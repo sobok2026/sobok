@@ -1,0 +1,51 @@
+import { describe, expect, it } from 'bun:test'
+import type { GETV1MeResponse } from '@sobok/contracts'
+
+import { hasAdultAccess, isAdultVerified } from '../adult-verification'
+
+function createMe(
+  status: GETV1MeResponse['adultVerification']['status'],
+  required = true,
+  adultVerifiedAdVisible = false,
+): GETV1MeResponse {
+  return {
+    id: 1,
+    loginId: 'tester',
+    name: 'tester',
+    nickname: '테스터',
+    imageURL: null,
+    adultVerification: {
+      required,
+      status,
+    },
+    settings: {
+      historySyncEnabled: true,
+      adultVerifiedAdVisible,
+      defaultCensorshipEnabled: true,
+      autoDeletionDay: 180,
+    },
+  }
+}
+
+describe('성인 인증 유틸', () => {
+  describe('isAdultVerified', () => {
+    it('성인 인증 완료 여부를 status만으로 판단한다', () => {
+      expect(isAdultVerified(undefined)).toBe(false)
+      expect(isAdultVerified(null)).toBe(false)
+      expect(isAdultVerified(createMe('adult'))).toBe(true)
+      expect(isAdultVerified(createMe('unverified'))).toBe(false)
+      expect(isAdultVerified(createMe('not-adult'))).toBe(false)
+    })
+  })
+
+  describe('hasAdultAccess', () => {
+    it('로그인했고 성인 게이트가 없거나 성인 인증이 완료된 경우 true를 반환한다', () => {
+      expect(hasAdultAccess(undefined)).toBe(false)
+      expect(hasAdultAccess(null)).toBe(false)
+      expect(hasAdultAccess(createMe('unverified', false))).toBe(true)
+      expect(hasAdultAccess(createMe('adult'))).toBe(true)
+      expect(hasAdultAccess(createMe('unverified'))).toBe(false)
+      expect(hasAdultAccess(createMe('not-adult'))).toBe(false)
+    })
+  })
+})

@@ -1,0 +1,74 @@
+import type { ReferredPost } from '@sobok/contracts'
+
+import { formatDistanceToNow } from '@sobok/std'
+import dayjs from 'dayjs'
+import { getLocale, getTranslations } from 'next-intl/server'
+
+import { Link } from '@/i18n/navigation'
+
+import Squircle from '../ui/Squircle'
+import PostImages from './PostImages'
+import { getPostDetailHref } from './postHref'
+
+type Props = {
+  referredPost: ReferredPost
+}
+
+export default async function ReferredPostCard({ referredPost }: Props) {
+  const t = await getTranslations('Community.common')
+
+  if (referredPost.isDeleted) {
+    return (
+      <div className="grid min-w-0 overflow-hidden rounded-2xl border-2 border-border-2 bg-overlay/50">
+        <div className="grid gap-1 p-3">
+          <p className="min-w-0 whitespace-pre-wrap break-all text-foreground-subtle">{t('deletedPost')}</p>
+        </div>
+      </div>
+    )
+  }
+
+  const locale = await getLocale()
+  const { createdAt, updatedAt, imageURLs, author, content, id } = referredPost
+
+  return (
+    <Link
+      className={`grid min-w-0 cursor-pointer overflow-hidden rounded-2xl border-2 transition border-border-strong hover:bg-surface`}
+      href={getPostDetailHref(id)}
+      prefetch={false}
+    >
+      <div className="grid gap-1 p-3">
+        <div className="flex min-w-0 justify-between gap-1">
+          <div className="flex min-w-0 gap-1 whitespace-nowrap">
+            <Squircle className="w-6 shrink-0" src={author?.imageURL} textClassName="text-foreground">
+              {author?.nickname.slice(0, 2) ?? t('deletedUserShort')}
+            </Squircle>
+            <div
+              aria-disabled={!author}
+              className="min-w-0 max-w-40 overflow-hidden font-semibold aria-disabled:text-foreground-subtle"
+            >
+              {author?.nickname ?? t('deletedUser')}
+            </div>
+            <div className="flex min-w-0 items-center gap-1 text-foreground-subtle">
+              {author && (
+                <>
+                  <div className="min-w-10 max-w-40 overflow-hidden">@{author.name}</div>
+                  <span>·</span>
+                </>
+              )}
+              <div className="shrink-0 text-xs overflow-hidden" title={dayjs(createdAt).format('YYYY-MM-DD HH:mm')}>
+                {formatDistanceToNow(new Date(createdAt), locale)}
+                {updatedAt && <span> ({t('edited')})</span>}
+              </div>
+            </div>
+          </div>
+        </div>
+        {content ? (
+          <p className="min-w-0 whitespace-pre-wrap break-all">{content}</p>
+        ) : (
+          <p className="min-w-0 whitespace-pre-wrap break-all text-foreground-subtle">{t('deletedPost')}</p>
+        )}
+      </div>
+      {imageURLs && <PostImages className="w-full max-h-[512px] overflow-hidden" urls={imageURLs} />}
+    </Link>
+  )
+}

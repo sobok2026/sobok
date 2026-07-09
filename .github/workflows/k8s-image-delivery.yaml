@@ -1,0 +1,410 @@
+name: Kubernetes Image Delivery
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kubernetes-image-delivery-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-publish-web-image:
+    name: Build and publish web image
+    if: ${{ github.ref_name == 'main' }}
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.build_web_image.outputs.digest }}
+    env:
+      IMAGE_WEB: ghcr.io/${{ github.repository_owner }}/sobok-web
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Load public web build arguments from overlay
+        id: load_public_env
+        shell: bash
+        run: |
+          set -euo pipefail
+          public_env_file="apps/web/public.env"
+
+          if [ ! -f "$public_env_file" ]; then
+            echo "public.env not found: $public_env_file" >&2
+            exit 1
+          fi
+
+          tmp="$(mktemp)"
+          while IFS= read -r line; do
+            if [[ "$line" =~ ^(#|[[:space:]]*$) ]]; then
+              continue
+            fi
+
+            if [[ ! "$line" =~ ^NEXT_PUBLIC_[A-Z0-9_]+=.*$ ]]; then
+              echo "public.env must contain only NEXT_PUBLIC_* assignments, blank lines, or comments." >&2
+              echo "$line" >&2
+              exit 1
+            fi
+
+            printf '%s\n' "$line" >> "$tmp"
+          done < "$public_env_file"
+
+          if [ ! -s "$tmp" ]; then
+            echo "No NEXT_PUBLIC_* entries found in $public_env_file" >&2
+            exit 1
+          fi
+
+          echo "build_args<<EOF" >> "$GITHUB_OUTPUT"
+          cat "$tmp" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Generate web image metadata
+        id: metadata_web
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE_WEB }}
+          tags: |
+            type=raw,value=${{ github.sha }}
+            type=raw,value=latest
+            type=ref,event=branch
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Authenticate to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish web image
+        id: build_web_image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          platforms: linux/arm64
+          push: true
+          build-args: |
+            CI=true
+            COMMIT_SHA=${{ github.sha }}
+            ${{ steps.load_public_env.outputs.build_args }}
+          secrets: |
+            APP_POSTGRES_URL=${{ secrets.APP_POSTGRES_URL }}
+            "APP_POSTGRES_CERTIFICATE=${{ secrets.APP_POSTGRES_CERTIFICATE }}"
+            CATALOG_POSTGRES_URL=${{ secrets.CATALOG_POSTGRES_URL }}
+            "CATALOG_POSTGRES_CERTIFICATE=${{ secrets.CATALOG_POSTGRES_CERTIFICATE }}"
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+          tags: ${{ steps.metadata_web.outputs.tags }}
+          labels: ${{ steps.metadata_web.outputs.labels }}
+
+  build-and-publish-api-image:
+    name: Build and publish api image
+    if: ${{ github.ref_name == 'main' }}
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.build_api_image.outputs.digest }}
+    env:
+      IMAGE_API: ghcr.io/${{ github.repository_owner }}/sobok-api
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Generate api image metadata
+        id: metadata_api
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE_API }}
+          tags: |
+            type=raw,value=${{ github.sha }}
+            type=raw,value=latest
+            type=ref,event=branch
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Authenticate to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish api image
+        id: build_api_image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          platforms: linux/arm64
+          push: true
+          build-args: |
+            COMMIT_SHA=${{ github.sha }}
+          secrets: |
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+          tags: ${{ steps.metadata_api.outputs.tags }}
+          labels: ${{ steps.metadata_api.outputs.labels }}
+
+  build-and-publish-chat-image:
+    name: Build and publish chat image
+    if: ${{ github.ref_name == 'main' }}
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.build_chat_image.outputs.digest }}
+    env:
+      IMAGE_CHAT: ghcr.io/${{ github.repository_owner }}/sobok-chat
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Generate chat image metadata
+        id: metadata_chat
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE_CHAT }}
+          tags: |
+            type=raw,value=${{ github.sha }}
+            type=raw,value=latest
+            type=ref,event=branch
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Authenticate to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish chat image
+        id: build_chat_image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: apps/chat/Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: ${{ steps.metadata_chat.outputs.tags }}
+          labels: ${{ steps.metadata_chat.outputs.labels }}
+
+  build-and-publish-chat-worker-image:
+    name: Build and publish chat-worker image
+    if: ${{ github.ref_name == 'main' }}
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.build_chat_worker_image.outputs.digest }}
+    env:
+      IMAGE_CHAT_WORKER: ghcr.io/${{ github.repository_owner }}/sobok-chat-worker
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Generate chat-worker image metadata
+        id: metadata_chat_worker
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE_CHAT_WORKER }}
+          tags: |
+            type=raw,value=${{ github.sha }}
+            type=raw,value=latest
+            type=ref,event=branch
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Authenticate to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish chat-worker image
+        id: build_chat_worker_image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: apps/chat-worker/Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: ${{ steps.metadata_chat_worker.outputs.tags }}
+          labels: ${{ steps.metadata_chat_worker.outputs.labels }}
+
+  build-and-publish-chat-push-image:
+    name: Build and publish chat-push image
+    if: ${{ github.ref_name == 'main' }}
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.build_chat_push_image.outputs.digest }}
+    env:
+      IMAGE_CHAT_PUSH: ghcr.io/${{ github.repository_owner }}/sobok-chat-push
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Generate chat-push image metadata
+        id: metadata_chat_push
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE_CHAT_PUSH }}
+          tags: |
+            type=raw,value=${{ github.sha }}
+            type=raw,value=latest
+            type=ref,event=branch
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Authenticate to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish chat-push image
+        id: build_chat_push_image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: apps/chat-push/Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: ${{ steps.metadata_chat_push.outputs.tags }}
+          labels: ${{ steps.metadata_chat_push.outputs.labels }}
+
+  propose-ops-production-image-digests:
+    name: Propose ops production image digests
+    if: ${{ github.ref_name == 'main' }}
+    needs:
+      - build-and-publish-web-image
+      - build-and-publish-api-image
+      - build-and-publish-chat-image
+      - build-and-publish-chat-worker-image
+      - build-and-publish-chat-push-image
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      OPS_REPOSITORY: ${{ github.repository_owner }}/sobok-ops
+      OPS_PATH: sobok-ops
+      OPS_WEB_OVERLAY_FILE: k8s/workload/sobok/prod/web/kustomization.yaml
+      OPS_API_OVERLAY_FILE: k8s/workload/sobok/prod/api/kustomization.yaml
+      OPS_CHAT_OVERLAY_FILE: k8s/workload/sobok/prod/chat/kustomization.yaml
+      OPS_CHAT_WORKER_OVERLAY_FILE: k8s/workload/sobok/prod/chat-worker/kustomization.yaml
+      OPS_CHAT_PUSH_OVERLAY_FILE: k8s/workload/sobok/prod/chat-push/kustomization.yaml
+      IMAGE_WEB: ghcr.io/${{ github.repository_owner }}/sobok-web
+      IMAGE_API: ghcr.io/${{ github.repository_owner }}/sobok-api
+      IMAGE_CHAT: ghcr.io/${{ github.repository_owner }}/sobok-chat
+      IMAGE_CHAT_WORKER: ghcr.io/${{ github.repository_owner }}/sobok-chat-worker
+      IMAGE_CHAT_PUSH: ghcr.io/${{ github.repository_owner }}/sobok-chat-push
+      IMAGE_WEB_DIGEST: ${{ needs.build-and-publish-web-image.outputs.digest }}
+      IMAGE_API_DIGEST: ${{ needs.build-and-publish-api-image.outputs.digest }}
+      IMAGE_CHAT_DIGEST: ${{ needs.build-and-publish-chat-image.outputs.digest }}
+      IMAGE_CHAT_WORKER_DIGEST: ${{ needs.build-and-publish-chat-worker-image.outputs.digest }}
+      IMAGE_CHAT_PUSH_DIGEST: ${{ needs.build-and-publish-chat-push-image.outputs.digest }}
+    steps:
+      - name: Generate sobok-ops GitHub App token
+        id: ops_app_token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.OPS_REPO_APP_CLIENT_ID }}
+          private-key: ${{ secrets.OPS_REPO_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: sobok-ops
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Checkout sobok-ops main branch
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ env.OPS_REPOSITORY }}
+          token: ${{ steps.ops_app_token.outputs.token }}
+          path: ${{ env.OPS_PATH }}
+          fetch-depth: 0
+          ref: main
+
+      - name: Update sobok-ops production image digests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          set_digest() {
+            local file="$1" image="$2" digest="$3"
+
+            if [[ ! "${digest}" == sha256:* ]]; then
+              echo "Invalid digest for ${image}: ${digest}" >&2
+              exit 1
+            fi
+
+            local matches
+            matches="$(IMAGE="${image}" yq '[(.images // [])[] | select(.name == strenv(IMAGE))] | length' "${file}")"
+
+            if [[ "${matches}" != "1" ]]; then
+              echo "Expected exactly 1 image named ${image} in ${file}, found ${matches}" >&2
+              exit 1
+            fi
+
+            IMAGE="${image}" DIGEST="${digest}" yq -i \
+              '(.images[] | select(.name == strenv(IMAGE)) | .digest) = strenv(DIGEST)' "${file}"
+          }
+
+          set_digest "${OPS_PATH}/${OPS_WEB_OVERLAY_FILE}" "${IMAGE_WEB}" "${IMAGE_WEB_DIGEST}"
+          set_digest "${OPS_PATH}/${OPS_API_OVERLAY_FILE}" "${IMAGE_API}" "${IMAGE_API_DIGEST}"
+          set_digest "${OPS_PATH}/${OPS_CHAT_OVERLAY_FILE}" "${IMAGE_CHAT}" "${IMAGE_CHAT_DIGEST}"
+          set_digest "${OPS_PATH}/${OPS_CHAT_WORKER_OVERLAY_FILE}" "${IMAGE_CHAT_WORKER}" "${IMAGE_CHAT_WORKER_DIGEST}"
+          set_digest "${OPS_PATH}/${OPS_CHAT_PUSH_OVERLAY_FILE}" "${IMAGE_CHAT_PUSH}" "${IMAGE_CHAT_PUSH_DIGEST}"
+
+      - name: Create or update sobok-ops production promotion PR
+        id: create_production_pr
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ steps.ops_app_token.outputs.token }}
+          path: ${{ env.OPS_PATH }}
+          add-paths: |
+            ${{ env.OPS_WEB_OVERLAY_FILE }}
+            ${{ env.OPS_API_OVERLAY_FILE }}
+            ${{ env.OPS_CHAT_OVERLAY_FILE }}
+            ${{ env.OPS_CHAT_WORKER_OVERLAY_FILE }}
+            ${{ env.OPS_CHAT_PUSH_OVERLAY_FILE }}
+          branch: codex/sobok-production-image-digests
+          delete-branch: true
+          commit-message: 'chore(k8s): promote sobok image digests'
+          title: 'chore(k8s): promote production image digests'
+          body: |
+            This PR updates sobok production manifests to the latest immutable image digests built from `sobok` `main`.
+
+            - Web: `${{ env.IMAGE_WEB }}@${{ env.IMAGE_WEB_DIGEST }}`
+            - API: `${{ env.IMAGE_API }}@${{ env.IMAGE_API_DIGEST }}`
+            - Chat: `${{ env.IMAGE_CHAT }}@${{ env.IMAGE_CHAT_DIGEST }}`
+            - Chat worker: `${{ env.IMAGE_CHAT_WORKER }}@${{ env.IMAGE_CHAT_WORKER_DIGEST }}`
+            - Chat push: `${{ env.IMAGE_CHAT_PUSH }}@${{ env.IMAGE_CHAT_PUSH_DIGEST }}`
+            - Source commit: `${{ github.sha }}`
+            - Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          base: main
+
+      - name: Report production promotion PR
+        if: ${{ steps.create_production_pr.outputs.pull-request-url }}
+        shell: bash
+        run: |
+          echo "Created or updated production promotion PR: ${{ steps.create_production_pr.outputs.pull-request-url }}"

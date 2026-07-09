@@ -1,0 +1,54 @@
+import type { PATCHV1NotificationReadAllResponse, PATCHV1NotificationReadResponse } from '@sobok/contracts'
+
+import { patchV1NotificationReadBodySchema } from '@sobok/contracts'
+import { db } from '@sobok/db/app'
+import { notificationTable } from '@sobok/db/app/notification'
+import { and, eq, inArray } from 'drizzle-orm'
+import { Hono } from 'hono'
+import { createFactory } from 'hono/factory'
+
+import type { Env } from '@/app'
+
+import { problemResponse } from '@/utils/problem'
+import { zProblemValidator } from '@/utils/validator'
+
+const route = new Hono<Env>()
+const factory = createFactory<Env>()
+const middlewares = factory.createHandlers(zProblemValidator('json', patchV1NotificationReadBodySchema))
+
+route.patch('/read', ...middlewares, async (c) => {
+  const userId = c.get('userId')!
+  const { ids } = c.req.valid('json')
+
+  try {
+    const updated = await db
+      .update(notificationTable)
+      .set({ read: true })
+      .where(and(eq(notificationTable.userId, userId), inArray(notificationTable.id, ids)))
+      .returning({ id: notificationTable.id })
+
+    return c.json({ ids: updated.map((item) => item.id) } satisfies PATCHV1NotificationReadResponse)
+  } catch (error) {
+    console.error(error)
+    return problemResponse(c, { status: 500 })
+  }
+})
+
+route.patch('/read-all', async (c) => {
+  const userId = c.get('userId')!
+
+  try {
+    const updated = await db
+      .update(notificationTable)
+      .set({ read: true })
+      .where(and(eq(notificationTable.userId, userId), eq(notificationTable.read, false)))
+      .returning({ id: notificationTable.id })
+
+    return c.json({ updatedCount: updated.length } satisfies PATCHV1NotificationReadAllResponse)
+  } catch (error) {
+    console.error(error)
+    return problemResponse(c, { status: 500 })
+  }
+})
+
+export default route

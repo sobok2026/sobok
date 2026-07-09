@@ -1,0 +1,144 @@
+import {
+  type GETV1PointsDonationRecipientResponse,
+  type GETV1PointsDonationsMeItem,
+  type GETV1PointsDonationsMeRecipient,
+  type GETV1PointsDonationsMeResponse,
+  getV1PointsDonationRecipientQuerySchema,
+  getV1PointsDonationsMeQuerySchema,
+} from '@sobok/contracts'
+import { db } from '@sobok/db/app'
+import {
+  DONATION_RECIPIENT_TYPE,
+  pointDonationRecipientTable,
+  pointDonationTable,
+  pointTransactionTable,
+} from '@sobok/db/app/points'
+import { createCacheControl } from '@sobok/http/cache-control'
+import { sec } from '@sobok/std'
+import { and, desc, eq, inArray, lt, sum } from 'drizzle-orm'
+import { Hono } from 'hono'
+import { createFactory } from 'hono/factory'
+
+import type { Env } from '@/app'
+
+import { requireAuth } from '@/middleware/require-auth'
+import { privateCacheControl } from '@/utils/cache-control'
+import { problemResponse } from '@/utils/problem'
+import { zProblemValidator } from '@/utils/validator'
+
+const route = new Hono<Env>()
+const factory = createFactory<Env>()
+
+const publicDailyCacheControl = createCacheControl({
+  public: true,
+  maxAge: 3,
+  sMaxAge: sec('1 day'),
+  swr: sec('1 day'),
+})
+
+const recipientMiddlewares = factory.createHandlers(zProblemValidator('query', getV1PointsDonationRecipientQuerySchema))
+
+route.get('/recipient', ...recipientMiddlewares, async (c) => {
+  const { type, value } = c.req.valid('query')
+  const recipientValue = value.trim()
+  const recipientType = type === 'artist' ? DONATION_RECIPIENT_TYPE.ARTIST : DONATION_RECIPIENT_TYPE.GROUP
+
+  try {
+    const [row] = await db
+      .select({ total: sum(pointDonationRecipientTable.amount) })
+      .from(pointDonationRecipientTable)
+      .where(
+        and(
+          eq(pointDonationRecipientTable.recipientType, recipientType),
+          eq(pointDonationRecipientTable.recipientValue, recipientValue),
+        ),
+      )
+
+    const response = {
+      totalReceived: Number(row?.total ?? 0),
+    } satisfies GETV1PointsDonationRecipientResponse
+
+    return c.json(response, { headers: { 'Cache-Control': publicDailyCacheControl } })
+  } catch (error) {
+    console.error(error)
+    return problemResponse(c, { status: 500 })
+  }
+})
+
+const PER_PAGE = 20
+
+const meMiddlewares = factory.createHandlers(requireAuth, zProblemValidator('query', getV1PointsDonationsMeQuerySchema))
+
+route.get('/me', ...meMiddlewares, async (c) => {
+  const userId = c.get('userId')!
+  const { cursor } = c.req.valid('query')
+
+  const whereConditions = cursor
+    ? and(eq(pointDonationTable.userId, userId), lt(pointDonationTable.id, cursor))
+    : eq(pointDonationTable.userId, userId)
+
+  try {
+    const donations = await db
+      .select({
+        id: pointDonationTable.id,
+        pointTransactionId: pointDonationTable.pointTransactionId,
+        totalAmount: pointTransactionTable.amount,
+        createdAt: pointTransactionTable.createdAt,
+      })
+      .from(pointDonationTable)
+      .innerJoin(pointTransactionTable, eq(pointDonationTable.pointTransactionId, pointTransactionTable.id))
+      .where(whereConditions)
+      .orderBy(desc(pointDonationTable.id))
+      .limit(PER_PAGE + 1)
+
+    const hasMore = donations.length > PER_PAGE
+
+    if (hasMore) {
+      donations.pop()
+    }
+
+    const transactionIds = donations.map((d) => d.pointTransactionId)
+    const recipients = transactionIds.length
+      ? await db
+          .select({
+            pointTransactionId: pointDonationRecipientTable.pointTransactionId,
+            recipientType: pointDonationRecipientTable.recipientType,
+            recipientValue: pointDonationRecipientTable.recipientValue,
+            amount: pointDonationRecipientTable.amount,
+          })
+          .from(pointDonationRecipientTable)
+          .where(inArray(pointDonationRecipientTable.pointTransactionId, transactionIds))
+      : []
+
+    const recipientMap = new Map<number, GETV1PointsDonationsMeRecipient[]>()
+    for (const r of recipients) {
+      const list = recipientMap.get(r.pointTransactionId) ?? []
+      list.push({
+        type: r.recipientType === DONATION_RECIPIENT_TYPE.ARTIST ? 'artist' : 'group',
+        value: r.recipientValue,
+        label: r.recipientValue,
+        amount: r.amount,
+      })
+      recipientMap.set(r.pointTransactionId, list)
+    }
+
+    const items: GETV1PointsDonationsMeItem[] = donations.map((d) => ({
+      id: d.id,
+      totalAmount: -d.totalAmount,
+      createdAt: d.createdAt.toISOString(),
+      recipients: recipientMap.get(d.pointTransactionId) ?? [],
+    }))
+
+    const response = {
+      items,
+      nextCursor: hasMore ? (donations[donations.length - 1]?.id ?? null) : null,
+    } satisfies GETV1PointsDonationsMeResponse
+
+    return c.json(response, { headers: { 'Cache-Control': privateCacheControl } })
+  } catch (error) {
+    console.error(error)
+    return problemResponse(c, { status: 500 })
+  }
+})
+
+export default route

@@ -1,0 +1,114 @@
+'use client'
+
+import { View } from '@sobok/std'
+import { Image, LayoutGrid } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useRef } from 'react'
+import { twMerge } from 'tailwind-merge'
+
+const VIEW_OPTIONS = [
+  { value: View.CARD, labelKey: 'card', Icon: LayoutGrid },
+  { value: View.IMAGE, labelKey: 'image', Icon: Image },
+] as const
+
+type Props = {
+  className?: string
+  onViewChange: (view: View) => void
+  view: View
+}
+
+export default function ViewToggle({ className = '', onViewChange, view }: Props) {
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const t = useTranslations('Search.view')
+
+  function focusOption(index: number) {
+    requestAnimationFrame(() => {
+      buttonRefs.current[index]?.focus()
+    })
+  }
+
+  function handleMove(nextIndex: number) {
+    const nextView = VIEW_OPTIONS[nextIndex]?.value
+
+    if (!nextView || nextView === view) {
+      focusOption(nextIndex)
+      return
+    }
+
+    setView(nextView)
+    focusOption(nextIndex)
+  }
+
+  function setView(nextView: View) {
+    if (nextView === view) {
+      return
+    }
+
+    onViewChange(nextView)
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      event.preventDefault()
+      handleMove((index + 1) % VIEW_OPTIONS.length)
+      return
+    }
+
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      handleMove((index - 1 + VIEW_OPTIONS.length) % VIEW_OPTIONS.length)
+      return
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault()
+      handleMove(0)
+      return
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault()
+      handleMove(VIEW_OPTIONS.length - 1)
+    }
+  }
+
+  return (
+    <div
+      aria-label={t('label')}
+      className={twMerge(
+        'relative inline-grid grid-cols-2 overflow-hidden rounded-xl border border-border-2 bg-surface/92 p-0.5 text-sm text-foreground-muted shadow-sm',
+        className,
+      )}
+      role="radiogroup"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0.5 left-0.5 w-[calc(50%-2px)] rounded-[0.65rem] border border-border-2 bg-surface-2 shadow-sm transition ease-out"
+        style={{ transform: `translateX(${view === View.IMAGE ? 100 : 0}%)` }}
+      />
+      {VIEW_OPTIONS.map(({ value, labelKey, Icon }, index) => {
+        const label = t(labelKey)
+
+        return (
+          <button
+            aria-checked={view === value}
+            className="relative z-10 inline-flex min-h-8 min-w-12 touch-manipulation select-none items-center justify-center gap-0.5 rounded-[0.65rem] px-2 py-1 text-sm font-medium text-foreground-muted transition hover:text-foreground active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-checked:font-semibold aria-checked:text-foreground sm:min-w-[3.4rem] sm:px-2.5"
+            key={value}
+            onClick={() => setView(value)}
+            onKeyDown={(event) => handleKeyDown(event, index)}
+            ref={(node) => {
+              buttonRefs.current[index] = node
+            }}
+            role="radio"
+            tabIndex={view === value ? 0 : -1}
+            title={label}
+            type="button"
+          >
+            <Icon aria-hidden className="hidden size-4 shrink-0 sm:block" strokeWidth={2.25} />
+            <span>{label}</span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}

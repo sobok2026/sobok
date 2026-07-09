@@ -1,0 +1,106 @@
+import type { GETV1PointExpansionResponse } from '@sobok/contracts'
+
+import { db } from '@sobok/db/app'
+import { userExpansionTable } from '@sobok/db/app/points'
+import {
+  MAX_BOOKMARKS_PER_USER,
+  MAX_LIBRARIES_PER_USER,
+  MAX_PINNED_LIBRARIES_PER_USER,
+  MAX_RATINGS_PER_USER,
+  MAX_READING_HISTORY_PER_USER,
+} from '@sobok/domain/library/policy'
+import { EXPANSION_TYPE, POINT_CONSTANTS } from '@sobok/domain/points/model'
+import { eq, sum } from 'drizzle-orm'
+import { Hono } from 'hono'
+import { createFactory } from 'hono/factory'
+
+import type { Env } from '@/app'
+
+import { requireAuth } from '@/middleware/require-auth'
+import { privateCacheControl } from '@/utils/cache-control'
+import { problemResponse } from '@/utils/problem'
+
+const route = new Hono<Env>()
+const factory = createFactory<Env>()
+const middlewares = factory.createHandlers(requireAuth)
+
+route.get('/', ...middlewares, async (c) => {
+  const userId = c.get('userId')!
+
+  try {
+    const expansions = await db
+      .select({
+        type: userExpansionTable.type,
+        totalAmount: sum(userExpansionTable.amount),
+      })
+      .from(userExpansionTable)
+      .where(eq(userExpansionTable.userId, userId))
+      .groupBy(userExpansionTable.type)
+
+    const libraryExpansion = expansions.find((e) => e.type === EXPANSION_TYPE.LIBRARY)
+    const historyExpansion = expansions.find((e) => e.type === EXPANSION_TYPE.READING_HISTORY)
+    const ratingExpansion = expansions.find((e) => e.type === EXPANSION_TYPE.RATING)
+    const bookmarkExpansion = expansions.find((e) => e.type === EXPANSION_TYPE.BOOKMARK)
+    const pinnedLibraryExpansion = expansions.find((e) => e.type === EXPANSION_TYPE.PINNED_LIBRARY)
+    const libraryExtra = Number(libraryExpansion?.totalAmount ?? 0)
+    const historyExtra = Number(historyExpansion?.totalAmount ?? 0)
+    const ratingExtra = Number(ratingExpansion?.totalAmount ?? 0)
+    const bookmarkExtra = Number(bookmarkExpansion?.totalAmount ?? 0)
+    const pinnedLibraryExtra = Number(pinnedLibraryExpansion?.totalAmount ?? 0)
+
+    const response = {
+      library: {
+        base: MAX_LIBRARIES_PER_USER,
+        extra: libraryExtra,
+        current: MAX_LIBRARIES_PER_USER + libraryExtra,
+        max: POINT_CONSTANTS.LIBRARY_MAX_EXPANSION,
+        canExpand: MAX_LIBRARIES_PER_USER + libraryExtra < POINT_CONSTANTS.LIBRARY_MAX_EXPANSION,
+        price: POINT_CONSTANTS.LIBRARY_EXPANSION_PRICE,
+        unit: POINT_CONSTANTS.LIBRARY_EXPANSION_AMOUNT,
+      },
+      history: {
+        base: MAX_READING_HISTORY_PER_USER,
+        extra: historyExtra,
+        current: MAX_READING_HISTORY_PER_USER + historyExtra,
+        max: POINT_CONSTANTS.HISTORY_MAX_EXPANSION,
+        canExpand: MAX_READING_HISTORY_PER_USER + historyExtra < POINT_CONSTANTS.HISTORY_MAX_EXPANSION,
+        price: POINT_CONSTANTS.HISTORY_EXPANSION_PRICE,
+        unit: POINT_CONSTANTS.HISTORY_EXPANSION_AMOUNT,
+      },
+      rating: {
+        base: MAX_RATINGS_PER_USER,
+        extra: ratingExtra,
+        current: MAX_RATINGS_PER_USER + ratingExtra,
+        max: POINT_CONSTANTS.RATING_MAX_EXPANSION,
+        canExpand: MAX_RATINGS_PER_USER + ratingExtra < POINT_CONSTANTS.RATING_MAX_EXPANSION,
+        price: POINT_CONSTANTS.RATING_EXPANSION_PRICE,
+        unit: POINT_CONSTANTS.RATING_EXPANSION_AMOUNT,
+      },
+      bookmark: {
+        base: MAX_BOOKMARKS_PER_USER,
+        extra: bookmarkExtra,
+        current: MAX_BOOKMARKS_PER_USER + bookmarkExtra,
+        max: POINT_CONSTANTS.BOOKMARK_MAX_EXPANSION,
+        canExpand: MAX_BOOKMARKS_PER_USER + bookmarkExtra < POINT_CONSTANTS.BOOKMARK_MAX_EXPANSION,
+        price: POINT_CONSTANTS.BOOKMARK_EXPANSION_SMALL_PRICE,
+        unit: POINT_CONSTANTS.BOOKMARK_EXPANSION_SMALL_AMOUNT,
+      },
+      pinnedLibrary: {
+        base: MAX_PINNED_LIBRARIES_PER_USER,
+        extra: pinnedLibraryExtra,
+        current: MAX_PINNED_LIBRARIES_PER_USER + pinnedLibraryExtra,
+        max: POINT_CONSTANTS.PINNED_LIBRARY_MAX_EXPANSION,
+        canExpand: MAX_PINNED_LIBRARIES_PER_USER + pinnedLibraryExtra < POINT_CONSTANTS.PINNED_LIBRARY_MAX_EXPANSION,
+        price: POINT_CONSTANTS.PINNED_LIBRARY_EXPANSION_PRICE,
+        unit: POINT_CONSTANTS.PINNED_LIBRARY_EXPANSION_AMOUNT,
+      },
+    } satisfies GETV1PointExpansionResponse
+
+    return c.json(response, { headers: { 'Cache-Control': privateCacheControl } })
+  } catch (error) {
+    console.error(error)
+    return problemResponse(c, { status: 500 })
+  }
+})
+
+export default route

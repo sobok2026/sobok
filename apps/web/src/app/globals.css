@@ -1,0 +1,386 @@
+@import 'tailwindcss' source(none);
+@import '@sobok/ui/styles.css';
+
+@source '..';
+
+@theme {
+  /* ── Semantic color tokens (dark baseline) ──────────────────────────────
+     Components use ONLY these role tokens — never a raw palette (zinc/red/…).
+     Per-theme values are reassigned in the :root[data-theme=…] blocks below,
+     so no `dark:` variants and no palette overriding are needed. */
+
+  /* Background & surfaces (low → high elevation) */
+  --color-background: #0a0a0a;
+  --color-surface: #18181b;
+  --color-surface-2: #27272a;
+  --color-surface-3: #3f3f46;
+  --color-surface-4: #52525b;
+  --color-overlay: #09090b;
+
+  /* Foreground / text (high → low emphasis) */
+  --color-foreground: #ededed;
+  --color-foreground-secondary: #d4d4d8;
+  --color-foreground-muted: #a1a1aa;
+  --color-foreground-subtle: #71717a;
+  --color-foreground-faint: #52525b;
+
+  /* Borders (subtle → strong) */
+  --color-border: #27272a;
+  --color-border-2: #3f3f46;
+  --color-border-strong: #52525b;
+
+  /* Brand */
+  --color-brand-start: #46cdfc;
+  --color-brand: #f5bcff;
+
+  --animate-fade-in: fade-in 1s ease-out;
+  --animate-fade-in-fast: fade-in 0.5s ease-out;
+  --animate-loading-bar: loading-bar 10s cubic-bezier(0.3, 0.7, 0.5, 1);
+  --animate-heartbeat: heartbeat 1.5s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  --animate-slide-up: slide-up 0.2s ease-out;
+  /* Delayed skeleton reveal: reserves space immediately (no CLS) but stays invisible for the
+     first 0.2s, so fast loads never flash a skeleton. */
+  --animate-skeleton-appear: skeleton-appear 0.7s ease-out 0.3s backwards;
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes loading-bar {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+
+  @keyframes rating-saved {
+    0%,
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      transform: scale(1.3) rotate(12deg);
+    }
+  }
+
+  @keyframes heartbeat {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    14% {
+      transform: scale(1.05);
+    }
+    28% {
+      transform: scale(1);
+    }
+    42% {
+      transform: scale(1.05);
+    }
+    56% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(0.85);
+      opacity: 0.75;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      transform: scale(1.3);
+      opacity: 0;
+    }
+  }
+
+  @keyframes skeleton-appear {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes slide-up {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+}
+
+@utility scrollbar-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+}
+
+@utility content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto;
+}
+
+@utility callout-none {
+  -webkit-touch-callout: none;
+}
+
+@utility p-safe {
+  padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left);
+}
+
+@utility px-safe {
+  padding-left: var(--safe-area-left);
+  padding-right: var(--safe-area-right);
+}
+
+@utility py-safe {
+  padding-top: var(--safe-area-top);
+  padding-bottom: var(--safe-area-bottom);
+}
+
+@utility pt-safe {
+  padding-top: var(--safe-area-top);
+}
+
+@utility pb-safe {
+  padding-bottom: var(--safe-area-bottom);
+}
+
+@utility pl-safe {
+  padding-left: var(--safe-area-left);
+}
+
+@utility pr-safe {
+  padding-right: var(--safe-area-right);
+}
+
+@utility bg-brand-gradient {
+  background-image: linear-gradient(to right, var(--color-brand-start), var(--color-brand));
+}
+
+@utility border-brand-gradient {
+  background-image:
+    linear-gradient(var(--color-background), var(--color-background)),
+    linear-gradient(to right, var(--color-brand-start), var(--color-brand));
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  border-color: transparent;
+}
+
+:root {
+  color-scheme: dark;
+
+  --safe-area-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --safe-area-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --safe-area-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  --safe-area-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+  --sobok-dock-h: 5.5rem;
+
+  --toast-bg: var(--color-surface-2);
+  --toast-border: var(--color-border-2);
+  --toast-description: var(--color-foreground-muted);
+  --toast-success: #4ade80;
+  --toast-info: #60a5fa;
+  --toast-warning: #ff9f0a;
+  --toast-error: #f87171;
+}
+
+/* First paint / no-JS: follow the OS light preference only when the user has
+   not explicitly chosen a theme. Once next-themes sets [data-theme] (before
+   paint), the explicit blocks below win and this never applies. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+
+    --color-background: #ffffff;
+    --color-surface: #f4f4f5;
+    --color-surface-2: #e4e4e7;
+    --color-surface-3: #d4d4d8;
+    --color-surface-4: #a1a1aa;
+    --color-overlay: #09090b;
+
+    --color-foreground: #18181b;
+    --color-foreground-secondary: #3f3f46;
+    --color-foreground-muted: #52525b;
+    --color-foreground-subtle: #71717a;
+    --color-foreground-faint: #a1a1aa;
+
+    --color-border: #e4e4e7;
+    --color-border-2: #d4d4d8;
+    --color-border-strong: #a1a1aa;
+
+    --color-brand-start: #3b82f6;
+    --color-brand: #8b5cf6;
+
+    --toast-bg: #ffffff;
+    --toast-border: #e4e4e7;
+    --toast-description: #52525b;
+    --toast-success: #16a34a;
+    --toast-info: #2563eb;
+    --toast-warning: #ff9500;
+    --toast-error: #dc2626;
+  }
+}
+
+/* Explicit theme selections (applied by next-themes before first paint). */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --color-background: #ffffff;
+  --color-surface: #f4f4f5;
+  --color-surface-2: #e4e4e7;
+  --color-surface-3: #d4d4d8;
+  --color-surface-4: #a1a1aa;
+  --color-overlay: #09090b;
+
+  --color-foreground: #18181b;
+  --color-foreground-secondary: #3f3f46;
+  --color-foreground-muted: #52525b;
+  --color-foreground-subtle: #71717a;
+  --color-foreground-faint: #a1a1aa;
+
+  --color-border: #e4e4e7;
+  --color-border-2: #d4d4d8;
+  --color-border-strong: #a1a1aa;
+
+  --color-brand-start: #3b82f6;
+  --color-brand: #8b5cf6;
+
+  --toast-bg: #ffffff;
+  --toast-border: #e4e4e7;
+  --toast-description: #52525b;
+  --toast-success: #16a34a;
+  --toast-info: #2563eb;
+  --toast-warning: #ff9500;
+  --toast-error: #dc2626;
+}
+
+:root[data-theme='neon'] {
+  color-scheme: dark;
+
+  --color-background: #0a0014;
+  --color-surface: #0d0d1a;
+  --color-surface-2: #18182a;
+  --color-surface-3: #252540;
+  --color-surface-4: #383860;
+  --color-overlay: #050010;
+
+  --color-foreground: #00ff9f;
+  --color-foreground-secondary: #a8a8d8;
+  --color-foreground-muted: #7070b0;
+  --color-foreground-subtle: #505088;
+  --color-foreground-faint: #383860;
+
+  --color-border: #18182a;
+  --color-border-2: #252540;
+  --color-border-strong: #383860;
+
+  --color-brand-start: #ff00ff;
+  --color-brand: #00ffff;
+
+  --toast-bg: #18182a;
+  --toast-border: #252540;
+  --toast-description: #a8a8d8;
+}
+
+:root[data-theme='retro'] {
+  color-scheme: dark;
+
+  --color-background: #2b1810;
+  --color-surface: #3a2b1e;
+  --color-surface-2: #4f3e2f;
+  --color-surface-3: #6a5642;
+  --color-surface-4: #88735a;
+  --color-overlay: #1a0f08;
+
+  --color-foreground: #f4e4c1;
+  --color-foreground-secondary: #c8b8a3;
+  --color-foreground-muted: #a89376;
+  --color-foreground-subtle: #88735a;
+  --color-foreground-faint: #6a5642;
+
+  --color-border: #4f3e2f;
+  --color-border-2: #6a5642;
+  --color-border-strong: #88735a;
+
+  --color-brand-start: #ff6b35;
+  --color-brand: #f7931e;
+
+  --toast-bg: #3a2b1e;
+  --toast-border: #4f3e2f;
+  --toast-description: #c8b8a3;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  color: var(--color-foreground);
+  background: var(--color-background);
+}
+
+[data-sonner-toast][data-styled='true'] {
+  background: var(--toast-bg) !important;
+  border-color: var(--toast-border) !important;
+  color: var(--color-foreground) !important;
+}
+
+[data-sonner-toast][data-styled='true'] [data-description] {
+  color: var(--toast-description) !important;
+}
+
+[data-sonner-toast][data-styled='true'][data-type='success'] [data-icon] {
+  color: var(--toast-success) !important;
+}
+
+[data-sonner-toast][data-styled='true'][data-type='info'] [data-icon] {
+  color: var(--toast-info) !important;
+}
+
+[data-sonner-toast][data-styled='true'][data-type='warning'] [data-icon] {
+  color: var(--toast-warning) !important;
+}
+
+[data-sonner-toast][data-styled='true'][data-type='error'] [data-icon] {
+  color: var(--toast-error) !important;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+code {
+  font-family: 'Courier New', Courier, monospace;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 0.9em;
+}

@@ -1,0 +1,32 @@
+import { idParamSchema } from '@sobok/contracts'
+import { db } from '@sobok/db/app'
+import { postLikeTable } from '@sobok/db/app/post'
+import { and, eq } from 'drizzle-orm'
+import { Hono } from 'hono'
+import { createFactory } from 'hono/factory'
+
+import type { Env } from '@/app'
+
+import { requireAuth } from '@/middleware/require-auth'
+import { problemResponse } from '@/utils/problem'
+import { zProblemValidator } from '@/utils/validator'
+
+const route = new Hono<Env>()
+const factory = createFactory<Env>()
+const middlewares = factory.createHandlers(requireAuth, zProblemValidator('param', idParamSchema))
+
+route.delete('/', ...middlewares, async (c) => {
+  const userId = c.get('userId')!
+  const { id: postId } = c.req.valid('param')
+
+  try {
+    await db.delete(postLikeTable).where(and(eq(postLikeTable.userId, userId), eq(postLikeTable.postId, postId)))
+
+    return c.body(null, 204)
+  } catch (error) {
+    console.error(error)
+    return problemResponse(c, { status: 500 })
+  }
+})
+
+export default route

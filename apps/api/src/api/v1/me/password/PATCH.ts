@@ -1,0 +1,127 @@
+import { getAuthCookieClearConfigs } from '@sobok/auth/cookie'
+import { PASSWORD_HASH_COST } from '@sobok/auth/password'
+import { decryptTOTPSecret, verifyTOTPToken } from '@sobok/auth/two-factor'
+import { type PATCHV1MePasswordResponse, PROBLEM, patchV1MePasswordBodySchema } from '@sobok/contracts'
+import { db } from '@sobok/db/app'
+import { twoFactorTable } from '@sobok/db/app/two-factor'
+import { userTable } from '@sobok/db/app/user'
+import { compare, hash } from 'bcryptjs'
+import { and, eq, isNull } from 'drizzle-orm'
+import { Hono } from 'hono'
+import { createFactory } from 'hono/factory'
+
+import type { Env } from '@/app'
+
+import { applyAuthCookie } from '@/utils/cookie'
+import { authRequiredProblemResponse, problemResponse, tooManyRequestsProblemResponse } from '@/utils/problem'
+import { RedisRateLimiter, RedisRateLimitPresets } from '@/utils/rate-limit'
+import { zProblemValidator } from '@/utils/validator'
+
+import { revokeAllSessionsByUserId } from '../session/query'
+
+const passwordChangeLimiter = new RedisRateLimiter({
+  ...RedisRateLimitPresets.strict(),
+  scope: 'me-password:user',
+})
+
+const route = new Hono<Env>()
+const factory = createFactory<Env>()
+const middlewares = factory.createHandlers(zProblemValidator('json', patchV1MePasswordBodySchema))
+
+route.patch('/', ...middlewares, async (c) => {
+  const userId = c.get('userId')!
+  const { currentPassword, newPassword, token } = c.req.valid('json')
+  const { allowed, retryAfter } = await passwordChangeLimiter.check(String(userId))
+
+  if (!allowed) {
+    return tooManyRequestsProblemResponse(c, retryAfter)
+  }
+
+  if (currentPassword === newPassword) {
+    return problemResponse(c, {
+      status: 400,
+      extensions: {
+        invalidParams: [
+          {
+            name: 'newPassword',
+            code: PROBLEM.PASSWORD_SAME_AS_CURRENT.slug,
+            reason: '현재 비밀번호와 새 비밀번호가 같아요',
+          },
+        ],
+      },
+    })
+  }
+
+  const now = new Date()
+
+  try {
+    const result = await db.transaction(async (tx) => {
+      const [user] = await tx
+        .select({ passwordHash: userTable.passwordHash })
+        .from(userTable)
+        .where(eq(userTable.id, userId))
+        .for('update')
+
+      if (!user) {
+        return { kind: 'unauthorized' } as const
+      }
+
+      const isValidPassword = await compare(currentPassword, user.passwordHash).catch(() => false)
+
+      if (!isValidPassword) {
+        return { kind: 'verification-failed' } as const
+      }
+
+      const [twoFactor] = await tx
+        .select({ secret: twoFactorTable.secret })
+        .from(twoFactorTable)
+        .where(and(eq(twoFactorTable.userId, userId), isNull(twoFactorTable.expiresAt)))
+
+      if (twoFactor) {
+        if (!token) {
+          return { kind: 'verification-failed' } as const
+        }
+
+        const secret = decryptTOTPSecret(twoFactor.secret)
+        const isValidToken = await verifyTOTPToken(token, secret)
+
+        if (!isValidToken) {
+          return { kind: 'verification-failed' } as const
+        }
+      }
+
+      const newPasswordHash = await hash(newPassword, PASSWORD_HASH_COST)
+
+      await tx
+        .update(userTable)
+        .set({
+          passwordHash: newPasswordHash,
+          loginAt: now,
+        })
+        .where(eq(userTable.id, userId))
+
+      await revokeAllSessionsByUserId(userId, now, tx)
+
+      return { kind: 'changed' } as const
+    })
+
+    switch (result.kind) {
+      case 'changed':
+        applyAuthCookie(c, getAuthCookieClearConfigs())
+        await Promise.allSettled([passwordChangeLimiter.reward(String(userId))])
+        return c.json({ clearedCurrentSession: true } satisfies PATCHV1MePasswordResponse)
+
+      case 'unauthorized':
+        applyAuthCookie(c, getAuthCookieClearConfigs())
+        return authRequiredProblemResponse(c)
+
+      case 'verification-failed':
+        return problemResponse(c, { problem: PROBLEM.CREDENTIAL_VERIFICATION_FAILED })
+    }
+  } catch (error) {
+    console.error(error)
+    return problemResponse(c, { status: 500 })
+  }
+})
+
+export default route

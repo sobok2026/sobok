@@ -1,0 +1,97 @@
+'use client'
+
+import { CaseSensitive, Plus } from 'lucide-react'
+import { useState } from 'react'
+
+import StatusState from '@/components/status/StatusState'
+import { getStatusActionClassName } from '@/components/status/styles'
+import useAdultAccessGuard from '@/hook/useAdultAccessGuard'
+import NotificationCriteriaCard from './NotificationCriteriaCard'
+import NotificationCriteriaModal from './NotificationCriteriaModal'
+import type { NotificationCriteria } from './types'
+
+interface Props {
+  initialCriteria: NotificationCriteria[]
+}
+
+export default function KeywordSettingsForm({ initialCriteria: criteria }: Props) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingCriteria, setEditingCriteria] = useState<NotificationCriteria | null>(null)
+  const { guardAdultAccess } = useAdultAccessGuard()
+
+  function handleCreateClick() {
+    if (!guardAdultAccess()) {
+      return
+    }
+
+    setIsModalOpen(true)
+    setEditingCriteria(null)
+  }
+
+  function handleEditClick(criterion: NotificationCriteria) {
+    if (!guardAdultAccess()) {
+      return
+    }
+
+    setIsModalOpen(true)
+    setEditingCriteria(criterion)
+  }
+
+  function handleModalClose() {
+    setIsModalOpen(false)
+    setEditingCriteria(null)
+  }
+
+  return (
+    <div className="flex flex-col gap-4 sm:gap-6">
+      {criteria.length === 0 ? (
+        <StatusState
+          description="관심있는 시리즈와 태그를 놓치지 않도록 알려드릴게요"
+          icon={<CaseSensitive className="size-8" />}
+          intent="setup"
+          title="키워드 알림 시작하기"
+        >
+          <button className={getStatusActionClassName('primary')} onClick={handleCreateClick} type="button">
+            키워드 알림 설정하기
+          </button>
+        </StatusState>
+      ) : (
+        <>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-base sm:text-lg font-medium text-foreground">조건</h2>
+              <p className="hidden sm:block text-sm text-foreground-subtle mt-0.5 sm:mt-1">
+                {criteria.length}개의 알림 조건이 활성화되어 있어요
+              </p>
+            </div>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl bg-surface hover:bg-surface-2 border border-border hover:border-border-2 px-3 py-2 sm:px-4 text-xs sm:text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-brand/50 focus:ring-offset-2 transition-all self-start sm:self-auto"
+              onClick={handleCreateClick}
+            >
+              <Plus className="size-3.5 shrink-0 sm:size-4" />새 조건
+            </button>
+          </div>
+          <div className="flex flex-col gap-2 sm:gap-3">
+            {criteria.map((criterion) => (
+              <NotificationCriteriaCard criterion={criterion} key={criterion.id} onEdit={handleEditClick} />
+            ))}
+          </div>
+          <div className="mt-4 sm:mt-8 rounded-lg sm:rounded-xl bg-surface border border-border p-3 sm:p-4">
+            <p className="text-xs sm:text-sm text-foreground-muted flex items-start">
+              <span className="inline-block w-4 h-4 sm:w-5 sm:h-5 rounded bg-surface-2 text-foreground-muted text-center leading-4 sm:leading-5 text-[10px] sm:text-xs font-medium mr-2 shrink-0">
+                i
+              </span>
+              <span>
+                복수 조건을 설정하면 모든 조건이 일치할 때만 알림을 받아요. 정확한 알림을 위해 구체적인 키워드를
+                사용하세요.
+              </span>
+            </p>
+          </div>
+        </>
+      )}
+
+      <NotificationCriteriaModal editingCriteria={editingCriteria} isOpen={isModalOpen} onClose={handleModalClose} />
+    </div>
+  )
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@sobok/chat",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run dev:local",
+    "dev:local": "bun run --env-file=.env.local --watch src/server.ts",
+    "dev:prod": "bun run --env-file=.env.prod.dev --watch src/server.ts",
+    "build": "bun build --compile --minify --sourcemap src/server.ts --target=bun --outfile dist/sobok-chat",
+    "start": "bun run start:prod",
+    "start:local": "bun --env-file=.env.local src/server.ts",
+    "start:prod": "bun --env-file=.env.prod.runtime src/server.ts",
+    "type": "tsc --noEmit",
+    "docker:build": "docker build -f Dockerfile -t sobok-chat-local ../..",
+    "docker:run": "docker run --rm -p 3003:3003 --env-file .env.prod.runtime sobok-chat-local"
+  },
+  "dependencies": {
+    "@sobok/auth": "workspace:*",
+    "@sobok/contracts": "workspace:*",
+    "@sobok/db": "workspace:*",
+    "@sobok/env": "workspace:*",
+    "@sobok/http": "workspace:*",
+    "@sobok/kv": "workspace:*",
+    "@sobok/std": "workspace:*",
+    "cookie": "^2.0.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.12",
+    "typescript": "^6.0.3"
+  }
+}

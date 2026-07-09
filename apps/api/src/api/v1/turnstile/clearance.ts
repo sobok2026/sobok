@@ -1,0 +1,38 @@
+import { PROBLEM, postV1TurnstileClearanceRequestSchema, TURNSTILE_ORIGIN_PROTECTION_ACTION } from '@sobok/contracts'
+import { getRequestIP } from '@sobok/http/request'
+import TurnstileValidator from '@sobok/http/turnstile'
+import { Hono } from 'hono'
+import { createFactory } from 'hono/factory'
+import ms from 'ms'
+
+import type { Env } from '@/app'
+
+import { problemResponse } from '@/utils/problem'
+import { APP_ORIGIN } from '@/utils/request-origin'
+import { zProblemValidator } from '@/utils/validator'
+
+const route = new Hono<Env>()
+const factory = createFactory<Env>()
+const middlewares = factory.createHandlers(zProblemValidator('json', postV1TurnstileClearanceRequestSchema))
+const turnstileValidator = new TurnstileValidator(ms('10 seconds'), 1)
+const expectedHostname = new URL(APP_ORIGIN).hostname
+
+route.post('/', ...middlewares, async (c) => {
+  const { token } = c.req.valid('json')
+  const remoteIP = getRequestIP(c.req.raw.headers)
+
+  const turnstile = await turnstileValidator.validate({
+    token,
+    remoteIP,
+    expectedAction: TURNSTILE_ORIGIN_PROTECTION_ACTION,
+    expectedHostname,
+  })
+
+  if (!turnstile.success) {
+    return problemResponse(c, { problem: PROBLEM.HUMAN_VERIFICATION_FAILED })
+  }
+
+  return c.body(null, 204)
+})
+
+export default route

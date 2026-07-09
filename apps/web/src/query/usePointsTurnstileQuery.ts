@@ -1,0 +1,34 @@
+import type { GETV1PointTurnstileResponse } from '@sobok/contracts'
+
+import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
+
+import { QueryKeys } from '@/lib/react-query/query-keys'
+import { fetchAPIData } from '@/utils/api-request'
+import { ProblemDetailsError } from '@/utils/fetch-response'
+
+export async function fetchPointsTurnstile() {
+  try {
+    const url = '/api/v1/points/turnstile'
+    const { data } = await fetchAPIData<GETV1PointTurnstileResponse>(url)
+    return data
+  } catch (error) {
+    if (error instanceof ProblemDetailsError && (error.status === 401 || error.status === 403)) {
+      return { verified: false } as const
+    }
+    throw error
+  }
+}
+
+export default function usePointsTurnstileQuery(enabled: boolean) {
+  return useQuery({
+    queryKey: QueryKeys.pointsTurnstile,
+    queryFn: fetchPointsTurnstile,
+    enabled,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    staleTime: ms('10 minutes'),
+    gcTime: ms('10 minutes'),
+  })
+}

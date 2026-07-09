@@ -1,0 +1,71 @@
+'use client'
+
+import type { POSTV1MePushTestBody } from '@sobok/contracts'
+
+import { LOCALE_LANGUAGE_TAGS } from '@sobok/domain/locale'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { BellRing } from 'lucide-react'
+import { useLocale } from 'next-intl'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { twMerge } from 'tailwind-merge'
+import { QueryKeys } from '@/lib/react-query/query-keys'
+import type { ProblemDetailsError } from '@/utils/fetch-response'
+
+import { sendTestPushNotification } from './api'
+import { getCurrentBrowserEndpoint } from './common'
+
+type Props = {
+  endpoints: string[]
+}
+
+export default function PushTestButton({ endpoints }: Props) {
+  const locale = useLocale()
+  const [hasTestedOnce, setHasTestedOnce] = useState(false)
+  const queryClient = useQueryClient()
+
+  const testMutation = useMutation<void, ProblemDetailsError, POSTV1MePushTestBody>({
+    mutationFn: sendTestPushNotification,
+    onSuccess: () => {
+      toast.success('현재 브라우저에 테스트 알림을 보냈어요')
+      setHasTestedOnce(true)
+      queryClient.invalidateQueries({ queryKey: QueryKeys.notification })
+    },
+  })
+
+  async function handleTestNotification() {
+    const endpoint = await getCurrentBrowserEndpoint()
+
+    if (!endpoint || !endpoints.includes(endpoint)) {
+      toast.error('현재 브라우저에 알림이 활성화되어 있지 않아요')
+      return
+    }
+
+    testMutation.mutate({
+      message: new Date().toLocaleString(LOCALE_LANGUAGE_TAGS[locale]),
+      endpoint,
+    })
+  }
+
+  return (
+    <button
+      className={twMerge(
+        'flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-sm font-medium',
+        'bg-surface-2 hover:from-surface-3 hover:to-surface-3/70',
+        'border border-border-2/50 hover:border-border-strong',
+        'text-foreground hover:text-foreground transition',
+        'shadow-sm hover:shadow-md hover:shadow-border/50',
+        'disabled:opacity-50 active:scale-98',
+      )}
+      disabled={testMutation.isPending}
+      onClick={handleTestNotification}
+      type="button"
+    >
+      <div className="relative">
+        <BellRing className={`size-4 shrink-0 ${hasTestedOnce ? 'text-brand/70' : ''}`} />
+        {!hasTestedOnce && <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-brand rounded-full animate-pulse" />}
+      </div>
+      <span className="whitespace-nowrap">{hasTestedOnce ? '다시 보내기' : '알림 보내기'}</span>
+    </button>
+  )
+}

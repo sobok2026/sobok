@@ -1,0 +1,21 @@
+import type { GETV1ChatRepliesResponse } from '@sobok/contracts'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { QueryKeys } from '@/lib/react-query/query-keys'
+import { buildSearchParams, fetchAPIData } from '@/utils/api-request'
+
+export default function useMessageReplyQuery(handle: string, messageId: string) {
+  return useInfiniteQuery({
+    queryKey: QueryKeys.chatReplies(handle, messageId),
+    queryFn: async ({ pageParam }) => {
+      const searchParams = buildSearchParams({ before: pageParam })
+      const url = `/api/v1/chat/artist/${handle}/message/${messageId}/reply?${searchParams}`
+      const { data } = await fetchAPIData<GETV1ChatRepliesResponse>(url)
+      return data
+    },
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    enabled: Boolean(handle) && Boolean(messageId),
+    // Realtime reply room: refetch on remount/focus rather than serving a 10-min-stale cache.
+    staleTime: 0,
+  })
+}

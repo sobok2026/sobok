@@ -1,0 +1,47 @@
+{
+  "name": "@sobok/auth",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./cookie": "./src/cookie.ts",
+    "./env": "./src/env.ts",
+    "./jwt": "./src/jwt.ts",
+    "./passkey": "./src/passkey.ts",
+    "./passkey/server": "./src/passkey/server.ts",
+    "./passkey-authentication-attempt": "./src/passkey-authentication-attempt.ts",
+    "./password": "./src/password.ts",
+    "./pkce-browser": "./src/pkce-browser.ts",
+    "./pkce-server": "./src/pkce-server.ts",
+    "./query/session": "./src/query/session.ts",
+    "./redis-challenge": "./src/redis-challenge.ts",
+    "./secret-crypto": "./src/secret-crypto.ts",
+    "./session": "./src/session.ts",
+    "./session/persistent-session": "./src/session/persistent-session.ts",
+    "./two-factor": "./src/two-factor.ts",
+    "./two-factor-backup-code": "./src/two-factor-backup-code.ts"
+  },
+  "scripts": {
+    "type": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sobok/db": "workspace:*",
+    "@sobok/domain": "workspace:*",
+    "@sobok/env": "workspace:*",
+    "@sobok/http": "workspace:*",
+    "@sobok/kv": "workspace:*",
+    "@sobok/std": "workspace:*",
+    "@t3-oss/env-core": "^0.13.11",
+    "bcryptjs": "^3.0.3",
+    "drizzle-orm": "1.0.0-rc.4",
+    "jose": "^6.2.3",
+    "next": "16.2.9",
+    "otplib": "^13.4.1",
+    "qrcode": "^1.5.4",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@simplewebauthn/server": "^13.3.2",
+    "@types/qrcode": "^1.5.6"
+  }
+}

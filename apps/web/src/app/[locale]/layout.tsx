@@ -1,0 +1,127 @@
+import '../globals.css'
+
+import { GoogleTagManager } from '@next/third-parties/google'
+import { APP_METADATA, THEME_COLOR } from '@sobok/domain/app/metadata'
+import { PUBLIC_LOCALES } from '@sobok/domain/locale'
+import { env } from '@sobok/env/client'
+import type { Metadata, Viewport } from 'next'
+import localFont from 'next/font/local'
+import { NextIntlClientProvider } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
+import { ThemeProvider } from 'next-themes'
+import type { ReactNode } from 'react'
+import { Toaster } from 'sonner'
+import CapacitorNativeEffects from '@/components/CapacitorNativeEffects'
+import HiyobiPing from '@/components/HiyobiPing'
+import OriginProtectionTurnstile from '@/components/OriginProtectionTurnstile'
+import SEOText from '@/components/SEOText'
+import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
+import OverlayHost from '@/components/ui/OverlayHost'
+import { getLocaleFromParams } from '@/i18n/server'
+import { generateLocalizedMetadata } from '@/lib/metadata'
+import QueryProvider from '@/lib/react-query/QueryProvider'
+import { THEMES } from '@/store/theme'
+
+const { NEXT_PUBLIC_APP_ORIGIN, NEXT_PUBLIC_GTM_ID } = env
+
+const PretendardVariable = localFont({
+  src: '../../fonts/PretendardVariable.400-700.3713.woff2',
+  display: 'swap',
+  weight: '400 700',
+  fallback: [
+    '-apple-system',
+    'BlinkMacSystemFont',
+    'system-ui',
+    'Roboto',
+    'Helvetica Neue',
+    'Segoe UI',
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    'Malgun Gothic',
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    'sans-serif',
+  ],
+})
+
+export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Promise<Metadata> {
+  const locale = await getLocaleFromParams(params)
+  const t = await getTranslations({ locale, namespace: 'Metadata.app' })
+  const appMetadata = APP_METADATA[locale]
+  const description = t('description')
+
+  return {
+    metadataBase: new URL(NEXT_PUBLIC_APP_ORIGIN),
+    title: {
+      default: appMetadata.applicationName,
+      template: `%s - ${appMetadata.shortName}`,
+    },
+    description,
+    applicationName: appMetadata.shortName,
+    keywords: 'sobok, 소복, sobok.cc',
+    referrer: 'same-origin',
+    robots: {
+      index: true,
+      follow: true,
+    },
+    ...generateLocalizedMetadata({ pathname: '/', locale, description }),
+    verification: { google: '...' },
+  }
+}
+
+export function generateStaticParams() {
+  return PUBLIC_LOCALES.map((locale) => ({ locale }))
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: THEME_COLOR.light },
+    { media: '(prefers-color-scheme: dark)', color: THEME_COLOR.dark },
+  ],
+  colorScheme: 'dark light',
+}
+
+type Props = {
+  children: ReactNode
+  params: Promise<{ locale: string }>
+}
+
+export default async function RootLayout({ children, params }: Props) {
+  const locale = await getLocaleFromParams(params)
+  const appMetadata = APP_METADATA[locale]
+
+  return (
+    <html className="h-full" lang={locale} suppressHydrationWarning>
+      <head>
+        <meta content={appMetadata.shortName} name="apple-mobile-web-app-title" />
+      </head>
+      <body className={`${PretendardVariable.className} antialiased h-full`}>
+        <ThemeProvider disableTransitionOnChange themes={THEMES}>
+          <CapacitorNativeEffects />
+          <NextIntlClientProvider>
+            <OverlayHost>
+              <Toaster
+                className="pointer-events-auto notranslate"
+                mobileOffset={{ top: 'calc(1rem + var(--safe-area-top))' }}
+                position="top-center"
+                theme="system"
+              />
+            </OverlayHost>
+            <QueryProvider>{children}</QueryProvider>
+            <OriginProtectionTurnstile />
+          </NextIntlClientProvider>
+          <ServiceWorkerRegistrar />
+          <HiyobiPing />
+          {NEXT_PUBLIC_GTM_ID && <GoogleTagManager gtmId={NEXT_PUBLIC_GTM_ID} />}
+          <p className="h-0 overflow-hidden tracking-widest invisible">
+            <SEOText />
+          </p>
+        </ThemeProvider>
+      </body>
+    </html>
+  )
+}

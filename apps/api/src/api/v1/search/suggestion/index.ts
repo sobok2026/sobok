@@ -1,0 +1,38 @@
+import { type GETV1SearchSuggestionResponse, getV1SearchSuggestionQuerySchema } from '@sobok/contracts'
+import { queryBlacklist } from '@sobok/domain/search/suggestion'
+import { createCacheControl } from '@sobok/http/cache-control'
+import { sec } from '@sobok/std'
+import { Hono } from 'hono'
+import { createFactory } from 'hono/factory'
+
+import type { Env } from '@/app'
+
+import { problemResponse } from '@/utils/problem'
+import { zProblemValidator } from '@/utils/validator'
+
+import { suggestionTrie } from './suggestion-trie'
+
+const suggestionRoutes = new Hono<Env>()
+const factory = createFactory<Env>()
+const middlewares = factory.createHandlers(zProblemValidator('query', getV1SearchSuggestionQuerySchema))
+
+suggestionRoutes.get('/', ...middlewares, async (c) => {
+  const { limit, locale, query } = c.req.valid('query')
+
+  if (queryBlacklist.some((regex) => regex.test(query))) {
+    return problemResponse(c, { status: 400 })
+  }
+
+  const suggestions = suggestionTrie.search(query, locale, limit)
+
+  const cacheControl = createCacheControl({
+    public: true,
+    maxAge: 3,
+    sMaxAge: sec('90 days'),
+    swr: sec('1 day'),
+  })
+
+  return c.json(suggestions satisfies GETV1SearchSuggestionResponse, { headers: { 'Cache-Control': cacheControl } })
+})
+
+export default suggestionRoutes

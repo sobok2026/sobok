@@ -1,0 +1,35 @@
+import type { GETV1MeFollowingResponse } from '@sobok/contracts'
+
+import { db } from '@sobok/db/app'
+import { userFollowTable } from '@sobok/db/app/user'
+import { eq } from 'drizzle-orm'
+import { Hono } from 'hono'
+
+import type { Env } from '@/app'
+
+import { privateCacheControl } from '@/utils/cache-control'
+import { problemResponse } from '@/utils/problem'
+
+const route = new Hono<Env>()
+
+route.get('/', async (c) => {
+  const userId = c.get('userId')!
+
+  try {
+    const followingRows = await db
+      .select({ userId: userFollowTable.followeeId })
+      .from(userFollowTable)
+      .where(eq(userFollowTable.followerId, userId))
+
+    const response = {
+      userIds: followingRows.map(({ userId: followeeId }) => followeeId),
+    } satisfies GETV1MeFollowingResponse
+
+    return c.json(response, { headers: { 'Cache-Control': privateCacheControl } })
+  } catch (error) {
+    console.error(error)
+    return problemResponse(c, { status: 500 })
+  }
+})
+
+export default route

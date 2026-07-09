@@ -1,0 +1,72 @@
+import { verifyRegistrationResponse } from '@simplewebauthn/server'
+import { WEBAUTHN_ORIGIN, WEBAUTHN_RP_ID } from '@sobok/auth/passkey/server'
+import { getAndDeleteChallenge } from '@sobok/auth/redis-challenge'
+import { type POSTV1MePasskeyVerifyResponse, postV1MePasskeyVerifyBodySchema } from '@sobok/contracts'
+import { db } from '@sobok/db/app'
+import { credentialTable } from '@sobok/db/app/passkey'
+import { ChallengeType, encodeDeviceType, getDefaultPasskeyName } from '@sobok/domain/auth/model'
+import { Hono } from 'hono'
+import { createFactory } from 'hono/factory'
+
+import type { Env } from '@/app'
+
+import { problemResponse } from '@/utils/problem'
+import { zProblemValidator } from '@/utils/validator'
+
+const route = new Hono<Env>()
+const factory = createFactory<Env>()
+const middlewares = factory.createHandlers(zProblemValidator('json', postV1MePasskeyVerifyBodySchema))
+
+route.post('/', ...middlewares, async (c) => {
+  const userId = c.get('userId')!
+  const { registration } = c.req.valid('json')
+
+  try {
+    const challenge = await getAndDeleteChallenge(userId, ChallengeType.REGISTRATION)
+
+    if (!challenge) {
+      return problemResponse(c, { status: 403, detail: '패스키를 등록할 수 없어요' })
+    }
+
+    const { verified, registrationInfo } = await verifyRegistrationResponse({
+      response: registration,
+      expectedChallenge: challenge,
+      expectedOrigin: WEBAUTHN_ORIGIN,
+      expectedRPID: WEBAUTHN_RP_ID,
+    })
+
+    if (!verified || !registrationInfo) {
+      return problemResponse(c, { status: 403, detail: '패스키를 등록할 수 없어요' })
+    }
+
+    const { id: credentialId, counter, transports, publicKey } = registrationInfo.credential
+
+    const deviceType = encodeDeviceType(registration.authenticatorAttachment)
+    const name = getDefaultPasskeyName(deviceType)
+
+    const [credential] = await db
+      .insert(credentialTable)
+      .values({
+        credentialId,
+        counter,
+        publicKey: Buffer.from(publicKey).toString('base64'),
+        deviceType,
+        name,
+        transports,
+        userId,
+        createdAt: new Date(),
+      })
+      .returning({ id: credentialTable.id, name: credentialTable.name })
+
+    return c.json({
+      id: credential.id,
+      credentialId,
+      name,
+    } satisfies POSTV1MePasskeyVerifyResponse)
+  } catch (error) {
+    console.error('verifyRegistration:', error)
+    return problemResponse(c, { status: 500 })
+  }
+})
+
+export default route

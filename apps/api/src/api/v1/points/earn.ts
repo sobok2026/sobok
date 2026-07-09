@@ -1,0 +1,188 @@
+import { type POSTV1PointEarnResponse, PROBLEM, postV1PointEarnRequestSchema } from '@sobok/contracts'
+import { db } from '@sobok/db/app'
+import { adImpressionTokenTable, pointTransactionTable, userPointsTable } from '@sobok/db/app/points'
+import { POINT_CONSTANTS, TRANSACTION_TYPE } from '@sobok/domain/points/model'
+import { CookieKey } from '@sobok/http/cookie'
+import { and, eq, gt, sql } from 'drizzle-orm'
+import { Hono } from 'hono'
+import { deleteCookie, getCookie } from 'hono/cookie'
+import { createFactory } from 'hono/factory'
+
+import type { Env } from '@/app'
+
+import { requireAuth } from '@/middleware/require-auth'
+import { type ProblemResponseOptions, problemResponse } from '@/utils/problem'
+import { zProblemValidator } from '@/utils/validator'
+
+import { verifyPointsTurnstileToken } from './util-turnstile-cookie'
+
+type TransactionResult =
+  | ({ ok: false } & ProblemResponseOptions)
+  | { ok: true; balance: number; earned: number; dailyRemaining: number }
+
+const route = new Hono<Env>()
+const factory = createFactory<Env>()
+const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json', postV1PointEarnRequestSchema))
+
+route.post('/', ...middlewares, async (c) => {
+  const userId = c.get('userId')!
+
+  const turnstileCookie = getCookie(c, CookieKey.POINTS_TURNSTILE)
+
+  if (!turnstileCookie) {
+    return problemResponse(c, {
+      problem: PROBLEM.TURNSTILE_REQUIRED,
+    })
+  }
+
+  const verified = await verifyPointsTurnstileToken(turnstileCookie)
+
+  if (!verified || verified.userId !== userId) {
+    deleteCookie(c, CookieKey.POINTS_TURNSTILE, { path: '/api/v1/points', secure: true })
+    return problemResponse(c, {
+      problem: PROBLEM.TURNSTILE_REQUIRED,
+    })
+  }
+
+  const { token } = c.req.valid('json')
+  const now = new Date()
+
+  try {
+    const result: TransactionResult = await db.transaction(async (tx) => {
+      // 1. 토큰 검증 (FOR UPDATE로 락)
+      const [tokenRecord] = await tx
+        .select()
+        .from(adImpressionTokenTable)
+        .where(eq(adImpressionTokenTable.token, token))
+        .for('update')
+
+      if (!tokenRecord) {
+        return { ok: false, status: 400, detail: '유효하지 않은 토큰이에요' }
+      }
+
+      // 2. 토큰 소유자 검증
+      if (tokenRecord.userId !== userId) {
+        return { ok: false, status: 403, detail: '토큰 소유자가 일치하지 않아요' }
+      }
+
+      // 3. 토큰 만료 확인
+      if (tokenRecord.expiresAt < now) {
+        return { ok: false, status: 400, detail: '토큰이 만료됐어요' }
+      }
+
+      // 4. 일일 한도 재검증 (하루 최대 10번)
+      const todayStart = new Date()
+      todayStart.setHours(0, 0, 0, 0)
+
+      const todayTransactions = await tx
+        .select({ id: pointTransactionTable.id })
+        .from(pointTransactionTable)
+        .where(
+          and(
+            eq(pointTransactionTable.userId, userId),
+            eq(pointTransactionTable.type, TRANSACTION_TYPE.AD_CLICK),
+            gt(pointTransactionTable.createdAt, todayStart),
+          ),
+        )
+        .limit(POINT_CONSTANTS.DAILY_EARN_LIMIT_COUNT)
+
+      const todayEarnCount = todayTransactions.length
+
+      if (todayEarnCount >= POINT_CONSTANTS.DAILY_EARN_LIMIT_COUNT) {
+        return {
+          ok: false,
+          problem: PROBLEM.DAILY_EARN_LIMIT_REACHED,
+        }
+      }
+
+      // 5. 같은 광고 쿨다운 체크 (1분)
+      if (tokenRecord.lastEarnedAt) {
+        const adSlotCooldownTime = new Date(now.getTime() - POINT_CONSTANTS.AD_SLOT_COOLDOWN_MS)
+
+        if (tokenRecord.lastEarnedAt > adSlotCooldownTime) {
+          const remainingMs = POINT_CONSTANTS.AD_SLOT_COOLDOWN_MS - (now.getTime() - tokenRecord.lastEarnedAt.getTime())
+          const remainingSeconds = Math.max(1, Math.ceil(remainingMs / 1000))
+
+          return {
+            ok: false,
+            problem: PROBLEM.AD_COOLDOWN,
+            headers: { 'Retry-After': String(remainingSeconds) },
+          }
+        }
+      }
+
+      // 6. 유저 포인트 레코드 락(없으면 생성)
+      await tx.insert(userPointsTable).values({ userId }).onConflictDoNothing()
+
+      const [points] = await tx
+        .select({ balance: userPointsTable.balance })
+        .from(userPointsTable)
+        .where(eq(userPointsTable.userId, userId))
+        .for('update')
+
+      if (!points) {
+        throw new Error('User points record is missing after upsert')
+      }
+
+      // 7. 토큰 로테이션 + 마지막 적립 시간 기록
+      const rotatedToken = generateToken()
+      const rotatedTokenExpiresAt = new Date(now.getTime() + POINT_CONSTANTS.TOKEN_EXPIRY_MS)
+      await tx
+        .update(adImpressionTokenTable)
+        .set({
+          token: rotatedToken,
+          expiresAt: rotatedTokenExpiresAt,
+          lastEarnedAt: now,
+        })
+        .where(eq(adImpressionTokenTable.id, tokenRecord.id))
+
+      // 8. 포인트 적립
+      const amount = POINT_CONSTANTS.AD_CLICK_REWARD
+      const newBalance = points.balance + amount
+      await tx
+        .update(userPointsTable)
+        .set({
+          balance: newBalance,
+          totalEarned: sql`${userPointsTable.totalEarned} + ${amount}`,
+          updatedAt: now,
+        })
+        .where(eq(userPointsTable.userId, userId))
+
+      // 9. 거래 내역 기록
+      await tx.insert(pointTransactionTable).values({
+        userId,
+        type: TRANSACTION_TYPE.AD_CLICK,
+        amount,
+        balanceAfter: newBalance,
+      })
+
+      return {
+        ok: true,
+        balance: newBalance,
+        earned: amount,
+        dailyRemaining: (POINT_CONSTANTS.DAILY_EARN_LIMIT_COUNT - todayEarnCount - 1) * POINT_CONSTANTS.AD_CLICK_REWARD,
+      }
+    })
+
+    if (!result.ok) {
+      return problemResponse(c, result)
+    }
+
+    return c.json({
+      balance: result.balance,
+      earned: result.earned,
+      dailyRemaining: result.dailyRemaining,
+    } satisfies POSTV1PointEarnResponse)
+  } catch (error) {
+    console.error(error)
+    return problemResponse(c, { status: 500 })
+  }
+})
+
+export default route
+
+function generateToken(): string {
+  const array = new Uint8Array(32)
+  crypto.getRandomValues(array)
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('')
+}

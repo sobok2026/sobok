@@ -1,0 +1,93 @@
+import type { PostComment } from '@sobok/db/app/query/post-comment'
+
+import { formatDistanceToNow } from '@sobok/std'
+import dayjs from 'dayjs'
+import { getLocale, getTranslations } from 'next-intl/server'
+
+import { getPostDetailHref } from '@/components/post/postHref'
+import Squircle from '@/components/ui/Squircle'
+import { Link } from '@/i18n/navigation'
+
+type Props = {
+  comments: PostComment[]
+}
+
+export default async function CommentList({ comments }: Props) {
+  const locale = await getLocale()
+  const t = await getTranslations('Community')
+
+  if (comments.length === 0) {
+    return (
+      <section className="border-t px-4 py-8 text-center text-sm text-foreground-subtle">
+        {t('post.emptyReplies')}
+      </section>
+    )
+  }
+
+  return (
+    <section aria-label={t('post.replies')} className="border-t">
+      <div className="px-4 pt-3 pb-2 text-sm font-semibold text-foreground-muted">{t('post.replies')}</div>
+      <ol className="divide-y divide-border">
+        {comments.map((comment) => {
+          const author = comment.author
+
+          const authorAvatar = (
+            <Squircle className="w-10 shrink-0" src={author?.imageURL}>
+              {(author?.nickname ?? t('common.deletedUserShort')).slice(0, 2)}
+            </Squircle>
+          )
+
+          const authorMeta = (
+            <div className="min-w-0">
+              <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 leading-5">
+                <span
+                  className={`truncate text-[0.98rem] ${author ? 'font-bold text-foreground' : 'text-foreground-subtle'}`}
+                >
+                  {author?.nickname ?? t('common.deletedUser')}
+                </span>
+                {author && <span className="truncate text-[0.98rem] text-foreground-subtle">@{author.name}</span>}
+              </div>
+            </div>
+          )
+
+          return (
+            <li className="px-4 py-3" key={comment.id}>
+              <article className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1.5">
+                {author ? (
+                  <Link className="row-span-2 self-start" href={`/@${author.name}`} prefetch={false}>
+                    {authorAvatar}
+                  </Link>
+                ) : (
+                  <div className="row-span-2 self-start">{authorAvatar}</div>
+                )}
+                <div className="flex min-w-0 items-center gap-1.5">
+                  {author ? (
+                    <Link className="min-w-0" href={`/@${author.name}`} prefetch={false}>
+                      {authorMeta}
+                    </Link>
+                  ) : (
+                    <div className="min-w-0">{authorMeta}</div>
+                  )}
+                  <span className="text-foreground-subtle">·</span>
+                  <span
+                    className="shrink-0 whitespace-nowrap text-xs text-foreground-subtle"
+                    title={dayjs(comment.createdAt).format('YYYY-MM-DD HH:mm')}
+                  >
+                    {formatDistanceToNow(comment.createdAt, locale)}
+                  </span>
+                </div>
+                <Link
+                  className="min-w-0 whitespace-pre-wrap break-all text-[1.02rem] text-foreground transition hover:text-foreground"
+                  href={getPostDetailHref(comment.id)}
+                  prefetch={false}
+                >
+                  {comment.content ?? t('post.deletedReply')}
+                </Link>
+              </article>
+            </li>
+          )
+        })}
+      </ol>
+    </section>
+  )
+}

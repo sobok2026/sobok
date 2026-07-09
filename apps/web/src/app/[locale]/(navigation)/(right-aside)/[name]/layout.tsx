@@ -1,0 +1,39 @@
+import { getUsernameFromParam } from '@sobok/std'
+import { getTranslations } from 'next-intl/server'
+import { twMerge } from 'tailwind-merge'
+
+import { TopStickySafeAreaSurface } from '@/components/SafeAreaSurface'
+
+import MyPageNavigationLink from './MyPageNavigationLink'
+import UserProfile from './UserProfile'
+
+export default async function Layout({ params, children }: LayoutProps<'/[locale]/[name]'>) {
+  const { name } = await params
+  const t = await getTranslations('Profile.navigation')
+  const username = getUsernameFromParam(name)
+
+  const publicLinks = [
+    { href: `/@${username}`, label: t('stories') },
+    { href: `/@${username}/reply`, label: t('replies') },
+  ]
+
+  return (
+    <main className="flex flex-col grow">
+      <UserProfile username={username} />
+      <TopStickySafeAreaSurface />
+      <nav
+        className={twMerge(
+          'sticky top-(--safe-area-top) min-h-(--safe-area-top) z-30 overflow-x-auto scrollbar-hidden border-b bg-background font-semibold',
+          '[&_a]:min-w-16 [&_a]:group [&_a]:relative [&_a]:flex [&_a]:justify-center [&_a]:items-center [&_a]:gap-1 [&_a]:p-3 [&_a]:transition',
+        )}
+      >
+        <div className="flex w-max h-full gap-4 px-3 whitespace-nowrap text-foreground-faint">
+          {publicLinks.map(({ href, label }) => (
+            <MyPageNavigationLink href={href} key={href} label={label} />
+          ))}
+        </div>
+      </nav>
+      {children}
+    </main>
+  )
+}

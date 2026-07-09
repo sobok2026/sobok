@@ -1,0 +1,54 @@
+import { type POSTV1PointTurnstileResponse, PROBLEM, postV1PointTurnstileRequestSchema } from '@sobok/contracts'
+import { CookieKey } from '@sobok/http/cookie'
+import { getRequestIP } from '@sobok/http/request'
+import TurnstileValidator from '@sobok/http/turnstile'
+import { Hono } from 'hono'
+import { setCookie } from 'hono/cookie'
+import { createFactory } from 'hono/factory'
+import ms from 'ms'
+
+import type { Env } from '@/app'
+
+import { requireAuth } from '@/middleware/require-auth'
+import { problemResponse } from '@/utils/problem'
+import { zProblemValidator } from '@/utils/validator'
+
+import { POINTS_TURNSTILE_TTL_SECONDS, signPointsTurnstileToken } from '../util-turnstile-cookie'
+
+const route = new Hono<Env>()
+const factory = createFactory<Env>()
+const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json', postV1PointTurnstileRequestSchema))
+const turnstileValidator = new TurnstileValidator(ms('10 seconds'), 1)
+
+route.post('/', ...middlewares, async (c) => {
+  const userId = c.get('userId')!
+  const { token } = c.req.valid('json')
+  const remoteIP = getRequestIP(c.req.raw.headers)
+
+  const turnstile = await turnstileValidator.validate({
+    token,
+    remoteIP,
+    expectedAction: 'points-earn',
+  })
+
+  if (!turnstile.success) {
+    return problemResponse(c, { problem: PROBLEM.HUMAN_VERIFICATION_FAILED })
+  }
+
+  const signedCookie = await signPointsTurnstileToken(userId)
+
+  setCookie(c, CookieKey.POINTS_TURNSTILE, signedCookie, {
+    httpOnly: true,
+    maxAge: POINTS_TURNSTILE_TTL_SECONDS,
+    path: '/api/v1/points',
+    sameSite: 'strict',
+    secure: true,
+  })
+
+  return c.json({
+    verified: true,
+    expiresInSeconds: POINTS_TURNSTILE_TTL_SECONDS,
+  } satisfies POSTV1PointTurnstileResponse)
+})
+
+export default route

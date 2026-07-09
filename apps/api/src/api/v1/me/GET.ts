@@ -1,0 +1,86 @@
+import { getAuthCookieClearConfigs } from '@sobok/auth/cookie'
+import { AdultVerificationStatus, type GETV1MeResponse } from '@sobok/contracts'
+import { db } from '@sobok/db/app'
+import { bbatonVerificationTable } from '@sobok/db/app/bbaton'
+import { userSettingsTable, userTable } from '@sobok/db/app/user'
+import { resolveUserSettings } from '@sobok/domain/utils/user-settings'
+import { eq } from 'drizzle-orm'
+import { Hono } from 'hono'
+
+import type { Env } from '@/app'
+
+import { isAdultVerificationRequiredForRequest } from '@/utils/adult-gate'
+import { privateCacheControl } from '@/utils/cache-control'
+import { applyAuthCookie } from '@/utils/cookie'
+import { problemResponse } from '@/utils/problem'
+
+const route = new Hono<Env>()
+
+route.get('/', async (c) => {
+  const userId = c.get('userId')!
+
+  try {
+    const [user] = await db
+      .select({
+        id: userTable.id,
+        loginId: userTable.loginId,
+        name: userTable.name,
+        nickname: userTable.nickname,
+        imageURL: userTable.imageURL,
+        adultFlag: bbatonVerificationTable.adultFlag,
+        historySyncEnabled: userSettingsTable.historySyncEnabled,
+        adultVerifiedAdVisible: userSettingsTable.adultVerifiedAdVisible,
+        defaultCensorshipEnabled: userSettingsTable.defaultCensorshipEnabled,
+        searchLanguage: userSettingsTable.searchLanguage,
+        autoDeletionDay: userSettingsTable.autoDeletionDay,
+      })
+      .from(userTable)
+      .leftJoin(bbatonVerificationTable, eq(bbatonVerificationTable.userId, userTable.id))
+      .leftJoin(userSettingsTable, eq(userSettingsTable.userId, userTable.id))
+      .where(eq(userTable.id, userId))
+
+    if (!user) {
+      applyAuthCookie(c, getAuthCookieClearConfigs())
+      return problemResponse(c, { status: 404, detail: '사용자 정보를 찾을 수 없어요' })
+    }
+
+    const required = isAdultVerificationRequiredForRequest(c)
+    const status = getAdultStatus(user.adultFlag)
+
+    const settings = resolveUserSettings({
+      historySyncEnabled: user.historySyncEnabled ?? undefined,
+      adultVerifiedAdVisible: user.adultVerifiedAdVisible ?? undefined,
+      defaultCensorshipEnabled: user.defaultCensorshipEnabled ?? undefined,
+      searchLanguage: user.searchLanguage ?? undefined,
+      autoDeletionDay: user.autoDeletionDay ?? undefined,
+    })
+
+    const result = {
+      id: user.id,
+      loginId: user.loginId,
+      name: user.name,
+      nickname: user.nickname,
+      imageURL: user.imageURL,
+      adultVerification: { required, status },
+      settings,
+    } satisfies GETV1MeResponse
+
+    return c.json(result, { headers: { 'Cache-Control': privateCacheControl } })
+  } catch (error) {
+    console.error(error)
+    return problemResponse(c, { status: 500 })
+  }
+})
+
+export default route
+
+function getAdultStatus(adultFlag: boolean | null) {
+  switch (adultFlag) {
+    case false:
+      return AdultVerificationStatus.NOT_ADULT
+    case true:
+      return AdultVerificationStatus.ADULT
+    default:
+      return AdultVerificationStatus.UNVERIFIED
+  }
+}

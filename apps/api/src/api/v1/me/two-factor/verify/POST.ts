@@ -1,0 +1,97 @@
+import { decryptTOTPSecret, verifyTOTPToken } from '@sobok/auth/two-factor'
+import { generateBackupCodes } from '@sobok/auth/two-factor-backup-code'
+import { type POSTV1MeTwoFactorVerifyResponse, PROBLEM, postV1MeTwoFactorVerifyBodySchema } from '@sobok/contracts'
+import { db } from '@sobok/db/app'
+import { twoFactorBackupCodeTable, twoFactorTable } from '@sobok/db/app/two-factor'
+import { and, eq, gt } from 'drizzle-orm'
+import { Hono } from 'hono'
+import { createFactory } from 'hono/factory'
+
+import type { Env } from '@/app'
+
+import { problemResponse, tooManyRequestsProblemResponse } from '@/utils/problem'
+import { RedisRateLimiter, RedisRateLimitPresets } from '@/utils/rate-limit'
+import { zProblemValidator } from '@/utils/validator'
+
+const twoFactorVerifyLimiter = new RedisRateLimiter({
+  ...RedisRateLimitPresets.strict(),
+  scope: 'me-two-factor-verify:user',
+})
+
+const route = new Hono<Env>()
+const factory = createFactory<Env>()
+const middlewares = factory.createHandlers(zProblemValidator('json', postV1MeTwoFactorVerifyBodySchema))
+
+route.post('/', ...middlewares, async (c) => {
+  const userId = c.get('userId')!
+  const { token } = c.req.valid('json')
+  const { allowed, retryAfter } = await twoFactorVerifyLimiter.check(String(userId))
+
+  if (!allowed) {
+    return tooManyRequestsProblemResponse(c, retryAfter)
+  }
+
+  try {
+    const result = await db.transaction(async (tx) => {
+      const now = new Date()
+
+      const [setup] = await tx
+        .select({ secret: twoFactorTable.secret })
+        .from(twoFactorTable)
+        .where(and(eq(twoFactorTable.userId, userId), gt(twoFactorTable.expiresAt, now)))
+        .for('update')
+
+      if (!setup) {
+        return { kind: 'expired' } as const
+      }
+
+      const secret = decryptTOTPSecret(setup.secret)
+      const isValidToken = await verifyTOTPToken(token, secret)
+
+      if (!isValidToken) {
+        return { kind: 'invalid-token' } as const
+      }
+
+      const { codes, hashedCodes } = await generateBackupCodes(8)
+
+      const [enabled] = await tx
+        .update(twoFactorTable)
+        .set({ expiresAt: null })
+        .where(and(eq(twoFactorTable.userId, userId), gt(twoFactorTable.expiresAt, now)))
+        .returning({ userId: twoFactorTable.userId })
+
+      if (!enabled) {
+        return { kind: 'expired' } as const
+      }
+
+      await tx.insert(twoFactorBackupCodeTable).values(
+        hashedCodes.map((codeHash) => ({
+          userId,
+          codeHash,
+        })),
+      )
+
+      return {
+        kind: 'verified',
+        backupCodes: codes,
+      } as const
+    })
+
+    switch (result.kind) {
+      case 'expired':
+        return problemResponse(c, { problem: PROBLEM.TWO_FACTOR_SETUP_EXPIRED })
+
+      case 'invalid-token':
+        return problemResponse(c, { problem: PROBLEM.TWO_FACTOR_TOKEN_INVALID })
+
+      case 'verified':
+        await Promise.allSettled([twoFactorVerifyLimiter.reward(String(userId))])
+        return c.json({ backupCodes: result.backupCodes } satisfies POSTV1MeTwoFactorVerifyResponse)
+    }
+  } catch (error) {
+    console.error(error)
+    return problemResponse(c, { status: 500 })
+  }
+})
+
+export default route
