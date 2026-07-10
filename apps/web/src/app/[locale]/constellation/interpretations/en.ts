@@ -1,5 +1,5 @@
 // en placement, retrograde and aspect-pair readings for the natal chart.
-// Loaded on demand by `./index` so only the active locale ships to the client.
+// Composed into the `Constellation.readings` message namespace by `../messages`.
 
 import type { AspectPairReadings, PlanetReadings, RetroReadings } from './types'
 

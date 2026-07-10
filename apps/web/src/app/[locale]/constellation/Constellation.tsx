@@ -1,7 +1,6 @@
 'use client'
 
-import type { PublicLocale } from '@sobok/domain/locale'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -34,7 +33,7 @@ import {
 } from './chart'
 import styles from './constellation.module.css'
 import { computeChart } from './ephemeris'
-import { aspectPairReading, type InterpretationBundle, loadInterpretations, planetSignReading } from './interpretations'
+import { aspectTone, pairKey } from './interpretations/types'
 import Starfield from './Starfield'
 
 // Animation timing (seconds).
@@ -56,9 +55,7 @@ const glyphText = (glyph: string) => `${glyph}︎`
 
 export default function Constellation() {
   const t = useTranslations('Constellation')
-  const locale = useLocale() as PublicLocale
   const [chart, setChart] = useState<NatalChart | null>(null)
-  const [readings, setReadings] = useState<InterpretationBundle | null>(null)
   const [computing, setComputing] = useState(false)
   const [runId, setRunId] = useState(0)
   const [selection, setSelection] = useState<Selection>(null)
@@ -83,11 +80,8 @@ export default function Constellation() {
     setComputing(true)
 
     try {
-      // Load the ephemeris and the active locale's readings together; both are
-      // dynamically imported and only needed once the user commits to a chart.
-      const [result, bundle] = await Promise.all([computeChart(input), loadInterpretations(locale)])
+      const result = await computeChart(input)
       setSelection(null)
-      setReadings(bundle)
       setChart(result)
       setRunId((n) => n + 1)
     } catch {
@@ -346,7 +340,7 @@ export default function Constellation() {
         )}
 
         {/* Detail panel */}
-        {revealed && readings && (
+        {revealed && (
           <div
             className="mt-4 w-full"
             key={`panel-${
@@ -361,7 +355,6 @@ export default function Constellation() {
               ascendant={ascendant}
               chart={activeChart}
               onClose={() => setSelection(null)}
-              readings={readings}
               selection={selection}
               t={t}
             />
@@ -803,14 +796,12 @@ function DetailPanel({
   ascendant,
   chart,
   onClose,
-  readings,
   selection,
   t,
 }: {
   ascendant: number | null
   chart: NatalChart
   onClose: () => void
-  readings: InterpretationBundle
   selection: Selection
   t: T
 }) {
@@ -851,11 +842,9 @@ function DetailPanel({
 
   if (selection.kind === 'aspect') {
     const color = ASPECT_STYLE[selection.aspectType].color
-    // Prefer the pair-specific reading (e.g. Sun–Saturn conjunction), falling
-    // back to the generic per-aspect-type copy for pairs without dedicated text.
-    const pairReading =
-      aspectPairReading(readings, selection.a as PlanetId, selection.b as PlanetId, selection.aspectType) ??
-      t(`aspects.${selection.aspectType}Desc`)
+    const pairKeyId = pairKey(selection.a as PlanetId, selection.b as PlanetId)
+    const pairReadingKey = `readings.aspectPairs.${pairKeyId}.${aspectTone(selection.aspectType)}`
+    const pairReading = t.has(pairReadingKey) ? t(pairReadingKey) : t(`aspects.${selection.aspectType}Desc`)
 
     return (
       <div
@@ -894,8 +883,8 @@ function DetailPanel({
   const color = ELEMENT_COLORS[element]
   const dm = degreeMinuteInSign(planet.lon)
   const house = houseOfLon(planet.lon, chart.cusps, ascendant)
-
-  const reading = planetSignReading(readings, planet.id, sign, planet.retrograde)
+  const retroKey = `readings.retro.${planet.id}.${sign}`
+  const reading = planet.retrograde && t.has(retroKey) ? t(retroKey) : t(`readings.planets.${planet.id}.${sign}`)
 
   return (
     <div

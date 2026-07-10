@@ -2,6 +2,11 @@ import { Locale } from '@sobok/domain/locale'
 
 import type { LocalizedMessages } from '@/i18n/messages'
 
+import { aspects as enAspectPairs, planets as enPlanets, retro as enRetro } from './interpretations/en'
+import { aspects as jaAspectPairs, planets as jaPlanets, retro as jaRetro } from './interpretations/ja'
+import { aspects as koAspectPairs, planets as koPlanets, retro as koRetro } from './interpretations/ko'
+import { aspects as zhAspectPairs, planets as zhPlanets, retro as zhRetro } from './interpretations/zh-CN'
+
 export const messages = {
   [Locale.KO]: {
     Constellation: {
@@ -156,6 +161,11 @@ export const messages = {
         uranus: '천왕성',
         neptune: '해왕성',
         pluto: '명왕성',
+      },
+      readings: {
+        planets: koPlanets,
+        retro: koRetro,
+        aspectPairs: koAspectPairs,
       },
     },
   },
@@ -314,6 +324,11 @@ export const messages = {
         neptune: 'Neptune',
         pluto: 'Pluto',
       },
+      readings: {
+        planets: enPlanets,
+        retro: enRetro,
+        aspectPairs: enAspectPairs,
+      },
     },
   },
   [Locale.ZH_CN]: {
@@ -470,6 +485,11 @@ export const messages = {
         neptune: '海王星',
         pluto: '冥王星',
       },
+      readings: {
+        planets: zhPlanets,
+        retro: zhRetro,
+        aspectPairs: zhAspectPairs,
+      },
     },
   },
   [Locale.JA]: {
@@ -625,6 +645,11 @@ export const messages = {
         uranus: '天王星',
         neptune: '海王星',
         pluto: '冥王星',
+      },
+      readings: {
+        planets: jaPlanets,
+        retro: jaRetro,
+        aspectPairs: jaAspectPairs,
       },
     },
   },
