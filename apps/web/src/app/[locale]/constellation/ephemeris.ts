@@ -178,6 +178,7 @@ function placidusCusps(ramcDeg: number, asc: number, mc: number, eps: number, ph
   const sinE = Math.sin(eps)
   const tanPhi = Math.tan(phi)
   const norm = (x: number) => ((x % 360) + 360) % 360
+  const clamp = (x: number) => Math.max(-1, Math.min(1, x))
   const lonFromRA = (a: number) => norm(Math.atan2(Math.sin(a * DEG), Math.cos(a * DEG) * cosE) * RAD)
 
   // A cusp trisects a semi-arc: iterate until its own semi-diurnal arc is consistent.
@@ -188,7 +189,7 @@ function placidusCusps(ramcDeg: number, asc: number, mc: number, eps: number, ph
     for (let i = 0; i < 40; i++) {
       const lon = lonFromRA(a)
       const dec = Math.asin(sinE * Math.sin(lon * DEG))
-      const ad = Math.asin(tanPhi * Math.tan(dec)) * RAD
+      const ad = Math.asin(clamp(tanPhi * Math.tan(dec))) * RAD
       a = ramcDeg + dir * fraction * (90 + ad)
     }
 
