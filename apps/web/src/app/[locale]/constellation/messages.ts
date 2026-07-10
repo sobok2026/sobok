@@ -16,6 +16,7 @@ export const messages = {
         openCta: '✨ 내 별자리 열기',
         reopenCta: '다시 그리기',
         tapHint: '별이나 별자리를 눌러 자세히 보기',
+        connectionHint: '빛나는 행성을 누르면 둘의 관계를 볼 수 있어요',
       },
       big3: {
         sunLabel: '태양',
@@ -188,6 +189,7 @@ export const messages = {
         openCta: '✨ Open my chart',
         reopenCta: 'Redraw',
         tapHint: 'Tap a planet or sign to see more',
+        connectionHint: 'Tap a lit-up planet to see how the two relate',
       },
       big3: {
         sunLabel: 'Sun',
@@ -361,6 +363,7 @@ export const messages = {
         openCta: '✨ 打开我的星盘',
         reopenCta: '重新绘制',
         tapHint: '点击行星或星座查看更多',
+        connectionHint: '点击发亮的行星，查看两者的关系',
       },
       big3: {
         sunLabel: '太阳',
@@ -533,6 +536,7 @@ export const messages = {
         openCta: '✨ 星図をひらく',
         reopenCta: '描き直す',
         tapHint: '惑星や星座をタップして詳しく見る',
+        connectionHint: '光っている惑星をタップすると二つの関係が見られます',
       },
       big3: {
         sunLabel: '太陽',

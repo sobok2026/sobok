@@ -156,9 +156,35 @@ export default function Constellation() {
     })
   }
 
-  // Clicking a selected item again clears it (toggle to deselect).
-  function togglePlanet(id: string) {
-    setSelection((prev) => (prev?.kind === 'planet' && prev.id === id ? null : { kind: 'planet', id }))
+  // A planet tap drives the whole relationship flow:
+  //   • the same planet again      → deselect
+  //   • another, aspected planet   → show the two planets' relationship
+  //   • anything else (unaspected, or coming from a sign/aspect/nothing) → show this planet
+  function selectPlanet(id: string) {
+    setSelection((prev) => {
+      if (prev?.kind === 'planet') {
+        if (prev.id === id) {
+          return null
+        }
+
+        const asp = aspects.find((x) => (x.a === prev.id && x.b === id) || (x.a === id && x.b === prev.id))
+
+        if (asp) {
+          return {
+            kind: 'aspect',
+            a: asp.a,
+            b: asp.b,
+            aspectType: asp.type,
+            orb: asp.orb,
+          }
+        }
+      }
+
+      return {
+        kind: 'planet',
+        id,
+      }
+    })
   }
 
   function toggleSign(id: string) {
@@ -222,7 +248,7 @@ export default function Constellation() {
               glyph="☉"
               hint={t('big3.sunHint')}
               label={t('big3.sunLabel')}
-              onClick={() => togglePlanet('sun')}
+              onClick={() => selectPlanet('sun')}
               value={t(`signs.${signOfLon(sunLon)}`)}
             />
             <Big3Card
@@ -230,7 +256,7 @@ export default function Constellation() {
               glyph="☾"
               hint={t('big3.moonHint')}
               label={t('big3.moonLabel')}
-              onClick={() => togglePlanet('moon')}
+              onClick={() => selectPlanet('moon')}
               value={t(`signs.${signOfLon(moonLon)}`)}
             />
             <Big3Card
@@ -264,14 +290,19 @@ export default function Constellation() {
             {revealed && (
               <>
                 <Aspects aspects={aspects} isDimmed={aspectDimmed} pointById={pointById} />
-                <Planets isDimmed={planetDimmed} onSelect={togglePlanet} placed={placed} selection={selection} t={t} />
+                <Planets isDimmed={planetDimmed} onSelect={selectPlanet} placed={placed} selection={selection} t={t} />
               </>
             )}
             <CenterHub revealed={revealed} />
           </svg>
         </div>
 
-        {revealed && <p className="mt-2 text-center text-xs text-slate-400">{t('hero.tapHint')}</p>}
+        {revealed && (
+          <p className="mt-2 text-center text-xs text-slate-400">
+            {/* Once a planet with aspects is selected, point the user at the two-tap gesture. */}
+            {selection?.kind === 'planet' && brightPlanets.size > 1 ? t('hero.connectionHint') : t('hero.tapHint')}
+          </p>
+        )}
 
         {/* Detail panel */}
         {revealed && (
