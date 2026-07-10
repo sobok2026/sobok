@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { type SubmitEvent, useState } from 'react'
 
-import { CITIES, DEFAULT_CITY_KEY, findCity } from './cities'
+import { CITY_GROUPS, DEFAULT_CITY_KEY, findCity } from './cities'
 import type { BirthInput } from './ephemeris'
 
 const fieldClass =
@@ -18,7 +18,6 @@ export default function BirthForm({
   onSubmit: (input: BirthInput) => void
 }) {
   const t = useTranslations('Constellation.form')
-  const tCity = useTranslations('Constellation.cities')
   const [date, setDate] = useState('2000-01-01')
   const [time, setTime] = useState('12:00')
   const [timeUnknown, setTimeUnknown] = useState(false)
@@ -103,10 +102,14 @@ export default function BirthForm({
             {t('cityLabel')}
           </label>
           <select className={fieldClass} id="birth-city" onChange={(e) => setCityKey(e.target.value)} value={cityKey}>
-            {CITIES.map((city) => (
-              <option className="bg-[#12091f] text-slate-100" key={city.key} value={city.key}>
-                {tCity(city.key)}
-              </option>
+            {CITY_GROUPS.map((group) => (
+              <optgroup key={group.iso2} label={group.country}>
+                {group.cities.map((city) => (
+                  <option className="bg-[#12091f] text-slate-100" key={city.key} value={city.key}>
+                    {city.name}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
         </div>
