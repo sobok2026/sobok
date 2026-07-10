@@ -397,6 +397,30 @@ export const RADIUS = {
   aspect: 66,
 } as const
 
+/**
+ * Pixel geometry of a planet token, shared by the renderer (`Planets`) and the
+ * spacing math below so a change to the token size automatically re-derives the
+ * minimum separation. `hit` is the transparent click target that actually
+ * receives pointer events; the glows are purely decorative.
+ */
+export const TOKEN = {
+  hit: 15,
+  disc: 13,
+  glow: 15,
+  glowActive: 18,
+} as const
+
+/** Centre-to-centre gap (px) that keeps two hit targets from overlapping, plus 2px for the float bob. */
+const TOKEN_MIN_GAP_PX = 2 * TOKEN.hit + 2
+
+/**
+ * The angular separation that gap subtends at the planet ring — i.e. the minimum
+ * spacing `placePlanets` fans overlapping bodies to. Derived from the token size
+ * rather than hard-coded, so tokens on the wheel are guaranteed individually
+ * clickable however dense the chart.
+ */
+export const PLANET_MIN_SEP_DEG = (2 * Math.asin(Math.min(1, TOKEN_MIN_GAP_PX / (2 * RADIUS.planet)))) / DEG
+
 export type PlacedPlanet = {
   planet: PlanetPosition & { glyph: string }
   /** Where the token is drawn (may be nudged apart from its true longitude to avoid overlap). */
@@ -408,33 +432,88 @@ export type PlacedPlanet = {
 }
 
 /**
- * Spread out the display longitudes of bodies that sit closer than `minSep`, so
- * their glyphs never stack. Each cluster of close bodies is fanned evenly around
- * its own center; isolated bodies stay on their true longitude. `lons` must be
- * sorted ascending.
+ * Spread the display longitudes of bodies that would sit closer than `minSep` so
+ * their glyphs never stack — including across the 0°/360° seam, which a plain
+ * ascending scan misses (a body at 359° and one at 2° land at opposite ends of
+ * the array yet are 3° apart on the wheel).
+ *
+ * The circle is cut at its largest empty gap so the seam falls where there is
+ * the most room, unwrapped into an ascending line, then any run of bodies closer
+ * than `minSep` is repeatedly re-centred and fanned at `minSep` until every
+ * neighbour clears it. Re-centring a run can push it into an adjacent one, so the
+ * pass repeats to a fixpoint — runs only ever merge, so it always converges.
+ *
+ * `lons` must be sorted ascending in [0, 360); the result is aligned to that same
+ * input order, normalised back into [0, 360).
  */
 function spreadLongitudes(lons: number[], minSep: number): number[] {
-  const display = lons.slice()
-  let i = 0
+  const n = lons.length
 
-  while (i < display.length) {
-    let j = i
+  if (n < 2) {
+    return lons.slice()
+  }
 
-    while (j + 1 < display.length && display[j + 1] - display[j] < minSep) {
-      j++
+  // Never demand more room than the circle holds; leave one gap free at the seam.
+  const sep = Math.min(minSep, (360 / n) * 0.98)
+
+  // 1. Find the largest circular gap and cut the circle just after it.
+  let cut = 0
+  let maxGap = -1
+
+  for (let i = 0; i < n; i++) {
+    const gap = (((lons[(i + 1) % n] - lons[i]) % 360) + 360) % 360
+
+    if (gap > maxGap) {
+      maxGap = gap
+      cut = i
     }
+  }
 
-    if (j > i) {
-      const count = j - i + 1
-      const center = (display[i] + display[j]) / 2
-      const start = center - ((count - 1) * minSep) / 2
+  // 2. Unwrap into an ascending line `x`, remembering each slot's input index.
+  const order = new Array<number>(n)
+  const x = new Array<number>(n)
 
-      for (let k = 0; k < count; k++) {
-        display[i + k] = start + k * minSep
+  for (let k = 0; k < n; k++) {
+    const idx = (cut + 1 + k) % n
+    order[k] = idx
+    x[k] = k === 0 ? lons[idx] : x[k - 1] + ((((lons[idx] - lons[order[k - 1]]) % 360) + 360) % 360)
+  }
+
+  // 3. Re-centre overlapping runs until no neighbours are closer than `sep`.
+  let changed = true
+
+  while (changed) {
+    changed = false
+    let i = 0
+
+    while (i < n) {
+      let j = i
+
+      while (j + 1 < n && x[j + 1] - x[j] < sep - 1e-6) {
+        j++
       }
-    }
 
-    i = j + 1
+      if (j > i) {
+        const count = j - i + 1
+        const center = (x[i] + x[j]) / 2
+        const start = center - ((count - 1) * sep) / 2
+
+        for (let k = 0; k < count; k++) {
+          x[i + k] = start + k * sep
+        }
+
+        changed = true
+      }
+
+      i = j + 1
+    }
+  }
+
+  // 4. Map back to the input order, normalised into [0, 360).
+  const display = new Array<number>(n)
+
+  for (let k = 0; k < n; k++) {
+    display[order[k]] = ((x[k] % 360) + 360) % 360
   }
 
   return display
@@ -445,7 +524,11 @@ function spreadLongitudes(lons: number[], minSep: number): number[] {
  * overlap. Returns entries sorted by longitude for stable render order; each
  * keeps a `truePoint` marker at its real longitude.
  */
-export function placePlanets(planets: readonly PlanetPosition[], ascendant: number, minSepDeg = 16): PlacedPlanet[] {
+export function placePlanets(
+  planets: readonly PlanetPosition[],
+  ascendant: number,
+  minSepDeg = PLANET_MIN_SEP_DEG,
+): PlacedPlanet[] {
   const sorted = [...planets].sort((a, b) => a.lon - b.lon)
 
   const display = spreadLongitudes(

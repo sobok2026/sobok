@@ -22,17 +22,19 @@ import {
   type NatalChart,
   PLANET_GLYPHS,
   type PlacedPlanet,
+  type PlanetId,
   placePlanets,
   polar,
   RADIUS,
   SIGNS,
   type SignId,
   signOfLon,
+  TOKEN,
   VIEW,
 } from './chart'
 import styles from './constellation.module.css'
 import { computeChart } from './ephemeris'
-import { planetSignReading } from './interpretations'
+import { aspectPairReading, planetSignReading } from './interpretations'
 import Starfield from './Starfield'
 
 // Animation timing (seconds).
@@ -579,12 +581,20 @@ function Planets({
                 style={{ opacity: dim ? 0.35 : 1 }}
                 tabIndex={0}
               >
-                <circle cx={point.x} cy={point.y} fill={color} opacity={0.18} r={isSelected ? 18 : 15} />
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  fill={color}
+                  opacity={0.18}
+                  pointerEvents="none"
+                  r={isSelected ? TOKEN.glowActive : TOKEN.glow}
+                />
                 <circle
                   cx={point.x}
                   cy={point.y}
                   fill="#0a0618"
-                  r={13}
+                  pointerEvents="none"
+                  r={TOKEN.disc}
                   stroke={color}
                   strokeWidth={isSelected ? 2 : 1.2}
                   style={isSelected ? { filter: `drop-shadow(0 0 6px ${color})` } : undefined}
@@ -593,6 +603,7 @@ function Planets({
                   dominantBaseline="central"
                   fill={color}
                   fontSize={13.5}
+                  pointerEvents="none"
                   textAnchor="middle"
                   x={point.x}
                   y={point.y + 0.5}
@@ -605,6 +616,7 @@ function Planets({
                     fill="#fb7185"
                     fontSize={6}
                     fontWeight={700}
+                    pointerEvents="none"
                     textAnchor="middle"
                     x={point.x + 9}
                     y={point.y - 9}
@@ -612,6 +624,9 @@ function Planets({
                     ℞
                   </text>
                 )}
+                {/* Sole, selection-independent hit target — kept last so it wins hit-testing
+                    over the decorative glow, whose radius changes when selected. */}
+                <circle cx={point.x} cy={point.y} fill="transparent" r={TOKEN.hit} />
               </g>
             </g>
           </g>
@@ -745,6 +760,11 @@ function DetailPanel({
 
   if (selection.kind === 'aspect') {
     const color = ASPECT_STYLE[selection.aspectType].color
+    // Prefer the pair-specific reading (e.g. Sun–Saturn conjunction), falling
+    // back to the generic per-aspect-type copy for pairs without dedicated text.
+    const pairReading =
+      aspectPairReading(locale, selection.a as PlanetId, selection.b as PlanetId, selection.aspectType) ??
+      t(`aspects.${selection.aspectType}Desc`)
 
     return (
       <div
@@ -767,9 +787,7 @@ function DetailPanel({
             </span>
           </div>
         </div>
-        <p className="mt-3 text-sm leading-relaxed text-slate-200 break-keep">
-          {t(`aspects.${selection.aspectType}Desc`)}
-        </p>
+        <p className="mt-3 text-sm leading-relaxed text-slate-200 break-keep">{pairReading}</p>
       </div>
     )
   }
