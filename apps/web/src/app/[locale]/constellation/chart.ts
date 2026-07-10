@@ -421,15 +421,22 @@ const TOKEN_MIN_GAP_PX = 2 * TOKEN.hit + 2
  */
 export const PLANET_MIN_SEP_DEG = (2 * Math.asin(Math.min(1, TOKEN_MIN_GAP_PX / (2 * RADIUS.planet)))) / DEG
 
+type Point = { x: number; y: number }
+
 export type PlacedPlanet = {
   planet: PlanetPosition & { glyph: string }
   /** Where the token is drawn (may be nudged apart from its true longitude to avoid overlap). */
-  point: { x: number; y: number }
-  /** A marker at the body's real longitude, so a nudged glyph never loses its position. */
-  truePoint: { x: number; y: number }
-  /** True when the token was moved far enough to warrant a connector to `truePoint`. */
+  point: Point
+  /** A short radial tick on the inner ring, marking the body's real longitude. */
+  tick: { inner: Point; outer: Point }
+  /** Leader line from the glyph's edge to that tick — null unless the glyph was nudged. */
+  connector: { from: Point; to: Point } | null
+  /** True when the token was moved far enough to warrant the connector. */
   displaced: boolean
 }
+
+/** Half-length (px) of a true-longitude tick, and the ring the ticks sit on. */
+const TICK_HALF = 3.5
 
 /**
  * Spread the display longitudes of bodies that would sit closer than `minSep` so
@@ -522,7 +529,8 @@ function spreadLongitudes(lons: number[], minSep: number): number[] {
 /**
  * Place each body's token on a single ring, fanning apart any that would
  * overlap. Returns entries sorted by longitude for stable render order; each
- * keeps a `truePoint` marker at its real longitude.
+ * keeps a tick at its real longitude, plus a leader line back to the glyph when
+ * the glyph had to be nudged away from it.
  */
 export function placePlanets(
   planets: readonly PlanetPosition[],
@@ -536,10 +544,24 @@ export function placePlanets(
     minSepDeg,
   )
 
-  return sorted.map((planet, i) => ({
-    planet: { ...planet, glyph: PLANET_GLYPHS[planet.id] },
-    point: polar(display[i], RADIUS.planet, ascendant),
-    truePoint: polar(planet.lon, RADIUS.trueMark, ascendant),
-    displaced: angularGap(display[i], planet.lon) > 2.5,
-  }))
+  return sorted.map((planet, i) => {
+    const displayLon = display[i]
+    const displaced = angularGap(displayLon, planet.lon) > 2.5
+    const tickInner = polar(planet.lon, RADIUS.trueMark - TICK_HALF, ascendant)
+
+    return {
+      planet: { ...planet, glyph: PLANET_GLYPHS[planet.id] },
+      point: polar(displayLon, RADIUS.planet, ascendant),
+      tick: {
+        inner: tickInner,
+        outer: polar(planet.lon, RADIUS.trueMark + TICK_HALF, ascendant),
+      },
+      // Run the leader along the ring gap (glyph rim → tick) so it never crosses
+      // under the glyph the way a centre-anchored line did.
+      connector: displaced
+        ? { from: polar(displayLon, RADIUS.planet + TOKEN.disc - 1, ascendant), to: tickInner }
+        : null,
+      displaced,
+    }
+  })
 }

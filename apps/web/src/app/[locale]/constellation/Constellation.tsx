@@ -532,25 +532,36 @@ function Planets({
 }) {
   return (
     <g>
-      {/* True-longitude markers (+ connectors for nudged glyphs) drawn under the tokens. */}
-      {placed.map(({ planet, point, truePoint, displaced }) => {
+      {/* True-longitude ticks (+ leader lines for nudged glyphs) drawn under the tokens. */}
+      {placed.map(({ planet, tick, connector }) => {
         const color = ELEMENT_COLORS[elementOfSign(signOfLon(planet.lon))]
         const dim = isDimmed(planet.id)
 
         return (
           <g className={styles.fade} key={`mark-${planet.id}`} style={{ opacity: dim ? 0.3 : 1 }}>
-            {displaced && (
+            {connector && (
               <line
-                opacity={0.35}
+                opacity={0.5}
                 stroke={color}
-                strokeWidth={0.5}
-                x1={point.x}
-                x2={truePoint.x}
-                y1={point.y}
-                y2={truePoint.y}
+                strokeDasharray="1.5 2"
+                strokeLinecap="round"
+                strokeWidth={0.9}
+                x1={connector.from.x}
+                x2={connector.to.x}
+                y1={connector.from.y}
+                y2={connector.to.y}
               />
             )}
-            <circle cx={truePoint.x} cy={truePoint.y} fill={color} opacity={0.7} r={1.6} />
+            <line
+              opacity={0.9}
+              stroke={color}
+              strokeLinecap="round"
+              strokeWidth={1.4}
+              x1={tick.inner.x}
+              x2={tick.outer.x}
+              y1={tick.inner.y}
+              y2={tick.outer.y}
+            />
           </g>
         )
       })}
