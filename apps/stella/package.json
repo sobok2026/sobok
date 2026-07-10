@@ -1,0 +1,29 @@
+{
+  "name": "@sobok/stella",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3010",
+    "build": "next build",
+    "preview": "npx serve out",
+    "type": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@sobok/domain": "workspace:*",
+    "astronomy-engine": "^2.1.19",
+    "next": "16.2.9",
+    "next-intl": "^4.13.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "sonner": "^2.0.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.1",
+    "@types/node": "^26.1.0",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "tailwindcss": "^4.3.1",
+    "typescript": "^6.0.3"
+  }
+}

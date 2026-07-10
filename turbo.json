@@ -30,6 +30,10 @@
       "inputs": ["$TURBO_DEFAULT$", ".env.prod.build"],
       "outputs": [".next/**"]
     },
+    "@sobok/stella#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["out/**", ".next/**"]
+    },
     "dev": {
       "dependsOn": ["^build"],
       "cache": false,
