@@ -214,6 +214,33 @@ export default function Constellation() {
     scrollToWheel()
   }
 
+  // Announced to screen readers on every selection change, so the outcome of a
+  // tap (which the two-tap relationship gesture makes non-obvious) is spoken.
+  function selectionStatus(): string {
+    if (!selection) {
+      return ''
+    }
+
+    if (selection.kind === 'sign') {
+      return t('a11y.statusSign', { name: t(`signs.${selection.id}`) })
+    }
+
+    if (selection.kind === 'aspect') {
+      return t('a11y.statusAspect', {
+        a: t(`planets.${selection.a}`),
+        b: t(`planets.${selection.b}`),
+        aspect: t(`aspects.${selection.aspectType}Name`),
+      })
+    }
+
+    const body = activeChart.planets.find((p) => p.id === selection.id)
+
+    return t('a11y.statusPlanet', {
+      name: t(`planets.${selection.id}`),
+      sign: body ? t(`signs.${signOfLon(body.lon)}`) : '',
+    })
+  }
+
   return (
     <main
       className="relative min-h-dvh overflow-hidden px-3 pb-16 pt-[calc(2rem+var(--safe-area-top))] text-slate-100 sm:px-4"
@@ -273,9 +300,11 @@ export default function Constellation() {
         {/* Wheel — goes edge-to-edge on mobile (<sm) to reclaim width for legibility. */}
         <div className="relative -mx-3 scroll-mt-4 w-[calc(100%+1.5rem)] sm:mx-0 sm:w-full" ref={wheelRef}>
           <svg
+            aria-hidden={!revealed}
             aria-label={t('meta.title')}
             className={`w-full ${revealed ? styles.wheel : 'pointer-events-none'}`}
             key={`wheel-${runId}`}
+            role="group"
             style={{
               transition: 'opacity 0.4s',
               opacity: revealed ? 1 : 0.4,
@@ -283,7 +312,7 @@ export default function Constellation() {
             viewBox={`-16 -16 ${VIEW + 32} ${VIEW + 32}`}
           >
             <Rings />
-            <Sectors ascendant={anchor} onSelect={toggleSign} selection={selection} t={t} />
+            <Sectors ascendant={anchor} interactive={revealed} onSelect={toggleSign} selection={selection} t={t} />
             {revealed && ascendant !== null && cusps && (
               <Houses ascendant={ascendant} cusps={cusps} midheaven={midheaven} t={t} />
             )}
@@ -296,6 +325,13 @@ export default function Constellation() {
             <CenterHub revealed={revealed} />
           </svg>
         </div>
+
+        {/* Speaks the current selection to screen readers on change. */}
+        {revealed && (
+          <div aria-atomic="true" aria-live="polite" className="sr-only" role="status">
+            {selectionStatus()}
+          </div>
+        )}
 
         {revealed && (
           <p className="mt-2 text-center text-xs text-slate-400">
@@ -379,11 +415,13 @@ function Rings() {
 
 function Sectors({
   ascendant,
+  interactive,
   onSelect,
   selection,
   t,
 }: {
   ascendant: number
+  interactive: boolean
   onSelect: (id: string) => void
   selection: Selection
   t: T
@@ -398,7 +436,8 @@ function Sectors({
         return (
           <g
             aria-label={t(`signs.${sign.id}`)}
-            className="cursor-pointer outline-none"
+            aria-pressed={active}
+            className={`${styles.wheelButton} cursor-pointer`}
             key={sign.id}
             onClick={() => onSelect(sign.id)}
             onKeyDown={(e) => {
@@ -408,7 +447,7 @@ function Sectors({
               }
             }}
             role="button"
-            tabIndex={0}
+            tabIndex={interactive ? 0 : -1}
           >
             <path
               className={styles.sector}
@@ -431,6 +470,7 @@ function Sectors({
             >
               {glyphText(sign.glyph)}
             </text>
+            <circle className={styles.focusRing} cx={glyphPos.x} cy={glyphPos.y} r={13} />
           </g>
         )
       })}
@@ -611,7 +651,8 @@ function Planets({
             <g className={styles.tokenFloat} style={{ animationDelay: `${delay + 0.55}s` }}>
               <g
                 aria-label={`${t(`planets.${planet.id}`)} · ${t(`signs.${sign}`)}`}
-                className={`${styles.fade} cursor-pointer outline-none`}
+                aria-pressed={isSelected}
+                className={`${styles.wheelButton} ${styles.fade} cursor-pointer`}
                 onClick={() => onSelect(planet.id)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -669,6 +710,7 @@ function Planets({
                 {/* Sole, selection-independent hit target — kept last so it wins hit-testing
                     over the decorative glow, whose radius changes when selected. */}
                 <circle cx={point.x} cy={point.y} fill="transparent" r={TOKEN.hit} />
+                <circle className={styles.focusRing} cx={point.x} cy={point.y} pointerEvents="none" r={TOKEN.hit + 3} />
               </g>
             </g>
           </g>
@@ -846,7 +888,7 @@ function DetailPanel({
   const dm = degreeMinuteInSign(planet.lon)
   const house = houseOfLon(planet.lon, chart.cusps, ascendant)
 
-  const reading = planetSignReading(locale, planet.id, sign)
+  const reading = planetSignReading(locale, planet.id, sign, planet.retrograde)
 
   return (
     <div

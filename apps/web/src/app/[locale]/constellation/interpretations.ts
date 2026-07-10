@@ -801,8 +801,533 @@ const BY_LOCALE: Record<PublicLocale, PlanetReadings> = {
   ja: JA,
 }
 
-/** Placement-based reading for any body, in the given locale. */
-export function planetSignReading(locale: PublicLocale, planet: PlanetId, sign: SignId): string {
+// Retrograde readings: only the eight bodies that can actually go retrograde
+// (Mercury–Pluto) carry these. When a planet is retrograde its energy turns
+// inward — reviewed, reworked, expressed on its own timing — so each sign gets
+// a distinct inward-facing reading. Sun/Moon are never retrograde; the nodes are
+// technically always retrograde and Part of Fortune is a point, so all four fall
+// back to their single direct reading.
+
+type RetroReadings = Partial<Record<PlanetId, SignText>>
+
+const KO_RETRO: RetroReadings = {
+  mercury: {
+    aries: '빠른 생각을 안에서 한 번 더 곱씹어요. 곧장 내뱉기보다 되짚을 때 말에 힘이 실려요.',
+    taurus: '한 번 정한 생각도 속으로 천천히 재확인해요. 서두르지 않고 되새길수록 판단이 단단해져요.',
+    gemini: '아이디어가 밖보다 안에서 맴돌아요. 말수는 줄어도 생각의 갈래는 더 깊고 촘촘해져요.',
+    cancer: '느낌을 안으로 오래 되새겨요. 바로 표현하기보다 곱씹은 뒤에야 진심을 꺼내요.',
+    leo: '표현하기 전에 속으로 여러 번 다듬어요. 화려함보다 진심이 담길 때 말이 빛나요.',
+    virgo: '분석이 안으로 파고들어요. 겉으로 정리하기보다 머릿속에서 완벽히 되짚고서 내놔요.',
+    libra: '결정을 안에서 몇 번이고 저울질해요. 남의 말보다 내 기준을 되물을 때 균형이 잡혀요.',
+    scorpio: '통찰이 더 깊은 곳으로 잠겨요. 말하지 않고 속으로 파고들어 숨은 뜻을 캐내요.',
+    sagittarius: '큰 생각을 밖에 펼치기보다 안에서 곱씹어요. 스스로 의미를 되물을 때 진짜 신념이 서요.',
+    capricorn: '체계를 스스로에게 여러 번 검증해요. 남의 틀보다 내 논리로 세울 때 신뢰가 쌓여요.',
+    aquarius: '기발한 생각이 안에서 조용히 들끓어요. 남과 달라 보여도 나만의 논리를 끝까지 밀어요.',
+    pisces: '생각이 이미지로 안에 잠겨요. 말로 옮기기 전에 느낌으로 오래 머무르며 상상을 키워요.',
+  },
+  venus: {
+    aries: '끌리는 마음을 곧장 드러내기보다 안에서 확인해요. 먼저 다가가기 전에 진짜 마음인지 되물어요.',
+    taurus: '애정을 천천히, 속으로 곱씹으며 키워요. 익숙한 것에 다시 끌리며 나만의 취향을 되찾아요.',
+    gemini: '설레는 감정을 가볍게 흘리기보다 안에서 되새겨요. 말보다 마음의 진심을 천천히 확인해요.',
+    cancer: '아끼는 마음을 안으로 깊이 품어요. 바로 표현하기보다 스스로 안전하다 느낄 때 열어요.',
+    leo: '화려한 표현보다 속마음을 조용히 키워요. 사랑받으려 애쓰기 전에 나를 먼저 아껴요.',
+    virgo: '배려를 겉으로 내기보다 마음속에서 다듬어요. 완벽한 사랑을 찾기보다 있는 그대로를 받아들여요.',
+    libra: '관계의 균형을 안에서 되물어요. 맞추기 전에 내가 진짜 원하는 걸 먼저 확인해요.',
+    scorpio: '강렬한 애정을 깊은 곳에 숨겨요. 쉽게 드러내지 않지만 한번 품으면 오래 타올라요.',
+    sagittarius: '자유로운 사랑을 안에서 되짚어요. 새로움을 좇기보다 내가 원하는 관계를 스스로 정의해요.',
+    capricorn: '진중한 마음을 속으로 오래 재요. 신뢰가 쌓이기 전엔 쉽게 열지 않아요.',
+    aquarius: '독특한 취향을 안에서 조용히 즐겨요. 남다른 사랑의 방식을 스스로 만들어가요.',
+    pisces: '낭만을 안으로 깊이 그려요. 환상에 빠지기보다 진짜 마음을 알아볼 때 사랑이 여물어요.',
+  },
+  mars: {
+    aries: '힘이 밖으로 터지기보다 안으로 쌓여요. 곧장 부딪히기보다 벼르다가 결정적일 때 움직여요.',
+    taurus: '추진력을 속으로 천천히 다져요. 서두르지 않고 벼른 힘이 끝내 밀어붙여요.',
+    gemini: '에너지가 여러 갈래로 안에서 맴돌아요. 밖으로 나서기 전에 머릿속에서 먼저 움직여요.',
+    cancer: '감정의 힘을 안으로 삭여요. 곧장 반응하기보다 소중한 걸 지키려 조용히 벼려요.',
+    leo: '화끈한 기세를 속으로 다잡아요. 드러내기보다 스스로 인정할 때 진짜 힘이 나와요.',
+    virgo: '실행을 머릿속에서 몇 번이고 점검해요. 곧장 나서기보다 완벽히 준비한 뒤 움직여요.',
+    libra: '힘을 부딪히기보다 안에서 조율해요. 직접 나서기 전에 방법을 오래 저울질해요.',
+    scorpio: '집념이 더 깊은 곳으로 잠겨요. 겉으로 조용해도 속에서 끝까지 벼르고 있어요.',
+    sagittarius: '뻗어나가려는 힘을 안에서 되물어요. 밖으로 넓히기 전에 스스로 방향을 먼저 정해요.',
+    capricorn: '전략을 속으로 오래 다듬어요. 서두르지 않고 때를 벼르며 정상을 향해요.',
+    aquarius: '남다른 추진력이 안에서 조용히 끓어요. 규칙을 바꾸는 힘을 나만의 속도로 밀어요.',
+    pisces: '힘이 방향을 안에서 더듬어요. 곧장 나서기보다 직감이 무르익을 때 조용히 움직여요.',
+  },
+  jupiter: {
+    aries: '기회를 밖에서 찾기보다 안에서 키워요. 스스로 도전할 이유를 정할 때 운이 자라요.',
+    taurus: '풍요를 서두르지 않고 속으로 쌓아요. 감각을 믿되 내 안의 기준으로 넓혀가요.',
+    gemini: '배움을 밖으로 넓히기보다 안으로 깊여요. 아는 걸 스스로 되새길 때 지혜가 늘어요.',
+    cancer: '복을 밖에서 구하기보다 마음 안에서 키워요. 베푸는 기쁨을 스스로 채울 때 넉넉해져요.',
+    leo: '자신감을 남에게 확인받기보다 안에서 다져요. 스스로 인정할 때 진짜 운이 트여요.',
+    virgo: '성실함의 의미를 속으로 되물어요. 남을 위해서가 아니라 나를 위해 다듬을 때 결실이 커져요.',
+    libra: '기회를 관계 밖 내 안에서 찾아요. 협력하기 전에 내가 원하는 방향을 먼저 정해요.',
+    scorpio: '깊이 파고드는 힘을 안으로 돌려요. 위기의 의미를 스스로 캐낼 때 크게 얻어요.',
+    sagittarius: '넓은 세계를 밖보다 안에서 탐험해요. 남의 신념을 좇기보다 나만의 진리를 세워요.',
+    capricorn: '노력의 보상을 밖에서 기대기보다 안에서 다져요. 스스로 세운 책임이 결국 복이 돼요.',
+    aquarius: '새로운 시도를 안에서 조용히 굴려요. 남다른 길의 의미를 스스로 정할 때 문이 열려요.',
+    pisces: '풍요를 상상으로 안에 그려요. 밖으로 베풀기 전에 내 안의 믿음을 먼저 채워요.',
+  },
+  saturn: {
+    aries: '충동을 남이 아닌 스스로 다스려요. 밖의 규칙보다 내 안의 원칙으로 힘을 길러요.',
+    taurus: '단단함을 속으로 오래 쌓아요. 남의 인정 없이도 스스로 흔들리지 않는 법을 배워요.',
+    gemini: '말과 배움의 책임을 안에서 되물어요. 인정받으려 애쓰기보다 스스로 깊어지려 해요.',
+    cancer: '지킴의 무게를 안으로 짊어져요. 남에게 기대기보다 스스로 든든한 울타리가 돼요.',
+    leo: '자신감을 밖의 박수 대신 안에서 세워요. 겸손 속에서 스스로를 인정하는 법을 배워요.',
+    virgo: '완벽의 기준을 스스로에게 겨눠요. 남의 눈보다 내 안의 잣대로 성실을 다져요.',
+    libra: '관계의 책임을 안에서 되짚어요. 맞추려 애쓰기보다 스스로 공정함을 세워가요.',
+    scorpio: '절제의 힘을 더 깊은 곳으로 돌려요. 스스로를 통제하며 위기를 견디는 법을 배워요.',
+    sagittarius: '신념의 책임을 안에서 물어요. 남의 진리보다 내가 검증한 믿음으로 단단해져요.',
+    capricorn: '스스로에게 더 엄격해져요. 밖의 성취보다 내 안의 원칙을 세울 때 진짜 단단해져요.',
+    aquarius: '이상을 현실로 다지는 힘을 안에서 벼려요. 남다른 구조를 나만의 원칙으로 세워요.',
+    pisces: '흐릿함 속 중심을 안으로 잡아요. 밖에 기대기보다 스스로 헌신의 책임을 짊어져요.',
+  },
+  uranus: {
+    aries: '틀을 깨는 힘이 안에서 들끓어요. 밖으로 튀기보다 나만의 자유를 조용히 재설계해요.',
+    taurus: '변화를 서두르지 않고 속으로 굴려요. 익숙함 안에서 나만의 혁신을 천천히 빚어요.',
+    gemini: '번뜩임이 밖보다 안에서 번져요. 남과 달라 보여도 나만의 생각을 끝까지 파고들어요.',
+    cancer: '감정의 새 방식을 안으로 실험해요. 겉보다 마음 안에서 낡은 틀을 조용히 바꿔요.',
+    leo: '개성을 드러내기보다 안에서 다져요. 남다름을 인정받기 전에 스스로 즐길 때 빛나요.',
+    virgo: '일하는 방식을 머릿속에서 뜯어고쳐요. 겉의 규칙보다 내 안의 효율로 새로 세워요.',
+    libra: '관계의 새 형태를 안에서 그려요. 밖으로 실험하기 전에 나만의 자유를 먼저 정의해요.',
+    scorpio: '근본을 뒤흔드는 힘을 깊은 곳으로 돌려요. 조용히, 그러나 안에서부터 혁명을 일으켜요.',
+    sagittarius: '경계를 넘는 생각을 안에서 넓혀요. 밖의 유행보다 나만의 미래상을 스스로 그려요.',
+    capricorn: '낡은 구조를 안에서 먼저 무너뜨려요. 겉의 체제보다 내 원칙을 새로 세워요.',
+    aquarius: '시대를 앞선 시선이 안에서 조용히 자라요. 독창성을 남과 겨루기보다 스스로 밀어붙여요.',
+    pisces: '상상으로 경계를 안에서 허물어요. 밖으로 펼치기 전에 내면의 새 꿈을 먼저 키워요.',
+  },
+  neptune: {
+    aries: '이상을 밖으로 좇기보다 안에서 벼려요. 환상을 걷어내고 진짜 원하는 꿈을 알아봐요.',
+    taurus: '아름다움을 감각 밖 마음 안에서 찾아요. 겉의 낭만보다 속에서 진짜 위안을 길어 올려요.',
+    gemini: '상상을 말로 옮기기보다 안에서 키워요. 이야기를 밖에 펼치기 전에 스스로 음미해요.',
+    cancer: '공감을 안으로 깊이 품어요. 남의 마음에 휩쓸리기보다 내 감정의 경계를 먼저 지켜요.',
+    leo: '창조적 영감을 안에서 조용히 태워요. 인정받으려 애쓰기보다 스스로의 표현에 몰입해요.',
+    virgo: '헌신의 의미를 속으로 되물어요. 남을 구하기 전에 내 이상을 현실로 먼저 다듬어요.',
+    libra: '이상적인 사랑을 안에서 그려요. 환상에 기대기보다 진짜 조화를 스스로 알아봐요.',
+    scorpio: '신비를 더 깊은 곳으로 잠겨요. 보이지 않는 것을 안에서 홀로 마주하며 통찰을 얻어요.',
+    sagittarius: '큰 진리를 밖에서 구하기보다 안에서 물어요. 남의 믿음을 걷어내고 나만의 의미를 찾아요.',
+    capricorn: '이상을 구조로 세우는 힘을 안에서 벼려요. 겉의 꿈보다 속의 뼈대를 먼저 다져요.',
+    aquarius: '모두를 위한 이상을 안에서 조용히 품어요. 밖으로 외치기보다 스스로 믿음을 먼저 세워요.',
+    pisces: '상상과 영성이 안으로 깊게 뻗어요. 밖의 환상을 걷어낼 때 진짜 영감이 또렷해져요.',
+  },
+  pluto: {
+    aries: '재탄생의 힘을 안으로 돌려요. 밖과 부딪히기보다 스스로를 조용히 다시 세워요.',
+    taurus: '가치를 뿌리부터 안에서 바꿔요. 겉의 안정보다 내 안의 진짜 가치를 되물어요.',
+    gemini: '진실을 캐는 힘이 안에서 깊어져요. 말로 뒤집기보다 스스로 파고들어 답을 찾아요.',
+    cancer: '감정의 상처를 안으로 마주해요. 겉으로 드러내기보다 홀로 깊이 치유하며 새로 태어나요.',
+    leo: '자아를 부수고 세우는 일을 안에서 겪어요. 존재감을 과시하기보다 스스로를 조용히 다시 빚어요.',
+    virgo: '일상과 몸을 안에서부터 뜯어고쳐요. 겉을 바꾸기보다 내 안의 습관을 근본부터 정화해요.',
+    libra: '관계의 힘을 안에서 재편해요. 밖으로 부딪히기보다 스스로 균형의 뿌리를 다시 놓아요.',
+    scorpio: '완전한 재탄생을 더 깊은 곳에서 겪어요. 남모르게, 그러나 근본부터 스스로를 바꿔요.',
+    sagittarius: '신념을 안에서부터 뒤흔들어요. 밖의 진실을 좇기보다 스스로 세계관을 다시 세워요.',
+    capricorn: '구조와 권력을 안에서 되물어요. 겉의 자리보다 내 안의 힘을 근본부터 바꿔요.',
+    aquarius: '낡은 체제를 마음 안에서 먼저 무너뜨려요. 밖의 변혁보다 나만의 신념을 새로 세워요.',
+    pisces: '무의식을 안으로 깊이 정화해요. 보이지 않는 상처를 홀로 마주하며 근본부터 다시 태어나요.',
+  },
+}
+
+const EN_RETRO: RetroReadings = {
+  mercury: {
+    aries:
+      'You chew over your quick thoughts one more time inside. Words land harder when you revisit them instead of blurting them out.',
+    taurus:
+      'Even a settled thought gets quietly re-checked within. The more you mull it over unhurried, the firmer your judgment.',
+    gemini: 'Ideas circle inside more than out. You may say less, but your trains of thought run deeper and finer.',
+    cancer:
+      'You replay feelings inwardly for a long time. You reach for your truth only after chewing it over, not right away.',
+    leo: 'You polish your words inside before you speak. They shine when they carry sincerity over flair.',
+    virgo:
+      'Your analysis burrows inward. You perfect it in your head first, then lay it out rather than sorting aloud.',
+    libra:
+      'You weigh decisions again and again within. Balance comes when you question your own standard over others opinions.',
+    scorpio: 'Insight sinks to a deeper place. You dig for hidden meaning silently rather than speaking it.',
+    sagittarius:
+      'You mull big ideas inside rather than broadcasting them. Real conviction forms when you ask what they mean to you.',
+    capricorn:
+      'You verify your systems to yourself many times over. Trust builds when you frame it by your own logic, not others.',
+    aquarius: 'Clever ideas simmer quietly inside. You push your own logic to the end even when it looks different.',
+    pisces: 'Thought sinks inward as imagery. You linger in feeling and grow the image before putting it into words.',
+  },
+  venus: {
+    aries: 'You confirm attraction inside before showing it. You ask whether it is real before making the first move.',
+    taurus:
+      'You grow affection slowly, savoring it within. Drawn again to the familiar, you rediscover your own taste.',
+    gemini:
+      'You revisit a flutter inside rather than letting it pass lightly. You confirm the heart behind the words, slowly.',
+    cancer: 'You hold tenderness deep inside. You open only when you feel safe, not the instant you feel it.',
+    leo: 'You nurture your true feelings quietly over grand display. You cherish yourself first before seeking to be loved.',
+    virgo:
+      'You refine care within rather than showing it. Love deepens when you accept things as they are over chasing perfection.',
+    libra: 'You question the balance of a bond inside. You confirm what you truly want before adjusting to others.',
+    scorpio: 'You hide intense affection in a deep place. You do not show it easily, but once held it burns long.',
+    sagittarius: 'You rethink free-spirited love within. You define the bond you want yourself over chasing novelty.',
+    capricorn: 'You measure serious feeling inwardly for a long time. You do not open until trust is built.',
+    aquarius: 'You quietly enjoy your unusual taste inside. You build your own unconventional way of loving.',
+    pisces:
+      'You paint romance deep within. Love ripens when you see the real heart instead of falling for the fantasy.',
+  },
+  mars: {
+    aries:
+      'Force builds inward rather than bursting out. You bide your time and move at the decisive moment over charging in.',
+    taurus: 'You firm up drive slowly within. The strength you bide finally pushes through without rushing.',
+    gemini: 'Energy circles inside in many strands. You move in your head first before stepping out.',
+    cancer:
+      'You digest emotional force inwardly. You bide quietly to protect what matters rather than reacting at once.',
+    leo: 'You steady your fiery spirit inside. Real power comes when you own it yourself over showing it off.',
+    virgo:
+      'You check the plan in your head again and again. You move only after preparing fully rather than rushing out.',
+    libra: 'You tune your force within rather than clashing. You weigh the method a long time before stepping up.',
+    scorpio: 'Tenacity sinks to a deeper place. Quiet on the surface, you keep sharpening it to the end inside.',
+    sagittarius: 'You question your reaching drive inside. You set your own direction before expanding outward.',
+    capricorn: 'You refine strategy inwardly for a long time. Unhurried, you bide the moment as you aim for the top.',
+    aquarius: 'An unusual drive simmers quietly inside. You push your rule-changing force at your own pace.',
+    pisces:
+      'Your force feels for direction within. You move quietly when intuition ripens rather than stepping straight out.',
+  },
+  jupiter: {
+    aries: 'You grow opportunity inside over seeking it out there. Luck grows when you set your own reason to dare.',
+    taurus: 'You stack abundance inwardly, unhurried. Trusting your senses, you widen by your own standard.',
+    gemini:
+      'You deepen learning inward rather than spreading it out. Wisdom grows when you revisit what you know yourself.',
+    cancer:
+      'You grow blessing within rather than seeking it outside. You feel full when you fill the joy of giving yourself.',
+    leo: 'You firm up confidence inside over having it confirmed by others. Real luck opens when you own it yourself.',
+    virgo:
+      'You question the meaning of diligence inwardly. The harvest grows when you refine for yourself, not for others.',
+    libra: 'You find opportunity within, not just in relationships. You set your own direction before cooperating.',
+    scorpio: 'You turn your digging force inward. You gain big when you mine the meaning of crisis yourself.',
+    sagittarius:
+      'You explore a wider world inside over outside. You build your own truth over following others beliefs.',
+    capricorn:
+      'You firm up reward within over expecting it out there. The responsibility you set yourself becomes your blessing.',
+    aquarius: 'You quietly turn new attempts over inside. Doors open when you set the meaning of your own path.',
+    pisces: 'You paint abundance within through imagination. You fill your own faith first before giving outward.',
+  },
+  saturn: {
+    aries:
+      'You master impulse yourself, not by others rule. You build strength by your own inner principle over outer rules.',
+    taurus: 'You stack solidity inwardly over a long time. You learn to stay unshaken without needing approval.',
+    gemini:
+      'You question the duty of words and learning inside. You seek to deepen yourself over striving for approval.',
+    cancer:
+      'You bear the weight of protecting inwardly. You become a firm shelter yourself rather than leaning on others.',
+    leo: 'You build confidence within over outside applause. You learn to affirm yourself through humility.',
+    virgo:
+      'You aim the standard of perfection at yourself. You firm up diligence by your own measure over others eyes.',
+    libra: 'You retrace the duty of relationships inside. You set your own fairness over straining to fit in.',
+    scorpio: 'You turn the force of restraint deeper. You learn to endure crisis by mastering yourself.',
+    sagittarius: 'You question the duty of belief inside. You grow solid on faith you have tested, not others truth.',
+    capricorn:
+      'You grow even stricter with yourself. You truly harden when you build your own principle over outer achievement.',
+    aquarius: 'You forge the force to ground ideals within. You build unusual structure by your own principle.',
+    pisces:
+      'You hold your center within the haze inwardly. You bear the duty of devotion yourself over leaning outward.',
+  },
+  uranus: {
+    aries: 'Mold-breaking force simmers inside. You quietly redesign your own freedom over acting out.',
+    taurus: 'You turn change over inside, unhurried. Within the familiar, you slowly craft your own innovation.',
+    gemini: 'Flashes spread inside more than out. You dig your own idea to the end even when it looks different.',
+    cancer:
+      'You experiment with new ways of feeling inwardly. You quietly change old frames within, not on the surface.',
+    leo: 'You firm up individuality inside over showing it. You shine when you enjoy your difference yourself first.',
+    virgo: 'You overhaul how you work in your head. You rebuild by your own efficiency over outer rules.',
+    libra: 'You picture new forms of bond inside. You define your own freedom first before experimenting outward.',
+    scorpio: 'You turn foundation-shaking force to a deeper place. Quietly, you spark revolution from within.',
+    sagittarius: 'You widen border-crossing thought inside. You draw your own image of the future over outer trends.',
+    capricorn: 'You tear down old structures inside first. You build your own principle over the outer system.',
+    aquarius:
+      'A vision ahead of its time grows quietly inside. You push originality yourself over competing with others.',
+    pisces:
+      'You dissolve borders within through imagination. You grow a new inner dream first before unfolding it out.',
+  },
+  neptune: {
+    aries:
+      'You forge the ideal within over chasing it out there. Clearing away illusion, you recognize the dream you truly want.',
+    taurus:
+      'You find beauty in your heart over the senses outside. You draw real comfort from within over surface romance.',
+    gemini:
+      'You grow imagination inside over putting it into words. You savor the story yourself before unfolding it out.',
+    cancer:
+      'You hold empathy deep within. You guard your own emotional boundary first over being swept by others hearts.',
+    leo: 'You quietly burn creative inspiration inside. You immerse in your own expression over striving for recognition.',
+    virgo:
+      'You question the meaning of devotion inwardly. You refine your ideal into reality first before saving others.',
+    libra: 'You picture an ideal love within. You recognize real harmony yourself over leaning on fantasy.',
+    scorpio: 'You sink into mystery at a deeper place. You face the unseen alone within and gain insight.',
+    sagittarius:
+      'You ask great truth inside over seeking it out there. Clearing others beliefs, you find your own meaning.',
+    capricorn:
+      'You forge the force to build ideals into structure within. You firm up the inner frame over the surface dream.',
+    aquarius: 'You quietly hold an ideal for everyone inside. You build your own faith first over crying it out loud.',
+    pisces: 'Imagination and spirit reach deep inward. Real inspiration sharpens when you clear away outer illusion.',
+  },
+  pluto: {
+    aries: 'You turn the force of rebirth inward. You quietly rebuild yourself over clashing with the outside.',
+    taurus: 'You change values from the root within. You question your own true worth over surface security.',
+    gemini: 'The force to mine truth deepens inside. You dig for the answer yourself over flipping it with words.',
+    cancer: 'You face emotional wounds inwardly. You heal deeply alone and are reborn over showing it outside.',
+    leo: 'You undergo breaking and rebuilding the self inside. You quietly remold yourself over flaunting your presence.',
+    virgo:
+      'You overhaul daily life and body from within. You purify your own habits at the root over changing the surface.',
+    libra:
+      'You rework the force of relationships inside. You lay the root of balance again yourself over clashing outward.',
+    scorpio: 'You undergo full rebirth in a deeper place. Unseen by others, you change yourself from the root.',
+    sagittarius: 'You shake belief from within. You rebuild your worldview yourself over chasing outer truth.',
+    capricorn:
+      'You question structure and power inside. You change your own inner force at the root over the outer seat.',
+    aquarius: 'You topple old systems in your heart first. You build your own conviction over outer upheaval.',
+    pisces: 'You purify the unconscious deep within. You face unseen wounds alone and are reborn from the root.',
+  },
+}
+
+const ZH_RETRO: RetroReadings = {
+  mercury: {
+    aries: '快速的想法在心里再多咀嚼一遍。不脱口而出、而是回味时，话语更有分量。',
+    taurus: '即使已定的想法也在内心慢慢复核。不急躁地反复琢磨，判断愈发坚实。',
+    gemini: '灵感更多在内心打转。话虽变少，思绪的分支却更深更密。',
+    cancer: '把感受在心里久久回味。不马上表达，咀嚼之后才吐露真心。',
+    leo: '开口前在心里反复打磨。比起华丽，饱含真心时话语才发光。',
+    virgo: '分析向内钻。不边说边理，而是在脑中彻底回顾后再拿出来。',
+    libra: '把决定在心里一次次掂量。比起他人之言，追问自己的标准时才平衡。',
+    scorpio: '洞察沉入更深处。不说出口，而在心里深挖隐藏之意。',
+    sagittarius: '把宏大想法在心里咀嚼，而非四处宣扬。自问其意义时，真正的信念才立起。',
+    capricorn: '把体系在心里反复自我验证。用自己的逻辑而非他人框架建立时，信赖才积累。',
+    aquarius: '奇想在内心静静沸腾。看似与众不同，也把自己的逻辑坚持到底。',
+    pisces: '思绪化作意象沉入内心。化为言语前，久久停留于感觉、养大想象。',
+  },
+  venus: {
+    aries: '把心动先在内心确认，而非立刻表露。先靠近前，先自问是否真心。',
+    taurus: '把爱意慢慢在心里酝酿。重新被熟悉之物吸引，找回自己的品味。',
+    gemini: '把悸动在内心回味，而非轻轻略过。比起言语，慢慢确认心底的真意。',
+    cancer: '把珍惜之心深藏内里。不马上表达，感到安全时才敞开。',
+    leo: '比起华丽表达，静静培养内心。在求爱之前，先珍惜自己。',
+    virgo: '把体贴在心里打磨，而非外露。比起追求完美的爱，接纳如实的样子。',
+    libra: '把关系的平衡在内心追问。迁就之前，先确认自己真正想要的。',
+    scorpio: '把强烈的爱藏于深处。不轻易流露，一旦怀抱便燃烧长久。',
+    sagittarius: '把自由的爱在心里重新掂量。比起追逐新鲜，自己定义想要的关系。',
+    capricorn: '把稳重之心在内心久久权衡。信任积累之前，不轻易敞开。',
+    aquarius: '把独特品味在内心静静享受。自己打造与众不同的爱的方式。',
+    pisces: '把浪漫在内心深深描绘。不陷入幻想、看清真心时，爱才成熟。',
+  },
+  mars: {
+    aries: '力量不向外爆发，而在内心积蓄。不立刻冲撞，蓄势到决定性一刻才动。',
+    taurus: '把推动力在心里慢慢夯实。不急躁，蓄好的力量终会推进。',
+    gemini: '能量分作多股在心里打转。向外出手前，先在脑中行动。',
+    cancer: '把情感的力量在内心消化。不立刻反应，为守护珍贵之物而静静蓄力。',
+    leo: '把火热的气势在心里稳住。比起外露，自我认可时才涌出真正的力量。',
+    virgo: '把执行在脑中反复检查。不立刻出手，充分准备后才动。',
+    libra: '把力量在内心调和，而非冲撞。亲自出手前，久久权衡方法。',
+    scorpio: '执念沉入更深处。表面安静，内里却蓄势到底。',
+    sagittarius: '把想要伸展的力量在内心追问。向外拓展前，先自定方向。',
+    capricorn: '把策略在内心久久打磨。不急躁，蓄势待时地奔向顶峰。',
+    aquarius: '与众不同的推动力在内心静静沸腾。以自己的节奏推动改变规则的力量。',
+    pisces: '力量在内心摸索方向。不立刻出手，直觉成熟时才静静而动。',
+  },
+  jupiter: {
+    aries: '比起向外寻找机会，在内心培养。自定挑战的理由时，运才生长。',
+    taurus: '把丰盛不急不躁地在心里累积。相信感官，也以自己的标准拓宽。',
+    gemini: '把学习向内深化，而非向外铺开。自己回味所学时，智慧增长。',
+    cancer: '把福气在心里培养，而非向外求取。以给予之乐自我充实时，才丰盈。',
+    leo: '把自信在内心夯实，而非让他人确认。自我认可时，真正的运才打开。',
+    virgo: '把踏实的意义在心里追问。为自己而非为他人打磨时，收获更大。',
+    libra: '在关系之外的自己内心寻找机会。协作之前，先定自己想要的方向。',
+    scorpio: '把深挖的力量转向内。自己挖掘危机的意义时，大有所得。',
+    sagittarius: '把广阔世界在内心探索，而非向外。以自己的真理，而非追随他人的信念。',
+    capricorn: '把回报在内心夯实，而非向外期待。自己立下的责任终成福气。',
+    aquarius: '把新的尝试在内心静静盘旋。自定属于自己之路的意义时，门便打开。',
+    pisces: '把丰盛以想象在内心描绘。向外给予前，先充实内心的信念。',
+  },
+  saturn: {
+    aries: '不靠他人，而靠自己驾驭冲动。以内心的原则而非外在规则来磨炼力量。',
+    taurus: '把坚实在内心久久累积。学会即使没有认可也不动摇。',
+    gemini: '把言语与学习的责任在内心追问。比起求认可，更想让自己深入。',
+    cancer: '把守护的重量向内承担。比起依赖他人，自己成为稳固的屏障。',
+    leo: '把自信在内心而非外部掌声中建立。在谦逊中学会自我认可。',
+    virgo: '把完美的标准对准自己。以内心的尺度而非他人目光夯实踏实。',
+    libra: '把关系的责任在内心回溯。比起迁就，自己立起公正。',
+    scorpio: '把节制的力量转向更深处。以自我掌控学会熬过危机。',
+    sagittarius: '把信念的责任在内心追问。以自己验证过的信念而非他人真理变得坚实。',
+    capricorn: '对自己更加严格。比起外在成就，立起内心原则时才真正坚实。',
+    aquarius: '把把理想落实的力量在内心磨砺。以自己的原则建起与众不同的结构。',
+    pisces: '把朦胧中的重心向内把握。比起向外依靠，自己承担奉献的责任。',
+  },
+  uranus: {
+    aries: '打破框架的力量在内心沸腾。比起向外张扬，静静重新设计自己的自由。',
+    taurus: '把变化不急不躁地在内心盘旋。在熟悉之中，慢慢雕琢自己的革新。',
+    gemini: '灵光更多在内心蔓延。看似与众不同，也把自己的想法挖掘到底。',
+    cancer: '把情感的新方式向内实验。不在表面、而在内心静静改变旧框架。',
+    leo: '把个性在内心夯实，而非外露。先自我享受与众不同时，才发光。',
+    virgo: '把工作方式在脑中彻底翻修。以内心的效率而非外在规则重新建立。',
+    libra: '把关系的新形态在内心描绘。向外试验前，先定义自己的自由。',
+    scorpio: '把撼动根本的力量转向更深处。安静地，却从内心掀起革命。',
+    sagittarius: '把跨越边界的想法在内心拓宽。以自己的未来图景，而非外在潮流。',
+    capricorn: '把陈旧的结构在内心先行推倒。比起外在体制，立起自己的原则。',
+    aquarius: '超越时代的视野在内心静静生长。比起与人竞争，自己推动独创。',
+    pisces: '以想象在内心消融边界。向外铺展前，先养大内在的新梦。',
+  },
+  neptune: {
+    aries: '把理想在内心磨砺，而非向外追逐。拨开幻想，认出真正想要的梦。',
+    taurus: '在心里而非外在感官中寻找美。比起表面的浪漫，从内心汲取真正的慰藉。',
+    gemini: '把想象在内心培养，而非化作言语。向外铺展前，自己先细细品味。',
+    cancer: '把共情深藏内里。比起被他人之心裹挟，先守住自己情感的边界。',
+    leo: '把创造性灵感在内心静静燃烧。比起求认可，沉浸于自己的表达。',
+    virgo: '把奉献的意义在内心追问。拯救他人前，先把自己的理想打磨进现实。',
+    libra: '把理想的爱在内心描绘。比起依赖幻想，自己认出真正的和谐。',
+    scorpio: '把神秘沉入更深处。在内心独自面对看不见之物，获得洞察。',
+    sagittarius: '把宏大真理在内心追问，而非向外求取。拨开他人信念，找到自己的意义。',
+    capricorn: '把将理想化为结构的力量在内心磨砺。比起表面的梦，先夯实内在骨架。',
+    aquarius: '把为众人的理想在内心静静怀抱。比起向外呐喊，先立起自己的信念。',
+    pisces: '想象与灵性向内深深延伸。拨开外在幻想时，真正的灵感才清晰。',
+  },
+  pluto: {
+    aries: '把重生的力量转向内。比起与外界冲撞，静静地重新建立自己。',
+    taurus: '把价值从根本在内心改变。比起表面的安定，追问自己真正的价值。',
+    gemini: '挖掘真相的力量在内心加深。比起用言语翻盘，自己深挖找出答案。',
+    cancer: '把情感的伤在内心面对。比起外露，独自深深疗愈而重生。',
+    leo: '把打碎并重建自我在内心经历。比起炫耀存在感，静静重塑自己。',
+    virgo: '把日常与身体从内翻修。比起改变表面，从根本净化自己的习惯。',
+    libra: '把关系的力量在内心重编。比起向外冲撞，自己重新铺下平衡的根。',
+    scorpio: '在更深处经历彻底重生。不为人知，却从根本改变自己。',
+    sagittarius: '把信念从内心撼动。比起追逐外在真相，自己重建世界观。',
+    capricorn: '把结构与权力在内心追问。比起外在的位子，从根本改变内心的力量。',
+    aquarius: '把陈旧体制先在心里推倒。比起外在变革，立起自己的信念。',
+    pisces: '把潜意识向内深深净化。独自面对看不见的伤，从根本重生。',
+  },
+}
+
+const JA_RETRO: RetroReadings = {
+  mercury: {
+    aries: '速い考えを内でもう一度噛みしめます。すぐ口にせず反すうするとき、言葉に重みが乗ります。',
+    taurus: '決めた考えも内で静かに再確認します。焦らず何度も味わうほど、判断が固まります。',
+    gemini: 'アイデアが外より内で巡ります。口数は減っても、思考の枝は深く細やかになります。',
+    cancer: '感じたことを内で長く反すうします。すぐ表さず、噛みしめてから本心を出します。',
+    leo: '話す前に内で何度も磨きます。華やかさより真心がこもるとき、言葉が輝きます。',
+    virgo: '分析が内へ潜ります。声に出して整えるより、頭の中で完璧に見直してから出します。',
+    libra: '決断を内で何度も量ります。人の言葉より自分の基準を問うとき、釣り合いが取れます。',
+    scorpio: '洞察が深い場所へ沈みます。口にせず、内で隠れた意味を掘り下げます。',
+    sagittarius: '大きな考えを広めるより内で噛みしめます。自ら意味を問うとき、本当の信念が立ちます。',
+    capricorn: '体系を内で何度も自ら検証します。他人の枠より自分の論理で立てるとき、信頼が積もります。',
+    aquarius: '奇抜な考えが内で静かに沸きます。人と違って見えても、自分の論理を最後まで押します。',
+    pisces: '考えがイメージとなって内に沈みます。言葉にする前に感覚に長くとどまり、想像を育てます。',
+  },
+  venus: {
+    aries: '惹かれる心をすぐ表さず内で確かめます。近づく前に、本当の気持ちかを問います。',
+    taurus: '愛情を内でゆっくり育てます。慣れたものに再び惹かれ、自分の好みを取り戻します。',
+    gemini: 'ときめきを軽く流さず内で味わいます。言葉より心の真意を、ゆっくり確かめます。',
+    cancer: '慈しむ心を内に深く抱きます。すぐ表さず、安心と感じたとき開きます。',
+    leo: '華やかな表現より本心を静かに育てます。愛されようとする前に、まず自分を大切にします。',
+    virgo: '気遣いを外に出すより内で磨きます。完璧な愛を探すより、ありのままを受け入れます。',
+    libra: '関係の釣り合いを内で問います。合わせる前に、本当に望むものを確かめます。',
+    scorpio: '強い愛情を深い場所に隠します。簡単に表さず、一度抱くと長く燃えます。',
+    sagittarius: '自由な愛を内で問い直します。新しさを追うより、望む関係を自ら定めます。',
+    capricorn: '真剣な気持ちを内で長く量ります。信頼が積もるまで、簡単には開きません。',
+    aquarius: '独特な好みを内で静かに楽しみます。人と違う愛し方を自ら作ります。',
+    pisces: 'ロマンを内に深く描きます。幻想に落ちず、本心を見抜くとき愛が実ります。',
+  },
+  mars: {
+    aries: '力が外へ爆発せず内に積もります。すぐぶつからず、機を待って決定的な時に動きます。',
+    taurus: '推進力を内でゆっくり固めます。焦らず、ためた力が最後に押し切ります。',
+    gemini: 'エネルギーが幾筋にも内で巡ります。外へ出る前に、頭の中でまず動きます。',
+    cancer: '感情の力を内で消化します。すぐ反応せず、大切なものを守ろうと静かにためます。',
+    leo: '熱い勢いを内で立て直します。表すより、自ら認めるとき本当の力が出ます。',
+    virgo: '実行を頭の中で何度も点検します。すぐ動かず、十分に備えてから動きます。',
+    libra: '力をぶつけるより内で調えます。自ら動く前に、方法を長く量ります。',
+    scorpio: '執念が深い場所へ沈みます。表は静かでも、内で最後までためています。',
+    sagittarius: '伸びようとする力を内で問います。外へ広げる前に、自ら方向を定めます。',
+    capricorn: '戦略を内で長く磨きます。焦らず、時をためて頂を目指します。',
+    aquarius: '人と違う推進力が内で静かに沸きます。ルールを変える力を自分の速度で押します。',
+    pisces: '力が内で方向を探ります。すぐ出ず、直感が熟すとき静かに動きます。',
+  },
+  jupiter: {
+    aries: '機会を外に探すより内で育てます。挑む理由を自ら定めるとき、運が育ちます。',
+    taurus: '豊かさを焦らず内に積みます。感覚を信じつつ、自分の基準で広げます。',
+    gemini: '学びを外へ広げるより内へ深めます。学んだことを自ら反すうするとき、知恵が増します。',
+    cancer: '福を外に求めるより心の内で育てます。与える喜びを自ら満たすとき、豊かになります。',
+    leo: '自信を人に確かめてもらうより内で固めます。自ら認めるとき、本当の運が開きます。',
+    virgo: '誠実さの意味を内で問います。人のためでなく自分のために磨くとき、実りが大きくなります。',
+    libra: '機会を関係の外、自分の内に探します。協力する前に、望む方向を自ら定めます。',
+    scorpio: '深く掘る力を内へ向けます。危機の意味を自ら掘るとき、大きく得ます。',
+    sagittarius: '広い世界を外より内で探ります。人の信念を追うより、自分の真理を立てます。',
+    capricorn: '報いを外に期待するより内で固めます。自ら立てた責任が、やがて福になります。',
+    aquarius: '新しい試みを内で静かに転がします。自分の道の意味を定めるとき、扉が開きます。',
+    pisces: '豊かさを想像で内に描きます。外へ与える前に、内の信念をまず満たします。',
+  },
+  saturn: {
+    aries: '衝動を人でなく自ら治めます。外の規則より内の原則で力を養います。',
+    taurus: '堅さを内で長く積みます。認められなくても揺るがない術を学びます。',
+    gemini: '言葉と学びの責任を内で問います。認められようとするより、自ら深まろうとします。',
+    cancer: '守る重さを内で背負います。人に頼るより、自ら頼れる砦になります。',
+    leo: '自信を外の拍手でなく内で立てます。謙虚さの中で自らを認める術を学びます。',
+    virgo: '完璧の基準を自分に向けます。人の目より内の物差しで誠実を固めます。',
+    libra: '関係の責任を内で辿ります。合わせようとするより、自ら公正を立てます。',
+    scorpio: '節制の力をより深くへ向けます。自らを律し、危機に耐える術を学びます。',
+    sagittarius: '信念の責任を内で問います。人の真理より、自ら検証した信念で固まります。',
+    capricorn: '自らにさらに厳しくなります。外の成就より内の原則を立てるとき、本当に固まります。',
+    aquarius: '理想を現実に固める力を内で鍛えます。人と違う構造を自分の原則で立てます。',
+    pisces: '曖昧さの中の軸を内で保ちます。外に頼るより、献身の責任を自ら背負います。',
+  },
+  uranus: {
+    aries: '型を破る力が内で沸きます。外へ跳ねるより、自分の自由を静かに再設計します。',
+    taurus: '変化を焦らず内で転がします。慣れの中で、自分の革新をゆっくり形にします。',
+    gemini: 'ひらめきが外より内で広がります。人と違って見えても、自分の考えを最後まで掘ります。',
+    cancer: '感情の新しい形を内で試します。表でなく心の内で、古い型を静かに変えます。',
+    leo: '個性を表すより内で固めます。人と違うことを自ら楽しむとき、輝きます。',
+    virgo: '働き方を頭の中で作り替えます。外の規則より内の効率で建て直します。',
+    libra: '関係の新しい形を内で描きます。外へ試す前に、自分の自由を定義します。',
+    scorpio: '根本を揺るがす力をより深くへ向けます。静かに、しかし内から革命を起こします。',
+    sagittarius: '境界を越える考えを内で広げます。外の流行より、自分の未来像を描きます。',
+    capricorn: '古い構造を内で先に崩します。外の体制より、自分の原則を立てます。',
+    aquarius: '時代を先取る視点が内で静かに育ちます。人と競うより、独創を自ら押します。',
+    pisces: '想像で境界を内から溶かします。外へ広げる前に、内の新しい夢を育てます。',
+  },
+  neptune: {
+    aries: '理想を外に追うより内で鍛えます。幻想を払い、本当に望む夢を見抜きます。',
+    taurus: '美を外の感覚より心の内に探します。表のロマンより、内から本当の慰めを汲みます。',
+    gemini: '想像を言葉にするより内で育てます。外へ広げる前に、自ら味わいます。',
+    cancer: '共感を内に深く抱きます。人の心に流されるより、自分の感情の境界をまず守ります。',
+    leo: '創造的な霊感を内で静かに燃やします。認められようとするより、自分の表現に没入します。',
+    virgo: '献身の意味を内で問います。人を救う前に、自分の理想を現実に磨きます。',
+    libra: '理想の愛を内で描きます。幻想に頼るより、本当の調和を自ら見抜きます。',
+    scorpio: '神秘を深い場所へ沈めます。見えないものを内で独り向き合い、洞察を得ます。',
+    sagittarius: '大きな真理を外に求めるより内で問います。人の信念を払い、自分の意味を見つけます。',
+    capricorn: '理想を構造にする力を内で鍛えます。表の夢より、内の骨組みを固めます。',
+    aquarius: '皆のための理想を内で静かに抱きます。外へ叫ぶより、自分の信を先に立てます。',
+    pisces: '想像と霊性が内へ深く伸びます。外の幻想を払うとき、本当の霊感が澄みます。',
+  },
+  pluto: {
+    aries: '再生の力を内へ向けます。外とぶつかるより、自らを静かに建て直します。',
+    taurus: '価値を根本から内で変えます。表の安定より、自分の本当の価値を問います。',
+    gemini: '真実を掘る力が内で深まります。言葉で覆すより、自ら掘り下げて答えを探します。',
+    cancer: '感情の傷を内で向き合います。表に出すより、独り深く癒やして生まれ変わります。',
+    leo: '自我を壊し建て直すことを内で経ます。存在感を誇るより、自らを静かに造り直します。',
+    virgo: '日常と体を内から作り替えます。表を変えるより、自分の習慣を根本から浄化します。',
+    libra: '関係の力を内で組み替えます。外へぶつかるより、自ら均衡の根を置き直します。',
+    scorpio: '完全な再生を深い場所で経ます。人知れず、しかし根本から自らを変えます。',
+    sagittarius: '信念を内から揺るがします。外の真実を追うより、自ら世界観を建て直します。',
+    capricorn: '構造と権力を内で問います。外の座より、内の力を根本から変えます。',
+    aquarius: '古い体制を心の内で先に崩します。外の変革より、自分の信を立てます。',
+    pisces: '無意識を内へ深く浄化します。見えない傷を独り向き合い、根本から生まれ変わります。',
+  },
+}
+
+const BY_LOCALE_RETRO: Record<PublicLocale, RetroReadings> = {
+  ko: KO_RETRO,
+  en: EN_RETRO,
+  'zh-CN': ZH_RETRO,
+  ja: JA_RETRO,
+}
+
+/**
+ * Placement-based reading for any body, in the given locale. When `retrograde`
+ * is true and the body has a retrograde variant (Mercury–Pluto only), the
+ * inward-facing reading is returned; otherwise the direct reading is used.
+ */
+export function planetSignReading(locale: PublicLocale, planet: PlanetId, sign: SignId, retrograde = false): string {
+  if (retrograde) {
+    const retro = (BY_LOCALE_RETRO[locale] ?? KO_RETRO)[planet]?.[sign]
+    if (retro) {
+      return retro
+    }
+  }
   return (BY_LOCALE[locale] ?? KO)[planet][sign]
 }
 

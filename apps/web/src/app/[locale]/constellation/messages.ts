@@ -18,6 +18,11 @@ export const messages = {
         tapHint: '별이나 별자리를 눌러 자세히 보기',
         connectionHint: '빛나는 행성을 누르면 둘의 관계를 볼 수 있어요',
       },
+      a11y: {
+        statusPlanet: '{name}, {sign} 선택됨',
+        statusSign: '{name} 선택됨',
+        statusAspect: '{a}와 {b}의 {aspect} 관계',
+      },
       big3: {
         sunLabel: '태양',
         moonLabel: '달',
@@ -190,6 +195,11 @@ export const messages = {
         reopenCta: 'Redraw',
         tapHint: 'Tap a planet or sign to see more',
         connectionHint: 'Tap a lit-up planet to see how the two relate',
+      },
+      a11y: {
+        statusPlanet: '{name} in {sign} selected',
+        statusSign: '{name} selected',
+        statusAspect: '{a} and {b}: {aspect}',
       },
       big3: {
         sunLabel: 'Sun',
@@ -365,6 +375,11 @@ export const messages = {
         tapHint: '点击行星或星座查看更多',
         connectionHint: '点击发亮的行星，查看两者的关系',
       },
+      a11y: {
+        statusPlanet: '已选择 {name}（{sign}）',
+        statusSign: '已选择 {name}',
+        statusAspect: '{a} 与 {b} 的{aspect}关系',
+      },
       big3: {
         sunLabel: '太阳',
         moonLabel: '月亮',
@@ -537,6 +552,11 @@ export const messages = {
         reopenCta: '描き直す',
         tapHint: '惑星や星座をタップして詳しく見る',
         connectionHint: '光っている惑星をタップすると二つの関係が見られます',
+      },
+      a11y: {
+        statusPlanet: '{name}（{sign}）を選択',
+        statusSign: '{name} を選択',
+        statusAspect: '{a} と {b} の{aspect}',
       },
       big3: {
         sunLabel: '太陽',

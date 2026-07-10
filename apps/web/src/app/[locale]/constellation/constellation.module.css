@@ -40,6 +40,30 @@
   animation: float 4s ease-in-out infinite;
 }
 
+/* Keyboard focus: the default outline is suppressed in favour of a ring drawn
+   around the glyph, so focus stays visible on both planet tokens and sign
+   sectors (WCAG 2.4.7). Hidden until the element is focused via the keyboard. */
+.wheelButton {
+  outline: none;
+}
+
+/* Keep a focused token fully visible even when the spotlight dims it (the dim is
+   an inline opacity on the same element), so the focus ring meets contrast. */
+.wheelButton:focus-visible {
+  opacity: 1 !important;
+}
+
+.focusRing {
+  fill: none;
+  stroke: none;
+}
+
+.wheelButton:focus-visible .focusRing {
+  stroke: #ffffff;
+  stroke-width: 2;
+  stroke-opacity: 0.9;
+}
+
 .card {
   opacity: 0;
   animation: cardUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
