@@ -17,9 +17,9 @@ export type TimelineAccess =
 // 열람한다. 결제 이력이 없으면 접근 불가. "현재 구독 중"인지(답장 자격)는 별개 축이라 여기서
 // 판정하지 않는다(resolveReplyTextLimit).
 export async function resolveTimelineAccess(
-  userId: number,
+  userId: string,
   // artist.userId null = 탈퇴한 아티스트의 tombstone — owner 판정만 항상 불일치로 흐른다.
-  artist: { id: number; userId: number | null },
+  artist: { id: number; userId: string | null },
 ): Promise<TimelineAccess | undefined> {
   if (artist.userId === userId) {
     return { kind: 'owner' }

@@ -39,14 +39,14 @@ async function processBroadcastPage(event: Extract<ChatPushFanoutEvent, { kind: 
   }
 }
 
-async function deliver(userIds: number[], payload: ChatPushPayload): Promise<void> {
+async function deliver(userIds: string[], payload: ChatPushPayload): Promise<void> {
   await webPush.sendWebPushesToUsers(await buildDeliverableMessages(userIds, payload))
 }
 
 // Drops recipients currently inside their quiet-hours window and maps the wire payload to
 // the web-push shape (click target lives under `data.url`). maxDaily is intentionally not
 // applied: chat is human-authored, so a real message is never withheld for a notification cap.
-async function buildDeliverableMessages(userIds: number[], payload: ChatPushPayload): Promise<WebPushMessage[]> {
+async function buildDeliverableMessages(userIds: string[], payload: ChatPushPayload): Promise<WebPushMessage[]> {
   if (userIds.length === 0) {
     return []
   }

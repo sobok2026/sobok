@@ -23,7 +23,7 @@ export function isAdultVerificationRequiredForRequest(c: Pick<Context, 'req'>): 
 
 export function shouldBlockAdultGate(c: AdultGateContextSource): boolean {
   const userIdRaw = c.get('userId')
-  const userId = typeof userIdRaw === 'number' ? userIdRaw : undefined
+  const userId = typeof userIdRaw === 'string' ? userIdRaw : undefined
   const isAdult = c.get('isAdult') === true
 
   return isAdultVerificationRequiredForRequest(c) && Boolean(userId) && !isAdult

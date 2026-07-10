@@ -3,7 +3,7 @@ import { db } from '../db'
 import { paymentMethodTable } from '../schema/subscription'
 
 export interface SavePaymentMethodInput {
-  userId: number
+  userId: string
   token: string
   method: string | null
   brand: string | null
@@ -43,7 +43,7 @@ export interface PaymentMethodBrief {
   createdAt: Date
 }
 
-export async function listActivePaymentMethods(userId: number): Promise<PaymentMethodBrief[]> {
+export async function listActivePaymentMethods(userId: string): Promise<PaymentMethodBrief[]> {
   return db
     .select({
       id: paymentMethodTable.id,
@@ -58,7 +58,7 @@ export async function listActivePaymentMethods(userId: number): Promise<PaymentM
 
 export interface PaymentMethodKey {
   id: number
-  userId: number
+  userId: string
 }
 
 export interface ChargeablePaymentMethod {
@@ -86,7 +86,7 @@ export async function getActivePaymentMethodForUser({
 }
 
 export interface GetRenewalPaymentMethodInput {
-  userId: number
+  userId: string
   preferredId: number | null
 }
 

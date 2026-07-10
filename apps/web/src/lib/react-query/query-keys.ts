@@ -59,7 +59,7 @@ export const QueryKeys = {
 
   adsterraStats: (startDate: string, finishDate: string) => ['adsterra', 'stats', startDate, finishDate],
   manga: (id: number, locale: PublicLocale) => ['manga', id, locale],
-  mangaRecommendations: (userId: number, limit: number, locale: string) => [
+  mangaRecommendations: (userId: string, limit: number, locale: string) => [
     'me',
     'manga-recommendations',
     userId,

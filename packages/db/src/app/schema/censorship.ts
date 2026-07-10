@@ -1,14 +1,14 @@
-import { bigint, index, pgTable, smallint, varchar } from 'drizzle-orm/pg-core'
+import { bigint, index, pgTable, smallint, text, varchar } from 'drizzle-orm/pg-core'
 import { createdAt } from '../../columns'
 
-import { userTable } from './user'
+import { user } from './auth'
 
 export const userCensorshipTable = pgTable.withRLS(
   'user_censorship',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     key: smallint().notNull(),
     value: varchar({ length: 256 }).notNull(),

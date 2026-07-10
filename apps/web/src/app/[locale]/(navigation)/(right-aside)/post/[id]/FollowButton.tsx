@@ -14,7 +14,7 @@ import useUserFollowMutation from '@/query/useUserFollowMutation'
 type Props = {
   initialFollowing?: boolean
   leader: {
-    id: number
+    id: string
     name: string
   }
   onError?: (following: boolean) => void

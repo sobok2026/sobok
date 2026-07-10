@@ -17,7 +17,7 @@ export function artistAggregateRoom(artistId: number): string {
   return `c:${artistId}`
 }
 
-export function fanInboundRoom(artistId: number, fanId: number): string {
+export function fanInboundRoom(artistId: number, fanId: string): string {
   return `fc:${artistId}:${fanId}`
 }
 

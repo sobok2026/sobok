@@ -19,7 +19,7 @@ export interface SelectBookmarkOptions {
   cursor?: LibraryItemCursor
 }
 
-export async function selectBookmark(userId: number, options: SelectBookmarkOptions = {}) {
+export async function selectBookmark(userId: string, options: SelectBookmarkOptions = {}) {
   const { limit, sort = DEFAULT_LIBRARY_ITEM_SORT, cursor } = options
 
   const query = db
@@ -38,7 +38,7 @@ export async function selectBookmark(userId: number, options: SelectBookmarkOpti
   return query
 }
 
-export async function selectBookmarkId(userId: number, options: SelectBookmarkOptions = {}) {
+export async function selectBookmarkId(userId: string, options: SelectBookmarkOptions = {}) {
   const { limit, sort = DEFAULT_LIBRARY_ITEM_SORT, cursor } = options
 
   const query = db
@@ -55,7 +55,7 @@ export async function selectBookmarkId(userId: number, options: SelectBookmarkOp
   return query
 }
 
-function buildBookmarkWhereClause(userId: number, sort: LibraryItemSort, cursor?: LibraryItemCursor) {
+function buildBookmarkWhereClause(userId: string, sort: LibraryItemSort, cursor?: LibraryItemCursor) {
   const conditions = [eq(bookmarkTable.userId, userId)]
 
   if (cursor) {

@@ -1,7 +1,7 @@
-import { bigint, index, pgEnum, pgTable, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
+import { bigint, index, pgEnum, pgTable, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
 import { timestamps } from '../../columns'
+import { user } from './auth'
 import { chatArtistTable } from './chat'
-import { userTable } from './user'
 
 // pending = 지급 대기(운영자 수동 이체 후 paid 처리), carried = 최소 정산액 미달·0 이하로 익월 이월.
 export const payoutStatusEnum = pgEnum('payout_status', ['pending', 'paid', 'carried'])
@@ -16,7 +16,7 @@ export const payoutTable = pgTable.withRLS(
     chatArtistId: bigint('chat_artist_id', { mode: 'number' }).references(() => chatArtistTable.id, {
       onDelete: 'set null',
     }),
-    userId: bigint('user_id', { mode: 'number' }).references(() => userTable.id, { onDelete: 'set null' }),
+    userId: text('user_id').references(() => user.id, { onDelete: 'set null' }),
     periodStart: timestamp('period_start', { precision: 3, withTimezone: true }).notNull(),
     periodEnd: timestamp('period_end', { precision: 3, withTimezone: true }).notNull(),
     grossAmount: bigint('gross_amount', { mode: 'number' }).notNull(),
@@ -39,8 +39,8 @@ export const payoutTable = pgTable.withRLS(
 // 정산 입금 계좌 — 수동 이체용. 계좌번호는 AES 암호화 저장(secret-crypto), 탈퇴 시 cascade 파기.
 export const payoutAccountTable = pgTable.withRLS('payout_account', {
   id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-  userId: bigint('user_id', { mode: 'number' })
-    .references(() => userTable.id, { onDelete: 'cascade' })
+  userId: text('user_id')
+    .references(() => user.id, { onDelete: 'cascade' })
     .notNull()
     .unique(),
   bankName: varchar('bank_name', { length: 32 }).notNull(),

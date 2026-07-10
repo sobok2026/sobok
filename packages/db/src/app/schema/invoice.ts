@@ -1,8 +1,8 @@
 import { sql } from 'drizzle-orm'
-import { bigint, index, pgEnum, pgTable, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
+import { bigint, index, pgEnum, pgTable, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
 import { timestamps } from '../../columns'
+import { user } from './auth'
 import { subscriptionTable } from './subscription'
-import { userTable } from './user'
 
 export const invoiceStatusEnum = pgEnum('invoice_status', ['open', 'paid', 'void'])
 
@@ -15,7 +15,7 @@ export const invoiceTable = pgTable.withRLS(
     subscriptionId: bigint('subscription_id', { mode: 'number' }).references(() => subscriptionTable.id, {
       onDelete: 'set null',
     }),
-    userId: bigint('user_id', { mode: 'number' }).references(() => userTable.id, { onDelete: 'set null' }),
+    userId: text('user_id').references(() => user.id, { onDelete: 'set null' }),
     targetType: varchar('target_type', { length: 32 }).notNull(),
     targetId: bigint('target_id', { mode: 'number' }).notNull(),
     // The entitlement window this invoice grants once paid.

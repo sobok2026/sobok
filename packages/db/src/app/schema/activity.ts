@@ -1,13 +1,13 @@
-import { bigint, index, integer, pgTable, primaryKey, smallint } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, primaryKey, smallint, text } from 'drizzle-orm/pg-core'
 import { createdAt, timestamps, updatedAt } from '../../columns'
 
-import { userTable } from './user'
+import { user } from './auth'
 
 export const bookmarkTable = pgTable.withRLS(
   'bookmark',
   {
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     mangaId: integer('manga_id').notNull(),
     createdAt,
@@ -21,8 +21,8 @@ export const bookmarkTable = pgTable.withRLS(
 export const readingHistoryTable = pgTable.withRLS(
   'reading_history',
   {
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     mangaId: integer('manga_id').notNull(),
     lastPage: smallint('last_page').notNull(),
@@ -39,8 +39,8 @@ export const readingHistoryTable = pgTable.withRLS(
 export const userRatingTable = pgTable.withRLS(
   'user_rating',
   {
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     mangaId: integer('manga_id').notNull(),
     rating: smallint('rating').notNull(), // 1-5 stars

@@ -13,7 +13,7 @@ const SWEEP_INTERVAL_MS = 5 * 60_000
 //   - 만료 경로: 이벤트가 없는 자연 만료를 잡는 주기 스윕(모든 소켓의 방 자격 재검증).
 // 강퇴된 클라이언트는 'revoked' 메시지를 받고 구독 상태를 다시 조회합니다.
 export class EntitlementEnforcer {
-  private readonly socketsByUser = new Map<number, Set<ServerWebSocket<SocketData>>>()
+  private readonly socketsByUser = new Map<string, Set<ServerWebSocket<SocketData>>>()
   private timer: ReturnType<typeof setInterval> | null = null
 
   constructor(private readonly rooms: RoomRegistry) {}

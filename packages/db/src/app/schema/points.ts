@@ -1,14 +1,24 @@
-import { bigint, foreignKey, index, pgTable, smallint, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
+import {
+  bigint,
+  foreignKey,
+  index,
+  pgTable,
+  smallint,
+  text,
+  timestamp,
+  uniqueIndex,
+  varchar,
+} from 'drizzle-orm/pg-core'
 import { createdAt, updatedAt } from '../../columns'
 
-import { userTable } from './user'
+import { user } from './auth'
 
 export const adImpressionTokenTable = pgTable.withRLS(
   'ad_impression_token',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     token: varchar('token', { length: 64 }).notNull().unique(),
     adSlotId: varchar('ad_slot_id', { length: 50 }).notNull(),
@@ -23,8 +33,8 @@ export const adImpressionTokenTable = pgTable.withRLS(
 )
 
 export const userPointsTable = pgTable.withRLS('user_points', {
-  userId: bigint('user_id', { mode: 'number' })
-    .references(() => userTable.id, { onDelete: 'cascade' })
+  userId: text('user_id')
+    .references(() => user.id, { onDelete: 'cascade' })
     .notNull()
     .primaryKey(),
   balance: bigint('balance', { mode: 'number' }).notNull().default(0),
@@ -37,8 +47,8 @@ export const pointTransactionTable = pgTable.withRLS(
   'point_transaction',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     type: smallint('type').notNull(),
     amount: bigint('amount', { mode: 'number' }).notNull(),
@@ -52,8 +62,8 @@ export const pointDonationTable = pgTable.withRLS(
   'point_donation',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     pointTransactionId: bigint('point_transaction_id', { mode: 'number' })
       .references(() => pointTransactionTable.id, { onDelete: 'cascade' })
@@ -98,8 +108,8 @@ export const userExpansionTable = pgTable.withRLS(
   'user_expansion',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     type: smallint('type').notNull(),
     amount: smallint('amount').notNull(),
@@ -112,8 +122,8 @@ export const userItemTable = pgTable.withRLS(
   'user_item',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     type: smallint('type').notNull(),
     itemId: varchar('item_id', { length: 50 }).notNull(),

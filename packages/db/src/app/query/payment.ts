@@ -6,7 +6,7 @@ export type PaymentRow = typeof paymentTable.$inferSelect
 
 export interface CreatePendingPaymentInput {
   paymentId: string
-  userId: number
+  userId: string
   orderName: string
   amount: number
   currency?: string
@@ -24,7 +24,7 @@ export async function createPendingPayment(input: CreatePendingPaymentInput): Pr
 
 export interface EnsureInvoicePaymentInput {
   invoiceId: number
-  userId: number
+  userId: string
   orderName: string
   amount: number
   currency: string
@@ -82,7 +82,7 @@ export interface ListPaymentsOptions {
 // 결제 허브의 결제 내역 — 최신순 keyset. 환불 합계는 행당 lateral 서브쿼리로 같은 쿼리에서
 // 계산한다(상관 조건이 where에 있어 컬럼 한정자가 유지된다).
 export async function listPaymentsOfUser(
-  userId: number,
+  userId: string,
   options: ListPaymentsOptions = {},
 ): Promise<PaymentHistoryRow[]> {
   const { beforeId, limit = 20 } = options

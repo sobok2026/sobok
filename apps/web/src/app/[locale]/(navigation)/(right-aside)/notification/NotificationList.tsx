@@ -31,7 +31,7 @@ interface Notification {
   sentAt: string | Date | null
   title: string
   type: number
-  userId: number
+  userId: string
 }
 
 type NotificationDateGroup = 'older' | 'thisWeek' | 'today' | 'yesterday'

@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 // Per-connection state attached to each WebSocket via `server.upgrade({ data })`.
 export interface SocketData {
-  userId: number
+  userId: string
   // Rooms this socket is subscribed to; used to release Valkey refcounts on close.
   rooms: Set<string>
   // Rate limiting state
@@ -30,7 +30,7 @@ export const clientMessageSchema = z.discriminatedUnion('t', [
 export type ClientMessage = z.infer<typeof clientMessageSchema>
 
 export type ServerMessage =
-  | { t: 'ready'; userId: number }
+  | { t: 'ready'; userId: string }
   | { t: 'sub:ok'; room: string }
   | { t: 'unsub:ok'; room: string }
   | { t: 'msg'; room: string; data: unknown }

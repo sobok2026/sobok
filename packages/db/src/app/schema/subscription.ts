@@ -1,6 +1,6 @@
-import { bigint, boolean, index, pgEnum, pgTable, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
+import { bigint, boolean, index, pgEnum, pgTable, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
 import { timestamps } from '../../columns'
-import { userTable } from './user'
+import { user } from './auth'
 
 export const paymentMethodProviderEnum = pgEnum('payment_method_provider', ['portone'])
 export const paymentMethodStatusEnum = pgEnum('payment_method_status', ['active', 'deleted'])
@@ -9,8 +9,8 @@ export const paymentMethodTable = pgTable.withRLS(
   'payment_method',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     provider: paymentMethodProviderEnum().notNull().default('portone'),
     // The provider's recurring-charge token; charges are made server-side against it.
@@ -41,8 +41,8 @@ export const subscriptionTable = pgTable.withRLS(
   'subscription',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     targetType: varchar('target_type', { length: 32 }).notNull(),
     targetId: bigint('target_id', { mode: 'number' }).notNull(),

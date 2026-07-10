@@ -6,7 +6,7 @@ import { chatDmMessageTable, chatReadCursorTable, chatReplyReadCursorTable } fro
 const ERASE_BATCH_SIZE = 5000
 
 export interface EraseChatUserInput {
-  userId: number
+  userId: string
 }
 
 // 탈퇴 파기 — 떠나는 사용자의 사적 데이터만 지운다. 1:1 대화는 값을 치른 팬의 사적 스레드이므로
@@ -21,7 +21,7 @@ export async function eraseChatUser({ userId }: EraseChatUserInput): Promise<voi
 
 interface DmMessageKey {
   artistId: number
-  fanId: number
+  fanId: string
   messageId: string
 }
 

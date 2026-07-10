@@ -3,7 +3,7 @@ import { db } from '../db'
 import { userErasureTable } from '../schema/user'
 
 export interface UserErasureRow {
-  userId: number
+  userId: string
 }
 
 export async function listUserErasures(limit: number): Promise<UserErasureRow[]> {
@@ -15,6 +15,6 @@ export async function listUserErasures(limit: number): Promise<UserErasureRow[]>
 }
 
 // Chat DB 파기가 끝난 뒤에만 호출 — 행이 남아 있는 한 다음 폴링에서 재시도됩니다.
-export async function deleteUserErasure(userId: number): Promise<void> {
+export async function deleteUserErasure(userId: string): Promise<void> {
   await db.delete(userErasureTable).where(eq(userErasureTable.userId, userId))
 }

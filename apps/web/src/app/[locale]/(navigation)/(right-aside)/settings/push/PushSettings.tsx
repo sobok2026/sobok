@@ -11,7 +11,7 @@ import PushSubscriptionToggle from './PushSubscriptionToggle'
 import PushTestButton from './PushTestButton'
 
 type Props = {
-  userId: number
+  userId: string
 }
 
 export default async function PushSettings({ userId }: Props) {
@@ -67,7 +67,7 @@ export default async function PushSettings({ userId }: Props) {
   )
 }
 
-async function getPushSettings(userId: number) {
+async function getPushSettings(userId: string) {
   const [[settings], webPushes] = await Promise.all([
     db
       .select({

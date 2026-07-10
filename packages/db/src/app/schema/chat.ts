@@ -1,7 +1,7 @@
 import { DEFAULT_PLATFORM_FEE_BPS, SETTLEMENT_TAX_TYPES } from '@sobok/domain/payout/policy'
 import { bigint, boolean, index, integer, pgEnum, pgTable, text, varchar } from 'drizzle-orm/pg-core'
 import { timestamps } from '../../columns'
-import { userTable } from './user'
+import { user } from './auth'
 
 export const settlementTaxTypeEnum = pgEnum('settlement_tax_type', SETTLEMENT_TAX_TYPES)
 
@@ -9,8 +9,8 @@ export const chatArtistTable = pgTable.withRLS(
   'chat_artist',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'set null' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'set null' })
       .unique(),
     handle: varchar({ length: 32 }).notNull().unique(),
     displayName: varchar('display_name', { length: 64 }).notNull(),

@@ -15,13 +15,13 @@ type CriteriaWithConditions = {
   lastMatchedAt: Date | null
 }
 
-export default async function KeywordSettings({ userId }: { userId: number }) {
+export default async function KeywordSettings({ userId }: { userId: string }) {
   const criteria = await getUserCriteria(userId)
 
   return <KeywordSettingsForm initialCriteria={criteria} />
 }
 
-async function getUserCriteria(userId: number) {
+async function getUserCriteria(userId: string) {
   const results = await db
     .select({
       criteriaId: notificationCriteriaTable.id,

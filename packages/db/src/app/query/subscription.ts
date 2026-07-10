@@ -24,7 +24,7 @@ export const subscriptionStateColumns = {
 } as const
 
 export interface SubscriptionKey {
-  userId: number
+  userId: string
   targetType: string
   targetId: number
 }
@@ -152,7 +152,7 @@ export async function activateFreeInvoice(invoiceId: number, paidAt: Date): Prom
 }
 
 export interface EnsureSubscriptionInput {
-  userId: number
+  userId: string
   targetType: string
   targetId: number
   paymentMethodId: number | null
@@ -198,7 +198,7 @@ export async function ensureSubscription(input: EnsureSubscriptionInput): Promis
 
 export interface DueSubscription {
   id: number
-  userId: number
+  userId: string
   targetType: string
   targetId: number
   status: SubscriptionStatus

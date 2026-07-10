@@ -103,8 +103,8 @@ interface TaggedRow {
 // This guarantees the merge never skips an item. (Duplicates across pages dedupe by id client-side.)
 async function buildFanTimeline(
   // artist.userId null = 탈퇴한 아티스트 tombstone — 읽음 커서도 파기되었으므로 receipt 없음.
-  artist: { id: number; userId: number | null },
-  fanId: number,
+  artist: { id: number; userId: string | null },
+  fanId: string,
   { before, after, limit, windows }: PageOptions & { windows: TimelineWindow[] },
 ): Promise<GETV1ChatMessagesResponse> {
   const artistId = artist.id

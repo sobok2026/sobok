@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm'
 import DataExportSectionClient from './DataExportSectionClient'
 
 type Props = {
-  userId: number
+  userId: string
 }
 
 export default async function DataExportSection({ userId }: Props) {
@@ -16,7 +16,7 @@ export default async function DataExportSection({ userId }: Props) {
   return <DataExportSectionClient counts={counts} />
 }
 
-async function getDataCounts(userId: number) {
+async function getDataCounts(userId: string) {
   const [history, bookmarks, ratings, libraries, censorships] = await Promise.all([
     db.$count(readingHistoryTable, eq(readingHistoryTable.userId, userId)),
     db.$count(bookmarkTable, eq(bookmarkTable.userId, userId)),

@@ -12,7 +12,7 @@ import { INVALID_PARAM } from '../problem'
 
 export interface NotificationItem {
   id: number
-  userId: number
+  userId: string
   createdAt: Date
   type: number
   read: boolean

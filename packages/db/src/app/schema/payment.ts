@@ -1,8 +1,8 @@
 import { sql } from 'drizzle-orm'
 import { bigint, index, integer, pgEnum, pgTable, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
 import { createdAt, timestamps } from '../../columns'
+import { user } from './auth'
 import { invoiceTable } from './invoice'
-import { userTable } from './user'
 
 export const paymentProviderEnum = pgEnum('payment_provider', ['portone'])
 export const paymentStatusEnum = pgEnum('payment_status', ['pending', 'paid', 'failed', 'refunded'])
@@ -11,7 +11,7 @@ export const paymentTable = pgTable.withRLS(
   'payment',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' }).references(() => userTable.id, { onDelete: 'set null' }),
+    userId: text('user_id').references(() => user.id, { onDelete: 'set null' }),
     invoiceId: bigint('invoice_id', { mode: 'number' }).references(() => invoiceTable.id, { onDelete: 'set null' }),
     paymentId: varchar('payment_id', { length: 64 }).notNull().unique(),
     orderName: varchar('order_name', { length: 128 }).notNull(),

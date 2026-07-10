@@ -10,7 +10,7 @@ import useMeQuery from '@/query/useMeQuery'
 import DeletePostDialog from './DeletePostDialog'
 
 type Props = {
-  authorId?: number | null
+  authorId?: string | null
   className?: string
   dropdownAlign?: 'center' | 'end' | 'start'
   fallbackUrl?: string

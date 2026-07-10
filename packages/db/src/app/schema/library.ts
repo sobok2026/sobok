@@ -3,17 +3,17 @@ import {
   MAX_LIBRARY_ICON_LENGTH,
   MAX_LIBRARY_NAME_LENGTH,
 } from '@sobok/domain/library/policy'
-import { bigint, boolean, index, integer, pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core'
+import { bigint, boolean, index, integer, pgTable, primaryKey, text, varchar } from 'drizzle-orm/pg-core'
 import { createdAt } from '../../columns'
 
-import { userTable } from './user'
+import { user } from './auth'
 
 export const libraryTable = pgTable.withRLS(
   'library',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     name: varchar('name', { length: MAX_LIBRARY_NAME_LENGTH }).notNull(),
     description: varchar('description', { length: MAX_LIBRARY_DESCRIPTION_LENGTH }),
@@ -44,8 +44,8 @@ export const libraryItemTable = pgTable.withRLS(
 export const pinnedLibraryTable = pgTable.withRLS(
   'pinned_library',
   {
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     libraryId: bigint('library_id', { mode: 'number' })
       .references(() => libraryTable.id, { onDelete: 'cascade' })

@@ -1,14 +1,14 @@
-import { bigint, index, integer, pgEnum, pgTable, primaryKey, timestamp } from 'drizzle-orm/pg-core'
+import { index, integer, pgEnum, pgTable, primaryKey, text, timestamp } from 'drizzle-orm/pg-core'
 
-import { userTable } from './user'
+import { user } from './auth'
 
 export const mangaReportReasonEnum = pgEnum('manga_report_reason', ['DEEPFAKE', 'REAL_PERSON_MINOR'])
 
 export const mangaReportTable = pgTable.withRLS(
   'manga_report',
   {
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     mangaId: integer('manga_id').notNull(),
     reason: mangaReportReasonEnum('reason').notNull(),

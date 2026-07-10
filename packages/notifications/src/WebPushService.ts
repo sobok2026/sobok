@@ -26,7 +26,7 @@ webpush.setVapidDetails(vapidSubject.origin, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY
 export interface WebPushMessage {
   messageId?: number
   payload: WebPushPayload
-  userId: number
+  userId: string
 }
 
 interface PushSettings {
@@ -46,7 +46,7 @@ interface WebPushFailure {
   error: string
   messageId?: number
   statusCode?: number
-  userId: number
+  userId: string
   webPushId: number
 }
 
@@ -69,7 +69,7 @@ export class WebPushService {
     return WebPushService.instance
   }
 
-  async getPushSettingsOfUsers(userIds: number[]): Promise<Map<number, PushSettings>> {
+  async getPushSettingsOfUsers(userIds: string[]): Promise<Map<string, PushSettings>> {
     if (userIds.length === 0) {
       return new Map()
     }
@@ -87,7 +87,7 @@ export class WebPushService {
       .from(pushSettingsTable)
       .where(inArray(pushSettingsTable.userId, uniqueUserIds))
 
-    const result = new Map<number, PushSettings>()
+    const result = new Map<string, PushSettings>()
 
     for (const setting of settings) {
       result.set(setting.userId, {
@@ -109,7 +109,7 @@ export class WebPushService {
     return result
   }
 
-  async registerPushSubscription(userId: number, subscription: PushSubscription, userAgent?: string) {
+  async registerPushSubscription(userId: string, subscription: PushSubscription, userAgent?: string) {
     const now = new Date()
 
     const [upsertedSubscription] = await db
@@ -137,7 +137,7 @@ export class WebPushService {
     return upsertedSubscription
   }
 
-  async sendTestWebPushToEndpoint(userId: number, endpoint: string, payload: WebPushPayload) {
+  async sendTestWebPushToEndpoint(userId: string, endpoint: string, payload: WebPushPayload) {
     const [subscription] = await db
       .select({
         id: webPushTable.id,
@@ -199,7 +199,7 @@ export class WebPushService {
       .from(webPushTable)
       .where(inArray(webPushTable.userId, uniqueUserIds))
 
-    const subscriptionsByUser = new Map<number, typeof subscriptions>()
+    const subscriptionsByUser = new Map<string, typeof subscriptions>()
 
     for (const subscription of subscriptions) {
       const userId = subscription.userId
@@ -310,7 +310,7 @@ export class WebPushService {
     }
   }
 
-  async unsubscribeUser(userId: number, endpoint?: string) {
+  async unsubscribeUser(userId: string, endpoint?: string) {
     if (endpoint) {
       await db.delete(webPushTable).where(and(eq(webPushTable.userId, userId), eq(webPushTable.endpoint, endpoint)))
     } else {

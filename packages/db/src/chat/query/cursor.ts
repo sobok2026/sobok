@@ -5,7 +5,7 @@ import { chatBroadcastTable, chatDmMessageTable, chatReadCursorTable, chatReplyR
 import { type ArtistBroadcastWindows, broadcastWindowsFilter } from './message'
 
 export interface FanWatermarkInput {
-  fanId: number
+  fanId: string
   artistId: number
   lastReadMessageId: string
 }
@@ -26,7 +26,7 @@ export async function setFanWatermark({ fanId, artistId, lastReadMessageId }: Fa
 }
 
 export interface ReplyRoomWatermarkInput {
-  artistUserId: number
+  artistUserId: string
   artistId: number
   messageId: string
   lastReadMessageId: string
@@ -56,7 +56,7 @@ export async function setReplyRoomWatermark({
 }
 
 export interface GetReplyRoomWatermarksInput {
-  artistUserId: number
+  artistUserId: string
   artistId: number
   contextMessageIds: string[]
 }
@@ -93,7 +93,7 @@ export async function getReplyRoomWatermarks({
 // 커서 조인까지 한 쿼리로(N+1 방지). 커서 없는 방은 창 안 전체가 안읽음. 방송은 항상 아티스트
 // 발신이므로 자기 메시지 제외 불필요. 0인/열람 창 없는 아티스트는 Map 제외.
 export async function countBroadcastUnread(
-  fanId: number,
+  fanId: string,
   entries: ArtistBroadcastWindows[],
 ): Promise<Map<number, number>> {
   const windowFilter = broadcastWindowsFilter(entries)
@@ -125,7 +125,7 @@ export async function countBroadcastUnread(
 
 // 팬의 아티스트별 1:1 안읽음 수 — 아티스트가 이 팬에게 보낸(senderRole='artist') 답장만 센다.
 // 팬 통합 커서(chatReadCursorTable)를 그대로 재사용한다(방송과 같은 읽음 위치).
-export async function countDmUnread(fanId: number, artistIds: number[]): Promise<Map<number, number>> {
+export async function countDmUnread(fanId: string, artistIds: number[]): Promise<Map<number, number>> {
   if (artistIds.length === 0) {
     return new Map()
   }
@@ -155,7 +155,7 @@ export async function countDmUnread(fanId: number, artistIds: number[]): Promise
 
 // 아티스트의 말풍선별 답장방 안읽음 수 — 새 팬 답장(senderRole='fan')만 센다(오너 커서 기준).
 export async function countReplyRoomUnread(
-  artistUserId: number,
+  artistUserId: string,
   artistId: number,
   contextMessageIds: string[],
 ): Promise<Map<string, number>> {

@@ -16,7 +16,7 @@ export type RatingRow = {
   updatedAt: Date
 }
 
-export function buildRatingWhereClause(userId: number, sort: RatingSort, cursor?: RatingCursor | null) {
+export function buildRatingWhereClause(userId: string, sort: RatingSort, cursor?: RatingCursor | null) {
   const conditions: SQL[] = [eq(userRatingTable.userId, userId)]
 
   if (cursor) {

@@ -23,6 +23,6 @@ export const ENTITLEMENT_CHANNEL = 'sobok:chat:entitlement'
 
 export interface EntitlementRevokedEvent {
   t: 'revoked'
-  userId: number
+  userId: string
   artistId: number
 }

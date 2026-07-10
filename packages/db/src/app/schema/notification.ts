@@ -12,12 +12,12 @@ import {
 } from 'drizzle-orm/pg-core'
 import { createdAt, timestamps } from '../../columns'
 
-import { userTable } from './user'
+import { user } from './auth'
 
 export const webPushTable = pgTable.withRLS('web_push', {
   id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-  userId: bigint('user_id', { mode: 'number' })
-    .references(() => userTable.id, { onDelete: 'cascade' })
+  userId: text('user_id')
+    .references(() => user.id, { onDelete: 'cascade' })
     .notNull(),
   endpoint: text().notNull().unique(),
   p256dh: text().notNull(),
@@ -28,8 +28,8 @@ export const webPushTable = pgTable.withRLS('web_push', {
 })
 
 export const pushSettingsTable = pgTable.withRLS('push_settings', {
-  userId: bigint('user_id', { mode: 'number' })
-    .references(() => userTable.id, { onDelete: 'cascade' })
+  userId: text('user_id')
+    .references(() => user.id, { onDelete: 'cascade' })
     .notNull()
     .primaryKey(),
   quietEnabled: boolean('quiet_enabled').notNull().default(true),
@@ -44,8 +44,8 @@ export const notificationTable = pgTable.withRLS(
   'notification',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     type: smallint().notNull(), // 'new_manga', 'bookmark_update', etc.
     title: text().notNull(),
@@ -67,8 +67,8 @@ export const notificationCriteriaTable = pgTable.withRLS(
   'notification_criteria',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     name: varchar({ length: 32 }).notNull(),
     matchCount: integer('match_count').notNull().default(0),

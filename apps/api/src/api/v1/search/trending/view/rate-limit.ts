@@ -29,7 +29,7 @@ const userQueryLimiter = new RedisRateLimiter({
 type Params = {
   query: string
   remoteIP: string
-  userId?: number
+  userId?: string
 }
 
 type Result = { allowed: false; retryAfterSeconds: number } | { allowed: true }

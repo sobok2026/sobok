@@ -18,7 +18,7 @@ export function applyPostLikeCountDeltaInPostLists(queryClient: QueryClient, pos
   })
 }
 
-export function removeAuthorPostsFromFollowingPostLists(queryClient: QueryClient, authorId: number) {
+export function removeAuthorPostsFromFollowingPostLists(queryClient: QueryClient, authorId: string) {
   queryClient.setQueriesData<InfiniteData<GETV1PostResponse>>({ queryKey: QueryKeys.followingPosts }, (data) =>
     removeAuthorPostsFromPostList(data, authorId),
   )
@@ -158,7 +158,7 @@ function patchPostLists(queryClient: QueryClient, postId: number, updater: (post
   })
 }
 
-function removeAuthorPostsFromPostList(data: InfiniteData<GETV1PostResponse> | undefined, authorId: number) {
+function removeAuthorPostsFromPostList(data: InfiniteData<GETV1PostResponse> | undefined, authorId: string) {
   if (!data) {
     return data
   }

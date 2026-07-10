@@ -5,7 +5,7 @@ import { fetchAPIData } from '@/utils/api-request'
 // The artist answers ONE fan's reply (messageId = the broadcast context, fanId = the recipient).
 export default function useSendArtistReplyMutation(handle: string, messageId: string) {
   return useMutation({
-    mutationFn: async ({ fanId, body }: { fanId: number; body: POSTV1ArtistReplyBody }) => {
+    mutationFn: async ({ fanId, body }: { fanId: string; body: POSTV1ArtistReplyBody }) => {
       const url = `/api/v1/chat/artist/${handle}/message/${messageId}/reply/${fanId}`
 
       const { data } = await fetchAPIData<POSTV1ArtistReplyResponse>(url, {

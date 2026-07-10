@@ -43,7 +43,7 @@ export async function putBroadcast(row: ChatBroadcastRow): Promise<void> {
 
 export interface AppendDmMessageInput {
   artistId: number
-  fanId: number
+  fanId: string
   contextMessageId: string
   senderRole: ChatSenderRole
   quotedMessageId: string | null
@@ -72,7 +72,7 @@ export interface FanReplyGate {
 export interface FanReplyGateKey {
   artistId: number
   contextMessageId: string
-  fanId: number
+  fanId: string
 }
 
 // Reply gate — 쿼터의 기준점은 "아티스트의 마지막 메시지"(아티스트가 새 메시지를 보내면 쿼터가
@@ -239,7 +239,7 @@ export async function getLatestBroadcastPerArtist(
 
 export interface ListFanTimelineInput {
   artistId: number
-  fanId: number
+  fanId: string
   before?: string
   after?: string
   limit?: number
@@ -334,7 +334,7 @@ export async function getReplyRoomMessagesByIds(
 // 팬의 아티스트별 "가장 최근 아티스트 1:1 답장" 한 건씩 — 팬 채팅 리스트에서 최신 활동/프리뷰를
 // 방송 요약과 비교(max)하기 위함. DISTINCT ON으로 아티스트당 최신 한 행만.
 export async function getLatestArtistDmPerArtist(
-  fanId: number,
+  fanId: string,
   artistIds: number[],
 ): Promise<Map<number, ChatDmMessageRow>> {
   if (artistIds.length === 0) {
@@ -360,7 +360,7 @@ export async function getLatestArtistDmPerArtist(
 // 프리뷰(quotedMessageId → 원문)를 해석하기 위함. PK 정확 조회.
 export async function getDmMessagesByIds(
   artistId: number,
-  fanId: number,
+  fanId: string,
   messageIds: string[],
 ): Promise<Map<string, ChatDmMessageRow>> {
   if (messageIds.length === 0) {
@@ -382,7 +382,7 @@ export async function getDmMessagesByIds(
 }
 
 export interface HasFanRepliesInput {
-  fanId: number
+  fanId: string
   artistId: number
   window: TimelineWindow
 }

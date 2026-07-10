@@ -1,15 +1,15 @@
-import { bigint, boolean, index, pgEnum, pgTable, smallint, timestamp, unique, varchar } from 'drizzle-orm/pg-core'
+import { boolean, index, pgEnum, pgTable, smallint, text, timestamp, unique, varchar } from 'drizzle-orm/pg-core'
 import { createdAt } from '../../columns'
 
-import { userTable } from './user'
+import { user } from './auth'
 
 export const bbatonGenderEnum = pgEnum('bbaton_gender', ['F', 'M'])
 
 export const bbatonVerificationTable = pgTable.withRLS(
   'bbaton_verification',
   {
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .primaryKey(),
     bbatonUserId: varchar('bbaton_user_id', { length: 128 }).notNull(),
     adultFlag: boolean('adult_flag').notNull(),

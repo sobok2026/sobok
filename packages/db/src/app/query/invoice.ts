@@ -12,7 +12,7 @@ export interface OpenInvoice {
 
 export interface EnsureOpenInvoiceInput {
   subscriptionId: number
-  userId: number
+  userId: string
   targetType: string
   targetId: number
   periodStart: Date

@@ -41,7 +41,7 @@ type Variables = {
   following: boolean
 }
 
-export async function toggleUserFollowing(targetUserId: number, following: boolean) {
+export async function toggleUserFollowing(targetUserId: string, following: boolean) {
   const url = `/api/v1/user/${targetUserId}/follow`
 
   const { data } = await fetchAPIData<SetUserFollowResponse>(url, {
@@ -52,7 +52,7 @@ export async function toggleUserFollowing(targetUserId: number, following: boole
 }
 
 export default function useUserFollowMutation(
-  targetUserId: number,
+  targetUserId: string,
   { initialFollowing, onError, onOptimisticUpdate, onSuccess }: Options = {},
 ) {
   const { data: me } = useMeQuery()
@@ -131,7 +131,7 @@ export default function useUserFollowMutation(
   }
 }
 
-function setUserFollowingInFollowingIds(queryClient: QueryClient, userId: number, following: boolean) {
+function setUserFollowingInFollowingIds(queryClient: QueryClient, userId: string, following: boolean) {
   queryClient.setQueryData<GETV1MeFollowingResponse | undefined>(QueryKeys.followingUsers, (previous) => {
     if (!previous) {
       return following ? { userIds: [userId] } : previous

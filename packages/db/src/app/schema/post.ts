@@ -1,13 +1,23 @@
-import { type AnyPgColumn, bigint, index, integer, pgTable, primaryKey, smallint, varchar } from 'drizzle-orm/pg-core'
+import {
+  type AnyPgColumn,
+  bigint,
+  index,
+  integer,
+  pgTable,
+  primaryKey,
+  smallint,
+  text,
+  varchar,
+} from 'drizzle-orm/pg-core'
 import { createdAt } from '../../columns'
 
-import { userTable } from './user'
+import { user } from './auth'
 
 export const postTable = pgTable.withRLS(
   'post',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    userId: bigint('user_id', { mode: 'number' }).references(() => userTable.id, { onDelete: 'set null' }),
+    userId: text('user_id').references(() => user.id, { onDelete: 'set null' }),
     parentPostId: bigint('parent_post_id', { mode: 'number' }).references((): AnyPgColumn => postTable.id, {
       onDelete: 'set null',
     }),
@@ -30,8 +40,8 @@ export const postTable = pgTable.withRLS(
 export const postLikeTable = pgTable.withRLS(
   'post_like',
   {
-    userId: bigint('user_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    userId: text('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     postId: bigint('post_id', { mode: 'number' })
       .references(() => postTable.id, { onDelete: 'cascade' })

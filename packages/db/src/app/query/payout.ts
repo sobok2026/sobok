@@ -148,7 +148,7 @@ export interface LatestPayout {
 
 export interface CreatePayoutInput {
   chatArtistId: number
-  userId: number | null
+  userId: string | null
   periodStart: Date
   periodEnd: Date
   grossAmount: number
@@ -210,7 +210,7 @@ export interface PayoutAccountRow {
   holderName: string
 }
 
-export async function getPayoutAccount(userId: number): Promise<PayoutAccountRow | undefined> {
+export async function getPayoutAccount(userId: string): Promise<PayoutAccountRow | undefined> {
   const [row] = await db
     .select({
       bankName: payoutAccountTable.bankName,
@@ -224,7 +224,7 @@ export async function getPayoutAccount(userId: number): Promise<PayoutAccountRow
 }
 
 export interface UpsertPayoutAccountInput {
-  userId: number
+  userId: string
   bankName: string
   accountNumber: string
   holderName: string

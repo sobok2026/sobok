@@ -19,7 +19,7 @@ export async function fetchFollowingUserIds() {
 export default function useFollowingUserSetQuery() {
   const { data: me } = useMeQuery()
 
-  return useQuery<GETV1MeFollowingResponse, Error, Set<number>>({
+  return useQuery<GETV1MeFollowingResponse, Error, Set<string>>({
     queryKey: QueryKeys.followingUsers,
     queryFn: fetchFollowingUserIds,
     enabled: Boolean(me),

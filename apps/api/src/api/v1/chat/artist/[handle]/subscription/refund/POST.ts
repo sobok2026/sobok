@@ -118,7 +118,7 @@ route.post('/', ...middlewares, async (c) => {
 })
 
 // 게이트웨이 강퇴는 best-effort — 실패해도 주기 재검증이 곧 따라잡으므로 환불 응답을 막지 않는다.
-async function publishEntitlementRevoked(userId: number, artistId: number): Promise<void> {
+async function publishEntitlementRevoked(userId: string, artistId: number): Promise<void> {
   const event: EntitlementRevokedEvent = {
     t: 'revoked',
     userId,
