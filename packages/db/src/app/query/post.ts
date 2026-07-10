@@ -1,6 +1,7 @@
 import { db } from '@sobok/db/app'
+import { user } from '@sobok/db/app/auth'
 import { postLikeTable, postTable } from '@sobok/db/app/post'
-import { userFollowTable, userTable } from '@sobok/db/app/user'
+import { userFollowTable } from '@sobok/db/app/user'
 import { PostFilter } from '@sobok/domain/post/filter'
 import { PostType } from '@sobok/domain/post/model'
 import { and, count, desc, eq, inArray, isNotNull, isNull, lt, or, type SQL } from 'drizzle-orm'
@@ -16,10 +17,10 @@ type LiveReferredPost = {
   createdAt: Date
   content?: string | null
   author?: {
-    id: number
-    nickname: string
+    id: string
     name: string
-    imageURL?: string | null
+    username: string | null
+    image?: string | null
   } | null
 }
 
@@ -33,7 +34,7 @@ type Params = {
   postIds?: number[]
   parentPostId?: number
   username?: string
-  currentUserId?: number
+  currentUserId?: string
 }
 
 type ReferredPostRow = DeletedReferredPost | LiveReferredPost
@@ -58,7 +59,7 @@ export default async function selectPost({
   const commentPosts = alias(postTable, 'comment_posts')
   const repostPosts = alias(postTable, 'repost_posts')
   const referredPosts = alias(postTable, 'referred_posts')
-  const referredUser = alias(userTable, 'referred_user')
+  const referredUser = alias(user, 'referred_user')
 
   if (cursorId && cursorCreatedAt) {
     conditions.push(
@@ -98,7 +99,7 @@ export default async function selectPost({
   }
 
   if (username) {
-    conditions.push(eq(userTable.name, username))
+    conditions.push(eq(user.username, username.toLowerCase()))
   }
 
   if (filter === PostFilter.FOLLOWING) {
@@ -118,7 +119,7 @@ export default async function selectPost({
     .$dynamic()
 
   if (username) {
-    baseQuery = baseQuery.innerJoin(userTable, eq(postTable.userId, userTable.id))
+    baseQuery = baseQuery.innerJoin(user, eq(postTable.userId, user.id))
   }
 
   if (filter === PostFilter.FOLLOWING) {
@@ -179,24 +180,24 @@ export default async function selectPost({
       mangaId: postTable.mangaId,
       parentPostId: postTable.parentPostId,
       referredPostId: postTable.referredPostId,
-      authorId: userTable.id,
-      authorName: userTable.name,
-      authorNickname: userTable.nickname,
-      authorImageURL: userTable.imageURL,
+      authorId: user.id,
+      authorName: user.name,
+      authorUsername: user.username,
+      authorImage: user.image,
       referredPostInnerId: referredPosts.id,
       referredPostCreatedAt: referredPosts.createdAt,
       referredPostContent: referredPosts.content,
       referredAuthorId: referredUser.id,
       referredAuthorName: referredUser.name,
-      referredAuthorNickname: referredUser.nickname,
-      referredAuthorImageURL: referredUser.imageURL,
+      referredAuthorUsername: referredUser.username,
+      referredAuthorImage: referredUser.image,
       commentCount: commentCounts.commentCount,
       repostCount: repostCounts.repostCount,
       likeCount: likeCounts.likeCount,
     })
     .from(basePosts)
     .innerJoin(postTable, eq(postTable.id, basePosts.id))
-    .leftJoin(userTable, eq(postTable.userId, userTable.id))
+    .leftJoin(user, eq(postTable.userId, user.id))
     .leftJoin(referredPosts, eq(referredPosts.id, postTable.referredPostId))
     .leftJoin(referredUser, eq(referredUser.id, referredPosts.userId))
     .leftJoin(likeCounts, eq(likeCounts.postId, basePosts.id))
@@ -212,31 +213,31 @@ export default async function selectPost({
       referredPostContent,
       referredAuthorId,
       referredAuthorName,
-      referredAuthorNickname,
-      referredAuthorImageURL,
+      referredAuthorUsername,
+      referredAuthorImage,
       authorId,
       authorName,
-      authorNickname,
-      authorImageURL,
+      authorUsername,
+      authorImage,
       ...post
     }) => {
       const author =
-        authorId !== null && authorName !== null && authorNickname !== null
+        authorId !== null && authorName !== null
           ? {
               id: authorId,
               name: authorName,
-              nickname: authorNickname,
-              imageURL: authorImageURL,
+              username: authorUsername,
+              image: authorImage,
             }
           : null
 
       const referredPostAuthor =
-        referredAuthorId !== null && referredAuthorName !== null && referredAuthorNickname !== null
+        referredAuthorId !== null && referredAuthorName !== null
           ? {
               id: referredAuthorId,
               name: referredAuthorName,
-              nickname: referredAuthorNickname,
-              imageURL: referredAuthorImageURL,
+              username: referredAuthorUsername,
+              image: referredAuthorImage,
             }
           : null
 

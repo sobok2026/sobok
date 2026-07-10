@@ -23,7 +23,7 @@ export type ChatBroadcastEvent = z.infer<typeof chatBroadcastEventSchema>
 export const chatDirectMessageEventSchema = z.object({
   kind: z.literal('dm'),
   artistId: z.number().int().positive(),
-  fanId: z.number().int().positive(),
+  fanId: z.string().min(1),
   contextMessageId: z.string().min(1),
   messageId: z.string().min(1),
   senderRole: z.enum(['artist', 'fan']),
@@ -69,17 +69,17 @@ export const chatPushFanoutEventSchema = z.discriminatedUnion('kind', [
     kind: z.literal('broadcast'),
     artistId: z.number().int().positive(),
     messageId: z.string().min(1),
-    // The sender (artist) — never push a broadcast back to its author.
-    excludeUserId: z.number().int().positive(),
-    // Keyset cursor; 0 = first page.
-    afterUserId: z.number().int().nonnegative(),
+    // The sender (artist) — never push a broadcast back to its author. '' = 제외 대상 없음(tombstone).
+    excludeUserId: z.string(),
+    // Keyset cursor(text PK); '' = first page.
+    afterUserId: z.string(),
     payload: chatPushPayloadSchema,
   }),
   z.object({
     kind: z.literal('direct'),
     // Partition/ordering key — the conversation's artist.
     artistId: z.number().int().positive(),
-    recipientUserId: z.number().int().positive(),
+    recipientUserId: z.string().min(1),
     payload: chatPushPayloadSchema,
   }),
 ])

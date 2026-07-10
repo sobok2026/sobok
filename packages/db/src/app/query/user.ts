@@ -1,26 +1,18 @@
 import { db } from '@sobok/db/app'
-import { userTable } from '@sobok/db/app/user'
+import { user } from '@sobok/db/app/auth'
 import { eq } from 'drizzle-orm'
 
-type Params = {
-  loginId?: string
-  name?: string
-}
-
-export default async function selectUser({ loginId, name }: Params) {
-  const condition = name ? eq(userTable.name, name) : loginId ? eq(userTable.loginId, loginId) : null
-
-  if (!condition) {
-    throw new Error('Either loginId or name must be provided')
-  }
-
+// better-auth username 플러그인은 username을 소문자로 정규화해 저장합니다.
+export default async function selectUser({ username }: { username: string }) {
   return db
     .select({
-      id: userTable.id,
-      createdAt: userTable.createdAt,
-      nickname: userTable.nickname,
-      imageURL: userTable.imageURL,
+      id: user.id,
+      createdAt: user.createdAt,
+      name: user.name,
+      username: user.username,
+      displayUsername: user.displayUsername,
+      image: user.image,
     })
-    .from(userTable)
-    .where(condition)
+    .from(user)
+    .where(eq(user.username, username.toLowerCase()))
 }

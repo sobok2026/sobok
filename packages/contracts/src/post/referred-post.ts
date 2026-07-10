@@ -10,10 +10,10 @@ export interface LiveReferredPost {
   content?: string | null
   imageURLs?: string[] | null
   author?: {
-    id: number
-    nickname: string
+    id: string
     name: string
-    imageURL?: string | null
+    username: string | null
+    image?: string | null
   } | null
 }
 

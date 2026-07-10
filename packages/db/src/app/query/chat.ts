@@ -3,10 +3,10 @@ import type { SettlementTaxType } from '@sobok/domain/payout/policy'
 import { SUBSCRIPTION_TARGET_CHAT_ARTIST } from '@sobok/domain/subscription/policy'
 import { and, asc, desc, eq, gt, inArray, lte, sql } from 'drizzle-orm'
 import { db } from '../db'
+import { user } from '../schema/auth'
 import { chatArtistTable } from '../schema/chat'
 import { invoiceTable } from '../schema/invoice'
 import { subscriptionTable } from '../schema/subscription'
-import { userTable } from '../schema/user'
 import { type SubscriptionState, subscriptionStateColumns } from './subscription'
 
 export type ChatArtistRow = typeof chatArtistTable.$inferSelect
@@ -21,7 +21,7 @@ export async function getChatArtistByHandle(handle: string): Promise<ChatArtistR
   return row
 }
 
-export async function getChatArtistByUserId(userId: number): Promise<ChatArtistRow | undefined> {
+export async function getChatArtistByUserId(userId: string): Promise<ChatArtistRow | undefined> {
   const [row] = await db.select().from(chatArtistTable).where(eq(chatArtistTable.userId, userId))
   return row
 }
@@ -36,37 +36,37 @@ export async function listChatArtistsByIds(artistIds: number[]): Promise<Map<num
   return new Map(rows.map((row) => [row.id, row]))
 }
 
-export async function getChatSenderBrief(userId: number) {
+export async function getChatSenderBrief(userId: string) {
   const [row] = await db
     .select({
-      nickname: userTable.nickname,
-      imageURL: userTable.imageURL,
+      name: user.name,
+      image: user.image,
     })
-    .from(userTable)
-    .where(eq(userTable.id, userId))
+    .from(user)
+    .where(eq(user.id, userId))
 
   return row
 }
 
 export interface ChatUserBriefRow {
-  id: number
-  nickname: string
-  imageURL: string | null
+  id: string
+  name: string
+  image: string | null
 }
 
-export async function listUserBriefs(userIds: number[]): Promise<Map<number, ChatUserBriefRow>> {
+export async function listUserBriefs(userIds: string[]): Promise<Map<string, ChatUserBriefRow>> {
   if (userIds.length === 0) {
     return new Map()
   }
 
   const rows = await db
     .select({
-      id: userTable.id,
-      nickname: userTable.nickname,
-      imageURL: userTable.imageURL,
+      id: user.id,
+      name: user.name,
+      image: user.image,
     })
-    .from(userTable)
-    .where(inArray(userTable.id, userIds))
+    .from(user)
+    .where(inArray(user.id, userIds))
 
   return new Map(rows.map((row) => [row.id, row]))
 }
@@ -88,7 +88,7 @@ export interface ListChatThreadArtistsOptions {
 }
 
 export async function listChatThreadArtists(
-  userId: number,
+  userId: string,
   options: ListChatThreadArtistsOptions = {},
 ): Promise<ChatThreadArtistRow[]> {
   const { limit = 500 } = options
@@ -132,7 +132,7 @@ export async function listChatThreadArtists(
 }
 
 export interface CreateChatArtistInput {
-  userId: number
+  userId: string
   handle: string
   displayName: string
   description: string | null
@@ -157,7 +157,7 @@ export interface ChatArtistPatch {
 
 export interface UpdateChatArtistInput {
   handle: string
-  userId: number
+  userId: string
   patch: ChatArtistPatch
 }
 
@@ -183,7 +183,7 @@ export interface SetSettlementTaxProfileInput {
 
 // 정산 세무 프로필 변경 — 아티스트 본인만(userId로 스코프). 원천징수 분기의 유일한 입력.
 export async function setSettlementTaxProfile(
-  userId: number,
+  userId: string,
   { taxType, countryCode }: SetSettlementTaxProfileInput,
 ): Promise<void> {
   await db
@@ -209,7 +209,7 @@ export interface ListChatSubscriptionsOptions {
 }
 
 export async function listChatSubscriptionsOfUser(
-  userId: number,
+  userId: string,
   options: ListChatSubscriptionsOptions = {},
 ): Promise<ChatSubscriptionListRow[]> {
   const { limit = 100 } = options
@@ -237,7 +237,7 @@ export async function listChatSubscriptionsOfUser(
 }
 
 export async function stopChatSubscriptionRenewal(
-  userId: number,
+  userId: string,
   handle: string,
 ): Promise<SubscriptionState | undefined> {
   const [row] = await db
@@ -262,7 +262,7 @@ export async function stopChatSubscriptionRenewal(
 }
 
 export interface FanArtistKey {
-  userId: number
+  userId: string
   artistId: number
 }
 
@@ -308,7 +308,7 @@ export async function listPaidIntervals({ userId, artistId }: FanArtistKey): Pro
 // 아티스트별 방송 프리뷰/안읽음을 결제 창으로 스코프하기 위함). 결제 이력이 없는 아티스트는
 // Map에서 빠진다.
 export async function listPaidIntervalsByArtist(
-  userId: number,
+  userId: string,
   artistIds: number[],
 ): Promise<Map<number, PaidInterval[]>> {
   if (artistIds.length === 0) {
@@ -351,15 +351,16 @@ export async function listPaidIntervalsByArtist(
 export const SUBSCRIBER_PAGE_SIZE = 1_000
 
 export interface ListSubscribersOptions {
-  afterUserId?: number
+  afterUserId?: string
   limit?: number
 }
 
 export async function listActiveSubscriberUserIds(
   artistId: number,
   options: ListSubscribersOptions = {},
-): Promise<number[]> {
-  const { afterUserId = 0, limit = SUBSCRIBER_PAGE_SIZE } = options
+): Promise<string[]> {
+  // text PK 키셋 페이지네이션 — 빈 문자열은 모든 id보다 앞서므로 첫 페이지 커서로 안전하다.
+  const { afterUserId = '', limit = SUBSCRIBER_PAGE_SIZE } = options
 
   const rows = await db
     .select({ userId: subscriptionTable.userId })

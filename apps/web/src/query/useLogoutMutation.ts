@@ -1,20 +1,19 @@
 'use client'
 
-import type { POSTV1AuthLogoutResponse } from '@sobok/contracts'
-
+import { authClient } from '@sobok/auth/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
-import type { ProblemDetailsError } from '@/utils/fetch-response'
 
 export default function useLogoutMutation() {
   const queryClient = useQueryClient()
 
-  return useMutation<POSTV1AuthLogoutResponse, ProblemDetailsError>({
+  return useMutation({
     mutationFn: async () => {
-      const url = '/api/v1/auth/logout'
-      const { data } = await fetchAPIData<POSTV1AuthLogoutResponse>(url, { method: 'POST' })
-      return data
+      const { error } = await authClient.signOut()
+
+      if (error) {
+        throw new Error(error.message)
+      }
     },
     onSuccess: () => {
       queryClient.setQueryData(QueryKeys.me, null)

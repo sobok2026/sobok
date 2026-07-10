@@ -1,34 +1,14 @@
 import { DEFAULT_SEARCH_LANGUAGE, MAX_SEARCH_LANGUAGE_LENGTH } from '@sobok/domain/search/language'
 import { sql } from 'drizzle-orm'
-import {
-  bigint,
-  boolean,
-  check,
-  index,
-  pgTable,
-  primaryKey,
-  smallint,
-  text,
-  timestamp,
-  varchar,
-} from 'drizzle-orm/pg-core'
-import { createdAt } from '../../columns'
+import { boolean, check, index, pgTable, primaryKey, smallint, text, varchar } from 'drizzle-orm/pg-core'
 
-export const userTable = pgTable.withRLS('user', {
-  id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-  loginId: varchar('login_id', { length: 32 }).notNull().unique(),
-  name: varchar({ length: 32 }).notNull().unique(),
-  passwordHash: text('password_hash').notNull(),
-  nickname: varchar({ length: 32 }).notNull(),
-  imageURL: varchar('image_url', { length: 256 }),
-  loginAt: timestamp('login_at', { precision: 3, withTimezone: true }),
-  logoutAt: timestamp('logout_at', { precision: 3, withTimezone: true }),
-  createdAt,
-})
+import { createdAt } from '../../columns'
+// user 테이블은 better-auth가 소유하며 ./auth.ts에 CLI로 생성된다(`bun --filter=@sobok/auth generate`).
+import { user } from './auth'
 
 export const userSettingsTable = pgTable.withRLS('user_settings', {
-  userId: bigint('user_id', { mode: 'number' })
-    .references(() => userTable.id, { onDelete: 'cascade' })
+  userId: text('user_id')
+    .references(() => user.id, { onDelete: 'cascade' })
     .notNull()
     .primaryKey(),
   historySyncEnabled: boolean('history_sync_enabled').notNull().default(true),
@@ -41,21 +21,21 @@ export const userSettingsTable = pgTable.withRLS('user_settings', {
 })
 
 // 탈퇴 파기 outbox — 탈퇴 트랜잭션 안에서 이 행을 남기고, chat-worker가 폴링해 Chat DB
-// (별도 클러스터, FK/cascade 불가)의 메시지·커서를 지운 뒤 행을 제거합니다. userTable로의
+// (별도 클러스터, FK/cascade 불가)의 메시지·커서를 지운 뒤 행을 제거합니다. user로의
 // FK를 걸면 유저 삭제와 함께 cascade로 사라지므로 의도적으로 참조하지 않습니다.
 export const userErasureTable = pgTable.withRLS('user_erasure', {
-  userId: bigint('user_id', { mode: 'number' }).primaryKey(),
+  userId: text('user_id').primaryKey(),
   createdAt,
 })
 
 export const userFollowTable = pgTable.withRLS(
   'user_follow',
   {
-    followerId: bigint('follower_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    followerId: text('follower_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
-    followeeId: bigint('followee_id', { mode: 'number' })
-      .references(() => userTable.id, { onDelete: 'cascade' })
+    followeeId: text('followee_id')
+      .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     createdAt,
   },

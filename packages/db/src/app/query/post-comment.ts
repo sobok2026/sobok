@@ -1,6 +1,6 @@
 import { db } from '@sobok/db/app'
+import { user } from '@sobok/db/app/auth'
 import { postTable } from '@sobok/db/app/post'
-import { userTable } from '@sobok/db/app/user'
 import { desc, eq } from 'drizzle-orm'
 
 export type PostComment = {
@@ -8,10 +8,10 @@ export type PostComment = {
   createdAt: Date
   content: string | null
   author: {
-    id: number
+    id: string
     name: string
-    nickname: string
-    imageURL: string | null
+    username: string | null
+    image: string | null
   } | null
 }
 
@@ -30,20 +30,20 @@ export default async function selectPostComment(
       id: postTable.id,
       createdAt: postTable.createdAt,
       content: postTable.content,
-      authorId: userTable.id,
-      authorName: userTable.name,
-      authorNickname: userTable.nickname,
-      authorImageURL: userTable.imageURL,
+      authorId: user.id,
+      authorName: user.name,
+      authorUsername: user.username,
+      authorImage: user.image,
     })
     .from(postTable)
-    .leftJoin(userTable, eq(postTable.userId, userTable.id))
+    .leftJoin(user, eq(postTable.userId, user.id))
     .where(eq(postTable.parentPostId, parentPostId))
     .orderBy(desc(postTable.createdAt), desc(postTable.id))
     .limit(limit)
 
   return rows
-    .map(({ authorId: id, authorName: name, authorNickname: nickname, authorImageURL: imageURL, ...comment }) => {
-      const author = id !== null && name !== null && nickname !== null ? { id, name, nickname, imageURL } : null
+    .map(({ authorId: id, authorName: name, authorUsername: username, authorImage: image, ...comment }) => {
+      const author = id !== null && name !== null ? { id, name, username, image } : null
 
       return { ...comment, author }
     })

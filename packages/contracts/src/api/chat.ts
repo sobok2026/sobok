@@ -29,7 +29,7 @@ export const chatMessageParamSchema = z.object({
 export const chatArtistReplyParamSchema = z.object({
   handle: z.string().min(1),
   messageId: z.string().min(1).max(MESSAGE_ID_MAX_LENGTH),
-  fanId: z.coerce.number().int().positive(),
+  fanId: z.string().min(1).max(64),
 })
 
 export const postV1ChatMessageBodySchema = z.object({
@@ -95,12 +95,12 @@ export type ChatRelayMessageDTO =
       kind: 'fanReply'
       messageId: string
       contextMessageId: string
-      fanId: number
+      fanId: string
       quotedMessageId?: string
       contentType: ChatContentType
       content: ChatMessageContent
       createdAt: string
-      fan?: { nickname: string; imageURL: string | null }
+      fan?: { name: string; image: string | null }
     }
   | {
       kind: 'artistReply'
@@ -129,9 +129,9 @@ export interface ChatArtistBrief {
 }
 
 export interface ChatUserBrief {
-  id: number
-  nickname: string
-  imageURL: string | null
+  id: string
+  name: string
+  image: string | null
 }
 
 // --- Fan timeline (broadcast feed + 1:1, merged by messageId) ------------------
@@ -449,7 +449,7 @@ export const getV1ChatRepliesQuerySchema = z.object({
 export interface ChatReplyRoomItem {
   messageId: string
   senderRole: ChatSenderRole
-  fanId: number
+  fanId: string
   fan?: ChatUserBrief
   quotedMessageId?: string
   quoted?: ChatQuotedPreview

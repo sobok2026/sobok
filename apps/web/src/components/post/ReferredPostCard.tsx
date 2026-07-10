@@ -39,19 +39,19 @@ export default async function ReferredPostCard({ referredPost }: Props) {
       <div className="grid gap-1 p-3">
         <div className="flex min-w-0 justify-between gap-1">
           <div className="flex min-w-0 gap-1 whitespace-nowrap">
-            <Squircle className="w-6 shrink-0" src={author?.imageURL} textClassName="text-foreground">
-              {author?.nickname.slice(0, 2) ?? t('deletedUserShort')}
+            <Squircle className="w-6 shrink-0" src={author?.image} textClassName="text-foreground">
+              {author?.name.slice(0, 2) ?? t('deletedUserShort')}
             </Squircle>
             <div
               aria-disabled={!author}
               className="min-w-0 max-w-40 overflow-hidden font-semibold aria-disabled:text-foreground-subtle"
             >
-              {author?.nickname ?? t('deletedUser')}
+              {author?.name ?? t('deletedUser')}
             </div>
             <div className="flex min-w-0 items-center gap-1 text-foreground-subtle">
               {author && (
                 <>
-                  <div className="min-w-10 max-w-40 overflow-hidden">@{author.name}</div>
+                  <div className="min-w-10 max-w-40 overflow-hidden">@{author.username}</div>
                   <span>·</span>
                 </>
               )}

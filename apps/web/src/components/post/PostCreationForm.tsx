@@ -97,8 +97,8 @@ export default function PostCreationForm({
 
   return (
     <form className={twMerge('gap-3', className)} onClick={handleClick} onSubmit={handleSubmit}>
-      <Squircle className="w-10 shrink-0" src={me?.imageURL} textClassName="text-foreground">
-        {me?.nickname.slice(0, 2)}
+      <Squircle className="w-10 shrink-0" src={me?.image} textClassName="text-foreground">
+        {me?.name.slice(0, 2)}
       </Squircle>
       <div className="grid items-center gap-3 grow py-1.5">
         {hasFocusedBefore && children}

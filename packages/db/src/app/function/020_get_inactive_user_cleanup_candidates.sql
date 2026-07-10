@@ -2,7 +2,7 @@ create or replace function public.get_inactive_user_cleanup_candidates (
   batch_size integer default 100,
   run_at timestamptz default now()
 ) returns table (
-  user_id bigint,
+  user_id text,
   effective_last_activity_at timestamptz,
   session_valid_until timestamptz,
   effective_auto_deletion_day integer
@@ -18,22 +18,21 @@ set
   left join public.user_settings as settings on settings.user_id = u.id
   left join lateral (
     select
-      max(family.last_used_at) as last_session_used_at,
+      max(s.updated_at) as last_session_used_at,
       max(
         case
-          when family.revoked_at is null
-            and least(family.idle_expires_at, family.absolute_expires_at) > run_at
-            then least(family.idle_expires_at, family.absolute_expires_at)
+          when s.expires_at > run_at
+            then s.expires_at
           else null
         end
       ) as session_valid_until
-    from public.auth_session_family as family
-    where family.user_id = u.id
+    from public.session as s
+    where s.user_id = u.id
   ) as session_activity on true
   left join lateral (
     select
       greatest(
-        coalesce(u.login_at, u.created_at),
+        u.created_at,
         coalesce(session_activity.last_session_used_at, '-infinity'::timestamptz)
       ) as effective_last_activity_at,
       coalesce(settings.auto_deletion_day, 90)::integer as effective_auto_deletion_day

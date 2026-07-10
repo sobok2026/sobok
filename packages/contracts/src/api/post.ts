@@ -12,10 +12,10 @@ export interface Post {
   content: string | null
   type: PostType
   author: {
-    id: number
+    id: string
     name: string
-    nickname: string
-    imageURL: string | null
+    username: string | null
+    image: string | null
   } | null
   mangaId: number | null
   parentPostId: number | null

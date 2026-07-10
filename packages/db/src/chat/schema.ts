@@ -1,4 +1,4 @@
-import { bigint, cockroachTable, index, jsonb, primaryKey, timestamp, varchar } from 'drizzle-orm/cockroach-core'
+import { bigint, cockroachTable, index, jsonb, primaryKey, text, varchar } from 'drizzle-orm/cockroach-core'
 import { createdAt, updatedAt } from './columns'
 
 // Chat store — runs on a dedicated CockroachDB cluster (Postgres-wire). Rows reference
@@ -41,7 +41,7 @@ export const chatDmMessageTable = cockroachTable.withRLS(
   'chat_dm_message',
   {
     artistId: bigint('artist_id', { mode: 'number' }).notNull(),
-    fanId: bigint('fan_id', { mode: 'number' }).notNull(),
+    fanId: text('fan_id').notNull(),
     // 이 1:1 교환이 앵커된 브로드캐스트 말풍선. 팬 답장과 그에 대한 아티스트 답장이 같은 값을 공유.
     contextMessageId: varchar('context_message_id', { length: 26 }).notNull(),
     messageId: varchar('message_id', { length: 26 }).notNull(),
@@ -67,7 +67,7 @@ export const chatDmMessageTable = cockroachTable.withRLS(
 export const chatReadCursorTable = cockroachTable.withRLS(
   'chat_read_cursor',
   {
-    userId: bigint('user_id', { mode: 'number' }).notNull(),
+    userId: text('user_id').notNull(),
     artistId: bigint('artist_id', { mode: 'number' }).notNull(),
     lastReadMessageId: varchar('last_read_message_id', { length: 26 }).notNull(),
     updatedAt,
@@ -79,7 +79,7 @@ export const chatReadCursorTable = cockroachTable.withRLS(
 export const chatReplyReadCursorTable = cockroachTable.withRLS(
   'chat_reply_read_cursor',
   {
-    userId: bigint('user_id', { mode: 'number' }).notNull(),
+    userId: text('user_id').notNull(),
     artistId: bigint('artist_id', { mode: 'number' }).notNull(),
     contextMessageId: varchar('context_message_id', { length: 26 }).notNull(),
     lastReadMessageId: varchar('last_read_message_id', { length: 26 }).notNull(),

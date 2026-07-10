@@ -5,7 +5,6 @@ export enum BroadcastChannelKey {
 }
 
 export enum LocalStorageKey {
-  BBATON_ADULT_VERIFICATION_SIGNAL = 'bbaton-adult-verification-signal',
   CHAT_WEBLLM_SETTINGS = 'chat-webllm-settings',
   RECENT_SEARCHES = 'recent-searches',
   RECENT_SEARCHES_ENABLED = 'recent-searches-enabled',
@@ -24,7 +23,7 @@ export enum SessionStorageKey {
 
 export type UserSettingsBroadcastMessage = {
   settings: UserSettings
-  userId: number
+  userId: string
 }
 
 export const SessionStorageKeyMap = {

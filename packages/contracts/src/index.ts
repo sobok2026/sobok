@@ -1,7 +1,5 @@
 export * from './api/adsterra'
 export * from './api/analytics'
-export * from './api/auth'
-export * from './api/bbaton'
 export * from './api/billing'
 export * from './api/bookmark'
 export * from './api/censorship'

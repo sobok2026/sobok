@@ -73,7 +73,7 @@ describe('selectBookmark', () => {
     const cursorTime = new Date('2025-01-10T00:00:00.000Z')
     nextRows = [{ mangaId: 90, createdAt: new Date('2025-01-09T00:00:00.000Z') }]
 
-    const rows = await selectBookmark(1, {
+    const rows = await selectBookmark('user-1', {
       limit: 3,
       cursor: { mangaId: 42, timestamp: cursorTime.getTime() },
     })
@@ -86,7 +86,7 @@ describe('selectBookmark', () => {
     expect(whereQuery.sql).toContain('"bookmark"."created_at" < $2')
     expect(whereQuery.sql).toContain('"bookmark"."created_at" = $3')
     expect(whereQuery.sql).toContain('"bookmark"."manga_id" < $4')
-    expect(whereQuery.params).toEqual([1, cursorTime.toISOString(), cursorTime.toISOString(), 42])
+    expect(whereQuery.params).toEqual(['user-1', cursorTime.toISOString(), cursorTime.toISOString(), 42])
 
     expect(queryState.orderByClauses).toHaveLength(2)
     expect(dialect.sqlToQuery(queryState.orderByClauses[0]).sql).toContain('"bookmark"."created_at" desc')
@@ -94,18 +94,18 @@ describe('selectBookmark', () => {
   })
 
   test('limit이 없으면 base query를 그대로 실행한다', async () => {
-    const rows = await selectBookmark(1)
+    const rows = await selectBookmark('user-1')
 
     expect(rows).toEqual(nextRows)
     expect(limitMock).not.toHaveBeenCalled()
 
     const whereQuery = dialect.sqlToQuery(queryState.whereClause!)
     expect(whereQuery.sql).toBe('"bookmark"."user_id" = $1')
-    expect(whereQuery.params).toEqual([1])
+    expect(whereQuery.params).toEqual(['user-1'])
   })
 
   test('오래된순 정렬을 요청하면 ascending order를 사용한다', async () => {
-    await selectBookmark(1, { sort: LibraryItemSort.CREATED_ASC })
+    await selectBookmark('user-1', { sort: LibraryItemSort.CREATED_ASC })
 
     expect(queryState.orderByClauses).toHaveLength(2)
     expect(dialect.sqlToQuery(queryState.orderByClauses[0]).sql).toContain('"bookmark"."created_at" asc')
