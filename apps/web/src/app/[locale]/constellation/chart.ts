@@ -19,7 +19,8 @@ export type SignId =
   | 'aquarius'
   | 'pisces'
 
-export type PlanetId =
+/** The ten bodies computed directly from the ephemeris. */
+export type ComputedPlanetId =
   | 'sun'
   | 'moon'
   | 'mercury'
@@ -31,16 +32,21 @@ export type PlanetId =
   | 'neptune'
   | 'pluto'
 
+/** Every point placed on the wheel — the ten bodies plus derived sensitive points. */
+export type PlanetId = ComputedPlanetId | 'northNode' | 'southNode' | 'fortune'
+
 export type AspectType = 'conjunction' | 'trine' | 'square' | 'sextile' | 'opposition'
 
 /** A single body's position on the ecliptic (tropical longitude, 0–360°). */
 export type PlanetPosition = { id: PlanetId; lon: number; retrograde: boolean }
 
-/** A fully computed natal chart. `ascendant`/`midheaven` are null when the birth time is unknown. */
+/** A fully computed natal chart. `ascendant`/`midheaven`/`cusps` are null when the birth time is unknown. */
 export type NatalChart = {
   planets: PlanetPosition[]
   ascendant: number | null
   midheaven: number | null
+  /** 12 Placidus house-cusp longitudes (index 0 = house 1), or null without a birth time. */
+  cusps: number[] | null
 }
 
 /** Zodiac signs in order. Each covers 30° of longitude starting at `index * 30`. */
@@ -107,8 +113,8 @@ export const SIGNS: readonly { id: SignId; glyph: string; element: ElementId }[]
   },
 ]
 
-/** Render order + glyph for each body. */
-export const PLANET_ORDER: readonly PlanetId[] = [
+/** The ten bodies the ephemeris computes directly, in render order. */
+export const PLANET_ORDER: readonly ComputedPlanetId[] = [
   'sun',
   'moon',
   'mercury',
@@ -132,6 +138,9 @@ export const PLANET_GLYPHS: Record<PlanetId, string> = {
   uranus: '♅',
   neptune: '♆',
   pluto: '♇',
+  northNode: '☊',
+  southNode: '☋',
+  fortune: '⊗',
 }
 
 export const ELEMENT_IDS: readonly ElementId[] = ['fire', 'earth', 'air', 'water']
@@ -168,32 +177,15 @@ export const ASPECT_STYLE: Record<AspectType, { color: string; dashed: boolean }
 
 /** Major aspects with their exact angle and orb (max allowed deviation, degrees). */
 const ASPECT_DEFS: readonly { type: AspectType; angle: number; orb: number }[] = [
-  {
-    type: 'conjunction',
-    angle: 0,
-    orb: 8,
-  },
-  {
-    type: 'opposition',
-    angle: 180,
-    orb: 8,
-  },
-  {
-    type: 'trine',
-    angle: 120,
-    orb: 6,
-  },
-  {
-    type: 'square',
-    angle: 90,
-    orb: 6,
-  },
-  {
-    type: 'sextile',
-    angle: 60,
-    orb: 4,
-  },
+  { type: 'conjunction', angle: 0, orb: 8 },
+  { type: 'opposition', angle: 180, orb: 8 },
+  { type: 'trine', angle: 120, orb: 7 },
+  { type: 'square', angle: 90, orb: 7 },
+  { type: 'sextile', angle: 60, orb: 6 },
 ]
+
+/** Points that don't take part in aspects (each node aspects the same things as its axis). */
+const ASPECT_EXCLUDED: ReadonlySet<PlanetId> = new Set(['southNode'])
 
 /**
  * A fixed sample chart, used as the decorative backdrop before the user enters
@@ -254,6 +246,7 @@ export const DEFAULT_CHART: NatalChart = {
   ],
   ascendant: 96,
   midheaven: 6,
+  cusps: null,
 }
 
 // ── Derivations ────────────────────────────────────────────────────────────
@@ -262,14 +255,43 @@ export function signOfLon(lon: number): SignId {
   return SIGNS[Math.floor((((lon % 360) + 360) % 360) / 30)].id
 }
 
-export function degreeInSign(lon: number): number {
-  return Math.floor(((lon % 30) + 30) % 30)
+/** Whole degrees and arcminutes within the sign, e.g. 21°57′. */
+export function degreeMinuteInSign(lon: number): { degree: number; minute: number } {
+  const within = ((lon % 30) + 30) % 30
+  let degree = Math.floor(within)
+  let minute = Math.round((within - degree) * 60)
+
+  if (minute === 60) {
+    minute = 0
+    degree += 1
+  }
+
+  return { degree, minute }
 }
 
-/** Equal-house system anchored to the ascendant → house number 1–12. */
-export function houseOfLon(lon: number, ascendant: number): number {
-  const offset = (((lon - ascendant) % 360) + 360) % 360
-  return Math.floor(offset / 30) + 1
+/** House number 1–12 — Placidus when cusps are given, else equal from the ascendant. */
+export function houseOfLon(lon: number, cusps: number[] | null, ascendant: number | null): number | null {
+  if (cusps) {
+    const l = ((lon % 360) + 360) % 360
+
+    for (let h = 0; h < 12; h++) {
+      const start = cusps[h]
+      const span = (((cusps[(h + 1) % 12] - start) % 360) + 360) % 360
+      const offset = (((l - start) % 360) + 360) % 360
+
+      if (offset < span) {
+        return h + 1
+      }
+    }
+
+    return 12
+  }
+
+  if (ascendant === null) {
+    return null
+  }
+
+  return Math.floor(((((lon - ascendant) % 360) + 360) % 360) / 30) + 1
 }
 
 export function elementOfSign(id: SignId): ElementId {
@@ -279,7 +301,9 @@ export function elementOfSign(id: SignId): ElementId {
 /** Count how many bodies fall in each element. */
 export function elementCounts(planets: readonly PlanetPosition[]): Record<ElementId, number> {
   const counts: Record<ElementId, number> = { fire: 0, earth: 0, air: 0, water: 0 }
-  for (const p of planets) counts[elementOfSign(signOfLon(p.lon))] += 1
+  for (const p of planets) {
+    counts[elementOfSign(signOfLon(p.lon))] += 1
+  }
   return counts
 }
 
@@ -288,13 +312,16 @@ export function angularGap(a: number, b: number): number {
   return diff > 180 ? 360 - diff : diff
 }
 
-/** Derive the major aspects present between the bodies (closest aspect per pair, within orb). */
-export function computeAspects(planets: readonly PlanetPosition[]): { a: PlanetId; b: PlanetId; type: AspectType }[] {
-  const result: { a: PlanetId; b: PlanetId; type: AspectType }[] = []
+export type ChartAspect = { a: PlanetId; b: PlanetId; type: AspectType; orb: number }
 
-  for (let i = 0; i < planets.length; i++) {
-    for (let j = i + 1; j < planets.length; j++) {
-      const sep = angularGap(planets[i].lon, planets[j].lon)
+/** Derive the major aspects present between the bodies (closest aspect per pair, within orb). */
+export function computeAspects(planets: readonly PlanetPosition[]): ChartAspect[] {
+  const bodies = planets.filter((p) => !ASPECT_EXCLUDED.has(p.id))
+  const result: ChartAspect[] = []
+
+  for (let i = 0; i < bodies.length; i++) {
+    for (let j = i + 1; j < bodies.length; j++) {
+      const sep = angularGap(bodies[i].lon, bodies[j].lon)
       let best: { type: AspectType; delta: number } | null = null
 
       for (const def of ASPECT_DEFS) {
@@ -305,7 +332,7 @@ export function computeAspects(planets: readonly PlanetPosition[]): { a: PlanetI
       }
 
       if (best) {
-        result.push({ a: planets[i].id, b: planets[j].id, type: best.type })
+        result.push({ a: bodies[i].id, b: bodies[j].id, type: best.type, orb: Math.round(best.delta * 10) / 10 })
       }
     }
   }

@@ -1,6 +1,7 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import type { PublicLocale } from '@sobok/domain/locale'
+import { useLocale, useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -9,9 +10,10 @@ import {
   ASPECT_STYLE,
   type AspectType,
   annularSector,
+  type ChartAspect,
   computeAspects,
   DEFAULT_CHART,
-  degreeInSign,
+  degreeMinuteInSign,
   ELEMENT_COLORS,
   ELEMENT_IDS,
   elementCounts,
@@ -30,6 +32,7 @@ import {
 } from './chart'
 import styles from './constellation.module.css'
 import { computeChart } from './ephemeris'
+import { planetSignReading } from './interpretations'
 import Starfield from './Starfield'
 
 // Animation timing (seconds).
@@ -42,10 +45,10 @@ const TENSION_TYPES: readonly AspectType[] = ['square', 'opposition']
 
 type Selection =
   | { kind: 'planet' | 'sign'; id: string }
-  | { kind: 'aspect'; a: string; b: string; aspectType: AspectType }
+  | { kind: 'aspect'; a: string; b: string; aspectType: AspectType; orb: number }
   | null
 type Point = { x: number; y: number }
-type Aspect = { a: string; b: string; type: AspectType }
+type Aspect = ChartAspect
 
 const glyphText = (glyph: string) => `${glyph}︎`
 
@@ -59,7 +62,7 @@ export default function Constellation() {
 
   const revealed = chart !== null
   const activeChart = chart ?? DEFAULT_CHART
-  const { ascendant, midheaven } = activeChart
+  const { ascendant, cusps, midheaven } = activeChart
   const anchor = ascendant ?? 0
 
   const placed = placePlanets(activeChart.planets, anchor)
@@ -177,6 +180,7 @@ export default function Constellation() {
       a: asp.a,
       b: asp.b,
       aspectType: asp.type,
+      orb: asp.orb,
     })
 
     scrollToWheel()
@@ -189,14 +193,14 @@ export default function Constellation() {
     >
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-md flex-col items-center">
+      <div className="relative z-10 mx-auto flex w-full max-w-lg flex-col items-center">
         {/* Hero */}
         <header className="mb-6 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#c9a8ff]">{t('hero.eyebrow')}</p>
           <h1 className="mt-2 bg-linear-to-r from-[#7cc4ff] via-brand to-[#ffd66b] bg-clip-text text-3xl font-extrabold text-transparent">
             {t('hero.title')}
           </h1>
-          <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-slate-300/90 break-keep">
+          <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-slate-300/90 break-keep">
             {t('hero.subtitle')}
           </p>
         </header>
@@ -252,7 +256,9 @@ export default function Constellation() {
           >
             <Rings />
             <Sectors ascendant={anchor} onSelect={toggleSign} selection={selection} t={t} />
-            {revealed && ascendant !== null && <Houses ascendant={ascendant} midheaven={midheaven} t={t} />}
+            {revealed && ascendant !== null && cusps && (
+              <Houses ascendant={ascendant} cusps={cusps} midheaven={midheaven} t={t} />
+            )}
             {revealed && (
               <>
                 <Aspects aspects={aspects} isDimmed={aspectDimmed} pointById={pointById} />
@@ -399,8 +405,17 @@ function Sectors({
   )
 }
 
-function Houses({ ascendant, midheaven, t }: { ascendant: number; midheaven: number | null; t: T }) {
-  const cusps = Array.from({ length: 12 }, (_, k) => ascendant + k * 30)
+function Houses({
+  ascendant,
+  cusps,
+  midheaven,
+  t,
+}: {
+  ascendant: number
+  cusps: number[]
+  midheaven: number | null
+  t: T
+}) {
   const angles = [{ lon: ascendant, label: 'ASC' }]
 
   if (midheaven !== null) {
@@ -412,10 +427,11 @@ function Houses({ ascendant, midheaven, t }: { ascendant: number; midheaven: num
       {cusps.map((lon, k) => {
         const inner = polar(lon, RADIUS.aspect, ascendant)
         const outer = polar(lon, RADIUS.houseOuter, ascendant)
-        const isAngle = k === 0 || k === 9 // ASC axis / MC axis
-        const labelPos = polar(lon + 15, RADIUS.houseLabel, ascendant)
+        const isAngle = k === 0 || k === 3 || k === 6 || k === 9 // ASC / IC / DSC / MC axes
+        const span = ((((cusps[(k + 1) % 12] - lon) % 360) + 360) % 360) / 2
+        const labelPos = polar(lon + span, RADIUS.houseLabel, ascendant)
         return (
-          <g key={lon}>
+          <g key={k}>
             <line
               stroke={isAngle ? 'rgba(245,188,255,0.5)' : 'rgba(255,255,255,0.1)'}
               strokeWidth={isAngle ? 1.2 : 0.6}
@@ -669,7 +685,7 @@ function CloseButton({ label, onClose }: { label: string; onClose: () => void })
   return (
     <button
       aria-label={label}
-      className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full text-sm text-slate-400 transition hover:bg-white/10 hover:text-slate-100"
+      className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-sm text-slate-400 transition hover:bg-white/10 hover:text-slate-100"
       onClick={onClose}
       type="button"
     >
@@ -692,6 +708,7 @@ function DetailPanel({
   t: T
 }) {
   const [showDetail, setShowDetail] = useState(false)
+  const locale = useLocale() as PublicLocale
 
   if (!selection) {
     return (
@@ -744,7 +761,9 @@ function DetailPanel({
             </p>
             <span className="text-xs font-medium" style={{ color }}>
               {t(`aspects.${selection.aspectType}Vibe`)}{' '}
-              <span className="text-slate-500">· {t(`aspects.${selection.aspectType}Name`)}</span>
+              <span className="text-slate-500">
+                · {t(`aspects.${selection.aspectType}Name`)} · {t('aspects.orbLabel')} {selection.orb}°
+              </span>
             </span>
           </div>
         </div>
@@ -764,8 +783,10 @@ function DetailPanel({
   const sign = signOfLon(planet.lon)
   const element = elementOfSign(sign)
   const color = ELEMENT_COLORS[element]
-  const deg = degreeInSign(planet.lon)
-  const house = ascendant !== null ? houseOfLon(planet.lon, ascendant) : null
+  const dm = degreeMinuteInSign(planet.lon)
+  const house = houseOfLon(planet.lon, chart.cusps, ascendant)
+
+  const reading = planetSignReading(locale, planet.id, sign)
 
   return (
     <div
@@ -794,7 +815,7 @@ function DetailPanel({
           </p>
         </div>
       </div>
-      <p className="mt-3 text-sm leading-relaxed text-slate-200 break-keep">{t(`readings.${planet.id}`)}</p>
+      <p className="mt-3 text-sm leading-relaxed text-slate-200 break-keep">{reading}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         <Chip color={color} label={`${t('panel.elementLabel')}: ${t(`elements.${element}`)}`} />
         <Chip color="#c9a8ff" label={`${t('panel.keywordLabel')}: ${t(`signKeywords.${sign}`)}`} />
@@ -809,7 +830,8 @@ function DetailPanel({
       {showDetail && (
         <div className="mt-2 rounded-xl bg-white/3 px-3 py-2.5">
           <p className="text-xs font-medium text-slate-200">
-            {t(`signs.${sign}`)} {deg}°{house !== null && <> · {t('panel.house', { n: house })}</>} ·{' '}
+            {t(`signs.${sign}`)} {dm.degree}°{String(dm.minute).padStart(2, '0')}′
+            {house !== null && <> · {t('panel.house', { n: house })}</>} ·{' '}
             {planet.retrograde ? t('panel.retrograde') : t('panel.direct')}
           </p>
           <p className="mt-1 text-[11px] leading-relaxed text-slate-500 break-keep">{t('panel.detailHint')}</p>
@@ -972,7 +994,9 @@ function AspectGroup({
                   </span>
                   <span className="block text-[11px]" style={{ color }}>
                     {t(`aspects.${asp.type}Vibe`)}{' '}
-                    <span className="text-slate-500">· {t(`aspects.${asp.type}Name`)}</span>
+                    <span className="text-slate-500">
+                      · {t(`aspects.${asp.type}Name`)} · {t('aspects.orbLabel')} {asp.orb}°
+                    </span>
                   </span>
                 </span>
               </button>
