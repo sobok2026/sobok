@@ -7,6 +7,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 import { Toaster } from 'sonner'
 
+import { ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getMessages } from '@/i18n/messages'
 import { getLocaleFromParams } from '@/i18n/server'
 
@@ -38,14 +39,15 @@ export function generateStaticParams() {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://stella.sobok.cc'),
+  metadataBase: new URL(ORIGIN),
+  applicationName: SITE_NAME,
 }
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#0a0618',
+  themeColor: THEME_COLOR,
 }
 
 export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {

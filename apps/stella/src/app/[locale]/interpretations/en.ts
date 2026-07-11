@@ -542,229 +542,399 @@ export const aspects: AspectPairReadings = {
       "Inside you, will and emotion sit at opposite poles, riding a seesaw. You swing between the you that wants and the you that feels, tipping one way then lurching back the other. Strangely, that tension often shows up mirrored in the people around you, so you meet both sides of yourself through your relationships. Just don't hand one pole to someone else and lose yourself; pull both extremes in as your own. When you find the balance point between them, you become someone wide and remarkably mature.",
   },
   'sun-mercury': {
-    conjunction: 'Your thoughts are your very self. Words and identity are one, so your expression rings true.',
-    flow: 'You know how to explain yourself clearly. Thought and presence connect with ease.',
-    friction:
-      'A gap opens between your ideas and who you really are. It helps to keep words from running ahead of you.',
+    conjunction:
+      'In you, the thoughts in your head are simply who you are. Whatever you say is fused with your identity, so your words always carry real conviction — when you explain something, people take it as you. Just know that when mind and self are this tight, criticism can feel like a personal attack; set your opinions a little apart from you. That single voice of thought and being is what gives your words their weight anywhere.',
+    flow: "You put your own thinking into clear words without even trying. Mind and presence connect so smoothly that a tangled thought comes out easy to follow once it passes through you — people leave your conversations with their heads a little clearer. Just know that when words come this easily, it's tempting to skip going deeper; push one layer further now and then. That gift for making yourself plain is why people keep turning to you to think things through.",
+    square:
+      "Inside you, a strange gap opens between your thoughts and the real you. Sometimes words race out ahead of your heart; other times you swallow what you meant to say and second-guess yourself. It can feel frustrating, but that tension is exactly what makes you weigh and sharpen your words — like almost no one else. Just don't let the self-editing win; say it before it's perfect. Forged in that inner friction, your language only grows more exact with time.",
+    opposition:
+      "Inside you, the self that says 'this is who I am' and the mind that counters 'actually, it's this' keep landing on opposite sides. You feel certain, then logic shakes you — reason it through and your conviction quietly thins. Oddly, that tug-of-war tends to show up through the talkative or contrary people around you, so you meet your own two minds through them. Just don't outsource the thinking; hold both certainty and logic as your own voice. When you learn to move between being and thinking, your conclusions turn wide and unshakable.",
   },
   'sun-venus': {
-    conjunction: 'Charm and identity are one. What you love says who you are.',
-    flow: 'You come across as lovable to others. Taste and confidence blend softly.',
-    friction:
-      'The wish to be loved rubs against being true to yourself. You learn to keep yourself rather than only please.',
+    conjunction:
+      "What you love and what you find beautiful is simply who you are. Your taste and charm are fused with your identity, so the things you choose speak for you. People feel it the moment they're near you — an ease, a warmth, something quietly lovable. Just know that when the loved-you and the real-you overlap too much, you can get swayed by others' approval; keep the center of what you love in yourself. Because loving is so natural to you, your charm shows without any effort to perform.",
+    flow: "You have a natural gift for coming across as easy to love. Taste and confidence blend so softly that people relax around you without deciding to. Thanks to that gentle magnetism, beauty and good company tend to gather wherever you are. Just know that when things flow this smoothly, you can smooth over friction instead of facing it — say the uncomfortable thing now and then. That effortless pull is why you're welcomed almost anywhere you go.",
+    square:
+      "Inside you, the wish to be loved and the need to stay true to yourself keep pulling apart. Bend to please someone and your own taste and lines quietly slip to the back, and the resentment builds. It can feel draining, but it's exactly how you learn to tell real love from mere approval-seeking. Just don't always fold yourself away — hold your share of the line even in love. The more you learn to stay yourself while you draw close, the sturdier and longer your love lasts.",
+    opposition:
+      "Inside you, wanting to be fully yourself and wanting to fit the other person ride a seesaw. You'll long to shine alone, then gladly bend for love — then ache for your own space again. That swing often shows up as an attraction to people who are your opposite, so you meet your other side through the relationship. Just don't leave all the loveliness to your partner and forget your own; find that glow in yourself too. When you find the balance between me and you, your love turns mature and deep.",
   },
   'sun-mars': {
-    conjunction: 'Will and drive burst out as one. When you want something, you push straight for it.',
-    flow: 'Courage and confidence flow naturally. Challenge itself becomes your energy.',
-    friction: 'Desire and force keep overheating. The more you master the rush, the stronger you grow.',
+    conjunction:
+      "In you, wanting something and moving toward it explode as a single act. The moment the thought lands, your feet are already going, and it's hard for you to stay still. That instant drive means you're a step ahead while others are still weighing it up. Just know that when the fire catches this fast, you can leap before you look — hold one breath and check the direction. Because wanting turns straight into doing, you're always the one who begins.",
+    flow: "You're someone who comes alive in the face of a challenge. Courage and confidence flow so naturally that pressure fires you up instead of scaring you off — and that spirited energy is catching, so people around you start feeling they could go for it too. Just know that when everything comes easily, you may never grit your teeth; set your own limits and cross them now and then. With body and heart aimed the same way, you push toward what you want without a flinch.",
+    square:
+      "Inside you, what you want and the force you push it with keep overheating. In the rush of a flare-up you hurry, and things that would've worked turn rough, or you burn yourself out. That impatience can look like the problem, but that hot pressure is exactly the engine that keeps driving you on. Just don't run at full throttle all the time — decide for yourself when to press and when to stop. The more you channel that heat as drive rather than haste, the less anything can stand in your way.",
+    opposition:
+      "Inside you, the urge to push your own way and the wish to avoid a clash pull taut at opposite poles. You'll want to lead, then back off from conflict — and the held-down feeling erupts somewhere it shouldn't. That tension tends to show up through the people who go head-to-head with you, so you meet your own aggression through them. Just don't keep loading your force onto others; pull both the anger and the will back as your own. When you can face conflict instead of dodging it, your strength turns clean and solid.",
   },
   'sun-jupiter': {
-    conjunction: 'Confidence and optimism are one. You dream big and move wide.',
-    flow: 'Opportunity follows you naturally. Positivity is the force that draws luck in.',
-    friction: 'Confidence can spill into overreach. Aim it in one direction and it grows.',
+    conjunction:
+      "In you, believing in yourself and seeing the world large fuse into one. You're always sketching a slightly bigger picture and reaching wider, and that boldness pulls people and chances your way. There's a lucky air about you that makes others feel it'll all work out. Just know that confidence can inflate, so you sometimes see a thing as bigger than it is — check the ground as much as the dream. Because you believe big and open big, new doors keep opening in front of you.",
+    flow: "You're someone whose optimism actually calls luck in. That belief that it'll work out flows so naturally that chances come toward you without your chasing. Warm and generous, your presence leaves people feeling lighter — just for being near it. Just know that when the current runs this kind, you may never root down deep; back the good luck with real skill too. Because you stay this open to the world, the possibilities in front of you rarely close.",
+    square:
+      "Inside you, the urge to stretch big and the size of what's actually real keep missing each other. When you're excited, plans balloon or you scatter into too many at once and can't keep up. That overreach can look like trouble, but that big energy is exactly what builds a bigger table than others dare. Just don't get drunk on scale and lose the substance — pick the real one out of all you've started and go deep. Add direction to that overflow and the big vision ripens into a real harvest.",
+    opposition:
+      "Inside you, the wish to settle where you are and the pull to reach further ride a seesaw. 'This is enough,' you'll think — then a restlessness for a wider world sends you itching to move. That craving often shows up through the people and openings that draw you outward, so your horizon widens through what you meet. Just don't always look for growth outside yourself; set your reasons to reach from within too. When you find your own rhythm between settling and expanding, your world keeps getting wider.",
   },
   'sun-saturn': {
-    conjunction: 'Self and responsibility fuse into one. It weighs on you, but it makes you solid and lasting.',
-    flow: 'Effort and patience turn naturally into results. Steadiness comes back to you as trust.',
-    friction: 'The self that wants freedom is pressed by duty. Enduring that weight is how you truly grow up.',
+    conjunction:
+      "In you, your very self and a sense of responsibility are fused tight. You carry weight on your shoulders as if you have since childhood, earnest and careful, not easily shaken. That weight can be heavy, but over time it comes back as a solidity no one can rattle. Just know that you can be so hard on yourself that you chew on small mistakes too long — go a little easier on you. Because you've carried it and held, you only grow deeper and more trustworthy with age.",
+    flow: "You're someone whose steadiness is your real skill. Effort and patience turn naturally into results, so you don't rush — you get back exactly what you put in. That reliability comes home to you as trust, and everything you achieve carries real weight. Just know that a safe road is comfortable, so you may never gamble; take a chance beyond the calculation now and then. Because you build honestly, one step at a time, what you achieve rarely falls apart.",
+    square:
+      "Inside you, the self that wants to be free and the duty that says you must deliver keep pressing on each other. Put off what you want and shoulder the responsibility first, and a self-tightening pressure builds. That weight feels heavy, but that endurance is exactly what tempers you into a real adult. Just don't only push yourself — give yourself some credit for what you've already done. The more you harden layer by layer under the weight, the steadier your core in any situation.",
+    opposition:
+      "Inside you, the urge to show yourself and the urge to press yourself down into the rules ride a seesaw. You'll long to shine — then self-editing catches your ankle and you step back. That tension often shows up through an authority who tests you or a stern figure, so you meet your own inner judge through them. Just don't seek the approval only outside; set a voice inside you that grants it too. When you steady your own center between freedom and restraint, you stand as an adult who leans on no one.",
   },
   'sun-uranus': {
-    conjunction: 'Being different is your identity. You are most yourself when nothing boxes you in.',
-    flow: 'Individuality and freedom shine naturally. New attempts suit you well.',
-    friction: 'You waver between wanting to stand out and craving stability. That tension breeds innovation.',
+    conjunction:
+      "In you, being different is simply who you are. You're most yourself when nothing boxes you in, so that individuality stands out naturally wherever you go. You come alive on the path you cut yourself, not the one laid down for you. Just know that the need to be different can get ahead of you, so you sometimes break away just to break away — let difference be the result of being you, not the goal. The more you step outside the frame, the more irreplaceable you become.",
+    flow: "Far from fearing change, you welcome it. Individuality and freedom shine in you so naturally that new attempts suit you unusually well. Because you're not tied to old ways, you get excited right where others feel stuck. Just know that the new is always fun, so you can drop the familiar too easily — keep what's worth keeping close. Because you turn change straight into opportunity, you never go stale in any current.",
+    square:
+      "Inside you, the urge to stand out and the urge to hold onto stability keep colliding. You'll suddenly want to overturn it all, then circle in place, afraid of the wobble. That back-and-forth frustrates even you, but that tension is exactly the spark that breeds the innovation others can't. Just don't get swept along by every impulse — sort for yourself what to change and what to keep. The more you find your own way between stability and change, the more that individuality ripens into real power.",
+    opposition:
+      "Inside you, wanting to stand out as yourself and wanting to blend into the group ride a seesaw. You'll crave full freedom — then feel lonely on the edges and slip back inside the frame. That tension often shows up through a sudden, disruptive person or event, so you meet your own rebel through them. Just don't wait for freedom to detonate from outside and let your life get jerked around; design your own freedom instead. When you balance belonging and independence, you become someone who answers to no one's glance.",
   },
   'sun-neptune': {
-    conjunction: 'Your self is tinted with dream and feeling. Artistic, but take care not to lose yourself.',
-    flow: 'Imagination and self connect softly. You picture ideals with ease.',
-    friction: 'Sometimes who you are blurs. You steady your center by keeping your feet on the ground.',
+    conjunction:
+      "In you, the self is softly tinted with dream and feeling. You carry an artist's soul, sensing and picturing the world in finer, gentler grain than most. That sensitivity leaves a dreamy, warm air wherever you are. Just know that you can sink so far into the ideal that who you are goes blurry — always keep one foot on the ground. With that imagination that tints the world beautiful, you breathe warmth even into dry places.",
+    flow: "You're someone who naturally paints an inner ideal right in front of you. Imagination and your own sense connect softly, so you carry a gift for spotting beauty and shaping it. Thanks to that warm sensitivity, people find comfort and inspiration near you. Just know that letting things drift is easy, so you can miss the knot that ties a dream to reality — bring what surfaces down into something you can hold. As long as that imagination flows, your presence stays full of a warm, lovely light.",
+    square:
+      "Inside you, the wish to stand as a clear self and the wish to melt into the ideal keep missing each other. When reality gets heavy, you retreat into a dream, who you are goes hazy, and a listlessness sets in. That fog feels frustrating, but that keen sensitivity is exactly what reads the grain others can't see. Just don't keep putting reality off until even the dream loses its power — drop one anchor of the real into your ideal. The more you learn to hold a dream with your feet on the ground, that sensitivity blooms into real talent.",
+    opposition:
+      "Inside you, the urge to keep yourself intact and the urge to give everything away ride a seesaw. You'll want to stand firm — then dissolve endlessly into someone and forget yourself. That swing often shows up through a person you want to save or an ideal figure, so you meet your own edges through the bond. Just don't keep pouring yourself out until the self you meant to keep is gone; draw a soft line between devotion and you. When you find the balance between melting and holding, your love deepens without losing you.",
   },
   'sun-pluto': {
-    conjunction: 'An intense presence is simply you. Every crisis reinvents you anew.',
-    flow: 'Deep will turns naturally into power. You do not fear change.',
-    friction: 'The urge to control clashes with the self. You grow stronger when you let power go.',
+    conjunction:
+      "In you runs an intense presence that no room can erase. You look calm on the surface, but a force strong enough to overturn everything is packed underneath, so every crisis reinvents you. That's why even when you fall, you rise again in a deeper form than before. Just know that gripping all that power and refusing to let go can wring you dry — learn to let the finished things flow away. With that power to be reborn from the rubble, you come back stronger, again and again.",
+    flow: "You're someone whose deep will turns naturally into strength. You don't fear change, so where others sink under a trial, you only harden. That heavy grit means that once you set your mind, what you decide carries a weight that's hard to reverse. Just know that the urge to control it all can quietly grow — let go of what you can leave to the current. As long as that power to rise stronger keeps flowing, no collapse holds you for long.",
+    square:
+      "Inside you, the urge to hold everything in your grip and the plain, actual you run a fierce tension. When things don't go your way, you clench harder and end up driving and draining yourself. That intensity can feel like too much, but it's exactly the force that lifts you back up from rock bottom. Just don't try to crush it all by force and lose yourself — practice opening the fist you've clenched. When you learn to set down what you're holding, you turn out bigger and sturdier instead.",
+    opposition:
+      "Inside you, standing tall on your own and clashing against another's power pull taut at opposite poles. You'll want to be strong alone, then pour everything into not losing to a forceful rival — and the war of attrition wears you down. That tension shows up through the people who go power-to-power with you, so you meet your own need for control through them. Just don't spend your force only on contest, or both you and the bond wear thin; turn that intensity toward building together too. When you learn to hold the balance of power, no one shakes you easily.",
   },
   'moon-mercury': {
-    conjunction: 'Feeling and thought are one. You put your heart into words with ease.',
-    flow: 'Emotion and reason connect well. You express feelings honestly and comfortably.',
-    friction: 'Head and heart keep pulling apart. Sorting them out keeps you from being swept away.',
+    conjunction:
+      'In you, what you feel and what you think are stitched together as one. The moment your heart moves, the words to describe it are already there — your emotions always come with a clear language. So instead of swallowing an upset, you talk it through and steady yourself. Just know that when feeling and analysis are this fused, you can rush to dissect a mood instead of feeling it; let yourself just feel sometimes. That knack for putting the heart into words lets you hand anyone your inner world, gently.',
+    flow: 'In you, head and heart clasp hands with ease. Emotion and reason connect so smoothly that even a heavy, delicate subject comes out softly when you speak it. Thanks to that honest, warm way of talking, people set their guard down around you without noticing. Just know that when everything talks itself out this easily, you can skim past the deepest feelings — go one layer further and say it. With feeling and thought running side by side, you become the person others can speak their minds to.',
+    square:
+      "Inside you, what your head knows and what your heart feels keep missing each other. Reason says it's fine while the feeling won't follow; other times your heart's decided and your mind keeps filing objections. It leaves you tangled, but that tension is exactly what keeps you from being ruled by either logic or mood. Just don't smother the feeling with your head — name it first, then sort it out. The more you learn to hold head and heart together, the sturdier and warmer your words become.",
+    opposition:
+      "Inside you, the urge to react from feeling and the urge to weigh it coldly ride a seesaw. You'll move with your heart, then swing too far into reason — then the feeling floods back in. That back-and-forth often shows up through people who are all logic or all emotion, so you meet your own split through them. Just don't hand either role to someone else and lose your balance; hold both feeling and reason within you. When you steady your center between heart and head, your judgment stays warm and unshakable.",
   },
   'moon-venus': {
-    conjunction: 'Tenderness and affection are one. You cherish warmly and express love sweetly.',
-    flow: 'Heart and love flow softly. You feel at ease in relationships.',
-    friction: 'The wish to be loved trembles sensitively. Filling yourself first brings ease.',
+    conjunction:
+      "In you, caring for someone and loving them are one and the same. The tenderness inside spills straight into warm gestures, so a soft, cozy air always hangs around you. That gift for putting people at ease and spotting the beautiful leaves warmth in every bond. Just know that your tenderness can run ahead, and you tire from minding everyone's mood before your own — spend that care on yourself too. With warmth and love flowing as one, you become the place people want to rest.",
+    flow: "You're someone who makes a natural, easy warmth in any relationship. Heart and love flow so softly that whoever's with you lets go of their tension and leans in. Tender yet unfussy, your affection keeps a quiet warmth in your bonds. Just know that when things stay this comfortable, you can wave off hurt instead of naming it — say what's nagging you, gently. Because you give and take love so easily, the people beside you tend to stay a long time.",
+    square:
+      "Inside you, the wish to be loved trembles unusually easily. Your heart lurches at the smallest reaction from someone, and even when you're plenty loved, a sudden unease seeps in. That sensitivity wears you out, but it's the same fineness that reads the temperature of a bond so well. Just don't keep checking for love only from the outside, or the hunger never eases — hand some of that affection to yourself. The more you learn to fill yourself before others, the calmer and steadier your heart.",
+    opposition:
+      "Inside you, the wish to give love and the wish to receive it ride a seesaw. You'll give without holding back, then ache that you don't get as much back — then feel guilty and give again. That rise and fall often shows up through people who only take or only give, so you learn the balance of affection through the bond. Just don't lean the filling only on your partner; keep a share of caring for yourself in hand. When you find the balance between giving and receiving, your bonds turn far easier and deeper.",
   },
   'moon-mars': {
-    conjunction: 'Emotion is action itself. When your heart moves, you react with heat.',
-    flow: 'Feeling and courage connect naturally. You express what you want honestly.',
-    friction: 'Emotion can flare up hot. Master that heat and it becomes drive.',
+    conjunction:
+      'In you, feeling and doing are one and the same. The instant your heart moves, your body answers, so your emotions always run hot and alive. Your likes and dislikes are clear and you go straight for what you want — refreshingly direct to be around. Just know that when feeling turns straight into action, a flash of temper can send your words and body out ahead of you; take one beat when the heat rises. With heart and action blazing as one, you stay more honest about your feelings than almost anyone.',
+    flow: "You're someone who names what you want out loud, plainly and bravely. Feeling and courage connect so naturally that you show what you like and what you don't without fuss — plainly, all of it. Thanks to that honesty, people relax around you, free of guessing games. Just know that firing feelings off comes so easily that you can miss the other person's pace — check in on their heart too, now and then. With heart and action running side by side, you stand as someone at peace with their own feelings.",
+    square:
+      "Inside you, feeling flares up hot and fast, again and again. Hurt or anger floods your body in a second, and words or moves you'll regret later leap out. That heat can feel like too much, but it's the very source of a drive nothing can block. Just don't let it all detonate on the spot, or the bond gets scorched — step away and catch your breath when it rises. The more you learn to steer that fire, your feeling stops burning others and starts pushing you forward.",
+    opposition:
+      "Inside you, the urge to blow up on the spot and the urge to clamp it down ride a seesaw. Angry but wanting to be the good one, you swallow it — and the pressed-down feeling explodes at the wrong moment. That tension often shows up through the people who keep provoking you, so you meet your own anger through them. Just don't only bottle it or blame the other side, or you lose yourself; take anger as an honest signal too. When you learn to choose when to speak and when to hold, your feeling becomes what protects you.",
   },
   'moon-jupiter': {
-    conjunction: 'Your heart is wide and warm. You are happiest when you give.',
-    flow: 'Emotion flows generously. Optimism draws people to you.',
-    friction: 'Feelings can swell too big. Adjust their scale and you find ease.',
+    conjunction:
+      "In you, feeling and generosity flow as one. Your heart is big and warm, so you're happiest when you give, and that warmth heats the room around you. There's something about you that puts people at ease, so they laugh easily by your side. Just know that feelings can swell too big — the mood runs ahead, or the caring spills into overstepping; give freely, but leave the other person their share. With that wide, warm heart, warmth and laughter tend to gather wherever you are.",
+    flow: "You're someone whose feelings run generous and bright. A natural optimism draws people in, so warmth and laughter tend to linger by your side. That ease, the way you don't hold much against anyone, lets people breathe lighter near you. Just know that always brushing it off brightly can leave your own shadows unchecked — look in on the feelings that sink, now and then. With that bright, generous heart flowing, your presence is a place people can finally exhale.",
+    square:
+      "Inside you, feelings swell bigger than what's actually there. High times send you soaring and hard times drop you just as deep, so your emotional range runs unusually wide. That swing wears even you out, but it's the same fullness with which you feel the world, hot and rich. Just don't ride a puffed-up mood straight off the edge, where judgment blurs — settle a beat when you're most lifted. The more you learn to set the scale of your own feelings, the longer and softer that warmth lasts.",
+    opposition:
+      "Inside you, the urge to embrace generously and the urge to weigh it coldly ride a seesaw. You'll give without limit and trust big — then shrink, wondering if you poured out too much. That rise and fall often shows up through people who are all lavish or all stingy, so you meet your own measure through them. Just don't set the size of your giving only by others; set the standard from within too. When you find the balance between generosity and a sense of reality, your warmth shines all the steadier.",
   },
   'moon-saturn': {
-    conjunction: 'You press your feelings firmly inward. You may seem blunt, but inside you run deep and earnest.',
-    flow: 'You know how to steady your emotions calmly. You show love through reliability.',
-    friction:
-      'Opening your heart is hard, and loneliness can creep in. You soothe yourself and lower the wall bit by bit.',
+    conjunction:
+      "In you, feeling and restraint are fused tight. You don't let your inner world show easily, so you can seem blunt — while inside runs a depth and seriousness few match. That's why the heart you once give doesn't change lightly; you mean to see it through. Just know that pressing feelings only inward can leave you lonely; lower the wall a little for the people you trust. With that heart that holds on with real weight, your affection reads as more precious the longer it's known.",
+    flow: "You're someone who knows how to steady their emotions calmly. You don't spike or crumble — you hold your heart in place, so there's a solid safety about you. Thanks to that unshakable quality, your side becomes a place people can lean without worry. Just know that always being the strong one can push your own hard feelings to the back; let yourself lean on someone too, sometimes. With that quiet strength that guards love, your side stays a shelter that rarely shakes.",
+    square:
+      "Inside you, the wish to be loved and the wish to shut the door before you're hurt keep colliding. You want to draw close yet set your distance first, so loneliness seeps in even with people right beside you. That wall leaves you lonely, but it's the same care that keeps you from handing your heart away carelessly. Just don't let the guard grow so high it pushes warmth away too — open the door a hand's width to the ones you trust. The more you soothe yourself and lower the wall, the real warmth in you starts to flow out.",
+    opposition:
+      "Inside you, the need to open up and lean and the urge to press feeling down and go hard ride a seesaw. You long for warmth yet raise a wall the moment it comes close — then the distance leaves you lonely. That tension often shows up through a cold or exacting partner, so you meet your own fear through them. Just don't guard your solidity only with distance, or the heart dries out; show some softness to the safe ones. When you find your own rhythm between restraint and tenderness, your love deepens without the weight.",
   },
   'moon-uranus': {
-    conjunction: 'Your feelings are free and unpredictable. You are at ease when nothing ties you down.',
-    flow: 'You air out your emotions lightly. An independent heart is your charm.',
-    friction: 'Moods can swing suddenly. You seek balance between stability and freedom.',
+    conjunction:
+      "In you, feeling and freedom are fused as one. You're most at ease when nothing ties you down, so a fresh wind always blows through your moods. You feel and react in your own offbeat way — a spark of unpredictability up close. Just know that a heart that roams free can suddenly cool or want distance; learn to catch the pattern of your own shifts. With that unbound heart, you keep breathing room in your relationships without even trying.",
+    flow: "You're someone who airs out their feelings lightly and cleanly. That independent heart turns out to be your charm, offering people an easy kind of space. Because you don't stay snagged on a feeling, there's no stuffiness around you. Just know that shaking things off too easily can make you miss the feelings worth staying with — linger in one for a while, sometimes. With that unbound flow, a fresh air always moves through your bonds.",
+    square:
+      "Inside you, feelings can suddenly lurch without warning. You're fine one second, then abruptly want distance or your mood flips, and even you can't quite track it. That volatility unsettles you, but it's the same free heart that no box can hold. Just don't shake the relationship every time the mood spikes, or the people beside you tire — take a moment alone when your feelings jump. The more you find your own balance between stability and freedom, the calmer your heart grows.",
+    opposition:
+      "Inside you, the wish to keep someone close and the wish to be suddenly free ride a seesaw. You want to get near, then feel boxed in the moment you're close — pull away, and end up lonely again. That push-pull often shows up through an unreadable partner or an abrupt goodbye, so you meet your own restlessness through it. Just don't chase freedom only by rattling the bond, or it comes loose; make your own space for yourself instead. When you balance closeness and independence, you get a deep bond without ever feeling tied.",
   },
   'moon-neptune': {
-    conjunction: 'Your heart overflows with imagination and empathy. You feel others hearts as if they seep into you.',
-    flow: 'Feeling and intuition flow softly. You have a gift for art and comfort.',
-    friction: 'Emotion and reality blur together. You protect yourself by keeping boundaries.',
+    conjunction:
+      "In you, feeling and imagination ripple as one. You take in others' hearts as if they seep straight into you, so you carry an almost world-soothing empathy. That fineness blooms into a gift for art and comfort, wrapping the people near you softly. Just know that taking on everyone's feelings can blur where your own heart ends — draw a soft line between you and others. With that sensitivity that feels the world so deeply, you soothe people's hearts without a word.",
+    flow: "You're someone in whom feeling and intuition flow softly. You read even the mood no words explain, so you carry a rare gift for art and comfort. Thanks to that warm instinct, people feel understood near you. Just know that giving yourself to the current can blur the line with reality — keep a place of your own to rest your heart. As long as that intuition flows, your side stays a place where a warm comfort lingers.",
+    square:
+      "Inside you, feeling and reality blur together at times. Whose mood is this, yours or theirs, and sometimes your heart sinks into a fog until you can't tell what you feel at all. That haze wears you down, but that keen sensitivity is exactly what reads the grain of a heart others miss. Just don't take on everyone's feelings until you burn out first — draw the line between you and others clearly. The more you learn to hold that boundary, your sensitivity stops draining you and stays a gift.",
+    opposition:
+      "Inside you, the urge to keep yourself and the urge to melt wholly into someone ride a seesaw. You'll want to stand clear on your own — then soak endlessly into another's feelings and forget yourself. That swing often shows up through a person you want to rescue or a tender bond, so you meet your own edges through it. Just don't keep giving your heart away in a blur until you lose yourself; set one line between empathy and you. When you find the balance between melting and holding, your empathy deepens without losing you.",
   },
   'moon-pluto': {
-    conjunction: 'Your feelings run deep and intense. Once you give your heart, you dig in to the end.',
-    flow: 'You turn deep emotion into strength. Your heart stays firm even in crisis.',
-    friction: 'Feelings can tip into obsession. You grow free when you learn to let go.',
+    conjunction:
+      "In you, feeling runs deep and intense. Once you give your heart, you dig all the way to the bottom, so there's no shallow water in your love. Calm as you look, a hot, thick current churns underneath, and you throw your whole self into whatever you touch. Just know that when the depth runs too far, you can drown in a feeling and struggle to surface — come up for air now and then. With that heart that reaches the very bottom, your love and focus carry a density no one can fake.",
+    flow: "You're someone who turns deep feeling into strength. Your heart doesn't shatter easily even in crisis, so even when you fall, you rise again for certain. That heavy grit means your feelings become a support beam, not a wobble. Just know that always mastering emotion inward can leave you carrying too much alone — take the heavy heart out into the open sometimes. With that power drawn from the depths, you outlast any trial in the end.",
+    square:
+      "Inside you, deep affection can tip into obsession before you notice. You want to hold the one you love whole, so jealousy or the urge to control creeps up. That intensity burns you, but it's the same heat with which you stake everything on what you love. Just don't only clench tight, or love and you both suffocate — open the hand and let them go. When you learn to let go, that deep love finally breathes free and alive.",
+    opposition:
+      "Inside you, the urge to grip a heart whole and the urge to back off before you're hurt pull taut at opposite poles. You want to become fully one, then fear that depth and shut the door — then miss them with an ache. That tension often shows up through a partner as intense as you or a push-pull bond, so you meet your own obsession and fear through it. Just don't only hold love by control, or you lose it; learn to trust and let it rest instead. When you find the balance between depth and trust, your love runs hot without swallowing anyone.",
   },
   'mercury-venus': {
-    conjunction: 'Words and grace are one. You express softly and charmingly.',
-    flow: 'Thought and taste pair elegantly. Your conversation has style.',
-    friction: 'Words and feelings can drift slightly apart. You find the balance of honesty and care.',
+    conjunction:
+      'In you, thought and a sense of beauty blend as one. A soft charm and kindness run through your words and writing, so your expression pulls people in. Whatever you say, that instinct to shape it gracefully makes a conversation feel easier. Just know that in dressing it up prettily, you can talk around what you actually mean — keep the truth clear inside the softness. With thought and beauty flowing as one, your words land pleasantly wherever they go.',
+    flow: "You're someone who knows how to lend a conversation real style. Thought and taste pair so elegantly that time flies when people talk with you. Thanks to that witty, graceful way with words, people remember their time with you long after. Just know that in tending the mood, you can steer around the uncomfortable topics — bring up the awkward thing plainly now and then. With style and warmth flowing through your words, the talk around you stays a pleasure.",
+    square:
+      "Inside you, the urge to speak plainly and the urge to soften with care keep pulling apart. Round it off too gently and the truth blurs — lead with honesty and you can leave someone stung. It can feel like your words keep spinning, but that very worry teaches you to carry truth and courtesy together. Just don't read the room so hard you lose your own message; say it soft but clear. The more you find the balance of honesty and care, the warmer and more weighted your words become.",
+    opposition:
+      "Inside you, the urge to reason it out and the urge to feel it ride a seesaw. You'll explain it neatly, then get pulled by mood and feeling — then swing back to cool logic. That rise and fall often shows up through people who are all feeling or all dry fact, so you meet your own two sides through them. Just don't hand either mode to someone else, or your expression goes lopsided; hold both logic and feeling within you. When head and heart speak together, your words come out both exact and moving.",
   },
   'mercury-mars': {
-    conjunction: 'Thought becomes word and action at once. You are quick and sharp.',
-    flow: 'Judgment and action click. Decisions come fast and clean.',
-    friction: 'Words can turn hasty and sharp. Pause a beat and your persuasion grows.',
+    conjunction:
+      "In you, thought, word, and action run as one line. It's out of your mouth and into motion the instant it lands, so you're first with the answer at the decisive moment. That quick, sharp judgment makes you shine most when things get urgent. Just know that when thought turns straight into word and deed, you can leap before you look — take one beat when it's hot. With thinking that turns straight into doing, you open the way while others hesitate.",
+    flow: "You're someone whose judgment and action click into place. Decisions come fast and clean — so things move without a snag around you. That no-hesitation drive gets the people near you moving faster too. Just know that when speed is second nature, you can rush the calls that deserve care; double-check the important ones. With thought and action running side by side, you become the one who carries the work forward.",
+    square:
+      "Inside you, the speed of your thinking and the heat of your words keep overheating. When a debate lights up, your words turn fast and cutting, so you can win and still feel off about it. That edge can look like it scrapes at people, but that sharpness is exactly what cuts to the core in one stroke. Just don't blurt the blade straight out, or they go on the defensive first — pause a beat and shape the angle. The more you tune that edge, your words turn from attack into real persuasion.",
+    opposition:
+      "Inside you, the urge to weigh it calmly and the urge to fire back at once pull taut at opposite poles. You want to sort it by logic, then flare up with words out ahead — then chew on the regret. That tension often shows up through the people who needle you with words, so you meet your own aggression through them. Just don't aim the blade only at others, or a talk turns into a fight; turn the edge toward defending yourself instead. When you learn when to fire back and when to step off, your words stay straight without wounding.",
   },
   'mercury-jupiter': {
-    conjunction: 'Your thinking is big and broad. You love to learn and to share.',
-    flow: 'Big picture and detail blend well. You carry an optimistic wisdom.',
-    friction: 'Words can turn boastful or scattered. Focus on the core and you shine.',
+    conjunction:
+      'In you, thought and a wide view stretch out as one. You love to learn and to share, always looking for the big picture and the meaning together. So talk with you and a stuck view opens up, your thinking a notch wider. Just know that leaning into the big view, you can skip the small facts — pair that broad eye with some precision. With that thinking that sees big and shares freely, the people around you always come away having learned.',
+    flow: "You're someone who moves naturally between the big picture and the fine detail. An optimistic wisdom flows through you, so your advice always carries a thread of hope. Thanks to that gift for opening a subject up, people want to bring their questions to you. Just know that always sending it out bright can let you skim an aching reality — offer the cold truth alongside the hope. With that wisdom that sees big yet shares warmly, your words carry weight worth turning over.",
+    square:
+      "Inside you, the urge to speak big and the reality that needs pinning down keep missing each other. When you get excited, the story balloons or branches everywhere, and the core goes blurry. That scatter can feel like a loss, but that wide mind is exactly what stitches together what others can't. Just don't get drunk on scale and miss the substance — pick one thing to say and dig into it. Add a focus to that broad view and your thinking ripens into real insight.",
+    opposition:
+      "Inside you, the urge to weigh every detail and the urge to sweep it into one big idea ride a seesaw. You'll want to pin it exactly, then get carried by the grand vision and drop the details — then swing back to precision. That rise and fall often shows up through people who are all bluster or all nitpick, so you meet your own tilt through them. Just don't hand either to someone else, or your thinking leans one way; grow both the wide eye and the sharp one. When you can hold big picture and detail at once, your judgment turns broad and exact.",
   },
   'mercury-saturn': {
-    conjunction: 'Your thinking is careful and structured. Your words carry weight and responsibility.',
-    flow: 'Focus and logic are solid. You dig deep, steadily.',
-    friction: 'Your mind keeps censoring itself. The more you trust yourself, the firmer your words.',
+    conjunction:
+      "In you, thought and caution are locked together. Your words carry weight and responsibility, so the one thing you say isn't easily brushed off. That seriousness, the refusal to blurt and the will to think it all the way through, lends your words their trust. Just know that you may not speak until it's perfectly ordered, and a chance slips by — share your thinking before you're certain, sometimes. With that thinking forged heavy, your words hold steady no matter how much time passes.",
+    flow: "You're someone who digs into one thing with a stubborn patience. Focus and logic are so solid that your knowledge grows an unshakable root. Thanks to that step-by-step diligence, your words always carry the weight of real grounding. Just know that staying only with the proven can put off the new — let in a thought from outside the usual frame now and then. With that thinking built deep and firm, your conclusions rarely fall apart.",
+    square:
+      "Inside you, the wish to speak and the fear of being wrong keep colliding. You edit it in your head a few times over and then can't get it out, or you underrate yourself. That caution can feel stifling, but it's the same care that means you never speak carelessly. Just don't let the editing bury even the good thoughts — get it out before it's perfect. The more you trust yourself, the firmer and clearer your words stand.",
+    opposition:
+      "Inside you, the urge to think freely and the urge to cage it in rules ride a seesaw. You'll want to speak your mind, then the self-editing grabs your ankle and you shut it — and the unsaid words leave you frustrated. That tension often shows up through someone who grades you strictly, so you meet your own inner judge through them. Just don't seek approval only from outside, or you lose your own thinking; set a voice inside that grants it too. When you steady your center between freedom and rigor, your thinking turns flexible and solid at once.",
   },
   'mercury-uranus': {
-    conjunction: 'Ideas spark like lightning. Unusual insight flashes through.',
-    flow: 'Clever ideas come easily. A fast, original mind.',
-    friction: 'Thought races ahead and turns impatient. Slow the pace and your genius comes alive.',
+    conjunction:
+      "In you, thought and a flash of insight leap out as one. You see the world from an angle no one else takes, so you spot what everyone missed first. Because you're not tied to the frame, your ideas always come out fresh and unexpected. Just know that your thinking can fire so fast it's out ahead before anyone can follow — leave room to unpack the flash for others. With that lightning insight, you keep opening a new way through a stuck problem.",
+    flow: "You're someone from whom clever ideas come pouring. With a fast, original mind, your eyes only brighten the more stuck a problem gets. Thanks to that free-springing invention, people always catch a fresh charge off you. Just know that a new idea can pull your heart away before you finish the last — see one flash through to the end. With that fresh-springing invention, you never go stale on any board.",
+    square:
+      "Inside you, the thought that runs ahead and the pace of the reality behind it keep missing each other. Your mind fires so fast you turn impatient, or others look slow and it frustrates you. That restlessness wears you down, but that quick flash is exactly the kind of genius others can't match. Just don't put speed first until a good thought goes half-baked — give the flash a little time to set. The more you master that pace, your spark ripens into real genius.",
+    opposition:
+      "Inside you, the urge to overturn it fresh and the urge to keep the proven frame ride a seesaw. You'll want to fire off the radical take, then hesitate at the wobble — then itch to break out again. That rise and fall often shows up through a startling person or a sudden turn in your thinking, so you meet it head-on. Just don't wait for the new to detonate from outside and let your mind get jerked around; move between the radical and the tested yourself. When you balance innovation and stability, your thinking ripens both fresh and useful.",
   },
   'mercury-neptune': {
-    conjunction: 'Thought flows in images and imagination. Poetic and intuitive.',
-    flow: 'Imagination and expression connect softly. You have a gift for metaphor.',
-    friction: 'Thinking can grow foggy and muddled. Check the facts and steady your center.',
+    conjunction:
+      "In you, thought and imagination flow as one. You picture a concept as an image and tell it in poetry, so your words carry scenes you can almost see. That instinct to leap past logic into intuition reads a grain others can't. Just know that when imagination runs ahead, fact and feeling can blur together — hold what surfaces up against reality once. With that gift for thinking in images, your words paint color even onto a dry story.",
+    flow: "You're someone in whom imagination and expression connect softly. You have a rare gift for metaphor, so even a flat story comes alive once it passes through you. Thanks to that way of telling it like painting on the heart, people fall easily into your words. Just know that drifting on a feeling can let an exact fact slip — pair the lovely image with a clear ground too. As long as that gift for turning imagination into language flows, your words keep tinting people's hearts.",
+    square:
+      "Inside you, the urge to lay it out clearly and imagination spreading like fog keep missing each other. Your thinking goes hazy, fact and feeling get confused, and your focus keeps scattering. That mist can feel frustrating, but that dreamlike sense is exactly what paints a picture others can't see. Just don't keep putting off the fact-check until a good vision floats away — tie what surfaces down to reality once. The more you set a clear center inside the imagination, that imagination ripens into real power.",
+    opposition:
+      "Inside you, the urge to hold clear facts and the urge to drift into imagination ride a seesaw. You'll want to lay it out plainly, then sink into a daydream — then swing back to fact. That rise and fall often shows up through someone vague or chasing an ideal, so you meet it face to face. Just don't hand clarity to someone else, or your thinking scatters; hold both fact and imagination in your own hands. When you steady your center between the clear and the dreamed, your words come out beautiful yet never empty.",
   },
   'mercury-pluto': {
-    conjunction: 'Your thinking digs deep. You see through to hidden truth.',
-    flow: 'Focused insight flows naturally. There is power in your inquiry.',
-    friction: 'Your mind can fixate on one spot. The more flexible you get, the sharper your insight.',
+    conjunction:
+      "In you, thought and a digging force are one. You see through past the surface words to the hidden truth, so a clumsy lie never gets past you. That doggedness that has to dig to the very end takes you a layer deeper where others stop. Just know that when the digging runs too far, suspicion can get ahead of you and you interrogate even the people you love — don't push insight all the way into distrust. With that thinking that pierces the bottom, you bring the truth no one else saw to light in the end.",
+    flow: "You're someone who, once you dig in, sees it to the bottom. Focused insight flows naturally, so you show a rare force in front of any inquiry. Thanks to that depth that won't settle for the surface, you unearth the answer no one else could reach. Just know that deep immersion can sink you into one thing and let you miss the rest — lift your head and take in the whole now and then. With that force to dig to the end, your insight carries a depth no one can fake.",
+    square:
+      "Inside you, the force that digs and the ease that lets go keep colliding. Fixate on one thought and you'll chew it all night or fail to stop the suspicion. That fixation wrings you, but it's the same drive that reaches a depth no one else can mine. Just don't hold onto one spot until your view narrows — loosen the thought you've gripped now and then. Add some flex to that digging force and the fixation opens into a larger insight.",
+    opposition:
+      "Inside you, the urge to dig out the truth and the urge to reveal nothing pull taut at opposite poles. You want to see through them, yet keep your own inside locked away — then tire of the distance you made. That tension often shows up through a secretive person or one who probes you, so you meet your own need for control through them. Just don't use the digging force only as defense, or the bond closes; turn that piercing eye toward understanding yourself too. When you find the balance between depth and trust, your insight pulls people in instead of pushing them off.",
   },
   'venus-mars': {
-    conjunction: 'Affection and passion blaze as one. When drawn, you approach with heat.',
-    flow: 'Love and desire flow in harmony. Charm and drive shine together.',
-    friction: 'What you want and how you pursue it fall out of step. You learn love through the push and pull.',
+    conjunction:
+      "In you, loving and pursuing blaze up as one. When you're drawn, you go in hot without weighing it, so there's no lukewarm in your love. That honesty about wanting sparks a live flame into a bond. Just know that the heat can run ahead — you miss the other's pace, or you flare and cool fast; add a layer of patience to the fire. With love and desire burning as one, a living warmth always runs through your love.",
+    flow: "You're someone in whom charm and drive shine together. Love and desire flow in harmony, so you reach what your heart wants naturally. That gift for turning attraction into action keeps a flutter and a liveliness in your romance. Just know that when a bond flows this easily, you can smooth over conflict with mood instead of facing it — bring up the prickly thing now and then. With love and passion running side by side, a warm flutter lingers by your side.",
+    square:
+      "Inside you, what you want and the way you go after it keep falling out of step. Drawn, you play hard to get — or you push too hard and leave them uneasy. That push-pull tires even you, but that tension is exactly what teaches you to tell real love from a passing pull. Just don't get lost in the game until you miss the feeling itself; show plainly what you want. The more you master that off-beat, the hotter and more honest your love turns.",
+    opposition:
+      "Inside you, the urge to love softly and the urge to seize it hot ride a seesaw. You'll want to come close tenderly, then desire runs ahead and you hurry — then turn cautious again. That swing often shows up through a push-pull partner or a bond laced with love and friction, so you meet it face to face. Just don't load the passion only onto your partner and lose your own rhythm; handle both love and desire within you. When you balance affection and heat, your love turns fiery yet tender.",
   },
   'venus-jupiter': {
-    conjunction: 'Both love and pleasure run abundant. Generous and romantic.',
-    flow: 'Affection and luck flow together. You draw people and beauty in.',
-    friction: 'Love and spending can both go overboard. You shine brighter through restraint.',
+    conjunction:
+      'In you, love and abundance overflow as one. Generous and romantic, you open your heart wide and give without holding back. Thanks to that warm, easy air, people and beautiful things gather around you. Just know that in the spirit of the good life, both love and spending can go over — enjoy freely, but draw a sensible line too. With that heart that opens love big, warmth and plenty always hang around your bonds.',
+    flow: "You're someone who draws people and beauty in without trying. Affection and luck flow together — so a warmth always hangs about your relationships. Thanks to that generous heart, people feel brighter near you. Just know that a life this full can let you skim past the depth of any one person; linger a little longer with the one beside you. With love and luck running side by side, your side stays full of warm company.",
+    square:
+      "Inside you, the urge to enjoy big and the reality you have to keep keep missing each other. When it's good, both love and spending puff up, so the reckoning gets heavy later. That excess can look like trouble, but it's the same fullness with which you know how to savor love and life. Just don't get carried on the pleasure until the aftermath weighs on you — enjoy all you like, but hold the brake yourself. Add restraint to the plenty and that abundance shines softly for longer.",
+    opposition:
+      "Inside you, the urge to give without limit and the urge to guard it coldly ride a seesaw. You'll give big and trust big — then shrink, wondering if you overpoured. That rise and fall often shows up through a partner who's all reckless or all stingy, so you meet your own measure through them. Just don't set the size of your giving only by others; decide how much to give from within too. When you balance generosity and discernment, your love shines all the steadier.",
   },
   'venus-saturn': {
     conjunction:
-      'You are serious and lasting in love. You do not open easily, but once you give your heart it does not change.',
-    flow: 'You build bonds responsibly. Trust is the root of your love.',
-    friction: 'You shrink back or feel distance before love. You need practice in opening your heart.',
+      "In you, love and seriousness are locked together. You don't open easily, but once your heart is given it barely changes, so your love carries real worth. That weight of taking responsibility to keep a bond gives the other person a deep steadiness. Just know that too much caution can push away even the love that's coming toward you — let someone in a little before you're certain. With that love that holds on for the long haul, your bond only ripens more precious with time.",
+    flow: "You're someone who makes trust the root of love. You build a bond responsibly — so your side becomes a place that rarely shakes. Thanks to that steadiness that proves the heart in action over words, people trust and lean on you for the long run. Just know that in tending the solid, you can put off the light, fluttery warmth; add a little fresh fun to the bond too. With that love built on faith, its roots hold through the passing years.",
+    square:
+      "Inside you, the wish to be loved and the urge to back off before you're hurt keep colliding. You want to draw close yet set your distance first, so you can turn oddly stingy or clumsy in the face of love. That flinching leaves you lonely, but it's the same care that means you never take love lightly. Just don't let the wall grow so high it pushes away the love that's coming — open the door a hand's width to the ones you trust. The more you practice opening bit by bit, a real, deep love comes to you.",
+    opposition:
+      "Inside you, the wish to lean on love and the urge to wall yourself off pull taut at opposite poles. You long for warmth, then test and push it away the moment it comes — and the distance leaves you lonely. That tension often shows up through an indifferent partner or one with a wide age gap, so you meet your own fear through them. Just don't guard your love only with distance, or the heart dries out; show some softness to the safe ones. When you balance caution and tenderness, your love deepens without the weight.",
   },
   'venus-uranus': {
-    conjunction: 'Love is free and electric. You are drawn to bonds that do not bind you.',
-    flow: 'Excitement and independence pair well. You have a fresh charm.',
-    friction: 'Your heart swings between love and freedom. You seek the balance of commitment and space.',
+    conjunction:
+      "In you, love and freedom are fused as one. You're drawn to a bond that doesn't tie you down, so a flutter and a freshness always live in your love. That unboxed sense breathes a spark of life into romance. Just know that once it turns familiar it can go flat fast, and you chase a new thrill — learn to see the flutter inside the comfort too. With that unbound heart, a fresh wind always moves through your love.",
+    flow: "You're someone in whom excitement and independence pair naturally. With that fresh charm, a bond with you rarely turns dull. Thanks to that sense of respecting each other's space, the person beside you feels easy, not smothered. Just know that in prizing freedom, you can put off the moment of putting down roots — stay a little longer with one person, sometimes. With that flutter that never ties you down, a fresh air always runs through your love.",
+    square:
+      "Inside you, the wish to keep someone close and the wish to be free keep colliding. Get close and you feel boxed in and push away, get distance and you miss them, so your heart swings back and forth. That volatility confuses even you, but it's the same free heart that no bond can cage. Just don't spend freedom only on pushing away, or the bond comes loose — find the balance of commitment and space yourself. The more you find your own rhythm between ties and freedom, the calmer your bonds grow.",
+    opposition:
+      "Inside you, the wish to be deeply bound and the wish to break free ride a seesaw. You want to get fully close, then feel boxed in the moment you are — pull away, and end up lonely. That push-pull often shows up through a partner who hates being tied or a sudden goodbye, so you meet it face to face. Just don't look for freedom only outside the bond, or your side shakes; make your own space within the relationship. When you balance closeness and independence, you get a deep love without ever feeling tied.",
   },
   'venus-neptune': {
-    conjunction: 'Love is romantic as a dream. Devoted, but take care not to fall for an illusion.',
-    flow: 'Feeling and love flow softly. You carry an artistic charm.',
-    friction: 'The ideal and the real partner keep mismatching. Love deepens when you see things as they are.',
+    conjunction:
+      "In you, love and dream are tinted as one. Devoted and romantic, you cherish someone like an ideal and pour your whole heart in. That wistful sensitivity lays a dreamlike beauty over your love. Just know that drunk on the ideal lover, you can miss the real person in front of you — separate the fantasy from the person now and then. With that dreamlike heart, a beauty others can't picture settles into your love.",
+    flow: "You're someone in whom feeling and love flow softly. With an artistic charm, a dreamy beauty hangs about your love. Thanks to that fineness that soothes without a word, people feel understood near you. Just know that steeping in the mood can put off the reality of the bond — bring a clear eye to the beauty too. As long as that soft feeling flows, a warm loveliness always drifts through your love.",
+    square:
+      "Inside you, the urge to paint love as an ideal and the real partner keep mismatching. You overlay the one you dreamed of, then crash and wander when the reality shows. That gap aches, but it's the same heart that knows how to picture love deep and beautiful. Just don't cling only to the fantasy until you miss the person in front of you — meet them as they really are once. The more you learn to see ideal and real together, your love finally puts down deep roots.",
+    opposition:
+      "Inside you, the urge to melt wholly in and the urge to keep yourself ride a seesaw. You'll want to give love everything, then feel aching and adrift — as if you've lost yourself. That swing often shows up through a person you want to save or a wistful, one-sided love, so you meet it face to face. Just don't try to prove love only by devotion, or you lose yourself; hold caring for you as part of the love too. When you balance melting and holding, your love deepens without losing you.",
   },
   'venus-pluto': {
-    conjunction: 'Love runs deep and intense. You want a bond you can stake everything on.',
-    flow: 'Deep affection turns naturally into strength. You immerse yourself with your whole heart.',
-    friction: 'Love can slide into obsession or jealousy. The bond revives when you let go.',
+    conjunction:
+      "In you, love runs deep and intense. You want a bond you can stake everything on, so your love never just brushes past. That density that wants to reach the other's very bottom leaves a mark on a relationship that can't be erased. Just know that staking your whole self can tip love into possession — love deep, but leave the other their own place. With that love that touches bottom, a density no one can fake runs through your bonds.",
+    flow: "You're someone who turns deep affection into strength. You immerse with your whole heart, so your love can even remake the other person's life. Thanks to that sincerity that won't stay on the surface, a bond with you leaves a deep imprint for a long time. Just know that always staking everything can make the weight of a bond heavy — leave some breathing room alongside the depth. With that love drawn up from the bottom, there's no shallow water in your relationships.",
+    square:
+      "Inside you, deep love can slide into obsession or jealousy before you know it. You want to hold the one you love whole, so unease churns at the smallest distance. That intensity burns you, but it's the same heat with which you stake everything on love. Just don't only clench tight, or love and you both suffocate — open the hand, trust, and let them go. When you learn to let go, that deep heart finally comes alive and free.",
+    opposition:
+      "Inside you, the urge to become fully one and the urge to wall up before you're hurt pull taut at opposite poles. You'll want to love with your whole body, then fear that depth and shut the door — then miss them with an ache. That tension often shows up through a partner as intense as you or a push-pull bond, so you meet your own obsession and fear through it. Just don't only hold love by control, or you lose it; learn to trust and hand it over instead. When you balance depth and trust, your love runs hot without swallowing anyone.",
   },
   'mars-jupiter': {
-    conjunction: 'Drive and boldness are one. You take on big things and push hard.',
-    flow: 'Courage and opportunity flow together. The more you dare, the more luck grows.',
-    friction: 'Zeal can overflow into overdoing it. Pace your strength and you go further.',
+    conjunction:
+      'In you, drive and a big appetite stretch out as one. You take on large things and push hard, so while others measure, you grow the game. That fearless charge pulls people and chances in together. Just know that zeal can run ahead and you bite off more than you can chew — leave enough in reserve to finish what you start. With that push that opens big and shoves hard, you keep becoming the one who opens a new arena.',
+    flow: "You're someone luck follows the more you dare. Courage and opportunity flow together, so you shine brightest the moment you leap. Thanks to that spare-nothing spirit, a new path always opens in front of you. Just know that a smooth run can blur the line between recklessness and courage — check the direction before you dive. With courage and luck running side by side, the more you move, the more you grow your luck.",
+    square:
+      "Inside you, the drive to stretch out and the limits you have to keep keep missing each other. When you're fired up, you overspend your strength or launch too many things at once and burn out. That overreach can look like trouble, but that overflowing energy is exactly what keeps pushing you forward. Just don't run at full force all the time, or you tire fast — decide for yourself when to charge and when to rest. The more you master that energy, the same strength carries you much further.",
+    opposition:
+      "Inside you, the urge to shove hard and the urge to stop in time ride a seesaw. You'll want to go big, then shrink, wondering if it was too much — then charge out again, restless. That swing often shows up through someone who eggs you on recklessly or one who holds you back, so you meet it face to face. Just don't spend your drive only to match others and lose your own rhythm; set your own push and pause. When you balance boldness and restraint, your strength reaches wide without going to waste.",
   },
   'mars-saturn': {
-    conjunction: 'Force and patience fuse. Slow but with the grit to push through to the end.',
-    flow: 'Strategy and action mesh steadily. You reach goals with patience.',
-    friction:
-      'You want to act but keep hitting walls — a stifling feeling. Cross that wall and you build real strength.',
+    conjunction:
+      'In you, drive and patience are locked together. Slow as it looks, you have the grit to push to the very end, so what you set your mind on eventually comes to be. That force that presses forward step by step, unhurried, holds firm before most walls. Just know that you can drive yourself with no brake at all — mark a spot to spend your strength sparingly too. With that grit that keeps pushing for the long haul, what you set eventually gets done, however long it takes.',
+    flow: "You're someone whose strategy and action mesh steadily. You reach a goal step by step with patience, so your achievements barely wobble. Thanks to that grit that pushes to the end without rushing, what you start reaches the finish line for certain. Just know that caution can make you miss the moment to strike fast — when the time comes, put on the speed boldly. With plan and action running side by side, what you achieve rarely falls apart.",
+    square:
+      "Inside you, the force to move forward and the wall that keeps blocking your ankle pull taut against each other. What you want to do keeps getting blocked or comes slow, so a stifling pressure builds inside. That resistance can look like it drains you, but every time you cross the wall you build real strength, one layer at a time. Just don't turn every block into your own fault, or you tire — learn the wisdom of waiting out what won't move. The more you cross each wall, your strength hardens beyond anyone's imitation.",
+    opposition:
+      "Inside you, the urge to push and the urge to press it down and endure ride a seesaw. You'll want to go straight, then stop to read the room — and the held-down force erupts somewhere else. That tension often shows up through someone who blocks or controls you, so you meet your own anger through them. Just don't only swallow the force or blame others, or you lose yourself; decide when to push and when to step back. When you balance drive and restraint, your strength stays straight and lasts.",
   },
   'mars-uranus': {
-    conjunction: 'Your action is lightning-fast and bold. A mold-breaking drive.',
-    flow: 'Quick reflexes and originality pair well. You respond fast in a crisis.',
-    friction: 'Impulses can burst out suddenly. Learn the brake and your power comes alive.',
+    conjunction:
+      'In you, drive and the shattering of molds leap out as one. With a frame-breaking push, you flip a stuck situation open in a way no one saw coming. That lightning-fast, fearless spirit throws a jammed situation wide in one move. Just know that riding a sudden impulse can wreck a thing — keep a margin to pause inside the boldness. With that daring that breaks the mold and dives in, you open a way no one else could cut.',
+    flow: "You're someone in whom quick reflexes and originality pair naturally. You respond fast in a crisis, so your eyes only sharpen when things get urgent. Thanks to that unbound nimbleness, you turn up a rare solution in a sudden situation. Just know that fast response is so habitual that you can rush even what needs a slow, steady push — ease the pace on what isn't urgent. With reflex and originality running side by side, you never go stale in any upheaval.",
+    square:
+      "Inside you, the impulse to detonate on the spot and the urge to hold it in keep colliding. Pushed past your limit, you suddenly flip the table or blow up and wreck the thing. That eruption startles even you, but that boldness is exactly the force that opens a breakthrough others can't. Just don't blurt the impulse straight out, or what you've built scatters — pause a beat and breathe before it bursts. The more you learn the brake, that boldness comes alive as real power.",
+    opposition:
+      "Inside you, the urge to go all-out and the urge to stay inside the frame ride a seesaw. You'll want to flip the board, then hesitate at the wobble — then itch to break out again. That swing often shows up through someone who sets you off or a sudden event, so you meet it face to face. Just don't wait for freedom to detonate from outside and let your force scatter; sort for yourself when to overturn and when to keep. When you balance disruption and stability, your boldness stops scattering and earns its use.",
   },
   'mars-neptune': {
-    conjunction: 'Action follows feeling and ideal. You move by inspiration.',
-    flow: 'Intuition and action connect softly. You move quietly, as if flowing.',
-    friction: 'Drive can lose its way and go hazy. Sharpen the goal and your strength gathers.',
+    conjunction:
+      'In you, action and inspiration run as one line. You move by what your heart, not logic, points to, so your own color soaks into everything you do. When something inspires you, you immerse quietly but deeply, and that force shapes a rare result. Just know that drifting where the heart pulls can blur the goal — add a clear direction to the pull. With that flow of moving by inspiration, you head for where your heart truly wants to go.',
+    flow: "You're someone in whom intuition and action connect softly. You move as if flowing, without straining, so you arrive where you want with hardly any force. Thanks to that sense that doesn't fight the current, things loosen naturally without your having to shove. Just know that leaving it all to the flow can cost you the push at the decisive moment — grab the direction clearly when it's needed. With that flow of moving by instinct, you get far without spending much force.",
+    square:
+      "Inside you, the force to push forward and a direction that keeps going hazy fall out of step. You want to move but it's vague where to go, so your strength quietly leaks or your drive sinks. That fog can feel frustrating, but it's the same you that only moves with heart toward what feels right. Just don't keep putting off the direction until good force scatters — set one small, clear goal when it's hazy. Give the scattered force a direction and your action gathers into strength.",
+    opposition:
+      "Inside you, the urge to push your own way and the urge to give yourself to the flow ride a seesaw. You'll want to move clearly, then lose your strength and drift — then grab the will back. That swing often shows up through someone who blurs your direction or demands your devotion, so you meet it face to face. Just don't keep loading your drive onto others, or you lose your own force; set the direction you'll go from within. When you balance will and flow, your action turns soft yet clear.",
   },
   'mars-pluto': {
-    conjunction: 'Your will is fearsomely intense. Once set, you see it to the end.',
-    flow: 'Deep tenacity turns naturally into strength. You grow stronger in crisis.',
-    friction: 'You can slide into power struggles or extremes. Master that energy and you become unstoppable.',
+    conjunction:
+      "In you, will and a digging force compress into one. Once you set your mind, you see it to the end, so there's almost nothing that can block you. That tenacity that shoves anything down to its root punches clean through most walls. Just know that the intensity can tip into power struggles or extremes — leave a place to step back for every place you push. With that force that has to see the end, you make what you decide happen, no matter what.",
+    flow: "You're someone whose deep tenacity turns naturally into strength. You only grow stronger in a crisis, so you find the way even at the edge of a cliff. Thanks to that grit that holds to the end, you survive alone where others give up. Just know that always pushing to the limit can make you drive yourself too hard — loosen the grip and catch your breath sometimes. With that tenacity drawn from the depths, you rise again from any cliff-edge.",
+    square:
+      "Inside you, the force that pushes and the restraint that stops keep colliding. When it won't go your way, you shove harder or it spills into a power struggle and runs to extremes. That fierceness burns you, but it's the same strength that nothing can break. Just don't try to force it all through, or both you and the bond burn out — learn too when to set down the force you hold. When you learn to master that energy, there's almost nothing left that can break you.",
+    opposition:
+      "Inside you, the urge to push by your own force and the urge to clash against another's pull taut at opposite poles. You'll want to grow strong alone, then pour everything into not losing to a strong rival — and the war of attrition wears you down. That tension often shows up through the people who go force-to-force with you, so you meet your own destructive edge through them. Just don't spend your force only in contest, or both you and the bond wear thin; turn that tenacity toward building together too. When you learn to handle the balance of power, no one breaks you easily.",
   },
   'jupiter-saturn': {
-    conjunction: 'Dream and reality meet in one place. You picture big yet build it step by step.',
-    flow: 'Optimism and patience find balance. You grow steadily.',
-    friction: 'The urge to expand clashes with the urge to tighten. Between them you find a wise pace.',
+    conjunction:
+      "In you, dreaming big and building it slow meet in one place. You hold an ideal yet climb the real steps one at a time, so your dream never ends as thin air. That balance of seeing far while minding your footing builds what others can't set up. Just know that the urge to grow and the urge to tighten can collide and you hit your own brake — sync the pace of expansion and control. With that power to picture big and build firm, your ideal turns into a reality you can hold.",
+    flow: "You're someone in whom optimism and patience find balance. You grow steadily without rushing, so you reach far even when you don't hurry. Thanks to that rhythm of seeing big yet building consistently, your achievements carry both weight and staying power. Just know that a settled pace can let a big chance slip — take a leap beyond the calculation sometimes. With hope and grit running side by side, you get far without ever rushing.",
+    square:
+      "Inside you, the urge to widen big and the urge to tighten firmly keep colliding. You'll want to stretch, then shrink at the risk, then get impatient with caution and blurt something huge. That push-pull leaves you tangled, but that tension is exactly what lets you find a wise pace between rashness and timidity. Just don't hold the two only as opposites until you circle in place — decide for yourself when to reach and when to firm up. When you find the rhythm of expansion and restraint, your real growth begins.",
+    opposition:
+      "Inside you, the urge to stretch out big and the urge to fit the frame of reality ride a seesaw. You'll race toward the ideal, then the weight of duty presses you to stop — then get impatient and want to reach again. That swing often shows up through someone who eggs you on or one who brakes you, so you meet it face to face. Just don't leave growth to the outside, or you lose your rhythm; set your reasons to reach and to firm up from within. When you balance ideal and reality, your dream stays big yet never crumbles.",
   },
   'jupiter-uranus': {
-    conjunction: 'Luck and innovation are one. You are strong with unexpected chances.',
-    flow: 'Freedom and opportunity flow together. Flashes of insight turn into luck.',
-    friction: 'Sudden change can leave you giddy. Use freedom wisely and it opens wide.',
+    conjunction:
+      "In you, an eye for the big chance and a mold-breaking innovation are one. You're strong at the unexpected moment, so you snatch big the chance others missed. That freely reaching sense keeps producing sudden leaps. Just know that giddy with a chance, you can launch big without checking — weigh the flash against the real once. With that sense of chance and innovation reaching as one, you leap big at the unexpected turn.",
+    flow: "You're someone whose flash of insight turns straight into a chance. Freedom and luck flow together, so your ideas keep opening new doors — flashes turning into openings. Thanks to that unbound sense, even a jam turns into an open road in front of you. Just know that a new chance can pull your heart away before one ripens; see one open door all the way through. With freedom and chance running side by side, a new path always opens ahead of you.",
+    square:
+      "Inside you, the urge to leap big and the reality that should back it keep missing each other. Giddy with a sudden change or chance, you go big, then can't keep up. That giddiness can look like trouble, but that free energy is exactly what nets the chance others can't catch. Just don't ride only the thrill until a good chance goes half-baked — weigh how to use your freedom wisely before you reach. The more you handle freedom with sense, that chance becomes a real leap.",
+    opposition:
+      "Inside you, the urge to grow big and the urge to overturn the board ride a seesaw. You'll want to build steadily, then suddenly want to raze it all — then want to protect it again. That swing often shows up through a startling upheaval or a free-spirited person, so you meet it face to face. Just don't wait for change to detonate from outside and let your flow get jerked around; sort for yourself when to grow and when to overturn. When you balance growth and innovation, your leap stays big without going to waste.",
   },
   'jupiter-neptune': {
-    conjunction: 'Ideal and faith swell as one. You hold a big, beautiful dream.',
-    flow: 'Imagination and generosity flow softly. A spiritual abundance is yours.',
-    friction: 'Dreams can run too big and miss the real. Anchor your ideals to reality.',
+    conjunction:
+      'In you, a great ideal and a deep faith swell as one. You hold a big, beautiful dream, so an imagination that tints the world softly runs through you. That heart that believes even in the unseen possibility hands people hope. Just know that a dream can grow so big it forgets the weight of reality — drop one anchor of the real into your ideal. With that heart that believes big and dreams soft, you breathe warmth and dream into a dry world.',
+    flow: "You're someone in whom imagination and generosity flow softly. A spiritual abundance is yours, so a quiet comfort hangs about your side. Thanks to that heart that holds big and dreams soft, people feel the world is a little warmer near you. Just know that steeping in the ideal can put off a real decision — add a clear footstep to the dream too. With imagination and mercy running side by side, your side stays a place where warm comfort drifts.",
+    square:
+      "Inside you, the urge to dream big and the reality you have to stand on keep missing each other. Drunk on the ideal, you puff it up, then feel hollow when reality won't follow. That gap aches, but it's the same you that pictures a dream bigger than anyone. Just don't cling only to the ideal until you miss the step in front of you — drop one anchor of the real into the big dream. The more you learn to see ideal and real together, that dream really comes true.",
+    opposition:
+      "Inside you, the urge to believe big and the urge to doubt coldly ride a seesaw. You'll stake your whole heart on the ideal — then hit reality and feel a deep disillusion. That rise and fall often shows up through someone who overpromises or one who lets you down, so you meet it face to face. Just don't seek the ground of your belief only outside, or it shakes easily; sort out from within what to believe. When you balance ideal and discernment, your faith stays big yet never fooled.",
   },
   'jupiter-pluto': {
-    conjunction: 'Great purpose and strong power are one. You have the ambition to change the whole board.',
-    flow: 'Deep conviction becomes your engine of growth. You turn crisis into growth.',
-    friction: 'Ambition and control can overheat. The larger your power, the more humility you need.',
+    conjunction:
+      "In you, a great purpose and a deep power compress as one. You have the ambition to change the whole board, so you move the world as far as you set your mind. That force that digs to the bottom and overturns the root pulls off change others wouldn't dare. Just know that when ambition and control overheat, the push goes too hard — add humility to the power you use big. With that force that means big and digs deep, you change the world as far as you set your mind.",
+    flow: "You're someone who turns deep conviction into an engine of growth. You raise a crisis into a chance, so you rise bigger from where you fell. Thanks to that grit that digs to the root, your growth carries a density no one can fake. Just know that always chasing the big and strong can let you skim past the value of small things — set your eyes on what's beside you too. As long as that deep conviction flows, you always rise bigger from where you fell.",
+    square:
+      "Inside you, the ambition to achieve big and the urge to grip it all overheat together. When it won't go your way, you shove harder or try to seize the board by force. That fierceness burns you, but it's the same force that can change the world in a big way. Just don't let arrogance grow as you use power big, or you collapse instead — load humility in with the ambition. The more you learn to master the power, that ambition ripens into a real harvest.",
+    opposition:
+      "Inside you, the ambition to move big and the helplessness that a reality beyond your control presses on ride a seesaw. You'll want to change the world, then go powerless before a wall — then grit your teeth and rise again. That swing often shows up through someone who contests your power or holds the board, so you meet it face to face. Just don't spend your power only in contest, or both you and the board wear thin; turn that ambition toward growing something together too. When you balance ambition and reality, you move the world without falling apart.",
   },
   'saturn-uranus': {
     conjunction:
-      'The force that preserves and the force that changes sit together. You rebuild old frames on solid ground.',
-    flow: 'Stability and innovation find balance. A down-to-earth reformer.',
-    friction: 'Old and new pull taut against each other. That tension makes real change.',
+      "In you, the force that preserves and the force that overturns are locked together. You don't just smash things; you rebuild the old frame into a solid new structure, so you become a revolutionary with both feet on the ground. That sense of gripping ideal and reality at once shapes a change that outlasts. Just know that preserving and changing can collide inside until you can't move either way — sort out what to keep and what to change. With that power to build firm and new, your change becomes a lasting current, not a fad.",
+    flow: "You're someone in whom stability and innovation find balance. A down-to-earth reformer, the change you make doesn't flash and vanish — it lives on. Thanks to that sense of taking in the new while keeping the root, your reform always carries staying power. Just know that in prizing balance, you can put off the moment for a bold overturn; take on a big decision sometimes. With stability and change running side by side, your change never goes stale with the years.",
+    square:
+      "Inside you, the urge to keep and the urge to overturn pull taut against each other. You want to hold stability, then get impatient and want to raze it all — then pull back to your place, afraid of the wobble. That tension wears you down, but that push-pull is exactly what forges a change that's neither rash nor stale. Just don't hold the two only as opposites until you circle in place; sort for yourself what to keep and what to change. The more you endure that tension, the more you make a change that lasts.",
+    opposition:
+      "Inside you, the urge to stay inside the frame and the urge to smash it ride a seesaw. You want to keep the rules, then feel stifled and bolt — then come back to order, afraid of the wobble. That swing often shows up through a system that binds you or a free spirit who shakes you, so you meet it face to face. Just don't wait for change to detonate from outside and let your flow get jerked around; decide for yourself when to keep and when to overturn. When you balance order and freedom, you lead a change that lasts yet stays new.",
   },
   'saturn-neptune': {
-    conjunction: 'Dream and reality are one body. You shape ideals into structure.',
-    flow: 'Imagination and responsibility meet softly. You realize dreams step by step.',
-    friction: 'You waver and tire between ideal and reality. Bridging that gap makes you solid.',
+    conjunction:
+      "In you, dreaming an ideal and shaping it into form are one body. You move a cloud-like imagination into structure, so you build a daydream into something you can see. That sense of gripping dream and reality at once realizes an ideal others can't set up. Just know that ideal and reality can push and pull inside until you tire or lose your way — break the big dream into small steps. With that power to shape a daydream into form, your ideal doesn't end as a picture but stands as reality.",
+    flow: "You're someone in whom imagination and responsibility meet softly. You move a dream into reality step by step, so your ideal always comes with a road to realize it. Thanks to that sense of adding a diligent hand to a beautiful imagining, your dream rarely scatters. Just know that in minding reality, you can fold the wings of imagination yourself — let the size of the ideal spread freely sometimes. With dream and responsibility running side by side, your ideal always holds a way to come true.",
+    square:
+      "Inside you, the urge to chase an ideal and the urge to carry reality keep missing each other. The dream is big but reality won't follow, so you go listless or lose your way and wander. That gap tires you out, but bridging it is exactly the path that tempers you from dreamer into realizer. Just don't hold ideal and reality only as opposites, or you lose both — move the big dream into small realities, one step at a time. The more you bridge that gap, you harden into someone who makes dreams real.",
+    opposition:
+      "Inside you, the urge to stand on clear reality and the urge to melt into the ideal ride a seesaw. You want to plant your feet, then get drunk on a dream and miss reality — then crash into disillusion and turn cold again. That swing often shows up through a reality that shakes your ideal or a partner lost in dreams, so you meet it face to face. Just don't chase the ideal only outside, or you lose your center; set from within what to dream and what to build. When you balance ideal and reality, your dream never runs empty but takes on form.",
   },
   'saturn-pluto': {
-    conjunction: 'The power to endure and the power to transform are one. You rebuild from the very bottom.',
-    flow: 'Grit and insight mesh deeply. You endure crisis and rebuild.',
-    friction: 'Pressure runs high between tearing down and holding on. That trial tempers you at the root.',
+    conjunction:
+      "In you, the power to endure and the power to transform from the root are one body. You rebuild from the very bottom of the rubble, so you start over in any ruin. That grit that holds to the end while overturning the foundation pulls off a rebuild others wouldn't dare. Just know that tearing down and holding on can collide inside and drive you to the edge — leave a gap to rest inside the endurance. With that power to rebuild from the bottom, whatever falls, you rise again in the end.",
+    flow: "You're someone in whom grit and insight mesh deeply. You endure crisis and rebuild step by step, so you only grow steadier after a trial. Thanks to that grit that digs to the root and rebuilds, what you build again rarely falls apart. Just know that being used to enduring can make you shoulder the hard feelings alone — bring the heavy load out into the open sometimes. With endurance and insight running side by side, you deepen each time you pass through a trial.",
+    square:
+      "Inside you, the urge to tear it all down and the urge to hold to the end pull taut against each other. You want to raze it to the bottom, then grit your teeth and hold, afraid it'll collapse. That pressure feels like it grinds you to the bone, but that trial is exactly what tempers you from the root. Just don't shoulder the endurance alone until you break — sort out calmly what to tear down and what to keep. The more you endure that pressure, the more you harden until nothing can shake you.",
+    opposition:
+      "Inside you, the urge to hold on to the end and the urge to let it all go ride a seesaw. You strain not to collapse, then want to set it all down — then grit your teeth and hold again. That swing often shows up through a crisis that tests you or someone who holds the power, so you meet it face to face. Just don't hold control only by force, or both you and the board break; sort out what to keep and what to let flow away. When you balance holding and releasing, you rise again in the end, even from a fall.",
   },
   'uranus-neptune': {
-    conjunction: 'Revolution and imagination flow as one. A generation holding the dream of a new age.',
-    flow: 'Freedom and inspiration connect softly. You carry ideals into reality.',
-    friction: 'You can waver between innovation and illusion. Sharpen your direction and your strength gathers.',
+    conjunction:
+      'In you, the force to overturn the world and the imagination that dreams something new flow as one. A generation holding the dream of a new age, you carry a sense for drawing the world from scratch. That force that erases the old picture and imagines a new one shifts the grain of the era little by little. Just know that when the ideal runs too big, it can idle off reality or lose its way — make a footing for the big dream too. With that imagination that redraws the world, you live a future a step ahead of others.',
+    flow: "You're someone in whom freedom and inspiration connect softly. You have the power to carry ideals into reality, so your imagination never ends as an empty dream. Thanks to that sense of picturing the new without being tied to a frame, you catch the change of an era before others. Just know that getting drunk on the ideal can let you skim past the reality at your feet — add a clear footstep to the dream too. With freedom and inspiration running side by side, your imagination always opens a new road.",
+    square:
+      "Inside you, the urge to change the world and the urge to scatter into the ideal keep missing each other. You want to overturn big, but the direction's hazy so your strength leaks, or you sink into a daydream and wander. That blankness can feel frustrating, but that's exactly the you who pictures a future others can't see. Just don't chase the ideal until you miss the ground and a good dream floats off — set one clear direction when it's hazy. Give the scattered ideal a direction and that imagination becomes a real force for change.",
+    opposition:
+      "Inside you, the urge to redraw the world and the urge to doubt the ideal ride a seesaw. You stake your whole heart on a big dream, then hit reality and feel disillusion — then dream a new one again. That swing often shows up through an upheaval of the age that shakes you or someone chasing an ideal, so you meet it face to face. Just don't seek the ground of your ideal only outside, or it shakes easily; sort out from within what to dream. When you balance ideal and discernment, your dream stays big yet never runs empty.",
   },
   'uranus-pluto': {
-    conjunction: 'The force to overturn and the force to rebuild are one. A generation that shakes things to the root.',
-    flow: 'Change and insight mesh strongly. You carry the energy to change an era.',
-    friction: 'Radical and resistant forces clash fiercely. That energy gives birth to great upheaval.',
+    conjunction:
+      "In you, the force to overturn the board and the force to rebuild from the root are one. A generation that shakes things to the very root, you carry the energy to change the whole current of an age. That force that smashes the old and builds anew plows most walls up from the base. Just know that force can run to radical extremes and resistance — draw the picture of what you'll rebuild as much as what you overturn. With that energy that changes the root, you stand at the very center of an era-shifting current.",
+    flow: "You're someone in whom change and insight mesh strongly. You carry the power to change an age, so you always stand at the front line of the current. Thanks to that sense of piercing the root and building anew, you read the next era before anyone else. Just know that eyes only on the big change can make you skim past the small things beside you — look at the reality at your feet too. With change and insight running side by side, you lead the current of an age from the front.",
+    square:
+      "Inside you, the force that wants to raze it all and the resistance that would block it clash fiercely. You want to flip the whole board, but blocked inside and out, the force runs to extremes. That fierceness burns you, but that clash is exactly what gives birth in the end to an upheaval that shakes the world. Just don't spend the force only in collision, or what you fought to change breaks too — draw together what to overturn and what to build. Add a direction to that fierceness and your change becomes rebuilding, not destruction.",
+    opposition:
+      "Inside you, the urge to overturn it all and the urge to be held inside control ride a seesaw. You want to raze the board, then hold on, afraid of collapse — then can't bear it and want to flip it again. That swing often shows up through an upheaval of the age that shakes you or someone who holds the power, so you meet it face to face. Just don't spend change only in collision, or both you and the board wear thin; sort for yourself when to overturn and when to firm up. When you balance innovation and control, your upheaval rebuilds instead of tearing down.",
   },
   'neptune-pluto': {
-    conjunction: 'Imagination and depth are one body. A generation that transforms the unseen.',
-    flow: 'Spirit and insight flow softly. You draw up deep meaning.',
-    friction: 'You can grow confused between fantasy and the abyss. Hold your center and master the depths.',
+    conjunction:
+      "In you, imagination and a deep transforming force are one body. A generation that changes the unseen from the root, you carry a force that touches the era's unconscious. That sense of reading the grain running under the surface and shifting it shapes a change others can't feel. Just know that sinking too deep can leave you off reality or lost in confusion — keep a footing to stand on, as much as the depth. With that force to change the unseen, you carve a quiet shift into the very bottom of an age.",
+    flow: "You're someone in whom spirit and insight flow softly. You draw up deep meaning, so you read the currents others can't see. Thanks to that sense of feeling past the surface, you catch which way the grain of an age is turning before anyone. Just know that steeping in the depth can let a real footstep slip — add a clear footing to the insight too. With spirit and insight running side by side, you read the unseen current before anyone else.",
+    square:
+      "Inside you, a beautiful ideal and a dark abyss keep blending into confusion. Pulled into the deep, reality blurs, or it goes hazy which thing is even real. That chaos feels like it could swallow you, but that deep sense is exactly the door to an insight others can't reach. Just don't sink only into the abyss until you lose your footing — hold your center and master the depth slowly. The more you learn to handle that chaos, your depth blooms into real insight.",
+    opposition:
+      "Inside you, the urge to picture it beautifully and the abyss that would dig to the very bottom ride a seesaw. You sink into a lovely dream, then get pulled down into a dark truth — then rise back toward the light. That swing often shows up through an era's unconscious that shakes you or a deep person, so you meet it face to face. Just don't face that depth only from outside, or you lose your center; hold both the light and the dark within you. When you balance ideal and abyss, your insight deepens without being swallowed by chaos.",
   },
 }
