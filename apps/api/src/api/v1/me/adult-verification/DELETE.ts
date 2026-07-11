@@ -19,7 +19,7 @@ const middlewares = factory.createHandlers(zProblemValidator('json', deleteV1MeA
 
 // BBaton 연동 해제 — better-auth account 연결과 인증 정보를 지우고 isAdult를 되돌린다.
 route.delete('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { password } = c.req.valid('json')
 
   try {

@@ -13,7 +13,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(zProblemValidator('json', deleteV1MePushSubscriptionBodySchema))
 
 route.delete('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { endpoint } = c.req.valid('json')
   const notificationService = WebPushService.getInstance()
 

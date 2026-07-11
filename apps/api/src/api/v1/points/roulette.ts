@@ -20,7 +20,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json', postV1RouletteSpinRequestSchema))
 
 route.post('/spin', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { bet } = c.req.valid('json')
 
   try {

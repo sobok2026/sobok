@@ -16,7 +16,7 @@ import { problemResponse } from '@/utils/problem'
 const route = new Hono<Env>()
 
 route.get('/', async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
 
   try {
     const [me] = await db

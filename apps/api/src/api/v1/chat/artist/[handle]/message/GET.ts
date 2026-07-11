@@ -40,7 +40,7 @@ const middlewares = factory.createHandlers(
 // (current subscription included, pre-subscription excluded); never-subscribed → 403.
 // The 1:1 history is always readable.
 route.get('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { handle } = c.req.valid('param')
   const { before, after, limit } = c.req.valid('query')
   const artist = await getChatArtistByHandle(handle)

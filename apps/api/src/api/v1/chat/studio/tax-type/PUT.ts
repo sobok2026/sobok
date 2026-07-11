@@ -15,7 +15,7 @@ const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json'
 
 // 정산 세무 프로필 변경 — 아티스트 본인만. 원천징수 여부(individual=3.3%, 그 외=없음)를 가른다.
 route.put('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { taxType, countryCode } = c.req.valid('json')
   const artist = await getChatArtistByUserId(userId)
 

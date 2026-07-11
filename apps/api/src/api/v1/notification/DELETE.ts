@@ -15,7 +15,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(zProblemValidator('json', deleteV1NotificationBodySchema))
 
 route.delete('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { ids } = c.req.valid('json')
 
   try {

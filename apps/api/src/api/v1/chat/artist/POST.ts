@@ -18,7 +18,7 @@ const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json'
 
 // 오픈 셀프서비스 온보딩 — 누구나 아티스트 프로필을 만들 수 있다(계정당 1개).
 route.post('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const body = c.req.valid('json')
 
   try {

@@ -16,7 +16,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(requireAuth, zProblemValidator('param', idParamSchema))
 
 route.delete('/:id', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { id } = c.req.valid('param')
 
   try {

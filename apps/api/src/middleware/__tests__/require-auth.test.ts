@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test'
+import type { SessionUser } from '@sobok/auth'
 import { PROBLEM_CONTENT_TYPE } from '@sobok/http/problem-details'
 import { Hono } from 'hono'
 
@@ -6,14 +7,13 @@ import { requireAuth } from '../require-auth'
 
 type TestEnv = {
   Variables: {
-    userId?: number
-    isAdult?: boolean
+    user: SessionUser | null
   }
 }
 
 describe('requireAuth', () => {
-  test('userId가 없으면 401 problem response를 반환한다', async () => {
-    const app = createApp()
+  test('세션 user가 없으면 401 problem response를 반환한다', async () => {
+    const app = createApp(null)
 
     const response = await app.request('/protected')
     const body = await response.json()
@@ -27,33 +27,26 @@ describe('requireAuth', () => {
     })
   })
 
-  test('userId가 있으면 다음 핸들러로 요청을 넘긴다', async () => {
-    const app = createApp({ userId: 7 })
+  test('세션 user가 있으면 다음 핸들러로 요청을 넘긴다', async () => {
+    const app = createApp({ id: 'user-7' } as SessionUser)
 
     const response = await app.request('/protected')
 
     expect(response.status).toBe(200)
-    expect(await response.json()).toEqual({ ok: true, userId: 7 })
+    expect(await response.json()).toEqual({ ok: true, userId: 'user-7' })
   })
 })
 
-function createApp(variables: TestEnv['Variables'] = {}) {
+function createApp(user: SessionUser | null) {
   const app = new Hono<TestEnv>()
 
   app.use('*', async (c, next) => {
-    if (variables.userId !== undefined) {
-      c.set('userId', variables.userId)
-    }
-
-    if (variables.isAdult !== undefined) {
-      c.set('isAdult', variables.isAdult)
-    }
-
+    c.set('user', user)
     await next()
   })
 
   app.use('*', requireAuth)
-  app.get('/protected', (c) => c.json({ ok: true, userId: c.get('userId') }))
+  app.get('/protected', (c) => c.json({ ok: true, userId: c.get('user')?.id }))
 
   return app
 }

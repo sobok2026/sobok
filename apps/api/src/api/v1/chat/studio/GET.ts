@@ -16,7 +16,7 @@ const middlewares = factory.createHandlers(requireAuth)
 
 // 스튜디오 진입점 — 내 아티스트 프로필. null이면 온보딩으로 안내한다.
 route.get('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const artist = await getChatArtistByUserId(userId)
 
   const response = {

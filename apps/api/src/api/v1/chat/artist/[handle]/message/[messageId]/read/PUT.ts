@@ -22,7 +22,7 @@ const middlewares = factory.createHandlers(
 // The artist marks one message's reply room read up to lastReadMessageId. A fan learns
 // the artist read their reply by comparing it to this cursor (A · room-level receipt).
 route.put('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { messageId } = c.req.valid('param')
   const { lastReadMessageId } = c.req.valid('json')
   const ownership = await requireOwnedArtist(c)

@@ -21,7 +21,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(zProblemValidator('query', getV1NotificationQuerySchema))
 
 route.get('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
 
   try {
     const { nextId, filter = [] } = c.req.valid('query')

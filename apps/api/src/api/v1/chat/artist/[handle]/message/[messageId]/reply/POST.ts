@@ -30,7 +30,7 @@ const middlewares = factory.createHandlers(
 // chooses that bubble — defaulting to its latest-seen — so the server never infers "latest".
 // The owner is rejected here (they answer via the reply room). Requires a live subscription.
 route.post('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { handle, messageId } = c.req.valid('param')
   const body = c.req.valid('json')
   const artist = await getChatArtistByHandle(handle)

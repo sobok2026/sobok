@@ -22,7 +22,7 @@ const middlewares = factory.createHandlers(zProblemValidator('query', getV1PostQ
 route.get('/', ...middlewares, async (c) => {
   const { cursor, limit, mangaId, filter, username } = c.req.valid('query')
   const decodedCursor = cursor ? decodePostCursor(cursor) : null
-  const currentUserId = c.get('userId')
+  const currentUserId = c.get('user')?.id
 
   if (cursor && !decodedCursor) {
     return problemResponse(c, { status: 400, detail: '잘못된 커서예요' })

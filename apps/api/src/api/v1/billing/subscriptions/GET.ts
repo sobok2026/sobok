@@ -14,7 +14,7 @@ const middlewares = factory.createHandlers(requireAuth)
 
 // 결제 허브의 구독 목록 — 만료·해지 이력 포함 전체.
 route.get('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const rows = await listChatSubscriptionsOfUser(userId)
 
   const response = {

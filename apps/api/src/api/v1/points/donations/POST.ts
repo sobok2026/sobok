@@ -31,7 +31,7 @@ const middlewares = factory.createHandlers(
 )
 
 route.post('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { totalAmount, recipients } = c.req.valid('json')
   const recipientKeys = new Set<string>()
 

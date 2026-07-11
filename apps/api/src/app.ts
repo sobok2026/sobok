@@ -1,5 +1,5 @@
 import { httpInstrumentationMiddleware } from '@hono/otel'
-import type { SessionUser } from '@sobok/auth'
+import type { Session, SessionUser } from '@sobok/auth'
 import { Hono } from 'hono'
 import { compress } from 'hono/compress'
 import { cors } from 'hono/cors'
@@ -19,9 +19,8 @@ import { APP_ORIGIN, isAllowedRequestOrigin } from './utils/request-origin'
 export type Env = {
   Variables: {
     requestId: string
-    user?: SessionUser
-    userId?: string
-    isAdult?: boolean
+    user: SessionUser | null
+    session: Session['session'] | null
   }
 }
 

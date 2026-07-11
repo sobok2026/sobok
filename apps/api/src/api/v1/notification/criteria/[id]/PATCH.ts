@@ -23,7 +23,7 @@ const middlewares = factory.createHandlers(
 )
 
 route.patch('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { id: criteriaId } = c.req.valid('param')
   const { name, conditions, isActive } = c.req.valid('json')
 

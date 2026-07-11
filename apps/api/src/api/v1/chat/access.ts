@@ -34,7 +34,7 @@ export async function resolveTimelineAccess(
 }
 
 export async function requireOwnedArtist(c: Context<Env>) {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const handle = c.req.param('handle')
 
   if (!handle) {

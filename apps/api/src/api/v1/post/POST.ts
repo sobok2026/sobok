@@ -17,7 +17,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json', postV1PostBodySchema))
 
 route.post('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { content, mangaId, parentPostId, referredPostId } = c.req.valid('json')
 
   if (parentPostId && referredPostId) {
