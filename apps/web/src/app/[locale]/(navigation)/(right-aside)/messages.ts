@@ -458,7 +458,7 @@ export const messages = {
       community: {
         posts: {
           title: 'ストーリー',
-          description: 'リトミユーザーのストーリーやおすすめ投稿を確認しましょう。',
+          description: 'ソボクユーザーのストーリーやおすすめ投稿を確認しましょう。',
         },
         notification: {
           title: '通知',
@@ -618,7 +618,7 @@ export const messages = {
     },
     Profile: {
       navigation: {
-        mySobok: 'マイリトミ',
+        mySobok: 'マイソボク',
         logout: 'ログアウト',
         stories: 'ストーリー',
         replies: '返信',
@@ -683,7 +683,7 @@ export const messages = {
       community: {
         posts: {
           title: '动态',
-          description: '查看莉托米用户发布的动态和推荐内容。',
+          description: '查看 Sobok 用户发布的动态和推荐内容。',
         },
         notification: {
           title: '通知',
@@ -842,7 +842,7 @@ export const messages = {
     },
     Profile: {
       navigation: {
-        mySobok: '我的莉托米',
+        mySobok: '我的 Sobok',
         logout: '退出登录',
         stories: '动态',
         replies: '评论',

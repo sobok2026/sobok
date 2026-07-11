@@ -241,7 +241,7 @@ export const messages = {
         titleLine1: '19歳未満の方は',
         titleLine2: 'ここでお戻りください。',
         description:
-          'リトミには成人向けコンテンツが含まれるため、19歳未満の未成年者による利用を制限しています。未成年者は本サイトおよび関連する成人向けコンテンツを利用できず、一部の機能では追加の成人確認またはアクセス制限が適用される場合があります。',
+          'ソボクには成人向けコンテンツが含まれるため、19歳未満の未成年者による利用を制限しています。未成年者は本サイトおよび関連する成人向けコンテンツを利用できず、一部の機能では追加の成人確認またはアクセス制限が適用される場合があります。',
       },
       summary: {
         audience: {
@@ -259,7 +259,7 @@ export const messages = {
       quickFacts: {
         ageRestricted: {
           title: '19歳未満は利用できません',
-          description: '未成年者はリトミおよび関連する成人向けコンテンツを利用できません。',
+          description: '未成年者はソボクおよび関連する成人向けコンテンツを利用できません。',
         },
         additionalCheck: {
           title: '追加確認が必要な場合があります',
@@ -352,7 +352,7 @@ export const messages = {
         titleLine1: '未满 19 岁，',
         titleLine2: '请在此停止。',
         description:
-          '莉托米包含面向成人的内容，因此限制未满 19 岁的未成年人使用。未成年人不得使用本网站及相关成人内容，部分功能可能会适用额外的成人认证或访问限制。',
+          'Sobok 包含面向成人的内容，因此限制未满 19 岁的未成年人使用。未成年人不得使用本网站及相关成人内容，部分功能可能会适用额外的成人认证或访问限制。',
       },
       summary: {
         audience: {
@@ -370,7 +370,7 @@ export const messages = {
       quickFacts: {
         ageRestricted: {
           title: '未满 19 岁不可使用',
-          description: '未成年人不得使用莉托米及相关成人内容。',
+          description: '未成年人不得使用 Sobok 及相关成人内容。',
         },
         additionalCheck: {
           title: '可能需要额外确认',

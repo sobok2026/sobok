@@ -244,7 +244,7 @@ export const messages = {
         },
         recommendManga: {
           title: 'おすすめ作品',
-          description: 'リトミがおすすめする作品を確認しましょう。',
+          description: 'ソボクがおすすめする作品を確認しましょう。',
         },
         tag: {
           title: 'タグ',
@@ -356,7 +356,7 @@ export const messages = {
         },
         recommendManga: {
           title: '推荐作品',
-          description: '查看莉托米推荐的作品。',
+          description: '查看 Sobok 推荐的作品。',
         },
         tag: {
           title: '标签',
