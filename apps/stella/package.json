@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --port 3010",
     "build": "next build",
-    "preview": "npx serve out",
+    "preview": "wrangler dev",
     "type": "next typegen && tsc --noEmit"
   },
   "dependencies": {
@@ -24,6 +24,7 @@
     "@types/react-dom": "19.2.3",
     "babel-plugin-react-compiler": "^1.0.0",
     "tailwindcss": "^4.3.1",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "wrangler": "^4.110.0"
   }
 }

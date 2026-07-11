@@ -1,0 +1,4 @@
+# Workers Static Assets custom headers (copied into ./out by `next build`).
+# Next.js content-hashes everything under /_next/static, so browsers may cache it forever.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
