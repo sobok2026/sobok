@@ -14,9 +14,16 @@ export default function manifest(): MetadataRoute.Manifest {
     id: '/',
     start_url: '/',
     display: 'standalone',
+    display_override: ['window-controls-overlay', 'standalone'],
     background_color: THEME_COLOR,
     theme_color: THEME_COLOR,
     lang: DEFAULT_LOCALE,
+    protocol_handlers: [
+      {
+        protocol: 'web+stella',
+        url: '/?protocol=web+stella&url=%s',
+      },
+    ],
     icons: [
       {
         src: '/web-app-manifest-192x192.png',

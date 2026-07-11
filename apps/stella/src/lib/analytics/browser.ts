@@ -1,7 +1,8 @@
 'use client'
 
 import { sendGTMEvent } from '@next/third-parties/google'
-import { env } from '@/env/client'
+
+import { ORIGIN } from '@/constants'
 
 export type AnalyticsParams = Record<string, AnalyticsValue | undefined>
 
@@ -12,10 +13,14 @@ type AnalyticsObject = {
 type AnalyticsPrimitive = boolean | number | string | null
 type AnalyticsValue = AnalyticsPrimitive | Date | readonly (AnalyticsObject | AnalyticsPrimitive)[]
 
-const { NEXT_PUBLIC_GTM_ID } = env
+const PRODUCTION_HOSTNAME = new URL(ORIGIN).hostname
+
+export function isAnalyticsEnabled(): boolean {
+  return typeof window !== 'undefined' && window.location.hostname === PRODUCTION_HOSTNAME
+}
 
 export function track(eventName: string, params?: AnalyticsParams) {
-  if (!NEXT_PUBLIC_GTM_ID) {
+  if (!isAnalyticsEnabled()) {
     return
   }
 

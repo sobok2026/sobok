@@ -1,6 +1,5 @@
 import '../globals.css'
 
-import { GoogleTagManager } from '@next/third-parties/google'
 import { PUBLIC_LOCALES } from '@sobok/domain/locale'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
@@ -9,9 +8,9 @@ import { getTranslations } from 'next-intl/server'
 import { Toaster } from 'sonner'
 
 import { ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
-import { env } from '@/env/client'
 import { getMessages } from '@/i18n/messages'
 import { getLocaleFromParams } from '@/i18n/server'
+import Analytics from '@/lib/analytics/Analytics'
 import LocaleSwitcher from './LocaleSwitcher'
 
 const PretendardVariable = localFont({
@@ -51,8 +50,6 @@ export const viewport: Viewport = {
   themeColor: THEME_COLOR,
 }
 
-const { NEXT_PUBLIC_GTM_ID } = env
-
 export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {
   const locale = await getLocaleFromParams(params)
   const messages = getMessages(locale)
@@ -66,7 +63,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           {children}
           <Toaster position="top-center" richColors theme="dark" />
         </NextIntlClientProvider>
-        {NEXT_PUBLIC_GTM_ID && <GoogleTagManager gtmId={NEXT_PUBLIC_GTM_ID} />}
+        <Analytics />
       </body>
     </html>
   )
