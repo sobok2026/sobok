@@ -14,6 +14,7 @@ export const messages = {
         title: '나의 별자리',
         description: '인터랙티브 탄생 차트로 당신만의 우주를 탐험하세요.',
       },
+      localeSwitcher: '언어 선택',
       hero: {
         eyebrow: '당신만의 우주',
         title: '나의 탄생 별자리',
@@ -179,6 +180,7 @@ export const messages = {
         title: 'My Star Chart',
         description: 'Explore your own universe through an interactive birth chart.',
       },
+      localeSwitcher: 'Select language',
       hero: {
         eyebrow: 'Your own universe',
         title: 'My Birth Chart',
@@ -345,6 +347,7 @@ export const messages = {
         title: '我的星盘',
         description: '通过互动式出生星盘，探索属于你的宇宙。',
       },
+      localeSwitcher: '选择语言',
       hero: {
         eyebrow: '属于你的宇宙',
         title: '我的出生星盘',
@@ -506,6 +509,7 @@ export const messages = {
         title: 'わたしの星図',
         description: 'インタラクティブな出生図で、あなただけの宇宙を探検しよう。',
       },
+      localeSwitcher: '言語を選択',
       hero: {
         eyebrow: 'あなただけの宇宙',
         title: 'わたしの出生図',

@@ -1,3 +1,4 @@
+import { PUBLIC_LOCALES } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
@@ -12,6 +13,14 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
   return {
     title: t('title'),
     description: t('description'),
+    alternates: {
+      canonical: `/${locale}/`,
+      languages: {
+        ...Object.fromEntries(PUBLIC_LOCALES.map((entry) => [entry, `/${entry}/`])),
+        // Root serves the default locale via public/_redirects; no Accept-Language magic.
+        'x-default': '/',
+      },
+    },
   }
 }
 

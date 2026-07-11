@@ -21,6 +21,13 @@
       "runtimeArgs": ["run", "dev"],
       "cwd": "apps/stella",
       "port": 3010
+    },
+    {
+      "name": "stella-preview",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "wrangler", "dev", "--port", "3011"],
+      "cwd": "apps/stella",
+      "port": 3011
     }
   ]
 }

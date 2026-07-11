@@ -5,10 +5,9 @@
   // Assets-only Worker (no `main`): the static export in ./out is served directly at the edge
   // via Workers Static Assets. CI runs `wrangler deploy` from this directory after `next build`.
   //
-  // Serving surface is stella.sobok.cc only. The custom-domain binding and the root-path
-  // Accept-Language redirect (/ -> /ko/ etc.) are owned by Terraform in sobok-ops
-  // (infra/cloudflare/account/sobok/workers-stella, infra/cloudflare/zone/sobok.cc/rulesets/redirects)
-  // — do NOT declare routes here.
+  // Serving surface is stella.sobok.cc only. The custom-domain binding is owned by Terraform
+  // in sobok-ops (infra/cloudflare/account/sobok/workers-stella) — do NOT declare routes here.
+  // The bare root redirects to the default locale via public/_redirects.
   "workers_dev": false,
   "preview_urls": false,
   "assets": {
