@@ -534,10 +534,12 @@ export const retro: RetroReadings = {
 export const aspects: AspectPairReadings = {
   'sun-moon': {
     conjunction:
-      'Your outer self and inner heart point the same way. What you want and what you feel move naturally as one.',
-    flow: 'Will and emotion fall into step easily. Life feels at ease, so you live as yourself without strain.',
-    friction:
-      'What you want and what your heart needs keep clashing. You find your real self in the space between them.',
+      'What you want on the outside and what you feel on the inside always point the same way. Your will and your emotions move as one, so you never have to lie to yourself — you live in the direction your heart actually pulls. Just know that being so fused with yourself can make you hard to see clearly; step back and look at you sometimes. That inner unity, where wanting and feeling never split, makes you the certain owner of your own life.',
+    flow: "Inside you, will and emotion fall into step naturally. What you want to do and what your heart needs rarely collide, so you live as yourself without much effort — a quiet self-acceptance sits at your foundation. Just know that comfort can leave you without a reason to push; step outside the familiar now and then. That smooth link between your inside and outside makes you someone who doesn't fall apart, wherever you are.",
+    square:
+      "Inside you, what you want and what your heart needs keep pulling in different directions. Your head says go this way while your feelings grab the other — a push-pull tension always humming under the surface. It can feel maddening, but that friction is exactly the engine that keeps you in motion. Just don't only drive yourself; know that both sides of you are right. When you learn to work that inner tension, you become someone deeper and sturdier than most.",
+    opposition:
+      "Inside you, will and emotion sit at opposite poles, riding a seesaw. You swing between the you that wants and the you that feels, tipping one way then lurching back the other. Strangely, that tension often shows up mirrored in the people around you, so you meet both sides of yourself through your relationships. Just don't hand one pole to someone else and lose yourself; pull both extremes in as your own. When you find the balance point between them, you become someone wide and remarkably mature.",
   },
   'sun-mercury': {
     conjunction: 'Your thoughts are your very self. Words and identity are one, so your expression rings true.',

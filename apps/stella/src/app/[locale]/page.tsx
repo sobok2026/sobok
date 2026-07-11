@@ -17,7 +17,6 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
       canonical: `/${locale}/`,
       languages: {
         ...Object.fromEntries(PUBLIC_LOCALES.map((entry) => [entry, `/${entry}/`])),
-        // Root serves the default locale via public/_redirects; no Accept-Language magic.
         'x-default': '/',
       },
     },

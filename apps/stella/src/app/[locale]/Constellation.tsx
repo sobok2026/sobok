@@ -844,15 +844,15 @@ function DetailPanel({
     const color = ASPECT_STYLE[selection.aspectType].color
     const pairKeyId = pairKey(selection.a as PlanetId, selection.b as PlanetId)
     const tone = aspectTone(selection.aspectType)
-    // Prefer the specific tone; if a locale hasn't split square/opposition yet, fall
-    // back to its legacy shared `friction` line, then to the generic aspect blurb.
     const specificKey = `readings.aspectPairs.${pairKeyId}.${tone}`
     const legacyKey = `readings.aspectPairs.${pairKeyId}.friction`
+
     const pairReadingKey = t.has(specificKey)
       ? specificKey
       : (tone === 'square' || tone === 'opposition') && t.has(legacyKey)
         ? legacyKey
         : `aspects.${selection.aspectType}Desc`
+
     const pairReading = t(pairReadingKey)
     const tier = orbTier(selection.orb)
     const intensityKey = tier ? `readings.aspectIntensity.${tier}` : null
