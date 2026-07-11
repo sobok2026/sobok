@@ -26,7 +26,7 @@ export default function Profile() {
     return <GuestProfileActions settingsLabel={t('settings')} />
   }
 
-  const { name, imageURL, nickname } = me
+  const { username, image, name } = me
 
   return (
     <TooltipPopover
@@ -37,15 +37,15 @@ export default function Profile() {
     >
       <Link
         className="flex justify-center items-center gap-3 p-2 group rounded-full pointer-events-auto sm:pointer-events-none"
-        href={`/@${name}`}
+        href={`/@${username ?? ''}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <Squircle backgroundClassName="fill-foreground-faint" className="w-8 shrink-0 sm:w-10" src={imageURL}>
-          {nickname.slice(0, 2)}
+        <Squircle backgroundClassName="fill-foreground-faint" className="w-8 shrink-0 sm:w-10" src={image}>
+          {name.slice(0, 2)}
         </Squircle>
         <div className="hidden text-left grow min-w-0 gap-1 py-0.5 2xl:grid">
-          <div className="leading-5 break-all line-clamp-1">{nickname}</div>
-          <div className="overflow-hidden text-foreground-muted leading-5">@{name}</div>
+          <div className="leading-5 break-all line-clamp-1">{name}</div>
+          <div className="overflow-hidden text-foreground-muted leading-5">@{username}</div>
         </div>
         <MoreHorizontal className="shrink-0 hidden size-11 p-3 2xl:block" />
       </Link>
@@ -57,7 +57,7 @@ export default function Profile() {
           <Settings className="w-5 transition" />
           <span className="min-w-0 hidden md:block">{t('settings')}</span>
         </Link>
-        <LogoutButton username={name} />
+        <LogoutButton username={username ?? name} />
       </div>
     </TooltipPopover>
   )
