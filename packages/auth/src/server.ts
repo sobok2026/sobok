@@ -3,5 +3,4 @@
 export { type Auth, auth, type Session, type SessionUser } from './auth'
 export { BBATON_PROVIDER_ID } from './bbaton'
 export { cleanupInactiveUsers } from './cleanup-inactive-users'
-export { verifyUserPassword } from './password'
 export { refreshSessionCookies } from './session-cookie'

@@ -1,10 +1,7 @@
+import { authClient } from '@sobok/auth/client'
 import type { GETV1MeResponse } from '@sobok/contracts'
-
-import { CookieKey } from '@sobok/http/cookie'
 import { useQuery } from '@tanstack/react-query'
-import Cookies from 'js-cookie'
 import ms from 'ms'
-import { useEffect, useState } from 'react'
 
 import { QueryKeys } from '@/lib/react-query/query-keys'
 import { fetchAPIData } from '@/utils/api-request'
@@ -23,16 +20,12 @@ export function getMeQueryFetchOptions() {
 }
 
 export default function useMeQuery() {
-  const [hasAuthHint, setHasAuthHint] = useState<boolean | null>(null)
-
-  useEffect(() => {
-    setHasAuthHint(Cookies.get(CookieKey.AUTH_HINT) === '1')
-  }, [])
+  const { data: session, isPending: isSessionPending } = authClient.useSession()
 
   return useQuery<GETV1MeResponse | null>({
     ...getMeQueryFetchOptions(),
-    enabled: hasAuthHint === true,
-    placeholderData: hasAuthHint === false ? null : undefined,
+    enabled: !isSessionPending && Boolean(session),
+    placeholderData: !isSessionPending && !session ? null : undefined,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,

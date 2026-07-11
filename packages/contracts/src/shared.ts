@@ -1,4 +1,3 @@
-import { PASSWORD_PATTERN } from '@sobok/domain/auth/policy'
 import { MAX_MANGA_ID } from '@sobok/domain/manga/policy'
 import { z } from 'zod'
 
@@ -23,7 +22,8 @@ export const mangaIdParamSchema = z.object({
 
 // --- Auth field validators ----------------------------------------------------
 
-export const passwordSchema = z.string().min(8).max(64).regex(new RegExp(PASSWORD_PATTERN))
+/** 기존 비밀번호 확인(sudo 재인증)용 — 생성 정책은 better-auth가 담당하므로 형식을 검사하지 않는다. */
+export const passwordVerificationSchema = z.string().min(1).max(256)
 
 // --- Anti-abuse tokens --------------------------------------------------------
 

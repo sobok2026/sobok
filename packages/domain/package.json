@@ -5,8 +5,6 @@
   "type": "module",
   "exports": {
     "./app/metadata": "./src/app/metadata.ts",
-    "./auth/model": "./src/auth/model.ts",
-    "./auth/policy": "./src/auth/policy.ts",
     "./censorship/model": "./src/censorship/model.ts",
     "./censorship/policy": "./src/censorship/policy.ts",
     "./chat/policy": "./src/chat/policy.ts",

@@ -3,7 +3,7 @@ import { normalizeValue } from '@sobok/domain/utils/normalize-value'
 import { z } from 'zod'
 
 import { INVALID_PARAM } from '../problem'
-import { passwordSchema } from '../shared'
+import { passwordVerificationSchema } from '../shared'
 
 // 프로필 변경(이름·username·이미지), 비밀번호·패스키·2FA·세션 관리는 better-auth(/api/auth/*)가 담당한다.
 
@@ -55,13 +55,13 @@ export const patchV1MeSettingsBodySchema = z
 export type PATCHV1MeSettingsBody = z.infer<typeof patchV1MeSettingsBodySchema>
 
 export const deleteV1MeAdultVerificationBodySchema = z.object({
-  password: passwordSchema,
+  password: passwordVerificationSchema,
 })
 
 export type DELETEV1MeAdultVerificationBody = z.infer<typeof deleteV1MeAdultVerificationBodySchema>
 
 export const postV1MeExportBodySchema = z.object({
-  password: passwordSchema,
+  password: passwordVerificationSchema,
   includeHistory: z.boolean(),
   includeBookmarks: z.boolean(),
   includeRatings: z.boolean(),
