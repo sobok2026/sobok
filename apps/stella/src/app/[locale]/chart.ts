@@ -314,6 +314,27 @@ export function angularGap(a: number, b: number): number {
 
 export type ChartAspect = { a: PlanetId; b: PlanetId; type: AspectType; orb: number }
 
+/**
+ * The closest major aspect for two longitudes, or null when none is in orb.
+ * `maxOrb` tightens every aspect's allowance uniformly — transit matching uses
+ * far tighter orbs than the natal wheel.
+ */
+export function closestAspect(lonA: number, lonB: number, maxOrb?: number): { type: AspectType; orb: number } | null {
+  const sep = angularGap(lonA, lonB)
+  let best: { type: AspectType; orb: number } | null = null
+
+  for (const def of ASPECT_DEFS) {
+    const delta = Math.abs(sep - def.angle)
+    const cap = maxOrb === undefined ? def.orb : Math.min(def.orb, maxOrb)
+
+    if (delta <= cap && (!best || delta < best.orb)) {
+      best = { type: def.type, orb: delta }
+    }
+  }
+
+  return best
+}
+
 /** Derive the major aspects present between the bodies (closest aspect per pair, within orb). */
 export function computeAspects(planets: readonly PlanetPosition[]): ChartAspect[] {
   const bodies = planets.filter((p) => !ASPECT_EXCLUDED.has(p.id))
@@ -321,18 +342,15 @@ export function computeAspects(planets: readonly PlanetPosition[]): ChartAspect[
 
   for (let i = 0; i < bodies.length; i++) {
     for (let j = i + 1; j < bodies.length; j++) {
-      const sep = angularGap(bodies[i].lon, bodies[j].lon)
-      let best: { type: AspectType; delta: number } | null = null
-
-      for (const def of ASPECT_DEFS) {
-        const delta = Math.abs(sep - def.angle)
-        if (delta <= def.orb && (!best || delta < best.delta)) {
-          best = { type: def.type, delta }
-        }
-      }
+      const best = closestAspect(bodies[i].lon, bodies[j].lon)
 
       if (best) {
-        result.push({ a: bodies[i].id, b: bodies[j].id, type: best.type, orb: Math.round(best.delta * 10) / 10 })
+        result.push({
+          a: bodies[i].id,
+          b: bodies[j].id,
+          type: best.type,
+          orb: Math.round(best.orb * 10) / 10,
+        })
       }
     }
   }

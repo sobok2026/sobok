@@ -1,6 +1,7 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import Link from 'next/link'
+import { useLocale, useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -60,6 +61,7 @@ const glyphText = (glyph: string) => `${glyph}︎`
 
 export default function Constellation() {
   const t = useTranslations('Constellation')
+  const locale = useLocale()
   const [chart, setChart] = useState<NatalChart | null>(null)
   const [computing, setComputing] = useState(false)
   const [runId, setRunId] = useState(0)
@@ -271,6 +273,14 @@ export default function Constellation() {
         {!revealed && (
           <div className="mb-6 w-full">
             <BirthForm computing={computing} onSubmit={handleSubmit} />
+            <p className="mt-4 text-center">
+              <Link
+                className="text-xs text-slate-400 underline-offset-4 transition hover:text-slate-200 hover:underline"
+                href={`/${locale}/today/`}
+              >
+                {t('todayCta')}
+              </Link>
+            </p>
           </div>
         )}
 
@@ -382,6 +392,12 @@ export default function Constellation() {
               >
                 {t('share.button')}
               </button>
+              <Link
+                className="text-xs text-slate-400 underline-offset-4 transition hover:text-slate-200 hover:underline"
+                href={`/${locale}/today/`}
+              >
+                {t('todayCta')}
+              </Link>
               <button
                 className="text-xs text-slate-400 underline-offset-4 transition hover:text-slate-200 hover:underline"
                 onClick={backToForm}
@@ -1113,7 +1129,7 @@ function AspectGroup({
                 onClick={() => onSelect(asp)}
                 type="button"
               >
-                <span className="shrink-0 text-base" style={{ color }}>
+                <span className="w-9 shrink-0 text-center text-base" style={{ color }}>
                   {glyphText(PLANET_GLYPHS[asp.a as never])} {glyphText(PLANET_GLYPHS[asp.b as never])}
                 </span>
                 <span className="min-w-0 flex-1">

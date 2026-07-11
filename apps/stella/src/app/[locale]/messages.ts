@@ -18,7 +18,7 @@ export const messages = {
       hero: {
         eyebrow: '당신만의 우주',
         title: '나의 탄생 별자리',
-        subtitle: '태어난 순간, 하늘이 그린 지도예요. 별을 눌러 나를 발견해 보세요.',
+        subtitle: '태어난 순간 하늘이 그린 지도예요. 별을 눌러 나를 발견해 보세요.',
         openCta: '✨ 내 별자리 열기',
         reopenCta: '다시 그리기',
         tapHint: '별이나 별자리를 눌러 자세히 보기',
@@ -27,7 +27,7 @@ export const messages = {
       a11y: {
         statusPlanet: '{name}, {sign} 선택됨',
         statusSign: '{name} 선택됨',
-        statusAspect: '{a}와 {b}의 {aspect} 관계',
+        statusAspect: '{a}과 {b}의 {aspect} 관계',
       },
       big3: {
         sunLabel: '태양',
@@ -35,10 +35,10 @@ export const messages = {
         risingLabel: '상승',
         sunHint: '가장 나다운 핵심 · 정체성',
         moonHint: '숨은 감정과 본능',
-        risingHint: '세상에 보여지는 첫인상',
+        risingHint: '세상에 보이는 첫인상',
       },
       panel: {
-        empty: '별을 눌러보세요',
+        empty: '별을 눌러 보세요',
         emptyHint: '행성과 별자리마다 당신의 이야기가 숨어 있어요.',
         retrograde: '역행',
         house: '{n}하우스',
@@ -76,7 +76,7 @@ export const messages = {
         sextileName: '육각',
         sextileVibe: '기회를 주는 흐름',
         squareName: '사각',
-        squareVibe: '부딪히며 크는 긴장',
+        squareVibe: '성장통 같은 긴장',
         oppositionName: '대립',
         oppositionVibe: '균형을 배우는 밀당',
         conjunctionDesc: '두 별이 한자리에 겹쳐, 힘이 배로 강해지고 한 방향으로 움직여요.',
@@ -89,7 +89,7 @@ export const messages = {
       share: {
         button: '내 별자리 공유',
         copied: '링크를 복사했어요',
-        text: '내 탄생 별자리를 확인해보세요 ✦',
+        text: '내 탄생 별자리를 확인해 보세요 ✦',
       },
       footer: '재미로 보는 별자리예요 ✦',
       form: {
@@ -131,7 +131,7 @@ export const messages = {
         scorpio: '깊이와 통찰',
         sagittarius: '자유와 모험',
         capricorn: '성실과 야망',
-        aquarius: '독창과 자유로운 사고',
+        aquarius: '독창성과 자유로운 사고',
         pisces: '감성과 상상력',
       },
       houseThemes: {
@@ -203,9 +203,9 @@ export const messages = {
         title: '나의 오늘',
         stageTitle: '오늘의 무대',
         highlightTitle: '오늘의 하이라이트',
-        bigFlowTitle: '지금 흐르는 큰 흐름',
+        bigFlowTitle: '지금 지나가는 큰 흐름',
         emptyTitle: '내 차트 기준으로 보면 더 깊어져요',
-        emptyHint: '생년월일시를 입력하면 오늘의 하늘이 내 차트의 어디를 지나는지 읽어드려요.',
+        emptyHint: '생년월일시를 입력하면 오늘의 하늘이 내 차트의 어디를 지나는지 읽어 드려요.',
         cta: '✨ 내 차트 만들기',
         privacy: '출생 정보는 이 기기에만 저장돼요. 서버로 전송되지 않아요.',
         clear: '저장된 출생 정보 지우기',

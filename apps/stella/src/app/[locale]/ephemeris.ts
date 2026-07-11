@@ -87,6 +87,41 @@ function meanObliquityDeg(T: number): number {
   return seconds / 3600
 }
 
+type AstronomyModule = typeof import('astronomy-engine')
+
+/** Geocentric tropical ecliptic longitude of date (degrees) for a body. */
+function eclipticLon(Astronomy: AstronomyModule, name: string, at: import('astronomy-engine').AstroTime): number {
+  const vec = name === 'Moon' ? Astronomy.GeoMoon(at) : Astronomy.GeoVector(Astronomy.Body[name as never], at, true)
+  const ect = Astronomy.RotateVector(Astronomy.Rotation_EQJ_ECT(at), vec)
+  return norm360(Astronomy.SphereFromVector(ect).lon)
+}
+
+/** The ten bodies (Sun–Pluto) at a given instant, with retrograde flags from the next-day delta. */
+function computeBodies(Astronomy: AstronomyModule, time: import('astronomy-engine').AstroTime): PlanetPosition[] {
+  const nextDay = time.AddDays(1)
+
+  return PLANET_ORDER.map((id) => {
+    const name = BODY_NAME[id]
+    const lon = eclipticLon(Astronomy, name, time)
+    let retrograde = false
+
+    if (id !== 'sun' && id !== 'moon') {
+      let delta = eclipticLon(Astronomy, name, nextDay) - lon
+      if (delta > 180) delta -= 360
+      if (delta < -180) delta += 360
+      retrograde = delta < 0
+    }
+
+    return { id, lon, retrograde }
+  })
+}
+
+/** Sun–Pluto positions for an arbitrary instant — the transit side of the /today page. */
+export async function computePositions(utc: Date): Promise<PlanetPosition[]> {
+  const Astronomy = await import('astronomy-engine')
+  return computeBodies(Astronomy, Astronomy.MakeTime(utc))
+}
+
 export async function computeChart(input: BirthInput): Promise<NatalChart> {
   const Astronomy = await import('astronomy-engine')
 
@@ -100,30 +135,7 @@ export async function computeChart(input: BirthInput): Promise<NatalChart> {
   )
 
   const time = Astronomy.MakeTime(utc)
-
-  /** Geocentric tropical ecliptic longitude of date (degrees) for a body. */
-  function eclipticLon(name: string, at: import('astronomy-engine').AstroTime): number {
-    const vec = name === 'Moon' ? Astronomy.GeoMoon(at) : Astronomy.GeoVector(Astronomy.Body[name as never], at, true)
-    const ect = Astronomy.RotateVector(Astronomy.Rotation_EQJ_ECT(at), vec)
-    return norm360(Astronomy.SphereFromVector(ect).lon)
-  }
-
-  const nextDay = time.AddDays(1)
-
-  const planets: PlanetPosition[] = PLANET_ORDER.map((id) => {
-    const name = BODY_NAME[id]
-    const lon = eclipticLon(name, time)
-    let retrograde = false
-
-    if (id !== 'sun' && id !== 'moon') {
-      let delta = eclipticLon(name, nextDay) - lon
-      if (delta > 180) delta -= 360
-      if (delta < -180) delta += 360
-      retrograde = delta < 0
-    }
-
-    return { id, lon, retrograde }
-  })
+  const planets = computeBodies(Astronomy, time)
 
   // Mean lunar nodes (Meeus) — always retrograde; the south node is the antipode.
   const T = time.tt / 36525

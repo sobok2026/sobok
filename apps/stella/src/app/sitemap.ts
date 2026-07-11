@@ -11,11 +11,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'x-default': `${ORIGIN}/`,
   }
 
-  return PUBLIC_LOCALES.map((locale) => ({
-    url: `${ORIGIN}/${locale}/`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: locale === DEFAULT_LOCALE ? 1 : 0.8,
-    alternates: { languages },
-  }))
+  const todayLanguages = {
+    ...Object.fromEntries(PUBLIC_LOCALES.map((locale) => [locale, `${ORIGIN}/${locale}/today/`])),
+    'x-default': `${ORIGIN}/today/`,
+  }
+
+  return [
+    ...PUBLIC_LOCALES.map((locale) => ({
+      url: `${ORIGIN}/${locale}/`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: locale === DEFAULT_LOCALE ? 1 : 0.8,
+      alternates: { languages },
+    })),
+    ...PUBLIC_LOCALES.map((locale) => ({
+      url: `${ORIGIN}/${locale}/today/`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: locale === DEFAULT_LOCALE ? 0.9 : 0.7,
+      alternates: { languages: todayLanguages },
+    })),
+  ]
 }
