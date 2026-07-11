@@ -39,15 +39,15 @@ export default async function Post({ post }: Props) {
       id={POST_DETAIL_CURRENT_ANCHOR_ID}
     >
       <div className="flex items-start justify-between gap-2">
-        <Link className="flex gap-2" href={`/@${author?.name ?? ''}`}>
-          <Squircle className="w-10 shrink-0" src={author?.imageURL}>
-            {author?.nickname.slice(0, 2)}
+        <Link className="flex gap-2" href={`/@${author?.username ?? ''}`}>
+          <Squircle className="w-10 shrink-0" src={author?.image}>
+            {author?.name.slice(0, 2)}
           </Squircle>
           <div>
             <div aria-disabled={!author} className="font-semibold aria-disabled:text-foreground-subtle">
-              {author?.nickname ?? t('common.deletedUser')}
+              {author?.name ?? t('common.deletedUser')}
             </div>
-            {author && <div className="text-foreground-subtle">@{author.name}</div>}
+            {author && <div className="text-foreground-subtle">@{author.username}</div>}
           </div>
         </Link>
         <div className="flex items-center gap-2">
@@ -109,7 +109,9 @@ export default async function Post({ post }: Props) {
       >
         {author && (
           <p className="text-left">
-            <span className="font-semibold text-foreground">{t('post.replyingTo', { name: author.name })}</span>
+            <span className="font-semibold text-foreground">
+              {t('post.replyingTo', { name: author.username ?? '' })}
+            </span>
           </p>
         )}
       </PostCreationForm>

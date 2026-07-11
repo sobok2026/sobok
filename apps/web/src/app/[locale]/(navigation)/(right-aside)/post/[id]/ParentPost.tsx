@@ -20,8 +20,8 @@ export default async function ParentPost({ post }: Props) {
   const referredPost = post.referredPost
 
   const avatar = (
-    <Squircle className="w-10 shrink-0" src={author?.imageURL}>
-      {(author?.nickname ?? t('common.deletedUserShort')).slice(0, 2)}
+    <Squircle className="w-10 shrink-0" src={author?.image}>
+      {(author?.name ?? t('common.deletedUserShort')).slice(0, 2)}
     </Squircle>
   )
 
@@ -30,8 +30,8 @@ export default async function ParentPost({ post }: Props) {
       <div className="flex flex-col items-center self-stretch">
         {author ? (
           <Link
-            aria-label={t('common.profileAria', { nickname: author.nickname })}
-            href={`/@${author.name}`}
+            aria-label={t('common.profileAria', { nickname: author.name })}
+            href={`/@${author.username ?? ''}`}
             prefetch={false}
           >
             {avatar}
@@ -47,15 +47,15 @@ export default async function ParentPost({ post }: Props) {
           {author ? (
             <Link
               className="min-w-0 font-bold text-foreground transition hover:text-foreground"
-              href={`/@${author.name}`}
+              href={`/@${author.username ?? ''}`}
               prefetch={false}
             >
-              <span className="break-all">{author.nickname}</span>
+              <span className="break-all">{author.name}</span>
             </Link>
           ) : (
             <span className="font-bold text-foreground-subtle">{t('common.deletedUser')}</span>
           )}
-          {author && <span className="min-w-0 break-all text-foreground-subtle">@{author.name}</span>}
+          {author && <span className="min-w-0 break-all text-foreground-subtle">@{author.username}</span>}
           <span className="text-foreground-subtle">·</span>
           <span
             className="shrink-0 text-xs text-foreground-subtle"

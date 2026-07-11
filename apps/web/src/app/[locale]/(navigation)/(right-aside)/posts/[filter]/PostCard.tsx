@@ -26,7 +26,7 @@ export default function PostCard({ post }: Props) {
   const postsT = useTranslations('Community.posts')
 
   const author = post.author
-  const authorNickname = author?.nickname
+  const authorName = author?.name
   const content = post.content ?? ''
   const hasInternalURL = checkInternalURL(content)
   const isReply = post.parentPostId !== null
@@ -41,11 +41,11 @@ export default function PostCard({ post }: Props) {
 
   const authorMeta = (
     <>
-      <Squircle className="w-6 shrink-0" src={author?.imageURL} textClassName="text-foreground">
-        {(authorNickname ?? commonT('deletedUserShort')).slice(0, 2)}
+      <Squircle className="w-6 shrink-0" src={author?.image} textClassName="text-foreground">
+        {(authorName ?? commonT('deletedUserShort')).slice(0, 2)}
       </Squircle>
       <div className="ml-1 min-w-0 flex-1 truncate">
-        {authorNickname ?? <span className="text-foreground-muted">{commonT('deletedUser')}</span>}
+        {authorName ?? <span className="text-foreground-muted">{commonT('deletedUser')}</span>}
       </div>
       <div
         className="shrink-0 overflow-hidden text-xs text-foreground-muted"
@@ -88,9 +88,9 @@ export default function PostCard({ post }: Props) {
           {author ? (
             <Link
               className="flex min-w-0 flex-1 items-center gap-1 pl-3"
-              href={`/@${author.name}`}
+              href={`/@${author.username ?? ''}`}
               prefetch={false}
-              title={`@${author.name}`}
+              title={`@${author.username ?? ''}`}
             >
               {authorMeta}
             </Link>

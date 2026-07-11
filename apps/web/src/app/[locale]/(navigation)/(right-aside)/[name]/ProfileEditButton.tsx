@@ -1,6 +1,5 @@
 'use client'
 
-import { signalCurrentPasskeyUserDetails } from '@sobok/auth/passkey'
 import { getSafeProfileImageURL } from '@sobok/std'
 import { Dialog, DialogBody, DialogFooter, DialogHeader } from '@sobok/ui'
 import { SquarePen } from 'lucide-react'
@@ -12,21 +11,18 @@ import { twMerge } from 'tailwind-merge'
 import { useRouter } from '@/i18n/navigation'
 
 import {
-  applyProfileProblem,
   buildProfileEditPatch,
   clearProfileInputValidity,
   clearProfileValidity,
   type EditableProfile,
-  encodePasskeyUserId,
-  getProfileProblemFieldErrors,
   type ProfileFieldErrors,
 } from './profile-edit-form'
 import usePatchMyProfileMutation from './usePatchMyProfileMutation'
 
 const formId = {
+  username: 'username',
   name: 'name',
-  nickname: 'nickname',
-  imageURL: 'imageURL',
+  image: 'image',
 }
 
 type Props = {
@@ -37,7 +33,7 @@ export default function ProfileEditButton({ me }: Props) {
   const [currentMe, setCurrentMe] = useState(me)
   const [showModal, setShowModal] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<ProfileFieldErrors>({})
-  const defaultProfileImageURL = getSafeProfileImageURL(currentMe.imageURL ?? '')
+  const defaultProfileImageURL = getSafeProfileImageURL(currentMe.image ?? '')
   const [profileImageURL, setProfileImageURL] = useState(defaultProfileImageURL)
   const formRef = useRef<HTMLFormElement | null>(null)
   const t = useTranslations('Profile.edit')
@@ -47,49 +43,23 @@ export default function ProfileEditButton({ me }: Props) {
   const editMutation = usePatchMyProfileMutation({
     onError: (error) => {
       clearProfileValidity(formRef.current)
-
-      if (error.status === 401) {
-        setFieldErrors({})
-        setShowModal(false)
-        router.refresh()
-        return
-      }
-
-      const nextFieldErrors = getProfileProblemFieldErrors(error.problem, tErrors)
-      setFieldErrors(nextFieldErrors)
-
-      if (applyProfileProblem(formRef.current, error.problem, tErrors)) {
-        return
-      }
+      toast.warning(error.message || tErrors('fallback'))
     },
 
-    onSuccess: async (data, _variables, context) => {
-      const previousProfile = context?.previousMe || currentMe
-      const previousDisplayName = previousProfile.nickname || previousProfile.name
-      const nextDisplayName = data.nickname || data.name
-
+    onSuccess: async (data) => {
       setCurrentMe((previous) => ({
         ...previous,
-        name: data.name,
-        nickname: data.nickname,
-        imageURL: data.imageURL,
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.username !== undefined && { username: data.username.toLowerCase() }),
+        ...(data.image !== undefined && { image: data.image }),
       }))
 
       setFieldErrors({})
       setShowModal(false)
-
-      if (previousDisplayName !== nextDisplayName) {
-        await signalCurrentPasskeyUserDetails({
-          displayName: nextDisplayName,
-          name: previousProfile.loginId,
-          userId: encodePasskeyUserId(previousProfile.id),
-        })
-      }
-
       toast.success(t('success'))
 
-      if (data.name !== previousProfile.name) {
-        router.replace(`/@${data.name}`)
+      if (data.username && data.username.toLowerCase() !== currentMe.username) {
+        router.replace(`/@${data.username.toLowerCase()}`)
       }
     },
   })
@@ -196,77 +166,77 @@ export default function ProfileEditButton({ me }: Props) {
             </div>
             <div className="grid gap-4 p-4 pt-16">
               <div className="grid gap-1">
-                <label className="block text-sm font-medium text-foreground-muted" htmlFor="loginId">
-                  {t('loginId')}
+                <label className="block text-sm font-medium text-foreground-muted" htmlFor="email">
+                  {t('email')}
                 </label>
                 <input
                   className="w-full px-3 py-2 bg-surface border border-border-2 rounded-lg text-foreground-subtle cursor-not-allowed"
-                  defaultValue={me.loginId}
+                  defaultValue={me.email}
                   disabled
-                  id="loginId"
+                  id="email"
                   type="text"
                 />
                 <p className="text-xs text-foreground-faint">{t('immutable')}</p>
               </div>
               <div className="grid gap-1">
-                <label className="block text-sm font-medium text-foreground-secondary" htmlFor={formId.name}>
+                <label className="block text-sm font-medium text-foreground-secondary" htmlFor={formId.username}>
                   {t('name')}
                 </label>
                 <input
-                  aria-invalid={Boolean(fieldErrors.name)}
+                  aria-invalid={Boolean(fieldErrors.username)}
                   autoCapitalize="off"
                   autoComplete="username"
                   className={twMerge(
                     'w-full px-3 py-2 bg-surface-2 border rounded-lg placeholder-foreground-subtle focus:outline-none focus:ring-2 focus:border-transparent',
                     'aria-invalid:border-red-500 aria-invalid:focus:ring-red-500 border-border-2 focus:ring-border-strong',
                   )}
+                  defaultValue={currentMe.username ?? ''}
+                  id={formId.username}
+                  maxLength={32}
+                  minLength={2}
+                  name={formId.username}
+                  placeholder={t('namePlaceholder')}
+                  type="text"
+                />
+                <p
+                  aria-invalid={Boolean(fieldErrors.username)}
+                  className="text-xs text-foreground-subtle aria-invalid:text-red-400"
+                >
+                  {fieldErrors.username || t('nameHelp')}
+                </p>
+              </div>
+              <div className="grid gap-1">
+                <label className="block text-sm font-medium text-foreground-secondary" htmlFor={formId.name}>
+                  {t('nickname')}
+                </label>
+                <input
+                  aria-invalid={Boolean(fieldErrors.name)}
+                  autoCapitalize="off"
+                  className={twMerge(
+                    'w-full px-3 py-2 bg-surface-2 border border-border-2 rounded-lg placeholder-foreground-subtle focus:outline-none focus:ring-2 focus:ring-border-strong focus:border-transparent',
+                    'aria-invalid:border-red-500 aria-invalid:focus:ring-red-500',
+                  )}
                   defaultValue={currentMe.name}
                   id={formId.name}
                   maxLength={32}
                   minLength={2}
                   name={formId.name}
-                  placeholder={t('namePlaceholder')}
+                  placeholder={t('nicknamePlaceholder')}
                   type="text"
                 />
                 <p
                   aria-invalid={Boolean(fieldErrors.name)}
                   className="text-xs text-foreground-subtle aria-invalid:text-red-400"
                 >
-                  {fieldErrors.name || t('nameHelp')}
+                  {fieldErrors.name || t('nicknameHelp')}
                 </p>
               </div>
               <div className="grid gap-1">
-                <label className="block text-sm font-medium text-foreground-secondary" htmlFor={formId.nickname}>
-                  {t('nickname')}
-                </label>
-                <input
-                  aria-invalid={Boolean(fieldErrors.nickname)}
-                  autoCapitalize="off"
-                  className={twMerge(
-                    'w-full px-3 py-2 bg-surface-2 border border-border-2 rounded-lg placeholder-foreground-subtle focus:outline-none focus:ring-2 focus:ring-border-strong focus:border-transparent',
-                    'aria-invalid:border-red-500 aria-invalid:focus:ring-red-500',
-                  )}
-                  defaultValue={currentMe.nickname}
-                  id={formId.nickname}
-                  maxLength={32}
-                  minLength={2}
-                  name={formId.nickname}
-                  placeholder={t('nicknamePlaceholder')}
-                  type="text"
-                />
-                <p
-                  aria-invalid={Boolean(fieldErrors.nickname)}
-                  className="text-xs text-foreground-subtle aria-invalid:text-red-400"
-                >
-                  {fieldErrors.nickname || t('nicknameHelp')}
-                </p>
-              </div>
-              <div className="grid gap-1">
-                <label className="block text-sm font-medium text-foreground-secondary" htmlFor={formId.imageURL}>
+                <label className="block text-sm font-medium text-foreground-secondary" htmlFor={formId.image}>
                   {t('imageURL')}
                 </label>
                 <input
-                  aria-invalid={Boolean(fieldErrors.imageURL)}
+                  aria-invalid={Boolean(fieldErrors.image)}
                   autoCapitalize="off"
                   autoComplete="photo"
                   className={twMerge(
@@ -274,20 +244,20 @@ export default function ProfileEditButton({ me }: Props) {
                     'aria-invalid:border-red-500 aria-invalid:focus:ring-red-500',
                   )}
                   defaultValue={defaultProfileImageURL}
-                  id={formId.imageURL}
+                  id={formId.image}
                   maxLength={256}
                   minLength={8}
-                  name={formId.imageURL}
+                  name={formId.image}
                   onChange={(e) => setProfileImageURL(getSafeProfileImageURL(e.currentTarget.value))}
                   pattern="https?://.+"
                   placeholder="https://example.com/profile.jpg"
                   type="url"
                 />
                 <p
-                  aria-invalid={Boolean(fieldErrors.imageURL)}
+                  aria-invalid={Boolean(fieldErrors.image)}
                   className="text-xs text-foreground-subtle aria-invalid:text-red-400"
                 >
-                  {fieldErrors.imageURL || t('imageURLHelp')}
+                  {fieldErrors.image || t('imageURLHelp')}
                 </p>
               </div>
               <p className="p-3 bg-surface-2/50 rounded-lg text-xs text-foreground-muted leading-relaxed">

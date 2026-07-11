@@ -32,8 +32,8 @@ export default async function CommentList({ comments }: Props) {
           const author = comment.author
 
           const authorAvatar = (
-            <Squircle className="w-10 shrink-0" src={author?.imageURL}>
-              {(author?.nickname ?? t('common.deletedUserShort')).slice(0, 2)}
+            <Squircle className="w-10 shrink-0" src={author?.image}>
+              {(author?.name ?? t('common.deletedUserShort')).slice(0, 2)}
             </Squircle>
           )
 
@@ -43,9 +43,9 @@ export default async function CommentList({ comments }: Props) {
                 <span
                   className={`truncate text-[0.98rem] ${author ? 'font-bold text-foreground' : 'text-foreground-subtle'}`}
                 >
-                  {author?.nickname ?? t('common.deletedUser')}
+                  {author?.name ?? t('common.deletedUser')}
                 </span>
-                {author && <span className="truncate text-[0.98rem] text-foreground-subtle">@{author.name}</span>}
+                {author && <span className="truncate text-[0.98rem] text-foreground-subtle">@{author.username}</span>}
               </div>
             </div>
           )
@@ -54,7 +54,7 @@ export default async function CommentList({ comments }: Props) {
             <li className="px-4 py-3" key={comment.id}>
               <article className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1.5">
                 {author ? (
-                  <Link className="row-span-2 self-start" href={`/@${author.name}`} prefetch={false}>
+                  <Link className="row-span-2 self-start" href={`/@${author.username ?? ''}`} prefetch={false}>
                     {authorAvatar}
                   </Link>
                 ) : (
@@ -62,7 +62,7 @@ export default async function CommentList({ comments }: Props) {
                 )}
                 <div className="flex min-w-0 items-center gap-1.5">
                   {author ? (
-                    <Link className="min-w-0" href={`/@${author.name}`} prefetch={false}>
+                    <Link className="min-w-0" href={`/@${author.username ?? ''}`} prefetch={false}>
                       {authorMeta}
                     </Link>
                   ) : (

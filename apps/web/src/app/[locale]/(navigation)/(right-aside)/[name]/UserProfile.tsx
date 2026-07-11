@@ -29,7 +29,7 @@ export default async function UserProfile({ username }: Props) {
         <div className="relative -mt-16 flex justify-between items-end">
           {profile ? (
             <>
-              <UserProfileIdentity imageURL={profile.imageURL} name={profile.name} nickname={profile.nickname} />
+              <UserProfileIdentity imageURL={profile.image} name={profile.username ?? ''} nickname={profile.name} />
               <MyPageButtons user={profile} />
             </>
           ) : (
