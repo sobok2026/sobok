@@ -1,8 +1,8 @@
-import { getAuthCookieClearConfigs } from '@sobok/auth/cookie'
 import { AdultVerificationStatus, type GETV1MeResponse } from '@sobok/contracts'
 import { db } from '@sobok/db/app'
+import { user } from '@sobok/db/app/auth'
 import { bbatonVerificationTable } from '@sobok/db/app/bbaton'
-import { userSettingsTable, userTable } from '@sobok/db/app/user'
+import { userSettingsTable } from '@sobok/db/app/user'
 import { resolveUserSettings } from '@sobok/domain/utils/user-settings'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -11,7 +11,6 @@ import type { Env } from '@/app'
 
 import { isAdultVerificationRequiredForRequest } from '@/utils/adult-gate'
 import { privateCacheControl } from '@/utils/cache-control'
-import { applyAuthCookie } from '@/utils/cookie'
 import { problemResponse } from '@/utils/problem'
 
 const route = new Hono<Env>()
@@ -20,13 +19,14 @@ route.get('/', async (c) => {
   const userId = c.get('userId')!
 
   try {
-    const [user] = await db
+    const [me] = await db
       .select({
-        id: userTable.id,
-        loginId: userTable.loginId,
-        name: userTable.name,
-        nickname: userTable.nickname,
-        imageURL: userTable.imageURL,
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        username: user.username,
+        displayUsername: user.displayUsername,
+        image: user.image,
         adultFlag: bbatonVerificationTable.adultFlag,
         historySyncEnabled: userSettingsTable.historySyncEnabled,
         adultVerifiedAdVisible: userSettingsTable.adultVerifiedAdVisible,
@@ -34,33 +34,33 @@ route.get('/', async (c) => {
         searchLanguage: userSettingsTable.searchLanguage,
         autoDeletionDay: userSettingsTable.autoDeletionDay,
       })
-      .from(userTable)
-      .leftJoin(bbatonVerificationTable, eq(bbatonVerificationTable.userId, userTable.id))
-      .leftJoin(userSettingsTable, eq(userSettingsTable.userId, userTable.id))
-      .where(eq(userTable.id, userId))
+      .from(user)
+      .leftJoin(bbatonVerificationTable, eq(bbatonVerificationTable.userId, user.id))
+      .leftJoin(userSettingsTable, eq(userSettingsTable.userId, user.id))
+      .where(eq(user.id, userId))
 
-    if (!user) {
-      applyAuthCookie(c, getAuthCookieClearConfigs())
+    if (!me) {
       return problemResponse(c, { status: 404, detail: '사용자 정보를 찾을 수 없어요' })
     }
 
     const required = isAdultVerificationRequiredForRequest(c)
-    const status = getAdultStatus(user.adultFlag)
+    const status = getAdultStatus(me.adultFlag)
 
     const settings = resolveUserSettings({
-      historySyncEnabled: user.historySyncEnabled ?? undefined,
-      adultVerifiedAdVisible: user.adultVerifiedAdVisible ?? undefined,
-      defaultCensorshipEnabled: user.defaultCensorshipEnabled ?? undefined,
-      searchLanguage: user.searchLanguage ?? undefined,
-      autoDeletionDay: user.autoDeletionDay ?? undefined,
+      historySyncEnabled: me.historySyncEnabled ?? undefined,
+      adultVerifiedAdVisible: me.adultVerifiedAdVisible ?? undefined,
+      defaultCensorshipEnabled: me.defaultCensorshipEnabled ?? undefined,
+      searchLanguage: me.searchLanguage ?? undefined,
+      autoDeletionDay: me.autoDeletionDay ?? undefined,
     })
 
     const result = {
-      id: user.id,
-      loginId: user.loginId,
-      name: user.name,
-      nickname: user.nickname,
-      imageURL: user.imageURL,
+      id: me.id,
+      email: me.email,
+      name: me.name,
+      username: me.username,
+      displayUsername: me.displayUsername,
+      image: me.image,
       adultVerification: { required, status },
       settings,
     } satisfies GETV1MeResponse

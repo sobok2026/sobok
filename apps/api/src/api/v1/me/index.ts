@@ -4,33 +4,22 @@ import type { Env } from '@/app'
 
 import { requireAuth } from '@/middleware/require-auth'
 
-import deleteRoute from './DELETE'
+import adultVerificationRoutes from './adult-verification'
 import exportRoutes from './export'
 import followingRoutes from './following'
 import getRoute from './GET'
-import patchRoute from './PATCH'
-import passkeyRoutes from './passkey'
-import passwordRoutes from './password'
 import pushRoutes from './push'
-import sessionRoutes from './session'
 import settingsRoutes from './settings'
-import trustedBrowserRoutes from './trusted-browser'
-import twoFactorRoutes from './two-factor'
 
+// 프로필 변경(updateUser)·탈퇴(deleteUser)·비밀번호·패스키·2FA·세션 관리는 better-auth(/api/auth/*)가 담당한다.
 const route = new Hono<Env>()
 
 route.use('*', requireAuth)
 route.route('/', getRoute)
-route.route('/', patchRoute)
-route.route('/', deleteRoute)
+route.route('/adult-verification', adultVerificationRoutes)
 route.route('/export', exportRoutes)
-route.route('/password', passwordRoutes)
-route.route('/passkey', passkeyRoutes)
 route.route('/push', pushRoutes)
 route.route('/following', followingRoutes)
-route.route('/session', sessionRoutes)
 route.route('/settings', settingsRoutes)
-route.route('/two-factor', twoFactorRoutes)
-route.route('/trusted-browser', trustedBrowserRoutes)
 
 export default route

@@ -2,88 +2,154 @@ import type { AspectPairReadings, PlanetReadings, RetroReadings } from './types'
 
 export const planets: PlanetReadings = {
   sun: {
-    aries: 'You shine brightest leading the charge. Challenge itself is your identity.',
-    taurus: 'A slow, steady builder. Unshakeable stability is your strength.',
-    gemini: 'You connect the world with curiosity and wit. You come alive learning and sharing.',
-    cancer: 'You become yourself protecting those you love. A warm heart is your center.',
-    leo: 'A born performer. Your bold confidence draws people in.',
-    virgo: 'You refine things to completion. Care and precision are your signature.',
-    libra: 'You find yourself in harmony and balance. Relationships are your stage.',
-    scorpio: 'You dig deep to the essence. Intense focus is your color.',
-    sagittarius: 'You feel free reaching for a wider world. Adventure is your identity.',
-    capricorn: 'You quietly climb to the summit. Responsibility and grit are you.',
-    aquarius: 'You picture the future with an original eye. Originality is your core.',
-    pisces: 'You hold the world with feeling and imagination. Deep empathy is your light.',
+    aries:
+      "While everyone else is still weighing their options, you've already taken the first step. You'd rather move and figure it out on the way than wait for the perfect plan — and the truth is, the world is always waiting for someone willing to go first. Your fire runs ahead of your own heart sometimes, sure. But that spark? No one else can fake it.",
+    taurus:
+      "You don't do rushed. While others scramble for shortcuts, you build one solid step at a time — and what you build doesn't wash away when the wind picks up. People mistake your pace for slowness, but they're wrong: you're simply making things that last. That unshakeable steadiness is exactly why the world learns, in the end, to trust you.",
+    gemini:
+      "Your mind always has a dozen tabs open at once. You can meet a stranger and be old friends within five minutes, and that bright curiosity is a bridge between worlds that would never otherwise touch. Yes, your attention scatters sometimes — but that lightness is your freedom. It's what keeps anything from pinning you down.",
+    cancer:
+      "One look from someone you love can change your whole day. You come home to yourself when you're holding and protecting the people who matter, and your warmth becomes the place tired hearts return to. That's not softness — that's depth, and it's rarer than you think.",
+    leo: "The moment you walk in, the room quietly turns toward you. You don't have to try to shine; people are already watching. But that presence isn't a trophy — it's a responsibility. The brighter you burn, the more everyone standing near you lights up too.",
+    virgo:
+      "You catch the one small thing that's off — the detail everyone else walks right past. Those sharp eyes and careful hands turn rough drafts into finished things, quietly, without applause. On the days you're hardest on yourself, remember: that impossible standard is just love wearing a stricter face.",
+    libra:
+      "You feel the tension in a room before a single word is spoken, and one sentence from you can loosen the tightest knot. You come alive alongside other people, and that gift for balance is one most will never have. Just don't lose your own voice while keeping everyone else's in tune — it deserves the front row too.",
+    scorpio:
+      "Surfaces have never been enough for you. Where others stop, you dig one layer deeper and won't quit until you reach the truth of a thing — and that intensity is exactly what makes you unforgettable. You can look straight at what most people are afraid to face. That depth isn't something to soften; it's your power.",
+    sagittarius:
+      "Your eyes are always on the horizon, never the wall in front of you. Familiar fences make you restless, but the moment you're on an unknown road, you feel completely alive. That free spirit and stubborn hope will carry you somewhere you can't picture yet — so when something calls you, don't put it off too long.",
+    capricorn:
+      "You climb without making a sound. Where others sit down to rest, you take one more step, and then another — and time, in the end, is always on your side. The weight you carry can feel heavy, no doubt. But it isn't slowing you down; it's proof of how close to the summit you already are.",
+    aquarius:
+      "You're the one asking 'why?' about the things everyone else takes for granted. You see a future that hasn't arrived yet and walk half a step ahead of it — and though it looks strange now, the world tends to end up following the path you drew. Some days no one gets it. Don't shrink for them; that different eye of yours is the whole point.",
+    pisces:
+      "You feel things long before you could put them into words. Someone else's sorrow seeps in as if it were your own, and that deep empathy quietly makes the world a gentler place. That tenderness isn't weakness — it's a light almost no one else can reach. Let it stay soft, but build yourself a shore to stand on too.",
   },
   moon: {
-    aries: 'Your feelings are honest and fast. When your heart points, you move at once.',
-    taurus: 'Calm, steady emotions. You recharge in comfort and stability.',
-    gemini: 'Feelings follow your curiosity. You process the heart through words.',
-    cancer: 'Deep, tender emotions. You feel safest caring and being cared for.',
-    leo: 'Warm, dramatic feelings. You bloom when you feel loved.',
-    virgo: 'You show love by quietly looking after things. Order settles you.',
-    libra: 'Your heart eases in peaceful bonds. Conflict is especially hard.',
-    scorpio: 'Deep, intense feelings. Once you give your heart, you go all the way.',
-    sagittarius: 'You feel at ease when free. New experiences are your comfort.',
-    capricorn: 'You steady emotions inward. You show love through reliability.',
-    aquarius: 'You watch feelings from a step back. Freedom is your stability.',
-    pisces: 'Tender, absorbing emotions. You feel others hearts as your own.',
+    aries:
+      "Your feelings arrive like lightning — instant, unmissable, written all over your face before you can hide them. When you're happy you glow, when you're hurt everyone knows, and there's no filter between your heart and the world. Some call it too much. But refusing to bury what you feel is its own kind of honesty — it's what keeps you fully, vividly alive.",
+    taurus:
+      "Your heart is a deep, still lake that doesn't ripple easily. A familiar scent, a warm touch, the same seat at the same table — that's where you finally exhale. Sudden change unsettles you more than you let on, but give it time and you always find your footing again. That steadiness is exactly why people stay: your side is the softest place they know.",
+    gemini:
+      "Your feelings only untangle once you say them out loud — on a heavy day, one good conversation lifts the whole weight like magic. Your moods travel, rarely stuck in one place for long, and sometimes that lightness makes you doubt yourself. But it's exactly what keeps you from being crushed by anything. So when your heart knots up, don't sit alone with it; talk it out.",
+    cancer:
+      "Your heart waxes and wanes like the moon it's named for. You feel safest holding someone and being held, and you catch the smallest shift in a loved one's face before they say a word. You carry hurt a long time, too — a careless remark can ache in you for days. But that tenderness isn't a weakness; it's the shelter tired hearts keep returning to.",
+    leo: "Your feelings run warm and a little dramatic. When you feel loved your whole face lights up, and when you give your heart, you pour in everything you've got — so a cooling of attention can leave you unusually lonely. But that big heart isn't a hunger for the spotlight; it's simply that you refuse to be shy about love. Feel it out loud. That's how you're built.",
+    virgo:
+      "You don't announce your feelings — you tend to them, quietly. You remember what someone likes and slip it to them right when they need it; that's your love language. When your mind gets loud, you steady yourself by putting things in order. Just don't tend everyone else so carefully that you forget your own heart — that quiet care deserves to come home to you too.",
+    libra:
+      "Your heart only breathes easy in a peaceful bond. Tension and cold silence are almost unbearable, so you'll do whatever it takes to smooth the air — but somewhere in all that peacekeeping, your own feelings keep sliding to the back of the line. A real bond doesn't ask you to erase yourself. The calm you create is a gift, and you're allowed to stand inside it too.",
+    scorpio:
+      "There's no shallow water in you. When you give your heart it sinks all the way to the bottom, and a betrayal can ache long after everyone assumes you've moved on. On the surface you look composed while a whole storm turns underneath. But that depth — the willingness to feel everything at full volume — is exactly what makes you unforgettable to anyone you let in.",
+    sagittarius:
+      "Your heart feels most at home when it's free. You can't stand the sense of being caged, and a single new experience can heal you more than any comforting words. That optimism can look light, even careless — but it's really your survival instinct, the way you find a sliver of light in any dark. On the heavy days, give yourself permission to roam a little.",
+    capricorn:
+      "You learned early how to hold your feelings steady. You don't crumble easily, and instead of saying it out loud, you show love by simply staying — reliable, present, unshakeable. People mistake that for cool distance. But behind all that composure is a heart more tender than anyone guesses, and it's allowed to be comforted too. Let yourself know that.",
+    aquarius:
+      "You watch your emotions from a step back instead of drowning in them. Even in intense moments you stay strangely calm — which can read as cold, but it's really the space you need to feel safe. That distance can sting the people who love you, so now and then, let them a little closer. Your unattached heart is a gift; it gives everyone room to breathe.",
+    pisces:
+      "Your heart has no clear borders. Someone else's sorrow seeps in without knocking, and you feel the whole world's ache as if it were your own — which is why some days you sink for no reason you can name. But reaching a depth no one else can touch, and comforting people from there, is a rare gift, not a flaw. When you start to flood, draw a soft line between you and them, and protect your own shore first.",
   },
   mercury: {
-    aries: 'Quick, direct thinking. You speak and act the moment it strikes.',
-    taurus: 'Once you decide, you hold firm. Careful, practical judgment.',
-    gemini: 'Ideas and words pour out. You dart wittily between topics.',
-    cancer: 'Great memory, you understand through feeling. You read the room first.',
-    leo: 'You express with confidence. Your stories carry force and drama.',
-    virgo: 'Sharp analysis to the point. You organize down to the detail.',
-    libra: 'You persuade with balanced words. You create harmony in dialogue.',
-    scorpio: 'You see through hidden motives. Few words, deep insight.',
-    sagittarius: 'You talk big pictures and meaning. Honest and unfiltered.',
-    capricorn: 'Structured, trustworthy speech. You tie it up with a solid conclusion.',
-    aquarius: 'Mold-breaking ideas spark. A fresh view captivates people.',
-    pisces: 'You think in images and feelings. Rich in metaphor and imagination.',
+    aries:
+      "Your mind moves at the speed of lightning. You grasp the heart of a situation in an instant and turn thought into words and action before anyone else has caught up. That bluntness can cut through a tangled mess in one stroke — though sometimes your mouth outruns your heart and catches people off guard. Pause half a beat and that quick edge becomes real force. You're the one who makes the call no one else dares to.",
+    taurus:
+      "You never rush to speak. A conclusion you've chewed over once doesn't wobble later, and that gives your words a quiet weight. It can look slow — but the words that outlast the noise, the ones people end up trusting, come from someone exactly like you. You're not behind; you're just choosing what will still be true tomorrow.",
+    gemini:
+      "Your mind runs a dozen open tabs at once. One topic branches into ten, and a single witty line can bring a dull room back to life — you wire together things that seem unrelated and find the link no one else spotted. Just watch that your attention doesn't skip on before you've gone deep. Linger a beat longer, and that spark makes you the center of the room anywhere you go.",
+    cancer:
+      "You read the feeling underneath the words before you register the words themselves. Your instinct for the mood is sharp, and your memory holds onto the little things people let slip, ready to bring them back with care. You do absorb other people's tones a bit too easily, though — you don't have to carry every signal. That emotional attunement is what makes talking to you feel, oddly, like being comforted.",
+    leo: "You put warmth and drama into your words — the same story, told by you, becomes a scene people can see, and a confident voice pulls them in without effort. On any stage or in easy talk, your words hold the room. Just remember: the louder your story gets, the less room there is for anyone else's — pass the mic now and then. The line with real heart in it is always the one they remember.",
+    virgo:
+      'You name the thing exactly. Where others blur it together, you separate it out cleanly and organize down to the last detail — which is why, when things get chaotic, everyone ends up asking you. Just be careful not to grind yourself down chasing flawless; sometimes good enough truly is. That clear, precise mind can bring order to almost any mess.',
+    libra:
+      "You can wrap even a sharp truth in something soft. You weigh both sides instinctively, so a standoff loosens the moment it passes through you — saying the hard thing without bruising anyone is a rare skill. Just don't blur your own opinion out of the picture while you're at it; say your piece a little more clearly. That graceful persuasion makes you the person every room turns out to need.",
+    scorpio:
+      "You don't say much, but the one thing you say lands dead center. You see straight through the motive behind a face or a tone, and a polished line rarely fools you — it can be unnervingly accurate. Just know that digging into everything can weigh on you; some things you can let float by. That relentless pull toward the truth hands you answers no one else can reach.",
+    sagittarius:
+      "You reach for the big picture and the meaning, not the fine print. What pulls you is the 'so what does this actually mean' — and your honest, unfiltered take tends to crack a stale conversation wide open. Just remember: when the idea gets big, the details go loose — back a bold claim with a small fact and it doubles its force. That wide view shows people the landscape beyond the wall they were staring at.",
+    capricorn:
+      "Your words carry weight and responsibility. You don't toss things out carelessly, and whatever you commit to, you stand behind — which is why, when a real decision is on the table, people lean on your read of it. Just watch that too much caution doesn't keep good thoughts trapped inside; share them before you're fully certain sometimes. That steady, trustworthy voice is what makes people trust you for the long haul.",
+    aquarius:
+      "There's always one angle in your head that no one else has seen yet. You flip an assumption everyone takes for granted, and that fresh view can turn a whole conversation on its head — they call it odd at first, but 'huh, you were right' always circles back to you. Just remember: race too far ahead and people can't follow. Slow half a step, and that different eye keeps you ahead of the times without leaving anyone behind.",
+    pisces:
+      "You think in images and feeling more than logic. A metaphor comes to you before a plain explanation does, and you read the silences and the mood between the lines. That poetic imagination gives color and warmth to the driest conversation. Just don't let feeling blur the facts when it matters — a quick double-check keeps you grounded. Turning the pictures in your mind into words is a gift no one else can quite copy.",
   },
   venus: {
-    aries: 'Honest, bold in love. You make the first move when drawn.',
-    taurus: 'Sensual, steadfast love. You treasure comfort and touch.',
-    gemini: 'Witty talk excites you. You love light, playful connection.',
-    cancer: 'Deeply caring, nurturing love. You open up in secure bonds.',
-    leo: 'Bright, passionate love. You give and want to receive it fully.',
-    virgo: 'You show love in small acts of care. Devoted and thoughtful.',
-    libra: 'Harmonious, graceful love. You savor beauty shared together.',
-    scorpio: 'You fall deep and intense. You love with everything at stake.',
-    sagittarius: 'Free, honest love. You are drawn to a fellow adventurer.',
-    capricorn: 'Serious, lasting love. You build the bond on trust.',
-    aquarius: 'Unusual, free love. You like a partner who is also a friend.',
-    pisces: 'Romantic, devoted love. You dream of a bond you sink deep into.',
+    aries:
+      "You're honest and hot-blooded in love. When you're drawn to someone you don't play it cool — you go first, and that fearless directness gives the other person a real thrill. Just know a fire that catches this fast can cool just as fast, so notice what's left once the rush fades. Choosing the truth over the game is exactly what makes you magnetic.",
+    taurus:
+      "Your love is sensual and steady — a warm touch, good food shared, a comfortable silence side by side is where it feels most real to you. You don't start easily, but once you open up you rarely change, so your side becomes the most stable place someone knows. Just don't let comfort harden into routine; make a little new thrill together now and then. That staying warmth is what makes love last.",
+    gemini:
+      "You fall for a good conversation. The moment words click is your version of romantic, and your heart opens to someone who's never boring — you love a light, playful, laughter-filled bond. Just notice when curiosity fades before you've checked how deep it really goes; with the person who truly clicks, stay a little longer. That spark for talk keeps a fresh breeze moving through any relationship.",
+    cancer:
+      "You love deeply and protectively — once someone's yours, you hold them with your whole heart and become the safe harbor they rest in. You open up only once you feel truly secure, and that caution makes your love all the more precious. Just don't pour so much in that you forget to be cared for too; let yourself receive. Once someone's felt that steady kind of love, they never forget it.",
+    leo: "Your love is bright and warm. You show what you feel without holding back and soak up being loved with your whole body. That big, showy affection isn't vanity — it's just that you can't and won't hide love. Just don't let your heart swing on every sign of approval; you don't have to keep proving they care. When you love out loud, the person beside you shines too.",
+    virgo:
+      "You say love in small acts of care. Instead of grand declarations, you quietly handle the thing they needed — that's your language. It barely shows, but anyone who's been close to that thoughtful devotion never forgets it. Just watch that caring doesn't leak out as worry or nagging; offer trust in who they are, as they are, too. That wordless attentiveness turns out to be the deepest kind of love.",
+    libra:
+      "Your love is graceful and harmonious — you enjoy building something beautiful together and feel happiest walking in step with someone. Your instinct for balance in a bond is a charm few people have. Just don't fold yourself away so often to keep the peace that you lose what you actually wanted. Real love isn't you disappearing; it's two people standing side by side — and that's what you've been after all along.",
+    scorpio:
+      "There's nothing lukewarm about your love. Once you fall you fall all the way, and you want to know someone completely — an intensity that can feel like a lot, though the person who loves with their whole being is rare. Just know a love this deep can slide toward obsession or jealousy, so loosen the grip now and then. Giving everything you have is exactly what leaves so deep a mark.",
+    sagittarius:
+      "Your love is free and honest. You're drawn to someone you can grow and adventure with, not someone who fences you in, and you dream of a bond full of laughter and open sky. Just know that guarding your freedom too hard can read as distance — staying, too, can be its own adventure. That wide-open heart turns love from an obligation into a joyful trip.",
+    capricorn:
+      "Your love is serious and built to last. You don't wobble — you take your time and stack up trust piece by piece, and once you've named someone yours, that loyalty is your real romance. Just know that opening up so slowly can leave them wondering; show what you feel a little more often. A love that only deepens with the years is the rarest gift you can give.",
+    aquarius:
+      "Your love is unusual and free. You want a partner who's also your closest friend, and you treasure the space that lets each of you keep your own world. Not following the standard relationship script is part of your charm. Just know that guarding that distance can make you seem far away — bring your honest affection a little closer sometimes. That different way of loving builds a bond that's anything but ordinary.",
+    pisces:
+      "Your love is romantic and devoted. You want to melt into someone's heart and become one, and you give what you have with no conditions attached — a devotion that wraps around a person like a warm tide. Just know that dissolving yourself entirely into love can leave only wounds; learn to keep a self, and the love completes itself. That way of seeping in, no strings attached, is a light the world rarely sees.",
   },
   mars: {
-    aries: 'Explosive drive. You charge head-on without hesitation.',
-    taurus: 'Slow but unstoppable grit. You push through to the end.',
-    gemini: 'Fast on many fronts at once. You compete with words and ideas.',
-    cancer: 'You grow strong protecting what matters. Emotion is your drive.',
-    leo: 'You take on challenges boldly. You gain power in the spotlight.',
-    virgo: 'You push forward precisely and thoroughly. You prove it with skill.',
-    libra: 'Gentle, yet persistent. You move through relationships.',
-    scorpio: 'Quiet but fierce persistence. Once set, you see it through.',
-    sagittarius: 'You challenge and expand freely. Freedom is your fuel.',
-    capricorn: 'You aim for the top strategically. Patience is your best weapon.',
-    aquarius: 'You break through in your own way. You advance by changing the rules.',
-    pisces: 'You move quietly, like flowing water. You steer by intuition.',
+    aries:
+      "The word 'hesitation' doesn't exist in you. The moment you want something your body's already moving, and that explosive drive can flip a stalled situation in a single beat. While everyone else is still deliberating, you're out there learning by crashing into it. Just know that fire can outrun you into recklessness — steal half a breath before you leap. Even so, the world belongs to the one who starts first.",
+    taurus:
+      "You're slow, but you never stop. Once you pick a direction you push like an ox, staying in the ring long after others have quit, until the result is undeniable. You don't rush — but the grit to finish what you start is your real weapon. Just know that clinging to one way can make you miss the shift; check your bearings now and then. That tireless persistence is what proves you, in the end, more surely than anyone.",
+    gemini:
+      "You juggle several things at once, fast and light. Rather than muscle through, you make words and ideas your weapon and bend a situation your way. In a fast-changing scene, you're the first to find the answer — that's your quickness. Just watch that scattered focus doesn't leave the one thing that matters unfinished; learn to gather your force in one place. That nimble wit always opens a new road out of a dead end.",
+    cancer:
+      "You're strongest when there's something to protect. You can be soft and gentle day to day, but the moment your people are threatened, a strength appears from nowhere. Emotion is what fuels you into motion. Just know that if that force curdles into resentment or defensiveness, it wears you down — when anger rises, look first at the real feeling underneath it. Quiet but never soft, you guard what you love to the very end.",
+    leo: "You take on a challenge boldly and warmly. Instead of shrinking under attention, you draw power from it, and your confidence heats up everyone around you. The bigger the stage, the brighter you burn — that's a gift you were born with. Just watch that the hunger to be seen doesn't push you into overreaching; chase your own satisfaction before the applause. That fearless step to the front is exactly what pulls people to you.",
+    virgo:
+      "You push forward precisely, not recklessly. Instead of charging in, you close the gaps one by one and prove yourself quietly, with skill. It's not flashy — but earning trust in the end is your way. Just know that chasing perfect can keep you from ever starting; find the courage to begin and refine as you go. That sure-handed execution speaks for you louder than any argument could.",
+    libra:
+      "You move gently but relentlessly, never head-on. Instead of forcing your way, you use relationships and balance as leverage to reach exactly where you meant to. Doing gracefully what brute force can't — that's your specialty. Just know that dodging every conflict can swallow the thing you needed to say; sometimes the courage to meet it head-on is what's called for. That refined drive gets the result without leaving a mark on anyone.",
+    scorpio:
+      "Your persistence is quiet, but frightening. You look calm on the surface while you sharpen your resolve underneath — and once you've decided, you see it all the way through. Where others give up, you dig in alone and pull out the answer. Just know that intensity turned too high can burn you down; learn which battles to fight and which to release. That deep, silent focus makes you someone no one can stop.",
+    sagittarius:
+      "You challenge and expand without flinching. Your heart races at the untraveled road, not the safe one, and that hunger for freedom is your fuel. You'll set foot exactly where others swore it couldn't be done. Just know that starting too many things can leave the endings loose — build the muscle to finish as much as you begin. That optimistic drive keeps carrying you to a brand-new horizon.",
+    capricorn:
+      "You move toward the summit strategically. You don't let emotion steer you; you can wait for the right moment and wield patience as your sharpest weapon. You count the seat you'll reach in the end more than today's speed, stepping one calculated step at a time. Just watch that fixing your eyes so far ahead doesn't drive you to grind yourself down; give the you who's made it this far some credit. That measured grit carries you, over time, to a place no one can touch.",
+    aquarius:
+      "You don't fight the way everyone else does. Rather than follow the set rules, you flip the whole board with a fresh idea and break through from an angle no one saw coming. The more stuck a situation is, the brighter you spark. Just watch that insisting on the unusual doesn't make you miss the simple, direct move — sometimes the old road is the fastest. That original drive opens a new way exactly where everyone else hit a wall.",
+    pisces:
+      "You move quietly, like flowing water. Instead of colliding head-on, you find the gap and seep through, steering by intuition like a compass. Something force couldn't manage, you somehow accomplish softly. Just know that when the goal goes blurry, your energy scatters everywhere; every so often, name clearly where your heart is pointing. That gentle drive keeps finding its own path, even against the hardest wall.",
   },
   jupiter: {
-    aries: 'Luck follows when you dare. Pioneering is your growth.',
-    taurus: 'Steadiness and stability bring abundance. Trust your senses to grow.',
-    gemini: 'Learning and people widen your chances. Curiosity is your asset.',
-    cancer: 'Blessing returns when you give and care. Home and warmth are your strength.',
-    leo: 'Fortune opens when you step up boldly. Confidence is your luck.',
-    virgo: 'Diligent refining grows the harvest. Service brings you blessings.',
-    libra: 'Chances grow within good relationships. Cooperation is your key.',
-    scorpio: 'You gain big by digging deep. You turn crisis into chance.',
-    sagittarius: 'Luck grows toward a wider world. Ideals and adventure are your blessing.',
-    capricorn: 'Responsibility and effort are richly rewarded. Time takes your side.',
-    aquarius: 'New attempts open doors. Being different is your opportunity.',
-    pisces: 'Abundance flows when you give and trust. Imagination widens reality.',
+    aries:
+      'Luck follows the moment you dare. The instant you raise your hand before anyone else, a door swings open, and the act of pioneering turns into real growth. Just know that always starting fresh can leave older things unfinished — build the muscle to carry them through. So stop weighing it and jump; the world is always ready to reward your nerve.',
+    taurus:
+      'Your abundance grows out of consistency. Stack things up one at a time without rushing and the blessings snowball; the more you trust your own senses, the bigger the opening. That unhurried ease is what builds the sturdiest wealth of all. Just know that clutching only the familiar can cost you a new chance — open your mind to the odd experiment now and then. Slow but sure is exactly how you end up with plenty.',
+    gemini:
+      "For you, luck arrives through people and learning. The network and knowledge you gather chasing your curiosity become assets, and a passing conversation swings open an unexpected door. Just know that skimming everything can cost you the depth; dig all the way into the one thing that pulls you. Stay curious and stay connected — that's your personal luck formula.",
+    cancer:
+      "Blessing comes back to you when you give and care. The people you've shared your heart with become your sturdiest shelter, and chances bloom where you've built warmth. Home and people — that warm root is your greatest asset. Just know that tending everyone else can cost you your own share; give as generously to yourself as you do to them. The kindness you offer comes back around, someday, as something larger.",
+    leo: "Fortune opens when you step up boldly. When you're unafraid to show yourself, the stage and the chance open together, and that confidence pulls luck toward you. Refusing to be shy about shining is, for you, a way of calling in blessings. Just watch that the wish to be recognized doesn't send you chasing empty things; follow what actually delights you over other people's eyes. The world roots for the one who burns bright.",
+    virgo:
+      "Your harvest opens through diligence. When you refine, with care, what others wave off, blessings stack up bit by bit, and an unexpected chance arrives where you've helped someone. That refusal to neglect the small stuff is the key that opens the big door. Just watch that chasing perfect doesn't drive you into the ground; let 'done' be enough sometimes. The quiet devotion you've built up returns, one day, as solid reward.",
+    libra:
+      "For you, luck grows inside good relationships. Cooperation with the people you've joined hands with opens the door of opportunity, and your gift for making harmony becomes its own blessing. Don't carry it all alone — your luck is largest when it's shared. Just know that always absorbing the cost to keep the peace will drain you; keep the give and take in balance. Your fortune blooms brightest side by side with good people.",
+    scorpio:
+      "You gain big by digging deep. Where others fearfully turn away, you spot the chance, and you flip a whole crisis into a blessing. That bold immersion hands you a reward the ordinary can't reach. Just know that betting everything on the descent can wear you out; weigh when to pull back and when to press on. The courage to go all the way down puts a treasure in your hands that no one else could mine.",
+    sagittarius:
+      "Your luck grows the wider you reach. On the ground of strange places, new learning, and big ideals, fortune comes out to meet you first. Don't fear crossing the fence — the world is most generous to an adventurer like you. Just know that always gazing far can cost you the chance right at your feet; look down and around every so often. The world keeps opening its doors wide for someone like you.",
+    capricorn:
+      "Your effort always comes back as reward. Today's responsibility and patience compound like interest over time, and time itself becomes your sturdiest ally. That endurance others can't match is your surest seed of luck. Just watch that fixating on results doesn't keep postponing today's joy; catch your breath on the way up. The time you've quietly held the line returns, one day, magnified.",
+    aquarius:
+      "For you, opportunity opens through the unusual attempt. The road no one takes and the idea no one expects swing open a surprise door, and your originality itself becomes an asset. Even when it looks strange, trust your own way and move. Just watch that always chasing the new doesn't make you skip a proven method; there's wisdom in the old road too. The era always ends up following the path you drew first.",
+    pisces:
+      "Abundance flows in when you give and trust. A heart offered without conditions circles back around as blessing, and the thing you pictured in your mind swings open reality's door. That uncalculating generosity guards you in the unlikeliest places. Just know that giving it all away can leave you empty; remember to refill as much as you pour out. Opening your hand and trusting the current brings you the fullest kind of luck.",
   },
   saturn: {
     aries: 'You grow strong mastering impulse. This is where you learn patience.',

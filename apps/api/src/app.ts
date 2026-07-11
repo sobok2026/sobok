@@ -1,4 +1,5 @@
 import { httpInstrumentationMiddleware } from '@hono/otel'
+import type { SessionUser } from '@sobok/auth'
 import { Hono } from 'hono'
 import { compress } from 'hono/compress'
 import { cors } from 'hono/cors'
@@ -9,8 +10,7 @@ import { logger } from 'hono/logger'
 import { requestId } from 'hono/request-id'
 import { secureHeaders } from 'hono/secure-headers'
 
-import apiRoutes from './api'
-import { auth } from './middleware/auth'
+import apiRouter from './api'
 import { getDefaultSecureHeadersOptions } from './middleware/secure-headers'
 import probeRoutes from './probe'
 import { problemResponse } from './utils/problem'
@@ -19,7 +19,8 @@ import { APP_ORIGIN, isAllowedRequestOrigin } from './utils/request-origin'
 export type Env = {
   Variables: {
     requestId: string
-    userId?: number
+    user?: SessionUser
+    userId?: string
     isAdult?: boolean
   }
 }
@@ -66,7 +67,7 @@ app.use(
 // 4. 응답 변환
 app.use(compress({ threshold: 1024 }))
 
-app.use('/api/*', async (c, next) => {
+app.use('/api/v1/*', async (c, next) => {
   if (c.req.method === 'GET' || c.req.method === 'HEAD') {
     return await etagMiddleware(c, next)
   }
@@ -83,10 +84,8 @@ app.use('*', (c, next) => {
   return csrfMiddleware(c, next)
 })
 
-app.use('*', auth)
-
 // 6. 하위 route
-app.route('/api', apiRoutes)
+app.route('/api', apiRouter)
 
 app.notFound((c) => {
   return problemResponse(c, { status: 404 })

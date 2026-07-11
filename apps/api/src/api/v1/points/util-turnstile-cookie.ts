@@ -1,4 +1,4 @@
-import { env } from '@sobok/auth/env'
+import { env as authEnv } from '@sobok/env/server.auth'
 import { env as commonEnv } from '@sobok/env/server.common'
 import { CookieKey } from '@sobok/http/cookie'
 import { sec } from '@sobok/std'
@@ -10,14 +10,14 @@ type PointsTurnstileTokenPayload = JWTPayload & {
 }
 
 const { APP_ORIGIN } = commonEnv
-const { JWT_SECRET_TRUSTED_DEVICE } = env
 const issuer = new URL(APP_ORIGIN).hostname
+const secret = new TextEncoder().encode(`${authEnv.BETTER_AUTH_SECRET}:points-turnstile`)
 
 export const POINTS_TURNSTILE_TTL_SECONDS = sec('2 minutes')
 
-export async function signPointsTurnstileToken(userId: number): Promise<string> {
+export async function signPointsTurnstileToken(userId: string): Promise<string> {
   const payload: PointsTurnstileTokenPayload = {
-    userId: String(userId),
+    userId,
     jti: crypto.randomUUID(),
   }
 
@@ -26,29 +26,23 @@ export async function signPointsTurnstileToken(userId: number): Promise<string> 
     .setIssuer(issuer)
     .setIssuedAt()
     .setExpirationTime(Math.floor(Date.now() / 1000) + POINTS_TURNSTILE_TTL_SECONDS)
-    .sign(new TextEncoder().encode(JWT_SECRET_TRUSTED_DEVICE))
+    .sign(secret)
 }
 
-export async function verifyPointsTurnstileToken(token: string): Promise<{ userId: number; expiresAt: Date } | null> {
+export async function verifyPointsTurnstileToken(token: string): Promise<{ userId: string; expiresAt: Date } | null> {
   try {
-    const { payload } = await jwtVerify<PointsTurnstileTokenPayload>(
-      token,
-      new TextEncoder().encode(JWT_SECRET_TRUSTED_DEVICE),
-      {
-        algorithms: ['HS256'],
-        issuer,
-        typ: CookieKey.POINTS_TURNSTILE,
-      },
-    )
+    const { payload } = await jwtVerify<PointsTurnstileTokenPayload>(token, secret, {
+      algorithms: ['HS256'],
+      issuer,
+      typ: CookieKey.POINTS_TURNSTILE,
+    })
 
-    const userId = Number.parseInt(payload.userId, 10)
-
-    if (!Number.isFinite(userId) || !payload.exp) {
+    if (!payload.userId || !payload.exp) {
       return null
     }
 
     return {
-      userId,
+      userId: payload.userId,
       expiresAt: new Date(payload.exp * 1000),
     }
   } catch {

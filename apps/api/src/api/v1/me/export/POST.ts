@@ -3,16 +3,15 @@ import { db } from '@sobok/db/app'
 import { bookmarkTable, readingHistoryTable, userRatingTable } from '@sobok/db/app/activity'
 import { userCensorshipTable } from '@sobok/db/app/censorship'
 import { libraryItemTable, libraryTable } from '@sobok/db/app/library'
-import { userTable } from '@sobok/db/app/user'
-import { compare } from 'bcryptjs'
 import { eq, inArray } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { createFactory } from 'hono/factory'
 
 import type { Env } from '@/app'
 
-import { authRequiredProblemResponse, problemResponse } from '@/utils/problem'
+import { problemResponse } from '@/utils/problem'
 import { zProblemValidator } from '@/utils/validator'
+import { verifyUserPassword } from '@/utils/verify-user-password'
 
 const route = new Hono<Env>()
 const factory = createFactory<Env>()
@@ -25,17 +24,7 @@ route.post('/', ...middlewares, async (c) => {
     c.req.valid('json')
 
   try {
-    const [user] = await db
-      .select({ passwordHash: userTable.passwordHash })
-      .from(userTable)
-      .where(eq(userTable.id, userId))
-
-    const dummyHash = '$2b$10$dummyhashfortimingattackprevention'
-    const isValidPassword = await compare(password, user?.passwordHash ?? dummyHash)
-
-    if (!user) {
-      return authRequiredProblemResponse(c)
-    }
+    const isValidPassword = await verifyUserPassword(c.req.raw.headers, password)
 
     if (!isValidPassword) {
       return problemResponse(c, {
