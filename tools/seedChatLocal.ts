@@ -1,34 +1,33 @@
+import { auth } from '@sobok/auth/server'
 import { db } from '@sobok/db/app'
+import { user } from '@sobok/db/app/auth'
 import { chatArtistTable } from '@sobok/db/app/chat'
 import { invoiceTable } from '@sobok/db/app/invoice'
 import { subscriptionTable } from '@sobok/db/app/subscription'
-import { userTable } from '@sobok/db/app/user'
 import { SUBSCRIPTION_TARGET_CHAT_ARTIST } from '@sobok/domain/subscription/policy'
 import { kafka, TOPIC_CHAT_MESSAGE, TOPIC_CHAT_PUSH_FANOUT } from '@sobok/events'
-import { hash } from 'bcryptjs'
 import { and, eq } from 'drizzle-orm'
 
-async function getOrCreateUser(loginId: string, name: string, nickname: string, passwordHash: string) {
-  const [user] = await db.select().from(userTable).where(eq(userTable.loginId, loginId)).limit(1)
+const SEED_PASSWORD = 'qwe123123'
 
-  if (user) {
-    return user
+// better-auth signUp API로 시드해 credential account(비밀번호 해시)까지 프로덕션과 동일하게 만든다.
+async function getOrCreateUser(username: string, name: string) {
+  const email = `${username}@sobok.local`
+  const [existing] = await db.select().from(user).where(eq(user.email, email)).limit(1)
+
+  if (existing) {
+    return existing
   }
 
-  const [inserted] = await db
-    .insert(userTable)
-    .values({
-      loginId,
-      name,
-      nickname,
-      passwordHash,
-    })
-    .returning()
+  await auth.api.signUpEmail({
+    body: { email, password: SEED_PASSWORD, name, username },
+  })
 
-  return inserted
+  const [created] = await db.select().from(user).where(eq(user.email, email)).limit(1)
+  return created
 }
 
-async function getOrCreateArtistProfile(userId: number, handle: string, displayName: string, emoji: string) {
+async function getOrCreateArtistProfile(userId: string, handle: string, displayName: string, emoji: string) {
   const [profile] = await db.select().from(chatArtistTable).where(eq(chatArtistTable.userId, userId)).limit(1)
 
   if (profile) {
@@ -62,12 +61,11 @@ async function createChatTopics() {
 async function main() {
   console.log('Seeding chat test data (3 Artists, 9 Fans)...')
   await createChatTopics()
-  const passwordHash = await hash('qwe123123', 10)
 
   // 1. Create 3 Artists
   const artists = []
   for (let i = 1; i <= 3; i++) {
-    const user = await getOrCreateUser(`cre${i}`, `cre${i}`, `Artist ${i}`, passwordHash)
+    const user = await getOrCreateUser(`cre${i}`, `Artist ${i}`)
     const profile = await getOrCreateArtistProfile(user.id, `cre${i}`, `Artist ${i}`, ['🔥', '✨', '🌟'][i - 1])
     artists.push(profile)
     console.log(`Created artist: cre${i}`)
@@ -76,7 +74,7 @@ async function main() {
   // 2. Create 9 Fans (numbered 4 to 12)
   const fans = []
   for (let i = 4; i <= 12; i++) {
-    const user = await getOrCreateUser(`fan${i}`, `fan${i}`, `Fan ${i}`, passwordHash)
+    const user = await getOrCreateUser(`fan${i}`, `Fan ${i}`)
     fans.push(user)
     console.log(`Created fan: fan${i}`)
   }
@@ -147,7 +145,7 @@ async function main() {
   }
 
   console.log('✅ Done! 3 Artists, 9 Fans (fan4~fan12), and subscriptions successfully seeded.')
-  console.log('You can now log in as any fan (e.g. fan4, fan5, fan6) and visit /sobok/cre1')
+  console.log('You can now log in as any fan (e.g. fan4@sobok.local / qwe123123) and visit /sobok/cre1')
   process.exit(0)
 }
 

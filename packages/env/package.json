@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./client": "./src/client.ts",
+    "./server.auth": "./src/server.auth.ts",
     "./server.common": "./src/server.common.ts"
   },
   "scripts": {

@@ -61,10 +61,6 @@ export const auth = betterAuth({
   databaseHooks: {
     account: {
       create: {
-        // BBaton 계정 연결 시 성인인증 결과를 반영한다. after가 아니라 before에서 한다 — after는
-        // 트랜잭션 커밋 후 best-effort로 실행되어(queueAfterTransactionHook), 실패하면 "연결됐지만
-        // 미인증" 상태가 남는다. before는 링크 커밋 전에 동기 실행되므로, 프로필 조회·검증 쓰기가
-        // 실패하면 링크 자체가 중단되어 부분 상태가 생기지 않는다.
         before: async (account, ctx) => {
           if (account.providerId !== BBATON_PROVIDER_ID || !account.accessToken) {
             return
@@ -87,10 +83,10 @@ export const auth = betterAuth({
             .values({ userId: account.userId, ...verification })
             .onConflictDoUpdate({ target: [bbatonVerificationTable.userId], set: verification })
 
-          // isAdult는 세션(쿠키·Redis)에 비정규화돼 있다. updateUser가 DB와 secondaryStorage 세션
-          // 스냅샷을 함께 갱신한다. 쿠키 캐시는 링크 완료 응답에서 refreshSessionCookies로 재발급해야 한다.
           const internalAdapter = ctx?.context.internalAdapter ?? (await auth.$context).internalAdapter
           await internalAdapter.updateUser(account.userId, { isAdult: profile.adult })
+
+          // 쿠키 캐시는 링크 완료 응답에서 refreshSessionCookies로 재발급해야 한다.
         },
       },
     },
