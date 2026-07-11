@@ -18,10 +18,8 @@ export const authClient = createAuthClient({
     passkeyClient(),
     twoFactorClient(),
     genericOAuthClient(),
-    ...(env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && [
-      oneTapClient({
-        clientId: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-      }),
-    ]),
+    oneTapClient({
+      clientId: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+    }),
   ],
 })

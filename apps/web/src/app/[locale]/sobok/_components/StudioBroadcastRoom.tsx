@@ -49,7 +49,7 @@ export default function StudioBroadcastRoom({ handle }: { handle: string }) {
             </div>
             <div className="custom-scrollbar flex gap-2 overflow-x-auto pb-0.5">
               {liveReplies.map((reply) => {
-                const nickname = reply.nickname ?? t('fan')
+                const nickname = reply.name ?? t('fan')
                 return (
                   <button
                     key={reply.id}
@@ -58,7 +58,7 @@ export default function StudioBroadcastRoom({ handle }: { handle: string }) {
                     className="flex max-w-60 shrink-0 items-center gap-1.5 rounded-full bg-surface-2 py-1 pl-1 pr-3 transition-colors hover:bg-surface-3"
                   >
                     <img
-                      src={avatarURL(nickname, reply.imageURL)}
+                      src={avatarURL(nickname, reply.image)}
                       alt=""
                       className="h-5 w-5 shrink-0 rounded-full object-cover"
                     />

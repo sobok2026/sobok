@@ -18,8 +18,8 @@ export interface LiveReply {
   id: string
   contextMessageId: string
   // null = the fan brief didn't resolve; the view renders a "팬" fallback.
-  nickname: string | null
-  imageURL: string | null
+  name: string | null
+  image: string | null
   text: string
 }
 
@@ -88,8 +88,8 @@ export default function useBroadcastRoom(handle: string) {
       const reply: LiveReply = {
         id: msg.messageId,
         contextMessageId: msg.contextMessageId,
-        nickname: msg.fan?.nickname ?? null,
-        imageURL: msg.fan?.imageURL ?? null,
+        name: msg.fan?.name ?? null,
+        image: msg.fan?.image ?? null,
         text: msg.content.text,
       }
 

@@ -1,6 +1,3 @@
-// en placement, retrograde and aspect-pair readings for the natal chart.
-// Composed into the `Constellation.readings` message namespace by `../messages`.
-
 import type { AspectPairReadings, PlanetReadings, RetroReadings } from './types'
 
 export const planets: PlanetReadings = {

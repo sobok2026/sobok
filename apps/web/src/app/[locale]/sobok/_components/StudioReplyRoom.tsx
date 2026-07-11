@@ -15,7 +15,7 @@ import { MessageFeedSkeleton } from './RoomSkeleton'
 import PageHeader, { HeaderBackLink } from './ui/PageHeader'
 
 interface AnswerTarget {
-  fanId: number
+  fanId: string
   replyMessageId: string
   fanName: string
   preview: string
@@ -33,7 +33,7 @@ export default function StudioReplyRoom({ handle, messageId }: { handle: string;
     useReplyRoom(handle, messageId)
 
   function fanNameOf(item: ChatReplyRoomItem): string {
-    return item.fan?.nickname || t('fanNumber', { id: item.fanId })
+    return item.fan?.name || t('fanNumber', { id: item.fanId })
   }
 
   function quoteFor(item: ChatReplyRoomItem): BubbleQuote | undefined {
@@ -69,7 +69,7 @@ export default function StudioReplyRoom({ handle, messageId }: { handle: string;
 
     return (
       <IncomingBubble
-        avatarSrc={avatarURL(fanName, item.fan?.imageURL)}
+        avatarSrc={avatarURL(fanName, item.fan?.image)}
         createdAt={item.createdAt}
         isHighlighted={isHighlighted}
         isSelected={answerTarget?.replyMessageId === item.messageId}

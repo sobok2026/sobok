@@ -28,7 +28,7 @@ export default function useReplyRoom(handle: string, messageId: string) {
   const quotes = computeReplyRoomQuotes(items)
   const newestFanReplyId = items.findLast((item) => item.senderRole === 'fan')?.messageId
 
-  async function sendAnswer(target: { fanId: number; replyMessageId: string }, text: string) {
+  async function sendAnswer(target: { fanId: string; replyMessageId: string }, text: string) {
     const { messageId: answerId } = await postAnswer({
       fanId: target.fanId,
       body: { contentType: 'text', text, quotedMessageId: target.replyMessageId },
@@ -59,11 +59,17 @@ export default function useReplyRoom(handle: string, messageId: string) {
           messageId: msg.messageId,
           senderRole: 'fan',
           fanId: msg.fanId,
-          ...(msg.fan && { fan: { id: msg.fanId, nickname: msg.fan.nickname, imageURL: msg.fan.imageURL } }),
-          ...(msg.quotedMessageId && { quotedMessageId: msg.quotedMessageId }),
           contentType: msg.contentType,
           content: msg.content,
           createdAt: msg.createdAt,
+          ...(msg.quotedMessageId && { quotedMessageId: msg.quotedMessageId }),
+          ...(msg.fan && {
+            fan: {
+              id: msg.fanId,
+              name: msg.fan.name,
+              image: msg.fan.image,
+            },
+          }),
         }),
       )
     },
