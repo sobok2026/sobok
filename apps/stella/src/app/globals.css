@@ -27,3 +27,10 @@ body {
   color: var(--color-foreground);
   background: var(--color-background);
 }
+
+/* With appearance:none, iOS WebKit centers date/time values and collapses the
+   value row's height — pin both back to normal text behavior. */
+::-webkit-date-and-time-value {
+  text-align: inherit;
+  height: 1.5em;
+}
