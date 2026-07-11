@@ -136,6 +136,7 @@
       "name": "@sobok/stella",
       "version": "0.1.0",
       "dependencies": {
+        "@next/third-parties": "^16.2.10",
         "@sobok/domain": "workspace:*",
         "astronomy-engine": "^2.1.19",
         "next": "16.2.10",

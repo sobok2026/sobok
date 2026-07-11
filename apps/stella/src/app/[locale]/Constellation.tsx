@@ -4,6 +4,8 @@ import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 
+import { track } from '@/lib/analytics/browser'
+
 import BirthForm from './BirthForm'
 import {
   ASPECT_STYLE,
@@ -84,6 +86,7 @@ export default function Constellation() {
       setSelection(null)
       setChart(result)
       setRunId((n) => n + 1)
+      track('chart_open')
     } catch {
       toast.error(t('form.error'))
     } finally {
@@ -103,10 +106,12 @@ export default function Constellation() {
     try {
       if (typeof navigator !== 'undefined' && navigator.share) {
         await navigator.share(data)
+        track('share', { method: 'web_share' })
         return
       }
       await navigator.clipboard.writeText(url)
       toast.success(t('share.copied'))
+      track('share', { method: 'clipboard' })
     } catch {
       /* user dismissed the share sheet — nothing to do */
     }

@@ -45,6 +45,9 @@ jobs:
 
       - name: Build static export
         run: bun run --filter=@sobok/stella build
+        env:
+          # GTM container ID (public value) — repository variable; leave unset to ship without GTM.
+          NEXT_PUBLIC_GTM_ID: ${{ vars.STELLA_GTM_ID }}
 
       - name: Deploy to Cloudflare Workers (Static Assets)
         uses: cloudflare/wrangler-action@v4
