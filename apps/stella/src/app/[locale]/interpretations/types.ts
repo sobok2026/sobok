@@ -14,12 +14,15 @@ export type PlanetReadings = Record<PlanetId, SignText>
  */
 export type RetroReadings = Partial<Record<PlanetId, SignText>>
 
-// The five major aspects collapse into three tones:
+// The five major aspects map to four tones:
 //   conjunction — the two energies fuse into one
 //   flow        — trine + sextile, they support each other with ease
-//   friction    — square + opposition, they pull against each other
-export type AspectTone = 'conjunction' | 'flow' | 'friction'
-export type PairText = Record<AspectTone, string>
+//   square      — they grind against each other; an inner friction that drives growth
+//   opposition  — they swing to opposite poles; a seesaw often mirrored in others
+// 'friction' is a legacy key kept only as a fallback for locales not yet split
+// into square/opposition — those fall back to their single friction line.
+export type AspectTone = 'conjunction' | 'flow' | 'square' | 'opposition'
+export type PairText = Partial<Record<AspectTone | 'friction', string>>
 export type AspectPairReadings = Partial<Record<string, PairText>>
 
 /** Canonical ordering used to build a stable, order-independent key per pair. */
@@ -49,5 +52,19 @@ export function aspectTone(aspect: AspectType): AspectTone {
   if (aspect === 'trine' || aspect === 'sextile') {
     return 'flow'
   }
-  return 'friction'
+  if (aspect === 'square') {
+    return 'square'
+  }
+  return 'opposition'
+}
+
+/** Orb-based intensity tier for a matched aspect. `null` = mid-range, no extra copy. */
+export function orbTier(orb: number): 'tight' | 'wide' | null {
+  if (orb <= 1.5) {
+    return 'tight'
+  }
+  if (orb > 4) {
+    return 'wide'
+  }
+  return null
 }

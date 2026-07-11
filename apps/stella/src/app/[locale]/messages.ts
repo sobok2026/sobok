@@ -166,6 +166,10 @@ export const messages = {
         planets: koPlanets,
         retro: koRetro,
         aspectPairs: koAspectPairs,
+        aspectIntensity: {
+          tight: '이건 당신 차트에서 가장 큰 목소리를 내는 힘이에요.',
+          wide: '은은하게 깔린, 배경 같은 결이에요.',
+        },
       },
     },
   },
@@ -328,6 +332,10 @@ export const messages = {
         planets: enPlanets,
         retro: enRetro,
         aspectPairs: enAspectPairs,
+        aspectIntensity: {
+          tight: 'This is one of the loudest voices in your whole chart.',
+          wide: 'A quiet undertone humming in the background.',
+        },
       },
     },
   },

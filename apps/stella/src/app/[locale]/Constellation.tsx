@@ -33,7 +33,7 @@ import {
 } from './chart'
 import styles from './constellation.module.css'
 import { computeChart } from './ephemeris'
-import { aspectTone, pairKey } from './interpretations/types'
+import { aspectTone, orbTier, pairKey } from './interpretations/types'
 import Starfield from './Starfield'
 
 // Animation timing (seconds).
@@ -843,8 +843,20 @@ function DetailPanel({
   if (selection.kind === 'aspect') {
     const color = ASPECT_STYLE[selection.aspectType].color
     const pairKeyId = pairKey(selection.a as PlanetId, selection.b as PlanetId)
-    const pairReadingKey = `readings.aspectPairs.${pairKeyId}.${aspectTone(selection.aspectType)}`
-    const pairReading = t.has(pairReadingKey) ? t(pairReadingKey) : t(`aspects.${selection.aspectType}Desc`)
+    const tone = aspectTone(selection.aspectType)
+    // Prefer the specific tone; if a locale hasn't split square/opposition yet, fall
+    // back to its legacy shared `friction` line, then to the generic aspect blurb.
+    const specificKey = `readings.aspectPairs.${pairKeyId}.${tone}`
+    const legacyKey = `readings.aspectPairs.${pairKeyId}.friction`
+    const pairReadingKey = t.has(specificKey)
+      ? specificKey
+      : (tone === 'square' || tone === 'opposition') && t.has(legacyKey)
+        ? legacyKey
+        : `aspects.${selection.aspectType}Desc`
+    const pairReading = t(pairReadingKey)
+    const tier = orbTier(selection.orb)
+    const intensityKey = tier ? `readings.aspectIntensity.${tier}` : null
+    const intensity = intensityKey && t.has(intensityKey) ? t(intensityKey) : null
 
     return (
       <div
@@ -867,7 +879,17 @@ function DetailPanel({
             </span>
           </div>
         </div>
-        <p className="mt-3 text-sm leading-relaxed text-slate-200 break-keep">{pairReading}</p>
+        {intensity && (
+          <p
+            className={`mt-3 text-xs font-semibold ${tier === 'wide' ? 'text-slate-400' : ''}`}
+            style={tier === 'tight' ? { color } : undefined}
+          >
+            {intensity}
+          </p>
+        )}
+        <p className={`${intensity ? 'mt-2' : 'mt-3'} text-sm leading-relaxed text-slate-200 break-keep`}>
+          {pairReading}
+        </p>
       </div>
     )
   }

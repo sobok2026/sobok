@@ -152,284 +152,382 @@ export const planets: PlanetReadings = {
       "Abundance flows in when you give and trust. A heart offered without conditions circles back around as blessing, and the thing you pictured in your mind swings open reality's door. That uncalculating generosity guards you in the unlikeliest places. Just know that giving it all away can leave you empty; remember to refill as much as you pour out. Opening your hand and trusting the current brings you the fullest kind of luck.",
   },
   saturn: {
-    aries: 'You grow strong mastering impulse. This is where you learn patience.',
-    taurus: 'Slow but solid building. Consistency wins in the end.',
-    gemini: 'You take responsibility for words and learning. You mature through depth.',
-    cancer: 'You guard your feelings and home yourself. You become a firm shelter.',
-    leo: 'You learn real confidence through humility. You shine through effort.',
-    virgo: 'Strictness toward perfection. Diligence builds trust.',
-    libra: 'You learn responsibility within relationships. Fairness keeps balance.',
-    scorpio: 'Deep control and restraint. You harden by enduring crisis.',
-    sagittarius: 'You take responsibility for your beliefs. You ground learning in reality.',
-    capricorn: 'A competitor strict with yourself. You harden as time passes.',
-    aquarius: 'Grit that turns ideals into reality. You grow reshaping structures.',
-    pisces: 'You find your center within the haze. You add responsibility to devotion.',
+    aries:
+      "You learn to master your own impulse, by living it. Every time you have to press pause on the urge to bolt, real strength grows, and the energy you've held back becomes unstoppable. Just know that clamping down too hard can suffocate you — leave a little room to breathe between the rules. The patience you're learning right here is exactly what will make you strongest.",
+    taurus:
+      "You build slowly but solidly. An unglamorous consistency becomes, over time, a foundation nothing can shake, and you're the one still standing when the impatient collapse. That stubborn steadiness wins in the end. Just know that stalling every change to protect stability can cost you the moment — hold firmness and flexibility at once. You may not rush, but you always arrive.",
+    gemini:
+      "You steadily add weight to your words and your learning. You dig into thoughts you once let drift, hardening them into real knowledge, and you learn not to speak carelessly. That matured thinking gives your words a staying force. Just know that the pressure to know everything perfectly can seal your mouth shut; find the courage to share even when you're unsure. Your deepened mind becomes a voice people come to trust.",
+    cancer:
+      'You learn to guard your feelings and your home yourself. You move past the wish to lean on someone and become, instead, the sturdy shelter for others — and in that, you grow into a real adult. Just know that always being the one who holds things up can cost you your own place to rest; make somewhere to lean, too. That unbreakable tenderness becomes the spot tired hearts keep coming home to.',
+    leo: "You learn real confidence through humility. Only when you can hold steady without applause does it harden, and that light — forged by effort — never goes out. The approval you once leaned on slowly turns into faith in yourself. Just know that stifling the wish to be seen can shrink you; don't be stingy with your own praise. The confidence you build from within becomes the longest-lasting glow.",
+    virgo:
+      'You aim your standard for perfection at yourself. You measure diligence by your own ruler more than any watching eye, and that honest effort roots into unshakable trust. Nothing slips by half-done, so trust follows whatever you finish. Just know that ruler can crush you sometimes; remember the imperfect you today is already enough. Go a little easier on yourself, and that diligence shines far longer.',
+    libra:
+      "You learn responsibility inside relationships. You move past pure people-pleasing and pick up, step by step, how to draw a fair line — and that mature sense of balance keeps your bonds healthy for years. Just make sure fairness doesn't harden into stiffness; carry principle and warmth together. Real harmony isn't erasing yourself; it's knowing how to protect yourself, too.",
+    scorpio:
+      "You learn deep restraint and control. Each time you master an emotion that nearly swept you away, real strength appears, and the more crises you endure, the sturdier you get. That capacity to hold makes it so no trial can topple you. Just know that shouldering everything alone can quietly rot you inside; share the heavy load now and then. The time you've endured turns you into someone deep and strong beyond most.",
+    sagittarius:
+      "You add responsibility to your beliefs. You verify vague ideals against reality, one at a time, and pack what you've read into lived experience. That hardened faith becomes the center that holds you steady in a shaky world. Just know that too much certainty can push away other people's truths; keep an ear open to voices beyond your own. A conviction tested and matured is a strength no one can easily shake.",
+    capricorn:
+      "You're the competitor strictest of all with yourself. You move by your own inner principle, not the standard someone else set, and the deeper time runs, the deeper your roots. The quiet weight you've stacked up makes you unshakeable. Just watch that endless self-discipline doesn't burn you out; give the you who's come this far some kindness now and then. If today's weight feels heavy, that's proof of how close to the summit you already are.",
+    aquarius:
+      "You hold the grit to turn ideals into reality. You build what only lived as a dream into actual structure and rebuild old frameworks from the root. That relentless power to realize becomes, at times, the force that changes the rules of the world itself. Just know that ideals racing ahead can lose the reality and the people; keep pace with what's beside you, too. The stubbornness to give a bold dream a form sets you up as an architect of the times.",
+    pisces:
+      "You learn to find your center inside the haze. You drop your own anchor into a heart that seeps past every boundary, and add the weight of responsibility to a formless devotion. That hardened tenderness completes you into someone warm yet not soft. Just make sure the weight of reality doesn't cost you your original imagination; hold the balance between dream and ground. A heart that carries both softness and steel is what holds people the longest.",
   },
   uranus: {
-    aries: 'A pioneer breaking molds and opening new paths. Freedom is your innovation.',
-    taurus: 'You create change within the familiar. You seek grounded innovation.',
-    gemini: 'You flip the board with flashing ideas. Freedom of thought sets you apart.',
-    cancer: 'You find new ways of feeling and home. You carry an unusual warmth.',
-    leo: 'You shine with original individuality. You build a stage all your own.',
-    virgo: 'You innovate how work is done. A practical inventor.',
-    libra: 'You experiment with new forms of bond and balance. You dream of free harmony.',
-    scorpio: 'Change that shakes the foundations. You spark revolution from the depths.',
-    sagittarius: 'Free thought crossing borders. You widen tomorrow horizon.',
-    capricorn: 'You overturn old structures. A reformer rebuilding the system.',
-    aquarius: 'A vision ahead of its time. Originality is your essence.',
-    pisces: 'You dissolve borders with imagination and inspiration. You open new dreams.',
+    aries:
+      "There's a pioneer in you who breaks the old mold and cuts a new path. You're not afraid to step first in a direction no one's tried, and that restless freedom becomes innovation itself. Wherever you shake things loose, a new current begins. Just know that if you get lost in tearing down, you may forget to build; picture what the change is for. That nerve no one else could summon becomes the key to the world's next chapter.",
+    taurus:
+      "You make change quietly, from inside the familiar. Rather than flip the whole table, you turn what already exists into something better one slow improvement at a time — and a change that practical lasts. Unflashy as it is, you're the one who ends up reshaping the world most surely. Just know that moving too slowly can cost you the moment; when it's ripe, be bold. That unhurried reform builds a change that doesn't wobble.",
+    gemini:
+      'Ideas that flip the board flash through your mind without pause. You wander off the marked path of thought and freely wire together things that seem unrelated, and that spark makes a stale debate new all over again. That different angle is the key that opens the next chapter of any conversation. Just know that if it stays only in your head, the sparkle scatters; take a ripe thought out and share it. Once your brilliance lands in the world, it becomes real force.',
+    cancer:
+      "You go looking for new ways to do feeling and home. You don't inherit the old frame as-is; you redefine your own warmth and shelter for yourself. That unusual tenderness quietly tells people, 'it's okay to love like this, too.' Just make sure that in breaking the frame you don't lose a place to rest your heart; keep a root even inside your freedom. The courage to rewrite the old way becomes, for someone, a great comfort.",
+    leo: "You shine with an originality all your own. Instead of copying anyone, you build a stage that's never existed, and that one-of-a-kind quality naturally catches every eye. That single color found nowhere else makes you impossible to replace. Just know that trying too hard to be different can turn stiff; trust that you're already rare without the effort. An individuality you don't have to force is the charm that shines the longest.",
+    virgo:
+      "You innovate the very way work gets done. You spot the inefficiency in a process everyone takes for granted and tear it apart to rebuild, easing the load for the people around you with practical invention. That quiet improvement piles up and nudges the world forward, inch by inch. Just watch that chasing a better method doesn't shake something already good enough; sort what to fix from what to keep. That knack for unshowy improvement makes you indispensable anywhere.",
+    libra:
+      "You experiment with new forms of bond and balance. You question the set formula for relationships and dream of a harmony that keeps each person's freedom intact. That open experiment shows the world fresh possibilities for love and friendship. Just know that insisting on your different way can leave the other person lonely; watch their heart as closely as the newness. That instinct to rewrite the rules makes a bond freer and healthier.",
+    scorpio:
+      "You carry a change that shakes the foundations. Unsatisfied with surface fixes, you tear things up from the root and spark a quiet revolution from the depths. That fierce transforming force lets the old be completely reborn. Just know that the urge to overturn everything can cost you what was worth keeping; picture what you'll build after you break it. That daring to dig to the bottom and change it makes a shift no one else could.",
+    sagittarius:
+      "You hold a free-roaming mind that crosses every border. You leap the fence of settled belief to find a wider truth and sketch tomorrow's horizon before it arrives. That unstoppable thinking carries the world's ideas a step further out. Just know that ideals racing ahead can lose their footing in reality; connect the big picture to small, real steps. That gaze unafraid of edges becomes the force that opens a new horizon.",
+    capricorn:
+      "You're a reformer who overturns old structures. You find the crack in a system that looks solid and rebuild it, tearing down and raising something better in the same motion. That fundamental rebuilding changes the very skeleton of the times. Just know that reshaping the whole board takes time; carry a long breath instead of impatience. The grit to not stop at breaking but to rebuild it in the end is what completes real change.",
+    aquarius:
+      "You were born with a gaze ahead of your time. You live the future no one else has seen yet, and originality is simply your essence. Strange as it looks now, the world ends up flowing in the direction you drew. Just know that racing too far ahead can leave the people beside you behind; slow down and walk with them sometimes. The day always comes when that different eye becomes everyone's obvious.",
+    pisces:
+      'You dissolve borders with imagination and inspiration. You reconnect, through feeling, what logic split apart, and you throw open a dream no one else could dream. That dreamlike innovation sketches a door of new possibility into the world. Just know that if imagination drifts too far from reality, it loses its shape; pin a small foothold onto the dream. The power to imagine, first, what no one could see becomes a seed that widens the world.',
   },
   neptune: {
-    aries: 'You dive passionately toward the ideal. You turn dreams into action.',
-    taurus: 'You shape beauty through the senses. You find romance in the real.',
-    gemini: 'Imagination and language blend. You make magic with stories.',
-    cancer: 'Deep empathy and care. You embrace the world with your heart.',
-    leo: 'You shine with creative inspiration. Your heart flows into art and expression.',
-    virgo: 'You help and heal with delicate devotion. You melt ideals into the real.',
-    libra: 'You dream of harmony and beauty. You picture an ideal love.',
-    scorpio: 'You are enchanted by mystery and depth. You feel the unseen.',
-    sagittarius: 'You chase greater meaning and truth. You enjoy spiritual adventure.',
-    capricorn: 'You realize ideals through structure. You give dreams a real frame.',
-    aquarius: 'You dream an ideal for everyone. Compassion widens your imagination.',
-    pisces: 'Imagination and spirit reach far. You hold a boundless empathy.',
+    aries:
+      "You dive burning-hot toward the ideal. You don't just cradle the dream in your chest; you move it into action, and that passion pulls a blurry ideal into reality. The ability to dream and leap at once makes you more than a daydreamer. Just know that ideals racing ahead can crash against reality and tire you out; break the big dream into small steps to walk. Believing hot and moving fast is what drags imagination into the here and now.",
+    taurus:
+      'You shape beauty through the senses. You find romance in what you can touch and see, and you fold the ideal, quietly, into the real. That fine eye is your own magic — turning the plainest day into a piece of art. Just know that pouring your heart into beauty can push real problems to the back; keep romance and the practical together. The sense that makes the world a little more beautiful keeps your side warm and lovely.',
+    gemini:
+      "Imagination and language blend naturally inside you. You move an image that surfaces into a story, and you have a knack for building a magic-like world out of a few words. That poetic gift paints a landscape in the listener's mind that was never there before. Just know that a story lived only in your head can sadly scatter; catch it in writing or in form. The imagination that rebuilds the world into story is your most luminous gift.",
+    cancer:
+      "You wrap the world in deep empathy. You read a heart without a word being spoken, and that tender intuition quietly soothes the weary. The power to hold the world with your heart makes you someone's shelter. Just know that carrying everyone's feelings can cost you yourself; draw a soft line between the empathy and you. The tenderness to recognize a hurt and hold it is a light no one else can quite copy.",
+    leo: "You shine with creative inspiration. Your heart flows toward art and expression, and you make what you've imagined bloom into visible beauty. That overflowing creativity leaves your own distinct color on the world. Just know that on the days inspiration doesn't come, you can waver hard; enjoy the making itself over the result. That expressive power that makes the world a touch more dazzling is a gift you were born with.",
+    virgo:
+      'You help and heal with delicate devotion. Instead of leaving the ideal vague, you fold it into reality with careful hands and quietly make someone well. That humble devotion makes the world, soundlessly, a better place. Just know that helping everyone can cost you your own care; spend some of that devotion on yourself, too. Those quiet hands mending the world turn out to be the deepest kind of healing.',
+    libra:
+      'You dream of harmony and beauty. You picture an ideal love and a perfect balance in your mind, and that sense colors everything around you a shade more graceful. That longing for beauty makes you a person of art and love. Just know that when the ideal is high, reality can look shabby and disappoint you; notice the beauty already here before the perfect. The sense that smooths the world a little finer turns everything nearby lovely.',
+    scorpio:
+      "You're enchanted by mystery and depth. You feel the unseen and sense the truth running quietly beneath the surface. That deep intuition draws up a beauty from the depths that no one else can reach. Just know that staying submerged in the dark too long can weigh the heart down; come up to the sunlit surface now and then. The sense that reads the invisible world makes you someone rare and deep.",
+    sagittarius:
+      "You chase a greater meaning and truth, past whatever's in front of you. Unsatisfied with now, you enjoy spiritual adventure and keep asking yourself what life even is. That hunger for the transcendent carves a rare depth into your journey. Just know that always seeking the answer far off can cost you this moment; turn your far gaze back to your feet sometimes. That endless thirst for meaning keeps carrying your life somewhere wider.",
+    capricorn:
+      "You realize the ideal through structure. Rather than let a dream drift in the air, you raise a real frame and shape it piece by piece, becoming the bridge between reverie and execution. That solid imagination makes your dream, in the end, something you can see. Just make sure the weight of reality doesn't make you forget the first ideal; revisit why you started every so often. The grit to make a dream graspable is a power few people hold.",
+    aquarius:
+      'You dream an ideal not for yourself but for everyone. You imagine a world larger than the individual, and a warmth for all of humanity widens that imagination without limit. That broad heart makes your dream something beyond your own. Just know that chasing the ideal can make you pass right by the person beside you; treasure one near heart as much as the far world. The wish to hold everyone in ends up, someday, making the world a little kinder.',
+    pisces:
+      "Your imagination and spirit reach far and wide, without a border. You carry an empathy that feels connected to everything by an invisible thread, and that limitless sensitivity makes you a person of art and soul. You read, with your whole body, subtle currents others can't feel. Just know that with borders so faint, you can be swept up in the world's feeling; keep a soft anchor to hold yourself. That very tenderness is the most precious, most beautiful gift there is.",
   },
   pluto: {
-    aries: 'You reinvent yourself with fierce will. You grow stronger in crisis.',
-    taurus: 'You transform values and security at the root. A deep-rooted change.',
-    gemini: 'You flip the board with the power of thought. You dig for the truth.',
-    cancer: 'You heal feelings and roots deeply. You transform family wounds.',
-    leo: 'You break the self and rebuild it. You carry an intense presence.',
-    virgo: 'You transform daily life and body at the root. You purify and rebuild.',
-    libra: 'You transform relationships at the root. You rework the balance of power.',
-    scorpio: 'You are fully reborn from the depths. Your insight runs intense.',
-    sagittarius: 'You shake beliefs to seek truth. You rebuild your worldview.',
-    capricorn: 'You transform structure and power at the root. Crisis makes you stronger.',
-    aquarius: 'You topple old systems. You lead collective transformation.',
-    pisces: 'You transform the unseen. You purify the unconscious deeply.',
+    aries:
+      'You reinvent yourself, again and again, by fierce will. Where others would collapse, you grow stronger, and each crisis forges you into a brand-new person. The power to rise every single time, no matter the ending, is your real backbone. Just know that always meeting things head-on can burn you out; weigh what to tear down against what to keep. That force that lifts off the bottom and climbs again makes you someone nothing can break.',
+    taurus:
+      "You change values and security from the very root. You don't just fix the surface; you rebuild, from the foundation, what truly matters. That deep transforming force lays a new base that won't shake. Just know that a grip you can't loosen can make change drag; remember that letting go is a strength too. The value you've questioned for yourself becomes, in the end, your sturdiest root.",
+    gemini:
+      'You flip the board with the power of thought and word. Unfooled by surface information, you dig to the truth and topple a solid old assumption with a single line that lands dead center. That penetrating intellect rewrites the story the world tells. Just know that endless excavating can sharpen your heart; carry warmth alongside the truth. The insight that finally drags the hidden into the light makes you someone no one can deceive.',
+    cancer:
+      'You heal feelings and roots at their deepest. You face an old inherited wound alone and cut it off, turning even that ache into power. That brave healing frees you and the people you love along with you. Just know that shouldering deep wounds alone can wear you out; sometimes lean on a hand beside you. Cutting off, in yourself, a pain passed down through generations is the most precious change of all.',
+    leo: 'You break the self and rebuild it stronger. You let the worn-out you go without regret and are reborn anew, and that intense presence can overwhelm a room. The power to be reborn as many times as it takes keeps you from ever fading out. Just know that the need to look strong can make you hide the weak moments; accept the crumbling you exactly as it is. A flame that reignites even from ash is your true dignity.',
+    virgo:
+      "You remake your daily life and your body from the inside out. Rather than touch the surface, you purify your habits from the root and rebuild into a healthier self, quietly flipping your whole life with the smallest change. That steady rebuilding turns you, before you notice, into someone entirely new. Just know that obsessing over fixing yourself can turn into self-punishment; remind yourself that today's you is already fine. A daily small purification adds up to the deepest transformation.",
+    libra:
+      'You reshape the power in a relationship from the root. Rather than clash on the outside, you re-lay the very foundation of balance, and only then does a bond get reborn healthy. That deep insight takes your relationships somewhere on another level. Just know that digging too far into the underside can wear you out; hold onto some grace to trust rather than excavate. The courage to cut out the rot and stitch it back together makes a sturdier bond in the end.',
+    scorpio:
+      "You're fully reborn from the very deepest place. You stare head-on at the dark others fearfully avoid, and that chillingly intense insight sees straight to the essence. A depth that has lived through several deaths and returns makes you someone nothing can shake. Just know that sinking alone into the dark can burn you up; rise to the light as much as you go under. That force that drops to the bottom and surges back up is your most formidable weapon.",
+    sagittarius:
+      "You shake a belief you've held to find a deeper truth. You doubt an inherited worldview wholesale and rebuild it toward a larger truth, and in that journey, you're reborn. That hunger for the fundamental makes your faith a depth no one else can copy. Just know that doubting everything can cost you even the ground to stand on; after you shake it, build a new belief too. Tearing down and raising up, over and over, leads you into a real kind of wisdom.",
+    capricorn:
+      "You change structure and power from the root. You shake the foundation of a system that looks unbreakable and grow stronger through the very crisis. That relentless transforming force carries you to the seat where the era's board gets reset. Just know that clinging to power can cost you the actual people; keep, always, what the power is for. The grit to rebuild an old order in the end sets you up as a cornerstone of the times.",
+    aquarius:
+      'You topple the old system and open a new order. You crack an order everyone took for granted and gather the scattered to lead a collective transformation. That burning will to reform makes you the one who opens the next era. Just know that tearing down too fast can lose the people meant to come with you; carry human warmth into the change. The courage to overturn the obvious in the end opens a new road for everyone.',
+    pisces:
+      "You transform what can't be seen. You face a wound sunk deep in the unconscious alone and purify it, quietly shifting a current no one else can see. That deep work of the soul reborns you and the world without a sound. Just know that sinking too far into the invisible can lose you the way in reality; keep a foot planted in the here and now. That depth that heals from the very bottom of the heart becomes a seed that quietly changes the world.",
   },
   northNode: {
     aries:
-      'Your path: learning to lead and find your own courage. Your soul grows when you take the first step in your own name instead of leaning on others.',
+      "This life, your soul came to learn how to lead and summon a courage that's yours alone. Leaning on others or hanging back may have felt safer and more familiar all along. But the real growth begins the moment you take the first step in your own name instead of following someone else's. It's completely natural for that first solo step to feel frightening and strange — and even so, the courage it takes carries you somewhere entirely new.",
     taurus:
-      'Learning to build steady, lasting value of your own. You settle when you let go of the rush and savor what you already have.',
+      "This life, you came to learn how to build value at your own unshakeable pace. Until now, you may have kept getting pulled into intensity and the swirl of crisis. But when you set down the rush and calmly savor what you already hold, a real steadiness settles into you. You don't have to hurry or compare — your pace is enough. The steadiness you build slowly roots a genuine peace into your life.",
     gemini:
-      'Learning to stay curious, learn, and connect. Your world widens when you listen to many stories instead of clinging to one answer.',
+      'This life, your direction is learning to open up, learn, and connect. Holding tight to a single answer may have felt more secure all along. But when you listen to many stories and ask your questions lightly, your world widens beyond recognition. You can set down the pressure to know everything for now. That curious, sharing way of yours makes you a far freer person.',
     cancer:
-      'Learning to open your heart, nurture, and put down roots. You find ease when you feel your emotions fully rather than proving yourself through results.',
-    leo: 'Growing the courage to shine and express yourself. Real joy comes when you step into the spotlight instead of hiding behind others.',
+      "This life, you came to learn how to open your heart, care, and put down roots. Proving yourself through results may be the more familiar habit. But when you feel your emotions exactly as they are and share your heart with someone, real ease finally arrives. You don't have to keep your heart shut for fear of looking weak — that very courage to open it makes you strong from the inside, not just the outside.",
+    leo: "This life, your direction is growing the courage to shine and to say what you feel. Blending quietly into the crowd may have felt more comfortable. But the moment you step onto the stage and show yourself, you meet a real joy for the first time. You don't have to fear or feel shy about being seen. The instant you let yourself shine, the sun inside you finally rises, bright.",
     virgo:
-      "Learning to refine step by step and stay grounded. Life falls into order when you do today's task with care rather than drifting in vague ideals.",
+      "This life, you came to learn how to refine, step by step, and set your feet on the ground. Drifting off into vague ideals or chaos may be the more familiar pull. But when you do today's task with care and put one thing at a time in order, a blurry life turns crisp and clear. It doesn't have to be something grand — each small act carries real weight. The habit of standing here, now, carries you from haze into focus.",
     libra:
-      'Learning togetherness, harmony, and real partnership. You go further when you balance with others instead of insisting on your own way.',
+      "This life, your direction is learning harmony and real partnership — together over alone. Pushing ahead solo, your own way, may have felt easier and faster. But when you match steps with someone and find the balance, you reach places you never could on your own. Holding out your hand isn't weakness; it's another kind of courage. The moment you learn to go together, your world widens to twice its size.",
     scorpio:
-      'Learning to dive deep and face true transformation. You are reborn when you dig into what scares you instead of settling for comfort.',
+      "This life, you came to learn how to dive deep and face real transformation. Settling into the comfortable and familiar, staying on the surface, may have felt safer. But when you dig into what frightens you and set yourself fully down, you're reborn, brand new. Leaping into the depths is scary — and it brings a change worth exactly that much. That brave immersion makes you strong and deep beyond recognition.",
     sagittarius:
-      'Setting out for a wider world and beliefs of your own. The path opens when you ask what things mean for yourself rather than following others.',
+      "This life, your direction is setting out for a wider world and beliefs of your own. Being swayed by other people's thoughts and the information in front of you may be the more familiar habit. But when you ask yourself what life means and go looking for your own truth, a new road finally opens. There doesn't have to be a set answer — the asking itself grows you. That step toward the horizon hands you a real freedom.",
     capricorn:
-      'Growing into responsibility and building your own achievement. You grow solid when you carry your own weight instead of leaning for support.',
+      "This life, you came to become the kind of adult who takes responsibility and builds achievement of your own. The wish to lean on feelings or retreat to the comfortable seat may have been stronger. But when you carry your own share fully and make something with your own hands, an unshakeable solidity grows in you. It's only natural for that weight to feel heavy at first. The moment you shoulder it, you finally become the true owner of your own life.",
     aquarius:
-      'Moving beyond yourself toward community and the future. You find freedom when you let go of seeking approval and reach out for everyone.',
+      'This life, your direction is moving beyond yourself, toward community and the future. Your heart may have leaned more toward personal recognition and being seen. But when you reach out a hand for something larger than you and stand in solidarity with others, a real freedom arrives instead. Shining together lasts far longer than shining alone. The moment you open your heart to something bigger than yourself, your life widens without limit.',
     pisces:
-      'Learning to let go, trust, and flow. Peace arrives when you empty your heart instead of trying to control everything.',
+      "This life, you came to learn how to let go, trust, and give yourself to the flow. Controlling and analyzing everything may have been the only thing that eased your mind. But when you loosen your grip and empty your heart, the peace you've long searched for quietly arrives. You don't have to hold onto everything — the world will hold you up gently. The moment you give yourself to the current, life carries you somewhere kinder than you expected.",
   },
   southNode: {
-    aries: 'You are used to charging in alone. Keep that courage, but now learn to look beside you and move together.',
+    aries:
+      "Charging in alone, no looking back, is far too familiar to you. That fearless courage is a talent you've honed across many lifetimes, so keep it close — but now, learn to pause, glance beside you, and go together. Racing ahead solo takes you far, but matching steps with people takes you further. The moment you learn to move together, your courage doubles.",
     taurus:
-      'You are comfortable staying safe and familiar. Keep that steadiness, but open your heart to change little by little.',
+      "Staying inside the safe and familiar is the most comfortable seat for you. That solid, unshakeable steadiness is a precious asset, so don't lose it — but in front of change, open your hand a little and let something new in. When you clutch the familiar too tight, there's no room left for anything better to arrive. The moment you gently let go, room opens for a far greater abundance.",
     gemini:
-      'You are used to skimming lightly with words and info. Keep the wit, but build the grit to dig deep into one thing.',
+      'Skimming lightly across words and information comes naturally to you. That wit and quickness is a born gift, so keep it — but now, build the grit to dig deep into one thing. A hundred things known shallowly matter less than one thing known deeply. The strength to linger a little longer even after the interest fades turns your talent into real mastery.',
     cancer:
-      'You are used to leaning and being protected. Keep that tenderness, but slowly grow the strength to stand on your own.',
-    leo: 'You feel safe only in the spotlight. Keep your shine, but meet the you that is enough offstage too.',
+      'Leaning and being protected is a long-familiar place for you. Your tenderness and sensitivity toward others is a beautiful gift, so keep it — but now, slowly grow the strength to stand on your own two feet. When you can hold yourself up without leaning on anyone, that tenderness only grows sturdier. The moment you learn to stand by your own strength, your warmth carries far more force.',
+    leo: "Feeling safe only under the spotlight is an old habit for you. That radiant presence is a charm all your own, so keep it — but now, meet the you that's more than enough offstage too. When you can shine on your own without anyone's applause, that light never goes out. The moment you love yourself without leaning on approval, real freedom arrives.",
     virgo:
-      'You habitually perfect and worry over everything. Treasure that care, but learn the ease of trusting and letting go.',
+      "Perfecting everything and worrying ahead of time is baked into you. That diligence and precision is a rare gift, so treasure it — but now and then, learn the ease of trusting and letting go. The world runs better than you'd think, even when you don't control it all. The moment you feel that it's okay for things not to be flawless, your heart grows a good deal lighter.",
     libra:
-      'You are used to accommodating others. Keep that thoughtfulness, but practice voicing your own truth clearly.',
+      'Accommodating others and keeping the peace is a familiar place for you. That thoughtfulness and instinct for harmony is precious, so keep it — but now, practice voicing your own truth clearly. A peace you keep by erasing yourself never lasts. When you move with a thoughtfulness that also protects you, a truly healthy bond is finally made.',
     scorpio:
-      'You are used to control and deep entanglement. Keep that intensity, but sometimes loosen your grip and let go lightly.',
+      'Controlling things and tangling deep comes naturally to you. That intensity and immersion is a rare power, so keep it close — but sometimes, ease off and learn to let go lightly. The harder you clutch everything, the more it slips through your fingers. The moment you gently open your grip, more of it stays beside you instead.',
     sagittarius:
-      'You are comfortable wandering free. Keep the wide view, but learn the stability of putting down roots.',
+      'Wandering free is the most comfortable state for you. That wide view and adventurous heart is a born gift, so keep it — but learn, too, the stability of putting down roots. A tree rooted deep is exactly the one that grows the tallest. The strength to know how to stay, in the end, carries you further than roaming ever could.',
     capricorn:
-      'You are used to proving yourself through achievement and control. Keep that resolve, but tend to your heart first.',
-    aquarius: 'You are used to observing from a distance. Keep that clarity, but now step close and share your heart.',
+      "Proving yourself through achievement and control is familiar to you. That resolve and grit is a fine asset, so keep it — but now, tend to your own heart first. You are already enough, exactly as you are, even without achieving a thing. The moment you take that truth deep into your heart, a real peace you've long put off finally arrives.",
+    aquarius:
+      'Observing from a step back is a familiar place for you. That objectivity and insight is a rare gift, so keep it close — but now, step a little closer and share your heart. When you connect through the heart and not just the head, a bond finally warms. The moment you close the safe distance and offer your presence, warmth returns to your world too.',
     pisces:
-      'You are used to drifting and escaping. Keep that softness, but grow the strength to plant both feet in reality.',
+      'Letting hard things drift by and quietly slipping away is familiar to you. That softness and imagination is a beautiful gift, so keep it — but now, grow the strength to plant both feet in reality. When you lay a sturdy bridge between dream and reality, your imagination finally gains its power. The moment you embrace the ground beneath your feet, your imagination blooms into real magic.',
   },
   fortune: {
     aries:
-      'Luck opens when you bravely start and take on challenges. Joy and blessing follow when you step up before anyone else.',
+      'Your joy breaks open in the moment you bravely start and take something on. Raise your hand and leap before anyone else, and luck and delight follow you there — that thrill is what keeps you most alive. Just know that hesitating to weigh the outcome can let that luck slip right past you; when your heart is pulled, just begin. Fortune is always on the side of the one who took the first step.',
     taurus:
-      'Joy grows as you build slowly and savor the senses. Blessing flows in when you stop rushing and relish the now.',
+      'Your blessing flows in when you build slowly and savor the senses. When you stop rushing and fully relish this moment, joy rises inside you, and that ease actually calls in more abundance. Just know that staying only in the familiar can cost you a new delight; open up to unfamiliar joys now and then. That knack for leisurely enjoying is what hands you the deepest satisfaction.',
     gemini:
-      'Fortune follows when you learn, share, and connect. Luck opens as you link people and stories through your curiosity.',
-    cancer: 'Blessing flows within caring, nurturing bonds. Joy returns when you share your heart and build warmth.',
-    leo: 'Luck shines when you show yourself boldly and enjoy it. Blessing opens bright when you express freely and feel loved.',
-    virgo: 'Joy and blessing come as you refine and help with care. Luck stacks up as you do small things faithfully.',
-    libra: 'Fortune grows in good relationships and harmony. Blessing blooms when you savor beauty shared with others.',
+      'Your luck swings wide open in the moment you learn, share, and connect. Following your curiosity to link people and stories, an unexpected chance arrives — and one stretch of joyful talk quietly becomes a blessing. Just know that spreading across too many places can cost you the core; take one connection you care about all the way deep. Staying curious and staying connected is your very own luck switch.',
+    cancer:
+      'Your blessing flows, gentle and steady, inside caring bonds. Share your heart and build warmth, and joy comes back to you whole; the people who warmly stay by your side turn out to be your sturdiest luck. Just know that tending everyone but yourself can leave you hollow; give that tenderness to yourself, too. The place where you give and receive love is where your greatest blessing returns.',
+    leo: "Your luck shines bright in the moment you show yourself boldly and enjoy it. Express freely and let yourself be loved, and blessing flings wide open, that joy lighting up the people around you too. Just know that leaning only on other eyes can wear you out; chase what genuinely delights you first. When you're having a good time, fortune laughs right alongside you.",
+    virgo:
+      "Your joy arrives, quiet, in the moment you refine with care and help someone. Do one small thing faithfully and luck stacks up bit by bit; a calm satisfaction blooms right where you've been of use. Just know that chasing flawless can exhaust the joy right out of it; praise yourself for the thing done well. That meticulous care hands you a quiet but certain blessing.",
+    libra:
+      "Your luck grows lush inside good relationships and harmony. Savor beauty together with someone whose heart matches yours, and blessing flings wide open; a balanced bond is itself your greatest joy. Just know that folding yourself away to keep the peace can thin the joy out; choose the bond where you're happy too. The moment you join hands with a good person opens the door of fortune.",
     scorpio:
-      'Luck breaks open when you immerse deeply and transform. You meet unexpected blessings when you dig in without fear.',
+      'Your luck breaks wide open in the moment you immerse deeply and transform. Dig in without fear and you meet a blessing others never see; the greatest joy can surge up right where you flipped a crisis. Just know that betting everything on the dig can wear you out; keep a balance of immersion and rest. That deep place everyone else fears is, for you, where treasure lies hidden.',
     sagittarius:
-      'Joy and luck grow as you head for a wider world. Fortune comes to meet you when you reach toward the unfamiliar.',
+      'Your joy swells in the moment you stretch out toward a wider world. Set off for somewhere unfamiliar and luck comes out to meet you first; each new experience quietly stacks up into blessing. Just know that always gazing far can cost you the joy right here; savor the happiness at your feet, too. That thrill of crossing the familiar fence brings you the greatest luck of all.',
     capricorn:
-      'Blessing returns as you diligently build. Luck backs you up firmly when you quietly carry your responsibilities.',
+      "Your blessing comes back in the moment you build up, one faithful step at a time. Carry your responsibility quietly and luck follows steadily at your back; the longer time runs, the bigger and surer the reward. Just know that clinging to achievement and forever postponing today's joy will wear you thin; catch your breath on the climb. That endurance others can't match is your surest fortune.",
     aquarius:
-      'Luck opens on an unusual path among good people. Blessing finds you when you trust your own way forward.',
+      'Your luck flings open on an unusual road and among good people. Trust your own way and stride forward, and unexpected blessing arrives; solidarity with kindred hearts becomes your fortune itself. Just know that insisting on being different can cost you a hand held out; open your side wide to those whose hearts match yours. The nerve to step off the obvious path hands you a rare kind of chance.',
     pisces:
-      'Blessing flows when you give, imagine, and trust the flow. Unexpected luck seeps in when you empty your heart and give.',
+      "Your blessing flows, gentle and quiet, in the moment you give, imagine, and trust the flow. Empty your heart and give without holding back, and unexpected luck seeps in; that uncalculating generosity calls blessing in before you know it. Just know that giving it all away until you're empty will wear you out; refill yourself as much as you pour out. Opening your hand and trusting the current brings you the most beautiful gift of all.",
   },
 }
 
 export const retro: RetroReadings = {
   mercury: {
     aries:
-      'You chew over your quick thoughts one more time inside. Words land harder when you revisit them instead of blurting them out.',
+      "Your quick thoughts don't fire straight out — they get chewed over one more time inside first. Instead of blurting what surfaces, you need that beat to double back and refine, and the words you sharpen that way land far harder than the first version. Just don't rework it so long that you miss the moment to say it; once you've turned it over enough, speak up. That extra pass inside is what makes the one line you finally drop hit heavy.",
     taurus:
-      'Even a settled thought gets quietly re-checked within. The more you mull it over unhurried, the firmer your judgment.',
-    gemini: 'Ideas circle inside more than out. You may say less, but your trains of thought run deeper and finer.',
+      "Even a settled thought gets quietly re-checked inside you. Before you'll put a conclusion out loud, you turn it over and over until you're sure — and the more unhurried you are, the more unshakeable your judgment becomes. Just don't let all that caution stall the decision forever; at some point, trust it and close the loop. A thought that's ripened inside becomes the most dependable conclusion of all.",
+    gemini:
+      "Your ideas circle inside more than they spill out. You may say less, but the branches of your thinking run deeper and finer, and that inward wiring finds a connection no one else spotted. Just know that if it stays only in your head, the sparkle scatters — take a finished thought out and share it. What you've woven so tightly within shines for real once it reaches the world.",
     cancer:
-      'You replay feelings inwardly for a long time. You reach for your truth only after chewing it over, not right away.',
-    leo: 'You polish your words inside before you speak. They shine when they carry sincerity over flair.',
+      "You replay a feeling inwardly for a long time. Rather than move it straight into words, you bring your truth out only after chewing it over — which is why there's always warmth soaked into what you finally say. Just don't stew so quietly that you never actually get the feeling across; the sincerity you've mulled deserves to be spoken. Words warmed that long inside stay in someone's heart the longest.",
+    leo: "You polish your words inside, several times, before you speak. Rather than dress them up, you check and re-check the sincerity they'll carry — and when you strip off the flair and let the real thing through, your words land deeper. Just don't perfect them so long that you miss the moment to say them; even a little clumsy, let the feeling out when it's live. The sincerity you forged inside rings longer than any dazzling line.",
     virgo:
-      'Your analysis burrows inward. You perfect it in your head first, then lay it out rather than sorting aloud.',
+      "Your analysis burrows inward before it ever shows. You revisit and re-check it perfectly in your head, and only then do you lay out a conclusion — so there's rarely a gap in what you present. Just know that being too strict with yourself can mean you never put anything out at all; once you've checked enough, trust it and finish. The order you've perfected inside becomes the standard everyone ends up leaning on.",
     libra:
-      'You weigh decisions again and again within. Balance comes when you question your own standard over others opinions.',
-    scorpio: 'Insight sinks to a deeper place. You dig for hidden meaning silently rather than speaking it.',
+      "You weigh a decision inside, again and again. Rather than follow what others say, you ask it against your own standard and turn it over until — only then — an unshakeable balance clicks into place. Just don't measure so long that you keep postponing the choice; if your heart's already leaning, trust it. A decision you've weighed thoroughly within turns out, in the end, to be the fairest one.",
+    scorpio:
+      "Your insight sinks to a deeper place instead of surfacing. Rather than say it aloud, you dig inward and mine out a truth no one else even noticed — and that depth you reach alone makes you unusually sharp. Just know that keeping it all to yourself can weigh you down; let the truth you've unearthed out into the open sometimes. The force that burrows in silence lands, in the end, on an answer no one else could see.",
     sagittarius:
-      'You mull big ideas inside rather than broadcasting them. Real conviction forms when you ask what they mean to you.',
+      "You mull a big idea inside first, rather than broadcasting it. Instead of following someone else's conclusion, you keep asking yourself what it actually means — and only a conviction you've questioned into place is truly yours, not borrowed. Just don't ruminate so long that you miss the chance to share it with the world; take the ripened thought out too. The belief you've forged yourself becomes the steady center that holds you.",
     capricorn:
-      'You verify your systems to yourself many times over. Trust builds when you frame it by your own logic, not others.',
-    aquarius: 'Clever ideas simmer quietly inside. You push your own logic to the end even when it looks different.',
-    pisces: 'Thought sinks inward as imagery. You linger in feeling and grow the image before putting it into words.',
+      "You verify any system to yourself, many times over. Rather than accept a framework someone handed you, you have to rebuild it by your own logic before your mind settles — and that's exactly why your words carry a trust that's hard to argue with. Just don't hold out for certainty so long that you miss the timing; at some point, trust it and put it out. The logic you've hardened inside becomes a standard no one can shake.",
+    aquarius:
+      "Your clever ideas don't burst out — they simmer quietly inside. Even when it looks different from everyone else, you push your own logic all the way to the end alone, and that self-forged thinking lands, in the end, on an answer no one could copy. Just know that a logic locked inside can get misread; let a thread of it out now and then. The originality that ripened quietly within will, someday, take the world by surprise.",
+    pisces:
+      "Your thoughts sink inward as imagery before they become words. You linger a long time in feeling, growing the image in your mind, and only then does the expression flow out — and by then it's quietly turned into a kind of poem. Just know that staying submerged in feeling can scatter what you meant to share; catch the image in writing or in words. The picture you drew so long inside colors people's hearts the moment it comes out.",
   },
   venus: {
-    aries: 'You confirm attraction inside before showing it. You ask whether it is real before making the first move.',
+    aries:
+      "You confirm attraction inside before you ever show it. Before you make a move, you ask yourself again and again whether this is real — and love filtered that carefully comes out as sincerity, not impulse. Just don't confirm it so endlessly that you miss the moment to draw near; if the feeling's sure, take the courage to show it. A heart that's ripened inside becomes the truest kind of love.",
     taurus:
-      'You grow affection slowly, savoring it within. Drawn again to the familiar, you rediscover your own taste.',
+      "You grow affection slowly, savoring it within. Drawn again to the familiar over what others call good, you rediscover your own real taste — and only what you've chosen for yourself keeps your heart easy for the long run. Just don't stay so inside the familiar that you miss a new spark; open up to unfamiliar beauty now and then. The taste you've steeped within becomes your own unshakeable standard.",
     gemini:
-      'You revisit a flutter inside rather than letting it pass lightly. You confirm the heart behind the words, slowly.',
-    cancer: 'You hold tenderness deep inside. You open only when you feel safe, not the instant you feel it.',
-    leo: 'You nurture your true feelings quietly over grand display. You cherish yourself first before seeking to be loved.',
+      "You revisit a flutter inside rather than letting it drift past. More than the words traded on the surface, you slowly confirm the real heart underneath — and it's exactly when you mull the feeling that the bond stops skimming and turns solid. Just don't measure so long that you miss the timing to draw close; if you're sure, show it, even lightly. The heart you've confirmed within adds real depth to the bond.",
+    cancer:
+      "You hold tenderness deep inside rather than out. Instead of expressing it right away, you open the door only once you feel genuinely safe — and a heart you've opened that carefully rarely changes once it's given. Just don't guard the gate so long that you miss the chance to draw near; reach out first to the one you trust. A love held deep, then handed over gently, is the kind that stays the longest.",
+    leo: "You nurture your true feelings quietly over any grand display. Before you strain to be loved, you need the time to cherish and fill yourself first — and when you love yourself before the approval, real love arrives on its own. Just don't keep it so far inside that the other person never knows; let the affection show, bright, now and then. That steadiness of loving yourself becomes the most radiant charm of all.",
     virgo:
-      'You refine care within rather than showing it. Love deepens when you accept things as they are over chasing perfection.',
-    libra: 'You question the balance of a bond inside. You confirm what you truly want before adjusting to others.',
-    scorpio: 'You hide intense affection in a deep place. You do not show it easily, but once held it burns long.',
-    sagittarius: 'You rethink free-spirited love within. You define the bond you want yourself over chasing novelty.',
-    capricorn: 'You measure serious feeling inwardly for a long time. You do not open until trust is built.',
-    aquarius: 'You quietly enjoy your unusual taste inside. You build your own unconventional way of loving.',
+      "You refine care inside rather than putting it on display. Over chasing a flawless love, you learn to slowly accept the other person exactly as they are — and it's when you lower the bar within that a bond turns easy and warm. Just don't care so silently that it never reaches them; put the quiet devotion into words sometimes. The generosity to hold someone as they are becomes, in the end, the deepest love.",
+    libra:
+      "You question the balance of a bond inside, over and over. Before you adjust to someone, you first confirm with yourself what you actually want — and only when you tend to yourself first does a harmony that doesn't tip to one side begin. Just don't measure so long that you keep putting off drawing near; if you know what you want, say it honestly. The balance that starts with you makes a bond that lasts.",
+    scorpio:
+      "You hide intense affection away in a deep place. You don't show it easily — but once you've held a heart it burns longer than anyone's, and a love forged inward runs to the very root, never shallow. Just don't lock it all away so completely that they never sense the depth; open your heart, a little at a time, to the one you trust. That deeply hidden sincerity, when it finally reaches them, wins them over completely.",
+    sagittarius:
+      "You rethink free-spirited love within rather than chasing it outward. Over hunting for a new thrill, you define for yourself what bond you actually want — and only when you set the direction inside does a truly free love arrive. Just don't sketch the ideal so long that you miss the person right beside you; take one more look at who's already here. The love you've defined yourself is what sets you the most free.",
+    capricorn:
+      "You measure a serious feeling inwardly, for a long time. You won't open until enough trust is built, which is exactly why your love carries so much weight and worth — a heart confirmed over time, once decided, you keep to the end. Just don't take so long that they're left wondering; let the affection show a little more often. A love weighed long and made certain only deepens as the years go by.",
+    aquarius:
+      "You quietly enjoy your unusual taste inside. Rather than follow the standard script for romance, you build your own way of loving for yourself — a bond you've sketched yourself, never predictable, always so you. Just don't insist on your own way so hard that the other person feels lonely; fold some warmth into the difference. The love you've shaped yourself makes a bond found nowhere else in the world.",
     pisces:
-      'You paint romance deep within. Love ripens when you see the real heart instead of falling for the fantasy.',
+      "You paint romance deep within rather than spreading it outward. Over falling for a sweet fantasy, you work to recognize the real heart inside it — and a love confirmed with the fantasy stripped away is the kind that finally ripens solid. Just don't stay in the ideal so long that you miss the love in front of you; meet the one your heart painted in reality too. When the love you drew so long inside becomes real, it blooms more beautiful than anything.",
   },
   mars: {
     aries:
-      'Force builds inward rather than bursting out. You bide your time and move at the decisive moment over charging in.',
-    taurus: 'You firm up drive slowly within. The strength you bide finally pushes through without rushing.',
-    gemini: 'Energy circles inside in many strands. You move in your head first before stepping out.',
+      "Your force doesn't burst straight out — it stacks up, layer by layer, inside. Rather than collide head-on, you sharpen your resolve and wait, moving at the decisive moment — so the single blow lands heavy and exact. Just don't sharpen it so long that you miss the window entirely; when the moment comes, let it fly without hesitation. The energy you've pressed down inside becomes, at the decisive instant, a force no one can stop.",
+    taurus:
+      "You firm up your drive slowly, inside, rather than showing it. Unhurried, you sharpen the strength and wait quietly for the moment to ripen — and the force you've built within finally pushes through with a grit nothing can block. Just don't prepare so endlessly that the start keeps getting later; at some point, trust it and push. The strength you've firmed up within is what makes the surest result in the end.",
+    gemini:
+      "Your energy circles inside, in many strands, before it reaches out. Before you actually make a move, you run the simulation in your head several times first — and thanks to that rehearsal, you move without a single wasted step. Just don't keep spinning it in your mind so long that the doing gets delayed; sometimes let the body move first. The plan you've drawn thoroughly inside clicks into place, gapless, when it finally comes out.",
     cancer:
-      'You digest emotional force inwardly. You bide quietly to protect what matters rather than reacting at once.',
-    leo: 'You steady your fiery spirit inside. Real power comes when you own it yourself over showing it off.',
+      "You digest emotional force inwardly rather than blowing it out. Instead of reacting at once, you quietly sharpen your resolve to protect what matters — and that force banked within bursts out strong at the decisive moment. Just don't swallow it all so completely that it rots inside; let the built-up feeling out, safely, now and then. The force you've quietly honed grows strongest exactly when there's something to defend.",
+    leo: "You steady your fiery spirit inside rather than showing it off. Before you display it for others' approval, real power rises when you first own it yourself — and a spirit steadied within holds firm, without a wobble. Just don't bottle it so tight that the passion gets stuck and stifled; when the time's right, let it out, bright. The spirit you've claimed for yourself becomes, in the end, the most confident force of all.",
     virgo:
-      'You check the plan in your head again and again. You move only after preparing fully rather than rushing out.',
-    libra: 'You tune your force within rather than clashing. You weigh the method a long time before stepping up.',
-    scorpio: 'Tenacity sinks to a deeper place. Quiet on the surface, you keep sharpening it to the end inside.',
-    sagittarius: 'You question your reaching drive inside. You set your own direction before expanding outward.',
-    capricorn: 'You refine strategy inwardly for a long time. Unhurried, you bide the moment as you aim for the top.',
-    aquarius: 'An unusual drive simmers quietly inside. You push your rule-changing force at your own pace.',
+      "You check the plan in your head, again and again, before you act. Over charging in, you close every gap and prepare fully, and only then do you move — so there's rarely a flaw in what you do. Just don't prepare so endlessly that the start keeps slipping; once it's good enough, just move. The execution you've honed carefully inside makes, in the end, the most sure-handed result.",
+    libra:
+      "You tune your force inside rather than clashing with it. Before you step in directly, you weigh a long time which path would run the smoothest — and thanks to all that measuring, you reach where you meant to gracefully, not roughly. Just don't keep picking the method so long that you miss the moment to act; when the way's clear, step out without hesitation. The approach you've refined within unknots, softly, what force never could.",
+    scorpio:
+      "Your tenacity sinks to a deeper place instead of surfacing. Calm as you look on the outside, you keep sharpening it to the very end inside — and a force honed that quietly means nothing can stop you. Just don't try to shoulder it all alone until you burn yourself out; let the sharpened force out into the open sometimes. The tenacity you've honed in silence pulls off, in the end, a result no one else could.",
+    sagittarius:
+      "You question your reaching drive inside before you pour it outward. Rather than expand at random, you set for yourself which way to head first — and thanks to that direction, you go far without wandering. Just don't measure so long that a late start lets the fire cool; once the direction's set, put your foot down at once. The direction you've named yourself is what carries you, in the end, the furthest.",
+    capricorn:
+      "You refine your strategy inside, for a long time, rather than showing it. Unhurried, you bide the moment and count each move toward the summit — and the patience you've honed within is exactly what makes you win. Just don't wait for the perfect moment so long that you let the chance drift by; if you're ready, take the step. The strategy you've firmed up within becomes, as time runs, a force no one can touch.",
+    aquarius:
+      "Your unusual drive doesn't burst out — it simmers quietly inside. You push the force to change the rules at your own pace, alone — and honed within like that, you break through in a surprising way no one else managed. Just don't insist so hard on your own method that you miss the people meant to come with you; glance beside you before you pour it all in. That quietly simmered drive shines brightest exactly where a situation is stuck.",
     pisces:
-      'Your force feels for direction within. You move quietly when intuition ripens rather than stepping straight out.',
+      'Your force feels for its direction inside rather than out. Over stepping straight out, you wait for intuition to ripen and then move quietly — and riding that current, you reach where you wanted, natural as water. Just know that when the goal goes blurry, the force scatters everywhere; name clearly, every so often, where your heart is pointing. The force that moved by intuition finds its own path, in the end, even against the hardest wall.',
   },
   jupiter: {
-    aries: 'You grow opportunity inside over seeking it out there. Luck grows when you set your own reason to dare.',
-    taurus: 'You stack abundance inwardly, unhurried. Trusting your senses, you widen by your own standard.',
+    aries:
+      "You grow opportunity inside rather than hunting for it out there. Over waiting for someone else to hand you a reason, you set for yourself why you're daring this — and a motive built within becomes luck that's truly yours, not borrowed. Just don't sharpen the reason so long inside that you miss the leap; once your mind's made up, step out too. The reason you named yourself is what grows you the most in the end.",
+    taurus:
+      "You stack abundance inwardly, unhurried. Over chasing anyone's standard, you trust your own senses and widen things your own way — and built up within like that, a wealth arrives that doesn't shake. Just don't wall yourself into your own measure so tightly that you miss a new chance; keep an ear open to the outside current too. The abundance you've firmed up yourself becomes, in the end, the sturdiest foundation.",
     gemini:
-      'You deepen learning inward rather than spreading it out. Wisdom grows when you revisit what you know yourself.',
+      "You deepen learning inward rather than spreading it out. Over piling up new facts, you revisit and digest what you already know — and it's exactly when you chew it over inside that shallow knowledge ripens into real wisdom. Just don't keep it all so internal that you miss the chance to share; take the matured learning out too. The knowing you've digested yourself becomes a wisdom no one can take from you.",
     cancer:
-      'You grow blessing within rather than seeking it outside. You feel full when you fill the joy of giving yourself.',
-    leo: 'You firm up confidence inside over having it confirmed by others. Real luck opens when you own it yourself.',
+      "You grow blessing within rather than seeking it outside. Over filling up on others' approval, you first fill yourself with the joy of giving — and once you brim from the inside, the fullness spills over on its own. Just don't hold it all so far inward that you forget how to receive; take in, generously, the blessing others hand you too. The heart you've filled yourself becomes, in the end, the sturdiest abundance.",
+    leo: "You firm up confidence inside over having it confirmed by others. Over filling on applause, you draw real strength from recognizing yourself — and only a confidence built within opens luck that doesn't waver. Just don't firm it so far inward that you miss the chance to step out; let the confidence you've built show, bright, in the world too. The self-recognition you've forged becomes, in the end, the surest fortune.",
     virgo:
-      'You question the meaning of diligence inwardly. The harvest grows when you refine for yourself, not for others.',
-    libra: 'You find opportunity within, not just in relationships. You set your own direction before cooperating.',
-    scorpio: 'You turn your digging force inward. You gain big when you mine the meaning of crisis yourself.',
+      "You question the meaning of diligence inwardly rather than outwardly. When you refine for yourself and not to be seen, real care wells up — and effort made for your own sake returns as a far greater harvest. Just don't polish it so long inside that you miss the moment to show it; put the thing you did with care out into the world too. The diligence you built for yourself becomes, in the end, the most precious reward.",
+    libra:
+      "You look for opportunity inside first, not only in relationships. Before you join hands with anyone, you settle for yourself which direction you actually want — and only once you've stood yourself up does a truly good connection arrive. Just don't take so long deciding alone that cooperation slips late; once it's set, take the hand beside you too. The direction you've chosen yourself leads, in the end, to the best meeting.",
+    scorpio:
+      "You turn your digging force inward rather than out. When crisis hits, you mine its meaning for yourself, descending alone to the bottom — and because you've dug it out yourself, a reward others never reach lands in your hands. Just don't unearth it all alone until you're worn out; share what you've mined, sometimes, out in the open. The force that drew the meaning of crisis up yourself becomes, in the end, the deepest blessing.",
     sagittarius:
-      'You explore a wider world inside over outside. You build your own truth over following others beliefs.',
+      "You explore a wider world inside more than outside. Over following someone else's beliefs, you build your own truth as you go — and only a faith raised within opens the road that's truly yours. Just don't muse so long inside that you miss the chance to head out into the world; carry the ripened conviction on your feet too. The truth you've found yourself carries you, in the end, the very furthest.",
     capricorn:
-      'You firm up reward within over expecting it out there. The responsibility you set yourself becomes your blessing.',
-    aquarius: 'You quietly turn new attempts over inside. Doors open when you set the meaning of your own path.',
-    pisces: 'You paint abundance within through imagination. You fill your own faith first before giving outward.',
+      "You firm up reward within rather than expecting it out there. Over hoping to be noticed, you quietly keep the responsibility you set yourself — and that responsibility you've shouldered returns, over time, as the surest blessing. Just don't defer the reward so far inward that you wear yourself out; give yourself credit, now and then, for what you've done. The responsibility you've firmed up yourself becomes, in the end, an unshakeable fortune.",
+    aquarius:
+      "You turn a new attempt over quietly inside. You decide for yourself what the unusual road even means, refining it alone — and only an attempt you've defined yourself swings open a door no one saw coming. Just don't roll it around so long inside that you miss the moment to put it out; toss the ripened idea into the world too. The meaning you've set yourself brings, in the end, an unexpected chance.",
+    pisces:
+      "You paint abundance within, through imagination, first. Before you give outward, you fill up the faith inside you — and only a faith you've filled yourself is the kind that eventually turns real. Just don't stay so long in imagination that you miss the actual chance; unfold the picture you've drawn out in the world too. The faith you've filled yourself blooms, in the end, into abundance right before your eyes.",
   },
   saturn: {
     aries:
-      'You master impulse yourself, not by others rule. You build strength by your own inner principle over outer rules.',
-    taurus: 'You stack solidity inwardly over a long time. You learn to stay unshaken without needing approval.',
+      "You master your impulse yourself, not by anyone else's rule. Over the rules imposed from outside, you rein yourself in by your own inner principle — and a restraint you've built yourself hardens so no one can shake it. Just don't tie yourself down so tightly that you can't breathe; leave a little room between the rules. The restraint you've grown yourself is exactly what makes you truly strong.",
+    taurus:
+      "You stack solidity inward, over a long time. Even without anyone's approval, you quietly learn to stay unshaken — and roots you've firmed up within sink deep, whatever the wind. Just don't hold the line so alone that you wear yourself out; let a hand help you now and then. The solidity you've built yourself becomes, in the end, the deepest root.",
     gemini:
-      'You question the duty of words and learning inside. You seek to deepen yourself over striving for approval.',
+      "You question the duty of your words and learning inside. Over straining to be recognized, you quietly work to deepen yourself — and only knowledge hardened within makes your understanding real. Just don't let the pressure to know everything seal your mouth shut; find the nerve to share even when you're unsure. The thinking you've deepened yourself takes on a weight that lasts.",
     cancer:
-      'You bear the weight of protecting inwardly. You become a firm shelter yourself rather than leaning on others.',
-    leo: 'You build confidence within over outside applause. You learn to affirm yourself through humility.',
+      "You bear the weight of protecting inward, over handing it off. Over leaning on someone, you set out to be the sturdy shelter yourself — and only a shelter you've built yourself brings you real stability. Just don't always be the one holding things up until you lose your own place to rest; make somewhere to lean, too. The weight you've shouldered yourself becomes, in the end, the sturdiest refuge.",
+    leo: "You build confidence within, over outside applause. In humility, you quietly learn to affirm yourself — and a light lit inside never goes out, even without anyone's eyes on you. Just don't stifle the wish to be seen so hard that you shrink; don't be stingy with your own praise. The confidence you've built yourself becomes, in the end, the longest-lasting glow.",
     virgo:
-      'You aim the standard of perfection at yourself. You firm up diligence by your own measure over others eyes.',
-    libra: 'You retrace the duty of relationships inside. You set your own fairness over straining to fit in.',
-    scorpio: 'You turn the force of restraint deeper. You learn to endure crisis by mastering yourself.',
-    sagittarius: 'You question the duty of belief inside. You grow solid on faith you have tested, not others truth.',
+      "You aim your standard for perfection at yourself. Over the watching eye, you firm up diligence by your own measure — and only a bar you've set yourself lets real trust root. Just know that bar can crush you sometimes; remind yourself that the imperfect you is already enough. The diligence you've built yourself becomes, in the end, an unshakeable trust.",
+    libra:
+      "You retrace the duty of a relationship inside. Over straining to fit in, you set your own fairness — and only a balance you've built within makes a bond that truly lasts. Just don't cling to principle so hard that your heart turns stiff; carry fairness and warmth together. The fairness you've built yourself makes, in the end, an unshakeable connection.",
+    scorpio:
+      "You turn the force of restraint deeper, inward. You learn, alone, to master yourself and endure a crisis — and a restraint honed within means nothing can topple you. Just don't shoulder it all alone until you rot inside; share the heavy load now and then. The force you've mastered yourself is exactly what carries you through any trial.",
+    sagittarius:
+      "You question the duty of your belief inside. Over taking someone else's truth as given, you stand on a faith you've tested yourself — and only a conviction you've confirmed hardens without a wobble. Just don't grow so certain that you push other people's truths away; keep an ear open to voices past your own. The belief you've tested yourself becomes, in the end, a center no one can shake.",
     capricorn:
-      'You grow even stricter with yourself. You truly harden when you build your own principle over outer achievement.',
-    aquarius: 'You forge the force to ground ideals within. You build unusual structure by your own principle.',
+      "You grow even stricter with yourself, from within. Over outer achievement, you truly harden when you build your own principle — and set up inside like that, you're reborn a genuinely sturdy adult. Just don't whip yourself so endlessly that you burn out; give the you who's come this far some kindness. The principle you've set yourself becomes, in the end, a you that no one can shake.",
+    aquarius:
+      "You forge the force to ground your ideals within. You build an unusual structure not by someone's method but by your own principle — and only a frame you've raised yourself makes the dream into a system that doesn't shake. Just don't wall yourself into your own principle so tightly that you miss the people to build with; check the structure against the outside too. The power to realize you've honed yourself, in the end, changes the world's rules.",
     pisces:
-      'You hold your center within the haze inwardly. You bear the duty of devotion yourself over leaning outward.',
+      "You hold your center within the haze, inward. Over leaning outward, you quietly shoulder the duty of devotion yourself — and only an anchor you've dropped within makes your tenderness sturdy. Just don't try to carry it all alone until you wear out; share the heavy load now and then. The responsibility you've shouldered yourself completes, in the end, a tenderness that isn't soft.",
   },
   uranus: {
-    aries: 'Mold-breaking force simmers inside. You quietly redesign your own freedom over acting out.',
-    taurus: 'You turn change over inside, unhurried. Within the familiar, you slowly craft your own innovation.',
-    gemini: 'Flashes spread inside more than out. You dig your own idea to the end even when it looks different.',
+    aries:
+      "Your mold-breaking force simmers inside rather than bursting out. Before you step out in front of anyone, you quietly redesign your own freedom, forging real innovation alone — and honed within like that, it's a change far more fundamental than any surface show. Just don't let it simmer so long that you miss the moment to release it; set the innovation off in the world too. The freedom you've quietly redesigned becomes, in the end, the force that flips the board.",
+    taurus:
+      "You turn change over inside, unhurried. Within the familiar, you quietly craft your own innovation — and a newness firmed up within holds steady without any fanfare. Just don't roll it so slowly that you miss the moment; when it's ripe, bring it out boldly. The change you've crafted inside becomes, in the end, the surest way you reshape the world.",
+    gemini:
+      'Your flashes spread more inside than out. Even when it looks different, you dig your own idea to the very end alone — and a thought honed within lands, in the end, on an original conclusion. Just know that kept only in your head, the sparkle scatters; take the ripened thought out and share it. The idea you dug into alone shows its real force the moment it reaches the world.',
     cancer:
-      'You experiment with new ways of feeling inwardly. You quietly change old frames within, not on the surface.',
-    leo: 'You firm up individuality inside over showing it. You shine when you enjoy your difference yourself first.',
-    virgo: 'You overhaul how you work in your head. You rebuild by your own efficiency over outer rules.',
-    libra: 'You picture new forms of bond inside. You define your own freedom first before experimenting outward.',
-    scorpio: 'You turn foundation-shaking force to a deeper place. Quietly, you spark revolution from within.',
-    sagittarius: 'You widen border-crossing thought inside. You draw your own image of the future over outer trends.',
-    capricorn: 'You tear down old structures inside first. You build your own principle over the outer system.',
+      "You experiment with new ways of feeling inwardly. Over changing the surface, you quietly swap out old frames within your own heart — and rebuilt inside like that, your own shelter turns new. Just don't experiment so only inside that you drift from the people beside you; share the new way with them too. The warmth you've quietly changed becomes, for someone, a brand-new comfort.",
+    leo: "You firm up your individuality inside over showing it off. Before it's recognized as different, you enjoy it yourself first — and a self honed within only grows more vivid and clear. Just don't keep it so far inward that no one ever sees the charm; let the color you've honed show outside too. The individuality you've enjoyed yourself becomes, in the end, a charm no one can replace.",
+    virgo:
+      "You overhaul how you work in your head first. Over the outer rules, you rebuild the process by your own inner efficiency — and reworked within, it quietly flips the whole board. Just don't fix it only in your head so long that you miss the moment to apply it; put the improvement to use out there too. The efficiency you've built yourself becomes, in the end, what makes everyone's life easier.",
+    libra:
+      "You picture new forms of bond inside first. Before you experiment outward, you define for yourself what your freedom even is — and only once you've set it within does a true balance click. Just don't sketch it all alone until you drift from the other person; fit the form you drew together with them too. The freedom you've defined yourself makes, in the end, a healthier bond.",
+    scorpio:
+      "You turn your foundation-shaking force to a deeper place. Quietly — but from the inside out — you spark a revolution, and a change dug from the root runs deepest and fiercest of all. Just don't try to overturn it all alone until you lose what's worth keeping; picture what you'll build after you break it. The revolution you raised from within is exactly what lets the old be reborn.",
+    sagittarius:
+      "You widen your border-crossing thought inside. Over the outer trend, you draw your own image of the future for yourself — and only a future sketched within grows a truly free way of thinking. Just don't draw it all so internal that you miss the chance to share; unfold the future you drew out in the world too. The horizon you've sketched yourself is what pulls the world's thinking forward.",
+    capricorn:
+      "You tear down old structures inside first. Over following the outer system, you build your own principle — and rebuilt within, that reconstruction is solid from the root. Just don't take so long rebuilding it alone; carry a long breath over impatience. The principle you've set yourself changes, in the end, the very skeleton of the times.",
     aquarius:
-      'A vision ahead of its time grows quietly inside. You push originality yourself over competing with others.',
+      "Your vision ahead of its time grows quietly inside. Over competing with others, you push your originality all the way yourself — and a vision honed alone reaches a future no one else could draw. Just know that racing too far ahead can leave the people beside you behind; slow down and walk with them sometimes. The originality that grew quietly within becomes, someday, everyone's obvious.",
     pisces:
-      'You dissolve borders within through imagination. You grow a new inner dream first before unfolding it out.',
+      'You dissolve borders within, through imagination. Before you unfold it outward, you first grow a new dream inside — and a dream grown within opens a possibility no one else saw. Just know that stay only in imagination and it loses its shape; pin a small foothold onto the dream. The imagination you grew inside widens the world the moment it comes out.',
   },
   neptune: {
     aries:
-      'You forge the ideal within over chasing it out there. Clearing away illusion, you recognize the dream you truly want.',
+      "You forge the ideal within rather than chasing it out there. Clearing away the fantasy, you recognize for yourself the dream you truly want — and only a longing forged within becomes a force that doesn't shake. Just don't forge it so long inside that you keep postponing the action; move the confirmed dream onto your feet at once. The dream you've recognized yourself pulls, in the end, imagination into reality.",
     taurus:
-      'You find beauty in your heart over the senses outside. You draw real comfort from within over surface romance.',
+      "You find beauty in your heart over the senses outside. Over surface romance, a comfort drawn up from within fills you far longer — and a beauty steeped inside doesn't fade easily. Just don't sink so far inward that you miss the joys of reality; savor the romance you can touch, too. The comfort you've drawn up yourself becomes, in the end, the deepest satisfaction.",
     gemini:
-      'You grow imagination inside over putting it into words. You savor the story yourself before unfolding it out.',
+      "You grow imagination inside over putting it into words. Before you unfold the story out in the world, you savor it yourself a long time — and a world ripened within grows deeper and richer. Just don't savor it so only inside that you miss the chance to share; bring the ripened story out too. The imagination you've grown yourself colors people's hearts the moment it comes out.",
     cancer:
-      'You hold empathy deep within. You guard your own emotional boundary first over being swept by others hearts.',
-    leo: 'You quietly burn creative inspiration inside. You immerse in your own expression over striving for recognition.',
+      "You hold empathy deep within. Before you're swept up in someone else's heart, you guard your own emotional boundary first — and only once you've protected yourself can you love in a healthy way. Just don't build the wall so high that your heart grows lonely; find the balance of guarding and sharing. The boundary you've kept yourself guards, in the end, your tenderness for a long time.",
+    leo: "You quietly burn creative inspiration inside. Over straining for recognition, you immerse fully in the expression itself — and it's when you lose yourself in it purely that real art is born. Just don't burn it so only inside that you miss the chance to show it; let the inspiration you've kindled out too. The flame you've burned yourself leaves, in the end, your own color on the world.",
     virgo:
-      'You question the meaning of devotion inwardly. You refine your ideal into reality first before saving others.',
-    libra: 'You picture an ideal love within. You recognize real harmony yourself over leaning on fantasy.',
-    scorpio: 'You sink into mystery at a deeper place. You face the unseen alone within and gain insight.',
+      "You question the meaning of devotion inwardly. Before you save anyone, you refine your own ideal into reality first — and only a devotion you've firmed up yourself becomes real force. Just don't question it so only inside that you forget to tend yourself; spend some of that care on you, too. The devotion you've firmed up yourself quietly makes, in the end, the world well.",
+    libra:
+      "You picture an ideal love within. Over leaning on fantasy, you recognize for yourself what real harmony is — and only a love you've recognized inside finally turns real. Just don't sketch the ideal so long that you miss the love in front of you; meet the love you drew in reality too. The harmony you've recognized yourself becomes, in the end, a real beauty.",
+    scorpio:
+      "You sink into mystery at a deeper place. You face the unseen alone within — and from where you've reached by yourself, an insight others can't gain comes to find you. Just don't sink so deep into the dark that your heart grows heavy; come up to the sunlit surface now and then. The insight you've drawn up alone lights, in the end, a beauty no one else could see.",
     sagittarius:
-      'You ask great truth inside over seeking it out there. Clearing others beliefs, you find your own meaning.',
+      "You ask a great truth inside over seeking it out there. Clearing away others' beliefs, you go looking for your own meaning — and only a meaning you've found yourself lets a real faith take hold. Just don't ask it so only inside that the answer just circles; test the ripened question out in the world too. The meaning you've found yourself becomes, in the end, an unshakeable belief.",
     capricorn:
-      'You forge the force to build ideals into structure within. You firm up the inner frame over the surface dream.',
-    aquarius: 'You quietly hold an ideal for everyone inside. You build your own faith first over crying it out loud.',
-    pisces: 'Imagination and spirit reach deep inward. Real inspiration sharpens when you clear away outer illusion.',
+      "You forge the force to build ideals into structure within. Over the surface dream, you firm up the inner frame first — and only what you've firmed up inside keeps your ideal from collapsing. Just don't cling to the frame so hard that you forget the first dream; revisit why you started too. The structure you've raised yourself makes, in the end, the dream something you can see.",
+    aquarius:
+      "You quietly hold an ideal for everyone inside. Before you cry it out loud, you first build the faith yourself — and only a faith you've set inside gives the dream real force. Just don't hold it so only inside that you miss the people to build with; share the ideal you're holding out too. The faith you've built yourself changes, in the end, the world into a kinder place.",
+    pisces:
+      "Your imagination and spirit reach deep inward. When you clear away the outer illusion, real inspiration finally sharpens into focus — and a sensitivity purified within runs endlessly clear and deep. Just know that sink only inward and you lose your way in reality; drop a small anchor onto the inspiration. The spirit you've cleared inside quietly soothes, in the end, the world.",
   },
   pluto: {
-    aries: 'You turn the force of rebirth inward. You quietly rebuild yourself over clashing with the outside.',
-    taurus: 'You change values from the root within. You question your own true worth over surface security.',
-    gemini: 'The force to mine truth deepens inside. You dig for the answer yourself over flipping it with words.',
-    cancer: 'You face emotional wounds inwardly. You heal deeply alone and are reborn over showing it outside.',
-    leo: 'You undergo breaking and rebuilding the self inside. You quietly remold yourself over flaunting your presence.',
+    aries:
+      "You turn the force of rebirth inward. Over clashing with the outside, you quietly rebuild yourself — and a change raised within is real from the very root. Just don't try to carry it all alone until you wear out; take a hand beside you on the way back up. The force you've quietly rebuilt lifts you, in the end, from any ending.",
+    taurus:
+      "You change values from the root, within. Over surface security, you question what your own true worth even is — and rebuilt inside, a foundation that doesn't shake stands new. Just know that a grip you can't loosen makes change drag; remember that letting go is a strength too. The worth you've questioned yourself becomes, in the end, the sturdiest root.",
+    gemini:
+      "The force to mine truth deepens inside you. Over flipping it with words, you dig for the answer yourself — and mined alone, you land on a truth no one else saw. Just don't unearth it alone until your heart grows heavy; let the truth you've dug out into the open sometimes. The answer you've found yourself rewrites, in the end, the story the world tells.",
+    cancer:
+      "You face emotional wounds inwardly. Over showing it on the outside, you heal deeply alone — and only after facing it yourself are you quietly reborn a new person. Just don't shoulder it all alone until you wear out; lean the ache on a hand beside you sometimes. The healing you've done alone frees you, in the end, from the very root.",
+    leo: "You undergo breaking and rebuilding the self inside. Over flaunting your presence, you quietly remold yourself — and a self remade within grows far sturdier than the surface. Just don't hide the weak moments to look strong; accept the crumbling you exactly as it is. The self you've quietly remade becomes, in the end, a force that never fades.",
     virgo:
-      'You overhaul daily life and body from within. You purify your own habits at the root over changing the surface.',
+      "You overhaul daily life and body from within. Over changing the surface, you purify your own habits at the root — and reworked inside, your whole life quietly shifts. Just know that obsessing over fixing yourself turns into self-punishment; remind yourself that today's you is fine. The habits you've purified yourself make you, in the end, a different person.",
     libra:
-      'You rework the force of relationships inside. You lay the root of balance again yourself over clashing outward.',
-    scorpio: 'You undergo full rebirth in a deeper place. Unseen by others, you change yourself from the root.',
-    sagittarius: 'You shake belief from within. You rebuild your worldview yourself over chasing outer truth.',
+      "You rework the force of a relationship inside. Over clashing outward, you lay the root of balance again yourself — and only after re-laying it within does a bond get reborn healthy. Just don't dig into the underside so far that you wear out; hold onto some grace to trust over excavate. The balance you've re-laid yourself makes, in the end, a sturdier bond.",
+    scorpio:
+      "You undergo a full rebirth in a deeper place. Unseen by others — but from the very root — you change yourself, and a transformation you've lived through alone is fiercer than anything. Just don't sink alone into the dark until you burn up; rise to the light as much as you go under. The rebirth you achieved unseen makes you, in the end, someone nothing can shake.",
+    sagittarius:
+      "You shake your belief from within. Over chasing an outer truth, you rebuild your worldview yourself — and rebuilt inside, an unshakeable faith grows. Just don't doubt everything until you lose the ground to stand on; after you shake it, build a new belief too. The worldview you've rebuilt yourself leads you, in the end, into real wisdom.",
     capricorn:
-      'You question structure and power inside. You change your own inner force at the root over the outer seat.',
-    aquarius: 'You topple old systems in your heart first. You build your own conviction over outer upheaval.',
-    pisces: 'You purify the unconscious deep within. You face unseen wounds alone and are reborn from the root.',
+      "You question structure and power inside. Over the outer seat, you change your own inner force at the root — and only after rebuilding it within do you become truly unshakeable. Just don't cling to power until you lose the actual people; keep, always, what the power is for. The force you've questioned yourself becomes, in the end, a cornerstone of the times.",
+    aquarius:
+      "You topple the old system in your heart first. Over the outer upheaval, you build your own conviction anew — and only a change begun inside becomes a real revolution. Just don't try to overturn it all alone until you lose the people meant to come with you; carry human warmth into the change. The conviction you've built yourself becomes, in the end, the force that opens the next era.",
+    pisces:
+      "You purify the unconscious deep within. You face an unseen wound alone, descending to the very bottom — and only after purifying it yourself are you reborn, new, from the root. Just know that sink too far into the invisible and you lose your way in reality; plant a foot in the here and now too. The depth you've purified alone becomes a seed that quietly changes the world.",
   },
 }
 
