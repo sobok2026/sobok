@@ -383,7 +383,7 @@ export const messages = {
       navigation: {
         app: {
           title: 'アプリで使う',
-          description: 'リトミをアプリとして使う方法を環境別に案内します。',
+          description: 'ソボクをアプリとして使う方法を環境別に案内します。',
         },
         chat: {
           title: 'AIと話す',
@@ -393,8 +393,8 @@ export const messages = {
       search: {
         title: '検索',
         queryTitle: '{query} 検索',
-        description: 'リトミで言語、種類、作家、シリーズ、キャラクター、タグ条件から漫画や同人誌を検索できます。',
-        queryDescription: '{query} 条件に合う漫画や同人誌をリトミで探しましょう。',
+        description: 'ソボクで言語、種類、作家、シリーズ、キャラクター、タグ条件から漫画や同人誌を検索できます。',
+        queryDescription: '{query} 条件に合う漫画や同人誌をソボクで探しましょう。',
         landingQueryLabels: {
           'language:korean': '韓国語作品',
           'type:doujinshi': '同人誌',
@@ -405,7 +405,7 @@ export const messages = {
     AppInstall: {
       title: 'アプリのインストール案内',
       description:
-        'お使いの端末に合うインストール方法を選んでください。現在のリトミアプリは端末向けに最適化されたネイティブアプリではなく、既存の Web サービスをアプリ形式で表示する仕組みのため、Web プッシュ通知と全画面表示に対応した Web アプリ (PWA) としてのインストールをおすすめします。',
+        'お使いの端末に合うインストール方法を選んでください。現在のソボクアプリは端末向けに最適化されたネイティブアプリではなく、既存の Web サービスをアプリ形式で表示する仕組みのため、Web プッシュ通知と全画面表示に対応した Web アプリ (PWA) としてのインストールをおすすめします。',
       common: {
         externalSrOnly: '(新しいタブで開きます)',
         faqTitle: 'よくある質問',
@@ -464,7 +464,7 @@ export const messages = {
         altStore: {
           title: 'IPA アプリをインストール (AltStore)',
           description:
-            'デスクトップ PC にインストールした AltServer 経由で、リトミ iOS アプリをインストールする方法です。',
+            'デスクトップ PC にインストールした AltServer 経由で、ソボク iOS アプリをインストールする方法です。',
           steps: {
             install: {
               title: 'AltStore をインストールする',
@@ -472,14 +472,14 @@ export const messages = {
                 'Windows/Mac で <altServer>AltServer</altServer> をインストールし、iPhone/iPad に <app>AltStore Classic</app> をインストールしたあと、設定で <trust>Apple ID を信頼</trust> と <developerMode>デベロッパモード</developerMode> の有効化まで完了してください。',
             },
             addSource: {
-              title: 'AltStore にリトミのソースを追加する',
+              title: 'AltStore にソボクのソースを追加する',
               content:
                 'AltStore の <sources>Sources</sources> タブで <addSource>Add Source</addSource> を押し、上の <sourceJson>Source JSON</sourceJson> URL を貼り付けます。',
             },
             installApp: {
-              title: 'リトミ iOS アプリをインストールする',
+              title: 'ソボク iOS アプリをインストールする',
               content:
-                '追加したリトミのソースを開き、アプリカードのインストールボタンを押すと端末にダウンロードできます。',
+                '追加したソボクのソースを開き、アプリカードのインストールボタンを押すと端末にダウンロードできます。',
             },
             refresh: {
               title: '期限切れ前に AltServer で更新する',
@@ -489,7 +489,7 @@ export const messages = {
           },
           faq: {
             refresh:
-              '無料の Apple アカウントでは、リトミと AltStore が 7 日ごとに期限切れになるため、定期的な更新が必要です。',
+              '無料の Apple アカウントでは、ソボクと AltStore が 7 日ごとに期限切れになるため、定期的な更新が必要です。',
             appLimit: '無料アカウントでは、AltStore 自体を含めて同時に有効化できるアプリは最大 3 個です。',
           },
         },
@@ -506,14 +506,14 @@ export const messages = {
                 'Windows/Mac/Linux で <sideStore>SideStore</sideStore> をインストールし、iPhone/iPad で <pairingFile>pairing ファイル</pairingFile> と <localDevVPN>LocalDevVPN</localDevVPN> の設定まで完了してください。',
             },
             addSource: {
-              title: 'SideStore にリトミのソースを追加する',
+              title: 'SideStore にソボクのソースを追加する',
               content:
-                'SideStore がインストールされた iPhone/iPad なら、上の <directButton>SideStore で直接追加</directButton> ボタンでリトミのソースを開けます。手動で追加する場合は、<sources>Sources</sources> タブで追加ボタンを押し、<sourceJson>Source JSON</sourceJson> URL を貼り付けます。',
+                'SideStore がインストールされた iPhone/iPad なら、上の <directButton>SideStore で直接追加</directButton> ボタンでソボクのソースを開けます。手動で追加する場合は、<sources>Sources</sources> タブで追加ボタンを押し、<sourceJson>Source JSON</sourceJson> URL を貼り付けます。',
             },
             installApp: {
-              title: 'リトミ iOS アプリをインストールする',
+              title: 'ソボク iOS アプリをインストールする',
               content:
-                '追加したリトミのソースを開き、アプリカードのインストールボタンを押すと端末にダウンロードできます。',
+                '追加したソボクのソースを開き、アプリカードのインストールボタンを押すと端末にダウンロードできます。',
             },
             refresh: {
               title: 'LocalDevVPN をオンにして更新する',
@@ -523,7 +523,7 @@ export const messages = {
           },
           faq: {
             refresh:
-              '無料の Apple アカウントでは、リトミと SideStore が 7 日ごとに期限切れになるため、定期的な更新が必要です。',
+              '無料の Apple アカウントでは、ソボクと SideStore が 7 日ごとに期限切れになるため、定期的な更新が必要です。',
             appLimit: '無料アカウントでは、SideStore 自体を含めて同時に有効化できるアプリは最大 3 個です。',
           },
         },
@@ -574,7 +574,7 @@ export const messages = {
       navigation: {
         app: {
           title: '作为应用使用',
-          description: '按环境说明莉托米应用的安装方法。',
+          description: '按环境说明 Sobok 应用的安装方法。',
         },
         chat: {
           title: 'AI 聊天',
@@ -584,8 +584,8 @@ export const messages = {
       search: {
         title: '搜索',
         queryTitle: '{query} 搜索',
-        description: '在莉托米按语言、类型、作者、系列、角色和标签条件搜索漫画与同人志。',
-        queryDescription: '在莉托米查找符合 {query} 条件的漫画和同人志。',
+        description: '在 Sobok 按语言、类型、作者、系列、角色和标签条件搜索漫画与同人志。',
+        queryDescription: '在 Sobok 查找符合 {query} 条件的漫画和同人志。',
         landingQueryLabels: {
           'language:korean': '韩语作品',
           'type:doujinshi': '同人志',
@@ -596,7 +596,7 @@ export const messages = {
     AppInstall: {
       title: '应用安装说明',
       description:
-        '请选择适合你设备的安装方式。当前莉托米应用并不是针对设备优化的原生应用，而是把现有 Web 服务包装成应用形式，因此更推荐使用支持网页推送通知和全屏显示的 Web 应用（PWA）安装方式。',
+        '请选择适合你设备的安装方式。当前 Sobok 应用并不是针对设备优化的原生应用，而是把现有 Web 服务包装成应用形式，因此更推荐使用支持网页推送通知和全屏显示的 Web 应用（PWA）安装方式。',
       common: {
         externalSrOnly: '（在新标签页打开）',
         faqTitle: '常见问题',
@@ -650,7 +650,7 @@ export const messages = {
         },
         altStore: {
           title: '安装 IPA 应用（AltStore）',
-          description: '通过安装在桌面电脑上的 AltServer 安装莉托米 iOS 应用。',
+          description: '通过安装在桌面电脑上的 AltServer 安装 Sobok iOS 应用。',
           steps: {
             install: {
               title: '安装 AltStore',
@@ -658,13 +658,13 @@ export const messages = {
                 '在 Windows/Mac 上安装 <altServer>AltServer</altServer>，在 iPhone/iPad 上安装 <app>AltStore Classic</app>，然后在设置中完成 <trust>信任 Apple ID</trust> 和启用 <developerMode>开发者模式</developerMode>。',
             },
             addSource: {
-              title: '将莉托米源添加到 AltStore',
+              title: '将 Sobok 源添加到 AltStore',
               content:
                 '在 AltStore 的 <sources>Sources</sources> 标签页中点击 <addSource>Add Source</addSource>，然后粘贴上方的 <sourceJson>Source JSON</sourceJson> 地址。',
             },
             installApp: {
-              title: '安装莉托米 iOS 应用',
-              content: '打开已添加的莉托米源，点击应用卡片上的安装按钮即可下载到设备。',
+              title: '安装 Sobok iOS 应用',
+              content: '打开已添加的 Sobok 源，点击应用卡片上的安装按钮即可下载到设备。',
             },
             refresh: {
               title: '到期前通过 AltServer 刷新',
@@ -673,7 +673,7 @@ export const messages = {
             },
           },
           faq: {
-            refresh: '使用免费 Apple 账号时，莉托米和 AltStore 每 7 天会到期，因此需要定期刷新。',
+            refresh: '使用免费 Apple 账号时，Sobok 和 AltStore 每 7 天会到期，因此需要定期刷新。',
             appLimit: '免费账号最多可同时保持 3 个应用处于激活状态，其中包括 AltStore 本身。',
           },
         },
@@ -689,13 +689,13 @@ export const messages = {
                 '在 Windows/Mac/Linux 上安装 <sideStore>SideStore</sideStore>，并在 iPhone/iPad 上完成 <pairingFile>pairing 文件</pairingFile> 和 <localDevVPN>LocalDevVPN</localDevVPN> 设置。',
             },
             addSource: {
-              title: '将莉托米源添加到 SideStore',
+              title: '将 Sobok 源添加到 SideStore',
               content:
-                '如果 iPhone/iPad 已安装 SideStore，可使用上方 <directButton>直接在 SideStore 中添加</directButton> 按钮打开莉托米源。若要手动添加，请在 <sources>Sources</sources> 标签页中点击添加按钮，然后粘贴 <sourceJson>Source JSON</sourceJson> 地址。',
+                '如果 iPhone/iPad 已安装 SideStore，可使用上方 <directButton>直接在 SideStore 中添加</directButton> 按钮打开 Sobok 源。若要手动添加，请在 <sources>Sources</sources> 标签页中点击添加按钮，然后粘贴 <sourceJson>Source JSON</sourceJson> 地址。',
             },
             installApp: {
-              title: '安装莉托米 iOS 应用',
-              content: '打开已添加的莉托米源，点击应用卡片上的安装按钮即可下载到设备。',
+              title: '安装 Sobok iOS 应用',
+              content: '打开已添加的 Sobok 源，点击应用卡片上的安装按钮即可下载到设备。',
             },
             refresh: {
               title: '开启 LocalDevVPN 后刷新',
@@ -704,7 +704,7 @@ export const messages = {
             },
           },
           faq: {
-            refresh: '使用免费 Apple 账号时，莉托米和 SideStore 每 7 天会到期，因此需要定期刷新。',
+            refresh: '使用免费 Apple 账号时，Sobok 和 SideStore 每 7 天会到期，因此需要定期刷新。',
             appLimit: '免费账号最多可同时保持 3 个应用处于激活状态，其中包括 SideStore 本身。',
           },
         },

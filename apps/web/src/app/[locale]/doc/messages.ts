@@ -824,19 +824,19 @@ export const messages = {
       doc: {
         compliance2257: {
           title: '2257 コンプライアンス案内',
-          description: 'リトミの 18 U.S.C. §2257 および §2257A に関する運営原則を案内します。',
+          description: 'ソボクの 18 U.S.C. §2257 および §2257A に関する運営原則を案内します。',
         },
         dmca: {
           title: '著作権/DMCA 通報',
-          description: 'リトミに著作権または DMCA 通報を提出する方法を案内します。',
+          description: 'ソボクに著作権または DMCA 通報を提出する方法を案内します。',
         },
         privacy: {
           title: 'プライバシーポリシー',
-          description: 'リトミがどの情報をどの目的で処理するかを案内します。',
+          description: 'ソボクがどの情報をどの目的で処理するかを案内します。',
         },
         terms: {
           title: '利用規約',
-          description: 'リトミサービスの利用に適用される規約を案内します。',
+          description: 'ソボクサービスの利用に適用される規約を案内します。',
         },
         youthProtection: {
           title: '青少年保護ポリシー',
@@ -980,7 +980,7 @@ export const messages = {
       },
       terms: {
         title: '利用規約',
-        subtitle: 'リトミサービスの利用に関する規約です。',
+        subtitle: 'ソボクサービスの利用に関する規約です。',
         sections: {
           purpose: {
             title: '第1条 (目的)',
@@ -1057,12 +1057,12 @@ export const messages = {
       youthProtection: {
         title: '青少年保護ポリシー',
         subtitle:
-          'リトミは、青少年が有害な情報から保護されるよう、関連法令とサービス運営基準に基づきポリシーを策定し適用します。',
+          'ソボクは、青少年が有害な情報から保護されるよう、関連法令とサービス運営基準に基づきポリシーを策定し適用します。',
         sections: {
           purpose: {
             title: '1. 目的および適用範囲',
-            p1: '本ポリシーは、リトミが情報通信ネットワークを通じて提供する情報および利用者相互作用機能について、<law>青少年保護法</law>、<law>情報通信ネットワーク利用促進および情報保護等に関する法律</law>および関連法令の趣旨に従い、青少年保護のための基準と手続きを案内するために設けられました。',
-            p2: 'リトミは漫画の閲覧と探索のためのサービスを提供しており、青少年に不適切な情報の露出を減らすため、アクセス制限、通報処理、運営ポリシー反映などの措置を適用する場合があります。',
+            p1: '本ポリシーは、ソボクが情報通信ネットワークを通じて提供する情報および利用者相互作用機能について、<law>青少年保護法</law>、<law>情報通信ネットワーク利用促進および情報保護等に関する法律</law>および関連法令の趣旨に従い、青少年保護のための基準と手続きを案内するために設けられました。',
+            p2: 'ソボクは漫画の閲覧と探索のためのサービスを提供しており、青少年に不適切な情報の露出を減らすため、アクセス制限、通報処理、運営ポリシー反映などの措置を適用する場合があります。',
           },
           controls: {
             title: '2. 青少年アクセス制限および管理措置',
@@ -1079,7 +1079,7 @@ export const messages = {
           },
           monitoring: {
             title: '3. 有害情報のモニタリングおよび対応',
-            p1: 'リトミは、利用者通報、権利者通知、運営レビュー、法令上の要請などをもとに、青少年有害情報または違法情報に該当するかを確認する場合があります。',
+            p1: 'ソボクは、利用者通報、権利者通知、運営レビュー、法令上の要請などをもとに、青少年有害情報または違法情報に該当するかを確認する場合があります。',
             p2: 'レビューの結果、青少年保護または法令遵守のため必要と判断される場合、当該情報について露出制限、削除、暫定措置、アクセス遮断、アカウント制裁、追加資料要請などの措置を行う場合があります。',
             p3: '特に児童・青少年対象の性的搾取物、違法撮影物、強要された性的画像、明白な違法情報など重大な事案は、サービス内の一般通報手続きに優先して迅速な制限または削除措置を検討します。',
           },
@@ -1103,7 +1103,7 @@ export const messages = {
           officer: {
             title: '6. 青少年保護責任者および担当者',
             departmentLabel: '部署',
-            departmentValue: 'リトミ運営チーム',
+            departmentValue: 'ソボク運営チーム',
             roleLabel: '役職',
             roleValue: '運営者',
           },
@@ -1158,7 +1158,7 @@ export const messages = {
             workDescription: '著作物の説明',
             workURL: '著作物 URL (任意)',
             infringingSection: '侵害物の識別',
-            infringingReferences: 'リトミ作品 URL または作品 ID',
+            infringingReferences: 'ソボク作品 URL または作品 ID',
             infringingPlaceholder: '例)\nhttps://sobok.cc/manga/123\n123\nhttps://sobok.cc/manga/456',
             infringingHelp:
               '作品 URL に /manga/数字 が含まれている場合は自動で認識します。複数ある場合は改行で入力してください。',
@@ -1205,7 +1205,7 @@ export const messages = {
             claimantPhone: '電話番号',
             relatedSection: '関連情報',
             relatedNoticeId: '関連受付番号 (任意)',
-            infringingReferences: 'リトミ作品 URL または作品 ID',
+            infringingReferences: 'ソボク作品 URL または作品 ID',
             infringingHelp:
               '作品 URL に /manga/数字 が含まれている場合は自動で認識します。複数ある場合は改行で入力してください。',
             claimSection: '主張内容',
@@ -1232,19 +1232,19 @@ export const messages = {
       doc: {
         compliance2257: {
           title: '2257 合规说明',
-          description: '说明莉托米关于 18 U.S.C. §2257 和 §2257A 的运营原则。',
+          description: '说明 Sobok 关于 18 U.S.C. §2257 和 §2257A 的运营原则。',
         },
         dmca: {
           title: '版权/DMCA 举报',
-          description: '说明如何向莉托米提交版权或 DMCA 举报。',
+          description: '说明如何向 Sobok 提交版权或 DMCA 举报。',
         },
         privacy: {
           title: '隐私政策',
-          description: '说明莉托米会处理哪些信息以及处理目的。',
+          description: '说明 Sobok 会处理哪些信息以及处理目的。',
         },
         terms: {
           title: '使用条款',
-          description: '说明适用于使用莉托米服务的条款。',
+          description: '说明适用于使用 Sobok 服务的条款。',
         },
         youthProtection: {
           title: '青少年保护政策',
@@ -1381,7 +1381,7 @@ export const messages = {
       },
       terms: {
         title: '使用条款',
-        subtitle: '关于使用莉托米服务的条款。',
+        subtitle: '关于使用 Sobok 服务的条款。',
         sections: {
           purpose: {
             title: '第 1 条（目的）',
@@ -1453,12 +1453,12 @@ export const messages = {
       },
       youthProtection: {
         title: '青少年保护政策',
-        subtitle: '莉托米根据相关法律和服务运营标准制定并适用本政策，以帮助青少年免受有害信息影响。',
+        subtitle: 'Sobok 根据相关法律和服务运营标准制定并适用本政策，以帮助青少年免受有害信息影响。',
         sections: {
           purpose: {
             title: '1. 目的和适用范围',
-            p1: '本政策旨在就莉托米通过信息通信网络提供的信息和用户互动功能，依据<law>青少年保护法</law>、<law>信息通信网络利用促进及信息保护等相关法律</law>及相关法律的宗旨，说明青少年保护的标准和程序。',
-            p2: '莉托米提供漫画浏览和探索服务，并可能采取访问限制、举报处理、运营政策反映等措施，以减少青少年接触不适宜信息的可能性。',
+            p1: '本政策旨在就 Sobok 通过信息通信网络提供的信息和用户互动功能，依据<law>青少年保护法</law>、<law>信息通信网络利用促进及信息保护等相关法律</law>及相关法律的宗旨，说明青少年保护的标准和程序。',
+            p2: 'Sobok 提供漫画浏览和探索服务，并可能采取访问限制、举报处理、运营政策反映等措施，以减少青少年接触不适宜信息的可能性。',
           },
           controls: {
             title: '2. 青少年访问限制和管理措施',
@@ -1473,7 +1473,7 @@ export const messages = {
           },
           monitoring: {
             title: '3. 有害信息监测与应对',
-            p1: '莉托米可基于用户举报、权利人通知、运营审核、法律请求等，确认信息是否属于青少年有害信息或违法信息。',
+            p1: 'Sobok 可基于用户举报、权利人通知、运营审核、法律请求等，确认信息是否属于青少年有害信息或违法信息。',
             p2: '如审核结果认为为保护青少年或遵守法律有必要，本服务可对相关信息采取曝光限制、删除、临时措施、访问阻断、账号制裁、请求补充资料等措施。',
             p3: '特别是儿童、青少年性剥削物、非法拍摄物、被强迫的性图像、明显违法信息等重大事项，会优先于服务内一般举报程序，迅速审查限制或删除措施。',
           },
@@ -1493,7 +1493,7 @@ export const messages = {
           officer: {
             title: '6. 青少年保护负责人和联系人',
             departmentLabel: '部门',
-            departmentValue: '莉托米运营团队',
+            departmentValue: 'Sobok 运营团队',
             roleLabel: '职务',
             roleValue: '运营者',
           },
@@ -1547,7 +1547,7 @@ export const messages = {
             workDescription: '作品说明',
             workURL: '作品 URL（可选）',
             infringingSection: '识别侵权内容',
-            infringingReferences: '莉托米作品 URL 或作品 ID',
+            infringingReferences: 'Sobok 作品 URL 或作品 ID',
             infringingPlaceholder: '例）\nhttps://sobok.cc/manga/123\n123\nhttps://sobok.cc/manga/456',
             infringingHelp: '如果作品 URL 中包含 /manga/数字，会自动识别。多个项目请换行填写。',
             statementsSection: '声明',
@@ -1593,7 +1593,7 @@ export const messages = {
             claimantPhone: '电话号码',
             relatedSection: '相关信息',
             relatedNoticeId: '相关受理编号（可选）',
-            infringingReferences: '莉托米作品 URL 或作品 ID',
+            infringingReferences: 'Sobok 作品 URL 或作品 ID',
             infringingHelp: '如果作品 URL 中包含 /manga/数字，会自动识别。多个项目请换行填写。',
             claimSection: '主张内容',
             claimDetails: '许可/权限依据',

@@ -12,7 +12,7 @@ export const messages = {
         },
         signup: {
           title: '회원가입',
-          description: '소복 계정을 만들고 작품과 서재를 관리하세요.',
+          description: '소복 계정을 만들고 좋아하는 아티스트의 메시지를 받아보세요.',
         },
       },
     },
@@ -112,7 +112,7 @@ export const messages = {
         },
         signup: {
           title: 'Sign up',
-          description: 'Create a Sobok account to manage manga and libraries.',
+          description: 'Create a Sobok account to receive messages from your favorite artists.',
         },
       },
     },
@@ -208,11 +208,11 @@ export const messages = {
       auth: {
         login: {
           title: 'ログイン',
-          description: 'リトミアカウントにログインしてください。',
+          description: 'ソボクアカウントにログインしてください。',
         },
         signup: {
           title: '新規登録',
-          description: 'リトミアカウントを作成して、作品とライブラリを管理しましょう。',
+          description: 'ソボクアカウントを作成して、好きなアーティストからのメッセージを受け取りましょう。',
         },
       },
     },
@@ -308,11 +308,11 @@ export const messages = {
       auth: {
         login: {
           title: '登录',
-          description: '登录你的莉托米账号。',
+          description: '登录你的 Sobok 账号。',
         },
         signup: {
           title: '注册',
-          description: '创建莉托米账号，管理作品和书库。',
+          description: '创建 Sobok 账号，接收你喜欢的艺人发来的消息。',
         },
       },
     },
