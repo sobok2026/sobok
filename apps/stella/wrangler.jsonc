@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "stella",
+  "compatibility_date": "2026-07-01",
+  // Assets-only Worker (no `main`): the static export in ./out is served directly at the edge
+  // via Workers Static Assets. CI runs `wrangler deploy` from this directory after `next build`.
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  }
+}

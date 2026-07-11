@@ -3,19 +3,27 @@
 @source '..';
 
 @theme {
+  --color-background: #0a0a0a;
+  --color-foreground: #ededed;
+
   --color-brand-start: #46cdfc;
   --color-brand: #f5bcff;
 }
 
 :root {
+  color-scheme: dark;
+
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --safe-area-left: env(safe-area-inset-left, 0px);
   --safe-area-right: env(safe-area-inset-right, 0px);
 }
 
-html,
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
-  background: #0a0618;
-  color: #e2e8f0;
+  color: var(--color-foreground);
+  background: var(--color-background);
 }
