@@ -18,8 +18,6 @@ function Label({ name }: { name: string }) {
   )
 }
 
-// Plain anchors on purpose: each locale is a separate static page, and a full
-// navigation swaps <html lang>, messages, and metadata in one step.
 export default function LocaleSwitcher({ label, locale }: Props) {
   return (
     <nav

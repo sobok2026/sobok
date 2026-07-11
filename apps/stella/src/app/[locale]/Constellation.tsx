@@ -50,8 +50,11 @@ type Selection =
   | { kind: 'planet' | 'sign'; id: string }
   | { kind: 'aspect'; a: string; b: string; aspectType: AspectType; orb: number }
   | null
-type Point = { x: number; y: number }
-type Aspect = ChartAspect
+
+type Point = {
+  x: number
+  y: number
+}
 
 const glyphText = (glyph: string) => `${glyph}︎`
 
@@ -143,7 +146,7 @@ export default function Constellation() {
     return focusActive && !brightPlanets.has(id)
   }
 
-  function aspectDimmed(asp: Aspect): boolean {
+  function aspectDimmed(asp: ChartAspect): boolean {
     if (selection?.kind === 'planet') {
       return asp.a !== selection.id && asp.b !== selection.id
     }
@@ -195,7 +198,7 @@ export default function Constellation() {
     setSelection((prev) => (prev?.kind === 'sign' && prev.id === id ? null : { kind: 'sign', id }))
   }
 
-  function toggleAspectAndScroll(asp: Aspect) {
+  function toggleAspectAndScroll(asp: ChartAspect) {
     const same =
       selection?.kind === 'aspect' &&
       selection.a === asp.a &&
@@ -556,8 +559,8 @@ function Aspects({
   isDimmed,
   pointById,
 }: {
-  aspects: readonly Aspect[]
-  isDimmed: (asp: Aspect) => boolean
+  aspects: readonly ChartAspect[]
+  isDimmed: (asp: ChartAspect) => boolean
   pointById: Map<string, Point>
 }) {
   return (
@@ -1033,8 +1036,8 @@ function AspectSection({
   selection,
   t,
 }: {
-  aspects: readonly Aspect[]
-  onSelect: (asp: Aspect) => void
+  aspects: readonly ChartAspect[]
+  onSelect: (asp: ChartAspect) => void
   selection: Selection
   t: T
 }) {
@@ -1082,9 +1085,9 @@ function AspectGroup({
   t,
 }: {
   accent: string
-  aspects: readonly Aspect[]
+  aspects: readonly ChartAspect[]
   label: string
-  onSelect: (asp: Aspect) => void
+  onSelect: (asp: ChartAspect) => void
   selection: Selection
   t: T
 }) {

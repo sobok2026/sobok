@@ -38,9 +38,19 @@ export function generateStaticParams() {
   return PUBLIC_LOCALES.map((locale) => ({ locale }))
 }
 
-export const metadata: Metadata = {
-  metadataBase: new URL(ORIGIN),
-  applicationName: SITE_NAME,
+export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Promise<Metadata> {
+  const locale = await getLocaleFromParams(params)
+  const t = await getTranslations({ locale, namespace: 'Constellation.meta' })
+
+  return {
+    metadataBase: new URL(ORIGIN),
+    title: {
+      default: `${t('title')} - ${SITE_NAME}`,
+      template: `%s - ${SITE_NAME}`,
+    },
+    description: t('description'),
+    applicationName: SITE_NAME,
+  }
 }
 
 export const viewport: Viewport = {
@@ -48,6 +58,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: THEME_COLOR,
+  colorScheme: 'dark',
 }
 
 export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {

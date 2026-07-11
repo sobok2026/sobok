@@ -17,8 +17,6 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
   const images = [{ url: '/og-image.png', width: 1200, height: 630, alt: `${SITE_NAME} — ${title}` }]
 
   return {
-    title,
-    description,
     alternates: {
       canonical,
       languages: {
@@ -43,7 +41,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
       description,
       images,
       card: 'summary_large_image',
-      site: '@sobok_in',
+      site: '@sobok_cc',
     },
   }
 }
