@@ -242,7 +242,7 @@ export default function Constellation() {
 
   return (
     <main
-      className="relative min-h-dvh overflow-hidden px-3 pb-16 pt-[calc(2rem+var(--safe-area-top))] text-slate-100 sm:px-4"
+      className="relative min-h-dvh overflow-hidden px-3 pb-16 pt-[calc(4rem+var(--safe-area-top))] text-slate-100 sm:px-4 md:pt-[calc(2rem+var(--safe-area-top))]"
       style={{ background: 'radial-gradient(120% 90% at 50% -10%, #1a0f3a 0%, #0a0618 45%, #05010f 100%)' }}
     >
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full" />
