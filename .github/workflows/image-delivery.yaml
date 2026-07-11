@@ -1,5 +1,7 @@
-name: Kubernetes Image Delivery
+name: Image Delivery
 
+# Build each service's arm64 image, push to GHCR, then open a PR in sobok-ops that promotes the
+# digest pins in compose/images.env. Merging that PR triggers the self-hosted-runner deploy.
 on:
   push:
     branches: [main]
@@ -9,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: kubernetes-image-delivery-${{ github.ref }}
+  group: image-delivery-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -293,6 +295,52 @@ jobs:
           tags: ${{ steps.metadata_chat_push.outputs.tags }}
           labels: ${{ steps.metadata_chat_push.outputs.labels }}
 
+  build-and-publish-billing-worker-image:
+    name: Build and publish billing-worker image
+    if: ${{ github.ref_name == 'main' }}
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.build_billing_worker_image.outputs.digest }}
+    env:
+      IMAGE_BILLING_WORKER: ghcr.io/${{ github.repository_owner }}/sobok-billing-worker
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Generate billing-worker image metadata
+        id: metadata_billing_worker
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE_BILLING_WORKER }}
+          tags: |
+            type=raw,value=${{ github.sha }}
+            type=raw,value=latest
+            type=ref,event=branch
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Authenticate to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish billing-worker image
+        id: build_billing_worker_image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: apps/billing-worker/Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: ${{ steps.metadata_billing_worker.outputs.tags }}
+          labels: ${{ steps.metadata_billing_worker.outputs.labels }}
+
   propose-ops-production-image-digests:
     name: Propose ops production image digests
     if: ${{ github.ref_name == 'main' }}
@@ -302,27 +350,26 @@ jobs:
       - build-and-publish-chat-image
       - build-and-publish-chat-worker-image
       - build-and-publish-chat-push-image
+      - build-and-publish-billing-worker-image
     runs-on: ubuntu-24.04
     permissions:
       contents: read
     env:
       OPS_REPOSITORY: ${{ github.repository_owner }}/sobok-ops
       OPS_PATH: sobok-ops
-      OPS_WEB_OVERLAY_FILE: k8s/workload/sobok/prod/web/kustomization.yaml
-      OPS_API_OVERLAY_FILE: k8s/workload/sobok/prod/api/kustomization.yaml
-      OPS_CHAT_OVERLAY_FILE: k8s/workload/sobok/prod/chat/kustomization.yaml
-      OPS_CHAT_WORKER_OVERLAY_FILE: k8s/workload/sobok/prod/chat-worker/kustomization.yaml
-      OPS_CHAT_PUSH_OVERLAY_FILE: k8s/workload/sobok/prod/chat-push/kustomization.yaml
+      OPS_IMAGES_FILE: compose/images.env
       IMAGE_WEB: ghcr.io/${{ github.repository_owner }}/sobok-web
       IMAGE_API: ghcr.io/${{ github.repository_owner }}/sobok-api
       IMAGE_CHAT: ghcr.io/${{ github.repository_owner }}/sobok-chat
       IMAGE_CHAT_WORKER: ghcr.io/${{ github.repository_owner }}/sobok-chat-worker
       IMAGE_CHAT_PUSH: ghcr.io/${{ github.repository_owner }}/sobok-chat-push
+      IMAGE_BILLING_WORKER: ghcr.io/${{ github.repository_owner }}/sobok-billing-worker
       IMAGE_WEB_DIGEST: ${{ needs.build-and-publish-web-image.outputs.digest }}
       IMAGE_API_DIGEST: ${{ needs.build-and-publish-api-image.outputs.digest }}
       IMAGE_CHAT_DIGEST: ${{ needs.build-and-publish-chat-image.outputs.digest }}
       IMAGE_CHAT_WORKER_DIGEST: ${{ needs.build-and-publish-chat-worker-image.outputs.digest }}
       IMAGE_CHAT_PUSH_DIGEST: ${{ needs.build-and-publish-chat-push-image.outputs.digest }}
+      IMAGE_BILLING_WORKER_DIGEST: ${{ needs.build-and-publish-billing-worker-image.outputs.digest }}
     steps:
       - name: Generate sobok-ops GitHub App token
         id: ops_app_token
@@ -344,55 +391,53 @@ jobs:
           fetch-depth: 0
           ref: main
 
-      - name: Update sobok-ops production image digests
+      - name: Update sobok-ops image digests
         shell: bash
         run: |
           set -euo pipefail
+          file="${OPS_PATH}/${OPS_IMAGES_FILE}"
 
           set_digest() {
-            local file="$1" image="$2" digest="$3"
+            local var="$1" image="$2" digest="$3"
 
             if [[ ! "${digest}" == sha256:* ]]; then
-              echo "Invalid digest for ${image}: ${digest}" >&2
+              echo "Invalid digest for ${var}: ${digest}" >&2
               exit 1
             fi
 
-            local matches
-            matches="$(IMAGE="${image}" yq '[(.images // [])[] | select(.name == strenv(IMAGE))] | length' "${file}")"
-
-            if [[ "${matches}" != "1" ]]; then
-              echo "Expected exactly 1 image named ${image} in ${file}, found ${matches}" >&2
+            if ! grep -qE "^${var}=${image}@sha256:[0-9a-f]+$" "${file}"; then
+              echo "No digest-pinned line '${var}=${image}@sha256:...' in ${file}" >&2
               exit 1
             fi
 
-            IMAGE="${image}" DIGEST="${digest}" yq -i \
-              '(.images[] | select(.name == strenv(IMAGE)) | .digest) = strenv(DIGEST)' "${file}"
+            sed -i -E "s|^(${var}=${image})@sha256:[0-9a-f]+$|\1@${digest}|" "${file}"
+            grep -qx "${var}=${image}@${digest}" "${file}" || {
+              echo "Failed to set ${var}" >&2
+              exit 1
+            }
           }
 
-          set_digest "${OPS_PATH}/${OPS_WEB_OVERLAY_FILE}" "${IMAGE_WEB}" "${IMAGE_WEB_DIGEST}"
-          set_digest "${OPS_PATH}/${OPS_API_OVERLAY_FILE}" "${IMAGE_API}" "${IMAGE_API_DIGEST}"
-          set_digest "${OPS_PATH}/${OPS_CHAT_OVERLAY_FILE}" "${IMAGE_CHAT}" "${IMAGE_CHAT_DIGEST}"
-          set_digest "${OPS_PATH}/${OPS_CHAT_WORKER_OVERLAY_FILE}" "${IMAGE_CHAT_WORKER}" "${IMAGE_CHAT_WORKER_DIGEST}"
-          set_digest "${OPS_PATH}/${OPS_CHAT_PUSH_OVERLAY_FILE}" "${IMAGE_CHAT_PUSH}" "${IMAGE_CHAT_PUSH_DIGEST}"
+          set_digest WEB_IMAGE "${IMAGE_WEB}" "${IMAGE_WEB_DIGEST}"
+          set_digest API_IMAGE "${IMAGE_API}" "${IMAGE_API_DIGEST}"
+          set_digest CHAT_IMAGE "${IMAGE_CHAT}" "${IMAGE_CHAT_DIGEST}"
+          set_digest CHAT_WORKER_IMAGE "${IMAGE_CHAT_WORKER}" "${IMAGE_CHAT_WORKER_DIGEST}"
+          set_digest CHAT_PUSH_IMAGE "${IMAGE_CHAT_PUSH}" "${IMAGE_CHAT_PUSH_DIGEST}"
+          set_digest BILLING_WORKER_IMAGE "${IMAGE_BILLING_WORKER}" "${IMAGE_BILLING_WORKER_DIGEST}"
 
-      - name: Create or update sobok-ops production promotion PR
+      - name: Create or update sobok-ops promotion PR
         id: create_production_pr
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ steps.ops_app_token.outputs.token }}
           path: ${{ env.OPS_PATH }}
           add-paths: |
-            ${{ env.OPS_WEB_OVERLAY_FILE }}
-            ${{ env.OPS_API_OVERLAY_FILE }}
-            ${{ env.OPS_CHAT_OVERLAY_FILE }}
-            ${{ env.OPS_CHAT_WORKER_OVERLAY_FILE }}
-            ${{ env.OPS_CHAT_PUSH_OVERLAY_FILE }}
-          branch: codex/sobok-production-image-digests
+            ${{ env.OPS_IMAGES_FILE }}
+          branch: codex/sobok-image-digests
           delete-branch: true
-          commit-message: 'chore(k8s): promote sobok image digests'
-          title: 'chore(k8s): promote production image digests'
+          commit-message: 'chore(deploy): promote sobok image digests'
+          title: 'chore(deploy): promote production image digests'
           body: |
-            This PR updates sobok production manifests to the latest immutable image digests built from `sobok` `main`.
+            This PR updates `compose/images.env` to the latest immutable image digests built from `sobok` `main`. Merging it triggers the self-hosted-runner deploy on the Mac Mini.
 
             - Web: `${{ env.IMAGE_WEB }}@${{ env.IMAGE_WEB_DIGEST }}`
             - API: `${{ env.IMAGE_API }}@${{ env.IMAGE_API_DIGEST }}`
