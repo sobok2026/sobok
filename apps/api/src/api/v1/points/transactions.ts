@@ -31,7 +31,7 @@ const middlewares = factory.createHandlers(
 )
 
 route.get('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { cursor, locale } = c.req.valid('query')
 
   const whereConditions = cursor

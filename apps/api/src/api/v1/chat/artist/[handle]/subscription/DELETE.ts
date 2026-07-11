@@ -16,7 +16,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(requireAuth, zProblemValidator('param', chatHandleParamSchema))
 
 route.delete('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { handle } = c.req.valid('param')
 
   // 핸들 해석이 UPDATE의 WHERE에 내장 — 없는 핸들과 구독 없음 모두 기존과 같은 404다.

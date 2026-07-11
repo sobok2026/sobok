@@ -13,7 +13,7 @@ import { problemResponse } from '@/utils/problem'
 const unreadCountRoutes = new Hono<Env>()
 
 unreadCountRoutes.get('/', async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
 
   try {
     const [{ count: unreadCount }] = await db

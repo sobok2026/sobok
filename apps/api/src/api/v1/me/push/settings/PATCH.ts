@@ -14,7 +14,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(zProblemValidator('json', patchV1MePushSettingsBodySchema))
 
 route.patch('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const settings = c.req.valid('json')
   const updateValues = { ...settings, updatedAt: new Date() }
 

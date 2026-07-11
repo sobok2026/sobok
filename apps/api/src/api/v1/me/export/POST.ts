@@ -18,7 +18,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(zProblemValidator('json', postV1MeExportBodySchema))
 
 route.post('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
 
   const { password, includeHistory, includeBookmarks, includeRatings, includeLibraries, includeCensorships } =
     c.req.valid('json')

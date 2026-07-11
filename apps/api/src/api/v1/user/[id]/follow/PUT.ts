@@ -16,7 +16,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(requireAuth, zProblemValidator('param', userIdParamSchema))
 
 route.put('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { id: targetUserId } = c.req.valid('param')
 
   if (userId === targetUserId) {

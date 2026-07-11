@@ -28,7 +28,7 @@ const middlewares = factory.createHandlers(
 // Posts a broadcast message. Only the artist may post here; fans reply to a specific
 // message via POST /artists/:handle/messages/:messageId/replies.
 route.post('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { handle } = c.req.valid('param')
   const body = c.req.valid('json')
   const artist = await getChatArtistByHandle(handle)

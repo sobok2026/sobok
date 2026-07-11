@@ -33,7 +33,7 @@ route.post('/', ...middlewares, async (c) => {
     return problemResponse(c, { status: 503 })
   }
 
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { handle } = c.req.valid('param')
   const artist = await getChatArtistByHandle(handle)
 

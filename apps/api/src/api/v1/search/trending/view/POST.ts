@@ -22,7 +22,7 @@ trendingViewPostRoutes.post('/', ...middlewares, async (c) => {
   const rateLimit = await checkSearchTrendingViewRateLimit({
     query,
     remoteIP,
-    userId: c.get('userId'),
+    userId: c.get('user')?.id,
   })
 
   if (!rateLimit.allowed) {

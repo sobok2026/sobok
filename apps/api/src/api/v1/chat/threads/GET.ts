@@ -27,7 +27,7 @@ const middlewares = factory.createHandlers(requireAuth)
 // gap-period broadcasts never show), while the 1:1 history is always readable, so the artist's
 // latest 1:1 answer + its unread count show regardless. The row's last message is whichever is newer.
 route.get('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const artists = await listChatThreadArtists(userId)
 
   if (artists.length === 0) {

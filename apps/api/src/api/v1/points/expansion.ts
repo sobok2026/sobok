@@ -25,7 +25,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(requireAuth)
 
 route.get('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
 
   try {
     const expansions = await db

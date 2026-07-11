@@ -19,7 +19,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json', postV1PointSpendRequestSchema))
 
 route.post('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
 
   type TransactionResult = ({ ok: false } & ProblemResponseOptions) | { ok: true; balance: number; spent: number }
 

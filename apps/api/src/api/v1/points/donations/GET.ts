@@ -70,7 +70,7 @@ const PER_PAGE = 20
 const meMiddlewares = factory.createHandlers(requireAuth, zProblemValidator('query', getV1PointsDonationsMeQuerySchema))
 
 route.get('/me', ...meMiddlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { cursor } = c.req.valid('query')
 
   const whereConditions = cursor

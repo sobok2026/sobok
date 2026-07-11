@@ -25,7 +25,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json', postV1PointEarnRequestSchema))
 
 route.post('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
 
   const turnstileCookie = getCookie(c, CookieKey.POINTS_TURNSTILE)
 

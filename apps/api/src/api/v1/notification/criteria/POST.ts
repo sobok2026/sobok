@@ -46,7 +46,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(zProblemValidator('json', postV1NotificationCriteriaBodySchema))
 
 route.post('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { conditions, isActive, name } = c.req.valid('json')
 
   try {

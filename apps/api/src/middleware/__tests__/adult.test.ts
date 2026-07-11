@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test'
+import type { SessionUser } from '@sobok/auth'
 import { PROBLEM } from '@sobok/contracts'
 import { PROBLEM_CONTENT_TYPE } from '@sobok/http/problem-details'
 import { Hono } from 'hono'
@@ -7,8 +8,7 @@ import { requireAdult } from '../require-adult'
 
 type TestEnv = {
   Variables: {
-    userId?: number
-    isAdult?: boolean
+    user: SessionUser | null
   }
 }
 
@@ -16,7 +16,7 @@ describe('requireAdult', () => {
   test('한국 로그인 사용자이고 성인 플래그가 없으면 403 problem response를 반환한다', async () => {
     const app = createApp({
       headers: { 'CF-IPCountry': 'KR' },
-      variables: { userId: 10, isAdult: false },
+      user: fakeUser({ isAdult: false }),
     })
 
     const response = await app.request('/adult')
@@ -35,7 +35,7 @@ describe('requireAdult', () => {
   test('비한국 사용자거나 비로그인 요청이면 다음 핸들러로 요청을 넘긴다', async () => {
     const app = createApp({
       headers: { 'CF-IPCountry': 'US' },
-      variables: { userId: 10, isAdult: false },
+      user: fakeUser({ isAdult: false }),
     })
 
     const response = await app.request('/adult')
@@ -45,18 +45,15 @@ describe('requireAdult', () => {
   })
 })
 
-function createApp({ headers, variables }: { headers?: HeadersInit; variables?: TestEnv['Variables'] } = {}) {
+function fakeUser({ isAdult }: { isAdult: boolean }): SessionUser {
+  return { id: 'user-10', isAdult } as SessionUser
+}
+
+function createApp({ headers, user = null }: { headers?: HeadersInit; user?: SessionUser | null } = {}) {
   const app = new Hono<TestEnv>()
 
   app.use('*', async (c, next) => {
-    if (variables?.userId !== undefined) {
-      c.set('userId', variables.userId)
-    }
-
-    if (variables?.isAdult !== undefined) {
-      c.set('isAdult', variables.isAdult)
-    }
-
+    c.set('user', user)
     await next()
   })
 

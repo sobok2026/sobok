@@ -17,7 +17,7 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(zProblemValidator('json', patchV1NotificationReadBodySchema))
 
 route.patch('/read', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { ids } = c.req.valid('json')
 
   try {
@@ -35,7 +35,7 @@ route.patch('/read', ...middlewares, async (c) => {
 })
 
 route.patch('/read-all', async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
 
   try {
     const updated = await db

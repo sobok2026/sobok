@@ -19,7 +19,7 @@ route.post('/', ...middlewares, async (c) => {
     return problemResponse(c, { status: 503 })
   }
 
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { token } = c.req.valid('json')
 
   let brief: Awaited<ReturnType<typeof inspectBillingKey>>

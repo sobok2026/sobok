@@ -21,7 +21,7 @@ const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json'
 const turnstileValidator = new TurnstileValidator(ms('10 seconds'), 1)
 
 route.post('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { token } = c.req.valid('json')
   const remoteIP = getRequestIP(c.req.raw.headers)
 

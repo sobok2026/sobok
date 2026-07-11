@@ -15,7 +15,7 @@ const middlewares = factory.createHandlers(requireAuth, zProblemValidator('query
 
 // 결제 내역(최신순 keyset) — 실패 건도 그대로 보여 준다(갱신 실패 안내·CS 대비).
 route.get('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { before, limit } = c.req.valid('query')
   const rows = await listPaymentsOfUser(userId, { beforeId: before, limit })
 

@@ -19,7 +19,7 @@ const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json'
 
 // 정산 입금 계좌 등록/변경 — 아티스트 본인만. 계좌번호는 암호화 저장한다.
 route.put('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const body = c.req.valid('json')
   const artist = await getChatArtistByUserId(userId)
 

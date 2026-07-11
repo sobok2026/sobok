@@ -22,7 +22,7 @@ const middlewares = factory.createHandlers(
 )
 
 route.put('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const { handle } = c.req.valid('param')
   const { lastReadMessageId } = c.req.valid('json')
   const artist = await getChatArtistByHandle(handle)

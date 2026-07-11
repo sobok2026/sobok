@@ -21,7 +21,7 @@ route.post('/test-payments', ...middlewares, async (c) => {
     return problemResponse(c, { status: 503 })
   }
 
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const paymentId = crypto.randomUUID()
 
   try {

@@ -25,7 +25,7 @@ const middlewares = factory.createHandlers(requireAuth)
 
 // 아티스트 수익 대시보드 — 이번 달(KST) 실시간 집계 + 월 정산 내역 + 입금 계좌.
 route.get('/', ...middlewares, async (c) => {
-  const userId = c.get('userId')!
+  const userId = c.get('user')!.id
   const artist = await getChatArtistByUserId(userId)
 
   if (!artist) {
