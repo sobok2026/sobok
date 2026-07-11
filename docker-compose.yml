@@ -33,20 +33,18 @@ services:
       timeout: 5s
       retries: 5
 
-  # Chat message store. The schema is vanilla Postgres, so a local Postgres gives full parity for dev.
-  chat-postgres:
-    image: postgres:18-alpine
-    container_name: sobok-chat-postgres
-    environment:
-      POSTGRES_USER: test_user
-      POSTGRES_PASSWORD: test_password
-      POSTGRES_DB: chat_db
+  chat-cockroach:
+    image: cockroachdb/cockroach:latest-v25.2
+    container_name: sobok-chat-cockroach
+    command: start-single-node --insecure
     ports:
-      - '5436:5432'
+      - '26257:26257'
     volumes:
-      - chat-db-data:/var/lib/postgresql
+      - chat-db-data:/cockroach/cockroach-data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U test_user -d chat_db']
+      # Doubles as init: the entrypoint ignores COCKROACH_DATABASE with an overridden command,
+      # so the DB is created here idempotently before --wait reports healthy.
+      test: ['CMD', 'cockroach', 'sql', '--insecure', '-e', 'CREATE DATABASE IF NOT EXISTS chat_db']
       interval: 5s
       timeout: 5s
       retries: 5
