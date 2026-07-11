@@ -1,4 +1,3 @@
-import { decryptSecret } from '@sobok/auth/secret-crypto'
 import type { ChatPayoutDTO, GETV1ChatStudioEarningsResponse } from '@sobok/contracts'
 import { getChatArtistByUserId } from '@sobok/db/app/query/chat'
 import {
@@ -7,6 +6,7 @@ import {
   listPayoutsOfArtist,
   type PayoutRow,
 } from '@sobok/db/app/query/payout'
+import { decryptSecret } from '@sobok/db/secret-crypto'
 import { computeSettlement, monthWindowKST } from '@sobok/domain/payout/policy'
 import { Hono } from 'hono'
 import { createFactory } from 'hono/factory'

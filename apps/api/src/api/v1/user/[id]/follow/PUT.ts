@@ -1,4 +1,4 @@
-import { idParamSchema, type PUTV1UserIdFollowResponse } from '@sobok/contracts'
+import { type PUTV1UserIdFollowResponse, userIdParamSchema } from '@sobok/contracts'
 import { db } from '@sobok/db/app'
 import { userFollowTable } from '@sobok/db/app/user'
 import { isPostgresError } from '@sobok/db/error'
@@ -13,7 +13,7 @@ import { zProblemValidator } from '@/utils/validator'
 
 const route = new Hono<Env>()
 const factory = createFactory<Env>()
-const middlewares = factory.createHandlers(requireAuth, zProblemValidator('param', idParamSchema))
+const middlewares = factory.createHandlers(requireAuth, zProblemValidator('param', userIdParamSchema))
 
 route.put('/', ...middlewares, async (c) => {
   const userId = c.get('userId')!

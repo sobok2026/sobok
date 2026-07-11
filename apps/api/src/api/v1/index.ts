@@ -1,9 +1,7 @@
 import { Hono } from 'hono'
 
-import type { Env } from '@/app'
+import { session } from '@/middleware/session'
 
-import authRoutes from './auth'
-import bbatonRoutes from './bbaton'
 import billingRoutes from './billing'
 import chatRoutes from './chat'
 import meRoutes from './me'
@@ -14,18 +12,17 @@ import searchRoutes from './search'
 import turnstileRoutes from './turnstile'
 import userRoutes from './user'
 
-const v1Routes = new Hono<Env>()
+const v1Router = new Hono()
 
-v1Routes.route('/auth', authRoutes)
-v1Routes.route('/bbaton', bbatonRoutes)
-v1Routes.route('/billing', billingRoutes)
-v1Routes.route('/chat', chatRoutes)
-v1Routes.route('/me', meRoutes)
-v1Routes.route('/notification', notificationRoutes)
-v1Routes.route('/points', pointsRoutes)
-v1Routes.route('/post', postRoutes)
-v1Routes.route('/search', searchRoutes)
-v1Routes.route('/turnstile', turnstileRoutes)
-v1Routes.route('/user', userRoutes)
+v1Router.use('*', session)
+v1Router.route('/billing', billingRoutes)
+v1Router.route('/chat', chatRoutes)
+v1Router.route('/me', meRoutes)
+v1Router.route('/notification', notificationRoutes)
+v1Router.route('/points', pointsRoutes)
+v1Router.route('/post', postRoutes)
+v1Router.route('/search', searchRoutes)
+v1Router.route('/turnstile', turnstileRoutes)
+v1Router.route('/user', userRoutes)
 
-export default v1Routes
+export default v1Router

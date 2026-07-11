@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/[name]'>
   }
 
   const profile = await getPublicUserProfile(username)
-  const title = profile ? t('title', { name: profile.name, nickname: profile.nickname }) : t('missingTitle')
+  const title = profile ? t('title', { name: profile.username ?? '', nickname: profile.name }) : t('missingTitle')
 
   const description = profile
     ? t('description', { followerCount: profile.followerCount, followingCount: profile.followingCount })

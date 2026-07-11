@@ -17,8 +17,7 @@ import {
 } from './bbaton'
 import { offboardUserBeforeDelete } from './delete-user'
 
-// 인증 테이블 스키마는 packages/db/src/app/schema/auth.ts에 CLI로 생성합니다(수동 편집 금지).
-// 플러그인 구성(필드)을 바꾸면 `bun run generate`로 스키마를 재생성한 뒤 push하세요.
+// 플러그인 구성(필드)을 바꾸면 `bun run generate`로 스키마를 재생성해주세요.
 export const auth = betterAuth({
   appName: env.APP_NAME,
   baseURL: env.BETTER_AUTH_URL,
@@ -44,53 +43,58 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  // user: {
-  //   additionalFields: {
-  //     isAdult: {
-  //       type: 'boolean',
-  //       defaultValue: false,
-  //       input: false,
-  //     },
-  //   },
-  //   deleteUser: {
-  //     enabled: true,
-  //     beforeDelete: async (user) => {
-  //       await offboardUserBeforeDelete(user.id)
-  //     },
-  //   },
-  // },
-  // databaseHooks: {
-  //   account: {
-  //     create: {
-  //       // BBaton 계정 연결(link) 완료 시 성인인증 결과를 반영한다.
-  //       after: async (account, ctx) => {
-  //         if (account.providerId !== BBATON_PROVIDER_ID || !account.accessToken) {
-  //           return
-  //         }
+  user: {
+    additionalFields: {
+      isAdult: {
+        type: 'boolean',
+        defaultValue: false,
+        input: false,
+      },
+    },
+    deleteUser: {
+      enabled: true,
+      beforeDelete: async (user) => {
+        await offboardUserBeforeDelete(user.id)
+      },
+    },
+  },
+  databaseHooks: {
+    account: {
+      create: {
+        // BBaton 계정 연결 시 성인인증 결과를 반영한다. after가 아니라 before에서 한다 — after는
+        // 트랜잭션 커밋 후 best-effort로 실행되어(queueAfterTransactionHook), 실패하면 "연결됐지만
+        // 미인증" 상태가 남는다. before는 링크 커밋 전에 동기 실행되므로, 프로필 조회·검증 쓰기가
+        // 실패하면 링크 자체가 중단되어 부분 상태가 생기지 않는다.
+        before: async (account, ctx) => {
+          if (account.providerId !== BBATON_PROVIDER_ID || !account.accessToken) {
+            return
+          }
 
-  //         const profile = await fetchBBatonProfile(account.accessToken)
-  //         const verification = {
-  //           bbatonUserId: profile.userId,
-  //           adultFlag: profile.adult,
-  //           birthYear: profile.birthYear,
-  //           gender: profile.gender,
-  //           income: profile.income,
-  //           student: profile.student,
-  //           verifiedAt: new Date(),
-  //         }
+          const profile = await fetchBBatonProfile(account.accessToken)
 
-  //         await db
-  //           .insert(bbatonVerificationTable)
-  //           .values({ userId: account.userId, ...verification })
-  //           .onConflictDoUpdate({ target: [bbatonVerificationTable.userId], set: verification })
+          const verification = {
+            bbatonUserId: profile.userId,
+            adultFlag: profile.adult,
+            birthYear: profile.birthYear,
+            gender: profile.gender,
+            income: profile.income,
+            student: profile.student,
+            verifiedAt: new Date(),
+          }
 
-  //         // internalAdapter로 갱신해야 secondaryStorage에 캐시된 세션 user까지 함께 반영된다.
-  //         const internalAdapter = ctx?.context.internalAdapter ?? (await auth.$context).internalAdapter
-  //         await internalAdapter.updateUser(account.userId, { isAdult: profile.adult })
-  //       },
-  //     },
-  //   },
-  // },
+          await db
+            .insert(bbatonVerificationTable)
+            .values({ userId: account.userId, ...verification })
+            .onConflictDoUpdate({ target: [bbatonVerificationTable.userId], set: verification })
+
+          // isAdult는 세션(쿠키·Redis)에 비정규화돼 있다. updateUser가 DB와 secondaryStorage 세션
+          // 스냅샷을 함께 갱신한다. 쿠키 캐시는 링크 완료 응답에서 refreshSessionCookies로 재발급해야 한다.
+          const internalAdapter = ctx?.context.internalAdapter ?? (await auth.$context).internalAdapter
+          await internalAdapter.updateUser(account.userId, { isAdult: profile.adult })
+        },
+      },
+    },
+  },
   plugins: [
     username({
       displayUsernameValidator: (displayUsername) => {

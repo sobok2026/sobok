@@ -1,11 +1,11 @@
 import { Hono } from 'hono'
 
-import type { Env } from '@/app'
+import authRouter from './auth'
+import v1Router from './v1'
 
-import v1Routes from './v1'
+const apiRouter = new Hono()
 
-const apiRoutes = new Hono<Env>()
+apiRouter.route('/auth', authRouter)
+apiRouter.route('/v1', v1Router)
 
-apiRoutes.route('/v1', v1Routes)
-
-export default apiRoutes
+export default apiRouter

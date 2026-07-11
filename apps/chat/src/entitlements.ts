@@ -12,7 +12,7 @@ type ParsedStream =
   | { kind: 'broadcast'; artistId: number }
   | { kind: 'artistInbound'; artistId: number }
   | { kind: 'replyRoom'; artistId: number }
-  | { kind: 'fanInbound'; artistId: number; fanId: number }
+  | { kind: 'fanInbound'; artistId: number; fanId: string }
 
 // 'sub' 요청 폭주나 무작위 streamId 탐색이 데이터베이스에 과부하를 주지 않도록 권한 결정 결과는 짧은 시간 동안 캐시됩니다.
 const AUTHZ_CACHE_TTL_MS = 30_000
@@ -29,11 +29,11 @@ interface CacheEntry {
 const cache = new Map<string, CacheEntry>()
 
 // 강퇴 이벤트(환불) 직후 캐시된 allow가 재구독을 통과시키지 않도록 항목을 지웁니다.
-export function invalidateAccessCache(userId: number, streamId: string): void {
+export function invalidateAccessCache(userId: string, streamId: string): void {
   cache.delete(`${userId}:${streamId}`)
 }
 
-export async function canAccessStream(userId: number, streamId: string): Promise<boolean> {
+export async function canAccessStream(userId: string, streamId: string): Promise<boolean> {
   const key = `${userId}:${streamId}`
 
   const cached = cacheGet(key)
@@ -46,7 +46,7 @@ export async function canAccessStream(userId: number, streamId: string): Promise
   return allowed
 }
 
-async function resolveAccess(userId: number, streamId: string): Promise<boolean> {
+async function resolveAccess(userId: string, streamId: string): Promise<boolean> {
   const parsed = parseStreamId(streamId)
 
   if (!parsed) {
@@ -67,7 +67,7 @@ async function resolveAccess(userId: number, streamId: string): Promise<boolean>
   }
 }
 
-async function ownsArtist(userId: number, artistId: number): Promise<boolean> {
+async function ownsArtist(userId: string, artistId: number): Promise<boolean> {
   const owned = await getChatArtistByUserId(userId)
   return owned?.id === artistId
 }
@@ -93,8 +93,9 @@ function parseStreamId(streamId: string): ParsedStream | null {
   // 3-part rooms. messageId(ULID)는 콜론을 포함하지 않으므로 split이 정확히 3조각이 된다.
   if (parts.length === 3) {
     if (parts[0] === 'fc') {
-      const fanId = toId(parts[2])
-      return fanId === null ? null : { kind: 'fanInbound', artistId, fanId }
+      // fanId는 better-auth 텍스트 id — 콜론을 포함하지 않으므로 split 결과를 그대로 쓴다.
+      const fanId = parts[2]
+      return fanId ? { kind: 'fanInbound', artistId, fanId } : null
     }
     if (parts[0] === 'rr') {
       return parts[2] ? { kind: 'replyRoom', artistId } : null

@@ -1,7 +1,7 @@
-import { encryptSecret } from '@sobok/auth/secret-crypto'
 import { type PUTV1ChatPayoutAccountResponse, putV1ChatPayoutAccountBodySchema } from '@sobok/contracts'
 import { getChatArtistByUserId } from '@sobok/db/app/query/chat'
 import { upsertPayoutAccount } from '@sobok/db/app/query/payout'
+import { encryptSecret } from '@sobok/db/secret-crypto'
 import { Hono } from 'hono'
 import { createFactory } from 'hono/factory'
 

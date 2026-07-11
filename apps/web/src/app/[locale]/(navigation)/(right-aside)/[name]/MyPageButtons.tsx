@@ -8,7 +8,7 @@ import LogoutButton from '../../LogoutButton'
 
 type Props = {
   user: {
-    id: number
+    id: string
     name: string
   }
 }
@@ -34,7 +34,7 @@ export default function MyPageButtons({ user }: Props) {
   return (
     <div className="flex items-center gap-2">
       <ProfileEditButton me={me} />
-      <LogoutButton username={me.name} />
+      <LogoutButton username={me.username ?? me.name} />
     </div>
   )
 }

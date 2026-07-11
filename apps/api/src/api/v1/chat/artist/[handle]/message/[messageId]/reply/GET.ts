@@ -48,11 +48,7 @@ route.get('/', ...middlewares, async (c) => {
     const fan = fans.get(row.fanId)
     const quotedRow = row.quotedMessageId ? quotedRows.get(row.quotedMessageId) : undefined
 
-    return toReplyRoomItem(
-      row,
-      fan && { id: fan.id, nickname: fan.nickname, imageURL: fan.imageURL },
-      quotedRow && toQuotedPreview(quotedRow),
-    )
+    return toReplyRoomItem(row, fan, quotedRow && toQuotedPreview(quotedRow))
   })
 
   const response = {

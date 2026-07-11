@@ -28,7 +28,7 @@ class FakeSubscriber implements RoomSubscriber {
   }
 }
 
-function makeSocket(userId = 1): ServerWebSocket<SocketData> {
+function makeSocket(userId = 'user-1'): ServerWebSocket<SocketData> {
   return {
     data: { userId, rooms: new Set<string>(), msgCount: 0, msgResetAt: 0 } satisfies SocketData,
     subscribe: () => {},
@@ -40,8 +40,8 @@ describe('RoomRegistry refcount', () => {
   test('첫 구독자만 Valkey를 SUBSCRIBE하고 마지막 해제자만 UNSUBSCRIBE한다', async () => {
     const sub = new FakeSubscriber()
     const reg = new RoomRegistry(sub)
-    const a = makeSocket(1)
-    const b = makeSocket(2)
+    const a = makeSocket('user-1')
+    const b = makeSocket('user-2')
 
     await reg.subscribe(a, 'r1')
     await reg.subscribe(b, 'r1')
@@ -126,8 +126,8 @@ describe('RoomRegistry 실패 처리', () => {
       return 1
     }
     const reg = new RoomRegistry(sub)
-    const a = makeSocket(1)
-    const b = makeSocket(2)
+    const a = makeSocket('user-1')
+    const b = makeSocket('user-2')
 
     // 같은 새 룸에 동시 진입: count 0→1(A, owner) →2(B, piggyback)가 동기적으로 일어나고
     // 두 reconcile이 같은 per-room 체인에 직렬화된다.

@@ -1,4 +1,4 @@
-import { idParamSchema } from '@sobok/contracts'
+import { userIdParamSchema } from '@sobok/contracts'
 import { db } from '@sobok/db/app'
 import { userFollowTable } from '@sobok/db/app/user'
 import { and, eq } from 'drizzle-orm'
@@ -13,7 +13,7 @@ import { zProblemValidator } from '@/utils/validator'
 
 const route = new Hono<Env>()
 const factory = createFactory<Env>()
-const middlewares = factory.createHandlers(requireAuth, zProblemValidator('param', idParamSchema))
+const middlewares = factory.createHandlers(requireAuth, zProblemValidator('param', userIdParamSchema))
 
 route.delete('/', ...middlewares, async (c) => {
   const userId = c.get('userId')!

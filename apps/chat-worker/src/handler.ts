@@ -63,8 +63,9 @@ async function processBroadcast(event: ChatBroadcastEvent): Promise<void> {
       kind: 'broadcast',
       artistId: event.artistId,
       messageId: event.messageId,
-      excludeUserId: artist.userId ?? event.artistId,
-      afterUserId: 0,
+      // 탈퇴한 아티스트(tombstone)는 제외할 작성자가 없다 — 빈 문자열은 어떤 user id와도 일치하지 않는다.
+      excludeUserId: artist.userId ?? '',
+      afterUserId: '',
       payload: {
         title: artist.emoji ? `${artist.emoji} ${artist.displayName}` : artist.displayName,
         body: previewBody(event.content),
@@ -121,11 +122,11 @@ async function relayFanReply(event: ChatDirectMessageEvent, row: ChatDmMessageRo
     }
 
     await pushDirect(event.artistId, artist.userId, {
-      title: fan?.nickname ?? '팬',
+      title: fan?.name ?? '팬',
       body: previewBody(event.content),
       url: sobokStudioPath(artist.handle),
       tag: `chat-reply:${event.artistId}`,
-      ...(fan?.imageURL && { icon: fan.imageURL }),
+      ...(fan?.image && { icon: fan.image }),
     })
   } catch (error) {
     console.error('chat-worker: fan reply push enqueue failed', { messageId: event.messageId, error })
@@ -158,7 +159,7 @@ async function relayArtistReply(event: ChatDirectMessageEvent, row: ChatDmMessag
   }
 }
 
-function pushDirect(artistId: number, recipientUserId: number, payload: ChatPushPayload): Promise<void> {
+function pushDirect(artistId: number, recipientUserId: string, payload: ChatPushPayload): Promise<void> {
   return publishPushFanout({ kind: 'direct', artistId, recipientUserId, payload })
 }
 
@@ -194,7 +195,7 @@ function toBroadcastRelay(row: ChatBroadcastRow) {
   }
 }
 
-type ChatSenderBrief = { nickname: string; imageURL: string | null }
+type ChatSenderBrief = { name: string; image: string | null }
 
 function toFanReplyRelay(row: ChatDmMessageRow, fan?: ChatSenderBrief) {
   return {
@@ -208,8 +209,8 @@ function toFanReplyRelay(row: ChatDmMessageRow, fan?: ChatSenderBrief) {
     ...(row.quotedMessageId && { quotedMessageId: row.quotedMessageId }),
     ...(fan && {
       fan: {
-        nickname: fan.nickname,
-        imageURL: fan.imageURL,
+        name: fan.name,
+        image: fan.image,
       },
     }),
   }

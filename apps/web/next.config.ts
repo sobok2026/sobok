@@ -42,19 +42,6 @@ const cacheControlHeaders = {
   }),
 }
 
-const bbatonCallbackCspHeader = `
-  default-src 'none';
-  script-src 'self' 'unsafe-inline';
-  script-src-attr 'none';
-  style-src 'self' 'unsafe-inline';
-  font-src 'self';
-  connect-src 'self';
-  base-uri 'none';
-  form-action 'none';
-  frame-ancestors 'none';
-  ${isProduction ? 'upgrade-insecure-requests;' : ''}
-`
-
 const serviceWorkerCspHeader = `
   default-src 'self';
   connect-src 'self' ${imageProxyOrigin};
@@ -80,18 +67,6 @@ const nextConfig: NextConfig = {
         {
           key: 'Content-Security-Policy',
           value: isProduction ? cspHeader.replace(/\s{2,}/g, ' ').trim() : '',
-        },
-      ],
-    },
-    {
-      source: '/oauth/bbaton/callback',
-      headers: [
-        { key: 'Cache-Control', value: 'no-store' },
-        { key: 'Referrer-Policy', value: 'no-referrer' },
-        { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
-        {
-          key: 'Content-Security-Policy',
-          value: bbatonCallbackCspHeader.replace(/\s{2,}/g, ' ').trim(),
         },
       ],
     },
