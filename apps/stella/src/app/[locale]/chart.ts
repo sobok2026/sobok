@@ -187,6 +187,9 @@ const ASPECT_DEFS: readonly { type: AspectType; angle: number; orb: number }[] =
 /** Points that don't take part in aspects (each node aspects the same things as its axis). */
 const ASPECT_EXCLUDED: ReadonlySet<PlanetId> = new Set(['southNode'])
 
+/** Calculated points (not bodies); pairs among themselves carry no standard reading. */
+const POINT_IDS: ReadonlySet<PlanetId> = new Set(['northNode', 'fortune'])
+
 /**
  * A fixed sample chart, used as the decorative backdrop before the user enters
  * their birth data. Longitudes are illustrative, not computed.
@@ -342,16 +345,30 @@ export function computeAspects(planets: readonly PlanetPosition[]): ChartAspect[
 
   for (let i = 0; i < bodies.length; i++) {
     for (let j = i + 1; j < bodies.length; j++) {
-      const best = closestAspect(bodies[i].lon, bodies[j].lon)
+      const a = bodies[i]
+      const b = bodies[j]
 
-      if (best) {
-        result.push({
-          a: bodies[i].id,
-          b: bodies[j].id,
-          type: best.type,
-          orb: Math.round(best.orb * 10) / 10,
-        })
+      if (POINT_IDS.has(a.id) && POINT_IDS.has(b.id)) {
+        continue
       }
+
+      const best = closestAspect(a.lon, b.lon)
+
+      if (!best) {
+        continue
+      }
+
+      // The Part of Fortune derives from Sun/Moon/Ascendant; standard practice reads only its conjunctions.
+      if ((a.id === 'fortune' || b.id === 'fortune') && best.type !== 'conjunction') {
+        continue
+      }
+
+      result.push({
+        a: a.id,
+        b: b.id,
+        type: best.type,
+        orb: Math.round(best.orb * 10) / 10,
+      })
     }
   }
   return result

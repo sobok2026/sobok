@@ -156,9 +156,7 @@ export default function BirthForm({
         </div>
       </div>
 
-      {timeUnknown && (
-        <p className="mt-3 text-[11px] leading-relaxed text-slate-500 break-keep">{t('timeUnknownHint')}</p>
-      )}
+      {timeUnknown && <p className="mt-3 text-[11px] leading-relaxed text-slate-500">{t('timeUnknownHint')}</p>}
       {error && <p className="mt-3 text-xs text-[#fb7185]">{error}</p>}
 
       <button

@@ -45,7 +45,7 @@ export default function GlobalError({ error }: ErrorProps) {
           <RetryGuidance errorMessage={error.message} hasSystemIssues={hasSystemIssues} />
           <CloudProviderStatus locale={locale} onStatusUpdate={setHasSystemIssues} />
           <ErrorDiagnosticDetails digest={error.digest} pathname={pathname} />
-          <p className="my-4 break-keep text-sm text-foreground-muted">
+          <p className="my-4 text-sm text-foreground-muted">
             문제가 계속되면{' '}
             <a
               className="underline decoration-dotted underline-offset-4"

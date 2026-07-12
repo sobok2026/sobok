@@ -264,9 +264,7 @@ export default function Constellation() {
           <h1 className="mt-2 bg-linear-to-r from-[#7cc4ff] via-brand to-[#ffd66b] bg-clip-text text-3xl font-extrabold text-transparent">
             {t('hero.title')}
           </h1>
-          <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-slate-300/90 break-keep">
-            {t('hero.subtitle')}
-          </p>
+          <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-slate-300/90">{t('hero.subtitle')}</p>
         </header>
 
         {/* Birth form (before compute) */}
@@ -673,7 +671,7 @@ function Planets({
           <g className={styles.token} key={planet.id} style={{ animationDelay: `${delay}s` }}>
             <g className={styles.tokenFloat} style={{ animationDelay: `${delay + 0.55}s` }}>
               <g
-                aria-label={`${t(`planets.${planet.id}`)} · ${t(`signs.${sign}`)}`}
+                aria-label={`${t(`planets.${planet.id}`)} · ${t(`signs.${sign}`)}${planet.retrograde ? ` · ${t('panel.retrograde')}` : ''}`}
                 aria-pressed={isSelected}
                 className={`${styles.wheelButton} ${styles.fade} cursor-pointer`}
                 onClick={() => onSelect(planet.id)}
@@ -717,18 +715,28 @@ function Planets({
                   {glyphText(planet.glyph)}
                 </text>
                 {planet.retrograde && (
-                  <text
-                    dominantBaseline="central"
-                    fill="#fb7185"
-                    fontSize={6}
-                    fontWeight={700}
-                    pointerEvents="none"
-                    textAnchor="middle"
-                    x={point.x + 9}
-                    y={point.y - 9}
-                  >
-                    ℞
-                  </text>
+                  <g pointerEvents="none">
+                    <circle
+                      cx={point.x + 9.5}
+                      cy={point.y - 9.5}
+                      fill="#0a0618"
+                      r={5.2}
+                      stroke="#fb7185"
+                      strokeOpacity={0.55}
+                      strokeWidth={0.8}
+                    />
+                    <text
+                      dominantBaseline="central"
+                      fill="#fb7185"
+                      fontSize={7}
+                      fontWeight={700}
+                      textAnchor="middle"
+                      x={point.x + 9.5}
+                      y={point.y - 9.2}
+                    >
+                      ℞
+                    </text>
+                  </g>
                 )}
                 {/* Sole, selection-independent hit target — kept last so it wins hit-testing
                     over the decorative glow, whose radius changes when selected. */}
@@ -798,7 +806,7 @@ function Big3Card({
       <span className="text-lg text-brand">{glyphText(glyph)}</span>
       <span className="text-[10px] uppercase tracking-widest text-slate-400">{label}</span>
       <span className="text-sm font-bold text-slate-100">{value}</span>
-      <span className="text-[10px] leading-tight text-slate-500 break-keep">{hint}</span>
+      <span className="text-[10px] leading-tight text-slate-500">{hint}</span>
     </button>
   )
 }
@@ -835,7 +843,7 @@ function DetailPanel({
     return (
       <div className="rounded-2xl border border-white/10 bg-white/3 p-4 text-center sm:p-5">
         <p className="text-sm font-semibold text-slate-200">{t('panel.empty')}</p>
-        <p className="mt-1 text-xs text-slate-400 break-keep">{t('panel.emptyHint')}</p>
+        <p className="mt-1 text-xs text-slate-400">{t('panel.emptyHint')}</p>
       </div>
     )
   }
@@ -859,7 +867,7 @@ function DetailPanel({
             <Chip color={color} label={t(`elements.${element}`)} />
           </div>
         </div>
-        <p className="mt-3 text-sm leading-relaxed text-slate-300 break-keep">{t(`signKeywords.${selection.id}`)}</p>
+        <p className="mt-3 text-sm leading-relaxed text-slate-300">{t(`signKeywords.${selection.id}`)}</p>
       </div>
     )
   }
@@ -911,9 +919,7 @@ function DetailPanel({
             {intensity}
           </p>
         )}
-        <p className={`${intensity ? 'mt-2' : 'mt-3'} text-sm leading-relaxed text-slate-200 break-keep`}>
-          {pairReading}
-        </p>
+        <p className={`${intensity ? 'mt-2' : 'mt-3'} text-sm leading-relaxed text-slate-200`}>{pairReading}</p>
       </div>
     )
   }
@@ -959,7 +965,7 @@ function DetailPanel({
           </p>
         </div>
       </div>
-      <p className="mt-3 text-sm leading-relaxed text-slate-200 break-keep">{reading}</p>
+      <p className="mt-3 text-sm leading-relaxed text-slate-200">{reading}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         <Chip color={color} label={`${t('panel.elementLabel')}: ${t(`elements.${element}`)}`} />
         <Chip color="#c9a8ff" label={`${t('panel.keywordLabel')}: ${t(`signKeywords.${sign}`)}`} />
@@ -978,7 +984,7 @@ function DetailPanel({
             {house !== null && <> · {t('panel.house', { n: house })}</>} ·{' '}
             {planet.retrograde ? t('panel.retrograde') : t('panel.direct')}
           </p>
-          <p className="mt-1 text-[11px] leading-relaxed text-slate-500 break-keep">{t('panel.detailHint')}</p>
+          <p className="mt-1 text-[11px] leading-relaxed text-slate-500">{t('panel.detailHint')}</p>
         </div>
       )}
     </div>
@@ -1067,7 +1073,7 @@ function AspectSection({
   return (
     <section className="sm:rounded-2xl sm:border sm:border-white/10 sm:bg-white/3 sm:p-5">
       <h2 className="text-sm font-bold text-slate-100">{t('aspects.title')}</h2>
-      <p className="mt-1 text-xs text-slate-400 break-keep">{t('aspects.intro')}</p>
+      <p className="mt-1 text-xs text-slate-400">{t('aspects.intro')}</p>
       {harmony.length > 0 && (
         <AspectGroup
           accent="#6ee7b7"
