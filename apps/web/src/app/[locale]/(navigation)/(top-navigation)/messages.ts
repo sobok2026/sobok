@@ -339,7 +339,7 @@ export const messages = {
       adultGateDescription: 'おすすめ作品を見るには匿名成人認証が必要です',
     },
   },
-  [Locale.ZH_CN]: {
+  [Locale.ZH]: {
     Metadata: {
       explore: {
         fortune: {

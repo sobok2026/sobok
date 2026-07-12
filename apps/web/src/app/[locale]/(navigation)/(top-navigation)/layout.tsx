@@ -13,7 +13,7 @@ const PORN_DUDE_URL_BY_LOCALE = {
   [Locale.KO]: 'https://theporndude.com/ko',
   [Locale.EN]: 'https://theporndude.com/',
   [Locale.JA]: 'https://theporndude.com/ja',
-  [Locale.ZH_CN]: 'https://theporndude.com/zh',
+  [Locale.ZH]: 'https://theporndude.com/zh',
 } satisfies Record<PublicLocale, string>
 
 export default async function Layout({ children, params }: LayoutProps<'/[locale]'>) {

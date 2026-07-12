@@ -288,10 +288,8 @@ function getDefaultKeywords(locale: string) {
       return [{ value: 'language:japanese', label: '日本語' }]
     case Locale.KO:
       return [{ value: 'language:korean', label: '한국어' }]
-    case Locale.ZH_CN:
+    case Locale.ZH:
       return [{ value: 'language:chinese', label: '简体中文' }]
-    case Locale.ZH_TW:
-      return [{ value: 'language:chinese', label: '繁體中文' }]
     default:
       return [{ value: 'language:korean', label: '한국어' }]
   }

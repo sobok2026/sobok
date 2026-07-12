@@ -678,7 +678,7 @@ export const messages = {
       },
     },
   },
-  [Locale.ZH_CN]: {
+  [Locale.ZH]: {
     Metadata: {
       community: {
         posts: {

@@ -15,7 +15,7 @@ const loaders: Record<PublicLocale, () => Promise<Interpretations>> = {
   ko: () => assemble(import('./ko'), import('./report/ko')),
   en: () => assemble(import('./en'), import('./report/en')),
   ja: () => assemble(import('./ja'), import('./report/ja')),
-  'zh-CN': () => assemble(import('./zh-CN'), import('./report/zh-CN')),
+  zh: () => assemble(import('./zh'), import('./report/zh')),
 }
 
 async function assemble(tables: Promise<Tables>, report: Promise<Report>): Promise<Interpretations> {

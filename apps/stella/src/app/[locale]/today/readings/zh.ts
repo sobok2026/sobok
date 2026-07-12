@@ -1,5 +1,3 @@
-// zh-CN daily reading tables — themes and invitations, never event predictions.
-
 import type { TodayReadings } from './types'
 
 export const readings: TodayReadings = {

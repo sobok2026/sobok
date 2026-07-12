@@ -4,8 +4,7 @@ export type SuggestionItem = {
     en: string
     ko?: string | null
     ja?: string | null
-    'zh-CN'?: string | null
-    'zh-TW'?: string | null
+    zh?: string | null
   }
 }
 

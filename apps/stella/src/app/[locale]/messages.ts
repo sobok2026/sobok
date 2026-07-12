@@ -636,7 +636,7 @@ export const messages = {
       toChart: 'See my birth chart',
     },
   },
-  [Locale.ZH_CN]: {
+  [Locale.ZH]: {
     Constellation: {
       meta: {
         title: '我的星盘 · 互动出生星盘',

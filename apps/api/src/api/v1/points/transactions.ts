@@ -164,7 +164,7 @@ const TRANSACTION_LABELS = {
     roulettePayout: 'ルーレット当選',
     themePurchase: 'カスタムテーマ購入',
   },
-  [Locale.ZH_CN]: {
+  [Locale.ZH]: {
     adClick: '广告点击',
     adminGrant: '运营发放',
     badgePurchase: '个人资料徽章购买',
@@ -173,16 +173,6 @@ const TRANSACTION_LABELS = {
     rouletteBet: '转盘下注',
     roulettePayout: '转盘中奖',
     themePurchase: '自定义主题购买',
-  },
-  [Locale.ZH_TW]: {
-    adClick: 'Ad click',
-    adminGrant: 'Admin grant',
-    badgePurchase: 'Profile badge purchase',
-    donation: 'Donation',
-    pointUnit: 'Libo',
-    rouletteBet: 'Roulette bet',
-    roulettePayout: 'Roulette payout',
-    themePurchase: 'Custom theme purchase',
   },
 } satisfies Record<Locale, Record<TransactionLabelKey, string>>
 
@@ -205,17 +195,11 @@ const EXPANSION_LABELS = {
     library: 'マイライブラリ拡張',
     rating: '評価拡張',
   },
-  [Locale.ZH_CN]: {
+  [Locale.ZH]: {
     bookmark: '书签扩展',
     history: '阅读记录扩展',
     library: '我的书库扩展',
     rating: '评分扩展',
-  },
-  [Locale.ZH_TW]: {
-    bookmark: 'Bookmark expansion',
-    history: 'History expansion',
-    library: 'Library expansion',
-    rating: 'Rating expansion',
   },
 } satisfies Record<Locale, Record<ExpansionKind, string>>
 

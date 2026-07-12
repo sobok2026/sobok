@@ -26,7 +26,7 @@ export const APP_METADATA = {
     description: '好きなアーティストからのメッセージを受け取って返信できるファンメッセージサービスです。',
     shortName: 'ソボク',
   },
-  [Locale.ZH_CN]: {
+  [Locale.ZH]: {
     applicationName: 'Sobok - 艺人私信',
     description: '一个粉丝消息服务，可接收你喜欢的艺人发来的消息并进行回复。',
     shortName: 'Sobok',

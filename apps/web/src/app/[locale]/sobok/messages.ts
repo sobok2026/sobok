@@ -566,7 +566,7 @@ export const messages = {
       },
     },
   },
-  [Locale.ZH_CN]: {
+  [Locale.ZH]: {
     Sobok: {
       nav: {
         chats: '聊天',

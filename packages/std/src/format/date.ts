@@ -1,6 +1,6 @@
 import ms, { type StringValue } from 'ms'
 
-export type DateFormatLocale = 'en' | 'ja' | 'ko' | 'zh-CN' | 'zh-TW'
+export type DateFormatLocale = 'en' | 'ja' | 'ko' | 'zh'
 
 type ElapsedDistance = {
   calendarDays: number
@@ -32,8 +32,7 @@ const LOCALE_LANGUAGE_TAGS = {
   en: 'en-US',
   ja: 'ja-JP',
   ko: 'ko-KR',
-  'zh-CN': 'zh-CN',
-  'zh-TW': 'zh-TW',
+  zh: 'zh-CN',
 } satisfies Record<DateFormatLocale, string>
 
 const DATE_TIME_FORMAT_OPTIONS = {

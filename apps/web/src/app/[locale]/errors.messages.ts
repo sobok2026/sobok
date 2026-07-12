@@ -288,7 +288,7 @@ const ja: ErrorCatalog = {
   },
 }
 
-const zhCN: ErrorCatalog = {
+const zh: ErrorCatalog = {
   status: {
     offline: '请检查网络连接',
     serverError: '处理请求时出错，请重试',
@@ -383,5 +383,5 @@ export const messages = {
   [Locale.KO]: { Errors: ko },
   [Locale.EN]: { Errors: en },
   [Locale.JA]: { Errors: ja },
-  [Locale.ZH_CN]: { Errors: zhCN },
+  [Locale.ZH]: { Errors: zh },
 } satisfies LocalizedMessages

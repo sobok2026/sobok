@@ -114,7 +114,7 @@ const STATIC_PAGE_TITLES: Record<PublicLocale, string[]> = {
     'リアルタイム',
     '検索',
   ],
-  [Locale.ZH_CN]: [
+  [Locale.ZH]: [
     '登录',
     '注册',
     '屏蔽',
@@ -172,7 +172,7 @@ const RANKING_PAGE_TITLES: Record<
     metrics: ['閲覧', 'ブックマーク', 'ライブラリ', '評価'],
     periods: ['日間', '週間', '月間', '四半期', '年間'],
   },
-  [Locale.ZH_CN]: {
+  [Locale.ZH]: {
     format: (period, metric) => `${period}${metric}排行`,
     metrics: ['浏览', '书签', '书库', '评分'],
     periods: ['日榜', '周榜', '月榜', '季度榜', '年榜'],

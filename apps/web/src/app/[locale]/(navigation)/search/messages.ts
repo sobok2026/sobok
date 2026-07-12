@@ -507,7 +507,7 @@ export const messages = {
       },
     },
   },
-  [Locale.ZH_CN]: {
+  [Locale.ZH]: {
     Search: {
       title: '作品搜索',
       activeFilters: '已应用条件',

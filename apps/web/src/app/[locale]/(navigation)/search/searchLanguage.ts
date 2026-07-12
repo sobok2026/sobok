@@ -8,7 +8,7 @@ const LOCALE_SEARCH_LANGUAGE: Record<PublicLocale, string> = {
   [Locale.KO]: 'korean',
   [Locale.EN]: 'english',
   [Locale.JA]: 'japanese',
-  [Locale.ZH_CN]: 'chinese',
+  [Locale.ZH]: 'chinese',
 }
 
 const PREFIX = 'language:'

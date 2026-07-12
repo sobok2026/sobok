@@ -335,7 +335,7 @@ export const messages = {
       },
     },
   },
-  [Locale.ZH_CN]: {
+  [Locale.ZH]: {
     Metadata: {
       deterrence: {
         title: '未满 19 岁访问限制说明',

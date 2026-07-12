@@ -236,11 +236,9 @@ describe('formatNumber', () => {
   describe('기타 로케일', () => {
     it('한국어가 아닌 로케일에는 영어 포맷을 사용한다', () => {
       expect(formatNumber(1000, 'ja')).toBe('1k')
-      expect(formatNumber(1000, 'zh-CN')).toBe('1k')
-      expect(formatNumber(1000, 'zh-TW')).toBe('1k')
+      expect(formatNumber(1000, 'zh')).toBe('1k')
       expect(formatNumber(1000000, 'ja')).toBe('1M')
-      expect(formatNumber(1000000, 'zh-CN')).toBe('1M')
-      expect(formatNumber(1000000, 'zh-TW')).toBe('1M')
+      expect(formatNumber(1000000, 'zh')).toBe('1M')
     })
   })
 })

@@ -32,24 +32,26 @@ export default function AspectSection({ aspects, onSelect, selection }: AspectSe
     <section className="sm:rounded-2xl sm:border sm:bg-surface sm:p-5">
       <h2 className="text-sm font-bold text-foreground">{t('aspects.title')}</h2>
       <p className="mt-1 text-xs text-foreground-subtle">{t('aspects.intro')}</p>
-      {harmony.length > 0 && (
-        <AspectGroup
-          accent="var(--color-positive)"
-          aspects={harmony}
-          label={t('aspects.harmonyGroup')}
-          onSelect={onSelect}
-          selection={selection}
-        />
-      )}
-      {tension.length > 0 && (
-        <AspectGroup
-          accent="var(--color-danger)"
-          aspects={tension}
-          label={t('aspects.tensionGroup')}
-          onSelect={onSelect}
-          selection={selection}
-        />
-      )}
+      <div className="mt-6 sm:grid sm:grid-cols-2 sm:gap-4">
+        {harmony.length > 0 && (
+          <AspectGroup
+            accent="var(--color-positive)"
+            aspects={harmony}
+            label={t('aspects.harmonyGroup')}
+            onSelect={onSelect}
+            selection={selection}
+          />
+        )}
+        {tension.length > 0 && (
+          <AspectGroup
+            accent="var(--color-danger)"
+            aspects={tension}
+            label={t('aspects.tensionGroup')}
+            onSelect={onSelect}
+            selection={selection}
+          />
+        )}
+      </div>
     </section>
   )
 }
@@ -66,7 +68,7 @@ function AspectGroup({ accent, aspects, label, onSelect, selection }: AspectGrou
   const t = useTranslations('Constellation')
 
   return (
-    <div className="mt-4">
+    <div>
       <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider" style={{ color: accent }}>
         {label}
       </p>

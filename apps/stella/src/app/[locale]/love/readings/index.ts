@@ -11,7 +11,7 @@ const loaders: Record<PublicLocale, () => Promise<LoveReadings>> = {
   ko: () => import('./ko').then((m) => m.readings),
   en: () => import('./en').then((m) => m.readings),
   ja: () => import('./ja').then((m) => m.readings),
-  'zh-CN': () => import('./zh-CN').then((m) => m.readings),
+  zh: () => import('./zh').then((m) => m.readings),
 }
 
 export function loadLoveReadings(locale: PublicLocale): Promise<LoveReadings> {

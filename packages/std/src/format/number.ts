@@ -1,4 +1,4 @@
-type Locale = 'en' | 'ja' | 'ko' | 'zh-CN' | 'zh-TW'
+type Locale = 'en' | 'ja' | 'ko' | 'zh'
 
 const THOUSAND = 1000
 const MILLION = 1000000

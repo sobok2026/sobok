@@ -691,10 +691,10 @@ export const messages = {
       emptyTitle: '空の結果です',
     },
   },
-  [Locale.ZH_CN]: {
+  [Locale.ZH]: {
     Metadata: {
       app: {
-        description: APP_METADATA[Locale.ZH_CN].description,
+        description: APP_METADATA[Locale.ZH].description,
       },
       newYear: {
         title: '新年倒计时',
