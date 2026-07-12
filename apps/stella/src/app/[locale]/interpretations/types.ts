@@ -1,7 +1,7 @@
 // Shared types + pair-key helpers for the per-locale reading modules. Kept apart
 // from the data files so each locale bundle stays pure string tables.
 
-import type { AspectType, PlanetId, SignId } from '../chart/types'
+import type { AspectType, ComputedPlanetId, ElementId, PlanetId, SignId } from '../chart/types'
 
 export type SignText = Record<SignId, string>
 export type PlanetReadings = Record<PlanetId, SignText>
@@ -24,6 +24,53 @@ export type HouseText = Record<HouseNumber, string>
  * so the panel simply omits the paragraph when the house is unknown.
  */
 export type PlanetHouseReadings = Partial<Record<PlanetId, HouseText>>
+
+export type ReportChapterId = 'closing' | 'core' | 'love' | 'mind' | 'money' | 'path' | 'root' | 'signature' | 'work'
+export type AngleKey = 'ascendant' | 'midheaven'
+
+/**
+ * Copy for the composed long-form reading. Fragment tables above stay the raw
+ * material; this adds the scaffolding the composer needs — chapter titles,
+ * kickers, bridge templates and the new axes (rising personas, planets on the
+ * angles, dignity, stellium). Locale-optional: the section renders only where
+ * this exists.
+ */
+export type ReportContent = {
+  title: string
+  subtitle: string
+  noTimeNote: string
+  chapterTitles: Record<ReportChapterId, string>
+  signatureIntro: string
+  kicker: {
+    sun: string
+    moon: string
+    mercury: string
+    venus: string
+    southNode: string
+    northNode: string
+    rising: string
+    aspect: string
+    house: string
+    dignity: string
+    stellium: string
+    ruler: string
+    rulerPlacement: string
+    mcRuler: string
+  }
+  angleKicker: Record<AngleKey, string>
+  rising: SignText
+  angles: Record<ComputedPlanetId, Record<AngleKey, string>>
+  dignity: { domicile: string; exaltation: string; chartRulerNote: string }
+  stellium: string
+  core: { bridge: string; bridgeNoTime: string }
+  path: { bridge: string; houseNote: string }
+  work: { mc: string }
+  money: { empty: string }
+  root: { ruler: string }
+  closing: Record<ElementId, string> & { outro: string }
+  /** CTA under the love chapter linking to the /love vertical — only where that page has copy. */
+  loveCta?: string
+}
 
 // The five major aspects map to four tones:
 //   conjunction — the two energies fuse into one

@@ -3,8 +3,9 @@
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
-import { degreeMinuteInSign, elementOfSign, houseOfLon, signOfLon } from '../chart/astrology'
+import { degreeMinuteInSign, elementOfSign, houseOfLon, modalityOfSign, signOfLon } from '../chart/astrology'
 import { ASPECT_STYLE, ELEMENT_COLORS, PLANET_GLYPHS, SIGNS } from '../chart/data'
+import { SIGN_RULERS } from '../chart/signature'
 import type { NatalChart, PlanetId, SignId } from '../chart/types'
 import styles from '../constellation.module.css'
 import { aspectTone, orbTier, pairKey } from '../interpretations/types'
@@ -33,9 +34,14 @@ export default function DetailPanel({ ascendant, chart, onClose, selection }: De
   }
 
   if (selection.kind === 'sign') {
-    const element = elementOfSign(selection.id as SignId)
+    const signId = selection.id as SignId
+    const element = elementOfSign(signId)
     const color = ELEMENT_COLORS[element]
     const glyph = SIGNS.find((s) => s.id === selection.id)?.glyph ?? '★'
+    const modality = modalityOfSign(signId)
+    const ruler = SIGN_RULERS[signId]
+    const residents = chart.planets.filter((p) => signOfLon(p.lon) === signId)
+    const descriptionKey = `signDescriptions.${signId}`
 
     return (
       <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
@@ -46,10 +52,38 @@ export default function DetailPanel({ ascendant, chart, onClose, selection }: De
           </span>
           <div>
             <p className="text-base font-bold text-foreground">{t(`signs.${selection.id}`)}</p>
-            <Chip color={color} label={t(`elements.${element}`)} />
+            <p className="text-xs text-foreground-subtle">{t(`signKeywords.${selection.id}`)}</p>
           </div>
         </div>
-        <p className="mt-3 text-sm leading-relaxed text-foreground-muted">{t(`signKeywords.${selection.id}`)}</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Chip color={color} label={t(`elements.${element}`)} />
+          <Chip color="var(--color-accent)" label={t(`modalities.${modality}`)} />
+          <Chip color="var(--color-accent)" label={t('panel.ruledBy', { planet: t(`planets.${ruler}`) })} />
+        </div>
+        {t.has(descriptionKey) && (
+          <p className="mt-3 text-sm leading-relaxed text-foreground-muted">{t(descriptionKey)}</p>
+        )}
+        {residents.length === 0 ? (
+          <p className="mt-3 border-t pt-3 text-sm leading-relaxed text-foreground-subtle">{t('panel.emptySign')}</p>
+        ) : (
+          <div className="mt-3 border-t pt-3">
+            <p className="text-xs font-semibold text-foreground-subtle">{t('panel.signResidents')}</p>
+            {residents.map((p) => {
+              const house = houseOfLon(p.lon, chart.cusps, ascendant)
+
+              return (
+                <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold" key={p.id} style={{ color }}>
+                  {glyphText(PLANET_GLYPHS[p.id])} {t(`planets.${p.id}`)}
+                  {house !== null && (
+                    <span className="font-medium text-foreground-faint">
+                      · {t('panel.area', { name: t(`houseThemes.${house}`) })}
+                    </span>
+                  )}
+                </p>
+              )
+            })}
+          </div>
+        )}
       </div>
     )
   }
@@ -213,7 +247,6 @@ export default function DetailPanel({ ascendant, chart, onClose, selection }: De
             {house !== null && <> · {t('panel.house', { n: house })}</>} ·{' '}
             {planet.retrograde ? t('panel.retrograde') : t('panel.direct')}
           </p>
-          <p className="mt-1 text-[11px] leading-relaxed text-foreground-faint">{t('panel.detailHint')}</p>
         </div>
       )}
     </div>
