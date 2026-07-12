@@ -326,6 +326,21 @@ export const planets: PlanetReadings = {
     pisces:
       "Your blessing flows, gentle and quiet, in the moment you give, imagine, and trust the flow. Empty your heart and give without holding back, and unexpected luck seeps in; that uncalculating generosity calls blessing in before you know it. Just know that giving it all away until you're empty will wear you out; refill yourself as much as you pour out. Opening your hand and trusting the current brings you the most beautiful gift of all.",
   },
+  // TODO(i18n): translate Black Moon Lilith sign readings (see ko.ts).
+  lilith: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
 }
 
 export const retro: RetroReadings = {
@@ -1068,6 +1083,17 @@ export const aspects: AspectPairReadings = {
     conjunction:
       "In you, the place of digging deep and transforming and the point where life catches a tailwind overlap. Pluto keeps company beside your Part of Fortune, so the deeper you immerse in the work others shy from, the greater the reward that follows. You're someone whose luck actually strengthens each time you pass through a crisis. Just know that intense blessing sits a paper's width from obsession — enjoy the immersion itself rather than gripping. As deep as you go, fortune deepens with you.",
   },
+  // TODO(i18n): translate Black Moon Lilith aspect readings (see ko.ts).
+  'sun-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'moon-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'mercury-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'venus-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'mars-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'jupiter-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'saturn-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'uranus-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'neptune-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'pluto-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
 }
 
 export const houses: PlanetHouseReadings = {
@@ -1252,6 +1278,21 @@ export const houses: PlanetHouseReadings = {
     10: "Joy is laid along the climbing road. Getting your charge done and rising stair by stair, even the heart smooths out. For you, work doesn't turn its back on delight. Achievement stacked with care returns as life's blessing, just as it is.",
     11: "Joy pools between people. In hours spent laughing with a crowd that fits, life's tailwind blows. Dreams dreamed together work out better for you than plans made alone. Staying near good people is your most natural habit of luck.",
     12: "Joy pools in stillness. In hours walking, resting and emptying alone, the heart's channel clears. What you've given in secret circles back and quietly guards you. Don't begrudge the hours withdrawn from the world. That's where your luck rises to fill.",
+  },
+  // TODO(i18n): translate Black Moon Lilith house readings (see ko.ts).
+  lilith: {
+    1: '',
+    2: '',
+    3: '',
+    4: '',
+    5: '',
+    6: '',
+    7: '',
+    8: '',
+    9: '',
+    10: '',
+    11: '',
+    12: '',
   },
 }
 

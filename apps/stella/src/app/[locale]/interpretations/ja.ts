@@ -326,6 +326,21 @@ export const planets: PlanetReadings = {
     pisces:
       'あなたの福は、与えて、想像して、流れに委ねる瞬間に静かに流れ込みます。心を空けて惜しみなく差し出すとき、思いがけない幸運が染み込んできますね。計算しないその寛大さが、いつの間にか福を呼び寄せたりもします。ただ、与え尽くして自分が空っぽになると疲れてしまうので、注ぐぶんだけ自分も満たしてください。手を開いて流れを信じるその心が、あなたにいちばん美しい贈り物を連れてきてくれます。',
   },
+  // TODO(i18n): translate Black Moon Lilith sign readings (see ko.ts).
+  lilith: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
 }
 
 export const retro: RetroReadings = {
@@ -1068,6 +1083,17 @@ export const aspects: AspectPairReadings = {
     conjunction:
       'あなたには、深く掘り下げて変える場所と、人生が追い風に乗る地点が重なっています。幸運の点のそばに冥王星がいるから、人が敬遠する深い仕事に没入するほど、大きな報酬がついてきますね。危機を通り抜けるたびに、むしろ運が強くなる人です。ただ、その強烈な福は執着と紙一重なので、握りしめるより没入そのものを楽しんでください。あなたが深くなったぶんだけ、幸運も一緒に深くなります。',
   },
+  // TODO(i18n): translate Black Moon Lilith aspect readings (see ko.ts).
+  'sun-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'moon-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'mercury-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'venus-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'mars-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'jupiter-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'saturn-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'uranus-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'neptune-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'pluto-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
 }
 
 export const houses: PlanetHouseReadings = {
@@ -1252,6 +1278,21 @@ export const houses: PlanetHouseReadings = {
     10: '喜びが、登り道の上に置かれています。任されたことをやり遂げて、一段ずつ登るとき、心まで穏やかになりますね。あなたにとって仕事は、楽しさと背中合わせではありません。真心で積んだ成果が、そのまま人生の福になって返ってくる人なのですから。',
     11: '喜びが、人々の間にたまります。気の合う仲間と一緒に笑う時間に、人生の追い風が吹きますね。一緒に見る夢が、ひとりの計画よりうまく解ける人です。良い人たちのそばに留まることが、あなたにはいちばん自然な幸運の習慣です。',
     12: '喜びが、静けさの中にたまります。ひとりで歩いて、休んで、空ける時間に、心の水路が澄んでいきますね。人知れず与えたものがめぐりめぐって、静かにあなたを守ってくれる人です。世界から退く時間を惜しまないでください。そこであなたの運が満ちてくるのですから。',
+  },
+  // TODO(i18n): translate Black Moon Lilith house readings (see ko.ts).
+  lilith: {
+    1: '',
+    2: '',
+    3: '',
+    4: '',
+    5: '',
+    6: '',
+    7: '',
+    8: '',
+    9: '',
+    10: '',
+    11: '',
+    12: '',
   },
 }
 

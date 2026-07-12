@@ -326,6 +326,21 @@ export const planets: PlanetReadings = {
     pisces:
       '你的福气，在给予、想象、随流而行的瞬间静静流入。倒空内心、慷慨给出时，意外的幸运悄悄渗进来。不精打细算的那份宽厚，不知不觉把福招来。只是全部给出去，自己被掏空就会疲惫，付出多少也要给自己补回多少。摊开手、相信流动的那颗心，会带来最美的礼物。',
   },
+  // TODO(i18n): translate Black Moon Lilith sign readings (see ko.ts).
+  lilith: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
 }
 
 export const retro: RetroReadings = {
@@ -1068,6 +1083,17 @@ export const aspects: AspectPairReadings = {
     conjunction:
       '在你身上，深挖与改变的位置和人生乘上顺风的地点重叠着。幸运点旁边有冥王星，越是投入别人避讳的深层事务，越有大的回报跟着来。你是每穿过一次危机、运反而变强的人。只是那份强烈的福和执着只隔一张纸，别攥紧，去享受投入本身。你有多深，幸运就跟着多深。',
   },
+  // TODO(i18n): translate Black Moon Lilith aspect readings (see ko.ts).
+  'sun-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'moon-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'mercury-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'venus-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'mars-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'jupiter-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'saturn-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'uranus-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'neptune-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'pluto-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
 }
 
 export const houses: PlanetHouseReadings = {
@@ -1252,6 +1278,21 @@ export const houses: PlanetHouseReadings = {
     10: '喜悦摆在上升的路上。做完接下的事、一阶一阶登上去时，连心都柔顺。对你来说，工作和快乐不背道而驰。用心垒起的成就，会原样变成人生的福回来。',
     11: '喜悦积在人与人之间。和合拍的伙伴一起笑的时间里，人生的顺风吹起。一起做的梦比独自的计划解得顺。留在好人身边，是你最自然的幸运习惯。',
     12: '喜悦积在宁静里。独自散步、休息、放空的时间里，心的水路变清。你悄悄给出的东西兜兜转转，安静地守护你。别心疼从世界退后的时间。你的运正是在那里涨满的。',
+  },
+  // TODO(i18n): translate Black Moon Lilith house readings (see ko.ts).
+  lilith: {
+    1: '',
+    2: '',
+    3: '',
+    4: '',
+    5: '',
+    6: '',
+    7: '',
+    8: '',
+    9: '',
+    10: '',
+    11: '',
+    12: '',
   },
 }
 
