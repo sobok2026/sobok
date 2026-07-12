@@ -3,12 +3,12 @@ import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { ORIGIN, SITE_NAME } from '@/constants'
-import { getLocaleFromParams } from '@/i18n/server'
+import { getLocale } from '@/i18n/server'
 
 import Constellation from './Constellation'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {
-  const locale = await getLocaleFromParams(params)
+  const locale = await getLocale(params)
   const t = await getTranslations({ locale, namespace: 'Constellation.meta' })
   const title = t('title')
   const description = t('description')
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
 }
 
 export default async function ConstellationPage({ params }: PageProps<'/[locale]'>) {
-  const locale = await getLocaleFromParams(params)
+  const locale = await getLocale(params)
   const t = await getTranslations({ locale, namespace: 'Constellation.meta' })
 
   const jsonLd = {

@@ -299,6 +299,12 @@ function TodayBody({
         >
           {t('toChart')}
         </Link>
+        <Link
+          className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
+          href={`${homeHref}love/`}
+        >
+          {t('toLove')}
+        </Link>
         <p className="mt-1 text-xs text-foreground-faint">{t('tomorrow')}</p>
       </div>
     </div>

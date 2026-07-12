@@ -93,14 +93,7 @@ export default function DetailPanel({ ascendant, chart, onClose, selection }: De
     const pairKeyId = pairKey(selection.a as PlanetId, selection.b as PlanetId)
     const tone = aspectTone(selection.aspectType)
     const specificKey = `readings.aspectPairs.${pairKeyId}.${tone}`
-    const legacyKey = `readings.aspectPairs.${pairKeyId}.friction`
-
-    const pairReadingKey = t.has(specificKey)
-      ? specificKey
-      : (tone === 'square' || tone === 'opposition') && t.has(legacyKey)
-        ? legacyKey
-        : `aspects.${selection.aspectType}Desc`
-
+    const pairReadingKey = t.has(specificKey) ? specificKey : `aspects.${selection.aspectType}Desc`
     const pairReading = t(pairReadingKey)
     const tier = orbTier(selection.orb)
     const intensityKey = tier ? `readings.aspectIntensity.${tier}` : null

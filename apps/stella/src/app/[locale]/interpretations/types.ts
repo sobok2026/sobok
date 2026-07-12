@@ -19,9 +19,8 @@ export type HouseText = Record<HouseNumber, string>
 
 /**
  * Placement-by-house readings — the sign says how a planet acts, the house says
- * where in life it plays out. Only the ten ephemeris bodies carry these; nodes
- * and fortune read through their sign/aspect lines. Houses need a birth time,
- * so the panel simply omits the paragraph when the house is unknown.
+ * where in life it plays out. All thirteen bodies carry these. Houses need a
+ * birth time, so the panel simply omits the paragraph when the house is unknown.
  */
 export type PlanetHouseReadings = Partial<Record<PlanetId, HouseText>>
 
@@ -32,8 +31,7 @@ export type AngleKey = 'ascendant' | 'midheaven'
  * Copy for the composed long-form reading. Fragment tables above stay the raw
  * material; this adds the scaffolding the composer needs — chapter titles,
  * kickers, bridge templates and the new axes (rising personas, planets on the
- * angles, dignity, stellium). Locale-optional: the section renders only where
- * this exists.
+ * angles, dignity, stellium). Every locale ships this in full.
  */
 export type ReportContent = {
   title: string
@@ -68,8 +66,8 @@ export type ReportContent = {
   money: { empty: string }
   root: { ruler: string }
   closing: Record<ElementId, string> & { outro: string }
-  /** CTA under the love chapter linking to the /love vertical — only where that page has copy. */
-  loveCta?: string
+  /** CTA under the love chapter linking to the /love vertical. */
+  loveCta: string
 }
 
 // The five major aspects map to four tones:
@@ -77,11 +75,9 @@ export type ReportContent = {
 //   flow        — trine + sextile, they support each other with ease
 //   square      — they grind against each other; an inner friction that drives growth
 //   opposition  — they swing to opposite poles; a seesaw often mirrored in others
-// 'friction' is a legacy key kept only as a fallback for locales not yet split
-// into square/opposition — those fall back to their single friction line.
 export type AspectTone = 'conjunction' | 'flow' | 'square' | 'opposition'
 
-export type PairText = Partial<Record<AspectTone | 'friction', string>>
+export type PairText = Partial<Record<AspectTone, string>>
 export type AspectPairReadings = Partial<Record<string, PairText>>
 
 /** Canonical ordering used to build a stable, order-independent key per pair. */

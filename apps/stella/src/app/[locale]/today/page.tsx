@@ -3,12 +3,12 @@ import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { SITE_NAME } from '@/constants'
-import { getLocaleFromParams } from '@/i18n/server'
+import { getLocale } from '@/i18n/server'
 
 import TodayFlow from './TodayFlow'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/today'>): Promise<Metadata> {
-  const locale = await getLocaleFromParams(params)
+  const locale = await getLocale(params)
   const t = await getTranslations({ locale, namespace: 'Today.meta' })
   const title = t('title')
   const description = t('description')
@@ -58,6 +58,6 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/today'>)
 }
 
 export default async function TodayPage({ params }: PageProps<'/[locale]/today'>) {
-  await getLocaleFromParams(params)
+  await getLocale(params)
   return <TodayFlow />
 }

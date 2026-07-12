@@ -9,7 +9,7 @@ import { Toaster } from 'sonner'
 
 import { ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getMessages } from '@/i18n/messages'
-import { getLocaleFromParams } from '@/i18n/server'
+import { getLocale } from '@/i18n/server'
 import Analytics from '@/lib/analytics/Analytics'
 import LocaleSwitcher from './LocaleSwitcher'
 
@@ -39,7 +39,7 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Promise<Metadata> {
-  const locale = await getLocaleFromParams(params)
+  const locale = await getLocale(params)
   const t = await getTranslations({ locale, namespace: 'Constellation.meta' })
 
   return {
@@ -62,7 +62,7 @@ export const viewport: Viewport = {
 }
 
 export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {
-  const locale = await getLocaleFromParams(params)
+  const locale = await getLocale(params)
   const messages = getMessages(locale)
   const t = await getTranslations({ locale, namespace: 'Constellation' })
 

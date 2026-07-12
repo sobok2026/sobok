@@ -5,7 +5,7 @@ import { setRequestLocale } from 'next-intl/server'
 
 import { routing } from './routing'
 
-export async function getLocaleFromParams(params: Promise<{ locale: string }>): Promise<PublicLocale> {
+export async function getLocale(params: Promise<{ locale: string }>): Promise<PublicLocale> {
   const { locale } = await params
 
   if (!hasLocale(routing.locales, locale)) {
