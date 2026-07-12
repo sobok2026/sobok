@@ -228,7 +228,6 @@ function TodayBody({ data, homeHref, onShare }: TodayBodyProps) {
                 )}
               />
             )}
-            <p className="pt-1 text-[11px] leading-relaxed text-foreground-faint">{t('personal.privacy')}</p>
           </div>
         ) : (
           <div className="mt-3 text-center">

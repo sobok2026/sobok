@@ -337,7 +337,6 @@ function LoveBody({ data, homeHref, locale, onShare }: LoveBodyProps) {
         >
           {t('toChart')}
         </Link>
-        <p className="mt-1 text-[11px] leading-relaxed text-foreground-faint">{t('privacy')}</p>
       </div>
     </div>
   )
