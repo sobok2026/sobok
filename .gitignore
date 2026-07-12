@@ -461,7 +461,9 @@ tmp
 /search
 data/model/
 
-.open-next/
-
 # GeoNames download cache for gen:cities
 apps/web/scripts/.cache/
+
+.open-next/
+.next-agent/
+.next-agent2/

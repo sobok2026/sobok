@@ -146,10 +146,10 @@ export const PLANET_GLYPHS: Record<PlanetId, string> = {
 export const ELEMENT_IDS: readonly ElementId[] = ['fire', 'earth', 'air', 'water']
 
 export const ELEMENT_COLORS: Record<ElementId, string> = {
-  fire: '#ff7a59',
-  earth: '#8bd66b',
-  air: '#ffd66b',
-  water: '#5eb3ff',
+  fire: '#f5866b',
+  earth: '#eacd84',
+  air: '#8fcf96',
+  water: '#6fb3f0',
 }
 
 export const ASPECT_STYLE: Record<AspectType, { color: string; dashed: boolean }> = {

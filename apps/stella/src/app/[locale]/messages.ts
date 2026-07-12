@@ -11,8 +11,9 @@ export const messages = {
   [Locale.KO]: {
     Constellation: {
       meta: {
-        title: '나의 별자리',
-        description: '인터랙티브 탄생 차트로 당신만의 우주를 탐험하세요.',
+        title: '나의 별자리 · 생년월일시로 그리는 탄생 차트',
+        description:
+          '생년월일과 태어난 시각으로 나만의 탄생 차트를 그려 보세요. 태양·달·상승 별자리와 행성 배치부터 하우스와 원소 밸런스까지 별자리판에서 한눈에 확인하고 오늘의 하늘이 만드는 흐름까지 읽어 드려요.',
       },
       localeSwitcher: '언어 선택',
       hero: {
@@ -176,8 +177,9 @@ export const messages = {
     },
     Today: {
       meta: {
-        title: '오늘의 흐름',
-        description: '오늘의 달과 행성이 만드는 하루의 결. 매일 새로 뜨는 하늘을 내 차트로 읽어 보세요.',
+        title: '오늘의 흐름 · 매일 보는 오늘의 별자리 운세',
+        description:
+          '오늘의 달과 행성이 만드는 하루의 결을 읽어 드려요. 달의 위상과 행성 역행을 한눈에 살펴보고 생년월일시를 입력하면 내 탄생 차트를 기준으로 오늘의 무대와 하이라이트 그리고 Do & Don’t까지 매일 새롭게 확인할 수 있어요.',
       },
       hero: {
         eyebrow: '매일 새로 뜨는 하늘',
@@ -228,8 +230,9 @@ export const messages = {
   [Locale.EN]: {
     Constellation: {
       meta: {
-        title: 'My Star Chart',
-        description: 'Explore your own universe through an interactive birth chart.',
+        title: 'My Star Chart · Interactive Birth Chart',
+        description:
+          'Draw your birth chart from your birth date, time, and place. See your Sun, Moon, and Rising signs, houses, and element balance on an interactive star map.',
       },
       localeSwitcher: 'Select language',
       hero: {
@@ -394,9 +397,9 @@ export const messages = {
     },
     Today: {
       meta: {
-        title: 'Today’s Flow',
+        title: 'Today’s Flow · Your Daily Astrology Forecast',
         description:
-          'The texture today’s Moon and planets give the day. Read the ever-changing sky through your own chart.',
+          'Read the texture today’s Moon and planets give the day. See the moon phase and retrogrades, then add your birth details for a daily reading from your own chart.',
       },
       hero: {
         eyebrow: 'A sky that rises anew each day',
@@ -447,8 +450,9 @@ export const messages = {
   [Locale.ZH_CN]: {
     Constellation: {
       meta: {
-        title: '我的星盘',
-        description: '通过互动式出生星盘，探索属于你的宇宙。',
+        title: '我的星盘 · 互动出生星盘',
+        description:
+          '用出生日期、时间和地点绘制专属出生星盘。从太阳、月亮、上升星座到行星配置、宫位与元素平衡，都能在互动星盘上一目了然，还能读懂今天的天空带来的流势。',
       },
       localeSwitcher: '选择语言',
       hero: {
@@ -608,8 +612,9 @@ export const messages = {
     },
     Today: {
       meta: {
-        title: '今日流势',
-        description: '今天的月亮与行星为一天织出的纹理。用你自己的星盘，读一读每天都不同的天空。',
+        title: '今日流势 · 每日更新的星象运势',
+        description:
+          '解读今天的月亮与行星为一天织出的纹理。一眼看懂月相与行星逆行，输入出生信息后还能以你自己的星盘为基准，每天获取今日解读与 Do & Don’t 提醒。',
       },
       hero: {
         eyebrow: '每天升起的新天空',
@@ -660,8 +665,9 @@ export const messages = {
   [Locale.JA]: {
     Constellation: {
       meta: {
-        title: 'わたしの星図',
-        description: 'インタラクティブな出生図で、あなただけの宇宙を探検しよう。',
+        title: 'わたしの星図 · インタラクティブ出生図',
+        description:
+          '生年月日と生まれた時刻からあなただけの出生図を描けます。太陽・月・上昇星座や惑星の配置からハウスとエレメントのバランスまでインタラクティブな星図でひと目で確認して今日の空が描く流れまで読み解けます。',
       },
       localeSwitcher: '言語を選択',
       hero: {
@@ -821,8 +827,9 @@ export const messages = {
     },
     Today: {
       meta: {
-        title: '今日の流れ',
-        description: '今日の月と惑星が一日に与える手ざわり。毎日生まれ変わる空を、あなたの星図で読んでみて。',
+        title: '今日の流れ · 毎日更新の星占い',
+        description:
+          '今日の月と惑星が一日に与える手ざわりを読み解きます。月の満ち欠けや惑星の逆行をひと目で確かめて生年月日と時刻を入れればあなたの星図をもとにした今日の読みとDo & Don’tまで毎日新しく確認できます。',
       },
       hero: {
         eyebrow: '毎日あたらしく昇る空',

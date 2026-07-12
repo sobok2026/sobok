@@ -23,6 +23,22 @@
       "port": 3010
     },
     {
+      "name": "stella-agent",
+      "runtimeExecutable": "env",
+      "runtimeArgs": ["NEXT_DIST_DIR=.next-agent", "bun", "run", "next", "dev"],
+      "cwd": "apps/stella",
+      "port": 3010,
+      "autoPort": true
+    },
+    {
+      "name": "stella-agent2",
+      "runtimeExecutable": "env",
+      "runtimeArgs": ["NEXT_DIST_DIR=.next-agent2", "bun", "run", "next", "dev"],
+      "cwd": "apps/stella",
+      "port": 3010,
+      "autoPort": true
+    },
+    {
       "name": "stella-preview",
       "runtimeExecutable": "bun",
       "runtimeArgs": ["run", "wrangler", "dev", "--port", "3011"],
