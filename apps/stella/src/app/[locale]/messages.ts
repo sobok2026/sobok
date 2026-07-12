@@ -300,7 +300,7 @@ export const messages = {
       hero: {
         eyebrow: '별이 읽는 사랑',
         title: '나의 연애운',
-        subtitle: '태어난 하늘에 새겨진 사랑의 결과 다가올 시기를 읽어 드려요.',
+        subtitle: '태어난 하늘에 새겨진 사랑의 결부터 다가올 시기까지 읽어 드려요.',
       },
       computing: '사랑의 별을 읽는 중...',
       style: {
@@ -327,7 +327,7 @@ export const messages = {
       },
       empty: {
         title: '내 차트가 있어야 읽을 수 있어요',
-        hint: '생년월일시를 입력하면 사랑의 결과 다가올 시기를 내 차트 기준으로 읽어 드려요.',
+        hint: '생년월일시를 입력하면 사랑의 결부터 다가올 시기까지 내 차트 기준으로 읽어 드려요.',
         cta: '✨ 내 차트 만들기',
       },
       comingSoon: {
