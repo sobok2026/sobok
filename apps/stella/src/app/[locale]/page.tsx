@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
       url: '/og-image.webp',
       width: 1200,
       height: 630,
-      alt: `${SITE_NAME} — ${title}`,
+      alt: `${SITE_NAME[locale]} — ${title}`,
       type: 'image/webp',
     },
   ]
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
       alternateLocale: Object.values(Locale)
         .map((entry) => LOCALE_OPEN_GRAPH_TAGS[entry])
         .filter((entry) => entry !== openGraphLocale),
-      siteName: SITE_NAME,
+      siteName: SITE_NAME[locale],
       type: 'website',
       url: canonical,
     },

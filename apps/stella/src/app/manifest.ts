@@ -9,7 +9,7 @@ export const dynamic = 'force-static'
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: '나의 별자리',
-    short_name: SITE_NAME,
+    short_name: SITE_NAME[DEFAULT_LOCALE],
     description: '상호작용 가능한 탄생 차트로 당신만의 우주를 탐험하세요.',
     id: '/',
     start_url: '/',

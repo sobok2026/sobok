@@ -7,7 +7,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 import { Toaster } from 'sonner'
 
-import { ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
+import { ADSENSE_ACCOUNT, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getLocale } from '@/i18n/server'
 import Analytics from '@/lib/analytics/Analytics'
 import LocaleSwitcher from './LocaleSwitcher'
@@ -40,15 +40,17 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Promise<Metadata> {
   const locale = await getLocale(params)
   const t = await getTranslations({ locale, namespace: 'Constellation.meta' })
+  const siteName = SITE_NAME[locale]
 
   return {
     metadataBase: new URL(ORIGIN),
     title: {
-      default: `${t('title')} - ${SITE_NAME}`,
-      template: `%s - ${SITE_NAME}`,
+      default: `${t('title')} - ${siteName}`,
+      template: `%s - ${siteName}`,
     },
     description: t('description'),
-    applicationName: SITE_NAME,
+    applicationName: siteName,
+    verification: { other: { 'google-adsense-account': ADSENSE_ACCOUNT } },
   }
 }
 
