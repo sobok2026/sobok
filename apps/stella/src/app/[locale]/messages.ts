@@ -4,7 +4,12 @@ import type { LocalizedMessages } from '@/i18n/messages'
 
 import { aspects as enAspectPairs, planets as enPlanets, retro as enRetro } from './interpretations/en'
 import { aspects as jaAspectPairs, planets as jaPlanets, retro as jaRetro } from './interpretations/ja'
-import { aspects as koAspectPairs, planets as koPlanets, retro as koRetro } from './interpretations/ko'
+import {
+  aspects as koAspectPairs,
+  houses as koHouses,
+  planets as koPlanets,
+  retro as koRetro,
+} from './interpretations/ko'
 import { aspects as zhAspectPairs, planets as zhPlanets, retro as zhRetro } from './interpretations/zh-CN'
 
 export const messages = {
@@ -106,6 +111,9 @@ export const messages = {
         risingUnknown: '시간 필요',
         invalidDate: '생년월일을 확인해 주세요.',
         error: '계산에 실패했어요. 다시 시도해 주세요.',
+        saveLabel: '이 브라우저에 출생 정보 저장',
+        saveHint:
+          '저장하면 오늘의 흐름에서 내 차트 기준 풀이를 볼 수 있어요. 정보는 이 기기에만 남고 서버로 전송되지 않아요.',
       },
       signs: {
         aries: '양자리',
@@ -167,6 +175,7 @@ export const messages = {
       readings: {
         planets: koPlanets,
         retro: koRetro,
+        houses: koHouses,
         aspectPairs: koAspectPairs,
         aspectIntensity: {
           tight: '이건 당신 차트에서 가장 큰 목소리를 내는 힘이에요.',
@@ -210,8 +219,6 @@ export const messages = {
         emptyHint: '생년월일시를 입력하면 오늘의 하늘이 내 차트의 어디를 지나는지 읽어 드려요.',
         cta: '✨ 내 차트 만들기',
         privacy: '출생 정보는 이 기기에만 저장돼요. 서버로 전송되지 않아요.',
-        clear: '저장된 출생 정보 지우기',
-        cleared: '이 기기에서 출생 정보를 지웠어요',
       },
       doDont: {
         title: '오늘의 Do & Don’t',
@@ -326,6 +333,9 @@ export const messages = {
         risingUnknown: 'Needs time',
         invalidDate: 'Please check the birth date.',
         error: 'Calculation failed. Please try again.',
+        saveLabel: 'Save my birth details in this browser',
+        saveHint:
+          'Saving lets Today’s Flow read the day from your own chart. Everything stays on this device and nothing is sent to a server.',
       },
       signs: {
         aries: 'Aries',
@@ -430,8 +440,6 @@ export const messages = {
         emptyHint: 'Enter your birth details and we’ll read where today’s sky moves through your own chart.',
         cta: '✨ Draw my chart',
         privacy: 'Your birth details are stored only on this device. Nothing is sent to a server.',
-        clear: 'Clear saved birth details',
-        cleared: 'Birth details removed from this device',
       },
       doDont: {
         title: 'Today’s Do & Don’t',
@@ -545,6 +553,8 @@ export const messages = {
         risingUnknown: '需要时间',
         invalidDate: '请检查出生日期。',
         error: '计算失败，请重试。',
+        saveLabel: '在此浏览器保存出生信息',
+        saveHint: '保存后，今日流势就能以你自己的星盘为基准解读。信息只保存在这台设备上，不会发送到服务器。',
       },
       signs: {
         aries: '白羊座',
@@ -645,8 +655,6 @@ export const messages = {
         emptyHint: '输入出生信息，我们会为你读出今天的天空正经过你星盘的哪个角落。',
         cta: '✨ 绘制我的星盘',
         privacy: '出生信息只保存在这台设备上，不会发送到服务器。',
-        clear: '清除已保存的出生信息',
-        cleared: '已从这台设备清除出生信息',
       },
       doDont: {
         title: '今天的 Do & Don’t',
@@ -760,6 +768,9 @@ export const messages = {
         risingUnknown: '時刻が必要',
         invalidDate: '生年月日を確認してください。',
         error: '計算に失敗しました。もう一度お試しください。',
+        saveLabel: 'このブラウザに出生情報を保存',
+        saveHint:
+          '保存すると「今日の流れ」であなたの星図をもとにした読みが見られます。情報はこの端末にだけ保存され、サーバーには送信されません。',
       },
       signs: {
         aries: 'おひつじ座',
@@ -860,8 +871,6 @@ export const messages = {
         emptyHint: '生年月日と時刻を入れると、今日の空があなたの星図のどこを通っているか読み解きます。',
         cta: '✨ わたしの星図を描く',
         privacy: '出生情報はこの端末にだけ保存されます。サーバーには送信されません。',
-        clear: '保存した出生情報を消す',
-        cleared: 'この端末から出生情報を消しました',
       },
       doDont: {
         title: '今日の Do & Don’t',

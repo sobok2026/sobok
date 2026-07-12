@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { type SubmitEvent, useEffect, useState } from 'react'
 
-import { loadBirth, saveBirth } from './birth-storage'
+import { clearBirth, loadBirth, saveBirth } from './birth-storage'
 import { CITY_GROUPS, DEFAULT_CITY_KEY, findCity } from './cities'
 import type { BirthInput } from './ephemeris'
 
@@ -24,6 +24,7 @@ export default function BirthForm({
   const [time, setTime] = useState('12:00')
   const [timeUnknown, setTimeUnknown] = useState(false)
   const [cityKey, setCityKey] = useState(DEFAULT_CITY_KEY)
+  const [save, setSave] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   function submit(e: SubmitEvent) {
@@ -39,12 +40,16 @@ export default function BirthForm({
     const city = findCity(cityKey)
     setError(null)
 
-    saveBirth({
-      date,
-      time,
-      timeKnown: !timeUnknown,
-      cityKey,
-    })
+    if (save) {
+      saveBirth({
+        date,
+        time,
+        timeKnown: !timeUnknown,
+        cityKey,
+      })
+    } else {
+      clearBirth()
+    }
 
     onSubmit({
       year,
@@ -68,6 +73,7 @@ export default function BirthForm({
       setTime(stored.time)
       setTimeUnknown(!stored.timeKnown)
       setCityKey(stored.cityKey)
+      setSave(true)
     }
   }, [])
 
@@ -116,6 +122,7 @@ export default function BirthForm({
             />
             {t('timeUnknown')}
           </label>
+          {timeUnknown && <p className="mt-1.5 text-[11px] leading-relaxed text-slate-500">{t('timeUnknownHint')}</p>}
         </div>
 
         <div>
@@ -156,7 +163,19 @@ export default function BirthForm({
         </div>
       </div>
 
-      {timeUnknown && <p className="mt-3 text-[11px] leading-relaxed text-slate-500">{t('timeUnknownHint')}</p>}
+      <div className="mt-4">
+        <label className="flex items-center gap-2 text-xs text-slate-300">
+          <input
+            checked={save}
+            className="h-4 w-4 accent-brand"
+            onChange={(e) => setSave(e.target.checked)}
+            type="checkbox"
+          />
+          {t('saveLabel')}
+        </label>
+        <p className="mt-1.5 text-[11px] leading-relaxed text-slate-500">{t('saveHint')}</p>
+      </div>
+
       {error && <p className="mt-3 text-xs text-[#fb7185]">{error}</p>}
 
       <button

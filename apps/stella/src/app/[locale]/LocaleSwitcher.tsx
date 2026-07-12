@@ -26,7 +26,7 @@ export default function LocaleSwitcher({ label, locale }: Props) {
     >
       {PUBLIC_LOCALES.map((entry) =>
         entry === locale ? (
-          <span key={entry} aria-current="page" className="font-semibold text-[#c9a8ff]">
+          <span key={entry} aria-current="page" className="font-semibold text-foreground">
             <Label name={LOCALE_NATIVE_NAMES[entry]} />
           </span>
         ) : (

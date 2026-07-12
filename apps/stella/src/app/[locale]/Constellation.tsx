@@ -937,6 +937,8 @@ function DetailPanel({
   const house = houseOfLon(planet.lon, chart.cusps, ascendant)
   const retroKey = `readings.retro.${planet.id}.${sign}`
   const reading = planet.retrograde && t.has(retroKey) ? t(retroKey) : t(`readings.planets.${planet.id}.${sign}`)
+  const houseKey = `readings.houses.${planet.id}.${house}`
+  const houseReading = house !== null && t.has(houseKey) ? t(houseKey) : null
 
   return (
     <div
@@ -966,6 +968,14 @@ function DetailPanel({
         </div>
       </div>
       <p className="mt-3 text-sm leading-relaxed text-slate-200">{reading}</p>
+      {house !== null && houseReading && (
+        <div className="mt-3 border-t border-white/10 pt-3">
+          <p className="text-xs font-semibold text-slate-400">
+            {t('panel.house', { n: house })} · {t(`houseThemes.${house}`)}
+          </p>
+          <p className="mt-1.5 text-sm leading-relaxed text-slate-200">{houseReading}</p>
+        </div>
+      )}
       <div className="mt-3 flex flex-wrap gap-2">
         <Chip color={color} label={`${t('panel.elementLabel')}: ${t(`elements.${element}`)}`} />
         <Chip color="#c9a8ff" label={`${t('panel.keywordLabel')}: ${t(`signKeywords.${sign}`)}`} />
