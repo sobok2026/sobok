@@ -4,7 +4,7 @@
 
 import { angularGap, signOfLon } from './astrology'
 import { PLANET_ORDER, SIGNS } from './data'
-import type { ChartAspect, NatalChart, PlanetId, PlanetPosition, SignId } from './types'
+import type { ChartAspect, ComputedPlanetId, NatalChart, PlanetId, PlanetPosition, SignId } from './types'
 
 export type AngleId = 'ascendant' | 'midheaven'
 
@@ -165,7 +165,9 @@ export function findStelliums(planets: readonly PlanetPosition[]): Stellium[] {
     .filter(([, ids]) => ids.length >= 3)
     .map(([sign, ids]) => ({
       sign,
-      planets: [...ids].sort((a, b) => PLANET_ORDER.indexOf(a as any) - PLANET_ORDER.indexOf(b as any)),
+      planets: [...ids].sort(
+        (a, b) => PLANET_ORDER.indexOf(a as ComputedPlanetId) - PLANET_ORDER.indexOf(b as ComputedPlanetId),
+      ),
     }))
 }
 

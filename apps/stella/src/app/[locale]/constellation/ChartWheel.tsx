@@ -23,6 +23,24 @@ import type { Selection } from './selection'
 const PLANET_BASE = 0.15
 const PLANET_STAGGER = 0.09
 
+// Enlarged tap target for the ASC/MC/IC/DSC labels: a transparent wedge in the
+// empty band just outside the zodiac ring. It grows outward and along the arc —
+// never inward, which would overlap the clickable sign sectors (radius ≤ 172).
+// The outer edge stays inside the viewBox (drawable radius ≈ 196), and the
+// tangential half-width shrinks when another angle is close so two wedges never
+// touch (down to the old r=10 circle's reach when angles crowd).
+const ANGLE_HIT_INNER = RADIUS.zodiacOuter
+const ANGLE_HIT_OUTER = RADIUS.zodiacOuter + 20
+const ANGLE_HIT_HALF_MAX = 6
+const ANGLE_HIT_HALF_MIN = 3.2
+const ANGLE_HIT_GAP = 1
+
+/** Smallest angle (deg) between two ecliptic longitudes. */
+function angleGap(a: number, b: number): number {
+  const d = Math.abs((((a - b) % 360) + 360) % 360)
+  return Math.min(d, 360 - d)
+}
+
 export interface ChartWheelProps {
   aspects: readonly ChartAspect[]
   chart: NatalChart
@@ -269,6 +287,14 @@ function Houses({ ascendant, cusps, midheaven, onSelect, onSelectAngle, selectio
         const pos = polar(lon, RADIUS.zodiacOuter + 8, ascendant)
         const active = selection?.kind === 'angle' && selection.id === id
 
+        // Shrink the wedge if a neighbouring angle is near so the two never overlap.
+        const nearest = angles.reduce(
+          (min, other) => (other.id === id ? min : Math.min(min, angleGap(lon, other.lon))),
+          Number.POSITIVE_INFINITY,
+        )
+
+        const hitHalf = Math.max(ANGLE_HIT_HALF_MIN, Math.min(ANGLE_HIT_HALF_MAX, nearest / 2 - ANGLE_HIT_GAP))
+
         // Selection intensifies the angle's own brand pink; the two-tier resting
         // opacity keeps ASC/MC dominant over their antipodes DSC/IC.
         const fill = active ? '#f5bcff' : primary ? 'rgba(245,188,255,0.85)' : 'rgba(245,188,255,0.5)'
@@ -303,7 +329,10 @@ function Houses({ ascendant, cusps, midheaven, onSelect, onSelectAngle, selectio
             {active && (
               <line stroke="#f5bcff" strokeWidth={0.9} x1={pos.x - 7} x2={pos.x + 7} y1={pos.y + 6} y2={pos.y + 6} />
             )}
-            <circle cx={pos.x} cy={pos.y} fill="transparent" r={10} />
+            <path
+              d={annularSector(lon - hitHalf, lon + hitHalf, ANGLE_HIT_OUTER, ANGLE_HIT_INNER, ascendant)}
+              fill="transparent"
+            />
             <circle className={styles.focusRing} cx={pos.x} cy={pos.y} r={10} />
           </g>
         )

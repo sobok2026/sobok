@@ -177,6 +177,23 @@ export async function computeChart(input: BirthInput): Promise<NatalChart> {
     retrograde: true,
   })
 
+  // Mean Black Moon Lilith — the Moon's mean apogee (empty focus of its orbit).
+  // Perigee longitude Π = L' − M' (Meeus mean elements); the apogee sits opposite.
+  // The apogee advances direct (~40.7°/yr), so mean Lilith is never retrograde.
+  const moonMeanLon = norm360(
+    218.3164477 + 481267.88123421 * T - 0.0015786 * T * T + (T * T * T) / 538841 - (T * T * T * T) / 65194000,
+  )
+
+  const moonMeanAnomaly = norm360(
+    134.9633964 + 477198.8675055 * T + 0.0087414 * T * T + (T * T * T) / 69699 - (T * T * T * T) / 14712000,
+  )
+
+  planets.push({
+    id: 'lilith',
+    lon: norm360(moonMeanLon - moonMeanAnomaly + 180),
+    retrograde: false,
+  })
+
   let ascendant: number | null = null
   let midheaven: number | null = null
   let cusps: number[] | null = null

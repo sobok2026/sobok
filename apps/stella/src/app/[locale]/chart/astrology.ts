@@ -27,7 +27,7 @@ const ASPECT_DEFS: readonly { type: AspectType; angle: number; orb: number }[] =
 const ASPECT_EXCLUDED: ReadonlySet<PlanetId> = new Set(['southNode'])
 
 /** Calculated points (not bodies); pairs among themselves carry no standard reading. */
-const POINT_IDS: ReadonlySet<PlanetId> = new Set(['northNode', 'fortune'])
+const POINT_IDS: ReadonlySet<PlanetId> = new Set(['northNode', 'fortune', 'lilith'])
 
 export function signOfLon(lon: number): SignId {
   return SIGNS[Math.floor((((lon % 360) + 360) % 360) / 30)].id

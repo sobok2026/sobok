@@ -34,7 +34,7 @@ export type ComputedPlanetId =
   | 'pluto'
 
 /** Every point placed on the wheel — the ten bodies plus derived sensitive points. */
-export type PlanetId = ComputedPlanetId | 'northNode' | 'southNode' | 'fortune'
+export type PlanetId = ComputedPlanetId | 'northNode' | 'southNode' | 'fortune' | 'lilith'
 
 export type AspectType = 'conjunction' | 'trine' | 'square' | 'sextile' | 'opposition'
 

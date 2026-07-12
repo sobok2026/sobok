@@ -19,7 +19,7 @@ export type HouseText = Record<HouseNumber, string>
 
 /**
  * Placement-by-house readings — the sign says how a planet acts, the house says
- * where in life it plays out. All thirteen bodies carry these. Houses need a
+ * where in life it plays out. All fourteen bodies carry these. Houses need a
  * birth time, so the panel simply omits the paragraph when the house is unknown.
  */
 export type PlanetHouseReadings = Partial<Record<PlanetId, HouseText>>
@@ -119,6 +119,7 @@ export const ASPECT_PAIR_ORDER: readonly PlanetId[] = [
   'pluto',
   'northNode',
   'fortune',
+  'lilith',
 ]
 
 export function pairKey(a: PlanetId, b: PlanetId): string {
