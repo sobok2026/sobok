@@ -1,4 +1,4 @@
-import type { AspectPairReadings, PlanetHouseReadings, PlanetReadings, RetroReadings } from './types'
+import type { AspectIntensity, AspectPairReadings, PlanetHouseReadings, PlanetReadings, RetroReadings } from './types'
 
 export const planets: PlanetReadings = {
   sun: {
@@ -1253,4 +1253,9 @@ export const houses: PlanetHouseReadings = {
     11: '喜びが、人々の間にたまります。気の合う仲間と一緒に笑う時間に、人生の追い風が吹きますね。一緒に見る夢が、ひとりの計画よりうまく解ける人です。良い人たちのそばに留まることが、あなたにはいちばん自然な幸運の習慣です。',
     12: '喜びが、静けさの中にたまります。ひとりで歩いて、休んで、空ける時間に、心の水路が澄んでいきますね。人知れず与えたものがめぐりめぐって、静かにあなたを守ってくれる人です。世界から退く時間を惜しまないでください。そこであなたの運が満ちてくるのですから。',
   },
+}
+
+export const aspectIntensity: AspectIntensity = {
+  tight: 'これはあなたのチャートでいちばん大きな声を出す力です。',
+  wide: '背景のようにほのかに敷かれたきめです。',
 }

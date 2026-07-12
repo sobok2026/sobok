@@ -8,7 +8,6 @@ import { getTranslations } from 'next-intl/server'
 import { Toaster } from 'sonner'
 
 import { ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
-import { getMessages } from '@/i18n/messages'
 import { getLocale } from '@/i18n/server'
 import Analytics from '@/lib/analytics/Analytics'
 import LocaleSwitcher from './LocaleSwitcher'
@@ -63,13 +62,12 @@ export const viewport: Viewport = {
 
 export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {
   const locale = await getLocale(params)
-  const messages = getMessages(locale)
   const t = await getTranslations({ locale, namespace: 'Constellation' })
 
   return (
     <html lang={locale}>
       <body className={`${PretendardVariable.className} antialiased`}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider>
           <LocaleSwitcher label={t('localeSwitcher')} locale={locale} />
           {children}
           <Toaster position="top-center" richColors theme="dark" />

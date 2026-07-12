@@ -1,33 +1,7 @@
 import { Locale, type PublicLocale } from '@sobok/domain/locale'
 
-import {
-  aspects as enAspectPairs,
-  houses as enHouses,
-  planets as enPlanets,
-  retro as enRetro,
-} from './interpretations/en'
-import {
-  aspects as jaAspectPairs,
-  houses as jaHouses,
-  planets as jaPlanets,
-  retro as jaRetro,
-} from './interpretations/ja'
-import {
-  aspects as koAspectPairs,
-  houses as koHouses,
-  planets as koPlanets,
-  retro as koRetro,
-} from './interpretations/ko'
-import { report as enReport } from './interpretations/report/en'
-import { report as jaReport } from './interpretations/report/ja'
-import { report as koReport } from './interpretations/report/ko'
-import { report as zhReport } from './interpretations/report/zh-CN'
-import {
-  aspects as zhAspectPairs,
-  houses as zhHouses,
-  planets as zhPlanets,
-  retro as zhRetro,
-} from './interpretations/zh-CN'
+export type Messages = { [key: string]: MessageValue }
+export type MessageValue = string | { [key: string]: MessageValue }
 
 export const messages = {
   [Locale.KO]: {
@@ -243,17 +217,6 @@ export const messages = {
       planetAliases: {
         fortune: '포르투나',
       },
-      readings: {
-        planets: koPlanets,
-        retro: koRetro,
-        houses: koHouses,
-        aspectPairs: koAspectPairs,
-        aspectIntensity: {
-          tight: '이건 당신 차트에서 가장 큰 목소리를 내는 힘이에요.',
-          wide: '은은하게 깔린, 배경 같은 결이에요.',
-        },
-      },
-      report: koReport,
       todayCta: '☾ 오늘의 흐름 보기',
       loveCta: '♡ 나의 연애운 보기',
     },
@@ -570,17 +533,6 @@ export const messages = {
       planetAliases: {
         fortune: 'Fortuna',
       },
-      readings: {
-        planets: enPlanets,
-        retro: enRetro,
-        houses: enHouses,
-        aspectPairs: enAspectPairs,
-        aspectIntensity: {
-          tight: 'This is one of the loudest voices in your whole chart.',
-          wide: 'A quiet undertone humming in the background.',
-        },
-      },
-      report: enReport,
       todayCta: '☾ See today’s flow',
       loveCta: '♡ See my love reading',
     },
@@ -895,17 +847,6 @@ export const messages = {
       planetAliases: {
         fortune: '福尔图娜',
       },
-      readings: {
-        planets: zhPlanets,
-        retro: zhRetro,
-        houses: zhHouses,
-        aspectPairs: zhAspectPairs,
-        aspectIntensity: {
-          tight: '这是你整张星盘里声音最大的力量之一。',
-          wide: '像背景一样安静铺着的纹理。',
-        },
-      },
-      report: zhReport,
       todayCta: '☾ 看看今天的流势',
       loveCta: '♡ 看我的恋爱运',
     },
@@ -1220,17 +1161,6 @@ export const messages = {
       planetAliases: {
         fortune: 'フォルトゥナ',
       },
-      readings: {
-        planets: jaPlanets,
-        retro: jaRetro,
-        houses: jaHouses,
-        aspectPairs: jaAspectPairs,
-        aspectIntensity: {
-          tight: 'これはあなたのチャートでいちばん大きな声を出す力です。',
-          wide: '背景のようにほのかに敷かれたきめです。',
-        },
-      },
-      report: jaReport,
       todayCta: '☾ 今日の流れを見る',
       loveCta: '♡ 私の恋愛運を見る',
     },

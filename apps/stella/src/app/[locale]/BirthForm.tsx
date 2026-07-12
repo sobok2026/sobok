@@ -12,13 +12,12 @@ const fieldClass =
 
 const labelClass = 'mb-1.5 block text-xs font-semibold text-foreground-muted'
 
-export default function BirthForm({
-  computing,
-  onSubmit,
-}: {
+type Props = {
   computing: boolean
   onSubmit: (input: BirthInput) => void
-}) {
+}
+
+export default function BirthForm({ computing, onSubmit }: Props) {
   const t = useTranslations('Constellation.form')
   const [date, setDate] = useState('2000-01-01')
   const [time, setTime] = useState('12:00')

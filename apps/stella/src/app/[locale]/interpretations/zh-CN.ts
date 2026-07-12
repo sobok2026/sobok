@@ -1,4 +1,4 @@
-import type { AspectPairReadings, PlanetHouseReadings, PlanetReadings, RetroReadings } from './types'
+import type { AspectIntensity, AspectPairReadings, PlanetHouseReadings, PlanetReadings, RetroReadings } from './types'
 
 export const planets: PlanetReadings = {
   sun: {
@@ -1253,4 +1253,9 @@ export const houses: PlanetHouseReadings = {
     11: '喜悦积在人与人之间。和合拍的伙伴一起笑的时间里，人生的顺风吹起。一起做的梦比独自的计划解得顺。留在好人身边，是你最自然的幸运习惯。',
     12: '喜悦积在宁静里。独自散步、休息、放空的时间里，心的水路变清。你悄悄给出的东西兜兜转转，安静地守护你。别心疼从世界退后的时间。你的运正是在那里涨满的。',
   },
+}
+
+export const aspectIntensity: AspectIntensity = {
+  tight: '这是你整张星盘里声音最大的力量之一。',
+  wide: '像背景一样安静铺着的纹理。',
 }

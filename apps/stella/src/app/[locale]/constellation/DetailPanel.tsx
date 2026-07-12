@@ -8,19 +8,21 @@ import { ASPECT_STYLE, ELEMENT_COLORS, PLANET_GLYPHS, SIGNS } from '../chart/dat
 import { SIGN_RULERS } from '../chart/signature'
 import type { NatalChart, PlanetId, SignId } from '../chart/types'
 import styles from '../constellation.module.css'
-import { aspectTone, orbTier, pairKey } from '../interpretations/types'
+import type { Interpretations } from '../interpretations/types'
+import { aspectTone, houseText, orbTier, pairKey } from '../interpretations/types'
 import { glyphText } from './glyphs'
 import type { Selection } from './selection'
 
 export interface DetailPanelProps {
   ascendant: number | null
   chart: NatalChart
+  interpretations: Interpretations
   onClose: () => void
   selection: Selection
 }
 
 /** The reading card under the wheel — one layout per selection kind (sign / aspect / house / planet). */
-export default function DetailPanel({ ascendant, chart, onClose, selection }: DetailPanelProps) {
+export default function DetailPanel({ ascendant, chart, interpretations, onClose, selection }: DetailPanelProps) {
   const t = useTranslations('Constellation')
   const [showDetail, setShowDetail] = useState(false)
 
@@ -92,12 +94,9 @@ export default function DetailPanel({ ascendant, chart, onClose, selection }: De
     const color = ASPECT_STYLE[selection.aspectType].color
     const pairKeyId = pairKey(selection.a as PlanetId, selection.b as PlanetId)
     const tone = aspectTone(selection.aspectType)
-    const specificKey = `readings.aspectPairs.${pairKeyId}.${tone}`
-    const pairReadingKey = t.has(specificKey) ? specificKey : `aspects.${selection.aspectType}Desc`
-    const pairReading = t(pairReadingKey)
     const tier = orbTier(selection.orb)
-    const intensityKey = tier ? `readings.aspectIntensity.${tier}` : null
-    const intensity = intensityKey && t.has(intensityKey) ? t(intensityKey) : null
+    const intensity = tier ? interpretations.aspectIntensity[tier] : null
+    const pairReading = interpretations.aspects[pairKeyId]?.[tone] ?? t(`aspects.${selection.aspectType}Desc`)
 
     return (
       <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
@@ -160,7 +159,7 @@ export default function DetailPanel({ ascendant, chart, onClose, selection }: De
           residents.map((p) => {
             const residentSign = signOfLon(p.lon)
             const residentColor = ELEMENT_COLORS[elementOfSign(residentSign)]
-            const readingKey = `readings.houses.${p.id}.${n}`
+            const reading = houseText(interpretations.houses[p.id], n)
 
             return (
               <div className="mt-3 border-t pt-3" key={p.id}>
@@ -168,9 +167,7 @@ export default function DetailPanel({ ascendant, chart, onClose, selection }: De
                   {glyphText(PLANET_GLYPHS[p.id])} {t(`planets.${p.id}`)}
                   <span className="font-medium text-foreground-faint">· {t(`signs.${residentSign}`)}</span>
                 </p>
-                {t.has(readingKey) && (
-                  <p className="mt-1.5 text-sm leading-relaxed text-foreground-secondary">{t(readingKey)}</p>
-                )}
+                {reading && <p className="mt-1.5 text-sm leading-relaxed text-foreground-secondary">{reading}</p>}
               </div>
             )
           })
@@ -190,8 +187,8 @@ export default function DetailPanel({ ascendant, chart, onClose, selection }: De
   const color = ELEMENT_COLORS[element]
   const dm = degreeMinuteInSign(planet.lon)
   const house = houseOfLon(planet.lon, chart.cusps, ascendant)
-  const retroKey = `readings.retro.${planet.id}.${sign}`
-  const reading = planet.retrograde && t.has(retroKey) ? t(retroKey) : t(`readings.planets.${planet.id}.${sign}`)
+  const retroReading = planet.retrograde ? interpretations.retro[planet.id]?.[sign] : undefined
+  const reading = retroReading ?? interpretations.planets[planet.id][sign]
 
   return (
     <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>

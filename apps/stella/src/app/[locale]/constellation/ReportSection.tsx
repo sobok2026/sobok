@@ -4,23 +4,33 @@ import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 
 import type { ChartAspect, NatalChart } from '../chart/types'
+import type { Interpretations } from '../interpretations/types'
 import { buildReport } from './report'
 
 /**
  * The composed long-form reading below the wheel — weighted signature first,
  * then life-theme chapters.
  */
-export default function ReportSection({ aspects, chart }: { aspects: ChartAspect[]; chart: NatalChart }) {
+export default function ReportSection({
+  aspects,
+  chart,
+  interpretations,
+}: {
+  aspects: ChartAspect[]
+  chart: NatalChart
+  interpretations: Interpretations
+}) {
   const t = useTranslations('Constellation')
   const locale = useLocale()
-  const chapters = buildReport(chart, aspects, t)
+  const { report } = interpretations
+  const chapters = buildReport(chart, aspects, interpretations, t)
 
   return (
     <section className="w-full">
       <header className="text-center">
-        <h2 className="text-lg font-bold text-foreground">{t('report.title')}</h2>
-        <p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-foreground-subtle">{t('report.subtitle')}</p>
-        {chart.ascendant === null && <p className="mt-2 text-[11px] text-foreground-faint">{t('report.noTimeNote')}</p>}
+        <h2 className="text-lg font-bold text-foreground">{report.title}</h2>
+        <p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-foreground-subtle">{report.subtitle}</p>
+        {chart.ascendant === null && <p className="mt-2 text-[11px] text-foreground-faint">{report.noTimeNote}</p>}
       </header>
       <div className="mt-4 space-y-4">
         {chapters.map((chapter) => (
@@ -40,7 +50,7 @@ export default function ReportSection({ aspects, chart }: { aspects: ChartAspect
                   className="text-xs font-semibold text-accent underline-offset-4 transition hover:underline"
                   href={`/${locale}/love/`}
                 >
-                  {t('report.loveCta')}
+                  {report.loveCta}
                 </Link>
               </p>
             )}

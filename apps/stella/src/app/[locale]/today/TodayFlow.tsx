@@ -122,19 +122,15 @@ export default function TodayFlow() {
 
 type T = ReturnType<typeof useTranslations>
 
-function TodayBody({
-  data,
-  homeHref,
-  onShare,
-  t,
-  tc,
-}: {
+type TodayBodyProps = {
   data: Data
   homeHref: string
   onShare: () => void
   t: T
   tc: T
-}) {
+}
+
+function TodayBody({ data, homeHref, onShare, t, tc }: TodayBodyProps) {
   const { sky, readings, personal, dateKey } = data
   const element = elementOfSign(sky.moonSign)
   const color = ELEMENT_COLORS[element]

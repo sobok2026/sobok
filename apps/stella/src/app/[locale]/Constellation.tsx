@@ -1,5 +1,6 @@
 'use client'
 
+import type { PublicLocale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
@@ -26,21 +27,29 @@ import {
   selectionKey,
 } from './constellation/selection'
 import { computeChart } from './ephemeris'
+import { loadInterpretations } from './interpretations'
+import type { Interpretations } from './interpretations/types'
 import Starfield from './Starfield'
+
+/** Chart and its locale's reading tables arrive together — one reveal, no half-loaded panel. */
+type ChartData = {
+  chart: NatalChart
+  interpretations: Interpretations
+}
 
 export default function Constellation() {
   const t = useTranslations('Constellation')
-  const locale = useLocale()
+  const locale = useLocale() as PublicLocale
   // The love vertical only exists where its copy does (Korean for now).
   const hasLove = (t as unknown as { has(key: string): boolean }).has('loveCta')
-  const [chart, setChart] = useState<NatalChart | null>(null)
+  const [data, setData] = useState<ChartData | null>(null)
   const [computing, setComputing] = useState(false)
   const [runId, setRunId] = useState(0)
   const [selection, setSelection] = useState<Selection>(null)
   const wheelRef = useRef<HTMLDivElement>(null)
 
-  const revealed = chart !== null
-  const activeChart = chart ?? DEFAULT_CHART
+  const revealed = data !== null
+  const activeChart = data?.chart ?? DEFAULT_CHART
   const { ascendant, cusps } = activeChart
 
   const aspects = computeAspects(activeChart.planets)
@@ -50,16 +59,15 @@ export default function Constellation() {
   const sunLon = activeChart.planets.find((p) => p.id === 'sun')?.lon ?? 0
   const moonLon = activeChart.planets.find((p) => p.id === 'moon')?.lon ?? 0
   const risingSign = ascendant !== null ? signOfLon(ascendant) : null
-
   const brightPlanets = computeBrightPlanets(selection, aspects, activeChart.planets, cusps, ascendant)
 
   async function handleSubmit(input: Parameters<typeof computeChart>[0]) {
     setComputing(true)
 
     try {
-      const result = await computeChart(input)
+      const [chart, interpretations] = await Promise.all([computeChart(input), loadInterpretations(locale)])
       setSelection(null)
-      setChart(result)
+      setData({ chart, interpretations })
       setRunId((n) => n + 1)
       track('chart_open')
     } catch {
@@ -71,7 +79,7 @@ export default function Constellation() {
 
   function backToForm() {
     setSelection(null)
-    setChart(null)
+    setData(null)
   }
 
   async function share() {
@@ -188,7 +196,7 @@ export default function Constellation() {
     <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-[calc(4rem+var(--safe-area-top))] text-foreground sm:px-4 md:pt-[calc(2rem+var(--safe-area-top))]">
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-lg flex-col items-center">
+      <div className="relative z-10 mx-auto flex w-full max-w-xl flex-col items-center">
         {/* Hero */}
         <header className="mb-6 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{t('hero.eyebrow')}</p>
@@ -262,11 +270,12 @@ export default function Constellation() {
         )}
 
         {/* Detail panel */}
-        {revealed && (
+        {data && (
           <div className="mt-4 w-full" key={`panel-${selectionKey(selection)}`}>
             <DetailPanel
               ascendant={ascendant}
-              chart={activeChart}
+              chart={data.chart}
+              interpretations={data.interpretations}
               onClose={() => setSelection(null)}
               selection={selection}
             />
@@ -274,11 +283,11 @@ export default function Constellation() {
         )}
 
         {/* Elements + aspects + actions */}
-        {revealed && (
+        {data && (
           <div className="mt-6 w-full space-y-6" key={`extras-${runId}`}>
-            <ElementBalance counts={counts} dominant={dominant} total={activeChart.planets.length} />
+            <ElementBalance counts={counts} dominant={dominant} total={data.chart.planets.length} />
             <AspectSection aspects={aspects} onSelect={toggleAspectAndScroll} selection={selection} />
-            <ReportSection aspects={aspects} chart={activeChart} />
+            <ReportSection aspects={aspects} chart={data.chart} interpretations={data.interpretations} />
             <div className="flex flex-col items-center gap-3">
               <button
                 className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 hover:bg-surface-3"

@@ -14,6 +14,15 @@ export type PartnerPersona = {
   friction: string
 }
 
+export type LoveTiming = {
+  jupiterVenus: Record<AspectTone, string>
+  jupiterDescendant: string
+  saturnVenus: Record<AspectTone, string>
+  venusRetro: string
+  /** Shown when the year ahead holds no scanned windows. */
+  empty: string
+}
+
 export type LoveReadings = {
   /** Mars by sign through the attraction lens — how desire approaches. */
   marsInLove: Record<SignId, string>
@@ -23,12 +32,5 @@ export type LoveReadings = {
   persona: Record<SignId, PartnerPersona>
   /** A body living in the 7th house colors the partnership stage. */
   seventhPlanet: Record<ComputedPlanetId, string>
-  timing: {
-    jupiterVenus: Record<AspectTone, string>
-    jupiterDescendant: string
-    saturnVenus: Record<AspectTone, string>
-    venusRetro: string
-    /** Shown when the year ahead holds no scanned windows. */
-    empty: string
-  }
+  timing: LoveTiming
 }

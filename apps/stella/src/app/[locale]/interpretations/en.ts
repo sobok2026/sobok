@@ -1,4 +1,4 @@
-import type { AspectPairReadings, PlanetHouseReadings, PlanetReadings, RetroReadings } from './types'
+import type { AspectIntensity, AspectPairReadings, PlanetHouseReadings, PlanetReadings, RetroReadings } from './types'
 
 export const planets: PlanetReadings = {
   sun: {
@@ -1253,4 +1253,9 @@ export const houses: PlanetHouseReadings = {
     11: "Joy pools between people. In hours spent laughing with a crowd that fits, life's tailwind blows. Dreams dreamed together work out better for you than plans made alone. Staying near good people is your most natural habit of luck.",
     12: "Joy pools in stillness. In hours walking, resting and emptying alone, the heart's channel clears. What you've given in secret circles back and quietly guards you. Don't begrudge the hours withdrawn from the world. That's where your luck rises to fill.",
   },
+}
+
+export const aspectIntensity: AspectIntensity = {
+  tight: 'This is one of the loudest voices in your whole chart.',
+  wide: 'A quiet undertone humming in the background.',
 }

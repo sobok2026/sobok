@@ -1,4 +1,4 @@
-import type { AspectPairReadings, PlanetHouseReadings, PlanetReadings, RetroReadings } from './types'
+import type { AspectIntensity, AspectPairReadings, PlanetHouseReadings, PlanetReadings, RetroReadings } from './types'
 
 export const planets: PlanetReadings = {
   sun: {
@@ -1253,4 +1253,9 @@ export const houses: PlanetHouseReadings = {
     11: '기쁨이 사람들 사이에 고여요. 마음 맞는 무리와 함께 웃는 시간에 삶의 순풍이 불죠. 함께 꾸는 꿈이 혼자의 계획보다 잘 풀리는 사람이에요. 좋은 사람들 곁에 머무는 것이 당신에겐 가장 자연스러운 행운의 습관이에요.',
     12: '기쁨이 고요 속에 고여요. 혼자 걷고 쉬고 비우는 시간에 마음의 물길이 맑아지죠. 남몰래 베푼 것들이 돌고 돌아 조용히 당신을 지켜 주는 사람이에요. 세상에서 물러나는 시간을 아까워하지 마세요. 거기서 당신의 운이 차올라요.',
   },
+}
+
+export const aspectIntensity: AspectIntensity = {
+  tight: '이건 당신 차트에서 가장 큰 목소리를 내는 힘이에요.',
+  wide: '은은하게 깔린 배경 같은 결이에요.',
 }
