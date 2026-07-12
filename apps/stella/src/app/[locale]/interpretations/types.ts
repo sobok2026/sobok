@@ -33,28 +33,30 @@ export type AngleKey = 'ascendant' | 'midheaven'
  * kickers, bridge templates and the new axes (rising personas, planets on the
  * angles, dignity, stellium). Every locale ships this in full.
  */
+export type ReportKicker = {
+  sun: string
+  moon: string
+  mercury: string
+  venus: string
+  southNode: string
+  northNode: string
+  rising: string
+  aspect: string
+  house: string
+  dignity: string
+  stellium: string
+  ruler: string
+  rulerPlacement: string
+  mcRuler: string
+}
+
 export type ReportContent = {
   title: string
   subtitle: string
   noTimeNote: string
   chapterTitles: Record<ReportChapterId, string>
   signatureIntro: string
-  kicker: {
-    sun: string
-    moon: string
-    mercury: string
-    venus: string
-    southNode: string
-    northNode: string
-    rising: string
-    aspect: string
-    house: string
-    dignity: string
-    stellium: string
-    ruler: string
-    rulerPlacement: string
-    mcRuler: string
-  }
+  kicker: ReportKicker
   angleKicker: Record<AngleKey, string>
   rising: SignText
   angles: Record<ComputedPlanetId, Record<AngleKey, string>>
@@ -79,6 +81,29 @@ export type AspectTone = 'conjunction' | 'flow' | 'square' | 'opposition'
 
 export type PairText = Partial<Record<AspectTone, string>>
 export type AspectPairReadings = Partial<Record<string, PairText>>
+
+/** Call-out lines for orb tiers — tight aspects get emphasis, wide ones a softener. */
+export type AspectIntensity = Record<'tight' | 'wide', string>
+
+/** Everything one locale's natal-reading chunk carries, as `loadInterpretations` returns it. */
+export type Interpretations = {
+  planets: PlanetReadings
+  retro: RetroReadings
+  houses: PlanetHouseReadings
+  aspects: AspectPairReadings
+  aspectIntensity: AspectIntensity
+  report: ReportContent
+}
+
+/** Replaces `{key}` placeholders in reading copy — the data modules use plain templates, not ICU. */
+export function fill(template: string, params: Record<string, number | string>): string {
+  return template.replace(/\{(\w+)\}/g, (match, key: string) => (key in params ? String(params[key]) : match))
+}
+
+/** Narrows a runtime house number (1–12 or out-of-range) onto the exhaustive house table. */
+export function houseText(table: HouseText | undefined, n: number): string | undefined {
+  return table?.[n as HouseNumber]
+}
 
 /** Canonical ordering used to build a stable, order-independent key per pair. */
 export const ASPECT_PAIR_ORDER: readonly PlanetId[] = [

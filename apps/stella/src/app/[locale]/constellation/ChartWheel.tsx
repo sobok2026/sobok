@@ -221,16 +221,19 @@ function Houses({ ascendant, cusps, midheaven, onSelect, selection }: HousesProp
               role="button"
               tabIndex={0}
             >
+              {/* Houses carry a neutral (white-alpha) identity, so selection reads as a
+                  brighter version of their own colour — matching the sign/planet idiom.
+                  Brand pink stays reserved for the ASC/MC axes and labels below. */}
               <path
                 d={annularSector(lon, lon + span, RADIUS.houseOuter, RADIUS.houseInner, ascendant)}
-                fill="#f5bcff"
+                fill="#ffffff"
                 fillOpacity={active ? 0.16 : 0.02}
-                stroke={active ? 'rgba(245,188,255,0.5)' : 'transparent'}
+                stroke={active ? 'rgba(255,255,255,0.5)' : 'transparent'}
                 strokeWidth={active ? 0.8 : 0}
               />
               <text
                 dominantBaseline="central"
-                fill={active ? 'rgba(245,188,255,0.9)' : 'rgba(255,255,255,0.4)'}
+                fill={active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)'}
                 fontSize={8}
                 textAnchor="middle"
                 x={labelPos.x}

@@ -1,8 +1,8 @@
 export enum Locale {
   KO = 'ko',
   EN = 'en',
-  JA = 'ja',
   ZH = 'zh',
+  JA = 'ja',
 }
 
 export const DEFAULT_LOCALE = Locale.KO
