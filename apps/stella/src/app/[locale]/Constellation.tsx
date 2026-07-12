@@ -135,6 +135,12 @@ export default function Constellation() {
     })
   }
 
+  // Big 3 cards always focus their own planet — no aspect-combining. Unlike a wheel
+  // tap, tapping Sun then Moon shows the Moon, not the Sun–Moon relationship.
+  function togglePlanet(id: PlanetId) {
+    setSelection((prev) => (prev?.kind === 'planet' && prev.id === id ? null : { kind: 'planet', id }))
+  }
+
   function toggleSign(id: SignId) {
     setSelection((prev) => (prev?.kind === 'sign' && prev.id === id ? null : { kind: 'sign', id }))
   }
@@ -222,7 +228,7 @@ export default function Constellation() {
               glyph="☉"
               hint={t('big3.sunHint')}
               label={t('big3.sunLabel')}
-              onClick={() => selectPlanet('sun')}
+              onClick={() => togglePlanet('sun')}
               value={t(`signs.${signOfLon(sunLon)}`)}
             />
             <Big3Card
@@ -230,7 +236,7 @@ export default function Constellation() {
               glyph="☾"
               hint={t('big3.moonHint')}
               label={t('big3.moonLabel')}
-              onClick={() => selectPlanet('moon')}
+              onClick={() => togglePlanet('moon')}
               value={t(`signs.${signOfLon(moonLon)}`)}
             />
             <Big3Card
