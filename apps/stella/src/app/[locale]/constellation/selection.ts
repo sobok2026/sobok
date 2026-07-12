@@ -2,12 +2,13 @@
 // which planets and aspect lines stay bright for the current selection.
 
 import { houseOfLon, signOfLon } from '../chart/astrology'
-import type { AspectType, ChartAspect, PlanetPosition } from '../chart/types'
+import type { AspectType, ChartAspect, HouseNumber, PlanetId, PlanetPosition, SignId } from '../chart/types'
 
 export type Selection =
-  | { kind: 'planet' | 'sign'; id: string }
-  | { kind: 'aspect'; a: string; b: string; aspectType: AspectType; orb: number }
-  | { kind: 'house'; n: number }
+  | { kind: 'planet'; id: PlanetId }
+  | { kind: 'sign'; id: SignId }
+  | { kind: 'aspect'; a: PlanetId; b: PlanetId; aspectType: AspectType; orb: number }
+  | { kind: 'house'; n: HouseNumber }
   | null
 
 /** True when `selection` is exactly this aspect (same pair and type). */

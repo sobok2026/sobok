@@ -2,7 +2,16 @@
 // detection between bodies. No rendering concerns — geometry lives in `geometry.ts`.
 
 import { SIGNS } from './data'
-import type { AspectType, ChartAspect, ElementId, ModalityId, PlanetId, PlanetPosition, SignId } from './types'
+import type {
+  AspectType,
+  ChartAspect,
+  ElementId,
+  HouseNumber,
+  ModalityId,
+  PlanetId,
+  PlanetPosition,
+  SignId,
+} from './types'
 
 /** Major aspects with their exact angle and orb (max allowed deviation, degrees). */
 const ASPECT_DEFS: readonly { type: AspectType; angle: number; orb: number }[] = [
@@ -38,7 +47,7 @@ export function degreeMinuteInSign(lon: number): { degree: number; minute: numbe
 }
 
 /** House number 1–12 — Placidus when cusps are given, else equal from the ascendant. */
-export function houseOfLon(lon: number, cusps: number[] | null, ascendant: number | null): number | null {
+export function houseOfLon(lon: number, cusps: number[] | null, ascendant: number | null): HouseNumber | null {
   if (cusps) {
     const l = ((lon % 360) + 360) % 360
 
@@ -48,7 +57,7 @@ export function houseOfLon(lon: number, cusps: number[] | null, ascendant: numbe
       const offset = (((l - start) % 360) + 360) % 360
 
       if (offset < span) {
-        return h + 1
+        return (h + 1) as HouseNumber
       }
     }
 
@@ -59,7 +68,7 @@ export function houseOfLon(lon: number, cusps: number[] | null, ascendant: numbe
     return null
   }
 
-  return Math.floor(((((lon - ascendant) % 360) + 360) % 360) / 30) + 1
+  return (Math.floor(((((lon - ascendant) % 360) + 360) % 360) / 30) + 1) as HouseNumber
 }
 
 export function elementOfSign(id: SignId): ElementId {

@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from 'next-intl'
 
 import type { ChartAspect, NatalChart } from '../chart/types'
 import type { Interpretations } from '../interpretations/types'
-import { buildReport } from './report'
+import { buildReport, type Translator } from './report'
 
 /**
  * The composed long-form reading below the wheel — weighted signature first,
@@ -23,7 +23,10 @@ export default function ReportSection({
   const t = useTranslations('Constellation')
   const locale = useLocale()
   const { report } = interpretations
-  const chapters = buildReport(chart, aspects, interpretations, t)
+
+  // report.ts is decoupled from next-intl (its own loose Translator); the typed
+  // `t` only supplies the name vocabulary, so hand it across the seam as that type.
+  const chapters = buildReport(chart, aspects, interpretations, t as Translator)
 
   return (
     <section className="w-full">

@@ -14,7 +14,7 @@ import {
   TOKEN,
   VIEW,
 } from '../chart/geometry'
-import type { ChartAspect, NatalChart } from '../chart/types'
+import type { ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from '../chart/types'
 import styles from '../constellation.module.css'
 import { glyphText } from './glyphs'
 import type { Selection } from './selection'
@@ -28,9 +28,9 @@ export interface ChartWheelProps {
   chart: NatalChart
   isAspectDimmed: (asp: ChartAspect) => boolean
   isPlanetDimmed: (id: string) => boolean
-  onSelectHouse: (n: number) => void
-  onSelectPlanet: (id: string) => void
-  onSelectSign: (id: string) => void
+  onSelectHouse: (n: HouseNumber) => void
+  onSelectPlanet: (id: PlanetId) => void
+  onSelectSign: (id: SignId) => void
   revealed: boolean
   selection: Selection
 }
@@ -111,7 +111,7 @@ function Rings() {
 interface SectorsProps {
   ascendant: number
   interactive: boolean
-  onSelect: (id: string) => void
+  onSelect: (id: SignId) => void
   selection: Selection
 }
 
@@ -174,7 +174,7 @@ interface HousesProps {
   ascendant: number
   cusps: number[]
   midheaven: number | null
-  onSelect: (n: number) => void
+  onSelect: (n: HouseNumber) => void
   selection: Selection
 }
 
@@ -192,7 +192,7 @@ function Houses({ ascendant, cusps, midheaven, onSelect, selection }: HousesProp
         const inner = polar(lon, RADIUS.aspect, ascendant)
         const outer = polar(lon, RADIUS.houseOuter, ascendant)
         const isAngle = k === 0 || k === 3 || k === 6 || k === 9 // ASC / IC / DSC / MC axes
-        const n = k + 1
+        const n = (k + 1) as HouseNumber
         const span = (((cusps[(k + 1) % 12] - lon) % 360) + 360) % 360
         const labelPos = polar(lon + span / 2, RADIUS.houseLabel, ascendant)
         const active = selection?.kind === 'house' && selection.n === n
@@ -305,7 +305,7 @@ function Aspects({ aspects, isDimmed, pointById }: AspectsProps) {
 
 interface PlanetsProps {
   isDimmed: (id: string) => boolean
-  onSelect: (id: string) => void
+  onSelect: (id: PlanetId) => void
   placed: PlacedPlanet[]
   selection: Selection
 }

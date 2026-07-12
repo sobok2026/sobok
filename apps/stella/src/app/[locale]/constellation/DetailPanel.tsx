@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { degreeMinuteInSign, elementOfSign, houseOfLon, modalityOfSign, signOfLon } from '../chart/astrology'
 import { ASPECT_STYLE, ELEMENT_COLORS, PLANET_GLYPHS, SIGNS } from '../chart/data'
 import { SIGN_RULERS } from '../chart/signature'
-import type { NatalChart, PlanetId, SignId } from '../chart/types'
+import type { NatalChart } from '../chart/types'
 import styles from '../constellation.module.css'
 import type { Interpretations } from '../interpretations/types'
 import { aspectTone, houseText, orbTier, pairKey } from '../interpretations/types'
@@ -36,14 +36,13 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
   }
 
   if (selection.kind === 'sign') {
-    const signId = selection.id as SignId
+    const signId = selection.id
     const element = elementOfSign(signId)
     const color = ELEMENT_COLORS[element]
-    const glyph = SIGNS.find((s) => s.id === selection.id)?.glyph ?? '★'
+    const glyph = SIGNS.find((s) => s.id === signId)?.glyph ?? '★'
     const modality = modalityOfSign(signId)
     const ruler = SIGN_RULERS[signId]
     const residents = chart.planets.filter((p) => signOfLon(p.lon) === signId)
-    const descriptionKey = `signDescriptions.${signId}`
 
     return (
       <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
@@ -62,8 +61,8 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
           <Chip color="var(--color-accent)" label={t(`modalities.${modality}`)} />
           <Chip color="var(--color-accent)" label={t('panel.ruledBy', { planet: t(`planets.${ruler}`) })} />
         </div>
-        {t.has(descriptionKey) && (
-          <p className="mt-3 text-sm leading-relaxed text-foreground-muted">{t(descriptionKey)}</p>
+        {t.has(`signDescriptions.${signId}`) && (
+          <p className="mt-3 text-sm leading-relaxed text-foreground-muted">{t(`signDescriptions.${signId}`)}</p>
         )}
         {residents.length === 0 ? (
           <p className="mt-3 border-t pt-3 text-sm leading-relaxed text-foreground-subtle">{t('panel.emptySign')}</p>
@@ -92,7 +91,7 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
 
   if (selection.kind === 'aspect') {
     const color = ASPECT_STYLE[selection.aspectType].color
-    const pairKeyId = pairKey(selection.a as PlanetId, selection.b as PlanetId)
+    const pairKeyId = pairKey(selection.a, selection.b)
     const tone = aspectTone(selection.aspectType)
     const tier = orbTier(selection.orb)
     const intensity = tier ? interpretations.aspectIntensity[tier] : null
@@ -103,7 +102,7 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
         <CloseButton label={t('panel.close')} onClose={onClose} />
         <div className="flex items-center gap-3">
           <span className="shrink-0 text-2xl" style={{ color }}>
-            {glyphText(PLANET_GLYPHS[selection.a as never])} {glyphText(PLANET_GLYPHS[selection.b as never])}
+            {glyphText(PLANET_GLYPHS[selection.a])} {glyphText(PLANET_GLYPHS[selection.b])}
           </span>
           <div className="min-w-0">
             <p className="text-base font-bold text-foreground">
@@ -190,6 +189,10 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
   const retroReading = planet.retrograde ? interpretations.retro[planet.id]?.[sign] : undefined
   const reading = retroReading ?? interpretations.planets[planet.id][sign]
 
+  // Only a few bodies carry a poetic alias (e.g. Fortuna). The message type only knows
+  // the aliases that exist, so cast for the `t.has`-guarded lookup over every body.
+  const aliasKey = `planetAliases.${planet.id}` as 'planetAliases.fortune'
+
   return (
     <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
       <CloseButton label={t('panel.close')} onClose={onClose} />
@@ -203,9 +206,7 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
         <div className="min-w-0">
           <p className="flex items-center gap-2 text-base font-bold text-foreground">
             {t(`planets.${planet.id}`)}
-            {t.has(`planetAliases.${planet.id}`) && (
-              <span className="text-xs font-normal text-foreground-subtle">{t(`planetAliases.${planet.id}`)}</span>
-            )}
+            {t.has(aliasKey) && <span className="text-xs font-normal text-foreground-subtle">{t(aliasKey)}</span>}
             {planet.retrograde && (
               <span className="rounded bg-danger/20 px-1.5 py-0.5 text-[10px] font-semibold text-danger">
                 ℞ {t('panel.retrograde')}

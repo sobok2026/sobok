@@ -1,6 +1,6 @@
 'use client'
 
-import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -114,23 +114,21 @@ export default function TodayFlow() {
         {!data && !failed && <p className="mt-10 animate-pulse text-sm text-foreground-subtle">{t('computing')}</p>}
         {failed && <p className="mt-10 text-sm text-danger">{tc('form.error')}</p>}
 
-        {data && <TodayBody data={data} homeHref={homeHref} onShare={share} t={t} tc={tc} />}
+        {data && <TodayBody data={data} homeHref={homeHref} onShare={share} />}
       </div>
     </main>
   )
 }
 
-type T = ReturnType<typeof useTranslations>
-
 type TodayBodyProps = {
   data: Data
   homeHref: string
   onShare: () => void
-  t: T
-  tc: T
 }
 
-function TodayBody({ data, homeHref, onShare, t, tc }: TodayBodyProps) {
+function TodayBody({ data, homeHref, onShare }: TodayBodyProps) {
+  const t = useTranslations('Today')
+  const tc = useTranslations('Constellation')
   const { sky, readings, personal, dateKey } = data
   const element = elementOfSign(sky.moonSign)
   const color = ELEMENT_COLORS[element]

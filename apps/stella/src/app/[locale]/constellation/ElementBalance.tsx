@@ -3,11 +3,12 @@
 import { useTranslations } from 'next-intl'
 
 import { ELEMENT_COLORS, ELEMENT_IDS } from '../chart/data'
+import type { ElementId } from '../chart/types'
 import styles from '../constellation.module.css'
 
 export interface ElementBalanceProps {
-  counts: Record<string, number>
-  dominant: string
+  counts: Record<ElementId, number>
+  dominant: ElementId
   total: number
 }
 

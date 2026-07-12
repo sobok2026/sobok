@@ -10,7 +10,7 @@ import { track } from '@/lib/analytics/browser'
 import BirthForm from './BirthForm'
 import { computeAspects, elementCounts, signOfLon } from './chart/astrology'
 import { DEFAULT_CHART, ELEMENT_IDS } from './chart/data'
-import type { ChartAspect, NatalChart } from './chart/types'
+import type { ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from './chart/types'
 import AspectSection from './constellation/AspectSection'
 import Big3Card from './constellation/Big3Card'
 import ChartWheel from './constellation/ChartWheel'
@@ -108,7 +108,7 @@ export default function Constellation() {
   //   • the same planet again      → deselect
   //   • another, aspected planet   → show the two planets' relationship
   //   • anything else (unaspected, or coming from a sign/aspect/nothing) → show this planet
-  function selectPlanet(id: string) {
+  function selectPlanet(id: PlanetId) {
     setSelection((prev) => {
       if (prev?.kind === 'planet') {
         if (prev.id === id) {
@@ -135,11 +135,11 @@ export default function Constellation() {
     })
   }
 
-  function toggleSign(id: string) {
+  function toggleSign(id: SignId) {
     setSelection((prev) => (prev?.kind === 'sign' && prev.id === id ? null : { kind: 'sign', id }))
   }
 
-  function toggleHouse(n: number) {
+  function toggleHouse(n: HouseNumber) {
     setSelection((prev) => (prev?.kind === 'house' && prev.n === n ? null : { kind: 'house', n }))
   }
 

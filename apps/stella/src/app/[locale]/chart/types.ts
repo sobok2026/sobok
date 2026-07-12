@@ -38,6 +38,9 @@ export type PlanetId = ComputedPlanetId | 'northNode' | 'southNode' | 'fortune'
 
 export type AspectType = 'conjunction' | 'trine' | 'square' | 'sextile' | 'opposition'
 
+/** A house index on the wheel, 1–12. */
+export type HouseNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
+
 /** A single body's position on the ecliptic (tropical longitude, 0–360°). */
 export type PlanetPosition = { id: PlanetId; lon: number; retrograde: boolean }
 
