@@ -3,6 +3,7 @@ import '../globals.css'
 import { Locale } from '@sobok/domain/locale'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
+import Script from 'next/script'
 import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 import { Toaster } from 'sonner'
@@ -75,6 +76,12 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           <Toaster position="top-center" richColors theme="dark" />
         </NextIntlClientProvider>
         <Analytics />
+        <Script
+          async
+          crossOrigin="anonymous"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ACCOUNT}`}
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   )

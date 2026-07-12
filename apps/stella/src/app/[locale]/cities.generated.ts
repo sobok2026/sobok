@@ -112,7 +112,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'jp-sendai',
     name: '仙台',
-    country: '日本',
+    country: '日本国',
     iso2: 'JP',
     latitude: 38.2667,
     longitude: 140.8667,
@@ -121,7 +121,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'jp-nagoya',
     name: '名古屋',
-    country: '日本',
+    country: '日本国',
     iso2: 'JP',
     latitude: 35.1815,
     longitude: 136.9064,
@@ -130,7 +130,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'jp-osaka',
     name: '大阪',
-    country: '日本',
+    country: '日本国',
     iso2: 'JP',
     latitude: 34.6938,
     longitude: 135.5011,
@@ -139,7 +139,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'jp-hiroshima',
     name: '広島',
-    country: '日本',
+    country: '日本国',
     iso2: 'JP',
     latitude: 34.4,
     longitude: 132.45,
@@ -148,7 +148,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'jp-sapporo',
     name: '札幌',
-    country: '日本',
+    country: '日本国',
     iso2: 'JP',
     latitude: 43.0667,
     longitude: 141.35,
@@ -157,7 +157,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'jp-tokyo',
     name: '東京',
-    country: '日本',
+    country: '日本国',
     iso2: 'JP',
     latitude: 35.6895,
     longitude: 139.6917,
@@ -166,7 +166,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'jp-fukuoka',
     name: '福岡',
-    country: '日本',
+    country: '日本国',
     iso2: 'JP',
     latitude: 33.6,
     longitude: 130.4167,
@@ -175,7 +175,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'cn-shanghai',
     name: '上海',
-    country: '中国',
+    country: '中华人民共和国',
     iso2: 'CN',
     latitude: 31.2222,
     longitude: 121.4581,
@@ -184,7 +184,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'cn-beijing',
     name: '北京',
-    country: '中国',
+    country: '中华人民共和国',
     iso2: 'CN',
     latitude: 39.9075,
     longitude: 116.3972,
@@ -193,7 +193,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'cn-harbin',
     name: '哈尔滨',
-    country: '中国',
+    country: '中华人民共和国',
     iso2: 'CN',
     latitude: 45.75,
     longitude: 126.65,
@@ -202,7 +202,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'cn-dalian',
     name: '大连',
-    country: '中国',
+    country: '中华人民共和国',
     iso2: 'CN',
     latitude: 38.9122,
     longitude: 121.6022,
@@ -211,7 +211,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'cn-guangzhou',
     name: '广州',
-    country: '中国',
+    country: '中华人民共和国',
     iso2: 'CN',
     latitude: 23.1167,
     longitude: 113.25,
@@ -220,7 +220,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'cn-chengdu',
     name: '成都',
-    country: '中国',
+    country: '中华人民共和国',
     iso2: 'CN',
     latitude: 30.6667,
     longitude: 104.0667,
@@ -229,7 +229,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'cn-kunming',
     name: '昆明',
-    country: '中国',
+    country: '中华人民共和国',
     iso2: 'CN',
     latitude: 25.0389,
     longitude: 102.7183,
@@ -238,7 +238,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'cn-wuhan',
     name: '武汉',
-    country: '中国',
+    country: '中华人民共和国',
     iso2: 'CN',
     latitude: 30.5833,
     longitude: 114.2667,
@@ -247,7 +247,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'cn-shenyang',
     name: '沈阳',
-    country: '中国',
+    country: '中华人民共和国',
     iso2: 'CN',
     latitude: 41.7922,
     longitude: 123.4328,
@@ -256,7 +256,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'cn-xi-an',
     name: '西安',
-    country: '中国',
+    country: '中华人民共和国',
     iso2: 'CN',
     latitude: 34.2583,
     longitude: 108.9286,
@@ -265,7 +265,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'cn-zhengzhou',
     name: '郑州',
-    country: '中国',
+    country: '中华人民共和国',
     iso2: 'CN',
     latitude: 34.7578,
     longitude: 113.6486,
@@ -274,7 +274,7 @@ export const GENERATED_CITIES: readonly City[] = [
   {
     key: 'hk-hong-kong',
     name: '香港',
-    country: '中華人民共和國香港特別行政區',
+    country: '中國香港特別行政區',
     iso2: 'HK',
     latitude: 22.2783,
     longitude: 114.1747,
