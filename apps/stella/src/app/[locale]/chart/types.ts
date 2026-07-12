@@ -4,6 +4,8 @@
 
 export type ElementId = 'fire' | 'earth' | 'air' | 'water'
 
+export type ModalityId = 'cardinal' | 'fixed' | 'mutable'
+
 export type SignId =
   | 'aries'
   | 'taurus'

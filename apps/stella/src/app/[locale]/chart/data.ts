@@ -1,69 +1,81 @@
 // Structural, non-localized data for the natal chart: sign/planet tables,
 // element colors, aspect styles and the decorative sample chart.
 
-import type { AspectType, ComputedPlanetId, ElementId, NatalChart, PlanetId, SignId } from './types'
+import type { AspectType, ComputedPlanetId, ElementId, ModalityId, NatalChart, PlanetId, SignId } from './types'
 
 /** Zodiac signs in order. Each covers 30° of longitude starting at `index * 30`. */
-export const SIGNS: readonly { id: SignId; glyph: string; element: ElementId }[] = [
+export const SIGNS: readonly { id: SignId; glyph: string; element: ElementId; modality: ModalityId }[] = [
   {
     id: 'aries',
     glyph: '♈',
     element: 'fire',
+    modality: 'cardinal',
   },
   {
     id: 'taurus',
     glyph: '♉',
     element: 'earth',
+    modality: 'fixed',
   },
   {
     id: 'gemini',
     glyph: '♊',
     element: 'air',
+    modality: 'mutable',
   },
   {
     id: 'cancer',
     glyph: '♋',
     element: 'water',
+    modality: 'cardinal',
   },
   {
     id: 'leo',
     glyph: '♌',
     element: 'fire',
+    modality: 'fixed',
   },
   {
     id: 'virgo',
     glyph: '♍',
     element: 'earth',
+    modality: 'mutable',
   },
   {
     id: 'libra',
     glyph: '♎',
     element: 'air',
+    modality: 'cardinal',
   },
   {
     id: 'scorpio',
     glyph: '♏',
     element: 'water',
+    modality: 'fixed',
   },
   {
     id: 'sagittarius',
     glyph: '♐',
     element: 'fire',
+    modality: 'mutable',
   },
   {
     id: 'capricorn',
     glyph: '♑',
     element: 'earth',
+    modality: 'cardinal',
   },
   {
     id: 'aquarius',
     glyph: '♒',
     element: 'air',
+    modality: 'fixed',
   },
   {
     id: 'pisces',
     glyph: '♓',
     element: 'water',
+    modality: 'mutable',
   },
 ]
 

@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE, PUBLIC_LOCALES } from '@sobok/domain/locale'
+import { DEFAULT_LOCALE, Locale, PUBLIC_LOCALES } from '@sobok/domain/locale'
 import type { MetadataRoute } from 'next'
 
 import { ORIGIN } from '@/constants'
@@ -31,5 +31,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: locale === DEFAULT_LOCALE ? 0.9 : 0.7,
       alternates: { languages: todayLanguages },
     })),
+    // The love vertical ships in Korean only for now — other locales are noindex stubs.
+    {
+      url: `${ORIGIN}/${Locale.KO}/love/`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
   ]
 }

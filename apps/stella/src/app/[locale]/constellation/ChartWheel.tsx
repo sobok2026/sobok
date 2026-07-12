@@ -62,7 +62,6 @@ export default function ChartWheel({
       aria-hidden={!revealed}
       aria-label={t('meta.title')}
       className={`w-full ${revealed ? styles.wheel : 'pointer-events-none'}`}
-      role="group"
       style={{
         transition: 'opacity 0.4s',
         opacity: revealed ? 1 : 0.4,

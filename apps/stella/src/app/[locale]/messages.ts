@@ -61,6 +61,11 @@ export const messages = {
         detailHint: '도수는 별자리 안에서의 정확한 위치, 하우스는 그 기운이 작동하는 삶의 영역을 뜻해요.',
         emptyHouse:
           '지금 이 방에는 머무는 별이 없어요. 빈 하우스는 결핍이 아니라 이 영역이 큰 숙제 없이 순하게 흘러간다는 뜻이에요.',
+        emptySign:
+          '지금 이 별자리에는 머무는 별이 없어요. 빈 별자리는 결핍이 아니라 이 기운이 당신 안에서 은은한 배경으로 흐른다는 뜻이에요.',
+        signResidents: '이 별자리에 머무는 내 별',
+        signResidentsHint: '빛나는 별을 누르면 그 별의 이야기를 볼 수 있어요.',
+        ruledBy: '지배 행성: {planet}',
       },
       elements: {
         title: '원소 밸런스',
@@ -73,6 +78,11 @@ export const messages = {
         airDesc: '생각과 소통',
         waterDesc: '감정과 직관',
         dominant: '{element} 기운이 가장 강해요',
+      },
+      modalities: {
+        cardinal: '활동궁',
+        fixed: '고정궁',
+        mutable: '변통궁',
       },
       aspects: {
         title: '행성의 대화',
@@ -146,6 +156,31 @@ export const messages = {
         aquarius: '독창성과 자유로운 사고',
         pisces: '감성과 상상력',
       },
+      signDescriptions: {
+        aries:
+          '양자리는 열두 별자리의 첫 관문이에요. 재고 따지기 전에 먼저 몸이 움직이는 개척의 기운이라 무엇이든 시작하는 힘이 가장 강하죠. 행성이 이 자리에 들어오면 그 힘은 망설임 없이 곧장 나아가는 결을 입어요.',
+        taurus:
+          '황소자리는 봄의 땅을 닮은 자리예요. 서두르지 않고 감각으로 하나하나 확인하며 한번 뿌리내린 것은 끝까지 지키는 기운이죠. 행성이 이 자리에 들어오면 그 힘은 느리지만 단단하게 쌓아 올리는 결을 입어요.',
+        gemini:
+          '쌍둥이자리는 소식과 연결의 자리예요. 하나에 오래 머물기보다 여러 갈래로 뻗어 나가며 세상과 세상을 잇는 기운이죠. 행성이 이 자리에 들어오면 그 힘은 가볍고 빠르게 오가는 대화의 결을 입어요.',
+        cancer:
+          '게자리는 마음이 돌아와 쉬는 집 같은 자리예요. 소중한 것을 품에 들이고 그 온기를 지키려는 기운이죠. 행성이 이 자리에 들어오면 그 힘은 곁을 살피고 돌보는 부드러운 결을 입어요.',
+        leo: '사자자리는 한여름 태양의 자리예요. 숨기기보다 드러내고 스스로 빛나서 곁까지 밝히는 기운이죠. 행성이 이 자리에 들어오면 그 힘은 당당하게 무대에 오르는 결을 입어요.',
+        virgo:
+          '처녀자리는 다듬고 완성하는 자리예요. 작은 어긋남도 놓치지 않는 밝은 눈으로 쓸모 있게 정돈하는 기운이죠. 행성이 이 자리에 들어오면 그 힘은 꼼꼼하고 정성스러운 결을 입어요.',
+        libra:
+          '천칭자리는 저울처럼 한가운데를 찾는 자리예요. 기울어진 것을 바로잡고 서로 다른 사람들 사이에 다리를 놓는 기운이죠. 행성이 이 자리에 들어오면 그 힘은 사이를 부드럽게 조율하는 결을 입어요.',
+        scorpio:
+          '전갈자리는 수면 아래를 들여다보는 자리예요. 얕게 스치는 대신 본질까지 파고들어 끝을 보는 기운이죠. 행성이 이 자리에 들어오면 그 힘은 강렬하게 몰입하는 결을 입어요.',
+        sagittarius:
+          '궁수자리는 지평선 너머를 겨냥하는 자리예요. 익숙한 울타리를 넘어 더 넓은 세상과 삶의 의미를 향해 화살을 쏘는 기운이죠. 행성이 이 자리에 들어오면 그 힘은 더 먼 곳을 향해 날아가는 결을 입어요.',
+        capricorn:
+          '염소자리는 산꼭대기를 향해 오르는 자리예요. 조급해하지 않고 책임을 다하며 시간을 들여 결과로 증명하는 기운이죠. 행성이 이 자리에 들어오면 그 힘은 묵묵하고 끈기 있는 결을 입어요.',
+        aquarius:
+          '물병자리는 내일을 먼저 사는 자리예요. 어제의 정답을 그대로 받아들이지 않고 모두를 위한 새로운 그림을 그리는 기운이죠. 행성이 이 자리에 들어오면 그 힘은 남다른 각도로 세상을 보는 결을 입어요.',
+        pisces:
+          '물고기자리는 경계가 녹아드는 마지막 자리예요. 나와 남 사이의 벽을 지우고 보이지 않는 것까지 느끼는 기운이죠. 행성이 이 자리에 들어오면 그 힘은 말없이도 마음을 헤아리는 결을 입어요.',
+      },
       houseThemes: {
         1: '자아',
         2: '재물',
@@ -204,6 +239,7 @@ export const messages = {
       },
       report: koReport,
       todayCta: '☾ 오늘의 흐름 보기',
+      loveCta: '♡ 나의 연애운 보기',
     },
     Today: {
       meta: {
@@ -252,6 +288,60 @@ export const messages = {
         copied: '링크를 복사했어요',
       },
       tomorrow: '내일의 하늘은 또 달라져요 ✦',
+      toChart: '내 탄생 별자리 보기',
+      toLove: '♡ 나의 연애운 보기',
+    },
+    Love: {
+      meta: {
+        title: '나의 연애운 · 네이탈 차트로 읽는 사랑의 지도',
+        description:
+          '생년월일로 내가 사랑하는 방식과 타고난 매력을 읽어 드려요. 관계의 문이 그리는 운명의 파트너부터 앞으로 1년 사랑의 하늘이 지나는 시기까지 나만의 연애운을 확인해 보세요.',
+      },
+      hero: {
+        eyebrow: '별이 읽는 사랑',
+        title: '나의 연애운',
+        subtitle: '태어난 하늘에 새겨진 사랑의 결과 다가올 시기를 읽어 드려요.',
+      },
+      computing: '사랑의 별을 읽는 중...',
+      style: {
+        title: '내가 사랑하는 방식',
+        marsKicker: '끌림의 온도 · {sign} 화성',
+        habitKicker: '좋아하면 생기는 마음속 습관',
+      },
+      partner: {
+        title: '운명의 파트너',
+        kicker: '관계의 문 · {sign}의 결',
+        matchLabel: '잘 맞는 결',
+        frictionLabel: '겉도는 결',
+        houseKicker: '관계의 방에 든 {planet}',
+        solarNote: '태어난 시각이 없어서 태양 기준으로 관계의 문을 읽었어요. 시각을 알게 되면 더 정확해져요.',
+      },
+      charm: {
+        title: '내 매력 사용법',
+      },
+      timing: {
+        title: '다가올 시기',
+        subtitle: '앞으로 1년 동안 사랑의 하늘이 지나는 길이에요.',
+        now: '진행 중',
+        noTimeNote: '태어난 시각까지 알면 만남의 문이 열리는 시기도 함께 읽어 드려요.',
+      },
+      empty: {
+        title: '내 차트가 있어야 읽을 수 있어요',
+        hint: '생년월일시를 입력하면 사랑의 결과 다가올 시기를 내 차트 기준으로 읽어 드려요.',
+        cta: '✨ 내 차트 만들기',
+      },
+      comingSoon: {
+        title: '이 언어로는 아직 준비 중이에요',
+        hint: '연애운 리딩은 지금 한국어로만 제공돼요. 탄생 차트와 오늘의 흐름은 모든 언어로 볼 수 있어요.',
+        cta: '✨ 내 차트 만들기',
+      },
+      share: {
+        button: '나의 연애운 공유',
+        text: '별이 읽어 준 나의 연애운 ✦',
+        copied: '링크를 복사했어요',
+      },
+      privacy: '출생 정보는 이 기기에만 저장돼요. 서버로 전송되지 않아요.',
+      toToday: '☾ 오늘의 흐름 보기',
       toChart: '내 탄생 별자리 보기',
     },
   },
@@ -303,6 +393,11 @@ export const messages = {
           'The degree is the exact spot within the sign; the house is the area of life this energy plays out in.',
         emptyHouse:
           "No planets are staying in this room. An empty house isn't a lack — it just means this part of life flows without heavy homework.",
+        emptySign:
+          "No planets are staying in this sign right now. An empty sign isn't a lack — its energy simply hums in the background.",
+        signResidents: 'Your planets in this sign',
+        signResidentsHint: 'Tap a bright planet to read its story.',
+        ruledBy: 'Ruled by {planet}',
       },
       elements: {
         title: 'Element balance',
@@ -315,6 +410,11 @@ export const messages = {
         airDesc: 'Thought & connection',
         waterDesc: 'Emotion & intuition',
         dominant: 'Your {element} energy runs strongest',
+      },
+      modalities: {
+        cardinal: 'Cardinal',
+        fixed: 'Fixed',
+        mutable: 'Mutable',
       },
       aspects: {
         title: 'Conversations between planets',
@@ -491,6 +591,24 @@ export const messages = {
       tomorrow: 'Tomorrow’s sky will be different again ✦',
       toChart: 'See my birth chart',
     },
+    Love: {
+      meta: {
+        title: 'Your Love Reading · A Natal Chart Map of the Heart',
+        description:
+          'How you love, your natural charm, the partner your chart describes and the year ahead in love — all read from your birth sky.',
+      },
+      hero: {
+        eyebrow: 'Love, read by the stars',
+        title: 'Your Love Reading',
+        subtitle: 'The texture of your love and its seasons ahead, written in your birth sky.',
+      },
+      computing: 'Reading the stars of love...',
+      comingSoon: {
+        title: 'This reading is Korean-only for now',
+        hint: 'The English version is on its way. Your birth chart and today’s flow are already available in English.',
+        cta: '✨ Open my chart',
+      },
+    },
   },
   [Locale.ZH_CN]: {
     Constellation: {
@@ -538,6 +656,10 @@ export const messages = {
         hideDetail: '收起',
         detailHint: '度数是星座内的精确位置，宫位代表这股能量作用的人生领域。',
         emptyHouse: '现在这个房间里没有停留的星。空宫不是缺失，而是说明这个领域会顺畅流过，无需太多功课。',
+        emptySign: '现在这个星座里没有停留的星。空星座不是缺失，它的能量只是像背景一样安静流淌。',
+        signResidents: '你在这个星座的行星',
+        signResidentsHint: '点击发亮的行星，就能查看它的故事。',
+        ruledBy: '守护星: {planet}',
       },
       elements: {
         title: '元素平衡',
@@ -550,6 +672,11 @@ export const messages = {
         airDesc: '思考与沟通',
         waterDesc: '情感与直觉',
         dominant: '你的{element}能量最强',
+      },
+      modalities: {
+        cardinal: '基本宫',
+        fixed: '固定宫',
+        mutable: '变动宫',
       },
       aspects: {
         title: '行星之间的对话',
@@ -722,6 +849,23 @@ export const messages = {
       tomorrow: '明天的天空又会不一样 ✦',
       toChart: '查看我的出生星盘',
     },
+    Love: {
+      meta: {
+        title: '我的恋爱运 · 用本命盘解读爱情地图',
+        description: '从本命盘解读你恋爱的方式、天生的魅力、星盘描绘的命定伴侣以及未来一年的爱情时机。',
+      },
+      hero: {
+        eyebrow: '星星解读的爱',
+        title: '我的恋爱运',
+        subtitle: '解读刻在出生星空里的爱情质感与即将到来的时机。',
+      },
+      computing: '正在解读爱之星...',
+      comingSoon: {
+        title: '该解读目前仅提供韩语版本',
+        hint: '中文版正在准备中。本命盘和今日星象已可用中文查看。',
+        cta: '✨ 打开我的星盘',
+      },
+    },
   },
   [Locale.JA]: {
     Constellation: {
@@ -770,6 +914,11 @@ export const messages = {
         detailHint: '度数は星座内の正確な位置、ハウスはそのエネルギーが働く人生の領域を表します。',
         emptyHouse:
           'いまこの部屋にとどまる星はありません。空のハウスは欠けではなく、この領域が大きな課題なく流れるというしるしです。',
+        emptySign:
+          'いまこの星座にとどまる星はありません。空の星座は欠けではなく、そのエネルギーが背景として静かに流れているというしるしです。',
+        signResidents: 'この星座にあるあなたの星',
+        signResidentsHint: '明るく光る星をタップすると、その星の物語が読めます。',
+        ruledBy: '支配星: {planet}',
       },
       elements: {
         title: 'エレメントのバランス',
@@ -782,6 +931,11 @@ export const messages = {
         airDesc: '思考と対話',
         waterDesc: '感情と直感',
         dominant: '{element}のエネルギーが最も強いです',
+      },
+      modalities: {
+        cardinal: '活動宮',
+        fixed: '不動宮',
+        mutable: '柔軟宮',
       },
       aspects: {
         title: '惑星たちの対話',
@@ -953,6 +1107,24 @@ export const messages = {
       },
       tomorrow: '明日の空はまた違う表情に ✦',
       toChart: 'わたしの出生星図を見る',
+    },
+    Love: {
+      meta: {
+        title: '私の恋愛運 · ネイタルチャートで読む恋の地図',
+        description:
+          '恋し方と生まれ持った魅力、チャートが描く運命のパートナー、そしてこれから1年の恋の流れをネイタルチャートから読み解きます。',
+      },
+      hero: {
+        eyebrow: '星が読む恋',
+        title: '私の恋愛運',
+        subtitle: '生まれた空に刻まれた恋の質感とこれからの時期を読み解きます。',
+      },
+      computing: '恋の星を読んでいます...',
+      comingSoon: {
+        title: 'このリーディングは現在韓国語のみです',
+        hint: '日本語版は準備中です。ネイタルチャートと今日の流れは日本語でご覧いただけます。',
+        cta: '✨ マイチャートを開く',
+      },
     },
   },
 } satisfies LocalizedMessages

@@ -31,6 +31,8 @@ import Starfield from './Starfield'
 export default function Constellation() {
   const t = useTranslations('Constellation')
   const locale = useLocale()
+  // The love vertical only exists where its copy does (Korean for now).
+  const hasLove = (t as unknown as { has(key: string): boolean }).has('loveCta')
   const [chart, setChart] = useState<NatalChart | null>(null)
   const [computing, setComputing] = useState(false)
   const [runId, setRunId] = useState(0)
@@ -200,13 +202,21 @@ export default function Constellation() {
         {!revealed && (
           <div className="mb-6 w-full">
             <BirthForm computing={computing} onSubmit={handleSubmit} />
-            <p className="mt-4 text-center">
+            <p className="mt-4 flex flex-col items-center gap-2 text-center">
               <Link
                 className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
                 href={`/${locale}/today/`}
               >
                 {t('todayCta')}
               </Link>
+              {hasLove && (
+                <Link
+                  className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
+                  href={`/${locale}/love/`}
+                >
+                  {t('loveCta')}
+                </Link>
+              )}
             </p>
           </div>
         )}
@@ -303,6 +313,14 @@ export default function Constellation() {
               >
                 {t('todayCta')}
               </Link>
+              {hasLove && (
+                <Link
+                  className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
+                  href={`/${locale}/love/`}
+                >
+                  {t('loveCta')}
+                </Link>
+              )}
               <button
                 className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
                 onClick={backToForm}

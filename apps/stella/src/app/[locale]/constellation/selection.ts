@@ -1,7 +1,7 @@
 // What the user has tapped on the wheel, plus the spotlight logic deciding
 // which planets and aspect lines stay bright for the current selection.
 
-import { houseOfLon } from '../chart/astrology'
+import { houseOfLon, signOfLon } from '../chart/astrology'
 import type { AspectType, ChartAspect, PlanetPosition } from '../chart/types'
 
 export type Selection =
@@ -22,6 +22,7 @@ export function isAspectSelection(selection: Selection, asp: ChartAspect): boole
  * - planet:  the planet + everything it aspects, and all of its lines
  * - aspect:  only the two involved planets and that single line
  * - house:   only the planets sitting inside that house
+ * - sign:    only the planets sitting inside that sign
  */
 export function computeBrightPlanets(
   selection: Selection,
@@ -52,14 +53,19 @@ export function computeBrightPlanets(
         bright.add(p.id)
       }
     }
+  } else if (selection?.kind === 'sign') {
+    for (const p of planets) {
+      if (signOfLon(p.lon) === selection.id) {
+        bright.add(p.id)
+      }
+    }
   }
 
   return bright
 }
 
 export function isPlanetDimmed(id: string, selection: Selection, brightPlanets: ReadonlySet<string>): boolean {
-  const focusActive = selection?.kind === 'planet' || selection?.kind === 'aspect' || selection?.kind === 'house'
-  return focusActive && !brightPlanets.has(id)
+  return selection != null && !brightPlanets.has(id)
 }
 
 export function isAspectDimmed(asp: ChartAspect, selection: Selection, brightPlanets: ReadonlySet<string>): boolean {
@@ -69,7 +75,7 @@ export function isAspectDimmed(asp: ChartAspect, selection: Selection, brightPla
   if (selection?.kind === 'aspect') {
     return !isAspectSelection(selection, asp)
   }
-  if (selection?.kind === 'house') {
+  if (selection?.kind === 'house' || selection?.kind === 'sign') {
     return !brightPlanets.has(asp.a) && !brightPlanets.has(asp.b)
   }
   return false

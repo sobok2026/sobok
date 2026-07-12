@@ -123,6 +123,29 @@ export async function computePositions(utc: Date): Promise<PlanetPosition[]> {
   return computeBodies(Astronomy, Astronomy.MakeTime(utc))
 }
 
+/**
+ * Tropical longitudes for selected bodies over a series of instants — the
+ * months-ahead transit scans only need a few bodies, so this skips the other
+ * ephemeris work `computePositions` would repeat per sample.
+ */
+export async function computeLongitudeSeries<T extends ComputedPlanetId>(
+  dates: readonly Date[],
+  ids: readonly T[],
+): Promise<Record<T, number>[]> {
+  const Astronomy = await import('astronomy-engine')
+
+  return dates.map((date) => {
+    const time = Astronomy.MakeTime(date)
+    const lons = {} as Record<T, number>
+
+    for (const id of ids) {
+      lons[id] = eclipticLon(Astronomy, BODY_NAME[id], time)
+    }
+
+    return lons
+  })
+}
+
 export async function computeChart(input: BirthInput): Promise<NatalChart> {
   const Astronomy = await import('astronomy-engine')
 

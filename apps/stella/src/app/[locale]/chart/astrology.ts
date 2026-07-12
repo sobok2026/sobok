@@ -2,7 +2,7 @@
 // detection between bodies. No rendering concerns — geometry lives in `geometry.ts`.
 
 import { SIGNS } from './data'
-import type { AspectType, ChartAspect, ElementId, PlanetId, PlanetPosition, SignId } from './types'
+import type { AspectType, ChartAspect, ElementId, ModalityId, PlanetId, PlanetPosition, SignId } from './types'
 
 /** Major aspects with their exact angle and orb (max allowed deviation, degrees). */
 const ASPECT_DEFS: readonly { type: AspectType; angle: number; orb: number }[] = [
@@ -64,6 +64,10 @@ export function houseOfLon(lon: number, cusps: number[] | null, ascendant: numbe
 
 export function elementOfSign(id: SignId): ElementId {
   return SIGNS.find((s) => s.id === id)?.element ?? 'fire'
+}
+
+export function modalityOfSign(id: SignId): ModalityId {
+  return SIGNS.find((s) => s.id === id)?.modality ?? 'cardinal'
 }
 
 /** Count how many bodies fall in each element. */
