@@ -10,6 +10,7 @@ import {
   planets as koPlanets,
   retro as koRetro,
 } from './interpretations/ko'
+import { report as koReport } from './interpretations/report/ko'
 import { aspects as zhAspectPairs, planets as zhPlanets, retro as zhRetro } from './interpretations/zh-CN'
 
 export const messages = {
@@ -178,7 +179,7 @@ export const messages = {
         moon: '달',
         northNode: '북교점',
         southNode: '남교점',
-        fortune: '행운의 점',
+        fortune: '행운점',
         mercury: '수성',
         venus: '금성',
         mars: '화성',
@@ -187,6 +188,9 @@ export const messages = {
         uranus: '천왕성',
         neptune: '해왕성',
         pluto: '명왕성',
+      },
+      planetAliases: {
+        fortune: '포르투나',
       },
       readings: {
         planets: koPlanets,
@@ -198,6 +202,7 @@ export const messages = {
           wide: '은은하게 깔린, 배경 같은 결이에요.',
         },
       },
+      report: koReport,
       todayCta: '☾ 오늘의 흐름 보기',
     },
     Today: {

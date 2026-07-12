@@ -179,6 +179,9 @@ export default function DetailPanel({ ascendant, chart, onClose, selection }: De
         <div className="min-w-0">
           <p className="flex items-center gap-2 text-base font-bold text-foreground">
             {t(`planets.${planet.id}`)}
+            {t.has(`planetAliases.${planet.id}`) && (
+              <span className="text-xs font-normal text-foreground-subtle">{t(`planetAliases.${planet.id}`)}</span>
+            )}
             {planet.retrograde && (
               <span className="rounded bg-danger/20 px-1.5 py-0.5 text-[10px] font-semibold text-danger">
                 ℞ {t('panel.retrograde')}
