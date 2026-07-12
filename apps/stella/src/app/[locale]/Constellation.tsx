@@ -199,27 +199,7 @@ export default function Constellation() {
         </header>
 
         {/* Birth form (before compute) */}
-        {!revealed && (
-          <div className="mb-6 w-full">
-            <BirthForm computing={computing} onSubmit={handleSubmit} />
-            <p className="mt-4 flex flex-col items-center gap-2 text-center">
-              <Link
-                className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-                href={`/${locale}/today/`}
-              >
-                {t('todayCta')}
-              </Link>
-              {hasLove && (
-                <Link
-                  className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-                  href={`/${locale}/love/`}
-                >
-                  {t('loveCta')}
-                </Link>
-              )}
-            </p>
-          </div>
-        )}
+        {!revealed && <BirthForm computing={computing} onSubmit={handleSubmit} />}
 
         {/* Big 3 (after compute) */}
         {revealed && (
