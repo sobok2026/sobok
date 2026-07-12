@@ -326,20 +326,30 @@ export const planets: PlanetReadings = {
     pisces:
       "Your blessing flows, gentle and quiet, in the moment you give, imagine, and trust the flow. Empty your heart and give without holding back, and unexpected luck seeps in; that uncalculating generosity calls blessing in before you know it. Just know that giving it all away until you're empty will wear you out; refill yourself as much as you pour out. Opening your hand and trusting the current brings you the most beautiful gift of all.",
   },
-  // TODO(i18n): translate Black Moon Lilith sign readings (see ko.ts).
   lilith: {
-    aries: '',
-    taurus: '',
-    gemini: '',
-    cancer: '',
-    leo: '',
-    virgo: '',
-    libra: '',
-    scorpio: '',
-    sagittarius: '',
-    capricorn: '',
-    aquarius: '',
-    pisces: '',
+    aries:
+      "There's a wild flame in you that won't move just because it was told to. Say sit down and it only burns hotter — press it down and it breaks out its own way regardless. That raw impulse lands you in trouble sometimes, yet it's a life-force no one gets to tame. Stop being ashamed of the fire and spend it guarding yourself, and you become someone no one can shove aside.",
+    taurus:
+      "A primal sense that says what it wants out loud lives in you. When people try to shame the pleasure your body craves or the desire for your own share, you only affirm yourself deeper. Suppress that instinct as something crude and a corner of you stays forever hungry. When you get to decide what you're allowed to enjoy, that wildness blooms into an unshakable self-worth.",
+    gemini:
+      "There's a blunt voice in you that says the thing no one's supposed to say. While everyone reads the room and swallows it, you can't help poking the untouchable spot and rattling the table. That honesty seems to stir up trouble, but it's really the courage to say what no one else would. Don't cage that voice — hone it, and your words become a force that wakes the world up.",
+    cancer:
+      "A fierce heart that refuses to be handled carelessly lives in you. The instant someone belittles your feelings or the people you love, an edge rises that looks nothing like your usual warmth. Bury that intensity as too much and it erupts somewhere it shouldn't. Knowing how to turn fierce in front of what you protect isn't weakness — it's the most primal power you carry.",
+    leo: "There's a self in you that will never accept stop shining. Told to tone it down or stay out of the way, you only want to show yourself bigger. Crush that desire as presumptuous and regret and resentment pile up inside. The moment you admit you have every right to take the stage without anyone's permission, that wildness becomes a light no one can put out.",
+    virgo:
+      "A rebellion that no longer accepts you're not enough yet lives in you. The more you're picked at and pushed to be polished, the more a voice rises inside insisting you're already plenty as you are. Dismiss that voice as oversensitivity and swallow it, and only self-loathing grows. When you measure yourself by your own standard instead of theirs, that wildness becomes a firmness no one can chip.",
+    libra:
+      "There's a fierce fairness in you that refuses to smooth things over. Forced to smile and accommodate in an unjust spot, a cry of this isn't right surges hard inside. Press that anger down as too abrasive and you're the one who keeps losing out, relationship after relationship. When you trust that you can belong without erasing yourself, that wildness becomes the force that makes real harmony.",
+    scorpio:
+      "This is where Lilith feels most at home. The desire and darkness others fear and cover up, you look at head-on and draw real power from within it. The more you hide that intensity as dangerous, the harder it swirls. When you master that depth yourself instead of being ruled by it, you're reborn as someone no one can shake.",
+    sagittarius:
+      "There's a wild freedom in you that refuses to be caged in someone else's right answer. Faced with a you-must morality or rule, you'd rather ask is that really so and step past the fence. That defiance worries you as irresponsible sometimes, but it's really a thirst to find your own truth. Follow the truth you've lived instead of a borrowed belief, and that wildness becomes a freedom no one can pen in.",
+    capricorn:
+      "There's a rough ambition in you that won't bow just because it's pressed from above. The more rules and authority try to force you into their mold, the firmer a defiance rises to climb your own way. Suppress that ambition as arrogance and you end up only boosting someone else's success. When you build your own place without anyone's permission, that wildness becomes a power no one can topple.",
+    aquarius:
+      "There's an outsider's streak in you that refuses to erase itself to fit the crowd. Faced with this is just how everyone lives, you'd rather ask why you have to. Hide that difference as odd and the feeling of not belonging only deepens wherever you are. When you take that difference as your own color instead of a flaw, that wildness becomes a vision that changes the world.",
+    pisces:
+      'A far-reaching sensitivity that refuses to go numb lives in you. The more the world tells you to stop being so sensitive, the more a tide surges inside to feel and dream deeper. Shut that tenderness down as weakness and your heart dries out and loses its way. When you stop being ashamed of that deep feeling and give it your own language, that wildness becomes a mystery no one can imitate.',
   },
 }
 
@@ -1083,17 +1093,96 @@ export const aspects: AspectPairReadings = {
     conjunction:
       "In you, the place of digging deep and transforming and the point where life catches a tailwind overlap. Pluto keeps company beside your Part of Fortune, so the deeper you immerse in the work others shy from, the greater the reward that follows. You're someone whose luck actually strengthens each time you pass through a crisis. Just know that intense blessing sits a paper's width from obsession — enjoy the immersion itself rather than gripping. As deep as you go, fortune deepens with you.",
   },
-  // TODO(i18n): translate Black Moon Lilith aspect readings (see ko.ts).
-  'sun-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
-  'moon-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
-  'mercury-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
-  'venus-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
-  'mars-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
-  'jupiter-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
-  'saturn-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
-  'uranus-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
-  'neptune-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
-  'pluto-lilith': { conjunction: '', flow: '', square: '', opposition: '' },
+  'sun-lilith': {
+    conjunction:
+      "For you, a wildness that won't be tamed is woven into your very being. You're just being yourself, yet people feel something magnetic about you that can't be handled carelessly. Press that intensity down for fear of standing out and your own light dims with it. Stop shaving yourself to fit their eyes and own the wildness outright — your presence becomes a force no one can imitate.",
+    flow: "You're someone whose sense of self and inner wildness naturally hold hands. Showing the raw you takes no effort, so people are drawn to exactly who you are. Just know the ease can let you dull your own edge — don't. That seamless flow of self and wildness is why you're remembered, vividly, everywhere you go.",
+    square:
+      "Inside you, the self you want others to see and the real, untamed you keep colliding. Showing only the good side, you press the wildness down until one day the held-back part bursts out sideways. That friction is uncomfortable, but it's a signal to live as your true self. The more you claim that hidden intensity as your own, the more unshakably yourself you become.",
+    opposition:
+      "Inside you, the tidy self and the unrestrained wildness seesaw at opposite poles. Keep pushing that wildness outward and you're drawn to — or clash with — intense, provocative people who mirror it back. Just don't only see your wildness reflected in others, or you lose yourself. When you accept that the intensity is a part of you, not them, you become far broader and steadier.",
+  },
+  'moon-lilith': {
+    conjunction:
+      "Your feelings run with a primal grain that politeness can't soothe. When your heart moves, the depth is so vast you feel it more fiercely than others call reasonable. Swallow that emotion in shame and it bursts out at the wrong moment. Take the depth of your heart as power, not a flaw, and you become the master of feelings no one can shake.",
+    flow: "You're someone whose emotional depth and wild instinct blend gently. You let fierce feeling flow without suppressing it, so feeling exactly as you do becomes your charm. Just know the ease can let you flush real depth away too casually — don't. That single current of heart and instinct is why you stay in people's memory as someone far from shallow.",
+    square:
+      "Inside you, the wish for safety and your untamed feelings keep tugging. You want calm, yet something fierce rises and your heart churns often. That churning is hard, but it's a signal to face the real feeling you've held down. When you look at that fierce heart without hating it, your emotions grow deeper and steadier instead.",
+    opposition:
+      "Inside you, the settled heart and the fierce wildness seesaw at opposite poles. Keep pushing that intensity outward and you tangle with emotionally intense people who mirror it back. Just don't hand your fierceness to others, or you lose your own heart. When you hold both calm and intensity as yours, you become far more grown.",
+  },
+  'mercury-lilith': {
+    conjunction:
+      "Your thoughts and words carry an edge that pokes the spot no one else will touch. You can't help voicing what everyone swallows, rattling the table. Shut your mouth because it feels dangerous and your own true voice vanishes too. Hone that sharp language instead of swinging it wildly, and your words become a force that wakes the world.",
+    flow: 'You put blunt thoughts into clear words with no effort. You raise the topics others avoid so naturally that people feel a strange release talking with you. Just know the fluency can tempt you to sharpen the blade anywhere — watch for it. That fearless-of-taboo voice keeps you a refreshing person to talk to.',
+    square:
+      "Inside you, what you should say and the sharp truth trying to leap out keep missing each other. You hold it in, then one day the held-back words break out roughly. That off-beat feels frustrating, but it's a signal to hone what you honestly want to say. The more you refine that suppressed voice, the more precise and solid your words become.",
+    opposition:
+      "Inside you, the safe reply and the provocative truth pull taut at opposite poles. Keep deferring that edged voice and you meet it through someone who corners you with words. Just don't leave the sharpness always to others, or you lose your own voice. When you hold both softness and edge as yours, your words grow broad and unshakable.",
+  },
+  'venus-lilith': {
+    conjunction:
+      "Your allure carries a primal pull that demure can't explain. Without trying to dress up, you draw people strongly, so being near you is oddly magnetic. Hide that magnetism as dangerous and your own loveliness fades too. Carry the pull outright instead of fitting their standard, and your charm becomes a force no one can imitate.",
+    flow: "You're someone whose affection and wild pull blend smoothly. Saying you want what you want comes naturally, so you draw people and beauty without apology. Just know the easy pull can blur real feeling and a passing spark — tell them apart now and then. That unselfconscious charm keeps intense connections gathering around you.",
+    square:
+      'Inside you, the wish to be liked and the refusal to be tamed keep colliding. You accommodate, then suddenly hate folding yourself, so a push-pull tension runs through the bond. That tug is tiring, but it teaches you to tell self-erasing love from the real thing. The more you learn to draw close while keeping yourself, the stronger and steadier your love grows.',
+    opposition:
+      "Inside you, the lovable self and the freely magnetic wildness seesaw at opposite poles. Keep the pull outside yourself and you fall for intense, edgy partners who mirror it back. Just don't keep seeking that allure only in others, or you forget your own light. When you hold both tenderness and intensity as yours, your love grows deeper than anyone's.",
+  },
+  'mars-lilith': {
+    conjunction:
+      "Your drive carries a primal force that won't be pressed down. Your body moves first toward what you want, and the momentum is so intense no one blocks it easily. Suppress that force as dangerous and it bursts out roughly at the wrong moment. Aim it and push instead of being ashamed of it, and almost nothing can stand in your way.",
+    flow: "You're someone whose push and wild momentum flow as one. Charging toward what you want feels natural, so challenge actually brings you alive. Just know that flowing so easily, you can spill the force anywhere — aim it. That clean alignment of body and instinct lets you take what you want without hesitation.",
+    square:
+      "Inside you, the force to go forward and the anger you've held down keep overheating. You hold it in, then one day the suppressed part explodes and wrecks even things that were working. The urgency seems to trip you, but that hot pressure is the engine that drives you to the end. The more you steer it as thrust instead of a tantrum, the straighter and stronger you become.",
+    opposition:
+      "Inside you, the force to push your own way and the wish to dodge conflict pull taut at opposite poles. Keep deferring that rough force and you meet your wildness through someone who picks a fight. Just don't keep loading your power onto others, or you can't spend it for yourself. When you hold both anger and desire as yours, your force grows straight and solid.",
+  },
+  'jupiter-lilith': {
+    conjunction:
+      'In you, the refusal to be tamed has grown into a whole belief. Faced with anything that suppresses freedom and instinct, you say no loudly and move on. That boldness draws people, but drunk on defiance itself, your aim can loosen. Hold onto why you protect that wildness too, and your freedom becomes a force no one can pen in.',
+    flow: "You're someone whose blunt instinct naturally flows toward widening the world. The less you suppress yourself, the more chances and people follow, so chasing freedom keeps opening doors. Just know that when it all comes easy, you forget the weight of that freedom — gather yourself now and then. Believing big and opening big is why new roads keep appearing before you.",
+    square:
+      "Inside you, the wish to expand and the refusal to be tamed keep missing each other. Chasing freedom, you overstep, or defiance overshoots and inflates a thing until it fails. That mismatch confuses you, but it's a class in telling real freedom from bravado. The more you ask whether this freedom actually grows you, the more your defiance becomes growth.",
+    opposition:
+      "Inside you, the belief that widens and the unrestrained wildness seesaw at opposite poles. Keep that craving for freedom outside yourself and you're drawn to radical people or ideas that mirror it back. Just don't seek freedom only in others, or you lose your own conviction. When you hold both belief and wildness as yours, your world grows far wider.",
+  },
+  'saturn-lilith': {
+    conjunction:
+      'Inside you, the wildness that refuses taming and the fear that suppresses it are bound into one body. From early on you learned to hide instinct and stay proper, so caging your true self comes easily. That suppression did keep you safe, but now the wall blocks the real you. When you draw that hidden wildness out little by little and set it inside the frame of your life, you finally become wholly yourself.',
+    flow: "You're a rare person who can give blunt instinct a solid form. Instead of suppressing the wildness, you back it with steadiness and discipline, turning what others call dangerous into lasting skill. Just know that building the frame, you can harden the wildness too — watch for it. Instinct and discipline holding hands is why you're intense yet unbreakable.",
+    square:
+      "Inside you, the discipline that suppresses you and the instinct that refuses taming keep facing off. Under pressure to be proper, you press the wildness down until the suppression hardens into resentment. That conflict is heavy, but it's the old task of not hiding your true self. The more you admit the force you've pressed down out of fear, the more real your firmness becomes.",
+    opposition:
+      "Inside you, the wish to keep the rules and the unrestrained wildness seesaw at opposite poles. Keep pushing that instinct outward and you meet your suppressed self through someone who tries to control you. Just don't keep blaming your wildness on others' pressure, or you can't free yourself. When you hold both restraint and instinct as yours, you become someone no one can cage.",
+  },
+  'uranus-lilith': {
+    conjunction:
+      "There's an explosive freedom in you that flips the table the moment it's caged. Faced with a hand trying to suppress it, it leaps up without warning and startles everyone. That upheaval looks precarious, but it's really a declaration that you'll be tamed by no one. Add direction instead of detonating it on impulse, and you become someone ahead of the times.",
+    flow: "You're someone whose blunt instinct and offbeat sense naturally connect. Stepping outside the mold feels normal, so the less you suppress yourself, the fresher life unfolds. Just know that chasing only the new, you can miss the chance to root — watch for it. That unbound sense keeps you walking a half-step ahead.",
+    square:
+      "Inside you, the urge to overturn and the refusal to be tamed keep colliding. Stifled, you want to raze it all, then you shake up a bond or a place yourself. That turbulence is dizzying, but it's a signal to sort out what truly needs changing. The more you ask, before flipping it, whether this is freedom or flight, the more your upheaval becomes a leap.",
+    opposition:
+      "Inside you, the wish to be free and the unrestrained wildness seesaw at opposite poles. Keep that defiance outside yourself and you're drawn to radical, unpredictable people who mirror it back. Just don't only live that freedom through others, or you never make it your own. When you hold both stability and upheaval as yours, your freedom becomes real.",
+  },
+  'neptune-lilith': {
+    conjunction:
+      'Your wildness is wrapped in an elusive, enchanting mist. Primal pull and far-off imagination blend until you draw people as if bewitching them. That haze is charm, but let the wildness drift off only as fantasy and you lose your way. Build the mystery into something you can hold instead of leaving it a dream, and your enchantment becomes real power.',
+    flow: "You're someone whose blunt instinct and rich imagination connect gently. You flow, for no reason you can name, toward what pulls your heart, and that sense blooms into art or inspiration. Just know the ease can leave the dream only a dream — move one lingering image into reality. That single current of instinct and imagination shapes a mystery all your own.",
+    square:
+      "Inside you, a far-off ideal and untamed desire keep blurring together. Whether you truly want it or are just drifting off drunk goes hazy, and you wander in fog. That blankness frustrates, but it's a class in telling real longing from empty illusion. The more you name the blurred desire and make it clear, the sharper your road grows, inch by inch.",
+    opposition:
+      "Inside you, the dreaming self and the unrestrained wildness seesaw at opposite poles. Keep that primal pull outside yourself and you're bewitched by mysterious, edgy partners who mirror it back. Just don't seek that enchantment only in others, or you lose yourself. When you hold both imagination and wildness as yours, your allure becomes an unshakable force.",
+  },
+  'pluto-lilith': {
+    conjunction:
+      "Inside you, the wildness that won't be tamed and the power to be reborn from the very bottom fuse into one. You dig into the desire and darkness others fear and cover, drawing real power from within. Keeping that intensity from tipping into obsession is a lifelong task. Each time you handle the hidden force yourself, you're reborn unrecognizably deeper and stronger.",
+    flow: "You're someone whose blunt instinct and bottom-deep reserves brace each other from far below. Passing through crisis or darkness, your power only sharpens, and you're built to rise again from the fallen place. Just know that, trusting it, you can try to grip everything and clog the flow — let one thing go. Instinct and reserve flowing together is the backbone that guards you to the end.",
+    square:
+      "Inside you, the force to change everything and the refusal to be tamed face off fiercely. The wish to control and the urge to smash it all swirl together, so the labor pains run especially large. That surge is frightening, but it's a force that peels off the old shell. Each time you sort what to tear down from what to keep, you stand again a layer deeper.",
+    opposition:
+      "Inside you, the force that digs deep and the unrestrained wildness seesaw at opposite poles. Keep that intensity outside yourself and you meet it through partners tangled in power or obsession. Just don't only live that force through relationships, or you lose yourself. When you hold both depth and wildness as yours, you become someone no one can shake.",
+  },
 }
 
 export const houses: PlanetHouseReadings = {
@@ -1279,20 +1368,19 @@ export const houses: PlanetHouseReadings = {
     11: "Joy pools between people. In hours spent laughing with a crowd that fits, life's tailwind blows. Dreams dreamed together work out better for you than plans made alone. Staying near good people is your most natural habit of luck.",
     12: "Joy pools in stillness. In hours walking, resting and emptying alone, the heart's channel clears. What you've given in secret circles back and quietly guards you. Don't begrudge the hours withdrawn from the world. That's where your luck rises to fill.",
   },
-  // TODO(i18n): translate Black Moon Lilith house readings (see ko.ts).
   lilith: {
-    1: '',
-    2: '',
-    3: '',
-    4: '',
-    5: '',
-    6: '',
-    7: '',
-    8: '',
-    9: '',
-    10: '',
-    11: '',
-    12: '',
+    1: "Your wildness shows on the outside before you can hide it. An intense air that can't be handled carelessly is woven into your very presence, so people are drawn yet wary. Press the impression down and play meek and your own selfhood dims. Carry the intensity as it is, outright, and you become someone no one can shove aside.",
+    2: "Your wildness comes alive around the sense of your own share and worth. When others try to measure what you're allowed to enjoy or own, a strong pushback rises inside. Suppress that desire as crude and you keep undervaluing yourself. When you set your worth yourself, that wildness becomes an unshakable self-esteem.",
+    3: "Your wildness leaps out where you speak and think. There's a blunt voice that can't help saying what everyone swallows, or asking why of a fixed answer. Swallow that edged speech as dangerous and your own voice vanishes too. Hone that language and let it out, and your words become a force that rattles the table and wakes the world.",
+    4: "Your wildness is hidden in the most private place — home and roots. You've held the real you down inside the family, or a fierce feeling rises right where you're supposed to be at ease. Cover that emotion as if it weren't there and the root of your heart stays uneasy. When you admit and tend that inner force, you finally have a place of true ease.",
+    5: "Your wildness blooms intensely where you love, express, and play. The romance and creation you pour into carry a primal pull and immersion, so a charm others can't easily copy pours out. Press that intensity down as too much and even the joy withers. When you express freely without minding others' eyes, that wildness becomes a light all your own.",
+    6: "Your wildness shows where you handle daily work and care for your body. You can't bear being caged in a fixed frame, so pushback rises against the repeating routine. Suppress it and grind on and your body signals first. When you find a way to run work and body by your own rhythm, that wildness turns into an unshakable diligence.",
+    7: "Your wildness reveals itself through the partner across from you. You're drawn to intense, unrestrained partners, or you keep meeting taut power struggles inside relationships. Leave that intensity always as the other's and you meet the same wave in every bond. When you notice it's your own wildness, you learn to love as an equal without being swept along.",
+    8: 'This is where Lilith feels most at home. The deep desire, hidden power, and moments of upheaval others fear and cover, you face head-on, drawing your real self up from within. The more you try to hide that intensity, the harder it swirls. When you master that depth yourself, you become someone who is reborn even after falling.',
+    9: "Your wildness comes alive chasing a wider world and your own truth. Faced with someone else's morality or right answer, you'd rather ask is that really so and step past the fence. Suppress that defiance and you suffocate inside a borrowed belief. Follow the truth you've lived, and that wildness becomes a freedom no one can pen in.",
+    10: "Your wildness shows where the world watches — over work and reputation. Against pressing authority or fixed rules, a firm defiance rises to climb your own way. Hide that ambition as arrogance and you end up only boosting someone else's success. When you build your own place without anyone's permission, that wildness becomes a power no one can topple.",
+    11: 'Your wildness shows as an outsider within the group and community. Faced with this is just how everyone does it, you want to ask why you have to. Hide your difference and force yourself to blend and the feeling of not belonging only deepens. When you take that difference as your own color, that wildness becomes a vision that leads the group forward.',
+    12: "Your wildness lies sunk in an inner place no one can see. A primal heart even you don't fully know flows in secret, surfacing suddenly as a dream or a hunch. Press that deep self down as if it weren't there and it leaks out sideways. When you quietly face and release that inner world, that wildness becomes a mystery all your own.",
   },
 }
 

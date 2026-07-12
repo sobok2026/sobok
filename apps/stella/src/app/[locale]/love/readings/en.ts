@@ -26,30 +26,75 @@ export const readings: LoveReadings = {
     pisces:
       "Your attraction is a tide that seeps into the mood. You sink deep into the other person's feelings and get drenched in their world. That unconditional attunement becomes a dreamlike comfort to them. Just know you can blur while matching them — keep your own outline even inside love.",
   },
-  charm: {
-    aries:
-      'Your charm is the liveliness that transmits on contact. It bursts brightest when you collide honestly instead of playing games. On active dates where you move your bodies together, your energy captivates completely.',
-    taurus:
-      "Your charm is the ease that settles over people near you. Don't hold back the senses — sharing good food, choosing scents and textures. Your unhurried pace is itself the greatest steadiness you can hand someone.",
-    gemini:
-      'Your charm is conversation that leaves no room for boredom. Draw out their stories with light questions and quick answers. That sparkle at the end of every exchange leaves them waiting for the next meeting without knowing why.',
-    cancer:
-      'Your charm is the tenderness that remembers the small things. When you return something they said in passing, hearts move hard. Small care with your touch in it is a stronger language for you than any staged event.',
-    leo: "Your charm is a presence that brightens the room. Don't shrink — show yourself enjoying the splendid moments your way. Be unstinting with praise for them too, and that warm light doubles.",
-    virgo:
-      "Your charm is the attentiveness that fills in without words. Don't hide that eye that notices their condition first. Show an unpolished side now and then instead of straining to be perfect, and they come in closer.",
-    libra:
-      'Your charm is the sense that makes shared time lovely. Choosing the good room, leaning into their story — that posture is your weapon. Just a nod from you and they feel understood.',
-    scorpio:
-      "Your charm is a depth not easily read. Opening one layer at a time, rather than rushing to show everything, is how you fascinate in your own way. Load your gaze with sincerity instead of many words, and they'll find that density hard to escape.",
-    sagittarius:
-      'Your charm is the open laugh and the sense of space. Suggest freely the places you want to go and the things you want to try. The feeling that the world gets bigger with you is the strongest hold you have on anyone.',
-    capricorn:
-      "Your charm is an unshakable dependability. Prove your heart by keeping the promise you made once, rather than with dazzling words. You're someone whose worth shows over time, so the longer they watch, the more they lean your way.",
-    aquarius:
-      'Your charm is a grain found nowhere else. Bring out your own gaze and your own obsessions instead of following the current. Being lover and best friend at once — that ease is a gift no one else can give.',
-    pisces:
-      "Your charm is empathy that seeps into the heart's grain. That gaze that feels what they feel is comfort in itself. Share the world your sensibility lives in — the music, the pictures — and they'll be dyed through.",
+  looks: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
+  inner: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
+  styling: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
+  flirting: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
+  caution: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
   },
   persona: {
     aries: {
@@ -143,6 +188,13 @@ export const readings: LoveReadings = {
       'Neptune dwells in your house of partnership. Romance runs deep and idealizing runs easy here — now and then, separate the dream from the actual person.',
     pluto:
       'Pluto sits in your house of partnership. Love remakes you from the root with this placement — the you before and after the meeting are different people.',
+  },
+  natalLove: {
+    flowing: '',
+    slowDeep: '',
+    intense: '',
+    unconventional: '',
+    balanced: '',
   },
   timing: {
     jupiterVenus: {

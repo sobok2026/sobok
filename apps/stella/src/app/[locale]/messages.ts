@@ -309,14 +309,31 @@ export const messages = {
         houseKicker: '관계의 방에 든 {planet}',
         solarNote: '태어난 시각이 없어서 태양 기준으로 관계의 문을 읽었어요. 시각을 알게 되면 더 정확해져요.',
       },
-      charm: {
-        title: '내 매력 사용법',
+      magnetism: {
+        title: '내 매력',
+        looksKicker: '첫인상 · {sign} 상승궁',
+        innerKicker: '마음의 결 · {sign} 달',
+        noRisingNote: '태어난 시각을 알면 첫인상을 그리는 상승궁까지 읽어 드려요.',
+      },
+      playbook: {
+        title: '내 매력 활용법',
+        stylingKicker: '스타일링 · {sign} 금성',
+        flirtKicker: '플러팅 · {sign} 화성',
+        cautionKicker: '주의할 행동',
       },
       timing: {
-        title: '다가올 시기',
+        title: '연애운 시기',
+        natalKicker: '타고난 연애운',
+        upcomingKicker: '다가올 시기',
         subtitle: '앞으로 1년 동안 사랑의 하늘이 지나는 길이에요.',
         now: '진행 중',
         noTimeNote: '태어난 시각까지 알면 만남의 문이 열리는 시기도 함께 읽어 드려요.',
+        purpose: {
+          meeting: '만남',
+          opening: '고백·진전',
+          deepening: '지속·심화',
+          caution: '주의',
+        },
       },
       empty: {
         title: '내 차트가 있어야 읽을 수 있어요',
@@ -640,14 +657,31 @@ export const messages = {
         solarNote:
           'Without a birth time, we read the gate of partnership from your Sun. It sharpens once the time is known.',
       },
-      charm: {
-        title: 'How to use my charm',
+      magnetism: {
+        title: '',
+        looksKicker: '',
+        innerKicker: '',
+        noRisingNote: '',
+      },
+      playbook: {
+        title: '',
+        stylingKicker: '',
+        flirtKicker: '',
+        cautionKicker: '',
       },
       timing: {
         title: 'Seasons ahead',
+        natalKicker: '',
+        upcomingKicker: '',
         subtitle: 'The road the sky of love travels over the next year.',
         now: 'Now',
         noTimeNote: 'Learn your birth time and we can also read when the gate of meeting opens.',
+        purpose: {
+          meeting: '',
+          opening: '',
+          deepening: '',
+          caution: '',
+        },
       },
       empty: {
         title: 'We need your chart to read this',
@@ -966,14 +1000,31 @@ export const messages = {
         houseKicker: '落在关系之宫的{planet}',
         solarNote: '因为没有出生时间，我们以太阳为基准解读了关系之门。知道时间后会更精确。',
       },
-      charm: {
-        title: '我的魅力使用法',
+      magnetism: {
+        title: '',
+        looksKicker: '',
+        innerKicker: '',
+        noRisingNote: '',
+      },
+      playbook: {
+        title: '',
+        stylingKicker: '',
+        flirtKicker: '',
+        cautionKicker: '',
       },
       timing: {
         title: '将至的时节',
+        natalKicker: '',
+        upcomingKicker: '',
         subtitle: '未来一年，爱情的天空将要走过的路。',
         now: '进行中',
         noTimeNote: '连出生时间也知道的话，还能一起读出相遇之门开启的时节。',
+        purpose: {
+          meeting: '',
+          opening: '',
+          deepening: '',
+          caution: '',
+        },
       },
       empty: {
         title: '需要你的星盘才能解读',
@@ -1295,14 +1346,31 @@ export const messages = {
         houseKicker: '関係の部屋に入った{planet}',
         solarNote: '出生時刻が分からないため、太陽を基準に関係の門を読みました。時刻が分かるともっと正確になります。',
       },
-      charm: {
-        title: '私の魅力の使い方',
+      magnetism: {
+        title: '',
+        looksKicker: '',
+        innerKicker: '',
+        noRisingNote: '',
+      },
+      playbook: {
+        title: '',
+        stylingKicker: '',
+        flirtKicker: '',
+        cautionKicker: '',
       },
       timing: {
         title: 'やって来る時期',
+        natalKicker: '',
+        upcomingKicker: '',
         subtitle: 'これから1年、恋の空が通っていく道です。',
         now: '進行中',
         noTimeNote: '出生時刻まで分かれば、出会いの門が開く時期も一緒に読み解きます。',
+        purpose: {
+          meeting: '',
+          opening: '',
+          deepening: '',
+          caution: '',
+        },
       },
       empty: {
         title: 'あなたのチャートがあってこそ読めます',

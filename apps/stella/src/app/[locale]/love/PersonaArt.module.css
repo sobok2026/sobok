@@ -1,0 +1,149 @@
+/* Ambient, quasi-periodic motion for the love persona portrait.
+   Every animation runs at a period that shares no common factor with the
+   others, so their composite has an effectively infinite repeat length —
+   the portrait drifts organically instead of visibly looping. This is the
+   sum-of-sines idea at the composition level: incommensurate frequencies
+   read as "unpredictable" without any randomness or JS.
+
+   Transform/opacity only (compositor-friendly), so the component stays pure
+   markup — no client hook, no rAF. Under reduced-motion every element rests
+   at its base pose, which is exactly the un-animated design. */
+
+/* Two orbits weaving — slow counter-rotation about the portrait centre.
+   The mismatched periods keep the overlap pattern continuously evolving. */
+.orbitA,
+.orbitB {
+  transform-box: view-box;
+  transform-origin: 60px 60px;
+}
+
+.orbitA {
+  animation: personaSpin 32s linear infinite;
+}
+
+.orbitB {
+  animation: personaSpin 41s linear infinite reverse;
+}
+
+/* Softly breathing halo. */
+.halo {
+  transform-box: view-box;
+  transform-origin: 60px 60px;
+  animation: personaBreathe 9s ease-in-out infinite;
+}
+
+/* A quick lub-dub, then rest — a heartbeat, not a metronome. */
+.heart {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: personaBeat 3.2s ease-in-out infinite;
+}
+
+/* Sum-of-sines drift on the asterism: three nested wrappers, each a single
+   sine on one axis at an incommensurate period. Because the transforms
+   compose, the figure traces a non-repeating Lissajous path. The negative
+   delays break the shared t=0 alignment so they never start in phase. */
+.drift1 {
+  animation: personaBobY 7s ease-in-out infinite alternate;
+}
+
+.drift2 {
+  animation: personaBobX 11s ease-in-out infinite alternate;
+  animation-delay: -3s;
+}
+
+.drift3 {
+  animation: personaBobY2 5.3s ease-in-out infinite alternate;
+  animation-delay: -2s;
+}
+
+/* Sparkles twinkle independently; each one's duration and phase are set
+   inline (per-sparkle data), so no two ever blink together. */
+.twinkle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: personaTwinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes personaSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes personaBreathe {
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.045);
+  }
+}
+
+@keyframes personaBeat {
+  0%,
+  62%,
+  100% {
+    transform: scale(1);
+  }
+  8% {
+    transform: scale(1.16);
+  }
+  20% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.1);
+  }
+  42% {
+    transform: scale(1);
+  }
+}
+
+@keyframes personaBobY {
+  to {
+    transform: translateY(-2.4px);
+  }
+}
+
+@keyframes personaBobX {
+  to {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes personaBobY2 {
+  to {
+    transform: translateY(1.4px);
+  }
+}
+
+@keyframes personaTwinkle {
+  from {
+    opacity: 0.4;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbitA,
+  .orbitB,
+  .halo,
+  .heart,
+  .drift1,
+  .drift2,
+  .drift3,
+  .twinkle {
+    animation: none;
+  }
+}

@@ -4,6 +4,7 @@
 
 import type { ComputedPlanetId, SignId } from '../../chart/types'
 import type { AspectTone } from '../../interpretations/types'
+import type { NatalLoveTone } from '../compute'
 
 export type PartnerPersona = {
   /** Card headline, e.g. '먼저 손 내미는 불꽃'. */
@@ -26,11 +27,21 @@ export type LoveTiming = {
 export type LoveReadings = {
   /** Mars by sign through the attraction lens — how desire approaches. */
   marsInLove: Record<SignId, string>
-  /** Venus by sign — the charm to lean on and how to use it. */
-  charm: Record<SignId, string>
+  /** Rising sign — the first impression others read before a word is said. */
+  looks: Record<SignId, string>
+  /** Moon by sign — the inner emotional grain under the surface. */
+  inner: Record<SignId, string>
+  /** Venus by sign — the charm to lean on and how to style it. */
+  styling: Record<SignId, string>
+  /** Mars by sign — how to flirt with your own current. */
+  flirting: Record<SignId, string>
+  /** Venus by sign — the behavior that dampens your own charm. */
+  caution: Record<SignId, string>
   /** Descendant-sign partner personas. */
   persona: Record<SignId, PartnerPersona>
   /** A body living in the 7th house colors the partnership stage. */
   seventhPlanet: Record<ComputedPlanetId, string>
+  /** The natal love baseline — one tone derived from the chart's loudest love signal. */
+  natalLove: Record<NatalLoveTone, string>
   timing: LoveTiming
 }

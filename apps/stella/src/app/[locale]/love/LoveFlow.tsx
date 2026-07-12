@@ -17,13 +17,28 @@ import { loadInterpretations } from '../interpretations'
 import type { Interpretations } from '../interpretations/types'
 import { aspectTone, fill, pairKey } from '../interpretations/types'
 import Starfield from '../Starfield'
-import { deriveLoveProfile, type LoveProfile, type LoveWindow, scanLoveTransits } from './compute'
+import {
+  deriveLoveProfile,
+  type LoveProfile,
+  type LoveWindow,
+  type LoveWindowPurpose,
+  scanLoveTransits,
+  windowPurpose,
+} from './compute'
 import PersonaArt from './PersonaArt'
 import { loadLoveReadings } from './readings'
 import type { LoveReadings } from './readings/types'
 
 /** How many timing windows the section shows at most. */
 const MAX_WINDOWS = 6
+
+/** Chip color per window purpose — accent invites, green opens, danger warns. */
+const PURPOSE_CHIP: Record<LoveWindowPurpose, string> = {
+  meeting: 'bg-accent/15 text-accent',
+  opening: 'bg-positive/15 text-positive',
+  deepening: 'bg-foreground/10 text-foreground-secondary',
+  caution: 'bg-danger/15 text-danger',
+}
 
 type Data = {
   readings: LoveReadings
@@ -177,6 +192,41 @@ function LoveBody({ data, homeHref, locale, onShare }: LoveBodyProps) {
         </div>
       </section>
 
+      {/* My magnetism — outer (rising) and inner (moon) */}
+      <section className={`${styles.card} rounded-3xl border bg-surface-2 p-5 backdrop-blur`}>
+        <h2 className="text-sm font-bold text-foreground">{t('magnetism.title')}</h2>
+        <div className="mt-3 space-y-4">
+          {profile.risingSign ? (
+            <Reading
+              label={t('magnetism.looksKicker', { sign: signName(profile.risingSign) })}
+              text={readings.looks[profile.risingSign]}
+            />
+          ) : (
+            <p className="text-[11px] leading-relaxed text-foreground-faint">{t('magnetism.noRisingNote')}</p>
+          )}
+          <Reading
+            label={t('magnetism.innerKicker', { sign: signName(profile.moonSign) })}
+            text={readings.inner[profile.moonSign]}
+          />
+        </div>
+      </section>
+
+      {/* Using your charm — a playbook */}
+      <section className={`${styles.card} rounded-3xl border bg-surface-2 p-5 backdrop-blur`}>
+        <h2 className="text-sm font-bold text-foreground">{t('playbook.title')}</h2>
+        <div className="mt-3 space-y-4">
+          <Reading
+            label={t('playbook.stylingKicker', { sign: signName(profile.venusSign) })}
+            text={readings.styling[profile.venusSign]}
+          />
+          <Reading
+            label={t('playbook.flirtKicker', { sign: signName(profile.marsSign) })}
+            text={readings.flirting[profile.marsSign]}
+          />
+          <Reading label={t('playbook.cautionKicker')} text={readings.caution[profile.venusSign]} />
+        </div>
+      </section>
+
       {/* Destined partner */}
       <section className={`${styles.card} rounded-3xl border bg-surface-2 p-5 backdrop-blur`}>
         <h2 className="text-sm font-bold text-foreground">{t('partner.title')}</h2>
@@ -216,39 +266,54 @@ function LoveBody({ data, homeHref, locale, onShare }: LoveBodyProps) {
         )}
       </section>
 
-      {/* Using your charm */}
-      <section className={`${styles.card} rounded-3xl border bg-surface-2 p-5 backdrop-blur`}>
-        <h2 className="text-sm font-bold text-foreground">{t('charm.title')}</h2>
-        <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">{readings.charm[profile.venusSign]}</p>
-      </section>
-
-      {/* The year ahead */}
+      {/* Love timing — natal baseline + the year ahead */}
       <section className={`${styles.card} rounded-3xl border bg-surface-2 p-5 backdrop-blur`}>
         <h2 className="text-sm font-bold text-foreground">{t('timing.title')}</h2>
-        <p className="mt-1 text-xs leading-relaxed text-foreground-subtle">{t('timing.subtitle')}</p>
-        {shownWindows.length === 0 && (
-          <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">{readings.timing.empty}</p>
-        )}
-        {shownWindows.length > 0 && (
-          <ol className="mt-3 space-y-3">
-            {shownWindows.map((w, i) => (
-              <li className="rounded-xl bg-surface px-3 py-2.5" key={`${w.kind}-${i}`}>
-                <p className="flex items-center gap-2 text-xs font-semibold text-accent">
-                  {formatWindowRange(w, locale)}
-                  {w.start <= today && (
-                    <span className="inline-flex items-center rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-medium text-accent">
-                      {t('timing.now')}
-                    </span>
-                  )}
-                </p>
-                <p className="mt-1.5 text-sm leading-relaxed text-foreground-secondary">{windowText(w, readings)}</p>
-              </li>
-            ))}
-          </ol>
-        )}
-        {!timeKnown && (
-          <p className="mt-3 text-[11px] leading-relaxed text-foreground-faint">{t('timing.noTimeNote')}</p>
-        )}
+
+        <div className="mt-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">{t('timing.natalKicker')}</p>
+          <p className="mt-1 text-sm leading-relaxed text-foreground-secondary">
+            {readings.natalLove[profile.natalLove]}
+          </p>
+        </div>
+
+        <div className="mt-5">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">{t('timing.upcomingKicker')}</p>
+          <p className="mt-1 text-xs leading-relaxed text-foreground-subtle">{t('timing.subtitle')}</p>
+          {shownWindows.length === 0 && (
+            <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">{readings.timing.empty}</p>
+          )}
+          {shownWindows.length > 0 && (
+            <ol className="mt-3 space-y-3">
+              {shownWindows.map((w, i) => {
+                const purpose = windowPurpose(w)
+                return (
+                  <li className="rounded-xl bg-surface px-3 py-2.5" key={`${w.kind}-${i}`}>
+                    <p className="flex flex-wrap items-center gap-2 text-xs font-semibold text-accent">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${PURPOSE_CHIP[purpose]}`}
+                      >
+                        {t(`timing.purpose.${purpose}`)}
+                      </span>
+                      {formatWindowRange(w, locale)}
+                      {w.start <= today && (
+                        <span className="inline-flex items-center rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-medium text-accent">
+                          {t('timing.now')}
+                        </span>
+                      )}
+                    </p>
+                    <p className="mt-1.5 text-sm leading-relaxed text-foreground-secondary">
+                      {windowText(w, readings)}
+                    </p>
+                  </li>
+                )
+              })}
+            </ol>
+          )}
+          {!timeKnown && (
+            <p className="mt-3 text-[11px] leading-relaxed text-foreground-faint">{t('timing.noTimeNote')}</p>
+          )}
+        </div>
       </section>
 
       {/* Actions */}

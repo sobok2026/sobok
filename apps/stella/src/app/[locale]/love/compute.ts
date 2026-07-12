@@ -5,6 +5,7 @@
 import ms from 'ms'
 import { closestAspect, houseOfLon, signOfLon } from '../chart/astrology'
 import { PLANET_ORDER } from '../chart/data'
+import { dignityOf } from '../chart/signature'
 import type { ChartAspect, ComputedPlanetId, NatalChart, PlanetId, SignId } from '../chart/types'
 import { computeLongitudeSeries } from '../ephemeris'
 import { type AspectTone, aspectTone } from '../interpretations/types'
@@ -24,10 +25,21 @@ const VENUS_PARTNERS: ReadonlySet<PlanetId> = new Set([
 
 const COMPUTED_BODIES: ReadonlySet<PlanetId> = new Set(PLANET_ORDER)
 
+/**
+ * The natal love baseline — one qualitative tone derived from the chart's
+ * loudest love signal. Ranked so the feature that most colors the felt
+ * experience wins; without a birth time the house signals drop out and the
+ * chart settles honestly toward `flowing`/`balanced`.
+ */
+export type NatalLoveTone = 'flowing' | 'slowDeep' | 'intense' | 'unconventional' | 'balanced'
+
 export type LoveProfile = {
   venusSign: SignId
   venusRetro: boolean
   marsSign: SignId
+  /** Rising sign — the first impression. Null without a birth time. */
+  risingSign: SignId | null
+  moonSign: SignId
   /** The tightest natal Venus aspect that carries copy, if any. */
   venusAspect: ChartAspect | null
   /** Descendant sign — the exact axis with a birth time, solar (Sun-opposite) without. */
@@ -35,11 +47,54 @@ export type LoveProfile = {
   solarDescendant: boolean
   /** Bodies living in the 7th house (birth time required, else empty). */
   seventhHouse: ComputedPlanetId[]
+  /** The natal love baseline tone. */
+  natalLove: NatalLoveTone
+}
+
+/** Whether a natal aspect ties Venus to the given body (either orientation). */
+function venusTouches(aspects: readonly ChartAspect[], partner: PlanetId): boolean {
+  return aspects.some((a) => (a.a === 'venus' && a.b === partner) || (a.b === 'venus' && a.a === partner))
+}
+
+/** First matching signal wins — loudest features first. See `NatalLoveTone`. */
+function deriveNatalLoveTone(
+  venusSign: SignId,
+  descendantSign: SignId,
+  seventhHouse: readonly ComputedPlanetId[],
+  aspects: readonly ChartAspect[],
+): NatalLoveTone {
+  const venusDignity = dignityOf('venus', venusSign)
+
+  if (
+    venusTouches(aspects, 'saturn') ||
+    seventhHouse.includes('saturn') ||
+    venusDignity === 'fall' ||
+    venusDignity === 'detriment'
+  ) {
+    return 'slowDeep'
+  }
+  if (venusTouches(aspects, 'pluto') || venusTouches(aspects, 'mars') || seventhHouse.includes('pluto')) {
+    return 'intense'
+  }
+  if (venusTouches(aspects, 'uranus') || seventhHouse.includes('uranus') || descendantSign === 'aquarius') {
+    return 'unconventional'
+  }
+  if (
+    venusDignity === 'domicile' ||
+    venusDignity === 'exaltation' ||
+    venusTouches(aspects, 'jupiter') ||
+    seventhHouse.includes('jupiter') ||
+    seventhHouse.includes('venus')
+  ) {
+    return 'flowing'
+  }
+  return 'balanced'
 }
 
 export function deriveLoveProfile(chart: NatalChart, aspects: readonly ChartAspect[]): LoveProfile {
   const venus = chart.planets.find((p) => p.id === 'venus')
   const mars = chart.planets.find((p) => p.id === 'mars')
+  const moon = chart.planets.find((p) => p.id === 'moon')
   const sun = chart.planets.find((p) => p.id === 'sun')
 
   const venusAspect =
@@ -48,6 +103,8 @@ export function deriveLoveProfile(chart: NatalChart, aspects: readonly ChartAspe
       .sort((a, b) => a.orb - b.orb)[0] ?? null
 
   const descendantLon = chart.ascendant !== null ? chart.ascendant + 180 : (sun?.lon ?? 0) + 180
+  const descendantSign = signOfLon(descendantLon)
+  const venusSign = signOfLon(venus?.lon ?? 0)
 
   const seventhHouse =
     chart.ascendant === null
@@ -58,13 +115,16 @@ export function deriveLoveProfile(chart: NatalChart, aspects: readonly ChartAspe
           .map((p) => p.id as ComputedPlanetId)
 
   return {
-    venusSign: signOfLon(venus?.lon ?? 0),
+    venusSign,
     venusRetro: venus?.retrograde ?? false,
     marsSign: signOfLon(mars?.lon ?? 0),
+    risingSign: chart.ascendant === null ? null : signOfLon(chart.ascendant),
+    moonSign: signOfLon(moon?.lon ?? 0),
     venusAspect,
-    descendantSign: signOfLon(descendantLon),
+    descendantSign,
     solarDescendant: chart.ascendant === null,
     seventhHouse,
+    natalLove: deriveNatalLoveTone(venusSign, descendantSign, seventhHouse, aspects),
   }
 }
 
@@ -76,6 +136,25 @@ export type LoveWindow = {
   tone: AspectTone | null
   start: Date
   end: Date
+}
+
+/** What a timing window is good for — the purpose framing the section reads by. */
+export type LoveWindowPurpose = 'meeting' | 'opening' | 'deepening' | 'caution'
+
+/** Map a scanned window to its purpose. Hard aspects and retrograde read as caution. */
+export function windowPurpose(w: LoveWindow): LoveWindowPurpose {
+  if (w.kind === 'jupiterDescendant') {
+    return 'meeting'
+  }
+  if (w.kind === 'venusRetro') {
+    return 'caution'
+  }
+  const hard = w.tone === 'square' || w.tone === 'opposition'
+  if (w.kind === 'jupiterVenus') {
+    return hard ? 'caution' : 'opening'
+  }
+  // saturnVenus
+  return hard ? 'caution' : 'deepening'
 }
 
 /** How far ahead the scan looks — a bit past a year so year-edge windows still close. */

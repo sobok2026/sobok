@@ -26,30 +26,75 @@ export const readings: LoveReadings = {
     pisces:
       '你的心动像渗进氛围的水波。深深代入对方的情绪，用全身浸进那个人的世界。无条件迁就的那份浪漫，对对方是梦一样的安慰。只是迁就着迁就着自己会变模糊，就算在爱里，也守住自己的轮廓。',
   },
-  charm: {
-    aries:
-      '你的魅力是见面瞬间就传过去的生气。比起欲擒故纵，坦率相撞时那道光迸得最亮。在一起活动身体的约会里，你的能量会把对方完全俘获。',
-    taurus:
-      '你的魅力是待在身边就自然安心的松弛感。分享好吃的、挑选好闻的香气和舒服的质感——那份感官别舍不得展示。你不慌不忙的速度本身，就是给对方最大的安稳。',
-    gemini:
-      '你的魅力是不给无聊留缝的对话。用轻巧的问题和机灵的回答，把对方的故事引出来。一来一往话锋上闪烁的那份急智，会让对方不知不觉期待下一次见面。',
-    cancer:
-      '你的魅力是连小事都记得的温柔。把对方随口说过的话记下来、在合适的时候还回去，人心会大大动摇。比起精心策划的仪式，带着手温的小小用心才是你最强的语言。',
-    leo: '你的魅力是照亮全场的存在感。别缩着，把你享受华丽时刻的样子大大方方亮出来。对对方的称赞也不吝啬的话，那道温暖的光会大上一倍。',
-    virgo:
-      '你的魅力是默默补位的细心。先察觉对方状态的那份眼力，别藏起来。比起努力显得完美，偶尔露出松散的一面，对方反而靠得更近。',
-    libra:
-      '你的魅力是把共处时光变得体面的感觉。挑一个氛围好的地方、认真听对方说话——那份姿态就是武器。只是点点头，对方就觉得被你理解了。',
-    scorpio:
-      '你的魅力是不易读懂的深。比起急着展示全部，一层层慢慢打开才是你式的魅惑。少说几句话、把真心放进眼神里，对方就很难从那份密度里出来。',
-    sagittarius:
-      '你的魅力是敞亮的笑和开阔感。想一起去的地方、想一起做的事，大大方方提出来。"和你在一起世界会变大"——这种感觉正是抓住对方最大的力量。',
-    capricorn:
-      '你的魅力是不动摇的可靠。用守住一次承诺的样子、而不是漂亮话来证明心意。你是时间越久真价越显的人，看得越久，对方越向你倾斜。',
-    aquarius:
-      '你的魅力是哪儿都没有的独特纹理。比起追流行，把只属于你的视角和爱好原样拿出来。既是恋人又是最好朋友的那份自在，是别人给不了的礼物。',
-    pisces:
-      '你的魅力是渗进心底的共情。一起感受对方情绪的那道眼神，本身就是安慰。分享装着你感性的世界——喜欢的音乐、喜欢的画——对方会被完全浸染。',
+  looks: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
+  inner: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
+  styling: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
+  flirting: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
+  caution: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
   },
   persona: {
     aries: {
@@ -136,6 +181,13 @@ export const readings: LoveReadings = {
     uranus: '天王星悬在关系之宫。这是老套恋爱公式不适用的配置，在与众不同的关系形态里，你反而找到安定。',
     neptune: '海王星驻在关系之宫。这是浪漫有多深、就多容易理想化对方的配置，偶尔把梦和真实的人分开看看。',
     pluto: '冥王星落在关系之宫。这是爱把你从根上改变的配置，相遇之前和之后的你，是两个人。',
+  },
+  natalLove: {
+    flowing: '',
+    slowDeep: '',
+    intense: '',
+    unconventional: '',
+    balanced: '',
   },
   timing: {
     jupiterVenus: {
