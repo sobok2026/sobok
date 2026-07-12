@@ -14,7 +14,16 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
   const description = t('description')
   const canonical = `/${locale}/`
   const openGraphLocale = LOCALE_OPEN_GRAPH_TAGS[locale]
-  const images = [{ url: '/og-image.png', width: 1200, height: 630, alt: `${SITE_NAME} — ${title}` }]
+
+  const images = [
+    {
+      url: '/og-image.webp',
+      width: 1200,
+      height: 630,
+      alt: `${SITE_NAME} — ${title}`,
+      type: 'image/webp',
+    },
+  ]
 
   return {
     alternates: {

@@ -160,7 +160,7 @@ export default function BirthForm({
       {error && <p className="mt-3 text-xs text-[#fb7185]">{error}</p>}
 
       <button
-        className="mt-5 w-full rounded-full bg-linear-to-r from-[#7cc4ff] to-brand px-6 py-3 text-sm font-bold text-[#0a0618] shadow-[0_0_36px_rgba(245,188,255,0.45)] transition active:scale-[0.98] disabled:opacity-70"
+        className="mt-5 w-full rounded-full bg-[#e9e4f4] px-6 py-3 text-sm font-semibold text-[#0a0618] transition hover:bg-white active:scale-[0.98] disabled:opacity-70"
         disabled={computing}
         type="submit"
       >

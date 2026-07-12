@@ -465,5 +465,4 @@ data/model/
 apps/web/scripts/.cache/
 
 .open-next/
-.next-agent/
-.next-agent2/
+.next-agent*/

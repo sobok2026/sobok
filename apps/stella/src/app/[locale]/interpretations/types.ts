@@ -14,6 +14,17 @@ export type PlanetReadings = Record<PlanetId, SignText>
  */
 export type RetroReadings = Partial<Record<PlanetId, SignText>>
 
+export type HouseNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
+export type HouseText = Record<HouseNumber, string>
+
+/**
+ * Placement-by-house readings — the sign says how a planet acts, the house says
+ * where in life it plays out. Only the ten ephemeris bodies carry these; nodes
+ * and fortune read through their sign/aspect lines. Houses need a birth time,
+ * so the panel simply omits the paragraph when the house is unknown.
+ */
+export type PlanetHouseReadings = Partial<Record<PlanetId, HouseText>>
+
 // The five major aspects map to four tones:
 //   conjunction — the two energies fuse into one
 //   flow        — trine + sextile, they support each other with ease
@@ -22,6 +33,7 @@ export type RetroReadings = Partial<Record<PlanetId, SignText>>
 // 'friction' is a legacy key kept only as a fallback for locales not yet split
 // into square/opposition — those fall back to their single friction line.
 export type AspectTone = 'conjunction' | 'flow' | 'square' | 'opposition'
+
 export type PairText = Partial<Record<AspectTone | 'friction', string>>
 export type AspectPairReadings = Partial<Record<string, PairText>>
 

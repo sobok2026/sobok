@@ -1,7 +1,7 @@
-// ko placement, retrograde and aspect-pair readings for the natal chart.
+// ko placement, retrograde, house and aspect-pair readings for the natal chart.
 // Composed into the `Constellation.readings` message namespace by `../messages`.
 
-import type { AspectPairReadings, PlanetReadings, RetroReadings } from './types'
+import type { AspectPairReadings, PlanetHouseReadings, PlanetReadings, RetroReadings } from './types'
 
 export const planets: PlanetReadings = {
   sun: {
