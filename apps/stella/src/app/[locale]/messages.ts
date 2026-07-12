@@ -1,17 +1,33 @@
-import { Locale } from '@sobok/domain/locale'
+import { Locale, type PublicLocale } from '@sobok/domain/locale'
 
-import type { LocalizedMessages } from '@/i18n/messages'
-
-import { aspects as enAspectPairs, planets as enPlanets, retro as enRetro } from './interpretations/en'
-import { aspects as jaAspectPairs, planets as jaPlanets, retro as jaRetro } from './interpretations/ja'
+import {
+  aspects as enAspectPairs,
+  houses as enHouses,
+  planets as enPlanets,
+  retro as enRetro,
+} from './interpretations/en'
+import {
+  aspects as jaAspectPairs,
+  houses as jaHouses,
+  planets as jaPlanets,
+  retro as jaRetro,
+} from './interpretations/ja'
 import {
   aspects as koAspectPairs,
   houses as koHouses,
   planets as koPlanets,
   retro as koRetro,
 } from './interpretations/ko'
+import { report as enReport } from './interpretations/report/en'
+import { report as jaReport } from './interpretations/report/ja'
 import { report as koReport } from './interpretations/report/ko'
-import { aspects as zhAspectPairs, planets as zhPlanets, retro as zhRetro } from './interpretations/zh-CN'
+import { report as zhReport } from './interpretations/report/zh-CN'
+import {
+  aspects as zhAspectPairs,
+  houses as zhHouses,
+  planets as zhPlanets,
+  retro as zhRetro,
+} from './interpretations/zh-CN'
 
 export const messages = {
   [Locale.KO]: {
@@ -330,11 +346,6 @@ export const messages = {
         hint: '생년월일시를 입력하면 사랑의 결부터 다가올 시기까지 내 차트 기준으로 읽어 드려요.',
         cta: '내 차트 만들기',
       },
-      comingSoon: {
-        title: '이 언어로는 아직 준비 중이에요',
-        hint: '연애운 리딩은 지금 한국어로만 제공돼요. 탄생 차트와 오늘의 흐름은 모든 언어로 볼 수 있어요.',
-        cta: '내 차트 만들기',
-      },
       share: {
         button: '나의 연애운 공유',
         text: '별이 읽어 준 나의 연애운 ✦',
@@ -488,6 +499,31 @@ export const messages = {
         aquarius: 'Originality and free thought',
         pisces: 'Sensitivity and imagination',
       },
+      signDescriptions: {
+        aries:
+          'Aries is the first gate of the twelve signs. A pioneering energy where the body moves before the weighing starts, it holds the strongest power to begin anything. A planet entering this seat takes on a grain that charges straight ahead without hesitation.',
+        taurus:
+          'Taurus is a seat like spring earth. Never hurried, checking one thing at a time through the senses, it guards to the end whatever has taken root. A planet entering this seat takes on a grain that builds slowly but solidly.',
+        gemini:
+          'Gemini is the seat of news and connection. Rather than staying long on one thing, it branches in many directions, linking world to world. A planet entering this seat takes on the grain of light, quick conversation.',
+        cancer:
+          'Cancer is a seat like the home a heart returns to. An energy that gathers precious things into its arms and guards their warmth. A planet entering this seat takes on a soft grain of watching over and caring for its own.',
+        leo: 'Leo is the seat of the midsummer sun. An energy that reveals rather than hides, shining by itself and lighting up whoever stands near. A planet entering this seat takes on the grain of stepping proudly onto the stage.',
+        virgo:
+          'Virgo is the seat of refining and completing. With a bright eye that misses no small slippage, it sets things in useful order. A planet entering this seat takes on a meticulous, devoted grain.',
+        libra:
+          'Libra is the seat that seeks the exact middle, like a scale. An energy that rights what has tilted and lays bridges between different people. A planet entering this seat takes on the grain of gently tuning what lies between.',
+        scorpio:
+          'Scorpio is the seat that looks beneath the surface. Instead of skimming, it digs to the essence and sees things through to the end. A planet entering this seat takes on the grain of intense immersion.',
+        sagittarius:
+          'Sagittarius is the seat that aims past the horizon. An energy that shoots its arrow over the familiar fence toward the wider world and the meaning of life. A planet entering this seat takes on the grain of flying toward somewhere farther.',
+        capricorn:
+          'Capricorn is the seat that climbs toward the summit. Without rushing, it carries its duties and proves itself through results over time. A planet entering this seat takes on a steady, tenacious grain.',
+        aquarius:
+          "Aquarius is the seat that lives tomorrow first. An energy that doesn't accept yesterday's answers as given and draws a new picture for everyone. A planet entering this seat takes on the grain of seeing the world from an unusual angle.",
+        pisces:
+          'Pisces is the last seat, where boundaries melt away. An energy that erases the wall between self and other and feels even what cannot be seen. A planet entering this seat takes on the grain of reading hearts without a word.',
+      },
       houseThemes: {
         1: 'Self',
         2: 'Wealth',
@@ -531,16 +567,22 @@ export const messages = {
         neptune: 'Neptune',
         pluto: 'Pluto',
       },
+      planetAliases: {
+        fortune: 'Fortuna',
+      },
       readings: {
         planets: enPlanets,
         retro: enRetro,
+        houses: enHouses,
         aspectPairs: enAspectPairs,
         aspectIntensity: {
           tight: 'This is one of the loudest voices in your whole chart.',
           wide: 'A quiet undertone humming in the background.',
         },
       },
+      report: enReport,
       todayCta: '☾ See today’s flow',
+      loveCta: '♡ See my love reading',
     },
     Today: {
       meta: {
@@ -590,6 +632,7 @@ export const messages = {
       },
       tomorrow: 'Tomorrow’s sky will be different again ✦',
       toChart: 'See my birth chart',
+      toLove: '♡ See my love reading',
     },
     Love: {
       meta: {
@@ -603,11 +646,42 @@ export const messages = {
         subtitle: 'The texture of your love and its seasons ahead, written in your birth sky.',
       },
       computing: 'Reading the stars of love...',
-      comingSoon: {
-        title: 'This reading is Korean-only for now',
-        hint: 'The English version is on its way. Your birth chart and today’s flow are already available in English.',
-        cta: 'Open my chart',
+      style: {
+        title: 'How I love',
+        marsKicker: 'Temperature of attraction · {sign} Mars',
+        habitKicker: 'The habit your heart falls into when smitten',
       },
+      partner: {
+        title: 'Your destined partner',
+        kicker: 'Gate of partnership · the grain of {sign}',
+        matchLabel: 'Textures that fit',
+        frictionLabel: 'Textures that drift',
+        houseKicker: '{planet} in the house of bonds',
+        solarNote:
+          'Without a birth time, we read the gate of partnership from your Sun. It sharpens once the time is known.',
+      },
+      charm: {
+        title: 'How to use my charm',
+      },
+      timing: {
+        title: 'Seasons ahead',
+        subtitle: 'The road the sky of love travels over the next year.',
+        now: 'Now',
+        noTimeNote: 'Learn your birth time and we can also read when the gate of meeting opens.',
+      },
+      empty: {
+        title: 'We need your chart to read this',
+        hint: 'Enter your birth details and we’ll read the grain of your love and its seasons ahead from your own chart.',
+        cta: '✨ Draw my chart',
+      },
+      share: {
+        button: 'Share my love reading',
+        text: 'My love reading, told by the stars ✦',
+        copied: 'Link copied',
+      },
+      privacy: 'Your birth details are stored only on this device. Nothing is sent to a server.',
+      toToday: '☾ See today’s flow',
+      toChart: 'See my birth chart',
     },
   },
   [Locale.ZH_CN]: {
@@ -750,6 +824,31 @@ export const messages = {
         aquarius: '独创与自由的思考',
         pisces: '感性与想象力',
       },
+      signDescriptions: {
+        aries:
+          '白羊座是十二星座的第一道门。这是一股身体先于盘算而动的开拓能量，最擅长开始任何事情。行星进入这个位置，力量就披上毫不犹豫、径直向前的纹理。',
+        taurus:
+          '金牛座是像春天土地一样的位置。不着急，用感官一一确认，一旦扎根就守到最后。行星进入这个位置，力量就披上缓慢却坚实垒起的纹理。',
+        gemini:
+          '双子座是消息与连接的位置。不在一处久留，向多个方向伸展，把世界与世界连起来。行星进入这个位置，力量就披上轻快往来的对话纹理。',
+        cancer:
+          '巨蟹座是像心之归处一样的位置。这股能量把珍贵的东西揽进怀里、守护那份温度。行星进入这个位置，力量就披上体察照料身边人的柔软纹理。',
+        leo: '狮子座是盛夏太阳的位置。不藏而露、自己发光也照亮身旁。行星进入这个位置，力量就披上堂堂登台的纹理。',
+        virgo:
+          '处女座是打磨与完成的位置。用不放过一丝偏差的明亮眼睛，把一切归置得有用。行星进入这个位置，力量就披上细致用心的纹理。',
+        libra:
+          '天秤座是像天平一样寻找正中的位置。扶正倾斜之物，在不同的人之间架桥。行星进入这个位置，力量就披上温柔调和彼此的纹理。',
+        scorpio:
+          '天蝎座是看向水面之下的位置。不浅浅掠过，而是挖到本质、看到尽头。行星进入这个位置，力量就披上强烈投入的纹理。',
+        sagittarius:
+          '射手座是瞄准地平线之外的位置。这股能量越过熟悉的围栏，朝更广的世界和人生意义射出箭矢。行星进入这个位置，力量就披上飞向更远处的纹理。',
+        capricorn:
+          '摩羯座是向着山顶攀登的位置。不心急，尽好责任，用时间以结果证明。行星进入这个位置，力量就披上沉默而坚韧的纹理。',
+        aquarius:
+          '水瓶座是先活在明天的位置。不把昨天的答案照单全收，为所有人描画新图。行星进入这个位置，力量就披上以独特角度看世界的纹理。',
+        pisces:
+          '双鱼座是边界消融的最后位置。抹去你我之间的墙，连看不见的也能感受。行星进入这个位置，力量就披上不言而喻体贴人心的纹理。',
+      },
       houseThemes: {
         1: '自我',
         2: '财富',
@@ -793,12 +892,22 @@ export const messages = {
         neptune: '海王星',
         pluto: '冥王星',
       },
+      planetAliases: {
+        fortune: '福尔图娜',
+      },
       readings: {
         planets: zhPlanets,
         retro: zhRetro,
+        houses: zhHouses,
         aspectPairs: zhAspectPairs,
+        aspectIntensity: {
+          tight: '这是你整张星盘里声音最大的力量之一。',
+          wide: '像背景一样安静铺着的纹理。',
+        },
       },
+      report: zhReport,
       todayCta: '☾ 看看今天的流势',
+      loveCta: '♡ 看我的恋爱运',
     },
     Today: {
       meta: {
@@ -848,6 +957,7 @@ export const messages = {
       },
       tomorrow: '明天的天空又会不一样 ✦',
       toChart: '查看我的出生星盘',
+      toLove: '♡ 看我的恋爱运',
     },
     Love: {
       meta: {
@@ -860,11 +970,41 @@ export const messages = {
         subtitle: '解读刻在出生星空里的爱情质感与即将到来的时机。',
       },
       computing: '正在解读爱之星...',
-      comingSoon: {
-        title: '该解读目前仅提供韩语版本',
-        hint: '中文版正在准备中。本命盘和今日星象已可用中文查看。',
-        cta: '打开我的星盘',
+      style: {
+        title: '我爱的方式',
+        marsKicker: '心动的温度 · {sign}火星',
+        habitKicker: '喜欢上一个人时的心底习惯',
       },
+      partner: {
+        title: '命中注定的伴侣',
+        kicker: '关系之门 · {sign}的纹理',
+        matchLabel: '合拍的纹理',
+        frictionLabel: '错开的纹理',
+        houseKicker: '落在关系之宫的{planet}',
+        solarNote: '因为没有出生时间，我们以太阳为基准解读了关系之门。知道时间后会更精确。',
+      },
+      charm: {
+        title: '我的魅力使用法',
+      },
+      timing: {
+        title: '将至的时节',
+        subtitle: '未来一年，爱情的天空将要走过的路。',
+        now: '进行中',
+        noTimeNote: '连出生时间也知道的话，还能一起读出相遇之门开启的时节。',
+      },
+      empty: {
+        title: '需要你的星盘才能解读',
+        hint: '输入出生信息，我们会以你的星盘为准，从爱的纹理读到将至的时节。',
+        cta: '✨ 绘制我的星盘',
+      },
+      share: {
+        button: '分享我的恋爱运',
+        text: '星星为我解读的恋爱运 ✦',
+        copied: '链接已复制',
+      },
+      privacy: '出生信息只保存在这台设备上，不会发送到服务器。',
+      toToday: '☾ 看看今天的流势',
+      toChart: '查看我的出生星盘',
     },
   },
   [Locale.JA]: {
@@ -1009,6 +1149,31 @@ export const messages = {
         aquarius: '独創と自由な思考',
         pisces: '感性と想像力',
       },
+      signDescriptions: {
+        aries:
+          'おひつじ座は十二星座の最初の門です。測って考える前に体が先に動く開拓のエネルギーで、何であれ始める力がいちばん強い場所ですね。惑星がこの席に入ると、その力はためらわずまっすぐ進むきめをまといます。',
+        taurus:
+          'おうし座は春の大地に似た席です。急がず感覚でひとつずつ確かめ、一度根を下ろしたものは最後まで守る気運ですね。惑星がこの席に入ると、その力は遅くとも固く積み上げるきめをまといます。',
+        gemini:
+          'ふたご座は知らせとつながりの席です。ひとつに長く留まるより幾筋にも伸びていき、世界と世界をつなぐ気運ですね。惑星がこの席に入ると、その力は軽く速く行き交う会話のきめをまといます。',
+        cancer:
+          'かに座は心が帰って休む家のような席です。大切なものを懐に迎え、そのぬくもりを守ろうとする気運ですね。惑星がこの席に入ると、その力はそばを見つめて世話するやわらかなきめをまといます。',
+        leo: 'しし座は真夏の太陽の席です。隠すより現し、自ら輝いてそばまで照らす気運ですね。惑星がこの席に入ると、その力は堂々と舞台に上がるきめをまといます。',
+        virgo:
+          'おとめ座は磨いて完成させる席です。小さなずれも見逃さない明るい目で、役立つように整える気運ですね。惑星がこの席に入ると、その力は几帳面で真心のこもったきめをまといます。',
+        libra:
+          'てんびん座は秤のように真ん中を探す席です。傾いたものを直し、違う人と人の間に橋を架ける気運ですね。惑星がこの席に入ると、その力は間をやわらかく調律するきめをまといます。',
+        scorpio:
+          'さそり座は水面の下をのぞく席です。浅くかすめる代わりに本質まで掘り下げ、最後まで見届ける気運ですね。惑星がこの席に入ると、その力は強烈に没入するきめをまといます。',
+        sagittarius:
+          'いて座は地平線の向こうを狙う席です。慣れた囲いを越えて、より広い世界と人生の意味へ矢を放つ気運ですね。惑星がこの席に入ると、その力はより遠くへ飛んでいくきめをまといます。',
+        capricorn:
+          'やぎ座は山頂へ登っていく席です。焦らず責任を果たし、時間をかけて結果で証明する気運ですね。惑星がこの席に入ると、その力は黙々と粘り強いきめをまといます。',
+        aquarius:
+          'みずがめ座は明日を先に生きる席です。昨日の正解をそのまま受け取らず、みんなのための新しい絵を描く気運ですね。惑星がこの席に入ると、その力は人と違う角度で世界を見るきめをまといます。',
+        pisces:
+          'うお座は境界が溶けていく最後の席です。自分と人の間の壁を消し、見えないものまで感じ取る気運ですね。惑星がこの席に入ると、その力は言葉がなくても心をくみ取るきめをまといます。',
+      },
       houseThemes: {
         1: '自我',
         2: '財',
@@ -1052,12 +1217,22 @@ export const messages = {
         neptune: '海王星',
         pluto: '冥王星',
       },
+      planetAliases: {
+        fortune: 'フォルトゥナ',
+      },
       readings: {
         planets: jaPlanets,
         retro: jaRetro,
+        houses: jaHouses,
         aspectPairs: jaAspectPairs,
+        aspectIntensity: {
+          tight: 'これはあなたのチャートでいちばん大きな声を出す力です。',
+          wide: '背景のようにほのかに敷かれたきめです。',
+        },
       },
+      report: jaReport,
       todayCta: '☾ 今日の流れを見る',
+      loveCta: '♡ 私の恋愛運を見る',
     },
     Today: {
       meta: {
@@ -1107,6 +1282,7 @@ export const messages = {
       },
       tomorrow: '明日の空はまた違う表情に ✦',
       toChart: 'わたしの出生星図を見る',
+      toLove: '♡ 私の恋愛運を見る',
     },
     Love: {
       meta: {
@@ -1120,11 +1296,41 @@ export const messages = {
         subtitle: '生まれた空に刻まれた恋の質感とこれからの時期を読み解きます。',
       },
       computing: '恋の星を読んでいます...',
-      comingSoon: {
-        title: 'このリーディングは現在韓国語のみです',
-        hint: '日本語版は準備中です。ネイタルチャートと今日の流れは日本語でご覧いただけます。',
-        cta: 'マイチャートを開く',
+      style: {
+        title: '私の恋し方',
+        marsKicker: '惹かれ方の温度 · {sign}の火星',
+        habitKicker: '好きになると生まれる心の癖',
       },
+      partner: {
+        title: '運命のパートナー',
+        kicker: '関係の門 · {sign}のきめ',
+        matchLabel: 'よく合うきめ',
+        frictionLabel: 'かみ合わないきめ',
+        houseKicker: '関係の部屋に入った{planet}',
+        solarNote: '出生時刻が分からないため、太陽を基準に関係の門を読みました。時刻が分かるともっと正確になります。',
+      },
+      charm: {
+        title: '私の魅力の使い方',
+      },
+      timing: {
+        title: 'やって来る時期',
+        subtitle: 'これから1年、恋の空が通っていく道です。',
+        now: '進行中',
+        noTimeNote: '出生時刻まで分かれば、出会いの門が開く時期も一緒に読み解きます。',
+      },
+      empty: {
+        title: 'あなたのチャートがあってこそ読めます',
+        hint: '生年月日と時刻を入れると、恋のきめからやって来る時期まで、あなたのチャートを基準に読み解きます。',
+        cta: '✨ マイチャートを描く',
+      },
+      share: {
+        button: '私の恋愛運をシェア',
+        text: '星が読んでくれた私の恋愛運 ✦',
+        copied: 'リンクをコピーしました',
+      },
+      privacy: '出生情報はこの端末にだけ保存されます。サーバーには送信されません。',
+      toToday: '☾ 今日の流れを見る',
+      toChart: 'わたしの出生星図を見る',
     },
   },
-} satisfies LocalizedMessages
+} satisfies Record<PublicLocale, Messages>
