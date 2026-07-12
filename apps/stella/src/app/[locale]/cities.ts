@@ -1,9 +1,3 @@
-// Birth-location presets. Coordinates and IANA time zones come from the
-// auto-generated `cities.generated.ts` (sourced offline from GeoNames, see
-// scripts/generate-cities.mjs) so they never need hand-maintenance. Display
-// names follow an endonym rule baked into the data: Korean/Japanese/Chinese
-// cities use their own language (a curated set), every other city uses English.
-
 import { GENERATED_CITIES } from './cities.generated'
 
 export type City = {
@@ -26,7 +20,11 @@ export function findCity(key: string): City {
   return CITIES.find((c) => c.key === key) ?? CITIES.find((c) => c.key === DEFAULT_CITY_KEY) ?? CITIES[0]
 }
 
-export type CityGroup = { iso2: string; country: string; cities: City[] }
+export type CityGroup = {
+  iso2: string
+  country: string
+  cities: City[]
+}
 
 // The app's primary markets lead the country list; the rest follow alphabetically.
 const PRIMARY_ISO2 = ['KR', 'JP', 'CN', 'TW', 'HK']
