@@ -14,7 +14,7 @@ import {
   TOKEN,
   VIEW,
 } from '../chart/geometry'
-import type { ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from '../chart/types'
+import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from '../chart/types'
 import styles from '../constellation.module.css'
 import { glyphText } from './glyphs'
 import type { Selection } from './selection'
@@ -28,6 +28,7 @@ export interface ChartWheelProps {
   chart: NatalChart
   isAspectDimmed: (asp: ChartAspect) => boolean
   isPlanetDimmed: (id: string) => boolean
+  onSelectAngle: (id: AngleId) => void
   onSelectHouse: (n: HouseNumber) => void
   onSelectPlanet: (id: PlanetId) => void
   onSelectSign: (id: SignId) => void
@@ -44,6 +45,7 @@ export default function ChartWheel({
   chart,
   isAspectDimmed,
   isPlanetDimmed,
+  onSelectAngle,
   onSelectHouse,
   onSelectPlanet,
   onSelectSign,
@@ -76,6 +78,7 @@ export default function ChartWheel({
           cusps={cusps}
           midheaven={midheaven}
           onSelect={onSelectHouse}
+          onSelectAngle={onSelectAngle}
           selection={selection}
         />
       )}
@@ -175,15 +178,24 @@ interface HousesProps {
   cusps: number[]
   midheaven: number | null
   onSelect: (n: HouseNumber) => void
+  onSelectAngle: (id: AngleId) => void
   selection: Selection
 }
 
-function Houses({ ascendant, cusps, midheaven, onSelect, selection }: HousesProps) {
+function Houses({ ascendant, cusps, midheaven, onSelect, onSelectAngle, selection }: HousesProps) {
   const t = useTranslations('Constellation')
-  const angles = [{ lon: ascendant, label: 'ASC' }]
+  const norm = (v: number) => ((v % 360) + 360) % 360
+
+  // The four angles as a tiered set: ASC/MC are primary, their antipodes DSC/IC
+  // secondary. DSC/IC derive from ASC/MC, so all four exist once we have a time.
+  const angles: { id: AngleId; lon: number; primary: boolean }[] = [
+    { id: 'asc', lon: norm(ascendant), primary: true },
+    { id: 'dsc', lon: norm(ascendant + 180), primary: false },
+  ]
 
   if (midheaven !== null) {
-    angles.push({ lon: midheaven, label: 'MC' })
+    angles.push({ id: 'mc', lon: norm(midheaven), primary: true })
+    angles.push({ id: 'ic', lon: norm(midheaven + 180), primary: false })
   }
 
   return (
@@ -191,7 +203,8 @@ function Houses({ ascendant, cusps, midheaven, onSelect, selection }: HousesProp
       {cusps.map((lon, k) => {
         const inner = polar(lon, RADIUS.aspect, ascendant)
         const outer = polar(lon, RADIUS.houseOuter, ascendant)
-        const isAngle = k === 0 || k === 3 || k === 6 || k === 9 // ASC / IC / DSC / MC axes
+        const isPrimaryAngle = k === 0 || k === 9 // ASC / MC axis
+        const isSecondaryAngle = k === 3 || k === 6 // IC / DSC axis
         const n = (k + 1) as HouseNumber
         const span = (((cusps[(k + 1) % 12] - lon) % 360) + 360) % 360
         const labelPos = polar(lon + span / 2, RADIUS.houseLabel, ascendant)
@@ -200,8 +213,14 @@ function Houses({ ascendant, cusps, midheaven, onSelect, selection }: HousesProp
         return (
           <g key={k}>
             <line
-              stroke={isAngle ? 'rgba(245,188,255,0.5)' : 'rgba(255,255,255,0.1)'}
-              strokeWidth={isAngle ? 1.2 : 0.6}
+              stroke={
+                isPrimaryAngle
+                  ? 'rgba(245,188,255,0.5)'
+                  : isSecondaryAngle
+                    ? 'rgba(245,188,255,0.3)'
+                    : 'rgba(255,255,255,0.1)'
+              }
+              strokeWidth={isPrimaryAngle ? 1.2 : isSecondaryAngle ? 0.9 : 0.6}
               x1={inner.x}
               x2={outer.x}
               y1={inner.y}
@@ -246,21 +265,47 @@ function Houses({ ascendant, cusps, midheaven, onSelect, selection }: HousesProp
           </g>
         )
       })}
-      {angles.map(({ lon, label }) => {
+      {angles.map(({ id, lon, primary }) => {
         const pos = polar(lon, RADIUS.zodiacOuter + 8, ascendant)
+        const active = selection?.kind === 'angle' && selection.id === id
+
+        // Selection intensifies the angle's own brand pink; the two-tier resting
+        // opacity keeps ASC/MC dominant over their antipodes DSC/IC.
+        const fill = active ? '#f5bcff' : primary ? 'rgba(245,188,255,0.85)' : 'rgba(245,188,255,0.5)'
+
         return (
-          <text
-            dominantBaseline="central"
-            fill="#f5bcff"
-            fontSize={8}
-            fontWeight={700}
-            key={label}
-            textAnchor="middle"
-            x={pos.x}
-            y={pos.y}
+          <g
+            aria-label={t(`angleNames.${id}`)}
+            aria-pressed={active}
+            className={`${styles.wheelButton} cursor-pointer`}
+            key={id}
+            onClick={() => onSelectAngle(id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onSelectAngle(id)
+              }
+            }}
+            role="button"
+            tabIndex={0}
           >
-            {label}
-          </text>
+            <text
+              dominantBaseline="central"
+              fill={fill}
+              fontSize={primary ? 8 : 7}
+              fontWeight={primary || active ? 700 : 600}
+              textAnchor="middle"
+              x={pos.x}
+              y={pos.y}
+            >
+              {id.toUpperCase()}
+            </text>
+            {active && (
+              <line stroke="#f5bcff" strokeWidth={0.9} x1={pos.x - 7} x2={pos.x + 7} y1={pos.y + 6} y2={pos.y + 6} />
+            )}
+            <circle cx={pos.x} cy={pos.y} fill="transparent" r={10} />
+            <circle className={styles.focusRing} cx={pos.x} cy={pos.y} r={10} />
+          </g>
         )
       })}
     </g>

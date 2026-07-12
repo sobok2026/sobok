@@ -26,6 +26,19 @@ export const messages = {
         statusSign: '{name} 선택됨',
         statusAspect: '{a}과 {b}의 {aspect} 관계',
         statusHouse: '{n}하우스 선택됨',
+        statusAngle: '{name} 선택됨',
+      },
+      angleNames: {
+        asc: '상승점',
+        dsc: '하강점',
+        mc: '천정',
+        ic: '천저',
+      },
+      angleMeanings: {
+        asc: '세상에 나서는 첫 표정이자 몸으로 드러나는 문이에요. {sign}에 위치해서 그 빛깔로 당신의 겉모습을 보여줘요.',
+        dsc: '나와 마주 보는 타인과 관계가 드나드는 문이에요. {sign}의 결로 곁에 끌리는 인연을 그려요.',
+        mc: '세상에 이름을 새기는 소명의 정점이에요. {sign}의 결로 당신이 향하는 길과 사회적 얼굴을 보여줘요.',
+        ic: '마음이 돌아가 쉬는 뿌리이자 가장 안쪽 바닥이에요. {sign}의 결로 당신을 조용히 지탱해 줘요.',
       },
       big3: {
         sunLabel: '태양',
@@ -341,6 +354,19 @@ export const messages = {
         statusSign: '{name} selected',
         statusAspect: '{a} and {b}: {aspect}',
         statusHouse: 'House {n} selected',
+        statusAngle: '{name} selected',
+      },
+      angleNames: {
+        asc: 'Ascendant',
+        dsc: 'Descendant',
+        mc: 'Midheaven',
+        ic: 'Imum Coeli',
+      },
+      angleMeanings: {
+        asc: 'The face you lead with and the door your body shows the world. Set in {sign}, it colours how you first come across.',
+        dsc: 'The door where other people and close partnerships come in. Through {sign}, it shapes the bonds you are drawn to.',
+        mc: 'The peak where you carve your name and calling. Through {sign}, it points to the path and public face you move toward.',
+        ic: 'The root you return to for rest, the innermost floor of you. Through {sign}, it quietly holds you up.',
       },
       big3: {
         sunLabel: 'Sun',
@@ -658,6 +684,19 @@ export const messages = {
         statusSign: '已选择 {name}',
         statusAspect: '{a} 与 {b} 的{aspect}关系',
         statusHouse: '已选择第{n}宫',
+        statusAngle: '已选择{name}',
+      },
+      angleNames: {
+        asc: '上升点',
+        dsc: '下降点',
+        mc: '天顶',
+        ic: '天底',
+      },
+      angleMeanings: {
+        asc: '你面向世界的第一表情，也是身体显现的门。落在{sign}，为你的外在染上它的色彩。',
+        dsc: '他人与亲密关系进出的门。以{sign}的质地，勾勒你被吸引的缘分。',
+        mc: '你铭刻名字与使命的顶点。以{sign}的质地，指向你所奔赴的道路与社会面貌。',
+        ic: '你回返休憩的根，也是最内里的底。以{sign}的质地，静静支撑着你。',
       },
       big3: {
         sunLabel: '太阳',
@@ -970,6 +1009,19 @@ export const messages = {
         statusSign: '{name} を選択',
         statusAspect: '{a} と {b} の{aspect}',
         statusHouse: '第{n}ハウスを選択',
+        statusAngle: '{name} を選択',
+      },
+      angleNames: {
+        asc: 'アセンダント',
+        dsc: 'ディセンダント',
+        mc: '天頂（MC）',
+        ic: '天底（IC）',
+      },
+      angleMeanings: {
+        asc: '世界へ踏み出す最初の表情であり、身体として現れる門です。{sign}に位置し、その色であなたの外見を描きます。',
+        dsc: '自分と向き合う他者や関係が出入りする門です。{sign}の質感で、惹かれ合う縁を描きます。',
+        mc: '世界に名を刻む使命の頂点です。{sign}の質感で、あなたが向かう道と社会的な顔を指し示します。',
+        ic: '心が帰って休む根であり、最も奥の底です。{sign}の質感で、あなたを静かに支えます。',
       },
       big3: {
         sunLabel: '太陽',

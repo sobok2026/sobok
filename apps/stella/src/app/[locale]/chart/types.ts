@@ -41,6 +41,9 @@ export type AspectType = 'conjunction' | 'trine' | 'square' | 'sextile' | 'oppos
 /** A house index on the wheel, 1–12. */
 export type HouseNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
 
+/** The four chart angles (cusps of the angular houses): ASC/IC/DSC/MC. */
+export type AngleId = 'asc' | 'ic' | 'dsc' | 'mc'
+
 /** A single body's position on the ecliptic (tropical longitude, 0–360°). */
 export type PlanetPosition = { id: PlanetId; lon: number; retrograde: boolean }
 

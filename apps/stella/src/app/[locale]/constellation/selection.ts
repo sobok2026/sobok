@@ -1,14 +1,12 @@
-// What the user has tapped on the wheel, plus the spotlight logic deciding
-// which planets and aspect lines stay bright for the current selection.
-
 import { houseOfLon, signOfLon } from '../chart/astrology'
-import type { AspectType, ChartAspect, HouseNumber, PlanetId, PlanetPosition, SignId } from '../chart/types'
+import type { AngleId, AspectType, ChartAspect, HouseNumber, PlanetId, PlanetPosition, SignId } from '../chart/types'
 
 export type Selection =
   | { kind: 'planet'; id: PlanetId }
   | { kind: 'sign'; id: SignId }
   | { kind: 'aspect'; a: PlanetId; b: PlanetId; aspectType: AspectType; orb: number }
   | { kind: 'house'; n: HouseNumber }
+  | { kind: 'angle'; id: AngleId }
   | null
 
 /** True when `selection` is exactly this aspect (same pair and type). */
@@ -66,6 +64,12 @@ export function computeBrightPlanets(
 }
 
 export function isPlanetDimmed(id: string, selection: Selection, brightPlanets: ReadonlySet<string>): boolean {
+  // Angles spotlight nothing on the wheel — the whole chart stays lit while the
+  // reading is shown, so no body is dimmed.
+  if (selection?.kind === 'angle') {
+    return false
+  }
+
   return selection != null && !brightPlanets.has(id)
 }
 

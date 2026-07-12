@@ -3,6 +3,7 @@
 
 import { SIGNS } from './data'
 import type {
+  AngleId,
   AspectType,
   ChartAspect,
   ElementId,
@@ -69,6 +70,28 @@ export function houseOfLon(lon: number, cusps: number[] | null, ascendant: numbe
   }
 
   return (Math.floor(((((lon - ascendant) % 360) + 360) % 360) / 30) + 1) as HouseNumber
+}
+
+/** Each angle's angular house — ASC→1, IC→4, DSC→7, MC→10. */
+export const ANGLE_HOUSE: Record<AngleId, HouseNumber> = { asc: 1, ic: 4, dsc: 7, mc: 10 }
+
+/**
+ * Longitude of a chart angle, or null when its defining point is unknown (no
+ * birth time). DSC/IC are the exact antipodes of ASC/MC.
+ */
+export function angleLongitude(id: AngleId, ascendant: number | null, midheaven: number | null): number | null {
+  const norm = (v: number) => ((v % 360) + 360) % 360
+
+  switch (id) {
+    case 'asc':
+      return ascendant === null ? null : norm(ascendant)
+    case 'dsc':
+      return ascendant === null ? null : norm(ascendant + 180)
+    case 'mc':
+      return midheaven === null ? null : norm(midheaven)
+    case 'ic':
+      return midheaven === null ? null : norm(midheaven + 180)
+  }
 }
 
 export function elementOfSign(id: SignId): ElementId {

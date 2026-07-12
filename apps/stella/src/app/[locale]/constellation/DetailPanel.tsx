@@ -3,7 +3,15 @@
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
-import { degreeMinuteInSign, elementOfSign, houseOfLon, modalityOfSign, signOfLon } from '../chart/astrology'
+import {
+  ANGLE_HOUSE,
+  angleLongitude,
+  degreeMinuteInSign,
+  elementOfSign,
+  houseOfLon,
+  modalityOfSign,
+  signOfLon,
+} from '../chart/astrology'
 import { ASPECT_STYLE, ELEMENT_COLORS, PLANET_GLYPHS, SIGNS } from '../chart/data'
 import { SIGN_RULERS } from '../chart/signature'
 import type { NatalChart } from '../chart/types'
@@ -171,6 +179,46 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
             )
           })
         )}
+      </div>
+    )
+  }
+
+  if (selection.kind === 'angle') {
+    const angleLon = angleLongitude(selection.id, chart.ascendant, chart.midheaven)
+
+    if (angleLon === null) {
+      return null
+    }
+
+    const sign = signOfLon(angleLon)
+    const element = elementOfSign(sign)
+    const color = ELEMENT_COLORS[element]
+    const area = t('panel.area', { name: t(`houseThemes.${ANGLE_HOUSE[selection.id]}`) })
+
+    return (
+      <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
+        <CloseButton label={t('panel.close')} onClose={onClose} />
+        <div className="flex items-center gap-3">
+          <span
+            className="flex h-11 w-11 items-center justify-center rounded-full border"
+            style={{ borderColor: 'var(--color-brand)', color: 'var(--color-brand)' }}
+          >
+            <span className="text-xs font-bold tracking-wide">{selection.id.toUpperCase()}</span>
+          </span>
+          <div className="min-w-0">
+            <p className="text-base font-bold text-foreground">{t(`angleNames.${selection.id}`)}</p>
+            <p className="text-xs text-foreground-subtle">
+              {t(`signs.${sign}`)} · {area}
+            </p>
+          </div>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-foreground-muted">
+          {t(`angleMeanings.${selection.id}`, { sign: t(`signs.${sign}`) })}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Chip color={color} label={`${t('panel.elementLabel')}: ${t(`elements.${element}`)}`} />
+          <Chip color="var(--color-accent)" label={`${t('panel.keywordLabel')}: ${t(`signKeywords.${sign}`)}`} />
+        </div>
       </div>
     )
   }

@@ -10,7 +10,7 @@ import { track } from '@/lib/analytics/browser'
 import BirthForm from './BirthForm'
 import { computeAspects, elementCounts, signOfLon } from './chart/astrology'
 import { DEFAULT_CHART, ELEMENT_IDS } from './chart/data'
-import type { ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from './chart/types'
+import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from './chart/types'
 import AspectSection from './constellation/AspectSection'
 import Big3Card from './constellation/Big3Card'
 import ChartWheel from './constellation/ChartWheel'
@@ -143,6 +143,10 @@ export default function Constellation() {
     setSelection((prev) => (prev?.kind === 'house' && prev.n === n ? null : { kind: 'house', n }))
   }
 
+  function toggleAngle(id: AngleId) {
+    setSelection((prev) => (prev?.kind === 'angle' && prev.id === id ? null : { kind: 'angle', id }))
+  }
+
   function toggleAspectAndScroll(asp: ChartAspect) {
     if (isAspectSelection(selection, asp)) {
       setSelection(null)
@@ -179,6 +183,10 @@ export default function Constellation() {
 
     if (selection.kind === 'house') {
       return t('a11y.statusHouse', { n: selection.n })
+    }
+
+    if (selection.kind === 'angle') {
+      return t('a11y.statusAngle', { name: t(`angleNames.${selection.id}`) })
     }
 
     const body = activeChart.planets.find((p) => p.id === selection.id)
@@ -244,6 +252,7 @@ export default function Constellation() {
             isAspectDimmed={(asp) => isAspectDimmed(asp, selection, brightPlanets)}
             isPlanetDimmed={(id) => isPlanetDimmed(id, selection, brightPlanets)}
             key={`wheel-${runId}`}
+            onSelectAngle={toggleAngle}
             onSelectHouse={toggleHouse}
             onSelectPlanet={selectPlanet}
             onSelectSign={toggleSign}
