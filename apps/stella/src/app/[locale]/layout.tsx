@@ -1,6 +1,6 @@
 import '../globals.css'
 
-import { PUBLIC_LOCALES } from '@sobok/domain/locale'
+import { Locale } from '@sobok/domain/locale'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { NextIntlClientProvider } from 'next-intl'
@@ -34,7 +34,7 @@ const PretendardVariable = localFont({
 })
 
 export function generateStaticParams() {
-  return PUBLIC_LOCALES.map((locale) => ({ locale }))
+  return Object.values(Locale).map((locale) => ({ locale }))
 }
 
 export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Promise<Metadata> {

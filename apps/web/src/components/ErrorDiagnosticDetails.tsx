@@ -1,6 +1,6 @@
 'use client'
 
-import { DEFAULT_LOCALE, isPublicLocale, LOCALE_LANGUAGE_TAGS } from '@sobok/domain/locale'
+import { DEFAULT_LOCALE, isLocale, LOCALE_LANGUAGE_TAGS } from '@sobok/domain/locale'
 import { env } from '@sobok/env/client'
 import { useState } from 'react'
 
@@ -14,7 +14,7 @@ export default function ErrorDiagnosticDetails({ digest, pathname }: Props) {
   const commitSHA = env.NEXT_PUBLIC_COMMIT_SHA || 'local'
   const environment = env.NEXT_PUBLIC_APP_ENV || 'development'
   const firstPathSegment = pathname?.split('/')[1] ?? ''
-  const locale = isPublicLocale(firstPathSegment) ? firstPathSegment : DEFAULT_LOCALE
+  const locale = isLocale(firstPathSegment) ? firstPathSegment : DEFAULT_LOCALE
 
   return (
     <div className="mt-4 space-y-3">

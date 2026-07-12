@@ -1,5 +1,5 @@
 import { APP_METADATA } from '@sobok/domain/app/metadata'
-import { Locale, type PublicLocale } from '@sobok/domain/locale'
+import { Locale } from '@sobok/domain/locale'
 import { Download } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
@@ -14,7 +14,7 @@ const PORN_DUDE_URL_BY_LOCALE = {
   [Locale.EN]: 'https://theporndude.com/',
   [Locale.JA]: 'https://theporndude.com/ja',
   [Locale.ZH]: 'https://theporndude.com/zh',
-} satisfies Record<PublicLocale, string>
+} satisfies Record<Locale, string>
 
 export default async function Layout({ children, params }: LayoutProps<'/[locale]'>) {
   const locale = await getLocaleFromParams(params)

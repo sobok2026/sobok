@@ -1,4 +1,4 @@
-import { LOCALE_NATIVE_NAMES, PUBLIC_LOCALES } from '@sobok/domain/locale'
+import { LOCALE_NATIVE_NAMES, Locale } from '@sobok/domain/locale'
 import { getTranslations } from 'next-intl/server'
 import { z } from 'zod'
 
@@ -32,7 +32,7 @@ export default async function Page({ params, searchParams }: PageProps<'/[locale
       <div className="max-w-prose mx-auto pb-safe px-safe">
         <div className="flex flex-wrap items-center justify-end gap-2 text-xs">
           <span className="text-foreground-subtle">{t('languageLabel')}</span>
-          {PUBLIC_LOCALES.map((code) => (
+          {Object.values(Locale).map((code) => (
             <Link
               aria-current={locale === code ? 'page' : undefined}
               className="rounded-full border border-border px-2 py-1 hover:bg-surface"

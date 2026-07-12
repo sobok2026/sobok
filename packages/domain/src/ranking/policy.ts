@@ -1,11 +1,11 @@
-import { Locale, type PublicLocale } from '../locale'
+import { Locale } from '../locale'
 
 export const TOP_MANGA_PER_PAGE = 30
 export const REALTIME_PAGE_VIEW_MIN_THRESHOLD = 10
 export const REALTIME_PAGE_RANKING_LIMIT = 20
 
 // apps/web 고정 라우트의 Metadata.*.title 문자열과 동기화해요
-const STATIC_PAGE_TITLES: Record<PublicLocale, string[]> = {
+const STATIC_PAGE_TITLES: Record<Locale, string[]> = {
   [Locale.KO]: [
     '로그인',
     '회원가입',
@@ -154,7 +154,7 @@ const STATIC_PAGE_TITLES: Record<PublicLocale, string[]> = {
 
 // apps/web Metadata.ranking title 템플릿(metric × period)과 동기화해요
 const RANKING_PAGE_TITLES: Record<
-  PublicLocale,
+  Locale,
   { format: (period: string, metric: string) => string; metrics: string[]; periods: string[] }
 > = {
   [Locale.KO]: {

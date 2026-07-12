@@ -3,7 +3,7 @@
 import './globals.css'
 
 import * as Sentry from '@sentry/nextjs'
-import { DEFAULT_LOCALE, isPublicLocale } from '@sobok/domain/locale'
+import { DEFAULT_LOCALE, isLocale } from '@sobok/domain/locale'
 import { env } from '@sobok/env/client'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -72,5 +72,5 @@ export default function GlobalError({ error }: ErrorProps) {
 
 function getLocaleFromPathname(pathname: string | null) {
   const firstPathSegment = pathname?.split('/')[1] ?? ''
-  return isPublicLocale(firstPathSegment) ? firstPathSegment : DEFAULT_LOCALE
+  return isLocale(firstPathSegment) ? firstPathSegment : DEFAULT_LOCALE
 }

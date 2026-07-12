@@ -1,5 +1,5 @@
 import type { LibraryItemSort, RatingSort } from '@sobok/domain/library/sort'
-import type { PublicLocale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 import { PostFilter } from '@sobok/domain/post/filter'
 
 export const QueryKeys = {
@@ -58,7 +58,7 @@ export const QueryKeys = {
   myDonations: (locale: string) => [...QueryKeys.myDonationsBase, locale],
 
   adsterraStats: (startDate: string, finishDate: string) => ['adsterra', 'stats', startDate, finishDate],
-  manga: (id: number, locale: PublicLocale) => ['manga', id, locale],
+  manga: (id: number, locale: Locale) => ['manga', id, locale],
   mangaRecommendations: (userId: string, limit: number, locale: string) => [
     'me',
     'manga-recommendations',
@@ -83,14 +83,14 @@ export const QueryKeys = {
   webtoonSeries: (provider: string, domain: string, path: string) => ['webtoon', 'series', provider, domain, path],
 
   proxyBase: ['proxy'],
-  search: (searchParams: URLSearchParams, locale: PublicLocale) => [
+  search: (searchParams: URLSearchParams, locale: Locale) => [
     ...QueryKeys.proxyBase,
     'search',
     locale,
     Object.fromEntries(searchParams),
   ],
   proxyKRandomBase: ['proxy', 'k', 'random'],
-  proxyKRandom: (searchParams: URLSearchParams, locale: PublicLocale) => [
+  proxyKRandom: (searchParams: URLSearchParams, locale: Locale) => [
     ...QueryKeys.proxyKRandomBase,
     locale,
     Object.fromEntries(searchParams),

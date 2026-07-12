@@ -1,6 +1,6 @@
 'use client'
 
-import { LOCALE_LANGUAGE_TAGS, LOCALE_NATIVE_NAMES, PUBLIC_LOCALES, type PublicLocale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS, LOCALE_NATIVE_NAMES, Locale } from '@sobok/domain/locale'
 import { Check, ChevronDown, Languages } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import { useEffect, useId, useRef, useState, useTransition } from 'react'
@@ -22,7 +22,7 @@ export default function LocaleSwitcher({ className }: Props) {
   const menuId = useId()
   const currentLabel = LOCALE_NATIVE_NAMES[currentLocale] ?? currentLocale
 
-  function handleLocaleChange(nextLocale: PublicLocale) {
+  function handleLocaleChange(nextLocale: Locale) {
     setIsOpen(false)
 
     if (nextLocale === currentLocale || isPending) {
@@ -86,7 +86,7 @@ export default function LocaleSwitcher({ className }: Props) {
           id={menuId}
           role="menu"
         >
-          {PUBLIC_LOCALES.map((locale) => {
+          {Object.values(Locale).map((locale) => {
             const isSelected = locale === currentLocale
             const label = LOCALE_NATIVE_NAMES[locale]
 

@@ -1,7 +1,7 @@
-import { LOCALE_LANGUAGE_TAGS, type PublicLocale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
 import { KOREAN_TO_ENGLISH_QUERY_KEYS } from '@sobok/domain/search/query-key-alias'
 
-export function formatDate(timestamp: number | string, locale: PublicLocale) {
+export function formatDate(timestamp: number | string, locale: Locale) {
   return new Date(Number(timestamp) * 1000).toLocaleDateString(LOCALE_LANGUAGE_TAGS[locale], {
     year: 'numeric',
     month: 'short',
@@ -9,7 +9,7 @@ export function formatDate(timestamp: number | string, locale: PublicLocale) {
   })
 }
 
-export function formatNumber(num: number | string | null | undefined, defaultValue: string, locale: PublicLocale) {
+export function formatNumber(num: number | string | null | undefined, defaultValue: string, locale: Locale) {
   if (!num) return defaultValue
   return Number(num).toLocaleString(LOCALE_LANGUAGE_TAGS[locale])
 }

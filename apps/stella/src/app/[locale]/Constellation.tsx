@@ -1,6 +1,5 @@
 'use client'
 
-import type { PublicLocale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
@@ -38,15 +37,13 @@ type ChartData = {
 }
 
 export default function Constellation() {
-  const t = useTranslations('Constellation')
-  const locale = useLocale() as PublicLocale
-  // The love vertical only exists where its copy does (Korean for now).
-  const hasLove = (t as unknown as { has(key: string): boolean }).has('loveCta')
   const [data, setData] = useState<ChartData | null>(null)
   const [computing, setComputing] = useState(false)
   const [runId, setRunId] = useState(0)
   const [selection, setSelection] = useState<Selection>(null)
   const wheelRef = useRef<HTMLDivElement>(null)
+  const t = useTranslations('Constellation')
+  const locale = useLocale()
 
   const revealed = data !== null
   const activeChart = data?.chart ?? DEFAULT_CHART
@@ -302,14 +299,12 @@ export default function Constellation() {
               >
                 {t('todayCta')}
               </Link>
-              {hasLove && (
-                <Link
-                  className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-                  href={`/${locale}/love/`}
-                >
-                  {t('loveCta')}
-                </Link>
-              )}
+              <Link
+                className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
+                href={`/${locale}/love/`}
+              >
+                {t('loveCta')}
+              </Link>
               <button
                 className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
                 onClick={backToForm}

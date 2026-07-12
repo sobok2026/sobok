@@ -1,8 +1,8 @@
-import { DEFAULT_LOCALE, PUBLIC_LOCALES } from '@sobok/domain/locale'
+import { DEFAULT_LOCALE, Locale } from '@sobok/domain/locale'
 import { defineRouting } from 'next-intl/routing'
 
 export const routing = defineRouting({
-  locales: PUBLIC_LOCALES,
+  locales: Object.values(Locale),
   defaultLocale: DEFAULT_LOCALE,
   localePrefix: 'as-needed',
   localeDetection: false,

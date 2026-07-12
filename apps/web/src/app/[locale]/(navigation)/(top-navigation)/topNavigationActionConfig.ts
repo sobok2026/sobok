@@ -1,11 +1,11 @@
-import { Locale, type PublicLocale } from '@sobok/domain/locale'
+import { Locale } from '@sobok/domain/locale'
 
 export const LIVE_CAM_AD_URL_BY_LOCALE = {
   [Locale.KO]: 'https://en.hotzcam.com/girls/korean',
   [Locale.EN]: 'https://en.hotzcam.com/girls/world-tournament',
   [Locale.JA]: 'https://ja.hotzcam.com/girls/japanese',
   [Locale.ZH]: 'https://zh.hotzcam.com/girls/chinese',
-} satisfies Record<PublicLocale, string>
+} satisfies Record<Locale, string>
 
 export const TOR_LINKS = {
   braveBrowserTor: {

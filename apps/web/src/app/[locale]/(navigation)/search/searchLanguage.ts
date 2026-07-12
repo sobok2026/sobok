@@ -1,10 +1,10 @@
-import { Locale, type PublicLocale } from '@sobok/domain/locale'
+import { Locale } from '@sobok/domain/locale'
 import { DEFAULT_SEARCH_LANGUAGE, isSearchLanguage, SEARCH_LANGUAGE_ALL } from '@sobok/domain/search/language'
 import { normalizeValue } from '@sobok/domain/utils/normalize-value'
 
 import { LocalStorageKey } from '@/storage'
 
-const LOCALE_SEARCH_LANGUAGE: Record<PublicLocale, string> = {
+const LOCALE_SEARCH_LANGUAGE: Record<Locale, string> = {
   [Locale.KO]: 'korean',
   [Locale.EN]: 'english',
   [Locale.JA]: 'japanese',
@@ -48,7 +48,7 @@ export function readPreferredSearchLanguage(me: MeWithSearchLanguage | null | un
 
 // 신작 피드는 항상 단일 언어를 보여줘요. 명시적으로 지정한 검색 언어가 있으면 그 값을,
 // 없으면(=전체) UI 로케일 언어로 폴백해요.
-export function resolveFeedSearchLanguage(me: MeWithSearchLanguage | null | undefined, locale: PublicLocale) {
+export function resolveFeedSearchLanguage(me: MeWithSearchLanguage | null | undefined, locale: Locale) {
   const preferred = readPreferredSearchLanguage(me)
 
   if (preferred && preferred !== SEARCH_LANGUAGE_ALL) {

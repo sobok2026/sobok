@@ -6,10 +6,6 @@ export enum Locale {
 }
 
 export const DEFAULT_LOCALE = Locale.KO
-export const PUBLIC_LOCALES = [Locale.KO, Locale.EN, Locale.JA, Locale.ZH] as const
-
-export type PublicLocale = (typeof PUBLIC_LOCALES)[number]
-export type PublicLocaleCode = `${PublicLocale}`
 
 export const LOCALE_NATIVE_NAMES = {
   [Locale.KO]: '한국어',
@@ -32,6 +28,6 @@ export const LOCALE_OPEN_GRAPH_TAGS = {
   [Locale.ZH]: 'zh_CN',
 } satisfies Record<Locale, string>
 
-export function isPublicLocale(value: string): value is PublicLocale {
-  return PUBLIC_LOCALES.includes(value as PublicLocale)
+export function isLocale(value: string): value is Locale {
+  return Object.values(Locale).includes(value as Locale)
 }

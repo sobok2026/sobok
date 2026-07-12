@@ -1,4 +1,4 @@
-import type { PublicLocale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 import { getTranslations } from 'next-intl/server'
 
@@ -12,7 +12,7 @@ import RecommendMangaLink from './RecommendMangaLink'
 import TorRecommendationLink from './TorRecommendationLink'
 
 type Props = {
-  locale: PublicLocale
+  locale: Locale
 }
 
 export default async function TopNavigationActions({ locale }: Props) {

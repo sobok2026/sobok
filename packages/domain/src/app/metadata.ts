@@ -1,4 +1,4 @@
-import { Locale, type PublicLocale } from '../locale'
+import { Locale } from '../locale'
 
 export const APPLICATION_NAME = '소복 - 아티스트 프라이빗 메시지'
 export const SHORT_NAME = '소복'
@@ -31,4 +31,4 @@ export const APP_METADATA = {
     description: '一个粉丝消息服务，可接收你喜欢的艺人发来的消息并进行回复。',
     shortName: 'Sobok',
   },
-} satisfies Record<PublicLocale, { applicationName: string; description: string; shortName: string }>
+} satisfies Record<Locale, { applicationName: string; description: string; shortName: string }>

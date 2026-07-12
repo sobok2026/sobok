@@ -1,6 +1,6 @@
 'use client'
 
-import { LOCALE_LANGUAGE_TAGS, type PublicLocale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -36,7 +36,7 @@ type Data = {
 export default function TodayFlow() {
   const t = useTranslations('Today')
   const tc = useTranslations('Constellation')
-  const locale = useLocale() as PublicLocale
+  const locale = useLocale()
   const [data, setData] = useState<Data | null>(null)
   const [failed, setFailed] = useState(false)
 

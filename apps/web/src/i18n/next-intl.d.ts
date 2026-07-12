@@ -1,7 +1,7 @@
-import type { PublicLocale } from '@sobok/domain/locale'
+import type { Locale as AppLocale } from '@sobok/domain/locale'
 
 declare module 'next-intl' {
   interface AppConfig {
-    Locale: PublicLocale
+    Locale: AppLocale
   }
 }

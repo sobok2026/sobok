@@ -1,4 +1,4 @@
-import { Locale, type PublicLocale } from '@sobok/domain/locale'
+import { Locale } from '@sobok/domain/locale'
 
 export type Messages = { [key: string]: MessageValue }
 export type MessageValue = string | { [key: string]: MessageValue }
@@ -1263,4 +1263,4 @@ export const messages = {
       toChart: 'わたしの出生星図を見る',
     },
   },
-} satisfies Record<PublicLocale, Messages>
+} satisfies Record<Locale, Messages>

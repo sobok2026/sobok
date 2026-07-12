@@ -2,7 +2,7 @@ import '../globals.css'
 
 import { GoogleTagManager } from '@next/third-parties/google'
 import { APP_METADATA, THEME_COLOR } from '@sobok/domain/app/metadata'
-import { PUBLIC_LOCALES } from '@sobok/domain/locale'
+import { Locale } from '@sobok/domain/locale'
 import { env } from '@sobok/env/client'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
@@ -71,7 +71,7 @@ export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Pr
 }
 
 export function generateStaticParams() {
-  return PUBLIC_LOCALES.map((locale) => ({ locale }))
+  return Object.values(Locale).map((locale) => ({ locale }))
 }
 
 export const viewport: Viewport = {

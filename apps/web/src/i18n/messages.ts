@@ -1,4 +1,4 @@
-import { PUBLIC_LOCALES, type PublicLocale } from '@sobok/domain/locale'
+import { Locale } from '@sobok/domain/locale'
 
 import { messages as rightAsideMessages } from '@/app/[locale]/(navigation)/(right-aside)/messages'
 import { messages as settingsMessages } from '@/app/[locale]/(navigation)/(right-aside)/settings/messages'
@@ -12,7 +12,7 @@ import { messages as errorMessages } from '@/app/[locale]/errors.messages'
 import { messages as appMessages } from '@/app/[locale]/messages'
 import { messages as sobokMessages } from '@/app/[locale]/sobok/messages'
 
-export type LocalizedMessages = Record<PublicLocale, Messages>
+export type LocalizedMessages = Record<Locale, Messages>
 export type Messages = { [key: string]: MessageValue }
 export type MessageValue = string | { [key: string]: MessageValue }
 
@@ -31,10 +31,10 @@ const messageModules = [
 ] satisfies LocalizedMessages[]
 
 const mergedMessages = Object.fromEntries(
-  PUBLIC_LOCALES.map((locale) => [locale, mergeLocaleMessages(locale)]),
+  Object.values(Locale).map((locale) => [locale, mergeLocaleMessages(locale)]),
 ) as LocalizedMessages
 
-export function getMessages(locale: PublicLocale): Messages {
+export function getMessages(locale: Locale): Messages {
   return mergedMessages[locale]
 }
 
@@ -42,7 +42,7 @@ function isMessages(value: MessageValue | undefined): value is Messages {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
-function mergeLocaleMessages(locale: PublicLocale): Messages {
+function mergeLocaleMessages(locale: Locale): Messages {
   return messageModules.reduce<Messages>((merged, moduleMessages) => {
     return mergeMessages(merged, moduleMessages[locale])
   }, {})
