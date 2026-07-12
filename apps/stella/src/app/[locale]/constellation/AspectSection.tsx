@@ -93,8 +93,8 @@ function AspectGroup({ accent, aspects, label, onSelect, selection }: AspectGrou
                   </span>
                   <span className="block text-[11px]" style={{ color }}>
                     {t(`aspects.${asp.type}Vibe`)}{' '}
-                    <span className="text-foreground-faint">
-                      · {t(`aspects.${asp.type}Name`)} · {t('aspects.orbLabel')} {asp.orb}°
+                    <span className="whitespace-nowrap text-foreground-faint">
+                      · {t('aspects.orbLabel')} {asp.orb}°
                     </span>
                   </span>
                 </span>
