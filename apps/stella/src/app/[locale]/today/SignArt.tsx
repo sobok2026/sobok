@@ -1,4 +1,6 @@
-import { ELEMENT_COLORS, elementOfSign, type SignId } from '../chart'
+import { elementOfSign } from '../chart/astrology'
+import { ELEMENT_COLORS } from '../chart/data'
+import type { SignId } from '../chart/types'
 import { SIGN_FIGURES } from './sign-art'
 
 export default function SignArt({ className, sign }: { className?: string; sign: SignId }) {

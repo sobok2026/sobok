@@ -1,7 +1,7 @@
 // Shared types + pair-key helpers for the per-locale reading modules. Kept apart
 // from the data files so each locale bundle stays pure string tables.
 
-import type { AspectType, PlanetId, SignId } from '../chart'
+import type { AspectType, PlanetId, SignId } from '../chart/types'
 
 export type SignText = Record<SignId, string>
 export type PlanetReadings = Record<PlanetId, SignText>

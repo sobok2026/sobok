@@ -2,7 +2,8 @@
 // from birth data using the `astronomy-engine` ephemeris. The library is
 // dynamically imported so its ~100 KB only loads when a user actually submits.
 
-import { type ComputedPlanetId, type NatalChart, PLANET_ORDER, type PlanetPosition } from './chart'
+import { PLANET_ORDER } from './chart/data'
+import type { ComputedPlanetId, NatalChart, PlanetPosition } from './chart/types'
 
 export type CityKey = string
 

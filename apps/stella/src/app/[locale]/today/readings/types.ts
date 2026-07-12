@@ -3,7 +3,7 @@
 // plain data modules loaded per locale on demand, so the home page bundle
 // never carries them.
 
-import type { ElementId, SignId } from '../../chart'
+import type { ElementId, SignId } from '../../chart/types'
 import type { AspectTone } from '../../interpretations/types'
 import type { MoonPhaseId } from '../sky'
 import type { MoonTargetId, SlowPlanetId, SlowPointId } from '../transits'

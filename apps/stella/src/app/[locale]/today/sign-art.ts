@@ -3,7 +3,7 @@
 // (Hyades V, Leo's sickle, the Sagittarius teapot, …). Data + one renderer
 // instead of image assets, so theme, color and size stay CSS-controlled.
 
-import type { SignId } from '../chart'
+import type { SignId } from '../chart/types'
 
 export type SignFigure = {
   /** [x, y, size] — size is a relative star weight (1 = minor, 2 = bright, 3 = alpha). */

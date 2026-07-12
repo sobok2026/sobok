@@ -1,4 +1,5 @@
-import { closestAspect, houseOfLon, type NatalChart, type PlanetPosition } from '../chart'
+import { closestAspect, houseOfLon } from '../chart/astrology'
+import type { NatalChart, PlanetPosition } from '../chart/types'
 import { type AspectTone, aspectTone } from '../interpretations/types'
 
 /** Natal bodies the transiting Moon is read against — the personal planets. */

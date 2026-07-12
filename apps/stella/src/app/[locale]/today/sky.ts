@@ -2,15 +2,9 @@
 // from a local-noon snapshot so the page is stable for a whole calendar day
 // (the one-update-per-day rhythm is deliberate), in the visitor's own time zone.
 
-import {
-  type AspectType,
-  angularGap,
-  type ComputedPlanetId,
-  PLANET_ORDER,
-  type PlanetPosition,
-  type SignId,
-  signOfLon,
-} from '../chart'
+import { angularGap, signOfLon } from '../chart/astrology'
+import { PLANET_ORDER } from '../chart/data'
+import type { AspectType, ComputedPlanetId, PlanetPosition, SignId } from '../chart/types'
 import { computePositions } from '../ephemeris'
 
 export type MoonPhaseId =
