@@ -11,6 +11,7 @@ import { Toaster } from 'sonner'
 import { ADSENSE_ACCOUNT, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getLocale } from '@/i18n/server'
 import Analytics from '@/lib/analytics/Analytics'
+import Footer from './Footer'
 import LocaleSwitcher from './LocaleSwitcher'
 
 const PretendardVariable = localFont({
@@ -73,6 +74,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
         <NextIntlClientProvider>
           <LocaleSwitcher label={t('localeSwitcher')} locale={locale} />
           {children}
+          <Footer locale={locale} />
           <Toaster position="top-center" richColors theme="dark" />
         </NextIntlClientProvider>
         <Analytics />
