@@ -1,7 +1,7 @@
 import type { PublicLocale } from '@sobok/domain/locale'
 
-import { type Messages, messages } from '@/app/[locale]/messages'
+import { messages } from '@/app/[locale]/messages'
 
-export function getMessages(locale: PublicLocale): Messages {
+export function getMessages(locale: PublicLocale) {
   return messages[locale]
 }
