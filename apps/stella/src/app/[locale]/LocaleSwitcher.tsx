@@ -22,7 +22,7 @@ export default function LocaleSwitcher({ label, locale }: Props) {
   return (
     <nav
       aria-label={label}
-      className="absolute right-3 top-[calc(0.75rem+var(--safe-area-top))] z-20 flex items-center gap-2.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs backdrop-blur-md"
+      className="absolute right-3 top-[calc(0.75rem+var(--safe-area-top))] z-20 flex items-center gap-2.5 rounded-full border bg-surface-2 px-3.5 py-1.5 text-xs backdrop-blur-md"
     >
       {PUBLIC_LOCALES.map((entry) =>
         entry === locale ? (
@@ -35,7 +35,7 @@ export default function LocaleSwitcher({ label, locale }: Props) {
             href={`/${entry}/`}
             hrefLang={entry}
             lang={entry}
-            className="text-slate-300/80 transition-colors hover:text-slate-100"
+            className="text-foreground-muted/80 transition-colors hover:text-foreground"
           >
             <Label name={LOCALE_NATIVE_NAMES[entry]} />
           </a>

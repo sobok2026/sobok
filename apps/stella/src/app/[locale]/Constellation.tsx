@@ -50,6 +50,7 @@ const TENSION_TYPES: readonly AspectType[] = ['square', 'opposition']
 type Selection =
   | { kind: 'planet' | 'sign'; id: string }
   | { kind: 'aspect'; a: string; b: string; aspectType: AspectType; orb: number }
+  | { kind: 'house'; n: number }
   | null
 
 type Point = {
@@ -82,6 +83,35 @@ export default function Constellation() {
   const sunLon = activeChart.planets.find((p) => p.id === 'sun')?.lon ?? 0
   const moonLon = activeChart.planets.find((p) => p.id === 'moon')?.lon ?? 0
   const risingSign = ascendant !== null ? signOfLon(ascendant) : null
+
+  // Spotlight logic: which planets/lines stay bright for the current selection.
+  // - planet:  the planet + everything it aspects, and all of its lines
+  // - aspect:  only the two involved planets and that single line
+  // - house:   only the planets sitting inside that house
+  const focusActive = selection?.kind === 'planet' || selection?.kind === 'aspect' || selection?.kind === 'house'
+  const brightPlanets = new Set<string>()
+
+  if (selection?.kind === 'planet') {
+    brightPlanets.add(selection.id)
+
+    for (const a of aspects) {
+      if (a.a === selection.id) {
+        brightPlanets.add(a.b)
+      }
+      if (a.b === selection.id) {
+        brightPlanets.add(a.a)
+      }
+    }
+  } else if (selection?.kind === 'aspect') {
+    brightPlanets.add(selection.a)
+    brightPlanets.add(selection.b)
+  } else if (selection?.kind === 'house') {
+    for (const p of activeChart.planets) {
+      if (houseOfLon(p.lon, cusps, ascendant) === selection.n) {
+        brightPlanets.add(p.id)
+      }
+    }
+  }
 
   async function handleSubmit(input: Parameters<typeof computeChart>[0]) {
     setComputing(true)
@@ -122,28 +152,6 @@ export default function Constellation() {
     }
   }
 
-  // Spotlight logic: which planets/lines stay bright for the current selection.
-  // - planet:  the planet + everything it aspects, and all of its lines
-  // - aspect:  only the two involved planets and that single line
-  const focusActive = selection?.kind === 'planet' || selection?.kind === 'aspect'
-  const brightPlanets = new Set<string>()
-
-  if (selection?.kind === 'planet') {
-    brightPlanets.add(selection.id)
-
-    for (const a of aspects) {
-      if (a.a === selection.id) {
-        brightPlanets.add(a.b)
-      }
-      if (a.b === selection.id) {
-        brightPlanets.add(a.a)
-      }
-    }
-  } else if (selection?.kind === 'aspect') {
-    brightPlanets.add(selection.a)
-    brightPlanets.add(selection.b)
-  }
-
   function planetDimmed(id: string): boolean {
     return focusActive && !brightPlanets.has(id)
   }
@@ -154,6 +162,9 @@ export default function Constellation() {
     }
     if (selection?.kind === 'aspect') {
       return !(asp.a === selection.a && asp.b === selection.b && asp.type === selection.aspectType)
+    }
+    if (selection?.kind === 'house') {
+      return !brightPlanets.has(asp.a) && !brightPlanets.has(asp.b)
     }
     return false
   }
@@ -200,6 +211,10 @@ export default function Constellation() {
     setSelection((prev) => (prev?.kind === 'sign' && prev.id === id ? null : { kind: 'sign', id }))
   }
 
+  function toggleHouse(n: number) {
+    setSelection((prev) => (prev?.kind === 'house' && prev.n === n ? null : { kind: 'house', n }))
+  }
+
   function toggleAspectAndScroll(asp: ChartAspect) {
     const same =
       selection?.kind === 'aspect' &&
@@ -223,8 +238,6 @@ export default function Constellation() {
     scrollToWheel()
   }
 
-  // Announced to screen readers on every selection change, so the outcome of a
-  // tap (which the two-tap relationship gesture makes non-obvious) is spoken.
   function selectionStatus(): string {
     if (!selection) {
       return ''
@@ -242,6 +255,10 @@ export default function Constellation() {
       })
     }
 
+    if (selection.kind === 'house') {
+      return t('a11y.statusHouse', { n: selection.n })
+    }
+
     const body = activeChart.planets.find((p) => p.id === selection.id)
 
     return t('a11y.statusPlanet', {
@@ -250,21 +267,34 @@ export default function Constellation() {
     })
   }
 
+  function selectionKey(): string {
+    if (!selection) {
+      return 'empty'
+    }
+
+    if (selection.kind === 'aspect') {
+      return `a-${selection.a}-${selection.b}-${selection.aspectType}`
+    }
+
+    if (selection.kind === 'house') {
+      return `h-${selection.n}`
+    }
+
+    return `${selection.kind}-${selection.id}`
+  }
+
   return (
-    <main
-      className="relative min-h-dvh overflow-hidden px-3 pb-16 pt-[calc(4rem+var(--safe-area-top))] text-slate-100 sm:px-4 md:pt-[calc(2rem+var(--safe-area-top))]"
-      style={{ background: 'radial-gradient(120% 90% at 50% -10%, #1a0f3a 0%, #0a0618 45%, #05010f 100%)' }}
-    >
+    <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-[calc(4rem+var(--safe-area-top))] text-foreground sm:px-4 md:pt-[calc(2rem+var(--safe-area-top))]">
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-lg flex-col items-center">
         {/* Hero */}
         <header className="mb-6 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#c9a8ff]">{t('hero.eyebrow')}</p>
-          <h1 className="mt-2 bg-linear-to-r from-[#7cc4ff] via-brand to-[#ffd66b] bg-clip-text text-3xl font-extrabold text-transparent">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{t('hero.eyebrow')}</p>
+          <h1 className="mt-2 bg-hero-gradient bg-clip-text text-3xl font-extrabold text-transparent">
             {t('hero.title')}
           </h1>
-          <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-slate-300/90">{t('hero.subtitle')}</p>
+          <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-foreground-muted/90">{t('hero.subtitle')}</p>
         </header>
 
         {/* Birth form (before compute) */}
@@ -273,7 +303,7 @@ export default function Constellation() {
             <BirthForm computing={computing} onSubmit={handleSubmit} />
             <p className="mt-4 text-center">
               <Link
-                className="text-xs text-slate-400 underline-offset-4 transition hover:text-slate-200 hover:underline"
+                className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
                 href={`/${locale}/today/`}
               >
                 {t('todayCta')}
@@ -329,7 +359,14 @@ export default function Constellation() {
             <Rings />
             <Sectors ascendant={anchor} interactive={revealed} onSelect={toggleSign} selection={selection} t={t} />
             {revealed && ascendant !== null && cusps && (
-              <Houses ascendant={ascendant} cusps={cusps} midheaven={midheaven} t={t} />
+              <Houses
+                ascendant={ascendant}
+                cusps={cusps}
+                midheaven={midheaven}
+                onSelect={toggleHouse}
+                selection={selection}
+                t={t}
+              />
             )}
             {revealed && (
               <>
@@ -349,7 +386,7 @@ export default function Constellation() {
         )}
 
         {revealed && (
-          <p className="mt-2 text-center text-xs text-slate-400">
+          <p className="mt-2 text-center text-xs text-foreground-subtle">
             {/* Once a planet with aspects is selected, point the user at the two-tap gesture. */}
             {selection?.kind === 'planet' && brightPlanets.size > 1 ? t('hero.connectionHint') : t('hero.tapHint')}
           </p>
@@ -357,16 +394,7 @@ export default function Constellation() {
 
         {/* Detail panel */}
         {revealed && (
-          <div
-            className="mt-4 w-full"
-            key={`panel-${
-              selection
-                ? selection.kind === 'aspect'
-                  ? `a-${selection.a}-${selection.b}-${selection.aspectType}`
-                  : `${selection.kind}-${selection.id}`
-                : 'empty'
-            }`}
-          >
+          <div className="mt-4 w-full" key={`panel-${selectionKey()}`}>
             <DetailPanel
               ascendant={ascendant}
               chart={activeChart}
@@ -384,26 +412,26 @@ export default function Constellation() {
             <AspectSection aspects={aspects} onSelect={toggleAspectAndScroll} selection={selection} t={t} />
             <div className="flex flex-col items-center gap-3">
               <button
-                className="rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-slate-100 backdrop-blur transition active:scale-95 hover:bg-white/10"
+                className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 hover:bg-surface-3"
                 onClick={share}
                 type="button"
               >
                 {t('share.button')}
               </button>
               <Link
-                className="text-xs text-slate-400 underline-offset-4 transition hover:text-slate-200 hover:underline"
+                className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
                 href={`/${locale}/today/`}
               >
                 {t('todayCta')}
               </Link>
               <button
-                className="text-xs text-slate-400 underline-offset-4 transition hover:text-slate-200 hover:underline"
+                className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
                 onClick={backToForm}
                 type="button"
               >
                 {t('form.recompute')}
               </button>
-              <p className="mt-1 text-xs text-slate-500">{t('footer')}</p>
+              <p className="mt-1 text-xs text-foreground-faint">{t('footer')}</p>
             </div>
           </div>
         )}
@@ -503,11 +531,15 @@ function Houses({
   ascendant,
   cusps,
   midheaven,
+  onSelect,
+  selection,
   t,
 }: {
   ascendant: number
   cusps: number[]
   midheaven: number | null
+  onSelect: (n: number) => void
+  selection: Selection
   t: T
 }) {
   const angles = [{ lon: ascendant, label: 'ASC' }]
@@ -522,8 +554,11 @@ function Houses({
         const inner = polar(lon, RADIUS.aspect, ascendant)
         const outer = polar(lon, RADIUS.houseOuter, ascendant)
         const isAngle = k === 0 || k === 3 || k === 6 || k === 9 // ASC / IC / DSC / MC axes
-        const span = ((((cusps[(k + 1) % 12] - lon) % 360) + 360) % 360) / 2
-        const labelPos = polar(lon + span, RADIUS.houseLabel, ascendant)
+        const n = k + 1
+        const span = (((cusps[(k + 1) % 12] - lon) % 360) + 360) % 360
+        const labelPos = polar(lon + span / 2, RADIUS.houseLabel, ascendant)
+        const active = selection?.kind === 'house' && selection.n === n
+
         return (
           <g key={k}>
             <line
@@ -534,16 +569,39 @@ function Houses({
               y1={inner.y}
               y2={outer.y}
             />
-            <text
-              dominantBaseline="central"
-              fill="rgba(255,255,255,0.4)"
-              fontSize={8}
-              textAnchor="middle"
-              x={labelPos.x}
-              y={labelPos.y}
+            <g
+              aria-label={`${t('panel.house', { n })} · ${t(`houseThemes.${n}`)}`}
+              aria-pressed={active}
+              className={`${styles.wheelButton} cursor-pointer`}
+              onClick={() => onSelect(n)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onSelect(n)
+                }
+              }}
+              role="button"
+              tabIndex={0}
             >
-              {t(`houseThemes.${k + 1}`)}
-            </text>
+              <path
+                d={annularSector(lon, lon + span, RADIUS.houseOuter, RADIUS.houseInner, ascendant)}
+                fill="#f5bcff"
+                fillOpacity={active ? 0.16 : 0.02}
+                stroke={active ? 'rgba(245,188,255,0.5)' : 'transparent'}
+                strokeWidth={active ? 0.8 : 0}
+              />
+              <text
+                dominantBaseline="central"
+                fill={active ? 'rgba(245,188,255,0.9)' : 'rgba(255,255,255,0.4)'}
+                fontSize={8}
+                textAnchor="middle"
+                x={labelPos.x}
+                y={labelPos.y}
+              >
+                {t(`houseThemes.${n}`)}
+              </text>
+              <circle className={styles.focusRing} cx={labelPos.x} cy={labelPos.y} r={11} />
+            </g>
           </g>
         )
       })}
@@ -696,7 +754,7 @@ function Planets({
                 <circle
                   cx={point.x}
                   cy={point.y}
-                  fill="#0a0618"
+                  fill="var(--color-background)"
                   pointerEvents="none"
                   r={TOKEN.disc}
                   stroke={color}
@@ -719,15 +777,15 @@ function Planets({
                     <circle
                       cx={point.x + 9.5}
                       cy={point.y - 9.5}
-                      fill="#0a0618"
+                      fill="var(--color-background)"
                       r={5.2}
-                      stroke="#fb7185"
+                      stroke="var(--color-danger)"
                       strokeOpacity={0.55}
                       strokeWidth={0.8}
                     />
                     <text
                       dominantBaseline="central"
-                      fill="#fb7185"
+                      fill="var(--color-danger)"
                       fontSize={7}
                       fontWeight={700}
                       textAnchor="middle"
@@ -770,8 +828,8 @@ function CenterHub({ revealed }: { revealed: boolean }) {
       <defs>
         <radialGradient id="coreGlow">
           <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="60%" stopColor="#f5bcff" />
-          <stop offset="100%" stopColor="#7cc4ff" stopOpacity="0" />
+          <stop offset="60%" stopColor="var(--color-brand)" />
+          <stop offset="100%" stopColor="var(--color-accent-cool)" stopOpacity="0" />
         </radialGradient>
       </defs>
     </g>
@@ -797,16 +855,16 @@ function Big3Card({
 }) {
   return (
     <button
-      className={`${styles.card} flex flex-col items-center gap-1 rounded-2xl border border-white/10 bg-white/5 p-2.5 text-center backdrop-blur transition enabled:hover:border-white/25 enabled:hover:bg-white/10 enabled:active:scale-95 disabled:cursor-default sm:p-3`}
+      className={`${styles.card} flex flex-col items-center gap-1 rounded-2xl border bg-surface-2 p-2.5 text-center backdrop-blur transition enabled:hover:border-border-strong enabled:hover:bg-surface-3 enabled:active:scale-95 disabled:cursor-default sm:p-3`}
       disabled={!onClick}
       onClick={onClick}
       style={{ animationDelay: `${delay}s` }}
       type="button"
     >
       <span className="text-lg text-brand">{glyphText(glyph)}</span>
-      <span className="text-[10px] uppercase tracking-widest text-slate-400">{label}</span>
-      <span className="text-sm font-bold text-slate-100">{value}</span>
-      <span className="text-[10px] leading-tight text-slate-500">{hint}</span>
+      <span className="text-[10px] uppercase tracking-widest text-foreground-subtle">{label}</span>
+      <span className="text-sm font-bold text-foreground">{value}</span>
+      <span className="text-[10px] leading-tight text-foreground-faint">{hint}</span>
     </button>
   )
 }
@@ -815,7 +873,7 @@ function CloseButton({ label, onClose }: { label: string; onClose: () => void })
   return (
     <button
       aria-label={label}
-      className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-sm text-slate-400 transition hover:bg-white/10 hover:text-slate-100"
+      className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-sm text-foreground-subtle transition hover:bg-surface-3 hover:text-foreground"
       onClick={onClose}
       type="button"
     >
@@ -841,9 +899,9 @@ function DetailPanel({
 
   if (!selection) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-white/3 p-4 text-center sm:p-5">
-        <p className="text-sm font-semibold text-slate-200">{t('panel.empty')}</p>
-        <p className="mt-1 text-xs text-slate-400">{t('panel.emptyHint')}</p>
+      <div className="rounded-2xl border bg-surface p-4 text-center sm:p-5">
+        <p className="text-sm font-semibold text-foreground-secondary">{t('panel.empty')}</p>
+        <p className="mt-1 text-xs text-foreground-subtle">{t('panel.emptyHint')}</p>
       </div>
     )
   }
@@ -854,20 +912,18 @@ function DetailPanel({
     const glyph = SIGNS.find((s) => s.id === selection.id)?.glyph ?? '★'
 
     return (
-      <div
-        className={`${styles.sheetIn} relative rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur sm:p-5`}
-      >
+      <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
         <CloseButton label={t('panel.close')} onClose={onClose} />
         <div className="flex items-center gap-3">
           <span className="text-2xl" style={{ color }}>
             {glyphText(glyph)}
           </span>
           <div>
-            <p className="text-base font-bold text-slate-100">{t(`signs.${selection.id}`)}</p>
+            <p className="text-base font-bold text-foreground">{t(`signs.${selection.id}`)}</p>
             <Chip color={color} label={t(`elements.${element}`)} />
           </div>
         </div>
-        <p className="mt-3 text-sm leading-relaxed text-slate-300">{t(`signKeywords.${selection.id}`)}</p>
+        <p className="mt-3 text-sm leading-relaxed text-foreground-muted">{t(`signKeywords.${selection.id}`)}</p>
       </div>
     )
   }
@@ -891,21 +947,20 @@ function DetailPanel({
     const intensity = intensityKey && t.has(intensityKey) ? t(intensityKey) : null
 
     return (
-      <div
-        className={`${styles.sheetIn} relative rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur sm:p-5`}
-      >
+      <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
         <CloseButton label={t('panel.close')} onClose={onClose} />
         <div className="flex items-center gap-3">
           <span className="shrink-0 text-2xl" style={{ color }}>
             {glyphText(PLANET_GLYPHS[selection.a as never])} {glyphText(PLANET_GLYPHS[selection.b as never])}
           </span>
           <div className="min-w-0">
-            <p className="text-base font-bold text-slate-100">
-              {t(`planets.${selection.a}`)} <span className="text-slate-500">↔</span> {t(`planets.${selection.b}`)}
+            <p className="text-base font-bold text-foreground">
+              {t(`planets.${selection.a}`)} <span className="text-foreground-faint">↔</span>{' '}
+              {t(`planets.${selection.b}`)}
             </p>
             <span className="text-xs font-medium" style={{ color }}>
               {t(`aspects.${selection.aspectType}Vibe`)}{' '}
-              <span className="text-slate-500">
+              <span className="text-foreground-faint">
                 · {t(`aspects.${selection.aspectType}Name`)} · {t('aspects.orbLabel')} {selection.orb}°
               </span>
             </span>
@@ -913,13 +968,60 @@ function DetailPanel({
         </div>
         {intensity && (
           <p
-            className={`mt-3 text-xs font-semibold ${tier === 'wide' ? 'text-slate-400' : ''}`}
+            className={`mt-3 text-xs font-semibold ${tier === 'wide' ? 'text-foreground-subtle' : ''}`}
             style={tier === 'tight' ? { color } : undefined}
           >
             {intensity}
           </p>
         )}
-        <p className={`${intensity ? 'mt-2' : 'mt-3'} text-sm leading-relaxed text-slate-200`}>{pairReading}</p>
+        <p className={`${intensity ? 'mt-2' : 'mt-3'} text-sm leading-relaxed text-foreground-secondary`}>
+          {pairReading}
+        </p>
+      </div>
+    )
+  }
+
+  if (selection.kind === 'house') {
+    const n = selection.n
+    const residents = chart.planets.filter((p) => houseOfLon(p.lon, chart.cusps, ascendant) === n)
+
+    return (
+      <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
+        <CloseButton label={t('panel.close')} onClose={onClose} />
+        <div className="flex items-center gap-3">
+          <span
+            className="flex h-11 w-11 items-center justify-center rounded-full border"
+            style={{ borderColor: 'var(--color-accent)', color: 'var(--color-accent)' }}
+          >
+            <span className="text-base font-bold">{n}</span>
+          </span>
+          <div className="min-w-0">
+            <p className="text-base font-bold text-foreground">{t('panel.house', { n })}</p>
+            <p className="text-xs text-foreground-subtle">{t(`houseThemes.${n}`)}</p>
+          </div>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-foreground-muted">{t(`houseIntros.${n}`)}</p>
+        {residents.length === 0 ? (
+          <p className="mt-3 border-t pt-3 text-sm leading-relaxed text-foreground-subtle">{t('panel.emptyHouse')}</p>
+        ) : (
+          residents.map((p) => {
+            const residentSign = signOfLon(p.lon)
+            const residentColor = ELEMENT_COLORS[elementOfSign(residentSign)]
+            const readingKey = `readings.houses.${p.id}.${n}`
+
+            return (
+              <div className="mt-3 border-t pt-3" key={p.id}>
+                <p className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: residentColor }}>
+                  {glyphText(PLANET_GLYPHS[p.id])} {t(`planets.${p.id}`)}
+                  <span className="font-medium text-foreground-faint">· {t(`signs.${residentSign}`)}</span>
+                </p>
+                {t.has(readingKey) && (
+                  <p className="mt-1.5 text-sm leading-relaxed text-foreground-secondary">{t(readingKey)}</p>
+                )}
+              </div>
+            )
+          })
+        )}
       </div>
     )
   }
@@ -937,13 +1039,9 @@ function DetailPanel({
   const house = houseOfLon(planet.lon, chart.cusps, ascendant)
   const retroKey = `readings.retro.${planet.id}.${sign}`
   const reading = planet.retrograde && t.has(retroKey) ? t(retroKey) : t(`readings.planets.${planet.id}.${sign}`)
-  const houseKey = `readings.houses.${planet.id}.${house}`
-  const houseReading = house !== null && t.has(houseKey) ? t(houseKey) : null
 
   return (
-    <div
-      className={`${styles.sheetIn} relative rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur sm:p-5`}
-    >
+    <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
       <CloseButton label={t('panel.close')} onClose={onClose} />
       <div className="flex items-center gap-3">
         <span
@@ -953,48 +1051,40 @@ function DetailPanel({
           <span className="text-xl">{glyphText(PLANET_GLYPHS[planet.id])}</span>
         </span>
         <div className="min-w-0">
-          <p className="flex items-center gap-2 text-base font-bold text-slate-100">
+          <p className="flex items-center gap-2 text-base font-bold text-foreground">
             {t(`planets.${planet.id}`)}
             {planet.retrograde && (
-              <span className="rounded bg-[#fb7185]/20 px-1.5 py-0.5 text-[10px] font-semibold text-[#fb7185]">
+              <span className="rounded bg-danger/20 px-1.5 py-0.5 text-[10px] font-semibold text-danger">
                 ℞ {t('panel.retrograde')}
               </span>
             )}
           </p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-foreground-subtle">
             {t(`signs.${sign}`)}
             {house !== null && <> · {t('panel.area', { name: t(`houseThemes.${house}`) })}</>}
           </p>
         </div>
       </div>
-      <p className="mt-3 text-sm leading-relaxed text-slate-200">{reading}</p>
-      {house !== null && houseReading && (
-        <div className="mt-3 border-t border-white/10 pt-3">
-          <p className="text-xs font-semibold text-slate-400">
-            {t('panel.house', { n: house })} · {t(`houseThemes.${house}`)}
-          </p>
-          <p className="mt-1.5 text-sm leading-relaxed text-slate-200">{houseReading}</p>
-        </div>
-      )}
+      <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">{reading}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         <Chip color={color} label={`${t('panel.elementLabel')}: ${t(`elements.${element}`)}`} />
-        <Chip color="#c9a8ff" label={`${t('panel.keywordLabel')}: ${t(`signKeywords.${sign}`)}`} />
+        <Chip color="var(--color-accent)" label={`${t('panel.keywordLabel')}: ${t(`signKeywords.${sign}`)}`} />
       </div>
       <button
-        className="mt-3 text-[11px] text-slate-400 underline-offset-2 transition hover:text-slate-200 hover:underline"
+        className="mt-3 text-[11px] text-foreground-subtle underline-offset-2 transition hover:text-foreground-secondary hover:underline"
         onClick={() => setShowDetail((v) => !v)}
         type="button"
       >
         {showDetail ? t('panel.hideDetail') : t('panel.showDetail')}
       </button>
       {showDetail && (
-        <div className="mt-2 rounded-xl bg-white/3 px-3 py-2.5">
-          <p className="text-xs font-medium text-slate-200">
+        <div className="mt-2 rounded-xl bg-surface px-3 py-2.5">
+          <p className="text-xs font-medium text-foreground-secondary">
             {t(`signs.${sign}`)} {dm.degree}°{String(dm.minute).padStart(2, '0')}′
             {house !== null && <> · {t('panel.house', { n: house })}</>} ·{' '}
             {planet.retrograde ? t('panel.retrograde') : t('panel.direct')}
           </p>
-          <p className="mt-1 text-[11px] leading-relaxed text-slate-500">{t('panel.detailHint')}</p>
+          <p className="mt-1 text-[11px] leading-relaxed text-foreground-faint">{t('panel.detailHint')}</p>
         </div>
       )}
     </div>
@@ -1005,7 +1095,8 @@ function Chip({ color, label }: { color: string; label: string }) {
   return (
     <span
       className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium"
-      style={{ backgroundColor: `${color}22`, color }}
+      // color-mix instead of hex-alpha concat so both raw hexes and var() tokens work
+      style={{ backgroundColor: `color-mix(in srgb, ${color} 13%, transparent)`, color }}
     >
       {label}
     </span>
@@ -1031,10 +1122,12 @@ function ElementBalance({
   }
 
   return (
-    <section className="sm:rounded-2xl sm:border sm:border-white/10 sm:bg-white/3 sm:p-5">
+    <section className="sm:rounded-2xl sm:border sm:bg-surface sm:p-5">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-bold text-slate-100">{t('elements.title')}</h2>
-        <span className="text-xs text-slate-400">{t('elements.dominant', { element: t(`elements.${dominant}`) })}</span>
+        <h2 className="text-sm font-bold text-foreground">{t('elements.title')}</h2>
+        <span className="text-xs text-foreground-subtle">
+          {t('elements.dominant', { element: t(`elements.${dominant}`) })}
+        </span>
       </div>
       <div className="space-y-2.5">
         {ELEMENT_IDS.map((id) => {
@@ -1046,14 +1139,14 @@ function ElementBalance({
               <span className="w-10 shrink-0 text-xs font-semibold" style={{ color }}>
                 {t(`elements.${id}`)}
               </span>
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/5">
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-2">
                 <div
                   className={`${styles.gaugeFill} h-full rounded-full`}
                   style={{ background: `linear-gradient(90deg, ${color}88, ${color})`, width: `${pct}%` }}
                 />
               </div>
-              <span className="w-16 shrink-0 text-right text-[10px] text-slate-500">{descriptions[id]}</span>
-              <span className="w-4 shrink-0 text-right text-xs text-slate-400">{counts[id]}</span>
+              <span className="w-16 shrink-0 text-right text-[10px] text-foreground-faint">{descriptions[id]}</span>
+              <span className="w-4 shrink-0 text-right text-xs text-foreground-subtle">{counts[id]}</span>
             </div>
           )
         })}
@@ -1081,12 +1174,12 @@ function AspectSection({
   const tension = aspects.filter((a) => TENSION_TYPES.includes(a.type))
 
   return (
-    <section className="sm:rounded-2xl sm:border sm:border-white/10 sm:bg-white/3 sm:p-5">
-      <h2 className="text-sm font-bold text-slate-100">{t('aspects.title')}</h2>
-      <p className="mt-1 text-xs text-slate-400">{t('aspects.intro')}</p>
+    <section className="sm:rounded-2xl sm:border sm:bg-surface sm:p-5">
+      <h2 className="text-sm font-bold text-foreground">{t('aspects.title')}</h2>
+      <p className="mt-1 text-xs text-foreground-subtle">{t('aspects.intro')}</p>
       {harmony.length > 0 && (
         <AspectGroup
-          accent="#6ee7b7"
+          accent="var(--color-positive)"
           aspects={harmony}
           label={t('aspects.harmonyGroup')}
           onSelect={onSelect}
@@ -1096,7 +1189,7 @@ function AspectSection({
       )}
       {tension.length > 0 && (
         <AspectGroup
-          accent="#fb7185"
+          accent="var(--color-danger)"
           aspects={tension}
           label={t('aspects.tensionGroup')}
           onSelect={onSelect}
@@ -1141,7 +1234,7 @@ function AspectGroup({
           return (
             <li key={`${asp.a}-${asp.b}-${asp.type}`}>
               <button
-                className={`flex w-full items-center gap-2.5 rounded-xl px-2 py-2 text-left transition hover:bg-white/5 sm:gap-3 sm:px-2.5 ${active ? 'bg-white/10 ring-1 ring-white/20' : ''}`}
+                className={`flex w-full items-center gap-2.5 rounded-xl px-2 py-2 text-left transition hover:bg-surface-2 sm:gap-3 sm:px-2.5 ${active ? 'bg-surface-3 ring-1 ring-ring' : ''}`}
                 onClick={() => onSelect(asp)}
                 type="button"
               >
@@ -1149,12 +1242,12 @@ function AspectGroup({
                   {glyphText(PLANET_GLYPHS[asp.a as never])} {glyphText(PLANET_GLYPHS[asp.b as never])}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-xs text-slate-200">
-                    {t(`planets.${asp.a}`)} <span className="text-slate-500">↔</span> {t(`planets.${asp.b}`)}
+                  <span className="block text-xs text-foreground-secondary">
+                    {t(`planets.${asp.a}`)} <span className="text-foreground-faint">↔</span> {t(`planets.${asp.b}`)}
                   </span>
                   <span className="block text-[11px]" style={{ color }}>
                     {t(`aspects.${asp.type}Vibe`)}{' '}
-                    <span className="text-slate-500">
+                    <span className="text-foreground-faint">
                       · {t(`aspects.${asp.type}Name`)} · {t('aspects.orbLabel')} {asp.orb}°
                     </span>
                   </span>

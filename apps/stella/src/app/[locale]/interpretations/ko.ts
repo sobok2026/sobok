@@ -1073,8 +1073,6 @@ export const aspects: AspectPairReadings = {
   },
 }
 
-// Placement-by-house readings. The sign line above says how the planet acts;
-// these say where in life that energy plays out, so they anchor on the domain.
 export const houses: PlanetHouseReadings = {
   sun: {
     1: '당신의 인생에서 가장 중요한 주제는 당신 자신이에요. 어디에 있든 존재가 먼저 읽히는 사람이라 숨으려 해도 잘 숨겨지지 않죠. 삶의 에너지가 나를 세우는 일에 쓰일 때 가장 크게 빛나니 스스로를 주인공 자리에 두는 걸 미안해하지 마세요.',

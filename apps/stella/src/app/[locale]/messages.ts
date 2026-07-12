@@ -34,6 +34,7 @@ export const messages = {
         statusPlanet: '{name}, {sign} 선택됨',
         statusSign: '{name} 선택됨',
         statusAspect: '{a}과 {b}의 {aspect} 관계',
+        statusHouse: '{n}하우스 선택됨',
       },
       big3: {
         sunLabel: '태양',
@@ -57,6 +58,8 @@ export const messages = {
         showDetail: '자세히',
         hideDetail: '간단히',
         detailHint: '도수는 별자리 안에서의 정확한 위치, 하우스는 그 기운이 작동하는 삶의 영역을 뜻해요.',
+        emptyHouse:
+          '지금 이 방에는 머무는 별이 없어요. 빈 하우스는 결핍이 아니라 이 영역이 큰 숙제 없이 순하게 흘러간다는 뜻이에요.',
       },
       elements: {
         title: '원소 밸런스',
@@ -102,7 +105,7 @@ export const messages = {
         title: '생년월일시로 내 별자리 그리기',
         dateLabel: '생년월일',
         timeLabel: '태어난 시각',
-        timeUnknown: '태어난 시각 몰라요',
+        timeUnknown: '태어난 시각을 몰라요',
         timeUnknownHint: '시간을 모르면 달·상승 별자리가 정확하지 않을 수 있어요.',
         cityLabel: '태어난 지역',
         submit: '내 별자리 그리기',
@@ -112,8 +115,7 @@ export const messages = {
         invalidDate: '생년월일을 확인해 주세요.',
         error: '계산에 실패했어요. 다시 시도해 주세요.',
         saveLabel: '이 브라우저에 출생 정보 저장',
-        saveHint:
-          '저장하면 오늘의 흐름에서 내 차트 기준 풀이를 볼 수 있어요. 정보는 이 기기에만 남고 서버로 전송되지 않아요.',
+        saveHint: '저장한 정보는 이 기기에만 남고 서버로 전송되지 않아요.',
       },
       signs: {
         aries: '양자리',
@@ -156,6 +158,20 @@ export const messages = {
         10: '성취',
         11: '우정',
         12: '내면',
+      },
+      houseIntros: {
+        1: '당신이라는 존재가 시작되는 방이에요. 첫인상과 몸 그리고 세상에 나서는 태도가 여기서 정해져요.',
+        2: '내 것을 일구고 지키는 방이에요. 돈과 소유부터 나를 든든하게 하는 모든 것이 여기 살아요.',
+        3: '말과 배움이 오가는 방이에요. 대화와 소식이 흐르고 가까운 세상과 연결되는 자리예요.',
+        4: '마음의 뿌리가 내리는 방이에요. 집과 가족 그리고 돌아가 쉴 자리가 여기 있어요.',
+        5: '설렘이 태어나는 방이에요. 연애와 창작처럼 가슴 뛰는 일들이 여기서 피어나요.',
+        6: '하루하루가 굴러가는 방이에요. 일과 루틴을 정돈하고 몸을 돌보는 자리예요.',
+        7: '마주 보는 관계의 방이에요. 연인과 동반자처럼 일대일로 맺는 인연이 여기로 들어와요.',
+        8: '깊은 것들이 잠겨 있는 방이에요. 신뢰와 공유 그리고 삶을 뒤바꾸는 재생의 힘이 여기 있어요.',
+        9: '지평선 너머를 바라보는 방이에요. 여행과 배움처럼 삶의 의미를 찾는 여정이 여기서 출발해요.',
+        10: '세상에 이름이 새겨지는 방이에요. 일과 성취 그리고 사회에서 오르는 자리가 여기 걸려 있어요.',
+        11: '함께 꿈꾸는 방이에요. 친구와 공동체 그리고 미래를 향한 희망이 여기 모여요.',
+        12: '가장 깊은 안쪽의 방이에요. 혼자만의 시간과 무의식 그리고 조용한 회복이 여기서 일어나요.',
       },
       planets: {
         sun: '태양',
@@ -255,6 +271,7 @@ export const messages = {
         statusPlanet: '{name} in {sign} selected',
         statusSign: '{name} selected',
         statusAspect: '{a} and {b}: {aspect}',
+        statusHouse: 'House {n} selected',
       },
       big3: {
         sunLabel: 'Sun',
@@ -279,6 +296,8 @@ export const messages = {
         hideDetail: 'Less',
         detailHint:
           'The degree is the exact spot within the sign; the house is the area of life this energy plays out in.',
+        emptyHouse:
+          "No planets are staying in this room. An empty house isn't a lack — it just means this part of life flows without heavy homework.",
       },
       elements: {
         title: 'Element balance',
@@ -334,8 +353,7 @@ export const messages = {
         invalidDate: 'Please check the birth date.',
         error: 'Calculation failed. Please try again.',
         saveLabel: 'Save my birth details in this browser',
-        saveHint:
-          'Saving lets Today’s Flow read the day from your own chart. Everything stays on this device and nothing is sent to a server.',
+        saveHint: 'Saved details stay on this device only and are never sent to a server.',
       },
       signs: {
         aries: 'Aries',
@@ -378,6 +396,20 @@ export const messages = {
         10: 'Achievement',
         11: 'Friends',
         12: 'Inner world',
+      },
+      houseIntros: {
+        1: 'The room where you begin. First impressions, your body, and the way you step into the world are decided here.',
+        2: "The room of what's yours. Money, possessions, and everything that makes you feel secure live here.",
+        3: 'The room of words and learning. Conversation, news, and your everyday connections flow through here.',
+        4: 'The room where your roots grow. Home, family, and the place you return to rest are here.',
+        5: 'The room where sparks are born. Romance, creativity, and everything that makes your heart race bloom here.',
+        6: 'The room where daily life runs. Work, routine, and the care of your body live here.',
+        7: 'The room of one-to-one bonds. Partners, companions, and the people you meet face to face enter here.',
+        8: 'The room of deep waters. Trust, sharing, and the forces that transform a life rest here.',
+        9: 'The room that faces the horizon. Travel, learning, and the search for meaning set out from here.',
+        10: 'The room where your name is written. Career, achievement, and your place in the world hang here.',
+        11: 'The room of shared dreams. Friends, community, and hopes for the future gather here.',
+        12: 'The innermost room. Solitude, the unconscious, and quiet recovery live here.',
       },
       planets: {
         sun: 'Sun',
@@ -476,6 +508,7 @@ export const messages = {
         statusPlanet: '已选择 {name}（{sign}）',
         statusSign: '已选择 {name}',
         statusAspect: '{a} 与 {b} 的{aspect}关系',
+        statusHouse: '已选择第{n}宫',
       },
       big3: {
         sunLabel: '太阳',
@@ -499,6 +532,7 @@ export const messages = {
         showDetail: '详情',
         hideDetail: '收起',
         detailHint: '度数是星座内的精确位置，宫位代表这股能量作用的人生领域。',
+        emptyHouse: '现在这个房间里没有停留的星。空宫不是缺失，而是说明这个领域会顺畅流过，无需太多功课。',
       },
       elements: {
         title: '元素平衡',
@@ -554,7 +588,7 @@ export const messages = {
         invalidDate: '请检查出生日期。',
         error: '计算失败，请重试。',
         saveLabel: '在此浏览器保存出生信息',
-        saveHint: '保存后，今日流势就能以你自己的星盘为基准解读。信息只保存在这台设备上，不会发送到服务器。',
+        saveHint: '保存的信息只留在这台设备上，不会发送到服务器。',
       },
       signs: {
         aries: '白羊座',
@@ -597,6 +631,20 @@ export const messages = {
         10: '成就',
         11: '友谊',
         12: '内在',
+      },
+      houseIntros: {
+        1: '“我”开始的房间。第一印象、身体和走向世界的姿态在这里定下。',
+        2: '经营与守护所有的房间。金钱、物品和让你安心的依靠住在这里。',
+        3: '语言与学习往来的房间。对话、消息和身边的联结在这里流动。',
+        4: '心之根扎下的房间。家与家人、回去休息的地方在这里。',
+        5: '心动诞生的房间。恋爱、创作和让心跳加速的事在这里绽放。',
+        6: '日常运转的房间。工作、节奏和照顾身体的用心都在这里。',
+        7: '面对面关系的房间。恋人、伴侣和一对一的缘分从这里进来。',
+        8: '深处沉睡的房间。信任、共享和改变人生的力量在这里。',
+        9: '望向地平线的房间。旅行、学习和寻找意义的旅程从这里出发。',
+        10: '名字被世界记住的房间。事业、成就和社会中的位置悬在这里。',
+        11: '一起做梦的房间。朋友、社群和对未来的期望聚在这里。',
+        12: '最深处的房间。独处、无意识和安静的恢复在这里发生。',
       },
       planets: {
         sun: '太阳',
@@ -691,6 +739,7 @@ export const messages = {
         statusPlanet: '{name}（{sign}）を選択',
         statusSign: '{name} を選択',
         statusAspect: '{a} と {b} の{aspect}',
+        statusHouse: '第{n}ハウスを選択',
       },
       big3: {
         sunLabel: '太陽',
@@ -714,6 +763,8 @@ export const messages = {
         showDetail: '詳細',
         hideDetail: '閉じる',
         detailHint: '度数は星座内の正確な位置、ハウスはそのエネルギーが働く人生の領域を表します。',
+        emptyHouse:
+          'いまこの部屋にとどまる星はありません。空のハウスは欠けではなく、この領域が大きな課題なく流れるというしるしです。',
       },
       elements: {
         title: 'エレメントのバランス',
@@ -769,8 +820,7 @@ export const messages = {
         invalidDate: '生年月日を確認してください。',
         error: '計算に失敗しました。もう一度お試しください。',
         saveLabel: 'このブラウザに出生情報を保存',
-        saveHint:
-          '保存すると「今日の流れ」であなたの星図をもとにした読みが見られます。情報はこの端末にだけ保存され、サーバーには送信されません。',
+        saveHint: '保存した情報はこの端末にだけ残り、サーバーには送信されません。',
       },
       signs: {
         aries: 'おひつじ座',
@@ -813,6 +863,20 @@ export const messages = {
         10: '達成',
         11: '友情',
         12: '内面',
+      },
+      houseIntros: {
+        1: '「わたし」が始まる部屋。第一印象や体、世界への踏み出し方がここで決まります。',
+        2: '自分のものを育て守る部屋。お金や持ち物など、安心のよりどころがここにあります。',
+        3: '言葉と学びが行き交う部屋。会話や知らせ、身近なつながりが流れる場所です。',
+        4: '心の根がおりる部屋。家と家族、帰って休む場所がここにあります。',
+        5: 'ときめきが生まれる部屋。恋や創作など、心おどることがここで咲きます。',
+        6: '毎日がまわる部屋。仕事とルーティン、体を整えることがここにあります。',
+        7: '向かい合う関係の部屋。恋人やパートナーなど、一対一の縁がここに入ります。',
+        8: '深いものが眠る部屋。信頼や共有など、人生を変える力がここにあります。',
+        9: '地平線の先を見る部屋。旅と学び、意味を探す旅路がここから始まります。',
+        10: '世界に名前が刻まれる部屋。仕事と達成、社会での居場所がここにかかっています。',
+        11: 'ともに夢を見る部屋。友人やコミュニティ、未来への希望がここに集まります。',
+        12: 'いちばん奥の部屋。ひとりの時間や無意識、静かな回復がここで起こります。',
       },
       planets: {
         sun: '太陽',

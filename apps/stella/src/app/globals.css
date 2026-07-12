@@ -3,11 +3,60 @@
 @source '..';
 
 @theme {
-  --color-background: #0a0a0a;
-  --color-foreground: #ededed;
+  /* --color-background must stay in sync with THEME_COLOR in src/constants.ts */
+  --color-background: #0a0618;
+  --color-background-glow: #1a0f3a;
+  --color-background-deep: #05010f;
+  --color-overlay: #12091f;
 
-  --color-brand-start: #46cdfc;
+  /* Glass surfaces over the night sky (low → high elevation) */
+  --color-surface: rgb(255 255 255 / 3%);
+  --color-surface-2: rgb(255 255 255 / 5%);
+  --color-surface-3: rgb(255 255 255 / 10%);
+
+  /* Foreground / text (high → low emphasis) */
+  --color-foreground: #f1f5f9;
+  --color-foreground-secondary: #e2e8f0;
+  --color-foreground-muted: #cbd5e1;
+  --color-foreground-subtle: #94a3b8;
+  --color-foreground-faint: #64748b;
+
+  /* Borders (subtle → strong) + focus/selection ring */
+  --color-border: rgb(255 255 255 / 10%);
+  --color-border-2: rgb(255 255 255 / 15%);
+  --color-border-strong: rgb(255 255 255 / 25%);
+  --color-ring: rgb(255 255 255 / 20%);
+
+  /* Primary CTA: moonlight fill, text punched out to the night sky */
+  --color-primary: #e9e4f4;
+  --color-primary-foreground: #0a0618;
+
+  /* Brand + accents */
   --color-brand: #f5bcff;
+  --color-accent: #c9a8ff; /* eyebrow/overline labels, keyword chips */
+  --color-accent-cool: #7cc4ff; /* hero-gradient start, comet head */
+  --color-accent-warm: #ffd66b; /* hero-gradient end */
+  --color-positive: #6ee7b7; /* do-list, harmonious aspects */
+  --color-danger: #fb7185; /* errors, retrogrades, hard aspects */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+}
+
+@utility bg-night-sky {
+  background-image: radial-gradient(
+    120% 90% at 50% -10%,
+    var(--color-background-glow) 0%,
+    var(--color-background) 45%,
+    var(--color-background-deep) 100%
+  );
+}
+
+@utility bg-hero-gradient {
+  background-image: linear-gradient(to right, var(--color-accent-cool), var(--color-brand), var(--color-accent-warm));
 }
 
 :root {
