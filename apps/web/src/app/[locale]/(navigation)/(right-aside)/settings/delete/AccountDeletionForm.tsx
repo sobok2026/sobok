@@ -197,18 +197,14 @@ export default function AccountDeletionForm({ email }: Props) {
               </label>
               <PasswordInput
                 aria-describedby="account-deletion-password-help"
-                autoCapitalize="off"
                 autoComplete="current-password"
-                autoCorrect="off"
                 className={`${deletionFieldClassName} pr-10`}
                 disabled={isPending}
                 enterKeyHint="done"
                 id="account-deletion-password"
-                maxLength={64}
                 name="password"
                 placeholder="현재 비밀번호"
                 required
-                spellCheck={false}
                 toggleClassName={deletionFieldActionClassName}
                 toggleLabel="비밀번호 표시"
                 wrapperClassName="group"

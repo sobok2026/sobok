@@ -105,9 +105,7 @@ export default function PasswordChangeForm() {
       <div>
         <label htmlFor="currentPassword">현재 비밀번호</label>
         <PasswordInput
-          autoCapitalize="off"
           autoComplete="current-password"
-          autoCorrect="off"
           disabled={isPending}
           enterKeyHint="next"
           iconClassName={toggleIconClassName}
@@ -115,7 +113,6 @@ export default function PasswordChangeForm() {
           name="currentPassword"
           placeholder="현재 비밀번호를 입력하세요"
           required
-          spellCheck={false}
           toggleClassName={toggleClassName}
           toggleLabel="비밀번호 표시"
         />
@@ -123,19 +120,15 @@ export default function PasswordChangeForm() {
       <div>
         <label htmlFor="newPassword">새 비밀번호</label>
         <PasswordInput
-          autoCapitalize="off"
           autoComplete="new-password"
-          autoCorrect="off"
           disabled={isPending}
           enterKeyHint="next"
           iconClassName={toggleIconClassName}
           id="newPassword"
-          maxLength={64}
           minLength={8}
           name="newPassword"
           placeholder="새 비밀번호를 입력하세요"
           required
-          spellCheck={false}
           toggleClassName={toggleClassName}
           toggleLabel="비밀번호 표시"
         />
@@ -145,19 +138,15 @@ export default function PasswordChangeForm() {
       <div>
         <label htmlFor="confirmPassword">새 비밀번호 확인</label>
         <PasswordInput
-          autoCapitalize="off"
           autoComplete="new-password"
-          autoCorrect="off"
           disabled={isPending}
           enterKeyHint="done"
           iconClassName={toggleIconClassName}
           id="confirmPassword"
-          maxLength={64}
           minLength={8}
           name="confirmPassword"
           placeholder="새 비밀번호를 다시 입력하세요"
           required
-          spellCheck={false}
           toggleClassName={toggleClassName}
           toggleLabel="비밀번호 표시"
         />

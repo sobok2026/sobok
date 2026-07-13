@@ -177,18 +177,14 @@ export default function SignupForm() {
             </label>
             <PasswordInput
               aria-describedby="signup-password-help"
-              autoCapitalize="off"
               autoComplete="new-password"
-              autoCorrect="off"
               className={inputClassName}
               disabled={isPending}
               enterKeyHint="next"
               id="signup-new-password"
-              maxLength={64}
               minLength={8}
               name="password"
               required
-              spellCheck={false}
               toggleClassName={trailingButtonClassName}
               toggleLabel={t('showPassword')}
               wrapperClassName="group"
@@ -207,18 +203,14 @@ export default function SignupForm() {
             </label>
             <PasswordInput
               aria-describedby="signup-password-confirmation-help"
-              autoCapitalize="off"
               autoComplete="new-password"
-              autoCorrect="off"
               className={inputClassName}
               disabled={isPending}
               enterKeyHint="next"
               id="signup-new-password-confirmation"
-              maxLength={64}
               minLength={8}
               name="password-confirm"
               required
-              spellCheck={false}
               toggleClassName={trailingButtonClassName}
               toggleLabel={t('showPassword')}
               wrapperClassName="group"

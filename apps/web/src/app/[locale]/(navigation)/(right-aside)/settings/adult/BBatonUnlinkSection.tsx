@@ -82,9 +82,7 @@ export default function BBatonUnlinkSection() {
                 현재 비밀번호
               </label>
               <PasswordInput
-                autoCapitalize="off"
                 autoComplete="current-password"
-                autoCorrect="off"
                 className="w-full rounded-md bg-surface-2 border border-border-strong px-3 py-2 pr-10 placeholder-foreground-subtle focus:outline-none focus:ring-2 focus:ring-border-strong focus:border-transparent disabled:bg-surface-3 disabled:text-foreground-muted"
                 disabled={unlinkMutation.isPending}
                 enterKeyHint="done"
@@ -92,7 +90,6 @@ export default function BBatonUnlinkSection() {
                 id="bbaton-unlink-password"
                 name="password"
                 required
-                spellCheck={false}
                 toggleClassName="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-surface-3"
                 toggleLabel="비밀번호 표시"
               />

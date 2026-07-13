@@ -215,17 +215,13 @@ export default function LoginForm() {
                   {t('password')}
                 </label>
                 <PasswordInput
-                  autoCapitalize="off"
                   autoComplete="current-password"
-                  autoCorrect="off"
                   className={authInputClassName}
                   disabled={isPending}
                   enterKeyHint="done"
                   id="login-current-password"
-                  maxLength={64}
                   name="password"
                   required
-                  spellCheck={false}
                   toggleClassName={authTrailingButtonClassName}
                   toggleLabel={t('showPassword')}
                   wrapperClassName="group"
