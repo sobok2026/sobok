@@ -82,7 +82,7 @@ export const viewport: Viewport = {
     { media: '(prefers-color-scheme: light)', color: THEME_COLOR.light },
     { media: '(prefers-color-scheme: dark)', color: THEME_COLOR.dark },
   ],
-  colorScheme: 'dark light',
+  colorScheme: 'light dark',
 }
 
 type Props = {

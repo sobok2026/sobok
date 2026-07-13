@@ -9,9 +9,9 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: '/',
     display: 'standalone',
     display_override: ['window-controls-overlay', 'standalone'],
-    background_color: THEME_COLOR.dark,
+    background_color: THEME_COLOR.light,
     id: '/',
-    theme_color: THEME_COLOR.dark,
+    theme_color: THEME_COLOR.light,
     screenshots: [
       {
         src: '/image/desktop-search.avif',

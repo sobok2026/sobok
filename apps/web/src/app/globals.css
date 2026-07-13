@@ -4,30 +4,30 @@
 @source '..';
 
 @theme {
-  /* ── Semantic color tokens (dark baseline) ──────────────────────────────
+  /* ── Semantic color tokens (light baseline) ─────────────────────────────
      Components use ONLY these role tokens — never a raw palette (zinc/red/…).
      Per-theme values are reassigned in the :root[data-theme=…] blocks below,
      so no `dark:` variants and no palette overriding are needed. */
 
   /* Background & surfaces (low → high elevation) */
-  --color-background: #0a0a0a;
-  --color-surface: #18181b;
-  --color-surface-2: #27272a;
-  --color-surface-3: #3f3f46;
-  --color-surface-4: #52525b;
+  --color-background: #ffffff;
+  --color-surface: #f4f4f5;
+  --color-surface-2: #e4e4e7;
+  --color-surface-3: #d4d4d8;
+  --color-surface-4: #a1a1aa;
   --color-overlay: #09090b;
 
   /* Foreground / text (high → low emphasis) */
-  --color-foreground: #ededed;
-  --color-foreground-secondary: #d4d4d8;
-  --color-foreground-muted: #a1a1aa;
+  --color-foreground: #18181b;
+  --color-foreground-secondary: #3f3f46;
+  --color-foreground-muted: #52525b;
   --color-foreground-subtle: #71717a;
-  --color-foreground-faint: #52525b;
+  --color-foreground-faint: #a1a1aa;
 
   /* Borders (subtle → strong) */
-  --color-border: #27272a;
-  --color-border-2: #3f3f46;
-  --color-border-strong: #52525b;
+  --color-border: #e4e4e7;
+  --color-border-2: #d4d4d8;
+  --color-border-strong: #a1a1aa;
 
   /* Brand — 소복 코럴(로고 색) */
   --color-brand: #ff9f74;
@@ -38,8 +38,6 @@
   --animate-heartbeat: heartbeat 1.5s ease-in-out infinite;
   --animate-pulse-ring: pulse-ring 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   --animate-slide-up: slide-up 0.2s ease-out;
-  /* Delayed skeleton reveal: reserves space immediately (no CLS) but stays invisible for the
-     first 0.2s, so fast loads never flash a skeleton. */
   --animate-skeleton-appear: skeleton-appear 0.7s ease-out 0.3s backwards;
 
   @keyframes fade-in {
@@ -174,85 +172,13 @@
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
   --safe-area-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
   --safe-area-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
   --safe-area-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
   --safe-area-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
   --sobok-dock-h: 5.5rem;
-
-  --toast-bg: var(--color-surface-2);
-  --toast-border: var(--color-border-2);
-  --toast-description: var(--color-foreground-muted);
-  --toast-success: #4ade80;
-  --toast-info: #60a5fa;
-  --toast-warning: #ff9f0a;
-  --toast-error: #f87171;
-}
-
-/* First paint / no-JS: follow the OS light preference only when the user has
-   not explicitly chosen a theme. Once next-themes sets [data-theme] (before
-   paint), the explicit blocks below win and this never applies. */
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) {
-    color-scheme: light;
-
-    --color-background: #ffffff;
-    --color-surface: #f4f4f5;
-    --color-surface-2: #e4e4e7;
-    --color-surface-3: #d4d4d8;
-    --color-surface-4: #a1a1aa;
-    --color-overlay: #09090b;
-
-    --color-foreground: #18181b;
-    --color-foreground-secondary: #3f3f46;
-    --color-foreground-muted: #52525b;
-    --color-foreground-subtle: #71717a;
-    --color-foreground-faint: #a1a1aa;
-
-    --color-border: #e4e4e7;
-    --color-border-2: #d4d4d8;
-    --color-border-strong: #a1a1aa;
-
-    --color-brand: #ff9f74;
-
-    --toast-bg: #ffffff;
-    --toast-border: #e4e4e7;
-    --toast-description: #52525b;
-    --toast-success: #16a34a;
-    --toast-info: #2563eb;
-    --toast-warning: #ff9500;
-    --toast-error: #dc2626;
-  }
-}
-
-/* Explicit theme selections (applied by next-themes before first paint). */
-:root[data-theme='dark'] {
-  color-scheme: dark;
-}
-
-:root[data-theme='light'] {
-  color-scheme: light;
-
-  --color-background: #ffffff;
-  --color-surface: #f4f4f5;
-  --color-surface-2: #e4e4e7;
-  --color-surface-3: #d4d4d8;
-  --color-surface-4: #a1a1aa;
-  --color-overlay: #09090b;
-
-  --color-foreground: #18181b;
-  --color-foreground-secondary: #3f3f46;
-  --color-foreground-muted: #52525b;
-  --color-foreground-subtle: #71717a;
-  --color-foreground-faint: #a1a1aa;
-
-  --color-border: #e4e4e7;
-  --color-border-2: #d4d4d8;
-  --color-border-strong: #a1a1aa;
-
-  --color-brand: #ff9f74;
 
   --toast-bg: #ffffff;
   --toast-border: #e4e4e7;
@@ -261,6 +187,78 @@
   --toast-info: #2563eb;
   --toast-warning: #ff9500;
   --toast-error: #dc2626;
+}
+
+/* First paint / no-JS: follow the OS dark preference only when the user has
+   not explicitly chosen a theme. Once next-themes sets [data-theme] (before
+   paint), the explicit blocks below win and this never applies. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+
+    --color-background: #0a0a0a;
+    --color-surface: #18181b;
+    --color-surface-2: #27272a;
+    --color-surface-3: #3f3f46;
+    --color-surface-4: #52525b;
+    --color-overlay: #09090b;
+
+    --color-foreground: #ededed;
+    --color-foreground-secondary: #d4d4d8;
+    --color-foreground-muted: #a1a1aa;
+    --color-foreground-subtle: #71717a;
+    --color-foreground-faint: #52525b;
+
+    --color-border: #27272a;
+    --color-border-2: #3f3f46;
+    --color-border-strong: #52525b;
+
+    --color-brand: #ff9f74;
+
+    --toast-bg: var(--color-surface-2);
+    --toast-border: var(--color-border-2);
+    --toast-description: var(--color-foreground-muted);
+    --toast-success: #4ade80;
+    --toast-info: #60a5fa;
+    --toast-warning: #ff9f0a;
+    --toast-error: #f87171;
+  }
+}
+
+/* Explicit theme selections (applied by next-themes before first paint). */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-background: #0a0a0a;
+  --color-surface: #18181b;
+  --color-surface-2: #27272a;
+  --color-surface-3: #3f3f46;
+  --color-surface-4: #52525b;
+  --color-overlay: #09090b;
+
+  --color-foreground: #ededed;
+  --color-foreground-secondary: #d4d4d8;
+  --color-foreground-muted: #a1a1aa;
+  --color-foreground-subtle: #71717a;
+  --color-foreground-faint: #52525b;
+
+  --color-border: #27272a;
+  --color-border-2: #3f3f46;
+  --color-border-strong: #52525b;
+
+  --color-brand: #ff9f74;
+
+  --toast-bg: var(--color-surface-2);
+  --toast-border: var(--color-border-2);
+  --toast-description: var(--color-foreground-muted);
+  --toast-success: #4ade80;
+  --toast-info: #60a5fa;
+  --toast-warning: #ff9f0a;
+  --toast-error: #f87171;
 }
 
 :root[data-theme='neon'] {
@@ -288,6 +286,10 @@
   --toast-bg: #18182a;
   --toast-border: #252540;
   --toast-description: #a8a8d8;
+  --toast-success: #4ade80;
+  --toast-info: #60a5fa;
+  --toast-warning: #ff9f0a;
+  --toast-error: #f87171;
 }
 
 :root[data-theme='retro'] {
@@ -315,6 +317,10 @@
   --toast-bg: #3a2b1e;
   --toast-border: #4f3e2f;
   --toast-description: #c8b8a3;
+  --toast-success: #4ade80;
+  --toast-info: #60a5fa;
+  --toast-warning: #ff9f0a;
+  --toast-error: #f87171;
 }
 
 html {
