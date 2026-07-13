@@ -410,7 +410,6 @@ function Aspects({ aspects, isDimmed, pointById, selection }: AspectsProps) {
           pointerEvents="none"
           stroke="#ffffff"
           strokeLinecap="round"
-          strokeWidth={2.2}
           x1={cometA.x}
           x2={cometB.x}
           y1={cometA.y}

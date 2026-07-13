@@ -91,17 +91,21 @@
 
 /* Planet-select relationship burst: a connected line ignites from near-dim, overshoots
    bright and thick, then settles to its resting weight. The per-line stagger (delay set
-   inline) lights the planet's web up as a quick cascade rather than all at once. */
+   inline) lights the planet's web up as a quick cascade rather than all at once.
+   --pulse-peak is the overshoot width; the mobile media query nudges it up. */
 .aspectPulse {
+  --pulse-peak: 2.8;
   animation: aspectPulse 0.4s ease-out both;
 }
 
 /* Aspect-select focus beat: a short bright comet travels once from A to B along the
    sole lit line, then clears — an energy channel between the two bodies that hands the
    eye off to the relationship reading. One-shot (never an ambient loop); pathLength=1
-   normalises the dash so the speed reads the same on long and short lines. */
+   normalises the dash so the speed reads the same on long and short lines. Width lives
+   here (not on the element) so the mobile media query can bump it. */
 .aspectComet {
   stroke-dasharray: 0.18 1;
+  stroke-width: 2.2;
   animation: aspectComet 0.6s ease-out both;
 }
 
@@ -167,7 +171,7 @@
   }
   50% {
     opacity: 1;
-    stroke-width: 2.8;
+    stroke-width: var(--pulse-peak);
   }
   100% {
     opacity: 0.85;
@@ -220,6 +224,18 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+/* Below the sm breakpoint the wheel renders smaller, so the relationship effects read
+   fainter. Nudge their weight up a touch — phones only; desktop keeps the base values. */
+@media (max-width: 639px) {
+  .aspectPulse {
+    --pulse-peak: 3.6;
+  }
+
+  .aspectComet {
+    stroke-width: 3;
   }
 }
 

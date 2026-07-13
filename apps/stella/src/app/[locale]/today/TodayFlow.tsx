@@ -57,8 +57,20 @@ export default function TodayFlow() {
         }
 
         if (!cancelled) {
-          setData({ date: now, dateKey: localDateKey(now), sky, readings, natal, personal })
-          track('today_open', { personalized: stored !== null })
+          setData({
+            date: now,
+            dateKey: localDateKey(now),
+            sky,
+            readings,
+            natal,
+            personal,
+          })
+
+          track('view_reading', {
+            content_type: 'today',
+            personalized: stored !== null,
+            time_known: stored?.timeKnown ?? false,
+          })
         }
       } catch {
         if (!cancelled) {
@@ -81,12 +93,12 @@ export default function TodayFlow() {
     try {
       if (typeof navigator !== 'undefined' && navigator.share) {
         await navigator.share(payload)
-        track('today_share', { method: 'web_share' })
+        track('share', { method: 'web_share', content_type: 'today' })
         return
       }
       await navigator.clipboard.writeText(url)
       toast.success(t('share.copied'))
-      track('today_share', { method: 'clipboard' })
+      track('share', { method: 'clipboard', content_type: 'today' })
     } catch {
       /* user dismissed the share sheet — nothing to do */
     }

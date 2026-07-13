@@ -65,12 +65,12 @@ export default function LoveFlow() {
     try {
       if (typeof navigator !== 'undefined' && navigator.share) {
         await navigator.share(payload)
-        track('love_share', { method: 'web_share' })
+        track('share', { method: 'web_share', content_type: 'love' })
         return
       }
       await navigator.clipboard.writeText(url)
       toast.success(t('share.copied'))
-      track('love_share', { method: 'clipboard' })
+      track('share', { method: 'clipboard', content_type: 'love' })
     } catch {
       /* user dismissed the share sheet — nothing to do */
     }
@@ -93,8 +93,19 @@ export default function LoveFlow() {
         }
 
         if (!cancelled) {
-          setData({ readings, interpretations, profile, windows, timeKnown: stored?.timeKnown ?? false })
-          track('love_open', { locale, personalized: stored !== null, timeKnown: stored?.timeKnown ?? false })
+          setData({
+            readings,
+            interpretations,
+            profile,
+            windows,
+            timeKnown: stored?.timeKnown ?? false,
+          })
+
+          track('view_reading', {
+            content_type: 'love',
+            personalized: stored !== null,
+            time_known: stored?.timeKnown ?? false,
+          })
         }
       } catch {
         if (!cancelled) {

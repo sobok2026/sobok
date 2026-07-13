@@ -67,7 +67,7 @@ export default function Constellation() {
       setSelection(null)
       setData({ chart, interpretations })
       setRunId((n) => n + 1)
-      track('chart_open')
+      track('generate_chart')
     } catch {
       toast.error(t('form.error'))
     } finally {
@@ -87,12 +87,12 @@ export default function Constellation() {
     try {
       if (typeof navigator !== 'undefined' && navigator.share) {
         await navigator.share(data)
-        track('share', { method: 'web_share' })
+        track('share', { method: 'web_share', content_type: 'natal' })
         return
       }
       await navigator.clipboard.writeText(url)
       toast.success(t('share.copied'))
-      track('share', { method: 'clipboard' })
+      track('share', { method: 'clipboard', content_type: 'natal' })
     } catch {
       /* user dismissed the share sheet — nothing to do */
     }
