@@ -23,6 +23,12 @@ import type { Selection } from './selection'
 const PLANET_BASE = 0.15
 const PLANET_STAGGER = 0.09
 
+// Aspect-line burst on planet select: the connected lines ignite in a staggered
+// overshoot (see .aspectPulse). The stagger is capped so a heavily-aspected planet
+// still finishes its cascade quickly instead of trickling in.
+const ASPECT_PULSE_STAGGER = 0.045
+const ASPECT_PULSE_STAGGER_MAX = 6
+
 // Enlarged tap target for the ASC/MC/IC/DSC labels: a transparent wedge in the
 // empty band just outside the zodiac ring. It grows outward and along the arc —
 // never inward, which would overlap the clickable sign sectors (radius ≤ 172).
@@ -102,7 +108,7 @@ export default function ChartWheel({
       )}
       {revealed && (
         <>
-          <Aspects aspects={aspects} isDimmed={isAspectDimmed} pointById={pointById} />
+          <Aspects aspects={aspects} isDimmed={isAspectDimmed} pointById={pointById} selection={selection} />
           <Planets isDimmed={isPlanetDimmed} onSelect={onSelectPlanet} placed={placed} selection={selection} />
         </>
       )}
@@ -345,9 +351,20 @@ interface AspectsProps {
   aspects: readonly ChartAspect[]
   isDimmed: (asp: ChartAspect) => boolean
   pointById: Map<string, Point>
+  selection: Selection
 }
 
-function Aspects({ aspects, isDimmed, pointById }: AspectsProps) {
+function Aspects({ aspects, isDimmed, pointById, selection }: AspectsProps) {
+  // A planet pick lights up its whole web of relationships — those lines ignite in a
+  // staggered overshoot burst (the "expansion" beat). An aspect pick instead narrows to
+  // one line and sends an energy comet down it A→B (the "focus" beat, rendered below).
+  const pulsePlanet = selection?.kind === 'planet' ? selection.id : null
+  let pulseIndex = 0
+
+  // Endpoints of the active aspect's line, for the A→B comet overlay.
+  const cometA = selection?.kind === 'aspect' ? pointById.get(selection.a) : undefined
+  const cometB = selection?.kind === 'aspect' ? pointById.get(selection.b) : undefined
+
   return (
     <g>
       {aspects.map((aspect) => {
@@ -360,15 +377,23 @@ function Aspects({ aspects, isDimmed, pointById }: AspectsProps) {
 
         const style = ASPECT_STYLE[aspect.type]
         const dim = isDimmed(aspect)
+        const pulse = pulsePlanet !== null && !dim
+        const stagger = pulse ? Math.min(pulseIndex++, ASPECT_PULSE_STAGGER_MAX) : 0
+        const baseKey = `${aspect.a}-${aspect.b}-${aspect.type}`
 
         return (
           <line
-            className={styles.aspectLine}
-            key={`${aspect.a}-${aspect.b}-${aspect.type}`}
+            className={pulse ? styles.aspectPulse : styles.aspectLine}
+            // Re-key connected lines by the selected planet so remount re-fires the pulse
+            // on each pick; dim lines keep the stable key and cross-fade instead.
+            key={pulse ? `${baseKey}-${pulsePlanet}` : baseKey}
             stroke={style.color}
             strokeDasharray={style.dashed ? '4 3' : undefined}
             strokeWidth={dim ? 0.5 : 1.2}
-            style={{ opacity: dim ? 0.12 : 0.85 }}
+            style={{
+              opacity: dim ? 0.12 : 0.85,
+              animationDelay: pulse ? `${stagger * ASPECT_PULSE_STAGGER}s` : undefined,
+            }}
             x1={a.x}
             x2={b.x}
             y1={a.y}
@@ -376,6 +401,22 @@ function Aspects({ aspects, isDimmed, pointById }: AspectsProps) {
           />
         )
       })}
+      {selection?.kind === 'aspect' && cometA && cometB && (
+        <line
+          className={styles.aspectComet}
+          // Keyed by the aspect so a new pick remounts the line and re-fires the one-shot.
+          key={`comet-${selection.a}-${selection.b}-${selection.aspectType}`}
+          pathLength={1}
+          pointerEvents="none"
+          stroke="#ffffff"
+          strokeLinecap="round"
+          strokeWidth={2.2}
+          x1={cometA.x}
+          x2={cometB.x}
+          y1={cometA.y}
+          y2={cometB.y}
+        />
+      )}
     </g>
   )
 }

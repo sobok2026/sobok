@@ -13,7 +13,11 @@ export interface ElementBalanceProps {
   total: number
 }
 
-/** Horizontal gauges showing how the bodies spread across the four elements. */
+/**
+ * One segmented bar splits the whole chart across the four elements, so the mix reads as a
+ * single balance rather than four independent ratings. The rows beneath carry each element's
+ * share — an absent element still shows there as 0.0% even though it contributes no segment.
+ */
 export default function ElementBalance({ counts, dominant, total }: ElementBalanceProps) {
   const t = useTranslations('Constellation')
 
@@ -25,32 +29,37 @@ export default function ElementBalance({ counts, dominant, total }: ElementBalan
   }
 
   return (
-    <section className="sm:rounded-2xl sm:border sm:bg-surface sm:p-5">
+    <section className="px-1 sm:rounded-2xl sm:border sm:bg-surface sm:p-5">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-bold text-foreground">{t('elements.title')}</h2>
         <span className="text-xs text-foreground-subtle">
           {t('elements.dominant', { element: t(`elements.${dominant}`) })}
         </span>
       </div>
-      <div className="grid grid-cols-[2.5rem_1fr_auto_auto] items-center gap-x-2 gap-y-2.5 sm:gap-x-3">
+
+      <div aria-hidden="true" className="mb-4 flex h-4 overflow-hidden rounded-full bg-surface-2">
+        <div className={`${styles.balanceBar} flex h-full w-full`}>
+          {ELEMENT_IDS.map((id) => {
+            const pct = total > 0 ? (counts[id] / total) * 100 : 0
+            if (pct === 0) return null
+
+            return <div key={id} style={{ background: ELEMENT_COLORS[id], width: `${pct}%` }} />
+          })}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-1 items-center gap-x-3 gap-y-2">
         {ELEMENT_IDS.map((id) => {
           const pct = total > 0 ? (counts[id] / total) * 100 : 0
-          const color = ELEMENT_COLORS[id]
 
           return (
-            <Fragment key={id}>
-              <span className="text-xs font-semibold" style={{ color }}>
+            <div key={id} className="grid grid-cols-[2rem_1fr_auto]">
+              <span className="text-xs font-semibold" style={{ color: ELEMENT_COLORS[id] }}>
                 {t(`elements.${id}`)}
               </span>
-              <div className="h-2 overflow-hidden rounded-full bg-surface-2">
-                <div
-                  className={`${styles.gaugeFill} h-full rounded-full`}
-                  style={{ background: `linear-gradient(90deg, ${color}88, ${color})`, width: `${pct}%` }}
-                />
-              </div>
-              <span className="whitespace-nowrap text-right text-[10px] text-foreground-faint">{descriptions[id]}</span>
-              <span className="w-4 text-right text-xs text-foreground-subtle">{counts[id]}</span>
-            </Fragment>
+              <span className="text-[10px] text-foreground-faint">{descriptions[id]}</span>
+              <span className="w-12 text-right text-xs tabular-nums text-foreground-subtle">{pct.toFixed(0)}%</span>
+            </div>
           )
         })}
       </div>
