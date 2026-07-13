@@ -21,7 +21,6 @@ RUN bun install --frozen-lockfile --silent --ignore-scripts
 
 COPY --from=pruner /app/out/full/ .
 COPY turbo.json tsconfig.json tsconfig.base.json ./
-COPY types ./types
 RUN bunx turbo run build --filter=@sobok/api
 
 # Stage 3: Runtime

@@ -50,8 +50,6 @@ RUN bun install --frozen-lockfile --no-save --silent
 
 COPY --from=pruner /app/out/full/ .
 COPY turbo.json tsconfig.json tsconfig.base.json ./
-COPY types ./types
-COPY tools ./tools
 
 RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN,env=SENTRY_AUTH_TOKEN,required=false \
     --mount=type=secret,id=APP_POSTGRES_URL,env=APP_POSTGRES_URL,required=false \
