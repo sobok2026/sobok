@@ -4,33 +4,42 @@
 @source '..';
 
 @theme {
-  /* ── Semantic color tokens (light baseline) ─────────────────────────────
+  /* ── Semantic color tokens (light ↔ dark via light-dark()) ───────────────
      Components use ONLY these role tokens — never a raw palette (zinc/red/…).
-     Per-theme values are reassigned in the :root[data-theme=…] blocks below,
-     so no `dark:` variants and no palette overriding are needed. */
-
-  /* Background & surfaces (low → high elevation) */
-  --color-background: #ffffff;
-  --color-surface: #f4f4f5;
-  --color-surface-2: #e4e4e7;
-  --color-surface-3: #d4d4d8;
-  --color-surface-4: #a1a1aa;
-  --color-overlay: #09090b;
-
-  /* Foreground / text (high → low emphasis) */
-  --color-foreground: #18181b;
-  --color-foreground-secondary: #3f3f46;
-  --color-foreground-muted: #52525b;
-  --color-foreground-subtle: #71717a;
-  --color-foreground-faint: #a1a1aa;
-
-  /* Borders (subtle → strong) */
-  --color-border: #e4e4e7;
-  --color-border-2: #d4d4d8;
-  --color-border-strong: #a1a1aa;
+     light-dark() resolves against the used `color-scheme`, which is set on
+     :root (light dark = follow OS) and forced in the :root[data-theme=…]
+     blocks below — so light/dark need no `dark:` variants, no media query, and
+     no duplicated value blocks. Tokens equal in both modes stay single-valued.
+     Custom themes (neon/retro) override these tokens outright. */
 
   /* Brand — 소복 코럴(로고 색) */
   --color-brand: #ff9f74;
+
+  /* Background & surfaces (low → high elevation) */
+  --color-background: light-dark(#ffffff, #0a0a0a);
+  --color-surface: light-dark(#f4f4f5, #18181b);
+  --color-surface-2: light-dark(#e4e4e7, #27272a);
+  --color-surface-3: light-dark(#d4d4d8, #3f3f46);
+  --color-surface-4: light-dark(#a1a1aa, #52525b);
+  --color-overlay: #09090b;
+
+  /* Foreground / text (high → low emphasis) */
+  --color-foreground: light-dark(#18181b, #ededed);
+  --color-foreground-secondary: light-dark(#3f3f46, #d4d4d8);
+  --color-foreground-muted: light-dark(#52525b, #a1a1aa);
+  --color-foreground-subtle: #71717a;
+  --color-foreground-faint: light-dark(#a1a1aa, #52525b);
+
+  /* Borders (subtle → strong) */
+  --color-border: light-dark(#e4e4e7, #27272a);
+  --color-border-2: light-dark(#d4d4d8, #3f3f46);
+  --color-border-strong: light-dark(#a1a1aa, #52525b);
+
+  /* Status / feedback */
+  --color-success: light-dark(#16a34a, #4ade80);
+  --color-info: light-dark(#2563eb, #60a5fa);
+  --color-warning: light-dark(#ff9500, #ff9f0a);
+  --color-error: light-dark(#dc2626, #f87171);
 
   --animate-fade-in: fade-in 1s ease-out;
   --animate-fade-in-fast: fade-in 0.5s ease-out;
@@ -172,93 +181,24 @@
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
 
   --safe-area-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
   --safe-area-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
   --safe-area-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
   --safe-area-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
   --sobok-dock-h: 5.5rem;
-
-  --toast-bg: #ffffff;
-  --toast-border: #e4e4e7;
-  --toast-description: #52525b;
-  --toast-success: #16a34a;
-  --toast-info: #2563eb;
-  --toast-warning: #ff9500;
-  --toast-error: #dc2626;
 }
 
-/* First paint / no-JS: follow the OS dark preference only when the user has
-   not explicitly chosen a theme. Once next-themes sets [data-theme] (before
-   paint), the explicit blocks below win and this never applies. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    color-scheme: dark;
-
-    --color-background: #0a0a0a;
-    --color-surface: #18181b;
-    --color-surface-2: #27272a;
-    --color-surface-3: #3f3f46;
-    --color-surface-4: #52525b;
-    --color-overlay: #09090b;
-
-    --color-foreground: #ededed;
-    --color-foreground-secondary: #d4d4d8;
-    --color-foreground-muted: #a1a1aa;
-    --color-foreground-subtle: #71717a;
-    --color-foreground-faint: #52525b;
-
-    --color-border: #27272a;
-    --color-border-2: #3f3f46;
-    --color-border-strong: #52525b;
-
-    --color-brand: #ff9f74;
-
-    --toast-bg: var(--color-surface-2);
-    --toast-border: var(--color-border-2);
-    --toast-description: var(--color-foreground-muted);
-    --toast-success: #4ade80;
-    --toast-info: #60a5fa;
-    --toast-warning: #ff9f0a;
-    --toast-error: #f87171;
-  }
-}
-
-/* Explicit theme selections (applied by next-themes before first paint). */
+/* Explicit theme selections (applied by next-themes before first paint). The
+   light/dark tokens live in @theme as light-dark() pairs, so these blocks only
+   need to force `color-scheme`; no OS media query and no value duplication. */
 :root[data-theme='light'] {
   color-scheme: light;
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-
-  --color-background: #0a0a0a;
-  --color-surface: #18181b;
-  --color-surface-2: #27272a;
-  --color-surface-3: #3f3f46;
-  --color-surface-4: #52525b;
-  --color-overlay: #09090b;
-
-  --color-foreground: #ededed;
-  --color-foreground-secondary: #d4d4d8;
-  --color-foreground-muted: #a1a1aa;
-  --color-foreground-subtle: #71717a;
-  --color-foreground-faint: #52525b;
-
-  --color-border: #27272a;
-  --color-border-2: #3f3f46;
-  --color-border-strong: #52525b;
-
-  --color-brand: #ff9f74;
-
-  --toast-bg: var(--color-surface-2);
-  --toast-border: var(--color-border-2);
-  --toast-description: var(--color-foreground-muted);
-  --toast-success: #4ade80;
-  --toast-info: #60a5fa;
-  --toast-warning: #ff9f0a;
-  --toast-error: #f87171;
 }
 
 :root[data-theme='neon'] {
@@ -282,14 +222,6 @@
   --color-border-strong: #383860;
 
   --color-brand: #00ffff;
-
-  --toast-bg: #18182a;
-  --toast-border: #252540;
-  --toast-description: #a8a8d8;
-  --toast-success: #4ade80;
-  --toast-info: #60a5fa;
-  --toast-warning: #ff9f0a;
-  --toast-error: #f87171;
 }
 
 :root[data-theme='retro'] {
@@ -313,14 +245,6 @@
   --color-border-strong: #88735a;
 
   --color-brand: #f7931e;
-
-  --toast-bg: #3a2b1e;
-  --toast-border: #4f3e2f;
-  --toast-description: #c8b8a3;
-  --toast-success: #4ade80;
-  --toast-info: #60a5fa;
-  --toast-warning: #ff9f0a;
-  --toast-error: #f87171;
 }
 
 html {
@@ -333,29 +257,29 @@ body {
 }
 
 [data-sonner-toast][data-styled='true'] {
-  background: var(--toast-bg) !important;
-  border-color: var(--toast-border) !important;
+  background: var(--color-surface-2) !important;
+  border-color: var(--color-border-2) !important;
   color: var(--color-foreground) !important;
 }
 
 [data-sonner-toast][data-styled='true'] [data-description] {
-  color: var(--toast-description) !important;
+  color: var(--color-foreground-muted) !important;
 }
 
 [data-sonner-toast][data-styled='true'][data-type='success'] [data-icon] {
-  color: var(--toast-success) !important;
+  color: var(--color-success) !important;
 }
 
 [data-sonner-toast][data-styled='true'][data-type='info'] [data-icon] {
-  color: var(--toast-info) !important;
+  color: var(--color-info) !important;
 }
 
 [data-sonner-toast][data-styled='true'][data-type='warning'] [data-icon] {
-  color: var(--toast-warning) !important;
+  color: var(--color-warning) !important;
 }
 
 [data-sonner-toast][data-styled='true'][data-type='error'] [data-icon] {
-  color: var(--toast-error) !important;
+  color: var(--color-error) !important;
 }
 
 button {
