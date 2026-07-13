@@ -12,7 +12,6 @@ import { ThemeProvider } from 'next-themes'
 import type { ReactNode } from 'react'
 import { Toaster } from 'sonner'
 import CapacitorNativeEffects from '@/components/CapacitorNativeEffects'
-import HiyobiPing from '@/components/HiyobiPing'
 import OriginProtectionTurnstile from '@/components/OriginProtectionTurnstile'
 import SEOText from '@/components/SEOText'
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
@@ -115,7 +114,6 @@ export default async function RootLayout({ children, params }: Props) {
             <OriginProtectionTurnstile />
           </NextIntlClientProvider>
           <ServiceWorkerRegistrar />
-          <HiyobiPing />
           {NEXT_PUBLIC_GTM_ID && <GoogleTagManager gtmId={NEXT_PUBLIC_GTM_ID} />}
           <p className="h-0 overflow-hidden tracking-widest invisible">
             <SEOText />
