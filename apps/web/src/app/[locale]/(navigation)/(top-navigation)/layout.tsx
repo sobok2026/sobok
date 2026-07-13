@@ -39,10 +39,10 @@ export default async function Layout({ children, params }: LayoutProps<'/[locale
         </Link>
         <p>© 2025 {shortName}. All rights reserved.</p>
         <div className="flex justify-center gap-2 gap-y-1 flex-wrap text-xs">
-          <Link className="hover:underline" href="/doc/terms" prefetch={false}>
+          <Link className="hover:underline" href="/terms" prefetch={false}>
             {t('terms')}
           </Link>
-          <Link className="hover:underline" href="/doc/privacy" prefetch={false}>
+          <Link className="hover:underline" href="/privacy" prefetch={false}>
             {t('privacy')}
           </Link>
           <Link className="hover:underline" href="/deterrence" prefetch={false}>
@@ -50,13 +50,13 @@ export default async function Layout({ children, params }: LayoutProps<'/[locale
           </Link>
         </div>
         <div className="flex justify-center gap-2 gap-y-1 flex-wrap text-xs">
-          <Link className="hover:underline" href="/doc/2257" prefetch={false}>
+          <Link className="hover:underline" href="/2257" prefetch={false}>
             {t('notice2257')}
           </Link>
-          <Link className="hover:underline" href="/doc/dmca" prefetch={false}>
+          <Link className="hover:underline" href="/dmca" prefetch={false}>
             {t('dmca')}
           </Link>
-          <Link className="hover:underline" href="/doc/youth-protection" prefetch={false}>
+          <Link className="hover:underline" href="/youth-protection" prefetch={false}>
             {t('youthProtection')}
           </Link>
         </div>

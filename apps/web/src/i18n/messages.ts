@@ -1,12 +1,11 @@
 import { Locale } from '@sobok/domain/locale'
-
+import { messages as docMessages } from '@/app/[locale]/(docs)/messages'
 import { messages as rightAsideMessages } from '@/app/[locale]/(navigation)/(right-aside)/messages'
 import { messages as settingsMessages } from '@/app/[locale]/(navigation)/(right-aside)/settings/messages'
 import { messages as topNavigationMessages } from '@/app/[locale]/(navigation)/(top-navigation)/messages'
 import { messages as navigationMessages } from '@/app/[locale]/(navigation)/messages'
 import { messages as searchMessages } from '@/app/[locale]/(navigation)/search/messages'
 import { messages as authMessages } from '@/app/[locale]/auth/messages'
-import { messages as docMessages } from '@/app/[locale]/doc/messages'
 import { messages as errorMessages } from '@/app/[locale]/errors.messages'
 import { messages as appMessages } from '@/app/[locale]/messages'
 import { messages as sobokMessages } from '@/app/[locale]/sobok/messages'

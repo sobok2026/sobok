@@ -108,7 +108,7 @@ export default function MangaReportButton({ mangaId, className = '', labelClassN
             )}
             <p>
               {t('dmcaPrefix')}{' '}
-              <Link className="underline underline-offset-2" href="/doc/dmca" prefetch={false}>
+              <Link className="underline underline-offset-2" href="/dmca" prefetch={false}>
                 {t('dmcaAction')}
               </Link>{' '}
               {t('dmcaSuffix')}

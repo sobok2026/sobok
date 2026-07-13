@@ -291,7 +291,7 @@ export default function SignupForm() {
           <span>{t('termsPrefix')}</span>
           <Link
             className="underline underline-offset-4 hover:text-foreground transition"
-            href="/doc/terms"
+            href="/terms"
             prefetch={false}
           >
             {t('termsAction')}
@@ -299,7 +299,7 @@ export default function SignupForm() {
           <span>{t('termsMiddle')}</span>
           <Link
             className="underline underline-offset-4 hover:text-foreground transition"
-            href="/doc/privacy"
+            href="/privacy"
             prefetch={false}
           >
             {t('privacyAction')}

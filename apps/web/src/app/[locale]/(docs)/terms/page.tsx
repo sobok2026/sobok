@@ -8,7 +8,7 @@ import { generateLocalizedMetadata } from '@/lib/metadata'
 
 const EFFECTIVE_DATE = '2026-01-04'
 
-export async function generateMetadata({ params }: PageProps<'/[locale]/doc/terms'>): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<'/[locale]/terms'>): Promise<Metadata> {
   const locale = await getLocaleFromParams(params)
   const t = await getTranslations({ locale, namespace: 'Metadata.doc.terms' })
   const title = t('title')
@@ -21,12 +21,12 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/doc/term
       title,
       description,
       locale,
-      pathname: '/doc/terms',
+      pathname: '/terms',
     }),
   }
 }
 
-export default async function Page({ params }: PageProps<'/[locale]/doc/terms'>) {
+export default async function Page({ params }: PageProps<'/[locale]/terms'>) {
   const locale = await getLocaleFromParams(params)
   const t = await getTranslations({ locale, namespace: 'Doc.terms' })
   const commonT = await getTranslations({ locale, namespace: 'Doc.common' })
@@ -182,7 +182,7 @@ export default async function Page({ params }: PageProps<'/[locale]/doc/terms'>)
                 dmca: (chunks: ReactNode) => (
                   <Link
                     className="underline underline-offset-4 text-foreground hover:text-foreground"
-                    href="/doc/dmca"
+                    href="/dmca"
                     prefetch={false}
                   >
                     {chunks}

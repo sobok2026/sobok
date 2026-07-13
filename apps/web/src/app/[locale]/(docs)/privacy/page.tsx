@@ -9,7 +9,7 @@ import { generateLocalizedMetadata } from '@/lib/metadata'
 const EFFECTIVE_DATE = '2026-01-04'
 const CONTACT_EMAIL = 'sobok2026@gmail.com'
 
-export async function generateMetadata({ params }: PageProps<'/[locale]/doc/privacy'>): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<'/[locale]/privacy'>): Promise<Metadata> {
   const locale = await getLocaleFromParams(params)
   const t = await getTranslations({ locale, namespace: 'Metadata.doc.privacy' })
   const title = t('title')
@@ -22,12 +22,12 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/doc/priv
       title,
       description,
       locale,
-      pathname: '/doc/privacy',
+      pathname: '/privacy',
     }),
   }
 }
 
-export default async function Page({ params }: PageProps<'/[locale]/doc/privacy'>) {
+export default async function Page({ params }: PageProps<'/[locale]/privacy'>) {
   const locale = await getLocaleFromParams(params)
   const t = await getTranslations({ locale, namespace: 'Doc.privacy' })
   const commonT = await getTranslations({ locale, namespace: 'Doc.common' })
@@ -122,7 +122,7 @@ export default async function Page({ params }: PageProps<'/[locale]/doc/privacy'
                 dmca: (chunks: ReactNode) => (
                   <Link
                     className="underline underline-offset-4 text-foreground hover:text-foreground"
-                    href="/doc/dmca"
+                    href="/dmca"
                     prefetch={false}
                   >
                     {chunks}
