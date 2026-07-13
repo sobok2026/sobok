@@ -1,0 +1,160 @@
+'use client'
+
+import { useCombobox } from 'downshift'
+import { useTranslations } from 'next-intl'
+import { Fragment, useEffect, useMemo, useState } from 'react'
+
+import { type City, findCity } from './cities'
+import { searchCities } from './city-search'
+
+const inputClass =
+  'w-full appearance-none rounded-xl border border-border-2 bg-surface-2 px-3 py-2.5 pr-9 text-base text-foreground outline-none transition [color-scheme:dark] placeholder:text-foreground-faint focus:border-brand/60 focus:bg-surface-3 sm:text-sm'
+
+const labelClass = 'mb-1.5 block text-xs font-semibold text-foreground-muted'
+
+type Props = {
+  cityKey: string
+  onSelect: (cityKey: string) => void
+}
+
+export default function CityCombobox({ cityKey, onSelect }: Props) {
+  const t = useTranslations('Constellation.form')
+  const [query, setQuery] = useState('')
+  const selectedCity = useMemo(() => findCity(cityKey), [cityKey])
+  const items = useMemo(() => searchCities(query), [query])
+
+  const {
+    isOpen,
+    highlightedIndex,
+    getLabelProps,
+    getInputProps,
+    getMenuProps,
+    getItemProps,
+    getToggleButtonProps,
+    openMenu,
+    setInputValue,
+  } = useCombobox<City>({
+    items,
+    selectedItem: selectedCity,
+    itemToString: (city) => city?.name ?? '',
+    onSelectedItemChange: ({ selectedItem }) => {
+      if (selectedItem) {
+        onSelect(selectedItem.key)
+      }
+    },
+    onInputValueChange: ({ inputValue, type }) => {
+      // Only real keystrokes drive the filter — ignore programmatic reverts and selection.
+      if (type === useCombobox.stateChangeTypes.InputChange) {
+        setQuery(inputValue ?? '')
+      }
+    },
+    onIsOpenChange: ({ isOpen: open }) => {
+      // Reset the filter on close so the next open browses the full list.
+      if (!open) {
+        setQuery('')
+      }
+    },
+    stateReducer: (_state, { type, changes }) => {
+      // A click fires right after focus (which already opened the menu via onFocus).
+      // Downshift's default toggles the menu on click, so it would immediately close
+      // what focus just opened — a one-frame flash. Force clicks to keep it open;
+      // the chevron toggle button and blur/Escape still close it.
+      if (type === useCombobox.stateChangeTypes.InputClick) {
+        return { ...changes, isOpen: true }
+      }
+
+      return changes
+    },
+  })
+
+  // Downshift seeds the input from `selectedItem` only once; when the parent
+  // prefills a saved city after mount, mirror it into the closed input.
+  useEffect(() => {
+    if (!isOpen) {
+      setInputValue(selectedCity.name)
+    }
+  }, [cityKey])
+
+  return (
+    <div>
+      <label className={labelClass} {...getLabelProps()}>
+        {t('cityLabel')}
+      </label>
+
+      <div className="relative">
+        <input
+          className={inputClass}
+          {...getInputProps({
+            autoComplete: 'off',
+            placeholder: t('cityPlaceholder'),
+            onFocus: () => {
+              // Clear to a blank search so the whole list is browsable on focus.
+              setQuery('')
+              setInputValue('')
+
+              if (!isOpen) {
+                openMenu()
+              }
+            },
+          })}
+        />
+
+        <button
+          aria-label={t('cityLabel')}
+          className="absolute right-3 top-[calc(0.75rem+1px)] text-foreground-subtle sm:top-2.5"
+          type="button"
+          {...getToggleButtonProps()}
+        >
+          <svg
+            aria-hidden
+            className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+
+        <ul
+          className={`absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-xl border border-border-2 bg-overlay py-1 shadow-2xl backdrop-blur-xl ${
+            isOpen ? '' : 'hidden'
+          }`}
+          {...getMenuProps()}
+        >
+          {isOpen && items.length === 0 && (
+            <li className="px-3 py-2 text-center text-sm text-foreground-subtle">{t('cityNoResults')}</li>
+          )}
+
+          {isOpen &&
+            items.map((city, index) => {
+              const isHighlighted = highlightedIndex === index
+              const isSelected = city.key === cityKey
+              const showHeader = index === 0 || items[index - 1].iso2 !== city.iso2
+
+              return (
+                <Fragment key={city.key}>
+                  {showHeader && (
+                    <li className="px-3 pb-1 pt-2 text-[11px] font-semibold text-foreground-faint" role="presentation">
+                      {city.country}
+                    </li>
+                  )}
+                  <li
+                    className={`cursor-pointer px-3 py-2 text-sm transition-colors ${
+                      isHighlighted ? 'bg-surface-3 text-foreground' : 'text-foreground-muted'
+                    } ${isSelected ? 'font-semibold' : ''}`}
+                    {...getItemProps({ item: city, index })}
+                  >
+                    {city.name}
+                  </li>
+                </Fragment>
+              )
+            })}
+        </ul>
+      </div>
+    </div>
+  )
+}

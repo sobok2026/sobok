@@ -1,6 +1,8 @@
-// Computes a natal chart (tropical planetary longitudes + ascendant/midheaven)
-// from birth data using the `astronomy-engine` ephemeris. The library is
-// dynamically imported so its ~100 KB only loads when a user actually submits.
+// Computes a natal chart (tropical planetary longitudes + ascendant/midheaven +
+// Placidus houses) from birth data using `circular-natal-horoscope-js` (public
+// domain), which wraps the Moshier analytic ephemeris — geocentric positions
+// accurate to well under an arcsecond, i.e. astrologically exact. The library is
+// dynamically imported so its weight only loads when a user actually submits.
 
 import { PLANET_ORDER } from './chart/data'
 import type { ComputedPlanetId, NatalChart, PlanetPosition } from './chart/types'
@@ -19,127 +21,85 @@ export type BirthInput = {
   timeKnown: boolean
 }
 
-const DEG = Math.PI / 180
-const RAD = 180 / Math.PI
-
-const BODY_NAME: Record<ComputedPlanetId, string> = {
-  sun: 'Sun',
-  moon: 'Moon',
-  mercury: 'Mercury',
-  venus: 'Venus',
-  mars: 'Mars',
-  jupiter: 'Jupiter',
-  saturn: 'Saturn',
-  uranus: 'Uranus',
-  neptune: 'Neptune',
-  pluto: 'Pluto',
-}
-
 const norm360 = (x: number) => ((x % 360) + 360) % 360
 
-/** Wall-clock offset (ms) of an IANA time zone at a given instant, DST-aware. */
-function tzOffsetMs(date: Date, timeZone: string): number {
-  const dtf = new Intl.DateTimeFormat('en-US', {
-    timeZone,
-    hour12: false,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  })
+type Lib = typeof import('circular-natal-horoscope-js')
+type OriginCtor = Lib['Origin']
+type HoroscopeCtor = Lib['Horoscope']
+type Horoscope = InstanceType<HoroscopeCtor>
 
-  const parts: Record<string, number> = {}
+// The library's public types are largely `any`; these are the exact views we read.
+type EclipticDD = { ChartPosition: { Ecliptic: { DecimalDegrees: number } } }
+type LibBody = { key: string; isRetrograde: boolean } & EclipticDD
+type LibHouse = { id: number; ChartPosition: { StartPosition: { Ecliptic: { DecimalDegrees: number } } } }
 
-  for (const part of dtf.formatToParts(date)) {
-    if (part.type !== 'literal') parts[part.type] = Number(part.value)
+/** The ten Sun–Pluto bodies, in `PLANET_ORDER`, with the library's retrograde flags. */
+function bodyPositions(horoscope: Horoscope): PlanetPosition[] {
+  const byKey = new Map<string, LibBody>()
+
+  for (const body of horoscope.CelestialBodies.all as LibBody[]) {
+    byKey.set(body.key, body)
   }
 
-  const asUtc = Date.UTC(
-    parts.year,
-    parts.month - 1,
-    parts.day,
-    parts.hour === 24 ? 0 : parts.hour,
-    parts.minute,
-    parts.second,
-  )
-
-  return asUtc - date.getTime()
-}
-
-/** Convert a wall-clock time in `timeZone` to the corresponding UTC instant. */
-function zonedTimeToUtc(
-  year: number,
-  month: number,
-  day: number,
-  hour: number,
-  minute: number,
-  timeZone: string,
-): Date {
-  const naive = Date.UTC(year, month - 1, day, hour, minute, 0)
-  const guess = naive - tzOffsetMs(new Date(naive), timeZone)
-  return new Date(naive - tzOffsetMs(new Date(guess), timeZone))
-}
-
-/** Mean obliquity of the ecliptic (degrees) for Julian centuries `T` past J2000 (Meeus). */
-function meanObliquityDeg(T: number): number {
-  const seconds = 84381.448 - 46.815 * T - 0.00059 * T * T + 0.001813 * T * T * T
-  return seconds / 3600
-}
-
-type AstronomyModule = typeof import('astronomy-engine')
-
-/** Geocentric tropical ecliptic longitude of date (degrees) for a body. */
-function eclipticLon(Astronomy: AstronomyModule, name: string, at: import('astronomy-engine').AstroTime): number {
-  const vec = name === 'Moon' ? Astronomy.GeoMoon(at) : Astronomy.GeoVector(Astronomy.Body[name as never], at, true)
-  const ect = Astronomy.RotateVector(Astronomy.Rotation_EQJ_ECT(at), vec)
-  return norm360(Astronomy.SphereFromVector(ect).lon)
-}
-
-/** The ten bodies (Sun–Pluto) at a given instant, with retrograde flags from the next-day delta. */
-function computeBodies(Astronomy: AstronomyModule, time: import('astronomy-engine').AstroTime): PlanetPosition[] {
-  const nextDay = time.AddDays(1)
-
   return PLANET_ORDER.map((id) => {
-    const name = BODY_NAME[id]
-    const lon = eclipticLon(Astronomy, name, time)
-    let retrograde = false
-
-    if (id !== 'sun' && id !== 'moon') {
-      let delta = eclipticLon(Astronomy, name, nextDay) - lon
-      if (delta > 180) delta -= 360
-      if (delta < -180) delta += 360
-      retrograde = delta < 0
+    // The library keys bodies by lowercase name, matching `ComputedPlanetId` 1:1.
+    const body = byKey.get(id) as LibBody
+    return {
+      id,
+      lon: norm360(body.ChartPosition.Ecliptic.DecimalDegrees),
+      retrograde: body.isRetrograde,
     }
-
-    return { id, lon, retrograde }
   })
+}
+
+/**
+ * A location-agnostic chart for a bare UTC instant — the transit side of the app.
+ * `tz-lookup(0, 0)` resolves to `Etc/GMT` (offset 0, no DST), so feeding the UTC
+ * wall-clock as the "local" time makes `Origin.utcTime` equal the instant we want;
+ * planetary longitudes are geocentric, so the (0, 0) observer never shifts them.
+ */
+function transitHoroscope(Origin: OriginCtor, Horoscope: HoroscopeCtor, utc: Date): Horoscope {
+  const origin = new Origin({
+    year: utc.getUTCFullYear(),
+    month: utc.getUTCMonth(), // Origin months are 0-indexed, like getUTCMonth()
+    date: utc.getUTCDate(),
+    hour: utc.getUTCHours(),
+    minute: utc.getUTCMinutes(),
+    second: utc.getUTCSeconds(),
+    latitude: 0,
+    longitude: 0,
+  })
+
+  return new Horoscope({ origin, houseSystem: 'placidus', zodiac: 'tropical', aspectTypes: [] })
 }
 
 /** Sun–Pluto positions for an arbitrary instant — the transit side of the /today page. */
 export async function computePositions(utc: Date): Promise<PlanetPosition[]> {
-  const Astronomy = await import('astronomy-engine')
-  return computeBodies(Astronomy, Astronomy.MakeTime(utc))
+  const { Origin, Horoscope } = await import('circular-natal-horoscope-js')
+  return bodyPositions(transitHoroscope(Origin, Horoscope, utc))
 }
 
 /**
  * Tropical longitudes for selected bodies over a series of instants — the
- * months-ahead transit scans only need a few bodies, so this skips the other
- * ephemeris work `computePositions` would repeat per sample.
+ * months-ahead transit scans only need a few bodies' longitudes per sample.
  */
 export async function computeLongitudeSeries<T extends ComputedPlanetId>(
   dates: readonly Date[],
   ids: readonly T[],
 ): Promise<Record<T, number>[]> {
-  const Astronomy = await import('astronomy-engine')
+  const { Origin, Horoscope } = await import('circular-natal-horoscope-js')
 
   return dates.map((date) => {
-    const time = Astronomy.MakeTime(date)
+    const byKey = new Map<string, LibBody>()
+
+    for (const body of transitHoroscope(Origin, Horoscope, date).CelestialBodies.all as LibBody[]) {
+      byKey.set(body.key, body)
+    }
+
     const lons = {} as Record<T, number>
 
     for (const id of ids) {
-      lons[id] = eclipticLon(Astronomy, BODY_NAME[id], time)
+      lons[id] = norm360((byKey.get(id) as LibBody).ChartPosition.Ecliptic.DecimalDegrees)
     }
 
     return lons
@@ -147,50 +107,50 @@ export async function computeLongitudeSeries<T extends ComputedPlanetId>(
 }
 
 export async function computeChart(input: BirthInput): Promise<NatalChart> {
-  const Astronomy = await import('astronomy-engine')
+  const { Origin, Horoscope } = await import('circular-natal-horoscope-js')
 
-  const utc = zonedTimeToUtc(
-    input.year,
-    input.month,
-    input.day,
-    input.timeKnown ? input.hour : 12,
-    input.timeKnown ? input.minute : 0,
-    input.timeZone,
-  )
+  // Origin takes the birth *local* wall-clock and derives the zone (with historical
+  // DST) from the coordinates — which, in this app, always travel together as one
+  // city record, so the derived zone matches `input.timeZone`.
+  const origin = new Origin({
+    year: input.year,
+    month: input.month - 1, // 1–12 → 0-indexed
+    date: input.day,
+    hour: input.timeKnown ? input.hour : 12,
+    minute: input.timeKnown ? input.minute : 0,
+    second: 0,
+    latitude: input.latitude,
+    longitude: input.longitude,
+  })
 
-  const time = Astronomy.MakeTime(utc)
-  const planets = computeBodies(Astronomy, time)
+  const horoscope = new Horoscope({
+    origin,
+    houseSystem: 'placidus',
+    zodiac: 'tropical',
+    aspectTypes: [],
+  })
 
-  // Mean lunar nodes (Meeus) — always retrograde; the south node is the antipode.
-  const T = time.tt / 36525
-  const node = norm360(125.0445479 - 1934.1362891 * T + 0.0020754 * T * T + (T * T * T) / 467441)
+  const planets = bodyPositions(horoscope)
+
+  // Mean lunar nodes (always retrograde; south node is the antipode) and mean Black
+  // Moon Lilith (the Moon's mean apogee, which advances direct → never retrograde).
+  const points = horoscope.CelestialPoints as Record<string, EclipticDD>
 
   planets.push({
     id: 'northNode',
-    lon: node,
+    lon: norm360(points.northnode.ChartPosition.Ecliptic.DecimalDegrees),
     retrograde: true,
   })
 
   planets.push({
     id: 'southNode',
-    lon: norm360(node + 180),
+    lon: norm360(points.southnode.ChartPosition.Ecliptic.DecimalDegrees),
     retrograde: true,
   })
 
-  // Mean Black Moon Lilith — the Moon's mean apogee (empty focus of its orbit).
-  // Perigee longitude Π = L' − M' (Meeus mean elements); the apogee sits opposite.
-  // The apogee advances direct (~40.7°/yr), so mean Lilith is never retrograde.
-  const moonMeanLon = norm360(
-    218.3164477 + 481267.88123421 * T - 0.0015786 * T * T + (T * T * T) / 538841 - (T * T * T * T) / 65194000,
-  )
-
-  const moonMeanAnomaly = norm360(
-    134.9633964 + 477198.8675055 * T + 0.0087414 * T * T + (T * T * T) / 69699 - (T * T * T * T) / 14712000,
-  )
-
   planets.push({
     id: 'lilith',
-    lon: norm360(moonMeanLon - moonMeanAnomaly + 180),
+    lon: norm360(points.lilith.ChartPosition.Ecliptic.DecimalDegrees),
     retrograde: false,
   })
 
@@ -199,17 +159,15 @@ export async function computeChart(input: BirthInput): Promise<NatalChart> {
   let cusps: number[] | null = null
 
   if (input.timeKnown) {
-    const eps = meanObliquityDeg(T) * DEG
-    const cosE = Math.cos(eps)
-    const sinE = Math.sin(eps)
-    const ramcDeg = norm360(Astronomy.SiderealTime(time) * 15 + input.longitude)
-    const ramc = ramcDeg * DEG
-    const phi = input.latitude * DEG
-    midheaven = norm360(Math.atan2(Math.sin(ramc), Math.cos(ramc) * cosE) * RAD)
-    ascendant = norm360(Math.atan2(Math.cos(ramc), -(Math.sin(ramc) * cosE + Math.tan(phi) * sinE)) * RAD)
-    cusps = placidusCusps(ramcDeg, ascendant, midheaven, eps, phi)
+    ascendant = norm360(horoscope.Ascendant.ChartPosition.Ecliptic.DecimalDegrees)
+    midheaven = norm360(horoscope.Midheaven.ChartPosition.Ecliptic.DecimalDegrees)
+    cusps = (horoscope.Houses as LibHouse[])
+      .slice()
+      .sort((a, b) => a.id - b.id)
+      .map((house) => norm360(house.ChartPosition.StartPosition.Ecliptic.DecimalDegrees))
 
-    // Part of Fortune — day formula above the horizon, night formula below.
+    // Part of Fortune — day formula above the horizon, night formula below. The
+    // library doesn't compute it, so it stays derived here from Asc/Sun/Moon.
     const sun = planets.find((p) => p.id === 'sun')?.lon ?? 0
     const moon = planets.find((p) => p.id === 'moon')?.lon ?? 0
     const sunAboveHorizon = norm360(sun - ascendant) >= 180
@@ -223,44 +181,4 @@ export async function computeChart(input: BirthInput): Promise<NatalChart> {
   }
 
   return { planets, ascendant, midheaven, cusps }
-}
-
-/** Standard Placidus house cusps (12 longitudes, index 0 = house 1). */
-function placidusCusps(ramcDeg: number, asc: number, mc: number, eps: number, phi: number): number[] {
-  const cosE = Math.cos(eps)
-  const sinE = Math.sin(eps)
-  const tanPhi = Math.tan(phi)
-  const norm = (x: number) => ((x % 360) + 360) % 360
-  const clamp = (x: number) => Math.max(-1, Math.min(1, x))
-  const lonFromRA = (a: number) => norm(Math.atan2(Math.sin(a * DEG), Math.cos(a * DEG) * cosE) * RAD)
-
-  // A cusp trisects a semi-arc: iterate until its own semi-diurnal arc is consistent.
-  function cusp(fraction: number, west: boolean): number {
-    const dir = west ? -1 : 1
-    let a = ramcDeg + dir * fraction * 90
-
-    for (let i = 0; i < 40; i++) {
-      const lon = lonFromRA(a)
-      const dec = Math.asin(sinE * Math.sin(lon * DEG))
-      const ad = Math.asin(clamp(tanPhi * Math.tan(dec))) * RAD
-      a = ramcDeg + dir * fraction * (90 + ad)
-    }
-
-    return lonFromRA(a)
-  }
-
-  const c = new Array<number>(12)
-  c[0] = asc // house 1
-  c[9] = mc // house 10
-  c[3] = norm(mc + 180) // house 4 (IC)
-  c[6] = norm(asc + 180) // house 7 (DSC)
-  c[10] = cusp(1 / 3, false) // house 11
-  c[11] = cusp(2 / 3, false) // house 12
-  c[7] = cusp(2 / 3, true) // house 8
-  c[8] = cusp(1 / 3, true) // house 9
-  c[1] = norm(c[7] + 180) // house 2
-  c[2] = norm(c[8] + 180) // house 3
-  c[4] = norm(c[10] + 180) // house 5
-  c[5] = norm(c[11] + 180) // house 6
-  return c
 }

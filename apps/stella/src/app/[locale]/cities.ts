@@ -27,7 +27,7 @@ export type CityGroup = {
 }
 
 // The app's primary markets lead the country list; the rest follow alphabetically.
-const PRIMARY_ISO2 = ['KR', 'JP', 'CN', 'TW', 'HK']
+const PRIMARY_ISO2 = ['KR', 'CN', 'HK', 'JP', 'TW']
 
 /** Cities grouped by country for the <optgroup> picker (generated order preserved within each group). */
 export const CITY_GROUPS: readonly CityGroup[] = (() => {
@@ -52,3 +52,6 @@ export const CITY_GROUPS: readonly CityGroup[] = (() => {
     .map(([iso2, cities]) => ({ iso2, country: cities[0].country, cities }))
     .sort((a, b) => rank(a.iso2) - rank(b.iso2) || a.country.localeCompare(b.country))
 })()
+
+/** Flat city list in picker order (primary markets first) — the combobox's browse/search source. */
+export const CITIES_IN_DISPLAY_ORDER: readonly City[] = CITY_GROUPS.flatMap((group) => group.cities)

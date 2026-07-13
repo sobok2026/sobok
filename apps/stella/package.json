@@ -11,7 +11,8 @@
   "dependencies": {
     "@next/third-parties": "^16.2.10",
     "@sobok/domain": "workspace:*",
-    "astronomy-engine": "^2.1.19",
+    "circular-natal-horoscope-js": "^1.1.0",
+    "downshift": "^9.0.0",
     "next": "16.2.10",
     "next-intl": "^4.13.0",
     "react": "19.2.7",

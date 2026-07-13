@@ -4,7 +4,8 @@ import { useTranslations } from 'next-intl'
 import { type SubmitEvent, useEffect, useState } from 'react'
 
 import { clearBirth, loadBirth, saveBirth } from './birth-storage'
-import { CITY_GROUPS, DEFAULT_CITY_KEY, findCity } from './cities'
+import CityCombobox from './CityCombobox'
+import { DEFAULT_CITY_KEY, findCity } from './cities'
 import type { BirthInput } from './ephemeris'
 
 const fieldClass =
@@ -123,42 +124,7 @@ export default function BirthForm({ computing, onSubmit }: Props) {
           )}
         </div>
 
-        <div>
-          <label className={labelClass} htmlFor="birth-city">
-            {t('cityLabel')}
-          </label>
-          <div className="relative">
-            <select
-              className={`${fieldClass} pr-9`}
-              id="birth-city"
-              onChange={(e) => setCityKey(e.target.value)}
-              value={cityKey}
-            >
-              {CITY_GROUPS.map((group) => (
-                <optgroup key={group.iso2} label={group.country}>
-                  {group.cities.map((city) => (
-                    <option className="bg-overlay text-foreground" key={city.key} value={city.key}>
-                      {city.name}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-            {/* appearance-none removes the native dropdown arrow, so draw our own. */}
-            <svg
-              aria-hidden
-              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground-subtle"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </div>
-        </div>
+        <CityCombobox cityKey={cityKey} onSelect={setCityKey} />
       </div>
 
       <div className="mt-4">
