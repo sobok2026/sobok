@@ -78,7 +78,10 @@ export default function BirthForm({ computing, onSubmit }: Props) {
   }, [])
 
   return (
-    <form className="w-full rounded-3xl border bg-surface-2 p-4 backdrop-blur-xl sm:p-5" onSubmit={submit}>
+    <form
+      className="relative z-20 w-full rounded-3xl border bg-surface-2 p-4 backdrop-blur-xl sm:p-5"
+      onSubmit={submit}
+    >
       <h2 className="mb-4 text-center text-base font-bold text-foreground">{t('title')}</h2>
 
       <div className="space-y-3">

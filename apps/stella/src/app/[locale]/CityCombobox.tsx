@@ -2,7 +2,7 @@
 
 import { useCombobox } from 'downshift'
 import { useTranslations } from 'next-intl'
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 import { type City, findCity } from './cities'
 import { searchCities } from './city-search'
@@ -18,10 +18,11 @@ type Props = {
 }
 
 export default function CityCombobox({ cityKey, onSelect }: Props) {
-  const t = useTranslations('Constellation.form')
   const [query, setQuery] = useState('')
-  const selectedCity = useMemo(() => findCity(cityKey), [cityKey])
-  const items = useMemo(() => searchCities(query), [query])
+  const t = useTranslations('Constellation.form')
+
+  const selectedCity = findCity(cityKey)
+  const items = searchCities(query)
 
   const {
     isOpen,
