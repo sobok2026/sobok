@@ -110,6 +110,56 @@ export const messages = {
         showMore: '더보기 {count}개',
         showLess: '접기',
       },
+      patterns: {
+        title: '차트 패턴',
+        intro: '여러 별이 하나의 도형으로 맞물리면 삶을 관통하는 큰 성향이 돼요.',
+        apex: '정점',
+        name: {
+          grandTrine: '대삼각',
+          tSquare: 'T 스퀘어',
+          grandCross: '대십자',
+          yod: '요드',
+          kite: '카이트',
+        },
+        body: {
+          grandTrine:
+            '세 별이 완벽한 삼각형으로 이어졌어요. 애쓰지 않아도 물 흐르듯 풀리는 재능이 당신 안에 흐른다는 뜻이에요. 다만 너무 쉽게 주어진 탓에 그 복을 당연하게 여기기 쉬우니 가끔은 의식해서 갈고닦아 보세요. 편안히 흐르는 그 재능이 당신의 가장 든든한 뒷배예요.',
+          tSquare:
+            '두 별이 팽팽히 맞선 힘이 한 별로 모여요. 정점의 별에 긴장이 쏠리는 만큼 당신은 바로 그 자리에서 남다른 추진력을 냅니다. 처음엔 버거운 압박 같아도 그게 당신을 앞으로 밀어내는 엔진이에요. 마찰을 피하지 않고 마주할수록 당신은 더 단단해져요.',
+          grandCross:
+            '네 별이 커다란 십자로 팽팽하게 맞물렸어요. 사방에서 당기는 힘 한가운데 서 있는 만큼 압박을 견디는 힘이 남달라요. 여러 방향으로 나뉘어 벅찰 때도 있지만 어디서든 쉽게 무너지지 않죠. 균형을 잡아 가는 그 과정에서 당신은 누구보다 단단해져요.',
+          yod: '두 별이 부드럽게 손잡고 한 별을 함께 가리켜요. 신의 손가락이라 불리는 이 도형은 당신에게 특별한 사명 하나를 조용히 겨눠요. 정점의 별이 자꾸 삶의 방향을 다시 맞추라고 신호를 보내죠. 처음엔 낯설어도 결국 당신만의 길로 이어지는 표식이에요.',
+          kite: '타고난 삼각형에 한 별이 더해져 연 모양을 이뤘어요. 편히 흐르던 재능에 뚜렷한 방향과 추진력이 생긴 셈이에요. 재능을 품고만 있지 않고 세상에 펼쳐 낼 통로가 당신에겐 있죠. 정점의 별이 그 재능을 현실로 데려가요.',
+        },
+      },
+      shapes: {
+        title: '차트 모양',
+        intro: '열 개의 별이 하늘에 흩어진 전체 그림이 당신의 큰 그릇을 보여 줘요.',
+        name: {
+          bundle: '번들',
+          bowl: '보울',
+          bucket: '버킷',
+          locomotive: '로코모티브',
+          seesaw: '시소',
+          splash: '스플래시',
+          splay: '스플레이',
+        },
+        body: {
+          bundle:
+            '열 개의 별이 한자리에 옹기종기 모였어요. 관심과 에너지가 좁고 깊게 집중되는 사람이라 한 우물을 파는 힘이 대단해요. 넓게 벌이기보다 하나에 몰입할 때 진가가 드러나죠. 그 응축된 몰입이 당신만의 전문성으로 여물어요.',
+          bowl: '모든 별이 하늘의 한쪽에 담겼어요. 스스로 채워야 할 무언가를 품고 사는 사람이라 방향 감각이 뚜렷해요. 비어 있는 반대편을 향한 갈증이 당신을 움직이게 하죠. 그 결핍이 오히려 당신의 목적이 돼요.',
+          bucket:
+            '한쪽에 모인 별들이 홀로 떨어진 한 별을 손잡이처럼 두었어요. 그 손잡이 별이 당신의 에너지가 세상으로 흘러 나가는 통로예요. 모든 힘이 그 한 점으로 모이는 만큼 그 자리가 당신의 사명이 되죠. 남다른 한 가지로 세상과 이어지는 사람이에요.',
+          locomotive:
+            '별들이 하늘의 3분의 2를 채우고 한 구역을 비워 뒀어요. 그 빈자리를 채우려는 힘이 당신을 스스로 굴러가게 하는 기관차 같아요. 누가 밀지 않아도 알아서 달리는 추진력이 있죠. 부족한 그 한 조각이 평생의 동력이 돼요.',
+          seesaw:
+            '별들이 하늘의 양 끝으로 나뉘어 마주 봐요. 늘 두 세계 사이에서 균형을 재는 사람이라 어느 한쪽도 쉽게 놓지 못하죠. 그만큼 상대의 입장을 헤아리는 폭이 넓어요. 오가며 저울질하는 그 감각 덕분에 당신의 시야는 누구보다 넓어요.',
+          splash:
+            '별들이 하늘 곳곳에 골고루 흩뿌려졌어요. 관심의 폭이 넓어 다재다능한 사람이라 어디서든 이야기가 통하죠. 여러 세계에 발을 걸친 만큼 삶이 다채로워요. 흩어진 관심을 하나로 꿰면 당신은 무엇이든 될 수 있어요.',
+          splay:
+            '별들이 저마다의 무리로 개성 있게 뭉쳤어요. 정해진 틀보다 스스로 세운 구조를 따르는 사람이라 개성이 뚜렷해요. 남과 다른 방식으로 세상을 짜맞추죠. 그 독특한 균형 안에서 당신은 오직 하나뿐인 사람이에요.',
+        },
+      },
       share: {
         button: '내 별자리 공유',
         copied: '링크를 복사했어요',
@@ -222,6 +272,7 @@ export const messages = {
         southNode: '남교점',
         fortune: '행운점',
         lilith: '릴리스',
+        chiron: '카이런',
         mercury: '수성',
         venus: '금성',
         mars: '화성',
@@ -459,6 +510,19 @@ export const messages = {
         showMore: 'Show {count} more',
         showLess: 'Show less',
       },
+      patterns: {
+        title: '',
+        intro: '',
+        apex: '',
+        name: { grandTrine: '', tSquare: '', grandCross: '', yod: '', kite: '' },
+        body: { grandTrine: '', tSquare: '', grandCross: '', yod: '', kite: '' },
+      },
+      shapes: {
+        title: '',
+        intro: '',
+        name: { bundle: '', bowl: '', bucket: '', locomotive: '', seesaw: '', splash: '', splay: '' },
+        body: { bundle: '', bowl: '', bucket: '', locomotive: '', seesaw: '', splash: '', splay: '' },
+      },
       share: {
         button: 'Share my chart',
         copied: 'Link copied',
@@ -571,6 +635,7 @@ export const messages = {
         southNode: 'South Node',
         fortune: 'Part of Fortune',
         lilith: 'Black Moon Lilith',
+        chiron: 'Chiron',
         mercury: 'Mercury',
         venus: 'Venus',
         mars: 'Mars',
@@ -806,6 +871,19 @@ export const messages = {
         showMore: '查看其余 {count} 个',
         showLess: '收起',
       },
+      patterns: {
+        title: '',
+        intro: '',
+        apex: '',
+        name: { grandTrine: '', tSquare: '', grandCross: '', yod: '', kite: '' },
+        body: { grandTrine: '', tSquare: '', grandCross: '', yod: '', kite: '' },
+      },
+      shapes: {
+        title: '',
+        intro: '',
+        name: { bundle: '', bowl: '', bucket: '', locomotive: '', seesaw: '', splash: '', splay: '' },
+        body: { bundle: '', bowl: '', bucket: '', locomotive: '', seesaw: '', splash: '', splay: '' },
+      },
       share: {
         button: '分享我的星盘',
         copied: '已复制链接',
@@ -918,6 +996,7 @@ export const messages = {
         southNode: '南交点',
         fortune: '福点',
         lilith: '莉莉丝',
+        chiron: '凯龙星',
         mercury: '水星',
         venus: '金星',
         mars: '火星',
@@ -1153,6 +1232,19 @@ export const messages = {
         showMore: '他 {count} 件を表示',
         showLess: '折りたたむ',
       },
+      patterns: {
+        title: '',
+        intro: '',
+        apex: '',
+        name: { grandTrine: '', tSquare: '', grandCross: '', yod: '', kite: '' },
+        body: { grandTrine: '', tSquare: '', grandCross: '', yod: '', kite: '' },
+      },
+      shapes: {
+        title: '',
+        intro: '',
+        name: { bundle: '', bowl: '', bucket: '', locomotive: '', seesaw: '', splash: '', splay: '' },
+        body: { bundle: '', bowl: '', bucket: '', locomotive: '', seesaw: '', splash: '', splay: '' },
+      },
       share: {
         button: '星図をシェア',
         copied: 'リンクをコピーしました',
@@ -1265,6 +1357,7 @@ export const messages = {
         southNode: '南交点',
         fortune: '幸運点',
         lilith: 'リリス',
+        chiron: 'カイロン',
         mercury: '水星',
         venus: '金星',
         mars: '火星',

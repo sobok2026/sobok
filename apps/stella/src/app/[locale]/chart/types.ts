@@ -34,7 +34,7 @@ export type ComputedPlanetId =
   | 'pluto'
 
 /** Every point placed on the wheel — the ten bodies plus derived sensitive points. */
-export type PlanetId = ComputedPlanetId | 'northNode' | 'southNode' | 'fortune' | 'lilith'
+export type PlanetId = ComputedPlanetId | 'northNode' | 'southNode' | 'fortune' | 'lilith' | 'chiron'
 
 export type AspectType = 'conjunction' | 'trine' | 'square' | 'sextile' | 'opposition'
 
@@ -58,3 +58,28 @@ export type NatalChart = {
 
 /** A major aspect present between two bodies, with its deviation from exact (orb, degrees). */
 export type ChartAspect = { a: PlanetId; b: PlanetId; type: AspectType; orb: number }
+
+/** Classic multi-body aspect patterns (the standard five beyond the stellium). */
+export type ChartPatternType = 'grandTrine' | 'tSquare' | 'grandCross' | 'yod' | 'kite'
+
+/**
+ * A detected aspect pattern among the ten classical planets.
+ * `apex` is the focal planet of a T-square/Yod (the one squared/quincunxed by the
+ * other two); null for the symmetric patterns. `element` carries the shared
+ * element of a Grand Trine or the shared modality flavor of a Grand Cross.
+ */
+export type ChartPattern = {
+  type: ChartPatternType
+  planets: ComputedPlanetId[]
+  apex: ComputedPlanetId | null
+}
+
+/** Marc Edmund Jones planetary-distribution shapes. */
+export type ChartShapeId = 'bundle' | 'bowl' | 'bucket' | 'locomotive' | 'seesaw' | 'splash' | 'splay'
+
+/** The chart's overall shape, with the singleton `handle` (Bucket) or `leading` planet where meaningful. */
+export type ChartShape = {
+  id: ChartShapeId
+  handle: ComputedPlanetId | null
+  leading: ComputedPlanetId | null
+}
