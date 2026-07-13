@@ -1,23 +1,15 @@
 'use client'
 
-import type { POSTV1BBatonAttemptResponse } from '@sobok/contracts'
-
+import { authClient } from '@sobok/auth/client'
 import { LOCALE_LANGUAGE_TAGS } from '@sobok/domain/locale'
-import { formatDistanceToNow, safeParseJSON } from '@sobok/std'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { formatDistanceToNow } from '@sobok/std'
+import { useMutation } from '@tanstack/react-query'
 import { useLocale } from 'next-intl'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo } from 'react'
 import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
 
-import { BBATON_POPUP_WINDOW_NAME } from '@/bbaton'
-import { useRouter } from '@/i18n/navigation'
-import { resetAdultGatedQueries } from '@/lib/react-query/adult-gated-queries'
-import { QueryKeys } from '@/lib/react-query/query-keys'
-import { LocalStorageKey } from '@/storage'
 import BBatonButton from '@/svg/BBatonButton'
-import { fetchAPIData, UserVisibleError } from '@/utils/api-request'
-import { ProblemDetailsError } from '@/utils/fetch-response'
 
 import AdultVerificationHelp from './AdultVerificationHelp'
 import BBatonUnlinkSection from './BBatonUnlinkSection'
@@ -27,23 +19,12 @@ type Props = {
     adultFlag: boolean
     verifiedAt: Date | null
   }
-  isTwoFactorEnabled: boolean
 }
 
-export default function AdultVerificationSectionClient({ initialVerification, isTwoFactorEnabled }: Props) {
+export default function AdultVerificationSectionClient({ initialVerification }: Props) {
   const locale = useLocale()
-  const [needsManualRefresh, setNeedsManualRefresh] = useState(false)
-  const [pendingToast, setPendingToast] = useState<{ previousVerifiedAtMs: number | null } | null>(null)
-  const [isVerifyingUI, setIsVerifyingUI] = useState(false)
-
-  const router = useRouter()
-  const queryClient = useQueryClient()
-  const popupRef = useRef<Window | null>(null)
-  const isVerifyingRef = useRef(false)
-  const focusHandlerRef = useRef<(() => void) | null>(null)
   const verifiedAt = initialVerification?.verifiedAt
   const verifiedAtLabel = verifiedAt ? formatDistanceToNow(new Date(verifiedAt), locale) : null
-  const verifiedAtMs = verifiedAt instanceof Date ? verifiedAt.getTime() : null
 
   const status = useMemo(() => {
     if (!initialVerification) {
@@ -55,155 +36,28 @@ export default function AdultVerificationSectionClient({ initialVerification, is
     return { label: '성인 아님', tone: 'red' }
   }, [initialVerification])
 
-  const verifyMutation = useMutation<POSTV1BBatonAttemptResponse, unknown, void>({
+  // better-auth genericOAuth 연결 플로우 — BBaton 인가 페이지로 리다이렉트했다가 이 페이지로 돌아온다.
+  const linkMutation = useMutation({
     mutationFn: async () => {
-      const url = '/api/v1/bbaton/attempt'
-
-      const { data } = await fetchAPIData<POSTV1BBatonAttemptResponse>(url, {
-        method: 'POST',
+      const { error } = await authClient.oauth2.link({
+        providerId: 'bbaton',
+        callbackURL: `${window.location.pathname}${window.location.search}`,
       })
 
-      const { authorizeUrl } = data
-      const popup = window.open(authorizeUrl, BBATON_POPUP_WINDOW_NAME, 'width=420,height=580')
-
-      if (!popup) {
-        throw new UserVisibleError('팝업을 열 수 없어요. 팝업 차단을 해제해 주세요.')
+      if (error) {
+        throw new Error(error.message)
       }
-
-      setIsVerifyingUI(true)
-      isVerifyingRef.current = true
-      popupRef.current = popup
-
-      const onFocus = () => {
-        const currentPopup = popupRef.current
-        if (!currentPopup) {
-          return
-        }
-
-        if (!isVerifyingRef.current) {
-          return
-        }
-
-        if (!currentPopup.closed) {
-          return
-        }
-
-        // NOTE: 콜백 팝업이 닫혔는데 신호(storage event)가 없으면 불확실 상태예요.
-        // 서버 상태 조회 엔드포인트는 공격면 최소화를 위해 두지 않으니, 수동 새로고침으로 확인해요.
-        setIsVerifyingUI(false)
-        isVerifyingRef.current = false
-        popupRef.current = null
-
-        if (focusHandlerRef.current) {
-          window.removeEventListener('focus', focusHandlerRef.current)
-          focusHandlerRef.current = null
-        }
-
-        setNeedsManualRefresh(true)
-        toast.warning('인증 완료 여부를 확인하려면 상태 새로고침을 눌러 주세요')
-      }
-
-      window.addEventListener('focus', onFocus)
-      focusHandlerRef.current = onFocus
-
-      return data
     },
-
     onError: (error) => {
-      setIsVerifyingUI(false)
-      isVerifyingRef.current = false
-
-      if (error instanceof ProblemDetailsError && error.status === 401) {
-        router.refresh()
-      }
+      toast.warning(error.message || '인증을 시작할 수 없어요')
     },
   })
 
   function startVerification() {
-    if (!verifyMutation.isPending && !isVerifyingUI) {
-      setNeedsManualRefresh(false)
-      verifyMutation.mutate()
+    if (!linkMutation.isPending) {
+      linkMutation.mutate()
     }
   }
-
-  function refreshStatus() {
-    queryClient.invalidateQueries({ queryKey: QueryKeys.me, exact: true })
-    resetAdultGatedQueries(queryClient)
-    router.refresh()
-  }
-
-  // NOTE: 콜백 팝업이 localStorage에 완료 신호를 남기면, 모든 탭에서 storage 이벤트로 감지해 페이지를 새로고침해요
-  useEffect(() => {
-    const onStorage = (event: StorageEvent) => {
-      if (event.key !== LocalStorageKey.BBATON_ADULT_VERIFICATION_SIGNAL) {
-        return
-      }
-
-      if (!event.newValue) {
-        return
-      }
-
-      const payload = safeParseJSON<{ type?: unknown; at?: unknown }>(event.newValue)
-      if (payload?.type !== 'complete') {
-        return
-      }
-
-      setNeedsManualRefresh(false)
-      setIsVerifyingUI(false)
-      isVerifyingRef.current = false
-
-      setPendingToast({ previousVerifiedAtMs: verifiedAtMs })
-
-      if (focusHandlerRef.current) {
-        window.removeEventListener('focus', focusHandlerRef.current)
-        focusHandlerRef.current = null
-      }
-
-      popupRef.current = null
-      queryClient.invalidateQueries({ queryKey: QueryKeys.me, exact: true })
-      resetAdultGatedQueries(queryClient)
-      router.refresh()
-    }
-
-    window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
-  }, [queryClient, router, verifiedAtMs])
-
-  // NOTE: refresh 후 서버에서 내려온 상태(성인/성인 아님)로 토스트를 결정해요
-  useEffect(() => {
-    if (!pendingToast) {
-      return
-    }
-
-    const currentVerifiedAtMs =
-      initialVerification?.verifiedAt instanceof Date ? initialVerification.verifiedAt.getTime() : null
-
-    const updated =
-      currentVerifiedAtMs != null &&
-      (pendingToast.previousVerifiedAtMs == null || currentVerifiedAtMs > pendingToast.previousVerifiedAtMs)
-
-    if (!updated) {
-      return
-    }
-
-    if (initialVerification?.adultFlag) {
-      toast.success('성인인증이 완료됐어요')
-    } else {
-      toast.success('인증 결과가 저장됐어요', { description: '성인으로 확인되지 않았어요' })
-    }
-
-    setPendingToast(null)
-  }, [initialVerification, pendingToast])
-
-  // NOTE: 인증 플로우에서 등록한 focus 이벤트 핸들러가 남지 않도록 언마운트 시 정리해요
-  useEffect(() => {
-    return () => {
-      if (focusHandlerRef.current) {
-        window.removeEventListener('focus', focusHandlerRef.current)
-        focusHandlerRef.current = null
-      }
-    }
-  }, [])
 
   return (
     <div className="flex flex-col gap-4">
@@ -223,15 +77,6 @@ export default function AdultVerificationSectionClient({ initialVerification, is
             {status.label}
           </span>
         </div>
-        {needsManualRefresh && (
-          <button
-            className="w-fit text-sm text-foreground-muted underline underline-offset-4 hover:text-foreground-secondary"
-            onClick={refreshStatus}
-            type="button"
-          >
-            상태 새로고침
-          </button>
-        )}
         {verifiedAtLabel && (
           <div className="flex items-center justify-between gap-3">
             <div className="text-sm text-foreground-muted">마지막 인증</div>
@@ -242,7 +87,7 @@ export default function AdultVerificationSectionClient({ initialVerification, is
         )}
       </div>
       <button
-        aria-disabled={verifyMutation.isPending || isVerifyingUI}
+        aria-disabled={linkMutation.isPending}
         className="w-full overflow-hidden rounded transition aria-disabled:opacity-60 active:opacity-90"
         onClick={startVerification}
         title={initialVerification ? '비바톤으로 다시 인증하기' : '비바톤으로 인증하기'}
@@ -257,7 +102,7 @@ export default function AdultVerificationSectionClient({ initialVerification, is
 
       <AdultVerificationHelp />
 
-      {initialVerification && <BBatonUnlinkSection isTwoFactorEnabled={isTwoFactorEnabled} />}
+      {initialVerification && <BBatonUnlinkSection />}
     </div>
   )
 }

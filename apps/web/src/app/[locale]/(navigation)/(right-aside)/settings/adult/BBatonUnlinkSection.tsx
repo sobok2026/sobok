@@ -1,38 +1,29 @@
 'use client'
 
-import { AdultVerificationStatus, type GETV1MeResponse, type POSTV1BBatonUnlinkResponse } from '@sobok/contracts'
+import { AdultVerificationStatus, type GETV1MeResponse } from '@sobok/contracts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChevronDown } from 'lucide-react'
 import { type SubmitEvent, useRef } from 'react'
 import { toast } from 'sonner'
 
+import PasswordInput from '@/components/PasswordInput'
 import { useRouter } from '@/i18n/navigation'
 import { QueryKeys } from '@/lib/react-query/query-keys'
 import { fetchAPIData } from '@/utils/api-request'
 import { ProblemDetailsError } from '@/utils/fetch-response'
 
-import OneTimeCodeInput from '../two-factor/components/OneTimeCodeInput'
-
-type Props = {
-  isTwoFactorEnabled: boolean
-}
-
-export default function BBatonUnlinkSection({ isTwoFactorEnabled }: Props) {
+export default function BBatonUnlinkSection() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const unlinkFormRef = useRef<HTMLFormElement | null>(null)
 
-  const unlinkMutation = useMutation<POSTV1BBatonUnlinkResponse, unknown, { password: string; token?: string }>({
-    mutationFn: async ({ password, token }) => {
-      const url = '/api/v1/bbaton/unlink'
-
-      const { data } = await fetchAPIData<POSTV1BBatonUnlinkResponse>(url, {
-        method: 'POST',
+  const unlinkMutation = useMutation({
+    mutationFn: async ({ password }: { password: string }) => {
+      await fetchAPIData<undefined>('/api/v1/me/adult-verification', {
+        method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password, ...(token ? { token } : {}) }),
+        body: JSON.stringify({ password }),
       })
-
-      return data
     },
     onSuccess: () => {
       queryClient.setQueryData<GETV1MeResponse | null>(QueryKeys.me, (previous) => {
@@ -65,11 +56,8 @@ export default function BBatonUnlinkSection({ isTwoFactorEnabled }: Props) {
 
     const formData = new FormData(e.currentTarget)
     const password = String(formData.get('password') ?? '')
-    const token = formData.get('token')
-    const tokenDigits = typeof token === 'string' ? token.replace(/[^0-9]/g, '') : ''
-    const tokenValue = tokenDigits.length > 0 ? tokenDigits : undefined
 
-    unlinkMutation.mutate({ password, token: tokenValue })
+    unlinkMutation.mutate({ password })
   }
 
   return (
@@ -93,34 +81,22 @@ export default function BBatonUnlinkSection({ isTwoFactorEnabled }: Props) {
               <label className="text-sm text-foreground-secondary" htmlFor="bbaton-unlink-password">
                 현재 비밀번호
               </label>
-              <input
+              <PasswordInput
                 autoCapitalize="off"
                 autoComplete="current-password"
                 autoCorrect="off"
-                className="w-full rounded-md bg-surface-2 border border-border-strong px-3 py-2 placeholder-foreground-subtle focus:outline-none focus:ring-2 focus:ring-border-strong focus:border-transparent disabled:bg-surface-3 disabled:text-foreground-muted"
+                className="w-full rounded-md bg-surface-2 border border-border-strong px-3 py-2 pr-10 placeholder-foreground-subtle focus:outline-none focus:ring-2 focus:ring-border-strong focus:border-transparent disabled:bg-surface-3 disabled:text-foreground-muted"
                 disabled={unlinkMutation.isPending}
-                enterKeyHint={isTwoFactorEnabled ? 'next' : 'done'}
+                enterKeyHint="done"
+                iconClassName="size-5 shrink-0 text-foreground-muted"
                 id="bbaton-unlink-password"
                 name="password"
-                placeholder="비밀번호를 입력해 주세요"
                 required
                 spellCheck={false}
-                type="password"
+                toggleClassName="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-surface-3"
+                toggleLabel="비밀번호 표시"
               />
             </div>
-
-            {isTwoFactorEnabled && (
-              <div className="grid gap-1.5">
-                <label className="text-sm text-foreground-secondary" htmlFor="bbaton-unlink-token">
-                  2단계 인증 코드
-                </label>
-                <OneTimeCodeInput
-                  className="w-full rounded-md bg-surface-2 border border-border-strong px-3 py-2 placeholder-foreground-subtle focus:outline-none focus:ring-2 focus:ring-border-strong focus:border-transparent disabled:bg-surface-3 disabled:text-foreground-muted"
-                  disabled={unlinkMutation.isPending}
-                  id="bbaton-unlink-token"
-                />
-              </div>
-            )}
 
             <button
               aria-disabled={unlinkMutation.isPending}
