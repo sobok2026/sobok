@@ -296,7 +296,7 @@ export default function Constellation() {
 
         {/* Elements + aspects + actions */}
         {data && (
-          <div className="mt-6 w-full space-y-6" key={`extras-${runId}`}>
+          <div className="mt-9 w-full space-y-9 sm:mt-6 sm:space-y-6" key={`extras-${runId}`}>
             <ElementBalance counts={counts} dominant={dominant} total={data.chart.planets.length} />
             <AspectSection aspects={aspects} onSelect={toggleAspectAndScroll} selection={selection} />
             <PatternSection chart={data.chart} />

@@ -351,6 +351,20 @@ export const planets: PlanetReadings = {
     pisces:
       'A far-reaching sensitivity that refuses to go numb lives in you. The more the world tells you to stop being so sensitive, the more a tide surges inside to feel and dream deeper. Shut that tenderness down as weakness and your heart dries out and loses its way. When you stop being ashamed of that deep feeling and give it your own language, that wildness becomes a mystery no one can imitate.',
   },
+  chiron: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
 }
 
 export const retro: RetroReadings = {

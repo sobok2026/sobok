@@ -351,6 +351,20 @@ export const planets: PlanetReadings = {
     pisces:
       '你的心里，活着一份拒绝变迟钝的、辽远的感受力。世界越叫你别那么敏感，内心越是凶悍地涌起想更深地去感受、去做梦的浪。若把那份柔软当作软弱关起来，心会枯干、迷失方向。不为那份深切的感受羞愧，而是用自己的语言把它道出时，那股野性会成为谁也模仿不来的神秘。',
   },
+  chiron: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
 }
 
 export const retro: RetroReadings = {

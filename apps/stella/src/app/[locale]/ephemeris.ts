@@ -154,6 +154,18 @@ export async function computeChart(input: BirthInput): Promise<NatalChart> {
     retrograde: false,
   })
 
+  // Chiron — a real orbiting body the ephemeris returns (unlike node/Lilith), so it
+  // carries a genuine retrograde flag. Read planet-grade in the reading layer.
+  const chiron = (horoscope.CelestialBodies.all as LibBody[]).find((body) => body.key === 'chiron')
+
+  if (chiron) {
+    planets.push({
+      id: 'chiron',
+      lon: norm360(chiron.ChartPosition.Ecliptic.DecimalDegrees),
+      retrograde: chiron.isRetrograde,
+    })
+  }
+
   let ascendant: number | null = null
   let midheaven: number | null = null
   let cusps: number[] | null = null

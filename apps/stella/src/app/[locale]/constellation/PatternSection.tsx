@@ -15,7 +15,7 @@ export default function PatternSection({ chart }: { chart: NatalChart }) {
   const shapeBody = t(`shapes.body.${shape.id}`)
 
   return (
-    <section className="sm:rounded-2xl sm:border sm:bg-surface sm:p-5">
+    <section className="px-1 sm:rounded-2xl sm:border sm:bg-surface sm:p-5">
       <h2 className="text-sm font-bold text-foreground">{t('shapes.title')}</h2>
       <p className="mt-1 text-xs text-foreground-subtle">{t('shapes.intro')}</p>
 

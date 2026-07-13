@@ -351,6 +351,20 @@ export const planets: PlanetReadings = {
     pisces:
       'あなたの中には、鈍くなることを拒む、はるかな感受性が生きています。世界がもう少し敏感にふるまうなと言うほど、内側ではもっと深く感じ、夢見ようとする波が猛々しく揺れますね。そのやわらかさを弱さだと閉じてしまうと、心が乾き、道を見失います。その深い感覚を恥じず、自分だけの言葉で紡ぐとき、その野性は誰にも真似できない神秘になります。',
   },
+  chiron: {
+    aries: '',
+    taurus: '',
+    gemini: '',
+    cancer: '',
+    leo: '',
+    virgo: '',
+    libra: '',
+    scorpio: '',
+    sagittarius: '',
+    capricorn: '',
+    aquarius: '',
+    pisces: '',
+  },
 }
 
 export const retro: RetroReadings = {
