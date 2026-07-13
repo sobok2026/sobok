@@ -1,6 +1,7 @@
 import { getAuthenticatorName, passkey } from '@better-auth/passkey'
 import { redisStorage } from '@better-auth/redis-storage'
 import { db } from '@sobok/db/app'
+import * as authSchema from '@sobok/db/app/auth'
 import { bbatonVerificationTable } from '@sobok/db/app/bbaton'
 import { env } from '@sobok/env/server.auth'
 import { redis } from '@sobok/kv'
@@ -27,6 +28,7 @@ export const auth = betterAuth({
     .filter(Boolean),
   database: drizzleAdapter(db, {
     provider: 'pg',
+    schema: authSchema,
   }),
   secondaryStorage: redisStorage({
     client: redis,
@@ -120,6 +122,9 @@ export const auth = betterAuth({
     captcha({
       provider: 'cloudflare-turnstile',
       secretKey: env.TURNSTILE_SECRET_KEY,
+      // 기본 보호 대상(sign-up/email·sign-in/email·request-password-reset)에는 sign-in/username이
+      // 빠져 있다. 아이디 로그인도 브루트포스에 노출되지 않도록 명시적으로 포함한다.
+      endpoints: ['/sign-up/email', '/sign-in/email', '/sign-in/username', '/request-password-reset'],
     }),
     genericOAuth({
       config: [

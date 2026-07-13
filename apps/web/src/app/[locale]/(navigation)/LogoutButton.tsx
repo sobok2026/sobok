@@ -19,8 +19,8 @@ export default function LogoutButton({ username }: Props) {
 
   function handleLogout() {
     logout(undefined, {
-      onSuccess: ({ loginId }) => {
-        toast.info(loginId ? `${loginId} 계정에서 로그아웃했어요` : '로그아웃했어요')
+      onSuccess: () => {
+        toast.info('로그아웃했어요')
         identify(null)
         track('logout')
       },

@@ -1,17 +1,7 @@
-type LoginFormFieldName = 'login-id' | 'password'
-type TwoFactorFormFieldName = 'token'
+type LoginFormFieldName = 'identifier' | 'password'
 
-export const loginInputNames: Record<string, LoginFormFieldName> = {
-  loginId: 'login-id',
-  password: 'password',
-}
-
-export const twoFactorInputNames: Record<string, TwoFactorFormFieldName> = {
-  token: 'token',
-}
-
-export function clearLoginId(form: HTMLFormElement | null) {
-  const input = getInput(form, 'login-id')
+export function clearIdentifier(form: HTMLFormElement | null) {
+  const input = getInput(form, 'identifier')
 
   if (!input) {
     return
@@ -23,15 +13,11 @@ export function clearLoginId(form: HTMLFormElement | null) {
 }
 
 export function clearLoginValidity(form: HTMLFormElement | null) {
-  getInput(form, 'login-id')?.setCustomValidity('')
+  getInput(form, 'identifier')?.setCustomValidity('')
   getInput(form, 'password')?.setCustomValidity('')
 }
 
-export function clearTwoFactorValidity(form: HTMLFormElement | null) {
-  getInput(form, 'token')?.setCustomValidity('')
-}
-
-function getInput(form: HTMLFormElement | null, field: LoginFormFieldName | TwoFactorFormFieldName) {
+function getInput(form: HTMLFormElement | null, field: LoginFormFieldName) {
   const input = form?.elements.namedItem(field)
   return input instanceof HTMLInputElement ? input : null
 }

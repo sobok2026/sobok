@@ -1,102 +1,91 @@
 'use client'
 
-import FingerprintJS from '@fingerprintjs/fingerprintjs'
 import type { TurnstileInstance } from '@marsidev/react-turnstile'
-import { generatePKCEChallenge, type PKCEChallenge } from '@sobok/auth/pkce-browser'
-import type { POSTV1AuthLoginAuthenticatedResponse, POSTV1AuthPasskeyVerifyResponse } from '@sobok/contracts'
-import { LOGIN_ID_PATTERN, PASSWORD_PATTERN } from '@sobok/domain/auth/policy'
+import { authClient } from '@sobok/auth/client'
 import { Toggle } from '@sobok/ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Eye, EyeOff, Loader2, X } from 'lucide-react'
+import { Loader2, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { type MouseEvent, type SubmitEvent, useEffect, useRef, useState } from 'react'
+import { type SubmitEvent, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
 import PasskeyLoginButton from '@/components/PasskeyLoginButton'
+import PasswordInput from '@/components/PasswordInput'
 import TurnstileWidget from '@/components/TurnstileWidget'
 import { Link, useRouter } from '@/i18n/navigation'
 import { identify, track } from '@/lib/analytics/browser'
-import { applyInvalidParams } from '@/lib/apply-invalid-params'
 import { getAuthRedirectHref, getAuthSuccessRedirect, getCurrentAuthRedirect } from '@/lib/auth-redirect'
-import { getProblemCodeMessage } from '@/lib/error-message'
-import { resetAdultGatedQueries } from '@/lib/react-query/adult-gated-queries'
-import { QueryKeys } from '@/lib/react-query/query-keys'
 import { getMeQueryFetchOptions } from '@/query/useMeQuery'
-import { isAdultVerified } from '@/utils/adult-verification'
-import type { ProblemDetailsError } from '@/utils/fetch-response'
-import { getLocalReadingHistoryArray, removeLocalReadingHistory } from '@/utils/reading-history-index'
 
-import { importReadingHistory, login } from './api'
+import { authInputClassName, authTrailingButtonClassName } from '../field'
 import TwoFactorVerification from './TwoFactorVerification'
-import { clearLoginId, clearLoginValidity, loginInputNames } from './util'
+import { clearIdentifier, clearLoginValidity } from './util'
 
-type TwoFactorData = {
-  fingerprint: string
-  remember: boolean
-  authorizationCode: string
+type LoginSuccessUser = {
+  id: string
+  email: string
+  username?: string | null
 }
 
-const LOGIN_LOCAL_ERROR_STATUSES = [400, 401]
-
-type User = POSTV1AuthLoginAuthenticatedResponse | POSTV1AuthPasskeyVerifyResponse
+type LoginVariables = {
+  identifier: string
+  password: string
+  rememberMe: boolean
+  turnstileToken: string
+}
 
 export default function LoginForm() {
-  const [twoFactorData, setTwoFactorData] = useState<TwoFactorData | null>(null)
-  const [pkceChallenge, setPkceChallenge] = useState<PKCEChallenge | null>(null)
+  const [isTwoFactorStep, setIsTwoFactorStep] = useState(false)
   const [hasTurnstileToken, setHasTurnstileToken] = useState(false)
   const [signupHref, setSignupHref] = useState('/auth/signup')
-  const passwordInputRef = useRef<HTMLInputElement | null>(null)
   const turnstileRef = useRef<TurnstileInstance>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const t = useTranslations('Auth.login')
-  const tErrors = useTranslations('Errors')
   const queryClient = useQueryClient()
   const router = useRouter()
 
+  function resetTurnstile() {
+    turnstileRef.current?.reset()
+    setHasTurnstileToken(false)
+  }
+
+  async function handleLoginSuccess(user: LoginSuccessUser) {
+    toast.success(t('success', { email: user.email }))
+
+    identify(user.id)
+    track('login', { email: user.email })
+
+    const me = await queryClient.fetchQuery({ ...getMeQueryFetchOptions(), staleTime: 0 }).catch(() => null)
+
+    router.replace(getAuthSuccessRedirect(getCurrentAuthRedirect(), me?.username ?? user.username ?? ''))
+  }
+
   const { mutate: submitLogin, isPending } = useMutation({
-    mutationFn: login,
-    onError: (error: ProblemDetailsError) => {
-      resetTurnstile()
-      clearLoginValidity(formRef.current)
+    mutationFn: async ({ identifier, password, rememberMe, turnstileToken }: LoginVariables) => {
+      const fetchOptions = { headers: { 'x-captcha-response': turnstileToken } }
 
-      window.requestAnimationFrame(() => {
-        const form = formRef.current
+      // username에는 '@'가 들어갈 수 없으므로('/^[a-zA-Z0-9_.]+$/') 이메일/아이디를 안전하게 구분한다.
+      const { data, error } = identifier.includes('@')
+        ? await authClient.signIn.email({ email: identifier, password, rememberMe, fetchOptions })
+        : await authClient.signIn.username({ username: identifier, password, rememberMe, fetchOptions })
 
-        if (applyInvalidParams(form, error.problem, tErrors, loginInputNames)) {
-          return
-        }
+      if (error) {
+        throw new Error(error.message ?? '')
+      }
 
-        if (!LOGIN_LOCAL_ERROR_STATUSES.includes(error.status)) {
-          return
-        }
-
-        toast.warning(getProblemCodeMessage(tErrors, error.problem) ?? t('fallbackError'))
-      })
+      return data
     },
-    onSuccess: (data, variables) => {
-      if (data.nextStep === 'two_factor_required') {
-        setTwoFactorData({
-          fingerprint: variables.fingerprint,
-          remember: variables.remember,
-          authorizationCode: data.authorizationCode,
-        })
+    onSuccess: async (data) => {
+      if ('twoFactorRedirect' in data && data.twoFactorRedirect) {
+        setIsTwoFactorStep(true)
         return
       }
 
-      setPkceChallenge(null)
-      handleLoginSuccess(data)
+      await handleLoginSuccess(data.user)
     },
-    meta: { suppressGlobalErrorToastForStatuses: LOGIN_LOCAL_ERROR_STATUSES },
-  })
-
-  const { mutateAsync: migrateReadingHistory } = useMutation({
-    mutationFn: importReadingHistory,
-    onSuccess: ({ synced }) => {
-      if (synced) {
-        removeLocalReadingHistory()
-        queryClient.invalidateQueries({ queryKey: QueryKeys.readingHistoryBase })
-        queryClient.invalidateQueries({ queryKey: QueryKeys.localReadingHistorySummary })
-      }
+    onError: (error: Error) => {
+      resetTurnstile()
+      toast.warning(error.message || t('fallbackError'))
     },
   })
 
@@ -112,50 +101,6 @@ export default function LoginForm() {
     } catch {
       return null
     }
-  }
-
-  function resetTurnstile() {
-    turnstileRef.current?.reset()
-    setHasTurnstileToken(false)
-  }
-
-  function togglePasswordVisibility(e: MouseEvent<HTMLButtonElement>) {
-    const input = passwordInputRef.current
-    if (!input) {
-      return
-    }
-
-    const nextVisible = input.type === 'password'
-    input.type = nextVisible ? 'text' : 'password'
-
-    if (nextVisible) {
-      e.currentTarget.setAttribute('aria-pressed', 'true')
-    } else {
-      e.currentTarget.removeAttribute('aria-pressed')
-    }
-    input.focus()
-  }
-
-  async function handleLoginSuccess({ loginId, name, id, lastLoginAt, lastLogoutAt }: User) {
-    toast.success(t('success', { loginId }))
-    setTwoFactorData(null)
-    setPkceChallenge(null)
-
-    if (id) {
-      identify(id)
-      track('login', { loginId, lastLoginAt, lastLogoutAt })
-    }
-
-    resetAdultGatedQueries(queryClient)
-
-    const me = await queryClient.fetchQuery({ ...getMeQueryFetchOptions(), staleTime: 0 }).catch(() => null)
-    const localHistory = getLocalReadingHistoryArray()
-
-    if (localHistory.length > 0 && isAdultVerified(me)) {
-      await migrateReadingHistory({ localHistories: localHistory }).catch(() => undefined)
-    }
-
-    router.replace(getAuthSuccessRedirect(getCurrentAuthRedirect(), name))
   }
 
   async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
@@ -177,20 +122,11 @@ export default function LoginForm() {
       return
     }
 
-    const [pkceChallenge, fingerprint] = await Promise.all([
-      generatePKCEChallenge(),
-      FingerprintJS.load().then((fp) => fp.get()),
-    ])
-
-    setPkceChallenge(pkceChallenge)
-
     submitLogin({
-      loginId: String(formData.get('login-id') ?? ''),
+      identifier: String(formData.get('identifier') ?? '').trim(),
       password: String(formData.get('password') ?? ''),
-      remember: formData.get('remember') === 'on',
+      rememberMe: formData.get('remember') === 'on',
       turnstileToken,
-      codeChallenge: pkceChallenge.codeChallenge,
-      fingerprint: fingerprint.visitorId,
     })
   }
 
@@ -210,16 +146,13 @@ export default function LoginForm() {
 
   return (
     <div className="grid gap-6 sm:gap-7">
-      {twoFactorData && pkceChallenge ? (
+      {isTwoFactorStep ? (
         <TwoFactorVerification
           onCancel={() => {
-            setTwoFactorData(null)
-            setPkceChallenge(null)
+            setIsTwoFactorStep(false)
             resetTurnstile()
           }}
           onSuccess={handleLoginSuccess}
-          pkceChallenge={pkceChallenge}
-          twoFactorData={twoFactorData}
         />
       ) : (
         <>
@@ -238,8 +171,11 @@ export default function LoginForm() {
           >
             <div className="grid gap-4">
               <div>
-                <label className="block mb-1.5 text-sm font-medium text-foreground-secondary" htmlFor="login-username">
-                  {t('loginId')}
+                <label
+                  className="block mb-1.5 text-sm font-medium text-foreground-secondary"
+                  htmlFor="login-identifier"
+                >
+                  {t('identifier')}
                 </label>
                 <div className="relative group">
                   <input
@@ -247,34 +183,22 @@ export default function LoginForm() {
                     autoComplete="username webauthn"
                     autoCorrect="off"
                     autoFocus
-                    className={twMerge(
-                      'w-full rounded-xl bg-white/4 border border-white/7 pl-3 pr-10 py-2.5 text-foreground placeholder:text-foreground-subtle transition',
-                      'focus:outline-none focus:ring-2 focus:ring-white/12 focus:border-transparent',
-                      'disabled:opacity-60 disabled:cursor-not-allowed',
-                      'user-invalid:border-red-600/50 user-invalid:focus:ring-red-600/30',
-                    )}
+                    className={authInputClassName}
                     disabled={isPending}
                     enterKeyHint="next"
-                    id="login-username"
-                    maxLength={32}
-                    minLength={2}
-                    name="login-id"
-                    pattern={LOGIN_ID_PATTERN}
-                    placeholder={t('loginIdPlaceholder')}
+                    id="login-identifier"
+                    maxLength={254}
+                    name="identifier"
+                    placeholder={t('identifierPlaceholder')}
                     required
                     spellCheck={false}
                     type="text"
                   />
                   <button
-                    aria-label={t('clearLoginId')}
-                    className={twMerge(
-                      'absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-1.5 bg-white/5 border border-white/7 text-foreground-muted hover:text-foreground hover:bg-white/7 transition',
-                      'opacity-0 pointer-events-none',
-                      'group-has-[input:focus:not(:placeholder-shown)]:opacity-100 group-has-[input:focus:not(:placeholder-shown)]:pointer-events-auto',
-                      'disabled:opacity-50',
-                    )}
+                    aria-label={t('clearIdentifier')}
+                    className={authTrailingButtonClassName}
                     disabled={isPending}
-                    onClick={() => clearLoginId(formRef.current)}
+                    onClick={() => clearIdentifier(formRef.current)}
                     onMouseDown={(e) => e.preventDefault()}
                     tabIndex={-1}
                     type="button"
@@ -291,49 +215,23 @@ export default function LoginForm() {
                 >
                   {t('password')}
                 </label>
-                <div className="relative group">
-                  <input
-                    autoCapitalize="off"
-                    autoComplete="current-password"
-                    autoCorrect="off"
-                    className={twMerge(
-                      'w-full rounded-xl bg-white/4 border border-white/7 pl-3 pr-10 py-2.5 text-foreground placeholder:text-foreground-subtle transition',
-                      'focus:outline-none focus:ring-2 focus:ring-white/12 focus:border-transparent',
-                      'disabled:opacity-60 disabled:cursor-not-allowed',
-                      'user-invalid:border-red-600/50 user-invalid:focus:ring-red-600/30',
-                    )}
-                    disabled={isPending}
-                    enterKeyHint="done"
-                    id="login-current-password"
-                    maxLength={64}
-                    minLength={8}
-                    name="password"
-                    pattern={PASSWORD_PATTERN}
-                    placeholder={t('passwordPlaceholder')}
-                    ref={passwordInputRef}
-                    required
-                    spellCheck={false}
-                    type="password"
-                  />
-                  <button
-                    aria-label={t('showPassword')}
-                    className={twMerge(
-                      'absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-1.5 bg-white/5 border border-white/7 text-foreground-muted hover:text-foreground hover:bg-white/7 transition',
-                      'opacity-0 pointer-events-none',
-                      'group-has-[input:focus:not(:placeholder-shown)]:opacity-100 group-has-[input:focus:not(:placeholder-shown)]:pointer-events-auto',
-                      'aria-pressed:[&_.eye-icon]:hidden aria-pressed:[&_.eye-off-icon]:block',
-                      'disabled:opacity-50',
-                    )}
-                    disabled={isPending}
-                    onClick={togglePasswordVisibility}
-                    onMouseDown={(e) => e.preventDefault()}
-                    tabIndex={-1}
-                    type="button"
-                  >
-                    <Eye className="eye-icon size-3.5" />
-                    <EyeOff className="eye-off-icon size-3.5 hidden" />
-                  </button>
-                </div>
+                <PasswordInput
+                  autoCapitalize="off"
+                  autoComplete="current-password"
+                  autoCorrect="off"
+                  className={authInputClassName}
+                  disabled={isPending}
+                  enterKeyHint="done"
+                  id="login-current-password"
+                  maxLength={64}
+                  name="password"
+                  placeholder={t('passwordPlaceholder')}
+                  required
+                  spellCheck={false}
+                  toggleClassName={authTrailingButtonClassName}
+                  toggleLabel={t('showPassword')}
+                  wrapperClassName="group"
+                />
               </div>
 
               <div className="flex justify-end">
@@ -380,15 +278,7 @@ export default function LoginForm() {
               </div>
             </div>
 
-            <PasskeyLoginButton
-              disabled={isPending}
-              formRef={formRef}
-              onSuccess={handleLoginSuccess}
-              turnstile={{
-                getToken: getTurnstileToken,
-                reset: resetTurnstile,
-              }}
-            />
+            <PasskeyLoginButton disabled={isPending} onSuccess={handleLoginSuccess} />
 
             <TurnstileWidget
               hasToken={hasTurnstileToken}

@@ -1,7 +1,6 @@
 'use client'
 
-import type { PKCEChallenge } from '@sobok/auth/pkce-browser'
-import { BACKUP_CODE_PATTERN } from '@sobok/domain/auth/policy'
+import { authClient } from '@sobok/auth/client'
 import { Toggle } from '@sobok/ui'
 import { useMutation } from '@tanstack/react-query'
 import { Key, Loader2, RectangleEllipsis } from 'lucide-react'
@@ -10,88 +9,55 @@ import { type SubmitEvent, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
 import OneTimeCodeInput from '@/app/[locale]/(navigation)/(right-aside)/settings/two-factor/components/OneTimeCodeInput'
-import { applyInvalidParams } from '@/lib/apply-invalid-params'
-import { getProblemCodeMessage } from '@/lib/error-message'
-import type { ProblemDetailsError } from '@/utils/fetch-response'
-
-import { verifyTwoFactorLogin } from './api'
-import { clearTwoFactorValidity, twoFactorInputNames } from './util'
-
-const TWO_FACTOR_LOCAL_ERROR_STATUSES = [400, 401]
 
 interface Props {
   onCancel: () => void
-  onSuccess: (data: {
-    id: number
-    loginId: string
-    name: string
-    lastLoginAt: Date | null
-    lastLogoutAt: Date | null
-  }) => void
-  pkceChallenge: PKCEChallenge
-  twoFactorData: {
-    fingerprint: string
-    remember: boolean
-    authorizationCode: string
-  }
+  onSuccess: (user: { id: string; email: string; username?: string | null }) => void
 }
 
-export default function TwoFactorVerification({ onCancel, onSuccess, pkceChallenge, twoFactorData }: Props) {
+type VerifyVariables = {
+  code: string
+  trustDevice: boolean
+  useBackupCode: boolean
+}
+
+export default function TwoFactorVerification({ onCancel, onSuccess }: Props) {
   const [isBackupCode, setIsBackupCode] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
   const t = useTranslations('Auth.twoFactor')
-  const tErrors = useTranslations('Errors')
 
-  const { mutate: submitTwoFactor, isPending } = useMutation({
-    mutationFn: verifyTwoFactorLogin,
-    onError: (error: ProblemDetailsError) => {
-      clearTwoFactorValidity(formRef.current)
+  const { mutate: verify, isPending } = useMutation({
+    mutationFn: async ({ code, trustDevice, useBackupCode }: VerifyVariables) => {
+      const { data, error } = useBackupCode
+        ? await authClient.twoFactor.verifyBackupCode({ code })
+        : await authClient.twoFactor.verifyTotp({ code, trustDevice })
 
-      window.requestAnimationFrame(() => {
-        const form = formRef.current
-
-        if (applyInvalidParams(form, error.problem, tErrors, twoFactorInputNames)) {
-          return
-        }
-
-        if (!TWO_FACTOR_LOCAL_ERROR_STATUSES.includes(error.status)) {
-          return
-        }
-
-        toast.warning(getProblemCodeMessage(tErrors, error.problem) ?? t('fallbackError'))
-      })
-    },
-    onSuccess: (data) => {
-      if (data.isBackupCode) {
-        if (data.backupCodeCount > 0) {
-          toast.info(t('backupCodeRemaining', { count: data.backupCodeCount }))
-        } else {
-          toast.warning(t('backupCodeUsedUp'))
-        }
+      if (error) {
+        throw new Error(error.message ?? '')
       }
 
-      onSuccess(data)
+      return data
     },
-    meta: { suppressGlobalErrorToastForStatuses: TWO_FACTOR_LOCAL_ERROR_STATUSES },
+    onSuccess: (data) => {
+      onSuccess(data.user)
+    },
+    onError: (error: Error) => {
+      toast.warning(error.message || t('fallbackError'))
+    },
   })
 
   function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
-    clearTwoFactorValidity(e.currentTarget)
 
     if (!e.currentTarget.reportValidity()) {
       return
     }
 
     const formData = new FormData(e.currentTarget)
-
-    submitTwoFactor({
-      authorizationCode: twoFactorData.authorizationCode,
-      codeVerifier: pkceChallenge.codeVerifier,
-      fingerprint: twoFactorData.fingerprint,
-      remember: twoFactorData.remember,
-      token: String(formData.get('token') ?? ''),
-      trustBrowser: formData.get('trust-browser') === 'on',
+    verify({
+      code: String(formData.get('token') ?? ''),
+      trustDevice: formData.get('trust-browser') === 'on',
+      useBackupCode: isBackupCode,
     })
   }
 
@@ -138,10 +104,9 @@ export default function TwoFactorVerification({ onCancel, onSuccess, pkceChallen
             disabled={isPending}
             enterKeyHint="done"
             inputMode={isBackupCode ? 'text' : 'numeric'}
-            maxLength={isBackupCode ? 9 : 6}
-            minLength={isBackupCode ? 9 : 6}
-            pattern={isBackupCode ? BACKUP_CODE_PATTERN : '[0-9]*'}
-            placeholder={isBackupCode ? 'XXXX-XXXX' : '000000'}
+            maxLength={isBackupCode ? 11 : 6}
+            minLength={isBackupCode ? 10 : 6}
+            placeholder={isBackupCode ? 'XXXXX-XXXXX' : '000000'}
             spellCheck={false}
           />
         </div>

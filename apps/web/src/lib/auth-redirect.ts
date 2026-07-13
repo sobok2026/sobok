@@ -17,7 +17,7 @@ export function getAuthRedirectHref(pathname: AuthPathname, redirect: string | n
 }
 
 export function getAuthSuccessRedirect(redirect: string | null | undefined, name: string) {
-  if (!redirect || !redirect.startsWith('/') || redirect.startsWith('//')) {
+  if (!redirect?.startsWith('/') || redirect.startsWith('//')) {
     return '/'
   }
 

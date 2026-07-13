@@ -1,29 +1,29 @@
 'use client'
 
 import type { TurnstileInstance } from '@marsidev/react-turnstile'
-import { LOGIN_ID_PATTERN, PASSWORD_PATTERN } from '@sobok/domain/auth/policy'
-import { Eye, EyeOff, Info, Loader2, X } from 'lucide-react'
+import { Info, Loader2, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { type SubmitEvent, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
 
+import PasswordInput from '@/components/PasswordInput'
 import TurnstileWidget from '@/components/TurnstileWidget'
 import { Link } from '@/i18n/navigation'
-import { applyInvalidParams } from '@/lib/apply-invalid-params'
 import { getAuthRedirectHref, getCurrentAuthRedirect } from '@/lib/auth-redirect'
-import { getProblemCodeMessage } from '@/lib/error-message'
 
+import { authInputClassName as inputClassName, authTrailingButtonClassName as trailingButtonClassName } from '../field'
 import {
   clearSignupInputValidity,
-  clearSignupLoginId,
+  clearSignupUsername,
   clearSignupValidity,
   getSignupInput,
   reportInputValidity,
-  signupInputNames,
-  toggleSignupPasswordVisibility,
 } from './signup-form'
-import useSignupMutation, { SIGNUP_LOCAL_ERROR_STATUSES } from './useSignupMutation'
+import useSignupMutation from './useSignupMutation'
+
+// better-auth username 플러그인의 기본 검증 규칙(3–30자, 영문·숫자·_·.)과 동일하게 맞춘다.
+const USERNAME_PATTERN = '^[a-zA-Z0-9_.]+$'
 
 export default function SignupForm() {
   const [hasTurnstileToken, setHasTurnstileToken] = useState(false)
@@ -31,35 +31,17 @@ export default function SignupForm() {
   const turnstileRef = useRef<TurnstileInstance>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const t = useTranslations('Auth.signup')
-  const tErrors = useTranslations('Errors')
 
   function resetTurnstile() {
     turnstileRef.current?.reset()
     setHasTurnstileToken(false)
   }
 
-  function handleTurnstileTokenChange(token: string) {
-    setHasTurnstileToken(Boolean(token))
-  }
-
   const { mutate: submitSignup, isPending } = useSignupMutation({
     onError: (error) => {
       resetTurnstile()
       clearSignupValidity(formRef.current)
-
-      window.requestAnimationFrame(() => {
-        const form = formRef.current
-
-        if (applyInvalidParams(form, error.problem, tErrors, signupInputNames)) {
-          return
-        }
-
-        if (!SIGNUP_LOCAL_ERROR_STATUSES.includes(error.status)) {
-          return
-        }
-
-        toast.warning(getProblemCodeMessage(tErrors, error.problem) ?? t('fallbackError'))
-      })
+      toast.warning(error.message || t('fallbackError'))
     },
   })
 
@@ -78,24 +60,30 @@ export default function SignupForm() {
     const formData = new FormData(e.currentTarget)
 
     const body = {
-      loginId: String(formData.get('login-id') ?? ''),
+      email: String(formData.get('email') ?? ''),
+      username: String(formData.get('username') ?? ''),
       nickname: String(formData.get('nickname') ?? ''),
       password: String(formData.get('password') ?? ''),
-      passwordConfirm: String(formData.get('password-confirm') ?? ''),
       turnstileToken,
     }
 
-    if (body.password !== body.passwordConfirm) {
+    const passwordConfirm = String(formData.get('password-confirm') ?? '')
+
+    if (body.password !== passwordConfirm) {
       reportInputValidity(getSignupInput(e.currentTarget, 'password-confirm'), t('passwordMismatch'))
       return
     }
 
-    if (body.loginId === body.password) {
-      reportInputValidity(getSignupInput(e.currentTarget, 'password'), t('passwordSameAsLoginId'))
+    if (body.username === body.password) {
+      reportInputValidity(getSignupInput(e.currentTarget, 'password'), t('passwordSameAsUsername'))
       return
     }
 
     submitSignup(body)
+  }
+
+  function handleTurnstileTokenChange(token: string) {
+    setHasTurnstileToken(Boolean(token))
   }
 
   useEffect(() => {
@@ -123,8 +111,30 @@ export default function SignupForm() {
       >
         <div className="grid gap-4">
           <div>
+            <label className="block mb-1.5 text-sm font-medium text-foreground-secondary" htmlFor="signup-email">
+              {t('email')}
+            </label>
+            <input
+              autoCapitalize="off"
+              autoComplete="email"
+              autoCorrect="off"
+              autoFocus
+              className={inputClassName}
+              disabled={isPending}
+              enterKeyHint="next"
+              id="signup-email"
+              maxLength={254}
+              name="email"
+              placeholder={t('emailPlaceholder')}
+              required
+              spellCheck={false}
+              type="email"
+            />
+          </div>
+
+          <div>
             <label className="block mb-1.5 text-sm font-medium text-foreground-secondary" htmlFor="signup-username">
-              {t('loginId')}
+              {t('username')}
             </label>
             <div className="relative group">
               <input
@@ -132,35 +142,24 @@ export default function SignupForm() {
                 autoCapitalize="off"
                 autoComplete="username"
                 autoCorrect="off"
-                autoFocus
-                className={twMerge(
-                  'w-full rounded-xl bg-white/4 border border-white/7 pl-3 pr-10 py-2.5 text-foreground placeholder:text-foreground-subtle transition',
-                  'focus:outline-none focus:ring-2 focus:ring-white/12 focus:border-transparent',
-                  'disabled:opacity-60 disabled:cursor-not-allowed',
-                  'user-invalid:border-red-600/50 user-invalid:focus:ring-red-600/30',
-                )}
+                className={inputClassName}
                 disabled={isPending}
                 enterKeyHint="next"
                 id="signup-username"
-                maxLength={32}
-                minLength={2}
-                name="login-id"
-                pattern={LOGIN_ID_PATTERN}
-                placeholder={t('loginIdPlaceholder')}
+                maxLength={30}
+                minLength={3}
+                name="username"
+                pattern={USERNAME_PATTERN}
+                placeholder={t('usernamePlaceholder')}
                 required
                 spellCheck={false}
                 type="text"
               />
               <button
-                aria-label={t('clearLoginId')}
-                className={twMerge(
-                  'absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-1.5 bg-white/5 border border-white/7 text-foreground-muted hover:text-foreground hover:bg-white/7 transition',
-                  'opacity-0 pointer-events-none',
-                  'group-has-[input:focus:not(:placeholder-shown)]:opacity-100 group-has-[input:focus:not(:placeholder-shown)]:pointer-events-auto',
-                  'disabled:opacity-50',
-                )}
+                aria-label={t('username')}
+                className={trailingButtonClassName}
                 disabled={isPending}
-                onClick={() => clearSignupLoginId(formRef.current)}
+                onClick={() => clearSignupUsername(formRef.current)}
                 onMouseDown={(e) => e.preventDefault()}
                 tabIndex={-1}
                 type="button"
@@ -169,7 +168,7 @@ export default function SignupForm() {
               </button>
             </div>
             <p className="mt-1 text-xs text-foreground-muted" id="signup-username-help">
-              {t('loginIdHelp')}
+              {t('usernameHelp')}
             </p>
           </div>
 
@@ -177,49 +176,25 @@ export default function SignupForm() {
             <label className="block mb-1.5 text-sm font-medium text-foreground-secondary" htmlFor="signup-new-password">
               {t('password')}
             </label>
-            <div className="relative group">
-              <input
-                aria-describedby="signup-password-help"
-                autoCapitalize="off"
-                autoComplete="new-password"
-                autoCorrect="off"
-                className={twMerge(
-                  'w-full rounded-xl bg-white/4 border border-white/7 pl-3 pr-10 py-2.5 text-foreground placeholder:text-foreground-subtle transition',
-                  'focus:outline-none focus:ring-2 focus:ring-white/12 focus:border-transparent',
-                  'disabled:opacity-60 disabled:cursor-not-allowed',
-                  'user-invalid:border-red-600/50 user-invalid:focus:ring-red-600/30',
-                )}
-                disabled={isPending}
-                enterKeyHint="next"
-                id="signup-new-password"
-                maxLength={64}
-                minLength={8}
-                name="password"
-                pattern={PASSWORD_PATTERN}
-                placeholder={t('passwordPlaceholder')}
-                required
-                spellCheck={false}
-                type="password"
-              />
-              <button
-                aria-label={t('showPassword')}
-                className={twMerge(
-                  'absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-1.5 bg-white/5 border border-white/7 text-foreground-muted hover:text-foreground hover:bg-white/7 transition',
-                  'opacity-0 pointer-events-none',
-                  'group-has-[input:focus:not(:placeholder-shown)]:opacity-100 group-has-[input:focus:not(:placeholder-shown)]:pointer-events-auto',
-                  'aria-pressed:[&_.eye-icon]:hidden aria-pressed:[&_.eye-off-icon]:block',
-                  'disabled:opacity-50',
-                )}
-                disabled={isPending}
-                onClick={(e) => toggleSignupPasswordVisibility(formRef.current, 'password', e.currentTarget)}
-                onMouseDown={(e) => e.preventDefault()}
-                tabIndex={-1}
-                type="button"
-              >
-                <Eye className="eye-icon size-3.5" />
-                <EyeOff className="eye-off-icon size-3.5 hidden" />
-              </button>
-            </div>
+            <PasswordInput
+              aria-describedby="signup-password-help"
+              autoCapitalize="off"
+              autoComplete="new-password"
+              autoCorrect="off"
+              className={inputClassName}
+              disabled={isPending}
+              enterKeyHint="next"
+              id="signup-new-password"
+              maxLength={64}
+              minLength={8}
+              name="password"
+              placeholder={t('passwordPlaceholder')}
+              required
+              spellCheck={false}
+              toggleClassName={trailingButtonClassName}
+              toggleLabel={t('showPassword')}
+              wrapperClassName="group"
+            />
             <p className="mt-1 text-xs text-foreground-muted" id="signup-password-help">
               {t('passwordHelp')}
             </p>
@@ -232,48 +207,25 @@ export default function SignupForm() {
             >
               {t('passwordConfirm')}
             </label>
-            <div className="relative group">
-              <input
-                aria-describedby="signup-password-confirmation-help"
-                autoCapitalize="off"
-                autoComplete="new-password"
-                autoCorrect="off"
-                className={twMerge(
-                  'w-full rounded-xl bg-white/4 border border-white/7 pl-3 pr-10 py-2.5 text-foreground placeholder:text-foreground-subtle transition',
-                  'focus:outline-none focus:ring-2 focus:ring-white/12 focus:border-transparent',
-                  'disabled:opacity-60 disabled:cursor-not-allowed',
-                  'user-invalid:border-red-600/50 user-invalid:focus:ring-red-600/30',
-                )}
-                disabled={isPending}
-                enterKeyHint="next"
-                id="signup-new-password-confirmation"
-                maxLength={64}
-                minLength={8}
-                name="password-confirm"
-                placeholder={t('passwordConfirmPlaceholder')}
-                required
-                spellCheck={false}
-                type="password"
-              />
-              <button
-                aria-label={t('showPassword')}
-                className={twMerge(
-                  'absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-1.5 bg-white/5 border border-white/7 text-foreground-muted hover:text-foreground hover:bg-white/7 transition',
-                  'opacity-0 pointer-events-none',
-                  'group-has-[input:focus:not(:placeholder-shown)]:opacity-100 group-has-[input:focus:not(:placeholder-shown)]:pointer-events-auto',
-                  'aria-pressed:[&_.eye-icon]:hidden aria-pressed:[&_.eye-off-icon]:block',
-                  'disabled:opacity-50',
-                )}
-                disabled={isPending}
-                onClick={(e) => toggleSignupPasswordVisibility(formRef.current, 'password-confirm', e.currentTarget)}
-                onMouseDown={(e) => e.preventDefault()}
-                tabIndex={-1}
-                type="button"
-              >
-                <Eye className="eye-icon size-3.5" />
-                <EyeOff className="eye-off-icon size-3.5 hidden" />
-              </button>
-            </div>
+            <PasswordInput
+              aria-describedby="signup-password-confirmation-help"
+              autoCapitalize="off"
+              autoComplete="new-password"
+              autoCorrect="off"
+              className={inputClassName}
+              disabled={isPending}
+              enterKeyHint="next"
+              id="signup-new-password-confirmation"
+              maxLength={64}
+              minLength={8}
+              name="password-confirm"
+              placeholder={t('passwordConfirmPlaceholder')}
+              required
+              spellCheck={false}
+              toggleClassName={trailingButtonClassName}
+              toggleLabel={t('showPassword')}
+              wrapperClassName="group"
+            />
             <p className="mt-1 text-xs text-foreground-muted" id="signup-password-confirmation-help">
               {t('passwordConfirmHelp')}
             </p>
@@ -288,12 +240,7 @@ export default function SignupForm() {
               autoCapitalize="off"
               autoComplete="nickname"
               autoCorrect="off"
-              className={twMerge(
-                'w-full rounded-xl bg-white/4 border border-white/7 px-3 py-2.5 text-foreground placeholder:text-foreground-subtle transition',
-                'focus:outline-none focus:ring-2 focus:ring-white/12 focus:border-transparent',
-                'disabled:opacity-60 disabled:cursor-not-allowed',
-                'user-invalid:border-red-600/50 user-invalid:focus:ring-red-600/30',
-              )}
+              className={twMerge(inputClassName, 'px-3')}
               disabled={isPending}
               enterKeyHint="done"
               id="signup-nickname"
