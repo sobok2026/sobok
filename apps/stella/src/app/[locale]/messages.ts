@@ -238,7 +238,7 @@ export const messages = {
       meta: {
         title: '오늘의 흐름 · 매일 보는 오늘의 별자리 운세',
         description:
-          '오늘의 달과 행성이 만드는 하루의 결을 읽어 드려요. 달의 위상과 행성 역행을 한눈에 살펴보고 생년월일시를 입력하면 내 탄생 차트를 기준으로 오늘의 무대와 하이라이트 그리고 Do & Don’t까지 매일 새롭게 확인할 수 있어요.',
+          '오늘의 달과 행성이 만드는 하루의 결을 읽어 드려요. 달의 위상과 행성 역행을 한눈에 살펴보고 생년월일시를 입력하면 내 탄생 차트를 기준으로 오늘의 무대와 하이라이트 그리고 추천과 주의까지 매일 새롭게 확인할 수 있어요.',
       },
       hero: {
         eyebrow: '매일 새로 뜨는 하늘',
@@ -250,7 +250,7 @@ export const messages = {
         moonIn: '{sign}의 달',
       },
       phases: {
-        newMoon: '뉴문 · 삭',
+        newMoon: '삭',
         waxingCrescent: '초승달',
         firstQuarter: '상현달',
         waxingGibbous: '차오르는 달',
@@ -271,9 +271,9 @@ export const messages = {
         privacy: '출생 정보는 이 기기에만 저장돼요. 서버로 전송되지 않아요.',
       },
       doDont: {
-        title: '오늘의 Do & Don’t',
-        doLabel: 'Do',
-        dontLabel: 'Don’t',
+        title: '오늘의 추천과 주의',
+        doLabel: '이렇게 해봐요',
+        dontLabel: '이건 피해요',
       },
       share: {
         button: '오늘의 흐름 공유',

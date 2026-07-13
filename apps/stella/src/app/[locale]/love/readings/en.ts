@@ -27,74 +27,129 @@ export const readings: LoveReadings = {
       "Your attraction is a tide that seeps into the mood. You sink deep into the other person's feelings and get drenched in their world. That unconditional attunement becomes a dreamlike comfort to them. Just know you can blur while matching them — keep your own outline even inside love.",
   },
   looks: {
-    aries: '',
-    taurus: '',
-    gemini: '',
-    cancer: '',
-    leo: '',
-    virgo: '',
-    libra: '',
-    scorpio: '',
-    sagittarius: '',
-    capricorn: '',
-    aquarius: '',
-    pisces: '',
+    aries:
+      "You're vivid from the very first impression. A clear gaze and a quick stride catch the eye first anywhere. That energy of stepping up without weighing it wakes the other person's heart the moment you meet.",
+    taurus:
+      "An unhurried steadiness comes through as your first impression. You carry a calm air that loosens tension on its own when you're near. That quality, subtly seeping out, draws people more the longer they look.",
+    gemini:
+      "A bright, quick impression reaches out first. A live expression and an open way of talking let conversation unwind even at a first meeting. That lightness, tied to nothing, melts the other person's tension in one stroke.",
+    cancer:
+      'A soft, tender first impression is yours. People open their hearts easily to your dewy gaze. That coziness that makes them want to keep you close is your very first weapon.',
+    leo: "You're someone the air brightens around the instant you walk in. A confident bearing and radiant presence gather eyes naturally. That light you don't hide captures the other person from the first impression.",
+    virgo:
+      'A neat, trim impression earns trust first. From flawless detail seeps the sense of a dependable person. Unshowy as it is, that cleanness that makes people want you near is your charm.',
+    libra:
+      'You were born with a balanced, likable first impression. A soft smile and a refined air let even strangers lower their guard. That air that turns comfortable in your company keeps drawing people closer.',
+    scorpio:
+      "An intensity that isn't easily read rides your first impression. A deep gaze and a mysterious distance make people curious. That coolness of not showing everything actually holds the eye.",
+    sagittarius:
+      'A wide-open brightness spreads as your first impression. A hearty laugh and a free bearing lighten even those beside you. That openness, tied to nothing, switches on goodwill the moment you meet.',
+    capricorn:
+      'A grounded, dependable first impression is yours. People place trust naturally in a poise more grown-up than your years. That composure that never looks light becomes deeper goodwill as time passes.',
+    aquarius:
+      "A distinctive individuality is felt at first sight. Your own grain, unlike the trend, draws people's curiosity. That air, friendly yet independent, keeps making people look again.",
+    pisces:
+      'A dreamy, soft atmosphere hovers over your first impression. People rest their hearts easily on your feeling-filled gaze. That tenderness that seeps in without borders disarms the other person from the start.',
   },
   inner: {
-    aries: '',
-    taurus: '',
-    gemini: '',
-    cancer: '',
-    leo: '',
-    virgo: '',
-    libra: '',
-    scorpio: '',
-    sagittarius: '',
-    capricorn: '',
-    aquarius: '',
-    pisces: '',
+    aries:
+      'Your inner heart is quick and honest. Feeling rises straight up and clears fast, so nothing lingers behind. You come alive more vividly inside a stir that races your heart than in placid calm.',
+    taurus:
+      'Your heart pools slowly but deeply. Only in a familiar, settled place do you turn truly at ease. Once you give your affection, that root that scarcely wavers is your inner strength.',
+    gemini:
+      'You sort your heart out by putting feeling into words. Even a tangled mood lightens once you share it with someone. Change is the grain that steadies you, so fresh stir revives your heart.',
+    cancer:
+      "Your heart runs deep and rises and falls like waves. Only inside a safe nest do you fully let down your guard. That tenderness that holds people's warmth and remembers it long is your true face.",
+    leo: "Your feelings are big and warm. Your heart swells brightest when it's loved and recognized. You have an honesty that can't hide even hurt, so your heart shows plainly on your face.",
+    virgo:
+      'You always work to keep your feelings in order. You express affection through worry and care, and tend to digest your heart inward. You may look composed outside, but inside you watch over the other person more finely than anyone.',
+    libra:
+      'Your heart finds its balance inside a relationship. Your mood steadies more together than alone, and you want harmony over conflict. Only when a good person is beside you does your inner side finally ease.',
+    scorpio:
+      "Your feelings are deep and intense. Yours is an all-or-nothing heart that can't bear a lukewarm temperature. You rarely show it, but inside runs water that's always hot.",
+    sagittarius:
+      'Your heart is optimistic and free. Feeling caged makes you restless, and laughter restores you fast. You carry the power to wave off even heavy feeling with a wide view.',
+    capricorn:
+      "You guard your feelings with restraint. You steady your heart with a sense of duty so you won't be easily shaken. You open late, but the affection you give once is a deep, quiet devotion that doesn't change with the years.",
+    aquarius:
+      'You watch your feelings from a step away. You steady yourself by keeping distance and holding your ground rather than getting swept up. Yours is a heart that flows most freely inside a friendship-like ease.',
+    pisces:
+      "Your heart seeps in without borders. Your empathy runs large, sinking deep into the other person's feelings and getting drenched alongside. That tenderness, keener to the grain of the heart than to practical math, is your inner world.",
   },
   styling: {
-    aries: '',
-    taurus: '',
-    gemini: '',
-    cancer: '',
-    leo: '',
-    virgo: '',
-    libra: '',
-    scorpio: '',
-    sagittarius: '',
-    capricorn: '',
-    aquarius: '',
-    pisces: '',
+    aries:
+      'Vivid color and bold accents bring you alive. An effortless, lively style that looks undone suits your born energy. Charm bursts strongest when you pick the one eye-catching move instead of hesitating.',
+    taurus:
+      'Fine fabric and sensuous texture are your weapon. A subtle scent and comfortable yet luxurious classics suit you well. That completeness, gathered one piece at a time without hurry, makes a steadiness people want to keep near.',
+    gemini:
+      'Light accents and witty mix-and-match shine just like you. Breezily blending trendy items leaves no room for boredom. That bright, fresh sense keeps making you look new.',
+    cancer:
+      'Soft pastels and cozy silhouettes wrap around you. Tender fabrics like knitwear carry your born warmth as it is. That comfortable air that makes people want to come closer is your own style.',
+    leo: 'Bold accents and one eye-catching move are made for you. Show your presence proudly with gleaming items like gold. That confidence you enjoy without shrinking completes the look.',
+    virgo:
+      'Clean lines and tidy minimalism set you off. A crisp, uncluttered look gives off a trim trustworthiness. That neatness, alive down to the smallest detail, never tires the eye.',
+    libra:
+      'Balanced harmony and elegant coordination are your strength. Soft colors and refined silhouettes meet your born sense. That harmony, blended without excess, makes people want to stay near.',
+    scorpio:
+      'Deep color and restrained sensuality make you alluring. A deep tone like black with one mysterious accent is enough. That restraint of not revealing everything actually holds the eye longer.',
+    sagittarius:
+      'Comfortable, active casual brings you alive naturally. A free mood, as if you might set off anywhere, suits you well. That ease, unbound by dressing up, makes you look more charming.',
+    capricorn:
+      "Classic monotone and a polished formal mood set your standing. A solid style that doesn't chase trends matches your grounded impression. That dignity, unchanged as time passes, adds to trust.",
+    aquarius:
+      'A distinctive individuality and a unique accent are so you. Charm comes alive when you experiment with your own look, unlike the trend. That uniqueness no one can copy keeps making people look again.',
+    pisces:
+      'A dreamy, flowing style wraps around you. Soft fabrics and emotive colors blend with your born atmosphere. That dreamlike mood draws the other person into your world.',
   },
   flirting: {
-    aries: '',
-    taurus: '',
-    gemini: '',
-    cancer: '',
-    leo: '',
-    virgo: '',
-    libra: '',
-    scorpio: '',
-    sagittarius: '',
-    capricorn: '',
-    aquarius: '',
-    pisces: '',
+    aries:
+      "Your flirting is unhesitating directness. When your heart stirs, meet their eyes and step up first, without weighing it. In an active meeting that moves the body together, that frank energy sets the other person's heart racing.",
+    taurus:
+      'Your flirting is an unhurried sense. Make a setting to share something tasty and feel good texture and scent together. That steady warmth of keeping company becomes the biggest thrill for the other person.',
+    gemini:
+      'Your flirting is talk that never runs out. Draw out their story with witty jokes and light questions. That quickness sparkling at every turn of words makes them wait for the next meeting.',
+    cancer:
+      "Your flirting is quiet tending. Remember a passing remark and return it thoughtfully. Small devotion offered in a comfortable setting warms the deepest part of the other person's heart.",
+    leo: "Your flirting is confident tenderness. Give praise without stinting and make the other person the lead. That radiant expression you don't hide sets them fluttering in one stroke.",
+    virgo:
+      'Your flirting is careful consideration. Notice what they need first and fill it without a word. That devotion offered without pressure builds a trust that lasts.',
+    libra:
+      'Your flirting is a sense for making atmosphere. Pick a good space and lend an ear to their story. That way of shaping the shared time beautifully draws them in naturally.',
+    scorpio:
+      'Your flirting is a deep gaze and focus. Load sincerity into your eyes instead of talking much. When you share the stories only the two of you know, one by one, they find it hard to escape that density.',
+    sagittarius:
+      "Your flirting is a spontaneous suggestion. Toss it out easily — let's go somewhere fun, right now. That sense that the world widens when you're together becomes the power that holds them.",
+    capricorn:
+      'Your flirting is dependable sincerity. Show your heart by keeping a single promise instead of flashy words. That way of approaching slowly but surely puts the other person at ease.',
+    aquarius:
+      'Your flirting is sharing a special interest. Bring out, at ease, the tastes and stories unlike others. That fresh distance, lover yet friend, makes them more curious.',
+    pisces:
+      'Your flirting is empathy that shares feeling. Do together something with heart in it, like a favorite song or painting. That gaze alone, soaking into their feelings, leaves the other person feeling consoled.',
   },
   caution: {
-    aries: '',
-    taurus: '',
-    gemini: '',
-    cancer: '',
-    leo: '',
-    virgo: '',
-    libra: '',
-    scorpio: '',
-    sagittarius: '',
-    capricorn: '',
-    aquarius: '',
-    pisces: '',
+    aries:
+      "When haste races ahead of the other person's speed, charm is halved. Driving them as if to push makes them feel chased. Tend the temperature that comes next, so you don't let the first thrill's cooling show.",
+    taurus:
+      'When you simmer too long and let the timing slip by, hearts fall out of line. Clinging only to the familiar makes it easy to miss their changes too. If your heart is ready, take the first step yourself.',
+    gemini:
+      "When words run ahead and sincerity stays hidden, the other person gets confused. A light, testing attitude easily clouds trust. Keep the place your heart stays clear, so interest doesn't wander here and there.",
+    cancer:
+      "Swallowing hurt and then bursting it all out at once startles the other person. Over-reading moods and clinging easily widen the distance instead. If there's something you want, don't hold it in — sometimes say it out loud.",
+    leo: 'Sulking or showing off over not getting attention cools your charm. The moment you treat them like a supporting role, hearts drift apart. As much as you want love, remember their pace of expression may simply differ.',
+    virgo:
+      'Constant nitpicking and nagging hide your tenderness. Waiting for the perfect moment easily postpones your heart too. However clumsy, offering your heart now reaches the other person more.',
+    libra:
+      "Postponing decisions makes the other person doubt your sincerity. Hiding your inner heart to avoid conflict creates distance. Over minding others' eyes, bring out your own heart clearly first.",
+    scorpio:
+      'The more you doubt and try to verify, the more the relationship suffocates. The harder your grip, the more stifled the other person feels. In your urge to know everything, leave a little slack now and then.',
+    sagittarius:
+      'When you want to flee the moment things turn serious, the other person grows uneasy. Leaning on impulse and taking promises lightly shakes trust. Take the deepening, too, as one scene of the adventure.',
+    capricorn:
+      "Looking indifferent because your expression comes late wears the other person out. Putting work and face first easily pushes your heart to the back. Of all words, don't ration I like you — offer it first.",
+    aquarius:
+      "Keeping only a vague distance leaves them guessing friend or lover. Avoiding feelings and playing it cool lets the warmth cool. Once your heart is set, it's better to let them know clearly.",
+    pisces:
+      'Matching the other person entirely until you blur yourself tips the relationship. Turning from reality and idealizing them is easy too. Even inside love, keep your own outline clear.',
   },
   persona: {
     aries: {
@@ -190,11 +245,16 @@ export const readings: LoveReadings = {
       'Pluto sits in your house of partnership. Love remakes you from the root with this placement — the you before and after the meeting are different people.',
   },
   natalLove: {
-    flowing: '',
-    slowDeep: '',
-    intense: '',
-    unconventional: '',
-    balanced: '',
+    flowing:
+      "Your chart was born with a grain where love flows naturally. Venus settles in with ease, so goodwill and chances gather unusually well. It's a blessing where people approach without effort, so don't take that flow for granted — keep your heart open.",
+    slowDeep:
+      "Your chart has a grain where love comes slowly but solidly. Light bonds filter out naturally, and only proven ties stay near. No need to rush over being later than others — it's a love whose worth shows as time stacks up.",
+    intense:
+      "Your chart has a grain where love flows intense and deep. There's no skimming shallow — once your heart turns, you stake everything. That temperature, deep enough to change the you before and after a meeting, is your own gift and homework.",
+    unconventional:
+      "Your chart has a grain where love is free and unlike others. The standard dating script doesn't fit, so a way just for two is needed. You actually find steadiness in a friendship-like romance or an independent tie, so there's no need to compare yourself to others.",
+    balanced:
+      "Your chart has a grain where love flows evenly, without tilting hard. Rather than leaning on dramatic luck, the relationship you build becomes the center. It's a good time to draw the scene you want by hand instead of waiting for a current.",
   },
   timing: {
     jupiterVenus: {
