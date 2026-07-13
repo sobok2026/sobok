@@ -35,8 +35,8 @@ type LoginVariables = {
 }
 
 export default function LoginForm() {
-  const [isTwoFactorStep, setIsTwoFactorStep] = useState(false)
   const [hasTurnstileToken, setHasTurnstileToken] = useState(false)
+  const [isTwoFactorStep, setIsTwoFactorStep] = useState(false)
   const [signupHref, setSignupHref] = useState('/auth/signup')
   const turnstileRef = useRef<TurnstileInstance>(null)
   const formRef = useRef<HTMLFormElement>(null)

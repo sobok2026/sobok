@@ -54,6 +54,7 @@ export default function TwoFactorVerification({ onCancel, onSuccess }: Props) {
     }
 
     const formData = new FormData(e.currentTarget)
+
     verify({
       code: String(formData.get('token') ?? ''),
       trustDevice: formData.get('trust-browser') === 'on',

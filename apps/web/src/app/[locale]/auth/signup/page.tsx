@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { getLocaleFromParams } from '@/i18n/server'
 import { generateLocalizedMetadata } from '@/lib/metadata'
+import SobokLogo from '@/svg/SobokLogo'
 
 import styles from '../authTheme.module.css'
 import SignupForm from './SignupForm'
@@ -34,6 +35,7 @@ export default async function Page({ params }: PageProps<'/[locale]/auth/signup'
     <main className={`min-h-dvh flex items-center justify-center sm:p-8 ${styles.background}`}>
       <h1 className="sr-only">{t('title')}</h1>
       <div className={`${styles.card} w-full p-4 sm:max-w-lg sm:rounded-2xl sm:p-6`}>
+        <SobokLogo aria-hidden className="mx-auto mb-6 h-12 w-auto text-foreground sm:mb-7" />
         <SignupForm />
       </div>
     </main>

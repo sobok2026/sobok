@@ -35,7 +35,7 @@ export default async function Home({ params }: PageProps<'/[locale]'>) {
       <h2 className="max-w-prose">{t('description')}</h2>
       <div className="grid gap-2">
         <Link
-          className={`${linkClassName} bg-brand-gradient relative text-background before:absolute before:inset-0 before:rounded-lg before:border-2 before:border-foreground/40`}
+          className={`${linkClassName} bg-brand relative text-background before:absolute before:inset-0 before:rounded-lg before:border-2 before:border-foreground/40`}
           href="/new"
         >
           {t('enterAction')}

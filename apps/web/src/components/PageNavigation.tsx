@@ -29,7 +29,7 @@ export default function PageNavigation({
   const { startPage, endPage, visiblePageNumbers } = getVisiblePageRange(currentPage, totalPages, VISIBLE_PAGES)
 
   const commonClassName =
-    'justify-center items-center rounded-full px-2 min-w-10 h-10 aria-current:bg-brand-gradient aria-current:pointer-events-none aria-current:text-background aria-disabled:pointer-events-none aria-disabled:text-foreground-faint hover:bg-surface-3 active:bg-surface-2'
+    'justify-center items-center rounded-full px-2 min-w-10 h-10 aria-current:bg-brand aria-current:pointer-events-none aria-current:text-background aria-disabled:pointer-events-none aria-disabled:text-foreground-faint hover:bg-surface-3 active:bg-surface-2'
 
   return (
     <nav

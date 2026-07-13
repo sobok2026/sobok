@@ -1,7 +1,5 @@
 import { twMerge } from 'tailwind-merge'
 
-// 로그인·회원가입 폼이 공유하는 입력/후행 버튼 스타일. 두 폼의 텍스트 입력, 지우기(X) 버튼,
-// 비밀번호 표시 토글이 모두 동일한 룩을 쓰므로 한 곳에서 관리한다.
 export const authInputClassName = twMerge(
   'w-full rounded-xl bg-white/4 border border-white/7 pl-3 pr-10 py-2.5 text-foreground placeholder:text-foreground-subtle transition',
   'focus:outline-none focus:ring-2 focus:ring-white/12 focus:border-transparent',

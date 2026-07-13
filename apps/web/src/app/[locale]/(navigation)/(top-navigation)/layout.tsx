@@ -28,7 +28,7 @@ export default async function Layout({ children, params }: LayoutProps<'/[locale
       <main className="flex flex-col grow gap-2">{children}</main>
       <footer className="text-center grid gap-2 p-4 text-sm">
         <Link
-          className="mx-auto text-foreground rounded-full border-2 border-brand-gradient hover:brightness-125 active:brightness-75 transition"
+          className="mx-auto text-foreground rounded-full border-2 border-brand hover:brightness-125 active:brightness-75 transition"
           href="/app"
           prefetch={false}
         >

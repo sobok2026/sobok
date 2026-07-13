@@ -22,7 +22,7 @@ const shelfItems = [
   { label: '404', className: 'bg-gradient-to-br from-surface-4/60 via-surface-2 to-overlay' },
   { label: 'X-13', className: 'bg-gradient-to-br from-rose-200/70 via-red-500/25 to-overlay' },
   { label: 'N-28', className: 'bg-gradient-to-br from-slate-500/70 via-surface-2 to-overlay' },
-  { label: 'E-35', className: 'row-span-2 bg-gradient-to-br from-brand-start/70 via-brand/35 to-overlay' },
+  { label: 'E-35', className: 'row-span-2 bg-gradient-to-br from-brand/70 via-brand/35 to-overlay' },
 ]
 
 export default async function NotFound() {
@@ -58,7 +58,7 @@ export default async function NotFound() {
             <span className="text-sm font-bold text-foreground-secondary">{shortName}</span>
           </div>
 
-          <p className="font-mono text-sm font-bold leading-6 text-brand-start">404 / PAGE NOT FOUND</p>
+          <p className="font-mono text-sm font-bold leading-6 text-brand">404 / PAGE NOT FOUND</p>
           <h1 className="mt-4 text-balance text-4xl font-bold leading-tight tracking-normal sm:text-6xl">
             {titleLines.map((line) => (
               <span className="block" key={line}>

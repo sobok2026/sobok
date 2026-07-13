@@ -20,7 +20,7 @@ export default async function PushSettings({ userId }: Props) {
   return (
     <div className="space-y-8 sm:space-y-12 max-w-2xl mx-auto">
       <div className="relative bg-linear-to-br from-surface-2/80 to-surface/80 rounded-2xl p-4 sm:p-5 border border-border-2/50 hover:border-brand/30 transition-all overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-tr from-brand-start/5 via-transparent to-brand/5 pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-tr from-brand/5 via-transparent to-brand/5 pointer-events-none" />
         <div className="flex items-center gap-4 flex-1">
           <IconBell className="size-5 shrink-0 text-brand p-2.5 bg-brand/10 rounded-xl border border-brand/20 box-content" />
           <div className="flex-1">

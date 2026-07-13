@@ -6,7 +6,6 @@ import { messages as topNavigationMessages } from '@/app/[locale]/(navigation)/(
 import { messages as navigationMessages } from '@/app/[locale]/(navigation)/messages'
 import { messages as searchMessages } from '@/app/[locale]/(navigation)/search/messages'
 import { messages as authMessages } from '@/app/[locale]/auth/messages'
-import { messages as deterrenceMessages } from '@/app/[locale]/deterrence/messages'
 import { messages as docMessages } from '@/app/[locale]/doc/messages'
 import { messages as errorMessages } from '@/app/[locale]/errors.messages'
 import { messages as appMessages } from '@/app/[locale]/messages'
@@ -19,7 +18,6 @@ export type MessageValue = string | { [key: string]: MessageValue }
 const messageModules = [
   appMessages,
   authMessages,
-  deterrenceMessages,
   docMessages,
   errorMessages,
   navigationMessages,

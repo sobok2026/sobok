@@ -82,7 +82,7 @@ export default function Slider({
     >
       <div className="relative h-1/3 w-full grow overflow-hidden rounded-full border bg-surface-3">
         <div
-          className={twMerge('absolute h-full w-full bg-brand-gradient', isReversed ? 'origin-right' : 'origin-left')}
+          className={twMerge('absolute h-full w-full bg-brand', isReversed ? 'origin-right' : 'origin-left')}
           style={{ transform: `scaleX(${ratio})` }}
         />
       </div>

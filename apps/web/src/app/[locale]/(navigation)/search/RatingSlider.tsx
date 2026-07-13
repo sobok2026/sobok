@@ -158,7 +158,7 @@ function RatingSlider({ minValue, maxValue, onMinChange, onMaxChange }: Props) {
       <div className="relative h-8 mx-4 flex items-center cursor-pointer" onClick={handleTrackClick} ref={sliderRef}>
         <div className="absolute w-full h-2 bg-surface-2 rounded-full" />
         <div
-          className="absolute h-2 bg-linear-to-r from-brand-start to-brand rounded-full"
+          className="absolute h-2 bg-brand rounded-full"
           style={{
             left: `${minPos}%`,
             right: `${100 - maxPos}%`,

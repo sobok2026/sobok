@@ -29,9 +29,8 @@
   --color-border-2: #3f3f46;
   --color-border-strong: #52525b;
 
-  /* Brand */
-  --color-brand-start: #46cdfc;
-  --color-brand: #f5bcff;
+  /* Brand — 소복 코럴(로고 색) */
+  --color-brand: #ff9f74;
 
   --animate-fade-in: fade-in 1s ease-out;
   --animate-fade-in-fast: fade-in 0.5s ease-out;
@@ -174,19 +173,6 @@
   padding-right: var(--safe-area-right);
 }
 
-@utility bg-brand-gradient {
-  background-image: linear-gradient(to right, var(--color-brand-start), var(--color-brand));
-}
-
-@utility border-brand-gradient {
-  background-image:
-    linear-gradient(var(--color-background), var(--color-background)),
-    linear-gradient(to right, var(--color-brand-start), var(--color-brand));
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-  border-color: transparent;
-}
-
 :root {
   color-scheme: dark;
 
@@ -229,8 +215,7 @@
     --color-border-2: #d4d4d8;
     --color-border-strong: #a1a1aa;
 
-    --color-brand-start: #3b82f6;
-    --color-brand: #8b5cf6;
+    --color-brand: #ff9f74;
 
     --toast-bg: #ffffff;
     --toast-border: #e4e4e7;
@@ -267,8 +252,7 @@
   --color-border-2: #d4d4d8;
   --color-border-strong: #a1a1aa;
 
-  --color-brand-start: #3b82f6;
-  --color-brand: #8b5cf6;
+  --color-brand: #ff9f74;
 
   --toast-bg: #ffffff;
   --toast-border: #e4e4e7;
@@ -299,7 +283,6 @@
   --color-border-2: #252540;
   --color-border-strong: #383860;
 
-  --color-brand-start: #ff00ff;
   --color-brand: #00ffff;
 
   --toast-bg: #18182a;
@@ -327,7 +310,6 @@
   --color-border-2: #6a5642;
   --color-border-strong: #88735a;
 
-  --color-brand-start: #ff6b35;
   --color-brand: #f7931e;
 
   --toast-bg: #3a2b1e;
