@@ -1,103 +1,53 @@
 'use client'
 
-import type { PATCHV1MePasswordBody, PATCHV1MePasswordResponse } from '@sobok/contracts'
-
-import { PASSWORD_PATTERN } from '@sobok/domain/auth/policy'
+import { authClient } from '@sobok/auth/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Eye, EyeOff, Loader2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useRef, useState } from 'react'
+import { Loader2 } from 'lucide-react'
+import { useRef } from 'react'
 import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
 
+import PasswordInput from '@/components/PasswordInput'
 import { useRouter } from '@/i18n/navigation'
-import { applyInvalidParams } from '@/lib/apply-invalid-params'
-import { getProblemMessage } from '@/lib/error-message'
 import { handleUnauthorizedError } from '@/lib/react-query/auth-state'
-import type { ProblemDetailsError } from '@/utils/fetch-response'
 
-import OneTimeCodeInput from '../two-factor/components/OneTimeCodeInput'
-import { changeMyPassword } from './api'
-import {
-  clearPasswordChangeInputValidity,
-  clearPasswordChangeValidity,
-  getPasswordChangeInput,
-  passwordChangeInputNames,
-} from './password-form'
+import { clearPasswordChangeInputValidity, clearPasswordChangeValidity, getPasswordChangeInput } from './password-form'
 
-type Props = {
-  isTwoFactorEnabled: boolean
-}
+const toggleClassName = 'absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-surface-3'
+const toggleIconClassName = 'size-5 shrink-0 text-foreground-muted'
 
-export default function PasswordChangeForm({ isTwoFactorEnabled }: Props) {
+export default function PasswordChangeForm() {
   const router = useRouter()
   const queryClient = useQueryClient()
-  const tErrors = useTranslations('Errors')
   const formRef = useRef<HTMLFormElement | null>(null)
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
-  const [showNewPassword, setShowNewPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [token, setToken] = useState('')
 
-  const normalizedToken = token.replace(/[^0-9]/g, '')
-  const strengthInfo = getStrengthText(calculatePasswordStrength(newPassword))
+  const changePasswordMutation = useMutation({
+    mutationFn: async (input: { currentPassword: string; newPassword: string }) => {
+      const { error } = await authClient.changePassword({ ...input, revokeOtherSessions: true })
 
-  const canSubmit =
-    currentPassword.length > 0 &&
-    newPassword.length > 0 &&
-    confirmPassword.length > 0 &&
-    (!isTwoFactorEnabled || normalizedToken.length === 6)
-
-  const changePasswordMutation = useMutation<PATCHV1MePasswordResponse, ProblemDetailsError, PATCHV1MePasswordBody>({
-    mutationFn: changeMyPassword,
+      if (error) {
+        throw new Error(error.message)
+      }
+    },
 
     onSuccess: () => {
-      clearSensitiveInputs()
+      resetForm()
       handleUnauthorizedError(queryClient)
       toast.success('비밀번호가 변경됐어요')
       router.replace('/auth/login')
     },
 
     onError: (error) => {
-      if (error.status === 401) {
-        clearSensitiveInputs()
-        handleUnauthorizedError(queryClient)
-        router.refresh()
-        return
-      }
-
-      const applied = applyInvalidParams(formRef.current, error.problem, tErrors, passwordChangeInputNames)
-
-      if (applied) {
-        return
-      }
-
-      if (error.status === 400) {
-        clearSensitiveInputs()
-        toast.warning(getProblemMessage(tErrors, error.problem))
-        return
-      }
-    },
-
-    meta: {
-      suppressGlobalErrorToastForStatuses: [400],
+      resetForm()
+      toast.warning(error.message || '비밀번호를 변경할 수 없어요')
     },
   })
 
   const isPending = changePasswordMutation.isPending
 
-  function clearSensitiveInputs() {
+  function resetForm() {
+    formRef.current?.reset()
     clearPasswordChangeValidity(formRef.current)
-    setCurrentPassword('')
-    setNewPassword('')
-    setConfirmPassword('')
-    setToken('')
-    setShowCurrentPassword(false)
-    setShowNewPassword(false)
-    setShowConfirmPassword(false)
   }
 
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
@@ -109,6 +59,11 @@ export default function PasswordChangeForm({ isTwoFactorEnabled }: Props) {
     if (!formElement.reportValidity()) {
       return
     }
+
+    const formData = new FormData(formElement)
+    const currentPassword = String(formData.get('currentPassword') ?? '')
+    const newPassword = String(formData.get('newPassword') ?? '')
+    const confirmPassword = String(formData.get('confirmPassword') ?? '')
 
     if (newPassword !== confirmPassword) {
       const confirmPasswordInput = getPasswordChangeInput(formElement, 'confirmPassword')
@@ -128,11 +83,7 @@ export default function PasswordChangeForm({ isTwoFactorEnabled }: Props) {
       return
     }
 
-    changePasswordMutation.mutate({
-      currentPassword,
-      newPassword,
-      ...(isTwoFactorEnabled && { token: normalizedToken }),
-    })
+    changePasswordMutation.mutate({ currentPassword, newPassword })
   }
 
   return (
@@ -153,140 +104,64 @@ export default function PasswordChangeForm({ isTwoFactorEnabled }: Props) {
     >
       <div>
         <label htmlFor="currentPassword">현재 비밀번호</label>
-        <div className="relative">
-          <input
-            autoCapitalize="off"
-            autoComplete="current-password"
-            autoCorrect="off"
-            disabled={isPending}
-            enterKeyHint="next"
-            id="currentPassword"
-            name="currentPassword"
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            placeholder="현재 비밀번호를 입력하세요"
-            required
-            spellCheck={false}
-            type={showCurrentPassword ? 'text' : 'password'}
-            value={currentPassword}
-          />
-          <button
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-surface-3"
-            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-            tabIndex={-1}
-            type="button"
-          >
-            {showCurrentPassword ? (
-              <EyeOff className="size-5 shrink-0 text-foreground-muted" />
-            ) : (
-              <Eye className="size-5 shrink-0 text-foreground-muted" />
-            )}
-          </button>
-        </div>
+        <PasswordInput
+          autoCapitalize="off"
+          autoComplete="current-password"
+          autoCorrect="off"
+          disabled={isPending}
+          enterKeyHint="next"
+          iconClassName={toggleIconClassName}
+          id="currentPassword"
+          name="currentPassword"
+          placeholder="현재 비밀번호를 입력하세요"
+          required
+          spellCheck={false}
+          toggleClassName={toggleClassName}
+          toggleLabel="비밀번호 표시"
+        />
       </div>
       <div>
         <label htmlFor="newPassword">새 비밀번호</label>
-        <div className="relative">
-          <input
-            autoCapitalize="off"
-            autoComplete="new-password"
-            autoCorrect="off"
-            disabled={isPending}
-            enterKeyHint="next"
-            id="newPassword"
-            maxLength={64}
-            minLength={8}
-            name="newPassword"
-            onChange={(e) => setNewPassword(e.target.value)}
-            pattern={PASSWORD_PATTERN}
-            placeholder="새 비밀번호를 입력하세요"
-            required
-            spellCheck={false}
-            type={showNewPassword ? 'text' : 'password'}
-            value={newPassword}
-          />
-          <button
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-surface-3"
-            onClick={() => setShowNewPassword(!showNewPassword)}
-            tabIndex={-1}
-            type="button"
-          >
-            {showNewPassword ? (
-              <EyeOff className="size-5 shrink-0 text-foreground-muted" />
-            ) : (
-              <Eye className="size-5 shrink-0 text-foreground-muted" />
-            )}
-          </button>
-        </div>
-        {strengthInfo.text ? (
-          <div className="mt-2 space-y-1">
-            <div className="flex gap-1 h-1">
-              {[1, 2, 3, 4].map((level) => (
-                <div
-                  className={twMerge(
-                    'flex-1 rounded-full transition-all',
-                    level <= calculatePasswordStrength(newPassword) ? strengthInfo.barColor : 'bg-surface-3',
-                  )}
-                  key={level}
-                />
-              ))}
-            </div>
-            <p className={`text-xs ${strengthInfo.color}`}>비밀번호 강도: {strengthInfo.text}</p>
-          </div>
-        ) : (
-          <p className="mt-1.5 text-xs text-foreground-muted">
-            알파벳, 숫자를 하나 이상 포함하여 8자 이상의 비밀번호를 입력해주세요
-          </p>
-        )}
+        <PasswordInput
+          autoCapitalize="off"
+          autoComplete="new-password"
+          autoCorrect="off"
+          disabled={isPending}
+          enterKeyHint="next"
+          iconClassName={toggleIconClassName}
+          id="newPassword"
+          maxLength={64}
+          minLength={8}
+          name="newPassword"
+          placeholder="새 비밀번호를 입력하세요"
+          required
+          spellCheck={false}
+          toggleClassName={toggleClassName}
+          toggleLabel="비밀번호 표시"
+        />
+        <p className="mt-1.5 text-xs text-foreground-muted">8자 이상의 비밀번호를 입력해주세요</p>
       </div>
 
       <div>
         <label htmlFor="confirmPassword">새 비밀번호 확인</label>
-        <div className="relative">
-          <input
-            autoCapitalize="off"
-            autoComplete="new-password"
-            autoCorrect="off"
-            disabled={isPending}
-            enterKeyHint="done"
-            id="confirmPassword"
-            maxLength={64}
-            minLength={8}
-            name="confirmPassword"
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="새 비밀번호를 다시 입력하세요"
-            required
-            spellCheck={false}
-            type={showConfirmPassword ? 'text' : 'password'}
-            value={confirmPassword}
-          />
-          <button
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-surface-3"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            tabIndex={-1}
-            type="button"
-          >
-            {showConfirmPassword ? (
-              <EyeOff className="size-5 shrink-0 text-foreground-muted" />
-            ) : (
-              <Eye className="size-5 shrink-0 text-foreground-muted" />
-            )}
-          </button>
-        </div>
+        <PasswordInput
+          autoCapitalize="off"
+          autoComplete="new-password"
+          autoCorrect="off"
+          disabled={isPending}
+          enterKeyHint="done"
+          iconClassName={toggleIconClassName}
+          id="confirmPassword"
+          maxLength={64}
+          minLength={8}
+          name="confirmPassword"
+          placeholder="새 비밀번호를 다시 입력하세요"
+          required
+          spellCheck={false}
+          toggleClassName={toggleClassName}
+          toggleLabel="비밀번호 표시"
+        />
       </div>
-
-      {isTwoFactorEnabled && (
-        <div>
-          <label htmlFor="password-change-token">2단계 인증 코드</label>
-          <OneTimeCodeInput
-            className="text-base"
-            disabled={isPending}
-            id="password-change-token"
-            onChange={(e) => setToken(e.target.value)}
-            value={token}
-          />
-          <p className="mt-1.5 text-xs text-foreground-muted">보안을 위해 인증 앱의 6자리 코드를 함께 입력해 주세요</p>
-        </div>
-      )}
 
       <div className="rounded-lg border border-border bg-surface/60 p-4 text-sm text-foreground-muted">
         비밀번호를 변경하면 현재 기기를 포함한 모든 로그인 세션이 종료돼요
@@ -294,10 +169,10 @@ export default function PasswordChangeForm({ isTwoFactorEnabled }: Props) {
 
       <button
         className={twMerge(
-          'group border-2 border-brand-gradient font-medium rounded-xl mt-2',
+          'group border-2 border-brand font-medium rounded-xl mt-2',
           'focus:outline-none focus:ring-3 focus:ring-border-strong disabled:border-border-strong disabled:text-foreground-subtle',
         )}
-        disabled={!canSubmit || isPending}
+        disabled={isPending}
         type="submit"
       >
         <div
@@ -311,31 +186,4 @@ export default function PasswordChangeForm({ isTwoFactorEnabled }: Props) {
       </button>
     </form>
   )
-}
-
-function calculatePasswordStrength(password: string) {
-  let strength = 0
-  if (password.length >= 8) strength++
-  if (password.length >= 12) strength++
-  if (/[A-Za-z]/.test(password)) strength++
-  if (/[0-9]/.test(password)) strength++
-  if (/[^A-Za-z0-9]/.test(password)) strength++
-  return Math.min(strength, 4)
-}
-
-function getStrengthText(strength: number) {
-  switch (strength) {
-    case 0:
-      return { text: '', color: 'text-foreground-subtle', barColor: 'bg-surface-4' }
-    case 1:
-      return { text: '약함', color: 'text-red-500', barColor: 'bg-red-500' }
-    case 2:
-      return { text: '보통', color: 'text-orange-500', barColor: 'bg-orange-500' }
-    case 3:
-      return { text: '강함', color: 'text-yellow-500', barColor: 'bg-yellow-500' }
-    case 4:
-      return { text: '매우 강함', color: 'text-green-500', barColor: 'bg-green-500' }
-    default:
-      return { text: '', color: '', barColor: '' }
-  }
 }

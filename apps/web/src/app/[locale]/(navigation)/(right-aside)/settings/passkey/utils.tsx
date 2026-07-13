@@ -1,68 +1,20 @@
-import type { AuthenticatorTransportFuture } from '@simplewebauthn/server'
-import { getDefaultPasskeyName } from '@sobok/domain/auth/model'
 import { Fingerprint, Key, Smartphone, SquareAsterisk, Usb } from 'lucide-react'
 
-export function generateFakeCredentials(loginId: string): Array<{
-  id: string
-  transports?: AuthenticatorTransportFuture[]
-}> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(loginId)
-
-  let hash = 0
-  for (let i = 0; i < data.length; i++) {
-    hash = (hash << 5) - hash + data[i]
-    hash = hash & hash
-  }
-
-  const numCredentials = 1 + (Math.abs(hash) % 3)
-  const credentials = []
-
-  for (let i = 0; i < numCredentials; i++) {
-    const credentialHash = Math.abs(hash + i * 12345)
-      .toString(16)
-      .padStart(16, '0')
-    const fakeCredentialId = btoa(credentialHash).replaceAll('=', '').slice(0, 43)
-
-    const transportIndex = (hash + i) % 4
-    let transports: AuthenticatorTransportFuture[]
-
-    switch (transportIndex) {
-      case 0:
-        transports = ['internal']
-        break
-      case 1:
-        transports = ['usb']
-        break
-      case 2:
-        transports = ['hybrid']
-        break
-      default:
-        transports = ['internal', 'hybrid']
-        break
-    }
-
-    credentials.push({
-      id: fakeCredentialId,
-      transports,
-    })
-  }
-
-  return credentials
-}
-
+// better-auth 패스키의 deviceType은 WebAuthn credentialDeviceType이다.
+// multiDevice = 클라우드에 동기화되는 패스키(iCloud 키체인, Google 비밀번호 관리자 등),
+// singleDevice = 기기에 종속된 자격 증명(하드웨어 보안 키 등).
 export function getDeviceInfo(deviceType: string) {
   switch (deviceType) {
-    case 'cross-platform':
+    case 'singleDevice':
       return {
         icon: <Usb className="size-6 text-brand" />,
-        label: '외부 보안키',
+        label: '보안 키',
         bgColor: 'bg-brand/10',
       }
-    case 'platform':
+    case 'multiDevice':
       return {
         icon: <Smartphone className="size-6 text-brand" />,
-        label: '내장 패스키',
+        label: '동기화 패스키',
         bgColor: 'bg-brand/10',
       }
     default:
@@ -74,9 +26,8 @@ export function getDeviceInfo(deviceType: string) {
   }
 }
 
-export function getPasskeyDisplayName(name: string | null, deviceType: string | null) {
-  const trimmedName = name?.trim()
-  return trimmedName || getDefaultPasskeyName(deviceType ?? '')
+export function getPasskeyDisplayName(name: string | null) {
+  return name?.trim() || '패스키'
 }
 
 export function getRelativeTime(date: Date): string {
@@ -113,12 +64,12 @@ export function getRelativeTime(date: Date): string {
 
 export function getUserVerificationMethod(deviceType: string) {
   switch (deviceType) {
-    case 'cross-platform':
+    case 'singleDevice':
       return {
         icon: <SquareAsterisk className="size-3" />,
         label: 'PIN 또는 터치',
       }
-    case 'platform':
+    case 'multiDevice':
       return {
         icon: <Fingerprint className="size-3" />,
         label: '생체 인증 또는 기기 잠금',
@@ -126,10 +77,4 @@ export function getUserVerificationMethod(deviceType: string) {
     default:
       return null
   }
-}
-
-export function hasCredentialId<T extends { credentialId: string | null }>(
-  value: T,
-): value is T & { credentialId: string } {
-  return value.credentialId !== null
 }

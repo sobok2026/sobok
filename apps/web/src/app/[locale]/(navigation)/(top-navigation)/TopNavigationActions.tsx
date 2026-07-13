@@ -4,7 +4,6 @@ import { getTranslations } from 'next-intl/server'
 
 import AutoHideHeader from '@/components/auto-hide/AutoHideHeader'
 
-import LiveCamPromotionLink from './LiveCamPromotionLink'
 import MobileNavigationButton from './MobileNavigationButton'
 import NewMangaLink from './NewMangaLink'
 import RandomMangaLink from './RandomMangaLink'
@@ -25,7 +24,6 @@ export default async function TopNavigationActions({ locale }: Props) {
         <NewMangaLink />
         <RecommendMangaLink />
         <RandomMangaLink timer={20} />
-        {/* <LiveCamPromotionLink /> */}
         <TorRecommendationLink />
       </nav>
     </AutoHideHeader>

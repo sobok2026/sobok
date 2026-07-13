@@ -1,25 +1,21 @@
 'use client'
 
-import type { GETV1MeResponse, PATCHV1MeBody, PATCHV1MeResponse } from '@sobok/contracts'
-
+import { authClient } from '@sobok/auth/client'
+import type { GETV1MeResponse } from '@sobok/contracts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
-import type { ProblemDetailsError } from '@/utils/fetch-response'
+
+import type { ProfileEditPatch } from './profile-edit-form'
 
 type MutationContext = {
   previousMe?: GETV1MeResponse | null
 }
 
 type Params = {
-  onError?: (
-    error: ProblemDetailsError,
-    variables: PATCHV1MeBody,
-    context: MutationContext | undefined,
-  ) => Promise<void> | void
+  onError?: (error: Error, variables: ProfileEditPatch, context: MutationContext | undefined) => Promise<void> | void
   onSuccess?: (
-    data: PATCHV1MeResponse,
-    variables: PATCHV1MeBody,
+    data: ProfileEditPatch,
+    variables: ProfileEditPatch,
     context: MutationContext | undefined,
   ) => Promise<void> | void
 }
@@ -27,15 +23,19 @@ type Params = {
 export default function usePatchMyProfileMutation({ onError, onSuccess }: Params = {}) {
   const queryClient = useQueryClient()
 
-  return useMutation<PATCHV1MeResponse, ProblemDetailsError, PATCHV1MeBody, MutationContext>({
-    mutationFn: async (body) => {
-      const { data } = await fetchAPIData<PATCHV1MeResponse>('/api/v1/me', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+  return useMutation<ProfileEditPatch, Error, ProfileEditPatch, MutationContext>({
+    mutationFn: async (patch) => {
+      const { error } = await authClient.updateUser({
+        ...(patch.name !== undefined && { name: patch.name }),
+        ...(patch.username !== undefined && { username: patch.username }),
+        ...(patch.image !== undefined && { image: patch.image }),
       })
 
-      return data
+      if (error) {
+        throw new Error(error.message)
+      }
+
+      return patch
     },
 
     onMutate: async (patch) => {
@@ -50,8 +50,8 @@ export default function usePatchMyProfileMutation({ onError, onSuccess }: Params
         return {
           ...current,
           ...(patch.name && { name: patch.name }),
-          ...(patch.nickname && { nickname: patch.nickname }),
-          ...(patch.imageURL !== undefined && { imageURL: patch.imageURL }),
+          ...(patch.username && { username: patch.username.toLowerCase(), displayUsername: patch.username }),
+          ...(patch.image !== undefined && { image: patch.image }),
         }
       })
 
@@ -67,24 +67,7 @@ export default function usePatchMyProfileMutation({ onError, onSuccess }: Params
     },
 
     onSuccess: async (data, variables, context) => {
-      queryClient.setQueryData<GETV1MeResponse | null>(QueryKeys.me, (current) => {
-        if (!current) {
-          return current
-        }
-
-        return {
-          ...current,
-          name: data.name,
-          nickname: data.nickname,
-          imageURL: data.imageURL,
-        }
-      })
-
       await onSuccess?.(data, variables, context)
-    },
-
-    meta: {
-      suppressGlobalErrorToastForStatuses: [400, 409],
     },
   })
 }

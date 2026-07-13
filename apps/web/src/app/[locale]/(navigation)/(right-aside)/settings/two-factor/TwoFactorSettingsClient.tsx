@@ -5,23 +5,24 @@ import TwoFactorBackupCodes from './components/TwoFactorBackupCodes'
 import TwoFactorManagement from './components/TwoFactorManagement'
 import TwoFactorOnboarding from './components/TwoFactorOnboarding'
 import TwoFactorSetup from './components/TwoFactorSetup'
-import type { TwoFactorSetupData, TwoFactorStatus } from './types'
+import type { TwoFactorSetupData } from './types'
 
 interface Props {
-  initialStatus: TwoFactorStatus | null
+  initialEnabled: boolean
 }
 
-export default function TwoFactorSettingsClient({ initialStatus }: Props) {
-  const [status, setStatus] = useState<TwoFactorStatus | null>(initialStatus)
+export default function TwoFactorSettingsClient({ initialEnabled }: Props) {
+  const [enabled, setEnabled] = useState(initialEnabled)
   const [setupData, setSetupData] = useState<TwoFactorSetupData | null>(null)
   const [backupCodes, setBackupCodes] = useState<string[]>([])
 
   if (setupData) {
     return (
       <TwoFactorSetup
-        onSuccess={(backupcodes) => {
-          setBackupCodes(backupcodes)
+        onSuccess={() => {
+          setBackupCodes(setupData.backupCodes)
           setSetupData(null)
+          setEnabled(true)
         }}
         setupData={setupData}
       />
@@ -34,18 +35,14 @@ export default function TwoFactorSettingsClient({ initialStatus }: Props) {
         backupCodes={backupCodes}
         onComplete={() => {
           setBackupCodes([])
-          setStatus({
-            createdAt: new Date(),
-            remainingBackupCodes: backupCodes.length,
-          })
         }}
       />
     )
   }
 
-  if (!status) {
-    return <TwoFactorOnboarding onSuccess={(setupData) => setSetupData(setupData)} />
+  if (!enabled) {
+    return <TwoFactorOnboarding onSuccess={(data) => setSetupData(data)} />
   }
 
-  return <TwoFactorManagement onBackupCodesChange={setBackupCodes} onStatusChange={setStatus} status={status} />
+  return <TwoFactorManagement onBackupCodesChange={setBackupCodes} onDisabled={() => setEnabled(false)} />
 }

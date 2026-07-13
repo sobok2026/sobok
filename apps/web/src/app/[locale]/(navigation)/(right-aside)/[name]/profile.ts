@@ -1,36 +1,38 @@
 import { db } from '@sobok/db/app'
-import { userFollowTable, userTable } from '@sobok/db/app/user'
+import { user } from '@sobok/db/app/auth'
+import { userFollowTable } from '@sobok/db/app/user'
 import { eq } from 'drizzle-orm'
 import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
 
 export type PublicUserProfile = {
-  id: number
+  id: string
   name: string
   createdAt: string
-  nickname: string
-  imageURL: string | null
+  username: string | null
+  image: string | null
   followingCount: number
   followerCount: number
 }
 
 // TODO: cache component 도입하기
 const getCachedPublicUserProfile = unstable_cache(
-  async (name: string): Promise<PublicUserProfile | null> => {
-    const [user] = await db
+  async (username: string): Promise<PublicUserProfile | null> => {
+    const [row] = await db
       .select({
-        id: userTable.id,
-        name: userTable.name,
-        createdAt: userTable.createdAt,
-        nickname: userTable.nickname,
-        imageURL: userTable.imageURL,
-        followingCount: db.$count(userFollowTable, eq(userFollowTable.followerId, userTable.id)),
-        followerCount: db.$count(userFollowTable, eq(userFollowTable.followeeId, userTable.id)),
+        id: user.id,
+        name: user.name,
+        createdAt: user.createdAt,
+        username: user.username,
+        image: user.image,
+        followingCount: db.$count(userFollowTable, eq(userFollowTable.followerId, user.id)),
+        followerCount: db.$count(userFollowTable, eq(userFollowTable.followeeId, user.id)),
       })
-      .from(userTable)
-      .where(eq(userTable.name, name))
+      .from(user)
+      // better-auth username 플러그인은 username을 소문자로 정규화해 저장한다.
+      .where(eq(user.username, username.toLowerCase()))
 
-    return user ? { ...user, createdAt: user.createdAt.toISOString() } : null
+    return row ? { ...row, createdAt: row.createdAt.toISOString() } : null
   },
   ['public-user-profile'],
   { revalidate: 60 },

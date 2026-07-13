@@ -4,8 +4,6 @@ import { Trash2 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-import type { PasskeySignalData } from './common'
-
 import PasskeyDeleteDialog from './PasskeyDeleteDialog'
 
 const DELETE_ACTION_WIDTH = 80
@@ -13,12 +11,10 @@ const DELETE_OPEN_THRESHOLD = 48
 
 type Props = {
   children: React.ReactNode
-  credentialId: string
-  id: number
-  passkeySignalData: PasskeySignalData
+  id: string
 }
 
-export default function PasskeyMobileDeleteWrapper({ children, credentialId, id, passkeySignalData }: Props) {
+export default function PasskeyMobileDeleteWrapper({ children, id }: Props) {
   const [swipeX, setSwipeX] = useState(0)
   const [isSwiping, setIsSwiping] = useState(false)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
@@ -87,13 +83,7 @@ export default function PasskeyMobileDeleteWrapper({ children, credentialId, id,
       >
         {children}
       </div>
-      <PasskeyDeleteDialog
-        credentialId={credentialId}
-        id={id}
-        onOpenChange={handleOpenChange}
-        open={showConfirmModal}
-        passkeySignalData={passkeySignalData}
-      />
+      <PasskeyDeleteDialog id={id} onOpenChange={handleOpenChange} open={showConfirmModal} />
     </div>
   )
 }

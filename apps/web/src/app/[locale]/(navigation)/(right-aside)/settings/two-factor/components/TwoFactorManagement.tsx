@@ -1,37 +1,68 @@
 'use client'
 
-import { BACKUP_CODE_PATTERN } from '@sobok/domain/auth/policy'
+import { authClient } from '@sobok/auth/client'
 import { useMutation } from '@tanstack/react-query'
-import dayjs from 'dayjs'
-import { Key, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { type SubmitEvent, useState } from 'react'
 import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
-import { disableTwoFactor, regenerateTwoFactorBackupCodes } from '../api'
-import type { TwoFactorStatus } from '../types'
-import OneTimeCodeInput from './OneTimeCodeInput'
-import TrustedBrowsers from './TrustedBrowsers'
 
-interface DisableConfirmationProps {
+interface ConfirmFormProps {
   onCancel: () => void
-  onSuccess: () => void
+  onSubmit: (password: string) => void
+  isPending: boolean
+  message: string
+  messageClassName: string
+  submitClassName: string
+  submitLabel: string
 }
 
 interface Props {
   onBackupCodesChange: (codes: string[]) => void
-  onStatusChange: (status: null) => void
-  status: TwoFactorStatus
+  onDisabled: () => void
 }
 
-interface RegenerateBackupCodesFormProps {
-  onCancel: () => void
-  onSuccess: (backupCodes: string[]) => void
-}
-
-export default function TwoFactorManagement({ onBackupCodesChange, onStatusChange, status }: Props) {
+export default function TwoFactorManagement({ onBackupCodesChange, onDisabled }: Props) {
   const [showDisableConfirm, setShowDisableConfirm] = useState(false)
   const [showRegenerateModal, setShowRegenerateModal] = useState(false)
-  const { remainingBackupCodes, createdAt, lastUsedAt, trustedBrowsers } = status
+
+  const disableMutation = useMutation({
+    mutationFn: async (password: string) => {
+      const { error } = await authClient.twoFactor.disable({ password })
+
+      if (error) {
+        throw new Error(error.message)
+      }
+    },
+    onError: (error) => {
+      toast.warning(error.message || '2단계 인증을 비활성화할 수 없어요')
+    },
+    onSuccess: () => {
+      onDisabled()
+      setShowDisableConfirm(false)
+      toast.info('2단계 인증이 비활성화됐어요')
+    },
+  })
+
+  const regenerateMutation = useMutation({
+    mutationFn: async (password: string) => {
+      const { data, error } = await authClient.twoFactor.generateBackupCodes({ password })
+
+      if (error) {
+        throw new Error(error.message)
+      }
+
+      return data
+    },
+    onError: (error) => {
+      toast.warning(error.message || '복구 코드를 재생성할 수 없어요')
+    },
+    onSuccess: ({ backupCodes }) => {
+      onBackupCodesChange(backupCodes)
+      setShowRegenerateModal(false)
+      toast.success('새로운 복구 코드를 생성했어요')
+    },
+  })
 
   return (
     <div className="grid gap-4">
@@ -39,35 +70,6 @@ export default function TwoFactorManagement({ onBackupCodesChange, onStatusChang
         <h2 className="text-lg font-bold text-foreground">2단계 인증 (2FA)</h2>
         <div className="rounded-full bg-green-900/20 px-2.5 py-1 text-xs font-medium text-green-500">활성화</div>
       </div>
-      <div className="rounded-lg bg-surface p-4 space-y-2">
-        {createdAt && (
-          <div className="flex justify-between text-sm">
-            <span className="text-foreground-subtle">활성화 일시</span>
-            <span className="text-foreground-secondary" title={dayjs(createdAt).format('YYYY년 M월 D일 HH:mm')}>
-              {dayjs(createdAt).format('YYYY년 M월 D일')}
-            </span>
-          </div>
-        )}
-        {lastUsedAt && (
-          <div className="flex justify-between text-sm">
-            <span className="text-foreground-subtle">마지막 사용</span>
-            <span className="text-foreground-secondary" title={dayjs(lastUsedAt).format('YYYY년 M월 D일 HH:mm')}>
-              {dayjs(lastUsedAt).format('YYYY년 M월 D일')}
-            </span>
-          </div>
-        )}
-        <div className="flex justify-between text-sm">
-          <span className="text-foreground-subtle">남은 복구 코드</span>
-          <span className="text-foreground-secondary">{remainingBackupCodes}개</span>
-        </div>
-      </div>
-      {remainingBackupCodes < 3 && (
-        <div className="rounded-lg bg-yellow-900/20 border border-yellow-800 p-4">
-          <p className="text-sm text-yellow-500">
-            복구 코드가 {remainingBackupCodes}개만 남았어요. 새로운 복구 코드를 생성하는 것을 권장합니다.
-          </p>
-        </div>
-      )}
       {!showDisableConfirm && !showRegenerateModal && (
         <div className="space-y-3">
           <button
@@ -87,114 +89,40 @@ export default function TwoFactorManagement({ onBackupCodesChange, onStatusChang
         </div>
       )}
       {showDisableConfirm && (
-        <DisableConfirmation
+        <ConfirmForm
+          isPending={disableMutation.isPending}
+          message="2단계 인증을 비활성화하면 계정 보안이 약해져요. 계속하려면 비밀번호를 입력하세요."
+          messageClassName="rounded-lg bg-red-900/20 border border-red-900 p-4 text-sm text-red-500"
           onCancel={() => setShowDisableConfirm(false)}
-          onSuccess={() => {
-            onStatusChange(null)
-            setShowDisableConfirm(false)
-            toast.info('2단계 인증이 비활성화됐어요')
-          }}
+          onSubmit={(password) => disableMutation.mutate(password)}
+          submitClassName="bg-red-900 hover:bg-red-800 text-foreground"
+          submitLabel="비활성화"
         />
       )}
       {showRegenerateModal && (
-        <RegenerateBackupCodesForm
+        <ConfirmForm
+          isPending={regenerateMutation.isPending}
+          message="새로운 복구 코드를 생성하면 기존 복구 코드는 모두 무효화돼요. 계속하려면 비밀번호를 입력하세요."
+          messageClassName="rounded-lg bg-yellow-900/20 border border-yellow-800 p-4 text-sm text-yellow-500"
           onCancel={() => setShowRegenerateModal(false)}
-          onSuccess={(backupCodes) => {
-            onBackupCodesChange(backupCodes)
-            setShowRegenerateModal(false)
-            toast.success('새로운 복구 코드를 생성했어요')
-          }}
+          onSubmit={(password) => regenerateMutation.mutate(password)}
+          submitClassName="bg-brand hover:bg-brand/90 text-background"
+          submitLabel="재생성"
         />
       )}
-      <div className="mt-8 border-t border-border pt-8">
-        <TrustedBrowsers trustedBrowsers={trustedBrowsers || []} />
-      </div>
     </div>
   )
 }
 
-function DisableConfirmation({ onSuccess, onCancel }: DisableConfirmationProps) {
-  const [isBackupCode, setIsBackupCode] = useState(false)
-
-  const disableMutation = useMutation({
-    mutationFn: disableTwoFactor,
-    onSuccess,
-  })
-
-  function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
-    event.preventDefault()
-
-    if (!event.currentTarget.reportValidity()) {
-      return
-    }
-
-    const formData = new FormData(event.currentTarget)
-    const token = String(formData.get('token') ?? '')
-
-    disableMutation.mutate({ token })
-  }
-
-  return (
-    <form className="grid gap-3" onSubmit={handleSubmit}>
-      <div className="rounded-lg bg-red-900/20 border border-red-900 p-4">
-        <p className="text-sm text-red-500">2단계 인증을 비활성화하면 계정 보안이 약해져요. 계속할까요?</p>
-      </div>
-      {isBackupCode ? (
-        <OneTimeCodeInput
-          autoCapitalize="characters"
-          autoComplete="off"
-          disabled={disableMutation.isPending}
-          inputMode="text"
-          maxLength={9}
-          minLength={9}
-          pattern={BACKUP_CODE_PATTERN}
-          placeholder="XXXX-XXXX"
-        />
-      ) : (
-        <OneTimeCodeInput disabled={disableMutation.isPending} />
-      )}
-      <button
-        className="flex items-center justify-self-start text-sm text-foreground-muted transition hover:text-foreground disabled:opacity-50"
-        disabled={disableMutation.isPending}
-        onClick={() => setIsBackupCode((prev) => !prev)}
-        type="button"
-      >
-        <Key className="mr-1 size-4" />
-        {isBackupCode ? '인증 앱 코드 사용' : '인증 앱을 잃어버렸나요? 복구 코드 사용'}
-      </button>
-      <div className="flex gap-3">
-        <button
-          className={twMerge(
-            'flex-1 rounded-lg bg-red-900 px-4 py-3 font-medium text-foreground transition',
-            'hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-50',
-          )}
-          disabled={disableMutation.isPending}
-          type="submit"
-        >
-          {disableMutation.isPending ? <Loader2 className="size-4 mx-auto animate-spin" /> : '비활성화'}
-        </button>
-        <button
-          className={twMerge(
-            'flex-1 rounded-lg bg-surface-2 px-4 py-3 font-medium text-foreground transition',
-            'hover:bg-surface-3',
-          )}
-          disabled={disableMutation.isPending}
-          onClick={onCancel}
-          type="button"
-        >
-          취소
-        </button>
-      </div>
-    </form>
-  )
-}
-
-function RegenerateBackupCodesForm({ onCancel, onSuccess }: RegenerateBackupCodesFormProps) {
-  const regenerateMutation = useMutation({
-    mutationFn: regenerateTwoFactorBackupCodes,
-    onSuccess: ({ backupCodes }) => onSuccess(backupCodes),
-  })
-
+function ConfirmForm({
+  onCancel,
+  onSubmit,
+  isPending,
+  message,
+  messageClassName,
+  submitClassName,
+  submitLabel,
+}: ConfirmFormProps) {
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
 
@@ -203,36 +131,37 @@ function RegenerateBackupCodesForm({ onCancel, onSuccess }: RegenerateBackupCode
     }
 
     const formData = new FormData(event.currentTarget)
-    const token = String(formData.get('token') ?? '')
-
-    regenerateMutation.mutate({ token })
+    onSubmit(String(formData.get('password') ?? ''))
   }
 
   return (
     <form className="grid gap-3" onSubmit={handleSubmit}>
-      <div className="rounded-lg bg-yellow-900/20 border border-yellow-800 p-4">
-        <p className="text-sm text-yellow-500">
-          새로운 복구 코드를 생성하면 기존 복구 코드는 모두 무효화돼요. 계속할까요?
-        </p>
-      </div>
-      <OneTimeCodeInput disabled={regenerateMutation.isPending} />
+      <div className={messageClassName}>{message}</div>
+      <input
+        autoComplete="current-password"
+        className="w-full rounded-lg border border-border-2 bg-surface-2 px-3 py-2 outline-none transition placeholder:text-foreground-subtle focus:border-transparent focus:ring-2 focus:ring-border-strong"
+        disabled={isPending}
+        maxLength={64}
+        minLength={8}
+        name="password"
+        placeholder="비밀번호"
+        required
+        type="password"
+      />
       <div className="flex gap-3">
         <button
           className={twMerge(
-            'flex-1 rounded-lg bg-brand px-4 py-3 font-medium text-background transition',
-            'hover:bg-brand/90 disabled:cursor-not-allowed disabled:opacity-50',
+            'flex-1 rounded-lg px-4 py-3 font-medium transition disabled:cursor-not-allowed disabled:opacity-50',
+            submitClassName,
           )}
-          disabled={regenerateMutation.isPending}
+          disabled={isPending}
           type="submit"
         >
-          {regenerateMutation.isPending ? <Loader2 className="size-4 mx-auto animate-spin" /> : '재생성'}
+          {isPending ? <Loader2 className="size-4 mx-auto animate-spin" /> : submitLabel}
         </button>
         <button
-          className={twMerge(
-            'flex-1 rounded-lg bg-surface-2 px-4 py-3 font-medium text-foreground transition',
-            'hover:bg-surface-3',
-          )}
-          disabled={regenerateMutation.isPending}
+          className="flex-1 rounded-lg bg-surface-2 px-4 py-3 font-medium text-foreground transition hover:bg-surface-3"
+          disabled={isPending}
           onClick={onCancel}
           type="button"
         >

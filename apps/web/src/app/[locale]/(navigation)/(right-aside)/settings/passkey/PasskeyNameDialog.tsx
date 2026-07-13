@@ -1,5 +1,6 @@
 'use client'
 
+import { authClient } from '@sobok/auth/client'
 import { Dialog, DialogBody, DialogFooter, DialogHeader } from '@sobok/ui'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
@@ -7,10 +8,8 @@ import type React from 'react'
 import { useEffect, useId, useState } from 'react'
 import { toast } from 'sonner'
 
-import { updatePasskeyName } from './api'
-
 type Props = {
-  id: number
+  id: string
   initialName: string
   onSaved?: () => void
   open: boolean
@@ -34,7 +33,13 @@ export default function PasskeyNameDialog({
   const isNameInvalid = trimmedName.length === 0 || trimmedName.length > 32
 
   const nameMutation = useMutation({
-    mutationFn: (nextName: string) => updatePasskeyName(id, { name: nextName }),
+    mutationFn: async (nextName: string) => {
+      const { error } = await authClient.passkey.updatePasskey({ id, name: nextName })
+
+      if (error) {
+        throw new Error(error.message)
+      }
+    },
 
     onSuccess: () => {
       toast.success('패스키 이름을 저장했어요')

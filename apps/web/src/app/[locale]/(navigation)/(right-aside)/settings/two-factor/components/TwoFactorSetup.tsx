@@ -1,28 +1,41 @@
 'use client'
 
+import { authClient } from '@sobok/auth/client'
 import { useMutation } from '@tanstack/react-query'
 import { Check, Copy, Loader2 } from 'lucide-react'
-import type { SubmitEvent } from 'react'
+import QRCode from 'qrcode'
+import { type SubmitEvent, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import useClipboard from '@/hook/useClipboard'
-import { verifyTwoFactorSetup } from '../api'
 import type { TwoFactorSetupData } from '../types'
 import OneTimeCodeInput from './OneTimeCodeInput'
 
 interface Props {
-  onSuccess: (backupCodes: string[]) => void
+  onSuccess: () => void
   setupData: TwoFactorSetupData
 }
 
 export default function TwoFactorSetup({ setupData, onSuccess }: Props) {
+  const [qrCode, setQrCode] = useState<string | null>(null)
   const { copy, copied } = useClipboard()
-  const { qrCode, secret } = setupData
+
+  const { totpURI } = setupData
+  const secret = new URL(totpURI).searchParams.get('secret') ?? ''
 
   const verifyMutation = useMutation({
-    mutationFn: verifyTwoFactorSetup,
-    onSuccess: ({ backupCodes }) => {
-      onSuccess(backupCodes)
+    mutationFn: async (code: string) => {
+      const { error } = await authClient.twoFactor.verifyTotp({ code })
+
+      if (error) {
+        throw new Error(error.message)
+      }
+    },
+    onError: (error) => {
+      toast.warning(error.message || '코드를 확인할 수 없어요')
+    },
+    onSuccess: () => {
+      onSuccess()
       toast.success('2단계 인증이 활성화됐어요')
     },
   })
@@ -35,10 +48,28 @@ export default function TwoFactorSetup({ setupData, onSuccess }: Props) {
     }
 
     const formData = new FormData(event.currentTarget)
-    const token = String(formData.get('token') ?? '')
-
-    verifyMutation.mutate({ token })
+    verifyMutation.mutate(String(formData.get('token') ?? ''))
   }
+
+  useEffect(() => {
+    let active = true
+
+    QRCode.toDataURL(totpURI, { margin: 1, width: 240 })
+      .then((dataURL) => {
+        if (active) {
+          setQrCode(dataURL)
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setQrCode(null)
+        }
+      })
+
+    return () => {
+      active = false
+    }
+  }, [totpURI])
 
   return (
     <div className="grid gap-6 py-3">

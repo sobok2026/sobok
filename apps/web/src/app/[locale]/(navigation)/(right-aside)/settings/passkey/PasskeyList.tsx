@@ -2,17 +2,16 @@ import { Fingerprint } from 'lucide-react'
 
 import StatusState from '@/components/status/StatusState'
 
-import type { Passkey, PasskeySignalData } from './common'
+import type { Passkey } from './common'
 import PasskeyCard from './PasskeyCard'
 import PasskeyInfoButton from './PasskeyInfoButton'
 import PasskeyRegisterButton from './PasskeyRegisterButton'
 
 type Props = {
-  passkeySignalData: PasskeySignalData
   passkeys: Passkey[]
 }
 
-export default function PasskeyList({ passkeySignalData, passkeys }: Props) {
+export default function PasskeyList({ passkeys }: Props) {
   if (passkeys.length === 0) {
     return (
       <StatusState
@@ -21,7 +20,7 @@ export default function PasskeyList({ passkeySignalData, passkeys }: Props) {
         intent="setup"
         title="아직 패스키가 없어요"
       >
-        <PasskeyRegisterButton passkeySignalData={passkeySignalData} />
+        <PasskeyRegisterButton />
       </StatusState>
     )
   }
@@ -34,13 +33,13 @@ export default function PasskeyList({ passkeySignalData, passkeys }: Props) {
           <p className="text-sm text-foreground-subtle mt-1">{passkeys.length}개의 패스키가 등록되어 있어요</p>
         </div>
         <div className="flex items-center gap-2">
-          <PasskeyRegisterButton passkeySignalData={passkeySignalData} />
+          <PasskeyRegisterButton />
           <PasskeyInfoButton />
         </div>
       </div>
       <div className="grid gap-3">
         {passkeys.map((passkey) => (
-          <PasskeyCard key={passkey.id} passkey={passkey} passkeySignalData={passkeySignalData} />
+          <PasskeyCard key={passkey.id} passkey={passkey} />
         ))}
       </div>
       {passkeys.length === 1 && (

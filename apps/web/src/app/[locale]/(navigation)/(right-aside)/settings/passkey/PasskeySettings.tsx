@@ -1,47 +1,26 @@
-import type { AuthenticatorTransportFuture } from '@simplewebauthn/server'
 import { db } from '@sobok/db/app'
-import { credentialTable } from '@sobok/db/app/passkey'
-import { decodeDeviceType } from '@sobok/domain/auth/model'
+import { passkey } from '@sobok/db/app/auth'
 import { desc, eq } from 'drizzle-orm'
 
 import PasskeyList from './PasskeyList'
 
 type Props = {
-  displayName: string
-  loginId: string
-  userId: number
+  userId: string
 }
 
-export default async function PasskeySettings({ displayName, loginId, userId }: Props) {
-  const credentials = await db
+export default async function PasskeySettings({ userId }: Props) {
+  const passkeys = await db
     .select({
-      id: credentialTable.id,
-      credentialId: credentialTable.credentialId,
-      name: credentialTable.name,
-      createdAt: credentialTable.createdAt,
-      lastUsedAt: credentialTable.lastUsedAt,
-      deviceType: credentialTable.deviceType,
-      transports: credentialTable.transports,
+      id: passkey.id,
+      credentialId: passkey.credentialID,
+      name: passkey.name,
+      createdAt: passkey.createdAt,
+      deviceType: passkey.deviceType,
+      transports: passkey.transports,
     })
-    .from(credentialTable)
-    .where(eq(credentialTable.userId, userId))
-    .orderBy(desc(credentialTable.createdAt))
+    .from(passkey)
+    .where(eq(passkey.userId, userId))
+    .orderBy(desc(passkey.createdAt))
 
-  const passkeys = credentials.map((credential) => ({
-    ...credential,
-    deviceType: decodeDeviceType(credential.deviceType),
-    transports: credential.transports as AuthenticatorTransportFuture[],
-  }))
-
-  return (
-    <PasskeyList
-      passkeys={passkeys}
-      passkeySignalData={{
-        credentialIds: credentials.map((credential) => credential.credentialId).sort(),
-        displayName,
-        name: loginId,
-        userId: Buffer.from(userId.toString()).toString('base64url'),
-      }}
-    />
-  )
+  return <PasskeyList passkeys={passkeys} />
 }

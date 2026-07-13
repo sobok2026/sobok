@@ -1,74 +1,44 @@
-import type { PATCHV1MeBody } from '@sobok/contracts'
-import type { ProblemDetails } from '@sobok/http/problem-details'
-
-import { getInvalidParams } from '@sobok/http/problem-details'
-
-import type { ErrorsTranslator } from '@/lib/error-message'
-
-import { getInvalidParamMessage } from '@/lib/error-message'
-
 export type EditableProfile = {
-  id: number
-  loginId: string
+  id: string
+  email: string
   name: string
-  nickname: string
-  imageURL: string | null
+  username: string | null
+  image: string | null
 }
 
 export type ProfileFieldErrors = Partial<Record<ProfileFieldName, string>>
 
-type ProfileFieldName = 'imageURL' | 'name' | 'nickname'
+export type ProfileEditPatch = {
+  name?: string
+  username?: string
+  image?: string | null
+}
+
+type ProfileFieldName = 'image' | 'name' | 'username'
 
 const profileInputNames: Record<ProfileFieldName, ProfileFieldName> = {
+  username: 'username',
   name: 'name',
-  nickname: 'nickname',
-  imageURL: 'imageURL',
+  image: 'image',
 }
 
-export function applyProfileProblem(form: HTMLFormElement | null, problem: ProblemDetails, t: ErrorsTranslator) {
-  const fieldErrors = getProfileProblemFieldErrors(problem, t)
-  let firstInvalidInput: HTMLInputElement | null = null
-
-  for (const [field, reason] of Object.entries(fieldErrors)) {
-    const input = getProfileInput(form, field as ProfileFieldName)
-
-    if (!input) {
-      continue
-    }
-
-    input.setCustomValidity(reason)
-
-    if (!firstInvalidInput) {
-      firstInvalidInput = input
-    }
-  }
-
-  if (!firstInvalidInput) {
-    return false
-  }
-
-  firstInvalidInput.focus()
-  firstInvalidInput.reportValidity()
-  return true
-}
-
-export function buildProfileEditPatch(me: EditableProfile, formData: FormData): PATCHV1MeBody | null {
+export function buildProfileEditPatch(me: EditableProfile, formData: FormData): ProfileEditPatch | null {
+  const username = String(formData.get(profileInputNames.username) ?? '')
   const name = String(formData.get(profileInputNames.name) ?? '')
-  const nickname = String(formData.get(profileInputNames.nickname) ?? '')
-  const rawImageURL = String(formData.get(profileInputNames.imageURL) ?? '')
-  const imageURL = rawImageURL === '' ? null : rawImageURL
-  const patch: PATCHV1MeBody = {}
+  const rawImage = String(formData.get(profileInputNames.image) ?? '')
+  const image = rawImage === '' ? null : rawImage
+  const patch: ProfileEditPatch = {}
+
+  if (username && username !== me.username) {
+    patch.username = username
+  }
 
   if (name !== me.name) {
     patch.name = name
   }
 
-  if (nickname !== me.nickname) {
-    patch.nickname = nickname
-  }
-
-  if (imageURL !== me.imageURL) {
-    patch.imageURL = imageURL
+  if (image !== me.image) {
+    patch.image = image
   }
 
   return Object.keys(patch).length > 0 ? patch : null
@@ -83,27 +53,9 @@ export function clearProfileInputValidity(target: EventTarget | null) {
 }
 
 export function clearProfileValidity(form: HTMLFormElement | null) {
+  getProfileInput(form, profileInputNames.username)?.setCustomValidity('')
   getProfileInput(form, profileInputNames.name)?.setCustomValidity('')
-  getProfileInput(form, profileInputNames.nickname)?.setCustomValidity('')
-  getProfileInput(form, profileInputNames.imageURL)?.setCustomValidity('')
-}
-
-export function encodePasskeyUserId(userId: number) {
-  return btoa(String(userId)).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '')
-}
-
-export function getProfileProblemFieldErrors(problem: ProblemDetails, t: ErrorsTranslator): ProfileFieldErrors {
-  const fieldErrors: ProfileFieldErrors = {}
-
-  for (const param of getInvalidParams(problem)) {
-    if (!isProfileFieldName(param.name)) {
-      continue
-    }
-
-    fieldErrors[param.name] = getInvalidParamMessage(t, param)
-  }
-
-  return fieldErrors
+  getProfileInput(form, profileInputNames.image)?.setCustomValidity('')
 }
 
 function getProfileInput(form: HTMLFormElement | null, field: ProfileFieldName) {
@@ -112,5 +64,5 @@ function getProfileInput(form: HTMLFormElement | null, field: ProfileFieldName) 
 }
 
 function isProfileFieldName(name: string): name is ProfileFieldName {
-  return name === 'name' || name === 'nickname' || name === 'imageURL'
+  return name === 'username' || name === 'name' || name === 'image'
 }

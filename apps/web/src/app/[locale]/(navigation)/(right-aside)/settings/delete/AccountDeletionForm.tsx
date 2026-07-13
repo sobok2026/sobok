@@ -1,24 +1,15 @@
 'use client'
 
-import type { DELETEV1MeBody, DELETEV1MeResponse } from '@sobok/contracts'
-
-import { PASSWORD_PATTERN } from '@sobok/domain/auth/policy'
-
+import { authClient } from '@sobok/auth/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AlertTriangle, Check, Eye, EyeOff, Loader2, Trash2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { AlertTriangle, Check, Loader2, Trash2 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
 
+import PasswordInput from '@/components/PasswordInput'
 import { useRouter } from '@/i18n/navigation'
-import { applyInvalidParams } from '@/lib/apply-invalid-params'
-import { getProblemMessage } from '@/lib/error-message'
 import { handleUnauthorizedError } from '@/lib/react-query/auth-state'
-import type { ProblemDetailsError } from '@/utils/fetch-response'
-
-import OneTimeCodeInput from '../two-factor/components/OneTimeCodeInput'
-import { deleteMyAccount } from './api'
 
 const CONSEQUENCES = [
   '북마크, 열람 기록, 평점이 삭제돼요',
@@ -38,7 +29,6 @@ const deletionFieldClassName = `w-full rounded-2xl bg-white/[0.035] border borde
 const deletionFieldActionClassName = `absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-1.5 bg-white/[0.04] border border-white/8 text-foreground-muted hover:text-foreground hover:bg-white/[0.06] transition
   opacity-0 pointer-events-none
   group-has-[input:focus:not(:placeholder-shown)]:opacity-100 group-has-[input:focus:not(:placeholder-shown)]:pointer-events-auto
-  aria-pressed:[&_.eye-icon]:hidden aria-pressed:[&_.eye-off-icon]:block
   disabled:opacity-50`
 
 enum DeletionStep {
@@ -48,62 +38,37 @@ enum DeletionStep {
 }
 
 type Props = {
-  isTwoFactorEnabled: boolean
-  loginId: string
+  email: string
 }
 
-export default function AccountDeletionForm({ loginId, isTwoFactorEnabled }: Props) {
-  const router = useRouter()
+export default function AccountDeletionForm({ email }: Props) {
   const [step, setStep] = useState<DeletionStep>(DeletionStep.INITIAL)
   const [confirmText, setConfirmText] = useState('')
-  const [password, setPassword] = useState('')
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
-  const [token, setToken] = useState('')
-  const queryClient = useQueryClient()
-  const tErrors = useTranslations('Errors')
   const formRef = useRef<HTMLFormElement | null>(null)
+  const queryClient = useQueryClient()
+  const router = useRouter()
 
-  const expectedConfirmText = `${loginId} 계정을 삭제해요`
+  const expectedConfirmText = `${email} 계정을 삭제해요`
   const isConfirmTextValid = confirmText === expectedConfirmText
-  const normalizedToken = token.replace(/[^0-9]/g, '')
-  const canSubmit = password.length > 0 && (!isTwoFactorEnabled || normalizedToken.length === 6)
 
-  const deleteMutation = useMutation<DELETEV1MeResponse, ProblemDetailsError, DELETEV1MeBody>({
-    mutationFn: deleteMyAccount,
+  const deleteMutation = useMutation({
+    mutationFn: async (input: { password: string }) => {
+      const { error } = await authClient.deleteUser(input)
 
-    onSuccess: (data) => {
+      if (error) {
+        throw new Error(error.message)
+      }
+    },
+
+    onSuccess: () => {
       handleUnauthorizedError(queryClient)
-      toast.success(`${data.loginId} 계정을 삭제했어요`)
+      toast.success(`${email} 계정을 삭제했어요`)
       router.replace('/')
     },
 
     onError: (error) => {
-      if (error.status === 401) {
-        handleUnauthorizedError(queryClient)
-        setPassword('')
-        setIsPasswordVisible(false)
-        setToken('')
-        router.refresh()
-        return
-      }
-
-      const applied = applyInvalidParams(formRef.current, error.problem, tErrors, accountDeletionInputNames)
-
-      if (applied) {
-        return
-      }
-
-      if (error.status === 400) {
-        setPassword('')
-        setIsPasswordVisible(false)
-        setToken('')
-        toast.warning(getProblemMessage(tErrors, error.problem))
-        return
-      }
-    },
-
-    meta: {
-      suppressGlobalErrorToastForStatuses: [400],
+      formRef.current?.reset()
+      toast.warning(error.message || '계정을 삭제할 수 없어요')
     },
   })
 
@@ -111,16 +76,16 @@ export default function AccountDeletionForm({ loginId, isTwoFactorEnabled }: Pro
 
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
-    clearDeletionValidity(e.currentTarget)
 
-    if (!e.currentTarget.reportValidity()) {
+    const formElement = e.currentTarget
+    clearDeletionValidity(formElement)
+
+    if (!formElement.reportValidity()) {
       return
     }
 
-    deleteMutation.mutate({
-      password,
-      ...(isTwoFactorEnabled && { token: normalizedToken }),
-    })
+    const password = String(new FormData(formElement).get('password') ?? '')
+    deleteMutation.mutate({ password })
   }
 
   return (
@@ -230,58 +195,25 @@ export default function AccountDeletionForm({ loginId, isTwoFactorEnabled }: Pro
               <label className={deletionFieldLabelClassName} htmlFor="account-deletion-password">
                 현재 비밀번호
               </label>
-              <div className="relative group">
-                <input
-                  aria-describedby="account-deletion-password-help"
-                  autoCapitalize="off"
-                  autoComplete="current-password"
-                  autoCorrect="off"
-                  className={`${deletionFieldClassName} pr-10`}
-                  disabled={isPending}
-                  enterKeyHint="done"
-                  id="account-deletion-password"
-                  maxLength={64}
-                  minLength={8}
-                  name="password"
-                  onChange={(e) => setPassword(e.target.value)}
-                  pattern={PASSWORD_PATTERN}
-                  placeholder="현재 비밀번호"
-                  required
-                  spellCheck={false}
-                  type={isPasswordVisible ? 'text' : 'password'}
-                  value={password}
-                />
-                <button
-                  aria-label="비밀번호 표시"
-                  aria-pressed={isPasswordVisible}
-                  className={deletionFieldActionClassName}
-                  disabled={isPending}
-                  onClick={() => setIsPasswordVisible((visible) => !visible)}
-                  onMouseDown={(e) => e.preventDefault()}
-                  tabIndex={-1}
-                  type="button"
-                >
-                  <Eye className="eye-icon size-3.5" />
-                  <EyeOff className="eye-off-icon size-3.5 hidden" />
-                </button>
-              </div>
+              <PasswordInput
+                aria-describedby="account-deletion-password-help"
+                autoCapitalize="off"
+                autoComplete="current-password"
+                autoCorrect="off"
+                className={`${deletionFieldClassName} pr-10`}
+                disabled={isPending}
+                enterKeyHint="done"
+                id="account-deletion-password"
+                maxLength={64}
+                name="password"
+                placeholder="현재 비밀번호"
+                required
+                spellCheck={false}
+                toggleClassName={deletionFieldActionClassName}
+                toggleLabel="비밀번호 표시"
+                wrapperClassName="group"
+              />
             </div>
-
-            {isTwoFactorEnabled && (
-              <div className="mt-4">
-                <label className={deletionFieldLabelClassName} htmlFor="account-deletion-token">
-                  2단계 인증 코드
-                </label>
-                <OneTimeCodeInput
-                  aria-describedby="account-deletion-token-help"
-                  className={`${deletionFieldClassName} text-center text-base font-medium font-mono tabular-nums tracking-widest`}
-                  disabled={isPending}
-                  id="account-deletion-token"
-                  onChange={(e) => setToken(e.target.value)}
-                  value={token}
-                />
-              </div>
-            )}
           </div>
           <div className="text-center space-y-2">
             <p className="text-red-400 font-semibold">이 작업은 즉시 실행되며 취소할 수 없어요</p>
@@ -291,12 +223,7 @@ export default function AccountDeletionForm({ loginId, isTwoFactorEnabled }: Pro
             <button
               className="flex-1 px-4 py-3 bg-surface-2 hover:bg-surface-3 rounded-lg font-medium transition"
               disabled={isPending}
-              onClick={() => {
-                setStep(DeletionStep.CONFIRM)
-                setPassword('')
-                setIsPasswordVisible(false)
-                setToken('')
-              }}
+              onClick={() => setStep(DeletionStep.CONFIRM)}
               type="button"
             >
               이전 단계
@@ -307,7 +234,7 @@ export default function AccountDeletionForm({ loginId, isTwoFactorEnabled }: Pro
                 'text-foreground rounded-lg font-medium transition',
                 'flex items-center justify-center gap-2',
               )}
-              disabled={!canSubmit || isPending}
+              disabled={isPending}
               type="submit"
             >
               {isPending ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4 shrink-0" />}
@@ -320,8 +247,6 @@ export default function AccountDeletionForm({ loginId, isTwoFactorEnabled }: Pro
   )
 }
 
-const accountDeletionInputNames: Record<string, string> = { password: 'password', token: 'token' }
-
 function clearDeletionInputValidity(target: EventTarget | null) {
   if (target instanceof HTMLInputElement) {
     target.setCustomValidity('')
@@ -330,13 +255,8 @@ function clearDeletionInputValidity(target: EventTarget | null) {
 
 function clearDeletionValidity(form: HTMLFormElement | null) {
   const passwordInput = form?.elements.namedItem('password')
-  const tokenInput = form?.elements.namedItem('token')
 
   if (passwordInput instanceof HTMLInputElement) {
     passwordInput.setCustomValidity('')
-  }
-
-  if (tokenInput instanceof HTMLInputElement) {
-    tokenInput.setCustomValidity('')
   }
 }

@@ -1,10 +1,4 @@
-type PasswordChangeFormFieldName = 'confirmPassword' | 'currentPassword' | 'newPassword' | 'token'
-
-export const passwordChangeInputNames: Record<string, PasswordChangeFormFieldName> = {
-  currentPassword: 'currentPassword',
-  newPassword: 'newPassword',
-  token: 'token',
-}
+type PasswordChangeFormFieldName = 'confirmPassword' | 'currentPassword' | 'newPassword'
 
 export function clearPasswordChangeInputValidity(form: HTMLFormElement | null, target: EventTarget | null) {
   if (!(target instanceof HTMLInputElement)) {
@@ -31,7 +25,6 @@ export function clearPasswordChangeValidity(form: HTMLFormElement | null) {
   getPasswordChangeInput(form, 'currentPassword')?.setCustomValidity('')
   getPasswordChangeInput(form, 'newPassword')?.setCustomValidity('')
   getPasswordChangeInput(form, 'confirmPassword')?.setCustomValidity('')
-  getPasswordChangeInput(form, 'token')?.setCustomValidity('')
 }
 
 export function getPasswordChangeInput(form: HTMLFormElement | null, field: PasswordChangeFormFieldName) {

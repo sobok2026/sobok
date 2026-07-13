@@ -1,7 +1,6 @@
 'use client'
 
-import type { DELETEV1MeSessionResponse } from '@sobok/contracts'
-
+import { authClient } from '@sobok/auth/client'
 import type { Locale } from '@sobok/domain/locale'
 import { formatDistanceToNow } from '@sobok/std'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -12,80 +11,85 @@ import { toast } from 'sonner'
 
 import { useRouter } from '@/i18n/navigation'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import type { ProblemDetailsError } from '@/utils/fetch-response'
 
-import { revokeAllPersistentSessions, revokeOtherPersistentSessions, revokePersistentSession } from './api'
-
-export type PersistentSession = {
+export type SessionRow = {
   id: string
+  token: string
   createdAt: Date
-  lastUsedAt: Date
-  idleExpiresAt: Date
-  deviceLabel: string | null
+  updatedAt: Date
+  expiresAt: Date
+  userAgent: string | null
   isCurrent: boolean
 }
 
 type Props = {
-  hasCurrentPersistentSession: boolean
-  sessions: PersistentSession[]
+  sessions: SessionRow[]
 }
 
-export default function SessionList({ sessions, hasCurrentPersistentSession }: Props) {
+export default function SessionList({ sessions }: Props) {
   const locale = useLocale()
   const router = useRouter()
   const queryClient = useQueryClient()
-  const revokeOthersLabel = hasCurrentPersistentSession ? '다른 기기 로그아웃' : '표시된 기기 모두 로그아웃'
 
-  const revokeSingleMutation = useMutation<DELETEV1MeSessionResponse, ProblemDetailsError, string>({
-    mutationFn: revokePersistentSession,
+  const revokeSingleMutation = useMutation({
+    mutationFn: async (token: string) => {
+      const { error } = await authClient.revokeSession({ token })
+
+      if (error) {
+        throw new Error(error.message)
+      }
+
+      return { clearedCurrentSession: false }
+    },
     onSuccess: handleSuccess,
-    onError: handleError,
   })
 
-  const revokeOthersMutation = useMutation<DELETEV1MeSessionResponse, ProblemDetailsError>({
-    mutationFn: revokeOtherPersistentSessions,
+  const revokeOthersMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await authClient.revokeOtherSessions()
+
+      if (error) {
+        throw new Error(error.message)
+      }
+
+      return { clearedCurrentSession: false }
+    },
     onSuccess: handleSuccess,
-    onError: handleError,
   })
 
-  const revokeAllMutation = useMutation<DELETEV1MeSessionResponse, ProblemDetailsError>({
-    mutationFn: revokeAllPersistentSessions,
+  const revokeAllMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await authClient.revokeSessions()
+
+      if (error) {
+        throw new Error(error.message)
+      }
+
+      return { clearedCurrentSession: true }
+    },
     onSuccess: handleSuccess,
-    onError: handleError,
   })
 
-  function handleSuccess(data: DELETEV1MeSessionResponse) {
+  function handleSuccess(data: { clearedCurrentSession: boolean }) {
     if (data.clearedCurrentSession) {
       clearMeCache(queryClient)
     }
 
     toast.success(data.clearedCurrentSession ? '모든 기기에서 로그아웃했어요' : '선택한 기기에서 로그아웃했어요')
+    queryClient.invalidateQueries({ queryKey: ['auth', 'sessions'] })
     router.refresh()
   }
 
-  function handleError(error: ProblemDetailsError) {
-    if (error.status === 401) {
-      clearMeCache(queryClient)
-      router.refresh()
-    }
-  }
-
-  function handleRevokeSession(familyId: string) {
+  function handleRevokeSession(token: string) {
     if (!confirm('이 기기에서 로그아웃할까요?')) {
       return
     }
 
-    revokeSingleMutation.mutate(familyId)
+    revokeSingleMutation.mutate(token)
   }
 
   function handleRevokeOthers() {
-    const confirmed = confirm(
-      hasCurrentPersistentSession
-        ? '이 기기를 제외한 다른 기기에서 모두 로그아웃할까요?'
-        : '지금 사용 중인 기기는 목록에 없어요. 계속하면 표시된 기기에서 모두 로그아웃돼요. 계속할까요?',
-    )
-
-    if (!confirmed) {
+    if (!confirm('이 기기를 제외한 다른 기기에서 모두 로그아웃할까요?')) {
       return
     }
 
@@ -104,10 +108,9 @@ export default function SessionList({ sessions, hasCurrentPersistentSession }: P
     return (
       <div className="space-y-4">
         <div className="p-6 text-center">
-          <p className="text-sm text-foreground-secondary">로그인 유지 중인 기기가 없어요</p>
-          <p className="mt-2 text-xs text-foreground-subtle">여기에는 로그인 유지를 켠 기기만 보여요</p>
+          <p className="text-sm text-foreground-secondary">로그인 중인 기기가 없어요</p>
         </div>
-        <SessionHint hasCurrentPersistentSession={hasCurrentPersistentSession} />
+        <SessionHint />
       </div>
     )
   }
@@ -122,7 +125,7 @@ export default function SessionList({ sessions, hasCurrentPersistentSession }: P
           type="button"
         >
           {revokeOthersMutation.isPending ? <Loader2 className="size-4 animate-spin" /> : <LogOut className="size-4" />}
-          {revokeOthersLabel}
+          다른 기기 로그아웃
         </button>
         <button
           className="flex items-center gap-2 rounded-lg border border-red-900/60 px-3 py-2 text-sm text-red-300 transition hover:bg-red-950/40 disabled:opacity-50"
@@ -158,7 +161,7 @@ export default function SessionList({ sessions, hasCurrentPersistentSession }: P
                   <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-foreground-subtle">
                     <span
                       className="text-foreground-muted"
-                      title={`마지막 사용: ${dayjs(session.lastUsedAt).format('YYYY년 M월 D일 HH:mm')}`}
+                      title={`마지막 사용: ${dayjs(session.updatedAt).format('YYYY년 M월 D일 HH:mm')}`}
                     >
                       {lastUsedLabel} 사용
                     </span>
@@ -167,7 +170,7 @@ export default function SessionList({ sessions, hasCurrentPersistentSession }: P
                       {createdLabel} 로그인
                     </span>
                     <span>•</span>
-                    <span title={`자동 로그아웃: ${dayjs(session.idleExpiresAt).format('YYYY년 M월 D일 HH:mm')}`}>
+                    <span title={`자동 로그아웃: ${dayjs(session.expiresAt).format('YYYY년 M월 D일 HH:mm')}`}>
                       {expiresLabel} 자동 로그아웃
                     </span>
                   </div>
@@ -177,7 +180,7 @@ export default function SessionList({ sessions, hasCurrentPersistentSession }: P
                 <button
                   className="rounded-lg p-2 text-foreground-muted transition hover:bg-surface-2 hover:text-red-400 disabled:opacity-50"
                   disabled={revokeSingleMutation.isPending}
-                  onClick={() => handleRevokeSession(session.id)}
+                  onClick={() => handleRevokeSession(session.token)}
                   title="로그아웃"
                   type="button"
                 >
@@ -193,7 +196,7 @@ export default function SessionList({ sessions, hasCurrentPersistentSession }: P
         })}
       </div>
 
-      <SessionHint hasCurrentPersistentSession={hasCurrentPersistentSession} />
+      <SessionHint />
     </div>
   )
 }
@@ -206,12 +209,12 @@ function clearMeCache(queryClient: ReturnType<typeof useQueryClient>) {
   })
 }
 
-function formatSessionInfo(session: PersistentSession, locale: Locale) {
-  const deviceLabel = session.deviceLabel?.trim() || '알 수 없는 기기'
-  const lastUsedLabel = formatDistanceToNow(new Date(session.lastUsedAt), locale)
-  const createdLabel = formatDistanceToNow(new Date(session.createdAt), locale)
-  const idleExpiresAt = dayjs(session.idleExpiresAt)
-  const hoursUntilExpiry = idleExpiresAt.diff(dayjs(), 'hour')
+function formatSessionInfo(session: SessionRow, locale: Locale) {
+  const deviceLabel = describeUserAgent(session.userAgent)
+  const lastUsedLabel = formatDistanceToNow(session.updatedAt, locale)
+  const createdLabel = formatDistanceToNow(session.createdAt, locale)
+  const expiresAt = dayjs(session.expiresAt)
+  const hoursUntilExpiry = expiresAt.diff(dayjs(), 'hour')
 
   let expiresLabel = '곧'
 
@@ -232,28 +235,70 @@ function formatSessionInfo(session: PersistentSession, locale: Locale) {
   }
 }
 
+// userAgent 문자열에서 기기/브라우저를 간단히 요약한다 — 정확한 파싱보다 알아볼 수 있는 라벨이 목적.
+function describeUserAgent(userAgent: string | null) {
+  if (!userAgent) {
+    return '알 수 없는 기기'
+  }
+
+  const ua = userAgent.toLowerCase()
+
+  let os: string | null = null
+
+  if (ua.includes('iphone')) {
+    os = 'iPhone'
+  } else if (ua.includes('ipad')) {
+    os = 'iPad'
+  } else if (ua.includes('android')) {
+    os = 'Android'
+  } else if (ua.includes('mac os')) {
+    os = 'macOS'
+  } else if (ua.includes('windows')) {
+    os = 'Windows'
+  } else if (ua.includes('linux')) {
+    os = 'Linux'
+  }
+
+  let browser: string | null = null
+
+  if (ua.includes('edg/')) {
+    browser = 'Edge'
+  } else if (ua.includes('chrome/')) {
+    browser = 'Chrome'
+  } else if (ua.includes('firefox/')) {
+    browser = 'Firefox'
+  } else if (ua.includes('safari/')) {
+    browser = 'Safari'
+  }
+
+  if (os && browser) {
+    return `${os} · ${browser}`
+  }
+
+  return os ?? browser ?? '알 수 없는 기기'
+}
+
 function getDeviceIcon(deviceName: string) {
   const name = deviceName.toLowerCase()
 
-  if (name.includes('mobile') || name.includes('모바일') || name.includes('phone')) {
+  if (name.includes('iphone') || name.includes('android') || name.includes('mobile')) {
     return <Smartphone className="size-5" />
   }
 
-  if (name.includes('tablet') || name.includes('ipad') || name.includes('태블릿')) {
+  if (name.includes('tablet') || name.includes('ipad')) {
     return <Tablet className="size-5" />
   }
 
   return <Monitor className="size-5" />
 }
 
-function SessionHint({ hasCurrentPersistentSession }: { hasCurrentPersistentSession: boolean }) {
+function SessionHint() {
   return (
     <div className="rounded-lg border border-border bg-surface/50 p-4">
       <h4 className="mb-2 text-sm font-medium text-foreground-secondary">알아두세요</h4>
       <ul className="space-y-1 text-xs text-foreground-muted">
-        <li>• 여기에는 로그인 유지를 켠 기기만 보여요</li>
-        {!hasCurrentPersistentSession && <li>• 지금 사용 중인 기기는 로그인 유지를 켜지 않아 목록에 없어요</li>}
-        <li>• 다른 기기를 로그아웃 시켜도, 그 기기에서 최대 1시간 동안은 계속 사용할 수 있어요</li>
+        <li>• 로그인 중인 모든 기기가 여기에 보여요</li>
+        <li>• 다른 기기를 로그아웃 시켜도, 그 기기에서 최대 5분 동안은 계속 사용할 수 있어요</li>
       </ul>
     </div>
   )

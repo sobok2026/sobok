@@ -1,41 +1,36 @@
 'use client'
 
-import { signalCurrentPasskeyUserDetails } from '@sobok/auth/passkey'
-import type { DELETEV1MePasskeyResponse } from '@sobok/contracts'
+import { authClient } from '@sobok/auth/client'
 import { Dialog, DialogBody, DialogFooter, DialogHeader } from '@sobok/ui'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2, Shield } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { useRouter } from '@/i18n/navigation'
-import type { ProblemDetailsError } from '@/utils/fetch-response'
-import { deletePasskey } from './api'
-import type { PasskeySignalData } from './common'
 
 type Props = {
-  credentialId: string
-  id: number
+  id: string
   open: boolean
   onOpenChange: (open: boolean) => void
-  passkeySignalData: PasskeySignalData
 }
 
-export default function PasskeyDeleteDialog({ credentialId, id, open, onOpenChange, passkeySignalData }: Props) {
+export default function PasskeyDeleteDialog({ id, open, onOpenChange }: Props) {
   const router = useRouter()
 
   function handleClose() {
     onOpenChange(false)
   }
 
-  const deleteMutation = useMutation<DELETEV1MePasskeyResponse, ProblemDetailsError, number>({
-    mutationFn: deletePasskey,
+  const deleteMutation = useMutation({
+    mutationFn: async (passkeyId: string) => {
+      const { error } = await authClient.passkey.deletePasskey({ id: passkeyId })
 
-    onSuccess: async () => {
-      await signalCurrentPasskeyUserDetails({
-        ...passkeySignalData,
-        credentialIds: passkeySignalData.credentialIds.filter((id) => id !== credentialId),
-      })
+      if (error) {
+        throw new Error(error.message)
+      }
+    },
 
+    onSuccess: () => {
       toast.success('패스키가 삭제됐어요')
       onOpenChange(false)
       router.refresh()

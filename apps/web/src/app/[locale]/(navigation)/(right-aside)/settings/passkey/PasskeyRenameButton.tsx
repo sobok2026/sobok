@@ -10,7 +10,7 @@ import PasskeyNameDialog from './PasskeyNameDialog'
 
 type Props = {
   className?: string
-  id: number
+  id: string
   name: string
 }
 

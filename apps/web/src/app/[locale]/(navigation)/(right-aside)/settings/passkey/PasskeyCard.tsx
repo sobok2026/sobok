@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { twMerge } from 'tailwind-merge'
 
-import type { Passkey, PasskeySignalData } from './common'
+import type { Passkey } from './common'
 
 import PasskeyDeleteButton from './PasskeyDeleteButton'
 import PasskeyMobileDeleteWrapper from './PasskeyMobileDeleteWrapper'
@@ -10,19 +10,17 @@ import { getDeviceInfo, getPasskeyDisplayName, getRelativeTime, getUserVerificat
 
 type Props = {
   passkey: Passkey
-  passkeySignalData: PasskeySignalData
 }
 
-export default function PasskeyCard({ passkey, passkeySignalData }: Props) {
-  const { deviceType, createdAt, credentialId, lastUsedAt, id, name } = passkey
-  const { icon, label, bgColor } = getDeviceInfo(deviceType ?? '')
-  const createdRelativeTime = getRelativeTime(createdAt)
-  const displayName = getPasskeyDisplayName(name, deviceType)
-  const lastUsedLabel = lastUsedAt ? `${getRelativeTime(lastUsedAt)} 사용` : '아직 사용한 적 없음'
-  const verificationMethod = getUserVerificationMethod(deviceType ?? '')
+export default function PasskeyCard({ passkey }: Props) {
+  const { deviceType, createdAt, id, name } = passkey
+  const { icon, label, bgColor } = getDeviceInfo(deviceType)
+  const createdRelativeTime = createdAt ? getRelativeTime(createdAt) : null
+  const displayName = getPasskeyDisplayName(name)
+  const verificationMethod = getUserVerificationMethod(deviceType)
 
   return (
-    <PasskeyMobileDeleteWrapper credentialId={credentialId} id={id} passkeySignalData={passkeySignalData}>
+    <PasskeyMobileDeleteWrapper id={id}>
       <div className="group/card relative flex min-w-0 items-start gap-3 rounded-2xl border-2 border-border bg-surface p-4 transition hover:border-border-2">
         <div className="relative shrink-0">
           <div className={`h-12 w-12 rounded-xl ${bgColor} flex items-center justify-center transition`}>{icon}</div>
@@ -39,24 +37,17 @@ export default function PasskeyCard({ passkey, passkeySignalData }: Props) {
                   'p-2 text-foreground-subtle rounded-xl transition',
                   'hover:text-red-400 hover:bg-red-900/10',
                 )}
-                credentialId={credentialId}
                 id={id}
-                passkeySignalData={passkeySignalData}
               />
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-            <span
-              className="text-foreground-muted"
-              title={lastUsedAt ? formatExactDateTitle('마지막 사용', lastUsedAt) : undefined}
-            >
-              {lastUsedLabel}
-            </span>
-            <span className="text-foreground-faint">·</span>
-            <span className="text-foreground-subtle" title={formatExactDateTitle('등록', createdAt)}>
-              {createdRelativeTime} 등록
-            </span>
-          </div>
+          {createdAt && (
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+              <span className="text-foreground-subtle" title={formatExactDateTitle('등록', createdAt)}>
+                {createdRelativeTime} 등록
+              </span>
+            </div>
+          )}
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-foreground-subtle mt-1">
             <span>{label}</span>
             {verificationMethod && (

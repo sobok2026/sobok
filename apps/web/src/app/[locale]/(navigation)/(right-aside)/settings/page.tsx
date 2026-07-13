@@ -1,10 +1,6 @@
-import { getUserIdFromCookie } from '@sobok/auth/cookie'
-import { db } from '@sobok/db/app'
+import { auth } from '@sobok/auth/server'
 import { readUserSettings } from '@sobok/db/app/query/user-settings'
-import { twoFactorTable } from '@sobok/db/app/two-factor'
-import { userTable } from '@sobok/db/app/user'
 import { ErrorBoundary } from '@suspensive/react'
-import { and, eq, isNull } from 'drizzle-orm'
 import {
   CalendarMinus,
   CaseSensitive,
@@ -21,6 +17,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 import { getTranslations } from 'next-intl/server'
 import { Suspense } from 'react'
 
@@ -63,7 +60,8 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/settings
 }
 
 export default async function SettingsPage() {
-  const userId = await getUserIdFromCookie()
+  const session = await auth.api.getSession({ headers: await headers() })
+  const user = session?.user
   const t = await getTranslations('Settings')
 
   const languageSelector = (
@@ -92,7 +90,7 @@ export default async function SettingsPage() {
     </CollapsibleSection>
   )
 
-  if (!userId) {
+  if (!user) {
     return (
       <>
         {languageSelector}
@@ -101,23 +99,8 @@ export default async function SettingsPage() {
     )
   }
 
-  const [[me], [isTwoFactorEnabled], settings] = await Promise.all([
-    db
-      .select({
-        id: userTable.id,
-        loginId: userTable.loginId,
-        name: userTable.name,
-        nickname: userTable.nickname,
-        imageURL: userTable.imageURL,
-      })
-      .from(userTable)
-      .where(eq(userTable.id, userId)),
-    db
-      .select({ userId: twoFactorTable.userId })
-      .from(twoFactorTable)
-      .where(and(eq(twoFactorTable.userId, userId), isNull(twoFactorTable.expiresAt))),
-    readUserSettings(userId),
-  ])
+  const userId = user.id
+  const settings = await readUserSettings(userId)
 
   return (
     <>
@@ -187,7 +170,7 @@ export default async function SettingsPage() {
       >
         <ErrorBoundary fallback={InternalServerError}>
           <Suspense fallback={<LoadingFallback />}>
-            <PasskeySettings displayName={me.nickname || me.name} loginId={me.loginId} userId={userId} />
+            <PasskeySettings userId={userId} />
           </Suspense>
         </ErrorBoundary>
       </CollapsibleSection>
@@ -199,7 +182,7 @@ export default async function SettingsPage() {
       >
         <ErrorBoundary fallback={InternalServerError}>
           <Suspense fallback={<LoadingFallback />}>
-            <TwoFactorSettings userId={userId} />
+            <TwoFactorSettings />
           </Suspense>
         </ErrorBoundary>
       </CollapsibleSection>
@@ -211,7 +194,7 @@ export default async function SettingsPage() {
       >
         <ErrorBoundary fallback={InternalServerError}>
           <Suspense fallback={<LoadingFallback />}>
-            <SessionSettings userId={userId} />
+            <SessionSettings />
           </Suspense>
         </ErrorBoundary>
       </CollapsibleSection>
@@ -235,7 +218,7 @@ export default async function SettingsPage() {
         <p className="text-foreground-muted text-sm mb-4 sm:mb-6">
           계정 보안을 위해 다른 사이트에서 사용하는 비밀번호와 다르게 설정하는 것을 권장해요
         </p>
-        <PasswordChangeForm isTwoFactorEnabled={Boolean(isTwoFactorEnabled)} />
+        <PasswordChangeForm />
       </CollapsibleSection>
       <CollapsibleSection
         description="계정과 모든 데이터를 영구적으로 삭제해요"
@@ -246,7 +229,7 @@ export default async function SettingsPage() {
         <p className="text-foreground-muted text-sm mb-4 sm:mb-6">
           계정을 삭제하면 사용자 관련 모든 데이터가 영구적으로 삭제되고 복구할 수 없어요
         </p>
-        <AccountDeletionForm isTwoFactorEnabled={Boolean(isTwoFactorEnabled)} loginId={me.loginId} />
+        <AccountDeletionForm email={user.email} />
       </CollapsibleSection>
     </>
   )
