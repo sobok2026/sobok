@@ -1,8 +1,10 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import { useMemo, useState } from 'react'
 
 import { ASPECT_STYLE, PLANET_GLYPHS } from '../chart/data'
+import { aspectScore } from '../chart/signature'
 import type { AspectType, ChartAspect } from '../chart/types'
 import { glyphText } from './glyphs'
 import { isAspectSelection, type Selection } from './selection'
@@ -10,6 +12,14 @@ import { isAspectSelection, type Selection } from './selection'
 // Aspects that flow easily vs. those that create productive friction.
 const HARMONY_TYPES: readonly AspectType[] = ['conjunction', 'trine', 'sextile']
 const TENSION_TYPES: readonly AspectType[] = ['square', 'opposition']
+
+// Rows shown per group before the rest collapse behind "더보기". The wheel already lays
+// side by side on sm+, so the collapse only kicks in on the stacked mobile layout.
+const DEFAULT_VISIBLE = 5
+
+// Only collapse when it hides a meaningful chunk — a "더보기 1개" isn't worth the tap, so a
+// group of 6–7 just shows everything. Below this the list stays fully expanded.
+const OVERFLOW_MIN = 2
 
 export interface AspectSectionProps {
   aspects: readonly ChartAspect[]
@@ -66,6 +76,16 @@ interface AspectGroupProps {
 
 function AspectGroup({ accent, aspects, label, onSelect, selection }: AspectGroupProps) {
   const t = useTranslations('Constellation')
+  const [expanded, setExpanded] = useState(false)
+
+  // Strongest aspects first, so a collapsed list keeps the ones that matter most.
+  const ranked = useMemo(() => [...aspects].sort((a, b) => aspectScore(b) - aspectScore(a)), [aspects])
+
+  const collapsible = ranked.length >= DEFAULT_VISIBLE + OVERFLOW_MIN
+
+  // Overflow rows still hidden on mobile: the selected one always stays visible, so exclude it.
+  const hiddenCount =
+    collapsible && !expanded ? ranked.slice(DEFAULT_VISIBLE).filter((a) => !isAspectSelection(selection, a)).length : 0
 
   return (
     <div className="mt-3">
@@ -73,12 +93,13 @@ function AspectGroup({ accent, aspects, label, onSelect, selection }: AspectGrou
         {label}
       </p>
       <ul className="space-y-1">
-        {aspects.map((asp) => {
-          const color = ASPECT_STYLE[asp.type].color
+        {ranked.map((asp, i) => {
+          const { color, glyph } = ASPECT_STYLE[asp.type]
           const active = isAspectSelection(selection, asp)
+          const hiddenOnMobile = collapsible && i >= DEFAULT_VISIBLE && !expanded && !active
 
           return (
-            <li key={`${asp.a}-${asp.b}-${asp.type}`}>
+            <li className={hiddenOnMobile ? 'hidden sm:block' : ''} key={`${asp.a}-${asp.b}-${asp.type}`}>
               <button
                 className={`flex w-full items-center gap-2.5 rounded-xl px-2 py-2 text-left transition hover:bg-surface-2 sm:gap-3 sm:px-2.5 ${active ? 'bg-surface-3 ring-1 ring-ring' : ''}`}
                 onClick={() => onSelect(asp)}
@@ -89,7 +110,11 @@ function AspectGroup({ accent, aspects, label, onSelect, selection }: AspectGrou
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-xs text-foreground-secondary">
-                    {t(`planets.${asp.a}`)} <span className="text-foreground-faint">↔</span> {t(`planets.${asp.b}`)}
+                    {t(`planets.${asp.a}`)}{' '}
+                    <span aria-hidden className="text-foreground-faint">
+                      {glyphText(glyph)}
+                    </span>{' '}
+                    {t(`planets.${asp.b}`)}
                   </span>
                   <span className="block text-[11px]" style={{ color }}>
                     {t(`aspects.${asp.type}Vibe`)}{' '}
@@ -103,6 +128,16 @@ function AspectGroup({ accent, aspects, label, onSelect, selection }: AspectGrou
           )
         })}
       </ul>
+      {collapsible && (expanded || hiddenCount > 0) && (
+        <button
+          aria-expanded={expanded}
+          className="mt-1.5 w-full rounded-lg px-2 py-1.5 text-[11px] font-medium text-foreground-subtle transition hover:bg-surface-2 hover:text-foreground-secondary sm:hidden"
+          onClick={() => setExpanded((v) => !v)}
+          type="button"
+        >
+          {expanded ? t('aspects.showLess') : t('aspects.showMore', { count: hiddenCount })}
+        </button>
+      )}
     </div>
   )
 }

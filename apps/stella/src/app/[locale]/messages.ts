@@ -18,7 +18,6 @@ export const messages = {
         subtitle: '태어난 순간 하늘에 새겨진 나의 이야기를 읽어 보세요.',
         openCta: '내 별자리 열기',
         reopenCta: '다시 그리기',
-        tapHint: '별이나 별자리를 눌러 자세히 보기',
         connectionHint: '빛나는 행성을 누르면 둘의 관계를 볼 수 있어요',
       },
       a11y: {
@@ -108,6 +107,8 @@ export const messages = {
         squareDesc: '자꾸 부딪히지만 그 마찰이 당신을 한 단계 성장시키는 자극이 돼요.',
         oppositionDesc: '서로 반대편에서 잡아당기며 균형점을 찾아가는 관계예요.',
         orbLabel: '오브',
+        showMore: '더보기 {count}개',
+        showLess: '접기',
       },
       share: {
         button: '내 별자리 공유',
@@ -363,7 +364,6 @@ export const messages = {
         subtitle: 'A map the sky drew the moment you were born. Tap a star to discover yourself.',
         openCta: 'Open my chart',
         reopenCta: 'Redraw',
-        tapHint: 'Tap a planet or sign to see more',
         connectionHint: 'Tap a lit-up planet to see how the two relate',
       },
       a11y: {
@@ -454,6 +454,8 @@ export const messages = {
         squareDesc: 'They keep clashing, but that friction is exactly what pushes you to grow.',
         oppositionDesc: 'They pull from opposite ends, teaching you to find the balance point.',
         orbLabel: 'orb',
+        showMore: 'Show {count} more',
+        showLess: 'Show less',
       },
       share: {
         button: 'Share my chart',
@@ -710,7 +712,6 @@ export const messages = {
         subtitle: '这是你出生那一刻，天空为你绘制的地图。点击星星，发现自己。',
         openCta: '打开我的星盘',
         reopenCta: '重新绘制',
-        tapHint: '点击行星或星座查看更多',
         connectionHint: '点击发亮的行星，查看两者的关系',
       },
       a11y: {
@@ -798,6 +799,8 @@ export const messages = {
         squareDesc: '总是碰撞，但这份摩擦正是推动你成长的动力。',
         oppositionDesc: '在两端互相拉扯，让你学会寻找平衡点。',
         orbLabel: '容许度',
+        showMore: '查看其余 {count} 个',
+        showLess: '收起',
       },
       share: {
         button: '分享我的星盘',
@@ -1052,7 +1055,6 @@ export const messages = {
         subtitle: '生まれた瞬間、空が描いた地図です。星をタップして自分を見つけてみて。',
         openCta: '星図をひらく',
         reopenCta: '描き直す',
-        tapHint: '惑星や星座をタップして詳しく見る',
         connectionHint: '光っている惑星をタップすると二つの関係が見られます',
       },
       a11y: {
@@ -1142,6 +1144,8 @@ export const messages = {
         squareDesc: 'ぶつかり合いますが、その摩擦こそがあなたを一段成長させます。',
         oppositionDesc: '反対側から引き合いながら、バランスの取り方を学ぶ関係です。',
         orbLabel: 'オーブ',
+        showMore: '他 {count} 件を表示',
+        showLess: '折りたたむ',
       },
       share: {
         button: '星図をシェア',

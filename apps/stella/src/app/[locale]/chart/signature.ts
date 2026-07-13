@@ -192,7 +192,7 @@ const ASPECT_ALLOWANCE: Record<ChartAspect['type'], number> = {
   sextile: 6,
 }
 
-function aspectScore(aspect: ChartAspect): number {
+export function aspectScore(aspect: ChartAspect): number {
   let score = ASPECT_BASE[aspect.type] + (ASPECT_ALLOWANCE[aspect.type] - aspect.orb) * 2.5
 
   // Partile (near-exact) aspects speak with outsized force in traditional practice.

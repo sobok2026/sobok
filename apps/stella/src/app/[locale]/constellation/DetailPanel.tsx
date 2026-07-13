@@ -98,7 +98,7 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
   }
 
   if (selection.kind === 'aspect') {
-    const color = ASPECT_STYLE[selection.aspectType].color
+    const { color, glyph } = ASPECT_STYLE[selection.aspectType]
     const pairKeyId = pairKey(selection.a, selection.b)
     const tone = aspectTone(selection.aspectType)
     const tier = orbTier(selection.orb)
@@ -114,7 +114,10 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
           </span>
           <div className="min-w-0">
             <p className="text-base font-bold text-foreground">
-              {t(`planets.${selection.a}`)} <span className="text-foreground-faint">↔</span>{' '}
+              {t(`planets.${selection.a}`)}{' '}
+              <span aria-hidden className="text-foreground-faint">
+                {glyphText(glyph)}
+              </span>{' '}
               {t(`planets.${selection.b}`)}
             </p>
             <span className="text-xs font-medium" style={{ color }}>

@@ -148,7 +148,6 @@ function EmptyState({ homeHref }: { homeHref: string }) {
       >
         {t('empty.cta')}
       </Link>
-      <p className="mt-3 text-[11px] leading-relaxed text-foreground-faint">{t('privacy')}</p>
     </section>
   )
 }

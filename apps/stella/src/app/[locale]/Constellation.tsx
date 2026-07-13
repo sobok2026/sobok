@@ -275,9 +275,8 @@ export default function Constellation() {
         )}
 
         {revealed && (
-          <p className="mt-2 text-center text-xs text-foreground-subtle">
-            {/* Once a planet with aspects is selected, point the user at the two-tap gesture. */}
-            {selection?.kind === 'planet' && brightPlanets.size > 1 ? t('hero.connectionHint') : t('hero.tapHint')}
+          <p className="mt-2 h-4 text-center text-xs text-foreground-subtle">
+            {selection?.kind === 'planet' && brightPlanets.size > 1 && t('hero.connectionHint')}
           </p>
         )}
 

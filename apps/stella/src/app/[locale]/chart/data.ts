@@ -119,26 +119,31 @@ export const ELEMENT_COLORS: Record<ElementId, string> = {
   water: '#6fb3f0',
 }
 
-export const ASPECT_STYLE: Record<AspectType, { color: string; dashed: boolean }> = {
+export const ASPECT_STYLE: Record<AspectType, { color: string; dashed: boolean; glyph: string }> = {
   conjunction: {
     color: '#f5bcff',
     dashed: false,
+    glyph: '☌',
   },
   trine: {
     color: '#6ee7b7',
     dashed: false,
+    glyph: '△',
   },
   sextile: {
     color: '#7dd3fc',
     dashed: true,
+    glyph: '⚹',
   },
   square: {
     color: '#fb7185',
     dashed: false,
+    glyph: '□',
   },
   opposition: {
     color: '#fbbf24',
     dashed: false,
+    glyph: '☍',
   },
 }
 
