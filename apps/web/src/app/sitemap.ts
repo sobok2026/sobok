@@ -6,19 +6,6 @@ import { getPathname } from '@/i18n/navigation'
 
 const { NEXT_PUBLIC_APP_ORIGIN } = env
 
-// const PRIORITY_LEVELS = {
-//   HOME: 1.0,
-//   MAIN_SECTIONS: 0.9,
-//   MANGA_DETAIL: 0.8,
-//   RANKING: 0.7,
-//   SEARCH: 0.6,
-//   LIBRARY: 0.5,
-//   USER_PAGES: 0.4,
-//   POSTS: 0.3,
-//   LEGAL: 0.2,
-//   AUTH: 0.1,
-// } as const
-
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...localizedSitemapEntries('/', 'monthly', 1),
