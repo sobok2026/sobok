@@ -70,7 +70,7 @@ export const messages = {
         ruledBy: '지배 행성: {planet}',
       },
       elements: {
-        title: '원소 밸런스',
+        title: '원소 구성',
         fire: '불',
         earth: '흙',
         air: '바람',

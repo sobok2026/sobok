@@ -37,7 +37,7 @@ export default function ElementBalance({ counts, dominant, total }: ElementBalan
         </span>
       </div>
 
-      <div aria-hidden="true" className="mb-4 flex h-4 overflow-hidden rounded-full bg-surface-2">
+      <div aria-hidden="true" className="mb-4 flex h-2.5 overflow-hidden rounded-full bg-surface-2">
         <div className={`${styles.balanceBar} flex h-full w-full`}>
           {ELEMENT_IDS.map((id) => {
             const pct = total > 0 ? (counts[id] / total) * 100 : 0

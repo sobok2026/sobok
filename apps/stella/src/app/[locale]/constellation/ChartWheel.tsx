@@ -87,7 +87,7 @@ export default function ChartWheel({
     <svg
       aria-hidden={!revealed}
       aria-label={t('meta.title')}
-      className={`w-full ${revealed ? styles.wheel : 'pointer-events-none'}`}
+      className={`w-full select-none ${revealed ? styles.wheel : 'pointer-events-none'}`}
       style={{
         transition: 'opacity 0.4s',
         opacity: revealed ? 1 : 0.4,
