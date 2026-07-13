@@ -150,7 +150,6 @@ export default function SignupForm() {
                 minLength={3}
                 name="username"
                 pattern={USERNAME_PATTERN}
-                placeholder={t('usernamePlaceholder')}
                 required
                 spellCheck={false}
                 type="text"
@@ -188,7 +187,6 @@ export default function SignupForm() {
               maxLength={64}
               minLength={8}
               name="password"
-              placeholder={t('passwordPlaceholder')}
               required
               spellCheck={false}
               toggleClassName={trailingButtonClassName}
@@ -219,7 +217,6 @@ export default function SignupForm() {
               maxLength={64}
               minLength={8}
               name="password-confirm"
-              placeholder={t('passwordConfirmPlaceholder')}
               required
               spellCheck={false}
               toggleClassName={trailingButtonClassName}
@@ -247,7 +244,6 @@ export default function SignupForm() {
               maxLength={32}
               minLength={2}
               name="nickname"
-              placeholder={t('nicknamePlaceholder')}
               spellCheck={false}
               type="text"
             />

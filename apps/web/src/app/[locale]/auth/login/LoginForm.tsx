@@ -189,7 +189,6 @@ export default function LoginForm() {
                     id="login-identifier"
                     maxLength={254}
                     name="identifier"
-                    placeholder={t('identifierPlaceholder')}
                     required
                     spellCheck={false}
                     type="text"
@@ -225,7 +224,6 @@ export default function LoginForm() {
                   id="login-current-password"
                   maxLength={64}
                   name="password"
-                  placeholder={t('passwordPlaceholder')}
                   required
                   spellCheck={false}
                   toggleClassName={authTrailingButtonClassName}
