@@ -120,6 +120,7 @@ export const ASPECT_PAIR_ORDER: readonly PlanetId[] = [
   'northNode',
   'fortune',
   'lilith',
+  'chiron',
 ]
 
 export function pairKey(a: PlanetId, b: PlanetId): string {

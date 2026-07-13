@@ -26,8 +26,12 @@ const ASPECT_DEFS: readonly { type: AspectType; angle: number; orb: number }[] =
 /** Points that don't take part in aspects (each node aspects the same things as its axis). */
 const ASPECT_EXCLUDED: ReadonlySet<PlanetId> = new Set(['southNode'])
 
-/** Calculated points (not bodies); pairs among themselves carry no standard reading. */
-const POINT_IDS: ReadonlySet<PlanetId> = new Set(['northNode', 'fortune', 'lilith'])
+/**
+ * Calculated points (not bodies); pairs among themselves carry no standard reading.
+ * Chiron sits here so it aspects only the ten classical planets — not the nodes,
+ * Lilith or Fortune — keeping its reading surface bounded, as Lilith's is.
+ */
+const POINT_IDS: ReadonlySet<PlanetId> = new Set(['northNode', 'fortune', 'lilith', 'chiron'])
 
 export function signOfLon(lon: number): SignId {
   return SIGNS[Math.floor((((lon % 360) + 360) % 360) / 30)].id

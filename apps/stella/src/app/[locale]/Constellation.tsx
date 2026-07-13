@@ -16,6 +16,7 @@ import Big3Card from './constellation/Big3Card'
 import ChartWheel from './constellation/ChartWheel'
 import DetailPanel from './constellation/DetailPanel'
 import ElementBalance from './constellation/ElementBalance'
+import PatternSection from './constellation/PatternSection'
 import ReportSection from './constellation/ReportSection'
 import {
   computeBrightPlanets,
@@ -298,6 +299,7 @@ export default function Constellation() {
           <div className="mt-6 w-full space-y-6" key={`extras-${runId}`}>
             <ElementBalance counts={counts} dominant={dominant} total={data.chart.planets.length} />
             <AspectSection aspects={aspects} onSelect={toggleAspectAndScroll} selection={selection} />
+            <PatternSection chart={data.chart} />
             <ReportSection aspects={aspects} chart={data.chart} interpretations={data.interpretations} />
             <div className="flex flex-col items-center gap-3">
               <button

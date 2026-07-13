@@ -108,6 +108,7 @@ export const PLANET_GLYPHS: Record<PlanetId, string> = {
   southNode: '☋',
   fortune: '⊗',
   lilith: '⚸',
+  chiron: '⚷',
 }
 
 export const ELEMENT_IDS: readonly ElementId[] = ['fire', 'earth', 'air', 'water']

@@ -1,7 +1,6 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { Fragment } from 'react'
 
 import { ELEMENT_COLORS, ELEMENT_IDS } from '../chart/data'
 import type { ElementId } from '../chart/types'

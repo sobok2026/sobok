@@ -69,9 +69,7 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
           <Chip color="var(--color-accent)" label={t(`modalities.${modality}`)} />
           <Chip color="var(--color-accent)" label={t('panel.ruledBy', { planet: t(`planets.${ruler}`) })} />
         </div>
-        {t.has(`signDescriptions.${signId}`) && (
-          <p className="mt-3 text-sm leading-relaxed text-foreground-muted">{t(`signDescriptions.${signId}`)}</p>
-        )}
+        <p className="mt-3 text-sm leading-relaxed text-foreground-muted">{t(`signDescriptions.${signId}`)}</p>
         {residents.length === 0 ? (
           <p className="mt-3 border-t pt-3 text-sm leading-relaxed text-foreground-subtle">{t('panel.emptySign')}</p>
         ) : (
