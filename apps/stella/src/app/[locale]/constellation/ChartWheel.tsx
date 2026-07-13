@@ -466,7 +466,7 @@ function Planets({ isDimmed, onSelect, placed, selection }: PlanetsProps) {
           </g>
         )
       })}
-      {placed.map(({ planet, point }, i) => {
+      {placed.map(({ planet, point, displaced }, i) => {
         const sign = signOfLon(planet.lon)
         const color = ELEMENT_COLORS[elementOfSign(sign)]
         const dim = isDimmed(planet.id)
@@ -478,7 +478,10 @@ function Planets({ isDimmed, onSelect, placed, selection }: PlanetsProps) {
 
         return (
           <g className={styles.token} key={planet.id} style={{ animationDelay: `${delay}s` }}>
-            <g className={styles.tokenFloat} style={{ animationDelay: `${delay + 0.55}s` }}>
+            <g
+              className={displaced ? undefined : styles.tokenFloat}
+              style={displaced ? undefined : { animationDelay: `${delay + 0.55}s` }}
+            >
               <g
                 aria-label={`${t(`planets.${planet.id}`)} · ${t(`signs.${sign}`)}${planet.retrograde ? ` · ${t('panel.retrograde')}` : ''}`}
                 aria-pressed={isSelected}

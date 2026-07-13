@@ -58,8 +58,16 @@ export const RADIUS = {
   houseOuter: 146,
   houseInner: 112,
   houseLabel: 129,
-  planet: 96,
-  trueMark: 114,
+  // Planet ring pulled toward the centre (was 96) so the glyphs' outer edge
+  // (≈ 101) clears the house ring at 112, opening a ~11px lane for the
+  // true-longitude ticks + leader lines. The house band keeps its full width;
+  // the space comes from the planet ring instead. Only cost: a slightly wider
+  // fan in tight clusters, since a smaller ring makes PLANET_MIN_SEP_DEG grow
+  // (~19.2° → ~21°).
+  planet: 88,
+  // Centred in that lane (103.5–110.5 with TICK_HALF): ~2.5px above the glyph
+  // ring, ~1.5px below the house-ring circle at 112.
+  trueMark: 107,
   aspect: 66,
 } as const
 

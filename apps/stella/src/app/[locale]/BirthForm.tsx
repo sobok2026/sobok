@@ -9,7 +9,7 @@ import { DEFAULT_CITY_KEY, findCity } from './cities'
 import type { BirthInput } from './ephemeris'
 
 const fieldClass =
-  'w-full appearance-none rounded-xl border border-border-2 bg-surface-2 px-3 py-2.5 text-base text-foreground outline-none transition [color-scheme:dark] focus:border-brand/60 focus:bg-surface-3 sm:text-sm'
+  'w-full appearance-none rounded-xl border border-border-2 bg-surface-2 px-3 py-2.5 text-base text-foreground outline-none transition [color-scheme:dark] focus:border-white/60 focus:bg-surface-3 sm:text-sm'
 
 const labelClass = 'mb-1.5 block text-xs font-semibold text-foreground-muted'
 
