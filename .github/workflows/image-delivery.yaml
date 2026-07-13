@@ -101,8 +101,6 @@ jobs:
           secrets: |
             APP_POSTGRES_URL=${{ secrets.APP_POSTGRES_URL }}
             "APP_POSTGRES_CERTIFICATE=${{ secrets.APP_POSTGRES_CERTIFICATE }}"
-            CATALOG_POSTGRES_URL=${{ secrets.CATALOG_POSTGRES_URL }}
-            "CATALOG_POSTGRES_CERTIFICATE=${{ secrets.CATALOG_POSTGRES_CERTIFICATE }}"
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           tags: ${{ steps.metadata_web.outputs.tags }}
           labels: ${{ steps.metadata_web.outputs.labels }}

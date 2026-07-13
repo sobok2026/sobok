@@ -55,8 +55,6 @@ COPY tools ./tools
 RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN,env=SENTRY_AUTH_TOKEN,required=false \
     --mount=type=secret,id=APP_POSTGRES_URL,env=APP_POSTGRES_URL,required=false \
     --mount=type=secret,id=APP_POSTGRES_CERTIFICATE,env=APP_POSTGRES_CERTIFICATE,required=false \
-    --mount=type=secret,id=CATALOG_POSTGRES_URL,env=CATALOG_POSTGRES_URL,required=false \
-    --mount=type=secret,id=CATALOG_POSTGRES_CERTIFICATE,env=CATALOG_POSTGRES_CERTIFICATE,required=false \
     COMMIT_SHA="$COMMIT_SHA" bunx turbo run build --filter=@sobok/web \
   # Strip `sourceMappingURL` references (prevents browser `*.map` requests).
   && find apps/web/.next/static -type f -name '*.js' -exec sed -i -E 's@//# sourceMappingURL=.*$@@g' {} + \
