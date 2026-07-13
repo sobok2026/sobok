@@ -1,7 +1,7 @@
 // Shared types + pair-key helpers for the per-locale reading modules. Kept apart
 // from the data files so each locale bundle stays pure string tables.
 
-import type { AspectType, ComputedPlanetId, ElementId, PlanetId, SignId } from '../chart/types'
+import type { AspectType, ElementId, PlanetId, SignId } from '../chart/types'
 
 export type SignText = Record<SignId, string>
 export type PlanetReadings = Record<PlanetId, SignText>
@@ -59,7 +59,8 @@ export type ReportContent = {
   kicker: ReportKicker
   angleKicker: Record<AngleKey, string>
   rising: SignText
-  angles: Record<ComputedPlanetId, Record<AngleKey, string>>
+  /** Body-on-angle copy. The ten planets ship it in every locale; Chiron/Lilith are ko-only for now, hence partial. */
+  angles: Partial<Record<PlanetId, Record<AngleKey, string>>>
   dignity: { domicile: string; exaltation: string; chartRulerNote: string }
   stellium: string
   core: { bridge: string; bridgeNoTime: string }

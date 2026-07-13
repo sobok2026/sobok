@@ -1,7 +1,7 @@
 // Pure astrological derivations: sign/house/element lookups and major-aspect
 // detection between bodies. No rendering concerns — geometry lives in `geometry.ts`.
 
-import { SIGNS } from './data'
+import { PLANET_ORDER, SIGNS } from './data'
 import type {
   AngleId,
   AspectType,
@@ -27,11 +27,11 @@ const ASPECT_DEFS: readonly { type: AspectType; angle: number; orb: number }[] =
 const ASPECT_EXCLUDED: ReadonlySet<PlanetId> = new Set(['southNode'])
 
 /**
- * Calculated points (not bodies); pairs among themselves carry no standard reading.
- * Chiron sits here so it aspects only the ten classical planets — not the nodes,
- * Lilith or Fortune — keeping its reading surface bounded, as Lilith's is.
+ * The ten classical planets. The Part of Fortune — a derived Sun/Moon/Ascendant
+ * point — only conjuncts these, never the nodes, Lilith or Chiron; everything else
+ * (planets, north node, Lilith, Chiron) aspects freely among itself.
  */
-const POINT_IDS: ReadonlySet<PlanetId> = new Set(['northNode', 'fortune', 'lilith', 'chiron'])
+const CLASSICAL_BODIES: ReadonlySet<PlanetId> = new Set(PLANET_ORDER)
 
 export function signOfLon(lon: number): SignId {
   return SIGNS[Math.floor((((lon % 360) + 360) % 360) / 30)].id
@@ -151,8 +151,16 @@ export function computeAspects(planets: readonly PlanetPosition[]): ChartAspect[
       const a = bodies[i]
       const b = bodies[j]
 
-      if (POINT_IDS.has(a.id) && POINT_IDS.has(b.id)) {
-        continue
+      const aFortune = a.id === 'fortune'
+      const bFortune = b.id === 'fortune'
+
+      // Fortune only relates to the ten classical planets (and only by conjunction).
+      if (aFortune || bFortune) {
+        const other = aFortune ? b : a
+
+        if (!CLASSICAL_BODIES.has(other.id)) {
+          continue
+        }
       }
 
       const best = closestAspect(a.lon, b.lon)
@@ -161,8 +169,7 @@ export function computeAspects(planets: readonly PlanetPosition[]): ChartAspect[
         continue
       }
 
-      // The Part of Fortune derives from Sun/Moon/Ascendant; standard practice reads only its conjunctions.
-      if ((a.id === 'fortune' || b.id === 'fortune') && best.type !== 'conjunction') {
+      if ((aFortune || bFortune) && best.type !== 'conjunction') {
         continue
       }
 

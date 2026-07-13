@@ -61,7 +61,7 @@ export function buildReport(
     northNode: report.kicker.northNode,
   }
 
-  // Angle copy only covers the classical bodies — nodes and fortune stay out.
+  // Angle copy covers the ten planets plus Chiron/Lilith (ko); nodes and fortune stay out.
   const angleTexts: Partial<Record<PlanetId, Record<AngleKey, string>>> = report.angles
 
   /** Sign fragment for a body, retro-aware like the detail panel. Null when already told. */

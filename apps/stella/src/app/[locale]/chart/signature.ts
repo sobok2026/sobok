@@ -4,7 +4,7 @@
 
 import { angularGap, signOfLon } from './astrology'
 import { PLANET_ORDER, SIGNS } from './data'
-import type { ChartAspect, ComputedPlanetId, NatalChart, PlanetId, PlanetPosition, SignId } from './types'
+import type { ChartAspect, NatalChart, PlanetId, PlanetPosition, SignId } from './types'
 
 export type AngleId = 'ascendant' | 'midheaven'
 
@@ -32,8 +32,16 @@ export type SignatureFeature =
   | { kind: 'dignity'; planet: PlanetId; sign: SignId; dignity: StrongDignity; isChartRuler: boolean; score: number }
   | { kind: 'stellium'; stellium: Stellium; score: number }
 
-/** The ten ephemeris bodies in traditional order — points don't sit on angles or form stelliums here. */
-const BODY_IDS: ReadonlySet<PlanetId> = new Set(PLANET_ORDER)
+/** Render/sort order for the bodies above — Chiron and Lilith trail the ten planets. */
+const BODY_ORDER: readonly PlanetId[] = [...PLANET_ORDER, 'lilith', 'chiron']
+
+/**
+ * Bodies that can headline the signature — sit on an angle, form a stellium, carry
+ * a dignity. The ten planets plus Chiron and Lilith (Chiron a real body, Lilith the
+ * mean apogee); the nodes and Fortune stay out. Chiron/Lilith have no essential
+ * dignity, so they only ever surface here as an angle conjunction or stellium member.
+ */
+const BODY_IDS: ReadonlySet<PlanetId> = new Set<PlanetId>(BODY_ORDER)
 
 /** Modern sign rulers — the chart ruler is the ruler of the rising sign. */
 export const SIGN_RULERS: Record<SignId, PlanetId> = {
@@ -165,9 +173,7 @@ export function findStelliums(planets: readonly PlanetPosition[]): Stellium[] {
     .filter(([, ids]) => ids.length >= 3)
     .map(([sign, ids]) => ({
       sign,
-      planets: [...ids].sort(
-        (a, b) => PLANET_ORDER.indexOf(a as ComputedPlanetId) - PLANET_ORDER.indexOf(b as ComputedPlanetId),
-      ),
+      planets: [...ids].sort((a, b) => BODY_ORDER.indexOf(a) - BODY_ORDER.indexOf(b)),
     }))
 }
 
