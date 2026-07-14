@@ -164,6 +164,9 @@ export const messages = {
         button: '내 별자리 공유',
         copied: '링크를 복사했어요',
         text: '내 탄생 별자리를 확인해 보세요 ✦',
+        imageButton: '이미지로 공유',
+        saved: '이미지를 저장했어요',
+        imageError: '이미지를 만들지 못했어요',
       },
       footer: '재미로 보는 별자리예요 ✦',
       form: {
@@ -347,7 +350,7 @@ export const messages = {
       hero: {
         eyebrow: '별이 읽어주는 사랑',
         title: '나의 연애운',
-        subtitle: '태어난 하늘에 새겨진 사랑의 결부터 다가올 시기까지 읽어 드려요.',
+        subtitle: '태어난 별자리에 새겨진 사랑의 결부터 다가올 시기까지 읽어 드려요.',
       },
       computing: '사랑의 별을 읽는 중...',
       style: {
@@ -527,6 +530,9 @@ export const messages = {
         button: 'Share my chart',
         copied: 'Link copied',
         text: 'Check out my birth chart ✦',
+        imageButton: 'Share as image',
+        saved: 'Image saved',
+        imageError: 'Couldn’t create the image',
       },
       footer: 'Just-for-fun astrology ✦',
       form: {
@@ -888,6 +894,9 @@ export const messages = {
         button: '分享我的星盘',
         copied: '已复制链接',
         text: '来看看我的出生星盘 ✦',
+        imageButton: '分享为图片',
+        saved: '已保存图片',
+        imageError: '无法生成图片',
       },
       footer: '仅供娱乐的占星 ✦',
       form: {
@@ -1249,6 +1258,9 @@ export const messages = {
         button: '星図をシェア',
         copied: 'リンクをコピーしました',
         text: 'わたしの出生図を見てみて ✦',
+        imageButton: '画像でシェア',
+        saved: '画像を保存しました',
+        imageError: '画像を作成できませんでした',
       },
       footer: '楽しむための占星術です ✦',
       form: {
