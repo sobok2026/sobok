@@ -64,6 +64,43 @@ export function clearBirth() {
   }
 }
 
+// Per-tab flag: the visitor made an explicit save/don't-save decision via the
+// form. Once set, a deep-linked chart won't cross-seed device storage — so a
+// deliberately unsaved chart isn't quietly resurrected on refresh.
+const DECISION_KEY = 'stella.birth.decided'
+
+export function markBirthDecision() {
+  try {
+    sessionStorage.setItem(DECISION_KEY, '1')
+  } catch {
+    /* session storage unavailable — cross-seeding just stays enabled */
+  }
+}
+
+function birthDecisionMade(): boolean {
+  try {
+    return sessionStorage.getItem(DECISION_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Persist birth data that arrived via a shared/deep-linked URL, so the /today and
+ * /love pages (which read localStorage) personalize too. Deliberately conservative:
+ * skips when the visitor already has their own saved birth (don't clobber a
+ * returning user with someone else's link) or made a form decision this tab (don't
+ * override a "don't save" choice). Genuine first-time link entries seed and nothing
+ * else does.
+ */
+export function seedBirthFromLink(birth: StoredBirth) {
+  if (birthDecisionMade() || loadBirth() !== null) {
+    return
+  }
+
+  saveBirth(birth)
+}
+
 export function toBirthInput(stored: StoredBirth): BirthInput {
   const [year, month, day] = stored.date.split('-').map(Number)
   const [hour, minute] = stored.timeKnown ? stored.time.split(':').map(Number) : [12, 0]
