@@ -21,6 +21,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'x-default': `${ORIGIN}/love/`,
   }
 
+  const termsLanguages = {
+    ...Object.fromEntries(Object.values(Locale).map((locale) => [locale, `${ORIGIN}/${locale}/terms/`])),
+    'x-default': `${ORIGIN}/terms/`,
+  }
+
+  const privacyLanguages = {
+    ...Object.fromEntries(Object.values(Locale).map((locale) => [locale, `${ORIGIN}/${locale}/privacy/`])),
+    'x-default': `${ORIGIN}/privacy/`,
+  }
+
   return [
     ...Object.values(Locale).map((locale) => ({
       url: `${ORIGIN}/${locale}/`,
@@ -42,6 +52,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly' as const,
       priority: locale === DEFAULT_LOCALE ? 0.8 : 0.6,
       alternates: { languages: loveLanguages },
+    })),
+    ...Object.values(Locale).map((locale) => ({
+      url: `${ORIGIN}/${locale}/terms/`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly' as const,
+      priority: 0.3,
+      alternates: { languages: termsLanguages },
+    })),
+    ...Object.values(Locale).map((locale) => ({
+      url: `${ORIGIN}/${locale}/privacy/`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly' as const,
+      priority: 0.3,
+      alternates: { languages: privacyLanguages },
     })),
   ]
 }

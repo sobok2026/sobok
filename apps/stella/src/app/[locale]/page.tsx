@@ -1,11 +1,14 @@
-import { LOCALE_LANGUAGE_TAGS, LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
+import { LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
-import { ORIGIN, SITE_NAME } from '@/constants'
+import { SITE_NAME } from '@/constants'
 import { getLocale } from '@/i18n/server'
+import JsonLd, { faqPageGraph, webApplicationGraph } from '@/lib/JsonLd'
 
 import Constellation from './Constellation'
+import FaqSection from './FaqSection'
+import { FAQ } from './faq'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {
   const locale = await getLocale(params)
@@ -59,28 +62,12 @@ export default async function ConstellationPage({ params }: PageProps<'/[locale]
   const locale = await getLocale(params)
   const t = await getTranslations({ locale, namespace: 'Constellation.meta' })
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: t('title'),
-    description: t('description'),
-    url: `${ORIGIN}/${locale}/`,
-    applicationCategory: 'EntertainmentApplication',
-    operatingSystem: 'Web',
-    inLanguage: LOCALE_LANGUAGE_TAGS[locale],
-    isAccessibleForFree: true,
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-    publisher: { '@type': 'Organization', name: 'sobok' },
-  }
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD built from our own translation strings, with `<` escaped
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replaceAll('<', '\\u003c') }}
-      />
+      <JsonLd data={webApplicationGraph(locale, t('description'))} />
+      <JsonLd data={faqPageGraph(FAQ[locale].constellation)} />
       <Constellation />
+      <FaqSection locale={locale} page="constellation" />
     </>
   )
 }

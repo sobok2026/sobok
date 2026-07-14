@@ -4,7 +4,9 @@ import { getTranslations } from 'next-intl/server'
 
 import { SITE_NAME } from '@/constants'
 import { getLocale } from '@/i18n/server'
-
+import JsonLd, { faqPageGraph, subPageGraph } from '@/lib/JsonLd'
+import FaqSection from '../FaqSection'
+import { FAQ } from '../faq'
 import LoveFlow from './LoveFlow'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/love'>): Promise<Metadata> {
@@ -48,6 +50,22 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/love'>):
 }
 
 export default async function LovePage({ params }: PageProps<'/[locale]/love'>) {
-  await getLocale(params)
-  return <LoveFlow />
+  const locale = await getLocale(params)
+  const t = await getTranslations({ locale, namespace: 'Love' })
+
+  return (
+    <>
+      <JsonLd
+        data={subPageGraph(locale, {
+          path: 'love',
+          name: t('hero.title'),
+          description: t('meta.description'),
+          image: '/og-love.webp',
+        })}
+      />
+      <JsonLd data={faqPageGraph(FAQ[locale].love)} />
+      <LoveFlow />
+      <FaqSection locale={locale} page="love" />
+    </>
+  )
 }

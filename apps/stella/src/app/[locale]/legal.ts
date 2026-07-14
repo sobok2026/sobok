@@ -4,14 +4,25 @@ import { Locale } from '@sobok/domain/locale'
 // monitored (or swap it) — AdSense reviewers and users may write to it.
 export const LEGAL_CONTACT_EMAIL = 'sobok2026@gmail.com'
 
-export type LegalSection = { heading: string; body: string[] }
-export type LegalDoc = { title: string; description: string; sections: LegalSection[] }
+export type LegalSection = {
+  heading: string
+  body: string[]
+}
+
+export type LegalDoc = {
+  title: string
+  description: string
+  sections: LegalSection[]
+}
 
 export type LegalContent = {
   updatedLabel: string
   updatedDate: string
   contactLabel: string
-  nav: { home: string; privacy: string; terms: string }
+  nav: {
+    privacy: string
+    terms: string
+  }
   privacy: LegalDoc
   terms: LegalDoc
 }
@@ -21,7 +32,10 @@ export const LEGAL = {
     updatedLabel: '최종 업데이트',
     updatedDate: '2026년 7월 12일',
     contactLabel: '문의',
-    nav: { home: '홈', privacy: '개인정보처리방침', terms: '이용약관' },
+    nav: {
+      privacy: '개인정보처리방침',
+      terms: '이용약관',
+    },
     privacy: {
       title: '개인정보처리방침',
       description: '별무리(소복)가 이용자의 정보를 어떻게 다루는지 안내합니다.',
@@ -117,7 +131,10 @@ export const LEGAL = {
     updatedLabel: 'Last updated',
     updatedDate: 'July 12, 2026',
     contactLabel: 'Contact',
-    nav: { home: 'Home', privacy: 'Privacy Policy', terms: 'Terms of Service' },
+    nav: {
+      privacy: 'Privacy Policy',
+      terms: 'Terms of Service',
+    },
     privacy: {
       title: 'Privacy Policy',
       description: 'How Stella (sobok) handles your information.',
@@ -213,7 +230,10 @@ export const LEGAL = {
     updatedLabel: '最終更新',
     updatedDate: '2026年7月12日',
     contactLabel: 'お問い合わせ',
-    nav: { home: 'ホーム', privacy: 'プライバシーポリシー', terms: '利用規約' },
+    nav: {
+      privacy: 'プライバシーポリシー',
+      terms: '利用規約',
+    },
     privacy: {
       title: 'プライバシーポリシー',
       description: '星屑（sobok）が利用者の情報をどのように扱うかについてご案内します。',
@@ -309,7 +329,10 @@ export const LEGAL = {
     updatedLabel: '最后更新',
     updatedDate: '2026年7月12日',
     contactLabel: '联系方式',
-    nav: { home: '首页', privacy: '隐私政策', terms: '服务条款' },
+    nav: {
+      privacy: '隐私政策',
+      terms: '服务条款',
+    },
     privacy: {
       title: '隐私政策',
       description: '说明 星黛洛（sobok）如何处理您的信息。',

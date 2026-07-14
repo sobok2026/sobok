@@ -7,11 +7,8 @@ export default function Footer({ locale }: { locale: Locale }) {
   const { nav } = LEGAL[locale]
 
   return (
-    <footer className="border-t border-border px-4 py-8 text-center text-sm text-foreground-subtle">
+    <footer className="border-t border-border px-4 py-8 text-center text-xs text-foreground-subtle">
       <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-        <Link className="hover:text-foreground" href={`/${locale}/`}>
-          {nav.home}
-        </Link>
         <Link className="hover:text-foreground" href={`/${locale}/terms/`}>
           {nav.terms}
         </Link>

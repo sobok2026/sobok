@@ -11,6 +11,7 @@ import { Toaster } from 'sonner'
 import { ADSENSE_ACCOUNT, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getLocale } from '@/i18n/server'
 import Analytics from '@/lib/analytics/Analytics'
+import JsonLd, { siteGraph } from '@/lib/JsonLd'
 import Footer from './Footer'
 import LocaleSwitcher from './LocaleSwitcher'
 
@@ -71,6 +72,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   return (
     <html lang={locale}>
       <body className={`${PretendardVariable.className} antialiased`}>
+        <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
           <LocaleSwitcher label={t('localeSwitcher')} locale={locale} />
           {children}
