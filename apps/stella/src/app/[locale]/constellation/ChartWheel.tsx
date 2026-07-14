@@ -87,11 +87,8 @@ export default function ChartWheel({
     <svg
       aria-hidden={!revealed}
       aria-label={t('meta.title')}
-      className={`w-full select-none ${revealed ? styles.wheel : 'pointer-events-none'}`}
-      style={{
-        transition: 'opacity 0.4s',
-        opacity: revealed ? 1 : 0.4,
-      }}
+      className={`w-full select-none transition-opacity duration-400 ${revealed ? styles.wheel : 'pointer-events-none'}`}
+      style={{ opacity: revealed ? 1 : 0.4 }}
       viewBox={`-16 -16 ${VIEW + 32} ${VIEW + 32}`}
     >
       <Rings />
@@ -119,7 +116,7 @@ export default function ChartWheel({
 
 function Rings() {
   return (
-    <g className={styles.ring} style={{ animationDelay: '0s' }}>
+    <g className={`${styles.ring} [animation-delay:0s]`}>
       <circle cx={VIEW / 2} cy={VIEW / 2} fill="none" r={RADIUS.zodiacOuter} stroke="rgba(255,255,255,0.12)" />
       <circle cx={VIEW / 2} cy={VIEW / 2} fill="none" r={RADIUS.zodiacInner} stroke="rgba(255,255,255,0.1)" />
       <circle cx={VIEW / 2} cy={VIEW / 2} fill="none" r={RADIUS.houseInner} stroke="rgba(255,255,255,0.08)" />
@@ -223,7 +220,7 @@ function Houses({ ascendant, cusps, midheaven, onSelect, onSelectAngle, selectio
   }
 
   return (
-    <g className={styles.house} style={{ animationDelay: '0.15s' }}>
+    <g className={`${styles.house} [animation-delay:0.15s]`}>
       {cusps.map((lon, k) => {
         const inner = polar(lon, RADIUS.aspect, ascendant)
         const outer = polar(lon, RADIUS.houseOuter, ascendant)
@@ -574,13 +571,12 @@ function CenterHub({ revealed }: CenterHubProps) {
   return (
     <g>
       <circle
-        className={styles.token}
+        className={`${styles.token} [animation-delay:1.6s]`}
         cx={VIEW / 2}
         cy={VIEW / 2}
         fill="url(#coreGlow)"
         opacity={0.9}
         r={10}
-        style={{ animationDelay: '1.6s' }}
       />
       <defs>
         <radialGradient id="coreGlow">

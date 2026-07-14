@@ -16,7 +16,7 @@ export interface Big3CardProps {
 export default function Big3Card({ delay, glyph, hint, label, onClick, value }: Big3CardProps) {
   return (
     <button
-      className={`${styles.card} flex flex-col items-center gap-1 rounded-2xl border bg-surface-2 p-2.5 text-center backdrop-blur transition enabled:hover:border-border-strong enabled:hover:bg-surface-3 enabled:active:scale-95 disabled:cursor-default sm:p-3`}
+      className={`${styles.card} flex flex-col items-center gap-1 rounded-2xl border bg-surface-2 p-2.5 text-center backdrop-blur transition enabled:hover:border-border-strong enabled:hover:bg-surface-3 enabled:active:scale-95 motion-reduce:enabled:active:scale-100 disabled:cursor-default sm:p-3`}
       disabled={!onClick}
       onClick={onClick}
       style={{ animationDelay: `${delay}s` }}

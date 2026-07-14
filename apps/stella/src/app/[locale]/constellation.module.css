@@ -241,24 +241,31 @@
 
 @media (prefers-reduced-motion: reduce) {
   .wheel,
-  .ring,
   .sector,
-  .signGlyph,
-  .house,
   .token,
-  .tokenFloat,
-  .aspectPulse,
-  .aspectComet,
   .card,
-  .sheetIn,
-  .balanceBar {
-    animation-duration: 0.01ms;
+  .sheetIn {
+    animation: fadeIn 0.3s ease-out both;
     animation-delay: 0ms !important;
     animation-iteration-count: 1;
   }
 
-  .aspectLine,
-  .fade {
-    transition: none;
+  /* Ambient/repeating effects and transform- or path-based motion rest at
+     their static base state. Inline delays may remain, but no animation runs. */
+  .tokenFloat,
+  .aspectPulse,
+  .balanceBar {
+    animation: none;
+  }
+
+  /* Without its traveling animation the comet would become a permanent dash. */
+  .aspectComet {
+    display: none;
+  }
+
+  /* Selection dimming is a short opacity-only state transition. Keep it for
+     continuity, while dropping the aspect line's stroke-width interpolation. */
+  .aspectLine {
+    transition: opacity 0.35s ease-out;
   }
 }

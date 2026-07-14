@@ -25,7 +25,7 @@ export default function Faq({ locale, page }: { locale: Locale; page: FaqPageKey
                 {item.q}
                 <span
                   aria-hidden
-                  className="shrink-0 text-lg text-foreground-muted transition-transform group-open:rotate-45"
+                  className="shrink-0 text-lg text-foreground-muted transition-transform motion-reduce:transition-none group-open:rotate-45"
                 >
                   +
                 </span>

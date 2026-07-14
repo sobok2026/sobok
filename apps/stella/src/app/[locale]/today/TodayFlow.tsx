@@ -123,7 +123,11 @@ export default function TodayFlow() {
           )}
         </header>
 
-        {!data && !failed && <p className="mt-10 animate-pulse text-sm text-foreground-subtle">{t('computing')}</p>}
+        {!data && !failed && (
+          <p className="mt-10 animate-pulse text-sm text-foreground-subtle motion-reduce:animate-none">
+            {t('computing')}
+          </p>
+        )}
         {failed && <p className="mt-10 text-sm text-danger">{tc('form.error')}</p>}
 
         {data && <TodayBody data={data} homeHref={homeHref} onShare={share} />}
@@ -248,7 +252,7 @@ function TodayBody({ data, homeHref, onShare }: TodayBodyProps) {
               {t('personal.emptyHint')}
             </p>
             <Link
-              className="mt-4 inline-block rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-white active:scale-[0.98]"
+              className="mt-4 inline-block rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-white active:scale-[0.98] motion-reduce:active:scale-100"
               href={homeHref}
             >
               {t('personal.cta')}
@@ -292,7 +296,7 @@ function TodayBody({ data, homeHref, onShare }: TodayBodyProps) {
       {/* Actions */}
       <div className="flex flex-col items-center gap-3 pt-1">
         <button
-          className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 hover:bg-surface-3"
+          className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
           onClick={onShare}
           type="button"
         >

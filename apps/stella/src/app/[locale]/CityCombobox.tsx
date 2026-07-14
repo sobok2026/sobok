@@ -108,7 +108,7 @@ export default function CityCombobox({ cityKey, onSelect }: Props) {
         >
           <svg
             aria-hidden
-            className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            className={`h-4 w-4 transition-transform motion-reduce:transition-none ${isOpen ? 'rotate-180' : ''}`}
             fill="none"
             stroke="currentColor"
             strokeLinecap="round"

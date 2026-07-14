@@ -125,7 +125,7 @@ export default function BirthForm({ onSubmit }: Props) {
       {error && <p className="mt-3 text-xs text-danger">{error}</p>}
 
       <button
-        className="mt-5 w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-white active:scale-[0.98]"
+        className="mt-5 w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-white active:scale-[0.98] motion-reduce:active:scale-100"
         type="submit"
       >
         {t('submit')}
