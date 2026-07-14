@@ -5,6 +5,8 @@ import { useEffect, useRef } from 'react'
 type Star = { x: number; y: number; r: number; phase: number; speed: number; hue: number }
 type Shooting = { x: number; y: number; vx: number; vy: number; life: number }
 
+const METEOR_LIFE = 90
+
 /**
  * Ambient twinkling starfield rendered on a canvas behind the chart. Adds the
  * sense of depth/motion that a flat chart image lacks. Honors reduced-motion by
@@ -97,20 +99,20 @@ export default function Starfield({ className }: { className?: string }) {
           shooting.y += shooting.vy
           shooting.life -= 1
 
-          const grad = ctx.createLinearGradient(
-            shooting.x,
-            shooting.y,
-            shooting.x - shooting.vx * 14,
-            shooting.y - shooting.vy * 14,
-          )
+          const age = METEOR_LIFE - shooting.life
+          const trailLen = 14 * Math.min(1, age / 10)
+          const fade = Math.min(1, shooting.life / 24)
+          const tailX = shooting.x - shooting.vx * trailLen
+          const tailY = shooting.y - shooting.vy * trailLen
+          const grad = ctx.createLinearGradient(shooting.x, shooting.y, tailX, tailY)
 
-          grad.addColorStop(0, 'rgba(255,255,255,0.9)')
+          grad.addColorStop(0, `rgba(255,255,255,${0.9 * fade})`)
           grad.addColorStop(1, 'rgba(255,255,255,0)')
           ctx.strokeStyle = grad
           ctx.lineWidth = 2
           ctx.beginPath()
           ctx.moveTo(shooting.x, shooting.y)
-          ctx.lineTo(shooting.x - shooting.vx * 14, shooting.y - shooting.vy * 14)
+          ctx.lineTo(tailX, tailY)
           ctx.stroke()
 
           if (shooting.life <= 0 || shooting.x > width + 40 || shooting.y > height + 40) {
@@ -125,7 +127,7 @@ export default function Starfield({ className }: { className?: string }) {
             y: Math.random() * height * 0.3,
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
-            life: 90,
+            life: METEOR_LIFE,
           }
 
           nextShoot = t + 4000 + Math.random() * 5000

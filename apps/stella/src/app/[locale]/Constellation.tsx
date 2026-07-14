@@ -70,6 +70,7 @@ export default function Constellation() {
 
   function backToForm() {
     window.history.pushState(null, '', `${window.location.pathname}${window.location.search}`)
+    window.scrollTo(0, 0)
     setSelection(null)
     setData(null)
     setFailed(false)
