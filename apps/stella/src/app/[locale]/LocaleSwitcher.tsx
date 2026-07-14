@@ -53,7 +53,7 @@ export default function LocaleSwitcher({ label, locale }: Props) {
               event.preventDefault()
               window.location.assign(`${hrefFor(entry)}${window.location.search}${window.location.hash}`)
             }}
-            className="text-foreground-muted/80 transition-colors hover:text-foreground"
+            className="relative text-foreground-muted/80 transition-colors before:absolute before:-inset-x-1 before:-inset-y-2.5 before:content-[''] hover:text-foreground"
           >
             <Label name={LOCALE_NATIVE_NAMES[entry]} />
           </a>

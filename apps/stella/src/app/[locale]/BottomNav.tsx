@@ -29,7 +29,7 @@ export default function BottomNav({ locale }: { locale: Locale }) {
             <Link
               key={item.href}
               aria-current={active ? 'page' : undefined}
-              className={`rounded-full px-4 py-1.5 text-xs transition-colors ${
+              className={`relative rounded-full px-4 py-1.5 text-xs transition-colors before:absolute before:-inset-x-2 before:-inset-y-1.5 before:content-[''] ${
                 active ? 'bg-surface-2 font-semibold text-foreground' : 'text-foreground-muted hover:text-foreground'
               }`}
               href={item.href}
