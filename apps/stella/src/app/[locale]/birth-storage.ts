@@ -15,7 +15,7 @@ export type StoredBirth = {
   cityKey: string
 }
 
-function isStoredBirth(value: unknown): value is StoredBirth {
+export function isStoredBirth(value: unknown): value is StoredBirth {
   if (typeof value !== 'object' || value === null) {
     return false
   }

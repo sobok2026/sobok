@@ -3,10 +3,9 @@
 import { useTranslations } from 'next-intl'
 import { type SubmitEvent, useEffect, useState } from 'react'
 
-import { clearBirth, loadBirth, saveBirth } from './birth-storage'
+import { clearBirth, loadBirth, type StoredBirth, saveBirth } from './birth-storage'
 import CityCombobox from './CityCombobox'
-import { DEFAULT_CITY_KEY, findCity } from './cities'
-import type { BirthInput } from './ephemeris'
+import { DEFAULT_CITY_KEY } from './cities'
 
 const fieldClass =
   'w-full appearance-none rounded-xl border border-border-2 bg-surface-2 px-3 py-2.5 text-base text-foreground outline-none transition [color-scheme:dark] focus:border-white/60 focus:bg-surface-3 sm:text-sm'
@@ -14,11 +13,10 @@ const fieldClass =
 const labelClass = 'mb-1.5 block text-xs font-semibold text-foreground-muted'
 
 type Props = {
-  computing: boolean
-  onSubmit: (input: BirthInput) => void
+  onSubmit: (birth: StoredBirth) => void
 }
 
-export default function BirthForm({ computing, onSubmit }: Props) {
+export default function BirthForm({ onSubmit }: Props) {
   const t = useTranslations('Constellation.form')
   const [date, setDate] = useState('2000-01-01')
   const [time, setTime] = useState('12:00')
@@ -36,32 +34,22 @@ export default function BirthForm({ computing, onSubmit }: Props) {
       return
     }
 
-    const [hour, minute] = timeUnknown ? [12, 0] : time.split(':').map(Number)
-    const city = findCity(cityKey)
     setError(null)
 
+    const birth: StoredBirth = {
+      date,
+      time,
+      timeKnown: !timeUnknown,
+      cityKey,
+    }
+
     if (save) {
-      saveBirth({
-        date,
-        time,
-        timeKnown: !timeUnknown,
-        cityKey,
-      })
+      saveBirth(birth)
     } else {
       clearBirth()
     }
 
-    onSubmit({
-      year,
-      month,
-      day,
-      hour: hour ?? 12,
-      minute: minute ?? 0,
-      latitude: city.latitude,
-      longitude: city.longitude,
-      timeZone: city.timeZone,
-      timeKnown: !timeUnknown,
-    })
+    onSubmit(birth)
   }
 
   // Prefill from the device-local copy after mount
@@ -141,11 +129,10 @@ export default function BirthForm({ computing, onSubmit }: Props) {
       {error && <p className="mt-3 text-xs text-danger">{error}</p>}
 
       <button
-        className="mt-5 w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-white active:scale-[0.98] disabled:opacity-70"
-        disabled={computing}
+        className="mt-5 w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-white active:scale-[0.98]"
         type="submit"
       >
-        {computing ? t('computing') : t('submit')}
+        {t('submit')}
       </button>
     </form>
   )

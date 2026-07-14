@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import { track } from '@/lib/analytics/browser'
-
 import BirthForm from './BirthForm'
+import { type StoredBirth, toBirthInput } from './birth-storage'
+import { decodeBirthHash, encodeBirthHash } from './birth-url'
 import { computeAspects, elementCounts, signOfLon } from './chart/astrology'
 import { DEFAULT_CHART, ELEMENT_IDS } from './chart/data'
 import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from './chart/types'
@@ -38,11 +39,13 @@ type ChartData = {
 }
 
 export default function Constellation() {
+  const [selection, setSelection] = useState<Selection>(null)
   const [data, setData] = useState<ChartData | null>(null)
   const [computing, setComputing] = useState(false)
+  const [failed, setFailed] = useState(false)
   const [runId, setRunId] = useState(0)
-  const [selection, setSelection] = useState<Selection>(null)
   const wheelRef = useRef<HTMLDivElement>(null)
+  const syncRef = useRef<(fromSubmit: boolean) => void>(() => {})
   const t = useTranslations('Constellation')
   const locale = useLocale()
 
@@ -59,25 +62,17 @@ export default function Constellation() {
   const risingSign = ascendant !== null ? signOfLon(ascendant) : null
   const brightPlanets = computeBrightPlanets(selection, aspects, activeChart.planets, cusps, ascendant)
 
-  async function handleSubmit(input: Parameters<typeof computeChart>[0]) {
-    setComputing(true)
-
-    try {
-      const [chart, interpretations] = await Promise.all([computeChart(input), loadInterpretations(locale)])
-      setSelection(null)
-      setData({ chart, interpretations })
-      setRunId((n) => n + 1)
-      track('generate_chart')
-    } catch {
-      toast.error(t('form.error'))
-    } finally {
-      setComputing(false)
-    }
+  function handleSubmit(birth: StoredBirth) {
+    const url = `${window.location.pathname}${window.location.search}#${encodeBirthHash(birth)}`
+    window.history.pushState(null, '', url)
+    syncRef.current(true)
   }
 
   function backToForm() {
+    window.history.pushState(null, '', `${window.location.pathname}${window.location.search}`)
     setSelection(null)
     setData(null)
+    setFailed(false)
   }
 
   async function share() {
@@ -136,8 +131,6 @@ export default function Constellation() {
     })
   }
 
-  // Big 3 cards always focus their own planet — no aspect-combining. Unlike a wheel
-  // tap, tapping Sun then Moon shows the Moon, not the Sun–Moon relationship.
   function togglePlanet(id: PlanetId) {
     setSelection((prev) => (prev?.kind === 'planet' && prev.id === id ? null : { kind: 'planet', id }))
   }
@@ -204,6 +197,72 @@ export default function Constellation() {
     })
   }
 
+  // The birth input is mirrored into the URL hash (see birth-url), which makes a
+  // chart refreshable, bookmarkable, and shareable, and lets Back return to the
+  // form. This effect is the single place a chart is computed: it resolves the
+  // hash on mount (deep links, refresh) and on every browser navigation. A submit
+  // pushes the hash then calls `syncRef` directly, since pushState fires no
+  // `hashchange`.
+  useEffect(() => {
+    let cancelled = false
+    let generation = 0
+
+    async function sync(fromSubmit: boolean) {
+      const stored = decodeBirthHash(window.location.hash)
+      const gen = ++generation
+
+      if (!stored) {
+        setFailed(false)
+        setSelection(null)
+        setData(null)
+        return
+      }
+
+      setFailed(false)
+      setComputing(true)
+
+      try {
+        const [chart, interpretations] = await Promise.all([
+          computeChart(toBirthInput(stored)),
+          loadInterpretations(locale),
+        ])
+
+        // A newer navigation (or unmount) superseded this compute — drop it.
+        if (cancelled || gen !== generation) {
+          return
+        }
+
+        setSelection(null)
+        setData({ chart, interpretations })
+        setRunId((n) => n + 1)
+
+        // Count only visitor-initiated charts, not deep-link/back-forward views.
+        if (fromSubmit) {
+          track('generate_chart')
+        }
+      } catch {
+        if (!cancelled && gen === generation) {
+          setFailed(true)
+        }
+      } finally {
+        if (!cancelled && gen === generation) {
+          setComputing(false)
+        }
+      }
+    }
+
+    syncRef.current = sync
+    sync(false)
+
+    const onHashChange = () => sync(false)
+    window.addEventListener('hashchange', onHashChange)
+
+    return () => {
+      cancelled = true
+      window.removeEventListener('hashchange', onHashChange)
+    }
+  }, [locale])
+
   return (
     <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-[calc(4rem+var(--safe-area-top))] text-foreground sm:px-4 md:pt-[calc(2rem+var(--safe-area-top))]">
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full" />
@@ -218,8 +277,17 @@ export default function Constellation() {
           <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-foreground-muted/90">{t('hero.subtitle')}</p>
         </header>
 
-        {/* Birth form (before compute) */}
-        {!revealed && <BirthForm computing={computing} onSubmit={handleSubmit} />}
+        {/* Birth form → loading → chart. The birth input lives in the URL hash, so a
+            submit computes through that hash; deep links and refreshes resolve the same way. */}
+        {!revealed &&
+          (computing ? (
+            <p className="mt-10 animate-pulse text-sm text-foreground-subtle">{t('form.computing')}</p>
+          ) : (
+            <div className="w-full">
+              <BirthForm onSubmit={handleSubmit} />
+              {failed && <p className="mt-3 text-center text-sm text-danger">{t('form.error')}</p>}
+            </div>
+          ))}
 
         {/* Big 3 (after compute) */}
         {revealed && (
