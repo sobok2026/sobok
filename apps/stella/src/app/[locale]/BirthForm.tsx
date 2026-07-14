@@ -2,8 +2,8 @@
 
 import { useTranslations } from 'next-intl'
 import { type SubmitEvent, useEffect, useState } from 'react'
-
-import { loadBirth, type StoredBirth, saveBirth } from './birth-storage'
+import { useBirthProfile } from './BirthProfileProvider'
+import type { StoredBirth } from './birth-storage'
 import CityCombobox from './CityCombobox'
 import { DEFAULT_CITY_KEY } from './cities'
 
@@ -13,11 +13,12 @@ const fieldClass =
 const labelClass = 'mb-1.5 block text-xs font-semibold text-foreground-muted'
 
 type Props = {
-  onSubmit: (birth: StoredBirth) => void
+  onSubmit: (birth: StoredBirth, persistent: boolean) => void
 }
 
 export default function BirthForm({ onSubmit }: Props) {
   const t = useTranslations('Constellation.form')
+  const profile = useBirthProfile()
   const [date, setDate] = useState('2000-01-01')
   const [time, setTime] = useState('12:00')
   const [timeUnknown, setTimeUnknown] = useState(false)
@@ -43,23 +44,20 @@ export default function BirthForm({ onSubmit }: Props) {
       cityKey,
     }
 
-    saveBirth(birth, save)
-    onSubmit(birth)
+    onSubmit(birth, save)
   }
 
   // Prefill from the stored copy after mount, restoring the checkbox to match
   // where the data actually lives (persistent device vs. this session only).
   useEffect(() => {
-    const loaded = loadBirth()
-
-    if (loaded) {
-      setDate(loaded.birth.date)
-      setTime(loaded.birth.time)
-      setTimeUnknown(!loaded.birth.timeKnown)
-      setCityKey(loaded.birth.cityKey)
-      setSave(loaded.persistent)
+    if (profile.hydrated && profile.birth) {
+      setDate(profile.birth.date)
+      setTime(profile.birth.time)
+      setTimeUnknown(!profile.birth.timeKnown)
+      setCityKey(profile.birth.cityKey)
+      setSave(profile.persistent)
     }
-  }, [])
+  }, [profile.birth, profile.hydrated, profile.persistent])
 
   return (
     <form

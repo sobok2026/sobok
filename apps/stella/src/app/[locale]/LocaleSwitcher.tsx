@@ -1,4 +1,7 @@
+'use client'
+
 import { LOCALE_NATIVE_NAMES, Locale } from '@sobok/domain/locale'
+import { usePathname } from 'next/navigation'
 
 type Props = {
   label: string
@@ -19,6 +22,20 @@ function Label({ name }: { name: string }) {
 }
 
 export default function LocaleSwitcher({ label, locale }: Props) {
+  const pathname = usePathname()
+
+  function hrefFor(nextLocale: Locale): string {
+    const segments = pathname.split('/')
+
+    if (Object.values(Locale).includes(segments[1] as Locale)) {
+      segments[1] = nextLocale
+    } else {
+      segments.splice(1, 0, nextLocale)
+    }
+
+    return segments.join('/') || `/${nextLocale}`
+  }
+
   return (
     <nav
       aria-label={label}
@@ -32,9 +49,13 @@ export default function LocaleSwitcher({ label, locale }: Props) {
         ) : (
           <a
             key={entry}
-            href={`/${entry}`}
+            href={hrefFor(entry)}
             hrefLang={entry}
             lang={entry}
+            onClick={(event) => {
+              event.preventDefault()
+              window.location.assign(`${hrefFor(entry)}${window.location.search}${window.location.hash}`)
+            }}
             className="text-foreground-muted/80 transition-colors hover:text-foreground"
           >
             <Label name={LOCALE_NATIVE_NAMES[entry]} />
