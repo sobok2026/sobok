@@ -7,16 +7,20 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import { track } from '@/lib/analytics/browser'
-
-import { loadBirth, toBirthInput } from '../birth-storage'
+import type { StoredBirth } from '../birth-storage'
+import { toBirthInput } from '../birth-storage'
 import { computeAspects } from '../chart/astrology'
 import type { SignId } from '../chart/types'
 import styles from '../constellation.module.css'
 import { computeChart } from '../ephemeris'
+import { HeroTitle } from '../HeroTitle'
 import { loadInterpretations } from '../interpretations'
 import type { Interpretations } from '../interpretations/types'
 import { aspectTone, fill, pairKey } from '../interpretations/types'
+import SharedLinkError from '../SharedLinkError'
 import Starfield from '../Starfield'
+import { buildShareUrl, shareLink } from '../share'
+import { useBirthSource } from '../useBirthSource'
 import {
   deriveLoveProfile,
   type LoveProfile,
@@ -41,6 +45,8 @@ const PURPOSE_CHIP: Record<LoveWindowPurpose, string> = {
 }
 
 type Data = {
+  asOf: Date
+  birth: StoredBirth | null
   readings: LoveReadings
   /** Natal venus copy and aspect pairs, shared with the chart page. */
   interpretations: Interpretations
@@ -53,58 +59,77 @@ type Data = {
 export default function LoveFlow() {
   const t = useTranslations('Love')
   const tc = useTranslations('Constellation')
+  const ts = useTranslations('Shared')
   const locale = useLocale()
+  const birthSource = useBirthSource('love')
   const [data, setData] = useState<Data | null>(null)
   const [failed, setFailed] = useState(false)
   const homeHref = `/${locale}`
+  const { birth, payload: sharedPayload, shared } = birthSource
+  const sourceReady = birthSource.status === 'ready'
 
   async function share() {
-    const url = typeof window !== 'undefined' ? window.location.href : ''
-    const payload = { title: t('meta.title'), text: t('share.text'), url }
+    if (!data?.birth) {
+      return
+    }
 
-    try {
-      if (typeof navigator !== 'undefined' && navigator.share) {
-        await navigator.share(payload)
-        track('share', { method: 'web_share', content_type: 'love' })
-        return
-      }
-      await navigator.clipboard.writeText(url)
+    const method = await shareLink({
+      title: t('meta.title'),
+      text: t('share.text'),
+      url: buildShareUrl(locale, { kind: 'love', birth: data.birth, asOf: data.asOf }),
+    })
+
+    if (method === 'clipboard') {
       toast.success(t('share.copied'))
-      track('share', { method: 'clipboard', content_type: 'love' })
-    } catch {
-      /* user dismissed the share sheet — nothing to do */
+    } else if (method === 'failed') {
+      toast.error(ts('shareError'))
+    }
+
+    if (method === 'web_share' || method === 'clipboard') {
+      track('share', { method, content_type: 'love' })
     }
   }
 
   useEffect(() => {
     let cancelled = false
 
+    if (!sourceReady) {
+      return () => {
+        cancelled = true
+      }
+    }
+
     async function run() {
       try {
+        setFailed(false)
+        setData(null)
+        const asOf = sharedPayload?.asOf ?? new Date()
         const [readings, interpretations] = await Promise.all([loadLoveReadings(locale), loadInterpretations(locale)])
-        const stored = loadBirth()?.birth ?? null
         let profile: LoveProfile | null = null
         let windows: LoveWindow[] = []
 
-        if (stored) {
-          const chart = await computeChart(toBirthInput(stored))
+        if (birth) {
+          const chart = await computeChart(toBirthInput(birth))
           profile = deriveLoveProfile(chart, computeAspects(chart.planets))
-          windows = await scanLoveTransits(chart, new Date())
+          windows = await scanLoveTransits(chart, asOf)
         }
 
         if (!cancelled) {
           setData({
+            asOf,
+            birth,
             readings,
             interpretations,
             profile,
             windows,
-            timeKnown: stored?.timeKnown ?? false,
+            timeKnown: birth?.timeKnown ?? false,
           })
 
           track('view_reading', {
             content_type: 'love',
-            personalized: stored !== null,
-            time_known: stored?.timeKnown ?? false,
+            personalized: birth !== null,
+            time_known: birth?.timeKnown ?? false,
+            shared,
           })
         }
       } catch {
@@ -119,19 +144,26 @@ export default function LoveFlow() {
     return () => {
       cancelled = true
     }
-  }, [locale])
+  }, [birth, locale, shared, sharedPayload?.asOf, sourceReady])
+
+  if (birthSource.status === 'invalid') {
+    return <SharedLinkError />
+  }
 
   return (
     <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-[calc(4rem+var(--safe-area-top))] text-foreground sm:px-4 md:pt-[calc(2rem+var(--safe-area-top))]">
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-xl flex-col items-center">
-        <header className="mb-6 text-center">
+        <header className="mb-6 w-full max-w-sm text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{t('hero.eyebrow')}</p>
-          <h1 className="mt-2 bg-hero-gradient bg-clip-text text-3xl font-extrabold text-transparent">
-            {t('hero.title')}
-          </h1>
+          <HeroTitle tone="love">{t('hero.title')}</HeroTitle>
           <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-foreground-muted/90">{t('hero.subtitle')}</p>
+          {shared && (
+            <p className="mx-auto mt-3 w-fit rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-xs text-accent">
+              {ts('viewing')}
+            </p>
+          )}
         </header>
 
         {!data && !failed && (
@@ -143,7 +175,13 @@ export default function LoveFlow() {
 
         {data && !data.profile && <EmptyState homeHref={homeHref} />}
         {data?.profile && (
-          <LoveBody data={{ ...data, profile: data.profile }} homeHref={homeHref} locale={locale} onShare={share} />
+          <LoveBody
+            data={{ ...data, profile: data.profile }}
+            homeHref={homeHref}
+            locale={locale}
+            onShare={share}
+            shared={shared}
+          />
         )}
       </div>
     </main>
@@ -172,11 +210,13 @@ type LoveBodyProps = {
   homeHref: string
   locale: Locale
   onShare: () => void
+  shared: boolean
 }
 
-function LoveBody({ data, homeHref, locale, onShare }: LoveBodyProps) {
+function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
   const t = useTranslations('Love')
   const tc = useTranslations('Constellation')
+  const ts = useTranslations('Shared')
   const { readings, interpretations, profile, windows, timeKnown } = data
   const signName = (id: SignId) => tc(`signs.${id}`)
 
@@ -186,7 +226,7 @@ function LoveBody({ data, homeHref, locale, onShare }: LoveBodyProps) {
   const aspectText = resolveAspectText(profile, interpretations)
   const persona = readings.persona[profile.descendantSign]
   const shownWindows = windows.slice(0, MAX_WINDOWS)
-  const today = new Date()
+  const today = data.asOf
 
   return (
     <div className="w-full space-y-5">
@@ -339,18 +379,30 @@ function LoveBody({ data, homeHref, locale, onShare }: LoveBodyProps) {
         >
           {t('share.button')}
         </button>
-        <Link
-          className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-          href={`/${locale}/today`}
-        >
-          {t('toToday')}
-        </Link>
-        <Link
-          className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-          href={homeHref}
-        >
-          {t('toChart')}
-        </Link>
+        <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
+        {shared ? (
+          <a
+            className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
+            href={homeHref}
+          >
+            {ts('createOwn')}
+          </a>
+        ) : (
+          <>
+            <Link
+              className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
+              href={`/${locale}/today`}
+            >
+              {t('toToday')}
+            </Link>
+            <Link
+              className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
+              href={homeHref}
+            >
+              {t('toChart')}
+            </Link>
+          </>
+        )}
       </div>
     </div>
   )
