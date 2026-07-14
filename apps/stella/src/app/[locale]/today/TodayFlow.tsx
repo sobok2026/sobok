@@ -342,16 +342,16 @@ function TodayBody({ data, homeHref, onShare, shared }: TodayBodyProps) {
       {/* Actions */}
       <div className="flex flex-col items-center gap-3 pt-1">
         {!shared && (
-          <button
-            className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
-            onClick={onShare}
-            type="button"
-          >
-            {t('share.button')}
-          </button>
-        )}
-        {data.birth && (
-          <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
+          <>
+            <button
+              className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
+              onClick={onShare}
+              type="button"
+            >
+              {t('share.button')}
+            </button>
+            <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
+          </>
         )}
         {shared ? (
           <a

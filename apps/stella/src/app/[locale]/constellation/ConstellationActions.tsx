@@ -120,26 +120,28 @@ export function ConstellationActions({ aspects, birth, chart, onRecompute, share
   return (
     <div className="flex flex-col items-center gap-3">
       {!shared && (
-        <div className="flex flex-wrap items-center justify-center gap-2.5">
-          <button
-            className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
-            onClick={share}
-            type="button"
-          >
-            {t('share.button')}
-          </button>
-          <button
-            aria-busy={imageBusy}
-            className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3 disabled:opacity-60"
-            disabled={imageBusy}
-            onClick={shareImage}
-            type="button"
-          >
-            {t('share.imageButton')}
-          </button>
-        </div>
+        <>
+          <div className="flex flex-wrap items-center justify-center gap-2.5">
+            <button
+              className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
+              onClick={share}
+              type="button"
+            >
+              {t('share.button')}
+            </button>
+            <button
+              aria-busy={imageBusy}
+              className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3 disabled:opacity-60"
+              disabled={imageBusy}
+              onClick={shareImage}
+              type="button"
+            >
+              {t('share.imageButton')}
+            </button>
+          </div>
+          <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
+        </>
       )}
-      <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
       {shared ? (
         <a
           className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
