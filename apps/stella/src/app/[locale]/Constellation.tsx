@@ -1,5 +1,6 @@
 'use client'
 
+import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useReducer, useRef, useState } from 'react'
 
@@ -11,6 +12,7 @@ import { toBirthInput } from './birth-storage'
 import { computeAspects, elementCounts, signOfLon } from './chart/astrology'
 import { DEFAULT_CHART, ELEMENT_IDS } from './chart/data'
 import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from './chart/types'
+import { findCity } from './cities'
 import AspectSection from './constellation/AspectSection'
 import Big3Card from './constellation/Big3Card'
 import ChartWheel from './constellation/ChartWheel'
@@ -47,6 +49,22 @@ type ChartState =
 
 const INITIAL_CHART_STATE: ChartState = { status: 'idle', runId: 0 }
 
+/** "2000년 1월 1일 · 12:00 · 서울" — date and city localized, time literal (or "unknown"). */
+function formatBirthSummary(birth: StoredBirth, locale: Locale, timeUnknownLabel: string): string {
+  const tag = LOCALE_LANGUAGE_TAGS[locale]
+
+  const date = new Intl.DateTimeFormat(tag, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(`${birth.date}T12:00:00`))
+
+  const time = birth.timeKnown ? birth.time : timeUnknownLabel
+  const city = findCity(birth.cityKey).name
+
+  return `${date} · ${time} · ${city}`
+}
+
 export default function Constellation() {
   const [chartState, setChartState] = useState<ChartState>(INITIAL_CHART_STATE)
   const [selection, dispatchSelection] = useReducer(selectionReducer, null)
@@ -58,13 +76,26 @@ export default function Constellation() {
   const locale = useLocale()
   const birthSource = useBirthSource('chart')
 
-  const { birth, save, shared } = birthSource
+  const { birth, save, shared, persistent, revealed: sessionRevealed } = birthSource
   const sourceReady = birthSource.status === 'ready'
   const data = chartState.status === 'ready' ? chartState.data : null
   const computing = chartState.status === 'computing'
   const failed = chartState.status === 'failed'
   const runId = chartState.runId
   const revealed = data !== null
+
+  // A stored birth surfaces as a finished chart without an explicit submit only
+  // when it is a saved profile (localStorage) or a shared link, or once the
+  // visitor has deliberately revealed a session copy this load. A transient
+  // session birth otherwise waits behind the prefilled form.
+  const shouldReveal = shared || persistent || sessionRevealed
+
+  // An auto-reveal birth computes its chart in an effect that runs a frame after
+  // the source hydrates. Treat that gap as loading so the form does not flash for
+  // one frame before the chart replaces it.
+  const autoRevealPending = sourceReady && !editing && birth !== null && shouldReveal && !revealed && !failed
+
+  const birthSummary = birth ? formatBirthSummary(birth, locale as Locale, t('form.timeUnknownShort')) : null
   const activeChart = data?.chart ?? DEFAULT_CHART
   const { ascendant, cusps } = activeChart
 
@@ -165,7 +196,7 @@ export default function Constellation() {
   useEffect(() => {
     let cancelled = false
 
-    if (!sourceReady || editing || !birth) {
+    if (!sourceReady || editing || !birth || !shouldReveal) {
       if (sourceReady) {
         dispatchSelection({ type: 'reset' })
         setChartState((previous) => ({ status: 'idle', runId: previous.runId }))
@@ -215,7 +246,7 @@ export default function Constellation() {
     return () => {
       cancelled = true
     }
-  }, [birth, editing, locale, sourceReady])
+  }, [birth, editing, locale, sourceReady, shouldReveal])
 
   if (birthSource.status === 'invalid') {
     return <SharedLinkError />
@@ -238,10 +269,34 @@ export default function Constellation() {
           )}
         </header>
 
+        {revealed && !shared && birthSummary && (
+          <button
+            className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-border-2 bg-surface-2/60 px-3.5 py-1.5 text-xs text-foreground-subtle backdrop-blur transition hover:border-white/30 hover:text-foreground-secondary"
+            onClick={backToForm}
+            type="button"
+          >
+            <span>{birthSummary}</span>
+            <svg
+              aria-hidden
+              className="h-3.5 w-3.5"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+            </svg>
+            <span className="sr-only">{t('form.edit')}</span>
+          </button>
+        )}
+
         {/* Normal profiles restore from the shared layout provider. Share routes
             inject an isolated birth and never render or mutate the visitor's form. */}
         {!revealed &&
-          (!sourceReady || computing ? (
+          (!sourceReady || computing || autoRevealPending ? (
             <p className="mt-10 animate-pulse text-sm text-foreground-subtle motion-reduce:animate-none">
               {t('form.computing')}
             </p>

@@ -121,6 +121,21 @@ export function saveBirth(birth: StoredBirth, persistent: boolean) {
   }
 }
 
+/** Forget the birth on this device — removes both storages so nothing lingers. */
+export function clearBirth() {
+  try {
+    localStorage.removeItem(STORAGE_KEY)
+  } catch {
+    /* ignore */
+  }
+
+  try {
+    sessionStorage.removeItem(STORAGE_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+
 export function toBirthInput(stored: StoredBirth): BirthInput {
   const [year, month, day] = stored.date.split('-').map(Number)
   const [hour, minute] = stored.timeKnown ? stored.time.split(':').map(Number) : [12, 0]

@@ -47,6 +47,18 @@ export default function BirthForm({ onSubmit }: Props) {
     onSubmit(birth, save)
   }
 
+  // Forget the saved profile and reset the form to a blank slate. Lives here —
+  // where saving is managed — rather than shouting from the result view.
+  function handleClear() {
+    profile.clear()
+    setDate('2000-01-01')
+    setTime('12:00')
+    setTimeUnknown(false)
+    setCityKey(DEFAULT_CITY_KEY)
+    setSave(false)
+    setError(null)
+  }
+
   // Prefill from the stored copy after mount, restoring the checkbox to match
   // where the data actually lives (persistent device vs. this session only).
   useEffect(() => {
@@ -113,10 +125,21 @@ export default function BirthForm({ onSubmit }: Props) {
       </div>
 
       <div className="mt-4">
-        <label className="flex items-center gap-2 text-xs text-foreground-muted">
-          <input checked={save} className="h-4 w-4" onChange={(e) => setSave(e.target.checked)} type="checkbox" />
-          {t('saveLabel')}
-        </label>
+        <div className="flex justify-between ">
+          <label className="flex items-center gap-2 text-xs text-foreground-muted">
+            <input checked={save} className="h-4 w-4" onChange={(e) => setSave(e.target.checked)} type="checkbox" />
+            {t('saveLabel')}
+          </label>
+          {profile.persistent && (
+            <button
+              className="text-[11px] text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
+              onClick={handleClear}
+              type="button"
+            >
+              {t('clearSaved')}
+            </button>
+          )}
+        </div>
         <p className="mt-1.5 text-[11px] leading-relaxed text-foreground-faint">{t('saveHint')}</p>
       </div>
 

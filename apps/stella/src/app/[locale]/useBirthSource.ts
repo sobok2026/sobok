@@ -10,6 +10,10 @@ type PayloadFor<K extends ShareKind> = Extract<SharedPayload, { kind: K }>
 export type BirthSourceState<K extends ShareKind> = {
   birth: StoredBirth | null
   payload: PayloadFor<K> | null
+  /** True when the visitor's own birth is a saved profile (localStorage), not a session copy. */
+  persistent: boolean
+  /** True once a session-only birth has been deliberately surfaced this page load. */
+  revealed: boolean
   save: (birth: StoredBirth, persistent: boolean) => void
   shared: boolean
   status: 'loading' | 'invalid' | 'ready'
@@ -36,6 +40,8 @@ export function useBirthSource<K extends ShareKind>(kind: K): BirthSourceState<K
   return {
     birth: payload?.birth ?? profile.birth,
     payload,
+    persistent: profile.persistent,
+    revealed: profile.revealed,
     save: profile.save,
     shared,
     status,
