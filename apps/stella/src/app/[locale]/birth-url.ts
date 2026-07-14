@@ -37,8 +37,6 @@ export function decodeBirthHash(hash: string): StoredBirth | null {
 
   const candidate: StoredBirth = {
     date,
-    // A missing `t` means the time is unknown; the chart then falls back to noon
-    // (see `toBirthInput`), so this placeholder round-trips harmlessly.
     time: time ?? '12:00',
     timeKnown: time !== null,
     cityKey,
