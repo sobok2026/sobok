@@ -109,7 +109,6 @@ export default function ChartWheel({
           <Planets isDimmed={isPlanetDimmed} onSelect={onSelectPlanet} placed={placed} selection={selection} />
         </>
       )}
-      <CenterHub revealed={revealed} />
     </svg>
   )
 }
@@ -555,36 +554,6 @@ function Planets({ isDimmed, onSelect, placed, selection }: PlanetsProps) {
           </g>
         )
       })}
-    </g>
-  )
-}
-
-interface CenterHubProps {
-  revealed: boolean
-}
-
-function CenterHub({ revealed }: CenterHubProps) {
-  if (!revealed) {
-    return null
-  }
-
-  return (
-    <g>
-      <circle
-        className={`${styles.token} [animation-delay:1.6s]`}
-        cx={VIEW / 2}
-        cy={VIEW / 2}
-        fill="url(#coreGlow)"
-        opacity={0.9}
-        r={10}
-      />
-      <defs>
-        <radialGradient id="coreGlow">
-          <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="60%" stopColor="var(--color-brand)" />
-          <stop offset="100%" stopColor="var(--color-accent-cool)" stopOpacity="0" />
-        </radialGradient>
-      </defs>
     </g>
   )
 }
