@@ -56,7 +56,7 @@ export default function LoveFlow() {
   const locale = useLocale()
   const [data, setData] = useState<Data | null>(null)
   const [failed, setFailed] = useState(false)
-  const homeHref = `/${locale}/`
+  const homeHref = `/${locale}`
 
   async function share() {
     const url = typeof window !== 'undefined' ? window.location.href : ''
@@ -337,7 +337,7 @@ function LoveBody({ data, homeHref, locale, onShare }: LoveBodyProps) {
         </button>
         <Link
           className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-          href={`/${locale}/today/`}
+          href={`/${locale}/today`}
         >
           {t('toToday')}
         </Link>

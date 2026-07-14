@@ -9,10 +9,10 @@ export default function Footer({ locale }: { locale: Locale }) {
   return (
     <footer className="border-t border-border px-4 py-8 text-center text-xs text-foreground-subtle">
       <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-        <Link className="hover:text-foreground" href={`/${locale}/terms/`}>
+        <Link className="hover:text-foreground" href={`/${locale}/terms`}>
           {nav.terms}
         </Link>
-        <Link className="hover:text-foreground" href={`/${locale}/privacy/`}>
+        <Link className="hover:text-foreground" href={`/${locale}/privacy`}>
           {nav.privacy}
         </Link>
       </nav>

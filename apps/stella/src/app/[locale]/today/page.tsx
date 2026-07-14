@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/today'>)
   const t = await getTranslations({ locale, namespace: 'Today.meta' })
   const title = t('title')
   const description = t('description')
-  const canonical = `/${locale}/today/`
+  const canonical = `/${locale}/today`
   const openGraphLocale = LOCALE_OPEN_GRAPH_TAGS[locale]
 
   const images = [
@@ -33,8 +33,8 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/today'>)
     alternates: {
       canonical,
       languages: {
-        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, `/${entry}/today/`])),
-        'x-default': '/today/',
+        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, `/${entry}/today`])),
+        'x-default': '/today',
       },
     },
     openGraph: {

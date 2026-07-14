@@ -23,7 +23,7 @@ export function siteGraph(locale: Locale) {
         '@type': 'WebSite',
         '@id': WEBSITE_ID,
         name: SITE_NAME[locale],
-        url: `${ORIGIN}/${locale}/`,
+        url: `${ORIGIN}/${locale}`,
         inLanguage: LOCALE_LANGUAGE_TAGS[locale],
         publisher: { '@id': ORGANIZATION_ID },
       },
@@ -36,10 +36,10 @@ export function webApplicationGraph(locale: Locale, description: string) {
   return {
     '@context': CONTEXT,
     '@type': 'WebApplication',
-    '@id': `${ORIGIN}/${locale}/#webapp`,
+    '@id': `${ORIGIN}/${locale}#webapp`,
     name: SITE_NAME[locale],
     description,
-    url: `${ORIGIN}/${locale}/`,
+    url: `${ORIGIN}/${locale}`,
     applicationCategory: 'EntertainmentApplication',
     operatingSystem: 'Web',
     inLanguage: LOCALE_LANGUAGE_TAGS[locale],
@@ -59,7 +59,7 @@ type SubPage = {
 
 // WebPage + BreadcrumbList for the secondary tool pages (today, love).
 export function subPageGraph(locale: Locale, { path, name, description, image }: SubPage) {
-  const url = `${ORIGIN}/${locale}/${path}/`
+  const url = `${ORIGIN}/${locale}/${path}`
   return {
     '@context': CONTEXT,
     '@graph': [
@@ -77,7 +77,7 @@ export function subPageGraph(locale: Locale, { path, name, description, image }:
         '@type': 'BreadcrumbList',
         '@id': `${url}#breadcrumb`,
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: SITE_NAME[locale], item: `${ORIGIN}/${locale}/` },
+          { '@type': 'ListItem', position: 1, name: SITE_NAME[locale], item: `${ORIGIN}/${locale}` },
           { '@type': 'ListItem', position: 2, name, item: url },
         ],
       },

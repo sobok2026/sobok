@@ -9,7 +9,7 @@ import { LEGAL } from '../../legal'
 export async function generateMetadata({ params }: PageProps<'/[locale]/terms'>): Promise<Metadata> {
   const locale = await getLocale(params)
   const doc = LEGAL[locale].terms
-  const canonical = `/${locale}/terms/`
+  const canonical = `/${locale}/terms`
 
   return {
     title: doc.title,
@@ -17,8 +17,8 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/terms'>)
     alternates: {
       canonical,
       languages: {
-        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, `/${entry}/terms/`])),
-        'x-default': '/terms/',
+        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, `/${entry}/terms`])),
+        'x-default': '/terms',
       },
     },
     openGraph: {

@@ -32,7 +32,7 @@ export default function LocaleSwitcher({ label, locale }: Props) {
         ) : (
           <a
             key={entry}
-            href={`/${entry}/`}
+            href={`/${entry}`}
             hrefLang={entry}
             lang={entry}
             className="text-foreground-muted/80 transition-colors hover:text-foreground"

@@ -104,7 +104,7 @@ export default function TodayFlow() {
     }
   }
 
-  const homeHref = `/${locale}/`
+  const homeHref = `/${locale}`
 
   return (
     <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-[calc(4rem+var(--safe-area-top))] text-foreground sm:px-4 md:pt-[calc(2rem+var(--safe-area-top))]">
@@ -306,7 +306,7 @@ function TodayBody({ data, homeHref, onShare }: TodayBodyProps) {
         </Link>
         <Link
           className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-          href={`${homeHref}love/`}
+          href={`${homeHref}/love`}
         >
           {t('toLove')}
         </Link>

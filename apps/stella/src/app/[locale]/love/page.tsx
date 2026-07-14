@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/love'>):
   const t = await getTranslations({ locale, namespace: 'Love.meta' })
   const title = t('title')
   const description = t('description')
-  const canonical = `/${locale}/love/`
+  const canonical = `/${locale}/love`
 
   const images = [
     {

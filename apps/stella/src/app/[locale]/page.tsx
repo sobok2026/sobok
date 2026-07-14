@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
   const t = await getTranslations({ locale, namespace: 'Constellation.meta' })
   const title = t('title')
   const description = t('description')
-  const canonical = `/${locale}/`
+  const canonical = `/${locale}`
   const openGraphLocale = LOCALE_OPEN_GRAPH_TAGS[locale]
 
   const images = [
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
     alternates: {
       canonical,
       languages: {
-        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, `/${entry}/`])),
+        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, `/${entry}`])),
         'x-default': '/',
       },
     },

@@ -51,7 +51,7 @@ export default function ReportSection({
               <p className="mt-4">
                 <Link
                   className="text-xs font-semibold text-accent underline-offset-4 transition hover:underline"
-                  href={`/${locale}/love/`}
+                  href={`/${locale}/love`}
                 >
                   {report.loveCta}
                 </Link>

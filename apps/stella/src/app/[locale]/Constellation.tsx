@@ -387,13 +387,13 @@ export default function Constellation() {
               </button>
               <Link
                 className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-                href={`/${locale}/today/`}
+                href={`/${locale}/today`}
               >
                 {t('todayCta')}
               </Link>
               <Link
                 className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-                href={`/${locale}/love/`}
+                href={`/${locale}/love`}
               >
                 {t('loveCta')}
               </Link>
