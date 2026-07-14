@@ -2,7 +2,6 @@ import '../globals.css'
 
 import { LOCALE_LANGUAGE_TAGS, Locale } from '@sobok/domain/locale'
 import type { Metadata, Viewport } from 'next'
-import localFont from 'next/font/local'
 import Script from 'next/script'
 import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
@@ -14,27 +13,6 @@ import Analytics from '@/lib/analytics/Analytics'
 import JsonLd, { siteGraph } from '@/lib/JsonLd'
 import Footer from './Footer'
 import LocaleSwitcher from './LocaleSwitcher'
-
-const PretendardVariable = localFont({
-  src: '../../fonts/PretendardVariable.400-700.3713.woff2',
-  display: 'swap',
-  weight: '400 700',
-  fallback: [
-    '-apple-system',
-    'BlinkMacSystemFont',
-    'system-ui',
-    'Roboto',
-    'Helvetica Neue',
-    'Segoe UI',
-    'Apple SD Gothic Neo',
-    'Noto Sans KR',
-    'Malgun Gothic',
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-    'sans-serif',
-  ],
-})
 
 export function generateStaticParams() {
   return Object.values(Locale).map((locale) => ({ locale }))
@@ -71,7 +49,14 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
 
   return (
     <html lang={LOCALE_LANGUAGE_TAGS[locale]}>
-      <body className={`${PretendardVariable.className} antialiased`}>
+      {locale !== Locale.ZH && (
+        <link
+          href="/fonts/pretendard-jp/1.3.9/variable/pretendardvariable-jp-dynamic-subset.css"
+          precedence="font"
+          rel="stylesheet"
+        />
+      )}
+      <body className="antialiased">
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
           <LocaleSwitcher label={t('localeSwitcher')} locale={locale} />

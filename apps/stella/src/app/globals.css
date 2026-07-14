@@ -75,6 +75,57 @@ html {
 body {
   color: var(--color-foreground);
   background: var(--color-background);
+  font-family:
+    'Pretendard JP Variable',
+    'Pretendard JP',
+    Pretendard,
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    'Helvetica Neue',
+    'Segoe UI',
+    'Hiragino Sans',
+    'Apple SD Gothic Neo',
+    Meiryo,
+    'Noto Sans JP',
+    'Noto Sans KR',
+    'Malgun Gothic',
+    Osaka,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    sans-serif;
+}
+
+/* Pretendard JP defaults to Japanese Han glyphs. Its ss05 feature switches
+   shared Han glyphs to the Korean forms recommended by the font project. */
+html:lang(ko-KR) body {
+  font-feature-settings: 'ss05';
+}
+
+/* Explicitly tagged non-Korean fragments (for example, locale names) must not
+   inherit the Korean glyph variant from a Korean document. */
+html:lang(ko-KR) [lang]:not(:lang(ko)) {
+  font-feature-settings: normal;
+}
+
+/* Pretendard JP does not cover Simplified Chinese. Keep zh-CN entirely on a
+   locale-appropriate system stack instead of mixing Japanese and SC glyphs. */
+html:lang(zh-CN) body {
+  font-family:
+    'PingFang SC',
+    'Microsoft YaHei',
+    'Noto Sans SC',
+    'Noto Sans CJK SC',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    sans-serif;
 }
 
 /* With appearance:none, iOS WebKit centers date/time values and collapses the
