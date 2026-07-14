@@ -313,10 +313,10 @@ export default function Constellation() {
               </div>
             )
           ) : (
-            <div className="w-full">
+            <>
               <BirthForm onSubmit={handleSubmit} />
               {failed && <p className="mt-3 text-center text-sm text-danger">{t('form.error')}</p>}
-            </div>
+            </>
           ))}
 
         {/* Big 3 (after compute) */}
