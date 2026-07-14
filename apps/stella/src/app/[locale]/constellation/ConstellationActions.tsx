@@ -163,13 +163,6 @@ export function ConstellationActions({ aspects, birth, chart, onRecompute, share
           >
             {t('loveCta')}
           </Link>
-          <button
-            className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-            onClick={onRecompute}
-            type="button"
-          >
-            {t('form.recompute')}
-          </button>
         </>
       )}
       <p className="mt-1 text-xs text-foreground-faint">{t('footer')}</p>

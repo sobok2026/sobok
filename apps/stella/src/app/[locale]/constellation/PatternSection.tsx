@@ -19,7 +19,7 @@ export default function PatternSection({ chart }: { chart: NatalChart }) {
       <h2 className="text-sm font-bold text-foreground">{t('shapes.title')}</h2>
       <p className="mt-1 text-xs text-foreground-subtle">{t('shapes.intro')}</p>
 
-      <div className="mt-3 rounded-xl bg-surface-2 p-3">
+      <div className="mt-3 border rounded-xl bg-surface-2 p-3 sm:border-0">
         <p className="text-sm font-semibold text-foreground">{t(`shapes.name.${shape.id}`)}</p>
         <p className="mt-1 text-xs leading-relaxed text-foreground-secondary">{shapeBody}</p>
       </div>
@@ -30,7 +30,7 @@ export default function PatternSection({ chart }: { chart: NatalChart }) {
           <p className="mt-1 text-xs text-foreground-subtle">{t('patterns.intro')}</p>
           <ul className="mt-3 space-y-2">
             {patterns.map((p) => (
-              <li className="rounded-xl bg-surface-2 p-3" key={`${p.type}-${p.planets.join('-')}`}>
+              <li className="border rounded-xl bg-surface-2 p-3 sm:border-0" key={`${p.type}-${p.planets.join('-')}`}>
                 <div className="flex items-center gap-2">
                   <span aria-hidden className="text-base text-accent">
                     {p.planets.map((id) => glyphText(PLANET_GLYPHS[id])).join(' ')}
