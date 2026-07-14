@@ -10,7 +10,7 @@ export default function Faq({ locale, page }: { locale: Locale; page: FaqPageKey
   const items = content[page]
 
   return (
-    <section aria-labelledby="faq-heading" className="border-t border-border bg-night-sky px-4 py-14 sm:px-6">
+    <section aria-labelledby="faq-heading" className="border-t border-border px-4 py-14 sm:px-6">
       <div className="mx-auto max-w-2xl">
         <h2 className="text-center text-2xl font-bold tracking-tight text-foreground" id="faq-heading">
           {content.heading}

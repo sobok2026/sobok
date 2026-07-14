@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 
 import { track } from '@/lib/analytics/browser'
 import BirthForm from './BirthForm'
-import { type StoredBirth, toBirthInput } from './birth-storage'
+import { loadBirth, type StoredBirth, saveBirth, toBirthInput } from './birth-storage'
 import { decodeBirthHash, encodeBirthHash } from './birth-url'
 import { computeAspects, elementCounts, signOfLon } from './chart/astrology'
 import { DEFAULT_CHART, ELEMENT_IDS } from './chart/data'
@@ -218,11 +218,10 @@ export default function Constellation() {
         return
       }
 
-      if (!fromSubmit) {
-        if (loadBirth() !== null) {
-          return
-        }
-
+      // A deep-linked chart (not our own submit) seeds the session so /today and
+      // /love personalize too — unless the visitor already has their own birth,
+      // which a shared link must never clobber. The chart computes either way.
+      if (!fromSubmit && loadBirth() === null) {
         saveBirth(stored, false)
       }
 
