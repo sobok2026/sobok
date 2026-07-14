@@ -1,20 +1,20 @@
 'use client'
 
-import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
-import { useEffect, useRef, useState } from 'react'
-import { toast } from 'sonner'
+import { useEffect, useReducer, useRef, useState } from 'react'
 
 import { track } from '@/lib/analytics/browser'
+
 import BirthForm from './BirthForm'
-import { loadBirth, type StoredBirth, saveBirth, toBirthInput } from './birth-storage'
-import { decodeBirthHash, encodeBirthHash } from './birth-url'
+import type { StoredBirth } from './birth-storage'
+import { toBirthInput } from './birth-storage'
 import { computeAspects, elementCounts, signOfLon } from './chart/astrology'
 import { DEFAULT_CHART, ELEMENT_IDS } from './chart/data'
 import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from './chart/types'
 import AspectSection from './constellation/AspectSection'
 import Big3Card from './constellation/Big3Card'
 import ChartWheel from './constellation/ChartWheel'
+import { ConstellationActions } from './constellation/ConstellationActions'
 import DetailPanel from './constellation/DetailPanel'
 import ElementBalance from './constellation/ElementBalance'
 import PatternSection from './constellation/PatternSection'
@@ -24,13 +24,16 @@ import {
   isAspectDimmed,
   isAspectSelection,
   isPlanetDimmed,
-  type Selection,
   selectionKey,
+  selectionReducer,
 } from './constellation/selection'
 import { computeChart } from './ephemeris'
+import { HeroTitle } from './HeroTitle'
 import { loadInterpretations } from './interpretations'
 import type { Interpretations } from './interpretations/types'
+import SharedLinkError from './SharedLinkError'
 import Starfield from './Starfield'
+import { useBirthSource } from './useBirthSource'
 
 /** Chart and its locale's reading tables arrive together — one reveal, no half-loaded panel. */
 type ChartData = {
@@ -38,17 +41,29 @@ type ChartData = {
   interpretations: Interpretations
 }
 
-export default function Constellation() {
-  const [selection, setSelection] = useState<Selection>(null)
-  const [data, setData] = useState<ChartData | null>(null)
-  const [computing, setComputing] = useState(false)
-  const [failed, setFailed] = useState(false)
-  const [runId, setRunId] = useState(0)
-  const wheelRef = useRef<HTMLDivElement>(null)
-  const syncRef = useRef<(fromSubmit: boolean) => void>(() => {})
-  const t = useTranslations('Constellation')
-  const locale = useLocale()
+type ChartState =
+  | { status: 'idle' | 'computing' | 'failed'; runId: number }
+  | { status: 'ready'; data: ChartData; runId: number }
 
+const INITIAL_CHART_STATE: ChartState = { status: 'idle', runId: 0 }
+
+export default function Constellation() {
+  const [chartState, setChartState] = useState<ChartState>(INITIAL_CHART_STATE)
+  const [selection, dispatchSelection] = useReducer(selectionReducer, null)
+  const [editing, setEditing] = useState(false)
+  const wheelRef = useRef<HTMLDivElement>(null)
+  const submittedRef = useRef(false)
+  const t = useTranslations('Constellation')
+  const ts = useTranslations('Shared')
+  const locale = useLocale()
+  const birthSource = useBirthSource('chart')
+
+  const { birth, save, shared } = birthSource
+  const sourceReady = birthSource.status === 'ready'
+  const data = chartState.status === 'ready' ? chartState.data : null
+  const computing = chartState.status === 'computing'
+  const failed = chartState.status === 'failed'
+  const runId = chartState.runId
   const revealed = data !== null
   const activeChart = data?.chart ?? DEFAULT_CHART
   const { ascendant, cusps } = activeChart
@@ -62,36 +77,17 @@ export default function Constellation() {
   const risingSign = ascendant !== null ? signOfLon(ascendant) : null
   const brightPlanets = computeBrightPlanets(selection, aspects, activeChart.planets, cusps, ascendant)
 
-  function handleSubmit(birth: StoredBirth) {
-    const url = `${window.location.pathname}${window.location.search}#${encodeBirthHash(birth)}`
-    window.history.pushState(null, '', url)
-    syncRef.current(true)
+  function handleSubmit(nextBirth: StoredBirth, persistent: boolean) {
+    submittedRef.current = true
+    save(nextBirth, persistent)
+    setEditing(false)
   }
 
   function backToForm() {
-    window.history.pushState(null, '', `${window.location.pathname}${window.location.search}`)
     window.scrollTo(0, 0)
-    setSelection(null)
-    setData(null)
-    setFailed(false)
-  }
-
-  async function share() {
-    const url = typeof window !== 'undefined' ? window.location.href : ''
-    const data = { title: t('meta.title'), text: t('share.text'), url }
-
-    try {
-      if (typeof navigator !== 'undefined' && navigator.share) {
-        await navigator.share(data)
-        track('share', { method: 'web_share', content_type: 'natal' })
-        return
-      }
-      await navigator.clipboard.writeText(url)
-      toast.success(t('share.copied'))
-      track('share', { method: 'clipboard', content_type: 'natal' })
-    } catch {
-      /* user dismissed the share sheet — nothing to do */
-    }
+    setEditing(true)
+    dispatchSelection({ type: 'reset' })
+    setChartState((previous) => ({ status: 'idle', runId: previous.runId }))
   }
 
   function scrollToWheel() {
@@ -101,68 +97,33 @@ export default function Constellation() {
     })
   }
 
-  // A planet tap drives the whole relationship flow:
-  //   • the same planet again      → deselect
-  //   • another, aspected planet   → show the two planets' relationship
-  //   • anything else (unaspected, or coming from a sign/aspect/nothing) → show this planet
   function selectPlanet(id: PlanetId) {
-    setSelection((prev) => {
-      if (prev?.kind === 'planet') {
-        if (prev.id === id) {
-          return null
-        }
-
-        const asp = aspects.find((x) => (x.a === prev.id && x.b === id) || (x.a === id && x.b === prev.id))
-
-        if (asp) {
-          return {
-            kind: 'aspect',
-            a: asp.a,
-            b: asp.b,
-            aspectType: asp.type,
-            orb: asp.orb,
-          }
-        }
-      }
-
-      return {
-        kind: 'planet',
-        id,
-      }
-    })
+    dispatchSelection({ type: 'selectPlanet', id, aspects })
   }
 
   function togglePlanet(id: PlanetId) {
-    setSelection((prev) => (prev?.kind === 'planet' && prev.id === id ? null : { kind: 'planet', id }))
+    dispatchSelection({ type: 'togglePlanet', id })
   }
 
   function toggleSign(id: SignId) {
-    setSelection((prev) => (prev?.kind === 'sign' && prev.id === id ? null : { kind: 'sign', id }))
+    dispatchSelection({ type: 'toggleSign', id })
   }
 
   function toggleHouse(n: HouseNumber) {
-    setSelection((prev) => (prev?.kind === 'house' && prev.n === n ? null : { kind: 'house', n }))
+    dispatchSelection({ type: 'toggleHouse', n })
   }
 
   function toggleAngle(id: AngleId) {
-    setSelection((prev) => (prev?.kind === 'angle' && prev.id === id ? null : { kind: 'angle', id }))
+    dispatchSelection({ type: 'toggleAngle', id })
   }
 
   function toggleAspectAndScroll(asp: ChartAspect) {
-    if (isAspectSelection(selection, asp)) {
-      setSelection(null)
-      return
+    const deselecting = isAspectSelection(selection, asp)
+    dispatchSelection({ type: 'toggleAspect', aspect: asp })
+
+    if (!deselecting) {
+      scrollToWheel()
     }
-
-    setSelection({
-      kind: 'aspect',
-      a: asp.a,
-      b: asp.b,
-      aspectType: asp.type,
-      orb: asp.orb,
-    })
-
-    scrollToWheel()
   }
 
   function selectionStatus(): string {
@@ -198,78 +159,67 @@ export default function Constellation() {
     })
   }
 
-  // The birth input is mirrored into the URL hash (see birth-url), which makes a
-  // chart refreshable, bookmarkable, and shareable, and lets Back return to the
-  // form. This effect is the single place a chart is computed: it resolves the
-  // hash on mount (deep links, refresh) and on every browser navigation. A submit
-  // pushes the hash then calls `syncRef` directly, since pushState fires no
-  // `hashchange`.
+  // Normal views resolve the visitor's profile from the layout-level provider;
+  // shared views receive an isolated read-only birth from the share route. The
+  // two sources never write into each other.
   useEffect(() => {
     let cancelled = false
-    let generation = 0
 
-    async function sync(fromSubmit: boolean) {
-      const stored = decodeBirthHash(window.location.hash)
-      const gen = ++generation
-
-      if (!stored) {
-        setFailed(false)
-        setSelection(null)
-        setData(null)
-        return
+    if (!sourceReady || editing || !birth) {
+      if (sourceReady) {
+        dispatchSelection({ type: 'reset' })
+        setChartState((previous) => ({ status: 'idle', runId: previous.runId }))
       }
-
-      // A deep-linked chart (not our own submit) seeds the session so /today and
-      // /love personalize too — unless the visitor already has their own birth,
-      // which a shared link must never clobber. The chart computes either way.
-      if (!fromSubmit && loadBirth() === null) {
-        saveBirth(stored, false)
+      return () => {
+        cancelled = true
       }
+    }
 
-      setFailed(false)
-      setComputing(true)
+    const fromSubmit = submittedRef.current
+    const sourceBirth = birth
+    submittedRef.current = false
+
+    async function compute() {
+      setChartState((previous) => ({ status: 'computing', runId: previous.runId }))
 
       try {
         const [chart, interpretations] = await Promise.all([
-          computeChart(toBirthInput(stored)),
+          computeChart(toBirthInput(sourceBirth)),
           loadInterpretations(locale),
         ])
 
-        // A newer navigation (or unmount) superseded this compute — drop it.
-        if (cancelled || gen !== generation) {
+        if (cancelled) {
           return
         }
 
-        setSelection(null)
-        setData({ chart, interpretations })
-        setRunId((n) => n + 1)
+        dispatchSelection({ type: 'reset' })
 
-        // Count only visitor-initiated charts, not deep-link/back-forward views.
+        setChartState((previous) => ({
+          status: 'ready',
+          data: { chart, interpretations },
+          runId: previous.runId + 1,
+        }))
+
         if (fromSubmit) {
           track('generate_chart')
         }
       } catch {
-        if (!cancelled && gen === generation) {
-          setFailed(true)
-        }
-      } finally {
-        if (!cancelled && gen === generation) {
-          setComputing(false)
+        if (!cancelled) {
+          setChartState((previous) => ({ status: 'failed', runId: previous.runId }))
         }
       }
     }
 
-    syncRef.current = sync
-    sync(false)
-
-    const onHashChange = () => sync(false)
-    window.addEventListener('hashchange', onHashChange)
+    compute()
 
     return () => {
       cancelled = true
-      window.removeEventListener('hashchange', onHashChange)
     }
-  }, [locale])
+  }, [birth, editing, locale, sourceReady])
+
+  if (birthSource.status === 'invalid') {
+    return <SharedLinkError />
+  }
 
   return (
     <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-[calc(4rem+var(--safe-area-top))] text-foreground sm:px-4 md:pt-[calc(2rem+var(--safe-area-top))]">
@@ -277,19 +227,36 @@ export default function Constellation() {
 
       <div className="relative z-10 mx-auto flex w-full max-w-xl flex-col items-center">
         {/* Hero */}
-        <header className="mb-6 text-center">
+        <header className="mb-6 w-full max-w-sm text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{t('hero.eyebrow')}</p>
-          <h1 className="mt-2 bg-hero-gradient bg-clip-text text-3xl font-extrabold text-transparent">
-            {t('hero.title')}
-          </h1>
+          <HeroTitle>{t('hero.title')}</HeroTitle>
           <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-foreground-muted/90">{t('hero.subtitle')}</p>
+          {shared && (
+            <p className="mx-auto mt-3 w-fit rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-xs text-accent">
+              {ts('viewing')}
+            </p>
+          )}
         </header>
 
-        {/* Birth form → loading → chart. The birth input lives in the URL hash, so a
-            submit computes through that hash; deep links and refreshes resolve the same way. */}
+        {/* Normal profiles restore from the shared layout provider. Share routes
+            inject an isolated birth and never render or mutate the visitor's form. */}
         {!revealed &&
-          (computing ? (
-            <p className="mt-10 animate-pulse text-sm text-foreground-subtle">{t('form.computing')}</p>
+          (!sourceReady || computing ? (
+            <p className="mt-10 animate-pulse text-sm text-foreground-subtle motion-reduce:animate-none">
+              {t('form.computing')}
+            </p>
+          ) : shared ? (
+            failed && (
+              <div className="text-center">
+                <p className="text-sm text-danger">{t('form.error')}</p>
+                <a
+                  className="mt-4 inline-block text-xs text-foreground-subtle underline-offset-4 hover:text-foreground-secondary hover:underline"
+                  href={`/${locale}`}
+                >
+                  {ts('createOwn')}
+                </a>
+              </div>
+            )
           ) : (
             <div className="w-full">
               <BirthForm onSubmit={handleSubmit} />
@@ -364,7 +331,7 @@ export default function Constellation() {
               ascendant={ascendant}
               chart={data.chart}
               interpretations={data.interpretations}
-              onClose={() => setSelection(null)}
+              onClose={() => dispatchSelection({ type: 'reset' })}
               selection={selection}
             />
           </div>
@@ -377,35 +344,7 @@ export default function Constellation() {
             <AspectSection aspects={aspects} onSelect={toggleAspectAndScroll} selection={selection} />
             <PatternSection chart={data.chart} />
             <ReportSection aspects={aspects} chart={data.chart} interpretations={data.interpretations} />
-            <div className="flex flex-col items-center gap-3">
-              <button
-                className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 hover:bg-surface-3"
-                onClick={share}
-                type="button"
-              >
-                {t('share.button')}
-              </button>
-              <Link
-                className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-                href={`/${locale}/today`}
-              >
-                {t('todayCta')}
-              </Link>
-              <Link
-                className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-                href={`/${locale}/love`}
-              >
-                {t('loveCta')}
-              </Link>
-              <button
-                className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-                onClick={backToForm}
-                type="button"
-              >
-                {t('form.recompute')}
-              </button>
-              <p className="mt-1 text-xs text-foreground-faint">{t('footer')}</p>
-            </div>
+            <ConstellationActions birth={birth} chart={data.chart} onRecompute={backToForm} shared={shared} />
           </div>
         )}
       </div>

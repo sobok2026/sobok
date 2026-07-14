@@ -9,11 +9,79 @@ export type Selection =
   | { kind: 'angle'; id: AngleId }
   | null
 
+export type SelectionAction =
+  | { type: 'reset' }
+  | { type: 'selectPlanet'; id: PlanetId; aspects: readonly ChartAspect[] }
+  | { type: 'togglePlanet'; id: PlanetId }
+  | { type: 'toggleSign'; id: SignId }
+  | { type: 'toggleHouse'; n: HouseNumber }
+  | { type: 'toggleAngle'; id: AngleId }
+  | { type: 'toggleAspect'; aspect: ChartAspect }
+
 /** True when `selection` is exactly this aspect (same pair and type). */
 export function isAspectSelection(selection: Selection, asp: ChartAspect): boolean {
   return (
     selection?.kind === 'aspect' && selection.a === asp.a && selection.b === asp.b && selection.aspectType === asp.type
   )
+}
+
+/** Pure selection state transitions shared by every chart interaction surface. */
+export function selectionReducer(selection: Selection, action: SelectionAction): Selection {
+  switch (action.type) {
+    case 'reset':
+      return null
+
+    case 'selectPlanet': {
+      if (selection?.kind === 'planet') {
+        if (selection.id === action.id) {
+          return null
+        }
+
+        const aspect = action.aspects.find(
+          (entry) =>
+            (entry.a === selection.id && entry.b === action.id) || (entry.a === action.id && entry.b === selection.id),
+        )
+
+        if (aspect) {
+          return {
+            kind: 'aspect',
+            a: aspect.a,
+            b: aspect.b,
+            aspectType: aspect.type,
+            orb: aspect.orb,
+          }
+        }
+      }
+
+      return { kind: 'planet', id: action.id }
+    }
+
+    case 'togglePlanet':
+      return selection?.kind === 'planet' && selection.id === action.id ? null : { kind: 'planet', id: action.id }
+
+    case 'toggleSign':
+      return selection?.kind === 'sign' && selection.id === action.id ? null : { kind: 'sign', id: action.id }
+
+    case 'toggleHouse':
+      return selection?.kind === 'house' && selection.n === action.n ? null : { kind: 'house', n: action.n }
+
+    case 'toggleAngle':
+      return selection?.kind === 'angle' && selection.id === action.id ? null : { kind: 'angle', id: action.id }
+
+    case 'toggleAspect': {
+      if (isAspectSelection(selection, action.aspect)) {
+        return null
+      }
+
+      return {
+        kind: 'aspect',
+        a: action.aspect.a,
+        b: action.aspect.b,
+        aspectType: action.aspect.type,
+        orb: action.aspect.orb,
+      }
+    }
+  }
 }
 
 /**
