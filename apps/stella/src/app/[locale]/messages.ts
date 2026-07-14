@@ -186,6 +186,9 @@ export const messages = {
         error: '계산에 실패했어요. 다시 시도해 주세요.',
         saveLabel: '이 브라우저에 출생 정보 저장',
         saveHint: '저장한 정보는 이 기기에만 남고 서버로 전송되지 않아요.',
+        savedBanner: '저장된 정보로 표시 중',
+        edit: '수정',
+        clearSaved: '지우기',
       },
       signs: {
         aries: '양자리',
@@ -521,17 +524,54 @@ export const messages = {
         showLess: 'Show less',
       },
       patterns: {
-        title: '',
-        intro: '',
-        apex: '',
-        name: { grandTrine: '', tSquare: '', grandCross: '', yod: '', kite: '' },
-        body: { grandTrine: '', tSquare: '', grandCross: '', yod: '', kite: '' },
+        title: 'Chart patterns',
+        intro: 'When several planets interlock into one shape, they create a major theme that runs through your life.',
+        apex: 'Apex',
+        name: {
+          grandTrine: 'Grand Trine',
+          tSquare: 'T-square',
+          grandCross: 'Grand Cross',
+          yod: 'Yod',
+          kite: 'Kite',
+        },
+        body: {
+          grandTrine:
+            'Three planets form a perfect triangle. It means you have a talent that flows as naturally as water, without forcing it. Because it comes so easily, though, you may take this gift for granted, so remember to develop it consciously now and then. That effortless talent is one of your strongest allies.',
+          tSquare:
+            'The force of two planets pulling against each other converges on a third. Because so much tension gathers at the apex planet, that is exactly where you generate extraordinary drive. It may feel like heavy pressure at first, but it is the engine that propels you forward. The more directly you face the friction, the stronger you become.',
+          grandCross:
+            'Four planets interlock in a great cross. Standing at the center of forces pulling from every direction gives you an exceptional ability to withstand pressure. Being drawn several ways at once can feel overwhelming, but you do not collapse easily. In the process of finding balance, you become remarkably resilient.',
+          yod: 'Two planets gently join hands and point together to a third. Known as the Finger of God, this shape quietly singles out a special calling for you. The apex planet keeps signaling you to realign the course of your life. It may feel unfamiliar at first, but it ultimately marks a path that is yours alone.',
+          kite: 'A fourth planet joins your natural Grand Trine to form a kite. It gives clear direction and momentum to a talent that once flowed with ease. You have a channel for bringing that gift out into the world instead of keeping it inside. The apex planet carries your talent into reality.',
+        },
       },
       shapes: {
-        title: '',
-        intro: '',
-        name: { bundle: '', bowl: '', bucket: '', locomotive: '', seesaw: '', splash: '', splay: '' },
-        body: { bundle: '', bowl: '', bucket: '', locomotive: '', seesaw: '', splash: '', splay: '' },
+        title: 'Chart shape',
+        intro: 'The way the ten planets spread across the sky reveals the broad pattern of how you move through life.',
+        name: {
+          bundle: 'Bundle',
+          bowl: 'Bowl',
+          bucket: 'Bucket',
+          locomotive: 'Locomotive',
+          seesaw: 'Seesaw',
+          splash: 'Splash',
+          splay: 'Splay',
+        },
+        body: {
+          bundle:
+            'All ten planets huddle together in one area. Your interests and energy run narrow and deep, giving you remarkable power to master one thing. You shine when you immerse yourself in a single pursuit rather than spreading yourself wide. That concentrated focus matures into expertise that is uniquely yours.',
+          bowl: 'All the planets sit on one side of the sky. You move through life with a sense that something is yours to fill, so your direction is clear. A longing for the empty opposite side keeps you moving. What seems missing becomes your purpose instead.',
+          bucket:
+            'The planets cluster on one side, with a single planet standing apart like a handle. That handle planet is the channel through which your energy flows into the world. Because all your strength converges there, it becomes part of your calling. You connect with the world through one quality that sets you apart.',
+          locomotive:
+            'The planets fill two-thirds of the sky and leave one section open. Your urge to fill that gap works like a locomotive, keeping you moving under your own power. You have the drive to run without anyone pushing you. That missing piece becomes a lifelong source of momentum.',
+          seesaw:
+            'The planets split into two groups at opposite ends of the sky. You are always weighing the balance between two worlds, so neither side is easy to let go. That tension also helps you understand a wide range of perspectives. Moving back and forth between them gives you an exceptionally broad view.',
+          splash:
+            'The planets scatter evenly across the sky. Your interests are broad and your talents varied, so you can find common ground almost anywhere. With a foot in many worlds, your life takes on many colors. Thread your scattered interests together, and you can become anything you choose.',
+          splay:
+            'The planets gather into distinct groups of their own. You follow structures you build yourself rather than a preset mold, giving you a strong individuality. You piece the world together in a way that is unlike anyone else. Within that unusual balance, you become entirely one of a kind.',
+        },
       },
       share: {
         button: 'Share my chart',
@@ -559,6 +599,9 @@ export const messages = {
         error: 'Calculation failed. Please try again.',
         saveLabel: 'Save my birth details in this browser',
         saveHint: 'Saved details stay on this device only and are never sent to a server.',
+        savedBanner: 'Showing your saved details',
+        edit: 'Edit',
+        clearSaved: 'Forget',
       },
       signs: {
         aries: 'Aries',
@@ -892,17 +935,54 @@ export const messages = {
         showLess: '收起',
       },
       patterns: {
-        title: '',
-        intro: '',
-        apex: '',
-        name: { grandTrine: '', tSquare: '', grandCross: '', yod: '', kite: '' },
-        body: { grandTrine: '', tSquare: '', grandCross: '', yod: '', kite: '' },
+        title: '星盘格局',
+        intro: '多颗行星相互咬合成一个几何图形时，就会成为贯穿人生的重要倾向。',
+        apex: '顶点',
+        name: {
+          grandTrine: '大三角',
+          tSquare: 'T三角',
+          grandCross: '大十字',
+          yod: '上帝之指',
+          kite: '风筝',
+        },
+        body: {
+          grandTrine:
+            '三颗行星连成一个完美的三角形。这意味着你拥有一种无需费力也能如水般自然流动的天赋。不过，正因为来得太轻松，你也容易把这份幸运视为理所当然，所以别忘了偶尔有意识地打磨它。那份自在流动的才华，会成为你最可靠的后盾。',
+          tSquare:
+            '两颗行星相互对峙的力量汇聚到另一颗行星上。张力越集中于顶点行星，你越能从那里迸发出不同寻常的行动力。起初它也许像沉重的压力，却正是推动你前进的引擎。越是不逃避摩擦、勇敢面对，你就会变得越坚定。',
+          grandCross:
+            '四颗行星紧紧咬合成巨大的十字。站在来自四面八方拉力中心的你，有着非同寻常的抗压能力。即使被不同方向牵扯得不堪重负，你也不会轻易在任何处境中倒下。在不断寻找平衡的过程中，你会比任何人都更加坚韧。',
+          yod: '两颗行星温柔地携手，共同指向另一颗行星。这个被称为“上帝之指”的图形，悄悄指向一项只属于你的特别使命。顶点行星会不断发出信号，提醒你重新校准人生方向。起初也许陌生，但它最终会成为通往你独有道路的标记。',
+          kite: '在天生的大三角之外，又加入一颗行星，组成风筝的形状。原本顺畅流动的天赋因此有了清晰方向和推动力。你不只会把才华藏在心里，也拥有将它带到世界上的通道。顶点行星会把这份天赋带进现实。',
+        },
       },
       shapes: {
-        title: '',
-        intro: '',
-        name: { bundle: '', bowl: '', bucket: '', locomotive: '', seesaw: '', splash: '', splay: '' },
-        body: { bundle: '', bowl: '', bucket: '', locomotive: '', seesaw: '', splash: '', splay: '' },
+        title: '星盘形态',
+        intro: '十颗行星散布在天空中的整体图景，展现出你人生的广阔格局。',
+        name: {
+          bundle: '集团型',
+          bowl: '碗型',
+          bucket: '提桶型',
+          locomotive: '火车头型',
+          seesaw: '跷跷板型',
+          splash: '散落型',
+          splay: '扩展型',
+        },
+        body: {
+          bundle:
+            '十颗行星紧紧聚在一处。你的兴趣和能量集中在狭窄而深入的领域，因此有着把一件事钻研到底的惊人力量。比起广撒网，专注于一点时你更能显出真正实力。那份高度凝聚的投入，终会沉淀成只属于你的专业能力。',
+          bowl: '所有行星都盛在天空的一侧。你仿佛生来就带着某种需要亲手填补的空缺，因此方向感十分清晰。对空白另一侧的渴望会推动你不断前行。那份缺憾反而会成为你的目标。',
+          bucket:
+            '行星聚集在天空的一侧，只有一颗孤立在另一边，像手柄一样。那颗手柄行星，就是你的能量流向世界的通道。所有力量都汇聚于这一点，因此那里也会成为你的使命。你会凭借一种独特之处与世界相连。',
+          locomotive:
+            '行星占据天空三分之二，留出一片空白。填补空缺的动力像一列火车头，推动你自行向前奔驰。无需别人推动，你也有主动出发的力量。那块缺失的拼图，会成为你一生的动力。',
+          seesaw:
+            '行星分成两组，在天空两端相望。你总在两个世界之间寻找平衡，因此很难轻易舍弃任何一边。也正因为如此，你更能广泛体察他人的立场。来回权衡的感觉让你的视野比谁都宽广。',
+          splash:
+            '行星均匀散落在天空各处。你的兴趣广泛、才华多样，无论到哪里都能找到共同话题。涉足多个世界，让你的人生丰富多彩。若能把分散的兴趣串成一线，你就能成为任何想成为的人。',
+          splay:
+            '行星各自结成富有个性的群组。比起固定框架，你更愿意遵循自己建立的结构，因此个性鲜明。你用不同于他人的方式拼合世界。就在那独特的平衡中，你成为独一无二的自己。',
+        },
       },
       share: {
         button: '分享我的星盘',
@@ -930,6 +1010,9 @@ export const messages = {
         error: '计算失败，请重试。',
         saveLabel: '在此浏览器保存出生信息',
         saveHint: '保存的信息只留在这台设备上，不会发送到服务器。',
+        savedBanner: '正在显示已保存的信息',
+        edit: '修改',
+        clearSaved: '清除',
       },
       signs: {
         aries: '白羊座',
@@ -1263,17 +1346,54 @@ export const messages = {
         showLess: '折りたたむ',
       },
       patterns: {
-        title: '',
-        intro: '',
-        apex: '',
-        name: { grandTrine: '', tSquare: '', grandCross: '', yod: '', kite: '' },
-        body: { grandTrine: '', tSquare: '', grandCross: '', yod: '', kite: '' },
+        title: 'チャートパターン',
+        intro: 'いくつもの星がひとつの図形としてかみ合うと、人生を貫く大きな傾向になります。',
+        apex: '頂点',
+        name: {
+          grandTrine: 'グランドトライン',
+          tSquare: 'Tスクエア',
+          grandCross: 'グランドクロス',
+          yod: 'ヨッド',
+          kite: 'カイト',
+        },
+        body: {
+          grandTrine:
+            '3つの星が完璧な三角形で結ばれています。努力しなくても水のように自然に流れる才能が、あなたの中にあるというしるしです。ただ、あまりに自然に与えられたぶん、その恵みを当たり前だと思いやすいので、ときには意識して磨いてみてください。無理なく流れるその才能が、あなたのいちばん心強い味方になります。',
+          tSquare:
+            '向かい合ってせめぎ合う2つの星の力が、ひとつの星へ集まっています。頂点の星に緊張が集中するぶん、あなたはまさにその場所で並外れた推進力を発揮します。はじめは重い圧力のようでも、それがあなたを前へ押し出すエンジンです。摩擦を避けずに向き合うほど、あなたはさらに強くなります。',
+          grandCross:
+            '4つの星が大きな十字を描いて、張り詰めるようにかみ合っています。四方から引かれる力の中心に立つぶん、あなたには並外れたプレッシャーへの強さがあります。いくつもの方向に引き裂かれそうなときも、簡単には崩れません。バランスを取り続けるその過程で、あなたは誰よりも強くなっていきます。',
+          yod: '2つの星がやわらかく手を取り合い、もうひとつの星を一緒に指しています。「神の指」と呼ばれるこの図形は、あなたに与えられた特別な使命を静かに示します。頂点の星は、人生の方向をもう一度合わせるよう何度も合図を送ります。はじめは戸惑っても、やがてあなただけの道へ続くしるしになります。',
+          kite: '生まれ持ったグランドトラインにもうひとつの星が加わり、凧の形をつくっています。自然に流れていた才能に、はっきりとした方向と推進力が加わったのです。才能を胸にしまっておくだけでなく、世界へ広げるための通り道があなたにはあります。頂点の星が、その才能を現実へ連れ出してくれます。',
+        },
       },
       shapes: {
-        title: '',
-        intro: '',
-        name: { bundle: '', bowl: '', bucket: '', locomotive: '', seesaw: '', splash: '', splay: '' },
-        body: { bundle: '', bowl: '', bucket: '', locomotive: '', seesaw: '', splash: '', splay: '' },
+        title: 'チャートの形',
+        intro: '空に散らばる10の星が描く全体像は、あなたという人の大きな器を映し出します。',
+        name: {
+          bundle: 'バンドル',
+          bowl: 'ボウル',
+          bucket: 'バケット',
+          locomotive: 'ロコモーティブ',
+          seesaw: 'シーソー',
+          splash: 'スプラッシュ',
+          splay: 'スプレイ',
+        },
+        body: {
+          bundle:
+            '10の星がひとつの場所に寄り添うように集まっています。関心とエネルギーが狭く深く集中する人なので、ひとつのことを掘り下げる力は抜群です。広く手を広げるより、ひとつに没頭するときに本領を発揮します。その凝縮された集中が、あなただけの専門性へと実っていきます。',
+          bowl: 'すべての星が空の片側に収まっています。自分で満たすべき何かを抱えて生きる人なので、進む方向がはっきりしています。空いている反対側への渇望が、あなたを動かす力になります。その欠けているものが、かえってあなたの目的になるのです。',
+          bucket:
+            '片側に集まった星々とは別に、ひとつの星だけが取っ手のように離れています。その取っ手の星が、あなたのエネルギーを世界へ流す通り道です。すべての力がその一点に集まるぶん、そこがあなたの使命になります。人とは違うひとつの力で、世界とつながる人です。',
+          locomotive:
+            '星々が空の3分の2を満たし、ひとつの領域を空けています。その空白を埋めようとする力が、あなたを自ら走らせる機関車のようです。誰かに押されなくても、自分から進み続ける推進力があります。足りないそのひと欠片が、生涯の原動力になります。',
+          seesaw:
+            '星々が空の両端に分かれて向かい合っています。いつも2つの世界の間でバランスを量る人なので、どちらか一方を簡単に手放せません。そのぶん、相手の立場を広くくみ取れます。行き来しながら量るその感覚のおかげで、あなたの視野は誰よりも広くなります。',
+          splash:
+            '星々が空のあちこちにまんべんなく散らばっています。関心の幅が広く多才な人なので、どこにいても会話が弾みます。いくつもの世界に足をかけるぶん、人生は色鮮やかです。散らばった関心をひとつにつなげれば、あなたは何にでもなれます。',
+          splay:
+            '星々がそれぞれ個性的なグループをつくっています。決められた枠よりも自分で組み立てた構造に従う人なので、はっきりとした個性があります。人とは違うやり方で世界を組み立てます。その独特なバランスの中で、あなたはたったひとりの存在になるのです。',
+        },
       },
       share: {
         button: '星図をシェア',
@@ -1301,6 +1421,9 @@ export const messages = {
         error: '計算に失敗しました。もう一度お試しください。',
         saveLabel: 'このブラウザに出生情報を保存',
         saveHint: '保存した情報はこの端末にだけ残り、サーバーには送信されません。',
+        savedBanner: '保存した情報で表示中',
+        edit: '編集',
+        clearSaved: '削除',
       },
       signs: {
         aries: 'おひつじ座',
