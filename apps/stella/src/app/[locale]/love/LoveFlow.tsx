@@ -82,7 +82,7 @@ export default function LoveFlow() {
     async function run() {
       try {
         const [readings, interpretations] = await Promise.all([loadLoveReadings(locale), loadInterpretations(locale)])
-        const stored = loadBirth()
+        const stored = loadBirth()?.birth ?? null
         let profile: LoveProfile | null = null
         let windows: LoveWindow[] = []
 

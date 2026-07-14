@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 
 import { track } from '@/lib/analytics/browser'
 import BirthForm from './BirthForm'
-import { markBirthDecision, type StoredBirth, seedBirthFromLink, toBirthInput } from './birth-storage'
+import { type StoredBirth, toBirthInput } from './birth-storage'
 import { decodeBirthHash, encodeBirthHash } from './birth-url'
 import { computeAspects, elementCounts, signOfLon } from './chart/astrology'
 import { DEFAULT_CHART, ELEMENT_IDS } from './chart/data'
@@ -63,10 +63,6 @@ export default function Constellation() {
   const brightPlanets = computeBrightPlanets(selection, aspects, activeChart.planets, cusps, ascendant)
 
   function handleSubmit(birth: StoredBirth) {
-    // The form is the visitor's own save decision (BirthForm already persisted or
-    // cleared per the checkbox), so a later deep-link resolve won't cross-seed over it.
-    markBirthDecision()
-
     const url = `${window.location.pathname}${window.location.search}#${encodeBirthHash(birth)}`
     window.history.pushState(null, '', url)
     syncRef.current(true)
@@ -223,7 +219,11 @@ export default function Constellation() {
       }
 
       if (!fromSubmit) {
-        seedBirthFromLink(stored)
+        if (loadBirth() !== null) {
+          return
+        }
+
+        saveBirth(stored, false)
       }
 
       setFailed(false)

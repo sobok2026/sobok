@@ -1,7 +1,13 @@
-// Device-local persistence for the birth form. The data never leaves the
-// browser — it exists so returning visitors (and the /today page) don't have to
-// retype their birth details. Stored as the raw form values (not the derived
-// BirthInput) so the form can prefill exactly what the user picked.
+// Client-side persistence for the birth form. The data never leaves the browser
+// — it exists so the /today and /love pages (and a returning visitor) can reuse
+// the birth details without retyping. Two storages back it:
+//   • localStorage  — the "save to this browser" checkbox is on: the details
+//     persist across visits and tabs on this device.
+//   • sessionStorage — the checkbox is off: the details live only for this tab's
+//     session, yet are still shared across pages so the visit stays personalized
+//     without leaving a lasting trace.
+// localStorage wins when both hold a value — an explicit "remember me on this
+// device" outranks a transient session copy.
 
 import { findCity } from './cities'
 import type { BirthInput } from './ephemeris'
@@ -13,6 +19,12 @@ export type StoredBirth = {
   time: string // HH:mm
   timeKnown: boolean
   cityKey: string
+}
+
+/** A loaded birth plus whether it came from persistent (localStorage) storage. */
+export type LoadedBirth = {
+  birth: StoredBirth
+  persistent: boolean
 }
 
 export function isStoredBirth(value: unknown): value is StoredBirth {
@@ -32,10 +44,10 @@ export function isStoredBirth(value: unknown): value is StoredBirth {
   )
 }
 
-/** localStorage can throw (private mode, disabled storage) — treat that as "no data". */
-export function loadBirth(): StoredBirth | null {
+/** Web Storage can throw (private mode, disabled storage) — treat that as "no data". */
+function read(storage: Storage): StoredBirth | null {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = storage.getItem(STORAGE_KEY)
 
     if (!raw) {
       return null
@@ -48,57 +60,38 @@ export function loadBirth(): StoredBirth | null {
   }
 }
 
-export function saveBirth(birth: StoredBirth) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(birth))
-  } catch {
-    /* storage unavailable — the app still works, just without persistence */
-  }
-}
+export function loadBirth(): LoadedBirth | null {
+  const persisted = read(localStorage)
 
-export function clearBirth() {
-  try {
-    localStorage.removeItem(STORAGE_KEY)
-  } catch {
-    /* ignore */
+  if (persisted) {
+    return { birth: persisted, persistent: true }
   }
-}
 
-// Per-tab flag: the visitor made an explicit save/don't-save decision via the
-// form. Once set, a deep-linked chart won't cross-seed device storage — so a
-// deliberately unsaved chart isn't quietly resurrected on refresh.
-const DECISION_KEY = 'stella.birth.decided'
-
-export function markBirthDecision() {
-  try {
-    sessionStorage.setItem(DECISION_KEY, '1')
-  } catch {
-    /* session storage unavailable — cross-seeding just stays enabled */
-  }
-}
-
-function birthDecisionMade(): boolean {
-  try {
-    return sessionStorage.getItem(DECISION_KEY) === '1'
-  } catch {
-    return false
-  }
+  const session = read(sessionStorage)
+  return session ? { birth: session, persistent: false } : null
 }
 
 /**
- * Persist birth data that arrived via a shared/deep-linked URL, so the /today and
- * /love pages (which read localStorage) personalize too. Deliberately conservative:
- * skips when the visitor already has their own saved birth (don't clobber a
- * returning user with someone else's link) or made a form decision this tab (don't
- * override a "don't save" choice). Genuine first-time link entries seed and nothing
- * else does.
+ * Persist the birth to exactly one storage, chosen by the "save to browser"
+ * checkbox, and clear the other so there is a single source of truth. When
+ * `persistent` is off the details survive only for this tab's session.
  */
-export function seedBirthFromLink(birth: StoredBirth) {
-  if (birthDecisionMade() || loadBirth() !== null) {
-    return
+export function saveBirth(birth: StoredBirth, persistent: boolean) {
+  const primary = persistent ? localStorage : sessionStorage
+  const secondary = persistent ? sessionStorage : localStorage
+  const value = JSON.stringify(birth)
+
+  try {
+    primary.setItem(STORAGE_KEY, value)
+  } catch {
+    /* storage unavailable — the app still works, just without persistence */
   }
 
-  saveBirth(birth)
+  try {
+    secondary.removeItem(STORAGE_KEY)
+  } catch {
+    /* ignore */
+  }
 }
 
 export function toBirthInput(stored: StoredBirth): BirthInput {

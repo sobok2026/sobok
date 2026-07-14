@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { type SubmitEvent, useEffect, useState } from 'react'
 
-import { clearBirth, loadBirth, type StoredBirth, saveBirth } from './birth-storage'
+import { loadBirth, type StoredBirth, saveBirth } from './birth-storage'
 import CityCombobox from './CityCombobox'
 import { DEFAULT_CITY_KEY } from './cities'
 
@@ -43,25 +43,21 @@ export default function BirthForm({ onSubmit }: Props) {
       cityKey,
     }
 
-    if (save) {
-      saveBirth(birth)
-    } else {
-      clearBirth()
-    }
-
+    saveBirth(birth, save)
     onSubmit(birth)
   }
 
-  // Prefill from the device-local copy after mount
+  // Prefill from the stored copy after mount, restoring the checkbox to match
+  // where the data actually lives (persistent device vs. this session only).
   useEffect(() => {
-    const stored = loadBirth()
+    const loaded = loadBirth()
 
-    if (stored) {
-      setDate(stored.date)
-      setTime(stored.time)
-      setTimeUnknown(!stored.timeKnown)
-      setCityKey(stored.cityKey)
-      setSave(true)
+    if (loaded) {
+      setDate(loaded.birth.date)
+      setTime(loaded.birth.time)
+      setTimeUnknown(!loaded.birth.timeKnown)
+      setCityKey(loaded.birth.cityKey)
+      setSave(loaded.persistent)
     }
   }, [])
 

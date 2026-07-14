@@ -47,7 +47,7 @@ export default function TodayFlow() {
       try {
         const now = new Date()
         const [sky, readings] = await Promise.all([computeSkyToday(now), loadReadings(locale)])
-        const stored = loadBirth()
+        const stored = loadBirth()?.birth ?? null
         let natal: NatalChart | null = null
         let personal: PersonalToday | null = null
 
