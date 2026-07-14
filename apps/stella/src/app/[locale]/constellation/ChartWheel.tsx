@@ -2,22 +2,21 @@
 
 import { useTranslations } from 'next-intl'
 
-import { elementOfSign, signOfLon } from '../chart/astrology'
-import { ASPECT_STYLE, ELEMENT_COLORS, SIGNS } from '../chart/data'
-import {
-  annularSector,
-  type PlacedPlanet,
-  type Point,
-  placePlanets,
-  polar,
-  RADIUS,
-  TOKEN,
-  VIEW,
-} from '../chart/geometry'
+import { CENTER, TOKEN } from '../chart/geometry'
 import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from '../chart/types'
 import styles from '../constellation.module.css'
-import { glyphText } from './glyphs'
 import type { Selection } from './selection'
+import {
+  buildWheelScene,
+  WHEEL_STYLE,
+  type WheelAngle,
+  type WheelAspect,
+  type WheelHouse,
+  type WheelPlanet,
+  type WheelRing,
+  type WheelScene,
+  type WheelSign,
+} from './wheel-scene'
 
 // Animation timing (seconds).
 const PLANET_BASE = 0.15
@@ -28,24 +27,6 @@ const PLANET_STAGGER = 0.09
 // still finishes its cascade quickly instead of trickling in.
 const ASPECT_PULSE_STAGGER = 0.045
 const ASPECT_PULSE_STAGGER_MAX = 6
-
-// Enlarged tap target for the ASC/MC/IC/DSC labels: a transparent wedge in the
-// empty band just outside the zodiac ring. It grows outward and along the arc —
-// never inward, which would overlap the clickable sign sectors (radius ≤ 172).
-// The outer edge stays inside the viewBox (drawable radius ≈ 196), and the
-// tangential half-width shrinks when another angle is close so two wedges never
-// touch (down to the old r=10 circle's reach when angles crowd).
-const ANGLE_HIT_INNER = RADIUS.zodiacOuter
-const ANGLE_HIT_OUTER = RADIUS.zodiacOuter + 20
-const ANGLE_HIT_HALF_MAX = 6
-const ANGLE_HIT_HALF_MIN = 3.2
-const ANGLE_HIT_GAP = 1
-
-/** Smallest angle (deg) between two ecliptic longitudes. */
-function angleGap(a: number, b: number): number {
-  const d = Math.abs((((a - b) % 360) + 360) % 360)
-  return Math.min(d, 360 - d)
-}
 
 export interface ChartWheelProps {
   aspects: readonly ChartAspect[]
@@ -77,11 +58,7 @@ export default function ChartWheel({
   selection,
 }: ChartWheelProps) {
   const t = useTranslations('Constellation')
-  const { ascendant, cusps, midheaven } = chart
-  const anchor = ascendant ?? 0
-
-  const placed = placePlanets(chart.planets, anchor)
-  const pointById = new Map<string, Point>(placed.map((entry) => [entry.planet.id, entry.point]))
+  const scene = buildWheelScene(chart, aspects)
 
   return (
     <svg
@@ -89,15 +66,14 @@ export default function ChartWheel({
       aria-label={t('meta.title')}
       className={`w-full select-none transition-opacity duration-400 ${revealed ? styles.wheel : 'pointer-events-none'}`}
       style={{ opacity: revealed ? 1 : 0.4 }}
-      viewBox={`-16 -16 ${VIEW + 32} ${VIEW + 32}`}
+      viewBox={scene.viewBox}
     >
-      <Rings />
-      <Sectors ascendant={anchor} interactive={revealed} onSelect={onSelectSign} selection={selection} />
-      {revealed && ascendant !== null && cusps && (
+      <Rings rings={scene.rings} />
+      <Sectors interactive={revealed} onSelect={onSelectSign} selection={selection} signs={scene.signs} />
+      {revealed && scene.houses.length > 0 && (
         <Houses
-          ascendant={ascendant}
-          cusps={cusps}
-          midheaven={midheaven}
+          angles={scene.angles}
+          houses={scene.houses}
           onSelect={onSelectHouse}
           onSelectAngle={onSelectAngle}
           selection={selection}
@@ -105,48 +81,51 @@ export default function ChartWheel({
       )}
       {revealed && (
         <>
-          <Aspects aspects={aspects} isDimmed={isAspectDimmed} pointById={pointById} selection={selection} />
-          <Planets isDimmed={isPlanetDimmed} onSelect={onSelectPlanet} placed={placed} selection={selection} />
+          <Aspects
+            aspects={scene.aspects}
+            isDimmed={isAspectDimmed}
+            pointById={scene.pointById}
+            selection={selection}
+          />
+          <Planets isDimmed={isPlanetDimmed} onSelect={onSelectPlanet} planets={scene.planets} selection={selection} />
         </>
       )}
     </svg>
   )
 }
 
-function Rings() {
+function Rings({ rings }: { rings: readonly WheelRing[] }) {
   return (
     <g className={`${styles.ring} [animation-delay:0s]`}>
-      <circle cx={VIEW / 2} cy={VIEW / 2} fill="none" r={RADIUS.zodiacOuter} stroke="rgba(255,255,255,0.12)" />
-      <circle cx={VIEW / 2} cy={VIEW / 2} fill="none" r={RADIUS.zodiacInner} stroke="rgba(255,255,255,0.1)" />
-      <circle cx={VIEW / 2} cy={VIEW / 2} fill="none" r={RADIUS.houseInner} stroke="rgba(255,255,255,0.08)" />
-      <circle
-        cx={VIEW / 2}
-        cy={VIEW / 2}
-        fill="none"
-        r={RADIUS.planet + 14}
-        stroke="rgba(255,255,255,0.06)"
-        strokeDasharray="2 4"
-      />
+      {rings.map((ring) => (
+        <circle
+          cx={CENTER}
+          cy={CENTER}
+          fill="none"
+          key={ring.radius}
+          r={ring.radius}
+          stroke={ring.stroke}
+          strokeDasharray={ring.dash?.join(' ')}
+          strokeWidth={ring.strokeWidth}
+        />
+      ))}
     </g>
   )
 }
 
 interface SectorsProps {
-  ascendant: number
   interactive: boolean
   onSelect: (id: SignId) => void
   selection: Selection
+  signs: readonly WheelSign[]
 }
 
-function Sectors({ ascendant, interactive, onSelect, selection }: SectorsProps) {
+function Sectors({ interactive, onSelect, selection, signs }: SectorsProps) {
   const t = useTranslations('Constellation')
 
   return (
     <g>
-      {SIGNS.map((sign, i) => {
-        const lonStart = i * 30
-        const color = ELEMENT_COLORS[sign.element]
-        const glyphPos = polar(lonStart + 15, RADIUS.zodiacGlyph, ascendant)
+      {signs.map((sign) => {
         const active = selection?.kind === 'sign' && selection.id === sign.id
         return (
           <g
@@ -166,26 +145,26 @@ function Sectors({ ascendant, interactive, onSelect, selection }: SectorsProps) 
           >
             <path
               className={styles.sector}
-              d={annularSector(lonStart, lonStart + 30, RADIUS.zodiacOuter, RADIUS.zodiacInner, ascendant)}
-              fill={color}
-              fillOpacity={active ? 0.4 : 0.14}
-              stroke={active ? color : 'transparent'}
-              strokeWidth={active ? 1 : 0}
-              style={{ animationDelay: `${i * 0.03}s` }}
+              d={sign.sectorPath}
+              fill={sign.color}
+              fillOpacity={active ? WHEEL_STYLE.sign.selectedFillOpacity : WHEEL_STYLE.sign.fillOpacity}
+              stroke={active ? sign.color : 'transparent'}
+              strokeWidth={active ? WHEEL_STYLE.sign.selectedStrokeWidth : 0}
+              style={{ animationDelay: `${sign.index * 0.03}s` }}
             />
             <text
               className={styles.signGlyph}
               dominantBaseline="central"
-              fill={color}
-              fontSize={16}
-              style={{ animationDelay: `${0.2 + i * 0.03}s` }}
+              fill={sign.color}
+              fontSize={WHEEL_STYLE.sign.glyphFontSize}
+              style={{ animationDelay: `${0.2 + sign.index * 0.03}s` }}
               textAnchor="middle"
-              x={glyphPos.x}
-              y={glyphPos.y}
+              x={sign.glyphPoint.x}
+              y={sign.glyphPoint.y}
             >
-              {glyphText(sign.glyph)}
+              {sign.glyph}
             </text>
-            <circle className={styles.focusRing} cx={glyphPos.x} cy={glyphPos.y} r={13} />
+            <circle className={styles.focusRing} cx={sign.glyphPoint.x} cy={sign.glyphPoint.y} r={13} />
           </g>
         )
       })}
@@ -194,67 +173,40 @@ function Sectors({ ascendant, interactive, onSelect, selection }: SectorsProps) 
 }
 
 interface HousesProps {
-  ascendant: number
-  cusps: number[]
-  midheaven: number | null
+  angles: readonly WheelAngle[]
+  houses: readonly WheelHouse[]
   onSelect: (n: HouseNumber) => void
   onSelectAngle: (id: AngleId) => void
   selection: Selection
 }
 
-function Houses({ ascendant, cusps, midheaven, onSelect, onSelectAngle, selection }: HousesProps) {
+function Houses({ angles, houses, onSelect, onSelectAngle, selection }: HousesProps) {
   const t = useTranslations('Constellation')
-  const norm = (v: number) => ((v % 360) + 360) % 360
-
-  // The four angles as a tiered set: ASC/MC are primary, their antipodes DSC/IC
-  // secondary. DSC/IC derive from ASC/MC, so all four exist once we have a time.
-  const angles: { id: AngleId; lon: number; primary: boolean }[] = [
-    { id: 'asc', lon: norm(ascendant), primary: true },
-    { id: 'dsc', lon: norm(ascendant + 180), primary: false },
-  ]
-
-  if (midheaven !== null) {
-    angles.push({ id: 'mc', lon: norm(midheaven), primary: true })
-    angles.push({ id: 'ic', lon: norm(midheaven + 180), primary: false })
-  }
 
   return (
     <g className={`${styles.house} [animation-delay:0.15s]`}>
-      {cusps.map((lon, k) => {
-        const inner = polar(lon, RADIUS.aspect, ascendant)
-        const outer = polar(lon, RADIUS.houseOuter, ascendant)
-        const isPrimaryAngle = k === 0 || k === 9 // ASC / MC axis
-        const isSecondaryAngle = k === 3 || k === 6 // IC / DSC axis
-        const n = (k + 1) as HouseNumber
-        const span = (((cusps[(k + 1) % 12] - lon) % 360) + 360) % 360
-        const labelPos = polar(lon + span / 2, RADIUS.houseLabel, ascendant)
-        const active = selection?.kind === 'house' && selection.n === n
+      {houses.map((house) => {
+        const active = selection?.kind === 'house' && selection.n === house.n
 
         return (
-          <g key={k}>
+          <g key={house.n}>
             <line
-              stroke={
-                isPrimaryAngle
-                  ? 'rgba(245,188,255,0.5)'
-                  : isSecondaryAngle
-                    ? 'rgba(245,188,255,0.3)'
-                    : 'rgba(255,255,255,0.1)'
-              }
-              strokeWidth={isPrimaryAngle ? 1.2 : isSecondaryAngle ? 0.9 : 0.6}
-              x1={inner.x}
-              x2={outer.x}
-              y1={inner.y}
-              y2={outer.y}
+              stroke={house.cuspStroke}
+              strokeWidth={house.cuspStrokeWidth}
+              x1={house.cuspFrom.x}
+              x2={house.cuspTo.x}
+              y1={house.cuspFrom.y}
+              y2={house.cuspTo.y}
             />
             <g
-              aria-label={`${t('panel.house', { n })} · ${t(`houseThemes.${n}`)}`}
+              aria-label={`${t('panel.house', { n: house.n })} · ${t(`houseThemes.${house.n}`)}`}
               aria-pressed={active}
               className={`${styles.wheelButton} cursor-pointer`}
-              onClick={() => onSelect(n)}
+              onClick={() => onSelect(house.n)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
-                  onSelect(n)
+                  onSelect(house.n)
                 }
               }}
               role="button"
@@ -264,54 +216,41 @@ function Houses({ ascendant, cusps, midheaven, onSelect, onSelectAngle, selectio
                   brighter version of their own colour — matching the sign/planet idiom.
                   Brand pink stays reserved for the ASC/MC axes and labels below. */}
               <path
-                d={annularSector(lon, lon + span, RADIUS.houseOuter, RADIUS.houseInner, ascendant)}
-                fill="#ffffff"
-                fillOpacity={active ? 0.16 : 0.02}
-                stroke={active ? 'rgba(255,255,255,0.5)' : 'transparent'}
-                strokeWidth={active ? 0.8 : 0}
+                d={house.sectorPath}
+                fill={WHEEL_STYLE.house.fill}
+                fillOpacity={active ? WHEEL_STYLE.house.selectedFillOpacity : WHEEL_STYLE.house.fillOpacity}
+                stroke={active ? WHEEL_STYLE.house.selectedStroke : 'transparent'}
+                strokeWidth={active ? WHEEL_STYLE.house.selectedStrokeWidth : 0}
               />
               <text
                 dominantBaseline="central"
-                fill={active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)'}
-                fontSize={8}
+                fill={active ? WHEEL_STYLE.house.selectedLabelFill : WHEEL_STYLE.house.labelFill}
+                fontSize={WHEEL_STYLE.house.labelFontSize}
                 textAnchor="middle"
-                x={labelPos.x}
-                y={labelPos.y}
+                x={house.labelPoint.x}
+                y={house.labelPoint.y}
               >
-                {t(`houseThemes.${n}`)}
+                {t(`houseThemes.${house.n}`)}
               </text>
-              <circle className={styles.focusRing} cx={labelPos.x} cy={labelPos.y} r={11} />
+              <circle className={styles.focusRing} cx={house.labelPoint.x} cy={house.labelPoint.y} r={11} />
             </g>
           </g>
         )
       })}
-      {angles.map(({ id, lon, primary }) => {
-        const pos = polar(lon, RADIUS.zodiacOuter + 8, ascendant)
-        const active = selection?.kind === 'angle' && selection.id === id
-
-        // Shrink the wedge if a neighbouring angle is near so the two never overlap.
-        const nearest = angles.reduce(
-          (min, other) => (other.id === id ? min : Math.min(min, angleGap(lon, other.lon))),
-          Number.POSITIVE_INFINITY,
-        )
-
-        const hitHalf = Math.max(ANGLE_HIT_HALF_MIN, Math.min(ANGLE_HIT_HALF_MAX, nearest / 2 - ANGLE_HIT_GAP))
-
-        // Selection intensifies the angle's own brand pink; the two-tier resting
-        // opacity keeps ASC/MC dominant over their antipodes DSC/IC.
-        const fill = active ? '#f5bcff' : primary ? 'rgba(245,188,255,0.85)' : 'rgba(245,188,255,0.5)'
+      {angles.map((angle) => {
+        const active = selection?.kind === 'angle' && selection.id === angle.id
 
         return (
           <g
-            aria-label={t(`angleNames.${id}`)}
+            aria-label={t(`angleNames.${angle.id}`)}
             aria-pressed={active}
             className={`${styles.wheelButton} cursor-pointer`}
-            key={id}
-            onClick={() => onSelectAngle(id)}
+            key={angle.id}
+            onClick={() => onSelectAngle(angle.id)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
-                onSelectAngle(id)
+                onSelectAngle(angle.id)
               }
             }}
             role="button"
@@ -319,23 +258,27 @@ function Houses({ ascendant, cusps, midheaven, onSelect, onSelectAngle, selectio
           >
             <text
               dominantBaseline="central"
-              fill={fill}
-              fontSize={primary ? 8 : 7}
-              fontWeight={primary || active ? 700 : 600}
+              fill={active ? WHEEL_STYLE.angle.selectedFill : angle.fill}
+              fontSize={angle.fontSize}
+              fontWeight={active ? WHEEL_STYLE.angle.primaryFontWeight : angle.fontWeight}
               textAnchor="middle"
-              x={pos.x}
-              y={pos.y}
+              x={angle.point.x}
+              y={angle.point.y}
             >
-              {id.toUpperCase()}
+              {angle.id.toUpperCase()}
             </text>
             {active && (
-              <line stroke="#f5bcff" strokeWidth={0.9} x1={pos.x - 7} x2={pos.x + 7} y1={pos.y + 6} y2={pos.y + 6} />
+              <line
+                stroke={WHEEL_STYLE.angle.selectedFill}
+                strokeWidth={WHEEL_STYLE.angle.selectedUnderlineWidth}
+                x1={angle.point.x - 7}
+                x2={angle.point.x + 7}
+                y1={angle.point.y + 6}
+                y2={angle.point.y + 6}
+              />
             )}
-            <path
-              d={annularSector(lon - hitHalf, lon + hitHalf, ANGLE_HIT_OUTER, ANGLE_HIT_INNER, ascendant)}
-              fill="transparent"
-            />
-            <circle className={styles.focusRing} cx={pos.x} cy={pos.y} r={10} />
+            <path d={angle.hitPath} fill="transparent" />
+            <circle className={styles.focusRing} cx={angle.point.x} cy={angle.point.y} r={10} />
           </g>
         )
       })}
@@ -344,9 +287,9 @@ function Houses({ ascendant, cusps, midheaven, onSelect, onSelectAngle, selectio
 }
 
 interface AspectsProps {
-  aspects: readonly ChartAspect[]
+  aspects: readonly WheelAspect[]
   isDimmed: (asp: ChartAspect) => boolean
-  pointById: Map<string, Point>
+  pointById: WheelScene['pointById']
   selection: Selection
 }
 
@@ -363,37 +306,28 @@ function Aspects({ aspects, isDimmed, pointById, selection }: AspectsProps) {
 
   return (
     <g>
-      {aspects.map((aspect) => {
-        const a = pointById.get(aspect.a)
-        const b = pointById.get(aspect.b)
-
-        if (!a || !b) {
-          return null
-        }
-
-        const style = ASPECT_STYLE[aspect.type]
-        const dim = isDimmed(aspect)
+      {aspects.map((line) => {
+        const dim = isDimmed(line.aspect)
         const pulse = pulsePlanet !== null && !dim
         const stagger = pulse ? Math.min(pulseIndex++, ASPECT_PULSE_STAGGER_MAX) : 0
-        const baseKey = `${aspect.a}-${aspect.b}-${aspect.type}`
 
         return (
           <line
             className={pulse ? styles.aspectPulse : styles.aspectLine}
             // Re-key connected lines by the selected planet so remount re-fires the pulse
             // on each pick; dim lines keep the stable key and cross-fade instead.
-            key={pulse ? `${baseKey}-${pulsePlanet}` : baseKey}
-            stroke={style.color}
-            strokeDasharray={style.dashed ? '4 3' : undefined}
-            strokeWidth={dim ? 0.5 : 1.2}
+            key={pulse ? `${line.key}-${pulsePlanet}` : line.key}
+            stroke={line.color}
+            strokeDasharray={line.dashed ? WHEEL_STYLE.aspect.dash.join(' ') : undefined}
+            strokeWidth={dim ? WHEEL_STYLE.aspect.dimStrokeWidth : WHEEL_STYLE.aspect.strokeWidth}
             style={{
-              opacity: dim ? 0.12 : 0.85,
+              opacity: dim ? WHEEL_STYLE.aspect.dimOpacity : WHEEL_STYLE.aspect.opacity,
               animationDelay: pulse ? `${stagger * ASPECT_PULSE_STAGGER}s` : undefined,
             }}
-            x1={a.x}
-            x2={b.x}
-            y1={a.y}
-            y2={b.y}
+            x1={line.from.x}
+            x2={line.to.x}
+            y1={line.from.y}
+            y2={line.to.y}
           />
         )
       })}
@@ -419,29 +353,35 @@ function Aspects({ aspects, isDimmed, pointById, selection }: AspectsProps) {
 interface PlanetsProps {
   isDimmed: (id: string) => boolean
   onSelect: (id: PlanetId) => void
-  placed: PlacedPlanet[]
+  planets: readonly WheelPlanet[]
   selection: Selection
 }
 
-function Planets({ isDimmed, onSelect, placed, selection }: PlanetsProps) {
+function Planets({ isDimmed, onSelect, planets, selection }: PlanetsProps) {
   const t = useTranslations('Constellation')
 
   return (
     <g>
       {/* True-longitude ticks (+ leader lines for nudged glyphs) drawn under the tokens. */}
-      {placed.map(({ planet, tick, connector }) => {
-        const color = ELEMENT_COLORS[elementOfSign(signOfLon(planet.lon))]
+      {planets.map(({ color, planet, tick, connector }) => {
         const dim = isDimmed(planet.id)
+        const isDirectlySelected = selection?.kind === 'planet' && selection.id === planet.id
 
         return (
           <g className={styles.fade} key={`mark-${planet.id}`} style={{ opacity: dim ? 0.3 : 1 }}>
             {connector && (
               <line
-                opacity={0.5}
+                opacity={
+                  isDirectlySelected ? WHEEL_STYLE.planet.selectedConnectorOpacity : WHEEL_STYLE.planet.connectorOpacity
+                }
                 stroke={color}
-                strokeDasharray="1.5 2"
+                strokeDasharray={WHEEL_STYLE.planet.connectorDash.join(' ')}
                 strokeLinecap="round"
-                strokeWidth={0.9}
+                strokeWidth={
+                  isDirectlySelected
+                    ? WHEEL_STYLE.planet.selectedConnectorStrokeWidth
+                    : WHEEL_STYLE.planet.connectorStrokeWidth
+                }
                 x1={connector.from.x}
                 x2={connector.to.x}
                 y1={connector.from.y}
@@ -449,10 +389,12 @@ function Planets({ isDimmed, onSelect, placed, selection }: PlanetsProps) {
               />
             )}
             <line
-              opacity={0.9}
+              opacity={isDirectlySelected ? WHEEL_STYLE.planet.selectedTickOpacity : WHEEL_STYLE.planet.tickOpacity}
               stroke={color}
               strokeLinecap="round"
-              strokeWidth={1.4}
+              strokeWidth={
+                isDirectlySelected ? WHEEL_STYLE.planet.selectedTickStrokeWidth : WHEEL_STYLE.planet.tickStrokeWidth
+              }
               x1={tick.inner.x}
               x2={tick.outer.x}
               y1={tick.inner.y}
@@ -461,15 +403,15 @@ function Planets({ isDimmed, onSelect, placed, selection }: PlanetsProps) {
           </g>
         )
       })}
-      {placed.map(({ planet, point, displaced }, i) => {
-        const sign = signOfLon(planet.lon)
-        const color = ELEMENT_COLORS[elementOfSign(sign)]
+      {planets.map(({ color, planet, point, displaced, sign }, i) => {
         const dim = isDimmed(planet.id)
         const delay = PLANET_BASE + i * PLANET_STAGGER
 
-        const isSelected =
-          (selection?.kind === 'planet' && selection.id === planet.id) ||
-          (selection?.kind === 'aspect' && (selection.a === planet.id || selection.b === planet.id))
+        // Visual involvement and the pressed toggle state are intentionally separate.
+        const isDirectlySelected = selection?.kind === 'planet' && selection.id === planet.id
+        const isAspectEndpoint =
+          selection?.kind === 'aspect' && (selection.a === planet.id || selection.b === planet.id)
+        const isEmphasized = isDirectlySelected || isAspectEndpoint
 
         return (
           <g className={styles.token} key={planet.id} style={{ animationDelay: `${delay}s` }}>
@@ -479,7 +421,7 @@ function Planets({ isDimmed, onSelect, placed, selection }: PlanetsProps) {
             >
               <g
                 aria-label={`${t(`planets.${planet.id}`)} · ${t(`signs.${sign}`)}${planet.retrograde ? ` · ${t('panel.retrograde')}` : ''}`}
-                aria-pressed={isSelected}
+                aria-pressed={isDirectlySelected}
                 className={`${styles.wheelButton} ${styles.fade} cursor-pointer`}
                 onClick={() => onSelect(planet.id)}
                 onKeyDown={(e) => {
@@ -496,9 +438,9 @@ function Planets({ isDimmed, onSelect, placed, selection }: PlanetsProps) {
                   cx={point.x}
                   cy={point.y}
                   fill={color}
-                  opacity={0.18}
+                  opacity={WHEEL_STYLE.planet.glowOpacity}
                   pointerEvents="none"
-                  r={isSelected ? TOKEN.glowActive : TOKEN.glow}
+                  r={isEmphasized ? TOKEN.glowActive : TOKEN.glow}
                 />
                 <circle
                   cx={point.x}
@@ -507,39 +449,41 @@ function Planets({ isDimmed, onSelect, placed, selection }: PlanetsProps) {
                   pointerEvents="none"
                   r={TOKEN.disc}
                   stroke={color}
-                  strokeWidth={isSelected ? 2 : 1.2}
-                  style={isSelected ? { filter: `drop-shadow(0 0 6px ${color})` } : undefined}
+                  strokeWidth={
+                    isEmphasized ? WHEEL_STYLE.planet.selectedDiscStrokeWidth : WHEEL_STYLE.planet.discStrokeWidth
+                  }
+                  style={isEmphasized ? { filter: `drop-shadow(0 0 6px ${color})` } : undefined}
                 />
                 <text
                   dominantBaseline="central"
                   fill={color}
-                  fontSize={13.5}
+                  fontSize={WHEEL_STYLE.planet.glyphFontSize}
                   pointerEvents="none"
                   textAnchor="middle"
                   x={point.x}
-                  y={point.y + 0.5}
+                  y={point.y + WHEEL_STYLE.planet.glyphOffsetY}
                 >
-                  {glyphText(planet.glyph)}
+                  {planet.glyph}
                 </text>
                 {planet.retrograde && (
                   <g pointerEvents="none">
                     <circle
-                      cx={point.x + 9.5}
-                      cy={point.y - 9.5}
+                      cx={point.x + WHEEL_STYLE.planet.retrogradeOffset}
+                      cy={point.y - WHEEL_STYLE.planet.retrogradeOffset}
                       fill="var(--color-background)"
-                      r={5.2}
+                      r={WHEEL_STYLE.planet.retrogradeRadius}
                       stroke="var(--color-danger)"
-                      strokeOpacity={0.55}
-                      strokeWidth={0.8}
+                      strokeOpacity={WHEEL_STYLE.planet.retrogradeStrokeOpacity}
+                      strokeWidth={WHEEL_STYLE.planet.retrogradeStrokeWidth}
                     />
                     <text
                       dominantBaseline="central"
                       fill="var(--color-danger)"
-                      fontSize={7}
-                      fontWeight={700}
+                      fontSize={WHEEL_STYLE.planet.retrogradeFontSize}
+                      fontWeight={WHEEL_STYLE.planet.retrogradeFontWeight}
                       textAnchor="middle"
-                      x={point.x + 9.5}
-                      y={point.y - 9.2}
+                      x={point.x + WHEEL_STYLE.planet.retrogradeOffset}
+                      y={point.y - WHEEL_STYLE.planet.retrogradeOffset + WHEEL_STYLE.planet.retrogradeTextOffsetY}
                     >
                       ℞
                     </text>

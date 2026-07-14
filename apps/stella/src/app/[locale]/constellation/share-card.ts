@@ -1,17 +1,11 @@
-// Renders a self-contained 3:4 PNG of the natal chart for sharing/saving — drawn
-// with the Canvas 2D API rather than by rasterizing the live SVG wheel. The live
-// wheel leans on CSS-module classes, CSS variables and the Pretendard webfont,
-// none of which survive an `<img>`-based SVG rasterization; drawing to canvas
-// with the document's own loaded font (passed in as `fontFamily`) reproduces the
-// brand look deterministically and renders the CJK service names (별무리/星屑/星黛洛)
-// correctly. Geometry is shared with the on-screen wheel via `polar`/`placePlanets`
-// so the exported chart is pixel-faithful to what the visitor sees.
+// Renders a self-contained 3:4 PNG in-browser. The surrounding card is Canvas-
+// specific, while the wheel consumes the same scene and resting visual contract
+// as the interactive SVG so their static, unselected representations stay aligned.
 
-import { computeAspects, elementOfSign, signOfLon } from '../chart/astrology'
-import { ASPECT_STYLE, ELEMENT_COLORS, SIGNS } from '../chart/data'
-import { type Point, placePlanets, polar, RADIUS, TOKEN, VIEW } from '../chart/geometry'
-import type { NatalChart } from '../chart/types'
-import { glyphText } from './glyphs'
+import { CENTER, type Point, TOKEN, VIEW } from '../chart/geometry'
+import type { ChartAspect, NatalChart } from '../chart/types'
+import { HERO_TITLE_STYLE } from '../hero-title-style'
+import { buildWheelScene, WHEEL_STYLE, WHEEL_VIEWBOX_PADDING, type WheelRing, type WheelScene } from './wheel-scene'
 
 /** One Big-3 tile: the body's glyph, its localized label and its sign name. */
 export type ShareCardCell = { glyph: string; label: string; value: string }
@@ -21,6 +15,7 @@ export type ShareCardContent = {
   eyebrow: string
   title: string
   big3: readonly ShareCardCell[]
+  houseThemes: readonly string[]
   siteName: string
   url: string
 }
@@ -32,41 +27,124 @@ const CARD_W = 1080
 const CARD_H = 1440
 const MARGIN = 76
 
-// Wheel placement. `K` scales the 360-unit VIEW space (padded to ~392 on screen)
-// up to the card; strokes and font sizes are multiplied by it so proportions
-// match the live wheel exactly.
-const WHEEL_CX = 540
-const WHEEL_CY = 650
-const K = 2
+// Fit the page wheel's canonical padded viewport into the card's content-safe
+// width. The Canvas then uses the SVG's 360-unit coordinate space as-is.
+const WHEEL_VIEWBOX_SIZE = VIEW + WHEEL_VIEWBOX_PADDING * 2
+const WHEEL_VIEWPORT_SIZE = CARD_W - MARGIN * 2
+const WHEEL_VIEWPORT_TOP = 188
+const WHEEL_CX = CARD_W / 2
+const WHEEL_CY = WHEEL_VIEWPORT_TOP + WHEEL_VIEWPORT_SIZE / 2
+const K = WHEEL_VIEWPORT_SIZE / WHEEL_VIEWBOX_SIZE
 
-// Palette mirrors src/app/globals.css (canvas can't read CSS variables).
-const COLOR = {
-  glow: '#1a0f3a',
-  base: '#0a0618',
-  deep: '#05010f',
-  foreground: '#f1f5f9',
-  muted: '#cbd5e1',
-  subtle: '#94a3b8',
-  faint: '#64748b',
-  brand: '#f5bcff',
-  accent: '#c9a8ff',
-  cool: '#7cc4ff',
-  warm: '#ffd66b',
-  danger: '#fb7185',
-} as const
+// Vertical rhythm after enlarging the wheel: the invisible viewBox padding ends
+// just before Big 3, while the visible angle labels retain additional clearance.
+const HEADER_EYEBROW_Y = 76
+const HEADER_TITLE_Y = 154
+const BIG3_TOP = WHEEL_VIEWPORT_TOP + WHEEL_VIEWPORT_SIZE + 4
+const BIG3_HEIGHT = 146
+const WATERMARK_Y = 1324
 
-/** Map a VIEW-space point onto the card so shared geometry lands identically. */
-function toCard(p: Point): Point {
-  return { x: WHEEL_CX + (p.x - VIEW / 2) * K, y: WHEEL_CY + (p.y - VIEW / 2) * K }
+const HERO_GRADIENT_SAMPLES = 32
+
+type ShareCardPalette = {
+  accent: string
+  base: string
+  brand: string
+  cool: string
+  danger: string
+  deep: string
+  faint: string
+  foreground: string
+  glow: string
+  subtle: string
+  warm: string
 }
 
-/** Card-space point for an ecliptic longitude at wheel radius `r`. */
-function at(lon: number, r: number, ascendant: number): Point {
-  return toCard(polar(lon, r, ascendant))
+const PALETTE_VARIABLES: Record<keyof ShareCardPalette, string> = {
+  accent: '--color-accent',
+  base: '--color-background',
+  brand: '--color-brand',
+  cool: '--color-accent-cool',
+  danger: '--color-danger',
+  deep: '--color-background-deep',
+  faint: '--color-foreground-faint',
+  foreground: '--color-foreground',
+  glow: '--color-background-glow',
+  subtle: '--color-foreground-subtle',
+  warm: '--color-accent-warm',
+}
+
+/** Resolve the same CSS design tokens used by the live wheel instead of copying values. */
+function readPalette(): ShareCardPalette {
+  const style = getComputedStyle(document.documentElement)
+
+  const entries = Object.entries(PALETTE_VARIABLES).map(([key, variable]) => {
+    const value = style.getPropertyValue(variable).trim()
+
+    if (!value) {
+      throw new Error(`missing CSS color token: ${variable}`)
+    }
+
+    return [key, value]
+  })
+
+  return Object.fromEntries(entries) as ShareCardPalette
 }
 
 function setFont(ctx: CanvasRenderingContext2D, weight: number, size: number, family: string) {
   ctx.font = `${weight} ${size}px ${family}`
+}
+
+/**
+ * Canvas gradients interpolate in sRGB, while Tailwind's page gradient upgrades
+ * to OKLab when the browser supports it. Sampling CSS color-mix reproduces that
+ * perceptual interpolation without maintaining a second set of title colors.
+ */
+function addHeroGradientStops(gradient: CanvasGradient, colors: readonly [string, string, string]) {
+  const supportsOklab =
+    CSS.supports('background-image', 'linear-gradient(in oklab, red, blue)') &&
+    CSS.supports('color', 'color-mix(in oklab, red, blue)')
+
+  if (!supportsOklab) {
+    gradient.addColorStop(0, colors[0])
+    gradient.addColorStop(0.5, colors[1])
+    gradient.addColorStop(1, colors[2])
+    return
+  }
+
+  const probe = document.createElement('span')
+  probe.style.pointerEvents = 'none'
+  probe.style.position = 'absolute'
+  probe.style.visibility = 'hidden'
+  document.body.append(probe)
+
+  try {
+    for (let index = 0; index <= HERO_GRADIENT_SAMPLES; index++) {
+      const offset = index / HERO_GRADIENT_SAMPLES
+      const firstHalf = offset <= 0.5
+      const from = firstHalf ? colors[0] : colors[1]
+      const to = firstHalf ? colors[1] : colors[2]
+      const progress = firstHalf ? offset * 2 : (offset - 0.5) * 2
+
+      probe.style.color = `color-mix(in oklab, ${from} ${(1 - progress) * 100}%, ${to} ${progress * 100}%)`
+      gradient.addColorStop(offset, getComputedStyle(probe).color)
+    }
+  } finally {
+    probe.remove()
+  }
+}
+
+function createHeroTitleGradient(
+  ctx: CanvasRenderingContext2D,
+  fontSize: number,
+  color: ShareCardPalette,
+): CanvasGradient {
+  // HeroTitle uses a centered 24rem gradient behind 1.875rem text. Preserve
+  // that ratio at the share-card title's larger font size.
+  const width = fontSize * HERO_TITLE_STYLE.gradientWidthEm
+  const gradient = ctx.createLinearGradient(CARD_W / 2 - width / 2, 0, CARD_W / 2 + width / 2, 0)
+  addHeroGradientStops(gradient, [color.cool, color.brand, color.warm])
+  return gradient
 }
 
 /** Deterministic PRNG so the starfield is stable across re-renders of one chart. */
@@ -82,11 +160,11 @@ function mulberry32(seed: number): () => number {
   }
 }
 
-function paintBackground(ctx: CanvasRenderingContext2D) {
+function paintBackground(ctx: CanvasRenderingContext2D, color: ShareCardPalette) {
   const bg = ctx.createRadialGradient(WHEEL_CX, -120, 120, WHEEL_CX, 300, CARD_H)
-  bg.addColorStop(0, COLOR.glow)
-  bg.addColorStop(0.45, COLOR.base)
-  bg.addColorStop(1, COLOR.deep)
+  bg.addColorStop(0, color.glow)
+  bg.addColorStop(0.45, color.base)
+  bg.addColorStop(1, color.deep)
   ctx.fillStyle = bg
   ctx.fillRect(0, 0, CARD_W, CARD_H)
 
@@ -106,174 +184,165 @@ function paintBackground(ctx: CanvasRenderingContext2D) {
   ctx.globalAlpha = 1
 }
 
-/** Trace an annular wedge by sampling the two arcs — avoids canvas arc-direction pitfalls. */
-function annularWedge(
-  ctx: CanvasRenderingContext2D,
-  lonStart: number,
-  lonEnd: number,
-  rOuter: number,
-  rInner: number,
-  ascendant: number,
-) {
-  const steps = 16
+function ring(ctx: CanvasRenderingContext2D, entry: WheelRing) {
   ctx.beginPath()
-
-  for (let i = 0; i <= steps; i++) {
-    const lon = lonStart + ((lonEnd - lonStart) * i) / steps
-    const p = at(lon, rOuter, ascendant)
-    i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)
-  }
-
-  for (let i = steps; i >= 0; i--) {
-    const lon = lonStart + ((lonEnd - lonStart) * i) / steps
-    const p = at(lon, rInner, ascendant)
-    ctx.lineTo(p.x, p.y)
-  }
-
-  ctx.closePath()
-}
-
-function ring(ctx: CanvasRenderingContext2D, r: number, stroke: string, width: number, dash?: number[]) {
-  ctx.beginPath()
-  ctx.arc(WHEEL_CX, WHEEL_CY, r * K, 0, Math.PI * 2)
-  ctx.strokeStyle = stroke
-  ctx.lineWidth = width * K
-  ctx.setLineDash(dash ? dash.map((d) => d * K) : [])
+  ctx.arc(CENTER, CENTER, entry.radius, 0, Math.PI * 2)
+  ctx.strokeStyle = entry.stroke
+  ctx.lineWidth = entry.strokeWidth
+  ctx.setLineDash(entry.dash ? [...entry.dash] : [])
   ctx.stroke()
   ctx.setLineDash([])
 }
 
-function line(ctx: CanvasRenderingContext2D, a: Point, b: Point, stroke: string, width: number, dash?: number[]) {
+function line(
+  ctx: CanvasRenderingContext2D,
+  a: Point,
+  b: Point,
+  stroke: string,
+  width: number,
+  dash?: readonly number[],
+  opacity = 1,
+  lineCap: CanvasLineCap = 'butt',
+) {
+  ctx.save()
   ctx.beginPath()
   ctx.moveTo(a.x, a.y)
   ctx.lineTo(b.x, b.y)
+  ctx.globalAlpha = opacity
   ctx.strokeStyle = stroke
-  ctx.lineWidth = width * K
-  ctx.setLineDash(dash ? dash.map((d) => d * K) : [])
-  ctx.lineCap = 'round'
+  ctx.lineWidth = width
+  ctx.setLineDash(dash ? [...dash] : [])
+  ctx.lineCap = lineCap
   ctx.stroke()
-  ctx.setLineDash([])
-  ctx.lineCap = 'butt'
+  ctx.restore()
 }
 
-function paintWheel(ctx: CanvasRenderingContext2D, chart: NatalChart, family: string) {
-  const anchor = chart.ascendant ?? 0
-  const aspects = computeAspects(chart.planets)
-  const placed = placePlanets(chart.planets, anchor)
-  const pointById = new Map(placed.map((p) => [p.planet.id, toCard(p.point)]))
+function fillPath(ctx: CanvasRenderingContext2D, path: string, fill: string, opacity: number) {
+  ctx.save()
+  ctx.globalAlpha = opacity
+  ctx.fillStyle = fill
+  ctx.fill(new Path2D(path))
+  ctx.restore()
+}
 
-  // Rings.
-  ring(ctx, RADIUS.zodiacOuter, 'rgba(255,255,255,0.12)', 1)
-  ring(ctx, RADIUS.zodiacInner, 'rgba(255,255,255,0.1)', 1)
-  ring(ctx, RADIUS.houseInner, 'rgba(255,255,255,0.08)', 1)
-  ring(ctx, RADIUS.planet + 14, 'rgba(255,255,255,0.06)', 1, [2, 4])
-
-  // Zodiac sectors + glyphs, tinted by element.
+function paintWheel(
+  ctx: CanvasRenderingContext2D,
+  scene: WheelScene,
+  houseThemes: readonly string[],
+  family: string,
+  color: ShareCardPalette,
+) {
+  ctx.save()
+  ctx.translate(WHEEL_CX, WHEEL_CY)
+  ctx.scale(K, K)
+  ctx.translate(-CENTER, -CENTER)
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
 
-  SIGNS.forEach((sign, i) => {
-    const color = ELEMENT_COLORS[sign.element]
-    annularWedge(ctx, i * 30, i * 30 + 30, RADIUS.zodiacOuter, RADIUS.zodiacInner, anchor)
-    ctx.globalAlpha = 0.14
-    ctx.fillStyle = color
-    ctx.fill()
-    ctx.globalAlpha = 1
-
-    const g = at(i * 30 + 15, RADIUS.zodiacGlyph, anchor)
-    setFont(ctx, 400, 16 * K, family)
-    ctx.fillStyle = color
-    ctx.fillText(glyphText(sign.glyph), g.x, g.y)
-  })
-
-  // House cusps (only with a birth time).
-  if (chart.ascendant !== null && chart.cusps) {
-    chart.cusps.forEach((lon, k) => {
-      const inner = at(lon, RADIUS.aspect, anchor)
-      const outer = at(lon, RADIUS.houseOuter, anchor)
-      const primary = k === 0 || k === 9
-      const secondary = k === 3 || k === 6
-      const stroke = primary ? 'rgba(245,188,255,0.5)' : secondary ? 'rgba(245,188,255,0.3)' : 'rgba(255,255,255,0.1)'
-      line(ctx, inner, outer, stroke, primary ? 1.2 : secondary ? 0.9 : 0.6)
-    })
+  for (const entry of scene.rings) {
+    ring(ctx, entry)
   }
 
-  // Aspect web under the tokens.
-  for (const aspect of aspects) {
-    const a = pointById.get(aspect.a)
-    const b = pointById.get(aspect.b)
+  for (const sign of scene.signs) {
+    fillPath(ctx, sign.sectorPath, sign.color, WHEEL_STYLE.sign.fillOpacity)
+    setFont(ctx, 400, WHEEL_STYLE.sign.glyphFontSize, family)
+    ctx.fillStyle = sign.color
+    ctx.fillText(sign.glyph, sign.glyphPoint.x, sign.glyphPoint.y)
+  }
 
-    if (!a || !b) {
-      continue
+  for (const house of scene.houses) {
+    line(ctx, house.cuspFrom, house.cuspTo, house.cuspStroke, house.cuspStrokeWidth)
+    fillPath(ctx, house.sectorPath, WHEEL_STYLE.house.fill, WHEEL_STYLE.house.fillOpacity)
+    setFont(ctx, 400, WHEEL_STYLE.house.labelFontSize, family)
+    ctx.fillStyle = WHEEL_STYLE.house.labelFill
+    ctx.fillText(houseThemes[house.n - 1] ?? '', house.labelPoint.x, house.labelPoint.y)
+  }
+
+  for (const angle of scene.angles) {
+    setFont(ctx, angle.fontWeight, angle.fontSize, family)
+    ctx.fillStyle = angle.fill
+    ctx.fillText(angle.id.toUpperCase(), angle.point.x, angle.point.y)
+  }
+
+  for (const aspect of scene.aspects) {
+    line(
+      ctx,
+      aspect.from,
+      aspect.to,
+      aspect.color,
+      WHEEL_STYLE.aspect.strokeWidth,
+      aspect.dashed ? WHEEL_STYLE.aspect.dash : undefined,
+      WHEEL_STYLE.aspect.opacity,
+    )
+  }
+
+  for (const planet of scene.planets) {
+    if (planet.connector) {
+      line(
+        ctx,
+        planet.connector.from,
+        planet.connector.to,
+        planet.color,
+        WHEEL_STYLE.planet.connectorStrokeWidth,
+        WHEEL_STYLE.planet.connectorDash,
+        WHEEL_STYLE.planet.connectorOpacity,
+        'round',
+      )
     }
 
-    const style = ASPECT_STYLE[aspect.type]
-    ctx.globalAlpha = 0.85
-    line(ctx, a, b, style.color, 1.2, style.dashed ? [4, 3] : undefined)
+    line(
+      ctx,
+      planet.tick.inner,
+      planet.tick.outer,
+      planet.color,
+      WHEEL_STYLE.planet.tickStrokeWidth,
+      undefined,
+      WHEEL_STYLE.planet.tickOpacity,
+      'round',
+    )
   }
 
-  ctx.globalAlpha = 1
-
-  // Center hub glow.
-  const hub = ctx.createRadialGradient(WHEEL_CX, WHEEL_CY, 0, WHEEL_CX, WHEEL_CY, 10 * K)
-  hub.addColorStop(0, '#ffffff')
-  hub.addColorStop(0.6, COLOR.brand)
-  hub.addColorStop(1, 'rgba(124,196,255,0)')
-  ctx.fillStyle = hub
-  ctx.beginPath()
-  ctx.arc(WHEEL_CX, WHEEL_CY, 10 * K, 0, Math.PI * 2)
-  ctx.fill()
-
-  // True-longitude ticks.
-  for (const p of placed) {
-    const color = ELEMENT_COLORS[elementOfSign(signOfLon(p.planet.lon))]
-
-    if (p.connector) {
-      line(ctx, toCard(p.connector.from), toCard(p.connector.to), color, 0.9, [1.5, 2])
-    }
-
-    line(ctx, toCard(p.tick.inner), toCard(p.tick.outer), color, 1.4)
-  }
-
-  // Planet tokens.
-  placed.forEach((p) => {
-    const point = toCard(p.point)
-    const color = ELEMENT_COLORS[elementOfSign(signOfLon(p.planet.lon))]
-
-    ctx.globalAlpha = 0.18
-    ctx.fillStyle = color
+  for (const planet of scene.planets) {
+    ctx.save()
+    ctx.globalAlpha = WHEEL_STYLE.planet.glowOpacity
+    ctx.fillStyle = planet.color
     ctx.beginPath()
-    ctx.arc(point.x, point.y, TOKEN.glow * K, 0, Math.PI * 2)
+    ctx.arc(planet.point.x, planet.point.y, TOKEN.glow, 0, Math.PI * 2)
     ctx.fill()
-    ctx.globalAlpha = 1
+    ctx.restore()
 
     ctx.beginPath()
-    ctx.arc(point.x, point.y, TOKEN.disc * K, 0, Math.PI * 2)
-    ctx.fillStyle = COLOR.base
+    ctx.arc(planet.point.x, planet.point.y, TOKEN.disc, 0, Math.PI * 2)
+    ctx.fillStyle = color.base
     ctx.fill()
-    ctx.lineWidth = 1.2 * K
-    ctx.strokeStyle = color
+    ctx.lineWidth = WHEEL_STYLE.planet.discStrokeWidth
+    ctx.strokeStyle = planet.color
     ctx.stroke()
 
-    setFont(ctx, 400, 13.5 * K, family)
-    ctx.fillStyle = color
-    ctx.fillText(glyphText(p.planet.glyph), point.x, point.y + 0.5 * K)
+    setFont(ctx, 400, WHEEL_STYLE.planet.glyphFontSize, family)
+    ctx.fillStyle = planet.color
+    ctx.fillText(planet.planet.glyph, planet.point.x, planet.point.y + WHEEL_STYLE.planet.glyphOffsetY)
 
-    if (p.planet.retrograde) {
-      const rx = point.x + 9.5 * K
-      const ry = point.y - 9.5 * K
+    if (planet.planet.retrograde) {
+      const rx = planet.point.x + WHEEL_STYLE.planet.retrogradeOffset
+      const ry = planet.point.y - WHEEL_STYLE.planet.retrogradeOffset
       ctx.beginPath()
-      ctx.arc(rx, ry, 5.2 * K, 0, Math.PI * 2)
-      ctx.fillStyle = COLOR.base
+      ctx.arc(rx, ry, WHEEL_STYLE.planet.retrogradeRadius, 0, Math.PI * 2)
+      ctx.fillStyle = color.base
       ctx.fill()
-      ctx.lineWidth = 0.8 * K
-      ctx.strokeStyle = 'rgba(251,113,133,0.55)'
+      ctx.save()
+      ctx.globalAlpha = WHEEL_STYLE.planet.retrogradeStrokeOpacity
+      ctx.lineWidth = WHEEL_STYLE.planet.retrogradeStrokeWidth
+      ctx.strokeStyle = color.danger
       ctx.stroke()
-      setFont(ctx, 700, 7 * K, family)
-      ctx.fillStyle = COLOR.danger
-      ctx.fillText('℞', rx, ry + 0.3 * K)
+      ctx.restore()
+      setFont(ctx, WHEEL_STYLE.planet.retrogradeFontWeight, WHEEL_STYLE.planet.retrogradeFontSize, family)
+      ctx.fillStyle = color.danger
+      ctx.fillText('℞', rx, ry + WHEEL_STYLE.planet.retrogradeTextOffsetY)
     }
-  })
+  }
+
+  ctx.restore()
 }
 
 /** Shrink `size` until `text` fits `maxWidth`, then return the size actually used. */
@@ -300,32 +369,35 @@ function fitFont(
   return s
 }
 
-function paintHeader(ctx: CanvasRenderingContext2D, content: ShareCardContent, family: string) {
+function paintHeader(
+  ctx: CanvasRenderingContext2D,
+  content: ShareCardContent,
+  family: string,
+  color: ShareCardPalette,
+) {
   ctx.textAlign = 'center'
   ctx.textBaseline = 'alphabetic'
 
   ctx.save()
   setFont(ctx, 600, 26, family)
   ctx.letterSpacing = '6px'
-  ctx.fillStyle = COLOR.accent
-  ctx.fillText(content.eyebrow.toUpperCase(), CARD_W / 2, 150)
+  ctx.fillStyle = color.accent
+  ctx.fillText(content.eyebrow.toUpperCase(), CARD_W / 2, HEADER_EYEBROW_Y)
   ctx.restore()
 
   const maxWidth = CARD_W - MARGIN * 2
-  const size = fitFont(ctx, content.title, 700, 62, family, maxWidth)
-  const half = Math.min(ctx.measureText(content.title).width, maxWidth) / 2
-  const grad = ctx.createLinearGradient(CARD_W / 2 - half, 0, CARD_W / 2 + half, 0)
-  grad.addColorStop(0, COLOR.cool)
-  grad.addColorStop(0.5, COLOR.brand)
-  grad.addColorStop(1, COLOR.warm)
-  setFont(ctx, 700, size, family)
-  ctx.fillStyle = grad
-  ctx.fillText(content.title, CARD_W / 2, 232)
+  const size = fitFont(ctx, content.title, HERO_TITLE_STYLE.fontWeight, 62, family, maxWidth)
+  setFont(ctx, HERO_TITLE_STYLE.fontWeight, size, family)
+  ctx.fillStyle = createHeroTitleGradient(ctx, size, color)
+  ctx.fillText(content.title, CARD_W / 2, HEADER_TITLE_Y)
 }
 
-function paintBig3(ctx: CanvasRenderingContext2D, cells: readonly ShareCardCell[], family: string) {
-  const top = 1044
-  const height = 168
+function paintBig3(
+  ctx: CanvasRenderingContext2D,
+  cells: readonly ShareCardCell[],
+  family: string,
+  color: ShareCardPalette,
+) {
   const gap = 24
   const width = (CARD_W - MARGIN * 2 - gap * 2) / 3
 
@@ -334,7 +406,7 @@ function paintBig3(ctx: CanvasRenderingContext2D, cells: readonly ShareCardCell[
     const cx = x + width / 2
 
     ctx.beginPath()
-    ctx.roundRect(x, top, width, height, 20)
+    ctx.roundRect(x, BIG3_TOP, width, BIG3_HEIGHT, 20)
     ctx.fillStyle = 'rgba(20,26,56,0.72)'
     ctx.fill()
     ctx.lineWidth = 1
@@ -344,14 +416,14 @@ function paintBig3(ctx: CanvasRenderingContext2D, cells: readonly ShareCardCell[
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     setFont(ctx, 500, 27, family)
-    ctx.fillStyle = COLOR.subtle
-    ctx.fillText(`${cell.glyph} ${cell.label}`, cx, top + 58)
+    ctx.fillStyle = color.subtle
+    ctx.fillText(`${cell.glyph} ${cell.label}`, cx, BIG3_TOP + 47)
 
     const value = cell.value
     const size = fitFont(ctx, value, 600, 40, family, width - 28)
     setFont(ctx, 600, size, family)
-    ctx.fillStyle = COLOR.foreground
-    ctx.fillText(value, cx, top + 112)
+    ctx.fillStyle = color.foreground
+    ctx.fillText(value, cx, BIG3_TOP + 98)
   })
 }
 
@@ -371,24 +443,28 @@ function sparkle(ctx: CanvasRenderingContext2D, cx: number, cy: number, s: numbe
   ctx.fill()
 }
 
-function paintWatermark(ctx: CanvasRenderingContext2D, content: ShareCardContent, family: string) {
+function paintWatermark(
+  ctx: CanvasRenderingContext2D,
+  content: ShareCardContent,
+  family: string,
+  color: ShareCardPalette,
+) {
   ctx.textAlign = 'left'
   ctx.textBaseline = 'middle'
   setFont(ctx, 600, 34, family)
   const nameWidth = ctx.measureText(content.siteName).width
   const total = 20 + 14 + nameWidth
   const startX = CARD_W / 2 - total / 2
-  const y = 1300
 
-  sparkle(ctx, startX + 10, y, 11, COLOR.warm)
-  ctx.fillStyle = COLOR.foreground
-  ctx.fillText(content.siteName, startX + 34, y)
+  sparkle(ctx, startX + 10, WATERMARK_Y, 11, color.warm)
+  ctx.fillStyle = color.foreground
+  ctx.fillText(content.siteName, startX + 34, WATERMARK_Y)
 
   ctx.textAlign = 'center'
   setFont(ctx, 400, 24, family)
   ctx.letterSpacing = '2px'
-  ctx.fillStyle = COLOR.faint
-  ctx.fillText(content.url, CARD_W / 2, y + 44)
+  ctx.fillStyle = color.faint
+  ctx.fillText(content.url, CARD_W / 2, WATERMARK_Y + 44)
   ctx.letterSpacing = '0px'
 }
 
@@ -399,6 +475,7 @@ function paintWatermark(ctx: CanvasRenderingContext2D, content: ShareCardContent
  */
 export async function createNatalShareCard(
   chart: NatalChart,
+  aspects: readonly ChartAspect[],
   content: ShareCardContent,
   fontFamily: string,
 ): Promise<Blob> {
@@ -412,11 +489,14 @@ export async function createNatalShareCard(
     throw new Error('2d context unavailable')
   }
 
-  paintBackground(ctx)
-  paintWheel(ctx, chart, fontFamily)
-  paintHeader(ctx, content, fontFamily)
-  paintBig3(ctx, content.big3, fontFamily)
-  paintWatermark(ctx, content, fontFamily)
+  const color = readPalette()
+  const scene = buildWheelScene(chart, aspects)
+
+  paintBackground(ctx, color)
+  paintWheel(ctx, scene, content.houseThemes, fontFamily, color)
+  paintHeader(ctx, content, fontFamily, color)
+  paintBig3(ctx, content.big3, fontFamily, color)
+  paintWatermark(ctx, content, fontFamily, color)
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('toBlob returned null'))), 'image/png')

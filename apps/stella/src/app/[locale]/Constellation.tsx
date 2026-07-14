@@ -344,7 +344,13 @@ export default function Constellation() {
             <AspectSection aspects={aspects} onSelect={toggleAspectAndScroll} selection={selection} />
             <PatternSection chart={data.chart} />
             <ReportSection aspects={aspects} chart={data.chart} interpretations={data.interpretations} />
-            <ConstellationActions birth={birth} chart={data.chart} onRecompute={backToForm} shared={shared} />
+            <ConstellationActions
+              aspects={aspects}
+              birth={birth}
+              chart={data.chart}
+              onRecompute={backToForm}
+              shared={shared}
+            />
           </div>
         )}
       </div>

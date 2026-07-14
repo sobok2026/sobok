@@ -9,11 +9,13 @@ import { track } from '@/lib/analytics/browser'
 
 import type { StoredBirth } from '../birth-storage'
 import { signOfLon } from '../chart/astrology'
-import type { NatalChart } from '../chart/types'
+import type { ChartAspect, NatalChart } from '../chart/types'
 import { buildShareURL, shareLink } from '../share'
 import { createNatalShareCard } from './share-card'
+import { HOUSE_NUMBERS } from './wheel-scene'
 
 type ConstellationActionsProps = {
+  aspects: readonly ChartAspect[]
   birth: StoredBirth | null
   chart: NatalChart
   onRecompute: () => void
@@ -21,7 +23,7 @@ type ConstellationActionsProps = {
 }
 
 /** Result sharing, export, and follow-up navigation for one completed chart. */
-export function ConstellationActions({ birth, chart, onRecompute, shared }: ConstellationActionsProps) {
+export function ConstellationActions({ aspects, birth, chart, onRecompute, shared }: ConstellationActionsProps) {
   const [imageBusy, setImageBusy] = useState(false)
   const t = useTranslations('Constellation')
   const ts = useTranslations('Shared')
@@ -67,6 +69,7 @@ export function ConstellationActions({ birth, chart, onRecompute, shared }: Cons
 
       const blob = await createNatalShareCard(
         chart,
+        aspects,
         {
           eyebrow: t('hero.eyebrow'),
           title: t('hero.title'),
@@ -79,6 +82,7 @@ export function ConstellationActions({ birth, chart, onRecompute, shared }: Cons
               value: risingSign ? t(`signs.${risingSign}`) : t('form.risingUnknown'),
             },
           ],
+          houseThemes: HOUSE_NUMBERS.map((n) => t(`houseThemes.${n}`)),
           siteName: SITE_NAME[locale as Locale] ?? SITE_NAME[Locale.EN],
           url: new URL(ORIGIN).host,
         },
