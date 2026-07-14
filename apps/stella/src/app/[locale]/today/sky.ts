@@ -1,6 +1,6 @@
 // Today's global sky — the layer every visitor shares. Everything is derived
-// from a local-noon snapshot so the page is stable for a whole calendar day
-// (the one-update-per-day rhythm is deliberate), in the visitor's own time zone.
+// from a chosen local-noon snapshot so the page is stable for a whole calendar
+// day (the one-update-per-day rhythm is deliberate).
 
 import { angularGap, signOfLon } from '../chart/astrology'
 import { PLANET_ORDER } from '../chart/data'
@@ -107,8 +107,7 @@ function findHeadline(
 
 const STATION_BODIES: readonly ComputedPlanetId[] = PLANET_ORDER.filter((id) => id !== 'sun' && id !== 'moon')
 
-export async function computeSkyToday(now: Date = new Date()): Promise<SkyToday> {
-  const noonLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12)
+export async function computeSkyToday(noonLocal: Date): Promise<SkyToday> {
   const dayMs = 24 * 60 * 60 * 1000
 
   const [yesterday, dayStart, noon, dayEnd] = await Promise.all([
@@ -120,7 +119,6 @@ export async function computeSkyToday(now: Date = new Date()): Promise<SkyToday>
 
   const moonLon = lonOf(noon, 'moon')
   const phaseAngle = (((moonLon - lonOf(noon, 'sun')) % 360) + 360) % 360
-
   const stations: Station[] = []
 
   for (const id of STATION_BODIES) {

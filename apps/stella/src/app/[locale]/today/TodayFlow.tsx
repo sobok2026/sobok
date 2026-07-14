@@ -18,9 +18,9 @@ import { HeroTitle } from '../HeroTitle'
 import { aspectTone } from '../interpretations/types'
 import SharedLinkError from '../SharedLinkError'
 import Starfield from '../Starfield'
-import { buildPageUrl, buildShareUrl, shareLink } from '../share'
+import { buildShareURL, shareLink } from '../share'
 import { useBirthSource } from '../useBirthSource'
-import { localDateKey, seededPick } from './daily'
+import { localDayAnchor, seededPick, snapshotAtLocalNoon } from './daily'
 import MoonPhase from './MoonPhase'
 import { loadReadings } from './readings'
 import type { StationPlanetId, TodayReadings } from './readings/types'
@@ -29,8 +29,8 @@ import { computeSkyToday, type SkyToday } from './sky'
 import { computePersonalToday, type PersonalToday } from './transits'
 
 type Data = {
-  date: Date
   dateKey: string
+  utcOffsetMinutes: number
   birth: StoredBirth | null
   sky: SkyToday
   readings: TodayReadings
@@ -63,8 +63,11 @@ export default function TodayFlow() {
       try {
         setFailed(false)
         setData(null)
-        const now = sharedPayload?.asOf ?? new Date()
-        const [sky, readings] = await Promise.all([computeSkyToday(now), loadReadings(locale)])
+
+        const anchor = sharedPayload ?? localDayAnchor()
+        const snapshotAt = snapshotAtLocalNoon(anchor)
+        const [sky, readings] = await Promise.all([computeSkyToday(snapshotAt), loadReadings(locale)])
+
         let natal: NatalChart | null = null
         let personal: PersonalToday | null = null
 
@@ -75,8 +78,8 @@ export default function TodayFlow() {
 
         if (!cancelled) {
           setData({
-            date: now,
-            dateKey: sharedPayload?.dateKey ?? localDateKey(now),
+            dateKey: anchor.dateKey,
+            utcOffsetMinutes: anchor.utcOffsetMinutes,
             birth,
             sky,
             readings,
@@ -103,7 +106,7 @@ export default function TodayFlow() {
     return () => {
       cancelled = true
     }
-  }, [birth, locale, shared, sharedPayload?.asOf, sharedPayload?.dateKey, sourceReady])
+  }, [birth, locale, shared, sharedPayload?.dateKey, sharedPayload?.utcOffsetMinutes, sourceReady])
 
   async function share() {
     if (!data) {
@@ -111,10 +114,19 @@ export default function TodayFlow() {
     }
 
     const url = data.birth
-      ? buildShareUrl(locale, { kind: 'today', birth: data.birth, asOf: data.date, dateKey: data.dateKey })
-      : buildPageUrl(locale, 'today')
+      ? buildShareURL(locale, {
+          kind: 'today',
+          birth: data.birth,
+          dateKey: data.dateKey,
+          utcOffsetMinutes: data.utcOffsetMinutes,
+        })
+      : new URL(`/${locale}/today`, window.location.origin).toString()
 
-    const method = await shareLink({ title: t('meta.title'), text: t('share.text'), url })
+    const method = await shareLink({
+      title: t('meta.title'),
+      text: t('share.text'),
+      url,
+    })
 
     if (method === 'clipboard') {
       toast.success(t('share.copied'))
@@ -329,13 +341,15 @@ function TodayBody({ data, homeHref, onShare, shared }: TodayBodyProps) {
 
       {/* Actions */}
       <div className="flex flex-col items-center gap-3 pt-1">
-        <button
-          className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
-          onClick={onShare}
-          type="button"
-        >
-          {t('share.button')}
-        </button>
+        {!shared && (
+          <button
+            className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
+            onClick={onShare}
+            type="button"
+          >
+            {t('share.button')}
+          </button>
+        )}
         {data.birth && (
           <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
         )}

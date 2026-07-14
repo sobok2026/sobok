@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-import { decodeShareHash, type SharedPayload, type ShareKind } from './share'
+import { decodeShareHash, isShareHash, type SharedPayload, type ShareKind } from './share'
 
 type PayloadFor<K extends ShareKind> = Extract<SharedPayload, { kind: K }>
 
@@ -17,9 +17,7 @@ export function useSharedPayload<K extends ShareKind>(kind: K): SharedPayloadSta
 
   useEffect(() => {
     function sync() {
-      const params = new URLSearchParams(window.location.hash.startsWith('#') ? window.location.hash.slice(1) : '')
-
-      if (!params.has('p')) {
+      if (!isShareHash(window.location.hash)) {
         setState({ status: 'none' })
         return
       }

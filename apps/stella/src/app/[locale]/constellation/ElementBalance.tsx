@@ -47,7 +47,7 @@ export default function ElementBalance({ counts, dominant, total }: ElementBalan
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-1 items-center gap-x-3 gap-y-2">
+      <div className="grid grid-cols-2 items-center gap-x-4 gap-y-2 sm:gap-x-5">
         {ELEMENT_IDS.map((id) => {
           const pct = total > 0 ? (counts[id] / total) * 100 : 0
 

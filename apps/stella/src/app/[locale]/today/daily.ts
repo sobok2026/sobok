@@ -6,6 +6,28 @@ export function localDateKey(date: Date = new Date()): string {
   return `${y}-${m}-${d}`
 }
 
+export type DayAnchor = {
+  dateKey: string
+  /** UTC offset at local noon, positive east of UTC. */
+  utcOffsetMinutes: number
+}
+
+/** Captures the creator's calendar day without coupling it to the recipient's time zone. */
+export function localDayAnchor(date: Date = new Date()): DayAnchor {
+  const noon = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12)
+
+  return {
+    dateKey: localDateKey(date),
+    utcOffsetMinutes: -noon.getTimezoneOffset(),
+  }
+}
+
+/** Rebuilds the exact instant that represented local noon for the captured day. */
+export function snapshotAtLocalNoon({ dateKey, utcOffsetMinutes }: DayAnchor): Date {
+  const [year, month, day] = dateKey.split('-').map(Number)
+  return new Date(Date.UTC(year, month - 1, day, 12) - utcOffsetMinutes * 60 * 1000)
+}
+
 /** xmur3 string hash — spreads a short seed string into a well-mixed 32-bit state. */
 function hashSeed(str: string): number {
   let h = 1779033703 ^ str.length

@@ -1,25 +1,31 @@
-import { ORIGIN } from '@/constants'
-
 import { isStoredBirth, type StoredBirth } from './birth-storage'
+
+const SHARE_VERSION = 1
+const SHARE_PREFIX = `${SHARE_VERSION}.`
+const SHARE_HASH_PATTERN = /^\d+\./
+const BASE64_URL_PATTERN = /^[A-Za-z0-9_-]+$/
+const MAX_ENCODED_PAYLOAD_LENGTH = 256
 
 export type ShareKind = 'chart' | 'today' | 'love'
 
 export type SharedPayload =
   | { kind: 'chart'; birth: StoredBirth }
-  | { kind: 'today'; birth: StoredBirth; asOf: Date; dateKey: string }
+  | { kind: 'today'; birth: StoredBirth; dateKey: string; utcOffsetMinutes: number }
   | { kind: 'love'; birth: StoredBirth; asOf: Date }
 
 type SerializedPayload = {
-  v: 1
-  k: ShareKind
-  b: StoredBirth
-  a?: string
-  d?: string
+  d: string
+  t: string
+  n: 0 | 1
+  c: string
+  a?: number
+  o?: string
+  z?: number
 }
 
 type ShareUrlInput =
   | { kind: 'chart'; birth: StoredBirth }
-  | { kind: 'today'; birth: StoredBirth; asOf: Date; dateKey: string }
+  | { kind: 'today'; birth: StoredBirth; dateKey: string; utcOffsetMinutes: number }
   | { kind: 'love'; birth: StoredBirth; asOf: Date }
 
 export type ShareLinkResult = 'web_share' | 'clipboard' | 'cancelled' | 'failed'
@@ -40,6 +46,7 @@ function fromBase64Url(text: string): string {
     .replaceAll('-', '+')
     .replaceAll('_', '/')
     .padEnd(Math.ceil(text.length / 4) * 4, '=')
+
   const binary = atob(base64)
   const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0))
   return new TextDecoder().decode(bytes)
@@ -47,21 +54,35 @@ function fromBase64Url(text: string): string {
 
 function encodePayload(input: ShareUrlInput): string {
   const payload: SerializedPayload = {
-    v: 1,
-    k: input.kind,
-    b: input.birth,
-    ...(input.kind === 'chart' ? {} : { a: input.asOf.toISOString() }),
-    ...(input.kind === 'today' ? { d: input.dateKey } : {}),
+    d: input.birth.date,
+    t: input.birth.time,
+    n: input.birth.timeKnown ? 1 : 0,
+    c: input.birth.cityKey,
+    ...(input.kind === 'love' ? { a: Math.floor(input.asOf.getTime() / 1000) } : {}),
+    ...(input.kind === 'today' ? { o: input.dateKey, z: input.utcOffsetMinutes } : {}),
   }
 
   return toBase64Url(JSON.stringify(payload))
 }
 
-export function decodeShareHash(hash: string, kind: ShareKind): SharedPayload | null {
-  const params = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash)
-  const encoded = params.get('p')
+function fragmentOf(hash: string): string {
+  return hash.startsWith('#') ? hash.slice(1) : hash
+}
 
-  if (!encoded) {
+export function isShareHash(hash: string): boolean {
+  return SHARE_HASH_PATTERN.test(fragmentOf(hash))
+}
+
+export function decodeShareHash(hash: string, kind: ShareKind): SharedPayload | null {
+  const fragment = fragmentOf(hash)
+
+  if (!fragment.startsWith(SHARE_PREFIX)) {
+    return null
+  }
+
+  const encoded = fragment.slice(SHARE_PREFIX.length)
+
+  if (encoded.length === 0 || encoded.length > MAX_ENCODED_PAYLOAD_LENGTH || !BASE64_URL_PATTERN.test(encoded)) {
     return null
   }
 
@@ -72,38 +93,81 @@ export function decodeShareHash(hash: string, kind: ShareKind): SharedPayload | 
       return null
     }
 
-    const payload = parsed as Partial<SerializedPayload>
+    const payload = parsed as Record<string, unknown>
+    const birth = deserializeBirth(payload)
 
-    if (payload.v !== 1 || payload.k !== kind || !isStoredBirth(payload.b)) {
+    if (!birth) {
       return null
     }
 
     if (kind === 'chart') {
-      return { kind, birth: payload.b }
-    }
-
-    if (typeof payload.a !== 'string') {
-      return null
-    }
-
-    const asOf = new Date(payload.a)
-
-    if (Number.isNaN(asOf.getTime())) {
-      return null
-    }
-
-    if (kind === 'today') {
-      if (typeof payload.d !== 'string' || !isCalendarDateKey(payload.d)) {
+      if (payload.a !== undefined || payload.o !== undefined || payload.z !== undefined) {
         return null
       }
 
-      return { kind, birth: payload.b, asOf, dateKey: payload.d }
+      return { kind, birth }
     }
 
-    return { kind, birth: payload.b, asOf }
+    if (kind === 'today') {
+      if (
+        payload.a !== undefined ||
+        typeof payload.o !== 'string' ||
+        !isCalendarDateKey(payload.o) ||
+        !isUtcOffsetMinutes(payload.z)
+      ) {
+        return null
+      }
+
+      return { kind, birth, dateKey: payload.o, utcOffsetMinutes: payload.z }
+    }
+
+    if (payload.o !== undefined || payload.z !== undefined) {
+      return null
+    }
+
+    const asOf = dateFromEpochSeconds(payload.a)
+
+    if (!asOf) {
+      return null
+    }
+
+    return { kind, birth, asOf }
   } catch {
     return null
   }
+}
+
+function deserializeBirth(payload: Record<string, unknown>): StoredBirth | null {
+  if (
+    typeof payload.d !== 'string' ||
+    typeof payload.t !== 'string' ||
+    (payload.n !== 0 && payload.n !== 1) ||
+    typeof payload.c !== 'string'
+  ) {
+    return null
+  }
+
+  const birth: StoredBirth = {
+    date: payload.d,
+    time: payload.t,
+    timeKnown: payload.n === 1,
+    cityKey: payload.c,
+  }
+
+  return isStoredBirth(birth) ? birth : null
+}
+
+function dateFromEpochSeconds(value: unknown): Date | null {
+  if (typeof value !== 'number' || !Number.isSafeInteger(value)) {
+    return null
+  }
+
+  const date = new Date(value * 1000)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+function isUtcOffsetMinutes(value: unknown): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= -14 * 60 && value <= 14 * 60
 }
 
 function isCalendarDateKey(value: string): boolean {
@@ -116,14 +180,10 @@ function isCalendarDateKey(value: string): boolean {
   return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
 }
 
-export function buildShareUrl(locale: string, input: ShareUrlInput): string {
-  const url = new URL(resultPath(locale, input.kind), ORIGIN)
-  url.hash = new URLSearchParams({ p: encodePayload(input) }).toString()
+export function buildShareURL(locale: string, input: ShareUrlInput): string {
+  const url = new URL(resultPath(locale, input.kind), window.location.origin)
+  url.hash = `${SHARE_PREFIX}${encodePayload(input)}`
   return url.toString()
-}
-
-export function buildPageUrl(locale: string, page: Exclude<ShareKind, 'chart'>): string {
-  return new URL(resultPath(locale, page), ORIGIN).toString()
 }
 
 function resultPath(locale: string, kind: ShareKind): string {

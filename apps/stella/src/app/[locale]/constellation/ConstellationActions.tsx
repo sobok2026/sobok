@@ -10,7 +10,7 @@ import { track } from '@/lib/analytics/browser'
 import type { StoredBirth } from '../birth-storage'
 import { signOfLon } from '../chart/astrology'
 import type { NatalChart } from '../chart/types'
-import { buildShareUrl, shareLink } from '../share'
+import { buildShareURL, shareLink } from '../share'
 import { createNatalShareCard } from './share-card'
 
 type ConstellationActionsProps = {
@@ -35,7 +35,7 @@ export function ConstellationActions({ birth, chart, onRecompute, shared }: Cons
     const method = await shareLink({
       title: t('meta.title'),
       text: t('share.text'),
-      url: buildShareUrl(locale, { kind: 'chart', birth }),
+      url: buildShareURL(locale, { kind: 'chart', birth }),
     })
 
     if (method === 'clipboard') {
@@ -115,24 +115,26 @@ export function ConstellationActions({ birth, chart, onRecompute, shared }: Cons
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="flex flex-wrap items-center justify-center gap-2.5">
-        <button
-          className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
-          onClick={share}
-          type="button"
-        >
-          {t('share.button')}
-        </button>
-        <button
-          aria-busy={imageBusy}
-          className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3 disabled:opacity-60"
-          disabled={imageBusy}
-          onClick={shareImage}
-          type="button"
-        >
-          {t('share.imageButton')}
-        </button>
-      </div>
+      {!shared && (
+        <div className="flex flex-wrap items-center justify-center gap-2.5">
+          <button
+            className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
+            onClick={share}
+            type="button"
+          >
+            {t('share.button')}
+          </button>
+          <button
+            aria-busy={imageBusy}
+            className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3 disabled:opacity-60"
+            disabled={imageBusy}
+            onClick={shareImage}
+            type="button"
+          >
+            {t('share.imageButton')}
+          </button>
+        </div>
+      )}
       <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
       {shared ? (
         <a

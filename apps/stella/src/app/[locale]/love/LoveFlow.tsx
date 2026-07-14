@@ -19,7 +19,7 @@ import type { Interpretations } from '../interpretations/types'
 import { aspectTone, fill, pairKey } from '../interpretations/types'
 import SharedLinkError from '../SharedLinkError'
 import Starfield from '../Starfield'
-import { buildShareUrl, shareLink } from '../share'
+import { buildShareURL, shareLink } from '../share'
 import { useBirthSource } from '../useBirthSource'
 import {
   deriveLoveProfile,
@@ -57,13 +57,14 @@ type Data = {
 }
 
 export default function LoveFlow() {
-  const t = useTranslations('Love')
-  const tc = useTranslations('Constellation')
-  const ts = useTranslations('Shared')
-  const locale = useLocale()
-  const birthSource = useBirthSource('love')
   const [data, setData] = useState<Data | null>(null)
   const [failed, setFailed] = useState(false)
+  const birthSource = useBirthSource('love')
+  const locale = useLocale()
+  const t = useTranslations('Love')
+  const ts = useTranslations('Shared')
+  const tc = useTranslations('Constellation')
+
   const homeHref = `/${locale}`
   const { birth, payload: sharedPayload, shared } = birthSource
   const sourceReady = birthSource.status === 'ready'
@@ -76,7 +77,7 @@ export default function LoveFlow() {
     const method = await shareLink({
       title: t('meta.title'),
       text: t('share.text'),
-      url: buildShareUrl(locale, { kind: 'love', birth: data.birth, asOf: data.asOf }),
+      url: buildShareURL(locale, { kind: 'love', birth: data.birth, asOf: data.asOf }),
     })
 
     if (method === 'clipboard') {
@@ -217,16 +218,16 @@ function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
   const t = useTranslations('Love')
   const tc = useTranslations('Constellation')
   const ts = useTranslations('Shared')
-  const { readings, interpretations, profile, windows, timeKnown } = data
-  const signName = (id: SignId) => tc(`signs.${id}`)
 
-  // Natal Venus copy is shared with the chart page — retro-aware like the detail panel.
+  const { readings, interpretations, profile, windows, timeKnown } = data
   const venusRetroText = profile.venusRetro ? interpretations.retro.venus?.[profile.venusSign] : undefined
   const venusText = venusRetroText ?? interpretations.planets.venus[profile.venusSign]
   const aspectText = resolveAspectText(profile, interpretations)
   const persona = readings.persona[profile.descendantSign]
   const shownWindows = windows.slice(0, MAX_WINDOWS)
   const today = data.asOf
+
+  const signName = (id: SignId) => tc(`signs.${id}`)
 
   return (
     <div className="w-full space-y-5">
@@ -372,13 +373,15 @@ function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
 
       {/* Actions */}
       <div className="flex flex-col items-center gap-3 pt-1">
-        <button
-          className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
-          onClick={onShare}
-          type="button"
-        >
-          {t('share.button')}
-        </button>
+        {!shared && (
+          <button
+            className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
+            onClick={onShare}
+            type="button"
+          >
+            {t('share.button')}
+          </button>
+        )}
         <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
         {shared ? (
           <a
