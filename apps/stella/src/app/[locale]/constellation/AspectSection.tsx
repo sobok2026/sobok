@@ -13,8 +13,7 @@ import { isAspectSelection, type Selection } from './selection'
 const HARMONY_TYPES: readonly AspectType[] = ['conjunction', 'trine', 'sextile']
 const TENSION_TYPES: readonly AspectType[] = ['square', 'opposition']
 
-// Rows shown per group before the rest collapse behind "더보기". The wheel already lays
-// side by side on sm+, so the collapse only kicks in on the stacked mobile layout.
+// Rows shown per group before the rest collapse behind "더보기".
 const DEFAULT_VISIBLE = 5
 
 // Only collapse when it hides a meaningful chunk — a "더보기 1개" isn't worth the tap, so a
@@ -83,7 +82,7 @@ function AspectGroup({ accent, aspects, label, onSelect, selection }: AspectGrou
 
   const collapsible = ranked.length >= DEFAULT_VISIBLE + OVERFLOW_MIN
 
-  // Overflow rows still hidden on mobile: the selected one always stays visible, so exclude it.
+  // The selected one always stays visible, so exclude it from the count.
   const hiddenCount =
     collapsible && !expanded ? ranked.slice(DEFAULT_VISIBLE).filter((a) => !isAspectSelection(selection, a)).length : 0
 
@@ -96,10 +95,10 @@ function AspectGroup({ accent, aspects, label, onSelect, selection }: AspectGrou
         {ranked.map((asp, i) => {
           const { color, glyph } = ASPECT_STYLE[asp.type]
           const active = isAspectSelection(selection, asp)
-          const hiddenOnMobile = collapsible && i >= DEFAULT_VISIBLE && !expanded && !active
+          const hidden = collapsible && i >= DEFAULT_VISIBLE && !expanded && !active
 
           return (
-            <li className={hiddenOnMobile ? 'hidden sm:block' : ''} key={`${asp.a}-${asp.b}-${asp.type}`}>
+            <li className={hidden ? 'hidden' : ''} key={`${asp.a}-${asp.b}-${asp.type}`}>
               <button
                 className={`flex w-full items-center gap-2.5 rounded-xl px-2 py-2 text-left transition hover:bg-surface-2 sm:gap-3 sm:px-2.5 ${active ? 'bg-surface-3 ring-1 ring-ring' : ''}`}
                 onClick={() => onSelect(asp)}
@@ -131,7 +130,7 @@ function AspectGroup({ accent, aspects, label, onSelect, selection }: AspectGrou
       {collapsible && (expanded || hiddenCount > 0) && (
         <button
           aria-expanded={expanded}
-          className="mt-1.5 w-full rounded-lg px-2 py-1.5 text-[11px] font-medium text-foreground-subtle transition hover:bg-surface-2 hover:text-foreground-secondary sm:hidden"
+          className="mt-1.5 w-full rounded-lg px-2 py-1.5 text-[11px] font-medium text-foreground-subtle transition hover:bg-surface-2 hover:text-foreground-secondary"
           onClick={() => setExpanded((v) => !v)}
           type="button"
         >

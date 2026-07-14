@@ -12,6 +12,12 @@ export interface ElementBalanceProps {
   total: number
 }
 
+/** Column-major pairing of the four elements into the 2×2 grid's left and right columns. */
+const COLUMN_GROUPS: readonly (readonly ElementId[])[] = [
+  ['fire', 'air'],
+  ['earth', 'water'],
+]
+
 /**
  * One segmented bar splits the whole chart across the four elements, so the mix reads as a
  * single balance rather than four independent ratings. The rows beneath carry each element's
@@ -40,27 +46,34 @@ export default function ElementBalance({ counts, dominant, total }: ElementBalan
         <div className={`${styles.balanceBar} flex h-full w-full`}>
           {ELEMENT_IDS.map((id) => {
             const pct = total > 0 ? (counts[id] / total) * 100 : 0
-            if (pct === 0) return null
+
+            if (pct === 0) {
+              return null
+            }
 
             return <div key={id} style={{ background: ELEMENT_COLORS[id], width: `${pct}%` }} />
           })}
         </div>
       </div>
 
-      <div className="grid grid-cols-2 items-center gap-x-4 gap-y-2 sm:gap-x-5">
-        {ELEMENT_IDS.map((id) => {
-          const pct = total > 0 ? (counts[id] / total) * 100 : 0
+      <div className="grid grid-cols-2 items-start gap-x-4 sm:gap-x-5">
+        {COLUMN_GROUPS.map((group) => (
+          <div key={group[0]} className="grid grid-cols-[auto_1fr_auto] gap-x-2 gap-y-2">
+            {group.map((id) => {
+              const pct = total > 0 ? (counts[id] / total) * 100 : 0
 
-          return (
-            <div key={id} className="grid grid-cols-[2rem_1fr_auto]">
-              <span className="text-xs font-semibold" style={{ color: ELEMENT_COLORS[id] }}>
-                {t(`elements.${id}`)}
-              </span>
-              <span className="text-[10px] text-foreground-faint">{descriptions[id]}</span>
-              <span className="w-12 text-right text-xs tabular-nums text-foreground-subtle">{pct.toFixed(0)}%</span>
-            </div>
-          )
-        })}
+              return (
+                <div key={id} className="col-span-3 grid grid-cols-subgrid items-baseline">
+                  <span className="text-xs font-semibold" style={{ color: ELEMENT_COLORS[id] }}>
+                    {t(`elements.${id}`)}
+                  </span>
+                  <span className="text-[10px] text-foreground-faint">{descriptions[id]}</span>
+                  <span className="text-right text-xs tabular-nums text-foreground-subtle">{pct.toFixed(0)}%</span>
+                </div>
+              )
+            })}
+          </div>
+        ))}
       </div>
     </section>
   )
