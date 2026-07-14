@@ -405,6 +405,13 @@ export const messages = {
       toToday: '☾ 오늘의 흐름 보기',
       toChart: '내 탄생 별자리 보기',
     },
+    Shared: {
+      invalid: '공유 링크가 올바르지 않거나 손상되었어요.',
+      viewing: '공유받은 결과를 보고 있어요.',
+      privacy: '공유 링크에는 결과 재현을 위한 출생 정보가 포함돼요.',
+      createOwn: '내 결과 만들기',
+      shareError: '링크를 공유하지 못했어요.',
+    },
   },
   [Locale.EN]: {
     Constellation: {
@@ -772,6 +779,13 @@ export const messages = {
       toToday: '☾ See today’s flow',
       toChart: 'See my birth chart',
     },
+    Shared: {
+      invalid: 'This share link is invalid or damaged.',
+      viewing: 'You’re viewing a shared result.',
+      privacy: 'The share link includes birth details needed to reproduce this result.',
+      createOwn: 'Create my own result',
+      shareError: 'Couldn’t share the link.',
+    },
   },
   [Locale.ZH]: {
     Constellation: {
@@ -1133,6 +1147,13 @@ export const messages = {
       },
       toToday: '☾ 看看今天的流势',
       toChart: '查看我的出生星盘',
+    },
+    Shared: {
+      invalid: '分享链接无效或已损坏。',
+      viewing: '你正在查看他人分享的结果。',
+      privacy: '分享链接包含重现此结果所需的出生信息。',
+      createOwn: '生成我的结果',
+      shareError: '无法分享链接。',
     },
   },
   [Locale.JA]: {
@@ -1498,6 +1519,13 @@ export const messages = {
       },
       toToday: '☾ 今日の流れを見る',
       toChart: 'わたしの出生星図を見る',
+    },
+    Shared: {
+      invalid: '共有リンクが無効か破損しています。',
+      viewing: '共有された結果を表示しています。',
+      privacy: '共有リンクには、この結果の再現に必要な出生情報が含まれます。',
+      createOwn: '自分の結果を作る',
+      shareError: 'リンクを共有できませんでした。',
     },
   },
 } satisfies Record<Locale, Messages>

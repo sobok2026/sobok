@@ -36,6 +36,7 @@
   --color-accent: #c9a8ff; /* eyebrow/overline labels, keyword chips */
   --color-accent-cool: #7cc4ff; /* hero-gradient start, comet head */
   --color-accent-warm: #ffd66b; /* hero-gradient end */
+  --color-love-warm: #ffc1d6; /* love hero-gradient end */
   --color-positive: #6ee7b7; /* do-list, harmonious aspects */
   --color-danger: #fb7185; /* errors, retrogrades, hard aspects */
 }
@@ -53,10 +54,6 @@
     var(--color-background) 45%,
     var(--color-background-deep) 100%
   );
-}
-
-@utility bg-hero-gradient {
-  background-image: linear-gradient(to right, var(--color-accent-cool), var(--color-brand), var(--color-accent-warm));
 }
 
 :root {
