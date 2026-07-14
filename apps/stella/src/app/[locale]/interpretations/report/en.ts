@@ -125,6 +125,18 @@ export const report: ReportContent = {
       midheaven:
         'Pluto stands on your Midheaven. Changing things from the root becomes your public name. You get pushed naturally upward into seats that carry authority and influence. Spend that force on regeneration rather than domination, and your career returns as deep respect.',
     },
+    chiron: {
+      ascendant:
+        "Chiron rides on your Ascendant. A tender wound others sense right away is woven into your first impression. Showing your whole self when you first meet someone can feel unusually risky. Yet living with that tenderness lets you notice another person's pain and reach out before anyone else. When you let the scar be seen as it is, your very presence becomes a source of comfort.",
+      midheaven:
+        "Chiron stands on your Midheaven. A wound you have lived through becomes part of your public name. What hurt you can readily lead into work that helps, teaches or heals other people. At first you may wonder whether you're qualified, but few people understand that pain as deeply as you do. Stop treating the wound as a source of shame and let it become a path, and it turns into a calling no one else can fulfill for you.",
+    },
+    lilith: {
+      ascendant:
+        "Lilith rides on your Ascendant. An intense presence that can't be easily dismissed is woven into your first impression. People find you strangely magnetic and a little intimidating at the same time. Suppress that wildness and pretend to be tame, and the qualities that make you yourself begin to fade. Carry your intensity openly, and you become someone no one can casually push aside.",
+      midheaven:
+        'Lilith stands on your Midheaven. This placement brings your untamed self fully into public view. Fixed conventions and authority pressing down from above rarely sit well with you; you want to rise in your own way. At times you may worry that your defiance looks arrogant, but it is also the force that opens roads others cannot take. Build your own place without waiting for permission, and that wildness becomes a name no one can tear down.',
+    },
   },
   dignity: {
     domicile:

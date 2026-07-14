@@ -9,7 +9,7 @@
 // localStorage wins when both hold a value — an explicit "remember me on this
 // device" outranks a transient session copy.
 
-import { findCity } from './cities'
+import { CITIES, findCity } from './cities'
 import type { BirthInput } from './ephemeris'
 
 const STORAGE_KEY = 'stella.birth.v1'
@@ -27,6 +27,32 @@ export type LoadedBirth = {
   persistent: boolean
 }
 
+function isCalendarDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false
+  }
+
+  const [year, month, day] = value.split('-').map(Number)
+  const date = new Date(Date.UTC(year, month - 1, day))
+
+  return (
+    year >= 1900 &&
+    year <= 2030 &&
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day
+  )
+}
+
+function isClockTime(value: string): boolean {
+  if (!/^\d{2}:\d{2}$/.test(value)) {
+    return false
+  }
+
+  const [hour, minute] = value.split(':').map(Number)
+  return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59
+}
+
 export function isStoredBirth(value: unknown): value is StoredBirth {
   if (typeof value !== 'object' || value === null) {
     return false
@@ -36,11 +62,12 @@ export function isStoredBirth(value: unknown): value is StoredBirth {
 
   return (
     typeof v.date === 'string' &&
-    /^\d{4}-\d{2}-\d{2}$/.test(v.date) &&
+    isCalendarDate(v.date) &&
     typeof v.time === 'string' &&
-    /^\d{2}:\d{2}$/.test(v.time) &&
+    isClockTime(v.time) &&
     typeof v.timeKnown === 'boolean' &&
-    typeof v.cityKey === 'string'
+    typeof v.cityKey === 'string' &&
+    CITIES.some((city) => city.key === v.cityKey)
   )
 }
 

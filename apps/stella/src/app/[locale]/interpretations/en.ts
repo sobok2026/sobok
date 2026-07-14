@@ -352,18 +352,29 @@ export const planets: PlanetReadings = {
       'A far-reaching sensitivity that refuses to go numb lives in you. The more the world tells you to stop being so sensitive, the more a tide surges inside to feel and dream deeper. Shut that tenderness down as weakness and your heart dries out and loses its way. When you stop being ashamed of that deep feeling and give it your own language, that wildness becomes a mystery no one can imitate.',
   },
   chiron: {
-    aries: '',
-    taurus: '',
-    gemini: '',
-    cancer: '',
-    leo: '',
-    virgo: '',
-    libra: '',
-    scorpio: '',
-    sagittarius: '',
-    capricorn: '',
-    aquarius: '',
-    pisces: '',
+    aries:
+      'Your tenderest wound lies in putting yourself first and saying plainly what you want. This is where the doubts catch you: am I allowed to step forward, do I have the right? But living with that wound has made you unusually attuned to anyone whose courage falters. The moment you give yourself permission to be brave, you begin awakening courage in others too.',
+    taurus:
+      'Your long-held wound lies in believing you deserve to have enough and enjoy what you have. Whenever your resources or sense of worth waver, this is where your heart feels most exposed. But because you know that insecurity so well, you can steady people who have forgotten their own value. When you decide your worth for yourself, you offer everyone around you a deeper sense of safety too.',
+    gemini:
+      "Your tender place lies in wondering whether your words and ideas will truly reach anyone. The fear of sounding trivial or getting it wrong can make you swallow your voice here. But because you know that hesitation, you're often the first to draw out someone who has gone quiet. Speak in your own language, however imperfectly, and you help other people find their voices too.",
+    cancer:
+      'Your deepest wound lies in the longing to belong completely and be cared for. Whenever affection passes between you and someone else, fears of being left or not fully loved can rise with it. But because you know that hunger, you notice a lonely heart before almost anyone. Hold yourself gently first, and you become the warmest kind of home for someone else.',
+    leo: 'Your tender place lies in wondering whether the unedited you deserves to be loved and seen shining. The wish to be noticed collides here with the fear of taking up too much space. But because you know that hesitation, you recognize the hidden light in people who shrink themselves. Show yourself without waiting for permission, and you become someone who brings others onto the stage with you.',
+    virgo:
+      "Your long-held wound lives in the feeling that you still aren't good enough. A single flaw, or a body and daily life that won't obey your plans, can make this place ache. But years of knowing that harsh inner critic have given you hands that quietly tend the tired and help them stand again. Accept even the imperfect parts as your own, and you become a healer who helps others mend.",
+    libra:
+      "Your tender place lies in wanting to be chosen and treated fairly in relationship. It aches when accommodating someone costs you yourself, or when it feels as though you're the only one giving way. But because you know that grief, you have a gift for gently repairing what has fallen out of balance between people. Learn that you can belong without erasing yourself, and real harmony begins to gather around you.",
+    scorpio:
+      "Your deepest wound lies in trusting completely and giving yourself over. The fear that opening all the way will end in hurt or betrayal waits close to the surface here. But because you've crossed that darkness, you can stay beside someone who has fallen apart and help them rise. When you claim even the wound as part of your strength, you carry a depth no one can shake.",
+    sagittarius:
+      "Your tender place lies in the search for meaning — what to believe and where to go. When your faith wavers or the world suddenly feels empty, this is where the hollow feeling gathers. But because you have wandered through that uncertainty, you can give a lost person a reason to move again. Follow the truth you've lived rather than one you've borrowed, and you become a compass for others.",
+    capricorn:
+      "Your long-held wound lies in the pressure to achieve something and earn recognition. However high you climb, a voice at this spot keeps insisting it still isn't enough. But because you've carried that pressure, you can become the steady adult who lifts someone after a fall. Climb by your own measure rather than anyone else's, and you become one of the surest pillars in another person's life.",
+    aquarius:
+      "Your tender place lies in feeling outside the group, never quite able to belong. Wherever you go, the loneliness of seeming like the odd one out can deepen here. But because you know exclusion, you're often the first to make room for someone pushed to the edge. Hold your difference as a color rather than a flaw, and you create a place where no one has to stand outside.",
+    pisces:
+      "Your deepest wound lies in feeling the world's pain too keenly. Other people's sorrow seeps in as if it were your own, and giving all of yourself can leave this place aching with exhaustion. But because you carry that sensitivity, you can see and hold pain that has no words. Learn to draw a line between yourself and others, and that sensitivity becomes compassion with the power to heal.",
   },
 }
 
@@ -567,6 +578,31 @@ export const retro: RetroReadings = {
       "You topple the old system in your heart first. Over the outer upheaval, you build your own conviction anew — and only a change begun inside becomes a real revolution. Just don't try to overturn it all alone until you lose the people meant to come with you; carry human warmth into the change. The conviction you've built yourself becomes, in the end, the force that opens the next era.",
     pisces:
       "You purify the unconscious deep within. You face an unseen wound alone, descending to the very bottom — and only after purifying it yourself are you reborn, new, from the root. Just know that sink too far into the invisible and you lose your way in reality; plant a foot in the here and now too. The depth you've purified alone becomes a seed that quietly changes the world.",
+  },
+  chiron: {
+    aries:
+      "Chiron retrograde draws your wound further inward. This journey isn't about proving your courage to the world; it's about giving yourself permission to step forward and want what you want. Before you rally anyone else, comfort the frightened self within you. The courage you offer yourself becomes your strongest root.",
+    taurus:
+      'Chiron retrograde draws the question of your worth further inward. This journey asks you to stop filling self-worth with outside approval and quietly notice how you value yourself. Before you try to prove anything, decide what you are worth on your own terms. The conviction you build within becomes a steadiness no one else can shake.',
+    gemini:
+      'Chiron retrograde draws the fear around your voice further inward. The journey matters less as polished speech that wins approval and more as learning to trust your own mind. Before you try to sound perfect for anyone else, believe your own language. The voice that ripens inside you will ultimately ring the clearest.',
+    cancer:
+      "Chiron retrograde draws the longing to belong further inward. This journey asks you to stop searching outside for care and inclusion and learn how to hold yourself first. Before you wait for someone else's arms, become a gentle home to yourself. The warmth you kindle within becomes a shelter that doesn't waver.",
+    leo: "Chiron retrograde draws the wish to shine further inward. This journey isn't about proving yourself through applause; it's about learning to recognize your own light. Before you step onto the stage, see the glow that is already yours. The light you kindle yourself becomes confidence that needs no one's permission.",
+    virgo:
+      "Chiron retrograde draws the voice that says you aren't enough further inward. This journey isn't about proving yourself through outward perfection; it's about including every flaw in your embrace. Before you tend everyone else, offer yourself some mercy. The forgiveness you find within becomes a hand that helps others heal.",
+    libra:
+      'Chiron retrograde draws the wish to be chosen further inward. This journey asks you to stop looking for a relationship to complete you and learn that you are whole on your own. Before you adjust yourself to someone else, restore the balance within. The harmony you build for yourself becomes the ground of a healthy bond.',
+    scorpio:
+      'Chiron retrograde draws your fear of trust further inward. This journey begins with making peace with your own wounds before opening your heart to anyone else. Before you decide whom to trust, learn to trust yourself again. The strength earned by crossing your own darkness becomes a depth no one can shake.',
+    sagittarius:
+      "Chiron retrograde draws the question of meaning further inward. This journey asks you to stop hunting outside for the right answer and discover what you truly believe. Before you borrow someone else's faith, listen to the voice within. The belief you build for yourself becomes an unshakable center.",
+    capricorn:
+      "Chiron retrograde draws the hunger for recognition further inward. This journey isn't about proving yourself through achievement; it's about telling yourself that who you are now is enough. Before you drive yourself up another step, acknowledge how far you have already come. The recognition you give yourself becomes your surest support.",
+    aquarius:
+      'Chiron retrograde draws the loneliness of not belonging further inward. This journey asks you to stop forcing yourself into the crowd and learn to accept the part of you that is different. Before you search for a place to fit, recognize your own color. The difference you embrace within begins creating a place that is truly yours.',
+    pisces:
+      "Chiron retrograde draws your sensitivity to the world's pain further inward. This journey asks you to stop emptying yourself to save everyone else and tend your own ache first. Before you carry another person's sorrow, draw a line between you and them. Compassion that protects you first becomes healing that can last.",
   },
 }
 
@@ -1197,6 +1233,123 @@ export const aspects: AspectPairReadings = {
     opposition:
       "Inside you, the force that digs deep and the unrestrained wildness seesaw at opposite poles. Keep that intensity outside yourself and you meet it through partners tangled in power or obsession. Just don't only live that force through relationships, or you lose yourself. When you hold both depth and wildness as yours, you become someone no one can shake.",
   },
+  'sun-chiron': {
+    conjunction:
+      'An old wound is woven into your very sense of self. Being fully yourself can hurt in a way few people understand, yet that ache lets you recognize pain in others before they speak it. Hide the wound out of shame and your own light dims with it. Embrace the scar as part of who you are, and your presence becomes a source of comfort.',
+    flow: "Your sense of self and your old wound know how to live gently together. What hurt you flows naturally into the way you care for other people. Just don't let that ease tempt you to skim over your own healing. The experience of tending yourself becomes a gift for helping others mend.",
+    square:
+      "Inside you, the self that wants to shine keeps colliding with a wound that hasn't fully healed. You start to step forward, then a voice insisting you aren't enough makes you hesitate. The clash is painful, but it is also a signal to face what still hurts. The more of that ache you can hold, the more steadily you grow into yourself.",
+    opposition:
+      'Inside you, the confident self and the wounded self pull from opposite poles. Push the pain outside and you keep meeting people who touch the bruise for you. But if you only see your wound reflected in someone else, you lose sight of yourself. Accept the scar as part of you, and you become far more grounded.',
+  },
+  'moon-chiron': {
+    conjunction:
+      "An old wound runs through the deepest part of your emotional life. Every feeling brushes that tender place, so you experience the world with unusual depth. Swallow the ache as if you're being too sensitive and it leaks out when you least expect it. Treat the depth of your feeling as strength, and you become someone who can hold another person's heart.",
+    flow: "Your tender heart and your old wound move together with surprising grace. You naturally turn the feelings that hurt into warmth for someone else. Just don't use that ease as a reason to rush past your own heart. What you have felt and survived becomes the warmest kind of comfort.",
+    square:
+      'Inside you, the heart that wants peace keeps tugging against an old tender place. You reach for safety, but buried pain rises and sends your feelings into motion. The instability is hard, but it is also a signal to face what has been held down. Listen without judging the feeling, and your emotional life grows deeper and steadier.',
+    opposition:
+      'Inside you, the heart at peace and the heart in pain pull from opposite poles. Push the ache outside and you keep finding yourself entangled with people who carry the tenderness for you. But if you always hand your wound to someone else, you lose your own emotional center. Hold the pain as yours, and your heart gains a new depth.',
+  },
+  'mercury-chiron': {
+    conjunction:
+      "An old wound lives in the way you think and speak. The fear that your words won't reach anyone can make you silence yourself here. Close your mouth because it hurts and your truest voice disappears with it. Speak in your own language, however imperfectly, and your words can soothe wounds in other people too.",
+    flow: "You naturally find words for tender thoughts and old wounds. You know how to turn a painful story into language that comforts someone else. Just don't let the fluency make you treat your own hurt too lightly. The voice that has known pain becomes a healing kind of language.",
+    square:
+      'Inside you, what needs to be said and the tender truth keep missing each other. You hold it down because silence seems safer, then the buried words burst out sharper than you meant. That disconnect can be frustrating, but it asks you to refine what you truly want to say. Shape the suppressed voice with care, and your language grows both stronger and more precise.',
+    opposition:
+      "Inside you, the easy thing to say and the wounded truth pull from opposite poles. Keep pushing that wounded voice aside and you meet people who hurt you with their words. But if you leave all the pain in someone else's mouth, you lose your own voice. Make room for even the most vulnerable words, and your voice grows wider and more grounded.",
+  },
+  'venus-chiron': {
+    conjunction:
+      'An old wound runs through your way of loving and being loved. The question of whether you deserve affection can ache especially sharply here. Hide yourself because it hurts and your natural loveliness fades with it. Let people come close without hiding the scar, and your charm gains a depth no one else can imitate.',
+    flow: "Your tender heart and your old wound flow gently into love. You naturally turn what hurt into a warm, attentive way of caring for someone else. Just don't use that ease to skip over your own healing. The heart that has known pain becomes capable of the deepest love.",
+    square:
+      "Inside you, the wish to be loved keeps colliding with a tender wound. You begin to draw close, then a voice saying you aren't enough makes you retreat. The ache is painful, but it is also a signal to face the wound. The more of it you can hold, the more you learn to love without abandoning yourself.",
+    opposition:
+      'Inside you, the lovable self and the wounded self pull from opposite poles. Push the ache outside and you may find yourself drawn to love that hurts. But if you only see your wound reflected in a partner, you lose yourself. Accept the scar as part of you, and your way of loving grows stronger.',
+  },
+  'mars-chiron': {
+    conjunction:
+      'An old wound is tangled up with your will and your strength. Stepping forward and pushing ahead can feel unusually tender here. Pull your power back because it hurts and you also lose the force that protects you. Take one step with the wound still present, and you become someone who awakens courage in others.',
+    flow: "Your tender wound and your drive know how to work together. You naturally turn what hurt into the courage to defend and lift someone else. Just don't let that ease carry you past your own healing. The strength that has known pain becomes courage that helps others stand.",
+    square:
+      'Inside you, the force that wants to push ahead keeps colliding with a tender wound. You start to step forward, then a frightened part of you holds you back. The conflict is frustrating, but it is also a signal to face what hurts. The more of that ache you can hold, the steadier your strength becomes.',
+    opposition:
+      'Inside you, the powerful self and the wounded self pull from opposite poles. Push the ache outside and you keep colliding with people who drive you too hard. But if you always hand your wound to someone else, you lose your own power. Embrace the scar as yours, and your courage becomes real strength.',
+  },
+  'jupiter-chiron': {
+    conjunction:
+      'An old wound touches your faith and your desire to expand. The question of whether you deserve to go further can ache especially sharply here. Make yourself smaller because it hurts and your whole world narrows with you. Open the door with the wound still present, and you become someone who gives other people hope.',
+    flow: "Your tender wound and your power to expand work gently together. You naturally turn what hurt into wisdom that opens a path for someone else. Just don't let the ease make you treat your own wound too lightly. A heart that has known pain develops the generosity to guide others.",
+    square:
+      "Inside you, the wish to grow keeps falling out of step with a tender wound. You prepare to move into something bigger, then a voice saying you aren't enough makes you hesitate. That tension is frustrating, but it asks you to hold the hurt instead of outrunning it. The more of that ache you can embrace, the deeper and steadier your faith becomes.",
+    opposition:
+      'Inside you, the expansive self and the wounded self pull from opposite poles. Push the ache outside and you may meet it through someone whose confidence fills the whole room. But if you always look for your wound in someone else, you lose your own way. Hold the scar as yours, and your faith matures into real wisdom.',
+  },
+  'saturn-chiron': {
+    conjunction:
+      'An old wound sits deep in the place of responsibility and limits. The pressure to get everything right can be especially painful here. Respond by driving yourself harder and your heart stays heavy. Build one step at a time with the wound still present, and you grow into the kind of adult others can lean on.',
+    flow: "Your tender wound and your ability to build something solid work gently together. You naturally turn what hurt into the reliability that supports someone else. Just don't let that ease carry you past your own pain. The strength you gained by enduring becomes a steady hand that helps others rise.",
+    square:
+      "Inside you, the need to do well keeps colliding with a tender wound. You start to build, then a voice saying you still aren't good enough brings you to a stop. The clash feels heavy, but it is also a signal to face what hurts. The more of that ache you can hold, the stronger and steadier your sense of responsibility becomes.",
+    opposition:
+      'Inside you, the capable self and the wounded self pull from opposite poles. Push the ache outside and you may find yourself clashing with authority figures who drive you too hard. But if you always hand your wound to someone else, you lose your own center. Embrace the scar as yours, and you become an adult who cannot be easily shaken.',
+  },
+  'uranus-chiron': {
+    conjunction:
+      'An old wound touches your individuality and freedom. The fear that the world will reject you for standing out can ache especially sharply here. Hide who you are because it hurts and the feeling of belonging nowhere only deepens. Step forward with your difference intact, and you make room for others who have been pushed aside.',
+    flow: "Your tender wound and your free-spirited individuality work gently together. You naturally turn the pain of being different into a vision that opens new paths for others. Just don't let that ease make you treat your own wound too lightly. What you learned by living outside the mold becomes a way of seeing that expands the world.",
+    square:
+      'Inside you, the wish to be free keeps colliding with a tender wound. You start to break out of the mold, then loneliness holds you back. The clash can sting, but it is also a signal to hold the hurt instead of hiding from it. The more of that ache you can embrace, the more steadily your individuality shines.',
+    opposition:
+      'Inside you, the unconventional self and the wounded self pull from opposite poles. Push the ache outside and you keep meeting it through people who seem strikingly different. But if you always see your wound reflected in someone else, you lose your own color. Embrace the scar as yours, and your difference becomes real freedom.',
+  },
+  'neptune-chiron': {
+    conjunction:
+      'An old wound runs through your sensitivity and your dreams. The pain of the world can seep into you so deeply that it aches as if it were your own. Close your heart because it hurts and your dreams dry up with it. Keep feeling the world with that tender heart, and you become someone who can hold even the pain that has no words.',
+    flow: "Your tender wound and your far-reaching sensitivity move gently together. You naturally turn what hurt into compassion that shelters someone else. Just don't let that ease make you forget where you end and another person begins. The heart that has known pain becomes art with the power to heal the world.",
+    square:
+      "Inside you, the wish to merge keeps falling out of step with a tender wound. You soak up someone else's pain until you feel yourself beginning to disappear. The confusion can be overwhelming, but it is also a signal to protect your own center. The more clearly you can draw a boundary, the deeper and steadier your compassion becomes.",
+    opposition:
+      'Inside you, the clear self and the wounded self pull from opposite poles. Push the ache outside and you may slip into relationships that blur who you are. But if you always see your wound reflected in someone else, you lose yourself. Embrace the scar as yours, and your sensitivity becomes a force that heals the world.',
+  },
+  'pluto-chiron': {
+    conjunction:
+      'An old wound waits in the deepest place of your power. Each time life tears down and rebuilds you, that pain rises in the same fierce current. The more you try to hide it, the more powerfully it surges. Walk through the darkness for yourself, and you become someone who can help others stand again after a fall.',
+    flow: "Your tender wound and your deepest power work gently together. You naturally turn what hurt into the strength to help someone else rise again. Just don't let that ease carry you past your own healing. The depth you gained by falling apart becomes a force that can save another person.",
+    square:
+      'Inside you, the force that wants to rise again keeps colliding with a tender wound. You begin to transform, then old pain holds you back. The struggle is hard, but it is also a signal to face what still hurts. The more of that ache you can hold, the more unbreakable you become.',
+    opposition:
+      'Inside you, the powerful self and the wounded self pull from opposite poles. Push the ache outside and you may become entangled with people who shake you to the core. But if you always hand your wound to someone else, you lose your own power. Embrace the scar as yours, and you gain the strength to be reborn.',
+  },
+  'northNode-chiron': {
+    conjunction:
+      'Your path of growth in this life leads straight through an old wound. Each time you face that painful place and move beyond it, you grow one step closer to your truest self. Try to go around the wound and your growth stalls with it. Let the pain become part of the path, and it turns into the compass that carries you farthest.',
+    flow: "The direction of your growth and a healing wound naturally work hand in hand. What you have been through settles gently into the road ahead. Just don't let that ease tempt you to skim over the wound. Move forward while holding it with care, and your growth becomes a journey that heals other people too.",
+    square:
+      'The direction of your growth keeps falling out of step with an old wound and holding you back. You start to move forward, then a painful memory stops you short. The conflict is difficult, but it is also a signal to tend the wound first. The more honestly you face the pain, the more strength you gain to travel farther.',
+    opposition:
+      "The way forward and a painful past pull you from opposite poles. The wish to return to a familiar wound stays taut against the wish to grow into something new. But don't settle there simply because the pain is familiar. Use what hurt as ground beneath your feet and choose your direction, and you finally begin to move ahead.",
+  },
+  'northNode-lilith': {
+    conjunction:
+      'Your growth in this life lies along the path of reclaiming the self that refuses to be tamed. The more you reveal the wildness you have suppressed, the more fully you grow into who you are. Make yourself smaller to suit other people and the direction of your growth grows hazy too. Embrace that fierce life force, and it leads you toward your most authentic self.',
+    flow: "The direction of your growth and the wildness inside you work naturally together. Your raw, unsuppressed power naturally propels you along the road ahead. Just don't let that ease tempt you to spend the force carelessly. Carry your wildness forward with intention, and your path takes on a color no one else can imitate.",
+    square:
+      'The direction of your growth keeps colliding with the part of you that refuses to be tamed. You try to move forward properly, then something fierce rises from within and throws you off balance. The friction is difficult, but it is also a signal to reveal the self you have suppressed. The more you acknowledge that wildness, the more confidently you move ahead.',
+    opposition:
+      'The way forward and the wildness inside you pull from opposite poles. You meet that force in yourself by feeling drawn to, or clashing with, people who are intense and unrestrained. But if you only see your wildness reflected in others, you lose your own path. Accept that power as yours, and you move forward without being shaken.',
+  },
+  'lilith-chiron': {
+    conjunction:
+      'Inside you, an untamed wildness and an old wound are tangled in the same place. The force that wants to reveal your suppressed self swirls together with painful memories. Hide that intensity because it seems dangerous and both the wound and the wildness begin to fester. Embrace them both as yours, and you become someone who can transform pain into power.',
+    flow: "The wildness inside you and a tender wound know how to live gently together. Your unrestrained strength and your wounded side can move without pushing each other away. Just don't let that ease tempt you to skim over the wound. Let both currents flow together, and they give you the depth to hold another person's pain too.",
+    square:
+      'Inside you, the wildness that wants to show itself keeps colliding with a wound that is still tender. You start to stand up for who you are, then old pain holds you back. The clash is difficult, but it is also a signal to tend the wound first. The more of that ache you can hold, the stronger and freer your wildness becomes.',
+    opposition:
+      'Inside you, an unrestrained wildness and your wounded self pull from opposite poles. Push either the intensity or the pain outside and you may become entangled with people who carry it for you. But if you always see both reflected in someone else, you lose yourself. Embrace the wildness and the wound as yours, and you become someone no one can shake.',
+  },
 }
 
 export const houses: PlanetHouseReadings = {
@@ -1395,6 +1548,20 @@ export const houses: PlanetHouseReadings = {
     10: "Your wildness shows where the world watches — over work and reputation. Against pressing authority or fixed rules, a firm defiance rises to climb your own way. Hide that ambition as arrogance and you end up only boosting someone else's success. When you build your own place without anyone's permission, that wildness becomes a power no one can topple.",
     11: 'Your wildness shows as an outsider within the group and community. Faced with this is just how everyone does it, you want to ask why you have to. Hide your difference and force yourself to blend and the feeling of not belonging only deepens. When you take that difference as your own color, that wildness becomes a vision that leads the group forward.',
     12: "Your wildness lies sunk in an inner place no one can see. A primal heart even you don't fully know flows in secret, surfacing suddenly as a dream or a hunch. Press that deep self down as if it weren't there and it leaks out sideways. When you quietly face and release that inner world, that wildness becomes a mystery all your own.",
+  },
+  chiron: {
+    1: "Your wound rests on your very presence and the first impression you make. Showing yourself to the world can feel unusually tender and exposed. But living with that sensitivity has given you an eye for other people's wounds. Reveal yourself as you are, and your presence alone becomes comfort to someone.",
+    2: 'Your wound rests on worth and what you possess. Questions of whether you are enough or deserve to enjoy what you have can shake you here. But because you know that insecurity, you can steady someone who undervalues themselves. Define your worth for yourself, and you offer solidity to others too.',
+    3: "Your wound rests where you speak and learn. Fears that your thought won't land or your words aren't worth hearing rise especially strongly here. But because you know that hesitation, you're often the first to reach for someone who has lost their voice. Speak in your own language, and your words awaken other voices too.",
+    4: 'Your wound rests in the most private place — home and family. The place that should have felt safe may instead carry a need that went unmet for a long time. But because you know that absence, you can become a true refuge for someone else. Hold yourself gently first, and you begin growing new roots of your own.',
+    5: "Your wound rests where you love and express yourself. The fear that your heart or your creation won't be loved can make this place ache. But because you know that vulnerability, you can draw the light out of people who have learned to shrink. Express yourself without watching the room, and your joy brings others alive too.",
+    6: "Your wound rests in daily work and the care of the body. The pressure to be useful, or a body that won't obey your plans, can wear you down here. But because you know that exhaustion, you carry a quiet gift for tending someone in pain. Care for yourself with mercy first, and you become someone who helps others mend.",
+    7: 'Your wound reveals itself through the relationship across from you. The wish to be chosen and treated fairly feels especially tender here. But because you know that hurt, you can understand a wounded partner with unusual depth. Learn to stay connected without erasing yourself, and real healing enters the relationship.',
+    8: 'Your wound rests in deep trust and transformation. Surrendering yourself completely can feel especially frightening and raw here. But because you have crossed that darkness, you can remain beside someone whose world has fallen apart. Claim even the wound as part of your strength, and you show others how to be reborn too.',
+    9: "Your wound rests where you ask what to believe and where to go. When faith wavers or the world feels suddenly empty, the hollow feeling gathers here. But because you know that wandering, you can offer a lost person a reason to move again. Follow the truth you've lived, and you become a compass for others.",
+    10: "Your wound rests where the world can see — on career and reputation. However much you accomplish, a voice here keeps insisting that it still isn't enough. But because you have carried that pressure, you can become the steady adult who lifts someone after a fall. Climb by your own stride, and you become a firm support in someone else's life.",
+    11: "Your wound rests at the edge of the group and community. Wherever you go, the loneliness of feeling like an outsider can deepen here. But because you know exclusion, you're often the first to make room for someone pushed aside. Hold your difference as a color, and you create a place where no one has to stand outside.",
+    12: "Your wound lies deep in an inner place no one can see. Pain even you don't fully understand may surface suddenly as a dream or a hunch. But because you carry that depth, you recognize hurts that have no words. Face that inner world quietly, and the wound becomes compassion that can hold someone else.",
   },
 }
 
