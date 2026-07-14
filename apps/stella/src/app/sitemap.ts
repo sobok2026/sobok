@@ -21,6 +21,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'x-default': `${ORIGIN}/love`,
   }
 
+  const aboutLanguages = {
+    ...Object.fromEntries(Object.values(Locale).map((locale) => [locale, `${ORIGIN}/${locale}/about`])),
+    'x-default': `${ORIGIN}/about`,
+  }
+
+  const contactLanguages = {
+    ...Object.fromEntries(Object.values(Locale).map((locale) => [locale, `${ORIGIN}/${locale}/contact`])),
+    'x-default': `${ORIGIN}/contact`,
+  }
+
   const termsLanguages = {
     ...Object.fromEntries(Object.values(Locale).map((locale) => [locale, `${ORIGIN}/${locale}/terms`])),
     'x-default': `${ORIGIN}/terms`,
@@ -52,6 +62,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly' as const,
       priority: locale === DEFAULT_LOCALE ? 0.8 : 0.6,
       alternates: { languages: loveLanguages },
+    })),
+    ...Object.values(Locale).map((locale) => ({
+      url: `${ORIGIN}/${locale}/about`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: locale === DEFAULT_LOCALE ? 0.5 : 0.4,
+      alternates: { languages: aboutLanguages },
+    })),
+    ...Object.values(Locale).map((locale) => ({
+      url: `${ORIGIN}/${locale}/contact`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly' as const,
+      priority: 0.4,
+      alternates: { languages: contactLanguages },
     })),
     ...Object.values(Locale).map((locale) => ({
       url: `${ORIGIN}/${locale}/terms`,

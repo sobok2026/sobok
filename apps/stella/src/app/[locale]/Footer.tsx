@@ -2,13 +2,24 @@ import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 
 import { LEGAL } from './legal'
+import { PAGES } from './pages'
 
 export default function Footer({ locale }: { locale: Locale }) {
   const { nav } = LEGAL[locale]
+  const { nav: pageNav } = PAGES[locale]
 
   return (
     <footer className="border-t border-border px-4 py-8 text-center text-xs text-foreground-subtle">
       <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+        <Link className="hover:text-foreground" href={`/${locale}`}>
+          {pageNav.home}
+        </Link>
+        <Link className="hover:text-foreground" href={`/${locale}/about`}>
+          {pageNav.about}
+        </Link>
+        <Link className="hover:text-foreground" href={`/${locale}/contact`}>
+          {pageNav.contact}
+        </Link>
         <Link className="hover:text-foreground" href={`/${locale}/terms`}>
           {nav.terms}
         </Link>

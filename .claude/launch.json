@@ -27,7 +27,7 @@
       "runtimeExecutable": "bun",
       "runtimeArgs": ["run", "dev"],
       "cwd": "apps/stella",
-      "port": 3012
+      "port": 3010
     }
   ]
 }
