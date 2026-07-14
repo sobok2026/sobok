@@ -102,7 +102,7 @@ function setFont(ctx: CanvasRenderingContext2D, weight: number, size: number, fa
  */
 function addHeroGradientStops(gradient: CanvasGradient, colors: readonly [string, string, string]) {
   const supportsOklab =
-    CSS.supports('background-image', 'linear-gradient(in oklab, red, blue)') &&
+    CSS.supports('background-image', 'linear-gradient(in lab, red, blue)') &&
     CSS.supports('color', 'color-mix(in oklab, red, blue)')
 
   if (!supportsOklab) {
