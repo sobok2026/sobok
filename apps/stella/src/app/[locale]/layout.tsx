@@ -1,6 +1,6 @@
 import '../globals.css'
 
-import { Locale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS, Locale } from '@sobok/domain/locale'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import Script from 'next/script'
@@ -70,7 +70,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   const t = await getTranslations({ locale, namespace: 'Constellation' })
 
   return (
-    <html lang={locale}>
+    <html lang={LOCALE_LANGUAGE_TAGS[locale]}>
       <body className={`${PretendardVariable.className} antialiased`}>
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>

@@ -9,7 +9,7 @@ export const messages = {
       meta: {
         title: '나의 별자리 · 생년월일시로 그리는 탄생 차트',
         description:
-          '생년월일과 태어난 시각으로 나만의 탄생 차트를 그려 보세요. 태양·달·상승 별자리와 행성 배치부터 하우스와 원소 밸런스까지 별자리판에서 한눈에 확인하고 오늘의 하늘이 만드는 흐름까지 읽어 드려요.',
+          '생년월일시로 나만의 탄생 차트를 그려 보세요. 태양·달·상승 별자리부터 행성 배치와 하우스 원소 밸런스까지 별자리판에서 한눈에 봐요.',
       },
       localeSwitcher: '언어 선택',
       hero: {
@@ -292,7 +292,7 @@ export const messages = {
       meta: {
         title: '오늘의 흐름 · 매일 보는 오늘의 별자리 운세',
         description:
-          '오늘의 달과 행성이 만드는 하루의 결을 읽어 드려요. 달의 위상과 행성 역행을 한눈에 살펴보고 생년월일시를 입력하면 내 탄생 차트를 기준으로 오늘의 무대와 하이라이트 그리고 추천과 주의까지 매일 새롭게 확인할 수 있어요.',
+          '오늘 달과 행성이 만드는 하루의 결을 읽어 드려요. 생년월일시를 넣으면 달의 위상과 행성 역행을 보고 내 탄생 차트 기준 오늘의 운세를 매일 확인해보세요.',
       },
       hero: {
         eyebrow: '매일 새로 뜨는 하늘',
@@ -342,7 +342,7 @@ export const messages = {
       meta: {
         title: '나의 연애운 · 네이탈 차트로 읽는 사랑의 지도',
         description:
-          '생년월일로 내가 사랑하는 방식과 타고난 매력을 읽어 드려요. 관계의 문이 그리는 운명의 파트너부터 앞으로 1년 사랑의 하늘이 지나는 시기까지 나만의 연애운을 확인해 보세요.',
+          '생년월일로 내가 사랑하는 방식과 타고난 매력을 읽어 드려요. 운명의 파트너부터 앞으로 1년 연애운 시기까지 나만의 사랑을 확인해 보세요.',
       },
       hero: {
         eyebrow: '별이 읽어주는 사랑',
@@ -408,7 +408,7 @@ export const messages = {
       meta: {
         title: 'My Star Chart · Interactive Birth Chart',
         description:
-          'Draw your birth chart from your birth date, time, and place. See your Sun, Moon, and Rising signs, houses, and element balance on an interactive star map.',
+          'Draw your free birth chart from your birth date, time, and place. See your Sun, Moon, Rising, houses, and elements on an interactive star map.',
       },
       localeSwitcher: 'Select language',
       hero: {
@@ -655,7 +655,7 @@ export const messages = {
       meta: {
         title: 'Today’s Flow · Your Daily Astrology Forecast',
         description:
-          'Read the texture today’s Moon and planets give the day. See the moon phase and retrogrades, then add your birth details for a daily reading from your own chart.',
+          'See how today’s Moon and planets shape your day. Track the moon phase and retrogrades, then add your birth details for a daily horoscope from your chart.',
       },
       hero: {
         eyebrow: 'A sky that rises anew each day',
@@ -1131,7 +1131,7 @@ export const messages = {
       meta: {
         title: 'わたしの星図 · インタラクティブ出生図',
         description:
-          '生年月日と生まれた時刻からあなただけの出生図を描けます。太陽・月・上昇星座や惑星の配置からハウスとエレメントのバランスまでインタラクティブな星図でひと目で確認して今日の空が描く流れまで読み解けます。',
+          '生年月日と時刻からあなただけの出生図を描きます。太陽・月・上昇星座や惑星の配置、ハウス、エレメントのバランスまで星図でひと目で確認できます。',
       },
       localeSwitcher: '言語を選択',
       hero: {
@@ -1377,7 +1377,7 @@ export const messages = {
       meta: {
         title: '今日の流れ · 毎日更新の星占い',
         description:
-          '今日の月と惑星が一日に与える手ざわりを読み解きます。月の満ち欠けや惑星の逆行をひと目で確かめて生年月日と時刻を入れればあなたの星図をもとにした今日の読みとDo & Don’tまで毎日新しく確認できます。',
+          '今日の月と惑星が与える一日の手ざわりを読み解きます。月の満ち欠けや惑星の逆行を確かめ、生年月日と時刻を入れればあなたの星図から今日の運勢を毎日お届けします。',
       },
       hero: {
         eyebrow: '毎日あたらしく昇る空',
