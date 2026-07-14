@@ -5,6 +5,7 @@
 import { CENTER, type Point, TOKEN, VIEW } from '../chart/geometry'
 import type { ChartAspect, NatalChart } from '../chart/types'
 import { HERO_TITLE_STYLE } from '../hero-title-style'
+import { ASTROLOGY_GLYPH_UNITS_PER_EM, getAstrologyGlyphPath } from './astrology-glyph-paths'
 import { buildWheelScene, WHEEL_STYLE, WHEEL_VIEWBOX_PADDING, type WheelRing, type WheelScene } from './wheel-scene'
 
 /** One Big-3 tile: the body's glyph, its localized label and its sign name. */
@@ -225,6 +226,26 @@ function fillPath(ctx: CanvasRenderingContext2D, path: string, fill: string, opa
   ctx.restore()
 }
 
+const canvasGlyphPaths = new Map<string, Path2D>()
+
+/** Fill the same ink-bounds-centered outline consumed by the page SVG. */
+function fillGlyph(ctx: CanvasRenderingContext2D, glyph: string, x: number, y: number, size: number, fill: string) {
+  let path = canvasGlyphPaths.get(glyph)
+
+  if (!path) {
+    path = new Path2D(getAstrologyGlyphPath(glyph))
+    canvasGlyphPaths.set(glyph, path)
+  }
+
+  const scale = size / ASTROLOGY_GLYPH_UNITS_PER_EM
+  ctx.save()
+  ctx.translate(x, y)
+  ctx.scale(scale, scale)
+  ctx.fillStyle = fill
+  ctx.fill(path)
+  ctx.restore()
+}
+
 function paintWheel(
   ctx: CanvasRenderingContext2D,
   scene: WheelScene,
@@ -245,9 +266,7 @@ function paintWheel(
 
   for (const sign of scene.signs) {
     fillPath(ctx, sign.sectorPath, sign.color, WHEEL_STYLE.sign.fillOpacity)
-    setFont(ctx, 400, WHEEL_STYLE.sign.glyphFontSize, family)
-    ctx.fillStyle = sign.color
-    ctx.fillText(sign.glyph, sign.glyphPoint.x, sign.glyphPoint.y)
+    fillGlyph(ctx, sign.glyph, sign.glyphPoint.x, sign.glyphPoint.y, WHEEL_STYLE.sign.glyphSize, sign.color)
   }
 
   for (const house of scene.houses) {
@@ -319,9 +338,7 @@ function paintWheel(
     ctx.strokeStyle = planet.color
     ctx.stroke()
 
-    setFont(ctx, 400, WHEEL_STYLE.planet.glyphFontSize, family)
-    ctx.fillStyle = planet.color
-    ctx.fillText(planet.planet.glyph, planet.point.x, planet.point.y + WHEEL_STYLE.planet.glyphOffsetY)
+    fillGlyph(ctx, planet.planet.glyph, planet.point.x, planet.point.y, WHEEL_STYLE.planet.glyphSize, planet.color)
 
     if (planet.planet.retrograde) {
       const rx = planet.point.x + WHEEL_STYLE.planet.retrogradeOffset
@@ -336,9 +353,7 @@ function paintWheel(
       ctx.strokeStyle = color.danger
       ctx.stroke()
       ctx.restore()
-      setFont(ctx, WHEEL_STYLE.planet.retrogradeFontWeight, WHEEL_STYLE.planet.retrogradeFontSize, family)
-      ctx.fillStyle = color.danger
-      ctx.fillText('℞', rx, ry + WHEEL_STYLE.planet.retrogradeTextOffsetY)
+      fillGlyph(ctx, '℞', rx, ry, WHEEL_STYLE.planet.retrogradeGlyphSize, color.danger)
     }
   }
 
@@ -470,8 +485,8 @@ function paintWatermark(
 
 /**
  * Draw the whole card onto a fresh offscreen canvas and return it as a PNG blob.
- * The caller must `await document.fonts.ready` first so Pretendard is available —
- * canvas text otherwise falls back to a system font mid-load.
+ * The caller must `await document.fonts.ready` first so localized prose uses
+ * its intended font. Astrology markers use deterministic vector outlines.
  */
 export async function createNatalShareCard(
   chart: NatalChart,

@@ -6,7 +6,6 @@ import { elementOfSign, signOfLon } from '../chart/astrology'
 import { ASPECT_STYLE, ELEMENT_COLORS, SIGNS } from '../chart/data'
 import { annularSector, type PlacedPlanet, type Point, placePlanets, polar, RADIUS, VIEW } from '../chart/geometry'
 import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from '../chart/types'
-import { glyphText } from './glyphs'
 
 export const HOUSE_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const satisfies readonly HouseNumber[]
 
@@ -32,7 +31,7 @@ export const WHEEL_STYLE = {
     fillOpacity: 0.14,
     selectedFillOpacity: 0.4,
     selectedStrokeWidth: 1,
-    glyphFontSize: 16,
+    glyphSize: 16,
   },
   house: {
     fill: '#ffffff',
@@ -79,15 +78,12 @@ export const WHEEL_STYLE = {
     glowOpacity: 0.18,
     discStrokeWidth: 1.2,
     selectedDiscStrokeWidth: 2,
-    glyphFontSize: 13.5,
-    glyphOffsetY: 0.5,
+    glyphSize: 13.5,
     retrogradeOffset: 9.5,
     retrogradeRadius: 5.2,
     retrogradeStrokeOpacity: 0.55,
     retrogradeStrokeWidth: 0.8,
-    retrogradeFontSize: 7,
-    retrogradeFontWeight: 700,
-    retrogradeTextOffsetY: 0.3,
+    retrogradeGlyphSize: 7,
   },
 } as const
 
@@ -194,7 +190,7 @@ export function buildWheelScene(chart: NatalChart, aspects: readonly ChartAspect
 
     return {
       color: ELEMENT_COLORS[sign.element],
-      glyph: glyphText(sign.glyph),
+      glyph: sign.glyph,
       glyphPoint: polar(lonStart + 15, RADIUS.zodiacGlyph, anchor),
       id: sign.id,
       index,
@@ -260,7 +256,6 @@ export function buildWheelScene(chart: NatalChart, aspects: readonly ChartAspect
     return {
       ...entry,
       color: ELEMENT_COLORS[elementOfSign(sign)],
-      planet: { ...entry.planet, glyph: glyphText(entry.planet.glyph) },
       sign,
     }
   })

@@ -1,10 +1,12 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import type { CSSProperties } from 'react'
 
 import { CENTER, TOKEN } from '../chart/geometry'
 import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from '../chart/types'
 import styles from '../constellation.module.css'
+import { ASTROLOGY_GLYPH_UNITS_PER_EM, getAstrologyGlyphPath } from './astrology-glyph-paths'
 import type { Selection } from './selection'
 import {
   buildWheelScene,
@@ -27,6 +29,33 @@ const PLANET_STAGGER = 0.09
 // still finishes its cascade quickly instead of trickling in.
 const ASPECT_PULSE_STAGGER = 0.045
 const ASPECT_PULSE_STAGGER_MAX = 6
+
+type VectorGlyphProps = {
+  className?: string
+  fill: string
+  glyph: string
+  pointerEvents?: 'none'
+  size: number
+  style?: CSSProperties
+  x: number
+  y: number
+}
+
+/** Render one ink-bounds-centered glyph without relying on font metrics. */
+function VectorGlyph({ className, fill, glyph, pointerEvents, size, style, x, y }: VectorGlyphProps) {
+  const scale = size / ASTROLOGY_GLYPH_UNITS_PER_EM
+
+  return (
+    <path
+      className={className}
+      d={getAstrologyGlyphPath(glyph)}
+      fill={fill}
+      pointerEvents={pointerEvents}
+      style={style}
+      transform={`translate(${x} ${y}) scale(${scale})`}
+    />
+  )
+}
 
 export interface ChartWheelProps {
   aspects: readonly ChartAspect[]
@@ -152,18 +181,15 @@ function Sectors({ interactive, onSelect, selection, signs }: SectorsProps) {
               strokeWidth={active ? WHEEL_STYLE.sign.selectedStrokeWidth : 0}
               style={{ animationDelay: `${sign.index * 0.03}s` }}
             />
-            <text
+            <VectorGlyph
               className={styles.signGlyph}
-              dominantBaseline="central"
               fill={sign.color}
-              fontSize={WHEEL_STYLE.sign.glyphFontSize}
+              glyph={sign.glyph}
+              size={WHEEL_STYLE.sign.glyphSize}
               style={{ animationDelay: `${0.2 + sign.index * 0.03}s` }}
-              textAnchor="middle"
               x={sign.glyphPoint.x}
               y={sign.glyphPoint.y}
-            >
-              {sign.glyph}
-            </text>
+            />
             <circle className={styles.focusRing} cx={sign.glyphPoint.x} cy={sign.glyphPoint.y} r={13} />
           </g>
         )
@@ -454,17 +480,14 @@ function Planets({ isDimmed, onSelect, planets, selection }: PlanetsProps) {
                   }
                   style={isEmphasized ? { filter: `drop-shadow(0 0 6px ${color})` } : undefined}
                 />
-                <text
-                  dominantBaseline="central"
+                <VectorGlyph
                   fill={color}
-                  fontSize={WHEEL_STYLE.planet.glyphFontSize}
+                  glyph={planet.glyph}
                   pointerEvents="none"
-                  textAnchor="middle"
+                  size={WHEEL_STYLE.planet.glyphSize}
                   x={point.x}
-                  y={point.y + WHEEL_STYLE.planet.glyphOffsetY}
-                >
-                  {planet.glyph}
-                </text>
+                  y={point.y}
+                />
                 {planet.retrograde && (
                   <g pointerEvents="none">
                     <circle
@@ -476,17 +499,13 @@ function Planets({ isDimmed, onSelect, planets, selection }: PlanetsProps) {
                       strokeOpacity={WHEEL_STYLE.planet.retrogradeStrokeOpacity}
                       strokeWidth={WHEEL_STYLE.planet.retrogradeStrokeWidth}
                     />
-                    <text
-                      dominantBaseline="central"
+                    <VectorGlyph
                       fill="var(--color-danger)"
-                      fontSize={WHEEL_STYLE.planet.retrogradeFontSize}
-                      fontWeight={WHEEL_STYLE.planet.retrogradeFontWeight}
-                      textAnchor="middle"
+                      glyph="℞"
+                      size={WHEEL_STYLE.planet.retrogradeGlyphSize}
                       x={point.x + WHEEL_STYLE.planet.retrogradeOffset}
-                      y={point.y - WHEEL_STYLE.planet.retrogradeOffset + WHEEL_STYLE.planet.retrogradeTextOffsetY}
-                    >
-                      ℞
-                    </text>
+                      y={point.y - WHEEL_STYLE.planet.retrogradeOffset}
+                    />
                   </g>
                 )}
                 {/* Sole, selection-independent hit target — kept last so it wins hit-testing

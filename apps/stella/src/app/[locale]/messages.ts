@@ -338,7 +338,7 @@ export const messages = {
         copied: '링크를 복사했어요',
       },
       tomorrow: '내일의 하늘은 또 달라져요 ✦',
-      toChart: '내 탄생 별자리 보기',
+      toChart: '내 탄생 차트 보기',
       toLove: '♡ 나의 연애운 보기',
     },
     Love: {
@@ -403,7 +403,7 @@ export const messages = {
         copied: '링크를 복사했어요',
       },
       toToday: '☾ 오늘의 흐름 보기',
-      toChart: '내 탄생 별자리 보기',
+      toChart: '내 탄생 차트 보기',
     },
     Shared: {
       invalid: '공유 링크가 올바르지 않거나 손상되었어요.',
