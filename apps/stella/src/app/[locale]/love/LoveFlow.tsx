@@ -152,7 +152,7 @@ export default function LoveFlow() {
   }
 
   return (
-    <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-[calc(4rem+var(--safe-area-top))] text-foreground sm:px-4 md:pt-[calc(2rem+var(--safe-area-top))]">
+    <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-[calc(4.5rem+var(--safe-area-top))] text-foreground sm:px-4">
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-xl flex-col items-center">
@@ -373,18 +373,6 @@ function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
 
       {/* Actions */}
       <div className="flex flex-col items-center gap-3 pt-1">
-        {!shared && (
-          <>
-            <button
-              className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
-              onClick={onShare}
-              type="button"
-            >
-              {t('share.button')}
-            </button>
-            <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
-          </>
-        )}
         {shared ? (
           <a
             className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
@@ -394,18 +382,14 @@ function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
           </a>
         ) : (
           <>
-            <Link
-              className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-              href={`/${locale}/today`}
+            <button
+              className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
+              onClick={onShare}
+              type="button"
             >
-              {t('toToday')}
-            </Link>
-            <Link
-              className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-              href={homeHref}
-            >
-              {t('toChart')}
-            </Link>
+              {t('share.button')}
+            </button>
+            <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
           </>
         )}
       </div>

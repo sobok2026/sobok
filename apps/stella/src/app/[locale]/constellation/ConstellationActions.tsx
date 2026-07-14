@@ -119,7 +119,14 @@ export function ConstellationActions({ aspects, birth, chart, onRecompute, share
 
   return (
     <div className="flex flex-col items-center gap-3">
-      {!shared && (
+      {shared ? (
+        <a
+          className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
+          href={`/${locale}`}
+        >
+          {ts('createOwn')}
+        </a>
+      ) : (
         <>
           <div className="flex flex-wrap items-center justify-center gap-2.5">
             <button
@@ -140,29 +147,6 @@ export function ConstellationActions({ aspects, birth, chart, onRecompute, share
             </button>
           </div>
           <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
-        </>
-      )}
-      {shared ? (
-        <a
-          className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-          href={`/${locale}`}
-        >
-          {ts('createOwn')}
-        </a>
-      ) : (
-        <>
-          <Link
-            className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-            href={`/${locale}/today`}
-          >
-            {t('todayCta')}
-          </Link>
-          <Link
-            className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-            href={`/${locale}/love`}
-          >
-            {t('loveCta')}
-          </Link>
         </>
       )}
       <p className="mt-1 text-xs text-foreground-faint">{t('footer')}</p>

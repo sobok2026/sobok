@@ -9,7 +9,7 @@ export default function Footer({ locale }: { locale: Locale }) {
   const { nav: pageNav } = PAGES[locale]
 
   return (
-    <footer className="border-t border-border px-4 py-8 text-center text-xs text-foreground-subtle">
+    <footer className="border-t border-border px-4 pt-8 pb-[calc(5rem+var(--safe-area-bottom))] text-center text-xs text-foreground-subtle sm:pb-8">
       <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
         <Link className="hover:text-foreground" href={`/${locale}`}>
           {pageNav.home}

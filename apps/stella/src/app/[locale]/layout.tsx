@@ -12,8 +12,9 @@ import { getLocale } from '@/i18n/server'
 import Analytics from '@/lib/analytics/Analytics'
 import JsonLd, { siteGraph } from '@/lib/JsonLd'
 import BirthProfileProvider from './BirthProfileProvider'
+import BottomNav from './BottomNav'
 import Footer from './Footer'
-import LocaleSwitcher from './LocaleSwitcher'
+import Header from './Header'
 
 export function generateStaticParams() {
   return Object.values(Locale).map((locale) => ({ locale }))
@@ -60,9 +61,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
       <body className="antialiased">
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
-          <LocaleSwitcher label={t('localeSwitcher')} locale={locale} />
+          <Header locale={locale} localeLabel={t('localeSwitcher')} />
           <BirthProfileProvider>{children}</BirthProfileProvider>
           <Footer locale={locale} />
+          <BottomNav locale={locale} />
           <Toaster position="top-center" richColors theme="dark" />
         </NextIntlClientProvider>
         <Analytics />

@@ -37,10 +37,7 @@ export default function LocaleSwitcher({ label, locale }: Props) {
   }
 
   return (
-    <nav
-      aria-label={label}
-      className="absolute right-3 top-[calc(0.75rem+var(--safe-area-top))] z-20 flex items-center gap-2.5 rounded-full border bg-surface-2 px-3.5 py-1.5 text-xs backdrop-blur-md"
-    >
+    <nav aria-label={label} className="flex items-center gap-2.5 text-xs">
       {Object.values(Locale).map((entry) =>
         entry === locale ? (
           <span key={entry} aria-current="page" className="font-semibold text-foreground">
