@@ -19,7 +19,7 @@ export default function BottomNav({ locale }: { locale: Locale }) {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 px-3 pb-[calc(0.5rem+var(--safe-area-bottom))] sm:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(0.5rem,var(--safe-area-bottom))] sm:hidden"
     >
       <div className="mx-auto flex max-w-xs items-center justify-around gap-1 rounded-full border border-border bg-background/70 px-2 py-1.5 shadow-lg shadow-black/30 backdrop-blur-md">
         {items.map((item) => {
