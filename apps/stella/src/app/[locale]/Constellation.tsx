@@ -247,7 +247,7 @@ export default function Constellation() {
   }
 
   return (
-    <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-7 text-foreground sm:px-4 sm:pt-[calc(4.5rem+var(--safe-area-top))]">
+    <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-[calc(4.5rem+var(--safe-area-top))] text-foreground sm:px-4">
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-xl flex-col items-center">
@@ -388,7 +388,7 @@ export default function Constellation() {
 
         {/* Elements + aspects + actions */}
         {data && (
-          <div className="mt-12 w-full space-y-12 sm:mt-6 sm:space-y-6" key={`extras-${runId}`}>
+          <div className="mt-9 w-full space-y-9 sm:mt-6 sm:space-y-6" key={`extras-${runId}`}>
             <ElementBalance counts={counts} dominant={dominant} total={data.chart.planets.length} />
             <AspectSection aspects={aspects} onSelect={toggleAspectAndScroll} selection={selection} />
             <PatternSection chart={data.chart} />

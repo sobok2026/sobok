@@ -8,7 +8,7 @@ type Props = {
 
 export default function LegalArticle({ doc, meta }: Props) {
   return (
-    <main className="min-h-dvh bg-night-sky px-4 pb-24 pt-9 text-foreground sm:px-6 sm:pt-[calc(5rem+var(--safe-area-top))]">
+    <main className="min-h-dvh bg-night-sky px-4 pb-24 pt-[calc(4.5rem+var(--safe-area-top))] text-foreground sm:px-6 sm:pt-[calc(5rem+var(--safe-area-top))]">
       <article className="mx-auto max-w-2xl">
         <h1 className="text-3xl font-bold tracking-tight">{doc.title}</h1>
         <p className="mt-3 text-foreground-muted">{doc.description}</p>

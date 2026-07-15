@@ -13,16 +13,15 @@ type Props = {
   localeLabel: string
 }
 
-const ISLAND =
-  'sm:h-9 sm:rounded-full sm:border sm:border-border sm:bg-background/70 sm:px-4 sm:shadow-lg sm:shadow-black/20 sm:backdrop-blur-md'
+const ISLAND = 'h-9 rounded-full border border-border bg-background/70 px-4 shadow-lg shadow-black/20 backdrop-blur-md'
 
 export default function Header({ locale, localeLabel }: Props) {
   const pathname = usePathname()
   const home = `/${locale}`
 
   return (
-    <header className="static z-40 px-3 pt-[calc(0.5rem+var(--safe-area-top))] sm:fixed sm:inset-x-0 sm:top-0">
-      <div className="mx-auto flex h-9 max-w-3xl items-center justify-between gap-3 rounded-full border border-border bg-background/70 px-4 shadow-lg shadow-black/20 backdrop-blur-md sm:h-auto sm:max-w-none sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-none">
+    <header className="absolute inset-x-0 top-0 z-40 px-3 pt-[calc(0.5rem+var(--safe-area-top))] sm:fixed">
+      <div className="mx-auto flex items-center justify-between gap-3">
         <div className={`flex items-center gap-2 ${ISLAND}`}>
           <Link
             className="relative shrink-0 text-sm font-semibold tracking-tight text-foreground before:absolute before:-inset-x-1 before:-inset-y-2 before:content-['']"

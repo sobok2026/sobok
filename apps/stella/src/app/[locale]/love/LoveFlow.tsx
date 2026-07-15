@@ -152,7 +152,7 @@ export default function LoveFlow() {
   }
 
   return (
-    <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-7 text-foreground sm:px-4 sm:pt-[calc(4.5rem+var(--safe-area-top))]">
+    <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-[calc(4.5rem+var(--safe-area-top))] text-foreground sm:px-4">
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-xl flex-col items-center">
@@ -195,7 +195,7 @@ function EmptyState({ homeHref }: { homeHref: string }) {
   return (
     <section className={`${styles.card} w-full rounded-3xl border bg-surface-2 p-6 text-center backdrop-blur`}>
       <p className="text-sm font-semibold text-foreground-secondary">{t('empty.title')}</p>
-      <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-foreground-subtle">{t('empty.hint')}</p>
+      <p className="mx-auto mt-1 text-xs leading-relaxed text-foreground-subtle">{t('empty.hint')}</p>
       <Link
         className="mt-4 inline-block rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-white active:scale-[0.98] motion-reduce:active:scale-100"
         href={homeHref}
@@ -230,9 +230,9 @@ function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
   const signName = (id: SignId) => tc(`signs.${id}`)
 
   return (
-    <div className="w-full space-y-5">
+    <div className="w-full space-y-10 sm:space-y-5">
       {/* How you love */}
-      <section className={`${styles.card} rounded-3xl border bg-surface-2 p-5 backdrop-blur`}>
+      <section className={`${styles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
         <h2 className="text-sm font-bold text-foreground">{t('style.title')}</h2>
         <div className="mt-3 space-y-4">
           <Reading
@@ -248,7 +248,7 @@ function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
       </section>
 
       {/* My magnetism — outer (rising) and inner (moon) */}
-      <section className={`${styles.card} rounded-3xl border bg-surface-2 p-5 backdrop-blur`}>
+      <section className={`${styles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
         <h2 className="text-sm font-bold text-foreground">{t('magnetism.title')}</h2>
         <div className="mt-3 space-y-4">
           {profile.risingSign ? (
@@ -267,7 +267,7 @@ function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
       </section>
 
       {/* Using your charm — a playbook */}
-      <section className={`${styles.card} rounded-3xl border bg-surface-2 p-5 backdrop-blur`}>
+      <section className={`${styles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
         <h2 className="text-sm font-bold text-foreground">{t('playbook.title')}</h2>
         <div className="mt-3 space-y-4">
           <Reading
@@ -283,7 +283,7 @@ function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
       </section>
 
       {/* Destined partner */}
-      <section className={`${styles.card} rounded-3xl border bg-surface-2 p-5 backdrop-blur`}>
+      <section className={`${styles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
         <h2 className="text-sm font-bold text-foreground">{t('partner.title')}</h2>
         <p className="mt-1 text-[11px] font-semibold uppercase tracking-wider text-accent">
           {t('partner.kicker', { sign: signName(profile.descendantSign) })}
@@ -322,7 +322,7 @@ function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
       </section>
 
       {/* Love timing — natal baseline + the year ahead */}
-      <section className={`${styles.card} rounded-3xl border bg-surface-2 p-5 backdrop-blur`}>
+      <section className={`${styles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
         <h2 className="text-sm font-bold text-foreground">{t('timing.title')}</h2>
 
         <div className="mt-3">

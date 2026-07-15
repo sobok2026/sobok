@@ -7,9 +7,9 @@ export const messages = {
   [Locale.KO]: {
     Constellation: {
       meta: {
-        title: '나의 별자리 · 생년월일시로 그리는 탄생 차트',
+        title: '나의 별자리 · 생년월일시로 그리는 탄생 별자리',
         description:
-          '생년월일시로 나만의 탄생 차트를 그려 보세요. 태양·달·상승 별자리부터 행성 배치와 하우스 원소 밸런스까지 별자리판에서 한눈에 봐요.',
+          '생년월일시로 나만의 탄생 별자리를 그려 보세요. 태양·달·상승 별자리부터 행성 배치와 하우스 원소 밸런스까지 별자리판에서 한눈에 봐요.',
       },
       localeSwitcher: '언어 선택',
       hero: {
@@ -298,10 +298,10 @@ export const messages = {
       meta: {
         title: '오늘의 흐름 · 매일 보는 오늘의 별자리 운세',
         description:
-          '오늘 달과 행성이 만드는 하루의 결을 읽어 드려요. 생년월일시를 넣으면 달의 위상과 행성 역행을 보고 내 탄생 차트 기준 오늘의 운세를 매일 확인해보세요.',
+          '오늘 달과 행성이 만드는 하루의 결을 읽고 행운 음식과 행운 색상을 추천해 드려요. 생년월일시를 넣으면 내 탄생 별자리 기준 오늘의 운세를 매일 확인할 수 있어요.',
       },
       hero: {
-        eyebrow: '매일 새로 뜨는 하늘',
+        eyebrow: '매일 뜨는 새로운 하늘',
         title: '오늘의 흐름',
       },
       computing: '오늘의 하늘을 읽는 중...',
@@ -325,10 +325,22 @@ export const messages = {
         stageTitle: '오늘의 무대',
         highlightTitle: '오늘의 하이라이트',
         bigFlowTitle: '지금 지나가는 큰 흐름',
-        emptyTitle: '내 차트 기준으로 보면 더 깊어져요',
+        emptyTitle: '내 별자리 기준으로 보면 더 자세해요',
         emptyHint: '생년월일시를 입력하면 오늘의 하늘이 내 차트의 어디를 지나는지 읽어 드려요.',
         cta: '내 차트 만들기',
-        privacy: '출생 정보는 이 기기에만 저장돼요. 서버로 전송되지 않아요.',
+      },
+      lucky: {
+        title: '오늘의 작은 행운',
+        collectiveBasis: '오늘 {sign}의 달과 {phase}의 리듬에 맞춰 골랐어요.',
+        personalBasis: '오늘 {sign}의 달에 내 차트의 달과 금성의 결을 더해 골랐어요.',
+        personalized: '내 별자리 기준',
+        foodLabel: '행운 음식',
+        colorLabel: '행운 색상',
+        colorCode: '색상 코드',
+        colorA11y: '{name}, {hex}',
+        actionLabel: '오늘 이렇게',
+        allergy: '알레르기가 있는지 확인해 주세요.',
+        complete: '오늘의 행운을 확인했어요 ✦',
       },
       doDont: {
         title: '오늘의 추천과 주의',
@@ -338,10 +350,11 @@ export const messages = {
       share: {
         button: '오늘의 흐름 공유',
         text: '오늘의 하늘이 그리는 흐름 ✦',
+        textWithLuck: '오늘의 행운 음식은 {food}, 행운 색상은 {color} ✦',
         copied: '링크를 복사했어요',
       },
       tomorrow: '내일의 하늘은 또 달라져요 ✦',
-      toChart: '내 탄생 차트 보기',
+      toChart: '내 탄생 별자리 보기',
       toLove: '♡ 나의 연애운 보기',
     },
     Love: {
@@ -397,7 +410,7 @@ export const messages = {
       },
       empty: {
         title: '내 차트가 있어야 읽을 수 있어요',
-        hint: '생년월일시를 입력하면 사랑의 결부터 다가올 시기까지 내 차트 기준으로 읽어 드려요.',
+        hint: '생년월일시를 입력하면 사랑의 결부터 다가올 시기까지 내 탄생 별자리 기준으로 읽어 드려요.',
         cta: '내 차트 만들기',
       },
       share: {
@@ -406,7 +419,7 @@ export const messages = {
         copied: '링크를 복사했어요',
       },
       toToday: '☾ 오늘의 흐름 보기',
-      toChart: '내 탄생 차트 보기',
+      toChart: '내 탄생 별자리 보기',
     },
     Shared: {
       invalid: '공유 링크가 올바르지 않거나 손상되었어요.',
@@ -711,7 +724,7 @@ export const messages = {
       meta: {
         title: 'Today’s Flow · Your Daily Astrology Forecast',
         description:
-          'See how today’s Moon and planets shape your day. Track the moon phase and retrogrades, then add your birth details for a daily horoscope from your chart.',
+          'See how today’s Moon and planets shape your day, with a daily lucky food and color. Add your birth details for a forecast based on your own chart.',
       },
       hero: {
         eyebrow: 'A sky that rises anew each day',
@@ -743,6 +756,19 @@ export const messages = {
         cta: 'Draw my chart',
         privacy: 'Your birth details are stored only on this device. Nothing is sent to a server.',
       },
+      lucky: {
+        title: 'Today’s little luck',
+        collectiveBasis: 'Chosen to match the Moon in {sign} and the rhythm of the {phase}.',
+        personalBasis: 'Chosen from today’s Moon in {sign}, with your natal Moon and Venus added to the mix.',
+        personalized: 'From my chart',
+        foodLabel: 'Lucky food',
+        colorLabel: 'Lucky color',
+        colorCode: 'Color code',
+        colorA11y: '{name}, {hex}',
+        actionLabel: 'Try it today',
+        allergy: 'Please check allergens yourself.',
+        complete: 'Today’s luck is revealed ✦',
+      },
       doDont: {
         title: 'Today’s Do & Don’t',
         doLabel: 'Do',
@@ -751,6 +777,7 @@ export const messages = {
       share: {
         button: 'Share today’s flow',
         text: 'The current today’s sky is drawing ✦',
+        textWithLuck: 'Today’s lucky picks are {food} and {color} ✦',
         copied: 'Link copied',
       },
       tomorrow: 'Tomorrow’s sky will be different again ✦',
@@ -1122,7 +1149,7 @@ export const messages = {
       meta: {
         title: '今日流势 · 每日更新的星象运势',
         description:
-          '解读今天的月亮与行星为一天织出的纹理。一眼看懂月相与行星逆行，输入出生信息后还能以你自己的星盘为基准，每天获取今日解读与 Do & Don’t 提醒。',
+          '解读今天的月亮与行星为一天织出的纹理，并推荐每日幸运食物与幸运色。输入出生信息后，还能以你的本命盘为基准获取今日运势。',
       },
       hero: {
         eyebrow: '每天升起的新天空',
@@ -1154,6 +1181,19 @@ export const messages = {
         cta: '绘制我的星盘',
         privacy: '出生信息只保存在这台设备上，不会发送到服务器。',
       },
+      lucky: {
+        title: '今日小幸运',
+        collectiveBasis: '根据今日月亮落在{sign}与{phase}的节奏为你选出。',
+        personalBasis: '结合今日落在{sign}的月亮，以及你本命盘中的月亮与金星为你选出。',
+        personalized: '按我的星盘',
+        foodLabel: '幸运食物',
+        colorLabel: '幸运色',
+        colorCode: '色号',
+        colorA11y: '{name}，{hex}',
+        actionLabel: '今天这样试试',
+        allergy: '请自行确认食材与过敏原。',
+        complete: '今日幸运已揭晓 ✦',
+      },
       doDont: {
         title: '今天的 Do & Don’t',
         doLabel: 'Do',
@@ -1162,6 +1202,7 @@ export const messages = {
       share: {
         button: '分享今日流势',
         text: '今天的天空画出的流向 ✦',
+        textWithLuck: '今天的幸运食物是{food}，幸运色是{color} ✦',
         copied: '链接已复制',
       },
       tomorrow: '明天的天空又会不一样 ✦',
@@ -1533,7 +1574,7 @@ export const messages = {
       meta: {
         title: '今日の流れ · 毎日更新の星占い',
         description:
-          '今日の月と惑星が与える一日の手ざわりを読み解きます。月の満ち欠けや惑星の逆行を確かめ、生年月日と時刻を入れればあなたの星図から今日の運勢を毎日お届けします。',
+          '今日の月と惑星が与える一日の手ざわりを読み、毎日のラッキーフードとラッキーカラーを提案します。生年月日と時刻を入れれば、あなたの星図を基準に今日の運勢を確認できます。',
       },
       hero: {
         eyebrow: '毎日あたらしく昇る空',
@@ -1565,6 +1606,19 @@ export const messages = {
         cta: 'わたしの星図を描く',
         privacy: '出生情報はこの端末にだけ保存されます。サーバーには送信されません。',
       },
+      lucky: {
+        title: '今日の小さな幸運',
+        collectiveBasis: '今日の{sign}の月と{phase}のリズムに合わせて選びました。',
+        personalBasis: '今日の{sign}の月に、あなたの出生図の月と金星を重ねて選びました。',
+        personalized: 'わたしの星図基準',
+        foodLabel: 'ラッキーフード',
+        colorLabel: 'ラッキーカラー',
+        colorCode: 'カラーコード',
+        colorA11y: '{name}、{hex}',
+        actionLabel: '今日の取り入れ方',
+        allergy: 'アレルゲンを確認してください。',
+        complete: '今日の幸運を見つけました ✦',
+      },
       doDont: {
         title: '今日の Do & Don’t',
         doLabel: 'Do',
@@ -1573,6 +1627,7 @@ export const messages = {
       share: {
         button: '今日の流れをシェア',
         text: '今日の空が描く流れ ✦',
+        textWithLuck: '今日のラッキーフードは{food}、ラッキーカラーは{color} ✦',
         copied: 'リンクをコピーしました',
       },
       tomorrow: '明日の空はまた違う表情に ✦',

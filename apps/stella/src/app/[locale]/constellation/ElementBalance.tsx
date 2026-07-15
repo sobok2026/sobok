@@ -34,7 +34,7 @@ export default function ElementBalance({ counts, dominant, total }: ElementBalan
   }
 
   return (
-    <section className="px-1 sm:rounded-2xl sm:border sm:bg-surface sm:p-5">
+    <section className="p-4 rounded-2xl border bg-surface sm:p-5">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-bold text-foreground">{t('elements.title')}</h2>
         <span className="text-xs text-foreground-subtle">

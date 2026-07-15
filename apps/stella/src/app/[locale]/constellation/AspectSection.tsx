@@ -38,7 +38,7 @@ export default function AspectSection({ aspects, onSelect, selection }: AspectSe
   const tension = aspects.filter((a) => TENSION_TYPES.includes(a.type))
 
   return (
-    <section className="px-1 sm:rounded-2xl sm:border sm:bg-surface sm:p-5">
+    <section className="p-4 rounded-2xl border bg-surface sm:p-5">
       <h2 className="text-sm font-bold text-foreground">{t('aspects.title')}</h2>
       <p className="mt-1 text-xs text-foreground-subtle">{t('aspects.intro')}</p>
       <div className="mt-4 sm:grid sm:grid-cols-2 sm:gap-4">
