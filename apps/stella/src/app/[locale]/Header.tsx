@@ -20,7 +20,7 @@ export default function Header({ locale, localeLabel }: Props) {
   const home = `/${locale}`
 
   return (
-    <header className="absolute inset-x-0 top-0 z-40 px-3 pt-[calc(0.5rem+var(--safe-area-top))] sm:fixed">
+    <header className="absolute inset-x-0 top-0 z-40 px-2 pt-[calc(0.5rem+var(--safe-area-top))] sm:fixed">
       <div className="mx-auto flex items-center justify-between gap-3">
         <div className={`flex items-center gap-2 ${ISLAND}`}>
           <Link

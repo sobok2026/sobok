@@ -230,7 +230,7 @@ function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
   const signName = (id: SignId) => tc(`signs.${id}`)
 
   return (
-    <div className="w-full space-y-10 sm:space-y-5">
+    <div className="w-full space-y-3 sm:space-y-5">
       {/* How you love */}
       <section className={`${styles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
         <h2 className="text-sm font-bold text-foreground">{t('style.title')}</h2>

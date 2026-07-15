@@ -10,7 +10,8 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: '나의 별자리',
     short_name: SITE_NAME[DEFAULT_LOCALE],
-    description: '상호작용 가능한 탄생 차트로 당신만의 우주를 탐험하세요.',
+    description:
+      '생년월일시로 나만의 탄생 별자리를 그려 보세요. 태양·달·상승 별자리부터 행성 배치와 하우스 원소 밸런스까지 별자리판에서 한눈에 봐요.',
     id: '/',
     start_url: '/',
     display: 'standalone',
