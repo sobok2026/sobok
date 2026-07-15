@@ -1,6 +1,6 @@
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
-
+import { SITE_NAME } from '@/constants'
 import { LEGAL } from './legal'
 import { PAGES } from './pages'
 
@@ -27,7 +27,7 @@ export default function Footer({ locale }: { locale: Locale }) {
           {nav.privacy}
         </Link>
       </nav>
-      <p className="mt-4 text-foreground-faint">© 2026 소복 · sobok.cc</p>
+      <p className="mt-4 text-foreground-faint">© 2026 {SITE_NAME[locale]} · stella.sobok.cc</p>
     </footer>
   )
 }
