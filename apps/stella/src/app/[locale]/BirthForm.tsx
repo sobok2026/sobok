@@ -47,7 +47,7 @@ export default function BirthForm({ onSubmit }: Props) {
     onSubmit(birth, save)
   }
 
-  // Forget the saved profile and reset the form to a blank slate. Lives here —
+  // Forget the current profile and reset the form to a blank slate. Lives here —
   // where saving is managed — rather than shouting from the result view.
   function handleClear() {
     profile.clear()
@@ -125,14 +125,14 @@ export default function BirthForm({ onSubmit }: Props) {
       </div>
 
       <div className="mt-4">
-        <div className="flex justify-between ">
+        <div className="flex justify-between items-center">
           <label className="flex items-center gap-2 text-xs text-foreground-muted">
             <input checked={save} className="h-4 w-4" onChange={(e) => setSave(e.target.checked)} type="checkbox" />
             {t('saveLabel')}
           </label>
           {profile.persistent && (
             <button
-              className="text-[11px] text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
+              className="text-[11px] leading-4 text-foreground-subtle transition hover:text-foreground-secondary hover:underline"
               onClick={handleClear}
               type="button"
             >

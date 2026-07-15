@@ -76,7 +76,7 @@ export default function Constellation() {
   const locale = useLocale()
   const birthSource = useBirthSource('chart')
 
-  const { birth, save, shared, persistent, revealed: sessionRevealed } = birthSource
+  const { birth, save, shared } = birthSource
   const sourceReady = birthSource.status === 'ready'
   const data = chartState.status === 'ready' ? chartState.data : null
   const computing = chartState.status === 'computing'
@@ -84,16 +84,10 @@ export default function Constellation() {
   const runId = chartState.runId
   const revealed = data !== null
 
-  // A stored birth surfaces as a finished chart without an explicit submit only
-  // when it is a saved profile (localStorage) or a shared link, or once the
-  // visitor has deliberately revealed a session copy this load. A transient
-  // session birth otherwise waits behind the prefilled form.
-  const shouldReveal = shared || persistent || sessionRevealed
-
   // An auto-reveal birth computes its chart in an effect that runs a frame after
   // the source hydrates. Treat that gap as loading so the form does not flash for
   // one frame before the chart replaces it.
-  const autoRevealPending = sourceReady && !editing && birth !== null && shouldReveal && !revealed && !failed
+  const autoRevealPending = sourceReady && !editing && birth !== null && !revealed && !failed
 
   const birthSummary = birth ? formatBirthSummary(birth, locale as Locale, t('form.timeUnknownShort')) : null
   const activeChart = data?.chart ?? DEFAULT_CHART
@@ -196,7 +190,7 @@ export default function Constellation() {
   useEffect(() => {
     let cancelled = false
 
-    if (!sourceReady || editing || !birth || !shouldReveal) {
+    if (!sourceReady || editing || !birth) {
       if (sourceReady) {
         dispatchSelection({ type: 'reset' })
         setChartState((previous) => ({ status: 'idle', runId: previous.runId }))
@@ -246,7 +240,7 @@ export default function Constellation() {
     return () => {
       cancelled = true
     }
-  }, [birth, editing, locale, sourceReady, shouldReveal])
+  }, [birth, editing, locale, sourceReady])
 
   if (birthSource.status === 'invalid') {
     return <SharedLinkError />
