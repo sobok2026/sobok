@@ -34,6 +34,10 @@
       "dependsOn": ["^build"],
       "outputs": ["out/**", ".next/**"]
     },
+    "@sobok/zwds#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["out/**", ".next/**"]
+    },
     "dev": {
       "dependsOn": ["^build"],
       "cache": false,

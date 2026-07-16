@@ -1,15 +1,15 @@
-import { Locale } from '@sobok/domain/locale'
-import type { BirthplaceCatalog } from './birthplaces'
+import { Locale } from '../locale'
+import type { BirthplaceCatalog } from './model'
 
 type GeneratedCatalogModule = {
   GENERATED_BIRTHPLACE_CATALOG: BirthplaceCatalog
 }
 
 const LOADERS = {
-  [Locale.KO]: () => import('./birthplaces.ko.generated'),
-  [Locale.EN]: () => import('./birthplaces.en.generated'),
-  [Locale.JA]: () => import('./birthplaces.ja.generated'),
-  [Locale.ZH]: () => import('./birthplaces.zh.generated'),
+  [Locale.KO]: () => import('./ko.generated'),
+  [Locale.EN]: () => import('./en.generated'),
+  [Locale.JA]: () => import('./ja.generated'),
+  [Locale.ZH]: () => import('./zh.generated'),
 } satisfies Record<Locale, () => Promise<GeneratedCatalogModule>>
 
 const catalogPromises = new Map<Locale, Promise<BirthplaceCatalog>>()

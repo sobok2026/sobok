@@ -1,4 +1,4 @@
-import type { Locale } from '@sobok/domain/locale'
+import type { Locale } from '../locale'
 
 export type BirthplaceCoordinatePrecision = 'locality' | 'administrativeSeat' | 'administrativeArea'
 

@@ -1,5 +1,5 @@
-import type { Locale } from '@sobok/domain/locale'
-import MARKET_JSON from './birthplace-markets.json'
+import type { Locale } from '../locale'
+import MARKET_JSON from './markets.json'
 
 type MarketPolicy = {
   countries: Readonly<Record<string, string>>

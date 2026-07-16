@@ -28,6 +28,13 @@
       "runtimeArgs": ["run", "dev"],
       "cwd": "apps/stella",
       "port": 3010
+    },
+    {
+      "name": "zwds",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "apps/zwds",
+      "port": 3012
     }
   ]
 }

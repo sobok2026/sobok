@@ -9,10 +9,10 @@
 // localStorage wins when both hold a value — an explicit "remember me on this
 // device" outranks a transient session copy.
 
+import type { BirthplaceSnapshot } from '@sobok/domain/birthplace/model'
+import { isBirthplaceCountryAllowed } from '@sobok/domain/birthplace/policy'
 import type { Locale } from '@sobok/domain/locale'
 import type { BirthInput } from '@/chart/ephemeris'
-import { isBirthplaceCountryAllowed } from './birthplace-policy'
-import type { BirthplaceSnapshot } from './birthplaces'
 
 const STORAGE_KEY = 'stella.birth.v3'
 

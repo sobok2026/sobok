@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "resolveJsonModule": true,
     "types": ["bun", "node"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "scripts/**/*.ts"],

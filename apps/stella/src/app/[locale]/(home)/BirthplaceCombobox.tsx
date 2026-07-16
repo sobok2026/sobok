@@ -1,13 +1,12 @@
 'use client'
 
+import { loadBirthplaceCatalog } from '@sobok/domain/birthplace/catalog.client'
+import { type BirthplaceCatalog, type BirthplaceSnapshot, snapshotBirthplace } from '@sobok/domain/birthplace/model'
+import { getBirthplaceGroups } from '@sobok/domain/birthplace/search'
 import { Locale } from '@sobok/domain/locale'
 import { useCombobox } from 'downshift'
 import { useLocale, useTranslations } from 'next-intl'
 import { Fragment, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
-
-import { loadBirthplaceCatalog } from '@/lib/birthplace-catalog.client'
-import { getBirthplaceGroups } from '@/lib/birthplace-search'
-import { type BirthplaceCatalog, type BirthplaceSnapshot, snapshotBirthplace } from '@/lib/birthplaces'
 
 const inputClass =
   'w-full appearance-none rounded-xl border border-border-2 bg-surface-2 px-3 py-2.5 pr-9 text-base text-foreground outline-none transition [color-scheme:dark] placeholder:text-foreground-faint focus:border-white/60 focus:bg-surface-3 sm:text-sm'

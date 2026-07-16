@@ -1,4 +1,4 @@
-import type { Birthplace, BirthplaceCatalog, BirthplaceResultGroup } from './birthplaces'
+import type { Birthplace, BirthplaceCatalog, BirthplaceResultGroup } from './model'
 
 const HANGUL_LEADS = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ'
 const HANGUL_SYLLABLE_BASE = 0xac00

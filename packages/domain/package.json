@@ -5,6 +5,10 @@
   "type": "module",
   "exports": {
     "./app/metadata": "./src/app/metadata.ts",
+    "./birthplace/catalog.client": "./src/birthplace/catalog.client.ts",
+    "./birthplace/model": "./src/birthplace/model.ts",
+    "./birthplace/policy": "./src/birthplace/policy.ts",
+    "./birthplace/search": "./src/birthplace/search.ts",
     "./censorship/model": "./src/censorship/model.ts",
     "./censorship/policy": "./src/censorship/policy.ts",
     "./chat/policy": "./src/chat/policy.ts",
@@ -44,6 +48,7 @@
   },
   "scripts": {
     "type": "tsc --noEmit",
+    "generate:birthplaces": "node scripts/generate-birthplaces.mjs",
     "generate:emoji": "bun scripts/generateEmojiList.ts"
   },
   "dependencies": {

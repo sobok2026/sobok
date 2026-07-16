@@ -1,10 +1,10 @@
 'use client'
 
+import type { BirthplaceSnapshot } from '@sobok/domain/birthplace/model'
 import { useTranslations } from 'next-intl'
 import { type SubmitEvent, useEffect, useState } from 'react'
 import { useBirthProfile } from '@/components/BirthProfileProvider'
 import type { StoredBirth } from '@/lib/birth-storage'
-import type { BirthplaceSnapshot } from '@/lib/birthplaces'
 import BirthplaceCombobox from './BirthplaceCombobox'
 
 const fieldClass =
