@@ -43,11 +43,11 @@ export type InfoContent = {
 }
 
 const UPDATED = {
-  [Locale.KO]: { label: '최종 업데이트', date: '2026년 7월 15일' },
-  [Locale.EN]: { label: 'Last updated', date: 'July 15, 2026' },
-  [Locale.JA]: { label: '最終更新', date: '2026年7月15日' },
-  [Locale.ZH]: { label: '最后更新', date: '2026年7月15日' },
-} satisfies Record<Locale, { label: string; date: string }>
+  [Locale.KO]: { label: '최종 업데이트', about: '2026년 7월 16일', contact: '2026년 7월 15일' },
+  [Locale.EN]: { label: 'Last updated', about: 'July 16, 2026', contact: 'July 15, 2026' },
+  [Locale.JA]: { label: '最終更新', about: '2026年7月16日', contact: '2026年7月15日' },
+  [Locale.ZH]: { label: '最后更新', about: '2026年7月16日', contact: '2026年7月15日' },
+} satisfies Record<Locale, { label: string; about: string; contact: string }>
 
 export const PAGES = {
   [Locale.KO]: {
@@ -60,7 +60,7 @@ export const PAGES = {
       title: '소개',
       description: '별무리가 어떤 서비스이고 별자리를 어떻게 계산하며 누가 만드는지 알려드립니다.',
       updatedLabel: UPDATED[Locale.KO].label,
-      updatedDate: UPDATED[Locale.KO].date,
+      updatedDate: UPDATED[Locale.KO].about,
       sections: [
         {
           heading: '별무리는 어떤 서비스인가요',
@@ -77,19 +77,19 @@ export const PAGES = {
         {
           heading: '무엇을 할 수 있나요',
           body: [
-            '태어난 순간의 하늘을 계산해 해와 달 그리고 상승궁을 비롯한 별자리 배치를 한눈에 보여 줍니다. 오늘의 운세는 지금 하늘을 지나는 행성을 내 차트에 겹쳐 그날의 흐름을 읽고 연애운은 금성과 화성 그리고 관계의 하우스를 살펴 사랑하는 방식과 어울리는 시기를 읽어 줍니다. 모든 해석은 한국어와 영어 그리고 일본어와 중국어로 제공합니다.',
+            '태어난 날의 해와 달 그리고 행성 배치를 한눈에 보여 주며, 출생 시각을 알면 상승궁과 하우스까지 함께 계산합니다. 오늘의 운세는 지금 하늘을 지나는 행성을 내 차트에 겹쳐 그날의 흐름을 읽고, 연애운은 금성과 화성 그리고 확인 가능한 관계 지표를 바탕으로 사랑하는 방식과 앞으로의 시기를 읽어 줍니다. 모든 해석은 한국어와 영어 그리고 일본어와 중국어로 제공합니다.',
           ],
         },
         {
           heading: '어떻게 계산하나요',
           body: [
-            '별무리는 태어난 순간의 천체 위치를 트로피컬 황도대와 플라시두스 하우스 방식으로 계산합니다. 계산에는 공개 도메인 천체력 라이브러리를 사용해 태양부터 명왕성까지 열 개 천체의 위치를 지구 중심 기준으로 구하며 그 정확도는 천문학적으로 정밀한 수준입니다.',
+            '별무리는 트로피컬 황도대를 사용하고, 출생 시각을 알 때는 플라시두스 방식으로 하우스를 계산합니다. 공개 도메인 천체력 라이브러리로 태양부터 명왕성까지 열 개 천체의 지구 중심 위치를 구합니다. 결과의 세부 수준은 입력 정보에 따라 달라지며, 출생 시각을 모르면 달의 하루 이동 범위만 보여 주고 정확한 달 도수와 달의 각, 상승궁, 하우스, 차트 모양은 해석에서 제외합니다.',
           ],
         },
         {
           heading: '입력한 정보는 어떻게 다루나요',
           body: [
-            '생년월일과 시각 그리고 출생지는 이용자의 브라우저 안에서만 계산되며 별도의 서버로 전송되지 않습니다. 개인정보를 어떻게 보관하고 삭제하는지는 개인정보처리방침에서 자세히 확인할 수 있습니다.',
+            '입력 폼의 생년월일과 시각 그리고 출생지는 이용자의 브라우저 안에서 계산되며 별무리 서버에 직접 제출되지 않습니다. 저장을 선택하면 이 브라우저에 보관되고, 링크 공유를 선택하면 결과 재현에 필요한 출생 정보가 공유 URL에 포함되어 선택한 공유 대상과 링크를 받은 사람에게 전달됩니다. 자세한 저장·삭제·공유 방식은 개인정보처리방침에서 확인할 수 있습니다.',
           ],
         },
         {
@@ -110,7 +110,7 @@ export const PAGES = {
       title: '문의하기',
       description: '별무리에 관한 문의와 제안 그리고 오류 신고를 받는 곳입니다.',
       updatedLabel: UPDATED[Locale.KO].label,
-      updatedDate: UPDATED[Locale.KO].date,
+      updatedDate: UPDATED[Locale.KO].contact,
       sections: [
         {
           heading: '이렇게 연락해 주세요',
@@ -165,7 +165,7 @@ export const PAGES = {
       title: 'About',
       description: 'What Stella is, how it calculates your chart, and who builds it.',
       updatedLabel: UPDATED[Locale.EN].label,
-      updatedDate: UPDATED[Locale.EN].date,
+      updatedDate: UPDATED[Locale.EN].about,
       sections: [
         {
           heading: 'What is Stella',
@@ -182,19 +182,19 @@ export const PAGES = {
         {
           heading: 'What you can do',
           body: [
-            'Stella maps the sky at the moment you were born and shows at a glance where the Sun, Moon, rising sign, and planets fall. Your daily horoscope overlays the planets moving through the sky right now onto your chart to read the day’s flow, while your love outlook looks at Venus, Mars, and the relationship houses to read how you love and when the timing is right. Every reading is available in Korean, English, Japanese, and Chinese.',
+            'Stella shows the Sun, Moon, and planet placements for your birth date at a glance, and adds the Rising sign and houses when your birth time is known. Your daily horoscope overlays the planets moving through the sky now onto your chart to read the day’s flow, while your love outlook uses Venus, Mars, and the relationship indicators that can be established from your input to read how you love and the seasons ahead. Every reading is available in Korean, English, Japanese, and Chinese.',
           ],
         },
         {
           heading: 'How it calculates',
           body: [
-            'Stella computes the positions of the planets at your moment of birth using the tropical zodiac and the Placidus house system. It relies on a public-domain ephemeris library, resolving the geocentric positions of ten bodies from the Sun to Pluto with astronomically precise accuracy.',
+            'Stella uses the tropical zodiac and, when the birth time is known, calculates houses with the Placidus system. A public-domain ephemeris library resolves the geocentric positions of ten bodies from the Sun to Pluto. The level of detail depends on the input: without a birth time, Stella shows the Moon’s full-day range and leaves out its exact degree and aspects, the Rising sign, houses, and chart shape.',
           ],
         },
         {
           heading: 'How your data is handled',
           body: [
-            'Your birth date, time, and place are calculated entirely within your browser and are never sent to a server. You can read exactly how personal data is stored and deleted in our Privacy Policy.',
+            'The birth date, time, and place entered in the form are calculated in your browser and are not directly submitted to Stella’s server. If you choose to save them, they stay in this browser. If you choose link sharing, the birth details needed to reproduce the result are included in the shared URL and delivered to the selected share target and anyone who receives the link. See the Privacy Policy for storage, deletion, and sharing details.',
           ],
         },
         {
@@ -215,7 +215,7 @@ export const PAGES = {
       title: 'Contact',
       description: 'Where to send questions, suggestions, and bug reports about Stella.',
       updatedLabel: UPDATED[Locale.EN].label,
-      updatedDate: UPDATED[Locale.EN].date,
+      updatedDate: UPDATED[Locale.EN].contact,
       sections: [
         {
           heading: 'How to reach us',
@@ -270,7 +270,7 @@ export const PAGES = {
       title: 'サービス紹介',
       description: '星屑がどんなサービスで、どのように星を計算し、誰が作っているのかをご案内します。',
       updatedLabel: UPDATED[Locale.JA].label,
-      updatedDate: UPDATED[Locale.JA].date,
+      updatedDate: UPDATED[Locale.JA].about,
       sections: [
         {
           heading: '星屑とは',
@@ -287,19 +287,19 @@ export const PAGES = {
         {
           heading: 'できること',
           body: [
-            '生まれた瞬間の空を計算し、太陽・月・上昇宮をはじめとする天体の配置をひと目で表示します。今日の運勢はいま空を運行する惑星をあなたの出生図に重ねてその日の流れを読み、恋愛運は金星・火星と関係のハウスから愛し方や巡ってくる好機を読み解きます。すべての解釈は韓国語・英語・日本語・中国語でご利用いただけます。',
+            '出生日の太陽・月・惑星の配置をひと目で表示し、出生時刻が分かる場合は上昇宮とハウスも計算します。今日の運勢はいま空を運行する惑星をあなたの出生図に重ねてその日の流れを読み、恋愛運は金星・火星と入力情報から確認できる関係の指標をもとに、愛し方やこれからの時期を読み解きます。すべての解釈は韓国語・英語・日本語・中国語でご利用いただけます。',
           ],
         },
         {
           heading: 'どのように計算するのか',
           body: [
-            '星屑は生まれた瞬間の天体の位置を、トロピカル方式の黄道帯とプラシーダス・ハウスシステムで計算します。計算にはパブリックドメインの天体暦ライブラリを用い、太陽から冥王星までの十天体の位置を地球中心で求めます。その精度は天文学的に厳密な水準です。',
+            '星屑はトロピカル方式の黄道帯を使用し、出生時刻が分かる場合はプラシーダス方式でハウスを計算します。パブリックドメインの天体暦ライブラリを用い、太陽から冥王星までの十天体の位置を地球中心で求めます。表示できる詳細は入力情報によって異なり、出生時刻が不明な場合は月の一日の移動範囲を示し、月の正確な度数とアスペクト、上昇星座、ハウス、チャート形状は解釈から除外します。',
           ],
         },
         {
           heading: '入力情報の取り扱い',
           body: [
-            '生年月日・出生時刻・出生地は利用者のブラウザ内でのみ計算され、サーバーに送信されることはありません。個人情報をどのように保存・削除するかは、プライバシーポリシーで詳しくご確認いただけます。',
+            '入力フォームの生年月日・出生時刻・出生地は利用者のブラウザ内で計算され、星屑のサーバーへ直接送信されません。保存を選ぶとこのブラウザに保管され、リンク共有を選ぶと結果の再現に必要な出生情報が共有URLに含まれ、選択した共有先とリンクを受け取った人へ渡ります。保存・削除・共有の詳細はプライバシーポリシーでご確認いただけます。',
           ],
         },
         {
@@ -320,7 +320,7 @@ export const PAGES = {
       title: 'お問い合わせ',
       description: '星屑に関するお問い合わせ・ご提案・不具合のご報告をお受けします。',
       updatedLabel: UPDATED[Locale.JA].label,
-      updatedDate: UPDATED[Locale.JA].date,
+      updatedDate: UPDATED[Locale.JA].contact,
       sections: [
         {
           heading: 'ご連絡方法',
@@ -375,7 +375,7 @@ export const PAGES = {
       title: '关于',
       description: '介绍 星黛洛 是什么服务、如何计算星盘，以及由谁制作。',
       updatedLabel: UPDATED[Locale.ZH].label,
-      updatedDate: UPDATED[Locale.ZH].date,
+      updatedDate: UPDATED[Locale.ZH].about,
       sections: [
         {
           heading: '星黛洛是什么',
@@ -392,19 +392,19 @@ export const PAGES = {
         {
           heading: '您可以做什么',
           body: [
-            '星黛洛会计算您出生瞬间的星空，一目了然地展示太阳、月亮、上升星座及各行星的分布。每日运势会把此刻运行于天空的行星叠加到您的星盘上解读当天的走向，爱情运则从金星、火星与关系宫位出发，解读您爱的方式与合适的时机。所有解读均支持韩语、英语、日语和中文。',
+            '星黛洛会一目了然地展示您出生日期的太阳、月亮及各行星位置；出生时间明确时，还会计算上升星座与宫位。每日运势会把此刻运行于天空的行星叠加到您的星盘上解读当天的走向；爱情运则以金星、火星和根据输入信息能够确认的关系指标为基础，解读您爱的方式与未来时机。所有解读均支持韩语、英语、日语和中文。',
           ],
         },
         {
           heading: '如何计算',
           body: [
-            '星黛洛采用回归黄道（tropical）与普拉西德斯宫位制，计算您出生瞬间的天体位置。计算使用公有领域的星历库，以地心为基准求得从太阳到冥王星共十颗天体的位置，其精度达到天文学上的严谨水平。',
+            '星黛洛采用回归黄道（tropical）；出生时间明确时，使用普拉西德斯宫位制计算宫位。我们通过公有领域的星历库，以地心为基准求得从太阳到冥王星共十颗天体的位置。结果的详细程度取决于输入信息：出生时间未知时，仅显示月亮当天的移动范围，不解读月亮的准确度数与相位、上升星座、宫位和盘型。',
           ],
         },
         {
           heading: '如何处理您的信息',
           body: [
-            '您的出生日期、时间和地点仅在您的浏览器内计算，不会发送到任何服务器。关于个人信息如何存储与删除，您可在隐私政策中详细查看。',
+            '输入表单中的出生日期、时间和地点在您的浏览器内计算，不会直接提交到星黛洛的服务器。选择保存时，信息会保留在此浏览器中；选择链接分享时，重现结果所需的出生信息会包含在共享 URL 中，并传递给您选择的分享目标和收到链接的人。有关存储、删除与分享的详情，请参阅隐私政策。',
           ],
         },
         {
@@ -423,7 +423,7 @@ export const PAGES = {
       title: '联系我们',
       description: '接收关于 星黛洛 的咨询、建议与错误反馈。',
       updatedLabel: UPDATED[Locale.ZH].label,
-      updatedDate: UPDATED[Locale.ZH].date,
+      updatedDate: UPDATED[Locale.ZH].contact,
       sections: [
         {
           heading: '如何联系',

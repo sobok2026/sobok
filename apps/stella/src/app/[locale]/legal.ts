@@ -12,12 +12,12 @@ export type LegalSection = {
 export type LegalDoc = {
   title: string
   description: string
+  updatedDate: string
   sections: LegalSection[]
 }
 
 export type LegalContent = {
   updatedLabel: string
-  updatedDate: string
   contactLabel: string
   nav: {
     privacy: string
@@ -30,7 +30,6 @@ export type LegalContent = {
 export const LEGAL = {
   [Locale.KO]: {
     updatedLabel: '최종 업데이트',
-    updatedDate: '2026년 7월 12일',
     contactLabel: '문의',
     nav: {
       privacy: '개인정보처리방침',
@@ -39,12 +38,13 @@ export const LEGAL = {
     privacy: {
       title: '개인정보처리방침',
       description: '별무리(소복)가 이용자의 정보를 어떻게 다루는지 안내합니다.',
+      updatedDate: '2026년 7월 16일',
       sections: [
         {
-          heading: '수집하는 정보',
+          heading: '출생 정보와 브라우저 처리',
           body: [
-            '별무리는 별자리 계산을 위해 이용자가 입력한 생년월일, 태어난 시각, 출생지 정보를 사용합니다. 이 정보는 이용자의 브라우저 안에서만 처리·저장되며 별도의 서버로 전송되지 않습니다.',
-            '서비스 이용 과정에서 접속 기기, 브라우저 종류, 방문 페이지 등 일반적인 이용 통계가 익명화된 형태로 수집될 수 있습니다.',
+            '별무리는 별자리 계산을 위해 이용자가 입력한 생년월일, 태어난 시각, 출생지 정보를 사용합니다. 계산은 이용자의 브라우저 안에서 이루어지며, 별무리는 입력 폼의 출생 정보를 별무리 서버에 직접 제출받거나 계정에 저장하지 않습니다.',
+            '“이 브라우저에 출생 정보 저장”을 선택하면 출생 정보가 브라우저의 로컬 저장소에 보관됩니다. 선택하지 않으면 현재 탭에서 결과를 이어 보기 위해 세션 저장소에 임시 보관됩니다.',
           ],
         },
         {
@@ -57,13 +57,23 @@ export const LEGAL = {
         {
           heading: '이용 통계 및 분석',
           body: [
-            '별무리는 서비스 개선을 위해 Google 태그 매니저 및 분석 도구를 사용할 수 있습니다. 이 과정에서 개인을 식별하지 않는 범위의 이용 데이터가 처리됩니다.',
+            '별무리는 서비스 개선을 위해 Google 태그 매니저 및 분석 도구를 사용할 수 있습니다. 이 과정에서 방문 페이지, 기기·브라우저 정보, 서비스 내 상호작용, 쿠키 또는 온라인 식별자 등이 각 도구 제공자의 정책에 따라 처리될 수 있습니다.',
+            '별무리가 직접 구성하는 분석 이벤트에는 생년월일, 태어난 시각, 출생지를 별도 항목으로 넣지 않습니다. 다만 공유 결과 URL에는 출생 정보가 포함되며, 아래의 “결과 공유”에 설명한 범위에서 처리될 수 있습니다.',
+          ],
+        },
+        {
+          heading: '결과 공유',
+          body: [
+            '이용자가 링크 공유를 선택하면 결과 재현에 필요한 생년월일, 태어난 시각 또는 시각 미상 여부, 출생지 식별 정보가 URL의 “#” 뒤 프래그먼트에 인코딩되어 포함됩니다. 인코딩은 암호화가 아닙니다.',
+            'URI 표준상 프래그먼트는 일반적인 페이지 요청에서 웹 서버로 전송되지 않습니다. 그러나 전체 링크는 이용자가 선택한 공유 대상과 링크를 받은 사람에게 전달되고, 공유 결과 페이지에서 실행되는 스크립트가 접근할 수 있습니다. 공유 대상과 분석·광고 도구는 각자의 정책에 따라 URL을 처리할 수 있습니다.',
+            '공유 링크에는 만료나 철회 기능이 없습니다. 신뢰할 수 있는 상대에게만 공유해 주세요. 이미지 공유를 선택하면 생성된 결과 이미지와 공유 문구가 이용자가 선택한 대상으로 전달됩니다.',
           ],
         },
         {
           heading: '정보의 보관과 삭제',
           body: [
-            '입력한 출생 정보는 이용자의 브라우저 로컬 저장소에 보관되며, 브라우저의 기록·저장 데이터를 삭제하면 함께 삭제됩니다.',
+            '브라우저에 저장된 출생 정보는 서비스의 “정보 지우기” 기능을 사용하거나 해당 사이트의 저장 데이터를 삭제하면 제거됩니다. 세션 저장소의 임시 정보는 현재 탭의 세션이 끝나면 제거됩니다.',
+            '기기에 저장된 정보를 삭제해도 이미 공유한 링크는 무효화되지 않으며, 별무리는 공유 대상이나 링크를 받은 사람이 보관한 사본을 삭제할 수 없습니다.',
           ],
         },
         {
@@ -81,6 +91,7 @@ export const LEGAL = {
     terms: {
       title: '이용약관',
       description: '별무리(소복) 서비스 이용에 적용되는 약관입니다.',
+      updatedDate: '2026년 7월 12일',
       sections: [
         {
           heading: '서비스 소개',
@@ -129,7 +140,6 @@ export const LEGAL = {
 
   [Locale.EN]: {
     updatedLabel: 'Last updated',
-    updatedDate: 'July 12, 2026',
     contactLabel: 'Contact',
     nav: {
       privacy: 'Privacy Policy',
@@ -138,12 +148,13 @@ export const LEGAL = {
     privacy: {
       title: 'Privacy Policy',
       description: 'How Stella (sobok) handles your information.',
+      updatedDate: 'July 16, 2026',
       sections: [
         {
-          heading: 'Information we collect',
+          heading: 'Birth information and in-browser processing',
           body: [
-            'Stella uses the birth date, time, and place you enter to calculate your astrological chart. This information is processed and stored only within your browser and is not sent to any server.',
-            'General, anonymized usage statistics — such as device type, browser, and pages visited — may be collected while you use the service.',
+            'Stella uses the birth date, time, and place you enter to calculate your astrological chart. The calculation runs in your browser. Stella does not directly submit the birth details from the form to its server or save them to an account.',
+            'If you select “Save details in this browser,” your birth details are kept in the browser’s local storage. Otherwise, they are held temporarily in session storage so you can continue viewing your result in the current tab.',
           ],
         },
         {
@@ -156,13 +167,23 @@ export const LEGAL = {
         {
           heading: 'Usage analytics',
           body: [
-            'Stella may use Google Tag Manager and analytics tools to improve the service. Only non-identifying usage data is processed in this context.',
+            'Stella may use Google Tag Manager and analytics tools to improve the service. Pages viewed, device and browser information, interactions within the service, cookies, or online identifiers may be processed under each provider’s policy.',
+            'The custom analytics events configured by Stella do not add your birth date, birth time, or birthplace as separate event fields. A shared-result URL does contain birth details and may be processed as described under “Sharing results” below.',
+          ],
+        },
+        {
+          heading: 'Sharing results',
+          body: [
+            'When you choose link sharing, the birth date, birth time or unknown-time status, and birthplace identifier needed to reproduce the result are encoded in the URL fragment after “#”. Encoding is not encryption.',
+            'Under the URI standard, a fragment is not sent to the web server in a normal page request. The complete link is still delivered to the share target you choose and to anyone who receives it, and scripts running on the shared-result page can access it. Share targets and analytics or advertising tools may process the URL under their own policies.',
+            'Shared links do not expire and cannot be revoked. Share only with people or services you trust. If you choose image sharing, the generated result image and accompanying share text are delivered to the target you select.',
           ],
         },
         {
           heading: 'Data retention and deletion',
           body: [
-            "The birth details you enter are stored in your browser's local storage and are removed when you clear your browser's history or site data.",
+            'Birth details saved in the browser are removed when you use “Delete saved” in the service or clear the site’s stored data. Temporary session-storage details are removed when the current tab session ends.',
+            'Deleting details from your device does not invalidate links you already shared, and Stella cannot delete copies retained by a share target or recipient.',
           ],
         },
         {
@@ -182,6 +203,7 @@ export const LEGAL = {
     terms: {
       title: 'Terms of Service',
       description: 'The terms that apply to using Stella (sobok).',
+      updatedDate: 'July 12, 2026',
       sections: [
         {
           heading: 'About the service',
@@ -228,7 +250,6 @@ export const LEGAL = {
 
   [Locale.JA]: {
     updatedLabel: '最終更新',
-    updatedDate: '2026年7月12日',
     contactLabel: 'お問い合わせ',
     nav: {
       privacy: 'プライバシーポリシー',
@@ -237,12 +258,13 @@ export const LEGAL = {
     privacy: {
       title: 'プライバシーポリシー',
       description: '星屑（sobok）が利用者の情報をどのように扱うかについてご案内します。',
+      updatedDate: '2026年7月16日',
       sections: [
         {
-          heading: '収集する情報',
+          heading: '出生情報とブラウザ内での処理',
           body: [
-            '星屑は星座を計算するために、利用者が入力した生年月日・出生時刻・出生地の情報を使用します。これらの情報は利用者のブラウザ内でのみ処理・保存され、サーバーに送信されることはありません。',
-            'サービスの利用中に、デバイスの種類・ブラウザ・閲覧ページなどの一般的な利用統計が匿名化された形で収集される場合があります。',
+            '星屑は星座を計算するために、利用者が入力した生年月日・出生時刻・出生地の情報を使用します。計算は利用者のブラウザ内で行われ、星屑は入力フォームの出生情報を星屑のサーバーへ直接送信したり、アカウントに保存したりしません。',
+            '「このブラウザに出生情報を保存」を選ぶと、出生情報はブラウザのローカルストレージに保存されます。選ばない場合は、現在のタブで結果を続けて表示するため、セッションストレージに一時保存されます。',
           ],
         },
         {
@@ -255,13 +277,23 @@ export const LEGAL = {
         {
           heading: '利用状況の分析',
           body: [
-            '星屑はサービス改善のためにGoogleタグマネージャーおよび分析ツールを使用することがあります。この際、個人を特定しない範囲の利用データが処理されます。',
+            '星屑はサービス改善のためにGoogleタグマネージャーおよび分析ツールを使用することがあります。この際、閲覧ページ、端末・ブラウザ情報、サービス内での操作、Cookieまたはオンライン識別子などが、各提供者のポリシーに従って処理される場合があります。',
+            '星屑が独自に設定する分析イベントには、生年月日・出生時刻・出生地を個別の項目として追加しません。ただし共有結果のURLには出生情報が含まれ、下記「結果の共有」に記載する範囲で処理される場合があります。',
+          ],
+        },
+        {
+          heading: '結果の共有',
+          body: [
+            'リンク共有を選ぶと、結果の再現に必要な生年月日、出生時刻または時刻不明の状態、出生地の識別情報がURLの「#」以降のフラグメントにエンコードされます。エンコードは暗号化ではありません。',
+            'URI標準上、フラグメントは通常のページリクエストでウェブサーバーへ送信されません。ただし完全なリンクは選択した共有先とリンクを受け取った人へ渡り、共有結果ページで動作するスクリプトからもアクセスできます。共有先や分析・広告ツールは、それぞれのポリシーに従ってURLを処理する場合があります。',
+            '共有リンクに有効期限や取り消し機能はありません。信頼できる相手やサービスにのみ共有してください。画像共有を選ぶと、生成された結果画像と共有文が選択した共有先へ渡ります。',
           ],
         },
         {
           heading: '情報の保存と削除',
           body: [
-            '入力された出生情報は利用者のブラウザのローカルストレージに保存され、ブラウザの履歴やサイトデータを削除すると併せて削除されます。',
+            'ブラウザに保存された出生情報は、サービスの「情報を削除」を使うか、このサイトの保存データを削除すると消去されます。セッションストレージの一時情報は、現在のタブのセッションが終了すると消去されます。',
+            '端末上の情報を削除しても、すでに共有したリンクは無効になりません。星屑は、共有先や受信者が保持するコピーを削除できません。',
           ],
         },
         {
@@ -279,6 +311,7 @@ export const LEGAL = {
     terms: {
       title: '利用規約',
       description: '星屑（sobok）のご利用に適用される規約です。',
+      updatedDate: '2026年7月12日',
       sections: [
         {
           heading: 'サービスについて',
@@ -327,7 +360,6 @@ export const LEGAL = {
 
   [Locale.ZH]: {
     updatedLabel: '最后更新',
-    updatedDate: '2026年7月12日',
     contactLabel: '联系方式',
     nav: {
       privacy: '隐私政策',
@@ -336,12 +368,13 @@ export const LEGAL = {
     privacy: {
       title: '隐私政策',
       description: '说明 星黛洛（sobok）如何处理您的信息。',
+      updatedDate: '2026年7月16日',
       sections: [
         {
-          heading: '我们收集的信息',
+          heading: '出生信息与浏览器内处理',
           body: [
-            '星黛洛使用您输入的出生日期、出生时间和出生地点来计算星盘。这些信息仅在您的浏览器内处理和存储，不会发送到任何服务器。',
-            '在您使用服务时，可能会以匿名方式收集设备类型、浏览器和访问页面等一般使用统计信息。',
+            '星黛洛使用您输入的出生日期、出生时间和出生地点来计算星盘。计算在您的浏览器内完成；星黛洛不会把输入表单中的出生信息直接提交到星黛洛的服务器，也不会将其保存到账号中。',
+            '如果选择“在此浏览器保存出生信息”，出生信息会保存在浏览器的本地存储中；如果不选择，则会临时保存在会话存储中，以便您在当前标签页继续查看结果。',
           ],
         },
         {
@@ -354,12 +387,24 @@ export const LEGAL = {
         {
           heading: '使用分析',
           body: [
-            '星黛洛可能使用 Google 跟踪代码管理器和分析工具来改进服务。在此过程中仅处理无法识别个人身份的使用数据。',
+            '星黛洛可能使用 Google 跟踪代码管理器和分析工具来改进服务。访问页面、设备与浏览器信息、服务内操作、Cookie 或在线标识符等，可能会按照各工具提供方的政策进行处理。',
+            '星黛洛自行配置的分析事件不会把出生日期、出生时间或出生地点作为单独的事件字段加入。不过，共享结果的 URL 中包含出生信息，并可能按下文“结果分享”所述方式被处理。',
+          ],
+        },
+        {
+          heading: '结果分享',
+          body: [
+            '选择链接分享时，重现结果所需的出生日期、出生时间或时间未知状态，以及出生地点标识信息，会被编码在 URL 中“#”之后的片段里。编码不等于加密。',
+            '根据 URI 标准，片段不会在普通页面请求中发送给网页服务器。但完整链接仍会传递给您选择的分享目标和收到链接的人，并且共享结果页面中运行的脚本也可以访问它。分享目标以及分析或广告工具可能会按照各自的政策处理该 URL。',
+            '共享链接不会过期，也无法撤回。请只分享给您信任的人或服务。选择图片分享时，生成的结果图片和分享文案会传递给您选择的分享目标。',
           ],
         },
         {
           heading: '信息的存储与删除',
-          body: ['您输入的出生信息存储在您浏览器的本地存储中，清除浏览器的历史记录或网站数据时会一并删除。'],
+          body: [
+            '浏览器内保存的出生信息会在您使用服务中的“删除信息”功能，或清除本网站的存储数据时被移除。会话存储中的临时信息会在当前标签页会话结束时被移除。',
+            '删除设备上的信息不会使已分享的链接失效；星黛洛也无法删除分享目标或收件人保留的副本。',
+          ],
         },
         {
           heading: '儿童隐私',
@@ -374,6 +419,7 @@ export const LEGAL = {
     terms: {
       title: '服务条款',
       description: '适用于使用 星黛洛（sobok）的条款。',
+      updatedDate: '2026年7月12日',
       sections: [
         {
           heading: '关于服务',

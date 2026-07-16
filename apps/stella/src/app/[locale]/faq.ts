@@ -25,8 +25,8 @@ export const FAQ = {
         a: '흔히 아는 "무슨 자리"는 태양 별자리 하나예요. 네이탈 차트는 태양에 더해 달·수성·금성·화성처럼 여러 행성이 어느 자리와 하우스에 놓였는지까지 담아 성향을 훨씬 자세히 그려 줘요.',
       },
       {
-        q: '무료인가요? 입력한 출생 정보는 안전한가요?',
-        a: '별무리의 탄생 별자리는 회원가입 없이 무료로 볼 수 있어요. 생년월일과 시각은 브라우저 안에서만 계산되고 서버로 전송되지 않아서 안심하고 사용하셔도 돼요.',
+        q: '무료인가요? 입력한 출생 정보는 어떻게 처리되나요?',
+        a: '별무리의 탄생 별자리는 회원가입 없이 무료로 볼 수 있어요. 입력 폼의 출생 정보는 브라우저 안에서 계산되고 별무리 서버에 직접 제출되지 않아요. 다만 링크 공유를 선택하면 결과 재현에 필요한 출생 정보가 공유 URL에 포함되어 선택한 공유 대상과 링크를 받은 사람에게 전달돼요. 저장·삭제·공유 방식은 개인정보처리방침에서 자세히 확인할 수 있어요.',
       },
     ],
     today: [
@@ -50,7 +50,7 @@ export const FAQ = {
     love: [
       {
         q: '연애운은 어떻게 읽나요?',
-        a: '태어난 하늘의 금성과 화성 그리고 관계를 뜻하는 하우스를 살펴 내가 사랑하는 방식과 끌리는 상대를 읽어요. 여기에 앞으로 1년 사랑의 하늘이 지나는 시기까지 함께 그려 드려요.',
+        a: '금성과 화성을 중심으로 내가 사랑하는 방식과 끌리는 상대를 읽어요. 출생 시각을 알면 디센던트와 7하우스까지 더하고, 모르면 태양의 반대편을 관계의 기준점으로 사용하되 하우스 해석은 제외해요. 달은 출생일 내내 같은 별자리에 머문 경우에만 마음의 결에 반영해요.',
       },
       {
         q: '별자리 궁합도 볼 수 있나요?',
@@ -62,7 +62,7 @@ export const FAQ = {
       },
       {
         q: '연애운이 좋은 시기는 어떻게 정해지나요?',
-        a: '오늘의 하늘을 지나는 행성이 내 금성이나 관계 하우스를 지날 때를 사랑의 흐름이 열리는 시기로 봐요. 앞으로 1년 치를 미리 살펴 마음의 준비를 해 둘 수 있어요.',
+        a: '앞으로 약 1년 동안 목성·토성이 내 금성과 맺는 주요 각, 금성 역행을 살펴요. 출생 시각을 알면 목성이 디센던트에 닿는 시기도 더해요. 5일 간격으로 탐색한 결과를 월 단위 범위로 보여 주므로 특정 날짜를 확정하는 예측이 아니라 큰 흐름을 참고하는 용도예요.',
       },
     ],
   },
@@ -83,8 +83,8 @@ export const FAQ = {
         a: 'The sign you usually know is just your Sun sign. A birth chart adds the Moon, Mercury, Venus, Mars, and more — showing which sign and house each planet falls in for a much richer portrait.',
       },
       {
-        q: 'Is it free, and is my birth data safe?',
-        a: "Stella's birth chart is free with no sign-up. Your birth date and time are calculated inside your browser and never sent to a server, so your details stay with you.",
+        q: 'Is it free, and how is my birth data handled?',
+        a: 'Stella’s birth chart is free with no sign-up. Birth details entered in the form are calculated in your browser and are not directly submitted to Stella’s server. If you choose link sharing, however, the birth details needed to reproduce the result are included in the shared URL and delivered to the selected share target and anyone who receives the link. See the Privacy Policy for storage, deletion, and sharing details.',
       },
     ],
     today: [
@@ -108,7 +108,7 @@ export const FAQ = {
     love: [
       {
         q: 'How do you read my love life?',
-        a: 'We look at Venus and Mars in your birth sky, plus the houses of relationship, to read how you love and who you are drawn to. We also map the seasons of love across the year ahead.',
+        a: 'We start with Venus and Mars to read how you love and who draws you in. With a known birth time, we add the Descendant and seventh house. Without one, we use the point opposite your Sun as a relationship reference and leave out house readings. The Moon shapes this reading only when it stays in one sign throughout your birth date.',
       },
       {
         q: 'Can I check zodiac compatibility here?',
@@ -120,7 +120,7 @@ export const FAQ = {
       },
       {
         q: 'How are the good seasons for love decided?',
-        a: "When today's moving planets pass over your Venus or relationship houses, we read it as a season when love opens up. Seeing the year ahead lets you prepare your heart.",
+        a: 'Across roughly the next year, we check the major aspects Jupiter and Saturn make to your natal Venus and the periods when Venus is retrograde. When your birth time is known, we also add Jupiter’s conjunction with your Descendant. The scan samples every five days and presents month-level ranges, so these are broad currents for reflection rather than exact-date predictions.',
       },
     ],
   },
@@ -141,8 +141,8 @@ export const FAQ = {
         a: 'よく知る「〇〇座」は太陽星座ひとつです。出生図は太陽に加えて月・水星・金星・火星などがどの星座とハウスにあるかまで含め、性格をずっと詳しく描きます。',
       },
       {
-        q: '無料ですか？入力した出生情報は安全ですか？',
-        a: '星屑の出生図は登録不要で無料です。生年月日と時刻はブラウザの中だけで計算され、サーバーに送られないので安心してお使いいただけます。',
+        q: '無料ですか？入力した出生情報はどのように扱われますか？',
+        a: '星屑の出生図は登録不要で無料です。入力フォームの出生情報はブラウザ内で計算され、星屑のサーバーへ直接送信されません。ただしリンク共有を選ぶと、結果の再現に必要な出生情報が共有URLに含まれ、選択した共有先とリンクを受け取った人へ渡ります。保存・削除・共有の詳細はプライバシーポリシーでご確認いただけます。',
       },
     ],
     today: [
@@ -166,7 +166,7 @@ export const FAQ = {
     love: [
       {
         q: '恋愛運はどう読みますか？',
-        a: '生まれた空の金星と火星、そして関係を表すハウスを見て、あなたの愛し方や惹かれる相手を読みます。さらにこれから一年、愛の空が通る時期まで描きます。',
+        a: '金星と火星を中心に、あなたの愛し方や惹かれる相手を読みます。出生時刻が分かる場合はディセンダントと第7ハウスも加え、不明な場合は太陽の反対側を関係の基準点として使い、ハウス解釈は除外します。月は出生日を通じて同じ星座にとどまる場合だけ、心のきめに反映します。',
       },
       {
         q: '星座の相性も見られますか？',
@@ -178,7 +178,7 @@ export const FAQ = {
       },
       {
         q: '恋愛運の良い時期はどう決まりますか？',
-        a: '今日の空を通る惑星が、あなたの金星や関係のハウスを通るときを、愛の流れが開く時期と見ます。これから一年分を先に見て、心の準備ができます。',
+        a: 'これから約1年、木星・土星が出生図の金星と作る主要アスペクトと、金星逆行の時期を調べます。出生時刻が分かる場合は、木星がディセンダントに重なる時期も加えます。5日間隔の探索結果を月単位の範囲で示すため、特定の日を断定する予測ではなく、大きな流れを振り返るための目安です。',
       },
     ],
   },
@@ -199,8 +199,8 @@ export const FAQ = {
         a: '你常说的"某某座"只是太阳星座。出生星盘还加入月亮、水星、金星、火星等，看它们落在哪个星座和宫位，把性格描绘得更加丰富。',
       },
       {
-        q: '免费吗？我输入的出生信息安全吗？',
-        a: '星黛洛的出生星盘无需注册即可免费查看。你的生日和时间只在浏览器内计算，不会上传到服务器，可以放心使用。',
+        q: '免费吗？我输入的出生信息会如何处理？',
+        a: '星黛洛的出生星盘无需注册即可免费查看。输入表单中的出生信息在浏览器内计算，不会直接提交到星黛洛的服务器。不过，选择链接分享时，重现结果所需的出生信息会包含在共享 URL 中，并传递给您选择的分享目标和收到链接的人。有关存储、删除与分享的详情，请参阅隐私政策。',
       },
     ],
     today: [
@@ -224,7 +224,7 @@ export const FAQ = {
     love: [
       {
         q: '恋爱运是怎么解读的？',
-        a: '我们查看你出生天空中的金星与火星，以及代表关系的宫位，解读你爱的方式和会被谁吸引。还会描绘未来一年爱的天空经过的时期。',
+        a: '我们以金星与火星为中心，解读你爱的方式和会被谁吸引。出生时间明确时，会加入下降点与第七宫；时间未知时，则以太阳对面的点作为关系参考，并排除宫位解读。只有当月亮在整个出生日期内都停留在同一星座时，才会将它纳入内心特质解读。',
       },
       {
         q: '这里能看星座配对吗？',
@@ -236,7 +236,7 @@ export const FAQ = {
       },
       {
         q: '恋爱运好的时期怎么确定？',
-        a: '当今天经过天空的行星掠过你的金星或关系宫位时，我们视为爱的流势开启的时期。提前看未来一年，可以让心里有所准备。',
+        a: '我们会查看未来约一年内木星、土星与本命金星形成的主要相位，以及金星逆行期。出生时间明确时，还会加入木星合下降点的时期。系统每隔五天取样，并以月份范围呈现，因此这是用于参考大趋势的解读，而不是对某个具体日期的确定预测。',
       },
     ],
   },

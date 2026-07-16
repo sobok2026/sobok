@@ -13,7 +13,7 @@ export default function LegalArticle({ doc, meta }: Props) {
         <h1 className="text-3xl font-bold tracking-tight">{doc.title}</h1>
         <p className="mt-3 text-foreground-muted">{doc.description}</p>
         <p className="mt-2 text-sm text-foreground-faint">
-          {meta.updatedLabel}: {meta.updatedDate}
+          {meta.updatedLabel}: {doc.updatedDate}
         </p>
 
         {doc.sections.map((section) => (
