@@ -352,9 +352,7 @@ export default function Constellation() {
             <Big3Card
               delay={0.2}
               glyph="☾"
-              hint={
-                moonSigns ? (moonSignUncertain ? t('big3.moonRangeHint') : t('big3.moonDateHint')) : t('big3.moonHint')
-              }
+              hint={t('big3.moonHint')}
               label={t('big3.moonLabel')}
               onClick={() => togglePlanet('moon')}
               value={displayedMoonSigns.map((sign) => t(`signs.${sign}`)).join(' ↔ ')}
