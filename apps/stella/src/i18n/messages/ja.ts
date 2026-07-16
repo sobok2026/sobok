@@ -357,6 +357,8 @@ export const ja = {
       colorA11y: '{name}、{hex}',
       actionLabel: '今日の取り入れ方',
       allergy: 'アレルゲンを確認してください。',
+      mapCta: 'Google マップで{food}を探す',
+      mapCtaA11y: 'Google マップで{food}を探す（新しいタブで開きます）',
       complete: '今日の幸運を見つけました ✦',
     },
     doDont: {

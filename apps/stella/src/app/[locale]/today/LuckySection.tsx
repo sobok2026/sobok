@@ -1,11 +1,11 @@
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 
 import { ELEMENT_COLORS } from '@/chart/data'
 import type { ElementId } from '@/chart/types'
 import cardStyles from '@/components/card.module.css'
 import { track } from '@/lib/analytics/browser'
-
+import { buildFoodMapLink } from './food-map'
 import type { LuckyRecommendations } from './recommendations/types'
 import type { SkyToday } from './sky'
 import styles from './today.module.css'
@@ -22,7 +22,9 @@ export default function LuckySection({ lucky, sky }: { lucky: LuckyRecommendatio
   const [revealed, setRevealed] = useState(false)
   const t = useTranslations('Today')
   const tc = useTranslations('Constellation')
+  const locale = useLocale()
   const foodColor = ELEMENT_COLORS[lucky.food.element]
+  const foodMap = buildFoodMapLink(locale, lucky.food.name)
 
   const basisKey = lucky.personalized
     ? lucky.usesNatalMoon
@@ -34,6 +36,14 @@ export default function LuckySection({ lucky, sky }: { lucky: LuckyRecommendatio
     sign: tc(`signs.${sky.moonSign}`),
     phase: t(`phases.${sky.phase}`),
   })
+
+  function handleFoodMapOpen() {
+    track('open_lucky_food_map', {
+      content_type: 'today_lucky',
+      provider: foodMap.provider,
+      lucky_food_id: lucky.food.id,
+    })
+  }
 
   useEffect(() => {
     const section = sectionRef.current
@@ -109,6 +119,30 @@ export default function LuckySection({ lucky, sky }: { lucky: LuckyRecommendatio
           <p className="mt-3 text-xs leading-relaxed text-foreground-secondary">{lucky.food.reason}</p>
           <p className="mt-3 text-[10px] font-semibold text-foreground-subtle">{t('lucky.actionLabel')}</p>
           <p className="mt-1 text-xs leading-relaxed text-foreground-secondary">{lucky.food.action}</p>
+          <a
+            aria-label={t('lucky.mapCtaA11y', { food: lucky.food.name })}
+            className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-accent/25 bg-accent/10 px-3 py-2.5 text-center text-xs font-semibold text-accent transition hover:border-accent/40 hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+            href={foodMap.href}
+            onClick={handleFoodMapOpen}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <span>{t('lucky.mapCta', { food: lucky.food.name })}</span>
+            <svg
+              aria-hidden="true"
+              className="h-3.5 w-3.5 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.8"
+              viewBox="0 0 24 24"
+            >
+              <path d="M15 4h5v5" />
+              <path d="m20 4-9 9" />
+              <path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5" />
+            </svg>
+          </a>
         </article>
 
         <article

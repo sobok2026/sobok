@@ -358,6 +358,8 @@ export const en = {
       colorA11y: '{name}, {hex}',
       actionLabel: 'Try it today',
       allergy: 'Please check allergens yourself.',
+      mapCta: 'Find {food} on Google Maps',
+      mapCtaA11y: 'Find {food} on Google Maps (opens in a new tab)',
       complete: 'Today’s luck is revealed ✦',
     },
     doDont: {

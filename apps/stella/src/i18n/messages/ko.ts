@@ -356,6 +356,8 @@ export const ko = {
       colorA11y: '{name}, {hex}',
       actionLabel: '오늘 이렇게',
       allergy: '알레르기가 있는지 확인해 주세요.',
+      mapCta: '네이버 지도에서 {food} 찾기',
+      mapCtaA11y: '네이버 지도에서 {food} 찾기, 새 창에서 열림',
       complete: '오늘의 행운을 확인했어요 ✦',
     },
     doDont: {

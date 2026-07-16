@@ -354,6 +354,8 @@ export const zh = {
       colorA11y: '{name}，{hex}',
       actionLabel: '今天这样试试',
       allergy: '请自行确认食材与过敏原。',
+      mapCta: '在高德地图查找{food}',
+      mapCtaA11y: '在高德地图查找{food}（在新标签页中打开）',
       complete: '今日幸运已揭晓 ✦',
     },
     doDont: {
