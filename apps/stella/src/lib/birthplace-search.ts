@@ -55,13 +55,14 @@ function getIndex(catalog: BirthplaceCatalog): readonly SearchEntry[] {
     return cached
   }
 
-  const groupLabelById = new Map(catalog.groups.map((group) => [group.id, group.label]))
+  const groupSearchTextById = new Map(catalog.groups.map((group) => [group.id, `${group.label} ${group.countryName}`]))
+
   const index = catalog.places.map((place) => ({
     place,
     name: normalize(place.name),
     aliases: place.searchNames.map(normalize),
     context: normalize(place.contextName),
-    group: normalize(groupLabelById.get(place.groupId) ?? ''),
+    group: normalize(groupSearchTextById.get(place.groupId) ?? ''),
   }))
 
   INDEX_CACHE.set(catalog, index)

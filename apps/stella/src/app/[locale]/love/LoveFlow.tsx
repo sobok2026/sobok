@@ -7,7 +7,6 @@ import { toast } from 'sonner'
 
 import { computeAspects } from '@/chart/astrology'
 import { computeBirthChartAnalysis } from '@/chart/ephemeris'
-import { useCityCatalog } from '@/components/CityCatalogProvider'
 import cardStyles from '@/components/card.module.css'
 import { HeroTitle } from '@/components/HeroTitle'
 import SharedLinkError from '@/components/SharedLinkError'
@@ -27,7 +26,6 @@ export default function LoveFlow() {
   const [failed, setFailed] = useState(false)
   const birthSource = useBirthSource('love')
   const locale = useLocale()
-  const cityCatalog = useCityCatalog()
   const t = useTranslations('Love')
   const ts = useTranslations('Shared')
   const tc = useTranslations('Constellation')
@@ -77,7 +75,7 @@ export default function LoveFlow() {
         let windows: LoveWindow[] = []
 
         if (birth) {
-          const { chart, unknownTime } = await computeBirthChartAnalysis(toBirthInput(birth, cityCatalog))
+          const { chart, unknownTime } = await computeBirthChartAnalysis(toBirthInput(birth))
           profile = deriveLoveProfile(chart, computeAspects(chart.planets), unknownTime?.moonSigns)
           windows = await scanLoveTransits(chart, asOf)
         }
@@ -112,7 +110,7 @@ export default function LoveFlow() {
     return () => {
       cancelled = true
     }
-  }, [birth, cityCatalog, locale, shared, sharedPayload?.asOf, sourceReady])
+  }, [birth, locale, shared, sharedPayload?.asOf, sourceReady])
 
   if (birthSource.status === 'invalid') {
     return <SharedLinkError />

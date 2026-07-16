@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url'
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url))
 const APP_DIR = join(SCRIPT_DIR, '..')
 const CACHE_DIR = join(SCRIPT_DIR, '.cache')
+const BIOME_PATH = join(APP_DIR, '../../node_modules/.bin/biome')
+const BIOME_DEFAULT_MAX_FILE_SIZE = 1024 * 1024
 const MARKET_PATH = join(APP_DIR, 'src/lib/birthplace-markets.json')
 const LOCALES = ['ko', 'en', 'ja', 'zh']
 const LOCALIZED_COUNTRIES = ['KR', 'JP', 'CN', 'HK', 'MO']
@@ -157,7 +159,9 @@ const outputs = Object.fromEntries(
           compareText(a.name, b.name),
       )
     const outputPath = OUTPUT_PATHS[locale]
-    return [locale, { outputPath, output: serializeCatalog(locale, markets[locale], localePlaces, sourceHashes) }]
+    const rawOutput = serializeCatalog(locale, markets[locale], localePlaces, sourceHashes)
+    const output = formatGeneratedSource(rawOutput, outputPath)
+    return [locale, { outputPath, output }]
   }),
 )
 
@@ -212,6 +216,19 @@ function readSource(source) {
   } catch (error) {
     throw new Error(`Unable to extract ${source.entryName}; install the \`unzip\` command`, { cause: error })
   }
+}
+
+function formatGeneratedSource(source, outputPath) {
+  if (Buffer.byteLength(source) > BIOME_DEFAULT_MAX_FILE_SIZE) {
+    return source
+  }
+
+  return execFileSync(BIOME_PATH, ['format', '--stdin-file-path', outputPath], {
+    cwd: APP_DIR,
+    encoding: 'utf8',
+    input: source,
+    maxBuffer: 64 * 1024 * 1024,
+  })
 }
 
 function parseGeoNamesPlaces(source, targetCountries) {

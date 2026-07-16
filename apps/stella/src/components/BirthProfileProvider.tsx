@@ -1,9 +1,10 @@
 'use client'
 
+import type { Locale } from '@sobok/domain/locale'
+import { useLocale } from 'next-intl'
 import { createContext, type ReactNode, useContext, useEffect, useState } from 'react'
 
 import { clearBirth, loadBirth, type StoredBirth, saveBirth } from '@/lib/birth-storage'
-import { useCityCatalog } from './CityCatalogProvider'
 
 type BirthProfileContextValue = {
   birth: StoredBirth | null
@@ -16,7 +17,7 @@ type BirthProfileContextValue = {
 const BirthProfileContext = createContext<BirthProfileContextValue | null>(null)
 
 export default function BirthProfileProvider({ children }: { children: ReactNode }) {
-  const catalog = useCityCatalog()
+  const locale = useLocale() as Locale
   const [birth, setBirth] = useState<StoredBirth | null>(null)
   const [persistent, setPersistent] = useState(false)
   const [hydrated, setHydrated] = useState(false)
@@ -34,7 +35,7 @@ export default function BirthProfileProvider({ children }: { children: ReactNode
   }
 
   useEffect(() => {
-    const loaded = loadBirth(catalog)
+    const loaded = loadBirth(locale)
 
     if (loaded) {
       setBirth(loaded.birth)
@@ -45,7 +46,7 @@ export default function BirthProfileProvider({ children }: { children: ReactNode
     }
 
     setHydrated(true)
-  }, [catalog])
+  }, [locale])
 
   return <BirthProfileContext value={{ birth, hydrated, persistent, save, clear }}>{children}</BirthProfileContext>
 }

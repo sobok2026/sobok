@@ -26,6 +26,7 @@ export type BirthplaceGroup = {
   id: string
   label: string
   countryCode: string
+  countryName: string
 }
 
 export type BirthplaceResultGroup = BirthplaceGroup & {
@@ -38,7 +39,7 @@ export type BirthplaceCatalog = {
   places: readonly Birthplace[]
 }
 
-export type GeneratedBirthplaceGroupRow = readonly [id: string, label: string, countryCode: string]
+export type GeneratedBirthplaceGroupRow = readonly [id: string, label: string, countryCode: string, countryName: string]
 
 export type GeneratedBirthplaceRow = readonly [
   id: string,
@@ -60,7 +61,8 @@ export function createBirthplaceCatalog(
   groupRows: readonly GeneratedBirthplaceGroupRow[],
   rows: readonly GeneratedBirthplaceRow[],
 ): BirthplaceCatalog {
-  const groups = groupRows.map(([id, label, countryCode]) => ({ id, label, countryCode }))
+  const groups = groupRows.map(([id, label, countryCode, countryName]) => ({ id, label, countryCode, countryName }))
+
   const places = rows.map(
     ([
       id,

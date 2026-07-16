@@ -7,7 +7,6 @@ import { toast } from 'sonner'
 
 import { computeBirthChartAnalysis, type UnknownBirthTimeAnalysis } from '@/chart/ephemeris'
 import type { NatalChart } from '@/chart/types'
-import { useCityCatalog } from '@/components/CityCatalogProvider'
 import { HeroTitle } from '@/components/HeroTitle'
 import SharedLinkError from '@/components/SharedLinkError'
 import Starfield from '@/components/Starfield'
@@ -30,7 +29,6 @@ export default function TodayFlow() {
   const [failed, setFailed] = useState(false)
   const birthSource = useBirthSource('today')
   const locale = useLocale()
-  const cityCatalog = useCityCatalog()
   const t = useTranslations('Today')
   const ts = useTranslations('Shared')
   const tc = useTranslations('Constellation')
@@ -69,7 +67,7 @@ export default function TodayFlow() {
         let personal: PersonalToday | null = null
 
         if (birth) {
-          const analysis = await computeBirthChartAnalysis(toBirthInput(birth, cityCatalog))
+          const analysis = await computeBirthChartAnalysis(toBirthInput(birth))
           natal = analysis.chart
           unknownTime = analysis.unknownTime
           personal = computePersonalToday(sky.positions, natal, { natalMoonExact: birth.timeKnown })
@@ -120,7 +118,6 @@ export default function TodayFlow() {
     }
   }, [
     birth,
-    cityCatalog,
     dayReady,
     liveDateKey,
     locale,

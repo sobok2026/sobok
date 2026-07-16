@@ -7,13 +7,11 @@ import { useReducer, useRef, useState } from 'react'
 import { computeAspects, elementCounts, signOfLon } from '@/chart/astrology'
 import { DEFAULT_CHART, ELEMENT_IDS } from '@/chart/data'
 import type { AngleId, ChartAspect, HouseNumber, PlanetId, SignId } from '@/chart/types'
-import { useCityCatalog } from '@/components/CityCatalogProvider'
 import { HeroTitle } from '@/components/HeroTitle'
 import SharedLinkError from '@/components/SharedLinkError'
 import Starfield from '@/components/Starfield'
 import { useBirthSource } from '@/hooks/useBirthSource'
 import type { StoredBirth } from '@/lib/birth-storage'
-import { type CityCatalog, findCity } from '@/lib/cities'
 
 import AspectSection from './AspectSection'
 import Big3Card from './Big3Card'
@@ -41,7 +39,6 @@ export default function Constellation() {
   const t = useTranslations('Constellation')
   const ts = useTranslations('Shared')
   const locale = useLocale()
-  const cityCatalog = useCityCatalog()
   const birthSource = useBirthSource('chart')
 
   const { birth, save, shared } = birthSource
@@ -62,7 +59,7 @@ export default function Constellation() {
   // one frame before the chart replaces it.
   const autoRevealPending = sourceReady && !editing && birth !== null && !revealed && !failed
 
-  const birthSummary = birth ? formatBirthSummary(birth, locale, t('form.timeUnknownShort'), cityCatalog) : null
+  const birthSummary = birth ? formatBirthSummary(birth, locale, t('form.timeUnknownShort')) : null
   const activeChart = data?.chart ?? DEFAULT_CHART
   const { ascendant, cusps } = activeChart
 
@@ -366,12 +363,7 @@ export default function Constellation() {
 }
 
 /** "2000년 1월 1일 · 12:00 · 서울" — date and city localized, time literal (or "unknown"). */
-function formatBirthSummary(
-  birth: StoredBirth,
-  locale: Locale,
-  timeUnknownLabel: string,
-  cityCatalog: CityCatalog,
-): string {
+function formatBirthSummary(birth: StoredBirth, locale: Locale, timeUnknownLabel: string): string {
   const tag = LOCALE_LANGUAGE_TAGS[locale]
 
   const date = new Intl.DateTimeFormat(tag, {
@@ -381,7 +373,5 @@ function formatBirthSummary(
   }).format(new Date(`${birth.date}T12:00:00`))
 
   const time = birth.timeKnown ? birth.time : timeUnknownLabel
-  const city = findCity(cityCatalog, birth.cityKey).name
-
-  return `${date} · ${time} · ${city}`
+  return `${date} · ${time} · ${birth.place.name}`
 }

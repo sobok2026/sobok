@@ -8,13 +8,11 @@ import { getTranslations } from 'next-intl/server'
 import { Toaster } from 'sonner'
 import BirthProfileProvider from '@/components/BirthProfileProvider'
 import BottomNav from '@/components/BottomNav'
-import CityCatalogProvider from '@/components/CityCatalogProvider'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import { ADSENSE_ACCOUNT, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getLocale } from '@/i18n/server'
 import Analytics from '@/lib/analytics/Analytics'
-import { loadCityCatalogData } from '@/lib/city-catalog.server'
 import JsonLd, { siteGraph } from '@/lib/JsonLd'
 
 export function generateStaticParams() {
@@ -48,11 +46,7 @@ export const viewport: Viewport = {
 
 export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {
   const locale = await getLocale(params)
-
-  const [t, cityCatalogData] = await Promise.all([
-    getTranslations({ locale, namespace: 'Constellation' }),
-    loadCityCatalogData(locale),
-  ])
+  const t = await getTranslations({ locale, namespace: 'Constellation' })
 
   return (
     <html lang={LOCALE_LANGUAGE_TAGS[locale]}>
@@ -67,9 +61,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
           <Header locale={locale} localeLabel={t('localeSwitcher')} />
-          <CityCatalogProvider data={cityCatalogData}>
-            <BirthProfileProvider key={locale}>{children}</BirthProfileProvider>
-          </CityCatalogProvider>
+          <BirthProfileProvider key={locale}>{children}</BirthProfileProvider>
           <Footer locale={locale} />
           <BottomNav locale={locale} />
           <Toaster position="top-center" richColors theme="dark" />

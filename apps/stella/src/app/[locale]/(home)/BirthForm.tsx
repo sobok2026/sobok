@@ -3,10 +3,9 @@
 import { useTranslations } from 'next-intl'
 import { type SubmitEvent, useEffect, useState } from 'react'
 import { useBirthProfile } from '@/components/BirthProfileProvider'
-import { useCityCatalog } from '@/components/CityCatalogProvider'
 import type { StoredBirth } from '@/lib/birth-storage'
-import { getDefaultCityKey } from '@/lib/cities'
-import CityCombobox from './CityCombobox'
+import type { BirthplaceSnapshot } from '@/lib/birthplaces'
+import BirthplaceCombobox from './BirthplaceCombobox'
 
 const fieldClass =
   'w-full appearance-none rounded-xl border border-border-2 bg-surface-2 px-3 py-2.5 text-base text-foreground outline-none transition [color-scheme:dark] focus:border-white/60 focus:bg-surface-3 sm:text-sm'
@@ -21,8 +20,7 @@ export default function BirthForm({ onSubmit }: Props) {
   const [date, setDate] = useState('2000-01-01')
   const [time, setTime] = useState('12:00')
   const [timeUnknown, setTimeUnknown] = useState(false)
-  const catalog = useCityCatalog()
-  const [cityKey, setCityKey] = useState(() => getDefaultCityKey(catalog))
+  const [place, setPlace] = useState<BirthplaceSnapshot | null>(null)
   const [save, setSave] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const profile = useBirthProfile()
@@ -37,13 +35,18 @@ export default function BirthForm({ onSubmit }: Props) {
       return
     }
 
+    if (!place) {
+      setError(t('cityRequired'))
+      return
+    }
+
     setError(null)
 
     const birth: StoredBirth = {
       date,
       time,
       timeKnown: !timeUnknown,
-      cityKey,
+      place,
     }
 
     onSubmit(birth, save)
@@ -56,7 +59,7 @@ export default function BirthForm({ onSubmit }: Props) {
     setDate('2000-01-01')
     setTime('12:00')
     setTimeUnknown(false)
-    setCityKey(getDefaultCityKey(catalog))
+    setPlace(null)
     setSave(false)
     setError(null)
   }
@@ -68,7 +71,7 @@ export default function BirthForm({ onSubmit }: Props) {
       setDate(profile.birth.date)
       setTime(profile.birth.time)
       setTimeUnknown(!profile.birth.timeKnown)
-      setCityKey(profile.birth.cityKey)
+      setPlace(profile.birth.place)
       setSave(profile.persistent)
     }
   }, [profile.birth, profile.hydrated, profile.persistent])
@@ -123,7 +126,7 @@ export default function BirthForm({ onSubmit }: Props) {
           )}
         </div>
 
-        <CityCombobox cityKey={cityKey} onSelect={setCityKey} />
+        <BirthplaceCombobox onSelect={setPlace} value={place} />
       </div>
 
       <div className="mt-4">

@@ -9,16 +9,18 @@
 // localStorage wins when both hold a value — an explicit "remember me on this
 // device" outranks a transient session copy.
 
+import type { Locale } from '@sobok/domain/locale'
 import type { BirthInput } from '@/chart/ephemeris'
-import { type CityCatalog, findCity } from './cities'
+import { isBirthplaceCountryAllowed } from './birthplace-policy'
+import type { BirthplaceSnapshot } from './birthplaces'
 
-const STORAGE_KEY = 'stella.birth.v1'
+const STORAGE_KEY = 'stella.birth.v2'
 
 export type StoredBirth = {
   date: string // YYYY-MM-DD
   time: string // HH:mm
   timeKnown: boolean
-  cityKey: string
+  place: BirthplaceSnapshot
 }
 
 /** A loaded birth plus whether it came from persistent (localStorage) storage. */
@@ -53,7 +55,46 @@ function isClockTime(value: string): boolean {
   return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59
 }
 
-export function isStoredBirth(value: unknown, catalog: CityCatalog): value is StoredBirth {
+function isBirthplaceSnapshot(value: unknown, locale: Locale): value is BirthplaceSnapshot {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+
+  const place = value as Record<string, unknown>
+
+  if (
+    typeof place.id !== 'string' ||
+    !/^geonames:\d+$/.test(place.id) ||
+    typeof place.name !== 'string' ||
+    place.name.length === 0 ||
+    place.name.length > 120 ||
+    typeof place.countryCode !== 'string' ||
+    !isBirthplaceCountryAllowed(locale, place.countryCode) ||
+    typeof place.latitude !== 'number' ||
+    !Number.isFinite(place.latitude) ||
+    place.latitude < -90 ||
+    place.latitude > 90 ||
+    typeof place.longitude !== 'number' ||
+    !Number.isFinite(place.longitude) ||
+    place.longitude < -180 ||
+    place.longitude > 180 ||
+    typeof place.timeZone !== 'string' ||
+    place.timeZone.length === 0 ||
+    place.timeZone.length > 64 ||
+    (place.coordinateKind !== 'locality' && place.coordinateKind !== 'administrativeSeat')
+  ) {
+    return false
+  }
+
+  try {
+    new Intl.DateTimeFormat('en', { timeZone: place.timeZone }).format()
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function isStoredBirth(value: unknown, locale: Locale): value is StoredBirth {
   if (typeof value !== 'object' || value === null) {
     return false
   }
@@ -66,13 +107,12 @@ export function isStoredBirth(value: unknown, catalog: CityCatalog): value is St
     typeof v.time === 'string' &&
     isClockTime(v.time) &&
     typeof v.timeKnown === 'boolean' &&
-    typeof v.cityKey === 'string' &&
-    catalog.cityByKey.has(v.cityKey)
+    isBirthplaceSnapshot(v.place, locale)
   )
 }
 
 /** Web Storage can throw (private mode, disabled storage) — treat that as "no data". */
-function read(storage: Storage, catalog: CityCatalog): StoredBirth | null {
+function read(storage: Storage, locale: Locale): StoredBirth | null {
   try {
     const raw = storage.getItem(STORAGE_KEY)
 
@@ -81,20 +121,20 @@ function read(storage: Storage, catalog: CityCatalog): StoredBirth | null {
     }
 
     const parsed: unknown = JSON.parse(raw)
-    return isStoredBirth(parsed, catalog) ? parsed : null
+    return isStoredBirth(parsed, locale) ? parsed : null
   } catch {
     return null
   }
 }
 
-export function loadBirth(catalog: CityCatalog): LoadedBirth | null {
-  const persisted = read(localStorage, catalog)
+export function loadBirth(locale: Locale): LoadedBirth | null {
+  const persisted = read(localStorage, locale)
 
   if (persisted) {
     return { birth: persisted, persistent: true }
   }
 
-  const session = read(sessionStorage, catalog)
+  const session = read(sessionStorage, locale)
   return session ? { birth: session, persistent: false } : null
 }
 
@@ -136,10 +176,9 @@ export function clearBirth() {
   }
 }
 
-export function toBirthInput(stored: StoredBirth, catalog: CityCatalog): BirthInput {
+export function toBirthInput(stored: StoredBirth): BirthInput {
   const [year, month, day] = stored.date.split('-').map(Number)
   const [hour, minute] = stored.timeKnown ? stored.time.split(':').map(Number) : [12, 0]
-  const city = findCity(catalog, stored.cityKey)
 
   return {
     year,
@@ -147,9 +186,9 @@ export function toBirthInput(stored: StoredBirth, catalog: CityCatalog): BirthIn
     day,
     hour: hour ?? 12,
     minute: minute ?? 0,
-    latitude: city.latitude,
-    longitude: city.longitude,
-    timeZone: city.timeZone,
+    latitude: stored.place.latitude,
+    longitude: stored.place.longitude,
+    timeZone: stored.place.timeZone,
     timeKnown: stored.timeKnown,
   }
 }

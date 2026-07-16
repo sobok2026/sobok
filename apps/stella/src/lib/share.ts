@@ -1,11 +1,11 @@
+import type { Locale } from '@sobok/domain/locale'
 import { isStoredBirth, type StoredBirth } from './birth-storage'
-import type { CityCatalog } from './cities'
 
-const SHARE_VERSION = 1
+const SHARE_VERSION = 2
 const SHARE_PREFIX = `${SHARE_VERSION}.`
 const SHARE_HASH_PATTERN = /^\d+\./
 const BASE64_URL_PATTERN = /^[A-Za-z0-9_-]+$/
-const MAX_ENCODED_PAYLOAD_LENGTH = 256
+const MAX_ENCODED_PAYLOAD_LENGTH = 512
 
 export type ShareKind = 'chart' | 'today' | 'love'
 
@@ -18,7 +18,7 @@ type SerializedPayload = {
   d: string
   t: string
   n: 0 | 1
-  c: string
+  p: [id: string, name: string, countryCode: string, latitude: number, longitude: number, timeZone: string, kind: 0 | 1]
   a?: number
   o?: string
   z?: number
@@ -50,6 +50,7 @@ function fromBase64Url(text: string): string {
 
   const binary = atob(base64)
   const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0))
+
   return new TextDecoder().decode(bytes)
 }
 
@@ -58,7 +59,15 @@ function encodePayload(input: ShareUrlInput): string {
     d: input.birth.date,
     t: input.birth.time,
     n: input.birth.timeKnown ? 1 : 0,
-    c: input.birth.cityKey,
+    p: [
+      input.birth.place.id,
+      input.birth.place.name,
+      input.birth.place.countryCode,
+      input.birth.place.latitude,
+      input.birth.place.longitude,
+      input.birth.place.timeZone,
+      input.birth.place.coordinateKind === 'locality' ? 0 : 1,
+    ],
     ...(input.kind === 'love' ? { a: Math.floor(input.asOf.getTime() / 1000) } : {}),
     ...(input.kind === 'today' ? { o: input.dateKey, z: input.utcOffsetMinutes } : {}),
   }
@@ -74,7 +83,7 @@ export function isShareHash(hash: string): boolean {
   return SHARE_HASH_PATTERN.test(fragmentOf(hash))
 }
 
-export function decodeShareHash(hash: string, kind: ShareKind, catalog: CityCatalog): SharedPayload | null {
+export function decodeShareHash(hash: string, kind: ShareKind, locale: Locale): SharedPayload | null {
   const fragment = fragmentOf(hash)
 
   if (!fragment.startsWith(SHARE_PREFIX)) {
@@ -95,7 +104,7 @@ export function decodeShareHash(hash: string, kind: ShareKind, catalog: CityCata
     }
 
     const payload = parsed as Record<string, unknown>
-    const birth = deserializeBirth(payload, catalog)
+    const birth = deserializeBirth(payload, locale)
 
     if (!birth) {
       return null
@@ -138,24 +147,35 @@ export function decodeShareHash(hash: string, kind: ShareKind, catalog: CityCata
   }
 }
 
-function deserializeBirth(payload: Record<string, unknown>, catalog: CityCatalog): StoredBirth | null {
+function deserializeBirth(payload: Record<string, unknown>, locale: Locale): StoredBirth | null {
   if (
     typeof payload.d !== 'string' ||
     typeof payload.t !== 'string' ||
     (payload.n !== 0 && payload.n !== 1) ||
-    typeof payload.c !== 'string'
+    !Array.isArray(payload.p) ||
+    payload.p.length !== 7
   ) {
     return null
   }
 
-  const birth: StoredBirth = {
+  const [id, name, countryCode, latitude, longitude, timeZone, coordinateKind] = payload.p
+
+  const birth: unknown = {
     date: payload.d,
     time: payload.t,
     timeKnown: payload.n === 1,
-    cityKey: payload.c,
+    place: {
+      id,
+      name,
+      countryCode,
+      latitude,
+      longitude,
+      timeZone,
+      coordinateKind: coordinateKind === 0 ? 'locality' : coordinateKind === 1 ? 'administrativeSeat' : coordinateKind,
+    },
   }
 
-  return isStoredBirth(birth, catalog) ? birth : null
+  return isStoredBirth(birth, locale) ? birth : null
 }
 
 function dateFromEpochSeconds(value: unknown): Date | null {
