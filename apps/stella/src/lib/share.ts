@@ -1,7 +1,7 @@
 import type { Locale } from '@sobok/domain/locale'
 import { isStoredBirth, type StoredBirth } from './birth-storage'
 
-const SHARE_VERSION = 2
+const SHARE_VERSION = 3
 const SHARE_PREFIX = `${SHARE_VERSION}.`
 const SHARE_HASH_PATTERN = /^\d+\./
 const BASE64_URL_PATTERN = /^[A-Za-z0-9_-]+$/
@@ -18,7 +18,15 @@ type SerializedPayload = {
   d: string
   t: string
   n: 0 | 1
-  p: [id: string, name: string, countryCode: string, latitude: number, longitude: number, timeZone: string, kind: 0 | 1]
+  p: [
+    id: string,
+    name: string,
+    countryCode: string,
+    latitude: number,
+    longitude: number,
+    timeZone: string,
+    precision: 0 | 1 | 2,
+  ]
   a?: number
   o?: string
   z?: number
@@ -66,7 +74,7 @@ function encodePayload(input: ShareUrlInput): string {
       input.birth.place.latitude,
       input.birth.place.longitude,
       input.birth.place.timeZone,
-      input.birth.place.coordinateKind === 'locality' ? 0 : 1,
+      { locality: 0, administrativeSeat: 1, administrativeArea: 2 }[input.birth.place.coordinatePrecision] as 0 | 1 | 2,
     ],
     ...(input.kind === 'love' ? { a: Math.floor(input.asOf.getTime() / 1000) } : {}),
     ...(input.kind === 'today' ? { o: input.dateKey, z: input.utcOffsetMinutes } : {}),
@@ -158,7 +166,7 @@ function deserializeBirth(payload: Record<string, unknown>, locale: Locale): Sto
     return null
   }
 
-  const [id, name, countryCode, latitude, longitude, timeZone, coordinateKind] = payload.p
+  const [id, name, countryCode, latitude, longitude, timeZone, coordinatePrecision] = payload.p
 
   const birth: unknown = {
     date: payload.d,
@@ -171,7 +179,14 @@ function deserializeBirth(payload: Record<string, unknown>, locale: Locale): Sto
       latitude,
       longitude,
       timeZone,
-      coordinateKind: coordinateKind === 0 ? 'locality' : coordinateKind === 1 ? 'administrativeSeat' : coordinateKind,
+      coordinatePrecision:
+        coordinatePrecision === 0
+          ? 'locality'
+          : coordinatePrecision === 1
+            ? 'administrativeSeat'
+            : coordinatePrecision === 2
+              ? 'administrativeArea'
+              : coordinatePrecision,
     },
   }
 

@@ -1,6 +1,6 @@
 import type { Locale } from '@sobok/domain/locale'
 
-export type BirthplaceCoordinateKind = 'locality' | 'administrativeSeat'
+export type BirthplaceCoordinatePrecision = 'locality' | 'administrativeSeat' | 'administrativeArea'
 
 /** The self-contained, reproducible location snapshot persisted with a birth profile. */
 export type BirthplaceSnapshot = {
@@ -10,7 +10,7 @@ export type BirthplaceSnapshot = {
   latitude: number
   longitude: number
   timeZone: string
-  coordinateKind: BirthplaceCoordinateKind
+  coordinatePrecision: BirthplaceCoordinatePrecision
 }
 
 /** Search-only metadata loaded when the birthplace combobox is first opened. */
@@ -48,7 +48,7 @@ export type GeneratedBirthplaceRow = readonly [
   latitude: number,
   longitude: number,
   timeZone: string,
-  coordinateKind: 0 | 1,
+  coordinatePrecision: 0 | 1 | 2,
   population: number,
   suggestionRank: number,
   contextName: string,
@@ -71,7 +71,7 @@ export function createBirthplaceCatalog(
       latitude,
       longitude,
       timeZone,
-      kind,
+      precision,
       population,
       suggestionRank,
       contextName,
@@ -83,6 +83,14 @@ export function createBirthplaceCatalog(
         throw new Error(`Unknown birthplace group index ${groupIndex} in ${locale}`)
       }
 
+      const coordinatePrecision = ['locality', 'administrativeSeat', 'administrativeArea'][precision] as
+        | BirthplaceCoordinatePrecision
+        | undefined
+
+      if (!coordinatePrecision) {
+        throw new Error(`Unknown birthplace coordinate precision ${precision} in ${locale}`)
+      }
+
       return {
         id,
         name,
@@ -91,7 +99,7 @@ export function createBirthplaceCatalog(
         latitude,
         longitude,
         timeZone,
-        coordinateKind: kind === 0 ? ('locality' as const) : ('administrativeSeat' as const),
+        coordinatePrecision,
         population,
         suggestionRank: suggestionRank >= 0 ? suggestionRank : null,
         contextName,
@@ -111,6 +119,6 @@ export function snapshotBirthplace(place: BirthplaceSnapshot): BirthplaceSnapsho
     latitude: place.latitude,
     longitude: place.longitude,
     timeZone: place.timeZone,
-    coordinateKind: place.coordinateKind,
+    coordinatePrecision: place.coordinatePrecision,
   }
 }

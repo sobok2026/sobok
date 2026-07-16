@@ -1,0 +1,36 @@
+Administrative birthplace catalogs
+
+Korea
+Source: Ministry of the Interior and Safety, Administrative Standard Code Management System
+Dataset: Full legal-district code list (법정동코드 전체자료)
+https://www.code.go.kr/
+
+Japan
+Source: Statistics Bureau of Japan, e-Stat
+Dataset: System of Social and Demographic Statistics municipality code list
+https://www.e-stat.go.jp/municipalities/cities/areacode
+Terms of use: https://www.e-stat.go.jp/terms-of-use
+
+The Japanese catalog includes municipalities and Tokyo's special wards. It includes a
+designated city as one value rather than its ordinary wards, and excludes the six
+Northern Territories codes that appear in e-Stat but are not currently administered by
+Japan.
+
+Mainland China
+Canonical dataset: National Geographical Names Database administrative-division snapshot,
+dated 2025-12-31. The official service is published by the Ministry of Civil Affairs at
+https://dmfw.mca.gov.cn/. Generation uses a pinned snapshot distributed by the
+AreaCity-JsSpider-StatsGov project because the official service is not reliably available
+to automated builds.
+Mirror: https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov
+Pinned commit: c6c6e35bea3066d674efe2cded189dc57a86e7d8
+Mirror license: MIT
+
+Hong Kong and Macau are deliberately represented by one product-level value each rather
+than their subordinate administrative divisions: Hong Kong is one value and Macau is one
+value.
+
+Stella derives groups, stable official-code IDs, and local-script display names from these
+sources. GeoNames supplies WGS84 representative coordinates, population metadata, and
+search aliases as documented separately in GeoNames.txt. Generated source headers record
+the exact SHA-256 hashes used for reproducibility.

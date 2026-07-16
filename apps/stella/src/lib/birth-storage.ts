@@ -14,7 +14,7 @@ import type { BirthInput } from '@/chart/ephemeris'
 import { isBirthplaceCountryAllowed } from './birthplace-policy'
 import type { BirthplaceSnapshot } from './birthplaces'
 
-const STORAGE_KEY = 'stella.birth.v2'
+const STORAGE_KEY = 'stella.birth.v3'
 
 export type StoredBirth = {
   date: string // YYYY-MM-DD
@@ -55,6 +55,34 @@ function isClockTime(value: string): boolean {
   return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59
 }
 
+function isBirthplaceIdAllowed(id: string, countryCode: string): boolean {
+  if (['US', 'GB', 'CA', 'AU', 'NZ'].includes(countryCode)) {
+    return /^geonames:\d+$/.test(id)
+  }
+
+  if (countryCode === 'KR') {
+    return /^KR:\d{10}$/.test(id)
+  }
+
+  if (countryCode === 'JP') {
+    return /^JP:\d{5}$/.test(id)
+  }
+
+  if (countryCode === 'CN') {
+    return /^CN:\d{12}$/.test(id)
+  }
+
+  if (countryCode === 'HK') {
+    return id === 'HK:810000000000'
+  }
+
+  if (countryCode === 'MO') {
+    return id === 'MO:820000000000'
+  }
+
+  return false
+}
+
 function isBirthplaceSnapshot(value: unknown, locale: Locale): value is BirthplaceSnapshot {
   if (typeof value !== 'object' || value === null) {
     return false
@@ -64,11 +92,11 @@ function isBirthplaceSnapshot(value: unknown, locale: Locale): value is Birthpla
 
   if (
     typeof place.id !== 'string' ||
-    !/^geonames:\d+$/.test(place.id) ||
+    typeof place.countryCode !== 'string' ||
+    !isBirthplaceIdAllowed(place.id, place.countryCode) ||
     typeof place.name !== 'string' ||
     place.name.length === 0 ||
     place.name.length > 120 ||
-    typeof place.countryCode !== 'string' ||
     !isBirthplaceCountryAllowed(locale, place.countryCode) ||
     typeof place.latitude !== 'number' ||
     !Number.isFinite(place.latitude) ||
@@ -81,7 +109,9 @@ function isBirthplaceSnapshot(value: unknown, locale: Locale): value is Birthpla
     typeof place.timeZone !== 'string' ||
     place.timeZone.length === 0 ||
     place.timeZone.length > 64 ||
-    (place.coordinateKind !== 'locality' && place.coordinateKind !== 'administrativeSeat')
+    (place.coordinatePrecision !== 'locality' &&
+      place.coordinatePrecision !== 'administrativeSeat' &&
+      place.coordinatePrecision !== 'administrativeArea')
   ) {
     return false
   }

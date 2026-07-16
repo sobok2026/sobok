@@ -7,9 +7,10 @@ License text: https://creativecommons.org/licenses/by/4.0/
 
 Copyright GeoNames contributors.
 
-Stella uses populated-place names, alternate names, coordinates, population metadata,
+Stella uses populated-place names, aliases, coordinates, population metadata,
 administrative identities, and IANA time-zone identifiers from the GeoNames cities1000,
-admin1CodesASCII, admin2Codes, and country-specific alternate-name datasets. Historical,
-abandoned, destroyed, and city-section records are excluded. The remaining data is
-filtered by Stella's locale markets, reordered, and rounded to four coordinate decimal
-places. Source snapshots accessed 2026-07-16.
+admin1CodesASCII, admin2Codes, and KR/JP/CN country extracts. GeoNames enriches official
+administrative catalogs with WGS84 coordinates and search aliases; it is not the source
+of selectable Korean, Japanese, or Chinese administrative identities. Historical,
+abandoned, destroyed, and city-section records are excluded from the English catalog.
+Coordinates are rounded to four decimal places. Source snapshots accessed 2026-07-16.
