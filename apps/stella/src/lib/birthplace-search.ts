@@ -112,7 +112,7 @@ function groupResults(catalog: BirthplaceCatalog, places: readonly Birthplace[])
   })
 }
 
-/** Empty input shows a short curated list; typed searches are globally ranked and capped. */
+/** Empty input shows generated capital/population suggestions; typed searches are globally ranked and capped. */
 export function getBirthplaceGroups(
   catalog: BirthplaceCatalog,
   query: string,
@@ -122,10 +122,11 @@ export function getBirthplaceGroups(
   const normalizedQuery = normalize(rawQuery)
 
   if (!normalizedQuery) {
-    const popular = catalog.places
-      .filter((place) => place.popularRank !== null)
-      .sort((a, b) => (a.popularRank ?? 0) - (b.popularRank ?? 0))
-    return groupResults(catalog, popular)
+    const suggestions = catalog.places
+      .filter((place) => place.suggestionRank !== null)
+      .sort((a, b) => (a.suggestionRank ?? 0) - (b.suggestionRank ?? 0))
+
+    return groupResults(catalog, suggestions)
   }
 
   const matches = getIndex(catalog)

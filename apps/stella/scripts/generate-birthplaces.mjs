@@ -15,10 +15,10 @@ const LOCALIZED_COUNTRIES = ['KR', 'JP', 'CN', 'HK', 'MO']
 const LANGUAGE_BY_LOCALE = { ko: 'ko', ja: 'ja', zh: 'zh' }
 const EXCLUDED_FEATURE_CODES = new Set(['PPLH', 'PPLQ', 'PPLW', 'PPLX'])
 const MINIMUM_COUNTRY_COUNTS = {
-  KR: 280,
-  JP: 1900,
-  CN: 4500,
-  HK: 250,
+  KR: 260,
+  JP: 1750,
+  CN: 3850,
+  HK: 100,
   MO: 5,
   US: 16000,
   GB: 4000,
@@ -128,14 +128,22 @@ for (const countryCode of LOCALIZED_COUNTRIES) {
   }
 
   const source = SOURCE_DEFINITIONS[`alternateNames-${countryCode}`]
-  localizedNamesByCountry.set(
-    countryCode,
-    parseAlternateNames(readSource(source), wantedIds, LANGUAGE_BY_LOCALE[marketEntry.locale]),
-  )
+  localizedNamesByCountry.set(countryCode, parseAlternateNames(readSource(source), wantedIds, marketEntry.locale))
 }
 
-const places = resolvedPlaces.map((place) =>
-  createBirthplace(place, markets[place.locale], admin1ByCode, admin2ByCode, localizedNamesByCountry),
+const places = assignSuggestionRanks(
+  resolvedPlaces.flatMap((place) => {
+    const birthplace = createBirthplace(
+      place,
+      markets[place.locale],
+      admin1ByCode,
+      admin2ByCode,
+      localizedNamesByCountry,
+    )
+
+    return birthplace ? [birthplace] : []
+  }),
+  markets,
 )
 
 validatePlaces(places, markets)
@@ -154,7 +162,7 @@ const outputs = Object.fromEntries(
       .sort(
         (a, b) =>
           a.groupIndex - b.groupIndex ||
-          Number(b.popularRank !== null) - Number(a.popularRank !== null) ||
+          Number(b.suggestionRank !== null) - Number(a.suggestionRank !== null) ||
           b.population - a.population ||
           compareText(a.name, b.name),
       )
@@ -285,8 +293,10 @@ function parseAdministrativeCodes(source) {
   return codes
 }
 
-function parseAlternateNames(source, wantedIds, language) {
+function parseAlternateNames(source, wantedIds, locale) {
   const namesById = new Map()
+  const language = LANGUAGE_BY_LOCALE[locale]
+  const localScriptPattern = localizedScriptPattern(locale)
 
   if (!language) {
     return namesById
@@ -296,11 +306,14 @@ function parseAlternateNames(source, wantedIds, language) {
     const fields = line.split('\t')
     const geonameId = Number(fields[1])
     const languageCode = fields[2]
+    const name = fields[3]
+    const isLocalizedLanguage = languageCode === language || languageCode.startsWith(`${language}-`)
+    const isUnlabeledLocalName = languageCode === '' && localScriptPattern?.test(name)
 
     if (
       !wantedIds.has(geonameId) ||
-      (languageCode !== language && !languageCode.startsWith(`${language}-`)) ||
-      !fields[3] ||
+      (!isLocalizedLanguage && !isUnlabeledLocalName) ||
+      !name ||
       fields[6] === '1' ||
       fields[7] === '1' ||
       fields[9]
@@ -309,7 +322,7 @@ function parseAlternateNames(source, wantedIds, language) {
     }
 
     const names = namesById.get(geonameId) ?? []
-    names.push(fields[3])
+    names.push(name)
     namesById.set(geonameId, names)
   })
 
@@ -321,6 +334,11 @@ function createBirthplace(place, market, admin1ByCode, admin2ByCode, localizedNa
   const groupIndex = market.groups.findIndex((group) => group.id === place.group.id)
   const alternateNames = localizedNames.get(place.geonameId) ?? []
   const localizedName = chooseLocalizedName(alternateNames, place.locale) ?? place.sourceName
+
+  if (!hasLocalizedDisplayName(localizedName, place.locale)) {
+    return null
+  }
+
   const name = canonicalizeName(localizedName, place.locale, place.group.label)
   const admin1 = admin1ByCode.get(`${place.countryCode}.${place.admin1Code}`)
   const admin2 = admin2ByCode.get(`${place.countryCode}.${place.admin1Code}.${place.admin2Code}`)
@@ -332,7 +350,6 @@ function createBirthplace(place, market, admin1ByCode, admin2ByCode, localizedNa
     admin1Name,
     admin2Name,
   })
-  const popularIndex = market.popularPlaceIds.indexOf(place.geonameId)
   const searchNames = uniqueSearchNames([...alternateNames, place.sourceName, place.asciiName], name)
 
   return {
@@ -349,10 +366,54 @@ function createBirthplace(place, market, admin1ByCode, admin2ByCode, localizedNa
     timeZone: canonicalTimeZone(place.countryCode, place.timeZone),
     coordinateKind: place.population < 1000 && place.featureCode.startsWith('PPLA') ? 'administrativeSeat' : 'locality',
     population: place.population,
-    popularRank: popularIndex >= 0 ? popularIndex : null,
+    suggestionRank: null,
     searchNames,
     featureCode: place.featureCode,
   }
+}
+
+function assignSuggestionRanks(places, markets) {
+  const rankById = new Map()
+
+  for (const locale of LOCALES) {
+    const market = markets[locale]
+    let nextRank = 0
+
+    for (const countryCode of Object.keys(market.countries)) {
+      const quota = market.suggestionCountByCountry[countryCode]
+      const candidates = places
+        .filter((place) => place.locale === locale && place.countryCode === countryCode)
+        .sort(comparePopulation)
+      const capitals = candidates.filter((place) => place.featureCode === 'PPLC')
+
+      if (capitals.length === 0) {
+        throw new Error(`No GeoNames PPLC capital found for ${locale}.${countryCode}`)
+      }
+
+      if (capitals.length > quota) {
+        throw new Error(
+          `Suggestion quota ${quota} cannot include all ${capitals.length} capitals for ${locale}.${countryCode}`,
+        )
+      }
+
+      const capitalIds = new Set(capitals.map((place) => place.id))
+      const selected = [...capitals, ...candidates.filter((place) => !capitalIds.has(place.id))].slice(0, quota)
+
+      if (selected.length !== quota) {
+        throw new Error(`Expected ${quota} suggestions for ${locale}.${countryCode}, found ${selected.length}`)
+      }
+
+      for (const place of selected) {
+        rankById.set(place.id, nextRank++)
+      }
+    }
+  }
+
+  return places.map((place) => ({ ...place, suggestionRank: rankById.get(place.id) ?? null }))
+}
+
+function comparePopulation(a, b) {
+  return b.population - a.population || compareText(a.name, b.name) || a.geonameId - b.geonameId
 }
 
 function localizedAdministrativeName(administrativeUnit, localizedNames, locale) {
@@ -366,16 +427,30 @@ function localizedAdministrativeName(administrativeUnit, localizedNames, locale)
 }
 
 function chooseLocalizedName(names, locale) {
-  const scriptPattern =
-    locale === 'ko'
-      ? /\p{Script=Hangul}/u
-      : locale === 'ja'
-        ? /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u
-        : locale === 'zh'
-          ? /\p{Script=Han}/u
-          : null
+  const scriptPattern = localizedScriptPattern(locale)
 
-  return names.find((name) => !scriptPattern || scriptPattern.test(name)) ?? names[0]
+  return scriptPattern ? names.find((name) => scriptPattern.test(name)) : names[0]
+}
+
+function hasLocalizedDisplayName(name, locale) {
+  const scriptPattern = localizedScriptPattern(locale)
+  return !scriptPattern || scriptPattern.test(name)
+}
+
+function localizedScriptPattern(locale) {
+  if (locale === 'ko') {
+    return /\p{Script=Hangul}/u
+  }
+
+  if (locale === 'ja') {
+    return /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u
+  }
+
+  if (locale === 'zh') {
+    return /\p{Script=Han}/u
+  }
+
+  return null
 }
 
 function canonicalizeName(name, locale, groupLabel) {
@@ -521,13 +596,16 @@ function validateMarkets(markets) {
       groupIds.add(group.id)
     }
 
-    const popularIds = new Set(market.popularPlaceIds)
+    const suggestionCountries = Object.keys(market.suggestionCountByCountry ?? {})
 
     if (
-      popularIds.size !== market.popularPlaceIds.length ||
-      market.popularPlaceIds.some((id) => !Number.isSafeInteger(id) || id <= 0)
+      suggestionCountries.sort().join(',') !== [...countryCodes].sort().join(',') ||
+      suggestionCountries.some((countryCode) => {
+        const count = market.suggestionCountByCountry[countryCode]
+        return !Number.isSafeInteger(count) || count <= 0
+      })
     ) {
-      throw new Error(`Invalid popular birthplace IDs in ${locale}`)
+      throw new Error(`Invalid suggestion counts in ${locale}`)
     }
   }
 
@@ -552,6 +630,7 @@ function validatePlaces(places, markets) {
 
     if (
       !place.name ||
+      !hasLocalizedDisplayName(place.name, place.locale) ||
       !place.contextName ||
       place.groupIndex < 0 ||
       !Number.isFinite(place.latitude) ||
@@ -589,9 +668,29 @@ function validatePlaces(places, markets) {
       }
     }
 
-    for (const popularId of market.popularPlaceIds) {
-      if (!localePlaces.some((place) => place.geonameId === popularId)) {
-        throw new Error(`Missing popular birthplace geonames:${popularId} in ${locale}`)
+    const suggestionRanks = localePlaces
+      .flatMap((place) => (place.suggestionRank === null ? [] : [place.suggestionRank]))
+      .sort((a, b) => a - b)
+    const expectedSuggestionCount = Object.values(market.suggestionCountByCountry).reduce(
+      (total, count) => total + count,
+      0,
+    )
+
+    if (suggestionRanks.length !== expectedSuggestionCount || suggestionRanks.some((rank, index) => rank !== index)) {
+      throw new Error(`Invalid suggestion ranks in ${locale}`)
+    }
+
+    for (const [countryCode, expectedCount] of Object.entries(market.suggestionCountByCountry)) {
+      const countryPlaces = localePlaces.filter((place) => place.countryCode === countryCode)
+      const suggestions = countryPlaces.filter((place) => place.suggestionRank !== null)
+      const capitals = countryPlaces.filter((place) => place.featureCode === 'PPLC')
+
+      if (
+        suggestions.length !== expectedCount ||
+        capitals.length === 0 ||
+        capitals.some((capital) => capital.suggestionRank === null)
+      ) {
+        throw new Error(`Invalid suggestions for ${locale}.${countryCode}`)
       }
     }
   }
@@ -612,7 +711,7 @@ function serializeCatalog(locale, market, places, sourceHashes) {
       quote(place.timeZone),
       place.coordinateKind === 'locality' ? 0 : 1,
       place.population,
-      place.popularRank ?? -1,
+      place.suggestionRank ?? -1,
       quote(place.contextName),
       ...place.searchNames.map(quote),
     ]

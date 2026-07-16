@@ -1,7 +1,7 @@
 {
   "ko": {
     "countries": { "KR": "대한민국" },
-    "popularPlaceIds": [1835848, 1838524, 1843564, 1835329, 1835235, 1841811, 1835553, 1833747],
+    "suggestionCountByCountry": { "KR": 50 },
     "groups": [
       { "id": "KR-11", "label": "서울특별시", "countryCode": "KR", "sourceAdmin1Code": "11" },
       { "id": "KR-26", "label": "부산광역시", "countryCode": "KR", "sourceAdmin1Code": "10" },
@@ -30,9 +30,7 @@
       "AU": "Australia",
       "NZ": "New Zealand"
     },
-    "popularPlaceIds": [
-      5128581, 5368361, 4887398, 2643743, 2655603, 6167865, 6173331, 2147714, 2158177, 2193733, 2179537
-    ],
+    "suggestionCountByCountry": { "US": 10, "GB": 10, "CA": 10, "AU": 10, "NZ": 10 },
     "groups": [
       { "id": "US", "label": "United States", "countryCode": "US" },
       { "id": "GB", "label": "United Kingdom", "countryCode": "GB" },
@@ -43,7 +41,7 @@
   },
   "ja": {
     "countries": { "JP": "日本" },
-    "popularPlaceIds": [1850147, 1848354, 1853909, 1856057, 2128295, 1863967, 1859171, 1857910],
+    "suggestionCountByCountry": { "JP": 50 },
     "groups": [
       { "id": "JP-01", "label": "北海道", "countryCode": "JP", "sourceAdmin1Code": "12" },
       { "id": "JP-02", "label": "青森県", "countryCode": "JP", "sourceAdmin1Code": "03" },
@@ -96,7 +94,7 @@
   },
   "zh": {
     "countries": { "CN": "中国", "HK": "中国香港", "MO": "中国澳门" },
-    "popularPlaceIds": [1816670, 1796236, 1809858, 1795565, 1791247, 1815286, 1814906, 1790630, 1819729, 1821274],
+    "suggestionCountByCountry": { "CN": 48, "HK": 1, "MO": 1 },
     "groups": [
       { "id": "CN-BJ", "label": "北京市", "countryCode": "CN", "sourceAdmin1Code": "22" },
       { "id": "CN-TJ", "label": "天津市", "countryCode": "CN", "sourceAdmin1Code": "28" },

@@ -18,7 +18,7 @@ export type Birthplace = BirthplaceSnapshot & {
   groupId: string
   contextName: string
   population: number
-  popularRank: number | null
+  suggestionRank: number | null
   searchNames: readonly string[]
 }
 
@@ -50,7 +50,7 @@ export type GeneratedBirthplaceRow = readonly [
   timeZone: string,
   coordinateKind: 0 | 1,
   population: number,
-  popularRank: number,
+  suggestionRank: number,
   contextName: string,
   ...searchNames: string[],
 ]
@@ -73,7 +73,7 @@ export function createBirthplaceCatalog(
       timeZone,
       kind,
       population,
-      popularRank,
+      suggestionRank,
       contextName,
       ...searchNames
     ]) => {
@@ -93,7 +93,7 @@ export function createBirthplaceCatalog(
         timeZone,
         coordinateKind: kind === 0 ? ('locality' as const) : ('administrativeSeat' as const),
         population,
-        popularRank: popularRank >= 0 ? popularRank : null,
+        suggestionRank: suggestionRank >= 0 ? suggestionRank : null,
         contextName,
         searchNames,
       }
