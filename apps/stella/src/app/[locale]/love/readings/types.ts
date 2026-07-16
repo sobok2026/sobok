@@ -2,8 +2,8 @@
 // these are plain data modules loaded per locale on demand — the natal Venus
 // fragments stay in the Constellation messages and are reused as-is.
 
-import type { ComputedPlanetId, SignId } from '../../chart/types'
-import type { AspectTone } from '../../interpretations/types'
+import type { ComputedPlanetId, SignId } from '@/chart/types'
+import type { AspectTone } from '@/content/interpretations/types'
 import type { NatalLoveTone } from '../compute'
 
 export type PartnerPersona = {

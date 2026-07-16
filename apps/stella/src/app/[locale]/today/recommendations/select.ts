@@ -1,8 +1,8 @@
 import type { Locale } from '@sobok/domain/locale'
 
-import { elementOfSign, signOfLon } from '../../chart/astrology'
-import type { ElementId, NatalChart, PlanetId, SignId } from '../../chart/types'
-import { type AspectTone, aspectTone } from '../../interpretations/types'
+import { elementOfSign, signOfLon } from '@/chart/astrology'
+import type { ElementId, NatalChart, PlanetId, SignId } from '@/chart/types'
+import { type AspectTone, aspectTone } from '@/content/interpretations/types'
 import { seededPick } from '../daily'
 import type { MoonPhaseId, SkyToday } from '../sky'
 import type { PersonalToday } from '../transits'

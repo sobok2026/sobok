@@ -1,7 +1,7 @@
-import { elementOfSign } from '../chart/astrology'
-import { ELEMENT_COLORS } from '../chart/data'
-import type { SignId } from '../chart/types'
-import { SIGN_FIGURES } from '../today/sign-art'
+import { elementOfSign } from '@/chart/astrology'
+import { ELEMENT_COLORS } from '@/chart/data'
+import type { SignId } from '@/chart/types'
+import { SIGN_FIGURES } from '@/lib/sign-art'
 import styles from './PersonaArt.module.css'
 
 /**

@@ -5,20 +5,20 @@ import FaqSection from '@/components/FaqSection'
 import { SITE_NAME } from '@/constants'
 import { FAQ } from '@/content/faq'
 import { getLocale } from '@/i18n/server'
-import JsonLd, { faqPageGraph, subPageGraph } from '@/lib/JsonLd'
-import TodayFlow from './TodayFlow'
+import JsonLd, { faqPageGraph, webApplicationGraph } from '@/lib/JsonLd'
+import Constellation from './Constellation'
 
-export async function generateMetadata({ params }: PageProps<'/[locale]/today'>): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {
   const locale = await getLocale(params)
-  const t = await getTranslations({ locale, namespace: 'Today.meta' })
+  const t = await getTranslations({ locale, namespace: 'Constellation.meta' })
   const title = t('title')
   const description = t('description')
-  const canonical = `/${locale}/today`
+  const canonical = `/${locale}`
   const openGraphLocale = LOCALE_OPEN_GRAPH_TAGS[locale]
 
   const images = [
     {
-      url: '/og-today.webp',
+      url: '/og-image.webp',
       width: 1200,
       height: 630,
       alt: `${SITE_NAME[locale]} — ${title}`,
@@ -27,13 +27,11 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/today'>)
   ]
 
   return {
-    title,
-    description,
     alternates: {
       canonical,
       languages: {
-        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, `/${entry}/today`])),
-        'x-default': '/today',
+        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, `/${entry}`])),
+        'x-default': '/',
       },
     },
     openGraph: {
@@ -58,23 +56,16 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/today'>)
   }
 }
 
-export default async function TodayPage({ params }: PageProps<'/[locale]/today'>) {
+export default async function ConstellationPage({ params }: PageProps<'/[locale]'>) {
   const locale = await getLocale(params)
-  const t = await getTranslations({ locale, namespace: 'Today' })
+  const t = await getTranslations({ locale, namespace: 'Constellation.meta' })
 
   return (
     <>
-      <JsonLd
-        data={subPageGraph(locale, {
-          path: 'today',
-          name: t('hero.title'),
-          description: t('meta.description'),
-          image: '/og-today.webp',
-        })}
-      />
-      <JsonLd data={faqPageGraph(FAQ[locale].today)} />
-      <TodayFlow />
-      <FaqSection locale={locale} page="today" />
+      <JsonLd data={webApplicationGraph(locale, t('description'))} />
+      <JsonLd data={faqPageGraph(FAQ[locale].constellation)} />
+      <Constellation />
+      <FaqSection locale={locale} page="constellation" />
     </>
   )
 }

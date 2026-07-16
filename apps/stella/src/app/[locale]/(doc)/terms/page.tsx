@@ -2,9 +2,9 @@ import { LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 
 import { SITE_NAME } from '@/constants'
+import { LEGAL } from '@/content/legal'
 import { getLocale } from '@/i18n/server'
-import LegalArticle from '../../LegalArticle'
-import { LEGAL } from '../../legal'
+import LegalArticle from '../LegalArticle'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/terms'>): Promise<Metadata> {
   const locale = await getLocale(params)

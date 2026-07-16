@@ -1,12 +1,11 @@
 import { LOCALE_OPEN_GRAPH_TAGS } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
-
+import FaqSection from '@/components/FaqSection'
 import { SITE_NAME } from '@/constants'
+import { FAQ } from '@/content/faq'
 import { getLocale } from '@/i18n/server'
 import JsonLd, { faqPageGraph, subPageGraph } from '@/lib/JsonLd'
-import FaqSection from '../FaqSection'
-import { FAQ } from '../faq'
 import LoveFlow from './LoveFlow'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/love'>): Promise<Metadata> {

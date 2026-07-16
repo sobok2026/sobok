@@ -2,10 +2,10 @@
 // from a chosen local-noon snapshot so the page is stable for a whole calendar
 // day (the one-update-per-day rhythm is deliberate).
 
-import { angularGap, signOfLon } from '../chart/astrology'
-import { PLANET_ORDER } from '../chart/data'
-import type { AspectType, ComputedPlanetId, PlanetPosition, SignId } from '../chart/types'
-import { computePositions } from '../ephemeris'
+import { angularGap, signOfLon } from '@/chart/astrology'
+import { PLANET_ORDER } from '@/chart/data'
+import { computePositions } from '@/chart/ephemeris'
+import type { AspectType, ComputedPlanetId, PlanetPosition, SignId } from '@/chart/types'
 
 export type MoonPhaseId =
   | 'newMoon'

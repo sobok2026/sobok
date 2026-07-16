@@ -6,15 +6,14 @@ import Script from 'next/script'
 import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 import { Toaster } from 'sonner'
-
+import BirthProfileProvider from '@/components/BirthProfileProvider'
+import BottomNav from '@/components/BottomNav'
+import Footer from '@/components/Footer'
+import Header from '@/components/Header'
 import { ADSENSE_ACCOUNT, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getLocale } from '@/i18n/server'
 import Analytics from '@/lib/analytics/Analytics'
 import JsonLd, { siteGraph } from '@/lib/JsonLd'
-import BirthProfileProvider from './BirthProfileProvider'
-import BottomNav from './BottomNav'
-import Footer from './Footer'
-import Header from './Header'
 
 export function generateStaticParams() {
   return Object.values(Locale).map((locale) => ({ locale }))

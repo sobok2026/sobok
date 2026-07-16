@@ -1,7 +1,7 @@
-import { elementOfSign } from '../chart/astrology'
-import { ELEMENT_COLORS } from '../chart/data'
-import type { SignId } from '../chart/types'
-import { SIGN_FIGURES } from './sign-art'
+import { elementOfSign } from '@/chart/astrology'
+import { ELEMENT_COLORS } from '@/chart/data'
+import type { SignId } from '@/chart/types'
+import { SIGN_FIGURES } from '@/lib/sign-art'
 
 export default function SignArt({ className, sign }: { className?: string; sign: SignId }) {
   const { stars, lines } = SIGN_FIGURES[sign]

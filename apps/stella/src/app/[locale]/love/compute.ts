@@ -3,12 +3,12 @@
 // the transits that color relationships. All copy lives in `./readings`.
 
 import ms from 'ms'
-import { closestAspect, houseOfLon, signOfLon } from '../chart/astrology'
-import { PLANET_ORDER } from '../chart/data'
-import { dignityOf } from '../chart/signature'
-import type { ChartAspect, ComputedPlanetId, NatalChart, PlanetId, SignId } from '../chart/types'
-import { computeLongitudeSeries } from '../ephemeris'
-import { type AspectTone, aspectTone } from '../interpretations/types'
+import { closestAspect, houseOfLon, signOfLon } from '@/chart/astrology'
+import { PLANET_ORDER } from '@/chart/data'
+import { computeLongitudeSeries } from '@/chart/ephemeris'
+import { dignityOf } from '@/chart/signature'
+import type { ChartAspect, ComputedPlanetId, NatalChart, PlanetId, SignId } from '@/chart/types'
+import { type AspectTone, aspectTone } from '@/content/interpretations/types'
 
 /** Venus pairs that carry aspect copy in the interpretation tables. */
 const VENUS_PARTNERS: ReadonlySet<PlanetId> = new Set([

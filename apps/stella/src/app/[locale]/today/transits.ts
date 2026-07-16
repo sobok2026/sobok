@@ -1,6 +1,6 @@
-import { closestAspect, houseOfLon } from '../chart/astrology'
-import type { NatalChart, PlanetPosition } from '../chart/types'
-import { type AspectTone, aspectTone } from '../interpretations/types'
+import { closestAspect, houseOfLon } from '@/chart/astrology'
+import type { NatalChart, PlanetPosition } from '@/chart/types'
+import { type AspectTone, aspectTone } from '@/content/interpretations/types'
 
 /** Natal bodies the transiting Moon is read against — the personal planets. */
 export const MOON_TARGETS = ['sun', 'moon', 'mercury', 'venus', 'mars'] as const

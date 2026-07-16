@@ -1,4 +1,4 @@
-import type { ElementId } from '../../chart/types'
+import type { ElementId } from '@/chart/types'
 
 export const LUCKY_COLOR_IDS = [
   'coralGlow',
