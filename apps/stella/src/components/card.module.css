@@ -1,0 +1,31 @@
+/* Frosted content-card entrance shared by the reading pages (home, today, love). */
+
+.card {
+  opacity: 0;
+  animation: cardUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cardUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: fadeIn 0.3s ease-out both;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1;
+  }
+}

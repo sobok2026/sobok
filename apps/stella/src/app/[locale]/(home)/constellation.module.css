@@ -64,19 +64,6 @@
   stroke-opacity: 0.9;
 }
 
-.card {
-  opacity: 0;
-  animation: cardUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.luckyItem {
-  opacity: 0;
-}
-
-.luckyItemVisible {
-  animation: luckyReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
 .sheetIn {
   animation: sheetUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -213,28 +200,6 @@
   }
 }
 
-@keyframes cardUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes luckyReveal {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 @keyframes sheetUp {
   from {
     transform: translateY(12px);
@@ -262,8 +227,6 @@
   .wheel,
   .sector,
   .token,
-  .card,
-  .luckyItemVisible,
   .sheetIn {
     animation: fadeIn 0.3s ease-out both;
     animation-delay: 0ms !important;

@@ -1,0 +1,34 @@
+/* Lucky-recommendation reveal — fires once when the section scrolls into view. */
+
+.luckyItem {
+  opacity: 0;
+}
+
+.luckyItemVisible {
+  animation: luckyReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes luckyReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .luckyItemVisible {
+    animation: fadeIn 0.3s ease-out both;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1;
+  }
+}

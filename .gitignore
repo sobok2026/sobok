@@ -462,7 +462,7 @@ tmp
 data/model/
 
 # GeoNames download cache for gen:cities
-apps/web/scripts/.cache/
+apps/stella/scripts/.cache/
 
 .open-next/
 .next-*/

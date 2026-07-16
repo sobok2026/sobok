@@ -1,0 +1,273 @@
+import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
+import { useTranslations } from 'next-intl'
+
+import type { SignId } from '@/chart/types'
+import cardStyles from '@/components/card.module.css'
+import Reading from '@/components/Reading'
+import type { Interpretations } from '@/content/interpretations/types'
+import { aspectTone, fill, pairKey } from '@/content/interpretations/types'
+import type { StoredBirth } from '@/lib/birth-storage'
+
+import { type LoveProfile, type LoveWindow, type LoveWindowPurpose, windowPurpose } from './compute'
+import PersonaArt from './PersonaArt'
+import type { LoveReadings } from './readings/types'
+
+/** How many timing windows the section shows at most. */
+const MAX_WINDOWS = 6
+
+/** Chip color per window purpose — accent invites, green opens, danger warns. */
+const PURPOSE_CHIP: Record<LoveWindowPurpose, string> = {
+  meeting: 'bg-accent/15 text-accent',
+  opening: 'bg-positive/15 text-positive',
+  deepening: 'bg-foreground/10 text-foreground-secondary',
+  caution: 'bg-danger/15 text-danger',
+}
+
+/** Everything the page resolves asynchronously before the reading can render at once. */
+export type LoveData = {
+  asOf: Date
+  birth: StoredBirth | null
+  readings: LoveReadings
+  /** Natal venus copy and aspect pairs, shared with the chart page. */
+  interpretations: Interpretations
+  /** Null until the visitor has saved birth data on the home page. */
+  profile: LoveProfile | null
+  windows: LoveWindow[]
+  timeKnown: boolean
+}
+
+type LoveBodyProps = {
+  data: LoveData & { profile: LoveProfile }
+  homeHref: string
+  locale: Locale
+  onShare: () => void
+  shared: boolean
+}
+
+export default function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
+  const t = useTranslations('Love')
+  const tc = useTranslations('Constellation')
+  const ts = useTranslations('Shared')
+
+  const { readings, interpretations, profile, windows, timeKnown } = data
+  const venusRetroText = profile.venusRetro ? interpretations.retro.venus?.[profile.venusSign] : undefined
+  const venusText = venusRetroText ?? interpretations.planets.venus[profile.venusSign]
+  const aspectText = resolveAspectText(profile, interpretations)
+  const persona = readings.persona[profile.descendantSign]
+  const stableMoonSign = profile.moonSigns.length === 1 ? profile.moonSigns[0] : null
+  const shownWindows = windows.slice(0, MAX_WINDOWS)
+  const today = data.asOf
+
+  const signName = (id: SignId) => tc(`signs.${id}`)
+
+  return (
+    <div className="w-full space-y-3 sm:space-y-5">
+      {/* How you love */}
+      <section className={`${cardStyles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
+        <h2 className="text-sm font-bold text-foreground">{t('style.title')}</h2>
+        <div className="mt-3 space-y-4">
+          <Reading
+            label={fill(interpretations.report.kicker.venus, { sign: signName(profile.venusSign) })}
+            text={venusText}
+          />
+          <Reading
+            label={t('style.marsKicker', { sign: signName(profile.marsSign) })}
+            text={readings.marsInLove[profile.marsSign]}
+          />
+          {aspectText && <Reading label={t('style.habitKicker')} text={aspectText} />}
+        </div>
+      </section>
+
+      {/* My magnetism — outer (rising) and inner (moon) */}
+      <section className={`${cardStyles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
+        <h2 className="text-sm font-bold text-foreground">{t('magnetism.title')}</h2>
+        <div className="mt-3 space-y-4">
+          {profile.risingSign ? (
+            <Reading
+              label={t('magnetism.looksKicker', { sign: signName(profile.risingSign) })}
+              text={readings.looks[profile.risingSign]}
+            />
+          ) : (
+            <p className="text-[11px] leading-relaxed text-foreground-faint">{t('magnetism.noRisingNote')}</p>
+          )}
+          {stableMoonSign ? (
+            <>
+              <Reading
+                label={t('magnetism.innerKicker', { sign: signName(stableMoonSign) })}
+                text={readings.inner[stableMoonSign]}
+              />
+              {!timeKnown && (
+                <p className="text-[11px] leading-relaxed text-foreground-faint">
+                  {t('magnetism.moonDateNote', { sign: signName(stableMoonSign) })}
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="rounded-xl bg-accent/10 px-3 py-2.5 text-[11px] leading-relaxed text-foreground-subtle">
+              {t('magnetism.moonRangeNote', {
+                from: signName(profile.moonSigns[0]),
+                to: signName(profile.moonSigns[1]),
+              })}
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* Using your charm — a playbook */}
+      <section className={`${cardStyles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
+        <h2 className="text-sm font-bold text-foreground">{t('playbook.title')}</h2>
+        <div className="mt-3 space-y-4">
+          <Reading
+            label={t('playbook.stylingKicker', { sign: signName(profile.venusSign) })}
+            text={readings.styling[profile.venusSign]}
+          />
+          <Reading
+            label={t('playbook.flirtKicker', { sign: signName(profile.marsSign) })}
+            text={readings.flirting[profile.marsSign]}
+          />
+          <Reading label={t('playbook.cautionKicker')} text={readings.caution[profile.venusSign]} />
+        </div>
+      </section>
+
+      {/* Destined partner */}
+      <section className={`${cardStyles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
+        <h2 className="text-sm font-bold text-foreground">{t('partner.title')}</h2>
+        <p className="mt-1 text-[11px] font-semibold uppercase tracking-wider text-accent">
+          {t('partner.kicker', { sign: signName(profile.descendantSign) })}
+        </p>
+        <PersonaArt className="mx-auto mt-3 h-32 w-32" sign={profile.descendantSign} />
+        <p className="mt-2 text-center text-lg font-bold text-foreground">{persona.name}</p>
+        <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">{persona.text}</p>
+        <div className="mt-4 space-y-3">
+          <div className="rounded-xl bg-surface px-3 py-2.5">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-positive">
+              {t('partner.matchLabel')}
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-foreground-secondary">{persona.match}</p>
+          </div>
+          <div className="rounded-xl bg-surface px-3 py-2.5">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-danger">
+              {t('partner.frictionLabel')}
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-foreground-subtle">{persona.friction}</p>
+          </div>
+        </div>
+        {profile.seventhHouse.length > 0 && (
+          <div className="mt-4 space-y-3">
+            {profile.seventhHouse.map((id) => (
+              <Reading
+                key={id}
+                label={t('partner.houseKicker', { planet: tc(`planets.${id}`) })}
+                text={readings.seventhPlanet[id]}
+              />
+            ))}
+          </div>
+        )}
+        {profile.solarDescendant && (
+          <p className="mt-4 text-[11px] leading-relaxed text-foreground-faint">{t('partner.solarNote')}</p>
+        )}
+      </section>
+
+      {/* Love timing — natal baseline + the year ahead */}
+      <section className={`${cardStyles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
+        <h2 className="text-sm font-bold text-foreground">{t('timing.title')}</h2>
+
+        <div className="mt-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">{t('timing.natalKicker')}</p>
+          <p className="mt-1 text-sm leading-relaxed text-foreground-secondary">
+            {readings.natalLove[profile.natalLove]}
+          </p>
+        </div>
+
+        <div className="mt-5">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">{t('timing.upcomingKicker')}</p>
+          <p className="mt-1 text-xs leading-relaxed text-foreground-subtle">{t('timing.subtitle')}</p>
+          {shownWindows.length === 0 && (
+            <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">{readings.timing.empty}</p>
+          )}
+          {shownWindows.length > 0 && (
+            <ol className="mt-3 space-y-3">
+              {shownWindows.map((w, i) => {
+                const purpose = windowPurpose(w)
+                return (
+                  <li className="rounded-xl bg-surface px-3 py-2.5" key={`${w.kind}-${i}`}>
+                    <p className="flex flex-wrap items-center gap-2 text-xs font-semibold text-accent">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${PURPOSE_CHIP[purpose]}`}
+                      >
+                        {t(`timing.purpose.${purpose}`)}
+                      </span>
+                      {formatWindowRange(w, locale)}
+                      {w.start <= today && (
+                        <span className="inline-flex items-center rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-medium text-accent">
+                          {t('timing.now')}
+                        </span>
+                      )}
+                    </p>
+                    <p className="mt-1.5 text-sm leading-relaxed text-foreground-secondary">
+                      {windowText(w, readings)}
+                    </p>
+                  </li>
+                )
+              })}
+            </ol>
+          )}
+          {!timeKnown && (
+            <p className="mt-3 text-[11px] leading-relaxed text-foreground-faint">{t('timing.noTimeNote')}</p>
+          )}
+        </div>
+      </section>
+
+      {/* Actions */}
+      <div className="flex flex-col items-center gap-3 pt-1">
+        {shared ? (
+          <a
+            className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
+            href={homeHref}
+          >
+            {ts('createOwn')}
+          </a>
+        ) : (
+          <>
+            <button
+              className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
+              onClick={onShare}
+              type="button"
+            >
+              {t('share.button')}
+            </button>
+            <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/** Pair fragment for the tightest Venus aspect — same sparse-pair guard as the detail panel. */
+function resolveAspectText(profile: LoveProfile, interpretations: Interpretations): string | null {
+  if (!profile.venusAspect) {
+    return null
+  }
+
+  const { a, b, type } = profile.venusAspect
+  return interpretations.aspects[pairKey(a, b)]?.[aspectTone(type)] ?? null
+}
+
+function windowText(w: LoveWindow, readings: LoveReadings): string {
+  if (w.kind === 'venusRetro') {
+    return readings.timing.venusRetro
+  }
+  if (w.kind === 'jupiterDescendant') {
+    return readings.timing.jupiterDescendant
+  }
+
+  const table = w.kind === 'jupiterVenus' ? readings.timing.jupiterVenus : readings.timing.saturnVenus
+  return table[w.tone ?? 'conjunction']
+}
+
+/** Month-level range — the 5-day scan step makes day precision an overclaim. */
+function formatWindowRange(w: LoveWindow, locale: Locale): string {
+  const fmt = new Intl.DateTimeFormat(LOCALE_LANGUAGE_TAGS[locale], { year: 'numeric', month: 'long' })
+  return fmt.formatRange(w.start, w.end)
+}

@@ -2,21 +2,18 @@
 
 import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
 import { useLocale, useTranslations } from 'next-intl'
-import { useEffect, useReducer, useRef, useState } from 'react'
+import { useReducer, useRef, useState } from 'react'
+
 import { computeAspects, elementCounts, signOfLon } from '@/chart/astrology'
 import { DEFAULT_CHART, ELEMENT_IDS } from '@/chart/data'
-import { computeBirthChartAnalysis, type UnknownBirthTimeAnalysis } from '@/chart/ephemeris'
-import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from '@/chart/types'
+import type { AngleId, ChartAspect, HouseNumber, PlanetId, SignId } from '@/chart/types'
 import { HeroTitle } from '@/components/HeroTitle'
 import SharedLinkError from '@/components/SharedLinkError'
 import Starfield from '@/components/Starfield'
-import { loadInterpretations } from '@/content/interpretations'
-import type { Interpretations } from '@/content/interpretations/types'
 import { useBirthSource } from '@/hooks/useBirthSource'
-import { track } from '@/lib/analytics/browser'
 import type { StoredBirth } from '@/lib/birth-storage'
-import { toBirthInput } from '@/lib/birth-storage'
 import { findCity } from '@/lib/cities'
+
 import AspectSection from './AspectSection'
 import Big3Card from './Big3Card'
 import BirthForm from './BirthForm'
@@ -33,43 +30,13 @@ import {
   selectionKey,
   selectionReducer,
 } from './selection'
+import { useNatalChart } from './useNatalChart'
 import ChartWheel from './wheel/ChartWheel'
 
-/** Chart and its locale's reading tables arrive together — one reveal, no half-loaded panel. */
-type ChartData = {
-  chart: NatalChart
-  interpretations: Interpretations
-  unknownTime: UnknownBirthTimeAnalysis | null
-}
-
-type ChartState =
-  | { status: 'idle' | 'computing' | 'failed'; runId: number }
-  | { status: 'ready'; data: ChartData; runId: number }
-
-const INITIAL_CHART_STATE: ChartState = { status: 'idle', runId: 0 }
-
-/** "2000년 1월 1일 · 12:00 · 서울" — date and city localized, time literal (or "unknown"). */
-function formatBirthSummary(birth: StoredBirth, locale: Locale, timeUnknownLabel: string): string {
-  const tag = LOCALE_LANGUAGE_TAGS[locale]
-
-  const date = new Intl.DateTimeFormat(tag, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(`${birth.date}T12:00:00`))
-
-  const time = birth.timeKnown ? birth.time : timeUnknownLabel
-  const city = findCity(birth.cityKey).name
-
-  return `${date} · ${time} · ${city}`
-}
-
 export default function Constellation() {
-  const [chartState, setChartState] = useState<ChartState>(INITIAL_CHART_STATE)
   const [selection, dispatchSelection] = useReducer(selectionReducer, null)
   const [editing, setEditing] = useState(false)
   const wheelRef = useRef<HTMLDivElement>(null)
-  const submittedRef = useRef(false)
   const t = useTranslations('Constellation')
   const ts = useTranslations('Shared')
   const locale = useLocale()
@@ -77,10 +44,15 @@ export default function Constellation() {
 
   const { birth, save, shared } = birthSource
   const sourceReady = birthSource.status === 'ready'
-  const data = chartState.status === 'ready' ? chartState.data : null
-  const computing = chartState.status === 'computing'
-  const failed = chartState.status === 'failed'
-  const runId = chartState.runId
+
+  const chart = useNatalChart({
+    birth,
+    editing,
+    onReset: () => dispatchSelection({ type: 'reset' }),
+    sourceReady,
+  })
+
+  const { computing, data, failed, runId } = chart
   const revealed = data !== null
 
   // An auto-reveal birth computes its chart in an effect that runs a frame after
@@ -104,9 +76,11 @@ export default function Constellation() {
   const moonLongitudeRange = unknownTime?.moonLongitudeRange ?? null
   const displayedMoonSigns = moonSigns ?? [signOfLon(moonLon)]
   const moonSignUncertain = displayedMoonSigns.length > 1
+
   const balancePlanets = moonSignUncertain
     ? activeChart.planets.filter((planet) => planet.id !== 'moon')
     : activeChart.planets
+
   const counts = elementCounts(balancePlanets)
   const dominant = ELEMENT_IDS.reduce((best, id) => (counts[id] > counts[best] ? id : best), ELEMENT_IDS[0])
   const risingSign = ascendant !== null ? signOfLon(ascendant) : null
@@ -117,7 +91,7 @@ export default function Constellation() {
   }
 
   function handleSubmit(nextBirth: StoredBirth, persistent: boolean) {
-    submittedRef.current = true
+    chart.markSubmitted()
     save(nextBirth, persistent)
     setEditing(false)
   }
@@ -126,7 +100,7 @@ export default function Constellation() {
     window.scrollTo(0, 0)
     setEditing(true)
     dispatchSelection({ type: 'reset' })
-    setChartState((previous) => ({ status: 'idle', runId: previous.runId }))
+    chart.reset()
   }
 
   function scrollToWheel() {
@@ -191,6 +165,7 @@ export default function Constellation() {
     }
 
     const body = activeChart.planets.find((p) => p.id === selection.id)
+
     const selectedSign =
       selection.id === 'moon' && moonSigns
         ? moonSigns.map((sign) => t(`signs.${sign}`)).join(' / ')
@@ -203,67 +178,6 @@ export default function Constellation() {
       sign: selectedSign,
     })
   }
-
-  // Normal views resolve the visitor's profile from the layout-level provider;
-  // shared views receive an isolated read-only birth from the share route. The
-  // two sources never write into each other.
-  useEffect(() => {
-    let cancelled = false
-
-    if (!sourceReady || editing || !birth) {
-      if (sourceReady) {
-        dispatchSelection({ type: 'reset' })
-        setChartState((previous) => ({ status: 'idle', runId: previous.runId }))
-      }
-      return () => {
-        cancelled = true
-      }
-    }
-
-    const fromSubmit = submittedRef.current
-    const sourceBirth = birth
-    submittedRef.current = false
-
-    async function compute() {
-      setChartState((previous) => ({ status: 'computing', runId: previous.runId }))
-
-      try {
-        const input = toBirthInput(sourceBirth)
-        const [analysis, interpretations] = await Promise.all([
-          computeBirthChartAnalysis(input),
-          loadInterpretations(locale),
-        ])
-
-        if (cancelled) {
-          return
-        }
-
-        const { chart, unknownTime } = analysis
-
-        dispatchSelection({ type: 'reset' })
-
-        setChartState((previous) => ({
-          status: 'ready',
-          data: { chart, interpretations, unknownTime },
-          runId: previous.runId + 1,
-        }))
-
-        if (fromSubmit) {
-          track('generate_chart')
-        }
-      } catch {
-        if (!cancelled) {
-          setChartState((previous) => ({ status: 'failed', runId: previous.runId }))
-        }
-      }
-    }
-
-    compute()
-
-    return () => {
-      cancelled = true
-    }
-  }, [birth, editing, locale, sourceReady])
 
   if (birthSource.status === 'invalid') {
     return <SharedLinkError />
@@ -447,4 +361,20 @@ export default function Constellation() {
       </div>
     </main>
   )
+}
+
+/** "2000년 1월 1일 · 12:00 · 서울" — date and city localized, time literal (or "unknown"). */
+function formatBirthSummary(birth: StoredBirth, locale: Locale, timeUnknownLabel: string): string {
+  const tag = LOCALE_LANGUAGE_TAGS[locale]
+
+  const date = new Intl.DateTimeFormat(tag, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(`${birth.date}T12:00:00`))
+
+  const time = birth.timeKnown ? birth.time : timeUnknownLabel
+  const city = findCity(birth.cityKey).name
+
+  return `${date} · ${time} · ${city}`
 }
