@@ -18,7 +18,7 @@ export const FAQ = {
       },
       {
         q: '태어난 시각을 모르면 별자리를 볼 수 없나요?',
-        a: '태양 별자리와 대부분의 행성 배치는 시각 없이도 확인할 수 있어요. 다만 달 별자리와 상승 별자리는 시각에 따라 크게 바뀌어서 정확한 출생 시각을 넣으면 훨씬 또렷하게 읽혀요.',
+        a: '태양 별자리와 대부분의 행성 배치는 시각 없이도 확인할 수 있어요. 달은 태어난 날의 처음과 끝 위치를 계산해, 별자리가 하나로 정해지는지와 두 별자리 사이를 이동했는지 보여 줘요. 정확한 달 도수와 각, 상승 별자리, 하우스, 차트 모양은 출생 시각을 알 때만 읽어요.',
       },
       {
         q: '태양 별자리랑 네이탈 차트는 뭐가 다른가요?',
@@ -32,7 +32,7 @@ export const FAQ = {
     today: [
       {
         q: '오늘의 별자리 운세는 어떻게 계산되나요?',
-        a: '오늘 하늘을 지나는 행성의 위치를 내 탄생 별자리에 겹쳐 흐름을 읽어요. 행운 음식과 색상은 오늘 달의 원소·달의 위상·주요 각의 분위기를 조합하고, 차트가 있으면 태어난 날의 달과 금성까지 더해 골라요.',
+        a: '오늘 하늘을 지나는 행성의 위치를 내 탄생 별자리에 겹쳐 흐름을 읽어요. 행운 음식과 색상은 오늘 달의 원소·달의 위상·주요 각의 분위기를 조합하고, 차트가 있으면 태어난 날의 달 별자리와 금성까지 더해 골라요.',
       },
       {
         q: '수성 역행 같은 행성 역행은 무슨 뜻인가요?',
@@ -76,7 +76,7 @@ export const FAQ = {
       },
       {
         q: 'Can I read my chart without my birth time?',
-        a: 'Your Sun sign and most planet placements show up fine without a time. But your Moon and Rising signs shift quickly through the day, so an exact birth time makes them far more accurate.',
+        a: 'Your Sun sign and most planet placements still show without a time. We calculate the Moon at the beginning and end of your birth date to show whether one sign is certain or two remain possible. Exact Moon degrees and aspects, the Rising sign, houses, and chart shape appear only when the birth time is known.',
       },
       {
         q: 'How is a Sun sign different from a birth chart?',
@@ -90,7 +90,7 @@ export const FAQ = {
     today: [
       {
         q: "How is today's horoscope calculated?",
-        a: "We overlay the planets moving through today's sky onto your birth chart. Lucky food and color combine the Moon’s element, phase, and major aspect tone, then add your natal Moon and Venus when a chart is available.",
+        a: "We overlay the planets moving through today's sky onto your birth chart. Lucky food and color combine the Moon’s element, phase, and major aspect tone, then add Venus and your natal Moon sign when that sign can be confirmed.",
       },
       {
         q: 'What does a retrograde like Mercury retrograde mean?',
@@ -134,7 +134,7 @@ export const FAQ = {
       },
       {
         q: '生まれた時刻がわからなくても見られますか？',
-        a: '太陽星座やほとんどの惑星の配置は時刻がなくても確認できます。ただ月星座と上昇星座は一日の中で大きく変わるため、正確な出生時刻を入れるとぐっと鮮明になります。',
+        a: '太陽星座やほとんどの惑星の配置は時刻がなくても確認できます。月は出生日の始まりと終わりの位置を計算し、ひとつの星座に確定するか、二つの星座が候補になるかを示します。月の正確な度数とアスペクト、上昇星座、ハウス、チャート形状は出生時刻が分かる場合だけ読みます。',
       },
       {
         q: '太陽星座と出生図はどう違いますか？',
@@ -148,7 +148,7 @@ export const FAQ = {
     today: [
       {
         q: '今日の星座占いはどう計算されますか？',
-        a: '今日の空を通る惑星の位置を出生図に重ねて流れを読みます。ラッキーフードとカラーは、今日の月の元素・月相・主要アスペクトの調子を組み合わせ、出生図があれば生まれた日の月と金星も加えて選びます。',
+        a: '今日の空を通る惑星の位置を出生図に重ねて流れを読みます。ラッキーフードとカラーは、今日の月の元素・月相・主要アスペクトの調子を組み合わせ、出生図があれば、確定できる出生図の月星座と金星も加えて選びます。',
       },
       {
         q: '水星逆行などの惑星の逆行とは何ですか？',
@@ -192,7 +192,7 @@ export const FAQ = {
       },
       {
         q: '不知道出生时间也能看吗？',
-        a: '太阳星座和大多数行星位置没有时间也能查看。不过月亮星座和上升星座在一天中变化很快，填入准确的出生时间会清晰得多。',
+        a: '太阳星座和大多数行星位置没有时间也能查看。我们会计算出生当天开始与结束时的月亮位置，显示月亮星座是否可以确定，或仍有两个可能。月亮的准确度数与相位、上升星座、宫位和盘型仅在出生时间明确时解读。',
       },
       {
         q: '太阳星座和出生星盘有什么区别？',
@@ -206,7 +206,7 @@ export const FAQ = {
     today: [
       {
         q: '今天的星座运势是怎么计算的？',
-        a: '我们把今天运行的行星位置叠加到你的本命盘上解读流势。幸运食物与幸运色会综合今日月亮的元素、月相和主要相位氛围；有本命盘时，还会加入你的本命月亮与金星。',
+        a: '我们把今天运行的行星位置叠加到你的本命盘上解读流势。幸运食物与幸运色会综合今日月亮的元素、月相和主要相位氛围；有本命盘时，还会加入可确定的本命月亮星座与金星。',
       },
       {
         q: '水星逆行之类的行星逆行是什么意思？',

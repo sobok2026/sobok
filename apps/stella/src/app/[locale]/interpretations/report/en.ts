@@ -5,7 +5,7 @@ export const report: ReportContent = {
   subtitle:
     'From the placements that ring loudest in this chart to love, work and the inner world — your sky, woven into one story.',
   noTimeNote:
-    'Without a birth time, we read every layer except the Ascendant and houses. Learn the time and the deeper layers open too.',
+    'Without a birth time, the Ascendant and houses are left out. The Moon is checked across the date, and its aspects are excluded.',
   chapterTitles: {
     core: 'Your Core Combination',
     signature: 'The Loudest Voice in This Chart',

@@ -29,6 +29,11 @@ export type ReportChapter = {
   paragraphs: ReportParagraph[]
 }
 
+export type ReportOptions = {
+  /** Suppress Moon-sign-dependent copy when the Moon crossed a sign on a date-only chart. */
+  moonSignUncertain?: boolean
+}
+
 /** How many signature features headline the report. */
 const SIGNATURE_COUNT = 3
 /** Features below this score don't make the signature chapter (keeps flat charts honest). */
@@ -41,9 +46,30 @@ export function buildReport(
   aspects: readonly ChartAspect[],
   interp: Interpretations,
   t: Translator,
+  options: ReportOptions = {},
 ): ReportChapter[] {
   const used = new Set<string>()
-  const features = computeSignature(chart, aspects)
+
+  const reliablePlanets = options.moonSignUncertain
+    ? chart.planets.filter((planet) => planet.id !== 'moon')
+    : chart.planets
+
+  const features = computeSignature(chart, aspects).filter((feature) => {
+    if (!options.moonSignUncertain) {
+      return true
+    }
+
+    if (feature.kind === 'aspect') {
+      return feature.aspect.a !== 'moon' && feature.aspect.b !== 'moon'
+    }
+
+    if (feature.kind === 'stellium') {
+      return !feature.stellium.planets.includes('moon')
+    }
+
+    return feature.planet !== 'moon'
+  })
+
   const rankedAspects = features.filter((f): f is Extract<SignatureFeature, { kind: 'aspect' }> => f.kind === 'aspect')
 
   const { report } = interp
@@ -66,6 +92,10 @@ export function buildReport(
 
   /** Sign fragment for a body, retro-aware like the detail panel. Null when already told. */
   function planetParagraph(id: PlanetId, kicker?: string): ReportParagraph | null {
+    if (id === 'moon' && options.moonSignUncertain) {
+      return null
+    }
+
     const p = position(id)
 
     if (!p) {
@@ -235,7 +265,7 @@ export function buildReport(
     const sunPos = position('sun')
     const moonPos = position('moon')
 
-    if (sunPos && moonPos) {
+    if (sunPos && moonPos && !options.moonSignUncertain) {
       const params = { sun: signName(signOfLon(sunPos.lon)), moon: signName(signOfLon(moonPos.lon)) }
 
       paragraphs.push(
@@ -433,7 +463,7 @@ export function buildReport(
   }
 
   function closing(): ReportChapter {
-    const counts = elementCounts(chart.planets)
+    const counts = elementCounts(reliablePlanets)
     const dominant = ELEMENT_IDS.reduce((best, id) => (counts[id] > counts[best] ? id : best), ELEMENT_IDS[0])
 
     return {

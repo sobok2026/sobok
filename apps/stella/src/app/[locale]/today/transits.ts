@@ -24,6 +24,11 @@ export type PersonalToday = {
   slowTransit: SlowContact | null
 }
 
+export type PersonalTodayOptions = {
+  /** False for date-only births: the noon Moon longitude is not an exact natal point. */
+  natalMoonExact?: boolean
+}
+
 const MOON_ORB = 4
 const SLOW_ORB = 2.5
 
@@ -31,11 +36,20 @@ function natalLon(natal: NatalChart, id: string): number | null {
   return natal.planets.find((p) => p.id === id)?.lon ?? null
 }
 
-export function computePersonalToday(sky: readonly PlanetPosition[], natal: NatalChart): PersonalToday {
+export function computePersonalToday(
+  sky: readonly PlanetPosition[],
+  natal: NatalChart,
+  options: PersonalTodayOptions = {},
+): PersonalToday {
   const moonLon = sky.find((p) => p.id === 'moon')?.lon ?? 0
   const moonContacts: MoonContact[] = []
+  const natalMoonExact = options.natalMoonExact ?? true
 
   for (const target of MOON_TARGETS) {
+    if (target === 'moon' && !natalMoonExact) {
+      continue
+    }
+
     const lon = natalLon(natal, target)
 
     if (lon === null) {
@@ -58,7 +72,7 @@ export function computePersonalToday(sky: readonly PlanetPosition[], natal: Nata
   if (natalSun !== null) {
     slowPoints.push({ point: 'sun', lon: natalSun })
   }
-  if (natalMoon !== null) {
+  if (natalMoonExact && natalMoon !== null) {
     slowPoints.push({ point: 'moon', lon: natalMoon })
   }
   if (natal.ascendant !== null) {

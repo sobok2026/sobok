@@ -3,7 +3,7 @@
 // and resting styles come from one source in both outputs.
 
 import { elementOfSign, signOfLon } from '../chart/astrology'
-import { ASPECT_STYLE, ELEMENT_COLORS, SIGNS } from '../chart/data'
+import { ASPECT_STYLE, ELEMENT_COLORS, PLANET_GLYPHS, SIGNS } from '../chart/data'
 import { annularSector, type PlacedPlanet, type Point, placePlanets, polar, RADIUS, VIEW } from '../chart/geometry'
 import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from '../chart/types'
 
@@ -85,6 +85,14 @@ export const WHEEL_STYLE = {
     retrogradeStrokeWidth: 0.8,
     retrogradeGlyphSize: 7,
   },
+  moonRange: {
+    fillOpacity: 0.28,
+    selectedFillOpacity: 0.58,
+    endpointOpacity: 0.75,
+    endpointStrokeWidth: 1.2,
+    glyphSize: 10,
+    mixedGlyphColor: 'rgba(255,255,255,0.92)',
+  },
 } as const
 
 export type WheelRing = (typeof WHEEL_STYLE.rings)[number]
@@ -128,15 +136,44 @@ export type WheelAspect = {
 
 export type WheelPlanet = PlacedPlanet & { color: string; sign: SignId }
 
+export type WheelMoonRangeSegment = {
+  color: string
+  key: string
+  sectorPath: string
+}
+
+type WheelMoonRangeTick = {
+  color: string
+  inner: Point
+  outer: Point
+}
+
+export type WheelMoonRange = {
+  endSign: SignId
+  endTick: WheelMoonRangeTick
+  glyph: string
+  glyphColor: string
+  glyphPoint: Point
+  hitPath: string
+  segments: readonly WheelMoonRangeSegment[]
+  startSign: SignId
+  startTick: WheelMoonRangeTick
+}
+
 export type WheelScene = {
   angles: readonly WheelAngle[]
   aspects: readonly WheelAspect[]
   houses: readonly WheelHouse[]
+  moonRange: WheelMoonRange | null
   planets: readonly WheelPlanet[]
   pointById: ReadonlyMap<PlanetId, Point>
   rings: readonly WheelRing[]
   signs: readonly WheelSign[]
   viewBox: string
+}
+
+export type WheelSceneOptions = {
+  moonLongitudeRange?: readonly [start: number, end: number] | null
 }
 
 /** Smallest angle (deg) between two ecliptic longitudes. */
@@ -179,10 +216,70 @@ function buildAngles(ascendant: number, midheaven: number | null): WheelAngle[] 
   })
 }
 
+function buildMoonRange(range: readonly [start: number, end: number], anchor: number): WheelMoonRange {
+  const [start, end] = range
+  const span = normalizeLongitude(end - start)
+  const endUnwrapped = start + span
+  const middle = normalizeLongitude(start + span / 2)
+  const rangeInner = RADIUS.trueMark - 4
+  const rangeOuter = RADIUS.trueMark + 4
+  const startSign = signOfLon(start)
+  const endSign = signOfLon(end)
+  const startColor = ELEMENT_COLORS[elementOfSign(startSign)]
+  const endColor = ELEMENT_COLORS[elementOfSign(endSign)]
+  const segments: WheelMoonRangeSegment[] = []
+  let segmentStart = start
+
+  // The Moon normally crosses at most one sign boundary per day, but walking
+  // every boundary keeps the scene correct for any wider future date range.
+  while (segmentStart < endUnwrapped) {
+    const sign = signOfLon(segmentStart)
+    const nextBoundary = (Math.floor(segmentStart / 30) + 1) * 30
+    const segmentEnd = Math.min(endUnwrapped, nextBoundary)
+
+    if (segmentEnd <= segmentStart) {
+      break
+    }
+
+    segments.push({
+      color: ELEMENT_COLORS[elementOfSign(sign)],
+      key: `${sign}-${segmentStart}`,
+      sectorPath: annularSector(segmentStart, segmentEnd, rangeOuter, rangeInner, anchor),
+    })
+    segmentStart = segmentEnd
+  }
+
+  return {
+    endSign,
+    endTick: {
+      color: endColor,
+      inner: polar(end, rangeInner - 2, anchor),
+      outer: polar(end, rangeOuter + 2, anchor),
+    },
+    glyph: PLANET_GLYPHS.moon,
+    glyphColor: startSign === endSign ? startColor : WHEEL_STYLE.moonRange.mixedGlyphColor,
+    glyphPoint: polar(middle, RADIUS.trueMark, anchor),
+    hitPath: annularSector(start - 3, end + 3, rangeOuter + 5, rangeInner - 5, anchor),
+    segments,
+    startSign,
+    startTick: {
+      color: startColor,
+      inner: polar(start, rangeInner - 2, anchor),
+      outer: polar(start, rangeOuter + 2, anchor),
+    },
+  }
+}
+
 /** Build the one canonical, fully revealed and unselected natal-wheel scene. */
-export function buildWheelScene(chart: NatalChart, aspects: readonly ChartAspect[]): WheelScene {
+export function buildWheelScene(
+  chart: NatalChart,
+  aspects: readonly ChartAspect[],
+  options: WheelSceneOptions = {},
+): WheelScene {
   const anchor = chart.ascendant ?? 0
-  const placed = placePlanets(chart.planets, anchor)
+  const moonLongitudeRange = options.moonLongitudeRange ?? null
+  const visiblePlanets = moonLongitudeRange ? chart.planets.filter((planet) => planet.id !== 'moon') : chart.planets
+  const placed = placePlanets(visiblePlanets, anchor)
   const pointById = new Map<PlanetId, Point>(placed.map((entry) => [entry.planet.id, entry.point]))
 
   const signs = SIGNS.map((sign, index): WheelSign => {
@@ -264,6 +361,7 @@ export function buildWheelScene(chart: NatalChart, aspects: readonly ChartAspect
     angles,
     aspects: aspectLines,
     houses,
+    moonRange: moonLongitudeRange ? buildMoonRange(moonLongitudeRange, anchor) : null,
     planets,
     pointById,
     rings: WHEEL_STYLE.rings,

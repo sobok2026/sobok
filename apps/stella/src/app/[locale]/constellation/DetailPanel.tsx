@@ -14,7 +14,7 @@ import {
 } from '../chart/astrology'
 import { ASPECT_STYLE, ELEMENT_COLORS, PLANET_GLYPHS, SIGNS } from '../chart/data'
 import { SIGN_RULERS } from '../chart/signature'
-import type { NatalChart } from '../chart/types'
+import type { NatalChart, SignId } from '../chart/types'
 import styles from '../constellation.module.css'
 import type { Interpretations } from '../interpretations/types'
 import { aspectTone, houseText, orbTier, pairKey } from '../interpretations/types'
@@ -25,12 +25,20 @@ export interface DetailPanelProps {
   ascendant: number | null
   chart: NatalChart
   interpretations: Interpretations
+  moonSigns: readonly SignId[] | null
   onClose: () => void
   selection: Selection
 }
 
 /** The reading card under the wheel — one layout per selection kind (sign / aspect / house / planet). */
-export default function DetailPanel({ ascendant, chart, interpretations, onClose, selection }: DetailPanelProps) {
+export default function DetailPanel({
+  ascendant,
+  chart,
+  interpretations,
+  moonSigns,
+  onClose,
+  selection,
+}: DetailPanelProps) {
   const t = useTranslations('Constellation')
   const [showDetail, setShowDetail] = useState(false)
 
@@ -50,7 +58,14 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
     const glyph = SIGNS.find((s) => s.id === signId)?.glyph ?? '★'
     const modality = modalityOfSign(signId)
     const ruler = SIGN_RULERS[signId]
-    const residents = chart.planets.filter((p) => signOfLon(p.lon) === signId)
+
+    const residents = chart.planets.filter((planet) => {
+      if (planet.id === 'moon' && moonSigns) {
+        return moonSigns.includes(signId)
+      }
+
+      return signOfLon(planet.lon) === signId
+    })
 
     return (
       <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
@@ -230,7 +245,49 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
     return null
   }
 
-  const sign = signOfLon(planet.lon)
+  if (planet.id === 'moon' && moonSigns?.length === 2) {
+    return (
+      <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
+        <CloseButton label={t('panel.close')} onClose={onClose} />
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 items-center justify-center rounded-full border border-accent text-xl text-accent">
+            {glyphText(PLANET_GLYPHS.moon)}
+          </span>
+          <div className="min-w-0">
+            <p className="text-base font-bold text-foreground">{t('planets.moon')}</p>
+            <p className="text-xs text-foreground-subtle">
+              {t(`signs.${moonSigns[0]}`)} ↔ {t(`signs.${moonSigns[1]}`)}
+            </p>
+          </div>
+        </div>
+        <p className="mt-3 rounded-xl bg-accent/10 px-3 py-2.5 text-xs leading-relaxed text-foreground-muted">
+          {t('overview.moonRange', {
+            from: t(`signs.${moonSigns[0]}`),
+            to: t(`signs.${moonSigns[1]}`),
+          })}
+        </p>
+        <div className="mt-3 space-y-3">
+          {moonSigns.map((moonSign) => {
+            const moonColor = ELEMENT_COLORS[elementOfSign(moonSign)]
+
+            return (
+              <div className="rounded-xl border bg-surface px-3 py-3" key={moonSign}>
+                <p className="text-xs font-semibold" style={{ color: moonColor }}>
+                  {t(`signs.${moonSign}`)} {t('planets.moon')}
+                </p>
+                <p className="mt-1.5 text-sm leading-relaxed text-foreground-secondary">
+                  {interpretations.planets.moon[moonSign]}
+                </p>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
+  const dateOnlyMoon = planet.id === 'moon' && moonSigns !== null
+  const sign = dateOnlyMoon ? moonSigns[0] : signOfLon(planet.lon)
   const element = elementOfSign(sign)
   const color = ELEMENT_COLORS[element]
   const dm = degreeMinuteInSign(planet.lon)
@@ -269,25 +326,34 @@ export default function DetailPanel({ ascendant, chart, interpretations, onClose
         </div>
       </div>
       <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">{reading}</p>
+      {dateOnlyMoon && (
+        <p className="mt-3 rounded-xl bg-accent/10 px-3 py-2.5 text-xs leading-relaxed text-foreground-muted">
+          {t('overview.moonStable')}
+        </p>
+      )}
       <div className="mt-3 flex flex-wrap gap-2">
         <Chip color={color} label={`${t('panel.elementLabel')}: ${t(`elements.${element}`)}`} />
         <Chip color="var(--color-accent)" label={`${t('panel.keywordLabel')}: ${t(`signKeywords.${sign}`)}`} />
       </div>
-      <button
-        className="mt-3 text-[11px] text-foreground-subtle underline-offset-2 transition hover:text-foreground-secondary hover:underline"
-        onClick={() => setShowDetail((v) => !v)}
-        type="button"
-      >
-        {showDetail ? t('panel.hideDetail') : t('panel.showDetail')}
-      </button>
-      {showDetail && (
-        <div className="mt-2 rounded-xl bg-surface px-3 py-2.5">
-          <p className="text-xs font-medium text-foreground-secondary">
-            {t(`signs.${sign}`)} {dm.degree}°{String(dm.minute).padStart(2, '0')}′
-            {house !== null && <> · {t('panel.house', { n: house })}</>} ·{' '}
-            {planet.retrograde ? t('panel.retrograde') : t('panel.direct')}
-          </p>
-        </div>
+      {!dateOnlyMoon && (
+        <>
+          <button
+            className="mt-3 text-[11px] text-foreground-subtle underline-offset-2 transition hover:text-foreground-secondary hover:underline"
+            onClick={() => setShowDetail((v) => !v)}
+            type="button"
+          >
+            {showDetail ? t('panel.hideDetail') : t('panel.showDetail')}
+          </button>
+          {showDetail && (
+            <div className="mt-2 rounded-xl bg-surface px-3 py-2.5">
+              <p className="text-xs font-medium text-foreground-secondary">
+                {t(`signs.${sign}`)} {dm.degree}°{String(dm.minute).padStart(2, '0')}′
+                {house !== null && <> · {t('panel.house', { n: house })}</>} ·{' '}
+                {planet.retrograde ? t('panel.retrograde') : t('panel.direct')}
+              </p>
+            </div>
+          )}
+        </>
       )}
     </div>
   )

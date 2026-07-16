@@ -12,7 +12,7 @@ import { toBirthInput } from '../birth-storage'
 import { computeAspects } from '../chart/astrology'
 import type { SignId } from '../chart/types'
 import styles from '../constellation.module.css'
-import { computeChart } from '../ephemeris'
+import { computeBirthChartAnalysis } from '../ephemeris'
 import { HeroTitle } from '../HeroTitle'
 import { loadInterpretations } from '../interpretations'
 import type { Interpretations } from '../interpretations/types'
@@ -110,8 +110,8 @@ export default function LoveFlow() {
         let windows: LoveWindow[] = []
 
         if (birth) {
-          const chart = await computeChart(toBirthInput(birth))
-          profile = deriveLoveProfile(chart, computeAspects(chart.planets))
+          const { chart, unknownTime } = await computeBirthChartAnalysis(toBirthInput(birth))
+          profile = deriveLoveProfile(chart, computeAspects(chart.planets), unknownTime?.moonSigns)
           windows = await scanLoveTransits(chart, asOf)
         }
 
@@ -224,6 +224,7 @@ function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
   const venusText = venusRetroText ?? interpretations.planets.venus[profile.venusSign]
   const aspectText = resolveAspectText(profile, interpretations)
   const persona = readings.persona[profile.descendantSign]
+  const stableMoonSign = profile.moonSigns.length === 1 ? profile.moonSigns[0] : null
   const shownWindows = windows.slice(0, MAX_WINDOWS)
   const today = data.asOf
 
@@ -259,10 +260,26 @@ function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
           ) : (
             <p className="text-[11px] leading-relaxed text-foreground-faint">{t('magnetism.noRisingNote')}</p>
           )}
-          <Reading
-            label={t('magnetism.innerKicker', { sign: signName(profile.moonSign) })}
-            text={readings.inner[profile.moonSign]}
-          />
+          {stableMoonSign ? (
+            <>
+              <Reading
+                label={t('magnetism.innerKicker', { sign: signName(stableMoonSign) })}
+                text={readings.inner[stableMoonSign]}
+              />
+              {!timeKnown && (
+                <p className="text-[11px] leading-relaxed text-foreground-faint">
+                  {t('magnetism.moonDateNote', { sign: signName(stableMoonSign) })}
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="rounded-xl bg-accent/10 px-3 py-2.5 text-[11px] leading-relaxed text-foreground-subtle">
+              {t('magnetism.moonRangeNote', {
+                from: signName(profile.moonSigns[0]),
+                to: signName(profile.moonSigns[1]),
+              })}
+            </p>
+          )}
         </div>
       </section>
 

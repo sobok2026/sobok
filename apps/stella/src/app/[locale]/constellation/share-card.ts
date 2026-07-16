@@ -295,6 +295,50 @@ function paintWheel(
     )
   }
 
+  if (scene.moonRange) {
+    const range = scene.moonRange
+
+    for (const segment of range.segments) {
+      fillPath(ctx, segment.sectorPath, segment.color, WHEEL_STYLE.moonRange.fillOpacity)
+    }
+
+    line(
+      ctx,
+      range.startTick.inner,
+      range.startTick.outer,
+      range.startTick.color,
+      WHEEL_STYLE.moonRange.endpointStrokeWidth,
+      undefined,
+      WHEEL_STYLE.moonRange.endpointOpacity,
+      'round',
+    )
+    line(
+      ctx,
+      range.endTick.inner,
+      range.endTick.outer,
+      range.endTick.color,
+      WHEEL_STYLE.moonRange.endpointStrokeWidth,
+      undefined,
+      WHEEL_STYLE.moonRange.endpointOpacity,
+      'round',
+    )
+    ctx.save()
+    ctx.globalAlpha = 0.82
+    ctx.fillStyle = color.base
+    ctx.beginPath()
+    ctx.arc(range.glyphPoint.x, range.glyphPoint.y, 7, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.restore()
+    fillGlyph(
+      ctx,
+      range.glyph,
+      range.glyphPoint.x,
+      range.glyphPoint.y,
+      WHEEL_STYLE.moonRange.glyphSize,
+      range.glyphColor,
+    )
+  }
+
   for (const planet of scene.planets) {
     if (planet.connector) {
       line(
@@ -493,6 +537,7 @@ export async function createNatalShareCard(
   aspects: readonly ChartAspect[],
   content: ShareCardContent,
   fontFamily: string,
+  moonLongitudeRange: readonly [start: number, end: number] | null = null,
 ): Promise<Blob> {
   const canvas = document.createElement('canvas')
   canvas.width = CARD_W
@@ -505,7 +550,7 @@ export async function createNatalShareCard(
   }
 
   const color = readPalette()
-  const scene = buildWheelScene(chart, aspects)
+  const scene = buildWheelScene(chart, aspects, { moonLongitudeRange })
 
   paintBackground(ctx, color)
   paintWheel(ctx, scene, content.houseThemes, fontFamily, color)

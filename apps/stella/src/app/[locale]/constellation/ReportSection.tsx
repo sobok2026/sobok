@@ -15,10 +15,12 @@ export default function ReportSection({
   aspects,
   chart,
   interpretations,
+  moonSignUncertain = false,
 }: {
   aspects: ChartAspect[]
   chart: NatalChart
   interpretations: Interpretations
+  moonSignUncertain?: boolean
 }) {
   const t = useTranslations('Constellation')
   const locale = useLocale()
@@ -26,13 +28,13 @@ export default function ReportSection({
 
   // report.ts is decoupled from next-intl (its own loose Translator); the typed
   // `t` only supplies the name vocabulary, so hand it across the seam as that type.
-  const chapters = buildReport(chart, aspects, interpretations, t as Translator)
+  const chapters = buildReport(chart, aspects, interpretations, t as Translator, { moonSignUncertain })
 
   return (
     <section className="w-full">
       <header className="text-center">
         <h2 className="text-lg font-bold text-foreground">{report.title}</h2>
-        <p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-foreground-subtle">{report.subtitle}</p>
+        <p className="mx-auto mt-1 text-xs leading-relaxed text-foreground-subtle">{report.subtitle}</p>
         {chart.ascendant === null && <p className="mt-2 text-[11px] text-foreground-faint">{report.noTimeNote}</p>}
       </header>
       <div className="mt-4 space-y-4">

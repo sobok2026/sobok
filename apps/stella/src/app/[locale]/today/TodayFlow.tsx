@@ -13,7 +13,7 @@ import { elementOfSign } from '../chart/astrology'
 import { ELEMENT_COLORS, PLANET_GLYPHS } from '../chart/data'
 import type { ElementId, NatalChart } from '../chart/types'
 import styles from '../constellation.module.css'
-import { computeChart } from '../ephemeris'
+import { computeBirthChartAnalysis, type UnknownBirthTimeAnalysis } from '../ephemeris'
 import { HeroTitle } from '../HeroTitle'
 import { aspectTone } from '../interpretations/types'
 import SharedLinkError from '../SharedLinkError'
@@ -38,6 +38,7 @@ type Data = {
   sky: SkyToday
   readings: TodayReadings
   natal: NatalChart | null
+  unknownTime: UnknownBirthTimeAnalysis | null
   personal: PersonalToday | null
   lucky: LuckyRecommendations
 }
@@ -81,11 +82,14 @@ export default function TodayFlow() {
         ])
 
         let natal: NatalChart | null = null
+        let unknownTime: UnknownBirthTimeAnalysis | null = null
         let personal: PersonalToday | null = null
 
         if (birth) {
-          natal = await computeChart(toBirthInput(birth))
-          personal = computePersonalToday(sky.positions, natal)
+          const analysis = await computeBirthChartAnalysis(toBirthInput(birth))
+          natal = analysis.chart
+          unknownTime = analysis.unknownTime
+          personal = computePersonalToday(sky.positions, natal, { natalMoonExact: birth.timeKnown })
         }
 
         const lucky = selectLuckyRecommendations({
@@ -94,6 +98,7 @@ export default function TodayFlow() {
           utcOffsetMinutes: anchor.utcOffsetMinutes,
           sky,
           natal,
+          natalMoonSigns: unknownTime?.moonSigns,
           personal,
           content: luckyContent,
         })
@@ -106,6 +111,7 @@ export default function TodayFlow() {
             sky,
             readings,
             natal,
+            unknownTime,
             personal,
             lucky,
           })
@@ -273,7 +279,7 @@ function TodayBody({ data, homeHref, onShare, shared }: TodayBodyProps) {
   const t = useTranslations('Today')
   const tc = useTranslations('Constellation')
   const ts = useTranslations('Shared')
-  const { sky, readings, personal, lucky, dateKey } = data
+  const { sky, readings, personal, lucky, dateKey, unknownTime } = data
   const element = elementOfSign(sky.moonSign)
   const color = ELEMENT_COLORS[element]
 
@@ -371,6 +377,11 @@ function TodayBody({ data, homeHref, onShare, shared }: TodayBodyProps) {
                   readings.points[personal.slowTransit.point],
                 )}
               />
+            )}
+            {unknownTime && (
+              <p className="rounded-xl bg-accent/10 px-3 py-2.5 text-[11px] leading-relaxed text-foreground-subtle">
+                {t('personal.noTimeNote')}
+              </p>
             )}
           </div>
         ) : (
@@ -493,7 +504,13 @@ function LuckySection({ lucky, sky }: { lucky: LuckyRecommendations; sky: SkyTod
     return () => observer.disconnect()
   }, [lucky.color.id, lucky.food.id, lucky.personalized])
 
-  const basis = t(lucky.personalized ? 'lucky.personalBasis' : 'lucky.collectiveBasis', {
+  const basisKey = lucky.personalized
+    ? lucky.usesNatalMoon
+      ? 'lucky.personalBasis'
+      : 'lucky.personalBasisWithoutMoon'
+    : 'lucky.collectiveBasis'
+
+  const basis = t(basisKey, {
     sign: tc(`signs.${sky.moonSign}`),
     phase: t(`phases.${sky.phase}`),
   })

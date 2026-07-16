@@ -63,6 +63,7 @@ export type LuckyColor = LuckyColorDefinition & LuckyCopy
 
 export type LuckyRecommendations = {
   personalized: boolean
+  usesNatalMoon: boolean
   food: LuckyFood
   color: LuckyColor
 }

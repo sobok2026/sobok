@@ -3,7 +3,8 @@ import type { ReportContent } from '../types'
 export const report: ReportContent = {
   title: '별이 들려주는 심층 이야기',
   subtitle: '이 차트에서 가장 크게 울리는 배치부터 사랑과 일 그리고 내면까지. 당신의 하늘을 한 편의 이야기로 엮었어요.',
-  noTimeNote: '태어난 시각이 없어서 상승궁과 하우스를 뺀 겹만 읽었어요. 시각을 알게 되면 더 깊은 겹까지 열려요.',
+  noTimeNote:
+    '태어난 시각이 없어 상승궁과 하우스는 뺐어요. 달은 그날의 이동 범위를 확인했고, 달과 연결된 각도 해석도 제외했어요.',
   chapterTitles: {
     core: '당신의 핵심 조합',
     signature: '이 차트에서 가장 큰 목소리',

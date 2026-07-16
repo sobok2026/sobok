@@ -4,8 +4,9 @@
 // accurate to well under an arcsecond, i.e. astrologically exact. The library is
 // dynamically imported so its weight only loads when a user actually submits.
 
+import { signOfLon } from './chart/astrology'
 import { PLANET_ORDER } from './chart/data'
-import type { ComputedPlanetId, NatalChart, PlanetPosition } from './chart/types'
+import type { ComputedPlanetId, NatalChart, PlanetPosition, SignId } from './chart/types'
 
 export type CityKey = string
 
@@ -19,6 +20,19 @@ export type BirthInput = {
   longitude: number // degrees, east positive
   timeZone: string // IANA zone, e.g. "Asia/Seoul"
   timeKnown: boolean
+}
+
+/** What can be stated safely about the Moon when only the local birth date is known. */
+export type UnknownBirthTimeAnalysis = {
+  /** One sign when the Moon stays put all day, otherwise the chronological start/end signs. */
+  moonSigns: readonly [SignId] | readonly [SignId, SignId]
+  /** Moon longitudes at 00:00 and 23:59 local time, used only as a visible uncertainty range. */
+  moonLongitudeRange: readonly [start: number, end: number]
+}
+
+export type BirthChartAnalysis = {
+  chart: NatalChart
+  unknownTime: UnknownBirthTimeAnalysis | null
 }
 
 const norm360 = (x: number) => ((x % 360) + 360) % 360
@@ -104,6 +118,47 @@ export async function computeLongitudeSeries<T extends ComputedPlanetId>(
 
     return lons
   })
+}
+
+/**
+ * Samples the beginning and end of the birth date in the birthplace's local time.
+ * The Moon moves far enough for its sign to depend on the missing time;
+ * the slower bodies remain represented by the noon chart returned by `computeChart`.
+ */
+export async function computeUnknownBirthTimeAnalysis(input: BirthInput): Promise<UnknownBirthTimeAnalysis> {
+  const [start, end] = await Promise.all([
+    computeChart({ ...input, hour: 0, minute: 0, timeKnown: true }),
+    computeChart({ ...input, hour: 23, minute: 59, timeKnown: true }),
+  ])
+
+  const startMoon = start.planets.find((planet) => planet.id === 'moon')
+  const endMoon = end.planets.find((planet) => planet.id === 'moon')
+
+  if (!startMoon || !endMoon) {
+    throw new Error('Moon position unavailable')
+  }
+
+  const startSign = signOfLon(startMoon.lon)
+  const endSign = signOfLon(endMoon.lon)
+
+  return {
+    moonSigns: startSign === endSign ? [startSign] : [startSign, endSign],
+    moonLongitudeRange: [startMoon.lon, endMoon.lon],
+  }
+}
+
+/**
+ * The one entry point for a saved birth across natal, today and love views.
+ * Date-only charts retain a noon chart for slow bodies, plus a separate Moon
+ * range that callers must use instead of treating the noon Moon as exact.
+ */
+export async function computeBirthChartAnalysis(input: BirthInput): Promise<BirthChartAnalysis> {
+  const [chart, unknownTime] = await Promise.all([
+    computeChart(input),
+    input.timeKnown ? Promise.resolve(null) : computeUnknownBirthTimeAnalysis(input),
+  ])
+
+  return { chart, unknownTime }
 }
 
 export async function computeChart(input: BirthInput): Promise<NatalChart> {

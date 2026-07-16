@@ -39,6 +39,8 @@ type SelectLuckyInput = {
   utcOffsetMinutes: number
   sky: SkyToday
   natal: NatalChart | null
+  /** Undefined when the exact birth time is known; one/two signs for a date-only birth. */
+  natalMoonSigns?: readonly SignId[]
   personal: PersonalToday | null
   content: LuckyContent
 }
@@ -48,14 +50,15 @@ export function selectLuckyRecommendations(input: SelectLuckyInput): LuckyRecomm
   const dayElement = elementOfSign(sky.moonSign)
   const energy = ENERGY_BY_PHASE[sky.phase]
   const tone = recommendationTone(personal?.moonContacts[0]?.tone ?? headlineTone(sky))
-  const profileKey = natalProfileKey(natal)
+  const natalMoonSign = resolveNatalMoonSign(natal, input.natalMoonSigns)
+  const profileKey = natalProfileKey(natal, natalMoonSign)
   const seedBase = ['lucky', dateKey, utcOffsetMinutes, sky.moonSign, sky.phase, profileKey].join(':')
 
   const food = pickBest(
     content.foods,
     `${seedBase}:${locale}:food`,
     dayElement,
-    natalElement(natal, 'moon'),
+    natalMoonSign ? elementOfSign(natalMoonSign) : null,
     energy,
     tone,
   )
@@ -70,6 +73,7 @@ export function selectLuckyRecommendations(input: SelectLuckyInput): LuckyRecomm
 
   return {
     personalized: natal !== null,
+    usesNatalMoon: natal !== null && natalMoonSign !== null,
     food,
     color: {
       ...colorDefinition,
@@ -149,13 +153,21 @@ function natalSign(natal: NatalChart | null, planet: PlanetId): SignId | null {
   return position ? signOfLon(position.lon) : null
 }
 
-function natalProfileKey(natal: NatalChart | null): string {
+function resolveNatalMoonSign(natal: NatalChart | null, dateOnlySigns: readonly SignId[] | undefined): SignId | null {
+  if (dateOnlySigns !== undefined) {
+    return dateOnlySigns.length === 1 ? dateOnlySigns[0] : null
+  }
+
+  return natalSign(natal, 'moon')
+}
+
+function natalProfileKey(natal: NatalChart | null, moonSign: SignId | null): string {
   if (!natal) {
     return 'collective'
   }
 
   const sun = natalSign(natal, 'sun') ?? 'unknown'
-  const moon = natalSign(natal, 'moon') ?? 'unknown'
+  const moon = moonSign ?? 'unknown'
   const venus = natalSign(natal, 'venus') ?? 'unknown'
   const rising = natal.ascendant === null ? 'unknown' : signOfLon(natal.ascendant)
 

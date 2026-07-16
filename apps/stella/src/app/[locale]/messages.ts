@@ -26,6 +26,8 @@ export const messages = {
         statusAspect: '{a}과 {b}의 {aspect} 관계',
         statusHouse: '{n}하우스 선택됨',
         statusAngle: '{name} 선택됨',
+        moonRange: '달의 하루 이동 범위, {from}에서 {to}',
+        moonRangeWithin: '달의 하루 이동 범위, {sign} 안에서 이동',
       },
       angleNames: {
         asc: '상승점',
@@ -45,7 +47,16 @@ export const messages = {
         risingLabel: '상승',
         sunHint: '가장 나다운 핵심',
         moonHint: '숨은 감정과 본능',
+        moonDateHint: '날짜 안에서 별자리 확정',
+        moonRangeHint: '그날 두 별자리 사이를 이동',
         risingHint: '세상에 보이는 첫인상',
+        risingUnknownHint: '태어난 시각이 필요해요',
+      },
+      overview: {
+        moonStable:
+          '하루 동안 달의 별자리는 바뀌지 않았어요. 별자리판은 달의 하루 이동 범위를 보여 주고 원소 구성에는 달을 포함하지만, 정확한 도수와 달의 각, 차트 모양은 해석에서 제외했어요.',
+        moonRange:
+          '그날 달이 {from}에서 {to}로 이동했어요. 별자리판에는 하루 이동 범위를 보여 주고 두 가능성을 함께 읽되, 달의 정확한 도수와 각, 원소 구성, 핵심 특징, 차트 모양에서는 달을 제외했어요.',
       },
       panel: {
         empty: '별을 눌러 보세요',
@@ -80,6 +91,7 @@ export const messages = {
         airDesc: '생각과 소통',
         waterDesc: '감정과 직관',
         dominant: '{element} 기운이 가장 강해요',
+        moonExcluded: '달이 두 별자리 사이를 이동한 날이라 원소 구성에서는 달을 제외했어요.',
       },
       modalities: {
         cardinal: '활동궁',
@@ -135,6 +147,7 @@ export const messages = {
       shapes: {
         title: '차트 모양',
         intro: '열 개의 별이 하늘에 흩어진 전체 그림이 당신의 큰 그릇을 보여 줘요.',
+        noTime: '정확한 달 위치가 필요한 차트 모양은 태어난 시각을 알 때만 보여 줘요.',
         name: {
           bundle: '번들',
           bowl: '보울',
@@ -174,7 +187,7 @@ export const messages = {
         dateLabel: '생년월일',
         timeLabel: '태어난 시각',
         timeUnknown: '태어난 시각을 몰라요',
-        timeUnknownHint: '시간을 모르면 달·상승 별자리가 정확하지 않을 수 있어요.',
+        timeUnknownHint: '달은 그날의 이동 범위로 확인하고, 상승 별자리와 하우스는 제외해요.',
         cityLabel: '태어난 지역',
         cityPlaceholder: '도시 검색 (예: 서울, Tokyo)',
         cityNoResults: '검색 결과가 없어요',
@@ -321,18 +334,21 @@ export const messages = {
       },
       retroChip: '{name} 역행 중',
       personal: {
-        title: '나의 오늘',
+        title: '오늘의 나',
         stageTitle: '오늘의 무대',
         highlightTitle: '오늘의 하이라이트',
         bigFlowTitle: '지금 지나가는 큰 흐름',
         emptyTitle: '내 별자리 기준으로 보면 더 자세해요',
         emptyHint: '생년월일시를 입력하면 오늘의 하늘이 내 차트의 어디를 지나는지 읽어 드려요.',
         cta: '내 차트 만들기',
+        noTimeNote:
+          '태어난 시각을 몰라 오늘의 무대와 본명 달의 정확한 각은 제외하고, 시각과 무관하게 확정되는 행성 흐름만 읽었어요.',
       },
       lucky: {
         title: '오늘의 작은 행운',
         collectiveBasis: '오늘 {sign}의 달과 {phase}의 리듬에 맞춰 골랐어요.',
         personalBasis: '오늘 {sign}의 달에 내 차트의 달과 금성의 결을 더해 골랐어요.',
+        personalBasisWithoutMoon: '오늘 {sign}의 달에 내 차트에서 확정되는 금성의 결을 더해 골랐어요.',
         personalized: '내 별자리 기준',
         foodLabel: '행운 음식',
         colorLabel: '행운 색상',
@@ -387,6 +403,9 @@ export const messages = {
         looksKicker: '첫인상 · {sign} 상승궁',
         innerKicker: '마음의 결 · {sign} 달',
         noRisingNote: '태어난 시각을 알면 첫인상을 그리는 상승궁까지 읽어 드려요.',
+        moonDateNote: '태어난 시각과 관계없이 그날의 달은 {sign}에 머물렀어요. 정확한 달의 각은 제외했어요.',
+        moonRangeNote:
+          '태어난 날 달이 {from}에서 {to}로 이동했어요. 별자리를 하나로 확정할 수 없어 마음의 결 해석과 정확한 달의 각은 제외했어요.',
       },
       playbook: {
         title: '내 매력 활용법',
@@ -451,6 +470,8 @@ export const messages = {
         statusAspect: '{a} and {b}: {aspect}',
         statusHouse: 'House {n} selected',
         statusAngle: '{name} selected',
+        moonRange: "Moon's full-day range, from {from} to {to}",
+        moonRangeWithin: "Moon's full-day range within {sign}",
       },
       angleNames: {
         asc: 'Ascendant',
@@ -470,7 +491,16 @@ export const messages = {
         risingLabel: 'Rising',
         sunHint: 'Your core self',
         moonHint: 'Hidden emotions & instinct',
+        moonDateHint: 'Sign stays stable that day',
+        moonRangeHint: 'Moves between two signs that day',
         risingHint: 'The first impression you give',
+        risingUnknownHint: 'Birth time required',
+      },
+      overview: {
+        moonStable:
+          'Moon sign that day: {moon}. It did not change signs during the date. The wheel shows its full-day range and the element balance includes it, while its exact degree, aspects and chart shape are left out.',
+        moonRange:
+          'The Moon moved from {from} into {to} that day. The wheel shows its full-day range and both signs remain possible, while its exact degree, aspects, element contribution, highlights and chart shape are left out.',
       },
       panel: {
         empty: 'Tap a star',
@@ -506,6 +536,7 @@ export const messages = {
         airDesc: 'Thought & connection',
         waterDesc: 'Emotion & intuition',
         dominant: 'Your {element} energy runs strongest',
+        moonExcluded: 'The Moon crossed signs that day, so it is excluded from the element balance.',
       },
       modalities: {
         cardinal: 'Cardinal',
@@ -561,6 +592,7 @@ export const messages = {
       shapes: {
         title: 'Chart shape',
         intro: 'The way the ten planets spread across the sky reveals the broad pattern of how you move through life.',
+        noTime: 'Chart shape needs the Moon’s exact position, so it appears only when the birth time is known.',
         name: {
           bundle: 'Bundle',
           bowl: 'Bowl',
@@ -600,7 +632,7 @@ export const messages = {
         dateLabel: 'Birth date',
         timeLabel: 'Birth time',
         timeUnknown: "I don't know the time",
-        timeUnknownHint: 'Without a birth time, your Moon and Rising signs may be inaccurate.',
+        timeUnknownHint: 'We show the Moon’s full-day range and leave out the Rising sign and houses.',
         cityLabel: 'Birth place',
         cityPlaceholder: 'Search a city (e.g. Seoul, Tokyo)',
         cityNoResults: 'No matching cities',
@@ -754,12 +786,16 @@ export const messages = {
         emptyTitle: 'It goes deeper with your chart',
         emptyHint: 'Enter your birth details and we’ll read where today’s sky moves through your own chart.',
         cta: 'Draw my chart',
+        noTimeNote:
+          'Without a birth time, we leave out today’s house stage and exact contacts to your natal Moon, and read only the planetary currents that remain reliable.',
         privacy: 'Your birth details are stored only on this device. Nothing is sent to a server.',
       },
       lucky: {
         title: 'Today’s little luck',
         collectiveBasis: 'Chosen to match the Moon in {sign} and the rhythm of the {phase}.',
         personalBasis: 'Chosen from today’s Moon in {sign}, with your natal Moon and Venus added to the mix.',
+        personalBasisWithoutMoon:
+          'Chosen from today’s Moon in {sign}, with the reliable Venus tone in your chart added.',
         personalized: 'From my chart',
         foodLabel: 'Lucky food',
         colorLabel: 'Lucky color',
@@ -815,6 +851,10 @@ export const messages = {
         looksKicker: 'First impression · {sign} Rising',
         innerKicker: 'Emotional texture · {sign} Moon',
         noRisingNote: 'Add your birth time and we can also read the Rising sign that shapes your first impression.',
+        moonDateNote:
+          'The Moon stayed in {sign} throughout your birth date, regardless of the time. Exact Moon aspects are left out.',
+        moonRangeNote:
+          'The Moon moved from {from} into {to} on your birth date. Because one sign cannot be confirmed, the emotional-texture reading and exact Moon aspects are left out.',
       },
       playbook: {
         title: 'Your attraction playbook',
@@ -879,6 +919,8 @@ export const messages = {
         statusAspect: '{a} 与 {b} 的{aspect}关系',
         statusHouse: '已选择第{n}宫',
         statusAngle: '已选择{name}',
+        moonRange: '月亮全天移动范围：从{from}到{to}',
+        moonRangeWithin: '月亮全天在{sign}内的移动范围',
       },
       angleNames: {
         asc: '上升点',
@@ -898,7 +940,16 @@ export const messages = {
         risingLabel: '上升',
         sunHint: '最真实的核心',
         moonHint: '隐藏的情感与本能',
+        moonDateHint: '当天星座保持不变',
+        moonRangeHint: '当天跨越两个星座',
         risingHint: '你给世界的第一印象',
+        risingUnknownHint: '需要出生时间',
+      },
+      overview: {
+        moonStable:
+          '当天的月亮星座是{moon}，一整天都没有换座。星盘会显示月亮全天的移动范围，元素构成会计入月亮；准确度数、月亮相位与盘型则不作解读。',
+        moonRange:
+          '当天月亮从{from}移动到{to}。星盘会显示全天移动范围，并保留两种星座可能；准确度数、月亮相位、元素构成、核心特征与盘型则不计入月亮。',
       },
       panel: {
         empty: '点击一颗星',
@@ -931,6 +982,7 @@ export const messages = {
         airDesc: '思考与沟通',
         waterDesc: '情感与直觉',
         dominant: '你的{element}能量最强',
+        moonExcluded: '月亮当天跨越两个星座，因此元素构成不计入月亮。',
       },
       modalities: {
         cardinal: '基本宫',
@@ -986,6 +1038,7 @@ export const messages = {
       shapes: {
         title: '星盘形态',
         intro: '十颗行星散布在天空中的整体图景，展现出你人生的广阔格局。',
+        noTime: '星盘形态需要月亮的准确位置，因此仅在出生时间明确时显示。',
         name: {
           bundle: '集团型',
           bowl: '碗型',
@@ -1025,7 +1078,7 @@ export const messages = {
         dateLabel: '出生日期',
         timeLabel: '出生时间',
         timeUnknown: '不知道出生时间',
-        timeUnknownHint: '不知道时间，月亮和上升星座可能不准确。',
+        timeUnknownHint: '月亮会按当天的移动范围显示，上升星座与宫位则不作计算。',
         cityLabel: '出生地',
         cityPlaceholder: '搜索城市（例如：上海、Seoul）',
         cityNoResults: '没有匹配的城市',
@@ -1179,12 +1232,14 @@ export const messages = {
         emptyTitle: '对照你的星盘，会看得更深',
         emptyHint: '输入出生信息，我们会为你读出今天的天空正经过你星盘的哪个角落。',
         cta: '绘制我的星盘',
+        noTimeNote: '由于出生时间未知，我们不解读今日宫位舞台和本命月亮的准确相位，只保留不受出生时间影响的行星流势。',
         privacy: '出生信息只保存在这台设备上，不会发送到服务器。',
       },
       lucky: {
         title: '今日小幸运',
         collectiveBasis: '根据今日月亮落在{sign}与{phase}的节奏为你选出。',
         personalBasis: '结合今日落在{sign}的月亮，以及你本命盘中的月亮与金星为你选出。',
+        personalBasisWithoutMoon: '结合今日落在{sign}的月亮，以及你本命盘中可确定的金星特质为你选出。',
         personalized: '按我的星盘',
         foodLabel: '幸运食物',
         colorLabel: '幸运色',
@@ -1238,6 +1293,8 @@ export const messages = {
         looksKicker: '第一印象 · {sign}上升星座',
         innerKicker: '内心的质感 · {sign}月亮',
         noRisingNote: '知道出生时间后，还能为你解读塑造第一印象的上升星座。',
+        moonDateNote: '无论具体出生时间，当天月亮始终停留在{sign}。准确的月亮相位不作解读。',
+        moonRangeNote: '你出生当天，月亮从{from}移动到{to}。由于无法确定唯一星座，我们不解读内心质感与准确的月亮相位。',
       },
       playbook: {
         title: '魅力发挥指南',
@@ -1302,6 +1359,8 @@ export const messages = {
         statusAspect: '{a} と {b} の{aspect}',
         statusHouse: '第{n}ハウスを選択',
         statusAngle: '{name} を選択',
+        moonRange: '月の一日の移動範囲、{from}から{to}',
+        moonRangeWithin: '月の一日の移動範囲、{sign}の中',
       },
       angleNames: {
         asc: 'アセンダント',
@@ -1321,7 +1380,16 @@ export const messages = {
         risingLabel: '上昇',
         sunHint: '最も自分らしい核',
         moonHint: '隠れた感情と本能',
+        moonDateHint: 'その日は星座が変わりません',
+        moonRangeHint: 'その日に2つの星座を移動',
         risingHint: '世界に見せる第一印象',
+        risingUnknownHint: '出生時刻が必要です',
+      },
+      overview: {
+        moonStable:
+          'その日の月星座は{moon}で、一日のあいだ変わりません。星図には月の一日の移動範囲を示し、エレメントには月を含めますが、正確な度数・月のアスペクト・チャート形状は解釈から外しています。',
+        moonRange:
+          'その日、月は{from}から{to}へ移動しました。星図には一日の移動範囲を示し、二つの星座を候補として扱います。正確な度数・月のアスペクト・エレメント・主要特徴・チャート形状では月を除外しています。',
       },
       panel: {
         empty: '星をタップ',
@@ -1356,6 +1424,7 @@ export const messages = {
         airDesc: '思考と対話',
         waterDesc: '感情と直感',
         dominant: '{element}のエネルギーが最も強いです',
+        moonExcluded: 'その日に月が2つの星座をまたいだため、エレメントの集計から月を除外しています。',
       },
       modalities: {
         cardinal: '活動宮',
@@ -1411,6 +1480,7 @@ export const messages = {
       shapes: {
         title: 'チャートの形',
         intro: '空に散らばる10の星が描く全体像は、あなたという人の大きな器を映し出します。',
+        noTime: '月の正確な位置が必要なため、チャートの形は出生時刻が分かる場合だけ表示します。',
         name: {
           bundle: 'バンドル',
           bowl: 'ボウル',
@@ -1450,7 +1520,7 @@ export const messages = {
         dateLabel: '生年月日',
         timeLabel: '生まれた時刻',
         timeUnknown: '生まれた時刻がわからない',
-        timeUnknownHint: '時刻がわからないと、月と上昇星座が正確でない場合があります。',
+        timeUnknownHint: '月はその日の移動範囲で表示し、上昇星座とハウスは算出しません。',
         cityLabel: '生まれた地域',
         cityPlaceholder: '都市を検索（例：Seoul、東京）',
         cityNoResults: '一致する都市がありません',
@@ -1604,12 +1674,15 @@ export const messages = {
         emptyTitle: 'あなたの星図で読むと、もっと深く',
         emptyHint: '生年月日と時刻を入れると、今日の空があなたの星図のどこを通っているか読み解きます。',
         cta: 'わたしの星図を描く',
+        noTimeNote:
+          '出生時刻が不明なため、今日のハウスと出生図の月への正確なアスペクトは除き、時刻に左右されない惑星の流れだけを読みました。',
         privacy: '出生情報はこの端末にだけ保存されます。サーバーには送信されません。',
       },
       lucky: {
         title: '今日の小さな幸運',
         collectiveBasis: '今日の{sign}の月と{phase}のリズムに合わせて選びました。',
         personalBasis: '今日の{sign}の月に、あなたの出生図の月と金星を重ねて選びました。',
+        personalBasisWithoutMoon: '今日の{sign}の月に、出生図で確定できる金星の質感を重ねて選びました。',
         personalized: 'わたしの星図基準',
         foodLabel: 'ラッキーフード',
         colorLabel: 'ラッキーカラー',
@@ -1664,6 +1737,10 @@ export const messages = {
         looksKicker: '第一印象 · {sign}の上昇星座',
         innerKicker: '心のきめ · {sign}の月',
         noRisingNote: '出生時刻が分かれば、第一印象を描く上昇星座まで読み解けます。',
+        moonDateNote:
+          '出生時刻にかかわらず、その日の月は{sign}にとどまっていました。月の正確なアスペクトは除外しています。',
+        moonRangeNote:
+          '出生した日に月は{from}から{to}へ移動しました。ひとつの星座に確定できないため、心のきめの解釈と月の正確なアスペクトは除外しています。',
       },
       playbook: {
         title: '魅力の生かし方',

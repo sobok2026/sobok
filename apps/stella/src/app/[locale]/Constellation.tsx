@@ -29,7 +29,7 @@ import {
   selectionKey,
   selectionReducer,
 } from './constellation/selection'
-import { computeChart } from './ephemeris'
+import { computeBirthChartAnalysis, type UnknownBirthTimeAnalysis } from './ephemeris'
 import { HeroTitle } from './HeroTitle'
 import { loadInterpretations } from './interpretations'
 import type { Interpretations } from './interpretations/types'
@@ -41,6 +41,7 @@ import { useBirthSource } from './useBirthSource'
 type ChartData = {
   chart: NatalChart
   interpretations: Interpretations
+  unknownTime: UnknownBirthTimeAnalysis | null
 }
 
 type ChartState =
@@ -93,14 +94,29 @@ export default function Constellation() {
   const activeChart = data?.chart ?? DEFAULT_CHART
   const { ascendant, cusps } = activeChart
 
-  const aspects = computeAspects(activeChart.planets)
-  const counts = elementCounts(activeChart.planets)
-  const dominant = ELEMENT_IDS.reduce((best, id) => (counts[id] > counts[best] ? id : best), ELEMENT_IDS[0])
+  const computedAspects = computeAspects(activeChart.planets)
+  const unknownTime = data?.unknownTime ?? null
+  const aspects = unknownTime
+    ? computedAspects.filter((aspect) => aspect.a !== 'moon' && aspect.b !== 'moon')
+    : computedAspects
 
   const sunLon = activeChart.planets.find((p) => p.id === 'sun')?.lon ?? 0
   const moonLon = activeChart.planets.find((p) => p.id === 'moon')?.lon ?? 0
+  const moonSigns = unknownTime?.moonSigns ?? null
+  const moonLongitudeRange = unknownTime?.moonLongitudeRange ?? null
+  const displayedMoonSigns = moonSigns ?? [signOfLon(moonLon)]
+  const moonSignUncertain = displayedMoonSigns.length > 1
+  const balancePlanets = moonSignUncertain
+    ? activeChart.planets.filter((planet) => planet.id !== 'moon')
+    : activeChart.planets
+  const counts = elementCounts(balancePlanets)
+  const dominant = ELEMENT_IDS.reduce((best, id) => (counts[id] > counts[best] ? id : best), ELEMENT_IDS[0])
   const risingSign = ascendant !== null ? signOfLon(ascendant) : null
   const brightPlanets = computeBrightPlanets(selection, aspects, activeChart.planets, cusps, ascendant)
+
+  if (selection?.kind === 'sign' && moonSigns?.includes(selection.id)) {
+    brightPlanets.add('moon')
+  }
 
   function handleSubmit(nextBirth: StoredBirth, persistent: boolean) {
     submittedRef.current = true
@@ -177,10 +193,16 @@ export default function Constellation() {
     }
 
     const body = activeChart.planets.find((p) => p.id === selection.id)
+    const selectedSign =
+      selection.id === 'moon' && moonSigns
+        ? moonSigns.map((sign) => t(`signs.${sign}`)).join(' / ')
+        : body
+          ? t(`signs.${signOfLon(body.lon)}`)
+          : ''
 
     return t('a11y.statusPlanet', {
       name: t(`planets.${selection.id}`),
-      sign: body ? t(`signs.${signOfLon(body.lon)}`) : '',
+      sign: selectedSign,
     })
   }
 
@@ -208,8 +230,9 @@ export default function Constellation() {
       setChartState((previous) => ({ status: 'computing', runId: previous.runId }))
 
       try {
-        const [chart, interpretations] = await Promise.all([
-          computeChart(toBirthInput(sourceBirth)),
+        const input = toBirthInput(sourceBirth)
+        const [analysis, interpretations] = await Promise.all([
+          computeBirthChartAnalysis(input),
           loadInterpretations(locale),
         ])
 
@@ -217,11 +240,13 @@ export default function Constellation() {
           return
         }
 
+        const { chart, unknownTime } = analysis
+
         dispatchSelection({ type: 'reset' })
 
         setChartState((previous) => ({
           status: 'ready',
-          data: { chart, interpretations },
+          data: { chart, interpretations, unknownTime },
           runId: previous.runId + 1,
         }))
 
@@ -327,15 +352,17 @@ export default function Constellation() {
             <Big3Card
               delay={0.2}
               glyph="☾"
-              hint={t('big3.moonHint')}
+              hint={
+                moonSigns ? (moonSignUncertain ? t('big3.moonRangeHint') : t('big3.moonDateHint')) : t('big3.moonHint')
+              }
               label={t('big3.moonLabel')}
               onClick={() => togglePlanet('moon')}
-              value={t(`signs.${signOfLon(moonLon)}`)}
+              value={displayedMoonSigns.map((sign) => t(`signs.${sign}`)).join(' ↔ ')}
             />
             <Big3Card
               delay={0.3}
               glyph="Asc"
-              hint={risingSign ? t('big3.risingHint') : t('form.timeUnknownHint')}
+              hint={risingSign ? t('big3.risingHint') : t('big3.risingUnknownHint')}
               label={t('big3.risingLabel')}
               onClick={risingSign ? () => toggleSign(risingSign) : undefined}
               value={risingSign ? t(`signs.${risingSign}`) : t('form.risingUnknown')}
@@ -351,6 +378,7 @@ export default function Constellation() {
             isAspectDimmed={(asp) => isAspectDimmed(asp, selection, brightPlanets)}
             isPlanetDimmed={(id) => isPlanetDimmed(id, selection, brightPlanets)}
             key={`wheel-${runId}`}
+            moonLongitudeRange={moonLongitudeRange}
             onSelectAngle={toggleAngle}
             onSelectHouse={toggleHouse}
             onSelectPlanet={selectPlanet}
@@ -380,26 +408,44 @@ export default function Constellation() {
               ascendant={ascendant}
               chart={data.chart}
               interpretations={data.interpretations}
+              moonSigns={moonSigns}
               onClose={() => dispatchSelection({ type: 'reset' })}
               selection={selection}
             />
           </div>
         )}
 
-        {/* Elements + aspects + actions */}
         {data && (
-          <div className="mt-9 w-full space-y-9 sm:mt-6 sm:space-y-6" key={`extras-${runId}`}>
-            <ElementBalance counts={counts} dominant={dominant} total={data.chart.planets.length} />
-            <AspectSection aspects={aspects} onSelect={toggleAspectAndScroll} selection={selection} />
-            <PatternSection chart={data.chart} />
-            <ReportSection aspects={aspects} chart={data.chart} interpretations={data.interpretations} />
+          <div className="mt-6 w-full">
             <ConstellationActions
               aspects={aspects}
               birth={birth}
               chart={data.chart}
-              onRecompute={backToForm}
+              moonLongitudeRange={moonLongitudeRange}
+              moonSigns={moonSigns}
               shared={shared}
             />
+          </div>
+        )}
+
+        {/* Elements + aspects + report */}
+        {data && (
+          <div className="mt-9 w-full space-y-9 sm:mt-6 sm:space-y-6" key={`extras-${runId}`}>
+            <ElementBalance
+              counts={counts}
+              dominant={dominant}
+              note={moonSignUncertain ? t('elements.moonExcluded') : undefined}
+              total={balancePlanets.length}
+            />
+            <AspectSection aspects={aspects} onSelect={toggleAspectAndScroll} selection={selection} />
+            <PatternSection chart={data.chart} dateOnly={unknownTime !== null} />
+            <ReportSection
+              aspects={aspects}
+              chart={data.chart}
+              interpretations={data.interpretations}
+              moonSignUncertain={moonSignUncertain}
+            />
+            <p className="text-center text-xs text-foreground-faint">{t('footer')}</p>
           </div>
         )}
       </div>

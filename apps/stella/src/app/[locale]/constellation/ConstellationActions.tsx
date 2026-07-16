@@ -9,7 +9,7 @@ import { track } from '@/lib/analytics/browser'
 
 import type { StoredBirth } from '../birth-storage'
 import { signOfLon } from '../chart/astrology'
-import type { ChartAspect, NatalChart } from '../chart/types'
+import type { ChartAspect, NatalChart, SignId } from '../chart/types'
 import { buildShareURL, shareLink } from '../share'
 import { createNatalShareCard } from './share-card'
 import { HOUSE_NUMBERS } from './wheel-scene'
@@ -18,12 +18,20 @@ type ConstellationActionsProps = {
   aspects: readonly ChartAspect[]
   birth: StoredBirth | null
   chart: NatalChart
-  onRecompute: () => void
+  moonLongitudeRange: readonly [start: number, end: number] | null
+  moonSigns: readonly SignId[] | null
   shared: boolean
 }
 
 /** Result sharing, export, and follow-up navigation for one completed chart. */
-export function ConstellationActions({ aspects, birth, chart, onRecompute, shared }: ConstellationActionsProps) {
+export function ConstellationActions({
+  aspects,
+  birth,
+  chart,
+  moonLongitudeRange,
+  moonSigns,
+  shared,
+}: ConstellationActionsProps) {
   const [imageBusy, setImageBusy] = useState(false)
   const t = useTranslations('Constellation')
   const ts = useTranslations('Shared')
@@ -66,6 +74,7 @@ export function ConstellationActions({ aspects, birth, chart, onRecompute, share
       const sunLon = chart.planets.find((planet) => planet.id === 'sun')?.lon ?? 0
       const moonLon = chart.planets.find((planet) => planet.id === 'moon')?.lon ?? 0
       const risingSign = chart.ascendant !== null ? signOfLon(chart.ascendant) : null
+      const displayedMoonSigns = moonSigns ?? [signOfLon(moonLon)]
 
       const blob = await createNatalShareCard(
         chart,
@@ -74,8 +83,16 @@ export function ConstellationActions({ aspects, birth, chart, onRecompute, share
           eyebrow: t('hero.eyebrow'),
           title: t('hero.title'),
           big3: [
-            { glyph: '☉', label: t('big3.sunLabel'), value: t(`signs.${signOfLon(sunLon)}`) },
-            { glyph: '☾', label: t('big3.moonLabel'), value: t(`signs.${signOfLon(moonLon)}`) },
+            {
+              glyph: '☉',
+              label: t('big3.sunLabel'),
+              value: t(`signs.${signOfLon(sunLon)}`),
+            },
+            {
+              glyph: '☾',
+              label: t('big3.moonLabel'),
+              value: displayedMoonSigns.map((sign) => t(`signs.${sign}`)).join(' ↔ '),
+            },
             {
               glyph: 'Asc',
               label: t('big3.risingLabel'),
@@ -87,6 +104,7 @@ export function ConstellationActions({ aspects, birth, chart, onRecompute, share
           url: new URL(ORIGIN).host,
         },
         getComputedStyle(document.body).fontFamily,
+        moonLongitudeRange,
       )
 
       const file = new File([blob], 'stella-natal.png', { type: 'image/png' })
@@ -120,36 +138,37 @@ export function ConstellationActions({ aspects, birth, chart, onRecompute, share
   return (
     <div className="flex flex-col items-center gap-3">
       {shared ? (
-        <a
-          className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-          href={`/${locale}`}
-        >
-          {ts('createOwn')}
-        </a>
+        <div className="flex flex-col items-center text-center">
+          <a
+            className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:brightness-110 active:scale-95 motion-reduce:active:scale-100"
+            href={`/${locale}`}
+          >
+            {ts('createOwn')}
+          </a>
+        </div>
       ) : (
         <>
           <div className="flex flex-wrap items-center justify-center gap-2.5">
             <button
-              className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
-              onClick={share}
-              type="button"
-            >
-              {t('share.button')}
-            </button>
-            <button
               aria-busy={imageBusy}
-              className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3 disabled:opacity-60"
+              className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:brightness-110 active:scale-95 motion-reduce:active:scale-100 disabled:opacity-60"
               disabled={imageBusy}
               onClick={shareImage}
               type="button"
             >
               {t('share.imageButton')}
             </button>
+            <button
+              className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition hover:bg-surface-3 active:scale-95 motion-reduce:active:scale-100"
+              onClick={share}
+              type="button"
+            >
+              {t('share.button')}
+            </button>
           </div>
-          <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
+          <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-subtle">{ts('privacy')}</p>
         </>
       )}
-      <p className="mt-1 text-xs text-foreground-faint">{t('footer')}</p>
     </div>
   )
 }

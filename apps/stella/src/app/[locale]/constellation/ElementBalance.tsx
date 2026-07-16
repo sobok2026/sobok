@@ -9,6 +9,7 @@ import styles from '../constellation.module.css'
 export interface ElementBalanceProps {
   counts: Record<ElementId, number>
   dominant: ElementId
+  note?: string
   total: number
 }
 
@@ -23,7 +24,7 @@ const COLUMN_GROUPS: readonly (readonly ElementId[])[] = [
  * single balance rather than four independent ratings. The rows beneath carry each element's
  * share — an absent element still shows there as 0.0% even though it contributes no segment.
  */
-export default function ElementBalance({ counts, dominant, total }: ElementBalanceProps) {
+export default function ElementBalance({ counts, dominant, note, total }: ElementBalanceProps) {
   const t = useTranslations('Constellation')
 
   const descriptions: Record<string, string> = {
@@ -75,6 +76,7 @@ export default function ElementBalance({ counts, dominant, total }: ElementBalan
           </div>
         ))}
       </div>
+      {note && <p className="mt-3 text-[11px] leading-relaxed text-foreground-faint">{note}</p>}
     </section>
   )
 }

@@ -39,7 +39,8 @@ export type LoveProfile = {
   marsSign: SignId
   /** Rising sign — the first impression. Null without a birth time. */
   risingSign: SignId | null
-  moonSign: SignId
+  /** One reliable sign, or the two chronological possibilities for a date-only birth. */
+  moonSigns: readonly SignId[]
   /** The tightest natal Venus aspect that carries copy, if any. */
   venusAspect: ChartAspect | null
   /** Descendant sign — the exact axis with a birth time, solar (Sun-opposite) without. */
@@ -91,14 +92,22 @@ function deriveNatalLoveTone(
   return 'balanced'
 }
 
-export function deriveLoveProfile(chart: NatalChart, aspects: readonly ChartAspect[]): LoveProfile {
+export function deriveLoveProfile(
+  chart: NatalChart,
+  aspects: readonly ChartAspect[],
+  dateOnlyMoonSigns?: readonly SignId[],
+): LoveProfile {
   const venus = chart.planets.find((p) => p.id === 'venus')
   const mars = chart.planets.find((p) => p.id === 'mars')
   const moon = chart.planets.find((p) => p.id === 'moon')
   const sun = chart.planets.find((p) => p.id === 'sun')
 
+  const reliableAspects = dateOnlyMoonSigns
+    ? aspects.filter((aspect) => aspect.a !== 'moon' && aspect.b !== 'moon')
+    : aspects
+
   const venusAspect =
-    aspects
+    reliableAspects
       .filter((a) => (a.a === 'venus' && VENUS_PARTNERS.has(a.b)) || (a.b === 'venus' && VENUS_PARTNERS.has(a.a)))
       .sort((a, b) => a.orb - b.orb)[0] ?? null
 
@@ -119,12 +128,12 @@ export function deriveLoveProfile(chart: NatalChart, aspects: readonly ChartAspe
     venusRetro: venus?.retrograde ?? false,
     marsSign: signOfLon(mars?.lon ?? 0),
     risingSign: chart.ascendant === null ? null : signOfLon(chart.ascendant),
-    moonSign: signOfLon(moon?.lon ?? 0),
+    moonSigns: dateOnlyMoonSigns ?? [signOfLon(moon?.lon ?? 0)],
     venusAspect,
     descendantSign,
     solarDescendant: chart.ascendant === null,
     seventhHouse,
-    natalLove: deriveNatalLoveTone(venusSign, descendantSign, seventhHouse, aspects),
+    natalLove: deriveNatalLoveTone(venusSign, descendantSign, seventhHouse, reliableAspects),
   }
 }
 

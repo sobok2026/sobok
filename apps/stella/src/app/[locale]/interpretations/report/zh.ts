@@ -3,7 +3,7 @@ import type { ReportContent } from '../types'
 export const report: ReportContent = {
   title: '星星讲给你的深度解读',
   subtitle: '从这张星盘上回响最大的配置，到爱、工作与内心。把你的天空，编成一个完整的故事。',
-  noTimeNote: '因为没有出生时间，我们只读了上升与宫位之外的层。知道时间后，更深的层也会打开。',
+  noTimeNote: '由于没有出生时间，上升与宫位不会纳入解读。月亮会按当天的移动范围判断，与月亮相连的相位也会被排除。',
   chapterTitles: {
     core: '你的核心组合',
     signature: '这张星盘里最大的声音',

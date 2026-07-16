@@ -8,21 +8,23 @@ import { findShape } from '../chart/shape'
 import type { NatalChart } from '../chart/types'
 import { glyphText } from './glyphs'
 
-export default function PatternSection({ chart }: { chart: NatalChart }) {
+export default function PatternSection({ chart, dateOnly = false }: { chart: NatalChart; dateOnly?: boolean }) {
   const t = useTranslations('Constellation')
-  const patterns = findPatterns(chart.planets)
-  const shape = findShape(chart.planets)
-  const shapeBody = t(`shapes.body.${shape.id}`)
+  const reliablePlanets = dateOnly ? chart.planets.filter((planet) => planet.id !== 'moon') : chart.planets
+  const patterns = findPatterns(reliablePlanets)
+  const shape = dateOnly ? null : findShape(chart.planets)
 
   return (
     <section className="px-1 sm:rounded-2xl sm:border sm:bg-surface sm:p-5">
       <h2 className="text-sm font-bold text-foreground">{t('shapes.title')}</h2>
-      <p className="mt-1 text-xs text-foreground-subtle">{t('shapes.intro')}</p>
+      <p className="mt-1 text-xs text-foreground-subtle">{t(dateOnly ? 'shapes.noTime' : 'shapes.intro')}</p>
 
-      <div className="mt-3 border rounded-xl bg-surface-2 p-3 sm:border-0">
-        <p className="text-sm font-semibold text-foreground">{t(`shapes.name.${shape.id}`)}</p>
-        <p className="mt-1 text-xs leading-relaxed text-foreground-secondary">{shapeBody}</p>
-      </div>
+      {shape && (
+        <div className="mt-3 border rounded-xl bg-surface-2 p-3 sm:border-0">
+          <p className="text-sm font-semibold text-foreground">{t(`shapes.name.${shape.id}`)}</p>
+          <p className="mt-1 text-xs leading-relaxed text-foreground-secondary">{t(`shapes.body.${shape.id}`)}</p>
+        </div>
+      )}
 
       {patterns.length > 0 && (
         <>
