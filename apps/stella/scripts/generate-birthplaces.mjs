@@ -166,13 +166,15 @@ function assignSuggestionRanks(allPlaces, marketDefinitions) {
         .filter((place) => place.locale === locale && place.countryCode === countryCode)
         .sort(compareSuggestionCandidate)
       const selected = candidates.slice(0, quota)
+      const selectedIds = new Set(selected.map((place) => place.id))
+      const excludedPriority = candidates.find((place) => place.suggestionPriority && !selectedIds.has(place.id))
 
       if (selected.length !== quota) {
         throw new Error(`Expected ${quota} suggestions for ${locale}.${countryCode}, found ${selected.length}`)
       }
 
-      if (candidates.some((place) => place.suggestionPriority) && !selected.some((place) => place.suggestionPriority)) {
-        throw new Error(`Priority suggestion was excluded for ${locale}.${countryCode}`)
+      if (excludedPriority) {
+        throw new Error(`Priority suggestion ${excludedPriority.id} was excluded for ${locale}.${countryCode}`)
       }
 
       for (const place of selected) {
@@ -355,12 +357,18 @@ function validateCatalogs(catalogDefinitions, marketDefinitions) {
   }
 
   assertPresent(ids, 'KR:4129000000', '과천시')
+  assertPresent(ids, 'KR:1100000000', '서울 admin1 self value')
   assertPresent(ids, 'KR:3611000000', '세종특별자치시 self value')
+  assertAbsent(ids, 'KR:1200000000', 'province-like 전남광주통합특별시 group')
   assertPresent(ids, 'JP:01100', '札幌市')
   assertAbsent(ids, 'JP:01101', 'ordinary ward of a designated city')
   assertAbsent(ids, 'JP:13100', 'Tokyo wards aggregate')
   assertPresent(ids, 'JP:13101', '千代田区')
   assertPresent(ids, 'CN:110101000000', '东城区')
+  assertPresent(ids, 'CN:110000000000', '北京 direct-municipality self value')
+  assertPresent(ids, 'CN:120000000000', '天津 direct-municipality self value')
+  assertPresent(ids, 'CN:310000000000', '上海 direct-municipality self value')
+  assertPresent(ids, 'CN:500000000000', '重庆 direct-municipality self value')
   assertAbsent(ids, 'CN:110100000000', 'direct-municipality prefecture aggregate')
   assertPresent(ids, 'HK:810000000000', '香港 single value')
   assertPresent(ids, 'MO:820000000000', '澳门 single value')

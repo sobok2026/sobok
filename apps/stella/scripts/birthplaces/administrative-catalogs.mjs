@@ -105,6 +105,10 @@ const CN_GEONAMES_ADMIN1 = {
 
 const CN_DIRECT_MUNICIPALITIES = new Set(['11', '12', '31', '50'])
 const MAINLAND_CHINA_CODES = new Set(Object.keys(CN_GEONAMES_ADMIN1))
+// Product semantics, not a name heuristic: these top-level jurisdictions are
+// meaningful city choices in their own right. Broad province-like regions remain
+// grouping-only even when their legal name happens to end in "특별시".
+const KR_ADMIN1_SELF_OPTION_CODES = new Set(['11', '26', '27', '28', '30', '31', '36'])
 // e-Stat publishes these claimed Northern Territories codes, but Japan does not
 // currently administer them and users cannot meaningfully select them as birthplaces.
 const JP_UNADMINISTERED_NORTHERN_TERRITORY_CODES = new Set(['01695', '01696', '01697', '01698', '01699', '01700'])
@@ -140,6 +144,7 @@ export function createKoreanAdministrativeCatalog(source, countryName) {
       geonamesAdmin1Codes: KR_GEONAMES_ADMIN1[code.slice(0, 2)] ?? [],
     }),
   )
+  validateAdmin1SelfOptionPolicy('KR', groups, KR_ADMIN1_SELF_OPTION_CODES)
   const units = groups.flatMap((parent) => {
     const officialPrefix = parent.officialCode.slice(0, 2)
     const children = rows.filter(({ code, fullName }) => {
@@ -151,22 +156,21 @@ export function createKoreanAdministrativeCatalog(source, countryName) {
       )
     })
 
-    if (children.length === 0) {
-      return [
-        unit({
-          id: `KR:${parent.officialCode}`,
-          officialCode: parent.officialCode,
-          name: shortenKoreanTopLevelName(parent.label),
-          countryCode: 'KR',
-          groupId: parent.id,
-          aliases: [parent.label],
-          lookupNames: [parent.label, shortenKoreanTopLevelName(parent.label)],
-          suggestionPriority: parent.officialCode === '1100000000',
-        }),
-      ]
-    }
-
-    return children.map(({ code, fullName }) => {
+    const selfUnits = KR_ADMIN1_SELF_OPTION_CODES.has(officialPrefix)
+      ? [
+          admin1SelfUnit({
+            id: `KR:${parent.officialCode}`,
+            officialCode: parent.officialCode,
+            name: shortenKoreanTopLevelName(parent.label),
+            countryCode: 'KR',
+            groupId: parent.id,
+            aliases: [parent.label],
+            lookupNames: [parent.label, shortenKoreanTopLevelName(parent.label)],
+            suggestionPriority: parent.officialCode === '1100000000' ? 2 : 1,
+          }),
+        ]
+      : []
+    const childUnits = children.map(({ code, fullName }) => {
       const name = fullName.split(/\s+/).at(-1)
       return unit({
         id: `KR:${code}`,
@@ -180,6 +184,8 @@ export function createKoreanAdministrativeCatalog(source, countryName) {
         suggestionPriority: code === '1111000000',
       })
     })
+
+    return [...selfUnits, ...childUnits]
   })
 
   return { groups, units }
@@ -246,25 +252,46 @@ export function createChineseAdministrativeCatalog(source, countries) {
       ? [{ id, parentId, depth: Number(depth), shortName, pinyin, officialCode, fullName }]
       : []
   })
-  const mainlandGroups = records
+  const mainlandRoots = records
     .filter((record) => record.depth === 0 && MAINLAND_CHINA_CODES.has(record.officialCode.slice(0, 2)))
     .sort((a, b) => a.officialCode.localeCompare(b.officialCode))
-    .map((record) => {
-      const code = record.officialCode.slice(0, 2)
-      return group({
-        id: `CN-${code}`,
-        label: record.fullName,
-        countryCode: 'CN',
-        countryName: countries.CN,
-        officialCode: record.officialCode,
-        geonamesAdmin1Codes: CN_GEONAMES_ADMIN1[code] ?? [],
-      })
+  const rootByOfficialCode = new Map(mainlandRoots.map((record) => [record.officialCode, record]))
+  const mainlandGroups = mainlandRoots.map((record) => {
+    const code = record.officialCode.slice(0, 2)
+    return group({
+      id: `CN-${code}`,
+      label: record.fullName,
+      countryCode: 'CN',
+      countryName: countries.CN,
+      officialCode: record.officialCode,
+      geonamesAdmin1Codes: CN_GEONAMES_ADMIN1[code] ?? [],
     })
+  })
+  validateAdmin1SelfOptionPolicy('CN', mainlandGroups, CN_DIRECT_MUNICIPALITIES)
   const units = mainlandGroups.flatMap((parent) => {
     const provinceCode = parent.officialCode.slice(0, 2)
     const expectedDepth = CN_DIRECT_MUNICIPALITIES.has(provinceCode) ? 2 : 1
+    const parentRecord = rootByOfficialCode.get(parent.officialCode)
 
-    return records
+    if (!parentRecord) {
+      throw new Error(`Missing mainland China root record ${parent.officialCode}`)
+    }
+
+    const selfUnits = CN_DIRECT_MUNICIPALITIES.has(provinceCode)
+      ? [
+          admin1SelfUnit({
+            id: `CN:${parent.officialCode}`,
+            officialCode: parent.officialCode,
+            name: parentRecord.shortName,
+            countryCode: 'CN',
+            groupId: parent.id,
+            aliases: [parentRecord.fullName, parentRecord.pinyin],
+            lookupNames: [parentRecord.fullName, parentRecord.shortName],
+            suggestionPriority: provinceCode === '11' ? 2 : 1,
+          }),
+        ]
+      : []
+    const childUnits = records
       .filter((record) => record.depth === expectedDepth && record.officialCode.startsWith(provinceCode))
       .map((record) =>
         unit({
@@ -279,6 +306,8 @@ export function createChineseAdministrativeCatalog(source, countries) {
           suggestionPriority: record.officialCode === '110101000000',
         }),
       )
+
+    return [...selfUnits, ...childUnits]
   })
 
   const specialRegions = [
@@ -291,7 +320,7 @@ export function createChineseAdministrativeCatalog(source, countries) {
         officialCode: '810000000000',
         geonamesAdmin1Codes: [],
       }),
-      unit: unit({
+      unit: admin1SelfUnit({
         id: 'HK:810000000000',
         officialCode: '810000000000',
         name: '香港',
@@ -299,7 +328,6 @@ export function createChineseAdministrativeCatalog(source, countries) {
         groupId: 'HK',
         aliases: ['Hong Kong'],
         lookupNames: ['香港', 'Hong Kong'],
-        suggestionPriority: true,
       }),
     },
     {
@@ -311,7 +339,7 @@ export function createChineseAdministrativeCatalog(source, countries) {
         officialCode: '820000000000',
         geonamesAdmin1Codes: [],
       }),
-      unit: unit({
+      unit: admin1SelfUnit({
         id: 'MO:820000000000',
         officialCode: '820000000000',
         name: '澳门',
@@ -319,7 +347,6 @@ export function createChineseAdministrativeCatalog(source, countries) {
         groupId: 'MO',
         aliases: ['Macao', 'Macau'],
         lookupNames: ['澳门', 'Macao', 'Macau'],
-        suggestionPriority: true,
       }),
     },
   ]
@@ -336,6 +363,24 @@ function group(value) {
 
 function unit(value) {
   return value
+}
+
+function admin1SelfUnit(value) {
+  return unit({
+    ...value,
+    coordinatePrecision: 'administrativeArea',
+    suggestionPriority: value.suggestionPriority ?? 1,
+  })
+}
+
+function validateAdmin1SelfOptionPolicy(countryCode, groups, configuredCodes) {
+  const availableCodes = new Set(groups.map((entry) => entry.officialCode.slice(0, 2)))
+
+  for (const code of configuredCodes) {
+    if (!availableCodes.has(code)) {
+      throw new Error(`Configured ${countryCode} admin1 self-option code ${code} is absent from the official source`)
+    }
+  }
 }
 
 function shortenKoreanTopLevelName(name) {

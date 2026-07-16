@@ -30,6 +30,13 @@ Hong Kong and Macau are deliberately represented by one product-level value each
 than their subordinate administrative divisions: Hong Kong is one value and Macau is one
 value.
 
+City-equivalent top-level jurisdictions may also have an explicit selectable value under
+their otherwise non-selectable group. Korea uses an audited official-code policy for
+city-equivalent top-level groups; broad province-like regions are grouping-only. Mainland
+China applies the same rule to Beijing, Tianjin, Shanghai, and Chongqing. These values use
+the official short local name and an administrative-area representative coordinate.
+Japanese prefecture groups and English country groups remain non-selectable.
+
 Stella derives groups, stable official-code IDs, and local-script display names from these
 sources. GeoNames supplies WGS84 representative coordinates, population metadata, and
 search aliases as documented separately in GeoNames.txt. Generated source headers record

@@ -12,7 +12,7 @@ import {
   modalityOfSign,
   signOfLon,
 } from '@/chart/astrology'
-import { ASPECT_STYLE, ELEMENT_COLORS, PLANET_GLYPHS, SIGNS } from '@/chart/data'
+import { ASPECT_STYLE, ELEMENT_COLORS, PLANET_GLYPHS } from '@/chart/data'
 import { SIGN_RULERS } from '@/chart/signature'
 import type { NatalChart, SignId } from '@/chart/types'
 import type { Interpretations } from '@/content/interpretations/types'
@@ -55,7 +55,6 @@ export default function DetailPanel({
     const signId = selection.id
     const element = elementOfSign(signId)
     const color = ELEMENT_COLORS[element]
-    const glyph = SIGNS.find((s) => s.id === signId)?.glyph ?? '★'
     const modality = modalityOfSign(signId)
     const ruler = SIGN_RULERS[signId]
 
@@ -71,9 +70,7 @@ export default function DetailPanel({
       <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
         <CloseButton label={t('panel.close')} onClose={onClose} />
         <div className="flex items-center gap-3">
-          <span className="text-2xl" style={{ color }}>
-            {glyphText(glyph)}
-          </span>
+          <img alt="" className="h-10 w-10 shrink-0" src={`/images/${signId}.svg`} />
           <div>
             <p className="text-base font-bold text-foreground">{t(`signs.${selection.id}`)}</p>
             <p className="text-xs text-foreground-subtle">{t(`signKeywords.${selection.id}`)}</p>

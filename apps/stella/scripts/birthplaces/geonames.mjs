@@ -148,13 +148,14 @@ export function createOfficialPlaces(locale, catalog, sourceTexts) {
       throw new Error(`No GeoNames representative coordinate for ${unit.id} (${unit.name})`)
     }
 
-    const isRegionWideValue = unit.countryCode === 'HK' || unit.countryCode === 'MO'
     const coordinatePrecision =
-      isRegionWideValue || !identityFeature
+      unit.coordinatePrecision ??
+      (!identityFeature
         ? 'administrativeArea'
         : coordinate.record.featureClass === 'P'
           ? 'administrativeSeat'
-          : 'administrativeArea'
+          : 'administrativeArea')
+
     const searchNames = uniqueSearchNames(
       [
         ...unit.aliases,
