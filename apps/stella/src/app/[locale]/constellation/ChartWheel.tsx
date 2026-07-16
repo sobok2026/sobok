@@ -1,7 +1,8 @@
+// biome-ignore-all lint/a11y/useSemanticElements: SVG has no native button element; each interactive shape implements the complete button keyboard contract below.
 'use client'
 
 import { useTranslations } from 'next-intl'
-import type { CSSProperties } from 'react'
+import { type CSSProperties, type FocusEvent, type KeyboardEvent, type PointerEvent, useId, useState } from 'react'
 
 import { CENTER, TOKEN } from '../chart/geometry'
 import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from '../chart/types'
@@ -30,6 +31,11 @@ const PLANET_STAGGER = 0.09
 // still finishes its cascade quickly instead of trickling in.
 const ASPECT_PULSE_STAGGER = 0.045
 const ASPECT_PULSE_STAGGER_MAX = 6
+const WHEEL_CONTROL_SELECTOR = '[data-wheel-control]'
+
+type WheelControlId = `sign:${SignId}` | `house:${HouseNumber}` | `angle:${AngleId}` | `planet:${PlanetId}`
+
+const INITIAL_WHEEL_CONTROL: WheelControlId = 'sign:aries'
 
 type VectorGlyphProps = {
   className?: string
@@ -91,17 +97,115 @@ export default function ChartWheel({
 }: ChartWheelProps) {
   const t = useTranslations('Constellation')
   const scene = buildWheelScene(chart, aspects, { moonLongitudeRange })
+  const instructionsId = useId()
+  const [tabStop, setTabStop] = useState<WheelControlId>(INITIAL_WHEEL_CONTROL)
+
+  const availableControls: WheelControlId[] = [
+    ...scene.signs.map(({ id }) => `sign:${id}` as const),
+    ...scene.houses.map(({ n }) => `house:${n}` as const),
+    ...scene.angles.map(({ id }) => `angle:${id}` as const),
+    ...(scene.moonRange ? (['planet:moon'] as const) : []),
+    ...scene.planets.map(({ planet }) => `planet:${planet.id}` as const),
+  ]
+
+  const resolvedTabStop = availableControls.includes(tabStop) ? tabStop : INITIAL_WHEEL_CONTROL
+
+  function controlFromTarget(target: EventTarget | null): SVGElement | null {
+    return target instanceof Element ? target.closest<SVGElement>(WHEEL_CONTROL_SELECTOR) : null
+  }
+
+  function controlId(element: SVGElement | null): WheelControlId | null {
+    return (element?.dataset.wheelControl as WheelControlId | undefined) ?? null
+  }
+
+  function syncTabStop(target: EventTarget | null) {
+    const id = controlId(controlFromTarget(target))
+
+    if (id) {
+      setTabStop(id)
+    }
+  }
+
+  function handleFocus(event: FocusEvent<SVGSVGElement>) {
+    syncTabStop(event.target)
+  }
+
+  function handlePointerDown(event: PointerEvent<SVGSVGElement>) {
+    syncTabStop(event.target)
+  }
+
+  function handleKeyDown(event: KeyboardEvent<SVGSVGElement>) {
+    if (event.altKey || event.ctrlKey || event.metaKey) {
+      return
+    }
+
+    const current = controlFromTarget(event.target)
+
+    if (!current) {
+      return
+    }
+
+    const controls = Array.from(event.currentTarget.querySelectorAll<SVGElement>(WHEEL_CONTROL_SELECTOR))
+    const currentIndex = controls.indexOf(current)
+
+    if (currentIndex < 0 || controls.length === 0) {
+      return
+    }
+
+    let nextIndex: number
+
+    switch (event.key) {
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        nextIndex = (currentIndex - 1 + controls.length) % controls.length
+        break
+      case 'ArrowRight':
+      case 'ArrowDown':
+        nextIndex = (currentIndex + 1) % controls.length
+        break
+      case 'Home':
+        nextIndex = 0
+        break
+      case 'End':
+        nextIndex = controls.length - 1
+        break
+      default:
+        return
+    }
+
+    event.preventDefault()
+
+    const next = controls[nextIndex]
+    const nextId = controlId(next)
+
+    if (nextId) {
+      setTabStop(nextId)
+      next.focus()
+    }
+  }
 
   return (
     <svg
       aria-hidden={!revealed}
-      aria-label={t('meta.title')}
+      aria-describedby={instructionsId}
+      aria-label={t('a11y.wheelLabel')}
       className={`w-full select-none transition-opacity duration-400 ${revealed ? styles.wheel : 'pointer-events-none'}`}
+      onFocusCapture={handleFocus}
+      onKeyDown={handleKeyDown}
+      onPointerDownCapture={handlePointerDown}
+      role="toolbar"
       style={{ opacity: revealed ? 1 : 0.4 }}
       viewBox={scene.viewBox}
     >
+      <desc id={instructionsId}>{t('a11y.wheelInstructions')}</desc>
       <Rings rings={scene.rings} />
-      <Sectors interactive={revealed} onSelect={onSelectSign} selection={selection} signs={scene.signs} />
+      <Sectors
+        interactive={revealed}
+        onSelect={onSelectSign}
+        selection={selection}
+        signs={scene.signs}
+        tabStop={resolvedTabStop}
+      />
       {revealed && scene.houses.length > 0 && (
         <Houses
           angles={scene.angles}
@@ -109,6 +213,7 @@ export default function ChartWheel({
           onSelect={onSelectHouse}
           onSelectAngle={onSelectAngle}
           selection={selection}
+          tabStop={resolvedTabStop}
         />
       )}
       {revealed && (
@@ -125,9 +230,16 @@ export default function ChartWheel({
               onSelect={() => onSelectPlanet('moon')}
               range={scene.moonRange}
               selected={selection?.kind === 'planet' && selection.id === 'moon'}
+              tabStop={resolvedTabStop}
             />
           )}
-          <Planets isDimmed={isPlanetDimmed} onSelect={onSelectPlanet} planets={scene.planets} selection={selection} />
+          <Planets
+            isDimmed={isPlanetDimmed}
+            onSelect={onSelectPlanet}
+            planets={scene.planets}
+            selection={selection}
+            tabStop={resolvedTabStop}
+          />
         </>
       )}
     </svg>
@@ -139,12 +251,14 @@ interface MoonRangeProps {
   onSelect: () => void
   range: WheelMoonRange
   selected: boolean
+  tabStop: WheelControlId
 }
 
 /** Date-only Moon: a full-day longitude band, never a falsely exact token. */
-function MoonRange({ isDimmed, onSelect, range, selected }: MoonRangeProps) {
+function MoonRange({ isDimmed, onSelect, range, selected, tabStop }: MoonRangeProps) {
   const t = useTranslations('Constellation')
   const opacity = isDimmed ? 0.3 : 1
+  const id: WheelControlId = 'planet:moon'
 
   const label =
     range.startSign === range.endSign
@@ -159,6 +273,7 @@ function MoonRange({ isDimmed, onSelect, range, selected }: MoonRangeProps) {
       aria-label={label}
       aria-pressed={selected}
       className={`${styles.wheelButton} ${styles.fade} cursor-pointer`}
+      data-wheel-control={id}
       onClick={onSelect}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
@@ -168,7 +283,7 @@ function MoonRange({ isDimmed, onSelect, range, selected }: MoonRangeProps) {
       }}
       role="button"
       style={{ opacity }}
-      tabIndex={0}
+      tabIndex={tabStop === id ? 0 : -1}
     >
       {range.segments.map((segment) => (
         <path
@@ -237,20 +352,24 @@ interface SectorsProps {
   onSelect: (id: SignId) => void
   selection: Selection
   signs: readonly WheelSign[]
+  tabStop: WheelControlId
 }
 
-function Sectors({ interactive, onSelect, selection, signs }: SectorsProps) {
+function Sectors({ interactive, onSelect, selection, signs, tabStop }: SectorsProps) {
   const t = useTranslations('Constellation')
 
   return (
     <g>
       {signs.map((sign) => {
         const active = selection?.kind === 'sign' && selection.id === sign.id
+        const id: WheelControlId = `sign:${sign.id}`
+
         return (
           <g
             aria-label={t(`signs.${sign.id}`)}
             aria-pressed={active}
             className={`${styles.wheelButton} cursor-pointer`}
+            data-wheel-control={id}
             key={sign.id}
             onClick={() => onSelect(sign.id)}
             onKeyDown={(e) => {
@@ -260,7 +379,7 @@ function Sectors({ interactive, onSelect, selection, signs }: SectorsProps) {
               }
             }}
             role="button"
-            tabIndex={interactive ? 0 : -1}
+            tabIndex={interactive && tabStop === id ? 0 : -1}
           >
             <path
               className={styles.sector}
@@ -294,15 +413,17 @@ interface HousesProps {
   onSelect: (n: HouseNumber) => void
   onSelectAngle: (id: AngleId) => void
   selection: Selection
+  tabStop: WheelControlId
 }
 
-function Houses({ angles, houses, onSelect, onSelectAngle, selection }: HousesProps) {
+function Houses({ angles, houses, onSelect, onSelectAngle, selection, tabStop }: HousesProps) {
   const t = useTranslations('Constellation')
 
   return (
     <g className={`${styles.house} [animation-delay:0.15s]`}>
       {houses.map((house) => {
         const active = selection?.kind === 'house' && selection.n === house.n
+        const id: WheelControlId = `house:${house.n}`
 
         return (
           <g key={house.n}>
@@ -318,6 +439,7 @@ function Houses({ angles, houses, onSelect, onSelectAngle, selection }: HousesPr
               aria-label={`${t('panel.house', { n: house.n })} · ${t(`houseThemes.${house.n}`)}`}
               aria-pressed={active}
               className={`${styles.wheelButton} cursor-pointer`}
+              data-wheel-control={id}
               onClick={() => onSelect(house.n)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -326,7 +448,7 @@ function Houses({ angles, houses, onSelect, onSelectAngle, selection }: HousesPr
                 }
               }}
               role="button"
-              tabIndex={0}
+              tabIndex={tabStop === id ? 0 : -1}
             >
               {/* Houses carry a neutral (white-alpha) identity, so selection reads as a
                   brighter version of their own colour — matching the sign/planet idiom.
@@ -355,12 +477,14 @@ function Houses({ angles, houses, onSelect, onSelectAngle, selection }: HousesPr
       })}
       {angles.map((angle) => {
         const active = selection?.kind === 'angle' && selection.id === angle.id
+        const id: WheelControlId = `angle:${angle.id}`
 
         return (
           <g
             aria-label={t(`angleNames.${angle.id}`)}
             aria-pressed={active}
             className={`${styles.wheelButton} cursor-pointer`}
+            data-wheel-control={id}
             key={angle.id}
             onClick={() => onSelectAngle(angle.id)}
             onKeyDown={(e) => {
@@ -370,7 +494,7 @@ function Houses({ angles, houses, onSelect, onSelectAngle, selection }: HousesPr
               }
             }}
             role="button"
-            tabIndex={0}
+            tabIndex={tabStop === id ? 0 : -1}
           >
             <text
               dominantBaseline="central"
@@ -471,9 +595,10 @@ interface PlanetsProps {
   onSelect: (id: PlanetId) => void
   planets: readonly WheelPlanet[]
   selection: Selection
+  tabStop: WheelControlId
 }
 
-function Planets({ isDimmed, onSelect, planets, selection }: PlanetsProps) {
+function Planets({ isDimmed, onSelect, planets, selection, tabStop }: PlanetsProps) {
   const t = useTranslations('Constellation')
 
   return (
@@ -522,11 +647,13 @@ function Planets({ isDimmed, onSelect, planets, selection }: PlanetsProps) {
       {planets.map(({ color, planet, point, displaced, sign }, i) => {
         const dim = isDimmed(planet.id)
         const delay = PLANET_BASE + i * PLANET_STAGGER
+        const id: WheelControlId = `planet:${planet.id}`
 
         // Visual involvement and the pressed toggle state are intentionally separate.
-        const isDirectlySelected = selection?.kind === 'planet' && selection.id === planet.id
         const isAspectEndpoint =
           selection?.kind === 'aspect' && (selection.a === planet.id || selection.b === planet.id)
+
+        const isDirectlySelected = selection?.kind === 'planet' && selection.id === planet.id
         const isEmphasized = isDirectlySelected || isAspectEndpoint
 
         return (
@@ -539,6 +666,7 @@ function Planets({ isDimmed, onSelect, planets, selection }: PlanetsProps) {
                 aria-label={`${t(`planets.${planet.id}`)} · ${t(`signs.${sign}`)}${planet.retrograde ? ` · ${t('panel.retrograde')}` : ''}`}
                 aria-pressed={isDirectlySelected}
                 className={`${styles.wheelButton} ${styles.fade} cursor-pointer`}
+                data-wheel-control={id}
                 onClick={() => onSelect(planet.id)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -548,7 +676,7 @@ function Planets({ isDimmed, onSelect, planets, selection }: PlanetsProps) {
                 }}
                 role="button"
                 style={{ opacity: dim ? 0.35 : 1 }}
-                tabIndex={0}
+                tabIndex={tabStop === id ? 0 : -1}
               >
                 <circle
                   cx={point.x}

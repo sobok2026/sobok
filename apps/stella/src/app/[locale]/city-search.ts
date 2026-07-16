@@ -48,31 +48,59 @@ function romanizedKey(city: City): string {
   return city.key.slice(city.iso2.length + 1)
 }
 
-function matchesQuery(city: City, query: string): boolean {
-  if (isChoseongQuery(query)) {
-    return matchesChoseong(city.name, query)
+/** Case-, accent-, width-, and separator-insensitive text used by every search field. */
+function normalizeSearchText(value: string): string {
+  return value
+    .normalize('NFKD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim()
+}
+
+type SearchableCity = {
+  city: City
+  name: string
+  country: string
+  romanizedKey: string
+}
+
+const SEARCHABLE_CITIES: readonly SearchableCity[] = CITIES_IN_DISPLAY_ORDER.map((city) => ({
+  city,
+  name: normalizeSearchText(city.name),
+  country: normalizeSearchText(city.country),
+  romanizedKey: normalizeSearchText(romanizedKey(city)),
+}))
+
+function matchesQuery(entry: SearchableCity, rawQuery: string, normalizedQuery: string): boolean {
+  if (isChoseongQuery(rawQuery)) {
+    return matchesChoseong(entry.city.name, rawQuery)
   }
 
-  return city.name.includes(query) || city.country.includes(query) || romanizedKey(city).includes(query.toLowerCase())
+  return (
+    entry.name.includes(normalizedQuery) ||
+    entry.country.includes(normalizedQuery) ||
+    entry.romanizedKey.includes(normalizedQuery)
+  )
 }
 
 /**
- * Cities matching `query`, in picker order. An empty query returns the full list
- * so the combobox doubles as a browsable dropdown. Capped so a broad query can't
- * render the entire list into the menu.
+ * Cities matching a non-empty query across the full catalog, in picker order.
+ * Results are capped so a broad query cannot render the entire catalog.
  */
 export function searchCities(query: string, limit = 60): City[] {
-  const q = query.trim()
+  const rawQuery = query.trim()
+  const normalizedQuery = normalizeSearchText(rawQuery)
 
-  if (!q) {
-    return [...CITIES_IN_DISPLAY_ORDER]
+  if (!normalizedQuery) {
+    return []
   }
 
   const matches: City[] = []
 
-  for (const city of CITIES_IN_DISPLAY_ORDER) {
-    if (matchesQuery(city, q)) {
-      matches.push(city)
+  for (const entry of SEARCHABLE_CITIES) {
+    if (matchesQuery(entry, rawQuery, normalizedQuery)) {
+      matches.push(entry.city)
 
       if (matches.length >= limit) {
         break

@@ -1,3 +1,5 @@
+import { Locale } from '@sobok/domain/locale'
+
 import { GENERATED_CITIES } from './cities.generated'
 
 export type City = {
@@ -14,10 +16,28 @@ export type City = {
 
 export const CITIES: readonly City[] = GENERATED_CITIES
 
-export const DEFAULT_CITY_KEY = 'kr-seoul'
+const DEFAULT_CITY_KEYS = {
+  [Locale.KO]: 'kr-seoul',
+  [Locale.EN]: 'us-new-york',
+  [Locale.JA]: 'jp-tokyo',
+  [Locale.ZH]: 'cn-beijing',
+} as const satisfies Record<Locale, string>
+
+const INITIAL_CITY_ISO2 = {
+  [Locale.KO]: ['KR'],
+  [Locale.EN]: ['US', 'GB', 'CA', 'AU', 'NZ'],
+  [Locale.JA]: ['JP'],
+  [Locale.ZH]: ['CN'],
+} as const satisfies Record<Locale, readonly string[]>
+
+const FALLBACK_CITY_KEY = DEFAULT_CITY_KEYS[Locale.KO]
+
+export function getDefaultCityKey(locale: Locale): string {
+  return DEFAULT_CITY_KEYS[locale]
+}
 
 export function findCity(key: string): City {
-  return CITIES.find((c) => c.key === key) ?? CITIES.find((c) => c.key === DEFAULT_CITY_KEY) ?? CITIES[0]
+  return CITIES.find((c) => c.key === key) ?? CITIES.find((c) => c.key === FALLBACK_CITY_KEY) ?? CITIES[0]
 }
 
 export type CityGroup = {
@@ -52,6 +72,13 @@ export const CITY_GROUPS: readonly CityGroup[] = (() => {
     .map(([iso2, cities]) => ({ iso2, country: cities[0].country, cities }))
     .sort((a, b) => rank(a.iso2) - rank(b.iso2) || a.country.localeCompare(b.country))
 })()
+
+const CITY_GROUP_BY_ISO2 = new Map(CITY_GROUPS.map((group) => [group.iso2, group]))
+
+/** The curated city list shown before the user types, with locale-specific country order. */
+export function getInitialCities(locale: Locale): City[] {
+  return INITIAL_CITY_ISO2[locale].flatMap((iso2) => CITY_GROUP_BY_ISO2.get(iso2)?.cities ?? [])
+}
 
 /** Flat city list in picker order (primary markets first) — the combobox's browse/search source. */
 export const CITIES_IN_DISPLAY_ORDER: readonly City[] = CITY_GROUPS.flatMap((group) => group.cities)

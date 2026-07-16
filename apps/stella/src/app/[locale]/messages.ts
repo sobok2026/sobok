@@ -18,7 +18,7 @@ export const messages = {
         subtitle: '태어난 순간 하늘에 새겨진 나의 이야기를 읽어 보세요.',
         openCta: '내 별자리 열기',
         reopenCta: '다시 그리기',
-        connectionHint: '빛나는 행성을 누르면 둘의 관계를 볼 수 있어요',
+        connectionHint: '빛나는 행성을 선택하면 둘의 관계를 볼 수 있어요',
       },
       a11y: {
         statusPlanet: '{name}, {sign} 선택됨',
@@ -28,6 +28,9 @@ export const messages = {
         statusAngle: '{name} 선택됨',
         moonRange: '달의 하루 이동 범위, {from}에서 {to}',
         moonRangeWithin: '달의 하루 이동 범위, {sign} 안에서 이동',
+        wheelLabel: '탄생 별자리 차트 휠',
+        wheelInstructions:
+          'Tab 키로 차트에 들어온 뒤 방향키로 항목을 이동하세요. Enter 또는 Space로 선택하고 Home과 End로 처음과 마지막 항목으로 이동할 수 있어요.',
       },
       angleNames: {
         asc: '상승점',
@@ -57,7 +60,7 @@ export const messages = {
           '그날 달이 {from}에서 {to}로 이동했어요. 별자리판에는 하루 이동 범위를 보여 주고 두 가능성을 함께 읽되, 달의 정확한 도수와 각, 원소 구성, 핵심 특징, 차트 모양에서는 달을 제외했어요.',
       },
       panel: {
-        empty: '별을 눌러 보세요',
+        empty: '별을 선택해 보세요',
         emptyHint: '행성과 별자리마다 당신의 이야기가 숨어 있어요.',
         retrograde: '역행',
         house: '{n}하우스',
@@ -75,7 +78,7 @@ export const messages = {
         emptySign:
           '지금 이 별자리에는 머무는 별이 없어요. 빈 별자리는 결핍이 아니라 이 기운이 당신 안에서 은은한 배경으로 흐른다는 뜻이에요.',
         signResidents: '이 별자리에 머무는 내 별',
-        signResidentsHint: '빛나는 별을 누르면 그 별의 이야기를 볼 수 있어요.',
+        signResidentsHint: '빛나는 별을 선택하면 그 별의 이야기를 볼 수 있어요.',
         ruledBy: '지배 행성: {planet}',
       },
       elements: {
@@ -98,7 +101,7 @@ export const messages = {
       },
       aspects: {
         title: '행성의 대화',
-        intro: '두 별이 특정 각도로 만나면 서로 기운을 주고받아요. 눌러서 별자리판에서 확인해 보세요.',
+        intro: '두 별이 특정 각도로 만나면 서로 기운을 주고받아요. 하나를 선택해 별자리판에서 확인해 보세요.',
         harmonyGroup: '잘 통하는 사이',
         tensionGroup: '부딪히며 크는 사이',
         conjunctionName: '합',
@@ -457,10 +460,10 @@ export const messages = {
       hero: {
         eyebrow: 'Your own universe',
         title: 'My Birth Chart',
-        subtitle: 'A map the sky drew the moment you were born. Tap a star to discover yourself.',
+        subtitle: 'A map the sky drew the moment you were born. Select a star to discover yourself.',
         openCta: 'Open my chart',
         reopenCta: 'Redraw',
-        connectionHint: 'Tap a lit-up planet to see how the two relate',
+        connectionHint: 'Select a lit-up planet to see how the two relate',
       },
       a11y: {
         statusPlanet: '{name} in {sign} selected',
@@ -470,6 +473,9 @@ export const messages = {
         statusAngle: '{name} selected',
         moonRange: "Moon's full-day range, from {from} to {to}",
         moonRangeWithin: "Moon's full-day range within {sign}",
+        wheelLabel: 'Birth chart wheel',
+        wheelInstructions:
+          'After tabbing into the chart, use the arrow keys to move between items. Press Enter or Space to select. Home and End move to the first and last items.',
       },
       angleNames: {
         asc: 'Ascendant',
@@ -499,7 +505,7 @@ export const messages = {
           'The Moon moved from {from} into {to} that day. The wheel shows its full-day range and both signs remain possible, while its exact degree, aspects, element contribution, highlights and chart shape are left out.',
       },
       panel: {
-        empty: 'Tap a star',
+        empty: 'Select a star',
         emptyHint: 'Every planet and sign hides a piece of your story.',
         retrograde: 'Retrograde',
         house: 'House {n}',
@@ -518,7 +524,7 @@ export const messages = {
         emptySign:
           "No planets are staying in this sign right now. An empty sign isn't a lack — its energy simply hums in the background.",
         signResidents: 'Your planets in this sign',
-        signResidentsHint: 'Tap a bright planet to read its story.',
+        signResidentsHint: 'Select a bright planet to read its story.',
         ruledBy: 'Ruled by {planet}',
       },
       elements: {
@@ -541,7 +547,7 @@ export const messages = {
       },
       aspects: {
         title: 'Conversations between planets',
-        intro: 'When two planets meet at a certain angle, their energies talk. Tap one to see it on the wheel.',
+        intro: 'When two planets meet at a certain angle, their energies talk. Select one to see it on the wheel.',
         harmonyGroup: 'Easy allies',
         tensionGroup: 'Growth through friction',
         conjunctionName: 'Conjunction',
@@ -904,10 +910,10 @@ export const messages = {
       hero: {
         eyebrow: '属于你的宇宙',
         title: '我的出生星盘',
-        subtitle: '这是你出生那一刻，天空为你绘制的地图。点击星星，发现自己。',
+        subtitle: '这是你出生那一刻，天空为你绘制的地图。选择星星，发现自己。',
         openCta: '打开我的星盘',
         reopenCta: '重新绘制',
-        connectionHint: '点击发亮的行星，查看两者的关系',
+        connectionHint: '选择发亮的行星，查看两者的关系',
       },
       a11y: {
         statusPlanet: '已选择 {name}（{sign}）',
@@ -917,6 +923,9 @@ export const messages = {
         statusAngle: '已选择{name}',
         moonRange: '月亮全天移动范围：从{from}到{to}',
         moonRangeWithin: '月亮全天在{sign}内的移动范围',
+        wheelLabel: '出生星盘',
+        wheelInstructions:
+          '按 Tab 键进入星盘后，使用方向键在项目之间移动。按 Enter 或空格键选择；Home 和 End 键可移至第一项和最后一项。',
       },
       angleNames: {
         asc: '上升点',
@@ -946,7 +955,7 @@ export const messages = {
           '当天月亮从{from}移动到{to}。星盘会显示全天移动范围，并保留两种星座可能；准确度数、月亮相位、元素构成、核心特征与盘型则不计入月亮。',
       },
       panel: {
-        empty: '点击一颗星',
+        empty: '选择一颗星',
         emptyHint: '每颗行星和星座都藏着你的一段故事。',
         retrograde: '逆行',
         house: '第{n}宫',
@@ -962,7 +971,7 @@ export const messages = {
         emptyHouse: '现在这个房间里没有停留的星。空宫不是缺失，而是说明这个领域会顺畅流过，无需太多功课。',
         emptySign: '现在这个星座里没有停留的星。空星座不是缺失，它的能量只是像背景一样安静流淌。',
         signResidents: '你在这个星座的行星',
-        signResidentsHint: '点击发亮的行星，就能查看它的故事。',
+        signResidentsHint: '选择发亮的行星，就能查看它的故事。',
         ruledBy: '守护星: {planet}',
       },
       elements: {
@@ -1342,10 +1351,10 @@ export const messages = {
       hero: {
         eyebrow: 'あなただけの宇宙',
         title: 'わたしの出生図',
-        subtitle: '生まれた瞬間、空が描いた地図です。星をタップして自分を見つけてみて。',
+        subtitle: '生まれた瞬間、空が描いた地図です。星を選んで自分を見つけてみて。',
         openCta: '星図をひらく',
         reopenCta: '描き直す',
-        connectionHint: '光っている惑星をタップすると二つの関係が見られます',
+        connectionHint: '光っている惑星を選ぶと二つの関係が見られます',
       },
       a11y: {
         statusPlanet: '{name}（{sign}）を選択',
@@ -1355,6 +1364,9 @@ export const messages = {
         statusAngle: '{name} を選択',
         moonRange: '月の一日の移動範囲、{from}から{to}',
         moonRangeWithin: '月の一日の移動範囲、{sign}の中',
+        wheelLabel: '出生図のチャートホイール',
+        wheelInstructions:
+          'Tabキーでチャートに入った後、矢印キーで項目間を移動します。EnterまたはSpaceで選択し、HomeとEndで最初と最後の項目へ移動できます。',
       },
       angleNames: {
         asc: 'アセンダント',
@@ -1384,7 +1396,7 @@ export const messages = {
           'その日、月は{from}から{to}へ移動しました。星図には一日の移動範囲を示し、二つの星座を候補として扱います。正確な度数・月のアスペクト・エレメント・主要特徴・チャート形状では月を除外しています。',
       },
       panel: {
-        empty: '星をタップ',
+        empty: '星を選択',
         emptyHint: 'どの惑星や星座にも、あなたの物語が隠れています。',
         retrograde: '逆行',
         house: '第{n}ハウス',
@@ -1402,7 +1414,7 @@ export const messages = {
         emptySign:
           'いまこの星座にとどまる星はありません。空の星座は欠けではなく、そのエネルギーが背景として静かに流れているというしるしです。',
         signResidents: 'この星座にあるあなたの星',
-        signResidentsHint: '明るく光る星をタップすると、その星の物語が読めます。',
+        signResidentsHint: '明るく光る星を選ぶと、その星の物語が読めます。',
         ruledBy: '支配星: {planet}',
       },
       elements: {
@@ -1425,7 +1437,7 @@ export const messages = {
       },
       aspects: {
         title: '惑星たちの対話',
-        intro: '2つの星が特定の角度で出会うと、エネルギーが響き合います。タップして星図で確認しましょう。',
+        intro: '2つの星が特定の角度で出会うと、エネルギーが響き合います。ひとつ選んで星図で確認しましょう。',
         harmonyGroup: '相性のいい関係',
         tensionGroup: 'ぶつかって成長する関係',
         conjunctionName: 'コンジャンクション',

@@ -1,10 +1,10 @@
 'use client'
 
 import { useCombobox } from 'downshift'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { Fragment, useEffect, useState } from 'react'
 
-import { type City, findCity } from './cities'
+import { type City, findCity, getInitialCities } from './cities'
 import { searchCities } from './city-search'
 
 const inputClass =
@@ -19,10 +19,11 @@ type Props = {
 
 export default function CityCombobox({ cityKey, onSelect }: Props) {
   const [query, setQuery] = useState('')
+  const locale = useLocale()
   const t = useTranslations('Constellation.form')
 
   const selectedCity = findCity(cityKey)
-  const items = searchCities(query)
+  const items = query.trim() ? searchCities(query) : getInitialCities(locale)
 
   const {
     isOpen,
@@ -50,7 +51,7 @@ export default function CityCombobox({ cityKey, onSelect }: Props) {
       }
     },
     onIsOpenChange: ({ isOpen: open }) => {
-      // Reset the filter on close so the next open browses the full list.
+      // Reset the filter on close so the next open shows this locale's initial cities.
       if (!open) {
         setQuery('')
       }
@@ -89,7 +90,6 @@ export default function CityCombobox({ cityKey, onSelect }: Props) {
             autoComplete: 'off',
             placeholder: t('cityPlaceholder'),
             onFocus: () => {
-              // Clear to a blank search so the whole list is browsable on focus.
               setQuery('')
               setInputValue('')
 
