@@ -1,6 +1,6 @@
 'use client'
 
-import styles from './constellation.module.css'
+import styles from '@/components/card.module.css'
 import { glyphText } from './glyphs'
 
 export interface Big3CardProps {

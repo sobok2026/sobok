@@ -1,5 +1,4 @@
 import { Locale } from '@sobok/domain/locale'
-import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { toast } from 'sonner'
