@@ -34,8 +34,29 @@ export type BirthChartAnalysis = {
   unknownTime: UnknownBirthTimeAnalysis | null
 }
 
-const EPHEMERIS_BASE_PATH = '/ephemeris/2.10.03'
-const EPHEMERIS_FILE_NAMES = ['sepl_18.se1', 'semo_18.se1', 'seas_18.se1'] as const
+// `name` stays exactly as Swiss Ephemeris expects inside its virtual filesystem;
+// the public filename inserts the digest before `.se1`. Adding another era or
+// asteroid therefore never invalidates an unchanged browser cache entry.
+const STANDARD_EPHEMERIS_ASSETS = [
+  {
+    name: 'sepl_18.se1',
+    sha256: 'ca1393ceab3a44fbc895887cf789c68819ae6a1cbc9b22225872dbe4ccd99a66',
+  },
+  {
+    name: 'semo_18.se1',
+    sha256: '1ca07bd67c24374d77226180c20a4f9996cba013697894810518e7eb582ca4f7',
+  },
+  {
+    name: 'seas_18.se1',
+    sha256: 'a2cd8fc33807c78ca9a700c91c2e042258b12fc4796519e00781440b5ad8b2e2',
+  },
+] as const
+
+const STANDARD_EPHEMERIS_FILES = STANDARD_EPHEMERIS_ASSETS.map(({ name, sha256 }) => ({
+  name,
+  url: `/ephemeris/${name.slice(0, -4)}.${sha256}.se1`,
+}))
+
 const norm360 = (x: number) => ((x % 360) + 360) % 360
 
 type SwissModule = typeof import('@swisseph/browser')
@@ -76,12 +97,7 @@ function getSwissRuntime(): Promise<SwissRuntime> {
           const ephemeris = new SwissEphemeris()
           await ephemeris.init()
 
-          await ephemeris.loadEphemerisFiles(
-            EPHEMERIS_FILE_NAMES.map((name) => ({
-              name,
-              url: `${EPHEMERIS_BASE_PATH}/${name}`,
-            })),
-          )
+          await ephemeris.loadEphemerisFiles(STANDARD_EPHEMERIS_FILES)
 
           return {
             ephemeris,

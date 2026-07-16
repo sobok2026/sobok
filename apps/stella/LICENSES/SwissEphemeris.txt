@@ -12,12 +12,21 @@ License: GNU Affero General Public License version 3
 License text: ./AGPL-3.0.txt
 
 Stella distributes these standard Swiss Ephemeris files for the 1800–2400
-range, retrieved from the upstream ephe directory on 2026-07-16:
-https://github.com/aloistr/swisseph/tree/master/ephe
+range, retrieved from this exact upstream snapshot on 2026-07-16:
+https://github.com/aloistr/swisseph/tree/59ac051b5a5812c684973ca0fcedb1c8c3e9c5dc/ephe
 
-sepl_18.se1  SHA-256 ca1393ceab3a44fbc895887cf789c68819ae6a1cbc9b22225872dbe4ccd99a66
-semo_18.se1  SHA-256 1ca07bd67c24374d77226180c20a4f9996cba013697894810518e7eb582ca4f7
-seas_18.se1  SHA-256 a2cd8fc33807c78ca9a700c91c2e042258b12fc4796519e00781440b5ad8b2e2
+Public asset URLs append the complete SHA-256 digest to each filename for
+immutable caching. The browser wrapper restores the original names shown below
+when it writes the files into the Swiss Ephemeris virtual filesystem.
+
+sepl_18.se1  484061 bytes
+SHA-256 ca1393ceab3a44fbc895887cf789c68819ae6a1cbc9b22225872dbe4ccd99a66
+
+semo_18.se1  1304771 bytes
+SHA-256 1ca07bd67c24374d77226180c20a4f9996cba013697894810518e7eb582ca4f7
+
+seas_18.se1  223004 bytes
+SHA-256 a2cd8fc33807c78ca9a700c91c2e042258b12fc4796519e00781440b5ad8b2e2
 
 Swiss Ephemeris is copyright Astrodienst AG and its authors. The names of its
 authors or copyright holder are not used to promote Stella.
