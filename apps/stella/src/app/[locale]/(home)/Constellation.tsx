@@ -3,6 +3,7 @@
 import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
 import { useLocale, useTranslations } from 'next-intl'
 import { useReducer, useRef, useState } from 'react'
+import { preload } from 'react-dom'
 
 import { computeAspects, elementCounts, signOfLon } from '@/chart/astrology'
 import { DEFAULT_CHART, ELEMENT_IDS } from '@/chart/data'
@@ -31,6 +32,7 @@ import {
 } from './selection'
 import { useNatalChart } from './useNatalChart'
 import ChartWheel from './wheel/ChartWheel'
+import { ZODIAC_IMAGE_URLS } from './zodiac-images'
 
 export default function Constellation() {
   const [selection, dispatchSelection] = useReducer(selectionReducer, null)
@@ -184,6 +186,7 @@ export default function Constellation() {
 
   return (
     <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-[calc(4.5rem+var(--safe-area-top))] text-foreground sm:px-4">
+      {data && <ZodiacImagePreloads />}
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-xl flex-col items-center">
@@ -360,6 +363,19 @@ export default function Constellation() {
       </div>
     </main>
   )
+}
+
+/** Warm the bounded icon set only after the chart is ready, when the critical data work is complete. */
+function ZodiacImagePreloads() {
+  for (const src of ZODIAC_IMAGE_URLS) {
+    preload(src, {
+      as: 'image',
+      fetchPriority: 'low',
+      type: 'image/svg+xml',
+    })
+  }
+
+  return null
 }
 
 /** "2000년 1월 1일 · 12:00 · 서울" — date and city localized, time literal (or "unknown"). */

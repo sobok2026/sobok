@@ -20,6 +20,7 @@ import { aspectTone, houseText, orbTier, pairKey } from '@/content/interpretatio
 import styles from './constellation.module.css'
 import { glyphText } from './glyphs'
 import type { Selection } from './selection'
+import { ZODIAC_IMAGE_BY_SIGN } from './zodiac-images'
 
 export interface DetailPanelProps {
   ascendant: number | null
@@ -70,7 +71,14 @@ export default function DetailPanel({
       <div className={`${styles.sheetIn} relative rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}>
         <CloseButton label={t('panel.close')} onClose={onClose} />
         <div className="flex items-center gap-3">
-          <img alt="" className="h-10 w-10 shrink-0" src={`/images/${signId}.svg`} />
+          <img
+            alt=""
+            className="h-10 w-10 shrink-0"
+            fetchPriority="high"
+            height={40}
+            src={ZODIAC_IMAGE_BY_SIGN[signId].src}
+            width={40}
+          />
           <div>
             <p className="text-base font-bold text-foreground">{t(`signs.${selection.id}`)}</p>
             <p className="text-xs text-foreground-subtle">{t(`signKeywords.${selection.id}`)}</p>
