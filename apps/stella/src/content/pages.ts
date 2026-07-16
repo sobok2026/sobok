@@ -87,7 +87,7 @@ export const PAGES = {
         {
           heading: '어떻게 계산하나요',
           body: [
-            '별무리는 트로피컬 황도대를 사용합니다. 공개 도메인 천체력 라이브러리로 태양부터 명왕성까지 열 개 천체의 지구 중심 위치를 구하고, 출생 시각을 알 때는 Swiss Ephemeris로 상승점·중천점과 플라시두스 하우스를 계산합니다. 두 계산 모두 이용자의 브라우저 안에서 이루어집니다. 결과의 세부 수준은 입력 정보에 따라 달라지며, 출생 시각을 모르면 달의 하루 이동 범위만 보여 주고 정확한 달 도수와 달의 각, 상승궁, 하우스, 차트 모양은 해석에서 제외합니다.',
+            '별무리는 트로피컬 황도대를 사용합니다. Swiss Ephemeris로 태양부터 명왕성, 달의 교점, 리리스, 키론의 지구 중심 위치를 구하고, 출생 시각을 알 때는 상승점·중천점과 플라시두스 하우스도 계산합니다. 모든 계산은 이용자의 브라우저 안에서 이루어집니다. 결과의 세부 수준은 입력 정보에 따라 달라지며, 출생 시각을 모르면 달의 하루 이동 범위만 보여 주고 정확한 달 도수와 달의 각, 상승궁, 하우스, 차트 모양은 해석에서 제외합니다.',
           ],
         },
         {
@@ -194,7 +194,7 @@ export const PAGES = {
         {
           heading: 'How it calculates',
           body: [
-            'Stella uses the tropical zodiac. A public-domain ephemeris library resolves the geocentric positions of ten bodies from the Sun to Pluto, and when the birth time is known, Swiss Ephemeris calculates the Ascendant, Midheaven, and Placidus houses. Both calculations run entirely in your browser. The level of detail depends on the input: without a birth time, Stella shows the Moon’s full-day range and leaves out its exact degree and aspects, the Rising sign, houses, and chart shape.',
+            'Stella uses the tropical zodiac. Swiss Ephemeris resolves the geocentric positions of the Sun through Pluto, the lunar nodes, Lilith, and Chiron; when the birth time is known, it also calculates the Ascendant, Midheaven, and Placidus houses. Every calculation runs entirely in your browser. The level of detail depends on the input: without a birth time, Stella shows the Moon’s full-day range and leaves out its exact degree and aspects, the Rising sign, houses, and chart shape.',
           ],
         },
         {
@@ -301,7 +301,7 @@ export const PAGES = {
         {
           heading: 'どのように計算するのか',
           body: [
-            '星屑はトロピカル方式の黄道帯を使用します。パブリックドメインの天体暦ライブラリで太陽から冥王星までの十天体の地心位置を求め、出生時刻が分かる場合はSwiss Ephemerisでアセンダント、MC、プラシーダス方式のハウスを計算します。どちらの計算も利用者のブラウザ内で行われます。表示できる詳細は入力情報によって異なり、出生時刻が不明な場合は月の一日の移動範囲を示し、月の正確な度数とアスペクト、上昇星座、ハウス、チャート形状は解釈から除外します。',
+            '星屑はトロピカル方式の黄道帯を使用します。Swiss Ephemerisで太陽から冥王星、月の交点、リリス、キロンの地心位置を求め、出生時刻が分かる場合はアセンダント、MC、プラシーダス方式のハウスも計算します。すべての計算は利用者のブラウザ内で行われます。表示できる詳細は入力情報によって異なり、出生時刻が不明な場合は月の一日の移動範囲を示し、月の正確な度数とアスペクト、上昇星座、ハウス、チャート形状は解釈から除外します。',
           ],
         },
         {
@@ -408,7 +408,7 @@ export const PAGES = {
         {
           heading: '如何计算',
           body: [
-            '星黛洛采用回归黄道（tropical）。我们通过公有领域的星历库，以地心为基准求得从太阳到冥王星共十颗天体的位置；出生时间明确时，则使用Swiss Ephemeris计算上升点、天顶和普拉西德斯宫位。两项计算都完全在您的浏览器内完成。结果的详细程度取决于输入信息：出生时间未知时，仅显示月亮当天的移动范围，不解读月亮的准确度数与相位、上升星座、宫位和盘型。',
+            '星黛洛采用回归黄道（tropical）。我们使用Swiss Ephemeris，以地心为基准计算从太阳到冥王星、月交点、莉莉丝和凯龙星的位置；出生时间明确时，还会计算上升点、天顶和普拉西德斯宫位。所有计算都完全在您的浏览器内完成。结果的详细程度取决于输入信息：出生时间未知时，仅显示月亮当天的移动范围，不解读月亮的准确度数与相位、上升星座、宫位和盘型。',
           ],
         },
         {
