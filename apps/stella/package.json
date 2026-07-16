@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --port 3010",
     "build": "next build",
-    "gen:cities": "node scripts/generate-cities.mjs",
+    "gen:birthplaces": "node scripts/generate-birthplaces.mjs",
     "preview": "wrangler dev",
     "type": "next typegen && tsc --noEmit"
   },

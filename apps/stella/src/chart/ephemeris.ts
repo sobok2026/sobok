@@ -37,6 +37,9 @@ export type BirthChartAnalysis = {
 // `name` stays exactly as Swiss Ephemeris expects inside its virtual filesystem;
 // the public filename inserts the digest before `.se1`. Adding another era or
 // asteroid therefore never invalidates an unchanged browser cache entry.
+// This eager list is only the one segment required by Stella's current date
+// range; wider ranges must select segments per requested date instead of being
+// appended here and downloaded for every user.
 const STANDARD_EPHEMERIS_ASSETS = [
   {
     name: 'sepl_18.se1',
