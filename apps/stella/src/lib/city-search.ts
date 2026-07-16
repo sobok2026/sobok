@@ -1,4 +1,6 @@
-import { CITIES_IN_DISPLAY_ORDER, type City } from './cities'
+import { Locale } from '@sobok/domain/locale'
+
+import { type City, type CityGroup, getCityGroups as getCatalogCityGroups } from './cities'
 
 // The 19 Hangul lead consonants (초성) in Unicode order. String literals here are
 // compatibility jamo (U+3131–), which is exactly what a Korean keyboard emits for
@@ -27,8 +29,8 @@ function isChoseongQuery(query: string): boolean {
 }
 
 /** "ㅅㅇ" matches "서울" — each query consonant equals the corresponding syllable's lead. */
-function matchesChoseong(name: string, query: string): boolean {
-  const chars = [...name]
+function matchesChoseong(value: string, query: string): boolean {
+  const chars = [...value]
 
   if (query.length > chars.length) {
     return false
@@ -59,53 +61,71 @@ function normalizeSearchText(value: string): string {
 
 type SearchableCity = {
   city: City
+  groupLabel: string
+  normalizedGroupLabel: string
   name: string
   country: string
   romanizedKey: string
 }
 
-const SEARCHABLE_CITIES: readonly SearchableCity[] = CITIES_IN_DISPLAY_ORDER.map((city) => ({
-  city,
-  name: normalizeSearchText(city.name),
-  country: normalizeSearchText(city.country),
-  romanizedKey: normalizeSearchText(romanizedKey(city)),
-}))
+type SearchableGroup = {
+  group: CityGroup
+  cities: readonly SearchableCity[]
+}
+
+function createSearchableGroups(locale: Locale): readonly SearchableGroup[] {
+  return getCatalogCityGroups(locale).map((group) => ({
+    group,
+    cities: group.cities.map((city) => ({
+      city,
+      groupLabel: group.label,
+      normalizedGroupLabel: normalizeSearchText(group.label),
+      name: normalizeSearchText(city.name),
+      country: normalizeSearchText(city.country),
+      romanizedKey: normalizeSearchText(romanizedKey(city)),
+    })),
+  }))
+}
+
+const SEARCHABLE_GROUPS_BY_LOCALE = {
+  [Locale.KO]: createSearchableGroups(Locale.KO),
+  [Locale.EN]: createSearchableGroups(Locale.EN),
+  [Locale.JA]: createSearchableGroups(Locale.JA),
+  [Locale.ZH]: createSearchableGroups(Locale.ZH),
+} satisfies Record<Locale, readonly SearchableGroup[]>
 
 function matchesQuery(entry: SearchableCity, rawQuery: string, normalizedQuery: string): boolean {
   if (isChoseongQuery(rawQuery)) {
-    return matchesChoseong(entry.city.name, rawQuery)
+    return (
+      matchesChoseong(entry.city.name, rawQuery) ||
+      matchesChoseong(entry.city.country, rawQuery) ||
+      matchesChoseong(entry.groupLabel, rawQuery)
+    )
   }
 
   return (
     entry.name.includes(normalizedQuery) ||
     entry.country.includes(normalizedQuery) ||
+    entry.normalizedGroupLabel.includes(normalizedQuery) ||
     entry.romanizedKey.includes(normalizedQuery)
   )
 }
 
 /**
- * Cities matching a non-empty query across the full catalog, in picker order.
- * Results are capped so a broad query cannot render the entire catalog.
+ * Full locale catalog for an empty query; otherwise only matching cities while
+ * preserving the locale's configured group and city order. Results are uncapped.
  */
-export function searchCities(query: string, limit = 60): City[] {
+export function getCityGroups(locale: Locale, query: string): readonly CityGroup[] {
   const rawQuery = query.trim()
   const normalizedQuery = normalizeSearchText(rawQuery)
 
   if (!normalizedQuery) {
-    return []
+    return getCatalogCityGroups(locale)
   }
 
-  const matches: City[] = []
+  return SEARCHABLE_GROUPS_BY_LOCALE[locale].flatMap(({ group, cities }) => {
+    const matches = cities.filter((city) => matchesQuery(city, rawQuery, normalizedQuery)).map(({ city }) => city)
 
-  for (const entry of SEARCHABLE_CITIES) {
-    if (matchesQuery(entry, rawQuery, normalizedQuery)) {
-      matches.push(entry.city)
-
-      if (matches.length >= limit) {
-        break
-      }
-    }
-  }
-
-  return matches
+    return matches.length > 0 ? [{ ...group, cities: matches }] : []
+  })
 }

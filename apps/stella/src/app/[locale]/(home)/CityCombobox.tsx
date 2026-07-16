@@ -2,10 +2,10 @@
 
 import { useCombobox } from 'downshift'
 import { useLocale, useTranslations } from 'next-intl'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 
-import { type City, findCity, getInitialCities } from '@/lib/cities'
-import { searchCities } from '@/lib/city-search'
+import { type City, findCity } from '@/lib/cities'
+import { getCityGroups } from '@/lib/city-search'
 
 const inputClass =
   'w-full appearance-none rounded-xl border border-border-2 bg-surface-2 px-3 py-2.5 pr-9 text-base text-foreground outline-none transition [color-scheme:dark] placeholder:text-foreground-faint focus:border-white/60 focus:bg-surface-3 sm:text-sm'
@@ -23,7 +23,22 @@ export default function CityCombobox({ cityKey, onSelect }: Props) {
   const t = useTranslations('Constellation.form')
 
   const selectedCity = findCity(cityKey)
-  const items = query.trim() ? searchCities(query) : getInitialCities(locale)
+  const groups = useMemo(() => getCityGroups(locale, query), [locale, query])
+  const items = useMemo(() => groups.flatMap((group) => group.cities), [groups])
+
+  const groupLabelByFirstCityKey = useMemo(() => {
+    const labels = new Map<string, string>()
+
+    for (const group of groups) {
+      const firstCity = group.cities[0]
+
+      if (firstCity) {
+        labels.set(firstCity.key, group.label)
+      }
+    }
+
+    return labels
+  }, [groups])
 
   const {
     isOpen,
@@ -134,13 +149,13 @@ export default function CityCombobox({ cityKey, onSelect }: Props) {
             items.map((city, index) => {
               const isHighlighted = highlightedIndex === index
               const isSelected = city.key === cityKey
-              const showHeader = index === 0 || items[index - 1].iso2 !== city.iso2
+              const groupLabel = groupLabelByFirstCityKey.get(city.key)
 
               return (
                 <Fragment key={city.key}>
-                  {showHeader && (
+                  {groupLabel && (
                     <li className="px-3 pb-1 pt-2 text-[11px] font-semibold text-foreground-faint" role="presentation">
-                      {city.country}
+                      {groupLabel}
                     </li>
                   )}
                   <li
