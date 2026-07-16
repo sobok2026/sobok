@@ -1,4 +1,5 @@
 import { isStoredBirth, type StoredBirth } from './birth-storage'
+import type { CityCatalog } from './cities'
 
 const SHARE_VERSION = 1
 const SHARE_PREFIX = `${SHARE_VERSION}.`
@@ -73,7 +74,7 @@ export function isShareHash(hash: string): boolean {
   return SHARE_HASH_PATTERN.test(fragmentOf(hash))
 }
 
-export function decodeShareHash(hash: string, kind: ShareKind): SharedPayload | null {
+export function decodeShareHash(hash: string, kind: ShareKind, catalog: CityCatalog): SharedPayload | null {
   const fragment = fragmentOf(hash)
 
   if (!fragment.startsWith(SHARE_PREFIX)) {
@@ -94,7 +95,7 @@ export function decodeShareHash(hash: string, kind: ShareKind): SharedPayload | 
     }
 
     const payload = parsed as Record<string, unknown>
-    const birth = deserializeBirth(payload)
+    const birth = deserializeBirth(payload, catalog)
 
     if (!birth) {
       return null
@@ -137,7 +138,7 @@ export function decodeShareHash(hash: string, kind: ShareKind): SharedPayload | 
   }
 }
 
-function deserializeBirth(payload: Record<string, unknown>): StoredBirth | null {
+function deserializeBirth(payload: Record<string, unknown>, catalog: CityCatalog): StoredBirth | null {
   if (
     typeof payload.d !== 'string' ||
     typeof payload.t !== 'string' ||
@@ -154,7 +155,7 @@ function deserializeBirth(payload: Record<string, unknown>): StoredBirth | null 
     cityKey: payload.c,
   }
 
-  return isStoredBirth(birth) ? birth : null
+  return isStoredBirth(birth, catalog) ? birth : null
 }
 
 function dateFromEpochSeconds(value: unknown): Date | null {

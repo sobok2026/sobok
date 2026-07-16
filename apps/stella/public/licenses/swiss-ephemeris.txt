@@ -1,0 +1,14 @@
+Swiss Ephemeris browser integration
+
+Stella uses @swisseph/browser 1.1.0 for Placidus house cusps and chart angles.
+The package compiles the Swiss Ephemeris C library to WebAssembly and runs it
+locally in the user's browser.
+
+Wrapper source: https://github.com/swisseph-js/swisseph
+Swiss Ephemeris source: https://github.com/aloistr/swisseph
+Stella source: https://github.com/sobok2026/sobok
+License: GNU Affero General Public License version 3
+License text: ./AGPL-3.0.txt
+
+Swiss Ephemeris is copyright Astrodienst AG and its authors. The names of its
+authors or copyright holder are not used to promote Stella.

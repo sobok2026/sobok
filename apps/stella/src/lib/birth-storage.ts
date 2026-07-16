@@ -10,7 +10,7 @@
 // device" outranks a transient session copy.
 
 import type { BirthInput } from '@/chart/ephemeris'
-import { CITIES, findCity } from './cities'
+import { type CityCatalog, findCity } from './cities'
 
 const STORAGE_KEY = 'stella.birth.v1'
 
@@ -53,7 +53,7 @@ function isClockTime(value: string): boolean {
   return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59
 }
 
-export function isStoredBirth(value: unknown): value is StoredBirth {
+export function isStoredBirth(value: unknown, catalog: CityCatalog): value is StoredBirth {
   if (typeof value !== 'object' || value === null) {
     return false
   }
@@ -67,12 +67,12 @@ export function isStoredBirth(value: unknown): value is StoredBirth {
     isClockTime(v.time) &&
     typeof v.timeKnown === 'boolean' &&
     typeof v.cityKey === 'string' &&
-    CITIES.some((city) => city.key === v.cityKey)
+    catalog.cityByKey.has(v.cityKey)
   )
 }
 
 /** Web Storage can throw (private mode, disabled storage) — treat that as "no data". */
-function read(storage: Storage): StoredBirth | null {
+function read(storage: Storage, catalog: CityCatalog): StoredBirth | null {
   try {
     const raw = storage.getItem(STORAGE_KEY)
 
@@ -81,20 +81,20 @@ function read(storage: Storage): StoredBirth | null {
     }
 
     const parsed: unknown = JSON.parse(raw)
-    return isStoredBirth(parsed) ? parsed : null
+    return isStoredBirth(parsed, catalog) ? parsed : null
   } catch {
     return null
   }
 }
 
-export function loadBirth(): LoadedBirth | null {
-  const persisted = read(localStorage)
+export function loadBirth(catalog: CityCatalog): LoadedBirth | null {
+  const persisted = read(localStorage, catalog)
 
   if (persisted) {
     return { birth: persisted, persistent: true }
   }
 
-  const session = read(sessionStorage)
+  const session = read(sessionStorage, catalog)
   return session ? { birth: session, persistent: false } : null
 }
 
@@ -136,10 +136,10 @@ export function clearBirth() {
   }
 }
 
-export function toBirthInput(stored: StoredBirth): BirthInput {
+export function toBirthInput(stored: StoredBirth, catalog: CityCatalog): BirthInput {
   const [year, month, day] = stored.date.split('-').map(Number)
   const [hour, minute] = stored.timeKnown ? stored.time.split(':').map(Number) : [12, 0]
-  const city = findCity(stored.cityKey)
+  const city = findCity(catalog, stored.cityKey)
 
   return {
     year,

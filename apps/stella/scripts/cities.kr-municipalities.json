@@ -1,0 +1,1224 @@
+[
+  {
+    "geonameId": 8462815,
+    "coordinateGeonameId": 11097951,
+    "key": "kr-gijang",
+    "name": "기장군",
+    "province": "부산광역시",
+    "type": "county"
+  },
+  {
+    "geonameId": 1834970,
+    "coordinateGeonameId": 11016612,
+    "key": "kr-dalseong",
+    "name": "달성군",
+    "province": "대구광역시",
+    "type": "county"
+  },
+  {
+    "geonameId": 1842015,
+    "coordinateGeonameId": 1842016,
+    "key": "kr-gunwi",
+    "name": "군위군",
+    "province": "대구광역시",
+    "type": "county"
+  },
+  {
+    "geonameId": 1843160,
+    "coordinateGeonameId": 11202841,
+    "key": "kr-ganghwa",
+    "name": "강화군",
+    "province": "인천광역시",
+    "type": "county"
+  },
+  {
+    "geonameId": 8541499,
+    "coordinateGeonameId": 11228039,
+    "key": "kr-ongjin",
+    "name": "옹진군",
+    "province": "인천광역시",
+    "type": "county"
+  },
+  {
+    "geonameId": 1833760,
+    "coordinateGeonameId": 11093180,
+    "key": "kr-ulju",
+    "name": "울주군",
+    "province": "울산광역시",
+    "type": "county"
+  },
+  {
+    "geonameId": 1835551,
+    "key": "kr-suwon",
+    "name": "수원",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1836091,
+    "key": "kr-seongnam",
+    "name": "성남",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1833787,
+    "key": "kr-uijeongbu",
+    "name": "의정부",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1846894,
+    "key": "kr-anyang",
+    "name": "안양",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1838715,
+    "key": "kr-bucheon",
+    "name": "부천",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8393794,
+    "coordinateGeonameId": 11233845,
+    "key": "kr-gwangmyeong",
+    "name": "광명",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1838341,
+    "key": "kr-pyeongtaek",
+    "name": "평택",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1834308,
+    "coordinateGeonameId": 11327698,
+    "key": "kr-dongducheon",
+    "name": "동두천",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8393792,
+    "key": "kr-ansan",
+    "name": "안산",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1842486,
+    "key": "kr-goyang",
+    "name": "고양",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8393798,
+    "coordinateGeonameId": 6572101,
+    "key": "kr-gwacheon",
+    "name": "과천",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8393803,
+    "coordinateGeonameId": 10430071,
+    "key": "kr-guri",
+    "name": "구리",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1840374,
+    "key": "kr-namyangju",
+    "name": "남양주",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8393795,
+    "key": "kr-osan",
+    "name": "오산",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1837364,
+    "key": "kr-siheung",
+    "name": "시흥",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8393793,
+    "key": "kr-gunpo",
+    "name": "군포",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8393796,
+    "key": "kr-uiwang",
+    "name": "의왕",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8393790,
+    "key": "kr-hanam",
+    "name": "하남",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1832426,
+    "key": "kr-yongin",
+    "name": "용인",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1839430,
+    "key": "kr-paju",
+    "name": "파주",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1843700,
+    "coordinateGeonameId": 6577875,
+    "key": "kr-icheon",
+    "name": "이천",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1846909,
+    "coordinateGeonameId": 6399138,
+    "key": "kr-anseong",
+    "name": "안성",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1842170,
+    "coordinateGeonameId": 11226474,
+    "key": "kr-gimpo",
+    "name": "김포",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8604734,
+    "key": "kr-hwaseong",
+    "name": "화성",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1841809,
+    "key": "kr-gyeonggi-gwangju",
+    "name": "경기 광주시",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8393804,
+    "key": "kr-yangju",
+    "name": "양주",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1839102,
+    "key": "kr-pocheon",
+    "name": "포천",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1832742,
+    "coordinateGeonameId": 6576877,
+    "key": "kr-yeoju",
+    "name": "여주",
+    "province": "경기도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1832697,
+    "coordinateGeonameId": 9865838,
+    "key": "kr-yeoncheon",
+    "name": "연천군",
+    "province": "경기도",
+    "type": "county"
+  },
+  {
+    "geonameId": 8604790,
+    "coordinateGeonameId": 6802311,
+    "key": "kr-gapyeong",
+    "name": "가평군",
+    "province": "경기도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1832832,
+    "coordinateGeonameId": 6577888,
+    "key": "kr-yangpyeong",
+    "name": "양평군",
+    "province": "경기도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1845134,
+    "key": "kr-chuncheon",
+    "name": "춘천",
+    "province": "강원특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1833099,
+    "key": "kr-wonju",
+    "name": "원주",
+    "province": "강원특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1843136,
+    "key": "kr-gangneung",
+    "name": "강릉",
+    "province": "강원특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1834262,
+    "key": "kr-donghae",
+    "name": "동해",
+    "province": "강원특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8393711,
+    "coordinateGeonameId": 6797105,
+    "key": "kr-taebaek",
+    "name": "태백",
+    "province": "강원특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1836534,
+    "key": "kr-sokcho",
+    "name": "속초",
+    "province": "강원특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8604737,
+    "key": "kr-samcheok",
+    "name": "삼척",
+    "province": "강원특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1844190,
+    "coordinateGeonameId": 6817192,
+    "key": "kr-hongcheon",
+    "name": "홍천군",
+    "province": "강원특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1844239,
+    "coordinateGeonameId": 6794112,
+    "key": "kr-hoengseong",
+    "name": "횡성군",
+    "province": "강원특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1832256,
+    "coordinateGeonameId": 6798106,
+    "key": "kr-yeongwol",
+    "name": "영월군",
+    "province": "강원특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1838467,
+    "coordinateGeonameId": 6796197,
+    "key": "kr-pyeongchang",
+    "name": "평창군",
+    "province": "강원특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1845515,
+    "coordinateGeonameId": 6793741,
+    "key": "kr-jeongseon",
+    "name": "정선군",
+    "province": "강원특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1845344,
+    "coordinateGeonameId": 9866482,
+    "key": "kr-cheorwon",
+    "name": "철원군",
+    "province": "강원특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 8393538,
+    "coordinateGeonameId": 11276599,
+    "key": "kr-hwacheon",
+    "name": "화천군",
+    "province": "강원특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1832908,
+    "coordinateGeonameId": 9997883,
+    "key": "kr-yanggu",
+    "name": "양구군",
+    "province": "강원특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1843543,
+    "coordinateGeonameId": 9997970,
+    "key": "kr-inje",
+    "name": "인제군",
+    "province": "강원특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1842514,
+    "coordinateGeonameId": 1843110,
+    "key": "kr-gangwon-goseong",
+    "name": "강원 고성군",
+    "province": "강원특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1832808,
+    "coordinateGeonameId": 9870292,
+    "key": "kr-yangyang",
+    "name": "양양군",
+    "province": "강원특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1845599,
+    "key": "kr-cheongju",
+    "name": "청주",
+    "province": "충청북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1845032,
+    "key": "kr-chungju",
+    "name": "충주",
+    "province": "충청북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1846277,
+    "coordinateGeonameId": 6793459,
+    "key": "kr-jecheon",
+    "name": "제천",
+    "province": "충청북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1838730,
+    "coordinateGeonameId": 6885756,
+    "key": "kr-boeun",
+    "name": "보은군",
+    "province": "충청북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1839869,
+    "coordinateGeonameId": 12078349,
+    "key": "kr-okcheon",
+    "name": "옥천군",
+    "province": "충청북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1832561,
+    "coordinateGeonameId": 12078479,
+    "key": "kr-yeongdong",
+    "name": "영동군",
+    "province": "충청북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1846093,
+    "coordinateGeonameId": 1846095,
+    "key": "kr-jincheon",
+    "name": "진천군",
+    "province": "충청북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1842799,
+    "coordinateGeonameId": 1842800,
+    "key": "kr-goesan",
+    "name": "괴산군",
+    "province": "충청북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1833704,
+    "coordinateGeonameId": 1833706,
+    "key": "kr-eumseong",
+    "name": "음성군",
+    "province": "충청북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1834820,
+    "coordinateGeonameId": 1834822,
+    "key": "kr-danyang",
+    "name": "단양군",
+    "province": "충청북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 8419683,
+    "coordinateGeonameId": 1844954,
+    "key": "kr-jeungpyeong",
+    "name": "증평군",
+    "province": "충청북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1845757,
+    "key": "kr-cheonan",
+    "name": "천안",
+    "province": "충청남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1842615,
+    "coordinateGeonameId": 6883452,
+    "key": "kr-gongju",
+    "name": "공주",
+    "province": "충청남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1838749,
+    "coordinateGeonameId": 6883678,
+    "key": "kr-boryeong",
+    "name": "보령",
+    "province": "충청남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1846848,
+    "coordinateGeonameId": 6811202,
+    "key": "kr-asan",
+    "name": "아산",
+    "province": "충청남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1835889,
+    "coordinateGeonameId": 6809551,
+    "key": "kr-seosan",
+    "name": "서산",
+    "province": "충청남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1840209,
+    "coordinateGeonameId": 12033417,
+    "key": "kr-nonsan",
+    "name": "논산",
+    "province": "충청남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8419251,
+    "coordinateGeonameId": 10913505,
+    "key": "kr-gyeryong",
+    "name": "계룡",
+    "province": "충청남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1834884,
+    "key": "kr-dangjin",
+    "name": "당진",
+    "province": "충청남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1842149,
+    "coordinateGeonameId": 6888365,
+    "key": "kr-geumsan",
+    "name": "금산군",
+    "province": "충청남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1838507,
+    "coordinateGeonameId": 12030321,
+    "key": "kr-buyeo",
+    "name": "부여군",
+    "province": "충청남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1836710,
+    "coordinateGeonameId": 12033003,
+    "key": "kr-seocheon",
+    "name": "서천군",
+    "province": "충청남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1845490,
+    "coordinateGeonameId": 12031592,
+    "key": "kr-cheongyang",
+    "name": "청양군",
+    "province": "충청남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1844173,
+    "coordinateGeonameId": 6810062,
+    "key": "kr-hongseong",
+    "name": "홍성군",
+    "province": "충청남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1832770,
+    "coordinateGeonameId": 6811395,
+    "key": "kr-yesan",
+    "name": "예산군",
+    "province": "충청남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 8419249,
+    "coordinateGeonameId": 6808892,
+    "key": "kr-taean",
+    "name": "태안군",
+    "province": "충청남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1845453,
+    "key": "kr-jeonju",
+    "name": "전주",
+    "province": "전북특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1842023,
+    "key": "kr-gunsan",
+    "name": "군산",
+    "province": "전북특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1843663,
+    "coordinateGeonameId": 12130340,
+    "key": "kr-iksan",
+    "name": "익산",
+    "province": "전북특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1845501,
+    "coordinateGeonameId": 1845503,
+    "key": "kr-jeongeup",
+    "name": "정읍",
+    "province": "전북특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1840378,
+    "coordinateGeonameId": 11915391,
+    "key": "kr-namwon",
+    "name": "남원",
+    "province": "전북특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1842211,
+    "key": "kr-gimje",
+    "name": "김제",
+    "province": "전북특별자치도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8604787,
+    "coordinateGeonameId": 6877737,
+    "key": "kr-wanju",
+    "name": "완주군",
+    "province": "전북특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1846111,
+    "coordinateGeonameId": 6895928,
+    "key": "kr-jinan",
+    "name": "진안군",
+    "province": "전북특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1840941,
+    "coordinateGeonameId": 6887256,
+    "key": "kr-muju",
+    "name": "무주군",
+    "province": "전북특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1846351,
+    "coordinateGeonameId": 11999277,
+    "key": "kr-jangsu",
+    "name": "장수군",
+    "province": "전북특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1843583,
+    "coordinateGeonameId": 12000045,
+    "key": "kr-imsil",
+    "name": "임실군",
+    "province": "전북특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1835649,
+    "coordinateGeonameId": 8690766,
+    "key": "kr-sunchang",
+    "name": "순창군",
+    "province": "전북특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1842854,
+    "coordinateGeonameId": 11908937,
+    "key": "kr-gochang",
+    "name": "고창군",
+    "province": "전북특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1838721,
+    "coordinateGeonameId": 1838722,
+    "key": "kr-buan",
+    "name": "부안군",
+    "province": "전북특별자치도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1841063,
+    "key": "kr-mokpo",
+    "name": "목포",
+    "province": "전라남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1832757,
+    "key": "kr-yeosu",
+    "name": "여수",
+    "province": "전라남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1835646,
+    "key": "kr-suncheon",
+    "name": "순천",
+    "province": "전라남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1840535,
+    "coordinateGeonameId": 11180260,
+    "key": "kr-naju",
+    "name": "나주",
+    "province": "전라남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1841773,
+    "coordinateGeonameId": 11840843,
+    "key": "kr-gwangyang",
+    "name": "광양",
+    "province": "전라남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1834945,
+    "coordinateGeonameId": 11170829,
+    "key": "kr-damyang",
+    "name": "담양군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1842714,
+    "coordinateGeonameId": 8690620,
+    "key": "kr-gokseong",
+    "name": "곡성군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1841975,
+    "coordinateGeonameId": 1841976,
+    "key": "kr-gurye",
+    "name": "구례군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1842780,
+    "coordinateGeonameId": 1842781,
+    "key": "kr-goheung",
+    "name": "고흥군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1838737,
+    "coordinateGeonameId": 1838740,
+    "key": "kr-boseong",
+    "name": "보성군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1843839,
+    "coordinateGeonameId": 11197977,
+    "key": "kr-hwasun",
+    "name": "화순군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1846543,
+    "coordinateGeonameId": 11660366,
+    "key": "kr-jangheung",
+    "name": "장흥군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1843154,
+    "coordinateGeonameId": 1843155,
+    "key": "kr-gangjin",
+    "name": "강진군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1844748,
+    "coordinateGeonameId": 1844751,
+    "key": "kr-haenam",
+    "name": "해남군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1832656,
+    "coordinateGeonameId": 1832663,
+    "key": "kr-yeongam",
+    "name": "영암군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1840979,
+    "coordinateGeonameId": 1840982,
+    "key": "kr-muan",
+    "name": "무안군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1844537,
+    "coordinateGeonameId": 8690548,
+    "key": "kr-hampyeong",
+    "name": "함평군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1832500,
+    "coordinateGeonameId": 11907196,
+    "key": "kr-yeonggwang",
+    "name": "영광군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1846368,
+    "coordinateGeonameId": 11169961,
+    "key": "kr-jangseong",
+    "name": "장성군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1833493,
+    "coordinateGeonameId": 1833494,
+    "key": "kr-wando",
+    "name": "완도군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1846089,
+    "coordinateGeonameId": 6306155,
+    "key": "kr-jindo",
+    "name": "진도군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1837286,
+    "coordinateGeonameId": 11725774,
+    "key": "kr-sinan",
+    "name": "신안군",
+    "province": "전라남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1839068,
+    "key": "kr-pohang",
+    "name": "포항",
+    "province": "경상북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1833276,
+    "key": "kr-gyeongju",
+    "name": "경주",
+    "province": "경상북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8604733,
+    "coordinateGeonameId": 6891139,
+    "key": "kr-gimcheon",
+    "name": "김천",
+    "province": "경상북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1846980,
+    "coordinateGeonameId": 11273053,
+    "key": "kr-andong",
+    "name": "안동",
+    "province": "경상북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1842218,
+    "key": "kr-gumi",
+    "name": "구미",
+    "province": "경상북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1844834,
+    "key": "kr-yeongju",
+    "name": "영주",
+    "province": "경상북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1832611,
+    "key": "kr-yeongcheon",
+    "name": "영천",
+    "province": "경상북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1837700,
+    "coordinateGeonameId": 6890318,
+    "key": "kr-sangju",
+    "name": "상주",
+    "province": "경상북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8604735,
+    "key": "kr-mungyeong",
+    "name": "문경",
+    "province": "경상북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1841596,
+    "coordinateGeonameId": 11035001,
+    "key": "kr-gyeongsan",
+    "name": "경산",
+    "province": "경상북도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1833775,
+    "coordinateGeonameId": 1833776,
+    "key": "kr-uiseong",
+    "name": "의성군",
+    "province": "경상북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 8604789,
+    "coordinateGeonameId": 1845519,
+    "key": "kr-cheongsong",
+    "name": "청송군",
+    "province": "경상북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 8419823,
+    "coordinateGeonameId": 6895429,
+    "key": "kr-yeongyang",
+    "name": "영양군",
+    "province": "경상북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1832577,
+    "coordinateGeonameId": 11245561,
+    "key": "kr-yeongdeok",
+    "name": "영덕군",
+    "province": "경상북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1845685,
+    "coordinateGeonameId": 6902774,
+    "key": "kr-cheongdo",
+    "name": "청도군",
+    "province": "경상북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1842555,
+    "coordinateGeonameId": 1842559,
+    "key": "kr-goryeong",
+    "name": "고령군",
+    "province": "경상북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1836130,
+    "coordinateGeonameId": 1836137,
+    "key": "kr-seongju",
+    "name": "성주군",
+    "province": "경상북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1846148,
+    "coordinateGeonameId": 10966699,
+    "key": "kr-chilgok",
+    "name": "칠곡군",
+    "province": "경상북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1832797,
+    "coordinateGeonameId": 11254625,
+    "key": "kr-yecheon",
+    "name": "예천군",
+    "province": "경상북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1838893,
+    "coordinateGeonameId": 1838896,
+    "key": "kr-bonghwa",
+    "name": "봉화군",
+    "province": "경상북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1833762,
+    "coordinateGeonameId": 6879794,
+    "key": "kr-uljin",
+    "name": "울진군",
+    "province": "경상북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1833753,
+    "coordinateGeonameId": 13286589,
+    "key": "kr-ulleung",
+    "name": "울릉군",
+    "province": "경상북도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1846050,
+    "key": "kr-jinju",
+    "name": "진주",
+    "province": "경상남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1845017,
+    "coordinateGeonameId": 6897326,
+    "key": "kr-tongyeong",
+    "name": "통영",
+    "province": "경상남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 8604736,
+    "key": "kr-sacheon",
+    "name": "사천",
+    "province": "경상남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1842942,
+    "key": "kr-kimhae",
+    "name": "김해",
+    "province": "경상남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1841147,
+    "key": "kr-miryang",
+    "name": "밀양",
+    "province": "경상남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1842752,
+    "key": "kr-geoje",
+    "name": "거제",
+    "province": "경상남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1832824,
+    "key": "kr-yangsan",
+    "name": "양산",
+    "province": "경상남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1846322,
+    "key": "kr-changwon",
+    "name": "창원",
+    "province": "경상남도",
+    "type": "city"
+  },
+  {
+    "geonameId": 1833782,
+    "coordinateGeonameId": 6897862,
+    "key": "kr-uiryeong",
+    "name": "의령군",
+    "province": "경상남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1844557,
+    "coordinateGeonameId": 1844558,
+    "key": "kr-haman",
+    "name": "함안군",
+    "province": "경상남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1846444,
+    "coordinateGeonameId": 6902776,
+    "key": "kr-changnyeong",
+    "name": "창녕군",
+    "province": "경상남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1842515,
+    "coordinateGeonameId": 6897117,
+    "key": "kr-gyeongnam-goseong",
+    "name": "경남 고성군",
+    "province": "경상남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1840450,
+    "coordinateGeonameId": 1840454,
+    "key": "kr-namhae",
+    "name": "남해군",
+    "province": "경상남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1844784,
+    "coordinateGeonameId": 11841012,
+    "key": "kr-hadong",
+    "name": "하동군",
+    "province": "경상남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1837894,
+    "coordinateGeonameId": 8690514,
+    "key": "kr-sancheong",
+    "name": "산청군",
+    "province": "경상남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1844532,
+    "coordinateGeonameId": 6896764,
+    "key": "kr-hamyang",
+    "name": "함양군",
+    "province": "경상남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1842853,
+    "coordinateGeonameId": 6893824,
+    "key": "kr-geochang",
+    "name": "거창군",
+    "province": "경상남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1844410,
+    "coordinateGeonameId": 1844413,
+    "key": "kr-hapcheon",
+    "name": "합천군",
+    "province": "경상남도",
+    "type": "county"
+  },
+  {
+    "geonameId": 1846261,
+    "key": "kr-jeju",
+    "name": "제주",
+    "province": "제주특별자치도",
+    "type": "administrativeCity"
+  },
+  {
+    "geonameId": 1836630,
+    "coordinateGeonameId": 6194164,
+    "key": "kr-seogwipo",
+    "name": "서귀포",
+    "province": "제주특별자치도",
+    "type": "administrativeCity"
+  }
+]

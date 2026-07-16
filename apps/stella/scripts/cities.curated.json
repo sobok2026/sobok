@@ -1,0 +1,614 @@
+[
+  {
+    "key": "kr-gwangju",
+    "name": "광주",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 35.1547,
+    "longitude": 126.9156,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-daegu",
+    "name": "대구",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 35.8703,
+    "longitude": 128.5911,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-daejeon",
+    "name": "대전",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 36.3491,
+    "longitude": 127.3849,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-busan",
+    "name": "부산",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 35.1017,
+    "longitude": 129.03,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-seoul",
+    "name": "서울",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 37.566,
+    "longitude": 126.9784,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-suwon",
+    "name": "수원",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 37.2911,
+    "longitude": 127.0089,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-ulsan",
+    "name": "울산",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 35.5372,
+    "longitude": 129.3167,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-incheon",
+    "name": "인천",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 37.4565,
+    "longitude": 126.7052,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-jeonju",
+    "name": "전주",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 35.8219,
+    "longitude": 127.1489,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-jeju",
+    "name": "제주",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 33.5097,
+    "longitude": 126.5219,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-changwon",
+    "name": "창원",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 35.2281,
+    "longitude": 128.6811,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-cheongju",
+    "name": "청주",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 36.6372,
+    "longitude": 127.4897,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "jp-sendai",
+    "name": "仙台",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-04",
+    "latitude": 38.2667,
+    "longitude": 140.8667,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-nagoya",
+    "name": "名古屋",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-23",
+    "latitude": 35.1815,
+    "longitude": 136.9064,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-osaka",
+    "name": "大阪",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-27",
+    "latitude": 34.6938,
+    "longitude": 135.5011,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-hiroshima",
+    "name": "広島",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-34",
+    "latitude": 34.4,
+    "longitude": 132.45,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-sapporo",
+    "name": "札幌",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-01",
+    "latitude": 43.0667,
+    "longitude": 141.35,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-tokyo",
+    "name": "東京",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-13",
+    "latitude": 35.6895,
+    "longitude": 139.6917,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-fukuoka",
+    "name": "福岡",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-40",
+    "latitude": 33.6,
+    "longitude": 130.4167,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "au-brisbane",
+    "name": "Brisbane",
+    "country": "Australia",
+    "iso2": "AU",
+    "latitude": -27.4679,
+    "longitude": 153.0281,
+    "timeZone": "Australia/Brisbane"
+  },
+  {
+    "key": "au-melbourne",
+    "name": "Melbourne",
+    "country": "Australia",
+    "iso2": "AU",
+    "latitude": -37.814,
+    "longitude": 144.9633,
+    "timeZone": "Australia/Melbourne"
+  },
+  {
+    "key": "au-perth",
+    "name": "Perth",
+    "country": "Australia",
+    "iso2": "AU",
+    "latitude": -31.9522,
+    "longitude": 115.8614,
+    "timeZone": "Australia/Perth"
+  },
+  {
+    "key": "au-sydney",
+    "name": "Sydney",
+    "country": "Australia",
+    "iso2": "AU",
+    "latitude": -33.8678,
+    "longitude": 151.2073,
+    "timeZone": "Australia/Sydney"
+  },
+  {
+    "key": "ca-toronto",
+    "name": "Toronto",
+    "country": "Canada",
+    "iso2": "CA",
+    "latitude": 43.7064,
+    "longitude": -79.3986,
+    "timeZone": "America/Toronto"
+  },
+  {
+    "key": "ca-vancouver",
+    "name": "Vancouver",
+    "country": "Canada",
+    "iso2": "CA",
+    "latitude": 49.2497,
+    "longitude": -123.1193,
+    "timeZone": "America/Vancouver"
+  },
+  {
+    "key": "nz-auckland",
+    "name": "Auckland",
+    "country": "New Zealand",
+    "iso2": "NZ",
+    "latitude": -36.8485,
+    "longitude": 174.7635,
+    "timeZone": "Pacific/Auckland"
+  },
+  {
+    "key": "gb-london",
+    "name": "London",
+    "country": "United Kingdom",
+    "iso2": "GB",
+    "latitude": 51.5085,
+    "longitude": -0.1257,
+    "timeZone": "Europe/London"
+  },
+  {
+    "key": "us-chicago",
+    "name": "Chicago",
+    "country": "United States",
+    "iso2": "US",
+    "latitude": 41.85,
+    "longitude": -87.65,
+    "timeZone": "America/Chicago"
+  },
+  {
+    "key": "us-houston",
+    "name": "Houston",
+    "country": "United States",
+    "iso2": "US",
+    "latitude": 29.7633,
+    "longitude": -95.3633,
+    "timeZone": "America/Chicago"
+  },
+  {
+    "key": "us-los-angeles",
+    "name": "Los Angeles",
+    "country": "United States",
+    "iso2": "US",
+    "latitude": 34.0522,
+    "longitude": -118.2437,
+    "timeZone": "America/Los_Angeles"
+  },
+  {
+    "key": "us-new-york",
+    "name": "New York City",
+    "country": "United States",
+    "iso2": "US",
+    "latitude": 40.7143,
+    "longitude": -74.006,
+    "timeZone": "America/New_York"
+  },
+  {
+    "key": "us-phoenix",
+    "name": "Phoenix",
+    "country": "United States",
+    "iso2": "US",
+    "latitude": 33.4484,
+    "longitude": -112.074,
+    "timeZone": "America/Phoenix"
+  },
+  {
+    "key": "kr-goyang",
+    "name": "고양",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 37.6564,
+    "longitude": 126.835,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-kimhae",
+    "name": "김해",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 35.2342,
+    "longitude": 128.8811,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-bucheon",
+    "name": "부천",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 37.4989,
+    "longitude": 126.7831,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-seongnam",
+    "name": "성남",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 37.4386,
+    "longitude": 127.1378,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-ansan",
+    "name": "안산",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 37.3236,
+    "longitude": 126.8219,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-anyang",
+    "name": "안양",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 37.3925,
+    "longitude": 126.9269,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-uijeongbu",
+    "name": "의정부",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 37.7415,
+    "longitude": 127.0474,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-cheonan",
+    "name": "천안",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 36.8065,
+    "longitude": 127.1522,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-pohang",
+    "name": "포항",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 36.0292,
+    "longitude": 129.3648,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "kr-hwaseong",
+    "name": "화성",
+    "country": "대한민국",
+    "iso2": "KR",
+    "latitude": 37.2068,
+    "longitude": 126.8169,
+    "timeZone": "Asia/Seoul"
+  },
+  {
+    "key": "jp-saitama",
+    "name": "さいたま",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-11",
+    "latitude": 35.9081,
+    "longitude": 139.6566,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-kyoto",
+    "name": "京都",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-26",
+    "latitude": 35.0211,
+    "longitude": 135.7539,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-hachioji",
+    "name": "八王子",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-13",
+    "latitude": 35.6558,
+    "longitude": 139.3239,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-kitakyushu",
+    "name": "北九州",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-40",
+    "latitude": 33.8518,
+    "longitude": 130.8503,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-chiba",
+    "name": "千葉",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-12",
+    "latitude": 35.6,
+    "longitude": 140.1167,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-sakai",
+    "name": "堺",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-27",
+    "latitude": 34.5822,
+    "longitude": 135.4665,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-himeji",
+    "name": "姫路",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-28",
+    "latitude": 34.8167,
+    "longitude": 134.7,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-utsunomiya",
+    "name": "宇都宮",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-09",
+    "latitude": 36.5667,
+    "longitude": 139.8833,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-okayama",
+    "name": "岡山",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-33",
+    "latitude": 34.65,
+    "longitude": 133.9333,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-kawaguchi",
+    "name": "川口",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-11",
+    "latitude": 35.8052,
+    "longitude": 139.7107,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-kawasaki",
+    "name": "川崎",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-14",
+    "latitude": 35.5206,
+    "longitude": 139.7172,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-niigata",
+    "name": "新潟",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-15",
+    "latitude": 37.9226,
+    "longitude": 139.0413,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-matsuyama",
+    "name": "松山",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-38",
+    "latitude": 33.8392,
+    "longitude": 132.7657,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-yokohama",
+    "name": "横浜",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-14",
+    "latitude": 35.4333,
+    "longitude": 139.65,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-hamamatsu",
+    "name": "浜松",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-22",
+    "latitude": 34.7,
+    "longitude": 137.7333,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-kumamoto",
+    "name": "熊本",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-43",
+    "latitude": 32.8059,
+    "longitude": 130.6918,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-sagamihara",
+    "name": "相模原",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-14",
+    "latitude": 35.5671,
+    "longitude": 139.2417,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-kobe",
+    "name": "神戸",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-28",
+    "latitude": 34.6913,
+    "longitude": 135.183,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-shizuoka",
+    "name": "静岡",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-22",
+    "latitude": 34.9833,
+    "longitude": 138.3833,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "jp-kagoshima",
+    "name": "鹿児島",
+    "country": "日本国",
+    "iso2": "JP",
+    "regionCode": "JP-46",
+    "latitude": 31.5667,
+    "longitude": 130.55,
+    "timeZone": "Asia/Tokyo"
+  },
+  {
+    "key": "ca-montreal",
+    "name": "Montreal",
+    "country": "Canada",
+    "iso2": "CA",
+    "latitude": 45.5088,
+    "longitude": -73.5878,
+    "timeZone": "America/Toronto"
+  },
+  {
+    "key": "us-philadelphia",
+    "name": "Philadelphia",
+    "country": "United States",
+    "iso2": "US",
+    "latitude": 39.9524,
+    "longitude": -75.1636,
+    "timeZone": "America/New_York"
+  },
+  {
+    "key": "us-san-antonio",
+    "name": "San Antonio",
+    "country": "United States",
+    "iso2": "US",
+    "latitude": 29.4241,
+    "longitude": -98.4936,
+    "timeZone": "America/Chicago"
+  }
+]

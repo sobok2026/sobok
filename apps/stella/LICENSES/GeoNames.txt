@@ -1,0 +1,14 @@
+GeoNames geographical database
+
+Source: https://download.geonames.org/export/dump/
+Project: https://www.geonames.org/
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+License text: https://creativecommons.org/licenses/by/4.0/
+
+Copyright GeoNames contributors.
+
+Stella uses selected city and country names, coordinates, administrative identities, and
+IANA time-zone identifiers from the GeoNames cities15000, KR, and CN datasets. The data
+has been curated, deduplicated, reordered, rounded to four coordinate decimal places,
+and combined with localized display-name, administrative-group, and standard-time
+overrides. Source snapshots accessed 2026-07-16.

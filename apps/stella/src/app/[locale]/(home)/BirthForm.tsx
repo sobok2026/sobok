@@ -1,8 +1,9 @@
 'use client'
 
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { type SubmitEvent, useEffect, useState } from 'react'
 import { useBirthProfile } from '@/components/BirthProfileProvider'
+import { useCityCatalog } from '@/components/CityCatalogProvider'
 import type { StoredBirth } from '@/lib/birth-storage'
 import { getDefaultCityKey } from '@/lib/cities'
 import CityCombobox from './CityCombobox'
@@ -17,15 +18,15 @@ type Props = {
 }
 
 export default function BirthForm({ onSubmit }: Props) {
-  const locale = useLocale()
-  const t = useTranslations('Constellation.form')
-  const profile = useBirthProfile()
   const [date, setDate] = useState('2000-01-01')
   const [time, setTime] = useState('12:00')
   const [timeUnknown, setTimeUnknown] = useState(false)
-  const [cityKey, setCityKey] = useState(() => getDefaultCityKey(locale))
+  const catalog = useCityCatalog()
+  const [cityKey, setCityKey] = useState(() => getDefaultCityKey(catalog))
   const [save, setSave] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const profile = useBirthProfile()
+  const t = useTranslations('Constellation.form')
 
   function submit(e: SubmitEvent) {
     e.preventDefault()
@@ -55,7 +56,7 @@ export default function BirthForm({ onSubmit }: Props) {
     setDate('2000-01-01')
     setTime('12:00')
     setTimeUnknown(false)
-    setCityKey(getDefaultCityKey(locale))
+    setCityKey(getDefaultCityKey(catalog))
     setSave(false)
     setError(null)
   }

@@ -5,18 +5,21 @@
   "scripts": {
     "dev": "next dev --port 3010",
     "build": "next build",
+    "gen:cities": "node scripts/generate-cities.mjs",
     "preview": "wrangler dev",
     "type": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.10",
     "@sobok/domain": "workspace:*",
+    "@swisseph/browser": "1.1.0",
     "circular-natal-horoscope-js": "^1.1.0",
     "downshift": "^9.0.0",
     "next": "16.2.10",
     "next-intl": "^4.13.0",
     "react": "19.2.7",
     "react-dom": "19.2.7",
+    "server-only": "^0.0.1",
     "sonner": "^2.0.7"
   },
   "devDependencies": {

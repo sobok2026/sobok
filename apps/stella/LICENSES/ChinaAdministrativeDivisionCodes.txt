@@ -1,0 +1,13 @@
+Chinese administrative-division names and codes
+
+Snapshot: https://github.com/yescallop/areacodes/blob/master/data/2025.txt
+Project: https://github.com/yescallop/areacodes
+Upstream source: National Place Names Information Database of China
+License: CC0 1.0 Universal (public-domain dedication)
+License text: https://creativecommons.org/publicdomain/zero/1.0/
+
+Stella uses the 2025 snapshot to pin official Simplified Chinese names and six-digit
+codes for mainland province-level and prefecture-level administrative divisions.
+The roster excludes Taiwan and includes Hong Kong and Macao according to Stella's
+configured Chinese-language market. GeoNames supplies administrative identities,
+representative coordinates, and IANA time-zone identifiers separately under CC BY 4.0.

@@ -1,8 +1,8 @@
-// Computes a natal chart (tropical planetary longitudes + ascendant/midheaven +
-// Placidus houses) from birth data using `circular-natal-horoscope-js` (public
-// domain), which wraps the Moshier analytic ephemeris — geocentric positions
-// accurate to well under an arcsecond, i.e. astrologically exact. The library is
-// dynamically imported so its weight only loads when a user actually submits.
+// Computes a natal chart from two browser-only engines: planetary longitudes come
+// from `circular-natal-horoscope-js` (public-domain Moshier ephemeris), while the
+// ascendant, midheaven and Placidus cusps come from Swiss Ephemeris compiled to
+// WebAssembly. Both libraries are dynamically imported so their weight only loads
+// when a user actually submits.
 
 import { signOfLon } from './astrology'
 import { PLANET_ORDER } from './data'
@@ -41,11 +41,40 @@ type Lib = typeof import('circular-natal-horoscope-js')
 type OriginCtor = Lib['Origin']
 type HoroscopeCtor = Lib['Horoscope']
 type Horoscope = InstanceType<HoroscopeCtor>
+type SwissModule = typeof import('@swisseph/browser')
+type SwissEphemeris = InstanceType<SwissModule['SwissEphemeris']>
+
+type SwissRuntime = {
+  ephemeris: SwissEphemeris
+  placidus: Parameters<SwissEphemeris['calculateHouses']>[3]
+}
+
+let swissRuntimePromise: Promise<SwissRuntime> | null = null
+
+/** One lazily initialized WASM instance shared by every natal calculation. */
+function getSwissRuntime(): Promise<SwissRuntime> {
+  if (!swissRuntimePromise) {
+    // package.json deliberately pins 1.1.0: the published 1.1.1 ESM artifact
+    // references CommonJS globals and cannot be imported in a browser module.
+    swissRuntimePromise = import('@swisseph/browser')
+      .then(async ({ HouseSystem, SwissEphemeris }) => {
+        const ephemeris = new SwissEphemeris()
+        await ephemeris.init()
+        return { ephemeris, placidus: HouseSystem.Placidus }
+      })
+      .catch((error: unknown) => {
+        // A transient asset/load failure must not poison every later attempt.
+        swissRuntimePromise = null
+        throw error
+      })
+  }
+
+  return swissRuntimePromise
+}
 
 // The library's public types are largely `any`; these are the exact views we read.
 type EclipticDD = { ChartPosition: { Ecliptic: { DecimalDegrees: number } } }
 type LibBody = { key: string; isRetrograde: boolean } & EclipticDD
-type LibHouse = { id: number; ChartPosition: { StartPosition: { Ecliptic: { DecimalDegrees: number } } } }
 
 /** The ten Sun–Pluto bodies, in `PLANET_ORDER`, with the library's retrograde flags. */
 function bodyPositions(horoscope: Horoscope): PlanetPosition[] {
@@ -162,7 +191,10 @@ export async function computeBirthChartAnalysis(input: BirthInput): Promise<Birt
 }
 
 export async function computeChart(input: BirthInput): Promise<NatalChart> {
-  const { Origin, Horoscope } = await import('circular-natal-horoscope-js')
+  const [{ Origin, Horoscope }, swissRuntime] = await Promise.all([
+    import('circular-natal-horoscope-js'),
+    input.timeKnown ? getSwissRuntime() : Promise.resolve(null),
+  ])
 
   // Origin takes the birth *local* wall-clock and derives the zone (with historical
   // DST) from the coordinates — which, in this app, always travel together as one
@@ -225,13 +257,25 @@ export async function computeChart(input: BirthInput): Promise<NatalChart> {
   let midheaven: number | null = null
   let cusps: number[] | null = null
 
-  if (input.timeKnown) {
-    ascendant = norm360(horoscope.Ascendant.ChartPosition.Ecliptic.DecimalDegrees)
-    midheaven = norm360(horoscope.Midheaven.ChartPosition.Ecliptic.DecimalDegrees)
-    cusps = (horoscope.Houses as LibHouse[])
-      .slice()
-      .sort((a, b) => a.id - b.id)
-      .map((house) => norm360(house.ChartPosition.StartPosition.Ecliptic.DecimalDegrees))
+  if (input.timeKnown && swissRuntime) {
+    const houses = swissRuntime.ephemeris.calculateHouses(
+      origin.julianDate,
+      input.latitude,
+      input.longitude,
+      swissRuntime.placidus,
+    )
+
+    // Swiss Ephemeris follows the C API convention: cusp 0 is unused and the
+    // twelve real Placidus cusps occupy indexes 1–12.
+    const placidusCusps = houses.cusps.slice(1, 13)
+
+    if (placidusCusps.length !== 12 || placidusCusps.some((cusp) => !Number.isFinite(cusp))) {
+      throw new Error('Swiss Ephemeris returned invalid Placidus house cusps')
+    }
+
+    ascendant = norm360(houses.ascendant)
+    midheaven = norm360(houses.mc)
+    cusps = placidusCusps.map(norm360)
 
     // Part of Fortune — day formula above the horizon, night formula below. The
     // library doesn't compute it, so it stays derived here from Asc/Sun/Moon.

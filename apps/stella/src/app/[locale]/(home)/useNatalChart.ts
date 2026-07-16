@@ -3,6 +3,7 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react'
 
 import { computeBirthChartAnalysis, type UnknownBirthTimeAnalysis } from '@/chart/ephemeris'
 import type { NatalChart } from '@/chart/types'
+import { useCityCatalog } from '@/components/CityCatalogProvider'
 import { loadInterpretations } from '@/content/interpretations'
 import type { Interpretations } from '@/content/interpretations/types'
 import { track } from '@/lib/analytics/browser'
@@ -39,6 +40,7 @@ export function useNatalChart({ birth, editing, onReset, sourceReady }: UseNatal
   const [chartState, setChartState] = useState<ChartState>(INITIAL_CHART_STATE)
   const submittedRef = useRef(false)
   const locale = useLocale()
+  const cityCatalog = useCityCatalog()
 
   // The reset callback is effect-only and should not retrigger chart computation
   // when the caller passes a new inline function.
@@ -68,7 +70,7 @@ export function useNatalChart({ birth, editing, onReset, sourceReady }: UseNatal
       setChartState((previous) => ({ status: 'computing', runId: previous.runId }))
 
       try {
-        const input = toBirthInput(sourceBirth)
+        const input = toBirthInput(sourceBirth, cityCatalog)
         const [analysis, interpretations] = await Promise.all([
           computeBirthChartAnalysis(input),
           loadInterpretations(locale),
@@ -103,7 +105,7 @@ export function useNatalChart({ birth, editing, onReset, sourceReady }: UseNatal
     return () => {
       cancelled = true
     }
-  }, [birth, editing, locale, sourceReady])
+  }, [birth, cityCatalog, editing, locale, sourceReady])
 
   /** Flags the next compute as user-submitted so it fires the analytics event. */
   function markSubmitted() {

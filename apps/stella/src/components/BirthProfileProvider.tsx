@@ -3,6 +3,7 @@
 import { createContext, type ReactNode, useContext, useEffect, useState } from 'react'
 
 import { clearBirth, loadBirth, type StoredBirth, saveBirth } from '@/lib/birth-storage'
+import { useCityCatalog } from './CityCatalogProvider'
 
 type BirthProfileContextValue = {
   birth: StoredBirth | null
@@ -15,6 +16,7 @@ type BirthProfileContextValue = {
 const BirthProfileContext = createContext<BirthProfileContextValue | null>(null)
 
 export default function BirthProfileProvider({ children }: { children: ReactNode }) {
+  const catalog = useCityCatalog()
   const [birth, setBirth] = useState<StoredBirth | null>(null)
   const [persistent, setPersistent] = useState(false)
   const [hydrated, setHydrated] = useState(false)
@@ -32,15 +34,18 @@ export default function BirthProfileProvider({ children }: { children: ReactNode
   }
 
   useEffect(() => {
-    const loaded = loadBirth()
+    const loaded = loadBirth(catalog)
 
     if (loaded) {
       setBirth(loaded.birth)
       setPersistent(loaded.persistent)
+    } else {
+      setBirth(null)
+      setPersistent(false)
     }
 
     setHydrated(true)
-  }, [])
+  }, [catalog])
 
   return <BirthProfileContext value={{ birth, hydrated, persistent, save, clear }}>{children}</BirthProfileContext>
 }

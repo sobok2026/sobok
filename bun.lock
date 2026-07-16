@@ -138,12 +138,14 @@
       "dependencies": {
         "@next/third-parties": "^16.2.10",
         "@sobok/domain": "workspace:*",
+        "@swisseph/browser": "1.1.0",
         "circular-natal-horoscope-js": "^1.1.0",
         "downshift": "^9.0.0",
         "next": "16.2.10",
         "next-intl": "^4.13.0",
         "react": "19.2.7",
         "react-dom": "19.2.7",
+        "server-only": "^0.0.1",
         "sonner": "^2.0.7",
       },
       "devDependencies": {
@@ -1069,6 +1071,10 @@
     "@swc/helpers": ["@swc/helpers@0.5.15", "", { "dependencies": { "tslib": "^2.8.0" } }, "sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g=="],
 
     "@swc/types": ["@swc/types@0.1.26", "", { "dependencies": { "@swc/counter": "^0.1.3" } }, "sha512-lyMwd7WGgG79RS7EERZV3T8wMdmPq3xwyg+1nmAM64kIhx5yl+juO2PYIHb7vTiPgPCj8LYjsNV2T5wiQHUEaw=="],
+
+    "@swisseph/browser": ["@swisseph/browser@1.1.0", "", { "dependencies": { "@swisseph/core": "1.0.4" } }, "sha512-QRkvl5oN/KUtm8szRGYPfsgUlB7JoskIdwm9coNNSU/guOG+mYxsUFeJOdNF3k1K3B8ZzFmx1BJ4huGuNhtftA=="],
+
+    "@swisseph/core": ["@swisseph/core@1.0.4", "", {}, "sha512-TBpy9Oe9KcVSa6wxika+kWLp2bElb9+l+MBKB4vnBVcD8tRiv/axtLYGYCGyb7uLFlBUFcuTqHQ33IwfDJmNZQ=="],
 
     "@t3-oss/env-core": ["@t3-oss/env-core@0.13.11", "", { "peerDependencies": { "arktype": "^2.1.0", "typescript": ">=5.0.0", "valibot": "^1.0.0-beta.7 || ^1.0.0", "zod": "^3.24.0 || ^4.0.0" }, "optionalPeers": ["arktype", "typescript", "valibot", "zod"] }, "sha512-sM7GYY+KL7H/Hl0BE0inWfk3nRHZOLhmVn7sHGxaZt9FAR6KqREXAE+6TqKfiavfXmpRxO/OZ2QgKRd+oiBYRQ=="],
 

@@ -97,7 +97,7 @@ export function ConstellationActions({
             },
           ],
           houseThemes: HOUSE_NUMBERS.map((n) => t(`houseThemes.${n}`)),
-          siteName: SITE_NAME[locale as Locale] ?? SITE_NAME[Locale.EN],
+          siteName: SITE_NAME[locale],
           url: new URL(ORIGIN).host,
         },
         getComputedStyle(document.body).fontFamily,

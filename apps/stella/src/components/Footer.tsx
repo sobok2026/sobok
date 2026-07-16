@@ -4,6 +4,8 @@ import { SITE_NAME } from '@/constants'
 import { LEGAL } from '@/content/legal'
 import { PAGES } from '@/content/pages'
 
+const SOURCE_URL = 'https://github.com/sobok2026/sobok'
+
 export default function Footer({ locale }: { locale: Locale }) {
   const { nav } = LEGAL[locale]
   const { nav: pageNav } = PAGES[locale]
@@ -26,6 +28,12 @@ export default function Footer({ locale }: { locale: Locale }) {
         <Link className="hover:text-foreground" href={`/${locale}/privacy`}>
           {nav.privacy}
         </Link>
+        <a className="hover:text-foreground" href={SOURCE_URL} rel="noreferrer" target="_blank">
+          {pageNav.source}
+        </a>
+        <a className="hover:text-foreground" href="/licenses/swiss-ephemeris.txt">
+          {pageNav.licenses}
+        </a>
       </nav>
       <p className="mt-4 text-foreground-faint">© 2026 {SITE_NAME[locale]} · stella.sobok.cc</p>
     </footer>

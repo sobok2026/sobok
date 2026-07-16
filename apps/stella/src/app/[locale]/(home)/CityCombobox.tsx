@@ -1,9 +1,10 @@
 'use client'
 
 import { useCombobox } from 'downshift'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 
+import { useCityCatalog } from '@/components/CityCatalogProvider'
 import { type City, findCity } from '@/lib/cities'
 import { getCityGroups } from '@/lib/city-search'
 
@@ -19,11 +20,11 @@ type Props = {
 
 export default function CityCombobox({ cityKey, onSelect }: Props) {
   const [query, setQuery] = useState('')
-  const locale = useLocale()
+  const catalog = useCityCatalog()
   const t = useTranslations('Constellation.form')
 
-  const selectedCity = findCity(cityKey)
-  const groups = useMemo(() => getCityGroups(locale, query), [locale, query])
+  const selectedCity = findCity(catalog, cityKey)
+  const groups = useMemo(() => getCityGroups(catalog.groups, query), [catalog.groups, query])
   const items = useMemo(() => groups.flatMap((group) => group.cities), [groups])
 
   const groupLabelByFirstCityKey = useMemo(() => {
@@ -90,7 +91,7 @@ export default function CityCombobox({ cityKey, onSelect }: Props) {
     if (!isOpen) {
       setInputValue(selectedCity.name)
     }
-  }, [cityKey])
+  }, [cityKey, isOpen, selectedCity.name, setInputValue])
 
   return (
     <div>
