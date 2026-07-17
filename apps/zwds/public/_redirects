@@ -1,0 +1,4 @@
+# Workers Static Assets redirects (copied into ./out by `next build`).
+# The bare root has no page (localePrefix: 'always'); send it to the default locale.
+# Language choice is explicit via the in-page locale links — no Accept-Language magic.
+/ /ko/ 302
