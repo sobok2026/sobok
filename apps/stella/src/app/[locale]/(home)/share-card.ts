@@ -2,9 +2,9 @@
 // specific, while the wheel consumes the same scene and resting visual contract
 // as the interactive SVG so their static, unselected representations stay aligned.
 
+import { ASTROLOGY_GLYPH_UNITS_PER_EM, getAstrologyGlyphPath, isAstrologyGlyph } from '@/chart/astrology-glyph-paths'
 import type { ChartAspect, NatalChart } from '@/chart/types'
 import { HERO_TITLE_STYLE } from '@/components/hero-title-style'
-import { ASTROLOGY_GLYPH_UNITS_PER_EM, getAstrologyGlyphPath } from './wheel/astrology-glyph-paths'
 import { CENTER, type Point, TOKEN, VIEW } from './wheel/geometry'
 import {
   buildWheelScene,
@@ -482,7 +482,20 @@ function paintBig3(
     ctx.textBaseline = 'middle'
     setFont(ctx, 500, 27, family)
     ctx.fillStyle = color.subtle
-    ctx.fillText(`${cell.glyph} ${cell.label}`, cx, BIG3_TOP + 47)
+
+    if (isAstrologyGlyph(cell.glyph)) {
+      // Draw the glyph from its vector outline, then the label as text next to it.
+      const glyphSize = 27
+      const glyphGap = 9
+      const labelWidth = ctx.measureText(cell.label).width
+      const left = cx - (glyphSize + glyphGap + labelWidth) / 2
+      fillGlyph(ctx, cell.glyph, left + glyphSize / 2, BIG3_TOP + 47, glyphSize, color.subtle)
+      ctx.textAlign = 'left'
+      ctx.fillText(cell.label, left + glyphSize + glyphGap, BIG3_TOP + 47)
+      ctx.textAlign = 'center'
+    } else {
+      ctx.fillText(`${cell.glyph} ${cell.label}`, cx, BIG3_TOP + 47)
+    }
 
     const value = cell.value
     const size = fitFont(ctx, value, 600, 40, family, width - 28)

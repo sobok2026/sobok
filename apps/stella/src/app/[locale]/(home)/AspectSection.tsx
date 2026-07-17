@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react'
 import { ASPECT_STYLE, PLANET_GLYPHS } from '@/chart/data'
 import { aspectScore } from '@/chart/signature'
 import type { AspectType, ChartAspect } from '@/chart/types'
-import { glyphText } from './glyphs'
+import AstroGlyph from '@/components/AstroGlyph'
 import { isAspectSelection, type Selection } from './selection'
 
 // Aspects that flow easily vs. those that create productive friction.
@@ -104,14 +104,14 @@ function AspectGroup({ accent, aspects, label, onSelect, selection }: AspectGrou
                 onClick={() => onSelect(asp)}
                 type="button"
               >
-                <span className="w-9 shrink-0 text-center text-base" style={{ color }}>
-                  {glyphText(PLANET_GLYPHS[asp.a as never])} {glyphText(PLANET_GLYPHS[asp.b as never])}
+                <span className="w-10 shrink-0 text-center text-base" style={{ color }}>
+                  <AstroGlyph glyph={PLANET_GLYPHS[asp.a]} /> <AstroGlyph glyph={PLANET_GLYPHS[asp.b]} />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-xs text-foreground-secondary">
                     {t(`planets.${asp.a}`)}{' '}
                     <span aria-hidden className="text-foreground-faint">
-                      {glyphText(glyph)}
+                      <AstroGlyph glyph={glyph} />
                     </span>{' '}
                     {t(`planets.${asp.b}`)}
                   </span>

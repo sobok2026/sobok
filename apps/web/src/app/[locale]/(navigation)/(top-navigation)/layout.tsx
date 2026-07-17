@@ -1,5 +1,4 @@
 import { APP_METADATA } from '@sobok/domain/app/metadata'
-import { Locale } from '@sobok/domain/locale'
 import { Download } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 

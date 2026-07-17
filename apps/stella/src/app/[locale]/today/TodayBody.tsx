@@ -5,6 +5,7 @@ import { elementOfSign } from '@/chart/astrology'
 import { ELEMENT_COLORS, PLANET_GLYPHS } from '@/chart/data'
 import type { UnknownBirthTimeAnalysis } from '@/chart/ephemeris'
 import type { NatalChart } from '@/chart/types'
+import AstroGlyph from '@/components/AstroGlyph'
 import cardStyles from '@/components/card.module.css'
 import Reading from '@/components/Reading'
 import { aspectTone } from '@/content/interpretations/types'
@@ -87,7 +88,7 @@ export default function TodayBody({ data, homeHref, onShare, shared }: TodayBody
           <p className="mt-3 rounded-xl bg-surface px-3 py-2.5 text-sm leading-relaxed text-foreground-secondary">
             {headline && (
               <span className="mr-1.5 text-brand">
-                {PLANET_GLYPHS[headline.a]} {PLANET_GLYPHS[headline.b]}
+                <AstroGlyph glyph={PLANET_GLYPHS[headline.a]} /> <AstroGlyph glyph={PLANET_GLYPHS[headline.b]} />
               </span>
             )}
             {headlineText}
@@ -110,7 +111,7 @@ export default function TodayBody({ data, homeHref, onShare, shared }: TodayBody
                 className="inline-flex items-center gap-1 rounded-full bg-danger/15 px-2.5 py-1 text-[11px] font-medium text-danger"
                 key={id}
               >
-                ℞ {t('retroChip', { name: tc(`planets.${id}`) })}
+                <AstroGlyph glyph="℞" /> {t('retroChip', { name: tc(`planets.${id}`) })}
               </span>
             ))}
           </div>

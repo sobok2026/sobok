@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 
-import { ASTROLOGY_GLYPH_UNITS_PER_EM, getAstrologyGlyphPath } from './astrology-glyph-paths'
+import { ASTROLOGY_GLYPH_UNITS_PER_EM, getAstrologyGlyphPath } from '@/chart/astrology-glyph-paths'
 
 type VectorGlyphProps = {
   className?: string

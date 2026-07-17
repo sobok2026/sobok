@@ -15,10 +15,10 @@ import {
 import { ASPECT_STYLE, ELEMENT_COLORS, PLANET_GLYPHS } from '@/chart/data'
 import { SIGN_RULERS } from '@/chart/signature'
 import type { NatalChart, SignId } from '@/chart/types'
+import AstroGlyph from '@/components/AstroGlyph'
 import type { Interpretations } from '@/content/interpretations/types'
 import { aspectTone, houseText, orbTier, pairKey } from '@/content/interpretations/types'
 import styles from './constellation.module.css'
-import { glyphText } from './glyphs'
 import type { Selection } from './selection'
 import { ZODIAC_IMAGE_BY_SIGN } from './zodiac-images'
 
@@ -100,7 +100,7 @@ export default function DetailPanel({
 
               return (
                 <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold" key={p.id} style={{ color }}>
-                  {glyphText(PLANET_GLYPHS[p.id])} {t(`planets.${p.id}`)}
+                  <AstroGlyph glyph={PLANET_GLYPHS[p.id]} /> {t(`planets.${p.id}`)}
                   {house !== null && (
                     <span className="font-medium text-foreground-faint">
                       · {t('panel.area', { name: t(`houseThemes.${house}`) })}
@@ -128,13 +128,13 @@ export default function DetailPanel({
         <CloseButton label={t('panel.close')} onClose={onClose} />
         <div className="flex items-center gap-3">
           <span className="shrink-0 text-2xl" style={{ color }}>
-            {glyphText(PLANET_GLYPHS[selection.a])} {glyphText(PLANET_GLYPHS[selection.b])}
+            <AstroGlyph glyph={PLANET_GLYPHS[selection.a]} /> <AstroGlyph glyph={PLANET_GLYPHS[selection.b]} />
           </span>
           <div className="min-w-0">
             <p className="text-base font-bold text-foreground">
               {t(`planets.${selection.a}`)}{' '}
               <span aria-hidden className="text-foreground-faint">
-                {glyphText(glyph)}
+                <AstroGlyph glyph={glyph} />
               </span>{' '}
               {t(`planets.${selection.b}`)}
             </p>
@@ -192,7 +192,7 @@ export default function DetailPanel({
             return (
               <div className="mt-3 border-t pt-3" key={p.id}>
                 <p className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: residentColor }}>
-                  {glyphText(PLANET_GLYPHS[p.id])} {t(`planets.${p.id}`)}
+                  <AstroGlyph glyph={PLANET_GLYPHS[p.id]} /> {t(`planets.${p.id}`)}
                   <span className="font-medium text-foreground-faint">· {t(`signs.${residentSign}`)}</span>
                 </p>
                 {reading && <p className="mt-1.5 text-sm leading-relaxed text-foreground-secondary">{reading}</p>}
@@ -256,7 +256,7 @@ export default function DetailPanel({
         <CloseButton label={t('panel.close')} onClose={onClose} />
         <div className="flex items-center gap-3">
           <span className="flex h-11 w-11 items-center justify-center rounded-full border border-accent text-xl text-accent">
-            {glyphText(PLANET_GLYPHS.moon)}
+            <AstroGlyph glyph={PLANET_GLYPHS.moon} />
           </span>
           <div className="min-w-0">
             <p className="text-base font-bold text-foreground">{t('planets.moon')}</p>
@@ -312,7 +312,7 @@ export default function DetailPanel({
           className="flex h-11 w-11 items-center justify-center rounded-full border"
           style={{ borderColor: color, color }}
         >
-          <span className="text-xl">{glyphText(PLANET_GLYPHS[planet.id])}</span>
+          <AstroGlyph className="text-xl" glyph={PLANET_GLYPHS[planet.id]} />
         </span>
         <div className="min-w-0">
           <p className="flex items-center gap-2 text-base font-bold text-foreground">
@@ -320,7 +320,7 @@ export default function DetailPanel({
             {t.has(aliasKey) && <span className="text-xs font-normal text-foreground-subtle">{t(aliasKey)}</span>}
             {planet.retrograde && (
               <span className="rounded bg-danger/20 px-1.5 py-0.5 text-[10px] font-semibold text-danger">
-                ℞ {t('panel.retrograde')}
+                <AstroGlyph glyph="℞" /> {t('panel.retrograde')}
               </span>
             )}
           </p>

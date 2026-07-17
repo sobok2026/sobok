@@ -6,7 +6,7 @@ import { PLANET_GLYPHS } from '@/chart/data'
 import { findPatterns } from '@/chart/patterns'
 import { findShape } from '@/chart/shape'
 import type { NatalChart } from '@/chart/types'
-import { glyphText } from './glyphs'
+import AstroGlyph from '@/components/AstroGlyph'
 
 export default function PatternSection({ chart, dateOnly = false }: { chart: NatalChart; dateOnly?: boolean }) {
   const t = useTranslations('Constellation')
@@ -34,8 +34,10 @@ export default function PatternSection({ chart, dateOnly = false }: { chart: Nat
             {patterns.map((p) => (
               <li className="border rounded-xl bg-surface-2 p-3 sm:border-0" key={`${p.type}-${p.planets.join('-')}`}>
                 <div className="flex items-center gap-2">
-                  <span aria-hidden className="text-base text-accent">
-                    {p.planets.map((id) => glyphText(PLANET_GLYPHS[id])).join(' ')}
+                  <span aria-hidden className="flex items-center gap-1 text-base text-accent">
+                    {p.planets.map((id) => (
+                      <AstroGlyph glyph={PLANET_GLYPHS[id]} key={id} />
+                    ))}
                   </span>
                   <span className="text-sm font-semibold text-foreground">{t(`patterns.name.${p.type}`)}</span>
                 </div>

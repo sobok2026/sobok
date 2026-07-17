@@ -1,7 +1,8 @@
 'use client'
 
+import { isAstrologyGlyph } from '@/chart/astrology-glyph-paths'
+import AstroGlyph from '@/components/AstroGlyph'
 import styles from '@/components/card.module.css'
-import { glyphText } from './glyphs'
 
 export interface Big3CardProps {
   delay: number
@@ -22,7 +23,7 @@ export default function Big3Card({ delay, glyph, hint, label, onClick, value }: 
       style={{ animationDelay: `${delay}s` }}
       type="button"
     >
-      <span className="text-lg text-brand">{glyphText(glyph)}</span>
+      <span className="text-lg text-brand">{isAstrologyGlyph(glyph) ? <AstroGlyph glyph={glyph} /> : glyph}</span>
       <span className="text-[10px] uppercase tracking-widest text-foreground-subtle">{label}</span>
       <span className="text-sm font-bold text-foreground">{value}</span>
       <span className="break-keep text-[10px] leading-tight text-foreground-faint wrap-anywhere">{hint}</span>
