@@ -101,7 +101,7 @@ export const zh = {
       conjunctionName: '合相',
       conjunctionVibe: '融为一体的力量',
       trineName: '三分相',
-      trineVibe: '天生顺畅的才能',
+      trineVibe: '通晓的天赋',
       sextileName: '六分相',
       sextileVibe: '带来机会的流动',
       squareName: '四分相',
