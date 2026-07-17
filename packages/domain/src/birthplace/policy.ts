@@ -1,21 +1,15 @@
+import ID_PATTERN_JSON from './id-patterns.json'
 import type { BirthplaceSnapshot } from './model'
 
 // A saved or shared birth profile is user data: it must survive UI-language
-// switches, so snapshots are validated against the union of every market's
-// catalog rules — never the current locale. Each pattern pins the id shape its
-// source catalog emits; countries outside every market fail closed.
-const BIRTHPLACE_ID_PATTERNS: Readonly<Record<string, RegExp>> = {
-  AU: /^geonames:\d+$/,
-  CA: /^geonames:\d+$/,
-  CN: /^CN:\d{12}$/,
-  GB: /^geonames:\d+$/,
-  HK: /^HK:810000000000$/,
-  JP: /^JP:\d{5}$/,
-  KR: /^KR:\d{10}$/,
-  MO: /^MO:820000000000$/,
-  NZ: /^geonames:\d+$/,
-  US: /^geonames:\d+$/,
-}
+// switches, so snapshots are validated against id-patterns.json — the union of
+// id shapes across every market ever shipped — never the current locale. The
+// catalog generator asserts that same file covers markets.json and matches
+// every generated id, so the two cannot drift. Entries must never be removed:
+// profiles saved under a retired market would silently vanish.
+const BIRTHPLACE_ID_PATTERNS = new Map(
+  Object.entries(ID_PATTERN_JSON).map(([countryCode, source]) => [countryCode, new RegExp(source)]),
+)
 
 export function isBirthplaceSnapshot(value: unknown): value is BirthplaceSnapshot {
   if (typeof value !== 'object' || value === null) {
@@ -27,7 +21,7 @@ export function isBirthplaceSnapshot(value: unknown): value is BirthplaceSnapsho
   if (
     typeof place.id !== 'string' ||
     typeof place.countryCode !== 'string' ||
-    !BIRTHPLACE_ID_PATTERNS[place.countryCode]?.test(place.id) ||
+    !BIRTHPLACE_ID_PATTERNS.get(place.countryCode)?.test(place.id) ||
     typeof place.name !== 'string' ||
     place.name.length === 0 ||
     place.name.length > 120 ||

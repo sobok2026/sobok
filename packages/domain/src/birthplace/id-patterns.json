@@ -1,0 +1,12 @@
+{
+  "AU": "^geonames:\\d+$",
+  "CA": "^geonames:\\d+$",
+  "CN": "^CN:\\d{12}$",
+  "GB": "^geonames:\\d+$",
+  "HK": "^HK:810000000000$",
+  "JP": "^JP:\\d{5}$",
+  "KR": "^KR:\\d{10}$",
+  "MO": "^MO:820000000000$",
+  "NZ": "^geonames:\\d+$",
+  "US": "^geonames:\\d+$"
+}

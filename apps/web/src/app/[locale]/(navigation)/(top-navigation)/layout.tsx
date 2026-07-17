@@ -9,18 +9,10 @@ import { getLocaleFromParams } from '@/i18n/server'
 
 import TopNavigationActions from './TopNavigationActions'
 
-const PORN_DUDE_URL_BY_LOCALE = {
-  [Locale.KO]: 'https://theporndude.com/ko',
-  [Locale.EN]: 'https://theporndude.com/',
-  [Locale.JA]: 'https://theporndude.com/ja',
-  [Locale.ZH]: 'https://theporndude.com/zh',
-} satisfies Record<Locale, string>
-
 export default async function Layout({ children, params }: LayoutProps<'/[locale]'>) {
   const locale = await getLocaleFromParams(params)
   const t = await getTranslations({ locale, namespace: 'TopNavigation.footer' })
   const shortName = APP_METADATA[locale].shortName
-  const pornDudeUrl = PORN_DUDE_URL_BY_LOCALE[locale]
 
   return (
     <div className="flex flex-col flex-1 gap-2 px-2 pb-2">
@@ -59,19 +51,6 @@ export default async function Layout({ children, params }: LayoutProps<'/[locale
           <Link className="hover:underline" href="/youth-protection" prefetch={false}>
             {t('youthProtection')}
           </Link>
-        </div>
-        <div className="flex justify-center gap-2 gap-y-1 flex-wrap text-xs">
-          <a className="hover:underline" href={pornDudeUrl} rel="nofollow sponsored noopener" target="_blank">
-            ThePornDude
-          </a>
-          <a
-            className="hover:underline"
-            href="https://moemoekyu.com/"
-            rel="nofollow sponsored noopener"
-            target="_blank"
-          >
-            萌女仆导航
-          </a>
         </div>
       </footer>
       <MobileNavigationSpacer />

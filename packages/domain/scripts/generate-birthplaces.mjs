@@ -17,6 +17,7 @@ const CACHE_DIR = join(SCRIPT_DIR, '.cache')
 const BIOME_PATH = join(PACKAGE_DIR, '../../node_modules/.bin/biome')
 const BIOME_DEFAULT_MAX_FILE_SIZE = 1024 * 1024
 const MARKET_PATH = join(PACKAGE_DIR, 'src/birthplace/markets.json')
+const ID_PATTERN_PATH = join(PACKAGE_DIR, 'src/birthplace/id-patterns.json')
 const LOCALES = ['ko', 'en', 'ja', 'zh']
 const CATALOG_BY_LOCALE = {
   ko: 'kr-administrative',
@@ -71,7 +72,16 @@ const sources = createSourceDefinitions(CACHE_DIR)
 await ensureSources(sources, refreshSource)
 
 const markets = JSON.parse(readFileSync(MARKET_PATH, 'utf8'))
-validateMarkets(markets)
+// The same file backs runtime snapshot validation in src/birthplace/policy.ts:
+// asserting it here (market coverage + every generated id) keeps the catalogs,
+// markets.json, and the persistence guard from drifting apart.
+const idPatterns = new Map(
+  Object.entries(JSON.parse(readFileSync(ID_PATTERN_PATH, 'utf8'))).map(([countryCode, source]) => [
+    countryCode,
+    new RegExp(source),
+  ]),
+)
+validateMarkets(markets, idPatterns)
 
 const koreanCatalog = createKoreanAdministrativeCatalog(readSource(sources.officialKR), markets.ko.countries.KR)
 const japaneseCatalog = createJapaneseAdministrativeCatalog(readSource(sources.officialJP), markets.ja.countries.JP)
@@ -117,7 +127,7 @@ for (const locale of LOCALES) {
   catalogs[locale].places = places.filter((place) => place.locale === locale)
 }
 
-validateCatalogs(catalogs, markets)
+validateCatalogs(catalogs, markets, idPatterns)
 
 const sourceHashes = hashSources(sources)
 const outputs = Object.fromEntries(
@@ -207,7 +217,7 @@ function compareCatalogOrder(a, b) {
   )
 }
 
-function validateMarkets(marketDefinitions) {
+function validateMarkets(marketDefinitions, idPatternsByCountry) {
   if (Object.keys(marketDefinitions).sort().join(',') !== [...LOCALES].sort().join(',')) {
     throw new Error(`Birthplace markets must define exactly ${LOCALES.join(', ')}`)
   }
@@ -229,6 +239,13 @@ function validateMarkets(marketDefinitions) {
 
       if (!market.countries[countryCode]) {
         throw new Error(`Missing country label for ${locale}.${countryCode}`)
+      }
+
+      if (!idPatternsByCountry.has(countryCode)) {
+        throw new Error(
+          `No id pattern for ${countryCode} in id-patterns.json — add one (and never remove entries: ` +
+            'saved profiles from retired markets must keep validating)',
+        )
       }
 
       assignedCountries.add(countryCode)
@@ -254,7 +271,7 @@ function validateMarkets(marketDefinitions) {
   }
 }
 
-function validateCatalogs(catalogDefinitions, marketDefinitions) {
+function validateCatalogs(catalogDefinitions, marketDefinitions, idPatternsByCountry) {
   const ids = new Set()
   const countByCountry = new Map()
 
@@ -286,6 +303,10 @@ function validateCatalogs(catalogDefinitions, marketDefinitions) {
 
       ids.add(place.id)
       countByCountry.set(place.countryCode, (countByCountry.get(place.countryCode) ?? 0) + 1)
+
+      if (!idPatternsByCountry.get(place.countryCode)?.test(place.id)) {
+        throw new Error(`Birthplace id ${place.id} does not match the ${place.countryCode} pattern in id-patterns.json`)
+      }
 
       if (place.coordinateResolution === 'groupFallback' && !ALLOWED_GROUP_FALLBACK_IDS.has(place.id)) {
         throw new Error(`Unreviewed parent-level coordinate fallback for ${place.id} (${place.name})`)
