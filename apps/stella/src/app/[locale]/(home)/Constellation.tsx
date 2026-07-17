@@ -92,6 +92,7 @@ export default function Constellation() {
   }
 
   function handleSubmit(nextBirth: StoredBirth, persistent: boolean) {
+    window.scrollTo(0, 0)
     chart.markSubmitted()
     save(nextBirth, persistent)
     setEditing(false)
