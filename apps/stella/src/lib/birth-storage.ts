@@ -10,8 +10,7 @@
 // device" outranks a transient session copy.
 
 import type { BirthplaceSnapshot } from '@sobok/domain/birthplace/model'
-import { isBirthplaceCountryAllowed } from '@sobok/domain/birthplace/policy'
-import type { Locale } from '@sobok/domain/locale'
+import { isBirthplaceSnapshot } from '@sobok/domain/birthplace/policy'
 import type { BirthInput } from '@/chart/ephemeris'
 
 const STORAGE_KEY = 'stella.birth.v3'
@@ -55,76 +54,7 @@ function isClockTime(value: string): boolean {
   return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59
 }
 
-function isBirthplaceIdAllowed(id: string, countryCode: string): boolean {
-  if (['US', 'GB', 'CA', 'AU', 'NZ'].includes(countryCode)) {
-    return /^geonames:\d+$/.test(id)
-  }
-
-  if (countryCode === 'KR') {
-    return /^KR:\d{10}$/.test(id)
-  }
-
-  if (countryCode === 'JP') {
-    return /^JP:\d{5}$/.test(id)
-  }
-
-  if (countryCode === 'CN') {
-    return /^CN:\d{12}$/.test(id)
-  }
-
-  if (countryCode === 'HK') {
-    return id === 'HK:810000000000'
-  }
-
-  if (countryCode === 'MO') {
-    return id === 'MO:820000000000'
-  }
-
-  return false
-}
-
-function isBirthplaceSnapshot(value: unknown, locale: Locale): value is BirthplaceSnapshot {
-  if (typeof value !== 'object' || value === null) {
-    return false
-  }
-
-  const place = value as Record<string, unknown>
-
-  if (
-    typeof place.id !== 'string' ||
-    typeof place.countryCode !== 'string' ||
-    !isBirthplaceIdAllowed(place.id, place.countryCode) ||
-    typeof place.name !== 'string' ||
-    place.name.length === 0 ||
-    place.name.length > 120 ||
-    !isBirthplaceCountryAllowed(locale, place.countryCode) ||
-    typeof place.latitude !== 'number' ||
-    !Number.isFinite(place.latitude) ||
-    place.latitude < -90 ||
-    place.latitude > 90 ||
-    typeof place.longitude !== 'number' ||
-    !Number.isFinite(place.longitude) ||
-    place.longitude < -180 ||
-    place.longitude > 180 ||
-    typeof place.timeZone !== 'string' ||
-    place.timeZone.length === 0 ||
-    place.timeZone.length > 64 ||
-    (place.coordinatePrecision !== 'locality' &&
-      place.coordinatePrecision !== 'administrativeSeat' &&
-      place.coordinatePrecision !== 'administrativeArea')
-  ) {
-    return false
-  }
-
-  try {
-    new Intl.DateTimeFormat('en', { timeZone: place.timeZone }).format()
-    return true
-  } catch {
-    return false
-  }
-}
-
-export function isStoredBirth(value: unknown, locale: Locale): value is StoredBirth {
+export function isStoredBirth(value: unknown): value is StoredBirth {
   if (typeof value !== 'object' || value === null) {
     return false
   }
@@ -137,12 +67,12 @@ export function isStoredBirth(value: unknown, locale: Locale): value is StoredBi
     typeof v.time === 'string' &&
     isClockTime(v.time) &&
     typeof v.timeKnown === 'boolean' &&
-    isBirthplaceSnapshot(v.place, locale)
+    isBirthplaceSnapshot(v.place)
   )
 }
 
 /** Web Storage can throw (private mode, disabled storage) — treat that as "no data". */
-function read(storage: Storage, locale: Locale): StoredBirth | null {
+function read(storage: Storage): StoredBirth | null {
   try {
     const raw = storage.getItem(STORAGE_KEY)
 
@@ -151,20 +81,20 @@ function read(storage: Storage, locale: Locale): StoredBirth | null {
     }
 
     const parsed: unknown = JSON.parse(raw)
-    return isStoredBirth(parsed, locale) ? parsed : null
+    return isStoredBirth(parsed) ? parsed : null
   } catch {
     return null
   }
 }
 
-export function loadBirth(locale: Locale): LoadedBirth | null {
-  const persisted = read(localStorage, locale)
+export function loadBirth(): LoadedBirth | null {
+  const persisted = read(localStorage)
 
   if (persisted) {
     return { birth: persisted, persistent: true }
   }
 
-  const session = read(sessionStorage, locale)
+  const session = read(sessionStorage)
   return session ? { birth: session, persistent: false } : null
 }
 

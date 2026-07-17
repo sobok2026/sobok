@@ -1,7 +1,5 @@
 'use client'
 
-import type { Locale } from '@sobok/domain/locale'
-import { useLocale } from 'next-intl'
 import { useEffect, useState } from 'react'
 
 import { decodeShareHash, isShareHash, type SharedPayload, type ShareKind } from '@/lib/share'
@@ -15,7 +13,6 @@ export type SharedPayloadState<K extends ShareKind> =
   | { status: 'ready'; payload: PayloadFor<K> }
 
 export function useSharedPayload<K extends ShareKind>(kind: K): SharedPayloadState<K> {
-  const locale = useLocale() as Locale
   const [state, setState] = useState<SharedPayloadState<K>>({ status: 'loading' })
 
   useEffect(() => {
@@ -25,7 +22,7 @@ export function useSharedPayload<K extends ShareKind>(kind: K): SharedPayloadSta
         return
       }
 
-      const payload = decodeShareHash(window.location.hash, kind, locale)
+      const payload = decodeShareHash(window.location.hash, kind)
       setState(payload ? { status: 'ready', payload: payload as PayloadFor<K> } : { status: 'invalid' })
     }
 
@@ -35,7 +32,7 @@ export function useSharedPayload<K extends ShareKind>(kind: K): SharedPayloadSta
     return () => {
       window.removeEventListener('hashchange', sync)
     }
-  }, [kind, locale])
+  }, [kind])
 
   return state
 }

@@ -1,4 +1,3 @@
-import type { Locale } from '@sobok/domain/locale'
 import { isStoredBirth, type StoredBirth } from './birth-storage'
 
 const SHARE_VERSION = 3
@@ -91,7 +90,7 @@ export function isShareHash(hash: string): boolean {
   return SHARE_HASH_PATTERN.test(fragmentOf(hash))
 }
 
-export function decodeShareHash(hash: string, kind: ShareKind, locale: Locale): SharedPayload | null {
+export function decodeShareHash(hash: string, kind: ShareKind): SharedPayload | null {
   const fragment = fragmentOf(hash)
 
   if (!fragment.startsWith(SHARE_PREFIX)) {
@@ -112,7 +111,7 @@ export function decodeShareHash(hash: string, kind: ShareKind, locale: Locale): 
     }
 
     const payload = parsed as Record<string, unknown>
-    const birth = deserializeBirth(payload, locale)
+    const birth = deserializeBirth(payload)
 
     if (!birth) {
       return null
@@ -155,7 +154,7 @@ export function decodeShareHash(hash: string, kind: ShareKind, locale: Locale): 
   }
 }
 
-function deserializeBirth(payload: Record<string, unknown>, locale: Locale): StoredBirth | null {
+function deserializeBirth(payload: Record<string, unknown>): StoredBirth | null {
   if (
     typeof payload.d !== 'string' ||
     typeof payload.t !== 'string' ||
@@ -190,7 +189,7 @@ function deserializeBirth(payload: Record<string, unknown>, locale: Locale): Sto
     },
   }
 
-  return isStoredBirth(birth, locale) ? birth : null
+  return isStoredBirth(birth) ? birth : null
 }
 
 function dateFromEpochSeconds(value: unknown): Date | null {
