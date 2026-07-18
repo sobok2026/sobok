@@ -63,7 +63,7 @@ export function LoveSignatureArt({ profile }: LoveSignatureArtProps) {
       </div>
 
       <div className="grid grid-cols-2 border-t border-border-2">
-        <div className="flex min-w-0 items-center gap-2 px-3 py-2.5">
+        <div className="flex min-w-0 items-center justify-center gap-2 px-3 py-2.5">
           {profile.risingSign ? (
             <SignFigure className="h-10 w-10 shrink-0" sign={profile.risingSign} />
           ) : (
@@ -81,7 +81,7 @@ export function LoveSignatureArt({ profile }: LoveSignatureArtProps) {
           </div>
         </div>
 
-        <div className="flex min-w-0 items-center gap-2 border-l border-border-2 px-3 py-2.5">
+        <div className="flex min-w-0 items-center justify-center gap-2 border-l border-border-2 px-3 py-2.5">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center">
             {profile.moonSigns.map((sign) => (
               <SignFigure
