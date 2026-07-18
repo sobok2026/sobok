@@ -155,6 +155,8 @@ export const report: ReportContent = {
       'To sum up: your center stands on the wick of {sun}, and your feelings rest by the waters of {moon}. Some days will and heart fall out of step, but both are truly you. Learn your birth time and the third face — the one the world sees — can be read as well.',
   },
   path: {
+    familiarLabel: 'Familiar foundation',
+    growthLabel: 'Growth direction',
     bridge:
       'Squeezed into one sentence, this axis says: instead of staying in the familiar ways of {from}, move one step at a time toward {to}. Not abandoning the familiar talent — using it as fuel while building the muscles of the unfamiliar side. That is the journey.',
     houseNote: 'The stage for this growth unfolds mainly in house {n}, the realm of {theme}.',

@@ -64,7 +64,7 @@ export type ReportContent = {
   dignity: { domicile: string; exaltation: string; chartRulerNote: string }
   stellium: string
   core: { bridge: string; bridgeNoTime: string }
-  path: { bridge: string; houseNote: string }
+  path: { bridge: string; familiarLabel: string; growthLabel: string; houseNote: string }
   work: { mc: string }
   money: { empty: string }
   root: { ruler: string }

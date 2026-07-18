@@ -72,7 +72,12 @@ export default function ReportSection({
                   <p className="mt-1.5 text-sm leading-relaxed text-foreground-secondary">{para.text}</p>
                 </div>
                 {chapter.id === 'path' && i === 1 && southNodeSign && northNodeSign && (
-                  <NodeAxisArt northSign={northNodeSign} southSign={southNodeSign} />
+                  <NodeAxisArt
+                    familiarLabel={report.path.familiarLabel}
+                    growthLabel={report.path.growthLabel}
+                    northSign={northNodeSign}
+                    southSign={southNodeSign}
+                  />
                 )}
               </Fragment>
             ))}
