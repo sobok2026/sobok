@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { SITE_NAME } from '@/constants'
 import { LEGAL } from '@/content/legal'
 import { PAGES } from '@/content/pages'
+import { OTHER_SERVICES } from '@/content/services'
 
 export default function Footer({ locale }: { locale: Locale }) {
   const { nav } = LEGAL[locale]
@@ -28,7 +29,14 @@ export default function Footer({ locale }: { locale: Locale }) {
           {nav.privacy}
         </Link>
       </nav>
-      <p className="mt-4 text-page-ink/40">© 2026 {SITE_NAME[locale]} · vibe.sobok.cc</p>
+      <p className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-page-ink/40">
+        {OTHER_SERVICES.map((service) => (
+          <a className="hover:text-page-ink" href={`${service.href}/${locale}`} key={service.href}>
+            {service.name[locale]}
+          </a>
+        ))}
+      </p>
+      <p className="mt-2 text-page-ink/40">© 2026 {SITE_NAME[locale]} · vibe.sobok.cc</p>
     </footer>
   )
 }

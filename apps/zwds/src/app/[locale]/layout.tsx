@@ -5,6 +5,7 @@ import type { Metadata, Viewport } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 import BirthProfileProvider from '@/components/BirthProfileProvider'
+import Footer from '@/components/Footer'
 import { ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getLocale } from '@/i18n/server'
 
@@ -51,6 +52,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
       <body className="antialiased">
         <NextIntlClientProvider>
           <BirthProfileProvider key={locale}>{children}</BirthProfileProvider>
+          <Footer locale={locale} />
         </NextIntlClientProvider>
       </body>
     </html>
