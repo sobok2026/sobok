@@ -1,7 +1,7 @@
 import { elementOfSign } from '@/chart/astrology'
 import { ELEMENT_COLORS } from '@/chart/data'
 import type { SignId } from '@/chart/types'
-import { SIGN_FIGURES } from '@/lib/sign-art'
+import { SignFigureMark } from '@/components/SignFigure'
 import styles from './PersonaArt.module.css'
 
 /**
@@ -18,7 +18,7 @@ const SPARKLES: readonly (readonly [number, number, number, number, number])[] =
 ]
 
 /**
- * Persona portrait for the love vertical: the descendant sign's asterism held
+ * Persona portrait for the love vertical: the descendant sign's modern line figure held
  * by two meeting orbits (the 1st–7th house axis) with a small heart where they
  * cross. Same data-plus-renderer approach as SignFigure — no image assets.
  *
@@ -28,20 +28,20 @@ const SPARKLES: readonly (readonly [number, number, number, number, number])[] =
  * markup, and it rests at the static pose under prefers-reduced-motion.
  */
 export default function PersonaArt({ className, sign }: { className?: string; sign: SignId }) {
-  const { stars, lines } = SIGN_FIGURES[sign]
   const color = ELEMENT_COLORS[elementOfSign(sign)]
+  const haloId = `persona-halo-${sign}`
 
   return (
-    <svg aria-hidden className={className} viewBox="0 0 120 120">
+    <svg aria-hidden className={className} focusable="false" viewBox="0 0 120 120">
       <defs>
-        <radialGradient id="persona-halo">
+        <radialGradient id={haloId}>
           <stop offset="0%" stopColor={color} stopOpacity="0.25" />
           <stop offset="65%" stopColor={color} stopOpacity="0.07" />
           <stop offset="100%" stopColor={color} stopOpacity="0" />
         </radialGradient>
       </defs>
 
-      <circle className={styles.halo} cx="60" cy="60" fill="url(#persona-halo)" r="56" />
+      <circle className={styles.halo} cx="60" cy="60" fill={`url(#${haloId})`} r="56" />
 
       {/* Two orbits meeting — you and the partner the descendant describes. */}
       <circle
@@ -73,32 +73,14 @@ export default function PersonaArt({ className, sign }: { className?: string; si
         opacity="0.75"
       />
 
-      {/* The descendant sign's asterism, scaled into the frame. The nested
+      {/* The descendant sign's modern Western figure, scaled into the frame. The nested
           drift wrappers each add one sine on one axis; composed, they trace a
           non-repeating Lissajous float. The inner transform keeps its scale. */}
       <g className={styles.drift1}>
         <g className={styles.drift2}>
           <g className={styles.drift3}>
             <g transform="translate(28 28) scale(0.64)">
-              {lines.map(([a, b]) => (
-                <line
-                  key={`${a}-${b}`}
-                  stroke={color}
-                  strokeLinecap="round"
-                  strokeOpacity={0.4}
-                  strokeWidth={1.2}
-                  x1={stars[a][0]}
-                  x2={stars[b][0]}
-                  y1={stars[a][1]}
-                  y2={stars[b][1]}
-                />
-              ))}
-              {stars.map(([x, y, size], i) => (
-                <g key={i}>
-                  <circle cx={x} cy={y} fill={color} opacity={0.25} r={size + 3} />
-                  <circle cx={x} cy={y} fill="#fff" r={1 + size * 0.8} />
-                </g>
-              ))}
+              <SignFigureMark sign={sign} />
             </g>
           </g>
         </g>

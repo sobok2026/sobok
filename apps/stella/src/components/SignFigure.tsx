@@ -1,39 +1,76 @@
 import { elementOfSign } from '@/chart/astrology'
 import { ELEMENT_COLORS } from '@/chart/data'
 import type { SignId } from '@/chart/types'
-import { SIGN_FIGURES } from '@/lib/sign-art'
+import { projectSignFigure } from '@/lib/sign-art'
 
 type SignFigureProps = {
   className?: string
   sign: SignId
 }
 
-/** A theme-aware constellation drawing shared by the chart and forecast views. */
-export function SignFigure({ className, sign }: SignFigureProps) {
-  const { stars, lines } = SIGN_FIGURES[sign]
+/** The reusable mark, for both standalone and composed SVG illustrations. */
+export function SignFigureMark({ sign }: Pick<SignFigureProps, 'sign'>) {
+  const { paths, stars } = projectSignFigure(sign)
   const color = ELEMENT_COLORS[elementOfSign(sign)]
 
   return (
-    <svg aria-hidden className={className} viewBox="0 0 100 100">
-      {lines.map(([a, b]) => (
-        <line
-          key={`${a}-${b}`}
-          stroke={color}
-          strokeLinecap="round"
-          strokeOpacity={0.35}
-          strokeWidth={0.9}
-          x1={stars[a][0]}
-          x2={stars[b][0]}
-          y1={stars[a][1]}
-          y2={stars[b][1]}
-        />
-      ))}
-      {stars.map(([x, y, size]) => (
-        <g key={`${x}-${y}`}>
-          <circle cx={x} cy={y} fill={color} opacity={0.25} r={size + 2.5} />
-          <circle cx={x} cy={y} fill="#fff" r={0.8 + size * 0.7} />
+    <g>
+      {paths.map((path, pathIndex) => {
+        const points = path
+          .map((starIndex) => `${stars[starIndex].x.toFixed(2)},${stars[starIndex].y.toFixed(2)}`)
+          .join(' ')
+
+        return (
+          <g key={`${sign}-path-${pathIndex}`}>
+            <polyline
+              fill="none"
+              points={points}
+              stroke={color}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeOpacity={0.14}
+              strokeWidth={2.8}
+              vectorEffect="non-scaling-stroke"
+            />
+            <polyline
+              fill="none"
+              points={points}
+              stroke={color}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeOpacity={0.58}
+              strokeWidth={0.9}
+              vectorEffect="non-scaling-stroke"
+            />
+          </g>
+        )
+      })}
+      {stars.map(({ hipparcosId, radius, x, y }) => (
+        <g key={hipparcosId}>
+          <circle cx={x} cy={y} fill={color} opacity={0.16} r={radius + 2.5} />
+          <circle
+            cx={x}
+            cy={y}
+            fill={color}
+            opacity={0.94}
+            r={radius}
+            stroke="#fff"
+            strokeOpacity={0.68}
+            strokeWidth={0.55}
+            vectorEffect="non-scaling-stroke"
+          />
+          <circle cx={x} cy={y} fill="#fff" opacity={0.92} r={Math.max(0.58, radius * 0.43)} />
         </g>
       ))}
+    </g>
+  )
+}
+
+/** A theme-aware modern Western constellation drawing shared across Stella. */
+export function SignFigure({ className, sign }: SignFigureProps) {
+  return (
+    <svg aria-hidden className={className} focusable="false" preserveAspectRatio="xMidYMid meet" viewBox="0 0 100 100">
+      <SignFigureMark sign={sign} />
     </svg>
   )
 }
