@@ -13,6 +13,7 @@ export const en = {
       title: 'My Zi Wei chart',
       subtitle: 'Unfold the story the Purple Star wrote across twelve palaces at the moment you were born.',
       openCta: 'Open my chart',
+      loading: 'Loading your chart…',
       birthSummaryTitle: 'Current birth details',
       editBirthCta: 'Edit birth details',
     },

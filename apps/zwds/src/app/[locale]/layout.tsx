@@ -2,13 +2,16 @@ import '../globals.css'
 
 import { LOCALE_LANGUAGE_TAGS, Locale } from '@sobok/domain/locale'
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 import BirthProfileProvider from '@/components/BirthProfileProvider'
 import Footer from '@/components/Footer'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
-import { ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
+import { ADSENSE_ACCOUNT, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getLocale } from '@/i18n/server'
+import Analytics from '@/lib/analytics/Analytics'
+import JsonLd, { siteGraph } from '@/lib/JsonLd'
 
 export function generateStaticParams() {
   return Object.values(Locale).map((locale) => ({ locale }))
@@ -27,6 +30,7 @@ export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Pr
     },
     description: t('description'),
     applicationName: siteName,
+    verification: { other: { 'google-adsense-account': ADSENSE_ACCOUNT } },
   }
 }
 
@@ -52,6 +56,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
         />
       )}
       <body className="antialiased">
+        <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
           <header className="absolute inset-x-0 top-0 z-40 px-2 pt-[calc(0.5rem+var(--safe-area-top))] sm:fixed">
             <div className="mx-auto flex items-center justify-end">
@@ -63,6 +68,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           <BirthProfileProvider key={locale}>{children}</BirthProfileProvider>
           <Footer locale={locale} />
         </NextIntlClientProvider>
+        <Analytics />
+        <Script
+          async
+          crossOrigin="anonymous"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ACCOUNT}`}
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   )

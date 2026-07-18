@@ -13,6 +13,7 @@ export const ko = {
       title: '내 자미두수 명반',
       subtitle: '태어난 순간 자미성이 새긴 열두 궁의 이야기를 펼쳐 보세요.',
       openCta: '내 명반 열기',
+      loading: '명반을 불러오는 중…',
       birthSummaryTitle: '현재 출생 정보',
       editBirthCta: '출생 정보 수정',
     },

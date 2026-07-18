@@ -12,6 +12,7 @@ export const zh = {
       title: '我的紫微命盘',
       subtitle: '展开出生那一刻紫微星在十二宫写下的故事。',
       openCta: '打开我的命盘',
+      loading: '正在加载命盘…',
       birthSummaryTitle: '当前出生信息',
       editBirthCta: '编辑出生信息',
     },

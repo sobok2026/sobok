@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 import { computeChart } from '@/chart/compute'
 import { useBirthProfile } from '@/components/BirthProfileProvider'
+import { track } from '@/lib/analytics/browser'
 import type { StoredBirth } from '@/lib/birth-storage'
 import BirthForm from './BirthForm'
 import ChartGrid from './ChartGrid'
@@ -31,16 +32,18 @@ function formatBirthTime(value: string, locale: string): string {
 }
 
 export default function ZwdsHome() {
+  const [selectedBranch, setSelectedBranch] = useState<string | null>(null)
+  const [editing, setEditing] = useState(false)
+  const summaryHeadingRef = useRef<HTMLHeadingElement>(null)
+  const focusSummaryAfterEditRef = useRef(false)
+  const profile = useBirthProfile()
   const locale = useLocale()
   const t = useTranslations('Zwds.hero')
   const tForm = useTranslations('Zwds.form')
   const tChart = useTranslations('Zwds.chart')
-  const profile = useBirthProfile()
-  const [editing, setEditing] = useState(false)
-  const [selectedBranch, setSelectedBranch] = useState<string | null>(null)
-  const summaryHeadingRef = useRef<HTMLHeadingElement>(null)
-  const focusSummaryAfterEditRef = useRef(false)
-  const birth = profile.hydrated ? profile.birth : null
+
+  const hydrated = profile.hydrated
+  const birth = hydrated ? profile.birth : null
 
   const chart = birth
     ? computeChart({
@@ -59,11 +62,25 @@ export default function ZwdsHome() {
       }
     : null
 
+  const selectedPalace =
+    chart && selectedBranch ? chart.palaces.find((palace) => palace.branch === selectedBranch) : null
+
   function handleSubmit(nextBirth: StoredBirth, persistent: boolean) {
     profile.save(nextBirth, persistent)
+    track('generate_chart')
     focusSummaryAfterEditRef.current = editing
     setEditing(false)
     setSelectedBranch(null)
+  }
+
+  function handleSelectPalace(branch: string) {
+    const next = branch === selectedBranch ? null : branch
+
+    if (next) {
+      track('view_reading', { palace: next })
+    }
+
+    setSelectedBranch(next)
   }
 
   function handleStartEditing() {
@@ -87,9 +104,6 @@ export default function ZwdsHome() {
     }
   }, [chart, editing])
 
-  const selectedPalace =
-    chart && selectedBranch ? chart.palaces.find((palace) => palace.branch === selectedBranch) : null
-
   return (
     <main className="bg-night-palace flex min-h-dvh flex-col items-center px-4 pt-[calc(4.5rem+var(--safe-area-top))] pb-[max(2.5rem,var(--safe-area-bottom))]">
       <header className="mb-8 text-center">
@@ -98,7 +112,12 @@ export default function ZwdsHome() {
         <p className="mt-3 text-sm leading-relaxed text-foreground-subtle">{t('subtitle')}</p>
       </header>
 
-      {chart && !editing ? (
+      {!hydrated ? (
+        // Wait for the stored profile to hydrate before choosing form vs. chart.
+        // Rendering the form during the pre-hydration frame makes it flash for a
+        // returning visitor before their saved chart replaces it.
+        <p className="mt-10 animate-pulse text-sm text-foreground-subtle motion-reduce:animate-none">{t('loading')}</p>
+      ) : chart && !editing ? (
         <div className="flex w-full flex-col items-center gap-6">
           {birth && birthDisplay && (
             <section
@@ -144,18 +163,14 @@ export default function ZwdsHome() {
                 </div>
                 <div className="min-w-0">
                   <dt className="text-[11px] font-semibold text-foreground-faint">{tForm('cityLabel')}</dt>
-                  <dd className="mt-1 break-words text-sm font-semibold text-foreground-secondary">
+                  <dd className="mt-1 wrap-break-word text-sm font-semibold text-foreground-secondary">
                     {birth.place.name}
                   </dd>
                 </div>
               </dl>
             </section>
           )}
-          <ChartGrid
-            chart={chart}
-            onSelectPalace={(branch) => setSelectedBranch(branch === selectedBranch ? null : branch)}
-            selectedBranch={selectedBranch}
-          />
+          <ChartGrid chart={chart} onSelectPalace={handleSelectPalace} selectedBranch={selectedBranch} />
           {!selectedPalace && <p className="text-xs text-foreground-faint">{tChart('palaceHint')}</p>}
           {selectedPalace && (
             <PalaceDetail chart={chart} onClose={() => setSelectedBranch(null)} palace={selectedPalace} />

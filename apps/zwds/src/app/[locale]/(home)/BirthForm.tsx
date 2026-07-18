@@ -19,14 +19,18 @@ type Props = {
 }
 
 export default function BirthForm({ onCancel, onProfileCleared, onSubmit }: Props) {
-  const [date, setDate] = useState('2000-01-01')
-  const [time, setTime] = useState('12:00')
-  const [gender, setGender] = useState<BirthGender>('male')
-  const [place, setPlace] = useState<BirthplaceSnapshot | null>(null)
-  const [save, setSave] = useState(false)
+  // The form only mounts once the profile has hydrated (ZwdsHome gates it), so
+  // seeding state lazily from the stored copy avoids a prefill effect — and the
+  // one-frame flash of blank defaults it would cause.
+  const profile = useBirthProfile()
+  const seed = profile.birth
+  const [date, setDate] = useState(seed?.date ?? '2000-01-01')
+  const [time, setTime] = useState(seed?.time ?? '12:00')
+  const [gender, setGender] = useState<BirthGender>(seed?.gender ?? 'male')
+  const [place, setPlace] = useState<BirthplaceSnapshot | null>(seed?.place ?? null)
+  const [save, setSave] = useState(profile.persistent)
   const [error, setError] = useState<string | null>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
-  const profile = useBirthProfile()
   const t = useTranslations('Zwds.form')
   const editing = onCancel !== undefined
 
@@ -60,18 +64,6 @@ export default function BirthForm({ onCancel, onProfileCleared, onSubmit }: Prop
     setError(null)
     onProfileCleared?.()
   }
-
-  // Prefill from the stored copy after mount, restoring the checkbox to match
-  // where the data actually lives (persistent device vs. this session only).
-  useEffect(() => {
-    if (profile.hydrated && profile.birth) {
-      setDate(profile.birth.date)
-      setTime(profile.birth.time)
-      setGender(profile.birth.gender)
-      setPlace(profile.birth.place)
-      setSave(profile.persistent)
-    }
-  }, [profile.birth, profile.hydrated, profile.persistent])
 
   useEffect(() => {
     if (editing) {

@@ -114,7 +114,9 @@ export default async function RootLayout({ children, params }: Props) {
             <OriginProtectionTurnstile />
           </NextIntlClientProvider>
           <ServiceWorkerRegistrar />
-          {NEXT_PUBLIC_GTM_ID && <GoogleTagManager gtmId={NEXT_PUBLIC_GTM_ID} />}
+          {NEXT_PUBLIC_GTM_ID && (
+            <GoogleTagManager gtmId={NEXT_PUBLIC_GTM_ID} gtmScriptUrl={`${NEXT_PUBLIC_APP_ORIGIN}/h8ou/gtm.js`} />
+          )}
           <p className="h-0 overflow-hidden tracking-widest invisible">
             <SEOText />
           </p>

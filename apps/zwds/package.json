@@ -9,6 +9,7 @@
     "type": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@next/third-parties": "^16.2.10",
     "@sobok/domain": "workspace:*",
     "downshift": "^9.0.0",
     "iztro": "^2.5.8",

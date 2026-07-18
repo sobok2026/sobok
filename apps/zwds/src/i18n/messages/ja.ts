@@ -13,6 +13,7 @@ export const ja = {
       title: '私の紫微斗数命盤',
       subtitle: '生まれた瞬間に紫微星が刻んだ十二宮の物語をひらいてみましょう。',
       openCta: '命盤をひらく',
+      loading: '命盤を読み込み中…',
       birthSummaryTitle: '現在の出生情報',
       editBirthCta: '出生情報を編集',
     },

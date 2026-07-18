@@ -148,7 +148,7 @@ export default function ChartGrid({
   const { year, month, day, hour } = chart.fourPillars
 
   return (
-    <div className="w-full max-w-4xl overflow-x-auto">
+    <div className="w-[calc(100%+2rem)] max-w-4xl overflow-x-auto p-4 pt-0 md:w-full md:px-0">
       <div className="grid min-w-2xl grid-cols-4 grid-rows-4 gap-1.5">
         {chart.palaces.map((palace) => (
           <PalaceCell

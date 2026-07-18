@@ -1,12 +1,12 @@
 'use client'
 
-import type { Locale } from '@sobok/domain/locale'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 
 import { pickLabel } from '@/chart/labels'
 import type { ZwdsChart } from '@/chart/types'
 import { ORIGIN, SITE_NAME } from '@/constants'
+import { track } from '@/lib/analytics/browser'
 
 import { createChartShareCard } from './share-card'
 
@@ -85,6 +85,7 @@ export default function ZwdsActions({ chart }: { chart: ZwdsChart }) {
 
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], text: t('share.text'), title: t('meta.title') })
+        track('share', { method: 'web_share' })
         return
       }
 
@@ -96,6 +97,7 @@ export default function ZwdsActions({ chart }: { chart: ZwdsChart }) {
       anchor.click()
       anchor.remove()
       URL.revokeObjectURL(objectUrl)
+      track('share', { method: 'download' })
       flashStatus('saved')
     } catch (error) {
       // Dismissing the native share sheet is not an application failure.
