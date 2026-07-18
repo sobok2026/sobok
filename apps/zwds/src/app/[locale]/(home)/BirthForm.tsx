@@ -19,7 +19,7 @@ type Props = {
 export default function BirthForm({ onSubmit }: Props) {
   const [date, setDate] = useState('2000-01-01')
   const [time, setTime] = useState('12:00')
-  const [gender, setGender] = useState<BirthGender>('female')
+  const [gender, setGender] = useState<BirthGender>('male')
   const [place, setPlace] = useState<BirthplaceSnapshot | null>(null)
   const [save, setSave] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -50,7 +50,7 @@ export default function BirthForm({ onSubmit }: Props) {
     profile.clear()
     setDate('2000-01-01')
     setTime('12:00')
-    setGender('female')
+    setGender('male')
     setPlace(null)
     setSave(false)
     setError(null)
@@ -110,7 +110,7 @@ export default function BirthForm({ onSubmit }: Props) {
         <fieldset>
           <legend className={labelClass}>{t('genderLabel')}</legend>
           <div className="grid grid-cols-2 gap-2">
-            {(['female', 'male'] as const).map((value) => (
+            {(['male', 'female'] as const).map((value) => (
               <label
                 className={`cursor-pointer rounded-xl border px-3 py-2.5 text-center text-sm font-semibold transition ${
                   gender === value
