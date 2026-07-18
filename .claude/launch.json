@@ -35,6 +35,13 @@
       "runtimeArgs": ["run", "dev"],
       "cwd": "apps/zwds",
       "port": 3012
+    },
+    {
+      "name": "vibe",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "apps/vibe",
+      "port": 3014
     }
   ]
 }

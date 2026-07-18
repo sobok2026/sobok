@@ -1,0 +1,109 @@
+@import 'tailwindcss' source(none);
+
+@source '..';
+
+:root {
+  /* Palette carried over from the original quiz UI — its shadows, gradients,
+     and opacity modifiers (page-ink/66 etc.) were tuned against these exact values. */
+  --page-accent: #ff4d6d;
+  --page-bg: #fdfaf6;
+  --page-border: #eadbd0;
+  --page-danger: #d93654;
+  --page-gutter-x: 1rem;
+  --page-ink: #241617;
+  --page-safe-inset-left: max(var(--page-gutter-x), var(--safe-area-inset-left));
+  --page-safe-inset-right: max(var(--page-gutter-x), var(--safe-area-inset-right));
+  --page-soft: #f7eee6;
+  --page-success: #147a4a;
+  --page-surface: #fffdf9;
+
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-inset-left: env(safe-area-inset-left, 0px);
+  --safe-area-inset-right: env(safe-area-inset-right, 0px);
+}
+
+@theme inline {
+  /* THEME_COLOR in src/constants.ts must stay in sync with --page-bg. */
+  --color-page-accent: var(--page-accent);
+  --color-page-bg: var(--page-bg);
+  --color-page-border: var(--page-border);
+  --color-page-danger: var(--page-danger);
+  --color-page-ink: var(--page-ink);
+  --color-page-soft: var(--page-soft);
+  --color-page-success: var(--page-success);
+  --color-page-surface: var(--page-surface);
+}
+
+@utility px-safe {
+  padding-inline-start: var(--page-safe-inset-left);
+  padding-inline-end: var(--page-safe-inset-right);
+}
+
+@utility pt-safe {
+  padding-top: var(--safe-area-top);
+}
+
+@utility pb-safe {
+  padding-bottom: var(--safe-area-bottom);
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  color: var(--page-ink);
+  background: var(--page-bg);
+  font-family:
+    'Pretendard JP Variable',
+    'Pretendard JP',
+    Pretendard,
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    'Helvetica Neue',
+    'Segoe UI',
+    'Hiragino Sans',
+    'Apple SD Gothic Neo',
+    Meiryo,
+    'Noto Sans JP',
+    'Noto Sans KR',
+    'Malgun Gothic',
+    Osaka,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    sans-serif;
+}
+
+/* Pretendard JP defaults to Japanese Han glyphs. Its ss05 feature switches
+   shared Han glyphs to the Korean forms recommended by the font project. */
+html:lang(ko-KR) body {
+  font-feature-settings: 'ss05';
+}
+
+/* Explicitly tagged non-Korean fragments (for example, locale names) must not
+   inherit the Korean glyph variant from a Korean document. */
+html:lang(ko-KR) [lang]:not(:lang(ko)) {
+  font-feature-settings: normal;
+}
+
+/* Pretendard JP does not cover Simplified Chinese. Keep zh-CN entirely on a
+   locale-appropriate system stack instead of mixing Japanese and SC glyphs. */
+html:lang(zh-CN) body {
+  font-family:
+    'PingFang SC',
+    'Microsoft YaHei',
+    'Noto Sans SC',
+    'Noto Sans CJK SC',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    sans-serif;
+}
