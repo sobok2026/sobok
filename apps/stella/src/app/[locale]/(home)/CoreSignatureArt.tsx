@@ -24,7 +24,7 @@ export function CoreSignatureArt({ moonSigns, risingSign, sunSign }: CoreSignatu
   return (
     <div
       aria-hidden
-      className="mt-3 grid grid-cols-3 gap-1.5 rounded-xl border border-accent/10 bg-surface p-2 sm:gap-2"
+      className="mt-3 grid grid-cols-3 gap-1.5 rounded-xl border-accent/10 sm:border sm:bg-surface sm:p-2 sm:gap-2"
     >
       {items.map((item) => (
         <div className="flex min-w-0 flex-col rounded-lg bg-surface-2 px-1.5 py-2 text-center" key={item.id}>
