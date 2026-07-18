@@ -8,6 +8,8 @@ import { findShape } from '@/chart/shape'
 import type { NatalChart } from '@/chart/types'
 import AstroGlyph from '@/components/AstroGlyph'
 
+import { ChartShapeArt } from './ChartShapeArt'
+
 export default function PatternSection({ chart, dateOnly = false }: { chart: NatalChart; dateOnly?: boolean }) {
   const t = useTranslations('Constellation')
   const reliablePlanets = dateOnly ? chart.planets.filter((planet) => planet.id !== 'moon') : chart.planets
@@ -20,9 +22,12 @@ export default function PatternSection({ chart, dateOnly = false }: { chart: Nat
       <p className="mt-1 text-xs text-foreground-subtle">{t(dateOnly ? 'shapes.noTime' : 'shapes.intro')}</p>
 
       {shape && (
-        <div className="mt-3 border rounded-xl bg-surface-2 p-3 sm:border-0">
+        <div className="mt-3 rounded-xl border bg-surface-2 p-3 sm:border-0">
           <p className="text-sm font-semibold text-foreground">{t(`shapes.name.${shape.id}`)}</p>
-          <p className="mt-1 text-xs leading-relaxed text-foreground-secondary">{t(`shapes.body.${shape.id}`)}</p>
+          <div className="mt-2 grid items-center gap-2 sm:grid-cols-[8rem_1fr] sm:gap-3">
+            <ChartShapeArt className="mx-auto h-28 w-28 sm:h-32 sm:w-32" planets={chart.planets} shape={shape} />
+            <p className="text-xs leading-relaxed text-foreground-secondary">{t(`shapes.body.${shape.id}`)}</p>
+          </div>
         </div>
       )}
 

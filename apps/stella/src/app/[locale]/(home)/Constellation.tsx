@@ -356,6 +356,7 @@ export default function Constellation() {
               aspects={aspects}
               chart={data.chart}
               interpretations={data.interpretations}
+              moonSigns={displayedMoonSigns}
               moonSignUncertain={moonSignUncertain}
             />
             <p className="text-center text-xs text-foreground-faint">{t('footer')}</p>
