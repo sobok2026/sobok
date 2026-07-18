@@ -304,6 +304,16 @@ export const ja = {
     planetAliases: {
       fortune: 'フォルトゥナ',
     },
+    phases: {
+      newMoon: '新月',
+      waxingCrescent: '三日月',
+      firstQuarter: '上弦の月',
+      waxingGibbous: '満ちていく月',
+      fullMoon: '満月',
+      waningGibbous: '欠けていく月',
+      lastQuarter: '下弦の月',
+      waningCrescent: '明けの月',
+    },
     todayCta: '☾ 今日の流れを見る',
     loveCta: '♡ 私の恋愛運を見る',
   },
@@ -321,16 +331,6 @@ export const ja = {
     sky: {
       title: '今日の空',
       moonIn: '{sign}の月',
-    },
-    phases: {
-      newMoon: '新月',
-      waxingCrescent: '三日月',
-      firstQuarter: '上弦の月',
-      waxingGibbous: '満ちていく月',
-      fullMoon: '満月',
-      waningGibbous: '欠けていく月',
-      lastQuarter: '下弦の月',
-      waningCrescent: '明けの月',
     },
     retroChip: '{name}逆行中',
     personal: {
@@ -359,7 +359,6 @@ export const ja = {
       allergy: 'アレルゲンを確認してください。',
       mapCta: 'Google マップで{food}を探す',
       mapCtaA11y: 'Google マップで{food}を探す（新しいタブで開きます）',
-      complete: '今日の幸運を見つけました ✦',
     },
     doDont: {
       title: '今日の Do & Don’t',
@@ -372,9 +371,54 @@ export const ja = {
       textWithLuck: '今日のラッキーフードは{food}、ラッキーカラーは{color} ✦',
       copied: 'リンクをコピーしました',
     },
+    teaser: {
+      kicker: '明日を先取り',
+      food: '明日のラッキーフードは{food}',
+    },
     tomorrow: '明日の空はまた違う表情に ✦',
     toChart: 'わたしの出生星図を見る',
     toLove: '♡ 私の恋愛運を見る',
+  },
+  Tomorrow: {
+    meta: {
+      title: '明日の幸運を先取り · 明日のラッキーフードとラッキーカラー',
+      description:
+        '明日の月が滞在する星座に合わせて、ラッキーフードとラッキーカラーを一日早くお知らせします。夜のうちに確認して、明日の準備をどうぞ。',
+    },
+    hero: {
+      eyebrow: '一日早く出会う幸運',
+      title: '明日の幸運',
+    },
+    computing: '明日の空を読んでいます...',
+    lucky: {
+      title: '明日の小さな幸運',
+      collectiveBasis: '明日の{sign}の月と{phase}のリズムに合わせて選びました。',
+      personalBasis: '明日の{sign}の月に、あなたの出生図の月と金星を重ねて選びました。',
+      personalBasisWithoutMoon: '明日の{sign}の月に、出生図で確定できる金星の質感を重ねて選びました。',
+      personalized: 'わたしの星図基準',
+      foodLabel: 'ラッキーフード',
+      colorLabel: 'ラッキーカラー',
+      colorCode: 'カラーコード',
+      colorA11y: '{name}、{hex}',
+      actionLabel: '明日の取り入れ方',
+      allergy: 'アレルゲンを確認してください。',
+      mapCta: 'Google マップで{food}を探す',
+      mapCtaA11y: 'Google マップで{food}を探す（新しいタブで開きます）',
+    },
+    note: '明日見ても結果は同じです。先に準備しても大丈夫です。',
+    personalize: {
+      title: 'あなたの星図で読むと、もっと深く',
+      hint: '生年月日と時刻を入れると、あなたの星図の質感を重ねて幸運を選びます。',
+      cta: 'わたしの星図を描く',
+    },
+    share: {
+      button: '明日の幸運をシェア',
+      text: '一日早く出会う明日の幸運 ✦',
+      textWithLuck: '明日のラッキーフードは{food}、ラッキーカラーは{color} ✦',
+      copied: 'リンクをコピーしました',
+    },
+    toToday: '☾ 今日の流れを見る',
+    toChart: 'わたしの出生星図を見る',
   },
   Love: {
     meta: {

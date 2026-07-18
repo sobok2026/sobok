@@ -1,0 +1,69 @@
+import '../globals.css'
+
+import { Locale } from '@sobok/domain/locale'
+import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
+import { NextIntlClientProvider } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
+import BottomNav from '@/components/BottomNav'
+import Footer from '@/components/Footer'
+import Header from '@/components/Header'
+import { ADSENSE_ACCOUNT, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
+import { getLocale } from '@/i18n/server'
+import Analytics from '@/lib/analytics/Analytics'
+import JsonLd, { siteGraph } from '@/lib/JsonLd'
+
+export function generateStaticParams() {
+  return Object.values(Locale).map((locale) => ({ locale }))
+}
+
+export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Promise<Metadata> {
+  const locale = await getLocale(params)
+  const t = await getTranslations({ locale, namespace: 'Common.meta' })
+  const siteName = SITE_NAME[locale]
+
+  return {
+    metadataBase: new URL(ORIGIN),
+    title: {
+      default: `${t('title')} · ${siteName}`,
+      template: `%s · ${siteName}`,
+    },
+    description: t('description'),
+    applicationName: siteName,
+    verification: { other: { 'google-adsense-account': ADSENSE_ACCOUNT } },
+  }
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: THEME_COLOR,
+  colorScheme: 'light',
+}
+
+export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {
+  const locale = await getLocale(params)
+  const t = await getTranslations({ locale, namespace: 'Common' })
+
+  return (
+    <html lang={locale}>
+      <body className="flex min-h-dvh flex-col bg-page-bg text-page-ink antialiased">
+        <JsonLd data={siteGraph(locale)} />
+        <NextIntlClientProvider>
+          <Header locale={locale} localeLabel={t('localeSwitcher')} />
+          <div className="flex flex-1 flex-col pb-16 sm:pb-0">{children}</div>
+          <Footer locale={locale} />
+          <BottomNav locale={locale} />
+        </NextIntlClientProvider>
+        <Analytics />
+        <Script
+          async
+          crossOrigin="anonymous"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ACCOUNT}`}
+          strategy="afterInteractive"
+        />
+      </body>
+    </html>
+  )
+}

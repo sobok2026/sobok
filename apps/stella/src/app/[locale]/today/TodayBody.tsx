@@ -31,6 +31,8 @@ export type TodayData = {
   unknownTime: UnknownBirthTimeAnalysis | null
   personal: PersonalToday | null
   lucky: LuckyRecommendations
+  /** Tomorrow's lucky food name for the preview teaser — null on shared views, which pin a past day. */
+  tomorrowFood: string | null
 }
 
 type TodayBodyProps = {
@@ -78,7 +80,7 @@ export default function TodayBody({ data, homeHref, onShare, shared }: TodayBody
             className="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium"
             style={{ backgroundColor: `${color}22`, color }}
           >
-            {t(`phases.${sky.phase}`)}
+            {tc(`phases.${sky.phase}`)}
           </span>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">{readings.moonInSign[sky.moonSign]}</p>
@@ -163,7 +165,24 @@ export default function TodayBody({ data, homeHref, onShare, shared }: TodayBody
         )}
       </section>
 
-      <LuckySection lucky={lucky} sky={sky} />
+      <LuckySection lucky={lucky} namespace="Today" sky={sky} />
+
+      {data.tomorrowFood && (
+        <Link
+          className={`${cardStyles.card} block rounded-3xl border bg-surface-2 p-4 backdrop-blur transition hover:bg-surface-3 sm:p-5`}
+          href={`${homeHref}/tomorrow`}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">{t('teaser.kicker')}</p>
+              <p className="mt-1 text-sm font-bold text-foreground">{t('teaser.food', { food: data.tomorrowFood })}</p>
+            </div>
+            <span aria-hidden="true" className="shrink-0 text-lg text-accent">
+              →
+            </span>
+          </div>
+        </Link>
+      )}
 
       {/* Do & Don't */}
       <section className={`${cardStyles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
@@ -217,7 +236,7 @@ export default function TodayBody({ data, homeHref, onShare, shared }: TodayBody
             <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
           </>
         )}
-        <p className="mt-1 text-xs text-foreground-faint">{t('tomorrow')}</p>
+        {shared && <p className="mt-1 text-xs text-foreground-faint">{t('tomorrow')}</p>}
       </div>
     </div>
   )

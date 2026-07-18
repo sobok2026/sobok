@@ -302,6 +302,16 @@ export const zh = {
     planetAliases: {
       fortune: '福尔图娜',
     },
+    phases: {
+      newMoon: '新月',
+      waxingCrescent: '娥眉月',
+      firstQuarter: '上弦月',
+      waxingGibbous: '盈凸月',
+      fullMoon: '满月',
+      waningGibbous: '亏凸月',
+      lastQuarter: '下弦月',
+      waningCrescent: '残月',
+    },
     todayCta: '☾ 看看今天的流势',
     loveCta: '♡ 看我的恋爱运',
   },
@@ -319,16 +329,6 @@ export const zh = {
     sky: {
       title: '今天的天空',
       moonIn: '月亮在{sign}',
-    },
-    phases: {
-      newMoon: '新月',
-      waxingCrescent: '娥眉月',
-      firstQuarter: '上弦月',
-      waxingGibbous: '盈凸月',
-      fullMoon: '满月',
-      waningGibbous: '亏凸月',
-      lastQuarter: '下弦月',
-      waningCrescent: '残月',
     },
     retroChip: '{name}逆行中',
     personal: {
@@ -356,7 +356,6 @@ export const zh = {
       allergy: '请自行确认食材与过敏原。',
       mapCta: '在高德地图查找{food}',
       mapCtaA11y: '在高德地图查找{food}（在新标签页中打开）',
-      complete: '今日幸运已揭晓 ✦',
     },
     doDont: {
       title: '今天的 Do & Don’t',
@@ -369,9 +368,53 @@ export const zh = {
       textWithLuck: '今天的幸运食物是{food}，幸运色是{color} ✦',
       copied: '链接已复制',
     },
+    teaser: {
+      kicker: '明日抢先看',
+      food: '明天的幸运食物是{food}',
+    },
     tomorrow: '明天的天空又会不一样 ✦',
     toChart: '查看我的出生星盘',
     toLove: '♡ 看我的恋爱运',
+  },
+  Tomorrow: {
+    meta: {
+      title: '明日幸运抢先看 · 提前一天的幸运食物与幸运色',
+      description: '根据明天月亮所在的星座，提前一天为你送上幸运食物与幸运色。晚上先看一眼，为明天做好准备。',
+    },
+    hero: {
+      eyebrow: '提前一天遇见的幸运',
+      title: '明日幸运',
+    },
+    computing: '正在读取明天的天空...',
+    lucky: {
+      title: '明日小幸运',
+      collectiveBasis: '根据明日月亮落在{sign}与{phase}的节奏为你选出。',
+      personalBasis: '结合明日落在{sign}的月亮，以及你本命盘中的月亮与金星为你选出。',
+      personalBasisWithoutMoon: '结合明日落在{sign}的月亮，以及你本命盘中可确定的金星特质为你选出。',
+      personalized: '按我的星盘',
+      foodLabel: '幸运食物',
+      colorLabel: '幸运色',
+      colorCode: '色号',
+      colorA11y: '{name}，{hex}',
+      actionLabel: '明天这样试试',
+      allergy: '请自行确认食材与过敏原。',
+      mapCta: '在高德地图查找{food}',
+      mapCtaA11y: '在高德地图查找{food}（在新标签页中打开）',
+    },
+    note: '明天再看结果也一样，可以放心提前准备。',
+    personalize: {
+      title: '对照你的星盘，会看得更深',
+      hint: '输入出生信息，我们会结合你星盘的特质为你选出幸运。',
+      cta: '绘制我的星盘',
+    },
+    share: {
+      button: '分享明日幸运',
+      text: '提前一天遇见的明日幸运 ✦',
+      textWithLuck: '明天的幸运食物是{food}，幸运色是{color} ✦',
+      copied: '链接已复制',
+    },
+    toToday: '☾ 查看今日流势',
+    toChart: '查看我的出生星盘',
   },
   Love: {
     meta: {

@@ -305,6 +305,16 @@ export const en = {
     planetAliases: {
       fortune: 'Fortuna',
     },
+    phases: {
+      newMoon: 'New Moon',
+      waxingCrescent: 'Waxing Crescent',
+      firstQuarter: 'First Quarter',
+      waxingGibbous: 'Waxing Gibbous',
+      fullMoon: 'Full Moon',
+      waningGibbous: 'Waning Gibbous',
+      lastQuarter: 'Last Quarter',
+      waningCrescent: 'Waning Crescent',
+    },
     todayCta: '☾ See today’s flow',
     loveCta: '♡ See my love reading',
   },
@@ -322,16 +332,6 @@ export const en = {
     sky: {
       title: 'Today’s sky',
       moonIn: 'Moon in {sign}',
-    },
-    phases: {
-      newMoon: 'New Moon',
-      waxingCrescent: 'Waxing Crescent',
-      firstQuarter: 'First Quarter',
-      waxingGibbous: 'Waxing Gibbous',
-      fullMoon: 'Full Moon',
-      waningGibbous: 'Waning Gibbous',
-      lastQuarter: 'Last Quarter',
-      waningCrescent: 'Waning Crescent',
     },
     retroChip: '{name} retrograde',
     personal: {
@@ -360,7 +360,6 @@ export const en = {
       allergy: 'Please check allergens yourself.',
       mapCta: 'Find {food} on Google Maps',
       mapCtaA11y: 'Find {food} on Google Maps (opens in a new tab)',
-      complete: 'Today’s luck is revealed ✦',
     },
     doDont: {
       title: 'Today’s Do & Don’t',
@@ -373,9 +372,55 @@ export const en = {
       textWithLuck: 'Today’s lucky picks are {food} and {color} ✦',
       copied: 'Link copied',
     },
+    teaser: {
+      kicker: 'Tomorrow preview',
+      food: 'Tomorrow’s lucky food is {food}',
+    },
     tomorrow: 'Tomorrow’s sky will be different again ✦',
     toChart: 'See my birth chart',
     toLove: '♡ See my love reading',
+  },
+  Tomorrow: {
+    meta: {
+      title: 'Tomorrow’s Luck Preview · Lucky Food & Color a Day Early',
+      description:
+        'See tomorrow’s lucky food and lucky color a day early, matched to where the Moon will be. Check tonight and get ready for tomorrow.',
+    },
+    hero: {
+      eyebrow: 'Luck, a day ahead',
+      title: 'Tomorrow’s Luck',
+    },
+    computing: 'Reading tomorrow’s sky...',
+    lucky: {
+      title: 'Tomorrow’s little luck',
+      collectiveBasis: 'Chosen to match tomorrow’s Moon in {sign} and the rhythm of the {phase}.',
+      personalBasis: 'Chosen from tomorrow’s Moon in {sign}, with your natal Moon and Venus added to the mix.',
+      personalBasisWithoutMoon:
+        'Chosen from tomorrow’s Moon in {sign}, with the reliable Venus tone in your chart added.',
+      personalized: 'From my chart',
+      foodLabel: 'Lucky food',
+      colorLabel: 'Lucky color',
+      colorCode: 'Color code',
+      colorA11y: '{name}, {hex}',
+      actionLabel: 'Try it tomorrow',
+      allergy: 'Please check allergens yourself.',
+      mapCta: 'Find {food} on Google Maps',
+      mapCtaA11y: 'Find {food} on Google Maps (opens in a new tab)',
+    },
+    note: 'The result stays the same tomorrow, so feel free to plan ahead.',
+    personalize: {
+      title: 'It goes deeper with your chart',
+      hint: 'Enter your birth details and we’ll pick your luck with your own chart in the mix.',
+      cta: 'Draw my chart',
+    },
+    share: {
+      button: 'Share tomorrow’s luck',
+      text: 'Tomorrow’s luck, a day early ✦',
+      textWithLuck: 'Tomorrow’s lucky picks are {food} and {color} ✦',
+      copied: 'Link copied',
+    },
+    toToday: '☾ See today’s flow',
+    toChart: 'See my birth chart',
   },
   Love: {
     meta: {

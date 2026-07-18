@@ -5,8 +5,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-import { computeBirthChartAnalysis, type UnknownBirthTimeAnalysis } from '@/chart/ephemeris'
-import type { NatalChart } from '@/chart/types'
+import { computeBirthChartAnalysis } from '@/chart/ephemeris'
 import { HeroTitle } from '@/components/HeroTitle'
 import SharedLinkError from '@/components/SharedLinkError'
 import Starfield from '@/components/Starfield'
@@ -15,13 +14,11 @@ import { track } from '@/lib/analytics/browser'
 import { toBirthInput } from '@/lib/birth-storage'
 import { buildShareURL, shareLink } from '@/lib/share'
 
-import { localDayAnchor, snapshotAtLocalNoon } from './daily'
+import { formatDateKey, localDayAnchor, nextLocalDayAnchor } from './daily'
+import { computeDailyLucky, type DailyLuckyInputs } from './daily-lucky'
 import { loadReadings } from './readings'
 import { loadLuckyContent } from './recommendations'
-import { selectLuckyRecommendations } from './recommendations/select'
-import { computeSkyToday } from './sky'
 import TodayBody, { type TodayData } from './TodayBody'
-import { computePersonalToday, type PersonalToday } from './transits'
 import { useLiveDateKey } from './useLiveDateKey'
 
 export default function TodayFlow() {
@@ -38,6 +35,47 @@ export default function TodayFlow() {
 
   const sourceReady = birthSource.status === 'ready'
   const dayReady = shared || liveDateKey !== null
+  const homeHref = `/${locale}`
+
+  async function share() {
+    if (!data) {
+      return
+    }
+
+    const url = data.birth
+      ? buildShareURL(locale, {
+          kind: 'today',
+          birth: data.birth,
+          dateKey: data.dateKey,
+          utcOffsetMinutes: data.utcOffsetMinutes,
+        })
+      : new URL(`/${locale}/today`, window.location.origin).toString()
+
+    // Only a birth-pinned link reproduces the sender's picks — an unpinned one
+    // recomputes with the recipient's own day and profile, so it must not name them.
+    const method = await shareLink({
+      title: t('meta.title'),
+      text: data.birth
+        ? t('share.textWithLuck', { food: data.lucky.food.name, color: data.lucky.color.name })
+        : t('share.text'),
+      url,
+    })
+
+    if (method === 'clipboard') {
+      toast.success(t('share.copied'))
+    } else if (method === 'failed') {
+      toast.error(ts('shareError'))
+    }
+
+    if (method === 'web_share' || method === 'clipboard') {
+      track('share', {
+        method,
+        content_type: 'today',
+        lucky_food_id: data.lucky.food.id,
+        lucky_color_id: data.lucky.color.id,
+      })
+    }
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -54,55 +92,62 @@ export default function TodayFlow() {
         setData(null)
 
         const anchor = sharedPayload ?? localDayAnchor()
-        const snapshotAt = snapshotAtLocalNoon(anchor)
 
-        const [sky, readings, luckyContent] = await Promise.all([
-          computeSkyToday(snapshotAt),
+        const [readings, luckyContent, analysis] = await Promise.all([
           loadReadings(locale),
           loadLuckyContent(locale),
+          birth ? computeBirthChartAnalysis(toBirthInput(birth)) : null,
         ])
 
-        let natal: NatalChart | null = null
-        let unknownTime: UnknownBirthTimeAnalysis | null = null
-        let personal: PersonalToday | null = null
+        const natal = analysis?.chart ?? null
+        const unknownTime = analysis?.unknownTime ?? null
 
-        if (birth) {
-          const analysis = await computeBirthChartAnalysis(toBirthInput(birth))
-          natal = analysis.chart
-          unknownTime = analysis.unknownTime
-          personal = computePersonalToday(sky.positions, natal, { natalMoonExact: birth.timeKnown })
-        }
-
-        const lucky = selectLuckyRecommendations({
+        const inputs: DailyLuckyInputs = {
           locale,
-          dateKey: anchor.dateKey,
-          utcOffsetMinutes: anchor.utcOffsetMinutes,
-          sky,
           natal,
           natalMoonSigns: unknownTime?.moonSigns,
-          personal,
+          natalMoonExact: birth?.timeKnown ?? false,
           content: luckyContent,
+        }
+
+        const { sky, personal, lucky } = await computeDailyLucky(anchor, inputs)
+
+        if (cancelled) {
+          return
+        }
+
+        setData({
+          dateKey: anchor.dateKey,
+          utcOffsetMinutes: anchor.utcOffsetMinutes,
+          birth,
+          sky,
+          readings,
+          natal,
+          unknownTime,
+          personal,
+          lucky,
+          tomorrowFood: null,
         })
 
-        if (!cancelled) {
-          setData({
-            dateKey: anchor.dateKey,
-            utcOffsetMinutes: anchor.utcOffsetMinutes,
-            birth,
-            sky,
-            readings,
-            natal,
-            unknownTime,
-            personal,
-            lucky,
-          })
+        track('view_reading', {
+          content_type: 'today',
+          personalized: birth !== null,
+          time_known: birth?.timeKnown ?? false,
+          shared,
+        })
 
-          track('view_reading', {
-            content_type: 'today',
-            personalized: birth !== null,
-            time_known: birth?.timeKnown ?? false,
-            shared,
-          })
+        // The teaser arrives after the reading is on screen and fails alone —
+        // tomorrow's computation must never blank or delay today's page.
+        if (!sharedPayload) {
+          try {
+            const next = await computeDailyLucky(nextLocalDayAnchor(), inputs)
+
+            if (!cancelled) {
+              setData((prev) => (prev ? { ...prev, tomorrowFood: next.lucky.food.name } : prev))
+            }
+          } catch {
+            /* the teaser is optional — today's reading stands */
+          }
         }
       } catch {
         if (!cancelled) {
@@ -127,44 +172,6 @@ export default function TodayFlow() {
     sourceReady,
   ])
 
-  async function share() {
-    if (!data) {
-      return
-    }
-
-    const url = data.birth
-      ? buildShareURL(locale, {
-          kind: 'today',
-          birth: data.birth,
-          dateKey: data.dateKey,
-          utcOffsetMinutes: data.utcOffsetMinutes,
-        })
-      : new URL(`/${locale}/today`, window.location.origin).toString()
-
-    const method = await shareLink({
-      title: t('meta.title'),
-      text: t('share.textWithLuck', { food: data.lucky.food.name, color: data.lucky.color.name }),
-      url,
-    })
-
-    if (method === 'clipboard') {
-      toast.success(t('share.copied'))
-    } else if (method === 'failed') {
-      toast.error(ts('shareError'))
-    }
-
-    if (method === 'web_share' || method === 'clipboard') {
-      track('share', {
-        method,
-        content_type: 'today',
-        lucky_food_id: data.lucky.food.id,
-        lucky_color_id: data.lucky.color.id,
-      })
-    }
-  }
-
-  const homeHref = `/${locale}`
-
   if (birthSource.status === 'invalid') {
     return <SharedLinkError />
   }
@@ -179,9 +186,7 @@ export default function TodayFlow() {
           <HeroTitle>{t('hero.title')}</HeroTitle>
           {data && (
             <p className="mt-3 text-sm text-foreground-muted/90">
-              {new Intl.DateTimeFormat(LOCALE_LANGUAGE_TAGS[locale], { dateStyle: 'full', timeZone: 'UTC' }).format(
-                new Date(`${data.dateKey}T12:00:00Z`),
-              )}
+              {formatDateKey(LOCALE_LANGUAGE_TAGS[locale], data.dateKey)}
             </p>
           )}
           {shared && (

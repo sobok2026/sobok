@@ -277,7 +277,7 @@ export const luckyContent = {
       id: 'en-global-congee',
       name: 'Congee',
       reason: 'Rice softened into a warm bowl favors gentleness, patience, and attention to quiet signals.',
-      action: 'Keep the toppings simple and give yourself permission to choose the slower route today.',
+      action: 'Keep the toppings simple and give yourself permission to choose the slower route.',
       element: 'water',
       resonatesWith: ['water', 'earth'],
       energies: ['peak', 'release'],

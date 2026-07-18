@@ -17,14 +17,31 @@ const LUCKY_GLYPHS: Record<ElementId, string> = {
   water: '≈',
 }
 
-export default function LuckySection({ lucky, sky }: { lucky: LuckyRecommendations; sky: SkyToday }) {
-  const sectionRef = useRef<HTMLElement>(null)
+/** The two daily surfaces sharing this section — each brings its own copy under the same keys. */
+export type LuckyNamespace = 'Today' | 'Tomorrow'
+
+/** Exhaustive by construction — a new surface fails to compile until it names its analytics slice. */
+const CONTENT_TYPES: Record<LuckyNamespace, string> = {
+  Today: 'today_lucky',
+  Tomorrow: 'tomorrow_lucky',
+}
+
+type LuckySectionProps = {
+  lucky: LuckyRecommendations
+  namespace: LuckyNamespace
+  sky: SkyToday
+}
+
+export default function LuckySection({ lucky, namespace, sky }: LuckySectionProps) {
   const [revealed, setRevealed] = useState(false)
-  const t = useTranslations('Today')
+  const sectionRef = useRef<HTMLElement>(null)
   const tc = useTranslations('Constellation')
+  const t = useTranslations(namespace)
   const locale = useLocale()
+
   const foodColor = ELEMENT_COLORS[lucky.food.element]
   const foodMap = buildFoodMapLink(locale, lucky.food.name)
+  const contentType = CONTENT_TYPES[namespace]
 
   const basisKey = lucky.personalized
     ? lucky.usesNatalMoon
@@ -34,12 +51,12 @@ export default function LuckySection({ lucky, sky }: { lucky: LuckyRecommendatio
 
   const basis = t(basisKey, {
     sign: tc(`signs.${sky.moonSign}`),
-    phase: t(`phases.${sky.phase}`),
+    phase: tc(`phases.${sky.phase}`),
   })
 
   function handleFoodMapOpen() {
     track('open_lucky_food_map', {
-      content_type: 'today_lucky',
+      content_type: contentType,
       provider: foodMap.provider,
       lucky_food_id: lucky.food.id,
     })
@@ -63,7 +80,7 @@ export default function LuckySection({ lucky, sky }: { lucky: LuckyRecommendatio
         setRevealed(true)
 
         track('view_lucky_recommendation', {
-          content_type: 'today_lucky',
+          content_type: contentType,
           personalized: lucky.personalized,
           lucky_food_id: lucky.food.id,
           lucky_color_id: lucky.color.id,
@@ -75,16 +92,16 @@ export default function LuckySection({ lucky, sky }: { lucky: LuckyRecommendatio
 
     observer.observe(section)
     return () => observer.disconnect()
-  }, [lucky.color.id, lucky.food.id, lucky.personalized])
+  }, [contentType, lucky.color.id, lucky.food.id, lucky.personalized])
 
   return (
     <section
-      aria-labelledby="today-lucky-title"
+      aria-labelledby="lucky-title"
       className={`${cardStyles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}
       ref={sectionRef}
     >
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-sm font-bold text-foreground" id="today-lucky-title">
+        <h2 className="text-sm font-bold text-foreground" id="lucky-title">
           {t('lucky.title')}
         </h2>
         {lucky.personalized && (

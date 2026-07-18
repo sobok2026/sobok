@@ -22,10 +22,28 @@ export function localDayAnchor(date: Date = new Date()): DayAnchor {
   }
 }
 
+/** Tomorrow's anchor — the offset comes from tomorrow's own noon so DST transitions stay correct. */
+export function nextLocalDayAnchor(date: Date = new Date()): DayAnchor {
+  return localDayAnchor(new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 12))
+}
+
 /** Rebuilds the exact instant that represented local noon for the captured day. */
 export function snapshotAtLocalNoon({ dateKey, utcOffsetMinutes }: DayAnchor): Date {
   const [year, month, day] = dateKey.split('-').map(Number)
   return new Date(Date.UTC(year, month - 1, day, 12) - utcOffsetMinutes * 60 * 1000)
+}
+
+/** Calendar day as a count of days since the Unix epoch — the step for daily rotations. */
+export function dayOrdinal(dateKey: string): number {
+  const [year, month, day] = dateKey.split('-').map(Number)
+  return Math.floor(Date.UTC(year, month - 1, day) / 86_400_000)
+}
+
+/** Renders a dateKey as a full localized date, pinned to noon UTC so every zone shows the same calendar day. */
+export function formatDateKey(languageTag: string, dateKey: string): string {
+  return new Intl.DateTimeFormat(languageTag, { dateStyle: 'full', timeZone: 'UTC' }).format(
+    new Date(`${dateKey}T12:00:00Z`),
+  )
 }
 
 /** xmur3 string hash — spreads a short seed string into a well-mixed 32-bit state. */

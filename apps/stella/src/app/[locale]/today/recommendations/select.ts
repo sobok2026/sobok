@@ -3,16 +3,18 @@ import type { Locale } from '@sobok/domain/locale'
 import { elementOfSign, signOfLon } from '@/chart/astrology'
 import type { ElementId, NatalChart, PlanetId, SignId } from '@/chart/types'
 import { type AspectTone, aspectTone } from '@/content/interpretations/types'
-import { seededPick } from '../daily'
+import { dayOrdinal, seededPick } from '../daily'
 import type { MoonPhaseId, SkyToday } from '../sky'
 import type { PersonalToday } from '../transits'
 import { LUCKY_COLORS } from './palette'
 import type { LuckyCandidate, LuckyContent, LuckyEnergy, LuckyRecommendations, LuckyTone } from './types'
 
 /**
- * The current Moon's element outweighs every secondary signal combined. V1
- * therefore stays inside today's elemental pool, then ranks that pool by the
- * personal placement, lunar phase, and aspect tone.
+ * The current Moon's element outweighs every secondary signal combined. The
+ * pick therefore stays inside the day's elemental pool, ranks that pool by the
+ * personal placement, lunar phase, and aspect tone, then rotates through the
+ * top candidates day by day — the Moon holds a sign for ~2.5 days, so without
+ * the rotation the same pick would repeat until the sky itself moved on.
  */
 const RULE_WEIGHTS = {
   dayElement: 8,
@@ -21,6 +23,9 @@ const RULE_WEIGHTS = {
   energy: 2,
   tone: 1,
 } as const
+
+/** Rotation window — the day's pick cycles through this many top-ranked candidates. */
+const DAILY_TIER = 3
 
 const ENERGY_BY_PHASE: Record<MoonPhaseId, LuckyEnergy> = {
   newMoon: 'begin',
@@ -36,7 +41,6 @@ const ENERGY_BY_PHASE: Record<MoonPhaseId, LuckyEnergy> = {
 type SelectLuckyInput = {
   locale: Locale
   dateKey: string
-  utcOffsetMinutes: number
   sky: SkyToday
   natal: NatalChart | null
   /** Undefined when the exact birth time is known; one/two signs for a date-only birth. */
@@ -46,25 +50,34 @@ type SelectLuckyInput = {
 }
 
 export function selectLuckyRecommendations(input: SelectLuckyInput): LuckyRecommendations {
-  const { locale, dateKey, utcOffsetMinutes, sky, natal, personal, content } = input
+  const { locale, dateKey, sky, natal, personal, content } = input
   const dayElement = elementOfSign(sky.moonSign)
   const energy = ENERGY_BY_PHASE[sky.phase]
   const tone = recommendationTone(personal?.moonContacts[0]?.tone ?? headlineTone(sky))
   const natalMoonSign = resolveNatalMoonSign(natal, input.natalMoonSigns)
   const profileKey = natalProfileKey(natal, natalMoonSign)
-  const seedBase = ['lucky', dateKey, utcOffsetMinutes, sky.moonSign, sky.phase, profileKey].join(':')
 
-  const food = pickBest(
+  // The ranking seed deliberately excludes the date (and anything else that can
+  // change between two same-sky days): the day ordinal walks the tier, and the
+  // tier's id-stable order in pickDaily keeps the walk from revisiting
+  // yesterday's pick as long as the tier's membership holds.
+  const rankSeed = ['lucky', sky.moonSign, sky.phase, profileKey].join(':')
+  const day = dayOrdinal(dateKey)
+
+  const food = pickDaily(
     content.foods,
-    `${seedBase}:${locale}:food`,
+    `${rankSeed}:${locale}:food`,
+    day,
     dayElement,
     natalMoonSign ? elementOfSign(natalMoonSign) : null,
     energy,
     tone,
   )
-  const colorDefinition = pickBest(
+
+  const colorDefinition = pickDaily(
     LUCKY_COLORS,
-    `${seedBase}:color`,
+    `${rankSeed}:color`,
+    day,
     dayElement,
     natalElement(natal, 'venus'),
     energy,
@@ -82,9 +95,10 @@ export function selectLuckyRecommendations(input: SelectLuckyInput): LuckyRecomm
   }
 }
 
-function pickBest<T extends LuckyCandidate & { id: string }>(
+function pickDaily<T extends LuckyCandidate & { id: string }>(
   candidates: readonly T[],
   seed: string,
+  day: number,
   dayElement: ElementId,
   personalElement: ElementId | null,
   energy: LuckyEnergy,
@@ -92,12 +106,21 @@ function pickBest<T extends LuckyCandidate & { id: string }>(
 ): T {
   const shuffled = seededPick(candidates, candidates.length, seed)
 
-  return shuffled
+  // Scores decide only who makes the tier; the tier itself is ordered by id so
+  // day-varying signals (tone, a reseeded shuffle) can reorder the RANKING
+  // without moving the rotation's target. A repeat across consecutive days then
+  // requires the tier's membership itself to change — rare, and it means the
+  // sky genuinely shifted.
+  const tier = shuffled
     .map((candidate) => ({
       candidate,
       score: candidateScore(candidate, dayElement, personalElement, energy, tone),
     }))
-    .sort((a, b) => b.score - a.score)[0].candidate
+    .sort((a, b) => b.score - a.score)
+    .slice(0, DAILY_TIER)
+    .sort((a, b) => (a.candidate.id < b.candidate.id ? -1 : 1))
+
+  return tier[day % tier.length].candidate
 }
 
 function candidateScore(

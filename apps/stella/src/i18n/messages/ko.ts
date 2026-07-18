@@ -304,6 +304,16 @@ export const ko = {
     planetAliases: {
       fortune: '포르투나',
     },
+    phases: {
+      newMoon: '삭',
+      waxingCrescent: '초승달',
+      firstQuarter: '상현달',
+      waxingGibbous: '차오르는 달',
+      fullMoon: '보름달',
+      waningGibbous: '기우는 달',
+      lastQuarter: '하현달',
+      waningCrescent: '그믐달',
+    },
     todayCta: '☾ 오늘의 흐름 보기',
     loveCta: '♡ 나의 연애운 보기',
   },
@@ -321,16 +331,6 @@ export const ko = {
     sky: {
       title: '오늘의 하늘',
       moonIn: '{sign}의 달',
-    },
-    phases: {
-      newMoon: '삭',
-      waxingCrescent: '초승달',
-      firstQuarter: '상현달',
-      waxingGibbous: '차오르는 달',
-      fullMoon: '보름달',
-      waningGibbous: '기우는 달',
-      lastQuarter: '하현달',
-      waningCrescent: '그믐달',
     },
     retroChip: '{name} 역행 중',
     personal: {
@@ -358,7 +358,6 @@ export const ko = {
       allergy: '알레르기가 있는지 확인해 주세요.',
       mapCta: '네이버 지도에서 {food} 찾기',
       mapCtaA11y: '네이버 지도에서 {food} 찾기, 새 창에서 열림',
-      complete: '오늘의 행운을 확인했어요 ✦',
     },
     doDont: {
       title: '오늘의 추천과 주의',
@@ -371,9 +370,54 @@ export const ko = {
       textWithLuck: '오늘의 행운 음식은 {food}, 행운 색상은 {color} ✦',
       copied: '링크를 복사했어요',
     },
+    teaser: {
+      kicker: '내일 미리 보기',
+      food: '내일의 행운 음식은 {food}',
+    },
     tomorrow: '내일의 하늘은 또 달라져요 ✦',
     toChart: '내 탄생 별자리 보기',
     toLove: '♡ 나의 연애운 보기',
+  },
+  Tomorrow: {
+    meta: {
+      title: '내일의 행운 미리 보기 · 내일 행운 음식과 행운 색상',
+      description:
+        '내일 달이 머무는 별자리에 맞춰 행운 음식과 행운 색상을 하루 먼저 알려 드려요. 저녁에 미리 확인하고 내일을 준비해 보세요.',
+    },
+    hero: {
+      eyebrow: '하루 먼저 만나는 행운',
+      title: '내일의 행운',
+    },
+    computing: '내일의 하늘을 읽는 중...',
+    lucky: {
+      title: '내일의 작은 행운',
+      collectiveBasis: '내일 {sign}의 달과 {phase}의 리듬에 맞춰 골랐어요.',
+      personalBasis: '내일 {sign}의 달에 내 차트의 달과 금성의 결을 더해 골랐어요.',
+      personalBasisWithoutMoon: '내일 {sign}의 달에 내 차트에서 확정되는 금성의 결을 더해 골랐어요.',
+      personalized: '내 별자리 기준',
+      foodLabel: '행운 음식',
+      colorLabel: '행운 색상',
+      colorCode: '색상 코드',
+      colorA11y: '{name}, {hex}',
+      actionLabel: '내일 이렇게',
+      allergy: '알레르기가 있는지 확인해 주세요.',
+      mapCta: '네이버 지도에서 {food} 찾기',
+      mapCtaA11y: '네이버 지도에서 {food} 찾기, 새 창에서 열림',
+    },
+    note: '내일 다시 봐도 같은 결과예요. 미리 준비해도 좋아요.',
+    personalize: {
+      title: '내 별자리 기준으로 보면 더 자세해요',
+      hint: '생년월일시를 입력하면 내 차트의 결을 더해 행운을 골라 드려요.',
+      cta: '내 차트 만들기',
+    },
+    share: {
+      button: '내일의 행운 공유',
+      text: '하루 먼저 확인하는 내일의 행운 ✦',
+      textWithLuck: '내일의 행운 음식은 {food}, 행운 색상은 {color} ✦',
+      copied: '링크를 복사했어요',
+    },
+    toToday: '☾ 오늘의 흐름 보기',
+    toChart: '내 탄생 별자리 보기',
   },
   Love: {
     meta: {

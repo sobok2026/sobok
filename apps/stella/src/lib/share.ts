@@ -6,11 +6,12 @@ const SHARE_HASH_PATTERN = /^\d+\./
 const BASE64_URL_PATTERN = /^[A-Za-z0-9_-]+$/
 const MAX_ENCODED_PAYLOAD_LENGTH = 512
 
-export type ShareKind = 'chart' | 'today' | 'love'
+export type ShareKind = 'chart' | 'today' | 'tomorrow' | 'love'
 
 export type SharedPayload =
   | { kind: 'chart'; birth: StoredBirth }
   | { kind: 'today'; birth: StoredBirth; dateKey: string; utcOffsetMinutes: number }
+  | { kind: 'tomorrow'; birth: StoredBirth; dateKey: string; utcOffsetMinutes: number }
   | { kind: 'love'; birth: StoredBirth; asOf: Date }
 
 type SerializedPayload = {
@@ -34,6 +35,7 @@ type SerializedPayload = {
 type ShareUrlInput =
   | { kind: 'chart'; birth: StoredBirth }
   | { kind: 'today'; birth: StoredBirth; dateKey: string; utcOffsetMinutes: number }
+  | { kind: 'tomorrow'; birth: StoredBirth; dateKey: string; utcOffsetMinutes: number }
   | { kind: 'love'; birth: StoredBirth; asOf: Date }
 
 export type ShareLinkResult = 'web_share' | 'clipboard' | 'cancelled' | 'failed'
@@ -76,7 +78,7 @@ function encodePayload(input: ShareUrlInput): string {
       { locality: 0, administrativeSeat: 1, administrativeArea: 2 }[input.birth.place.coordinatePrecision] as 0 | 1 | 2,
     ],
     ...(input.kind === 'love' ? { a: Math.floor(input.asOf.getTime() / 1000) } : {}),
-    ...(input.kind === 'today' ? { o: input.dateKey, z: input.utcOffsetMinutes } : {}),
+    ...(input.kind === 'today' || input.kind === 'tomorrow' ? { o: input.dateKey, z: input.utcOffsetMinutes } : {}),
   }
 
   return toBase64Url(JSON.stringify(payload))
@@ -125,7 +127,7 @@ export function decodeShareHash(hash: string, kind: ShareKind): SharedPayload | 
       return { kind, birth }
     }
 
-    if (kind === 'today') {
+    if (kind === 'today' || kind === 'tomorrow') {
       if (
         payload.a !== undefined ||
         typeof payload.o !== 'string' ||

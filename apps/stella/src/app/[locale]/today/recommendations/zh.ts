@@ -6,7 +6,7 @@ export const luckyContent = {
     {
       id: 'zh-mainland-mapo-tofu',
       name: '麻婆豆腐',
-      reason: '麻、辣、烫与柔嫩豆腐形成鲜明对比，适合为今天点亮果断的行动力。',
+      reason: '麻、辣、烫与柔嫩豆腐形成鲜明对比，适合为这一天点亮果断的行动力。',
       action: '配一碗米饭，把最想推进的那件事趁热开个头。',
       element: 'fire',
       resonatesWith: ['fire', 'water'],
@@ -46,7 +46,7 @@ export const luckyContent = {
     {
       id: 'zh-mainland-twice-cooked-pork',
       name: '回锅肉',
-      reason: '肉片回锅后更有焦香，提醒你今天适合把已有经验重新用出新火候。',
+      reason: '肉片回锅后更有焦香，提醒你把已有经验重新用出新火候。',
       action: '回头整理一个做过一半的方案，保留有效部分，再大胆补上关键一步。',
       element: 'fire',
       resonatesWith: ['fire', 'earth'],
@@ -57,7 +57,7 @@ export const luckyContent = {
       id: 'zh-mainland-yuxiang-pork',
       name: '鱼香肉丝',
       reason: '咸甜酸辣在一盘里取得平衡，适合把复杂关系重新调到彼此都舒服的位置。',
-      action: '吃饭时放慢一点，也给今天那场重要沟通留出转圜余地。',
+      action: '吃饭时放慢一点，也给重要的沟通留出转圜余地。',
       element: 'fire',
       resonatesWith: ['fire', 'air'],
       energies: ['build', 'release'],
@@ -77,7 +77,7 @@ export const luckyContent = {
       id: 'zh-mainland-lamb-skewers',
       name: '烤羊肉串',
       reason: '炭火、孜然与成串分享的热闹感，适合为忙碌一天补上一段真实连接。',
-      action: '找几位自在的朋友坐在一起，让今天的辛苦在烟火气里落地。',
+      action: '找几位自在的朋友坐在一起，让一天的辛苦在烟火气里落地。',
       element: 'fire',
       resonatesWith: ['fire', 'air', 'earth'],
       energies: ['peak', 'release'],
@@ -87,7 +87,7 @@ export const luckyContent = {
       id: 'zh-mainland-red-braised-pork',
       name: '红烧肉',
       reason: '慢火收出的浓郁酱色，让耐心与满足感都变得具体而踏实。',
-      action: '别把今天排得太满，留出一顿坐下来慢慢吃完的正餐时间。',
+      action: '别把日程排得太满，留出一顿坐下来慢慢吃完的正餐时间。',
       element: 'earth',
       resonatesWith: ['earth', 'water'],
       energies: ['begin', 'release'],
@@ -117,7 +117,7 @@ export const luckyContent = {
       id: 'zh-mainland-dumplings',
       name: '饺子',
       reason: '馅料被面皮稳稳包住，一只只排好，像把散乱心意收成完整形状。',
-      action: '和家人朋友一起包或一起吃，让今天在有来有往的陪伴里圆满收口。',
+      action: '和家人朋友一起包或一起吃，让这一天在有来有往的陪伴里圆满收口。',
       element: 'earth',
       resonatesWith: ['earth', 'water'],
       energies: ['peak', 'release'],
@@ -166,7 +166,7 @@ export const luckyContent = {
     {
       id: 'zh-mainland-spring-rolls',
       name: '春卷',
-      reason: '薄脆外皮裹着轻巧馅料，一口一个的节奏为今天添上明快的新鲜感。',
+      reason: '薄脆外皮裹着轻巧馅料，一口一个的节奏为这一天添上明快的新鲜感。',
       action: '给普通的一餐加一小盘，也给原本固定的计划留一个灵活选项。',
       element: 'air',
       resonatesWith: ['air', 'fire'],
@@ -197,7 +197,7 @@ export const luckyContent = {
       id: 'zh-mainland-guilin-rice-noodles',
       name: '桂林米粉',
       reason: '米粉爽利、卤水鲜明，配料可自由增减，适合在变化中保持自己的节奏。',
-      action: '按今天的口味选配菜，也按真实精力调整日程，不必照搬别人的安排。',
+      action: '按当下的口味选配菜，也按真实精力调整日程，不必照搬别人的安排。',
       element: 'air',
       resonatesWith: ['air', 'water'],
       energies: ['peak', 'release'],
@@ -207,7 +207,7 @@ export const luckyContent = {
       id: 'zh-mainland-xiaolongbao',
       name: '小笼包',
       reason: '薄皮里藏着热汤，一笼整齐上桌，让细致心意有了轻巧而惊喜的表达。',
-      action: '放慢第一口，也把今天最重要的话说得细一点、柔一点。',
+      action: '放慢第一口，也把最重要的话说得细一点、柔一点。',
       element: 'air',
       resonatesWith: ['air', 'water'],
       energies: ['build', 'peak'],
@@ -226,7 +226,7 @@ export const luckyContent = {
     {
       id: 'zh-mainland-luosifen',
       name: '螺蛳粉',
-      reason: '鲜、酸、辣与独特香气毫不含糊，提醒你今天不必把个人偏好藏得太深。',
+      reason: '鲜、酸、辣与独特香气毫不含糊，提醒你不必把个人偏好藏得太深。',
       action: '坦然选自己真正想吃的，也坦然为一个小决定表达明确立场。',
       element: 'air',
       resonatesWith: ['air', 'fire'],
@@ -277,7 +277,7 @@ export const luckyContent = {
       id: 'zh-mainland-lanzhou-beef-noodles',
       name: '兰州牛肉面',
       reason: '清汤、手工面与香菜辣油各自分明，却在一碗里形成沉稳流动。',
-      action: '按自己的口味调好这一碗，也把今天的边界说得清楚又留有余地。',
+      action: '按自己的口味调好这一碗，也把自己的边界说得清楚又留有余地。',
       element: 'water',
       resonatesWith: ['water', 'air', 'earth'],
       energies: ['peak', 'release'],
@@ -297,7 +297,7 @@ export const luckyContent = {
       id: 'zh-mainland-fish-head-tofu-soup',
       name: '鱼头豆腐汤',
       reason: '鲜汤与柔嫩豆腐把浓郁和细腻放在一起，适合照顾深层感受而不夸张。',
-      action: '与亲近的人共享一锅，并认真听完对方今天最想讲的那一段。',
+      action: '与亲近的人共享一锅，并认真听完对方最想讲的那一段。',
       element: 'water',
       resonatesWith: ['water', 'earth'],
       energies: ['build', 'release'],
@@ -333,7 +333,7 @@ export const luckyContent = {
     vermilion: {
       name: '朱砂红',
       reason: '明净而有力量的红色，能让决心在纷杂日程中保持清晰。',
-      action: '用它标出今天必须完成的一项任务，做完后再切换目标。',
+      action: '用它标出必须完成的一项任务，做完后再切换目标。',
     },
     amberSpark: {
       name: '琥珀火花',
@@ -343,7 +343,7 @@ export const luckyContent = {
     apricotLight: {
       name: '杏桃微光',
       reason: '不张扬的暖色能柔化陌生开端，也让对话更容易靠近彼此。',
-      action: '用在上衣或笔记本封面上，以小面积陪伴今天的开始。',
+      action: '用在上衣或笔记本封面上，以小面积陪伴一天的开始。',
     },
     roseFlame: {
       name: '玫瑰焰',
@@ -363,7 +363,7 @@ export const luckyContent = {
     oliveLeaf: {
       name: '橄榄叶绿',
       reason: '务实又灵活的绿，适合需要兼顾现实与尝试的一天。',
-      action: '今天挑选耐用物品时，优先留意这个颜色。',
+      action: '挑选耐用物品时，优先留意这个颜色。',
     },
     oatBeige: {
       name: '燕麦米色',
@@ -378,7 +378,7 @@ export const luckyContent = {
     cedarBrown: {
       name: '雪松棕',
       reason: '深木色带来可靠重量，适合安放摇摆的心情与尚未定型的计划。',
-      action: '选一件皮质小物或耐用笔记本，让它成为今天的稳定支点。',
+      action: '选一件皮质小物或耐用笔记本，让它成为一天的稳定支点。',
     },
     sageGreen: {
       name: '鼠尾草绿',
@@ -398,7 +398,7 @@ export const luckyContent = {
     lavenderMist: {
       name: '薰衣草雾',
       reason: '轻柔紫色连接想象与现实，让尚未成形的灵感慢慢显影。',
-      action: '准备一本淡紫色笔记本，随手接住今天飘过的想法。',
+      action: '准备一本淡紫色笔记本，随手接住飘过的想法。',
     },
     silverCloud: {
       name: '银灰云',
