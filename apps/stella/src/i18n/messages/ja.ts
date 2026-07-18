@@ -467,6 +467,9 @@ export const ja = {
       upcomingKicker: 'これからの時期',
       subtitle: 'これから1年、恋の空が通っていく道です。',
       now: '進行中',
+      guidanceLabel: '星からの助言',
+      basisAspect: 'トランジット{transit} × ネイタル{target} · {aspect}',
+      basisRetrograde: 'トランジット{planet} · 逆行',
       noTimeNote: '出生時刻まで分かれば、出会いの門が開く時期も一緒に読み解きます。',
       purpose: {
         meeting: '出会い',

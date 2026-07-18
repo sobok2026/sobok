@@ -38,18 +38,13 @@ export function LoveSignatureArt({ profile }: LoveSignatureArtProps) {
             strokeOpacity={0.6}
             strokeWidth={1.4}
           />
-          <circle
-            cx="28"
-            cy="28"
-            fill="var(--color-surface-2)"
-            r="9"
-            stroke="var(--color-accent)"
-            strokeOpacity={0.35}
-          />
-          <path
-            d="M28 34.5c-1.1-1-6.2-4.8-6.2-8.6 0-2.2 1.7-3.9 3.9-3.9 1.2 0 2.2.5 2.9 1.4.7-.9 1.8-1.4 2.9-1.4 2.2 0 3.9 1.7 3.9 3.9 0 3.8-5.1 7.6-6.2 8.6a.9.9 0 0 1-1.2 0Z"
-            fill="var(--color-accent)"
-          />
+          {/* Keep the heart on the orbit's origin so it stays centered at every rendered size. */}
+          <g transform="translate(28 28)">
+            <path
+              d="M0 6.5C-1.1 5.5-6.2 1.7-6.2-2.1-6.2-4.3-4.5-6-2.3-6-1.35-6-.55-5.6 0-5 .55-5.6 1.35-6 2.3-6 4.5-6 6.2-4.3 6.2-2.1 6.2 1.7 1.1 5.5 0 6.5Z"
+              fill="var(--color-accent)"
+            />
+          </g>
         </svg>
 
         <div className="min-w-0 text-center">

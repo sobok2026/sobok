@@ -465,6 +465,9 @@ export const ko = {
       upcomingKicker: '다가올 시기',
       subtitle: '앞으로 1년 동안 사랑의 하늘이 지나는 길이에요.',
       now: '진행 중',
+      guidanceLabel: '별의 조언',
+      basisAspect: '트랜짓 {transit} × 네이털 {target} · {aspect}',
+      basisRetrograde: '트랜짓 {planet} · 역행',
       noTimeNote: '태어난 시각까지 알면 만남의 문이 열리는 시기도 함께 읽어 드려요.',
       purpose: {
         meeting: '만남',

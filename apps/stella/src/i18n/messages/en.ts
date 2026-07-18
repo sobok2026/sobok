@@ -470,6 +470,9 @@ export const en = {
       upcomingKicker: "What's ahead",
       subtitle: 'The road the sky of love travels over the next year.',
       now: 'Now',
+      guidanceLabel: "The stars' counsel",
+      basisAspect: 'Transit {transit} × natal {target} · {aspect}',
+      basisRetrograde: 'Transit {planet} · Retrograde',
       noTimeNote: 'Learn your birth time and we can also read when the gate of meeting opens.',
       purpose: {
         meeting: 'Meeting someone',

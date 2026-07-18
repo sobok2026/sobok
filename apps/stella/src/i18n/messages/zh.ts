@@ -460,6 +460,9 @@ export const zh = {
       upcomingKicker: '即将到来的时机',
       subtitle: '未来一年，爱情的天空将要走过的路。',
       now: '进行中',
+      guidanceLabel: '星星的建议',
+      basisAspect: '行运{transit} × 本命{target} · {aspect}',
+      basisRetrograde: '行运{planet} · 逆行',
       noTimeNote: '连出生时间也知道的话，还能一起读出相遇之门开启的时节。',
       purpose: {
         meeting: '相遇',

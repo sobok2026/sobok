@@ -15,11 +15,20 @@ export type PartnerPersona = {
   friction: string
 }
 
+export type TimingReading = {
+  /** Editorial headline that gives the season a distinct emotional identity. */
+  title: string
+  /** Premium long-form interpretation of the astrological current. */
+  interpretation: string
+  /** A concrete closing thought, visually separated as the reader's takeaway. */
+  guidance: string
+}
+
 export type LoveTiming = {
-  jupiterVenus: Record<AspectTone, string>
-  jupiterDescendant: string
-  saturnVenus: Record<AspectTone, string>
-  venusRetro: string
+  jupiterVenus: Record<AspectTone, TimingReading>
+  jupiterDescendant: TimingReading
+  saturnVenus: Record<AspectTone, TimingReading>
+  venusRetro: TimingReading
   /** Shown when the year ahead holds no scanned windows. */
   empty: string
 }

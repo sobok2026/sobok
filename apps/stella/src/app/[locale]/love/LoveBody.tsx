@@ -167,25 +167,31 @@ export default function LoveBody({ data, homeHref, locale, onShare, shared }: Lo
       <section className={`${cardStyles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
         <h2 className="text-sm font-bold text-foreground">{t('timing.title')}</h2>
 
-        <div className="mt-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">{t('timing.natalKicker')}</p>
-          <p className="mt-1 text-sm leading-relaxed text-foreground-secondary">
-            {readings.natalLove[profile.natalLove]}
-          </p>
-        </div>
+        <div className="mt-3 space-y-5">
+          <div>
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-accent">
+              {t('timing.natalKicker')}
+            </h3>
+            <p className="mt-1 text-sm leading-relaxed text-foreground-secondary">
+              {readings.natalLove[profile.natalLove]}
+            </p>
+          </div>
 
-        <div className="mt-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">{t('timing.upcomingKicker')}</p>
-          <p className="mt-1 text-xs leading-relaxed text-foreground-subtle">{t('timing.subtitle')}</p>
-          {shownWindows.length === 0 && (
-            <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">{readings.timing.empty}</p>
-          )}
-          {shownWindows.length > 0 && (
-            <LoveTimeline locale={locale} readings={readings} today={today} windows={shownWindows} />
-          )}
-          {!timeKnown && (
-            <p className="mt-3 text-[11px] leading-relaxed text-foreground-faint">{t('timing.noTimeNote')}</p>
-          )}
+          <div>
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-accent">
+              {t('timing.upcomingKicker')}
+            </h3>
+            <p className="mt-1 text-sm leading-relaxed text-foreground-subtle">{t('timing.subtitle')}</p>
+            {shownWindows.length === 0 && (
+              <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">{readings.timing.empty}</p>
+            )}
+            {shownWindows.length > 0 && (
+              <LoveTimeline locale={locale} readings={readings} today={today} windows={shownWindows} />
+            )}
+            {!timeKnown && (
+              <p className="mt-3 text-[11px] leading-relaxed text-foreground-faint">{t('timing.noTimeNote')}</p>
+            )}
+          </div>
         </div>
       </section>
 

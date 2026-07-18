@@ -258,27 +258,77 @@ export const readings: LoveReadings = {
   },
   timing: {
     jupiterVenus: {
-      conjunction:
-        "It's golden time — Jupiter is passing over your Venus. Charm swells and people and chances gather unusually well. If there's a bond you've wanted to begin, move on this current.",
-      flow: 'Jupiter is flowing in fair wind with your Venus. Relationships unwind gently without strain — a good grain for conveying your heart. If a confession or reconciliation has been postponed, now is when it lands soft.',
-      square:
-        'Jupiter is rocking your Venus hard — hearts inflate easily now. Flutter and spending both swell, so enjoy it, but keep the speed in your own hands. Rest a beat when giddy, and only the pleasure of this season remains.',
-      opposition:
-        'Jupiter is shining on your relationships from across your Venus. What you receive and what you come to expect both grow. Watch the balance of give and take, and the bonds of this season grow large.',
+      conjunction: {
+        title: 'Your brightest season of magnetism',
+        interpretation:
+          'Jupiter crosses your natal Venus and turns up the warmth of your natural charm. People and possibilities gather with less effort than usual, while a bond already on your mind gains the momentum to move into its next chapter. The door to love is closer than it looks, provided you do not dim your own light.',
+        guidance:
+          'If there is a relationship you want to begin, stop waiting for a flawless sign and make the first move on this current.',
+      },
+      flow: {
+        title: 'A fair wind for speaking your heart',
+        interpretation:
+          'Jupiter flows easily with your natal Venus, loosening the tension between two people without either one having to force the pace. Words that would normally catch in your throat can land with unusual warmth and honesty now. For an established relationship, this is also a gentle season for remembering why your hearts chose each other.',
+        guidance:
+          'If a confession or reconciliation has been waiting, offer one small piece of truth instead of holding out for the perfect scene.',
+      },
+      square: {
+        title: 'When excitement outruns the relationship',
+        interpretation:
+          'Jupiter presses against your natal Venus and makes feelings and expectations expand faster than usual. Attraction, promises, displays of affection, and even spending can all grow at once. Enjoying the abundance is part of this season, but the size of a feeling is not always the same as the depth of a bond.',
+        guidance: 'Before a consequential decision, slow down long enough for the first rush of excitement to settle.',
+      },
+      opposition: {
+        title: 'A season that magnifies give and take',
+        interpretation:
+          'Jupiter faces your natal Venus and casts a bright light across the relationship, enlarging both what you receive and what you hope for. The desire to draw closer can rise beside a sharper awareness of every imbalance. When both people name their different wishes honestly, this tension becomes room for the bond to grow.',
+        guidance:
+          'Ask what the other person needs as clearly as you name your own, and bring giving and receiving back into balance.',
+      },
     },
-    jupiterDescendant:
-      "Jupiter is passing over your gate of partnership. A season fit for new bonds walking in, or a bond already beside you deepening a full step. If your heart is open to meeting, don't let this season pass.",
+    jupiterDescendant: {
+      title: 'When a new bond knocks at the door',
+      interpretation:
+        'Jupiter crosses your natal Descendant and opens the gate through which close relationships enter your life. Someone new may arrive from an unexpected setting, or a familiar person may begin to carry an entirely different meaning. This is a season when another person can naturally widen a world that was difficult to expand alone.',
+      guidance:
+        'Leave a little more room for introductions, invitations, and chance conversations instead of dismissing them too quickly.',
+    },
     saturnVenus: {
-      conjunction:
-        'A season of ripening — Saturn is resting on your Venus. Love turns suddenly serious and the light bonds filter themselves out. It may feel heavy, but the heart that remains after this season is the real one.',
-      flow: "A steady season — Saturn is bracing your Venus firmly. Trust stacks layer by layer in place of noisy flutter. A good current for setting a relationship's foundation or confirming a promise.",
-      square:
-        'Saturn is inspecting your Venus. Hearts run heavier than usual and grievances gather easily in this grain. It may be the season rather than the person — tend your expressions a little more diligently.',
-      opposition:
-        'Saturn is measuring distance from across your Venus. The relationship may feel cool, as if set on a scale. But a bond that crosses this season together comes out far more solid.',
+      conjunction: {
+        title: 'When light feelings fall away and truth remains',
+        interpretation:
+          'Saturn rests on your natal Venus and asks love to ripen slowly. Relationships turn serious, and connections held together by atmosphere alone begin to reveal their true weight. Responsibility and reality enter the romance, not simply to cool it, but to give lasting love a shape it can actually inhabit.',
+        guidance:
+          'Do not let go only because the mood feels heavy; watch calmly for the feeling that remains after the pressure passes.',
+      },
+      flow: {
+        title: 'When chemistry settles into trust',
+        interpretation:
+          'Saturn supports your natal Venus, helping emotion become a promise that can survive ordinary life. Consistent contact and small acts of responsibility carry more warmth than dramatic displays, and a shared future begins to look more concrete. Trust built slowly in this season can become a foundation that is difficult to shake.',
+        guidance:
+          'Speak plainly about your standards and future promises, then begin shaping a rhythm the two of you can rely on.',
+      },
+      square: {
+        title: 'When unspoken hurt tests the temperature',
+        interpretation:
+          'Saturn bears down on your natal Venus, making the heart feel heavier and affection harder to express. A small distance can register as rejection, and grievances left unnamed may make the entire relationship look colder than it is. The strain may be a picture drawn by exhaustion and practical pressure as much as by the other person’s true feelings.',
+        guidance:
+          'Instead of waiting to be understood, tend to the necessary words and gestures of affection more deliberately than usual.',
+      },
+      opposition: {
+        title: 'A season that weighs what can last',
+        interpretation:
+          'Saturn faces your natal Venus and illuminates distance, responsibility, and the future with an unsparing light. Questions about whether you want the same life—or whether one person is carrying too much—become difficult to avoid. Even if the temperature feels low, facing the real issue can make the relationship more honest and far more durable.',
+        guidance:
+          'Look beyond the mood of the moment and ask whether both of you can take responsibility for moving in the same direction.',
+      },
     },
-    venusRetro:
-      "It's the review season — Venus is retrograde. Old bonds surface out of nowhere and you find yourself re-asking what the current one means. It's time suited to looking inward rather than starting new — just postpone the hasty decisions.",
+    venusRetro: {
+      title: 'When an old heart speaks again',
+      interpretation:
+        'Venus turns retrograde and brings unfinished feelings in love and relationship back to the surface. An old bond may return to mind, or you may find yourself asking from the beginning why you love the person beside you now. A returning feeling is not automatically an invitation to begin again, but it can be a precious clue to a truth you once avoided.',
+      guidance: 'Postpone a new conclusion until you have looked carefully at why the same emotion keeps returning.',
+    },
     empty:
       "For the year ahead, the sky of love runs calm, without great waves. In quiet seasons of luck, your own heart holds the wheel. It's a good time to draw the scene you want by hand instead of waiting for a current.",
   },

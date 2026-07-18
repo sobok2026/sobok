@@ -7,7 +7,7 @@ import { closestAspect, houseOfLon, signOfLon } from '@/chart/astrology'
 import { PLANET_ORDER } from '@/chart/data'
 import { computeLongitudeSeries } from '@/chart/ephemeris'
 import { dignityOf } from '@/chart/signature'
-import type { ChartAspect, ComputedPlanetId, NatalChart, PlanetId, SignId } from '@/chart/types'
+import type { AspectType, ChartAspect, ComputedPlanetId, NatalChart, PlanetId, SignId } from '@/chart/types'
 import { type AspectTone, aspectTone } from '@/content/interpretations/types'
 
 /** Venus pairs that carry aspect copy in the interpretation tables. */
@@ -139,16 +139,32 @@ export function deriveLoveProfile(
 
 export type LoveWindowKind = 'jupiterDescendant' | 'jupiterVenus' | 'saturnVenus' | 'venusRetro'
 
-export type LoveWindow = {
-  kind: LoveWindowKind
-  /** Aspect tone for planet windows; null for Venus retrograde. */
-  tone: AspectTone | null
+type AspectWindowKind = Exclude<LoveWindowKind, 'venusRetro'>
+
+type AspectLoveWindow = {
+  kind: AspectWindowKind
+  /** Exact aspect is preserved for the premium technical label; copy still groups it by tone. */
+  aspect: AspectType
   start: Date
   end: Date
 }
 
+type RetrogradeLoveWindow = {
+  kind: 'venusRetro'
+  aspect: null
+  start: Date
+  end: Date
+}
+
+export type LoveWindow = AspectLoveWindow | RetrogradeLoveWindow
+
 /** What a timing window is good for — the purpose framing the section reads by. */
 export type LoveWindowPurpose = 'meeting' | 'opening' | 'deepening' | 'caution'
+
+/** The four editorial copy tones; retrograde has its own dedicated reading. */
+export function windowTone(w: LoveWindow): AspectTone | null {
+  return w.kind === 'venusRetro' ? null : aspectTone(w.aspect)
+}
 
 /** Map a scanned window to its purpose. Hard aspects and retrograde read as caution. */
 export function windowPurpose(w: LoveWindow): LoveWindowPurpose {
@@ -158,7 +174,10 @@ export function windowPurpose(w: LoveWindow): LoveWindowPurpose {
   if (w.kind === 'venusRetro') {
     return 'caution'
   }
-  const hard = w.tone === 'square' || w.tone === 'opposition'
+
+  const tone = windowTone(w)
+  const hard = tone === 'square' || tone === 'opposition'
+
   if (w.kind === 'jupiterVenus') {
     return hard ? 'caution' : 'opening'
   }
@@ -174,25 +193,55 @@ const SATURN_ORB = 2.5
 
 const DAY_MS = ms('1 day')
 
-/** Walk the samples and merge consecutive same-tone contacts into date windows. */
-function collectWindows(
-  kind: LoveWindowKind,
+/** Walk the samples and merge consecutive contacts of the same exact aspect. */
+function collectAspectWindows(
+  kind: AspectWindowKind,
   dates: readonly Date[],
-  toneAt: (index: number) => AspectTone | null,
-): LoveWindow[] {
-  const windows: LoveWindow[] = []
-  let open: LoveWindow | null = null
+  aspectAt: (index: number) => AspectType | null,
+): AspectLoveWindow[] {
+  const windows: AspectLoveWindow[] = []
+  let open: AspectLoveWindow | null = null
 
   for (let i = 0; i < dates.length; i++) {
-    const tone = toneAt(i)
+    const aspect = aspectAt(i)
 
-    if (open && tone !== open.tone) {
+    if (open && aspect !== open.aspect) {
       windows.push(open)
       open = null
     }
 
-    if (tone !== null && !open) {
-      open = { kind, tone, start: dates[i], end: dates[i] }
+    if (aspect !== null && !open) {
+      open = { kind, aspect, start: dates[i], end: dates[i] }
+    } else if (open) {
+      open.end = dates[i]
+    }
+  }
+
+  if (open) {
+    windows.push(open)
+  }
+
+  return windows
+}
+
+/** Venus retrograde has no aspect, so its active samples use a separate boolean collector. */
+function collectRetrogradeWindows(
+  dates: readonly Date[],
+  activeAt: (index: number) => boolean,
+): RetrogradeLoveWindow[] {
+  const windows: RetrogradeLoveWindow[] = []
+  let open: RetrogradeLoveWindow | null = null
+
+  for (let i = 0; i < dates.length; i++) {
+    const active = activeAt(i)
+
+    if (open && !active) {
+      windows.push(open)
+      open = null
+    }
+
+    if (active && !open) {
+      open = { kind: 'venusRetro', aspect: null, start: dates[i], end: dates[i] }
     } else if (open) {
       open.end = dates[i]
     }
@@ -224,37 +273,37 @@ export async function scanLoveTransits(chart: NatalChart, now: Date): Promise<Lo
 
   if (venusLon !== null) {
     windows.push(
-      ...collectWindows('jupiterVenus', dates, (i) => {
+      ...collectAspectWindows('jupiterVenus', dates, (i) => {
         const match = closestAspect(samples[i].jupiter, venusLon, JUPITER_ORB)
-        return match ? aspectTone(match.type) : null
+        return match?.type ?? null
       }),
-      ...collectWindows('saturnVenus', dates, (i) => {
+      ...collectAspectWindows('saturnVenus', dates, (i) => {
         const match = closestAspect(samples[i].saturn, venusLon, SATURN_ORB)
-        return match ? aspectTone(match.type) : null
+        return match?.type ?? null
       }),
     )
   }
 
   if (descendantLon !== null) {
     windows.push(
-      ...collectWindows('jupiterDescendant', dates, (i) => {
+      ...collectAspectWindows('jupiterDescendant', dates, (i) => {
         const match = closestAspect(samples[i].jupiter, descendantLon, JUPITER_ORB)
-        return match && match.type === 'conjunction' ? 'conjunction' : null
+        return match?.type === 'conjunction' ? match.type : null
       }),
     )
   }
 
   // Venus retrograde: the 5-day longitude delta turns negative for ~40 days.
   windows.push(
-    ...collectWindows('venusRetro', dates, (i) => {
+    ...collectRetrogradeWindows(dates, (i) => {
       if (i === dates.length - 1) {
-        return null
+        return false
       }
       let delta = samples[i + 1].venus - samples[i].venus
       if (delta > 180) delta -= 360
       if (delta < -180) delta += 360
-      return delta < 0 ? ('conjunction' as AspectTone) : null
-    }).map((w) => ({ ...w, tone: null })),
+      return delta < 0
+    }),
   )
 
   return windows.sort((a, b) => a.start.getTime() - b.start.getTime())
