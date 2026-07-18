@@ -1,6 +1,6 @@
 // ko — canonical reading tables. Authored copy follows the Korean copy style
-// guide (쉼표 최소화·어미 기능 분배·해요체); en/ja/zh mirror the key structure
-// with empty strings until translated.
+// guide (쉼표 최소화·어미 기능 분배·해요체); en/ja/zh mirror the same key
+// structure, with en/ja still awaiting translation.
 import type { Interpretations } from './types'
 
 export const interpretations: Interpretations = {

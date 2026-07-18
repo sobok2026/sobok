@@ -13,10 +13,12 @@ export const en = {
       title: 'My Zi Wei chart',
       subtitle: 'Unfold the story the Purple Star wrote across twelve palaces at the moment you were born.',
       openCta: 'Open my chart',
-      reopenCta: 'Draw again',
+      birthSummaryTitle: 'Current birth details',
+      editBirthCta: 'Edit birth details',
     },
     form: {
       title: 'Birth details',
+      editTitle: 'Edit birth details',
       dateLabel: 'Date of birth (solar)',
       timeLabel: 'Time of birth',
       timeHint: 'Your birth time sets the double-hour. It is adjusted to apparent solar time at your birthplace.',
@@ -34,6 +36,8 @@ export const en = {
       saveHint: 'Your birth details stay on this device and are never sent to a server.',
       clearSaved: 'Clear saved details',
       submit: 'Draw my chart',
+      cancel: 'Cancel',
+      applyChanges: 'Recalculate chart',
     },
     chart: {
       title: 'Zi Wei Dou Shu chart',

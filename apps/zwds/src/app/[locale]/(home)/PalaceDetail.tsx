@@ -95,7 +95,7 @@ export default function PalaceDetail({
   palace: ZwdsPalace
   onClose: () => void
 }) {
-  const locale = useLocale() as Locale
+  const locale = useLocale()
   const t = useTranslations('Zwds.chart')
   const interpretations = useInterpretations(locale)
 
@@ -110,9 +110,9 @@ export default function PalaceDetail({
       <header className="mb-3 flex items-baseline justify-between gap-2">
         <h2 className="flex items-baseline gap-2 text-lg font-bold text-foreground">
           {pickLabel(palace.name, locale)}
-          <span className="text-xs font-normal text-foreground-faint" lang="zh-Hant">
-            {palace.stemLabel.hanja}
-            {palace.branchLabel.hanja}
+          <span className="text-xs font-normal text-foreground-faint">
+            {pickLabel(palace.stemLabel, locale)}
+            {pickLabel(palace.branchLabel, locale)}
           </span>
           {palace.isBodyPalace && (
             <span className="rounded bg-brand/15 px-1.5 py-0.5 text-[10px] font-semibold text-brand">

@@ -1,7 +1,7 @@
 import { Locale } from '@sobok/domain/locale'
 
 export const ORIGIN = 'https://zwds.sobok.cc'
-export const THEME_COLOR = '#130817' // keep in sync with --color-background in src/app/globals.css
+export const THEME_COLOR = '#120a10' // keep in sync with --color-background in src/app/globals.css
 
 export const SITE_NAME = {
   [Locale.KO]: '자미원',

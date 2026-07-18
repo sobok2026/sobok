@@ -18,7 +18,7 @@ type ShareStatus = 'error' | 'idle' | 'saved'
  * never leaves the device.
  */
 export default function ZwdsActions({ chart }: { chart: ZwdsChart }) {
-  const locale = useLocale() as Locale
+  const locale = useLocale()
   const t = useTranslations('Zwds')
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState<ShareStatus>('idle')

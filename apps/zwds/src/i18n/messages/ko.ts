@@ -13,10 +13,12 @@ export const ko = {
       title: '내 자미두수 명반',
       subtitle: '태어난 순간 자미성이 새긴 열두 궁의 이야기를 펼쳐 보세요.',
       openCta: '내 명반 열기',
-      reopenCta: '다시 그리기',
+      birthSummaryTitle: '현재 출생 정보',
+      editBirthCta: '출생 정보 수정',
     },
     form: {
       title: '출생 정보 입력',
+      editTitle: '출생 정보 수정',
       dateLabel: '태어난 날짜 (양력)',
       timeLabel: '태어난 시각',
       timeHint: '태어난 시각은 시진을 정해요. 출생지 경도에 맞춘 진태양시로 자동 보정돼요.',
@@ -34,6 +36,8 @@ export const ko = {
       saveHint: '출생 정보는 이 기기 안에만 머물고 서버로 전송되지 않아요.',
       clearSaved: '저장된 정보 지우기',
       submit: '명반 그리기',
+      cancel: '취소',
+      applyChanges: '명반 다시 계산',
     },
     chart: {
       title: '자미두수 명반',

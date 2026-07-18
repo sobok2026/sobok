@@ -1,8 +1,7 @@
 // Shared types + helpers for the per-locale reading modules, mirroring
 // apps/stella/src/content/interpretations/types.ts. Data files stay pure string
-// tables; ko is canonical and en/ja/zh keep the identical key structure with
-// empty strings until translated — the composer skips falsy text, so a locale
-// without copy simply renders no reading.
+// tables; ko is canonical and every locale keeps an identical key structure.
+// en/ja still contain empty strings until their translations are authored.
 
 import type { FiveElementsKey, MajorStarKey, MutagenKey, PalaceKey } from '@/chart/keys'
 

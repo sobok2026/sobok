@@ -1,8 +1,7 @@
 'use client'
 
-import type { Locale } from '@sobok/domain/locale'
 import { useLocale } from 'next-intl'
-import { useMemo } from 'react'
+import { useState } from 'react'
 
 import { computeSignature } from '@/chart/signature'
 import type { ZwdsChart } from '@/chart/types'
@@ -11,18 +10,17 @@ import { useInterpretations } from '@/hooks/useInterpretations'
 import { buildReport } from './report'
 
 export default function ReportSection({ chart }: { chart: ZwdsChart }) {
-  const locale = useLocale() as Locale
+  const locale = useLocale()
   const interpretations = useInterpretations(locale)
 
-  const chapters = useMemo(() => {
-    if (!interpretations) {
-      return []
-    }
+  // 세는나이 — 대한 구간 판정과 같은 기준을 쓴다. 렌더를 순수하게 유지하려고 현재 연도는 마운트 때 한 번만 읽는다.
+  const [currentYear] = useState(() => new Date().getFullYear())
 
-    // 세는나이 — 대한 구간 판정과 같은 기준을 쓴다.
-    const nominalAge = new Date().getFullYear() - chart.clock.year + 1
-    return buildReport(chart, computeSignature(chart), interpretations, locale, { nominalAge })
-  }, [chart, interpretations, locale])
+  const chapters = interpretations
+    ? buildReport(chart, computeSignature(chart), interpretations, locale, {
+        nominalAge: currentYear - chart.clock.year + 1,
+      })
+    : []
 
   if (!interpretations || chapters.length === 0) {
     return null

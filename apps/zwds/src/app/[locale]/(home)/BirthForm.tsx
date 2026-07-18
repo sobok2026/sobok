@@ -2,29 +2,33 @@
 
 import type { BirthplaceSnapshot } from '@sobok/domain/birthplace/model'
 import { useTranslations } from 'next-intl'
-import { type SubmitEvent, useEffect, useState } from 'react'
+import { type SubmitEvent, useEffect, useRef, useState } from 'react'
 import { useBirthProfile } from '@/components/BirthProfileProvider'
 import type { BirthGender, StoredBirth } from '@/lib/birth-storage'
 import BirthplaceCombobox from './BirthplaceCombobox'
 
 const fieldClass =
-  'w-full appearance-none rounded-xl border border-border-2 bg-surface-2 px-3 py-2.5 text-base text-foreground outline-none transition [color-scheme:dark] focus:border-white/60 focus:bg-surface-3 sm:text-sm'
+  'w-full appearance-none rounded-xl border border-outline bg-surface-2 px-3 py-2.5 text-base text-foreground outline-none transition [color-scheme:dark] focus:border-primary focus:bg-surface-3 sm:text-sm'
 
 const labelClass = 'mb-1.5 block text-xs font-semibold text-foreground-muted'
 
 type Props = {
+  onCancel?: () => void
+  onProfileCleared?: () => void
   onSubmit: (birth: StoredBirth, persistent: boolean) => void
 }
 
-export default function BirthForm({ onSubmit }: Props) {
+export default function BirthForm({ onCancel, onProfileCleared, onSubmit }: Props) {
   const [date, setDate] = useState('2000-01-01')
   const [time, setTime] = useState('12:00')
   const [gender, setGender] = useState<BirthGender>('male')
   const [place, setPlace] = useState<BirthplaceSnapshot | null>(null)
   const [save, setSave] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const headingRef = useRef<HTMLHeadingElement>(null)
   const profile = useBirthProfile()
   const t = useTranslations('Zwds.form')
+  const editing = onCancel !== undefined
 
   function submit(e: SubmitEvent) {
     e.preventDefault()
@@ -54,6 +58,7 @@ export default function BirthForm({ onSubmit }: Props) {
     setPlace(null)
     setSave(false)
     setError(null)
+    onProfileCleared?.()
   }
 
   // Prefill from the stored copy after mount, restoring the checkbox to match
@@ -68,12 +73,24 @@ export default function BirthForm({ onSubmit }: Props) {
     }
   }, [profile.birth, profile.hydrated, profile.persistent])
 
+  useEffect(() => {
+    if (editing) {
+      headingRef.current?.focus()
+    }
+  }, [editing])
+
   return (
     <form
       className="relative z-20 w-full max-w-lg rounded-3xl border bg-surface-2 p-4 backdrop-blur-xl sm:p-5"
       onSubmit={submit}
     >
-      <h2 className="mb-4 text-center text-base font-bold text-foreground">{t('title')}</h2>
+      <h2
+        className="mb-4 text-center text-base font-bold text-foreground"
+        ref={headingRef}
+        tabIndex={editing ? -1 : undefined}
+      >
+        {editing ? t('editTitle') : t('title')}
+      </h2>
 
       <div className="space-y-3">
         <div>
@@ -114,8 +131,8 @@ export default function BirthForm({ onSubmit }: Props) {
               <label
                 className={`cursor-pointer rounded-xl border px-3 py-2.5 text-center text-sm font-semibold transition ${
                   gender === value
-                    ? 'border-border-strong bg-surface-3 text-foreground'
-                    : 'border-border-2 bg-surface-2 text-foreground-subtle hover:text-foreground-muted'
+                    ? 'border-accent bg-accent/10 text-foreground'
+                    : 'border-outline bg-surface-2 text-foreground-subtle hover:text-foreground-muted'
                 }`}
                 key={value}
               >
@@ -139,7 +156,12 @@ export default function BirthForm({ onSubmit }: Props) {
       <div className="mt-4">
         <div className="flex justify-between items-center">
           <label className="flex items-center gap-2 text-xs text-foreground-muted">
-            <input checked={save} className="h-4 w-4" onChange={(e) => setSave(e.target.checked)} type="checkbox" />
+            <input
+              checked={save}
+              className="h-4 w-4 accent-accent"
+              onChange={(e) => setSave(e.target.checked)}
+              type="checkbox"
+            />
             {t('saveLabel')}
           </label>
           {profile.persistent && (
@@ -157,12 +179,23 @@ export default function BirthForm({ onSubmit }: Props) {
 
       {error && <p className="mt-3 text-xs text-danger">{error}</p>}
 
-      <button
-        className="mt-5 w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-white active:scale-[0.98] motion-reduce:active:scale-100"
-        type="submit"
-      >
-        {t('submit')}
-      </button>
+      <div className={`mt-5 grid gap-2 ${editing ? 'grid-cols-2' : ''}`}>
+        {onCancel && (
+          <button
+            className="min-h-11 rounded-full border border-border-strong px-5 text-sm font-semibold text-foreground-secondary transition hover:bg-surface-3 active:scale-[0.98] motion-reduce:active:scale-100"
+            onClick={onCancel}
+            type="button"
+          >
+            {t('cancel')}
+          </button>
+        )}
+        <button
+          className="min-h-11 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:brightness-105 active:scale-[0.98] motion-reduce:active:scale-100"
+          type="submit"
+        >
+          {editing ? t('applyChanges') : t('submit')}
+        </button>
+      </div>
     </form>
   )
 }

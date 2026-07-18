@@ -21,13 +21,13 @@ type Props = {
 }
 
 export default function BirthplaceCombobox({ value, onSelect }: Props) {
-  const locale = useLocale() as Locale
-  const t = useTranslations('Constellation.form')
   const [catalog, setCatalog] = useState<BirthplaceCatalog | null>(null)
   const [loadStatus, setLoadStatus] = useState<LoadStatus>('idle')
   const [query, setQuery] = useState('')
   const requestIdRef = useRef(0)
   const deferredQuery = useDeferredValue(query)
+  const t = useTranslations('Constellation.form')
+  const locale = useLocale()
 
   function ensureCatalog() {
     if (catalog || loadStatus === 'loading') {

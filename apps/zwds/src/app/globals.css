@@ -4,39 +4,40 @@
 
 @theme {
   /* --color-background must stay in sync with THEME_COLOR in src/constants.ts */
-  --color-background: #130817;
-  --color-background-glow: #2b1038;
-  --color-background-deep: #08030d;
-  --color-overlay: #1a0c22;
+  --color-background: #120a10;
+  --color-background-glow: #32152b;
+  --color-background-deep: #060305;
+  --color-overlay: #1b0d18;
 
-  /* Glass surfaces over the night palace (low → high elevation) */
-  --color-surface: rgb(255 255 255 / 3%);
-  --color-surface-2: rgb(255 255 255 / 5%);
-  --color-surface-3: rgb(255 255 255 / 10%);
+  /* Warm paper-lit glass over the ink-dark night palace (low → high elevation) */
+  --color-surface: rgb(255 243 230 / 3%);
+  --color-surface-2: rgb(255 243 230 / 5%);
+  --color-surface-3: rgb(255 243 230 / 10%);
 
   /* Foreground / text (high → low emphasis) */
-  --color-foreground: #f4f0f7;
-  --color-foreground-secondary: #e5dfeb;
-  --color-foreground-muted: #cdc3d6;
-  --color-foreground-subtle: #998ba6;
-  --color-foreground-faint: #6b5f78;
+  --color-foreground: #f3ebdd;
+  --color-foreground-secondary: #e3d8c8;
+  --color-foreground-muted: #cdbead;
+  --color-foreground-subtle: #ad9ca2;
+  --color-foreground-faint: #8e7d87;
 
-  /* Borders (subtle → strong) + focus/selection ring */
-  --color-border: rgb(255 255 255 / 10%);
-  --color-border-2: rgb(255 255 255 / 15%);
-  --color-border-strong: rgb(255 255 255 / 25%);
-  --color-ring: rgb(255 255 255 / 20%);
+  /* Decorative borders stay quiet; controls get a separately accessible outline. */
+  --color-border: rgb(255 243 230 / 10%);
+  --color-border-2: rgb(255 243 230 / 15%);
+  --color-border-strong: rgb(255 243 230 / 25%);
+  --color-outline: rgb(255 243 230 / 36%);
+  --color-ring: #eeddbf;
 
-  /* Primary CTA: palace-lantern fill, text punched out to the night sky */
-  --color-primary: #f0e7f6;
-  --color-primary-foreground: #130817;
+  /* Primary CTA: warm paper-lantern fill, text punched out to the ink-dark sky */
+  --color-primary: #eeddbf;
+  --color-primary-foreground: #120a10;
 
-  /* Brand + accents — the Purple Star and its imperial gold */
-  --color-brand: #d9a8ff;
-  --color-accent: #b98aef; /* eyebrow/overline labels, keyword chips */
-  --color-accent-gold: #f2c76b; /* 화록·길성, imperial gold */
-  --color-positive: #7be0b4; /* 화권·화과 강조 */
-  --color-danger: #f8758b; /* 화기·살성 */
+  /* Brand + accents — Purple Forbidden Enclosure, antique gold, jade, cinnabar */
+  --color-brand: #d39bdf;
+  --color-accent: #be8dc7; /* eyebrow/overline labels, keyword chips */
+  --color-accent-gold: #d8b76a; /* 화록·길성 */
+  --color-positive: #79c9a4; /* 화권·화과 강조 */
+  --color-danger: #eb7b70; /* 화기·살성 */
 }
 
 @layer base {

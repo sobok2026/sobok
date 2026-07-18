@@ -13,10 +13,12 @@ export const ja = {
       title: '私の紫微斗数命盤',
       subtitle: '生まれた瞬間に紫微星が刻んだ十二宮の物語をひらいてみましょう。',
       openCta: '命盤をひらく',
-      reopenCta: 'もう一度描く',
+      birthSummaryTitle: '現在の出生情報',
+      editBirthCta: '出生情報を編集',
     },
     form: {
       title: '出生情報の入力',
+      editTitle: '出生情報を編集',
       dateLabel: '生年月日（新暦）',
       timeLabel: '出生時刻',
       timeHint: '出生時刻は時辰を決めます。出生地の経度に合わせた真太陽時に自動補正されます。',
@@ -34,6 +36,8 @@ export const ja = {
       saveHint: '出生情報はこの端末内にのみ保存され、サーバーへは送信されません。',
       clearSaved: '保存した情報を消去',
       submit: '命盤を描く',
+      cancel: 'キャンセル',
+      applyChanges: '命盤を再計算',
     },
     chart: {
       title: '紫微斗数命盤',

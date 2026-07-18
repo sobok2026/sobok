@@ -12,10 +12,12 @@ export const zh = {
       title: '我的紫微命盘',
       subtitle: '展开出生那一刻紫微星在十二宫写下的故事。',
       openCta: '打开我的命盘',
-      reopenCta: '重新排盘',
+      birthSummaryTitle: '当前出生信息',
+      editBirthCta: '编辑出生信息',
     },
     form: {
       title: '出生信息',
+      editTitle: '编辑出生信息',
       dateLabel: '出生日期（阳历）',
       timeLabel: '出生时间',
       timeHint: '出生时间决定时辰，并按出生地经度自动换算为真太阳时。',
@@ -33,6 +35,8 @@ export const zh = {
       saveHint: '出生信息只保存在此设备上，不会发送到服务器。',
       clearSaved: '清除已保存的信息',
       submit: '开始排盘',
+      cancel: '取消',
+      applyChanges: '重新排盘',
     },
     chart: {
       title: '紫微斗数命盘',

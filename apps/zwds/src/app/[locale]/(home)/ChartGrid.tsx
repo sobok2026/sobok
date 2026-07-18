@@ -2,8 +2,9 @@
 
 import { Locale } from '@sobok/domain/locale'
 import { useLocale, useTranslations } from 'next-intl'
-import type { Label } from '@/chart/labels'
-import { TIME_INDEX_NAMES_HANJA, TIME_INDEX_NAMES_KO } from '@/chart/time-index'
+import type { MutagenKey } from '@/chart/keys'
+import { pickLabel } from '@/chart/labels'
+import { TIME_INDEX_NAMES } from '@/chart/time-index'
 import type { ZwdsChart, ZwdsPalace, ZwdsPillar } from '@/chart/types'
 
 // Traditional 명반 layout: the twelve branches run clockwise around a fixed
@@ -23,15 +24,11 @@ const GRID_POSITION: Readonly<Record<string, string>> = {
   亥: 'col-start-4 row-start-4',
 }
 
-const MUTAGEN_BADGE_CLASSES: Readonly<Record<string, string>> = {
-  화록: 'bg-accent-gold/15 text-accent-gold',
-  화권: 'bg-positive/15 text-positive',
-  화과: 'bg-brand/15 text-brand',
-  화기: 'bg-danger/15 text-danger',
-}
-
-function pick(label: Label, locale: Locale): string {
-  return locale === Locale.KO ? label.ko : label.hanja
+const MUTAGEN_BADGE_CLASSES: Readonly<Record<MutagenKey, string>> = {
+  lu: 'bg-accent-gold/15 text-accent-gold',
+  quan: 'bg-positive/15 text-positive',
+  ke: 'bg-brand/15 text-brand',
+  ji: 'bg-danger/15 text-danger',
 }
 
 function formatClock(hour: number, minute: number): string {
@@ -62,16 +59,16 @@ function PalaceCell({
     >
       <div className="flex w-full items-baseline justify-between gap-1">
         <span className="flex items-baseline gap-1 text-[11px] font-bold text-accent">
-          {pick(palace.name, locale)}
+          {pickLabel(palace.name, locale)}
           {palace.isBodyPalace && (
             <span className="rounded bg-brand/15 px-1 py-px text-[9px] font-semibold text-brand">
               {t('bodyPalaceBadge')}
             </span>
           )}
         </span>
-        <span className="text-[10px] text-foreground-faint" lang="zh-Hant">
-          {palace.stemLabel.hanja}
-          {palace.branchLabel.hanja}
+        <span className="text-[10px] text-foreground-faint">
+          {pickLabel(palace.stemLabel, locale)}
+          {pickLabel(palace.branchLabel, locale)}
         </span>
       </div>
 
@@ -80,17 +77,15 @@ function PalaceCell({
         {palace.majorStars.map((star) => (
           <span
             className="inline-flex items-baseline gap-0.5 text-sm font-semibold text-foreground"
-            key={star.label.hanja}
+            key={star.key ?? pickLabel(star.label, Locale.ZH)}
           >
-            {pick(star.label, locale)}
+            {pickLabel(star.label, locale)}
             {star.brightness && (
-              <sup className="text-[9px] font-normal text-foreground-subtle">{pick(star.brightness, locale)}</sup>
+              <sup className="text-[9px] font-normal text-foreground-subtle">{pickLabel(star.brightness, locale)}</sup>
             )}
-            {star.mutagen && (
-              <span
-                className={`rounded px-1 py-px text-[9px] font-semibold ${MUTAGEN_BADGE_CLASSES[star.mutagen.ko] ?? ''}`}
-              >
-                {pick(star.mutagen, locale)}
+            {star.mutagen && star.mutagenKey && (
+              <span className={`rounded px-1 py-px text-[9px] font-semibold ${MUTAGEN_BADGE_CLASSES[star.mutagenKey]}`}>
+                {pickLabel(star.mutagen, locale)}
               </span>
             )}
           </span>
@@ -100,13 +95,16 @@ function PalaceCell({
       {palace.luckyStars.length > 0 && (
         <p className="text-[11px] leading-tight text-accent-gold/90">
           {palace.luckyStars.map((star) => (
-            <span className="mr-1.5 inline-flex items-baseline gap-0.5" key={star.label.hanja}>
-              {pick(star.label, locale)}
-              {star.mutagen && (
+            <span
+              className="mr-1.5 inline-flex items-baseline gap-0.5"
+              key={star.key ?? pickLabel(star.label, Locale.ZH)}
+            >
+              {pickLabel(star.label, locale)}
+              {star.mutagen && star.mutagenKey && (
                 <span
-                  className={`rounded px-1 py-px text-[9px] font-semibold ${MUTAGEN_BADGE_CLASSES[star.mutagen.ko] ?? ''}`}
+                  className={`rounded px-1 py-px text-[9px] font-semibold ${MUTAGEN_BADGE_CLASSES[star.mutagenKey]}`}
                 >
-                  {pick(star.mutagen, locale)}
+                  {pickLabel(star.mutagen, locale)}
                 </span>
               )}
             </span>
@@ -117,8 +115,8 @@ function PalaceCell({
       {palace.unluckyStars.length > 0 && (
         <p className="text-[11px] leading-tight text-danger/90">
           {palace.unluckyStars.map((star) => (
-            <span className="mr-1.5" key={star.label.hanja}>
-              {pick(star.label, locale)}
+            <span className="mr-1.5" key={star.key ?? pickLabel(star.label, Locale.ZH)}>
+              {pickLabel(star.label, locale)}
             </span>
           ))}
         </p>
@@ -132,7 +130,7 @@ function PalaceCell({
 }
 
 function pillarText(pillar: ZwdsPillar, locale: Locale): string {
-  return locale === Locale.KO ? `${pillar.stem.ko}${pillar.branch.ko}` : `${pillar.stem.hanja}${pillar.branch.hanja}`
+  return `${pickLabel(pillar.stem, locale)}${pickLabel(pillar.branch, locale)}`
 }
 
 export default function ChartGrid({
@@ -144,9 +142,9 @@ export default function ChartGrid({
   selectedBranch?: string | null
   onSelectPalace?: (branch: string) => void
 }) {
-  const locale = useLocale() as Locale
+  const locale = useLocale()
   const t = useTranslations('Zwds.chart')
-  const timeNames = locale === Locale.KO ? TIME_INDEX_NAMES_KO : TIME_INDEX_NAMES_HANJA
+  const timeNames = TIME_INDEX_NAMES[locale]
   const { year, month, day, hour } = chart.fourPillars
 
   return (
@@ -165,13 +163,14 @@ export default function ChartGrid({
         <div className="col-start-2 col-span-2 row-start-2 row-span-2 flex flex-col items-center justify-center gap-2 rounded-xl border border-border-2 bg-surface-2 p-4 text-center">
           <h2 className="text-lg font-bold text-foreground">{t('title')}</h2>
           <p className="text-sm font-semibold text-accent">
-            {chart.gender === 'male' ? t('genderMale') : t('genderFemale')} · {pick(chart.fiveElementsClass, locale)}
+            {chart.gender === 'male' ? t('genderMale') : t('genderFemale')} ·{' '}
+            {pickLabel(chart.fiveElementsClass, locale)}
           </p>
           <p className="text-xs text-foreground-muted">
             {t('lunarDateLabel')} {chart.lunar.year}. {chart.lunar.isLeap ? `${t('leapMonth')} ` : ''}
             {chart.lunar.month}. {chart.lunar.day}.
           </p>
-          <p className="text-xs text-foreground-muted" lang={locale === Locale.KO ? undefined : 'zh-Hant'}>
+          <p className="text-xs text-foreground-muted">
             {t('fourPillarsLabel')} {pillarText(year, locale)} {pillarText(month, locale)} {pillarText(day, locale)}{' '}
             {pillarText(hour, locale)}
           </p>

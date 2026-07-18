@@ -1,7 +1,7 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
-import { useMemo, useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
+import { useEffect, useRef, useState } from 'react'
 import { computeChart } from '@/chart/compute'
 import { useBirthProfile } from '@/components/BirthProfileProvider'
 import type { StoredBirth } from '@/lib/birth-storage'
@@ -11,39 +11,87 @@ import PalaceDetail from './PalaceDetail'
 import ReportSection from './ReportSection'
 import ZwdsActions from './ZwdsActions'
 
+function formatBirthDate(value: string, locale: string): string {
+  const [year, month, day] = value.split('-').map(Number)
+
+  return new Intl.DateTimeFormat(locale, {
+    dateStyle: 'medium',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(year, month - 1, day)))
+}
+
+function formatBirthTime(value: string, locale: string): string {
+  const [hour, minute] = value.split(':').map(Number)
+
+  return new Intl.DateTimeFormat(locale, {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(2000, 0, 1, hour, minute)))
+}
+
 export default function ZwdsHome() {
+  const locale = useLocale()
   const t = useTranslations('Zwds.hero')
+  const tForm = useTranslations('Zwds.form')
   const tChart = useTranslations('Zwds.chart')
   const profile = useBirthProfile()
   const [editing, setEditing] = useState(false)
   const [selectedBranch, setSelectedBranch] = useState<string | null>(null)
+  const summaryHeadingRef = useRef<HTMLHeadingElement>(null)
+  const focusSummaryAfterEditRef = useRef(false)
   const birth = profile.hydrated ? profile.birth : null
 
-  const chart = useMemo(() => {
-    if (!birth) {
-      return null
-    }
+  const chart = birth
+    ? computeChart({
+        date: birth.date,
+        time: birth.time,
+        gender: birth.gender,
+        longitude: birth.place.longitude,
+        timeZone: birth.place.timeZone,
+      })
+    : null
 
-    return computeChart({
-      date: birth.date,
-      time: birth.time,
-      gender: birth.gender,
-      longitude: birth.place.longitude,
-      timeZone: birth.place.timeZone,
-    })
-  }, [birth])
+  const birthDisplay = birth
+    ? {
+        date: formatBirthDate(birth.date, locale),
+        time: formatBirthTime(birth.time, locale),
+      }
+    : null
 
   function handleSubmit(nextBirth: StoredBirth, persistent: boolean) {
     profile.save(nextBirth, persistent)
+    focusSummaryAfterEditRef.current = editing
     setEditing(false)
     setSelectedBranch(null)
   }
+
+  function handleStartEditing() {
+    setEditing(true)
+  }
+
+  function handleCancelEditing() {
+    focusSummaryAfterEditRef.current = true
+    setEditing(false)
+  }
+
+  function handleProfileCleared() {
+    setEditing(false)
+    setSelectedBranch(null)
+  }
+
+  useEffect(() => {
+    if (chart && !editing && focusSummaryAfterEditRef.current) {
+      focusSummaryAfterEditRef.current = false
+      summaryHeadingRef.current?.focus()
+    }
+  }, [chart, editing])
 
   const selectedPalace =
     chart && selectedBranch ? chart.palaces.find((palace) => palace.branch === selectedBranch) : null
 
   return (
-    <main className="bg-night-palace flex min-h-dvh flex-col items-center px-4 pt-[max(2.5rem,var(--safe-area-top))] pb-[max(2.5rem,var(--safe-area-bottom))]">
+    <main className="bg-night-palace flex min-h-dvh flex-col items-center px-4 pt-[calc(4.5rem+var(--safe-area-top))] pb-[max(2.5rem,var(--safe-area-bottom))]">
       <header className="mb-8 text-center">
         <p className="mb-2 text-xs font-semibold tracking-[0.2em] text-accent uppercase">{t('eyebrow')}</p>
         <h1 className="text-3xl font-bold text-foreground sm:text-4xl">{t('title')}</h1>
@@ -52,6 +100,57 @@ export default function ZwdsHome() {
 
       {chart && !editing ? (
         <div className="flex w-full flex-col items-center gap-6">
+          {birth && birthDisplay && (
+            <section
+              aria-labelledby="birth-summary-title"
+              className="w-full max-w-4xl rounded-2xl border border-border-2 bg-surface px-4 py-4 sm:px-5"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <h2
+                  className="text-sm font-bold text-foreground"
+                  id="birth-summary-title"
+                  ref={summaryHeadingRef}
+                  tabIndex={-1}
+                >
+                  {t('birthSummaryTitle')}
+                </h2>
+                <button
+                  className="p-1.5 shrink-0 rounded-full border border-border-strong px-4 text-xs font-semibold text-foreground-secondary transition hover:bg-surface-3 active:scale-[0.98] motion-reduce:active:scale-100 sm:px-5 sm:text-sm"
+                  onClick={handleStartEditing}
+                  type="button"
+                >
+                  {t('editBirthCta')}
+                </button>
+              </div>
+
+              <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4">
+                <div className="min-w-0">
+                  <dt className="text-[11px] font-semibold text-foreground-faint">{tForm('dateLabel')}</dt>
+                  <dd className="mt-1 text-sm font-semibold text-foreground-secondary">
+                    <time dateTime={birth.date}>{birthDisplay.date}</time>
+                  </dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="text-[11px] font-semibold text-foreground-faint">{tForm('timeLabel')}</dt>
+                  <dd className="mt-1 text-sm font-semibold text-foreground-secondary">
+                    <time dateTime={birth.time}>{birthDisplay.time}</time>
+                  </dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="text-[11px] font-semibold text-foreground-faint">{tForm('genderLabel')}</dt>
+                  <dd className="mt-1 text-sm font-semibold text-foreground-secondary">
+                    {birth.gender === 'female' ? tForm('genderFemale') : tForm('genderMale')}
+                  </dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="text-[11px] font-semibold text-foreground-faint">{tForm('cityLabel')}</dt>
+                  <dd className="mt-1 break-words text-sm font-semibold text-foreground-secondary">
+                    {birth.place.name}
+                  </dd>
+                </div>
+              </dl>
+            </section>
+          )}
           <ChartGrid
             chart={chart}
             onSelectPalace={(branch) => setSelectedBranch(branch === selectedBranch ? null : branch)}
@@ -65,14 +164,18 @@ export default function ZwdsHome() {
           <ReportSection chart={chart} />
           <button
             className="rounded-full border border-border-strong px-6 py-2.5 text-sm font-semibold text-foreground-secondary transition hover:bg-surface-3 active:scale-[0.98] motion-reduce:active:scale-100"
-            onClick={() => setEditing(true)}
+            onClick={handleStartEditing}
             type="button"
           >
-            {t('reopenCta')}
+            {t('editBirthCta')}
           </button>
         </div>
       ) : (
-        <BirthForm onSubmit={handleSubmit} />
+        <BirthForm
+          onCancel={chart ? handleCancelEditing : undefined}
+          onProfileCleared={handleProfileCleared}
+          onSubmit={handleSubmit}
+        />
       )}
     </main>
   )

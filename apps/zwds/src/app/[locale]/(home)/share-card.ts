@@ -6,7 +6,8 @@
 
 import type { Locale } from '@sobok/domain/locale'
 
-import { type Label, pickLabel } from '@/chart/labels'
+import type { MutagenKey } from '@/chart/keys'
+import { pickLabel } from '@/chart/labels'
 import type { ZwdsChart, ZwdsPalace, ZwdsStar } from '@/chart/types'
 
 /** One summary tile below the grid: label on top, value below. */
@@ -196,11 +197,11 @@ function paintHeader(
   ctx.fillText(content.title, CARD_W / 2, HEADER_TITLE_Y)
 }
 
-function mutagenColor(mutagen: Label, color: ShareCardPalette): string {
-  if (mutagen.ko === '화록') {
+function mutagenColor(mutagen: MutagenKey, color: ShareCardPalette): string {
+  if (mutagen === 'lu') {
     return color.accentGold
   }
-  if (mutagen.ko === '화기') {
+  if (mutagen === 'ji') {
     return color.danger
   }
   return color.positive
@@ -243,10 +244,10 @@ function paintStarLine(
       cursor += ctx.measureText(brightness).width + 2
     }
 
-    if (star.mutagen) {
+    if (star.mutagen && star.mutagenKey) {
       const mutagen = pickLabel(star.mutagen, locale)
       setFont(ctx, 600, size * 0.62, family)
-      ctx.fillStyle = mutagenColor(star.mutagen, color)
+      ctx.fillStyle = mutagenColor(star.mutagenKey, color)
       ctx.fillText(mutagen, cursor + 2, y)
       cursor += ctx.measureText(mutagen).width + 4
     }
@@ -295,7 +296,11 @@ function paintPalaceCell(
   setFont(ctx, 400, 16, family)
   ctx.fillStyle = color.faint
   ctx.textAlign = 'right'
-  ctx.fillText(`${palace.stemLabel.hanja}${palace.branchLabel.hanja}`, x + CELL - pad, y + pad + 18)
+  ctx.fillText(
+    `${pickLabel(palace.stemLabel, locale)}${pickLabel(palace.branchLabel, locale)}`,
+    x + CELL - pad,
+    y + pad + 18,
+  )
   ctx.textAlign = 'left'
 
   // Major stars with brightness + 사화.
