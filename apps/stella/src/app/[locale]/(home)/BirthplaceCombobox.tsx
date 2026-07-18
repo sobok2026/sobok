@@ -52,13 +52,6 @@ export default function BirthplaceCombobox({ value, onSelect }: Props) {
     )
   }
 
-  useEffect(() => {
-    requestIdRef.current += 1
-    setCatalog(null)
-    setLoadStatus('idle')
-    setQuery('')
-  }, [locale])
-
   const groups = useMemo(() => (catalog ? getBirthplaceGroups(catalog, deferredQuery) : []), [catalog, deferredQuery])
   const items = useMemo(() => groups.flatMap((group) => group.places), [groups])
   const groupLabelByFirstPlaceId = useMemo(() => {

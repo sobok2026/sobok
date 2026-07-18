@@ -1,8 +1,8 @@
 'use client'
 
 import type { BirthplaceSnapshot } from '@sobok/domain/birthplace/model'
-import { useTranslations } from 'next-intl'
-import { type SubmitEvent, useEffect, useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
+import { type SubmitEvent, useState } from 'react'
 import { useBirthProfile } from '@/components/BirthProfileProvider'
 import type { StoredBirth } from '@/lib/birth-storage'
 import BirthplaceCombobox from './BirthplaceCombobox'
@@ -17,14 +17,16 @@ type Props = {
 }
 
 export default function BirthForm({ onSubmit }: Props) {
-  const [date, setDate] = useState('2000-01-01')
-  const [time, setTime] = useState('12:00')
-  const [timeUnknown, setTimeUnknown] = useState(false)
-  const [place, setPlace] = useState<BirthplaceSnapshot | null>(null)
-  const [save, setSave] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const profile = useBirthProfile()
+  const seed = profile.birth
+  const [date, setDate] = useState(seed?.date ?? '2000-01-01')
+  const [time, setTime] = useState(seed?.time ?? '12:00')
+  const [timeUnknown, setTimeUnknown] = useState(seed ? !seed.timeKnown : false)
+  const [place, setPlace] = useState<BirthplaceSnapshot | null>(seed?.place ?? null)
+  const [save, setSave] = useState(profile.persistent)
+  const [error, setError] = useState<string | null>(null)
   const t = useTranslations('Constellation.form')
+  const locale = useLocale()
 
   function submit(e: SubmitEvent) {
     e.preventDefault()
@@ -63,18 +65,6 @@ export default function BirthForm({ onSubmit }: Props) {
     setSave(false)
     setError(null)
   }
-
-  // Prefill from the stored copy after mount, restoring the checkbox to match
-  // where the data actually lives (persistent device vs. this session only).
-  useEffect(() => {
-    if (profile.hydrated && profile.birth) {
-      setDate(profile.birth.date)
-      setTime(profile.birth.time)
-      setTimeUnknown(!profile.birth.timeKnown)
-      setPlace(profile.birth.place)
-      setSave(profile.persistent)
-    }
-  }, [profile.birth, profile.hydrated, profile.persistent])
 
   return (
     <form
@@ -126,7 +116,7 @@ export default function BirthForm({ onSubmit }: Props) {
           )}
         </div>
 
-        <BirthplaceCombobox onSelect={setPlace} value={place} />
+        <BirthplaceCombobox key={locale} onSelect={setPlace} value={place} />
       </div>
 
       <div className="mt-4">
