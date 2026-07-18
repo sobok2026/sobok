@@ -22,13 +22,17 @@ type LoveTimelineProps = {
   windows: readonly LoveWindow[]
 }
 
-/** A semantic event list: every window renders as an evenly framed card, with the current one tinted by accent. */
+/**
+ * A semantic event list: full-width editorial reading on mobile, a chronological rail with dot
+ * markers on wider screens (Ant Design/MUI Timeline pattern — status lives on the dot's fill,
+ * not on a wrapper box, so it doesn't compete with the per-item card framing used elsewhere).
+ */
 export function LoveTimeline({ locale, readings, today, windows }: LoveTimelineProps) {
   const t = useTranslations('Love')
   const tc = useTranslations('Constellation')
 
   return (
-    <ol className="mt-3 space-y-3">
+    <ol className="relative mt-4 sm:space-y-10 sm:before:absolute sm:before:bottom-2 sm:before:left-1.5 sm:before:top-2 sm:before:w-px sm:before:bg-border-2">
       {windows.map((window) => {
         const purpose = windowPurpose(window)
         const current = window.start <= today && today <= window.end
@@ -47,9 +51,16 @@ export function LoveTimeline({ locale, readings, today, windows }: LoveTimelineP
         return (
           <li
             aria-current={current ? 'date' : undefined}
-            className={`rounded-2xl p-4 ${current ? 'sm:border border-accent/25 bg-accent/5' : 'border-border bg-surface'}`}
+            className="relative border-t border-border py-6 first:border-t-0 sm:border-0 sm:py-0 sm:pl-8"
             key={key}
           >
+            <span
+              aria-hidden
+              className={`absolute left-0 top-1.5 hidden h-3 w-3 rounded-full border-2 ring-4 ring-surface-2 sm:block ${
+                current ? 'border-accent bg-accent' : 'border-border-strong bg-surface-3'
+              }`}
+            />
+
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <span className="text-sm font-semibold text-accent">{formatWindowRange(window, locale)}</span>
               {current && (
@@ -71,7 +82,7 @@ export function LoveTimeline({ locale, readings, today, windows }: LoveTimelineP
               <span className="text-foreground-subtle">{basis}</span>
             </p>
 
-            <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">{reading.interpretation}</p>
+            <p className="mt-3 text-base leading-relaxed text-foreground-secondary">{reading.interpretation}</p>
 
             <div className="mt-4 border-t border-border pt-4">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">
