@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
-import { Fragment } from 'react'
 
 import { signOfLon } from '@/chart/astrology'
 import type { ChartAspect, NatalChart, PlanetId, SignId } from '@/chart/types'
@@ -63,23 +62,21 @@ export default function ReportSection({
             {chapter.id === 'core' && sunSign && (
               <CoreSignatureArt moonSigns={reportMoonSigns} risingSign={risingSign} sunSign={sunSign} />
             )}
+            {chapter.id === 'path' && southNodeSign && northNodeSign && (
+              <NodeAxisArt
+                familiarLabel={report.path.familiarLabel}
+                growthLabel={report.path.growthLabel}
+                northSign={northNodeSign}
+                southSign={southNodeSign}
+              />
+            )}
             {chapter.intro && <p className="mt-2 text-xs leading-relaxed text-foreground-subtle">{chapter.intro}</p>}
-            {chapter.paragraphs.map((para, i) => (
-              <Fragment key={`${chapter.id}-${para.kicker ?? para.text}`}>
-                <div className="mt-4 first-of-type:mt-3">
-                  {para.kicker && <p className="text-xs font-semibold text-accent">{para.kicker}</p>}
-                  {para.note && <p className="mt-1 text-xs font-semibold text-foreground-subtle">{para.note}</p>}
-                  <p className="mt-1.5 text-sm leading-relaxed text-foreground-secondary">{para.text}</p>
-                </div>
-                {chapter.id === 'path' && i === 1 && southNodeSign && northNodeSign && (
-                  <NodeAxisArt
-                    familiarLabel={report.path.familiarLabel}
-                    growthLabel={report.path.growthLabel}
-                    northSign={northNodeSign}
-                    southSign={southNodeSign}
-                  />
-                )}
-              </Fragment>
+            {chapter.paragraphs.map((para) => (
+              <div className="mt-4 first-of-type:mt-3" key={`${chapter.id}-${para.kicker ?? para.text}`}>
+                {para.kicker && <p className="text-xs font-semibold text-accent">{para.kicker}</p>}
+                {para.note && <p className="mt-1 text-xs font-semibold text-foreground-subtle">{para.note}</p>}
+                <p className="mt-1.5 text-sm leading-relaxed text-foreground-secondary">{para.text}</p>
+              </div>
             ))}
             {chapter.id === 'love' && (
               <p className="mt-4">
