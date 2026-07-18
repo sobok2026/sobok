@@ -8,6 +8,7 @@ import type { NatalChart } from '@/chart/types'
 import AstroGlyph from '@/components/AstroGlyph'
 import cardStyles from '@/components/card.module.css'
 import Reading from '@/components/Reading'
+import { SignFigure } from '@/components/SignFigure'
 import { aspectTone } from '@/content/interpretations/types'
 import type { StoredBirth } from '@/lib/birth-storage'
 
@@ -16,7 +17,6 @@ import LuckySection from './LuckySection'
 import MoonPhase from './MoonPhase'
 import type { StationPlanetId, TodayReadings } from './readings/types'
 import type { LuckyRecommendations } from './recommendations/types'
-import SignArt from './SignArt'
 import type { SkyToday } from './sky'
 import type { PersonalToday } from './transits'
 
@@ -70,7 +70,7 @@ export default function TodayBody({ data, homeHref, onShare, shared }: TodayBody
       <section className={`${cardStyles.card} p-4 rounded-3xl border bg-surface-2 backdrop-blur sm:p-5`}>
         <div className="flex items-center justify-center gap-5">
           <MoonPhase className="h-20 w-20 shrink-0" phaseAngle={sky.phaseAngle} />
-          <SignArt className="h-24 w-24 shrink-0" sign={sky.moonSign} />
+          <SignFigure className="h-24 w-24 shrink-0" sign={sky.moonSign} />
         </div>
         <div className="mt-3 flex items-center justify-center gap-2">
           <p className="text-base font-bold text-foreground">

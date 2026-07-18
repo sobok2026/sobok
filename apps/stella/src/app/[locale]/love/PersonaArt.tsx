@@ -20,7 +20,7 @@ const SPARKLES: readonly (readonly [number, number, number, number, number])[] =
 /**
  * Persona portrait for the love vertical: the descendant sign's asterism held
  * by two meeting orbits (the 1st–7th house axis) with a small heart where they
- * cross. Same data-plus-renderer approach as SignArt — no image assets.
+ * cross. Same data-plus-renderer approach as SignFigure — no image assets.
  *
  * Ambient motion (defined in PersonaArt.module.css) runs several animations at
  * mutually incommensurate periods so the composite never visibly repeats — an
