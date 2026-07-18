@@ -51,7 +51,7 @@ export function LoveTimeline({ locale, readings, today, windows }: LoveTimelineP
         return (
           <li
             aria-current={current ? 'date' : undefined}
-            className="relative border-t border-border py-6 first:border-t-0 sm:border-0 sm:py-0 sm:pl-8"
+            className="relative border-t border-border py-6 sm:first:border-t-0 sm:border-0 sm:py-0 sm:pl-8"
             key={key}
           >
             <span
@@ -62,7 +62,7 @@ export function LoveTimeline({ locale, readings, today, windows }: LoveTimelineP
             />
 
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span className="text-sm font-semibold text-accent">{formatWindowRange(window, locale)}</span>
+              <span className="text-sm font-semibold text-foreground">{formatWindowRange(window, locale)}</span>
               {current && (
                 <span className="inline-flex items-center rounded-full bg-accent/15 px-2.5 py-1 text-[11px] font-medium text-accent">
                   {t('timing.now')}
@@ -82,9 +82,9 @@ export function LoveTimeline({ locale, readings, today, windows }: LoveTimelineP
               <span className="text-foreground-subtle">{basis}</span>
             </p>
 
-            <p className="mt-3 text-base leading-relaxed text-foreground-secondary">{reading.interpretation}</p>
+            <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">{reading.interpretation}</p>
 
-            <div className="mt-4 border-t border-border pt-4">
+            <div className="mt-1 border-border pt-4 sm:mt-4 sm:border-t">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">
                 {t('timing.guidanceLabel')}
               </p>
