@@ -58,21 +58,22 @@ export const LEGAL = {
           heading: '이용 통계 및 분석',
           body: [
             '자미원은 서비스 개선을 위해 Google 태그 매니저 및 분석 도구를 사용할 수 있습니다. 이 과정에서 방문 페이지, 기기·브라우저 정보, 서비스 내 상호작용, 쿠키 또는 온라인 식별자 등이 각 도구 제공자의 정책에 따라 처리될 수 있습니다.',
-            '자미원이 직접 구성하는 분석 이벤트에는 생년월일, 태어난 시각, 출생지를 별도 항목으로 넣지 않습니다.',
+            '자미원이 직접 구성하는 분석 이벤트에는 생년월일, 태어난 시각, 출생지를 별도 항목으로 넣지 않습니다. 다만 공유 결과 URL에는 출생 정보가 포함되며, 아래 “결과 공유”에 설명한 범위에서 처리될 수 있습니다.',
           ],
         },
         {
-          heading: '명반 이미지 공유',
+          heading: '결과 공유',
           body: [
-            '자미원은 완성된 명반을 이미지로 저장하거나 공유할 수 있습니다. 이미지 공유를 선택하면 생성된 명반 이미지와 공유 문구가 이용자가 선택한 대상으로 전달됩니다.',
-            '출생 정보는 이미지를 만드는 과정에서 브라우저 안에서만 사용되며, 링크(URL)나 이미지 파일의 별도 데이터로 전송되지 않습니다. 다만 이미지에는 명반과 그 요약이 담기므로, 공유 대상을 신중히 선택해 주세요.',
+            '이용자가 링크 공유를 선택하면 명반 재현에 필요한 생년월일, 태어난 시각, 성별, 출생지 식별 정보가 URL의 “#” 뒤 프래그먼트에 인코딩되어 포함됩니다. 인코딩은 암호화가 아닙니다.',
+            'URI 표준상 프래그먼트는 일반적인 페이지 요청에서 웹 서버로 전송되지 않습니다. 그러나 전체 링크는 이용자가 선택한 공유 대상과 링크를 받은 사람에게 전달되고, 공유 결과 페이지에서 실행되는 스크립트가 접근할 수 있습니다. 공유 대상과 분석·광고 도구는 각자의 정책에 따라 URL을 처리할 수 있습니다.',
+            '공유 링크에는 만료나 철회 기능이 없습니다. 신뢰할 수 있는 상대에게만 공유해 주세요. 이미지 공유를 선택하면 생성된 명반 이미지와 공유 문구가 이용자가 선택한 대상으로 전달됩니다.',
           ],
         },
         {
           heading: '정보의 보관과 삭제',
           body: [
             '브라우저에 저장된 출생 정보는 서비스의 “저장된 정보 지우기” 기능을 사용하거나 해당 사이트의 저장 데이터를 삭제하면 제거됩니다. 세션 저장소의 임시 정보는 현재 탭의 세션이 끝나면 제거됩니다.',
-            '기기에 저장된 정보를 삭제해도 이미 이미지로 공유한 명반은 취소되지 않으며, 자미원은 공유 대상이나 이미지를 받은 사람이 보관한 사본을 삭제할 수 없습니다.',
+            '기기에 저장된 정보를 삭제해도 이미 공유한 링크는 무효화되지 않으며, 자미원은 공유 대상이나 링크·이미지를 받은 사람이 보관한 사본을 삭제할 수 없습니다.',
           ],
         },
         {
@@ -167,21 +168,22 @@ export const LEGAL = {
           heading: 'Usage analytics',
           body: [
             'Ziwei may use Google Tag Manager and analytics tools to improve the service. Pages viewed, device and browser information, interactions within the service, cookies, or online identifiers may be processed under each provider’s policy.',
-            'The custom analytics events configured by Ziwei do not add your birth date, birth time, or birthplace as separate event fields.',
+            'The custom analytics events configured by Ziwei do not add your birth date, birth time, or birthplace as separate event fields. A shared-result URL does contain birth details and may be processed as described under “Sharing results” below.',
           ],
         },
         {
-          heading: 'Sharing your chart image',
+          heading: 'Sharing results',
           body: [
-            'Ziwei lets you save or share your completed chart as an image. If you choose to share, the generated chart image and accompanying share text are delivered to the target you select.',
-            'Your birth details are used only in your browser while the image is generated, and are not transmitted in a link (URL) or as separate data in the image file. The image does, however, contain your chart and its summary, so choose your share target carefully.',
+            'When you choose link sharing, the birth date, birth time, gender, and birthplace identifier needed to reproduce the chart are encoded in the URL fragment after “#”. Encoding is not encryption.',
+            'Under the URI standard, a fragment is not sent to the web server in a normal page request. The complete link is still delivered to the share target you choose and to anyone who receives it, and scripts running on the shared-result page can access it. Share targets and analytics or advertising tools may process the URL under their own policies.',
+            'Shared links do not expire and cannot be revoked. Share only with people or services you trust. If you choose image sharing, the generated chart image and accompanying share text are delivered to the target you select.',
           ],
         },
         {
           heading: 'Data retention and deletion',
           body: [
             'Birth details saved in the browser are removed when you use “Delete saved details” in the service or clear the site’s stored data. Temporary session-storage details are removed when the current tab session ends.',
-            'Deleting details from your device does not undo an image you already shared, and Ziwei cannot delete copies retained by a share target or recipient.',
+            'Deleting details from your device does not invalidate links you already shared, and Ziwei cannot delete copies retained by a share target or recipient.',
           ],
         },
         {
@@ -276,21 +278,22 @@ export const LEGAL = {
           heading: '利用状況の分析',
           body: [
             '紫微垣はサービス改善のためにGoogleタグマネージャーおよび分析ツールを使用することがあります。この際、閲覧ページ、端末・ブラウザ情報、サービス内での操作、Cookieまたはオンライン識別子などが、各提供者のポリシーに従って処理される場合があります。',
-            '紫微垣が独自に設定する分析イベントには、生年月日・出生時刻・出生地を個別の項目として追加しません。',
+            '紫微垣が独自に設定する分析イベントには、生年月日・出生時刻・出生地を個別の項目として追加しません。ただし共有結果のURLには出生情報が含まれ、下記「結果の共有」に記載する範囲で処理される場合があります。',
           ],
         },
         {
-          heading: '命盤画像の共有',
+          heading: '結果の共有',
           body: [
-            '紫微垣は、完成した命盤を画像として保存・共有できます。画像共有を選ぶと、生成された命盤画像と共有文が選択した共有先へ渡ります。',
-            '出生情報は画像を生成する過程でブラウザ内でのみ使用され、リンク（URL）や画像ファイルの別データとして送信されることはありません。ただし画像には命盤とその要約が含まれるため、共有先は慎重にお選びください。',
+            'リンク共有を選ぶと、命盤の再現に必要な生年月日、出生時刻、性別、出生地の識別情報がURLの「#」以降のフラグメントにエンコードされます。エンコードは暗号化ではありません。',
+            'URI標準上、フラグメントは通常のページリクエストでウェブサーバーへ送信されません。ただし完全なリンクは選択した共有先とリンクを受け取った人へ渡り、共有結果ページで動作するスクリプトからもアクセスできます。共有先や分析・広告ツールは、それぞれのポリシーに従ってURLを処理する場合があります。',
+            '共有リンクに有効期限や取り消し機能はありません。信頼できる相手やサービスにのみ共有してください。画像共有を選ぶと、生成された命盤画像と共有文が選択した共有先へ渡ります。',
           ],
         },
         {
           heading: '情報の保存と削除',
           body: [
             'ブラウザに保存された出生情報は、サービスの「保存した情報を削除」を使うか、このサイトの保存データを削除すると消去されます。セッションストレージの一時情報は、現在のタブのセッションが終了すると消去されます。',
-            '端末上の情報を削除しても、すでに画像で共有した命盤は取り消せません。紫微垣は、共有先や画像を受け取った人が保持するコピーを削除できません。',
+            '端末上の情報を削除しても、すでに共有したリンクは無効になりません。紫微垣は、共有先やリンク・画像を受け取った人が保持するコピーを削除できません。',
           ],
         },
         {
@@ -385,21 +388,22 @@ export const LEGAL = {
           heading: '使用分析',
           body: [
             '紫微垣可能使用 Google 跟踪代码管理器和分析工具来改进服务。访问页面、设备与浏览器信息、服务内操作、Cookie 或在线标识符等，可能会按照各工具提供方的政策进行处理。',
-            '紫微垣自行配置的分析事件不会把出生日期、出生时间或出生地点作为单独的事件字段加入。',
+            '紫微垣自行配置的分析事件不会把出生日期、出生时间或出生地点作为单独的事件字段加入。不过，共享结果的 URL 中包含出生信息，并可能按下文“结果分享”所述方式被处理。',
           ],
         },
         {
-          heading: '命盘图片分享',
+          heading: '结果分享',
           body: [
-            '紫微垣允许您把排好的命盘保存或分享为图片。选择分享时，生成的命盘图片和分享文案会传递给您选择的分享目标。',
-            '出生信息仅在生成图片的过程中于浏览器内使用，不会以链接（URL）或图片文件的额外数据形式发送。不过图片中包含命盘及其摘要，请谨慎选择分享目标。',
+            '选择链接分享时，重现命盘所需的出生日期、出生时间、性别，以及出生地点标识信息，会被编码在 URL 中“#”之后的片段里。编码不等于加密。',
+            '根据 URI 标准，片段不会在普通页面请求中发送给网页服务器。但完整链接仍会传递给您选择的分享目标和收到链接的人，并且共享结果页面中运行的脚本也可以访问它。分享目标以及分析或广告工具可能会按照各自的政策处理该 URL。',
+            '共享链接不会过期，也无法撤回。请只分享给您信任的人或服务。选择图片分享时，生成的命盘图片和分享文案会传递给您选择的分享目标。',
           ],
         },
         {
           heading: '信息的存储与删除',
           body: [
             '浏览器内保存的出生信息会在您使用服务中的“删除已保存的信息”功能，或清除本网站的存储数据时被移除。会话存储中的临时信息会在当前标签页会话结束时被移除。',
-            '删除设备上的信息不会撤回您已分享的图片；紫微垣也无法删除分享目标或收件人保留的副本。',
+            '删除设备上的信息不会使已分享的链接失效；紫微垣也无法删除分享目标或收件人保留的副本。',
           ],
         },
         {

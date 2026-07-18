@@ -63,6 +63,15 @@ export const zh = {
       text: '这是出生那一刻星辰为我绘制的紫微斗数命盘。',
       saved: '图片已保存。',
       imageError: '图片生成失败，请重试。',
+      linkButton: '分享命盘链接',
+      copied: '已复制链接。',
+      linkError: '链接分享失败，请重试。',
+      privacy: '链接中包含重现命盘所需的出生信息。请只分享给您信任的人。',
+    },
+    shared: {
+      viewing: '您正在查看分享的命盘。',
+      createOwn: '创建我的命盘',
+      invalid: '此链接无效或已损坏。',
     },
   },
 } satisfies typeof ko

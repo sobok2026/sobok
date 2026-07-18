@@ -89,7 +89,7 @@ export const PAGES = {
         {
           heading: '입력한 정보는 어떻게 다루나요',
           body: [
-            '입력 폼의 생년월일과 시각 그리고 출생지는 이용자의 브라우저 안에서 계산되며 자미원 서버에 직접 제출되지 않습니다. 저장을 선택하면 이 브라우저에 보관되고, 명반은 이미지로만 공유되어 출생 정보가 링크(URL)에 담기지 않습니다. 자세한 저장·삭제·공유 방식은 개인정보처리방침에서 확인할 수 있습니다.',
+            '입력 폼의 생년월일과 시각 그리고 출생지는 이용자의 브라우저 안에서 계산되며 자미원 서버에 직접 제출되지 않습니다. 저장을 선택하면 이 브라우저에 보관되고, 링크 공유를 선택하면 명반 재현에 필요한 출생 정보가 공유 URL에 포함되어 링크를 받은 사람에게 전달됩니다. 자세한 저장·삭제·공유 방식은 개인정보처리방침에서 확인할 수 있습니다.',
           ],
         },
         {
@@ -194,7 +194,7 @@ export const PAGES = {
         {
           heading: 'How your data is handled',
           body: [
-            'The birth date, time, and place entered in the form are calculated in your browser and are not directly submitted to Ziwei’s server. If you choose to save them, they stay in this browser, and your chart is shared only as an image, so your birth details are never placed in a link (URL). See the Privacy Policy for storage, deletion, and sharing details.',
+            'The birth date, time, and place entered in the form are calculated in your browser and are not directly submitted to Ziwei’s server. If you choose to save them, they stay in this browser. If you choose link sharing, the birth details needed to reproduce the chart are included in the shared URL and delivered to anyone who receives it. See the Privacy Policy for storage, deletion, and sharing details.',
           ],
         },
         {
@@ -299,7 +299,7 @@ export const PAGES = {
         {
           heading: '入力情報の取り扱い',
           body: [
-            '入力フォームの生年月日・出生時刻・出生地は利用者のブラウザ内で計算され、紫微垣のサーバーへ直接送信されません。保存を選ぶとこのブラウザに保管され、命盤は画像としてのみ共有されるため、出生情報がリンク（URL）に含まれることはありません。保存・削除・共有の詳細はプライバシーポリシーでご確認いただけます。',
+            '入力フォームの生年月日・出生時刻・出生地は利用者のブラウザ内で計算され、紫微垣のサーバーへ直接送信されません。保存を選ぶとこのブラウザに保管され、リンク共有を選ぶと、命盤の再現に必要な出生情報が共有URLに含まれ、リンクを受け取った人へ渡ります。保存・削除・共有の詳細はプライバシーポリシーでご確認いただけます。',
           ],
         },
         {
@@ -404,7 +404,7 @@ export const PAGES = {
         {
           heading: '如何处理您的信息',
           body: [
-            '输入表单中的出生日期、时间和地点在您的浏览器内计算，不会直接提交到紫微垣的服务器。选择保存时，信息会保留在此浏览器中；命盘仅以图片形式分享，出生信息不会包含在链接（URL）中。有关存储、删除与分享的详情，请参阅隐私政策。',
+            '输入表单中的出生日期、时间和地点在您的浏览器内计算，不会直接提交到紫微垣的服务器。选择保存时，信息会保留在此浏览器中；选择链接分享时，重现命盘所需的出生信息会包含在共享 URL 中，并传递给收到链接的人。有关存储、删除与分享的详情，请参阅隐私政策。',
           ],
         },
         {

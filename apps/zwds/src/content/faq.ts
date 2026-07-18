@@ -29,7 +29,7 @@ export const FAQ = {
       },
       {
         q: '무료인가요? 입력한 출생 정보는 어떻게 처리되나요?',
-        a: '자미원의 명반은 회원가입 없이 무료로 볼 수 있어요. 입력한 출생 정보는 이용자의 브라우저 안에서 계산되고 자미원 서버에 저장되지 않아요. 명반은 이미지로만 공유되며 출생 정보가 링크(URL)에 담기지 않아요. 자세한 내용은 개인정보처리방침에서 확인할 수 있어요.',
+        a: '자미원의 명반은 회원가입 없이 무료로 볼 수 있어요. 입력한 출생 정보는 이용자의 브라우저 안에서 계산되고 자미원 서버에 저장되지 않아요. 다만 링크 공유를 선택하면 명반 재현에 필요한 출생 정보가 공유 URL에 포함되어 링크를 받은 사람에게 전달돼요. 자세한 내용은 개인정보처리방침에서 확인할 수 있어요.',
       },
       {
         q: '자미두수와 서양 별자리는 뭐가 다른가요?',
@@ -59,7 +59,7 @@ export const FAQ = {
       },
       {
         q: 'Is it free, and how is my birth data handled?',
-        a: 'Ziwei’s chart is free with no sign-up. The birth details you enter are calculated in your browser and are not saved to Ziwei’s server. Your chart is shared only as an image, and your birth details are never placed in a link (URL). See the Privacy Policy for details.',
+        a: 'Ziwei’s chart is free with no sign-up. The birth details you enter are calculated in your browser and are not saved to Ziwei’s server. If you choose link sharing, however, the birth details needed to reproduce the chart are included in the shared URL and delivered to anyone who receives the link. See the Privacy Policy for details.',
       },
       {
         q: 'How is Zi Wei Dou Shu different from Western astrology?',
@@ -89,7 +89,7 @@ export const FAQ = {
       },
       {
         q: '無料ですか？入力した出生情報はどのように扱われますか？',
-        a: '紫微垣の命盤は登録不要で無料です。入力した出生情報は利用者のブラウザ内で計算され、紫微垣のサーバーには保存されません。命盤は画像としてのみ共有され、出生情報がリンク（URL）に含まれることはありません。詳しくはプライバシーポリシーをご覧ください。',
+        a: '紫微垣の命盤は登録不要で無料です。入力した出生情報は利用者のブラウザ内で計算され、紫微垣のサーバーには保存されません。ただしリンク共有を選ぶと、命盤の再現に必要な出生情報が共有URLに含まれ、リンクを受け取った人へ渡ります。詳しくはプライバシーポリシーをご覧ください。',
       },
       {
         q: '紫微斗数と西洋占星術（星座）はどう違いますか？',
@@ -119,7 +119,7 @@ export const FAQ = {
       },
       {
         q: '免费吗？我输入的出生信息会如何处理？',
-        a: '紫微垣的命盘无需注册即可免费查看。输入的出生信息在浏览器内计算，不会保存到紫微垣的服务器。命盘仅以图片形式分享，出生信息不会包含在链接（URL）中。详情请参阅隐私政策。',
+        a: '紫微垣的命盘无需注册即可免费查看。输入的出生信息在浏览器内计算，不会保存到紫微垣的服务器。不过，选择链接分享时，重现命盘所需的出生信息会包含在共享 URL 中，并传递给收到链接的人。详情请参阅隐私政策。',
       },
       {
         q: '紫微斗数和西方占星（星座）有什么区别？',

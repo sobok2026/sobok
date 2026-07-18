@@ -64,6 +64,15 @@ export const ko = {
       text: '태어난 순간의 별들이 그린 나의 자미두수 명반이에요.',
       saved: '이미지를 저장했어요.',
       imageError: '이미지를 만들지 못했어요. 다시 시도해 봐요.',
+      linkButton: '명반 링크 공유',
+      copied: '링크를 복사했어요.',
+      linkError: '링크를 공유하지 못했어요. 다시 시도해 봐요.',
+      privacy: '링크에는 명반 재현에 필요한 출생 정보가 담겨요. 신뢰하는 사람에게만 공유해 주세요.',
+    },
+    shared: {
+      viewing: '공유받은 명반을 보고 있어요.',
+      createOwn: '내 명반 만들기',
+      invalid: '링크가 올바르지 않거나 손상됐어요.',
     },
   },
 } satisfies Messages

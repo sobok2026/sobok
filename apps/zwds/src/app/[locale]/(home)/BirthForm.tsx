@@ -123,7 +123,7 @@ export default function BirthForm({ onCancel, onProfileCleared, onSubmit }: Prop
               <label
                 className={`cursor-pointer rounded-xl border px-3 py-2.5 text-center text-sm font-semibold transition ${
                   gender === value
-                    ? 'border-accent bg-accent/10 text-foreground'
+                    ? 'border-foreground bg-foreground/10 text-foreground'
                     : 'border-outline bg-surface-2 text-foreground-subtle hover:text-foreground-muted'
                 }`}
                 key={value}

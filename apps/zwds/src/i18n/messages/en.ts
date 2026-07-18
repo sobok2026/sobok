@@ -5,7 +5,7 @@ export const en = {
     meta: {
       title: 'My Zi Wei Dou Shu Chart · Eastern Astrology from Your Birth Time',
       description:
-        'Draw your own Zi Wei Dou Shu natal chart from your birth date and time. See your Life Palace, the 14 major stars, the four transformations, and decade cycles across all twelve palaces at a glance.',
+        'Draw your own Zi Wei Dou Shu chart from your birth date and time. See your Life Palace, the 14 major stars, the four transformations, and decade cycles across all twelve palaces at a glance.',
     },
     localeSwitcher: 'Choose language',
     hero: {
@@ -64,6 +64,15 @@ export const en = {
       text: 'My Zi Wei Dou Shu chart, drawn by the stars at the moment I was born.',
       saved: 'Image saved.',
       imageError: 'Could not create the image. Please try again.',
+      linkButton: 'Share chart link',
+      copied: 'Link copied.',
+      linkError: 'Could not share the link. Please try again.',
+      privacy: 'The link carries the birth details needed to reproduce the chart. Share it only with people you trust.',
+    },
+    shared: {
+      viewing: 'You’re viewing a shared chart.',
+      createOwn: 'Create my own chart',
+      invalid: 'This link is invalid or corrupted.',
     },
   },
 } satisfies typeof ko
