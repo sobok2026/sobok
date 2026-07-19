@@ -67,11 +67,6 @@
 
 html {
   scrollbar-gutter: stable;
-  /* Paint the root element so iOS Safari fills the bottom safe-area / toolbar
-     backdrop / overscroll region with the page color instead of black. Body
-     background alone is not propagated into that chrome region under
-     viewport-fit=cover + color-scheme:dark. Keep in sync with THEME_COLOR. */
-  background: var(--color-background);
 }
 
 body {
