@@ -44,10 +44,10 @@
       "port": 3014
     },
     {
-      "name": "ufo",
+      "name": "horn",
       "runtimeExecutable": "bun",
       "runtimeArgs": ["run", "dev"],
-      "cwd": "apps/ufo",
+      "cwd": "apps/horn",
       "port": 3013
     }
   ]

@@ -99,7 +99,7 @@ export default function Game() {
 
     // Dev-only handle for stepping the sim in tests (dead-code-eliminated in the production build).
     if (process.env.NODE_ENV !== 'production') {
-      ;(window as unknown as { __ufoEngine?: Engine }).__ufoEngine = engine
+      ;(window as unknown as { __hornEngine?: Engine }).__hornEngine = engine
     }
 
     setBest(loadBest())

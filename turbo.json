@@ -38,7 +38,7 @@
       "dependsOn": ["^build"],
       "outputs": ["out/**", ".next/**"]
     },
-    "@sobok/ufo#build": {
+    "@sobok/horn#build": {
       "dependsOn": ["^build"],
       "outputs": ["out/**", ".next/**"]
     },

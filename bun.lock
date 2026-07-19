@@ -132,6 +132,25 @@
         "typescript": "^6.0.3",
       },
     },
+    "apps/horn": {
+      "name": "@sobok/horn",
+      "version": "0.1.0",
+      "dependencies": {
+        "next": "16.2.10",
+        "react": "19.2.7",
+        "react-dom": "19.2.7",
+      },
+      "devDependencies": {
+        "@tailwindcss/postcss": "^4.3.1",
+        "@types/node": "^26.1.0",
+        "@types/react": "19.2.17",
+        "@types/react-dom": "19.2.3",
+        "babel-plugin-react-compiler": "^1.0.0",
+        "tailwindcss": "^4.3.1",
+        "typescript": "^6.0.3",
+        "wrangler": "^4.110.0",
+      },
+    },
     "apps/stella": {
       "name": "@sobok/stella",
       "version": "0.1.0",
@@ -148,25 +167,6 @@
         "server-only": "^0.0.1",
         "sonner": "^2.0.7",
         "tailwind-merge": "^3.6.0",
-      },
-      "devDependencies": {
-        "@tailwindcss/postcss": "^4.3.1",
-        "@types/node": "^26.1.0",
-        "@types/react": "19.2.17",
-        "@types/react-dom": "19.2.3",
-        "babel-plugin-react-compiler": "^1.0.0",
-        "tailwindcss": "^4.3.1",
-        "typescript": "^6.0.3",
-        "wrangler": "^4.110.0",
-      },
-    },
-    "apps/ufo": {
-      "name": "@sobok/ufo",
-      "version": "0.1.0",
-      "dependencies": {
-        "next": "16.2.10",
-        "react": "19.2.7",
-        "react-dom": "19.2.7",
       },
       "devDependencies": {
         "@tailwindcss/postcss": "^4.3.1",
@@ -1091,6 +1091,8 @@
 
     "@sobok/events": ["@sobok/events@workspace:packages/events"],
 
+    "@sobok/horn": ["@sobok/horn@workspace:apps/horn"],
+
     "@sobok/http": ["@sobok/http@workspace:packages/http"],
 
     "@sobok/kv": ["@sobok/kv@workspace:packages/kv"],
@@ -1102,8 +1104,6 @@
     "@sobok/std": ["@sobok/std@workspace:packages/std"],
 
     "@sobok/stella": ["@sobok/stella@workspace:apps/stella"],
-
-    "@sobok/ufo": ["@sobok/ufo@workspace:apps/ufo"],
 
     "@sobok/ui": ["@sobok/ui@workspace:packages/ui"],
 

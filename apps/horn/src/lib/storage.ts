@@ -1,4 +1,4 @@
-const KEY = 'ufo.best.v1'
+const KEY = 'horn.best.v1'
 
 export function loadBest(): number {
   if (typeof localStorage === 'undefined') return 0
