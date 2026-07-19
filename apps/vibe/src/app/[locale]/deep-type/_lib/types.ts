@@ -14,28 +14,19 @@ export type PersonaCode = DichoCode
 export type InnerCode = DichoCode
 export type GemCode = `${RMPole}${OAPole}${VHPole}${UOPole}`
 
-export type DichoAxisId = 'EI' | 'JP' | 'SN' | 'TF'
-export type GemAxisId = 'OA' | 'RM' | 'UO' | 'VH'
+export type DichoAxisId = 'EI' | 'SN' | 'TF' | 'JP'
+export type GemAxisId = 'RM' | 'OA' | 'VH' | 'UO'
 export type AxisId = DichoAxisId | GemAxisId
 
 export type InnerGroup = 'NF' | 'NT' | 'SJ' | 'SP'
-
-// A single answered question's contribution to each axis it touches — mirrors the source's `sig` object,
-// e.g. `{ EI: 2 }` or (for a multi-axis question) `{ SN: 2, TF: 1 }`.
-export type AxisSignal = Partial<Record<AxisId, number>>
-
-export type AnsweredSignal = {
-  // The axis this question is the "anchor" for, if any — used as a tie-breaker in sumSigs()/judge()
-  // when a phase's raw total for an axis nets to zero but this question still leaned one way.
-  anchor?: AxisId
-  signal: AxisSignal
-}
 
 export type AxisDefinition<TAxisId extends AxisId, TPoleA extends string, TPoleB extends string> = {
   id: TAxisId
   poles: readonly [TPoleA, TPoleB]
 }
 
+// The first pole in each pair is the axis's canonical `+` direction: every item's signed value and every
+// score's `lean` is measured toward poles[0]. poles[1] is simply the negative direction.
 export const DICHO_AXES = [
   { id: 'EI', poles: ['E', 'I'] },
   { id: 'SN', poles: ['S', 'N'] },
@@ -50,84 +41,162 @@ export const GEM_AXES = [
   { id: 'UO', poles: ['U', 'O'] },
 ] as const satisfies readonly AxisDefinition<GemAxisId, string, string>[]
 
-export type AxisJudgment<TId extends string> = {
+// --- items ------------------------------------------------------------------------------------------
+//
+// Every item measures exactly ONE axis — no cross-axis "bonus" signals. Keeping items unidimensional is
+// what makes the score honest: an axis's lean is just the mean of its own items, nothing bleeds in.
+//
+// A `choice` item's options each carry a signed strength toward the axis's first pole (poles[0]), drawn
+// from {-2, -1, +1, +2} (0 allowed for a deliberate "either way" option). A `scale` item maps a 0..100
+// slider onto [-2, +2] (midpoint 50 → 0), negated when `reverse` is set.
+//
+// Balanced keying — mixing which pole the strong answer favors across an axis's items, and NOT always
+// putting the +2 option at the same index — is a property of each axis's item SET, enforced by the bank
+// invariant tests, not by the engine. It is what keeps "always pick the first / always agree" from
+// drifting the result toward one pole (acquiescence control).
+
+export type ItemId = string
+
+export type ChoiceItem = {
+  readonly id: ItemId
+  readonly axis: AxisId
+  readonly kind: 'choice'
+  readonly options: readonly number[]
+}
+
+export type ScaleItem = {
+  readonly id: ItemId
+  readonly axis: AxisId
+  readonly kind: 'scale'
+  readonly reverse: boolean
+}
+
+export type Item = ChoiceItem | ScaleItem
+
+export function isScaleItem(item: Item): item is ScaleItem {
+  return item.kind === 'scale'
+}
+
+// --- answers & responses ----------------------------------------------------------------------------
+
+export type ChoiceAnswer = { kind: 'choice'; itemId: ItemId; optionIndex: number }
+export type ScaleAnswer = { kind: 'scale'; itemId: ItemId; value: number }
+export type ItemAnswer = ChoiceAnswer | ScaleAnswer
+
+// A resolved answer's signed contribution to its axis, in [-2, +2] toward poles[0].
+export type AxisResponse = { axis: AxisId; value: number }
+
+// --- scores -----------------------------------------------------------------------------------------
+
+// Below this |lean| an axis is reported as genuinely split ("거의 반반") instead of faking certainty.
+export const BORDERLINE_LEAN = 0.2
+
+export type AxisScore = {
+  // Resolved pole letter (poles[0] when lean >= 0, else poles[1]).
+  pole: string
+  // Signed mean toward poles[0], in [-1, 1]. 0 = perfectly split.
+  lean: number
+  // Honest 0..100 = round(|lean| * 100). No artificial floor.
+  confidence: number
+  // True when |lean| < BORDERLINE_LEAN — the result view flags this axis as split.
+  borderline: boolean
+  // Share (0..100) of this axis's items that pointed the same way as the resolved pole.
+  consistency: number
+  answered: number
+}
+
+export type AxesResult<TId extends string> = {
   code: string
-  axes: Record<TId, { pole: string; strength: number }>
+  axes: Record<TId, AxisScore>
 }
 
-// --- question shapes -----------------------------------------------------------------------------
+// Persona is measured against the visitor's self-claimed type: the claim seeds a weak prior, verification
+// items can override it. `mismatch` marks an axis where the measured evidence flipped the claimed letter.
+export type ClaimedAxisScore = AxisScore & { claimed: string; mismatch: boolean }
 
-export type PickQuestionId = string
-export type SliderQuestionId = string
-
-// A "pick one of N" question: N options, each with its own scoring signal. Text lives in _content, keyed
-// by the same id.
-export type PickQuestionDef = {
-  id: PickQuestionId
-  anchor?: AxisId
-  optionCount: 3 | 4
-  options: readonly AxisSignal[]
+export type PersonaResult = {
+  code: PersonaCode
+  axes: Record<DichoAxisId, ClaimedAxisScore>
+  mismatches: readonly DichoAxisId[]
 }
-
-// A single-axis slider question (0-100, midpoint 50): sign of (value-50) maps to the axis's pole,
-// flipped if `negated`.
-export type SliderQuestionDef = {
-  id: SliderQuestionId
-  anchor?: AxisId
-  axis: AxisId
-  negated: boolean
-}
-
-export type QuestionDef = PickQuestionDef | SliderQuestionDef
-
-export function isSliderQuestion(question: QuestionDef): question is SliderQuestionDef {
-  return 'axis' in question
-}
-
-// --- answer shapes ---------------------------------------------------------------------------------
-
-export type PickAnswer = { kind: 'pick'; optionIndex: number; questionId: PickQuestionId }
-export type SliderAnswer = { kind: 'slider'; questionId: SliderQuestionId; value: number }
-export type Answer = PickAnswer | SliderAnswer
 
 // --- content shapes ---------------------------------------------------------------------------------
 
-export type PickQuestionContent = {
+export type ChoiceItemContent = {
   scene?: string
   text: string
   options: readonly string[]
 }
 
-export type SliderQuestionContent = {
+export type ScaleItemContent = {
   hi: string
   lo: string
   scene?: string
   text: string
 }
 
+export type ItemContent = ChoiceItemContent | ScaleItemContent
+
 export type DeepTypeUiText = {
+  analyzingBody: string
+  analyzingTitle: string
   claimSubtitle: string
   claimTitle: string
-  deepIntroBody: string
-  deepIntroCta: string
-  deepIntroTitle: string
+  claimVerifyBody: string
+  claimVerifyCta: string
+  claimVerifyTitle: string
+  confidenceBorderlineLabel: string
+  confidenceIntro: string
+  confidenceTitle: string
+  // interim "겉속 간극" reveal after the Inner chapter (mirrors the prototype midpoint)
+  gapRevealCta: string
+  gapRevealEyebrow: string
+  // {outer}/{inner} resolved by the reveal view
+  gapRevealGapLine: string
+  gapRevealInnerLead: string
+  gapRevealPull: string
+  innerIntroBody: string
+  innerIntroCta: string
+  innerIntroTitle: string
   landingCta: string
+  landingStepGemDesc: string
+  landingStepInnerDesc: string
+  landingStepOuterDesc: string
+  // report layer/label chrome — kept in content so every locale renders without hardcoded ko in the view
+  layerGemFull: string
+  layerGemShort: string
+  layerInner: string
+  layerPersona: string
+  matchClashLabel: string
+  matchFitLabel: string
+  selfAloneTitle: string
+  stressAidLabel: string
+  stressDontLabel: string
+  stressSignLabel: string
+  // {outerNoun}/{innerNoun}/{gemName}/{narrative} resolved by the report view
+  summaryTemplate: string
+  // {rate} resolved by the report view
+  syncRateLabel: string
   landingNote: string
   landingSubtitle: string
   landingTitle: string
   loveNoteAutonomous: string
   loveNoteConnected: string
-  part2IntroBody: string
-  part2IntroCta: string
-  part2IntroTitle: string
-  paywallCta: string
-  paywallFeatureList: readonly string[]
-  paywallSubtitle: string
-  paywallTitle: string
-  quickIntroBody: string
-  quickIntroCta: string
-  quickIntroTitle: string
-  quickShareTextTemplate: string
+  measureIntroBody: string
+  measureIntroCta: string
+  measureIntroTitle: string
+  // {claimed}/{measured} → pole labels of the overridden axis.
+  mismatchNote: string
+  mismatchTitle: string
+  // interim persona reveal after the verify chapter (light — the type was self-claimed)
+  personaRevealDiff: string
+  personaRevealEyebrow: string
+  personaRevealMeasured: string
+  personaRevealSame: string
+  reportDisclaimer: string
+  reportRestartCta: string
+  reportShareCta: string
+  reportShareText: string
   socialBatteryNoteExtroverted: string
   socialBatteryNoteIntroverted: string
   transparentTypeNote: string
@@ -137,23 +206,21 @@ export type ReportSectionContent = {
   title: string
 }
 
+export type AxisContent = {
+  name: string
+  poles: Record<string, { description: string; label: string }>
+}
+
 export type DeepTypeContent = {
   metadata: {
     description: string
     title: string
   }
   ui: DeepTypeUiText
-  personaQuestions: Record<string, PickQuestionContent | SliderQuestionContent>
-  innerQuestions: Record<string, PickQuestionContent | SliderQuestionContent>
-  gemQuestions: Record<string, PickQuestionContent | SliderQuestionContent>
-  axes: Record<
-    AxisId,
-    {
-      name: string
-      poles: Record<string, { description: string; label: string }>
-    }
-  >
-  gemGroupFlavor: Record<InnerGroup, string>
+  personaQuestions: Record<string, ItemContent>
+  innerQuestions: Record<string, ItemContent>
+  gemQuestions: Record<string, ItemContent>
+  axes: Record<AxisId, AxisContent>
   base: Record<PersonaCode, { ident: string; keywords: readonly [string, string]; noun: string }>
   hiddenDescription: Record<InnerCode, string>
   gem: Record<
@@ -200,12 +267,39 @@ export type ReportSectionKey =
   | 'thisWeek'
   | 'weakSpot'
 
+// --- report -----------------------------------------------------------------------------------------
+
+// One axis's honest read, ready to render as a confidence bar. `pole`/`lean` come from the score;
+// name + labels are resolved from content.axes so the view stays copy-free.
+export type ConfidenceBar = {
+  axisId: AxisId
+  axisName: string
+  pole: string
+  poleLabel: string
+  poleDescription: string
+  confidence: number
+  borderline: boolean
+}
+
+export type PersonaMismatch = {
+  axisId: DichoAxisId
+  axisName: string
+  claimedLabel: string
+  measuredLabel: string
+}
+
 export type DeepReport = {
   code: {
     gem: GemCode
     inner: InnerCode
     outer: PersonaCode
   }
+  confidence: {
+    gem: readonly ConfidenceBar[]
+    inner: readonly ConfidenceBar[]
+    persona: readonly ConfidenceBar[]
+  }
+  mismatches: readonly PersonaMismatch[]
   sections: {
     avoid: readonly string[]
     gap: { lines: readonly { gap: string; prediction: string }[]; syncRate: number | null; transparent: boolean }

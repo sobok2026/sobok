@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { buildLocalizedMetadata } from '@/i18n/metadata'
+import JsonLd, { webApplicationGraph } from '@/lib/JsonLd'
 
 import { DeepTypeFlow } from './_components/deep-type-flow'
 import { getDeepTypeContent } from './_lib/content'
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/deep-typ
 
   const content = await getDeepTypeContent(locale)
 
-  return await buildLocalizedMetadata({
+  return buildLocalizedMetadata({
     description: content.metadata.description,
     locale,
     pathname: '/deep-type',
@@ -34,9 +35,18 @@ export default async function DeepTypePage({ params }: PageProps<'/[locale]/deep
   const content = await getDeepTypeContent(locale)
 
   return (
-    <Suspense fallback={<DeepTypePageFallback />}>
-      <DeepTypeFlow content={content} locale={locale} />
-    </Suspense>
+    <>
+      <JsonLd
+        data={webApplicationGraph(locale, {
+          description: content.metadata.description,
+          name: content.metadata.title,
+          path: 'deep-type',
+        })}
+      />
+      <Suspense fallback={<DeepTypePageFallback />}>
+        <DeepTypeFlow content={content} locale={locale} />
+      </Suspense>
+    </>
   )
 }
 

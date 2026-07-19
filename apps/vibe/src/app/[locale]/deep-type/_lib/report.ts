@@ -1,47 +1,108 @@
-import { bestMatchInner, clashInner, syncRate } from './model'
-import type { DeepReport, DeepTypeContent, GemCode, InnerCode, PersonaCode } from './types'
+import { bestMatchInner, clashInner, syncRate } from './codes'
+import type {
+  AxesResult,
+  AxisDefinition,
+  AxisId,
+  AxisScore,
+  ConfidenceBar,
+  DeepReport,
+  DeepTypeContent,
+  DichoAxisId,
+  GemAxisId,
+  GemCode,
+  InnerCode,
+  PersonaCode,
+  PersonaMismatch,
+  PersonaResult,
+} from './types'
+import { DICHO_AXES, GEM_AXES } from './types'
 
-// Pure composition of the 12-section deep report from three codes + the content dictionaries — no DOM, no
-// server round-trip. Mirrors scrReport()/gapOS() in the source prototype line for line; every dictionary
-// key derivation below is a direct port, not a re-design — see the inline comments for exactly which
-// letters of which code build each lookup key.
+// Pure composition of the deep report from the three measured results + the content dictionaries — no
+// DOM, no server round-trip. The 12 psychological sections are keyed off the resolved codes exactly as
+// before; the confidence bars and the self-claim mismatch insight are the new, honest-measurement layer.
 export function buildDeepReport(
   content: DeepTypeContent,
-  outer: PersonaCode,
-  inner: InnerCode,
-  gemCode: GemCode,
+  persona: PersonaResult,
+  inner: AxesResult<DichoAxisId>,
+  gem: AxesResult<GemAxisId>,
 ): DeepReport {
+  const outer = persona.code
+  const innerCode = inner.code as InnerCode
+  const gemCode = gem.code as GemCode
+
   const outerBase = content.base[outer]
-  const innerBase = content.base[inner]
-  const gem = content.gem[gemCode]
+  const innerBase = content.base[innerCode]
+  const gemContent = content.gem[gemCode]
 
   return {
-    code: { gem: gemCode, inner, outer },
+    code: { gem: gemCode, inner: innerCode, outer },
+    confidence: {
+      gem: buildConfidenceBars(content, gem.axes, GEM_AXES),
+      inner: buildConfidenceBars(content, inner.axes, DICHO_AXES),
+      persona: buildConfidenceBars(content, persona.axes, DICHO_AXES),
+    },
+    mismatches: buildMismatches(content, persona),
     sections: {
       avoid: buildAvoid(content, gemCode),
-      gap: buildGap(content, outer, inner),
+      gap: buildGap(content, outer, innerCode),
       goals: [content.work[outer[3]], content.work[outer[2]], content.work[gemCode[3]]].join(' '),
       lifeAttitude: content.lifeAttitude[gemCode[0] + gemCode[3]],
       love: {
         note: gemCode[1] === 'O' ? content.ui.loveNoteConnected : content.ui.loveNoteAutonomous,
-        text: gem.love,
+        text: gemContent.love,
       },
       match: {
         clashGem: content.gem[clashInner(gemCode)].gemName,
         matchGem: content.gem[bestMatchInner(gemCode)].gemName,
       },
-      recharge: content.recharge[inner[0] + gemCode[2]],
-      social: buildSocial(content, outer, inner),
+      recharge: content.recharge[innerCode[0] + gemCode[2]],
+      social: buildSocial(content, outer, innerCode),
       stress: content.stressGuide[gemCode[2] + gemCode[3]],
-      summary: { gemName: gem.gemName, innerNoun: innerBase.noun, outerNoun: outerBase.noun },
+      summary: { gemName: gemContent.gemName, innerNoun: innerBase.noun, outerNoun: outerBase.noun },
       thisWeek: [
-        content.ctaByEI[inner[0] as 'E' | 'I'],
+        content.ctaByEI[innerCode[0] as 'E' | 'I'],
         content.ctaByRM[gemCode[0] as 'R' | 'M'],
         content.ctaByVH[gemCode[2] as 'V' | 'H'],
       ],
-      weakSpot: gem.lack,
+      weakSpot: gemContent.lack,
     },
   }
+}
+
+export function buildConfidenceBars<TId extends AxisId>(
+  content: DeepTypeContent,
+  axes: Record<TId, AxisScore>,
+  order: readonly AxisDefinition<TId, string, string>[],
+): ConfidenceBar[] {
+  return order.map((axis) => {
+    const score = axes[axis.id]
+    const axisContent = content.axes[axis.id]
+    const poleContent = axisContent.poles[score.pole]
+
+    return {
+      axisId: axis.id,
+      axisName: axisContent.name,
+      borderline: score.borderline,
+      confidence: score.confidence,
+      pole: score.pole,
+      poleDescription: poleContent.description,
+      poleLabel: poleContent.label,
+    }
+  })
+}
+
+function buildMismatches(content: DeepTypeContent, persona: PersonaResult): PersonaMismatch[] {
+  return persona.mismatches.map((axisId) => {
+    const score = persona.axes[axisId]
+    const axisContent = content.axes[axisId]
+
+    return {
+      axisId,
+      axisName: axisContent.name,
+      claimedLabel: axisContent.poles[score.claimed].label,
+      measuredLabel: axisContent.poles[score.pole].label,
+    }
+  })
 }
 
 function buildGap(content: DeepTypeContent, outer: PersonaCode, inner: InnerCode): DeepReport['sections']['gap'] {
