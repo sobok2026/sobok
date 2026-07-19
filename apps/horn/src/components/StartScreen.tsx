@@ -4,7 +4,7 @@ export default function StartScreen({ best, onStart }: { best: number; onStart: 
   return (
     <div className="absolute inset-0 z-30 overflow-y-auto bg-gradient-to-b from-black/40 via-black/25 to-black/55 backdrop-blur-[2px]">
       <div className="flex min-h-full flex-col items-center justify-center gap-6 px-6 py-8 text-center">
-        <div className="animate-float-slow text-6xl drop-shadow-[0_6px_20px_rgba(255,138,190,0.5)]">👽💘</div>
+        <div className="animate-float-slow text-6xl drop-shadow-[0_6px_20px_rgba(255,138,190,0.5)]">💑💘</div>
 
         <div>
           <h1 className="bg-gradient-to-r from-accent-cool via-brand to-accent-warm bg-clip-text text-5xl font-black text-transparent drop-shadow sm:text-6xl">

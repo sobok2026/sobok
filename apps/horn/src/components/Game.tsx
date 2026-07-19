@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { KO } from '@/content/ko'
-import { alienSpriteEntries } from '@/game/archetypes'
 import { AudioEngine } from '@/game/audio'
+import { personSpriteEntries } from '@/game/characters'
 import { CONFIG, MONSTER_KINDS } from '@/game/config'
 import { Game as Engine } from '@/game/engine'
 import { Renderer } from '@/game/render'
@@ -66,7 +66,7 @@ export default function Game() {
     const renderer = new Renderer()
     const sprites = new SpriteSheet()
     sprites.load([
-      ...alienSpriteEntries(),
+      ...personSpriteEntries(),
       ...MONSTER_KINDS.map((m) => ({ key: `monster-${m.key}`, url: `/characters/monster-${m.key}.webp` })),
     ])
     renderer.sprites = sprites

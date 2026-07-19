@@ -1,18 +1,19 @@
-import { ALIEN_ARCHETYPES } from './archetypes'
+import { PERSON_ROSTER } from './characters'
 import { BABY_EMOJI, CONFIG, MONSTER_KINDS } from './config'
 import { makeSeed, Rng } from './rng'
 import { pushOutOfWater } from './terrain'
 import type {
-  Alien,
   Baby,
   Cupid,
   Floater,
   GameCallbacks,
   Gem,
+  Gender,
   Grade,
   HudSnapshot,
   Monster,
   Particle,
+  Person,
   Phase,
   Projectile,
   Pulse,
@@ -154,7 +155,7 @@ export interface World {
   camera: Vec
   weapons: Weapons
   upgradeLevels: Record<UpgradeId, number>
-  aliens: Alien[]
+  people: Person[]
   monsters: Monster[]
   projectiles: Projectile[]
   pulses: Pulse[]
@@ -162,7 +163,7 @@ export interface World {
   babies: Baby[]
   particles: Particle[]
   floaters: Floater[]
-  spawnAlienAcc: number
+  spawnPersonAcc: number
   monsterTimer: number
 }
 
@@ -172,6 +173,7 @@ export class Game {
   private cb: GameCallbacks
   private rng: Rng
   private nextId = 1
+  private isPaused = false
 
   constructor(cb: GameCallbacks = {}) {
     this.cb = cb
@@ -227,7 +229,7 @@ export class Game {
         maxHp: 0,
         regen: 0,
       },
-      aliens: [],
+      people: [],
       monsters: [],
       projectiles: [],
       pulses: [],
@@ -235,7 +237,7 @@ export class Game {
       babies: [],
       particles: [],
       floaters: [],
-      spawnAlienAcc: 0,
+      spawnPersonAcc: 0,
       monsterTimer: CONFIG.monster.firstSpawn,
     }
   }
@@ -250,9 +252,9 @@ export class Game {
     }
     w.camera.x = w.cupid.x - width / 2
     w.camera.y = w.cupid.y - height / 2
-    if (w.phase === 'ready' && w.aliens.length === 0 && width > 0 && height > 0) {
-      const target = this.targetAlienCount()
-      for (let i = 0; i < target; i++) this.spawnAlien()
+    if (w.phase === 'ready' && w.people.length === 0 && width > 0 && height > 0) {
+      const target = this.targetPersonCount()
+      for (let i = 0; i < target; i++) this.spawnPerson()
     }
   }
 
@@ -263,12 +265,13 @@ export class Game {
   start(): void {
     this.rng = new Rng(makeSeed())
     this.nextId = 1
+    this.isPaused = false
     this.world = this.freshWorld()
     this.world.phase = 'playing'
     this.world.cupid.x = this.world.width / 2
     this.world.cupid.y = this.world.height / 2
-    const target = this.targetAlienCount()
-    for (let i = 0; i < target; i++) this.spawnAlien()
+    const target = this.targetPersonCount()
+    for (let i = 0; i < target; i++) this.spawnPerson()
     this.cb.onSfx?.('start')
     this.pushHud()
     this.cb.onPhase?.('playing')
@@ -292,58 +295,57 @@ export class Game {
     this.cb.onPhase?.('playing')
   }
 
-  private targetAlienCount(): number {
+  private targetPersonCount(): number {
     const { width, height, elapsed } = this.world
     const area = Math.max(1, width * height)
-    const base = Math.round((area * CONFIG.alien.regionFactor) / CONFIG.alien.areaPerAlien)
-    const ramp = Math.floor((elapsed / 60) * CONFIG.alien.growthPerMinute)
-    return clamp(base + ramp, CONFIG.alien.minCount, CONFIG.alien.maxCount)
+    const base = Math.round((area * CONFIG.person.regionFactor) / CONFIG.person.areaPerPerson)
+    const ramp = Math.floor((elapsed / 60) * CONFIG.person.growthPerMinute)
+    return clamp(base + ramp, CONFIG.person.minCount, CONFIG.person.maxCount)
   }
 
-  private spawnAlien(): Alien {
+  private spawnPerson(): Person {
     const w = this.world
-    const size = CONFIG.alien.size * this.rng.range(0.9, 1.15)
-    const golden = this.rng.chance(CONFIG.alien.goldenChance)
+    const size = CONFIG.person.size * this.rng.range(0.9, 1.15)
+    const golden = this.rng.chance(CONFIG.person.goldenChance)
     const ang = this.rng.range(0, Math.PI * 2)
-    const speed = CONFIG.alien.wanderSpeed
-    const arche = this.rng.pick(ALIEN_ARCHETYPES)
+    const speed = CONFIG.person.wanderSpeed
+    const gender: Gender = this.rng.chance(0.5) ? 'f' : 'm'
     // On the title screen fill the view; in play spawn around the player (some just off-screen).
     const vr = this.viewRadius()
     const rr = w.phase === 'ready' ? this.rng.range(vr * 0.1, vr * 0.85) : this.rng.range(vr * 0.6, vr * 1.3)
     const pang = this.rng.range(0, Math.PI * 2)
-    const alien: Alien = {
+    const person: Person = {
       id: this.nextId++,
       x: w.cupid.x + Math.cos(pang) * rr,
       y: w.cupid.y + Math.sin(pang) * rr,
       vx: Math.cos(ang) * speed,
       vy: Math.sin(ang) * speed,
-      emoji: arche.emoji,
-      archetype: arche.key,
+      characterId: this.rng.pick(PERSON_ROSTER[gender]),
       size,
       wobble: this.rng.range(0, Math.PI * 2),
       wobbleSpeed: this.rng.range(3.5, 6),
       state: 'wander',
       love: this.rng.range(0, 0.1),
-      gender: this.rng.chance(0.5) ? 'f' : 'm',
+      gender,
       golden,
       partnerId: -1,
       target: { x: 0, y: 0 },
       life: 0,
       intro: 0,
     }
-    this.world.aliens.push(alien)
-    return alien
+    this.world.people.push(person)
+    return person
   }
 
-  private byId(id: number): Alien | undefined {
-    for (const a of this.world.aliens) if (a.id === id) return a
+  private byId(id: number): Person | undefined {
+    for (const a of this.world.people) if (a.id === id) return a
     return undefined
   }
 
-  private nearestReady(a: Alien): Alien | undefined {
-    let best: Alien | undefined
-    let bestD = CONFIG.alien.readyDetect ** 2
-    for (const b of this.world.aliens) {
+  private nearestReady(a: Person): Person | undefined {
+    let best: Person | undefined
+    let bestD = CONFIG.person.readyDetect ** 2
+    for (const b of this.world.people) {
       if (b.state !== 'ready' || b.id === a.id || b.gender === a.gender) continue
       const d = (b.x - a.x) ** 2 + (b.y - a.y) ** 2
       if (d < bestD) {
@@ -385,8 +387,8 @@ export class Game {
       this.updateMonsters(dt)
     }
 
-    // Aliens drift on the title screen too (ambient backdrop).
-    this.updateAliens(dt)
+    // Persons drift on the title screen too (ambient backdrop).
+    this.updatePeople(dt)
 
     if (w.phase === 'playing') {
       this.resolveMeets()
@@ -427,9 +429,9 @@ export class Game {
     const w = this.world
     const c = w.cupid
 
-    // Aura passively woos wandering aliens in range.
+    // Aura passively woos wandering people in range.
     const r2 = w.weapons.auraRadius * w.weapons.auraRadius
-    for (const a of w.aliens) {
+    for (const a of w.people) {
       if (a.state !== 'wander') continue
       const dx = a.x - c.x
       const dy = a.y - c.y
@@ -479,7 +481,7 @@ export class Game {
       }
     }
     if (!best) {
-      for (const a of w.aliens) {
+      for (const a of w.people) {
         if (a.state !== 'wander') continue
         const d = (a.x - c.x) ** 2 + (a.y - c.y) ** 2
         if (d < bestD) {
@@ -531,7 +533,7 @@ export class Game {
       p.y += p.vy * dt
       p.life -= dt
       // (No screen-bounds cull — the map is infinite; `life` retires projectiles.)
-      // Monsters first (defense), then aliens (charm).
+      // Monsters first (defense), then people (charm).
       for (const m of w.monsters) {
         if (p.hit.has(m.id)) continue
         const rr = (m.size / 2 + CONFIG.arrow.size / 2) ** 2
@@ -546,7 +548,7 @@ export class Game {
         }
       }
       if (p.life <= 0) continue
-      for (const a of w.aliens) {
+      for (const a of w.people) {
         if (a.state !== 'wander' || p.hit.has(a.id)) continue
         const rr = (a.size / 2 + CONFIG.arrow.size / 2) ** 2
         if ((a.x - p.x) ** 2 + (a.y - p.y) ** 2 <= rr) {
@@ -576,7 +578,7 @@ export class Game {
           pl.hit.add(m.id)
         }
       }
-      for (const a of w.aliens) {
+      for (const a of w.people) {
         if (a.state !== 'wander' || pl.hit.has(a.id)) continue
         if ((a.x - pl.x) ** 2 + (a.y - pl.y) ** 2 <= r2) {
           a.love = clamp(a.love + CONFIG.pulse.charm, 0, 1)
@@ -654,7 +656,6 @@ export class Game {
     w.monsters.push({
       id: this.nextId++,
       kind: kind.key,
-      emoji: kind.emoji,
       x,
       y,
       hp,
@@ -666,10 +667,10 @@ export class Game {
     })
   }
 
-  private updateAliens(dt: number): void {
+  private updatePeople(dt: number): void {
     const w = this.world
-    const speed = CONFIG.alien.wanderSpeed
-    for (const a of w.aliens) {
+    const speed = CONFIG.person.wanderSpeed
+    for (const a of w.people) {
       a.wobble += a.wobbleSpeed * dt
       if (a.intro < 1) a.intro = clamp(a.intro + dt / 0.4, 0, 1)
 
@@ -683,14 +684,14 @@ export class Game {
         a.x += a.vx * dt
         a.y += a.vy * dt
       } else if (a.state === 'ready') {
-        // Looking for love — drift toward the nearest opposite-gender ready alien.
+        // Looking for love — drift toward the nearest opposite-gender ready person.
         const mate = this.nearestReady(a)
         if (mate) {
           const dx = mate.x - a.x
           const dy = mate.y - a.y
           const d = Math.hypot(dx, dy) || 1
-          a.vx = (dx / d) * CONFIG.alien.readySeekSpeed
-          a.vy = (dy / d) * CONFIG.alien.readySeekSpeed
+          a.vx = (dx / d) * CONFIG.person.readySeekSpeed
+          a.vy = (dy / d) * CONFIG.person.readySeekSpeed
         } else {
           a.vx += this.rng.range(-1, 1) * speed * 2 * dt
           a.vy += this.rng.range(-1, 1) * speed * 2 * dt
@@ -704,7 +705,7 @@ export class Game {
         const dx = a.target.x - a.x
         const dy = a.target.y - a.y
         const d = Math.hypot(dx, dy) || 1
-        const step = CONFIG.alien.seekSpeed * dt
+        const step = CONFIG.person.seekSpeed * dt
         if (d <= step) {
           a.x = a.target.x
           a.y = a.target.y
@@ -723,11 +724,11 @@ export class Game {
       }
     }
 
-    // Reap faded aliens and recycle wanderers that drifted far off-screen (they respawn near the player).
+    // Reap faded people and recycle wanderers that drifted far off-screen (they respawn near the player).
     const cull = (this.viewRadius() * 1.7) ** 2
     const cx = w.cupid.x
     const cy = w.cupid.y
-    w.aliens = w.aliens.filter((a) => {
+    w.people = w.people.filter((a) => {
       if (a.state === 'spent' && a.life <= 0) return false
       if ((a.state === 'wander' || a.state === 'ready') && (a.x - cx) ** 2 + (a.y - cy) ** 2 > cull) return false
       return true
@@ -736,12 +737,12 @@ export class Game {
 
   private resolveMeets(): void {
     const w = this.world
-    // Pair up ready aliens that are near each other.
-    for (const a of w.aliens) {
+    // Pair up ready people that are near each other.
+    for (const a of w.people) {
       if (a.state !== 'ready') continue
-      let mate: Alien | undefined
-      let bestD = CONFIG.alien.seekRadius * CONFIG.alien.seekRadius
-      for (const b of w.aliens) {
+      let mate: Person | undefined
+      let bestD = CONFIG.person.seekRadius * CONFIG.person.seekRadius
+      for (const b of w.people) {
         if (b.state !== 'ready' || b.id === a.id || b.gender === a.gender) continue
         const d = (b.x - a.x) ** 2 + (b.y - a.y) ** 2
         if (d < bestD) {
@@ -753,8 +754,8 @@ export class Game {
     }
 
     // Rushing pairs that have met bond.
-    const meet = CONFIG.alien.meetDistance
-    for (const a of w.aliens) {
+    const meet = CONFIG.person.meetDistance
+    for (const a of w.people) {
       if (a.state !== 'rushing' || a.id > a.partnerId) continue
       const b = this.byId(a.partnerId)
       if (!b || b.state !== 'rushing') continue
@@ -764,7 +765,7 @@ export class Game {
     }
   }
 
-  private startPair(a: Alien, b: Alien): void {
+  private startPair(a: Person, b: Person): void {
     const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
     a.state = 'rushing'
     b.state = 'rushing'
@@ -774,7 +775,7 @@ export class Game {
     b.target = mid
   }
 
-  private bond(a: Alien, b: Alien): void {
+  private bond(a: Person, b: Person): void {
     const w = this.world
     const r = this.rng
     const p = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
@@ -821,20 +822,20 @@ export class Game {
 
     a.state = 'bonding'
     b.state = 'bonding'
-    a.life = CONFIG.alien.bondTime
-    b.life = CONFIG.alien.bondTime
+    a.life = CONFIG.person.bondTime
+    b.life = CONFIG.person.bondTime
   }
 
   private spawnMaintenance(dt: number): void {
     const w = this.world
-    w.spawnAlienAcc += dt
-    if (w.spawnAlienAcc < CONFIG.alien.spawnInterval) return
-    w.spawnAlienAcc = 0
-    const target = this.targetAlienCount()
-    let live = w.aliens.reduce((n, a) => n + (a.state === 'spent' ? 0 : 1), 0)
+    w.spawnPersonAcc += dt
+    if (w.spawnPersonAcc < CONFIG.person.spawnInterval) return
+    w.spawnPersonAcc = 0
+    const target = this.targetPersonCount()
+    let live = w.people.reduce((n, a) => n + (a.state === 'spent' ? 0 : 1), 0)
     // Top up in a small burst so density holds even when the player sprints across the city.
-    for (let i = 0; i < CONFIG.alien.spawnBurst && live < target; i++) {
-      this.spawnAlien()
+    for (let i = 0; i < CONFIG.person.spawnBurst && live < target; i++) {
+      this.spawnPerson()
       live++
     }
   }

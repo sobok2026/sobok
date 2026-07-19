@@ -18,20 +18,20 @@ export const CONFIG = {
   /** Charm aura — the always-on zone that woos nearby residents and burns nearby monsters (love hurts them). */
   aura: {
     radius: 100,
-    /** Love added per second to aliens inside the aura. */
+    /** Love added per second to people inside the aura. */
     rate: 0.72,
     /** Damage per second to monsters inside the aura. */
     monsterDamage: 10,
   },
 
-  /** Auto-firing love arrow. Charms aliens, damages monsters. */
+  /** Auto-firing love arrow. Charms people, damages monsters. */
   arrow: {
     cooldown: 0.95,
     count: 1,
     speed: 440,
     life: 1.25,
     damage: 10,
-    /** Love added to an alien on hit. */
+    /** Love added to a person on hit. */
     charm: 0.5,
     pierce: 0,
     size: 16,
@@ -46,16 +46,16 @@ export const CONFIG = {
     charm: 0.55,
   },
 
-  alien: {
+  person: {
     minCount: 20,
     maxCount: 64,
-    areaPerAlien: 30000,
+    areaPerPerson: 30000,
     /** Maintained region is larger than the view (infinite map), so scale the target up. */
     regionFactor: 3.0,
-    /** Extra aliens per full minute of the run. */
+    /** Extra people per full minute of the run. */
     growthPerMinute: 8,
     wanderSpeed: 30,
-    /** A ready alien drifts toward the nearest opposite-gender ready alien within this range... */
+    /** A ready person drifts toward the nearest opposite-gender ready person within this range... */
     readyDetect: 460,
     readySeekSpeed: 95,
     /** ...and once two are this close they rush together and bond. */
@@ -63,9 +63,9 @@ export const CONFIG = {
     seekRadius: 300,
     meetDistance: 26,
     bondTime: 0.3,
-    size: 38,
+    size: 60,
     spawnInterval: 0.35,
-    /** Max aliens topped up per maintenance tick (keeps density up when the player is moving fast). */
+    /** Max people topped up per maintenance tick (keeps density up when the player is moving fast). */
     spawnBurst: 8,
     goldenChance: 0.05,
   },
@@ -116,16 +116,14 @@ export const CONFIG = {
   },
 } as const
 
-export const ALIEN_EMOJI = ['👽', '👾', '🤖', '🦑', '🐙', '👹', '🦠'] as const
 export const BABY_EMOJI = ['👶', '🍼', '🥚', '🐣'] as const
-export const GOLDEN_EMOJI = '👑'
 export const CUPID_EMOJI = '👼'
 
-/** The "저출산 원인" monsters — weak to love. */
+/** The "저출산 원인" monsters — weak to love. Art at public/characters/monster-<key>.webp. */
 export const MONSTER_KINDS = [
-  { key: 'rent', emoji: '🏠', hpMul: 1, speedMul: 1 },
-  { key: 'overtime', emoji: '💼', hpMul: 0.8, speedMul: 1.25 },
-  { key: 'tuition', emoji: '📚', hpMul: 1.4, speedMul: 0.82 },
+  { key: 'rent', hpMul: 1, speedMul: 1 },
+  { key: 'overtime', hpMul: 0.8, speedMul: 1.25 },
+  { key: 'tuition', hpMul: 1.4, speedMul: 0.82 },
 ] as const
 
 export type MonsterKey = (typeof MONSTER_KINDS)[number]['key']

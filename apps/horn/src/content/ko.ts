@@ -5,7 +5,7 @@ export const KO = {
   meta: {
     title: '도시 큐피드 — 도시 저출산 대작전',
     description:
-      '저출산 몬스터가 덮친 도시에서 큐피드가 되어 외계인들을 이어주고 인구를 최대한 늘리는 액션 아케이드 게임. 사랑으로 저출산을 물리쳐라! 👽💘',
+      '저출산 몬스터가 덮친 도시에서 큐피드가 되어 솔로들을 이어주고 인구를 최대한 늘리는 액션 아케이드 게임. 사랑으로 저출산을 물리쳐라! 💘',
   },
 
   brand: '도시 큐피드',
@@ -16,7 +16,7 @@ export const KO = {
     title: '작전 요령',
     steps: [
       '이동만 하면 큐피드가 알아서 사랑을 쏜다 (WASD·방향키·화면 드래그)',
-      '달아오른 외계인은 짝을 찾아가 출산한다',
+      '달아오른 솔로는 짝을 찾아가 아이를 낳는다',
       '집값·야근 몬스터는 피하고, 사랑으로 물리쳐라',
     ],
   },
@@ -44,8 +44,8 @@ export const KO = {
   },
 
   upgrades: {
-    auraRadius: { emoji: '💗', name: '매력 오라 확대', desc: '더 넓은 반경의 외계인이 반한다' },
-    auraRate: { emoji: '💞', name: '치명적 매력', desc: '오라 안 외계인이 더 빨리 달아오른다' },
+    auraRadius: { emoji: '💗', name: '매력 오라 확대', desc: '더 넓은 반경의 사람이 반한다' },
+    auraRate: { emoji: '💞', name: '치명적 매력', desc: '오라 안 사람이 더 빨리 달아오른다' },
     arrowCount: { emoji: '🏹', name: '큐피드 화살 +1', desc: '사랑의 화살을 한 발 더 쏜다' },
     arrowRate: { emoji: '⚡', name: '속사', desc: '화살 발사 속도가 빨라진다' },
     pulse: { emoji: '💓', name: '하트 펄스', desc: '주기적으로 사방에 사랑을 퍼뜨린다' },
@@ -74,12 +74,12 @@ export const KO = {
     shareButton: '결과 자랑하기',
     replayButton: '다시 도전',
     shareTitle: '도시 큐피드',
-    shareText: '나는 도시 큐피드로 {score}명을 늘리고 Lv.{level}까지 찍었다. 너의 출산율은? 👽💘',
+    shareText: '나는 도시 큐피드로 {score}명을 늘리고 Lv.{level}까지 찍었다. 너의 출산율은? 💘',
     copied: '링크를 복사했어요',
   },
 
   a11y: {
-    canvas: '외계인 매칭 액션 게임 화면',
+    canvas: '사람 매칭 액션 게임 화면',
     mute: '소리 끄기',
     unmute: '소리 켜기',
     levelup: '레벨 업 능력 선택',

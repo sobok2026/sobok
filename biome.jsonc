@@ -8,7 +8,7 @@
   "files": {
     // .gitignore is honored via vcs.useIgnoreFile. Only add tracked paths we still want skipped.
     // CSS is owned by Prettier — Biome's CSS parser can't read Tailwind v4 syntax (@theme / @custom-variant).
-    "includes": ["**", "!**/trash", "!apps/mobile/android", "!apps/mobile/ios", "!**/*.css"]
+    "includes": ["**", "!**/trash", "!apps/mobile/android", "!apps/mobile/ios", "!**/*.css", "!**/*.generated.ts"]
   },
   "formatter": {
     "indentStyle": "space",

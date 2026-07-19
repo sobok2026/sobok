@@ -1,6 +1,6 @@
 /**
- * Loads character WebP art and hands ready <img> elements to the renderer. Anything not yet present
- * (or still loading) returns null, so the renderer falls back to the emoji — the game always works.
+ * Loads character WebP art and hands ready <img> elements to the renderer. A key still decoding
+ * returns null, so the renderer simply skips it for that frame until the image is ready.
  */
 export class SpriteSheet {
   private imgs = new Map<string, HTMLImageElement>()

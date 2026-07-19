@@ -1,3 +1,4 @@
+import { PERSON_ART } from './characters'
 import { CONFIG, CUPID_EMOJI } from './config'
 import type { World } from './engine'
 import type { SpriteSheet } from './sprites'
@@ -53,7 +54,7 @@ export class Renderer {
     if (active) this.drawAura(ctx, world)
     this.drawPulses(ctx, world)
     this.drawGems(ctx, world)
-    this.drawAliens(ctx, world, t)
+    this.drawPeople(ctx, world, t)
     this.drawMonsters(ctx, world)
     if (active) this.drawCupid(ctx, world, t)
     this.drawProjectiles(ctx, world)
@@ -183,26 +184,21 @@ export class Renderer {
     ctx.restore()
   }
 
-  /** Draw the WebP sprite for `key` if it's loaded; otherwise fall back to the emoji glyph. */
-  private drawSprite(
-    ctx: CanvasRenderingContext2D,
-    key: string,
-    glyph: string,
-    x: number,
-    y: number,
-    size: number,
-    alpha = 1,
-  ): void {
+  /**
+   * Draw the WebP sprite for `key`, centered on (x, y) and contained within a `size * 1.5` box while
+   * keeping the art's native aspect ratio (portraits stay portrait). Skips if art hasn't decoded yet.
+   */
+  private drawSprite(ctx: CanvasRenderingContext2D, key: string, x: number, y: number, size: number, alpha = 1): void {
     const img = this.sprites?.get(key)
-    if (img) {
-      const box = size * 1.5
-      ctx.save()
-      ctx.globalAlpha = alpha
-      ctx.drawImage(img, x - box / 2, y - box / 2, box, box)
-      ctx.restore()
-    } else {
-      this.emoji(ctx, glyph, x, y, size, alpha)
-    }
+    if (!img) return
+    const box = size * 1.5
+    const fit = Math.min(box / img.naturalWidth, box / img.naturalHeight)
+    const w = img.naturalWidth * fit
+    const h = img.naturalHeight * fit
+    ctx.save()
+    ctx.globalAlpha = alpha
+    ctx.drawImage(img, x - w / 2, y - h / 2, w, h)
+    ctx.restore()
   }
 
   private drawAura(ctx: CanvasRenderingContext2D, world: World): void {
@@ -239,9 +235,9 @@ export class Renderer {
     this.emoji(ctx, CUPID_EMOJI, c.x, c.y, CONFIG.cupid.size * 1.1, blink)
   }
 
-  private drawAliens(ctx: CanvasRenderingContext2D, world: World, t: number): void {
+  private drawPeople(ctx: CanvasRenderingContext2D, world: World, t: number): void {
     const m = this.reducedMotion ? 0 : 1
-    for (const a of world.aliens) {
+    for (const a of world.people) {
       const bob = Math.sin(a.wobble) * 3 * m
       let scale = easeOutBack(a.intro)
       if (a.state === 'bonding') scale *= 1 + Math.sin(t * 30) * 0.08 * m
@@ -279,15 +275,10 @@ export class Renderer {
         this.emoji(ctx, '💗', a.x + size * 0.32, y - size * 0.6, size * 0.42 * pulse)
       }
 
-      this.drawSprite(
-        ctx,
-        `alien-${a.archetype}`,
-        a.emoji,
-        a.x,
-        y,
-        size,
-        a.state === 'spent' ? Math.max(0, a.life / 0.4) : 1,
-      )
+      // Heart portrait once fully charmed — held while seeking (ready) and dashing to a partner (rushing).
+      const art = a.state === 'ready' || a.state === 'rushing' ? 'heart' : 'base'
+      const spriteKey = PERSON_ART[a.characterId][art]
+      this.drawSprite(ctx, spriteKey, a.x, y, size, a.state === 'spent' ? Math.max(0, a.life / 0.4) : 1)
 
       // Gender pip so you can read who pairs with whom.
       if (a.state !== 'spent') {
@@ -311,7 +302,7 @@ export class Renderer {
       ctx.arc(mo.x, mo.y, size, 0, TAU)
       ctx.fill()
 
-      this.drawSprite(ctx, `monster-${mo.kind}`, mo.emoji, mo.x, mo.y, size)
+      this.drawSprite(ctx, `monster-${mo.kind}`, mo.x, mo.y, size)
 
       if (mo.hitFlash > 0) {
         ctx.save()
@@ -354,9 +345,17 @@ export class Renderer {
   }
 
   private drawGems(ctx: CanvasRenderingContext2D, world: World): void {
-    ctx.fillStyle = 'rgba(255, 150, 200, 0.95)'
     for (const g of world.gems) {
-      drawHeart(ctx, g.x, g.y, 7)
+      // Soft glow so the pickup hearts read against the dark city.
+      const glow = ctx.createRadialGradient(g.x, g.y, 0, g.x, g.y, 20)
+      glow.addColorStop(0, 'rgba(255, 120, 180, 0.55)')
+      glow.addColorStop(1, 'rgba(255, 120, 180, 0)')
+      ctx.fillStyle = glow
+      ctx.beginPath()
+      ctx.arc(g.x, g.y, 20, 0, TAU)
+      ctx.fill()
+      ctx.fillStyle = 'rgba(255, 165, 205, 0.98)'
+      drawHeart(ctx, g.x, g.y, 15)
     }
   }
 

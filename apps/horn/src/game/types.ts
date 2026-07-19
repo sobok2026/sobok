@@ -2,7 +2,10 @@ import type { MonsterKey } from './config'
 
 export type Phase = 'ready' | 'playing' | 'levelup' | 'result'
 
-export type AlienState = 'wander' | 'ready' | 'rushing' | 'bonding' | 'spent'
+export type PersonState = 'wander' | 'ready' | 'rushing' | 'bonding' | 'spent'
+
+/** Couples form only between opposite genders. */
+export type Gender = 'f' | 'm'
 
 export type ToastKind = 'twins' | 'triplets' | 'golden' | 'combo' | 'levelup'
 
@@ -37,24 +40,21 @@ export interface Cupid {
   facing: number
 }
 
-export interface Alien {
+export interface Person {
   id: number
   x: number
   y: number
   vx: number
   vy: number
-  /** Fallback glyph when the sprite art isn't loaded. */
-  emoji: string
-  /** Archetype key → public/characters/alien-<archetype>.webp. */
-  archetype: string
+  /** Character identity chosen at spawn (e.g. 'girl-3'); render picks the art state (base/heart). */
+  characterId: string
   size: number
   wobble: number
   wobbleSpeed: number
-  state: AlienState
-  /** 0..1 — filled by the aura and love arrows; at 1 the alien goes looking for a partner. */
+  state: PersonState
+  /** 0..1 — filled by the aura and love arrows; at 1 the person goes looking for a partner. */
   love: number
-  /** Couples form only between opposite genders. */
-  gender: 'f' | 'm'
+  gender: Gender
   golden: boolean
   partnerId: number
   target: Vec
@@ -65,7 +65,6 @@ export interface Alien {
 export interface Monster {
   id: number
   kind: MonsterKey
-  emoji: string
   x: number
   y: number
   hp: number

@@ -1,37 +1,39 @@
 # 캐릭터 아트 (WebP)
 
-이 폴더에 아래 파일을 넣으면 게임이 이모지 대신 그 이미지를 씁니다.
-파일이 없으면 자동으로 이모지로 폴백하므로 하나씩 채워 넣어도 됩니다.
+게임이 캔버스에 그리는 캐릭터 이미지입니다. 이모지 폴백은 없으니 아래 파일이 모두 있어야 합니다.
 
 ## 스펙
 
 - 포맷: **WebP** (`.webp`), 알파(투명 배경) 필수
-- 크기: **512×512** 정사각형 권장 (캔버스에서 자동 축소)
+- 비율: 자유 (렌더러가 원본 비율을 유지한 채 축소해 그립니다. 인물은 3:4 세로 권장)
 - 구도: 캐릭터를 프레임 중앙, 여백 살짝, 정면 상반신 또는 전신
 - 스타일: 서로 일관된 아트 스타일 (같은 화가가 그린 느낌)
 
-## 외계인 (사람) — `alien-<key>.webp`
+## 사람 — `<성별>-<번호>-<상태>.webp`
 
-| 파일                   | 컨셉            |
-| ---------------------- | --------------- |
-| `alien-beautiful.webp` | 아름다운        |
-| `alien-cute.webp`      | 귀여운          |
-| `alien-cool.webp`      | 쿨한 / 시크한   |
-| `alien-ugly.webp`      | 못생긴          |
-| `alien-chubby.webp`    | 뚱뚱한          |
-| `alien-macho.webp`     | 마초            |
-| `alien-nerd.webp`      | 너드 / 안경잡이 |
-| `alien-hipster.webp`   | 힙스터          |
+한 캐릭터(정체성)는 **상태별 이미지**를 가집니다. 파일명은 `<girl|man>-<n>-<state>.webp`.
+
+- **정체성:** `girl-<n>`(여성 f) / `man-<n>`(남성 m). 스폰 시 성별에 맞는 캐릭터를 무작위로 뽑아 고정합니다.
+- **상태(state):** 아래 둘은 **캐릭터마다 필수** — 하나라도 없으면 빌드가 에러로 알려줍니다(폴백 없음).
+
+| 상태    | 파일 예시           | 언제 보이나                                  |
+| ------- | ------------------- | -------------------------------------------- |
+| `base`  | `girl-3-base.webp`  | 평상시 (기본)                                |
+| `heart` | `girl-3-heart.webp` | 사랑이 가득 차 짝을 찾아 나설 때(ready 상태) |
+
+### 에셋 추가 (zero-config)
+
+- 파일만 넣으면 됩니다. `<girl|man>-<n>-<state>.webp` 규칙만 지키면 번호는 몇이든(연속이 아니어도) 자동 인식됩니다. 새 캐릭터는 `base`·`heart` **둘 다** 넣어야 합니다.
+- `dev`/`build`가 `scripts/gen-characters.mjs`로 이 폴더를 스캔해 `src/game/characters.generated.ts`(자동 생성, 수정 금지)를 갱신합니다. 코드 수정 불필요.
+- 이미 켜져 있는 `dev` 서버라면 파일 추가 후 재시작해야 스캔이 다시 돕니다. 수동 갱신은 `bun run gen:characters`.
+- 상태를 더 늘리려면(예: `bonding`) `scripts/gen-characters.mjs`의 `REQUIRED_STATES`에 추가하고 모든 캐릭터에 해당 파일을 채우면 됩니다.
 
 ## 적 (저출산 몬스터) — `monster-<key>.webp`
+
+몬스터는 파일마다 게임 스탯(체력·속도)이 달라서 아트만으로는 부족합니다. `src/game/config.ts`의 `MONSTER_KINDS`에 키를 추가하고 같은 키로 아트를 넣으세요.
 
 | 파일                    | 컨셉     |
 | ----------------------- | -------- |
 | `monster-rent.webp`     | 집값     |
 | `monster-overtime.webp` | 야근     |
 | `monster-tuition.webp`  | 사교육비 |
-
-## 추가/변경
-
-- 아키타입을 늘리려면 `src/game/archetypes.ts`의 `ALIEN_ARCHETYPES`에 `{ key, label, emoji }`를 추가하고 같은 `key`로 `alien-<key>.webp`를 넣으면 됩니다.
-- 적을 늘리려면 `src/game/config.ts`의 `MONSTER_KINDS`에 추가.
