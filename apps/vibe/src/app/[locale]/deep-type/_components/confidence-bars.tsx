@@ -2,17 +2,15 @@ import { cn } from '@/utils/cn'
 
 import type { ConfidenceBar } from '../_lib/types'
 
-// One labeled group of per-axis confidence bars — shared by the final report and the midpoint Inner
-// reveal. A borderline axis renders a muted bar + "거의 반반" instead of a confident percentage.
-export function ConfidenceBars({
-  bars,
-  borderlineLabel,
-  title,
-}: {
+type ConfidenceBarsProps = {
   bars: readonly ConfidenceBar[]
   borderlineLabel: string
   title: string
-}) {
+}
+
+// One labeled group of per-axis confidence bars — shared by the final report and the midpoint Inner
+// reveal. A borderline axis renders a muted bar + "거의 반반" instead of a confident percentage.
+export function ConfidenceBars({ bars, borderlineLabel, title }: ConfidenceBarsProps) {
   return (
     <div className="mt-5">
       <p className="font-bold text-page-ink/48 text-xs">{title}</p>

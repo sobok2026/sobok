@@ -211,11 +211,25 @@ export type AxisContent = {
   poles: Record<string, { description: string; label: string }>
 }
 
+export type DeepTypeMetadata = {
+  description: string
+  title: string
+}
+
+export type GemContent = {
+  gemName: string
+  gemWhy: string
+  grow: string
+  keyword: string
+  lack: string
+  love: string
+  modifier: string
+  narrative: string
+  read: string
+}
+
 export type DeepTypeContent = {
-  metadata: {
-    description: string
-    title: string
-  }
+  metadata: DeepTypeMetadata
   ui: DeepTypeUiText
   personaQuestions: Record<string, ItemContent>
   innerQuestions: Record<string, ItemContent>
@@ -223,20 +237,7 @@ export type DeepTypeContent = {
   axes: Record<AxisId, AxisContent>
   base: Record<PersonaCode, { ident: string; keywords: readonly [string, string]; noun: string }>
   hiddenDescription: Record<InnerCode, string>
-  gem: Record<
-    GemCode,
-    {
-      gemName: string
-      gemWhy: string
-      grow: string
-      keyword: string
-      lack: string
-      love: string
-      modifier: string
-      narrative: string
-      read: string
-    }
-  >
+  gem: Record<GemCode, GemContent>
   // Keyed by GemCode (not the localized gem display name) so lookups stay stable across locales.
   gemDescription: Record<GemCode, string>
   gapOuterInner: Record<string, string>
@@ -288,30 +289,36 @@ export type PersonaMismatch = {
   measuredLabel: string
 }
 
+export type DeepReportCode = {
+  gem: GemCode
+  inner: InnerCode
+  outer: PersonaCode
+}
+
+export type DeepReportConfidence = {
+  gem: readonly ConfidenceBar[]
+  inner: readonly ConfidenceBar[]
+  persona: readonly ConfidenceBar[]
+}
+
+export type DeepReportSections = {
+  avoid: readonly string[]
+  gap: { lines: readonly { gap: string; prediction: string }[]; syncRate: number | null; transparent: boolean }
+  goals: string
+  lifeAttitude: { desc: string; name: string; tip: string }
+  love: { note: string; text: string }
+  match: { clashGem: string; matchGem: string }
+  recharge: string
+  social: { note?: string; text: string }
+  stress: { aid: string; base: string; dont: string; sign: string }
+  summary: { gemName: string; innerNoun: string; outerNoun: string }
+  thisWeek: readonly string[]
+  weakSpot: string
+}
+
 export type DeepReport = {
-  code: {
-    gem: GemCode
-    inner: InnerCode
-    outer: PersonaCode
-  }
-  confidence: {
-    gem: readonly ConfidenceBar[]
-    inner: readonly ConfidenceBar[]
-    persona: readonly ConfidenceBar[]
-  }
+  code: DeepReportCode
+  confidence: DeepReportConfidence
   mismatches: readonly PersonaMismatch[]
-  sections: {
-    avoid: readonly string[]
-    gap: { lines: readonly { gap: string; prediction: string }[]; syncRate: number | null; transparent: boolean }
-    goals: string
-    lifeAttitude: { desc: string; name: string; tip: string }
-    love: { note: string; text: string }
-    match: { clashGem: string; matchGem: string }
-    recharge: string
-    social: { note?: string; text: string }
-    stress: { aid: string; base: string; dont: string; sign: string }
-    summary: { gemName: string; innerNoun: string; outerNoun: string }
-    thisWeek: readonly string[]
-    weakSpot: string
-  }
+  sections: DeepReportSections
 }

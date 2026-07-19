@@ -46,19 +46,15 @@ export type CoupleTypeResult = {
   watchOut: string
 }
 
+export type CoupleTypeQuestionOption = {
+  label: string
+  value: AxisValue
+}
+
 export type CoupleTypeQuestion = {
   axis: Axis
   id: string
-  options: readonly [
-    {
-      label: string
-      value: AxisValue
-    },
-    {
-      label: string
-      value: AxisValue
-    },
-  ]
+  options: readonly [CoupleTypeQuestionOption, CoupleTypeQuestionOption]
   question: string
 }
 
@@ -87,12 +83,14 @@ export type CoupleTypeUiText = {
   watchOutTitle: string
 }
 
+export type CoupleTypeMetadata = {
+  description: string
+  title: string
+}
+
 export type CoupleTypeContent = {
   axisDefinitions: Record<Axis, AxisDefinition>
-  metadata: {
-    description: string
-    title: string
-  }
+  metadata: CoupleTypeMetadata
   questions: readonly CoupleTypeQuestion[]
   results: Record<CoupleTypeCode, CoupleTypeResult>
   ui: CoupleTypeUiText

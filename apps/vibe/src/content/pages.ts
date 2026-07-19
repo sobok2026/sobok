@@ -32,12 +32,14 @@ export type ContactPage = InfoPage & {
   channels: ContactChannel[]
 }
 
+export type InfoNav = {
+  home: string
+  about: string
+  contact: string
+}
+
 export type InfoContent = {
-  nav: {
-    home: string
-    about: string
-    contact: string
-  }
+  nav: InfoNav
   about: InfoPage
   contact: ContactPage
 }

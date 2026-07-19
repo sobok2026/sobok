@@ -88,22 +88,14 @@ export type GyeolResult = {
   weaveIndex: number
 }
 
+export type GyeolQuestionOption = {
+  id: GyeolOptionId
+  label: string
+}
+
 export type GyeolQuestion = {
   id: GyeolQuestionId
-  options: readonly [
-    {
-      id: GyeolOptionId
-      label: string
-    },
-    {
-      id: GyeolOptionId
-      label: string
-    },
-    {
-      id: GyeolOptionId
-      label: string
-    },
-  ]
+  options: readonly [GyeolQuestionOption, GyeolQuestionOption, GyeolQuestionOption]
   question: string
 }
 
@@ -158,19 +150,20 @@ export type GyeolUiText = {
   shareTitle: string
 }
 
+export type GyeolAxisContent = {
+  description: string
+  label: string
+}
+
+export type GyeolMetadata = {
+  description: string
+  title: string
+}
+
 export type GyeolContent = {
-  axes?: Record<
-    GyeolAxisId,
-    {
-      description: string
-      label: string
-    }
-  >
+  axes?: Record<GyeolAxisId, GyeolAxisContent>
   grades: Record<GyeolGrade, GyeolGradeContent>
-  metadata: {
-    description: string
-    title: string
-  }
+  metadata: GyeolMetadata
   questions: readonly GyeolQuestion[]
   results: Record<GyeolResultCode, GyeolResultContent>
   ui: GyeolUiText

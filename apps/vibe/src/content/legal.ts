@@ -16,13 +16,15 @@ export type LegalDoc = {
   sections: LegalSection[]
 }
 
+export type LegalNav = {
+  privacy: string
+  terms: string
+}
+
 export type LegalContent = {
   updatedLabel: string
   contactLabel: string
-  nav: {
-    privacy: string
-    terms: string
-  }
+  nav: LegalNav
   privacy: LegalDoc
   terms: LegalDoc
 }
