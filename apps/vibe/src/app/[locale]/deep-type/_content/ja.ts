@@ -1,669 +1,385 @@
 import type { DeepTypeContent } from '../_lib/types'
 
-// Structural mirror of ko.ts, kept key-for-key in sync — translation is intentionally deferred.
-// See content.test.ts for the parity check that enforces this.
-export const deepTypeContent: DeepTypeContent = {
+// Awaiting translation (task: localize). Structural stub matching ko (canonical); every copy string is
+// blank until localized. Do not hand-edit — regenerate or replace wholesale with the translated content.
+export const deepTypeContent = {
   metadata: {
     description: '',
     title: '',
   },
   ui: {
+    analyzingBody: '',
+    analyzingTitle: '',
     claimSubtitle: '',
     claimTitle: '',
-    deepIntroBody: '',
-    deepIntroCta: '',
-    deepIntroTitle: '',
+    claimVerifyBody: '',
+    claimVerifyCta: '',
+    claimVerifyTitle: '',
+    confidenceBorderlineLabel: '',
+    confidenceIntro: '',
+    confidenceTitle: '',
+    gapRevealCta: '',
+    gapRevealEyebrow: '',
+    gapRevealGapLine: '',
+    gapRevealInnerLead: '',
+    gapRevealPull: '',
+    innerIntroBody: '',
+    innerIntroCta: '',
+    innerIntroTitle: '',
     landingCta: '',
     landingNote: '',
+    landingStepGemDesc: '',
+    landingStepInnerDesc: '',
+    landingStepOuterDesc: '',
+    layerGemFull: '',
+    layerGemShort: '',
+    layerInner: '',
+    layerPersona: '',
+    matchClashLabel: '',
+    matchFitLabel: '',
+    selfAloneTitle: '',
+    stressAidLabel: '',
+    stressDontLabel: '',
+    stressSignLabel: '',
+    summaryTemplate: '',
+    syncRateLabel: '',
     landingSubtitle: '',
     landingTitle: '',
     loveNoteAutonomous: '',
     loveNoteConnected: '',
-    part2IntroBody: '',
-    part2IntroCta: '',
-    part2IntroTitle: '',
-    paywallCta: '',
-    paywallFeatureList: ['', '', '', ''],
-    paywallSubtitle: '',
-    paywallTitle: '',
-    quickIntroBody: '',
-    quickIntroCta: '',
-    quickIntroTitle: '',
-    quickShareTextTemplate: '',
+    measureIntroBody: '',
+    measureIntroCta: '',
+    measureIntroTitle: '',
+    mismatchNote: '',
+    mismatchTitle: '',
+    personaRevealDiff: '',
+    personaRevealEyebrow: '',
+    personaRevealMeasured: '',
+    personaRevealSame: '',
+    reportDisclaimer: '',
+    reportRestartCta: '',
+    reportShareCta: '',
+    reportShareText: '',
     socialBatteryNoteExtroverted: '',
     socialBatteryNoteIntroverted: '',
     transparentTypeNote: '',
   },
   personaQuestions: {
-    'persona-0': {
+    'persona-EI-0': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'persona-1': {
+    'persona-EI-1': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'persona-2': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'persona-3': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'persona-4': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'persona-5': {
+    'persona-EI-2': {
       scene: '',
       text: '',
       lo: '',
       hi: '',
     },
-    'persona-6': {
+    'persona-EI-3': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'persona-7': {
+    'persona-EI-4': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'persona-SN-0': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'persona-SN-1': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'persona-SN-2': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'persona-SN-3': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'persona-SN-4': {
       scene: '',
       text: '',
       lo: '',
       hi: '',
     },
-    'persona-8': {
+    'persona-TF-0': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'persona-9': {
+    'persona-TF-1': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'persona-10': {
+    'persona-TF-2': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'persona-11': {
+    'persona-TF-3': {
+      scene: '',
+      text: '',
+      lo: '',
+      hi: '',
+    },
+    'persona-TF-4': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'persona-JP-0': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'persona-JP-1': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'persona-JP-2': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'persona-JP-3': {
+      scene: '',
+      text: '',
+      lo: '',
+      hi: '',
+    },
+    'persona-JP-4': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
   },
   innerQuestions: {
-    'inner-quick-letter-E': {
+    'inner-EI-0': {
       scene: '',
       text: '',
-      options: ['', '', ''],
+      options: ['', '', '', ''],
     },
-    'inner-quick-letter-I': {
+    'inner-EI-1': {
       scene: '',
       text: '',
-      options: ['', '', ''],
+      options: ['', '', '', ''],
     },
-    'inner-quick-letter-S': {
+    'inner-EI-2': {
       scene: '',
       text: '',
-      options: ['', '', ''],
+      options: ['', '', '', ''],
     },
-    'inner-quick-letter-N': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-quick-letter-T': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-quick-letter-F': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-quick-letter-J': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-quick-letter-P': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-quick-neutral-0': {
+    'inner-EI-3': {
       scene: '',
       text: '',
       lo: '',
       hi: '',
     },
-    'inner-quick-neutral-1': {
+    'inner-EI-4': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'inner-quick-neutral-2': {
+    'inner-SN-0': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'inner-quick-neutral-3': {
+    'inner-SN-1': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'inner-quick-fallback-0': {
+    'inner-SN-2': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'inner-SN-3': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'inner-SN-4': {
       scene: '',
       text: '',
       lo: '',
       hi: '',
     },
-    'inner-quick-fallback-1': {
+    'inner-TF-0': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'inner-quick-fallback-2': {
+    'inner-TF-1': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'inner-quick-fallback-3': {
+    'inner-TF-2': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'inner-quick-fallback-4': {
+    'inner-TF-3': {
+      scene: '',
+      text: '',
+      lo: '',
+      hi: '',
+    },
+    'inner-TF-4': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'inner-quick-fallback-5': {
+    'inner-JP-0': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'inner-quick-fallback-6': {
+    'inner-JP-1': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'inner-quick-fallback-7': {
+    'inner-JP-2': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'inner-deep-E-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-E-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-E-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-E-3': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-E-4': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-E-5': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-I-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-I-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-I-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-I-3': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-I-4': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-I-5': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-S-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-S-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-S-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-S-3': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-S-4': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-S-5': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-N-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-N-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-N-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-N-3': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-N-4': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-N-5': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-T-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-T-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-T-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-T-3': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-T-4': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-T-5': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-F-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-F-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-F-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-F-3': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-F-4': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-F-5': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-J-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-J-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-J-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-J-3': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-J-4': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-J-5': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-P-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-P-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-P-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-P-3': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-P-4': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-deep-P-5': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'inner-probe-NF-0': {
+    'inner-JP-3': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'inner-probe-NF-1': {
+    'inner-JP-4': {
       scene: '',
       text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-NF-2': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-NF-3': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-NT-0': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-NT-1': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-NT-2': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-NT-3': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-SJ-0': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-SJ-1': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-SJ-2': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-SJ-3': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-SP-0': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-SP-1': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-SP-2': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
-    },
-    'inner-probe-SP-3': {
-      scene: '',
-      text: '',
-      options: ['', '', '', ''],
+      lo: '',
+      hi: '',
     },
   },
   gemQuestions: {
-    'gem-quick-0': {
+    'gem-RM-0': {
       scene: '',
       text: '',
       lo: '',
       hi: '',
     },
-    'gem-quick-1': {
+    'gem-RM-1': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'gem-quick-2': {
+    'gem-RM-2': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'gem-RM-3': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'gem-RM-4': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'gem-OA-0': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'gem-OA-1': {
       scene: '',
       text: '',
       lo: '',
       hi: '',
     },
-    'gem-quick-3': {
+    'gem-OA-2': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'gem-deep-group-NF-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-NF-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-NF-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-NF-3': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-NT-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-NT-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-NT-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-NT-3': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-SJ-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-SJ-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-SJ-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-SJ-3': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-SP-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-SP-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-SP-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-group-SP-3': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-extra-0': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-extra-1': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-extra-2': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-extra-3': {
+    'gem-OA-3': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'gem-deep-extra-4': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-extra-5': {
-      scene: '',
-      text: '',
-      options: ['', '', ''],
-    },
-    'gem-deep-extra-6': {
+    'gem-OA-4': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
     },
-    'gem-deep-extra-7': {
+    'gem-VH-0': {
+      scene: '',
+      text: '',
+      lo: '',
+      hi: '',
+    },
+    'gem-VH-1': {
       scene: '',
       text: '',
       options: ['', '', '', ''],
+    },
+    'gem-VH-2': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'gem-VH-3': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'gem-VH-4': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'gem-UO-0': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'gem-UO-1': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'gem-UO-2': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'gem-UO-3': {
+      scene: '',
+      text: '',
+      options: ['', '', '', ''],
+    },
+    'gem-UO-4': {
+      scene: '',
+      text: '',
+      lo: '',
+      hi: '',
     },
   },
   axes: {
@@ -771,12 +487,6 @@ export const deepTypeContent: DeepTypeContent = {
         },
       },
     },
-  },
-  gemGroupFlavor: {
-    NF: '',
-    NT: '',
-    SJ: '',
-    SP: '',
   },
   base: {
     ISTJ: {

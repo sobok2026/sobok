@@ -31,9 +31,9 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
         <p className="mt-5 max-w-xl text-page-ink/66 leading-8">{content.ui.landingSubtitle}</p>
 
         <div className="mt-8 grid gap-3 sm:grid-cols-3">
-          <StepCard eyebrow="STEP 1" label="Persona" description="이미 아는 유형. 입력만 하면 돼요" />
-          <StepCard eyebrow="STEP 2" label="Inner" description="혼자일 때의 나. 맞춤 문항" />
-          <StepCard eyebrow="STEP 3" label="보석" description="내 결핍이 만든 보석" />
+          <StepCard eyebrow="STEP 1" label="Persona" description={content.ui.landingStepOuterDesc} />
+          <StepCard eyebrow="STEP 2" label="Inner" description={content.ui.landingStepInnerDesc} />
+          <StepCard eyebrow="STEP 3" label={content.ui.layerGemShort} description={content.ui.landingStepGemDesc} />
         </div>
 
         <button

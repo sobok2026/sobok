@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { buildLocalizedMetadata } from '@/i18n/metadata'
+import JsonLd, { webApplicationGraph } from '@/lib/JsonLd'
 
 import { CoupleGyeolFlow } from './_components/couple-rarity-screen'
 import { getGyeolContent } from './_lib/content'
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/couple-g
 
   const content = await getGyeolContent(locale)
 
-  return await buildLocalizedMetadata({
+  return buildLocalizedMetadata({
     description: content.metadata.description,
     locale,
     pathname: '/couple-gyeol',
@@ -34,9 +35,18 @@ export default async function CoupleGyeolPage({ params }: PageProps<'/[locale]/c
   const content = await getGyeolContent(locale)
 
   return (
-    <Suspense fallback={<GyeolPageFallback />}>
-      <CoupleGyeolFlow content={content} locale={locale} />
-    </Suspense>
+    <>
+      <JsonLd
+        data={webApplicationGraph(locale, {
+          description: content.metadata.description,
+          name: content.metadata.title,
+          path: 'couple-gyeol',
+        })}
+      />
+      <Suspense fallback={<GyeolPageFallback />}>
+        <CoupleGyeolFlow content={content} locale={locale} />
+      </Suspense>
+    </>
   )
 }
 

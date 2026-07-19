@@ -31,6 +31,46 @@ export function siteGraph(locale: Locale) {
   }
 }
 
+type ToolPage = {
+  path: string
+  name: string
+  description: string
+}
+
+// WebApplication + BreadcrumbList for a test tool page. Each test is a free,
+// self-contained interactive app, so it carries its own WebApplication entity
+// plus a breadcrumb back to the site root for breadcrumb rich results.
+export function webApplicationGraph(locale: Locale, { path, name, description }: ToolPage) {
+  const url = `${ORIGIN}/${locale}/${path}`
+  return {
+    '@context': CONTEXT,
+    '@graph': [
+      {
+        '@type': 'WebApplication',
+        '@id': `${url}#webapp`,
+        name,
+        description,
+        url,
+        applicationCategory: 'EntertainmentApplication',
+        operatingSystem: 'Web',
+        inLanguage: LOCALE_LANGUAGE_TAGS[locale],
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'KRW' },
+        isPartOf: { '@id': WEBSITE_ID },
+        publisher: { '@id': ORGANIZATION_ID },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${url}#breadcrumb`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: SITE_NAME[locale], item: `${ORIGIN}/${locale}` },
+          { '@type': 'ListItem', position: 2, name, item: url },
+        ],
+      },
+    ],
+  }
+}
+
 export default function JsonLd({ data }: { data: object }) {
   return (
     <script

@@ -3,40 +3,27 @@
 import { ArrowLeft } from '@mynaui/icons-react'
 import { useState } from 'react'
 import { cn } from '@/utils/cn'
-import { interpolate, type TemplateTokens } from '../_lib/template'
-import type { Answer, PickQuestionContent, QuestionDef, SliderQuestionContent } from '../_lib/types'
-import { isSliderQuestion } from '../_lib/types'
+
+import type { ChoiceItemContent, Item, ItemAnswer, ItemContent, ScaleItemContent } from '../_lib/types'
+import { isScaleItem } from '../_lib/types'
 
 type QuizViewProps = {
-  content: Record<string, PickQuestionContent | SliderQuestionContent>
-  onAnswer: (answer: Answer) => void
+  content: Record<string, ItemContent>
+  item: Item
+  onAnswer: (answer: ItemAnswer) => void
   onBack?: () => void
   progressLabel: string
   progressPercent: number
-  question: QuestionDef
-  tokens: TemplateTokens
 }
 
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
-export function QuizView({
-  content,
-  onAnswer,
-  onBack,
-  progressLabel,
-  progressPercent,
-  question,
-  tokens,
-}: QuizViewProps) {
-  const [sliderValue, setSliderValue] = useState(50)
-  const questionContent = content[question.id]
+export function QuizView({ content, item, onAnswer, onBack, progressLabel, progressPercent }: QuizViewProps) {
+  const itemContent = content[item.id]
 
-  if (!questionContent) {
+  if (!itemContent) {
     return null
   }
-
-  const scene = questionContent.scene ? interpolate(questionContent.scene, tokens) : undefined
-  const text = interpolate(questionContent.text, tokens)
 
   return (
     <section className="flex flex-1 flex-col justify-center px-safe py-10 sm:py-16">
@@ -52,22 +39,18 @@ export function QuizView({
         </div>
 
         <div className="rounded-4xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
-          {scene ? <p className="font-bold text-page-accent text-sm">{scene}</p> : null}
-          <h1 className="mt-2 font-black text-2xl leading-snug break-keep">{text}</h1>
+          {itemContent.scene ? <p className="font-bold text-page-accent text-sm">{itemContent.scene}</p> : null}
+          <h1 className="mt-2 break-keep font-black text-2xl leading-snug">{itemContent.text}</h1>
 
-          {isSliderQuestion(question) ? (
-            <SliderAnswer
-              content={questionContent as SliderQuestionContent}
-              onSubmit={() => onAnswer({ kind: 'slider', questionId: question.id, value: sliderValue })}
-              onValueChange={setSliderValue}
-              tokens={tokens}
-              value={sliderValue}
+          {isScaleItem(item) ? (
+            <ScaleAnswer
+              content={itemContent as ScaleItemContent}
+              onSubmit={(value) => onAnswer({ itemId: item.id, kind: 'scale', value })}
             />
           ) : (
-            <PickAnswer
-              content={questionContent as PickQuestionContent}
-              onSelect={(optionIndex) => onAnswer({ kind: 'pick', optionIndex, questionId: question.id })}
-              tokens={tokens}
+            <ChoiceAnswer
+              content={itemContent as ChoiceItemContent}
+              onSelect={(optionIndex) => onAnswer({ itemId: item.id, kind: 'choice', optionIndex })}
             />
           )}
         </div>
@@ -90,15 +73,7 @@ export function QuizView({
   )
 }
 
-function PickAnswer({
-  content,
-  onSelect,
-  tokens,
-}: {
-  content: PickQuestionContent
-  onSelect: (optionIndex: number) => void
-  tokens: TemplateTokens
-}) {
+function ChoiceAnswer({ content, onSelect }: { content: ChoiceItemContent; onSelect: (optionIndex: number) => void }) {
   return (
     <div className="mt-6 grid gap-3">
       {content.options.map((label, index) => (
@@ -111,37 +86,27 @@ function PickAnswer({
           onClick={() => onSelect(index)}
           type="button"
         >
-          {interpolate(label, tokens)}
+          {label}
         </button>
       ))}
     </div>
   )
 }
 
-function SliderAnswer({
-  content,
-  onSubmit,
-  onValueChange,
-  tokens,
-  value,
-}: {
-  content: SliderQuestionContent
-  onSubmit: () => void
-  onValueChange: (value: number) => void
-  tokens: TemplateTokens
-  value: number
-}) {
+function ScaleAnswer({ content, onSubmit }: { content: ScaleItemContent; onSubmit: (value: number) => void }) {
+  const [value, setValue] = useState(50)
+
   return (
     <div className="mt-8">
       <div className="flex items-center justify-between text-page-ink/58 text-sm">
-        <span>{interpolate(content.lo, tokens)}</span>
-        <span>{interpolate(content.hi, tokens)}</span>
+        <span>{content.lo}</span>
+        <span>{content.hi}</span>
       </div>
       <input
         className="mt-3 h-9 w-full accent-page-accent"
         max={100}
         min={0}
-        onChange={(event) => onValueChange(Number(event.target.value))}
+        onChange={(event) => setValue(Number(event.target.value))}
         type="range"
         value={value}
       />
@@ -151,7 +116,7 @@ function SliderAnswer({
           'mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-page-ink font-black text-sm text-white transition-colors hover:bg-page-ink/92',
           focusClassName,
         )}
-        onClick={onSubmit}
+        onClick={() => onSubmit(value)}
         type="button"
       >
         다음

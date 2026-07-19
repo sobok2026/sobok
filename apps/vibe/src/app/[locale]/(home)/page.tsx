@@ -1,52 +1,21 @@
-import { LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 
 import { SITE_NAME } from '@/constants'
+import { buildLocalizedMetadata } from '@/i18n/metadata'
 import { getLocale } from '@/i18n/server'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {
   const locale = await getLocale(params)
   const t = await getTranslations({ locale, namespace: 'Common.meta' })
-  const title = t('title')
-  const description = t('description')
-  const canonical = `/${locale}`
-  const openGraphLocale = LOCALE_OPEN_GRAPH_TAGS[locale]
-  const images = [
-    { url: '/og-image.png', width: 1200, height: 630, alt: `${SITE_NAME[locale]} — ${title}`, type: 'image/png' },
-  ]
 
-  return {
-    title,
-    description,
-    alternates: {
-      canonical,
-      languages: {
-        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, `/${entry}`])),
-        'x-default': '/',
-      },
-    },
-    openGraph: {
-      title,
-      description,
-      images,
-      locale: openGraphLocale,
-      alternateLocale: Object.values(Locale)
-        .map((entry) => LOCALE_OPEN_GRAPH_TAGS[entry])
-        .filter((entry) => entry !== openGraphLocale),
-      siteName: SITE_NAME[locale],
-      type: 'website',
-      url: canonical,
-    },
-    twitter: {
-      title,
-      description,
-      images,
-      card: 'summary_large_image',
-      site: '@sobok_cc',
-    },
-  }
+  return buildLocalizedMetadata({
+    description: t('description'),
+    locale,
+    pathname: '/',
+    title: t('title'),
+  })
 }
 
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'

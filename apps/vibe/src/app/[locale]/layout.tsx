@@ -1,6 +1,6 @@
 import '../globals.css'
 
-import { Locale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS, Locale } from '@sobok/domain/locale'
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 import { NextIntlClientProvider } from 'next-intl'
@@ -47,7 +47,12 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   const t = await getTranslations({ locale, namespace: 'Common' })
 
   return (
-    <html lang={locale}>
+    <html lang={LOCALE_LANGUAGE_TAGS[locale]}>
+      <link
+        href="/fonts/pretendard-jp/1.3.9/variable/pretendardvariable-jp-dynamic-subset.css"
+        precedence="font"
+        rel="stylesheet"
+      />
       <body className="flex min-h-dvh flex-col bg-page-bg text-page-ink antialiased">
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>

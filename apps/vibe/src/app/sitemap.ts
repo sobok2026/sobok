@@ -9,6 +9,7 @@ const ROUTES = [
   { path: '', changeFrequency: 'weekly' as const, priority: 1 },
   { path: 'couple-gyeol', changeFrequency: 'monthly' as const, priority: 0.8 },
   { path: 'couple-type', changeFrequency: 'monthly' as const, priority: 0.8 },
+  { path: 'deep-type', changeFrequency: 'monthly' as const, priority: 0.8 },
   { path: 'about', changeFrequency: 'monthly' as const, priority: 0.5 },
   { path: 'contact', changeFrequency: 'yearly' as const, priority: 0.4 },
   { path: 'terms', changeFrequency: 'yearly' as const, priority: 0.3 },

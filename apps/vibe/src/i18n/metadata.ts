@@ -1,35 +1,76 @@
-import { DEFAULT_LOCALE, Locale } from '@sobok/domain/locale'
+import { DEFAULT_LOCALE, LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
+import type { Metadata } from 'next'
 
-import { ORIGIN } from '@/constants'
+import { SITE_NAME } from '@/constants'
+import { SOBOK_X_HANDLE } from '@/content/pages'
 
 import { getLocalizedPath } from './pathnames'
 
+type OgImage = {
+  url: string
+  width: number
+  height: number
+  type: string
+}
+
+// Shared social-preview image. WebP is served as-is (images: { unoptimized: true }).
+const DEFAULT_OG_IMAGE: OgImage = {
+  url: '/og-image.webp',
+  width: 1200,
+  height: 630,
+  type: 'image/webp',
+}
+
 type Options = {
   description: string
+  image?: OgImage
   locale: Locale
   pathname: string
   title: string
 }
 
-export function buildLocalizedMetadata({ description, locale, pathname, title }: Options) {
-  const languageEntries = Object.values(Locale).map((entryLocale) => [
-    entryLocale,
-    toAbsoluteUrl(getLocalizedPath(entryLocale, pathname)),
-  ])
+// Single source of truth for per-page metadata: title + description, canonical +
+// hreflang alternates (with an unprefixed x-default), OpenGraph, and Twitter card.
+// URLs are relative and resolve against `metadataBase` set in the root layout.
+export function buildLocalizedMetadata({
+  description,
+  image = DEFAULT_OG_IMAGE,
+  locale,
+  pathname,
+  title,
+}: Options): Metadata {
+  const canonical = getLocalizedPath(locale, pathname)
+  const openGraphLocale = LOCALE_OPEN_GRAPH_TAGS[locale]
+  const images = [{ ...image, alt: `${SITE_NAME[locale]} — ${title}` }]
 
   return {
+    title,
+    description,
     alternates: {
-      canonical: toAbsoluteUrl(getLocalizedPath(locale, pathname)),
+      canonical,
       languages: {
-        ...Object.fromEntries(languageEntries),
-        'x-default': toAbsoluteUrl(getLocalizedPath(DEFAULT_LOCALE, pathname)),
+        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, getLocalizedPath(entry, pathname)])),
+        'x-default': pathname,
       },
     },
-    description,
-    title,
+    openGraph: {
+      title,
+      description,
+      images,
+      locale: openGraphLocale,
+      alternateLocale: Object.values(Locale)
+        .map((entry) => LOCALE_OPEN_GRAPH_TAGS[entry])
+        .filter((entry) => entry !== openGraphLocale),
+      siteName: SITE_NAME[locale],
+      type: 'website',
+      url: canonical,
+    },
+    twitter: {
+      title,
+      description,
+      images,
+      card: 'summary_large_image',
+      site: SOBOK_X_HANDLE,
+    },
   }
-}
-
-function toAbsoluteUrl(pathname: string) {
-  return new URL(pathname, ORIGIN).toString()
 }
