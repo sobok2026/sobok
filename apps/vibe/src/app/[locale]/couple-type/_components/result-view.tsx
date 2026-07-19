@@ -1,7 +1,7 @@
 import { ArrowLeft, HeartWaves, MessageDots, Refresh } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
 import Image from 'next/image'
-import { cn } from '@/component/cn'
+import { cn } from '@/utils/cn'
 import { axisOrder, getAxisOption } from '../_lib/model'
 import type { AxisValue, CoupleTypeContent, CoupleTypeResult } from '../_lib/types'
 

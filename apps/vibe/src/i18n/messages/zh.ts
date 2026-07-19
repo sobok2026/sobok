@@ -20,6 +20,11 @@ export const zh = {
         description: '结合聊天速度与表达方式,找到你们的对话类型。',
         cta: '查看对话类型',
       },
+      deepTypeCard: {
+        title: 'DeepType',
+        description: '',
+        cta: '',
+      },
     },
   },
 } satisfies Messages

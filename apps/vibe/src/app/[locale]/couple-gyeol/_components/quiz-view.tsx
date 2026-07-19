@@ -1,6 +1,6 @@
 import { ArrowRight, HeartWaves } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
-import { cn } from '@/component/cn'
+import { cn } from '@/utils/cn'
 
 import type { GyeolAnswers, GyeolContent, GyeolQuestionId } from '../_lib/types'
 

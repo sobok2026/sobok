@@ -1,7 +1,7 @@
 import { ArrowRight, ChartNoAxesColumnIncreasing, HeartWaves } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
 import Image from 'next/image'
-import { cn } from '@/component/cn'
+import { cn } from '@/utils/cn'
 import coupleGyeolRidgeImage from '../../../../../public/image/rarity/ridge.png'
 import type { GyeolContent } from '../_lib/types'
 

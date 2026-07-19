@@ -30,6 +30,7 @@
     "./chat/query": "./src/chat/query/index.ts",
     "./app/query/bookmark": "./src/app/query/bookmark.ts",
     "./app/query/chat": "./src/app/query/chat.ts",
+    "./app/query/deep-type-purchase": "./src/app/query/deep-type-purchase.ts",
     "./app/query/invoice": "./src/app/query/invoice.ts",
     "./app/query/payment-method": "./src/app/query/payment-method.ts",
     "./app/query/payment": "./src/app/query/payment.ts",

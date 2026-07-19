@@ -3,7 +3,7 @@
 import { ArrowLeft, ArrowRight, HeartWaves } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
 import { useState } from 'react'
-import { cn } from '@/component/cn'
+import { cn } from '@/utils/cn'
 
 import type { AxisValue, CoupleTypeAnswers, CoupleTypeContent } from '../_lib/types'
 

@@ -20,6 +20,11 @@ export const ko = {
         description: '대화 속도와 표현 방식을 조합해 우리 커플의 유형을 찾아요.',
         cta: '대화 유형 확인하기',
       },
+      deepTypeCard: {
+        title: '겉속유형',
+        description: '겉으로 보이는 나와 혼자일 때의 나, 그 간극을 40문항으로 파고들어요.',
+        cta: '겉속유형 확인하기',
+      },
     },
   },
 } satisfies Messages

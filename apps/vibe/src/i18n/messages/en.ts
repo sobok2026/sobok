@@ -20,6 +20,11 @@ export const en = {
         description: 'Combine your pace and expression style to find your couple’s type.',
         cta: 'Check talk type',
       },
+      deepTypeCard: {
+        title: 'DeepType',
+        description: '',
+        cta: '',
+      },
     },
   },
 } satisfies Messages

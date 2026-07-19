@@ -20,6 +20,11 @@ export const ja = {
         description: '会話の速度と表現スタイルを組み合わせてタイプを見つけます。',
         cta: '会話タイプを見る',
       },
+      deepTypeCard: {
+        title: 'DeepType',
+        description: '',
+        cta: '',
+      },
     },
   },
 } satisfies Messages
