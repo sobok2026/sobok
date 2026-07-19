@@ -38,6 +38,10 @@
       "dependsOn": ["^build"],
       "outputs": ["out/**", ".next/**"]
     },
+    "@sobok/ufo#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["out/**", ".next/**"]
+    },
     "dev": {
       "dependsOn": ["^build"],
       "cache": false,

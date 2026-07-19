@@ -42,6 +42,13 @@
       "runtimeArgs": ["run", "dev"],
       "cwd": "apps/vibe",
       "port": 3014
+    },
+    {
+      "name": "ufo",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "apps/ufo",
+      "port": 3013
     }
   ]
 }

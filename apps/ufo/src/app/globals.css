@@ -1,0 +1,92 @@
+@import 'tailwindcss' source(none);
+
+@source '..';
+
+@theme {
+  --color-brand: #ff8abe;
+  --color-accent-cool: #8be9ff;
+  --color-accent-warm: #ffd66b;
+  --color-positive: #6ee7b7;
+  --color-danger: #fb7185;
+
+  --animate-float-slow: float-slow 4s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+  --animate-toast: toast 1.5s ease-out forwards;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 138, 190, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px 6px rgba(255, 138, 190, 0.55);
+  }
+}
+
+@keyframes toast {
+  0% {
+    transform: translateY(12px) scale(0.8);
+    opacity: 0;
+  }
+  15% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-18px) scale(1);
+    opacity: 0;
+  }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  background: #0e1a38;
+  color: #fff;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  font-family:
+    Pretendard,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Apple SD Gothic Neo',
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-pulse-glow {
+    animation: none;
+  }
+  .animate-toast {
+    animation: none;
+    opacity: 1;
+  }
+}
