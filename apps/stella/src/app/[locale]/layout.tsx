@@ -56,6 +56,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
         rel="stylesheet"
       />
       <body className="antialiased">
+        {/* Full-viewport night-sky backdrop. `fixed inset-0` spans the entire
+            physical screen under viewport-fit=cover, so the gradient reaches the
+            iOS Safari bottom safe area / home-indicator strip behind the address
+            bar — which the scrolling `<main>` gradient (sized to dvh) never
+            covers. In standalone the main gradient fills the screen and hides
+            this, so the normal look is unchanged. */}
+        <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-night-sky" />
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
           <Header locale={locale} localeLabel={t('localeSwitcher')} />
