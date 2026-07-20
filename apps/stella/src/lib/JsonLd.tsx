@@ -18,6 +18,7 @@ export function siteGraph(locale: Locale) {
         name: 'sobok',
         url: 'https://sobok.cc',
         logo: `${ORIGIN}/web-app-manifest-512x512.png`,
+        sameAs: ['https://x.com/sobok_cc'],
       },
       {
         '@type': 'WebSite',

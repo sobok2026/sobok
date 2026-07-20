@@ -35,10 +35,13 @@ export class Renderer {
   sprites: SpriteSheet | null = null
 
   draw(ctx: CanvasRenderingContext2D, world: World, t: number): void {
-    const { width: w, height: h } = world
-    if (w === 0 || h === 0) return
+    const scale = world.scale
+    // Screen size in css px (world dims are world units); used for the screen-space base/vignette fills.
+    const cw = world.width * scale
+    const ch = world.height * scale
+    if (cw === 0 || ch === 0) return
 
-    this.drawBase(ctx, w, h)
+    this.drawBase(ctx, cw, ch)
 
     ctx.save()
     if (world.shake > 0 && !this.reducedMotion) {
@@ -47,6 +50,7 @@ export class Renderer {
     }
 
     ctx.save()
+    ctx.scale(scale, scale)
     ctx.translate(-world.camera.x, -world.camera.y)
     this.drawGround(ctx, world)
     this.drawLakes(ctx, world)
@@ -65,8 +69,8 @@ export class Renderer {
 
     ctx.restore()
 
-    this.drawVignette(ctx, w, h)
-    if (world.phase !== 'ready') this.drawHurtVignette(ctx, world)
+    this.drawVignette(ctx, cw, ch)
+    if (world.phase !== 'ready') this.drawHurtVignette(ctx, world, cw, ch)
   }
 
   private drawBase(ctx: CanvasRenderingContext2D, w: number, h: number): void {
@@ -410,10 +414,9 @@ export class Renderer {
     ctx.fillRect(0, 0, w, h)
   }
 
-  private drawHurtVignette(ctx: CanvasRenderingContext2D, world: World): void {
+  private drawHurtVignette(ctx: CanvasRenderingContext2D, world: World, w: number, h: number): void {
     const frac = world.cupid.hp / world.cupid.maxHp
     if (frac >= 0.35) return
-    const { width: w, height: h } = world
     const a = (0.35 - frac) / 0.35
     const g = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.35, w / 2, h / 2, Math.max(w, h) * 0.7)
     g.addColorStop(0, 'rgba(220, 40, 60, 0)')

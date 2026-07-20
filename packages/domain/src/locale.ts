@@ -28,6 +28,13 @@ export const LOCALE_OPEN_GRAPH_TAGS = {
   [Locale.ZH]: 'zh_CN',
 }
 
+export const LOCALE_HREFLANG_TAGS = {
+  [Locale.KO]: 'ko',
+  [Locale.EN]: 'en',
+  [Locale.JA]: 'ja',
+  [Locale.ZH]: 'zh-Hans',
+}
+
 export function isLocale(value: string): value is Locale {
   return Object.values(Locale).includes(value as Locale)
 }

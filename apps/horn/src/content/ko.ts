@@ -3,13 +3,13 @@ import type { Grade, ToastKind, UpgradeId } from '@/game/types'
 /** All player-facing Korean copy. Tone: 짓궂지만 전연령 — winking, never explicit. */
 export const KO = {
   meta: {
-    title: '도시 큐피드 — 도시 저출산 대작전',
+    title: '임신시키기 — 저출산 대작전',
     description:
       '저출산 몬스터가 덮친 도시에서 큐피드가 되어 솔로들을 이어주고 인구를 최대한 늘리는 액션 아케이드 게임. 사랑으로 저출산을 물리쳐라! 💘',
   },
 
-  brand: '도시 큐피드',
-  subtitle: '도시 저출산 대작전',
+  brand: '임신시키기',
+  subtitle: '저출산 대작전',
   tagline: '집값·야근·사교육이 도시를 덮쳤다.\n큐피드가 되어 사랑으로 인구를 되살려라.',
   startButton: '작전 개시 😏',
   howto: {
@@ -73,8 +73,8 @@ export const KO = {
     } satisfies Record<Grade, { title: string; blurb: string }>,
     shareButton: '결과 자랑하기',
     replayButton: '다시 도전',
-    shareTitle: '도시 큐피드',
-    shareText: '나는 도시 큐피드로 {score}명을 늘리고 Lv.{level}까지 찍었다. 너의 출산율은? 💘',
+    shareTitle: '임신시키기',
+    shareText: '나는 임신시키기로 {score}명을 늘리고 Lv.{level}까지 찍었다. 너의 출산율은? 💘',
     copied: '링크를 복사했어요',
   },
 

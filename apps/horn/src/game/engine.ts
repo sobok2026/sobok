@@ -133,8 +133,11 @@ const UPGRADES: { id: UpgradeId; max: number; apply: (w: World) => void }[] = [
 ]
 
 export interface World {
+  /** Visible view size in WORLD units (= css px / scale). */
   width: number
   height: number
+  /** Screen px per world unit (responsive camera zoom). */
+  scale: number
   phase: Phase
   /** Difficulty-ramp window in seconds; the run itself is endless (ends only on death). */
   duration: number
@@ -184,9 +187,11 @@ export class Game {
   private freshWorld(): World {
     const w = this.world?.width ?? 0
     const h = this.world?.height ?? 0
+    const scale = this.world?.scale ?? 1
     return {
       width: w,
       height: h,
+      scale,
       phase: 'ready',
       duration: CONFIG.duration,
       elapsed: 0,
@@ -242,17 +247,20 @@ export class Game {
     }
   }
 
-  resize(width: number, height: number): void {
+  resize(cssWidth: number, cssHeight: number): void {
     const w = this.world
-    w.width = width
-    w.height = height
+    const short = Math.min(cssWidth, cssHeight)
+    const scale = clamp(short / CONFIG.view.referenceShortEdge, CONFIG.view.minScale, CONFIG.view.maxScale)
+    w.scale = scale
+    w.width = cssWidth / scale
+    w.height = cssHeight / scale
     if (w.cupid.x === 0 && w.cupid.y === 0) {
-      w.cupid.x = width / 2
-      w.cupid.y = height / 2
+      w.cupid.x = w.width / 2
+      w.cupid.y = w.height / 2
     }
-    w.camera.x = w.cupid.x - width / 2
-    w.camera.y = w.cupid.y - height / 2
-    if (w.phase === 'ready' && w.people.length === 0 && width > 0 && height > 0) {
+    w.camera.x = w.cupid.x - w.width / 2
+    w.camera.y = w.cupid.y - w.height / 2
+    if (w.phase === 'ready' && w.people.length === 0 && cssWidth > 0 && cssHeight > 0) {
       const target = this.targetPersonCount()
       for (let i = 0; i < target; i++) this.spawnPerson()
     }
@@ -735,6 +743,8 @@ export class Game {
       }
     }
 
+    this.separateWanderers(dt)
+
     // Reap faded people and recycle wanderers that drifted far off-screen (they respawn near the player).
     const cull = (this.viewRadius() * 1.7) ** 2
     const cx = w.cupid.x
@@ -744,6 +754,54 @@ export class Game {
       if ((a.state === 'wander' || a.state === 'ready') && (a.x - cx) ** 2 + (a.y - cy) ** 2 > cull) return false
       return true
     })
+  }
+
+  /**
+   * Soft-separate WANDER people so they don't stack (readability). ready/rushing/bonding are excluded —
+   * they need to converge to pair up. Spatial-grid buckets keep this O(n) instead of O(n²).
+   */
+  private separateWanderers(dt: number): void {
+    const w = this.world
+    const cell = CONFIG.person.separationCell
+    const grid = new Map<string, Person[]>()
+    const cellOf = (p: Person) => `${Math.floor(p.x / cell)},${Math.floor(p.y / cell)}`
+    for (const p of w.people) {
+      if (p.state !== 'wander') continue
+      const key = cellOf(p)
+      const bucket = grid.get(key)
+      if (bucket) bucket.push(p)
+      else grid.set(key, [p])
+    }
+
+    const factor = CONFIG.person.separationFactor
+    const rate = Math.min(1, CONFIG.person.separationStrength * dt)
+    for (const p of w.people) {
+      if (p.state !== 'wander') continue
+      const gx = Math.floor(p.x / cell)
+      const gy = Math.floor(p.y / cell)
+      for (let oy = -1; oy <= 1; oy++) {
+        for (let ox = -1; ox <= 1; ox++) {
+          const bucket = grid.get(`${gx + ox},${gy + oy}`)
+          if (!bucket) continue
+          for (const q of bucket) {
+            if (q.id <= p.id) continue // resolve each pair once
+            const dx = p.x - q.x
+            const dy = p.y - q.y
+            const min = (p.size + q.size) * 0.5 * factor
+            const d2 = dx * dx + dy * dy
+            if (d2 === 0 || d2 >= min * min) continue
+            const d = Math.sqrt(d2)
+            const push = ((min - d) * rate) / 2
+            const nx = dx / d
+            const ny = dy / d
+            p.x += nx * push
+            p.y += ny * push
+            q.x -= nx * push
+            q.y -= ny * push
+          }
+        }
+      }
+    }
   }
 
   private resolveMeets(): void {

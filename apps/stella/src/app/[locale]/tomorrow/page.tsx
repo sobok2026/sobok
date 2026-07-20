@@ -1,59 +1,22 @@
-import { LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
-import { SITE_NAME } from '@/constants'
 import { getLocale } from '@/i18n/server'
+import { buildMetadata } from '@/lib/metadata'
 import TomorrowFlow from './TomorrowFlow'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/tomorrow'>): Promise<Metadata> {
   const locale = await getLocale(params)
   const t = await getTranslations({ locale, namespace: 'Tomorrow.meta' })
 
-  const title = t('title')
-  const description = t('description')
-  const canonical = `/${locale}/tomorrow`
-  const openGraphLocale = LOCALE_OPEN_GRAPH_TAGS[locale]
-
-  const images = [
-    {
-      url: '/og-today.webp',
-      width: 1200,
-      height: 630,
-      alt: `${SITE_NAME[locale]} — ${title}`,
-      type: 'image/webp',
-    },
-  ]
-
-  return {
-    title,
-    description,
-    alternates: {
-      canonical,
-      languages: {
-        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, `/${entry}/tomorrow`])),
-        'x-default': '/tomorrow',
-      },
-    },
-    openGraph: {
-      title,
-      description,
-      images,
-      locale: openGraphLocale,
-      alternateLocale: Object.values(Locale)
-        .map((entry) => LOCALE_OPEN_GRAPH_TAGS[entry])
-        .filter((entry) => entry !== openGraphLocale),
-      siteName: SITE_NAME[locale],
-      type: 'website',
-      url: canonical,
-    },
-    twitter: {
-      title,
-      description,
-      images,
-      card: 'summary_large_image',
-      site: '@sobok_cc',
-    },
-  }
+  // Ephemeral, derived from /today — kept crawlable but out of the index.
+  return buildMetadata({
+    locale,
+    path: '/tomorrow',
+    title: t('title'),
+    description: t('description'),
+    image: '/og-today.webp',
+    noindex: true,
+  })
 }
 
 export default function TomorrowPage() {

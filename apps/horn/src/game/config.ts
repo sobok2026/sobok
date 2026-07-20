@@ -1,7 +1,18 @@
-/** All gameplay tunables for the Vampire-Survivors-style run. Units: seconds, css px. */
+/** All gameplay tunables for the Vampire-Survivors-style run. Spatial units: world units (see `view`). */
 export const CONFIG = {
   /** Run length. Survive to the end (or die when 기력 hits 0). */
   duration: 180,
+
+  /**
+   * Responsive camera. Every device shows `referenceShortEdge` world units across its shorter screen
+   * edge (clamped), so character size and on-screen density stay consistent phone→desktop. worldScale
+   * (screen px per world unit) = clamp(shorterEdgePx / referenceShortEdge, minScale, maxScale).
+   */
+  view: {
+    referenceShortEdge: 420,
+    minScale: 0.85,
+    maxScale: 1.0,
+  },
 
   cupid: {
     speed: 210,
@@ -49,9 +60,16 @@ export const CONFIG = {
   person: {
     minCount: 20,
     maxCount: 64,
-    areaPerPerson: 30000,
+    /** World units² per person. Higher = fewer people on screen (lower density, less overlap). */
+    areaPerPerson: 40000,
     /** Maintained region is larger than the view (infinite map), so scale the target up. */
     regionFactor: 3.0,
+    /** Wanderers gently push apart so they don't stack. Spatial-grid cell (>= max separation distance). */
+    separationCell: 100,
+    /** Min center gap = (a.size+b.size)/2 * factor. >1 keeps a full-sprite gap so art doesn't visually overlap. */
+    separationFactor: 1.35,
+    /** How fast overlap is corrected (per second); frame-rate independent. */
+    separationStrength: 12,
     /** Extra people per full minute of the run. */
     growthPerMinute: 8,
     wanderSpeed: 30,
