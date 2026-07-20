@@ -56,9 +56,36 @@ body {
   color: var(--page-ink);
   background: var(--page-bg);
   font-family:
+    'Pretendard Variable',
     'Pretendard JP Variable',
-    'Pretendard JP',
-    Pretendard,
+    'Noto Sans SC Variable',
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    'Helvetica Neue',
+    'Segoe UI',
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    'Malgun Gothic',
+    'Hiragino Sans',
+    Meiryo,
+    'Noto Sans JP',
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    sans-serif;
+}
+
+/* Han is unified in Unicode, so ko/ja/zh share codepoints but need different
+   regional glyphs — selection is by :lang() + font-family order, not
+   unicode-range. Korean leads with base Pretendard (Hangul), Japanese with
+   Pretendard JP, Simplified Chinese with Noto Sans SC. */
+html:lang(ja) body {
+  font-family:
+    'Pretendard JP Variable',
+    'Pretendard Variable',
+    'Noto Sans SC Variable',
     -apple-system,
     BlinkMacSystemFont,
     system-ui,
@@ -66,34 +93,22 @@ body {
     'Helvetica Neue',
     'Segoe UI',
     'Hiragino Sans',
-    'Apple SD Gothic Neo',
     Meiryo,
     'Noto Sans JP',
+    'Apple SD Gothic Neo',
     'Noto Sans KR',
-    'Malgun Gothic',
-    Osaka,
     'Apple Color Emoji',
     'Segoe UI Emoji',
     'Segoe UI Symbol',
     sans-serif;
 }
 
-/* Pretendard JP defaults to Japanese Han glyphs. Its ss05 feature switches
-   shared Han glyphs to the Korean forms recommended by the font project. */
-html:lang(ko-KR) body {
-  font-feature-settings: 'ss05';
-}
-
-/* Explicitly tagged non-Korean fragments (for example, locale names) must not
-   inherit the Korean glyph variant from a Korean document. */
-html:lang(ko-KR) [lang]:not(:lang(ko)) {
-  font-feature-settings: normal;
-}
-
-/* Pretendard JP does not cover Simplified Chinese. Keep zh-CN entirely on a
-   locale-appropriate system stack instead of mixing Japanese and SC glyphs. */
+/* Base Pretendard covers no Simplified Chinese hanzi, so zh-CN leads with Noto
+   Sans SC and keeps a system SC stack as the offline fallback. */
 html:lang(zh-CN) body {
   font-family:
+    'Noto Sans SC Variable',
+    'Pretendard Variable',
     'PingFang SC',
     'Microsoft YaHei',
     'Noto Sans SC',

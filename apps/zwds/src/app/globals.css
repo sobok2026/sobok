@@ -72,7 +72,9 @@ body {
   color: var(--color-foreground);
   background: var(--color-background);
   font-family:
-    Pretendard,
+    'Pretendard Variable',
+    'Pretendard JP Variable',
+    'Noto Sans SC Variable',
     -apple-system,
     BlinkMacSystemFont,
     system-ui,
@@ -84,6 +86,53 @@ body {
     'Malgun Gothic',
     'Hiragino Sans',
     Meiryo,
+    'Noto Sans JP',
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    sans-serif;
+}
+
+/* Han is unified in Unicode, so ko/ja/zh share codepoints but need different
+   regional glyphs — selection is by :lang() + font-family order, not
+   unicode-range. Korean leads with base Pretendard (Hangul), Japanese with
+   Pretendard JP, Simplified Chinese with Noto Sans SC. */
+html:lang(ja) body {
+  font-family:
+    'Pretendard JP Variable',
+    'Pretendard Variable',
+    'Noto Sans SC Variable',
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    'Helvetica Neue',
+    'Segoe UI',
+    'Hiragino Sans',
+    Meiryo,
+    'Noto Sans JP',
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    sans-serif;
+}
+
+/* Base Pretendard covers no Simplified Chinese hanzi, so zh-CN leads with Noto
+   Sans SC and keeps a system SC stack as the offline fallback. */
+html:lang(zh-CN) body {
+  font-family:
+    'Noto Sans SC Variable',
+    'Pretendard Variable',
+    'PingFang SC',
+    'Microsoft YaHei',
+    'Noto Sans SC',
+    'Noto Sans CJK SC',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
     'Apple Color Emoji',
     'Segoe UI Emoji',
     'Segoe UI Symbol',
