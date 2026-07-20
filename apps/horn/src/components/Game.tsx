@@ -12,6 +12,7 @@ import type { HudSnapshot, Phase, RunSummary, Toast, ToastKind, UpgradeChoice, U
 import { loadBest, saveBest } from '@/lib/storage'
 import Hud from './Hud'
 import LevelUpModal from './LevelUpModal'
+import PauseScreen from './PauseScreen'
 import ResultScreen from './ResultScreen'
 import StartScreen from './StartScreen'
 
@@ -53,6 +54,7 @@ export default function Game() {
   const [summary, setSummary] = useState<RunSummary | null>(null)
   const [best, setBest] = useState(0)
   const [muted, setMuted] = useState(false)
+  const [paused, setPaused] = useState(false)
   const [toasts, setToasts] = useState<LiveToast[]>([])
   const [levelChoices, setLevelChoices] = useState<UpgradeChoice[] | null>(null)
 
@@ -129,6 +131,11 @@ export default function Game() {
     const keys = new Set<string>()
     const onKeyDown = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase()
+      if (k === 'escape' || k === 'p') {
+        e.preventDefault()
+        setPaused(engine.togglePause())
+        return
+      }
       if (MOVE_KEYS.has(k)) {
         keys.add(k)
         e.preventDefault()
@@ -257,7 +264,13 @@ export default function Game() {
     setSummary(null)
     setToasts([])
     setLevelChoices(null)
+    setPaused(false)
     engineRef.current?.start()
+  }
+
+  const togglePause = () => {
+    const engine = engineRef.current
+    if (engine) setPaused(engine.togglePause())
   }
 
   const chooseUpgrade = (id: UpgradeId) => {
@@ -302,7 +315,19 @@ export default function Game() {
         {muted ? '🔇' : '🔊'}
       </button>
 
+      {phase === 'playing' && (
+        <button
+          aria-label={paused ? KO.a11y.resume : KO.a11y.pause}
+          className="absolute bottom-[calc(env(safe-area-inset-bottom)+1rem)] left-[calc(env(safe-area-inset-left)+1rem)] z-40 flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-xl backdrop-blur-md transition-transform active:scale-90"
+          onClick={togglePause}
+          type="button"
+        >
+          {paused ? '▶️' : '⏸️'}
+        </button>
+      )}
+
       {phase === 'ready' && <StartScreen best={best} onStart={startRun} />}
+      {phase === 'playing' && paused && <PauseScreen onRestart={startRun} onResume={togglePause} />}
       {phase === 'levelup' && levelChoices && (
         <LevelUpModal choices={levelChoices} level={hud.level} onChoose={chooseUpgrade} />
       )}

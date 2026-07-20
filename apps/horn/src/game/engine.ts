@@ -282,6 +282,17 @@ export class Game {
     this.world.move.y = y
   }
 
+  get paused(): boolean {
+    return this.isPaused
+  }
+
+  /** Toggle pause — only meaningful mid-run. Returns the new paused state. */
+  togglePause(): boolean {
+    if (this.world.phase !== 'playing') return this.isPaused
+    this.isPaused = !this.isPaused
+    return this.isPaused
+  }
+
   chooseUpgrade(id: UpgradeId): void {
     const w = this.world
     if (w.phase !== 'levelup') return
@@ -365,8 +376,8 @@ export class Game {
     w.camera.x = w.cupid.x - w.width / 2
     w.camera.y = w.cupid.y - w.height / 2
 
-    if (w.phase === 'levelup' || w.phase === 'result') {
-      // Frozen — the run is paused for a choice or over.
+    if (this.isPaused || w.phase === 'levelup' || w.phase === 'result') {
+      // Frozen — paused by the player, or held for a level-up choice / game over.
       return
     }
 

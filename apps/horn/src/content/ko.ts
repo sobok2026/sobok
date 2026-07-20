@@ -78,10 +78,18 @@ export const KO = {
     copied: '링크를 복사했어요',
   },
 
+  pause: {
+    title: '일시정지',
+    resume: '계속하기',
+    restart: '다시 시작',
+  },
+
   a11y: {
     canvas: '사람 매칭 액션 게임 화면',
     mute: '소리 끄기',
     unmute: '소리 켜기',
     levelup: '레벨 업 능력 선택',
+    pause: '일시정지',
+    resume: '계속하기',
   },
 } as const
