@@ -1,3 +1,8 @@
 trash
 apps/mobile/android
 apps/mobile/ios
+
+# Cloudflare Workers Static Assets config — not Markdown. Prettier's markdown
+# parser escapes `*`/`_` and reflows these, corrupting path matching.
+**/_headers
+**/_redirects

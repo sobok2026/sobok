@@ -48,13 +48,20 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
 
   return (
     <html lang={LOCALE_LANGUAGE_TAGS[locale]}>
-      {locale !== Locale.ZH && (
-        <link
-          href="/fonts/pretendard-jp/1.3.9/variable/pretendardvariable-jp-dynamic-subset.css"
-          precedence="font"
-          rel="stylesheet"
-        />
-      )}
+      {/* Korean (Hangul) — base Pretendard dynamic subset. */}
+      <link
+        href="/fonts/pretendard/1.3.9/variable/pretendardvariable-dynamic-subset.css"
+        precedence="font"
+        rel="stylesheet"
+      />
+      {/* Japanese (kana + JIS kanji) — Pretendard JP dynamic subset. */}
+      <link
+        href="/fonts/pretendard-jp/1.3.9/variable/pretendardvariable-jp-dynamic-subset.css"
+        precedence="font"
+        rel="stylesheet"
+      />
+      {/* Simplified Chinese — Noto Sans SC (Pretendard has no SC hanzi). */}
+      <link href="/fonts/noto-sans-sc/5.3.0/wght.css" precedence="font" rel="stylesheet" />
       <body className="antialiased">
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
