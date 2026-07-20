@@ -73,9 +73,36 @@ body {
   color: var(--color-foreground);
   background: var(--color-background);
   font-family:
+    'Pretendard Variable',
     'Pretendard JP Variable',
-    'Pretendard JP',
-    Pretendard,
+    'Noto Sans SC Variable',
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    'Helvetica Neue',
+    'Segoe UI',
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    'Malgun Gothic',
+    'Hiragino Sans',
+    Meiryo,
+    'Noto Sans JP',
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    sans-serif;
+}
+
+/* Han is unified in Unicode, so ko/ja/zh share codepoints but need different
+   regional glyphs — selection is by :lang() + font-family order, not
+   unicode-range. Korean leads with base Pretendard (Hangul + Korean-form Han),
+   Japanese with Pretendard JP, Simplified Chinese with Noto Sans SC. */
+html:lang(ja) body {
+  font-family:
+    'Pretendard JP Variable',
+    'Pretendard Variable',
+    'Noto Sans SC Variable',
     -apple-system,
     BlinkMacSystemFont,
     system-ui,
@@ -83,34 +110,22 @@ body {
     'Helvetica Neue',
     'Segoe UI',
     'Hiragino Sans',
-    'Apple SD Gothic Neo',
     Meiryo,
     'Noto Sans JP',
+    'Apple SD Gothic Neo',
     'Noto Sans KR',
-    'Malgun Gothic',
-    Osaka,
     'Apple Color Emoji',
     'Segoe UI Emoji',
     'Segoe UI Symbol',
     sans-serif;
 }
 
-/* Pretendard JP defaults to Japanese Han glyphs. Its ss05 feature switches
-   shared Han glyphs to the Korean forms recommended by the font project. */
-html:lang(ko-KR) body {
-  font-feature-settings: 'ss05';
-}
-
-/* Explicitly tagged non-Korean fragments (for example, locale names) must not
-   inherit the Korean glyph variant from a Korean document. */
-html:lang(ko-KR) [lang]:not(:lang(ko)) {
-  font-feature-settings: normal;
-}
-
-/* Pretendard JP does not cover Simplified Chinese. Keep zh-CN entirely on a
-   locale-appropriate system stack instead of mixing Japanese and SC glyphs. */
+/* Base Pretendard covers no Simplified Chinese hanzi, so zh-CN leads with Noto
+   Sans SC and keeps a system SC stack as the offline fallback. */
 html:lang(zh-CN) body {
   font-family:
+    'Noto Sans SC Variable',
+    'Pretendard Variable',
     'PingFang SC',
     'Microsoft YaHei',
     'Noto Sans SC',
@@ -123,6 +138,19 @@ html:lang(zh-CN) body {
     'Segoe UI Emoji',
     'Segoe UI Symbol',
     sans-serif;
+}
+
+/* Korean text that falls through to Pretendard JP (rare Han absent from base
+   Pretendard) gets ss05 so those render in Korean rather than Japanese forms;
+   families without ss05 ignore it. */
+html:lang(ko-KR) body {
+  font-feature-settings: 'ss05';
+}
+
+/* Explicitly tagged non-Korean fragments (for example, locale names) must not
+   inherit the Korean glyph variant from a Korean document. */
+html:lang(ko-KR) [lang]:not(:lang(ko)) {
+  font-feature-settings: normal;
 }
 
 /* With appearance:none, iOS WebKit centers date/time values and collapses the
