@@ -1,16 +1,35 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "vibe",
+  // A Worker WITH static assets: `main` handles /api/* (the deeptype paid backend — PortOne secrets and
+  // the Aiven/Hyperdrive DB must stay server-side); everything else is the static Next export in ./out,
+  // served directly at the edge.
+  "main": "worker/index.ts",
   "compatibility_date": "2026-07-01",
-  // Assets-only Worker (no `main`): the static export in ./out is served directly at the edge via Workers Static Assets.
+  // Required by postgres.js (Aiven over the Workers TCP socket API via Hyperdrive).
+  "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
   "preview_urls": false,
-  "observability": {
-    "enabled": true
-  },
+  "observability": { "enabled": true, "head_sampling_rate": 1 },
   "assets": {
     "directory": "./out",
+    "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "html_handling": "drop-trailing-slash"
-  }
+    "html_handling": "drop-trailing-slash",
+    // API routes always hit the Worker first so they can never be shadowed by an asset.
+    "run_worker_first": ["/api/*"]
+  },
+  // Two Hyperdrive configs over the SAME isolated deeptype Aiven Postgres. Provision in Phase 0:
+  //   wrangler hyperdrive create deeptype-fresh  --connection-string="postgres://deeptype_app:…?sslmode=require" --caching-disabled
+  //   wrangler hyperdrive create deeptype-cached --connection-string="postgres://deeptype_app:…?sslmode=require"
+  // then paste the ids below. FRESH = money/entitlement path (never stale); CACHED = done-report reads only.
+  "hyperdrive": [
+    { "binding": "HYPERDRIVE_FRESH", "id": "REPLACE_WITH_FRESH_HYPERDRIVE_ID" },
+    { "binding": "HYPERDRIVE_CACHED", "id": "REPLACE_WITH_CACHED_HYPERDRIVE_ID" }
+  ],
+  // Reconcile purchases stuck 'pending' against PortOne every 15 min (worker `scheduled` handler).
+  "triggers": { "crons": ["*/15 * * * *"] }
+  // Secrets (NOT in this file) — set with `wrangler secret put`:
+  //   DEEPTYPE_PORTONE_STORE_ID, DEEPTYPE_PORTONE_CHANNEL_KEY, DEEPTYPE_PORTONE_API_SECRET,
+  //   DEEPTYPE_PORTONE_WEBHOOK_SECRET, DEEPTYPE_ANTHROPIC_API_KEY, DEEPTYPE_LLM_ENABLED, DEEPTYPE_TURNSTILE_SECRET
 }

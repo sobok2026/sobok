@@ -14,12 +14,14 @@ type ReportViewProps = {
   content: DeepTypeContent
   locale: Locale
   onRestart: () => void
+  // When present, the report is the FREE teaser and this opens the paywall for the deep 감정서.
+  onUnlock?: () => void
   report: DeepReport
 }
 
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
-export function ReportView({ content, locale, onRestart, report }: ReportViewProps) {
+export function ReportView({ content, locale, onRestart, onUnlock, report }: ReportViewProps) {
   const [shareFeedback, setShareFeedback] = useState('')
   const { code, confidence, mismatches, sections } = report
   const gem = content.gem[code.gem]
@@ -72,6 +74,24 @@ export function ReportView({ content, locale, onRestart, report }: ReportViewPro
           </p>
           <p className="mt-3 text-left text-page-ink/60 text-sm leading-7">{content.gemDescription[code.gem]}</p>
         </header>
+
+        {/* Paywall upsell — the free report is the teaser; this opens the deep 감정서 */}
+        {onUnlock ? (
+          <section className="rounded-4xl border border-page-accent/40 bg-page-accent/8 p-6 text-center sm:p-7">
+            <p className="break-keep font-black text-lg text-page-accent">{content.paywall.title}</p>
+            <p className="mx-auto mt-2 max-w-md text-page-ink/68 text-sm leading-7">{content.paywall.body}</p>
+            <button
+              className={cn(
+                'mt-5 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_rgba(255,77,109,0.24)] transition-colors hover:bg-page-accent/92',
+                focusClassName,
+              )}
+              onClick={onUnlock}
+              type="button"
+            >
+              {content.paywall.unlockCta}
+            </button>
+          </section>
+        ) : null}
 
         {/* Measurement confidence — honest per-axis reads */}
         <section className="rounded-4xl border border-page-border bg-page-surface p-6 sm:p-7">

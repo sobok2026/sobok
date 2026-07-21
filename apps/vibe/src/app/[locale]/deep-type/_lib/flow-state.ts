@@ -21,6 +21,30 @@ export type State =
   | { inner: AxesResult<DichoAxisId>; persona: PersonaResult; phase: 'gem'; responses: AxisResponse[] }
   | { gem: AxesResult<GemAxisId>; inner: AxesResult<DichoAxisId>; persona: PersonaResult; phase: 'analyzing' }
   | { gem: AxesResult<GemAxisId>; inner: AxesResult<DichoAxisId>; persona: PersonaResult; phase: 'report' }
+  // Monetization tail (Phase 6): free report → paywall → (verified payment) → 정밀 24문항 → dynamic report.
+  // The access_token from checkout threads through the paid phases.
+  | { gem: AxesResult<GemAxisId>; inner: AxesResult<DichoAxisId>; persona: PersonaResult; phase: 'paywall' }
+  | {
+      accessToken: string
+      gem: AxesResult<GemAxisId>
+      inner: AxesResult<DichoAxisId>
+      persona: PersonaResult
+      phase: 'precisionIntro'
+    }
+  | {
+      accessToken: string
+      gem: AxesResult<GemAxisId>
+      inner: AxesResult<DichoAxisId>
+      persona: PersonaResult
+      phase: 'precision'
+    }
+  | {
+      accessToken: string
+      gem: AxesResult<GemAxisId>
+      inner: AxesResult<DichoAxisId>
+      persona: PersonaResult
+      phase: 'dynamicReport'
+    }
 
 // Actions name what happened, not what to set. The reducer derives the target phase from the current
 // one, so no action can jump to a phase without supplying that phase's data. `ANSWER` is one event for
@@ -34,6 +58,10 @@ export type Action =
   | { type: 'RESTART' }
   | { type: 'START' }
   | { type: 'TO_REPORT' }
+  | { type: 'UNLOCK' }
+  | { type: 'CLOSE_PAYWALL' }
+  | { accessToken: string; type: 'PAID' }
+  | { type: 'PRECISION_DONE' }
 
 export const INITIAL_STATE: State = { phase: 'landing' }
 
@@ -55,6 +83,14 @@ export function reducer(state: State, action: Action): State {
           return { persona: state.persona, phase: 'inner', responses: [] }
         case 'gemIntro':
           return { inner: state.inner, persona: state.persona, phase: 'gem', responses: [] }
+        case 'precisionIntro':
+          return {
+            accessToken: state.accessToken,
+            gem: state.gem,
+            inner: state.inner,
+            persona: state.persona,
+            phase: 'precision',
+          }
         default:
           return state
       }
@@ -108,6 +144,42 @@ export function reducer(state: State, action: Action): State {
     case 'TO_REPORT':
       if (state.phase === 'analyzing') {
         return { gem: state.gem, inner: state.inner, persona: state.persona, phase: 'report' }
+      }
+
+      return state
+    case 'UNLOCK':
+      if (state.phase === 'report') {
+        return { gem: state.gem, inner: state.inner, persona: state.persona, phase: 'paywall' }
+      }
+
+      return state
+    case 'CLOSE_PAYWALL':
+      if (state.phase === 'paywall') {
+        return { gem: state.gem, inner: state.inner, persona: state.persona, phase: 'report' }
+      }
+
+      return state
+    case 'PAID':
+      if (state.phase === 'paywall') {
+        return {
+          accessToken: action.accessToken,
+          gem: state.gem,
+          inner: state.inner,
+          persona: state.persona,
+          phase: 'precisionIntro',
+        }
+      }
+
+      return state
+    case 'PRECISION_DONE':
+      if (state.phase === 'precision') {
+        return {
+          accessToken: state.accessToken,
+          gem: state.gem,
+          inner: state.inner,
+          persona: state.persona,
+          phase: 'dynamicReport',
+        }
       }
 
       return state

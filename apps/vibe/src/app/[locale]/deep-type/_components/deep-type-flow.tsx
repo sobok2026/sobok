@@ -11,11 +11,14 @@ import { buildDeepReport } from '../_lib/report'
 import { resolveResponse } from '../_lib/scoring'
 import type { AxisResponse, DeepTypeContent, Item, ItemAnswer, PersonaCode } from '../_lib/types'
 import { AnalyzingView } from './analyzing-view'
+import { DynamicReportView } from './dynamic-report-view'
 import { GapReveal } from './gap-reveal'
 import { IntroView } from './intro-view'
 import { LandingView } from './landing-view'
+import { PaywallView } from './paywall-view'
 import { PersonaClaimView } from './persona-claim-view'
 import { PersonaReveal } from './persona-reveal'
+import { PrecisionQuizView } from './precision-quiz-view'
 import { QuizView } from './quiz-view'
 import { ReportView } from './report-view'
 
@@ -123,7 +126,54 @@ export function DeepTypeFlow({ content, locale }: DeepTypeFlowProps) {
       const report = buildDeepReport(content, state.persona, state.inner, state.gem)
 
       return (
-        <ReportView content={content} locale={locale} onRestart={() => dispatch({ type: 'RESTART' })} report={report} />
+        <ReportView
+          content={content}
+          locale={locale}
+          onRestart={() => dispatch({ type: 'RESTART' })}
+          onUnlock={() => dispatch({ type: 'UNLOCK' })}
+          report={report}
+        />
+      )
+    }
+    case 'paywall':
+      return (
+        <PaywallView
+          content={content}
+          freeResult={{ gem: state.gem.code, innerType: state.inner.code, locale, persona: state.persona.code }}
+          onClose={() => dispatch({ type: 'CLOSE_PAYWALL' })}
+          onPaid={(accessToken) => dispatch({ accessToken, type: 'PAID' })}
+        />
+      )
+    case 'precisionIntro':
+      return (
+        <IntroView
+          body={content.paywall.precisionIntroBody}
+          cta={content.paywall.precisionIntroCta}
+          onNext={() => dispatch({ type: 'BEGIN' })}
+          title={content.paywall.precisionIntroTitle}
+        />
+      )
+    case 'precision':
+      return (
+        <PrecisionQuizView
+          accessToken={state.accessToken}
+          content={content}
+          gemCode={state.gem.code}
+          innerCode={state.inner.code}
+          onComplete={() => dispatch({ type: 'PRECISION_DONE' })}
+        />
+      )
+    case 'dynamicReport': {
+      const fallbackReport = buildDeepReport(content, state.persona, state.inner, state.gem)
+
+      return (
+        <DynamicReportView
+          accessToken={state.accessToken}
+          content={content}
+          fallbackReport={fallbackReport}
+          locale={locale}
+          onRestart={() => dispatch({ type: 'RESTART' })}
+        />
       )
     }
     default: {

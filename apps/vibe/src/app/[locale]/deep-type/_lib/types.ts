@@ -228,12 +228,43 @@ export type GemContent = {
   read: string
 }
 
+// Phase 6 monetization copy. One nested block so every locale adds a single key. lockedItems is the
+// teaser bullet list of what the paywall unlocks.
+export type DeepTypePaywallContent = {
+  unlockCta: string
+  title: string
+  body: string
+  lockedItems: readonly string[]
+  listPriceLabel: string
+  priceLabel: string
+  emailLabel: string
+  emailPlaceholder: string
+  consentWithdrawal: string
+  consentPrivacy: string
+  notice: string
+  cta: string
+  processing: string
+  errorGeneric: string
+  closeCta: string
+  generatingTitle: string
+  generatingBody: string
+  fallbackNote: string
+  precisionIntroTitle: string
+  precisionIntroBody: string
+  precisionIntroCta: string
+  precisionStepLabel: string
+  precisionSubmitting: string
+}
+
 export type DeepTypeContent = {
   metadata: DeepTypeMetadata
+  paywall: DeepTypePaywallContent
   ui: DeepTypeUiText
   personaQuestions: Record<string, ItemContent>
   innerQuestions: Record<string, ItemContent>
   gemQuestions: Record<string, ItemContent>
+  // Paid 심연 items (Phase 6b). Keyed by the precision bank ids; en/ja/zh carry empty stubs like the others.
+  precisionQuestions: Record<string, ItemContent>
   axes: Record<AxisId, AxisContent>
   base: Record<PersonaCode, { ident: string; keywords: readonly [string, string]; noun: string }>
   hiddenDescription: Record<InnerCode, string>

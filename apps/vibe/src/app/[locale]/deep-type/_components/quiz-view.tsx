@@ -4,12 +4,15 @@ import { ArrowLeft } from '@mynaui/icons-react'
 import { useState } from 'react'
 import { cn } from '@/utils/cn'
 
-import type { ChoiceItemContent, Item, ItemAnswer, ItemContent, ScaleItemContent } from '../_lib/types'
-import { isScaleItem } from '../_lib/types'
+import type { ChoiceItemContent, ItemAnswer, ItemContent, ScaleItemContent } from '../_lib/types'
+
+// QuizView renders from `content` (labels/hi/lo) and only needs the item's id + kind — it never reads the
+// scoring signs. So a lightweight item works for both the free banks (full Item) and the precision specs.
+type QuizItem = { id: string; kind: 'choice' | 'scale' }
 
 type QuizViewProps = {
   content: Record<string, ItemContent>
-  item: Item
+  item: QuizItem
   onAnswer: (answer: ItemAnswer) => void
   onBack?: () => void
   progressLabel: string
@@ -42,7 +45,7 @@ export function QuizView({ content, item, onAnswer, onBack, progressLabel, progr
           {itemContent.scene ? <p className="font-bold text-page-accent text-sm">{itemContent.scene}</p> : null}
           <h1 className="mt-2 break-keep font-black text-2xl leading-snug">{itemContent.text}</h1>
 
-          {isScaleItem(item) ? (
+          {item.kind === 'scale' ? (
             <ScaleAnswer
               content={itemContent as ScaleItemContent}
               onSubmit={(value) => onAnswer({ itemId: item.id, kind: 'scale', value })}

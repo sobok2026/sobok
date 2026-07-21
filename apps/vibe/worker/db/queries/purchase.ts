@@ -1,0 +1,117 @@
+import { and, eq, isNull, lt } from 'drizzle-orm'
+
+import type { Db } from '../client'
+import { purchaseTable } from '../schema'
+
+export type PurchaseStatus = 'pending' | 'paid' | 'failed' | 'refunded'
+
+export interface NewPurchase {
+  accessToken: string
+  paymentId: string
+  resultId: number
+  email: string
+  emailHash: string
+  orderName: string
+  amount: number
+  currency: string
+  sku: 'report' | 'compat' | 'bundle'
+  consentWithdrawalAt: Date
+  consentPrivacyAt: Date
+}
+
+export async function createPendingPurchase(db: Db, input: NewPurchase): Promise<void> {
+  await db.insert(purchaseTable).values(input)
+}
+
+export interface PurchaseRow {
+  id: number
+  amount: number
+  currency: string
+  status: PurchaseStatus
+}
+
+// Report gate: resolve the bearer access_token to its purchase (FRESH — entitlement must never be stale).
+export async function getPurchaseByAccessToken(
+  db: Db,
+  accessToken: string,
+): Promise<{ id: number; status: PurchaseStatus } | null> {
+  const [row] = await db
+    .select({ id: purchaseTable.id, status: purchaseTable.status })
+    .from(purchaseTable)
+    .where(eq(purchaseTable.accessToken, accessToken))
+    .limit(1)
+  return row ?? null
+}
+
+// Stamp viewed_at when the done report is actually delivered — once. This is the legal anchor for the
+// unviewed-refund right, so it must fire on delivery, not at generation time.
+export async function stampReportViewed(db: Db, purchaseId: number): Promise<void> {
+  await db
+    .update(purchaseTable)
+    .set({ viewedAt: new Date() })
+    .where(and(eq(purchaseTable.id, purchaseId), isNull(purchaseTable.viewedAt)))
+}
+
+export async function getPurchaseByPaymentId(db: Db, paymentId: string): Promise<PurchaseRow | null> {
+  const [row] = await db
+    .select({
+      id: purchaseTable.id,
+      amount: purchaseTable.amount,
+      currency: purchaseTable.currency,
+      status: purchaseTable.status,
+    })
+    .from(purchaseTable)
+    .where(eq(purchaseTable.paymentId, paymentId))
+    .limit(1)
+  return row ?? null
+}
+
+// CAS: only a still-pending row flips to paid, and only one caller wins (verify vs webhook vs reconcile).
+// Returns true iff THIS call performed the transition.
+export async function markPurchasePaid(
+  db: Db,
+  id: number,
+  patch: { providerTxnId: string | null; method: string | null; paidAt: Date },
+): Promise<boolean> {
+  const rows = await db
+    .update(purchaseTable)
+    .set({ status: 'paid', paidAt: patch.paidAt, providerTxnId: patch.providerTxnId, method: patch.method })
+    .where(and(eq(purchaseTable.id, id), eq(purchaseTable.status, 'pending')))
+    .returning({ id: purchaseTable.id })
+  return rows.length > 0
+}
+
+// CAS: only a paid row moves to refunded. Idempotent — a redelivered cancel webhook returns false.
+export async function markPurchaseRefunded(db: Db, paymentId: string): Promise<boolean> {
+  const rows = await db
+    .update(purchaseTable)
+    .set({ status: 'refunded', refundedAt: new Date() })
+    .where(and(eq(purchaseTable.paymentId, paymentId), eq(purchaseTable.status, 'paid')))
+    .returning({ id: purchaseTable.id })
+  return rows.length > 0
+}
+
+export async function markPurchaseFailed(
+  db: Db,
+  id: number,
+  failure: { code: string | null; message: string | null },
+): Promise<void> {
+  await db
+    .update(purchaseTable)
+    .set({ status: 'failed', failureCode: failure.code, failureMessage: failure.message })
+    .where(and(eq(purchaseTable.id, id), eq(purchaseTable.status, 'pending')))
+}
+
+// Pending purchases older than the cutoff — the reconcile sweeper converges these against PortOne (a
+// process/webhook that died between checkout and confirm).
+export async function listStalePendingPurchases(
+  db: Db,
+  olderThan: Date,
+  limit: number,
+): Promise<{ id: number; paymentId: string }[]> {
+  return db
+    .select({ id: purchaseTable.id, paymentId: purchaseTable.paymentId })
+    .from(purchaseTable)
+    .where(and(eq(purchaseTable.status, 'pending'), lt(purchaseTable.createdAt, olderThan)))
+    .limit(limit)
+}

@@ -32,7 +32,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         <h1 className="mt-3 text-balance font-black text-4xl tracking-[-0.04em] sm:text-5xl">{t('heroTitle')}</h1>
         <p className="mt-4 max-w-xl text-page-ink/66 leading-8">{t('heroSubtitle')}</p>
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-5">
           <Link
             className={`group rounded-[2rem] border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${focusClassName}`}
             href={`${home}/couple-gyeol`}
