@@ -6,6 +6,7 @@ import { cn } from '@/utils/cn'
 
 import { type FreeResult, useCheckout } from '../_hooks/use-checkout'
 import type { DeepTypeContent } from '../_lib/types'
+import { Turnstile } from './turnstile'
 
 type PaywallViewProps = {
   content: DeepTypeContent
@@ -22,15 +23,16 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
   const [email, setEmail] = useState('')
   const [agreeWithdrawal, setAgreeWithdrawal] = useState(false)
   const [agreePrivacy, setAgreePrivacy] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState('')
 
   const emailValid = /.+@.+\..+/.test(email)
-  const canSubmit = emailValid && agreeWithdrawal && agreePrivacy && status !== 'processing'
+  const canSubmit = emailValid && agreeWithdrawal && agreePrivacy && turnstileToken !== '' && status !== 'processing'
 
   async function submit() {
     if (!canSubmit) {
       return
     }
-    const accessToken = await start(email)
+    const accessToken = await start(email, turnstileToken)
     if (accessToken) {
       onPaid(accessToken)
     }
@@ -83,6 +85,8 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
             <Consent checked={agreeWithdrawal} label={paywall.consentWithdrawal} onChange={setAgreeWithdrawal} />
             <Consent checked={agreePrivacy} label={paywall.consentPrivacy} onChange={setAgreePrivacy} />
           </div>
+
+          <Turnstile onVerify={setTurnstileToken} />
 
           <button
             className={cn(

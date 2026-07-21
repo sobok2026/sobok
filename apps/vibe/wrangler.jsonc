@@ -19,17 +19,53 @@
     // API routes always hit the Worker first so they can never be shadowed by an asset.
     "run_worker_first": ["/api/*"]
   },
-  // Two Hyperdrive configs over the SAME isolated deeptype Aiven Postgres. Provision in Phase 0:
-  //   wrangler hyperdrive create deeptype-fresh  --connection-string="postgres://deeptype_app:…?sslmode=require" --caching-disabled
-  //   wrangler hyperdrive create deeptype-cached --connection-string="postgres://deeptype_app:…?sslmode=require"
-  // then paste the ids below. FRESH = money/entitlement path (never stale); CACHED = done-report reads only.
+  // Two Hyperdrive configs over the SAME isolated deeptype Aiven Postgres. The configs are declared in
+  // Terraform (sobok-ops: infra/cloudflare/account/sobok/workers/vibe — `cloudflare_hyperdrive_config`,
+  // FRESH = caching.disabled=true, CACHED = default). Paste the two `terraform output` ids below and commit
+  // (same as a KV namespace id). FRESH = money/entitlement path (never stale); CACHED = done-report reads only.
   "hyperdrive": [
     { "binding": "HYPERDRIVE_FRESH", "id": "REPLACE_WITH_FRESH_HYPERDRIVE_ID" },
     { "binding": "HYPERDRIVE_CACHED", "id": "REPLACE_WITH_CACHED_HYPERDRIVE_ID" }
   ],
-  // Reconcile purchases stuck 'pending' against PortOne every 15 min (worker `scheduled` handler).
-  "triggers": { "crons": ["*/15 * * * *"] }
-  // Secrets (NOT in this file) — set with `wrangler secret put`:
-  //   DEEPTYPE_PORTONE_STORE_ID, DEEPTYPE_PORTONE_CHANNEL_KEY, DEEPTYPE_PORTONE_API_SECRET,
-  //   DEEPTYPE_PORTONE_WEBHOOK_SECRET, DEEPTYPE_ANTHROPIC_API_KEY, DEEPTYPE_LLM_ENABLED, DEEPTYPE_TURNSTILE_SECRET
+  // Crons (worker `scheduled` handler): every 15 min → reconcile stuck 'pending'; daily 03:00 → retention purge.
+  "triggers": { "crons": ["*/15 * * * *", "0 3 * * *"] },
+  // Non-secret config. storeId/channelKey are public (sent to the browser SDK); fill after the separate
+  // PortOne store is approved (Phase 0). LLM_ENABLED is the Anthropic-budget kill-switch ('1' to enable).
+  "vars": {
+    "DEEPTYPE_PORTONE_STORE_ID": "REPLACE_WITH_STORE_ID",
+    "DEEPTYPE_PORTONE_CHANNEL_KEY": "REPLACE_WITH_CHANNEL_KEY",
+    "DEEPTYPE_LLM_ENABLED": "0"
+  },
+  // True secrets live in Cloudflare Secrets Store, declared in Terraform (sobok-ops: the vibe workers module,
+  // `cloudflare_secrets_store_secret`, values from HCP Terraform sensitive variables). Bound here by name;
+  // read at runtime with `await env.<binding>.get()`. `store_id` = the account's single Secrets Store id.
+  // DEEPTYPE_TURNSTILE_SECRET reuses the shared "sobok" Turnstile widget secret.
+  "secrets_store_secrets": [
+    {
+      "binding": "DEEPTYPE_PORTONE_API_SECRET",
+      "store_id": "REPLACE_WITH_SECRETS_STORE_ID",
+      "secret_name": "deeptype-portone-api-secret"
+    },
+    {
+      "binding": "DEEPTYPE_PORTONE_WEBHOOK_SECRET",
+      "store_id": "REPLACE_WITH_SECRETS_STORE_ID",
+      "secret_name": "deeptype-portone-webhook-secret"
+    },
+    {
+      "binding": "DEEPTYPE_ANTHROPIC_API_KEY",
+      "store_id": "REPLACE_WITH_SECRETS_STORE_ID",
+      "secret_name": "deeptype-anthropic-api-key"
+    },
+    {
+      "binding": "DEEPTYPE_TURNSTILE_SECRET",
+      "store_id": "REPLACE_WITH_SECRETS_STORE_ID",
+      "secret_name": "sobok-turnstile-secret"
+    },
+    {
+      "binding": "DEEPTYPE_DISCORD_WEBHOOK",
+      "store_id": "REPLACE_WITH_SECRETS_STORE_ID",
+      "secret_name": "deeptype-discord-webhook"
+    }
+  ]
+  // Local dev only: copy .dev.vars.example → .dev.vars (gitignored) for `wrangler dev`.
 }

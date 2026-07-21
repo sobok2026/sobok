@@ -37,6 +37,10 @@ export const deepTypeContent: DeepTypeContent = {
     precisionIntroCta: '심연 시작',
     precisionStepLabel: '심연',
     precisionSubmitting: '깊이 읽어 감정서에 반영하는 중...',
+    refundCta: '환불 요청하기',
+    refundPending: '환불 처리 중이에요...',
+    refundDone: '환불됐어요. 결제수단으로 곧 반영돼요.',
+    refundFailed: '환불 처리에 실패했어요. 문의해주세요.',
   },
   precisionQuestions: {
     'pr-EI-c0': {

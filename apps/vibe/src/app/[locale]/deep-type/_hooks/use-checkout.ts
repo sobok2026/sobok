@@ -23,7 +23,7 @@ export function useCheckout(freeResult: FreeResult) {
   const [status, setStatus] = useState<CheckoutStatus>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
-  async function start(email: string): Promise<string | null> {
+  async function start(email: string, turnstileToken: string): Promise<string | null> {
     setStatus('processing')
     setErrorMessage('')
     try {
@@ -34,9 +34,7 @@ export function useCheckout(freeResult: FreeResult) {
         email,
         resultToken,
         sku: 'report',
-        // TODO(Phase 7): real Cloudflare Turnstile token. The Worker only enforces it when
-        // DEEPTYPE_TURNSTILE_SECRET is set, so a placeholder is accepted in dev.
-        turnstileToken: 'turnstile-pending',
+        turnstileToken,
       })
 
       const sdk = await import('@portone/browser-sdk/v2')

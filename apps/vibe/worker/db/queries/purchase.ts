@@ -43,6 +43,25 @@ export async function getPurchaseByAccessToken(
   return row ?? null
 }
 
+// Cancel/청약철회 gate: needs paymentId (to cancel at the PG) + viewedAt (withdrawal is forbidden once the
+// digital content has been delivered).
+export async function getPurchaseForCancel(
+  db: Db,
+  accessToken: string,
+): Promise<{ id: number; paymentId: string; status: PurchaseStatus; viewedAt: Date | null } | null> {
+  const [row] = await db
+    .select({
+      id: purchaseTable.id,
+      paymentId: purchaseTable.paymentId,
+      status: purchaseTable.status,
+      viewedAt: purchaseTable.viewedAt,
+    })
+    .from(purchaseTable)
+    .where(eq(purchaseTable.accessToken, accessToken))
+    .limit(1)
+  return row ?? null
+}
+
 // Stamp viewed_at when the done report is actually delivered — once. This is the legal anchor for the
 // unviewed-refund right, so it must fire on delivery, not at generation time.
 export async function stampReportViewed(db: Db, purchaseId: number): Promise<void> {

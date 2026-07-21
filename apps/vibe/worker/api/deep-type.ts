@@ -21,9 +21,11 @@ import {
 import { recordWebhookEvent } from '../db/queries/webhook'
 import type { AppEnv } from '../env'
 import { problem } from '../errors'
+import { alertDiscord } from '../lib/alert'
 import { resolveSku } from '../lib/pricing'
 import { newPaymentId, normalizeEmail, randomToken, sha256Hex } from '../lib/tokens'
 import { verifyTurnstile } from '../lib/turnstile'
+import { requestWithdrawal } from '../payments/cancel'
 import { applyRefund, confirmPurchase } from '../payments/confirm'
 import { generateReport } from '../report/claude'
 import { buildReportProfile } from '../report/profile'
@@ -31,8 +33,14 @@ import { refineAxes, resolvePrecisionResponses } from '../scoring/precision'
 
 export const deepType = new Hono<AppEnv>()
 
-function creds(c: Context<AppEnv>): PortOneCreds {
-  return { apiSecret: c.env.DEEPTYPE_PORTONE_API_SECRET, webhookSecret: c.env.DEEPTYPE_PORTONE_WEBHOOK_SECRET }
+// Resolves the PortOne secrets from Secrets Store (async .get()). Fetched per use — the runtime caches
+// Secrets Store reads, so this is cheap.
+async function creds(c: Context<AppEnv>): Promise<PortOneCreds> {
+  const [apiSecret, webhookSecret] = await Promise.all([
+    c.env.DEEPTYPE_PORTONE_API_SECRET.get(),
+    c.env.DEEPTYPE_PORTONE_WEBHOOK_SECRET.get(),
+  ])
+  return { apiSecret, webhookSecret }
 }
 
 // The report access_token, carried as `Authorization: Bearer <token>` (never a query param — credentials
@@ -102,12 +110,15 @@ deepType.post('/checkout', async (c) => {
     return problem(422, 'consent-required')
   }
 
-  const turnstileSecret = c.env.DEEPTYPE_TURNSTILE_SECRET
-  if (turnstileSecret) {
-    const ok = await verifyTurnstile(turnstileSecret, body.turnstileToken, c.req.header('cf-connecting-ip') ?? null)
-    if (!ok) {
-      return problem(403, 'turnstile-failed')
-    }
+  // Always enforced on the paid path (the shared "sobok" Turnstile widget). Locally the widget test key +
+  // test secret pass any token; prod requires a real solved token (Phase 7 wires the frontend widget).
+  const turnstileOk = await verifyTurnstile(
+    await c.env.DEEPTYPE_TURNSTILE_SECRET.get(),
+    body.turnstileToken,
+    c.req.header('cf-connecting-ip') ?? null,
+  )
+  if (!turnstileOk) {
+    return problem(403, 'turnstile-failed')
   }
 
   const detail = resolveSku(body.sku)
@@ -166,8 +177,9 @@ deepType.post('/verify', async (c) => {
     return problem(422, 'invalid-request')
   }
 
+  const portOneCreds = await creds(c)
   const outcome = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
-    confirmPurchase(db, creds(c), parsed.data.paymentId),
+    confirmPurchase(db, portOneCreds, parsed.data.paymentId),
   )
 
   switch (outcome) {
@@ -196,8 +208,9 @@ deepType.post('/webhook', async (c) => {
     'webhook-timestamp': c.req.header('webhook-timestamp') ?? '',
   }
 
+  const portOneCreds = await creds(c)
   // verifyWebhook throws on a bad signature and returns null for an event type we don't act on.
-  const event = await verifyWebhook(creds(c), raw, headers).catch(() => undefined)
+  const event = await verifyWebhook(portOneCreds, raw, headers).catch(() => undefined)
   if (event === undefined) {
     return problem(400, 'invalid-signature')
   }
@@ -208,9 +221,14 @@ deepType.post('/webhook', async (c) => {
   const acted = event
   return withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     if (acted.type === 'paid') {
-      const outcome = await confirmPurchase(db, creds(c), acted.paymentId)
+      const outcome = await confirmPurchase(db, portOneCreds, acted.paymentId)
       if (outcome === 'amount-mismatch') {
         console.error('deeptype.webhook.amount_mismatch', acted.paymentId)
+        c.executionCtx.waitUntil(
+          c.env.DEEPTYPE_DISCORD_WEBHOOK.get().then((url) =>
+            alertDiscord(url, `⚠️ deeptype amount mismatch: ${acted.paymentId}`),
+          ),
+        )
       }
     } else {
       await applyRefund(db, acted.paymentId)
@@ -346,7 +364,8 @@ deepType.post('/report/generate', async (c) => {
   }
 
   try {
-    const sections = await generateReport(c.env.DEEPTYPE_ANTHROPIC_API_KEY, model, buildReportProfile(claim.result))
+    const apiKey = await c.env.DEEPTYPE_ANTHROPIC_API_KEY.get()
+    const sections = await generateReport(apiKey, model, buildReportProfile(claim.result))
     await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
       finalizeReportDone(db, claim.purchaseId, lockToken, model, sections),
     )
@@ -355,7 +374,38 @@ deepType.post('/report/generate', async (c) => {
     await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
       finalizeReportFailed(db, claim.purchaseId, lockToken, String(error).slice(0, 500)),
     )
+    c.executionCtx.waitUntil(
+      c.env.DEEPTYPE_DISCORD_WEBHOOK.get().then((url) =>
+        alertDiscord(url, `❌ deeptype report failed (purchase ${claim.purchaseId}): ${String(error).slice(0, 200)}`),
+      ),
+    )
     return problem(502, 'report-generation-failed')
+  }
+})
+
+// ── Phase 7: 청약철회 (customer-initiated withdrawal / refund) ────────────────────────────────────────
+// Allowed only while the paid report has NOT been delivered (viewed_at IS NULL). Cancels at PortOne + flips
+// the purchase to refunded (the Transaction.Cancelled webhook is the backstop).
+deepType.post('/cancel', async (c) => {
+  const token = bearer(c)
+  if (!token) {
+    return problem(401, 'unauthorized')
+  }
+
+  const portOneCreds = await creds(c)
+  const outcome = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    requestWithdrawal(db, portOneCreds, token),
+  )
+
+  switch (outcome) {
+    case 'refunded':
+      return c.json({ status: 'refunded' })
+    case 'not-found':
+      return problem(404, 'purchase-not-found')
+    case 'not-paid':
+      return problem(403, 'purchase-not-paid')
+    case 'viewed':
+      return problem(409, 'withdrawal-forbidden')
   }
 })
 

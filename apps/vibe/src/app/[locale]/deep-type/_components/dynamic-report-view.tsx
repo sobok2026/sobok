@@ -2,9 +2,11 @@
 
 import { Refresh } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
+import { useState } from 'react'
 import { cn } from '@/utils/cn'
 
 import { useReportPolling } from '../_hooks/use-report-polling'
+import { postCancel } from '../_lib/api'
 import type { DeepReport, DeepTypeContent } from '../_lib/types'
 import { ReportView } from './report-view'
 
@@ -37,12 +39,13 @@ export function DynamicReportView({ accessToken, content, fallbackReport, locale
 
   if (state.phase === 'failed') {
     return (
-      <div className="flex flex-1 flex-col">
-        <p className="bg-page-accent/10 px-safe py-3 text-center font-bold text-page-accent text-sm">
-          {paywall.fallbackNote}
-        </p>
-        <ReportView content={content} locale={locale} onRestart={onRestart} report={fallbackReport} />
-      </div>
+      <FailedReport
+        accessToken={accessToken}
+        content={content}
+        fallbackReport={fallbackReport}
+        locale={locale}
+        onRestart={onRestart}
+      />
     )
   }
 
@@ -71,5 +74,54 @@ export function DynamicReportView({ accessToken, content, fallbackReport, locale
         <p className="mt-2 text-center text-page-ink/40 text-xs leading-6">{content.ui.reportDisclaimer}</p>
       </div>
     </main>
+  )
+}
+
+type FailedReportProps = {
+  accessToken: string
+  content: DeepTypeContent
+  fallbackReport: DeepReport
+  locale: Locale
+  onRestart: () => void
+}
+
+// Generation failed → the paid report was never delivered (unviewed), so 청약철회 is allowed. Offer the
+// refund alongside the static free report as a consolation.
+function FailedReport({ accessToken, content, fallbackReport, locale, onRestart }: FailedReportProps) {
+  const paywall = content.paywall
+  const [refund, setRefund] = useState<'idle' | 'pending' | 'done' | 'failed'>('idle')
+
+  async function requestRefund() {
+    setRefund('pending')
+    try {
+      const result = await postCancel(accessToken)
+      setRefund(result.status === 'refunded' ? 'done' : 'failed')
+    } catch {
+      setRefund('failed')
+    }
+  }
+
+  return (
+    <div className="flex flex-1 flex-col">
+      <div className="grid gap-2 bg-page-accent/10 px-safe py-3 text-center">
+        <p className="font-bold text-page-accent text-sm">{paywall.fallbackNote}</p>
+        {refund === 'done' && <p className="text-page-ink/64 text-sm">{paywall.refundDone}</p>}
+        {refund === 'failed' && <p className="text-page-ink/64 text-sm">{paywall.refundFailed}</p>}
+        {(refund === 'idle' || refund === 'pending') && (
+          <button
+            className={cn(
+              'mx-auto inline-flex min-h-10 items-center rounded-full border border-page-accent/50 px-4 font-bold text-page-accent text-sm transition-colors hover:bg-page-accent/10 disabled:opacity-60',
+              focusClassName,
+            )}
+            disabled={refund === 'pending'}
+            onClick={requestRefund}
+            type="button"
+          >
+            {refund === 'pending' ? paywall.refundPending : paywall.refundCta}
+          </button>
+        )}
+      </div>
+      <ReportView content={content} locale={locale} onRestart={onRestart} report={fallbackReport} />
+    </div>
   )
 }

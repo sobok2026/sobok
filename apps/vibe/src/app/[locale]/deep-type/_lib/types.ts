@@ -254,6 +254,10 @@ export type DeepTypePaywallContent = {
   precisionIntroCta: string
   precisionStepLabel: string
   precisionSubmitting: string
+  refundCta: string
+  refundPending: string
+  refundDone: string
+  refundFailed: string
 }
 
 export type DeepTypeContent = {

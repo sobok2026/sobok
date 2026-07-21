@@ -27,6 +27,10 @@ export const deepTypeContent = {
     precisionIntroCta: '',
     precisionStepLabel: '',
     precisionSubmitting: '',
+    refundCta: '',
+    refundPending: '',
+    refundDone: '',
+    refundFailed: '',
   },
   precisionQuestions: {
     'pr-EI-c0': { text: '', options: ['', '', '', ''] },

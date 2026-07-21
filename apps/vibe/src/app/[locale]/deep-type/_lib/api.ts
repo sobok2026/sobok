@@ -99,6 +99,11 @@ export function postGenerate(accessToken: string): Promise<{ status: string }> {
   return postJson('/report/generate', {}, accessToken)
 }
 
+// 청약철회 — allowed only while the paid report is unviewed (server enforces; 409 otherwise).
+export function postCancel(accessToken: string): Promise<{ status: string }> {
+  return postJson('/cancel', {}, accessToken)
+}
+
 export type ReportPoll = { done: true; sections: ReportSection[] } | { done: false }
 
 // 200 → done; 202 → still generating (keep polling); anything else is terminal (not-paid/refunded/failed).

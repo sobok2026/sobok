@@ -1,17 +1,23 @@
-# Local Worker secrets for `wrangler dev` (copy to .dev.vars, which is gitignored).
-# In production these are set with `wrangler secret put <NAME>` — never committed.
+# Local `wrangler dev` config. Copy to .dev.vars (gitignored). Prod is provisioned declaratively in
+# sobok-ops (Terraform) — nothing here is used in production.
+
+# Non-secret vars (mirror wrangler.jsonc `vars`):
 DEEPTYPE_PORTONE_STORE_ID=""
 DEEPTYPE_PORTONE_CHANNEL_KEY=""
-DEEPTYPE_PORTONE_API_SECRET=""
-DEEPTYPE_PORTONE_WEBHOOK_SECRET=""
-DEEPTYPE_ANTHROPIC_API_KEY=""
 DEEPTYPE_LLM_ENABLED="1"
-DEEPTYPE_TURNSTILE_SECRET=""
+# DEEPTYPE_REPORT_MODEL="claude-haiku-4-5"
 
-# Local Hyperdrive → point both bindings at a local/dev Postgres for `wrangler dev`
-# (wrangler reads these to stand in for the Hyperdrive configs locally):
+# The 4 true secrets are Cloudflare Secrets Store bindings (accessed via `await env.X.get()`). For local
+# dev, seed a LOCAL secrets store (no --remote) so they resolve offline — one per binding's secret_name:
+#   wrangler secrets-store secret create <STORE_ID> --name deeptype-portone-api-secret     --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name deeptype-portone-webhook-secret --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name deeptype-anthropic-api-key      --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name sobok-turnstile-secret          --value "1x0000000000000000000000000000000AA" --scopes workers
+# (the Turnstile test secret 1x00…AA passes any token locally.)
+
+# Local Hyperdrive → point both bindings at a local/dev Postgres for `wrangler dev`:
 # WRANGLER_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_FRESH="postgres://…"
 # WRANGLER_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_CACHED="postgres://…"
 
-# drizzle-kit push target (OWNER role, direct connection, sslmode=require):
-# DEEPTYPE_POSTGRES_URL_DIRECT="postgres://owner:…@…aivencloud.com:.../defaultdb?sslmode=require"
+# drizzle-kit push target (owner/avnadmin, direct connection, sslmode=require):
+# DEEPTYPE_POSTGRES_URL_DIRECT="postgres://avnadmin:…@…aivencloud.com:…/deeptype?sslmode=require"
