@@ -11,7 +11,6 @@ import { normalizeEmail, randomToken, sha256Hex } from '~/lib/tokens'
 import { verifyTurnstile } from '~/lib/turnstile'
 
 const RequestBody = z.object({
-  ageConfirmed: z.literal(true),
   email: z.string().email().max(254),
   locale: z.enum(['ko', 'en', 'ja', 'zh']),
   turnstileToken: z.string().min(1).max(2048),

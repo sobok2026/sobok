@@ -6,21 +6,23 @@ import { cn } from '@/utils/cn'
 type IntroViewProps = {
   body: string
   cta: string
+  hint: string
   onNext: () => void
   title: string
 }
 
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
-// Shared chapter-intro screen (STEP 1 검증/측정, STEP 2 Inner, STEP 3 보석) — sets the context for the
-// block of items that follows so the journey reads as chapters, not one long undifferentiated quiz. Title
-// carries its own "STEP N" prefix from content, so nothing here is hardcoded per-locale.
-export function IntroView({ body, cta, onNext, title }: IntroViewProps) {
+// Each chapter frames the context before its questions so the journey reads as distinct layers.
+export function IntroView({ body, cta, hint, onNext, title }: IntroViewProps) {
   return (
     <main className="flex flex-1 flex-col justify-center bg-page-bg px-safe py-10 text-page-ink sm:py-16">
       <div className="mx-auto w-full max-w-xl text-center">
         <h1 className="break-keep font-black text-3xl leading-tight">{title}</h1>
         <p className="mx-auto mt-5 max-w-md text-page-ink/68 leading-8">{body}</p>
+        <p className="mx-auto mt-5 max-w-md rounded-3xl bg-page-soft px-5 py-4 font-bold text-page-ink/72 text-sm leading-6">
+          {hint}
+        </p>
 
         <button
           className={cn(

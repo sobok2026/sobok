@@ -13,21 +13,35 @@ export type AxisContent = {
   second: AxisPoleContent
 }
 
+export type QuestionContent = {
+  options: readonly [string, string, string, string]
+  prompt: string
+}
+
+export type QuestionOptionCatalog = {
+  gem: readonly QuestionContent['options'][]
+  inner: readonly QuestionContent['options'][]
+  persona: readonly QuestionContent['options'][]
+  refinement: readonly QuestionContent['options'][]
+}
+
 export type DeepTypeUiText = {
   analyzingBody: string
   analyzingTitle: string
-  answerScale: readonly [string, string, string, string]
   backCta: string
   clarityLabel: string
   clarityNote: string
+  closestAnswerHint: string
   contextBody: string
   contextTitle: string
   gemIntroBody: string
   gemIntroCta: string
+  gemIntroHint: string
   gemIntroTitle: string
   gemStepLabel: string
   innerIntroBody: string
   innerIntroCta: string
+  innerIntroHint: string
   innerIntroTitle: string
   innerStepLabel: string
   landingCta: string
@@ -46,6 +60,7 @@ export type DeepTypeUiText = {
   methodologyNoteTitle: string
   personaIntroBody: string
   personaIntroCta: string
+  personaIntroHint: string
   personaIntroTitle: string
   personaStepLabel: string
   profileTitle: string
@@ -80,6 +95,7 @@ export type DeepTypePaywallContent = {
   processing: string
   refinementIntroBody: string
   refinementIntroCta: string
+  refinementIntroHint: string
   refinementIntroTitle: string
   refinementStepLabel: string
   refinementSubmitting: string
@@ -113,6 +129,6 @@ export type DeepTypeContent = {
   metadata: { description: string; title: string }
   methodology: MethodologyContent
   paywall: DeepTypePaywallContent
-  questions: Record<string, string>
+  questions: Record<string, QuestionContent>
   ui: DeepTypeUiText
 }

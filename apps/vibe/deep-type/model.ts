@@ -1,4 +1,4 @@
-export const INSTRUMENT_VERSION = '2.0.0' as const
+export const INSTRUMENT_VERSION = '3.0.0' as const
 
 export const TYPE_AXES = ['EI', 'SN', 'TF', 'JP'] as const
 export const CONTEXT_AXES = [...TYPE_AXES, 'NE'] as const

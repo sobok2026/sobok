@@ -144,7 +144,7 @@ export const LEGAL = {
         {
           heading: '아동의 개인정보',
           body: [
-            '초기 버전은 만 14세 미만의 서비스 이용과 구매를 허용하지 않습니다. 생년월일은 수집하지 않고 브라우저의 연령 확인 시각과 결제 시 만 14세 이상 확인 시각만 저장합니다. 만 14세 미만 이용자의 정보가 수집된 사실을 알게 되면 문의처로 알려주세요. 확인 후 이용을 제한하고 해당 데이터를 삭제합니다.',
+            '무료 서비스는 연령 확인 없이 이용할 수 있습니다. 유료 감정서는 만 14세 이상만 구매할 수 있으며, 생년월일은 수집하지 않고 결제 시 만 14세 이상 확인 시각만 저장합니다.',
           ],
         },
         {
@@ -196,9 +196,9 @@ export const LEGAL = {
           ],
         },
         {
-          heading: '이용 자격과 연령 확인',
+          heading: '구매 자격과 연령 확인',
           body: [
-            '초기 버전은 만 14세 이상만 이용하고 구매할 수 있습니다. 이용 시작 시 브라우저에서, 결제 시 다시 만 14세 이상임을 직접 확인해야 하며 생년월일은 수집하지 않습니다.',
+            '무료 서비스는 연령 확인 없이 이용할 수 있습니다. 유료 감정서는 만 14세 이상만 구매할 수 있으며 결제 시 직접 확인해야 합니다. 생년월일은 수집하지 않습니다.',
           ],
         },
         {
@@ -299,7 +299,7 @@ export const LEGAL = {
         {
           heading: '연령 제한',
           body: [
-            '초기 버전은 만 14세 미만의 이용과 구매를 허용하지 않습니다. 연령 제한을 통과해 잘못 결제한 사실을 알게 되면 구매 이메일과 함께 문의해 주세요.',
+            '만 14세 미만은 유료 감정서를 구매할 수 없습니다. 연령을 잘못 확인하고 결제한 사실을 알게 되면 구매 이메일과 함께 문의해 주세요.',
           ],
         },
         {
@@ -413,7 +413,7 @@ export const LEGAL = {
         {
           heading: "Children's privacy",
           body: [
-            'The initial release does not allow anyone under 14 to use or purchase the service. We do not collect dates of birth. We save only the browser confirmation timestamp and a separate 14+ confirmation timestamp at checkout. Contact us if you believe we collected data from someone under 14; after verification we will restrict access and delete that data.',
+            'The free service is available without age confirmation. Paid reports may be purchased only by people aged 14 or older. We do not collect dates of birth; we store only the 14+ confirmation timestamp submitted at checkout.',
           ],
         },
         {
@@ -465,9 +465,9 @@ export const LEGAL = {
           ],
         },
         {
-          heading: 'Eligibility and age confirmation',
+          heading: 'Purchase eligibility and age confirmation',
           body: [
-            'The initial release is available only to people aged 14 or older. You must self-confirm 14+ when entering the service and again at checkout. We do not collect your date of birth.',
+            'The free service is available without age confirmation. Paid reports may be purchased only by people aged 14 or older, who must self-confirm at checkout. We do not collect dates of birth.',
           ],
         },
         {
@@ -568,7 +568,7 @@ export const LEGAL = {
         {
           heading: 'Age restriction',
           body: [
-            'The initial release does not allow use or purchases by anyone under 14. If you learn that a payment was made after bypassing this restriction, contact us with the purchase email.',
+            'Anyone under 14 may not purchase a paid report. If you learn that a payment was made after an incorrect age confirmation, contact us with the purchase email.',
           ],
         },
         {
@@ -682,7 +682,7 @@ export const LEGAL = {
         {
           heading: '子どものプライバシー',
           body: [
-            '初期版では14歳未満の利用・購入を認めません。生年月日は収集せず、ブラウザでの確認時刻と決済時の14歳以上確認時刻のみを保存します。14歳未満の方の情報を収集したと思われる場合はご連絡ください。確認後、利用を制限しデータを削除します。',
+            '無料サービスは年齢確認なしで利用できます。有料鑑定書は14歳以上の方のみ購入でき、生年月日は収集せず、決済時の14歳以上確認時刻のみを保存します。',
           ],
         },
         {
@@ -734,9 +734,9 @@ export const LEGAL = {
           ],
         },
         {
-          heading: '利用資格と年齢確認',
+          heading: '購入資格と年齢確認',
           body: [
-            '初期版は14歳以上の方のみ利用・購入できます。利用開始時と決済時に14歳以上であることを自己確認する必要があります。生年月日は収集しません。',
+            '無料サービスは年齢確認なしで利用できます。有料鑑定書は14歳以上の方のみ購入でき、決済時に直接確認する必要があります。生年月日は収集しません。',
           ],
         },
         {
@@ -837,7 +837,7 @@ export const LEGAL = {
         {
           heading: '年齢制限',
           body: [
-            '初期版では14歳未満の利用・購入を認めません。この制限を回避した決済が判明した場合は、購入メールを添えてお問い合わせください。',
+            '14歳未満の方は有料鑑定書を購入できません。年齢を誤って確認して決済したことが判明した場合は、購入メールを添えてお問い合わせください。',
           ],
         },
         {
@@ -951,7 +951,7 @@ export const LEGAL = {
         {
           heading: '儿童隐私',
           body: [
-            '初始版本不允许未满14周岁的用户使用或购买。我们不收集出生日期，只保存浏览器确认时间以及结账时单独的14周岁以上确认时间。如您认为我们收集了未满14周岁用户的数据，请联系我们；核实后会限制使用并删除该数据。',
+            '免费服务无需年龄确认即可使用。付费报告仅限年满14周岁的用户购买。我们不收集出生日期，只保存结账时提交的14周岁以上确认时间。',
           ],
         },
         {
@@ -1003,9 +1003,9 @@ export const LEGAL = {
           ],
         },
         {
-          heading: '使用资格与年龄确认',
+          heading: '购买资格与年龄确认',
           body: [
-            '初始版本仅限年满14周岁的用户使用和购买。进入服务时以及结账时，均须自行确认已满14周岁。我们不收集出生日期。',
+            '免费服务无需年龄确认即可使用。付费报告仅限年满14周岁的用户购买，并须在结账时自行确认。我们不收集出生日期。',
           ],
         },
         {
@@ -1101,7 +1101,7 @@ export const LEGAL = {
         },
         {
           heading: '年龄限制',
-          body: ['初始版本不允许未满14周岁的用户使用或购买。如发现有人绕过该限制完成支付，请提供购买邮箱并联系我们。'],
+          body: ['未满14周岁的用户不能购买付费报告。如发现有人错误确认年龄并完成支付，请提供购买邮箱并联系我们。'],
         },
         {
           heading: '退款咨询',

@@ -2,7 +2,6 @@ import { isLocale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import AgeGate from '@/components/AgeGate'
 import { DEEP_TYPE_REOPEN } from '@/content/deep-type-reopen'
 import { buildLocalizedMetadata } from '@/i18n/metadata'
 
@@ -29,15 +28,12 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/deep-typ
 
 export default async function DeepTypeReopenPage({ params }: PageProps<'/[locale]/deep-type/reopen'>) {
   const { locale } = await params
+
   if (!isLocale(locale)) {
     notFound()
   }
 
   const content = await getDeepTypeContent(locale)
 
-  return (
-    <AgeGate locale={locale}>
-      <ReopenView content={content} copy={DEEP_TYPE_REOPEN[locale]} locale={locale} />
-    </AgeGate>
-  )
+  return <ReopenView content={content} copy={DEEP_TYPE_REOPEN[locale]} locale={locale} />
 }

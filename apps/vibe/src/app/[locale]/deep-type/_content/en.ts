@@ -1,4 +1,5 @@
 import { createDeepTypeContent } from './create-content'
+import { enQuestionOptions } from './question-options/en'
 
 export const deepTypeContent = createDeepTypeContent({
   metadata: {
@@ -9,20 +10,22 @@ export const deepTypeContent = createDeepTypeContent({
   ui: {
     analyzingBody: 'We are scoring all 50 responses under one model and building your three-layer profile.',
     analyzingTitle: 'Mapping your three layers',
-    answerScale: ['Strongly disagree', 'Somewhat disagree', 'Somewhat agree', 'Strongly agree'],
     backCta: 'Previous question',
     clarityLabel: 'Response direction',
     clarityNote: 'The longer the bar, the more clearly that direction appeared across your responses.',
+    closestAnswerHint: 'If none fits exactly, choose the option closest to you.',
     contextBody:
       'The same constructs were asked about in social and private contexts. Differences describe context-dependent expression, not a contradictory personality.',
     contextTitle: 'How expression shifts by context',
     gemIntroBody:
       'The final 20 questions explore the basis of self-worth, connection and autonomy, emotion processing, and goal focus.',
     gemIntroCta: 'Start Gem questions',
+    gemIntroHint: 'Choose what you actually tend to do, not what sounds most desirable.',
     gemIntroTitle: 'STEP 3. Inner motives',
     gemStepLabel: 'STEP 3 · Gem',
     innerIntroBody: 'Now answer the same trait dimensions while imagining yourself alone or outside a social role.',
     innerIntroCta: 'Start Inner questions',
+    innerIntroHint: 'It is fine if this differs from earlier answers. Choose what feels closest when you are off duty.',
     innerIntroTitle: 'STEP 2. Outside your roles',
     innerStepLabel: 'STEP 2 · Inner',
     landingCta: 'Start inner exploration',
@@ -44,6 +47,8 @@ export const deepTypeContent = createDeepTypeContent({
     personaIntroBody:
       'Answer while thinking about how you naturally behave around other people or while performing a social role.',
     personaIntroCta: 'Start Persona questions',
+    personaIntroHint:
+      'You do not need a perfect match. Think about how you have usually been lately and choose the closest option.',
     personaIntroTitle: 'STEP 1. Around other people',
     personaStepLabel: 'STEP 1 · Persona',
     profileTitle: 'Continuous score profile',
@@ -88,6 +93,8 @@ export const deepTypeContent = createDeepTypeContent({
     refinementIntroBody:
       'These 24 short questions explore eight key dimensions in greater depth. Your answers complete your Inner and Gem profile and shape the personalized report.',
     refinementIntroCta: 'Complete my profile',
+    refinementIntroHint:
+      'You do not need to match your earlier result. The closest answer makes your report more specific.',
     refinementStepLabel: 'STEP 4 · Profile completion',
     refinementSubmitting: 'Completing your final profile...',
     refundCta: 'Request payment cancellation',
@@ -253,7 +260,7 @@ export const deepTypeContent = createDeepTypeContent({
       'Persona and Inner use the same five dimensions. The dominant directions on four dimensions create a 16-type code for each layer; emotional reactivity remains continuous and does not enter the code. Four motive dimensions create 16 Gems, producing 16×16×16, or 4,096 total classifications.',
     scoringTitle: 'Questions and scoring',
     scoringBody:
-      'The free stage has 50 questions, followed after payment by 24 questions that explore eight key dimensions in greater depth. Responses use a four-point agreement scale with reverse-keyed items. The server checks IDs, duplicates, omissions, and ranges before computing equal-weighted axis means.',
+      'The free stage has 50 questions, followed after payment by 24 questions that explore eight key dimensions in greater depth. Each question asks for the closest of four concrete options and includes reverse-keyed items. The server checks IDs, duplicates, omissions, and ranges before computing equal-weighted axis means.',
     evidenceTitle: 'Conceptual starting points',
     evidenceBody:
       'Context-dependent expression draws on Whole Trait Theory and cross-role trait research. The self-worth dimension references contingencies of self-worth; connection and autonomy draw on attachment research and self-determination theory. Emotion processing and goal focus incorporate perspectives from emotion-regulation and regulatory-focus research.',
@@ -268,7 +275,8 @@ export const deepTypeContent = createDeepTypeContent({
     sourcesIntro: 'These are the main studies and standards referenced in DeepType design and interpretation.',
     backCta: 'Return to DeepType',
   },
-  questionText: {
+  questionOptions: enQuestionOptions,
+  questionPrompts: {
     persona: [
       'Around other people, I tend to start conversations without much warm-up.',
       'After spending time with people, I need solitude for my energy to return.',

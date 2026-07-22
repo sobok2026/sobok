@@ -44,8 +44,8 @@ export function DeepTypeFlow({ content, locale }: DeepTypeFlowProps) {
 
     return (
       <QuizView
-        answerScale={ui.answerScale}
         backLabel={ui.backCta}
+        hint={offset === 0 && index === 0 ? ui.closestAnswerHint : undefined}
         itemId={item.id}
         key={item.id}
         onAnswer={(answer) => dispatch({ answer, type: 'ANSWER' })}
@@ -65,6 +65,7 @@ export function DeepTypeFlow({ content, locale }: DeepTypeFlowProps) {
         <IntroView
           body={ui.personaIntroBody}
           cta={ui.personaIntroCta}
+          hint={ui.personaIntroHint}
           onNext={() => dispatch({ type: 'BEGIN' })}
           title={ui.personaIntroTitle}
         />
@@ -76,6 +77,7 @@ export function DeepTypeFlow({ content, locale }: DeepTypeFlowProps) {
         <IntroView
           body={ui.innerIntroBody}
           cta={ui.innerIntroCta}
+          hint={ui.innerIntroHint}
           onNext={() => dispatch({ type: 'BEGIN' })}
           title={ui.innerIntroTitle}
         />
@@ -87,6 +89,7 @@ export function DeepTypeFlow({ content, locale }: DeepTypeFlowProps) {
         <IntroView
           body={ui.gemIntroBody}
           cta={ui.gemIntroCta}
+          hint={ui.gemIntroHint}
           onNext={() => dispatch({ type: 'BEGIN' })}
           title={ui.gemIntroTitle}
         />
@@ -125,6 +128,7 @@ export function DeepTypeFlow({ content, locale }: DeepTypeFlowProps) {
         <IntroView
           body={content.paywall.refinementIntroBody}
           cta={content.paywall.refinementIntroCta}
+          hint={content.paywall.refinementIntroHint}
           onNext={() => dispatch({ type: 'BEGIN' })}
           title={content.paywall.refinementIntroTitle}
         />

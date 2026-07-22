@@ -89,7 +89,7 @@ export const PAGES = {
         {
           heading: '이용 시 유의해 주세요',
           body: [
-            '초기 버전은 만 14세 이상만 이용하고 구매할 수 있습니다. 결타레의 결과는 재미와 관계 참고를 위한 정보이며 전문적인 관계 상담이나 조언을 대신하지 않습니다. 자세한 조건은 이용약관에서 확인할 수 있습니다.',
+            '무료 서비스는 연령 확인 없이 이용할 수 있으며, 유료 구매는 만 14세 이상만 가능합니다. 결타레의 결과는 재미와 관계 참고를 위한 정보이며 전문적인 관계 상담이나 조언을 대신하지 않습니다. 자세한 조건은 이용약관에서 확인할 수 있습니다.',
           ],
         },
       ],
@@ -172,7 +172,7 @@ export const PAGES = {
         {
           heading: 'Please keep in mind',
           body: [
-            'The initial release is available only to people aged 14 or older. vibe’s results are for fun and self-reflection and are not a substitute for professional relationship advice. See the Terms of Service for full conditions.',
+            'The free service is available without age confirmation, while paid purchases are limited to people aged 14 or older. vibe’s results are for fun and self-reflection and are not a substitute for professional relationship advice. See the Terms of Service for full conditions.',
           ],
         },
       ],
@@ -257,7 +257,7 @@ export const PAGES = {
         {
           heading: 'ご利用にあたって',
           body: [
-            '初期版は14歳以上の方のみ利用・購入できます。vibeの結果は娯楽と自己理解のための参考情報であり、専門的な相談や助言に代わるものではありません。詳しい条件は利用規約をご確認ください。',
+            '無料サービスは年齢確認なしで利用でき、有料購入は14歳以上の方に限られます。vibeの結果は娯楽と自己理解のための参考情報であり、専門的な相談や助言に代わるものではありません。詳しい条件は利用規約をご確認ください。',
           ],
         },
       ],
@@ -340,7 +340,7 @@ export const PAGES = {
         {
           heading: '使用提示',
           body: [
-            '初始版本仅限年满14周岁的用户使用和购买。vibe的结果仅供娱乐与自我了解参考，不能替代专业咨询或建议。详细条件请见服务条款。',
+            '免费服务无需年龄确认即可使用，付费购买仅限年满14周岁的用户。vibe的结果仅供娱乐与自我了解参考，不能替代专业咨询或建议。详细条件请见服务条款。',
           ],
         },
       ],

@@ -66,6 +66,7 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
       <IntroView
         body={content.paywall.refinementIntroBody}
         cta={content.paywall.refinementIntroCta}
+        hint={content.paywall.refinementIntroHint}
         onNext={() => setPhase('refinement')}
         title={content.paywall.refinementIntroTitle}
       />

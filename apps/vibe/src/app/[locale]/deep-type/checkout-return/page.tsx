@@ -2,7 +2,6 @@ import { isLocale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import AgeGate from '@/components/AgeGate'
 import { DEEP_TYPE_CHECKOUT_RETURN } from '@/content/deep-type-checkout-return'
 import { buildLocalizedMetadata } from '@/i18n/metadata'
 
@@ -30,14 +29,12 @@ export async function generateMetadata({
 
 export default async function DeepTypeCheckoutReturnPage({ params }: PageProps<'/[locale]/deep-type/checkout-return'>) {
   const { locale } = await params
+
   if (!isLocale(locale)) {
     notFound()
   }
 
   const content = await getDeepTypeContent(locale)
-  return (
-    <AgeGate locale={locale}>
-      <CheckoutReturnView content={content} copy={DEEP_TYPE_CHECKOUT_RETURN[locale]} locale={locale} />
-    </AgeGate>
-  )
+
+  return <CheckoutReturnView content={content} copy={DEEP_TYPE_CHECKOUT_RETURN[locale]} locale={locale} />
 }

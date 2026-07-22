@@ -1,4 +1,5 @@
 import { createDeepTypeContent } from './create-content'
+import { koQuestionOptions } from './question-options/ko'
 
 export const deepTypeContent = createDeepTypeContent({
   metadata: {
@@ -8,19 +9,21 @@ export const deepTypeContent = createDeepTypeContent({
   ui: {
     analyzingBody: '50개 응답을 같은 기준으로 채점해 세 층의 프로필을 만들고 있어요.',
     analyzingTitle: '당신의 세 층을 정리하고 있어요',
-    answerScale: ['전혀 그렇지 않다', '그렇지 않은 편이다', '그런 편이다', '매우 그렇다'],
     backCta: '이전 문항',
     clarityLabel: '응답 방향',
     clarityNote: '막대가 한쪽으로 길수록 이번 응답에서 그 방향이 더 선명하게 나타났다는 뜻이에요.',
+    closestAnswerHint: '딱 맞는 답이 없다면 가장 가까운 선택지를 골라주세요.',
     contextBody:
       '같은 축을 사람들과 있을 때와 혼자 있을 때에 맞춰 물었습니다. 차이는 성격의 모순이 아니라 상황별 표현의 차이로 읽습니다.',
     contextTitle: '상황에 따른 표현 차이',
     gemIntroBody: '마지막 20문항은 자기가치의 기준, 연결과 자율, 감정 처리, 목표 초점을 살펴봅니다.',
     gemIntroCta: '보석 문항 시작',
+    gemIntroHint: '좋아 보이는 답보다 실제로 자주 나타나는 모습에 가까운 선택지를 골라주세요.',
     gemIntroTitle: 'STEP 3. 내면 동기',
     gemStepLabel: 'STEP 3 · 보석',
     innerIntroBody: '같은 성향 축을 혼자 있거나 사회적 역할에서 벗어난 상황에 맞춰 다시 살펴봅니다.',
     innerIntroCta: '속유형 문항 시작',
+    innerIntroHint: '앞선 답과 달라도 괜찮아요. 역할에서 벗어난 나에게 더 가까운 선택지를 골라주세요.',
     innerIntroTitle: 'STEP 2. 역할에서 벗어난 나',
     innerStepLabel: 'STEP 2 · 속유형',
     landingCta: '내면 탐구 시작',
@@ -41,6 +44,7 @@ export const deepTypeContent = createDeepTypeContent({
     methodologyNoteTitle: '결과를 더 잘 활용하는 방법',
     personaIntroBody: '사람들과 함께 있거나 역할을 수행할 때 자연스럽게 드러나는 행동 경향을 떠올려 답해 주세요.',
     personaIntroCta: '겉유형 문항 시작',
+    personaIntroHint: '완벽히 맞는 답을 찾지 않아도 괜찮아요. 최근의 평소 모습에 가장 가까운 선택지를 골라주세요.',
     personaIntroTitle: 'STEP 1. 사람들 앞의 나',
     personaStepLabel: 'STEP 1 · 겉유형',
     profileTitle: '연속 점수 프로필',
@@ -83,6 +87,8 @@ export const deepTypeContent = createDeepTypeContent({
     refinementIntroBody:
       '8가지 핵심 축을 더 깊이 확인하는 24개의 짧은 질문이에요. 응답을 더해 속유형과 보석 프로필을 완성하고 개인화 리포트에 반영합니다.',
     refinementIntroCta: '내 프로필 완성하기',
+    refinementIntroHint:
+      '앞선 결과에 맞출 필요 없어요. 지금의 나에게 더 가까운 선택지가 리포트를 더 선명하게 만들어요.',
     refinementStepLabel: 'STEP 4 · 프로필 완성',
     refinementSubmitting: '최종 프로필을 완성하고 있어요...',
     refundCta: '결제 취소 요청',
@@ -245,7 +251,7 @@ export const deepTypeContent = createDeepTypeContent({
       '겉유형과 속유형은 같은 다섯 축으로 측정하며, 네 축의 우세 방향이 각각 16유형 코드를 만듭니다. 정서 반응성은 코드에는 넣지 않고 연속 점수로만 제공합니다. 보석은 네 동기 축의 조합으로 16개가 되므로 전체 분류는 16×16×16, 총 4,096개입니다.',
     scoringTitle: '문항과 채점',
     scoringBody:
-      '무료 단계는 50문항이며, 결제 후에는 8가지 핵심 축을 더 깊게 확인하는 24개 심화 문항이 이어집니다. 각 문항은 4점 척도로 답하고 역문항을 함께 구성했습니다. 서버가 문항 ID, 중복, 누락, 응답 범위를 확인한 뒤 축별 평균을 계산합니다.',
+      '무료 단계는 50문항이며, 결제 후에는 8가지 핵심 축을 더 깊게 확인하는 24개 심화 문항이 이어집니다. 각 문항은 의미가 구체적인 네 선택지 중 가장 가까운 답을 고르며, 역문항을 함께 구성했습니다. 서버가 문항 ID, 중복, 누락, 응답 범위를 확인한 뒤 축별 평균을 계산합니다.',
     evidenceTitle: '이론적 출발점',
     evidenceBody:
       '상황별 성향 표현은 Whole Trait Theory와 역할별 특성 연구를, 자기가치 축은 contingencies of self-worth를, 연결·자율은 애착 연구와 자기결정성이론을 참고했습니다. 감정 처리와 목표 초점에는 정서조절 및 regulatory focus 연구의 관점을 반영했습니다.',
@@ -260,7 +266,8 @@ export const deepTypeContent = createDeepTypeContent({
     sourcesIntro: '아래는 겉속유형의 문항 설계와 해석 원칙에 참고한 주요 연구와 표준입니다.',
     backCta: '겉속유형으로 돌아가기',
   },
-  questionText: {
+  questionOptions: koQuestionOptions,
+  questionPrompts: {
     persona: [
       '사람들과 함께 있을 때, 긴 준비 없이 먼저 대화를 시작하는 편이다.',
       '사람들과 시간을 보낸 뒤에는 혼자 있어야 에너지가 돌아오는 편이다.',

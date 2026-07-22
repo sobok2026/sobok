@@ -1,4 +1,5 @@
 import { createDeepTypeContent } from './create-content'
+import { zhQuestionOptions } from './question-options/zh'
 
 export const deepTypeContent = createDeepTypeContent({
   metadata: {
@@ -8,18 +9,20 @@ export const deepTypeContent = createDeepTypeContent({
   ui: {
     analyzingBody: '正在用同一套规则计算50项回答，并生成你的三层画像。',
     analyzingTitle: '正在整理你的三个层面',
-    answerScale: ['完全不符合', '不太符合', '比较符合', '非常符合'],
     backCta: '上一题',
     clarityLabel: '回答方向',
     clarityNote: '条形越偏向一侧，表示该方向在你这次回答中表现得越清晰。',
+    closestAnswerHint: '如果没有完全符合的答案，请选择最接近现在的你的选项。',
     contextBody: '同一组特质分别在人际情境和独处情境中提问。差异描述的是情境中的表达变化，而不是人格矛盾。',
     contextTitle: '不同情境下的表达变化',
     gemIntroBody: '最后20题探索自我价值依据、连接与自主、情绪处理方式和目标焦点。',
     gemIntroCta: '开始宝石题目',
+    gemIntroHint: '不要选择看起来更理想的答案，请选择最接近你实际常见状态的选项。',
     gemIntroTitle: 'STEP 3. 内在动机',
     gemStepLabel: 'STEP 3 · 宝石',
     innerIntroBody: '请用同样的特质维度，想象独处或离开社会角色时的自己来回答。',
     innerIntroCta: '开始内在类型题目',
+    innerIntroHint: '与前面的回答不同也没关系。请选择最接近你卸下角色时状态的选项。',
     innerIntroTitle: 'STEP 2. 离开角色的我',
     innerStepLabel: 'STEP 2 · 内在类型',
     landingCta: '开始内在探索',
@@ -38,6 +41,7 @@ export const deepTypeContent = createDeepTypeContent({
     methodologyNoteTitle: '更好地运用你的结果',
     personaIntroBody: '请回想与他人相处或承担社会角色时，自然表现出来的行为倾向。',
     personaIntroCta: '开始外在类型题目',
+    personaIntroHint: '不必寻找完全符合的答案。请回想最近日常中的自己，选择最接近的选项。',
     personaIntroTitle: 'STEP 1. 人前的我',
     personaStepLabel: 'STEP 1 · 外在类型',
     profileTitle: '连续分数画像',
@@ -80,6 +84,7 @@ export const deepTypeContent = createDeepTypeContent({
     refinementIntroBody:
       '这24道简短问题会更深入地探索8个核心维度。你的回答将完善内在类型与宝石画像，并用于个性化报告。',
     refinementIntroCta: '完成我的画像',
+    refinementIntroHint: '不必迎合之前的结果。越接近现在的你，报告就会越具体。',
     refinementStepLabel: 'STEP 4 · 完善画像',
     refinementSubmitting: '正在完成你的最终画像...',
     refundCta: '申请取消付款',
@@ -242,7 +247,7 @@ export const deepTypeContent = createDeepTypeContent({
       '外在类型和内在类型使用相同的五个维度，其中四个维度的优势方向分别形成16类型代码。情绪反应性不进入代码，只以连续分数呈现。四个动机维度形成16种宝石，因此总分类是16×16×16，共4,096种。',
     scoringTitle: '题目与计分',
     scoringBody:
-      '免费阶段有50题，付款后继续完成24道问题，以更深入地探索8个核心维度。题目采用四点同意量表并搭配反向题；服务器确认题目ID、重复、缺失和回答范围后，计算等权重的维度平均分。',
+      '免费阶段有50题，付款后继续完成24道问题，以更深入地探索8个核心维度。每题从四个含义具体的选项中选择最接近自己的答案，并搭配反向题；服务器确认题目ID、重复、缺失和回答范围后，计算等权重的维度平均分。',
     evidenceTitle: '概念起点',
     evidenceBody:
       '情境中的特质表达参考Whole Trait Theory与跨角色特质研究；自我价值维度参考contingencies of self-worth；连接与自主参考依恋研究和自我决定理论；情绪处理与目标焦点融入了情绪调节和regulatory focus研究的观点。',
@@ -257,7 +262,8 @@ export const deepTypeContent = createDeepTypeContent({
     sourcesIntro: '以下是DeepType在题目设计与解释原则中参考的主要研究与标准。',
     backCta: '返回DeepType',
   },
-  questionText: {
+  questionOptions: zhQuestionOptions,
+  questionPrompts: {
     persona: [
       '与他人在一起时，我往往不需要太多铺垫就会主动开始交谈。',
       '与人相处一段时间后，我需要独处才能恢复精力。',

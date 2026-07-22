@@ -1,4 +1,5 @@
 import { createDeepTypeContent } from './create-content'
+import { jaQuestionOptions } from './question-options/ja'
 
 export const deepTypeContent = createDeepTypeContent({
   metadata: {
@@ -8,19 +9,21 @@ export const deepTypeContent = createDeepTypeContent({
   ui: {
     analyzingBody: '50件の回答を同じ基準で採点し、3層のプロフィールを作成しています。',
     analyzingTitle: 'あなたの3つの層を整理しています',
-    answerScale: ['まったく当てはまらない', 'あまり当てはまらない', 'やや当てはまる', 'とても当てはまる'],
     backCta: '前の質問',
     clarityLabel: '回答の方向',
     clarityNote: 'バーが一方に長いほど、今回の回答でその方向がよりはっきり表れたことを示します。',
+    closestAnswerHint: 'ぴったりの答えがなければ、今の自分に最も近い選択肢を選んでください。',
     contextBody:
       '同じ特性を、人といる場面と一人の場面に分けて尋ねました。差は性格の矛盾ではなく、状況による表れ方の違いとして読みます。',
     contextTitle: '状況による表れ方の違い',
     gemIntroBody: '最後の20問では、自己価値の基準、つながりと自律、感情処理、目標への焦点を見ていきます。',
     gemIntroCta: 'Gemの質問を始める',
+    gemIntroHint: 'よく見える答えではなく、実際によく現れる自分に近い選択肢を選んでください。',
     gemIntroTitle: 'STEP 3. 内的動機',
     gemStepLabel: 'STEP 3 · Gem',
     innerIntroBody: '同じ特性軸について、一人でいる時や社会的役割を離れた時の自分を思い浮かべて答えてください。',
     innerIntroCta: 'Innerの質問を始める',
+    innerIntroHint: '前の回答と違っても大丈夫です。役割を離れた自分に最も近い選択肢を選んでください。',
     innerIntroTitle: 'STEP 2. 役割を離れた私',
     innerStepLabel: 'STEP 2 · Inner',
     landingCta: '内面探索を始める',
@@ -40,6 +43,7 @@ export const deepTypeContent = createDeepTypeContent({
     methodologyNoteTitle: '結果をより深く活用するために',
     personaIntroBody: '人と一緒にいる時や社会的役割を担う時に、自然に表れる行動を思い浮かべて答えてください。',
     personaIntroCta: 'Personaの質問を始める',
+    personaIntroHint: '完全に当てはまらなくても大丈夫です。最近の普段の自分に最も近い選択肢を選んでください。',
     personaIntroTitle: 'STEP 1. 人前の私',
     personaStepLabel: 'STEP 1 · Persona',
     profileTitle: '連続スコアプロフィール',
@@ -82,6 +86,7 @@ export const deepTypeContent = createDeepTypeContent({
     refinementIntroBody:
       '8つの重要な軸をさらに深く見る24問の短い質問です。回答を加えてInnerとGemのプロフィールを完成し、パーソナライズレポートに反映します。',
     refinementIntroCta: 'プロフィールを完成する',
+    refinementIntroHint: '前の結果に合わせる必要はありません。今の自分に近い回答ほど、レポートがより具体的になります。',
     refinementStepLabel: 'STEP 4 · プロフィール完成',
     refinementSubmitting: '最終プロフィールを完成しています...',
     refundCta: '決済取消を申請',
@@ -244,7 +249,7 @@ export const deepTypeContent = createDeepTypeContent({
       'PersonaとInnerは同じ五つの軸で測定し、四軸の優勢方向がそれぞれ16タイプのコードを作ります。感情反応性はコードに入れず、連続値のみを示します。Gemは四つの動機軸から16種類となり、全体は16×16×16、計4,096分類です。',
     scoringTitle: '質問と採点',
     scoringBody:
-      '無料段階は50問で、決済後には8つの重要な軸をより深く見る24問が続きます。4件法と逆転項目を組み合わせ、サーバーがID、重複、欠落、回答範囲を確認してから、同じ重みで軸別平均を計算します。',
+      '無料段階は50問で、決済後には8つの重要な軸をより深く見る24問が続きます。各問では意味が具体的な4つの選択肢から最も近い答えを選び、逆転項目も組み合わせます。サーバーがID、重複、欠落、回答範囲を確認してから、同じ重みで軸別平均を計算します。',
     evidenceTitle: '理論的な出発点',
     evidenceBody:
       '状況別の特性表現はWhole Trait Theoryと役割別特性研究、自己価値はcontingencies of self-worth、つながりと自律は愛着研究と自己決定理論を参考にしています。感情処理と目標焦点には、感情調整とregulatory focus研究の視点を取り入れています。',
@@ -259,7 +264,8 @@ export const deepTypeContent = createDeepTypeContent({
     sourcesIntro: '以下は、DeepTypeの質問設計と解釈原則で参照した主な研究と標準です。',
     backCta: 'DeepTypeに戻る',
   },
-  questionText: {
+  questionOptions: jaQuestionOptions,
+  questionPrompts: {
     persona: [
       '人といる時、長く様子を見なくても自分から会話を始めるほうだ。',
       '人と過ごした後は、一人にならないとエネルギーが戻りにくい。',

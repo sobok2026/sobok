@@ -82,7 +82,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
     setRequestPending(true)
     const email = String(new FormData(event.currentTarget).get('email') ?? '')
     try {
-      await postReopenRequest({ ageConfirmed: true, email, locale, turnstileToken })
+      await postReopenRequest({ email, locale, turnstileToken })
       setPhase('accepted')
     } catch {
       setRequestError(true)
@@ -229,6 +229,7 @@ function ReopenedAccess({
       <IntroView
         body={content.paywall.refinementIntroBody}
         cta={content.paywall.refinementIntroCta}
+        hint={content.paywall.refinementIntroHint}
         onNext={() => setPhase('refinement')}
         title={content.paywall.refinementIntroTitle}
       />

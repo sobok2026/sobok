@@ -11,7 +11,7 @@
 - **Secrets Store**(계정당 1개): PortOne API/웹훅 시크릿, Anthropic 키, Resend 키, Turnstile 시크릿, Discord 웹훅. `await env.<binding>.get()`으로 읽음.
 - **Cron 2개**: `*/15 * * * *` 결제 pending 재조정(`reconcileStalePending`), `0 3 * * *` 리텐션 purge(`runRetentionPurge`).
 - **DB**: drizzle-kit `push`(버전 마이그레이션 없음). 테이블 5개(`deeptype_result/purchase/report/reopen_access/webhook_event`).
-- **측정 계약**: `2.0.0`. 무료 50문항을 Worker가 재채점해 겉 16유형·속 16유형·보석 16분류를 만들고, 결제 후에는 모든 사용자에게 동일한 24개 심화 문항으로 속·보석을 재산출한다. 클라이언트가 보낸 유형 코드는 신뢰하지 않는다.
+- **측정 계약**: `3.0.0`. 문항별 의미가 구체적인 4개 선택지로 구성된 무료 50문항을 Worker가 재채점해 겉 16유형·속 16유형·보석 16분류를 만들고, 결제 후에는 모든 사용자에게 동일한 24개 심화 문항으로 속·보석을 재산출한다. 클라이언트가 보낸 유형 코드는 신뢰하지 않는다.
 
 라우트:
 
@@ -135,7 +135,7 @@ bun run deploy
 
 **I. 연령·동의·CMP**
 
-1. 새 브라우저에서 테스트 진입 전 만 14세 확인이 필요하고, 확인 시각만 로컬 저장소에 남는지 확인한다. 결제 화면에서는 다시 확인해야 한다.
+1. 새 브라우저에서 무료 검사·재열람·결제 복귀 화면에 연령 게이트가 없고, 결제 화면에서만 만 14세 이상 확인이 필수인지 확인한다.
 2. Google Privacy & Messaging 메시지를 `?fc=alwaysshow&fctype=gdpr`로 강제 표시해 언어·철회 UI를 확인한다.
 3. 선택 전 Consent Mode v2 네 신호가 `denied`, 선택 후 CMP 선택대로 갱신되는지 Tag Assistant에서 확인한다. `/deep-type/reopen`과 `/deep-type/checkout-return`에는 GTM·AdSense 요청이 없어야 한다.
 4. 미국 주 규정 메시지도 AdSense 메시지 진단 도구와 대상 지역 테스트로 확인한다.

@@ -58,7 +58,6 @@ export function RefinementQuizView({ accessToken, content, onComplete }: Refinem
         </p>
       ) : null}
       <QuizView
-        answerScale={content.ui.answerScale}
         backLabel={content.ui.backCta}
         itemId={item.id}
         onAnswer={answer}

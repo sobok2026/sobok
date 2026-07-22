@@ -1,7 +1,6 @@
 import { isLocale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import AgeGate from '@/components/AgeGate'
 import { buildLocalizedMetadata } from '@/i18n/metadata'
 import JsonLd, { webApplicationGraph } from '@/lib/JsonLd'
 
@@ -43,11 +42,9 @@ export default async function CoupleTypePage({ params }: PageProps<'/[locale]/co
           path: 'couple-type',
         })}
       />
-      <AgeGate locale={locale}>
-        <main className="flex flex-1 flex-col bg-page-bg text-page-ink">
-          <CoupleTypeFlow content={content} locale={locale} />
-        </main>
-      </AgeGate>
+      <main className="flex flex-1 flex-col bg-page-bg text-page-ink">
+        <CoupleTypeFlow content={content} locale={locale} />
+      </main>
     </>
   )
 }

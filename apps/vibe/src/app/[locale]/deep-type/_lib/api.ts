@@ -97,7 +97,6 @@ export type ReopenExchangeResponse = {
 }
 
 export function postReopenRequest(input: {
-  ageConfirmed: true
   email: string
   locale: Locale
   turnstileToken: string

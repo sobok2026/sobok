@@ -3,24 +3,25 @@
 import type { AgreementValue, ItemAnswer } from '@deep-type/model'
 import { ArrowLeft } from '@mynaui/icons-react'
 import { cn } from '@/utils/cn'
+import type { QuestionContent } from '../_lib/types'
 
 type QuizViewProps = {
-  answerScale: readonly [string, string, string, string]
   backLabel: string
+  hint?: string
   itemId: string
   onAnswer: (answer: ItemAnswer) => void
   onBack?: () => void
   progressLabel: string
   progressPercent: number
-  question: string
+  question: QuestionContent
 }
 
 const AGREEMENT_VALUES = [1, 2, 3, 4] as const satisfies readonly AgreementValue[]
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export function QuizView({
-  answerScale,
   backLabel,
+  hint,
   itemId,
   onAnswer,
   onBack,
@@ -49,7 +50,8 @@ export function QuizView({
         </div>
 
         <div className="rounded-4xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
-          <h1 className="text-balance font-black text-2xl leading-snug">{question}</h1>
+          <h1 className="text-balance font-black text-2xl leading-snug">{question.prompt}</h1>
+          {hint ? <p className="mt-3 text-page-ink/52 text-sm leading-6">{hint}</p> : null}
           <div className="mt-7 grid gap-3">
             {AGREEMENT_VALUES.map((value, index) => (
               <button
@@ -61,7 +63,7 @@ export function QuizView({
                 onClick={() => onAnswer({ itemId, value })}
                 type="button"
               >
-                {answerScale[index]}
+                {question.options[index]}
               </button>
             ))}
           </div>
