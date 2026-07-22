@@ -26,8 +26,8 @@
   // two ids below, then commit (same as a KV namespace id). FRESH = money/entitlement path (never stale);
   // CACHED = done-report reads only.
   "hyperdrive": [
-    { "binding": "HYPERDRIVE_FRESH", "id": "REPLACE_WITH_FRESH_HYPERDRIVE_ID" },
-    { "binding": "HYPERDRIVE_CACHED", "id": "REPLACE_WITH_CACHED_HYPERDRIVE_ID" }
+    { "binding": "HYPERDRIVE_FRESH", "id": "14e658152a554541b0e1a6712fc43787" },
+    { "binding": "HYPERDRIVE_CACHED", "id": "a2a2c4cb90d94e6fb08b0eb6727bb61d" }
   ],
   // Crons (worker `scheduled` handler): every 15 min → reconcile stuck 'pending'; daily 03:00 → retention purge.
   "triggers": { "crons": ["*/15 * * * *", "0 3 * * *"] },
@@ -45,27 +45,27 @@
   "secrets_store_secrets": [
     {
       "binding": "DEEPTYPE_PORTONE_API_SECRET",
-      "store_id": "REPLACE_WITH_SECRETS_STORE_ID",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
       "secret_name": "deeptype-portone-api-secret"
     },
     {
       "binding": "DEEPTYPE_PORTONE_WEBHOOK_SECRET",
-      "store_id": "REPLACE_WITH_SECRETS_STORE_ID",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
       "secret_name": "deeptype-portone-webhook-secret"
     },
     {
       "binding": "DEEPTYPE_ANTHROPIC_API_KEY",
-      "store_id": "REPLACE_WITH_SECRETS_STORE_ID",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
       "secret_name": "deeptype-anthropic-api-key"
     },
     {
       "binding": "DEEPTYPE_TURNSTILE_SECRET",
-      "store_id": "REPLACE_WITH_SECRETS_STORE_ID",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
       "secret_name": "sobok-turnstile-secret"
     },
     {
       "binding": "DEEPTYPE_DISCORD_WEBHOOK",
-      "store_id": "REPLACE_WITH_SECRETS_STORE_ID",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
       "secret_name": "deeptype-discord-webhook"
     }
   ]
