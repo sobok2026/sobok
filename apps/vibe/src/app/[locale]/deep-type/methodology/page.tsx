@@ -42,14 +42,14 @@ export default async function DeepTypeMethodologyPage({ params }: PageProps<'/[l
           <MethodSection body={methodology.evidenceBody} title={methodology.evidenceTitle} />
 
           <section className="rounded-4xl border border-page-border bg-page-surface p-6 sm:p-8">
-            <h2 className="font-black text-xl">{methodology.limitationsTitle}</h2>
+            <h2 className="font-black text-xl">{methodology.principlesTitle}</h2>
             <ul className="mt-4 grid gap-3">
-              {methodology.limitations.map((limitation) => (
-                <li className="flex gap-3 text-page-ink/70 leading-7" key={limitation}>
+              {methodology.principles.map((principle) => (
+                <li className="flex gap-3 text-page-ink/70 leading-7" key={principle}>
                   <span aria-hidden="true" className="font-black text-page-accent">
                     •
                   </span>
-                  {limitation}
+                  {principle}
                 </li>
               ))}
             </ul>

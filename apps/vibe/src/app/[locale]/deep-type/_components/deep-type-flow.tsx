@@ -3,7 +3,7 @@
 import type { ItemAnswer } from '@deep-type/model'
 import { GEM_ITEMS, INNER_ITEMS, PERSONA_ITEMS } from '@deep-type/questionnaire'
 import type { Locale } from '@sobok/domain/locale'
-import { useReducer } from 'react'
+import { useEffect, useReducer } from 'react'
 
 import { assertNever } from '../_lib/assert'
 import { INITIAL_STATE, reducer } from '../_lib/flow-state'
@@ -25,6 +25,10 @@ type DeepTypeFlowProps = {
 export function DeepTypeFlow({ content, locale }: DeepTypeFlowProps) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
   const ui = content.ui
+
+  useEffect(() => {
+    window.scrollTo({ behavior: 'auto', top: 0 })
+  }, [state.phase])
 
   function renderQuiz(
     items: readonly { id: string }[],

@@ -14,7 +14,7 @@ export type DeepTypeCheckoutReturnContent = {
 
 export const DEEP_TYPE_CHECKOUT_RETURN = {
   [Locale.KO]: {
-    metadata: { title: '딥타입 결제 확인', description: '딥타입 결제 결과를 확인하고 감정서를 이어서 만듭니다.' },
+    metadata: { title: '겉속유형 결제 확인', description: '겉속유형 결제 결과를 확인하고 감정서를 이어서 만듭니다.' },
     eyebrow: 'DeepType',
     checkingTitle: '결제를 확인하고 있어요',
     checkingBody: '창을 닫지 말아 주세요. 결제 상태를 안전하게 확인한 뒤 다음 단계로 이어집니다.',
@@ -22,7 +22,7 @@ export const DEEP_TYPE_CHECKOUT_RETURN = {
     errorBody: '잠시 후 다시 확인하거나, 결제가 완료됐다면 구매 이메일로 감정서 재열람 링크를 요청해 주세요.',
     retryCta: '결제 다시 확인',
     reopenCta: '이메일로 감정서 찾기',
-    startOverCta: '딥타입 처음으로',
+    startOverCta: '겉속유형 처음으로',
   },
   [Locale.EN]: {
     metadata: {

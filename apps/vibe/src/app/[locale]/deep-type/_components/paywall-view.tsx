@@ -1,14 +1,18 @@
 'use client'
 
+import { DEEP_TYPE_REPORT_OFFER } from '@deep-type/offer'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
-import { ArrowLeft, Lock } from '@mynaui/icons-react'
+import { ArrowLeft, CheckCircle, Sparkles } from '@mynaui/icons-react'
 import Link from 'next/link'
-import { type FormEvent, useRef, useState } from 'react'
+import { type FormEvent, useEffect, useRef, useState } from 'react'
 import { TURNSTILE_SITE_KEY } from '@/constants'
 import { LEGAL } from '@/content/legal'
+import { track } from '@/lib/analytics/browser'
 import { cn } from '@/utils/cn'
 
 import { type FreeResult, useCheckout } from '../_hooks/use-checkout'
+import { formatKrw } from '../_lib/price'
+import { REPORT_OFFER_ITEMS } from '../_lib/report-offer-analytics'
 import type { DeepTypeContent } from '../_lib/types'
 
 type PaywallViewProps = {
@@ -26,6 +30,18 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
   const turnstileRef = useRef<TurnstileInstance | undefined>(undefined)
 
   const paywall = content.paywall
+  const discountLabel = paywall.discountTemplate.replace('{discount}', String(DEEP_TYPE_REPORT_OFFER.discountPercent))
+  const listPrice = formatKrw(freeResult.locale, DEEP_TYPE_REPORT_OFFER.listAmount)
+  const price = formatKrw(freeResult.locale, DEEP_TYPE_REPORT_OFFER.amount)
+
+  useEffect(() => {
+    track('view_item', {
+      currency: DEEP_TYPE_REPORT_OFFER.currency,
+      items: REPORT_OFFER_ITEMS,
+      locale: freeResult.locale,
+      value: DEEP_TYPE_REPORT_OFFER.amount,
+    })
+  }, [freeResult.locale])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -34,6 +50,12 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
       return
     }
 
+    track('begin_checkout', {
+      currency: DEEP_TYPE_REPORT_OFFER.currency,
+      items: REPORT_OFFER_ITEMS,
+      locale: freeResult.locale,
+      value: DEEP_TYPE_REPORT_OFFER.amount,
+    })
     const email = String(new FormData(event.currentTarget).get('email') ?? '')
     const accessToken = await start(email, turnstileToken)
 
@@ -51,24 +73,28 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
       <div className="mx-auto grid w-full max-w-xl gap-4">
         <section className="rounded-4xl border border-page-accent/35 bg-page-surface p-6 text-center shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
           <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-page-accent/12 text-page-accent">
-            <Lock aria-hidden="true" className="h-7 w-7" stroke={1.8} />
+            <Sparkles aria-hidden="true" className="h-7 w-7" stroke={1.8} />
           </span>
           <h1 className="mt-4 break-keep font-black text-2xl leading-snug">{paywall.title}</h1>
           <p className="mx-auto mt-3 max-w-md text-page-ink/68 leading-7">{paywall.body}</p>
 
           <ul className="mt-6 grid gap-2 text-left">
-            {paywall.lockedItems.map((item) => (
+            {paywall.benefits.map((item) => (
               <li className="flex items-center gap-2 text-page-ink/78 leading-7" key={item}>
-                <Lock aria-hidden="true" className="h-4 w-4 shrink-0 text-page-ink/40" stroke={1.8} />
+                <CheckCircle aria-hidden="true" className="h-4 w-4 shrink-0 text-page-accent" stroke={1.8} />
                 {item}
               </li>
             ))}
           </ul>
 
-          <div className="mt-6 flex items-center justify-center gap-2">
-            <span className="text-page-ink/40 line-through">{paywall.listPriceLabel}</span>
-            <span className="font-black text-3xl text-page-accent">{paywall.priceLabel}</span>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+            <span className="text-page-ink/40 line-through">{listPrice}</span>
+            <span className="font-black text-3xl text-page-accent">{price}</span>
+            <span className="rounded-full bg-page-accent/12 px-3 py-1 font-black text-page-accent text-xs">
+              {discountLabel}
+            </span>
           </div>
+          <p className="mx-auto mt-3 max-w-md text-page-ink/54 text-sm leading-6">{paywall.effortNote}</p>
         </section>
 
         <form className="rounded-4xl border border-page-border bg-page-surface p-6 sm:p-7" onSubmit={handleSubmit}>

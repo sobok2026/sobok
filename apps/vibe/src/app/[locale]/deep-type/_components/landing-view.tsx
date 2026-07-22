@@ -1,7 +1,6 @@
 import { ArrowRight, Sparkles } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
-import CommerceNotice from '@/components/CommerceNotice'
 import { cn } from '@/utils/cn'
 
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
@@ -56,22 +55,11 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
               'inline-flex min-h-11 items-center rounded-full font-bold text-page-ink/58 text-sm underline underline-offset-4 hover:text-page-ink',
               focusClassName,
             )}
-            href={`/${locale}/deep-type/methodology`}
-          >
-            {content.ui.methodologyCta}
-          </Link>
-          <Link
-            className={cn(
-              'inline-flex min-h-11 items-center rounded-full font-bold text-page-ink/58 text-sm underline underline-offset-4 hover:text-page-ink',
-              focusClassName,
-            )}
             href={`/${locale}/deep-type/reopen`}
           >
             {content.ui.reopenCta}
           </Link>
         </div>
-
-        <CommerceNotice className="mt-10" locale={locale} />
       </div>
     </main>
   )

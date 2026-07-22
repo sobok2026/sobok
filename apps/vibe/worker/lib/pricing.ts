@@ -1,3 +1,5 @@
+import { DEEP_TYPE_REPORT_OFFER } from '@deep-type/offer'
+
 // Server is the SOLE price authority. The client never supplies an amount; checkout looks the SKU up here
 // and the grant path verifies the PG-reported amount equals this. Minor units, KRW.
 export type Sku = 'report' | 'compat' | 'bundle'
@@ -14,13 +16,13 @@ export interface SkuDetail {
 // NOTE: orderName must never contain "MBTI" (상표) — it shows on the PortOne 결제창/영수증.
 export const SKU_CATALOG: Partial<Record<Sku, SkuDetail>> = {
   report: {
-    amount: 5900,
-    currency: 'KRW',
+    amount: DEEP_TYPE_REPORT_OFFER.amount,
+    currency: DEEP_TYPE_REPORT_OFFER.currency,
     orderNames: {
-      ko: '딥타입 정밀 감정서',
+      ko: '겉속유형 심층 리포트',
       en: 'DeepType in-depth report',
-      ja: 'DeepType精密鑑定書',
-      zh: 'DeepType精密分析报告',
+      ja: 'DeepType詳細レポート',
+      zh: 'DeepType深度报告',
     },
   },
 }

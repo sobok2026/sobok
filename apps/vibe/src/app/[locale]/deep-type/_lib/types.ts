@@ -67,16 +67,16 @@ export type DeepTypePaywallContent = {
   ageConfirmation: string
   consentWithdrawal: string
   cta: string
+  discountTemplate: string
   emailLabel: string
   emailPlaceholder: string
+  effortNote: string
   errorGeneric: string
   fallbackNote: string
   generatingBody: string
   generatingTitle: string
-  listPriceLabel: string
-  lockedItems: readonly string[]
+  benefits: readonly string[]
   notice: string
-  priceLabel: string
   processing: string
   refinementIntroBody: string
   refinementIntroCta: string
@@ -96,8 +96,8 @@ export type MethodologyContent = {
   evidenceBody: string
   evidenceTitle: string
   intro: string
-  limitations: readonly string[]
-  limitationsTitle: string
+  principles: readonly string[]
+  principlesTitle: string
   modelBody: string
   modelTitle: string
   scoringBody: string

@@ -30,10 +30,10 @@ export type DeepTypeReopenContent = {
 export const DEEP_TYPE_REOPEN = {
   [Locale.KO]: {
     metadata: {
-      title: '딥타입 감정서 다시 열기',
-      description: '구매에 사용한 이메일로 1년 이내의 딥타입 감정서를 다시 열 수 있습니다.',
+      title: '겉속유형 감정서 다시 열기',
+      description: '구매에 사용한 이메일로 1년 이내의 겉속유형 감정서를 다시 열 수 있습니다.',
     },
-    eyebrow: '딥타입 · 재열람',
+    eyebrow: '겉속유형 · 재열람',
     title: '구매한 감정서를 다시 열어드려요',
     body: '구매에 사용한 이메일을 입력하면 열람 가능한 감정서의 일회용 링크를 보내드려요.',
     emailLabel: '구매 이메일',
@@ -55,7 +55,7 @@ export const DEEP_TYPE_REOPEN = {
     reportFailedTitle: '감정서를 열지 못했어요',
     reportFailedBody: '잠시 후 새 링크로 다시 시도하거나 고객센터에 문의해 주세요.',
     accessUntil: '{date}까지 다시 열 수 있어요.',
-    startOverCta: '딥타입 처음부터 하기',
+    startOverCta: '겉속유형 처음부터 하기',
   },
   [Locale.EN]: {
     metadata: {

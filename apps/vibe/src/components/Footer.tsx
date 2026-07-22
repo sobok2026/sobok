@@ -2,12 +2,10 @@ import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 
 import { SITE_NAME } from '@/constants'
-import { BUSINESS_LABELS } from '@/content/business'
 import { LEGAL } from '@/content/legal'
 import { PAGES } from '@/content/pages'
 import { OTHER_SERVICES } from '@/content/services'
 import BusinessInfo from './BusinessInfo'
-import PrivacyChoicesButton from './PrivacyChoicesButton'
 
 export default function Footer({ locale }: { locale: Locale }) {
   const { nav } = LEGAL[locale]
@@ -34,10 +32,6 @@ export default function Footer({ locale }: { locale: Locale }) {
         <Link className="hover:text-page-ink" href={`/${locale}/refund`}>
           {nav.refund}
         </Link>
-        <Link className="hover:text-page-ink" href={`/${locale}/business`}>
-          {BUSINESS_LABELS[locale].heading}
-        </Link>
-        <PrivacyChoicesButton locale={locale} />
       </nav>
 
       <BusinessInfo
