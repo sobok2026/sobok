@@ -2,7 +2,7 @@
 
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { ArrowLeft, Lock } from '@mynaui/icons-react'
-import { useRef, useState } from 'react'
+import { type FormEvent, useRef, useState } from 'react'
 import { TURNSTILE_SITE_KEY } from '@/constants'
 import { cn } from '@/utils/cn'
 
@@ -20,27 +20,26 @@ const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 f
 
 export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallViewProps) {
   const { errorMessage, start, status } = useCheckout(freeResult)
-  const [email, setEmail] = useState('')
-  const [agreeWithdrawal, setAgreeWithdrawal] = useState(false)
-  const [agreePrivacy, setAgreePrivacy] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState('')
   const turnstileRef = useRef<TurnstileInstance | undefined>(undefined)
 
   const paywall = content.paywall
-  const emailValid = /.+@.+\..+/.test(email)
-  const canSubmit = emailValid && agreeWithdrawal && agreePrivacy && turnstileToken !== '' && status !== 'processing'
 
-  async function submit() {
-    if (!canSubmit) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    if (!turnstileToken) {
       return
     }
+
+    const email = String(new FormData(event.currentTarget).get('email') ?? '')
     const accessToken = await start(email, turnstileToken)
+
     if (accessToken) {
       onPaid(accessToken)
       return
     }
-    // Cancel/fail: the server already consumed the single-use Turnstile token in /checkout, so clear it and
-    // re-challenge the widget — otherwise the retry re-sends a spent token and gets rejected.
+
     setTurnstileToken('')
     turnstileRef.current?.reset()
   }
@@ -70,7 +69,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
           </div>
         </section>
 
-        <section className="rounded-4xl border border-page-border bg-page-surface p-6 sm:p-7">
+        <form className="rounded-4xl border border-page-border bg-page-surface p-6 sm:p-7" onSubmit={handleSubmit}>
           <label className="block font-bold text-page-ink/70 text-sm" htmlFor="deeptype-email">
             {paywall.emailLabel}
           </label>
@@ -82,15 +81,16 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
             )}
             id="deeptype-email"
             inputMode="email"
-            onChange={(event) => setEmail(event.target.value)}
+            maxLength={254}
+            name="email"
             placeholder={paywall.emailPlaceholder}
+            required
             type="email"
-            value={email}
           />
 
           <div className="mt-4 grid gap-3">
-            <Consent checked={agreeWithdrawal} label={paywall.consentWithdrawal} onChange={setAgreeWithdrawal} />
-            <Consent checked={agreePrivacy} label={paywall.consentPrivacy} onChange={setAgreePrivacy} />
+            <Consent label={paywall.consentWithdrawal} name="agree-withdrawal" />
+            <Consent label={paywall.consentPrivacy} name="agree-privacy" />
           </div>
 
           <div className="mt-4 flex justify-center">
@@ -109,9 +109,8 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
               'mt-6 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_rgba(255,77,109,0.24)] transition-colors hover:bg-page-accent/92 disabled:cursor-not-allowed disabled:bg-page-ink/20 disabled:shadow-none',
               focusClassName,
             )}
-            disabled={!canSubmit}
-            onClick={submit}
-            type="button"
+            disabled={!turnstileToken || status === 'processing'}
+            type="submit"
           >
             {status === 'processing' ? paywall.processing : paywall.cta}
           </button>
@@ -123,7 +122,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
           ) : null}
 
           <p className="mt-4 text-page-ink/40 text-xs leading-6">{paywall.notice}</p>
-        </section>
+        </form>
 
         <button
           className={cn(
@@ -141,15 +140,10 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
   )
 }
 
-function Consent({ checked, label, onChange }: { checked: boolean; label: string; onChange: (next: boolean) => void }) {
+function Consent({ label, name }: { label: string; name: string }) {
   return (
     <label className="flex cursor-pointer items-start gap-3 text-left text-page-ink/74 text-sm leading-6">
-      <input
-        checked={checked}
-        className="mt-0.5 h-5 w-5 shrink-0 accent-page-accent"
-        onChange={(event) => onChange(event.target.checked)}
-        type="checkbox"
-      />
+      <input className="mt-0.5 h-5 w-5 shrink-0 accent-page-accent" name={name} required type="checkbox" />
       <span>{label}</span>
     </label>
   )

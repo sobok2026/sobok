@@ -3,6 +3,7 @@
 import type { Locale } from '@sobok/domain/locale'
 import { useReducer } from 'react'
 
+import { assertNever } from '../_lib/assert'
 import { INITIAL_STATE, reducer } from '../_lib/flow-state'
 import { GEM_ITEMS } from '../_lib/gem'
 import { INNER_ITEMS } from '../_lib/inner'
@@ -176,10 +177,7 @@ export function DeepTypeFlow({ content, locale }: DeepTypeFlowProps) {
         />
       )
     }
-    default: {
-      const _exhaustive: never = state
-
-      return _exhaustive
-    }
+    default:
+      return assertNever(state)
   }
 }

@@ -31,4 +31,10 @@ export interface Bindings {
   DEEPTYPE_REPORT_MODEL?: string
 }
 
-export type AppEnv = { Bindings: Bindings }
+export type AppEnv = {
+  Bindings: Bindings
+  Variables: {
+    // The paid report access_token, set by requireAccessToken on entitlement routes (report/cancel/precision).
+    accessToken: string
+  }
+}

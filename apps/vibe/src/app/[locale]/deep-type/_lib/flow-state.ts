@@ -1,3 +1,4 @@
+import { assertNever } from './assert'
 import { GEM_ITEMS, scoreGem } from './gem'
 import { INNER_ITEMS, scoreInner } from './inner'
 import { PERSONA_MEASURE_ITEMS, PERSONA_VERIFY_ITEMS, scorePersonaMeasure, scorePersonaVerify } from './persona'
@@ -185,10 +186,7 @@ export function reducer(state: State, action: Action): State {
       return state
     case 'RESTART':
       return INITIAL_STATE
-    default: {
-      const _exhaustive: never = action
-
-      return _exhaustive
-    }
+    default:
+      return assertNever(action)
   }
 }

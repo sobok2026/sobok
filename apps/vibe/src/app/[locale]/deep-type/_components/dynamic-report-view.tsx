@@ -93,6 +93,7 @@ function FailedReport({ accessToken, content, fallbackReport, locale, onRestart 
 
   async function requestRefund() {
     setRefund('pending')
+
     try {
       const result = await postCancel(accessToken)
       setRefund(result.status === 'refunded' ? 'done' : 'failed')

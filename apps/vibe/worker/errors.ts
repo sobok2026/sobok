@@ -19,6 +19,7 @@ export type ProblemSlug =
   | 'withdrawal-forbidden'
   | 'invalid-signature'
   | 'not-configured'
+  | 'not-found'
   | 'internal'
 
 export function problem(
