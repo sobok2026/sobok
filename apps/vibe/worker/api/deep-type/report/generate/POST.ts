@@ -37,6 +37,11 @@ route.post('/', async (c) => {
       return problem(403, 'purchase-not-paid')
     }
 
+    const result = await getResultForReport(db, purchase.id)
+    if (!result?.refined) {
+      return problem(409, 'refinement-required')
+    }
+
     const report = await getReportStatus(db, purchase.id)
 
     if (report?.status === 'done') {
@@ -54,8 +59,6 @@ route.post('/', async (c) => {
       return problem(202, 'report-generating', undefined, undefined, { 'retry-after': '2' })
     }
 
-    const result = await getResultForReport(db, purchase.id)
-
     return {
       purchaseId: purchase.id,
       result,
@@ -68,7 +71,7 @@ route.post('/', async (c) => {
 
   // Lock held. The DB handle is closed during the slow Claude call so we don't tie up a pooled connection;
   // a fresh handle finalizes. The lock_token guards both finalize paths against a reclaimed stale lock.
-  const model = c.env.DEEPTYPE_REPORT_MODEL ?? 'claude-haiku-4-5'
+  const model = c.env.DEEPTYPE_REPORT_MODEL ?? 'claude-haiku-4-5-20251001'
 
   if (!claim.result) {
     await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
@@ -78,7 +81,7 @@ route.post('/', async (c) => {
   }
 
   try {
-    // LLM disabled (kill-switch / no budget) → serve a deterministic sample감정서 instead of 503 so the paid
+    // LLM disabled (kill-switch / no budget) → serve a deterministic sample report instead of 503 so the paid
     // flow still renders. Prod runs with DEEPTYPE_LLM_ENABLED='1' for the real Claude report.
     const llmEnabled = c.env.DEEPTYPE_LLM_ENABLED === '1'
     const profile = buildReportProfile(claim.result)
@@ -99,7 +102,7 @@ route.post('/', async (c) => {
 
     c.executionCtx.waitUntil(
       c.env.DEEPTYPE_DISCORD_WEBHOOK.get().then((url) =>
-        alertDiscord(url, `❌ deeptype report failed (purchase ${claim.purchaseId}): ${String(error).slice(0, 200)}`),
+        alertDiscord(url, '❌ deeptype report generation failed; inspect the restricted Worker logs'),
       ),
     )
 

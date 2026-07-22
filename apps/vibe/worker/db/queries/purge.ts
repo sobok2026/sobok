@@ -1,11 +1,26 @@
-import { and, lt, sql } from 'drizzle-orm'
+import { and, eq, inArray, isNotNull, lt, or, sql } from 'drizzle-orm'
 
+import { dateIsOlderThanYears } from '../../lib/retention'
 import type { Db } from '../client'
-import { purchaseTable, resultTable, webhookEventTable } from '../schema'
+import { purchaseTable, reopenAccessTable, reportTable, resultTable, webhookEventTable } from '../schema'
 
-// PIPA data-minimization purge (runs on the daily cron). Purchases are NEVER purged here — 전자상거래법
-// requires payment/contract records be kept ~5 years; only unconverted (never-paid) results and stale
-// webhook payloads are removed.
+const BATCH = 500
+
+// Daily data-lifecycle sweeps. Identifying/report data and the minimal transaction record deliberately
+// have different lifetimes, so a paid purchase is anonymized after one year and deleted after five.
+
+export async function purgeAbandonedPurchases(db: Db, cutoff: Date): Promise<number> {
+  const rows = await db
+    .delete(purchaseTable)
+    .where(
+      and(
+        lt(purchaseTable.createdAt, cutoff),
+        or(eq(purchaseTable.status, 'pending'), eq(purchaseTable.status, 'failed')),
+      ),
+    )
+    .returning({ id: purchaseTable.id })
+  return rows.length
+}
 
 // Free results that never led to a purchase, older than the cutoff. Results with ANY purchase are protected
 // by the purchase→result onDelete restrict FK, so the NOT EXISTS guard also keeps the delete safe.
@@ -19,6 +34,108 @@ export async function purgeUnconvertedResults(db: Db, cutoff: Date): Promise<num
       ),
     )
     .returning({ id: resultTable.id })
+  return rows.length
+}
+
+// Raw base and refinement answers are no longer needed three months after the generated report is
+// available. Server-scored profiles remain until the one-year report-access window ends.
+export async function minimizeDeliveredAnswers(db: Db, cutoff: Date): Promise<number> {
+  const rows = await db
+    .update(resultTable)
+    .set({ baseAnswers: [], refinementAnswers: null })
+    .where(
+      and(
+        sql`(${resultTable.baseAnswers} <> '[]'::jsonb OR ${resultTable.refinementAnswers} IS NOT NULL)`,
+        sql`EXISTS (
+          SELECT 1
+          FROM ${purchaseTable}
+          INNER JOIN ${reportTable} ON ${reportTable.purchaseId} = ${purchaseTable.id}
+          WHERE ${purchaseTable.resultId} = ${resultTable.id}
+            AND ${reportTable.generatedAt} < ${cutoff}
+        )`,
+      ),
+    )
+    .returning({ id: resultTable.id })
+  return rows.length
+}
+
+export async function expireReportAccess(
+  db: Db,
+  now: Date,
+): Promise<{ purchases: number; reports: number; results: number }> {
+  return db.transaction(async (tx) => {
+    const expired = await tx
+      .select({ id: purchaseTable.id, resultId: purchaseTable.resultId })
+      .from(purchaseTable)
+      .where(
+        and(
+          isNotNull(purchaseTable.paidAt),
+          isNotNull(purchaseTable.resultId),
+          dateIsOlderThanYears(purchaseTable.paidAt, now, 1),
+          or(eq(purchaseTable.status, 'paid'), eq(purchaseTable.status, 'refunded')),
+        ),
+      )
+      .limit(BATCH)
+
+    if (expired.length === 0) {
+      return { purchases: 0, reports: 0, results: 0 }
+    }
+
+    const purchaseIds = expired.map(({ id }) => id)
+    const resultIds = expired.flatMap(({ resultId }) => (resultId === null ? [] : [resultId]))
+
+    await tx.delete(reopenAccessTable).where(inArray(reopenAccessTable.purchaseId, purchaseIds))
+    const reports = await tx
+      .delete(reportTable)
+      .where(inArray(reportTable.purchaseId, purchaseIds))
+      .returning({ id: reportTable.id })
+    await tx
+      .update(purchaseTable)
+      .set({
+        accessToken: null,
+        email: null,
+        emailHash: null,
+        failureCode: null,
+        failureMessage: null,
+        resultId: null,
+      })
+      .where(inArray(purchaseTable.id, purchaseIds))
+    const results =
+      resultIds.length === 0
+        ? []
+        : await tx
+            .delete(resultTable)
+            .where(
+              and(
+                inArray(resultTable.id, resultIds),
+                sql`NOT EXISTS (SELECT 1 FROM ${purchaseTable} WHERE ${purchaseTable.resultId} = ${resultTable.id})`,
+              ),
+            )
+            .returning({ id: resultTable.id })
+
+    return { purchases: purchaseIds.length, reports: reports.length, results: results.length }
+  })
+}
+
+export async function purgeExpiredTransactionRecords(db: Db, now: Date): Promise<number> {
+  const rows = await db
+    .delete(purchaseTable)
+    .where(
+      and(
+        isNotNull(purchaseTable.paidAt),
+        dateIsOlderThanYears(purchaseTable.paidAt, now, 5),
+        or(eq(purchaseTable.status, 'paid'), eq(purchaseTable.status, 'refunded')),
+      ),
+    )
+    .returning({ id: purchaseTable.id })
+  return rows.length
+}
+
+export async function purgeExpiredReopenLinks(db: Db, cutoff: Date): Promise<number> {
+  const rows = await db
+    .delete(reopenAccessTable)
+    .where(lt(reopenAccessTable.expiresAt, cutoff))
+    .returning({ id: reopenAccessTable.id })
   return rows.length
 }
 

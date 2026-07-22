@@ -1,26 +1,20 @@
 'use client'
 
+import type { ItemAnswer } from '@deep-type/model'
+import { GEM_ITEMS, INNER_ITEMS, PERSONA_ITEMS } from '@deep-type/questionnaire'
 import type { Locale } from '@sobok/domain/locale'
 import { useReducer } from 'react'
 
 import { assertNever } from '../_lib/assert'
 import { INITIAL_STATE, reducer } from '../_lib/flow-state'
-import { GEM_ITEMS } from '../_lib/gem'
-import { INNER_ITEMS } from '../_lib/inner'
-import { PERSONA_MEASURE_ITEMS, PERSONA_VERIFY_ITEMS } from '../_lib/persona'
-import { buildDeepReport } from '../_lib/report'
-import { resolveResponse } from '../_lib/scoring'
-import type { AxisResponse, DeepTypeContent, Item, ItemAnswer, PersonaCode } from '../_lib/types'
+import type { DeepTypeContent } from '../_lib/types'
 import { AnalyzingView } from './analyzing-view'
 import { DynamicReportView } from './dynamic-report-view'
-import { GapReveal } from './gap-reveal'
 import { IntroView } from './intro-view'
 import { LandingView } from './landing-view'
 import { PaywallView } from './paywall-view'
-import { PersonaClaimView } from './persona-claim-view'
-import { PersonaReveal } from './persona-reveal'
-import { PrecisionQuizView } from './precision-quiz-view'
 import { QuizView } from './quiz-view'
+import { RefinementQuizView } from './refinement-quiz-view'
 import { ReportView } from './report-view'
 
 type DeepTypeFlowProps = {
@@ -32,30 +26,29 @@ export function DeepTypeFlow({ content, locale }: DeepTypeFlowProps) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
   const ui = content.ui
 
-  // Persona/Inner/Gem item text lives in three content dictionaries keyed by the item id prefix.
-  function contentByPrefix(id: string) {
-    if (id.startsWith('persona-')) {
-      return content.personaQuestions
-    }
-    if (id.startsWith('inner-')) {
-      return content.innerQuestions
-    }
-    return content.gemQuestions
-  }
-
-  function renderQuiz(items: readonly Item[], stepLabel: string, responses: readonly AxisResponse[]) {
-    const index = responses.length
+  function renderQuiz(
+    items: readonly { id: string }[],
+    offset: number,
+    answers: readonly ItemAnswer[],
+    stepLabel: string,
+  ) {
+    const index = answers.length - offset
     const item = items[index]
+    if (!item) {
+      return null
+    }
 
     return (
       <QuizView
-        content={contentByPrefix(item.id)}
-        item={item}
+        answerScale={ui.answerScale}
+        backLabel={ui.backCta}
+        itemId={item.id}
         key={item.id}
-        onAnswer={(answer: ItemAnswer) => dispatch({ response: resolveResponse(item, answer), type: 'ANSWER' })}
+        onAnswer={(answer) => dispatch({ answer, type: 'ANSWER' })}
         onBack={index > 0 ? () => dispatch({ type: 'BACK' }) : undefined}
         progressLabel={`${stepLabel} · ${index + 1} / ${items.length}`}
-        progressPercent={Math.round((index / items.length) * 100)}
+        progressPercent={Math.round(((index + 1) / items.length) * 100)}
+        question={content.questions[item.id]}
       />
     )
   }
@@ -63,58 +56,39 @@ export function DeepTypeFlow({ content, locale }: DeepTypeFlowProps) {
   switch (state.phase) {
     case 'landing':
       return <LandingView content={content} locale={locale} onStart={() => dispatch({ type: 'START' })} />
-    case 'claim':
-      return (
-        <PersonaClaimView
-          content={content}
-          onMeasure={() => dispatch({ type: 'MEASURE' })}
-          onSubmit={(code) => dispatch({ code: code as PersonaCode, type: 'CLAIM' })}
-        />
-      )
-    case 'verifyIntro':
+    case 'personaIntro':
       return (
         <IntroView
-          body={ui.claimVerifyBody}
-          cta={ui.claimVerifyCta}
+          body={ui.personaIntroBody}
+          cta={ui.personaIntroCta}
           onNext={() => dispatch({ type: 'BEGIN' })}
-          title={ui.claimVerifyTitle}
+          title={ui.personaIntroTitle}
         />
       )
-    case 'measureIntro':
-      return (
-        <IntroView
-          body={ui.measureIntroBody}
-          cta={ui.measureIntroCta}
-          onNext={() => dispatch({ type: 'BEGIN' })}
-          title={ui.measureIntroTitle}
-        />
-      )
-    case 'personaVerify':
-      return renderQuiz(PERSONA_VERIFY_ITEMS, 'STEP 1 · 겉유형', state.responses)
-    case 'personaMeasure':
-      return renderQuiz(PERSONA_MEASURE_ITEMS, 'STEP 1 · 겉유형', state.responses)
+    case 'persona':
+      return renderQuiz(PERSONA_ITEMS, 0, state.baseAnswers, ui.personaStepLabel)
     case 'innerIntro':
       return (
-        <PersonaReveal
-          claim={state.claim}
-          content={content}
+        <IntroView
+          body={ui.innerIntroBody}
+          cta={ui.innerIntroCta}
           onNext={() => dispatch({ type: 'BEGIN' })}
-          persona={state.persona}
+          title={ui.innerIntroTitle}
         />
       )
     case 'inner':
-      return renderQuiz(INNER_ITEMS, 'STEP 2 · Inner', state.responses)
+      return renderQuiz(INNER_ITEMS, PERSONA_ITEMS.length, state.baseAnswers, ui.innerStepLabel)
     case 'gemIntro':
       return (
-        <GapReveal
-          content={content}
-          inner={state.inner}
+        <IntroView
+          body={ui.gemIntroBody}
+          cta={ui.gemIntroCta}
           onNext={() => dispatch({ type: 'BEGIN' })}
-          outer={state.persona.code}
+          title={ui.gemIntroTitle}
         />
       )
     case 'gem':
-      return renderQuiz(GEM_ITEMS, 'STEP 3 · 보석', state.responses)
+      return renderQuiz(GEM_ITEMS, PERSONA_ITEMS.length + INNER_ITEMS.length, state.baseAnswers, ui.gemStepLabel)
     case 'analyzing':
       return (
         <AnalyzingView
@@ -123,60 +97,52 @@ export function DeepTypeFlow({ content, locale }: DeepTypeFlowProps) {
           title={ui.analyzingTitle}
         />
       )
-    case 'report': {
-      const report = buildDeepReport(content, state.persona, state.inner, state.gem)
-
+    case 'report':
       return (
         <ReportView
           content={content}
           locale={locale}
           onRestart={() => dispatch({ type: 'RESTART' })}
           onUnlock={() => dispatch({ type: 'UNLOCK' })}
-          report={report}
+          profile={state.profile}
         />
       )
-    }
     case 'paywall':
       return (
         <PaywallView
           content={content}
-          freeResult={{ gem: state.gem.code, innerType: state.inner.code, locale, persona: state.persona.code }}
+          freeResult={{ answers: state.baseAnswers, locale }}
           onClose={() => dispatch({ type: 'CLOSE_PAYWALL' })}
           onPaid={(accessToken) => dispatch({ accessToken, type: 'PAID' })}
         />
       )
-    case 'precisionIntro':
+    case 'refinementIntro':
       return (
         <IntroView
-          body={content.paywall.precisionIntroBody}
-          cta={content.paywall.precisionIntroCta}
+          body={content.paywall.refinementIntroBody}
+          cta={content.paywall.refinementIntroCta}
           onNext={() => dispatch({ type: 'BEGIN' })}
-          title={content.paywall.precisionIntroTitle}
+          title={content.paywall.refinementIntroTitle}
         />
       )
-    case 'precision':
+    case 'refinement':
       return (
-        <PrecisionQuizView
+        <RefinementQuizView
           accessToken={state.accessToken}
           content={content}
-          gemCode={state.gem.code}
-          innerCode={state.inner.code}
-          onComplete={() => dispatch({ type: 'PRECISION_DONE' })}
+          onComplete={(profile) => dispatch({ profile, type: 'REFINEMENT_DONE' })}
         />
       )
-    case 'dynamicReport': {
-      const fallbackReport = buildDeepReport(content, state.persona, state.inner, state.gem)
-
+    case 'dynamicReport':
       return (
         <DynamicReportView
           accessToken={state.accessToken}
           content={content}
-          fallbackReport={fallbackReport}
+          fallbackProfile={state.profile}
           locale={locale}
           onRestart={() => dispatch({ type: 'RESTART' })}
         />
       )
-    }
     default:
       return assertNever(state)
   }

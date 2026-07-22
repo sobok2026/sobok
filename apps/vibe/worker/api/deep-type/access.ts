@@ -6,7 +6,7 @@ import { problem } from '~/errors'
 // The paid report access_token, carried as `Authorization: Bearer <token>` (never a query param —
 // credentials don't belong in URLs). Validates the header, exposes the token as c.var.accessToken for the
 // handler, and 401s when it's absent or malformed. Applied on every entitlement route (report/cancel/
-// precision); the unauthenticated funnel routes (config/session/checkout/verify/webhook) never use it.
+// refinement); the unauthenticated funnel routes (config/session/checkout/verify/webhook) never use it.
 export const requireAccessToken: MiddlewareHandler<AppEnv> = async (c, next) => {
   const match = c.req.header('authorization')?.match(/^Bearer\s+(\S+)$/i)
   if (!match) {

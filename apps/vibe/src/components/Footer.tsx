@@ -2,9 +2,12 @@ import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 
 import { SITE_NAME } from '@/constants'
+import { BUSINESS_LABELS } from '@/content/business'
 import { LEGAL } from '@/content/legal'
 import { PAGES } from '@/content/pages'
 import { OTHER_SERVICES } from '@/content/services'
+import BusinessInfo from './BusinessInfo'
+import PrivacyChoicesButton from './PrivacyChoicesButton'
 
 export default function Footer({ locale }: { locale: Locale }) {
   const { nav } = LEGAL[locale]
@@ -28,14 +31,29 @@ export default function Footer({ locale }: { locale: Locale }) {
         <Link className="hover:text-page-ink" href={`/${locale}/privacy`}>
           {nav.privacy}
         </Link>
+        <Link className="hover:text-page-ink" href={`/${locale}/refund`}>
+          {nav.refund}
+        </Link>
+        <Link className="hover:text-page-ink" href={`/${locale}/business`}>
+          {BUSINESS_LABELS[locale].heading}
+        </Link>
+        <PrivacyChoicesButton locale={locale} />
       </nav>
-      <p className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-page-ink/40">
+
+      <BusinessInfo
+        className="mx-auto mt-6 max-w-xl text-left text-[0.6875rem] leading-5"
+        locale={locale}
+        showHeading={false}
+      />
+
+      <p className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-page-ink/40">
         {OTHER_SERVICES.map((service) => (
           <a className="hover:text-page-ink" href={`${service.href}/${locale}`} key={service.href}>
             {service.name[locale]}
           </a>
         ))}
       </p>
+
       <p className="mt-2 text-page-ink/40">© 2026 {SITE_NAME[locale]} · vibe.sobok.cc</p>
     </footer>
   )

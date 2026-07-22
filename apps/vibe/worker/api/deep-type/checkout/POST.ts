@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { openFresh, withDb } from '~/db/client'
 import { createPendingPurchase } from '~/db/queries/purchase'
-import { getResultIdByToken } from '~/db/queries/result'
+import { getResultForCheckoutByToken } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { resolveSku } from '~/lib/pricing'
@@ -17,6 +17,7 @@ const CheckoutBody = z.object({
   email: z.string().email().max(254),
   consentWithdrawal: z.boolean(),
   consentPrivacy: z.boolean(),
+  ageConfirmed: z.boolean(),
   turnstileToken: z.string().min(1).max(2048),
 })
 
@@ -31,7 +32,7 @@ route.post('/', async (c) => {
   const body = parsed.data
 
   // 청약철회 제한 + 개인정보 수집·이용 — both must be affirmatively consented before we take money.
-  if (!body.consentWithdrawal || !body.consentPrivacy) {
+  if (!body.consentWithdrawal || !body.consentPrivacy || !body.ageConfirmed) {
     return problem(422, 'consent-required')
   }
 
@@ -47,41 +48,41 @@ route.post('/', async (c) => {
     return problem(403, 'turnstile-failed')
   }
 
-  const detail = resolveSku(body.sku)
-  if (!detail) {
-    return problem(422, 'invalid-sku')
-  }
-
   const email = normalizeEmail(body.email)
   const emailHash = await sha256Hex(email)
   const paymentId = newPaymentId()
   const accessToken = randomToken()
   const now = new Date()
 
-  const created = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
-    const resultId = await getResultIdByToken(db, body.resultToken)
-    if (resultId === null) {
-      return false
+  const detail = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+    const result = await getResultForCheckoutByToken(db, body.resultToken)
+    if (!result) {
+      return null
+    }
+    const sku = resolveSku(body.sku, result.locale)
+    if (!sku) {
+      return null
     }
 
     await createPendingPurchase(db, {
       accessToken,
       paymentId,
-      resultId,
+      resultId: result.id,
       email,
       emailHash,
-      orderName: detail.orderName,
-      amount: detail.amount,
-      currency: detail.currency,
-      sku: detail.sku,
+      orderName: sku.orderName,
+      amount: sku.amount,
+      currency: sku.currency,
+      sku: sku.sku,
       consentWithdrawalAt: now,
       consentPrivacyAt: now,
+      ageConfirmedAt: now,
     })
 
-    return true
+    return sku
   })
 
-  if (!created) {
+  if (!detail) {
     return problem(404, 'result-not-found')
   }
 

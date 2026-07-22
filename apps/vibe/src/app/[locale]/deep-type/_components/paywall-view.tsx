@@ -2,8 +2,10 @@
 
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { ArrowLeft, Lock } from '@mynaui/icons-react'
+import Link from 'next/link'
 import { type FormEvent, useRef, useState } from 'react'
 import { TURNSTILE_SITE_KEY } from '@/constants'
+import { LEGAL } from '@/content/legal'
 import { cn } from '@/utils/cn'
 
 import { type FreeResult, useCheckout } from '../_hooks/use-checkout'
@@ -89,6 +91,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
           />
 
           <div className="mt-4 grid gap-3">
+            <Consent label={paywall.ageConfirmation} name="confirm-age" />
             <Consent label={paywall.consentWithdrawal} name="agree-withdrawal" />
             <Consent label={paywall.consentPrivacy} name="agree-privacy" />
           </div>
@@ -122,6 +125,18 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
           ) : null}
 
           <p className="mt-4 text-page-ink/40 text-xs leading-6">{paywall.notice}</p>
+
+          <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-page-ink/40 text-xs">
+            <Link className="underline underline-offset-2 hover:text-page-ink" href={`/${freeResult.locale}/terms`}>
+              {LEGAL[freeResult.locale].nav.terms}
+            </Link>
+            <Link className="underline underline-offset-2 hover:text-page-ink" href={`/${freeResult.locale}/refund`}>
+              {LEGAL[freeResult.locale].nav.refund}
+            </Link>
+            <Link className="underline underline-offset-2 hover:text-page-ink" href={`/${freeResult.locale}/privacy`}>
+              {LEGAL[freeResult.locale].nav.privacy}
+            </Link>
+          </p>
         </form>
 
         <button

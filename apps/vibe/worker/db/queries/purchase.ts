@@ -1,5 +1,6 @@
-import { and, eq, isNull, lt } from 'drizzle-orm'
+import { and, eq, isNotNull, isNull, lt, or, sql } from 'drizzle-orm'
 
+import { dateIsWithinYears } from '../../lib/retention'
 import type { Db } from '../client'
 import { purchaseTable } from '../schema'
 
@@ -17,6 +18,7 @@ export interface NewPurchase {
   sku: 'report' | 'compat' | 'bundle'
   consentWithdrawalAt: Date
   consentPrivacyAt: Date
+  ageConfirmedAt: Date
 }
 
 export async function createPendingPurchase(db: Db, input: NewPurchase): Promise<void> {
@@ -35,10 +37,16 @@ export async function getPurchaseByAccessToken(
   db: Db,
   accessToken: string,
 ): Promise<{ id: number; status: PurchaseStatus } | null> {
+  const now = new Date()
   const [row] = await db
     .select({ id: purchaseTable.id, status: purchaseTable.status })
     .from(purchaseTable)
-    .where(eq(purchaseTable.accessToken, accessToken))
+    .where(
+      and(
+        eq(purchaseTable.accessToken, accessToken),
+        or(isNull(purchaseTable.paidAt), dateIsWithinYears(purchaseTable.paidAt, now, 1)),
+      ),
+    )
     .limit(1)
   return row ?? null
 }
@@ -49,6 +57,7 @@ export async function getPurchaseForCancel(
   db: Db,
   accessToken: string,
 ): Promise<{ id: number; paymentId: string; status: PurchaseStatus; viewedAt: Date | null } | null> {
+  const now = new Date()
   const [row] = await db
     .select({
       id: purchaseTable.id,
@@ -57,18 +66,35 @@ export async function getPurchaseForCancel(
       viewedAt: purchaseTable.viewedAt,
     })
     .from(purchaseTable)
-    .where(eq(purchaseTable.accessToken, accessToken))
+    .where(
+      and(
+        eq(purchaseTable.accessToken, accessToken),
+        or(isNull(purchaseTable.paidAt), dateIsWithinYears(purchaseTable.paidAt, now, 1)),
+      ),
+    )
     .limit(1)
+    .for('update')
   return row ?? null
 }
 
-// Stamp viewed_at when the done report is actually delivered — once. This is the legal anchor for the
-// unviewed-refund right, so it must fire on delivery, not at generation time.
-export async function stampReportViewed(db: Db, purchaseId: number): Promise<void> {
-  await db
+// Stamp viewed_at immediately before a done report is delivered, preserving the first timestamp. The
+// paid/access predicates also close the cancellation race between the initial gate and response delivery.
+export async function stampReportViewed(db: Db, purchaseId: number): Promise<boolean> {
+  const now = new Date()
+  const rows = await db
     .update(purchaseTable)
-    .set({ viewedAt: new Date() })
-    .where(and(eq(purchaseTable.id, purchaseId), isNull(purchaseTable.viewedAt)))
+    .set({ viewedAt: sql`coalesce(${purchaseTable.viewedAt}, ${new Date()})` })
+    .where(
+      and(
+        eq(purchaseTable.id, purchaseId),
+        eq(purchaseTable.status, 'paid'),
+        isNotNull(purchaseTable.accessToken),
+        isNotNull(purchaseTable.paidAt),
+        dateIsWithinYears(purchaseTable.paidAt, now, 1),
+      ),
+    )
+    .returning({ id: purchaseTable.id })
+  return rows.length > 0
 }
 
 export async function getPurchaseByPaymentId(db: Db, paymentId: string): Promise<PurchaseRow | null> {

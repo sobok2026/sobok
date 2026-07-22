@@ -1,5 +1,7 @@
 import { ArrowRight, Sparkles } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
+import Link from 'next/link'
+import CommerceNotice from '@/components/CommerceNotice'
 import { cn } from '@/utils/cn'
 
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
@@ -33,7 +35,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
         <div className="mt-8 grid gap-3 sm:grid-cols-3">
           <StepCard eyebrow="STEP 1" label="Persona" description={content.ui.landingStepOuterDesc} />
           <StepCard eyebrow="STEP 2" label="Inner" description={content.ui.landingStepInnerDesc} />
-          <StepCard eyebrow="STEP 3" label={content.ui.layerGemShort} description={content.ui.landingStepGemDesc} />
+          <StepCard eyebrow="STEP 3" label="Gem" description={content.ui.landingStepGemDesc} />
         </div>
 
         <button
@@ -48,6 +50,28 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
           <ArrowRight aria-hidden="true" className="h-4 w-4" stroke={1.8} />
         </button>
         <p className="mt-3 text-page-ink/48 text-sm">{content.ui.landingNote}</p>
+        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1">
+          <Link
+            className={cn(
+              'inline-flex min-h-11 items-center rounded-full font-bold text-page-ink/58 text-sm underline underline-offset-4 hover:text-page-ink',
+              focusClassName,
+            )}
+            href={`/${locale}/deep-type/methodology`}
+          >
+            {content.ui.methodologyCta}
+          </Link>
+          <Link
+            className={cn(
+              'inline-flex min-h-11 items-center rounded-full font-bold text-page-ink/58 text-sm underline underline-offset-4 hover:text-page-ink',
+              focusClassName,
+            )}
+            href={`/${locale}/deep-type/reopen`}
+          >
+            {content.ui.reopenCta}
+          </Link>
+        </div>
+
+        <CommerceNotice className="mt-10" locale={locale} />
       </div>
     </main>
   )

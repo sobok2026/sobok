@@ -16,7 +16,11 @@ type AnalyticsValue = AnalyticsPrimitive | Date | readonly (AnalyticsObject | An
 const PRODUCTION_HOSTNAME = new URL(ORIGIN).hostname
 
 export function isAnalyticsEnabled(): boolean {
-  return typeof window !== 'undefined' && window.location.hostname === PRODUCTION_HOSTNAME
+  return (
+    typeof window !== 'undefined' &&
+    window.location.hostname === PRODUCTION_HOSTNAME &&
+    !/\/deep-type\/(?:checkout-return|reopen)(?:\/|$)/.test(window.location.pathname)
+  )
 }
 
 export function track(eventName: string, params?: AnalyticsParams) {

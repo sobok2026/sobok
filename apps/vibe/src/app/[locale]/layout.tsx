@@ -48,6 +48,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
 
   return (
     <html lang={LOCALE_LANGUAGE_TAGS[locale]}>
+      <head>
+        <Script id="google-consent-default" strategy="beforeInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('consent','default',{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);`}
+        </Script>
+      </head>
       {/* Korean (Hangul) — base Pretendard dynamic subset. */}
       <link
         href="/fonts/pretendard/1.3.9/variable/pretendardvariable-dynamic-subset.css"
@@ -71,12 +76,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           <BottomNav locale={locale} />
         </NextIntlClientProvider>
         <Analytics />
-        <Script
-          async
-          crossOrigin="anonymous"
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ACCOUNT}`}
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   )

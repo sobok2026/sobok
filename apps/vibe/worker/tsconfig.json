@@ -9,11 +9,12 @@
     "typeRoots": ["../../../node_modules", "../../../node_modules/@types"],
     "types": ["@cloudflare/workers-types"],
     "paths": {
+      "@deep-type/*": ["../deep-type/*"],
       "~/*": ["./*"]
     },
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "../deep-type/**/*.ts"]
 }

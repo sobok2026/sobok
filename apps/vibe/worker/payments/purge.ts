@@ -1,18 +1,41 @@
 import { openFresh } from '../db/client'
-import { purgeOldWebhookEvents, purgeUnconvertedResults } from '../db/queries/purge'
+import {
+  expireReportAccess,
+  minimizeDeliveredAnswers,
+  purgeAbandonedPurchases,
+  purgeExpiredReopenLinks,
+  purgeExpiredTransactionRecords,
+  purgeOldWebhookEvents,
+  purgeUnconvertedResults,
+} from '../db/queries/purge'
 import type { Bindings } from '../env'
-
-const UNCONVERTED_RESULT_TTL_MS = 30 * 24 * 60 * 60 * 1000 // 30 days
-const WEBHOOK_EVENT_TTL_MS = 90 * 24 * 60 * 60 * 1000 // 90 days
+import { daysBefore, monthsBefore } from '../lib/retention'
 
 // Daily retention purge (driven by the daily cron in wrangler.jsonc). Logged to Workers Observability.
 export async function runRetentionPurge(env: Bindings): Promise<void> {
   const { db, sql } = openFresh(env.HYPERDRIVE_FRESH)
   try {
     const now = Date.now()
-    const results = await purgeUnconvertedResults(db, new Date(now - UNCONVERTED_RESULT_TTL_MS))
-    const webhookEvents = await purgeOldWebhookEvents(db, new Date(now - WEBHOOK_EVENT_TTL_MS))
-    console.log('deeptype.purge', JSON.stringify({ results, webhookEvents }))
+    const current = new Date(now)
+    const abandonedPurchases = await purgeAbandonedPurchases(db, daysBefore(current, 30))
+    const minimizedAnswers = await minimizeDeliveredAnswers(db, monthsBefore(current, 3))
+    const expiredAccess = await expireReportAccess(db, current)
+    const transactionRecords = await purgeExpiredTransactionRecords(db, current)
+    const results = await purgeUnconvertedResults(db, daysBefore(current, 30))
+    const reopenLinks = await purgeExpiredReopenLinks(db, current)
+    const webhookEvents = await purgeOldWebhookEvents(db, daysBefore(current, 90))
+    console.log(
+      'deeptype.purge',
+      JSON.stringify({
+        abandonedPurchases,
+        expiredAccess,
+        minimizedAnswers,
+        reopenLinks,
+        results,
+        transactionRecords,
+        webhookEvents,
+      }),
+    )
   } finally {
     await sql.end({ timeout: 5 })
   }

@@ -44,7 +44,7 @@ route.post('/', async (c) => {
         console.error('deeptype.webhook.amount_mismatch', acted.paymentId)
         c.executionCtx.waitUntil(
           c.env.DEEPTYPE_DISCORD_WEBHOOK.get().then((url) =>
-            alertDiscord(url, `⚠️ deeptype amount mismatch: ${acted.paymentId}`),
+            alertDiscord(url, '⚠️ deeptype amount mismatch; inspect the restricted Worker logs'),
           ),
         )
       }

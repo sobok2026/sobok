@@ -1,3 +1,5 @@
+import type { AssessmentProfile } from '@deep-type/model'
+import { scoreBaseAssessment } from '@deep-type/scoring'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
@@ -6,23 +8,17 @@ import { insertResult } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { randomToken } from '~/lib/tokens'
+import { BaseAnswersSchema } from '~/scoring/answer-schema'
 
-// Phase 2: free result persistence.
 const SessionBody = z.object({
-  locale: z.enum(['ko', 'en', 'ja', 'zh']).default('ko'),
-  selfClaim: z.string().max(4).optional(),
-  persona: z.string().length(4),
-  innerType: z.string().length(4),
-  gem: z.string().length(4),
-  baseAnswers: z.array(z.unknown()).max(500),
-  innerAnswers: z.array(z.unknown()).max(500),
-  gemAnswers: z.array(z.unknown()).max(500),
+  answers: BaseAnswersSchema,
+  locale: z.enum(['ko', 'en', 'ja', 'zh']),
 })
 
 const route = new Hono<AppEnv>()
 
 route.post('/', async (c) => {
-  if (Number(c.req.header('content-length') ?? 0) > 32 * 1024) {
+  if (Number(c.req.header('content-length') ?? 0) > 16 * 1024) {
     return problem(413, 'payload-too-large')
   }
 
@@ -31,12 +27,23 @@ route.post('/', async (c) => {
     return problem(422, 'invalid-request')
   }
 
+  let profile: AssessmentProfile
+  try {
+    profile = scoreBaseAssessment(parsed.data.answers)
+  } catch {
+    return problem(422, 'invalid-request')
+  }
+
   const resultToken = randomToken()
   await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
-    insertResult(db, { ...parsed.data, resultToken }),
+    insertResult(db, {
+      baseAnswers: parsed.data.answers,
+      baseProfile: profile,
+      locale: parsed.data.locale,
+      resultToken,
+    }),
   )
-
-  return c.json({ resultToken }, 201)
+  return c.json({ profile, resultToken }, 201)
 })
 
 export default route

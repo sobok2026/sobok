@@ -45,10 +45,10 @@ export type InfoContent = {
 }
 
 const UPDATED = {
-  [Locale.KO]: { label: '최종 업데이트', about: '2026년 7월 18일', contact: '2026년 7월 18일' },
-  [Locale.EN]: { label: 'Last updated', about: 'July 18, 2026', contact: 'July 18, 2026' },
-  [Locale.JA]: { label: '最終更新', about: '2026年7月18日', contact: '2026年7月18日' },
-  [Locale.ZH]: { label: '最后更新', about: '2026年7月18日', contact: '2026年7月18日' },
+  [Locale.KO]: { label: '최종 업데이트', about: '2026년 7월 22일', contact: '2026년 7월 22일' },
+  [Locale.EN]: { label: 'Last updated', about: 'July 22, 2026', contact: 'July 22, 2026' },
+  [Locale.JA]: { label: '最終更新', about: '2026年7月22日', contact: '2026年7月22日' },
+  [Locale.ZH]: { label: '最后更新', about: '2026年7月22日', contact: '2026年7月22日' },
 } satisfies Record<Locale, { label: string; about: string; contact: string }>
 
 export const PAGES = {
@@ -78,7 +78,9 @@ export const PAGES = {
         },
         {
           heading: '어떻게 계산하나요',
-          body: ['테스트 문항의 답변은 이용자의 브라우저 안에서 계산되며 결타레 서버로 직접 제출되지 않습니다.'],
+          body: [
+            '결지수와 대화 유형 무료 테스트의 답변은 이용자의 브라우저 안에서 계산되며 서버로 제출되지 않습니다. 딥타입 감정서를 구매할 때는 이메일과 응답을 서버에서 처리하고, 서버가 다시 채점한 결과를 Anthropic API로 서술합니다. 감정서는 결제일부터 1년 동안 구매 이메일로 다시 열 수 있으며 자세한 내용은 개인정보처리방침에서 확인할 수 있습니다.',
+          ],
         },
         {
           heading: '누가 만드나요',
@@ -87,7 +89,7 @@ export const PAGES = {
         {
           heading: '이용 시 유의해 주세요',
           body: [
-            '결타레의 결과는 재미와 관계 참고를 위한 정보이며 전문적인 관계 상담이나 조언을 대신하지 않습니다. 서비스 이용에 관한 자세한 조건은 이용약관에서 확인할 수 있으니 궁금한 점이나 제안이 있으면 문의하기 페이지로 연락해 주세요.',
+            '초기 버전은 만 14세 이상만 이용하고 구매할 수 있습니다. 결타레의 결과는 재미와 관계 참고를 위한 정보이며 전문적인 관계 상담이나 조언을 대신하지 않습니다. 자세한 조건은 이용약관에서 확인할 수 있습니다.',
           ],
         },
       ],
@@ -100,7 +102,9 @@ export const PAGES = {
       sections: [
         {
           heading: '이렇게 연락해 주세요',
-          body: ['결타레를 쓰다가 생긴 궁금한 점이나 제안이 있으면 아래 채널로 편하게 알려 주세요.'],
+          body: [
+            '아래 채널로 알려 주세요. 결제·재열람 문의에는 구매 이메일을 적되 카드번호 전체나 일회용 재열람 링크는 보내지 마세요.',
+          ],
         },
         {
           heading: '어떤 문의를 받나요',
@@ -157,7 +161,9 @@ export const PAGES = {
         },
         {
           heading: 'How it calculates',
-          body: ['Your quiz answers are calculated in your browser and are not directly submitted to vibe’s server.'],
+          body: [
+            'Answers to the free Compatibility and Talk Type quizzes are calculated in your browser and are not submitted to a server. For a paid DeepType report, your email and answers are processed on the server, and a server-scored profile is narrated through the Anthropic API. You can reopen the report with the purchase email for 1 year from payment; see the Privacy Policy for details.',
+          ],
         },
         {
           heading: 'Who builds it',
@@ -166,7 +172,7 @@ export const PAGES = {
         {
           heading: 'Please keep in mind',
           body: [
-            'vibe’s results are for fun and self-reflection, and are not a substitute for professional relationship advice. The full terms for using the service are in the Terms of Service, and if you have a question or suggestion, reach out through the Contact page.',
+            'The initial release is available only to people aged 14 or older. vibe’s results are for fun and self-reflection and are not a substitute for professional relationship advice. See the Terms of Service for full conditions.',
           ],
         },
       ],
@@ -180,7 +186,7 @@ export const PAGES = {
         {
           heading: 'How to reach us',
           body: [
-            'If you have a question or suggestion while using vibe, let us know through one of the channels below.',
+            'Use a channel below. For payment or report-access help, include the purchase email but never send a full card number or one-time report link.',
           ],
         },
         {
@@ -240,7 +246,9 @@ export const PAGES = {
         },
         {
           heading: 'どのように計算するのか',
-          body: ['診断の回答は利用者のブラウザ内で計算され、vibeのサーバーへ直接送信されません。'],
+          body: [
+            '相性診断・会話タイプ診断（無料）の回答はブラウザ内で計算され、サーバーへ送信されません。有料DeepType鑑定書ではメールと回答をサーバーで処理し、サーバー採点済みプロファイルをAnthropic APIで文章化します。決済日から1年間、購入メールで再閲覧できます。詳しくはプライバシーポリシーをご確認ください。',
+          ],
         },
         {
           heading: '運営者について',
@@ -249,7 +257,7 @@ export const PAGES = {
         {
           heading: 'ご利用にあたって',
           body: [
-            'vibeの結果は娯楽と自己理解のための参考情報であり、専門的な関係性の相談やアドバイスに代わるものではありません。サービス利用に関する詳しい条件は利用規約でご確認いただけますので、ご質問やご提案があればお問い合わせページからご連絡ください。',
+            '初期版は14歳以上の方のみ利用・購入できます。vibeの結果は娯楽と自己理解のための参考情報であり、専門的な相談や助言に代わるものではありません。詳しい条件は利用規約をご確認ください。',
           ],
         },
       ],
@@ -262,7 +270,9 @@ export const PAGES = {
       sections: [
         {
           heading: 'ご連絡方法',
-          body: ['vibeをご利用中に気になる点やご提案があれば、下記のチャンネルよりお気軽にお知らせください。'],
+          body: [
+            '下記のチャンネルからご連絡ください。決済・再閲覧のお問い合わせには購入メールを記載し、カード番号全体やワンタイム再閲覧リンクは送らないでください。',
+          ],
         },
         {
           heading: 'お受けする内容',
@@ -319,7 +329,9 @@ export const PAGES = {
         },
         {
           heading: '如何计算',
-          body: ['测试答案在您的浏览器内计算，不会直接提交到 vibe 的服务器。'],
+          body: [
+            '默契指数与对话类型免费测试的答案在浏览器内计算，不会提交服务器。购买DeepType报告时，邮箱与答案会在服务器处理，并将服务器评分后的档案通过Anthropic API生成文字。自付款之日起1年内可用购买邮箱重新查看；详情请见隐私政策。',
+          ],
         },
         {
           heading: '由谁制作',
@@ -328,7 +340,7 @@ export const PAGES = {
         {
           heading: '使用提示',
           body: [
-            'vibe 的结果仅供娱乐与自我了解参考，不能替代专业的关系咨询或建议。有关使用服务的详细条款请见服务条款，如有疑问或建议，欢迎通过联系我们页面与我们联系。',
+            '初始版本仅限年满14周岁的用户使用和购买。vibe的结果仅供娱乐与自我了解参考，不能替代专业咨询或建议。详细条件请见服务条款。',
           ],
         },
       ],
@@ -341,7 +353,7 @@ export const PAGES = {
       sections: [
         {
           heading: '如何联系',
-          body: ['在使用 vibe 时如有疑问或建议，欢迎通过以下渠道告诉我们。'],
+          body: ['请通过以下渠道联系我们。支付或重新查看相关咨询可附上购买邮箱，但请勿发送完整卡号或一次性报告链接。'],
         },
         {
           heading: '我们欢迎哪些反馈',

@@ -1,3 +1,4 @@
+import type { AssessmentProfile, ItemAnswer } from '@deep-type/model'
 import { sql } from 'drizzle-orm'
 import {
   bigint,
@@ -14,7 +15,8 @@ import {
 
 import { createdAt, timestamps } from './columns'
 
-// Isolated deeptype Postgres (Aiven), reached from the Worker via Hyperdrive. Plain tables — NOT RLS.
+// Isolated deeptype Postgres (Supabase, Seoul region), reached from the Worker via Hyperdrive. Plain
+// tables — NOT RLS.
 // There is no better-auth user context here; access is enforced in the Worker via unguessable per-row
 // tokens (result_token / access_token). At the DB boundary, a least-privilege `deeptype_app` role
 // (SELECT/INSERT/UPDATE, no DELETE/DDL) is what both Hyperdrive connection strings authenticate as; a
@@ -28,17 +30,17 @@ export const reportStatusEnum = pgEnum('dt_report_status', ['pending', 'generati
 
 export const REPORT_SECTION_KEYS = [
   'summary',
-  'gap',
-  'abyss',
-  'love',
-  'work',
-  'money',
-  'growthStory',
-  'energy',
-  'relationCaution',
-  'flow',
-  'match',
-  'thisWeek',
+  'contextShift',
+  'selfWorth',
+  'relationships',
+  'emotionRegulation',
+  'motivation',
+  'workStyle',
+  'recovery',
+  'strengths',
+  'friction',
+  'reflectionQuestions',
+  'nextSteps',
 ] as const
 export type ReportSectionKey = (typeof REPORT_SECTION_KEYS)[number]
 export interface ReportSection {
@@ -47,36 +49,27 @@ export interface ReportSection {
   body: string
 }
 
-// Raw quiz payloads are the client-posted responses. Their exact serialization is finalized when
-// /session (Phase 2) and /precision (Phase 5) are wired; kept as opaque arrays until then. axis_strengths
-// and profile are computed server-side (Phase 5) — never trusted from the client.
-type RawAnswers = unknown[]
-type AxisStrengths = Record<string, number>
-type ReportProfile = Record<string, unknown>
-
-// The free-tier record. One row per completed 간이 test; the paid report narrates this.
+// One row per completed free assessment. Codes and profiles are always computed by the Worker from the
+// versioned raw answer set; the client never supplies authoritative score data.
 export const resultTable = pgTable(
   'deeptype_result',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
     resultToken: varchar('result_token', { length: 43 }).notNull().unique(),
     locale: localeEnum().notNull().default('ko'),
-    selfClaim: varchar('self_claim', { length: 4 }),
-    persona: varchar('persona', { length: 4 }),
-    innerType: varchar('inner_type', { length: 4 }),
-    gem: varchar('gem', { length: 4 }),
-    baseAnswers: jsonb('base_answers').$type<RawAnswers>().notNull().default(sql`'[]'::jsonb`),
-    innerAnswers: jsonb('inner_answers').$type<RawAnswers>().notNull().default(sql`'[]'::jsonb`),
-    gemAnswers: jsonb('gem_answers').$type<RawAnswers>().notNull().default(sql`'[]'::jsonb`),
-    precisionAnswers: jsonb('precision_answers').$type<RawAnswers>(),
-    axisStrengths: jsonb('axis_strengths').$type<AxisStrengths>(),
-    profile: jsonb('profile').$type<ReportProfile>(),
+    instrumentVersion: varchar('instrument_version', { length: 16 }).notNull(),
+    personaCode: varchar('persona_code', { length: 4 }).notNull(),
+    innerCode: varchar('inner_code', { length: 4 }).notNull(),
+    gemCode: varchar('gem_code', { length: 4 }).notNull(),
+    baseAnswers: jsonb('base_answers').$type<ItemAnswer[]>().notNull(),
+    refinementAnswers: jsonb('refinement_answers').$type<ItemAnswer[]>(),
+    baseProfile: jsonb('base_profile').$type<AssessmentProfile>().notNull(),
+    refinedProfile: jsonb('refined_profile').$type<AssessmentProfile>(),
     ...timestamps,
   },
   (t) => [
     index('idx_dt_result_created').on(t.createdAt),
-    // Aggregate stats: "자칭 vs 실측" and gem/type distribution.
-    index('idx_dt_result_codes').on(t.persona, t.innerType, t.gem),
+    index('idx_dt_result_codes').on(t.personaCode, t.innerCode, t.gemCode),
   ],
 )
 
@@ -84,16 +77,15 @@ export const purchaseTable = pgTable(
   'deeptype_purchase',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    // Report-gating handle, minted at checkout, carried across the PortOne redirect.
-    accessToken: varchar('access_token', { length: 43 }).notNull().unique(),
+    // Report-gating handle, minted at checkout, carried across the PortOne redirect. Cleared when the
+    // one-year report-access window ends while the minimal transaction record remains for five years.
+    accessToken: varchar('access_token', { length: 43 }).unique(),
     // The order id we send to PortOne (server-minted; the sole join key back from the PG/webhook).
     paymentId: varchar('payment_id', { length: 64 }).notNull().unique(),
-    resultId: bigint('result_id', { mode: 'number' })
-      .notNull()
-      .references(() => resultTable.id, { onDelete: 'restrict' }),
-    email: varchar('email', { length: 254 }).notNull(),
-    // Lookup/dedup key; never used to reveal the plaintext email.
-    emailHash: varchar('email_hash', { length: 64 }).notNull(),
+    resultId: bigint('result_id', { mode: 'number' }).references(() => resultTable.id, { onDelete: 'set null' }),
+    // Plaintext + lookup hash exist only during the one-year re-open window, then both are cleared.
+    email: varchar('email', { length: 254 }),
+    emailHash: varchar('email_hash', { length: 64 }),
     orderName: varchar('order_name', { length: 128 }).notNull(),
     // Minor units (₩5900 → 5900). Server is the sole price authority.
     amount: bigint({ mode: 'number' }).notNull(),
@@ -108,6 +100,8 @@ export const purchaseTable = pgTable(
     // Two separate consents captured at the pre-payment checkbox (청약철회 제한 + 개인정보 수집·이용).
     consentWithdrawalAt: timestamp('consent_withdrawal_at', { precision: 3, withTimezone: true }).notNull(),
     consentPrivacyAt: timestamp('consent_privacy_at', { precision: 3, withTimezone: true }).notNull(),
+    // Self-attestation only; no date of birth is collected.
+    ageConfirmedAt: timestamp('age_confirmed_at', { precision: 3, withTimezone: true }).notNull(),
     paidAt: timestamp('paid_at', { precision: 3, withTimezone: true }),
     refundedAt: timestamp('refunded_at', { precision: 3, withTimezone: true }),
     // Stamped when the done report is actually delivered to the client — gates the unviewed-refund right.
@@ -125,6 +119,23 @@ export const purchaseTable = pgTable(
   ],
 )
 
+// One-time, short-lived email magic links. Only the SHA-256 digest is stored; the raw token exists solely
+// in the message URL. Rows cascade with the purchase and are also swept after expiry/consumption.
+export const reopenAccessTable = pgTable(
+  'deeptype_reopen_access',
+  {
+    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
+    purchaseId: bigint('purchase_id', { mode: 'number' })
+      .notNull()
+      .references(() => purchaseTable.id, { onDelete: 'cascade' }),
+    tokenHash: varchar('token_hash', { length: 64 }).notNull().unique(),
+    expiresAt: timestamp('expires_at', { precision: 3, withTimezone: true }).notNull(),
+    consumedAt: timestamp('consumed_at', { precision: 3, withTimezone: true }),
+    createdAt,
+  },
+  (t) => [index('idx_dt_reopen_purchase').on(t.purchaseId), index('idx_dt_reopen_expires').on(t.expiresAt)],
+)
+
 // 1:1 with a purchase. Generated exactly once (CAS lock via lock_token), cache-first on read.
 export const reportTable = pgTable(
   'deeptype_report',
@@ -134,7 +145,7 @@ export const reportTable = pgTable(
       .notNull()
       .unique()
       .references(() => purchaseTable.id, { onDelete: 'cascade' }),
-    model: varchar('model', { length: 64 }).notNull().default('claude-haiku-4-5'),
+    model: varchar('model', { length: 64 }).notNull().default('claude-haiku-4-5-20251001'),
     status: reportStatusEnum().notNull().default('pending'),
     sections: jsonb('sections').$type<ReportSection[]>(),
     error: text('error'),

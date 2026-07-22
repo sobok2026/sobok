@@ -3,16 +3,11 @@
 import { useState } from 'react'
 
 import { postCheckout, postSession, postVerify, type SessionInput } from '../_lib/api'
+import { clearPendingCheckout, storePendingCheckout } from '../_lib/pending-checkout'
 
 export type CheckoutStatus = 'idle' | 'processing' | 'error'
+export type FreeResult = SessionInput
 
-export type FreeResult = Pick<SessionInput, 'persona' | 'innerType' | 'gem'> & {
-  locale: SessionInput['locale']
-}
-
-// Drives the guest one-time checkout: persist the free result → create a pending purchase → PortOne
-// browser payment → server-side verify. Returns the report access_token on success, null otherwise. The
-// paywall UI is responsible for the consent gate; by the time start() runs, both consents are given.
 export function useCheckout(freeResult: FreeResult) {
   const [status, setStatus] = useState<CheckoutStatus>('idle')
   const [errorMessage, setErrorMessage] = useState('')
@@ -23,6 +18,7 @@ export function useCheckout(freeResult: FreeResult) {
     try {
       const { resultToken } = await postSession(freeResult)
       const checkout = await postCheckout({
+        ageConfirmed: true,
         consentPrivacy: true,
         consentWithdrawal: true,
         email,
@@ -31,22 +27,29 @@ export function useCheckout(freeResult: FreeResult) {
         turnstileToken,
       })
 
-      // Lazy chunk: the ~82KB PortOne browser loader is only needed on the checkout path, not the free-quiz
-      // hot path most users take — so it stays a dynamic import (code-split), not a static one.
+      storePendingCheckout({
+        accessToken: checkout.accessToken,
+        createdAt: Date.now(),
+        paymentId: checkout.paymentId,
+      })
+
       const { requestPayment } = await import('@portone/browser-sdk/v2')
       const result = await requestPayment({
+        bypass: freeResult.locale === 'ko' ? undefined : { tosspayments: { useInternationalCardOnly: true } },
         channelKey: checkout.channelKey,
         currency: 'CURRENCY_KRW',
         customer: { email },
+        forceRedirect: true,
         orderName: checkout.orderName,
         paymentId: checkout.paymentId,
         payMethod: 'CARD',
+        redirectUrl: `${window.location.origin}/${freeResult.locale}/deep-type/checkout-return`,
         storeId: checkout.storeId,
         totalAmount: checkout.amount,
       })
 
-      // PortOne returns a truthy `code` only on failure/cancel.
       if (result?.code != null) {
+        clearPendingCheckout()
         setStatus('idle')
         setErrorMessage(result.message ?? '')
         return null
@@ -58,6 +61,7 @@ export function useCheckout(freeResult: FreeResult) {
         return null
       }
 
+      clearPendingCheckout()
       setStatus('idle')
       return checkout.accessToken
     } catch {

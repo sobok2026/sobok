@@ -5,7 +5,6 @@ import { REPORT_OUTPUT_SCHEMA, SYSTEM_12_SECTIONS } from './prompt'
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages'
 const MAX_ATTEMPTS = 3
 const BACKOFF_MS = [500, 1500, 4000]
-const MIN_SECTIONS = 8
 const KEY_SET = new Set<string>(REPORT_SECTION_KEYS)
 
 // Generate the paid report via the Anthropic Messages API (raw fetch — no SDK on Workers). Structured
@@ -66,10 +65,10 @@ function parseSections(text: string): ReportSection[] {
     })
   }
 
-  // Emit in canonical order; drop any hallucinated/duplicate keys. Too few → treat as a failed generation.
+  // Emit in canonical order; any missing section makes the generation incomplete.
   const sections = REPORT_SECTION_KEYS.map((key) => byKey.get(key)).filter((s): s is ReportSection => Boolean(s))
-  if (sections.length < MIN_SECTIONS) {
-    throw new Error(`too few sections: ${sections.length}`)
+  if (sections.length !== REPORT_SECTION_KEYS.length) {
+    throw new Error(`incomplete sections: ${sections.length}`)
   }
   return sections
 }

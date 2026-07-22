@@ -2,6 +2,7 @@ import { isLocale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
+import AgeGate from '@/components/AgeGate'
 import { buildLocalizedMetadata } from '@/i18n/metadata'
 import JsonLd, { webApplicationGraph } from '@/lib/JsonLd'
 
@@ -43,9 +44,11 @@ export default async function CoupleGyeolPage({ params }: PageProps<'/[locale]/c
           path: 'couple-gyeol',
         })}
       />
-      <Suspense fallback={<GyeolPageFallback />}>
-        <CoupleGyeolFlow content={content} locale={locale} />
-      </Suspense>
+      <AgeGate locale={locale}>
+        <Suspense fallback={<GyeolPageFallback />}>
+          <CoupleGyeolFlow content={content} locale={locale} />
+        </Suspense>
+      </AgeGate>
     </>
   )
 }

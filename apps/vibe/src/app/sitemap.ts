@@ -27,6 +27,11 @@ const ROUTES = [
     priority: 0.8,
   },
   {
+    path: 'deep-type/methodology',
+    changeFrequency: 'monthly',
+    priority: 0.55,
+  },
+  {
     path: 'about',
     changeFrequency: 'monthly',
     priority: 0.5,
@@ -43,6 +48,16 @@ const ROUTES = [
   },
   {
     path: 'privacy',
+    changeFrequency: 'yearly',
+    priority: 0.3,
+  },
+  {
+    path: 'refund',
+    changeFrequency: 'yearly',
+    priority: 0.3,
+  },
+  {
+    path: 'business',
     changeFrequency: 'yearly',
     priority: 0.3,
   },

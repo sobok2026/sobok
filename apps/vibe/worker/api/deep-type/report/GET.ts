@@ -3,6 +3,7 @@ import { Hono } from 'hono'
 import { openCached, openFresh, withDb } from '~/db/client'
 import { getPurchaseByAccessToken, stampReportViewed } from '~/db/queries/purchase'
 import { getDoneSections, getReportStatus } from '~/db/queries/report'
+import { getResultForReport } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 
@@ -10,8 +11,8 @@ const route = new Hono<AppEnv>()
 
 // Phase 4: read-only, cache-first delivery. The gate is FRESH (entitlement must never be stale); the done
 // body is read from the CACHED binding with a FRESH fallback for post-write cache lag. A GET never generates
-// or mutates — except stamping viewed_at on the delivering 200 (the legal anchor for the unviewed-refund
-// right). The gate transaction returns a terminal Response, or { purchaseId } to proceed to delivery.
+// or mutates — except stamping viewed_at immediately before the delivering 200, after the body has been
+// resolved and the paid entitlement is revalidated. The gate returns a terminal Response or a purchase id.
 route.get('/', async (c) => {
   const token = c.get('accessToken')
 
@@ -33,8 +34,11 @@ route.get('/', async (c) => {
     const report = await getReportStatus(db, purchase.id)
 
     if (report?.status === 'done') {
-      await stampReportViewed(db, purchase.id)
-      return { purchaseId: purchase.id }
+      const result = await getResultForReport(db, purchase.id)
+      if (!result?.refined) {
+        return problem(409, 'refinement-required')
+      }
+      return { profile: result.profile, purchaseId: purchase.id }
     }
 
     if (report?.status === 'failed' && report.attempts >= 5) {
@@ -56,7 +60,18 @@ route.get('/', async (c) => {
     cached ??
     (await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) => getDoneSections(db, gate.purchaseId)))
 
-  return c.json({ sections, status: 'done' })
+  if (!sections) {
+    return problem(502, 'report-generation-failed')
+  }
+
+  const delivered = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    stampReportViewed(db, gate.purchaseId),
+  )
+  if (!delivered) {
+    return problem(410, 'purchase-refunded')
+  }
+
+  return c.json({ profile: gate.profile, sections, status: 'done' })
 })
 
 export default route

@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE, LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
+import { LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 
 import { SITE_NAME } from '@/constants'

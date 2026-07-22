@@ -1,38 +1,40 @@
 'use client'
 
-import { Refresh } from '@mynaui/icons-react'
+import type { AssessmentProfile } from '@deep-type/model'
 import type { Locale } from '@sobok/domain/locale'
 import { useState } from 'react'
 import { cn } from '@/utils/cn'
 
 import { useReportPolling } from '../_hooks/use-report-polling'
 import { postCancel } from '../_lib/api'
-import type { DeepReport, DeepTypeContent } from '../_lib/types'
+import type { DeepTypeContent } from '../_lib/types'
 import { ReportView } from './report-view'
 
 type DynamicReportViewProps = {
   accessToken: string
   content: DeepTypeContent
-  fallbackReport: DeepReport
+  fallbackProfile: AssessmentProfile
   locale: Locale
   onRestart: () => void
 }
 
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
-// The paid tail: kick + poll the LLM report. While generating, a spinner. On a terminal failure the paid
-// report is unavailable, so we fall back to the (already-computed) static report as a consolation and flag
-// it — Phase 7 wires the one-click refund for this case.
-export function DynamicReportView({ accessToken, content, fallbackReport, locale, onRestart }: DynamicReportViewProps) {
-  const paywall = content.paywall
+export function DynamicReportView({
+  accessToken,
+  content,
+  fallbackProfile,
+  locale,
+  onRestart,
+}: DynamicReportViewProps) {
   const state = useReportPolling(accessToken)
 
   if (state.phase === 'generating') {
     return (
       <main className="flex flex-1 flex-col items-center justify-center bg-page-bg px-safe py-16 text-center text-page-ink">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent" />
-        <h1 className="mt-6 break-keep font-black text-2xl">{paywall.generatingTitle}</h1>
-        <p className="mx-auto mt-3 max-w-sm text-page-ink/64 leading-7">{paywall.generatingBody}</p>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent motion-reduce:animate-none" />
+        <h1 className="mt-6 break-keep font-black text-2xl">{content.paywall.generatingTitle}</h1>
+        <p className="mx-auto mt-3 max-w-sm text-page-ink/64 leading-7">{content.paywall.generatingBody}</p>
       </main>
     )
   }
@@ -42,7 +44,7 @@ export function DynamicReportView({ accessToken, content, fallbackReport, locale
       <FailedReport
         accessToken={accessToken}
         content={content}
-        fallbackReport={fallbackReport}
+        fallbackProfile={fallbackProfile}
         locale={locale}
         onRestart={onRestart}
       />
@@ -50,50 +52,24 @@ export function DynamicReportView({ accessToken, content, fallbackReport, locale
   }
 
   return (
-    <main className="flex flex-1 flex-col bg-page-bg px-safe py-10 text-page-ink sm:py-14">
-      <div className="mx-auto grid w-full max-w-xl gap-4">
-        {state.sections.map((section) => (
-          <section className="rounded-4xl border border-page-border bg-page-surface p-6 sm:p-7" key={section.key}>
-            <h2 className="break-keep font-black text-lg">{section.title}</h2>
-            <p className="mt-3 whitespace-pre-line break-keep text-page-ink/76 leading-8">{section.body}</p>
-          </section>
-        ))}
-
-        <button
-          className={cn(
-            'mt-2 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-page-border bg-white px-6 font-bold text-page-ink/70 text-sm transition-colors hover:text-page-ink',
-            focusClassName,
-          )}
-          onClick={onRestart}
-          type="button"
-        >
-          <Refresh aria-hidden="true" className="h-4 w-4" stroke={1.8} />
-          {content.ui.reportRestartCta}
-        </button>
-
-        <p className="mt-2 text-center text-page-ink/40 text-xs leading-6">{content.ui.reportDisclaimer}</p>
-      </div>
-    </main>
+    <ReportView
+      content={content}
+      locale={locale}
+      onRestart={onRestart}
+      paidSections={state.sections}
+      profile={state.profile}
+      refined
+    />
   )
 }
 
-type FailedReportProps = {
-  accessToken: string
-  content: DeepTypeContent
-  fallbackReport: DeepReport
-  locale: Locale
-  onRestart: () => void
-}
+type FailedReportProps = DynamicReportViewProps
 
-// Generation failed → the paid report was never delivered (unviewed), so 청약철회 is allowed. Offer the
-// refund alongside the static free report as a consolation.
-function FailedReport({ accessToken, content, fallbackReport, locale, onRestart }: FailedReportProps) {
-  const paywall = content.paywall
+function FailedReport({ accessToken, content, fallbackProfile, locale, onRestart }: FailedReportProps) {
   const [refund, setRefund] = useState<'idle' | 'pending' | 'done' | 'failed'>('idle')
 
   async function requestRefund() {
     setRefund('pending')
-
     try {
       const result = await postCancel(accessToken)
       setRefund(result.status === 'refunded' ? 'done' : 'failed')
@@ -105,10 +81,10 @@ function FailedReport({ accessToken, content, fallbackReport, locale, onRestart 
   return (
     <div className="flex flex-1 flex-col">
       <div className="grid gap-2 bg-page-accent/10 px-safe py-3 text-center">
-        <p className="font-bold text-page-accent text-sm">{paywall.fallbackNote}</p>
-        {refund === 'done' && <p className="text-page-ink/64 text-sm">{paywall.refundDone}</p>}
-        {refund === 'failed' && <p className="text-page-ink/64 text-sm">{paywall.refundFailed}</p>}
-        {(refund === 'idle' || refund === 'pending') && (
+        <p className="font-bold text-page-accent text-sm">{content.paywall.fallbackNote}</p>
+        {refund === 'done' ? <p className="text-page-ink/64 text-sm">{content.paywall.refundDone}</p> : null}
+        {refund === 'failed' ? <p className="text-page-ink/64 text-sm">{content.paywall.refundFailed}</p> : null}
+        {refund === 'idle' || refund === 'pending' ? (
           <button
             className={cn(
               'mx-auto inline-flex min-h-10 items-center rounded-full border border-page-accent/50 px-4 font-bold text-page-accent text-sm transition-colors hover:bg-page-accent/10 disabled:opacity-60',
@@ -118,11 +94,11 @@ function FailedReport({ accessToken, content, fallbackReport, locale, onRestart 
             onClick={requestRefund}
             type="button"
           >
-            {refund === 'pending' ? paywall.refundPending : paywall.refundCta}
+            {refund === 'pending' ? content.paywall.refundPending : content.paywall.refundCta}
           </button>
-        )}
+        ) : null}
       </div>
-      <ReportView content={content} locale={locale} onRestart={onRestart} report={fallbackReport} />
+      <ReportView content={content} locale={locale} onRestart={onRestart} profile={fallbackProfile} refined />
     </div>
   )
 }

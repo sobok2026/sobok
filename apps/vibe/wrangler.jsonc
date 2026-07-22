@@ -2,11 +2,11 @@
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "vibe",
   // A Worker WITH static assets: `main` handles /api/* (the deeptype paid backend — PortOne secrets and
-  // the Aiven/Hyperdrive DB must stay server-side); everything else is the static Next export in ./out,
+  // the Supabase/Hyperdrive DB must stay server-side); everything else is the static Next export in ./out,
   // served directly at the edge.
   "main": "worker/index.ts",
   "compatibility_date": "2026-07-01",
-  // Required by postgres.js (Aiven over the Workers TCP socket API via Hyperdrive).
+  // Required by postgres.js (Supabase Postgres over the Workers TCP socket API via Hyperdrive).
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
   "preview_urls": false,
@@ -36,8 +36,12 @@
   "vars": {
     "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
     "DEEPTYPE_PORTONE_CHANNEL_KEY": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88",
+    "DEEPTYPE_PUBLIC_ORIGIN": "https://vibe.sobok.cc",
+    "DEEPTYPE_EMAIL_FROM": "vibe <reports@vibe.sobok.cc>",
+    "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",
     // LLM_ENABLED is the Anthropic-budget kill-switch ('1' to enable).
-    "DEEPTYPE_LLM_ENABLED": "0"
+    "DEEPTYPE_LLM_ENABLED": "1",
+    "DEEPTYPE_REPORT_MODEL": "claude-haiku-4-5-20251001"
   },
   // DEEPTYPE_TURNSTILE_SECRET reuses the shared "sobok" Turnstile widget secret.
   "secrets_store_secrets": [
@@ -55,6 +59,11 @@
       "binding": "DEEPTYPE_ANTHROPIC_API_KEY",
       "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
       "secret_name": "deeptype-anthropic-api-key"
+    },
+    {
+      "binding": "DEEPTYPE_RESEND_API_KEY",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+      "secret_name": "deeptype-resend-api-key"
     },
     {
       "binding": "DEEPTYPE_TURNSTILE_SECRET",
