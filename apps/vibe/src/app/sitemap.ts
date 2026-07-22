@@ -46,7 +46,7 @@ const ROUTES = [
     changeFrequency: 'yearly',
     priority: 0.3,
   },
-]
+] as const
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return ROUTES.flatMap(({ path, changeFrequency, priority }) => {
