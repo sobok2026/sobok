@@ -10,6 +10,7 @@ const SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render
 type TurnstileApi = {
   render: (el: HTMLElement, options: { sitekey: string; callback: (token: string) => void }) => string
   remove: (widgetId: string) => void
+  reset: (widgetId: string) => void
 }
 
 declare global {
@@ -20,18 +21,22 @@ declare global {
 
 // Renders the Cloudflare Turnstile widget and hands the solved token up via onVerify. Pass a STABLE
 // onVerify (e.g. a useState setter) so the widget isn't re-rendered every parent render.
-export function Turnstile({ onVerify }: { onVerify: (token: string) => void }) {
+//
+// Turnstile tokens are SINGLE-USE (the server consumes one per /checkout). Bump `resetSignal` after a
+// consumed-token attempt (payment cancel/fail) to re-challenge the widget and emit a fresh token via
+// onVerify — otherwise a retry re-sends the spent token and the server rejects it.
+export function Turnstile({ onVerify, resetSignal = 0 }: { onVerify: (token: string) => void; resetSignal?: number }) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const widgetIdRef = useRef<string | undefined>(undefined)
 
   useEffect(() => {
-    let widgetId: string | undefined
     let cancelled = false
 
     function render() {
       if (cancelled || !containerRef.current || !window.turnstile) {
         return
       }
-      widgetId = window.turnstile.render(containerRef.current, { callback: onVerify, sitekey: SITE_KEY })
+      widgetIdRef.current = window.turnstile.render(containerRef.current, { callback: onVerify, sitekey: SITE_KEY })
     }
 
     if (window.turnstile) {
@@ -53,11 +58,18 @@ export function Turnstile({ onVerify }: { onVerify: (token: string) => void }) {
 
     return () => {
       cancelled = true
-      if (widgetId && window.turnstile) {
-        window.turnstile.remove(widgetId)
+      if (widgetIdRef.current && window.turnstile) {
+        window.turnstile.remove(widgetIdRef.current)
       }
     }
   }, [onVerify])
+
+  // Re-challenge on demand (skips the initial 0). reset() issues a fresh token through onVerify.
+  useEffect(() => {
+    if (resetSignal > 0 && widgetIdRef.current && window.turnstile) {
+      window.turnstile.reset(widgetIdRef.current)
+    }
+  }, [resetSignal])
 
   return <div className="mt-4 flex justify-center" ref={containerRef} />
 }

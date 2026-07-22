@@ -24,6 +24,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
   const [agreeWithdrawal, setAgreeWithdrawal] = useState(false)
   const [agreePrivacy, setAgreePrivacy] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState('')
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0)
 
   const emailValid = /.+@.+\..+/.test(email)
   const canSubmit = emailValid && agreeWithdrawal && agreePrivacy && turnstileToken !== '' && status !== 'processing'
@@ -35,7 +36,12 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
     const accessToken = await start(email, turnstileToken)
     if (accessToken) {
       onPaid(accessToken)
+      return
     }
+    // Cancel/fail: the server already consumed the single-use Turnstile token in /checkout, so clear it and
+    // re-challenge the widget — otherwise the retry re-sends a spent token and gets rejected.
+    setTurnstileToken('')
+    setTurnstileResetKey((key) => key + 1)
   }
 
   return (
@@ -86,7 +92,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
             <Consent checked={agreePrivacy} label={paywall.consentPrivacy} onChange={setAgreePrivacy} />
           </div>
 
-          <Turnstile onVerify={setTurnstileToken} />
+          <Turnstile onVerify={setTurnstileToken} resetSignal={turnstileResetKey} />
 
           <button
             className={cn(
@@ -100,7 +106,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
             {status === 'processing' ? paywall.processing : paywall.cta}
           </button>
 
-          {status === 'error' ? (
+          {status === 'error' || errorMessage ? (
             <p className="mt-3 text-center font-bold text-page-accent text-sm">
               {errorMessage || paywall.errorGeneric}
             </p>

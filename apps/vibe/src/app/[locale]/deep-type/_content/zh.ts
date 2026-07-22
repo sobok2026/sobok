@@ -7,7 +7,7 @@ export const deepTypeContent = {
     unlockCta: '',
     title: '',
     body: '',
-    lockedItems: [],
+    lockedItems: ['', '', '', '', ''],
     listPriceLabel: '',
     priceLabel: '',
     emailLabel: '',

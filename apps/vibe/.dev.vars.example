@@ -7,17 +7,19 @@ DEEPTYPE_PORTONE_CHANNEL_KEY=""
 DEEPTYPE_LLM_ENABLED="1"
 # DEEPTYPE_REPORT_MODEL="claude-haiku-4-5"
 
-# The 4 true secrets are Cloudflare Secrets Store bindings (accessed via `await env.X.get()`). For local
+# The 5 true secrets are Cloudflare Secrets Store bindings (accessed via `await env.X.get()`). For local
 # dev, seed a LOCAL secrets store (no --remote) so they resolve offline — one per binding's secret_name:
 #   wrangler secrets-store secret create <STORE_ID> --name deeptype-portone-api-secret     --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name deeptype-portone-webhook-secret --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name deeptype-anthropic-api-key      --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name sobok-turnstile-secret          --value "1x0000000000000000000000000000000AA" --scopes workers
-# (the Turnstile test secret 1x00…AA passes any token locally.)
+#   wrangler secrets-store secret create <STORE_ID> --name deeptype-discord-webhook        --value "" --scopes workers
+# (the Turnstile test secret 1x00…AA passes any token locally; empty discord value = alerts disabled.)
 
-# Local Hyperdrive → point both bindings at a local/dev Postgres for `wrangler dev`:
-# WRANGLER_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_FRESH="postgres://…"
-# WRANGLER_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_CACHED="postgres://…"
+# Local Hyperdrive → point both bindings at a local/dev Postgres for `wrangler dev` (current docs use the
+# CLOUDFLARE_ prefix; the WRANGLER_ form is an older fallback):
+# CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_FRESH="postgres://…"
+# CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_CACHED="postgres://…"
 
-# drizzle-kit push target (owner/avnadmin, direct connection, sslmode=require):
-# DEEPTYPE_POSTGRES_URL_DIRECT="postgres://avnadmin:…@…aivencloud.com:…/deeptype?sslmode=require"
+# drizzle-kit push target — DIRECT owner connection (bypasses Hyperdrive), Supabase session pooler, sslmode=require:
+# DEEPTYPE_POSTGRES_URL_DIRECT="postgres://postgres.<project-ref>:…@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require"
