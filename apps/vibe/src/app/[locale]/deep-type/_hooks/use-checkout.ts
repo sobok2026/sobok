@@ -4,12 +4,6 @@ import { useState } from 'react'
 
 import { postCheckout, postSession, postVerify, type SessionInput } from '../_lib/api'
 
-// Minimal surface of @portone/browser-sdk/v2 we call — declared locally so the external SDK's exact types
-// don't leak into ours, and so it stays a lazy (dynamic-import) chunk out of the static bundle.
-interface PortOneModule {
-  requestPayment(request: Record<string, unknown>): Promise<{ code?: string; message?: string } | undefined>
-}
-
 export type CheckoutStatus = 'idle' | 'processing' | 'error'
 
 export type FreeResult = Pick<SessionInput, 'persona' | 'innerType' | 'gem'> & {
@@ -37,9 +31,10 @@ export function useCheckout(freeResult: FreeResult) {
         turnstileToken,
       })
 
-      const sdk = await import('@portone/browser-sdk/v2')
-      const portOne = (sdk as { default?: PortOneModule }).default ?? (sdk as unknown as PortOneModule)
-      const result = await portOne.requestPayment({
+      // Lazy chunk: the ~82KB PortOne browser loader is only needed on the checkout path, not the free-quiz
+      // hot path most users take — so it stays a dynamic import (code-split), not a static one.
+      const { requestPayment } = await import('@portone/browser-sdk/v2')
+      const result = await requestPayment({
         channelKey: checkout.channelKey,
         currency: 'CURRENCY_KRW',
         customer: { email },

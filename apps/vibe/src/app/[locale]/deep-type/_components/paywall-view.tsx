@@ -1,12 +1,13 @@
 'use client'
 
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { ArrowLeft, Lock } from '@mynaui/icons-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { TURNSTILE_SITE_KEY } from '@/constants'
 import { cn } from '@/utils/cn'
 
 import { type FreeResult, useCheckout } from '../_hooks/use-checkout'
 import type { DeepTypeContent } from '../_lib/types'
-import { Turnstile } from './turnstile'
 
 type PaywallViewProps = {
   content: DeepTypeContent
@@ -18,14 +19,14 @@ type PaywallViewProps = {
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallViewProps) {
-  const paywall = content.paywall
   const { errorMessage, start, status } = useCheckout(freeResult)
   const [email, setEmail] = useState('')
   const [agreeWithdrawal, setAgreeWithdrawal] = useState(false)
   const [agreePrivacy, setAgreePrivacy] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState('')
-  const [turnstileResetKey, setTurnstileResetKey] = useState(0)
+  const turnstileRef = useRef<TurnstileInstance | undefined>(undefined)
 
+  const paywall = content.paywall
   const emailValid = /.+@.+\..+/.test(email)
   const canSubmit = emailValid && agreeWithdrawal && agreePrivacy && turnstileToken !== '' && status !== 'processing'
 
@@ -41,7 +42,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
     // Cancel/fail: the server already consumed the single-use Turnstile token in /checkout, so clear it and
     // re-challenge the widget — otherwise the retry re-sends a spent token and gets rejected.
     setTurnstileToken('')
-    setTurnstileResetKey((key) => key + 1)
+    turnstileRef.current?.reset()
   }
 
   return (
@@ -92,7 +93,16 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
             <Consent checked={agreePrivacy} label={paywall.consentPrivacy} onChange={setAgreePrivacy} />
           </div>
 
-          <Turnstile onVerify={setTurnstileToken} resetSignal={turnstileResetKey} />
+          <div className="mt-4 flex justify-center">
+            <Turnstile
+              onError={() => setTurnstileToken('')}
+              onExpire={() => setTurnstileToken('')}
+              onSuccess={setTurnstileToken}
+              options={{ responseField: false }}
+              ref={turnstileRef}
+              siteKey={TURNSTILE_SITE_KEY}
+            />
+          </div>
 
           <button
             className={cn(

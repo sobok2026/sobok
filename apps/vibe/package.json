@@ -11,6 +11,7 @@
     "type": "next typegen && tsc --noEmit && tsc -p worker/tsconfig.json"
   },
   "dependencies": {
+    "@marsidev/react-turnstile": "^1.5.3",
     "@mynaui/icons-react": "^0.4.2",
     "@next/third-parties": "^16.2.10",
     "@portone/browser-sdk": "^0.1.9",

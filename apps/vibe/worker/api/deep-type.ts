@@ -29,6 +29,7 @@ import { requestWithdrawal } from '../payments/cancel'
 import { applyRefund, confirmPurchase } from '../payments/confirm'
 import { generateReport } from '../report/claude'
 import { buildReportProfile } from '../report/profile'
+import { buildSampleReport } from '../report/sample'
 import { refineAxes, resolvePrecisionResponses } from '../scoring/precision'
 
 export const deepType = new Hono<AppEnv>()
@@ -303,9 +304,6 @@ deepType.post('/report/generate', async (c) => {
   if (!token) {
     return problem(401, 'unauthorized')
   }
-  if (c.env.DEEPTYPE_LLM_ENABLED !== '1') {
-    return problem(503, 'not-configured')
-  }
 
   const lockToken = randomToken()
   const claim = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
@@ -364,11 +362,19 @@ deepType.post('/report/generate', async (c) => {
   }
 
   try {
-    const apiKey = await c.env.DEEPTYPE_ANTHROPIC_API_KEY.get()
-    const sections = await generateReport(apiKey, model, buildReportProfile(claim.result))
+    // LLM disabled (kill-switch / no budget) → serve a deterministic sample감정서 instead of 503 so the paid
+    // flow still renders. Prod runs with DEEPTYPE_LLM_ENABLED='1' for the real Claude report.
+    const llmEnabled = c.env.DEEPTYPE_LLM_ENABLED === '1'
+    const profile = buildReportProfile(claim.result)
+
+    const sections = llmEnabled
+      ? await generateReport(await c.env.DEEPTYPE_ANTHROPIC_API_KEY.get(), model, profile)
+      : buildSampleReport(profile)
+
     await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
-      finalizeReportDone(db, claim.purchaseId, lockToken, model, sections),
+      finalizeReportDone(db, claim.purchaseId, lockToken, llmEnabled ? model : 'sample', sections),
     )
+
     return c.json({ status: 'done' })
   } catch (error) {
     await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
