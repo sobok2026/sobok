@@ -2,9 +2,8 @@
 
 import { useEffect, useRef } from 'react'
 
-// Public sitekey for the shared "sobok" Turnstile widget. Set NEXT_PUBLIC_TURNSTILE_SITE_KEY at build for
-// prod (the account-turnstile `turnstile_sitekey` output); the default is Cloudflare's always-pass test key.
-const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'
+import { TURNSTILE_SITE_KEY } from '@/constants'
+
 const SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
 
 type TurnstileApi = {
@@ -36,7 +35,10 @@ export function Turnstile({ onVerify, resetSignal = 0 }: { onVerify: (token: str
       if (cancelled || !containerRef.current || !window.turnstile) {
         return
       }
-      widgetIdRef.current = window.turnstile.render(containerRef.current, { callback: onVerify, sitekey: SITE_KEY })
+      widgetIdRef.current = window.turnstile.render(containerRef.current, {
+        callback: onVerify,
+        sitekey: TURNSTILE_SITE_KEY,
+      })
     }
 
     if (window.turnstile) {
