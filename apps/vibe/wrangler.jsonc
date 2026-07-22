@@ -19,28 +19,26 @@
     // API routes always hit the Worker first so they can never be shadowed by an asset.
     "run_worker_first": ["/api/*"]
   },
-  // Two Hyperdrive configs over the SAME isolated deeptype Supabase Postgres (session pooler, Seoul). The
-  // configs are declared in Terraform (sobok-ops: infra/cloudflare/account/sobok/vibe — its own `account-vibe`
-  // workspace; `cloudflare_hyperdrive_config`, FRESH = caching.disabled=true, CACHED = default; origin read
-  // from the supabase-prod workspace via tfe_outputs). Run `terraform output` on account-vibe and paste the
-  // two ids below, then commit (same as a KV namespace id). FRESH = money/entitlement path (never stale);
-  // CACHED = done-report reads only.
   "hyperdrive": [
-    { "binding": "HYPERDRIVE_FRESH", "id": "14e658152a554541b0e1a6712fc43787" },
-    { "binding": "HYPERDRIVE_CACHED", "id": "a2a2c4cb90d94e6fb08b0eb6727bb61d" }
+    {
+      // FRESH = money/entitlement path (never stale);
+      "binding": "HYPERDRIVE_FRESH",
+      "id": "14e658152a554541b0e1a6712fc43787"
+    },
+    {
+      // CACHED = done-report reads only.
+      "binding": "HYPERDRIVE_CACHED",
+      "id": "a2a2c4cb90d94e6fb08b0eb6727bb61d"
+    }
   ],
   // Crons (worker `scheduled` handler): every 15 min → reconcile stuck 'pending'; daily 03:00 → retention purge.
   "triggers": { "crons": ["*/15 * * * *", "0 3 * * *"] },
-  // Non-secret config. storeId/channelKey are public (sent to the browser SDK); fill after the separate
-  // PortOne store is approved (Phase 0). LLM_ENABLED is the Anthropic-budget kill-switch ('1' to enable).
   "vars": {
-    "DEEPTYPE_PORTONE_STORE_ID": "REPLACE_WITH_STORE_ID",
-    "DEEPTYPE_PORTONE_CHANNEL_KEY": "REPLACE_WITH_CHANNEL_KEY",
+    "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
+    "DEEPTYPE_PORTONE_CHANNEL_KEY": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88",
+    // LLM_ENABLED is the Anthropic-budget kill-switch ('1' to enable).
     "DEEPTYPE_LLM_ENABLED": "0"
   },
-  // True secrets live in Cloudflare Secrets Store, declared in Terraform (sobok-ops: the vibe workers module,
-  // `cloudflare_secrets_store_secret`, values from HCP Terraform sensitive variables). Bound here by name;
-  // read at runtime with `await env.<binding>.get()`. `store_id` = the account's single Secrets Store id.
   // DEEPTYPE_TURNSTILE_SECRET reuses the shared "sobok" Turnstile widget secret.
   "secrets_store_secrets": [
     {
@@ -69,5 +67,4 @@
       "secret_name": "deeptype-discord-webhook"
     }
   ]
-  // Local dev only: copy .dev.vars.example → .dev.vars (gitignored) for `wrangler dev`.
 }
