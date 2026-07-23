@@ -9,7 +9,7 @@ type ContextComparisonProps = {
 
 export function ContextComparison({ content, profile }: ContextComparisonProps) {
   return (
-    <section className="rounded-4xl border border-page-border bg-page-surface p-6 sm:p-7">
+    <section className="rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6">
       <h2 className="font-black text-lg">{content.ui.contextTitle}</h2>
       <p className="mt-2 text-page-ink/60 text-sm leading-6">{content.ui.contextBody}</p>
       <div className="mt-5 grid gap-4">

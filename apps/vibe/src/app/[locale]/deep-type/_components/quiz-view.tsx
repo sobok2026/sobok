@@ -7,7 +7,6 @@ import type { QuestionContent } from '../_lib/types'
 
 type QuizViewProps = {
   backLabel: string
-  hint?: string
   itemId: string
   onAnswer: (answer: ItemAnswer) => void
   onBack?: () => void
@@ -21,7 +20,6 @@ const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 f
 
 export function QuizView({
   backLabel,
-  hint,
   itemId,
   onAnswer,
   onBack,
@@ -50,8 +48,7 @@ export function QuizView({
         </div>
 
         <div className="rounded-4xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
-          <h1 className="text-balance font-black text-2xl leading-snug">{question.prompt}</h1>
-          {hint ? <p className="mt-3 text-page-ink/52 text-sm leading-6">{hint}</p> : null}
+          <h1 className="font-black text-2xl leading-snug">{question.prompt}</h1>
           <div className="mt-7 grid gap-3">
             {AGREEMENT_VALUES.map((value, index) => (
               <button
@@ -69,19 +66,18 @@ export function QuizView({
           </div>
         </div>
 
-        {onBack ? (
-          <button
-            className={cn(
-              'mt-5 inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-bold text-page-ink/58 text-sm transition-colors hover:text-page-ink',
-              focusClassName,
-            )}
-            onClick={onBack}
-            type="button"
-          >
-            <ArrowLeft aria-hidden="true" className="h-4 w-4" stroke={1.8} />
-            {backLabel}
-          </button>
-        ) : null}
+        <button
+          className={cn(
+            'mt-5 inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-bold text-page-ink/58 text-sm transition-colors enabled:hover:text-page-ink disabled:cursor-not-allowed disabled:opacity-40',
+            focusClassName,
+          )}
+          onClick={onBack}
+          disabled={!onBack}
+          type="button"
+        >
+          <ArrowLeft aria-hidden="true" className="h-4 w-4" stroke={1.8} />
+          {backLabel}
+        </button>
       </div>
     </section>
   )

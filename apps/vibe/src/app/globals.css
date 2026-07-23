@@ -24,6 +24,8 @@
 }
 
 @theme inline {
+  --spacing-header: 4rem;
+
   /* THEME_COLOR in src/constants.ts must stay in sync with --page-bg. */
   --color-page-accent: var(--page-accent);
   --color-page-bg: var(--page-bg);

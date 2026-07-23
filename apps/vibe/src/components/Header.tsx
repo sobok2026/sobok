@@ -20,8 +20,8 @@ export default function Header({ locale, localeLabel }: Props) {
   const home = `/${locale}`
 
   return (
-    <header className="sticky top-0 z-40 border-page-border/70 border-b bg-page-bg/88 px-safe pt-safe backdrop-blur-2xl">
-      <div className="mx-auto flex h-16 w-full max-w-4xl items-center justify-between gap-4 px-4">
+    <header className="fixed top-0 left-0 right-0 z-40 border-page-border/70 border-b bg-page-bg/88 px-safe pt-safe backdrop-blur-2xl">
+      <div className="mx-auto flex h-header w-full max-w-4xl items-center justify-between gap-4 px-4">
         <Link className={`shrink-0 font-black text-page-ink tracking-tight ${focusClassName}`} href={home}>
           {SITE_NAME[locale]}
         </Link>

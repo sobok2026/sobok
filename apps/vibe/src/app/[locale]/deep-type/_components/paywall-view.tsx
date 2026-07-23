@@ -97,7 +97,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
           <p className="mx-auto mt-3 max-w-md text-page-ink/54 text-sm leading-6">{paywall.effortNote}</p>
         </section>
 
-        <form className="rounded-4xl border border-page-border bg-page-surface p-6 sm:p-7" onSubmit={handleSubmit}>
+        <form className="rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6" onSubmit={handleSubmit}>
           <label className="block font-bold text-page-ink/70 text-sm" htmlFor="deeptype-email">
             {paywall.emailLabel}
           </label>

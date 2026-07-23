@@ -10,11 +10,13 @@ import { ReopenView } from './_components/reopen-view'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/deep-type/reopen'>): Promise<Metadata> {
   const { locale } = await params
+
   if (!isLocale(locale)) {
     return {}
   }
 
   const copy = DEEP_TYPE_REOPEN[locale]
+
   return {
     ...buildLocalizedMetadata({
       description: copy.metadata.description,

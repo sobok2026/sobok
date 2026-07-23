@@ -11,7 +11,7 @@ type AxisProfileProps<TAxis extends AxisId> = {
 
 export function AxisProfile<TAxis extends AxisId>({ axisIds, content, scores, title }: AxisProfileProps<TAxis>) {
   return (
-    <section className="rounded-4xl border border-page-border bg-page-surface p-6 sm:p-7">
+    <section className="rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6">
       <h2 className="font-black text-lg">{title}</h2>
       <div className="mt-5 grid gap-6">
         {axisIds.map((axis) => {

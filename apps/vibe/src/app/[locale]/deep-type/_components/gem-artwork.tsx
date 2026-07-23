@@ -39,16 +39,14 @@ const GEM_ARTWORK = {
 
 export function GemArtwork({ gemCode }: { gemCode: GemCode }) {
   return (
-    <div className="mx-auto w-full max-w-sm overflow-hidden rounded-3xl border border-page-border bg-page-soft">
-      <Image
-        alt=""
-        className="aspect-square h-auto w-full object-cover"
-        draggable={false}
-        fetchPriority="high"
-        loading="eager"
-        sizes="(min-width: 640px) 384px, calc(100vw - 4rem)"
-        src={GEM_ARTWORK[gemCode]}
-      />
-    </div>
+    <Image
+      alt=""
+      className="border border-page-border bg-page-soft mx-auto overflow-hidden rounded-3xl max-w-sm aspect-square h-auto w-full object-cover"
+      draggable={false}
+      fetchPriority="high"
+      loading="eager"
+      sizes="(min-width: 640px) 384px, calc(100vw - 4rem)"
+      src={GEM_ARTWORK[gemCode]}
+    />
   )
 }

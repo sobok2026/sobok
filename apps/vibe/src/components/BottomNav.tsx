@@ -34,8 +34,8 @@ export default function BottomNav({ locale }: { locale: Locale }) {
             <Link
               key={item.href}
               aria-current={active ? 'page' : undefined}
-              className={`relative rounded-full px-4 py-1.5 text-xs transition-colors before:absolute before:-inset-x-2 before:-inset-y-1.5 before:content-[''] ${
-                active ? 'bg-page-soft font-semibold text-page-ink' : 'text-page-ink/62 hover:text-page-ink'
+              className={`relative rounded-full py-1.5 text-xs transition-colors before:absolute before:-inset-x-5 before:-inset-y-1.5 before:content-[''] ${
+                active ? 'font-semibold text-page-ink' : 'text-page-ink/62 hover:text-page-ink'
               }`}
               href={item.href}
             >

@@ -71,8 +71,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
           <Header locale={locale} localeLabel={t('localeSwitcher')} />
-          <div className="flex flex-1 flex-col pb-16 sm:pb-0">{children}</div>
-          <Footer locale={locale} />
+          <div className="flex flex-1 flex-col min-h-dvh pt-[calc(var(--spacing-header)+var(--safe-area-top))]">
+            {children}
+          </div>
           <BottomNav locale={locale} />
         </NextIntlClientProvider>
         <Analytics />

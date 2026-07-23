@@ -2,13 +2,14 @@ import { isLocale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import Footer from '@/components/Footer'
+
 import { buildLocalizedMetadata } from '@/i18n/metadata'
 import JsonLd, { webApplicationGraph } from '@/lib/JsonLd'
-import { LandingView } from './_components/landing-view'
-import { getDeepTypeContent } from './_lib/content'
 
-export async function generateMetadata({ params }: PageProps<'/[locale]/deep-type'>): Promise<Metadata> {
+import { TestFlow } from '../_components/test-flow'
+import { getDeepTypeContent } from '../_lib/content'
+
+export async function generateMetadata({ params }: PageProps<'/[locale]/deep-type/test'>): Promise<Metadata> {
   const { locale } = await params
 
   if (!isLocale(locale)) {
@@ -20,12 +21,12 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/deep-typ
   return buildLocalizedMetadata({
     description: content.metadata.description,
     locale,
-    pathname: '/deep-type',
-    title: content.metadata.title,
+    pathname: '/deep-type/test',
+    title: `${content.metadata.title} - Test`,
   })
 }
 
-export default async function DeepTypePage({ params }: PageProps<'/[locale]/deep-type'>) {
+export default async function DeepTypeTestPage({ params }: PageProps<'/[locale]/deep-type/test'>) {
   const { locale } = await params
 
   if (!isLocale(locale)) {
@@ -40,11 +41,11 @@ export default async function DeepTypePage({ params }: PageProps<'/[locale]/deep
         data={webApplicationGraph(locale, {
           description: content.metadata.description,
           name: content.metadata.title,
-          path: 'deep-type',
+          path: 'deep-type/test',
         })}
       />
       <Suspense fallback={<DeepTypePageFallback />}>
-        <LandingView content={content} locale={locale} />
+        <TestFlow content={content} locale={locale} />
       </Suspense>
     </>
   )
