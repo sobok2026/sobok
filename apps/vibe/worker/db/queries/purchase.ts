@@ -83,7 +83,7 @@ export async function stampReportViewed(db: Db, purchaseId: number): Promise<boo
   const now = new Date()
   const rows = await db
     .update(purchaseTable)
-    .set({ viewedAt: sql`coalesce(${purchaseTable.viewedAt}, ${new Date()})` })
+    .set({ viewedAt: sql`coalesce(${purchaseTable.viewedAt}, now())` })
     .where(
       and(
         eq(purchaseTable.id, purchaseId),

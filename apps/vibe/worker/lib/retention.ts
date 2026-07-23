@@ -1,3 +1,6 @@
+import { gt, lt, type SQL } from 'drizzle-orm'
+import type { PgColumn } from 'drizzle-orm/pg-core'
+
 export const REOPEN_LINK_TTL_MS = 15 * 60 * 1000
 export const REOPEN_REQUEST_COOLDOWN_MS = 5 * 60 * 1000
 
@@ -17,12 +20,16 @@ export function yearsAfter(now: Date, years: number): Date {
   return shiftUtcMonths(now, years * 12)
 }
 
-export function dateIsWithinYears(timestamp: SQLWrapper, now: Date, years: number): SQL {
-  return sql`${timestamp} > ${yearsBefore(now, years)}`
+// Comparators, not sql`` fragments: gt/lt bind the cutoff through the column's own encoder. A Date
+// interpolated bare into sql`` would get drizzle's noopEncoder, and drizzle's postgres-js driver has already
+// replaced postgres.js's date/time serializers with identity functions — so nothing would encode it and the
+// socket writer dies on the raw Date object.
+export function dateIsWithinYears(timestamp: PgColumn, now: Date, years: number): SQL {
+  return gt(timestamp, yearsBefore(now, years))
 }
 
-export function dateIsOlderThanYears(timestamp: SQLWrapper, now: Date, years: number): SQL {
-  return sql`${timestamp} < ${yearsBefore(now, years)}`
+export function dateIsOlderThanYears(timestamp: PgColumn, now: Date, years: number): SQL {
+  return lt(timestamp, yearsBefore(now, years))
 }
 
 function shiftUtcMonths(value: Date, delta: number): Date {
@@ -34,5 +41,3 @@ function shiftUtcMonths(value: Date, delta: number): Date {
   shifted.setUTCDate(Math.min(originalDay, lastDay))
   return shifted
 }
-
-import { type SQL, type SQLWrapper, sql } from 'drizzle-orm'

@@ -1,4 +1,4 @@
-import { and, eq, inArray, isNotNull, lt, or, sql } from 'drizzle-orm'
+import { and, eq, exists, inArray, isNotNull, lt, ne, notExists, or } from 'drizzle-orm'
 
 import { dateIsOlderThanYears } from '../../lib/retention'
 import type { Db } from '../client'
@@ -30,7 +30,9 @@ export async function purgeUnconvertedResults(db: Db, cutoff: Date): Promise<num
     .where(
       and(
         lt(resultTable.createdAt, cutoff),
-        sql`NOT EXISTS (SELECT 1 FROM ${purchaseTable} WHERE ${purchaseTable.resultId} = ${resultTable.id})`,
+        notExists(
+          db.select({ id: purchaseTable.id }).from(purchaseTable).where(eq(purchaseTable.resultId, resultTable.id)),
+        ),
       ),
     )
     .returning({ id: resultTable.id })
@@ -45,14 +47,14 @@ export async function minimizeDeliveredAnswers(db: Db, cutoff: Date): Promise<nu
     .set({ baseAnswers: [], refinementAnswers: null })
     .where(
       and(
-        sql`(${resultTable.baseAnswers} <> '[]'::jsonb OR ${resultTable.refinementAnswers} IS NOT NULL)`,
-        sql`EXISTS (
-          SELECT 1
-          FROM ${purchaseTable}
-          INNER JOIN ${reportTable} ON ${reportTable.purchaseId} = ${purchaseTable.id}
-          WHERE ${purchaseTable.resultId} = ${resultTable.id}
-            AND ${reportTable.generatedAt} < ${cutoff}
-        )`,
+        or(ne(resultTable.baseAnswers, []), isNotNull(resultTable.refinementAnswers)),
+        exists(
+          db
+            .select({ id: purchaseTable.id })
+            .from(purchaseTable)
+            .innerJoin(reportTable, eq(reportTable.purchaseId, purchaseTable.id))
+            .where(and(eq(purchaseTable.resultId, resultTable.id), lt(reportTable.generatedAt, cutoff))),
+        ),
       ),
     )
     .returning({ id: resultTable.id })
@@ -108,7 +110,12 @@ export async function expireReportAccess(
             .where(
               and(
                 inArray(resultTable.id, resultIds),
-                sql`NOT EXISTS (SELECT 1 FROM ${purchaseTable} WHERE ${purchaseTable.resultId} = ${resultTable.id})`,
+                notExists(
+                  tx
+                    .select({ id: purchaseTable.id })
+                    .from(purchaseTable)
+                    .where(eq(purchaseTable.resultId, resultTable.id)),
+                ),
               ),
             )
             .returning({ id: resultTable.id })

@@ -28,9 +28,28 @@ app.route('/api/deep-type', deepType)
 // the ASSETS binding, which applies the configured 404-page / trailing-slash handling.
 app.notFound((c) => (c.req.path.startsWith('/api/') ? problem(404, 'not-found') : c.env.ASSETS.fetch(c.req.raw)))
 
+// Workers' console.error prints an Error's own message and stack but drops `cause` — and drizzle wraps every
+// driver failure in a DrizzleQueryError whose cause holds the only diagnostic part (the postgres.js/Postgres
+// error, with its code/detail/routine). Flatten the chain so a 500 is fully readable from `wrangler tail`.
+function describeError(error: unknown, depth = 0): unknown {
+  if (!(error instanceof Error) || depth > 4) {
+    return error
+  }
+
+  const { code, detail, hint, routine, severity } = error as Error & Record<string, unknown>
+
+  return {
+    name: error.name,
+    message: error.message,
+    ...(code === undefined ? {} : { code, detail, hint, routine, severity }),
+    stack: error.stack,
+    ...(error.cause === undefined ? {} : { cause: describeError(error.cause, depth + 1) }),
+  }
+}
+
 // Any unhandled handler throw becomes a uniform problem+json 500 instead of a bare Workers exception.
 app.onError((error) => {
-  console.error('deeptype.unhandled', error)
+  console.error('deeptype.unhandled', describeError(error))
   return problem(500, 'internal')
 })
 
