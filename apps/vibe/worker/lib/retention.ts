@@ -9,16 +9,20 @@ export function monthsBefore(now: Date, months: number): Date {
   return shiftUtcMonths(now, -months)
 }
 
+export function yearsBefore(now: Date, years: number): Date {
+  return shiftUtcMonths(now, -years * 12)
+}
+
 export function yearsAfter(now: Date, years: number): Date {
   return shiftUtcMonths(now, years * 12)
 }
 
 export function dateIsWithinYears(timestamp: SQLWrapper, now: Date, years: number): SQL {
-  return sql`${timestamp} + make_interval(years => ${years}) > ${now}`
+  return sql`${timestamp} > ${yearsBefore(now, years)}`
 }
 
 export function dateIsOlderThanYears(timestamp: SQLWrapper, now: Date, years: number): SQL {
-  return sql`${timestamp} + make_interval(years => ${years}) < ${now}`
+  return sql`${timestamp} < ${yearsBefore(now, years)}`
 }
 
 function shiftUtcMonths(value: Date, delta: number): Date {
