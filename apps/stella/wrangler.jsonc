@@ -25,7 +25,7 @@
       // Single origin over the SHARED Supabase Postgres, authenticating as the least-privilege `stella_app`
       // role. Caching DISABLED — a just-posted comment must appear immediately (read-after-write board).
       "binding": "HYPERDRIVE",
-      "id": "REPLACE_WITH_STELLA_HYPERDRIVE_ID"
+      "id": "fba6a34ba67a4d0588d71266b13d57b9"
     }
   ],
   // One cron (worker `scheduled` handler): daily 03:00 → retention purge (also keeps the shared Supabase
