@@ -22,7 +22,7 @@ import { createdAt, timestamps } from './columns'
 //   • the `stella` schema is NOT added to Supabase's exposed schemas, so PostgREST never surfaces ipHash /
 //     edit-token hashes over the anon REST API.
 // Plain tables, NOT RLS — access is enforced in the Worker (Turnstile + rate-limit + unguessable editToken).
-const stella = pgSchema('stella')
+export const stella = pgSchema('stella')
 
 export const localeEnum = stella.enum('locale', ['ko', 'en', 'ja', 'zh'])
 export const commentStatusEnum = stella.enum('comment_status', ['visible', 'hidden', 'removed'])

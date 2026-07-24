@@ -7,7 +7,7 @@ import { createdAt, timestamps } from './columns'
 // The deeptype payments/report tables live in a DEDICATED `deeptype` schema on the SHARED sobok-prod Supabase
 // Postgres (Seoul) — NOT the public schema, where nothing app-owned sits; the stella comment board has its
 // own `stella` schema.
-const deeptype = pgSchema('deeptype')
+export const deeptype = pgSchema('deeptype')
 
 export const localeEnum = deeptype.enum('locale', ['ko', 'en', 'ja', 'zh'])
 export const providerEnum = deeptype.enum('provider', ['portone'])
