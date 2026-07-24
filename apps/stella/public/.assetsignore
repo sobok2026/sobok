@@ -1,0 +1,13 @@
+# Cloudflare Workers assets ignore file (wrangler-native, gitignore syntax, relative to the assets dir root).
+# Files matched here are excluded from the upload manifest. Copied into out/ from public/ at build time, the
+# same way _headers and _redirects are.
+#
+# Next 16 emits ~8 per-segment client-cache prefetch payloads ("__next.*") for every prerendered route. The
+# /talk/[topic] boards enumerate the full, finite astrology vocabulary (707 topics x 4 locales), so those
+# segment files alone are ~22,600 files and push the export past Cloudflare's 20,000-file asset limit on the
+# free plan. They are a pure client-navigation optimization: the crawlable <topic>.html shell (with baked
+# comments) and the full <topic>.txt RSC payload are kept, and the Next client falls back to <topic>.txt — or
+# a full-document nav to <topic>.html — when a segment file is absent. Excluding them keeps the deploy far
+# under the limit and bounded forever (the vocabulary is finite). Segment files outside /talk (home, love,
+# today) are NOT matched, so those high-traffic pages keep their instant per-segment prefetch.
+**/talk/**/__next.*
