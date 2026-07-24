@@ -524,7 +524,7 @@ export const ko = {
     error: '문제가 생겼어요. 잠시 후 다시 시도해 주세요.',
     locked: '이 보드는 잠겨 있어요.',
     count: '{n}개의 이야기',
-    entryEmpty: '이야기 남기기',
+    entry: '이야기 남기기',
     backToChart: '차트로 돌아가기',
     metaDescription: '{label}에 대한 이야기를 나눠보세요.',
   },

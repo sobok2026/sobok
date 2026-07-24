@@ -529,7 +529,7 @@ export const en = {
     error: 'Something went wrong. Please try again.',
     locked: 'This board is locked.',
     count: '{n} stories',
-    entryEmpty: 'Leave a note',
+    entry: 'Leave a note',
     backToChart: 'Back to the chart',
     metaDescription: 'Join the conversation about {label}.',
   },

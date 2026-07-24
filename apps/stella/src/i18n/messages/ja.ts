@@ -526,7 +526,7 @@ export const ja = {
     error: '問題が発生しました。しばらくして再度お試しください。',
     locked: 'このボードはロックされています。',
     count: '{n}件の声',
-    entryEmpty: '声を残す',
+    entry: '声を残す',
     backToChart: 'チャートに戻る',
     metaDescription: '{label}について語り合いましょう。',
   },

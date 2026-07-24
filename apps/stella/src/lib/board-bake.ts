@@ -53,6 +53,7 @@ async function load(): Promise<Map<string, BakedBoard>> {
 
   const client = postgres(url, { max: 1, prepare: false })
   const db = drizzle({ client })
+
   try {
     // Every visible comment of every non-empty thread, newest-first. Grouping + top-PAGE happens in JS below;
     // at build the total comment volume is small and this is a single query. Global desc order means each
@@ -73,6 +74,7 @@ async function load(): Promise<Map<string, BakedBoard>> {
       .orderBy(desc(commentTable.createdAt), desc(commentTable.id))
 
     const grouped = new Map<string, Row[]>()
+
     for (const row of rows) {
       const key = `${row.locale}:${row.topicKey}`
       const list = grouped.get(key)
@@ -84,10 +86,12 @@ async function load(): Promise<Map<string, BakedBoard>> {
     }
 
     const boards = new Map<string, BakedBoard>()
+
     for (const [key, list] of grouped) {
       const hasMore = list.length > PAGE
       const shown = hasMore ? list.slice(0, PAGE) : list
       const last = shown[shown.length - 1]
+
       boards.set(key, {
         count: shown.length,
         page: {
@@ -101,6 +105,7 @@ async function load(): Promise<Map<string, BakedBoard>> {
         },
       })
     }
+
     return boards
   } catch (error) {
     // A DB hiccup at build must not fail the whole static export — degrade to empty boards.

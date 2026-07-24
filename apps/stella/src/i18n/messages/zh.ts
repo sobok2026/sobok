@@ -519,7 +519,7 @@ export const zh = {
     error: '出错了，请稍后再试。',
     locked: '该看板已锁定。',
     count: '{n} 条留言',
-    entryEmpty: '留个言',
+    entry: '留个言',
     backToChart: '返回星盘',
     metaDescription: '一起聊聊{label}。',
   },

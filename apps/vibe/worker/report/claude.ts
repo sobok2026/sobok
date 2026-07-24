@@ -46,7 +46,7 @@ export async function generateReport(apiKey: string, model: string, profile: Rep
     }
 
     // The response body carries the API's own explanation (bad key, unknown model, invalid schema). Losing it
-    // leaves a bare status code in deeptype_report.error and nothing to act on.
+    // leaves a bare status code in deeptype.report.error and nothing to act on.
     const detail = (await response.text().catch(() => '')).slice(0, 300)
 
     // 429 rate-limit / 529 overloaded are the only retriable statuses.

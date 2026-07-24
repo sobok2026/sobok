@@ -1,32 +1,19 @@
 import type { AssessmentProfile, ItemAnswer } from '@deep-type/model'
 import { sql } from 'drizzle-orm'
-import {
-  bigint,
-  index,
-  integer,
-  jsonb,
-  pgEnum,
-  pgTable,
-  text,
-  timestamp,
-  uniqueIndex,
-  varchar,
-} from 'drizzle-orm/pg-core'
+import { bigint, index, integer, jsonb, pgSchema, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
 
 import { createdAt, timestamps } from './columns'
 
-// Isolated deeptype Postgres (Supabase, Seoul region), reached from the Worker via Hyperdrive. Plain
-// tables — NOT RLS.
-// There is no better-auth user context here; access is enforced in the Worker via unguessable per-row
-// tokens (result_token / access_token). At the DB boundary, a least-privilege `deeptype_app` role
-// (SELECT/INSERT/UPDATE, no DELETE/DDL) is what both Hyperdrive connection strings authenticate as; a
-// separate owner role runs `drizzle-kit push`, and a separate DELETE-capable role runs the purge job.
+// The deeptype payments/report tables live in a DEDICATED `deeptype` schema on the SHARED sobok-prod Supabase
+// Postgres (Seoul) — NOT the public schema, where nothing app-owned sits; the stella comment board has its
+// own `stella` schema.
+const deeptype = pgSchema('deeptype')
 
-export const localeEnum = pgEnum('dt_locale', ['ko', 'en', 'ja', 'zh'])
-export const providerEnum = pgEnum('dt_provider', ['portone'])
-export const skuEnum = pgEnum('dt_sku', ['report', 'compat', 'bundle'])
-export const purchaseStatusEnum = pgEnum('dt_purchase_status', ['pending', 'paid', 'failed', 'refunded'])
-export const reportStatusEnum = pgEnum('dt_report_status', ['pending', 'generating', 'done', 'failed'])
+export const localeEnum = deeptype.enum('locale', ['ko', 'en', 'ja', 'zh'])
+export const providerEnum = deeptype.enum('provider', ['portone'])
+export const skuEnum = deeptype.enum('sku', ['report', 'compat', 'bundle'])
+export const purchaseStatusEnum = deeptype.enum('purchase_status', ['pending', 'paid', 'failed', 'refunded'])
+export const reportStatusEnum = deeptype.enum('report_status', ['pending', 'generating', 'done', 'failed'])
 
 export const REPORT_SECTION_KEYS = [
   'summary',
@@ -42,7 +29,9 @@ export const REPORT_SECTION_KEYS = [
   'reflectionQuestions',
   'nextSteps',
 ] as const
+
 export type ReportSectionKey = (typeof REPORT_SECTION_KEYS)[number]
+
 export interface ReportSection {
   key: ReportSectionKey
   title: string
@@ -51,8 +40,8 @@ export interface ReportSection {
 
 // One row per completed free assessment. Codes and profiles are always computed by the Worker from the
 // versioned raw answer set; the client never supplies authoritative score data.
-export const resultTable = pgTable(
-  'deeptype_result',
+export const resultTable = deeptype.table(
+  'result',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
     resultToken: varchar('result_token', { length: 43 }).notNull().unique(),
@@ -68,13 +57,13 @@ export const resultTable = pgTable(
     ...timestamps,
   },
   (t) => [
-    index('idx_dt_result_created').on(t.createdAt),
-    index('idx_dt_result_codes').on(t.personaCode, t.innerCode, t.gemCode),
+    index('idx_deeptype_result_created').on(t.createdAt),
+    index('idx_deeptype_result_codes').on(t.personaCode, t.innerCode, t.gemCode),
   ],
 )
 
-export const purchaseTable = pgTable(
-  'deeptype_purchase',
+export const purchaseTable = deeptype.table(
+  'purchase',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
     // Report-gating handle, minted at checkout, carried across the PortOne redirect. Cleared when the
@@ -109,20 +98,20 @@ export const purchaseTable = pgTable(
     ...timestamps,
   },
   (t) => [
-    index('idx_dt_purchase_result').on(t.resultId),
-    index('idx_dt_purchase_email_hash').on(t.emailHash),
-    index('idx_dt_purchase_paid_at').on(t.paidAt),
-    index('idx_dt_purchase_pending_created').on(t.createdAt).where(sql`status = 'pending'`),
+    index('idx_deeptype_purchase_result').on(t.resultId),
+    index('idx_deeptype_purchase_email_hash').on(t.emailHash),
+    index('idx_deeptype_purchase_paid_at').on(t.paidAt),
+    index('idx_deeptype_purchase_pending_created').on(t.createdAt).where(sql`status = 'pending'`),
     // No double-buy of the same product for one result.
-    uniqueIndex('uq_dt_purchase_paid_sku').on(t.resultId, t.sku).where(sql`status = 'paid'`),
-    uniqueIndex('uq_dt_purchase_provider_txn').on(t.provider, t.providerTxnId),
+    uniqueIndex('uq_deeptype_purchase_paid_sku').on(t.resultId, t.sku).where(sql`status = 'paid'`),
+    uniqueIndex('uq_deeptype_purchase_provider_txn').on(t.provider, t.providerTxnId),
   ],
 )
 
 // One-time, short-lived email magic links. Only the SHA-256 digest is stored; the raw token exists solely
 // in the message URL. Rows cascade with the purchase and are also swept after expiry/consumption.
-export const reopenAccessTable = pgTable(
-  'deeptype_reopen_access',
+export const reopenAccessTable = deeptype.table(
+  'reopen_access',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
     purchaseId: bigint('purchase_id', { mode: 'number' })
@@ -133,12 +122,12 @@ export const reopenAccessTable = pgTable(
     consumedAt: timestamp('consumed_at', { precision: 3, withTimezone: true }),
     createdAt,
   },
-  (t) => [index('idx_dt_reopen_purchase').on(t.purchaseId), index('idx_dt_reopen_expires').on(t.expiresAt)],
+  (t) => [index('idx_deeptype_reopen_purchase').on(t.purchaseId), index('idx_deeptype_reopen_expires').on(t.expiresAt)],
 )
 
 // 1:1 with a purchase. Generated exactly once (CAS lock via lock_token), cache-first on read.
-export const reportTable = pgTable(
-  'deeptype_report',
+export const reportTable = deeptype.table(
+  'report',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
     purchaseId: bigint('purchase_id', { mode: 'number' })
@@ -155,12 +144,12 @@ export const reportTable = pgTable(
     generatedAt: timestamp('generated_at', { precision: 3, withTimezone: true }),
     ...timestamps,
   },
-  (t) => [index('idx_dt_report_status').on(t.status)],
+  (t) => [index('idx_deeptype_report_status').on(t.status)],
 )
 
 // Inbound PortOne webhook idempotency (Standard Webhooks event id).
-export const webhookEventTable = pgTable(
-  'deeptype_webhook_event',
+export const webhookEventTable = deeptype.table(
+  'webhook_event',
   {
     id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
     provider: providerEnum().notNull().default('portone'),
@@ -169,5 +158,5 @@ export const webhookEventTable = pgTable(
     payload: text('payload').notNull(),
     createdAt,
   },
-  (t) => [uniqueIndex('uq_dt_webhook_event').on(t.provider, t.eventId)],
+  (t) => [uniqueIndex('uq_deeptype_webhook_event').on(t.provider, t.eventId)],
 )
