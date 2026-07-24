@@ -51,7 +51,7 @@ async function load(): Promise<Map<string, BakedBoard>> {
     return new Map()
   }
 
-  const client = postgres(url, { max: 1, prepare: false })
+  const client = postgres(url, { max: 1, prepare: false, ssl: 'require' })
   const db = drizzle({ client })
 
   try {
