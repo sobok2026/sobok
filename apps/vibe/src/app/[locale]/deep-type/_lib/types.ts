@@ -29,6 +29,7 @@ export type DeepTypeUiText = {
   analyzingBody: string
   analyzingTitle: string
   backCta: string
+  clarityBands: { clear: string; moderate: string; slight: string }
   clarityLabel: string
   clarityNote: string
   closestAnswerHint: string

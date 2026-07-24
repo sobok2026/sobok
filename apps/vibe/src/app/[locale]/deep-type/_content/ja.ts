@@ -11,7 +11,8 @@ export const deepTypeContent = createDeepTypeContent({
     analyzingBody: '50件の回答を同じ基準で採点し、3層のプロフィールを作成しています。',
     analyzingTitle: 'あなたの3つの層を整理しています',
     backCta: '前の質問',
-    clarityLabel: '回答の方向',
+    clarityBands: { clear: 'はっきり', moderate: '中程度', slight: '弱い' },
+    clarityLabel: '明確さ',
     clarityNote: 'バーが一方に長いほど、今回の回答でその方向がよりはっきり表れたことを示します。',
     closestAnswerHint: 'ぴったりの答えがなければ、今の自分に最も近い選択肢を選んでください。',
     contextBody:
@@ -256,7 +257,7 @@ export const deepTypeContent = createDeepTypeContent({
       '状況別の特性表現はWhole Trait Theoryと役割別特性研究、自己価値はcontingencies of self-worth、つながりと自律は愛着研究と自己決定理論を参考にしています。感情処理と目標焦点には、感情調整とregulatory focus研究の視点を取り入れています。',
     principlesTitle: '結果を読むための原則',
     principles: [
-      '文字コードだけでなく、各軸の連続スコアと回答の方向を一緒に読みます。',
+      '文字コードだけでなく、各軸の連続スコアと明確さを一緒に読みます。',
       'PersonaとInnerの違いは矛盾ではなく、状況による表れ方の変化として見ます。',
       'どの方向にも、状況に応じて役立つ強みと調整ポイントがあります。',
       'レポートの問いと小さな実験を日常で試し、自分に合う活用法を見つけます。',

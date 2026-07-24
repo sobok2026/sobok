@@ -12,7 +12,8 @@ export const deepTypeContent = createDeepTypeContent({
     analyzingBody: 'We are scoring all 50 responses under one model and building your three-layer profile.',
     analyzingTitle: 'Mapping your three layers',
     backCta: 'Previous question',
-    clarityLabel: 'Response direction',
+    clarityBands: { clear: 'Clear', moderate: 'Moderate', slight: 'Slight' },
+    clarityLabel: 'Clarity',
     clarityNote: 'The longer the bar, the more clearly that direction appeared across your responses.',
     closestAnswerHint: 'If none fits exactly, choose the option closest to you.',
     contextBody:
@@ -267,7 +268,7 @@ export const deepTypeContent = createDeepTypeContent({
       'Context-dependent expression draws on Whole Trait Theory and cross-role trait research. The self-worth dimension references contingencies of self-worth; connection and autonomy draw on attachment research and self-determination theory. Emotion processing and goal focus incorporate perspectives from emotion-regulation and regulatory-focus research.',
     principlesTitle: 'Principles for reading your result',
     principles: [
-      'Read each dimension’s continuous score and response direction alongside the letter codes.',
+      'Read each dimension’s continuous score and clarity alongside the letter codes.',
       'Treat Persona–Inner differences as context-dependent expression rather than contradiction.',
       'Every direction offers useful strengths and trade-offs depending on the situation.',
       'Use the report’s prompts and small experiments to find applications that fit your daily life.',

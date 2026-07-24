@@ -11,7 +11,8 @@ export const deepTypeContent = createDeepTypeContent({
     analyzingBody: '50개 응답을 같은 기준으로 채점해 세 층의 프로필을 만들고 있어요.',
     analyzingTitle: '당신의 세 층을 정리하고 있어요',
     backCta: '이전 문항',
-    clarityLabel: '응답 방향',
+    clarityBands: { clear: '뚜렷', moderate: '보통', slight: '약함' },
+    clarityLabel: '선명도',
     clarityNote: '막대가 한쪽으로 길수록 이번 응답에서 그 방향이 더 선명하게 나타났다는 뜻이에요.',
     closestAnswerHint: '딱 맞는 답이 없다면 가장 가까운 선택지를 골라주세요.',
     contextBody:
@@ -258,7 +259,7 @@ export const deepTypeContent = createDeepTypeContent({
       '상황별 성향 표현은 Whole Trait Theory와 역할별 특성 연구를, 자기가치 축은 contingencies of self-worth를, 연결·자율은 애착 연구와 자기결정성이론을 참고했습니다. 감정 처리와 목표 초점에는 정서조절 및 regulatory focus 연구의 관점을 반영했습니다.',
     principlesTitle: '결과를 읽는 원칙',
     principles: [
-      '한 글자 코드만 보지 않고 각 축의 연속 점수와 응답 방향을 함께 읽습니다.',
+      '한 글자 코드만 보지 않고 각 축의 연속 점수와 선명도를 함께 읽습니다.',
       '겉유형과 속유형의 차이는 모순이 아니라 상황에 따라 달라지는 표현 패턴으로 살펴봅니다.',
       '모든 방향에는 상황에 따라 도움이 되는 강점과 조절할 지점이 함께 있습니다.',
       '리포트의 질문과 작은 실험을 일상에 적용하며 나에게 맞는 활용법을 찾아갑니다.',

@@ -11,7 +11,8 @@ export const deepTypeContent = createDeepTypeContent({
     analyzingBody: '正在用同一套规则计算50项回答，并生成你的三层画像。',
     analyzingTitle: '正在整理你的三个层面',
     backCta: '上一题',
-    clarityLabel: '回答方向',
+    clarityBands: { clear: '明显', moderate: '中等', slight: '较弱' },
+    clarityLabel: '清晰度',
     clarityNote: '条形越偏向一侧，表示该方向在你这次回答中表现得越清晰。',
     closestAnswerHint: '如果没有完全符合的答案，请选择最接近现在的你的选项。',
     contextBody: '同一组特质分别在人际情境和独处情境中提问。差异描述的是情境中的表达变化，而不是人格矛盾。',
@@ -254,7 +255,7 @@ export const deepTypeContent = createDeepTypeContent({
       '情境中的特质表达参考Whole Trait Theory与跨角色特质研究；自我价值维度参考contingencies of self-worth；连接与自主参考依恋研究和自我决定理论；情绪处理与目标焦点融入了情绪调节和regulatory focus研究的观点。',
     principlesTitle: '阅读结果的原则',
     principles: [
-      '不要只看字母代码，也要结合每个维度的连续分数与回答方向。',
+      '不要只看字母代码，也要结合每个维度的连续分数与清晰度。',
       '把外在与内在类型的差异理解为随情境变化的表达，而不是矛盾。',
       '每个方向都包含在不同情境下有用的优势与可调整之处。',
       '尝试报告中的反思问题和小实验，找到适合自己日常生活的运用方式。',
