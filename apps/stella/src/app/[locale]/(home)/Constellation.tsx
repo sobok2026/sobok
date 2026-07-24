@@ -17,7 +17,9 @@ import type { StoredBirth } from '@/lib/birth-storage'
 import AspectSection from './AspectSection'
 import Big3Card from './Big3Card'
 import BirthForm from './BirthForm'
+import CommentEntry from './CommentEntry'
 import { ConstellationActions } from './ConstellationActions'
+import { commentTopicKey } from './comment-topic'
 import DetailPanel from './DetailPanel'
 import ElementBalance from './ElementBalance'
 import PatternSection from './PatternSection'
@@ -77,6 +79,10 @@ export default function Constellation() {
   const moonLongitudeRange = unknownTime?.moonLongitudeRange ?? null
   const displayedMoonSigns = moonSigns ?? [signOfLon(moonLon)]
   const moonSignUncertain = displayedMoonSigns.length > 1
+
+  // The comment board's stable topic key for the current selection (null when nothing is selected, or an
+  // angle with no birth time — cases where no panel/board is shown).
+  const commentTopic = commentTopicKey(selection, activeChart, moonSigns)
 
   const balancePlanets = moonSignUncertain
     ? activeChart.planets.filter((planet) => planet.id !== 'moon')
@@ -314,7 +320,7 @@ export default function Constellation() {
           </p>
         )}
 
-        {/* Detail panel */}
+        {/* Detail panel + its per-topic comment board */}
         {data && (
           <div className="mt-4 w-full" key={`panel-${selectionKey(selection)}`}>
             <DetailPanel
@@ -325,6 +331,7 @@ export default function Constellation() {
               onClose={() => dispatchSelection({ type: 'reset' })}
               selection={selection}
             />
+            {commentTopic && <CommentEntry key={commentTopic} locale={locale} topicKey={commentTopic} />}
           </div>
         )}
 

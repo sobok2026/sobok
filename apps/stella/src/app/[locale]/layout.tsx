@@ -10,6 +10,7 @@ import BirthProfileProvider from '@/components/BirthProfileProvider'
 import BottomNav from '@/components/BottomNav'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
+import QueryProvider from '@/components/QueryProvider'
 import { ADSENSE_ACCOUNT, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getLocale } from '@/i18n/server'
 import Analytics from '@/lib/analytics/Analytics'
@@ -67,11 +68,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
       <body className="antialiased">
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
-          <Header locale={locale} localeLabel={t('localeSwitcher')} />
-          <BirthProfileProvider key={locale}>{children}</BirthProfileProvider>
-          <Footer locale={locale} />
-          <BottomNav locale={locale} />
-          <Toaster position="top-center" richColors theme="dark" />
+          <QueryProvider>
+            <Header locale={locale} localeLabel={t('localeSwitcher')} />
+            <BirthProfileProvider key={locale}>{children}</BirthProfileProvider>
+            <Footer locale={locale} />
+            <BottomNav locale={locale} />
+            <Toaster position="top-center" richColors theme="dark" />
+          </QueryProvider>
         </NextIntlClientProvider>
         <Analytics />
         <Script

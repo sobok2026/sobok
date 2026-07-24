@@ -38,7 +38,7 @@ export const LEGAL = {
     privacy: {
       title: '개인정보처리방침',
       description: '별무리(소복)가 이용자의 정보를 어떻게 다루는지 안내합니다.',
-      updatedDate: '2026년 7월 16일',
+      updatedDate: '2026년 7월 24일',
       sections: [
         {
           heading: '출생 정보와 브라우저 처리',
@@ -74,6 +74,14 @@ export const LEGAL = {
           body: [
             '브라우저에 저장된 출생 정보는 서비스의 “정보 지우기” 기능을 사용하거나 해당 사이트의 저장 데이터를 삭제하면 제거됩니다. 세션 저장소의 임시 정보는 현재 탭의 세션이 끝나면 제거됩니다.',
             '기기에 저장된 정보를 삭제해도 이미 공유한 링크는 무효화되지 않으며, 별무리는 공유 대상이나 링크를 받은 사람이 보관한 사본을 삭제할 수 없습니다.',
+          ],
+        },
+        {
+          heading: '익명 댓글 게시판',
+          body: [
+            '별무리의 별자리별 댓글 게시판은 로그인 없이 이용할 수 있습니다. 게시판을 이용하면 이용자가 입력한 닉네임(선택)과 댓글 내용, 그리고 악용·스팸 방지에만 쓰이는 접속 IP의 비가역 해시값이 별무리 서버에 저장됩니다. 원본 IP 주소는 저장하지 않으며, 생년월일·태어난 시각·출생지 같은 출생 정보는 게시판에 저장되지 않습니다.',
+            '수집 목적은 게시판 운영과 도배·스팸·악용 방지입니다. IP 해시값은 마지막 활동일로부터 90일이 지나면 삭제하고, 이용자가 삭제하거나 신고로 숨김 처리된 댓글은 30일이 지나면 완전히 파기합니다.',
+            '작성한 댓글은 브라우저에 저장된 삭제 키로 직접 수정하거나 삭제할 수 있습니다. 삭제 키를 잃어버린 경우 문의 이메일로 요청하면 관리자가 삭제를 도와드립니다. 게시판 데이터는 데이터베이스와 엣지 인프라 제공을 위해 Supabase, Cloudflare에 위탁해 처리합니다.',
           ],
         },
         {
@@ -148,7 +156,7 @@ export const LEGAL = {
     privacy: {
       title: 'Privacy Policy',
       description: 'How Stella (sobok) handles your information.',
-      updatedDate: 'July 16, 2026',
+      updatedDate: 'July 24, 2026',
       sections: [
         {
           heading: 'Birth information and in-browser processing',
@@ -184,6 +192,14 @@ export const LEGAL = {
           body: [
             'Birth details saved in the browser are removed when you use “Delete saved” in the service or clear the site’s stored data. Temporary session-storage details are removed when the current tab session ends.',
             'Deleting details from your device does not invalidate links you already shared, and Stella cannot delete copies retained by a share target or recipient.',
+          ],
+        },
+        {
+          heading: 'Anonymous comment board',
+          body: [
+            'Stella’s per-placement comment boards can be used without an account. When you post, the nickname you choose (optional) and the comment text are stored on Stella’s server, together with a one-way hash of your connecting IP address used only to prevent spam and abuse. The raw IP address is not stored, and birth details (date, time, place) are never stored with a comment.',
+            'This data is collected to run the board and to prevent flooding, spam, and abuse. The IP hash is deleted 90 days after your last activity, and comments you delete — or that are hidden after reports — are permanently removed 30 days later.',
+            'You can edit or delete your own comments with a delete key kept in your browser. If you lose it, contact us and an operator can remove the comment for you. Board data is processed on our behalf by Supabase and Cloudflare, which provide the database and edge infrastructure.',
           ],
         },
         {
@@ -258,7 +274,7 @@ export const LEGAL = {
     privacy: {
       title: 'プライバシーポリシー',
       description: '星屑（sobok）が利用者の情報をどのように扱うかについてご案内します。',
-      updatedDate: '2026年7月16日',
+      updatedDate: '2026年7月24日',
       sections: [
         {
           heading: '出生情報とブラウザ内での処理',
@@ -294,6 +310,14 @@ export const LEGAL = {
           body: [
             'ブラウザに保存された出生情報は、サービスの「情報を削除」を使うか、このサイトの保存データを削除すると消去されます。セッションストレージの一時情報は、現在のタブのセッションが終了すると消去されます。',
             '端末上の情報を削除しても、すでに共有したリンクは無効になりません。星屑は、共有先や受信者が保持するコピーを削除できません。',
+          ],
+        },
+        {
+          heading: '匿名コメント掲示板',
+          body: [
+            '星屑の星位ごとのコメント掲示板は、ログインなしで利用できます。投稿すると、任意で入力したニックネームとコメント本文、そして不正利用の防止のみに用いる接続元IPアドレスの不可逆ハッシュ値がサーバーに保存されます。生のIPアドレスは保存せず、生年月日・出生時刻・出生地などの出生情報は掲示板に保存されません。',
+            '収集の目的は、掲示板の運営と、荒らし・スパム・不正利用の防止です。IPハッシュ値は最終利用日から90日を過ぎると削除し、利用者が削除したコメントや通報により非表示となったコメントは、30日を過ぎると完全に消去します。',
+            '投稿したコメントは、ブラウザに保存された削除キーで自分で編集・削除できます。削除キーを紛失した場合は、お問い合わせ先へご連絡いただければ運営者が削除に対応します。掲示板のデータは、データベースおよびエッジ基盤の提供のため、SupabaseおよびCloudflareに委託して処理します。',
           ],
         },
         {
@@ -368,7 +392,7 @@ export const LEGAL = {
     privacy: {
       title: '隐私政策',
       description: '说明 星黛洛（sobok）如何处理您的信息。',
-      updatedDate: '2026年7月16日',
+      updatedDate: '2026年7月24日',
       sections: [
         {
           heading: '出生信息与浏览器内处理',
@@ -404,6 +428,14 @@ export const LEGAL = {
           body: [
             '浏览器内保存的出生信息会在您使用服务中的“删除信息”功能，或清除本网站的存储数据时被移除。会话存储中的临时信息会在当前标签页会话结束时被移除。',
             '删除设备上的信息不会使已分享的链接失效；星黛洛也无法删除分享目标或收件人保留的副本。',
+          ],
+        },
+        {
+          heading: '匿名评论板',
+          body: [
+            '星黛洛的各星位评论板无需登录即可使用。发布时，您填写的昵称（可选）和评论内容，以及仅用于防止滥用与垃圾信息的连接 IP 的不可逆哈希值，会保存在星黛洛的服务器上。原始 IP 地址不会被保存，出生日期、出生时间、出生地点等出生信息也不会随评论一起保存。',
+            '收集目的为运营评论板并防止刷屏、垃圾信息与滥用。IP 哈希值会在最后活动日起 90 天后删除；您删除的评论，或因举报而被隐藏的评论，将在 30 天后被永久清除。',
+            '您可以使用保存在浏览器中的删除密钥自行编辑或删除自己的评论。若丢失该密钥，可通过联系邮箱请求管理员协助删除。评论板数据委托 Supabase 与 Cloudflare 处理，用于提供数据库与边缘基础设施。',
           ],
         },
         {
