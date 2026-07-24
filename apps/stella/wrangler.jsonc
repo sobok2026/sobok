@@ -1,8 +1,12 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "stella",
+  // A Worker WITH static assets: `main` handles /api/* (the anonymous comment board — Supabase/Hyperdrive DB
+  // and Turnstile secrets must stay server-side); everything else is the static Next export in ./out.
+  "main": "worker/index.ts",
   "compatibility_date": "2026-07-01",
-  // Assets-only Worker (no `main`): the static export in ./out is served directly at the edge via Workers Static Assets.
+  // Required by postgres.js (Supabase Postgres over the Workers TCP socket API via Hyperdrive).
+  "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
   "preview_urls": false,
   "observability": {
@@ -10,7 +14,43 @@
   },
   "assets": {
     "directory": "./out",
+    "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "html_handling": "drop-trailing-slash"
-  }
+    "html_handling": "drop-trailing-slash",
+    // API routes always hit the Worker first so they can never be shadowed by an asset.
+    "run_worker_first": ["/api/*"]
+  },
+  "hyperdrive": [
+    {
+      // Single origin over the SHARED Supabase Postgres, authenticating as the least-privilege `stella_app`
+      // role. Caching DISABLED — a just-posted comment must appear immediately (read-after-write board).
+      "binding": "HYPERDRIVE",
+      "id": "REPLACE_WITH_STELLA_HYPERDRIVE_ID"
+    }
+  ],
+  // One cron (worker `scheduled` handler): daily 03:00 → retention purge (also keeps the shared Supabase
+  // project warm past the free-tier 7-day inactivity pause).
+  "triggers": {
+    "crons": ["0 3 * * *"]
+  },
+  // Account-level Secrets Store (same store as apps/vibe). `sobok-turnstile-secret` is the SHARED widget
+  // secret — bound by name here, NOT re-declared in Terraform (account-stella only CREATES the two new
+  // stella-* secrets). Read at runtime with `await binding.get()`.
+  "secrets_store_secrets": [
+    {
+      "binding": "STELLA_TURNSTILE_SECRET",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+      "secret_name": "sobok-turnstile-secret"
+    },
+    {
+      "binding": "STELLA_IP_HASH_SALT",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+      "secret_name": "stella-ip-hash-salt"
+    },
+    {
+      "binding": "STELLA_DISCORD_WEBHOOK",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+      "secret_name": "stella-discord-webhook"
+    }
+  ]
 }
