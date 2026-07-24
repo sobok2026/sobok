@@ -21,6 +21,12 @@ export const zhQuestionOptions = {
       '与人连接得越多，我越明显感到有活力',
     ],
     [
+      'TODO persona-ei-4 · 선택1 = E극 강함',
+      'TODO persona-ei-4 · 선택2 = E극 약함',
+      'TODO persona-ei-4 · 선택3 = I극 약함',
+      'TODO persona-ei-4 · 선택4 = I극 강함',
+    ],
+    [
       '我会先展开各种可能性和整体方向',
       '我先抓住大局，再看细节',
       '我会先看已确认的事实和可行的事情',
@@ -37,6 +43,12 @@ export const zhQuestionOptions = {
       '我先掌握原理，再用例子确认',
       '我看过实际案例后再理解原理',
       '亲自体验或能立即应用的例子对我最重要',
+    ],
+    [
+      'TODO persona-sn-4 · 선택1 = S극 강함',
+      'TODO persona-sn-4 · 선택2 = S극 약함',
+      'TODO persona-sn-4 · 선택3 = N극 약함',
+      'TODO persona-sn-4 · 선택4 = N극 강함',
     ],
     [
       '关系是否舒适是我判断的起点',
@@ -57,6 +69,12 @@ export const zhQuestionOptions = {
       '我会先单独理清事实，再处理情绪',
     ],
     [
+      'TODO persona-tf-4 · 선택1 = T극 강함',
+      'TODO persona-tf-4 · 선택2 = T극 약함',
+      'TODO persona-tf-4 · 선택3 = F극 약함',
+      'TODO persona-tf-4 · 선택4 = F극 강함',
+    ],
+    [
       '没有固定计划、随时调整会让我更自在',
       '只要有大致方向，对我就足够了',
       '有计划和大致期限会让我安心',
@@ -73,6 +91,12 @@ export const zhQuestionOptions = {
       '我只定大目标，然后马上行动',
       '我先大致安排顺序和角色，再开始',
       '开始前，我会明确整理好顺序和角色',
+    ],
+    [
+      'TODO persona-jp-4 · 선택1 = J극 강함',
+      'TODO persona-jp-4 · 선택2 = J극 약함',
+      'TODO persona-jp-4 · 선택3 = P극 약함',
+      'TODO persona-jp-4 · 선택4 = P극 강함',
     ],
     [
       '小小的不确定很快就会被我忘记',
@@ -92,6 +116,12 @@ export const zhQuestionOptions = {
       '压力增大时，我的情绪变化会变得明显',
       '我的情绪状态会随社交压力发生很大变化',
     ],
+    [
+      'TODO persona-ne-4 · 선택1 = N극 강함',
+      'TODO persona-ne-4 · 선택2 = N극 약함',
+      'TODO persona-ne-4 · 선택3 = C극 약함',
+      'TODO persona-ne-4 · 선택4 = C극 강함',
+    ],
   ],
   inner: [
     [
@@ -106,6 +136,12 @@ export const zhQuestionOptions = {
       '是否和人连接，对我的精力影响不大',
       '简单的消息或见面会让我有些精神',
       '和人产生连接时，我的精力会明显上升',
+    ],
+    [
+      'TODO inner-ei-4 · 선택1 = E극 강함',
+      'TODO inner-ei-4 · 선택2 = E극 약함',
+      'TODO inner-ei-4 · 선택3 = I극 약함',
+      'TODO inner-ei-4 · 선택4 = I극 강함',
     ],
     [
       '独处时，我更会先展开可能性和整体图景',
@@ -126,6 +162,12 @@ export const zhQuestionOptions = {
       '有能直接应用的案例时，我理解得最好',
     ],
     [
+      'TODO inner-sn-4 · 선택1 = S극 강함',
+      'TODO inner-sn-4 · 선택2 = S극 약함',
+      'TODO inner-sn-4 · 선택3 = N극 약함',
+      'TODO inner-sn-4 · 선택4 = N극 강함',
+    ],
+    [
       '我的决定从让自己心里舒服的方向开始',
       '我会先考虑情境以及对人的影响',
       '我也看影响，但优先保持一致的标准',
@@ -142,6 +184,12 @@ export const zhQuestionOptions = {
       '我整理情绪后再回看事实',
       '我把情绪和事实分开，同时审视两者',
       '我会先单独理清事实关系，再看自己的情绪',
+    ],
+    [
+      'TODO inner-tf-4 · 선택1 = T극 강함',
+      'TODO inner-tf-4 · 선택2 = T극 약함',
+      'TODO inner-tf-4 · 선택3 = F극 약함',
+      'TODO inner-tf-4 · 선택4 = F극 강함',
     ],
     [
       '自由时间毫无计划地流过，会让我最自在',
@@ -162,6 +210,12 @@ export const zhQuestionOptions = {
       '即使独自做事，我也会具体排好顺序再开始',
     ],
     [
+      'TODO inner-jp-4 · 선택1 = J극 강함',
+      'TODO inner-jp-4 · 선택2 = J극 약함',
+      'TODO inner-jp-4 · 선택3 = P극 약함',
+      'TODO inner-jp-4 · 선택4 = P극 강함',
+    ],
+    [
       '独处时，小小的不确定很快就会消失',
       '我会想一会儿，然后转去做别的事',
       '我会多次回想小小的不确定',
@@ -178,6 +232,12 @@ export const zhQuestionOptions = {
       '我会有点紧张，但很快能整理好',
       '只是想一想，我的情绪就会明显波动',
       '仅仅想象压力，我的情绪状态就会大幅变化',
+    ],
+    [
+      'TODO inner-ne-4 · 선택1 = N극 강함',
+      'TODO inner-ne-4 · 선택2 = N극 약함',
+      'TODO inner-ne-4 · 선택3 = C극 약함',
+      'TODO inner-ne-4 · 선택4 = C극 강함',
     ],
   ],
   gem: [
@@ -206,12 +266,6 @@ export const zhQuestionOptions = {
       '如果得不到认可，我会觉得努力本身也没那么有意义',
     ],
     [
-      '如果无人看见，我很难持续重视一件事',
-      '有回应时，我才能长期觉得它重要',
-      '即使没有回应，只要对我重要，我也能继续',
-      '即使无人看见，我也能按自己的标准重视它',
-    ],
-    [
       '即使很少联系，我也觉得关系足够稳定',
       '偶尔互相问候会让我觉得自在',
       '定期联系会让我觉得关系更稳定',
@@ -234,12 +288,6 @@ export const zhQuestionOptions = {
       '我对连接和独处时间的需要差不多',
       '有独处时间，关系才会让我自在',
       '有清晰边界和充分独处时间时，我最容易亲近',
-    ],
-    [
-      '只分享重要的事，我就觉得彼此足够连接',
-      '偶尔分享日常会让我感到亲密',
-      '越常分享小小的日常，我越觉得亲近',
-      '连日常细小瞬间都持续分享时，我感到连接最深',
     ],
     [
       '独自整理情绪时，我最能理解它',
@@ -266,12 +314,6 @@ export const zhQuestionOptions = {
       '还没充分处理就说出来，会让我对情绪更困惑',
     ],
     [
-      '越是难以承受，我越想独自解决',
-      '我会先独自撑住，实在需要时才联系别人',
-      '感到辛苦时，我会向一位信任的人求助',
-      '难以承受时，我会马上寻找信任的人建立连接',
-    ],
-    [
       '比起新机会，降低风险更能推动我',
       '我需要确认安全，才会想要行动',
       '机会足够大时，即使有风险我也会行动',
@@ -295,12 +337,6 @@ export const zhQuestionOptions = {
       '我先确认可能失去什么，再开始行动',
       '决定前，充分防止损失和风险对我最重要',
     ],
-    [
-      '陌生的挑战会快速降低我的精力',
-      '只有确信安全，我才会产生兴趣',
-      '即使陌生，只要看见可能，我就会好奇',
-      '结果越不确定，新的可能性越让我充满能量',
-    ],
   ],
   refinement: [
     [
@@ -322,6 +358,12 @@ export const zhQuestionOptions = {
       '和很多人交谈之后，我依然活力充足',
     ],
     [
+      'TODO refine-inner-ei-4 · 선택1 = E극 강함',
+      'TODO refine-inner-ei-4 · 선택2 = E극 약함',
+      'TODO refine-inner-ei-4 · 선택3 = I극 약함',
+      'TODO refine-inner-ei-4 · 선택4 = I극 강함',
+    ],
+    [
       '独处时，我的想法停留在眼前的现实',
       '从具体事情中，我偶尔会想到其他可能',
       '我的想法经常扩展到多种可能和连接',
@@ -338,6 +380,12 @@ export const zhQuestionOptions = {
       '理论有说服力时，我之后才考虑能否应用',
       '比起理论，我会稍微更偏向现在就能试的方法',
       '我最相信能立即应用并验证的方法',
+    ],
+    [
+      'TODO refine-inner-sn-4 · 선택1 = S극 강함',
+      'TODO refine-inner-sn-4 · 선택2 = S극 약함',
+      'TODO refine-inner-sn-4 · 선택3 = N극 약함',
+      'TODO refine-inner-sn-4 · 선택4 = N극 강함',
     ],
     [
       '情况变化时，我的标准也可能大幅变化',
@@ -358,6 +406,12 @@ export const zhQuestionOptions = {
       '平静后，我会系统比较各种理由再作决定',
     ],
     [
+      'TODO refine-inner-tf-4 · 선택1 = T극 강함',
+      'TODO refine-inner-tf-4 · 선택2 = T극 약함',
+      'TODO refine-inner-tf-4 · 선택3 = F극 약함',
+      'TODO refine-inner-tf-4 · 선택4 = F극 강함',
+    ],
+    [
       '没有安排的时间，完全无计划才让我自在',
       '只要想好可能想做的事就足够了',
       '有一个宽松计划会让我更自在',
@@ -374,6 +428,12 @@ export const zhQuestionOptions = {
       '即使还有几件事没做完，我也能安心休息',
       '完成小事会减少占据我注意力的内容',
       '连小事都收尾后，我的头脑才会明显轻松',
+    ],
+    [
+      'TODO refine-inner-jp-4 · 선택1 = J극 강함',
+      'TODO refine-inner-jp-4 · 선택2 = J극 약함',
+      'TODO refine-inner-jp-4 · 선택3 = P극 약함',
+      'TODO refine-inner-jp-4 · 선택4 = P극 강함',
     ],
     [
       '听到批评时，我自己的评价标准会立刻动摇',
@@ -394,6 +454,12 @@ export const zhQuestionOptions = {
       '明确写下重要价值后，我能不受外界反应影响地选择',
     ],
     [
+      'TODO refine-gem-rm-4 · 선택1 = R극 강함',
+      'TODO refine-gem-rm-4 · 선택2 = R극 약함',
+      'TODO refine-gem-rm-4 · 선택3 = M극 약함',
+      'TODO refine-gem-rm-4 · 선택4 = M극 강함',
+    ],
+    [
       '即使联系很少，亲密感也会充分成长',
       '偶尔互相问候会让我觉得自在',
       '频繁互相问候会让我觉得更亲近',
@@ -410,6 +476,12 @@ export const zhQuestionOptions = {
       '我倾向于间接释放信号',
       '需要时，我可以直接请求连接',
       '我会清楚告诉对方想要怎样连接以及何时连接',
+    ],
+    [
+      'TODO refine-gem-oa-4 · 선택1 = O극 강함',
+      'TODO refine-gem-oa-4 · 선택2 = O극 약함',
+      'TODO refine-gem-oa-4 · 선택3 = A극 약함',
+      'TODO refine-gem-oa-4 · 선택4 = A극 강함',
     ],
     [
       '越是辛苦，我越倾向于独自默默整理',
@@ -430,6 +502,12 @@ export const zhQuestionOptions = {
       '即使复杂的情绪，我也能用具体名称和句子明确表达',
     ],
     [
+      'TODO refine-gem-vh-4 · 선택1 = V극 강함',
+      'TODO refine-gem-vh-4 · 선택2 = V극 약함',
+      'TODO refine-gem-vh-4 · 선택3 = H극 약함',
+      'TODO refine-gem-vh-4 · 선택4 = H극 강함',
+    ],
+    [
       '设定目标时，我会先想到要避开的风险',
       '我先确认安全范围，再思考成长',
       '我最先想到想要的成长和拓展',
@@ -446,6 +524,12 @@ export const zhQuestionOptions = {
       '只有看到安全的迹象，我才会产生兴趣',
       '看到机会时，即使不确定我也会好奇',
       '结果越未知，我探索新机会的能量越强',
+    ],
+    [
+      'TODO refine-gem-uo-4 · 선택1 = U극 강함',
+      'TODO refine-gem-uo-4 · 선택2 = U극 약함',
+      'TODO refine-gem-uo-4 · 선택3 = O극 약함',
+      'TODO refine-gem-uo-4 · 선택4 = O극 강함',
     ],
   ],
 } as const satisfies QuestionOptionCatalog

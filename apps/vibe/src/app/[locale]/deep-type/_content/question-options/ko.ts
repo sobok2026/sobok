@@ -21,6 +21,12 @@ export const koQuestionOptions = {
       '사람들과 연결될수록 확실히 활력이 난다',
     ],
     [
+      'TODO persona-ei-4 · 선택1 = E극 강함',
+      'TODO persona-ei-4 · 선택2 = E극 약함',
+      'TODO persona-ei-4 · 선택3 = I극 약함',
+      'TODO persona-ei-4 · 선택4 = I극 강함',
+    ],
+    [
       '가능성과 큰 방향부터 넓혀 본다',
       '큰 그림을 잡은 뒤 세부를 본다',
       '확인된 사실과 가능한 일부터 본다',
@@ -37,6 +43,12 @@ export const koQuestionOptions = {
       '원리를 잡고 예시로 확인한다',
       '실제 사례를 본 뒤 원리를 이해한다',
       '직접 경험하거나 적용 가능한 예시가 가장 중요하다',
+    ],
+    [
+      'TODO persona-sn-4 · 선택1 = S극 강함',
+      'TODO persona-sn-4 · 선택2 = S극 약함',
+      'TODO persona-sn-4 · 선택3 = N극 약함',
+      'TODO persona-sn-4 · 선택4 = N극 강함',
     ],
     [
       '관계가 편안한지가 판단의 출발점이다',
@@ -57,6 +69,12 @@ export const koQuestionOptions = {
       '우선 사실을 분리한 뒤 감정을 다룬다',
     ],
     [
+      'TODO persona-tf-4 · 선택1 = T극 강함',
+      'TODO persona-tf-4 · 선택2 = T극 약함',
+      'TODO persona-tf-4 · 선택3 = F극 약함',
+      'TODO persona-tf-4 · 선택4 = F극 강함',
+    ],
+    [
       '정해진 계획 없이 그때그때 움직이는 게 편하다',
       '큰 방향만 있으면 충분하다',
       '계획과 대략적인 마감이 있으면 편하다',
@@ -75,6 +93,12 @@ export const koQuestionOptions = {
       '시작 전에 순서와 역할을 분명히 정리한다',
     ],
     [
+      'TODO persona-jp-4 · 선택1 = J극 강함',
+      'TODO persona-jp-4 · 선택2 = J극 약함',
+      'TODO persona-jp-4 · 선택3 = P극 약함',
+      'TODO persona-jp-4 · 선택4 = P극 강함',
+    ],
+    [
       '작은 불확실성은 금방 잊는다',
       '잠깐 신경 쓰이지만 곧 지나간다',
       '한동안 여러 가능성을 다시 생각한다',
@@ -91,6 +115,12 @@ export const koQuestionOptions = {
       '감정이 조금 흔들리지만 곧 조절된다',
       '압박이 커지면 감정 변화가 눈에 띈다',
       '사회적 압박에 따라 감정 상태가 크게 달라진다',
+    ],
+    [
+      'TODO persona-ne-4 · 선택1 = N극 강함',
+      'TODO persona-ne-4 · 선택2 = N극 약함',
+      'TODO persona-ne-4 · 선택3 = C극 약함',
+      'TODO persona-ne-4 · 선택4 = C극 강함',
     ],
   ],
   inner: [
@@ -113,6 +143,12 @@ export const koQuestionOptions = {
       '누군가와 연결될 때 확실히 에너지가 올라간다',
     ],
     [
+      'TODO inner-ei-4 · 선택1 = E극 강함',
+      'TODO inner-ei-4 · 선택2 = E극 약함',
+      'TODO inner-ei-4 · 선택3 = I극 약함',
+      'TODO inner-ei-4 · 선택4 = I극 강함',
+    ],
+    [
       '혼자일수록 가능성과 큰 그림부터 넓혀 본다',
       '방향을 상상한 뒤 세부를 확인한다',
       '확인된 사실과 적용 방법부터 살핀다',
@@ -129,6 +165,12 @@ export const koQuestionOptions = {
       '원리를 이해하고 사례로 확인한다',
       '실제 사례에서 공통 원리를 찾는다',
       '직접 적용할 수 있는 사례가 있어야 가장 잘 이해된다',
+    ],
+    [
+      'TODO inner-sn-4 · 선택1 = S극 강함',
+      'TODO inner-sn-4 · 선택2 = S극 약함',
+      'TODO inner-sn-4 · 선택3 = N극 약함',
+      'TODO inner-sn-4 · 선택4 = N극 강함',
     ],
     [
       '내 결정은 마음이 편한 쪽에서 시작한다',
@@ -149,6 +191,12 @@ export const koQuestionOptions = {
       '사실관계를 먼저 분리한 뒤 감정을 살핀다',
     ],
     [
+      'TODO inner-tf-4 · 선택1 = T극 강함',
+      'TODO inner-tf-4 · 선택2 = T극 약함',
+      'TODO inner-tf-4 · 선택3 = F극 약함',
+      'TODO inner-tf-4 · 선택4 = F극 강함',
+    ],
+    [
       '자유 시간은 아무 계획 없이 흘러갈 때 편하다',
       '하고 싶은 것 한두 가지만 떠올린다',
       '느슨한 계획이 있으면 마음이 편하다',
@@ -167,6 +215,12 @@ export const koQuestionOptions = {
       '혼자 하는 일도 순서를 구체적으로 정리한 뒤 시작한다',
     ],
     [
+      'TODO inner-jp-4 · 선택1 = J극 강함',
+      'TODO inner-jp-4 · 선택2 = J극 약함',
+      'TODO inner-jp-4 · 선택3 = P극 약함',
+      'TODO inner-jp-4 · 선택4 = P극 강함',
+    ],
+    [
       '혼자 있으면 작은 불확실성은 금방 사라진다',
       '잠시 생각하지만 곧 다른 일로 넘어간다',
       '작은 불확실성을 여러 번 되짚어 본다',
@@ -183,6 +237,12 @@ export const koQuestionOptions = {
       '조금 긴장하지만 금방 정리된다',
       '생각만 해도 감정이 눈에 띄게 흔들린다',
       '압박을 상상하는 것만으로 감정 상태가 크게 달라진다',
+    ],
+    [
+      'TODO inner-ne-4 · 선택1 = N극 강함',
+      'TODO inner-ne-4 · 선택2 = N극 약함',
+      'TODO inner-ne-4 · 선택3 = C극 약함',
+      'TODO inner-ne-4 · 선택4 = C극 강함',
     ],
   ],
   gem: [
@@ -211,12 +271,6 @@ export const koQuestionOptions = {
       '인정받지 못하면 그 노력의 의미도 작게 느껴진다',
     ],
     [
-      '알아주는 사람이 없으면 중요하게 여기기 어렵다',
-      '반응이 있어야 오래 중요하게 느껴진다',
-      '반응이 없어도 내가 중요하면 이어 갈 수 있다',
-      '아무도 알아주지 않아도 내 기준으로 중요하게 여긴다',
-    ],
-    [
       '연락이 뜸해도 관계는 충분히 안정적으로 느껴진다',
       '가끔 안부를 나누는 정도면 편하다',
       '정기적으로 연락하면 관계가 더 안정적으로 느껴진다',
@@ -239,12 +293,6 @@ export const koQuestionOptions = {
       '연결과 개인 시간을 비슷하게 원한다',
       '혼자만의 시간이 있어야 관계도 편해진다',
       '분명한 경계와 충분한 혼자 시간이 있어야 가장 편하게 가까워진다',
-    ],
-    [
-      '중요한 일만 나눠도 충분히 연결돼 있다고 느낀다',
-      '가끔 일상을 나누면 친밀함을 느낀다',
-      '사소한 일상을 자주 공유할수록 가까워진다',
-      '일상의 작은 순간까지 계속 나눌 때 가장 깊이 연결된다고 느낀다',
     ],
     [
       '감정은 혼자 정리해야 가장 잘 이해된다',
@@ -271,12 +319,6 @@ export const koQuestionOptions = {
       '충분히 처리하기 전에 말하면 감정이 더 크게 헷갈린다',
     ],
     [
-      '벅찰수록 혼자 해결하려고 한다',
-      '먼저 혼자 버티고 꼭 필요할 때만 연락한다',
-      '힘들면 믿는 사람 한 명에게 도움을 구한다',
-      '감당하기 벅차면 바로 믿는 사람을 찾아 연결한다',
-    ],
-    [
       '새 기회보다 위험을 줄이는 일이 더 움직이게 한다',
       '안전을 확인해야 움직일 마음이 생긴다',
       '위험이 있어도 기회가 크면 움직인다',
@@ -300,12 +342,6 @@ export const koQuestionOptions = {
       '잃을 수 있는 것을 먼저 확인한 뒤 움직인다',
       '결정 전에 손실과 위험을 충분히 막는 일이 가장 중요하다',
     ],
-    [
-      '익숙하지 않은 도전은 에너지를 빠르게 낮춘다',
-      '안전하다는 확신이 있어야 관심이 생긴다',
-      '낯설어도 가능성이 보이면 호기심이 생긴다',
-      '결과가 불확실할수록 새로운 가능성에 에너지가 오른다',
-    ],
   ],
   refinement: [
     [
@@ -327,6 +363,12 @@ export const koQuestionOptions = {
       '사람들과 많이 이야기한 뒤에도 활력이 충분히 남는다',
     ],
     [
+      'TODO refine-inner-ei-4 · 선택1 = E극 강함',
+      'TODO refine-inner-ei-4 · 선택2 = E극 약함',
+      'TODO refine-inner-ei-4 · 선택3 = I극 약함',
+      'TODO refine-inner-ei-4 · 선택4 = I극 강함',
+    ],
+    [
       '혼자일 때 생각은 눈앞의 현실에 머문다',
       '구체적인 일에서 가끔 다른 가능성을 떠올린다',
       '생각이 여러 가능성과 연결로 자주 확장된다',
@@ -343,6 +385,12 @@ export const koQuestionOptions = {
       '이론이 설득력 있으면 적용 가능성은 나중에 본다',
       '이론보다 지금 써볼 수 있는 방법에 조금 더 끌린다',
       '바로 적용하고 확인할 수 있는 방법을 가장 신뢰한다',
+    ],
+    [
+      'TODO refine-inner-sn-4 · 선택1 = S극 강함',
+      'TODO refine-inner-sn-4 · 선택2 = S극 약함',
+      'TODO refine-inner-sn-4 · 선택3 = N극 약함',
+      'TODO refine-inner-sn-4 · 선택4 = N극 강함',
     ],
     [
       '상황이 달라지면 기준도 크게 바뀔 수 있다',
@@ -363,6 +411,12 @@ export const koQuestionOptions = {
       '감정이 가라앉은 뒤 가능한 이유를 체계적으로 비교해 결정한다',
     ],
     [
+      'TODO refine-inner-tf-4 · 선택1 = T극 강함',
+      'TODO refine-inner-tf-4 · 선택2 = T극 약함',
+      'TODO refine-inner-tf-4 · 선택3 = F극 약함',
+      'TODO refine-inner-tf-4 · 선택4 = F극 강함',
+    ],
+    [
       '예정 없는 시간은 계획이 전혀 없어야 편하다',
       '하고 싶은 일만 떠올려 두면 충분하다',
       '느슨한 계획이 있으면 더 편하다',
@@ -379,6 +433,12 @@ export const koQuestionOptions = {
       '몇 가지가 남아 있어도 편하게 쉴 수 있다',
       '작은 일을 마치면 신경 쓸 것이 줄어든다',
       '작은 일까지 마감해 두어야 머릿속에 확실한 여유가 생긴다',
+    ],
+    [
+      'TODO refine-inner-jp-4 · 선택1 = J극 강함',
+      'TODO refine-inner-jp-4 · 선택2 = J극 약함',
+      'TODO refine-inner-jp-4 · 선택3 = P극 약함',
+      'TODO refine-inner-jp-4 · 선택4 = P극 강함',
     ],
     [
       '비판을 들으면 내 평가 기준도 바로 흔들린다',
@@ -399,6 +459,12 @@ export const koQuestionOptions = {
       '중요한 가치를 분명히 적으면 외부 반응과 무관하게 선택할 수 있다',
     ],
     [
+      'TODO refine-gem-rm-4 · 선택1 = R극 강함',
+      'TODO refine-gem-rm-4 · 선택2 = R극 약함',
+      'TODO refine-gem-rm-4 · 선택3 = M극 약함',
+      'TODO refine-gem-rm-4 · 선택4 = M극 강함',
+    ],
+    [
       '연락이 드물어도 친밀감은 충분히 자란다',
       '가끔 안부를 나누는 정도가 편하다',
       '자주 안부를 주고받으면 더 가까워진다',
@@ -415,6 +481,12 @@ export const koQuestionOptions = {
       '간접적으로 신호를 보내는 편이다',
       '필요할 때 연결을 직접 요청할 수 있다',
       '원하는 연결 방식과 시간을 상대에게 분명하게 요청한다',
+    ],
+    [
+      'TODO refine-gem-oa-4 · 선택1 = O극 강함',
+      'TODO refine-gem-oa-4 · 선택2 = O극 약함',
+      'TODO refine-gem-oa-4 · 선택3 = A극 약함',
+      'TODO refine-gem-oa-4 · 선택4 = A극 강함',
     ],
     [
       '힘들수록 혼자 말없이 정리하는 편이다',
@@ -435,6 +507,12 @@ export const koQuestionOptions = {
       '복잡한 감정도 구체적인 이름과 문장으로 분명히 표현할 수 있다',
     ],
     [
+      'TODO refine-gem-vh-4 · 선택1 = V극 강함',
+      'TODO refine-gem-vh-4 · 선택2 = V극 약함',
+      'TODO refine-gem-vh-4 · 선택3 = H극 약함',
+      'TODO refine-gem-vh-4 · 선택4 = H극 강함',
+    ],
+    [
       '목표를 세울 때 피해야 할 위험부터 떠올린다',
       '안전한 범위를 확인한 뒤 성장을 생각한다',
       '원하는 성장과 확장을 먼저 떠올린다',
@@ -451,6 +529,12 @@ export const koQuestionOptions = {
       '안전하다는 단서가 있어야 관심이 생긴다',
       '기회가 보이면 불확실해도 호기심이 생긴다',
       '결과를 알 수 없을수록 새로운 기회를 탐색하고 싶은 에너지가 커진다',
+    ],
+    [
+      'TODO refine-gem-uo-4 · 선택1 = U극 강함',
+      'TODO refine-gem-uo-4 · 선택2 = U극 약함',
+      'TODO refine-gem-uo-4 · 선택3 = O극 약함',
+      'TODO refine-gem-uo-4 · 선택4 = O극 강함',
     ],
   ],
 } as const satisfies QuestionOptionCatalog

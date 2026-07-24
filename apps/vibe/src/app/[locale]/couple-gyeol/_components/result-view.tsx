@@ -81,14 +81,14 @@ export function ResultView({ content, isSharedResult, locale, onRestart, result 
         </div>
 
         <div className="grid gap-5">
-          <section className="rounded-4xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
+          <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
             <h2 className="font-black text-2xl">{content.ui.gradeTitle}</h2>
             <p className="mt-4 text-page-ink/70 leading-8">{gradeContent.description}</p>
           </section>
 
           <AxisScoresSection content={content} result={result} />
 
-          <section className="rounded-4xl border border-page-border bg-white p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
+          <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-white p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
             <h2 className="font-black text-2xl">{content.ui.reasonsTitle}</h2>
             <ul className="mt-5 grid gap-3">
               {resultContent.reasons.map((reason) => (
@@ -100,12 +100,12 @@ export function ResultView({ content, isSharedResult, locale, onRestart, result 
             </ul>
           </section>
 
-          <section className="rounded-4xl bg-[#eef7ff] p-6 sm:p-8">
+          <section className="rounded-3xl sm:rounded-4xl bg-[#eef7ff] p-6 sm:p-8">
             <h2 className="font-black text-2xl">{content.ui.missionTitle}</h2>
             <p className="mt-4 text-page-ink/70 leading-8">{resultContent.mission}</p>
           </section>
 
-          <section className="rounded-4xl bg-page-accent p-6 text-white shadow-[0_24px_90px_rgba(255,77,109,0.18)] sm:p-8">
+          <section className="rounded-3xl sm:rounded-4xl bg-page-accent p-6 text-white shadow-[0_24px_90px_rgba(255,77,109,0.18)] sm:p-8">
             <h2 className="font-black text-2xl">{content.ui.resultCardTitle}</h2>
             <p className="mt-4 max-w-2xl text-white/76 leading-8">{content.ui.resultCardBody}</p>
             <div className="mt-6 rounded-3xl bg-white p-5 text-page-ink">
@@ -165,7 +165,7 @@ function AxisScoresSection({ content, result }: Pick<ResultViewProps, 'content' 
   }
 
   return (
-    <section className="rounded-4xl border border-page-border bg-white p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
+    <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-white p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
       <h2 className="font-black text-2xl">{content.ui.axisScoresTitle}</h2>
       <div className="mt-6 grid gap-5">
         {axisOrder.map((axis) => {
@@ -201,7 +201,7 @@ function AxisScoresSection({ content, result }: Pick<ResultViewProps, 'content' 
 
 function GyeolScoreCard({ gradeLabel, indexLabel, mountainLabel, weaveIndex }: GyeolScoreCardProps) {
   return (
-    <div className="relative mt-7 min-h-82 overflow-hidden rounded-4xl bg-page-ink p-5 text-white shadow-[0_24px_80px_rgba(0,0,0,0.18)] sm:min-h-92">
+    <div className="relative mt-7 min-h-82 overflow-hidden rounded-3xl sm:rounded-4xl bg-page-ink p-5 text-white shadow-[0_24px_80px_rgba(0,0,0,0.18)] sm:min-h-92">
       <Image
         alt=""
         className="object-cover"

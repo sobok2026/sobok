@@ -19,7 +19,7 @@ export function ResultHero({ content, profile, refined = false }: ResultHeroProp
   })
 
   return (
-    <header className="rounded-4xl border border-page-border bg-page-surface p-4 text-center shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
+    <header className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-4 text-center shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
       <GemArtwork gemCode={profile.gem.code} />
 
       {refined ? (

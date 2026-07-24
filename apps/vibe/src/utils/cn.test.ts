@@ -16,8 +16,15 @@ describe('cn', () => {
   })
 
   test('keeps the last conflicting project token class', () => {
-    expect(cn('bg-page-ink', 'bg-page-accent', 'text-page-ink', 'text-page-accent', 'rounded-2xl', 'rounded-4xl')).toBe(
-      'bg-page-accent text-page-accent rounded-4xl',
-    )
+    expect(
+      cn(
+        'bg-page-ink',
+        'bg-page-accent',
+        'text-page-ink',
+        'text-page-accent',
+        'rounded-2xl',
+        'rounded-3xl sm:rounded-4xl',
+      ),
+    ).toBe('bg-page-accent text-page-accent rounded-3xl sm:rounded-4xl')
   })
 })

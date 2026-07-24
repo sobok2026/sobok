@@ -124,7 +124,7 @@ export function ReportView({
 
         {onUnlock ? (
           <section
-            className="rounded-4xl border border-page-accent/40 bg-page-accent/8 p-6 text-center sm:p-7"
+            className="rounded-3xl sm:rounded-4xl border border-page-accent/40 bg-page-accent/8 p-6 text-center sm:p-7"
             ref={promotionRef}
           >
             <p className="break-keep font-black text-lg text-page-accent">{content.paywall.title}</p>
@@ -167,7 +167,7 @@ export function ReportView({
         />
         <AxisProfile axisIds={GEM_AXES} content={content} scores={profile.gem.axes} title={content.ui.layerGem} />
 
-        <section className="rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6">
+        <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6">
           <h2 className="font-black text-lg">{content.ui.reflectionTitle}</h2>
           <p className="mt-2 text-page-ink/60 text-sm leading-6">{content.ui.reflectionBody}</p>
           <ul className="mt-4 grid gap-3">
@@ -186,13 +186,16 @@ export function ReportView({
         </section>
 
         {paidSections?.map((section) => (
-          <section className="rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6" key={section.key}>
+          <section
+            className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6"
+            key={section.key}
+          >
             <h2 className="break-keep font-black text-lg">{section.title}</h2>
             <p className="mt-3 whitespace-pre-line break-keep text-page-ink/76 leading-8">{section.body}</p>
           </section>
         ))}
 
-        <section className="rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6">
+        <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6">
           <h2 className="font-black text-lg">{content.ui.methodologyNoteTitle}</h2>
           <p className="mt-2 text-page-ink/64 text-sm leading-7">{content.ui.methodologyNoteBody}</p>
           <Link

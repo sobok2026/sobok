@@ -98,7 +98,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
 
   return (
     <main className="flex flex-1 items-center justify-center bg-page-bg px-safe py-12 text-page-ink" id="main-content">
-      <section className="w-full max-w-lg rounded-4xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
+      <section className="w-full max-w-lg rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
         <p className="font-bold text-page-accent text-sm">{copy.eyebrow}</p>
 
         {phase === 'checking' || phase === 'opening' ? (
@@ -293,7 +293,7 @@ function ReopenedReport({
   if (report.phase === 'failed') {
     return (
       <main className="flex flex-1 items-center justify-center bg-page-bg px-safe py-12 text-page-ink">
-        <section className="w-full max-w-lg rounded-4xl border border-page-border bg-page-surface p-6 text-center sm:p-8">
+        <section className="w-full max-w-lg rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 text-center sm:p-8">
           <h1 className="font-black text-2xl">{copy.reportFailedTitle}</h1>
           <p className="mt-3 text-page-ink/64 leading-7">{copy.reportFailedBody}</p>
           {refund === 'done' ? <p className="mt-4 text-page-ink/64 text-sm">{content.paywall.refundDone}</p> : null}

@@ -29,7 +29,7 @@ export function QuizView({ answers, content, currentIndex, locale, onBack, onNex
   return (
     <section className="flex flex-1 flex-col justify-center bg-page-bg px-safe py-10 text-page-ink">
       <div className="mx-auto grid w-full max-w-7xl gap-4 py-4 sm:gap-8 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
-        <aside className="rounded-4xl bg-page-ink p-6 text-white shadow-[0_32px_110px_rgba(36,22,23,0.16)] sm:p-8">
+        <aside className="rounded-3xl sm:rounded-4xl bg-page-ink p-6 text-white shadow-[0_32px_110px_rgba(36,22,23,0.16)] sm:p-8">
           <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-bold text-sm text-white/78">
             <HeartWaves aria-hidden="true" className="h-4 w-4 text-page-accent" stroke={1.8} />
             {content.ui.questionEyebrow}
@@ -59,7 +59,7 @@ export function QuizView({ answers, content, currentIndex, locale, onBack, onNex
           </div>
         </aside>
 
-        <form className="rounded-4xl border border-page-border bg-page-surface p-5 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-7">
+        <form className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-5 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-7">
           <fieldset>
             <legend
               className={cn('font-black text-xl leading-tight tracking-tight sm:text-3xl', keepHeadingBreakClassName)}

@@ -35,7 +35,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
           <div className="mt-10 grid gap-5">
             <Link
-              className={`group rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${focusClassName}`}
+              className={`group rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${focusClassName}`}
               href={`${home}/couple-gyeol`}
             >
               <h2 className="font-black text-2xl tracking-[-0.03em]">{t('gyeolCard.title')}</h2>
@@ -46,7 +46,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             </Link>
 
             <Link
-              className={`group rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${focusClassName}`}
+              className={`group rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${focusClassName}`}
               href={`${home}/couple-type`}
             >
               <h2 className="font-black text-2xl tracking-[-0.03em]">{t('typeCard.title')}</h2>
@@ -57,7 +57,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             </Link>
 
             <Link
-              className={`group rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${focusClassName}`}
+              className={`group rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${focusClassName}`}
               href={`${home}/deep-type`}
             >
               <h2 className="font-black text-2xl tracking-[-0.03em]">{t('deepTypeCard.title')}</h2>

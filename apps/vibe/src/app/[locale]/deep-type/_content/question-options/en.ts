@@ -21,6 +21,12 @@ export const enQuestionOptions = {
       'Connecting with people clearly makes me feel more alive',
     ],
     [
+      'TODO persona-ei-4 · 선택1 = E극 강함',
+      'TODO persona-ei-4 · 선택2 = E극 약함',
+      'TODO persona-ei-4 · 선택3 = I극 약함',
+      'TODO persona-ei-4 · 선택4 = I극 강함',
+    ],
+    [
       'I first expand the possibilities and overall direction',
       'I form the big picture before looking at details',
       'I first look at established facts and feasible actions',
@@ -37,6 +43,12 @@ export const enQuestionOptions = {
       'I grasp the principle and then confirm it with examples',
       'I understand the principle after seeing a real case',
       'Direct experience or an immediately usable example matters most',
+    ],
+    [
+      'TODO persona-sn-4 · 선택1 = S극 강함',
+      'TODO persona-sn-4 · 선택2 = S극 약함',
+      'TODO persona-sn-4 · 선택3 = N극 약함',
+      'TODO persona-sn-4 · 선택4 = N극 강함',
     ],
     [
       'Relational comfort is my starting point for judgment',
@@ -57,6 +69,12 @@ export const enQuestionOptions = {
       'I isolate the facts first and then address the feelings',
     ],
     [
+      'TODO persona-tf-4 · 선택1 = T극 강함',
+      'TODO persona-tf-4 · 선택2 = T극 약함',
+      'TODO persona-tf-4 · 선택3 = F극 약함',
+      'TODO persona-tf-4 · 선택4 = F극 강함',
+    ],
+    [
       'I am comfortable adapting without a set plan',
       'An overall direction is enough for me',
       'I am comfortable with a plan and approximate deadlines',
@@ -75,6 +93,12 @@ export const enQuestionOptions = {
       'I clarify the sequence and roles before starting',
     ],
     [
+      'TODO persona-jp-4 · 선택1 = J극 강함',
+      'TODO persona-jp-4 · 선택2 = J극 약함',
+      'TODO persona-jp-4 · 선택3 = P극 약함',
+      'TODO persona-jp-4 · 선택4 = P극 강함',
+    ],
+    [
       'I quickly forget small uncertainties',
       'They bother me briefly and then pass',
       'I reconsider several possibilities for a while',
@@ -91,6 +115,12 @@ export const enQuestionOptions = {
       'I waver a little but regulate it quickly',
       'My emotional shifts become noticeable as pressure rises',
       'My emotional state changes substantially with social pressure',
+    ],
+    [
+      'TODO persona-ne-4 · 선택1 = N극 강함',
+      'TODO persona-ne-4 · 선택2 = N극 약함',
+      'TODO persona-ne-4 · 선택3 = C극 약함',
+      'TODO persona-ne-4 · 선택4 = C극 강함',
     ],
   ],
   inner: [
@@ -113,6 +143,12 @@ export const enQuestionOptions = {
       'Connecting with someone clearly raises my energy',
     ],
     [
+      'TODO inner-ei-4 · 선택1 = E극 강함',
+      'TODO inner-ei-4 · 선택2 = E극 약함',
+      'TODO inner-ei-4 · 선택3 = I극 약함',
+      'TODO inner-ei-4 · 선택4 = I극 강함',
+    ],
+    [
       'Alone, I first expand possibilities and the big picture',
       'I imagine the direction before checking the details',
       'I first examine established facts and ways to apply them',
@@ -129,6 +165,12 @@ export const enQuestionOptions = {
       'I understand the principle and confirm it through cases',
       'I find the common principle after seeing real cases',
       'I understand best when there is a case I can apply directly',
+    ],
+    [
+      'TODO inner-sn-4 · 선택1 = S극 강함',
+      'TODO inner-sn-4 · 선택2 = S극 약함',
+      'TODO inner-sn-4 · 선택3 = N극 약함',
+      'TODO inner-sn-4 · 선택4 = N극 강함',
     ],
     [
       'My decision begins with what feels emotionally comfortable',
@@ -149,6 +191,12 @@ export const enQuestionOptions = {
       'I isolate the factual situation before examining my feelings',
     ],
     [
+      'TODO inner-tf-4 · 선택1 = T극 강함',
+      'TODO inner-tf-4 · 선택2 = T극 약함',
+      'TODO inner-tf-4 · 선택3 = F극 약함',
+      'TODO inner-tf-4 · 선택4 = F극 강함',
+    ],
+    [
       'Free time feels best when it unfolds without a plan',
       'I only think of one or two things I might want to do',
       'A loose plan makes me feel more comfortable',
@@ -167,6 +215,12 @@ export const enQuestionOptions = {
       'Even alone, I arrange the sequence in detail before starting',
     ],
     [
+      'TODO inner-jp-4 · 선택1 = J극 강함',
+      'TODO inner-jp-4 · 선택2 = J극 약함',
+      'TODO inner-jp-4 · 선택3 = P극 약함',
+      'TODO inner-jp-4 · 선택4 = P극 강함',
+    ],
+    [
       'Small uncertainties disappear quickly when I am alone',
       'I think about them briefly and move on',
       'I revisit small uncertainties several times',
@@ -183,6 +237,12 @@ export const enQuestionOptions = {
       'I tense a little but settle quickly',
       'Just thinking about it makes my emotions visibly waver',
       'Merely imagining pressure changes my emotional state substantially',
+    ],
+    [
+      'TODO inner-ne-4 · 선택1 = N극 강함',
+      'TODO inner-ne-4 · 선택2 = N극 약함',
+      'TODO inner-ne-4 · 선택3 = C극 약함',
+      'TODO inner-ne-4 · 선택4 = C극 강함',
     ],
   ],
   gem: [
@@ -211,12 +271,6 @@ export const enQuestionOptions = {
       'Without recognition, the effort itself feels less meaningful',
     ],
     [
-      'It is hard to value something if no one notices it',
-      'I need a response to keep valuing it over time',
-      'I can continue without a response if it matters to me',
-      'I can value it by my own standard even if no one notices',
-    ],
-    [
       'The relationship feels secure even with little contact',
       'An occasional check-in feels comfortable enough',
       'Regular contact makes the relationship feel more secure',
@@ -239,12 +293,6 @@ export const enQuestionOptions = {
       'I want connection and private time in similar amounts',
       'Time alone is what makes a relationship comfortable',
       'I feel closest with clear boundaries and substantial private time',
-    ],
-    [
-      'Sharing only important matters feels connected enough',
-      'Occasional everyday updates make me feel close',
-      'Frequent small updates make me feel closer',
-      'I feel deepest connection when even the smallest moments are shared',
     ],
     [
       'I understand feelings best by sorting them out alone',
@@ -271,12 +319,6 @@ export const enQuestionOptions = {
       'Speaking before I have processed them makes my feelings more confusing',
     ],
     [
-      'The more overwhelmed I am, the more I try to solve it alone',
-      'I endure alone first and reach out only when necessary',
-      'When struggling, I ask one trusted person for help',
-      'When overwhelmed, I immediately seek connection with someone I trust',
-    ],
-    [
       'Reducing risk moves me more than a new opportunity',
       'I need to confirm safety before I feel ready to move',
       'I move despite risk when the opportunity is large',
@@ -300,12 +342,6 @@ export const enQuestionOptions = {
       'I check what I could lose before moving',
       'Preventing loss and risk thoroughly is most important before deciding',
     ],
-    [
-      'Unfamiliar challenges quickly lower my energy',
-      'I become interested only after feeling sure it is safe',
-      'I become curious when I see potential, even if it is unfamiliar',
-      'Greater uncertainty gives me more energy for new possibilities',
-    ],
   ],
   refinement: [
     [
@@ -327,6 +363,12 @@ export const enQuestionOptions = {
       'I remain fully energized after talking with many people',
     ],
     [
+      'TODO refine-inner-ei-4 · 선택1 = E극 강함',
+      'TODO refine-inner-ei-4 · 선택2 = E극 약함',
+      'TODO refine-inner-ei-4 · 선택3 = I극 약함',
+      'TODO refine-inner-ei-4 · 선택4 = I극 강함',
+    ],
+    [
       'Alone, my thinking stays with the reality in front of me',
       'A concrete matter occasionally suggests another possibility',
       'My thinking often expands into multiple possibilities and connections',
@@ -343,6 +385,12 @@ export const enQuestionOptions = {
       'If a theory persuades me, I consider application later',
       'I lean slightly more toward a method I can try now',
       'I most trust a method I can apply and verify immediately',
+    ],
+    [
+      'TODO refine-inner-sn-4 · 선택1 = S극 강함',
+      'TODO refine-inner-sn-4 · 선택2 = S극 약함',
+      'TODO refine-inner-sn-4 · 선택3 = N극 약함',
+      'TODO refine-inner-sn-4 · 선택4 = N극 강함',
     ],
     [
       'My standard may change greatly as the situation changes',
@@ -363,6 +411,12 @@ export const enQuestionOptions = {
       'Once calm, I decide by comparing possible reasons systematically',
     ],
     [
+      'TODO refine-inner-tf-4 · 선택1 = T극 강함',
+      'TODO refine-inner-tf-4 · 선택2 = T극 약함',
+      'TODO refine-inner-tf-4 · 선택3 = F극 약함',
+      'TODO refine-inner-tf-4 · 선택4 = F극 강함',
+    ],
+    [
       'Unscheduled time feels best with no plan at all',
       'It is enough to know what I might want to do',
       'A loose plan makes it more comfortable',
@@ -379,6 +433,12 @@ export const enQuestionOptions = {
       'I can rest comfortably with several tasks unfinished',
       'Finishing small tasks reduces what occupies my attention',
       'Closing even small tasks gives me definite room in my mind',
+    ],
+    [
+      'TODO refine-inner-jp-4 · 선택1 = J극 강함',
+      'TODO refine-inner-jp-4 · 선택2 = J극 약함',
+      'TODO refine-inner-jp-4 · 선택3 = P극 약함',
+      'TODO refine-inner-jp-4 · 선택4 = P극 강함',
     ],
     [
       'Criticism immediately shakes my standard of evaluation',
@@ -399,6 +459,12 @@ export const enQuestionOptions = {
       'Clear written values let me choose independently of outside reactions',
     ],
     [
+      'TODO refine-gem-rm-4 · 선택1 = R극 강함',
+      'TODO refine-gem-rm-4 · 선택2 = R극 약함',
+      'TODO refine-gem-rm-4 · 선택3 = M극 약함',
+      'TODO refine-gem-rm-4 · 선택4 = M극 강함',
+    ],
+    [
       'Closeness grows enough even with infrequent contact',
       'An occasional check-in feels comfortable',
       'Frequent check-ins make me feel closer',
@@ -415,6 +481,12 @@ export const enQuestionOptions = {
       'I tend to signal the need indirectly',
       'I can ask directly for connection when I need it',
       'I clearly ask for the kind and timing of connection I want',
+    ],
+    [
+      'TODO refine-gem-oa-4 · 선택1 = O극 강함',
+      'TODO refine-gem-oa-4 · 선택2 = O극 약함',
+      'TODO refine-gem-oa-4 · 선택3 = A극 약함',
+      'TODO refine-gem-oa-4 · 선택4 = A극 강함',
     ],
     [
       'When struggling, I tend to process silently on my own',
@@ -435,6 +507,12 @@ export const enQuestionOptions = {
       'I can express even complex emotions with specific names and sentences',
     ],
     [
+      'TODO refine-gem-vh-4 · 선택1 = V극 강함',
+      'TODO refine-gem-vh-4 · 선택2 = V극 약함',
+      'TODO refine-gem-vh-4 · 선택3 = H극 약함',
+      'TODO refine-gem-vh-4 · 선택4 = H극 강함',
+    ],
+    [
       'When setting a goal, I first picture the risk to avoid',
       'I establish a safe range before thinking about growth',
       'I first picture the growth and expansion I want',
@@ -451,6 +529,12 @@ export const enQuestionOptions = {
       'I become interested only when I see a sign of safety',
       'An opportunity makes me curious even when the outcome is uncertain',
       'The less certain the outcome, the more energy I feel to explore it',
+    ],
+    [
+      'TODO refine-gem-uo-4 · 선택1 = U극 강함',
+      'TODO refine-gem-uo-4 · 선택2 = U극 약함',
+      'TODO refine-gem-uo-4 · 선택3 = O극 약함',
+      'TODO refine-gem-uo-4 · 선택4 = O극 강함',
     ],
   ],
 } as const satisfies QuestionOptionCatalog

@@ -101,7 +101,7 @@ export function QuizView({ answers, axisDefinitions, locale, onComplete, onSelec
           </div>
         </div>
 
-        <form className="rounded-4xl border-page-border sm:border sm:bg-page-surface sm:p-6 sm:shadow-[0_32px_110px_rgba(36,22,23,0.12)]">
+        <form className="rounded-3xl sm:rounded-4xl border-page-border sm:border sm:bg-page-surface sm:p-6 sm:shadow-[0_32px_110px_rgba(36,22,23,0.12)]">
           <div className="flex flex-col gap-4 border-page-border border-b pb-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="font-black text-page-accent text-sm">

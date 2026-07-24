@@ -41,7 +41,7 @@ export default async function DeepTypeMethodologyPage({ params }: PageProps<'/[l
           <MethodSection body={methodology.scoringBody} title={methodology.scoringTitle} />
           <MethodSection body={methodology.evidenceBody} title={methodology.evidenceTitle} />
 
-          <section className="rounded-4xl border border-page-border bg-page-surface p-6 sm:p-8">
+          <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 sm:p-8">
             <h2 className="font-black text-xl">{methodology.principlesTitle}</h2>
             <ul className="mt-4 grid gap-3">
               {methodology.principles.map((principle) => (
@@ -55,7 +55,7 @@ export default async function DeepTypeMethodologyPage({ params }: PageProps<'/[l
             </ul>
           </section>
 
-          <section className="rounded-4xl border border-page-border bg-page-surface p-6 sm:p-8">
+          <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 sm:p-8">
             <h2 className="font-black text-xl">{methodology.sourcesTitle}</h2>
             <p className="mt-3 text-page-ink/64 text-sm leading-7">{methodology.sourcesIntro}</p>
             <ol className="mt-5 grid gap-4">
@@ -89,7 +89,7 @@ export default async function DeepTypeMethodologyPage({ params }: PageProps<'/[l
 
 function MethodSection({ body, title }: { body: string; title: string }) {
   return (
-    <section className="rounded-4xl border border-page-border bg-page-surface p-6 sm:p-8">
+    <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 sm:p-8">
       <h2 className="font-black text-xl">{title}</h2>
       <p className="mt-3 whitespace-pre-line text-page-ink/70 leading-8">{body}</p>
     </section>

@@ -21,6 +21,12 @@ export const jaQuestionOptions = {
       '人とつながるほど明らかに活力が増す',
     ],
     [
+      'TODO persona-ei-4 · 선택1 = E극 강함',
+      'TODO persona-ei-4 · 선택2 = E극 약함',
+      'TODO persona-ei-4 · 선택3 = I극 약함',
+      'TODO persona-ei-4 · 선택4 = I극 강함',
+    ],
+    [
       '可能性と大きな方向性から広げて考える',
       '全体像をつかんでから細部を見る',
       '確認できた事実と実行可能なことから見る',
@@ -37,6 +43,12 @@ export const jaQuestionOptions = {
       '原理をつかみ、例で確かめる',
       '実際の例を見てから原理を理解する',
       '直接体験できる、またはすぐ使える例を最も重視する',
+    ],
+    [
+      'TODO persona-sn-4 · 선택1 = S극 강함',
+      'TODO persona-sn-4 · 선택2 = S극 약함',
+      'TODO persona-sn-4 · 선택3 = N극 약함',
+      'TODO persona-sn-4 · 선택4 = N극 강함',
     ],
     [
       '関係が心地よいかどうかを判断の出発点にする',
@@ -57,6 +69,12 @@ export const jaQuestionOptions = {
       'まず事実を切り分け、その後に感情を扱う',
     ],
     [
+      'TODO persona-tf-4 · 선택1 = T극 강함',
+      'TODO persona-tf-4 · 선택2 = T극 약함',
+      'TODO persona-tf-4 · 선택3 = F극 약함',
+      'TODO persona-tf-4 · 선택4 = F극 강함',
+    ],
+    [
       '決まった計画なしで、その場に合わせて動くほうが楽だ',
       '大きな方向性だけあれば十分だ',
       '計画とおおよその期限があると安心する',
@@ -75,6 +93,12 @@ export const jaQuestionOptions = {
       '始める前に順序と役割を明確に整理する',
     ],
     [
+      'TODO persona-jp-4 · 선택1 = J극 강함',
+      'TODO persona-jp-4 · 선택2 = J극 약함',
+      'TODO persona-jp-4 · 선택3 = P극 약함',
+      'TODO persona-jp-4 · 선택4 = P극 강함',
+    ],
+    [
       '小さな不確実さはすぐに忘れる',
       '少し気になるが、ほどなく過ぎる',
       'しばらく複数の可能性を考え直す',
@@ -91,6 +115,12 @@ export const jaQuestionOptions = {
       '少し揺れるが、すぐに調整できる',
       '圧力が強まると感情の変化が目立つ',
       '社会的な圧力によって感情の状態が大きく変わる',
+    ],
+    [
+      'TODO persona-ne-4 · 선택1 = N극 강함',
+      'TODO persona-ne-4 · 선택2 = N극 약함',
+      'TODO persona-ne-4 · 선택3 = C극 약함',
+      'TODO persona-ne-4 · 선택4 = C극 강함',
     ],
   ],
   inner: [
@@ -113,6 +143,12 @@ export const jaQuestionOptions = {
       '誰かとつながると明らかにエネルギーが上がる',
     ],
     [
+      'TODO inner-ei-4 · 선택1 = E극 강함',
+      'TODO inner-ei-4 · 선택2 = E극 약함',
+      'TODO inner-ei-4 · 선택3 = I극 약함',
+      'TODO inner-ei-4 · 선택4 = I극 강함',
+    ],
+    [
       '一人のときほど可能性と全体像から広げて考える',
       '方向を思い描いてから細部を確認する',
       '確認できた事実と使い方から見る',
@@ -129,6 +165,12 @@ export const jaQuestionOptions = {
       '原理を理解し、事例で確かめる',
       '実際の事例から共通する原理を見つける',
       '直接使える事例があると最もよく理解できる',
+    ],
+    [
+      'TODO inner-sn-4 · 선택1 = S극 강함',
+      'TODO inner-sn-4 · 선택2 = S극 약함',
+      'TODO inner-sn-4 · 선택3 = N극 약함',
+      'TODO inner-sn-4 · 선택4 = N극 강함',
     ],
     [
       '自分が心地よく感じることから決定を始める',
@@ -149,6 +191,12 @@ export const jaQuestionOptions = {
       '事実関係を先に切り分けてから感情を見る',
     ],
     [
+      'TODO inner-tf-4 · 선택1 = T극 강함',
+      'TODO inner-tf-4 · 선택2 = T극 약함',
+      'TODO inner-tf-4 · 선택3 = F극 약함',
+      'TODO inner-tf-4 · 선택4 = F극 강함',
+    ],
+    [
       '自由時間は何も計画せず流れるときが最も楽だ',
       'やりたいことを一、二個思い浮かべる程度だ',
       '緩い計画があると気持ちが楽だ',
@@ -167,6 +215,12 @@ export const jaQuestionOptions = {
       '一人ですることも順序を具体的に整理してから始める',
     ],
     [
+      'TODO inner-jp-4 · 선택1 = J극 강함',
+      'TODO inner-jp-4 · 선택2 = J극 약함',
+      'TODO inner-jp-4 · 선택3 = P극 약함',
+      'TODO inner-jp-4 · 선택4 = P극 강함',
+    ],
+    [
       '一人でいると小さな不確実さはすぐ消える',
       '少し考えるが、すぐ別のことへ移る',
       '小さな不確実さを何度も振り返る',
@@ -183,6 +237,12 @@ export const jaQuestionOptions = {
       '少し緊張するが、すぐに整う',
       '考えるだけで感情が目に見えて揺れる',
       '圧力を想像するだけで感情の状態が大きく変わる',
+    ],
+    [
+      'TODO inner-ne-4 · 선택1 = N극 강함',
+      'TODO inner-ne-4 · 선택2 = N극 약함',
+      'TODO inner-ne-4 · 선택3 = C극 약함',
+      'TODO inner-ne-4 · 선택4 = C극 강함',
     ],
   ],
   gem: [
@@ -211,12 +271,6 @@ export const jaQuestionOptions = {
       '認められないと、その努力の意味も小さく感じる',
     ],
     [
-      '気づく人がいないと大切に思いにくい',
-      '反応があってこそ長く大切に思える',
-      '反応がなくても自分に重要なら続けられる',
-      '誰も気づかなくても自分の基準で大切にできる',
-    ],
-    [
       '連絡が少なくても関係は十分に安定していると感じる',
       'ときどき近況を交わす程度が心地よい',
       '定期的に連絡すると関係がより安定して感じる',
@@ -239,12 +293,6 @@ export const jaQuestionOptions = {
       'つながりと一人の時間を同じくらい求める',
       '一人の時間があってこそ関係も心地よい',
       '明確な境界と十分な一人時間があると最も楽に親しくなれる',
-    ],
-    [
-      '大事なことだけ共有しても十分につながっていると感じる',
-      'ときどき日常を共有すると親しさを感じる',
-      '小さな日常を頻繁に共有するほど近く感じる',
-      '日常の小さな瞬間まで共有すると最も深くつながっていると感じる',
     ],
     [
       '感情は一人で整理すると最もよく理解できる',
@@ -271,12 +319,6 @@ export const jaQuestionOptions = {
       '十分に処理する前に話すと感情がさらに混乱する',
     ],
     [
-      'つらいほど一人で解決しようとする',
-      'まず一人で耐え、どうしても必要なときだけ連絡する',
-      'つらいときは信頼する一人に助けを求める',
-      '抱えきれないときはすぐ信頼する人につながる',
-    ],
-    [
       '新しい機会よりリスクを減らすことが自分を動かす',
       '安全を確認して初めて動く気になる',
       'リスクがあっても機会が大きければ動く',
@@ -300,12 +342,6 @@ export const jaQuestionOptions = {
       '失う可能性があるものを先に確認してから動く',
       '決定前に損失とリスクを十分防ぐことを最も重視する',
     ],
-    [
-      '慣れない挑戦はすぐにエネルギーを下げる',
-      '安全だと確信して初めて興味が湧く',
-      '未知でも可能性が見えれば好奇心が湧く',
-      '結果が不確実なほど新しい可能性にエネルギーが上がる',
-    ],
   ],
   refinement: [
     [
@@ -327,6 +363,12 @@ export const jaQuestionOptions = {
       '多くの人と話した後も十分に活力が残る',
     ],
     [
+      'TODO refine-inner-ei-4 · 선택1 = E극 강함',
+      'TODO refine-inner-ei-4 · 선택2 = E극 약함',
+      'TODO refine-inner-ei-4 · 선택3 = I극 약함',
+      'TODO refine-inner-ei-4 · 선택4 = I극 강함',
+    ],
+    [
       '一人のとき、考えは目の前の現実にとどまる',
       '具体的なことから、ときどき別の可能性を思いつく',
       '考えが複数の可能性やつながりへよく広がる',
@@ -343,6 +385,12 @@ export const jaQuestionOptions = {
       '理論に納得すれば、使えるかは後で考える',
       '理論より今試せる方法に少し惹かれる',
       'すぐ使って確かめられる方法を最も信頼する',
+    ],
+    [
+      'TODO refine-inner-sn-4 · 선택1 = S극 강함',
+      'TODO refine-inner-sn-4 · 선택2 = S극 약함',
+      'TODO refine-inner-sn-4 · 선택3 = N극 약함',
+      'TODO refine-inner-sn-4 · 선택4 = N극 강함',
     ],
     [
       '状況が変われば基準も大きく変わることがある',
@@ -363,6 +411,12 @@ export const jaQuestionOptions = {
       '落ち着いた後、考えられる理由を体系的に比べて決める',
     ],
     [
+      'TODO refine-inner-tf-4 · 선택1 = T극 강함',
+      'TODO refine-inner-tf-4 · 선택2 = T극 약함',
+      'TODO refine-inner-tf-4 · 선택3 = F극 약함',
+      'TODO refine-inner-tf-4 · 선택4 = F극 강함',
+    ],
+    [
       '予定のない時間は計画が全くないほうが楽だ',
       'やりたいことだけ思い浮かべれば十分だ',
       '緩い計画があるとより心地よい',
@@ -379,6 +433,12 @@ export const jaQuestionOptions = {
       'いくつか残っていても落ち着いて休める',
       '小さな作業を終えると気にすることが減る',
       '小さなことまで終えて初めて頭にはっきり余裕ができる',
+    ],
+    [
+      'TODO refine-inner-jp-4 · 선택1 = J극 강함',
+      'TODO refine-inner-jp-4 · 선택2 = J극 약함',
+      'TODO refine-inner-jp-4 · 선택3 = P극 약함',
+      'TODO refine-inner-jp-4 · 선택4 = P극 강함',
     ],
     [
       '批判を聞くと自分の評価基準もすぐ揺らぐ',
@@ -399,6 +459,12 @@ export const jaQuestionOptions = {
       '大切な価値を明記すれば外部反応にかかわらず選べる',
     ],
     [
+      'TODO refine-gem-rm-4 · 선택1 = R극 강함',
+      'TODO refine-gem-rm-4 · 선택2 = R극 약함',
+      'TODO refine-gem-rm-4 · 선택3 = M극 약함',
+      'TODO refine-gem-rm-4 · 선택4 = M극 강함',
+    ],
+    [
       '連絡が少なくても親密さは十分に育つ',
       'ときどき近況を交わす程度が心地よい',
       '頻繁に近況を交わすほど親しくなる',
@@ -415,6 +481,12 @@ export const jaQuestionOptions = {
       '間接的に合図を送るほうだ',
       '必要なときはつながりを直接求められる',
       '望むつながり方と時間を相手にはっきり伝える',
+    ],
+    [
+      'TODO refine-gem-oa-4 · 선택1 = O극 강함',
+      'TODO refine-gem-oa-4 · 선택2 = O극 약함',
+      'TODO refine-gem-oa-4 · 선택3 = A극 약함',
+      'TODO refine-gem-oa-4 · 선택4 = A극 강함',
     ],
     [
       'つらいほど一人で黙って整理する',
@@ -435,6 +507,12 @@ export const jaQuestionOptions = {
       '複雑な感情も具体的な名前と文で明確に表現できる',
     ],
     [
+      'TODO refine-gem-vh-4 · 선택1 = V극 강함',
+      'TODO refine-gem-vh-4 · 선택2 = V극 약함',
+      'TODO refine-gem-vh-4 · 선택3 = H극 약함',
+      'TODO refine-gem-vh-4 · 선택4 = H극 강함',
+    ],
+    [
       '目標を立てるとき、避けるべきリスクから考える',
       '安全な範囲を確認してから成長を考える',
       '望む成長と拡大を最初に思い浮かべる',
@@ -451,6 +529,12 @@ export const jaQuestionOptions = {
       '安全だという手がかりがあって初めて興味が湧く',
       '機会が見えれば不確実でも好奇心が湧く',
       '結果が分からないほど新しい機会を探るエネルギーが増す',
+    ],
+    [
+      'TODO refine-gem-uo-4 · 선택1 = U극 강함',
+      'TODO refine-gem-uo-4 · 선택2 = U극 약함',
+      'TODO refine-gem-uo-4 · 선택3 = O극 약함',
+      'TODO refine-gem-uo-4 · 선택4 = O극 강함',
     ],
   ],
 } as const satisfies QuestionOptionCatalog

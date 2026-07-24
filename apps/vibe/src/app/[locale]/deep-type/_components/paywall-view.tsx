@@ -71,7 +71,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
   return (
     <main className="flex flex-1 flex-col bg-page-bg px-safe py-10 text-page-ink sm:py-14">
       <div className="mx-auto grid w-full max-w-xl gap-4">
-        <section className="rounded-4xl border border-page-accent/35 bg-page-surface p-6 text-center shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
+        <section className="rounded-3xl sm:rounded-4xl border border-page-accent/35 bg-page-surface p-6 text-center shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
           <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-page-accent/12 text-page-accent">
             <Sparkles aria-hidden="true" className="h-7 w-7" stroke={1.8} />
           </span>
@@ -97,7 +97,10 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
           <p className="mx-auto mt-3 max-w-md text-page-ink/54 text-sm leading-6">{paywall.effortNote}</p>
         </section>
 
-        <form className="rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6" onSubmit={handleSubmit}>
+        <form
+          className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6"
+          onSubmit={handleSubmit}
+        >
           <label className="block font-bold text-page-ink/70 text-sm" htmlFor="deeptype-email">
             {paywall.emailLabel}
           </label>

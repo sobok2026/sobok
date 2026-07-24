@@ -29,7 +29,7 @@ export function QuizView({
 }: QuizViewProps) {
   return (
     <section className="flex flex-1 flex-col justify-center px-safe py-10 sm:py-16">
-      <div className="mx-auto w-full max-w-xl">
+      <div className="mx-auto w-full max-w-2xl">
         <div className="mb-6">
           <p className="text-page-ink/48 text-xs">{progressLabel}</p>
           <div
@@ -47,8 +47,8 @@ export function QuizView({
           </div>
         </div>
 
-        <div className="rounded-4xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
-          <h1 className="font-black text-2xl leading-snug">{question.prompt}</h1>
+        <div className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
+          <h1 className="font-black text-xl leading-snug">{question.prompt}</h1>
           <div className="mt-7 grid gap-3">
             {AGREEMENT_VALUES.map((value, index) => (
               <button

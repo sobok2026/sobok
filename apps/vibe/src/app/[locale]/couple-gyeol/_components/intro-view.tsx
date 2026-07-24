@@ -90,17 +90,17 @@ export function IntroView({ content, hasInvalidSharedResult, locale, onStart }: 
 
       <section className="px-safe pb-16 sm:pb-24" id="rarity-model">
         <div className="mx-auto grid max-w-7xl gap-5 sm:px-6 lg:grid-cols-3 lg:px-8">
-          <article className="rounded-4xl bg-[#fff7e8] p-7">
+          <article className="rounded-3xl sm:rounded-4xl bg-[#fff7e8] p-7">
             <p className="font-bold text-page-accent text-sm">01</p>
             <h2 className="mt-6 font-black text-2xl tracking-[-0.03em]">{content.ui.modelStepInputTitle}</h2>
             <p className="mt-4 text-page-ink/66 leading-7">{content.ui.modelStepInputBody}</p>
           </article>
-          <article className="rounded-4xl bg-[#fff1ee] p-7">
+          <article className="rounded-3xl sm:rounded-4xl bg-[#fff1ee] p-7">
             <p className="font-bold text-page-accent text-sm">02</p>
             <h2 className="mt-6 font-black text-2xl tracking-[-0.03em]">{content.ui.modelStepGradeTitle}</h2>
             <p className="mt-4 text-page-ink/66 leading-7">{content.ui.modelStepGradeBody}</p>
           </article>
-          <article className="rounded-4xl bg-page-soft p-7">
+          <article className="rounded-3xl sm:rounded-4xl bg-page-soft p-7">
             <p className="font-bold text-page-accent text-sm">03</p>
             <h2 className="mt-6 font-black text-2xl tracking-[-0.03em]">{content.ui.modelStepShareTitle}</h2>
             <p className="mt-4 text-page-ink/66 leading-7">{content.ui.modelStepShareBody}</p>
