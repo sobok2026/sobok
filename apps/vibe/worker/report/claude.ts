@@ -6,6 +6,7 @@ const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages'
 const MAX_ATTEMPTS = 3
 const BACKOFF_MS = [500, 1500, 4000]
 const KEY_SET = new Set<string>(REPORT_SECTION_KEYS)
+const MAX_OUTPUT_TOKENS = 16000
 
 // Generate the paid report via the Anthropic Messages API (raw fetch — no SDK on Workers). Structured
 // outputs constrain the shape; we still validate + clamp defensively. Retries only 429/529 (overload);
@@ -13,7 +14,7 @@ const KEY_SET = new Set<string>(REPORT_SECTION_KEYS)
 export async function generateReport(apiKey: string, model: string, profile: ReportProfile): Promise<ReportSection[]> {
   const body = JSON.stringify({
     model,
-    max_tokens: 4096,
+    max_tokens: MAX_OUTPUT_TOKENS,
     system: SYSTEM_12_SECTIONS,
     messages: [{ role: 'user', content: `측정 프로필:\n${JSON.stringify(profile)}` }],
     output_config: { format: { type: 'json_schema', schema: REPORT_OUTPUT_SCHEMA } },
@@ -23,38 +24,55 @@ export async function generateReport(apiKey: string, model: string, profile: Rep
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const response = await fetch(ANTHROPIC_URL, {
       method: 'POST',
-      headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
       body,
     })
 
     if (response.ok) {
-      const data = (await response.json()) as { content?: { text?: string }[] }
-      const text = data.content?.[0]?.text ?? ''
-      return parseSections(text)
+      const data = (await response.json()) as { content?: { text?: string }[]; stop_reason?: string }
+      // A truncated or declined generation still returns 200; without this it degrades into an opaque
+      // "no json in report response" three lines later.
+      if (data.stop_reason === 'max_tokens') {
+        throw new Error(`anthropic truncated the report at max_tokens (${MAX_OUTPUT_TOKENS})`)
+      }
+      if (data.stop_reason === 'refusal') {
+        throw new Error('anthropic refused the report request')
+      }
+      return parseSections(data.content?.[0]?.text ?? '')
     }
+
+    // The response body carries the API's own explanation (bad key, unknown model, invalid schema). Losing it
+    // leaves a bare status code in deeptype_report.error and nothing to act on.
+    const detail = (await response.text().catch(() => '')).slice(0, 300)
 
     // 429 rate-limit / 529 overloaded are the only retriable statuses.
     if (response.status === 429 || response.status === 529) {
-      lastError = `anthropic ${response.status}`
+      lastError = `anthropic ${response.status}: ${detail}`
       await sleep(BACKOFF_MS[attempt] ?? 4000)
       continue
     }
 
-    throw new Error(`anthropic ${response.status}`)
+    throw new Error(`anthropic ${response.status}: ${detail}`)
   }
+
   throw new Error(lastError)
 }
 
 function parseSections(text: string): ReportSection[] {
   const parsed = extractJson(text)
   const raw = Array.isArray(parsed.sections) ? parsed.sections : []
-
   const byKey = new Map<ReportSectionKey, ReportSection>()
+
   for (const item of raw) {
     const key = String(item?.key ?? '')
     if (!KEY_SET.has(key) || byKey.has(key as ReportSectionKey)) {
       continue
     }
+
     byKey.set(key as ReportSectionKey, {
       key: key as ReportSectionKey,
       title: String(item?.title ?? '').slice(0, 60),

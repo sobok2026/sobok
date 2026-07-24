@@ -23,14 +23,12 @@ export function AxisProfile<TAxis extends AxisId>({ axisIds, content, scores, ti
           return (
             <div key={axis}>
               <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-black text-sm">{copy.name}</p>
-                  <p className="mt-1 text-page-ink/56 text-xs leading-5">{selected.description}</p>
-                </div>
+                <p className="font-black text-sm">{copy.name}</p>
                 <span className="shrink-0 rounded-full bg-page-soft px-3 py-1 font-black text-page-accent text-xs">
                   {score.pole} · {selected.label}
                 </span>
               </div>
+              <p className="mt-1 text-page-ink/56 text-xs leading-5">{selected.description}</p>
               <div
                 aria-label={`${copy.name}: ${copy.first.label} ${score.firstShare}%, ${copy.second.label} ${score.secondShare}%`}
                 className="mt-3 flex h-3 overflow-hidden rounded-full bg-page-soft"

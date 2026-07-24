@@ -1,7 +1,7 @@
 'use client'
 
 import type { AssessmentProfile, ItemAnswer } from '@deep-type/model'
-import { REFINEMENT_ITEMS } from '@deep-type/questionnaire'
+import { REFINEMENT_PRESENTATION } from '@deep-type/presentation'
 import { useState } from 'react'
 
 import { postRefinement } from '../_lib/api'
@@ -17,12 +17,12 @@ type RefinementQuizViewProps = {
 export function RefinementQuizView({ accessToken, content, onComplete }: RefinementQuizViewProps) {
   const [answers, setAnswers] = useState<ItemAnswer[]>([])
   const [status, setStatus] = useState<'answering' | 'submitting' | 'error'>('answering')
-  const item = REFINEMENT_ITEMS[answers.length]
+  const item = REFINEMENT_PRESENTATION[answers.length]
   const paywall = content.paywall
 
   async function answer(nextAnswer: ItemAnswer) {
     const nextAnswers = [...answers, nextAnswer]
-    if (nextAnswers.length < REFINEMENT_ITEMS.length) {
+    if (nextAnswers.length < REFINEMENT_PRESENTATION.length) {
       setAnswers(nextAnswers)
       setStatus('answering')
       return
@@ -62,8 +62,8 @@ export function RefinementQuizView({ accessToken, content, onComplete }: Refinem
         itemId={item.id}
         onAnswer={answer}
         onBack={answers.length > 0 ? () => setAnswers((current) => current.slice(0, -1)) : undefined}
-        progressLabel={`${paywall.refinementStepLabel} · ${answers.length + 1} / ${REFINEMENT_ITEMS.length}`}
-        progressPercent={Math.round(((answers.length + 1) / REFINEMENT_ITEMS.length) * 100)}
+        progressLabel={`${paywall.refinementStepLabel} · ${answers.length + 1} / ${REFINEMENT_PRESENTATION.length}`}
+        progressPercent={Math.round(((answers.length + 1) / REFINEMENT_PRESENTATION.length) * 100)}
         question={content.questions[item.id]}
       />
     </div>

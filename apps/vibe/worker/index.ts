@@ -57,7 +57,7 @@ export default {
   fetch: app.fetch,
   // Two crons (wrangler triggers.crons): daily → PIPA retention purge; every 15 min → reconcile stuck
   // 'pending' purchases against PortOne.
-  scheduled(event: ScheduledController, env: Bindings, ctx: ExecutionContext) {
+  scheduled: (event: ScheduledController, env: Bindings, ctx: ExecutionContext) => {
     ctx.waitUntil(event.cron === PURGE_CRON ? runRetentionPurge(env) : reconcileStalePending(env))
   },
 } satisfies ExportedHandler<Bindings>

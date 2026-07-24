@@ -1,7 +1,7 @@
 'use client'
 
 import type { ItemAnswer } from '@deep-type/model'
-import { GEM_ITEMS, INNER_ITEMS, PERSONA_ITEMS } from '@deep-type/questionnaire'
+import { GEM_PRESENTATION, INNER_PRESENTATION, PERSONA_PRESENTATION } from '@deep-type/presentation'
 import type { Locale } from '@sobok/domain/locale'
 import { useRouter } from 'next/navigation'
 import { useEffect, useReducer } from 'react'
@@ -45,15 +45,15 @@ function testReducer(state: TestState, action: TestAction): TestState {
       }
       const baseAnswers = [...state.baseAnswers, action.answer]
 
-      if (state.phase === 'persona' && baseAnswers.length === PERSONA_ITEMS.length) {
+      if (state.phase === 'persona' && baseAnswers.length === PERSONA_PRESENTATION.length) {
         return { baseAnswers, phase: 'innerIntro' }
       }
-      if (state.phase === 'inner' && baseAnswers.length === PERSONA_ITEMS.length + INNER_ITEMS.length) {
+      if (state.phase === 'inner' && baseAnswers.length === PERSONA_PRESENTATION.length + INNER_PRESENTATION.length) {
         return { baseAnswers, phase: 'gemIntro' }
       }
       if (
         state.phase === 'gem' &&
-        baseAnswers.length === PERSONA_ITEMS.length + INNER_ITEMS.length + GEM_ITEMS.length
+        baseAnswers.length === PERSONA_PRESENTATION.length + INNER_PRESENTATION.length + GEM_PRESENTATION.length
       ) {
         return { baseAnswers, phase: 'analyzing' }
       }
@@ -133,7 +133,7 @@ export function TestFlow({ content, locale }: TestFlowProps) {
         />
       )
     case 'persona':
-      return renderQuiz(PERSONA_ITEMS, 0, state.baseAnswers, ui.personaStepLabel)
+      return renderQuiz(PERSONA_PRESENTATION, 0, state.baseAnswers, ui.personaStepLabel)
     case 'innerIntro':
       return (
         <IntroView
@@ -145,7 +145,7 @@ export function TestFlow({ content, locale }: TestFlowProps) {
         />
       )
     case 'inner':
-      return renderQuiz(INNER_ITEMS, PERSONA_ITEMS.length, state.baseAnswers, ui.innerStepLabel)
+      return renderQuiz(INNER_PRESENTATION, PERSONA_PRESENTATION.length, state.baseAnswers, ui.innerStepLabel)
     case 'gemIntro':
       return (
         <IntroView
@@ -157,7 +157,12 @@ export function TestFlow({ content, locale }: TestFlowProps) {
         />
       )
     case 'gem':
-      return renderQuiz(GEM_ITEMS, PERSONA_ITEMS.length + INNER_ITEMS.length, state.baseAnswers, ui.gemStepLabel)
+      return renderQuiz(
+        GEM_PRESENTATION,
+        PERSONA_PRESENTATION.length + INNER_PRESENTATION.length,
+        state.baseAnswers,
+        ui.gemStepLabel,
+      )
     case 'analyzing':
       return <AnalyzingView body={ui.analyzingBody} onDone={handleAnalyzingDone} title={ui.analyzingTitle} />
   }

@@ -96,6 +96,15 @@ route.post('/', async (c) => {
 
     return c.json({ status: 'done' })
   } catch (error) {
+    // The Discord alert points at the Worker logs, so the failure has to actually reach them — the DB `error`
+    // column alone is unreadable without a psql session against the payment DB.
+    console.error('deeptype.report.generate-failed', {
+      message: error instanceof Error ? error.message : String(error),
+      model,
+      purchaseId: claim.purchaseId,
+      stack: error instanceof Error ? error.stack : undefined,
+    })
+
     await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
       finalizeReportFailed(db, claim.purchaseId, lockToken, String(error).slice(0, 500)),
     )
