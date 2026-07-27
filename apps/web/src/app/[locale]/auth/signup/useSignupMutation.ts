@@ -1,12 +1,12 @@
 'use client'
 
+import { identify, track } from '@sobok/analytics/browser'
 import { authClient } from '@sobok/auth/client'
 import { generateRandomNickname } from '@sobok/domain/utils/nickname'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { useRouter } from '@/i18n/navigation'
-import { identify, track } from '@/lib/analytics/browser'
 import { getAuthSuccessRedirect, getCurrentAuthRedirect } from '@/lib/auth-redirect'
 import { getMeQueryFetchOptions } from '@/query/useMeQuery'
 

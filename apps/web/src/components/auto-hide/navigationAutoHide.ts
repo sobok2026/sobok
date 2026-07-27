@@ -190,8 +190,9 @@ function getBrowserWindow() {
   return typeof window === 'undefined' ? null : window
 }
 
+// Narrowed by property rather than by identity against `getBrowserWindow()`. The identity comparison only
+// discriminated the union as a side effect of how `typeof globalThis` happened to resolve, so it silently
+// stopped narrowing whenever an unrelated file entered the program.
 function getScrollY(scrollTarget: ScrollTarget) {
-  const browserWindow = getBrowserWindow()
-
-  return scrollTarget === browserWindow ? browserWindow.scrollY : scrollTarget.scrollTop
+  return 'scrollY' in scrollTarget ? scrollTarget.scrollY : scrollTarget.scrollTop
 }

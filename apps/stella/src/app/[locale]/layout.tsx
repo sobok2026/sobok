@@ -1,5 +1,6 @@
 import '../globals.css'
 
+import GTMLoader from '@sobok/analytics/gtm-loader'
 import { LOCALE_LANGUAGE_TAGS, Locale } from '@sobok/domain/locale'
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
@@ -11,9 +12,8 @@ import BottomNav from '@/components/BottomNav'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import QueryProvider from '@/components/QueryProvider'
-import { ADSENSE_ACCOUNT, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
+import { ADSENSE_ACCOUNT, GTM_ID, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getLocale } from '@/i18n/server'
-import Analytics from '@/lib/analytics/Analytics'
 import JsonLd, { siteGraph } from '@/lib/JsonLd'
 
 export function generateStaticParams() {
@@ -76,7 +76,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             <Toaster position="top-center" richColors theme="dark" />
           </QueryProvider>
         </NextIntlClientProvider>
-        <Analytics />
+        <GTMLoader containerId={GTM_ID} productionOrigin={ORIGIN} />
         <Script
           async
           crossOrigin="anonymous"

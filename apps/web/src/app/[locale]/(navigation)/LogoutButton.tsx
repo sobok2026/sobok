@@ -1,11 +1,10 @@
 'use client'
 
+import { identify, track } from '@sobok/analytics/browser'
 import { LogOut } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
-
-import { identify, track } from '@/lib/analytics/browser'
 import useLogoutMutation from '@/query/useLogoutMutation'
 
 type Props = {

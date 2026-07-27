@@ -1,6 +1,7 @@
 'use client'
 
 import type { TurnstileInstance } from '@marsidev/react-turnstile'
+import { identify, track } from '@sobok/analytics/browser'
 import { authClient } from '@sobok/auth/client'
 import { TURNSTILE_AUTH_ACTION } from '@sobok/contracts'
 import { Toggle } from '@sobok/ui'
@@ -14,7 +15,6 @@ import PasskeyLoginButton from '@/components/PasskeyLoginButton'
 import PasswordInput from '@/components/PasswordInput'
 import TurnstileWidget from '@/components/TurnstileWidget'
 import { Link, useRouter } from '@/i18n/navigation'
-import { identify, track } from '@/lib/analytics/browser'
 import { getAuthRedirectHref, getAuthSuccessRedirect, getCurrentAuthRedirect } from '@/lib/auth-redirect'
 import { getMeQueryFetchOptions } from '@/query/useMeQuery'
 

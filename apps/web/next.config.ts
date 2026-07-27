@@ -95,6 +95,7 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   outputFileTracingRoot: repoRoot,
   transpilePackages: [
+    '@sobok/analytics',
     '@sobok/auth',
     '@sobok/contracts',
     '@sobok/db',

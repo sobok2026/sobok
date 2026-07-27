@@ -1,11 +1,9 @@
 'use client'
 
+import { identify } from '@sobok/analytics/browser'
 import type { GETV1MeResponse } from '@sobok/contracts'
-
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-
-import { identify } from '@/lib/analytics/browser'
 import { QueryKeys } from '@/lib/react-query/query-keys'
 import useMeQuery from '@/query/useMeQuery'
 import { BroadcastChannelKey, type UserSettingsBroadcastMessage } from '@/storage'

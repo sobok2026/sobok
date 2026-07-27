@@ -1,12 +1,11 @@
 'use client'
 
+import { track } from '@sobok/analytics/browser'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
-
 import { pickLabel } from '@/chart/labels'
 import type { ZwdsChart } from '@/chart/types'
 import { ORIGIN, SITE_NAME } from '@/constants'
-import { track } from '@/lib/analytics/browser'
 import type { StoredBirth } from '@/lib/birth-storage'
 import { buildShareURL, shareLink } from '@/lib/share'
 

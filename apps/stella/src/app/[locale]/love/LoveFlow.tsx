@@ -1,10 +1,10 @@
 'use client'
 
+import { track } from '@sobok/analytics/browser'
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-
 import { computeAspects } from '@/chart/astrology'
 import { computeBirthChartAnalysis } from '@/chart/ephemeris'
 import cardStyles from '@/components/card.module.css'
@@ -13,7 +13,6 @@ import SharedLinkError from '@/components/SharedLinkError'
 import Starfield from '@/components/Starfield'
 import { loadInterpretations } from '@/content/interpretations'
 import { useBirthSource } from '@/hooks/useBirthSource'
-import { track } from '@/lib/analytics/browser'
 import { toBirthInput } from '@/lib/birth-storage'
 import { buildShareURL, shareLink } from '@/lib/share'
 

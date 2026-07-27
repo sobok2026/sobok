@@ -1,18 +1,17 @@
 'use client'
 
+import { track } from '@sobok/analytics/browser'
 import { LOCALE_LANGUAGE_TAGS } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-
 import { computeBirthChartAnalysis } from '@/chart/ephemeris'
 import cardStyles from '@/components/card.module.css'
 import { HeroTitle } from '@/components/HeroTitle'
 import SharedLinkError from '@/components/SharedLinkError'
 import Starfield from '@/components/Starfield'
 import { useBirthSource } from '@/hooks/useBirthSource'
-import { track } from '@/lib/analytics/browser'
 import { type StoredBirth, toBirthInput } from '@/lib/birth-storage'
 import { buildShareURL, shareLink } from '@/lib/share'
 

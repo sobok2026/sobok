@@ -1,10 +1,9 @@
+import { track } from '@sobok/analytics/browser'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
-
 import { ELEMENT_COLORS } from '@/chart/data'
 import type { ElementId } from '@/chart/types'
 import cardStyles from '@/components/card.module.css'
-import { track } from '@/lib/analytics/browser'
 import { buildFoodMapLink } from './food-map'
 import type { LuckyRecommendations } from './recommendations/types'
 import type { SkyToday } from './sky'

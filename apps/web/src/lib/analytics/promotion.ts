@@ -1,4 +1,4 @@
-import type { AnalyticsParams } from './browser'
+import type { AnalyticsParams } from '@sobok/analytics/browser'
 
 type PromotionEventParams = {
   campaign_id?: string

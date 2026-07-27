@@ -1,11 +1,10 @@
+import { track } from '@sobok/analytics/browser'
 import { useLocale } from 'next-intl'
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
-
 import { computeBirthChartAnalysis, type UnknownBirthTimeAnalysis } from '@/chart/ephemeris'
 import type { NatalChart } from '@/chart/types'
 import { loadInterpretations } from '@/content/interpretations'
 import type { Interpretations } from '@/content/interpretations/types'
-import { track } from '@/lib/analytics/browser'
 import type { StoredBirth } from '@/lib/birth-storage'
 import { toBirthInput } from '@/lib/birth-storage'
 

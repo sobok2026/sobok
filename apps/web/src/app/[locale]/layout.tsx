@@ -1,6 +1,6 @@
 import '../globals.css'
 
-import { GoogleTagManager } from '@next/third-parties/google'
+import GTMLoader from '@sobok/analytics/gtm-loader'
 import { APP_METADATA, THEME_COLOR } from '@sobok/domain/app/metadata'
 import { Locale } from '@sobok/domain/locale'
 import { env } from '@sobok/env/client'
@@ -112,9 +112,7 @@ export default async function RootLayout({ children, params }: Props) {
             <QueryProvider>{children}</QueryProvider>
           </NextIntlClientProvider>
           <ServiceWorkerRegistrar />
-          {NEXT_PUBLIC_GTM_ID && (
-            <GoogleTagManager gtmId={NEXT_PUBLIC_GTM_ID} gtmScriptUrl={`${NEXT_PUBLIC_APP_ORIGIN}/h8ou/gtm.js`} />
-          )}
+          <GTMLoader containerId={NEXT_PUBLIC_GTM_ID} productionOrigin={NEXT_PUBLIC_APP_ORIGIN} />
           <p className="h-0 overflow-hidden tracking-widest invisible">
             <SEOText />
           </p>

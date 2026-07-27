@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@marsidev/react-turnstile": "^1.5.3",
-    "@next/third-parties": "^16.2.11",
+    "@sobok/analytics": "workspace:*",
     "@sobok/domain": "workspace:*",
     "@sobok/edge": "workspace:*",
     "@swisseph/browser": "1.1.0",

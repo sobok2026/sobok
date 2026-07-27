@@ -1,0 +1,24 @@
+{
+  "name": "@sobok/analytics",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./browser": "./src/browser.ts",
+    "./ga-identity": "./src/ga-identity.ts",
+    "./gtm-loader": "./src/GTMLoader.tsx"
+  },
+  "scripts": {
+    "type": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "next": ">=16",
+    "react": ">=19.2.7"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.17",
+    "next": "16.2.11",
+    "react": "19.2.7",
+    "typescript": "^6.0.3"
+  }
+}

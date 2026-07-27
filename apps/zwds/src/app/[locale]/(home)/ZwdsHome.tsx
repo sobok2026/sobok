@@ -1,11 +1,11 @@
 'use client'
 
+import { track } from '@sobok/analytics/browser'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 import { computeChart } from '@/chart/compute'
 import SharedLinkError from '@/components/SharedLinkError'
 import { useBirthSource } from '@/hooks/useBirthSource'
-import { track } from '@/lib/analytics/browser'
 import type { StoredBirth } from '@/lib/birth-storage'
 import BirthForm from './BirthForm'
 import ChartGrid from './ChartGrid'

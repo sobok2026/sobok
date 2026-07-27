@@ -1,6 +1,5 @@
+import { identify } from '@sobok/analytics/browser'
 import type { QueryClient } from '@tanstack/react-query'
-
-import { identify } from '@/lib/analytics/browser'
 import { QueryKeys } from '@/lib/react-query/query-keys'
 
 export function handleUnauthorizedError(queryClient: QueryClient) {
