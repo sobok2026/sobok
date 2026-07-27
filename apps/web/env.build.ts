@@ -20,8 +20,8 @@ export const nextBuildEnv = createEnv({
     NEXT_PUBLIC_PROXY_MANGA_ORIGIN: z.url().default(env.NEXT_PUBLIC_PROXY_MANGA_ORIGIN),
     NEXT_PUBLIC_PROXY_SEARCH_ORIGIN: z.url().default(env.NEXT_PUBLIC_PROXY_SEARCH_ORIGIN),
     NEXT_PUBLIC_SENTRY_DSN: z.url().optional(),
-    NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().default(env.NEXT_PUBLIC_TURNSTILE_SITE_KEY),
-    NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string().default(env.NEXT_PUBLIC_VAPID_PUBLIC_KEY),
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1),
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string().min(1),
 
     // Next.js server build requirements
     APP_POSTGRES_URL: z.url(),

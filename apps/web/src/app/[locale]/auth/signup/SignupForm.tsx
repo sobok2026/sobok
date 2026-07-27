@@ -1,6 +1,7 @@
 'use client'
 
 import type { TurnstileInstance } from '@marsidev/react-turnstile'
+import { TURNSTILE_AUTH_ACTION } from '@sobok/contracts'
 import { Info, Loader2, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { type SubmitEvent, useEffect, useRef, useState } from 'react'
@@ -273,7 +274,7 @@ export default function SignupForm() {
           hasToken={hasTurnstileToken}
           id="signup-turnstile"
           onTokenChange={handleTurnstileTokenChange}
-          options={{ action: 'signup' }}
+          options={{ action: TURNSTILE_AUTH_ACTION }}
           turnstileRef={turnstileRef}
         />
       </form>

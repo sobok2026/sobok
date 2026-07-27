@@ -37,14 +37,6 @@ export const messages = {
         adultVerificationRequired: '성인인증이 필요해요',
         adultDescription: '익명 성인인증 후 이용할 수 있어요',
         anonymousAdultVerificationAction: '익명으로 성인인증하기',
-        originProtection: {
-          requiredTitle: '보안 확인이 필요해요',
-          checkingDescription: '사람인지 확인하고 있어요',
-          failedTitle: '보안 확인에 실패했어요',
-          failedDescription: '네트워크를 확인한 뒤 다시 시도해 주세요',
-          retryTitle: '보안 확인 다시 시도',
-          retryAction: '재시도',
-        },
       },
       ads: {
         action: '익명 성인인증',
@@ -266,14 +258,6 @@ export const messages = {
         adultVerificationRequired: 'Adult verification is required',
         adultDescription: 'You can continue after anonymous adult verification.',
         anonymousAdultVerificationAction: 'Verify anonymously',
-        originProtection: {
-          requiredTitle: 'Security check required',
-          checkingDescription: 'Checking that you are human',
-          failedTitle: 'Security check failed',
-          failedDescription: 'Check your network and try again',
-          retryTitle: 'Retry security check',
-          retryAction: 'Retry',
-        },
       },
       ads: {
         action: 'Verify your age anonymously',
@@ -496,14 +480,6 @@ export const messages = {
         adultVerificationRequired: '成人認証が必要です',
         adultDescription: '匿名の成人認証後に利用できます',
         anonymousAdultVerificationAction: '匿名で成人認証する',
-        originProtection: {
-          requiredTitle: 'セキュリティ確認が必要です',
-          checkingDescription: '人間であることを確認しています',
-          failedTitle: 'セキュリティ確認に失敗しました',
-          failedDescription: 'ネットワークを確認してから再試行してください',
-          retryTitle: 'セキュリティ確認を再試行',
-          retryAction: '再試行',
-        },
       },
       ads: {
         action: '匿名で成人認証',
@@ -724,14 +700,6 @@ export const messages = {
         adultVerificationRequired: '需要成人认证',
         adultDescription: '完成匿名成人认证后即可继续使用',
         anonymousAdultVerificationAction: '匿名进行成人认证',
-        originProtection: {
-          requiredTitle: '需要安全验证',
-          checkingDescription: '正在确认你是真人',
-          failedTitle: '安全验证失败',
-          failedDescription: '请检查网络后重试',
-          retryTitle: '重试安全验证',
-          retryAction: '重试',
-        },
       },
       ads: {
         action: '匿名成人认证',

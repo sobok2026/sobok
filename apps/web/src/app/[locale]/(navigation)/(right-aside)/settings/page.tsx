@@ -1,5 +1,3 @@
-import { auth } from '@sobok/auth/server'
-import { readUserSettings } from '@sobok/db/app/query/user-settings'
 import { ErrorBoundary } from '@suspensive/react'
 import {
   CalendarMinus,
@@ -17,7 +15,6 @@ import {
   Trash2,
 } from 'lucide-react'
 import type { Metadata } from 'next'
-import { headers } from 'next/headers'
 import { getTranslations } from 'next-intl/server'
 import { Suspense } from 'react'
 
@@ -25,6 +22,7 @@ import IconBell from '@/components/icons/IconBell'
 import CollapsibleSection from '@/components/ui/CollapsibleSection'
 import { getLocaleFromParams } from '@/i18n/server'
 import { generateLocalizedMetadata } from '@/lib/metadata'
+import { getServerMe } from '@/lib/server-me'
 
 import AdultVerificationSection from './adult/AdultVerificationSection'
 import ContentSettingsForm from './content/ContentSettingsForm'
@@ -39,7 +37,7 @@ import AutoDeletionForm from './privacy/AutoDeletionForm'
 import PushSettings from './push/PushSettings'
 import SessionSettings from './session/SessionSettings'
 import ThemeSettings from './theme/ThemeSettings'
-import TwoFactorSettings from './two-factor/TwoFactorSettings'
+import TwoFactorSettingsClient from './two-factor/TwoFactorSettingsClient'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/settings'>): Promise<Metadata> {
   const locale = await getLocaleFromParams(params)
@@ -60,8 +58,9 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/settings
 }
 
 export default async function SettingsPage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  const user = session?.user
+  // One call replaces the old session lookup plus a separate direct-from-DB settings read: /api/v1/me
+  // already returns the resolved settings alongside the user.
+  const me = await getServerMe()
   const t = await getTranslations('Settings')
 
   const languageSelector = (
@@ -90,7 +89,7 @@ export default async function SettingsPage() {
     </CollapsibleSection>
   )
 
-  if (!user) {
+  if (!me) {
     return (
       <>
         {languageSelector}
@@ -99,8 +98,8 @@ export default async function SettingsPage() {
     )
   }
 
-  const userId = user.id
-  const settings = await readUserSettings(userId)
+  const userId = me.id
+  const settings = me.settings
 
   return (
     <>
@@ -182,7 +181,7 @@ export default async function SettingsPage() {
       >
         <ErrorBoundary fallback={InternalServerError}>
           <Suspense fallback={<LoadingFallback />}>
-            <TwoFactorSettings />
+            <TwoFactorSettingsClient initialEnabled={me.twoFactorEnabled} />
           </Suspense>
         </ErrorBoundary>
       </CollapsibleSection>
@@ -229,7 +228,7 @@ export default async function SettingsPage() {
         <p className="text-foreground-muted text-sm mb-4 sm:mb-6">
           계정을 삭제하면 사용자 관련 모든 데이터가 영구적으로 삭제되고 복구할 수 없어요
         </p>
-        <AccountDeletionForm email={user.email} />
+        <AccountDeletionForm email={me.email} />
       </CollapsibleSection>
     </>
   )

@@ -12,7 +12,6 @@ import { ThemeProvider } from 'next-themes'
 import type { ReactNode } from 'react'
 import { Toaster } from 'sonner'
 import CapacitorNativeEffects from '@/components/CapacitorNativeEffects'
-import OriginProtectionTurnstile from '@/components/OriginProtectionTurnstile'
 import SEOText from '@/components/SEOText'
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
 import OverlayHost from '@/components/ui/OverlayHost'
@@ -111,7 +110,6 @@ export default async function RootLayout({ children, params }: Props) {
               />
             </OverlayHost>
             <QueryProvider>{children}</QueryProvider>
-            <OriginProtectionTurnstile />
           </NextIntlClientProvider>
           <ServiceWorkerRegistrar />
           {NEXT_PUBLIC_GTM_ID && (

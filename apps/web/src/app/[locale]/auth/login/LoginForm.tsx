@@ -2,6 +2,7 @@
 
 import type { TurnstileInstance } from '@marsidev/react-turnstile'
 import { authClient } from '@sobok/auth/client'
+import { TURNSTILE_AUTH_ACTION } from '@sobok/contracts'
 import { Toggle } from '@sobok/ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2, X } from 'lucide-react'
@@ -278,7 +279,7 @@ export default function LoginForm() {
               hasToken={hasTurnstileToken}
               id="login-turnstile"
               onTokenChange={(token) => setHasTurnstileToken(Boolean(token))}
-              options={{ action: 'login' }}
+              options={{ action: TURNSTILE_AUTH_ACTION }}
               turnstileRef={turnstileRef}
             />
           </form>
