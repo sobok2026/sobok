@@ -1,49 +1,69 @@
-// Cloudflare Turnstile siteverify for the comment write paths (post + report) — the primary bot gate.
+import { type TurnstileFailureReason, type TurnstileResult, verifyTurnstile } from '@sobok/edge/turnstile'
+import type { Context } from 'hono'
+
+import type { AppEnv } from '~/env'
+import { type ProblemSlug, problem } from '~/errors'
+import { alertDiscord } from './alert'
+
+// The verifier's reason → what the client is allowed to see. Deliberately coarse: `rejected` never says
+// whether the hostname or the action was the pin that refused, and `misconfigured` never says the secret is
+// the problem. The diagnosis goes to the log line below instead.
+const RESPONSE_BY_REASON: Record<TurnstileFailureReason, { slug: ProblemSlug; status: number }> = {
+  expired: { slug: 'turnstile-expired', status: 400 },
+  misconfigured: { slug: 'internal', status: 500 },
+  rejected: { slug: 'turnstile-failed', status: 403 },
+  unavailable: { slug: 'service-unavailable', status: 503 },
+}
+
+// Returns null when the solve is good, or the response to send when it is not. Both write paths gate through
+// here so the host pin, the classification and the alert rule cannot drift apart between them.
+export async function guardTurnstile(
+  c: Context<AppEnv>,
+  args: { expectedAction: string; ip: string | null; token: string },
+): Promise<Response | null> {
+  const allowedHostnames = parseAllowedHostnames(c.env.STELLA_ALLOWED_HOSTNAMES)
+
+  if (allowedHostnames.length === 0) {
+    return null
+  }
+
+  const { token, ip, expectedAction } = args
+
+  const result: TurnstileResult = await verifyTurnstile(await c.env.STELLA_TURNSTILE_SECRET.get(), token, ip, {
+    allowedHostnames,
+    expectedAction,
+  })
+
+  if (result.ok) {
+    return null
+  }
+
+  // Workers Observability is the durable record for all four reasons; the token itself is a credential and
+  // never belongs in a log line.
+  console.warn(`turnstile ${result.reason} (${expectedAction}): ${result.logDetail}`)
+
+  // Only `misconfigured` pages anyone. A client cannot provoke it — bad secrets and malformed requests come
+  // from us — so a per-request webhook here cannot be turned into a flood, which is exactly what alerting on
+  // `rejected` during a bot wave would be.
+  if (result.reason === 'misconfigured') {
+    const webhook = await c.env.STELLA_DISCORD_WEBHOOK.get()
+    c.executionCtx.waitUntil(alertDiscord(webhook, '🚨 stella Turnstile is misconfigured; comments are down'))
+  }
+
+  const { slug, status } = RESPONSE_BY_REASON[result.reason]
+  return problem(status, slug, undefined, status === 503 ? { 'retry-after': '5' } : undefined)
+}
+
+// Whitespace and stray trailing commas are dropped rather than becoming a hostname that can never match —
+// a silently unmatchable entry is how a pin turns into a total outage that reads as a bot wave.
 //
-// Two checks beyond `success` that the shared-widget setup makes essential:
-//  • hostname — the "sobok" widget covers every *.sobok.cc host, so a token solved on ANY sobok app would
-//    otherwise be replayable here. We assert the solve happened on a stella host.
-//  • action   — bound per endpoint ('comment_post' vs 'comment_report') so a token minted for one flow can't
-//    be spent on the other.
-// (Recommended follow-up: mint a stella-dedicated widget/sitekey instead of the shared one; this check works
-// with either.)
-const SITEVERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
-
-interface VerifyOptions {
-  allowedHostnames: readonly string[]
-  expectedAction: string
-}
-
-interface SiteverifyResponse {
-  success?: boolean
-  hostname?: string
-  action?: string
-}
-
-export async function verifyTurnstile(
-  secret: string,
-  token: string,
-  ip: string | null,
-  opts: VerifyOptions,
-): Promise<boolean> {
-  const form = new FormData()
-  form.append('secret', secret)
-  form.append('response', token)
-  if (ip) {
-    form.append('remoteip', ip)
-  }
-
-  try {
-    const res = await fetch(SITEVERIFY, { method: 'POST', body: form })
-    const data = (await res.json()) as SiteverifyResponse
-    if (data.success !== true) {
-      return false
-    }
-    if (data.hostname === undefined || !opts.allowedHostnames.includes(data.hostname)) {
-      return false
-    }
-    return data.action === opts.expectedAction
-  } catch {
-    return false
-  }
+// `raw` is typed string by the binding but the runtime does not guarantee one: a wrangler.jsonc that lost the
+// var, or a named environment that failed to redeclare it (wrangler does NOT inherit `vars` into named
+// environments), delivers undefined. Coercing here sends that into the misconfigured branch — which alerts —
+// instead of an unhandled TypeError that 500s with no diagnosis.
+function parseAllowedHostnames(raw: string | undefined): readonly string[] {
+  return (raw ?? '')
+    .split(',')
+    .map((hostname) => hostname.trim())
+    .filter(Boolean)
 }

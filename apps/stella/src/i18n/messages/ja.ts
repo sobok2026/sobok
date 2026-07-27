@@ -523,6 +523,7 @@ export const ja = {
     reasonOther: 'その他',
     rateLimited: 'しばらくしてからもう一度お試しください。',
     turnstileFailed: 'ボット検証に失敗しました。もう一度お試しください。',
+    turnstileExpired: 'ボット検証の有効期限が切れました。もう一度ご確認ください。',
     error: '問題が発生しました。しばらくして再度お試しください。',
     locked: 'このボードはロックされています。',
     count: '{n}件の声',

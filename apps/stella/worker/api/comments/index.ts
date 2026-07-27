@@ -18,10 +18,9 @@ import { alertDiscord } from '~/lib/alert'
 import { hashIp } from '~/lib/ip'
 import { MAX_BODY, sanitizeBody, sanitizeNickname } from '~/lib/text'
 import { newEditToken, newPublicId, sha256Hex } from '~/lib/tokens'
-import { verifyTurnstile } from '~/lib/turnstile'
+import { guardTurnstile } from '~/lib/turnstile'
+import { COMMENT_POST_ACTION, COMMENT_REPORT_ACTION } from './actions'
 
-// Hostnames the shared "sobok" Turnstile widget may legitimately be solved on (stella + apex + local dev).
-const ALLOWED_HOSTNAMES = ['stella.sobok.cc', 'sobok.cc', 'localhost'] as const
 const LIST_LIMIT = 20
 const COUNTS_MAX = 120
 // Auto-hide thresholds: a privacy report hides immediately (pending manual review); ordinary reports need a
@@ -152,28 +151,31 @@ comments.post('/', async (c) => {
   if (Number(c.req.header('content-length') ?? 0) > 4 * 1024) {
     return problem(413, 'payload-too-large')
   }
+
   const parsed = PostBody.safeParse(await c.req.json().catch(() => null))
   if (!parsed.success) {
     return problem(422, 'invalid-request')
   }
 
   const ip = clientIp(c)
-  const [salt, secret] = await Promise.all([c.env.STELLA_IP_HASH_SALT.get(), c.env.STELLA_TURNSTILE_SECRET.get()])
-  const ipHash = await hashIp(ip, salt)
 
-  if (
-    !(await verifyTurnstile(secret, parsed.data.turnstileToken, ip, {
-      allowedHostnames: ALLOWED_HOSTNAMES,
-      expectedAction: 'comment_post',
-    }))
-  ) {
-    return problem(403, 'turnstile-failed')
+  const denied = await guardTurnstile(c, {
+    expectedAction: COMMENT_POST_ACTION,
+    ip,
+    token: parsed.data.turnstileToken,
+  })
+
+  if (denied) {
+    return denied
   }
+
+  const ipHash = await hashIp(ip, await c.env.STELLA_IP_HASH_SALT.get())
 
   const body = sanitizeBody(parsed.data.body)
   if (body.length === 0) {
     return problem(422, 'invalid-request')
   }
+
   const nickname = sanitizeNickname(parsed.data.nickname)
   const publicId = newPublicId()
   const editToken = newEditToken()
@@ -193,6 +195,7 @@ comments.post('/', async (c) => {
       ipHash,
     })
   })
+
   if (outcome === 'rate-limited') {
     return problem(429, 'rate-limited')
   }
@@ -256,17 +259,18 @@ comments.post('/:publicId/report', async (c) => {
   }
 
   const ip = clientIp(c)
-  const [salt, secret] = await Promise.all([c.env.STELLA_IP_HASH_SALT.get(), c.env.STELLA_TURNSTILE_SECRET.get()])
-  const ipHash = await hashIp(ip, salt)
 
-  if (
-    !(await verifyTurnstile(secret, parsed.data.turnstileToken, ip, {
-      allowedHostnames: ALLOWED_HOSTNAMES,
-      expectedAction: 'comment_report',
-    }))
-  ) {
-    return problem(403, 'turnstile-failed')
+  const denied = await guardTurnstile(c, {
+    expectedAction: COMMENT_REPORT_ACTION,
+    ip,
+    token: parsed.data.turnstileToken,
+  })
+
+  if (denied) {
+    return denied
   }
+
+  const ipHash = await hashIp(ip, await c.env.STELLA_IP_HASH_SALT.get())
 
   const result = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, async (db) => {
     if (!(await withinLimits(db, ipHash ?? 'noip', REPORT_LIMITS))) {

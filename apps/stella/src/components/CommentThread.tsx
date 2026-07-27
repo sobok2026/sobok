@@ -5,7 +5,6 @@ import { type InfiniteData, useInfiniteQuery, useMutation, useQueryClient } from
 import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
-
 import { TURNSTILE_SITE_KEY } from '@/constants'
 import {
   type Comment,
@@ -22,6 +21,7 @@ import {
   reportComment,
   updateComment,
 } from '@/lib/comments'
+import { COMMENT_POST_ACTION, COMMENT_REPORT_ACTION } from '../../worker/api/comments/actions'
 
 const REPORT_REASONS: ReportReason[] = ['spam', 'abuse', 'sexual', 'privacy', 'other']
 const REASON_KEY = {
@@ -43,6 +43,8 @@ function apiMessage(t: Translate, error: unknown): string {
       return t('rateLimited')
     case 'turnstile-failed':
       return t('turnstileFailed')
+    case 'turnstile-expired':
+      return t('turnstileExpired')
     case 'thread-locked':
       return t('locked')
     default:
@@ -229,7 +231,7 @@ export default function CommentThread({ locale, topicKey, initial }: CommentThre
               onError={() => setPostToken('')}
               onExpire={() => setPostToken('')}
               onSuccess={setPostToken}
-              options={{ action: 'comment_post', size: 'flexible' }}
+              options={{ action: COMMENT_POST_ACTION, size: 'flexible' }}
               ref={postWidget}
               siteKey={TURNSTILE_SITE_KEY}
             />
@@ -380,7 +382,7 @@ function ReportButton({ publicId, t }: { publicId: string; t: Translate }) {
         onError={() => setToken('')}
         onExpire={() => setToken('')}
         onSuccess={setToken}
-        options={{ action: 'comment_report', size: 'flexible' }}
+        options={{ action: COMMENT_REPORT_ACTION, size: 'flexible' }}
         ref={widget}
         siteKey={TURNSTILE_SITE_KEY}
       />

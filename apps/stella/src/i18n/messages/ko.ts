@@ -521,6 +521,7 @@ export const ko = {
     reasonOther: '기타',
     rateLimited: '잠시 후 다시 시도해 주세요.',
     turnstileFailed: '봇 검증에 실패했어요. 다시 시도해 주세요.',
+    turnstileExpired: '봇 검증이 만료됐어요. 한 번 더 확인해 주세요.',
     error: '문제가 생겼어요. 잠시 후 다시 시도해 주세요.',
     locked: '이 보드는 잠겨 있어요.',
     count: '{n}개의 이야기',

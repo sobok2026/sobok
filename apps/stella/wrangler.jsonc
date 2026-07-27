@@ -20,6 +20,18 @@
     // API routes always hit the Worker first so they can never be shadowed by an asset.
     "run_worker_first": ["/api/*"]
   },
+  // The hostnames a Turnstile solve is accepted from, comma-separated. This is a security pin, so the
+  // PRODUCTION value lives here — version-controlled and reviewed exactly like the literal it replaced. It is
+  // a var rather than a constant only so `.dev.vars` can narrow it to `localhost` on a laptop, where the
+  // separate dev widget is the one being solved. An empty value is treated as a misconfiguration, never as a
+  // reason to reject every visitor (see worker/lib/turnstile.ts).
+  //
+  // Cloudflare auto-covers subdomains of a widget's configured domain, so the widget itself cannot narrow
+  // this — the list below is the actual pin. stella serves BOTH the apex and stella.sobok.cc today.
+  // CUTOVER: drop 'sobok.cc' when apps/web takes the apex from this Worker.
+  "vars": {
+    "STELLA_ALLOWED_HOSTNAMES": "sobok.cc,stella.sobok.cc"
+  },
   "hyperdrive": [
     {
       // Single origin over the SHARED Supabase Postgres, authenticating as the least-privilege `stella_app`
@@ -33,14 +45,11 @@
   "triggers": {
     "crons": ["0 3 * * *"]
   },
-  // Account-level Secrets Store (same store as apps/vibe). `sobok-turnstile-secret` is the SHARED widget
-  // secret — bound by name here, NOT re-declared in Terraform (account-stella only CREATES the two new
-  // stella-* secrets). Read at runtime with `await binding.get()`.
   "secrets_store_secrets": [
     {
       "binding": "STELLA_TURNSTILE_SECRET",
       "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-      "secret_name": "sobok-turnstile-secret"
+      "secret_name": "stella-turnstile-secret"
     },
     {
       "binding": "STELLA_IP_HASH_SALT",

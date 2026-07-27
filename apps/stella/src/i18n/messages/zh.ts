@@ -516,6 +516,7 @@ export const zh = {
     reasonOther: '其他',
     rateLimited: '请稍后再试。',
     turnstileFailed: '人机验证失败，请重试。',
+    turnstileExpired: '人机验证已过期，请再确认一次。',
     error: '出错了，请稍后再试。',
     locked: '该看板已锁定。',
     count: '{n} 条留言',

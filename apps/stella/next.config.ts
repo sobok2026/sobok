@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   poweredByHeader: false,
   reactCompiler: true,
+  // NOTE: @sobok/edge is used by the Worker bundle only (wrangler bundles it directly), so it does not
+  // belong here yet. If any of it ever enters the Next graph — the board-bake prerender path already reaches
+  // into worker/db/schema, so moving worker/db/columns.ts into the package would do it — this list must gain
+  // '@sobok/edge' or `next build` fails on raw .ts inside node_modules.
   transpilePackages: ['@sobok/domain'],
 
   // Overridable so a second `next dev` (e.g. another agent session) can run

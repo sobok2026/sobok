@@ -7,10 +7,12 @@ export type ProblemSlug =
   | 'invalid-topic'
   | 'payload-too-large'
   | 'turnstile-failed'
+  | 'turnstile-expired'
   | 'rate-limited'
   | 'thread-locked'
   | 'comment-not-found'
   | 'forbidden'
+  | 'service-unavailable'
   | 'internal'
 
 export function problem(

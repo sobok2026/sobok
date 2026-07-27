@@ -526,6 +526,7 @@ export const en = {
     reasonOther: 'Other',
     rateLimited: 'Please try again in a moment.',
     turnstileFailed: 'Bot check failed. Please try again.',
+    turnstileExpired: 'Bot check expired. Please confirm once more.',
     error: 'Something went wrong. Please try again.',
     locked: 'This board is locked.',
     count: '{n} stories',

@@ -13,8 +13,14 @@ export interface Bindings {
   // posted comment must appear immediately).
   HYPERDRIVE: Hyperdrive
 
+  // ── Plain vars (wrangler.jsonc `vars`, overridable by .dev.vars locally) ───────────────────────────
+  // Comma-separated hostnames a Turnstile solve is accepted from. Production value is committed in
+  // wrangler.jsonc; local dev narrows it to `localhost` for the dev widget.
+  STELLA_ALLOWED_HOSTNAMES: string
+
   // ── Secrets Store bindings (async: `await X.get()`) ────────────────────────────────────────────────
-  // Turnstile siteverify secret (the shared "sobok" widget for now; a stella-dedicated widget is recommended).
+  // Siteverify secret for stella's own Turnstile widget (account-turnstile workspace; cutover off the shared
+  // "sobok" widget is written in Terraform but not applied yet).
   STELLA_TURNSTILE_SECRET: SecretsStoreSecret
   // Static HMAC key for pseudonymous IP hashing (rate-limit + report dedup). Never rotated (see lib/ip.ts).
   STELLA_IP_HASH_SALT: SecretsStoreSecret
