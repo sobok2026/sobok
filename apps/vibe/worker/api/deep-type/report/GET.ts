@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 
-import { openCached, openFresh, withDb } from '~/db/client'
+import { openCached, openFresh, withDB } from '~/db/client'
 import { getPurchaseByAccessToken, stampReportViewed } from '~/db/queries/purchase'
 import { getDoneSections, getReportStatus } from '~/db/queries/report'
 import { getResultForReport } from '~/db/queries/result'
@@ -16,7 +16,7 @@ const route = new Hono<AppEnv>()
 route.get('/', async (c) => {
   const token = c.get('accessToken')
 
-  const gate = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  const gate = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const purchase = await getPurchaseByAccessToken(db, token)
 
     if (!purchase) {
@@ -52,19 +52,19 @@ route.get('/', async (c) => {
     return gate
   }
 
-  const cached = await withDb(openCached(c.env.HYPERDRIVE_CACHED), c.executionCtx, (db) =>
+  const cached = await withDB(openCached(c.env.HYPERDRIVE_CACHED), c.executionCtx, (db) =>
     getDoneSections(db, gate.purchaseId),
   )
 
   const sections =
     cached ??
-    (await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) => getDoneSections(db, gate.purchaseId)))
+    (await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) => getDoneSections(db, gate.purchaseId)))
 
   if (!sections) {
     return problem(502, 'report-generation-failed')
   }
 
-  const delivered = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+  const delivered = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     stampReportViewed(db, gate.purchaseId),
   )
   if (!delivered) {

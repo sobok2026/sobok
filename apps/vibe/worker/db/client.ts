@@ -16,7 +16,7 @@ export interface DbHandle {
 // - prepare:false   Hyperdrive pools in transaction mode, so a prepared statement created on one backend
 //                   connection may not exist on the next — disable to avoid "prepared statement …" errors.
 // Always close the socket after the response via `c.executionCtx.waitUntil(handle.sql.end({ timeout: 5 }))`.
-export function openDb(connectionString: string): DbHandle {
+export function openDB(connectionString: string): DbHandle {
   const sql = postgres(connectionString, { max: 5, fetch_types: false, prepare: false })
   return { db: drizzle({ client: sql }), sql }
 }
@@ -24,20 +24,20 @@ export function openDb(connectionString: string): DbHandle {
 // FRESH binding (Hyperdrive caching DISABLED): every write + read-after-write on the money/entitlement
 // path — checkout, verify, webhook, report CAS, viewed_at. Never serves a stale row.
 export function openFresh(hyperdrive: Hyperdrive): DbHandle {
-  return openDb(hyperdrive.connectionString)
+  return openDB(hyperdrive.connectionString)
 }
 
 // CACHED binding (Hyperdrive caching ON): the SINGLE read of an immutable done-report body. MUST NOT be
 // used for any status/entitlement read — the cache does not invalidate on writes and would leak a
 // refunded user their report or grant on a stale 'pending'.
 export function openCached(hyperdrive: Hyperdrive): DbHandle {
-  return openDb(hyperdrive.connectionString)
+  return openDB(hyperdrive.connectionString)
 }
 
 // Run a unit of work against a per-request handle, then close the socket in the background after the
 // response is sent (the Workers-idiomatic way — never block the response on the TCP teardown). The ctx is
 // structurally typed so both Hono's `c.executionCtx` and the raw Workers `ExecutionContext` fit.
-export async function withDb<T>(
+export async function withDB<T>(
   handle: DbHandle,
   ctx: { waitUntil(promise: Promise<unknown>): void },
   fn: (db: Db) => Promise<T>,

@@ -3,7 +3,7 @@ import { scoreBaseAssessment } from '@deep-type/scoring'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
-import { openFresh, withDb } from '~/db/client'
+import { openFresh, withDB } from '~/db/client'
 import { insertResult } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
@@ -35,7 +35,7 @@ route.post('/', async (c) => {
   }
 
   const resultToken = randomToken()
-  await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+  await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     insertResult(db, {
       baseAnswers: parsed.data.answers,
       baseProfile: profile,

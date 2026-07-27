@@ -3,7 +3,7 @@ import { scoreRefinedAssessment } from '@deep-type/scoring'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
-import { openFresh, withDb } from '~/db/client'
+import { openFresh, withDB } from '~/db/client'
 import { getPurchaseResultByAccessToken, getRefinedProfile, persistRefinement } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
@@ -20,7 +20,7 @@ route.post('/', requireAccessToken, async (c) => {
     return problem(422, 'invalid-request')
   }
 
-  return withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  return withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const context = await getPurchaseResultByAccessToken(db, c.get('accessToken'))
     if (!context) {
       return problem(404, 'purchase-not-found')

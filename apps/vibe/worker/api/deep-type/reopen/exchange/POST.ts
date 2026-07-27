@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
 
-import { openFresh, withDb } from '~/db/client'
+import { openFresh, withDB } from '~/db/client'
 import { consumeReopenLink } from '~/db/queries/reopen'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
@@ -18,7 +18,7 @@ route.post('/', async (c) => {
   }
 
   const tokenHash = await sha256Hex(parsed.data.token)
-  const reopened = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+  const reopened = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     consumeReopenLink(db, tokenHash, new Date()),
   )
 

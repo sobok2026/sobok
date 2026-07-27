@@ -2,7 +2,7 @@ import { drizzle, type PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 
 // Core query builder only (tables are imported directly by the query modules), so no relational `schema` is
-// passed to drizzle. Mirrors apps/vibe's worker db client.
+// passed to drizzle.
 export type Db = PostgresJsDatabase
 
 export interface DbHandle {
@@ -10,15 +10,25 @@ export interface DbHandle {
   sql: postgres.Sql
 }
 
-// Per-request postgres.js over Hyperdrive.
-// - max:5            Workers caps a script at 6 concurrent TCP connections; leave headroom.
+// Per-request postgres.js over Hyperdrive. Takes the BINDING, not a connection string, so a caller can't
+// hand it a direct unpooled URL and quietly lose Hyperdrive's pooling — the caching policy stays a property
+// of which binding you pass (a fresh-vs-cached config), which is the distinction that matters on money paths.
+// - max:5             Workers caps a script at 6 concurrent TCP connections; leave headroom.
 // - fetch_types:false Hyperdrive can't serve the type-introspection round trip postgres.js does on boot.
-// - prepare:false    Hyperdrive pools in transaction mode, so a prepared statement created on one backend
-//                    connection may not exist on the next — disable to avoid "prepared statement …" errors.
-// Always close the socket after the response via `c.executionCtx.waitUntil(handle.sql.end({ timeout: 5 }))`.
+// - prepare:false     Hyperdrive pools in transaction mode, so a prepared statement created on one backend
+//                     connection may not exist on the next — disable to avoid "prepared statement …" errors.
+// Always close the socket after the response — use `withDB`, or waitUntil(handle.sql.end({ timeout: 5 })).
 export function openDB(hyperdrive: Hyperdrive): DbHandle {
-  const sql = postgres(hyperdrive.connectionString, { max: 5, fetch_types: false, prepare: false })
-  return { db: drizzle({ client: sql }), sql }
+  const sql = postgres(hyperdrive.connectionString, {
+    max: 5,
+    fetch_types: false,
+    prepare: false,
+  })
+
+  return {
+    db: drizzle({ client: sql }),
+    sql,
+  }
 }
 
 // Run a unit of work against a per-request handle, then close the socket in the background after the response

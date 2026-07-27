@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
 
-import { type Db, openDb, withDb } from '~/db/client'
+import { type Db, openDB, withDB } from '~/db/client'
 import {
   type Cursor,
   checkRateLimit,
@@ -117,7 +117,7 @@ comments.get('/', async (c) => {
   }
 
   const before = decodeCursor(c.req.query('cursor'))
-  const { comments: rows, nextCursor } = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) =>
+  const { comments: rows, nextCursor } = await withDB(openDB(c.env.HYPERDRIVE), c.executionCtx, (db) =>
     listComments(db, locale.data, topic.data, LIST_LIMIT, before),
   )
   return c.json(
@@ -142,7 +142,7 @@ comments.get('/counts', async (c) => {
     .filter((t) => TopicKeySchema.safeParse(t).success)
     .slice(0, COUNTS_MAX)
 
-  const counts = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) => getCounts(db, locale.data, topics))
+  const counts = await withDB(openDB(c.env.HYPERDRIVE), c.executionCtx, (db) => getCounts(db, locale.data, topics))
   return c.json({ counts }, 200, { 'cache-control': 'no-store' })
 })
 
@@ -181,7 +181,7 @@ comments.post('/', async (c) => {
   const editToken = newEditToken()
   const editTokenHash = await sha256Hex(editToken)
 
-  const outcome = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, async (db) => {
+  const outcome = await withDB(openDB(c.env.HYPERDRIVE), c.executionCtx, async (db) => {
     if (!(await withinLimits(db, ipHash ?? 'noip', POST_LIMITS))) {
       return 'rate-limited' as const
     }
@@ -229,7 +229,7 @@ comments.patch('/:publicId', async (c) => {
   }
 
   const editTokenHash = await sha256Hex(token)
-  const ok = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) =>
+  const ok = await withDB(openDB(c.env.HYPERDRIVE), c.executionCtx, (db) =>
     editComment(db, c.req.param('publicId'), editTokenHash, body),
   )
   return ok ? c.json({ ok: true }, 200, { 'cache-control': 'no-store' }) : problem(403, 'forbidden')
@@ -242,7 +242,7 @@ comments.delete('/:publicId', async (c) => {
     return problem(403, 'forbidden')
   }
   const editTokenHash = await sha256Hex(token)
-  const ok = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) =>
+  const ok = await withDB(openDB(c.env.HYPERDRIVE), c.executionCtx, (db) =>
     deleteComment(db, c.req.param('publicId'), editTokenHash),
   )
   return ok ? c.json({ ok: true }, 200, { 'cache-control': 'no-store' }) : problem(403, 'forbidden')
@@ -272,7 +272,7 @@ comments.post('/:publicId/report', async (c) => {
 
   const ipHash = await hashIp(ip, await c.env.STELLA_IP_HASH_SALT.get())
 
-  const result = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, async (db) => {
+  const result = await withDB(openDB(c.env.HYPERDRIVE), c.executionCtx, async (db) => {
     if (!(await withinLimits(db, ipHash ?? 'noip', REPORT_LIMITS))) {
       return 'rate-limited' as const
     }

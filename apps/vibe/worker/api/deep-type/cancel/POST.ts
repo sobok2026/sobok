@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 
-import { openFresh, withDb } from '~/db/client'
+import { openFresh, withDB } from '~/db/client'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { requestWithdrawal } from '~/payments/cancel'
@@ -16,7 +16,7 @@ const route = new Hono<AppEnv>()
 route.post('/', requireAccessToken, async (c) => {
   const portOneCreds = await creds(c)
 
-  const outcome = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+  const outcome = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     requestWithdrawal(db, portOneCreds, c.get('accessToken')),
   )
 

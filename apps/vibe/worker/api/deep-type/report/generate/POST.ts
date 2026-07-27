@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 
-import { openFresh, withDb } from '~/db/client'
+import { openFresh, withDB } from '~/db/client'
 import { getPurchaseByAccessToken } from '~/db/queries/purchase'
 import { acquireReportLock, finalizeReportDone, finalizeReportFailed, getReportStatus } from '~/db/queries/report'
 import { getResultForReport } from '~/db/queries/result'
@@ -23,7 +23,7 @@ route.post('/', async (c) => {
 
   const lockToken = randomToken()
 
-  const claim = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  const claim = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const purchase = await getPurchaseByAccessToken(db, token)
     if (!purchase) {
       return problem(404, 'purchase-not-found')
@@ -74,7 +74,7 @@ route.post('/', async (c) => {
   const model = c.env.DEEPTYPE_REPORT_MODEL ?? 'claude-haiku-4-5-20251001'
 
   if (!claim.result) {
-    await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
       finalizeReportFailed(db, claim.purchaseId, lockToken, 'missing result'),
     )
     return problem(502, 'report-generation-failed')
@@ -90,7 +90,7 @@ route.post('/', async (c) => {
       ? await generateReport(await c.env.DEEPTYPE_ANTHROPIC_API_KEY.get(), model, profile)
       : buildSampleReport(profile)
 
-    await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
       finalizeReportDone(db, claim.purchaseId, lockToken, llmEnabled ? model : 'sample', sections),
     )
 
@@ -105,7 +105,7 @@ route.post('/', async (c) => {
       stack: error instanceof Error ? error.stack : undefined,
     })
 
-    await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
       finalizeReportFailed(db, claim.purchaseId, lockToken, String(error).slice(0, 500)),
     )
 
