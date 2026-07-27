@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'apps/horn/**'
+      - 'packages/**'
       - 'bun.lock'
       - '.github/workflows/horn-deploy.yml'
   workflow_dispatch:

@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - 'apps/zwds/**'
-      - 'packages/domain/**'
+      - 'packages/**'
       - 'bun.lock'
       - '.github/workflows/zwds-deploy.yml'
   workflow_dispatch:
