@@ -23,16 +23,18 @@ export async function guardTurnstile(
 ): Promise<Response | null> {
   const allowedHostnames = parseAllowedHostnames(c.env.STELLA_ALLOWED_HOSTNAMES)
 
-  if (allowedHostnames.length === 0) {
-    return null
-  }
-
   const { token, ip, expectedAction } = args
 
-  const result: TurnstileResult = await verifyTurnstile(await c.env.STELLA_TURNSTILE_SECRET.get(), token, ip, {
-    allowedHostnames,
-    expectedAction,
-  })
+  // An empty pin would reject every real visitor while looking exactly like a bot wave in the logs. That is
+  // precisely the confusion the `misconfigured` class exists to prevent, so route it there — one deny path,
+  // so the alert and the response mapping below cover this case too.
+  const result: TurnstileResult =
+    allowedHostnames.length === 0
+      ? { ok: false, logDetail: 'STELLA_ALLOWED_HOSTNAMES resolved to an empty list', reason: 'misconfigured' }
+      : await verifyTurnstile(await c.env.STELLA_TURNSTILE_SECRET.get(), token, ip, {
+          allowedHostnames,
+          expectedAction,
+        })
 
   if (result.ok) {
     return null
