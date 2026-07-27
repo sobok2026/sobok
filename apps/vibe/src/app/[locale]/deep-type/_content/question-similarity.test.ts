@@ -15,18 +15,14 @@ const OPTIONS: QuestionOptionCatalog = koQuestionOptions
 // A stem-only 8-gram gate was tried first and caught nothing.
 const CEILING = 0.1
 
-// Two pairs still sit over the ceiling and cannot be brought under it by reselecting: the free three per axis
-// are forced (the `-4` ids are unauthored in three locales), and both admissible paid pairs for VH contain
-// `refine-gem-vh-2`, so `gem-vh-2`·`refine-gem-vh-2` survives every combination. VH therefore belongs on the
-// §9.1 rewrite list, not the reanchor list. Each entry is a ceiling, not a pin: a rewrite that lowers the
-// number passes, a text edit that raises it fails, and removing the pair from this table is the goal.
-//
-// The best VH selection swaps `refine-gem-vh-1` for `-3` and takes the axis maximum from 0.1543 to 0.1092. It is
-// not applied here because it moves which items Phase 0 has to reanchor, which is §9.1's call to make.
-const EXEMPT: Record<string, number> = {
-  'gem-vh-1|refine-gem-vh-1': 0.1543,
-  'gem-vh-2|refine-gem-vh-2': 0.1092,
-}
+// Empty, and the goal is that it stays empty. It formerly carried the two VH pairs that no reselection could
+// fix: `gem-vh-1`·`refine-gem-vh-1` at 0.1543 and `gem-vh-2`·`refine-gem-vh-2` at 0.1092, because both refine
+// items restated their free counterpart's scene. Phase 0 rewrote the two refine items onto distinct VH
+// facets — 겪은 감정을 얼마나 말로 꺼내는가, 물어 왔을 때 속마음을 어디까지 여는가 — which took the pairs to
+// 0.0273 and 0.0109.
+// The instrument-wide maximum is now 0.0703 (`gem-rm-3`·`refine-gem-rm-1`), so every pair clears the ceiling on
+// its own and no entry is warranted. An entry here is a ceiling rather than a pin: adding one is admitting debt.
+const EXEMPT: Record<string, number> = {}
 
 // The raw ko catalogs rather than the projected content, so a reserve item stays measurable: the reselection
 // below has to be able to score the item it replaced, which `createDeepTypeContent` no longer projects.
