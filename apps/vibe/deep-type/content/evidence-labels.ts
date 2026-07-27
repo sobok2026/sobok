@@ -1,0 +1,27 @@
+// Behavioural evidence tags attached to work-item options. Deliberately short verb phrases, not trait nouns:
+// they are quoted back as what the answers kept doing, which is a claim the forced-choice data can support.
+export const EVIDENCE_LABELS = {
+  adapt: '방법을 바꿈',
+  align: '방향을 맞춤',
+  care: '사람을 돌봄',
+  clarify: '쉽게 설명함',
+  communicate: '사람의 말을 모음',
+  detail: '빠진 것을 봄',
+  empathy: '마음을 살핌',
+  experiment: '작게 시험함',
+  focus: '깊게 집중함',
+  follow_through: '끝까지 챙김',
+  idea: '새 방법을 떠올림',
+  initiate: '먼저 시작함',
+  investigate: '원인을 찾음',
+  learn: '빠르게 배움',
+  mastery: '혼자 해냄',
+  mediate: '대화를 풀어냄',
+  notice: '문제를 먼저 봄',
+  ownership: '내 일처럼 움직임',
+  prioritize: '우선순위를 세움',
+  reframe: '다른 관점을 냄',
+  risk_scan: '위험을 살핌',
+  structure: '구조를 세움',
+  support: '실제 도움을 줌',
+} as const
