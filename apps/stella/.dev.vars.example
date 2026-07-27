@@ -1,0 +1,34 @@
+# Local `wrangler dev` config. Copy to .dev.vars (gitignored). Prod is provisioned declaratively in
+# sobok-ops (Terraform) — nothing here is used in production.
+
+# Non-secret vars — these OVERRIDE the wrangler.jsonc `vars` of the same name for `wrangler dev`. (Wrangler
+# merges the two and lets .dev.vars win; Cloudflare never spells this out in prose, so don't go hunting for
+# the doc sentence.) NOTE these do not compose with .env*: once a .dev.vars file exists, wrangler stops
+# loading .env/.env.local into the Worker entirely. Put Worker vars HERE, not in .env.local — otherwise the
+# host pin silently stays at the production value and every local solve is rejected.
+#
+# The Turnstile host pin must name the host you actually serve locally, because siteverify echoes back the
+# hostname the widget was solved on and the Worker rejects anything not in this list.
+STELLA_ALLOWED_HOSTNAMES="localhost"
+
+# The 3 true secrets are Cloudflare Secrets Store bindings (accessed via `await env.X.get()`). For local
+# dev, seed a LOCAL secrets store (no --remote) so they resolve offline — one per binding's secret_name:
+#   wrangler secrets-store secret create <STORE_ID> --name stella-turnstile-secret --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-ip-hash-salt     --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-discord-webhook  --value ""  --scopes workers
+# (empty discord value = alerts disabled.)
+#
+# The Turnstile value must be the DEV widget's real secret (`terraform output -raw dev_turnstile_secret_key`
+# in sobok-ops), NOT Cloudflare's 1x00…AA test key. The test key makes siteverify answer from the secret alone
+# with hostname "example.com", which can never satisfy the hostname pin in @sobok/edge/turnstile — by design,
+# so that no bypass branch exists to ship to production. Pair it with the dev widget's sitekey in
+# NEXT_PUBLIC_TURNSTILE_SITE_KEY (see .env.local.example); the dev widget covers localhost.
+
+# Local Hyperdrive → point the single binding at a local/dev Postgres for `wrangler dev` (current docs use
+# the CLOUDFLARE_ prefix; the WRANGLER_ form is an older fallback):
+# CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="postgres://…"
+
+# drizzle-kit push target — DIRECT owner connection (bypasses Hyperdrive), Supabase session pooler. The
+# pooler serves Supabase's own CA (not in Node's trust store), so use sslmode=no-verify. Read only by the
+# schema-push tool (production talks to Postgres via Hyperdrive, not this URL):
+# STELLA_POSTGRES_URL_DIRECT="postgres://postgres.<project-ref>:…@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=no-verify"
