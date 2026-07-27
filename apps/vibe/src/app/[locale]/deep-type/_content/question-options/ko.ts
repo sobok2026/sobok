@@ -476,11 +476,14 @@ export const koQuestionOptions = {
       '방해받지 않는 혼자만의 시간이 있어야 회복된다',
       '충분히 보호된 혼자만의 시간이 가장 중요한 회복 조건이다',
     ],
+    // refine-gem-oa-3 is keyed forward (questionnaire.ts), so option 4 must sit on OA's first pole (O). These
+    // four ran O -> A, which scored every "keep our own rhythm" answer as connection-seeking. Only the ko bank
+    // was affected: en/ja/zh hold a different item at this index and already run A -> O.
     [
-      '가까운 사람과는 일정과 쉬는 시간을 가능한 한 함께 보내고 싶다',
-      '중요한 일정은 함께 맞추는 편이 편하다',
-      '함께할 시간과 각자 보낼 시간을 구분하는 편이다',
       '가까운 사이여도 일정과 생활 리듬은 각자 유지해야 편하다',
+      '함께할 시간과 각자 보낼 시간을 구분하는 편이다',
+      '중요한 일정은 함께 맞추는 편이 편하다',
+      '가까운 사람과는 일정과 쉬는 시간을 가능한 한 함께 보내고 싶다',
     ],
     [
       '가까운 관계일수록 생활과 결정을 폭넓게 함께 나누고 싶다',
