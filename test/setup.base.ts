@@ -4,8 +4,10 @@ const backendIntegrationPostgresUrl =
   process.env.BACKEND_INTEGRATION_POSTGRES_URL ??
   'postgresql://test_user:test_password@localhost:5434/sobok_backend_integration_test'
 
-process.env.SKIP_ENV_VALIDATION = 'true'
+// Every secret below must be set here: none of them has a default any more, and @t3-oss/env-core validates
+// eagerly at import, so a suite that transitively imports @sobok/env would throw at module load.
 process.env.BACKEND_INTEGRATION_POSTGRES_URL ??= backendIntegrationPostgresUrl
+process.env.BETTER_AUTH_SECRET ??= '0'.repeat(32)
 process.env.APP_POSTGRES_URL ??= backendIntegrationPostgresUrl
 process.env.APP_POSTGRES_URL_DIRECT ??= backendIntegrationPostgresUrl
 process.env.APP_ORIGIN ??= 'http://localhost:3000'

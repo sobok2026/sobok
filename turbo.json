@@ -1,5 +1,9 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
+  // Every workspace tsconfig extends tsconfig.base.json, but turbo hashes only a task's own package inputs —
+  // without this, editing a compiler option there invalidates `//#type:root` and NOTHING else, so all 24
+  // package `type` tasks replay a cached PASS across a change that affects every one of them.
+  "globalDependencies": ["tsconfig.base.json"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -30,8 +34,18 @@
       "inputs": ["$TURBO_DEFAULT$", ".env.prod.build"],
       "outputs": [".next/**"]
     },
+    // The sitekey is inlined into the bundle by Next, so it belongs in the cache key: without it, changing
+    // the widget replays a cached bundle still carrying the old sitekey — the exact silent staleness the
+    // `requireEnv` in src/constants.ts exists to catch. `.env.local` is gitignored, so $TURBO_DEFAULT$ does
+    // not cover it either.
     "@sobok/stella#build": {
       "dependsOn": ["^build"],
+      "env": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY"],
+      "outputs": ["out/**", ".next/**"]
+    },
+    "@sobok/vibe#build": {
+      "dependsOn": ["^build"],
+      "env": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY"],
       "outputs": ["out/**", ".next/**"]
     },
     "@sobok/zwds#build": {
@@ -78,11 +92,16 @@
       "cache": false,
       "persistent": true
     },
+    // `^type` is what makes a consumer re-check when a dependency's SOURCE changes: a task's hash folds in
+    // its dependencies' hashes, and without the edge the dependency graph is invisible to caching (change a
+    // shared helper's signature and @sobok/stella#type replays a cached pass without re-checking any call site).
     "type": {
+      "dependsOn": ["^type"],
       "outputs": []
     },
+    // A package-task config REPLACES the base entry rather than merging, so `^type` has to be repeated here.
     "@sobok/web#type": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "^type"],
       "outputs": []
     },
     "//#type:root": {

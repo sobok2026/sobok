@@ -35,6 +35,7 @@ export interface GETV1MeResponse {
   username: string | null
   displayUsername: string | null
   image: string | null
+  twoFactorEnabled: boolean
   adultVerification: {
     required: boolean
     status: AdultVerificationStatus

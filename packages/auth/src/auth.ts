@@ -1,5 +1,6 @@
 import { getAuthenticatorName, passkey } from '@better-auth/passkey'
 import { redisStorage } from '@better-auth/redis-storage'
+import { TURNSTILE_AUTH_ACTION } from '@sobok/contracts'
 import { db } from '@sobok/db/app'
 import * as authSchema from '@sobok/db/app/auth'
 import { bbatonVerificationTable } from '@sobok/db/app/bbaton'
@@ -125,6 +126,15 @@ export const auth = betterAuth({
       // 기본 보호 대상(sign-up/email·sign-in/email·request-password-reset)에는 sign-in/username이
       // 빠져 있다. 아이디 로그인도 브루트포스에 노출되지 않도록 명시적으로 포함한다.
       endpoints: ['/sign-up/email', '/sign-in/email', '/sign-in/username', '/request-password-reset'],
+      // 이 둘을 빼면 플러그인이 action·hostname 검사를 통째로 건너뛴다(verify-handlers의 두 검사가 모두
+      // 옵션 존재 여부로 가드돼 있다). 그 상태에서는 apps/web이 페이지 로드마다 자동 발급하는
+      // origin-protection 토큰이 로그인·가입·비밀번호 재설정에 그대로 통한다.
+      //
+      // 이 플러그인은 expectedAction을 엔드포인트별로 못 받고 전체에 하나만 적용한다. 그래서 네 경로가
+      // action 하나(TURNSTILE_AUTH_ACTION)를 공유하고, 위젯 쪽도 같은 값을 보내야 한다.
+      expectedAction: TURNSTILE_AUTH_ACTION,
+      // 위젯 domains에 apex를 넣으면 서브도메인이 자동 커버되므로, 실제 호스트 고정은 여기가 담당한다.
+      allowedHostnames: [new URL(env.BETTER_AUTH_URL).hostname],
     }),
     genericOAuth({
       config: [

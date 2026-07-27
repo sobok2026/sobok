@@ -118,9 +118,19 @@ export const PROBLEM = {
     status: 400,
     title: '지금 사용 중인 기기는 여기서 로그아웃할 수 없어요',
   },
+  // 토큰이 만료됐거나 이미 쓴 경우. 다시 풀면 통과하므로 HUMAN_VERIFICATION_FAILED 와 상태 코드부터 다르다.
+  // 위조 토큰도 여기로 떨어진다 — Cloudflare 가 만료와 위조를 같은 코드로 답하고, 굳이 갈라 주면 공격자에게
+  // "위조가 걸렸다"는 신호만 준다.
+  HUMAN_VERIFICATION_EXPIRED: {
+    slug: 'human-verification-expired',
+    status: 400,
+    title: '보안 확인이 만료됐어요. 다시 시도해 주세요',
+  },
+  // 호스트·action 핀이 거절한 경우. 다시 풀어도 통과하지 못하므로 403 이고, 둘 중 무엇이 어긋났는지는
+  // 절대 알려 주지 않는다(크로스앱 리플레이 탐색의 오라클이 된다).
   HUMAN_VERIFICATION_FAILED: {
     slug: 'human-verification-failed',
-    status: 400,
+    status: 403,
     title: '보안 확인에 실패했어요',
   },
   INVALID_CREDENTIALS: {

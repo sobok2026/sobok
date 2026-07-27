@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    // Workers runtime only — no DOM, no Node, no Bun. This is the guarantee the package exists to give:
+    // anything that type-checks here runs on Workers. (@sobok/http fails this test — it reads process.env at
+    // module scope and calls Buffer.byteLength, so it can't be reused from a Worker.)
+    "lib": ["ES2022"],
+    // Override the base's @types-only typeRoots so the scoped Workers runtime types resolve.
+    "typeRoots": ["../../node_modules", "../../node_modules/@types"],
+    "types": ["@cloudflare/workers-types"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

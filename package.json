@@ -18,7 +18,7 @@
     "start": "bun run start:prod",
     "start:local": "turbo start:local --filter=@sobok/web --filter=@sobok/api --filter=@sobok/chat --filter=@sobok/chat-worker --filter=@sobok/chat-push",
     "start:prod": "turbo start:prod --filter=@sobok/web --filter=@sobok/api --filter=@sobok/chat --filter=@sobok/chat-worker --filter=@sobok/chat-push",
-    "type": "turbo run type type:root",
+    "type": "turbo run type type:root --continue=dependencies-successful",
     "type:root": "tsc -p tsconfig.json --noEmit",
     "lint": "biome check --write .",
     "format": "prettier --write '**/*.{css,md,yml,yaml,html}'",

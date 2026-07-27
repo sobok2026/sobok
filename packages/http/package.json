@@ -10,17 +10,13 @@
     "./image-proxy": "./src/image-proxy.ts",
     "./problem-details": "./src/problem-details.ts",
     "./rate-limit": "./src/rate-limit.ts",
-    "./request": "./src/request.ts",
-    "./turnstile": "./src/turnstile.ts"
+    "./request": "./src/request.ts"
   },
   "scripts": {
     "type": "tsc --noEmit"
   },
   "dependencies": {
     "@sobok/env": "workspace:*",
-    "@sobok/std": "workspace:*",
-    "@t3-oss/env-core": "^0.13.11",
-    "ms": "^2.1.3",
-    "zod": "^4.3.6"
+    "ms": "^2.1.3"
   }
 }

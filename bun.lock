@@ -46,6 +46,7 @@
         "@sobok/contracts": "workspace:*",
         "@sobok/db": "workspace:*",
         "@sobok/domain": "workspace:*",
+        "@sobok/edge": "workspace:*",
         "@sobok/env": "workspace:*",
         "@sobok/events": "workspace:*",
         "@sobok/http": "workspace:*",
@@ -158,6 +159,7 @@
         "@marsidev/react-turnstile": "^1.5.3",
         "@next/third-parties": "^16.2.11",
         "@sobok/domain": "workspace:*",
+        "@sobok/edge": "workspace:*",
         "@swisseph/browser": "1.1.0",
         "@tanstack/react-query": "^5.101.1",
         "downshift": "^9.0.0",
@@ -197,6 +199,7 @@
         "@portone/browser-sdk": "^0.1.9",
         "@portone/server-sdk": "^0.19.0",
         "@sobok/domain": "workspace:*",
+        "@sobok/edge": "workspace:*",
         "clsx": "^2.1.1",
         "drizzle-orm": "1.0.0-rc.4",
         "hono": "^4.12.27",
@@ -324,6 +327,7 @@
         "@better-auth/passkey": "^1.6.18",
         "@better-auth/redis-storage": "^1.6.18",
         "@sobok/billing": "workspace:*",
+        "@sobok/contracts": "workspace:*",
         "@sobok/db": "workspace:*",
         "@sobok/domain": "workspace:*",
         "@sobok/env": "workspace:*",
@@ -389,6 +393,18 @@
         "ms": "^2.1.3",
       },
     },
+    "packages/edge": {
+      "name": "@sobok/edge",
+      "version": "1.1.0",
+      "dependencies": {
+        "drizzle-orm": "1.0.0-rc.4",
+        "postgres": "^3.4.9",
+      },
+      "devDependencies": {
+        "@cloudflare/workers-types": "^4.20260701.0",
+        "typescript": "^6.0.3",
+      },
+    },
     "packages/env": {
       "name": "@sobok/env",
       "version": "1.1.0",
@@ -414,10 +430,7 @@
       "version": "1.1.0",
       "dependencies": {
         "@sobok/env": "workspace:*",
-        "@sobok/std": "workspace:*",
-        "@t3-oss/env-core": "^0.13.11",
         "ms": "^2.1.3",
-        "zod": "^4.3.6",
       },
     },
     "packages/kv": {
@@ -1105,6 +1118,8 @@
     "@sobok/db": ["@sobok/db@workspace:packages/db"],
 
     "@sobok/domain": ["@sobok/domain@workspace:packages/domain"],
+
+    "@sobok/edge": ["@sobok/edge@workspace:packages/edge"],
 
     "@sobok/env": ["@sobok/env@workspace:packages/env"],
 
