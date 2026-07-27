@@ -1,4 +1,4 @@
-name: Lint
+name: Lint & Types
 
 on:
   pull_request:
@@ -9,14 +9,17 @@ permissions:
   contents: read
 
 concurrency:
-  group: lint-${{ github.ref }}
+  group: lint-type-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: Biome
+  lint-and-type:
+    name: Biome + TypeScript
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    env:
+      CI: true
+      NEXT_TELEMETRY_DISABLED: '1'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -42,3 +45,12 @@ jobs:
 
       - name: Prettier check (css, markdown, yaml, html)
         run: bunx prettier --check '**/*.{css,md,yml,yaml,html}' --ignore-path .gitignore
+
+      # Until now nothing in CI ran tsc — the only gate was the .husky/pre-push hook, which `--no-verify`
+      # skips. Deploy workflows build the app they deploy, so a type error in a package that no deploy
+      # touches could reach main unnoticed.
+      - name: Type check
+        run: bun run type
+
+      - name: Assert no generated-file drift
+        run: git diff --exit-code
