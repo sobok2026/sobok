@@ -30,15 +30,13 @@ export function ResultHero({ content, profile, refined = false }: ResultHeroProp
       <h1 className={cn('break-keep font-black text-3xl sm:text-4xl', refined ? 'mt-3' : 'mt-6')}>{gemName}</h1>
       <p className="mt-2 text-page-ink/58 text-sm">{motiveLabels.join(' · ')}</p>
 
-      <div className="mt-6 grid grid-cols-3 gap-2">
-        <CodeChip label={content.ui.layerPersona} value={profile.persona.code} />
+      <div className="mt-6 grid grid-cols-2 gap-2">
         <CodeChip label={content.ui.layerInner} value={profile.inner.code} />
         <CodeChip accent label={content.ui.layerGem} value={profile.gem.code} />
       </div>
 
       <p className="mt-6 px-2 text-left text-page-ink/72 leading-8 sm:px-0">
         {content.ui.summaryTemplate
-          .replace('{persona}', profile.persona.code)
           .replace('{inner}', profile.inner.code)
           .replace('{gem}', `${gemName} (${profile.gem.code})`)}
       </p>

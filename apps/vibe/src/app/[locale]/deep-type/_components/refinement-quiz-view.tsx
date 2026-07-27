@@ -1,7 +1,7 @@
 'use client'
 
-import type { AssessmentProfile, ItemAnswer } from '@deep-type/model'
-import { REFINEMENT_PRESENTATION } from '@deep-type/presentation'
+import type { ItemAnswer, WorkAnswer } from '@deep-type/model'
+import { PAID_LIKERT_PRESENTATION } from '@deep-type/presentation'
 import { useState } from 'react'
 
 import { postRefinement } from '../_lib/api'
@@ -11,18 +11,21 @@ import { QuizView } from './quiz-view'
 type RefinementQuizViewProps = {
   accessToken: string
   content: DeepTypeContent
-  onComplete: (profile: AssessmentProfile) => void
+  // No payload: the refined profile is paid content and reaches the client through the report poll.
+  onComplete: () => void
+  /** The whole forced-choice set the refined tally needs, free drain block included. */
+  workAnswers: WorkAnswer[]
 }
 
-export function RefinementQuizView({ accessToken, content, onComplete }: RefinementQuizViewProps) {
+export function RefinementQuizView({ accessToken, content, onComplete, workAnswers }: RefinementQuizViewProps) {
   const [answers, setAnswers] = useState<ItemAnswer[]>([])
   const [status, setStatus] = useState<'answering' | 'submitting' | 'error'>('answering')
-  const item = REFINEMENT_PRESENTATION[answers.length]
+  const item = PAID_LIKERT_PRESENTATION[answers.length]
   const paywall = content.paywall
 
   async function answer(nextAnswer: ItemAnswer) {
     const nextAnswers = [...answers, nextAnswer]
-    if (nextAnswers.length < REFINEMENT_PRESENTATION.length) {
+    if (nextAnswers.length < PAID_LIKERT_PRESENTATION.length) {
       setAnswers(nextAnswers)
       setStatus('answering')
       return
@@ -30,8 +33,8 @@ export function RefinementQuizView({ accessToken, content, onComplete }: Refinem
 
     setStatus('submitting')
     try {
-      const result = await postRefinement(accessToken, nextAnswers)
-      onComplete(result.profile)
+      await postRefinement(accessToken, nextAnswers, workAnswers)
+      onComplete()
     } catch {
       setStatus('error')
     }
@@ -62,8 +65,8 @@ export function RefinementQuizView({ accessToken, content, onComplete }: Refinem
         itemId={item.id}
         onAnswer={answer}
         onBack={answers.length > 0 ? () => setAnswers((current) => current.slice(0, -1)) : undefined}
-        progressLabel={`${paywall.refinementStepLabel} · ${answers.length + 1} / ${REFINEMENT_PRESENTATION.length}`}
-        progressPercent={Math.round(((answers.length + 1) / REFINEMENT_PRESENTATION.length) * 100)}
+        progressLabel={`${paywall.refinementStepLabel} · ${answers.length + 1} / ${PAID_LIKERT_PRESENTATION.length}`}
+        progressPercent={Math.round(((answers.length + 1) / PAID_LIKERT_PRESENTATION.length) * 100)}
         question={content.questions[item.id]}
       />
     </div>

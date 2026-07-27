@@ -6,12 +6,16 @@ export async function alertDiscord(webhookUrl: string, text: string): Promise<vo
     return
   }
   try {
-    await fetch(webhookUrl, {
+    const response = await fetch(webhookUrl, {
       body: JSON.stringify({ content: text.slice(0, 1900) }),
       headers: { 'content-type': 'application/json' },
       method: 'POST',
     })
-  } catch {
-    // swallow — alerts are advisory
+
+    if (!response.ok) {
+      console.error('deeptype.alert.rejected', { status: response.status })
+    }
+  } catch (error) {
+    console.error('deeptype.alert.failed', { message: error instanceof Error ? error.message : String(error) })
   }
 }

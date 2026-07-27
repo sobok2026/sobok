@@ -1,14 +1,15 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
 
-import { openFresh, withDb } from '~/db/client'
+import { openFresh, withDB } from '~/db/client'
 import { insertReopenLinks, listReopenCandidates } from '~/db/queries/reopen'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { sendReopenEmail } from '~/lib/reopen-email'
 import { REOPEN_LINK_TTL_MS } from '~/lib/retention'
 import { normalizeEmail, randomToken, sha256Hex } from '~/lib/tokens'
-import { verifyTurnstile } from '~/lib/turnstile'
+import { guardTurnstile } from '~/lib/turnstile'
+import { DEEPTYPE_REOPEN_ACTION } from '../../actions'
 
 const RequestBody = z.object({
   email: z.string().email().max(254),
@@ -27,20 +28,19 @@ route.post('/', async (c) => {
   }
 
   const body = parsed.data
-  const turnstileOk = await verifyTurnstile(
-    await c.env.DEEPTYPE_TURNSTILE_SECRET.get(),
-    body.turnstileToken,
-    c.req.header('cf-connecting-ip') ?? null,
-  )
-  if (!turnstileOk) {
-    return problem(403, 'turnstile-failed')
+
+  // Gated before the email is ever looked up, so a Turnstile failure cannot become an enumeration oracle:
+  // the response depends only on the solve, never on whether that address bought anything.
+  const denied = await guardTurnstile(c, { expectedAction: DEEPTYPE_REOPEN_ACTION, token: body.turnstileToken })
+  if (denied) {
+    return denied
   }
 
   const email = normalizeEmail(body.email)
   const emailHash = await sha256Hex(email)
   const now = new Date()
 
-  const links = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  const links = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const candidates = await listReopenCandidates(db, emailHash, now)
     const issued = await Promise.all(
       candidates.map(async (candidate) => {

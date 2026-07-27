@@ -1,14 +1,15 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
 
-import { openFresh, withDb } from '~/db/client'
+import { openFresh, withDB } from '~/db/client'
 import { createPendingPurchase } from '~/db/queries/purchase'
 import { getResultForCheckoutByToken } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { resolveSku } from '~/lib/pricing'
 import { newPaymentId, normalizeEmail, randomToken, sha256Hex } from '~/lib/tokens'
-import { verifyTurnstile } from '~/lib/turnstile'
+import { guardTurnstile } from '~/lib/turnstile'
+import { DEEPTYPE_CHECKOUT_ACTION } from '../actions'
 
 // Phase 3: checkout → PortOne → verify / webhook.
 const CheckoutBody = z.object({
@@ -19,6 +20,29 @@ const CheckoutBody = z.object({
   consentPrivacy: z.boolean(),
   ageConfirmed: z.boolean(),
   turnstileToken: z.string().min(1).max(2048),
+  // The buyer's GA4 identity, read from the first-party cookies while they are still on the paywall. Purely
+  // routing data for the server-side `purchase`: it is never trusted for entitlement, pricing or identity, and
+  // is null whenever `analytics_storage` is denied. The shapes are pinned so a forged value cannot smuggle
+  // anything into the Measurement Protocol payload.
+  //
+  // `.catch(null)` is the load-bearing part: this field must be unable to fail the request. Without it a
+  // cookie Google reshapes tomorrow — it has reshaped `_ga_<stream>` once already — turns every checkout into
+  // a 422 and stops the sale. A missing analytics field costs a measurement, never money.
+  analytics: z
+    .object({
+      clientId: z.string().regex(/^\d{1,24}\.\d{1,24}$/),
+      // Stored and forwarded as the whole cookie value, so the charset is the opaque-token set (base64 in
+      // both alphabets, plus GA's `$` separators) rather than today's exact grammar — pinning it tighter
+      // would mean Google reshaping the value once again costs every session. Its own `.catch(null)` keeps
+      // that blast radius to the session: a client id still reaches the Worker on its own.
+      sessionId: z
+        .string()
+        .regex(/^[A-Za-z0-9$._~+/=-]{1,128}$/)
+        .nullable()
+        .catch(null),
+    })
+    .nullish()
+    .catch(null),
 })
 
 const route = new Hono<AppEnv>()
@@ -36,16 +60,11 @@ route.post('/', async (c) => {
     return problem(422, 'consent-required')
   }
 
-  // Always enforced on the paid path (the shared "sobok" Turnstile widget). Locally the widget test key +
-  // test secret pass any token; prod requires a real solved token (Phase 7 wires the frontend widget).
-  const turnstileOk = await verifyTurnstile(
-    await c.env.DEEPTYPE_TURNSTILE_SECRET.get(),
-    body.turnstileToken,
-    c.req.header('cf-connecting-ip') ?? null,
-  )
-
-  if (!turnstileOk) {
-    return problem(403, 'turnstile-failed')
+  // Always enforced on the paid path — this is the gate that keeps bots from minting pending purchases and
+  // probing the funnel. Never conditional on the environment: a testing-key bypass would ship to production.
+  const denied = await guardTurnstile(c, { expectedAction: DEEPTYPE_CHECKOUT_ACTION, token: body.turnstileToken })
+  if (denied) {
+    return denied
   }
 
   const email = normalizeEmail(body.email)
@@ -54,7 +73,7 @@ route.post('/', async (c) => {
   const accessToken = randomToken()
   const now = new Date()
 
-  const detail = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  const detail = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const result = await getResultForCheckoutByToken(db, body.resultToken)
     if (!result) {
       return null
@@ -77,6 +96,8 @@ route.post('/', async (c) => {
       consentWithdrawalAt: now,
       consentPrivacyAt: now,
       ageConfirmedAt: now,
+      gaClientId: body.analytics?.clientId ?? null,
+      gaSessionId: body.analytics?.sessionId ?? null,
     })
 
     return sku

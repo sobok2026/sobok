@@ -8,9 +8,10 @@
 
 - **워커 1개** = 정적 Next 에셋(`assets` 바인딩, `output: 'export'`) + `/api/deep-type/*` Hono 라우트(`run_worker_first`).
 - **Hyperdrive 2개**: `HYPERDRIVE_FRESH`(캐시 비활성 — 돈·엔티틀먼트 조회/쓰기), `HYPERDRIVE_CACHED`(완료된 리포트 본문 등 불변 읽기). **Supabase Postgres(세션 풀러, 서울 ap-northeast-2)** origin. 공개 CA라 CA 업로드 불필요(`sslmode=require`).
-- **Secrets Store**(계정당 1개): PortOne API/웹훅 시크릿, Anthropic 키, Resend 키, Turnstile 시크릿, Discord 웹훅. `await env.<binding>.get()`으로 읽음.
+- **Secrets Store**(계정당 1개): PortOne API/웹훅 시크릿, Anthropic 키, Resend 키, Turnstile 시크릿, Discord 웹훅, GA4 Measurement Protocol 시크릿. `await env.<binding>.get()`으로 읽음.
 - **Cron 2개**: `*/15 * * * *` 결제 pending 재조정(`reconcileStalePending`), `0 3 * * *` 리텐션 purge(`runRetentionPurge`).
 - **DB**: drizzle-kit `push`(버전 마이그레이션 없음). 테이블 5개(`deeptype_result/purchase/report/reopen_access/webhook_event`).
+- **분석 파이프라인**: GTM 컨테이너 `GTM-MH37D28N`(4개 사이트 공용) → GA4 `G-RHHX4JRYDS`. 컨테이너 로더는 **앱이 싣는다**(`@sobok/analytics/gtm-loader`, 4개 앱 공용). Cloudflare Google tag gateway는 zone에서 **프록시로만** 켜져 있고(`setUpTag` off) `/h8ou/*`를 서빙할 뿐 HTML에 아무것도 주입하지 않으므로, 이 컴포넌트를 빼면 측정이 통째로 사라진다. 브라우저는 `dataLayer`에 퍼널 이벤트만 push하고, 돈이 걸린 `purchase`는 **결제 승인 CAS를 이긴 Worker가 Measurement Protocol로 직접** 보낸다.
 - **측정 계약**: `3.0.0`. 문항별 의미가 구체적인 4개 선택지로 구성된 무료 50문항을 Worker가 재채점해 겉 16유형·속 16유형·보석 16분류를 만들고, 결제 후에는 모든 사용자에게 동일한 24개 심화 문항으로 속·보석을 재산출한다. 클라이언트가 보낸 유형 코드는 신뢰하지 않는다.
 
 라우트:
@@ -44,14 +45,16 @@
    **런타임 역할·권한도 이 워크스페이스가 소유한다**(`roles.tf`, `cyrilgdn/postgresql` provider): 최소권한 `deeptype_app`(+ stella용 `stella_app`) 역할·grant·default privileges를 세션 풀러로 접속해 생성하고 비밀번호를 `random_password`로 만들어 sensitive output으로 노출한다. ⚠️ 이 provider 때문에 **이 워크스페이스의 모든 plan/apply가 DB 접속을 요구**한다 — Free 플랜 일시정지 시 실패하므로 ops 실행 전 **Pro 유지(또는 사전 언포즈)** 필요.
 2. **Hyperdrive ×2 (`account-vibe`)** — `terraform apply` → 두 config id. **origin(host/port/db/user/password) 전부 `sobok-prod`에서 `terraform_remote_state`로 링크**(수동 복사·손-설정 비밀번호 없음, 별도 토큰 불필요 — 런 자체 크레덴셜). user는 최소권한 `deeptype_app.<ref>`(owner `postgres` 아님). 전제: ① `sobok-prod` 먼저 apply(outputs 존재) ② sobok-prod → account-vibe **Remote State Sharing** 활성화 ③ 데이터소스의 `organization`+워크스페이스 `name`이 실제 HCP와 정확히 일치(**org=`sobok2026`, ws=`sobok-prod`** — VCS-무시되는 cloud{} 블록의 "sobok"과 다름).
 3. **Secrets Store** — 계정 스토어 id 확보(`wrangler secrets-store store list` 또는 대시보드). `account-vibe`의 `secrets.tf`가 시크릿 6개를 push:
-   `deeptype-portone-api-secret` · `deeptype-portone-webhook-secret` · `deeptype-anthropic-api-key` · `deeptype-resend-api-key` · `sobok-turnstile-secret` · `deeptype-discord-webhook`.
+   `deeptype-portone-api-secret` · `deeptype-portone-webhook-secret` · `deeptype-anthropic-api-key` · `deeptype-resend-api-key` · `deeptype-discord-webhook` · `deeptype-ga4-api-secret`. Turnstile 시크릿(`vibe-turnstile-secret`)만 예외로 **`account-turnstile` 워크스페이스**가 위젯과 함께 push한다.
    값은 HCP Terraform 민감 변수(`account-vibe`)로 설정.
 4. **PortOne(딥타입 전용 스토어)** — 스토어 생성 → **store id + Toss Payments V2 channel key**(공개 vars), **API secret + 웹훅 secret**(Secrets Store). 콘솔에서 **웹훅 URL 등록**: `https://<worker-domain>/api/deep-type/webhook`. EN·JA·ZH 이용자에게 해외 발급 카드를 받으려면 Toss Payments에 **해외카드(KRW) 추가 계약·기능 활성화**를 완료해야 한다. 앱은 비한국어 결제에 PortOne의 `bypass.tosspayments.useInternationalCardOnly = true`를 사용한다. 계약 없이 코드만 켜서는 승인되지 않는다.
-5. **Turnstile** — 공유 "sobok" 위젯의 **sitekey**(프론트 빌드 env) + **secret**(Secrets Store, `sobok-turnstile-secret`).
+5. **Turnstile** — vibe **전용 위젯**(`account-turnstile` 워크스페이스, 호스트네임 `vibe.sobok.cc`)의 **sitekey**(GitHub 저장소 변수 `VIBE_TURNSTILE_SITE_KEY` → 프론트 빌드 env) + **secret**(Secrets Store, `vibe-turnstile-secret`). 아직 apply 전이며 `moved`/`import` 블록이 없어 apply 시 기존 공유 위젯이 파괴·재생성된다 — sitekey 교체와 반드시 한 번에 넘겨야 한다.
 6. **Anthropic** — 리포트 생성용 API 키 → Secrets Store. 기본 모델은 재현 가능한 고정 스냅샷 `claude-haiku-4-5-20251001`이며, 교체는 품질 회귀 확인 후 `DEEPTYPE_REPORT_MODEL`로 명시한다.
 7. **Resend** — `sending_access` 전용 API 키를 `deeptype-resend-api-key`로 저장하고 `vibe.sobok.cc` 발신 도메인을 검증한다. Resend가 발급한 SPF/DKIM/MX 레코드는 Cloudflare DNS의 desired state에 옮긴 뒤 검증하며, 인증 링크가 중계 서비스에 노출되지 않도록 이 트랜잭션 발신 도메인의 **클릭 추적과 오픈 추적을 끈다**. 발신자는 `vibe <reports@vibe.sobok.cc>`, 회신 주소는 실제 모니터링하는 `sobok2026@gmail.com`이다. 발송은 같은 idempotency key로 일시 오류를 최대 3회 재시도한다.
-8. **Google Privacy & Messaging** — AdSense에서 유럽 규정 메시지와 미국 주 규정 메시지를 게시하고, 메시지 설정의 Consent Mode 광고·분석 통합을 모두 켠다. 앱은 선택 전 `ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`을 `denied`로 초기화한다.
-9. **Discord**(선택) — 알림 웹훅 URL → Secrets Store(`account-vibe` HCP 변수 `deeptype_discord_webhook`). 빈 값이면 알림 no-op. Discord에는 구매·결제 식별자를 보내지 않고 이벤트 종류만 보낸다.
+8. **Google Privacy & Messaging** — AdSense에서 유럽 규정 메시지와 미국 주 규정 메시지를 게시하고, 메시지 설정의 Consent Mode 광고·분석 통합을 모두 켠다. Google 인증 CMP가 유일한 `consent update` 주체다.
+   동의 **기본값은 앱이 아니라 GTM 컨테이너**(`sobok-ops/infra/gtm/sobok.cc/GTM-MH37D28N.json`의 `Consent Mode - 지역별 기본값`, Consent Initialization 트리거)가 소유한다. Consent Initialization은 GTM이 다른 모든 태그보다 먼저 실행을 보장하는 유일한 훅이라, 기본값을 페이지로 옮기면 법적 통제 장치의 진실 원천이 둘로 갈린다. EEA·영국·스위스 32개국은 선택 전 전부 `denied`(+`wait_for_update: 500`), 그 외 지역은 `granted`이며 `ads_data_redaction`·`url_passthrough`는 항상 켜 둔다.
+9. **GA4 Measurement Protocol** — GA4 관리 → 데이터 스트림 → `vibe.sobok.cc`(`G-RHHX4JRYDS`) → **Measurement Protocol API 비밀번호**를 발급해 `deeptype-ga4-api-secret`으로 저장한다(HCP 변수 `deeptype_ga4_api_secret`). 결제 승인 CAS를 이긴 호출만 `purchase`를 보내며, 빈 값이면 전송만 조용히 생략되고 결제·리포트는 영향받지 않는다. GA4에서 `purchase`를 **키 이벤트로 표시**해야 Ads 전환 가져오기가 가능하다.
+10. **Discord**(선택) — 알림 웹훅 URL → Secrets Store(`account-vibe` HCP 변수 `deeptype_discord_webhook`). 빈 값이면 알림 no-op. Discord에는 구매·결제 식별자를 보내지 않고 이벤트 종류만 보낸다.
 
 > **drizzle-kit push**는 Hyperdrive를 우회해 Supabase에 **owner로 직접** 붙는다: `DEEPTYPE_POSTGRES_URL_DIRECT`를 Supabase **세션 풀러**(5432, `postgres.<ref>`) 또는 IPv6 가능 머신에서 direct 연결로 설정한다. 런타임 Worker는 이와 별개로 최소권한 `deeptype_app`로 접속한다. **순서 불변식**: `sobok-prod` apply(스키마·역할·grant·default privileges 생성)가 **첫 `db:push`보다 먼저** — 그래야 push가 만드는 테이블이 default privileges를 상속한다.
 
@@ -61,12 +64,12 @@
 
 - `apps/vibe/wrangler.jsonc`
   - `hyperdrive[].id` = `REPLACE_WITH_*_ID` → 2의 fresh/cached id
-  - `secrets_store_secrets[].store_id` = 계정 Secrets Store id(6곳)
+  - `secrets_store_secrets[].store_id` = 계정 Secrets Store id(7곳)
   - `vars.DEEPTYPE_PORTONE_STORE_ID` / `DEEPTYPE_PORTONE_CHANNEL_KEY` → 4의 값
-  - `vars.DEEPTYPE_LLM_ENABLED` = **라이브는 `"1"`**(0이면 정적 폴백만 생성)
   - `vars.DEEPTYPE_REPORT_MODEL` = `claude-haiku-4-5-20251001`처럼 별칭이 아닌 검증된 고정 model id
   - `vars.DEEPTYPE_PUBLIC_ORIGIN` / `DEEPTYPE_EMAIL_FROM` / `DEEPTYPE_EMAIL_REPLY_TO`가 실제 프로덕션 값인지 확인
-- **프론트 sitekey**: `apps/vibe/src/constants.ts`의 `TURNSTILE_SITE_KEY`(공개 상수, AdSense/GTM id와 동일 컨벤션) → 빌드 시 인라인. 이 sitekey와 서버 `sobok-turnstile-secret`은 **같은 위젯 짝**이어야 함(위젯 호스트네임은 `sobok.cc`가 서브도메인 커버).
+  - `vars.DEEPTYPE_GA4_MEASUREMENT_ID` = `src/constants.ts`의 `GA4_MEASUREMENT_ID` 및 컨테이너 `LT - GA4 Measurement ID` 룩업의 `vibe.sobok.cc` 값과 **세 곳이 동일**해야 한다
+- **프론트 sitekey**: `apps/vibe/src/constants.ts`의 `TURNSTILE_SITE_KEY`가 `NEXT_PUBLIC_TURNSTILE_SITE_KEY`를 읽고, CI가 저장소 변수 `VIBE_TURNSTILE_SITE_KEY`로 주입해 빌드 시 인라인한다(값이 비면 빌드가 실패한다). 이 sitekey와 서버 `vibe-turnstile-secret`은 **같은 위젯 짝**이어야 함.
 
 ---
 
@@ -78,8 +81,8 @@ cd apps/vibe
 bun run db:push        # drizzle-kit push (5 테이블 + 5 enum)
 bun run type           # next typegen && tsc(프론트) && tsc(worker) — 0 이어야 함
 # deploy = `next build && wrangler deploy` — 정적 out/을 먼저 재빌드한다.
-# Turnstile sitekey는 src/constants.ts의 TURNSTILE_SITE_KEY(공개 상수)에서 빌드 시 인라인된다(값 바꾸려면
-# 그 파일 수정). 프론트 sitekey와 서버 sobok-turnstile-secret은 반드시 같은 위젯 짝이어야 한다.
+# Turnstile sitekey는 NEXT_PUBLIC_TURNSTILE_SITE_KEY(CI 저장소 변수 VIBE_TURNSTILE_SITE_KEY)에서 빌드 시
+# 인라인된다. 프론트 sitekey와 서버 vibe-turnstile-secret은 반드시 같은 위젯 짝이어야 한다.
 bun run deploy
 ```
 
@@ -138,8 +141,18 @@ bun run deploy
 
 1. 새 브라우저에서 무료 검사·재열람·결제 복귀 화면에 연령 게이트가 없고, 결제 화면에서만 만 14세 이상 확인이 필수인지 확인한다.
 2. Google Privacy & Messaging 메시지를 `?fc=alwaysshow&fctype=gdpr`로 강제 표시해 언어·철회 UI를 확인한다.
-3. 선택 전 Consent Mode v2 네 신호가 `denied`, 선택 후 CMP 선택대로 갱신되는지 Tag Assistant에서 확인한다. `/deep-type/reopen`과 `/deep-type/checkout-return`에는 GTM·AdSense 요청이 없어야 한다.
+3. EEA/영국/스위스 IP에서 선택 전 Consent Mode v2 네 신호가 `denied`(GA4 요청의 `gcs=G100`), 선택 후 CMP 선택대로 갱신되는지 Tag Assistant에서 확인한다. 한국 IP에서는 선택 UI 없이 처음부터 `granted`(`gcs=G111`)여야 한다.
 4. 미국 주 규정 메시지도 AdSense 메시지 진단 도구와 대상 지역 테스트로 확인한다.
+5. `/deep-type/reopen`과 `/deep-type/checkout-return`에서 **GTM은 로드되고 AdSense(`pagead2.googlesyndication.com`) 요청만 없어야** 한다. 광고 없는 것은 결제 화면 UX 결정이지 측정 차단이 아니다.
+
+**K. 측정 파이프라인**
+
+1. 컨테이너 로더가 페이지당 **정확히 1개**인지 확인한다 — `<script id="gtm-loader">` 하나가 `/h8ou/gtm.js?id=GTM-MH37D28N`를 받고, `googletagmanager.com/gtm.js`는 `gtg_health` 요청 외에 없어야 한다. Cloudflare에서 `setUpTag`를 켜면 엣지가 두 번째 로더를 주입하므로 여기서 잡힌다(GTG는 zone 단위라 서브도메인별로 끌 수 없다).
+2. GTM 미리보기에서 `view_item` · `begin_checkout` · `view_promotion` · `select_promotion`이 각각 발화하고, GA4 요청에 `items`·`value`·`currency`가 실려 나가는지 확인한다(빈 `items`면 `ecommerce` 객체가 아니라 평면 push로 되돌아간 것이다).
+3. 소액 실결제 1건 후 GA4 실시간 보고서에 `purchase` 1건, `transaction_id` = PortOne `paymentId`, `value` = 결제 금액인지 확인한다. **정확히 1건**이어야 한다 — 웹훅과 브라우저 복귀가 모두 도착해도 CAS 승자만 전송한다.
+4. 같은 결제의 `/verify`를 두 번 호출하고, 두 번째에는 GA4 이벤트가 추가되지 않는지 확인한다.
+5. 전송 성공 후 `deeptype.purchase` 행의 `ga_client_id`·`ga_session_id`가 모두 `null`로 비워졌는지 확인한다.
+6. **라이브 전 필수** — Measurement Protocol 디버그 엔드포인트(`/debug/mp/collect`)로 같은 body를 한 번 보내 `validationMessages`가 비어 있는지 확인한다. 운영 엔드포인트는 잘못된 이벤트도 204를 준다. 특히 `session_id`는 `_ga_<stream>` 쿠키를 **파싱하지 않고 통째로** 싣는 형태이므로(레퍼런스가 "send the full value of the cookie"로 허용하는 경로), 이 검증에서 거부되면 그때 숫자 세션 id 추출로 되돌린다.
 
 **J. 해외카드·모바일 복귀**
 
@@ -152,14 +165,15 @@ bun run deploy
 
 ## 6. 라이브 전환 체크리스트
 
-- [ ] Phase 0 산출물 전부 존재(Supabase·Hyperdrive×2·Secrets Store 6개·PortOne 스토어·Turnstile·Anthropic·Resend).
+- [ ] Phase 0 산출물 전부 존재(Supabase·Hyperdrive×2·Secrets Store 6개·PortOne 스토어·Turnstile·Anthropic·Resend·GA4 API secret).
 - [ ] `wrangler.jsonc` placeholder 전부 치환, `DEEPTYPE_LLM_ENABLED = "1"`, `DEEPTYPE_REPORT_MODEL`은 검증된 고정 id.
-- [ ] `src/constants.ts`의 `TURNSTILE_SITE_KEY` = 실 위젯 sitekey, 서버 `sobok-turnstile-secret` = 그 위젯의 secret(짝 일치).
+- [ ] 저장소 변수 `VIBE_TURNSTILE_SITE_KEY` = vibe 위젯 sitekey, 서버 `vibe-turnstile-secret` = 그 위젯의 secret(짝 일치).
 - [ ] PortOne 콘솔 웹훅 URL = 프로덕션 워커 도메인, Toss Payments 해외카드(KRW) 추가 계약·기능 활성.
 - [ ] Resend 발신 도메인 검증, SPF/DKIM/MX 정상, 인증 메일 클릭·오픈 추적 비활성.
 - [ ] Google 유럽/미국 메시지 게시 및 Consent Mode 광고·분석 통합 활성.
+- [ ] GTM 컨테이너 v3 import·게시 완료(`Consent Mode - 지역별 기본값` + 전자상거래 태그 4종), GA4에서 `purchase` 키 이벤트 표시.
 - [ ] `bun run type` = 0, `db:push` 완료(프로덕션 Supabase).
-- [ ] 스테이징 E2E A–J 통과(특히 B/C/D/H/J — 돈·멱등·환불·재열람·해외/모바일 결제).
+- [ ] 스테이징 E2E A–K 통과(특히 B/C/D/H/J/K — 돈·멱등·환불·재열람·해외/모바일 결제·측정).
 - [ ] Discord 알림 채널 수신 확인.
 - [ ] `wrangler deploy` 후 스모크: `/config` 200, 무료 세션 200, 소액 실결제 1건 → 환불로 정리.
 - [ ] Cron 트리거 2개 활성(`*/15`, `0 3`).
@@ -172,6 +186,6 @@ bun run deploy
 - **재조정**: `*/15` cron이 `verify`를 놓친 pending을 PortOne 재조회로 마감.
 - **리텐션**: `0 3` cron이 미전환 결과와 pending/failed 구매 30일, 완료 리포트의 원본·심화 응답 3개월, 원본 웹훅 90일을 기준으로 정리한다. 결제 1년 뒤 이메일·접근 토큰·파생 결과·리포트를 삭제하고 최소 거래 기록만 5년까지 보관한 뒤 삭제한다. 일회용 재열람 토큰은 만료 즉시 다음 purge에서 삭제한다.
 - **재열람 보안**: 메일 링크는 15분·1회용 SHA-256 해시로 저장한다. 원본 토큰은 URL fragment에 두고, 화면에서 명시적으로 열기를 누르기 전에는 교환하지 않는다.
-- **결제 복귀 보안**: PortOne의 결제 id만 복귀 쿼리로 받고 즉시 URL에서 제거한다. 리포트 access token은 URL에 넣지 않고 탭 한정 `sessionStorage`에 최대 1시간 보관하며, 복귀 페이지에서는 GTM·AdSense를 로드하지 않는다.
+- **결제 복귀 보안**: PortOne의 결제 id만 복귀 쿼리로 받고 즉시 URL에서 제거한다. 리포트 access token은 URL에 넣지 않고 탭 한정 `sessionStorage`에 최대 1시간 보관하며, 복귀 페이지에서는 **AdSense를 로드하지 않는다**(GTM은 측정 연속성 때문에 로드된다 — I-5 참고).
 - **환불 불변식**: `viewed_at != null`이면 환불 거부(청약철회 = 콘텐츠 미열람 한정).
 - **캐시 주의**: 돈·엔티틀먼트는 반드시 `HYPERDRIVE_FRESH`(캐시 비활성)로만 조회/쓰기. 완료 리포트 본문 등 불변 데이터만 `HYPERDRIVE_CACHED` 사용.

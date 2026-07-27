@@ -3,16 +3,17 @@
 import { DEEP_TYPE_REPORT_OFFER } from '@deep-type/offer'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { ArrowLeft, CheckCircle, Sparkles } from '@mynaui/icons-react'
+import { trackEcommerce } from '@sobok/analytics/browser'
 import Link from 'next/link'
 import { type FormEvent, useEffect, useRef, useState } from 'react'
 import { TURNSTILE_SITE_KEY } from '@/constants'
 import { LEGAL } from '@/content/legal'
-import { track } from '@/lib/analytics/browser'
 import { cn } from '@/utils/cn'
+import { DEEPTYPE_CHECKOUT_ACTION } from '../../../../../worker/api/deep-type/actions'
 
 import { type FreeResult, useCheckout } from '../_hooks/use-checkout'
 import { formatKrw } from '../_lib/price'
-import { REPORT_OFFER_ITEMS } from '../_lib/report-offer-analytics'
+import { REPORT_OFFER_ECOMMERCE } from '../_lib/report-offer-analytics'
 import type { DeepTypeContent } from '../_lib/types'
 
 type PaywallViewProps = {
@@ -25,22 +26,17 @@ type PaywallViewProps = {
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallViewProps) {
-  const { errorMessage, start, status } = useCheckout(freeResult)
+  const paywall = content.paywall
+  const { errorMessage, start, status } = useCheckout(freeResult, paywall)
   const [turnstileToken, setTurnstileToken] = useState('')
   const turnstileRef = useRef<TurnstileInstance | undefined>(undefined)
 
-  const paywall = content.paywall
   const discountLabel = paywall.discountTemplate.replace('{discount}', String(DEEP_TYPE_REPORT_OFFER.discountPercent))
   const listPrice = formatKrw(freeResult.locale, DEEP_TYPE_REPORT_OFFER.listAmount)
   const price = formatKrw(freeResult.locale, DEEP_TYPE_REPORT_OFFER.amount)
 
   useEffect(() => {
-    track('view_item', {
-      currency: DEEP_TYPE_REPORT_OFFER.currency,
-      items: REPORT_OFFER_ITEMS,
-      locale: freeResult.locale,
-      value: DEEP_TYPE_REPORT_OFFER.amount,
-    })
+    trackEcommerce('view_item', REPORT_OFFER_ECOMMERCE, { locale: freeResult.locale })
   }, [freeResult.locale])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -50,12 +46,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
       return
     }
 
-    track('begin_checkout', {
-      currency: DEEP_TYPE_REPORT_OFFER.currency,
-      items: REPORT_OFFER_ITEMS,
-      locale: freeResult.locale,
-      value: DEEP_TYPE_REPORT_OFFER.amount,
-    })
+    trackEcommerce('begin_checkout', REPORT_OFFER_ECOMMERCE, { locale: freeResult.locale })
     const email = String(new FormData(event.currentTarget).get('email') ?? '')
     const accessToken = await start(email, turnstileToken)
 
@@ -130,7 +121,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
               onError={() => setTurnstileToken('')}
               onExpire={() => setTurnstileToken('')}
               onSuccess={setTurnstileToken}
-              options={{ responseField: false }}
+              options={{ action: DEEPTYPE_CHECKOUT_ACTION, responseField: false }}
               ref={turnstileRef}
               siteKey={TURNSTILE_SITE_KEY}
             />

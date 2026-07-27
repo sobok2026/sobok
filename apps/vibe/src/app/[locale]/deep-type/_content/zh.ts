@@ -17,6 +17,7 @@ export const deepTypeContent = createDeepTypeContent({
     closestAnswerHint: '如果没有完全符合的答案，请选择最接近现在的你的选项。',
     contextBody: '同一组特质分别在人际情境和独处情境中提问。差异描述的是情境中的表达变化，而不是人格矛盾。',
     contextTitle: '不同情境下的表达变化',
+    evidenceSplitNote: '精细题目上你的答案出现了分歧。条形是目前全部回答的合计，字母保持不变。',
     gemIntroBody: '最后20题探索自我价值依据、连接与自主、情绪处理方式和目标焦点。',
     gemIntroCta: '开始宝石题目',
     gemIntroHint: '不要选择看起来更理想的答案，请选择最接近你实际常见状态的选项。',
@@ -78,6 +79,9 @@ export const deepTypeContent = createDeepTypeContent({
     cta: '开始我的深度报告',
     processing: '正在准备付款...',
     errorGeneric: '付款未能完成，请稍后重试。',
+    errorVerificationExpired: '安全验证已过期，请在下方再确认一次后继续。',
+    errorVerificationFailed: '安全验证未通过，请刷新页面后重试。',
+    errorUnavailable: '安全验证服务暂无响应，请稍后重试。',
     closeCta: '返回免费结果',
     generatingTitle: '正在撰写深度报告',
     generatingBody: '正在将你的回答整理为关于关系、情绪、动力与恢复的12项洞察。',
@@ -149,20 +153,6 @@ export const deepTypeContent = createDeepTypeContent({
         label: '灵活·探索',
         description: '保留选项，并随新情况作出调整',
         reflection: '今天分别选一个继续开放的选项和一个要确定的决定。',
-      },
-    },
-    NE: {
-      name: '情绪反应性',
-      description: '比较在不确定和压力下的敏感反应，与相对快速的情绪恢复。',
-      first: {
-        label: '敏感反应',
-        description: '小的不确定也会停留较久，压力下情绪变化更大',
-        reflection: '把敏感所传达的信号与真实风险程度分开。',
-      },
-      second: {
-        label: '稳定恢复',
-        description: '不适之后相对较快回到平稳状态',
-        reflection: '区分真正恢复与尚未处理的情绪。',
       },
     },
     RM: {

@@ -1,63 +1,59 @@
-import { BASE_ITEMS, GEM_ITEMS, INNER_ITEMS, PERSONA_ITEMS, REFINEMENT_ITEMS } from '@deep-type/questionnaire'
+import { FREE_LIKERT_ITEMS, PAID_LIKERT_ITEMS } from '@deep-type/questionnaire'
 
-import type { DeepTypeContent, QuestionContent, QuestionOptionCatalog } from '../_lib/types'
+import type { DeepTypeContent, QuestionContent, QuestionOptionCatalog, QuestionPromptCatalog } from '../_lib/types'
 
 type DeepTypeTranslations = Omit<DeepTypeContent, 'questions'> & {
   questionOptions: QuestionOptionCatalog
-  questionPrompts: {
-    gem: readonly string[]
-    inner: readonly string[]
-    persona: readonly string[]
-    refinement: readonly string[]
-  }
+  questionPrompts: QuestionPromptCatalog
 }
+
+// The catalog is projected from the scored instrument rather than from whatever the locale files happen to
+// hold. Reserve items keep their authored text so a selection change stays reversible, and they stay out of
+// the bundle until something selects them — at which point a missing translation stops the build instead of
+// shipping a placeholder.
+const SCORED_ITEM_IDS: readonly string[] = [...FREE_LIKERT_ITEMS, ...PAID_LIKERT_ITEMS].map((item) => item.id)
 
 export function createDeepTypeContent(translations: DeepTypeTranslations): DeepTypeContent {
   const { questionOptions, questionPrompts, ...content } = translations
 
-  const questions = Object.fromEntries([
-    ...zip(PERSONA_ITEMS, questionPrompts.persona, questionOptions.persona),
-    ...zip(INNER_ITEMS, questionPrompts.inner, questionOptions.inner),
-    ...zip(GEM_ITEMS, questionPrompts.gem, questionOptions.gem),
-    ...zip(REFINEMENT_ITEMS, questionPrompts.refinement, questionOptions.refinement),
-  ])
-
-  if (Object.keys(questions).length !== BASE_ITEMS.length + REFINEMENT_ITEMS.length) {
-    throw new Error('DeepType question catalog is incomplete')
+  const questions: Record<string, QuestionContent> = {}
+  for (const id of SCORED_ITEM_IDS) {
+    if (questions[id]) {
+      throw new Error(`DeepType selects question ${id} twice`)
+    }
+    questions[id] = buildQuestion(id, questionPrompts, questionOptions)
   }
 
   assertNoBlankStrings({ ...content, questions })
   return { ...content, questions }
 }
 
-function zip(
-  items: readonly { id: string }[],
-  prompts: readonly string[],
-  options: readonly QuestionContent['options'][],
-): [string, QuestionContent][] {
-  if (items.length !== prompts.length || items.length !== options.length) {
-    throw new Error(
-      `DeepType question count mismatch: expected ${items.length}, received ${prompts.length} prompts and ${options.length} option sets`,
-    )
+function buildQuestion(id: string, prompts: QuestionPromptCatalog, options: QuestionOptionCatalog): QuestionContent {
+  const prompt = prompts[id]
+  const itemOptions = options[id]
+  if (!prompt) {
+    throw new Error(`DeepType question ${id} has no prompt`)
   }
-
-  return items.map((item, index) => {
-    const prompt = prompts[index]
-    const itemOptions = options[index]
-    if (!prompt || !itemOptions || itemOptions.length !== 4) {
-      throw new Error(`DeepType question ${item.id} must have exactly four options`)
-    }
-    if (new Set(itemOptions.map((option) => option.trim())).size !== itemOptions.length) {
-      throw new Error(`DeepType question ${item.id} must have four distinct options`)
-    }
-    return [item.id, { options: itemOptions, prompt }]
-  })
+  if (!itemOptions || itemOptions.length !== 4) {
+    throw new Error(`DeepType question ${id} must have exactly four options`)
+  }
+  if (new Set(itemOptions.map((option) => option.trim())).size !== itemOptions.length) {
+    throw new Error(`DeepType question ${id} must have four distinct options`)
+  }
+  return { options: itemOptions, prompt }
 }
+
+// Unauthored copy never reached production as an empty string: the placeholders read `TODO <id> · …`, which is
+// non-empty and passed the blank check untouched.
+const PLACEHOLDER = /\bTODO\b/
 
 function assertNoBlankStrings(value: unknown): void {
   if (typeof value === 'string') {
     if (value.trim().length === 0) {
       throw new Error('DeepType content contains a blank string')
+    }
+    if (PLACEHOLDER.test(value)) {
+      throw new Error(`DeepType content contains a placeholder: ${value}`)
     }
     return
   }

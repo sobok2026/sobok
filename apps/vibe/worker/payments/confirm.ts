@@ -103,7 +103,6 @@ async function reportPurchase(
   const delivered = await sendGA4Purchase(
     { apiSecret, measurementId: env.DEEPTYPE_GA4_MEASUREMENT_ID },
     {
-      adsConsent: purchase.gaAdsConsent ?? false,
       clientId: purchase.gaClientId,
       currency: purchase.currency,
       items: [item],

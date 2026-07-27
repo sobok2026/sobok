@@ -1,16 +1,15 @@
 import '../globals.css'
 
+import GTMLoader from '@sobok/analytics/gtm-loader'
 import { LOCALE_LANGUAGE_TAGS, Locale } from '@sobok/domain/locale'
 import type { Metadata, Viewport } from 'next'
-import Script from 'next/script'
 import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 import BottomNav from '@/components/BottomNav'
-import Footer from '@/components/Footer'
 import Header from '@/components/Header'
-import { ADSENSE_ACCOUNT, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
+import { ADSENSE_ACCOUNT, GTM_ID, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getLocale } from '@/i18n/server'
-import Analytics from '@/lib/analytics/Analytics'
+import AdSense from '@/lib/ads/AdSense'
 import JsonLd, { siteGraph } from '@/lib/JsonLd'
 
 export function generateStaticParams() {
@@ -48,11 +47,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
 
   return (
     <html lang={LOCALE_LANGUAGE_TAGS[locale]}>
-      <head>
-        <Script id="google-consent-default" strategy="beforeInteractive">
-          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('consent','default',{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});gtag('set','ads_data_redaction',true);`}
-        </Script>
-      </head>
+      {/* Consent Mode defaults are NOT set here. They live in the container, on the Consent Initialization
+          trigger — the one hook GTM guarantees runs before every other tag, and therefore the only place the
+          defaults are ordered correctly relative to the tags they gate. Duplicating them page-side would give
+          two sources of truth for a legal control. See infra/gtm/sobok.cc/GTM-MH37D28N.json in sobok-ops. */}
       {/* Korean (Hangul) — base Pretendard dynamic subset. */}
       <link
         href="/fonts/pretendard/1.3.9/variable/pretendardvariable-dynamic-subset.css"
@@ -76,7 +74,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           </div>
           <BottomNav locale={locale} />
         </NextIntlClientProvider>
-        <Analytics />
+        <AdSense />
+        <GTMLoader containerId={GTM_ID} productionOrigin={ORIGIN} />
       </body>
     </html>
   )

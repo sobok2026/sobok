@@ -18,6 +18,8 @@ export const deepTypeContent = createDeepTypeContent({
     contextBody:
       '同じ特性を、人といる場面と一人の場面に分けて尋ねました。差は性格の矛盾ではなく、状況による表れ方の違いとして読みます。',
     contextTitle: '状況による表れ方の違い',
+    evidenceSplitNote:
+      '精密設問では答えが分かれました。バーはこれまでの回答をすべて合わせた結果で、文字は変わりません。',
     gemIntroBody: '最後の20問では、自己価値の基準、つながりと自律、感情処理、目標への焦点を見ていきます。',
     gemIntroCta: 'Gemの質問を始める',
     gemIntroHint: 'よく見える答えではなく、実際によく現れる自分に近い選択肢を選んでください。',
@@ -80,6 +82,9 @@ export const deepTypeContent = createDeepTypeContent({
     cta: '詳細レポートを始める',
     processing: '決済を準備しています...',
     errorGeneric: '決済を完了できませんでした。しばらくしてから再度お試しください。',
+    errorVerificationExpired: 'セキュリティ確認の有効期限が切れました。下でもう一度確認してからお進みください。',
+    errorVerificationFailed: 'セキュリティ確認を通過できませんでした。ページを再読み込みしてお試しください。',
+    errorUnavailable: 'セキュリティ確認サーバーが応答していません。しばらくしてから再度お試しください。',
     closeCta: '無料結果に戻る',
     generatingTitle: '詳細レポートを作成しています',
     generatingBody: '回答をもとに、人間関係・感情・モチベーション・回復の12のインサイトを整理しています。',
@@ -151,20 +156,6 @@ export const deepTypeContent = createDeepTypeContent({
         label: '柔軟・探索',
         description: '選択肢を残し、状況に合わせて調整しやすい',
         reflection: '残す選択肢と今日決める選択を一つずつ定めましょう。',
-      },
-    },
-    NE: {
-      name: '感情反応性',
-      description: '不確実さや圧力への敏感な反応と、比較的速い安定回復を比べます。',
-      first: {
-        label: '敏感な反応',
-        description: '小さな不確実さが残り、圧力で感情が大きく動きやすい',
-        reflection: '敏感さが伝えるサインと実際の危険度を分けてみましょう。',
-      },
-      second: {
-        label: '安定した回復',
-        description: '不快な出来事の後も比較的早く平静に戻りやすい',
-        reflection: '本当の回復と、まだ扱っていない感情を区別してみましょう。',
       },
     },
     RM: {

@@ -1,20 +1,19 @@
 'use client'
 
-import { type AssessmentProfile, AXIS_POLES, CONTEXT_AXES, GEM_AXES } from '@deep-type/model'
+import { type AssessmentProfile, AXIS_POLES, GEM_AXES, TYPE_AXES } from '@deep-type/model'
 import { DEEP_TYPE_REPORT_OFFER } from '@deep-type/offer'
 import { Refresh, Share } from '@mynaui/icons-react'
+import { trackEcommerce } from '@sobok/analytics/browser'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
-import { track } from '@/lib/analytics/browser'
 import { cn } from '@/utils/cn'
 import type { ReportSection } from '../_lib/api'
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
 import { formatKrw } from '../_lib/price'
-import { REPORT_OFFER_ITEMS, REPORT_PROMOTION } from '../_lib/report-offer-analytics'
+import { REPORT_PROMOTION_ECOMMERCE } from '../_lib/report-offer-analytics'
 import type { DeepTypeContent } from '../_lib/types'
 import { AxisProfile } from './axis-profile'
-import { ContextComparison } from './context-comparison'
 import { ResultHero } from './result-hero'
 
 type ReportViewProps = {
@@ -48,7 +47,6 @@ export function ReportView({
   const listPrice = formatKrw(locale, DEEP_TYPE_REPORT_OFFER.listAmount)
   const price = formatKrw(locale, DEEP_TYPE_REPORT_OFFER.amount)
   const shareText = content.ui.reportShareText
-    .replace('{persona}', profile.persona.code)
     .replace('{inner}', profile.inner.code)
     .replace('{gem}', `${gemName} (${profile.gem.code})`)
 
@@ -63,12 +61,7 @@ export function ReportView({
         if (!entry?.isIntersecting) {
           return
         }
-        track('view_promotion', {
-          creative_slot: 'free_result_offer',
-          items: REPORT_OFFER_ITEMS,
-          locale,
-          ...REPORT_PROMOTION,
-        })
+        trackEcommerce('view_promotion', REPORT_PROMOTION_ECOMMERCE, { locale })
         observer.disconnect()
       },
       { threshold: 0.5 },
@@ -84,12 +77,7 @@ export function ReportView({
     if (!onUnlock) {
       return
     }
-    track('select_promotion', {
-      creative_slot: 'free_result_offer',
-      items: REPORT_OFFER_ITEMS,
-      locale,
-      ...REPORT_PROMOTION,
-    })
+    trackEcommerce('select_promotion', REPORT_PROMOTION_ECOMMERCE, { locale })
     onUnlock()
   }
 
@@ -119,8 +107,6 @@ export function ReportView({
     <main className="flex flex-1 flex-col bg-page-bg px-safe py-10 text-page-ink sm:py-14" id="main-content">
       <div className="mx-auto grid w-full max-w-xl gap-4">
         <ResultHero content={content} profile={profile} refined={refined} />
-
-        <ContextComparison content={content} profile={profile} />
 
         {onUnlock ? (
           <section
@@ -153,19 +139,36 @@ export function ReportView({
           <p className="text-page-ink/60 text-xs leading-6">{content.ui.clarityNote}</p>
         </div>
 
-        <AxisProfile
-          axisIds={CONTEXT_AXES}
-          content={content}
-          scores={profile.persona.axes}
-          title={`${content.ui.profileTitle} · ${content.ui.layerPersona}`}
-        />
-        <AxisProfile
-          axisIds={CONTEXT_AXES}
-          content={content}
-          scores={profile.inner.axes}
-          title={`${content.ui.profileTitle} · ${content.ui.layerInner}`}
-        />
-        <AxisProfile axisIds={GEM_AXES} content={content} scores={profile.gem.axes} title={content.ui.layerGem} />
+        {/* Split on `tier` rather than on the `refined` prop: the tier is what carries `evidenceSplit`, and the
+            paid branch is the one `AxisProfile` requires the split sentence from. */}
+        {profile.tier === 'refined' ? (
+          <>
+            <AxisProfile
+              axisIds={TYPE_AXES}
+              content={content}
+              scores={profile.inner.axes}
+              splitNotice={content.ui.evidenceSplitNote}
+              title={`${content.ui.profileTitle} · ${content.ui.layerInner}`}
+            />
+            <AxisProfile
+              axisIds={GEM_AXES}
+              content={content}
+              scores={profile.gem.axes}
+              splitNotice={content.ui.evidenceSplitNote}
+              title={content.ui.layerGem}
+            />
+          </>
+        ) : (
+          <>
+            <AxisProfile
+              axisIds={TYPE_AXES}
+              content={content}
+              scores={profile.inner.axes}
+              title={`${content.ui.profileTitle} · ${content.ui.layerInner}`}
+            />
+            <AxisProfile axisIds={GEM_AXES} content={content} scores={profile.gem.axes} title={content.ui.layerGem} />
+          </>
+        )}
 
         <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6">
           <h2 className="font-black text-lg">{content.ui.reflectionTitle}</h2>

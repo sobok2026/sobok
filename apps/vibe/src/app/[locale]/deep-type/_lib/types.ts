@@ -18,12 +18,11 @@ export type QuestionContent = {
   prompt: string
 }
 
-export type QuestionOptionCatalog = {
-  gem: readonly QuestionContent['options'][]
-  inner: readonly QuestionContent['options'][]
-  persona: readonly QuestionContent['options'][]
-  refinement: readonly QuestionContent['options'][]
-}
+// Keyed by item id, never by position. The four banks used to arrive as parallel arrays zipped against the
+// item list, so reordering or dropping one item shifted every prompt after it onto the wrong scoring vector
+// without any type or runtime error. A lookup by id cannot drift; a missing id throws at build time.
+export type QuestionPromptCatalog = Readonly<Record<string, string>>
+export type QuestionOptionCatalog = Readonly<Record<string, QuestionContent['options']>>
 
 export type DeepTypeUiText = {
   analyzingBody: string
@@ -35,6 +34,10 @@ export type DeepTypeUiText = {
   closestAnswerHint: string
   contextBody: string
   contextTitle: string
+  // Rendered beside any paid axis whose added items lean against the frozen letter. The bar is cumulative and
+  // the letter is not, so without this line the two contradict each other on screen. Required by the type of
+  // `AxisProfile` for refined scores — see `_components/axis-profile.tsx`.
+  evidenceSplitNote: string
   gemIntroBody: string
   gemIntroCta: string
   gemIntroHint: string
@@ -88,6 +91,11 @@ export type DeepTypePaywallContent = {
   emailPlaceholder: string
   effortNote: string
   errorGeneric: string
+  // 보안 확인 실패는 만료(다시 풀면 됨)와 거절(다시 풀어도 안 됨)을 나눠서 안내한다. errorUnavailable 은
+  // Cloudflare 가 답하지 않아 fail closed 로 막은 경우다.
+  errorVerificationExpired: string
+  errorVerificationFailed: string
+  errorUnavailable: string
   fallbackNote: string
   generatingBody: string
   generatingTitle: string

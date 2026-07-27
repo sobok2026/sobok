@@ -95,6 +95,15 @@ export const purchaseTable = deeptype.table(
     refundedAt: timestamp('refunded_at', { precision: 3, withTimezone: true }),
     // Stamped when the done report is actually delivered to the client — gates the unviewed-refund right.
     viewedAt: timestamp('viewed_at', { precision: 3, withTimezone: true }),
+    // GA4 identity snapshotted in the browser at checkout, carried here because the grant that emits the
+    // server-side `purchase` may be performed by the webhook or the reconcile cron, with no browser attached.
+    // Both are null when `analytics_storage` was denied, and are cleared the moment the event is accepted —
+    // they are single-use routing data, not part of the transaction record.
+    gaClientId: varchar('ga_client_id', { length: 64 }),
+    // The `_ga_<stream>` cookie is stored whole, unparsed (see @sobok/analytics/ga-identity). Its current
+    // `GS2.…` form runs to ~95 characters and Google has changed the shape once without notice, so the column
+    // is sized for the value plus room to grow rather than for today's exact grammar.
+    gaSessionId: varchar('ga_session_id', { length: 128 }),
     ...timestamps,
   },
   (t) => [

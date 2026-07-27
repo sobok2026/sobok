@@ -18,6 +18,7 @@ export const deepTypeContent = createDeepTypeContent({
     contextBody:
       '같은 축을 사람들과 있을 때와 혼자 있을 때에 맞춰 물었습니다. 차이는 성격의 모순이 아니라 상황별 표현의 차이로 읽습니다.',
     contextTitle: '상황에 따른 표현 차이',
+    evidenceSplitNote: '정밀 문항에서는 답이 갈렸어요. 막대는 지금까지의 답을 모두 합한 결과이고 글자는 그대로예요.',
     gemIntroBody: '마지막 20문항은 자기가치의 기준, 연결과 자율, 감정 처리, 목표 초점을 살펴봅니다.',
     gemIntroCta: '보석 문항 시작',
     gemIntroHint: '좋아 보이는 답보다 실제로 자주 나타나는 모습에 가까운 선택지를 골라주세요.',
@@ -81,6 +82,9 @@ export const deepTypeContent = createDeepTypeContent({
     cta: '심층 리포트 시작하기',
     processing: '결제를 준비하고 있어요...',
     errorGeneric: '결제를 완료하지 못했어요. 잠시 후 다시 시도해 주세요.',
+    errorVerificationExpired: '보안 확인이 만료됐어요. 아래에서 한 번 더 확인하고 결제해 주세요.',
+    errorVerificationFailed: '보안 확인을 통과하지 못했어요. 페이지를 새로고침한 뒤 다시 시도해 주세요.',
+    errorUnavailable: '보안 확인 서버가 응답하지 않아요. 잠시 후 다시 시도해 주세요.',
     closeCta: '무료 결과로 돌아가기',
     generatingTitle: '심층 리포트를 작성하고 있어요',
     generatingBody: '당신의 응답을 관계, 감정, 동기, 회복의 12개 인사이트로 정리하고 있어요.',
@@ -153,20 +157,6 @@ export const deepTypeContent = createDeepTypeContent({
         label: '유연·탐색',
         description: '선택지를 열어 두고 상황에 맞춰 조정하는 편',
         reflection: '열어 둘 선택과 오늘 닫을 선택을 하나씩 정해 보세요.',
-      },
-    },
-    NE: {
-      name: '정서 반응성',
-      description: '압박과 불확실성에 민감하게 반응하는 방향과 비교적 빠르게 안정되는 방향을 비교합니다.',
-      first: {
-        label: '민감 반응',
-        description: '작은 불확실성도 오래 남고 압박에서 감정 변화가 커지는 편',
-        reflection: '민감함이 알려 주는 신호와 실제 위험을 나누어 적어 보세요.',
-      },
-      second: {
-        label: '안정 회복',
-        description: '불편한 일이 있어도 비교적 빠르게 평정을 되찾는 편',
-        reflection: '빨리 괜찮아지는 힘과 아직 다루지 않은 감정을 구분해 보세요.',
       },
     },
     RM: {

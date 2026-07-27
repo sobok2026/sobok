@@ -1,6 +1,5 @@
 'use client'
 
-import type { AssessmentProfile } from '@deep-type/model'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
@@ -13,6 +12,7 @@ import { IntroView } from '../../_components/intro-view'
 import { RefinementQuizView } from '../../_components/refinement-quiz-view'
 import { postVerify } from '../../_lib/api'
 import { clearPendingCheckout, type PendingCheckout, readPendingCheckout } from '../../_lib/pending-checkout'
+import { readSittingWorkAnswers } from '../../_lib/sitting'
 import type { DeepTypeContent } from '../../_lib/types'
 
 type CheckoutReturnViewProps = {
@@ -28,7 +28,6 @@ const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 f
 export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnViewProps) {
   const [phase, setPhase] = useState<Phase>('checking')
   const [pending, setPending] = useState<PendingCheckout | null>(null)
-  const [profile, setProfile] = useState<AssessmentProfile | null>(null)
 
   const verifyPayment = useCallback(async (candidate: PendingCheckout) => {
     setPending(candidate)
@@ -78,20 +77,21 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
       <RefinementQuizView
         accessToken={pending.accessToken}
         content={content}
-        onComplete={(nextProfile) => {
-          setProfile(nextProfile)
-          setPhase('report')
-        }}
+        onComplete={() => setPhase('report')}
+        // The PortOne redirect lands in the same tab, so the free sitting is still in session storage here.
+        workAnswers={readSittingWorkAnswers()}
       />
     )
   }
 
-  if (phase === 'report' && pending && profile) {
+  if (phase === 'report' && pending) {
     return (
       <DynamicReportView
         accessToken={pending.accessToken}
         content={content}
-        fallbackProfile={profile}
+        // This tab arrived from the PortOne redirect, so it never held the free answers. Nothing to fall back
+        // to; a generation failure shows the banner and the refund CTA alone.
+        fallbackProfile={null}
         locale={locale}
         onRestart={() => {
           clearPendingCheckout()

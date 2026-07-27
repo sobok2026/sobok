@@ -8,11 +8,13 @@ import { insertResult } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { randomToken } from '~/lib/tokens'
-import { BaseAnswersSchema } from '~/scoring/answer-schema'
+import { BaseAnswersSchema, BaseWorkAnswersSchema, DeclaredPersonaSchema } from '~/scoring/answer-schema'
 
 const SessionBody = z.object({
   answers: BaseAnswersSchema,
+  declaredPersona: DeclaredPersonaSchema.default(null),
   locale: z.enum(['ko', 'en', 'ja', 'zh']),
+  workAnswers: BaseWorkAnswersSchema,
 })
 
 const route = new Hono<AppEnv>()
@@ -29,7 +31,7 @@ route.post('/', async (c) => {
 
   let profile: AssessmentProfile
   try {
-    profile = scoreBaseAssessment(parsed.data.answers)
+    profile = scoreBaseAssessment(parsed.data.answers, parsed.data.workAnswers, parsed.data.declaredPersona)
   } catch {
     return problem(422, 'invalid-request')
   }
@@ -39,6 +41,7 @@ route.post('/', async (c) => {
     insertResult(db, {
       baseAnswers: parsed.data.answers,
       baseProfile: profile,
+      declaredPersona: parsed.data.declaredPersona,
       locale: parsed.data.locale,
       resultToken,
     }),

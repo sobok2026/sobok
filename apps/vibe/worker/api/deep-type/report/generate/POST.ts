@@ -10,7 +10,6 @@ import { alertDiscord } from '~/lib/alert'
 import { randomToken } from '~/lib/tokens'
 import { generateReport } from '~/report/claude'
 import { buildReportProfile } from '~/report/profile'
-import { buildSampleReport } from '~/report/sample'
 
 const route = new Hono<AppEnv>()
 
@@ -80,18 +79,33 @@ route.post('/', async (c) => {
     return problem(502, 'report-generation-failed')
   }
 
-  try {
-    // LLM disabled (kill-switch / no budget) → serve a deterministic sample report instead of 503 so the paid
-    // flow still renders. Prod runs with DEEPTYPE_LLM_ENABLED='1' for the real Claude report.
-    const llmEnabled = c.env.DEEPTYPE_LLM_ENABLED === '1'
-    const profile = buildReportProfile(claim.result)
+  const LLM_API_KEY = await c.env.DEEPTYPE_ANTHROPIC_API_KEY.get()
 
-    const sections = llmEnabled
-      ? await generateReport(await c.env.DEEPTYPE_ANTHROPIC_API_KEY.get(), model, profile)
-      : buildSampleReport(profile)
+  // Kill-switch / no budget. This used to persist a placeholder report as `done`, which was worse than
+  // failing: `GET /report` then stamps `viewed_at`, and `cancel.ts` refuses a refund once that is set — so the
+  // buyer paid, received filler and lost the refund. Fail instead; the client shows the refund CTA.
+  if (!LLM_API_KEY) {
+    console.error('deeptype.report.llm-disabled', { purchaseId: claim.purchaseId })
 
     await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
-      finalizeReportDone(db, claim.purchaseId, lockToken, llmEnabled ? model : 'sample', sections),
+      finalizeReportFailed(db, claim.purchaseId, lockToken, 'llm disabled'),
+    )
+
+    c.executionCtx.waitUntil(
+      c.env.DEEPTYPE_DISCORD_WEBHOOK.get().then((url) =>
+        alertDiscord(url, '🚨 deeptype report generation is disabled; paid reports are failing'),
+      ),
+    )
+
+    return problem(502, 'report-generation-failed')
+  }
+
+  try {
+    const profile = buildReportProfile(claim.result)
+    const sections = await generateReport(LLM_API_KEY, model, profile)
+
+    await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+      finalizeReportDone(db, claim.purchaseId, lockToken, model, sections),
     )
 
     return c.json({ status: 'done' })

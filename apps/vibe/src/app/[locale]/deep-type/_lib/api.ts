@@ -1,4 +1,5 @@
-import type { AssessmentProfile, ItemAnswer } from '@deep-type/model'
+import type { AssessmentProfile, ItemAnswer, PersonaCode, WorkAnswer } from '@deep-type/model'
+import type { GAIdentity } from '@sobok/analytics/ga-identity'
 import type { Locale } from '@sobok/domain/locale'
 
 const BASE = '/api/deep-type'
@@ -21,7 +22,10 @@ export type ReportSection = { body: string; key: ReportSectionKey; title: string
 
 export type SessionInput = {
   answers: ItemAnswer[]
+  /** Null when the picker was skipped. The server keeps only whether it was given. */
+  declaredPersona: PersonaCode | null
   locale: Locale
+  workAnswers: WorkAnswer[]
 }
 
 async function postJson<T>(path: string, body: unknown, token?: string, signal?: AbortSignal): Promise<T> {
@@ -58,6 +62,9 @@ export type CheckoutResponse = {
 
 export type CheckoutInput = {
   ageConfirmed: boolean
+  // GA4 identity snapshot taken on the paywall, so the Worker can attribute the server-side `purchase` to this
+  // visitor's session. Null whenever `analytics_storage` is denied — the server then sends nothing.
+  analytics: GAIdentity | null
   consentPrivacy: boolean
   consentWithdrawal: boolean
   email: string
@@ -74,11 +81,16 @@ export function postVerify(paymentId: string): Promise<{ status: string }> {
   return postJson('/verify', { paymentId })
 }
 
+// Acknowledgement only. The refined profile is paid content and arrives through `getReport`, which is the one
+// path that stamps delivery.
 export function postRefinement(
   accessToken: string,
   answers: ItemAnswer[],
-): Promise<{ profile: AssessmentProfile; status: 'ok' }> {
-  return postJson('/refinement', { answers }, accessToken)
+  // Whole forced-choice set, free drain block included: the refined tally spans all five dimensions and the
+  // free three are not stored server-side.
+  workAnswers: WorkAnswer[],
+): Promise<{ status: 'ok' }> {
+  return postJson('/refinement', { answers, workAnswers }, accessToken)
 }
 
 export function postGenerate(accessToken: string, signal?: AbortSignal): Promise<{ status: string }> {

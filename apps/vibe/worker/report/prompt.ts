@@ -24,10 +24,10 @@ Section intent:
 - contextShift: concrete Persona versus Inner similarities and differences
 - selfWorth: RM observations and one question to explore
 - relationships: OA observations without assigning an attachment category
-- emotionRegulation: VH plus NE observations without judging health
+- emotionRegulation: VH observations without judging health
 - motivation: UO observations and situational trade-offs
 - workStyle: EI/SN/TF/JP patterns as hypotheses about preferred conditions
-- recovery: EI and NE cues plus low-risk self-observation ideas
+- recovery: EI cues plus low-risk self-observation ideas
 - strengths: context-specific advantages supported by the profile
 - friction: likely trade-offs phrased conditionally, never as flaws
 - reflectionQuestions: three explicit questions tied to the strongest or most context-shifting dimensions

@@ -1,14 +1,28 @@
 'use client'
 
+import { readGAIdentity } from '@sobok/analytics/ga-identity'
 import { useState } from 'react'
+
+import { GA4_MEASUREMENT_ID } from '@/constants'
 
 import { postCheckout, postSession, postVerify, type SessionInput } from '../_lib/api'
 import { clearPendingCheckout, storePendingCheckout } from '../_lib/pending-checkout'
+import type { DeepTypePaywallContent } from '../_lib/types'
+import { classifyApiError, type VerificationErrorKind } from '../_lib/verification-error'
 
 export type CheckoutStatus = 'idle' | 'processing' | 'error'
 export type FreeResult = SessionInput
 
-export function useCheckout(freeResult: FreeResult) {
+type PaywallErrorKey = 'errorGeneric' | 'errorUnavailable' | 'errorVerificationExpired' | 'errorVerificationFailed'
+
+const MESSAGE_KEY_BY_KIND: Record<VerificationErrorKind, PaywallErrorKey> = {
+  expired: 'errorVerificationExpired',
+  generic: 'errorGeneric',
+  rejected: 'errorVerificationFailed',
+  unavailable: 'errorUnavailable',
+}
+
+export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallContent) {
   const [status, setStatus] = useState<CheckoutStatus>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -17,8 +31,12 @@ export function useCheckout(freeResult: FreeResult) {
     setErrorMessage('')
     try {
       const { resultToken } = await postSession(freeResult)
+
       const checkout = await postCheckout({
         ageConfirmed: true,
+        // Captured here, on the last screen the buyer is guaranteed to see: the grant that emits `purchase` may
+        // run in the PortOne webhook or the reconcile cron, long after this browser is gone.
+        analytics: readGAIdentity(GA4_MEASUREMENT_ID),
         consentPrivacy: true,
         consentWithdrawal: true,
         email,
@@ -34,6 +52,7 @@ export function useCheckout(freeResult: FreeResult) {
       })
 
       const { requestPayment } = await import('@portone/browser-sdk/v2')
+
       const result = await requestPayment({
         bypass: freeResult.locale === 'ko' ? undefined : { tosspayments: { useInternationalCardOnly: true } },
         channelKey: checkout.channelKey,
@@ -56,6 +75,7 @@ export function useCheckout(freeResult: FreeResult) {
       }
 
       const verified = await postVerify(checkout.paymentId)
+
       if (verified.status !== 'paid') {
         setStatus('error')
         return null
@@ -64,8 +84,11 @@ export function useCheckout(freeResult: FreeResult) {
       clearPendingCheckout()
       setStatus('idle')
       return checkout.accessToken
-    } catch {
+    } catch (error) {
+      // A Turnstile refusal is the one failure the buyer can act on, and the paywall resets the widget right
+      // after this returns — so saying "expired, confirm once more" is advice that actually completes a sale.
       setStatus('error')
+      setErrorMessage(paywall[MESSAGE_KEY_BY_KIND[classifyApiError(error)]])
       return null
     }
   }

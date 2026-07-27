@@ -16,5 +16,7 @@
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["**/*.ts", "../deep-type/**/*.ts"]
+  // The worker never loads a test file, and `bun:test` types are absent from `types` above on purpose.
+  "include": ["**/*.ts", "../deep-type/**/*.ts"],
+  "exclude": ["**/*.test.ts", "../deep-type/**/*.test.ts"]
 }

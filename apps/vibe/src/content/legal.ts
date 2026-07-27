@@ -118,7 +118,7 @@ export const LEGAL = {
           heading: '쿠키와 광고',
           body: [
             'Google AdSense, Google Tag Manager와 분석 도구를 사용합니다. 페이지의 Google 태그보다 먼저 Consent Mode v2의 광고 저장·분석 저장·광고 사용자 데이터·광고 개인화 신호를 denied로 초기화하고, Google Privacy & Messaging이 지원 지역에서 받은 선택에 따라 갱신합니다. 거부하면 광고·분석 쿠키를 새로 저장하지 않지만 고급 동의 모드의 쿠키 없는 신호는 전송될 수 있습니다.',
-            '푸터의 개인정보·쿠키 설정에서 선택을 다시 열 수 있습니다. Google 광고 설정(https://adssettings.google.com)에서도 개인화 설정을 관리할 수 있습니다. 원본 재열람 토큰이나 결제 식별자가 있을 수 있는 /deep-type/reopen 및 /deep-type/checkout-return 페이지에는 GTM과 AdSense를 로드하지 않습니다.',
+            '푸터의 개인정보·쿠키 설정에서 선택을 다시 열 수 있습니다. Google 광고 설정(https://adssettings.google.com)에서도 개인화 설정을 관리할 수 있습니다. 원본 재열람 토큰이나 결제 식별자가 있을 수 있는 /deep-type/reopen 및 /deep-type/checkout-return 페이지에는 AdSense를 로드하지 않습니다.',
           ],
         },
         {
@@ -387,7 +387,7 @@ export const LEGAL = {
           heading: 'Cookies and advertising',
           body: [
             'We use Google AdSense, Google Tag Manager, and analytics tools. Before any Google tag, Consent Mode v2 initializes ad storage, analytics storage, ad user data, and ad personalization as denied. Google Privacy & Messaging updates those states from choices collected in supported regions. Refusing prevents new advertising or analytics cookies from being stored, but advanced consent mode may still send cookieless signals.',
-            'You can reopen your choices from “Privacy & cookie choices” in the footer and manage Google personalization at https://adssettings.google.com. GTM and AdSense are not loaded on /deep-type/reopen or /deep-type/checkout-return, where a raw access token or payment identifier may be present.',
+            'You can reopen your choices from “Privacy & cookie choices” in the footer and manage Google personalization at https://adssettings.google.com. AdSense is not loaded on /deep-type/reopen or /deep-type/checkout-return, where a raw access token or payment identifier may be present.',
           ],
         },
         {
@@ -656,7 +656,7 @@ export const LEGAL = {
           heading: 'Cookieと広告',
           body: [
             'Google AdSense、Google Tag Manager、分析ツールを使用します。Googleタグより前にConsent Mode v2の広告保存・分析保存・広告ユーザーデータ・広告パーソナライズをdeniedで初期化し、対応地域ではGoogle Privacy & Messagingの選択に応じて更新します。拒否すると新しい広告・分析Cookieは保存されませんが、高度な同意モードのCookieを使わない信号は送信される場合があります。',
-            'フッターの「プライバシー・Cookie設定」から選択を開き直せます。Google広告設定（https://adssettings.google.com）でも管理できます。元の再閲覧トークンまたは決済識別子があり得る/deep-type/reopenと/deep-type/checkout-returnではGTMとAdSenseを読み込みません。',
+            'フッターの「プライバシー・Cookie設定」から選択を開き直せます。Google広告設定（https://adssettings.google.com）でも管理できます。元の再閲覧トークンまたは決済識別子があり得る/deep-type/reopenと/deep-type/checkout-returnではAdSenseを読み込みません。',
           ],
         },
         {
@@ -927,7 +927,7 @@ export const LEGAL = {
           heading: 'Cookie 与广告',
           body: [
             '我们使用Google AdSense、Google跟踪代码管理器和分析工具。在任何Google标签之前，Consent Mode v2会将广告存储、分析存储、广告用户数据与广告个性化初始化为denied；Google Privacy & Messaging会根据支持地区内收集的选择更新状态。拒绝后不会新建广告或分析Cookie，但高级同意模式仍可能发送不使用Cookie的信号。',
-            '可通过页脚的“隐私与Cookie设置”重新打开选择，也可在Google广告设置（https://adssettings.google.com）管理个性化。可能包含原始重新查看令牌或支付标识的/deep-type/reopen与/deep-type/checkout-return页面不会加载GTM与AdSense。',
+            '可通过页脚的“隐私与Cookie设置”重新打开选择，也可在Google广告设置（https://adssettings.google.com）管理个性化。可能包含原始重新查看令牌或支付标识的/deep-type/reopen与/deep-type/checkout-return页面不会加载AdSense。',
           ],
         },
         {

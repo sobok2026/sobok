@@ -18,10 +18,12 @@ export interface Bindings {
   DEEPTYPE_ANTHROPIC_API_KEY: SecretsStoreSecret
   // Transactional re-open email API key.
   DEEPTYPE_RESEND_API_KEY: SecretsStoreSecret
-  // Shared "sobok" Turnstile widget secret (siteverify) — reused for the paid checkout.
   DEEPTYPE_TURNSTILE_SECRET: SecretsStoreSecret
   // Discord webhook for money/ops alerts. Empty value disables alerting.
   DEEPTYPE_DISCORD_WEBHOOK: SecretsStoreSecret
+  // GA4 Measurement Protocol API secret for the vibe data stream. Empty value disables the server-side
+  // `purchase` event (the grant itself is unaffected).
+  DEEPTYPE_GA4_API_SECRET: SecretsStoreSecret
 
   // ── Plain vars (not secret) ─────────────────────────────────────────────────────────────────────
   // Separate PortOne store (own settlement entity). storeId/channelKey are public (sent to the browser SDK).
@@ -30,10 +32,11 @@ export interface Bindings {
   DEEPTYPE_PUBLIC_ORIGIN: string
   DEEPTYPE_EMAIL_FROM: string
   DEEPTYPE_EMAIL_REPLY_TO: string
-  // Kill-switch for LLM report generation ('1' to enable); guards the Anthropic budget.
-  DEEPTYPE_LLM_ENABLED?: string
   // Pinned model override (defaults to claude-haiku-4-5-20251001 for reproducible report behavior).
   DEEPTYPE_REPORT_MODEL?: string
+  // vibe's GA4 data stream — the destination of the server-side `purchase`. Public (it ships in the browser
+  // too, via src/constants.ts); it is the paired API secret that is confidential.
+  DEEPTYPE_GA4_MEASUREMENT_ID: string
 }
 
 export type AppEnv = {

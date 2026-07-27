@@ -1,33 +1,33 @@
 'use client'
 
-import type { AssessmentProfile, ItemAnswer } from '@deep-type/model'
+import type { AssessmentProfile } from '@deep-type/model'
 import { scoreBaseAssessment } from '@deep-type/scoring'
 import type { Locale } from '@sobok/domain/locale'
 import { useRouter } from 'next/navigation'
 import { useEffect, useReducer, useState } from 'react'
 
 import { assertNever } from '../_lib/assert'
+import { clearSitting, type DeepTypeSitting, readSitting } from '../_lib/sitting'
 import type { DeepTypeContent } from '../_lib/types'
 import { DynamicReportView } from './dynamic-report-view'
 import { IntroView } from './intro-view'
 import { PaywallView } from './paywall-view'
 import { RefinementQuizView } from './refinement-quiz-view'
 import { ReportView } from './report-view'
-import { DEEP_TYPE_STORAGE_KEY } from './test-flow'
 
 type ResultState =
   | { phase: 'report' }
   | { phase: 'paywall' }
   | { accessToken: string; phase: 'refinementIntro' }
   | { accessToken: string; phase: 'refinement' }
-  | { accessToken: string; phase: 'dynamicReport'; profile: AssessmentProfile }
+  | { accessToken: string; phase: 'dynamicReport' }
 
 type ResultAction =
   | { type: 'UNLOCK' }
   | { type: 'CLOSE_PAYWALL' }
   | { accessToken: string; type: 'PAID' }
   | { type: 'BEGIN' }
-  | { profile: AssessmentProfile; type: 'REFINEMENT_DONE' }
+  | { type: 'REFINEMENT_DONE' }
 
 function resultReducer(state: ResultState, action: ResultAction): ResultState {
   switch (action.type) {
@@ -40,9 +40,7 @@ function resultReducer(state: ResultState, action: ResultAction): ResultState {
     case 'BEGIN':
       return state.phase === 'refinementIntro' ? { accessToken: state.accessToken, phase: 'refinement' } : state
     case 'REFINEMENT_DONE':
-      return state.phase === 'refinement'
-        ? { accessToken: state.accessToken, phase: 'dynamicReport', profile: action.profile }
-        : state
+      return state.phase === 'refinement' ? { accessToken: state.accessToken, phase: 'dynamicReport' } : state
     default:
       return state
   }
@@ -54,28 +52,29 @@ type ResultFlowProps = {
 }
 
 export function ResultFlow({ content, locale }: ResultFlowProps) {
-  const [answers, setAnswers] = useState<ItemAnswer[] | null>(null)
+  const [sitting, setSitting] = useState<DeepTypeSitting | null>(null)
   const [profile, setProfile] = useState<AssessmentProfile | null>(null)
   const [loaded, setLoaded] = useState(false)
   const [state, dispatch] = useReducer(resultReducer, { phase: 'report' })
   const router = useRouter()
 
   useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem(DEEP_TYPE_STORAGE_KEY)
-      if (stored) {
-        const parsed = JSON.parse(stored) as ItemAnswer[]
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setAnswers(parsed)
-          setProfile(scoreBaseAssessment(parsed))
-          setLoaded(true)
-          return
-        }
-      }
-    } catch {
-      // Storage unavailable or invalid JSON
+    const stored = readSitting()
+
+    if (!stored || stored.likert.length === 0) {
+      router.replace(`/${locale}/deep-type/test`)
+      return
     }
-    router.replace(`/${locale}/deep-type/test`)
+
+    try {
+      setProfile(scoreBaseAssessment(stored.likert, stored.work, stored.declaredPersona))
+      setSitting(stored)
+      setLoaded(true)
+    } catch {
+      // An answer set the current instrument cannot score. Sending the visitor back to the test would loop, so
+      // the landing page is the exit until the sitting carries every part scoring needs.
+      router.replace(`/${locale}/deep-type`)
+    }
   }, [locale, router])
 
   useEffect(() => {
@@ -83,15 +82,11 @@ export function ResultFlow({ content, locale }: ResultFlowProps) {
   }, [state.phase])
 
   function handleRestart() {
-    try {
-      sessionStorage.removeItem(DEEP_TYPE_STORAGE_KEY)
-    } catch {
-      // ignore
-    }
+    clearSitting()
     router.push(`/${locale}/deep-type/test`)
   }
 
-  if (!loaded || !answers || !profile) {
+  if (!loaded || !sitting || !profile) {
     return (
       <main className="flex flex-1 items-center justify-center bg-page-bg px-safe py-16 text-page-ink">
         <div className="h-12 w-12 rounded-full border-4 border-page-accent/20 border-t-page-accent" />
@@ -114,7 +109,12 @@ export function ResultFlow({ content, locale }: ResultFlowProps) {
       return (
         <PaywallView
           content={content}
-          freeResult={{ answers, locale }}
+          freeResult={{
+            answers: sitting.likert,
+            declaredPersona: sitting.declaredPersona,
+            locale,
+            workAnswers: sitting.work,
+          }}
           onClose={() => dispatch({ type: 'CLOSE_PAYWALL' })}
           onPaid={(accessToken) => dispatch({ accessToken, type: 'PAID' })}
         />
@@ -134,7 +134,8 @@ export function ResultFlow({ content, locale }: ResultFlowProps) {
         <RefinementQuizView
           accessToken={state.accessToken}
           content={content}
-          onComplete={(refinedProfile) => dispatch({ profile: refinedProfile, type: 'REFINEMENT_DONE' })}
+          onComplete={() => dispatch({ type: 'REFINEMENT_DONE' })}
+          workAnswers={sitting.work}
         />
       )
     case 'dynamicReport':
@@ -142,7 +143,7 @@ export function ResultFlow({ content, locale }: ResultFlowProps) {
         <DynamicReportView
           accessToken={state.accessToken}
           content={content}
-          fallbackProfile={state.profile}
+          fallbackProfile={profile}
           locale={locale}
           onRestart={handleRestart}
         />

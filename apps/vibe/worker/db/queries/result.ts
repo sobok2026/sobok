@@ -1,4 +1,4 @@
-import type { AssessmentProfile, ItemAnswer } from '@deep-type/model'
+import { type AssessmentProfile, type ItemAnswer, PERSONA_CODES, type PersonaCode } from '@deep-type/model'
 import { and, eq, isNull, or } from 'drizzle-orm'
 
 import { dateIsWithinYears } from '../../lib/retention'
@@ -9,10 +9,13 @@ import type { PurchaseStatus } from './purchase'
 export interface NewResult {
   baseAnswers: ItemAnswer[]
   baseProfile: AssessmentProfile
+  declaredPersona: PersonaCode | null
   locale: 'ko' | 'en' | 'ja' | 'zh'
   resultToken: string
 }
 
+// `persona_code` now holds the respondent's self-declaration, which is offered rather than measured, so it can
+// be absent. The column is still NOT NULL, so absence is written as the empty string until Phase 2 relaxes it.
 export async function insertResult(db: Db, input: NewResult): Promise<void> {
   await db.insert(resultTable).values({
     baseAnswers: input.baseAnswers,
@@ -21,9 +24,13 @@ export async function insertResult(db: Db, input: NewResult): Promise<void> {
     innerCode: input.baseProfile.inner.code,
     instrumentVersion: input.baseProfile.instrumentVersion,
     locale: input.locale,
-    personaCode: input.baseProfile.persona.code,
+    personaCode: input.declaredPersona ?? '',
     resultToken: input.resultToken,
   })
+}
+
+function toDeclaredPersona(value: string): PersonaCode | null {
+  return (PERSONA_CODES as readonly string[]).includes(value) ? (value as PersonaCode) : null
 }
 
 export async function getResultForCheckoutByToken(
@@ -41,6 +48,7 @@ export async function getResultForCheckoutByToken(
 export interface PurchaseResultContext {
   baseAnswers: ItemAnswer[]
   baseProfile: AssessmentProfile
+  declaredPersona: PersonaCode | null
   purchaseId: number
   refinedProfile: AssessmentProfile | null
   resultId: number
@@ -56,6 +64,7 @@ export async function getPurchaseResultByAccessToken(
     .select({
       baseAnswers: resultTable.baseAnswers,
       baseProfile: resultTable.baseProfile,
+      personaCode: resultTable.personaCode,
       purchaseId: purchaseTable.id,
       refinedProfile: resultTable.refinedProfile,
       resultId: resultTable.id,
@@ -70,7 +79,11 @@ export async function getPurchaseResultByAccessToken(
       ),
     )
     .limit(1)
-  return row ?? null
+  if (!row) {
+    return null
+  }
+  const { personaCode, ...context } = row
+  return { ...context, declaredPersona: toDeclaredPersona(personaCode) }
 }
 
 export async function persistRefinement(

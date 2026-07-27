@@ -19,6 +19,8 @@ export const deepTypeContent = createDeepTypeContent({
     contextBody:
       'The same constructs were asked about in social and private contexts. Differences describe context-dependent expression, not a contradictory personality.',
     contextTitle: 'How expression shifts by context',
+    evidenceSplitNote:
+      'The refinement items leaned the other way. The bar sums every answer so far, and the letter stays as it was.',
     gemIntroBody:
       'The final 20 questions explore the basis of self-worth, connection and autonomy, emotion processing, and goal focus.',
     gemIntroCta: 'Start Gem questions',
@@ -86,6 +88,9 @@ export const deepTypeContent = createDeepTypeContent({
     cta: 'Start my in-depth report',
     processing: 'Preparing payment...',
     errorGeneric: 'Payment could not be completed. Please try again shortly.',
+    errorVerificationExpired: 'The security check expired. Please confirm once more below and continue.',
+    errorVerificationFailed: 'The security check did not pass. Please refresh the page and try again.',
+    errorUnavailable: 'The security check service is not responding. Please try again shortly.',
     closeCta: 'Return to the free result',
     generatingTitle: 'Writing your in-depth report',
     generatingBody:
@@ -160,20 +165,6 @@ export const deepTypeContent = createDeepTypeContent({
         label: 'Flexibility and exploration',
         description: 'Keeps options open and adjusts to emerging conditions',
         reflection: 'Choose one option to keep open and one decision to close today.',
-      },
-    },
-    NE: {
-      name: 'Emotional reactivity',
-      description: 'Compares sensitivity under uncertainty and pressure with relatively rapid emotional recovery.',
-      first: {
-        label: 'Sensitive response',
-        description: 'Small uncertainties linger and pressure brings larger emotional shifts',
-        reflection: 'Separate the signal your sensitivity offers from the level of actual risk.',
-      },
-      second: {
-        label: 'Steady recovery',
-        description: 'Returns to an even state relatively quickly after discomfort',
-        reflection: 'Distinguish genuine recovery from emotions that have simply not been addressed yet.',
       },
     },
     RM: {

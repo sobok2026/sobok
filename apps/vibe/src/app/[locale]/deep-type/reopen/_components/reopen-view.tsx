@@ -5,17 +5,19 @@ import { Lock } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { type FormEvent, useEffect, useRef, useState } from 'react'
-
 import { LEGAL_CONTACT_EMAIL, TURNSTILE_SITE_KEY } from '@/constants'
 import type { DeepTypeReopenContent } from '@/content/deep-type-reopen'
 import { cn } from '@/utils/cn'
+import { DEEPTYPE_REOPEN_ACTION } from '../../../../../../worker/api/deep-type/actions'
 
 import { IntroView } from '../../_components/intro-view'
 import { RefinementQuizView } from '../../_components/refinement-quiz-view'
 import { ReportView } from '../../_components/report-view'
 import { useReportPolling } from '../../_hooks/use-report-polling'
 import { postCancel, postReopenExchange, postReopenRequest, type ReopenExchangeResponse } from '../../_lib/api'
+import { readSittingWorkAnswers } from '../../_lib/sitting'
 import type { DeepTypeContent } from '../../_lib/types'
+import { classifyApiError, type VerificationErrorKind } from '../../_lib/verification-error'
 
 type ReopenViewProps = {
   content: DeepTypeContent
@@ -25,6 +27,19 @@ type ReopenViewProps = {
 
 type Phase = 'checking' | 'request' | 'link-ready' | 'opening' | 'report' | 'accepted'
 
+type ReopenErrorKey =
+  | 'genericError'
+  | 'verificationExpiredError'
+  | 'verificationFailedError'
+  | 'verificationUnavailableError'
+
+const REQUEST_ERROR_KEY_BY_KIND: Record<VerificationErrorKind, ReopenErrorKey> = {
+  expired: 'verificationExpiredError',
+  generic: 'genericError',
+  rejected: 'verificationFailedError',
+  unavailable: 'verificationUnavailableError',
+}
+
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export function ReopenView({ content, copy, locale }: ReopenViewProps) {
@@ -33,7 +48,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
   const [invalidLink, setInvalidLink] = useState(false)
   const [access, setAccess] = useState<ReopenExchangeResponse | null>(null)
   const [turnstileToken, setTurnstileToken] = useState('')
-  const [requestError, setRequestError] = useState(false)
+  const [requestError, setRequestError] = useState('')
   const [requestPending, setRequestPending] = useState(false)
   const turnstileRef = useRef<TurnstileInstance | undefined>(undefined)
 
@@ -78,14 +93,16 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
       return
     }
 
-    setRequestError(false)
+    setRequestError('')
     setRequestPending(true)
     const email = String(new FormData(event.currentTarget).get('email') ?? '')
     try {
       await postReopenRequest({ email, locale, turnstileToken })
       setPhase('accepted')
-    } catch {
-      setRequestError(true)
+    } catch (error) {
+      // The widget resets on the next line, so an expired solve is worth naming: confirming again works,
+      // and the generic "try later" copy would send someone away from a form they could finish now.
+      setRequestError(copy[REQUEST_ERROR_KEY_BY_KIND[classifyApiError(error)]])
       setRequestPending(false)
       setTurnstileToken('')
       turnstileRef.current?.reset()
@@ -170,7 +187,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
                   onError={() => setTurnstileToken('')}
                   onExpire={() => setTurnstileToken('')}
                   onSuccess={setTurnstileToken}
-                  options={{ responseField: false }}
+                  options={{ action: DEEPTYPE_REOPEN_ACTION, responseField: false }}
                   ref={turnstileRef}
                   siteKey={TURNSTILE_SITE_KEY}
                 />
@@ -187,7 +204,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
               </button>
               {requestError ? (
                 <p className="mt-3 text-center font-bold text-page-accent text-sm" role="alert">
-                  {copy.genericError}
+                  {requestError}
                 </p>
               ) : null}
               <p className="mt-4 text-page-ink/44 text-xs leading-6">{copy.deliveryNote}</p>
@@ -238,7 +255,14 @@ function ReopenedAccess({
 
   if (phase === 'refinement') {
     return (
-      <RefinementQuizView accessToken={access.accessToken} content={content} onComplete={() => setPhase('report')} />
+      <RefinementQuizView
+        accessToken={access.accessToken}
+        content={content}
+        onComplete={() => setPhase('report')}
+        // A re-open link may be opened on another device, where no sitting exists. The Worker refuses an
+        // incomplete forced-choice set rather than scoring a partial one.
+        workAnswers={readSittingWorkAnswers()}
+      />
     )
   }
 

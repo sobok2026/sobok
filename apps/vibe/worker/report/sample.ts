@@ -73,7 +73,7 @@ const SAMPLE_BODY: Record<ReportProfile['locale'], (codes: string) => string> = 
 
 export function buildSampleReport(profile: ReportProfile): ReportSection[] {
   const assessment = profile.assessment
-  const codes = `${assessment.persona.code} · ${assessment.inner.code} · ${assessment.gem.code}`
+  const codes = `${assessment.inner.code} · ${assessment.gem.code}`
   return REPORT_SECTION_KEYS.map((key) => ({
     body: SAMPLE_BODY[profile.locale](codes),
     key,

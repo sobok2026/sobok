@@ -13,7 +13,10 @@ import { ReportView } from './report-view'
 type DynamicReportViewProps = {
   accessToken: string
   content: DeepTypeContent
-  fallbackProfile: AssessmentProfile
+  // The FREE profile, or null when this screen was reached without one (the checkout return arrives from
+  // PortOne with no answers in this tab). Never the refined profile — that is paid content and only
+  // `GET /report` may hand it over. On failure the buyer sees their free result and the refund CTA.
+  fallbackProfile: AssessmentProfile | null
   locale: Locale
   onRestart: () => void
 }
@@ -98,7 +101,9 @@ function FailedReport({ accessToken, content, fallbackProfile, locale, onRestart
           </button>
         ) : null}
       </div>
-      <ReportView content={content} locale={locale} onRestart={onRestart} profile={fallbackProfile} refined />
+      {fallbackProfile ? (
+        <ReportView content={content} locale={locale} onRestart={onRestart} profile={fallbackProfile} />
+      ) : null}
     </div>
   )
 }

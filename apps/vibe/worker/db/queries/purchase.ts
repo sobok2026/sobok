@@ -19,6 +19,8 @@ export interface NewPurchase {
   consentWithdrawalAt: Date
   consentPrivacyAt: Date
   ageConfirmedAt: Date
+  gaClientId: string | null
+  gaSessionId: string | null
 }
 
 export async function createPendingPurchase(db: Db, input: NewPurchase): Promise<void> {
@@ -30,6 +32,9 @@ export interface PurchaseRow {
   amount: number
   currency: string
   status: PurchaseStatus
+  sku: 'report' | 'compat' | 'bundle'
+  gaClientId: string | null
+  gaSessionId: string | null
 }
 
 // Report gate: resolve the bearer access_token to its purchase (FRESH — entitlement must never be stale).
@@ -104,11 +109,20 @@ export async function getPurchaseByPaymentId(db: Db, paymentId: string): Promise
       amount: purchaseTable.amount,
       currency: purchaseTable.currency,
       status: purchaseTable.status,
+      sku: purchaseTable.sku,
+      gaClientId: purchaseTable.gaClientId,
+      gaSessionId: purchaseTable.gaSessionId,
     })
     .from(purchaseTable)
     .where(eq(purchaseTable.paymentId, paymentId))
     .limit(1)
   return row ?? null
+}
+
+// The GA4 identity exists only to route one server-side `purchase`. Drop it as soon as that event has been
+// accepted so a pseudonymous advertising identifier does not sit in the five-year transaction record.
+export async function clearPurchaseAnalytics(db: Db, id: number): Promise<void> {
+  await db.update(purchaseTable).set({ gaClientId: null, gaSessionId: null }).where(eq(purchaseTable.id, id))
 }
 
 // CAS: only a still-pending row flips to paid, and only one caller wins (verify vs webhook vs reconcile).

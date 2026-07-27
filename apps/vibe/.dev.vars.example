@@ -7,7 +7,8 @@ DEEPTYPE_PORTONE_CHANNEL_KEY=""
 DEEPTYPE_PUBLIC_ORIGIN="http://localhost:3000"
 DEEPTYPE_EMAIL_FROM="vibe <reports@example.com>"
 DEEPTYPE_EMAIL_REPLY_TO="support@example.com"
-DEEPTYPE_LLM_ENABLED="1"
+# Must match `GA4_MEASUREMENT_ID` in src/constants.ts and the container's `LT - GA4 Measurement ID` lookup.
+DEEPTYPE_GA4_MEASUREMENT_ID="G-RHHX4JRYDS"
 # DEEPTYPE_REPORT_MODEL="claude-haiku-4-5-20251001"
 
 # The 6 true secrets are Cloudflare Secrets Store bindings (accessed via `await env.X.get()`). For local
@@ -16,9 +17,15 @@ DEEPTYPE_LLM_ENABLED="1"
 #   wrangler secrets-store secret create <STORE_ID> --name deeptype-portone-webhook-secret --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name deeptype-anthropic-api-key      --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name deeptype-resend-api-key         --value "…" --scopes workers
-#   wrangler secrets-store secret create <STORE_ID> --name sobok-turnstile-secret          --value "1x0000000000000000000000000000000AA" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name vibe-turnstile-secret          --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name deeptype-discord-webhook        --value "" --scopes workers
-# (the Turnstile test secret 1x00…AA passes any token locally; empty discord value = alerts disabled.)
+# (empty discord value = alerts disabled.)
+#
+# The Turnstile value must be the DEV widget's real secret (`terraform output -raw dev_turnstile_secret_key`
+# in sobok-ops), NOT Cloudflare's 1x00…AA test key. The test key makes siteverify answer from the secret alone
+# with hostname "example.com", which can never satisfy the hostname pin in @sobok/edge/turnstile — by design,
+# so that no bypass branch exists to ship to production. Pair it with the dev widget's sitekey in
+# NEXT_PUBLIC_TURNSTILE_SITE_KEY (see .env.local.example); the dev widget covers localhost.
 
 # Local Hyperdrive → point both bindings at a local/dev Postgres for `wrangler dev` (current docs use the
 # CLOUDFLARE_ prefix; the WRANGLER_ form is an older fallback):

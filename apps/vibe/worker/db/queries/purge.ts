@@ -99,6 +99,10 @@ export async function expireReportAccess(
         emailHash: null,
         failureCode: null,
         failureMessage: null,
+        // Normally already null — cleared as soon as the server-side `purchase` was accepted. This is the
+        // long-stop for the rows where that send was rejected and the identity was kept for a manual replay.
+        gaClientId: null,
+        gaSessionId: null,
         resultId: null,
       })
       .where(inArray(purchaseTable.id, purchaseIds))
