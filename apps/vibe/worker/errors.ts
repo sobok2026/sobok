@@ -26,6 +26,15 @@ export type ProblemSlug =
   | 'not-configured'
   | 'not-found'
   | 'internal'
+  // APPEND ONLY. Each slug is concatenated onto BASE to form the public `type` URI of a problem document, so
+  // an existing string that changes retires a URI clients may already branch on. New members go at the end
+  // and old ones are never renamed or removed.
+  //
+  // Both of the following are 410, never 422. A stored answer set that the current instrument no longer
+  // accepts is permanently unusable, and 422 invites the client to retry a payload it can never fix — which
+  // is how a buyer ends up locked out of the thing they paid for with no path but a support ticket.
+  | 'instrument-retired'
+  | 'answers-expired'
 
 export function problem(
   status: number,

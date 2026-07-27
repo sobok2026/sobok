@@ -94,3 +94,80 @@ export async function finalizeReportFailed(
     .returning({ id: reportTable.id })
   return rows.length > 0
 }
+
+// The narrative pass runs after the engine has already committed `sections`, on its own lock. Nothing below
+// touches the engine's `lock_token`/`attempts`/`error`: two passes sharing one lease means the narrative
+// worker can release a lock the engine still holds, and a narrative retry can burn the engine's retry budget.
+
+export async function getNarrativeStatus(
+  db: Db,
+  purchaseId: number,
+): Promise<{ status: ReportStatus; attempts: number } | null> {
+  const [row] = await db
+    .select({ status: reportTable.narrativeStatus, attempts: reportTable.narrativeAttempts })
+    .from(reportTable)
+    .where(eq(reportTable.purchaseId, purchaseId))
+    .limit(1)
+  return row ?? null
+}
+
+// CAS lock, same shape as the engine's: claims pending, failed-under-cap, or a generating row whose lease has
+// expired. Only rows whose engine body already exists are claimable — narrative without sections has nothing
+// to narrate.
+export async function acquireNarrativeLock(
+  db: Db,
+  purchaseId: number,
+  lockToken: string,
+  staleBefore: Date,
+): Promise<boolean> {
+  const rows = await db
+    .update(reportTable)
+    .set({
+      narrativeStatus: 'generating',
+      narrativeLockToken: lockToken,
+      narrativeLockedAt: new Date(),
+      narrativeAttempts: sql`${reportTable.narrativeAttempts} + 1`,
+    })
+    .where(
+      and(
+        eq(reportTable.purchaseId, purchaseId),
+        eq(reportTable.status, 'done'),
+        lt(reportTable.narrativeAttempts, 5),
+        or(
+          inArray(reportTable.narrativeStatus, ['pending', 'failed']),
+          and(eq(reportTable.narrativeStatus, 'generating'), lt(reportTable.narrativeLockedAt, staleBefore)),
+        ),
+      ),
+    )
+    .returning({ id: reportTable.id })
+  return rows.length > 0
+}
+
+export async function finalizeNarrativeDone(
+  db: Db,
+  purchaseId: number,
+  lockToken: string,
+  model: string,
+  narrative: ReportSection[],
+): Promise<boolean> {
+  const rows = await db
+    .update(reportTable)
+    .set({ narrativeStatus: 'done', narrative, narrativeModel: model, narrativeError: null })
+    .where(and(eq(reportTable.purchaseId, purchaseId), eq(reportTable.narrativeLockToken, lockToken)))
+    .returning({ id: reportTable.id })
+  return rows.length > 0
+}
+
+export async function finalizeNarrativeFailed(
+  db: Db,
+  purchaseId: number,
+  lockToken: string,
+  error: string,
+): Promise<boolean> {
+  const rows = await db
+    .update(reportTable)
+    .set({ narrativeStatus: 'failed', narrativeError: error, narrativeLockToken: null })
+    .where(and(eq(reportTable.purchaseId, purchaseId), eq(reportTable.narrativeLockToken, lockToken)))
+    .returning({ id: reportTable.id })
+  return rows.length > 0
+}

@@ -1,4 +1,4 @@
-import { type TurnstileFailureReason, verifyTurnstile } from '@sobok/edge/turnstile'
+import { type TurnstileFailureReason, type TurnstileResult, verifyTurnstile } from '@sobok/edge/turnstile'
 import type { Context } from 'hono'
 
 import type { AppEnv } from '~/env'
@@ -24,13 +24,20 @@ export async function guardTurnstile(
   c: Context<AppEnv>,
   args: { expectedAction: string; token: string },
 ): Promise<Response | null> {
-  const secret = await c.env.DEEPTYPE_TURNSTILE_SECRET.get()
   const ip = c.req.header('cf-connecting-ip') ?? null
+  const hostname = parseOriginHostname(c.env.DEEPTYPE_PUBLIC_ORIGIN)
 
-  const result = await verifyTurnstile(secret, args.token, ip, {
-    allowedHostnames: [new URL(c.env.DEEPTYPE_PUBLIC_ORIGIN).hostname],
-    expectedAction: args.expectedAction,
-  })
+  // An unparsable origin used to throw out of here into `app.onError`, which answers 500 `internal` without
+  // ever reaching the classification below — so the one failure that means "nobody can pay" was also the one
+  // that never alerted. Routing it through `misconfigured` puts it back on the single deny path that both
+  // the response mapping and the Discord page hang off. Mirrors stella's `parseAllowedHostnames`.
+  const result: TurnstileResult =
+    hostname === null
+      ? { ok: false, logDetail: 'DEEPTYPE_PUBLIC_ORIGIN is not a parsable absolute URL', reason: 'misconfigured' }
+      : await verifyTurnstile(await c.env.DEEPTYPE_TURNSTILE_SECRET.get(), args.token, ip, {
+          allowedHostnames: [hostname],
+          expectedAction: args.expectedAction,
+        })
 
   if (result.ok) {
     return null
@@ -53,4 +60,17 @@ export async function guardTurnstile(
 
   const { slug, status } = RESPONSE_BY_REASON[result.reason]
   return problem(status, slug, undefined, undefined, status === 503 ? { 'retry-after': '5' } : undefined)
+}
+
+// `raw` is typed string by the binding but the runtime does not guarantee one: a wrangler.jsonc that lost the
+// var, or a named environment that failed to redeclare it (wrangler does NOT inherit `vars` into named
+// environments), delivers undefined — and a relative or misspelled value parses no better. try/catch rather
+// than `URL.canParse`, which @cloudflare/workers-types does not declare. The value itself never reaches the
+// log: it is ours, but echoing config into a line that also names the failing pin is a habit worth not having.
+function parseOriginHostname(raw: string | undefined): string | null {
+  try {
+    return new URL(raw ?? '').hostname || null
+  } catch {
+    return null
+  }
 }

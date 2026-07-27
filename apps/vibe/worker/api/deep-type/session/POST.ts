@@ -42,6 +42,7 @@ route.post('/', async (c) => {
       baseAnswers: parsed.data.answers,
       baseProfile: profile,
       declaredPersona: parsed.data.declaredPersona,
+      freeWorkAnswers: parsed.data.workAnswers,
       locale: parsed.data.locale,
       resultToken,
     }),

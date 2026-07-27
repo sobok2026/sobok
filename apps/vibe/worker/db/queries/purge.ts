@@ -1,4 +1,4 @@
-import { and, eq, exists, inArray, isNotNull, lt, ne, notExists, or } from 'drizzle-orm'
+import { and, eq, exists, inArray, isNotNull, isNull, lt, ne, notExists, or } from 'drizzle-orm'
 
 import { dateIsOlderThanYears } from '../../lib/retention'
 import type { Db } from '../client'
@@ -39,21 +39,83 @@ export async function purgeUnconvertedResults(db: Db, cutoff: Date): Promise<num
   return rows.length
 }
 
-// Raw base and refinement answers are no longer needed three months after the generated report is
-// available. Server-scored profiles remain until the one-year report-access window ends.
+// Raw answers are no longer needed three months after the generated report is available. Every raw response
+// column goes together — the Likert sets, both forced-choice blocks, and the unfinished paid draft — because
+// they are the same category of data and keeping any one of them re-creates the record the others shed. The
+// collection timestamps go with them: once the answers are gone the timestamps only describe when someone was
+// here. Server-scored profiles remain until the one-year report-access window ends.
 export async function minimizeDeliveredAnswers(db: Db, cutoff: Date): Promise<number> {
   const rows = await db
     .update(resultTable)
-    .set({ baseAnswers: [], refinementAnswers: null })
+    .set({
+      baseAnswers: [],
+      freeWorkAnswers: null,
+      freeWorkAnswersAt: null,
+      refinementAnswers: null,
+      refinementDraft: null,
+      refinementDraftAt: null,
+      workAnswers: null,
+    })
     .where(
       and(
-        or(ne(resultTable.baseAnswers, []), isNotNull(resultTable.refinementAnswers)),
+        or(
+          ne(resultTable.baseAnswers, []),
+          isNotNull(resultTable.freeWorkAnswers),
+          isNotNull(resultTable.refinementAnswers),
+          isNotNull(resultTable.refinementDraft),
+          isNotNull(resultTable.workAnswers),
+        ),
         exists(
           db
             .select({ id: purchaseTable.id })
             .from(purchaseTable)
             .innerJoin(reportTable, eq(reportTable.purchaseId, purchaseTable.id))
             .where(and(eq(purchaseTable.resultId, resultTable.id), lt(reportTable.generatedAt, cutoff))),
+        ),
+      ),
+    )
+    .returning({ id: resultTable.id })
+  return rows.length
+}
+
+// Raw answers of a purchase that was paid and then never finished. `minimizeDeliveredAnswers` cannot reach
+// these rows at all — its EXISTS keys off a generated report, and an unfinished paid block never produces one
+// — so without this sweep the responses of every abandoned purchase would sit here untouched for the whole
+// year of the access window. The same raw-answer set goes as it does there: keeping the free drain block
+// while dropping `base_answers` would leave responses on file that can no longer be scored into anything,
+// which is retention with none of the purpose. Server-scored profiles stay, so the free report a buyer
+// already has keeps rendering; what ends is the ability to submit the paid block, and the 410 in
+// `retiredAnswersProblem` is what says so.
+export async function purgeAbandonedRefinements(db: Db, cutoff: Date): Promise<number> {
+  const rows = await db
+    .update(resultTable)
+    .set({
+      baseAnswers: [],
+      freeWorkAnswers: null,
+      freeWorkAnswersAt: null,
+      refinementDraft: null,
+      refinementDraftAt: null,
+    })
+    .where(
+      and(
+        isNull(resultTable.refinedProfile),
+        // Without this the sweep re-selects and rewrites every long-abandoned row on every daily run.
+        or(
+          ne(resultTable.baseAnswers, []),
+          isNotNull(resultTable.freeWorkAnswers),
+          isNotNull(resultTable.refinementDraft),
+        ),
+        exists(
+          db
+            .select({ id: purchaseTable.id })
+            .from(purchaseTable)
+            .where(
+              and(
+                eq(purchaseTable.resultId, resultTable.id),
+                eq(purchaseTable.status, 'paid'),
+                lt(purchaseTable.paidAt, cutoff),
+              ),
+            ),
         ),
       ),
     )

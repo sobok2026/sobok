@@ -24,5 +24,13 @@ export const RefinementAnswersSchema = z.array(ItemAnswerSchema).length(PAID_LIK
 // The refined pass tallies all five dimensions, so it needs the free drain block back alongside the paid 21.
 export const RefinedWorkAnswersSchema = z.array(WorkAnswerSchema).length(WORK_ITEMS.length)
 
+// The paid block is answered over one or more sittings, so the in-progress set is a prefix of the submission
+// rather than a submission. Length is therefore a CEILING, not an equality — the only guarantee a draft owes
+// is that it cannot grow unbounded in the row. Nothing parsed by these two ever reaches the scorer: the
+// resume path replays the draft to the client, and the client re-submits through the fixed-length schemas
+// above. Keeping that one-way is what stops a short draft from becoming a short scoring input.
+export const RefinementDraftAnswersSchema = z.array(ItemAnswerSchema).max(PAID_LIKERT_ITEMS.length)
+export const RefinementDraftWorkAnswersSchema = z.array(WorkAnswerSchema).max(WORK_ITEMS.length)
+
 /** Offered, never measured. Only whether it was given reaches the profile. */
 export const DeclaredPersonaSchema = z.enum(PERSONA_CODES).nullable()

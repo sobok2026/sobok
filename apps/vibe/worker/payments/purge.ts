@@ -3,6 +3,7 @@ import {
   expireReportAccess,
   minimizeDeliveredAnswers,
   purgeAbandonedPurchases,
+  purgeAbandonedRefinements,
   purgeExpiredReopenLinks,
   purgeExpiredTransactionRecords,
   purgeOldWebhookEvents,
@@ -19,6 +20,9 @@ export async function runRetentionPurge(env: Bindings): Promise<void> {
     const current = new Date(now)
     const abandonedPurchases = await purgeAbandonedPurchases(db, daysBefore(current, 30))
     const minimizedAnswers = await minimizeDeliveredAnswers(db, monthsBefore(current, 3))
+    // Rides the existing daily sweep on purpose. wrangler.jsonc declares exactly two crons (*/15 reconcile,
+    // 0 3 purge) and a third schedule for one UPDATE would be a new failure surface for no coverage.
+    const abandonedRefinements = await purgeAbandonedRefinements(db, daysBefore(current, 90))
     const expiredAccess = await expireReportAccess(db, current)
     const transactionRecords = await purgeExpiredTransactionRecords(db, current)
     const results = await purgeUnconvertedResults(db, daysBefore(current, 30))
@@ -28,6 +32,7 @@ export async function runRetentionPurge(env: Bindings): Promise<void> {
       'deeptype.purge',
       JSON.stringify({
         abandonedPurchases,
+        abandonedRefinements,
         expiredAccess,
         minimizedAnswers,
         reopenLinks,

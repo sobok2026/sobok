@@ -1,4 +1,4 @@
-import type { AssessmentProfile, ItemAnswer } from '@deep-type/model'
+import type { AssessmentProfile, ItemAnswer, PersonaSource, WorkAnswer } from '@deep-type/model'
 import { sql } from 'drizzle-orm'
 import { bigint, index, integer, jsonb, pgSchema, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
 
@@ -38,6 +38,14 @@ export interface ReportSection {
   body: string
 }
 
+// The paid pass is answered over two sittings, so the in-progress set is parked here between them. It is a
+// draft by definition: no length holds until the block is submitted, which is why it can never be fed to the
+// scorer without going through the wire schemas first.
+export interface RefinementDraft {
+  answers: ItemAnswer[]
+  workAnswers: WorkAnswer[]
+}
+
 // One row per completed free assessment. Codes and profiles are always computed by the Worker from the
 // versioned raw answer set; the client never supplies authoritative score data.
 export const resultTable = deeptype.table(
@@ -47,11 +55,27 @@ export const resultTable = deeptype.table(
     resultToken: varchar('result_token', { length: 43 }).notNull().unique(),
     locale: localeEnum().notNull().default('ko'),
     instrumentVersion: varchar('instrument_version', { length: 16 }).notNull(),
-    personaCode: varchar('persona_code', { length: 4 }).notNull(),
+    // The four-letter code is offered by the respondent, never measured, so 'I did not answer' is a legitimate
+    // state and is written as NULL. Rows created before the declaration replaced the measured persona carry a
+    // measured code here; `persona_source` is what tells the two apart.
+    personaCode: varchar('persona_code', { length: 4 }),
+    // Two values only — 'declared' | 'unknown'. Not 'measured': a default outside the domain would silently
+    // make `selfReportGap` generation conditions unreachable on backfilled rows.
+    personaSource: varchar('persona_source', { length: 8 }).$type<PersonaSource>().notNull().default('unknown'),
     innerCode: varchar('inner_code', { length: 4 }).notNull(),
     gemCode: varchar('gem_code', { length: 4 }).notNull(),
     baseAnswers: jsonb('base_answers').$type<ItemAnswer[]>().notNull(),
+    // The free drain block, kept apart from the paid forced-choice set on purpose. One shared column would take
+    // two partial writes at two different times, which defeats the fixed-length wire schemas and erases the
+    // difference between 'only took the free pass' and 'paid but never finished'.
+    freeWorkAnswers: jsonb('free_work_answers').$type<WorkAnswer[]>(),
+    // When the free drain block was answered. The paid block is only summed with it when the two sittings fall
+    // inside the same recall window; past the threshold the report is rebuilt from the paid answers alone.
+    freeWorkAnswersAt: timestamp('free_work_answers_at', { precision: 3, withTimezone: true }),
     refinementAnswers: jsonb('refinement_answers').$type<ItemAnswer[]>(),
+    workAnswers: jsonb('work_answers').$type<WorkAnswer[]>(),
+    refinementDraft: jsonb('refinement_draft').$type<RefinementDraft>(),
+    refinementDraftAt: timestamp('refinement_draft_at', { precision: 3, withTimezone: true }),
     baseProfile: jsonb('base_profile').$type<AssessmentProfile>().notNull(),
     refinedProfile: jsonb('refined_profile').$type<AssessmentProfile>(),
     ...timestamps,
@@ -95,6 +119,9 @@ export const purchaseTable = deeptype.table(
     refundedAt: timestamp('refunded_at', { precision: 3, withTimezone: true }),
     // Stamped when the done report is actually delivered to the client — gates the unviewed-refund right.
     viewedAt: timestamp('viewed_at', { precision: 3, withTimezone: true }),
+    // One-shot guard for the nudge sent to buyers who paid and then abandoned the paid block. Set before the
+    // send, never cleared: a second reminder is worse than a missed one.
+    reminderSentAt: timestamp('reminder_sent_at', { precision: 3, withTimezone: true }),
     // GA4 identity snapshotted in the browser at checkout, carried here because the grant that emits the
     // server-side `purchase` may be performed by the webhook or the reconcile cron, with no browser attached.
     // Both are null when `analytics_storage` was denied, and are cleared the moment the event is accepted —
@@ -134,7 +161,9 @@ export const reopenAccessTable = deeptype.table(
   (t) => [index('idx_deeptype_reopen_purchase').on(t.purchaseId), index('idx_deeptype_reopen_expires').on(t.expiresAt)],
 )
 
-// 1:1 with a purchase. Generated exactly once (CAS lock via lock_token), cache-first on read.
+// 1:1 with a purchase. The rule engine writes `sections` under its own CAS lock; the LLM narrative is a second,
+// independent pass with its own lock and its own terminal state. The two never share a lock token — a shared
+// one lets whichever pass finishes first release a lease the other is still holding.
 export const reportTable = deeptype.table(
   'report',
   {
@@ -143,6 +172,9 @@ export const reportTable = deeptype.table(
       .notNull()
       .unique()
       .references(() => purchaseTable.id, { onDelete: 'cascade' }),
+    // The section-key vocabulary this row was written against. Stored rows are never migrated to a newer
+    // vocabulary, so the reader dispatches on this for the whole one-year re-open window.
+    schemaVersion: varchar('schema_version', { length: 8 }).notNull().default('1'),
     model: varchar('model', { length: 64 }).notNull().default('claude-haiku-4-5-20251001'),
     status: reportStatusEnum().notNull().default('pending'),
     sections: jsonb('sections').$type<ReportSection[]>(),
@@ -151,6 +183,15 @@ export const reportTable = deeptype.table(
     lockToken: varchar('lock_token', { length: 43 }),
     lockedAt: timestamp('locked_at', { precision: 3, withTimezone: true }),
     generatedAt: timestamp('generated_at', { precision: 3, withTimezone: true }),
+    // Narrative pass. `report_status` is reused rather than cloned: the state machine is the same four states
+    // and a second enum type with an identical value set would only add a name to keep in sync.
+    narrative: jsonb('narrative').$type<ReportSection[]>(),
+    narrativeStatus: reportStatusEnum('narrative_status').notNull().default('pending'),
+    narrativeModel: varchar('narrative_model', { length: 64 }),
+    narrativeError: text('narrative_error'),
+    narrativeAttempts: integer('narrative_attempts').notNull().default(0),
+    narrativeLockToken: varchar('narrative_lock_token', { length: 43 }),
+    narrativeLockedAt: timestamp('narrative_locked_at', { precision: 3, withTimezone: true }),
     ...timestamps,
   },
   (t) => [index('idx_deeptype_report_status').on(t.status)],

@@ -5,7 +5,7 @@ import type { AppEnv } from '~/env'
 import cancelRoute from './cancel/POST'
 import checkoutRoute from './checkout/POST'
 import configRoute from './config/GET'
-import refinementRoute from './refinement/POST'
+import refinementRoutes from './refinement'
 import reopenRoutes from './reopen'
 import reportRoutes from './report'
 import sessionRoute from './session/POST'
@@ -22,6 +22,6 @@ deepType.route('/checkout', checkoutRoute)
 deepType.route('/verify', verifyRoute)
 deepType.route('/webhook', webhookRoute)
 deepType.route('/cancel', cancelRoute)
-deepType.route('/refinement', refinementRoute)
+deepType.route('/refinement', refinementRoutes)
 deepType.route('/report', reportRoutes)
 deepType.route('/reopen', reopenRoutes)
