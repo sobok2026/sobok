@@ -27,6 +27,7 @@ route.get('/', async (c) => {
         username: user.username,
         displayUsername: user.displayUsername,
         image: user.image,
+        twoFactorEnabled: user.twoFactorEnabled,
         adultFlag: bbatonVerificationTable.adultFlag,
         historySyncEnabled: userSettingsTable.historySyncEnabled,
         adultVerifiedAdVisible: userSettingsTable.adultVerifiedAdVisible,
@@ -61,6 +62,8 @@ route.get('/', async (c) => {
       username: me.username,
       displayUsername: me.displayUsername,
       image: me.image,
+      // Nullable in the schema (better-auth's twoFactor plugin only writes it on enrolment); absent means off.
+      twoFactorEnabled: me.twoFactorEnabled ?? false,
       adultVerification: { required, status },
       settings,
     } satisfies GETV1MeResponse

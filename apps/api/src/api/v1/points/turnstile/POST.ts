@@ -1,16 +1,17 @@
-import { type POSTV1PointTurnstileResponse, PROBLEM, postV1PointTurnstileRequestSchema } from '@sobok/contracts'
+import {
+  type POSTV1PointTurnstileResponse,
+  postV1PointTurnstileRequestSchema,
+  TURNSTILE_POINTS_EARN_ACTION,
+} from '@sobok/contracts'
 import { CookieKey } from '@sobok/http/cookie'
-import { getRequestIP } from '@sobok/http/request'
-import TurnstileValidator from '@sobok/http/turnstile'
 import { Hono } from 'hono'
 import { setCookie } from 'hono/cookie'
 import { createFactory } from 'hono/factory'
-import ms from 'ms'
 
 import type { Env } from '@/app'
 
 import { requireAuth } from '@/middleware/require-auth'
-import { problemResponse } from '@/utils/problem'
+import { guardTurnstile } from '@/utils/turnstile'
 import { zProblemValidator } from '@/utils/validator'
 
 import { POINTS_TURNSTILE_TTL_SECONDS, signPointsTurnstileToken } from '../util-turnstile-cookie'
@@ -18,21 +19,14 @@ import { POINTS_TURNSTILE_TTL_SECONDS, signPointsTurnstileToken } from '../util-
 const route = new Hono<Env>()
 const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json', postV1PointTurnstileRequestSchema))
-const turnstileValidator = new TurnstileValidator(ms('10 seconds'), 1)
 
 route.post('/', ...middlewares, async (c) => {
   const userId = c.get('user')!.id
   const { token } = c.req.valid('json')
-  const remoteIP = getRequestIP(c.req.raw.headers)
 
-  const turnstile = await turnstileValidator.validate({
-    token,
-    remoteIP,
-    expectedAction: 'points-earn',
-  })
-
-  if (!turnstile.success) {
-    return problemResponse(c, { problem: PROBLEM.HUMAN_VERIFICATION_FAILED })
+  const denied = await guardTurnstile(c, TURNSTILE_POINTS_EARN_ACTION, token)
+  if (denied) {
+    return denied
   }
 
   const signedCookie = await signPointsTurnstileToken(userId)

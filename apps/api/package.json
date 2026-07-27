@@ -24,6 +24,7 @@
     "@sobok/contracts": "workspace:*",
     "@sobok/db": "workspace:*",
     "@sobok/domain": "workspace:*",
+    "@sobok/edge": "workspace:*",
     "@sobok/env": "workspace:*",
     "@sobok/events": "workspace:*",
     "@sobok/http": "workspace:*",

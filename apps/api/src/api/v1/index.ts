@@ -9,7 +9,6 @@ import notificationRoutes from './notification'
 import pointsRoutes from './points'
 import postRoutes from './post'
 import searchRoutes from './search'
-import turnstileRoutes from './turnstile'
 import userRoutes from './user'
 
 const v1Router = new Hono()
@@ -22,7 +21,6 @@ v1Router.route('/notification', notificationRoutes)
 v1Router.route('/points', pointsRoutes)
 v1Router.route('/post', postRoutes)
 v1Router.route('/search', searchRoutes)
-v1Router.route('/turnstile', turnstileRoutes)
 v1Router.route('/user', userRoutes)
 
 export default v1Router

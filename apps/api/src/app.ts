@@ -14,7 +14,7 @@ import apiRouter from './api'
 import { getDefaultSecureHeadersOptions } from './middleware/secure-headers'
 import probeRoutes from './probe'
 import { problemResponse } from './utils/problem'
-import { APP_ORIGIN, isAllowedRequestOrigin } from './utils/request-origin'
+import { ALLOW_ANY_REQUEST_ORIGIN, APP_ORIGIN, isAllowedRequestOrigin } from './utils/request-origin'
 
 export type Env = {
   Variables: {
@@ -26,11 +26,10 @@ export type Env = {
 
 const app = new Hono<Env>()
 const etagMiddleware = etag()
-const isProduction = process.env.NODE_ENV === 'production'
 
 const csrfMiddleware = csrf({
   origin: isAllowedRequestOrigin,
-  secFetchSite: isProduction ? 'same-origin' : 'same-site',
+  secFetchSite: ALLOW_ANY_REQUEST_ORIGIN ? 'same-site' : 'same-origin',
 })
 
 // 1. 상태 검사
