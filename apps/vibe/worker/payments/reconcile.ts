@@ -14,7 +14,7 @@ export async function reconcileStalePending(env: Bindings): Promise<void> {
     env.DEEPTYPE_PORTONE_WEBHOOK_SECRET.get(),
   ])
 
-  const creds = { apiSecret, webhookSecret }
+  const deps = { creds: { apiSecret, webhookSecret }, env }
   const { db, sql } = openFresh(env.HYPERDRIVE_FRESH)
 
   try {
@@ -23,7 +23,7 @@ export async function reconcileStalePending(env: Bindings): Promise<void> {
 
     for (const purchase of stale) {
       try {
-        const outcome = await confirmPurchase(db, creds, purchase.paymentId)
+        const outcome = await confirmPurchase(db, deps, purchase.paymentId)
         if (outcome === 'amount-mismatch') {
           console.error('deeptype.reconcile.amount_mismatch', purchase.paymentId)
         }

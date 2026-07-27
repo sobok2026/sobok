@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
 
-import { openFresh, withDb } from '~/db/client'
+import { openFresh, withDB } from '~/db/client'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { confirmPurchase } from '~/payments/confirm'
@@ -22,8 +22,8 @@ route.post('/', async (c) => {
 
   const portOneCreds = await creds(c)
 
-  const outcome = await withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
-    confirmPurchase(db, portOneCreds, parsed.data.paymentId),
+  const outcome = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    confirmPurchase(db, { creds: portOneCreds, env: c.env }, parsed.data.paymentId),
   )
 
   switch (outcome) {

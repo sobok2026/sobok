@@ -9,6 +9,8 @@ export type ProblemSlug =
   | 'consent-required'
   | 'payload-too-large'
   | 'turnstile-failed'
+  | 'turnstile-expired'
+  | 'service-unavailable'
   | 'purchase-not-found'
   | 'amount-mismatch'
   | 'payment-not-completed'

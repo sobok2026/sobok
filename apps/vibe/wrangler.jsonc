@@ -37,13 +37,11 @@
     "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
     "DEEPTYPE_PORTONE_CHANNEL_KEY": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88",
     "DEEPTYPE_PUBLIC_ORIGIN": "https://vibe.sobok.cc",
-    "DEEPTYPE_EMAIL_FROM": "vibe <reports@vibe.sobok.cc>",
+    "DEEPTYPE_EMAIL_FROM": "sobok <sobok2026@gmail.com>",
     "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",
-    // LLM_ENABLED is the Anthropic-budget kill-switch ('1' to enable).
-    "DEEPTYPE_LLM_ENABLED": "1",
-    "DEEPTYPE_REPORT_MODEL": "claude-haiku-4-5-20251001"
+    "DEEPTYPE_REPORT_MODEL": "claude-haiku-4-5-20251001",
+    "DEEPTYPE_GA4_MEASUREMENT_ID": "G-RHHX4JRYDS"
   },
-  // DEEPTYPE_TURNSTILE_SECRET reuses the shared "sobok" Turnstile widget secret.
   "secrets_store_secrets": [
     {
       "binding": "DEEPTYPE_PORTONE_API_SECRET",
@@ -68,12 +66,17 @@
     {
       "binding": "DEEPTYPE_TURNSTILE_SECRET",
       "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-      "secret_name": "sobok-turnstile-secret"
+      "secret_name": "vibe-turnstile-secret"
     },
     {
       "binding": "DEEPTYPE_DISCORD_WEBHOOK",
       "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
       "secret_name": "deeptype-discord-webhook"
+    },
+    {
+      "binding": "DEEPTYPE_GA4_API_SECRET",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+      "secret_name": "deeptype-ga4-api-secret"
     }
   ]
 }

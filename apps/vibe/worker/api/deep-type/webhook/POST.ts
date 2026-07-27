@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { verifyWebhook } from '~/billing/portone'
-import { openFresh, withDb } from '~/db/client'
+import { openFresh, withDB } from '~/db/client'
 import { recordWebhookEvent } from '~/db/queries/webhook'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
@@ -36,9 +36,9 @@ route.post('/', async (c) => {
 
   const acted = event
 
-  return withDb(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  return withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     if (acted.type === 'paid') {
-      const outcome = await confirmPurchase(db, portOneCreds, acted.paymentId)
+      const outcome = await confirmPurchase(db, { creds: portOneCreds, env: c.env }, acted.paymentId)
 
       if (outcome === 'amount-mismatch') {
         console.error('deeptype.webhook.amount_mismatch', acted.paymentId)
