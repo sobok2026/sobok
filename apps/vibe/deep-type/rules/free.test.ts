@@ -40,9 +40,12 @@ const VIBE_ROOT = resolve(RULES_DIR, '../..')
 // ---------------------------------------------------------------------------
 
 /**
- * Every relative module reachable from `free.ts`, not just its direct imports: a paid table re-exported through
- * an allowed file would pass a one-level check. Package imports are out of scope because the free perimeter is
- * about this repo's content tables and `free.ts` has none.
+ * Every in-repo module reachable from `free.ts`, not just its direct imports: a paid table re-exported through
+ * an allowed file would pass a one-level check.
+ *
+ * Alias specifiers are followed too. Matching only `'./…'` left `@deep-type/content/work-labels.paid` outside
+ * the closure entirely, so the perimeter could be crossed by writing the import the way the rest of the app
+ * already writes it — the gate would stay green while the paid table shipped in the free bundle.
  */
 function relativeImportClosure(entry: string): Set<string> {
   const seen = new Set<string>()
@@ -56,16 +59,33 @@ function relativeImportClosure(entry: string): Set<string> {
     seen.add(file)
 
     const source = readFileSync(file, 'utf8')
-    for (const match of source.matchAll(/(?:from|import)\s*'(\.[^']*)'/g)) {
-      const specifier = match[1]
-      if (!specifier) {
-        continue
+    for (const match of source.matchAll(/(?:from|import)\s*'([^']+)'/g)) {
+      const resolved = resolveSpecifier(match[1], dirname(file))
+      if (resolved) {
+        queue.push(resolved)
       }
-      queue.push(resolveModule(join(dirname(file), specifier)))
     }
   }
 
   return seen
+}
+
+/** The two path aliases `tsconfig.json` declares for this app. Anything else is a package and out of scope. */
+const ALIASES: readonly [string, string][] = [
+  ['@deep-type/', join(VIBE_ROOT, 'deep-type/')],
+  ['@/', join(VIBE_ROOT, 'src/')],
+]
+
+function resolveSpecifier(specifier: string | undefined, from: string): string | null {
+  if (!specifier) {
+    return null
+  }
+  for (const [prefix, target] of ALIASES) {
+    if (specifier.startsWith(prefix)) {
+      return resolveModule(target + specifier.slice(prefix.length))
+    }
+  }
+  return specifier.startsWith('.') ? resolveModule(join(from, specifier)) : null
 }
 
 function resolveModule(base: string): string {

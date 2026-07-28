@@ -52,5 +52,15 @@ jobs:
       - name: Type check
         run: bun run type
 
+      # Scoped to apps/vibe on purpose. The deep-type instrument is guarded almost entirely by assertions —
+      # option polarity, reverse-flag pins, pole freeze, band cuts, claim boundaries — and none of them ran in
+      # CI until now, so a sign inversion could reach main exactly the way `refine-gem-oa-3` already did.
+      #
+      # A repo-wide `bun test` is not the fix today: `apps/web` carries 23 pre-existing failures, and
+      # `test/backend` needs the Postgres and Redis services that backend-integration.yml stands up. Widening
+      # this step means fixing those first — do it, then drop the path filter.
+      - name: Unit tests (apps/vibe)
+        run: bun test apps/vibe
+
       - name: Assert no generated-file drift
         run: git diff --exit-code
