@@ -539,7 +539,7 @@ describe('drain signature', () => {
     expect(data.mergedWindow).toBe(false)
     // Paid-only TENSION 2 · STUCK 1 → gap 1 → double, so the runner-up rides along.
     expect(data.leaders.map((facet) => facet.id)).toEqual(['TENSION', 'STUCK'])
-    expect(data.contrast.sentence).toContain('정밀 답만')
+    expect(data.contrast.sentence).toContain('심층 답만')
   })
 
   test('an inconsistent subtraction keeps the merged read and says so', () => {

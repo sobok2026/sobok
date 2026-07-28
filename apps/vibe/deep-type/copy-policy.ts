@@ -48,8 +48,12 @@ export type CopyGate = {
  * A match is forgiven when the rest of its sentence negates it. R5 of §5.4 — '이직이나 퇴사를 권하는 조언이
  * 아니에요' — is a required disclaimer that names exactly what the directive gate bans, so a gate that could
  * not read the negation would forbid the sentence that keeps the product honest.
+ *
+ * `아닙` is listed separately from `아니` and is not redundant. Hangul composes a syllable from its 받침, so
+ * '아닙니다' is 아·닙·니·다 and simply does not contain the substring '아니' — the polite form the product copy
+ * uses was forgiven while the formal form the legal documents use was not, which is exactly backwards.
  */
-export const NEGATION = /아니|않|없어|없습니다|말아/
+export const NEGATION = /아니|아닙|않|없어|없습니다|말아/
 
 export const COPY_GATES: readonly CopyGate[] = [
   {
@@ -154,9 +158,9 @@ export const COPY_GATES: readonly CopyGate[] = [
  * ko copy the gates read, as path suffixes under `apps/vibe`. A source lands here when a human authored Korean
  * that reaches a screen; generated strings and locale files that are still blank do not.
  *
- * `legal.ts` and `pages.ts` are deliberately absent until Phase 6 rewrites them — they still carry pre-pivot
- * wording, so adding them now would either fail CI on text nobody has revised yet or force the patterns to be
- * loosened to accommodate it.
+ * `legal.ts` and `pages.ts` carry all four locales in one module rather than one file per locale. The Korean
+ * gates simply do not match English, Japanese or Chinese text, so scanning the whole module costs nothing and
+ * keeps TRADEMARK — the one gate whose patterns are not Hangul — reading every locale.
  */
 export const KO_COPY_SOURCES: readonly string[] = [
   'deep-type/content/abilities.ts',
@@ -177,5 +181,29 @@ export const KO_COPY_SOURCES: readonly string[] = [
   'src/app/[locale]/deep-type/_content/question-options/ko.paid.ts',
   'src/app/[locale]/deep-type/_content/question-prompts/ko.free.ts',
   'src/app/[locale]/deep-type/_content/question-prompts/ko.paid.ts',
+  'src/content/legal.ts',
+  'src/content/pages.ts',
   'worker/report/rules.ts',
+]
+
+/**
+ * Layer 1 of the MBTI trademark rule: the surfaces where the mark would appear as OUR name for the product —
+ * the product name itself, page titles, structured-data names, the site name in OpenGraph. §8.5 puts these
+ * under an absolute ban, and until D11's counsel reply the other two layers are banned too, so in practice
+ * TRADEMARK is what enforces all three.
+ *
+ * This list exists separately because the highest-risk surface was the one `KO_COPY_SOURCES` could not see:
+ * `worker/lib/pricing.ts` holds the string PortOne prints on the 결제창 and the card statement, and it is not
+ * user-facing Korean copy, so it never belonged in the copy list. The rule lived only in a comment there — and
+ * a comment is invisible to an AST scanner by construction.
+ */
+export const TRADEMARK_SOURCES: readonly string[] = [
+  'deep-type/offer.ts',
+  'src/app/[locale]/deep-type/_content/ko.ts',
+  'src/app/[locale]/deep-type/_lib/brand.ts',
+  'src/constants.ts',
+  'src/content/legal.ts',
+  'src/content/pages.ts',
+  'src/i18n/messages/ko.ts',
+  'worker/lib/pricing.ts',
 ]

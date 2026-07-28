@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import ts from 'typescript'
 
-import { COPY_GATES, type CopyGateId, KO_COPY_SOURCES, NEGATION } from './copy-policy'
+import { COPY_GATES, type CopyGateId, KO_COPY_SOURCES, NEGATION, TRADEMARK_SOURCES } from './copy-policy'
 
 const VIBE_ROOT = resolve(dirname(import.meta.path), '..')
 
@@ -33,7 +33,7 @@ function literalsOf(file: string): Literal[] {
     }
 
     if (ts.isPropertyAssignment(node)) {
-      const name = ts.isIdentifier(node.name) || ts.isStringLiteral(node.name) ? node.name.text : ''
+      const name = propertyName(node.name)
       const nextPath = keyPath && name ? `${keyPath}.${name}` : name || keyPath
       walk(node.initializer, nextPath)
       return
@@ -59,6 +59,26 @@ function literalsOf(file: string): Literal[] {
 
   walk(tree, '')
   return found
+}
+
+/**
+ * The key a property contributes to the path, including the computed form.
+ *
+ * `[Locale.KO]: {…}` is a ComputedPropertyName, and reading it as nothing collapsed the whole locale segment:
+ * every literal in `legal.ts` and `pages.ts` arrived as `privacy.sections.body` with no ko/en/ja/zh anywhere,
+ * so a gate could not be scoped to one locale even in principle. Taking the accessed member name gives
+ * `KO.privacy.sections.body`, which is the path a reader of these files would have written by hand.
+ */
+function propertyName(name: ts.PropertyName): string {
+  if (ts.isIdentifier(name) || ts.isStringLiteral(name)) {
+    return name.text
+  }
+
+  if (ts.isComputedPropertyName(name) && ts.isPropertyAccessExpression(name.expression)) {
+    return name.expression.name.text
+  }
+
+  return ''
 }
 
 function lineOf(tree: ts.SourceFile, node: ts.Node): number {
@@ -124,6 +144,18 @@ describe('ko copy gates', () => {
 
     expect(fired).toEqual(['deep-type/content/band-labels.free.ts', 'deep-type/content/band-labels.paid.ts'])
   })
+
+  /**
+   * Layer 1 of the trademark rule, over the surfaces that carry OUR name for the product rather than user copy.
+   * `worker/lib/pricing.ts` is the one that matters most and the one `KO_COPY_SOURCES` cannot reach: its
+   * `orderNames` become the string PortOne prints on the 결제창 and the card statement. The rule used to live in
+   * a comment on that object, and a comment is invisible to this scanner by design.
+   */
+  for (const file of TRADEMARK_SOURCES) {
+    test(`${file} carries no MBTI-family mark`, () => {
+      expect(violations('TRADEMARK', file)).toEqual([])
+    })
+  }
 
   // D14's movement wording may say the ruler moved and may never say a letter did. The allowlist buys the
   // first and must not be readable as buying the second.

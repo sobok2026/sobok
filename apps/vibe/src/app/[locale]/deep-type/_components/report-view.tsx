@@ -28,10 +28,30 @@ type ReportViewProps = {
 
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
+/**
+ * The 인공지능 기본법 제31조 제2항 mark. The 시행령 allows a machine-readable mark only when a human-readable one is
+ * also shown at least once, so this is the visible one and it is repeated per generated block rather than stated
+ * once at the top — a reader who lands mid-report by anchor link has to be able to tell what they are reading.
+ */
+function GeneratedLabel({ text }: { text: string }) {
+  return (
+    <p className="font-bold text-page-ink/44 text-xs tracking-wide" data-ai-generated="true">
+      {text}
+    </p>
+  )
+}
+
 type RenderedSection = {
   body: string
+  /**
+   * Whether `body` itself is model output. The two LLM-only sections have no engine text, so their whole body is
+   * generated; everywhere else the engine wrote `body` and the model only wrote `narrative`. 인공지능 기본법
+   * 제31조 제2항 requires the generated result to be marked as generated, and 'which paragraph' is the whole
+   * question — labelling the engine's own text would be a false statement in the other direction.
+   */
+  bodyIsGenerated: boolean
   key: string
-  /** Narration written over this section, or null where the engine body stands alone. */
+  /** Narration written over this section, or null where the engine body stands alone. Always model output. */
   narrative: string | null
   title: string
 }
@@ -48,13 +68,20 @@ function renderedSections(
   return [
     ...engine.map((section) => ({
       body: section.body,
+      bodyIsGenerated: false,
       key: section.key,
       narrative: byKey.get(section.key)?.body ?? null,
       title: section.title,
     })),
     ...narrative
       .filter((section) => !written.has(section.key))
-      .map((section) => ({ body: section.body, key: section.key, narrative: null, title: section.title })),
+      .map((section) => ({
+        body: section.body,
+        bodyIsGenerated: true,
+        key: section.key,
+        narrative: null,
+        title: section.title,
+      })),
   ]
 }
 
@@ -126,11 +153,13 @@ export function ReportView({
             key={section.key}
           >
             <h2 className="break-keep font-black text-lg">{section.title}</h2>
+            {section.bodyIsGenerated ? <GeneratedLabel text={content.ui.aiGeneratedLabel} /> : null}
             <p className="mt-3 whitespace-pre-line break-keep text-page-ink/76 leading-8">{section.body}</p>
             {section.narrative ? (
-              <p className="mt-4 whitespace-pre-line break-keep border-page-border border-t pt-4 text-page-ink/68 leading-8">
-                {section.narrative}
-              </p>
+              <div className="mt-4 border-page-border border-t pt-4">
+                <GeneratedLabel text={content.ui.aiGeneratedLabel} />
+                <p className="mt-2 whitespace-pre-line break-keep text-page-ink/68 leading-8">{section.narrative}</p>
+              </div>
             ) : null}
           </section>
         ))}

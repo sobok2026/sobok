@@ -25,6 +25,8 @@ export type QuestionPromptCatalog = Readonly<Record<string, string>>
 export type QuestionOptionCatalog = Readonly<Record<string, QuestionContent['options']>>
 
 export type DeepTypeUiText = {
+  /** 인공지능 기본법 제31조 제2항 mark, shown on every model-written block of the report. */
+  aiGeneratedLabel: string
   analyzingBody: string
   analyzingTitle: string
   backCta: string
@@ -76,6 +78,7 @@ export type DeepTypePaywallContent = {
   closeCta: string
   consentPrivacy: string
   consentWithdrawal: string
+  minorNotice: string
   cta: string
   discountTemplate: string
   effortNote: string

@@ -5,9 +5,11 @@
 // Source of truth: apps/vibe/MIGRATION.md §8.3 (D16). Strings are verbatim from the §8.3 code block and from
 // the terms body on the line above it; do not reword them here without amending §8.3 and `legal.ts` together.
 //
-// Two invariants, both enforced in CI (§8.3):
+// Two invariants, both enforced by `free-deliverables.test.ts` (§8.3):
 //   1. The `legal.ts` withdrawal-limitation paragraph contains these four joined by ' · ', exactly.
 //   2. The four block headings on the free result screen are injected from this array.
+// They are ko-only, and deliberately so: '두/세 갈래' is respondent-dependent and the join separator differs by
+// locale (ja uses ・). The en/ja/zh refund pages carry the same four deliverables as prose, checked by eye.
 // Value labels inside those blocks (the four-letter codes, the job name, the branch count, band wording) are
 // deliberately out of scope: '두/세 갈래' is respondent-dependent, so a value-level invariant cannot hold.
 //

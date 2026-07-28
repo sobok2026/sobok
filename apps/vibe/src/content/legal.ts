@@ -1,4 +1,16 @@
+import { FREE_DELIVERABLES_KO } from '@deep-type/free-deliverables'
+import { DEEP_TYPE_REPORT_OFFER, PRODUCT_NAME } from '@deep-type/offer'
 import { Locale } from '@sobok/domain/locale'
+
+import { previousVersionsOf } from './legal-archive'
+
+// The contract states the price and the product name, so it reads them from the same constants the checkout
+// charges and the PortOne 결제창 prints. 전자상거래법 제13조 제2항 제2호·제3호 make both pre-contract disclosures,
+// and a literal here would be a second copy free to drift from the one the buyer is actually charged.
+const PRICE_KO = `${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('ko-KR')}원`
+const PRICE_EN = `KRW ${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('en-US')}`
+const PRICE_JA = `${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('ja-JP')}ウォン`
+const PRICE_ZH = `${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('zh-CN')}韩元`
 
 // Contact shown on the legal pages. Keep this a mailbox that is actually
 // monitored (or swap it) — AdSense reviewers and users may write to it.
@@ -57,42 +69,45 @@ export const LEGAL = {
     privacy: {
       title: '개인정보처리방침',
       description: '로빈리뷰가 결타레 서비스에서 이용자의 정보를 어떻게 다루는지 안내합니다.',
-      effectiveDate: '2026년 7월 22일',
-      updatedDate: '2026년 7월 22일',
-      version: '1.0',
+      effectiveDate: '2026년 8월 4일',
+      updatedDate: '2026년 7월 28일',
+      version: '1.1',
+      previousVersions: previousVersionsOf(Locale.KO, 'privacy'),
       sections: [
         {
-          heading: '무료 테스트와 유료 감정서의 구분',
+          heading: '무료 테스트와 유료 리포트의 구분',
           body: [
             '결지수 테스트와 대화 유형 테스트의 답변은 이용자의 브라우저 안에서만 계산되며 서버로 전송되거나 저장되지 않습니다. 이 테스트는 회원가입이 필요하지 않습니다.',
-            '겉속유형 무료 결과는 브라우저에서 계산됩니다. 이용자가 유료 감정서 결제를 시작하면 결과 코드와 답변이 구매·감정서 제공을 위해 서버로 전송됩니다. 구매로 이어지지 않거나 결제가 실패·대기 상태로 끝난 데이터는 생성 또는 결제 시도 후 30일에 파기합니다.',
+            '겉속유형 무료 결과는 브라우저에서 계산됩니다. 이용자가 유료 리포트 결제를 시작하면 결과 코드와 답변이 구매·리포트 제공을 위해 서버로 전송됩니다. 구매로 이어지지 않거나 결제가 실패·대기 상태로 끝난 데이터는 생성 또는 결제 시도 후 30일에 파기합니다.',
           ],
         },
         {
           heading: '수집하는 개인정보 항목',
           body: [
-            '유료 감정서 이용 시 이메일 주소와 조회용 해시값, 테스트 결과 코드와 답변, 정밀 문항 답변, 서버가 산출한 축별 수치와 감정서, 결제 정보(결제수단·승인 및 거래 식별자·금액·동의 시각·만 14세 이상 확인 시각), 접속·이용 정보(IP 주소·기기 및 브라우저 정보·봇 방지 토큰)를 처리합니다.',
+            '유료 리포트 이용 시 이메일 주소와 조회용 해시값, 무료 검사와 심층 검사의 문항 답변, 이용자가 직접 고른 자가선언 코드와 그 제공 여부, 서버가 산출한 결과 코드와 축별 선명도 및 리포트, 결제 정보(결제수단·승인 및 거래 식별자·금액·동의 시각·만 14세 이상 확인 시각), 접속·이용 정보(IP 주소·기기 및 브라우저 정보·봇 방지 토큰)를 처리합니다.',
             'Google 도구가 켜진 페이지에서는 동의 상태, 방문 페이지, 기기·브라우저 정보, 광고·분석 식별자가 처리될 수 있습니다. 저장형 광고·분석 식별자는 이용자의 선택에 따르며, 고급 동의 모드에서는 선택 전이나 거부 상태에도 쿠키 없는 동의 상태·측정 신호가 Google로 전송될 수 있습니다.',
+            '겉속유형 무료 검사에서는 결제 전에도 답변한 문항 수와 진행 구간 및 자가선언 코드 제공 여부가 이용 통계 이벤트로 Google에 전송될 수 있습니다. 답변 내용 자체는 전송하지 않습니다.',
             '카드번호 같은 민감한 결제수단 정보는 결제대행사가 직접 처리하며 회사는 보관하지 않습니다.',
           ],
         },
         {
           heading: '개인정보의 처리 목적',
           body: [
-            '감정서를 생성해 제공하고 이메일로 재열람할 수 있도록 하기 위해, 결제와 환불 및 거래 기록을 관리하기 위해, 부정 이용과 자동화 봇을 차단하기 위해, 문의에 응대하고 서비스를 개선하기 위한 통계에 개인정보를 이용합니다.',
+            '리포트를 생성해 제공하고 이메일로 재열람할 수 있도록 하기 위해, 결제와 환불 및 거래 기록을 관리하기 위해, 부정 이용과 자동화 봇을 차단하기 위해, 문의에 응대하고 서비스를 개선하기 위한 통계에 개인정보를 이용합니다.',
           ],
         },
         {
           heading: '보유 및 이용 기간',
           body: [
-            '구매로 이어지지 않은 결과와 pending·failed 구매 시도는 30일 보관합니다. 감정서가 생성된 뒤 원본·정밀 답변은 3개월 보관하고, 결과 코드·서버 산출 프로필·감정서·구매 이메일·재열람 권한은 결제일부터 1년 보관합니다. 재열람용 원본 링크 토큰은 저장하지 않고 해시만 저장하며, 15분 만료 또는 1회 사용 뒤 다음 정기 삭제에서 파기합니다.',
-            'PortOne 원본 웹훅은 90일, 접속·보안 로그는 최대 3개월 보관합니다. 결제·계약·환불 증빙에 필요한 최소 거래 기록은 5년 보관하며 소비자 문의·분쟁 기록은 해당 처리 목적에 필요한 기간 동안 최대 3년 보관합니다. 1년이 지나면 이메일, 접근 토큰, 결과·감정서 데이터는 거래 기록과 분리해 삭제하고, 5년이 지나면 최소 거래 기록도 삭제합니다.',
+            '구매로 이어지지 않은 결과와 pending·failed 구매 시도는 30일 보관합니다. 리포트가 생성된 뒤 무료·심층 답변과 중간 저장 초안은 3개월 보관하고 결과 코드·서버 산출 프로필·리포트·구매 이메일·재열람 권한은 결제일부터 1년 보관합니다. 재열람용 원본 링크 토큰은 저장하지 않고 해시만 저장하며 15분 만료 또는 1회 사용 뒤 다음 정기 삭제에서 파기합니다.',
+            '결제한 뒤 심층 문항을 끝내지 않아 리포트가 생성되지 않은 경우 답변과 중간 저장 초안은 결제일부터 90일 보관하고 그 뒤 삭제합니다. 이때 서버가 산출한 프로필은 남아 있어 결과 열람은 유지됩니다.',
+            'PortOne 원본 웹훅은 90일, 접속·보안 로그는 최대 3개월 보관합니다. 결제·계약·환불 증빙에 필요한 최소 거래 기록은 5년 보관하며 소비자 문의·분쟁 기록은 해당 처리 목적에 필요한 기간 동안 최대 3년 보관합니다. 1년이 지나면 이메일, 접근 토큰, 결과·리포트 데이터는 거래 기록과 분리해 삭제하고 5년이 지나면 최소 거래 기록도 삭제합니다.',
           ],
         },
         {
           heading: '개인정보 처리의 위탁',
           body: [
-            '회사는 서비스 제공을 위해 아래와 같이 처리를 맡깁니다. PortOne과 Toss Payments는 카드 결제·환불과 결제 연동을, Anthropic PBC는 감정서 생성을, Plus Five Five, Inc.(Resend)는 재열람용 트랜잭션 이메일 발송을, Cloudflare, Inc.는 웹 호스팅·콘텐츠 전송·접속 로그와 봇 차단(Turnstile)을, Supabase는 데이터 보관(서울 리전)을, Google은 동의 관리·이용 통계와 광고를 담당합니다.',
+            '회사는 서비스 제공을 위해 아래와 같이 처리를 맡깁니다. PortOne과 Toss Payments는 카드 결제·환불과 결제 연동을, Anthropic PBC는 리포트 서술을, Plus Five Five, Inc.(Resend)는 재열람용 트랜잭션 이메일 발송을, Cloudflare, Inc.는 웹 호스팅·콘텐츠 전송·접속 로그와 봇 차단(Turnstile)을, Supabase는 데이터 보관(서울 리전)을, Google은 동의 관리·이용 통계와 광고를 담당합니다.',
             '위탁 계약을 체결할 때 개인정보가 안전하게 관리되도록 필요한 사항을 정하고 수탁자를 감독합니다.',
           ],
         },
@@ -100,11 +115,11 @@ export const LEGAL = {
           heading: '개인정보의 국외 이전',
           body: [
             '회사는 계약의 이행을 위한 처리위탁과 보관 목적으로 아래와 같이 개인정보를 국외로 이전합니다(개인정보보호법 제28조의8 제1항 제3호). 별도의 동의 없이 본 방침의 공개로 갈음합니다.',
-            'Anthropic PBC(미국)에 서버가 산출한 유형 코드·축별 수치·정제된 프로필을 감정서 생성 시 전송합니다. 이메일과 원본 답변은 전송하지 않습니다. Anthropic은 상용 API 입력·출력을 기본적으로 모델 학습에 사용하지 않으며, 별도 약정이나 정책 집행 등 예외가 없으면 30일 안에 삭제한다고 안내합니다. 회사가 받은 감정서는 자체 보존 기준에 따라 1년 보관합니다.',
-            'Plus Five Five, Inc.(Resend, 미국)에 수신 이메일 주소, 구매일, 15분 일회용 재열람 URL, 메일 본문과 발송 메타데이터를 요청 시 전송합니다. 유형 코드나 감정서 본문은 보내지 않습니다. 표준 요금제의 이메일 데이터 보존 기간은 30일이며 링크 클릭·오픈 추적은 사용하지 않습니다.',
-            'Cloudflare, Inc.(미국)에 이전합니다. 이전 항목은 접속 정보(IP 주소·기기 정보)와 봇 방지 토큰이며, 서비스 이용 시점에 전송하고 웹 호스팅과 콘텐츠 전송 및 보안 목적으로 서비스 제공 기간 동안 처리됩니다.',
-            'Google 및 그 광고·분석 파트너의 처리 위치는 이용 지역과 공급자 인프라에 따라 달라질 수 있습니다. 동의 상태, 쿠키 없는 측정 신호 또는 동의한 광고·분석 데이터가 서비스 이용 시 전송되며 Google의 설정과 보존 정책에 따라 처리됩니다.',
-            '이전을 원하지 않으면 감정서를 구매하지 않으면 됩니다. 감정서 생성처럼 국외 이전 없이는 제공할 수 없는 기능이 있어 이전을 거부하면 해당 기능의 이용이 제한됩니다. 거부 의사는 문의처로도 전달할 수 있습니다.',
+            'Anthropic PBC(미국)에 리포트 서술 시 전송합니다. 이전 항목은 서버가 산출한 유형 코드와 축 이름·양극 라벨·선명도 문구, 세계관 직업, 지치는 조건 라벨, 규칙 엔진이 이미 작성한 리포트 본문입니다. 이메일과 문항별 답변 및 축별 점수는 전송하지 않습니다. 이전 방법은 HTTPS 암호화 전송이고 연락처는 privacy@anthropic.com 입니다. Anthropic은 상용 API 입력·출력을 기본적으로 모델 학습에 사용하지 않으며 별도 약정이나 정책 집행 등 예외가 없으면 30일 안에 삭제한다고 안내합니다. 회사가 받은 서술은 자체 보존 기준에 따라 1년 보관합니다.',
+            'Plus Five Five, Inc.(Resend, 미국)에 수신 이메일 주소, 구매일, 15분 일회용 재열람 URL, 메일 본문과 발송 메타데이터를 요청 시 전송합니다. 유형 코드나 리포트 본문은 보내지 않습니다. 이전 방법은 HTTPS 암호화 전송이고 연락처는 privacy@resend.com 입니다. 표준 요금제의 이메일 데이터 보존 기간은 30일이며 링크 클릭·오픈 추적은 사용하지 않습니다.',
+            'Cloudflare, Inc.(미국)에 이전합니다. 이전 항목은 접속 정보(IP 주소·기기 정보)와 봇 방지 토큰이며 서비스 이용 시점에 전송하고 웹 호스팅과 콘텐츠 전송 및 보안 목적으로 서비스 제공 기간 동안 처리됩니다. 봇 검증에서는 접속 IP 주소와 위젯 토큰을 Cloudflare Turnstile 검증 엔드포인트로 보냅니다. 이전 방법은 HTTPS 암호화 전송이고 연락처는 privacyquestions@cloudflare.com 입니다.',
+            'Google 및 그 광고·분석 파트너의 처리 위치는 이용 지역과 공급자 인프라에 따라 달라질 수 있습니다. 동의 상태, 쿠키 없는 측정 신호 또는 동의한 광고·분석 데이터가 서비스 이용 시 전송되며 Google의 설정과 보존 정책에 따라 처리됩니다. 결제가 확정되면 회사 서버가 거래 식별자와 결제 금액·통화·상품 정보 및 브라우저에서 수집한 분석 식별자를 Google로 직접 전송합니다. 이 전송은 이용자의 브라우저가 닫힌 뒤에도 발생할 수 있습니다. 연락처는 https://support.google.com/policies 에서 확인할 수 있습니다.',
+            '리포트 서술과 결제를 위한 이전은 리포트를 구매하지 않으면 발생하지 않습니다. 광고·분석 목적의 이전은 푸터의 개인정보·쿠키 설정에서 거부할 수 있습니다. 보안과 봇 차단을 위한 이전은 서비스 제공에 필요한 최소 범위로 이루어지며 이를 거부하면 서비스를 이용할 수 없습니다. 거부 의사는 문의처로도 전달할 수 있습니다.',
           ],
         },
         {
@@ -144,7 +159,7 @@ export const LEGAL = {
         {
           heading: '아동의 개인정보',
           body: [
-            '무료 서비스는 연령 확인 없이 이용할 수 있습니다. 유료 감정서는 만 14세 이상만 구매할 수 있으며, 생년월일은 수집하지 않고 결제 시 만 14세 이상 확인 시각만 저장합니다.',
+            '무료 서비스는 연령 확인 없이 이용할 수 있습니다. 유료 리포트는 만 14세 이상만 구매할 수 있으며 생년월일은 수집하지 않고 결제 시 만 14세 이상 확인 시각만 저장합니다.',
           ],
         },
         {
@@ -158,60 +173,75 @@ export const LEGAL = {
     terms: {
       title: '이용약관',
       description: '로빈리뷰가 운영하는 결타레 서비스 이용에 적용되는 약관입니다.',
-      effectiveDate: '2026년 7월 22일',
-      updatedDate: '2026년 7월 22일',
-      version: '1.0',
+      effectiveDate: '2026년 8월 4일',
+      updatedDate: '2026년 7월 28일',
+      version: '1.1',
+      previousVersions: previousVersionsOf(Locale.KO, 'terms'),
       sections: [
         {
           heading: '서비스 소개',
           body: [
-            '결타레는 커플 케미를 가볍게 확인하는 무료 테스트와 자기 이해를 돕는 유료 감정서(겉속유형 정밀 감정서)를 제공하는 서비스이며 로빈리뷰가 운영합니다.',
+            `결타레는 결지수 테스트와 대화 유형 테스트를 무료로 제공하고 일에서의 자기 이해를 돕는 유료 리포트(${PRODUCT_NAME.ko})를 함께 제공하는 서비스이며 로빈리뷰가 운영합니다.`,
+            '무료 두 테스트는 커플의 케미를 가볍게 확인하는 도구입니다. 유료 리포트는 일에서 힘이 붙는 조건과 힘이 새는 조건을 정리해 주는 자기이해 콘텐츠이며 커플 궁합과는 관련이 없습니다.',
+            '상품명의 「심층」은 측정 정밀도가 아니라 산출 범위를 뜻합니다. 결제 후 이어지는 문항은 무료 결과에서 이미 나온 여덟 글자를 바꾸지 않고 각 축이 얼마나 선명한지와 서술 범위만 넓힙니다.',
           ],
         },
         {
           heading: '용어와 계약의 성립',
           body: [
-            '서비스는 vibe.sobok.cc에서 제공되는 무료 테스트와 겉속유형 기능을, 감정서는 결제 후 생성되는 디지털 리포트를 뜻합니다. 이용자는 결제 화면에서 상품·가격·제공 기간·필수 동의를 확인하고 카드 결제를 완료하면 감정서 이용 계약을 맺습니다.',
-            '회원가입은 없으며 구매 이메일과 서버가 발급한 접근 권한으로 감정서를 제공합니다. 정기결제나 자동 갱신 상품이 아닙니다.',
+            '서비스는 vibe.sobok.cc에서 제공되는 무료 테스트와 겉속유형 기능을, 리포트는 결제 후 생성되는 디지털 콘텐츠를 뜻합니다. 이용자는 결제 화면에서 상품·가격·제공 기간·필수 동의를 확인하고 카드 결제를 완료하면 리포트 이용 계약을 맺습니다.',
+            '회원가입은 없으며 구매 이메일과 서버가 발급한 접근 권한으로 리포트를 제공합니다. 정기결제나 자동 갱신 상품이 아닙니다.',
           ],
         },
         {
           heading: '유료 서비스와 결제',
           body: [
-            '겉속유형 정밀 감정서는 5,900원(VAT 포함)의 유료 디지털 콘텐츠입니다. 현재 결제수단은 PortOne을 통해 연결되는 Toss Payments 카드 결제입니다. 승인 전 화면에 표시된 최종 금액을 확인해야 합니다.',
+            `${PRODUCT_NAME.ko}는 ${PRICE_KO}(VAT 포함)의 유료 디지털 콘텐츠입니다. 현재 결제수단은 PortOne을 통해 연결되는 Toss Payments 카드 결제입니다. 승인 전 화면에 표시된 최종 금액을 확인해야 합니다.`,
             '해외 발급 카드의 사용 가능 여부는 카드사와 결제대행사 정책에 따라 달라질 수 있습니다. 결제 통화는 KRW이며 카드사가 환율과 해외 결제 수수료를 적용할 수 있습니다.',
           ],
         },
         {
           heading: '콘텐츠의 제공',
           body: [
-            '감정서는 결제 후 심화 문항을 서버에서 다시 채점한 결과로 생성해 웹에서 제공합니다. 생성에 시간이 걸릴 수 있으며 재시도 한도를 넘겨 실패하면 자동 취소 기능이나 고객센터를 통해 전액 환불을 요청할 수 있습니다.',
-            '감정서와 이메일 재열람은 결제일부터 1년 동안 제공합니다. 구매 이메일을 입력하면 15분 동안 한 번만 쓸 수 있는 링크를 보내며, 링크에서 이용자가 열기 버튼을 누른 뒤 감정서를 표시합니다. 1년 뒤에는 감정서·결과·이메일과 접근 권한을 삭제하므로 별도 복구를 보장하지 않습니다.',
+            '리포트는 결제 후 이어지는 심층 문항의 답을 서버가 채점해 만듭니다. 심층 문항은 무료 결과에서 이미 나온 여덟 글자를 다시 정하지 않고 각 축의 선명도를 확정합니다.',
+            '리포트는 두 단계로 제공됩니다. 회사의 규칙 엔진이 쓴 본문이 먼저 올라오고 인공지능이 쓰는 서술 문단이 이어서 붙습니다. 서술이 끝나기 전까지는 리포트를 아직 제공하지 않은 것으로 보며 이 시점에는 청약철회가 제한되지 않습니다. 서술 생성이 재시도 한도를 넘겨 실패하면 자동 취소 기능이나 고객센터를 통해 전액 환불을 요청할 수 있습니다.',
+            '리포트는 내려받는 파일이 아니라 웹 화면으로 제공합니다. 자바스크립트를 켠 최신 브라우저가 필요하고 따로 설치할 프로그램은 없습니다. 재열람은 구매에 사용한 이메일을 받을 수 있어야 가능합니다.',
+            '리포트와 이메일 재열람은 결제일부터 1년 동안 제공합니다. 구매 이메일을 입력하면 15분 동안 한 번만 쓸 수 있는 링크를 보내며 링크에서 이용자가 열기 버튼을 누른 뒤 리포트를 표시합니다. 1년 뒤에는 리포트·결과·이메일과 접근 권한을 삭제하므로 별도 복구를 보장하지 않습니다.',
+          ],
+        },
+        {
+          heading: '인공지능 생성 고지',
+          body: [
+            '리포트의 본문은 회사의 규칙 엔진이 작성하고 일부 서술 문단은 Anthropic의 생성형 인공지능이 씁니다. 회사는 인공지능 기본법 제31조 제1항에 따라 이 사실을 결제 전에 알리고 같은 조 제2항에 따라 리포트 화면에서 인공지능이 쓴 문단에 그 사실을 표시합니다.',
+            '인공지능은 여덟 글자와 선명도를 정하지 않습니다. 그 값은 회사의 프로그램이 이용자의 답에서 계산하며 인공지능은 이미 정해진 값을 문장으로 옮길 뿐입니다.',
+            '생성형 인공지능이 쓴 문장은 사실 확인을 거친 진술이 아니고 같은 답변이라도 표현이 달라질 수 있습니다. 인공지능 서술이 끝내 생성되지 않아도 규칙 엔진이 쓴 본문은 그대로 제공합니다.',
           ],
         },
         {
           heading: '청약철회와 환불',
           body: [
-            '청약철회와 환불에 관한 사항은 별도의 청약철회·환불 정책에서 정합니다. 요약하면 감정서를 열람하기 전에는 전액 환불되며, 열람한 뒤에는 디지털 콘텐츠 특성상 청약철회가 제한됩니다. 다만 표시·광고와 다르게 이행된 경우에는 열람 후에도 법령에 따라 청약철회를 할 수 있습니다.',
+            '청약철회와 환불에 관한 사항은 별도의 청약철회·환불 정책에서 정합니다. 요약하면 리포트를 열람하기 전에는 전액 환불되며 열람한 뒤에는 디지털 콘텐츠 특성상 청약철회가 제한됩니다. 다만 표시·광고와 다르게 이행된 경우에는 열람 후에도 법령에 따라 청약철회를 할 수 있습니다.',
           ],
         },
         {
           heading: '구매 자격과 연령 확인',
           body: [
-            '무료 서비스는 연령 확인 없이 이용할 수 있습니다. 유료 감정서는 만 14세 이상만 구매할 수 있으며 결제 시 직접 확인해야 합니다. 생년월일은 수집하지 않습니다.',
+            '무료 서비스는 연령 확인 없이 이용할 수 있습니다. 유료 리포트는 만 14세 이상만 구매할 수 있으며 결제 시 직접 확인해야 합니다. 생년월일은 수집하지 않습니다.',
+            '미성년자가 법정대리인의 동의 없이 맺은 계약은 미성년자 본인이나 법정대리인이 취소할 수 있습니다. 회사는 전자상거래법 제13조 제3항에 따라 이 사실을 결제 화면에서도 안내합니다.',
           ],
         },
         {
           heading: '이용자의 의무',
           body: [
-            '이용자는 본인이 접근할 수 있는 정확한 이메일을 사용하고, 결제·재열람 토큰과 링크를 다른 사람에게 공개하지 않아야 합니다. 다른 사람의 이메일·결제수단을 무단 사용하거나, 자동화 요청·우회·역공학·서비스 방해·감정서의 무단 재판매를 해서는 안 됩니다.',
-            '공유 기능으로 만든 텍스트에는 유형 코드와 결과 요약이 포함되므로, 이용자가 공개 전에 공유 대상과 포함된 내용을 확인해야 합니다.',
+            '이용자는 본인이 접근할 수 있는 정확한 이메일을 사용하고 결제·재열람 토큰과 링크를 다른 사람에게 공개하지 않아야 합니다. 다른 사람의 이메일·결제수단을 무단 사용하거나 자동화 요청·우회·역공학·서비스 방해·리포트의 무단 재판매를 해서는 안 됩니다.',
+            '공유 기능으로 만든 텍스트에는 유형 코드와 결과 요약이 포함되므로 이용자가 공개 전에 공유 대상과 포함된 내용을 확인해야 합니다.',
           ],
         },
         {
           heading: '오락·참고 목적',
           body: [
-            '감정서를 포함해 결타레가 제공하는 모든 결과는 자기 이해와 오락을 돕기 위한 참고 정보이며 의학적·심리적 진단이나 전문 상담을 대신하지 않습니다.',
+            '리포트를 포함해 결타레가 제공하는 모든 결과는 자기 이해와 오락을 돕기 위한 참고 정보이며 의학적·심리적 진단이나 전문 상담을 대신하지 않습니다.',
+            '리포트는 직업소개나 취업알선 서비스가 아니고 직업적성검사나 채용 도구도 아닙니다. 결과에 나오는 세계관 직업은 실제 채용 직무가 아니라 지금의 답에 가장 가까운 역할을 보여주는 표현이며 이직이나 퇴사 또는 창업을 권하는 조언이 아닙니다.',
             '이용자는 서비스의 내용을 중요한 의사결정의 유일한 근거로 삼지 않아야 하며 서비스 이용에 따른 판단과 책임은 이용자 본인에게 있습니다.',
           ],
         },
@@ -230,7 +260,7 @@ export const LEGAL = {
         {
           heading: '지식재산권',
           body: [
-            '서비스에 포함된 텍스트, 디자인, 로고, 감정서 콘텐츠에 대한 권리는 로빈리뷰 또는 정당한 권리자에게 있으며 무단 복제·배포를 금지합니다.',
+            '서비스에 포함된 텍스트, 디자인, 로고, 리포트 콘텐츠에 대한 권리는 로빈리뷰 또는 정당한 권리자에게 있으며 무단 복제·배포를 금지합니다.',
           ],
         },
         {
@@ -261,10 +291,11 @@ export const LEGAL = {
     },
     refund: {
       title: '청약철회·환불 정책',
-      description: '겉속유형 정밀 감정서의 청약철회와 환불에 관한 사항을 안내합니다.',
-      effectiveDate: '2026년 7월 22일',
-      updatedDate: '2026년 7월 22일',
-      version: '1.0',
+      description: `${PRODUCT_NAME.ko}의 청약철회와 환불에 관한 사항을 안내합니다.`,
+      effectiveDate: '2026년 8월 4일',
+      updatedDate: '2026년 7월 28일',
+      version: '1.1',
+      previousVersions: previousVersionsOf(Locale.KO, 'refund'),
       sections: [
         {
           heading: '청약철회 기간',
@@ -273,21 +304,33 @@ export const LEGAL = {
         {
           heading: '디지털 콘텐츠의 청약철회 제한',
           body: [
-            '겉속유형 정밀 감정서는 디지털 콘텐츠입니다. 전자상거래법 제17조 제2항에 따라 콘텐츠의 제공이 개시되면 청약철회가 제한될 수 있습니다.',
-            '회사는 이 제한이 적용된다는 사실을 결제 화면에 명확히 표시하고, 결제 전에 무료 요약 결과(겉·속·보석 세 겹)를 제공해 이용자가 상품을 미리 확인할 수 있도록 합니다.',
+            `${PRODUCT_NAME.ko}는 디지털 콘텐츠입니다. 전자상거래법 제17조 제2항에 따라 콘텐츠의 제공이 개시되면 청약철회가 제한될 수 있습니다.`,
+            // The four deliverables come from the constant, not from a second copy of the words. This paragraph is
+            // the only thing that supports the 시용 상품 제공 limb of 제17조 제6항, so if the free run ever hands over
+            // something different from what this sentence promises, the limitation itself falls away.
+            `회사는 이 제한이 적용된다는 사실을 결제 화면에 명확히 표시합니다. 회사는 결제 전에 무료 검사 결과로 ${FREE_DELIVERABLES_KO.join(' · ')}를 제공해 이용자가 상품의 성격을 미리 확인할 수 있도록 합니다. 무료 검사는 결제 없이 언제든 다시 받을 수 있습니다.`,
           ],
         },
         {
           heading: '열람 전 전액 환불',
           body: [
-            '결제한 뒤에도 감정서를 아직 열람하지 않았다면 언제든 전액 환불받을 수 있습니다. 감정서 화면의 환불 요청 기능으로 즉시 처리하거나 아래 문의처로 요청할 수 있습니다.',
-            '감정서의 1년 재열람 기간은 환불 가능 기간을 늘리거나 이미 시작된 콘텐츠 제공을 되돌리는 의미가 아닙니다. 다만 감정서 생성이 최종 실패했거나 회사가 제공하지 못한 경우에는 전액 환불합니다.',
+            '결제한 뒤에도 리포트를 아직 열람하지 않았다면 언제든 전액 환불받을 수 있습니다. 리포트 화면의 환불 요청 기능으로 즉시 처리하거나 아래 문의처로 요청할 수 있습니다.',
+            '리포트는 규칙 엔진이 쓴 본문이 먼저 올라오고 인공지능 서술이 이어서 붙습니다. 서술이 끝나기 전까지는 콘텐츠 제공이 개시되지 않은 것으로 보므로 이 시점에는 청약철회가 제한되지 않습니다.',
+            '리포트의 1년 재열람 기간은 환불 가능 기간을 늘리거나 이미 시작된 콘텐츠 제공을 되돌리는 의미가 아닙니다. 다만 리포트 생성이 최종 실패했거나 회사가 제공하지 못한 경우에는 전액 환불합니다.',
           ],
         },
         {
           heading: '표시·광고와 다르게 이행된 경우',
           body: [
-            '제공된 감정서가 표시·광고 내용과 다르거나 계약과 다르게 이행된 경우에는 열람한 뒤에도 공급받은 날부터 3개월 이내, 그 사실을 안 날 또는 알 수 있었던 날부터 30일 이내에 청약철회를 할 수 있습니다.',
+            '제공된 리포트가 표시·광고 내용과 다르거나 계약과 다르게 이행된 경우에는 열람한 뒤에도 공급받은 날부터 3개월 이내, 그 사실을 안 날 또는 알 수 있었던 날부터 30일 이내에 청약철회를 할 수 있습니다.',
+            '리포트에 결함이 있어 이용자에게 피해가 생긴 경우 회사는 콘텐츠산업진흥법 제28조 제2항에 따라 그 피해를 보상합니다.',
+          ],
+        },
+        {
+          heading: '과오금의 환불',
+          body: [
+            '결제 오류나 회사의 잘못으로 실제 이용 금액보다 많이 결제된 금액은 이용자가 요청하면 전액 환불합니다. 회사의 책임이 아닌 사유로 과오금이 생긴 경우에는 환불에 실제로 드는 비용을 뺀 금액을 돌려드립니다.',
+            '과오금 환불은 결제한 수단으로 처리합니다.',
           ],
         },
         {
@@ -299,7 +342,8 @@ export const LEGAL = {
         {
           heading: '연령 제한',
           body: [
-            '만 14세 미만은 유료 감정서를 구매할 수 없습니다. 연령을 잘못 확인하고 결제한 사실을 알게 되면 구매 이메일과 함께 문의해 주세요.',
+            '만 14세 미만은 유료 리포트를 구매할 수 없습니다. 연령을 잘못 확인하고 결제한 사실을 알게 되면 구매 이메일과 함께 문의해 주세요.',
+            '미성년자가 법정대리인의 동의 없이 맺은 계약은 미성년자 본인이나 법정대리인이 취소할 수 있습니다. 취소를 원하면 구매 이메일과 함께 아래 문의처로 연락해 주세요.',
           ],
         },
         {
@@ -326,9 +370,10 @@ export const LEGAL = {
     privacy: {
       title: 'Privacy Policy',
       description: 'How Robin Review handles your information in vibe (DeepType).',
-      effectiveDate: 'July 22, 2026',
-      updatedDate: 'July 22, 2026',
-      version: '1.0',
+      effectiveDate: 'August 4, 2026',
+      updatedDate: 'July 28, 2026',
+      version: '1.1',
+      previousVersions: previousVersionsOf(Locale.EN, 'privacy'),
       sections: [
         {
           heading: 'Free quizzes vs. the paid report',
@@ -340,8 +385,9 @@ export const LEGAL = {
         {
           heading: 'Personal data we collect',
           body: [
-            'For paid reports we process your email address and a lookup hash, result codes and answers, refinement answers, server-computed axis values and profile, the generated report, payment data (method, approval and transaction identifiers, amount, consent timestamps, and the timestamp of your 14+ confirmation), and access and usage data (IP address, device and browser information, and anti-bot token).',
+            'For paid reports we process your email address and a lookup hash; your answers to the forced-choice items in the free and in-depth runs; the self-declared code you picked and whether you provided one; the server-computed result codes, per-axis clarity, and the generated report; payment data (method, approval and transaction identifiers, amount, consent timestamps, and the timestamp of your 14+ confirmation); and access and usage data (IP address, device and browser information, and anti-bot token).',
             'On pages where Google tools are enabled, consent state, page viewed, device and browser data, and advertising or analytics identifiers may be processed. Stored advertising and analytics identifiers follow your choices. In advanced consent mode, cookieless consent-state and measurement signals may still be sent to Google before a choice or after a refusal.',
+            'In the free DeepType run, the number of items answered, the segment you have reached, and whether you provided a self-declared code may be sent to Google as usage-statistics events even before payment. The answers themselves are not sent.',
             'Sensitive payment details such as card numbers are handled directly by the payment provider and are not stored by us.',
           ],
         },
@@ -354,14 +400,15 @@ export const LEGAL = {
         {
           heading: 'Retention period',
           body: [
-            'Unpurchased results and pending or failed purchase attempts are kept for 30 days. Raw and refinement answers are kept for 3 months after report generation. Result codes, the server-computed profile, report, purchase email, and report-access credential are kept for 1 year from payment. We do not store the raw email-link token; only its hash is kept and deleted by the next scheduled purge after it expires in 15 minutes or is used once.',
+            'Unpurchased results and pending or failed purchase attempts are kept for 30 days. Answers from the free and in-depth runs, together with saved drafts, are kept for 3 months after report generation. Result codes, the server-computed profile, report, purchase email, and report-access credential are kept for 1 year from payment. We do not store the raw email-link token; only its hash is kept and deleted by the next scheduled purge after it expires in 15 minutes or is used once.',
+            'If you paid but never finished the in-depth items and no report was generated, your answers and saved drafts are kept for 90 days from payment and then deleted. The server-computed profile remains, so you can still open your result.',
             'Raw PortOne webhooks are kept for 90 days and access or security logs for up to 3 months. Minimal payment, contract, and refund evidence is kept for 5 years, and inquiry or dispute records for the period needed for that purpose, up to 3 years. After 1 year we delete the email, access credential, result, and report separately from the minimal transaction record; after 5 years the minimal record is deleted too.',
           ],
         },
         {
           heading: 'Processing entrusted to others',
           body: [
-            'We use PortOne and Toss Payments for card payments, refunds, and payment integration; Anthropic PBC for report generation; Plus Five Five, Inc. (Resend) for transactional report-access email; Cloudflare, Inc. for hosting, content delivery, access logs, and bot mitigation (Turnstile); Supabase for database storage in Seoul; and Google for consent management, analytics, and advertising.',
+            'We use PortOne and Toss Payments for card payments, refunds, and payment integration; Anthropic PBC for report narration; Plus Five Five, Inc. (Resend) for transactional report-access email; Cloudflare, Inc. for hosting, content delivery, access logs, and bot mitigation (Turnstile); Supabase for database storage in Seoul; and Google for consent management, analytics, and advertising.',
             'We set the terms needed to keep personal data safe in each contract and supervise our processors.',
           ],
         },
@@ -369,11 +416,11 @@ export const LEGAL = {
           heading: 'Transfer of personal data overseas',
           body: [
             'For the purpose of entrusted processing and storage needed to perform the contract, we transfer personal data overseas as follows, disclosed here in lieu of separate consent (Article 28-8(1)3 of the Personal Information Protection Act).',
-            'To Anthropic PBC (United States), when a report is generated: server-computed type codes, axis values, and a sanitized profile. Your email and raw answers are not sent. Anthropic states that commercial API inputs and outputs are not used for model training by default and are deleted within 30 days unless an agreed or policy-enforcement exception applies. We keep the resulting report under our own 1-year schedule.',
-            'To Plus Five Five, Inc. (Resend, United States), when you request access: the recipient email, purchase date, 15-minute one-time URL, message content, and sending metadata. We do not include type codes or report text. Standard-plan email data is retained for 30 days, and we disable click and open tracking.',
-            'To Cloudflare, Inc. (United States): the transferred items are access data (IP address, device information) and an anti-bot token, sent when you use the service and processed for hosting, content delivery, and security for as long as the service is provided.',
-            'Google and its advertising or analytics partners may process data in locations that depend on your region and their infrastructure. Consent state, cookieless measurement signals, or consented advertising and analytics data is sent when you use the service and processed under Google settings and retention policies.',
-            'If you do not want the transfer, do not purchase the report. Some features, such as report generation, cannot be provided without the overseas transfer, so declining it limits those features. You may also send your objection to our contact address.',
+            'To Anthropic PBC (United States), when a report is narrated: the server-computed type codes; the axis names, pole labels, and clarity wording; the world-job; the drain-condition labels; and the report body the rules engine has already written. Your email, your per-item answers, and your per-axis scores are not sent. The transfer is made over encrypted HTTPS, and the contact is privacy@anthropic.com. Anthropic states that commercial API inputs and outputs are not used for model training by default and are deleted within 30 days unless an agreed or policy-enforcement exception applies. We keep the narration we receive under our own 1-year schedule.',
+            'To Plus Five Five, Inc. (Resend, United States), when you request access: the recipient email, purchase date, 15-minute one-time URL, message content, and sending metadata. We do not include type codes or report text. The transfer is made over encrypted HTTPS, and the contact is privacy@resend.com. Standard-plan email data is retained for 30 days, and we disable click and open tracking.',
+            'To Cloudflare, Inc. (United States): the transferred items are access data (IP address, device information) and an anti-bot token, sent when you use the service and processed for hosting, content delivery, and security for as long as the service is provided. For bot verification we send your access IP address and the widget token to the Cloudflare Turnstile verification endpoint. The transfer is made over encrypted HTTPS, and the contact is privacyquestions@cloudflare.com.',
+            'Google and its advertising or analytics partners may process data in locations that depend on your region and their infrastructure. Consent state, cookieless measurement signals, or consented advertising and analytics data is sent when you use the service and processed under Google settings and retention policies. Once a payment is confirmed, our server sends the transaction identifier, the payment amount, currency, and item information, together with the analytics identifier collected in your browser, directly to Google. This transmission can happen after your browser is closed. The contact can be found at https://support.google.com/policies.',
+            'Transfers for report narration and for payment do not happen unless you purchase a report. You can refuse transfers for advertising and analytics from “Privacy & cookie choices” in the footer. Transfers for security and bot mitigation are limited to the minimum needed to provide the service, and the service cannot be used if you refuse them. You may also send your objection to our contact address.',
           ],
         },
         {
@@ -427,14 +474,17 @@ export const LEGAL = {
     terms: {
       title: 'Terms of Service',
       description: 'The terms that apply to using vibe (DeepType), operated by Robin Review.',
-      effectiveDate: 'July 22, 2026',
-      updatedDate: 'July 22, 2026',
-      version: '1.0',
+      effectiveDate: 'August 4, 2026',
+      updatedDate: 'July 28, 2026',
+      version: '1.1',
+      previousVersions: previousVersionsOf(Locale.EN, 'terms'),
       sections: [
         {
           heading: 'About the service',
           body: [
-            'vibe offers free quizzes for a light-hearted couple-chemistry check and a paid report (the DeepType in-depth report) for self-understanding. It is operated by Robin Review.',
+            `vibe offers the Compatibility and Talk Type quizzes for free, together with a paid report (the ${PRODUCT_NAME.en}) that supports self-understanding at work. It is operated by Robin Review.`,
+            'The two free quizzes are a light-hearted way to check couple chemistry. The paid report is self-understanding content that sets out the conditions under which you gain energy at work and the conditions under which you lose it, and it has nothing to do with couple compatibility.',
+            '“In-depth” in the product name refers to the range of what is produced, not to measurement precision. The items that follow payment do not change the eight letters your free result already gave you; they only settle how clear each axis is and widen the range of the narration.',
           ],
         },
         {
@@ -447,15 +497,25 @@ export const LEGAL = {
         {
           heading: 'Paid service and payment',
           body: [
-            'The DeepType in-depth report is paid digital content priced at KRW 5,900 including VAT. The current payment method is a Toss Payments card transaction connected through PortOne. Review the final amount shown before authorizing payment.',
+            `The ${PRODUCT_NAME.en} is paid digital content priced at ${PRICE_EN} including VAT. The current payment method is a Toss Payments card transaction connected through PortOne. Review the final amount shown before authorizing payment.`,
             'Availability of cards issued outside Korea depends on the issuer and payment provider. The charge is in KRW, and your issuer may apply its own exchange rate and cross-border fees.',
           ],
         },
         {
           heading: 'Delivery of content',
           body: [
-            'After payment, the service re-scores your refinement answers on the server and generates the report for web delivery. Generation may take time. If it reaches the retry limit without succeeding, you can request a full refund through the automatic cancellation control or support.',
+            'The report is built by the server from your answers to the in-depth items that follow payment. Those items do not set the eight letters of your free result a second time; they settle how clear each axis is.',
+            'The report is delivered in two stages. The body written by our rules engine appears first, and the narrative paragraphs written by AI are added after it. Until the narration settles, the report is treated as not yet delivered, and withdrawal is not restricted at that point. If narration reaches the retry limit without succeeding, you can request a full refund through the automatic cancellation control or support.',
+            'The report is delivered as a web page, not as a file to download. It requires a modern browser with JavaScript enabled, and there is no program to install. Re-opening it requires that you can receive mail at the address used for the purchase.',
             'The report and email reopening are available for 1 year from payment. Entering the purchase email sends a link that works once for 15 minutes; the report opens after you explicitly select the open button. After 1 year, the report, results, email, and access credential are deleted and recovery is not guaranteed.',
+          ],
+        },
+        {
+          heading: 'AI generation notice',
+          body: [
+            'The body of the report is written by our rules engine, and some narrative paragraphs are written by Anthropic’s generative AI. Under Article 31(1) of the Korean Framework Act on Artificial Intelligence, we tell you this before payment, and under Article 31(2) of the same Act we mark the AI-written paragraphs as such on the report screen.',
+            'The AI does not decide the eight letters or the clarity of each axis. Those values are computed by our own program from your answers, and the AI only puts already-fixed values into sentences.',
+            'Sentences written by generative AI are not fact-checked statements, and the wording can differ even for the same answers. If the AI narration is never produced, we still deliver the body written by the rules engine unchanged.',
           ],
         },
         {
@@ -468,6 +528,7 @@ export const LEGAL = {
           heading: 'Purchase eligibility and age confirmation',
           body: [
             'The free service is available without age confirmation. Paid reports may be purchased only by people aged 14 or older, who must self-confirm at checkout. We do not collect dates of birth.',
+            'A contract entered into by a minor without the consent of their legal representative may be cancelled by the minor or by that representative. Under Article 13(3) of the Korean Act on Consumer Protection in Electronic Commerce, we also state this on the payment screen.',
           ],
         },
         {
@@ -481,6 +542,7 @@ export const LEGAL = {
           heading: 'For entertainment and reference',
           body: [
             'All results, including the report, are reference information for self-understanding and entertainment and are not a substitute for medical or psychological diagnosis or professional counseling.',
+            'The report is not a job placement or employment referral service, and it is not a vocational aptitude test or a hiring tool. The world-job shown in your result is not an actual job on offer; it is a way of showing the role closest to your current answers, and it is not advice to change jobs, quit, or start a business.',
             'You should not rely on the service as the sole basis for important decisions; any decisions and responsibility arising from your use of the service are your own.',
           ],
         },
@@ -530,10 +592,11 @@ export const LEGAL = {
     },
     refund: {
       title: 'Withdrawal & Refund Policy',
-      description: 'How withdrawal and refunds work for the DeepType in-depth report.',
-      effectiveDate: 'July 22, 2026',
-      updatedDate: 'July 22, 2026',
-      version: '1.0',
+      description: `How withdrawal and refunds work for the ${PRODUCT_NAME.en}.`,
+      effectiveDate: 'August 4, 2026',
+      updatedDate: 'July 28, 2026',
+      version: '1.1',
+      previousVersions: previousVersionsOf(Locale.EN, 'refund'),
       sections: [
         {
           heading: 'Withdrawal period',
@@ -542,14 +605,15 @@ export const LEGAL = {
         {
           heading: 'Withdrawal limits for digital content',
           body: [
-            'The DeepType in-depth report is digital content. Under Article 17(2) of the Korean Act on Consumer Protection in Electronic Commerce, withdrawal may be restricted once delivery of the content has begun.',
-            'We clearly indicate on the payment screen that this restriction applies, and before payment we provide a free summary result (the three layers: persona, inner, and gem) so you can preview the product.',
+            `The ${PRODUCT_NAME.en} is digital content. Under Article 17(2) of the Korean Act on Consumer Protection in Electronic Commerce, withdrawal may be restricted once delivery of the content has begun.`,
+            'We clearly indicate on the payment screen that this restriction applies. Before payment, the free run gives you the four letters of your inner type, the four letters of your mind core, your world-job, and your drain-condition signals, so you can see in advance what kind of product this is. The free run can be taken again at any time without payment.',
           ],
         },
         {
           heading: 'Full refund before opening',
           body: [
             'Even after payment, if you have not yet opened the report you can get a full refund at any time. Use the refund request on the report screen for immediate processing, or contact us below.',
+            'In the report, the body written by the rules engine appears first and the AI narration is added after it. Until the narration settles, delivery of the content is treated as not yet begun, so withdrawal is not restricted at that point.',
             'The 1-year reopening period does not extend the refund period or reverse delivery that has already started. We do provide a full refund if final report generation fails or we cannot deliver the paid content.',
           ],
         },
@@ -557,6 +621,14 @@ export const LEGAL = {
           heading: 'When it differs from what was advertised',
           body: [
             'If the delivered report differs from what was advertised or was performed differently from the contract, you may withdraw even after opening it, within 3 months of delivery or within 30 days of when you learned or could have learned of the fact.',
+            'If a defect in the report causes you harm, we compensate for that harm under Article 28(2) of the Korean Content Industry Promotion Act.',
+          ],
+        },
+        {
+          heading: 'Refund of overcharges',
+          body: [
+            'If a payment error or a fault on our side results in a charge greater than the amount actually due, we refund the excess in full at your request. If the overcharge arose for reasons that are not our responsibility, we return the excess less the costs actually incurred in making the refund.',
+            'Overcharge refunds are issued to the original payment method.',
           ],
         },
         {
@@ -569,6 +641,7 @@ export const LEGAL = {
           heading: 'Age restriction',
           body: [
             'Anyone under 14 may not purchase a paid report. If you learn that a payment was made after an incorrect age confirmation, contact us with the purchase email.',
+            'A contract entered into by a minor without the consent of their legal representative may be cancelled by the minor or by that representative. If you want to cancel, contact us below with the purchase email.',
           ],
         },
         {
@@ -578,7 +651,6 @@ export const LEGAL = {
       ],
     },
   },
-
   [Locale.JA]: {
     updatedLabel: '最終更新',
     effectiveLabel: '施行日',
@@ -595,42 +667,45 @@ export const LEGAL = {
     privacy: {
       title: 'プライバシーポリシー',
       description: 'Robin Review が vibe（DeepType）で利用者の情報をどのように扱うかについてご案内します。',
-      effectiveDate: '2026年7月22日',
-      updatedDate: '2026年7月22日',
-      version: '1.0',
+      effectiveDate: '2026年8月4日',
+      updatedDate: '2026年7月28日',
+      version: '1.1',
+      previousVersions: previousVersionsOf(Locale.JA, 'privacy'),
       sections: [
         {
-          heading: '無料診断と有料鑑定書の区別',
+          heading: '無料診断と有料レポートの区別',
           body: [
             '相性診断・会話タイプ診断の回答は利用者のブラウザ内でのみ計算され、サーバーへ送信・保存されることはありません。これらの診断に会員登録は不要です。',
-            'DeepTypeの無料結果はブラウザ内で計算されます。有料鑑定書の購入を開始すると、購入処理と鑑定書提供のために結果コードと回答がサーバーへ送信されます。購入に至らないデータ、pendingまたはfailedで終了した決済試行は、作成または決済試行から30日後に削除します。',
+            'DeepTypeの無料結果はブラウザ内で計算されます。利用者が有料レポートの決済を開始すると、購入処理とレポート提供のために結果コードと回答がサーバーへ送信されます。購入に至らないデータ、pendingまたはfailedで終了した決済試行は、作成または決済試行から30日後に削除します。',
           ],
         },
         {
           heading: '収集する個人情報の項目',
           body: [
-            '有料鑑定書では、メールアドレスと照会用ハッシュ、結果コードと回答、精密設問の回答、サーバー算出の軸別数値とプロファイル、生成された鑑定書、決済情報（手段・承認および取引識別子・金額・同意時刻・14歳以上確認時刻）、接続・利用情報（IPアドレス・端末・ブラウザ情報・ボット防止トークン）を処理します。',
+            '有料レポートでは、メールアドレスと照会用ハッシュ、無料診断と詳細診断の回答、利用者ご自身が選んだ自己申告コードとその提供の有無、サーバーが算出した結果コードと軸ごとの明瞭度およびレポート、決済情報（手段・承認および取引識別子・金額・同意時刻・14歳以上確認時刻）、接続・利用情報（IPアドレス・端末・ブラウザ情報・ボット防止トークン）を処理します。',
             'Googleツールが有効なページでは、同意状態、閲覧ページ、端末・ブラウザ情報、広告・分析識別子が処理される場合があります。保存型の広告・分析識別子は利用者の選択に従います。高度な同意モードでは、選択前または拒否後にもCookieを使わない同意状態・測定信号がGoogleへ送信される場合があります。',
+            'DeepTypeの無料診断では、決済前でも回答した設問数と進行状況、自己申告コードを提供したかどうかが、利用統計イベントとしてGoogleへ送信される場合があります。回答の内容そのものは送信しません。',
             'カード番号などの機微な決済手段情報は決済代行会社が直接処理し、当社は保管しません。',
           ],
         },
         {
           heading: '処理の目的',
           body: [
-            '鑑定書を生成して提供しメールで再閲覧できるようにするため、決済・返金および取引記録を管理するため、不正利用や自動ボットを遮断するため、お問い合わせに対応しサービスを改善する統計のために個人情報を利用します。',
+            'レポートを生成して提供しメールで再閲覧できるようにするため、決済・返金および取引記録を管理するため、不正利用や自動ボットを遮断するため、お問い合わせに対応しサービスを改善する統計のために個人情報を利用します。',
           ],
         },
         {
           heading: '保有および利用期間',
           body: [
-            '未購入の結果とpending・failedの購入試行は30日間保管します。元回答と精密回答は鑑定書生成後3か月、結果コード・サーバー算出プロファイル・鑑定書・購入メール・閲覧権限は決済日から1年間保管します。メールリンクの生トークンは保存せずハッシュのみを保存し、15分の期限切れまたは1回使用後の次回定期削除で破棄します。',
-            'PortOneの元Webhookは90日、接続・セキュリティログは最大3か月保管します。決済・契約・返金の証憑に必要な最小取引記録は5年、問い合わせ・紛争記録は目的に必要な期間、最大3年保管します。1年後にメール・閲覧権限・結果・鑑定書を最小取引記録から分離して削除し、5年後に最小記録も削除します。',
+            '未購入の結果とpending・failedの購入試行は30日間保管します。レポートの生成後、無料診断と詳細診断の回答および途中保存の下書きは3か月、結果コード・サーバー算出プロファイル・レポート・購入メール・閲覧権限は決済日から1年間保管します。メールリンクの生トークンは保存せずハッシュのみを保存し、15分の期限切れまたは1回使用後の次回定期削除で破棄します。',
+            '決済後に詳細設問を終えず、レポートが生成されなかった場合、回答と途中保存の下書きは決済日から90日間保管し、その後削除します。この場合もサーバーが算出したプロファイルは残るため、結果の閲覧は維持されます。',
+            'PortOneの元Webhookは90日、接続・セキュリティログは最大3か月保管します。決済・契約・返金の証憑に必要な最小取引記録は5年、問い合わせ・紛争記録は目的に必要な期間、最大3年保管します。1年後にメール・アクセストークン・結果・レポートを最小取引記録から分離して削除し、5年後に最小記録も削除します。',
           ],
         },
         {
           heading: '個人情報処理の委託',
           body: [
-            'PortOneとToss Paymentsにカード決済・返金・決済連携を、Anthropic PBCに鑑定書生成を、Plus Five Five, Inc.（Resend）に再閲覧用トランザクションメール送信を、Cloudflare, Inc.にホスティング・コンテンツ配信・接続ログ・ボット遮断（Turnstile）を、Supabaseにソウルリージョンでのデータ保管を、Googleに同意管理・分析・広告を委託します。',
+            'PortOneとToss Paymentsにカード決済・返金・決済連携を、Anthropic PBCにレポートの記述を、Plus Five Five, Inc.（Resend）に再閲覧用トランザクションメール送信を、Cloudflare, Inc.にホスティング・コンテンツ配信・接続ログ・ボット遮断（Turnstile）を、Supabaseにソウルリージョンでのデータ保管を、Googleに同意管理・分析・広告を委託します。',
             '委託契約の締結にあたり個人情報が安全に管理されるよう必要な事項を定め、受託者を監督します。',
           ],
         },
@@ -638,11 +713,11 @@ export const LEGAL = {
           heading: '個人情報の国外移転',
           body: [
             '当社は契約の履行に必要な処理委託と保管の目的で、以下のとおり個人情報を国外へ移転します（個人情報保護法第28条の8第1項第3号）。別途の同意に代えて本ポリシーで公開します。',
-            'Anthropic PBC（米国）へ、鑑定書生成時にサーバー算出のタイプコード・軸別数値・整理済みプロファイルを送信します。メールと元回答は送信しません。Anthropicは商用APIの入力・出力を既定でモデル学習に使用せず、別途合意やポリシー執行等の例外がなければ30日以内に削除すると案内しています。当社が受け取った鑑定書は当社基準で1年間保管します。',
-            'Plus Five Five, Inc.（Resend、米国）へ、再閲覧依頼時に宛先メール、購入日、15分のワンタイムURL、メール本文、送信メタデータを送信します。タイプコードと鑑定書本文は含めません。標準プランのメールデータ保持は30日で、クリック・開封トラッキングは無効にします。',
-            'Cloudflare, Inc.（米国）へ移転します。移転する項目は接続情報（IPアドレス・端末情報）とボット防止トークンで、サービス利用時に送信し、ホスティング、コンテンツ配信およびセキュリティの目的でサービス提供期間中に処理されます。',
-            'Googleおよび広告・分析パートナーの処理場所は利用地域と提供者インフラにより異なります。同意状態、Cookieを使わない測定信号、または同意した広告・分析データが利用時に送信され、Googleの設定と保持方針に従って処理されます。',
-            '移転を望まない場合は鑑定書を購入しないでください。鑑定書の生成のように国外移転なしには提供できない機能があり、移転を拒否すると当該機能の利用が制限されます。拒否の意思はお問い合わせ先にお伝えいただくこともできます。',
+            'Anthropic PBC（米国）へ、レポートの記述時に送信します。移転する項目は、サーバーが算出したタイプコードと軸の名称・両極のラベル・明瞭度の文言、世界観の職業、消耗する条件のラベル、ルールエンジンがすでに作成したレポート本文です。メールアドレス、設問ごとの回答、軸ごとのスコアは送信しません。移転方法はHTTPSによる暗号化通信で、連絡先は privacy@anthropic.com です。Anthropicは商用APIの入力・出力を既定でモデル学習に使用せず、別途合意やポリシー執行等の例外がなければ30日以内に削除すると案内しています。当社が受け取った記述は当社基準で1年間保管します。',
+            'Plus Five Five, Inc.（Resend、米国）へ、再閲覧依頼時に宛先メール、購入日、15分のワンタイムURL、メール本文、送信メタデータを送信します。タイプコードとレポート本文は含めません。移転方法はHTTPSによる暗号化通信で、連絡先は privacy@resend.com です。標準プランのメールデータ保持は30日で、クリック・開封トラッキングは無効にします。',
+            'Cloudflare, Inc.（米国）へ移転します。移転する項目は接続情報（IPアドレス・端末情報）とボット防止トークンで、サービス利用時に送信し、ホスティング、コンテンツ配信およびセキュリティの目的でサービス提供期間中に処理されます。ボット検証では、接続元のIPアドレスとウィジェットトークンをCloudflare Turnstileの検証エンドポイント（siteverify）へ送信します。移転方法はHTTPSによる暗号化通信で、連絡先は privacyquestions@cloudflare.com です。',
+            'Googleおよび広告・分析パートナーの処理場所は利用地域と提供者インフラにより異なります。同意状態、Cookieを使わない測定信号、または同意した広告・分析データが利用時に送信され、Googleの設定と保持方針に従って処理されます。決済が確定すると、当社のサーバーが取引識別子と決済金額・通貨・商品情報、およびブラウザで収集した分析識別子をGoogleへ直接送信します。この送信は利用者のブラウザを閉じた後に行われる場合があります。連絡先は https://support.google.com/policies でご確認いただけます。',
+            'レポートの記述と決済のための移転は、レポートを購入しなければ発生しません。広告・分析を目的とする移転は、フッターの「プライバシー・Cookie設定」から拒否できます。セキュリティとボット遮断のための移転はサービス提供に必要な最小限の範囲で行われ、これを拒否するとサービスをご利用いただけません。拒否の意思はお問い合わせ先にお伝えいただくこともできます。',
           ],
         },
         {
@@ -682,7 +757,7 @@ export const LEGAL = {
         {
           heading: '子どものプライバシー',
           body: [
-            '無料サービスは年齢確認なしで利用できます。有料鑑定書は14歳以上の方のみ購入でき、生年月日は収集せず、決済時の14歳以上確認時刻のみを保存します。',
+            '無料サービスは年齢確認なしで利用できます。有料レポートは14歳以上の方のみ購入でき、生年月日は収集せず、決済時の14歳以上確認時刻のみを保存します。',
           ],
         },
         {
@@ -696,60 +771,75 @@ export const LEGAL = {
     terms: {
       title: '利用規約',
       description: 'Robin Review が運営する vibe（DeepType）のご利用に適用される規約です。',
-      effectiveDate: '2026年7月22日',
-      updatedDate: '2026年7月22日',
-      version: '1.0',
+      effectiveDate: '2026年8月4日',
+      updatedDate: '2026年7月28日',
+      version: '1.1',
+      previousVersions: previousVersionsOf(Locale.JA, 'terms'),
       sections: [
         {
           heading: 'サービスについて',
           body: [
-            'vibeはカップルのケミストリーを気軽に確認できる無料診断と、自己理解を助ける有料の鑑定書（DeepType精密鑑定書）を提供するサービスで、Robin Reviewが運営しています。',
+            `vibeは相性診断と会話タイプ診断を無料で提供し、仕事における自己理解を助ける有料レポート（${PRODUCT_NAME.ja}）を併せて提供するサービスで、Robin Reviewが運営しています。`,
+            '無料の2つの診断は、カップルのケミストリーを気軽に確認するためのツールです。有料レポートは、仕事で力が湧く条件と力が失われる条件を整理する自己理解のためのコンテンツで、カップルの相性とは関係ありません。',
+            '商品名の「詳細」は測定の精度ではなく算出の範囲を意味します。決済後に続く設問は、無料結果ですでに出た八文字を変えることはなく、各軸がどれだけ明瞭かを確定し、記述の範囲を広げるだけです。',
           ],
         },
         {
           heading: '用語と購入契約の成立',
           body: [
-            '「サービス」はvibe.sobok.ccで提供する無料診断とDeepType機能を、「鑑定書」は決済後に生成するデジタルレポートを指します。決済画面で商品・価格・閲覧期間・必須確認を確認し、カード決済を完了すると購入契約が成立します。',
-            '会員登録はなく、購入メールとサーバー発行の閲覧権限で鑑定書を提供します。定期購入や自動更新ではありません。',
+            '「サービス」はvibe.sobok.ccで提供する無料診断とDeepType機能を、「レポート」は決済後に生成するデジタルコンテンツを指します。決済画面で商品・価格・提供期間・必須の同意事項を確認し、カード決済を完了するとレポートの利用契約が成立します。',
+            '会員登録はなく、購入メールとサーバー発行の閲覧権限でレポートを提供します。定期購入や自動更新ではありません。',
           ],
         },
         {
           heading: '有料サービスと決済',
           body: [
-            'DeepType精密鑑定書はVAT込み5,900ウォンの有料デジタルコンテンツです。現在の決済手段はPortOne経由のToss Paymentsカード決済です。承認前に表示された最終金額をご確認ください。',
+            `${PRODUCT_NAME.ja}は${PRICE_JA}（税込）の有料デジタルコンテンツです。現在の決済手段はPortOne経由のToss Paymentsカード決済です。承認前に表示された最終金額をご確認ください。`,
             '韓国以外で発行されたカードの利用可否は発行会社と決済代行会社の方針によります。決済通貨はKRWで、カード会社が為替レートや海外利用手数料を適用する場合があります。',
           ],
         },
         {
           heading: 'コンテンツの提供',
           body: [
-            '決済後、精密回答をサーバーで再採点し、ウェブで閲覧できる鑑定書を生成します。生成には時間がかかる場合があります。再試行上限まで失敗した場合、自動キャンセル機能またはサポートから全額返金を依頼できます。',
-            '鑑定書とメールによる再閲覧は決済日から1年間利用できます。購入メールを入力すると15分以内に1回だけ使えるリンクを送り、利用者が開くボタンを選択した後に表示します。1年後は鑑定書・結果・メール・閲覧権限を削除し、復旧は保証しません。',
+            'レポートは、決済後に続く詳細設問の回答をサーバーが採点して作成します。詳細設問は、無料結果ですでに出た八文字を決め直すことはなく、各軸の明瞭度を確定します。',
+            'レポートは2段階で提供します。当社のルールエンジンが書いた本文が先に表示され、人工知能が書く記述の段落が後から加わります。記述が終わるまではレポートをまだ提供していないものとみなし、この時点では申込撤回は制限されません。記述の生成が再試行の上限を超えて失敗した場合は、自動キャンセル機能またはサポートから全額返金を依頼できます。',
+            'レポートは、ダウンロードするファイルではなくウェブ画面で提供します。JavaScriptを有効にした最新のブラウザが必要で、別途インストールするプログラムはありません。再閲覧は、購入に使用したメールを受け取れることが条件となります。',
+            'レポートとメールによる再閲覧は決済日から1年間利用できます。購入メールを入力すると15分以内に1回だけ使えるリンクを送り、利用者が開くボタンを選択した後に表示します。1年後はレポート・結果・メール・閲覧権限を削除し、復旧は保証しません。',
+          ],
+        },
+        {
+          heading: '人工知能生成の告知',
+          body: [
+            'レポートの本文は当社のルールエンジンが作成し、記述の段落の一部はAnthropicの生成AIが書きます。当社は人工知能基本法第31条第1項に基づきこの事実を決済前にお知らせし、同条第2項に基づきレポート画面で人工知能が書いた段落にその旨を表示します。',
+            '人工知能が八文字や明瞭度を決めることはありません。これらの値は当社のプログラムが利用者の回答から計算し、人工知能はすでに確定した値を文章に置き換えるだけです。',
+            '生成AIが書いた文章は事実確認を経た記述ではなく、同じ回答でも表現が変わることがあります。人工知能の記述が最後まで生成されなかった場合でも、ルールエンジンが書いた本文はそのまま提供します。',
           ],
         },
         {
           heading: '申込撤回と返金',
           body: [
-            '申込撤回と返金に関する事項は別途の申込撤回・返金ポリシーで定めます。要約すると、鑑定書を閲覧する前は全額返金され、閲覧後はデジタルコンテンツの性質上、申込撤回が制限されます。ただし表示・広告と異なる形で履行された場合は、閲覧後も法令に従って申込撤回ができます。',
+            '申込撤回と返金に関する事項は別途の申込撤回・返金ポリシーで定めます。要約すると、レポートを閲覧する前は全額返金され、閲覧後はデジタルコンテンツの性質上、申込撤回が制限されます。ただし表示・広告と異なる形で履行された場合は、閲覧後も法令に従って申込撤回ができます。',
           ],
         },
         {
           heading: '購入資格と年齢確認',
           body: [
-            '無料サービスは年齢確認なしで利用できます。有料鑑定書は14歳以上の方のみ購入でき、決済時に直接確認する必要があります。生年月日は収集しません。',
+            '無料サービスは年齢確認なしで利用できます。有料レポートは14歳以上の方のみ購入でき、決済時に直接確認する必要があります。生年月日は収集しません。',
+            '未成年者が法定代理人の同意なく結んだ契約は、未成年者本人または法定代理人が取り消すことができます。当社は電子商取引法第13条第3項に基づき、この事実を決済画面でもご案内します。',
           ],
         },
         {
           heading: '利用者の責任',
           body: [
-            '本人が利用できる正確なメールを使用し、決済・再閲覧トークンやリンクを他人に公開しないでください。他人のメール・決済手段の無断使用、自動化や回避、リバースエンジニアリング、サービス妨害、鑑定書の無断再販売を行ってはなりません。',
+            '本人が利用できる正確なメールを使用し、決済・再閲覧トークンやリンクを他人に公開しないでください。他人のメール・決済手段の無断使用、自動化や回避、リバースエンジニアリング、サービス妨害、レポートの無断再販売を行ってはなりません。',
             '共有テキストにはタイプコードと結果の要約が含まれます。公開前に、共有相手と内容をご確認ください。',
           ],
         },
         {
           heading: '娯楽・参考目的',
           body: [
-            '鑑定書を含め、vibeが提供するすべての結果は自己理解と娯楽のための参考情報であり、医学的・心理的な診断や専門的なカウンセリングに代わるものではありません。',
+            'レポートを含め、vibeが提供するすべての結果は自己理解と娯楽のための参考情報であり、医学的・心理的な診断や専門的なカウンセリングに代わるものではありません。',
+            'レポートは職業紹介や就職斡旋のサービスではなく、職業適性検査や採用のツールでもありません。結果に表示される世界観の職業は実際の採用職種ではなく、いまの回答にもっとも近い役割を示す表現であり、転職や退職または起業を勧める助言ではありません。',
             '利用者は本サービスの内容を重要な意思決定の唯一の根拠とすべきではなく、サービス利用に伴う判断と責任は利用者ご自身にあります。',
           ],
         },
@@ -768,7 +858,7 @@ export const LEGAL = {
         {
           heading: '知的財産権',
           body: [
-            'サービスに含まれるテキスト・デザイン・ロゴ・鑑定書コンテンツに関する権利はRobin Reviewまたは正当な権利者に帰属し、無断での複製・配布を禁じます。',
+            'サービスに含まれるテキスト・デザイン・ロゴ・レポートのコンテンツに関する権利はRobin Reviewまたは正当な権利者に帰属し、無断での複製・配布を禁じます。',
           ],
         },
         {
@@ -799,10 +889,11 @@ export const LEGAL = {
     },
     refund: {
       title: '申込撤回・返金ポリシー',
-      description: 'DeepType精密鑑定書の申込撤回と返金に関する事項をご案内します。',
-      effectiveDate: '2026年7月22日',
-      updatedDate: '2026年7月22日',
-      version: '1.0',
+      description: `${PRODUCT_NAME.ja}の申込撤回と返金に関する事項をご案内します。`,
+      effectiveDate: '2026年8月4日',
+      updatedDate: '2026年7月28日',
+      version: '1.1',
+      previousVersions: previousVersionsOf(Locale.JA, 'refund'),
       sections: [
         {
           heading: '申込撤回の期間',
@@ -811,21 +902,30 @@ export const LEGAL = {
         {
           heading: 'デジタルコンテンツの申込撤回制限',
           body: [
-            'DeepType精密鑑定書はデジタルコンテンツです。電子商取引法第17条第2項に基づき、コンテンツの提供が開始されると申込撤回が制限される場合があります。',
-            '当社はこの制限が適用される事実を決済画面に明確に表示し、決済前に無料の要約結果（外・内・宝石の三層）を提供して、利用者が商品を事前に確認できるようにします。',
+            `${PRODUCT_NAME.ja}はデジタルコンテンツです。電子商取引法第17条第2項に基づき、コンテンツの提供が開始されると申込撤回が制限される場合があります。`,
+            '当社はこの制限が適用される事実を決済画面に明確に表示します。当社は決済前に、無料診断の結果として内タイプの四文字・心のコアの四文字・世界観の職業・消耗する条件のサインを提供し、利用者が商品の性格を事前に確認できるようにします。無料診断は決済なしでいつでも受け直せます。',
           ],
         },
         {
           heading: '閲覧前の全額返金',
           body: [
-            '決済後でも鑑定書をまだ閲覧していなければ、いつでも全額返金を受けられます。鑑定書画面の返金リクエスト機能で即時に処理するか、下記のお問い合わせ先までご連絡ください。',
-            '1年間の再閲覧期間は返金可能期間を延長したり、すでに始まった提供を取り消したりするものではありません。ただし鑑定書生成が最終的に失敗した場合、または当社が提供できない場合は全額返金します。',
+            '決済後でもレポートをまだ閲覧していなければ、いつでも全額返金を受けられます。レポート画面の返金リクエスト機能で即時に処理するか、下記のお問い合わせ先までご連絡ください。',
+            'レポートは、ルールエンジンが書いた本文が先に表示され、人工知能の記述が後から加わります。記述が終わるまではコンテンツの提供が開始されていないものとみなすため、この時点では申込撤回は制限されません。',
+            '1年間の再閲覧期間は返金可能期間を延長したり、すでに始まった提供を取り消したりするものではありません。ただしレポートの生成が最終的に失敗した場合、または当社が提供できない場合は全額返金します。',
           ],
         },
         {
           heading: '表示・広告と異なる場合',
           body: [
-            '提供された鑑定書が表示・広告の内容と異なる、または契約と異なる形で履行された場合は、閲覧後でも供給を受けた日から3か月以内、その事実を知った日または知り得た日から30日以内に申込撤回ができます。',
+            '提供されたレポートが表示・広告の内容と異なる、または契約と異なる形で履行された場合は、閲覧後でも供給を受けた日から3か月以内、その事実を知った日または知り得た日から30日以内に申込撤回ができます。',
+            'レポートに欠陥があり利用者に被害が生じた場合、当社はコンテンツ産業振興法第28条第2項に基づきその被害を補償します。',
+          ],
+        },
+        {
+          heading: '過誤金の返金',
+          body: [
+            '決済の誤りや当社の過失により、実際のご利用金額より多く決済された金額は、利用者からのご請求により全額返金します。当社の責めに帰さない事由で過誤金が生じた場合は、返金に実際にかかる費用を差し引いた金額をお返しします。',
+            '過誤金の返金は決済した手段で処理します。',
           ],
         },
         {
@@ -837,7 +937,8 @@ export const LEGAL = {
         {
           heading: '年齢制限',
           body: [
-            '14歳未満の方は有料鑑定書を購入できません。年齢を誤って確認して決済したことが判明した場合は、購入メールを添えてお問い合わせください。',
+            '14歳未満の方は有料レポートを購入できません。年齢を誤って確認して決済したことが判明した場合は、購入メールを添えてお問い合わせください。',
+            '未成年者が法定代理人の同意なく結んだ契約は、未成年者本人または法定代理人が取り消すことができます。取消しをご希望の場合は、購入メールを添えて下記のお問い合わせ先までご連絡ください。',
           ],
         },
         {
@@ -849,7 +950,6 @@ export const LEGAL = {
       ],
     },
   },
-
   [Locale.ZH]: {
     updatedLabel: '最后更新',
     effectiveLabel: '生效日期',
@@ -866,9 +966,10 @@ export const LEGAL = {
     privacy: {
       title: '隐私政策',
       description: '说明 Robin Review 在 vibe（DeepType）中如何处理您的信息。',
-      effectiveDate: '2026年7月22日',
-      updatedDate: '2026年7月22日',
-      version: '1.0',
+      effectiveDate: '2026年8月4日',
+      updatedDate: '2026年7月28日',
+      version: '1.1',
+      previousVersions: previousVersionsOf(Locale.ZH, 'privacy'),
       sections: [
         {
           heading: '免费测试与付费报告的区分',
@@ -880,8 +981,9 @@ export const LEGAL = {
         {
           heading: '收集的个人信息项目',
           body: [
-            '使用付费报告时，我们会处理电子邮箱及查询哈希、结果代码与答案、精密题目答案、服务器计算的各轴数值与档案、生成的报告、支付信息（方式、授权及交易标识、金额、同意时间、14周岁以上确认时间）以及访问和使用信息（IP地址、设备、浏览器信息、防机器人令牌）。',
+            '使用付费报告时，我们会处理以下信息：电子邮箱及查询哈希，免费测验与深度测验的题目答案，您自行选择的自我申报代码及是否提供该代码，服务器计算的结果代码、各轴清晰度与报告，支付信息（方式、授权及交易标识、金额、同意时间、14周岁以上确认时间），以及访问和使用信息（IP地址、设备、浏览器信息、防机器人令牌）。',
             '在启用Google工具的页面中，可能会处理同意状态、访问页面、设备和浏览器信息、广告或分析标识符。存储型广告与分析标识符遵循您的选择。在高级同意模式下，即使尚未选择或拒绝后，也可能向Google发送不使用Cookie的同意状态与测量信号。',
+            '在DeepType免费测验中，即使在支付之前，已作答的题目数量、进行到的阶段以及是否提供自我申报代码，也可能作为使用统计事件发送至Google。答案内容本身不会发送。',
             '卡号等敏感的支付方式信息由支付代理公司直接处理，我们不予保存。',
           ],
         },
@@ -894,14 +996,15 @@ export const LEGAL = {
         {
           heading: '保存及使用期限',
           body: [
-            '未购买结果以及pending、failed购买尝试保存30天。原始和精密答案在报告生成后保存3个月；结果代码、服务器计算档案、报告、购买邮箱和访问凭证自付款之日起保存1年。我们不保存邮件链接的原始令牌，只保存哈希；链接15分钟失效或使用一次后，在下一次定期清理时删除。',
+            '未购买结果以及pending、failed购买尝试保存30天。报告生成后，免费与深度答案及中途保存的草稿保存3个月；结果代码、服务器计算档案、报告、购买邮箱和访问凭证自付款之日起保存1年。我们不保存邮件链接的原始令牌，只保存哈希；链接15分钟失效或使用一次后，在下一次定期清理时删除。',
+            '若您已付款但未完成深度题目，导致报告尚未生成，则答案与中途保存的草稿自付款之日起保存90天，之后删除。此时服务器计算的档案仍会保留，您仍可查看结果。',
             'PortOne原始Webhook保存90天，访问与安全日志最多保存3个月。支付、合同与退款所需的最小交易记录保存5年；咨询或纠纷记录按处理目的所需期限保存，最长3年。1年后，邮箱、访问凭证、结果和报告与最小交易记录分离删除；5年后最小交易记录也会删除。',
           ],
         },
         {
           heading: '个人信息处理的委托',
           body: [
-            '我们使用PortOne与Toss Payments处理银行卡支付、退款及支付对接；Anthropic PBC生成报告；Plus Five Five, Inc.（Resend）发送重新查看用的事务邮件；Cloudflare, Inc.负责托管、内容分发、访问日志及机器人拦截（Turnstile）；Supabase在首尔区域保存数据库；Google负责同意管理、分析与广告。',
+            '我们使用PortOne与Toss Payments处理银行卡支付、退款及支付对接；Anthropic PBC负责报告叙述文字的生成；Plus Five Five, Inc.（Resend）发送重新查看用的事务邮件；Cloudflare, Inc.负责托管、内容分发、访问日志及机器人拦截（Turnstile）；Supabase在首尔区域保存数据库；Google负责同意管理、分析与广告。',
             '在签订委托合同时，我们会约定使个人信息得到安全管理的必要事项，并对受托方进行监督。',
           ],
         },
@@ -909,11 +1012,11 @@ export const LEGAL = {
           heading: '个人信息的跨境转移',
           body: [
             '为履行合同所需的处理委托与保存目的，我们按如下方式将个人信息转移至境外，并以本政策的公开代替单独同意（《个人信息保护法》第28条之8第1款第3项）。',
-            '生成报告时向Anthropic PBC（美国）发送服务器计算的类型代码、各轴数值和经整理的档案。不发送邮箱与原始答案。Anthropic说明，商业API输入与输出默认不用于模型训练；除另有约定或政策执行等例外外，会在30天内删除。我们收到的报告按本公司的1年期限保存。',
-            '申请重新查看时向Plus Five Five, Inc.（Resend，美国）发送收件邮箱、购买日期、15分钟一次性URL、邮件正文和发送元数据。不包含类型代码或报告正文。标准套餐的邮件数据保存30天，并关闭点击与打开跟踪。',
-            '转移至 Cloudflare, Inc.（美国）。转移项目为访问信息（IP 地址·设备信息）与防机器人令牌，在您使用服务时发送，用于托管、内容分发与安全目的，在服务提供期间处理。',
-            'Google及其广告或分析合作方的处理地点取决于您的地区和供应商基础设施。同意状态、不使用Cookie的测量信号，或经您同意的广告与分析数据，会在使用服务时发送，并按Google设置与保存政策处理。',
-            '若您不希望转移，请勿购买报告。像报告生成这样的功能没有跨境转移便无法提供，拒绝转移将限制这些功能。您也可以通过联系方式表达拒绝的意愿。',
+            '生成报告的叙述文字时转移至 Anthropic PBC（美国）。转移项目为服务器计算的类型代码、各轴名称与两极标签、清晰度表述、世界观职业、容易感到疲惫的条件标签，以及规则引擎已经写好的报告正文。邮箱、逐题答案与各轴分数不会发送。转移方式为HTTPS加密传输，联系方式为 privacy@anthropic.com。Anthropic说明，商业API输入与输出默认不用于模型训练；除另有约定或政策执行等例外外，会在30天内删除。我们收到的叙述文字按本公司的1年期限保存。',
+            '申请重新查看时向 Plus Five Five, Inc.（Resend，美国）发送收件邮箱、购买日期、15分钟一次性URL、邮件正文和发送元数据。不包含类型代码或报告正文。转移方式为HTTPS加密传输，联系方式为 privacy@resend.com。标准套餐的邮件数据保存30天，并关闭点击与打开跟踪。',
+            '转移至 Cloudflare, Inc.（美国）。转移项目为访问信息（IP 地址·设备信息）与防机器人令牌，在您使用服务时发送，用于托管、内容分发与安全目的，在服务提供期间处理。进行机器人验证时，我们会将访问IP地址与小组件令牌发送至 Cloudflare Turnstile 的验证端点。转移方式为HTTPS加密传输，联系方式为 privacyquestions@cloudflare.com。',
+            'Google及其广告或分析合作方的处理地点取决于您的地区和供应商基础设施。同意状态、不使用Cookie的测量信号，或经您同意的广告与分析数据，会在使用服务时发送，并按Google设置与保存政策处理。支付确认后，我们的服务器会将交易标识、支付金额、币种、商品信息以及浏览器收集的分析标识符直接发送至Google。该发送也可能在您关闭浏览器之后发生。联系方式可在 https://support.google.com/policies 确认。',
+            '不购买报告时，不会发生为生成报告叙述与处理支付而进行的转移。以广告与分析为目的的转移，可通过页脚的“隐私与Cookie设置”拒绝。为安全与拦截机器人而进行的转移限于提供服务所必需的最小范围，若您拒绝，将无法使用本服务。您也可以通过联系方式表达拒绝的意愿。',
           ],
         },
         {
@@ -965,35 +1068,48 @@ export const LEGAL = {
     terms: {
       title: '服务条款',
       description: '适用于使用由 Robin Review 运营的 vibe（DeepType）的条款。',
-      effectiveDate: '2026年7月22日',
-      updatedDate: '2026年7月22日',
-      version: '1.0',
+      effectiveDate: '2026年8月4日',
+      updatedDate: '2026年7月28日',
+      version: '1.1',
+      previousVersions: previousVersionsOf(Locale.ZH, 'terms'),
       sections: [
         {
           heading: '关于服务',
           body: [
-            'vibe 提供轻松测试情侣默契的免费测试，以及帮助自我了解的付费报告（DeepType 精密分析报告），由 Robin Review 运营。',
+            `vibe 免费提供默契指数测试与对话类型测试，并提供帮助您在工作中了解自己的付费报告（${PRODUCT_NAME.zh}），由 Robin Review 运营。`,
+            '两项免费测试是轻松确认情侣默契的工具。付费报告是一份自我了解内容，梳理您在工作中什么条件下更有干劲、什么条件下会被消耗，与情侣合拍度无关。',
+            '商品名称中的“深度”指的是产出范围，而不是测量精度。付款后继续作答的题目不会改变免费结果中已经得出的八个字母，只会确定各轴的清晰程度，并扩大叙述范围。',
           ],
         },
         {
           heading: '术语与购买成立',
           body: [
-            '“服务”指vibe.sobok.cc提供的免费测试与DeepType功能；“报告”指付款后生成的数字报告。您在结账页面确认商品、价格、访问期限及必需确认，并完成银行卡支付后，报告购买成立。',
+            '“服务”指vibe.sobok.cc提供的免费测试与DeepType功能；“报告”指付款后生成的数字内容。您在结账页面确认商品、价格、访问期限及必需确认，并完成银行卡支付后，报告购买成立。',
             '无需注册账号。我们通过购买邮箱与服务器签发的访问凭证提供报告。本商品为一次性购买，不是订阅，也不会自动续费。',
           ],
         },
         {
           heading: '付费服务与支付',
           body: [
-            'DeepType精密分析报告为含VAT的5,900韩元付费数字内容。目前仅支持通过PortOne连接的Toss Payments银行卡支付。授权付款前请确认页面显示的最终金额。',
+            `${PRODUCT_NAME.zh}为含VAT的${PRICE_ZH}付费数字内容。目前仅支持通过PortOne连接的Toss Payments银行卡支付。授权付款前请确认页面显示的最终金额。`,
             '韩国境外发行的银行卡是否可用取决于发卡机构和支付服务商。结算币种为KRW，发卡机构可能采用其汇率并收取跨境手续费。',
           ],
         },
         {
           heading: '内容的提供',
           body: [
-            '付款后，服务会在服务器重新评分精密答案，并生成可在网页查看的报告。生成可能需要一定时间。如达到重试上限仍失败，可通过自动取消功能或客服申请全额退款。',
+            '报告由服务器对付款后继续作答的深度题目进行评分后生成。深度题目不会重新决定免费结果中已经得出的八个字母，只确定各轴的清晰度。',
+            '报告分两个阶段提供。我们的规则引擎所写的正文先行显示，随后附上由人工智能撰写的叙述段落。在叙述完成之前，视为报告尚未提供，此时撤回不受限制。若叙述生成达到重试上限仍失败，可通过自动取消功能或客服申请全额退款。',
+            '报告以网页形式提供，不是可下载的文件。需要启用JavaScript的现代浏览器，无需另行安装任何程序。重新查看需要您能够收取购买时使用的邮箱。',
             '报告与邮件重新查看服务自付款之日起提供1年。输入购买邮箱后会发送15分钟内仅可使用一次的链接；您明确点击打开按钮后才会显示报告。1年后将删除报告、结果、邮箱和访问凭证，不保证恢复。',
+          ],
+        },
+        {
+          heading: '人工智能生成告知',
+          body: [
+            '报告的正文由我们的规则引擎撰写，部分叙述段落由 Anthropic 的生成式人工智能撰写。依据《人工智能基本法》第31条第1款，我们在支付前告知这一事实；依据同条第2款，我们在报告页面对人工智能撰写的段落作出标示。',
+            '人工智能不决定八个字母与清晰度。这些数值由我们的程序根据您的答案计算，人工智能只是把已经确定的数值写成句子。',
+            '生成式人工智能所写的句子并非经过事实核查的陈述，即使答案相同，表述也可能不同。即使人工智能的叙述最终没有生成，规则引擎所写的正文仍会照常提供。',
           ],
         },
         {
@@ -1006,6 +1122,7 @@ export const LEGAL = {
           heading: '购买资格与年龄确认',
           body: [
             '免费服务无需年龄确认即可使用。付费报告仅限年满14周岁的用户购买，并须在结账时自行确认。我们不收集出生日期。',
+            '未成年人未经法定代理人同意订立的合同，未成年人本人或其法定代理人可以撤销。依据《电子商务法》第13条第3款，我们也会在支付页面告知这一事实。',
           ],
         },
         {
@@ -1019,6 +1136,7 @@ export const LEGAL = {
           heading: '娱乐与参考目的',
           body: [
             '包括报告在内，vibe 提供的所有结果均为自我了解与娱乐的参考信息，不能替代医学或心理诊断或专业咨询。',
+            '报告不是职业介绍或就业中介服务，也不是职业适性测验或招聘工具。结果中出现的世界观职业并非实际的招聘岗位，只是用来呈现与您当前答案最接近的角色，也不构成建议您跳槽、离职或创业。',
             '您不应将本服务作为重要决策的唯一依据；因使用本服务而做出的判断与责任由您自行承担。',
           ],
         },
@@ -1064,10 +1182,11 @@ export const LEGAL = {
     },
     refund: {
       title: '撤回·退款政策',
-      description: '说明 DeepType 精密分析报告的撤回与退款事宜。',
-      effectiveDate: '2026年7月22日',
-      updatedDate: '2026年7月22日',
-      version: '1.0',
+      description: `说明 ${PRODUCT_NAME.zh}的撤回与退款事宜。`,
+      effectiveDate: '2026年8月4日',
+      updatedDate: '2026年7月28日',
+      version: '1.1',
+      previousVersions: previousVersionsOf(Locale.ZH, 'refund'),
       sections: [
         {
           heading: '撤回期限',
@@ -1076,14 +1195,15 @@ export const LEGAL = {
         {
           heading: '数字内容的撤回限制',
           body: [
-            'DeepType 精密分析报告为数字内容。依据电子商务法第17条第2款，内容的提供一旦开始，撤回可能受到限制。',
-            '我们会在支付页面明确标示适用该限制的事实，并在支付前提供免费的摘要结果（外·内·宝石三层），使用户可以预先确认商品。',
+            `${PRODUCT_NAME.zh}为数字内容。依据《电子商务法》第17条第2款，内容的提供一旦开始，撤回可能受到限制。`,
+            '我们会在支付页面明确标示适用该限制的事实。在支付之前，我们会通过免费测验的结果提供内在类型的四个字母、内心核心的四个字母、世界观职业以及容易感到疲惫的条件信号，使您可以预先确认商品的性质。免费测验无需付款，可随时重新进行。',
           ],
         },
         {
           heading: '查看前全额退款',
           body: [
             '即使已支付，只要尚未查看报告，随时可获得全额退款。可通过报告页面的退款申请功能即时处理，或联系下方联系方式。',
+            '报告先显示规则引擎所写的正文，随后附上人工智能的叙述。在叙述完成之前，视为内容的提供尚未开始，因此撤回不受限制。',
             '1年的重新查看期限不会延长退款期限，也不会撤回已经开始的内容提供。但若报告最终生成失败，或我们无法提供已付款内容，将全额退款。',
           ],
         },
@@ -1091,6 +1211,14 @@ export const LEGAL = {
           heading: '与展示·广告不符的情况',
           body: [
             '若所提供的报告与展示·广告内容不符，或以与合同不同的方式履行，则查看后仍可在收到供应之日起3个月内、或在知道或应当知道该事实之日起30日内进行撤回。',
+            '若报告存在缺陷并因此给您造成损害，我们将依据《内容产业振兴法》第28条第2款对该损害予以赔偿。',
+          ],
+        },
+        {
+          heading: '多收款项的退还',
+          body: [
+            '因支付错误或我们的过失，收取了多于实际使用金额的款项时，经您申请将全额退还。若多收款项因非我方责任的原因产生，我们将扣除退款实际发生的费用后退还。',
+            '多收款项的退还以原支付方式处理。',
           ],
         },
         {
@@ -1101,7 +1229,10 @@ export const LEGAL = {
         },
         {
           heading: '年龄限制',
-          body: ['未满14周岁的用户不能购买付费报告。如发现有人错误确认年龄并完成支付，请提供购买邮箱并联系我们。'],
+          body: [
+            '未满14周岁的用户不能购买付费报告。如发现有人错误确认年龄并完成支付，请提供购买邮箱并联系我们。',
+            '未成年人未经法定代理人同意订立的合同，未成年人本人或其法定代理人可以撤销。如需撤销，请提供购买邮箱并通过下方联系方式与我们联系。',
+          ],
         },
         {
           heading: '退款咨询',

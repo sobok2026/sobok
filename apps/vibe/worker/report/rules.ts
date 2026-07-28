@@ -624,7 +624,7 @@ const DRAIN_CONTRAST_SENTENCES = {
   shifted: '무료 결과에서 보여 준 조건과 앞에 놓인 자리가 달라졌어요.',
 } as const satisfies Record<DrainContrastRelation, string>
 
-const DRAIN_WINDOW_SENTENCE = '무료 답과 사이가 많이 벌어져서 이번 조건은 정밀 답만 읽었어요.'
+const DRAIN_WINDOW_SENTENCE = '무료 답과 사이가 많이 벌어져서 이번 조건은 심층 답만 읽었어요.'
 
 function paidOnlyDrain(
   merged: DrainTally<DrainSpread>,

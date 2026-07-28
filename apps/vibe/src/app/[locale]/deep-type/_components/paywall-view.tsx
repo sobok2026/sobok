@@ -121,6 +121,11 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
             <Consent label={paywall.consentPrivacy} name="agree-privacy" />
           </div>
 
+          {/* 전자상거래법 제13조 제3항 owes this to a minor at the moment the contract is formed, so it sits on the
+              checkout rather than only in the terms. It is a notice and not a consent — nothing to tick, because
+              the right it describes exists whether or not the buyer agrees to it. */}
+          <p className="mt-3 text-page-ink/54 text-xs leading-relaxed">{paywall.minorNotice}</p>
+
           <div className="mt-4 flex justify-center">
             <Turnstile
               onError={() => setTurnstileToken('')}
