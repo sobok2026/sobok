@@ -1,8 +1,8 @@
 import { CLAIMABLE_EVIDENCE_IDS } from './claims'
 import type { ReportProfile } from './profile'
-import { NARRATED_SECTION_KEYS, type NarratedSectionKey, type StoredReportSection } from './section-keys'
+import { NARRATED_SECTION_KEYS, type NarratedSectionKey, type ReportSection } from './section-keys'
 
-// v2. The model no longer writes the report — the rule engine does, and this pass narrates over a body that is
+// The model no longer writes the report — the rule engine does, and this pass narrates over a body that is
 // already committed and already delivering. So the prompt asks for a bounded set of sections rather than all
 // twelve, and every section has to declare what it rests on: `claims` is checked against `SECTION_CLAIMS`
 // before storage, and a section that claims something its row does not license loses its narration while the
@@ -73,7 +73,7 @@ export const NARRATIVE_OUTPUT_SCHEMA = {
  */
 export function narrativeUserMessage(
   profile: ReportProfile,
-  engine: readonly StoredReportSection[],
+  engine: readonly ReportSection[],
   keys: readonly NarratedSectionKey[],
 ): string {
   return [

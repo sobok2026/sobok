@@ -1,186 +1,87 @@
-import {
-  AXES,
-  type AxisId,
-  type DrainFacet,
-  type DrainFraming,
-  type EnvironmentFacet,
-  type InterestFacet,
-  type NeedFacet,
-  type PurposeFacet,
+import type {
+  AxisId,
+  DrainFacet,
+  DrainFraming,
+  EnvironmentFacet,
+  InterestFacet,
+  NeedFacet,
+  PurposeFacet,
 } from './model'
 
-export type BaseLayer = 'persona' | 'inner' | 'gem'
+/** Where an item's stem was authored. Two layers, and an axis draws from exactly one of them. */
+export type LikertLayer = 'inner' | 'gem'
 
-export type BaseItem = {
-  readonly axis: AxisId | 'NE'
+export type LikertItem = {
+  readonly axis: AxisId
   readonly id: string
-  readonly layer: BaseLayer
+  readonly layer: LikertLayer
   /** When true, agreement contributes toward the axis's second pole. */
   readonly reverse: boolean
 }
 
-export type RefinementItem = {
-  readonly axis: AxisId
-  readonly id: string
-  readonly layer: 'inner' | 'gem'
-  readonly reverse: boolean
-}
-
-// Three banks below are the authored inventory, not the scored instrument. `PERSONA_ITEMS`, the `NE` axis and
-// the unselected two thirds of `REFINEMENT_ITEMS` stay exported and stay out of every scoring path: the split
-// has to be reversible, and deleting the records would make reverting a selection decision an authoring job.
+// The scored instrument, declared directly. There is no reserve bank behind it and no selection table in
+// front of it: an authored-but-unscored item costs four locales of text and buys a reversibility nobody
+// exercised. Adding an item back is an authoring job either way.
 //
-// Keying inside a bank is two forward + two reverse per axis. That balance no longer cancels straight-line
-// responding, because the scored instrument draws an odd count per axis on purpose (see FREE_SELECTION).
-export const PERSONA_ITEMS = [
-  { id: 'persona-ei-1', layer: 'persona', axis: 'EI', reverse: false },
-  { id: 'persona-ei-2', layer: 'persona', axis: 'EI', reverse: true },
-  { id: 'persona-ei-3', layer: 'persona', axis: 'EI', reverse: false },
-  { id: 'persona-ei-4', layer: 'persona', axis: 'EI', reverse: true },
-  { id: 'persona-sn-1', layer: 'persona', axis: 'SN', reverse: false },
-  { id: 'persona-sn-2', layer: 'persona', axis: 'SN', reverse: true },
-  { id: 'persona-sn-3', layer: 'persona', axis: 'SN', reverse: false },
-  { id: 'persona-sn-4', layer: 'persona', axis: 'SN', reverse: true },
-  { id: 'persona-tf-1', layer: 'persona', axis: 'TF', reverse: false },
-  { id: 'persona-tf-2', layer: 'persona', axis: 'TF', reverse: true },
-  { id: 'persona-tf-3', layer: 'persona', axis: 'TF', reverse: false },
-  { id: 'persona-tf-4', layer: 'persona', axis: 'TF', reverse: true },
-  { id: 'persona-jp-1', layer: 'persona', axis: 'JP', reverse: false },
-  { id: 'persona-jp-2', layer: 'persona', axis: 'JP', reverse: true },
-  { id: 'persona-jp-3', layer: 'persona', axis: 'JP', reverse: false },
-  { id: 'persona-jp-4', layer: 'persona', axis: 'JP', reverse: true },
-  { id: 'persona-ne-1', layer: 'persona', axis: 'NE', reverse: false },
-  { id: 'persona-ne-2', layer: 'persona', axis: 'NE', reverse: true },
-  { id: 'persona-ne-3', layer: 'persona', axis: 'NE', reverse: false },
-  { id: 'persona-ne-4', layer: 'persona', axis: 'NE', reverse: true },
-] as const satisfies readonly BaseItem[]
+// Three rules produced this list. An axis draws its free three from one source layer and its paid two from one
+// source layer, so keying is never confounded with context. Free is two forward + one reverse and paid is one
+// of each, which keeps the count per axis odd on both passes so no tie can occur. And the axis order is AXES
+// order, which `presentation.ts` reads as its per-axis queues.
 
-export const INNER_ITEMS = [
+/** 24 items, eight axes x two forward + one reverse, from the base layer. */
+export const FREE_LIKERT_ITEMS: readonly LikertItem[] = [
   { id: 'inner-ei-1', layer: 'inner', axis: 'EI', reverse: false },
-  { id: 'inner-ei-2', layer: 'inner', axis: 'EI', reverse: true },
   { id: 'inner-ei-3', layer: 'inner', axis: 'EI', reverse: false },
-  { id: 'inner-ei-4', layer: 'inner', axis: 'EI', reverse: true },
+  { id: 'inner-ei-2', layer: 'inner', axis: 'EI', reverse: true },
   { id: 'inner-sn-1', layer: 'inner', axis: 'SN', reverse: false },
-  { id: 'inner-sn-2', layer: 'inner', axis: 'SN', reverse: true },
   { id: 'inner-sn-3', layer: 'inner', axis: 'SN', reverse: false },
-  { id: 'inner-sn-4', layer: 'inner', axis: 'SN', reverse: true },
+  { id: 'inner-sn-2', layer: 'inner', axis: 'SN', reverse: true },
   { id: 'inner-tf-1', layer: 'inner', axis: 'TF', reverse: false },
-  { id: 'inner-tf-2', layer: 'inner', axis: 'TF', reverse: true },
   { id: 'inner-tf-3', layer: 'inner', axis: 'TF', reverse: false },
-  { id: 'inner-tf-4', layer: 'inner', axis: 'TF', reverse: true },
+  { id: 'inner-tf-2', layer: 'inner', axis: 'TF', reverse: true },
   { id: 'inner-jp-1', layer: 'inner', axis: 'JP', reverse: false },
-  { id: 'inner-jp-2', layer: 'inner', axis: 'JP', reverse: true },
   { id: 'inner-jp-3', layer: 'inner', axis: 'JP', reverse: false },
-  { id: 'inner-jp-4', layer: 'inner', axis: 'JP', reverse: true },
-  { id: 'inner-ne-1', layer: 'inner', axis: 'NE', reverse: false },
-  { id: 'inner-ne-2', layer: 'inner', axis: 'NE', reverse: true },
-  { id: 'inner-ne-3', layer: 'inner', axis: 'NE', reverse: false },
-  { id: 'inner-ne-4', layer: 'inner', axis: 'NE', reverse: true },
-] as const satisfies readonly BaseItem[]
-
-export const GEM_ITEMS = [
+  { id: 'inner-jp-2', layer: 'inner', axis: 'JP', reverse: true },
   { id: 'gem-rm-1', layer: 'gem', axis: 'RM', reverse: false },
-  { id: 'gem-rm-2', layer: 'gem', axis: 'RM', reverse: true },
   { id: 'gem-rm-3', layer: 'gem', axis: 'RM', reverse: false },
-  { id: 'gem-rm-4', layer: 'gem', axis: 'RM', reverse: true },
+  { id: 'gem-rm-2', layer: 'gem', axis: 'RM', reverse: true },
   { id: 'gem-oa-1', layer: 'gem', axis: 'OA', reverse: false },
-  { id: 'gem-oa-2', layer: 'gem', axis: 'OA', reverse: true },
   { id: 'gem-oa-3', layer: 'gem', axis: 'OA', reverse: false },
-  { id: 'gem-oa-4', layer: 'gem', axis: 'OA', reverse: true },
+  { id: 'gem-oa-2', layer: 'gem', axis: 'OA', reverse: true },
   { id: 'gem-vh-1', layer: 'gem', axis: 'VH', reverse: false },
-  { id: 'gem-vh-2', layer: 'gem', axis: 'VH', reverse: true },
   { id: 'gem-vh-3', layer: 'gem', axis: 'VH', reverse: false },
-  { id: 'gem-vh-4', layer: 'gem', axis: 'VH', reverse: true },
+  { id: 'gem-vh-2', layer: 'gem', axis: 'VH', reverse: true },
   { id: 'gem-uo-1', layer: 'gem', axis: 'UO', reverse: false },
-  { id: 'gem-uo-2', layer: 'gem', axis: 'UO', reverse: true },
   { id: 'gem-uo-3', layer: 'gem', axis: 'UO', reverse: false },
-  { id: 'gem-uo-4', layer: 'gem', axis: 'UO', reverse: true },
-] as const satisfies readonly BaseItem[]
+  { id: 'gem-uo-2', layer: 'gem', axis: 'UO', reverse: true },
+]
 
-export const REFINEMENT_ITEMS = [
-  { id: 'refine-inner-ei-1', layer: 'inner', axis: 'EI', reverse: true },
+/**
+ * 16 items, eight axes x one forward + one reverse, from the refine layer. Bands only — poles are frozen.
+ *
+ * UO reads `refine-gem-uo-3` where every other axis takes its `-1`. The `-1` stem restated `gem-uo-3` almost
+ * verbatim and the two scored at 4-gram Jaccard 0.1718, the worst pair in the instrument and well over the
+ * 0.10 gate; `-3` is forward exactly as `-1` was, so the keying is unchanged and the UO maximum drops to
+ * 0.0316. See `_content/question-similarity.test.ts`.
+ */
+export const PAID_LIKERT_ITEMS: readonly LikertItem[] = [
   { id: 'refine-inner-ei-2', layer: 'inner', axis: 'EI', reverse: false },
-  { id: 'refine-inner-ei-3', layer: 'inner', axis: 'EI', reverse: false },
-  { id: 'refine-inner-ei-4', layer: 'inner', axis: 'EI', reverse: true },
-  { id: 'refine-inner-sn-1', layer: 'inner', axis: 'SN', reverse: true },
+  { id: 'refine-inner-ei-1', layer: 'inner', axis: 'EI', reverse: true },
   { id: 'refine-inner-sn-2', layer: 'inner', axis: 'SN', reverse: false },
-  { id: 'refine-inner-sn-3', layer: 'inner', axis: 'SN', reverse: false },
-  { id: 'refine-inner-sn-4', layer: 'inner', axis: 'SN', reverse: true },
+  { id: 'refine-inner-sn-1', layer: 'inner', axis: 'SN', reverse: true },
   { id: 'refine-inner-tf-1', layer: 'inner', axis: 'TF', reverse: false },
   { id: 'refine-inner-tf-2', layer: 'inner', axis: 'TF', reverse: true },
-  { id: 'refine-inner-tf-3', layer: 'inner', axis: 'TF', reverse: false },
-  { id: 'refine-inner-tf-4', layer: 'inner', axis: 'TF', reverse: true },
-  { id: 'refine-inner-jp-1', layer: 'inner', axis: 'JP', reverse: false },
-  { id: 'refine-inner-jp-2', layer: 'inner', axis: 'JP', reverse: true },
   { id: 'refine-inner-jp-3', layer: 'inner', axis: 'JP', reverse: false },
-  { id: 'refine-inner-jp-4', layer: 'inner', axis: 'JP', reverse: true },
+  { id: 'refine-inner-jp-2', layer: 'inner', axis: 'JP', reverse: true },
   { id: 'refine-gem-rm-1', layer: 'gem', axis: 'RM', reverse: false },
   { id: 'refine-gem-rm-2', layer: 'gem', axis: 'RM', reverse: true },
-  { id: 'refine-gem-rm-3', layer: 'gem', axis: 'RM', reverse: false },
-  { id: 'refine-gem-rm-4', layer: 'gem', axis: 'RM', reverse: true },
   { id: 'refine-gem-oa-1', layer: 'gem', axis: 'OA', reverse: false },
   { id: 'refine-gem-oa-2', layer: 'gem', axis: 'OA', reverse: true },
-  { id: 'refine-gem-oa-3', layer: 'gem', axis: 'OA', reverse: false },
-  { id: 'refine-gem-oa-4', layer: 'gem', axis: 'OA', reverse: true },
   { id: 'refine-gem-vh-1', layer: 'gem', axis: 'VH', reverse: false },
   { id: 'refine-gem-vh-2', layer: 'gem', axis: 'VH', reverse: true },
-  { id: 'refine-gem-vh-3', layer: 'gem', axis: 'VH', reverse: false },
-  { id: 'refine-gem-vh-4', layer: 'gem', axis: 'VH', reverse: true },
-  { id: 'refine-gem-uo-1', layer: 'gem', axis: 'UO', reverse: false },
-  { id: 'refine-gem-uo-2', layer: 'gem', axis: 'UO', reverse: true },
   { id: 'refine-gem-uo-3', layer: 'gem', axis: 'UO', reverse: false },
-  { id: 'refine-gem-uo-4', layer: 'gem', axis: 'UO', reverse: true },
-] as const satisfies readonly RefinementItem[]
-
-// Selection tables, in `[forward, forward, reverse]` and `[forward, reverse]` order. Three rules produced them:
-// an axis draws its free three from one source layer and its paid two from one source layer, so keying is never
-// confounded with context; no `-4` id is drawn, which is what keeps the three non-ko locales free of the 90
-// placeholder strings each; and the count per axis stays odd on both passes so no tie can occur.
-const FREE_SELECTION = {
-  EI: ['inner-ei-1', 'inner-ei-3', 'inner-ei-2'],
-  SN: ['inner-sn-1', 'inner-sn-3', 'inner-sn-2'],
-  TF: ['inner-tf-1', 'inner-tf-3', 'inner-tf-2'],
-  JP: ['inner-jp-1', 'inner-jp-3', 'inner-jp-2'],
-  RM: ['gem-rm-1', 'gem-rm-3', 'gem-rm-2'],
-  OA: ['gem-oa-1', 'gem-oa-3', 'gem-oa-2'],
-  VH: ['gem-vh-1', 'gem-vh-3', 'gem-vh-2'],
-  UO: ['gem-uo-1', 'gem-uo-3', 'gem-uo-2'],
-} as const satisfies Record<AxisId, readonly [string, string, string]>
-
-const PAID_SELECTION = {
-  EI: ['refine-inner-ei-2', 'refine-inner-ei-1'],
-  SN: ['refine-inner-sn-2', 'refine-inner-sn-1'],
-  TF: ['refine-inner-tf-1', 'refine-inner-tf-2'],
-  JP: ['refine-inner-jp-3', 'refine-inner-jp-2'],
-  RM: ['refine-gem-rm-1', 'refine-gem-rm-2'],
-  OA: ['refine-gem-oa-1', 'refine-gem-oa-2'],
-  VH: ['refine-gem-vh-1', 'refine-gem-vh-2'],
-  // `refine-gem-uo-3`, not `-1`: `-1` restates `gem-uo-3` almost verbatim ("목표를 세울 때 피해야 할 손실/위험부터
-  // 떠올린다"), and the two scored together at 4-gram Jaccard 0.1718 — the worst pair in the instrument and well
-  // over the 0.10 gate. Swapping to `-3` drops the UO maximum to 0.0316 and keeps the one forward + one reverse
-  // keying, because `-3` is forward exactly as `-1` was. See `_content/question-similarity.test.ts`.
-  UO: ['refine-gem-uo-3', 'refine-gem-uo-2'],
-} as const satisfies Record<AxisId, readonly [string, string]>
-
-function pick<Item extends { id: string }>(bank: readonly Item[], ids: readonly string[]): readonly Item[] {
-  return ids.map((id) => {
-    const item = bank.find((candidate) => candidate.id === id)
-    if (!item) {
-      throw new Error(`DeepType selection references an unknown item: ${id}`)
-    }
-    return item
-  })
-}
-
-const BASE_BANK = [...INNER_ITEMS, ...GEM_ITEMS] as readonly BaseItem[]
-
-/** 24 items, eight axes × two forward + one reverse, drawn from the base layer. */
-export const FREE_LIKERT_ITEMS: readonly BaseItem[] = AXES.flatMap((axis) => pick(BASE_BANK, FREE_SELECTION[axis]))
-
-/** 16 items, eight axes × one forward + one reverse, drawn from the refine layer. Bands only — poles are frozen. */
-export const PAID_LIKERT_ITEMS: readonly RefinementItem[] = AXES.flatMap((axis) =>
-  pick(REFINEMENT_ITEMS, PAID_SELECTION[axis]),
-)
+  { id: 'refine-gem-uo-2', layer: 'gem', axis: 'UO', reverse: true },
+]
 
 export type WorkItem =
   | {

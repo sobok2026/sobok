@@ -50,22 +50,22 @@ describe('likert presentation', () => {
       'inner-sn-1',
       'inner-tf-2',
       'inner-jp-1',
-      'gem-rm-1',
-      'gem-oa-2',
-      'gem-vh-1',
-      'gem-uo-1',
-      'inner-ei-2',
-      'inner-tf-1',
-      'gem-oa-1',
-      'inner-sn-2',
-      'inner-jp-3',
-      'gem-rm-3',
-      'gem-vh-2',
-      'gem-uo-3',
       'inner-ei-3',
-      'inner-jp-2',
+      'inner-sn-2',
+      'inner-tf-1',
+      'inner-jp-3',
+      'inner-ei-2',
       'inner-sn-3',
       'inner-tf-3',
+      'inner-jp-2',
+      'gem-rm-1',
+      'gem-oa-1',
+      'gem-vh-2',
+      'gem-uo-1',
+      'gem-rm-3',
+      'gem-oa-2',
+      'gem-vh-1',
+      'gem-uo-3',
       'gem-rm-2',
       'gem-oa-3',
       'gem-vh-3',
@@ -89,6 +89,16 @@ describe('likert presentation', () => {
       'refine-gem-uo-3',
       'refine-gem-vh-2',
     ])
+  })
+
+  // The screen depends on this split, not just the item set: `_lib/free-run.ts` labels the progress bar in three
+  // segments and reveals the four type letters at item twelve, both of which are lies if a core item appears in
+  // the first half. Asserting the boundary separately from the pinned order means a future reshuffle that keeps
+  // the constraints still has to face this one deliberately.
+  test('settles the four type axes before the first core item', () => {
+    const layers = FREE_LIKERT_PRESENTATION.map((item) => item.layer)
+    expect(layers.slice(0, 12)).toEqual(Array.from({ length: 12 }, () => 'inner' as const))
+    expect(layers.slice(12)).toEqual(Array.from({ length: 12 }, () => 'gem' as const))
   })
 
   // 16 forward against 8 reverse cannot alternate, so two is the floor for the free run length, not a target

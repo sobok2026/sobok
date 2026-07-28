@@ -3,43 +3,12 @@
 // instead would drag drizzle and the top-level `pgSchema()` side effect into the Next client graph. So this
 // module stays dependency-free and both trees import it, the same arrangement `api/deep-type/actions.ts` uses.
 
-export const REPORT_SCHEMA_VERSIONS = ['1', '2'] as const
-export type ReportSchemaVersion = (typeof REPORT_SCHEMA_VERSIONS)[number]
-
 /**
- * Written on every new row. Stored rows are never migrated to a newer vocabulary — a purchase carries a
- * one-year re-open window, so v1 documents keep rendering for a year after the last v1 write.
+ * The career vocabulary (MIGRATION §4.1), and the only one. Order is the section table's own 1..12, which is
+ * generation order: `openingRead` reads sections 1~7 and therefore cannot be produced before them. Display
+ * order is a render decision and is not this array's job.
  */
-export const CURRENT_REPORT_SCHEMA_VERSION = '2' satisfies ReportSchemaVersion
-
-/**
- * v1 — retired for writes, frozen for reads. Six of these keys (`selfWorth`, `relationships`,
- * `emotionRegulation`, `motivation`, `workStyle`, `recovery`) describe an inner-life report that the career
- * pivot no longer produces. Deleting the union would not delete the rows.
- */
-export const REPORT_SECTION_KEYS_V1 = [
-  'summary',
-  'contextShift',
-  'selfWorth',
-  'relationships',
-  'emotionRegulation',
-  'motivation',
-  'workStyle',
-  'recovery',
-  'strengths',
-  'friction',
-  'reflectionQuestions',
-  'nextSteps',
-] as const
-
-export type ReportSectionKeyV1 = (typeof REPORT_SECTION_KEYS_V1)[number]
-
-/**
- * v2 — the career vocabulary (MIGRATION §4.1). Order is the section table's own 1..12, which is generation
- * order: `openingRead` reads sections 1~7 and therefore cannot be produced before them. Display order is a
- * render decision and is not this array's job.
- */
-export const REPORT_SECTION_KEYS_V2 = [
+export const REPORT_SECTION_KEYS = [
   'worldJob',
   'strengthCards',
   'drainSignature',
@@ -54,41 +23,13 @@ export const REPORT_SECTION_KEYS_V2 = [
   'reflectionQuestions',
 ] as const
 
-export type ReportSectionKeyV2 = (typeof REPORT_SECTION_KEYS_V2)[number]
+export type ReportSectionKey = (typeof REPORT_SECTION_KEYS)[number]
 
-/** Unqualified names mean the current vocabulary. Legacy call sites must name `_V1` out loud. */
-export const REPORT_SECTION_KEYS = REPORT_SECTION_KEYS_V2
-export type ReportSectionKey = ReportSectionKeyV2
-
-/**
- * What a reader may encounter in `report.sections` / `report.narrative`. `contextShift` and
- * `reflectionQuestions` are members of both vocabularies and mean the same thing in both, so the overlap is
- * intentional rather than an accident to clean up. Everything else is disjoint, which is what lets a renderer
- * fall back on the key alone when a row predates `schema_version`.
- */
-export type StoredReportSectionKey = ReportSectionKeyV1 | ReportSectionKeyV2
-
-export type ReportSectionKeyFor<Version extends ReportSchemaVersion> = Version extends '1'
-  ? ReportSectionKeyV1
-  : ReportSectionKeyV2
-
-export interface ReportSectionOf<Key extends StoredReportSectionKey> {
+/** Exactly what a row of `report.sections` / `report.narrative` holds. */
+export interface ReportSection {
   body: string
-  key: Key
+  key: ReportSectionKey
   title: string
-}
-
-export type ReportSection = ReportSectionOf<ReportSectionKey>
-export type ReportSectionV1 = ReportSectionOf<ReportSectionKeyV1>
-export type StoredReportSection = ReportSectionOf<StoredReportSectionKey>
-
-export function isReportSchemaVersion(value: string): value is ReportSchemaVersion {
-  return (REPORT_SCHEMA_VERSIONS as readonly string[]).includes(value)
-}
-
-/** Read-path dispatch. An unknown stored value is treated as v1 because that is what the column defaults to. */
-export function sectionKeysFor(version: string): readonly StoredReportSectionKey[] {
-  return version === '2' ? REPORT_SECTION_KEYS_V2 : REPORT_SECTION_KEYS_V1
 }
 
 /** Who writes the body. ENGINE bodies exist without the LLM; HYBRID keeps an engine body under the narration. */
@@ -115,7 +56,10 @@ export interface ReportSectionContract {
 
 export const REPORT_SECTION_CONTRACT = {
   worldJob: { generator: 'ENGINE', inputSource: 'free-only', onFailure: 'unreachable' },
-  strengthCards: { generator: 'ENGINE', inputSource: 'free-only', onFailure: 'unreachable' },
+  // The cards themselves are free-only and are not recomputed here. `mixed` is for what the paid tier adds on
+  // top: the settled band and its movement for all eight axes (D14). Same shape as `drainSignature` — one key,
+  // a free reading and a richer paid one — and the same consequence: the free engine may still emit it.
+  strengthCards: { generator: 'ENGINE', inputSource: 'mixed', onFailure: 'unreachable' },
   // Dual output, one key: the free pass answers three drain items and the paid pass six. `mixed` is what makes
   // the free engine allowed to emit it at all.
   drainSignature: { generator: 'ENGINE', inputSource: 'mixed', onFailure: 'unreachable' },
@@ -132,37 +76,37 @@ export const REPORT_SECTION_CONTRACT = {
   fitAndFriction: { generator: 'HYBRID', inputSource: 'paid', onFailure: 'keep-engine-body' },
   openingRead: { generator: 'LLM', inputSource: 'mixed', onFailure: 'drop-section' },
   reflectionQuestions: { generator: 'LLM', inputSource: 'mixed', onFailure: 'drop-section' },
-} as const satisfies Record<ReportSectionKeyV2, ReportSectionContract>
+} as const satisfies Record<ReportSectionKey, ReportSectionContract>
 
 type SectionKeysWhere<Field extends keyof ReportSectionContract, Value> = {
-  [Key in ReportSectionKeyV2]: (typeof REPORT_SECTION_CONTRACT)[Key][Field] extends Value ? Key : never
-}[ReportSectionKeyV2]
+  [Key in ReportSectionKey]: (typeof REPORT_SECTION_CONTRACT)[Key][Field] extends Value ? Key : never
+}[ReportSectionKey]
 
 export type EngineSectionKey = SectionKeysWhere<'generator', 'ENGINE'>
-export type NarratedSectionKey = Exclude<ReportSectionKeyV2, EngineSectionKey>
+export type NarratedSectionKey = Exclude<ReportSectionKey, EngineSectionKey>
 /** Never derivable in the browser. A free-bundle module that names one of these should fail to compile. */
 export type PaidSectionKey = SectionKeysWhere<'inputSource', 'paid'>
-export type FreeSafeSectionKey = Exclude<ReportSectionKeyV2, PaidSectionKey>
+export type FreeSafeSectionKey = Exclude<ReportSectionKey, PaidSectionKey>
 
-export const ENGINE_SECTION_KEYS = REPORT_SECTION_KEYS_V2.filter(
+export const ENGINE_SECTION_KEYS = REPORT_SECTION_KEYS.filter(
   (key): key is EngineSectionKey => REPORT_SECTION_CONTRACT[key].generator === 'ENGINE',
 )
 
 /** What the LLM pass may return. Anything outside this set is dropped rather than stored. */
-export const NARRATED_SECTION_KEYS = REPORT_SECTION_KEYS_V2.filter(
+export const NARRATED_SECTION_KEYS = REPORT_SECTION_KEYS.filter(
   (key): key is NarratedSectionKey => REPORT_SECTION_CONTRACT[key].generator !== 'ENGINE',
 )
 
-export const PAID_SECTION_KEYS = REPORT_SECTION_KEYS_V2.filter(
+export const PAID_SECTION_KEYS = REPORT_SECTION_KEYS.filter(
   (key): key is PaidSectionKey => REPORT_SECTION_CONTRACT[key].inputSource === 'paid',
 )
 
-export const FREE_SAFE_SECTION_KEYS = REPORT_SECTION_KEYS_V2.filter(
+export const FREE_SAFE_SECTION_KEYS = REPORT_SECTION_KEYS.filter(
   (key): key is FreeSafeSectionKey => REPORT_SECTION_CONTRACT[key].inputSource !== 'paid',
 )
 
 /**
- * D3: the free-text `careerContext` is not collected in v1, so each of these sections carries one part —
+ * D3: the free-text `careerContext` is not collected at all, so each of these sections carries one part —
  * `threePaths`' stay route, `fitAndFriction` as a whole, `roleFamilies`' "experience to carry over" — whose
  * confidence is pinned at "needs more input". Pinned, not defaulted: no later answer raises it, because no
  * question asks. Listed by key so the copy layer cannot quietly drop the marker from one of the three.
@@ -171,4 +115,4 @@ export const CONTEXT_DEPENDENT_SECTION_KEYS = [
   'roleFamilies',
   'threePaths',
   'fitAndFriction',
-] as const satisfies readonly ReportSectionKeyV2[]
+] as const satisfies readonly ReportSectionKey[]

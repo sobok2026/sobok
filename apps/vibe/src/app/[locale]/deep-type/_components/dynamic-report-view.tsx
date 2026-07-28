@@ -1,6 +1,6 @@
 'use client'
 
-import type { AssessmentProfile } from '@deep-type/model'
+import type { FreeAssessmentProfile } from '@deep-type/model'
 import type { Locale } from '@sobok/domain/locale'
 import { useState } from 'react'
 import { cn } from '@/utils/cn'
@@ -8,6 +8,7 @@ import { cn } from '@/utils/cn'
 import { useReportPolling } from '../_hooks/use-report-polling'
 import { postCancel } from '../_lib/api'
 import type { DeepTypeContent } from '../_lib/types'
+import { FreeResultView } from './free-result-view'
 import { ReportView } from './report-view'
 
 type DynamicReportViewProps = {
@@ -16,7 +17,7 @@ type DynamicReportViewProps = {
   // The FREE profile, or null when this screen was reached without one (the checkout return arrives from
   // PortOne with no answers in this tab). Never the refined profile — that is paid content and only
   // `GET /report` may hand it over. On failure the buyer sees their free result and the refund CTA.
-  fallbackProfile: AssessmentProfile | null
+  fallbackProfile: FreeAssessmentProfile | null
   locale: Locale
   onRestart: () => void
 }
@@ -58,11 +59,11 @@ export function DynamicReportView({
     <ReportView
       content={content}
       locale={locale}
+      narrativePending={state.narrativePending}
       narrativeSections={state.narrative}
       onRestart={onRestart}
-      paidSections={state.sections}
       profile={state.profile}
-      refined
+      sections={state.sections}
     />
   )
 }
@@ -102,8 +103,10 @@ function FailedReport({ accessToken, content, fallbackProfile, locale, onRestart
           </button>
         ) : null}
       </div>
+      {/* The free result, not a stripped paid one: generation failed, so there are no paid sections to show and
+          the reader is back to what they already had. The offer CTA is left off — they have already bought. */}
       {fallbackProfile ? (
-        <ReportView content={content} locale={locale} onRestart={onRestart} profile={fallbackProfile} />
+        <FreeResultView content={content} locale={locale} onRestart={onRestart} profile={fallbackProfile} />
       ) : null}
     </div>
   )

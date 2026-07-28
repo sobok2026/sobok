@@ -1,31 +1,29 @@
 'use client'
 
-import { type AssessmentProfile, AXIS_POLES, GEM_AXES, TYPE_AXES } from '@deep-type/model'
-import { DEEP_TYPE_REPORT_OFFER } from '@deep-type/offer'
+import type { AssessmentProfile } from '@deep-type/model'
 import { Refresh, Share } from '@mynaui/icons-react'
-import { trackEcommerce } from '@sobok/analytics/browser'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
+
 import { cn } from '@/utils/cn'
+
 import type { ReportSection } from '../_lib/api'
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
-import { formatKrw } from '../_lib/price'
-import { REPORT_PROMOTION_ECOMMERCE } from '../_lib/report-offer-analytics'
 import type { DeepTypeContent } from '../_lib/types'
-import { AxisProfile } from './axis-profile'
-import { ResultHero } from './result-hero'
+import { GemArtwork } from './gem-artwork'
+import { WorldJobHero } from './world-job-hero'
 
 type ReportViewProps = {
   content: DeepTypeContent
   locale: Locale
+  /** True while the narration is still being written. Delivery is not stamped yet and the poll keeps running. */
+  narrativePending?: boolean
   /** The LLM pass. Always optional: the engine sections below are the finished report on their own. */
   narrativeSections?: readonly ReportSection[]
   onRestart: () => void
-  onUnlock?: () => void
-  paidSections?: readonly ReportSection[]
   profile: AssessmentProfile
-  refined?: boolean
+  sections: readonly ReportSection[]
 }
 
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
@@ -41,7 +39,7 @@ type RenderedSection = {
 // Engine order first, because that is the report. A narration for a section the engine wrote sits under its
 // body; the two LLM-only sections have no engine body and come after, in the order they were generated.
 function renderedSections(
-  engine: readonly ReportSection[] = [],
+  engine: readonly ReportSection[],
   narrative: readonly ReportSection[] = [],
 ): RenderedSection[] {
   const byKey = new Map(narrative.map((section) => [section.key, section]))
@@ -60,59 +58,28 @@ function renderedSections(
   ]
 }
 
+/**
+ * The paid report: the hero, then whatever sections the server delivered, in the order it delivered them.
+ *
+ * There is no loading state for the narration and no placeholder where it will land. The engine body is the
+ * finished report — that is the delivery contract, not a fallback — so the reader gets the whole thing at once,
+ * and narration appears under the sections it was written over as it arrives. `narrativePending` says so in one
+ * line rather than by greying anything out.
+ */
 export function ReportView({
   content,
   locale,
+  narrativePending = false,
   narrativeSections,
   onRestart,
-  onUnlock,
-  paidSections,
   profile,
-  refined = false,
+  sections,
 }: ReportViewProps) {
-  const promotionRef = useRef<HTMLElement>(null)
   const [shareFeedback, setShareFeedback] = useState('')
   const gemName = content.gemNames[profile.gem.code]
-  const discountLabel = content.paywall.discountTemplate.replace(
-    '{discount}',
-    String(DEEP_TYPE_REPORT_OFFER.discountPercent),
-  )
-  const listPrice = formatKrw(locale, DEEP_TYPE_REPORT_OFFER.listAmount)
-  const price = formatKrw(locale, DEEP_TYPE_REPORT_OFFER.amount)
   const shareText = content.ui.reportShareText
     .replace('{inner}', profile.inner.code)
     .replace('{gem}', `${gemName} (${profile.gem.code})`)
-
-  useEffect(() => {
-    const promotion = promotionRef.current
-    if (!onUnlock || !promotion) {
-      return
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) {
-          return
-        }
-        trackEcommerce('view_promotion', REPORT_PROMOTION_ECOMMERCE, { locale })
-        observer.disconnect()
-      },
-      { threshold: 0.5 },
-    )
-    observer.observe(promotion)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [locale, onUnlock])
-
-  function unlock() {
-    if (!onUnlock) {
-      return
-    }
-    trackEcommerce('select_promotion', REPORT_PROMOTION_ECOMMERCE, { locale })
-    onUnlock()
-  }
 
   async function share() {
     const shareData = { text: shareText, title: content.metadata.title, url: window.location.href }
@@ -139,91 +106,23 @@ export function ReportView({
   return (
     <main className="flex flex-1 flex-col bg-page-bg px-safe py-10 text-page-ink sm:py-14" id="main-content">
       <div className="mx-auto grid w-full max-w-xl gap-4">
-        <ResultHero content={content} profile={profile} refined={refined} />
+        <WorldJobHero content={content} gem={profile.gem.code} inner={profile.inner.code} />
 
-        {onUnlock ? (
-          <section
-            className="rounded-3xl sm:rounded-4xl border border-page-accent/40 bg-page-accent/8 p-6 text-center sm:p-7"
-            ref={promotionRef}
-          >
-            <p className="break-keep font-black text-lg text-page-accent">{content.paywall.title}</p>
-            <p className="mx-auto mt-2 max-w-md text-page-ink/68 text-sm leading-7">{content.paywall.body}</p>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-              <span className="text-page-ink/38 text-sm line-through">{listPrice}</span>
-              <span className="font-black text-page-accent text-xl">{price}</span>
-              <span className="rounded-full bg-page-accent/12 px-2.5 py-1 font-black text-page-accent text-xs">
-                {discountLabel}
-              </span>
-            </div>
-            <button
-              className={cn(
-                'mt-5 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_rgba(255,77,109,0.24)] transition-colors hover:bg-page-accent/92',
-                focusClassName,
-              )}
-              onClick={unlock}
-              type="button"
-            >
-              {content.paywall.unlockCta}
-            </button>
-          </section>
-        ) : null}
-
-        <div className="rounded-3xl border border-page-border bg-page-soft/60 p-4">
-          <p className="text-page-ink/60 text-xs leading-6">{content.ui.clarityNote}</p>
+        <div className="rounded-3xl border border-page-border bg-page-surface p-4 text-center">
+          <GemArtwork gemCode={profile.gem.code} />
+          <p className="mt-4 font-black text-lg">{gemName}</p>
+          <p className="mt-1 text-page-ink/56 text-sm">{content.ui.layerGem}</p>
         </div>
 
-        {/* Split on `tier` rather than on the `refined` prop: the tier is what carries `evidenceSplit`, and the
-            paid branch is the one `AxisProfile` requires the split sentence from. */}
-        {profile.tier === 'refined' ? (
-          <>
-            <AxisProfile
-              axisIds={TYPE_AXES}
-              content={content}
-              scores={profile.inner.axes}
-              splitNotice={content.ui.evidenceSplitNote}
-              title={`${content.ui.profileTitle} · ${content.ui.layerInner}`}
-            />
-            <AxisProfile
-              axisIds={GEM_AXES}
-              content={content}
-              scores={profile.gem.axes}
-              splitNotice={content.ui.evidenceSplitNote}
-              title={content.ui.layerGem}
-            />
-          </>
-        ) : (
-          <>
-            <AxisProfile
-              axisIds={TYPE_AXES}
-              content={content}
-              scores={profile.inner.axes}
-              title={`${content.ui.profileTitle} · ${content.ui.layerInner}`}
-            />
-            <AxisProfile axisIds={GEM_AXES} content={content} scores={profile.gem.axes} title={content.ui.layerGem} />
-          </>
-        )}
+        {narrativePending ? (
+          <p className="rounded-3xl bg-page-soft px-5 py-4 text-page-ink/60 text-xs leading-6">
+            {content.paywall.narrativePendingNote}
+          </p>
+        ) : null}
 
-        <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6">
-          <h2 className="font-black text-lg">{content.ui.reflectionTitle}</h2>
-          <p className="mt-2 text-page-ink/60 text-sm leading-6">{content.ui.reflectionBody}</p>
-          <ul className="mt-4 grid gap-3">
-            {GEM_AXES.map((axis) => {
-              const copy = content.axes[axis]
-              const reflection =
-                profile.gem.axes[axis].pole === AXIS_POLES[axis][0] ? copy.first.reflection : copy.second.reflection
-              return (
-                <li className="rounded-3xl border border-page-border bg-white p-4" key={axis}>
-                  <p className="font-black text-sm">{copy.name}</p>
-                  <p className="mt-1 text-page-ink/68 text-sm leading-6">{reflection}</p>
-                </li>
-              )
-            })}
-          </ul>
-        </section>
-
-        {renderedSections(paidSections, narrativeSections).map((section) => (
+        {renderedSections(sections, narrativeSections).map((section) => (
           <section
-            className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6"
+            className="rounded-3xl border border-page-border bg-page-surface p-4 sm:rounded-4xl sm:p-6"
             key={section.key}
           >
             <h2 className="break-keep font-black text-lg">{section.title}</h2>
@@ -236,7 +135,7 @@ export function ReportView({
           </section>
         ))}
 
-        <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6">
+        <section className="rounded-3xl border border-page-border bg-page-surface p-4 sm:rounded-4xl sm:p-6">
           <h2 className="font-black text-lg">{content.ui.methodologyNoteTitle}</h2>
           <p className="mt-2 text-page-ink/64 text-sm leading-7">{content.ui.methodologyNoteBody}</p>
           <Link

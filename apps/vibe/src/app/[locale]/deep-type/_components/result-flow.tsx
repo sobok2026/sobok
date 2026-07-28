@@ -1,6 +1,6 @@
 'use client'
 
-import type { AssessmentProfile } from '@deep-type/model'
+import type { FreeAssessmentProfile } from '@deep-type/model'
 import { scoreBaseAssessment } from '@deep-type/scoring'
 import type { Locale } from '@sobok/domain/locale'
 import { useRouter } from 'next/navigation'
@@ -10,10 +10,10 @@ import { assertNever } from '../_lib/assert'
 import { clearSitting, type DeepTypeSitting, readSitting } from '../_lib/sitting'
 import type { DeepTypeContent } from '../_lib/types'
 import { DynamicReportView } from './dynamic-report-view'
+import { FreeResultView } from './free-result-view'
 import { IntroView } from './intro-view'
 import { PaywallView } from './paywall-view'
 import { RefinementQuizView } from './refinement-quiz-view'
-import { ReportView } from './report-view'
 
 type ResultState =
   | { phase: 'report' }
@@ -53,7 +53,7 @@ type ResultFlowProps = {
 
 export function ResultFlow({ content, locale }: ResultFlowProps) {
   const [sitting, setSitting] = useState<DeepTypeSitting | null>(null)
-  const [profile, setProfile] = useState<AssessmentProfile | null>(null)
+  const [profile, setProfile] = useState<FreeAssessmentProfile | null>(null)
   const [loaded, setLoaded] = useState(false)
   const [state, dispatch] = useReducer(resultReducer, { phase: 'report' })
   const router = useRouter()
@@ -97,7 +97,7 @@ export function ResultFlow({ content, locale }: ResultFlowProps) {
   switch (state.phase) {
     case 'report':
       return (
-        <ReportView
+        <FreeResultView
           content={content}
           locale={locale}
           onRestart={handleRestart}
@@ -134,8 +134,9 @@ export function ResultFlow({ content, locale }: ResultFlowProps) {
         <RefinementQuizView
           accessToken={state.accessToken}
           content={content}
+          freeWorkAnswers={sitting.work}
+          locale={locale}
           onComplete={() => dispatch({ type: 'REFINEMENT_DONE' })}
-          workAnswers={sitting.work}
         />
       )
     case 'dynamicReport':

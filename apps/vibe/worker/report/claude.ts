@@ -6,7 +6,6 @@ import {
   type NarratedSectionKey,
   REPORT_SECTION_CONTRACT,
   type ReportSection,
-  type StoredReportSection,
 } from './section-keys'
 
 // The narration pass. It runs after the engine body is committed and delivering, so nothing here can fail the
@@ -42,7 +41,7 @@ export interface NarrativeOutcome {
 
 export interface NarrativeInput {
   /** The committed engine bodies. They are the ground truth the narration is checked and written against. */
-  engine: readonly StoredReportSection[]
+  engine: readonly ReportSection[]
   profile: ReportProfile
 }
 
@@ -51,7 +50,7 @@ export interface NarrativeInput {
  * reader who declared nothing, and narrating a section the reader will never see is how a report ends up
  * describing a contrast that is not on screen. LLM-only sections have no engine body by definition.
  */
-export function requestedNarrativeKeys(engine: readonly StoredReportSection[]): readonly NarratedSectionKey[] {
+export function requestedNarrativeKeys(engine: readonly ReportSection[]): readonly NarratedSectionKey[] {
   const written = new Set<string>(engine.map((section) => section.key))
   return NARRATED_SECTION_KEYS.filter((key) => REPORT_SECTION_CONTRACT[key].generator !== 'HYBRID' || written.has(key))
 }

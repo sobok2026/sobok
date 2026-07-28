@@ -1,14 +1,18 @@
 import { describe, expect, test } from 'bun:test'
 
+import { BAND_SHIFT_PAID, CLARITY_BANDS_PAID } from '../../deep-type/content/band-labels.paid'
 import { PROPER_NOUNS } from '../../deep-type/content/proper-nouns'
 import { WORLD_JOB_NAMES } from '../../deep-type/content/world-job-names'
 import {
+  AXIS_POLES,
   type AxisId,
+  type BandShift,
   type DrainFacet,
   type EnvironmentFacet,
   type FreeAssessmentProfile,
   type FreeAxisScore,
   type FreeDrainSpread,
+  GEM_AXES,
   GEM_CODES,
   type GemCode,
   INSTRUMENT_VERSION,
@@ -21,12 +25,14 @@ import {
   type RefinedAssessmentProfile,
   type RefinedAxisScore,
   type TentativeBand,
+  TYPE_AXES,
   WORK_FACETS,
   type WorkFacetId,
   type WorkFacetTally,
 } from '../../deep-type/model'
 import { buildFreeReport } from '../../deep-type/rules/free'
 import { resolveDrainBand } from '../../deep-type/scoring'
+import { axisCopyFor } from './axis-copy'
 import { checkClaims, SECTION_CLAIMS } from './claims'
 import {
   DRAIN_MERGE_WINDOW_DAYS,
@@ -35,7 +41,7 @@ import {
   mergeDrainSittings,
   type NamedFacet,
 } from './rules'
-import { REPORT_SECTION_CONTRACT, REPORT_SECTION_KEYS_V2 } from './section-keys'
+import { REPORT_SECTION_CONTRACT, REPORT_SECTION_KEYS } from './section-keys'
 
 // Fixtures build profiles directly rather than by scoring answer sets. The engine reads bands, codes and
 // tallies, so routing every case through 40 Likert answers would test the scorer twice and this module once.
@@ -54,12 +60,18 @@ function axisScoreFor(band3: TentativeBand, letter: string): FreeAxisScore {
   }
 }
 
-function refinedAxisScoreFor(band3: TentativeBand, letter: string): RefinedAxisScore {
+type AxisMovementFixture = { evidenceSplit?: boolean; shift?: BandShift }
+
+function refinedAxisScoreFor(
+  band3: TentativeBand,
+  letter: string,
+  movement: AxisMovementFixture = {},
+): RefinedAxisScore {
   return {
     ...axisScoreFor(band3, letter),
     band5: band3 === 'distinct3' ? 'distinct' : band3 === 'moderate3' ? 'moderate' : 'faint',
-    evidenceSplit: false,
-    shift: 'same',
+    evidenceSplit: movement.evidenceSplit ?? false,
+    shift: movement.shift ?? 'same',
   }
 }
 
@@ -157,30 +169,32 @@ function refinedProfileOf(
     environment?: Record<EnvironmentFacet, number>
     interest?: Record<InterestFacet, number>
     mergedDrain?: readonly DrainFacet[]
+    movement?: Partial<Record<AxisId, AxisMovementFixture>>
     need?: Record<NeedFacet, number>
     personaSource?: PersonaSource
     purpose?: Record<PurposeFacet, number>
   } = {},
 ): RefinedAssessmentProfile {
   const band = (axis: AxisId) => options.bands?.[axis] ?? 'distinct3'
+  const moved = (axis: AxisId) => options.movement?.[axis] ?? {}
   const counts = drainCounts(options.mergedDrain ?? [...FREE_DRAIN_DEFAULT, ...PAID_DRAIN_DEFAULT])
 
   return {
     gem: {
       axes: {
-        RM: refinedAxisScoreFor(band('RM'), gem[0]),
-        OA: refinedAxisScoreFor(band('OA'), gem[1]),
-        VH: refinedAxisScoreFor(band('VH'), gem[2]),
-        UO: refinedAxisScoreFor(band('UO'), gem[3]),
+        RM: refinedAxisScoreFor(band('RM'), gem[0], moved('RM')),
+        OA: refinedAxisScoreFor(band('OA'), gem[1], moved('OA')),
+        VH: refinedAxisScoreFor(band('VH'), gem[2], moved('VH')),
+        UO: refinedAxisScoreFor(band('UO'), gem[3], moved('UO')),
       },
       code: gem,
     },
     inner: {
       axes: {
-        EI: refinedAxisScoreFor(band('EI'), inner[0]),
-        SN: refinedAxisScoreFor(band('SN'), inner[1]),
-        TF: refinedAxisScoreFor(band('TF'), inner[2]),
-        JP: refinedAxisScoreFor(band('JP'), inner[3]),
+        EI: refinedAxisScoreFor(band('EI'), inner[0], moved('EI')),
+        SN: refinedAxisScoreFor(band('SN'), inner[1], moved('SN')),
+        TF: refinedAxisScoreFor(band('TF'), inner[2], moved('TF')),
+        JP: refinedAxisScoreFor(band('JP'), inner[3], moved('JP')),
       },
       code: inner,
     },
@@ -284,12 +298,11 @@ describe('generateEngineReport totality', () => {
     expect(strengths?.body).toContain('강점 카드를 뽑지 않았어요')
   })
 
-  test('sections mirror blocks and carry the v2 schema version', () => {
+  test('sections mirror blocks', () => {
     const document = generateEngineReport(inputOf({ declaredPersona: 'ENFP' }))
-    expect(document.schemaVersion).toBe('2')
     expect(document.sections).toEqual(document.blocks.map(({ body, key, title }) => ({ body, key, title })))
     for (const section of document.sections) {
-      expect(REPORT_SECTION_KEYS_V2).toContain(section.key)
+      expect(REPORT_SECTION_KEYS).toContain(section.key)
     }
   })
 })
@@ -316,7 +329,9 @@ describe('claim boundary', () => {
 })
 
 describe('input source', () => {
-  test('free-only sections ignore the paid sitting entirely', () => {
+  // `strengthCards` is `mixed` and reads the paid AXES, never the paid work tallies — the only thing varying
+  // between these two documents. So it belongs in this list alongside the free-only section.
+  test('sections that do not read the paid work sitting ignore it entirely', () => {
     const free = freeProfileOf('ENFJ', 'ROVU')
     const one = generateEngineReport(inputOf({ free, refined: refinedProfileOf('ENFJ', 'ROVU') }))
     const other = generateEngineReport(
@@ -355,7 +370,77 @@ describe('input source', () => {
     const worldJob = document.blocks.find((block) => block.key === 'worldJob')
     const strengths = document.blocks.find((block) => block.key === 'strengthCards')
     expect(worldJob?.data).toEqual(expected.worldJob)
-    expect(strengths?.data).toEqual(expected.strengthCards)
+    // The cards, not the whole block. `bandMovement` is the paid tier's own addition (D14) and has no free
+    // counterpart to be equal to, so it is compared in its own describe below.
+    expect(strengths?.data).toMatchObject({ axis: expected.strengthCards.axis, combo: expected.strengthCards.combo })
+  })
+})
+
+// D14's paid half. The free tier labels its bands tentatively; what earns that hedge is the paid pass saying
+// where the ruler landed and which way it moved. These pins exist because both facts used to travel only in the
+// model request, so §4.3's planned narration failure took the whole statement with it.
+describe('band movement', () => {
+  function movementOf(refined: RefinedAssessmentProfile) {
+    const block = generateEngineReport(inputOf({ refined })).blocks.find((entry) => entry.key === 'strengthCards')
+    if (block?.key !== 'strengthCards') {
+      throw new Error('strengthCards missing')
+    }
+    return { body: block.body, data: block.data.bandMovement }
+  }
+
+  test('all eight axes are reported, inner first', () => {
+    const { data } = movementOf(refinedProfileOf('ENFJ', 'ROVU'))
+    expect(data.map((axis) => axis.id)).toEqual([...TYPE_AXES, ...GEM_AXES])
+  })
+
+  test('the settled band and the movement are both in the body, not only in the data', () => {
+    const { body, data } = movementOf(
+      refinedProfileOf('ENFJ', 'ROVU', { bands: { EI: 'moderate3' }, movement: { EI: { shift: 'up' } } }),
+    )
+    for (const axis of data) {
+      expect(body).toContain(`${axis.name} — ${axis.band.label} · ${axis.shift.label}`)
+    }
+    expect(body).toContain(CLARITY_BANDS_PAID.moderate.label)
+    expect(body).toContain(BAND_SHIFT_PAID.up.label)
+  })
+
+  // The one sentence D14 names. A downgrade must reach the reader as words even when nothing else runs.
+  test('a downgraded axis says so in the engine body', () => {
+    const { body } = movementOf(refinedProfileOf('ENFJ', 'ROVU', { movement: { JP: { shift: 'down' } } }))
+    expect(body).toContain(BAND_SHIFT_PAID.down.label)
+    expect(BAND_SHIFT_PAID.down.label).toBe('답이 갈렸어요')
+  })
+
+  test('split axes are named and the pole freeze is repeated beside them', () => {
+    const { body } = movementOf(
+      refinedProfileOf('ENFJ', 'ROVU', {
+        movement: { SN: { evidenceSplit: true, shift: 'down' }, VH: { evidenceSplit: true, shift: 'down' } },
+      }),
+    )
+    const copy = axisCopyFor('ko')
+    expect(body).toContain(`${copy.SN.name} · ${copy.VH.name}`)
+    expect(body).toContain(BAND_SHIFT_PAID.down.detail)
+    expect(body).toContain('여덟 글자는 그대로예요')
+  })
+
+  test('no split is stated rather than left out', () => {
+    const { body, data } = movementOf(refinedProfileOf('ENFJ', 'ROVU'))
+    expect(data.every((axis) => !axis.evidenceSplit)).toBe(true)
+    expect(body).toContain('양쪽으로 갈린 축은 없었어요')
+  })
+
+  // The letter is frozen at the free pass and a split axis is exactly where the bar and the letter disagree, so
+  // the label has to come off the code rather than off the recomputed score.
+  test('the named pole follows the frozen code letter even on a split axis', () => {
+    const { data } = movementOf(
+      refinedProfileOf('ISTJ', 'MAHO', { movement: { EI: { evidenceSplit: true, shift: 'down' } } }),
+    )
+    const copy = axisCopyFor('ko')
+    const ei = data.find((axis) => axis.id === 'EI')
+    // Widened on purpose: reading the fold off the table rather than hard-coding 'I' keeps the pin alive if
+    // `AXIS_POLES` is ever reordered.
+    const poles: readonly string[] = AXIS_POLES.EI
+    expect(ei?.leading).toBe(poles[0] === 'I' ? copy.EI.first.label : copy.EI.second.label)
   })
 })
 

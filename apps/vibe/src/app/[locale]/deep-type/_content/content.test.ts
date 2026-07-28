@@ -4,56 +4,57 @@ import { AXIS_POLES, TYPE_AXES } from '@deep-type/model'
 import { FREE_LIKERT_ITEMS, FREE_WORK_ITEMS, PAID_LIKERT_ITEMS, WORK_ITEMS } from '@deep-type/questionnaire'
 import { scoreBaseAssessment, scoreRefinedAssessment } from '@deep-type/scoring'
 
-import { createDeepTypeContent } from './create-content'
-import { deepTypeContent as en } from './en'
-import { deepTypeContent as ja } from './ja'
+import { createDeepTypeContent, createPaidQuestions } from './create-content'
 import { deepTypeContent as ko } from './ko'
-import { koQuestionOptions } from './question-options/ko'
-import { koQuestionPrompts } from './question-prompts/ko'
-import { deepTypeContent as zh } from './zh'
+import { koFreeQuestionOptions } from './question-options/ko.free'
+import { koPaidQuestionOptions } from './question-options/ko.paid'
+import { koFreeQuestionPrompts } from './question-prompts/ko.free'
+import { koPaidQuestionPrompts } from './question-prompts/ko.paid'
 
-const contents = { en, ja, ko, zh } as const
 const SCORED_IDS = [...FREE_LIKERT_ITEMS, ...PAID_LIKERT_ITEMS].map((item) => item.id)
+const FREE_IDS = [...FREE_LIKERT_ITEMS, ...FREE_WORK_ITEMS].map((item) => item.id)
 
+// The two tiers ship as separate modules so paid text stays out of the free static export, so a test that wants
+// to read the whole scored instrument has to put them back together itself.
+const koPaidQuestions = createPaidQuestions(koPaidQuestionPrompts, koPaidQuestionOptions)
+const koQuestions = { ...ko.questions, ...koPaidQuestions }
+
+// Everything below reads ko only. ko is the canonical locale; en/ja/zh carry the same forty ids with empty
+// strings and are filled by a human before they ship, so asserting anything about their text here would only
+// pin the emptiness.
 describe('deep type question catalog', () => {
-  test('every locale carries exactly the scored instrument', () => {
-    const expected = [...SCORED_IDS].sort().join()
-    for (const [locale, content] of Object.entries(contents)) {
-      expect(`${locale}:${Object.keys(content.questions).sort().join()}`).toBe(`${locale}:${expected}`)
-      expect(Object.keys(content.axes).sort()).toEqual(['EI', 'JP', 'OA', 'RM', 'SN', 'TF', 'UO', 'VH'])
+  test('the free bundle carries the free tier and nothing else', () => {
+    expect(Object.keys(ko.questions).sort()).toEqual([...FREE_IDS].sort())
+    expect(Object.keys(ko.axes).sort()).toEqual(['EI', 'JP', 'OA', 'RM', 'SN', 'TF', 'UO', 'VH'])
+  })
+
+  // The gate behind MIGRATION L6. `out/**/*.{html,txt}` is scanned by `scripts/check-paid-bundle.ts` after a
+  // build; this is the same claim one step earlier, where it fails in a second instead of after `next build`.
+  test('no paid item text is reachable from the free bundle', () => {
+    for (const id of Object.keys(koPaidQuestions)) {
+      expect(`${id}:${id in ko.questions}`).toBe(`${id}:false`)
     }
   })
 
-  // The reserve banks stay authored in the locale files; what must not happen is one of them reaching the
-  // shipped catalog, because the three non-ko banks hold `TODO <id>` notes for every `-4` item.
-  test('no placeholder or blank text reaches the catalog', () => {
-    for (const [locale, content] of Object.entries(contents)) {
-      for (const [id, question] of Object.entries(content.questions)) {
-        const strings = [question.prompt, ...question.options]
-        expect(`${locale}/${id}:${strings.some((value) => value.trim().length === 0)}`).toBe(`${locale}/${id}:false`)
-        expect(`${locale}/${id}:${strings.some((value) => /\bTODO\b/.test(value))}`).toBe(`${locale}/${id}:false`)
-      }
-    }
-  })
-
-  test('the placeholder gate fires when a selected item is untranslated', () => {
+  test('selecting an item the catalog does not carry stops the build', () => {
     expect(() =>
       createDeepTypeContent({
         ...ko,
-        questionOptions: koQuestionOptions,
-        questionPrompts: { ...koQuestionPrompts, [String(SCORED_IDS[0])]: 'TODO inner-ei-1' },
-      }),
-    ).toThrow(/placeholder/)
-  })
-
-  test('selecting an item with no authored text stops the build', () => {
-    expect(() =>
-      createDeepTypeContent({
-        ...ko,
-        questionOptions: koQuestionOptions,
-        questionPrompts: Object.fromEntries(Object.entries(koQuestionPrompts).filter(([id]) => id !== SCORED_IDS[0])),
+        questionOptions: koFreeQuestionOptions,
+        questionPrompts: Object.fromEntries(Object.entries(koFreeQuestionPrompts).filter(([id]) => id !== FREE_IDS[0])),
       }),
     ).toThrow(/has no prompt/)
+  })
+
+  // Likert only. The four options are one ordinal ladder, so a repeat is a dead rung: two positions that score
+  // differently while reading identically. Forced-choice work items are a different shape and are not authored
+  // yet, so pinning them here would only pin the emptiness.
+  test('gives every ko Likert item four distinct options', () => {
+    for (const id of SCORED_IDS) {
+      const question = koQuestions[id]
+      const distinct = new Set((question?.options ?? []).map((option) => option.trim())).size
+      expect(`${id}:${distinct}`).toBe(`${id}:4`)
+    }
   })
 })
 
@@ -283,7 +284,7 @@ describe('scored item option polarity', () => {
         '반응이 약하면 내가 잘했는지 다시 생각한다',
         '반응이 미지근하면 결과물과 내 가치까지 의심한다',
       ],
-      prompt: '내가 한 일에 대한 반응이 미지근하면, 그 일을 어떻게 바라보나요?',
+      prompt: '내가 한 일에 대한 반응이 미지근하면 그 일을 어떻게 바라보나요?',
     },
     {
       axis: 'RM',
@@ -405,7 +406,7 @@ describe('scored item option polarity', () => {
         '영향이 크면 내 결정을 어느 정도 조정한다',
         '다른 사람에게 미칠 영향을 중심으로 결정을 조정한다',
       ],
-      prompt: '내 결정이 다른 사람에게 영향을 줄 수 있다면, 그 영향을 얼마나 반영하나요?',
+      prompt: '내 결정이 다른 사람에게 영향을 줄 수 있다면 그 영향을 얼마나 반영하나요?',
     },
     {
       axis: 'TF',
@@ -630,7 +631,7 @@ describe('scored item option polarity', () => {
 
   test('no private-life context frame reaches the scored 40', () => {
     for (const item of POLARITY) {
-      const question = ko.questions[item.id]
+      const question = koQuestions[item.id]
       const strings = question ? [question.prompt, ...question.options] : []
       expect(`${item.id}:${strings.length}`).toBe(`${item.id}:5`)
       const flagged = strings.filter((value) => CONTEXT_FRAME.test(value))
@@ -640,7 +641,7 @@ describe('scored item option polarity', () => {
 
   for (const item of POLARITY) {
     test(`${item.id} runs from '${item.lastPole}'-opposite to ${item.lastPole}`, () => {
-      const question = ko.questions[item.id]
+      const question = koQuestions[item.id]
       expect(question?.prompt).toBe(item.prompt)
       expect(question?.options).toEqual(item.options)
 

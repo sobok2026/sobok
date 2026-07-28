@@ -33,7 +33,7 @@ import {
 import { FREE_LIKERT_ITEMS, FREE_WORK_ITEMS, PAID_LIKERT_ITEMS, WORK_ITEMS, type WorkItem } from './questionnaire'
 
 type ScoredItem = {
-  readonly axis: AxisId | 'NE'
+  readonly axis: AxisId
   readonly id: string
   readonly reverse: boolean
 }
@@ -75,6 +75,24 @@ export function scoreBaseAssessment(
     tier: 'free',
     work: scoreFreeWorkProfile(workAnswers),
   }
+}
+
+/**
+ * The four type letters, off the twelve type items alone. The free run settles them at its halfway mark and the
+ * screen says so there, so the sentence on that screen has to come from this file: a letter derived anywhere
+ * else can disagree with the report twelve items later, and a reveal that contradicts the result is worse than
+ * no reveal.
+ *
+ * It is the same tally `scoreBaseAssessment` runs, restricted to the type axes, so the letters it returns are
+ * the ones the full pass will return. The twelve core items cannot move them — an axis is scored from its own
+ * items only — and the odd count per axis keeps every letter decided.
+ */
+export function readTypeLetters(typeAnswers: readonly ItemAnswer[]): InnerCode {
+  const typeItems = FREE_LIKERT_ITEMS.filter((item) => (TYPE_AXES as readonly AxisId[]).includes(item.axis))
+  const byId = validateAndIndex(typeItems, typeAnswers)
+  // Per type axis rather than through `tallyAxes`, which walks all eight and would throw on the four core axes
+  // this restricted item set has nothing for.
+  return TYPE_AXES.map((axis) => requirePole(axis, tallyAxis(axis, typeItems, byId))).join('') as InnerCode
 }
 
 // The paid pass re-derives the ruler and nothing else. Poles and both codes are copied from the free result

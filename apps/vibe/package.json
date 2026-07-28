@@ -7,6 +7,7 @@
     "build": "next build",
     "preview": "next build && wrangler dev",
     "deploy": "next build && wrangler deploy",
+    "check:export": "bun scripts/assert-paid-text-absent.ts",
     "db:push": "drizzle-kit push",
     "type": "next typegen && tsc --noEmit && tsc -p worker/tsconfig.json"
   },

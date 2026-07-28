@@ -31,12 +31,7 @@ import {
   type ReportSourceRow,
   reportDelivery,
 } from './pipeline'
-import {
-  CURRENT_REPORT_SCHEMA_VERSION,
-  type NarratedSectionKey,
-  REPORT_SECTION_KEYS_V2,
-  type ReportSection,
-} from './section-keys'
+import { type NarratedSectionKey, REPORT_SECTION_KEYS, type ReportSection } from './section-keys'
 
 const PASS_STATUSES: readonly ReportPassStatus[] = ['pending', 'generating', 'done', 'failed']
 
@@ -165,17 +160,14 @@ describe('engine-first commit', () => {
 
     expect(plan?.engine.model).toBe(ENGINE_MODEL)
     expect(plan?.engine.model).toBe('rules-only')
-    // Explicit: the column defaults to '1' and a v2 body stored under it reads back as v1 forever.
-    expect(plan?.engine.schemaVersion).toBe(CURRENT_REPORT_SCHEMA_VERSION)
-    expect(plan?.engine.schemaVersion).toBe('2')
   })
 
-  test('every committed section carries v2 keys and a body', () => {
+  test('every committed section carries a vocabulary key and a body', () => {
     const plan = planReportPasses(sourceOf())
     expect(plan).not.toBeNull()
 
     for (const section of plan?.engine.sections ?? []) {
-      expect(REPORT_SECTION_KEYS_V2 as readonly string[]).toContain(section.key)
+      expect(REPORT_SECTION_KEYS as readonly string[]).toContain(section.key)
       expect(section.body.length).toBeGreaterThan(0)
       expect(section.title.length).toBeGreaterThan(0)
     }

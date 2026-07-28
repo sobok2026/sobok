@@ -5,13 +5,9 @@ import {
   FREE_ITEM_COUNT,
   FREE_LIKERT_ITEMS,
   FREE_WORK_ITEMS,
-  GEM_ITEMS,
-  INNER_ITEMS,
   PAID_ITEM_COUNT,
   PAID_LIKERT_ITEMS,
   PAID_WORK_ITEMS,
-  PERSONA_ITEMS,
-  REFINEMENT_ITEMS,
   WORK_ITEMS,
   type WorkItem,
 } from './questionnaire'
@@ -64,6 +60,8 @@ const REVERSE_BY_ID: Record<string, boolean> = {
   'refine-inner-tf-1': false,
   'refine-inner-tf-2': true,
 }
+
+const REVERSE_BY_ID_KEYS = Object.keys(REVERSE_BY_ID)
 
 function facetExposure(items: readonly WorkItem[], dimension: WorkDimension): readonly number[] {
   const counts = new Map<WorkFacetId, number>(WORK_FACETS[dimension].map((facet) => [facet, 0]))
@@ -119,12 +117,6 @@ describe('likert selection', () => {
     expect([...freeIds].filter((id) => paidIds.has(id))).toEqual([])
   })
 
-  // The three non-ko locales carry a placeholder string for every `-4` item. Selecting none of them is what
-  // clears that debt without a translation pass, so the gate lives here rather than in a locale test.
-  test('draws no placeholder item', () => {
-    expect(SELECTED_LIKERT.filter((item) => item.id.endsWith('-4'))).toEqual([])
-  })
-
   test('draws each axis from a single source layer on each pass', () => {
     for (const axis of AXES) {
       const free = FREE_LIKERT_ITEMS.filter((item) => item.axis === axis)
@@ -137,16 +129,10 @@ describe('likert selection', () => {
     }
   })
 
-  test('leaves the unselected banks exported so the split stays reversible', () => {
-    expect(PERSONA_ITEMS.length).toBe(20)
-    expect(INNER_ITEMS.length).toBe(20)
-    expect(GEM_ITEMS.length).toBe(16)
-    expect(REFINEMENT_ITEMS.length).toBe(32)
-
-    const selected = new Set(SELECTED_LIKERT.map((item) => item.id))
-    expect(PERSONA_ITEMS.filter((item) => selected.has(item.id))).toEqual([])
-    expect([...PERSONA_ITEMS, ...INNER_ITEMS].filter((item) => item.axis === 'NE').length).toBe(8)
-    expect(SELECTED_LIKERT.filter((item) => item.axis === 'NE')).toEqual([])
+  // The instrument is the whole inventory now, so this is what stops an item from being added or renamed
+  // without the locale catalogs and the ko polarity pins moving with it.
+  test('is exactly the forty ids the content layer projects', () => {
+    expect(SELECTED_LIKERT.map((item) => item.id).sort()).toEqual([...REVERSE_BY_ID_KEYS].sort())
   })
 })
 

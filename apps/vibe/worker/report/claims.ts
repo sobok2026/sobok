@@ -1,4 +1,4 @@
-import type { ReportSectionKeyV2 } from './section-keys'
+import type { ReportSectionKey } from './section-keys'
 
 // The claim boundary the instrument was documented against — `results` in
 // research/13_item_result_evidence_matrix.json (scoringVersion 60), carried here verbatim so the boundary
@@ -116,7 +116,7 @@ export const SECTION_CLAIMS = {
   fitAndFriction: ['life_work_profile', 'mind_axis_and_gem'],
   openingRead: ['llm_report', 'inner_axis_profile', 'mind_axis_and_gem'],
   reflectionQuestions: ['llm_report'],
-} as const satisfies Record<ReportSectionKeyV2, readonly ClaimableEvidenceId[]>
+} as const satisfies Record<ReportSectionKey, readonly ClaimableEvidenceId[]>
 
 /**
  * §4.3 requires this sentence to survive the removal of the percentile block: it is what the percentile used to
@@ -130,15 +130,15 @@ export const LLM_EVIDENCE_PRIVACY_BOUNDARY =
   '문항별 로컬 근거는 동의 설계가 끝나기 전까지 브라우저 밖으로 보내지 않아요.'
 
 export type ClaimViolation =
-  | { claim: string; kind: 'undeclared'; section: ReportSectionKeyV2 }
-  | { claim: string; kind: 'withdrawn'; section: ReportSectionKeyV2; withdrawnBecause: string }
-  | { claim: string; kind: 'unknown'; section: ReportSectionKeyV2 }
+  | { claim: string; kind: 'undeclared'; section: ReportSectionKey }
+  | { claim: string; kind: 'withdrawn'; section: ReportSectionKey; withdrawnBecause: string }
+  | { claim: string; kind: 'unknown'; section: ReportSectionKey }
 
 /**
  * Total: returns what is wrong instead of throwing, because the narration gate drops offending sections and
  * keeps the engine body. The engine itself never reaches a violation — its claims are the table above.
  */
-export function checkClaims(section: ReportSectionKeyV2, claims: readonly string[]): readonly ClaimViolation[] {
+export function checkClaims(section: ReportSectionKey, claims: readonly string[]): readonly ClaimViolation[] {
   const declared = new Set<string>(SECTION_CLAIMS[section])
   const violations: ClaimViolation[] = []
 
@@ -174,7 +174,7 @@ export class ClaimBoundaryError extends Error {
  * engine's own tests, and anything that assembles a section from a claim list it built itself.
  */
 export function assertClaims(
-  section: ReportSectionKeyV2,
+  section: ReportSectionKey,
   claims: readonly string[],
 ): asserts claims is readonly ClaimableEvidenceId[] {
   const violations = checkClaims(section, claims)
@@ -184,8 +184,8 @@ export function assertClaims(
 }
 
 type SectionsClaimingNothing = {
-  [Key in ReportSectionKeyV2]: (typeof SECTION_CLAIMS)[Key]['length'] extends 0 ? Key : never
-}[ReportSectionKeyV2]
+  [Key in ReportSectionKey]: (typeof SECTION_CLAIMS)[Key]['length'] extends 0 ? Key : never
+}[ReportSectionKey]
 
 /**
  * A section resting on no evidence is a section that should not ship. Checked at compile time rather than at

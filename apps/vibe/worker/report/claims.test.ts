@@ -10,7 +10,7 @@ import {
   INTERPRETATION_BOUNDARY,
   SECTION_CLAIMS,
 } from './claims'
-import { REPORT_SECTION_KEYS_V2 } from './section-keys'
+import { REPORT_SECTION_KEYS } from './section-keys'
 
 describe('evidence claim boundary', () => {
   test('carries all nine results from the evidence matrix', () => {
@@ -39,11 +39,11 @@ describe('evidence claim boundary', () => {
 
 describe('section claim declarations', () => {
   test('every section declares its evidence and nothing extra declares any', () => {
-    expect(Object.keys(SECTION_CLAIMS).sort()).toEqual([...REPORT_SECTION_KEYS_V2].sort())
+    expect(Object.keys(SECTION_CLAIMS).sort()).toEqual([...REPORT_SECTION_KEYS].sort())
   })
 
   test('every section rests on at least one live claim', () => {
-    for (const key of REPORT_SECTION_KEYS_V2) {
+    for (const key of REPORT_SECTION_KEYS) {
       expect(SECTION_CLAIMS[key].length).toBeGreaterThan(0)
     }
   })
@@ -54,7 +54,7 @@ describe('section claim declarations', () => {
     const withdrawn = EVIDENCE_RESULT_IDS.filter((id) => EVIDENCE_CLAIM_BOUNDARY[id].status === 'withdrawn')
     expect(withdrawn.length).toBeGreaterThan(0)
 
-    for (const key of REPORT_SECTION_KEYS_V2) {
+    for (const key of REPORT_SECTION_KEYS) {
       for (const claim of SECTION_CLAIMS[key] as readonly string[]) {
         expect(withdrawn as readonly string[]).not.toContain(claim)
       }

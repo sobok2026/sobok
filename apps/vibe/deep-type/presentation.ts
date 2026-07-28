@@ -12,7 +12,13 @@ import { FREE_LIKERT_ITEMS, FREE_WORK_ITEMS, PAID_LIKERT_ITEMS, PAID_WORK_ITEMS,
 //
 // The free sequence cannot alternate keying: 16 forward against 8 reverse admits no alternation, so the target
 // is a maximum run of two. The paid sequence is 8 against 8 and alternates perfectly.
-
+//
+// The free order runs the four type axes to completion before the four core axes, rather than interleaving all
+// eight. That is a screen requirement reaching back into the sequence: the free run is one uninterrupted 27-item
+// stretch whose progress bar is labelled in three segments, and the one reveal it shows at item twelve names the
+// four type letters. Interleaved, no prefix of the sequence decides any code, so there is nothing true to say at
+// item twelve and the segments would be arbitrary marks on a bar. Both constraints survive the split — axes stay
+// non-adjacent across the block boundary and the keying run stays at two — because they are local properties.
 type KeySlot = 'F' | 'R'
 type Slot = readonly [number, KeySlot]
 
@@ -21,22 +27,22 @@ const FREE_ORDER = [
   [1, 'F'],
   [2, 'R'],
   [3, 'F'],
+  [0, 'F'],
+  [1, 'R'],
+  [2, 'F'],
+  [3, 'F'],
+  [0, 'R'],
+  [1, 'F'],
+  [2, 'F'],
+  [3, 'R'],
+  [4, 'F'],
+  [5, 'F'],
+  [6, 'R'],
+  [7, 'F'],
   [4, 'F'],
   [5, 'R'],
   [6, 'F'],
   [7, 'F'],
-  [0, 'R'],
-  [2, 'F'],
-  [5, 'F'],
-  [1, 'R'],
-  [3, 'F'],
-  [4, 'F'],
-  [6, 'R'],
-  [7, 'F'],
-  [0, 'F'],
-  [3, 'R'],
-  [1, 'F'],
-  [2, 'F'],
   [4, 'R'],
   [5, 'F'],
   [6, 'F'],
@@ -64,7 +70,7 @@ const PAID_ORDER = [
 
 // Draws from per-axis queues in the plan's order. Throwing on a miss is deliberate: a plan that no longer
 // matches the selection is a defect in the selection table, and shipping a silently shorter quiz would hide it.
-function arrange<Item extends { axis: AxisId | 'NE'; reverse: boolean }>(
+function arrange<Item extends { axis: AxisId; reverse: boolean }>(
   items: readonly Item[],
   plan: readonly Slot[],
 ): readonly Item[] {

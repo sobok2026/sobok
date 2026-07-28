@@ -1,3 +1,4 @@
+import { FREE_DELIVERABLES_KO } from '@deep-type/free-deliverables'
 import { ArrowRight, Sparkles } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
@@ -13,6 +14,7 @@ type LandingViewProps = {
 }
 
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
+const JOB_HEADING = FREE_DELIVERABLES_KO[2]
 
 export function LandingView({ content, locale, onStart }: LandingViewProps) {
   const keepHeadingBreakClassName = locale === 'ko' ? 'break-keep' : undefined
@@ -31,10 +33,12 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
         </h1>
         <p className="mt-5 text-page-ink/66 leading-8">{content.ui.landingSubtitle}</p>
 
+        {/* The three cards name the three things the free run hands back, not three steps of a questionnaire —
+            the run is one continuous stretch of questions and has no steps to number. */}
         <div className="mt-8 grid gap-3 sm:grid-cols-3">
-          <StepCard eyebrow="STEP 1" label="Persona" description={content.ui.landingStepOuterDesc} />
-          <StepCard eyebrow="STEP 2" label="Inner" description={content.ui.landingStepInnerDesc} />
-          <StepCard eyebrow="STEP 3" label="Gem" description={content.ui.landingStepGemDesc} />
+          <StepCard description={content.ui.landingStepTypeDesc} label={content.ui.layerInner} />
+          <StepCard description={content.ui.landingStepCoreDesc} label={content.ui.layerGem} />
+          <StepCard description={content.ui.landingStepJobDesc} label={JOB_HEADING} />
         </div>
 
         <Link
@@ -63,11 +67,10 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
   )
 }
 
-function StepCard({ description, eyebrow, label }: { description: string; eyebrow: string; label: string }) {
+function StepCard({ description, label }: { description: string; label: string }) {
   return (
     <div className="rounded-3xl border border-page-border bg-page-surface p-5 shadow-[0_18px_55px_rgba(36,22,23,0.07)]">
-      <p className="font-bold text-page-accent text-xs">{eyebrow}</p>
-      <p className="mt-2 font-black text-lg">{label}</p>
+      <p className="font-black text-lg">{label}</p>
       <p className="mt-1 text-page-ink/56 text-sm leading-6">{description}</p>
     </div>
   )

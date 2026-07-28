@@ -77,9 +77,10 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
       <RefinementQuizView
         accessToken={pending.accessToken}
         content={content}
-        onComplete={() => setPhase('report')}
         // The PortOne redirect lands in the same tab, so the free sitting is still in session storage here.
-        workAnswers={readSittingWorkAnswers()}
+        freeWorkAnswers={readSittingWorkAnswers()}
+        locale={locale}
+        onComplete={() => setPhase('report')}
       />
     )
   }

@@ -1,17 +1,27 @@
 import {
   AXIS_POLES,
+  type AxisId,
+  type BandCopy,
   type DrainFacet,
   type DrainTally,
   type FreeAssessmentProfile,
+  GEM_AXES,
   type InterestFacet,
   type PersonaCode,
   type RefinedAssessmentProfile,
+  type RefinedAxisScore,
   TYPE_AXES,
   type TypeAxisId,
   WORK_FACETS,
   type WorkFacetId,
 } from '@deep-type/model'
-import { DRAIN_SPREAD_MEANING, DRAIN_SPREAD_PAID } from '../../deep-type/content/band-labels.paid'
+import {
+  BAND_SHIFT_PAID,
+  CLARITY_BANDS_PAID,
+  CLARITY_NOTE_PAID,
+  DRAIN_SPREAD_MEANING,
+  DRAIN_SPREAD_PAID,
+} from '../../deep-type/content/band-labels.paid'
 import { DRAIN_LABELS } from '../../deep-type/content/work-labels.free'
 import {
   ENVIRONMENT_LABELS,
@@ -30,14 +40,12 @@ import {
 } from '../../deep-type/role-families'
 import { buildFreeReport, type FreeReport, type FreeStrengthCard } from '../../deep-type/rules/free'
 import { resolveDrainBand } from '../../deep-type/scoring'
-import { axisCopyFor, type ReportLocale } from './axis-copy'
+import { type AxisCopy, axisCopyFor, type ReportLocale } from './axis-copy'
 import { assertClaims, type ClaimableEvidenceId, INTERPRETATION_BOUNDARY } from './claims'
 import {
-  CURRENT_REPORT_SCHEMA_VERSION,
   REPORT_SECTION_CONTRACT,
-  type ReportSchemaVersion,
   type ReportSection,
-  type ReportSectionKeyV2,
+  type ReportSectionKey,
   type SectionInputSource,
 } from './section-keys'
 
@@ -53,8 +61,8 @@ import {
 //
 // Sections 1-3 are not re-derived here. `deep-type/rules/free.ts` computes them and this module calls it, so a
 // free screen and a paid report cannot disagree about the world job, the strength cards or the free drain read.
-// What the paid tier adds to section 3 is a second ruler and a contrast, never a second computation of the
-// first three answers.
+// What the paid tier adds is a second ruler beside the same answers — the band movement in section 2 and the
+// drain contrast in section 3 — never a second computation of the first three answers.
 
 export interface EngineReportInput {
   /** The four letters the respondent offered. `null` and `personaSource: 'unknown'` both omit section 8. */
@@ -88,8 +96,8 @@ export interface NamedFacet {
 
 /** MIGRATION §4.1 rows 1-10. Rows 11-12 are the model's, so they are not members of this union. */
 export type EngineWrittenKey = {
-  [Key in ReportSectionKeyV2]: (typeof REPORT_SECTION_CONTRACT)[Key]['generator'] extends 'LLM' ? never : Key
-}[ReportSectionKeyV2]
+  [Key in ReportSectionKey]: (typeof REPORT_SECTION_CONTRACT)[Key]['generator'] extends 'LLM' ? never : Key
+}[ReportSectionKey]
 
 export interface EngineBlockOf<Key extends EngineWrittenKey, Data> {
   /** Rendered body. Stored as-is, and kept under the narration when the model overwrites a HYBRID section. */
@@ -110,9 +118,30 @@ export interface WorldJobData {
   name: string
 }
 
+/**
+ * One axis as the paid ruler leaves it. D14's other half: the free tier labels its bands tentatively, and the
+ * only thing that earns that hedge is the paid pass actually saying where the ruler landed and which way it
+ * moved. `shift` and `evidenceSplit` reached the model request and nothing else, so a reader whose narration
+ * failed — an outcome §4.3 explicitly plans for — was told the free band was provisional and then never told
+ * what it resolved to.
+ */
+export interface AxisBandMovement {
+  /** Paid band copy. The settled ruler, not the tentative one the cards above were grouped by. */
+  band: BandCopy
+  /** True when the added items leaned against the frozen letter. Forces `shift` to `down` before any compare. */
+  evidenceSplit: boolean
+  id: AxisId
+  /** The frozen pole's label, read off the code rather than off the recomputed score. For renderers. */
+  leading: string
+  name: string
+  shift: BandCopy
+}
+
 export interface StrengthCardsData {
   /** Grouped by band, never ranked (§4.3). Combos keep their own slot: `min(A, B)` ties a parent by definition. */
   axis: FreeReport['strengthCards']['axis']
+  /** All eight axes, always. A list that skipped the unmoved ones would make its own length a signal. */
+  bandMovement: readonly AxisBandMovement[]
   combo: FreeReport['strengthCards']['combo']
 }
 
@@ -272,11 +301,6 @@ export type EngineBlock =
 export interface EngineReportDocument {
   blocks: readonly EngineBlock[]
   interpretationBoundary: string
-  /**
-   * The vocabulary these keys belong to. Returned rather than assumed so the write path cannot store v2 keys
-   * under the column default of '1', which would send every later read down the v1 branch.
-   */
-  schemaVersion: ReportSchemaVersion
   /** Storage shape — exactly what `report.sections` holds. */
   sections: readonly ReportSection[]
 }
@@ -320,7 +344,7 @@ export function generateEngineReport(input: EngineReportInput): EngineReportDocu
 
   const blocks: EngineBlock[] = [
     worldJobBlock(free),
-    strengthCardsBlock(free),
+    strengthCardsBlock(free, input.refined, input.locale),
     drainSignatureBlock(drain),
     happinessConditionsBlock(input.refined),
     interestProfileBlock(input.refined),
@@ -334,7 +358,6 @@ export function generateEngineReport(input: EngineReportInput): EngineReportDocu
   return {
     blocks,
     interpretationBoundary: INTERPRETATION_BOUNDARY,
-    schemaVersion: CURRENT_REPORT_SCHEMA_VERSION,
     sections: blocks.map(({ body, key, title }) => ({ body, key, title })),
   }
 }
@@ -421,7 +444,14 @@ const STRENGTH_GROUP_HEADINGS = {
 // The free band copy stays in `data` and out of the body. Its labels carry the tentativeness marker that the
 // paid ruler has already resolved, and printing '지금까지는' on a paid screen would reopen a reading the paid
 // pass just settled (N7). The grouping is the band; the wording is not.
-function strengthCardsBlock(free: FreeReport): EngineBlockOf<'strengthCards', StrengthCardsData> {
+//
+// The cards are still the free engine's, unrecomputed. What the paid tier adds is the movement block below —
+// the same arrangement `drainSignature` has, which is why this section's input source is `mixed`.
+function strengthCardsBlock(
+  free: FreeReport,
+  refined: RefinedAssessmentProfile,
+  locale: ReportLocale,
+): EngineBlockOf<'strengthCards', StrengthCardsData> {
   const { axis, combo } = free.strengthCards
   const groups = [
     cardGroup(STRENGTH_GROUP_HEADINGS.distinct3, axis.distinct3),
@@ -431,16 +461,72 @@ function strengthCardsBlock(free: FreeReport): EngineBlockOf<'strengthCards', St
   ]
 
   const written = groups.filter((group): group is string => group !== null)
+  const bandMovement = axisBandMovement(refined, axisCopyFor(locale))
   const body = paragraphs(
     written.length > 0 ? '집합으로 묶었어요. 안에서 순서는 없어요.' : EMPTY_STRENGTH_NOTE,
     ...written,
+    bandMovementBody(bandMovement),
   )
 
   return block(
     'strengthCards',
     ['ability_card_ranking', 'inner_axis_profile', 'mind_axis_and_gem'],
-    { axis, combo },
+    { axis, bandMovement, combo },
     body,
+  )
+}
+
+// Inner first and then the core, the order the eight letters are printed in everywhere else.
+function axisBandMovement(refined: RefinedAssessmentProfile, copy: AxisCopy): readonly AxisBandMovement[] {
+  return [
+    ...TYPE_AXES.map((id, index) => axisMovement(id, refined.inner.code[index], refined.inner.axes[id], copy)),
+    ...GEM_AXES.map((id, index) => axisMovement(id, refined.gem.code[index], refined.gem.axes[id], copy)),
+  ]
+}
+
+function axisMovement(
+  id: AxisId,
+  letter: string | undefined,
+  score: RefinedAxisScore,
+  copy: AxisCopy,
+): AxisBandMovement {
+  const content = copy[id]
+  return {
+    band: CLARITY_BANDS_PAID[score.band5],
+    evidenceSplit: score.evidenceSplit,
+    id,
+    // Read off the frozen code letter rather than `score.pole`, which is null at a tie. Same fold as `poleLabel`.
+    leading: letter === AXIS_POLES[id][0] ? content.first.label : content.second.label,
+    name: content.name,
+    shift: BAND_SHIFT_PAID[score.shift],
+  }
+}
+
+// Every string a reader sees here comes out of `band-labels.paid`, never off a literal in this file. That table
+// is the one place §8.5's REMEASURE gate exempts, and the exemption stops at the table: an engine that inlined
+// '답이 갈렸어요' would put the movement wording somewhere the gate can no longer hold it. The two sentences
+// authored below say which axes and how many, never what moving means.
+const NO_EVIDENCE_SPLIT_NOTE = '양쪽으로 갈린 축은 없었어요.'
+const BAND_MOVEMENT_HEADING = '문항을 더한 뒤의 선명도예요.'
+const EVIDENCE_SPLIT_LABEL = '양쪽 답이 섞인 축'
+
+function bandMovementBody(movement: readonly AxisBandMovement[]): string {
+  const split = movement.filter((axis) => axis.evidenceSplit)
+
+  return paragraphs(
+    [
+      BAND_MOVEMENT_HEADING,
+      // The pole label stays out of the bullet and in `data`. Several of them carry their own '·'
+      // ('사실·적용'), so printing one here would put three separators in a line whose two halves are the band
+      // and its movement. The two sentences under this list are what hold the letter still.
+      bullets(movement.map((axis) => field(axis.name, `${axis.band.label} · ${axis.shift.label}`))),
+    ].join('\n'),
+    split.length > 0
+      ? [field(EVIDENCE_SPLIT_LABEL, split.map((axis) => axis.name).join(' · ')), BAND_SHIFT_PAID.down.detail].join(
+          '\n',
+        )
+      : NO_EVIDENCE_SPLIT_NOTE,
+    CLARITY_NOTE_PAID,
   )
 }
 

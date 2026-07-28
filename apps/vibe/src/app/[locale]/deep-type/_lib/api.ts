@@ -2,7 +2,7 @@ import type { AssessmentProfile, ItemAnswer, PersonaCode, WorkAnswer } from '@de
 import type { GAIdentity } from '@sobok/analytics/ga-identity'
 import type { Locale } from '@sobok/domain/locale'
 
-import type { StoredReportSection } from '../../../../../worker/report/section-keys'
+import type { ReportSection } from '../../../../../worker/report/section-keys'
 
 const BASE = '/api/deep-type'
 
@@ -10,13 +10,7 @@ const BASE = '/api/deep-type'
 // drifted from the server's list the moment the career sections landed, and nothing could have caught it: two
 // independent unions agree with each other by luck. `worker/report/section-keys.ts` is dependency-free for
 // exactly this import, the same arrangement as `worker/api/deep-type/actions.ts`.
-//
-// A rendered report may carry either vocabulary — v1 rows keep rendering for the whole one-year re-open window
-// — so the client type is the stored union rather than the current one.
-export type {
-  StoredReportSection as ReportSection,
-  StoredReportSectionKey as ReportSectionKey,
-} from '../../../../../worker/report/section-keys'
+export type { ReportSection, ReportSectionKey } from '../../../../../worker/report/section-keys'
 
 export type SessionInput = {
   answers: ItemAnswer[]
@@ -120,15 +114,28 @@ export function postRefinement(
 
 export type RefinementDraft = { answers: ItemAnswer[]; workAnswers: WorkAnswer[] }
 
+/**
+ * What resume returns: the parked buffer plus the free drain block the server has held since `POST /session`.
+ *
+ * The extra field is not a copy of anything the client can be sure it has. `sessionStorage` belongs to one tab
+ * and the parked buffer carries the free three only after a paid item was answered, so a buyer who opens the
+ * re-open e-mail on another device has neither — and `POST /refinement` refuses a set of fewer than
+ * twenty-four. This is the only source that survives a new browser.
+ */
+export type RefinementResume = RefinementDraft & { freeWorkAnswers: WorkAnswer[] }
+
 // Mid-block save. Replaces the whole buffer every time, so a duplicate send from a flaky connection costs
 // nothing and there is no partial state to reconcile.
 export function putRefinementDraft(accessToken: string, draft: RefinementDraft): Promise<{ status: 'ok' }> {
   return sendJson('PUT', '/refinement/draft', draft, accessToken)
 }
 
-// Resume. Empty arrays mean "nothing parked" — a fresh sitting and a finished one are both legitimately
-// empty here, and `refinementRequired` from the re-open exchange is what separates them.
-export async function getRefinementDraft(accessToken: string, signal?: AbortSignal): Promise<RefinementDraft> {
+// Resume. Empty `answers`/`workAnswers` mean "nothing parked" — a fresh sitting and a finished one are both
+// legitimately empty here, and `refinementRequired` from the re-open exchange is what separates them.
+//
+// `freeWorkAnswers` is defaulted rather than trusted: a row written before the column existed sends null, and
+// the caller's own sitting is the fallback in that case.
+export async function getRefinementDraft(accessToken: string, signal?: AbortSignal): Promise<RefinementResume> {
   const response = await fetch(`${BASE}/refinement/draft`, {
     headers: { authorization: `Bearer ${accessToken}` },
     signal,
@@ -136,8 +143,8 @@ export async function getRefinementDraft(accessToken: string, signal?: AbortSign
   if (!response.ok) {
     throw await toApiError(response)
   }
-  const data = (await response.json()) as RefinementDraft
-  return { answers: data.answers, workAnswers: data.workAnswers }
+  const data = (await response.json()) as RefinementResume
+  return { answers: data.answers, freeWorkAnswers: data.freeWorkAnswers ?? [], workAnswers: data.workAnswers }
 }
 
 export function postGenerate(accessToken: string, signal?: AbortSignal): Promise<{ status: string }> {
@@ -172,11 +179,10 @@ export function postReopenExchange(token: string): Promise<ReopenExchangeRespons
 // LLM pass has not finished; while it is true the server has NOT stamped delivery, so the withdrawal right is
 // still open and the caller should keep polling.
 export type ReportDelivery = {
-  narrative: StoredReportSection[]
+  narrative: ReportSection[]
   narrativePending: boolean
   profile: AssessmentProfile
-  schemaVersion: string
-  sections: StoredReportSection[]
+  sections: ReportSection[]
 }
 
 export type ReportPoll = { done: false } | ({ done: true } & ReportDelivery)
@@ -195,7 +201,6 @@ export async function getReport(accessToken: string, signal?: AbortSignal): Prom
     narrative: data.narrative ?? [],
     narrativePending: data.narrativePending,
     profile: data.profile,
-    schemaVersion: data.schemaVersion,
     sections: data.sections,
   }
 }

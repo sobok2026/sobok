@@ -3,7 +3,7 @@ import type { AssessmentProfile, PersonaCode } from '@deep-type/model'
 import type { ReportLocale } from './axis-copy'
 import { buildReportProfile, type ReportProfile } from './profile'
 import { generateEngineReport, mergeDrainSittings } from './rules'
-import type { ReportSchemaVersion, ReportSection } from './section-keys'
+import type { ReportSection } from './section-keys'
 
 // The two-pass contract, expressed as pure functions so the route is glue. Everything that decides whether a
 // report may be delivered, cached or stamped lives here: a Hono handler cannot be exercised without a
@@ -67,8 +67,6 @@ export interface ReportSourceRow {
 
 export interface EngineCommit {
   model: typeof ENGINE_MODEL
-  /** Written explicitly. The column defaults to '1', and a v2 body stored under it reads back as v1 forever. */
-  schemaVersion: ReportSchemaVersion
   sections: readonly ReportSection[]
 }
 
@@ -100,7 +98,6 @@ export function planReportPasses(source: ReportSourceRow): ReportPassPlan | null
   return {
     engine: {
       model: ENGINE_MODEL,
-      schemaVersion: document.schemaVersion,
       sections: document.sections,
     },
     profile: buildReportProfile({ locale: source.locale, profile: refinedProfile }),

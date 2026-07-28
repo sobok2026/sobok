@@ -25,7 +25,6 @@ import {
   planReportPasses,
   type ReportPassPlan,
 } from '~/report/pipeline'
-import { CURRENT_REPORT_SCHEMA_VERSION } from '~/report/section-keys'
 
 const route = new Hono<AppEnv>()
 
@@ -156,15 +155,12 @@ async function runNarrativePass(c: Context<AppEnv>, purchaseId: number, plan: Re
     return
   }
 
-  // Two rows that cannot be narrated: one whose stored answers no longer feed the engine, and one written
-  // under the previous vocabulary (its body has different section keys, so narration over it would be
-  // narration of sections the reader does not have). Both still have to reach a terminal state, or delivery
+  // A row whose stored answers no longer feed the engine still has to reach a terminal state, or delivery
   // would never be stamped for a report that is otherwise complete.
-  const stale = status !== null && status.schemaVersion !== CURRENT_REPORT_SCHEMA_VERSION
-  if (!plan || stale) {
-    console.error('deeptype.report.narrative-skipped', { purchaseId, schemaVersion: status?.schemaVersion, stale })
+  if (!plan) {
+    console.error('deeptype.report.narrative-skipped', { purchaseId })
     await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
-      finalizeNarrativeFailed(db, purchaseId, lockToken, stale ? 'schema version mismatch' : 'engine input unusable'),
+      finalizeNarrativeFailed(db, purchaseId, lockToken, 'engine input unusable'),
     )
     return
   }

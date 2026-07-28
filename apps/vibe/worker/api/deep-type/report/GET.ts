@@ -91,7 +91,6 @@ route.get('/', async (c) => {
     // CTA keeps working.
     narrativePending: !gate.delivery.stamp,
     profile: gate.profile,
-    schemaVersion: stored.schemaVersion,
     sections: stored.sections,
     status: 'done',
   })

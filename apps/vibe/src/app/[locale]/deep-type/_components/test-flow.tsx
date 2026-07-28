@@ -1,42 +1,63 @@
 'use client'
 
-import type { ItemAnswer } from '@deep-type/model'
-import { FREE_LIKERT_PRESENTATION } from '@deep-type/presentation'
+import type { AgreementValue, ItemAnswer, OptionIndex, PersonaCode, WorkAnswer } from '@deep-type/model'
+import { readTypeLetters } from '@deep-type/scoring'
 import type { Locale } from '@sobok/domain/locale'
 import { useRouter } from 'next/navigation'
 import { useEffect, useReducer } from 'react'
 
+import { assertNever } from '../_lib/assert'
+import { FREE_RUN, FREE_SEGMENTS, TYPE_BLOCK_END } from '../_lib/free-run'
 import { writeSitting } from '../_lib/sitting'
+import { trackFreeDeclaration, trackFreeProgress } from '../_lib/test-progress-analytics'
 import type { DeepTypeContent } from '../_lib/types'
 import { AnalyzingView } from './analyzing-view'
-import { IntroView } from './intro-view'
+import { MicroReveal } from './micro-reveal'
+import { PersonaDeclareView } from './persona-declare-view'
 import { QuizView } from './quiz-view'
 
+// Three things leave this screen together and `POST /session` requires all three: the twenty-four Likert
+// answers, the three forced-choice drain answers, and whether four letters were declared. A sitting missing any
+// of them cannot be scored and cannot be paid for, so the run does not branch — everyone walks the same 1 + 27.
 type TestState =
-  | { phase: 'intro' }
-  | { likert: ItemAnswer[]; phase: 'likert' }
-  | { likert: ItemAnswer[]; phase: 'analyzing' }
+  | { phase: 'declare' }
+  | { answers: readonly Answer[]; declaredPersona: PersonaCode | null; phase: 'run' }
+  | { answers: readonly Answer[]; declaredPersona: PersonaCode | null; phase: 'analyzing' }
 
-type TestAction = { type: 'BEGIN' } | { answer: ItemAnswer; type: 'ANSWER' } | { type: 'BACK' }
+/** Kept discriminated all the way to the writer so an option index can never land in an agreement level. */
+type Answer = { kind: 'likert'; value: ItemAnswer } | { kind: 'work'; value: WorkAnswer }
 
-const INITIAL_TEST_STATE: TestState = { phase: 'intro' }
+type TestAction =
+  | { declaredPersona: PersonaCode | null; type: 'DECLARE' }
+  | { answer: Answer; type: 'ANSWER' }
+  | { type: 'BACK' }
+
+const INITIAL_TEST_STATE: TestState = { phase: 'declare' }
 
 function testReducer(state: TestState, action: TestAction): TestState {
   switch (action.type) {
-    case 'BEGIN':
-      return state.phase === 'intro' ? { likert: [], phase: 'likert' } : state
+    case 'DECLARE':
+      return state.phase === 'declare' ? { answers: [], declaredPersona: action.declaredPersona, phase: 'run' } : state
     case 'ANSWER': {
-      if (state.phase !== 'likert') {
+      if (state.phase !== 'run') {
         return state
       }
-      const likert = [...state.likert, action.answer]
-      return { likert, phase: likert.length === FREE_LIKERT_PRESENTATION.length ? 'analyzing' : 'likert' }
+      const answers = [...state.answers, action.answer]
+      return { ...state, answers, phase: answers.length === FREE_RUN.length ? 'analyzing' : 'run' }
     }
     case 'BACK':
-      return state.phase === 'likert' ? { ...state, likert: state.likert.slice(0, -1) } : state
+      return state.phase === 'run' ? { ...state, answers: state.answers.slice(0, -1) } : state
     default:
       return state
   }
+}
+
+function likertAnswers(answers: readonly Answer[]): ItemAnswer[] {
+  return answers.flatMap((answer) => (answer.kind === 'likert' ? [answer.value] : []))
+}
+
+function workAnswers(answers: readonly Answer[]): WorkAnswer[] {
+  return answers.flatMap((answer) => (answer.kind === 'work' ? [answer.value] : []))
 }
 
 type TestFlowProps = {
@@ -53,46 +74,75 @@ export function TestFlow({ content, locale }: TestFlowProps) {
     window.scrollTo({ top: 0 })
   }, [state.phase])
 
-  // The drain block and the self-declaration picker have no authored copy yet, so the sitting still leaves here
-  // without them and the result screen cannot score it.
-  function handleAnalyzingDone() {
-    if ('likert' in state && state.likert.length > 0) {
-      writeSitting({ declaredPersona: null, likert: state.likert, work: [] })
+  const segmentLabels = { core: ui.segmentCoreLabel, drain: ui.segmentDrainLabel, type: ui.segmentTypeLabel }
+  const segments = FREE_SEGMENTS.map(({ count, segment }) => ({ count, label: segmentLabels[segment] }))
+
+  function declare(declaredPersona: PersonaCode | null) {
+    trackFreeDeclaration(declaredPersona ? 'declared' : 'unknown', locale)
+    dispatch({ declaredPersona, type: 'DECLARE' })
+  }
+
+  function finish() {
+    if (state.phase !== 'analyzing') {
+      return
     }
+    writeSitting({
+      declaredPersona: state.declaredPersona,
+      likert: likertAnswers(state.answers),
+      work: workAnswers(state.answers),
+    })
     router.push(`/${locale}/deep-type/result`)
   }
 
   switch (state.phase) {
-    case 'intro':
-      return (
-        <IntroView
-          body={ui.innerIntroBody}
-          cta={ui.innerIntroCta}
-          hint={ui.innerIntroHint}
-          onNext={() => dispatch({ type: 'BEGIN' })}
-          title={ui.innerIntroTitle}
-        />
-      )
-    case 'likert': {
-      const index = state.likert.length
-      const item = FREE_LIKERT_PRESENTATION[index]
-      if (!item) {
+    case 'declare':
+      return <PersonaDeclareView onDeclare={declare} ui={ui} />
+    case 'run': {
+      const index = state.answers.length
+      const step = FREE_RUN[index]
+      const question = step && content.questions[step.id]
+      if (!step || !question) {
         return null
       }
+
+      // The two blocks answer into different types off the same four buttons. The answer is built here, where
+      // the step's kind is known, so the shared view never has to know which one it is showing.
+      const answer = (optionIndex: OptionIndex) => {
+        dispatch({
+          answer:
+            step.kind === 'likert'
+              ? { kind: 'likert', value: { itemId: step.id, value: (optionIndex + 1) as AgreementValue } }
+              : { kind: 'work', value: { itemId: step.id, optionIndex } },
+          type: 'ANSWER',
+        })
+        trackFreeProgress(index + 1, step.segment, locale)
+      }
+
       return (
         <QuizView
           backLabel={ui.backCta}
-          itemId={item.id}
-          key={item.id}
-          onAnswer={(answer) => dispatch({ answer, type: 'ANSWER' })}
+          banner={
+            index === TYPE_BLOCK_END ? (
+              <MicroReveal
+                body={ui.revealBody}
+                code={readTypeLetters(likertAnswers(state.answers))}
+                template={ui.revealTemplate}
+                title={ui.revealTitle}
+              />
+            ) : null
+          }
+          hint={ui.closestAnswerHint}
+          key={step.id}
+          onAnswer={answer}
           onBack={index > 0 ? () => dispatch({ type: 'BACK' }) : undefined}
-          progressLabel={`${ui.innerStepLabel} · ${index + 1} / ${FREE_LIKERT_PRESENTATION.length}`}
-          progressPercent={Math.round(((index + 1) / FREE_LIKERT_PRESENTATION.length) * 100)}
-          question={content.questions[item.id]}
+          progress={{ answered: index, segments }}
+          question={question}
         />
       )
     }
     case 'analyzing':
-      return <AnalyzingView body={ui.analyzingBody} onDone={handleAnalyzingDone} title={ui.analyzingTitle} />
+      return <AnalyzingView body={ui.analyzingBody} onDone={finish} title={ui.analyzingTitle} />
+    default:
+      return assertNever(state)
   }
 }

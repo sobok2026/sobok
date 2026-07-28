@@ -86,6 +86,11 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
             </span>
           </div>
           <p className="mx-auto mt-3 max-w-md text-page-ink/54 text-sm leading-6">{paywall.effortNote}</p>
+          {/* O6, said twice on purpose. On the picker it is information; here it is disclosure, because this is
+              the screen where money moves and a buyer who skipped the picker would otherwise learn afterwards. */}
+          {freeResult.declaredPersona === null ? (
+            <p className="mx-auto mt-2 max-w-md text-page-ink/54 text-sm leading-6">{paywall.unknownPersonaNote}</p>
+          ) : null}
         </section>
 
         <form

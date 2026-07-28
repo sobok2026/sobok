@@ -1,9 +1,8 @@
 import { and, eq, inArray, lt, or, sql } from 'drizzle-orm'
 
 import type { ReportPassStatus } from '../../report/pipeline'
-import type { ReportSchemaVersion } from '../../report/section-keys'
 import type { Db } from '../client'
-import { reportTable, type StoredReportSection } from '../schema'
+import { type ReportSection, reportTable } from '../schema'
 
 /** The state machine is declared with the rest of the pass contract; this module only reads and writes it. */
 export type ReportStatus = ReportPassStatus
@@ -28,10 +27,8 @@ export async function getReportStatus(
 
 export interface DeliverableReport {
   /** Null until the narration pass commits. The engine body ships without it. */
-  narrative: StoredReportSection[] | null
-  /** Which vocabulary `sections` and `narrative` belong to. Never inferred from the keys. */
-  schemaVersion: string
-  sections: StoredReportSection[]
+  narrative: ReportSection[] | null
+  sections: ReportSection[]
 }
 
 // The done-report body. Readable from the CACHED Hyperdrive ONLY once the narrative pass is terminal — that
@@ -42,7 +39,6 @@ export async function getDeliverableReport(db: Db, purchaseId: number): Promise<
   const [row] = await db
     .select({
       narrative: reportTable.narrative,
-      schemaVersion: reportTable.schemaVersion,
       sections: reportTable.sections,
     })
     .from(reportTable)
@@ -52,7 +48,7 @@ export async function getDeliverableReport(db: Db, purchaseId: number): Promise<
   if (!row?.sections) {
     return null
   }
-  return { narrative: row.narrative, schemaVersion: row.schemaVersion, sections: row.sections }
+  return { narrative: row.narrative, sections: row.sections }
 }
 
 // CAS lock: at most one generator per purchase. Claims a row that is pending, failed (under the retry cap),
@@ -87,9 +83,7 @@ export async function acquireReportLock(
 
 export interface ReportBody {
   model: string
-  /** Written on every done row. The column defaults to '1', so an unwritten v2 body reads back as v1 forever. */
-  schemaVersion: ReportSchemaVersion
-  sections: readonly StoredReportSection[]
+  sections: readonly ReportSection[]
 }
 
 // Finalize only if THIS caller still holds the lease (lock_token guard) — a reclaimed stale lock can't be
@@ -106,7 +100,6 @@ export async function finalizeReportDone(
       status: 'done',
       sections: [...body.sections],
       model: body.model,
-      schemaVersion: body.schemaVersion,
       generatedAt: new Date(),
       error: null,
     })
@@ -136,14 +129,11 @@ export async function finalizeReportFailed(
 export async function getNarrativeStatus(
   db: Db,
   purchaseId: number,
-): Promise<{ status: ReportStatus; attempts: number; schemaVersion: string } | null> {
+): Promise<{ status: ReportStatus; attempts: number } | null> {
   const [row] = await db
     .select({
       status: reportTable.narrativeStatus,
       attempts: reportTable.narrativeAttempts,
-      // The narrator writes against the vocabulary the body was written in. A row from an older vocabulary is
-      // not narratable, and this is the column that says so.
-      schemaVersion: reportTable.schemaVersion,
     })
     .from(reportTable)
     .where(eq(reportTable.purchaseId, purchaseId))
@@ -188,7 +178,7 @@ export async function finalizeNarrativeDone(
   purchaseId: number,
   lockToken: string,
   model: string,
-  narrative: readonly StoredReportSection[],
+  narrative: readonly ReportSection[],
 ): Promise<boolean> {
   const rows = await db
     .update(reportTable)

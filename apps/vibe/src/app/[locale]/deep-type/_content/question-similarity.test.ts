@@ -3,11 +3,15 @@ import { AXES, type AxisId } from '@deep-type/model'
 import { FREE_LIKERT_ITEMS, PAID_LIKERT_ITEMS } from '@deep-type/questionnaire'
 
 import type { QuestionOptionCatalog, QuestionPromptCatalog } from '../_lib/types'
-import { koQuestionOptions } from './question-options/ko'
-import { koQuestionPrompts } from './question-prompts/ko'
+import { koFreeQuestionOptions } from './question-options/ko.free'
+import { koPaidQuestionOptions } from './question-options/ko.paid'
+import { koFreeQuestionPrompts } from './question-prompts/ko.free'
+import { koPaidQuestionPrompts } from './question-prompts/ko.paid'
 
-const PROMPTS: QuestionPromptCatalog = koQuestionPrompts
-const OPTIONS: QuestionOptionCatalog = koQuestionOptions
+// Overlap is measured across the whole scored instrument, so the two tier modules are rejoined here. They are
+// split in the product so paid text stays out of the free static export, not because they measure separately.
+const PROMPTS: QuestionPromptCatalog = { ...koFreeQuestionPrompts, ...koPaidQuestionPrompts }
+const OPTIONS: QuestionOptionCatalog = { ...koFreeQuestionOptions, ...koPaidQuestionOptions }
 
 // Risk 40: each axis's reverse-keyed stock tends to restate the same construct, which inflates internal
 // consistency and makes a band read sharper than the evidence supports. §9.1 fixes the measure — ko stem plus
@@ -24,8 +28,8 @@ const CEILING = 0.1
 // its own and no entry is warranted. An entry here is a ceiling rather than a pin: adding one is admitting debt.
 const EXEMPT: Record<string, number> = {}
 
-// The raw ko catalogs rather than the projected content, so a reserve item stays measurable: the reselection
-// below has to be able to score the item it replaced, which `createDeepTypeContent` no longer projects.
+// The raw ko catalogs rather than the projected content. Same forty items either way; this skips the
+// projection so a failure points at the authored text.
 function normalize(id: string): string {
   const prompt = PROMPTS[id]
   const options = OPTIONS[id]
@@ -97,16 +101,5 @@ describe('within-axis item similarity', () => {
       expect(`${key}:${jaccard(left, right) > CEILING}`).toBe(`${key}:true`)
       expect(allowed).toBeGreaterThan(CEILING)
     }
-  })
-
-  // `gem-uo-3`·`refine-gem-uo-1` measured 0.1718, the worst pair in the instrument, because `-1` restates the
-  // free item nearly word for word. The paid draw moved to `refine-gem-uo-3`; this records what that bought and
-  // fails if the selection drifts back.
-  test('records the UO reselection', () => {
-    expect(jaccard('gem-uo-3', 'refine-gem-uo-1')).toBeCloseTo(0.1718, 4)
-    expect(jaccard('gem-uo-3', 'refine-gem-uo-3')).toBeLessThan(CEILING)
-    const selected = [...FREE_LIKERT_ITEMS, ...PAID_LIKERT_ITEMS].map((item) => item.id)
-    expect(selected).toContain('refine-gem-uo-3')
-    expect(selected).not.toContain('refine-gem-uo-1')
   })
 })

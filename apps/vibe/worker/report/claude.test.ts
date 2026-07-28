@@ -6,14 +6,13 @@ import {
   type NarratedSectionKey,
   REPORT_SECTION_CONTRACT,
   type ReportSection,
-  type StoredReportSection,
 } from './section-keys'
 
 // The narration pass is exercised through its pure half. `generateNarrative` adds one fetch and one retry on
 // top of `acceptNarrative`, and every rule §4.3 states about partial acceptance and the claim gate lives here.
 
-function engineSection(key: string): StoredReportSection {
-  return { body: `${key} 본문`, key: key as StoredReportSection['key'], title: key }
+function engineSection(key: string): ReportSection {
+  return { body: `${key} 본문`, key: key as ReportSection['key'], title: key }
 }
 
 const ENGINE_WRITTEN = ['worldJob', 'strengthCards', 'contextShift', 'threePaths', 'fitAndFriction'].map(engineSection)

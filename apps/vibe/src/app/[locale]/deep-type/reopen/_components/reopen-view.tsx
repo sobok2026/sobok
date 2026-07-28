@@ -258,10 +258,12 @@ function ReopenedAccess({
       <RefinementQuizView
         accessToken={access.accessToken}
         content={content}
+        // A re-open link may be opened on another device, where no sitting exists. The parked draft carries the
+        // free drain answers in that case; otherwise the Worker refuses an incomplete forced-choice set rather
+        // than scoring a partial one.
+        freeWorkAnswers={readSittingWorkAnswers()}
+        locale={locale}
         onComplete={() => setPhase('report')}
-        // A re-open link may be opened on another device, where no sitting exists. The Worker refuses an
-        // incomplete forced-choice set rather than scoring a partial one.
-        workAnswers={readSittingWorkAnswers()}
       />
     )
   }
@@ -355,11 +357,11 @@ function ReopenedReport({
       <ReportView
         content={content}
         locale={locale}
-        onRestart={() => window.location.assign(`/${locale}/deep-type`)}
+        narrativePending={report.narrativePending}
         narrativeSections={report.narrative}
-        paidSections={report.sections}
+        onRestart={() => window.location.assign(`/${locale}/deep-type`)}
         profile={report.profile}
-        refined
+        sections={report.sections}
       />
     </div>
   )
