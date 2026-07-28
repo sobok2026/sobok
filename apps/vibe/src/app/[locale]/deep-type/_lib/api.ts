@@ -167,7 +167,19 @@ export function postReopenExchange(token: string): Promise<ReopenExchangeRespons
   return postJson('/reopen/exchange', { token })
 }
 
-export type ReportPoll = { done: false } | { done: true; profile: AssessmentProfile; sections: StoredReportSection[] }
+// The report is delivered in two commits. `sections` is the rule engine's body and is complete on its own —
+// it is what the reader paid for, and it is renderable with `narrative` empty. `narrativePending` says the
+// LLM pass has not finished; while it is true the server has NOT stamped delivery, so the withdrawal right is
+// still open and the caller should keep polling.
+export type ReportDelivery = {
+  narrative: StoredReportSection[]
+  narrativePending: boolean
+  profile: AssessmentProfile
+  schemaVersion: string
+  sections: StoredReportSection[]
+}
+
+export type ReportPoll = { done: false } | ({ done: true } & ReportDelivery)
 
 export async function getReport(accessToken: string, signal?: AbortSignal): Promise<ReportPoll> {
   const response = await fetch(`${BASE}/report`, { headers: { authorization: `Bearer ${accessToken}` }, signal })
@@ -177,6 +189,13 @@ export async function getReport(accessToken: string, signal?: AbortSignal): Prom
   if (!response.ok) {
     throw await toApiError(response)
   }
-  const data = (await response.json()) as { profile: AssessmentProfile; sections: StoredReportSection[] }
-  return { done: true, profile: data.profile, sections: data.sections }
+  const data = (await response.json()) as ReportDelivery
+  return {
+    done: true,
+    narrative: data.narrative ?? [],
+    narrativePending: data.narrativePending,
+    profile: data.profile,
+    schemaVersion: data.schemaVersion,
+    sections: data.sections,
+  }
 }

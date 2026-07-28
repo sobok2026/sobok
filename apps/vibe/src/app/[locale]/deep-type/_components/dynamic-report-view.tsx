@@ -58,6 +58,7 @@ export function DynamicReportView({
     <ReportView
       content={content}
       locale={locale}
+      narrativeSections={state.narrative}
       onRestart={onRestart}
       paidSections={state.sections}
       profile={state.profile}

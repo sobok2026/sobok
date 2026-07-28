@@ -356,6 +356,7 @@ function ReopenedReport({
         content={content}
         locale={locale}
         onRestart={() => window.location.assign(`/${locale}/deep-type`)}
+        narrativeSections={report.narrative}
         paidSections={report.sections}
         profile={report.profile}
         refined

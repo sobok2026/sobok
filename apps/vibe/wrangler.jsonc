@@ -40,6 +40,8 @@
     "DEEPTYPE_EMAIL_FROM": "sobok <sobok2026@gmail.com>",
     "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",
     "DEEPTYPE_REPORT_MODEL": "claude-haiku-4-5-20251001",
+    // Narration killswitch only. "0" ships the rule-engine report alone; the paid report never depends on it.
+    "DEEPTYPE_LLM_ENABLED": "1",
     "DEEPTYPE_GA4_MEASUREMENT_ID": "G-RHHX4JRYDS"
   },
   "secrets_store_secrets": [

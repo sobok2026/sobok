@@ -2,17 +2,22 @@ import { Hono } from 'hono'
 
 import { openCached, openFresh, withDB } from '~/db/client'
 import { getPurchaseByAccessToken, stampReportViewed } from '~/db/queries/purchase'
-import { getDoneSections, getReportStatus } from '~/db/queries/report'
+import { getDeliverableReport, getNarrativeStatus, getReportStatus } from '~/db/queries/report'
 import { getResultForReport } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
+import { reportDelivery } from '~/report/pipeline'
 
 const route = new Hono<AppEnv>()
 
-// Phase 4: read-only, cache-first delivery. The gate is FRESH (entitlement must never be stale); the done
-// body is read from the CACHED binding with a FRESH fallback for post-write cache lag. A GET never generates
-// or mutates — except stamping viewed_at immediately before the delivering 200, after the body has been
-// resolved and the paid entitlement is revalidated. The gate returns a terminal Response or a purchase id.
+// Read-only delivery. The gate is FRESH (entitlement must never be stale); the body comes from the CACHED
+// binding only once the row has stopped changing. A GET never generates or mutates — except stamping
+// viewed_at, and only on a report that is complete.
+//
+// D4 = A: `reportDelivery()` decides caching and stamping in one expression. An engine report whose narration
+// has not landed is delivered and NOT stamped, so the buyer reads it with the withdrawal right that
+// `legal.ts` promises still intact. Two conditions here instead of one, and the cache freezes a half-written
+// row in front of them.
 route.get('/', async (c) => {
   const token = c.get('accessToken')
 
@@ -38,7 +43,12 @@ route.get('/', async (c) => {
       if (!result?.refined) {
         return problem(409, 'refinement-required')
       }
-      return { profile: result.profile, purchaseId: purchase.id }
+      const narrative = await getNarrativeStatus(db, purchase.id)
+      return {
+        delivery: reportDelivery(narrative?.status ?? 'pending'),
+        profile: result.profile,
+        purchaseId: purchase.id,
+      }
     }
 
     if (report?.status === 'failed' && report.attempts >= 5) {
@@ -52,26 +62,39 @@ route.get('/', async (c) => {
     return gate
   }
 
-  const cached = await withDB(openCached(c.env.HYPERDRIVE_CACHED), c.executionCtx, (db) =>
-    getDoneSections(db, gate.purchaseId),
-  )
+  const cached = gate.delivery.readCached
+    ? await withDB(openCached(c.env.HYPERDRIVE_CACHED), c.executionCtx, (db) =>
+        getDeliverableReport(db, gate.purchaseId),
+      )
+    : null
 
-  const sections =
+  const stored =
     cached ??
-    (await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) => getDoneSections(db, gate.purchaseId)))
+    (await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) => getDeliverableReport(db, gate.purchaseId)))
 
-  if (!sections) {
+  if (!stored) {
     return problem(502, 'report-generation-failed')
   }
 
-  const delivered = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
-    stampReportViewed(db, gate.purchaseId),
-  )
-  if (!delivered) {
-    return problem(410, 'purchase-refunded')
+  if (gate.delivery.stamp) {
+    const delivered = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+      stampReportViewed(db, gate.purchaseId),
+    )
+    if (!delivered) {
+      return problem(410, 'purchase-refunded')
+    }
   }
 
-  return c.json({ profile: gate.profile, sections, status: 'done' })
+  return c.json({
+    narrative: stored.narrative ?? [],
+    // The same condition, negated: while the report can still grow, the client keeps polling and the refund
+    // CTA keeps working.
+    narrativePending: !gate.delivery.stamp,
+    profile: gate.profile,
+    schemaVersion: stored.schemaVersion,
+    sections: stored.sections,
+    status: 'done',
+  })
 })
 
 export default route

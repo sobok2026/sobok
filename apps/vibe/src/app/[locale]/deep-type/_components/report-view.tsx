@@ -19,6 +19,8 @@ import { ResultHero } from './result-hero'
 type ReportViewProps = {
   content: DeepTypeContent
   locale: Locale
+  /** The LLM pass. Always optional: the engine sections below are the finished report on their own. */
+  narrativeSections?: readonly ReportSection[]
   onRestart: () => void
   onUnlock?: () => void
   paidSections?: readonly ReportSection[]
@@ -28,9 +30,40 @@ type ReportViewProps = {
 
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
+type RenderedSection = {
+  body: string
+  key: string
+  /** Narration written over this section, or null where the engine body stands alone. */
+  narrative: string | null
+  title: string
+}
+
+// Engine order first, because that is the report. A narration for a section the engine wrote sits under its
+// body; the two LLM-only sections have no engine body and come after, in the order they were generated.
+function renderedSections(
+  engine: readonly ReportSection[] = [],
+  narrative: readonly ReportSection[] = [],
+): RenderedSection[] {
+  const byKey = new Map(narrative.map((section) => [section.key, section]))
+  const written = new Set(engine.map((section) => section.key))
+
+  return [
+    ...engine.map((section) => ({
+      body: section.body,
+      key: section.key,
+      narrative: byKey.get(section.key)?.body ?? null,
+      title: section.title,
+    })),
+    ...narrative
+      .filter((section) => !written.has(section.key))
+      .map((section) => ({ body: section.body, key: section.key, narrative: null, title: section.title })),
+  ]
+}
+
 export function ReportView({
   content,
   locale,
+  narrativeSections,
   onRestart,
   onUnlock,
   paidSections,
@@ -188,13 +221,18 @@ export function ReportView({
           </ul>
         </section>
 
-        {paidSections?.map((section) => (
+        {renderedSections(paidSections, narrativeSections).map((section) => (
           <section
             className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6"
             key={section.key}
           >
             <h2 className="break-keep font-black text-lg">{section.title}</h2>
             <p className="mt-3 whitespace-pre-line break-keep text-page-ink/76 leading-8">{section.body}</p>
+            {section.narrative ? (
+              <p className="mt-4 whitespace-pre-line break-keep border-page-border border-t pt-4 text-page-ink/68 leading-8">
+                {section.narrative}
+              </p>
+            ) : null}
           </section>
         ))}
 

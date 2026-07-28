@@ -1,4 +1,5 @@
 import {
+  type AssessmentProfile,
   AXIS_POLES,
   type AxisId,
   type BandCopy,
@@ -34,7 +35,6 @@ import {
 } from '../../deep-type/content/work-labels.paid'
 import { WORLD_JOB_CORE, WORLD_JOB_FAMILY } from '../../deep-type/content/world-job'
 import { WORLD_JOB_NAMES } from '../../deep-type/content/world-job-names'
-import type { ResultForReport } from '../db/queries/result'
 import { type AxisCopy, axisCopyFor, type ReportLocale } from './axis-copy'
 import { INTERPRETATION_BOUNDARY } from './claims'
 
@@ -125,7 +125,17 @@ export interface ReportProfile {
   worldJob: NamedWorldJob
 }
 
-export function buildReportProfile(result: ResultForReport): ReportProfile {
+/**
+ * Structurally what `ResultForReport` is, declared here rather than imported: that type lives next to drizzle,
+ * and pulling the query module in for one field name drags the Worker runtime globals into every program that
+ * type-checks this file.
+ */
+export interface ReportProfileSource {
+  locale: ReportLocale
+  profile: AssessmentProfile
+}
+
+export function buildReportProfile(result: ReportProfileSource): ReportProfile {
   const { locale, profile } = result
   const copy = axisCopyFor(locale)
   const inner = profile.inner.code

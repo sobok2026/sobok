@@ -34,6 +34,9 @@ export interface Bindings {
   DEEPTYPE_EMAIL_REPLY_TO: string
   // Pinned model override (defaults to claude-haiku-4-5-20251001 for reproducible report behavior).
   DEEPTYPE_REPORT_MODEL?: string
+  // Narration killswitch. '0' ships reports with the rule-engine body alone; anything else (including an
+  // absent var) leaves narration on. It no longer gates the report itself — the engine owns that.
+  DEEPTYPE_LLM_ENABLED?: string
   // vibe's GA4 data stream — the destination of the server-side `purchase`. Public (it ships in the browser
   // too, via src/constants.ts); it is the paired API secret that is confidential.
   DEEPTYPE_GA4_MEASUREMENT_ID: string

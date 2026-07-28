@@ -9,6 +9,7 @@ import {
 import { and, eq, isNull, or } from 'drizzle-orm'
 
 import { dateIsWithinYears } from '../../lib/retention'
+import type { ReportSourceRow } from '../../report/pipeline'
 import type { Db } from '../client'
 import { purchaseTable, type RefinementDraft, resultTable } from '../schema'
 import type { PurchaseStatus } from './purchase'
@@ -168,6 +169,35 @@ export async function getRefinedProfile(db: Db, resultId: number): Promise<Asses
     .where(eq(resultTable.id, resultId))
     .limit(1)
   return row?.profile ?? null
+}
+
+// Everything the two report passes read, in one round trip. `getResultForReport` cannot serve this: the engine
+// needs BOTH sittings (the free one owns sections 1-3 and the free drain read the paid block is contrasted
+// against), and that function collapses them into whichever profile is newer.
+export async function getReportSource(db: Db, purchaseId: number): Promise<ReportSourceRow | null> {
+  const [row] = await db
+    .select({
+      freeProfile: resultTable.baseProfile,
+      freeWorkAnswersAt: resultTable.freeWorkAnswersAt,
+      locale: resultTable.locale,
+      personaCode: resultTable.personaCode,
+      personaSource: resultTable.personaSource,
+      // The paid sitting has no timestamp column of its own. `updated_at` is the row's last write and
+      // `persistRefinement` is the last thing that writes it, so it dates the paid block within the precision
+      // the 14-day merge window needs.
+      refinedAt: resultTable.updatedAt,
+      refinedProfile: resultTable.refinedProfile,
+    })
+    .from(purchaseTable)
+    .innerJoin(resultTable, eq(purchaseTable.resultId, resultTable.id))
+    .where(eq(purchaseTable.id, purchaseId))
+    .limit(1)
+
+  if (!row) {
+    return null
+  }
+  const { personaCode, personaSource, ...source } = row
+  return { ...source, declaredPersona: toDeclaredPersona(personaSource, personaCode) }
 }
 
 export interface ResultForReport {

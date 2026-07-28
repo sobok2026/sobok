@@ -7,10 +7,21 @@ import { getReport, postGenerate, type ReportSection } from '../_lib/api'
 
 export type ReportPollState =
   | { phase: 'generating' }
-  | { phase: 'done'; profile: AssessmentProfile; sections: ReportSection[] }
+  | {
+      phase: 'done'
+      narrative: ReportSection[]
+      /** The engine report is on screen and the narration is still being written. */
+      narrativePending: boolean
+      profile: AssessmentProfile
+      sections: ReportSection[]
+    }
   | { phase: 'failed' }
 
 const POLL_INTERVAL_MS = 2500
+// The engine report is already rendered by now, so this loop is only topping it up. A slower beat and a hard
+// stop keep a stuck narration from turning into an open-ended request stream.
+const NARRATIVE_POLL_INTERVAL_MS = 5000
+const MAX_NARRATIVE_POLLS = 24
 
 export function useReportPolling(accessToken: string): ReportPollState {
   const [state, setState] = useState<ReportPollState>({ phase: 'generating' })
@@ -18,13 +29,17 @@ export function useReportPolling(accessToken: string): ReportPollState {
   useEffect(() => {
     const controller = new AbortController()
     let timer: ReturnType<typeof setTimeout> | undefined
+    let narrativePolls = 0
+    // Once the engine report is on screen it stays there. A failed top-up poll must not swap a delivered
+    // report for the refund screen.
+    let delivered = false
 
     async function poll() {
       if (controller.signal.aborted) {
         return
       }
-      // Generation is idempotent and lock-protected. Retrying here lets transient failures consume the
-      // server's bounded retry budget instead of leaving the client polling a failed row forever.
+      // Both passes are idempotent and lock-protected. Retrying here is also what reclaims a narration whose
+      // background pass died with its lease still held.
       await postGenerate(accessToken, controller.signal).catch(() => undefined)
       if (controller.signal.aborted) {
         return
@@ -35,11 +50,23 @@ export function useReportPolling(accessToken: string): ReportPollState {
           return
         }
         if (result.done) {
-          setState({ phase: 'done', profile: result.profile, sections: result.sections })
+          delivered = true
+          setState({
+            narrative: result.narrative,
+            narrativePending: result.narrativePending,
+            phase: 'done',
+            profile: result.profile,
+            sections: result.sections,
+          })
+          if (!result.narrativePending || narrativePolls >= MAX_NARRATIVE_POLLS) {
+            return
+          }
+          narrativePolls += 1
+          timer = setTimeout(poll, NARRATIVE_POLL_INTERVAL_MS)
           return
         }
       } catch {
-        if (!controller.signal.aborted) {
+        if (!controller.signal.aborted && !delivered) {
           setState({ phase: 'failed' })
         }
         return

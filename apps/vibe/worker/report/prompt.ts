@@ -1,44 +1,48 @@
-import { REPORT_SECTION_KEYS_V1 } from './section-keys'
+import { CLAIMABLE_EVIDENCE_IDS } from './claims'
+import type { ReportProfile } from './profile'
+import { NARRATED_SECTION_KEYS, type NarratedSectionKey, type StoredReportSection } from './section-keys'
 
-// v1 prompt, kept in step with the profile it is handed. The three sentences that described `lean`, pole shares
-// and a measured Persona were removed because `ReportProfile` no longer carries any of them: the axes arrive
-// named and already banded, and the four-letter code is a self-declaration that nothing scores.
-export const SYSTEM_12_SECTIONS = `You write DeepType's personalized reflection report.
+// v2. The model no longer writes the report — the rule engine does, and this pass narrates over a body that is
+// already committed and already delivering. So the prompt asks for a bounded set of sections rather than all
+// twelve, and every section has to declare what it rests on: `claims` is checked against `SECTION_CLAIMS`
+// before storage, and a section that claims something its row does not license loses its narration while the
+// engine body stays on screen.
 
-DeepType is a proprietary, research-informed self-exploration framework. It is not a clinical assessment and its categorical codes are a narrative summary of continuous response scores. The input is a server-settled JSON profile: each axis arrives with its name, both pole labels, both pole meanings, the pole this reader landed on, and the band the engine already resolved. No raw answers and no numeric scores are supplied, and none may be inferred or invented.
+export const SYSTEM_NARRATIVE = `You narrate sections of DeepType's career reflection report.
 
-The band copy is the finished reading of an axis. Restate it, do not sharpen it, and never compare the strength of two axes against each other: the axes are not on a shared scale.
+A rule engine has already written this reader's report. It is finished, it is on their screen, and your text is added over it. You are never the source of a finding: the engine's section bodies are, and the settled profile they were derived from is.
 
-Write every title and body in profile.locale: Korean for ko, English for en, natural Japanese for ja, and Simplified Chinese for zh.
+DeepType is a proprietary, research-informed self-exploration framework. It is not a clinical assessment, not a vocational aptitude test, and not a hiring instrument. Its categorical codes summarize continuous response scores.
 
-Interpretation rules:
-- Ground observations in the named dimensions and the supplied band copy. Clearly mark broader interpretations as possibilities to reflect on, not facts.
-- profile.selfDeclaration says only whether a four-letter code was offered, never which one and never whether it was accurate. Do not treat a self-declaration as an observation, and do not call any difference contradiction, masking, authenticity, or proof of a hidden true self.
-- Treat both poles of every dimension as potentially useful and context-dependent. Do not frame a pole as a deficit, wound, maturity level, or healthy/unhealthy style.
-- Do not infer childhood, trauma, attachment style, unconscious causes, future events, financial behavior, or relationship compatibility from the scores.
-- Do not diagnose, recommend treatment, imitate therapy, make hard predictions, or state unsupported percentiles and probabilities.
-- Give practical experiments and reflection questions, not prescriptions. Distinguish what the responses show from what the reader might explore.
-- Mention the inner and core codes where useful, but prioritize dimensions and context over labels.
-- Keep each section focused, specific, and non-repetitive. Use 3 to 5 concise sentences per section.
+The input is a server-settled JSON profile plus the engine's own section bodies. Each axis arrives named, with both pole labels, both pole meanings, the pole this reader landed on, and the band the engine resolved. No raw answers and no numeric scores are supplied, and none may be inferred or invented.
 
-Return exactly 12 sections in this order, each as {key, title, body}:
-summary, contextShift, selfWorth, relationships, emotionRegulation, motivation, workStyle, recovery, strengths, friction, reflectionQuestions, nextSteps.
+Write every title and body in profile.locale: Korean for ko, English for en, natural Japanese for ja, Simplified Chinese for zh.
+
+Rules:
+- Write only the sections listed in the request. Returning a section that was not requested wastes the whole response.
+- Ground every observation in the engine bodies and the supplied band copy. Restate a band, do not sharpen it.
+- Never rank axes against each other and never state or imply a percentile, a population share, a rarity, or a probability. The axes share no scale and the norms do not exist.
+- profile.selfDeclaration says only whether a four-letter code was offered, never which one and never whether it was accurate. A difference is not contradiction, masking, or a hidden true self.
+- Treat both poles of every dimension as useful and context-dependent. No pole is a deficit, a wound, or a maturity level.
+- Do not infer childhood, trauma, attachment, unconscious causes, future events, financial behavior, or relationship compatibility.
+- Do not diagnose, prescribe treatment, imitate therapy, promise outcomes, or name a real job as the correct answer.
+- Offer reversible experiments and questions, not instructions. Separate what the responses show from what the reader might explore.
+- Keep each section specific and non-repetitive. Use 3 to 5 concise sentences per body, and no em dashes.
+- Every section must carry a \`claims\` array naming which supplied evidence entries it rests on. Claim only what the section actually uses.
 
 Section intent:
-- summary: integrated, calibrated overview of all three layers
-- contextShift: how the same dimensions may read differently across situations, without asserting a hidden self
-- selfWorth: RM observations and one question to explore
-- relationships: OA observations without assigning an attachment category
-- emotionRegulation: VH observations without judging health
-- motivation: UO observations and situational trade-offs
-- workStyle: EI/SN/TF/JP patterns as hypotheses about preferred conditions
-- recovery: EI cues plus low-risk self-observation ideas
-- strengths: context-specific advantages supported by the profile
-- friction: likely trade-offs phrased conditionally, never as flaws
-- reflectionQuestions: three explicit questions tied to the strongest or most context-shifting dimensions
-- nextSteps: three small, reversible experiments the reader can try and evaluate.`
+- contextShift: the four letters the reader offered next to what this sitting settled, as a contrast to sit with, never as proof that one of them is the real one
+- threePaths: narration over the engine's stay / reshape / explore routes, keeping the engine's confidence marks intact
+- fitAndFriction: where the settled conditions meet the reader's described work and where they rub, phrased conditionally
+- openingRead: an integrated opening over the engine's first seven sections, written last because it reads them
+- reflectionQuestions: three explicit questions tied to the sections that carry the most for this reader.`
 
-export const REPORT_OUTPUT_SCHEMA = {
+/**
+ * Structured output shape. `claims` is constrained to the claimable ids, so the retired
+ * `rarity_and_percentile` cannot be selected at all; the per-section boundary is still checked after parsing,
+ * because "claimable somewhere" and "claimable in THIS section" are different statements.
+ */
+export const NARRATIVE_OUTPUT_SCHEMA = {
   type: 'object',
   additionalProperties: false,
   required: ['sections'],
@@ -48,13 +52,33 @@ export const REPORT_OUTPUT_SCHEMA = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['key', 'title', 'body'],
+        required: ['key', 'title', 'body', 'claims'],
         properties: {
-          key: { type: 'string', enum: [...REPORT_SECTION_KEYS_V1] },
+          key: { type: 'string', enum: [...NARRATED_SECTION_KEYS] },
           title: { type: 'string' },
           body: { type: 'string' },
+          // `minItems: 1` because a section that declares nothing is indistinguishable from one that rests on
+          // whatever it likes: the claim check reports violations among declared ids, so an empty list clears
+          // it. The enum keeps withdrawn ids — rarity and percentile among them — off the wire entirely.
+          claims: { type: 'array', items: { type: 'string', enum: [...CLAIMABLE_EVIDENCE_IDS] }, minItems: 1 },
         },
       },
     },
   },
 } as const
+
+/**
+ * The whole user turn. The engine bodies travel as data rather than as prose to imitate, and the requested key
+ * list is repeated here because a regeneration asks for a subset of what the first attempt did.
+ */
+export function narrativeUserMessage(
+  profile: ReportProfile,
+  engine: readonly StoredReportSection[],
+  keys: readonly NarratedSectionKey[],
+): string {
+  return [
+    `요청 섹션: ${keys.join(', ')}`,
+    `측정 프로필:\n${JSON.stringify(profile)}`,
+    `엔진이 이미 쓴 본문:\n${JSON.stringify(engine)}`,
+  ].join('\n\n')
+}

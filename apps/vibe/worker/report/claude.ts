@@ -1,32 +1,186 @@
-// Pinned to the v1 vocabulary on purpose. This pass is the pre-pivot single-shot generator: it asks the model
-// for all twelve sections and stores them as the report body. v2 splits that in two — a rule engine owns the
-// body and a narrative pass adds prose over it — so this file switches vocabulary when that pass exists, not
-// before. Until then `report.schema_version` keeps defaulting to '1', which is what this writes.
-
+import { checkClaims } from './claims'
 import type { ReportProfile } from './profile'
-import { REPORT_OUTPUT_SCHEMA, SYSTEM_12_SECTIONS } from './prompt'
-import { REPORT_SECTION_KEYS_V1, type ReportSectionKeyV1, type ReportSectionV1 } from './section-keys'
+import { NARRATIVE_OUTPUT_SCHEMA, narrativeUserMessage, SYSTEM_NARRATIVE } from './prompt'
+import {
+  NARRATED_SECTION_KEYS,
+  type NarratedSectionKey,
+  REPORT_SECTION_CONTRACT,
+  type ReportSection,
+  type StoredReportSection,
+} from './section-keys'
+
+// The narration pass. It runs after the engine body is committed and delivering, so nothing here can fail the
+// report: the worst outcome is a report that ships with the engine text alone (§4.3).
+//
+// Acceptance is per section, not all-or-nothing. The old parser threw on `incomplete sections`, which meant one
+// missing key discarded eleven good ones and, before the engine existed, failed the whole purchase.
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages'
 const MAX_ATTEMPTS = 3
 const BACKOFF_MS = [500, 1500, 4000]
-const KEY_SET = new Set<string>(REPORT_SECTION_KEYS_V1)
-const MAX_OUTPUT_TOKENS = 16000
+const MAX_OUTPUT_TOKENS = 8000
+const TITLE_LIMIT = 60
+const BODY_LIMIT = 1200
 
-// Generate the paid report via the Anthropic Messages API (raw fetch — no SDK on Workers). Structured
-// outputs constrain the shape; we still validate + clamp defensively. Retries only 429/529 (overload);
-// any other failure throws so the caller marks the report failed (retriable up to attempts<5).
-export async function generateReport(
+/** One regeneration, for the sections the first pass did not deliver. §4.3 caps it there. */
+const MAX_REGENERATIONS = 1
+
+export type NarrativeDropReason =
+  /** Claimed evidence this section is not licensed to rest on, or that the matrix has withdrawn. */
+  'claims' | 'duplicate' | 'empty' | 'unrequested'
+
+export interface NarrativeDrop {
+  key: string
+  reason: NarrativeDropReason
+}
+
+export interface NarrativeOutcome {
+  /** Kept for the failure log: an empty `sections` is only diagnosable next to what was thrown away. */
+  dropped: readonly NarrativeDrop[]
+  sections: readonly ReportSection[]
+}
+
+export interface NarrativeInput {
+  /** The committed engine bodies. They are the ground truth the narration is checked and written against. */
+  engine: readonly StoredReportSection[]
+  profile: ReportProfile
+}
+
+/**
+ * A HYBRID section is narrated only where the engine actually wrote one — `contextShift` is omitted for a
+ * reader who declared nothing, and narrating a section the reader will never see is how a report ends up
+ * describing a contrast that is not on screen. LLM-only sections have no engine body by definition.
+ */
+export function requestedNarrativeKeys(engine: readonly StoredReportSection[]): readonly NarratedSectionKey[] {
+  const written = new Set<string>(engine.map((section) => section.key))
+  return NARRATED_SECTION_KEYS.filter((key) => REPORT_SECTION_CONTRACT[key].generator !== 'HYBRID' || written.has(key))
+}
+
+export async function generateNarrative(
   apiKey: string,
   model: string,
-  profile: ReportProfile,
-): Promise<ReportSectionV1[]> {
+  input: NarrativeInput,
+): Promise<NarrativeOutcome> {
+  const requested = requestedNarrativeKeys(input.engine)
+  const accepted = new Map<NarratedSectionKey, ReportSection>()
+  const dropped: NarrativeDrop[] = []
+
+  // A first-attempt transport failure is the caller's to record; there is nothing partial to keep yet.
+  dropped.push(...acceptNarrative(await callModel(apiKey, model, input, requested), requested, accepted))
+
+  for (let round = 0; round < MAX_REGENERATIONS; round++) {
+    const missing = requested.filter((key) => !accepted.has(key))
+    if (missing.length === 0) {
+      break
+    }
+    try {
+      dropped.push(...acceptNarrative(await callModel(apiKey, model, input, missing), missing, accepted))
+    } catch (error) {
+      // The retry is best-effort by construction. Losing what the first pass delivered to chase the rest is
+      // the one outcome worse than a partial narration.
+      console.error('deeptype.report.narrative-retry-failed', {
+        message: error instanceof Error ? error.message : String(error),
+      })
+      break
+    }
+  }
+
+  return {
+    dropped,
+    sections: requested.flatMap((key) => accepted.get(key) ?? []),
+  }
+}
+
+/**
+ * Total: violations become drops, never exceptions. `accepted` is carried across attempts, so a regeneration
+ * merges into the first pass instead of replacing it, and a section already accepted cannot be overwritten by
+ * a later, worse one.
+ */
+export function acceptNarrative(
+  text: string,
+  requested: readonly NarratedSectionKey[],
+  accepted: Map<NarratedSectionKey, ReportSection>,
+): readonly NarrativeDrop[] {
+  const allowed = new Set<string>(requested)
+  const dropped: NarrativeDrop[] = []
+
+  for (const item of extractSections(text)) {
+    const key = String(item?.key ?? '')
+    if (!allowed.has(key)) {
+      dropped.push({ key, reason: 'unrequested' })
+      continue
+    }
+
+    const narratedKey = key as NarratedSectionKey
+    if (accepted.has(narratedKey)) {
+      dropped.push({ key, reason: 'duplicate' })
+      continue
+    }
+
+    // An empty list has to drop, not pass. `checkClaims` reports violations among the claims it is given, so
+    // claiming nothing produces no violations — the model could skip the declaration entirely and the gate
+    // that exists to bound what a section may rest on would wave it through. Declaring the evidence is the
+    // obligation; `minItems: 1` in the output schema asks for it and this rejects the answers that ignore it.
+    const claims = Array.isArray(item?.claims) ? item.claims.map((claim) => String(claim)) : []
+    if (claims.length === 0 || checkClaims(narratedKey, claims).length > 0) {
+      dropped.push({ key, reason: 'claims' })
+      continue
+    }
+
+    const body = clamp(item?.body, BODY_LIMIT)
+    const title = clamp(item?.title, TITLE_LIMIT)
+    if (body.length === 0 || title.length === 0) {
+      dropped.push({ key, reason: 'empty' })
+      continue
+    }
+
+    accepted.set(narratedKey, { body, key: narratedKey, title })
+  }
+
+  return dropped
+}
+
+// em-dash ban + the stored payload budget.
+function clamp(value: unknown, limit: number): string {
+  return String(value ?? '')
+    .replace(/—/g, ',')
+    .trim()
+    .slice(0, limit)
+}
+
+type RawSection = { body?: unknown; claims?: unknown[]; key?: unknown; title?: unknown }
+
+// Tolerant extraction: with structured outputs the text is already valid JSON, but slicing to the outer braces
+// first keeps a stray prefix from breaking the parse. A response that carries no JSON at all yields no
+// sections rather than an exception — the pass then finalizes as failed with the engine body untouched.
+function extractSections(text: string): readonly RawSection[] {
+  const start = text.indexOf('{')
+  const end = text.lastIndexOf('}')
+  if (start < 0 || end <= start) {
+    return []
+  }
+  try {
+    const parsed = JSON.parse(text.slice(start, end + 1)) as { sections?: unknown }
+    return Array.isArray(parsed.sections) ? (parsed.sections as RawSection[]) : []
+  } catch {
+    return []
+  }
+}
+
+// Retries only 429/529 (rate limit / overload); every other failure throws so the caller finalizes the
+// narrative pass as failed. The engine report is already delivering either way.
+async function callModel(
+  apiKey: string,
+  model: string,
+  input: NarrativeInput,
+  keys: readonly NarratedSectionKey[],
+): Promise<string> {
   const body = JSON.stringify({
     model,
     max_tokens: MAX_OUTPUT_TOKENS,
-    system: SYSTEM_12_SECTIONS,
-    messages: [{ role: 'user', content: `측정 프로필:\n${JSON.stringify(profile)}` }],
-    output_config: { format: { type: 'json_schema', schema: REPORT_OUTPUT_SCHEMA } },
+    system: SYSTEM_NARRATIVE,
+    messages: [{ role: 'user', content: narrativeUserMessage(input.profile, input.engine, keys) }],
+    output_config: { format: { type: 'json_schema', schema: NARRATIVE_OUTPUT_SCHEMA } },
   })
 
   let lastError = 'unknown'
@@ -43,22 +197,17 @@ export async function generateReport(
 
     if (response.ok) {
       const data = (await response.json()) as { content?: { text?: string }[]; stop_reason?: string }
-      // A truncated or declined generation still returns 200; without this it degrades into an opaque
-      // "no json in report response" three lines later.
-      if (data.stop_reason === 'max_tokens') {
-        throw new Error(`anthropic truncated the report at max_tokens (${MAX_OUTPUT_TOKENS})`)
-      }
+      // A truncated or declined generation still returns 200. Truncation is not fatal here: whatever sections
+      // completed before the cut are accepted and the rest come back on the regeneration.
       if (data.stop_reason === 'refusal') {
-        throw new Error('anthropic refused the report request')
+        throw new Error('anthropic refused the narration request')
       }
-      return parseSections(data.content?.[0]?.text ?? '')
+      return data.content?.[0]?.text ?? ''
     }
 
-    // The response body carries the API's own explanation (bad key, unknown model, invalid schema). Losing it
-    // leaves a bare status code in deeptype.report.error and nothing to act on.
+    // The response body carries the API's own explanation (bad key, unknown model, invalid schema).
     const detail = (await response.text().catch(() => '')).slice(0, 300)
 
-    // 429 rate-limit / 529 overloaded are the only retriable statuses.
     if (response.status === 429 || response.status === 529) {
       lastError = `anthropic ${response.status}: ${detail}`
       await sleep(BACKOFF_MS[attempt] ?? 4000)
@@ -69,46 +218,6 @@ export async function generateReport(
   }
 
   throw new Error(lastError)
-}
-
-function parseSections(text: string): ReportSectionV1[] {
-  const parsed = extractJson(text)
-  const raw = Array.isArray(parsed.sections) ? parsed.sections : []
-  const byKey = new Map<ReportSectionKeyV1, ReportSectionV1>()
-
-  for (const item of raw) {
-    const key = String(item?.key ?? '')
-    if (!KEY_SET.has(key) || byKey.has(key as ReportSectionKeyV1)) {
-      continue
-    }
-
-    byKey.set(key as ReportSectionKeyV1, {
-      key: key as ReportSectionKeyV1,
-      title: String(item?.title ?? '').slice(0, 60),
-      // em-dash ban + hard length clamp to the stored payload budget.
-      body: String(item?.body ?? '')
-        .replace(/—/g, ',')
-        .slice(0, 1200),
-    })
-  }
-
-  // Emit in canonical order; any missing section makes the generation incomplete.
-  const sections = REPORT_SECTION_KEYS_V1.map((key) => byKey.get(key)).filter((s): s is ReportSectionV1 => Boolean(s))
-  if (sections.length !== REPORT_SECTION_KEYS_V1.length) {
-    throw new Error(`incomplete sections: ${sections.length}`)
-  }
-  return sections
-}
-
-// Tolerant JSON extraction: with structured outputs the text is already valid JSON, but slice to the outer
-// braces first so a stray prefix/suffix can't break the parse.
-function extractJson(text: string): { sections?: { key?: unknown; title?: unknown; body?: unknown }[] } {
-  const start = text.indexOf('{')
-  const end = text.lastIndexOf('}')
-  if (start < 0 || end <= start) {
-    throw new Error('no json in report response')
-  }
-  return JSON.parse(text.slice(start, end + 1))
 }
 
 function sleep(ms: number): Promise<void> {
