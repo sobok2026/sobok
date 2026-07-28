@@ -166,7 +166,6 @@ export type DeepTypeLandingContent = {
   stepsTitle: string
   steps: readonly { duration: string; title: string }[]
   stickyCta: string
-  stickyCtaMeta: string
 }
 
 export type DeepTypeContent = {

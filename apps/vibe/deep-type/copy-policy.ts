@@ -184,6 +184,8 @@ export const KO_COPY_SOURCES: readonly string[] = [
   'src/app/[locale]/deep-type/_content/question-options/ko.paid.ts',
   'src/app/[locale]/deep-type/_content/question-prompts/ko.free.ts',
   'src/app/[locale]/deep-type/_content/question-prompts/ko.paid.ts',
+  'src/content/deep-type-checkout-return.ts',
+  'src/content/deep-type-reopen.ts',
   'src/content/legal.ts',
   'src/content/pages.ts',
   'worker/report/rules.ts',

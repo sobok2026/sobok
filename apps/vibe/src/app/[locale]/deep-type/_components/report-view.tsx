@@ -1,5 +1,6 @@
 'use client'
 
+import { WORLD_JOB_NAMES } from '@deep-type/content/world-job-names'
 import type { AssessmentProfile } from '@deep-type/model'
 import { Refresh, Share } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
@@ -104,7 +105,11 @@ export function ReportView({
 }: ReportViewProps) {
   const [shareFeedback, setShareFeedback] = useState('')
   const gemName = content.gemNames[profile.gem.code]
+  // The share text names the world job, so both screens have to fill the same token. The free screen already
+  // did; leaving this one out shipped a literal '{job}' to the people who paid.
+  const worldJobName = WORLD_JOB_NAMES[`${profile.inner.code}_${profile.gem.code}`]
   const shareText = content.ui.reportShareText
+    .replace('{job}', worldJobName)
     .replace('{inner}', profile.inner.code)
     .replace('{gem}', `${gemName} (${profile.gem.code})`)
 

@@ -150,7 +150,6 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
 
         <div className="mt-10 border-page-border border-t pt-6">
           <p className={cn('text-page-ink/44 text-xs leading-6', keepBreak)}>{landing.legal}</p>
-          <p className={cn('mt-2 text-page-ink/44 text-xs leading-6', keepBreak)}>{ui.reportDisclaimer}</p>
         </div>
       </div>
 
@@ -206,16 +205,31 @@ function CtaBlock({
 /**
  * A persistent CTA that steps aside whenever a real one is on screen.
  *
- * Without the observer the bar sits on top of the inline buttons and the reader taps the wrong one; with it the
- * bar is present only when there is nothing else to tap. The intersecting targets are held in a set rather than
- * a boolean because two inline CTAs can be visible at once, and a boolean loses the second one's exit.
+ * An island rather than a bar, and deliberately so. `BottomNav` is already a floating pill and it hides itself
+ * on this route, so this is the single layer that owns the bottom edge — a full-bleed bar would have been a
+ * second visual language on the same screen and would have pushed permanent chrome past a sixth of the viewport.
+ * It inherits the nav's `bottom` offset for the reason recorded there: iOS 26 Safari tints its bottom chin from
+ * any fixed element within ~3px of the edge, and a translucent one falls back to black.
+ *
+ * No caption under the label. The three facts and the closing CTA already carry the free/no-signup promise, and
+ * a second line here buys nothing while making the island tall enough to matter.
+ *
+ * Without the observer the island covers the inline buttons and the reader taps the wrong one; with it, the
+ * island is present only when there is nothing else to tap. The intersecting targets are held in a set rather
+ * than a boolean because two inline CTAs can be visible at once, and a boolean loses the second one's exit.
  */
 function StickyCta({ content, locale, onStart }: LandingViewProps) {
   const [hidden, setHidden] = useState(true)
 
   useEffect(() => {
     const targets = document.querySelectorAll('[data-cta-role="hero"],[data-cta-role="closing"]')
-    if (targets.length === 0) {
+
+    // Fail open. The island starts hidden so it never flashes over the hero button on first paint, which means
+    // every path that leaves the observer unable to report has to reveal it explicitly — otherwise a browser
+    // without IntersectionObserver, or a render where the inline CTAs are missing, gets a landing with no
+    // persistent CTA at all and no error to show for it. A conversion element must degrade to present.
+    if (targets.length === 0 || !('IntersectionObserver' in window)) {
+      setHidden(false)
       return
     }
 
@@ -244,27 +258,24 @@ function StickyCta({ content, locale, onStart }: LandingViewProps) {
   }, [])
 
   return (
-    // Above the floating BottomNav, not behind it. That nav is `z-40` and sits at
-    // `bottom:max(0.5rem, safe-area)` with a 42px pill, so a bar at `bottom-0` renders underneath it and the
-    // reader taps the nav instead. On sm the nav is hidden and the bar returns to the bottom edge.
     <div
       className={cn(
-        'fixed inset-x-0 bottom-[calc(3.75rem+max(0.5rem,var(--safe-area-bottom)))] z-20 border-page-border border-t bg-page-bg/92 px-safe py-3 backdrop-blur transition-opacity duration-200 sm:bottom-0',
+        'fixed inset-x-0 bottom-[max(0.5rem,var(--safe-area-bottom))] z-40 px-3 transition-opacity duration-200',
         hidden && 'pointer-events-none opacity-0',
       )}
     >
-      <div className="mx-auto w-full max-w-sm">
+      <div className="mx-auto w-full max-w-xs">
         <Link
           className={cn(
-            'flex w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-page-accent py-3.5 font-black text-sm text-white transition-colors hover:bg-page-accent/92',
+            'flex w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-page-accent py-3.5 font-black text-sm text-white shadow-[0_16px_40px_var(--page-accent-glow)] transition-colors hover:bg-page-accent/92',
             focusClassName,
           )}
           href={`/${locale}/deep-type/test`}
           onClick={onStart}
         >
           {content.landing.stickyCta}
+          <ArrowRight aria-hidden="true" className="h-4 w-4" stroke={1.8} />
         </Link>
-        <p className="mt-2 text-center text-page-ink/48 text-xs">{content.landing.stickyCtaMeta}</p>
       </div>
     </div>
   )

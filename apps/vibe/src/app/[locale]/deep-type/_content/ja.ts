@@ -146,7 +146,6 @@ export const deepTypeContent = createDeepTypeContent({
     steps: [],
     closingCtaMeta: '',
     stickyCta: '',
-    stickyCtaMeta: '',
     legal: '',
   },
   gemNames: {

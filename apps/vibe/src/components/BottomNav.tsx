@@ -7,9 +7,23 @@ import { usePathname } from 'next/navigation'
 import { SITE_NAME } from '@/constants'
 import { PRIMARY_NAV } from './nav'
 
+/**
+ * Routes that own the bottom edge themselves.
+ *
+ * The deep-type landing is an ad destination with its own persistent CTA. Two floating layers there put ~17% of
+ * a phone viewport under permanent chrome and stack two thumb-zone targets with different destinations, and the
+ * one that wins the tap is the one that leaks the visitor to a sibling quiz. Header navigation stays, so nothing
+ * becomes unreachable — only the always-on version steps aside while a paid click is being converted.
+ */
+const OWNS_BOTTOM_EDGE = new Set(['deep-type'])
+
 export default function BottomNav({ locale }: { locale: Locale }) {
   const pathname = usePathname()
   const home = `/${locale}`
+
+  if (OWNS_BOTTOM_EDGE.has(pathname.replace(`${home}/`, ''))) {
+    return null
+  }
 
   const items = [
     { href: home, label: SITE_NAME[locale] },

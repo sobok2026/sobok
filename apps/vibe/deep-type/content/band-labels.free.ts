@@ -72,10 +72,10 @@ export const DRAIN_SPREAD_FREE = {
 // movement notice and the ban forbids the words that express it, so the copy gate needs an allowlist keyed on
 // these two identifiers.
 export const CLARITY_NOTE_FREE =
-  '여덟 글자와 세계관 직업은 여기서 정해졌어요. 심층 검사가 다시 재는 건 그 옆에 붙는 선명도뿐이에요. 선명도는 올라가기도 내려가기도 해요.'
+  '여덟 글자와 세계관 직업은 여기서 정해졌어요. 심층 검사가 다시 재는 건 그 옆에 붙는 선명도뿐이고 늘어나는 건 리포트가 다루는 범위예요. 선명도는 올라가기도 내려가기도 해요.'
 
 // Carries the promise without naming the sep>=2 label, which the free bundle may not contain as a literal.
-export const DRAIN_NARROW_NOTE_FREE = '갈래를 줄이는 건 심층 검사에서 해요.'
+export const DRAIN_NARROW_NOTE_FREE = '조건을 더 물어 갈래를 좁히는 건 심층 리포트가 해요.'
 
 // Shared by both tiers. It lives on the free side because free may not import paid; the paid module re-exports
 // this identifier instead of restating the sentence, so the gloss cannot drift between tiers.

@@ -247,8 +247,6 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
             {content.ui.reportRestartCta}
           </button>
         </div>
-
-        <p className="mt-4 text-center text-page-ink/40 text-xs leading-6">{content.ui.reportDisclaimer}</p>
       </div>
     </main>
   )
