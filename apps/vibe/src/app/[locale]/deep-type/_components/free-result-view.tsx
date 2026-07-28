@@ -22,7 +22,9 @@ import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
 import { formatKrw } from '../_lib/price'
 import { REPORT_PROMOTION_ECOMMERCE } from '../_lib/report-offer-analytics'
 import type { DeepTypeContent } from '../_lib/types'
+import { AbilityArtwork } from './ability-artwork'
 import { GemArtwork } from './gem-artwork'
+import { InnerArtwork } from './inner-artwork'
 import { WorldJobHero } from './world-job-hero'
 
 type FreeResultViewProps = {
@@ -154,6 +156,9 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
         <section className={cardClassName}>
           <h2 className="font-black text-lg">{TYPE_HEADING}</h2>
           <p className="mt-1 font-black text-2xl text-page-accent tracking-wide">{profile.inner.code}</p>
+          <div className="mt-4">
+            <InnerArtwork innerCode={profile.inner.code} />
+          </div>
           <AxisBands bands={report.axes.inner} content={content} />
         </section>
 
@@ -293,15 +298,18 @@ function StrengthCards({ cards, title }: { cards: FreeStrengthCards; title: stri
       <h2 className="font-black text-lg">{title}</h2>
       <ul className="mt-4 grid gap-3">
         {ordered.map((card) => (
-          <li className="rounded-3xl border border-page-border bg-white p-4" key={card.slug}>
-            <div className="flex items-start justify-between gap-3">
-              <p className="break-keep font-black text-sm">{card.copy.name}</p>
-              <span className="shrink-0 rounded-full bg-page-soft px-2.5 py-1 font-bold text-page-ink/56 text-xs">
-                {card.poles.join('')}
-              </span>
+          <li className="flex gap-4 rounded-3xl border border-page-border bg-white p-4" key={card.slug}>
+            <AbilityArtwork slug={card.slug} />
+            <div className="min-w-0">
+              <div className="flex items-start justify-between gap-3">
+                <p className="break-keep font-black text-sm">{card.copy.name}</p>
+                <span className="shrink-0 rounded-full bg-page-soft px-2.5 py-1 font-bold text-page-ink/56 text-xs">
+                  {card.poles.join('')}
+                </span>
+              </div>
+              <p className="mt-2 break-keep text-page-ink/68 text-sm leading-6">{card.copy.core}</p>
+              <p className="mt-2 break-keep text-page-ink/52 text-xs leading-5">{card.band.label}</p>
             </div>
-            <p className="mt-2 break-keep text-page-ink/68 text-sm leading-6">{card.copy.core}</p>
-            <p className="mt-2 break-keep text-page-ink/52 text-xs leading-5">{card.band.label}</p>
           </li>
         ))}
       </ul>

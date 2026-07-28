@@ -38,9 +38,6 @@ export type DeepTypeUiText = {
   declareUnknownLabel: string
   landingCta: string
   landingNote: string
-  landingStepCoreDesc: string
-  landingStepJobDesc: string
-  landingStepTypeDesc: string
   landingSubtitle: string
   landingTitle: string
   layerGem: string
@@ -146,9 +143,36 @@ export type MethodologyContent = {
   title: string
 }
 
+/**
+ * The landing page, which is an ad destination before it is a product page. A visitor arrives from a paid click
+ * knowing nothing, so the screen has to answer three questions in order — what is this, what do I get, what does
+ * it cost me — before it asks for the first tap.
+ *
+ * Structured rather than a flat bag of strings because each group renders as a numbered list and the numbering
+ * has to follow the array. A translator adds an entry and the screen grows a row.
+ */
+export type DeepTypeLandingContent = {
+  /** Question a visitor already has, and the sentence that says this test takes it seriously. */
+  asks: readonly { body: string; question: string }[]
+  closingCtaMeta: string
+  ctaMeta: string
+  /** Cost, time, and when the result arrives. Three, because a fourth stops being scannable. */
+  facts: readonly { label: string; value: string }[]
+  /** What the free run hands back. Titles come from FREE_DELIVERABLES_KO, so only the bodies live here. */
+  getsBodies: readonly string[]
+  getsTitle: string
+  kicker: string
+  legal: string
+  stepsTitle: string
+  steps: readonly { duration: string; title: string }[]
+  stickyCta: string
+  stickyCtaMeta: string
+}
+
 export type DeepTypeContent = {
   axes: Record<AxisId, AxisContent>
   gemNames: Record<GemCode, string>
+  landing: DeepTypeLandingContent
   metadata: { description: string; title: string }
   methodology: MethodologyContent
   paywall: DeepTypePaywallContent

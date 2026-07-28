@@ -129,7 +129,10 @@ export const COPY_GATES: readonly CopyGate[] = [
     // §8.5 names `offer.ts` as a third target. It is scanned (below) but needs no key entry: it holds amounts
     // and a GA4 item name, so it has no place to promise a count. `methodology.*` and `legal.*` stay out by
     // construction — neither path matches — and neither states a section count either.
-    keyPaths: [/^paywall\./, /^ui\.landing/],
+    // `landing.` is the ad-landing block and `ui.landing` the strings that predate it. Both are pre-purchase
+    // copy on the same screen, so both are gated: the whole reason D5 exists is that a promised count becomes an
+    // unfulfilled promise the moment one deliverable is cut, and that promise is most tempting exactly here.
+    keyPaths: [/^paywall\./, /^ui\.landing/, /^landing\./],
     patterns: [/\d+\s*(개|장|가지)\s*(섹션|카드|인사이트|리포트)/, /(12|10)\s*개/],
   },
   {

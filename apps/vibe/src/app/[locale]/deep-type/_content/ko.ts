@@ -33,9 +33,6 @@ export const deepTypeContent = createDeepTypeContent({
     declareUnknownLabel: '모르겠어요',
     landingCta: '무료로 시작하기',
     landingNote: `무료 · 약 ${FREE_EFFORT.minMinutes}~${FREE_EFFORT.maxMinutes}분 · 완료 즉시 내 세계관 직업 확인 · 심층 결과 ${PRICE_KO} · 한 번 결제`,
-    landingStepCoreDesc: '무엇이 나를 움직이는지 네 글자로 봐요.',
-    landingStepJobDesc: '두 글자 묶음이 만나 내 세계관 직업 하나로 이어져요.',
-    landingStepTypeDesc: '일할 때 판단과 실행이 어디로 기우는지 네 글자로 봐요.',
     landingSubtitle:
       '같은 일을 해도 힘이 붙는 자리는 사람마다 달라요. 답을 고르면 내가 일하는 방식과 나를 움직이는 힘을 읽어 그 조합에 붙는 세계관 직업을 보여줘요.',
     landingTitle: '어떤 일에서 내 힘이 오래 갈까?',
@@ -234,6 +231,53 @@ export const deepTypeContent = createDeepTypeContent({
         reflection: '지킬 것과 시험해 볼 작은 범위를 따로 정해 봐요.',
       },
     },
+  },
+  // The ad-landing block. Ported from the reference build's conversion layer, with its Persona/MBTI framing
+  // replaced by the career framing this product actually delivers — the structure is what carried the value,
+  // not the vocabulary. Counts of sections or cards stay out of `ui.landing*` and out of here: the copy gate
+  // reads these keys and D5 does not let the page promise a number of deliverables.
+  landing: {
+    kicker: '네 글자 하나로 끝내지 않아요',
+    facts: [
+      { label: '검사 비용', value: '무료' },
+      { label: '걸리는 시간', value: `약 ${FREE_EFFORT.minMinutes}~${FREE_EFFORT.maxMinutes}분` },
+      { label: '결과 확인', value: '바로' },
+    ],
+    ctaMeta: '가입이나 이메일 입력 없이 바로 시작해요.',
+    getsTitle: '검사가 끝나면 이걸 바로 봐요.',
+    getsBodies: [
+      '일할 때 판단과 실행이 어디로 기우는지 네 글자로 봐요.',
+      '무엇이 나를 움직이는지 네 글자로 봐요.',
+      '두 글자 묶음이 만나 내 세계관 직업 하나로 이어져요.',
+      '어떤 조건에서 힘이 빠지는지 무료 결과에서 함께 봐요.',
+    ],
+    asks: [
+      {
+        question: '나는 무엇 때문에 유독 지칠까?',
+        body: '일이 많아서일까 사람 때문일까 아니면 내 방식대로 할 수 없어서일까.',
+      },
+      {
+        question: '나는 뭘 잘하고 어떤 일을 해야 행복할까?',
+        body: '큰 힘을 들이지 않아도 잘되는 일과 오래 해도 덜 지치는 일을 함께 찾아봐요.',
+      },
+      {
+        question: '왜 어떤 자리에서는 잘 풀리고 어떤 자리에서는 안 될까?',
+        body: '같은 일을 해도 힘이 붙는 조건은 사람마다 달라요. 내 조건이 무엇인지부터 봐요.',
+      },
+    ],
+    stepsTitle: '세 단계로 끝나요.',
+    steps: [
+      { title: '알고 있는 네 글자가 있으면 골라요.', duration: '10초' },
+      {
+        title: '일할 때의 나를 묻는 문항에 답해요.',
+        duration: `약 ${FREE_EFFORT.minMinutes}~${FREE_EFFORT.maxMinutes}분`,
+      },
+      { title: '내 세계관 직업과 지치는 조건을 봐요.', duration: '바로 확인' },
+    ],
+    closingCtaMeta: `무료 · 약 ${FREE_EFFORT.minMinutes}~${FREE_EFFORT.maxMinutes}분 · 결과 바로 확인`,
+    stickyCta: '무료로 시작하기',
+    stickyCtaMeta: '무료 · 가입 없이 시작',
+    legal: '무료 검사 결과는 결제 없이 볼 수 있어요. 일에 연결한 심층 리포트는 유료예요.',
   },
   gemNames: {
     ROVU: '루비',

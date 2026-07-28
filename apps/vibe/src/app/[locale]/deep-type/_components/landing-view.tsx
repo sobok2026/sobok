@@ -1,9 +1,15 @@
+'use client'
+
 import { FREE_DELIVERABLES_KO } from '@deep-type/free-deliverables'
-import { ArrowRight, Sparkles } from '@mynaui/icons-react'
+import { ArrowRight } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
+import Image from 'next/image'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+
 import { cn } from '@/utils/cn'
 
+import heroArtwork from '../_assets/hero/landing.webp'
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
 import type { DeepTypeContent } from '../_lib/types'
 
@@ -14,64 +20,252 @@ type LandingViewProps = {
 }
 
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
-const JOB_HEADING = FREE_DELIVERABLES_KO[2]
 
+/**
+ * The landing, laid out as an ad destination rather than a product page.
+ *
+ * Most visitors arrive from a paid click and decide inside one screen, so the order is fixed: what this is, the
+ * three numbers that decide whether it is worth a try, what the free run hands back, the questions the reader
+ * already has, how long it takes, and only then the ask. The structure is ported from the reference build's
+ * conversion layer. Its vocabulary is not — that layer sells a persona-versus-inner comparison, and this
+ * product sells the conditions your work energy runs on.
+ *
+ * The deliverable titles come from `FREE_DELIVERABLES_KO`, the same constant the refund policy names and the
+ * result screen injects. A landing that promised a fifth thing would break the trial-provision claim as surely
+ * as a result screen that delivered only three.
+ */
 export function LandingView({ content, locale, onStart }: LandingViewProps) {
-  const keepHeadingBreakClassName = locale === 'ko' ? 'break-keep' : undefined
+  const { landing, ui } = content
+  const keepBreak = locale === 'ko' ? 'break-keep' : undefined
 
   return (
-    <main className="flex flex-1 flex-col justify-center bg-page-bg px-safe py-10 text-page-ink" id="main-content">
-      <div className="mx-auto w-full max-w-3xl py-4">
-        <p className="inline-flex items-center gap-2 rounded-full bg-page-ink px-4 py-2 font-bold text-sm text-white">
-          <Sparkles aria-hidden="true" className="h-4 w-4 text-page-accent" stroke={1.8} />
-          {DEEP_TYPE_BRAND_NAME[locale]}
-        </p>
-        <h1
-          className={cn('mt-6 text-balance font-black text-4xl leading-tight sm:text-5xl', keepHeadingBreakClassName)}
-        >
-          {content.ui.landingTitle}
-        </h1>
-        <p className="mt-5 text-page-ink/66 leading-8">{content.ui.landingSubtitle}</p>
+    <main className="flex flex-1 flex-col bg-page-bg px-safe pt-10 pb-32 text-page-ink" id="main-content">
+      <div className="mx-auto w-full max-w-3xl">
+        <p className="font-black text-page-ink/72 text-sm tracking-tight">{DEEP_TYPE_BRAND_NAME[locale]}</p>
 
-        {/* The three cards name the three things the free run hands back, not three steps of a questionnaire —
-            the run is one continuous stretch of questions and has no steps to number. */}
-        <div className="mt-8 grid gap-3 sm:grid-cols-3">
-          <StepCard description={content.ui.landingStepTypeDesc} label={content.ui.layerInner} />
-          <StepCard description={content.ui.landingStepCoreDesc} label={content.ui.layerGem} />
-          <StepCard description={content.ui.landingStepJobDesc} label={JOB_HEADING} />
-        </div>
+        <header className="mt-8">
+          <span className="font-bold text-page-accent text-sm">{landing.kicker}</span>
+          <h1 className={cn('mt-3 text-balance font-black text-4xl leading-tight sm:text-5xl', keepBreak)}>
+            {ui.landingTitle}
+          </h1>
+          <p className={cn('mt-5 text-page-ink/66 leading-8', keepBreak)}>{ui.landingSubtitle}</p>
+        </header>
+
+        <figure className="mt-8 overflow-hidden rounded-4xl border border-page-border bg-page-soft">
+          <Image
+            alt=""
+            className="h-auto w-full object-cover"
+            draggable={false}
+            priority
+            sizes="(min-width: 768px) 768px, 100vw"
+            src={heroArtwork}
+          />
+        </figure>
+
+        <dl className="mt-6 grid grid-cols-3 gap-2">
+          {landing.facts.map((fact) => (
+            <div
+              className="rounded-3xl border border-page-border bg-page-surface px-3 py-4 text-center"
+              key={fact.label}
+            >
+              <dt className="text-page-ink/48 text-xs">{fact.label}</dt>
+              <dd className="mt-1 break-keep font-black text-base">{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <CtaBlock
+          className="mt-8"
+          label={ui.landingCta}
+          locale={locale}
+          meta={landing.ctaMeta}
+          onStart={onStart}
+          ctaRole="hero"
+        />
+
+        <Section title={landing.getsTitle}>
+          <ol className="mt-5 grid gap-3">
+            {FREE_DELIVERABLES_KO.map((deliverable, index) => (
+              <li className="flex gap-4 rounded-3xl border border-page-border bg-page-surface p-5" key={deliverable}>
+                <span className="shrink-0 font-black text-page-accent text-sm tabular-nums">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <p className="font-black">{deliverable}</p>
+                  <p className={cn('mt-1 text-page-ink/58 text-sm leading-6', keepBreak)}>
+                    {landing.getsBodies[index]}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </Section>
+
+        <section className="mt-14 grid gap-3">
+          {landing.asks.map((ask) => (
+            <div className="rounded-3xl border border-page-border bg-page-soft/60 p-5" key={ask.question}>
+              <h2 className={cn('font-black text-lg leading-8', keepBreak)}>{ask.question}</h2>
+              <p className={cn('mt-2 text-page-ink/62 text-sm leading-7', keepBreak)}>{ask.body}</p>
+            </div>
+          ))}
+        </section>
+
+        <Section title={landing.stepsTitle}>
+          <ol className="mt-5 grid gap-2">
+            {landing.steps.map((step, index) => (
+              <li
+                className="flex items-center justify-between gap-4 rounded-3xl border border-page-border bg-page-surface px-5 py-4"
+                key={step.title}
+              >
+                <p className={cn('flex gap-3 font-bold text-sm', keepBreak)}>
+                  <span className="text-page-accent tabular-nums">{String(index + 1).padStart(2, '0')}</span>
+                  {step.title}
+                </p>
+                <span className="shrink-0 text-page-ink/48 text-xs">{step.duration}</span>
+              </li>
+            ))}
+          </ol>
+        </Section>
+
+        <CtaBlock
+          className="mt-12"
+          label={ui.landingCta}
+          locale={locale}
+          meta={landing.closingCtaMeta}
+          onStart={onStart}
+          ctaRole="closing"
+        />
+
+        <p className="mt-4 text-center text-page-ink/48 text-sm">{ui.landingNote}</p>
 
         <Link
           className={cn(
-            'mt-9 mx-auto w-full flex touch-manipulation items-center justify-center gap-2 rounded-2xl bg-page-accent py-4 font-black text-base text-white shadow-[0_24px_80px_rgba(255,77,109,0.26)] transition-colors hover:bg-page-accent/92 sm:max-w-sm',
+            'mx-auto mt-4 flex w-fit items-center rounded-full p-3 text-center font-bold text-page-ink/58 text-xs underline underline-offset-4 hover:text-page-ink',
+            focusClassName,
+          )}
+          href={`/${locale}/deep-type/reopen`}
+        >
+          {ui.reopenCta}
+        </Link>
+
+        <div className="mt-10 border-page-border border-t pt-6">
+          <p className={cn('text-page-ink/44 text-xs leading-6', keepBreak)}>{landing.legal}</p>
+          <p className={cn('mt-2 text-page-ink/44 text-xs leading-6', keepBreak)}>{ui.reportDisclaimer}</p>
+        </div>
+      </div>
+
+      <StickyCta content={content} locale={locale} onStart={onStart} />
+    </main>
+  )
+}
+
+function Section({ children, title }: { children: React.ReactNode; title: string }) {
+  return (
+    <section className="mt-14">
+      <h2 className="break-keep font-black text-2xl leading-tight">{title}</h2>
+      {children}
+    </section>
+  )
+}
+
+function CtaBlock({
+  className,
+  ctaRole,
+  label,
+  locale,
+  meta,
+  onStart,
+}: {
+  className?: string
+  /** Not an ARIA role — the marker the sticky bar's observer watches. */
+  ctaRole: string
+  label: string
+  locale: Locale
+  meta: string
+  onStart?: () => void
+}) {
+  return (
+    <div className={className}>
+      <Link
+        className={cn(
+          'flex w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-page-accent py-4 font-black text-base text-white shadow-[0_24px_80px_var(--page-accent-glow)] transition-colors hover:bg-page-accent/92 sm:mx-auto sm:max-w-sm',
+          focusClassName,
+        )}
+        data-cta-role={ctaRole}
+        href={`/${locale}/deep-type/test`}
+        onClick={onStart}
+      >
+        {label}
+        <ArrowRight aria-hidden="true" className="h-4 w-4" stroke={1.8} />
+      </Link>
+      <p className="mt-3 text-center text-page-ink/48 text-sm">{meta}</p>
+    </div>
+  )
+}
+
+/**
+ * A persistent CTA that steps aside whenever a real one is on screen.
+ *
+ * Without the observer the bar sits on top of the inline buttons and the reader taps the wrong one; with it the
+ * bar is present only when there is nothing else to tap. The intersecting targets are held in a set rather than
+ * a boolean because two inline CTAs can be visible at once, and a boolean loses the second one's exit.
+ */
+function StickyCta({ content, locale, onStart }: LandingViewProps) {
+  const [hidden, setHidden] = useState(true)
+
+  useEffect(() => {
+    const targets = document.querySelectorAll('[data-cta-role="hero"],[data-cta-role="closing"]')
+    if (targets.length === 0) {
+      return
+    }
+
+    const seen = new Set<Element>()
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            seen.add(entry.target)
+          } else {
+            seen.delete(entry.target)
+          }
+        }
+        setHidden(seen.size > 0)
+      },
+      { rootMargin: '0px 0px -92px 0px', threshold: 0.02 },
+    )
+
+    for (const target of targets) {
+      observer.observe(target)
+    }
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  return (
+    // Above the floating BottomNav, not behind it. That nav is `z-40` and sits at
+    // `bottom:max(0.5rem, safe-area)` with a 42px pill, so a bar at `bottom-0` renders underneath it and the
+    // reader taps the nav instead. On sm the nav is hidden and the bar returns to the bottom edge.
+    <div
+      className={cn(
+        'fixed inset-x-0 bottom-[calc(3.75rem+max(0.5rem,var(--safe-area-bottom)))] z-20 border-page-border border-t bg-page-bg/92 px-safe py-3 backdrop-blur transition-opacity duration-200 sm:bottom-0',
+        hidden && 'pointer-events-none opacity-0',
+      )}
+    >
+      <div className="mx-auto w-full max-w-sm">
+        <Link
+          className={cn(
+            'flex w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-page-accent py-3.5 font-black text-sm text-white transition-colors hover:bg-page-accent/92',
             focusClassName,
           )}
           href={`/${locale}/deep-type/test`}
           onClick={onStart}
         >
-          {content.ui.landingCta}
-          <ArrowRight aria-hidden="true" className="h-4 w-4" stroke={1.8} />
+          {content.landing.stickyCta}
         </Link>
-        <p className="mt-3 text-center text-page-ink/48 text-sm">{content.ui.landingNote}</p>
-        <Link
-          className={cn(
-            'mt-4 w-fit text-center mx-auto flex p-3 items-center rounded-full font-bold text-page-ink/58 text-xs underline underline-offset-4 hover:text-page-ink',
-            focusClassName,
-          )}
-          href={`/${locale}/deep-type/reopen`}
-        >
-          {content.ui.reopenCta}
-        </Link>
+        <p className="mt-2 text-center text-page-ink/48 text-xs">{content.landing.stickyCtaMeta}</p>
       </div>
-    </main>
-  )
-}
-
-function StepCard({ description, label }: { description: string; label: string }) {
-  return (
-    <div className="rounded-3xl border border-page-border bg-page-surface p-5 shadow-[0_18px_55px_rgba(36,22,23,0.07)]">
-      <p className="font-black text-lg">{label}</p>
-      <p className="mt-1 text-page-ink/56 text-sm leading-6">{description}</p>
     </div>
   )
 }
