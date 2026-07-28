@@ -2,23 +2,21 @@ import type { AssessmentProfile, ItemAnswer, PersonaCode, WorkAnswer } from '@de
 import type { GAIdentity } from '@sobok/analytics/ga-identity'
 import type { Locale } from '@sobok/domain/locale'
 
+import type { StoredReportSection } from '../../../../../worker/report/section-keys'
+
 const BASE = '/api/deep-type'
 
-export type ReportSectionKey =
-  | 'summary'
-  | 'contextShift'
-  | 'selfWorth'
-  | 'relationships'
-  | 'emotionRegulation'
-  | 'motivation'
-  | 'workStyle'
-  | 'recovery'
-  | 'strengths'
-  | 'friction'
-  | 'reflectionQuestions'
-  | 'nextSteps'
-
-export type ReportSection = { body: string; key: ReportSectionKey; title: string }
+// The section vocabulary lives in the Worker tree and is imported, not restated. The copy that used to sit here
+// drifted from the server's list the moment the career sections landed, and nothing could have caught it: two
+// independent unions agree with each other by luck. `worker/report/section-keys.ts` is dependency-free for
+// exactly this import, the same arrangement as `worker/api/deep-type/actions.ts`.
+//
+// A rendered report may carry either vocabulary — v1 rows keep rendering for the whole one-year re-open window
+// — so the client type is the stored union rather than the current one.
+export type {
+  StoredReportSection as ReportSection,
+  StoredReportSectionKey as ReportSectionKey,
+} from '../../../../../worker/report/section-keys'
 
 export type SessionInput = {
   answers: ItemAnswer[]
@@ -169,7 +167,7 @@ export function postReopenExchange(token: string): Promise<ReopenExchangeRespons
   return postJson('/reopen/exchange', { token })
 }
 
-export type ReportPoll = { done: true; profile: AssessmentProfile; sections: ReportSection[] } | { done: false }
+export type ReportPoll = { done: false } | { done: true; profile: AssessmentProfile; sections: StoredReportSection[] }
 
 export async function getReport(accessToken: string, signal?: AbortSignal): Promise<ReportPoll> {
   const response = await fetch(`${BASE}/report`, { headers: { authorization: `Bearer ${accessToken}` }, signal })
@@ -179,6 +177,6 @@ export async function getReport(accessToken: string, signal?: AbortSignal): Prom
   if (!response.ok) {
     throw await toApiError(response)
   }
-  const data = (await response.json()) as { profile: AssessmentProfile; sections: ReportSection[] }
+  const data = (await response.json()) as { profile: AssessmentProfile; sections: StoredReportSection[] }
   return { done: true, profile: data.profile, sections: data.sections }
 }

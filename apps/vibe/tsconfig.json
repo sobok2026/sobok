@@ -13,6 +13,17 @@
     "resolveJsonModule": true,
     "types": ["bun", "node", "react", "react-dom"]
   },
-  "include": ["next-env.d.ts", "*.ts", "deep-type/**/*.ts", "src/**/*.ts", "src/**/*.tsx", ".next/types/**/*.ts"],
+  // `worker/**/*.test.ts` rides along because the Worker program excludes test files (it has no `bun:test`
+  // types) and nothing else would type-check them. The Worker sources themselves stay out — they are checked
+  // by worker/tsconfig.json under `strict`, and only the handful the client imports are pulled in here.
+  "include": [
+    "next-env.d.ts",
+    "*.ts",
+    "deep-type/**/*.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "worker/**/*.test.ts",
+    ".next/types/**/*.ts"
+  ],
   "exclude": ["node_modules", ".next", "out"]
 }

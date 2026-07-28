@@ -1,7 +1,7 @@
 import { and, eq, inArray, lt, or, sql } from 'drizzle-orm'
 
 import type { Db } from '../client'
-import { type ReportSection, reportTable } from '../schema'
+import { reportTable, type StoredReportSection } from '../schema'
 
 export type ReportStatus = 'pending' | 'generating' | 'done' | 'failed'
 
@@ -25,7 +25,7 @@ export async function getReportStatus(
 
 // The immutable done-report body. Read via the CACHED Hyperdrive on the hot path (safe: only status='done'
 // rows return, and sections never change once done), with a FRESH fallback for the brief post-write cache lag.
-export async function getDoneSections(db: Db, purchaseId: number): Promise<ReportSection[] | null> {
+export async function getDoneSections(db: Db, purchaseId: number): Promise<StoredReportSection[] | null> {
   const [row] = await db
     .select({ sections: reportTable.sections })
     .from(reportTable)
@@ -71,7 +71,7 @@ export async function finalizeReportDone(
   purchaseId: number,
   lockToken: string,
   model: string,
-  sections: ReportSection[],
+  sections: StoredReportSection[],
 ): Promise<boolean> {
   const rows = await db
     .update(reportTable)
@@ -148,7 +148,7 @@ export async function finalizeNarrativeDone(
   purchaseId: number,
   lockToken: string,
   model: string,
-  narrative: ReportSection[],
+  narrative: StoredReportSection[],
 ): Promise<boolean> {
   const rows = await db
     .update(reportTable)

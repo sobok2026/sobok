@@ -2,6 +2,7 @@ import type { AssessmentProfile, ItemAnswer, PersonaSource, WorkAnswer } from '@
 import { sql } from 'drizzle-orm'
 import { bigint, index, integer, jsonb, pgSchema, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
 
+import type { StoredReportSection } from '../report/section-keys'
 import { createdAt, timestamps } from './columns'
 
 // The deeptype payments/report tables live in a DEDICATED `deeptype` schema on the SHARED sobok-prod Supabase
@@ -15,28 +16,11 @@ export const skuEnum = deeptype.enum('sku', ['report', 'compat', 'bundle'])
 export const purchaseStatusEnum = deeptype.enum('purchase_status', ['pending', 'paid', 'failed', 'refunded'])
 export const reportStatusEnum = deeptype.enum('report_status', ['pending', 'generating', 'done', 'failed'])
 
-export const REPORT_SECTION_KEYS = [
-  'summary',
-  'contextShift',
-  'selfWorth',
-  'relationships',
-  'emotionRegulation',
-  'motivation',
-  'workStyle',
-  'recovery',
-  'strengths',
-  'friction',
-  'reflectionQuestions',
-  'nextSteps',
-] as const
-
-export type ReportSectionKey = (typeof REPORT_SECTION_KEYS)[number]
-
-export interface ReportSection {
-  key: ReportSectionKey
-  title: string
-  body: string
-}
+// The section vocabulary is NOT declared here any more. It moved to worker/report/section-keys.ts so the Next
+// client can import it without pulling drizzle and the `pgSchema()` side effect above into the browser bundle.
+// `StoredReportSection` spans both vocabularies on purpose: rows are never migrated, and `schema_version` is
+// what a reader dispatches on.
+export type { ReportSchemaVersion, StoredReportSection } from '../report/section-keys'
 
 // The paid pass is answered over two sittings, so the in-progress set is parked here between them. It is a
 // draft by definition: no length holds until the block is submitted, which is why it can never be fed to the
@@ -177,7 +161,7 @@ export const reportTable = deeptype.table(
     schemaVersion: varchar('schema_version', { length: 8 }).notNull().default('1'),
     model: varchar('model', { length: 64 }).notNull().default('claude-haiku-4-5-20251001'),
     status: reportStatusEnum().notNull().default('pending'),
-    sections: jsonb('sections').$type<ReportSection[]>(),
+    sections: jsonb('sections').$type<StoredReportSection[]>(),
     error: text('error'),
     attempts: integer('attempts').notNull().default(0),
     lockToken: varchar('lock_token', { length: 43 }),
@@ -185,7 +169,7 @@ export const reportTable = deeptype.table(
     generatedAt: timestamp('generated_at', { precision: 3, withTimezone: true }),
     // Narrative pass. `report_status` is reused rather than cloned: the state machine is the same four states
     // and a second enum type with an identical value set would only add a name to keep in sync.
-    narrative: jsonb('narrative').$type<ReportSection[]>(),
+    narrative: jsonb('narrative').$type<StoredReportSection[]>(),
     narrativeStatus: reportStatusEnum('narrative_status').notNull().default('pending'),
     narrativeModel: varchar('narrative_model', { length: 64 }),
     narrativeError: text('narrative_error'),

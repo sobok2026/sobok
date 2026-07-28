@@ -1,7 +1,7 @@
-import { REPORT_SECTION_KEYS, type ReportSection, type ReportSectionKey } from '../db/schema'
 import type { ReportProfile } from './profile'
+import { REPORT_SECTION_KEYS_V1, type ReportSectionKeyV1, type ReportSectionV1 } from './section-keys'
 
-const TITLES: Record<ReportProfile['locale'], Record<ReportSectionKey, string>> = {
+const TITLES: Record<ReportProfile['locale'], Record<ReportSectionKeyV1, string>> = {
   ko: {
     summary: '세 층의 한눈 요약',
     contextShift: '상황에 따른 표현 변화',
@@ -71,10 +71,9 @@ const SAMPLE_BODY: Record<ReportProfile['locale'], (codes: string) => string> = 
     `[示例模式] 本章节将依据${codes}的连续分数生成。正式环境会区分回答所支持的观察与需要进一步探索的假设。`,
 }
 
-export function buildSampleReport(profile: ReportProfile): ReportSection[] {
-  const assessment = profile.assessment
-  const codes = `${assessment.inner.code} · ${assessment.gem.code}`
-  return REPORT_SECTION_KEYS.map((key) => ({
+export function buildSampleReport(profile: ReportProfile): ReportSectionV1[] {
+  const codes = `${profile.codes.inner} · ${profile.codes.gem}`
+  return REPORT_SECTION_KEYS_V1.map((key) => ({
     body: SAMPLE_BODY[profile.locale](codes),
     key,
     title: TITLES[profile.locale][key],

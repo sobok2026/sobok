@@ -1,17 +1,26 @@
-import { REPORT_SECTION_KEYS, type ReportSection, type ReportSectionKey } from '../db/schema'
+// Pinned to the v1 vocabulary on purpose. This pass is the pre-pivot single-shot generator: it asks the model
+// for all twelve sections and stores them as the report body. v2 splits that in two — a rule engine owns the
+// body and a narrative pass adds prose over it — so this file switches vocabulary when that pass exists, not
+// before. Until then `report.schema_version` keeps defaulting to '1', which is what this writes.
+
 import type { ReportProfile } from './profile'
 import { REPORT_OUTPUT_SCHEMA, SYSTEM_12_SECTIONS } from './prompt'
+import { REPORT_SECTION_KEYS_V1, type ReportSectionKeyV1, type ReportSectionV1 } from './section-keys'
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages'
 const MAX_ATTEMPTS = 3
 const BACKOFF_MS = [500, 1500, 4000]
-const KEY_SET = new Set<string>(REPORT_SECTION_KEYS)
+const KEY_SET = new Set<string>(REPORT_SECTION_KEYS_V1)
 const MAX_OUTPUT_TOKENS = 16000
 
 // Generate the paid report via the Anthropic Messages API (raw fetch — no SDK on Workers). Structured
 // outputs constrain the shape; we still validate + clamp defensively. Retries only 429/529 (overload);
 // any other failure throws so the caller marks the report failed (retriable up to attempts<5).
-export async function generateReport(apiKey: string, model: string, profile: ReportProfile): Promise<ReportSection[]> {
+export async function generateReport(
+  apiKey: string,
+  model: string,
+  profile: ReportProfile,
+): Promise<ReportSectionV1[]> {
   const body = JSON.stringify({
     model,
     max_tokens: MAX_OUTPUT_TOKENS,
@@ -62,19 +71,19 @@ export async function generateReport(apiKey: string, model: string, profile: Rep
   throw new Error(lastError)
 }
 
-function parseSections(text: string): ReportSection[] {
+function parseSections(text: string): ReportSectionV1[] {
   const parsed = extractJson(text)
   const raw = Array.isArray(parsed.sections) ? parsed.sections : []
-  const byKey = new Map<ReportSectionKey, ReportSection>()
+  const byKey = new Map<ReportSectionKeyV1, ReportSectionV1>()
 
   for (const item of raw) {
     const key = String(item?.key ?? '')
-    if (!KEY_SET.has(key) || byKey.has(key as ReportSectionKey)) {
+    if (!KEY_SET.has(key) || byKey.has(key as ReportSectionKeyV1)) {
       continue
     }
 
-    byKey.set(key as ReportSectionKey, {
-      key: key as ReportSectionKey,
+    byKey.set(key as ReportSectionKeyV1, {
+      key: key as ReportSectionKeyV1,
       title: String(item?.title ?? '').slice(0, 60),
       // em-dash ban + hard length clamp to the stored payload budget.
       body: String(item?.body ?? '')
@@ -84,8 +93,8 @@ function parseSections(text: string): ReportSection[] {
   }
 
   // Emit in canonical order; any missing section makes the generation incomplete.
-  const sections = REPORT_SECTION_KEYS.map((key) => byKey.get(key)).filter((s): s is ReportSection => Boolean(s))
-  if (sections.length !== REPORT_SECTION_KEYS.length) {
+  const sections = REPORT_SECTION_KEYS_V1.map((key) => byKey.get(key)).filter((s): s is ReportSectionV1 => Boolean(s))
+  if (sections.length !== REPORT_SECTION_KEYS_V1.length) {
     throw new Error(`incomplete sections: ${sections.length}`)
   }
   return sections
