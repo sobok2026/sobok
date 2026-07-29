@@ -76,6 +76,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
 
         <CtaBlock
           className="mt-8"
+          keepBreak={keepBreak}
           label={ui.landingCta}
           locale={locale}
           meta={landing.ctaMeta}
@@ -133,6 +134,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
         <CtaBlock
           className="mt-12"
           ctaRole="closing"
+          keepBreak={keepBreak}
           label={ui.landingCta}
           locale={locale}
           meta={ui.landingNote}
@@ -171,6 +173,7 @@ function Section({ children, title }: { children: React.ReactNode; title: string
 function CtaBlock({
   className,
   ctaRole,
+  keepBreak,
   label,
   locale,
   meta,
@@ -179,6 +182,8 @@ function CtaBlock({
   className?: string
   /** Not an ARIA role — the marker the sticky bar's observer watches. */
   ctaRole: string
+  /** `break-keep` for ko. Without it the browser breaks inside a word and '원할 때' splits after '원'. */
+  keepBreak?: string
   label: string
   locale: Locale
   meta: string
@@ -198,7 +203,7 @@ function CtaBlock({
         {label}
         <ArrowRight aria-hidden="true" className="h-4 w-4" stroke={1.8} />
       </Link>
-      <p className="mt-3 text-balance text-center text-page-ink/48 text-sm leading-6">{meta}</p>
+      <p className={cn('mt-3 text-balance text-center text-page-ink/48 text-sm leading-6', keepBreak)}>{meta}</p>
     </div>
   )
 }

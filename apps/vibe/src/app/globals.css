@@ -6,7 +6,8 @@
   /* Palette carried over from the original quiz UI — its shadows, gradients,
      and opacity modifiers (page-ink/66 etc.) were tuned against these exact values. */
   --page-accent: #ff4d6d;
-  /* The colour under a primary CTA's drop shadow. Always the accent, so it has to move with it. */
+  /* The colour under a primary CTA's drop shadow. Kept as a variable so the accent and its shadow can
+     never drift apart. */
   --page-accent-glow: rgba(255, 77, 109, 0.26);
   --page-bg: #fdfaf6;
   --page-border: #eadbd0;
@@ -37,21 +38,6 @@
   --color-page-soft: var(--page-soft);
   --color-page-success: var(--page-success);
   --color-page-surface: var(--page-surface);
-}
-
-/*
- * deep-type runs its own accent.
- *
- * The site accent is a warm pink, tuned for the two couple-chemistry quizzes. deep-type is a career product now
- * and its artwork is cream paper with navy ink, which pink fights on every card. The deep teal is the reference
- * build's own action colour and it sits under the same illustrations without competing with them.
- *
- * Scoped to a class rather than swapped globally: /couple-gyeol and /couple-type share this stylesheet and are
- * still pink products.
- */
-.deep-type-theme {
-  --page-accent: #12796d;
-  --page-accent-glow: rgba(18, 121, 109, 0.26);
 }
 
 @utility px-safe {
