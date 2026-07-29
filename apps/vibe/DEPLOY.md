@@ -102,9 +102,12 @@ bun run deploy
 ```bash
 cd apps/vibe
 bun run build
-bunx wrangler deploy --env stg   # Worker `vibe-stg` → vibe-stg.sobok.cc
+bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 없음)
+# 그 다음에 account-vibe apply → cloudflare_workers_custom_domain.vibe_stg 가 붙는다
 ```
 
+- **순서 불변식**: 커스텀 도메인은 **이미 존재하는 Worker**에만 붙는다. 첫 `wrangler deploy --env stg`보다 `account-vibe` apply를 먼저 돌리면 `404 This Worker does not exist on your account.`로 실패한다(프로덕션 `vibe`도 같은 전제다). 배포와 apply 사이에는 워커가 잠시 도달 불가 상태로 존재하는데, 정상이다.
+- **도메인 소유자는 Terraform 하나뿐이다.** `wrangler.jsonc`에는 top-level에도 `env.stg`에도 `routes`를 두지 않는다 — 양쪽에 선언하면 같은 바인딩에 주인이 둘이 된다.
 - **테스트 채널은 배포로만 갈린다.** `/checkout`이 채널 키를 정하는 유일한 지점이라, 프로덕션 빌드가 테스트 키를 내려줄 수 있는 경로가 하나라도 생기면 0원 결제로 유료 리포트가 나간다. 런타임 플래그·쿼리 파라미터로 모드를 바꾸지 않는다.
 - `vars` · `define` · `hyperdrive` · `secrets_store_secrets`는 **비상속**이라 `env.stg`에 전부 다시 적혀 있다. 새 var를 top-level에 추가하면 staging에도 같이 넣어야 하고, 빠뜨리면 `undefined`로 도착한다(`guardTurnstile`이 `DEEPTYPE_PUBLIC_ORIGIN` 누락을 `misconfigured`로 잡아 주는 이유).
 - **Turnstile**: Cloudflare의 always-pass 더미 시크릿은 `hostname`을 `example.com`으로 돌려주므로 이 검증기를 통과할 수 없다(`packages/edge/src/turnstile.ts`). 스테이징도 **실제 vibe 위젯**을 쓰고, `vibe-stg.sobok.cc`를 위젯 Hostname Management에 등록해야 한다. `vibe.sobok.cc`의 서브도메인이 아니라 형제 호스트라 자동 커버되지 않는다.

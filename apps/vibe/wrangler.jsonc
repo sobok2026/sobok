@@ -106,8 +106,13 @@
   // restated in full, and anything omitted arrives as undefined rather than as the production value.
   "env": {
     "stg": {
+      // No `routes` here, exactly as at the top level: the custom domain is Terraform's
+      // (account-vibe/workers.tf), and declaring it in both places would give one binding two owners.
+      //
+      // ORDER: a Workers custom domain attaches to a Worker that already exists, so the FIRST
+      // `wrangler deploy --env stg` has to run before that resource can apply — until then Cloudflare answers
+      // 404 `This Worker does not exist on your account.` The Worker is simply unreachable in between.
       "workers_dev": false,
-      "routes": [{ "pattern": "vibe-stg.sobok.cc", "custom_domain": true }],
       // Same Supabase project and the SAME two Hyperdrive configs as production — the connection string is
       // identical and only the schema the SQL names is different.
       "define": { "DEEPTYPE_DB_SCHEMA": "'deeptype_stg'" },
