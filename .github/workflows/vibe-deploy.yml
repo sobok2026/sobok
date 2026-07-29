@@ -48,6 +48,12 @@ jobs:
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
         run: bun run --filter=@sobok/vibe build
 
+      # The paid question text may not be readable in the static export. It rides in a lazily imported chunk,
+      # so the only thing that catches an accidental server prop is a scan of what shipped — and it has to run
+      # here rather than in lint.yml, which never builds. Between build and deploy: a leak must not ship.
+      - name: Assert no paid question text in the static export
+        run: bun run --filter=@sobok/vibe check:export
+
       - name: Deploy to Cloudflare Workers (Static Assets)
         uses: cloudflare/wrangler-action@v4
         with:
