@@ -3,7 +3,7 @@ import type { AgreementValue, ItemAnswer, WorkAnswer } from '@deep-type/model'
 import { FREE_ITEM_COUNT, PAID_ITEM_COUNT } from '@deep-type/questionnaire'
 import { readTypeLetters, scoreBaseAssessment } from '@deep-type/scoring'
 
-import { FREE_RUN, FREE_SEGMENTS, TYPE_BLOCK_END } from './free-run'
+import { FREE_HINT_INDEXES, FREE_RUN, FREE_SEGMENTS, TYPE_BLOCK_END } from './free-run'
 import { PAID_RUN, PAID_SEGMENTS } from './paid-run'
 import { FREE_PROGRESS_CHECKPOINTS } from './test-progress-analytics'
 
@@ -75,5 +75,28 @@ describe('paid run', () => {
   test('never returns to a dimension it has left', () => {
     const dimensions = PAID_SEGMENTS.flatMap((segment) => ('dimension' in segment ? [segment.dimension] : []))
     expect(new Set(dimensions).size).toBe(dimensions.length)
+  })
+})
+
+const CORE_BLOCK_LENGTH = FREE_RUN.filter((step) => step.segment === 'core').length
+
+describe('answering instruction', () => {
+  test('shows on the first item and where the answer shape changes, nowhere else', () => {
+    expect([...FREE_HINT_INDEXES].sort((a, b) => a - b)).toEqual([0, TYPE_BLOCK_END + CORE_BLOCK_LENGTH])
+  })
+
+  // Two of twenty-seven. The number is the whole point: a rule printed on every card is a rule nobody reads.
+  test('leaves the rest of the run clean', () => {
+    expect(FREE_HINT_INDEXES.size).toBe(2)
+    expect(FREE_RUN.length).toBe(27)
+  })
+
+  // The second index is the first forced-choice item, not merely 'somewhere later'. If the blocks are ever
+  // reordered this catches a hint that stayed behind on a Likert card.
+  test('puts the second one on the first forced-choice item', () => {
+    for (const index of FREE_HINT_INDEXES) {
+      const previous = FREE_RUN[index - 1]
+      expect(`${index}: ${previous ? previous.kind !== FREE_RUN[index]?.kind : true}`).toBe(`${index}: true`)
+    }
   })
 })

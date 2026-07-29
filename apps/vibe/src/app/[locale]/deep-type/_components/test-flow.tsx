@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useReducer } from 'react'
 
 import { assertNever } from '../_lib/assert'
-import { FREE_RUN, FREE_SEGMENTS, TYPE_BLOCK_END } from '../_lib/free-run'
+import { FREE_HINT_INDEXES, FREE_RUN, FREE_SEGMENTS, TYPE_BLOCK_END } from '../_lib/free-run'
 import { writeSitting } from '../_lib/sitting'
 import { trackFreeDeclaration, trackFreeProgress } from '../_lib/test-progress-analytics'
 import type { DeepTypeContent } from '../_lib/types'
@@ -153,7 +153,7 @@ export function TestFlow({ content, locale }: TestFlowProps) {
               />
             ) : null
           }
-          hint={ui.closestAnswerHint}
+          hint={FREE_HINT_INDEXES.has(index) ? ui.closestAnswerHint : undefined}
           key={step.id}
           onAnswer={answer}
           onBack={index > 0 ? () => dispatch({ type: 'BACK' }) : undefined}

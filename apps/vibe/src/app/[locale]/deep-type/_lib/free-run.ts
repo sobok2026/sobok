@@ -29,6 +29,23 @@ export const FREE_SEGMENTS: readonly { count: number; segment: FreeSegment }[] =
   .filter((entry) => entry.count > 0)
 
 /**
+ * The indexes where the answering instruction is worth showing, which is not all of them.
+ *
+ * '딱 맞는 답이 없으면 가장 가까운 쪽을 골라요' is a rule about how to answer, and a rule lands once. Printed
+ * under all twenty-seven cards it stops being read by item three and spends a line of vertical space on every
+ * screen for the rest of the run.
+ *
+ * Twice, then: on the first item, and again where the answer shape changes. The Likert block asks how strongly a
+ * statement fits and the forced-choice block asks which of four situations is nearest, so 'the closest one'
+ * means something different there and the reader meets the instruction as if for the first time.
+ *
+ * Derived from the run rather than written down, so reordering the blocks moves it without anyone remembering to.
+ */
+export const FREE_HINT_INDEXES: ReadonlySet<number> = new Set(
+  FREE_RUN.flatMap((step, index) => (index === 0 || step.kind !== FREE_RUN[index - 1]?.kind ? [index] : [])),
+)
+
+/**
  * The single reveal point: the answer that completes the type block. It is the only index in the run where a
  * four-letter code is decided and nothing further can move it, which is what makes a reveal there true rather
  * than a teaser.
