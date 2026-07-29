@@ -97,11 +97,19 @@ bun run deploy
 
 ---
 
-## 4.1 스테이징(테스트 결제) 배포
+## 4.1 스테이징(기능·결제 QA) 배포
+
+**PR을 열면 자동으로 `vibe-stg`에 올라간다.** `main` 푸시만 프로덕션(`vibe`)으로 가고, 그 외에는 전부 스테이징이다(`.github/workflows/vibe-deploy.yml`). PR 없이 브랜치를 올려 보거나 스테이징을 특정 ref로 되돌릴 때는 Actions에서 수동 실행한다.
+
+어느 환경으로 가는지는 워크플로 안의 약속이 아니라 **GitHub Environment가 강제한다** — `production` 환경에 `main`만 배포할 수 있는 브랜치 정책이 걸려 있어(sobok-ops `infra/github/sobok2026`), 이 워크플로를 고쳐도 다른 브랜치가 실연동 채널 키에 닿지 못한다.
+
+⚠️ **`vibe-stg` 워커는 하나뿐이다.** PR 두 개가 동시에 QA를 받으면 나중 배포가 앞의 것을 덮는다. 지금 뭐가 올라가 있는지는 레포의 **Deployments**에서 본다. 동시 QA가 일상이 되면 PR별 preview(`wrangler versions upload`)로 갈라야 하는데, 그때도 **결제 경로만은 `vibe-stg`에 남는다** — `guardTurnstile`이 호스트네임을 `DEEPTYPE_PUBLIC_ORIGIN`에서 뽑아서 preview 호스트로는 결제창을 못 연다.
+
+로컬에서 직접 올려야 할 때:
 
 ```bash
 cd apps/vibe
-bun run build
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=<vibe 위젯 sitekey> bun run build   # 값이 비면 빌드가 실패한다
 bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 없음)
 # 그 다음에 account-vibe apply → cloudflare_workers_custom_domain.vibe_stg 가 붙는다
 ```
