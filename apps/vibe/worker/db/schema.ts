@@ -4,11 +4,17 @@ import { bigint, index, integer, jsonb, pgSchema, text, timestamp, uniqueIndex, 
 
 import type { ReportSection } from '../report/section-keys'
 import { createdAt, timestamps } from './columns'
+import { DB_SCHEMA } from './schema-name'
 
-// The deeptype payments/report tables live in a DEDICATED `deeptype` schema on the SHARED sobok-prod Supabase
-// Postgres (Seoul) — NOT the public schema, where nothing app-owned sits; the stella comment board has its
-// own `stella` schema.
-export const deeptype = pgSchema('deeptype')
+// The deeptype payments/report tables live in a DEDICATED schema on the SHARED sobok-prod Supabase Postgres
+// (Seoul) — NOT the public schema, where nothing app-owned sits; the stella comment board has its own
+// `stella` schema.
+//
+// The name is per-deployment (`deeptype` / `deeptype_stg`) and comes from `./schema-name`. That is the whole
+// of the test/live data split: staging reuses the same Hyperdrive configs, the same Supabase project and the
+// same role, and only the schema the SQL names differs. MUST stay exported — drizzle-kit reads the exported
+// `pgSchema` to know the schema is declared, and a push that cannot see it drops the schema instead.
+export const deeptype = pgSchema(DB_SCHEMA)
 
 export const localeEnum = deeptype.enum('locale', ['ko', 'en', 'ja', 'zh'])
 export const providerEnum = deeptype.enum('provider', ['portone'])

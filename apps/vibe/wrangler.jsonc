@@ -33,6 +33,10 @@
   ],
   // Crons (worker `scheduled` handler): every 15 min → reconcile stuck 'pending'; daily 03:00 → retention purge.
   "triggers": { "crons": ["*/15 * * * *", "0 3 * * *"] },
+  // Build-time substitution (esbuild `define`), NOT a binding: `pgSchema()` runs at module load, before any
+  // binding exists. The value is a JS expression source, so the inner quotes are load-bearing — dropping them
+  // substitutes a bare identifier and the Worker throws on boot. See worker/db/schema-name.ts.
+  "define": { "DEEPTYPE_DB_SCHEMA": "'deeptype'" },
   "vars": {
     "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
     // Every channel this deployment can spend, keyed by PortOne pgProvider. A new channel is one line here
@@ -87,5 +91,86 @@
       "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
       "secret_name": "deeptype-ga4-api-secret"
     }
-  ]
+  ],
+  // ── Test money, deployed apart ──────────────────────────────────────────────────────────────────────
+  // The PortOne test channel is separated by DEPLOYMENT and never by a runtime flag. /checkout is the single
+  // place a channel key is chosen, so a production build that could ever be talked into serving the test key
+  // is a production build that hands out paid reports for nothing.
+  //
+  // `deploy` = `next build && wrangler deploy`, so a staging release is
+  //   NEXT_PUBLIC_TURNSTILE_SITE_KEY=<vibe widget> bun run build && wrangler deploy --env stg
+  // and it lands as the Worker `vibe-stg`.
+  //
+  // `main` / `assets` / `triggers` / `observability` / `compatibility_*` are inheritable and are NOT repeated.
+  // `vars`, `define`, `hyperdrive` and `secrets_store_secrets` are non-inheritable: everything below has to be
+  // restated in full, and anything omitted arrives as undefined rather than as the production value.
+  "env": {
+    "stg": {
+      "workers_dev": false,
+      "routes": [{ "pattern": "vibe-stg.sobok.cc", "custom_domain": true }],
+      // Same Supabase project and the SAME two Hyperdrive configs as production — the connection string is
+      // identical and only the schema the SQL names is different.
+      "define": { "DEEPTYPE_DB_SCHEMA": "'deeptype_stg'" },
+      "hyperdrive": [
+        { "binding": "HYPERDRIVE_FRESH", "id": "14e658152a554541b0e1a6712fc43787" },
+        { "binding": "HYPERDRIVE_CACHED", "id": "a2a2c4cb90d94e6fb08b0eb6727bb61d" }
+      ],
+      "vars": {
+        "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
+        "DEEPTYPE_PORTONE_CHANNELS": {
+          "kakaopay": "channel-key-d80ebe96-61e3-49f9-b3eb-5dc22aee47b7",
+          "kcp_v2": "channel-key-d48cde15-5f73-4ab2-9b40-2ec29d152ad5",
+          "tosspay_v2": "channel-key-70320dc7-8e65-4cf7-901b-7b834ae4f21a",
+          "tosspayments": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88"
+        },
+        "DEEPTYPE_PUBLIC_ORIGIN": "https://vibe-stg.sobok.cc",
+        "DEEPTYPE_EMAIL_FROM": "sobok <sobok2026@gmail.com>",
+        "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",
+        "DEEPTYPE_REPORT_MODEL": "claude-haiku-4-5-20251001",
+        "DEEPTYPE_LLM_ENABLED": "1",
+        "DEEPTYPE_GA4_MEASUREMENT_ID": ""
+      },
+      "secrets_store_secrets": [
+        {
+          "binding": "DEEPTYPE_PORTONE_API_SECRET",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "deeptype-portone-api-secret"
+        },
+        // The one PortOne secret that IS per environment: the console issues webhook secrets separately for
+        // 테스트 and 실연동, so a staging worker bound to the live secret rejects every test webhook.
+        {
+          "binding": "DEEPTYPE_PORTONE_WEBHOOK_SECRET",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "deeptype-portone-webhook-secret-stg"
+        },
+        {
+          "binding": "DEEPTYPE_ANTHROPIC_API_KEY",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "deeptype-anthropic-api-key"
+        },
+        {
+          "binding": "DEEPTYPE_RESEND_API_KEY",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "deeptype-resend-api-key"
+        },
+        {
+          "binding": "DEEPTYPE_TURNSTILE_SECRET",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "vibe-turnstile-secret"
+        },
+        {
+          "binding": "DEEPTYPE_DISCORD_WEBHOOK",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "deeptype-discord-webhook"
+        },
+        // Same credential as production, and it is never spent: DEEPTYPE_GA4_MEASUREMENT_ID above is "",
+        // which is what stops confirmPurchase from sending. The kill switch is the destination, not the key.
+        {
+          "binding": "DEEPTYPE_GA4_API_SECRET",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "deeptype-ga4-api-secret"
+        }
+      ]
+    }
+  }
 }

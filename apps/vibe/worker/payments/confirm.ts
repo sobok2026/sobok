@@ -89,6 +89,14 @@ async function reportPurchase(
     return
   }
 
+  // The measurement id is the destination, and an empty one is how a deployment declares it does not report
+  // revenue. `vibe-stg` sets it to "" so test purchases cannot reach the production property — the switch is
+  // a plain var rather than a blanked-out credential, because "there is nowhere to send this" is a
+  // configuration fact and blanking a secret to mean it relies on an empty secret being storable at all.
+  if (!env.DEEPTYPE_GA4_MEASUREMENT_ID) {
+    return
+  }
+
   const item = skuItem(purchase.sku)
   if (!item) {
     console.error('deeptype.ga4.unknown_sku', purchase.sku)
