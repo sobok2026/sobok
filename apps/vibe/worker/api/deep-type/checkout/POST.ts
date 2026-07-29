@@ -1,3 +1,4 @@
+import { isPayMethodAllowed, PAY_METHODS } from '@deep-type/pay-method'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
@@ -10,11 +11,15 @@ import { resolveSku } from '~/lib/pricing'
 import { newPaymentId, normalizeEmail, randomToken, sha256Hex } from '~/lib/tokens'
 import { guardTurnstile } from '~/lib/turnstile'
 import { DEEPTYPE_CHECKOUT_ACTION } from '../actions'
+import { channelKeyFor } from '../channels'
 
 // Phase 3: checkout → PortOne → verify / webhook.
 const CheckoutBody = z.object({
   resultToken: z.string().length(43),
   sku: z.enum(['report']),
+  // Which method to open. Shape-checked against the catalogue here and policy-checked below against the
+  // result's locale — the enum alone would let an EN sitting open a domestic wallet it was never offered.
+  payMethod: z.enum(PAY_METHODS),
   email: z.string().email().max(254),
   consentWithdrawal: z.boolean(),
   consentPrivacy: z.boolean(),
@@ -78,6 +83,14 @@ route.post('/', async (c) => {
     if (!result) {
       return null
     }
+
+    // The locale is the stored one, not a client claim, so this is the point where the channel policy is
+    // actually enforced. Checked before the pending row is written — a refused method must leave nothing
+    // behind for the reconcile cron to chase.
+    if (!isPayMethodAllowed(result.locale, body.payMethod)) {
+      return 'method-not-allowed' as const
+    }
+
     const sku = resolveSku(body.sku, result.locale)
     if (!sku) {
       return null
@@ -103,15 +116,23 @@ route.post('/', async (c) => {
     return sku
   })
 
+  // Deliberately the same generic 422 a malformed body gets: naming the policy would tell a prober which
+  // locales carry which channels, and a legitimate client cannot reach this branch — the paywall only ever
+  // offers what `payMethodsFor` returned.
+  if (detail === 'method-not-allowed') {
+    return problem(422, 'invalid-request')
+  }
   if (!detail) {
     return problem(404, 'result-not-found')
   }
 
+  // One key, for the method the server just approved. Channel keys are public — the browser SDK needs them —
+  // so this is not about secrecy; it is that the response should carry the decision rather than the menu.
   return c.json({
     paymentId,
     accessToken,
     storeId: c.env.DEEPTYPE_PORTONE_STORE_ID,
-    channelKey: c.env.DEEPTYPE_PORTONE_CHANNEL_KEY,
+    channelKey: channelKeyFor(c.env, body.payMethod),
     orderName: detail.orderName,
     amount: detail.amount,
     currency: detail.currency,

@@ -4,7 +4,9 @@
 //   - Hyperdrive configs → cloudflare_hyperdrive_config (ids pasted into wrangler.jsonc)
 //   - true secrets → Cloudflare Secrets Store (cloudflare_secrets_store_secret), bound via
 //     wrangler `secrets_store_secrets`; accessed at runtime with `await binding.get()`
-//   - non-secret config (store/channel id, kill-switch, model) → wrangler `vars` (plain strings)
+//   - non-secret config (store id, channel keys, kill-switch, model) → wrangler `vars`
+import type { PortOneChannel } from '@deep-type/pay-method'
+
 export interface Bindings {
   // Static Next export (./out), served for every non-/api path via env.ASSETS.fetch(request).
   ASSETS: Fetcher
@@ -21,14 +23,27 @@ export interface Bindings {
   DEEPTYPE_TURNSTILE_SECRET: SecretsStoreSecret
   // Discord webhook for money/ops alerts. Empty value disables alerting.
   DEEPTYPE_DISCORD_WEBHOOK: SecretsStoreSecret
-  // GA4 Measurement Protocol API secret for the vibe data stream. Empty value disables the server-side
-  // `purchase` event (the grant itself is unaffected).
+  // GA4 Measurement Protocol API secret for the vibe data stream. Paired with DEEPTYPE_GA4_MEASUREMENT_ID
+  // below, which is the switch — this is only the credential.
   DEEPTYPE_GA4_API_SECRET: SecretsStoreSecret
 
   // ── Plain vars (not secret) ─────────────────────────────────────────────────────────────────────
   // Separate PortOne store (own settlement entity). storeId/channelKey are public (sent to the browser SDK).
+  //
   DEEPTYPE_PORTONE_STORE_ID: string
-  DEEPTYPE_PORTONE_CHANNEL_KEY: string
+  // Every PortOne channel key this deployment can spend, keyed by PG — PortOne's own pgProvider ids, not the
+  // payment methods they carry. `tosspayments` is the same key whether it opens a card window or a 가상계좌
+  // one, and it backs two methods already; `@deep-type/pay-method` owns which method rides which channel.
+  //
+  // ONE var holding a map rather than one var per channel, and wrangler binds JSON in `vars` as a parsed
+  // object. Channels are added continuously, `vars` is non-inheritable, and one flat key per channel means a
+  // growing pair of blocks that must be edited in lockstep — a map makes a new channel one line in each
+  // environment and nothing here at all.
+  //
+  // These keys are also the ONLY thing that separates test from live: the store id and the API secret are
+  // issued per store and shared across both modes. That is why they are `vars` pinned per wrangler
+  // environment rather than anything resolvable at runtime — see the `env.stg` block in wrangler.jsonc.
+  DEEPTYPE_PORTONE_CHANNELS: Record<PortOneChannel, string>
   DEEPTYPE_PUBLIC_ORIGIN: string
   DEEPTYPE_EMAIL_FROM: string
   DEEPTYPE_EMAIL_REPLY_TO: string
@@ -39,6 +54,10 @@ export interface Bindings {
   DEEPTYPE_LLM_ENABLED?: string
   // vibe's GA4 data stream — the destination of the server-side `purchase`. Public (it ships in the browser
   // too, via src/constants.ts); it is the paired API secret that is confidential.
+  //
+  // Empty string = this deployment does not report revenue, and `confirmPurchase` sends nothing. That is how
+  // `vibe-stg` stays out of the production property: no destination, rather than a credential blanked out to
+  // stand in for one.
   DEEPTYPE_GA4_MEASUREMENT_ID: string
 }
 

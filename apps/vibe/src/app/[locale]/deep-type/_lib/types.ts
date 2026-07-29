@@ -1,4 +1,5 @@
 import type { AxisId, GemCode, WorkDimension } from '@deep-type/model'
+import type { PayMethod } from '@deep-type/pay-method'
 
 export type AxisPoleContent = {
   description: string
@@ -77,6 +78,14 @@ export type DeepTypePaywallContent = {
   consentWithdrawal: string
   minorNotice: string
   cta: string
+  /**
+   * Payment-method picker. Only rendered where more than one method is offered — `payMethodsFor` gives `ko`
+   * the wallets and everyone else the card channel alone — but every method carries a label in every locale,
+   * so a locale that gains one later cannot ship the picker with a blank button. `Record<PayMethod, string>`
+   * rather than a key each: adding a method then fails to compile until all four locales name it.
+   */
+  methodLabel: string
+  methodLabels: Record<PayMethod, string>
   discountTemplate: string
   effortNote: string
   emailLabel: string

@@ -77,6 +77,14 @@ export const deepTypeContent = createDeepTypeContent({
     consentWithdrawal:
       '리포트를 열기 전에는 언제든 전액 환불받을 수 있어요. 완성된 리포트가 열려 제공이 개시된 뒤에는 전자상거래법에 따라 청약철회를 할 수 없다는 점에 동의합니다.',
     cta: '결제하고 심층 리포트 받기',
+    methodLabel: '결제 수단',
+    methodLabels: {
+      card: '카드',
+      kakaopay: '카카오페이',
+      mobile: '휴대폰',
+      tosspay: '토스페이',
+      transfer: '계좌이체',
+    },
     minorNotice:
       '미성년자가 법정대리인의 동의 없이 맺은 계약은 미성년자 본인이나 법정대리인이 취소할 수 있어요. 구매한 이메일과 함께 알려 주시면 취소를 처리해 드려요.',
     discountTemplate: '{discount}% 할인',

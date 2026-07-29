@@ -1,4 +1,5 @@
 import type { AssessmentProfile, ItemAnswer, PersonaCode, PersonaSource, WorkAnswer } from '@deep-type/model'
+import type { PayMethod } from '@deep-type/pay-method'
 import type { GAIdentity } from '@sobok/analytics/ga-identity'
 import type { Locale } from '@sobok/domain/locale'
 
@@ -73,6 +74,7 @@ export function postSession(input: SessionInput): Promise<{ profile: AssessmentP
 export type CheckoutResponse = {
   accessToken: string
   amount: number
+  // The channel the server approved for the requested `payMethod`, and only that one.
   channelKey: string
   currency: string
   orderName: string
@@ -88,6 +90,8 @@ export type CheckoutInput = {
   consentPrivacy: boolean
   consentWithdrawal: boolean
   email: string
+  // The channel the buyer picked. The server re-checks it against the stored locale before it approves one.
+  payMethod: PayMethod
   resultToken: string
   sku: 'report'
   turnstileToken: string

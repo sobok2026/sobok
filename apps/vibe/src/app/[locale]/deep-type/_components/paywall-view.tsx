@@ -1,6 +1,7 @@
 'use client'
 
 import { DEEP_TYPE_REPORT_OFFER } from '@deep-type/offer'
+import { type PayMethod, payMethodsFor } from '@deep-type/pay-method'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { ArrowLeft, CheckCircle, Sparkles } from '@mynaui/icons-react'
 import { trackEcommerce } from '@sobok/analytics/browser'
@@ -30,6 +31,12 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
   const { errorMessage, start, status } = useCheckout(freeResult, paywall)
   const [turnstileToken, setTurnstileToken] = useState('')
   const turnstileRef = useRef<TurnstileInstance | undefined>(undefined)
+  // The same list the Worker enforces, from the same module — the screen cannot offer a channel `/checkout`
+  // would refuse. Card is the default: it heads every list, and it is the one method that needs no app.
+  // The catalogue's order is the picker's order, and its first entry is the default — so which method a
+  // decided buyer lands on is edited in `@deep-type/pay-method` and not here.
+  const methods = payMethodsFor(freeResult.locale)
+  const [payMethod, setPayMethod] = useState<PayMethod>(methods[0])
 
   const discountLabel = paywall.discountTemplate.replace('{discount}', String(DEEP_TYPE_REPORT_OFFER.discountPercent))
   const listPrice = formatKrw(freeResult.locale, DEEP_TYPE_REPORT_OFFER.listAmount)
@@ -48,7 +55,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
 
     trackEcommerce('begin_checkout', REPORT_OFFER_ECOMMERCE, { locale: freeResult.locale })
     const email = String(new FormData(event.currentTarget).get('email') ?? '')
-    const accessToken = await start(email, turnstileToken)
+    const accessToken = await start(email, turnstileToken, payMethod)
 
     if (accessToken) {
       onPaid(accessToken)
@@ -114,6 +121,40 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
             required
             type="email"
           />
+
+          {/* Hidden rather than disabled when there is nothing to choose: a one-entry radio group is a control
+              that cannot do anything, and every non-Korean locale has exactly one channel. */}
+          {methods.length > 1 ? (
+            <fieldset className="mt-5">
+              <legend className="font-bold text-page-ink/70 text-sm">{paywall.methodLabel}</legend>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                {methods.map((method) => (
+                  <label
+                    className={cn(
+                      'flex min-h-12 cursor-pointer items-center justify-center rounded-2xl border font-bold text-sm transition-colors',
+                      // The radio itself is sr-only, so the ring has to be borrowed from the input it labels —
+                      // otherwise the whole picker is invisible to a keyboard.
+                      'has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-page-accent',
+                      payMethod === method
+                        ? 'border-page-accent bg-page-accent/10 text-page-accent'
+                        : 'border-page-border text-page-ink/62 hover:text-page-ink',
+                    )}
+                    key={method}
+                  >
+                    <input
+                      checked={payMethod === method}
+                      className="sr-only"
+                      name="pay-method"
+                      onChange={() => setPayMethod(method)}
+                      type="radio"
+                      value={method}
+                    />
+                    {paywall.methodLabels[method]}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          ) : null}
 
           <div className="mt-4 grid gap-3">
             <Consent label={paywall.ageConfirmation} name="confirm-age" />

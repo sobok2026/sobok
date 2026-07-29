@@ -35,7 +35,14 @@
   "triggers": { "crons": ["*/15 * * * *", "0 3 * * *"] },
   "vars": {
     "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
-    "DEEPTYPE_PORTONE_CHANNEL_KEY": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88",
+    // Every channel this deployment can spend, keyed by PortOne pgProvider. A new channel is one line here
+    // and one in env.stg — no binding, no resolver. deep-type/pay-method.ts owns which method rides which.
+    "DEEPTYPE_PORTONE_CHANNELS": {
+      "kakaopay": "REPLACE_WITH_KAKAOPAY_LIVE_CHANNEL_KEY",
+      "kcp_v2": "REPLACE_WITH_KCP_LIVE_CHANNEL_KEY",
+      "tosspay_v2": "channel-key-d14e0af9-18be-457f-aa21-228e7265211f",
+      "tosspayments": "REPLACE_WITH_TOSSPAYMENTS_LIVE_CHANNEL_KEY"
+    },
     "DEEPTYPE_PUBLIC_ORIGIN": "https://vibe.sobok.cc",
     "DEEPTYPE_EMAIL_FROM": "sobok <sobok2026@gmail.com>",
     "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",

@@ -51,6 +51,8 @@ export const deepTypeContent = createDeepTypeContent({
     consentWithdrawal: '',
     minorNotice: '',
     cta: '',
+    methodLabel: '',
+    methodLabels: { card: '', kakaopay: '', mobile: '', tosspay: '', transfer: '' },
     discountTemplate: '',
     effortNote: '',
     emailLabel: '',
