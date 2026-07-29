@@ -296,12 +296,12 @@ function StrengthCards({ cards, title }: { cards: FreeStrengthCards; title: stri
       <h2 className="font-black text-lg">{title}</h2>
       <ul className="mt-4 grid gap-3">
         {ordered.map((card) => (
-          <li className="flex gap-4 rounded-3xl border border-page-border bg-white p-4" key={card.slug}>
+          <li className="flex gap-4 overflow-hidden rounded-3xl border border-page-border bg-white" key={card.slug}>
             <AbilityArtwork slug={card.slug} />
-            <div className="min-w-0">
+            <div className="min-w-0 py-4 pr-4">
               <div className="flex items-start justify-between gap-3">
-                <p className="break-keep font-black text-sm">{card.copy.name}</p>
-                <span className="shrink-0 rounded-full bg-page-soft px-2.5 py-1 font-bold text-page-ink/56 text-xs">
+                <p className="break-keep font-black text-sm leading-5">{card.copy.name}</p>
+                <span className="inline-flex h-5 min-w-9 shrink-0 items-center justify-center rounded-full bg-page-soft px-2 font-bold text-page-ink/56 text-xs">
                   {card.poles.join('')}
                 </span>
               </div>

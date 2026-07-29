@@ -78,10 +78,10 @@ export function AbilityArtwork({ slug }: { slug: AbilitySlug }) {
   return (
     <Image
       alt=""
-      className="aspect-square w-16 shrink-0 rounded-2xl border border-page-border bg-page-soft object-cover sm:w-20"
+      className="w-24 shrink-0 self-stretch bg-page-soft object-cover sm:w-28"
       draggable={false}
       loading="lazy"
-      sizes="80px"
+      sizes="112px"
       src={ABILITY_ARTWORK[slug]}
     />
   )
