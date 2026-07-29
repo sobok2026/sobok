@@ -255,7 +255,7 @@ export const deepTypeContent = createDeepTypeContent({
       { label: '걸리는 시간', value: `약 ${FREE_EFFORT.minMinutes}~${FREE_EFFORT.maxMinutes}분` },
       { label: '결과 확인', value: '바로' },
     ],
-    ctaMeta: '가입도 결제 정보도 없이 바로 시작해요.',
+    ctaMeta: '가입이나 결제 없이 바로 시작해요.',
     getsTitle: '결제 없이 여기까지 바로 나와요.',
     getsBodies: [
       '에너지 방향 · 정보 초점 · 판단 기준 · 실행 방식 네 축이 어느 쪽으로 기울었는지 글자로 나와요.',
