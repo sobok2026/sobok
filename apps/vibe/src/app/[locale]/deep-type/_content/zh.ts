@@ -145,7 +145,7 @@ export const deepTypeContent = createDeepTypeContent({
     stepsTitle: '',
     steps: [],
     stickyCta: '',
-    legal: '',
+    offerNote: '',
   },
   gemNames: {
     ROVU: '',

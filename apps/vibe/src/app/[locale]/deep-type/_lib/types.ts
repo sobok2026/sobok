@@ -161,7 +161,8 @@ export type DeepTypeLandingContent = {
   getsBodies: readonly string[]
   getsTitle: string
   kicker: string
-  legal: string
+  /** What the free run costs and what the paid one does. Offer terms, not a disclaimer. */
+  offerNote: string
   stepsTitle: string
   steps: readonly { duration: string; title: string }[]
   stickyCta: string

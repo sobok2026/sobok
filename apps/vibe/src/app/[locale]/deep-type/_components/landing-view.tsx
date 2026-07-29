@@ -152,7 +152,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
         </Link>
 
         <div className="mt-10 border-page-border border-t pt-6">
-          <p className={cn('text-page-ink/44 text-xs leading-6', keepBreak)}>{landing.legal}</p>
+          <p className={cn('text-page-ink/44 text-xs leading-6', keepBreak)}>{landing.offerNote}</p>
         </div>
       </div>
 

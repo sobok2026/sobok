@@ -279,7 +279,7 @@ export const deepTypeContent = createDeepTypeContent({
       { title: '내 세계관 직업과 지치는 조건을 바로 받아요.', duration: '바로 확인' },
     ],
     stickyCta: '무료로 내 세계관 직업 보기',
-    legal: `무료 검사 결과는 결제 없이 다 볼 수 있어요. 일과 연결한 심층 리포트는 원할 때 고르는 ${PRICE_KO} 유료 상품이고 정기결제는 없어요. 겉속유형은 자기 이해를 돕는 콘텐츠이고 진단이 아니에요.`,
+    offerNote: `무료 검사 결과는 결제 없이 다 볼 수 있어요. 일과 연결한 심층 리포트는 원할 때 고르는 ${PRICE_KO} 유료 상품이고 정기결제는 없어요.`,
   },
   gemNames: {
     ROVU: '루비',
