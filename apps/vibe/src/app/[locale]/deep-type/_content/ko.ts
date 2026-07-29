@@ -32,7 +32,7 @@ export const deepTypeContent = createDeepTypeContent({
     declareTitle: '알고 있는 네 글자가 있나요?',
     declareUnknownLabel: '모르겠어요',
     landingCta: '무료로 내 세계관 직업 보기',
-    landingNote: `약 ${FREE_EFFORT.minMinutes}~${FREE_EFFORT.maxMinutes}분이면 내 세계관 직업이 나와요. 심층 리포트는 원할 때 ${PRICE_KO} 한 번만 내면 되고 정기결제는 없어요.`,
+    landingNote: `답만 고르면 돼요. 약 ${FREE_EFFORT.minMinutes}~${FREE_EFFORT.maxMinutes}분이면 내 세계관 직업이 나와요.`,
     landingSubtitle:
       '같은 일을 해도 힘이 붙는 자리는 사람마다 달라요. 답을 고르면 속유형 네 글자와 마음의 코어 네 글자를 읽어 내 세계관 직업과 지치는 조건에 이름을 붙여 줘요.',
     landingTitle: '내 힘이 오래 가는 자리는 따로 있어요',
@@ -279,7 +279,7 @@ export const deepTypeContent = createDeepTypeContent({
       { title: '내 세계관 직업과 지치는 조건을 바로 받아요.', duration: '바로 확인' },
     ],
     stickyCta: '무료로 내 세계관 직업 보기',
-    legal: '겉속유형은 자기 이해를 돕는 콘텐츠이고 진단이 아니에요.',
+    legal: `무료 검사 결과는 결제 없이 다 볼 수 있어요. 일과 연결한 심층 리포트는 원할 때 고르는 ${PRICE_KO} 유료 상품이고 정기결제는 없어요. 겉속유형은 자기 이해를 돕는 콘텐츠이고 진단이 아니에요.`,
   },
   gemNames: {
     ROVU: '루비',
