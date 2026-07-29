@@ -2,7 +2,6 @@ import { ErrorBoundary } from '@suspensive/react'
 import {
   CalendarMinus,
   CaseSensitive,
-  Download,
   Fingerprint,
   Key,
   Languages,
@@ -26,7 +25,6 @@ import { getServerMe } from '@/lib/server-me'
 
 import AdultVerificationSection from './adult/AdultVerificationSection'
 import ContentSettingsForm from './content/ContentSettingsForm'
-import DataExportSection from './data/DataExportSection'
 import AccountDeletionForm from './delete/AccountDeletionForm'
 import InternalServerError from './InternalServerError'
 import KeywordSettings from './keyword/KeywordSettings'
@@ -136,18 +134,6 @@ export default async function SettingsPage() {
         title="개인 설정"
       >
         <ContentSettingsForm initialSettings={settings} />
-      </CollapsibleSection>
-      <CollapsibleSection
-        description="내 데이터를 다운로드할 수 있어요"
-        icon={<Download className="size-5 shrink-0" />}
-        id="data"
-        title="데이터 내보내기"
-      >
-        <ErrorBoundary fallback={InternalServerError}>
-          <Suspense fallback={<LoadingFallback />}>
-            <DataExportSection userId={userId} />
-          </Suspense>
-        </ErrorBoundary>
       </CollapsibleSection>
       <CollapsibleSection
         description="비바톤에서 익명으로 성인 여부를 인증해요"

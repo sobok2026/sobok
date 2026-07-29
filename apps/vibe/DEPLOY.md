@@ -99,9 +99,21 @@ bun run deploy
 
 ## 4.1 스테이징(테스트 결제) 배포
 
+**브랜치를 밀면 스테이징, `main`을 밀면 프로덕션**이다(`.github/workflows/vibe-deploy.yml`). 워크플로가 보는 건 `main`이냐 아니냐뿐이고, 브랜치 이름은 배포에 관여하지 않는다 — 규약은 `<type>/<app>-<요약>`(`feat/vibe-kakaopay`)으로 커밋 메시지의 type과 같은 단어를 쓴다.
+
+돈이 걸린 변경의 흐름은 이렇다:
+
+1. 브랜치를 만들어 푸시 → `vibe-stg`에 배포된다
+2. `vibe-stg.sobok.cc`에서 포트원 **테스트 채널**로 결제 E2E(5.L 포함)를 돌린다
+3. `main`에 머지 → `vibe`에 배포된다
+
+named environment는 별도 Worker 스크립트라 `deploy` 하나로는 `vibe`만 올라간다. 스테이징은 브랜치 수명을 따르므로 **머지 직후에는 프로덕션과 다른 코드를 들고 있다** — 배포 후 확인은 프로덕션에서 소액 실결제로 하고, 스테이징에서 한 검증은 머지 전 것으로 읽는다.
+
+로컬에서 직접 올려야 할 때만:
+
 ```bash
 cd apps/vibe
-bun run build
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=<vibe 위젯 sitekey> bun run build   # 값이 비면 빌드가 실패한다
 bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 없음)
 # 그 다음에 account-vibe apply → cloudflare_workers_custom_domain.vibe_stg 가 붙는다
 ```

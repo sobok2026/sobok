@@ -1,7 +1,7 @@
 'use client'
 
 type Props = {
-  onRetry: () => Promise<unknown> | void
+  onRetry: () => unknown
   label?: string
   containerClassName?: string
   buttonClassName?: string

@@ -827,7 +827,7 @@ export class Game {
     for (const a of w.people) {
       if (a.state !== 'rushing' || a.id > a.partnerId) continue
       const b = this.byId(a.partnerId)
-      if (!b || b.state !== 'rushing') continue
+      if (b?.state !== 'rushing') continue
       const da = Math.hypot(a.x - a.target.x, a.y - a.target.y)
       const db = Math.hypot(b.x - b.target.x, b.y - b.target.y)
       if (da < meet && db < meet) this.bond(a, b)

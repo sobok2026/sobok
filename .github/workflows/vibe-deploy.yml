@@ -1,8 +1,15 @@
 name: Vibe Deploy
 
+# main은 프로덕션(`vibe`), 그 밖의 브랜치는 스테이징(`vibe-stg`)으로 나간다. 스테이징은 포트원 테스트 채널
+# 키를 든 배포라, 브랜치를 밀어 두면 돈이 걸린 변경을 머지 전에 실제 결제 플로우로 확인할 수 있다.
+#
+# 브랜치 이름은 배포에 관여하지 않는다(main이냐 아니냐만 본다). 규약은 `<type>/<app>-<요약>`이며 커밋
+# 메시지의 type과 같은 단어를 쓴다 — feat/vibe-kakaopay, fix/vibe-stg-domain.
+#
+# 스테이징은 브랜치 수명을 따르므로 머지 직후에는 프로덕션과 다른 코드를 들고 있다. 프로덕션과 같은 코드로
+# 되돌리려면 main에서도 `deploy --env stg`를 돌리면 되지만, 그러면 머지 전 게이트라는 성격이 흐려진다.
 on:
   push:
-    branches: [main]
     paths:
       - 'apps/vibe/**'
       - 'packages/**'
@@ -20,7 +27,6 @@ concurrency:
 jobs:
   deploy:
     name: Build and deploy to Cloudflare
-    if: ${{ github.ref_name == 'main' }}
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 10
     steps:
@@ -54,6 +60,9 @@ jobs:
       - name: Assert no paid question text in the static export
         run: bun run --filter=@sobok/vibe check:export
 
+      # A wrangler named environment is a SEPARATE Worker script: `deploy` ships `vibe` and `deploy --env stg`
+      # ships `vibe-stg`. One step with the ref choosing, so there is no path where both run and no path where
+      # a branch can reach the live PortOne channel keys.
       - name: Deploy to Cloudflare Workers (Static Assets)
         uses: cloudflare/wrangler-action@v4
         with:
@@ -61,4 +70,4 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: apps/vibe
           packageManager: bun
-          command: deploy
+          command: ${{ github.ref_name == 'main' && 'deploy' || 'deploy --env stg' }}

@@ -63,10 +63,7 @@ export default function PostDetailLikeButton({ likeCount, postId }: Props) {
       <div className="shrink-0 rounded-full transition group-hover:bg-red-600/20 group-hover:text-red-600 aria-pressed:text-red-600">
         <Heart aria-selected={resolvedIsLiked} className="size-9 sm:size-10 p-2 aria-selected:text-red-600" />
       </div>
-      <span
-        aria-selected={resolvedIsLiked}
-        className="tabular-nums aria-selected:font-medium aria-selected:text-red-600"
-      >
+      <span className="tabular-nums group-aria-pressed:font-medium group-aria-pressed:text-red-600">
         {resolvedLikeCount}
       </span>
     </button>

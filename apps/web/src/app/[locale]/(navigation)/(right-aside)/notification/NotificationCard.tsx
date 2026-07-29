@@ -137,8 +137,8 @@ export default function NotificationCard({
       {selectionMode ? (
         <div className="flex items-center transition">
           <div
-            aria-selected={selected}
-            className="size-5 rounded-md border-2 transition aria-selected:border-brand aria-selected:bg-brand"
+            className="size-5 rounded-md border-2 transition data-[selected=true]:border-brand data-[selected=true]:bg-brand"
+            data-selected={selected}
           >
             {selected && <Check className="size-full text-background" />}
           </div>
