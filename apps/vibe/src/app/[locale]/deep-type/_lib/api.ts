@@ -1,4 +1,4 @@
-import type { AssessmentProfile, ItemAnswer, PersonaCode, WorkAnswer } from '@deep-type/model'
+import type { AssessmentProfile, ItemAnswer, PersonaCode, PersonaSource, WorkAnswer } from '@deep-type/model'
 import type { GAIdentity } from '@sobok/analytics/ga-identity'
 import type { Locale } from '@sobok/domain/locale'
 
@@ -14,9 +14,10 @@ export type { ReportSection, ReportSectionKey } from '../../../../../worker/repo
 
 export type SessionInput = {
   answers: ItemAnswer[]
-  /** Null when the picker was skipped. The server keeps only whether it was given. */
+  /** Null when the picker was skipped. The server keeps only whether it was given and how. */
   declaredPersona: PersonaCode | null
   locale: Locale
+  personaSource: PersonaSource
   workAnswers: WorkAnswer[]
 }
 

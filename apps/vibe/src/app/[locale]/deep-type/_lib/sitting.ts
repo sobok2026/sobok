@@ -1,4 +1,4 @@
-import type { ItemAnswer, PersonaCode, WorkAnswer } from '@deep-type/model'
+import type { ItemAnswer, PersonaCode, PersonaSource, WorkAnswer } from '@deep-type/model'
 
 const STORAGE_KEY = 'sobok_deep_type_answers'
 
@@ -6,6 +6,8 @@ const STORAGE_KEY = 'sobok_deep_type_answers'
 // three parts, so they travel together rather than as a bare answer array.
 export type DeepTypeSitting = {
   declaredPersona: PersonaCode | null
+  /** How the four letters were reached. `unknown` whenever `declaredPersona` is null. */
+  personaSource: PersonaSource
   likert: ItemAnswer[]
   work: WorkAnswer[]
 }
@@ -17,7 +19,14 @@ export function readSitting(): DeepTypeSitting | null {
     if (!parsed || !Array.isArray(parsed.likert) || !Array.isArray(parsed.work)) {
       return null
     }
-    return { declaredPersona: parsed.declaredPersona ?? null, likert: parsed.likert, work: parsed.work }
+    const declaredPersona = parsed.declaredPersona ?? null
+    return {
+      declaredPersona,
+      likert: parsed.likert,
+      // A sitting written before the self-image branch existed carries no source, and every one of those was typed.
+      personaSource: declaredPersona ? (parsed.personaSource ?? 'declared') : 'unknown',
+      work: parsed.work,
+    }
   } catch {
     // Storage unavailable, or a payload written by an older instrument.
     return null

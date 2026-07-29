@@ -182,7 +182,10 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
                 required
                 type="email"
               />
-              <div className="mt-4 flex justify-center">
+              {/* The challenge arrives from a third-party script and mounts into a container that is zero
+                  height until then, so the button underneath jumps once the widget lands. Reserving the
+                  widget's own box (300x72) keeps the form still while it loads. */}
+              <div className="mt-4 flex min-h-18 justify-center">
                 <Turnstile
                   onError={() => setTurnstileToken('')}
                   onExpire={() => setTurnstileToken('')}

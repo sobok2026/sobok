@@ -126,7 +126,9 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
               the right it describes exists whether or not the buyer agrees to it. */}
           <p className="mt-3 text-page-ink/54 text-xs leading-relaxed">{paywall.minorNotice}</p>
 
-          <div className="mt-4 flex justify-center">
+          {/* Same reservation as the re-open form: the widget mounts late, so its box is held open from the
+              first paint rather than pushing the pay button down mid-read. */}
+          <div className="mt-4 flex min-h-18 justify-center">
             <Turnstile
               onError={() => setTurnstileToken('')}
               onExpire={() => setTurnstileToken('')}

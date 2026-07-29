@@ -28,8 +28,8 @@ export const deepTypeContent = createDeepTypeContent({
     closestAnswerHint: '딱 맞는 답이 없으면 가장 가까운 쪽을 골라요.',
     declareBody:
       '평소 나를 소개할 때 써 온 네 글자를 골라요. 채점에는 넣지 않고 검사에서 나온 글자와 어디서 갈리는지 볼 때만 써요.',
-    declareNotice: '모르겠어요를 골라도 나머지는 그대로 다 나와요. 알던 네 글자와 비교하는 대목만 빠져요.',
     declareTitle: '알고 있는 네 글자가 있나요?',
+    declareUnknownHint: '네 문항이면 같이 찾을 수 있어요',
     declareUnknownLabel: '모르겠어요',
     landingCta: '무료로 내 세계관 직업 보기',
     landingNote: `답만 고르면 돼요. 약 ${FREE_EFFORT.minMinutes}~${FREE_EFFORT.maxMinutes}분이면 내 세계관 직업이 나와요.`,
@@ -280,6 +280,29 @@ export const deepTypeContent = createDeepTypeContent({
     ],
     stickyCta: '무료로 내 세계관 직업 보기',
     offerNote: `무료 검사 결과는 결제 없이 다 볼 수 있어요. 일과 연결한 심층 리포트는 원할 때 고르는 ${PRICE_KO} 유료 상품이고 정기결제는 없어요.`,
+  },
+  selfImage: {
+    segmentLabel: '알던 네 글자',
+    title: '네 글자를 같이 찾아볼까요?',
+    body: '네 문항이면 돼요. 실제로 어떻게 했는지가 아니라 스스로 어떤 사람이라고 생각하는지만 고르면 돼요.',
+    items: [
+      {
+        prompt: '사람들 사이에 있을 때 나는 어떤 사람이라고 생각해요?',
+        options: ['먼저 말을 꺼내는 편이에요', '듣고 있다가 필요할 때 꺼내는 편이에요'],
+      },
+      {
+        prompt: '무언가를 설명할 때 나는 어떤 사람이라고 생각해요?',
+        options: ['실제로 있었던 일부터 말하는 편이에요', '그래서 무슨 뜻인지부터 말하는 편이에요'],
+      },
+      {
+        prompt: '결정을 내릴 때 나는 어떤 사람이라고 생각해요?',
+        options: ['기준이 맞는지 먼저 보는 편이에요', '사람들이 어떻게 받아들일지 먼저 보는 편이에요'],
+      },
+      {
+        prompt: '일을 시작할 때 나는 어떤 사람이라고 생각해요?',
+        options: ['먼저 정해 두고 움직이는 편이에요', '해 보면서 맞춰 가는 편이에요'],
+      },
+    ],
   },
   gemNames: {
     ROVU: '루비',

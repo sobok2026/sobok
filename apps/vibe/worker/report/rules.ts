@@ -901,7 +901,7 @@ const CONTEXT_SHIFT_CLOSING =
 // measured persona, so there is no second reading to contrast against — an omitted section is the honest shape.
 function contextShiftBlocks(input: EngineReportInput): readonly EngineBlockOf<'contextShift', ContextShiftData>[] {
   const declaredCode = input.declaredPersona
-  if (!declaredCode || input.refined.personaSource !== 'declared') {
+  if (!declaredCode || input.refined.personaSource === 'unknown') {
     return []
   }
 

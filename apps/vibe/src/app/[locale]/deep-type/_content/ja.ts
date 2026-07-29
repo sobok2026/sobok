@@ -13,8 +13,8 @@ export const deepTypeContent = createDeepTypeContent({
     backCta: '',
     closestAnswerHint: '',
     declareBody: '',
-    declareNotice: '',
     declareTitle: '',
+    declareUnknownHint: '',
     declareUnknownLabel: '',
     landingCta: '',
     landingNote: '',
@@ -146,6 +146,17 @@ export const deepTypeContent = createDeepTypeContent({
     steps: [],
     stickyCta: '',
     offerNote: '',
+  },
+  selfImage: {
+    segmentLabel: '',
+    title: '',
+    body: '',
+    items: [
+      { prompt: '', options: ['', ''] },
+      { prompt: '', options: ['', ''] },
+      { prompt: '', options: ['', ''] },
+      { prompt: '', options: ['', ''] },
+    ],
   },
   gemNames: {
     ROVU: '',

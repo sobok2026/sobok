@@ -4,7 +4,6 @@ import type { OptionIndex } from '@deep-type/model'
 import { ArrowLeft } from '@mynaui/icons-react'
 import type { ReactNode } from 'react'
 import { cn } from '@/utils/cn'
-import type { QuestionContent } from '../_lib/types'
 import { type ProgressSegment, QuizProgress } from './quiz-progress'
 
 type QuizViewProps = {
@@ -15,10 +14,14 @@ type QuizViewProps = {
   onAnswer: (optionIndex: OptionIndex) => void
   onBack?: () => void
   progress: { answered: number; segments: readonly ProgressSegment[] }
-  question: QuestionContent
+  /**
+   * Every scored item is four options, but the option count is read off the question rather than fixed here.
+   * The self-image branch asks four binary questions through this same view, and the alternative was a second
+   * component that looks like this one until someone edits one of them.
+   */
+  question: { options: readonly string[]; prompt: string }
 }
 
-const OPTION_INDEXES = [0, 1, 2, 3] as const satisfies readonly OptionIndex[]
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 /**
@@ -40,17 +43,17 @@ export function QuizView({ backLabel, banner, hint, onAnswer, onBack, progress, 
         <div className="mt-6 rounded-3xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:rounded-4xl sm:p-8">
           <h1 className="break-keep font-black text-xl leading-snug">{question.prompt}</h1>
           <div className="mt-7 grid gap-3">
-            {OPTION_INDEXES.map((index) => (
+            {question.options.map((option, index) => (
               <button
                 className={cn(
                   'min-h-13 rounded-3xl border border-page-border bg-white p-4 text-left font-bold leading-6 transition-colors hover:border-page-accent/50 hover:bg-page-soft/50',
                   focusClassName,
                 )}
-                key={index}
-                onClick={() => onAnswer(index)}
+                key={option}
+                onClick={() => onAnswer(index as OptionIndex)}
                 type="button"
               >
-                {question.options[index]}
+                {option}
               </button>
             ))}
           </div>

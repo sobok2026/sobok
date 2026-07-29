@@ -41,7 +41,12 @@ export type WorkAnswer = {
 }
 
 /** The four-letter self-declaration is offered, never measured. Only whether it was given survives scoring. */
-export type PersonaSource = 'declared' | 'unknown'
+/**
+ * How the four self-reported letters were obtained. `guided` came from the four self-image questions and
+ * `declared` was typed in; both are self-report and both feed the same comparison. `unknown` means the reader
+ * offered nothing, and it is the only value that omits the comparison from the report.
+ */
+export type PersonaSource = 'declared' | 'guided' | 'unknown'
 
 // Two band scales that must never merge. The free pass reports a provisional ruler, the paid pass a settled
 // one; a shared union would let a free screen render settled wording. `tie` is defensive only — see AxisScore.

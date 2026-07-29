@@ -113,6 +113,7 @@ export function ResultFlow({ content, locale }: ResultFlowProps) {
             answers: sitting.likert,
             declaredPersona: sitting.declaredPersona,
             locale,
+            personaSource: sitting.personaSource,
             workAnswers: sitting.work,
           }}
           onClose={() => dispatch({ type: 'CLOSE_PAYWALL' })}

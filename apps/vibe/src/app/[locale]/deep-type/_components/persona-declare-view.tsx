@@ -5,7 +5,9 @@ import { cn } from '@/utils/cn'
 import type { DeepTypeUiText } from '../_lib/types'
 
 type PersonaDeclareViewProps = {
-  onDeclare: (code: PersonaCode | null) => void
+  onDeclare: (code: PersonaCode) => void
+  /** Opens the four self-image questions for a reader who does not carry four letters around. */
+  onGuide: () => void
   ui: DeepTypeUiText
 }
 
@@ -17,9 +19,9 @@ const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 f
  *
  * '모름' is a full-width choice below the grid, not a small link. It is a legitimate answer — most people do not
  * carry four letters around — and burying it would push them into picking one they half-remember, which is worse
- * input than no input. The notice under it says what skipping costs, per O6, and the paywall repeats it.
+ * input than no input. It opens the four self-image questions, so nothing is lost by admitting it.
  */
-export function PersonaDeclareView({ onDeclare, ui }: PersonaDeclareViewProps) {
+export function PersonaDeclareView({ onDeclare, onGuide, ui }: PersonaDeclareViewProps) {
   return (
     <main className="flex flex-1 flex-col justify-center bg-page-bg px-safe py-10 text-page-ink" id="main-content">
       <div className="mx-auto w-full max-w-2xl py-4">
@@ -42,18 +44,21 @@ export function PersonaDeclareView({ onDeclare, ui }: PersonaDeclareViewProps) {
           ))}
         </div>
 
+        {/* '모름' used to end the branch here. It now opens four self-image questions instead, because the
+            comparison is worth more than the twenty seconds and a reader who does not know four letters is not
+            a reader with nothing to say about themselves. There is no third choice: an opt-out beside this one
+            would be offering the dead end back, and it would cost a report section to save twenty seconds. */}
         <button
           className={cn(
-            'mt-3 min-h-13 w-full rounded-2xl border border-page-border border-dashed bg-transparent font-bold text-page-ink/64 text-sm transition-colors hover:border-page-ink/40 hover:text-page-ink',
+            'mt-3 min-h-14 w-full rounded-2xl border border-page-border bg-page-surface px-5 text-left font-bold text-page-ink transition-colors hover:border-page-accent hover:text-page-accent',
             focusClassName,
           )}
-          onClick={() => onDeclare(null)}
+          onClick={onGuide}
           type="button"
         >
           {ui.declareUnknownLabel}
+          <span className="mt-0.5 block font-medium text-page-ink/54 text-xs">{ui.declareUnknownHint}</span>
         </button>
-
-        <p className="mt-4 rounded-3xl bg-page-soft px-5 py-4 text-page-ink/60 text-sm leading-6">{ui.declareNotice}</p>
       </div>
     </main>
   )

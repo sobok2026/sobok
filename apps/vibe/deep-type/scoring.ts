@@ -55,6 +55,7 @@ export function scoreBaseAssessment(
   baseAnswers: readonly ItemAnswer[],
   workAnswers: readonly WorkAnswer[],
   declaredPersona: PersonaCode | null,
+  declaredSource: Exclude<PersonaSource, 'unknown'> = 'declared',
 ): FreeAssessmentProfile {
   const byId = validateAndIndex(FREE_LIKERT_ITEMS, baseAnswers)
   const tallies = tallyAxes(FREE_LIKERT_ITEMS, byId)
@@ -71,7 +72,7 @@ export function scoreBaseAssessment(
       code: TYPE_AXES.map((axis) => requirePole(axis, tallies[axis])).join('') as InnerCode,
     },
     instrumentVersion: INSTRUMENT_VERSION,
-    personaSource: declaredPersona ? 'declared' : 'unknown',
+    personaSource: declaredPersona ? declaredSource : 'unknown',
     tier: 'free',
     work: scoreFreeWorkProfile(workAnswers),
   }
@@ -103,6 +104,7 @@ export function scoreRefinedAssessment(
   refinementAnswers: readonly ItemAnswer[],
   workAnswers: readonly WorkAnswer[],
   declaredPersona: PersonaCode | null,
+  declaredSource: Exclude<PersonaSource, 'unknown'> = 'declared',
 ): RefinedAssessmentProfile {
   const baseById = validateAndIndex(FREE_LIKERT_ITEMS, baseAnswers)
   const refinementById = validateAndIndex(PAID_LIKERT_ITEMS, refinementAnswers)
@@ -139,7 +141,7 @@ export function scoreRefinedAssessment(
       code: TYPE_AXES.map((axis) => requirePole(axis, baseTallies[axis])).join('') as InnerCode,
     },
     instrumentVersion: INSTRUMENT_VERSION,
-    personaSource: declaredPersona ? 'declared' : 'unknown',
+    personaSource: declaredPersona ? declaredSource : 'unknown',
     tier: 'refined',
     work: scoreRefinedWorkProfile(workAnswers),
   }

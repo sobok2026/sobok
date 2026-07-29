@@ -33,8 +33,8 @@ export type DeepTypeUiText = {
   closestAnswerHint: string
   declareBody: string
   /** O6: what choosing '모름' costs, said here and again on the paywall. Never a section count (D5). */
-  declareNotice: string
   declareTitle: string
+  declareUnknownHint: string
   declareUnknownLabel: string
   landingCta: string
   landingNote: string
@@ -116,9 +116,10 @@ export type DeepTypePaywallContent = {
   resumeNote: string
   title: string
   /**
-   * O6, second half. `ui.declareNotice` says the same thing at the picker; this one says it where money is
-   * about to move, which is where a buyer who forgot the picker would otherwise find out afterwards. It
-   * describes what is missing without counting anything (D5).
+   * O6. The picker no longer has a way to arrive here — '모름' builds a code instead of skipping — so this
+   * reaches only a sitting stored before that branch existed, where `declaredPersona` is null. Kept because
+   * such a sitting can still be resumed, and because the API accepts a null code from any caller. It describes
+   * what is missing without counting anything (D5).
    */
   unknownPersonaNote: string
   unlockCta: string
@@ -168,6 +169,19 @@ export type DeepTypeLandingContent = {
   stickyCta: string
 }
 
+/**
+ * The four questions someone answers instead of picking a code they do not know. Order follows
+ * `SELF_IMAGE_AXES`, and `options` is [first pole, second pole] for that axis — positional on both counts, so a
+ * translator reorders nothing.
+ */
+export type DeepTypeSelfImageContent = {
+  body: string
+  items: readonly { options: readonly [string, string]; prompt: string }[]
+  /** Shown on the progress rail, so it has to be short. The title is for the banner. */
+  segmentLabel: string
+  title: string
+}
+
 export type DeepTypeContent = {
   axes: Record<AxisId, AxisContent>
   gemNames: Record<GemCode, string>
@@ -177,5 +191,6 @@ export type DeepTypeContent = {
   paywall: DeepTypePaywallContent
   /** Free-tier question text only. The paid 37 arrive through `_content/paid-questions.ts`. */
   questions: Record<string, QuestionContent>
+  selfImage: DeepTypeSelfImageContent
   ui: DeepTypeUiText
 }

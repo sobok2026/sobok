@@ -13,6 +13,7 @@ import { BaseAnswersSchema, BaseWorkAnswersSchema, DeclaredPersonaSchema } from 
 const SessionBody = z.object({
   answers: BaseAnswersSchema,
   declaredPersona: DeclaredPersonaSchema.default(null),
+  personaSource: z.enum(['declared', 'guided']).default('declared'),
   locale: z.enum(['ko', 'en', 'ja', 'zh']),
   workAnswers: BaseWorkAnswersSchema,
 })
@@ -31,7 +32,12 @@ route.post('/', async (c) => {
 
   let profile: AssessmentProfile
   try {
-    profile = scoreBaseAssessment(parsed.data.answers, parsed.data.workAnswers, parsed.data.declaredPersona)
+    profile = scoreBaseAssessment(
+      parsed.data.answers,
+      parsed.data.workAnswers,
+      parsed.data.declaredPersona,
+      parsed.data.personaSource,
+    )
   } catch {
     return problem(422, 'invalid-request')
   }

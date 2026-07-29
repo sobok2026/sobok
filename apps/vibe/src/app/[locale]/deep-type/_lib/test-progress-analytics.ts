@@ -1,5 +1,6 @@
 'use client'
 
+import type { PersonaSource } from '@deep-type/model'
 import { FREE_ITEM_COUNT } from '@deep-type/questionnaire'
 import { track } from '@sobok/analytics/browser'
 import type { Locale } from '@sobok/domain/locale'
@@ -47,6 +48,6 @@ export function trackFreeProgress(answered: number, segment: FreeSegment, locale
 }
 
 /** The picker is the first thing after the landing CTA, so its own drop-off is the funnel's first step. */
-export function trackFreeDeclaration(personaSource: 'declared' | 'unknown', locale: Locale): void {
+export function trackFreeDeclaration(personaSource: PersonaSource, locale: Locale): void {
   track('deeptype_free_declared', { locale, persona_source: personaSource })
 }
