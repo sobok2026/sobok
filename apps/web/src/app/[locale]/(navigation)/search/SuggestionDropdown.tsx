@@ -68,20 +68,23 @@ export default function SuggestionDropdown<T extends SuggestionItem = Suggestion
             <Loader2 className="size-5 text-foreground-muted animate-spin" />
           </div>
         )}
-        <ul
+        <div
           aria-busy={isFetching}
-          className="list-none p-0 transition aria-busy:opacity-60 text-sm font-medium"
+          className="transition aria-busy:opacity-60 text-sm font-medium"
           id={id}
           role="listbox"
         >
           {items.map((item, index) => (
-            <li
+            // Focus stays in the search input and moves the selection with aria-activedescendant, so an option is
+            // only ever focused programmatically — hence tabIndex -1 rather than 0.
+            <div
               aria-selected={selectedIndex === index}
               className="flex min-w-0 cursor-pointer items-center gap-1.5 overflow-x-auto p-4 py-2.5 text-left transition hover:bg-surface-2/70 aria-selected:bg-surface-2 scrollbar-hidden"
               id={`${id}-option-${index}`}
               key={`${item.value}-${index}`}
               onClick={() => onSelect(item, index)}
               role="option"
+              tabIndex={-1}
             >
               {item.icon}
               {item.value.endsWith(':') ? (
@@ -100,9 +103,9 @@ export default function SuggestionDropdown<T extends SuggestionItem = Suggestion
                 </>
               )}
               {renderRightContent?.(item, index)}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
         {items.length === 0 && searchTerm && !isLoading && (
           <div className="text-center py-4 text-foreground-subtle text-sm">{t('noResults')}</div>
         )}

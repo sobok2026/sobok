@@ -26,15 +26,10 @@
         "noSvgWithoutTitle": "off",
         // False positives: a <label> wrapping a custom component (e.g. <Toggle/>) isn't recognized as a control.
         "noLabelWithoutControl": "off",
-        // a11y findings concentrated in seasonal/toy pages & custom widgets — visible but non-blocking until addressed.
+        // Auth forms and dialogs open with the caret in their first field on purpose.
         "noAutofocus": "off",
-        "noNoninteractiveElementToInteractiveRole": "warn",
-        "noRedundantAlt": "warn",
         "noStaticElementInteractions": "off",
-        "useAriaPropsSupportedByRole": "warn",
-        "useFocusableInteractive": "warn",
-        "useKeyWithClickEvents": "off",
-        "useSemanticElements": "warn"
+        "useKeyWithClickEvents": "off"
       },
       "correctness": {
         // React Compiler manages memoization; manual effect deps are often intentional — visible but non-blocking.
@@ -51,8 +46,6 @@
       "suspicious": {
         // Intentional index keys for static / generated lists (skeletons, rating stars, seasonal effects).
         "noArrayIndexKey": "off",
-        // Idiomatic regex exec-loops / PRNG step / dual-assignment — visible but non-blocking.
-        "noAssignInExpressions": "warn",
         // Bootstrap (otel.ts / server.ts) reads process.env directly by design; app code uses the typed @sobok/env package.
         "noUndeclaredEnvVars": "off"
       }

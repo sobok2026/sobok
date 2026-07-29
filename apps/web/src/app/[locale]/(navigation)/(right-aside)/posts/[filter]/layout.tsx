@@ -21,7 +21,7 @@ export default async function Layout({ params, children }: LayoutProps<'/[locale
   const { filter } = validation.data
   const isrecommend = filter === PostFilterParams.RECOMMEND
   const isFollowing = filter === PostFilterParams.FOLLOWING
-  const barClassName = 'absolute bottom-0 left-1/2 -translate-x-1/2 h-1 rounded w-14 aria-selected:bg-surface-3'
+  const barClassName = 'absolute bottom-0 left-1/2 -translate-x-1/2 h-1 rounded w-14 data-[selected=true]:bg-surface-3'
 
   return (
     <>
@@ -39,11 +39,11 @@ export default async function Layout({ params, children }: LayoutProps<'/[locale
         >
           <Link aria-selected={isrecommend} href="recommend">
             {t('recommend')}
-            <div aria-selected={isrecommend} className={barClassName} />
+            <div className={barClassName} data-selected={isrecommend} />
           </Link>
           <Link aria-selected={isFollowing} href="following">
             {t('following')}
-            <div aria-selected={isFollowing} className={barClassName} />
+            <div className={barClassName} data-selected={isFollowing} />
           </Link>
         </div>
       </NavigationWithMobileMenu>

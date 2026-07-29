@@ -44,7 +44,6 @@ export function getRatingOrderByClauses(sort: RatingSort): SQL[] {
     case RatingSort.RATING_DESC:
       return [desc(userRatingTable.rating), desc(userRatingTable.updatedAt), desc(userRatingTable.mangaId)]
     case RatingSort.UPDATED_DESC:
-    default:
       return [desc(userRatingTable.updatedAt), desc(userRatingTable.mangaId)]
   }
 }
@@ -83,7 +82,6 @@ function getRatingCursorCondition(sort: RatingSort, cursor: RatingCursor) {
         ),
       )!
     case RatingSort.UPDATED_DESC:
-    default:
       return or(
         lt(userRatingTable.updatedAt, cursorTime),
         and(eq(userRatingTable.updatedAt, cursorTime), lt(userRatingTable.mangaId, cursor.mangaId)),
@@ -100,7 +98,6 @@ function getRatingCursorTimestamp(sort: RatingSort, row: RatingRow) {
     case RatingSort.RATING_ASC:
     case RatingSort.RATING_DESC:
     case RatingSort.UPDATED_DESC:
-    default:
       return row.updatedAt.getTime()
   }
 }

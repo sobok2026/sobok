@@ -111,10 +111,7 @@ export default function NotificationCriteriaCard({ criterion, onEdit }: Notifica
       data-active={criterion.isActive}
     >
       <div className="flex items-start gap-4">
-        <div
-          aria-selected={criterion.isActive}
-          className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl aria-selected:bg-brand/10 bg-surface-2/50 flex items-center justify-center transition"
-        >
+        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl group-data-[active=true]/card:bg-brand/10 bg-surface-2/50 flex items-center justify-center transition">
           {criterion.isActive ? (
             <IconBell className="h-5 w-5 text-brand" />
           ) : (

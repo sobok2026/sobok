@@ -90,6 +90,7 @@ export default function ViewToggle({ className = '', onViewChange, view }: Props
         const label = t(labelKey)
 
         return (
+          // biome-ignore lint/a11y/useSemanticElements: <input type="radio"> can carry neither the sliding indicator nor the icon+label content this segmented control renders, so it implements the APG radiogroup pattern in full instead — roving tabIndex, aria-checked, and the Arrow/Home/End handling above.
           <button
             aria-checked={view === value}
             className="relative z-10 inline-flex min-h-8 min-w-12 touch-manipulation select-none items-center justify-center gap-0.5 rounded-[0.65rem] px-2 py-1 text-sm font-medium text-foreground-muted transition hover:text-foreground active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-checked:font-semibold aria-checked:text-foreground sm:min-w-[3.4rem] sm:px-2.5"
