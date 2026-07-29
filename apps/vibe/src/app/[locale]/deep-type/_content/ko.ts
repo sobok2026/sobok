@@ -32,7 +32,7 @@ export const deepTypeContent = createDeepTypeContent({
     declareTitle: '알고 있는 네 글자가 있나요?',
     declareUnknownLabel: '모르겠어요',
     landingCta: '무료로 내 세계관 직업 보기',
-    landingNote: `무료 · 약 ${FREE_EFFORT.minMinutes}~${FREE_EFFORT.maxMinutes}분 · 끝나면 바로 내 세계관 직업 · 심층 리포트 ${PRICE_KO} 한 번 결제 · 정기결제 없음`,
+    landingNote: `약 ${FREE_EFFORT.minMinutes}~${FREE_EFFORT.maxMinutes}분이면 내 세계관 직업이 나와요. 심층 리포트는 원할 때 ${PRICE_KO} 한 번만 내면 되고 정기결제는 없어요.`,
     landingSubtitle:
       '같은 일을 해도 힘이 붙는 자리는 사람마다 달라요. 답을 고르면 속유형 네 글자와 마음의 코어 네 글자를 읽어 내 세계관 직업과 지치는 조건에 이름을 붙여 줘요.',
     landingTitle: '내 힘이 오래 가는 자리는 따로 있어요',
@@ -247,7 +247,7 @@ export const deepTypeContent = createDeepTypeContent({
       { label: '걸리는 시간', value: `약 ${FREE_EFFORT.minMinutes}~${FREE_EFFORT.maxMinutes}분` },
       { label: '결과 확인', value: '바로' },
     ],
-    ctaMeta: '가입도 이메일도 없이 바로 시작해요.',
+    ctaMeta: '가입도 결제 정보도 없이 바로 시작해요.',
     getsTitle: '결제 없이 여기까지 바로 나와요.',
     getsBodies: [
       '에너지 방향 · 정보 초점 · 판단 기준 · 실행 방식 네 축이 어느 쪽으로 기울었는지 글자로 나와요.',
@@ -278,9 +278,8 @@ export const deepTypeContent = createDeepTypeContent({
       },
       { title: '내 세계관 직업과 지치는 조건을 바로 받아요.', duration: '바로 확인' },
     ],
-    closingCtaMeta: `무료 · 약 ${FREE_EFFORT.minMinutes}~${FREE_EFFORT.maxMinutes}분 · 세계관 직업까지 바로 확인`,
     stickyCta: '무료로 내 세계관 직업 보기',
-    legal: `무료 검사 결과는 결제 없이 다 볼 수 있어요. 실제 일과 연결한 심층 리포트는 ${PRICE_KO} 한 번 결제예요. 겉속유형은 자기 이해를 돕는 콘텐츠이고 진단이 아니에요.`,
+    legal: '겉속유형은 자기 이해를 돕는 콘텐츠이고 진단이 아니에요.',
   },
   gemNames: {
     ROVU: '루비',

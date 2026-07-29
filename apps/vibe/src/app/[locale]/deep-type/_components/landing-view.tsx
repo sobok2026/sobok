@@ -127,16 +127,17 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
           </ol>
         </Section>
 
+        {/* The closing CTA carries the full offer line, not a second reassurance. The hero button already said
+            free and no-signup, and repeating it here put two lines of the same promise under one button while
+            the price — the one thing a reader still needs before committing — sat below both. */}
         <CtaBlock
           className="mt-12"
+          ctaRole="closing"
           label={ui.landingCta}
           locale={locale}
-          meta={landing.closingCtaMeta}
+          meta={ui.landingNote}
           onStart={onStart}
-          ctaRole="closing"
         />
-
-        <p className="mt-4 text-center text-page-ink/48 text-sm">{ui.landingNote}</p>
 
         <Link
           className={cn(
@@ -197,7 +198,7 @@ function CtaBlock({
         {label}
         <ArrowRight aria-hidden="true" className="h-4 w-4" stroke={1.8} />
       </Link>
-      <p className="mt-3 text-center text-page-ink/48 text-sm">{meta}</p>
+      <p className="mt-3 text-balance text-center text-page-ink/48 text-sm leading-6">{meta}</p>
     </div>
   )
 }

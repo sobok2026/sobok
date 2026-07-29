@@ -144,7 +144,6 @@ export const deepTypeContent = createDeepTypeContent({
     asks: [],
     stepsTitle: '',
     steps: [],
-    closingCtaMeta: '',
     stickyCta: '',
     legal: '',
   },

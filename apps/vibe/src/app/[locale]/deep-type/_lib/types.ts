@@ -154,7 +154,6 @@ export type MethodologyContent = {
 export type DeepTypeLandingContent = {
   /** Question a visitor already has, and the sentence that says this test takes it seriously. */
   asks: readonly { body: string; question: string }[]
-  closingCtaMeta: string
   ctaMeta: string
   /** Cost, time, and when the result arrives. Three, because a fourth stops being scannable. */
   facts: readonly { label: string; value: string }[]
