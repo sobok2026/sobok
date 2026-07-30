@@ -2,6 +2,15 @@
   --card-radius: 1.75rem;
   --card-ink: #170d32;
   --card-gold: #f2c560;
+
+  /* Alpha derivations, so retuning a source color propagates instead of stranding literals here. */
+  --card-gold-line: color-mix(in srgb, var(--card-gold) 34%, transparent);
+  --card-gold-line-soft: color-mix(in srgb, var(--card-gold) 20%, transparent);
+  --card-gold-glow: color-mix(in srgb, var(--card-gold) 20%, transparent);
+  --card-brand-veil: color-mix(in srgb, var(--color-brand) 16%, transparent);
+  --card-brand-glow: color-mix(in srgb, var(--color-brand) 12%, transparent);
+  --card-brand-ring: color-mix(in srgb, var(--color-brand) 70%, transparent);
+
   isolation: isolate;
 }
 
@@ -16,24 +25,6 @@
     radial-gradient(circle at 50% 72%, rgb(255 193 214 / 8%), transparent 34rem);
 }
 
-.page::after {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  content: '';
-  opacity: 0.14;
-  background-image:
-    radial-gradient(circle at 20% 40%, white 0 1px, transparent 1.5px),
-    radial-gradient(circle at 80% 20%, white 0 1px, transparent 1.5px);
-  background-position:
-    0 0,
-    1.75rem 1.25rem;
-  background-size:
-    4rem 4rem,
-    5rem 5rem;
-}
-
 .sampleChip {
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 10%),
@@ -42,122 +33,166 @@
 
 .questionOption {
   min-height: 2.75rem;
-  border: 1px solid rgb(255 255 255 / 10%);
+  border: 1px solid var(--color-border);
   background: rgb(255 255 255 / 4%);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 4%);
 }
 
-.questionOption:hover {
-  border-color: rgb(245 188 255 / 32%);
-  background: rgb(245 188 255 / 8%);
+/* Pointer feedback stays neutral. The brand hue means "picked" and nothing else, so hovering an
+   unpicked option can never read as a second selection. */
+@media (hover: hover) {
+  .questionOption:hover {
+    border-color: var(--color-border-strong);
+    background: rgb(255 255 255 / 9%);
+  }
 }
 
-.questionOptionSelected {
-  border-color: rgb(245 188 255 / 55%);
+.questionOption:active {
+  background: rgb(255 255 255 / 14%);
+}
+
+.questionOption:focus-visible {
+  outline: 2px solid var(--card-brand-ring);
+  outline-offset: 2px;
+}
+
+/* A flat fill, not a gradient: `transition` animates background-color but not background-image, so
+   the gradient used to snap into place while the border eased. */
+.questionOptionSelected,
+.questionOptionSelected:active {
   color: #fff7ff;
-  background: linear-gradient(135deg, rgb(245 188 255 / 22%), rgb(201 168 255 / 12%));
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 14%),
-    0 8px 22px rgb(93 52 125 / 18%);
+  border-color: color-mix(in srgb, var(--color-brand) 55%, transparent);
+  background: color-mix(in srgb, var(--color-brand) 18%, transparent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 14%);
 }
 
+/* Without this the hover rule outranks the selected rule on specificity and washes it out. */
+@media (hover: hover) {
+  .questionOptionSelected:hover {
+    border-color: color-mix(in srgb, var(--color-brand) 68%, transparent);
+    background: color-mix(in srgb, var(--color-brand) 24%, transparent);
+  }
+}
+
+/* The pack sits in the same column as the question card, so it shares that card's surface and
+   radius. Its weight comes from elevation and from the card stack, not from a competing palette. */
 .pack {
   position: relative;
-  overflow: hidden;
-  border: 1px solid rgb(242 197 96 / 32%);
-  background:
-    radial-gradient(circle at 50% 15%, rgb(245 188 255 / 20%), transparent 42%),
-    linear-gradient(155deg, rgb(44 25 78 / 96%), rgb(17 8 39 / 98%));
+  border: 1px solid var(--color-border-2);
+  background: radial-gradient(110% 72% at 50% -12%, var(--card-brand-veil), transparent 62%), var(--color-surface-2);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 12%),
-    inset 0 -18px 42px rgb(2 0 10 / 30%),
-    0 24px 70px rgb(3 0 14 / 42%);
+    inset 0 1px 0 rgb(255 255 255 / 10%),
+    0 18px 48px rgb(3 0 14 / 32%);
 }
 
-.pack::before,
-.pack::after {
-  position: absolute;
-  inset-inline: 1.25rem;
-  height: 1px;
-  content: '';
-  background: linear-gradient(90deg, transparent, rgb(242 197 96 / 55%), transparent);
+/* Hangul must not break inside an eojeol. Scoped to ko because zh/ja rely on breaking between
+   characters — forbidding it there would leave a long sentence with nowhere to wrap. */
+.pack:lang(ko) {
+  word-break: keep-all;
 }
 
-.pack::before {
-  top: 1.25rem;
-}
-
-.pack::after {
-  bottom: 1.25rem;
-}
-
-.packEmblem {
+.packStack {
   position: relative;
+  height: 10rem;
+}
+
+/* Fanned face-down cards in the real 3:4 ratio, sharing the card back's surface, so the preview
+   looks like the thing it opens into. */
+.packCard {
+  --fan-x: 0rem;
+  --fan-y: 0rem;
+  --fan-rotate: 0deg;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
   display: grid;
-  width: 5.5rem;
-  height: 5.5rem;
-  margin-inline: auto;
+  width: 6rem;
   place-items: center;
+  aspect-ratio: 3 / 4;
   color: var(--card-gold);
-  border: 1px solid rgb(242 197 96 / 38%);
-  border-radius: 999px;
-  background: radial-gradient(circle, rgb(242 197 96 / 16%), transparent 68%);
-  box-shadow:
-    0 0 0 0.5rem rgb(242 197 96 / 4%),
-    0 0 42px rgb(242 197 96 / 18%);
+  border: 1px solid var(--card-gold-line-soft);
+  border-radius: 0.6rem;
+  box-shadow: 0 10px 26px rgb(3 0 14 / 45%);
+  transform: translate(-50%, -50%) translate(var(--fan-x), var(--fan-y)) rotate(var(--fan-rotate));
 }
 
-.packEmblem::before,
-.packEmblem::after {
+.packCard:nth-child(1) {
+  --fan-x: -3rem;
+  --fan-rotate: -11deg;
+}
+
+.packCard:nth-child(2) {
+  --fan-x: 3rem;
+  --fan-rotate: 11deg;
+}
+
+.packCard:nth-child(3) {
+  --fan-y: -0.35rem;
+
+  z-index: 2;
+  border-color: var(--card-gold-line);
+}
+
+/* Only the front card carries the inner frame, matching the real card back at reduced scale. */
+.packCard:nth-child(3)::before {
   position: absolute;
-  width: 1.5rem;
-  height: 1.5rem;
+  inset: 0.3rem;
   content: '';
-  border: 1px solid rgb(242 197 96 / 22%);
-  transform: rotate(45deg);
+  border: 1px solid var(--card-gold-line-soft);
+  border-radius: 0.35rem;
 }
 
-.packEmblem::before {
-  top: -0.8rem;
-  left: -0.5rem;
+.packStackReady .packCard {
+  animation: packFan 620ms cubic-bezier(0.34, 1.4, 0.5, 1) both;
 }
 
-.packEmblem::after {
-  right: -0.35rem;
-  bottom: -0.7rem;
+.packStackReady .packCard:nth-child(1) {
+  animation-delay: 60ms;
 }
 
-.stackPreview {
-  position: relative;
-  width: 7.5rem;
-  height: 3rem;
-  margin: 1.5rem auto 0;
+.packStackReady .packCard:nth-child(2) {
+  animation-delay: 100ms;
 }
 
-.stackPreview span {
+.packStackReady::after {
   position: absolute;
   inset: 0;
-  border: 1px solid rgb(242 197 96 / 22%);
-  border-radius: 0.75rem;
-  background: linear-gradient(145deg, #2f1a53, #170d32);
+  z-index: 0;
+  pointer-events: none;
+  content: '';
+  background: radial-gradient(58% 42% at 50% 50%, var(--card-gold-glow), transparent 70%);
+  animation: packSeal 900ms ease-out both;
 }
 
-.stackPreview span:nth-child(1) {
-  transform: translate(-0.7rem, 0.25rem) rotate(-5deg);
-}
-
-.stackPreview span:nth-child(2) {
-  transform: translate(0.7rem, 0.25rem) rotate(5deg);
-}
-
-.stackPreview span:nth-child(3) {
-  transform: translateY(-0.15rem);
-}
-
+/* Each slot mounts a fresh stage (keyed on the slot), so this deals the next card in rather than
+   letting the previous card's flip unwind — which would expose the incoming artwork mid-rotation. */
 .cardStage {
   width: min(82vw, 22rem);
   aspect-ratio: 3 / 4;
   perspective: 120rem;
+  animation: cardDeal 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cardDeal {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .cardButton {
@@ -212,16 +247,21 @@
   display: grid;
   place-items: center;
   color: var(--card-gold);
+}
+
+/* One surface definition for the face-down card, wherever it appears at whatever scale. */
+.cardBack,
+.packCard {
   background:
     radial-gradient(circle at 50% 35%, rgb(124 89 174 / 36%), transparent 36%),
-    radial-gradient(circle at 50% 100%, rgb(245 188 255 / 12%), transparent 50%), var(--card-ink);
+    radial-gradient(circle at 50% 100%, var(--card-brand-glow), transparent 50%), var(--card-ink);
 }
 
 .cardBack::before {
   position: absolute;
   inset: 0.8rem;
   content: '';
-  border: 1px solid rgb(242 197 96 / 34%);
+  border: 1px solid var(--card-gold-line);
   border-radius: calc(var(--card-radius) - 0.45rem);
   background-image:
     radial-gradient(circle at 18% 22%, rgb(255 255 255 / 60%) 0 1px, transparent 1.5px),
@@ -288,6 +328,21 @@
     rgb(17 8 39 / 84%) 82%,
     rgb(12 5 28 / 96%) 100%
   );
+}
+
+/* Only the rarity stamp is left in the report figure, so the scrim that existed to seat overlay
+   copy is dropped and the artwork shows undimmed. A local wash keeps the badge legible over
+   whatever the illustration puts in that corner. */
+.artworkStamp {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 1.1rem;
+  pointer-events: none;
+  background: radial-gradient(80% 42% at 100% 0%, rgb(12 5 28 / 62%), transparent 70%);
 }
 
 .artwork::after {
@@ -366,23 +421,52 @@
 
 .tomorrowCard {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
   background:
     radial-gradient(circle at 82% 18%, rgb(245 188 255 / 18%), transparent 34%),
     linear-gradient(145deg, rgb(38 21 67 / 96%), rgb(14 7 31 / 96%));
 }
 
-.tomorrowCard::after {
+/* Negative z-index inside the card's own stacking context: above its background, below the copy. */
+.tomorrowSigil {
   position: absolute;
-  top: -1.8rem;
-  right: -1rem;
-  width: 8rem;
-  height: 8rem;
-  content: '✦';
-  color: rgb(242 197 96 / 12%);
-  font-size: 7rem;
-  line-height: 1;
+  top: -1rem;
+  right: -0.5rem;
+  z-index: -1;
+  color: color-mix(in srgb, var(--card-gold) 12%, transparent);
+  font-size: 5.5rem;
   transform: rotate(12deg);
+}
+
+/* Fires once, when the last question is answered — the cards fan out past their resting spread and
+   settle back. `both` leaves the final frame in place, which equals the base transform. */
+@keyframes packFan {
+  0% {
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+  62% {
+    transform: translate(-50%, -50%) translate(calc(var(--fan-x) * 1.16), calc(var(--fan-y) * 1.16))
+      rotate(calc(var(--fan-rotate) * 1.16)) scale(1.04);
+  }
+  100% {
+    transform: translate(-50%, -50%) translate(var(--fan-x), var(--fan-y)) rotate(var(--fan-rotate)) scale(1);
+  }
+}
+
+@keyframes packSeal {
+  0% {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+  38% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.14);
+  }
 }
 
 @keyframes stellaShine {
@@ -399,6 +483,20 @@
 @media (prefers-reduced-motion: reduce) {
   .cardInner {
     transition-duration: 1ms;
+  }
+
+  /* Dropping the animation leaves the base transform, which is the animation's own final frame. */
+  .packStackReady .packCard {
+    animation: none;
+  }
+
+  .cardStage {
+    animation: cardFadeIn 200ms ease-out both;
+  }
+
+  .packStackReady::after {
+    display: none;
+    animation: none;
   }
 
   .rarityStella::before {
