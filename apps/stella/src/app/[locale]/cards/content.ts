@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 export const REPORT_SLOTS = ['self', 'love', 'work', 'choice'] as const
 export const RARITY_IDS = ['orbit', 'nebula', 'eclipse', 'stella'] as const
@@ -90,7 +90,7 @@ export type CardReportContent = {
 }
 
 export const CARD_REPORT_CONTENT = {
-  [Locale.KO]: {
+  ko: {
     meta: {
       title: '별자리 수호령 카드 리포트',
       description: '네 장의 별자리 수호령 카드를 열고 자기이해·사랑·일·결정에 관한 이야기를 읽어 보세요.',
@@ -225,7 +225,7 @@ export const CARD_REPORT_CONTENT = {
       prototypeNote: '결제·실제 판매 확률·알림은 연결하지 않은 경험 검증용 화면입니다.',
     },
   },
-  [Locale.EN]: {
+  en: {
     meta: {
       title: 'Zodiac Guardian Card Report',
       description: 'Open four zodiac guardian cards and read your story of self, love, work, and choice.',
@@ -360,7 +360,7 @@ export const CARD_REPORT_CONTENT = {
       prototypeNote: 'Payments, production odds, and reminders are not connected in this experience prototype.',
     },
   },
-  [Locale.JA]: {
+  ja: {
     meta: {
       title: '星座の守り子カードレポート',
       description: '4枚の星座の守り子カードをめくり、自分・恋・仕事・選択の物語を読んでみましょう。',
@@ -495,7 +495,7 @@ export const CARD_REPORT_CONTENT = {
       prototypeNote: '決済・実際の販売確率・通知は未接続の体験検証用画面です。',
     },
   },
-  [Locale.ZH]: {
+  zh: {
     meta: {
       title: '星座守护灵卡牌报告',
       description: '翻开四张星座守护灵卡，读一读关于自我、爱情、工作与选择的故事。',
