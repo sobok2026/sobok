@@ -2,8 +2,6 @@ import { FREE_DELIVERABLES_KO } from '@deep-type/free-deliverables'
 import { DEEP_TYPE_REPORT_OFFER, majorUnits, PRODUCT_NAME } from '@deep-type/offer'
 import type { Locale } from '@sobok/domain/locale'
 
-import { previousVersionsOf } from './legal-archive'
-
 // The contract states the price and the product name, so it reads them from the same constants the checkout
 // charges and the PortOne 결제창 prints. 전자상거래법 제13조 제2항 제2호·제3호 make both pre-contract disclosures,
 // and a literal here would be a second copy free to drift from the one the buyer is actually charged.
@@ -32,7 +30,6 @@ export type LegalDoc = {
   effectiveDate?: string
   updatedDate: string
   version?: string
-  previousVersions?: { label: string; href: string }[]
   sections: LegalSection[]
 }
 
@@ -47,8 +44,6 @@ export type LegalContent = {
   effectiveLabel: string
   versionLabel: string
   contentsLabel: string
-  previousVersionsLabel: string
-  noPreviousVersions: string
   contactLabel: string
   nav: LegalNav
   privacy: LegalDoc
@@ -62,8 +57,6 @@ export const LEGAL = {
     effectiveLabel: '시행일',
     versionLabel: '버전',
     contentsLabel: '목차',
-    previousVersionsLabel: '이전 버전',
-    noPreviousVersions: '이전 버전은 개정 시 이곳에 공개합니다.',
     contactLabel: '문의',
     nav: {
       privacy: '개인정보처리방침',
@@ -73,10 +66,9 @@ export const LEGAL = {
     privacy: {
       title: '개인정보처리방침',
       description: '로빈리뷰가 결타레 서비스에서 이용자의 정보를 어떻게 다루는지 안내합니다.',
-      effectiveDate: '2026년 8월 4일',
-      updatedDate: '2026년 7월 28일',
-      version: '1.1',
-      previousVersions: previousVersionsOf('ko', 'privacy'),
+      effectiveDate: '2026년 8월 1일',
+      updatedDate: '2026년 7월 30일',
+      version: '1.0',
       sections: [
         {
           heading: '무료 테스트와 유료 리포트의 구분',
@@ -177,10 +169,9 @@ export const LEGAL = {
     terms: {
       title: '이용약관',
       description: '로빈리뷰가 운영하는 결타레 서비스 이용에 적용되는 약관입니다.',
-      effectiveDate: '2026년 8월 4일',
-      updatedDate: '2026년 7월 28일',
-      version: '1.1',
-      previousVersions: previousVersionsOf('ko', 'terms'),
+      effectiveDate: '2026년 8월 1일',
+      updatedDate: '2026년 7월 30일',
+      version: '1.0',
       sections: [
         {
           heading: '서비스 소개',
@@ -288,10 +279,9 @@ export const LEGAL = {
     refund: {
       title: '청약철회·환불 정책',
       description: `${PRODUCT_NAME.ko}의 청약철회와 환불에 관한 사항을 안내합니다.`,
-      effectiveDate: '2026년 8월 4일',
-      updatedDate: '2026년 7월 28일',
-      version: '1.1',
-      previousVersions: previousVersionsOf('ko', 'refund'),
+      effectiveDate: '2026년 8월 1일',
+      updatedDate: '2026년 7월 30일',
+      version: '1.0',
       sections: [
         {
           heading: '청약철회 기간',
@@ -355,8 +345,6 @@ export const LEGAL = {
     effectiveLabel: 'Effective',
     versionLabel: 'Version',
     contentsLabel: 'Contents',
-    previousVersionsLabel: 'Previous versions',
-    noPreviousVersions: 'Previous versions will be published here when this document is revised.',
     contactLabel: 'Contact',
     nav: {
       privacy: 'Privacy Policy',
@@ -366,10 +354,9 @@ export const LEGAL = {
     privacy: {
       title: 'Privacy Policy',
       description: 'How Robin Review handles your information in vibe (DeepType).',
-      effectiveDate: 'August 4, 2026',
-      updatedDate: 'July 28, 2026',
-      version: '1.1',
-      previousVersions: previousVersionsOf('en', 'privacy'),
+      effectiveDate: 'August 1, 2026',
+      updatedDate: 'July 30, 2026',
+      version: '1.0',
       sections: [
         {
           heading: 'Free quizzes vs. the paid report',
@@ -470,10 +457,9 @@ export const LEGAL = {
     terms: {
       title: 'Terms of Service',
       description: 'The terms that apply to using vibe (DeepType), operated by Robin Review.',
-      effectiveDate: 'August 4, 2026',
-      updatedDate: 'July 28, 2026',
-      version: '1.1',
-      previousVersions: previousVersionsOf('en', 'terms'),
+      effectiveDate: 'August 1, 2026',
+      updatedDate: 'July 30, 2026',
+      version: '1.0',
       sections: [
         {
           heading: 'About the service',
@@ -581,10 +567,9 @@ export const LEGAL = {
     refund: {
       title: 'Withdrawal & Refund Policy',
       description: `How withdrawal and refunds work for the ${PRODUCT_NAME.en}.`,
-      effectiveDate: 'August 4, 2026',
-      updatedDate: 'July 28, 2026',
-      version: '1.1',
-      previousVersions: previousVersionsOf('en', 'refund'),
+      effectiveDate: 'August 1, 2026',
+      updatedDate: 'July 30, 2026',
+      version: '1.0',
       sections: [
         {
           heading: 'Withdrawal period',
@@ -644,8 +629,6 @@ export const LEGAL = {
     effectiveLabel: '施行日',
     versionLabel: 'バージョン',
     contentsLabel: '目次',
-    previousVersionsLabel: '過去のバージョン',
-    noPreviousVersions: '改定時に過去のバージョンをここで公開します。',
     contactLabel: 'お問い合わせ',
     nav: {
       privacy: 'プライバシーポリシー',
@@ -655,10 +638,9 @@ export const LEGAL = {
     privacy: {
       title: 'プライバシーポリシー',
       description: 'Robin Review が vibe（DeepType）で利用者の情報をどのように扱うかについてご案内します。',
-      effectiveDate: '2026年8月4日',
-      updatedDate: '2026年7月28日',
-      version: '1.1',
-      previousVersions: previousVersionsOf('ja', 'privacy'),
+      effectiveDate: '2026年8月1日',
+      updatedDate: '2026年7月30日',
+      version: '1.0',
       sections: [
         {
           heading: '無料診断と有料レポートの区別',
@@ -759,10 +741,9 @@ export const LEGAL = {
     terms: {
       title: '利用規約',
       description: 'Robin Review が運営する vibe（DeepType）のご利用に適用される規約です。',
-      effectiveDate: '2026年8月4日',
-      updatedDate: '2026年7月28日',
-      version: '1.1',
-      previousVersions: previousVersionsOf('ja', 'terms'),
+      effectiveDate: '2026年8月1日',
+      updatedDate: '2026年7月30日',
+      version: '1.0',
       sections: [
         {
           heading: 'サービスについて',
@@ -870,10 +851,9 @@ export const LEGAL = {
     refund: {
       title: '申込撤回・返金ポリシー',
       description: `${PRODUCT_NAME.ja}の申込撤回と返金に関する事項をご案内します。`,
-      effectiveDate: '2026年8月4日',
-      updatedDate: '2026年7月28日',
-      version: '1.1',
-      previousVersions: previousVersionsOf('ja', 'refund'),
+      effectiveDate: '2026年8月1日',
+      updatedDate: '2026年7月30日',
+      version: '1.0',
       sections: [
         {
           heading: '申込撤回の期間',
@@ -935,8 +915,6 @@ export const LEGAL = {
     effectiveLabel: '生效日期',
     versionLabel: '版本',
     contentsLabel: '目录',
-    previousVersionsLabel: '历史版本',
-    noPreviousVersions: '修订后将在此公布历史版本。',
     contactLabel: '联系方式',
     nav: {
       privacy: '隐私政策',
@@ -946,10 +924,9 @@ export const LEGAL = {
     privacy: {
       title: '隐私政策',
       description: '说明 Robin Review 在 vibe（DeepType）中如何处理您的信息。',
-      effectiveDate: '2026年8月4日',
-      updatedDate: '2026年7月28日',
-      version: '1.1',
-      previousVersions: previousVersionsOf('zh', 'privacy'),
+      effectiveDate: '2026年8月1日',
+      updatedDate: '2026年7月30日',
+      version: '1.0',
       sections: [
         {
           heading: '免费测试与付费报告的区分',
@@ -1048,10 +1025,9 @@ export const LEGAL = {
     terms: {
       title: '服务条款',
       description: '适用于使用由 Robin Review 运营的 vibe（DeepType）的条款。',
-      effectiveDate: '2026年8月4日',
-      updatedDate: '2026年7月28日',
-      version: '1.1',
-      previousVersions: previousVersionsOf('zh', 'terms'),
+      effectiveDate: '2026年8月1日',
+      updatedDate: '2026年7月30日',
+      version: '1.0',
       sections: [
         {
           heading: '关于服务',
@@ -1155,10 +1131,9 @@ export const LEGAL = {
     refund: {
       title: '撤回·退款政策',
       description: `说明 ${PRODUCT_NAME.zh}的撤回与退款事宜。`,
-      effectiveDate: '2026年8月4日',
-      updatedDate: '2026年7月28日',
-      version: '1.1',
-      previousVersions: previousVersionsOf('zh', 'refund'),
+      effectiveDate: '2026年8月1日',
+      updatedDate: '2026年7月30日',
+      version: '1.0',
       sections: [
         {
           heading: '撤回期限',

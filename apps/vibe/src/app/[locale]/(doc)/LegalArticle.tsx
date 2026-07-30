@@ -2,38 +2,19 @@ import { LEGAL_CONTACT_EMAIL, type LegalContent, type LegalDoc } from '@/content
 import Paragraph from './Paragraph'
 
 type Props = {
-  /**
-   * Set only by the archive route. A superseded document has to say so above its own first line — a reader who
-   * arrives from a search result or a saved link has nothing else on the page telling them which version they
-   * are reading, and the version number alone does not read as 'not the one that applies to you'.
-   */
-  archived?: { current: string; href: string; notice: string; version: string }
   doc: LegalDoc
   meta: LegalContent
 }
 
-export default function LegalArticle({ archived, doc, meta }: Props) {
+// No archived-version banner and no previous-versions list. Both existed for `/[locale]/legal/[version]/…`, and
+// that route cannot exist while the archive is empty: `output: export` treats a `generateStaticParams()` that
+// returns nothing as a missing one and fails the build. They come back with the first superseded document, which
+// is the commit that gives the route its first params.
+export default function LegalArticle({ doc, meta }: Props) {
   return (
     <main className="min-h-dvh bg-page-bg px-4 pt-[calc(4.5rem+var(--safe-area-top))] pb-24 text-page-ink sm:px-6 sm:pt-[calc(5rem+var(--safe-area-top))]">
       <article className="mx-auto max-w-2xl">
-        {archived ? (
-          <aside
-            className="mb-6 rounded-3xl border border-page-border bg-page-soft p-5 text-page-ink/70 text-sm leading-relaxed"
-            role="note"
-          >
-            <p>{archived.notice}</p>
-            <a
-              className="mt-2 inline-block font-semibold text-page-accent underline underline-offset-2 hover:text-page-ink"
-              href={archived.href}
-            >
-              {archived.current}
-            </a>
-          </aside>
-        ) : null}
-        <h1 className="font-bold text-3xl tracking-tight">
-          {doc.title}
-          {archived ? <span className="ml-2 font-normal text-page-ink/46 text-xl">v{archived.version}</span> : null}
-        </h1>
+        <h1 className="font-bold text-3xl tracking-tight">{doc.title}</h1>
         <p className="mt-3 text-page-ink/62">{doc.description}</p>
         <p className="mt-2 text-page-ink/46 text-sm">
           {meta.updatedLabel}: {doc.updatedDate}
@@ -78,27 +59,6 @@ export default function LegalArticle({ archived, doc, meta }: Props) {
             </a>
           </p>
         </section>
-
-        {/* An archived page does not list previous versions. It is one, and the banner above already carries
-            the only link a reader on this page needs. */}
-        {archived ? null : (
-          <section className="mt-10 border-page-border border-t pt-8">
-            <h2 className="mb-3 font-semibold text-page-ink text-xl">{meta.previousVersionsLabel}</h2>
-            {doc.previousVersions?.length ? (
-              <ul className="grid gap-2 text-page-ink/62">
-                {doc.previousVersions.map((version) => (
-                  <li key={version.href}>
-                    <a className="underline underline-offset-2 hover:text-page-ink" href={version.href}>
-                      {version.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-page-ink/52 text-sm">{meta.noPreviousVersions}</p>
-            )}
-          </section>
-        )}
       </article>
     </main>
   )
