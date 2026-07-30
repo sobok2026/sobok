@@ -120,7 +120,7 @@ PR 없이 브랜치를 올려 보거나 스테이징을 특정 ref로 되돌릴 
 - **DB는 갈리지 않는다.** 스테이징이 하나이므로 `deeptype_stg` 스키마도 하나다. 라벨이 막는 것은 코드가 섞이는 것이지 데이터가 섞이는 것이 아니다.
 - 라벨은 `sobok-ops`의 `infra/github/sobok2026/labels.tf`가 선언한다. 워크플로가 리터럴 `stg`로 매칭하므로 **양쪽을 같이 고치지 않으면 스테이징 배포가 조용히 죽는다.**
 
-**PR에서 도는 것은 검증뿐이다**(`verify` job). `next build`와 유료 텍스트 유출 검사(`check:export`)를 `live`·`test` **두 tier 모두**에 대해 돌린다. lint.yml은 `bun run type`과 `bun test apps/vibe`까지만 하고 빌드는 하지 않으므로, 이 job이 없으면 빌드 깨짐이 머지된 뒤 프로덕션 배포에서 처음 드러난다.
+**PR에서 도는 것은 검증뿐이다**(`verify` job). `next build`와 유료 텍스트 유출 검사(`check:export`)를 `test` tier 한 번으로 돌린다 — tier는 빌드에 인라인되는 문자열이라 성패를 가르지 않고 유출 검사의 needle도 tier와 무관하며, tier가 실제로 가르는 것(로케일별 결제수단 메뉴)은 `deep-type/pay-method.test.ts`가 lint.yml의 `bun test apps/vibe`에서 두 tier 모두 단정한다(`live`의 en/ja/zh 빈 메뉴는 페이팔 심사 전까지 의도된 상태로 핀). lint.yml은 빌드는 하지 않으므로, 이 job이 없으면 빌드 깨짐이 머지된 뒤 프로덕션 배포에서 처음 드러난다.
 
 ⚠️ **`verify`에 GitHub Environment를 붙이지 마라.** `pull_request`는 PR 브랜치의 워크플로 파일을 그대로 실행하므로, environment를 붙이는 순간 아무 게이트 없이 도는 job이 환경 시크릿을 쥐게 된다. tier가 모든 job에서 리터럴인 것도 같은 계열이다 — 시크릿이 아닌 값을 environment에 두면 그 값을 읽으려고 job이 시크릿까지 쥐게 된다. 같은 맥락에서 **레포 레벨 `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`는 존재하면 안 된다** — 레포 시크릿은 environment 없는 job에도 내려간다. 값은 `production`·`staging` 환경 시크릿에만 두고, 그래서 **stella·zwds·horn 워크플로도 `environment: production`을 선언하도록 함께 바꿨다**(안 그러면 그 셋의 배포가 크레덴셜을 못 찾는다). `verify`의 첫 스텝이 이 전제가 깨졌는지 매번 확인한다.
 
