@@ -16,7 +16,6 @@
     "binding": "ASSETS",
     "not_found_handling": "404-page",
     "html_handling": "drop-trailing-slash",
-    // API 경로는 항상 워커가 먼저 받는다 — 기본은 에셋 우선이라 겹치는 파일이 /api를 가릴 수 있다.
     "run_worker_first": ["/api/*"]
   },
   "hyperdrive": [
@@ -33,27 +32,17 @@
   ],
   // 크론(워커 `scheduled` 핸들러): 15분마다 → 멈춘 'pending' 재조정, 매일 03:00 → 리텐션 purge.
   "triggers": { "crons": ["*/15 * * * *", "0 3 * * *"] },
-  // 바인딩이 아니라 빌드타임 치환(esbuild `define`)이다: `pgSchema()`는 모듈 로드 시점에 실행돼 어떤 바인딩도
-  // 존재하기 전이다. 값은 JS 표현식 소스라 안쪽 따옴표가 하중을 진다 — 빼면 맨 식별자로 치환돼 워커가
-  // 부팅에서 던진다. worker/db/schema-name.ts 참고.
   "define": { "DEEPTYPE_DB_SCHEMA": "'deeptype'" },
   "vars": {
     "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
-    // 실연동. .github/workflows/vibe-deploy.yml에서 대응하는 배포 job의 NEXT_PUBLIC_DEEPTYPE_PAY_TIER
-    // 리터럴과 같아야 한다 — 어긋나면 페이월이 내놓은 수단을 /checkout이 거절한다.
     "DEEPTYPE_PAY_TIER": "live",
-    // 키는 PortOne pgProvider다(어느 결제수단이 어느 채널을 타는지는 deep-type/pay-method.ts 소유). 채널은
-    // 원천사 심사가 끝난 뒤에만 `SELLABLE_CHANNELS.live`와 같은 커밋으로 들어온다 — ""도 placeholder도
-    // 두지 않는다. 두 표의 어긋남은 `GET /api/deep-type/config`가 알려준다.
     "DEEPTYPE_PORTONE_CHANNELS": {
       "tosspay_v2": "channel-key-d14e0af9-18be-457f-aa21-228e7265211f"
     },
     "DEEPTYPE_PUBLIC_ORIGIN": "https://vibe.sobok.cc",
     "DEEPTYPE_EMAIL_FROM": "sobok <sobok2026@gmail.com>",
     "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",
-    // 내레이션의 목적지이자 스위치다: ""면 내레이션 없이 룰 엔진 리포트만 나가고 유료 리포트는 여기에 기대지
-    // 않는다. 코드에 기본 모델이 없어 호출은 항상 여기 적힌 id로만 나간다.
-    "DEEPTYPE_REPORT_MODEL": "claude-haiku-4-5-20251001",
+    "DEEPTYPE_REPORT_MODEL": "", // "claude-haiku-4-5-20251001",
     "DEEPTYPE_GA4_MEASUREMENT_ID": "G-RHHX4JRYDS"
   },
   "secrets_store_secrets": [
@@ -98,24 +87,24 @@
   // (`main`/`assets`/`triggers`/`observability`/`compatibility_*`는 상속돼서 반복하지 않는다.)
   "env": {
     "stg": {
-      // top-level과 똑같이 여기에도 `routes`가 없다: 커스텀 도메인은 Terraform(account-vibe/workers.tf)
-      // 소유이고 두 곳에 선언하면 바인딩 하나에 소유자가 둘이 된다.
       "workers_dev": false,
-      // 프로덕션과 같은 Supabase 프로젝트·같은 Hyperdrive 두 개가 맞다 — 접속 문자열이 동일하고 SQL이
-      // 부르는 스키마 이름만 다르다.
       "define": { "DEEPTYPE_DB_SCHEMA": "'deeptype_stg'" },
       "hyperdrive": [
-        { "binding": "HYPERDRIVE_FRESH", "id": "14e658152a554541b0e1a6712fc43787" },
-        { "binding": "HYPERDRIVE_CACHED", "id": "a2a2c4cb90d94e6fb08b0eb6727bb61d" }
+        {
+          "binding": "HYPERDRIVE_FRESH",
+          "id": "14e658152a554541b0e1a6712fc43787"
+        },
+        {
+          "binding": "HYPERDRIVE_CACHED",
+          "id": "a2a2c4cb90d94e6fb08b0eb6727bb61d"
+        }
       ],
       "vars": {
         "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
-        // 테스트. 짝 규칙은 top-level의 같은 키 주석 참고.
         "DEEPTYPE_PAY_TIER": "test",
         "DEEPTYPE_PORTONE_CHANNELS": {
           "kakaopay": "channel-key-d80ebe96-61e3-49f9-b3eb-5dc22aee47b7",
           "kcp_v2": "channel-key-d48cde15-5f73-4ab2-9b40-2ec29d152ad5",
-          // 포트원 제공 "한국" 샌드박스 판매자 계정의 키 — 목록의 국가는 구매자가 아니라 수취 계정 기준.
           "paypal_v2": "channel-key-8a0c783e-608f-48f0-a2f1-842667a464bc",
           "tosspay_v2": "channel-key-70320dc7-8e65-4cf7-901b-7b834ae4f21a",
           "tosspayments": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88"
@@ -123,9 +112,7 @@
         "DEEPTYPE_PUBLIC_ORIGIN": "https://vibe-stg.sobok.cc",
         "DEEPTYPE_EMAIL_FROM": "sobok <sobok2026@gmail.com>",
         "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",
-        "DEEPTYPE_REPORT_MODEL": "claude-haiku-4-5-20251001",
-        // 일부러 ""다: 목적지가 없으면 이 배포는 revenue를 보내지 않는다. 프로덕션 id를 채우면 스테이징
-        // 테스트 구매가 프로덕션 GA4 property에 들어간다.
+        "DEEPTYPE_REPORT_MODEL": "",
         "DEEPTYPE_GA4_MEASUREMENT_ID": ""
       },
       "secrets_store_secrets": [
@@ -134,8 +121,6 @@
           "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
           "secret_name": "deeptype-portone-api-secret"
         },
-        // PortOne 시크릿 중 유일하게 환경별이다: 콘솔이 웹훅 시크릿을 테스트·실연동 모드별로 각각 발급해서
-        // 실연동 시크릿을 문 스테이징 워커는 모든 테스트 웹훅을 거절한다.
         {
           "binding": "DEEPTYPE_PORTONE_WEBHOOK_SECRET",
           "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
