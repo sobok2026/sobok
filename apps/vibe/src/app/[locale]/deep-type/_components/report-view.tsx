@@ -8,12 +8,12 @@ import Link from 'next/link'
 import { useShare } from '@/components/use-share'
 import { cn } from '@/utils/cn'
 import { FOCUS_CLASS_NAME } from '../../../../components/focus'
-import type { ReportSection } from '../_lib/api'
+import type { NarrativeSection, ReportSection } from '../_lib/api'
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
 
 import { CARD_CLASS_NAME } from '../_lib/surface'
 import type { DeepTypeContent } from '../_lib/types'
-import { GemArtwork } from './code-artwork'
+import { ReportSectionView } from './report/section-view'
 import { WorldJobHero } from './world-job-hero'
 
 type ReportViewProps = {
@@ -22,76 +22,21 @@ type ReportViewProps = {
   /** True while the narration is still being written. Delivery is not stamped yet and the poll keeps running. */
   narrativePending?: boolean
   /** The LLM pass. Always optional: the engine sections below are the finished report on their own. */
-  narrativeSections?: readonly ReportSection[]
+  narrativeSections?: readonly NarrativeSection[]
   onRestart: () => void
   profile: AssessmentProfile
   sections: readonly ReportSection[]
 }
 
 /**
- * The 인공지능 기본법 제31조 제2항 mark. The 시행령 allows a machine-readable mark only when a human-readable one is
- * also shown at least once, so this is the visible one and it is repeated per generated block rather than stated
- * once at the top — a reader who lands mid-report by anchor link has to be able to tell what they are reading.
- */
-function GeneratedLabel({ text }: { text: string }) {
-  return (
-    <p className="font-bold text-page-ink/44 text-xs tracking-wide" data-ai-generated="true">
-      {text}
-    </p>
-  )
-}
-
-type RenderedSection = {
-  body: string
-  /**
-   * Whether `body` itself is model output. The two LLM-only sections have no engine text, so their whole body is
-   * generated; everywhere else the engine wrote `body` and the model only wrote `narrative`. 인공지능 기본법
-   * 제31조 제2항 requires the generated result to be marked as generated, and 'which paragraph' is the whole
-   * question — labelling the engine's own text would be a false statement in the other direction.
-   */
-  bodyIsGenerated: boolean
-  key: string
-  /** Narration written over this section, or null where the engine body stands alone. Always model output. */
-  narrative: string | null
-  title: string
-}
-
-// Engine order first, because that is the report. A narration for a section the engine wrote sits under its
-// body; the two LLM-only sections have no engine body and come after, in the order they were generated.
-function renderedSections(
-  engine: readonly ReportSection[],
-  narrative: readonly ReportSection[] = [],
-): RenderedSection[] {
-  const byKey = new Map(narrative.map((section) => [section.key, section]))
-  const written = new Set(engine.map((section) => section.key))
-
-  return [
-    ...engine.map((section) => ({
-      body: section.body,
-      bodyIsGenerated: false,
-      key: section.key,
-      narrative: byKey.get(section.key)?.body ?? null,
-      title: section.title,
-    })),
-    ...narrative
-      .filter((section) => !written.has(section.key))
-      .map((section) => ({
-        body: section.body,
-        bodyIsGenerated: true,
-        key: section.key,
-        narrative: null,
-        title: section.title,
-      })),
-  ]
-}
-
-/**
- * The paid report: the hero, then whatever sections the server delivered, in the order it delivered them.
+ * The paid report: the hero, then the sections the server delivered, in the order it delivered them. That order
+ * is reading order and the server owns it (`REPORT_DISPLAY_ORDER`) — the opening first, the three questions
+ * last — so this component never re-sorts and never decides what a report opens on.
  *
- * There is no loading state for the narration and no placeholder where it will land. The engine body is the
- * finished report — that is the delivery contract, not a fallback — so the reader gets the whole thing at once,
- * and narration appears under the sections it was written over as it arrives. `narrativePending` says so in one
- * line rather than by greying anything out.
+ * There is no loading state for the narration and no placeholder where it will land. The engine's sections are
+ * the finished report — that is the delivery contract, not a fallback — so the reader gets the whole thing at
+ * once, and narration appears under the sections it was written over as it arrives. `narrativePending` says so
+ * in one line rather than by greying anything out.
  */
 export function ReportView({
   content,
@@ -111,17 +56,12 @@ export function ReportView({
     .replace('{job}', worldJobName)
     .replace('{inner}', profile.inner.code)
     .replace('{gem}', `${gemName} (${profile.gem.code})`)
+  const narrativeByKey = new Map((narrativeSections ?? []).map((section) => [section.key, section]))
 
   return (
     <main className="flex flex-1 flex-col bg-page-bg px-safe py-10 text-page-ink sm:py-14" id="main-content">
       <div className="mx-auto grid w-full max-w-xl gap-4">
         <WorldJobHero content={content} gem={profile.gem.code} inner={profile.inner.code} />
-
-        <div className="rounded-3xl border border-page-border bg-page-surface p-4 text-center">
-          <GemArtwork gemCode={profile.gem.code} />
-          <p className="mt-4 font-black text-lg">{gemName}</p>
-          <p className="mt-1 text-page-ink/56 text-sm">{content.ui.layerGem}</p>
-        </div>
 
         {narrativePending ? (
           <p className="rounded-3xl bg-page-soft px-5 py-4 text-page-ink/60 text-xs leading-6">
@@ -129,18 +69,13 @@ export function ReportView({
           </p>
         ) : null}
 
-        {renderedSections(sections, narrativeSections).map((section) => (
-          <section className={CARD_CLASS_NAME} key={section.key}>
-            <h2 className="break-keep font-black text-lg">{section.title}</h2>
-            {section.bodyIsGenerated ? <GeneratedLabel text={content.ui.aiGeneratedLabel} /> : null}
-            <p className="mt-3 whitespace-pre-line break-keep text-page-ink/76 leading-8">{section.body}</p>
-            {section.narrative ? (
-              <div className="mt-4 border-page-border border-t pt-4">
-                <GeneratedLabel text={content.ui.aiGeneratedLabel} />
-                <p className="mt-2 whitespace-pre-line break-keep text-page-ink/68 leading-8">{section.narrative}</p>
-              </div>
-            ) : null}
-          </section>
+        {sections.map((section) => (
+          <ReportSectionView
+            content={content}
+            key={section.key}
+            narrative={narrativeByKey.get(section.key) ?? null}
+            section={section}
+          />
         ))}
 
         <section className={CARD_CLASS_NAME}>

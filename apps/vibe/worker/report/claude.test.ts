@@ -1,21 +1,33 @@
 import { describe, expect, test } from 'bun:test'
 import { SECTION_CLAIMS } from './claims'
 import { acceptNarrative, requestedNarrativeKeys } from './claude'
-import {
-  NARRATED_SECTION_KEYS,
-  type NarratedSectionKey,
-  REPORT_SECTION_CONTRACT,
-  type ReportSection,
-} from './section-keys'
+import type { NarrativeSection, ReportSection } from './section-data'
+import { NARRATED_SECTION_KEYS, type NarratedSectionKey, REPORT_SECTION_CONTRACT } from './section-keys'
 
 // The narration pass is exercised through its pure half. `generateNarrative` adds one fetch and one retry on
 // top of `acceptNarrative`, and every rule §4.3 states about partial acceptance and the claim gate lives here.
 
+/**
+ * A stand-in engine section. Only `key` matters to this module — `requestedNarrativeKeys` asks which sections
+ * exist and the prompt serializes whatever it is given — so the data is deliberately not a real section: what
+ * is being tested is that narration is requested for what the engine produced, not what it produced.
+ */
 function engineSection(key: string): ReportSection {
-  return { body: `${key} 본문`, key: key as ReportSection['key'], title: key }
+  return { data: {}, intro: `${key} 안내`, key, title: key } as unknown as ReportSection
 }
 
-const ENGINE_WRITTEN = ['worldJob', 'strengthCards', 'contextShift', 'threePaths', 'fitAndFriction'].map(engineSection)
+// Everything the engine produced for a reader who declared four letters. All five narrated keys are here
+// because the engine writes all five — `openingRead` and `reflectionQuestions` are composed sections now, not
+// the model's to invent.
+const ENGINE_WRITTEN = [
+  'worldJob',
+  'strengthCards',
+  'contextShift',
+  'threePaths',
+  'fitAndFriction',
+  'openingRead',
+  'reflectionQuestions',
+].map(engineSection)
 
 function narrated(key: NarratedSectionKey, overrides: Record<string, unknown> = {}) {
   return {
@@ -28,23 +40,30 @@ function narrated(key: NarratedSectionKey, overrides: Record<string, unknown> = 
 }
 
 function accept(sections: readonly unknown[], requested: readonly NarratedSectionKey[]) {
-  const accepted = new Map<NarratedSectionKey, ReportSection>()
+  const accepted = new Map<NarratedSectionKey, NarrativeSection>()
   const dropped = acceptNarrative(JSON.stringify({ sections }), requested, accepted)
   return { accepted, dropped }
 }
 
 describe('requestedNarrativeKeys', () => {
-  test('a HYBRID section is narrated only where the engine wrote one', () => {
+  test('a section is narrated only where the engine wrote one', () => {
     const keys = requestedNarrativeKeys(ENGINE_WRITTEN)
     expect(keys).toContain('contextShift')
 
     const withoutContextShift = requestedNarrativeKeys(
       ENGINE_WRITTEN.filter((section) => section.key !== 'contextShift'),
     )
+    // `contextShift` is omitted for a reader who declared nothing, and narrating a section the reader will
+    // never see is how a report ends up describing a contrast that is not on screen.
     expect(withoutContextShift).not.toContain('contextShift')
-    // LLM-only sections have no engine body by definition, so their absence proves nothing about them.
     expect(withoutContextShift).toContain('openingRead')
     expect(withoutContextShift).toContain('reflectionQuestions')
+  })
+
+  // Nothing is requested off a bare vocabulary list any more. If the engine produced no section under a key,
+  // there is nothing for a narration to sit under and asking for one spends tokens on text nobody renders.
+  test('an engine that wrote nothing is narrated not at all', () => {
+    expect(requestedNarrativeKeys([])).toEqual([])
   })
 
   test('nothing outside the narrated vocabulary is ever requested', () => {
@@ -66,7 +85,7 @@ describe('partial acceptance', () => {
 
   test('a regeneration merges into the first pass instead of replacing it', () => {
     const requested = requestedNarrativeKeys(ENGINE_WRITTEN)
-    const accepted = new Map<NarratedSectionKey, ReportSection>()
+    const accepted = new Map<NarratedSectionKey, NarrativeSection>()
 
     acceptNarrative(JSON.stringify({ sections: [narrated('openingRead')] }), requested, accepted)
     const missing = requested.filter((key) => !accepted.has(key))
@@ -85,7 +104,7 @@ describe('partial acceptance', () => {
   })
 
   test('garbage in place of JSON accepts nothing and throws nothing', () => {
-    const accepted = new Map<NarratedSectionKey, ReportSection>()
+    const accepted = new Map<NarratedSectionKey, NarrativeSection>()
     expect(acceptNarrative('sorry, no', requestedNarrativeKeys(ENGINE_WRITTEN), accepted)).toEqual([])
     expect(acceptNarrative('{ not json', requestedNarrativeKeys(ENGINE_WRITTEN), accepted)).toEqual([])
     expect(accepted.size).toBe(0)

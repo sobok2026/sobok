@@ -8,7 +8,6 @@ import { zhFreeQuestionPrompts } from './question-prompts/zh.free'
 export const deepTypeContent = createDeepTypeContent({
   metadata: { title: '', description: '' },
   ui: {
-    aiGeneratedLabel: '',
     analyzingBody: '',
     analyzingTitle: '',
     backCta: '',

@@ -3,13 +3,13 @@
 import type { AssessmentProfile } from '@deep-type/model'
 import { useEffect, useState } from 'react'
 
-import { getReport, postGenerate, type ReportSection } from '../_lib/api'
+import { getReport, type NarrativeSection, postGenerate, type ReportSection } from '../_lib/api'
 
 export type ReportPollState =
   | { phase: 'generating' }
   | {
       phase: 'done'
-      narrative: ReportSection[]
+      narrative: NarrativeSection[]
       /** The engine report is on screen and the narration is still being written. */
       narrativePending: boolean
       profile: AssessmentProfile
