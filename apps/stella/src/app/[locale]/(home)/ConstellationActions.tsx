@@ -162,7 +162,7 @@ export function ConstellationActions({
               {t('share.button')}
             </button>
           </div>
-          <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-subtle">{ts('privacy')}</p>
+          <p className="text-center text-[11px] leading-relaxed text-foreground-subtle">{ts('privacy')}</p>
         </>
       )}
     </div>

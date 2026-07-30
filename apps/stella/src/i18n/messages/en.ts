@@ -204,6 +204,9 @@ export const en = {
       clearSaved: 'Delete saved',
       timeUnknownShort: 'Time unknown',
     },
+    cardTopics: {
+      ariesLove: 'Pufflet & Moonlet’s love card',
+    },
     signs: {
       aries: 'Aries',
       taurus: 'Taurus',
@@ -504,12 +507,14 @@ export const en = {
   Comments: {
     heading: 'Join the conversation',
     subtitle: 'Notes from people with the same placement.',
+    cardSubtitle: 'Notes from people who received the same card.',
     empty: 'No notes yet. Be the first.',
     loading: 'Loading',
     loadMore: 'Load more',
     anonymous: 'Anonymous',
     nicknamePlaceholder: 'Nickname (optional)',
     bodyPlaceholder: 'Share a thought about this placement',
+    cardBodyPlaceholder: 'Share what this card brought to mind',
     submit: 'Post',
     submitting: 'Posting',
     edit: 'Edit',
@@ -530,6 +535,7 @@ export const en = {
     error: 'Something went wrong. Please try again.',
     locked: 'This board is locked.',
     count: '{n} stories',
+    backToCardReport: 'Back to the card report',
     entry: 'Leave a note',
     backToChart: 'Back to the chart',
     metaDescription: 'Join the conversation about {label}.',

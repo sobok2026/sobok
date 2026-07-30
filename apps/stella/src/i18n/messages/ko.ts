@@ -203,6 +203,9 @@ export const ko = {
       clearSaved: '정보 지우기',
       timeUnknownShort: '시간 모름',
     },
+    cardTopics: {
+      ariesLove: '몽실이와 달콩이의 사랑 카드',
+    },
     signs: {
       aries: '양자리',
       taurus: '황소자리',
@@ -499,12 +502,14 @@ export const ko = {
   Comments: {
     heading: '이야기 나누기',
     subtitle: '같은 자리를 가진 사람들의 이야기예요.',
+    cardSubtitle: '같은 카드를 받은 사람들의 이야기예요.',
     empty: '아직 이야기가 없어요. 먼저 남겨보세요.',
     loading: '불러오는 중',
     loadMore: '더 보기',
     anonymous: '익명',
     nicknamePlaceholder: '닉네임 (선택)',
     bodyPlaceholder: '이 자리에 대한 생각을 남겨보세요',
+    cardBodyPlaceholder: '이 카드에서 어떤 마음이 들었는지 남겨보세요',
     submit: '남기기',
     submitting: '남기는 중',
     edit: '수정',
@@ -525,6 +530,7 @@ export const ko = {
     error: '문제가 생겼어요. 잠시 후 다시 시도해 주세요.',
     locked: '이 보드는 잠겨 있어요.',
     count: '{n}개의 이야기',
+    backToCardReport: '카드 리포트로 돌아가기',
     entry: '이야기 남기기',
     backToChart: '차트로 돌아가기',
     metaDescription: '{label}에 대한 이야기를 나눠보세요.',

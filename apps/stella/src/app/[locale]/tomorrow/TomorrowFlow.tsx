@@ -168,7 +168,7 @@ export default function TomorrowFlow() {
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-xl flex-col items-center">
-        <header className="mb-6 w-full max-w-sm text-center">
+        <header className="mb-6 w-full text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{t('hero.eyebrow')}</p>
           <HeroTitle>{t('hero.title')}</HeroTitle>
           {data && (
@@ -229,9 +229,7 @@ export default function TomorrowFlow() {
                     {t('share.button')}
                   </button>
                   {data.birth && (
-                    <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">
-                      {ts('privacy')}
-                    </p>
+                    <p className="text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
                   )}
                 </>
               )}

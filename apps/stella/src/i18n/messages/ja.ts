@@ -203,6 +203,9 @@ export const ja = {
       clearSaved: '情報を削除',
       timeUnknownShort: '時刻不明',
     },
+    cardTopics: {
+      ariesLove: 'ふわりとつきみの恋カード',
+    },
     signs: {
       aries: 'おひつじ座',
       taurus: 'おうし座',
@@ -501,12 +504,14 @@ export const ja = {
   Comments: {
     heading: '語り合う',
     subtitle: '同じ配置を持つ人たちの声です。',
+    cardSubtitle: '同じカードを受け取った人たちの声です。',
     empty: 'まだ投稿がありません。最初の一言をどうぞ。',
     loading: '読み込み中',
     loadMore: 'もっと見る',
     anonymous: '匿名',
     nicknamePlaceholder: 'ニックネーム（任意）',
     bodyPlaceholder: 'この配置について思うことを書いてみましょう',
+    cardBodyPlaceholder: 'このカードを見て感じたことを残してみて',
     submit: '投稿',
     submitting: '投稿中',
     edit: '編集',
@@ -527,6 +532,7 @@ export const ja = {
     error: '問題が発生しました。しばらくして再度お試しください。',
     locked: 'このボードはロックされています。',
     count: '{n}件の声',
+    backToCardReport: 'カードレポートに戻る',
     entry: '声を残す',
     backToChart: 'チャートに戻る',
     metaDescription: '{label}について語り合いましょう。',
