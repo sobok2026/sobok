@@ -203,6 +203,9 @@ export const ko = {
       clearSaved: '정보 지우기',
       timeUnknownShort: '시간 모름',
     },
+    cardTopics: {
+      ariesLove: '몽실이와 달콩이의 사랑 카드',
+    },
     signs: {
       aries: '양자리',
       taurus: '황소자리',

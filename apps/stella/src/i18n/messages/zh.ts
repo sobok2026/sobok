@@ -201,6 +201,9 @@ export const zh = {
       clearSaved: '删除信息',
       timeUnknownShort: '时间未知',
     },
+    cardTopics: {
+      ariesLove: '绵绵与月窝的爱情卡',
+    },
     signs: {
       aries: '白羊座',
       taurus: '金牛座',

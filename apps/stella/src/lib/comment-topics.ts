@@ -49,6 +49,7 @@ const ASPECT_TYPES = [
 ] as const satisfies readonly AspectType[]
 
 const HOUSES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const
+const CARD_TOPICS = ['ariesLove'] as const
 
 // Every valid topic key. MUST stay consistent with commentTopicKey() in (home)/comment-topic.ts — the panel
 // links to one of these, so a missing key would 404. Aspect pairs use the ASPECT_PAIR_ORDER canonical order
@@ -62,6 +63,10 @@ export function allTopicKeys(): string[] {
 
   for (const n of HOUSES) {
     keys.push(`house-${n}`)
+  }
+
+  for (const card of CARD_TOPICS) {
+    keys.push(`card-${card}`)
   }
 
   for (const planet of PLANETS) {
@@ -101,6 +106,9 @@ export function topicLabel(topicKey: string, t: Labeler): string {
   }
   if (kind === 'house') {
     return `${t('panel.house', { n: Number(rest[0]) })} · ${t(`houseThemes.${rest[0]}`)}`
+  }
+  if (kind === 'card') {
+    return t(`cardTopics.${rest[0]}`)
   }
   if (kind === 'planet') {
     return `${t(`signs.${rest[1]}`)} ${t(`planets.${rest[0]}`)}`

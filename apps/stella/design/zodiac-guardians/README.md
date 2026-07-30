@@ -7,12 +7,15 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - 캐릭터 화풍 및 12종 외형: 확정
 - 확정일: 2026-07-30
 - 네 주제 대표 카드 콘셉트: 확정
+- `aries.love` Orbit·Nebula·Eclipse·Stella 희귀도 세트: 확정
 - 공개 이름: `ko`, `zh`, `ja`, `en`별 독립 작업명 확정
 - 공개 이름 표시: 줄바꿈 없는 한 줄
 - 대사, 카드 제목: 작업안
-- 앱 런타임 적용: 아직 하지 않음
+- 모바일 카드 리포트 프로토타입: `/[locale]/cards`에 적용
+- 프로토타입 공개 상태: 내비게이션·사이트맵 미노출, `noindex`
 
-이 폴더는 디자인 원본과 기획 문서를 보관한다. 앱에서 사용하는 최적화 에셋은 추후 확정 원화를 제작한 뒤 별도의 런타임 에셋 위치로 옮긴다.
+이 폴더는 디자인 원본과 기획 문서를 보관한다. 앱에서 사용하는 최적화 WebP 에셋은
+`apps/stella/public/images/zodiac-guardians`에 따로 둔다.
 
 ## 확정 설정 시트
 
@@ -28,15 +31,18 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - [캐릭터 바이블](./character-bible.md): 이름, 성격, 말투, 색상, 소품, 관계
 - [카드 카탈로그](./card-catalog.md): 48장 기본 카드와 희귀도 확장 규칙
 - [대표 카드 제작 기록](./cards/representative/README.md): 네 주제 원화, 공통 프롬프트, 제작 메모
+- [모바일 카드 리포트 프로토타입](./card-report-prototype.md): 개봉, 리포트, 저장, 공유, 댓글 흐름과 구현 경계
 
 ## 네 주제 대표 카드
 
-| 주제     | 카드 ID        | 중심 장면                                      | 파일                                                        |
-| -------- | -------------- | ---------------------------------------------- | ----------------------------------------------------------- |
-| 자기이해 | `cancer.self`  | 달집 안에서 자기 모습을 바라보는 모루          | [cancer-self.png](./cards/representative/cancer-self.png)   |
-| 사랑     | `aries.love`   | 걸린 하트를 함께 잡은 포피와 모루              | [aries-love.png](./cards/representative/aries-love.png)     |
-| 일       | `taurus.work`  | 기울어진 별쿠키 탑을 함께 수습하는 토토와 누리 | [taurus-work.png](./cards/representative/taurus-work.png)   |
-| 결정     | `libra.choice` | 저울을 내려놓고 분홍 문손잡이를 잡은 틸리      | [libra-choice.png](./cards/representative/libra-choice.png) |
+| 주제     | 카드 ID        | 중심 장면                                      | 파일                                                                    |
+| -------- | -------------- | ---------------------------------------------- | ----------------------------------------------------------------------- |
+| 자기이해 | `cancer.self`  | 달집 안에서 자기 모습을 바라보는 모루          | [cancer-self.png](./cards/representative/cancer-self.png)               |
+| 사랑     | `aries.love`   | 걸린 하트를 함께 잡은 포피와 모루              | [aries-love-eclipse.png](./cards/representative/aries-love-eclipse.png) |
+| 일       | `taurus.work`  | 기울어진 별쿠키 탑을 함께 수습하는 토토와 누리 | [taurus-work.png](./cards/representative/taurus-work.png)               |
+| 결정     | `libra.choice` | 저울을 내려놓고 분홍 문손잡이를 잡은 틸리      | [libra-choice.png](./cards/representative/libra-choice.png)             |
+
+`aries.love`의 네 희귀도 원화와 장면 차이는 [대표 카드 제작 기록](./cards/representative/README.md#arieslove-희귀도-세트)에 정리한다.
 
 ## 확정된 공통 원칙
 

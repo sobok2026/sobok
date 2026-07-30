@@ -204,6 +204,9 @@ export const en = {
       clearSaved: 'Delete saved',
       timeUnknownShort: 'Time unknown',
     },
+    cardTopics: {
+      ariesLove: 'Pufflet & Moonlet’s love card',
+    },
     signs: {
       aries: 'Aries',
       taurus: 'Taurus',

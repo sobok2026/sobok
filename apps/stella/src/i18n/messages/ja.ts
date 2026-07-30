@@ -203,6 +203,9 @@ export const ja = {
       clearSaved: '情報を削除',
       timeUnknownShort: '時刻不明',
     },
+    cardTopics: {
+      ariesLove: 'ふわりとつきみの恋カード',
+    },
     signs: {
       aries: 'おひつじ座',
       taurus: 'おうし座',
