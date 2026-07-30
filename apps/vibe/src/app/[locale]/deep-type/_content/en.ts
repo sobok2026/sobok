@@ -7,7 +7,6 @@ import { enFreeQuestionPrompts } from './question-prompts/en.free'
 export const deepTypeContent = createDeepTypeContent({
   metadata: { title: '', description: '' },
   ui: {
-    aiGeneratedLabel: '',
     analyzingBody: '',
     analyzingTitle: '',
     backCta: '',

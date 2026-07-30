@@ -214,14 +214,6 @@ export const LEGAL = {
           ],
         },
         {
-          heading: '인공지능 생성 고지',
-          body: [
-            '리포트의 본문은 회사의 규칙 엔진이 작성하고 일부 서술 문단은 Anthropic의 생성형 인공지능이 씁니다. 회사는 인공지능 기본법 제31조 제1항에 따라 이 사실을 결제 전에 알리고 같은 조 제2항에 따라 리포트 화면에서 인공지능이 쓴 문단에 그 사실을 표시합니다.',
-            '인공지능은 여덟 글자와 선명도를 정하지 않습니다. 그 값은 회사의 프로그램이 이용자의 답에서 계산하며 인공지능은 이미 정해진 값을 문장으로 옮길 뿐입니다.',
-            '생성형 인공지능이 쓴 문장은 사실 확인을 거친 진술이 아니고 같은 답변이라도 표현이 달라질 수 있습니다. 인공지능 서술이 끝내 생성되지 않아도 규칙 엔진이 쓴 본문은 그대로 제공합니다.',
-          ],
-        },
-        {
           heading: '청약철회와 환불',
           body: [
             '청약철회와 환불에 관한 사항은 별도의 청약철회·환불 정책에서 정합니다. 요약하면 리포트를 열람하기 전에는 전액 환불되며 열람한 뒤에는 디지털 콘텐츠 특성상 청약철회가 제한됩니다. 다만 표시·광고와 다르게 이행된 경우에는 열람 후에도 법령에 따라 청약철회를 할 수 있습니다.',
@@ -515,14 +507,6 @@ export const LEGAL = {
           ],
         },
         {
-          heading: 'AI generation notice',
-          body: [
-            'The body of the report is written by our rules engine, and some narrative paragraphs are written by Anthropic’s generative AI. Under Article 31(1) of the Korean Framework Act on Artificial Intelligence, we tell you this before payment, and under Article 31(2) of the same Act we mark the AI-written paragraphs as such on the report screen.',
-            'The AI does not decide the eight letters or the clarity of each axis. Those values are computed by our own program from your answers, and the AI only puts already-fixed values into sentences.',
-            'Sentences written by generative AI are not fact-checked statements, and the wording can differ even for the same answers. If the AI narration is never produced, we still deliver the body written by the rules engine unchanged.',
-          ],
-        },
-        {
           heading: 'Withdrawal and refund',
           body: [
             'Withdrawal and refunds are governed by our separate Withdrawal & Refund Policy. In short, the report is fully refundable before you open it, and after you open it withdrawal is restricted as digital content. If it was performed differently from what was advertised, you may still withdraw after opening it as permitted by law.',
@@ -812,14 +796,6 @@ export const LEGAL = {
           ],
         },
         {
-          heading: '人工知能生成の告知',
-          body: [
-            'レポートの本文は当社のルールエンジンが作成し、記述の段落の一部はAnthropicの生成AIが書きます。当社は人工知能基本法第31条第1項に基づきこの事実を決済前にお知らせし、同条第2項に基づきレポート画面で人工知能が書いた段落にその旨を表示します。',
-            '人工知能が八文字や明瞭度を決めることはありません。これらの値は当社のプログラムが利用者の回答から計算し、人工知能はすでに確定した値を文章に置き換えるだけです。',
-            '生成AIが書いた文章は事実確認を経た記述ではなく、同じ回答でも表現が変わることがあります。人工知能の記述が最後まで生成されなかった場合でも、ルールエンジンが書いた本文はそのまま提供します。',
-          ],
-        },
-        {
           heading: '申込撤回と返金',
           body: [
             '申込撤回と返金に関する事項は別途の申込撤回・返金ポリシーで定めます。要約すると、レポートを閲覧する前は全額返金され、閲覧後はデジタルコンテンツの性質上、申込撤回が制限されます。ただし表示・広告と異なる形で履行された場合は、閲覧後も法令に従って申込撤回ができます。',
@@ -1106,14 +1082,6 @@ export const LEGAL = {
             '报告分两个阶段提供。我们的规则引擎所写的正文先行显示，随后附上由人工智能撰写的叙述段落。在叙述完成之前，视为报告尚未提供，此时撤回不受限制。若叙述生成达到重试上限仍失败，可通过自动取消功能或客服申请全额退款。',
             '报告以网页形式提供，不是可下载的文件。需要启用JavaScript的现代浏览器，无需另行安装任何程序。重新查看需要您能够收取购买时使用的邮箱。',
             '报告与邮件重新查看服务自付款之日起提供1年。输入购买邮箱后会发送15分钟内仅可使用一次的链接；您明确点击打开按钮后才会显示报告。1年后将删除报告、结果、邮箱和访问凭证，不保证恢复。',
-          ],
-        },
-        {
-          heading: '人工智能生成告知',
-          body: [
-            '报告的正文由我们的规则引擎撰写，部分叙述段落由 Anthropic 的生成式人工智能撰写。依据《人工智能基本法》第31条第1款，我们在支付前告知这一事实；依据同条第2款，我们在报告页面对人工智能撰写的段落作出标示。',
-            '人工智能不决定八个字母与清晰度。这些数值由我们的程序根据您的答案计算，人工智能只是把已经确定的数值写成句子。',
-            '生成式人工智能所写的句子并非经过事实核查的陈述，即使答案相同，表述也可能不同。即使人工智能的叙述最终没有生成，规则引擎所写的正文仍会照常提供。',
           ],
         },
         {

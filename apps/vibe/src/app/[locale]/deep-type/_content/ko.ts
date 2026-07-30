@@ -21,7 +21,6 @@ export const deepTypeContent = createDeepTypeContent({
       '왜 이 일에서 유독 지치는지 무료 검사로 확인해요. 속유형 네 글자와 마음의 코어 네 글자에서 내 세계관 직업과 지치는 조건이 나와요.',
   },
   ui: {
-    aiGeneratedLabel: '인공지능이 쓴 문단',
     analyzingBody: '고른 답을 같은 기준으로 채점하고 있어요. 곧 내 세계관 직업이 나와요.',
     analyzingTitle: '거의 다 왔어요',
     backCta: '이전 문항',
