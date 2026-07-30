@@ -20,8 +20,12 @@ import { BlockHeading, ClosingNote, FacetList, Field, Kicker } from './primitive
 // spread as strands — instead of the twelve identical text blocks the report used to be.
 
 /**
- * Section 11 in generation order, first on screen. The composed reading — one lead sentence, then the reader's
- * banded axes, strength combo, drain spread and interest lead, each with its own kicker.
+ * Section 11 in generation order, first on screen. The long-form reading — one lead sentence, then every axis
+ * of both layers with the settled band beside it, then what the work answers point at.
+ *
+ * The band line sits UNDER the scene rather than inside it. It is the one thing on this screen the free result
+ * could not say, and running it into the same paragraph as the pole's description made a statement about the
+ * spread of the answers read as one more sentence about the reader.
  *
  * `data.worldJobName` is not printed. The hero two cards above is the job name at 3xl, and repeating it here
  * put the same string on screen three times before the first finding.
@@ -31,14 +35,21 @@ export function OpeningReadSection({ data }: { data: OpeningReadData }) {
     <>
       <p className="break-keep text-page-ink/72 leading-8">{data.lead}</p>
 
-      <div className="mt-6 grid gap-5">
-        {data.paragraphs.map((paragraph) => (
-          <div key={paragraph.kicker}>
-            <Kicker>{paragraph.kicker}</Kicker>
-            {paragraph.note ? (
-              <p className="mt-1 break-keep font-bold text-page-ink/56 text-xs leading-5">{paragraph.note}</p>
-            ) : null}
-            <p className="mt-1.5 break-keep text-page-ink/72 text-sm leading-7">{paragraph.text}</p>
+      <div className="mt-7 grid gap-7">
+        {data.blocks.map((block) => (
+          <div key={block.heading}>
+            <BlockHeading>{block.heading}</BlockHeading>
+            <div className="mt-3 grid gap-5">
+              {block.paragraphs.map((paragraph) => (
+                <div key={paragraph.kicker}>
+                  <Kicker>{paragraph.kicker}</Kicker>
+                  <p className="mt-1.5 break-keep text-page-ink/72 text-sm leading-7">{paragraph.text}</p>
+                  {paragraph.note ? (
+                    <p className="mt-2 break-keep text-page-ink/48 text-xs leading-5">{paragraph.note}</p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
@@ -73,11 +84,13 @@ export function WorldJobSection({ content, data }: { content: DeepTypeContent; d
           <dd className="mt-1 break-keep font-black text-sm">{data.family.name}</dd>
           <dd className="mt-1.5 break-keep text-page-ink/68 text-sm leading-6">{data.family.method}</dd>
           <dd className="mt-2 break-keep text-page-ink/48 text-xs leading-5">{data.family.role}</dd>
+          <dd className="mt-3 break-keep text-page-ink/72 text-sm leading-7">{data.reading.family}</dd>
         </div>
         <div className={GROUPED_ROW_CLASS_NAME}>
           <dt className="text-page-ink/44 text-xs">{content.ui.worldJobCoreLabel}</dt>
           <dd className="mt-1 break-keep font-black text-sm">{data.core.name}</dd>
           <dd className="mt-1.5 break-keep text-page-ink/68 text-sm leading-6">{data.core.strength}</dd>
+          <dd className="mt-3 break-keep text-page-ink/72 text-sm leading-7">{data.reading.core}</dd>
         </div>
       </dl>
     </>

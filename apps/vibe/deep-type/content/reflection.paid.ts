@@ -48,5 +48,21 @@ export const REFLECTION_SOURCE = {
   need: '오래 일하게 하는 조건에서',
 } as const
 
+/**
+ * Why this dimension is worth a week, one line each. Authored per dimension rather than per facet: the
+ * question already changes with the facet, and what does not change is the reason that kind of question repays
+ * being carried around instead of answered on the spot.
+ *
+ * Still not an answer, and still not a hint at one. Each line says what the reader will be able to see after a
+ * week that they cannot see today, which is the only thing the report can honestly promise about a question.
+ */
+export const REFLECTION_WHY = {
+  drain:
+    '힘이 빠지는 조건은 그날의 기분과 섞여 있어서 한 번의 기억으로는 갈라지지 않아요. 한 주를 놓고 보면 매번 같이 나타난 조건이 하나쯤 드러나요.',
+  interest:
+    '손이 먼저 가는 쪽은 잘하는 쪽과 겹치기도 하고 갈리기도 해요. 실제로 시간이 빨리 갔던 장면을 모아 두면 그 둘이 어디서 갈라지는지 보여요.',
+  need: '있을 때는 잘 보이지 않고 없을 때만 티가 나는 조건이에요. 한 주 동안 어떤 날이 유난히 무거웠는지 적어 두면 무엇이 빠져 있었는지 뒤늦게 잡혀요.',
+} as const satisfies Record<keyof typeof REFLECTION_SOURCE, string>
+
 export const REFLECTION_CLOSING =
   '지금 답을 다 내지 않아도 괜찮아요. 세 질문은 한 주 동안 곁에 두고 떠오를 때마다 적어 보라고 놓은 것이에요.'

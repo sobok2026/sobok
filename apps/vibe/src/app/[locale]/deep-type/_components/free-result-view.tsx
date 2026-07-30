@@ -10,6 +10,7 @@ import {
   type FreeStrengthCard,
   type FreeStrengthCards,
 } from '@deep-type/rules/free'
+import type { FreeReading } from '@deep-type/rules/free-reading'
 import { Refresh, Share } from '@mynaui/icons-react'
 import { trackEcommerce } from '@sobok/analytics/browser'
 import type { Locale } from '@sobok/domain/locale'
@@ -58,7 +59,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
   const offer = DEEP_TYPE_REPORT_OFFER[locale]
   const promotionRef = useRef<HTMLElement>(null)
   const { feedback: shareFeedback, share } = useShare({ copiedMessage: content.ui.reportShareCopied })
-  const report = buildFreeReport(profile)
+  const report = buildFreeReport(profile, locale)
   const gemName = content.gemNames[profile.gem.code]
   const shareText = content.ui.reportShareText
     .replace('{inner}', profile.inner.code)
@@ -191,6 +192,8 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
 
         <StrengthCards cards={report.strengthCards} title={content.ui.strengthCardsTitle} />
 
+        <ReadingChapters reading={report.reading} />
+
         <section className={CARD_CLASS_NAME}>
           <h2 className="font-black text-lg">{content.ui.methodologyNoteTitle}</h2>
           <p className="mt-2 text-page-ink/64 text-sm leading-7">{content.ui.methodologyNoteBody}</p>
@@ -298,12 +301,50 @@ function StrengthCards({ cards, title }: { cards: FreeStrengthCards; title: stri
                 </span>
               </div>
               <p className="mt-2 break-keep text-page-ink/68 text-sm leading-6">{card.copy.core}</p>
+              <p className="mt-2 break-keep text-page-ink/56 text-xs leading-5">{card.copy.shine}</p>
+              <p className="mt-2 break-keep text-page-ink/44 text-xs leading-5">{card.copy.watch}</p>
               <p className="mt-2 break-keep text-page-ink/52 text-xs leading-5">{card.band.label}</p>
             </div>
           </li>
         ))}
       </ul>
     </section>
+  )
+}
+
+/**
+ * The long-form reading, one card per chapter. It sits under the result blocks rather than over them because
+ * the reader came for the eight letters and the job name; the prose is what they stay for.
+ *
+ * Every string here arrives through `report.reading`. The component holds no Korean of its own — same rule the
+ * paid report's sections follow, and for the same reason: the copy gates scan content modules, not React trees.
+ */
+function ReadingChapters({ reading }: { reading: FreeReading }) {
+  return (
+    <>
+      {reading.chapters.map((chapter) => (
+        <section className={CARD_CLASS_NAME} key={chapter.id}>
+          <h2 className="break-keep font-black text-lg">{chapter.title}</h2>
+          <p className="mt-1.5 break-keep text-page-ink/56 text-sm leading-6">{chapter.intro}</p>
+          <div className="mt-5 grid gap-5">
+            {chapter.paragraphs.map((paragraph) => (
+              <div key={paragraph.text}>
+                {paragraph.kicker ? (
+                  <p className="font-black text-page-accent text-xs tracking-wide">{paragraph.kicker}</p>
+                ) : null}
+                <p className="mt-1.5 break-keep text-page-ink/72 leading-8">{paragraph.text}</p>
+                {paragraph.note ? (
+                  <p className="mt-2 break-keep text-page-ink/48 text-xs leading-5">{paragraph.note}</p>
+                ) : null}
+              </div>
+            ))}
+          </div>
+          {chapter.id === 'closing' ? (
+            <p className="mt-5 break-keep text-page-ink/48 text-xs leading-5">{reading.closing}</p>
+          ) : null}
+        </section>
+      ))}
+    </>
   )
 }
 

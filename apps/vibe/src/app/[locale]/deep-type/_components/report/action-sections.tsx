@@ -284,7 +284,8 @@ export function ReflectionQuestionsSection({ data }: { data: ReflectionQuestions
             </span>
             <div className="min-w-0">
               <p className="break-keep font-bold text-page-ink/84 leading-7">{question.text}</p>
-              <p className="mt-1 text-page-ink/40 text-xs">{question.source}</p>
+              <p className="mt-2 break-keep text-page-ink/60 text-sm leading-6">{question.why}</p>
+              <p className="mt-2 text-page-ink/40 text-xs">{question.source}</p>
             </div>
           </li>
         ))}

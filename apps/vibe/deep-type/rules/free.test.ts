@@ -12,7 +12,7 @@ import {
   NEED_DETAILS,
   PURPOSE_DETAILS,
 } from '../content/facet-details.paid'
-import { POLE_SIGNATURE } from '../content/opening.paid'
+import { BAND_FRAME } from '../content/opening.paid'
 import { REFLECTION_BY_DRAIN, REFLECTION_BY_INTEREST, REFLECTION_BY_NEED } from '../content/reflection.paid'
 import { DRAIN_LABELS } from '../content/work-labels.free'
 import { ENVIRONMENT_LABELS, INTEREST_LABELS, NEED_LABELS, PURPOSE_LABELS } from '../content/work-labels.paid'
@@ -106,7 +106,19 @@ const FREE_ENTRY = join(RULES_DIR, 'free.ts')
 /** Relative to apps/vibe so a failure names the file rather than a machine-specific absolute path. */
 const EXPECTED_CLOSURE = [
   'deep-type/content/abilities.ts',
+  // The four locale axis tables and the lookup over them. They reach the free bundle because the long-form
+  // reading's kickers name the axis and the pole, and the axis bars above the reading already render them —
+  // one table for both, which is the arrangement `axis-copy.ts` exists to hold.
+  'deep-type/content/axes.en.ts',
+  'deep-type/content/axes.ja.ts',
+  'deep-type/content/axes.ko.ts',
+  'deep-type/content/axes.zh.ts',
+  'deep-type/content/axis-content.ts',
+  'deep-type/content/axis-copy.ts',
   'deep-type/content/band-labels.free.ts',
+  // The long-form reading's own copy. Free by placement and by right: it explains the eight letters and the
+  // world job, and both are free deliverables (§4.1 rows 1-3).
+  'deep-type/content/reading.free.ts',
   'deep-type/content/work-labels.free.ts',
   'deep-type/content/world-job-names.ts',
   'deep-type/content/world-job.ts',
@@ -114,6 +126,7 @@ const EXPECTED_CLOSURE = [
   // label table the caller passes — which is what lets the free bundle import it at all.
   'deep-type/facets.ts',
   'deep-type/model.ts',
+  'deep-type/rules/free-reading.ts',
   'deep-type/rules/free.ts',
 ]
 
@@ -167,9 +180,11 @@ function paidCopyLiterals(): string[] {
   )
   const report = [
     ...[DRAIN_DETAILS, NEED_DETAILS, ENVIRONMENT_DETAILS, INTEREST_DETAILS, PURPOSE_DETAILS].flatMap((table) =>
-      Object.values(table),
+      Object.values(table).flatMap((detail) => [detail.contrast, detail.detail]),
     ),
-    ...Object.values(POLE_SIGNATURE).flatMap((axis) => Object.values(axis).map((pole) => pole.line)),
+    // The axis scenes are NOT on this list any more. They moved to `content/reading.free.ts` when the free
+    // screen grew its own long-form reading, and a free source is supposed to contain them now.
+    ...Object.values(BAND_FRAME),
     ...[REFLECTION_BY_DRAIN, REFLECTION_BY_INTEREST, REFLECTION_BY_NEED].flatMap((table) => Object.values(table)),
   ]
   const free = new Set([
@@ -365,7 +380,7 @@ describe('exhaustive axis sweep', () => {
 
     for (let index = 0; index < TOTAL_STATE_VECTORS; index++) {
       const states = decodeStates(index)
-      const report = buildFreeReport(profileFor(states))
+      const report = buildFreeReport(profileFor(states), 'ko')
       // Both codes are rebuilt from the state vector rather than read back off the report, so a card that is
       // internally consistent but attached to the wrong code still fails.
       const inner = INNER_CODES[index % QUAD_VECTORS] ?? ''
@@ -499,14 +514,14 @@ describe('exhaustive axis sweep', () => {
     for (let axisIndex = 0; axisIndex < AXES.length; axisIndex++) {
       for (let state = 0; state < AXIS_STATES; state++) {
         const uniform = AXES.map((_, position) => (position === axisIndex ? state : 5))
-        collect(buildFreeReport(profileFor(uniform)))
+        collect(buildFreeReport(profileFor(uniform), 'ko'))
       }
     }
     for (let index = 0; index < TOTAL_STATE_VECTORS; index += 4801) {
-      collect(buildFreeReport(profileFor(decodeStates(index))))
+      collect(buildFreeReport(profileFor(decodeStates(index)), 'ko'))
     }
     for (const work of allFreeWorkProfiles()) {
-      collect(buildFreeReport(profileFor([5, 5, 5, 5, 5, 5, 5, 5], work)))
+      collect(buildFreeReport(profileFor([5, 5, 5, 5, 5, 5, 5, 5], work), 'ko'))
     }
 
     const leaked = paidCopyLiterals().filter((literal) => emitted.has(literal))
@@ -538,7 +553,7 @@ describe('drain signature', () => {
     const spreads = new Set<string>()
 
     for (const work of allFreeWorkProfiles()) {
-      const report = buildFreeReport(profileFor([0, 0, 0, 0, 0, 0, 0, 0], work))
+      const report = buildFreeReport(profileFor([0, 0, 0, 0, 0, 0, 0, 0], work), 'ko')
       const signature = report.drainSignature
 
       // Sized by the band, not by the tied set. `double` shows two and `triple` shows three so the true
@@ -574,18 +589,18 @@ describe('block independence', () => {
   test('the drain block ignores the axes and the axis blocks ignore the drain', () => {
     const works = allFreeWorkProfiles()
     const vectors = [0, 285941, 794531, 1_679_615].map(decodeStates)
-    const baseline = buildFreeReport(profileFor(vectors[0]!, works[0]!))
+    const baseline = buildFreeReport(profileFor(vectors[0]!, works[0]!), 'ko')
 
     for (const work of works) {
       for (const states of vectors) {
-        const report = buildFreeReport(profileFor(states, work))
-        expect(report.drainSignature).toEqual(buildFreeReport(profileFor(vectors[0]!, work)).drainSignature)
-        expect(report.worldJob).toEqual(buildFreeReport(profileFor(states, works[0]!)).worldJob)
-        expect(report.strengthCards).toEqual(buildFreeReport(profileFor(states, works[0]!)).strengthCards)
+        const report = buildFreeReport(profileFor(states, work), 'ko')
+        expect(report.drainSignature).toEqual(buildFreeReport(profileFor(vectors[0]!, work), 'ko').drainSignature)
+        expect(report.worldJob).toEqual(buildFreeReport(profileFor(states, works[0]!), 'ko').worldJob)
+        expect(report.strengthCards).toEqual(buildFreeReport(profileFor(states, works[0]!), 'ko').strengthCards)
       }
     }
 
-    expect(baseline.clarityNote).toBe(buildFreeReport(profileFor(vectors[3]!, works[63]!)).clarityNote)
+    expect(baseline.clarityNote).toBe(buildFreeReport(profileFor(vectors[3]!, works[63]!), 'ko').clarityNote)
   })
 })
 
@@ -665,7 +680,7 @@ describe('real scoring conformance', () => {
 
       expect(scored.inner.code).toBe(fabricated.inner.code)
       expect(scored.gem.code).toBe(fabricated.gem.code)
-      expect(buildFreeReport(scored)).toEqual(buildFreeReport(fabricated))
+      expect(buildFreeReport(scored, 'ko')).toEqual(buildFreeReport(fabricated, 'ko'))
       checked += 1
     }
 
@@ -682,7 +697,7 @@ describe('real scoring conformance', () => {
       for (const axis of GEM_AXES) {
         expect(scored.gem.axes[axis].pole).not.toBeNull()
       }
-      expect(buildFreeReport(scored).worldJob.name.length).toBeGreaterThan(0)
+      expect(buildFreeReport(scored, 'ko').worldJob.name.length).toBeGreaterThan(0)
     }
   })
 })
@@ -692,7 +707,7 @@ const FREE_WORK: WorkAnswer[] = FREE_WORK_ITEMS.map((item) => ({ itemId: item.id
 describe('band copy', () => {
   test('every axis carries the free ruler and every card carries its own band', () => {
     for (let index = 0; index < TOTAL_STATE_VECTORS; index += 1777) {
-      const report = buildFreeReport(profileFor(decodeStates(index)))
+      const report = buildFreeReport(profileFor(decodeStates(index)), 'ko')
       for (const entry of [...report.axes.inner, ...report.axes.gem]) {
         expect(entry.band).toBe(CLARITY_BANDS_FREE[entry.band3])
         expect((AXIS_POLES[entry.id] as readonly string[]).includes(entry.leading)).toBe(true)

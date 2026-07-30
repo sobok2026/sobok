@@ -30,10 +30,12 @@ import {
 import {
   DRAIN_DETAILS,
   ENVIRONMENT_DETAILS,
+  type FacetDetail,
   INTEREST_DETAILS,
   NEED_DETAILS,
   PURPOSE_DETAILS,
 } from '../../deep-type/content/facet-details.paid'
+import { GEM_CORE_READING, INNER_FAMILY_READING } from '../../deep-type/content/reading.free'
 import {
   BLOCK_NOTES_KO,
   SECTION_INTROS_KO,
@@ -145,7 +147,7 @@ export function mergeDrainSittings(freeAnsweredAt: Date | null, paidAnsweredAt: 
 }
 
 export function generateEngineReport(input: EngineReportInput): EngineReportDocument {
-  const free = buildFreeReport(input.free)
+  const free = buildFreeReport(input.free, input.locale)
   const copy = axisCopyFor(input.locale)
   const drain = drainRead(input)
   const drainLeaders = detailFacets(drain.leaders, DRAIN_LABELS, DRAIN_DETAILS)
@@ -211,16 +213,21 @@ function heading<Key extends ReportSectionKey>(key: Key): { intro: string; key: 
 function detailFacets<Facet extends WorkFacetId>(
   facets: readonly Facet[],
   labels: FacetLabels<Facet>,
-  details: Readonly<Record<Facet, string>>,
+  details: Readonly<Record<Facet, FacetDetail>>,
 ): readonly DetailedFacet[] {
-  return nameFacets(facets, labels).map((facet) => ({ ...facet, detail: details[facet.id] }))
+  return nameFacets(facets, labels).map((facet) => ({ ...facet, ...details[facet.id] }))
 }
 
 // Section 1 ------------------------------------------------------------------------------------------------
 
+// The section used to be the two card fields and nothing else, which made the report's headline result the
+// thinnest block in it. The two readings are the same ones the free screen shows — sections 1-3 are free
+// deliverables the paid engine renders rather than re-derives, so quoting them here is the arrangement working
+// rather than a duplicate.
 function worldJobBlock(free: FreeReport): EngineBlock {
   const { codes, core, family, name } = free.worldJob
-  return block({ ...heading('worldJob'), data: { codes, core, family, name } }, [
+  const reading = { core: GEM_CORE_READING[codes.gem], family: INNER_FAMILY_READING[codes.inner] }
+  return block({ ...heading('worldJob'), data: { codes, core, family, name, reading } }, [
     'inner_axis_profile',
     'mind_axis_and_gem',
     'world_role_card',
