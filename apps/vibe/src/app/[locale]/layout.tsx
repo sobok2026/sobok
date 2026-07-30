@@ -1,7 +1,7 @@
 import '../globals.css'
 
 import GTMLoader from '@sobok/analytics/gtm-loader'
-import { LOCALE_LANGUAGE_TAGS, Locale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS, LOCALES } from '@sobok/domain/locale'
 import type { Metadata, Viewport } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
@@ -14,7 +14,7 @@ import AdSense from '@/lib/ads/AdSense'
 import JsonLd, { siteGraph } from '@/lib/JsonLd'
 
 export function generateStaticParams() {
-  return Object.values(Locale).map((locale) => ({ locale }))
+  return LOCALES.map((locale) => ({ locale }))
 }
 
 export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Promise<Metadata> {

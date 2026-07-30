@@ -1,7 +1,9 @@
+import { LOCALES } from '@sobok/domain/locale'
+import { alertDiscord } from '@sobok/edge/alert'
+import { type Db, openDB, withDB } from '@sobok/edge/db/client'
+import { sha256Hex } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
 import { z } from 'zod'
-
-import { type Db, openDB, withDB } from '~/db/client'
 import {
   type Cursor,
   checkRateLimit,
@@ -14,10 +16,9 @@ import {
 } from '~/db/queries/comment'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
-import { alertDiscord } from '~/lib/alert'
 import { hashIp } from '~/lib/ip'
 import { MAX_BODY, sanitizeBody, sanitizeNickname } from '~/lib/text'
-import { newEditToken, newPublicId, sha256Hex } from '~/lib/tokens'
+import { newEditToken, newPublicId } from '~/lib/tokens'
 import { guardTurnstile } from '~/lib/turnstile'
 import { COMMENT_POST_ACTION, COMMENT_REPORT_ACTION } from './actions'
 
@@ -37,7 +38,7 @@ const REPORT_LIMITS = [
   { bucket: 'report_burst', windowMs: 60_000, limit: 8 },
 ]
 
-const LocaleSchema = z.enum(['ko', 'en', 'ja', 'zh'])
+const LocaleSchema = z.enum(LOCALES)
 // The persistent public topic key minted client-side by topicKey(). camelCase bodies (northNode) are valid.
 const TopicKeySchema = z
   .string()

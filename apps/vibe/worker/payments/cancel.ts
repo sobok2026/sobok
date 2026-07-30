@@ -1,5 +1,5 @@
+import type { Db } from '@sobok/edge/db/client'
 import { cancelPayment, type PortOneCreds } from '../billing/portone'
-import type { Db } from '../db/client'
 import { getPurchaseForCancel, markPurchaseRefunded } from '../db/queries/purchase'
 
 export type WithdrawalOutcome =

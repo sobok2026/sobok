@@ -1,6 +1,6 @@
 'use client'
 
-import { getViewFromSearchParams, setViewToSearchParams, View } from '@sobok/std'
+import { getViewFromSearchParams, setViewToSearchParams, VIEW, type View } from '@sobok/std'
 import type { ReadonlyURLSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
@@ -12,7 +12,7 @@ type Props = {
 }
 
 export default function SearchViewToggle({ className }: Props) {
-  const [view, setView] = useState(View.CARD)
+  const [view, setView] = useState<View>(VIEW.CARD)
 
   function handleSearchParamsUpdate(searchParams: ReadonlyURLSearchParams) {
     setView(getViewFromSearchParams(searchParams))

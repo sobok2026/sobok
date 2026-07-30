@@ -1,4 +1,7 @@
 import { DEEP_TYPE_REPORT_OFFER, type OfferCurrency, PRODUCT_NAME, reportItemFor } from '@deep-type/offer'
+import type { Locale } from '@sobok/domain/locale'
+
+import type { Sku } from '~/db/schema'
 
 import type { GA4Item } from './ga4'
 
@@ -6,8 +9,6 @@ import type { GA4Item } from './ga4'
 // and the grant path verifies the PG-reported amount equals this. Minor units, per-locale currency — `ko`
 // charges KRW, the overseas locales charge what their PayPal rail settles (`en`/`zh` USD, `ja` JPY), and the
 // numbers live in `@deep-type/offer` so the paywall shows the same price this module charges.
-export type Sku = 'report' | 'compat' | 'bundle'
-type Locale = 'ko' | 'en' | 'ja' | 'zh'
 
 export interface SkuDetail {
   offers: typeof DEEP_TYPE_REPORT_OFFER

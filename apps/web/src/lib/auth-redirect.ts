@@ -1,4 +1,4 @@
-import { SearchParamKey } from '@/storage'
+import { SEARCH_PARAM_KEY } from '@/storage'
 
 type AuthPathname = '/auth/login' | '/auth/signup'
 
@@ -11,7 +11,7 @@ export function getAuthRedirectHref(pathname: AuthPathname, redirect: string | n
     return pathname
   }
 
-  const searchParams = new URLSearchParams({ [SearchParamKey.REDIRECT]: redirect })
+  const searchParams = new URLSearchParams({ [SEARCH_PARAM_KEY.REDIRECT]: redirect })
 
   return `${pathname}?${searchParams}`
 }
@@ -25,7 +25,7 @@ export function getAuthSuccessRedirect(redirect: string | null | undefined, name
 }
 
 export function getCurrentAuthRedirect() {
-  return new URLSearchParams(window.location.search).get(SearchParamKey.REDIRECT)
+  return new URLSearchParams(window.location.search).get(SEARCH_PARAM_KEY.REDIRECT)
 }
 
 export function getPathWithSearch(pathname: string, searchParams: string | SearchParamsLike) {

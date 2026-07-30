@@ -10,9 +10,18 @@ import type { PayTier, PortOneChannel } from '@deep-type/pay-method'
 export interface Bindings {
   // Static Next export (./out), served for every non-/api path via env.ASSETS.fetch(request).
   ASSETS: Fetcher
-  // Two Hyperdrive configs over the SAME isolated Supabase Postgres (Seoul), differing only in caching:
-  HYPERDRIVE_FRESH: Hyperdrive // caching disabled — money/entitlement path
-  HYPERDRIVE_CACHED: Hyperdrive // caching enabled — done-report body read only
+  // Two Hyperdrive configs over the SAME isolated Supabase Postgres (Seoul), differing only in caching. Which
+  // one a handler passes to `openDB` IS the caching decision — there is no fresh-vs-cached opener to pick, and
+  // there was never a real one: the two used to be separate functions with identical bodies, so the name
+  // promised a guarantee that only the argument ever provided.
+  //
+  // Caching DISABLED. Every write and every read-after-write on the money/entitlement path: checkout, verify,
+  // webhook, the report CAS, viewed_at. Never serves a stale row.
+  HYPERDRIVE_FRESH: Hyperdrive
+  // Caching ENABLED, and usable for exactly one thing: the single read of an immutable done-report body. MUST
+  // NOT back any status or entitlement read — the cache does not invalidate on writes, so it would hand a
+  // refunded buyer their report back, or grant on a 'pending' that has since settled.
+  HYPERDRIVE_CACHED: Hyperdrive
 
   // ── Secrets Store bindings (async: `await X.get()`) ─────────────────────────────────────────────
   DEEPTYPE_PORTONE_API_SECRET: SecretsStoreSecret

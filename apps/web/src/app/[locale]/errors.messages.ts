@@ -1,7 +1,5 @@
 import type { InvalidParamCode, ProblemSlug } from '@sobok/contracts'
 
-import { Locale } from '@sobok/domain/locale'
-
 import type { LocalizedMessages } from '@/i18n/messages'
 
 // 에러 카탈로그 — 서버가 보내는 machine code(problem type slug / invalidParams[].code)를 사용자 로케일 카피로 변환한다.
@@ -384,8 +382,8 @@ const zh: ErrorCatalog = {
 }
 
 export const messages = {
-  [Locale.KO]: { Errors: ko },
-  [Locale.EN]: { Errors: en },
-  [Locale.JA]: { Errors: ja },
-  [Locale.ZH]: { Errors: zh },
+  ko: { Errors: ko },
+  en: { Errors: en },
+  ja: { Errors: ja },
+  zh: { Errors: zh },
 } satisfies LocalizedMessages

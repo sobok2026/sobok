@@ -1,12 +1,12 @@
+import type { Locale } from '@sobok/domain/locale'
+import type { Db } from '@sobok/edge/db/client'
 import { and, desc, eq, gt, isNotNull, isNull } from 'drizzle-orm'
-
 import { dateIsWithinYears, REOPEN_REQUEST_COOLDOWN_MS, yearsAfter } from '../../lib/retention'
-import type { Db } from '../client'
 import { purchaseTable, reopenAccessTable, resultTable } from '../schema'
 
 export type ReopenCandidate = {
   purchaseId: number
-  locale: 'ko' | 'en' | 'ja' | 'zh'
+  locale: Locale
   paidAt: Date
 }
 
@@ -57,7 +57,7 @@ export async function insertReopenLinks(
 export type ReopenedPurchase = {
   accessToken: string
   accessExpiresAt: Date
-  locale: 'ko' | 'en' | 'ja' | 'zh'
+  locale: Locale
   refinementRequired: boolean
 }
 

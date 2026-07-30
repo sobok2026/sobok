@@ -6,9 +6,8 @@ import { usePathname } from 'next/navigation'
 
 import { SITE_NAME } from '@/constants'
 import { useBottomNavVisible } from './flow-focus'
+import { FOCUS_CLASS_NAME } from './focus'
 import { PRIMARY_NAV } from './nav'
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export default function BottomNav({ locale, navLabel }: { locale: Locale; navLabel: string }) {
   const pathname = usePathname()
@@ -42,7 +41,7 @@ export default function BottomNav({ locale, navLabel }: { locale: Locale; navLab
             <Link
               key={item.href}
               aria-current={active ? 'page' : undefined}
-              className={`relative rounded-full py-1.5 text-xs transition-colors before:absolute before:-inset-x-5 before:-inset-y-1.5 before:content-[''] ${focusClassName} ${
+              className={`relative rounded-full py-1.5 text-xs transition-colors before:absolute before:-inset-x-5 before:-inset-y-1.5 before:content-[''] ${FOCUS_CLASS_NAME} ${
                 active ? 'font-semibold text-page-ink' : 'text-page-ink/62 hover:text-page-ink'
               }`}
               href={item.href}

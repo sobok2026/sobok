@@ -7,9 +7,9 @@ import { scoreBaseAssessment, scoreRefinedAssessment } from '@deep-type/scoring'
 import { createDeepTypeContent, createPaidQuestions } from './create-content'
 import { deepTypeContent as ko } from './ko'
 import { koFreeQuestionOptions } from './question-options/ko.free'
-import { koPaidQuestionOptions } from './question-options/ko.paid'
+import { paidQuestionOptions as koPaidQuestionOptions } from './question-options/ko.paid'
 import { koFreeQuestionPrompts } from './question-prompts/ko.free'
-import { koPaidQuestionPrompts } from './question-prompts/ko.paid'
+import { paidQuestionPrompts as koPaidQuestionPrompts } from './question-prompts/ko.paid'
 
 const SCORED_IDS = [...FREE_LIKERT_ITEMS, ...PAID_LIKERT_ITEMS].map((item) => item.id)
 const FREE_IDS = [...FREE_LIKERT_ITEMS, ...FREE_WORK_ITEMS].map((item) => item.id)

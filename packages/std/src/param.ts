@@ -1,14 +1,18 @@
-export enum View {
-  IMAGE = 'img',
-  CARD = 'card',
-}
+// An `as const` object and not a tuple: `'img'` is an abbreviation the member name explains. See
+// `@sobok/domain/censorship/model` for why this is not an enum.
+export const VIEW = {
+  IMAGE: 'img',
+  CARD: 'card',
+} as const
+
+export type View = (typeof VIEW)[keyof typeof VIEW]
 
 export const VIEW_PARAM = 'view'
 
 type SearchParamsLike = Pick<URLSearchParams, 'get'>
 
 export function appendViewToPath(pathname: string, view: View) {
-  return view === View.IMAGE ? `${pathname}?${VIEW_PARAM}=${View.IMAGE}` : pathname
+  return view === VIEW.IMAGE ? `${pathname}?${VIEW_PARAM}=${VIEW.IMAGE}` : pathname
 }
 
 export function convertCamelCaseToKebabCase(str: string) {
@@ -20,12 +24,12 @@ export function getUsernameFromParam(username: string) {
 }
 
 export function getViewFromSearchParams(searchParams: SearchParamsLike) {
-  return searchParams.get(VIEW_PARAM) === View.IMAGE ? View.IMAGE : View.CARD
+  return searchParams.get(VIEW_PARAM) === VIEW.IMAGE ? VIEW.IMAGE : VIEW.CARD
 }
 
 export function setViewToSearchParams(searchParams: URLSearchParams, view: View) {
-  if (view === View.IMAGE) {
-    searchParams.set(VIEW_PARAM, View.IMAGE)
+  if (view === VIEW.IMAGE) {
+    searchParams.set(VIEW_PARAM, VIEW.IMAGE)
     return searchParams
   }
 

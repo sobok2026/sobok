@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 import { en } from './en'
 import { ja } from './ja'
@@ -7,10 +7,10 @@ import type { Messages } from './types'
 import { zh } from './zh'
 
 export const messages = {
-  [Locale.KO]: ko,
-  [Locale.EN]: en,
-  [Locale.ZH]: zh,
-  [Locale.JA]: ja,
+  ko: ko,
+  en: en,
+  zh: zh,
+  ja: ja,
 } satisfies Record<Locale, Messages>
 
 export function getMessages(locale: Locale) {

@@ -1,3 +1,6 @@
+import type { GemCode, InnerCode } from '../model'
+import { WORLD_JOB_NAMES } from './world-job-names'
+
 // Runtime-final values, not the first declaration. The source HTML declares these once near the top and then
 // overwrites them from later patch scripts, so the literals at the declaration site are stale; what shipped is the
 // last write. Recorded here so the divergence cannot silently reappear:
@@ -161,3 +164,19 @@ export const WORLD_JOB_CORE = {
     strength: '믿는 방향이 생기면 사람들과 함께 먼저 움직여요.',
   },
 } as const
+
+/**
+ * The world job for a pair of codes: the core, the family, and the one hand-authored name.
+ *
+ * Assembled here because both engines need exactly this triple and both had their own copy of it — the free
+ * engine's `buildFreeReport` and the narration profile's `buildReportProfile`. The name is looked up whole from
+ * the 256-entry table rather than composed from the two halves; composition is what the origin shipped and it
+ * produced 256 strings that read the same.
+ */
+export function resolveWorldJob(inner: InnerCode, gem: GemCode) {
+  return {
+    core: WORLD_JOB_CORE[gem],
+    family: WORLD_JOB_FAMILY[inner],
+    name: WORLD_JOB_NAMES[`${inner}_${gem}`],
+  }
+}

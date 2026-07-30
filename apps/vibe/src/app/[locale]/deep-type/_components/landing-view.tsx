@@ -6,8 +6,8 @@ import type { Locale } from '@sobok/domain/locale'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 import heroArtwork from '../_assets/hero/landing.webp'
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
@@ -18,8 +18,6 @@ type LandingViewProps = {
   locale: Locale
   onStart?: () => void
 }
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 /**
  * The landing, laid out as an ad destination rather than a product page.
@@ -144,7 +142,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
         <Link
           className={cn(
             'mx-auto mt-4 flex w-fit items-center rounded-full p-3 text-center font-bold text-page-ink/58 text-xs underline underline-offset-4 hover:text-page-ink',
-            focusClassName,
+            FOCUS_CLASS_NAME,
           )}
           href={`/${locale}/deep-type/reopen`}
         >
@@ -194,7 +192,7 @@ function CtaBlock({
       <Link
         className={cn(
           'flex w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-page-accent py-4 font-black text-base text-white shadow-[0_24px_80px_var(--page-accent-glow)] transition-colors hover:bg-page-accent/92 sm:mx-auto sm:max-w-sm',
-          focusClassName,
+          FOCUS_CLASS_NAME,
         )}
         data-cta-role={ctaRole}
         href={`/${locale}/deep-type/test`}
@@ -274,7 +272,7 @@ function StickyCta({ content, locale, onStart }: LandingViewProps) {
         <Link
           className={cn(
             'flex w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-page-accent py-3.5 font-black text-sm text-white transition-colors hover:bg-page-accent/92',
-            focusClassName,
+            FOCUS_CLASS_NAME,
           )}
           href={`/${locale}/deep-type/test`}
           onClick={onStart}

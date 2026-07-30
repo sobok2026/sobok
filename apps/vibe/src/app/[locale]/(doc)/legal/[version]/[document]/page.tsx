@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import { LOCALES } from '@sobok/domain/locale'
 import { notFound } from 'next/navigation'
 
 import {
@@ -13,7 +13,7 @@ import { getLocale } from '@/i18n/server'
 import LegalArticle from '../../../LegalArticle'
 
 export function generateStaticParams() {
-  return Object.values(Locale).flatMap((locale) =>
+  return LOCALES.flatMap((locale) =>
     LEGAL_ARCHIVE.flatMap((entry) =>
       ARCHIVED_DOCUMENTS.map((document) => ({ locale, version: entry.segment, document })),
     ),

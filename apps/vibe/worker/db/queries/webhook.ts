@@ -1,4 +1,4 @@
-import type { Db } from '../client'
+import type { Db } from '@sobok/edge/db/client'
 import { webhookEventTable } from '../schema'
 
 // Record an inbound webhook by its Standard-Webhooks event id. Returns true iff this was the FIRST time we

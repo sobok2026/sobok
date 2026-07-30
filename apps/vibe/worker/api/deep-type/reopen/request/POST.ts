@@ -1,19 +1,20 @@
+import { LOCALES } from '@sobok/domain/locale'
+import { openDB, withDB } from '@sobok/edge/db/client'
+import { randomToken, sha256Hex } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
 import { z } from 'zod'
-
-import { openFresh, withDB } from '~/db/client'
 import { insertReopenLinks, listReopenCandidates } from '~/db/queries/reopen'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { sendReopenEmail } from '~/lib/reopen-email'
 import { REOPEN_LINK_TTL_MS } from '~/lib/retention'
-import { normalizeEmail, randomToken, sha256Hex } from '~/lib/tokens'
+import { normalizeEmail } from '~/lib/tokens'
 import { guardTurnstile } from '~/lib/turnstile'
 import { DEEPTYPE_REOPEN_ACTION } from '../../actions'
 
 const RequestBody = z.object({
   email: z.string().email().max(254),
-  locale: z.enum(['ko', 'en', 'ja', 'zh']),
+  locale: z.enum(LOCALES),
   turnstileToken: z.string().min(1).max(2048),
 })
 
@@ -40,7 +41,7 @@ route.post('/', async (c) => {
   const emailHash = await sha256Hex(email)
   const now = new Date()
 
-  const links = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  const links = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const candidates = await listReopenCandidates(db, emailHash, now)
     const issued = await Promise.all(
       candidates.map(async (candidate) => {

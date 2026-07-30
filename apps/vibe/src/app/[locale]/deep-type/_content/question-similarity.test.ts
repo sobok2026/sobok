@@ -4,9 +4,9 @@ import { FREE_LIKERT_ITEMS, PAID_LIKERT_ITEMS } from '@deep-type/questionnaire'
 
 import type { QuestionOptionCatalog, QuestionPromptCatalog } from '../_lib/types'
 import { koFreeQuestionOptions } from './question-options/ko.free'
-import { koPaidQuestionOptions } from './question-options/ko.paid'
+import { paidQuestionOptions as koPaidQuestionOptions } from './question-options/ko.paid'
 import { koFreeQuestionPrompts } from './question-prompts/ko.free'
-import { koPaidQuestionPrompts } from './question-prompts/ko.paid'
+import { paidQuestionPrompts as koPaidQuestionPrompts } from './question-prompts/ko.paid'
 
 // Overlap is measured across the whole scored instrument, so the two tier modules are rejoined here. They are
 // split in the product so paid text stays out of the free static export, not because they measure separately.

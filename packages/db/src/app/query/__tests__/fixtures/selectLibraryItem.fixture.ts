@@ -1,6 +1,4 @@
 import { afterAll, beforeEach, describe, expect, mock, test } from 'bun:test'
-
-import { LibraryItemSort } from '@sobok/domain/library/sort'
 import type { SQL } from 'drizzle-orm'
 import { PgDialect } from 'drizzle-orm/pg-core'
 
@@ -74,7 +72,7 @@ describe('selectLibraryItem', () => {
 
     await selectLibraryItem(7, {
       limit: 3,
-      sort: LibraryItemSort.CREATED_ASC,
+      sort: 'created-asc',
       cursor: { mangaId: 42, timestamp: cursorTime.getTime() },
     })
 

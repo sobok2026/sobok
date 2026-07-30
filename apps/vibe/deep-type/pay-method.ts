@@ -1,3 +1,5 @@
+import type { Locale } from '@sobok/domain/locale'
+
 /**
  * The payment-method catalogue: what a buyer may pay with, what each one is made of, and which locales are
  * offered it.
@@ -119,8 +121,6 @@ const SELLABLE_CHANNELS = {
 export function sellableChannels(tier: PayTier): readonly PortOneChannel[] {
   return SELLABLE_CHANNELS[tier]
 }
-
-type Locale = 'ko' | 'en' | 'ja' | 'zh'
 
 /**
  * The split is domestic vs overseas. Everything on the `ko` list needs Korea — the wallets need a Korean app,

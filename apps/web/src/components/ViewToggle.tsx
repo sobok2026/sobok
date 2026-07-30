@@ -1,14 +1,14 @@
 'use client'
 
-import { View } from '@sobok/std'
+import { VIEW, type View } from '@sobok/std'
 import { Image, LayoutGrid } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRef } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 const VIEW_OPTIONS = [
-  { value: View.CARD, labelKey: 'card', Icon: LayoutGrid },
-  { value: View.IMAGE, labelKey: 'image', Icon: Image },
+  { value: VIEW.CARD, labelKey: 'card', Icon: LayoutGrid },
+  { value: VIEW.IMAGE, labelKey: 'image', Icon: Image },
 ] as const
 
 type Props = {
@@ -84,7 +84,7 @@ export default function ViewToggle({ className = '', onViewChange, view }: Props
       <div
         aria-hidden
         className="pointer-events-none absolute inset-y-0.5 left-0.5 w-[calc(50%-2px)] rounded-[0.65rem] border border-border-2 bg-surface-2 shadow-sm transition ease-out"
-        style={{ transform: `translateX(${view === View.IMAGE ? 100 : 0}%)` }}
+        style={{ transform: `translateX(${view === VIEW.IMAGE ? 100 : 0}%)` }}
       />
       {VIEW_OPTIONS.map(({ value, labelKey, Icon }, index) => {
         const label = t(labelKey)

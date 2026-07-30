@@ -1,6 +1,6 @@
 import { userRatingTable } from '@sobok/db/app/activity'
 import { encodeRatingCursor } from '@sobok/db/cursor'
-import { RatingSort } from '@sobok/domain/library/sort'
+import type { RatingSort } from '@sobok/domain/library/sort'
 import { and, asc, desc, eq, gt, lt, or, type SQL } from 'drizzle-orm'
 
 export type RatingCursor = {
@@ -33,17 +33,17 @@ export function getNextRatingCursor(sort: RatingSort, row: RatingRow) {
 
 export function getRatingOrderByClauses(sort: RatingSort): SQL[] {
   switch (sort) {
-    case RatingSort.CREATED_DESC:
+    case 'created-desc':
       return [desc(userRatingTable.createdAt), desc(userRatingTable.mangaId)]
-    case RatingSort.MANGA_ID_ASC:
+    case 'manga-id-asc':
       return [asc(userRatingTable.mangaId)]
-    case RatingSort.MANGA_ID_DESC:
+    case 'manga-id-desc':
       return [desc(userRatingTable.mangaId)]
-    case RatingSort.RATING_ASC:
+    case 'rating-asc':
       return [asc(userRatingTable.rating), desc(userRatingTable.updatedAt), desc(userRatingTable.mangaId)]
-    case RatingSort.RATING_DESC:
+    case 'rating-desc':
       return [desc(userRatingTable.rating), desc(userRatingTable.updatedAt), desc(userRatingTable.mangaId)]
-    case RatingSort.UPDATED_DESC:
+    case 'updated-desc':
       return [desc(userRatingTable.updatedAt), desc(userRatingTable.mangaId)]
   }
 }
@@ -52,16 +52,16 @@ function getRatingCursorCondition(sort: RatingSort, cursor: RatingCursor) {
   const cursorTime = new Date(cursor.timestamp)
 
   switch (sort) {
-    case RatingSort.CREATED_DESC:
+    case 'created-desc':
       return or(
         lt(userRatingTable.createdAt, cursorTime),
         and(eq(userRatingTable.createdAt, cursorTime), lt(userRatingTable.mangaId, cursor.mangaId)),
       )!
-    case RatingSort.MANGA_ID_ASC:
+    case 'manga-id-asc':
       return gt(userRatingTable.mangaId, cursor.mangaId)
-    case RatingSort.MANGA_ID_DESC:
+    case 'manga-id-desc':
       return lt(userRatingTable.mangaId, cursor.mangaId)
-    case RatingSort.RATING_ASC:
+    case 'rating-asc':
       return or(
         gt(userRatingTable.rating, cursor.rating),
         and(eq(userRatingTable.rating, cursor.rating), lt(userRatingTable.updatedAt, cursorTime)),
@@ -71,7 +71,7 @@ function getRatingCursorCondition(sort: RatingSort, cursor: RatingCursor) {
           lt(userRatingTable.mangaId, cursor.mangaId),
         ),
       )!
-    case RatingSort.RATING_DESC:
+    case 'rating-desc':
       return or(
         lt(userRatingTable.rating, cursor.rating),
         and(eq(userRatingTable.rating, cursor.rating), lt(userRatingTable.updatedAt, cursorTime)),
@@ -81,7 +81,7 @@ function getRatingCursorCondition(sort: RatingSort, cursor: RatingCursor) {
           lt(userRatingTable.mangaId, cursor.mangaId),
         ),
       )!
-    case RatingSort.UPDATED_DESC:
+    case 'updated-desc':
       return or(
         lt(userRatingTable.updatedAt, cursorTime),
         and(eq(userRatingTable.updatedAt, cursorTime), lt(userRatingTable.mangaId, cursor.mangaId)),
@@ -91,13 +91,13 @@ function getRatingCursorCondition(sort: RatingSort, cursor: RatingCursor) {
 
 function getRatingCursorTimestamp(sort: RatingSort, row: RatingRow) {
   switch (sort) {
-    case RatingSort.CREATED_DESC:
+    case 'created-desc':
       return row.createdAt.getTime()
-    case RatingSort.MANGA_ID_ASC:
-    case RatingSort.MANGA_ID_DESC:
-    case RatingSort.RATING_ASC:
-    case RatingSort.RATING_DESC:
-    case RatingSort.UPDATED_DESC:
+    case 'manga-id-asc':
+    case 'manga-id-desc':
+    case 'rating-asc':
+    case 'rating-desc':
+    case 'updated-desc':
       return row.updatedAt.getTime()
   }
 }

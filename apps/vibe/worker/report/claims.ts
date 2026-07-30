@@ -162,10 +162,13 @@ export function checkClaims(section: ReportSectionKey, claims: readonly string[]
 }
 
 export class ClaimBoundaryError extends Error {
-  constructor(readonly violations: readonly ClaimViolation[]) {
+  readonly violations: readonly ClaimViolation[]
+
+  constructor(violations: readonly ClaimViolation[]) {
     super(
       `report section claims out of bounds: ${violations.map((v) => `${v.section}/${v.claim} (${v.kind})`).join(', ')}`,
     )
+    this.violations = violations
   }
 }
 

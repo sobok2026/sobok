@@ -1,6 +1,6 @@
 'use client'
 
-import { LOCALE_LANGUAGE_TAGS, LOCALE_NATIVE_NAMES, Locale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS, LOCALE_NATIVE_NAMES, LOCALES, type Locale } from '@sobok/domain/locale'
 import { Check, ChevronDown, Languages } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import { useEffect, useId, useRef, useState, useTransition } from 'react'
@@ -86,7 +86,7 @@ export default function LocaleSwitcher({ className }: Props) {
           id={menuId}
           role="menu"
         >
-          {Object.values(Locale).map((locale) => {
+          {LOCALES.map((locale) => {
             const isSelected = locale === currentLocale
             const label = LOCALE_NATIVE_NAMES[locale]
 

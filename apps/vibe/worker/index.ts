@@ -1,10 +1,11 @@
+import { describeError } from '@sobok/edge/errors'
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { requestId } from 'hono/request-id'
 import { secureHeaders } from 'hono/secure-headers'
-
 import { deepType } from './api/deep-type'
 import type { AppEnv, Bindings } from './env'
+
 import { problem } from './errors'
 import { runRetentionPurge } from './payments/purge'
 import { reconcileStalePending } from './payments/reconcile'
@@ -27,25 +28,6 @@ app.route('/api/deep-type', deepType)
 // under the mounted sub-app, since Hono routes those to this root handler. Everything else falls through to
 // the ASSETS binding, which applies the configured 404-page / trailing-slash handling.
 app.notFound((c) => (c.req.path.startsWith('/api/') ? problem(404, 'not-found') : c.env.ASSETS.fetch(c.req.raw)))
-
-// Workers' console.error prints an Error's own message and stack but drops `cause` — and drizzle wraps every
-// driver failure in a DrizzleQueryError whose cause holds the only diagnostic part (the postgres.js/Postgres
-// error, with its code/detail/routine). Flatten the chain so a 500 is fully readable from `wrangler tail`.
-function describeError(error: unknown, depth = 0): unknown {
-  if (!(error instanceof Error) || depth > 4) {
-    return error
-  }
-
-  const { code, detail, hint, routine, severity } = error as Error & Record<string, unknown>
-
-  return {
-    name: error.name,
-    message: error.message,
-    ...(code === undefined ? {} : { code, detail, hint, routine, severity }),
-    stack: error.stack,
-    ...(error.cause === undefined ? {} : { cause: describeError(error.cause, depth + 1) }),
-  }
-}
 
 // Any unhandled handler throw becomes a uniform problem+json 500 instead of a bare Workers exception.
 app.onError((error) => {

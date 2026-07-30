@@ -1,6 +1,6 @@
 'use client'
 
-import { type NotificationData, NotificationType } from '@sobok/domain/notification/model'
+import { NOTIFICATION_TYPE, type NotificationData } from '@sobok/domain/notification/model'
 import { formatDistanceToNow } from '@sobok/std'
 import { Book, Bookmark, Check, Circle, Eye, Trash2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
@@ -65,11 +65,11 @@ export default function NotificationCard({
 
   function getNotificationIcon() {
     switch (notification.type) {
-      case NotificationType.BOOKMARK_UPDATE:
+      case NOTIFICATION_TYPE.BOOKMARK_UPDATE:
         return <Bookmark className="size-5 shrink-0" />
-      case NotificationType.NEW_MANGA:
+      case NOTIFICATION_TYPE.NEW_MANGA:
         return <Book className="size-5 shrink-0" />
-      case NotificationType.TEST:
+      case NOTIFICATION_TYPE.TEST:
         return <IconBell className="size-5 shrink-0" />
       default:
         return <IconBell className="size-5 shrink-0" />

@@ -36,7 +36,11 @@ export class RoomRegistry {
 
   private server: Server<SocketData> | null = null
 
-  constructor(private readonly subscriber: RoomSubscriber = subscriberClient) {}
+  private readonly subscriber: RoomSubscriber
+
+  constructor(subscriber: RoomSubscriber = subscriberClient) {
+    this.subscriber = subscriber
+  }
 
   start(server: Server<SocketData>): void {
     this.server = server

@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 export type DeepTypeReopenContent = {
   metadata: { title: string; description: string }
@@ -33,7 +33,7 @@ export type DeepTypeReopenContent = {
 }
 
 export const DEEP_TYPE_REOPEN = {
-  [Locale.KO]: {
+  ko: {
     metadata: {
       title: '겉속유형 감정서 다시 열기',
       description: '구매에 사용한 이메일로 1년 이내의 겉속유형 감정서를 다시 열 수 있습니다.',
@@ -65,7 +65,7 @@ export const DEEP_TYPE_REOPEN = {
     accessUntil: '{date}까지 다시 열 수 있어요.',
     startOverCta: '겉속유형 처음부터 하기',
   },
-  [Locale.EN]: {
+  en: {
     metadata: {
       title: 'Reopen your DeepType report',
       description: 'Reopen a DeepType report within one year using the email address used for purchase.',
@@ -98,7 +98,7 @@ export const DEEP_TYPE_REOPEN = {
     accessUntil: 'Available to reopen until {date}.',
     startOverCta: 'Start DeepType again',
   },
-  [Locale.JA]: {
+  ja: {
     metadata: {
       title: 'DeepType鑑定書をもう一度開く',
       description: '購入時のメールアドレスを使って、決済日から1年以内のDeepType鑑定書を再閲覧できます。',
@@ -131,7 +131,7 @@ export const DEEP_TYPE_REOPEN = {
     accessUntil: '{date}まで再閲覧できます。',
     startOverCta: 'DeepTypeを最初から行う',
   },
-  [Locale.ZH]: {
+  zh: {
     metadata: {
       title: '重新打开 DeepType 报告',
       description: '使用购买时的电子邮箱，可在付款后一年内重新查看 DeepType 报告。',

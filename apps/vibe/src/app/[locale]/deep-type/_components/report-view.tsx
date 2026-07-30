@@ -1,19 +1,19 @@
 'use client'
 
-import { WORLD_JOB_NAMES } from '@deep-type/content/world-job-names'
+import { resolveWorldJob } from '@deep-type/content/world-job'
 import type { AssessmentProfile } from '@deep-type/model'
 import { Refresh, Share } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
-import { useState } from 'react'
-
+import { useShare } from '@/components/use-share'
 import { cn } from '@/utils/cn'
-
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 import type { ReportSection } from '../_lib/api'
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
+
 import { CARD_CLASS_NAME } from '../_lib/surface'
 import type { DeepTypeContent } from '../_lib/types'
-import { GemArtwork } from './gem-artwork'
+import { GemArtwork } from './code-artwork'
 import { WorldJobHero } from './world-job-hero'
 
 type ReportViewProps = {
@@ -27,8 +27,6 @@ type ReportViewProps = {
   profile: AssessmentProfile
   sections: readonly ReportSection[]
 }
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 /**
  * The 인공지능 기본법 제31조 제2항 mark. The 시행령 allows a machine-readable mark only when a human-readable one is
@@ -104,37 +102,15 @@ export function ReportView({
   profile,
   sections,
 }: ReportViewProps) {
-  const [shareFeedback, setShareFeedback] = useState('')
+  const { feedback: shareFeedback, share } = useShare({ copiedMessage: content.ui.reportShareCopied })
   const gemName = content.gemNames[profile.gem.code]
   // The share text names the world job, so both screens have to fill the same token. The free screen already
   // did; leaving this one out shipped a literal '{job}' to the people who paid.
-  const worldJobName = WORLD_JOB_NAMES[`${profile.inner.code}_${profile.gem.code}`]
+  const worldJobName = resolveWorldJob(profile.inner.code, profile.gem.code).name
   const shareText = content.ui.reportShareText
     .replace('{job}', worldJobName)
     .replace('{inner}', profile.inner.code)
     .replace('{gem}', `${gemName} (${profile.gem.code})`)
-
-  async function share() {
-    const shareData = { text: shareText, title: content.metadata.title, url: window.location.href }
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData)
-        return
-      } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') {
-          return
-        }
-      }
-    }
-
-    try {
-      await navigator.clipboard.writeText(`${shareText} ${DEEP_TYPE_BRAND_NAME[locale]}`)
-      setShareFeedback(content.ui.reportShareCopied)
-    } catch {
-      // Older/in-app browsers may expose neither a share sheet nor clipboard access.
-    }
-  }
 
   return (
     <main className="flex flex-1 flex-col bg-page-bg px-safe py-10 text-page-ink sm:py-14" id="main-content">
@@ -173,7 +149,7 @@ export function ReportView({
           <Link
             className={cn(
               'mt-4 inline-flex min-h-11 items-center font-bold text-page-accent text-sm underline underline-offset-4',
-              focusClassName,
+              FOCUS_CLASS_NAME,
             )}
             href={`/${locale}/deep-type/methodology`}
           >
@@ -185,9 +161,15 @@ export function ReportView({
           <button
             className={cn(
               'inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-page-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_rgba(255,77,109,0.24)] transition-colors hover:bg-page-accent/92',
-              focusClassName,
+              FOCUS_CLASS_NAME,
             )}
-            onClick={share}
+            onClick={() =>
+              share({
+                copy: `${shareText} ${DEEP_TYPE_BRAND_NAME[locale]}`,
+                text: shareText,
+                title: content.metadata.title,
+              })
+            }
             type="button"
           >
             <Share aria-hidden="true" className="h-4 w-4" stroke={1.8} />
@@ -197,7 +179,7 @@ export function ReportView({
           <button
             className={cn(
               'inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-page-border bg-white px-6 font-bold text-page-ink/70 text-sm transition-colors hover:text-page-ink',
-              focusClassName,
+              FOCUS_CLASS_NAME,
             )}
             onClick={onRestart}
             type="button"

@@ -3,8 +3,7 @@ import type { GETV1NotificationResponse } from '@sobok/contracts'
 import { getV1NotificationQuerySchema } from '@sobok/contracts'
 import { db } from '@sobok/db/app'
 import { notificationTable } from '@sobok/db/app/notification'
-import { NotificationFilter } from '@sobok/domain/notification/filter'
-import { NotificationType } from '@sobok/domain/notification/model'
+import { NOTIFICATION_TYPE } from '@sobok/domain/notification/model'
 import { NOTIFICATION_PER_PAGE } from '@sobok/domain/notification/policy'
 import { and, desc, eq, lt } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -32,12 +31,12 @@ route.get('/', ...middlewares, async (c) => {
       conditions.push(lt(notificationTable.id, nextId))
     }
 
-    if (filters.includes(NotificationFilter.UNREAD)) {
+    if (filters.includes('unread')) {
       conditions.push(eq(notificationTable.read, false))
     }
 
-    if (filters.includes(NotificationFilter.NEW_MANGA)) {
-      conditions.push(eq(notificationTable.type, NotificationType.NEW_MANGA))
+    if (filters.includes('new')) {
+      conditions.push(eq(notificationTable.type, NOTIFICATION_TYPE.NEW_MANGA))
     }
 
     const results = await db

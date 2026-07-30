@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 type FoodMapProvider = 'amap' | 'google' | 'naver'
 
@@ -8,10 +8,10 @@ type FoodMapLink = {
 }
 
 const FOOD_MAP_PROVIDER = {
-  [Locale.KO]: 'naver',
-  [Locale.EN]: 'google',
-  [Locale.JA]: 'google',
-  [Locale.ZH]: 'amap',
+  ko: 'naver',
+  en: 'google',
+  ja: 'google',
+  zh: 'amap',
 } as const satisfies Record<Locale, FoodMapProvider>
 
 export function buildFoodMapLink(locale: Locale, foodName: string): FoodMapLink {

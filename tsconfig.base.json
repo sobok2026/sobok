@@ -6,6 +6,16 @@
     "typeRoots": ["./types", "./node_modules/@types"],
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
+    // Bans the four TypeScript constructs that emit runtime JS instead of erasing: enum, namespace with a body,
+    // parameter properties, and `import =`. They are the only syntax a type-stripping runtime cannot load — Node's
+    // own strip-only mode rejects them and needs --experimental-transform-types — so keeping them out is what
+    // makes every file in this repo loadable by anything that merely deletes types.
+    //
+    // It is also the guard on a decision already taken. `Locale` was a string enum, which is nominal, so a table
+    // keyed by locale had to import it as a VALUE to write `[Locale.KO]:`; the Workers bundles could not do that
+    // and re-declared the union instead, nine times over. Every such vocabulary is now an `as const` tuple or
+    // object, and this flag is what stops the next enum from re-opening that.
+    "erasableSyntaxOnly": true,
     "jsx": "react-jsx"
   }
 }

@@ -8,10 +8,7 @@ import { twMerge } from 'tailwind-merge'
 import LogoDiscord from '@/components/icons/LogoDiscord'
 import { Link } from '@/i18n/navigation'
 
-enum Period {
-  NEW_YEAR,
-  CHRISTMAS,
-}
+type Period = 'christmas' | 'newYear'
 
 type Props = {
   className?: string
@@ -25,7 +22,7 @@ export default function CTAButton({ className = '' }: Props) {
     setPeriod(getPeriod())
   }, [])
 
-  if (period === Period.CHRISTMAS) {
+  if (period === 'christmas') {
     return (
       <Link className={twMerge('flex justify-center items-center gap-2 rounded', className)} href="/" prefetch={false}>
         <CandyCane className="size-5" /> {t('christmas')}
@@ -33,7 +30,7 @@ export default function CTAButton({ className = '' }: Props) {
     )
   }
 
-  if (period === Period.NEW_YEAR) {
+  if (period === 'newYear') {
     return (
       <Link
         className={twMerge('flex justify-center items-center gap-2 rounded', className)}
@@ -64,11 +61,11 @@ function getPeriod() {
   const day = now.getDate()
 
   if (month === 12 && day >= 24 && day < 26) {
-    return Period.CHRISTMAS
+    return 'christmas'
   }
 
   if ((month === 12 && day >= 26) || (month === 1 && day <= 1)) {
-    return Period.NEW_YEAR
+    return 'newYear'
   }
 
   return null

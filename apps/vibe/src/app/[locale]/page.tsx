@@ -5,6 +5,7 @@ import Footer from '@/components/Footer'
 import { SITE_NAME } from '@/constants'
 import { buildLocalizedMetadata } from '@/i18n/metadata'
 import { getLocale } from '@/i18n/server'
+import { FOCUS_CLASS_NAME } from '../../components/focus'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {
   const locale = await getLocale(params)
@@ -17,8 +18,6 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
     title: t('title'),
   })
 }
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const locale = await getLocale(params)
@@ -35,7 +34,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
           <div className="mt-10 grid gap-5">
             <Link
-              className={`group rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${focusClassName}`}
+              className={`group rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${FOCUS_CLASS_NAME}`}
               href={`${home}/couple-gyeol`}
             >
               <h2 className="font-black text-2xl tracking-[-0.03em]">{t('gyeolCard.title')}</h2>
@@ -46,7 +45,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             </Link>
 
             <Link
-              className={`group rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${focusClassName}`}
+              className={`group rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${FOCUS_CLASS_NAME}`}
               href={`${home}/couple-type`}
             >
               <h2 className="font-black text-2xl tracking-[-0.03em]">{t('typeCard.title')}</h2>
@@ -57,7 +56,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             </Link>
 
             <Link
-              className={`group rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${focusClassName}`}
+              className={`group rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${FOCUS_CLASS_NAME}`}
               href={`${home}/deep-type`}
             >
               <h2 className="font-black text-2xl tracking-[-0.03em]">{t('deepTypeCard.title')}</h2>

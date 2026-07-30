@@ -1,8 +1,7 @@
+import type { Db } from '@sobok/edge/db/client'
 import { and, eq, isNotNull, isNull, lt, or, sql } from 'drizzle-orm'
-
 import { dateIsWithinYears } from '../../lib/retention'
-import type { Db } from '../client'
-import { purchaseTable } from '../schema'
+import { purchaseTable, type Sku } from '../schema'
 
 export type PurchaseStatus = 'pending' | 'paid' | 'failed' | 'refunded'
 
@@ -15,7 +14,7 @@ export interface NewPurchase {
   orderName: string
   amount: number
   currency: string
-  sku: 'report' | 'compat' | 'bundle'
+  sku: Sku
   consentWithdrawalAt: Date
   consentPrivacyAt: Date
   ageConfirmedAt: Date
@@ -32,7 +31,7 @@ export interface PurchaseRow {
   amount: number
   currency: string
   status: PurchaseStatus
-  sku: 'report' | 'compat' | 'bundle'
+  sku: Sku
   gaClientId: string | null
   gaSessionId: string | null
 }

@@ -1,6 +1,6 @@
 import type { QuestionPromptCatalog } from '../../_lib/types'
 
-export const koPaidQuestionPrompts = {
+export const paidQuestionPrompts = {
   'refine-inner-ei-2': '처음 보는 사람들과 일하게 되면 어떻게 말을 트나요?',
   'refine-inner-ei-1': '하루 일정을 짤 때 사람 만나는 일정을 어느 정도로 잡나요?',
   'refine-inner-sn-2': '결정을 내릴 때 전체 방향과 세부 근거를 어떤 순서로 확인하나요?',

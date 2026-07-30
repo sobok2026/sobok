@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-
+import { axisCopyFor } from '@deep-type/content/axis-copy'
+import type { NamedFacet } from '@deep-type/facets'
 import { BAND_SHIFT_PAID, CLARITY_BANDS_PAID } from '../../deep-type/content/band-labels.paid'
 import { PROPER_NOUNS } from '../../deep-type/content/proper-nouns'
 import { WORLD_JOB_NAMES } from '../../deep-type/content/world-job-names'
@@ -32,15 +33,8 @@ import {
 } from '../../deep-type/model'
 import { buildFreeReport } from '../../deep-type/rules/free'
 import { resolveDrainBand } from '../../deep-type/scoring'
-import { axisCopyFor } from './axis-copy'
 import { checkClaims, SECTION_CLAIMS } from './claims'
-import {
-  DRAIN_MERGE_WINDOW_DAYS,
-  type EngineReportInput,
-  generateEngineReport,
-  mergeDrainSittings,
-  type NamedFacet,
-} from './rules'
+import { DRAIN_MERGE_WINDOW_DAYS, type EngineReportInput, generateEngineReport, mergeDrainSittings } from './rules'
 import { REPORT_SECTION_CONTRACT, REPORT_SECTION_KEYS } from './section-keys'
 
 // Fixtures build profiles directly rather than by scoring answer sets. The engine reads bands, codes and

@@ -1,18 +1,17 @@
 'use client'
 
-import { DEFAULT_LOCALE, isLocale, Locale } from '@sobok/domain/locale'
+import { DEFAULT_LOCALE, isLocale, type Locale } from '@sobok/domain/locale'
 import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../components/focus'
 
 const COPY = {
-  [Locale.KO]: { retry: '다시 시도', title: '문제가 생겼어요' },
-  [Locale.EN]: { retry: 'Try again', title: 'Something went wrong' },
-  [Locale.JA]: { retry: 'もう一度試す', title: '問題が発生しました' },
-  [Locale.ZH]: { retry: '重试', title: '出现了问题' },
+  ko: { retry: '다시 시도', title: '문제가 생겼어요' },
+  en: { retry: 'Try again', title: 'Something went wrong' },
+  ja: { retry: 'もう一度試す', title: '問題が発生しました' },
+  zh: { retry: '重试', title: '出现了问题' },
 } satisfies Record<Locale, { retry: string; title: string }>
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 type Props = {
   error: Error & { digest?: string }
@@ -36,7 +35,7 @@ export default function DeepTypeError({ error, reset }: Props) {
       <button
         className={cn(
           'mt-9 inline-flex min-h-13 items-center justify-center rounded-full bg-page-ink px-6 font-black text-sm text-white transition-colors hover:bg-page-ink/92',
-          focusClassName,
+          FOCUS_CLASS_NAME,
         )}
         onClick={reset}
         type="button"

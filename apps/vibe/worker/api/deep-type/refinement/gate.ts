@@ -1,6 +1,6 @@
 import { INSTRUMENT_VERSION } from '@deep-type/model'
 
-import type { Db } from '~/db/client'
+import type { Db } from '@sobok/edge/db/client'
 import { getPurchaseResultByAccessToken, type PurchaseResultContext } from '~/db/queries/result'
 import { problem } from '~/errors'
 

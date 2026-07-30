@@ -1,3 +1,5 @@
+import type { Locale } from '@sobok/domain/locale'
+
 /**
  * The one name the paid product is sold under, in every locale.
  *
@@ -19,9 +21,7 @@ export const PRODUCT_NAME = {
   en: 'DeepType in-depth report',
   ja: 'DeepType詳細レポート',
   zh: 'DeepType深度报告',
-} as const satisfies Record<'ko' | 'en' | 'ja' | 'zh', string>
-
-type OfferLocale = 'ko' | 'en' | 'ja' | 'zh'
+} as const satisfies Record<Locale, string>
 
 /**
  * Every currency this product is ever priced in. Three and not four on purpose: PayPal is the overseas rail
@@ -62,7 +62,7 @@ const REPORT_CURRENCY = {
   en: 'USD',
   ja: 'JPY',
   zh: 'USD',
-} as const satisfies Record<OfferLocale, OfferCurrency>
+} as const satisfies Record<Locale, OfferCurrency>
 
 export type ReportOffer = {
   /** Sale price, minor units. What `/checkout` charges and the PG verifies. */
@@ -80,7 +80,7 @@ export const DEEP_TYPE_REPORT_OFFER = Object.fromEntries(
     const { amount, listAmount } = REPORT_PRICE[currency]
     return [locale, { amount, currency, discountPercent: Math.round((1 - amount / listAmount) * 100), listAmount }]
   }),
-) as Record<OfferLocale, ReportOffer>
+) as Record<Locale, ReportOffer>
 
 /**
  * The GA4 `items[]` entry for the paid report. Lives beside the price because the browser funnel

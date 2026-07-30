@@ -3,7 +3,7 @@ import type { QuestionOptionCatalog } from '../../_lib/types'
 // Untranslated on purpose. ko is the canonical locale and a human writes these before this locale ships;
 // nothing in the build or the tests asserts they are filled, so a blank string renders as a blank string.
 // Option order is the scored polarity: a translator fills these four slots in place and never reorders them.
-export const enPaidQuestionOptions = {
+export const paidQuestionOptions = {
   'refine-inner-ei-2': ['', '', '', ''],
   'refine-inner-ei-1': ['', '', '', ''],
   'refine-inner-sn-2': ['', '', '', ''],

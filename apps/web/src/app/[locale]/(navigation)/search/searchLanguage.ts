@@ -1,14 +1,14 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 import { DEFAULT_SEARCH_LANGUAGE, isSearchLanguage, SEARCH_LANGUAGE_ALL } from '@sobok/domain/search/language'
 import { normalizeValue } from '@sobok/domain/utils/normalize-value'
 
-import { LocalStorageKey } from '@/storage'
+import { LOCAL_STORAGE_KEY } from '@/storage'
 
 const LOCALE_SEARCH_LANGUAGE: Record<Locale, string> = {
-  [Locale.KO]: 'korean',
-  [Locale.EN]: 'english',
-  [Locale.JA]: 'japanese',
-  [Locale.ZH]: 'chinese',
+  ko: 'korean',
+  en: 'english',
+  ja: 'japanese',
+  zh: 'chinese',
 }
 
 const PREFIX = 'language:'
@@ -64,7 +64,7 @@ export function readStoredSearchLanguage() {
   }
 
   try {
-    const language = normalizeValue(localStorage.getItem(LocalStorageKey.SEARCH_LANGUAGE) ?? '')
+    const language = normalizeValue(localStorage.getItem(LOCAL_STORAGE_KEY.SEARCH_LANGUAGE) ?? '')
     return language && isSearchLanguage(language) ? language : DEFAULT_SEARCH_LANGUAGE
   } catch {
     return DEFAULT_SEARCH_LANGUAGE
@@ -91,7 +91,7 @@ export function setLanguageFilter(query: string | null, language: string | null 
 
 export function writeStoredSearchLanguage(language: string) {
   try {
-    localStorage.setItem(LocalStorageKey.SEARCH_LANGUAGE, language)
+    localStorage.setItem(LOCAL_STORAGE_KEY.SEARCH_LANGUAGE, language)
   } catch {
     // localStorage를 사용할 수 없으면 게스트 기본값으로 남겨요.
   }

@@ -1,4 +1,4 @@
-type Locale = 'ko' | 'en' | 'ja' | 'zh'
+import type { Locale } from '@sobok/domain/locale'
 
 type ReopenEmailLink = {
   paidAt: Date

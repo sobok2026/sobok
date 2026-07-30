@@ -4,6 +4,7 @@ import type { FreeAssessmentProfile } from '@deep-type/model'
 import type { Locale } from '@sobok/domain/locale'
 import { useState } from 'react'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 import { useReportPolling } from '../_hooks/use-report-polling'
 import { postCancel } from '../_lib/api'
@@ -21,8 +22,6 @@ type DynamicReportViewProps = {
   locale: Locale
   onRestart: () => void
 }
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export function DynamicReportView({
   accessToken,
@@ -93,7 +92,7 @@ function FailedReport({ accessToken, content, fallbackProfile, locale, onRestart
           <button
             className={cn(
               'mx-auto inline-flex min-h-10 items-center rounded-full border border-page-accent/50 px-4 font-bold text-page-accent text-sm transition-colors hover:bg-page-accent/10 disabled:opacity-60',
-              focusClassName,
+              FOCUS_CLASS_NAME,
             )}
             disabled={refund === 'pending'}
             onClick={requestRefund}

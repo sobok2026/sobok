@@ -1,6 +1,6 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
-import type { QuestionContent } from '../_lib/types'
+import type { QuestionContent, QuestionOptionCatalog, QuestionPromptCatalog } from '../_lib/types'
 import { createPaidQuestions } from './create-content'
 
 // The paid question text, and the only door to it. Deliberately NOT `server-only` and deliberately not reachable
@@ -12,35 +12,24 @@ import { createPaidQuestions } from './create-content'
 // entitlement check and is not sold as one; the entitlement is `POST /refinement`, which refuses answers without
 // a paid access token. This only stops the text from riding along in the free static assets, which is exactly the
 // scan the CI gate runs (`out/**/*.{html,txt}`).
+//
+// Every locale module exports the same two names, so a loader is one line. They used to be prefixed per locale
+// (`koPaidQuestionPrompts`, `enPaidQuestionPrompts`, …), which forced four eight-line blocks that differed only
+// in the identifier being destructured.
+async function paidQuestions(
+  prompts: Promise<{ paidQuestionPrompts: QuestionPromptCatalog }>,
+  options: Promise<{ paidQuestionOptions: QuestionOptionCatalog }>,
+): Promise<Record<string, QuestionContent>> {
+  const [prompt, option] = await Promise.all([prompts, options])
+  return createPaidQuestions(prompt.paidQuestionPrompts, option.paidQuestionOptions)
+}
+
+// The specifiers stay literal because a bundler has to see them to emit a chunk per locale.
 const paidLoaders = {
-  [Locale.EN]: async () => {
-    const [{ enPaidQuestionPrompts }, { enPaidQuestionOptions }] = await Promise.all([
-      import('./question-prompts/en.paid'),
-      import('./question-options/en.paid'),
-    ])
-    return createPaidQuestions(enPaidQuestionPrompts, enPaidQuestionOptions)
-  },
-  [Locale.JA]: async () => {
-    const [{ jaPaidQuestionPrompts }, { jaPaidQuestionOptions }] = await Promise.all([
-      import('./question-prompts/ja.paid'),
-      import('./question-options/ja.paid'),
-    ])
-    return createPaidQuestions(jaPaidQuestionPrompts, jaPaidQuestionOptions)
-  },
-  [Locale.KO]: async () => {
-    const [{ koPaidQuestionPrompts }, { koPaidQuestionOptions }] = await Promise.all([
-      import('./question-prompts/ko.paid'),
-      import('./question-options/ko.paid'),
-    ])
-    return createPaidQuestions(koPaidQuestionPrompts, koPaidQuestionOptions)
-  },
-  [Locale.ZH]: async () => {
-    const [{ zhPaidQuestionPrompts }, { zhPaidQuestionOptions }] = await Promise.all([
-      import('./question-prompts/zh.paid'),
-      import('./question-options/zh.paid'),
-    ])
-    return createPaidQuestions(zhPaidQuestionPrompts, zhPaidQuestionOptions)
-  },
+  en: () => paidQuestions(import('./question-prompts/en.paid'), import('./question-options/en.paid')),
+  ja: () => paidQuestions(import('./question-prompts/ja.paid'), import('./question-options/ja.paid')),
+  ko: () => paidQuestions(import('./question-prompts/ko.paid'), import('./question-options/ko.paid')),
+  zh: () => paidQuestions(import('./question-prompts/zh.paid'), import('./question-options/zh.paid')),
 } as const satisfies Record<Locale, () => Promise<Record<string, QuestionContent>>>
 
 export function loadPaidQuestions(locale: Locale): Promise<Record<string, QuestionContent>> {

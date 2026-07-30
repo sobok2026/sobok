@@ -1,5 +1,5 @@
 import { APP_METADATA } from '@sobok/domain/app/metadata'
-import { DEFAULT_LOCALE, LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
+import { DEFAULT_LOCALE, LOCALE_OPEN_GRAPH_TAGS, LOCALES, type Locale } from '@sobok/domain/locale'
 import type { Twitter } from 'next/dist/lib/metadata/types/twitter-types'
 
 import { getPathname } from '@/i18n/navigation'
@@ -27,16 +27,16 @@ export function generateLocalizedMetadata({ pathname, locale, title, description
     alternates: {
       canonical,
       languages: {
-        ...Object.fromEntries(Object.values(Locale).map((locale) => [locale, getPathname({ href: pathname, locale })])),
+        ...Object.fromEntries(LOCALES.map((locale) => [locale, getPathname({ href: pathname, locale })])),
         'x-default': getPathname({ href: pathname, locale: DEFAULT_LOCALE }),
       },
     },
     openGraph: {
       ...socialMetadata,
       locale: openGraphLocale,
-      alternateLocale: Object.values(Locale)
-        .map((locale) => LOCALE_OPEN_GRAPH_TAGS[locale])
-        .filter((locale) => locale !== openGraphLocale),
+      alternateLocale: LOCALES.map((locale) => LOCALE_OPEN_GRAPH_TAGS[locale]).filter(
+        (locale) => locale !== openGraphLocale,
+      ),
       siteName: shortName,
       type: 'website',
       url: canonical,

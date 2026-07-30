@@ -2,6 +2,7 @@
 
 import { ArrowRight } from '@mynaui/icons-react'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 type IntroViewProps = {
   body: string
@@ -10,8 +11,6 @@ type IntroViewProps = {
   onNext: () => void
   title: string
 }
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 // Each chapter frames the context before its questions so the journey reads as distinct layers.
 export function IntroView({ body, cta, hint, onNext, title }: IntroViewProps) {
@@ -27,7 +26,7 @@ export function IntroView({ body, cta, hint, onNext, title }: IntroViewProps) {
         <button
           className={cn(
             'mt-9 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-page-ink px-6 font-black text-sm text-white transition-colors hover:bg-page-ink/92 sm:w-auto',
-            focusClassName,
+            FOCUS_CLASS_NAME,
           )}
           onClick={onNext}
           type="button"

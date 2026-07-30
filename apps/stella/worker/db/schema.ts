@@ -1,3 +1,5 @@
+import { LOCALES } from '@sobok/domain/locale'
+import { createdAt, timestamps } from '@sobok/edge/db/columns'
 import { sql } from 'drizzle-orm'
 import {
   bigint,
@@ -12,8 +14,6 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core'
 
-import { createdAt, timestamps } from './columns'
-
 // The anonymous comment board lives in a DEDICATED `stella` schema on the SHARED Supabase Postgres — NOT the
 // public schema, where the deeptype_* payment tables sit. This is load-bearing for isolation:
 //   • drizzle-kit push runs with schemaFilter:['stella'] as the OWNER, so it never sees (and never proposes
@@ -24,7 +24,7 @@ import { createdAt, timestamps } from './columns'
 // Plain tables, NOT RLS — access is enforced in the Worker (Turnstile + rate-limit + unguessable editToken).
 export const stella = pgSchema('stella')
 
-export const localeEnum = stella.enum('locale', ['ko', 'en', 'ja', 'zh'])
+export const localeEnum = stella.enum('locale', [...LOCALES])
 export const commentStatusEnum = stella.enum('comment_status', ['visible', 'hidden', 'removed'])
 export const reportReasonEnum = stella.enum('report_reason', ['spam', 'abuse', 'sexual', 'privacy', 'other'])
 

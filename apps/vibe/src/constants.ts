@@ -1,5 +1,5 @@
 import { isPayTier, type PayTier } from '@deep-type/pay-method'
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 export const ADSENSE_ACCOUNT = 'ca-pub-5167766222238626' // keep in sync with public/ads.txt
 export const ORIGIN = 'https://vibe.sobok.cc'
@@ -27,10 +27,10 @@ export const TURNSTILE_SITE_KEY = requireEnv(
 export const PAY_TIER = requirePayTier(process.env.NEXT_PUBLIC_DEEPTYPE_PAY_TIER)
 
 export const SITE_NAME = {
-  [Locale.KO]: '결타레',
-  [Locale.EN]: 'vibe',
-  [Locale.JA]: 'vibe',
-  [Locale.ZH]: 'vibe',
+  ko: '결타레',
+  en: 'vibe',
+  ja: 'vibe',
+  zh: 'vibe',
 } satisfies Record<Locale, string>
 
 // Public values, but REQUIRED at build time — no fallback. The sitekey used to be hardcoded, which pinned

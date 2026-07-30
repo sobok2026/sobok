@@ -1,7 +1,6 @@
+import { openDB, withDB } from '@sobok/edge/db/client'
 import { Hono } from 'hono'
 import { z } from 'zod'
-
-import { openFresh, withDB } from '~/db/client'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { confirmPurchase } from '~/payments/confirm'
@@ -22,7 +21,7 @@ route.post('/', async (c) => {
 
   const portOneCreds = await creds(c)
 
-  const outcome = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+  const outcome = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     confirmPurchase(db, { creds: portOneCreds, env: c.env }, parsed.data.paymentId),
   )
 

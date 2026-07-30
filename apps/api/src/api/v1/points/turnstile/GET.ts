@@ -1,6 +1,6 @@
 import { type GETV1PointTurnstileResponse, PROBLEM } from '@sobok/contracts'
 
-import { CookieKey } from '@sobok/http/cookie'
+import { COOKIE_KEY } from '@sobok/http/cookie'
 import { Hono } from 'hono'
 import { deleteCookie, getCookie } from 'hono/cookie'
 import { createFactory } from 'hono/factory'
@@ -20,7 +20,7 @@ const middlewares = factory.createHandlers(requireAuth)
 route.get('/', ...middlewares, async (c) => {
   const userId = c.get('user')!.id
 
-  const cookieValue = getCookie(c, CookieKey.POINTS_TURNSTILE)
+  const cookieValue = getCookie(c, COOKIE_KEY.POINTS_TURNSTILE)
 
   if (!cookieValue) {
     return problemResponse(c, { problem: PROBLEM.TURNSTILE_REQUIRED })
@@ -29,7 +29,7 @@ route.get('/', ...middlewares, async (c) => {
   const verified = await verifyPointsTurnstileToken(cookieValue)
 
   if (!verified || verified.userId !== userId) {
-    deleteCookie(c, CookieKey.POINTS_TURNSTILE, { path: '/api/v1/points', secure: true })
+    deleteCookie(c, COOKIE_KEY.POINTS_TURNSTILE, { path: '/api/v1/points', secure: true })
     return problemResponse(c, { problem: PROBLEM.TURNSTILE_REQUIRED })
   }
 
