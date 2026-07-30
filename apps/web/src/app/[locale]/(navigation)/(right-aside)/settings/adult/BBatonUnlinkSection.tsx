@@ -1,6 +1,6 @@
 'use client'
 
-import { AdultVerificationStatus, type GETV1MeResponse } from '@sobok/contracts'
+import type { GETV1MeResponse } from '@sobok/contracts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChevronDown } from 'lucide-react'
 import { type SubmitEvent, useRef } from 'react'
@@ -35,7 +35,7 @@ export default function BBatonUnlinkSection() {
           ...previous,
           adultVerification: {
             ...previous.adultVerification,
-            status: AdultVerificationStatus.UNVERIFIED,
+            status: 'unverified',
           },
         }
       })

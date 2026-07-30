@@ -1,4 +1,4 @@
-import { LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
+import { LOCALE_OPEN_GRAPH_TAGS, LOCALES, type Locale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 
 import { SITE_NAME } from '@/constants'
@@ -49,7 +49,7 @@ export function buildLocalizedMetadata({
     alternates: {
       canonical,
       languages: {
-        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, getLocalizedPath(entry, pathname)])),
+        ...Object.fromEntries(LOCALES.map((entry) => [entry, getLocalizedPath(entry, pathname)])),
         'x-default': pathname,
       },
     },
@@ -58,9 +58,9 @@ export function buildLocalizedMetadata({
       description,
       images,
       locale: openGraphLocale,
-      alternateLocale: Object.values(Locale)
-        .map((entry) => LOCALE_OPEN_GRAPH_TAGS[entry])
-        .filter((entry) => entry !== openGraphLocale),
+      alternateLocale: LOCALES.map((entry) => LOCALE_OPEN_GRAPH_TAGS[entry]).filter(
+        (entry) => entry !== openGraphLocale,
+      ),
       siteName: SITE_NAME[locale],
       type: 'website',
       url: canonical,

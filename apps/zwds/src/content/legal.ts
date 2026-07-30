@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 // Contact shown on the legal pages. Keep this a mailbox that is actually
 // monitored (or swap it) — AdSense reviewers and users may write to it.
@@ -28,7 +28,7 @@ export type LegalContent = {
 }
 
 export const LEGAL = {
-  [Locale.KO]: {
+  ko: {
     updatedLabel: '최종 업데이트',
     contactLabel: '문의',
     nav: {
@@ -138,7 +138,7 @@ export const LEGAL = {
     },
   },
 
-  [Locale.EN]: {
+  en: {
     updatedLabel: 'Last updated',
     contactLabel: 'Contact',
     nav: {
@@ -248,7 +248,7 @@ export const LEGAL = {
     },
   },
 
-  [Locale.JA]: {
+  ja: {
     updatedLabel: '最終更新',
     contactLabel: 'お問い合わせ',
     nav: {
@@ -358,7 +358,7 @@ export const LEGAL = {
     },
   },
 
-  [Locale.ZH]: {
+  zh: {
     updatedLabel: '最后更新',
     contactLabel: '联系方式',
     nav: {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { NotificationConditionType } from '@sobok/domain/notification/model'
+import { NOTIFICATION_CONDITION_TYPE } from '@sobok/domain/notification/model'
 
 import { parseSearchQuery } from '../queryParser'
 
@@ -9,7 +9,7 @@ describe('parseSearchQuery', () => {
 
     expect(result.conditions).toHaveLength(1)
     expect(result.conditions[0]).toEqual({
-      type: NotificationConditionType.TAG,
+      type: NOTIFICATION_CONDITION_TYPE.TAG,
       value: 'big_breasts',
       displayValue: 'big_breasts',
       isExcluded: undefined,
@@ -22,19 +22,19 @@ describe('parseSearchQuery', () => {
 
     expect(result.conditions).toHaveLength(3)
     expect(result.conditions[0]).toEqual({
-      type: NotificationConditionType.ARTIST,
+      type: NOTIFICATION_CONDITION_TYPE.ARTIST,
       value: 'john_doe',
       displayValue: 'john_doe',
       isExcluded: undefined,
     })
     expect(result.conditions[1]).toEqual({
-      type: NotificationConditionType.TAG,
+      type: NOTIFICATION_CONDITION_TYPE.TAG,
       value: 'glasses',
       displayValue: 'glasses',
       isExcluded: undefined,
     })
     expect(result.conditions[2]).toEqual({
-      type: NotificationConditionType.SERIES,
+      type: NOTIFICATION_CONDITION_TYPE.SERIES,
       value: 'original',
       displayValue: 'original',
       isExcluded: undefined,
@@ -55,7 +55,7 @@ describe('parseSearchQuery', () => {
 
     expect(result.conditions).toHaveLength(3)
     expect(result.conditions.find((c) => c.value === 'big_breasts')).toEqual({
-      type: NotificationConditionType.TAG,
+      type: NOTIFICATION_CONDITION_TYPE.TAG,
       value: 'big_breasts',
       displayValue: 'big_breasts',
       isExcluded: true,
@@ -67,7 +67,7 @@ describe('parseSearchQuery', () => {
 
     expect(result.conditions).toEqual([
       {
-        type: NotificationConditionType.TAG,
+        type: NOTIFICATION_CONDITION_TYPE.TAG,
         value: 'big_breasts',
         displayValue: 'big_breasts',
         isExcluded: true,
@@ -102,8 +102,8 @@ describe('parseSearchQuery', () => {
     const result = parseSearchQuery('여성:안경 작가:홍길동')
 
     expect(result.conditions).toHaveLength(2)
-    expect(result.conditions[0].type).toBe(NotificationConditionType.TAG)
-    expect(result.conditions[1].type).toBe(NotificationConditionType.ARTIST)
+    expect(result.conditions[0].type).toBe(NOTIFICATION_CONDITION_TYPE.TAG)
+    expect(result.conditions[1].type).toBe(NOTIFICATION_CONDITION_TYPE.ARTIST)
     expect(result.suggestedName).toBe('홍길동')
   })
 })

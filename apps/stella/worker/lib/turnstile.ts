@@ -1,9 +1,8 @@
+import { alertDiscord } from '@sobok/edge/alert'
 import { type TurnstileFailureReason, type TurnstileResult, verifyTurnstile } from '@sobok/edge/turnstile'
 import type { Context } from 'hono'
-
 import type { AppEnv } from '~/env'
 import { type ProblemSlug, problem } from '~/errors'
-import { alertDiscord } from './alert'
 
 // The verifier's reason → what the client is allowed to see. Deliberately coarse: `rejected` never says
 // whether the hostname or the action was the pin that refused, and `misconfigured` never says the secret is
@@ -53,7 +52,7 @@ export async function guardTurnstile(
   }
 
   const { slug, status } = RESPONSE_BY_REASON[result.reason]
-  return problem(status, slug, undefined, status === 503 ? { 'retry-after': '5' } : undefined)
+  return problem(status, slug, status === 503 ? { headers: { 'retry-after': '5' } } : undefined)
 }
 
 // Whitespace and stray trailing commas are dropped rather than becoming a hostname that can never match —

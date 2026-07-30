@@ -1,6 +1,6 @@
 import { FREE_DELIVERABLES_KO } from '@deep-type/free-deliverables'
 import { DEEP_TYPE_REPORT_OFFER, majorUnits, PRODUCT_NAME } from '@deep-type/offer'
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 import { previousVersionsOf } from './legal-archive'
 
@@ -57,7 +57,7 @@ export type LegalContent = {
 }
 
 export const LEGAL = {
-  [Locale.KO]: {
+  ko: {
     updatedLabel: '최종 업데이트',
     effectiveLabel: '시행일',
     versionLabel: '버전',
@@ -76,7 +76,7 @@ export const LEGAL = {
       effectiveDate: '2026년 8월 4일',
       updatedDate: '2026년 7월 28일',
       version: '1.1',
-      previousVersions: previousVersionsOf(Locale.KO, 'privacy'),
+      previousVersions: previousVersionsOf('ko', 'privacy'),
       sections: [
         {
           heading: '무료 테스트와 유료 리포트의 구분',
@@ -180,7 +180,7 @@ export const LEGAL = {
       effectiveDate: '2026년 8월 4일',
       updatedDate: '2026년 7월 28일',
       version: '1.1',
-      previousVersions: previousVersionsOf(Locale.KO, 'terms'),
+      previousVersions: previousVersionsOf('ko', 'terms'),
       sections: [
         {
           heading: '서비스 소개',
@@ -291,7 +291,7 @@ export const LEGAL = {
       effectiveDate: '2026년 8월 4일',
       updatedDate: '2026년 7월 28일',
       version: '1.1',
-      previousVersions: previousVersionsOf(Locale.KO, 'refund'),
+      previousVersions: previousVersionsOf('ko', 'refund'),
       sections: [
         {
           heading: '청약철회 기간',
@@ -350,7 +350,7 @@ export const LEGAL = {
     },
   },
 
-  [Locale.EN]: {
+  en: {
     updatedLabel: 'Last updated',
     effectiveLabel: 'Effective',
     versionLabel: 'Version',
@@ -369,7 +369,7 @@ export const LEGAL = {
       effectiveDate: 'August 4, 2026',
       updatedDate: 'July 28, 2026',
       version: '1.1',
-      previousVersions: previousVersionsOf(Locale.EN, 'privacy'),
+      previousVersions: previousVersionsOf('en', 'privacy'),
       sections: [
         {
           heading: 'Free quizzes vs. the paid report',
@@ -473,7 +473,7 @@ export const LEGAL = {
       effectiveDate: 'August 4, 2026',
       updatedDate: 'July 28, 2026',
       version: '1.1',
-      previousVersions: previousVersionsOf(Locale.EN, 'terms'),
+      previousVersions: previousVersionsOf('en', 'terms'),
       sections: [
         {
           heading: 'About the service',
@@ -584,7 +584,7 @@ export const LEGAL = {
       effectiveDate: 'August 4, 2026',
       updatedDate: 'July 28, 2026',
       version: '1.1',
-      previousVersions: previousVersionsOf(Locale.EN, 'refund'),
+      previousVersions: previousVersionsOf('en', 'refund'),
       sections: [
         {
           heading: 'Withdrawal period',
@@ -639,7 +639,7 @@ export const LEGAL = {
       ],
     },
   },
-  [Locale.JA]: {
+  ja: {
     updatedLabel: '最終更新',
     effectiveLabel: '施行日',
     versionLabel: 'バージョン',
@@ -658,7 +658,7 @@ export const LEGAL = {
       effectiveDate: '2026年8月4日',
       updatedDate: '2026年7月28日',
       version: '1.1',
-      previousVersions: previousVersionsOf(Locale.JA, 'privacy'),
+      previousVersions: previousVersionsOf('ja', 'privacy'),
       sections: [
         {
           heading: '無料診断と有料レポートの区別',
@@ -762,7 +762,7 @@ export const LEGAL = {
       effectiveDate: '2026年8月4日',
       updatedDate: '2026年7月28日',
       version: '1.1',
-      previousVersions: previousVersionsOf(Locale.JA, 'terms'),
+      previousVersions: previousVersionsOf('ja', 'terms'),
       sections: [
         {
           heading: 'サービスについて',
@@ -873,7 +873,7 @@ export const LEGAL = {
       effectiveDate: '2026年8月4日',
       updatedDate: '2026年7月28日',
       version: '1.1',
-      previousVersions: previousVersionsOf(Locale.JA, 'refund'),
+      previousVersions: previousVersionsOf('ja', 'refund'),
       sections: [
         {
           heading: '申込撤回の期間',
@@ -930,7 +930,7 @@ export const LEGAL = {
       ],
     },
   },
-  [Locale.ZH]: {
+  zh: {
     updatedLabel: '最后更新',
     effectiveLabel: '生效日期',
     versionLabel: '版本',
@@ -949,7 +949,7 @@ export const LEGAL = {
       effectiveDate: '2026年8月4日',
       updatedDate: '2026年7月28日',
       version: '1.1',
-      previousVersions: previousVersionsOf(Locale.ZH, 'privacy'),
+      previousVersions: previousVersionsOf('zh', 'privacy'),
       sections: [
         {
           heading: '免费测试与付费报告的区分',
@@ -1051,7 +1051,7 @@ export const LEGAL = {
       effectiveDate: '2026年8月4日',
       updatedDate: '2026年7月28日',
       version: '1.1',
-      previousVersions: previousVersionsOf(Locale.ZH, 'terms'),
+      previousVersions: previousVersionsOf('zh', 'terms'),
       sections: [
         {
           heading: '关于服务',
@@ -1158,7 +1158,7 @@ export const LEGAL = {
       effectiveDate: '2026年8月4日',
       updatedDate: '2026年7月28日',
       version: '1.1',
-      previousVersions: previousVersionsOf(Locale.ZH, 'refund'),
+      previousVersions: previousVersionsOf('zh', 'refund'),
       sections: [
         {
           heading: '撤回期限',

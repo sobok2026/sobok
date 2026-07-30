@@ -1,5 +1,5 @@
-import { NotificationFilter } from '@sobok/domain/notification/filter'
-import { NotificationConditionType } from '@sobok/domain/notification/model'
+import { NOTIFICATION_FILTERS } from '@sobok/domain/notification/filter'
+import { NOTIFICATION_CONDITION_TYPE } from '@sobok/domain/notification/model'
 import {
   MAX_CRITERIA_NAME_LENGTH,
   MAX_NOTIFICATION_COUNT,
@@ -50,7 +50,7 @@ export interface PATCHV1NotificationReadAllResponse {
 }
 
 const notificationCriteriaConditionSchema = z.object({
-  type: z.enum(NotificationConditionType),
+  type: z.enum(NOTIFICATION_CONDITION_TYPE),
   value: z
     .string()
     .min(1)
@@ -117,7 +117,7 @@ export interface DELETEV1NotificationCriteriaIdResponse {
   id: number
 }
 
-const notificationFilterSchema = z.enum(NotificationFilter)
+const notificationFilterSchema = z.enum(NOTIFICATION_FILTERS)
 
 export const getV1NotificationQuerySchema = z.object({
   nextId: z.coerce.number().optional(),

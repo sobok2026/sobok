@@ -1,4 +1,4 @@
-import { PostFilter } from '@sobok/domain/post/filter'
+import { POST_FILTER } from '@sobok/domain/post/filter'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
@@ -7,7 +7,7 @@ import { getLocaleFromParams } from '@/i18n/server'
 import { generateLocalizedMetadata } from '@/lib/metadata'
 
 import PostList from './PostList'
-import { PostFilterParams, postFilterSchema } from './schema'
+import { type PostFilterParam, postFilterSchema } from './schema'
 
 export const dynamicParams = false
 
@@ -30,12 +30,12 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/posts/[f
 }
 
 const filterParamsToPostFilter = {
-  [PostFilterParams.FOLLOWING]: PostFilter.FOLLOWING,
-  [PostFilterParams.RECOMMEND]: PostFilter.RECOMMEND,
-} satisfies Record<PostFilterParams, PostFilter.FOLLOWING | PostFilter.RECOMMEND>
+  following: POST_FILTER.FOLLOWING,
+  recommend: POST_FILTER.RECOMMEND,
+} satisfies Record<PostFilterParam, typeof POST_FILTER.FOLLOWING | typeof POST_FILTER.RECOMMEND>
 
 export function generateStaticParams() {
-  return [{ filter: PostFilterParams.RECOMMEND }, { filter: PostFilterParams.FOLLOWING }]
+  return [{ filter: 'recommend' }, { filter: 'following' }]
 }
 
 export default async function Page({ params }: PageProps<'/[locale]/posts/[filter]'>) {

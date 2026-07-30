@@ -1,5 +1,6 @@
+import { type AxisCopy, axisCopyFor } from '@deep-type/content/axis-copy'
+import { type FacetLabels, nameFacets, rankFacetCounts, shownDrainFacets } from '@deep-type/facets'
 import {
-  AXIS_POLES,
   type AxisId,
   type ClarityBand,
   type DrainFacet,
@@ -7,6 +8,7 @@ import {
   type FreeAssessmentProfile,
   GEM_AXES,
   type InterestFacet,
+  isFirstPole,
   type PersonaCode,
   type RefinedAssessmentProfile,
   type RefinedAxisScore,
@@ -15,6 +17,8 @@ import {
   WORK_FACETS,
   type WorkFacetId,
 } from '@deep-type/model'
+import { resolveDrainBand } from '@deep-type/scoring'
+import type { Locale } from '@sobok/domain/locale'
 
 import {
   BAND_SHIFT_PAID,
@@ -52,13 +56,12 @@ import {
   resolveRoleFamilies,
 } from '../../deep-type/role-families'
 import { buildFreeReport, type FreeReport, type FreeStrengthCard } from '../../deep-type/rules/free'
-import { resolveDrainBand } from '../../deep-type/scoring'
-import { type AxisCopy, axisCopyFor, type ReportLocale } from './axis-copy'
 import { assertClaims, type ClaimableEvidenceId, INTERPRETATION_BOUNDARY } from './claims'
 import { composeOpeningRead, composeReflectionQuestions } from './compose'
 import type {
   AxisBandMovement,
   ContextShiftData,
+  DetailedFacet,
   DrainContrast,
   DrainContrastRelation,
   DrainSignatureData,
@@ -67,7 +70,6 @@ import type {
   FitAndFrictionData,
   FitPoint,
   FrictionPoint,
-  NamedFacet,
   QuestWeek,
   ReportSection,
   RoleFamilyCard,
@@ -107,7 +109,7 @@ export interface EngineReportInput {
    * which is what makes the input-source column a property of the call graph rather than a claim in a comment.
    */
   free: FreeAssessmentProfile
-  locale: ReportLocale
+  locale: Locale
   /**
    * False when the two drain sittings fall outside the recall window. It describes what the engine did, not
    * what the caller intended: see `mergeDrainSittings` for the decision and `drainRead` for the fallback.
@@ -146,8 +148,8 @@ export function generateEngineReport(input: EngineReportInput): EngineReportDocu
   const free = buildFreeReport(input.free)
   const copy = axisCopyFor(input.locale)
   const drain = drainRead(input)
-  const drainLeaders = nameFacets(drain.leaders, DRAIN_LABELS, DRAIN_DETAILS)
-  const interestLeaders = nameFacets(input.refined.work.interest.leaders, INTEREST_LABELS, INTEREST_DETAILS)
+  const drainLeaders = detailFacets(drain.leaders, DRAIN_LABELS, DRAIN_DETAILS)
+  const interestLeaders = detailFacets(input.refined.work.interest.leaders, INTEREST_LABELS, INTEREST_DETAILS)
   const roleCards = roleFamilyCards(input.refined)
   const leadingStrength = firstStrengthCard(free)
 
@@ -203,14 +205,15 @@ function heading<Key extends ReportSectionKey>(key: Key): { intro: string; key: 
   return { intro: SECTION_INTROS_KO[key], key, title: SECTION_TITLES_KO[key] }
 }
 
-type FacetLabelTable<Facet extends WorkFacetId> = Readonly<Record<Facet, { action: string; name: string }>>
-
-function nameFacets<Facet extends WorkFacetId>(
+// The shared namer plus the paid paragraph. `nameFacets` lives in `deep-type/facets.ts` because the free engine
+// calls it too, and it carries no copy for exactly that reason — so the detail table is applied here, on the
+// paid side, rather than by widening the shared helper.
+function detailFacets<Facet extends WorkFacetId>(
   facets: readonly Facet[],
-  labels: FacetLabelTable<Facet>,
+  labels: FacetLabels<Facet>,
   details: Readonly<Record<Facet, string>>,
-): readonly NamedFacet[] {
-  return facets.map((id) => ({ action: labels[id].action, detail: details[id], id, label: labels[id].name }))
+): readonly DetailedFacet[] {
+  return nameFacets(facets, labels).map((facet) => ({ ...facet, detail: details[facet.id] }))
 }
 
 // Section 1 ------------------------------------------------------------------------------------------------
@@ -293,7 +296,7 @@ function axisMovement(
     evidenceSplit: score.evidenceSplit,
     id,
     // Read off the frozen code letter rather than `score.pole`, which is null at a tie. Same fold as `poleLabel`.
-    leading: letter === AXIS_POLES[id][0] ? content.first.label : content.second.label,
+    leading: isFirstPole(id, letter) ? content.first.label : content.second.label,
     name: content.name,
     shift: BAND_SHIFT_PAID[score.shift],
     shiftDirection: score.shift,
@@ -316,19 +319,6 @@ interface DrainRead {
   strands: 1 | 2 | 3
 }
 
-// How many facets the band puts on screen. The band is a confidence statement, not a count of ties: at
-// `double` there IS a top facet, but the runner-up sits one pick behind, so naming both is what keeps the real
-// leader inside the shown set. `tally.leaders` cannot serve this — it holds the tied set, which is a single
-// facet in every reachable `double` vector and in most `triple` ones, so reading it made the copy ("두 조건이
-// 비슷하게 나왔어요") describe a list of one.
-const DRAIN_SHOWN_COUNT = { double: 2, single: 1, triple: 3 } as const
-
-// Ties break on declaration order, matching the fixed display order the strength cards use. Array#sort is
-// stable, so starting from WORK_FACETS.drain is the whole tiebreak.
-function shownDrainFacets(counts: Readonly<Record<DrainFacet, number>>, spread: DrainSpread): readonly DrainFacet[] {
-  return [...WORK_FACETS.drain].sort((a, b) => counts[b] - counts[a]).slice(0, DRAIN_SHOWN_COUNT[spread])
-}
-
 // Un-merging is exact rather than approximate: forced-choice counts are additive over picks, so the paid half
 // is the merged tally minus the free one. Where that subtraction is inconsistent the engine keeps the merged
 // read and reports `mergedWindow: true`, because summing both sittings is then what it actually did.
@@ -340,16 +330,16 @@ function drainRead(input: EngineReportInput): DrainRead {
 
   const leaders = shownDrainFacets(tally.counts, tally.spread)
   const freeFacets = shownDrainFacets(freeTally.counts, freeTally.spread)
-  const freeShown = nameFacets(freeFacets, DRAIN_LABELS, DRAIN_DETAILS)
+  const freeShown = detailFacets(freeFacets, DRAIN_LABELS, DRAIN_DETAILS)
   const shown = new Set<DrainFacet>(freeFacets)
   const lead = new Set<DrainFacet>(leaders)
 
-  const added = nameFacets(
+  const added = detailFacets(
     leaders.filter((facet) => !shown.has(facet)),
     DRAIN_LABELS,
     DRAIN_DETAILS,
   )
-  const dropped = nameFacets(
+  const dropped = detailFacets(
     freeFacets.filter((facet) => !lead.has(facet)),
     DRAIN_LABELS,
     DRAIN_DETAILS,
@@ -367,7 +357,9 @@ function drainRead(input: EngineReportInput): DrainRead {
     leaders,
     merged: paidOnly === null,
     spread: DRAIN_SPREAD_PAID[tally.spread],
-    strands: DRAIN_SHOWN_COUNT[tally.spread],
+    // The drawn strand count is the shown count, read off the list rather than off a second table: two tables
+    // agreeing is a thing to maintain, and `shownDrainFacets` already owns how many the band puts on screen.
+    strands: leaders.length as DrainSignatureData['strands'],
   }
 }
 
@@ -412,23 +404,15 @@ function paidOnlyDrain(
     return null
   }
 
-  const ranked = WORK_FACETS.drain.map((facet) => counts[facet]).sort((a, b) => b - a)
-  const top = ranked[0] ?? 0
-
-  return {
-    counts,
-    exposure: 2,
-    leaders: WORK_FACETS.drain.filter((facet) => counts[facet] === top),
-    separation: top - (ranked[1] ?? 0),
-    spread: resolveDrainBand(counts, 2),
-  }
+  const { leaders, separation } = rankFacetCounts(WORK_FACETS.drain, counts)
+  return { counts, exposure: 2, leaders, separation, spread: resolveDrainBand(counts, 2) }
 }
 
 const PAID_DRAIN_PICKS = 3
 
 type DrainSpread = RefinedAssessmentProfile['work']['drain']['spread']
 
-function drainSignatureBlock(drain: DrainRead, leaders: readonly NamedFacet[]): EngineBlock {
+function drainSignatureBlock(drain: DrainRead, leaders: readonly DetailedFacet[]): EngineBlock {
   const data: DrainSignatureData = {
     contrast: drain.contrast,
     contrastLabels: {
@@ -453,10 +437,10 @@ function happinessConditionsBlock(refined: RefinedAssessmentProfile): EngineBloc
     {
       ...heading('happinessConditions'),
       data: {
-        environments: nameFacets(refined.work.environment.leaders, ENVIRONMENT_LABELS, ENVIRONMENT_DETAILS),
+        environments: detailFacets(refined.work.environment.leaders, ENVIRONMENT_LABELS, ENVIRONMENT_DETAILS),
         headings: { environments: BLOCK_NOTES_KO.happinessEnvironments, needs: BLOCK_NOTES_KO.happinessNeeds },
         meaning: BLOCK_NOTES_KO.happinessMeaning,
-        needs: nameFacets(refined.work.need.leaders, NEED_LABELS, NEED_DETAILS),
+        needs: detailFacets(refined.work.need.leaders, NEED_LABELS, NEED_DETAILS),
       },
     },
     ['life_work_profile'],
@@ -465,7 +449,7 @@ function happinessConditionsBlock(refined: RefinedAssessmentProfile): EngineBloc
 
 // Section 5 ------------------------------------------------------------------------------------------------
 
-function interestProfileBlock(refined: RefinedAssessmentProfile, interests: readonly NamedFacet[]): EngineBlock {
+function interestProfileBlock(refined: RefinedAssessmentProfile, interests: readonly DetailedFacet[]): EngineBlock {
   return block(
     {
       ...heading('interestProfile'),
@@ -473,7 +457,7 @@ function interestProfileBlock(refined: RefinedAssessmentProfile, interests: read
         headings: { interests: BLOCK_NOTES_KO.interestInterests, purposes: BLOCK_NOTES_KO.interestPurposes },
         interests,
         meaning: BLOCK_NOTES_KO.interestMeaning,
-        purposes: nameFacets(refined.work.purpose.leaders, PURPOSE_LABELS, PURPOSE_DETAILS),
+        purposes: detailFacets(refined.work.purpose.leaders, PURPOSE_LABELS, PURPOSE_DETAILS),
       },
     },
     ['life_work_profile'],
@@ -523,7 +507,7 @@ const GENERIC_STRENGTH_TASK = '오늘 한 일 가운데 잘 풀린 것 하나를
 // leading role family's own experiment — so the other four are the same week for every reader by design.
 // `taskAnchor` is where a day quotes the reader's own result; a day with none is a day that did not need one.
 function weekQuestBlock(
-  drainLeaders: readonly NamedFacet[],
+  drainLeaders: readonly DetailedFacet[],
   strength: FreeStrengthCard | null,
   cards: readonly RoleFamilyCard[],
 ): EngineBlock {
@@ -682,7 +666,7 @@ type AxisContentShape = ReturnType<typeof axisCopyFor>[TypeAxisId]
 // A declared letter is respondent input and reaches here as a bare `string`, so anything that is not the first
 // pole folds onto the second — the same fold `free.ts` applies to the frozen code letters.
 function poleLabel(axis: TypeAxisId, letter: string, content: AxisContentShape): string {
-  return letter === AXIS_POLES[axis][0] ? content.first.label : content.second.label
+  return isFirstPole(axis, letter) ? content.first.label : content.second.label
 }
 
 // Section 9 ------------------------------------------------------------------------------------------------
@@ -799,7 +783,7 @@ function fitAndFrictionBlock(refined: RefinedAssessmentProfile, drainLeaders: re
   }))
 
   const data: FitAndFrictionData = {
-    conditions: nameFacets(refined.work.environment.leaders, ENVIRONMENT_LABELS, ENVIRONMENT_DETAILS),
+    conditions: detailFacets(refined.work.environment.leaders, ENVIRONMENT_LABELS, ENVIRONMENT_DETAILS),
     confidence: 'needsMoreInput',
     confidenceLabel: CONFIDENCE_LABELS.needsMoreInput,
     contextNote: FIT_CONTEXT_NOTE,

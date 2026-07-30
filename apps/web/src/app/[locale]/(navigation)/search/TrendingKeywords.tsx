@@ -1,7 +1,6 @@
 'use client'
 
-import { Locale } from '@sobok/domain/locale'
-import { getViewFromSearchParams, View } from '@sobok/std'
+import { getViewFromSearchParams, VIEW, type View } from '@sobok/std'
 import { ChevronRight } from 'lucide-react'
 import type { ReadonlyURLSearchParams } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
@@ -19,7 +18,7 @@ const ROTATION_INTERVAL = 5000
 const SCROLL_MOMENTUM_DELAY = 1000 // NOTE: 스크롤 모멘텀을 방지하기 위해 1초 대기
 
 export default function TrendingKeywords() {
-  const [view, setView] = useState(View.CARD)
+  const [view, setView] = useState<View>(VIEW.CARD)
   const [currentIndex, setCurrentIndex] = useState(0)
   const isUserInteractingRef = useRef(false)
   const isProgrammaticScrollRef = useRef(false)
@@ -172,8 +171,8 @@ export default function TrendingKeywords() {
   function createKeywordHref(value: string) {
     const searchParams = new URLSearchParams({ [SearchParam.QUERY]: value })
 
-    if (view === View.IMAGE) {
-      searchParams.set('view', View.IMAGE)
+    if (view === VIEW.IMAGE) {
+      searchParams.set('view', VIEW.IMAGE)
     }
 
     return `/search?${searchParams}`
@@ -282,13 +281,13 @@ export default function TrendingKeywords() {
 
 function getDefaultKeywords(locale: string) {
   switch (locale) {
-    case Locale.EN:
+    case 'en':
       return [{ value: 'language:english', label: 'English' }]
-    case Locale.JA:
+    case 'ja':
       return [{ value: 'language:japanese', label: '日本語' }]
-    case Locale.KO:
+    case 'ko':
       return [{ value: 'language:korean', label: '한국어' }]
-    case Locale.ZH:
+    case 'zh':
       return [{ value: 'language:chinese', label: '简体中文' }]
     default:
       return [{ value: 'language:korean', label: '한국어' }]

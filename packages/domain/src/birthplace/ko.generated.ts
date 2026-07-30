@@ -4,7 +4,6 @@
 // geonamesKR SHA-256: 22749d3d52fb04ed376e86e17e44ca395605e462c6923e11ba8b03ef79ecd982
 // 236 selectable places. Regenerate with `bun run generate:birthplaces` from packages/domain.
 
-import { Locale } from '../locale'
 import { createBirthplaceCatalog, type GeneratedBirthplaceGroupRow, type GeneratedBirthplaceRow } from './model'
 
 const GROUPS: readonly GeneratedBirthplaceGroupRow[] = [
@@ -4603,4 +4602,4 @@ const PLACES: readonly GeneratedBirthplaceRow[] = [
   ],
 ]
 
-export const GENERATED_BIRTHPLACE_CATALOG = createBirthplaceCatalog(Locale.KO, GROUPS, PLACES)
+export const GENERATED_BIRTHPLACE_CATALOG = createBirthplaceCatalog('ko', GROUPS, PLACES)

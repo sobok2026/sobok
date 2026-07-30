@@ -1,3 +1,4 @@
+import type { NamedFacet } from '@deep-type/facets'
 import type { AxisId, BandCopy, GemCode, InnerCode, PersonaCode, TypeAxisId, WorkFacetId } from '@deep-type/model'
 
 import type { ConfidenceLevel, RoleFamily, RoleFamilyPick } from '../../deep-type/role-families'
@@ -81,14 +82,15 @@ export interface StrengthCardsData {
 }
 
 /**
- * A work facet in the reader's vocabulary. `detail` is the authored paragraph that turns a label into
- * something worth reading; `action` stays the one concrete choice the facet suggests.
+ * A named facet plus the authored paragraph that turns a label into something worth reading.
+ *
+ * It extends `NamedFacet` rather than widening it. `deep-type/facets.ts` is importable by the free bundle
+ * precisely because it carries no copy, and `detail` comes out of `facet-details.paid.ts` — so putting the field
+ * there would either drag a paid table into the free engine's call sites or make `nameFacets` take a details
+ * argument the free tier has nothing to pass. The extra data belongs to the layer that owns it.
  */
-export interface NamedFacet {
-  action: string
+export interface DetailedFacet<Facet extends WorkFacetId = WorkFacetId> extends NamedFacet<Facet> {
   detail: string
-  id: WorkFacetId
-  label: string
 }
 
 export type DrainContrastRelation = 'narrowed' | 'same' | 'shifted' | 'widened'
@@ -99,10 +101,10 @@ export type DrainContrastRelation = 'narrowed' | 'same' | 'shifted' | 'widened'
  */
 export interface DrainContrast {
   /** Paid leaders the free block did not show. */
-  added: readonly NamedFacet[]
+  added: readonly DetailedFacet[]
   /** Free leaders the paid read no longer leads with. */
-  dropped: readonly NamedFacet[]
-  freeShown: readonly NamedFacet[]
+  dropped: readonly DetailedFacet[]
+  freeShown: readonly DetailedFacet[]
   relation: DrainContrastRelation
   sentence: string
 }
@@ -110,7 +112,7 @@ export interface DrainContrast {
 export interface DrainSignatureData {
   contrast: DrainContrast
   contrastLabels: { added: string; dropped: string; free: string }
-  leaders: readonly NamedFacet[]
+  leaders: readonly DetailedFacet[]
   meaning: string
   /** True when the paid read summed both sittings. It reports the computation, so it cannot describe a wish. */
   mergedWindow: boolean
@@ -120,17 +122,17 @@ export interface DrainSignatureData {
 }
 
 export interface HappinessConditionsData {
-  environments: readonly NamedFacet[]
+  environments: readonly DetailedFacet[]
   headings: { environments: string; needs: string }
   meaning: string
-  needs: readonly NamedFacet[]
+  needs: readonly DetailedFacet[]
 }
 
 export interface InterestProfileData {
   headings: { interests: string; purposes: string }
-  interests: readonly NamedFacet[]
+  interests: readonly DetailedFacet[]
   meaning: string
-  purposes: readonly NamedFacet[]
+  purposes: readonly DetailedFacet[]
 }
 
 export interface RoleFamilyCarryOver {
@@ -256,7 +258,7 @@ export interface FitAndFrictionData {
   /** Same pin as the stay route, same reason (D3). The whole section rests on input that v1 does not collect. */
   confidence: Extract<ConfidenceLevel, 'needsMoreInput'>
   confidenceLabel: string
-  conditions: readonly NamedFacet[]
+  conditions: readonly DetailedFacet[]
   contextNote: string
   fits: readonly FitPoint[]
   frictions: readonly FrictionPoint[]

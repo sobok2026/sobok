@@ -1,3 +1,4 @@
+import { enAxisContent } from '@deep-type/content/axes.en'
 import { createDeepTypeContent } from './create-content'
 import { enFreeQuestionOptions } from './question-options/en.free'
 import { enFreeQuestionPrompts } from './question-prompts/en.free'
@@ -88,56 +89,7 @@ export const deepTypeContent = createDeepTypeContent({
     workDimensions: { drain: '', environment: '', interest: '', need: '', purpose: '' },
     workStepLabel: '',
   },
-  axes: {
-    EI: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    SN: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    TF: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    JP: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    RM: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    OA: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    VH: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    UO: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-  },
+  axes: enAxisContent,
   landing: {
     kicker: '',
     facts: [],

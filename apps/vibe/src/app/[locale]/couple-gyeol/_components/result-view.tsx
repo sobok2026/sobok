@@ -3,9 +3,10 @@
 import { Copy, HeartWaves, Refresh, Share, Sparkles } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useShare } from '@/components/use-share'
 import { cn } from '@/utils/cn'
 import coupleGyeolRidgeImage from '../../../../../public/image/rarity/ridge.png'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 import { axisOrder, serializeGyeolResult } from '../_lib/model'
 import type { GyeolContent, GyeolResult } from '../_lib/types'
 
@@ -24,10 +25,8 @@ type GyeolScoreCardProps = {
   weaveIndex: number
 }
 
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
-
 export function ResultView({ content, isSharedResult, locale, onRestart, result }: ResultViewProps) {
-  const [shareFeedback, setShareFeedback] = useState('')
+  const { feedback: shareFeedback, share } = useShare({ copiedMessage: content.ui.copiedFeedback })
   const resultContent = content.results[result.code]
   const gradeContent = content.grades[result.grade]
   const keepHeadingBreakClassName = locale === 'en' ? undefined : 'break-keep'
@@ -38,25 +37,9 @@ export function ResultView({ content, isSharedResult, locale, onRestart, result 
     nickname: resultContent.nickname,
   })
 
-  async function shareResult() {
+  function shareResult() {
     const url = getShareUrl(result)
-    const shareData = {
-      text: shareBody,
-      title: content.ui.shareTitle,
-      url,
-    }
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData)
-        return
-      } catch {
-        // Fall back to copying when native share is canceled or unavailable in the current browser context.
-      }
-    }
-
-    await navigator.clipboard?.writeText(url)
-    setShareFeedback(content.ui.copiedFeedback)
+    return share({ copy: url, text: shareBody, title: content.ui.shareTitle, url })
   }
 
   return (
@@ -119,7 +102,7 @@ export function ResultView({ content, isSharedResult, locale, onRestart, result 
               <button
                 className={cn(
                   'inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-5 font-black text-page-accent text-sm transition-colors hover:bg-white/90',
-                  focusClassName,
+                  FOCUS_CLASS_NAME,
                 )}
                 onClick={shareResult}
                 type="button"
@@ -130,7 +113,7 @@ export function ResultView({ content, isSharedResult, locale, onRestart, result 
               <button
                 className={cn(
                   'inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/24 bg-white/10 px-5 font-black text-sm text-white transition-colors hover:bg-white/16',
-                  focusClassName,
+                  FOCUS_CLASS_NAME,
                 )}
                 onClick={shareResult}
                 type="button"
@@ -145,7 +128,7 @@ export function ResultView({ content, isSharedResult, locale, onRestart, result 
           <button
             className={cn(
               'inline-flex min-h-12 w-fit items-center justify-center gap-2 rounded-full border border-page-border bg-white px-5 font-black text-page-ink/72 text-sm transition-colors hover:text-page-ink',
-              focusClassName,
+              FOCUS_CLASS_NAME,
             )}
             onClick={onRestart}
             type="button"

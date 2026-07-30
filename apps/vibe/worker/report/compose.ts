@@ -1,11 +1,13 @@
+import type { AxisCopy } from '@deep-type/content/axis-copy'
 import {
-  AXIS_POLES,
   type AxisId,
   type BandCopy,
   type ClarityBand,
   type DrainFacet,
   GEM_AXES,
   type InterestFacet,
+  isFirstPole,
+  leadingPole,
   type NeedFacet,
   type RefinedAssessmentProfile,
   TYPE_AXES,
@@ -33,8 +35,7 @@ import {
   REFLECTION_SOURCE,
 } from '../../deep-type/content/reflection.paid'
 import type { FreeReport, FreeStrengthCard } from '../../deep-type/rules/free'
-import type { AxisCopy } from './axis-copy'
-import type { NamedFacet, OpeningReadData, ReflectionQuestionsData, ReportParagraph } from './section-data'
+import type { DetailedFacet, OpeningReadData, ReflectionQuestionsData, ReportParagraph } from './section-data'
 
 // The composer. It decides what the report leads with and what it closes on — the two sections that used to
 // exist only when the narrator was switched on, which meant the deployment that ships today opened on a bare
@@ -63,10 +64,10 @@ const SELECTABLE_BANDS = ['distinct', 'moderate'] as const satisfies readonly Cl
 export interface OpeningReadInput {
   copy: AxisCopy
   /** Named and detailed by the engine, so the opening and the drain section cannot describe different facets. */
-  drainLeaders: readonly NamedFacet[]
+  drainLeaders: readonly DetailedFacet[]
   drainSpread: BandCopy
   free: FreeReport
-  interestLeaders: readonly NamedFacet[]
+  interestLeaders: readonly DetailedFacet[]
   refined: RefinedAssessmentProfile
 }
 
@@ -124,16 +125,16 @@ function axisParagraphs(refined: RefinedAssessmentProfile, copy: AxisCopy): read
 
   return selected.map((reading) => {
     const axis = copy[reading.id]
-    const first = reading.letter === AXIS_POLES[reading.id][0]
     // `POLE_SIGNATURE[id]` is one of eight two-key objects and the checker cannot correlate it with a runtime
-    // letter, so the widening happens once. The key comes from `AXIS_POLES`, so the lookup cannot miss.
+    // letter, so the widening happens once. `leadingPole` returns only letters the table declares, so the lookup
+    // cannot miss.
     const poles: Readonly<Record<string, PoleSignature>> = POLE_SIGNATURE[reading.id]
-    const pole = first ? axis.first : axis.second
+    const pole = isFirstPole(reading.id, reading.letter) ? axis.first : axis.second
 
     return {
       kicker: `${axis.name} · ${pole.label}`,
       note: null,
-      text: `${poles[AXIS_POLES[reading.id][first ? 0 : 1]].line} ${BAND_FRAME[reading.band]}`,
+      text: `${poles[leadingPole(reading.id, reading.letter)].line} ${BAND_FRAME[reading.band]}`,
     }
   })
 }
@@ -183,7 +184,7 @@ function interestParagraph(input: OpeningReadInput): readonly ReportParagraph[] 
 // Interpolated Korean nouns sit at the end of a line or in front of ' — ', never in front of a particle:
 // 은/는 and 이/가 split on the final consonant of the preceding word, so a template that attached one would be
 // wrong for roughly half of any table it reads.
-function noteLine(label: string, facets: readonly NamedFacet[]): string | null {
+function noteLine(label: string, facets: readonly DetailedFacet[]): string | null {
   return facets.length === 0 ? null : `${label} — ${facets.map((facet) => facet.label).join(' · ')}`
 }
 

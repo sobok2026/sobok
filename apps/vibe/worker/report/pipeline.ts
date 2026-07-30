@@ -1,6 +1,6 @@
 import type { AssessmentProfile, PersonaCode } from '@deep-type/model'
+import type { Locale } from '@sobok/domain/locale'
 
-import type { ReportLocale } from './axis-copy'
 import { buildReportProfile, type ReportProfile } from './profile'
 import { generateEngineReport, mergeDrainSittings } from './rules'
 import type { ReportSection } from './section-data'
@@ -64,7 +64,7 @@ export interface ReportSourceRow {
   declaredPersona: PersonaCode | null
   freeProfile: AssessmentProfile
   freeWorkAnswersAt: Date | null
-  locale: ReportLocale
+  locale: Locale
   /** When the paid block landed. Null on rows that never took it. */
   refinedAt: Date | null
   refinedProfile: AssessmentProfile | null
@@ -105,6 +105,6 @@ export function planReportPasses(source: ReportSourceRow): ReportPassPlan | null
       model: ENGINE_MODEL,
       sections: document.sections,
     },
-    profile: buildReportProfile({ locale: source.locale, profile: refinedProfile }),
+    profile: buildReportProfile(source.locale, refinedProfile),
   }
 }

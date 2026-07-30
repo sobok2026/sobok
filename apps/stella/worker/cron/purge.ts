@@ -1,4 +1,4 @@
-import { openDB } from '../db/client'
+import { openDB } from '@sobok/edge/db/client'
 import {
   nullifyOldCommentIps,
   nullifyOldReportIps,

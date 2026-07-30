@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 import { LEGAL_CONTACT_EMAIL } from './legal'
 
@@ -45,14 +45,14 @@ export type InfoContent = {
 }
 
 const UPDATED = {
-  [Locale.KO]: { label: '최종 업데이트', about: '2026년 7월 22일', contact: '2026년 7월 22일' },
-  [Locale.EN]: { label: 'Last updated', about: 'July 22, 2026', contact: 'July 22, 2026' },
-  [Locale.JA]: { label: '最終更新', about: '2026年7月22日', contact: '2026年7月22日' },
-  [Locale.ZH]: { label: '最后更新', about: '2026年7月22日', contact: '2026年7月22日' },
+  ko: { label: '최종 업데이트', about: '2026년 7월 22일', contact: '2026년 7월 22일' },
+  en: { label: 'Last updated', about: 'July 22, 2026', contact: 'July 22, 2026' },
+  ja: { label: '最終更新', about: '2026年7月22日', contact: '2026年7月22日' },
+  zh: { label: '最后更新', about: '2026年7月22日', contact: '2026年7月22日' },
 } satisfies Record<Locale, { label: string; about: string; contact: string }>
 
 export const PAGES = {
-  [Locale.KO]: {
+  ko: {
     nav: {
       home: '홈',
       about: '소개',
@@ -61,8 +61,8 @@ export const PAGES = {
     about: {
       title: '소개',
       description: '결타레가 어떤 서비스이고 결과를 어떻게 계산하며 누가 만드는지 알려드립니다.',
-      updatedLabel: UPDATED[Locale.KO].label,
-      updatedDate: UPDATED[Locale.KO].about,
+      updatedLabel: UPDATED.ko.label,
+      updatedDate: UPDATED.ko.about,
       sections: [
         {
           heading: '결타레는 어떤 서비스인가요',
@@ -102,8 +102,8 @@ export const PAGES = {
     contact: {
       title: '문의하기',
       description: '결타레에 관한 문의와 제안 그리고 오류 신고를 받는 곳입니다.',
-      updatedLabel: UPDATED[Locale.KO].label,
-      updatedDate: UPDATED[Locale.KO].contact,
+      updatedLabel: UPDATED.ko.label,
+      updatedDate: UPDATED.ko.contact,
       sections: [
         {
           heading: '이렇게 연락해 주세요',
@@ -140,7 +140,7 @@ export const PAGES = {
     },
   },
 
-  [Locale.EN]: {
+  en: {
     nav: {
       home: 'Home',
       about: 'About',
@@ -149,8 +149,8 @@ export const PAGES = {
     about: {
       title: 'About',
       description: 'What vibe is, how it calculates your result, and who builds it.',
-      updatedLabel: UPDATED[Locale.EN].label,
-      updatedDate: UPDATED[Locale.EN].about,
+      updatedLabel: UPDATED.en.label,
+      updatedDate: UPDATED.en.about,
       sections: [
         {
           heading: 'What is vibe',
@@ -185,8 +185,8 @@ export const PAGES = {
     contact: {
       title: 'Contact',
       description: 'Where to send questions, suggestions, and bug reports about vibe.',
-      updatedLabel: UPDATED[Locale.EN].label,
-      updatedDate: UPDATED[Locale.EN].contact,
+      updatedLabel: UPDATED.en.label,
+      updatedDate: UPDATED.en.contact,
       sections: [
         {
           heading: 'How to reach us',
@@ -225,7 +225,7 @@ export const PAGES = {
     },
   },
 
-  [Locale.JA]: {
+  ja: {
     nav: {
       home: 'ホーム',
       about: 'サービス紹介',
@@ -234,8 +234,8 @@ export const PAGES = {
     about: {
       title: 'サービス紹介',
       description: 'vibeがどんなサービスで、どのように結果を計算し、誰が作っているのかをご案内します。',
-      updatedLabel: UPDATED[Locale.JA].label,
-      updatedDate: UPDATED[Locale.JA].about,
+      updatedLabel: UPDATED.ja.label,
+      updatedDate: UPDATED.ja.about,
       sections: [
         {
           heading: 'vibeとは',
@@ -270,8 +270,8 @@ export const PAGES = {
     contact: {
       title: 'お問い合わせ',
       description: 'vibeに関するお問い合わせ・ご提案・不具合のご報告をお受けします。',
-      updatedLabel: UPDATED[Locale.JA].label,
-      updatedDate: UPDATED[Locale.JA].contact,
+      updatedLabel: UPDATED.ja.label,
+      updatedDate: UPDATED.ja.contact,
       sections: [
         {
           heading: 'ご連絡方法',
@@ -308,7 +308,7 @@ export const PAGES = {
     },
   },
 
-  [Locale.ZH]: {
+  zh: {
     nav: {
       home: '首页',
       about: '关于',
@@ -317,8 +317,8 @@ export const PAGES = {
     about: {
       title: '关于',
       description: '介绍 vibe 是什么服务、如何计算结果，以及由谁制作。',
-      updatedLabel: UPDATED[Locale.ZH].label,
-      updatedDate: UPDATED[Locale.ZH].about,
+      updatedLabel: UPDATED.zh.label,
+      updatedDate: UPDATED.zh.about,
       sections: [
         {
           heading: 'vibe是什么',
@@ -353,8 +353,8 @@ export const PAGES = {
     contact: {
       title: '联系我们',
       description: '接收关于 vibe 的咨询、建议与错误反馈。',
-      updatedLabel: UPDATED[Locale.ZH].label,
-      updatedDate: UPDATED[Locale.ZH].contact,
+      updatedLabel: UPDATED.zh.label,
+      updatedDate: UPDATED.zh.contact,
       sections: [
         {
           heading: '如何联系',

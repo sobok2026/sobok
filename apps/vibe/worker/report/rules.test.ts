@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test'
+import { axisCopyFor } from '@deep-type/content/axis-copy'
 
 import { BAND_SHIFT_PAID, CLARITY_BANDS_PAID } from '../../deep-type/content/band-labels.paid'
 import { PROPER_NOUNS } from '../../deep-type/content/proper-nouns'
@@ -33,7 +34,6 @@ import {
 } from '../../deep-type/model'
 import { buildFreeReport } from '../../deep-type/rules/free'
 import { resolveDrainBand } from '../../deep-type/scoring'
-import { axisCopyFor } from './axis-copy'
 import { checkClaims, SECTION_CLAIMS } from './claims'
 import {
   DRAIN_MERGE_WINDOW_DAYS,
@@ -42,7 +42,7 @@ import {
   generateEngineReport,
   mergeDrainSittings,
 } from './rules'
-import type { NamedFacet, ReportSection } from './section-data'
+import type { DetailedFacet, ReportSection } from './section-data'
 import {
   REPORT_DISPLAY_ORDER,
   REPORT_SECTION_CONTRACT,
@@ -267,7 +267,7 @@ function sectionOf<Key extends ReportSectionKey>(
 }
 
 /** Every facet the section named, so the corpus check does not have to know which section it came from. */
-function facetsOf(section: ReportSection): readonly NamedFacet[] {
+function facetsOf(section: ReportSection): readonly DetailedFacet[] {
   switch (section.key) {
     case 'drainSignature':
       return [...section.data.leaders, ...section.data.contrast.freeShown]

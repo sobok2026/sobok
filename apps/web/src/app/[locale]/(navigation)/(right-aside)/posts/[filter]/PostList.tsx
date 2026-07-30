@@ -1,6 +1,6 @@
 'use client'
 
-import { PostFilter } from '@sobok/domain/post/filter'
+import { POST_FILTER } from '@sobok/domain/post/filter'
 import { Book, Frown, MessageSquare, Repeat, SquarePen, Target, Users } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
@@ -20,7 +20,7 @@ import MasonryPostList, { MasonryPostSkeletonGrid } from './MasonryPostList'
 
 type PostListSource =
   | { type: 'manga'; mangaId: number }
-  | { type: 'timeline'; filter: PostFilter.FOLLOWING | PostFilter.RECOMMEND }
+  | { type: 'timeline'; filter: typeof POST_FILTER.FOLLOWING | typeof POST_FILTER.RECOMMEND }
   | { type: 'userPosts'; username: string; viewer: PostListViewer }
   | { type: 'userReplies'; username: string; viewer: PostListViewer }
 
@@ -59,7 +59,7 @@ export default function PostList({ source }: Props) {
 
     if (
       source.type === 'timeline' &&
-      source.filter === PostFilter.FOLLOWING &&
+      source.filter === POST_FILTER.FOLLOWING &&
       error instanceof ProblemDetailsError &&
       error.status === 401
     ) {
@@ -135,13 +135,13 @@ function ErrorState({ error, retry }: { error: Error; retry: () => unknown }) {
 function getPostQuery(source: PostListSource): PostQuery {
   switch (source.type) {
     case 'manga':
-      return { filter: PostFilter.MANGA, mangaId: source.mangaId }
+      return { filter: POST_FILTER.MANGA, mangaId: source.mangaId }
     case 'timeline':
       return { filter: source.filter }
     case 'userPosts':
-      return { filter: PostFilter.USER, username: source.username }
+      return { filter: POST_FILTER.USER, username: source.username }
     case 'userReplies':
-      return { filter: PostFilter.USER_REPLY, username: source.username }
+      return { filter: POST_FILTER.USER_REPLY, username: source.username }
   }
 }
 
@@ -162,15 +162,15 @@ function shouldShowMangaCover(source: PostListSource) {
   return source.type === 'timeline' || source.type === 'userPosts'
 }
 
-function TimelineEmptyState({ filter }: { filter: PostFilter.FOLLOWING | PostFilter.RECOMMEND }) {
+function TimelineEmptyState({ filter }: { filter: typeof POST_FILTER.FOLLOWING | typeof POST_FILTER.RECOMMEND }) {
   const communityPostsT = useTranslations('Community.posts')
   const title =
-    filter === PostFilter.FOLLOWING ? communityPostsT('emptyFollowingTitle') : communityPostsT('emptyRecommendTitle')
+    filter === POST_FILTER.FOLLOWING ? communityPostsT('emptyFollowingTitle') : communityPostsT('emptyRecommendTitle')
   const description =
-    filter === PostFilter.FOLLOWING
+    filter === POST_FILTER.FOLLOWING
       ? communityPostsT('emptyFollowingDescription')
       : communityPostsT('emptyRecommendDescription')
-  const Icon = filter === PostFilter.FOLLOWING ? Users : Target
+  const Icon = filter === POST_FILTER.FOLLOWING ? Users : Target
 
   return <StatusState className="py-16" description={description} icon={<Icon className="size-8" />} title={title} />
 }

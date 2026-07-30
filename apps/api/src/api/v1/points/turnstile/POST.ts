@@ -3,7 +3,7 @@ import {
   postV1PointTurnstileRequestSchema,
   TURNSTILE_POINTS_EARN_ACTION,
 } from '@sobok/contracts'
-import { CookieKey } from '@sobok/http/cookie'
+import { COOKIE_KEY } from '@sobok/http/cookie'
 import { Hono } from 'hono'
 import { setCookie } from 'hono/cookie'
 import { createFactory } from 'hono/factory'
@@ -31,7 +31,7 @@ route.post('/', ...middlewares, async (c) => {
 
   const signedCookie = await signPointsTurnstileToken(userId)
 
-  setCookie(c, CookieKey.POINTS_TURNSTILE, signedCookie, {
+  setCookie(c, COOKIE_KEY.POINTS_TURNSTILE, signedCookie, {
     httpOnly: true,
     maxAge: POINTS_TURNSTILE_TTL_SECONDS,
     path: '/api/v1/points',

@@ -1,4 +1,4 @@
-import { LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
+import { LOCALE_OPEN_GRAPH_TAGS, LOCALES } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 
 import { SITE_NAME } from '@/constants'
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/about'>)
     alternates: {
       canonical,
       languages: {
-        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, `/${entry}/about`])),
+        ...Object.fromEntries(LOCALES.map((entry) => [entry, `/${entry}/about`])),
         'x-default': '/about',
       },
     },

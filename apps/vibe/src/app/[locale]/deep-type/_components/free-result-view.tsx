@@ -14,10 +14,11 @@ import { Refresh, Share } from '@mynaui/icons-react'
 import { trackEcommerce } from '@sobok/analytics/browser'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
-
+import { useEffect, useRef } from 'react'
 import { useFlowFocusOverride } from '@/components/flow-focus'
+import { useShare } from '@/components/use-share'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
 import { formatPrice } from '../_lib/price'
@@ -25,8 +26,7 @@ import { reportPromotionEcommerce } from '../_lib/report-offer-analytics'
 import { CARD_CLASS_NAME, GROUPED_LIST_CLASS_NAME, GROUPED_ROW_CLASS_NAME } from '../_lib/surface'
 import type { DeepTypeContent } from '../_lib/types'
 import { AbilityArtwork } from './ability-artwork'
-import { GemArtwork } from './gem-artwork'
-import { InnerArtwork } from './inner-artwork'
+import { GemArtwork, InnerArtwork } from './code-artwork'
 import { WorldJobHero } from './world-job-hero'
 
 type FreeResultViewProps = {
@@ -38,7 +38,6 @@ type FreeResultViewProps = {
   profile: FreeAssessmentProfile
 }
 
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 const [TYPE_HEADING, CORE_HEADING, JOB_HEADING, DRAIN_HEADING] = FREE_DELIVERABLES_KO
 
 /**
@@ -58,7 +57,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
 
   const offer = DEEP_TYPE_REPORT_OFFER[locale]
   const promotionRef = useRef<HTMLElement>(null)
-  const [shareFeedback, setShareFeedback] = useState('')
+  const { feedback: shareFeedback, share } = useShare({ copiedMessage: content.ui.reportShareCopied })
   const report = buildFreeReport(profile)
   const gemName = content.gemNames[profile.gem.code]
   const shareText = content.ui.reportShareText
@@ -97,28 +96,6 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
     onUnlock()
   }
 
-  async function share() {
-    const shareData = { text: shareText, title: content.metadata.title, url: window.location.href }
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData)
-        return
-      } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') {
-          return
-        }
-      }
-    }
-
-    try {
-      await navigator.clipboard.writeText(`${shareText} ${DEEP_TYPE_BRAND_NAME[locale]}`)
-      setShareFeedback(content.ui.reportShareCopied)
-    } catch {
-      // Older/in-app browsers may expose neither a share sheet nor clipboard access.
-    }
-  }
-
   return (
     <main className="flex flex-1 flex-col bg-page-bg px-safe py-10 text-page-ink sm:py-14" id="main-content">
       <div className="mx-auto grid w-full max-w-xl gap-4">
@@ -145,7 +122,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
             <button
               className={cn(
                 'mt-5 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_rgba(255,77,109,0.24)] transition-colors hover:bg-page-accent/92',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               onClick={unlock}
               type="button"
@@ -220,7 +197,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
           <Link
             className={cn(
               'mt-4 inline-flex min-h-11 items-center font-bold text-page-accent text-sm underline underline-offset-4',
-              focusClassName,
+              FOCUS_CLASS_NAME,
             )}
             href={`/${locale}/deep-type/methodology`}
           >
@@ -232,9 +209,15 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
           <button
             className={cn(
               'inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-page-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_rgba(255,77,109,0.24)] transition-colors hover:bg-page-accent/92',
-              focusClassName,
+              FOCUS_CLASS_NAME,
             )}
-            onClick={share}
+            onClick={() =>
+              share({
+                copy: `${shareText} ${DEEP_TYPE_BRAND_NAME[locale]}`,
+                text: shareText,
+                title: content.metadata.title,
+              })
+            }
             type="button"
           >
             <Share aria-hidden="true" className="h-4 w-4" stroke={1.8} />
@@ -244,7 +227,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
           <button
             className={cn(
               'inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-page-border bg-white px-6 font-bold text-page-ink/70 text-sm transition-colors hover:text-page-ink',
-              focusClassName,
+              FOCUS_CLASS_NAME,
             )}
             onClick={onRestart}
             type="button"

@@ -7,7 +7,7 @@ import type {
   POSTV1NotificationCriteriaResponse,
 } from '@sobok/contracts'
 
-import { NotificationConditionType } from '@sobok/domain/notification/model'
+import { isNotificationConditionType, NOTIFICATION_CONDITION_TYPE } from '@sobok/domain/notification/model'
 import { MAX_NOTIFICATION_CRITERIA_CONDITIONS } from '@sobok/domain/notification/policy'
 import { getInvalidParams } from '@sobok/http/problem-details'
 import { Dialog, DialogBody, DialogFooter, DialogHeader } from '@sobok/ui'
@@ -125,9 +125,19 @@ export default function NotificationCriteriaModal({ isOpen, onClose, editingCrit
         return []
       }
 
+      // The select's value round-trips through FormData as a string, so what comes back is a bare number until
+      // it is checked. Dropped rather than sent, the same way a blank value is dropped above: every option the
+      // select renders comes from `NOTIFICATION_CONDITION_TYPE`, so an unrecognised one means the DOM was
+      // tampered with and the server would reject the body anyway.
+      const conditionType = Number.parseInt(type, 10)
+
+      if (!isNotificationConditionType(conditionType)) {
+        return []
+      }
+
       return [
         {
-          type: Number.parseInt(type, 10),
+          type: conditionType,
           value: trimmedValue,
           isExcluded: excludedConditionIds.has(row.id),
         },
@@ -280,7 +290,7 @@ function createConditionInputRow(
   return {
     id,
     initialCondition: initialCondition ?? {
-      type: NotificationConditionType.SERIES,
+      type: NOTIFICATION_CONDITION_TYPE.SERIES,
       value: '',
       isExcluded: false,
     },

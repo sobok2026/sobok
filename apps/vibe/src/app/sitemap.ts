@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE, Locale } from '@sobok/domain/locale'
+import { DEFAULT_LOCALE, LOCALES } from '@sobok/domain/locale'
 import type { MetadataRoute } from 'next'
 
 import { ORIGIN } from '@/constants'
@@ -68,11 +68,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const suffix = path ? `/${path}` : ''
 
     const languages = {
-      ...Object.fromEntries(Object.values(Locale).map((locale) => [locale, `${ORIGIN}/${locale}${suffix}`])),
+      ...Object.fromEntries(LOCALES.map((locale) => [locale, `${ORIGIN}/${locale}${suffix}`])),
       'x-default': `${ORIGIN}${suffix}`,
     }
 
-    return Object.values(Locale).map((locale) => ({
+    return LOCALES.map((locale) => ({
       url: `${ORIGIN}/${locale}${suffix}`,
       lastModified: new Date(),
       changeFrequency,

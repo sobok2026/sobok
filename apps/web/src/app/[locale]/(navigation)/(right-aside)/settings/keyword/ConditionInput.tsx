@@ -2,7 +2,7 @@
 
 import type { POSTV1NotificationCriteriaBody } from '@sobok/contracts'
 
-import { NotificationConditionType, NotificationConditionTypeNames } from '@sobok/domain/notification/model'
+import { NOTIFICATION_CONDITION_TYPE, NotificationConditionTypeNames } from '@sobok/domain/notification/model'
 import { Trash2 } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
 
@@ -29,7 +29,7 @@ export default function ConditionInput({ isPending, onRemove, row, showRemoveBut
     <div className="flex flex-col sm:flex-row gap-2">
       <CustomSelect
         className="sm:w-40"
-        defaultValue={(row.initialCondition?.type ?? NotificationConditionType.SERIES).toString()}
+        defaultValue={(row.initialCondition?.type ?? NOTIFICATION_CONDITION_TYPE.SERIES).toString()}
         disabled={isPending}
         name="condition-type"
         options={Object.entries(NotificationConditionTypeNames).map(([value, label]) => ({

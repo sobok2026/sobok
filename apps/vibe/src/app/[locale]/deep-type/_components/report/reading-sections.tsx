@@ -11,8 +11,7 @@ import type {
 import { GROUPED_LIST_CLASS_NAME, GROUPED_ROW_CLASS_NAME } from '../../_lib/surface'
 import type { DeepTypeContent } from '../../_lib/types'
 import { AbilityArtwork } from '../ability-artwork'
-import { GemArtwork } from '../gem-artwork'
-import { InnerArtwork } from '../inner-artwork'
+import { GemArtwork, InnerArtwork } from '../code-artwork'
 import { BandLadder, DrainStrands } from './art'
 import { BlockHeading, ClosingNote, FacetList, Field, Kicker } from './primitives'
 

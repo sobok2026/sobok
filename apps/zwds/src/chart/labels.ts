@@ -3,7 +3,7 @@
 // Keys are the simplified-Chinese strings iztro emits when the astrolabe is
 // requested with language 'zh-CN'.
 
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 export type Label = Readonly<Record<Locale, string>>
 
@@ -13,10 +13,10 @@ export function pickLabel(label: Label, locale: Locale): string {
 
 function label(ko: string, en: string, zh: string, ja: string): Label {
   return {
-    [Locale.KO]: ko,
-    [Locale.EN]: en,
-    [Locale.ZH]: zh,
-    [Locale.JA]: ja,
+    ko: ko,
+    en: en,
+    zh: zh,
+    ja: ja,
   }
 }
 

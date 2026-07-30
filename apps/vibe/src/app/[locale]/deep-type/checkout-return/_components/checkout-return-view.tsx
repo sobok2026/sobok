@@ -3,9 +3,9 @@
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
-
 import type { DeepTypeCheckoutReturnContent } from '@/content/deep-type-checkout-return'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../../components/focus'
 
 import { DynamicReportView } from '../../_components/dynamic-report-view'
 import { IntroView } from '../../_components/intro-view'
@@ -22,8 +22,6 @@ type CheckoutReturnViewProps = {
 }
 
 type Phase = 'checking' | 'error' | 'intro' | 'refinement' | 'report'
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnViewProps) {
   const [phase, setPhase] = useState<Phase>('checking')
@@ -123,7 +121,7 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
               <button
                 className={cn(
                   'mt-6 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white hover:bg-page-accent/92',
-                  focusClassName,
+                  FOCUS_CLASS_NAME,
                 )}
                 onClick={() => verifyPayment(pending)}
                 type="button"
@@ -134,7 +132,7 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
             <Link
               className={cn(
                 'mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-page-border font-bold text-page-ink/70 text-sm hover:text-page-ink',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               href={`/${locale}/deep-type/reopen`}
             >
@@ -143,7 +141,7 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
             <Link
               className={cn(
                 'mt-2 inline-flex min-h-11 w-full items-center justify-center rounded-full font-bold text-page-ink/54 text-sm hover:text-page-ink',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               href={`/${locale}/deep-type`}
             >

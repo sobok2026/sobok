@@ -3,6 +3,7 @@ import type { Messages } from './types'
 export const en = {
   Common: {
     localeSwitcher: 'Language',
+    primaryNav: 'Primary',
     meta: {
       title: 'Couple Compatibility Quizzes',
       description: 'Check your couple vibe with two quick quizzes — a compatibility score and a communication type.',

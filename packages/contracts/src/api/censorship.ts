@@ -1,4 +1,9 @@
-import { CensorshipKey, CensorshipLevel } from '@sobok/domain/censorship/model'
+import {
+  CENSORSHIP_KEY,
+  CENSORSHIP_LEVEL,
+  type CensorshipKey,
+  type CensorshipLevel,
+} from '@sobok/domain/censorship/model'
 import { CENSORSHIPS_PER_PAGE, MAX_CENSORSHIPS_PER_USER } from '@sobok/domain/censorship/policy'
 import { z } from 'zod'
 
@@ -24,9 +29,9 @@ export const postV1CensorshipCreateBodySchema = z.object({
   items: z
     .array(
       z.object({
-        key: z.enum(CensorshipKey),
+        key: z.enum(CENSORSHIP_KEY),
         value: z.string().trim().min(1).max(256),
-        level: z.enum(CensorshipLevel),
+        level: z.enum(CENSORSHIP_LEVEL),
       }),
     )
     .min(1)
@@ -42,9 +47,9 @@ export const patchV1CensorshipUpdateBodySchema = z.object({
     .array(
       z.object({
         id: z.coerce.number().int().positive(),
-        key: z.enum(CensorshipKey),
+        key: z.enum(CENSORSHIP_KEY),
         value: z.string().trim().min(1).max(256),
-        level: z.enum(CensorshipLevel),
+        level: z.enum(CENSORSHIP_LEVEL),
       }),
     )
     .min(1)

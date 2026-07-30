@@ -1,6 +1,6 @@
 'use client'
 
-import { LOCALE_LANGUAGE_TAGS, LOCALE_NATIVE_NAMES, Locale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS, LOCALE_NATIVE_NAMES, LOCALES, type Locale } from '@sobok/domain/locale'
 import { Check } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import { useTransition } from 'react'
@@ -27,7 +27,7 @@ export default function LanguageSettings() {
 
   return (
     <div className="grid gap-2 sm:grid-cols-2">
-      {Object.values(Locale).map((code) => {
+      {LOCALES.map((code) => {
         const isSelected = currentLocale === code
         const label = LOCALE_NATIVE_NAMES[code]
 

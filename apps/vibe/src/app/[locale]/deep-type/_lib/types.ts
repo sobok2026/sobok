@@ -1,18 +1,10 @@
+// The axis shapes live in `deep-type/content/axis-content` — both programs read the axis tables, so the type
+// cannot belong to the route. Re-exported here because the screen types are assembled from this module.
+import type { AxisContent } from '@deep-type/content/axis-content'
 import type { AxisId, GemCode, WorkDimension } from '@deep-type/model'
 import type { PayMethod } from '@deep-type/pay-method'
 
-export type AxisPoleContent = {
-  description: string
-  label: string
-  reflection: string
-}
-
-export type AxisContent = {
-  description: string
-  first: AxisPoleContent
-  name: string
-  second: AxisPoleContent
-}
+export type { AxisContent, AxisPoleContent } from '@deep-type/content/axis-content'
 
 export type QuestionContent = {
   options: readonly [string, string, string, string]

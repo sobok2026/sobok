@@ -5,7 +5,7 @@ import {
 } from '@sobok/contracts'
 import { db } from '@sobok/db/app'
 import { pointTransactionTable } from '@sobok/db/app/points'
-import { LOCALE_LANGUAGE_TAGS, Locale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
 import { POINT_CONSTANTS, TRANSACTION_TYPE } from '@sobok/domain/points/model'
 import { and, desc, eq, lt } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -134,7 +134,7 @@ function getTransactionDescription({ transactionType, amount, locale }: Transact
 }
 
 const TRANSACTION_LABELS = {
-  [Locale.KO]: {
+  ko: {
     adClick: '광고 클릭',
     adminGrant: '운영 지급',
     badgePurchase: '프로필 뱃지 구매',
@@ -144,7 +144,7 @@ const TRANSACTION_LABELS = {
     roulettePayout: '룰렛 당첨',
     themePurchase: '커스텀 테마 구매',
   },
-  [Locale.EN]: {
+  en: {
     adClick: 'Ad click',
     adminGrant: 'Admin grant',
     badgePurchase: 'Profile badge purchase',
@@ -154,7 +154,7 @@ const TRANSACTION_LABELS = {
     roulettePayout: 'Roulette payout',
     themePurchase: 'Custom theme purchase',
   },
-  [Locale.JA]: {
+  ja: {
     adClick: '広告クリック',
     adminGrant: '運営支給',
     badgePurchase: 'プロフィールバッジ購入',
@@ -164,7 +164,7 @@ const TRANSACTION_LABELS = {
     roulettePayout: 'ルーレット当選',
     themePurchase: 'カスタムテーマ購入',
   },
-  [Locale.ZH]: {
+  zh: {
     adClick: '广告点击',
     adminGrant: '运营发放',
     badgePurchase: '个人资料徽章购买',
@@ -177,25 +177,25 @@ const TRANSACTION_LABELS = {
 } satisfies Record<Locale, Record<TransactionLabelKey, string>>
 
 const EXPANSION_LABELS = {
-  [Locale.KO]: {
+  ko: {
     bookmark: '북마크 확장',
     history: '감상 기록 확장',
     library: '내 서재 확장',
     rating: '평가 확장',
   },
-  [Locale.EN]: {
+  en: {
     bookmark: 'Bookmark expansion',
     history: 'History expansion',
     library: 'Library expansion',
     rating: 'Rating expansion',
   },
-  [Locale.JA]: {
+  ja: {
     bookmark: 'ブックマーク拡張',
     history: '閲覧履歴拡張',
     library: 'マイライブラリ拡張',
     rating: '評価拡張',
   },
-  [Locale.ZH]: {
+  zh: {
     bookmark: '书签扩展',
     history: '阅读记录扩展',
     library: '我的书库扩展',
@@ -205,5 +205,5 @@ const EXPANSION_LABELS = {
 
 function getExpansionLabel(locale: Locale, kind: ExpansionKind, amount: number): string {
   const label = EXPANSION_LABELS[locale][kind]
-  return locale === Locale.KO ? `${label} (+${amount}개)` : `${label} (+${amount})`
+  return locale === 'ko' ? `${label} (+${amount}개)` : `${label} (+${amount})`
 }

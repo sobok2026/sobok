@@ -20,12 +20,13 @@ export interface PUTV1MangaIdRatingResponse {
   updatedAt: number
 }
 
-export enum MangaReportReason {
-  DEEPFAKE = 'DEEPFAKE',
-  REAL_PERSON_MINOR = 'REAL_PERSON_MINOR',
-}
+// A tuple so `z.enum` reads the same declaration the type comes from. See `@sobok/domain/censorship/model` for
+// why this is not an enum.
+export const MANGA_REPORT_REASONS = ['DEEPFAKE', 'REAL_PERSON_MINOR'] as const
 
-const mangaReportReasonSchema = z.enum(MangaReportReason)
+export type MangaReportReason = (typeof MANGA_REPORT_REASONS)[number]
+
+const mangaReportReasonSchema = z.enum(MANGA_REPORT_REASONS)
 
 export const postV1MangaIdReportBodySchema = z.object({
   reason: mangaReportReasonSchema,

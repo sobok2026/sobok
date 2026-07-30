@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { cn } from '@/utils/cn'
 import coupleGyeolRidgeImage from '../../../../../public/image/rarity/ridge.png'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 import type { GyeolContent } from '../_lib/types'
 
 type IntroViewProps = {
@@ -11,8 +12,6 @@ type IntroViewProps = {
   hasInvalidSharedResult: boolean
   locale: Locale
 }
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export function IntroView({ content, hasInvalidSharedResult, locale }: IntroViewProps) {
   const keepHeadingBreakClassName = locale === 'ko' ? 'break-keep' : undefined
@@ -39,7 +38,7 @@ export function IntroView({ content, hasInvalidSharedResult, locale }: IntroView
               <Link
                 className={cn(
                   'inline-flex min-h-14 touch-manipulation items-center justify-center gap-2 rounded-2xl bg-page-accent px-6 font-black text-base text-white shadow-[0_24px_80px_rgba(255,77,109,0.26)] transition-colors hover:bg-page-accent/92',
-                  focusClassName,
+                  FOCUS_CLASS_NAME,
                 )}
                 href={`/${locale}/couple-gyeol/quiz`}
               >
@@ -49,7 +48,7 @@ export function IntroView({ content, hasInvalidSharedResult, locale }: IntroView
               <a
                 className={cn(
                   'inline-flex min-h-14 touch-manipulation items-center justify-center rounded-2xl border border-page-border bg-white px-6 font-bold text-base text-page-ink transition-colors hover:border-page-accent/50',
-                  focusClassName,
+                  FOCUS_CLASS_NAME,
                 )}
                 href="#rarity-model"
               >

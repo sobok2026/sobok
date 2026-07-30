@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 
 import { cn } from '@/utils/cn'
 
-import type { NamedFacet } from '../../_lib/api'
+import type { DetailedFacet } from '../../_lib/api'
 import { CARD_CLASS_NAME, GROUPED_LIST_CLASS_NAME, GROUPED_ROW_CLASS_NAME } from '../../_lib/surface'
 
 // The pieces every report section is built from. They exist so that twelve sections can look like one report:
@@ -82,7 +82,7 @@ export function ConfidenceBadge({ label, level }: { label: string; level: keyof 
  * A work facet as the report shows it: the name, the authored paragraph, and the one reversible choice it
  * suggests. The three used to be a bullet, a missing middle and another bullet.
  */
-export function FacetCard({ facet }: { facet: NamedFacet }) {
+export function FacetCard({ facet }: { facet: DetailedFacet }) {
   return (
     <li className={GROUPED_ROW_CLASS_NAME}>
       <p className="break-keep font-black text-sm">{facet.label}</p>
@@ -92,7 +92,7 @@ export function FacetCard({ facet }: { facet: NamedFacet }) {
   )
 }
 
-export function FacetList({ facets }: { facets: readonly NamedFacet[] }) {
+export function FacetList({ facets }: { facets: readonly DetailedFacet[] }) {
   if (facets.length === 0) {
     return null
   }
@@ -106,7 +106,7 @@ export function FacetList({ facets }: { facets: readonly NamedFacet[] }) {
 }
 
 /** Name-only chips, for the places a list is context rather than content. */
-export function FacetChips({ facets }: { facets: readonly NamedFacet[] }) {
+export function FacetChips({ facets }: { facets: readonly DetailedFacet[] }) {
   if (facets.length === 0) {
     return null
   }

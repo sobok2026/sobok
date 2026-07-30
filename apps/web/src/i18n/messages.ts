@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import { LOCALES, type Locale } from '@sobok/domain/locale'
 import { messages as docMessages } from '@/app/[locale]/(docs)/messages'
 import { messages as rightAsideMessages } from '@/app/[locale]/(navigation)/(right-aside)/messages'
 import { messages as settingsMessages } from '@/app/[locale]/(navigation)/(right-aside)/settings/messages'
@@ -28,7 +28,7 @@ const messageModules = [
 ] satisfies LocalizedMessages[]
 
 const mergedMessages = Object.fromEntries(
-  Object.values(Locale).map((locale) => [locale, mergeLocaleMessages(locale)]),
+  LOCALES.map((locale) => [locale, mergeLocaleMessages(locale)]),
 ) as LocalizedMessages
 
 export function getMessages(locale: Locale): Messages {

@@ -1,5 +1,4 @@
-import { WORLD_JOB_FAMILY } from '@deep-type/content/world-job'
-import { WORLD_JOB_NAMES } from '@deep-type/content/world-job-names'
+import { resolveWorldJob } from '@deep-type/content/world-job'
 import type { GemCode, InnerCode } from '@deep-type/model'
 
 import { cn } from '@/utils/cn'
@@ -22,10 +21,12 @@ type WorldJobHeroProps = {
  * Composition is what the origin shipped and it produced 256 strings that read the same.
  */
 export function WorldJobHero({ content, gem, inner }: WorldJobHeroProps) {
+  const worldJob = resolveWorldJob(inner, gem)
+
   return (
     <header className="rounded-3xl border border-page-border bg-page-surface p-6 text-center shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:rounded-4xl sm:p-8">
-      <h1 className="break-keep font-black text-3xl leading-tight sm:text-4xl">{WORLD_JOB_NAMES[`${inner}_${gem}`]}</h1>
-      <p className="mx-auto mt-3 max-w-md break-keep text-page-ink/68 leading-8">{WORLD_JOB_FAMILY[inner].method}</p>
+      <h1 className="break-keep font-black text-3xl leading-tight sm:text-4xl">{worldJob.name}</h1>
+      <p className="mx-auto mt-3 max-w-md break-keep text-page-ink/68 leading-8">{worldJob.family.method}</p>
 
       <div className="mt-6 grid grid-cols-2 gap-2">
         <CodeChip label={content.ui.layerInner} value={inner} />

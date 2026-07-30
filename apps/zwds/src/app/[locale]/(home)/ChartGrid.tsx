@@ -1,6 +1,6 @@
 'use client'
 
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 import { useLocale, useTranslations } from 'next-intl'
 import type { MutagenKey } from '@/chart/keys'
 import { pickLabel } from '@/chart/labels'
@@ -77,7 +77,7 @@ function PalaceCell({
         {palace.majorStars.map((star) => (
           <span
             className="inline-flex items-baseline gap-0.5 text-sm font-semibold text-foreground"
-            key={star.key ?? pickLabel(star.label, Locale.ZH)}
+            key={star.key ?? pickLabel(star.label, 'zh')}
           >
             {pickLabel(star.label, locale)}
             {star.brightness && (
@@ -95,10 +95,7 @@ function PalaceCell({
       {palace.luckyStars.length > 0 && (
         <p className="text-[11px] leading-tight text-accent-gold/90">
           {palace.luckyStars.map((star) => (
-            <span
-              className="mr-1.5 inline-flex items-baseline gap-0.5"
-              key={star.key ?? pickLabel(star.label, Locale.ZH)}
-            >
+            <span className="mr-1.5 inline-flex items-baseline gap-0.5" key={star.key ?? pickLabel(star.label, 'zh')}>
               {pickLabel(star.label, locale)}
               {star.mutagen && star.mutagenKey && (
                 <span
@@ -115,7 +112,7 @@ function PalaceCell({
       {palace.unluckyStars.length > 0 && (
         <p className="text-[11px] leading-tight text-danger/90">
           {palace.unluckyStars.map((star) => (
-            <span className="mr-1.5" key={star.key ?? pickLabel(star.label, Locale.ZH)}>
+            <span className="mr-1.5" key={star.key ?? pickLabel(star.label, 'zh')}>
               {pickLabel(star.label, locale)}
             </span>
           ))}

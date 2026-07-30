@@ -2,7 +2,7 @@ import type { QuestionPromptCatalog } from '../../_lib/types'
 
 // Untranslated on purpose. ko is the canonical locale and a human writes these before this locale ships;
 // nothing in the build or the tests asserts they are filled, so a blank string renders as a blank string.
-export const zhPaidQuestionPrompts = {
+export const paidQuestionPrompts = {
   'refine-inner-ei-2': '',
   'refine-inner-ei-1': '',
   'refine-inner-sn-2': '',

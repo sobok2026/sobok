@@ -1,7 +1,6 @@
+import type { Db } from '@sobok/edge/db/client'
 import { and, eq, inArray, lt, or, sql } from 'drizzle-orm'
-
 import type { ReportPassStatus } from '../../report/pipeline'
-import type { Db } from '../client'
 import { type NarrativeSection, type ReportSection, reportTable } from '../schema'
 
 /** The state machine is declared with the rest of the pass contract; this module only reads and writes it. */

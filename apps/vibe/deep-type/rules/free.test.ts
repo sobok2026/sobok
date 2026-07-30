@@ -101,6 +101,9 @@ const EXPECTED_CLOSURE = [
   'deep-type/content/work-labels.free.ts',
   'deep-type/content/world-job-names.ts',
   'deep-type/content/world-job.ts',
+  // Facet naming, shared with the paid engine. It carries no copy of its own — it is generic over whichever
+  // label table the caller passes — which is what lets the free bundle import it at all.
+  'deep-type/facets.ts',
   'deep-type/model.ts',
   'deep-type/rules/free.ts',
 ]

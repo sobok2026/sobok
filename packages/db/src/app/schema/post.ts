@@ -1,3 +1,4 @@
+import type { PostType } from '@sobok/domain/post/model'
 import {
   type AnyPgColumn,
   bigint,
@@ -9,6 +10,7 @@ import {
   text,
   varchar,
 } from 'drizzle-orm/pg-core'
+
 import { createdAt } from '../../columns'
 
 import { user } from './auth'
@@ -26,7 +28,12 @@ export const postTable = pgTable.withRLS(
     }),
     mangaId: integer('manga_id'),
     content: varchar({ length: 160 }),
-    type: smallint().notNull(), // 'text', 'image', 'video', 'audio', 'poll', 'event', etc.
+    // `$type` narrows the smallint to the four values `POST_TYPE` defines — still a smallint in Postgres, so
+    // no migration. It has to be declared: `PostType` used to be a numeric enum, and TypeScript lets any
+    // `number` be assigned to one of those, so the API could hand the contract a raw column value and nothing
+    // checked that it was one of the four. The old comment here listed 'image'/'video'/'audio'/'event', none of
+    // which `POST_TYPE` has ever had.
+    type: smallint().$type<PostType>().notNull(),
     createdAt,
   },
   (table) => [

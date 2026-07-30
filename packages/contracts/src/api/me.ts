@@ -14,11 +14,11 @@ const searchLanguageSchema = z
   .transform(normalizeValue)
   .refine(isSearchLanguage, { params: { code: INVALID_PARAM.INVALID_SEARCH_LANGUAGE } })
 
-export enum AdultVerificationStatus {
-  ADULT = 'adult',
-  NOT_ADULT = 'not-adult',
-  UNVERIFIED = 'unverified',
-}
+// A tuple so `z.enum` reads the same declaration the type comes from. See `@sobok/domain/censorship/model` for
+// why this is not an enum.
+export const ADULT_VERIFICATION_STATUSES = ['adult', 'not-adult', 'unverified'] as const
+
+export type AdultVerificationStatus = (typeof ADULT_VERIFICATION_STATUSES)[number]
 
 export interface UserSettings {
   historySyncEnabled: boolean

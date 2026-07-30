@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 export type NavItem = {
   // Path segment after the locale, e.g. 'today' → /{locale}/today.
@@ -10,19 +10,19 @@ export type NavItem = {
 // wordmark, so it is not repeated here. Add forecast verticals (금전 등) to this
 // list as they ship — the header degrades to a horizontal scroll strip.
 export const PRIMARY_NAV = {
-  [Locale.KO]: [
+  ko: [
     { segment: 'today', label: '오늘' },
     { segment: 'love', label: '연애' },
   ],
-  [Locale.EN]: [
+  en: [
     { segment: 'today', label: 'Today' },
     { segment: 'love', label: 'Love' },
   ],
-  [Locale.JA]: [
+  ja: [
     { segment: 'today', label: '今日' },
     { segment: 'love', label: '恋愛' },
   ],
-  [Locale.ZH]: [
+  zh: [
     { segment: 'today', label: '今日' },
     { segment: 'love', label: '恋爱' },
   ],

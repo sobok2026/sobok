@@ -11,6 +11,7 @@ import { PAY_TIER, TURNSTILE_SITE_KEY } from '@/constants'
 import { LEGAL } from '@/content/legal'
 import { cn } from '@/utils/cn'
 import { DEEPTYPE_CHECKOUT_ACTION } from '../../../../../worker/api/deep-type/actions'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 import { type FreeResult, type PaypalSession, useCheckout } from '../_hooks/use-checkout'
 import { formatPrice } from '../_lib/price'
@@ -24,8 +25,6 @@ type PaywallViewProps = {
   onClose: () => void
   onPaid: (accessToken: string) => void
 }
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallViewProps) {
   const paywall = content.paywall
@@ -128,7 +127,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
               autoComplete="email"
               className={cn(
                 'mt-2 min-h-12 w-full rounded-2xl border border-page-border bg-white px-4 font-medium text-page-ink outline-none placeholder:text-page-ink/36 focus-visible:border-page-accent',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               id="deeptype-email"
               inputMode="email"
@@ -213,7 +212,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
             <button
               className={cn(
                 'mt-6 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_rgba(255,77,109,0.24)] transition-colors hover:bg-page-accent/92 disabled:cursor-not-allowed disabled:bg-page-ink/20 disabled:shadow-none',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               disabled={!turnstileToken || status === 'processing'}
               type="submit"
@@ -246,7 +245,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
         <button
           className={cn(
             'mx-auto inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-bold text-page-ink/58 text-sm transition-colors hover:text-page-ink',
-            focusClassName,
+            FOCUS_CLASS_NAME,
           )}
           onClick={onClose}
           type="button"
@@ -315,7 +314,7 @@ function PaypalArea({ cancelLabel, hint, onCancel, onFail, onSuccess, session }:
       <button
         className={cn(
           'justify-self-center rounded-full px-3 py-1 font-bold text-page-ink/58 text-sm underline underline-offset-2 transition-colors hover:text-page-ink',
-          focusClassName,
+          FOCUS_CLASS_NAME,
         )}
         onClick={onCancel}
         type="button"

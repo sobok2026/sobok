@@ -1,6 +1,6 @@
 'use client'
 
-import { NotificationFilter } from '@sobok/domain/notification/filter'
+import type { NotificationFilter } from '@sobok/domain/notification/filter'
 import { Book, Check, Loader2 } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -14,7 +14,7 @@ import useInfiniteScrollObserver from '@/hook/useInfiniteScrollObserver'
 import useMeQuery from '@/query/useMeQuery'
 import { hasAdultAccess } from '@/utils/adult-verification'
 
-import { SearchParams } from './common'
+import { NOTIFICATION_PARAM } from './common'
 import NotificationCard from './NotificationCard'
 import { useNotificationSelection } from './NotificationProvider'
 import SwipeableWrapper from './SwipeableNotificationCard'
@@ -58,7 +58,7 @@ export default function NotificationList() {
   })
 
   const notifications = data?.pages.flatMap((page) => page.notifications) ?? []
-  const filter = searchParams.get(SearchParams.FILTER) as NotificationFilter | null
+  const filter = searchParams.get(NOTIFICATION_PARAM.FILTER) as NotificationFilter | null
   const groupedNotifications = groupNotificationsByDate(notifications)
 
   if (me === undefined) {
@@ -103,7 +103,7 @@ export default function NotificationList() {
                 onMarkAsRead={markAsRead}
               >
                 <NotificationCard
-                  autoMarkAsRead={!selectionMode && filter !== NotificationFilter.UNREAD}
+                  autoMarkAsRead={!selectionMode && filter !== 'unread'}
                   notification={notification}
                   onDelete={deleteNotification}
                   onMarkAsRead={markAsRead}
@@ -129,7 +129,7 @@ export default function NotificationList() {
 
 function EmptyState() {
   const searchParams = useSearchParams()
-  const filter = searchParams.get(SearchParams.FILTER) as NotificationFilter | null
+  const filter = searchParams.get(NOTIFICATION_PARAM.FILTER) as NotificationFilter | null
   const t = useTranslations('Community.notification')
   const content = getEmptyContent(filter, t)
   const showKeywordSetting = content.showKeywordSetting
@@ -155,13 +155,13 @@ function getEmptyContent(
   t: ReturnType<typeof useTranslations<'Community.notification'>>,
 ) {
   switch (filter) {
-    case NotificationFilter.NEW_MANGA:
+    case 'new':
       return {
         icon: <Book className="size-8" />,
         title: t('empty.newMangaTitle'),
         description: t('empty.newMangaDescription'),
       }
-    case NotificationFilter.UNREAD:
+    case 'unread':
       return {
         icon: <Check className="size-8" />,
         title: t('empty.unreadTitle'),

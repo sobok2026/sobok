@@ -1,6 +1,4 @@
 import { afterAll, beforeEach, describe, expect, mock, test } from 'bun:test'
-
-import { LibraryItemSort } from '@sobok/domain/library/sort'
 import type { SQL } from 'drizzle-orm'
 import { PgDialect } from 'drizzle-orm/pg-core'
 
@@ -105,7 +103,7 @@ describe('selectBookmark', () => {
   })
 
   test('오래된순 정렬을 요청하면 ascending order를 사용한다', async () => {
-    await selectBookmark('user-1', { sort: LibraryItemSort.CREATED_ASC })
+    await selectBookmark('user-1', { sort: 'created-asc' })
 
     expect(queryState.orderByClauses).toHaveLength(2)
     expect(dialect.sqlToQuery(queryState.orderByClauses[0]).sql).toContain('"bookmark"."created_at" asc')

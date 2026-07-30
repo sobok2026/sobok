@@ -28,7 +28,11 @@ export class MemoryStore implements RateLimitStore {
   private attempts = new Map<string, { count: number; resetAt: number }>()
   private cleanupInterval: NodeJS.Timeout | null = null
 
-  constructor(private windowMs: number) {
+  private windowMs: number
+
+  constructor(windowMs: number) {
+    this.windowMs = windowMs
+
     this.cleanupInterval = setInterval(() => {
       this.cleanup()
     }, ms('1 minute'))

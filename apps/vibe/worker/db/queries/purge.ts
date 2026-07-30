@@ -1,7 +1,6 @@
+import type { Db } from '@sobok/edge/db/client'
 import { and, eq, exists, inArray, isNotNull, isNull, lt, ne, notExists, or } from 'drizzle-orm'
-
 import { dateIsOlderThanYears } from '../../lib/retention'
-import type { Db } from '../client'
 import { purchaseTable, reopenAccessTable, reportTable, resultTable, webhookEventTable } from '../schema'
 
 const BATCH = 500

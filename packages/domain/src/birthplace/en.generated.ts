@@ -5,7 +5,6 @@
 // geonamesAdmin2 SHA-256: 314a76e0b02610c653947acbf4e9dceab6b20eb39a0e793e09fea55d3d1a96be
 // 24055 selectable places. Regenerate with `bun run generate:birthplaces` from packages/domain.
 
-import { Locale } from '../locale'
 import {
   createBirthplaceCatalog,
   type GeneratedBirthplaceGroupRow,
@@ -24078,4 +24077,4 @@ const PLACES: readonly GeneratedBirthplaceRow[] = [
   ["geonames:6228827", "Kaitaia", 4, -35.1148, 173.2637, "Pacific/Auckland", 1, 0, -1, "Far North District, Northland", "KAT", "kai ta ya", "Каитаиа", "カイタイア", "凱塔亞", "카이타이아"],
 ]
 
-export const GENERATED_BIRTHPLACE_CATALOG = createBirthplaceCatalog(Locale.EN, GROUPS, PLACES)
+export const GENERATED_BIRTHPLACE_CATALOG = createBirthplaceCatalog('en', GROUPS, PLACES)

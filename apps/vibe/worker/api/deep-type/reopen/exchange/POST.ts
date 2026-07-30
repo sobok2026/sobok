@@ -1,11 +1,10 @@
+import { openDB, withDB } from '@sobok/edge/db/client'
+import { sha256Hex } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
 import { z } from 'zod'
-
-import { openFresh, withDB } from '~/db/client'
 import { consumeReopenLink } from '~/db/queries/reopen'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
-import { sha256Hex } from '~/lib/tokens'
 
 const ExchangeBody = z.object({ token: z.string().length(43) })
 
@@ -18,7 +17,7 @@ route.post('/', async (c) => {
   }
 
   const tokenHash = await sha256Hex(parsed.data.token)
-  const reopened = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+  const reopened = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     consumeReopenLink(db, tokenHash, new Date()),
   )
 

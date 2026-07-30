@@ -2,6 +2,7 @@ import { ArrowLeft, HeartWaves, MessageDots, Refresh } from '@mynaui/icons-react
 import type { Locale } from '@sobok/domain/locale'
 import Image from 'next/image'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 import { axisOrder, getAxisOption } from '../_lib/model'
 import type { AxisValue, CoupleTypeContent, CoupleTypeResult } from '../_lib/types'
 
@@ -14,8 +15,6 @@ type ResultViewProps = {
   result: CoupleTypeResult
   ui: CoupleTypeContent['ui']
 }
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export function ResultView({ answerCount, axisDefinitions, locale, onEdit, onRestart, result, ui }: ResultViewProps) {
   const codeLetters = result.code.split('') as AxisValue[]
@@ -49,7 +48,7 @@ export function ResultView({ answerCount, axisDefinitions, locale, onEdit, onRes
             <button
               className={cn(
                 'inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-page-accent px-5 font-black text-sm text-white transition-colors hover:bg-page-accent/92',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               onClick={onEdit}
               type="button"
@@ -60,7 +59,7 @@ export function ResultView({ answerCount, axisDefinitions, locale, onEdit, onRes
             <button
               className={cn(
                 'inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/18 bg-white/8 px-5 font-black text-sm text-white transition-colors hover:bg-white/14',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               onClick={onRestart}
               type="button"

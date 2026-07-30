@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import { LOCALES } from '@sobok/domain/locale'
 import {
   MANGA_RECOMMENDATION_PER_PAGE,
   MAX_MANGA_RECOMMENDATION_PER_PAGE,
@@ -13,7 +13,7 @@ export const getV1MangaRecommendationQuerySchema = z.object({
     .positive()
     .max(MAX_MANGA_RECOMMENDATION_PER_PAGE)
     .default(MANGA_RECOMMENDATION_PER_PAGE),
-  locale: z.enum(Locale),
+  locale: z.enum(LOCALES),
 })
 
 export interface MangaRecommendation {

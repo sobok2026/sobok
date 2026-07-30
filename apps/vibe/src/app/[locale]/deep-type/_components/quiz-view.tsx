@@ -4,6 +4,7 @@ import type { OptionIndex } from '@deep-type/model'
 import { ArrowLeft } from '@mynaui/icons-react'
 import type { ReactNode } from 'react'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 import { type ProgressSegment, QuizProgress } from './quiz-progress'
 
 type QuizViewProps = {
@@ -21,8 +22,6 @@ type QuizViewProps = {
    */
   question: { options: readonly string[]; prompt: string }
 }
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 /**
  * Every item in this instrument is one stem over four options, whether the four are an agreement ladder or six
@@ -47,7 +46,7 @@ export function QuizView({ backLabel, banner, hint, onAnswer, onBack, progress, 
               <button
                 className={cn(
                   'min-h-13 rounded-3xl border border-page-border bg-white p-4 text-left font-bold leading-6 transition-colors hover:border-page-accent/50 hover:bg-page-soft/50',
-                  focusClassName,
+                  FOCUS_CLASS_NAME,
                 )}
                 key={option}
                 onClick={() => onAnswer(index as OptionIndex)}
@@ -63,7 +62,7 @@ export function QuizView({ backLabel, banner, hint, onAnswer, onBack, progress, 
         <button
           className={cn(
             'mt-5 inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-bold text-page-ink/58 text-sm transition-colors enabled:hover:text-page-ink disabled:cursor-not-allowed disabled:opacity-40',
-            focusClassName,
+            FOCUS_CLASS_NAME,
           )}
           disabled={!onBack}
           onClick={onBack}
