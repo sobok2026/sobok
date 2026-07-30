@@ -21,6 +21,7 @@ import { cn } from '@/utils/cn'
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
 import { formatKrw } from '../_lib/price'
 import { REPORT_PROMOTION_ECOMMERCE } from '../_lib/report-offer-analytics'
+import { CARD_CLASS_NAME, GROUPED_LIST_CLASS_NAME, GROUPED_ROW_CLASS_NAME } from '../_lib/surface'
 import type { DeepTypeContent } from '../_lib/types'
 import { AbilityArtwork } from './ability-artwork'
 import { GemArtwork } from './gem-artwork'
@@ -38,8 +39,6 @@ type FreeResultViewProps = {
 
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 const [TYPE_HEADING, CORE_HEADING, JOB_HEADING, DRAIN_HEADING] = FREE_DELIVERABLES_KO
-
-const cardClassName = 'rounded-3xl border border-page-border bg-page-surface p-4 sm:rounded-4xl sm:p-6'
 
 /**
  * The free result, and the four blocks below the hero are the four deliverables the terms name — headings
@@ -153,7 +152,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
           <p className="text-page-ink/60 text-xs leading-6">{report.clarityNote}</p>
         </div>
 
-        <section className={cardClassName}>
+        <section className={CARD_CLASS_NAME}>
           <h2 className="font-black text-lg">{TYPE_HEADING}</h2>
           <p className="mt-1 font-black text-2xl text-page-accent tracking-wide">{profile.inner.code}</p>
           <div className="mt-4">
@@ -162,7 +161,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
           <AxisBands bands={report.axes.inner} content={content} />
         </section>
 
-        <section className={cardClassName}>
+        <section className={CARD_CLASS_NAME}>
           <h2 className="font-black text-lg">{CORE_HEADING}</h2>
           <p className="mt-1 font-black text-2xl text-page-accent tracking-wide">
             {gemName} · {profile.gem.code}
@@ -173,10 +172,10 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
           <AxisBands bands={report.axes.gem} content={content} />
         </section>
 
-        <section className={cardClassName}>
+        <section className={CARD_CLASS_NAME}>
           <h2 className="font-black text-lg">{JOB_HEADING}</h2>
           <p className="mt-2 break-keep font-black text-xl">{report.worldJob.name}</p>
-          <dl className="mt-4 grid gap-2 sm:grid-cols-2">
+          <dl className={cn('mt-4', GROUPED_LIST_CLASS_NAME, 'sm:grid sm:grid-cols-2 sm:gap-2')}>
             <Facet
               label={content.ui.worldJobFamilyLabel}
               name={WORLD_JOB_FAMILY[profile.inner.code].name}
@@ -190,13 +189,13 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
           </dl>
         </section>
 
-        <section className={cardClassName}>
+        <section className={CARD_CLASS_NAME}>
           <h2 className="font-black text-lg">{DRAIN_HEADING}</h2>
           <p className="mt-2 font-bold text-page-accent text-sm">{report.drainSignature.spread.label}</p>
           <p className="mt-1 text-page-ink/68 text-sm leading-6">{report.drainSignature.spread.detail}</p>
-          <ul className="mt-4 grid gap-3">
+          <ul className={cn('mt-4', GROUPED_LIST_CLASS_NAME, 'sm:grid sm:gap-3')}>
             {report.drainSignature.leaders.map((facet) => (
-              <li className="rounded-3xl border border-page-border bg-white p-4" key={facet.id}>
+              <li className={GROUPED_ROW_CLASS_NAME} key={facet.id}>
                 <p className="break-keep font-black text-sm">{facet.label}</p>
                 <p className="mt-1 break-keep text-page-ink/68 text-sm leading-6">{facet.action}</p>
               </li>
@@ -208,7 +207,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
 
         <StrengthCards cards={report.strengthCards} title={content.ui.strengthCardsTitle} />
 
-        <section className={cardClassName}>
+        <section className={CARD_CLASS_NAME}>
           <h2 className="font-black text-lg">{content.ui.methodologyNoteTitle}</h2>
           <p className="mt-2 text-page-ink/64 text-sm leading-7">{content.ui.methodologyNoteBody}</p>
           <Link
@@ -292,13 +291,16 @@ function StrengthCards({ cards, title }: { cards: FreeStrengthCards; title: stri
   }
 
   return (
-    <section className={cardClassName}>
+    <section className={CARD_CLASS_NAME}>
       <h2 className="font-black text-lg">{title}</h2>
       <ul className="mt-4 grid gap-3">
         {ordered.map((card) => (
-          <li className="flex gap-4 overflow-hidden rounded-3xl border border-page-border bg-white" key={card.slug}>
+          <li
+            className="flex flex-col overflow-hidden rounded-3xl border border-page-border bg-white sm:flex-row sm:gap-4"
+            key={card.slug}
+          >
             <AbilityArtwork slug={card.slug} />
-            <div className="min-w-0 py-4 pr-4">
+            <div className="min-w-0 flex-1 p-4 sm:py-4 sm:pr-4 sm:pl-0">
               <div className="flex items-start justify-between gap-3">
                 <p className="break-keep font-black text-sm leading-5">{card.copy.name}</p>
                 <span className="inline-flex h-5 min-w-9 shrink-0 items-center justify-center rounded-full bg-page-soft px-2 font-bold text-page-ink/56 text-xs">
@@ -317,7 +319,7 @@ function StrengthCards({ cards, title }: { cards: FreeStrengthCards; title: stri
 
 function Facet({ label, name, value }: { label: string; name: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-page-border bg-white p-4">
+    <div className={GROUPED_ROW_CLASS_NAME}>
       <dt className="text-page-ink/44 text-xs">{label}</dt>
       <dd className="mt-1 font-black text-sm">{name}</dd>
       <dd className="mt-1 break-keep text-page-ink/64 text-xs leading-5">{value}</dd>
