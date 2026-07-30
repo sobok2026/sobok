@@ -208,7 +208,7 @@ export const LEGAL = {
           heading: '콘텐츠의 제공',
           body: [
             '리포트는 결제 후 이어지는 심층 문항의 답을 서버가 채점해 만듭니다. 심층 문항은 무료 결과에서 이미 나온 여덟 글자를 다시 정하지 않고 각 축의 선명도를 확정합니다.',
-            '리포트는 두 단계로 제공됩니다. 회사의 규칙 엔진이 쓴 본문이 먼저 올라오고 인공지능이 쓰는 서술 문단이 이어서 붙습니다. 서술이 끝나기 전까지는 리포트를 아직 제공하지 않은 것으로 보며 이 시점에는 청약철회가 제한되지 않습니다. 서술 생성이 재시도 한도를 넘겨 실패하면 자동 취소 기능이나 고객센터를 통해 전액 환불을 요청할 수 있습니다.',
+            '리포트는 두 단계로 제공됩니다. 회사의 규칙 엔진이 쓴 본문이 먼저 올라오고 서술 문단이 이어서 붙습니다. 서술이 끝나기 전까지는 리포트를 아직 제공하지 않은 것으로 보며 이 시점에는 청약철회가 제한되지 않습니다. 서술 생성이 재시도 한도를 넘겨 실패하면 자동 취소 기능이나 고객센터를 통해 전액 환불을 요청할 수 있습니다.',
             '리포트는 내려받는 파일이 아니라 웹 화면으로 제공합니다. 자바스크립트를 켠 최신 브라우저가 필요하고 따로 설치할 프로그램은 없습니다. 재열람은 구매에 사용한 이메일을 받을 수 있어야 가능합니다.',
             '리포트와 이메일 재열람은 결제일부터 1년 동안 제공합니다. 구매 이메일을 입력하면 15분 동안 한 번만 쓸 수 있는 링크를 보내며 링크에서 이용자가 열기 버튼을 누른 뒤 리포트를 표시합니다. 1년 뒤에는 리포트·결과·이메일과 접근 권한을 삭제하므로 별도 복구를 보장하지 않습니다.',
           ],
@@ -311,7 +311,7 @@ export const LEGAL = {
           heading: '열람 전 전액 환불',
           body: [
             '결제한 뒤에도 리포트를 아직 열람하지 않았다면 언제든 전액 환불받을 수 있습니다. 리포트 화면의 환불 요청 기능으로 즉시 처리하거나 아래 문의처로 요청할 수 있습니다.',
-            '리포트는 규칙 엔진이 쓴 본문이 먼저 올라오고 인공지능 서술이 이어서 붙습니다. 서술이 끝나기 전까지는 콘텐츠 제공이 개시되지 않은 것으로 보므로 이 시점에는 청약철회가 제한되지 않습니다.',
+            '리포트는 규칙 엔진이 쓴 본문이 먼저 올라오고 서술 문단이 이어서 붙습니다. 서술이 끝나기 전까지는 콘텐츠 제공이 개시되지 않은 것으로 보므로 이 시점에는 청약철회가 제한되지 않습니다.',
             '리포트의 1년 재열람 기간은 환불 가능 기간을 늘리거나 이미 시작된 콘텐츠 제공을 되돌리는 의미가 아닙니다. 다만 리포트 생성이 최종 실패했거나 회사가 제공하지 못한 경우에는 전액 환불합니다.',
           ],
         },
@@ -501,7 +501,7 @@ export const LEGAL = {
           heading: 'Delivery of content',
           body: [
             'The report is built by the server from your answers to the in-depth items that follow payment. Those items do not set the eight letters of your free result a second time; they settle how clear each axis is.',
-            'The report is delivered in two stages. The body written by our rules engine appears first, and the narrative paragraphs written by AI are added after it. Until the narration settles, the report is treated as not yet delivered, and withdrawal is not restricted at that point. If narration reaches the retry limit without succeeding, you can request a full refund through the automatic cancellation control or support.',
+            'The report is delivered in two stages. The body written by our rules engine appears first, and the narrative paragraphs are added after it. Until the narration settles, the report is treated as not yet delivered, and withdrawal is not restricted at that point. If narration reaches the retry limit without succeeding, you can request a full refund through the automatic cancellation control or support.',
             'The report is delivered as a web page, not as a file to download. It requires a modern browser with JavaScript enabled, and there is no program to install. Re-opening it requires that you can receive mail at the address used for the purchase.',
             'The report and email reopening are available for 1 year from payment. Entering the purchase email sends a link that works once for 15 minutes; the report opens after you explicitly select the open button. After 1 year, the report, results, email, and access credential are deleted and recovery is not guaranteed.',
           ],
@@ -601,7 +601,7 @@ export const LEGAL = {
           heading: 'Full refund before opening',
           body: [
             'Even after payment, if you have not yet opened the report you can get a full refund at any time. Use the refund request on the report screen for immediate processing, or contact us below.',
-            'In the report, the body written by the rules engine appears first and the AI narration is added after it. Until the narration settles, delivery of the content is treated as not yet begun, so withdrawal is not restricted at that point.',
+            'In the report, the body written by the rules engine appears first and the narrative paragraphs are added after it. Until the narration settles, delivery of the content is treated as not yet begun, so withdrawal is not restricted at that point.',
             'The 1-year reopening period does not extend the refund period or reverse delivery that has already started. We do provide a full refund if final report generation fails or we cannot deliver the paid content.',
           ],
         },
@@ -790,7 +790,7 @@ export const LEGAL = {
           heading: 'コンテンツの提供',
           body: [
             'レポートは、決済後に続く詳細設問の回答をサーバーが採点して作成します。詳細設問は、無料結果ですでに出た八文字を決め直すことはなく、各軸の明瞭度を確定します。',
-            'レポートは2段階で提供します。当社のルールエンジンが書いた本文が先に表示され、人工知能が書く記述の段落が後から加わります。記述が終わるまではレポートをまだ提供していないものとみなし、この時点では申込撤回は制限されません。記述の生成が再試行の上限を超えて失敗した場合は、自動キャンセル機能またはサポートから全額返金を依頼できます。',
+            'レポートは2段階で提供します。当社のルールエンジンが書いた本文が先に表示され、記述の段落が後から加わります。記述が終わるまではレポートをまだ提供していないものとみなし、この時点では申込撤回は制限されません。記述の生成が再試行の上限を超えて失敗した場合は、自動キャンセル機能またはサポートから全額返金を依頼できます。',
             'レポートは、ダウンロードするファイルではなくウェブ画面で提供します。JavaScriptを有効にした最新のブラウザが必要で、別途インストールするプログラムはありません。再閲覧は、購入に使用したメールを受け取れることが条件となります。',
             'レポートとメールによる再閲覧は決済日から1年間利用できます。購入メールを入力すると15分以内に1回だけ使えるリンクを送り、利用者が開くボタンを選択した後に表示します。1年後はレポート・結果・メール・閲覧権限を削除し、復旧は保証しません。',
           ],
@@ -890,7 +890,7 @@ export const LEGAL = {
           heading: '閲覧前の全額返金',
           body: [
             '決済後でもレポートをまだ閲覧していなければ、いつでも全額返金を受けられます。レポート画面の返金リクエスト機能で即時に処理するか、下記のお問い合わせ先までご連絡ください。',
-            'レポートは、ルールエンジンが書いた本文が先に表示され、人工知能の記述が後から加わります。記述が終わるまではコンテンツの提供が開始されていないものとみなすため、この時点では申込撤回は制限されません。',
+            'レポートは、ルールエンジンが書いた本文が先に表示され、記述の段落が後から加わります。記述が終わるまではコンテンツの提供が開始されていないものとみなすため、この時点では申込撤回は制限されません。',
             '1年間の再閲覧期間は返金可能期間を延長したり、すでに始まった提供を取り消したりするものではありません。ただしレポートの生成が最終的に失敗した場合、または当社が提供できない場合は全額返金します。',
           ],
         },
@@ -1079,7 +1079,7 @@ export const LEGAL = {
           heading: '内容的提供',
           body: [
             '报告由服务器对付款后继续作答的深度题目进行评分后生成。深度题目不会重新决定免费结果中已经得出的八个字母，只确定各轴的清晰度。',
-            '报告分两个阶段提供。我们的规则引擎所写的正文先行显示，随后附上由人工智能撰写的叙述段落。在叙述完成之前，视为报告尚未提供，此时撤回不受限制。若叙述生成达到重试上限仍失败，可通过自动取消功能或客服申请全额退款。',
+            '报告分两个阶段提供。我们的规则引擎所写的正文先行显示，随后附上叙述段落。在叙述完成之前，视为报告尚未提供，此时撤回不受限制。若叙述生成达到重试上限仍失败，可通过自动取消功能或客服申请全额退款。',
             '报告以网页形式提供，不是可下载的文件。需要启用JavaScript的现代浏览器，无需另行安装任何程序。重新查看需要您能够收取购买时使用的邮箱。',
             '报告与邮件重新查看服务自付款之日起提供1年。输入购买邮箱后会发送15分钟内仅可使用一次的链接；您明确点击打开按钮后才会显示报告。1年后将删除报告、结果、邮箱和访问凭证，不保证恢复。',
           ],
@@ -1175,7 +1175,7 @@ export const LEGAL = {
           heading: '查看前全额退款',
           body: [
             '即使已支付，只要尚未查看报告，随时可获得全额退款。可通过报告页面的退款申请功能即时处理，或联系下方联系方式。',
-            '报告先显示规则引擎所写的正文，随后附上人工智能的叙述。在叙述完成之前，视为内容的提供尚未开始，因此撤回不受限制。',
+            '报告先显示规则引擎所写的正文，随后附上叙述段落。在叙述完成之前，视为内容的提供尚未开始，因此撤回不受限制。',
             '1年的重新查看期限不会延长退款期限，也不会撤回已经开始的内容提供。但若报告最终生成失败，或我们无法提供已付款内容，将全额退款。',
           ],
         },
