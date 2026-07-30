@@ -3,6 +3,9 @@ import type { Messages } from './types'
 export const ko = {
   Common: {
     localeSwitcher: '언어 선택',
+    /* Names the navigation landmark for a screen reader, which appends the role itself — so this is
+       '주요 메뉴' and not '주요 내비게이션', which would be read as a navigation twice over. */
+    primaryNav: '주요 메뉴',
     meta: {
       title: '커플 케미 테스트',
       description: '결지수 테스트와 대화 유형 테스트로 커플 케미를 확인해보세요.',

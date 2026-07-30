@@ -273,7 +273,7 @@ function StickyCta({ content, locale, onStart }: LandingViewProps) {
       <div className="mx-auto w-full max-w-xs">
         <Link
           className={cn(
-            'flex w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-page-accent py-3.5 font-black text-sm text-white shadow-[0_16px_40px_var(--page-accent-glow)] transition-colors hover:bg-page-accent/92',
+            'flex w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-page-accent py-3.5 font-black text-sm text-white transition-colors hover:bg-page-accent/92',
             focusClassName,
           )}
           href={`/${locale}/deep-type/test`}
