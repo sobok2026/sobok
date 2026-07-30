@@ -280,7 +280,7 @@ export default function CardReportPrototype({ content, locale }: Props) {
 
   return (
     <main
-      className={`${styles.page} relative min-h-dvh overflow-x-hidden bg-night-sky px-3 pb-24 pt-[calc(4.5rem+var(--safe-area-top))] text-foreground sm:px-4`}
+      className={`${styles.page} relative min-h-dvh bg-night-sky px-3 pb-24 pt-[calc(4.5rem+var(--safe-area-top))] text-foreground sm:px-4`}
     >
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full opacity-70" />
 
