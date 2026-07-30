@@ -1,6 +1,7 @@
 'use client'
 
 import { PAY_METHOD_SPEC, type PayMethod } from '@deep-type/pay-method'
+import type { LoadPaymentUIRequest } from '@portone/browser-sdk/v2'
 import { readGAIdentity } from '@sobok/analytics/ga-identity'
 import { useState } from 'react'
 
@@ -11,12 +12,17 @@ import { clearPendingCheckout, storePendingCheckout } from '../_lib/pending-chec
 import type { DeepTypePaywallContent } from '../_lib/types'
 import { classifyApiError, type VerificationErrorKind } from '../_lib/verification-error'
 
-export type CheckoutStatus = 'idle' | 'processing' | 'error'
+// `paypal` is the two-step SPB leg: `/checkout` has approved a payment and PayPal's own button — the only
+// control that can open its window — is on screen waiting to be pressed. Everything else matches the window
+// methods: `processing` spans our round-trips, `error` is terminal for the attempt.
+export type CheckoutStatus = 'idle' | 'processing' | 'paypal' | 'error'
 export type FreeResult = SessionInput
+
+/** A `/checkout`-approved PayPal payment, holding exactly what `loadPaymentUI` and the finish leg need. */
+export type PaypalSession = { accessToken: string; paymentId: string; request: LoadPaymentUIRequest }
 
 type PaywallErrorKey = 'errorGeneric' | 'errorUnavailable' | 'errorVerificationExpired' | 'errorVerificationFailed'
 
-type BypassContext = { email: string; locale: FreeResult['locale'] }
 type Bypass = Parameters<typeof import('@portone/browser-sdk/v2').requestPayment>[0]['bypass']
 
 // Per-method PG options, and the extension point every new channel lands on. `bypass` is keyed by pgProvider,
@@ -24,16 +30,17 @@ type Bypass = Parameters<typeof import('@portone/browser-sdk/v2').requestPayment
 // `tosspay_v2` key would put one PG's parameters on another's window.
 //
 // A table rather than a conditional because the requirement is per-PG and not uniform: the wallets take
-// nothing, the card channel needs one option for foreign issuers, and KCP demands `shop_user_id` for 휴대폰
-// 소액결제 and not for 계좌이체 on the very same channel. A branch cannot absorb that; a row can.
-const BYPASS: Record<PayMethod, (context: BypassContext) => Bypass> = {
-  // 해외 발급 카드는 전용 창으로만 승인된다. 국내 결제에 실으면 국내 카드가 막히므로 로케일로 가른다.
-  card: ({ locale }) => (locale === 'ko' ? undefined : { tosspayments: { useInternationalCardOnly: true } }),
+// nothing and KCP demands `shop_user_id` for 휴대폰 소액결제 and not for 계좌이체 on the very same channel. A
+// branch cannot absorb that; a row can. Window methods only — PayPal's `loadPaymentUI` takes its own bypass
+// type and needs nothing from us.
+const BYPASS: Record<PayMethod, (email: string) => Bypass> = {
+  card: () => undefined,
   kakaopay: () => undefined,
   // KCP requires `shop_user_id` on 휴대폰 소액결제 — it is the identity its carrier-fraud checks are keyed by,
   // so it has to be stable per buyer rather than per payment. This product has no accounts, and the e-mail is
   // the only thing a buyer brings back across sittings; the PG receives it as `customer.email` regardless.
-  mobile: ({ email }) => ({ kcp_v2: { shop_user_id: email } }),
+  mobile: (email) => ({ kcp_v2: { shop_user_id: email } }),
+  paypal: () => undefined,
   tosspay: () => undefined,
   // Same KCP channel, no bypass: `shop_user_id` is optional here and the cash-receipt toggle (`disp_tax_yn`)
   // needs a KCP-side agreement we have not made, so KCP's own default is the honest choice.
@@ -50,7 +57,14 @@ const MESSAGE_KEY_BY_KIND: Record<VerificationErrorKind, PaywallErrorKey> = {
 export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallContent) {
   const [status, setStatus] = useState<CheckoutStatus>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const [paypal, setPaypal] = useState<PaypalSession | null>(null)
 
+  /**
+   * Runs the shared leg — session, server-approved checkout, pending marker — then finishes by method shape.
+   * A `'window'` method resolves the whole payment here and returns the access token. A `'ui'` method returns
+   * null with `status === 'paypal'`: the payment is approved but only PayPal's button can open it, so the
+   * paywall mounts that button and completion arrives through `finishPaypal`.
+   */
   async function start(email: string, turnstileToken: string, payMethod: PayMethod): Promise<string | null> {
     setStatus('processing')
     setErrorMessage('')
@@ -77,17 +91,38 @@ export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallCont
         paymentId: checkout.paymentId,
       })
 
+      const spec = PAY_METHOD_SPEC[payMethod]
+
+      if (spec.open === 'ui') {
+        setPaypal({
+          accessToken: checkout.accessToken,
+          paymentId: checkout.paymentId,
+          request: {
+            channelKey: checkout.channelKey,
+            currency: checkout.currency,
+            customer: { email },
+            orderName: checkout.orderName,
+            paymentId: checkout.paymentId,
+            storeId: checkout.storeId,
+            totalAmount: checkout.amount,
+            uiType: spec.uiType,
+          },
+        })
+        setStatus('paypal')
+        return null
+      }
+
       const { requestPayment } = await import('@portone/browser-sdk/v2')
 
       const result = await requestPayment({
-        bypass: BYPASS[payMethod]({ email, locale: freeResult.locale }),
+        bypass: BYPASS[payMethod](email),
         channelKey: checkout.channelKey,
-        currency: 'CURRENCY_KRW',
+        currency: checkout.currency,
         customer: { email },
         forceRedirect: true,
         orderName: checkout.orderName,
         paymentId: checkout.paymentId,
-        payMethod: PAY_METHOD_SPEC[payMethod].sdkPayMethod,
+        payMethod: spec.sdkPayMethod,
         redirectUrl: `${window.location.origin}/${freeResult.locale}/deep-type/checkout-return`,
         storeId: checkout.storeId,
         totalAmount: checkout.amount,
@@ -100,16 +135,7 @@ export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallCont
         return null
       }
 
-      const verified = await postVerify(checkout.paymentId)
-
-      if (verified.status !== 'paid') {
-        setStatus('error')
-        return null
-      }
-
-      clearPendingCheckout()
-      setStatus('idle')
-      return checkout.accessToken
+      return await verifyAndFinish(checkout.paymentId, checkout.accessToken)
     } catch (error) {
       // A Turnstile refusal is the one failure the buyer can act on, and the paywall resets the widget right
       // after this returns — so saying "expired, confirm once more" is advice that actually completes a sale.
@@ -119,5 +145,53 @@ export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallCont
     }
   }
 
-  return { errorMessage, start, status }
+  /** PayPal reported approval — converge with the server exactly like a window method's return. */
+  async function finishPaypal(): Promise<string | null> {
+    if (!paypal) {
+      return null
+    }
+
+    try {
+      const accessToken = await verifyAndFinish(paypal.paymentId, paypal.accessToken)
+      if (accessToken) {
+        setPaypal(null)
+      }
+      return accessToken
+    } catch (error) {
+      setStatus('error')
+      setErrorMessage(paywall[MESSAGE_KEY_BY_KIND[classifyApiError(error)]])
+      return null
+    }
+  }
+
+  /**
+   * PayPal window closed or declined. Not terminal: the SPB button is still mounted and pressable, so keep the
+   * session and surface the message — the buyer decides whether to try again or step back.
+   */
+  function failPaypal(message: string) {
+    setErrorMessage(message || paywall.errorGeneric)
+  }
+
+  /** Back out of the two-step leg. The pending row is abandoned to the reconcile/purge crons, like any closed window. */
+  function cancelPaypal() {
+    clearPendingCheckout()
+    setPaypal(null)
+    setStatus('idle')
+    setErrorMessage('')
+  }
+
+  async function verifyAndFinish(paymentId: string, accessToken: string): Promise<string | null> {
+    const verified = await postVerify(paymentId)
+
+    if (verified.status !== 'paid') {
+      setStatus('error')
+      return null
+    }
+
+    clearPendingCheckout()
+    setStatus('idle')
+    return accessToken
+  }
+
+  return { cancelPaypal, errorMessage, failPaypal, finishPaypal, paypal, start, status }
 }

@@ -1,5 +1,5 @@
 import { FREE_DELIVERABLES_KO } from '@deep-type/free-deliverables'
-import { DEEP_TYPE_REPORT_OFFER, PRODUCT_NAME } from '@deep-type/offer'
+import { DEEP_TYPE_REPORT_OFFER, majorUnits, PRODUCT_NAME } from '@deep-type/offer'
 import { Locale } from '@sobok/domain/locale'
 
 import { previousVersionsOf } from './legal-archive'
@@ -7,10 +7,14 @@ import { previousVersionsOf } from './legal-archive'
 // The contract states the price and the product name, so it reads them from the same constants the checkout
 // charges and the PortOne 결제창 prints. 전자상거래법 제13조 제2항 제2호·제3호 make both pre-contract disclosures,
 // and a literal here would be a second copy free to drift from the one the buyer is actually charged.
-const PRICE_KO = `${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('ko-KR')}원`
-const PRICE_EN = `KRW ${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('en-US')}`
-const PRICE_JA = `${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('ja-JP')}ウォン`
-const PRICE_ZH = `${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('zh-CN')}韩元`
+//
+// Each locale discloses in ITS OWN settlement currency — `ko` charges KRW and the overseas locales charge
+// what PayPal settles (`en`/`zh` USD, `ja` JPY) — so the number a contract names is the number the statement
+// shows, with no issuer FX between them.
+const PRICE_KO = `${DEEP_TYPE_REPORT_OFFER.ko.amount.toLocaleString('ko-KR')}원`
+const PRICE_EN = `USD ${majorUnits('USD', DEEP_TYPE_REPORT_OFFER.en.amount).toFixed(2)}`
+const PRICE_JA = `${DEEP_TYPE_REPORT_OFFER.ja.amount.toLocaleString('ja-JP')}円`
+const PRICE_ZH = `${majorUnits('USD', DEEP_TYPE_REPORT_OFFER.zh.amount).toFixed(2)}美元`
 
 // Contact shown on the legal pages. Keep this a mailbox that is actually
 // monitored (or swap it) — AdSense reviewers and users may write to it.

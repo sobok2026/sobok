@@ -24,8 +24,8 @@ import { resolveDrainBand } from '../../deep-type/scoring'
 import { acceptNarrative, requestedNarrativeKeys } from './claude'
 import {
   ENGINE_MODEL,
-  isNarrativeEnabled,
   isReportSettled,
+  narrativeModelOf,
   planReportPasses,
   type ReportPassStatus,
   type ReportSourceRow,
@@ -154,9 +154,9 @@ describe('engine-first commit', () => {
   test('the engine commit is rules-only at the current schema version, narration off or on', () => {
     const plan = planReportPasses(sourceOf())
 
-    expect(isNarrativeEnabled('0')).toBe(false)
-    expect(isNarrativeEnabled('1')).toBe(true)
-    expect(isNarrativeEnabled(undefined)).toBe(true)
+    expect(narrativeModelOf('')).toBe(null)
+    expect(narrativeModelOf(undefined)).toBe(null)
+    expect(narrativeModelOf('claude-haiku-4-5-20251001')).toBe('claude-haiku-4-5-20251001')
 
     expect(plan?.engine.model).toBe(ENGINE_MODEL)
     expect(plan?.engine.model).toBe('rules-only')

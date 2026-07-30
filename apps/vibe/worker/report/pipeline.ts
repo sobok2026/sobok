@@ -22,9 +22,14 @@ export const ENGINE_MODEL = 'rules-only'
 /** Recorded on `narrative_error` when the narrator was never asked. Failure of the pass, not of the report. */
 export const NARRATIVE_DISABLED_REASON = 'llm disabled'
 
-/** Explicit off switch. Absent means on — a missing var must not silently retire the narration. */
-export function isNarrativeEnabled(flag: string | undefined): boolean {
-  return flag !== '0'
+/**
+ * The narration switch IS the destination, exactly as GA4's is (`DEEPTYPE_GA4_MEASUREMENT_ID`): a deployment
+ * with no model id has nowhere to send the pass and skips it, and the shared Anthropic credential stays bound
+ * and unspent. No in-code default model — a fallback id here would be a second copy of what wrangler already
+ * pins, free to drift from it. Absent and "" both mean off; the report itself never depends on this.
+ */
+export function narrativeModelOf(value: string | undefined): string | null {
+  return value || null
 }
 
 /**

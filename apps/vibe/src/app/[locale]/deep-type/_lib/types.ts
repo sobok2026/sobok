@@ -102,6 +102,14 @@ export type DeepTypePaywallContent = {
   /** Shown while the engine report is already on screen and the narration is still being written. */
   narrativePendingNote: string
   notice: string
+  /**
+   * The SPB leg. `paypalHint` sits above PayPal's own button after `/checkout` approves — the screen's only
+   * explanation of why our pay button just became someone else's — and `paypalCancel` is the way back to an
+   * editable form. Required in every locale like `methodLabels`: a locale that gains PayPal later cannot ship
+   * the leg with blank copy.
+   */
+  paypalCancel: string
+  paypalHint: string
   processing: string
   /**
    * The last request of the paid block failing. Its own copy rather than `errorGeneric`, which names payment —

@@ -19,9 +19,9 @@ import { alertDiscord } from '~/lib/alert'
 import { randomToken } from '~/lib/tokens'
 import { generateNarrative } from '~/report/claude'
 import {
-  isNarrativeEnabled,
   isReportSettled,
   NARRATIVE_DISABLED_REASON,
+  narrativeModelOf,
   planReportPasses,
   type ReportPassPlan,
 } from '~/report/pipeline'
@@ -165,24 +165,23 @@ async function runNarrativePass(c: Context<AppEnv>, purchaseId: number, plan: Re
     return
   }
 
-  const enabled = isNarrativeEnabled(c.env.DEEPTYPE_LLM_ENABLED)
-  const apiKey = enabled ? await c.env.DEEPTYPE_ANTHROPIC_API_KEY.get() : ''
+  const model = narrativeModelOf(c.env.DEEPTYPE_REPORT_MODEL)
+  const apiKey = model ? await c.env.DEEPTYPE_ANTHROPIC_API_KEY.get() : ''
 
-  // Terminal on purpose. A killswitched narrator is a decision, not an outage, and leaving the pass open would
-  // withhold the delivery stamp forever — the buyer would keep a withdrawal right on a finished report.
-  if (!apiKey) {
-    console.error('deeptype.report.narrative-disabled', { enabled, purchaseId })
+  // Terminal on purpose. A narrator with no destination is a decision, not an outage, and leaving the pass
+  // open would withhold the delivery stamp forever — the buyer would keep a withdrawal right on a finished
+  // report.
+  if (!model || !apiKey) {
+    console.error('deeptype.report.narrative-disabled', { model, purchaseId })
     await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
       finalizeNarrativeFailed(db, purchaseId, lockToken, NARRATIVE_DISABLED_REASON),
     )
-    // A missing key while the switch is ON is a misconfiguration; the switch itself being off is not.
-    if (enabled) {
+    // A missing key while a model is named is a misconfiguration; an empty model is the off switch itself.
+    if (model) {
       alertOps(c, '⚠️ deeptype narration has no API key; reports ship with the engine body only')
     }
     return
   }
-
-  const model = c.env.DEEPTYPE_REPORT_MODEL ?? 'claude-haiku-4-5-20251001'
 
   try {
     const outcome = await generateNarrative(apiKey, model, {

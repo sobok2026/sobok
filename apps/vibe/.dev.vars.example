@@ -9,6 +9,7 @@ DEEPTYPE_EMAIL_FROM="vibe <reports@example.com>"
 DEEPTYPE_EMAIL_REPLY_TO="support@example.com"
 # Must match `GA4_MEASUREMENT_ID` in src/constants.ts and the container's `LT - GA4 Measurement ID` lookup.
 DEEPTYPE_GA4_MEASUREMENT_ID="G-RHHX4JRYDS"
+# Narration destination AND switch: unset/"" = engine-only reports (no Anthropic spend in dev).
 # DEEPTYPE_REPORT_MODEL="claude-haiku-4-5-20251001"
 
 # The 6 true secrets are Cloudflare Secrets Store bindings (accessed via `await env.X.get()`). For local

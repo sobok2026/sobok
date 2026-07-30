@@ -10,8 +10,14 @@
 - **Hyperdrive 2개**: `HYPERDRIVE_FRESH`(캐시 비활성 — 돈·엔티틀먼트 조회/쓰기), `HYPERDRIVE_CACHED`(완료된 리포트 본문 등 불변 읽기). **Supabase Postgres(세션 풀러, 서울 ap-northeast-2)** origin. 공개 CA라 CA 업로드 불필요(`sslmode=require`).
 - **Secrets Store**(계정당 1개): PortOne API/웹훅 시크릿, Anthropic 키, Resend 키, Turnstile 시크릿, Discord 웹훅, GA4 Measurement Protocol 시크릿. `await env.<binding>.get()`으로 읽음.
 - **Cron 2개**: `*/15 * * * *` 결제 pending 재조정(`reconcileStalePending`), `0 3 * * *` 리텐션 purge(`runRetentionPurge`).
-- **결제수단 카탈로그**: V2는 채널 하나가 PG 하나라 결제수단 추가는 곧 채널 추가이고, 여러 채널을 한 창에서 고르게 해주는 UI가 없다(`loadPaymentUI`는 PayPal SPB 전용). 그래서 페이월이 먼저 고르게 하고 `requestPayment`에 채널 키와 `payMethod`를 함께 넘긴다. 무엇을 어느 로케일에 파는지는 워커와 페이월이 함께 쓰는 **`deep-type/pay-method.ts` 한 곳**에 있다 — 지금은 `ko`에 카카오페이·토스페이·카드·계좌이체·휴대폰, 비한국어에 카드(해외 발급 전용 창). 채널은 결제수단보다 적다: `kcp_v2` 하나가 계좌이체와 휴대폰을 함께 받는다. `/checkout`이 저장된 로케일로 다시 검증한 뒤 **승인한 채널 키 하나만** 내려준다 — 가격·채점·지급과 같은 서버 권위다.
-- **결제수단 추가 절차**(채널은 계속 늘어난다): ① `pay-method.ts`의 `PAY_METHODS`·`PAY_METHOD_SPEC`에 한 줄 ② 로케일 목록에 추가 ③ 각 wrangler 환경의 `DEEPTYPE_PORTONE_CHANNELS`에 채널 키 한 줄 ④ `_content` 4개 로케일에 라벨 ⑤ 그 PG가 bypass를 요구할 때만 `use-checkout`의 `BYPASS` 표에 한 줄. 바인딩도 리졸버도 분기도 건드리지 않는다.
+- **결제수단 카탈로그**: V2는 채널 하나가 PG 하나라 결제수단 추가는 곧 채널 추가이고, 여러 채널을 한 창에서 고르게 해주는 UI가 없다(`loadPaymentUI`는 PayPal SPB 전용). 그래서 페이월이 먼저 고르게 하고 `requestPayment`에 채널 키와 `payMethod`를 함께 넘긴다. 무엇을 어느 로케일에 파는지는 워커와 페이월이 함께 쓰는 **`deep-type/pay-method.ts` 한 곳**에 있다 — 카탈로그는 `ko`에 카카오페이·토스페이·카드·계좌이체·휴대폰, 비한국어(en·ja·zh)에 **페이팔 단독**이다. 채널은 결제수단보다 적다: `kcp_v2` 하나가 계좌이체와 휴대폰을 함께 받는다. `/checkout`이 저장된 로케일로 다시 검증한 뒤 **승인한 채널 키 하나만** 내려준다 — 가격·채점·지급과 같은 서버 권위다.
+- **페이팔(SPB) = 두 번째 SDK 모양**: 스펙의 `open` 판별자로 갈린다. `'window'` 수단은 우리 버튼이 `requestPayment`로 창을 열고, 페이팔은 `'ui'` — `loadPaymentUI`가 **페이팔 자신의 버튼**을 `portone-ui-container`에 렌더하며 우리 버튼으로는 못 연다. 그래서 페이월은 2단계다: 폼 제출 → `/checkout`이 가격·paymentId를 승인 → 결제하기 버튼 자리에 페이팔 버튼이 나타나고 그동안 폼은 `fieldset disabled`로 얼린다(생성된 결제가 그 값에 고정돼 있으므로). 창 닫힘/거절은 attempt 단위라 버튼이 남고, `돌아가기`로 세션을 버리면 pending 행은 닫힌 창과 같은 경로(reconcile·purge)로 수렴한다.
+- **다통화 가격**: 페이팔은 KRW를 받지 않아 en·zh=USD 4.98, ja=JPY 698, ko=KRW 5,900(`deep-type/offer.ts` 한 곳, 통화당 가격 1개를 로케일이 참조). **모든 금액은 ISO 4217 minor unit 정수**(USD는 센트: 498=$4.98, KRW·JPY는 그대로)이고 PortOne `totalAmount`·DB·`/checkout` 응답이 같은 단위라 변환 없이 흐른다. 나누는 곳은 화면(`formatPrice`)과 GA4(major unit 필수, `majorUnits`) 둘뿐이다. CNY는 페이팔이 중국 내 계정에만 허용해서 못 쓴다 — zh가 USD인 이유.
+- **판매 가능 목록 = 카탈로그 ∩ 능력**: 카탈로그가 "무엇을 파는가"라면 `pay-method.ts`의 `SELLABLE_CHANNELS`가 "이 배포가 실제로 결제를 붙일 수 있는가"다. **키를 들고 있는 것과 팔 수 있는 것은 다른 사실이다** — 실연동 채널은 원천사 심사가 끝나기 전에는 창만 열리고 승인이 오지 않는다. 그래서 화면에 나가는 메뉴는 두 표의 교집합이고 `payMethodsFor(locale, tier)` 한 곳에서만 계산한다. 심사가 안 끝난 수단은 **아예 렌더되지 않는다** — 고를 수 있는데 승인이 안 되는 수단은 pending 행만 남기고 죽는다.
+- **tier**: `live`(실연동) / `test`(테스트) — 포트원 콘솔의 설정 모드와 같은 말이다. 워커는 `DEEPTYPE_PAY_TIER` var로, 페이월(정적 export라 워커 var를 못 읽는다)은 빌드 시 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER`로 받는다. **둘 다 배포 단위에 붙는 리터럴이다** — wrangler 환경 블록과 `vibe-deploy.yml`의 각 배포 job이 자기 tier를 하드코딩한다(`--env stg`를 하드코딩하는 job에서 tier가 `test` 아닌 값일 수 없다). 시크릿도 설정할 변수도 아니고, 호스트네임이나 브랜치에서 유도하지도 않는다. 어긋나면 페이월이 내놓은 수단을 `/checkout`이 거절하므로 첫 QA에서 드러난다.
+- **결제수단 추가 절차**(채널은 계속 늘어난다): ① `pay-method.ts`의 `PAY_METHODS`·`PAY_METHOD_SPEC`에 한 줄 ② 로케일 목록에 추가 ③ `SELLABLE_CHANNELS`에서 그 채널이 결제되는 tier마다 한 줄 ④ 각 wrangler 환경의 `DEEPTYPE_PORTONE_CHANNELS`에 채널 키 한 줄(③과 **같은 커밋**에서) ⑤ `_content` 4개 로케일에 라벨 ⑥ 그 PG가 bypass를 요구할 때만 `use-checkout`의 `BYPASS` 표에 한 줄. 바인딩도 리졸버도 분기도 건드리지 않는다.
+- **채널 키에 placeholder·빈 문자열을 두지 않는다.** 못 파는 채널은 맵에서 **빠져 있다**(`Partial<Record<...>>`). 빈 문자열은 `string`을 만족해 타입이 잡지 못하고 `requestPayment`까지 흘러가며, placeholder는 truthy라 falsy 검사로도 안 걸린다. `""`는 `DEEPTYPE_GA4_MEASUREMENT_ID`처럼 **없으면 생략하면 되는**(fail-open) 스칼라에만 쓴다 — 결제 능력은 fail-closed이고 집합이라 원소를 담지 않는 것이 부재의 정직한 표현이다.
+- **드리프트 점검**: `GET /api/deep-type/config`가 `payTier`, 바인딩된 채널, `unbound`(팔겠다고 했는데 키가 없음 → `/checkout`이 500 + Discord), `unsold`(키는 있는데 `SELLABLE_CHANNELS`에 안 넣음 → 돈 내는 채널이 숨어 있음), 로케일별 최종 메뉴를 함께 돌려준다. 배포 직후 이 한 번의 요청이 스모크 체크다.
 - **DB**: drizzle-kit `push`(버전 마이그레이션 없음). 테이블 5개(`deeptype_result/purchase/report/reopen_access/webhook_event`). 스키마 이름은 배포마다 다르다 — 프로덕션 `deeptype`, 스테이징 `deeptype_stg`. `pgSchema()`는 모듈 로드 시점에 실행돼 바인딩을 볼 수 없으므로 이름은 wrangler `define`으로 넣는 **빌드타임 상수**다(`worker/db/schema-name.ts`). 기본값은 없다 — 값이 비면 부팅에서 던진다.
 - **분석 파이프라인**: GTM 컨테이너 `GTM-MH37D28N`(4개 사이트 공용) → GA4 `G-RHHX4JRYDS`. 컨테이너 로더는 **앱이 싣는다**(`@sobok/analytics/gtm-loader`, 4개 앱 공용). Cloudflare Google tag gateway는 zone에서 **프록시로만** 켜져 있고(`setUpTag` off) `/h8ou/*`를 서빙할 뿐 HTML에 아무것도 주입하지 않으므로, 이 컴포넌트를 빼면 측정이 통째로 사라진다. 브라우저는 `dataLayer`에 퍼널 이벤트만 push하고, 돈이 걸린 `purchase`는 **결제 승인 CAS를 이긴 Worker가 Measurement Protocol로 직접** 보낸다.
 - **측정 계약**: `3.0.0`. 문항별 의미가 구체적인 4개 선택지로 구성된 무료 50문항을 Worker가 재채점해 겉 16유형·속 16유형·보석 16분류를 만들고, 결제 후에는 모든 사용자에게 동일한 24개 심화 문항으로 속·보석을 재산출한다. 클라이언트가 보낸 유형 코드는 신뢰하지 않는다.
@@ -50,11 +56,11 @@
 3. **Secrets Store** — 계정 스토어 id 확보(`wrangler secrets-store store list` 또는 대시보드). `account-vibe`의 `secrets.tf`가 시크릿 7개를 push:
    `deeptype-portone-api-secret` · `deeptype-portone-webhook-secret` · **`deeptype-portone-webhook-secret-stg`** · `deeptype-anthropic-api-key` · `deeptype-resend-api-key` · `deeptype-discord-webhook` · `deeptype-ga4-api-secret`. 굵은 것 하나만 스테이징 전용이다 — 포트원이 실연동/테스트 모드별로 웹훅 시크릿을 각각 발급하기 때문이고, 나머지는 두 배포가 공유한다. Turnstile 시크릿(`vibe-turnstile-secret`)만 예외로 **`account-turnstile` 워크스페이스**가 위젯과 함께 push한다.
    값은 HCP Terraform 민감 변수(`account-vibe`)로 설정.
-4. **PortOne(딥타입 전용 스토어)** — 스토어 생성 → **store id + 카탈로그가 요구하는 채널 전부**(현재 `tosspayments`·`tosspay_v2`·`kakaopay`·`kcp_v2`; 채널 키는 공개 vars). KCP의 사이트코드·PG-API 인증서·개인 키·키 비밀번호는 **포트원 콘솔에만** 넣는다 — 레포에도 Secrets Store에도 들어가지 않는다, **API secret + 웹훅 secret**(Secrets Store).
-   - **테스트 ↔ 실연동을 가르는 것은 채널 키뿐이다.** store id와 V2 API Secret은 상점 단위라 두 모드가 공유한다. 그래서 채널 키는 wrangler 환경에 고정하고 런타임에서 고르지 않는다(5.1 참고).
+4. **PortOne(딥타입 전용 스토어)** — 스토어 생성 → **store id + 카탈로그가 요구하는 채널 전부**(현재 `tosspayments`·`tosspay_v2`·`kakaopay`·`kcp_v2`·`paypal_v2`; 채널 키는 공개 vars). KCP의 사이트코드·PG-API 인증서·개인 키·키 비밀번호는 **포트원 콘솔에만** 넣는다 — 레포에도 Secrets Store에도 들어가지 않는다, **API secret + 웹훅 secret**(Secrets Store).
+   - **테스트 ↔ 실연동을 가르는 것은 채널 키뿐이다.** store id와 V2 API Secret은 상점 단위라 두 모드가 공유한다. 그래서 채널 키는 wrangler 환경에 고정하고 런타임에서 고르지 않는다(5.1 참고). `DEEPTYPE_PAY_TIER`도 같은 규칙이다 — 어느 계약 묶음을 들고 있는지는 배포의 사실이고 유도하지 않는다.
    - **웹훅**은 [결제 연동] → [연동 관리] → [결제알림(Webhook) 관리]에서 **설정 모드(실연동/테스트)별로 URL을 따로** 등록하고 **시크릿도 환경별로 각각 발급**된다. 실연동 → `https://vibe.sobok.cc/api/deep-type/webhook`, 테스트 → `https://vibe-stg.sobok.cc/api/deep-type/webhook`. 웹훅은 상점 단위라 채널이 몇 개든 URL은 모드당 하나면 된다.
-   - **실연동 채널은 채널마다** 계약 → MID/CID 발급 → **원천사 심사 완료**까지 끝나야 결제가 붙는다. 심사 전 상점아이디는 결제창이 열려도 승인되지 않는다. 채널의 과세구분도 테스트 채널과 같게 맞춘다.
-   - EN·JA·ZH 이용자에게 해외 발급 카드를 받으려면 Toss Payments에 **해외카드(KRW) 추가 계약·기능 활성화**를 완료해야 한다. 앱은 비한국어 **카드** 결제에만 `bypass.tosspayments.useInternationalCardOnly = true`를 쓴다 — 이 bypass는 토스페이먼츠 전용이라 토스페이 채널에는 절대 실리지 않는다. 계약 없이 코드만 켜서는 승인되지 않는다.
+   - **실연동 채널은 채널마다** 계약 → MID/CID 발급 → **원천사 심사 완료**까지 끝나야 결제가 붙는다. 심사 전 상점아이디는 결제창이 열려도 승인되지 않는다. 채널의 과세구분도 테스트 채널과 같게 맞춘다. 그래서 **심사가 끝난 채널만** `SELLABLE_CHANNELS.live`와 실연동 채널 맵에 **같은 커밋으로** 들어간다 — 키가 발급된 날이 아니라 승인이 떨어진 날이 기준이다. 심사가 진행 중인 동안 그 수단은 프로덕션 페이월에 나오지 않고 `vibe-stg`에서 테스트 채널로만 QA된다.
+   - EN·JA·ZH 판매는 **페이팔(`paypal_v2`) 단독**이다. 테스트 채널은 포트원이 제공하는 **국가별 샌드박스 판매자 계정** 목록에서 만든다 — 목록의 국가는 구매자 국가가 아니라 **수취 계정의 등록 국가**라서 "한국"을 고른다(실연동에서 연결할 본인 PayPal Business 계정이 한국이므로). 실연동은 목록에서 고르는 게 아니라 **본인 PayPal Business 계정을 채널에 연결**하는 방식이고, 연결이 끝나는 날 `SELLABLE_CHANNELS.live`와 실연동 채널 맵에 `paypal_v2`를 같은 커밋으로 추가한다. 구매자 국적별 분기는 없다 — 판매자 계정 하나에 전 세계가 결제하고 창 현지화는 페이팔이 구매자 계정 로케일로 한다. 정기결제는 RT 별도라 SPB 일반결제만 쓴다.
 5. **Turnstile** — vibe **전용 위젯**(`account-turnstile` 워크스페이스, 호스트네임 `vibe.sobok.cc` + `vibe-stg.sobok.cc`)의 **sitekey**(GitHub 저장소 변수 `VIBE_TURNSTILE_SITE_KEY` → 프론트 빌드 env) + **secret**(Secrets Store, `vibe-turnstile-secret`). 아직 apply 전이며 `moved`/`import` 블록이 없어 apply 시 기존 공유 위젯이 파괴·재생성된다 — sitekey 교체와 반드시 한 번에 넘겨야 한다.
 6. **Anthropic** — 리포트 생성용 API 키 → Secrets Store. 기본 모델은 재현 가능한 고정 스냅샷 `claude-haiku-4-5-20251001`이며, 교체는 품질 회귀 확인 후 `DEEPTYPE_REPORT_MODEL`로 명시한다.
 7. **Resend** — `sending_access` 전용 API 키를 `deeptype-resend-api-key`로 저장하고 `vibe.sobok.cc` 발신 도메인을 검증한다. Resend가 발급한 SPF/DKIM/MX 레코드는 Cloudflare DNS의 desired state에 옮긴 뒤 검증하며, 인증 링크가 중계 서비스에 노출되지 않도록 이 트랜잭션 발신 도메인의 **클릭 추적과 오픈 추적을 끈다**. 발신자는 `vibe <reports@vibe.sobok.cc>`, 회신 주소는 실제 모니터링하는 `sobok2026@gmail.com`이다. 발송은 같은 idempotency key로 일시 오류를 최대 3회 재시도한다.
@@ -72,11 +78,13 @@
 - `apps/vibe/wrangler.jsonc`
   - `hyperdrive[].id` = `REPLACE_WITH_*_ID` → 2의 fresh/cached id
   - `secrets_store_secrets[].store_id` = 계정 Secrets Store id(7곳)
-  - `vars.DEEPTYPE_PORTONE_STORE_ID` / `DEEPTYPE_PORTONE_CHANNELS` → 4의 값. 채널 맵은 **PG(pgProvider) 이름으로 키잉**한다 — 채널이 담는 건 결제수단이 아니라 계약이고, `tosspayments` 채널 하나가 카드도 가상계좌도 받는다. 어느 결제수단이 어느 채널을 타는지는 `deep-type/pay-method.ts`가 가진다. top-level은 **실연동** 채널, `env.stg`는 **테스트** 채널이다
-  - `vars.DEEPTYPE_REPORT_MODEL` = `claude-haiku-4-5-20251001`처럼 별칭이 아닌 검증된 고정 model id
+  - `vars.DEEPTYPE_PORTONE_STORE_ID` / `DEEPTYPE_PORTONE_CHANNELS` → 4의 값. 채널 맵은 **PG(pgProvider) 이름으로 키잉**한다 — 채널이 담는 건 결제수단이 아니라 계약이고, `tosspayments` 채널 하나가 카드도 가상계좌도 받는다. 어느 결제수단이 어느 채널을 타는지는 `deep-type/pay-method.ts`가 가진다. top-level은 **실연동** 채널, `env.stg`는 **테스트** 채널이다. **심사가 끝난 채널만 넣고 자리를 미리 만들어 두지 않는다** — 맵의 키 집합이 곧 `sellableChannels(tier)`여야 한다
+  - `vars.DEEPTYPE_PAY_TIER` = top-level `live`, `env.stg` `test`. 빌드 쪽 짝은 `vibe-deploy.yml` 각 배포 job의 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER` 리터럴(production job `live` · stg job `test`)이며 비어 있으면 빌드가 실패한다
+  - `vars.DEEPTYPE_REPORT_MODEL` = `claude-haiku-4-5-20251001`처럼 별칭이 아닌 검증된 고정 model id. 내레이션의 목적지이자 스위치라 `""`면 내레이션이 꺼진다(GA4 measurement id와 같은 모양) — 코드에 기본 모델은 없다
   - `vars.DEEPTYPE_PUBLIC_ORIGIN` / `DEEPTYPE_EMAIL_FROM` / `DEEPTYPE_EMAIL_REPLY_TO`가 실제 프로덕션 값인지 확인
   - `vars.DEEPTYPE_GA4_MEASUREMENT_ID` = `src/constants.ts`의 `GA4_MEASUREMENT_ID` 및 컨테이너 `LT - GA4 Measurement ID` 룩업의 `vibe.sobok.cc` 값과 **세 곳이 동일**해야 한다
 - **프론트 sitekey**: `apps/vibe/src/constants.ts`의 `TURNSTILE_SITE_KEY`가 `NEXT_PUBLIC_TURNSTILE_SITE_KEY`를 읽고, CI가 저장소 변수 `VIBE_TURNSTILE_SITE_KEY`로 주입해 빌드 시 인라인한다(값이 비면 빌드가 실패한다). 이 sitekey와 서버 `vibe-turnstile-secret`은 **같은 위젯 짝**이어야 함.
+- **프론트 tier**: 같은 파일의 `PAY_TIER`가 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER`를 읽는다. `live`/`test` 둘 중 하나가 아니면 빌드가 실패한다 — 안전한 기본값이 없는 변수라 그게 맞는 실패다. CI에서는 **각 배포 job의 리터럴**이다(등록할 GitHub 변수 없음). 로컬은 `.env.local`에 `test`.
 
 ---
 
@@ -99,17 +107,36 @@ bun run deploy
 
 ## 4.1 스테이징(기능·결제 QA) 배포
 
-**PR을 열면 자동으로 `vibe-stg`에 올라간다.** `main` 푸시만 프로덕션(`vibe`)으로 가고, 그 외에는 전부 스테이징이다(`.github/workflows/vibe-deploy.yml`). PR 없이 브랜치를 올려 보거나 스테이징을 특정 ref로 되돌릴 때는 Actions에서 수동 실행한다.
+**PR을 여는 것만으로는 아무 데도 배포되지 않는다.** 스테이징은 **`stg` 라벨로 점유**한다 — PR에 라벨을 붙이면 `vibe-stg`에 올라가고, 이후 그 PR에 푸시할 때마다 자동으로 갱신된다. 라벨을 떼면 반납이다. `main` 푸시만 프로덕션(`vibe`)으로 간다(`.github/workflows/vibe-deploy.yml`).
 
-어느 환경으로 가는지는 워크플로 안의 약속이 아니라 **GitHub Environment가 강제한다** — `production` 환경에 `main`만 배포할 수 있는 브랜치 정책이 걸려 있어(sobok-ops `infra/github/sobok2026`), 이 워크플로를 고쳐도 다른 브랜치가 실연동 채널 키에 닿지 못한다.
+PR 없이 브랜치를 올려 보거나 스테이징을 특정 ref로 되돌릴 때는 Actions에서 수동 실행한다(ref는 실행 화면에서 고른다).
 
-⚠️ **`vibe-stg` 워커는 하나뿐이다.** PR 두 개가 동시에 QA를 받으면 나중 배포가 앞의 것을 덮는다. 지금 뭐가 올라가 있는지는 레포의 **Deployments**에서 본다. 동시 QA가 일상이 되면 PR별 preview(`wrangler versions upload`)로 갈라야 하는데, 그때도 **결제 경로만은 `vibe-stg`에 남는다** — `guardTurnstile`이 호스트네임을 `DEEPTYPE_PUBLIC_ORIGIN`에서 뽑아서 preview 호스트로는 결제창을 못 연다.
+**라벨 점유는 확인 가능한 사실이다.** 배포 job의 첫 스텝이 열려 있는 PR 중 `stg` 라벨을 가진 것을 세고, 자기 말고 다른 PR이 쥐고 있으면 번호를 대며 멈춘다(조회가 실패하면 통과시키지 않고 죽는다 — 잠금은 fail-closed다). 강행이 필요하면 수동 실행의 `force` 입력을 켠다. concurrency는 `group: vibe-stg` 하나에 `cancel-in-progress: false` + `queue: max`라, 동시에 들어온 배포는 취소되지 않고 FIFO로 줄을 선다(기본값 `single`은 대기 중인 실행을 **교체**하므로 명시가 필요하다).
+
+**수동 실행은 잠금이 아니라 탈출구다.** `workflow_dispatch`는 라벨을 남기지 않으므로 점유를 주장하지도, 남의 점유를 막지도 않는다(라벨을 쥔 PR이 있으면 멈추기는 한다). 두 사람이 동시에 수동 실행하면 `queue: max`가 순서만 세우고 나중 것이 앞의 것을 대체한다. **점유가 필요하면 PR에 라벨을 붙인다.**
+
+- 라벨을 떼도 워커는 **마지막 배포를 계속 서빙한다**. 반납은 "다음 사람이 올려도 된다"는 뜻이지 스테이징이 비었다는 뜻이 아니다. 지금 뭐가 올라가 있는지는 레포의 **Deployments**에서 본다.
+- 라벨은 워크플로의 `paths` 필터에 걸리는 PR에서만 동작한다(`apps/vibe`, `packages`, `bun.lock`, 이 워크플로 자신). 그 밖의 PR에 라벨을 붙이면 워크플로가 아예 트리거되지 않아 조용히 아무 일도 일어나지 않는다.
+- **DB는 갈리지 않는다.** 스테이징이 하나이므로 `deeptype_stg` 스키마도 하나다. 라벨이 막는 것은 코드가 섞이는 것이지 데이터가 섞이는 것이 아니다.
+- 라벨은 `sobok-ops`의 `infra/github/sobok2026/labels.tf`가 선언한다. 워크플로가 리터럴 `stg`로 매칭하므로 **양쪽을 같이 고치지 않으면 스테이징 배포가 조용히 죽는다.**
+
+**PR에서 도는 것은 검증뿐이다**(`verify` job). `next build`와 유료 텍스트 유출 검사(`check:export`)를 `live`·`test` **두 tier 모두**에 대해 돌린다. lint.yml은 `bun run type`과 `bun test apps/vibe`까지만 하고 빌드는 하지 않으므로, 이 job이 없으면 빌드 깨짐이 머지된 뒤 프로덕션 배포에서 처음 드러난다.
+
+⚠️ **`verify`에 GitHub Environment를 붙이지 마라.** `pull_request`는 PR 브랜치의 워크플로 파일을 그대로 실행하므로, environment를 붙이는 순간 아무 게이트 없이 도는 job이 환경 시크릿을 쥐게 된다. tier가 모든 job에서 리터럴인 것도 같은 계열이다 — 시크릿이 아닌 값을 environment에 두면 그 값을 읽으려고 job이 시크릿까지 쥐게 된다. 같은 맥락에서 **레포 레벨 `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`는 존재하면 안 된다** — 레포 시크릿은 environment 없는 job에도 내려간다. 값은 `production`·`staging` 환경 시크릿에만 두고, 그래서 **stella·zwds·horn 워크플로도 `environment: production`을 선언하도록 함께 바꿨다**(안 그러면 그 셋의 배포가 크레덴셜을 못 찾는다). `verify`의 첫 스텝이 이 전제가 깨졌는지 매번 확인한다.
+
+이 경계가 **보장하는 것과 보장하지 않는 것**을 정확히:
+
+- **보장** — 아무 게이트 없이 모든 PR에서 도는 `verify`는 Cloudflare 크레덴셜을 쥐지 않는다.
+- **보장하지 않음** — `stg`는 `pull_request`로 돌면서 `environment: staging`을 선언하므로 토큰을 받는다. Cloudflare의 `Workers Scripts: Edit`은 스크립트 단위로 좁힐 수 없고 wrangler에는 OIDC 경로도 없어서 그 토큰은 `vibe`도 쓸 수 있다. **라벨을 붙일 수 있는 사람은 이 워크플로를 고쳐 프로덕션 워커에 닿을 수 있다.** 익명 공격자에게는 닫혀 있고, 협업자에게는 신뢰가 경계다 — 이미 `main`에 푸시할 수 있는 사람들과 같은 집합이다.
+- 그리고 **스테이징은 저가치 환경이 아니다.** `env.stg`는 실연동과 **같은** PortOne API 시크릿·Anthropic 키·Resend 키·Discord 웹훅·GA4 시크릿과 **같은 Hyperdrive 두 개**(= 같은 Supabase 클러스터)를 바인딩한다. 프로덕션 데이터와 갈라 주는 것은 `DEEPTYPE_DB_SCHEMA` 빌드타임 문자열 하나뿐이고, 그건 배포되는 코드가 바꿀 수 있다. 라벨은 실제 권한 부여다.
+
+**롤백**은 별도 장치 없이 `bunx wrangler rollback`이다(필요하면 `--env stg`).
 
 로컬에서 직접 올려야 할 때:
 
 ```bash
 cd apps/vibe
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=<vibe 위젯 sitekey> bun run build   # 값이 비면 빌드가 실패한다
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=<vibe 위젯 sitekey> NEXT_PUBLIC_DEEPTYPE_PAY_TIER=test bun run build   # 값이 비면 빌드가 실패한다
 bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 없음)
 # 그 다음에 account-vibe apply → cloudflare_workers_custom_domain.vibe_stg 가 붙는다
 ```
@@ -196,33 +223,38 @@ bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 �
 2. 카카오페이·토스페이를 각각 골라 결제하면 `EASY_PAY` + 해당 채널 키로 창이 열리고, 승인 뒤 `deeptype_purchase.method`가 `easyPay`로 남는지 확인한다.
    2-1. 계좌이체·휴대폰은 **같은 `kcp_v2` 채널 키**로 열리되 `payMethod`가 각각 `TRANSFER`·`MOBILE`인지, 휴대폰 요청에만 `bypass.kcp_v2.shop_user_id`가 실리는지 확인한다(계좌이체에는 실리면 안 된다).
    2-2. 휴대폰 소액결제 건에 당월 내 청약철회를 걸어 취소가 반영되는지 확인하고, 취소 실패 경로가 `refundFailed` 안내로 끝나는지도 함께 본다.
-3. 카드를 고르면 `CARD` + 토스페이먼츠 채널로 열리는지, **비한국어 카드 결제에만** `useInternationalCardOnly`가 실리는지 확인한다(간편결제 요청에 이 bypass가 실리면 안 된다).
+3. 카드를 고르면 `CARD` + 토스페이먼츠 채널로 열리는지 확인한다(카드는 `ko` 전용이고 bypass 없이 열린다).
 4. 토스페이 결제 만료(기본 15분) 뒤 복귀하면 `pending`으로 남고 `*/15` 재조정이 정리하는지 확인한다.
 5. 토스페이 결제 건에 청약철회(`POST /cancel`)를 걸어 전액취소가 반영되는지 확인한다.
 
-**J. 해외카드·모바일 복귀**
+**J. 페이팔(SPB)·모바일 복귀**
 
-1. Toss Payments 해외카드(KRW) 계약이 활성화된 테스트/실 MID에서 EN·JA·ZH 결제가 해외카드 전용 창으로 열리는지 확인한다.
-2. Visa·Mastercard·JCB 승인/거절 케이스와 실제 해외 발급 카드 소액 결제 1건을 확인한다. 통화는 KRW이고 발급사 환율·해외 이용 수수료가 적용될 수 있다.
-3. iOS Safari·Android Chrome에서 결제 후 `/deep-type/checkout-return`으로 돌아와 쿼리를 즉시 지우고, 서버 검증 후 24문항으로 이어지는지 확인한다.
-4. 결제 복귀 탭의 세션 저장소가 없거나 만료된 경우 구매 이메일 재열람 경로로 복구할 수 있는지 확인한다.
+1. EN·JA·ZH에서 폼 제출 → `/checkout` 승인 → 결제하기 버튼 자리에 페이팔 버튼이 나타나고 그동안 폼 입력이 잠기는지 확인한다. `돌아가기`를 누르면 폼이 다시 열리고 pending 행이 `*/15` 재조정으로 수렴하는지도 본다.
+2. 페이팔 샌드박스 구매자 계정으로 승인·거절·창 닫기 세 경로를 확인한다. 거절과 닫기는 attempt 단위라 버튼이 남고 다시 눌러 완료할 수 있어야 한다. 금액·통화는 EN·ZH = **USD 4.98**, JA = **JPY 698** — PortOne `totalAmount`는 minor unit이라 USD는 `498`로 실려야 한다.
+3. 승인 후 `/verify`가 `paid`를 주고 24문항으로 이어지는지, `deeptype_purchase.method`·통화·금액이 맞게 남는지 확인한다. GA4 `purchase`의 `value`는 major unit(4.98)이어야 한다.
+4. iOS Safari·Android Chrome에서 SPB 팝업 완료가 콜백으로 돌아오는지 확인한다(SPB는 리디렉션이 아니라 PC·모바일 모두 UI 방식이다). `ko` 창 결제는 기존대로 `/deep-type/checkout-return` 복귀를 확인한다.
+5. 결제 복귀 탭의 세션 저장소가 없거나 만료된 경우 구매 이메일 재열람 경로로 복구할 수 있는지 확인한다.
 
 ---
 
 ## 6. 라이브 전환 체크리스트
 
 - [ ] Phase 0 산출물 전부 존재(Supabase·Hyperdrive×2·Secrets Store 7개·PortOne 스토어·Turnstile·Anthropic·Resend·GA4 API secret).
+- [ ] **CI 크레덴셜 이관** — `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`가 `production`·`staging` **환경 시크릿**에만 있고 **레포 레벨에서는 삭제**됨. 확인 방법: PR 하나를 열어 `verify`의 첫 스텝(`Assert this job holds no Cloudflare credential`)이 초록인지 본다. 넷 다 배포되는지도 확인 — stella/zwds/horn도 이제 `production` 환경을 쓴다.
+- [ ] `stg` 라벨 존재(sobok-ops `infra/github/sobok2026/labels.tf` apply). 없으면 스테이징 배포를 트리거할 방법이 라벨 경로에는 없다.
 - [ ] `sobok-prod` roles.tf가 `deeptype`·`deeptype_stg` 두 스키마에 grant·default privileges 적용 완료.
-- [ ] `wrangler.jsonc` placeholder 전부 치환(top-level 토스페이 실연동 키 · `env.stg` 카드 테스트 키), `DEEPTYPE_LLM_ENABLED = "1"`, `DEEPTYPE_REPORT_MODEL`은 검증된 고정 id.
+- [ ] `wrangler.jsonc` placeholder 전부 치환, `DEEPTYPE_REPORT_MODEL`은 검증된 고정 id(내레이션의 목적지이자 스위치 — `""`면 룰 엔진 리포트만 나간다).
 - [ ] top-level `vars`에 새로 추가한 항목이 `env.stg`에도 들어갔는지(비상속 키).
+- [ ] **심사 완료된 실연동 채널만** `DEEPTYPE_PORTONE_CHANNELS`에 있고 그 키 집합이 `SELLABLE_CHANNELS.live`와 정확히 같음 — `GET /api/deep-type/config`의 `unbound`·`unsold`가 둘 다 빈 배열이고, `payMethods`의 네 로케일이 모두 비어 있지 않음.
+- [ ] 배포된 페이월의 결제수단이 `GET /api/deep-type/config`의 `payMethods`와 일치(빌드 리터럴 tier ↔ 워커 var tier 정합 확인).
 - [ ] 저장소 변수 `VIBE_TURNSTILE_SITE_KEY` = vibe 위젯 sitekey, 서버 `vibe-turnstile-secret` = 그 위젯의 secret(짝 일치), 위젯 호스트네임에 `vibe.sobok.cc`·`vibe-stg.sobok.cc` 둘 다 등록.
 - [ ] PortOne 콘솔 웹훅 URL이 **모드별로** 등록(실연동 = `vibe.sobok.cc`, 테스트 = `vibe-stg.sobok.cc`)되고 테스트 모드 시크릿이 `deeptype-portone-webhook-secret-stg`에 들어감.
-- [ ] 토스페이 실연동 MID의 **원천사 심사 완료** 확인, Toss Payments 해외카드(KRW) 추가 계약·기능 활성.
+- [ ] 토스페이 실연동 MID의 **원천사 심사 완료** 확인. 페이팔은 **본인 PayPal Business 계정을 실연동 채널에 연결**하고 그 커밋에서 `SELLABLE_CHANNELS.live`+실연동 채널 맵에 `paypal_v2`를 함께 추가.
 - [ ] Resend 발신 도메인 검증, SPF/DKIM/MX 정상, 인증 메일 클릭·오픈 추적 비활성.
 - [ ] Google 유럽/미국 메시지 게시 및 Consent Mode 광고·분석 통합 활성.
 - [ ] GTM 컨테이너 v3 import·게시 완료(`Consent Mode - 지역별 기본값` + 전자상거래 태그 4종), GA4에서 `purchase` 키 이벤트 표시.
 - [ ] `bun run type` = 0, `DEEPTYPE_DB_SCHEMA=deeptype`으로 `db:push` 완료(프로덕션 Supabase).
-- [ ] 스테이징 E2E A–L 통과(특히 B/C/D/H/J/K/L — 돈·멱등·환불·재열람·해외/모바일 결제·측정·토스페이).
+- [ ] 스테이징 E2E A–L 통과(특히 B/C/D/H/J/K/L — 돈·멱등·환불·재열람·페이팔/모바일 결제·측정·토스페이).
 - [ ] Discord 알림 채널 수신 확인.
 - [ ] `wrangler deploy` 후 스모크: `/config` 200, 무료 세션 200, 소액 실결제 1건 → 환불로 정리.
 - [ ] Cron 트리거 2개 활성(`*/15`, `0 3`).

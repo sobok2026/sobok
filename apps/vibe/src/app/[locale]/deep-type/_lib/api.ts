@@ -1,4 +1,5 @@
 import type { AssessmentProfile, ItemAnswer, PersonaCode, PersonaSource, WorkAnswer } from '@deep-type/model'
+import type { OfferCurrency } from '@deep-type/offer'
 import type { PayMethod } from '@deep-type/pay-method'
 import type { GAIdentity } from '@sobok/analytics/ga-identity'
 import type { Locale } from '@sobok/domain/locale'
@@ -73,10 +74,11 @@ export function postSession(input: SessionInput): Promise<{ profile: AssessmentP
 
 export type CheckoutResponse = {
   accessToken: string
+  /** Minor units in `currency` — exactly what the PortOne SDK's `totalAmount` takes, no conversion between. */
   amount: number
   // The channel the server approved for the requested `payMethod`, and only that one.
   channelKey: string
-  currency: string
+  currency: OfferCurrency
   orderName: string
   paymentId: string
   storeId: string

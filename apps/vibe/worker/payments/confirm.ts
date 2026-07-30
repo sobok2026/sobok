@@ -1,3 +1,5 @@
+import { isOfferCurrency, majorUnits } from '@deep-type/offer'
+
 import { getRemotePayment, type PortOneCreds } from '../billing/portone'
 import type { Db } from '../db/client'
 import {
@@ -97,7 +99,14 @@ async function reportPurchase(
     return
   }
 
-  const item = skuItem(purchase.sku)
+  // The row's own currency, guarded because the column is `text`: only values this codebase wrote can appear,
+  // but a row that predates a retired currency would otherwise divide by an exponent that no longer exists.
+  if (!isOfferCurrency(purchase.currency)) {
+    console.error('deeptype.ga4.unknown_currency', purchase.currency)
+    return
+  }
+
+  const item = skuItem(purchase.sku, purchase.currency)
   if (!item) {
     console.error('deeptype.ga4.unknown_sku', purchase.sku)
     return
@@ -117,7 +126,8 @@ async function reportPurchase(
       occurredAt: paidAt,
       sessionId: purchase.gaSessionId,
       transactionId: paymentId,
-      value: purchase.amount,
+      // Stored minor units → GA4 major units. ₩5,900 stays 5900; $4.98 travels as 498 and reports as 4.98.
+      value: majorUnits(purchase.currency, purchase.amount),
     },
   )
 

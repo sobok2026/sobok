@@ -12,7 +12,7 @@ import { koFreeQuestionPrompts } from './question-prompts/ko.free'
 // Everywhere else says how long it takes and what comes out — a count on a landing page is a cost quoted before
 // anything has been bought. Counts and minutes are interpolated from constants; a literal here would outlive the
 // next change to the instrument and become a false claim.
-const PRICE_KO = `${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('ko-KR')}원`
+const PRICE_KO = `${DEEP_TYPE_REPORT_OFFER.ko.amount.toLocaleString('ko-KR')}원`
 
 export const deepTypeContent = createDeepTypeContent({
   metadata: {
@@ -82,6 +82,7 @@ export const deepTypeContent = createDeepTypeContent({
       card: '카드',
       kakaopay: '카카오페이',
       mobile: '휴대폰',
+      paypal: 'PayPal',
       tosspay: '토스페이',
       transfer: '계좌이체',
     },
@@ -101,6 +102,8 @@ export const deepTypeContent = createDeepTypeContent({
     generatingTitle: '내 리포트를 쓰고 있어요',
     narrativePendingNote: '읽을 내용은 아래에 이미 다 나왔어요. 다듬은 문장이 잠시 뒤 같은 화면에 붙어요.',
     notice: '한 번만 결제하고 정기결제는 없어요. 완성된 리포트는 입력한 이메일로 1년 동안 다시 열 수 있어요.',
+    paypalCancel: '입력으로 돌아가기',
+    paypalHint: '아래 PayPal 버튼을 눌러 결제를 마무리해 주세요.',
     processing: '결제를 준비하고 있어요...',
     refinementFailedBody: '고른 답은 여기 그대로 있어요. 연결을 확인하고 다시 보내 주세요.',
     refinementFailedTitle: '답을 보내지 못했어요',

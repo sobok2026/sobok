@@ -20,8 +20,8 @@ import { useFlowFocusOverride } from '@/components/flow-focus'
 import { cn } from '@/utils/cn'
 
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
-import { formatKrw } from '../_lib/price'
-import { REPORT_PROMOTION_ECOMMERCE } from '../_lib/report-offer-analytics'
+import { formatPrice } from '../_lib/price'
+import { reportPromotionEcommerce } from '../_lib/report-offer-analytics'
 import { CARD_CLASS_NAME, GROUPED_LIST_CLASS_NAME, GROUPED_ROW_CLASS_NAME } from '../_lib/surface'
 import type { DeepTypeContent } from '../_lib/types'
 import { AbilityArtwork } from './ability-artwork'
@@ -56,6 +56,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
   // sharing, and 'what else is here' is the question the site wants them to ask next.
   useFlowFocusOverride(false)
 
+  const offer = DEEP_TYPE_REPORT_OFFER[locale]
   const promotionRef = useRef<HTMLElement>(null)
   const [shareFeedback, setShareFeedback] = useState('')
   const report = buildFreeReport(profile)
@@ -76,7 +77,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
         if (!entry?.isIntersecting) {
           return
         }
-        trackEcommerce('view_promotion', REPORT_PROMOTION_ECOMMERCE, { locale })
+        trackEcommerce('view_promotion', reportPromotionEcommerce(locale), { locale })
         observer.disconnect()
       },
       { threshold: 0.5 },
@@ -92,7 +93,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
     if (!onUnlock) {
       return
     }
-    trackEcommerce('select_promotion', REPORT_PROMOTION_ECOMMERCE, { locale })
+    trackEcommerce('select_promotion', reportPromotionEcommerce(locale), { locale })
     onUnlock()
   }
 
@@ -132,13 +133,13 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
             <p className="mx-auto mt-2 max-w-md text-page-ink/68 text-sm leading-7">{content.paywall.body}</p>
             <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
               <span className="text-page-ink/38 text-sm line-through">
-                {formatKrw(locale, DEEP_TYPE_REPORT_OFFER.listAmount)}
+                {formatPrice(locale, offer.currency, offer.listAmount)}
               </span>
               <span className="font-black text-page-accent text-xl">
-                {formatKrw(locale, DEEP_TYPE_REPORT_OFFER.amount)}
+                {formatPrice(locale, offer.currency, offer.amount)}
               </span>
               <span className="rounded-full bg-page-accent/12 px-2.5 py-1 font-black text-page-accent text-xs">
-                {content.paywall.discountTemplate.replace('{discount}', String(DEEP_TYPE_REPORT_OFFER.discountPercent))}
+                {content.paywall.discountTemplate.replace('{discount}', String(offer.discountPercent))}
               </span>
             </div>
             <button
