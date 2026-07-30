@@ -16,6 +16,7 @@ import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
+import { useFlowFocusOverride } from '@/components/flow-focus'
 import { cn } from '@/utils/cn'
 
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
@@ -50,6 +51,11 @@ const [TYPE_HEADING, CORE_HEADING, JOB_HEADING, DRAIN_HEADING] = FREE_DELIVERABL
  * which of three bands it landed in, and the note above them says what the paid pass can and cannot move.
  */
 export function FreeResultView({ content, locale, onRestart, onUnlock, profile }: FreeResultViewProps) {
+  // `deep-type/result` is a focused flow by route, because the paywall and the refinement run live on that URL
+  // too. This phase is the exception: nothing is unsaved and nothing is in flight, the visitor is reading and
+  // sharing, and 'what else is here' is the question the site wants them to ask next.
+  useFlowFocusOverride(false)
+
   const promotionRef = useRef<HTMLElement>(null)
   const [shareFeedback, setShareFeedback] = useState('')
   const report = buildFreeReport(profile)
