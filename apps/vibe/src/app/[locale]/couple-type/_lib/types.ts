@@ -66,6 +66,8 @@ export type CoupleTypeUiText = {
   heroEyebrow: string
   heroTitle: string
   homeLink: string
+  introCta: string
+  introNote: string
   navigationLabel: string
   nextButton: string
   previousButton: string

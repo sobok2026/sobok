@@ -1,38 +1,41 @@
-'use client'
-
 import { ArrowLeft, ArrowRight, HeartWaves } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
-import { useState } from 'react'
 import { cn } from '@/utils/cn'
 
 import type { AxisValue, CoupleTypeAnswers, CoupleTypeContent } from '../_lib/types'
+import { MiniStat } from './mini-stat'
 
 type QuizViewProps = {
   answers: CoupleTypeAnswers
   axisDefinitions: CoupleTypeContent['axisDefinitions']
+  /** Held by the flow, not here: a run that cannot be resumed at the question it stopped at is not resumable. */
+  currentIndex: number
   locale: Locale
-  onComplete: () => void
+  onBack: () => void
+  onNext: () => void
   onSelect: (questionId: string, value: AxisValue) => void
   questions: CoupleTypeContent['questions']
   ui: CoupleTypeContent['ui']
 }
 
-type MiniStatProps = {
-  label: string
-  value: string
-}
-
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
-export function QuizView({ answers, axisDefinitions, locale, onComplete, onSelect, questions, ui }: QuizViewProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-
+export function QuizView({
+  answers,
+  axisDefinitions,
+  currentIndex,
+  locale,
+  onBack,
+  onNext,
+  onSelect,
+  questions,
+  ui,
+}: QuizViewProps) {
   const currentQuestion = questions[currentIndex]
   const totalQuestions = questions.length
   const selectedValue = answers[currentQuestion.id]
   const answeredCount = Object.keys(answers).length
   const progressPercent = Math.round((answeredCount / totalQuestions) * 100)
-  const isFirstQuestion = currentIndex === 0
   const isLastQuestion = currentIndex === totalQuestions - 1
   const isComplete = answeredCount === totalQuestions
   const axis = axisDefinitions[currentQuestion.axis]
@@ -45,35 +48,6 @@ export function QuizView({ answers, axisDefinitions, locale, onComplete, onSelec
       : selectedValue
         ? ui.nextButton
         : ui.selectAnswerButton
-
-  function selectAnswer(value: AxisValue) {
-    onSelect(currentQuestion.id, value)
-
-    if (isLastQuestion) {
-      return
-    }
-
-    setCurrentIndex((index) => Math.min(totalQuestions - 1, index + 1))
-  }
-
-  function goToPreviousQuestion() {
-    setCurrentIndex((index) => Math.max(0, index - 1))
-  }
-
-  function goToNextQuestion() {
-    if (!selectedValue) {
-      return
-    }
-
-    if (isLastQuestion) {
-      if (isComplete) {
-        onComplete()
-      }
-      return
-    }
-
-    setCurrentIndex((index) => Math.min(totalQuestions - 1, index + 1))
-  }
 
   return (
     <section className="flex flex-1 flex-col justify-center px-safe py-10 sm:py-16">
@@ -145,7 +119,7 @@ export function QuizView({ answers, axisDefinitions, locale, onComplete, onSelec
                       checked={isSelected}
                       className="mt-1 h-5 w-5 shrink-0 accent-page-accent"
                       name={currentQuestion.id}
-                      onChange={() => selectAnswer(option.value)}
+                      onChange={() => onSelect(currentQuestion.id, option.value)}
                       type="radio"
                       value={option.value}
                     />
@@ -161,11 +135,10 @@ export function QuizView({ answers, axisDefinitions, locale, onComplete, onSelec
           <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
             <button
               className={cn(
-                'inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-page-border bg-white px-5 font-bold text-page-ink/70 text-sm transition-colors enabled:hover:text-page-ink disabled:cursor-not-allowed disabled:opacity-45',
+                'inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-page-border bg-white px-5 font-bold text-page-ink/70 text-sm transition-colors hover:text-page-ink',
                 focusClassName,
               )}
-              disabled={isFirstQuestion}
-              onClick={goToPreviousQuestion}
+              onClick={onBack}
               type="button"
             >
               <ArrowLeft aria-hidden="true" className="h-4 w-4" stroke={1.8} />
@@ -177,7 +150,7 @@ export function QuizView({ answers, axisDefinitions, locale, onComplete, onSelec
                 focusClassName,
               )}
               disabled={!canGoNext}
-              onClick={goToNextQuestion}
+              onClick={onNext}
               type="button"
             >
               {nextButtonLabel}
@@ -187,15 +160,6 @@ export function QuizView({ answers, axisDefinitions, locale, onComplete, onSelec
         </form>
       </div>
     </section>
-  )
-}
-
-function MiniStat({ label, value }: MiniStatProps) {
-  return (
-    <div className="rounded-3xl border border-page-border bg-page-surface p-5 shadow-[0_18px_55px_rgba(36,22,23,0.07)]">
-      <p className="font-bold text-page-ink/48 text-sm">{label}</p>
-      <p className="mt-2 font-black text-2xl">{value}</p>
-    </div>
   )
 }
 
