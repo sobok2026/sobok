@@ -5,6 +5,15 @@ import { dirname, join, resolve } from 'node:path'
 import { ABILITY, ABILITY_DETAIL, COMBO } from '../content/abilities'
 import { CLARITY_BANDS_FREE, DRAIN_SPREAD_FREE } from '../content/band-labels.free'
 import { BAND_SHIFT_PAID, CLARITY_BANDS_PAID, DRAIN_SPREAD_PAID } from '../content/band-labels.paid'
+import {
+  DRAIN_DETAILS,
+  ENVIRONMENT_DETAILS,
+  INTEREST_DETAILS,
+  NEED_DETAILS,
+  PURPOSE_DETAILS,
+} from '../content/facet-details.paid'
+import { POLE_SIGNATURE } from '../content/opening.paid'
+import { REFLECTION_BY_DRAIN, REFLECTION_BY_INTEREST, REFLECTION_BY_NEED } from '../content/reflection.paid'
 import { DRAIN_LABELS } from '../content/work-labels.free'
 import { ENVIRONMENT_LABELS, INTEREST_LABELS, NEED_LABELS, PURPOSE_LABELS } from '../content/work-labels.paid'
 import { WORLD_JOB_CORE, WORLD_JOB_FAMILY } from '../content/world-job'
@@ -141,6 +150,10 @@ function freeRuleSources(): { name: string; source: string }[] {
 /**
  * Strings only the paid copy modules own. A free source containing one has copied it, imported or not.
  *
+ * The report's own tables are in here too. They are paid copy by the same definition as the facet labels — a
+ * buyer reaches them through `GET /report` — and a free screen that grew one of these paragraphs would be
+ * handing over report content without a purchase.
+ *
  * The free tables are subtracted rather than assumed disjoint. `DRAIN_SPREAD_MEANING` is authored free-side and
  * re-exported by the paid module, and `NEED_LABELS.IMPACT.action` is character-for-character
  * `DRAIN_LABELS.EMPTY.action` — a genuine duplicate across the tiers, which the gate must not read as a leak.
@@ -152,13 +165,20 @@ function paidCopyLiterals(): string[] {
   const facets = [ENVIRONMENT_LABELS, INTEREST_LABELS, NEED_LABELS, PURPOSE_LABELS].flatMap((table) =>
     Object.values(table).flatMap((label) => [label.action, label.name]),
   )
+  const report = [
+    ...[DRAIN_DETAILS, NEED_DETAILS, ENVIRONMENT_DETAILS, INTEREST_DETAILS, PURPOSE_DETAILS].flatMap((table) =>
+      Object.values(table),
+    ),
+    ...Object.values(POLE_SIGNATURE).flatMap((axis) => Object.values(axis).map((pole) => pole.line)),
+    ...[REFLECTION_BY_DRAIN, REFLECTION_BY_INTEREST, REFLECTION_BY_NEED].flatMap((table) => Object.values(table)),
+  ]
   const free = new Set([
     ...Object.values(CLARITY_BANDS_FREE).flatMap((copy) => [copy.detail, copy.label]),
     ...Object.values(DRAIN_SPREAD_FREE).flatMap((copy) => [copy.detail, copy.label]),
     ...Object.values(DRAIN_LABELS).flatMap((label) => [label.action, label.name]),
   ])
 
-  return [...new Set([...bands, ...facets])].filter((literal) => !free.has(literal))
+  return [...new Set([...bands, ...facets, ...report])].filter((literal) => !free.has(literal))
 }
 
 describe('free sources', () => {
