@@ -10,8 +10,8 @@ on:
       - 'packages/**'
       - 'bun.lock'
       - '.github/workflows/vibe-deploy.yml'
-  # `labeled`가 있어야 라벨을 붙이는 순간 `stg`가 깨어난다. 나머지 셋은 `verify`용이고, 라벨을 이미 가진
-  # PR에 새 커밋이 오면 `synchronize`가 스테이징을 최신으로 다시 올린다.
+  # `labeled`가 있어야 라벨을 붙이는 순간 `staging`이 깨어난다. 나머지 셋은 `verify`용이고, 라벨을 이미
+  # 가진 PR에 새 커밋이 오면 `synchronize`가 스테이징을 최신으로 다시 올린다.
   pull_request:
     types: [opened, synchronize, reopened, labeled]
     paths:
@@ -38,8 +38,8 @@ jobs:
   # 시크릿이 아니고, 두 tier를 다 빌드하면 유출 검사가 `live` 빌드에도 걸린다).
   verify:
     name: Verify vibe build (${{ matrix.tier }})
-    # `labeled`는 `stg`를 깨우려고 트리거에 넣은 것이지 코드가 바뀐 사건이 아니다. 걸러 내지 않으면 아무
-    # 라벨이나 붙일 때마다 매트릭스가 다시 돌고, cancel-in-progress가 같은 커밋을 검증 중이던 실행을
+    # `labeled`는 `staging`을 깨우려고 트리거에 넣은 것이지 코드가 바뀐 사건이 아니다. 걸러 내지 않으면
+    # 아무 라벨이나 붙일 때마다 매트릭스가 다시 돌고, cancel-in-progress가 같은 커밋을 검증 중이던 실행을
     # 취소해 PR 체크에 아무것도 검증하지 않은 취소만 남는다.
     if: github.event_name == 'pull_request' && github.event.action != 'labeled'
     runs-on: ubuntu-24.04-arm
@@ -97,7 +97,7 @@ jobs:
       - name: Assert no paid question text in the static export
         run: bun run --filter=@sobok/vibe check:export
 
-  stg:
+  staging:
     name: Deploy to staging (vibe-stg)
     # 포크 PR에는 시크릿이 내려가지 않아 배포 스텝에서 멈추므로, 조용히 건너뛴다.
     #

@@ -79,7 +79,7 @@
   - `hyperdrive[].id` = `REPLACE_WITH_*_ID` → 2의 fresh/cached id
   - `secrets_store_secrets[].store_id` = 계정 Secrets Store id(7곳)
   - `vars.DEEPTYPE_PORTONE_STORE_ID` / `DEEPTYPE_PORTONE_CHANNELS` → 4의 값. 채널 맵은 **PG(pgProvider) 이름으로 키잉**한다 — 채널이 담는 건 결제수단이 아니라 계약이고, `tosspayments` 채널 하나가 카드도 가상계좌도 받는다. 어느 결제수단이 어느 채널을 타는지는 `deep-type/pay-method.ts`가 가진다. top-level은 **실연동** 채널, `env.stg`는 **테스트** 채널이다. **심사가 끝난 채널만 넣고 자리를 미리 만들어 두지 않는다** — 맵의 키 집합이 곧 `sellableChannels(tier)`여야 한다
-  - `vars.DEEPTYPE_PAY_TIER` = top-level `live`, `env.stg` `test`. 빌드 쪽 짝은 `vibe-deploy.yml` 각 배포 job의 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER` 리터럴(production job `live` · stg job `test`)이며 비어 있으면 빌드가 실패한다
+  - `vars.DEEPTYPE_PAY_TIER` = top-level `live`, `env.stg` `test`. 빌드 쪽 짝은 `vibe-deploy.yml` 각 배포 job의 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER` 리터럴(`production` job `live` · `staging` job `test`)이며 비어 있으면 빌드가 실패한다
   - `vars.DEEPTYPE_REPORT_MODEL` = `claude-haiku-4-5-20251001`처럼 별칭이 아닌 검증된 고정 model id. 내레이션의 목적지이자 스위치라 `""`면 내레이션이 꺼진다(GA4 measurement id와 같은 모양) — 코드에 기본 모델은 없다
   - `vars.DEEPTYPE_PUBLIC_ORIGIN` / `DEEPTYPE_EMAIL_FROM` / `DEEPTYPE_EMAIL_REPLY_TO`가 실제 프로덕션 값인지 확인
   - `vars.DEEPTYPE_GA4_MEASUREMENT_ID` = `src/constants.ts`의 `GA4_MEASUREMENT_ID` 및 컨테이너 `LT - GA4 Measurement ID` 룩업의 `vibe.sobok.cc` 값과 **세 곳이 동일**해야 한다
