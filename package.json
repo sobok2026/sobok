@@ -25,6 +25,7 @@
     "format:sql": "git ls-files '*.sql' | xargs -n 1 sql-formatter --fix -l postgresql",
     "prepare": "husky",
     "clean": "rm -rf .next .turbo apps/web/.next apps/api/dist node_modules/.cache",
+    "worktree:clean": "bun tools/cleanupMergedWorktrees.ts",
     "db:reset": "docker compose down -v && docker compose up -d --wait && bun --filter=@sobok/db push:local",
     "test": "bun test",
     "test:backend:integration": "bun tools/setupBackendIntegrationDb.ts && bun test ./test/backend --max-concurrency 1 --timeout 30000",
