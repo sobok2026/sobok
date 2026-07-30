@@ -1,6 +1,4 @@
-import { FOCUS_CLASS_NAME } from '../../../../components/focus'
-
-;('use client')
+'use client'
 
 import { FREE_DELIVERABLES_KO } from '@deep-type/free-deliverables'
 import { ArrowRight } from '@mynaui/icons-react'
@@ -8,8 +6,8 @@ import type { Locale } from '@sobok/domain/locale'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 import heroArtwork from '../_assets/hero/landing.webp'
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'

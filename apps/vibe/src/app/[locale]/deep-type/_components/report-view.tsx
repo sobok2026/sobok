@@ -1,6 +1,4 @@
-import { FOCUS_CLASS_NAME } from '../../../../components/focus'
-
-;('use client')
+'use client'
 
 import { resolveWorldJob } from '@deep-type/content/world-job'
 import type { AssessmentProfile } from '@deep-type/model'
@@ -9,6 +7,7 @@ import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useShare } from '@/components/use-share'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 import type { ReportSection } from '../_lib/api'
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
 

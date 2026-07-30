@@ -1,11 +1,10 @@
-import { FOCUS_CLASS_NAME } from '../../../components/focus'
-
-;('use client')
+'use client'
 
 import { DEFAULT_LOCALE, isLocale, type Locale } from '@sobok/domain/locale'
 import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../components/focus'
 
 const COPY = {
   ko: { retry: '다시 시도', title: '문제가 생겼어요' },

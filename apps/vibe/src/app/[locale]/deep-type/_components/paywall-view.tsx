@@ -1,6 +1,4 @@
-import { FOCUS_CLASS_NAME } from '../../../../components/focus'
-
-;('use client')
+'use client'
 
 import { DEEP_TYPE_REPORT_OFFER } from '@deep-type/offer'
 import { type PayMethod, payMethodsFor } from '@deep-type/pay-method'
@@ -13,6 +11,7 @@ import { PAY_TIER, TURNSTILE_SITE_KEY } from '@/constants'
 import { LEGAL } from '@/content/legal'
 import { cn } from '@/utils/cn'
 import { DEEPTYPE_CHECKOUT_ACTION } from '../../../../../worker/api/deep-type/actions'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 import { type FreeResult, type PaypalSession, useCheckout } from '../_hooks/use-checkout'
 import { formatPrice } from '../_lib/price'

@@ -1,6 +1,4 @@
-import { FOCUS_CLASS_NAME } from '../../../../components/focus'
-
-;('use client')
+'use client'
 
 import { WORLD_JOB_CORE, WORLD_JOB_FAMILY } from '@deep-type/content/world-job'
 import { FREE_DELIVERABLES_KO } from '@deep-type/free-deliverables'
@@ -17,10 +15,10 @@ import { trackEcommerce } from '@sobok/analytics/browser'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
-
 import { useFlowFocusOverride } from '@/components/flow-focus'
 import { useShare } from '@/components/use-share'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
 import { formatPrice } from '../_lib/price'

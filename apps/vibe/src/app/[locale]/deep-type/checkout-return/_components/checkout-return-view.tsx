@@ -1,13 +1,11 @@
-import { FOCUS_CLASS_NAME } from '../../../../../components/focus'
-
-;('use client')
+'use client'
 
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
-
 import type { DeepTypeCheckoutReturnContent } from '@/content/deep-type-checkout-return'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../../components/focus'
 
 import { DynamicReportView } from '../../_components/dynamic-report-view'
 import { IntroView } from '../../_components/intro-view'

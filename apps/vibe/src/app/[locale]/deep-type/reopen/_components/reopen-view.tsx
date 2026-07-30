@@ -1,6 +1,4 @@
-import { FOCUS_CLASS_NAME } from '../../../../../components/focus'
-
-;('use client')
+'use client'
 
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { Lock } from '@mynaui/icons-react'
@@ -11,6 +9,7 @@ import { LEGAL_CONTACT_EMAIL, TURNSTILE_SITE_KEY } from '@/constants'
 import type { DeepTypeReopenContent } from '@/content/deep-type-reopen'
 import { cn } from '@/utils/cn'
 import { DEEPTYPE_REOPEN_ACTION } from '../../../../../../worker/api/deep-type/actions'
+import { FOCUS_CLASS_NAME } from '../../../../../components/focus'
 
 import { IntroView } from '../../_components/intro-view'
 import { RefinementQuizView } from '../../_components/refinement-quiz-view'

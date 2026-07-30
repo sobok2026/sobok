@@ -1,9 +1,8 @@
-import { FOCUS_CLASS_NAME } from '../../../../components/focus'
-
-;('use client')
+'use client'
 
 import { PERSONA_CODES, type PersonaCode } from '@deep-type/model'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 import type { DeepTypeUiText } from '../_lib/types'
 
 type PersonaDeclareViewProps = {

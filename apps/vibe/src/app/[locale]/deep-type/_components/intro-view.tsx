@@ -1,9 +1,8 @@
-import { FOCUS_CLASS_NAME } from '../../../../components/focus'
-
-;('use client')
+'use client'
 
 import { ArrowRight } from '@mynaui/icons-react'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 type IntroViewProps = {
   body: string

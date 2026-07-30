@@ -1,11 +1,10 @@
-import { FOCUS_CLASS_NAME } from '../../../../components/focus'
-
-;('use client')
+'use client'
 
 import type { OptionIndex } from '@deep-type/model'
 import { ArrowLeft } from '@mynaui/icons-react'
 import type { ReactNode } from 'react'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 import { type ProgressSegment, QuizProgress } from './quiz-progress'
 
 type QuizViewProps = {

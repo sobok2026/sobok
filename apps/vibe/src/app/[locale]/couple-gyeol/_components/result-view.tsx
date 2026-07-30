@@ -1,6 +1,4 @@
-import { FOCUS_CLASS_NAME } from '../../../../components/focus'
-
-;('use client')
+'use client'
 
 import { Copy, HeartWaves, Refresh, Share, Sparkles } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
@@ -8,6 +6,7 @@ import Image from 'next/image'
 import { useShare } from '@/components/use-share'
 import { cn } from '@/utils/cn'
 import coupleGyeolRidgeImage from '../../../../../public/image/rarity/ridge.png'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 import { axisOrder, serializeGyeolResult } from '../_lib/model'
 import type { GyeolContent, GyeolResult } from '../_lib/types'
 

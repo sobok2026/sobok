@@ -1,11 +1,10 @@
-import { FOCUS_CLASS_NAME } from '../../../../components/focus'
-
-;('use client')
+'use client'
 
 import type { FreeAssessmentProfile } from '@deep-type/model'
 import type { Locale } from '@sobok/domain/locale'
 import { useState } from 'react'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 import { useReportPolling } from '../_hooks/use-report-polling'
 import { postCancel } from '../_lib/api'
