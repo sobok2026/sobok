@@ -3,7 +3,7 @@ import type { AssessmentProfile, PersonaCode } from '@deep-type/model'
 import type { ReportLocale } from './axis-copy'
 import { buildReportProfile, type ReportProfile } from './profile'
 import { generateEngineReport, mergeDrainSittings } from './rules'
-import type { ReportSection } from './section-keys'
+import type { ReportSection } from './section-data'
 
 // The two-pass contract, expressed as pure functions so the route is glue. Everything that decides whether a
 // report may be delivered, cached or stamped lives here: a Hono handler cannot be exercised without a

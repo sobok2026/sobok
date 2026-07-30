@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 
 import { BAND_SHIFT_PAID, CLARITY_BANDS_PAID } from '../../deep-type/content/band-labels.paid'
 import { PROPER_NOUNS } from '../../deep-type/content/proper-nouns'
+import { BLOCK_NOTES_KO, SELF_REPORT_AXIS_NOTES } from '../../deep-type/content/section-copy.paid'
 import { WORLD_JOB_NAMES } from '../../deep-type/content/world-job-names'
 import {
   AXIS_POLES,
@@ -36,12 +37,18 @@ import { axisCopyFor } from './axis-copy'
 import { checkClaims, SECTION_CLAIMS } from './claims'
 import {
   DRAIN_MERGE_WINDOW_DAYS,
+  type EngineReportDocument,
   type EngineReportInput,
   generateEngineReport,
   mergeDrainSittings,
-  type NamedFacet,
 } from './rules'
-import { REPORT_SECTION_CONTRACT, REPORT_SECTION_KEYS } from './section-keys'
+import type { NamedFacet, ReportSection } from './section-data'
+import {
+  REPORT_DISPLAY_ORDER,
+  REPORT_SECTION_CONTRACT,
+  REPORT_SECTION_KEYS,
+  type ReportSectionKey,
+} from './section-keys'
 
 // Fixtures build profiles directly rather than by scoring answer sets. The engine reads bands, codes and
 // tallies, so routing every case through 40 Likert answers would test the scorer twice and this module once.
@@ -225,19 +232,51 @@ function inputOf(overrides: Partial<EngineReportInput> = {}): EngineReportInput 
   }
 }
 
-type AnyBlock = ReturnType<typeof generateEngineReport>['blocks'][number]
+/** Generation order, which is the section table's own 1..12 minus whatever this input omits. */
+const GENERATION_ORDER: readonly ReportSectionKey[] = [
+  'worldJob',
+  'strengthCards',
+  'drainSignature',
+  'happinessConditions',
+  'interestProfile',
+  'roleFamilies',
+  'weekQuest',
+  'threePaths',
+  'fitAndFriction',
+  'openingRead',
+  'reflectionQuestions',
+]
 
-/** Every facet the block named, in one list, so the corpus check does not have to know which section it came from. */
-function facetsOf(block: AnyBlock): readonly NamedFacet[] {
-  switch (block.key) {
+function keysOf(document: EngineReportDocument): readonly ReportSectionKey[] {
+  return document.blocks.map((block) => block.section.key)
+}
+
+/**
+ * The section under `key`, narrowed. Throws when absent rather than returning undefined: every caller below
+ * would otherwise assert on `undefined?.data` and pass.
+ */
+function sectionOf<Key extends ReportSectionKey>(
+  document: EngineReportDocument,
+  key: Key,
+): Extract<ReportSection, { key: Key }> {
+  const found = document.sections.find((section) => section.key === key)
+  if (!found || found.key !== key) {
+    throw new Error(`section ${key} missing`)
+  }
+  return found as Extract<ReportSection, { key: Key }>
+}
+
+/** Every facet the section named, so the corpus check does not have to know which section it came from. */
+function facetsOf(section: ReportSection): readonly NamedFacet[] {
+  switch (section.key) {
     case 'drainSignature':
-      return [...block.data.leaders, ...block.data.contrast.freeShown]
+      return [...section.data.leaders, ...section.data.contrast.freeShown]
     case 'happinessConditions':
-      return [...block.data.needs, ...block.data.environments]
+      return [...section.data.needs, ...section.data.environments]
     case 'interestProfile':
-      return [...block.data.interests, ...block.data.purposes]
+      return [...section.data.interests, ...section.data.purposes]
     case 'fitAndFriction':
-      return block.data.conditions
+      return section.data.conditions
     default:
       return []
   }
@@ -265,45 +304,83 @@ describe('generateEngineReport totality', () => {
         const document = generateEngineReport(
           inputOf({ free: freeProfileOf(inner, gem), refined: refinedProfileOf(inner, gem) }),
         )
-        expect(document.blocks.map((block) => block.key)).toEqual([
-          'worldJob',
-          'strengthCards',
-          'drainSignature',
-          'happinessConditions',
-          'interestProfile',
-          'roleFamilies',
-          'weekQuest',
-          'threePaths',
-          'fitAndFriction',
-        ])
+        expect(keysOf(document)).toEqual(GENERATION_ORDER)
       }
     }
   })
 
-  test('an all-faint reading still ships every section with a non-empty body', () => {
+  // The two sections that used to exist only when the narrator was switched on. A deployment with no model id
+  // is the normal deployment, so their absence was the normal report — an opening on nothing and no close.
+  test('the opening and the closing questions are engine output, not narration', () => {
+    const document = generateEngineReport(inputOf())
+    const opening = sectionOf(document, 'openingRead')
+    const reflection = sectionOf(document, 'reflectionQuestions')
+
+    expect(opening.data.lead.length).toBeGreaterThan(0)
+    expect(opening.data.paragraphs.length).toBeGreaterThan(1)
+    expect(opening.data.worldJobName).toBe(WORLD_JOB_NAMES.ENFJ_ROVU)
+    for (const paragraph of opening.data.paragraphs) {
+      expect(paragraph.kicker.length).toBeGreaterThan(0)
+      expect(paragraph.text.length).toBeGreaterThan(0)
+    }
+
+    expect(reflection.data.questions).toHaveLength(3)
+    // One question per tally, never three readings of the same one.
+    expect(new Set(reflection.data.questions.map((question) => question.source)).size).toBe(3)
+    for (const question of reflection.data.questions) {
+      expect(question.text.endsWith('?')).toBe(true)
+    }
+  })
+
+  // Selection is by band and never by magnitude (§4.3), so a reading with no banded axis has to have its own
+  // paragraph rather than an empty opening.
+  test('an all-faint reading still ships every section, opening included', () => {
     const bands = Object.fromEntries(
-      [...WORK_FACETS.drain, 'EI', 'SN', 'TF', 'JP', 'RM', 'OA', 'VH', 'UO'].map((axis) => [axis, 'faint3']),
+      ['EI', 'SN', 'TF', 'JP', 'RM', 'OA', 'VH', 'UO'].map((axis) => [axis, 'faint3']),
     ) as Partial<Record<AxisId, TentativeBand>>
 
     const document = generateEngineReport(
       inputOf({ free: freeProfileOf('ISTJ', 'MAHO', { bands }), refined: refinedProfileOf('ISTJ', 'MAHO', { bands }) }),
     )
 
-    expect(document.blocks).toHaveLength(9)
+    expect(document.blocks).toHaveLength(11)
     for (const block of document.blocks) {
-      expect(block.body.length).toBeGreaterThan(0)
-      expect(block.title.length).toBeGreaterThan(0)
+      expect(block.section.title.length).toBeGreaterThan(0)
+      expect(block.section.intro.length).toBeGreaterThan(0)
+      expect(stringsOf(block.section.data).length).toBeGreaterThan(0)
     }
-    const strengths = document.blocks.find((block) => block.key === 'strengthCards')
-    expect(strengths?.body).toContain('강점 카드를 뽑지 않았어요')
+
+    expect(sectionOf(document, 'strengthCards').data.emptyNote).toBe(BLOCK_NOTES_KO.strengthEmpty)
+    expect(sectionOf(document, 'strengthCards').data.groups).toEqual([])
+    // Two of the five paragraph slots are unconditional (drain, interest); the axis slot falls back rather
+    // than emptying.
+    expect(sectionOf(document, 'openingRead').data.paragraphs.length).toBeGreaterThanOrEqual(3)
   })
 
-  test('sections mirror blocks', () => {
-    const document = generateEngineReport(inputOf({ declaredPersona: 'ENFP' }))
-    expect(document.sections).toEqual(document.blocks.map(({ body, key, title }) => ({ body, key, title })))
+  test('stored sections are the blocks in reading order', () => {
+    const document = generateEngineReport(
+      inputOf({
+        declaredPersona: 'ENFP',
+        free: freeProfileOf('ENFJ', 'ROVU', { personaSource: 'declared' }),
+        refined: refinedProfileOf('ENFJ', 'ROVU', { personaSource: 'declared' }),
+      }),
+    )
+
+    expect(document.sections.map((section) => section.key)).toEqual([...REPORT_DISPLAY_ORDER])
+    expect([...document.sections].map((section) => section.key).sort()).toEqual(keysOf(document).toSorted())
     for (const section of document.sections) {
       expect(REPORT_SECTION_KEYS).toContain(section.key)
     }
+  })
+
+  // Reading order is a permutation of generation order, not an independent list: the opening reads the seven
+  // sections above it and cannot be built first, and it is read first because an opening is read first.
+  test('an omitted section leaves no hole in reading order', () => {
+    const document = generateEngineReport(inputOf())
+    expect(keysOf(document)).not.toContain('contextShift')
+    expect(document.sections.map((section) => section.key)).toEqual(
+      REPORT_DISPLAY_ORDER.filter((key) => key !== 'contextShift'),
+    )
   })
 })
 
@@ -312,10 +389,19 @@ describe('claim boundary', () => {
     const document = generateEngineReport(
       inputOf({ declaredPersona: 'ENFP', refined: refinedProfileOf('ENFJ', 'ROVU', { personaSource: 'declared' }) }),
     )
-    expect(document.blocks).toHaveLength(10)
+    expect(document.blocks).toHaveLength(12)
     for (const block of document.blocks) {
-      expect(checkClaims(block.key, block.claims)).toEqual([])
+      expect(checkClaims(block.section.key, block.claims)).toEqual([])
       expect(block.claims.length).toBeGreaterThan(0)
+    }
+  })
+
+  // The engine composes both of the once-LLM-only sections, so neither may rest on `llm_report` — that entry
+  // licenses the narration written over them and nothing the engine itself produced.
+  test('the engine never claims the narration evidence', () => {
+    const document = generateEngineReport(inputOf())
+    for (const block of document.blocks) {
+      expect(block.claims).not.toContain('llm_report' as never)
     }
   })
 
@@ -323,7 +409,7 @@ describe('claim boundary', () => {
     const document = generateEngineReport(inputOf())
     for (const block of document.blocks) {
       expect(block.claims).not.toContain('rarity_and_percentile' as never)
-      expect(SECTION_CLAIMS[block.key]).not.toContain('rarity_and_percentile' as never)
+      expect(SECTION_CLAIMS[block.section.key]).not.toContain('rarity_and_percentile' as never)
     }
   })
 })
@@ -345,12 +431,10 @@ describe('input source', () => {
       }),
     )
 
-    const bodyAt = (document: typeof one, key: string) => document.blocks.find((block) => block.key === key)?.body
-
-    expect(bodyAt(one, 'worldJob')).toBe(bodyAt(other, 'worldJob') ?? '')
-    expect(bodyAt(one, 'strengthCards')).toBe(bodyAt(other, 'strengthCards') ?? '')
-    expect(bodyAt(one, 'happinessConditions')).not.toBe(bodyAt(other, 'happinessConditions') ?? '')
-    expect(bodyAt(one, 'roleFamilies')).not.toBe(bodyAt(other, 'roleFamilies') ?? '')
+    expect(sectionOf(one, 'worldJob').data).toEqual(sectionOf(other, 'worldJob').data)
+    expect(sectionOf(one, 'strengthCards').data).toEqual(sectionOf(other, 'strengthCards').data)
+    expect(sectionOf(one, 'happinessConditions').data).not.toEqual(sectionOf(other, 'happinessConditions').data)
+    expect(sectionOf(one, 'roleFamilies').data).not.toEqual(sectionOf(other, 'roleFamilies').data)
   })
 
   test('each block reports the input source the section contract declares', () => {
@@ -358,7 +442,7 @@ describe('input source', () => {
       inputOf({ declaredPersona: 'ENFP', refined: refinedProfileOf('ENFJ', 'ROVU', { personaSource: 'declared' }) }),
     )
     for (const block of document.blocks) {
-      expect(block.inputSource).toBe(REPORT_SECTION_CONTRACT[block.key].inputSource)
+      expect(block.inputSource).toBe(REPORT_SECTION_CONTRACT[block.section.key].inputSource)
     }
   })
 
@@ -367,12 +451,16 @@ describe('input source', () => {
     const expected = buildFreeReport(free)
     const document = generateEngineReport(inputOf({ free, refined: refinedProfileOf('INTP', 'MOHU') }))
 
-    const worldJob = document.blocks.find((block) => block.key === 'worldJob')
-    const strengths = document.blocks.find((block) => block.key === 'strengthCards')
-    expect(worldJob?.data).toEqual(expected.worldJob)
-    // The cards, not the whole block. `bandMovement` is the paid tier's own addition (D14) and has no free
+    expect(sectionOf(document, 'worldJob').data).toEqual(expected.worldJob)
+    // The cards, not the whole section. `bandMovement` is the paid tier's own addition (D14) and has no free
     // counterpart to be equal to, so it is compared in its own describe below.
-    expect(strengths?.data).toMatchObject({ axis: expected.strengthCards.axis, combo: expected.strengthCards.combo })
+    const grouped = sectionOf(document, 'strengthCards').data.groups.flatMap((group) => group.cards)
+    expect(grouped).toEqual([
+      ...expected.strengthCards.axis.distinct3,
+      ...expected.strengthCards.axis.moderate3,
+      ...expected.strengthCards.combo.distinct3,
+      ...expected.strengthCards.combo.moderate3,
+    ])
   })
 })
 
@@ -381,62 +469,75 @@ describe('input source', () => {
 // model request, so §4.3's planned narration failure took the whole statement with it.
 describe('band movement', () => {
   function movementOf(refined: RefinedAssessmentProfile) {
-    const block = generateEngineReport(inputOf({ refined })).blocks.find((entry) => entry.key === 'strengthCards')
-    if (block?.key !== 'strengthCards') {
-      throw new Error('strengthCards missing')
-    }
-    return { body: block.body, data: block.data.bandMovement }
+    return sectionOf(generateEngineReport(inputOf({ refined })), 'strengthCards').data
   }
 
   test('all eight axes are reported, inner first', () => {
-    const { data } = movementOf(refinedProfileOf('ENFJ', 'ROVU'))
-    expect(data.map((axis) => axis.id)).toEqual([...TYPE_AXES, ...GEM_AXES])
+    const data = movementOf(refinedProfileOf('ENFJ', 'ROVU'))
+    expect(data.bandMovement.map((axis) => axis.id)).toEqual([...TYPE_AXES, ...GEM_AXES])
   })
 
-  test('the settled band and the movement are both in the body, not only in the data', () => {
-    const { body, data } = movementOf(
+  test('the settled band and the movement both reach the section', () => {
+    const data = movementOf(
       refinedProfileOf('ENFJ', 'ROVU', { bands: { EI: 'moderate3' }, movement: { EI: { shift: 'up' } } }),
     )
-    for (const axis of data) {
-      expect(body).toContain(`${axis.name} — ${axis.band.label} · ${axis.shift.label}`)
+    const labels = data.bandMovement.map((axis) => `${axis.band.label} · ${axis.shift.label}`)
+    expect(labels).toContain(`${CLARITY_BANDS_PAID.moderate.label} · ${BAND_SHIFT_PAID.up.label}`)
+    for (const axis of data.bandMovement) {
+      expect(axis.name.length).toBeGreaterThan(0)
+      expect(axis.leading.length).toBeGreaterThan(0)
     }
-    expect(body).toContain(CLARITY_BANDS_PAID.moderate.label)
-    expect(body).toContain(BAND_SHIFT_PAID.up.label)
+  })
+
+  // The ladder is drawn from `step`, so the three rungs have to follow the three bands and nothing else. A
+  // step derived from |lean| would be a bar with a percentage hidden in its width.
+  test('the rung follows the band and never a magnitude', () => {
+    const distinct = movementOf(refinedProfileOf('ENFJ', 'ROVU'))
+    const faint = movementOf(refinedProfileOf('ENFJ', 'ROVU', { bands: { EI: 'faint3' } }))
+    const moderate = movementOf(refinedProfileOf('ENFJ', 'ROVU', { bands: { EI: 'moderate3' } }))
+
+    const stepAt = (data: typeof distinct) => data.bandMovement.find((axis) => axis.id === 'EI')?.step
+    expect(stepAt(distinct)).toBe(3)
+    expect(stepAt(moderate)).toBe(2)
+    expect(stepAt(faint)).toBe(1)
   })
 
   // The one sentence D14 names. A downgrade must reach the reader as words even when nothing else runs.
-  test('a downgraded axis says so in the engine body', () => {
-    const { body } = movementOf(refinedProfileOf('ENFJ', 'ROVU', { movement: { JP: { shift: 'down' } } }))
-    expect(body).toContain(BAND_SHIFT_PAID.down.label)
+  test('a downgraded axis says so in the section', () => {
+    const data = movementOf(refinedProfileOf('ENFJ', 'ROVU', { movement: { JP: { shift: 'down' } } }))
+    const jp = data.bandMovement.find((axis) => axis.id === 'JP')
+    expect(jp?.shift.label).toBe(BAND_SHIFT_PAID.down.label)
+    expect(jp?.shiftDirection).toBe('down')
     expect(BAND_SHIFT_PAID.down.label).toBe('답이 갈렸어요')
   })
 
   test('split axes are named and the pole freeze is repeated beside them', () => {
-    const { body } = movementOf(
+    const data = movementOf(
       refinedProfileOf('ENFJ', 'ROVU', {
         movement: { SN: { evidenceSplit: true, shift: 'down' }, VH: { evidenceSplit: true, shift: 'down' } },
       }),
     )
     const copy = axisCopyFor('ko')
-    expect(body).toContain(`${copy.SN.name} · ${copy.VH.name}`)
-    expect(body).toContain(BAND_SHIFT_PAID.down.detail)
-    expect(body).toContain('여덟 글자는 그대로예요')
+    expect(data.splitAxisNames).toEqual([copy.SN.name, copy.VH.name])
+    expect(data.splitNote).toBe(BAND_SHIFT_PAID.down.detail)
+    expect(data.splitNote).toContain('여덟 글자는 그대로예요')
   })
 
   test('no split is stated rather than left out', () => {
-    const { body, data } = movementOf(refinedProfileOf('ENFJ', 'ROVU'))
-    expect(data.every((axis) => !axis.evidenceSplit)).toBe(true)
-    expect(body).toContain('양쪽으로 갈린 축은 없었어요')
+    const data = movementOf(refinedProfileOf('ENFJ', 'ROVU'))
+    expect(data.bandMovement.every((axis) => !axis.evidenceSplit)).toBe(true)
+    expect(data.splitAxisNames).toEqual([])
+    expect(data.splitNote).toBe(BLOCK_NOTES_KO.noEvidenceSplit)
   })
 
   // The letter is frozen at the free pass and a split axis is exactly where the bar and the letter disagree, so
   // the label has to come off the code rather than off the recomputed score.
   test('the named pole follows the frozen code letter even on a split axis', () => {
-    const { data } = movementOf(
+    const data = movementOf(
       refinedProfileOf('ISTJ', 'MAHO', { movement: { EI: { evidenceSplit: true, shift: 'down' } } }),
     )
     const copy = axisCopyFor('ko')
-    const ei = data.find((axis) => axis.id === 'EI')
+    const ei = data.bandMovement.find((axis) => axis.id === 'EI')
     // Widened on purpose: reading the fold off the table rather than hard-coding 'I' keeps the pin alive if
     // `AXIS_POLES` is ever reordered.
     const poles: readonly string[] = AXIS_POLES.EI
@@ -446,11 +547,7 @@ describe('band movement', () => {
 
 describe('drain signature', () => {
   function drainDataOf(input: EngineReportInput) {
-    const block = generateEngineReport(input).blocks.find((candidate) => candidate.key === 'drainSignature')
-    if (block?.key !== 'drainSignature') {
-      throw new Error('drainSignature missing')
-    }
-    return block.data
+    return sectionOf(generateEngineReport(input), 'drainSignature').data
   }
 
   test('the contrast against the free display set is always present', () => {
@@ -458,6 +555,22 @@ describe('drain signature', () => {
     expect(data.contrast.freeShown.length).toBeGreaterThan(0)
     expect(data.contrast.sentence.length).toBeGreaterThan(0)
     expect(data.mergedWindow).toBe(true)
+  })
+
+  // The strand count IS the spread, so a drawing derived from it cannot disagree with the words beside it.
+  test('the drawn strand count follows the shown facet count', () => {
+    const data = drainDataOf(inputOf())
+    expect(data.strands).toBe(data.leaders.length as typeof data.strands)
+  })
+
+  // Every facet the section names carries the authored paragraph, not only a label and an action.
+  test('each named facet carries its detail', () => {
+    const data = drainDataOf(inputOf())
+    for (const facet of [...data.leaders, ...data.contrast.freeShown]) {
+      expect(facet.detail.length).toBeGreaterThan(0)
+      expect(facet.detail).not.toBe(facet.label)
+      expect(facet.detail).not.toBe(facet.action)
+    }
   })
 
   test('a paid leader that left the free display set reads as shifted', () => {
@@ -569,13 +682,10 @@ describe('drain signature', () => {
 
 describe('week quest', () => {
   test('seven days, each inside the cost and contact limits', () => {
-    const block = generateEngineReport(inputOf()).blocks.find((candidate) => candidate.key === 'weekQuest')
-    if (block?.key !== 'weekQuest') {
-      throw new Error('weekQuest missing')
-    }
+    const data = sectionOf(generateEngineReport(inputOf()), 'weekQuest').data
 
-    expect(block.data.days).toHaveLength(7)
-    block.data.days.forEach((day, index) => {
+    expect(data.days).toHaveLength(7)
+    data.days.forEach((day, index) => {
       expect(day.day).toBe((index + 1) as typeof day.day)
       expect(day.estimatedMinutes).toBeGreaterThanOrEqual(10)
       expect(day.estimatedMinutes).toBeLessThanOrEqual(30)
@@ -587,62 +697,66 @@ describe('week quest', () => {
     })
   })
 
-  test('the strength day and the role day read the profile', () => {
-    const block = generateEngineReport(inputOf()).blocks.find((candidate) => candidate.key === 'weekQuest')
-    if (block?.key !== 'weekQuest') {
-      throw new Error('weekQuest missing')
+  // Only days 3, 4 and 5 read the profile. `taskAnchor` is where that shows, so a day that quotes the reader's
+  // own result carries one and the four that run the same week for everyone carry none.
+  test('the profile-reading days are the ones that carry an anchor', () => {
+    const data = sectionOf(generateEngineReport(inputOf()), 'weekQuest').data
+    const anchored = data.days.filter((day) => day.taskAnchor !== null).map((day) => day.day)
+    expect(anchored).toEqual([3, 4, 5])
+    expect(data.days[3].taskAnchor?.label).toBe('오늘 쓸 강점')
+    expect(data.days[4].taskAnchor?.label).toBe('살펴볼 역할군')
+    for (const day of data.days) {
+      expect(day.taskAnchor?.value.length ?? 1).toBeGreaterThan(0)
     }
-    expect(block.data.days[3].task).toContain('오늘 쓸 강점')
-    expect(block.data.days[4].task).toContain('살펴볼 역할군')
   })
 })
 
 describe('self report contrast', () => {
   test('omitted when nothing was declared', () => {
-    const keys = generateEngineReport(inputOf()).blocks.map((block) => block.key)
-    expect(keys).not.toContain('contextShift')
+    expect(keysOf(generateEngineReport(inputOf()))).not.toContain('contextShift')
   })
 
   test('omitted when a code is present but the source says unknown', () => {
-    const keys = generateEngineReport(inputOf({ declaredPersona: 'ENFP' })).blocks.map((block) => block.key)
-    expect(keys).not.toContain('contextShift')
+    expect(keysOf(generateEngineReport(inputOf({ declaredPersona: 'ENFP' })))).not.toContain('contextShift')
   })
 
   test('names the split axes when a declaration exists', () => {
-    const block = generateEngineReport(
-      inputOf({
-        declaredPersona: 'ENFP',
-        free: freeProfileOf('ENFJ', 'ROVU', { personaSource: 'declared' }),
-        refined: refinedProfileOf('ENFJ', 'ROVU', { personaSource: 'declared' }),
-      }),
-    ).blocks.find((candidate) => candidate.key === 'contextShift')
+    const data = sectionOf(
+      generateEngineReport(
+        inputOf({
+          declaredPersona: 'ENFP',
+          free: freeProfileOf('ENFJ', 'ROVU', { personaSource: 'declared' }),
+          refined: refinedProfileOf('ENFJ', 'ROVU', { personaSource: 'declared' }),
+        }),
+      ),
+      'contextShift',
+    ).data
 
-    if (block?.key !== 'contextShift') {
-      throw new Error('contextShift missing')
-    }
-    expect(block.data.declaredCode).toBe('ENFP')
-    expect(block.data.measuredCode).toBe('ENFJ')
-    expect(block.data.axes.filter((axis) => !axis.matched).map((axis) => axis.id)).toEqual(['JP'])
-    for (const axis of block.data.axes) {
+    expect(data.declaredCode).toBe('ENFP')
+    expect(data.measuredCode).toBe('ENFJ')
+    expect(data.axes.filter((axis) => !axis.matched).map((axis) => axis.id)).toEqual(['JP'])
+    for (const axis of data.axes) {
       expect(axis.declared.label.length).toBeGreaterThan(0)
       expect(axis.measured.label.length).toBeGreaterThan(0)
+      expect(axis.note.length).toBeGreaterThan(0)
     }
+    // Per axis and per reading. A note shared across axes, or across the matched and split cases, would be a
+    // heading pretending to be a finding.
+    for (const axis of data.axes) {
+      const notes = SELF_REPORT_AXIS_NOTES[axis.id]
+      expect(axis.note).toBe(axis.matched ? notes.matched : notes.split)
+      expect(notes.matched).not.toBe(notes.split)
+    }
+    expect(new Set(data.axes.map((axis) => axis.note)).size).toBe(data.axes.length)
   })
 })
 
 describe('context-dependent confidence', () => {
   test('the stay route and the whole friction section stay pinned', () => {
     const document = generateEngineReport(inputOf())
-    const paths = document.blocks.find((block) => block.key === 'threePaths')
-    const friction = document.blocks.find((block) => block.key === 'fitAndFriction')
-    const roles = document.blocks.find((block) => block.key === 'roleFamilies')
-
-    if (paths?.key !== 'threePaths' || friction?.key !== 'fitAndFriction' || roles?.key !== 'roleFamilies') {
-      throw new Error('sections missing')
-    }
-    expect(paths.data.paths[0].confidence).toBe('needsMoreInput')
-    expect(friction.data.confidence).toBe('needsMoreInput')
-    for (const card of roles.data.cards) {
+    expect(sectionOf(document, 'threePaths').data.paths[0].confidence).toBe('needsMoreInput')
+    expect(sectionOf(document, 'fitAndFriction').data.confidence).toBe('needsMoreInput')
+    for (const card of sectionOf(document, 'roleFamilies').data.cards) {
       expect(card.carryOver.confidence).toBe('needsMoreInput')
     }
   })
@@ -659,14 +773,11 @@ describe('proper noun identity', () => {
         const document = generateEngineReport(
           inputOf({ free: freeProfileOf(inner, gem), refined: refinedProfileOf(inner, gem) }),
         )
-        const block = document.blocks.find((candidate) => candidate.key === 'worldJob')
-        if (block?.key !== 'worldJob') {
-          throw new Error('worldJob missing')
-        }
         const row = worldJobRows.find((candidate) => candidate.key === `${inner}_${gem}`)
         expect(row?.text).toBe(WORLD_JOB_NAMES[`${inner}_${gem}`])
-        expect(block.data.name).toBe(row?.text ?? '')
-        expect(block.body).toContain(row?.text ?? '')
+        expect(sectionOf(document, 'worldJob').data.name).toBe(row?.text ?? '')
+        // The composed opening leads with the same name, so a rewrite in the composer surfaces here too.
+        expect(sectionOf(document, 'openingRead').data.worldJobName).toBe(row?.text ?? '')
       }
     }
   })
@@ -675,7 +786,7 @@ describe('proper noun identity', () => {
     const corpus = new Set<string>(PROPER_NOUNS.map((row) => row.text))
     const emitted = new Set<string>()
     // Every value the engine printed under a key the corpus owns. A rewrite anywhere between the table and the
-    // block surfaces here as a string the corpus does not contain.
+    // section surfaces here as a string the corpus does not contain.
     const named = new Set<string>()
 
     for (const inner of PERSONA_CODES) {
@@ -687,24 +798,24 @@ describe('proper noun identity', () => {
             refined: refinedProfileOf(inner, gem, { personaSource: 'declared' }),
           }),
         )
-        for (const value of stringsOf(document.blocks)) {
+        for (const value of stringsOf(document.sections)) {
           emitted.add(value)
         }
-        for (const block of document.blocks) {
-          if (block.key === 'worldJob') {
-            const { core, family, name } = block.data
+        for (const section of document.sections) {
+          if (section.key === 'worldJob') {
+            const { core, family, name } = section.data
             for (const value of [name, family.name, family.method, family.role, core.name, core.strength]) {
               named.add(value)
             }
           }
-          if (block.key === 'strengthCards') {
-            for (const set of [block.data.axis, block.data.combo]) {
-              for (const card of [...set.distinct3, ...set.moderate3]) {
+          if (section.key === 'strengthCards') {
+            for (const group of section.data.groups) {
+              for (const card of group.cards) {
                 named.add(card.copy.name)
               }
             }
           }
-          for (const facet of facetsOf(block)) {
+          for (const facet of facetsOf(section)) {
             named.add(facet.label)
           }
         }
@@ -738,7 +849,7 @@ describe('proper noun identity', () => {
     }
   })
 
-  test('facet labels and world job halves reach the body unchanged', () => {
+  test('facet labels and world job halves reach the sections unchanged', () => {
     const facetRows = PROPER_NOUNS.filter((row) => row.source === 'render:SIGNAL_COPY_V47')
     const document = generateEngineReport(
       inputOf({
@@ -750,7 +861,7 @@ describe('proper noun identity', () => {
         }),
       }),
     )
-    const joined = document.blocks.map((block) => block.body).join('\n')
+    const joined = stringsOf(document.sections).join('\n')
 
     for (const key of ['MAKE', 'AUT', 'SOLVE', 'FOCUS_ENV']) {
       const row = facetRows.find((candidate) => candidate.key === key && candidate.field === 'name')
@@ -766,8 +877,9 @@ describe('proper noun identity', () => {
 })
 
 describe('forbidden vocabulary', () => {
-  // FAKE_METRIC and DETERMINISM from MIGRATION §8.5, plus the ranking words §4.3 rules out. Terms the engine
-  // only relays from a frozen content table are not scanned here — the corpus test above owns those strings.
+  // FAKE_METRIC and DETERMINISM from MIGRATION §8.5, plus the ranking words §4.3 rules out. The scan covers
+  // every string the sections carry, frozen tables included — the corpus test above already pins those byte
+  // for byte, so a hit here is a real leak rather than a table this list forgot about.
   const ENGINE_AUTHORED_BANS = [
     '상위',
     '백분위',
@@ -785,7 +897,7 @@ describe('forbidden vocabulary', () => {
     'MBTI',
   ] as const
 
-  test('no engine-authored string carries a metric or a determinism claim', () => {
+  test('no string the sections carry holds a metric or a determinism claim', () => {
     const document = generateEngineReport(
       inputOf({
         declaredPersona: 'ENFP',
@@ -793,7 +905,7 @@ describe('forbidden vocabulary', () => {
         refined: refinedProfileOf('ENFJ', 'ROVU', { personaSource: 'declared' }),
       }),
     )
-    const joined = document.blocks.map((block) => block.body).join('\n')
+    const joined = stringsOf(document.sections).join('\n')
 
     for (const banned of ENGINE_AUTHORED_BANS) {
       expect(joined).not.toContain(banned)

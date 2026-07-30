@@ -1,15 +1,17 @@
 import { checkClaims } from './claims'
 import type { ReportProfile } from './profile'
 import { NARRATIVE_OUTPUT_SCHEMA, narrativeUserMessage, SYSTEM_NARRATIVE } from './prompt'
-import {
-  NARRATED_SECTION_KEYS,
-  type NarratedSectionKey,
-  REPORT_SECTION_CONTRACT,
-  type ReportSection,
-} from './section-keys'
+import type { NarrativeSection, ReportSection } from './section-data'
+import { NARRATED_SECTION_KEYS, type NarratedSectionKey } from './section-keys'
 
-// The narration pass. It runs after the engine body is committed and delivering, so nothing here can fail the
-// report: the worst outcome is a report that ships with the engine text alone (§4.3).
+// The narration pass. It runs after the engine sections are committed and delivering, so nothing here can fail
+// the report: the worst outcome is a report that ships with the engine's own text alone (§4.3), which is what
+// every deployment with no model id ships today and is a complete report rather than a degraded one.
+//
+// The two directions are not symmetric. The engine hands the model STRUCTURE and the model hands back PROSE,
+// written under the section the structure was rendered into. It is never asked for structure of its own: the
+// findings are the engine's, and a model that returned its own band or its own quest week would be re-deciding
+// them.
 //
 // Acceptance is per section, not all-or-nothing. The old parser threw on `incomplete sections`, which meant one
 // missing key discarded eleven good ones and, before the engine existed, failed the whole purchase.
@@ -36,23 +38,23 @@ export interface NarrativeDrop {
 export interface NarrativeOutcome {
   /** Kept for the failure log: an empty `sections` is only diagnosable next to what was thrown away. */
   dropped: readonly NarrativeDrop[]
-  sections: readonly ReportSection[]
+  sections: readonly NarrativeSection[]
 }
 
 export interface NarrativeInput {
-  /** The committed engine bodies. They are the ground truth the narration is checked and written against. */
+  /** The committed engine sections, structured. They are the ground truth the narration is written against. */
   engine: readonly ReportSection[]
   profile: ReportProfile
 }
 
 /**
- * A HYBRID section is narrated only where the engine actually wrote one — `contextShift` is omitted for a
- * reader who declared nothing, and narrating a section the reader will never see is how a report ends up
- * describing a contrast that is not on screen. LLM-only sections have no engine body by definition.
+ * Narration is requested only for sections the engine actually produced. Every narrated key is HYBRID now, so
+ * this is the whole rule: `contextShift` is omitted for a reader who declared nothing, and narrating a section
+ * the reader will never see is how a report ends up describing a contrast that is not on screen.
  */
 export function requestedNarrativeKeys(engine: readonly ReportSection[]): readonly NarratedSectionKey[] {
   const written = new Set<string>(engine.map((section) => section.key))
-  return NARRATED_SECTION_KEYS.filter((key) => REPORT_SECTION_CONTRACT[key].generator !== 'HYBRID' || written.has(key))
+  return NARRATED_SECTION_KEYS.filter((key) => written.has(key))
 }
 
 export async function generateNarrative(
@@ -61,7 +63,7 @@ export async function generateNarrative(
   input: NarrativeInput,
 ): Promise<NarrativeOutcome> {
   const requested = requestedNarrativeKeys(input.engine)
-  const accepted = new Map<NarratedSectionKey, ReportSection>()
+  const accepted = new Map<NarratedSectionKey, NarrativeSection>()
   const dropped: NarrativeDrop[] = []
 
   // A first-attempt transport failure is the caller's to record; there is nothing partial to keep yet.
@@ -98,7 +100,7 @@ export async function generateNarrative(
 export function acceptNarrative(
   text: string,
   requested: readonly NarratedSectionKey[],
-  accepted: Map<NarratedSectionKey, ReportSection>,
+  accepted: Map<NarratedSectionKey, NarrativeSection>,
 ): readonly NarrativeDrop[] {
   const allowed = new Set<string>(requested)
   const dropped: NarrativeDrop[] = []

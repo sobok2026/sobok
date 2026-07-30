@@ -25,15 +25,33 @@ export const REPORT_SECTION_KEYS = [
 
 export type ReportSectionKey = (typeof REPORT_SECTION_KEYS)[number]
 
-/** Exactly what a row of `report.sections` / `report.narrative` holds. */
-export interface ReportSection {
-  body: string
-  key: ReportSectionKey
-  title: string
-}
+/**
+ * Reading order, which is not generation order. `openingRead` is written eleventh because it reads the seven
+ * sections above it, and it is read first because an opening that arrives after the detail is not an opening.
+ * `reflectionQuestions` closes for the same reason in reverse. Declared as its own permutation rather than
+ * derived, so the day a section moves on screen is a one-line edit in the place a reader would look.
+ */
+export const REPORT_DISPLAY_ORDER = [
+  'openingRead',
+  'worldJob',
+  'strengthCards',
+  'drainSignature',
+  'happinessConditions',
+  'interestProfile',
+  'roleFamilies',
+  'contextShift',
+  'fitAndFriction',
+  'threePaths',
+  'weekQuest',
+  'reflectionQuestions',
+] as const satisfies readonly ReportSectionKey[]
 
-/** Who writes the body. ENGINE bodies exist without the LLM; HYBRID keeps an engine body under the narration. */
-export type SectionGenerator = 'ENGINE' | 'HYBRID' | 'LLM'
+/**
+ * Who writes the section. Every section has an engine author: a report whose narrator is off is the normal
+ * shape of a report, not a degraded one, so there is no generator that leaves a hole. HYBRID means the model
+ * may write *over* the engine's section; it never means the engine skipped it.
+ */
+export type SectionGenerator = 'ENGINE' | 'HYBRID'
 
 /**
  * Which answer set the section is derived from (MIGRATION §4.1 '입력 출처'). This is the input to the free/paid
@@ -44,9 +62,10 @@ export type SectionInputSource = 'free-only' | 'mixed' | 'paid'
 
 /**
  * §4.1 '실패 시'. `unreachable` is a claim about the engine being total, not a wish — the sections that carry
- * it read tables that are complete for every code and every band.
+ * it read tables that are complete for every code and every band. `drop-section` is gone with the LLM-only
+ * generator: there is no section left whose only author could fail.
  */
-export type SectionFailureMode = 'drop-section' | 'keep-engine-body' | 'omit-section' | 'unreachable'
+export type SectionFailureMode = 'keep-engine-body' | 'omit-section' | 'unreachable'
 
 export interface ReportSectionContract {
   generator: SectionGenerator
@@ -74,14 +93,21 @@ export const REPORT_SECTION_CONTRACT = {
   contextShift: { generator: 'HYBRID', inputSource: 'mixed', onFailure: 'omit-section' },
   threePaths: { generator: 'HYBRID', inputSource: 'paid', onFailure: 'keep-engine-body' },
   fitAndFriction: { generator: 'HYBRID', inputSource: 'paid', onFailure: 'keep-engine-body' },
-  openingRead: { generator: 'LLM', inputSource: 'mixed', onFailure: 'drop-section' },
-  reflectionQuestions: { generator: 'LLM', inputSource: 'mixed', onFailure: 'drop-section' },
+  // Both of these used to be LLM-only, which meant a deployment with the narrator off shipped a report with no
+  // opening and no closing — the two places a reader looks first and last. The engine writes them now, from
+  // the composer in `compose.ts`, and the model narrates over them like any other HYBRID section.
+  openingRead: { generator: 'HYBRID', inputSource: 'mixed', onFailure: 'keep-engine-body' },
+  reflectionQuestions: { generator: 'HYBRID', inputSource: 'mixed', onFailure: 'keep-engine-body' },
 } as const satisfies Record<ReportSectionKey, ReportSectionContract>
 
 type SectionKeysWhere<Field extends keyof ReportSectionContract, Value> = {
   [Key in ReportSectionKey]: (typeof REPORT_SECTION_CONTRACT)[Key][Field] extends Value ? Key : never
 }[ReportSectionKey]
 
+/**
+ * Sections the model never touches. Not "sections the engine writes" — the engine writes all twelve — so the
+ * partition below is about who may write the *last* word, which is the only question the narration pass asks.
+ */
 export type EngineSectionKey = SectionKeysWhere<'generator', 'ENGINE'>
 export type NarratedSectionKey = Exclude<ReportSectionKey, EngineSectionKey>
 /** Never derivable in the browser. A free-bundle module that names one of these should fail to compile. */

@@ -31,7 +31,8 @@ import {
   type ReportSourceRow,
   reportDelivery,
 } from './pipeline'
-import { type NarratedSectionKey, REPORT_SECTION_KEYS, type ReportSection } from './section-keys'
+import type { NarrativeSection } from './section-data'
+import { type NarratedSectionKey, REPORT_SECTION_KEYS } from './section-keys'
 
 const PASS_STATUSES: readonly ReportPassStatus[] = ['pending', 'generating', 'done', 'failed']
 
@@ -162,14 +163,17 @@ describe('engine-first commit', () => {
     expect(plan?.engine.model).toBe('rules-only')
   })
 
-  test('every committed section carries a vocabulary key and a body', () => {
+  test('every committed section carries a vocabulary key, a heading and its own data', () => {
     const plan = planReportPasses(sourceOf())
     expect(plan).not.toBeNull()
 
     for (const section of plan?.engine.sections ?? []) {
       expect(REPORT_SECTION_KEYS as readonly string[]).toContain(section.key)
-      expect(section.body.length).toBeGreaterThan(0)
       expect(section.title.length).toBeGreaterThan(0)
+      expect(section.intro.length).toBeGreaterThan(0)
+      // Structured, not rendered. A section whose data serialized to nothing would reach the screen as an
+      // empty card, which is the shape the old `body` string could not have.
+      expect(JSON.stringify(section.data).length).toBeGreaterThan(2)
     }
     expect(plan?.engine.sections.length).toBeGreaterThan(0)
   })
@@ -189,14 +193,14 @@ describe('engine-first commit', () => {
   })
 })
 
-describe('narration never invalidates the engine body', () => {
+describe('narration never invalidates the engine sections', () => {
   test('a claim-boundary violation drops the narration and leaves the engine sections whole', () => {
     const plan = planReportPasses(sourceOf())
     const engine = plan?.engine.sections ?? []
     const before = engine.length
     const requested = requestedNarrativeKeys(engine)
 
-    const accepted = new Map<NarratedSectionKey, ReportSection>()
+    const accepted = new Map<NarratedSectionKey, NarrativeSection>()
     const dropped = acceptNarrative(
       JSON.stringify({
         sections: [
