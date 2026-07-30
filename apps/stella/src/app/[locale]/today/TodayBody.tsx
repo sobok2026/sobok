@@ -233,7 +233,7 @@ export default function TodayBody({ data, homeHref, onShare, shared }: TodayBody
             >
               {t('share.button')}
             </button>
-            <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
+            <p className="text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
           </>
         )}
         {shared && <p className="mt-1 text-xs text-foreground-faint">{t('tomorrow')}</p>}

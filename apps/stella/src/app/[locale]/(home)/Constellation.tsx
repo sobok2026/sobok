@@ -198,10 +198,10 @@ export default function Constellation() {
 
       <div className="relative z-10 mx-auto flex w-full max-w-xl flex-col items-center">
         {/* Hero */}
-        <header className="mb-6 w-full max-w-sm text-center">
+        <header className="mb-6 w-full text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{t('hero.eyebrow')}</p>
           <HeroTitle>{t('hero.title')}</HeroTitle>
-          <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-foreground-muted/90">{t('hero.subtitle')}</p>
+          <p className="mt-3 text-sm leading-relaxed text-foreground-muted/90">{t('hero.subtitle')}</p>
           {shared && (
             <p className="mx-auto mt-3 w-fit rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-xs text-accent">
               {ts('viewing')}

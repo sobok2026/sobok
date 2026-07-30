@@ -91,6 +91,7 @@ function withoutComment(publicId: string) {
 }
 
 interface CommentThreadProps {
+  bodyPlaceholder: string
   locale: string
   topicKey: string
   // First page baked into the static HTML at build (SEO snapshot + no first-paint flash). Seeds the query and
@@ -98,7 +99,7 @@ interface CommentThreadProps {
   initial?: CommentPage
 }
 
-export default function CommentThread({ locale, topicKey, initial }: CommentThreadProps) {
+export default function CommentThread({ bodyPlaceholder, locale, topicKey, initial }: CommentThreadProps) {
   const t = useTranslations('Comments')
   const queryClient = useQueryClient()
   const queryKey = ['comments', locale, topicKey] as const
@@ -222,7 +223,7 @@ export default function CommentThread({ locale, topicKey, initial }: CommentThre
           className="mt-2 h-24 w-full resize-none rounded-lg border bg-surface-2 px-3 py-2 text-sm text-foreground placeholder:text-foreground-faint"
           maxLength={MAX_BODY}
           onChange={(e) => setBody(e.target.value)}
-          placeholder={t('bodyPlaceholder')}
+          placeholder={bodyPlaceholder}
           value={body}
         />
         {showComposerWidget && (
