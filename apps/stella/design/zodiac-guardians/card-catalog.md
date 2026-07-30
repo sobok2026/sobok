@@ -158,10 +158,14 @@
 
 ### 희귀도 예시: `aries.love`
 
-- Orbit: 포피가 큰 하트를 혼자 우체통에 넣으려 한다.
-- Nebula: 비 오는 날 비옷을 입고 하트를 젖지 않게 감싼다.
-- Eclipse: 모루가 문 뒤에서 나와 하트의 반대쪽을 잡는다.
-- Stella: 하트가 열리며 사용자의 출생 차트 모양 별들이 두 캐릭터 위로 이어진다.
+| 등급    | 장면                                                                  | 원화                                                                    |
+| ------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Orbit   | 포피가 큰 하트를 혼자 우체통에 넣으려 한다.                           | [aries-love-orbit.png](./cards/representative/aries-love-orbit.png)     |
+| Nebula  | 비 오는 날 비옷을 입고 하트를 젖지 않게 감싼다.                       | [aries-love-nebula.png](./cards/representative/aries-love-nebula.png)   |
+| Eclipse | 모루가 문 뒤에서 나와 하트의 반대쪽을 잡는다.                         | [aries-love-eclipse.png](./cards/representative/aries-love-eclipse.png) |
+| Stella  | 열린 하트에서 개인화 가능한 차트 광륜이 나와 두 캐릭터 위로 이어진다. | [aries-love-stella.png](./cards/representative/aries-love-stella.png)   |
+
+Stella 마스터의 비개인화 차트 광륜은 개인화가 없을 때도 장면이 완결되는 기본 언더레이다. 실제 출생 차트 선과 개인 색은 사용자별 UI 및 다운로드 합성 단계에서 그 위에 렌더링한다.
 
 ## 5. 제작 순서
 
@@ -170,12 +174,12 @@
 - [x] 확정된 12캐릭터 설정 시트
 - [x] 대표 카드 네 장: 자기이해, 사랑, 일, 결정 각 한 장
 
-| 주제     | 카드 ID        | 콘셉트 원화                                                 |
-| -------- | -------------- | ----------------------------------------------------------- |
-| 자기이해 | `cancer.self`  | [cancer-self.png](./cards/representative/cancer-self.png)   |
-| 사랑     | `aries.love`   | [aries-love.png](./cards/representative/aries-love.png)     |
-| 일       | `taurus.work`  | [taurus-work.png](./cards/representative/taurus-work.png)   |
-| 결정     | `libra.choice` | [libra-choice.png](./cards/representative/libra-choice.png) |
+| 주제     | 카드 ID        | 콘셉트 원화                                                             |
+| -------- | -------------- | ----------------------------------------------------------------------- |
+| 자기이해 | `cancer.self`  | [cancer-self.png](./cards/representative/cancer-self.png)               |
+| 사랑     | `aries.love`   | [aries-love-eclipse.png](./cards/representative/aries-love-eclipse.png) |
+| 일       | `taurus.work`  | [taurus-work.png](./cards/representative/taurus-work.png)               |
+| 결정     | `libra.choice` | [libra-choice.png](./cards/representative/libra-choice.png)             |
 
 ### 유료 파일럿 24장
 
