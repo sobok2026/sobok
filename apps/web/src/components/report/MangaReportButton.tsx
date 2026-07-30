@@ -1,8 +1,6 @@
 'use client'
 
 import type { POSTV1MangaIdReportBody, POSTV1MangaIdReportResponse } from '@sobok/contracts'
-
-import { MangaReportReason } from '@sobok/contracts'
 import { Dialog, DialogBody, DialogFooter, DialogHeader } from '@sobok/ui'
 import { useMutation } from '@tanstack/react-query'
 import { Flag } from 'lucide-react'
@@ -88,12 +86,12 @@ export default function MangaReportButton({ mangaId, className = '', labelClassN
             <ReasonButton
               disabled={reportMutation.isPending}
               label={t('reasons.deepfake')}
-              onClick={() => reportMutation.mutate({ reason: MangaReportReason.DEEPFAKE })}
+              onClick={() => reportMutation.mutate({ reason: 'DEEPFAKE' })}
             />
             <ReasonButton
               disabled={reportMutation.isPending}
               label={t('reasons.realPersonMinor')}
-              onClick={() => reportMutation.mutate({ reason: MangaReportReason.REAL_PERSON_MINOR })}
+              onClick={() => reportMutation.mutate({ reason: 'REAL_PERSON_MINOR' })}
             />
           </div>
           <div className="grid gap-1 p-3 py-2 text-xs text-foreground-subtle">

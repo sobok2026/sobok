@@ -1,7 +1,7 @@
-import { LOCALE_LANGUAGE_TAGS, Locale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
 
 export function formatKRW(amount: number, locale: Locale): string {
-  if (locale === Locale.KO) {
+  if (locale === 'ko') {
     return `${amount.toLocaleString('ko-KR')}원`
   }
 

@@ -2,7 +2,7 @@ import { type POSTV1PointTokenResponse, PROBLEM, postV1PointTokenRequestSchema }
 import { db } from '@sobok/db/app'
 import { adImpressionTokenTable, pointTransactionTable } from '@sobok/db/app/points'
 import { POINT_CONSTANTS, TRANSACTION_TYPE } from '@sobok/domain/points/model'
-import { CookieKey } from '@sobok/http/cookie'
+import { COOKIE_KEY } from '@sobok/http/cookie'
 import { and, eq, gt, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { deleteCookie, getCookie } from 'hono/cookie'
@@ -23,7 +23,7 @@ const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json'
 route.post('/', ...middlewares, async (c) => {
   const userId = c.get('user')!.id
 
-  const turnstileCookie = getCookie(c, CookieKey.POINTS_TURNSTILE)
+  const turnstileCookie = getCookie(c, COOKIE_KEY.POINTS_TURNSTILE)
 
   if (!turnstileCookie) {
     return problemResponse(c, { problem: PROBLEM.TURNSTILE_REQUIRED })
@@ -32,7 +32,7 @@ route.post('/', ...middlewares, async (c) => {
   const verified = await verifyPointsTurnstileToken(turnstileCookie)
 
   if (!verified || verified.userId !== userId) {
-    deleteCookie(c, CookieKey.POINTS_TURNSTILE, { path: '/api/v1/points', secure: true })
+    deleteCookie(c, COOKIE_KEY.POINTS_TURNSTILE, { path: '/api/v1/points', secure: true })
     return problemResponse(c, { problem: PROBLEM.TURNSTILE_REQUIRED })
   }
 

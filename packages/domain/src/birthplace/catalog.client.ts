@@ -1,4 +1,4 @@
-import { Locale } from '../locale'
+import type { Locale } from '../locale'
 import type { BirthplaceCatalog } from './model'
 
 type GeneratedCatalogModule = {
@@ -6,10 +6,10 @@ type GeneratedCatalogModule = {
 }
 
 const LOADERS = {
-  [Locale.KO]: () => import('./ko.generated'),
-  [Locale.EN]: () => import('./en.generated'),
-  [Locale.JA]: () => import('./ja.generated'),
-  [Locale.ZH]: () => import('./zh.generated'),
+  ko: () => import('./ko.generated'),
+  en: () => import('./en.generated'),
+  ja: () => import('./ja.generated'),
+  zh: () => import('./zh.generated'),
 } satisfies Record<Locale, () => Promise<GeneratedCatalogModule>>
 
 const catalogPromises = new Map<Locale, Promise<BirthplaceCatalog>>()

@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 // Evergreen, server-rendered FAQ copy. Kept as a plain module (like legal.ts)
 // rather than next-intl messages so the answers stay crawlable prose and feed
@@ -8,7 +8,7 @@ export type FaqItem = { q: string; a: string }
 type FaqContent = { heading: string; items: FaqItem[] }
 
 export const FAQ = {
-  [Locale.KO]: {
+  ko: {
     heading: '자주 묻는 질문',
     items: [
       {
@@ -38,7 +38,7 @@ export const FAQ = {
     ],
   },
 
-  [Locale.EN]: {
+  en: {
     heading: 'Frequently asked questions',
     items: [
       {
@@ -68,7 +68,7 @@ export const FAQ = {
     ],
   },
 
-  [Locale.JA]: {
+  ja: {
     heading: 'よくある質問',
     items: [
       {
@@ -98,7 +98,7 @@ export const FAQ = {
     ],
   },
 
-  [Locale.ZH]: {
+  zh: {
     heading: '常见问题',
     items: [
       {

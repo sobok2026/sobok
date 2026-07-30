@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import { LOCALES } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
@@ -14,7 +14,7 @@ export const dynamicParams = false
 
 export function generateStaticParams() {
   const topics = allTopicKeys()
-  return Object.values(Locale).flatMap((locale) => topics.map((topic) => ({ locale, topic })))
+  return LOCALES.flatMap((locale) => topics.map((topic) => ({ locale, topic })))
 }
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/talk/[topic]'>): Promise<Metadata> {

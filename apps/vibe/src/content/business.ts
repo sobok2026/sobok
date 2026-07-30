@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 import { LEGAL_CONTACT_EMAIL } from './legal'
 
@@ -52,7 +52,7 @@ export type BusinessLabels = {
 // Field values stay in Korean on every locale (they mirror the legal registration); only the labels and the
 // section chrome are localized. This is standard for a Korean 통신판매업자 disclosure.
 export const BUSINESS_LABELS = {
-  [Locale.KO]: {
+  ko: {
     heading: '사업자 정보',
     description: '전자상거래법에 따라 판매자 정보를 안내합니다.',
     lookupLabel: '사업자정보확인',
@@ -68,7 +68,7 @@ export const BUSINESS_LABELS = {
       privacyOfficer: '개인정보보호책임자',
     },
   },
-  [Locale.EN]: {
+  en: {
     heading: 'Business information',
     description: 'Seller information disclosed under the Korean Act on Consumer Protection in Electronic Commerce.',
     lookupLabel: 'Verify registration',
@@ -84,7 +84,7 @@ export const BUSINESS_LABELS = {
       privacyOfficer: 'Privacy officer',
     },
   },
-  [Locale.JA]: {
+  ja: {
     heading: '事業者情報',
     description: '韓国の電子商取引法に基づき、販売者情報をご案内します。',
     lookupLabel: '事業者情報の確認',
@@ -100,7 +100,7 @@ export const BUSINESS_LABELS = {
       privacyOfficer: '個人情報保護責任者',
     },
   },
-  [Locale.ZH]: {
+  zh: {
     heading: '经营者信息',
     description: '依据韩国《电子商务消费者保护法》公示销售者信息。',
     lookupLabel: '经营者信息查询',

@@ -1,4 +1,8 @@
-// RFC 9457 problem+json for the deeptype API. Every money/entitlement response is no-store.
+import { createProblem } from '@sobok/edge/problem'
+
+// The deeptype slug vocabulary. The RFC 9457 wire shape, the content-type and the no-store discipline are
+// `@sobok/edge/problem`'s — identical in every Worker — and what stays here is the only part that is this
+// app's: which slugs exist and what URI base they hang off.
 const BASE = 'https://sobok.app/problems/deep-type/'
 
 export type ProblemSlug =
@@ -36,25 +40,5 @@ export type ProblemSlug =
   | 'instrument-retired'
   | 'answers-expired'
 
-export function problem(
-  status: number,
-  slug: ProblemSlug,
-  detail?: string,
-  extra?: Record<string, unknown>,
-  extraHeaders?: Record<string, string>,
-): Response {
-  const headers = new Headers({
-    'content-type': 'application/problem+json; charset=utf-8',
-    'cache-control': 'no-store',
-  })
-  // report-generating is a 202 poll signal, not an error; the handler passes Retry-After via extraHeaders.
-  if (extraHeaders) {
-    for (const [key, value] of Object.entries(extraHeaders)) {
-      headers.set(key, value)
-    }
-  }
-  return new Response(
-    JSON.stringify({ type: BASE + slug, title: slug, status, ...(detail ? { detail } : {}), ...extra }),
-    { status, headers },
-  )
-}
+// report-generating is a 202 poll signal, not an error; that handler passes Retry-After through `headers`.
+export const problem = createProblem<ProblemSlug>(BASE)

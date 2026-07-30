@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
+import { LOCALES } from '@sobok/domain/locale'
 import ts from 'typescript'
 
 import { LEGAL } from '../src/content/legal'
@@ -79,8 +80,6 @@ describe('free deliverable invariant', () => {
  * four locales — including a PortOne 결제창 label that matched no contract in any language.
  */
 describe('product name invariant', () => {
-  const LOCALES = ['ko', 'en', 'ja', 'zh'] as const
-
   test('every locale states the name the contract uses', () => {
     for (const locale of LOCALES) {
       const documents = [LEGAL[locale].terms, LEGAL[locale].refund]

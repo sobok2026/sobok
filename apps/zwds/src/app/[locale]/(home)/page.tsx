@@ -1,4 +1,4 @@
-import { LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
+import { LOCALE_OPEN_GRAPH_TAGS, LOCALES } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import FaqSection from '@/components/FaqSection'
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
     alternates: {
       canonical,
       languages: {
-        ...Object.fromEntries(Object.values(Locale).map((entry) => [entry, `/${entry}`])),
+        ...Object.fromEntries(LOCALES.map((entry) => [entry, `/${entry}`])),
         'x-default': '/',
       },
     },
@@ -39,9 +39,9 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
       description,
       images,
       locale: openGraphLocale,
-      alternateLocale: Object.values(Locale)
-        .map((entry) => LOCALE_OPEN_GRAPH_TAGS[entry])
-        .filter((entry) => entry !== openGraphLocale),
+      alternateLocale: LOCALES.map((entry) => LOCALE_OPEN_GRAPH_TAGS[entry]).filter(
+        (entry) => entry !== openGraphLocale,
+      ),
       siteName: SITE_NAME[locale],
       type: 'website',
       url: canonical,

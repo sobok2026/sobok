@@ -25,6 +25,27 @@ export const AXIS_POLES = {
   UO: ['U', 'O'],
 } as const satisfies Record<AxisId, readonly [string, string]>
 
+/**
+ * Whether a code letter is the axis's FIRST pole. Everything that reads a letter needs this and nothing can
+ * avoid it: indexing a template-literal code type yields a bare `string`, and a declared letter is respondent
+ * input, so anything that is not the first pole folds onto the second. Folding rather than throwing is what
+ * keeps every downstream lookup on a key the copy tables own.
+ *
+ * The fold was written out four times — `poleOf` in the free engine, `poleLabel` in the paid engine, and inline
+ * in both `axisMovement` and `namedAxis` — and each copy's comment pointed at one of the others as the reason it
+ * was correct. It is the predicate rather than the pole because the four callers want different things out of
+ * it: a pole letter, a pole label, and twice a whole `NamedPole`.
+ */
+export function isFirstPole(axis: AxisId, letter: string | undefined): boolean {
+  return letter === AXIS_POLES[axis][0]
+}
+
+/** The pole letter a code letter names, folded. For callers that key a table by the pole itself. */
+export function leadingPole(axis: AxisId, letter: string | undefined): string {
+  const [first, second] = AXIS_POLES[axis]
+  return isFirstPole(axis, letter) ? first : second
+}
+
 export type AgreementValue = 1 | 2 | 3 | 4
 export type OptionIndex = 0 | 1 | 2 | 3
 

@@ -16,7 +16,11 @@ export class EntitlementEnforcer {
   private readonly socketsByUser = new Map<string, Set<ServerWebSocket<SocketData>>>()
   private timer: ReturnType<typeof setInterval> | null = null
 
-  constructor(private readonly rooms: RoomRegistry) {}
+  private readonly rooms: RoomRegistry
+
+  constructor(rooms: RoomRegistry) {
+    this.rooms = rooms
+  }
 
   register(ws: ServerWebSocket<SocketData>): void {
     const sockets = this.socketsByUser.get(ws.data.userId)

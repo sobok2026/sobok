@@ -1,4 +1,4 @@
-import { type GETV1SearchTrendingResponse, getV1SearchTrendingQuerySchema, TrendingType } from '@sobok/contracts'
+import { type GETV1SearchTrendingResponse, getV1SearchTrendingQuerySchema } from '@sobok/contracts'
 import { createCacheControl } from '@sobok/http/cache-control'
 import { sec } from '@sobok/std'
 import { Hono } from 'hono'
@@ -17,14 +17,14 @@ trendingRoutes.get('/', ...middlewares, async (c) => {
   const { limit, type } = c.req.valid('query')
 
   const { keywords = [], cacheMaxAge } = {
-    [TrendingType.DAILY]: {
+    daily: {
       cacheMaxAge: sec('1 day'),
     },
-    [TrendingType.HOURLY]: {
+    hourly: {
       keywords: await trendingKeywordsService.getTrendingHourly(limit),
       cacheMaxAge: sec('2 minutes'),
     },
-    [TrendingType.WEEKLY]: {
+    weekly: {
       cacheMaxAge: sec('1 week'),
     },
   }[type]

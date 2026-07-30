@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 export type DeepTypeCheckoutReturnContent = {
   checkingBody: string
@@ -13,7 +13,7 @@ export type DeepTypeCheckoutReturnContent = {
 }
 
 export const DEEP_TYPE_CHECKOUT_RETURN = {
-  [Locale.KO]: {
+  ko: {
     metadata: { title: '겉속유형 결제 확인', description: '겉속유형 결제를 확인하고 심층 리포트를 이어서 만들어요.' },
     eyebrow: 'DeepType',
     checkingTitle: '결제를 확인하고 바로 이어가요',
@@ -24,7 +24,7 @@ export const DEEP_TYPE_CHECKOUT_RETURN = {
     reopenCta: '이메일로 내 리포트 찾기',
     startOverCta: '겉속유형 처음으로',
   },
-  [Locale.EN]: {
+  en: {
     metadata: {
       title: 'Verify DeepType payment',
       description: 'Verify your DeepType payment and continue your report.',
@@ -38,7 +38,7 @@ export const DEEP_TYPE_CHECKOUT_RETURN = {
     reopenCta: 'Find report by email',
     startOverCta: 'Back to DeepType',
   },
-  [Locale.JA]: {
+  ja: {
     metadata: { title: 'DeepType決済確認', description: 'DeepTypeの決済結果を確認し、鑑定書作成を続けます。' },
     eyebrow: 'DeepType',
     checkingTitle: '決済を確認しています',
@@ -49,7 +49,7 @@ export const DEEP_TYPE_CHECKOUT_RETURN = {
     reopenCta: 'メールで鑑定書を探す',
     startOverCta: 'DeepTypeの最初へ',
   },
-  [Locale.ZH]: {
+  zh: {
     metadata: { title: '确认DeepType付款', description: '确认DeepType付款结果并继续生成报告。' },
     eyebrow: 'DeepType',
     checkingTitle: '正在确认付款',

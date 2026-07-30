@@ -2,7 +2,7 @@ import { type POSTV1PostResponse, postV1PostBodySchema } from '@sobok/contracts'
 import { db } from '@sobok/db/app'
 import { postTable } from '@sobok/db/app/post'
 import { isPostgresError } from '@sobok/db/error'
-import { PostType } from '@sobok/domain/post/model'
+import { POST_TYPE } from '@sobok/domain/post/model'
 import { Hono } from 'hono'
 import { createFactory } from 'hono/factory'
 
@@ -24,7 +24,7 @@ route.post('/', ...middlewares, async (c) => {
     return problemResponse(c, { status: 400, detail: '답글과 리포스트를 동시에 지정할 수 없어요' })
   }
 
-  const type = parentPostId ? PostType.REPLY : referredPostId ? PostType.REPOST : PostType.TEXT
+  const type = parentPostId ? POST_TYPE.REPLY : referredPostId ? POST_TYPE.REPOST : POST_TYPE.TEXT
 
   try {
     const [createdPost] = await db

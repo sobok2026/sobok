@@ -1,10 +1,10 @@
+import { alertDiscord } from '@sobok/edge/alert'
+import { openDB, withDB } from '@sobok/edge/db/client'
 import { Hono } from 'hono'
 import { verifyWebhook } from '~/billing/portone'
-import { openFresh, withDB } from '~/db/client'
 import { recordWebhookEvent } from '~/db/queries/webhook'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
-import { alertDiscord } from '~/lib/alert'
 import { applyRefund, confirmPurchase } from '~/payments/confirm'
 
 import { creds } from '../creds'
@@ -36,7 +36,7 @@ route.post('/', async (c) => {
 
   const acted = event
 
-  return withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  return withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     if (acted.type === 'paid') {
       const outcome = await confirmPurchase(db, { creds: portOneCreds, env: c.env }, acted.paymentId)
 

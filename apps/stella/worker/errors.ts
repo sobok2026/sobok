@@ -1,5 +1,9 @@
-// RFC 9457 problem+json for the stella comments API. All responses are no-store — the board is public but
-// dynamic, and the money-DB caching discipline (never cache entitlement/state) carries over as a habit.
+import { createProblem } from '@sobok/edge/problem'
+
+// The comments slug vocabulary. The RFC 9457 wire shape, the content-type and the no-store discipline are
+// `@sobok/edge/problem`'s — identical in every Worker — and what stays here is the only part that is this
+// app's: which slugs exist and what URI base they hang off. All responses are no-store: the board is public
+// but dynamic, and the money-DB caching discipline (never cache entitlement/state) carries over as a habit.
 const BASE = 'https://sobok.cc/problems/comments/'
 
 export type ProblemSlug =
@@ -15,23 +19,4 @@ export type ProblemSlug =
   | 'service-unavailable'
   | 'internal'
 
-export function problem(
-  status: number,
-  slug: ProblemSlug,
-  detail?: string,
-  extraHeaders?: Record<string, string>,
-): Response {
-  const headers = new Headers({
-    'content-type': 'application/problem+json; charset=utf-8',
-    'cache-control': 'no-store',
-  })
-  if (extraHeaders) {
-    for (const [key, value] of Object.entries(extraHeaders)) {
-      headers.set(key, value)
-    }
-  }
-  return new Response(JSON.stringify({ type: BASE + slug, title: slug, status, ...(detail ? { detail } : {}) }), {
-    status,
-    headers,
-  })
-}
+export const problem = createProblem<ProblemSlug>(BASE)

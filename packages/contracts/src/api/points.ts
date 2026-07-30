@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import { LOCALES } from '@sobok/domain/locale'
 import { ROULETTE_CONFIG, type ROULETTE_SEGMENT_IDS } from '@sobok/domain/points/roulette'
 import { z } from 'zod'
 
@@ -62,7 +62,7 @@ export interface GETV1PointsDonationRecipientResponse {
 
 export const getV1PointsDonationsMeQuerySchema = z.object({
   cursor: z.coerce.number().int().positive().optional(),
-  locale: z.enum(Locale),
+  locale: z.enum(LOCALES),
 })
 
 export const postV1PointEarnRequestSchema = z.object({
@@ -144,7 +144,7 @@ export interface Transaction {
 
 export const getV1PointTransactionQuerySchema = z.object({
   cursor: z.coerce.number().int().positive().optional(),
-  locale: z.enum(Locale),
+  locale: z.enum(LOCALES),
 })
 
 export interface GETV1PointTransactionResponse {

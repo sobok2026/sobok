@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 // Evergreen, server-rendered FAQ copy. Kept as a plain module (like legal.ts)
 // rather than next-intl messages so the answers stay crawlable prose and feed
@@ -9,7 +9,7 @@ export type FaqPageKey = 'constellation' | 'today' | 'love'
 type FaqContent = { heading: string } & Record<FaqPageKey, FaqItem[]>
 
 export const FAQ = {
-  [Locale.KO]: {
+  ko: {
     heading: '자주 묻는 질문',
     constellation: [
       {
@@ -67,7 +67,7 @@ export const FAQ = {
     ],
   },
 
-  [Locale.EN]: {
+  en: {
     heading: 'Frequently asked questions',
     constellation: [
       {
@@ -125,7 +125,7 @@ export const FAQ = {
     ],
   },
 
-  [Locale.JA]: {
+  ja: {
     heading: 'よくある質問',
     constellation: [
       {
@@ -183,7 +183,7 @@ export const FAQ = {
     ],
   },
 
-  [Locale.ZH]: {
+  zh: {
     heading: '常见问题',
     constellation: [
       {

@@ -7,11 +7,10 @@ import {
   DRAIN_SPREAD_MEANING,
 } from '../content/band-labels.free'
 import { DRAIN_LABELS } from '../content/work-labels.free'
-import { WORLD_JOB_CORE, WORLD_JOB_FAMILY } from '../content/world-job'
-import { WORLD_JOB_NAMES } from '../content/world-job-names'
+import { resolveWorldJob } from '../content/world-job'
+import { type NamedFacet, nameFacets, shownDrainFacets, weakerTentativeBand } from '../facets'
 import {
   AXES,
-  AXIS_POLES,
   type AxisId,
   type BandCopy,
   type DrainFacet,
@@ -20,9 +19,9 @@ import {
   GEM_AXES,
   type GemCode,
   type InnerCode,
+  leadingPole,
   type TentativeBand,
   TYPE_AXES,
-  WORK_FACETS,
 } from '../model'
 
 // The free engine. It is isomorphic on purpose: the free result is already computed in the browser
@@ -96,15 +95,9 @@ export interface FreeAxisBand {
   leading: string
 }
 
-export interface FreeDrainFacet {
-  action: string
-  id: DrainFacet
-  label: string
-}
-
 export interface FreeDrainSignature {
   /** Facets tied at the top count, in canonical order. Tied, not ranked — three items cannot separate them. */
-  leaders: readonly FreeDrainFacet[]
+  leaders: readonly NamedFacet<DrainFacet>[]
   meaning: string
   narrowNote: string
   spread: BandCopy
@@ -148,12 +141,7 @@ export function buildFreeReport(profile: FreeAssessmentProfile): FreeReport {
     tier: 'free',
     // Three items per axis put `|S3|` on {1,3,5,7,9}, so an exact tie is unreachable and both codes are always
     // eight decided letters. That is what makes the world job a single card with no tie branch to render.
-    worldJob: {
-      codes: { gem, inner },
-      core: WORLD_JOB_CORE[gem],
-      family: WORLD_JOB_FAMILY[inner],
-      name: WORLD_JOB_NAMES[`${inner}_${gem}`],
-    },
+    worldJob: { codes: { gem, inner }, ...resolveWorldJob(inner, gem) },
   }
 }
 
@@ -175,14 +163,7 @@ function reading(band3: TentativeBand, letter: string | undefined): AxisReading 
 }
 
 function axisBand(axis: AxisId, { band3, letter }: AxisReading): FreeAxisBand {
-  return { band: CLARITY_BANDS_FREE[band3], band3, id: axis, leading: poleOf(axis, letter) }
-}
-
-// The letter arrives as a bare `string` because indexing a template-literal code type yields `string`. Folding
-// anything that is not the first pole onto the second keeps every downstream lookup on a key the tables own.
-function poleOf(axis: AxisId, letter: string): string {
-  const [first, second] = AXIS_POLES[axis]
-  return letter === first ? first : second
+  return { band: CLARITY_BANDS_FREE[band3], band3, id: axis, leading: leadingPole(axis, letter) }
 }
 
 // `ABILITY[axis]` is one of eight two-key objects and the checker cannot correlate it with a runtime letter, so
@@ -190,10 +171,8 @@ function poleOf(axis: AxisId, letter: string): string {
 // only letters the table declares, so the lookup cannot miss.
 function abilitySlugFor(axis: AxisId, letter: string): AbilitySlug {
   const poles: Readonly<Record<string, AbilitySlug>> = ABILITY[axis]
-  return poles[poleOf(axis, letter)]
+  return poles[leadingPole(axis, letter)]
 }
-
-const BAND3_RANK = { faint3: 0, moderate3: 1, distinct3: 2 } as const satisfies Record<TentativeBand, number>
 
 function isStrengthBand(band3: TentativeBand): band3 is StrengthBand {
   return band3 !== 'faint3'
@@ -218,7 +197,7 @@ function axisCards(readings: Record<AxisId, AxisReading>): StrengthCardSets {
       axes: [axis],
       band: CLARITY_BANDS_FREE[band3],
       copy: ABILITY_DETAIL[slug],
-      poles: [poleOf(axis, letter)],
+      poles: [leadingPole(axis, letter)],
       slug,
     })
   }
@@ -239,8 +218,8 @@ function comboCards(readings: Record<AxisId, AxisReading>): StrengthCardSets {
       continue
     }
 
-    const band3 = BAND3_RANK[first.band3] <= BAND3_RANK[second.band3] ? first.band3 : second.band3
-    const poles = [poleOf(pair.a, first.letter), poleOf(pair.b, second.letter)]
+    const band3 = weakerTentativeBand(first.band3, second.band3)
+    const poles = [leadingPole(pair.a, first.letter), leadingPole(pair.b, second.letter)]
     const cells: Readonly<Record<string, AbilitySlug>> = pair.n
     const slug = cells[poles.join('')]
 
@@ -256,22 +235,14 @@ function comboCards(readings: Record<AxisId, AxisReading>): StrengthCardSets {
   return sets
 }
 
-// `spread` is typed `FreeDrainSpread`, so the branch count copy the paid tier owns is not reachable from here
-// and `DRAIN_SPREAD_FREE` has no cell for it to reach.
-//
-// The list is sized by the band, not by `drain.leaders`. The band says how many facets to put on screen so the
-// real leader stays inside the set; `leaders` holds the tied set, which is one facet in every reachable
-// `double` vector — reading it made "두 조건이 비슷하게 나왔어요" sit above a list of one. Ties break on
-// declaration order because Array#sort is stable.
-const FREE_DRAIN_SHOWN_COUNT = { double: 2, triple: 3 } as const
-
+// `spread` is typed `FreeDrainSpread`, so the `single` band the paid tier owns is not reachable from here and
+// `DRAIN_SPREAD_FREE` has no cell for it. The shown set is sized by the band rather than by `drain.leaders` —
+// see `shownDrainFacets`, which both engines call.
 function buildDrainSignature(drain: FreeWorkProfile['drain']): FreeDrainSignature {
-  const shown = [...WORK_FACETS.drain]
-    .sort((a, b) => drain.counts[b] - drain.counts[a])
-    .slice(0, FREE_DRAIN_SHOWN_COUNT[drain.spread])
+  const shown = shownDrainFacets(drain.counts, drain.spread)
 
   return {
-    leaders: shown.map((id) => ({ action: DRAIN_LABELS[id].action, id, label: DRAIN_LABELS[id].name })),
+    leaders: nameFacets(shown, DRAIN_LABELS),
     meaning: DRAIN_SPREAD_MEANING,
     narrowNote: DRAIN_NARROW_NOTE_FREE,
     spread: DRAIN_SPREAD_FREE[drain.spread],

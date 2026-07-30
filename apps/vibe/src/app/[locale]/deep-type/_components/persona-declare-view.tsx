@@ -1,4 +1,6 @@
-'use client'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
+
+;('use client')
 
 import { PERSONA_CODES, type PersonaCode } from '@deep-type/model'
 import { cn } from '@/utils/cn'
@@ -10,8 +12,6 @@ type PersonaDeclareViewProps = {
   onGuide: () => void
   ui: DeepTypeUiText
 }
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 /**
  * The first screen of the free run and the only place `personaSource` is decided. Nothing here is scored: the
@@ -33,7 +33,7 @@ export function PersonaDeclareView({ onDeclare, onGuide, ui }: PersonaDeclareVie
             <button
               className={cn(
                 'min-h-13 rounded-2xl border border-page-border bg-page-surface font-black text-base tabular-nums transition-colors hover:border-page-accent hover:bg-page-accent/8 hover:text-page-accent',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               key={code}
               onClick={() => onDeclare(code)}
@@ -51,7 +51,7 @@ export function PersonaDeclareView({ onDeclare, onGuide, ui }: PersonaDeclareVie
         <button
           className={cn(
             'mt-3 min-h-14 w-full rounded-2xl border border-page-border bg-page-surface px-5 text-left font-bold text-page-ink transition-colors hover:border-page-accent hover:text-page-accent',
-            focusClassName,
+            FOCUS_CLASS_NAME,
           )}
           onClick={onGuide}
           type="button"

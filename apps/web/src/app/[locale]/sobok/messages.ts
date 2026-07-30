@@ -1,9 +1,7 @@
-import { Locale } from '@sobok/domain/locale'
-
 import type { LocalizedMessages } from '@/i18n/messages'
 
 export const messages = {
-  [Locale.KO]: {
+  ko: {
     Sobok: {
       nav: {
         chats: '채팅',
@@ -189,7 +187,7 @@ export const messages = {
       },
     },
   },
-  [Locale.EN]: {
+  en: {
     Sobok: {
       nav: {
         chats: 'Chats',
@@ -379,7 +377,7 @@ export const messages = {
       },
     },
   },
-  [Locale.JA]: {
+  ja: {
     Sobok: {
       nav: {
         chats: 'チャット',
@@ -566,7 +564,7 @@ export const messages = {
       },
     },
   },
-  [Locale.ZH]: {
+  zh: {
     Sobok: {
       nav: {
         chats: '聊天',

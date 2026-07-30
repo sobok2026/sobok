@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import { LOCALES } from '@sobok/domain/locale'
 import { TAGS_PER_PAGE } from '@sobok/domain/tag/policy'
 import { z } from 'zod'
 
@@ -10,7 +10,7 @@ export const getV1TagQuerySchema = z.object({
   category: z.enum(TagCategoryParam),
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(TAGS_PER_PAGE).default(TAGS_PER_PAGE),
-  locale: z.enum(Locale),
+  locale: z.enum(LOCALES),
 })
 
 export interface TagItem {

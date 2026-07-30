@@ -1,6 +1,6 @@
 import { env as authEnv } from '@sobok/env/server.auth'
 import { env as commonEnv } from '@sobok/env/server.common'
-import { CookieKey } from '@sobok/http/cookie'
+import { COOKIE_KEY } from '@sobok/http/cookie'
 import { sec } from '@sobok/std'
 import type { JWTPayload } from 'jose'
 import { jwtVerify, SignJWT } from 'jose'
@@ -22,7 +22,7 @@ export async function signPointsTurnstileToken(userId: string): Promise<string> 
   }
 
   return await new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256', typ: CookieKey.POINTS_TURNSTILE })
+    .setProtectedHeader({ alg: 'HS256', typ: COOKIE_KEY.POINTS_TURNSTILE })
     .setIssuer(issuer)
     .setIssuedAt()
     .setExpirationTime(Math.floor(Date.now() / 1000) + POINTS_TURNSTILE_TTL_SECONDS)
@@ -34,7 +34,7 @@ export async function verifyPointsTurnstileToken(token: string): Promise<{ userI
     const { payload } = await jwtVerify<PointsTurnstileTokenPayload>(token, secret, {
       algorithms: ['HS256'],
       issuer,
-      typ: CookieKey.POINTS_TURNSTILE,
+      typ: COOKIE_KEY.POINTS_TURNSTILE,
     })
 
     if (!payload.userId || !payload.exp) {

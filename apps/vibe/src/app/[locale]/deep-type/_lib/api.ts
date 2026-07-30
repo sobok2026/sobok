@@ -50,11 +50,13 @@ export class ApiError extends Error {
   // mean opposite things to the person reading the screen: a refunded purchase is over, while a retired
   // instrument or a purged answer set means "your report is still yours, the follow-up questions are not".
   // Null whenever the failure did not come back as a problem document — a proxy, an edge error, a 502.
-  constructor(
-    readonly status: number,
-    readonly slug: string | null = null,
-  ) {
+  readonly status: number
+  readonly slug: string | null
+
+  constructor(status: number, slug: string | null = null) {
     super(`deeptype api ${status}${slug ? ` ${slug}` : ''}`)
+    this.status = status
+    this.slug = slug
   }
 }
 

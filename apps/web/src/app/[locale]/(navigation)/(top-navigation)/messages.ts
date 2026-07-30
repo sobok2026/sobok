@@ -1,9 +1,7 @@
-import { Locale } from '@sobok/domain/locale'
-
 import type { LocalizedMessages } from '@/i18n/messages'
 
 export const messages = {
-  [Locale.KO]: {
+  ko: {
     Metadata: {
       explore: {
         fortune: {
@@ -115,7 +113,7 @@ export const messages = {
       adultGateDescription: '추천 작품을 보려면 익명 성인인증이 필요해요',
     },
   },
-  [Locale.EN]: {
+  en: {
     Metadata: {
       explore: {
         fortune: {
@@ -227,7 +225,7 @@ export const messages = {
       adultGateDescription: 'Anonymous adult verification is required to view recommended works.',
     },
   },
-  [Locale.JA]: {
+  ja: {
     Metadata: {
       explore: {
         fortune: {
@@ -339,7 +337,7 @@ export const messages = {
       adultGateDescription: 'おすすめ作品を見るには匿名成人認証が必要です',
     },
   },
-  [Locale.ZH]: {
+  zh: {
     Metadata: {
       explore: {
         fortune: {

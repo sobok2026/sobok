@@ -1,15 +1,15 @@
 import { isPayMethodAllowed, PAY_METHODS } from '@deep-type/pay-method'
+import { alertDiscord } from '@sobok/edge/alert'
+import { openDB, withDB } from '@sobok/edge/db/client'
+import { randomToken, sha256Hex } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
 import { z } from 'zod'
-
-import { openFresh, withDB } from '~/db/client'
 import { createPendingPurchase } from '~/db/queries/purchase'
 import { getResultForCheckoutByToken } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
-import { alertDiscord } from '~/lib/alert'
 import { resolveSku } from '~/lib/pricing'
-import { newPaymentId, normalizeEmail, randomToken, sha256Hex } from '~/lib/tokens'
+import { newPaymentId, normalizeEmail } from '~/lib/tokens'
 import { guardTurnstile } from '~/lib/turnstile'
 import { DEEPTYPE_CHECKOUT_ACTION } from '../actions'
 import { channelKeyFor } from '../channels'
@@ -79,7 +79,7 @@ route.post('/', async (c) => {
   const accessToken = randomToken()
   const now = new Date()
 
-  const detail = await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  const detail = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const result = await getResultForCheckoutByToken(db, body.resultToken)
     if (!result) {
       return null

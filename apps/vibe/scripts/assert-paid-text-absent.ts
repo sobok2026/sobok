@@ -17,14 +17,14 @@ import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { DRAIN_SPREAD_PAID } from '../deep-type/content/band-labels.paid'
 import { ENVIRONMENT_LABELS, INTEREST_LABELS, NEED_LABELS, PURPOSE_LABELS } from '../deep-type/content/work-labels.paid'
-import { enPaidQuestionOptions } from '../src/app/[locale]/deep-type/_content/question-options/en.paid'
-import { jaPaidQuestionOptions } from '../src/app/[locale]/deep-type/_content/question-options/ja.paid'
-import { koPaidQuestionOptions } from '../src/app/[locale]/deep-type/_content/question-options/ko.paid'
-import { zhPaidQuestionOptions } from '../src/app/[locale]/deep-type/_content/question-options/zh.paid'
-import { enPaidQuestionPrompts } from '../src/app/[locale]/deep-type/_content/question-prompts/en.paid'
-import { jaPaidQuestionPrompts } from '../src/app/[locale]/deep-type/_content/question-prompts/ja.paid'
-import { koPaidQuestionPrompts } from '../src/app/[locale]/deep-type/_content/question-prompts/ko.paid'
-import { zhPaidQuestionPrompts } from '../src/app/[locale]/deep-type/_content/question-prompts/zh.paid'
+import { paidQuestionOptions as enOptions } from '../src/app/[locale]/deep-type/_content/question-options/en.paid'
+import { paidQuestionOptions as jaOptions } from '../src/app/[locale]/deep-type/_content/question-options/ja.paid'
+import { paidQuestionOptions as koOptions } from '../src/app/[locale]/deep-type/_content/question-options/ko.paid'
+import { paidQuestionOptions as zhOptions } from '../src/app/[locale]/deep-type/_content/question-options/zh.paid'
+import { paidQuestionPrompts as enPrompts } from '../src/app/[locale]/deep-type/_content/question-prompts/en.paid'
+import { paidQuestionPrompts as jaPrompts } from '../src/app/[locale]/deep-type/_content/question-prompts/ja.paid'
+import { paidQuestionPrompts as koPrompts } from '../src/app/[locale]/deep-type/_content/question-prompts/ko.paid'
+import { paidQuestionPrompts as zhPrompts } from '../src/app/[locale]/deep-type/_content/question-prompts/zh.paid'
 
 const VIBE_ROOT = resolve(dirname(import.meta.path), '..')
 const OUT_DIR = join(VIBE_ROOT, 'out')
@@ -38,14 +38,14 @@ const MIN_NEEDLE = 8
 
 function needles(): string[] {
   const catalogs = [
-    ...Object.values(koPaidQuestionPrompts),
-    ...Object.values(enPaidQuestionPrompts),
-    ...Object.values(jaPaidQuestionPrompts),
-    ...Object.values(zhPaidQuestionPrompts),
-    ...Object.values(koPaidQuestionOptions).flat(),
-    ...Object.values(enPaidQuestionOptions).flat(),
-    ...Object.values(jaPaidQuestionOptions).flat(),
-    ...Object.values(zhPaidQuestionOptions).flat(),
+    ...Object.values(koPrompts),
+    ...Object.values(enPrompts),
+    ...Object.values(jaPrompts),
+    ...Object.values(zhPrompts),
+    ...Object.values(koOptions).flat(),
+    ...Object.values(enOptions).flat(),
+    ...Object.values(jaOptions).flat(),
+    ...Object.values(zhOptions).flat(),
   ]
 
   // The forced-choice options are composed from the paid label tables rather than authored per item, so the

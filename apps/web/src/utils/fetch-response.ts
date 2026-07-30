@@ -20,8 +20,11 @@ export class HTTPResponseError extends Error {
     return this.response.status
   }
 
-  constructor(public readonly response: Response) {
+  readonly response: Response
+
+  constructor(response: Response) {
     super(response.statusText ? `HTTP ${response.status} ${response.statusText}` : `HTTP ${response.status}`)
+    this.response = response
   }
 }
 
@@ -44,15 +47,17 @@ export class ProblemDetailsError extends Error {
     return this.problem.type
   }
 
+  readonly problem: ProblemDetails
+  readonly response?: Response
+
   // message는 진단용(Sentry·로그) — 사용자 표시는 problem code를 Errors 카탈로그로 변환한다.
-  constructor(
-    public readonly problem: ProblemDetails,
-    public readonly response?: Response,
-  ) {
+  constructor(problem: ProblemDetails, response?: Response) {
     const code = getProblemCode(problem.type)
     const summary = problem.detail ?? problem.title
     const meta = [problem.status, code].filter(Boolean).join(' ')
     super(`[${meta}] ${summary}`)
+    this.problem = problem
+    this.response = response
   }
 }
 

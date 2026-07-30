@@ -1,6 +1,6 @@
 import '@test/setup.dom'
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import { getViewFromSearchParams, View } from '@sobok/std'
+import { getViewFromSearchParams, VIEW } from '@sobok/std'
 import { createTestNavigationWrapper } from '@test/utils/navigation'
 import { fireEvent, render } from '@testing-library/react'
 import { useSearchParams } from 'next/navigation'
@@ -54,7 +54,7 @@ describe('ViewToggle', () => {
   test('initialView가 주어지면 첫 렌더부터 해당 보기 방식이 선택된다', () => {
     window.history.replaceState({}, '', 'http://localhost:3000/library/bookmark?sort=created_desc&view=img')
 
-    const view = render(<ViewToggle initialView={View.IMAGE} />, { wrapper: createTestNavigationWrapper() })
+    const view = render(<ViewToggle initialView={VIEW.IMAGE} />, { wrapper: createTestNavigationWrapper() })
 
     expect(view.getByRole('radio', { name: '그림' }).getAttribute('aria-checked')).toBe('true')
     expect(view.getByRole('radio', { name: '카드' }).getAttribute('aria-checked')).toBe('false')
@@ -69,10 +69,10 @@ describe('ViewToggle', () => {
       { wrapper: createTestNavigationWrapper() },
     )
 
-    expect(view.getByTestId('view-indicator').textContent).toBe(View.CARD)
+    expect(view.getByTestId('view-indicator').textContent).toBe(VIEW.CARD)
 
     fireEvent.click(view.getByRole('radio', { name: '그림' }))
 
-    expect(view.getByTestId('view-indicator').textContent).toBe(View.IMAGE)
+    expect(view.getByTestId('view-indicator').textContent).toBe(VIEW.IMAGE)
   })
 })

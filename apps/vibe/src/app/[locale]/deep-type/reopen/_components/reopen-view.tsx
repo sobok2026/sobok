@@ -1,4 +1,6 @@
-'use client'
+import { FOCUS_CLASS_NAME } from '../../../../../components/focus'
+
+;('use client')
 
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { Lock } from '@mynaui/icons-react'
@@ -39,8 +41,6 @@ const REQUEST_ERROR_KEY_BY_KIND: Record<VerificationErrorKind, ReopenErrorKey> =
   rejected: 'verificationFailedError',
   unavailable: 'verificationUnavailableError',
 }
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export function ReopenView({ content, copy, locale }: ReopenViewProps) {
   const [phase, setPhase] = useState<Phase>('checking')
@@ -132,7 +132,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
             <button
               className={cn(
                 'mt-6 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-page-accent px-6 font-black text-sm text-white transition-colors hover:bg-page-accent/92',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               onClick={openReport}
               type="button"
@@ -172,7 +172,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
                 autoComplete="email"
                 className={cn(
                   'mt-2 min-h-12 w-full rounded-2xl border border-page-border bg-white px-4 font-medium text-page-ink outline-none placeholder:text-page-ink/36 focus-visible:border-page-accent',
-                  focusClassName,
+                  FOCUS_CLASS_NAME,
                 )}
                 id="deeptype-reopen-email"
                 inputMode="email"
@@ -198,7 +198,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
               <button
                 className={cn(
                   'mt-5 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white transition-colors hover:bg-page-accent/92 disabled:cursor-not-allowed disabled:bg-page-ink/20',
-                  focusClassName,
+                  FOCUS_CLASS_NAME,
                 )}
                 disabled={!turnstileToken || requestPending}
                 type="submit"
@@ -219,7 +219,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
           <Link
             className={cn(
               'mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full font-bold text-page-ink/54 text-sm hover:text-page-ink',
-              focusClassName,
+              FOCUS_CLASS_NAME,
             )}
             href={`/${locale}/deep-type`}
           >
@@ -331,7 +331,7 @@ function ReopenedReport({
             <button
               className={cn(
                 'mt-5 inline-flex min-h-11 items-center justify-center rounded-full border border-page-accent/50 px-5 font-bold text-page-accent text-sm hover:bg-page-accent/8 disabled:opacity-60',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               disabled={refund === 'pending'}
               onClick={requestRefund}

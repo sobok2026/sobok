@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import type { Locale } from '@sobok/domain/locale'
 
 import type { LegalContent } from './legal'
 
@@ -18,7 +18,7 @@ import type { LegalContent } from './legal'
  * server, and the label carries the real version anyway.
  */
 const V1_0 = {
-  [Locale.KO]: {
+  ko: {
     updatedLabel: '최종 업데이트',
     effectiveLabel: '시행일',
     versionLabel: '버전',
@@ -287,7 +287,7 @@ const V1_0 = {
     },
   },
 
-  [Locale.EN]: {
+  en: {
     updatedLabel: 'Last updated',
     effectiveLabel: 'Effective',
     versionLabel: 'Version',
@@ -556,7 +556,7 @@ const V1_0 = {
     },
   },
 
-  [Locale.JA]: {
+  ja: {
     updatedLabel: '最終更新',
     effectiveLabel: '施行日',
     versionLabel: 'バージョン',
@@ -827,7 +827,7 @@ const V1_0 = {
     },
   },
 
-  [Locale.ZH]: {
+  zh: {
     updatedLabel: '最后更新',
     effectiveLabel: '生效日期',
     versionLabel: '版本',
@@ -1115,21 +1115,21 @@ export function findArchived(segment: string): ArchivedVersion | undefined {
  * amended to satisfy a later type. Being archived is a property of the route, not of the document.
  */
 export const ARCHIVE_NOTICE: Record<Locale, { current: string; notice: string }> = {
-  [Locale.KO]: {
+  ko: {
     current: '현재 시행 중인 문서 보기',
     notice: '이 문서는 지난 버전이며 현재 시행되지 않습니다. 지금 적용되는 내용은 최신 버전에서 확인해 주세요.',
   },
-  [Locale.EN]: {
+  en: {
     current: 'View the document currently in effect',
     notice:
       'This is a superseded version and is no longer in effect. See the current version for the terms that apply today.',
   },
-  [Locale.JA]: {
+  ja: {
     current: '現在施行中の文書を見る',
     notice:
       'この文書は過去のバージョンであり、現在は施行されていません。現在適用される内容は最新バージョンでご確認ください。',
   },
-  [Locale.ZH]: {
+  zh: {
     current: '查看当前生效的文件',
     notice: '本文件为历史版本，现已不再生效。当前适用的内容请查阅最新版本。',
   },

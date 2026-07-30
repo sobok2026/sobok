@@ -1,11 +1,10 @@
 import { type PortOneChannel, payMethodsFor, sellableChannels } from '@deep-type/pay-method'
+import { LOCALES } from '@sobok/domain/locale'
 import { Hono } from 'hono'
 
 import type { AppEnv } from '~/env'
 
 const route = new Hono<AppEnv>()
-
-const LOCALES = ['ko', 'en', 'ja', 'zh'] as const
 
 // Deploy smoke check, not a client dependency: nothing in the browser ever calls this — the paywall's menu is
 // baked into the static bundle, and `/checkout` is what hands out the key a payment is actually opened with.

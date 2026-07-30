@@ -1,4 +1,4 @@
-import { Locale } from '../locale'
+import type { Locale } from '../locale'
 
 export const TOP_MANGA_PER_PAGE = 30
 export const REALTIME_PAGE_VIEW_MIN_THRESHOLD = 10
@@ -6,7 +6,7 @@ export const REALTIME_PAGE_RANKING_LIMIT = 20
 
 // apps/web 고정 라우트의 Metadata.*.title 문자열과 동기화해요
 const STATIC_PAGE_TITLES: Record<Locale, string[]> = {
-  [Locale.KO]: [
+  ko: [
     '로그인',
     '회원가입',
     '검열',
@@ -42,7 +42,7 @@ const STATIC_PAGE_TITLES: Record<Locale, string[]> = {
     '실시간',
     '검색',
   ],
-  [Locale.EN]: [
+  en: [
     'Log in',
     'Sign up',
     'Censor',
@@ -78,7 +78,7 @@ const STATIC_PAGE_TITLES: Record<Locale, string[]> = {
     'Realtime',
     'Search',
   ],
-  [Locale.JA]: [
+  ja: [
     'ログイン',
     '新規登録',
     '検閲',
@@ -114,7 +114,7 @@ const STATIC_PAGE_TITLES: Record<Locale, string[]> = {
     'リアルタイム',
     '検索',
   ],
-  [Locale.ZH]: [
+  zh: [
     '登录',
     '注册',
     '屏蔽',
@@ -157,22 +157,22 @@ const RANKING_PAGE_TITLES: Record<
   Locale,
   { format: (period: string, metric: string) => string; metrics: string[]; periods: string[] }
 > = {
-  [Locale.KO]: {
+  ko: {
     format: (period, metric) => `${period} ${metric} 순위`,
     metrics: ['조회', '북마크', '서재', '별점'],
     periods: ['일간', '주간', '월간', '분기', '연간'],
   },
-  [Locale.EN]: {
+  en: {
     format: (period, metric) => `${period} ${metric} Ranking`,
     metrics: ['Views', 'Bookmarks', 'Libraries', 'Ratings'],
     periods: ['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly'],
   },
-  [Locale.JA]: {
+  ja: {
     format: (period, metric) => `${period} ${metric} ランキング`,
     metrics: ['閲覧', 'ブックマーク', 'ライブラリ', '評価'],
     periods: ['日間', '週間', '月間', '四半期', '年間'],
   },
-  [Locale.ZH]: {
+  zh: {
     format: (period, metric) => `${period}${metric}排行`,
     metrics: ['浏览', '书签', '书库', '评分'],
     periods: ['日榜', '周榜', '月榜', '季度榜', '年榜'],

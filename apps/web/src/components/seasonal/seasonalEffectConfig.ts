@@ -1,4 +1,4 @@
-import { LOCALE_LANGUAGE_TAGS, Locale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS } from '@sobok/domain/locale'
 
 const MINUTE_MS = 60 * 1000
 const SEOUL_TIME_ZONE = 'Asia/Seoul'
@@ -93,7 +93,7 @@ function getFormatter(timeZone: string): Intl.DateTimeFormat {
     return cachedFormatter
   }
 
-  const formatter = new Intl.DateTimeFormat(LOCALE_LANGUAGE_TAGS[Locale.EN], {
+  const formatter = new Intl.DateTimeFormat(LOCALE_LANGUAGE_TAGS.en, {
     day: '2-digit',
     hour: '2-digit',
     hourCycle: 'h23',

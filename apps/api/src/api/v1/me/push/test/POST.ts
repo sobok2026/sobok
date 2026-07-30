@@ -1,7 +1,7 @@
 import { postV1MePushTestBodySchema } from '@sobok/contracts'
 import { db } from '@sobok/db/app'
 import { notificationTable } from '@sobok/db/app/notification'
-import { NotificationType } from '@sobok/domain/notification/model'
+import { NOTIFICATION_TYPE } from '@sobok/domain/notification/model'
 import { WebPushService } from '@sobok/notifications'
 import { Hono } from 'hono'
 import { createFactory } from 'hono/factory'
@@ -31,7 +31,7 @@ route.post('/', ...middlewares, async (c) => {
 
     await db.insert(notificationTable).values({
       userId,
-      type: NotificationType.TEST,
+      type: NOTIFICATION_TYPE.TEST,
       title: '테스트 알림',
       body: message,
       data: null,

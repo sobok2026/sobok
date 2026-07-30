@@ -6,11 +6,11 @@ import {
   type PersonaSource,
   type WorkAnswer,
 } from '@deep-type/model'
+import type { Locale } from '@sobok/domain/locale'
+import type { Db } from '@sobok/edge/db/client'
 import { and, eq, isNull, or } from 'drizzle-orm'
-
 import { dateIsWithinYears } from '../../lib/retention'
 import type { ReportSourceRow } from '../../report/pipeline'
-import type { Db } from '../client'
 import { purchaseTable, type RefinementDraft, resultTable } from '../schema'
 import type { PurchaseStatus } from './purchase'
 
@@ -19,7 +19,7 @@ export interface NewResult {
   baseProfile: AssessmentProfile
   declaredPersona: PersonaCode | null
   freeWorkAnswers: WorkAnswer[]
-  locale: 'ko' | 'en' | 'ja' | 'zh'
+  locale: Locale
   resultToken: string
 }
 
@@ -54,7 +54,7 @@ function toDeclaredPersona(source: PersonaSource, value: string | null): Persona
 export async function getResultForCheckoutByToken(
   db: Db,
   resultToken: string,
-): Promise<{ id: number; locale: 'ko' | 'en' | 'ja' | 'zh' } | null> {
+): Promise<{ id: number; locale: Locale } | null> {
   const [row] = await db
     .select({ id: resultTable.id, locale: resultTable.locale })
     .from(resultTable)
@@ -201,7 +201,7 @@ export async function getReportSource(db: Db, purchaseId: number): Promise<Repor
 }
 
 export interface ResultForReport {
-  locale: 'ko' | 'en' | 'ja' | 'zh'
+  locale: Locale
   profile: AssessmentProfile
   refined: boolean
 }

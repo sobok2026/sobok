@@ -3,7 +3,7 @@ import type { GETV1PostResponse } from '@sobok/contracts'
 import { getV1PostQuerySchema } from '@sobok/contracts'
 import selectPost from '@sobok/db/app/query/post'
 import { decodePostCursor, encodePostCursor } from '@sobok/db/cursor'
-import { PostFilter } from '@sobok/domain/post/filter'
+import { POST_FILTER, type PostFilter } from '@sobok/domain/post/filter'
 import { createCacheControl } from '@sobok/http/cache-control'
 import { sec } from '@sobok/std'
 import { Hono } from 'hono'
@@ -28,7 +28,7 @@ route.get('/', ...middlewares, async (c) => {
     return problemResponse(c, { status: 400, detail: '잘못된 커서예요' })
   }
 
-  if (filter === PostFilter.FOLLOWING && !currentUserId) {
+  if (filter === POST_FILTER.FOLLOWING && !currentUserId) {
     return authRequiredProblemResponse(c)
   }
 
@@ -59,7 +59,7 @@ route.get('/', ...middlewares, async (c) => {
 export default route
 
 function getPostListCacheControl({ cursor, filter }: { cursor?: string; filter?: PostFilter }) {
-  if (filter === PostFilter.FOLLOWING) {
+  if (filter === POST_FILTER.FOLLOWING) {
     return privateCacheControl
   }
 

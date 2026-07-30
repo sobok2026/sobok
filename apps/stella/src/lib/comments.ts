@@ -25,12 +25,14 @@ export interface CommentPage {
 
 // Carries the RFC 9457 problem `title` slug so the UI can map it to a localized message.
 export class CommentApiError extends Error {
-  constructor(
-    readonly slug: string,
-    readonly status: number,
-  ) {
+  readonly slug: string
+  readonly status: number
+
+  constructor(slug: string, status: number) {
     super(slug)
     this.name = 'CommentApiError'
+    this.slug = slug
+    this.status = status
   }
 }
 

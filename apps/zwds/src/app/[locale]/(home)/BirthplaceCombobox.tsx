@@ -3,7 +3,6 @@
 import { loadBirthplaceCatalog } from '@sobok/domain/birthplace/catalog.client'
 import { type BirthplaceCatalog, type BirthplaceSnapshot, snapshotBirthplace } from '@sobok/domain/birthplace/model'
 import { getBirthplaceGroups } from '@sobok/domain/birthplace/search'
-import { Locale } from '@sobok/domain/locale'
 import { useCombobox } from 'downshift'
 import { useLocale, useTranslations } from 'next-intl'
 import { Fragment, useDeferredValue, useEffect, useRef, useState } from 'react'
@@ -208,7 +207,7 @@ export default function BirthplaceCombobox({ value, onSelect }: Props) {
                     {...getItemProps({ item: place, index })}
                   >
                     <span className="block text-sm">{place.name}</span>
-                    {locale === Locale.EN && (
+                    {locale === 'en' && (
                       <span className="block truncate text-[11px] font-normal text-foreground-faint">
                         {place.contextName}
                       </span>

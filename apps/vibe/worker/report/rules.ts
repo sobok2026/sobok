@@ -1,5 +1,6 @@
+import { type AxisCopy, axisCopyFor } from '@deep-type/content/axis-copy'
+import { type NamedFacet, nameFacets, rankFacetCounts, shownDrainFacets } from '@deep-type/facets'
 import {
-  AXIS_POLES,
   type AxisId,
   type BandCopy,
   type DrainFacet,
@@ -7,14 +8,16 @@ import {
   type FreeAssessmentProfile,
   GEM_AXES,
   type InterestFacet,
+  isFirstPole,
   type PersonaCode,
   type RefinedAssessmentProfile,
   type RefinedAxisScore,
   TYPE_AXES,
   type TypeAxisId,
   WORK_FACETS,
-  type WorkFacetId,
 } from '@deep-type/model'
+import { resolveDrainBand } from '@deep-type/scoring'
+import type { Locale } from '@sobok/domain/locale'
 import {
   BAND_SHIFT_PAID,
   CLARITY_BANDS_PAID,
@@ -39,8 +42,6 @@ import {
   resolveRoleFamilies,
 } from '../../deep-type/role-families'
 import { buildFreeReport, type FreeReport, type FreeStrengthCard } from '../../deep-type/rules/free'
-import { resolveDrainBand } from '../../deep-type/scoring'
-import { type AxisCopy, axisCopyFor, type ReportLocale } from './axis-copy'
 import { assertClaims, type ClaimableEvidenceId, INTERPRETATION_BOUNDARY } from './claims'
 import {
   REPORT_SECTION_CONTRACT,
@@ -72,7 +73,7 @@ export interface EngineReportInput {
    * which is what makes the input-source column a property of the call graph rather than a claim in a comment.
    */
   free: FreeAssessmentProfile
-  locale: ReportLocale
+  locale: Locale
   /**
    * False when the two drain sittings fall outside the recall window. It describes what the engine did, not
    * what the caller intended: see `mergeDrainSittings` for the decision and `drainRead` for the fallback.
@@ -80,18 +81,6 @@ export interface EngineReportInput {
   mergedDrainWindow: boolean
   /** The paid sitting. Its poles and `band3` values are copies of the free ones — payment re-draws the ruler. */
   refined: RefinedAssessmentProfile
-}
-
-/**
- * Structurally identical to `NamedFacet` in `./profile`, and deliberately not imported from it: that module
- * reaches `worker/db/queries/result` for one type, which drags drizzle and the Worker runtime globals into
- * whatever program type-checks this file. Duplicating a three-string shape is cheaper than that, and there is
- * no behaviour to keep in sync — the tables both sides read are the same two label modules.
- */
-export interface NamedFacet {
-  action: string
-  id: WorkFacetId
-  label: string
 }
 
 /** MIGRATION §4.1 rows 1-10. Rows 11-12 are the model's, so they are not members of this union. */
@@ -407,15 +396,6 @@ function actionsOf(facets: readonly NamedFacet[]): readonly string[] {
   return facets.map((facet) => facet.action)
 }
 
-type FacetLabelTable<Facet extends WorkFacetId> = Readonly<Record<Facet, { action: string; name: string }>>
-
-function nameFacets<Facet extends WorkFacetId>(
-  facets: readonly Facet[],
-  labels: FacetLabelTable<Facet>,
-): readonly NamedFacet[] {
-  return facets.map((id) => ({ action: labels[id].action, id, label: labels[id].name }))
-}
-
 // Section 1 ------------------------------------------------------------------------------------------------
 
 function worldJobBlock(free: FreeReport): EngineBlockOf<'worldJob', WorldJobData> {
@@ -450,7 +430,7 @@ const STRENGTH_GROUP_HEADINGS = {
 function strengthCardsBlock(
   free: FreeReport,
   refined: RefinedAssessmentProfile,
-  locale: ReportLocale,
+  locale: Locale,
 ): EngineBlockOf<'strengthCards', StrengthCardsData> {
   const { axis, combo } = free.strengthCards
   const groups = [
@@ -495,8 +475,8 @@ function axisMovement(
     band: CLARITY_BANDS_PAID[score.band5],
     evidenceSplit: score.evidenceSplit,
     id,
-    // Read off the frozen code letter rather than `score.pole`, which is null at a tie. Same fold as `poleLabel`.
-    leading: letter === AXIS_POLES[id][0] ? content.first.label : content.second.label,
+    // Read off the frozen code letter rather than `score.pole`, which is null at a tie.
+    leading: isFirstPole(id, letter) ? content.first.label : content.second.label,
     name: content.name,
     shift: BAND_SHIFT_PAID[score.shift],
   }
@@ -553,19 +533,6 @@ interface DrainRead {
   leaders: readonly DrainFacet[]
   merged: boolean
   spread: DrainSignatureData['spread']
-}
-
-// How many facets the band puts on screen. The band is a confidence statement, not a count of ties: at
-// `double` there IS a top facet, but the runner-up sits one pick behind, so naming both is what keeps the real
-// leader inside the shown set. `tally.leaders` cannot serve this — it holds the tied set, which is a single
-// facet in every reachable `double` vector and in most `triple` ones, so reading it made the copy ("두 조건이
-// 비슷하게 나왔어요") describe a list of one.
-const DRAIN_SHOWN_COUNT = { double: 2, single: 1, triple: 3 } as const
-
-// Ties break on declaration order, matching the fixed display order the strength cards use. Array#sort is
-// stable, so starting from WORK_FACETS.drain is the whole tiebreak.
-function shownDrainFacets(counts: Readonly<Record<DrainFacet, number>>, spread: DrainSpread): readonly DrainFacet[] {
-  return [...WORK_FACETS.drain].sort((a, b) => counts[b] - counts[a]).slice(0, DRAIN_SHOWN_COUNT[spread])
 }
 
 // Un-merging is exact rather than approximate: forced-choice counts are additive over picks, so the paid half
@@ -648,16 +615,9 @@ function paidOnlyDrain(
     return null
   }
 
-  const ranked = WORK_FACETS.drain.map((facet) => counts[facet]).sort((a, b) => b - a)
-  const top = ranked[0] ?? 0
+  const { leaders, separation } = rankFacetCounts(WORK_FACETS.drain, counts)
 
-  return {
-    counts,
-    exposure: 2,
-    leaders: WORK_FACETS.drain.filter((facet) => counts[facet] === top),
-    separation: top - (ranked[1] ?? 0),
-    spread: resolveDrainBand(counts, 2),
-  }
+  return { counts, exposure: 2, leaders, separation, spread: resolveDrainBand(counts, 2) }
 }
 
 const PAID_DRAIN_PICKS = 3
@@ -944,10 +904,8 @@ function contextShiftBlocks(input: EngineReportInput): readonly EngineBlockOf<'c
 
 type AxisContentShape = ReturnType<typeof axisCopyFor>[TypeAxisId]
 
-// A declared letter is respondent input and reaches here as a bare `string`, so anything that is not the first
-// pole folds onto the second — the same fold `free.ts` applies to the frozen code letters.
 function poleLabel(axis: TypeAxisId, letter: string, content: AxisContentShape): string {
-  return letter === AXIS_POLES[axis][0] ? content.first.label : content.second.label
+  return isFirstPole(axis, letter) ? content.first.label : content.second.label
 }
 
 // Section 9 ------------------------------------------------------------------------------------------------

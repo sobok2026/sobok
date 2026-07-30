@@ -1,9 +1,7 @@
-import { Locale } from '@sobok/domain/locale'
-
 import type { LocalizedMessages } from '@/i18n/messages'
 
 export const messages = {
-  [Locale.KO]: {
+  ko: {
     Metadata: {
       community: {
         posts: {
@@ -228,7 +226,7 @@ export const messages = {
       },
     },
   },
-  [Locale.EN]: {
+  en: {
     Metadata: {
       community: {
         posts: {
@@ -453,7 +451,7 @@ export const messages = {
       },
     },
   },
-  [Locale.JA]: {
+  ja: {
     Metadata: {
       community: {
         posts: {
@@ -678,7 +676,7 @@ export const messages = {
       },
     },
   },
-  [Locale.ZH]: {
+  zh: {
     Metadata: {
       community: {
         posts: {
