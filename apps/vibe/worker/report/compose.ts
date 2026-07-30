@@ -19,47 +19,48 @@ import {
   BAND_FRAME,
   DRAIN_OPENING_TAIL,
   LEAD_JOIN,
-  NO_DISTINCT_AXIS_KICKER,
-  NO_DISTINCT_AXIS_LINE,
+  OPENING_BLOCK,
   OPENING_CLOSING,
   OPENING_KICKER,
   OPENING_NOTE_LABEL,
-  POLE_SIGNATURE,
-  type PoleSignature,
 } from '../../deep-type/content/opening.paid'
+import { AXIS_SCENE, type AxisScene } from '../../deep-type/content/reading.free'
 import {
   REFLECTION_BY_DRAIN,
   REFLECTION_BY_INTEREST,
   REFLECTION_BY_NEED,
   REFLECTION_CLOSING,
   REFLECTION_SOURCE,
+  REFLECTION_WHY,
 } from '../../deep-type/content/reflection.paid'
 import type { FreeReport, FreeStrengthCard } from '../../deep-type/rules/free'
-import type { DetailedFacet, OpeningReadData, ReflectionQuestionsData, ReportParagraph } from './section-data'
+import type {
+  DetailedFacet,
+  OpeningBlock,
+  OpeningReadData,
+  ReflectionQuestionsData,
+  ReportParagraph,
+} from './section-data'
 
-// The composer. It decides what the report leads with and what it closes on — the two sections that used to
-// exist only when the narrator was switched on, which meant the deployment that ships today opened on a bare
-// list of eight letters and ended mid-sentence on a friction table.
+// The composer. It writes what the report opens on and what it closes on — the two sections that used to exist
+// only when the narrator was switched on, which meant the deployment that ships today opened on a bare list of
+// eight letters and ended mid-sentence on a friction table.
 //
-// SELECTION IS BY BAND, NEVER BY MAGNITUDE. This is the one rule the whole module is arranged around. §4.3
-// rules out comparing |lean| across axes: five items an axis is an unequated within-person measurement and one
-// flipped answer reorders it, so "your strongest axis" is a sentence the instrument cannot support. What it
-// can support is the band, which is a statement about one axis on its own. So the composer takes the axes that
-// landed in the `distinct` band — all of them, in the fixed order the eight letters are printed in — and only
-// reaches for `moderate` when `distinct` did not fill the slots. Two axes in the same band are in declaration
-// order and the copy never says one came first.
+// NO RANKING, EVER. This is the one rule the whole module is arranged around. §4.3 rules out comparing |lean|
+// across axes: five items an axis is an unequated within-person measurement and one flipped answer reorders it,
+// so "your strongest axis" is a sentence the instrument cannot support. It used to be honoured by SELECTING two
+// axes by band, which was one rule obeyed and another one broken — a selection of two out of eight is itself a
+// statement that those two matter more. So all eight are printed, in the fixed order the letters are printed
+// in, and what distinguishes them is the band each one carries about itself.
 //
-// Pure and total, like the engine it feeds. No clock, no random, no throw: an all-faint reading has its own
-// authored paragraph rather than an empty section, and every table read below is complete over its key type.
-
-/**
- * How many axis paragraphs the opening carries. Two, not more: the opening's job is to give the reader
- * somewhere to stand before the detail starts, and an opening that recites six axes has become the detail.
- */
-const AXIS_PARAGRAPH_COUNT = 2
-
-/** The bands a paragraph may be written from, in the order the composer fills its slots. */
-const SELECTABLE_BANDS = ['distinct', 'moderate'] as const satisfies readonly ClarityBand[]
+// The prose comes out of `reading.free.ts`, the same table the free result screen reads. That is deliberate:
+// the eight letters are a free deliverable, so the sentences that explain them belong to the tier that gives
+// them away, and one table means the free screen and the paid opening cannot describe a pole two ways. What
+// this module adds on the paid side is the settled band beside each scene, and the work-profile paragraphs the
+// free tier has no answers for.
+//
+// Pure and total, like the engine it feeds. No clock, no random, no throw, and every table read below is
+// complete over its key type.
 
 export interface OpeningReadInput {
   copy: AxisCopy
@@ -73,68 +74,52 @@ export interface OpeningReadInput {
 
 export function composeOpeningRead(input: OpeningReadInput): OpeningReadData {
   const { copy, free, refined } = input
-  const paragraphs: ReportParagraph[] = [
-    ...axisParagraphs(refined, copy),
-    ...comboParagraph(free),
-    drainParagraph(input),
-    ...interestParagraph(input),
+  const blocks: OpeningBlock[] = [
+    { heading: OPENING_BLOCK.inner, paragraphs: axisParagraphs(TYPE_AXES, refined.inner, copy) },
+    { heading: OPENING_BLOCK.gem, paragraphs: axisParagraphs(GEM_AXES, refined.gem, copy) },
+    {
+      heading: OPENING_BLOCK.work,
+      paragraphs: [...comboParagraph(free), drainParagraph(input), ...interestParagraph(input)],
+    },
   ]
 
   return {
+    blocks,
     closing: OPENING_CLOSING,
     codes: free.worldJob.codes,
     // `family.method` is deliberately not here. It is the hero's subtitle, two cards above this one, and the
     // world job block repeats it again under its own label — quoting it a third time in the opening's first
     // sentence made the top of the report read as the same paragraph three times.
     lead: [free.worldJob.core.strength, LEAD_JOIN].join(' '),
-    paragraphs,
     // Not rendered here — the hero carries the name — but the narrator needs it to write about the reader's
     // role without inferring it back out of two four-letter codes.
     worldJobName: free.worldJob.name,
   }
 }
 
-interface AxisReading {
-  band: ClarityBand
-  id: AxisId
-  /** The frozen code letter, read off the code rather than off `AxisScore.pole`, which is null at a tie. */
-  letter: string
-}
-
-// Inner first and then the core, the order the eight letters are printed in everywhere else.
-function axisReadings(refined: RefinedAssessmentProfile): readonly AxisReading[] {
-  return [
-    ...TYPE_AXES.map((id, index) => ({ band: refined.inner.axes[id].band5, id, letter: refined.inner.code[index] })),
-    ...GEM_AXES.map((id, index) => ({ band: refined.gem.axes[id].band5, id, letter: refined.gem.code[index] })),
-  ]
-}
-
-function axisParagraphs(refined: RefinedAssessmentProfile, copy: AxisCopy): readonly ReportParagraph[] {
-  const readings = axisReadings(refined)
-  // One pass per band rather than a sort: a sort needs a comparator over the two bands and a comparator is a
-  // ranking, which is the thing this module may not build. Concatenating two filtered lists says only that
-  // `distinct` fills the slots first.
-  const selected = SELECTABLE_BANDS.flatMap((band) => readings.filter((reading) => reading.band === band)).slice(
-    0,
-    AXIS_PARAGRAPH_COUNT,
-  )
-
-  if (selected.length === 0) {
-    return [{ kicker: NO_DISTINCT_AXIS_KICKER, note: null, text: NO_DISTINCT_AXIS_LINE }]
-  }
-
-  return selected.map((reading) => {
-    const axis = copy[reading.id]
-    // `POLE_SIGNATURE[id]` is one of eight two-key objects and the checker cannot correlate it with a runtime
-    // letter, so the widening happens once. `leadingPole` returns only letters the table declares, so the lookup
-    // cannot miss.
-    const poles: Readonly<Record<string, PoleSignature>> = POLE_SIGNATURE[reading.id]
-    const pole = isFirstPole(reading.id, reading.letter) ? axis.first : axis.second
+/**
+ * One layer's four axes, in the order its letters are printed. All four, never a selection — see the module
+ * note. The scene says what the pole looks like at work and the band says how firmly it landed; they are two
+ * fields rather than one joined sentence, so a renderer can set the ruler quieter than the reading.
+ */
+function axisParagraphs<Axis extends AxisId>(
+  axes: readonly Axis[],
+  layer: { axes: Record<Axis, { band5: ClarityBand }>; code: string },
+  copy: AxisCopy,
+): readonly ReportParagraph[] {
+  return axes.map((id, index) => {
+    const axis = copy[id]
+    const letter = layer.code[index] ?? ''
+    // `AXIS_SCENE[id]` is one of eight two-key objects and the checker cannot correlate it with a runtime
+    // letter, so the widening happens once. `leadingPole` returns only letters the table declares, so the
+    // lookup cannot miss.
+    const poles: Readonly<Record<string, AxisScene>> = AXIS_SCENE[id]
+    const pole = isFirstPole(id, letter) ? axis.first : axis.second
 
     return {
       kicker: `${axis.name} · ${pole.label}`,
-      note: null,
-      text: `${poles[leadingPole(reading.id, reading.letter)].line} ${BAND_FRAME[reading.band]}`,
+      note: BAND_FRAME[layer.axes[id].band5],
+      text: poles[leadingPole(id, letter)].scene,
     }
   })
 }
@@ -206,14 +191,17 @@ export function composeReflectionQuestions(input: ReflectionInput): ReflectionQu
       {
         source: REFLECTION_SOURCE.drain,
         text: REFLECTION_BY_DRAIN[leadingFacet(WORK_FACETS.drain, input.drain.counts)],
+        why: REFLECTION_WHY.drain,
       },
       {
         source: REFLECTION_SOURCE.interest,
         text: REFLECTION_BY_INTEREST[leadingFacet(WORK_FACETS.interest, input.interest.counts)],
+        why: REFLECTION_WHY.interest,
       },
       {
         source: REFLECTION_SOURCE.need,
         text: REFLECTION_BY_NEED[leadingFacet(WORK_FACETS.need, input.need.counts)],
+        why: REFLECTION_WHY.need,
       },
     ],
   }

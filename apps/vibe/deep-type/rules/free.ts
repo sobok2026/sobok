@@ -1,4 +1,7 @@
+import type { Locale } from '@sobok/domain/locale'
+
 import { ABILITY, ABILITY_DETAIL, COMBO } from '../content/abilities'
+import { axisCopyFor } from '../content/axis-copy'
 import {
   CLARITY_BANDS_FREE,
   CLARITY_NOTE_FREE,
@@ -23,6 +26,7 @@ import {
   type TentativeBand,
   TYPE_AXES,
 } from '../model'
+import { composeFreeReading, type FreeReading } from './free-reading'
 
 // The free engine. It is isomorphic on purpose: the free result is already computed in the browser
 // (`scoreBaseAssessment`) and Phase 8 publishes the 256 world jobs as static pages, so moving this to the server
@@ -32,7 +36,8 @@ import {
 // `band-labels.paid`, `role-families`) may never appear in it, and the module may not name the paid five-item
 // ruler even in prose — the CI gate in free.test.ts is a raw-text scan, so a comment about the banned token
 // would fail on itself. `abilities` is on the allowed side because the strength cards are a free deliverable
-// (MIGRATION §4.1 rows 1-3 mark all three free outputs as `free-only`/`mixed`).
+// (MIGRATION §4.1 rows 1-3 mark all three free outputs as `free-only`/`mixed`), and `reading.free` is on it for
+// the same reason: it explains the eight letters and the world job, which are free deliverables too.
 //
 // Nothing here throws. `generateEngineReport` is a total-generation contract (§4.2) and this module is the half
 // of it that runs where an exception would blank the result screen rather than fail a request.
@@ -119,24 +124,33 @@ export interface FreeReport {
   clarityNote: string
   drainSignature: FreeDrainSignature
   instrumentVersion: string
+  /** The composed long-form reading. Prose over the same result, never a second computation of it. */
+  reading: FreeReading
   strengthCards: FreeStrengthCards
   tier: 'free'
   worldJob: FreeWorldJob
 }
 
-export function buildFreeReport(profile: FreeAssessmentProfile): FreeReport {
+/**
+ * `locale` reaches the axis names and pole labels the reading's kickers are built from, and nothing else. The
+ * reading's own paragraphs are ko today, exactly like the paid engine's tables — the locale argument is what
+ * makes filling the other three a content job rather than a refactor.
+ */
+export function buildFreeReport(profile: FreeAssessmentProfile, locale: Locale): FreeReport {
   const readings = readAxes(profile)
   const gem = profile.gem.code
   const inner = profile.inner.code
+  const axes = {
+    gem: GEM_AXES.map((axis) => axisBand(axis, readings[axis])),
+    inner: TYPE_AXES.map((axis) => axisBand(axis, readings[axis])),
+  }
 
   return {
-    axes: {
-      gem: GEM_AXES.map((axis) => axisBand(axis, readings[axis])),
-      inner: TYPE_AXES.map((axis) => axisBand(axis, readings[axis])),
-    },
+    axes,
     clarityNote: CLARITY_NOTE_FREE,
     drainSignature: buildDrainSignature(profile.work.drain),
     instrumentVersion: profile.instrumentVersion,
+    reading: composeFreeReading({ axes, codes: { gem, inner }, copy: axisCopyFor(locale) }),
     strengthCards: { axis: axisCards(readings), combo: comboCards(readings) },
     tier: 'free',
     // Three items per axis put `|S3|` on {1,3,5,7,9}, so an exact tie is unreachable and both codes are always

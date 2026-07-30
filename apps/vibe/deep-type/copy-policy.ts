@@ -177,6 +177,10 @@ export const KO_COPY_SOURCES: readonly string[] = [
   'deep-type/content/evidence-labels.ts',
   'deep-type/content/facet-details.paid.ts',
   'deep-type/content/opening.paid.ts',
+  // The long-form reading both tiers read: the sixteen pole scenes, the sixteen world-job family readings and
+  // the sixteen core readings. It is the largest single body of ko copy in the app, so it is also the one a
+  // gate is most worth pointing at.
+  'deep-type/content/reading.free.ts',
   'deep-type/content/reflection.paid.ts',
   'deep-type/content/section-copy.paid.ts',
   'deep-type/content/work-labels.free.ts',
@@ -187,6 +191,7 @@ export const KO_COPY_SOURCES: readonly string[] = [
   'deep-type/free-deliverables.ts',
   'deep-type/offer.ts',
   'deep-type/role-families.ts',
+  'deep-type/rules/free-reading.ts',
   'deep-type/rules/free.ts',
   'src/app/[locale]/deep-type/_content/ko.ts',
   'src/app/[locale]/deep-type/_content/question-options/ko.free.ts',

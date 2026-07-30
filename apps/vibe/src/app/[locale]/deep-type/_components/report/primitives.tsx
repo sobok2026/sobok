@@ -79,14 +79,16 @@ export function ConfidenceBadge({ label, level }: { label: string; level: keyof 
 }
 
 /**
- * A work facet as the report shows it: the name, the authored paragraph, and the one reversible choice it
- * suggests. The three used to be a bullet, a missing middle and another bullet.
+ * A work facet as the report shows it: the name, what the condition looks like, the same condition from the
+ * other side, and the one reversible choice it suggests. It used to be a bullet, a missing middle and another
+ * bullet; `contrast` is what lets a reader check the facet against a week that actually happened.
  */
 export function FacetCard({ facet }: { facet: DetailedFacet }) {
   return (
     <li className={GROUPED_ROW_CLASS_NAME}>
       <p className="break-keep font-black text-sm">{facet.label}</p>
       <p className="mt-1.5 break-keep text-page-ink/68 text-sm leading-6">{facet.detail}</p>
+      <p className="mt-2 break-keep text-page-ink/56 text-sm leading-6">{facet.contrast}</p>
       <p className="mt-2 break-keep text-page-ink/48 text-xs leading-5">{facet.action}</p>
     </li>
   )

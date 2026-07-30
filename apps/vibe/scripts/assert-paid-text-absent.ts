@@ -23,7 +23,7 @@ import {
   NEED_DETAILS,
   PURPOSE_DETAILS,
 } from '../deep-type/content/facet-details.paid'
-import { BAND_FRAME, POLE_SIGNATURE } from '../deep-type/content/opening.paid'
+import { BAND_FRAME } from '../deep-type/content/opening.paid'
 import { REFLECTION_BY_DRAIN, REFLECTION_BY_INTEREST, REFLECTION_BY_NEED } from '../deep-type/content/reflection.paid'
 import { BLOCK_NOTES_KO, SECTION_INTROS_KO, SELF_REPORT_AXIS_NOTES } from '../deep-type/content/section-copy.paid'
 import { ENVIRONMENT_LABELS, INTEREST_LABELS, NEED_LABELS, PURPOSE_LABELS } from '../deep-type/content/work-labels.paid'
@@ -110,9 +110,10 @@ function needles(): string[] {
   // one layer up. Short entries fall out on `MIN_NEEDLE`; the paragraphs and questions are all far longer.
   const report = [
     ...[DRAIN_DETAILS, NEED_DETAILS, ENVIRONMENT_DETAILS, INTEREST_DETAILS, PURPOSE_DETAILS].flatMap((table) =>
-      Object.values(table),
+      Object.values(table).flatMap((entry) => [entry.contrast, entry.detail]),
     ),
-    ...Object.values(POLE_SIGNATURE).flatMap((axis) => Object.values(axis).map((pole) => pole.line)),
+    // The axis scenes are deliberately absent. They are free copy now (`content/reading.free.ts`) and the free
+    // result screen prerenders them, so scanning for them would fail on the export working as designed.
     ...Object.values(BAND_FRAME),
     ...[REFLECTION_BY_DRAIN, REFLECTION_BY_INTEREST, REFLECTION_BY_NEED].flatMap((table) => Object.values(table)),
     ...Object.values(SECTION_INTROS_KO),

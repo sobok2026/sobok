@@ -3,6 +3,7 @@ import { axisCopyFor } from '@deep-type/content/axis-copy'
 
 import { BAND_SHIFT_PAID, CLARITY_BANDS_PAID } from '../../deep-type/content/band-labels.paid'
 import { PROPER_NOUNS } from '../../deep-type/content/proper-nouns'
+import { GEM_CORE_READING, INNER_FAMILY_READING } from '../../deep-type/content/reading.free'
 import { BLOCK_NOTES_KO, SELF_REPORT_AXIS_NOTES } from '../../deep-type/content/section-copy.paid'
 import { WORLD_JOB_NAMES } from '../../deep-type/content/world-job-names'
 import {
@@ -251,6 +252,11 @@ function keysOf(document: EngineReportDocument): readonly ReportSectionKey[] {
   return document.blocks.map((block) => block.section.key)
 }
 
+/** The opening's paragraphs across its blocks, for the assertions that are about the reading as a whole. */
+function openingParagraphs(data: Extract<ReportSection, { key: 'openingRead' }>['data']) {
+  return data.blocks.flatMap((entry) => entry.paragraphs)
+}
+
 /**
  * The section under `key`, narrowed. Throws when absent rather than returning undefined: every caller below
  * would otherwise assert on `undefined?.data` and pass.
@@ -317,9 +323,15 @@ describe('generateEngineReport totality', () => {
     const reflection = sectionOf(document, 'reflectionQuestions')
 
     expect(opening.data.lead.length).toBeGreaterThan(0)
-    expect(opening.data.paragraphs.length).toBeGreaterThan(1)
     expect(opening.data.worldJobName).toBe(WORLD_JOB_NAMES.ENFJ_ROVU)
-    for (const paragraph of opening.data.paragraphs) {
+    // Both layers in full plus the work block. All eight axes are printed, so a selection that quietly dropped
+    // one would surface here rather than as a shorter report nobody counted.
+    expect(openingParagraphs(opening.data).length).toBeGreaterThanOrEqual(10)
+    expect(opening.data.blocks.map((entry) => entry.paragraphs.length).slice(0, 2)).toEqual([4, 4])
+    for (const entry of opening.data.blocks) {
+      expect(entry.heading.length).toBeGreaterThan(0)
+    }
+    for (const paragraph of openingParagraphs(opening.data)) {
       expect(paragraph.kicker.length).toBeGreaterThan(0)
       expect(paragraph.text.length).toBeGreaterThan(0)
     }
@@ -332,8 +344,8 @@ describe('generateEngineReport totality', () => {
     }
   })
 
-  // Selection is by band and never by magnitude (§4.3), so a reading with no banded axis has to have its own
-  // paragraph rather than an empty opening.
+  // Nothing is selected by band and nothing by magnitude (§4.3), so an all-faint reading is not a special case
+  // for the opening — it prints the same eight axes and says `faint` beside each of them.
   test('an all-faint reading still ships every section, opening included', () => {
     const bands = Object.fromEntries(
       ['EI', 'SN', 'TF', 'JP', 'RM', 'OA', 'VH', 'UO'].map((axis) => [axis, 'faint3']),
@@ -352,9 +364,9 @@ describe('generateEngineReport totality', () => {
 
     expect(sectionOf(document, 'strengthCards').data.emptyNote).toBe(BLOCK_NOTES_KO.strengthEmpty)
     expect(sectionOf(document, 'strengthCards').data.groups).toEqual([])
-    // Two of the five paragraph slots are unconditional (drain, interest); the axis slot falls back rather
-    // than emptying.
-    expect(sectionOf(document, 'openingRead').data.paragraphs.length).toBeGreaterThanOrEqual(3)
+    // Eight axes plus drain and interest. The combo paragraph is the only conditional one, and an all-faint
+    // reading is exactly the case that has no combo card to write it from.
+    expect(openingParagraphs(sectionOf(document, 'openingRead').data)).toHaveLength(10)
   })
 
   test('stored sections are the blocks in reading order', () => {
@@ -448,10 +460,14 @@ describe('input source', () => {
 
   test('sections 1 to 3 repeat the free engine rather than recomputing it', () => {
     const free = freeProfileOf('INTP', 'MOHU')
-    const expected = buildFreeReport(free)
+    const expected = buildFreeReport(free, 'ko')
     const document = generateEngineReport(inputOf({ free, refined: refinedProfileOf('INTP', 'MOHU') }))
 
-    expect(sectionOf(document, 'worldJob').data).toEqual(expected.worldJob)
+    // `reading` is the section's own addition, and it is looked up from the same two codes rather than being a
+    // second computation of them — so the free half of the section still has to match byte for byte.
+    const { reading, ...worldJob } = sectionOf(document, 'worldJob').data
+    expect(worldJob).toEqual(expected.worldJob)
+    expect(reading).toEqual({ core: GEM_CORE_READING[expected.worldJob.codes.gem], family: INNER_FAMILY_READING.INTP })
     // The cards, not the whole section. `bandMovement` is the paid tier's own addition (D14) and has no free
     // counterpart to be equal to, so it is compared in its own describe below.
     const grouped = sectionOf(document, 'strengthCards').data.groups.flatMap((group) => group.cards)

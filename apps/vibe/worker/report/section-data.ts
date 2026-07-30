@@ -28,6 +28,8 @@ export interface WorldJobData {
   family: { method: string; name: string; role: string }
   /** One of 256 authored names. Hand-written, not composed from the two halves above. */
   name: string
+  /** A paragraph under each half — what the method looks like at work, and what pushes it. */
+  reading: { core: string; family: string }
 }
 
 /**
@@ -90,6 +92,8 @@ export interface StrengthCardsData {
  * argument the free tier has nothing to pass. The extra data belongs to the layer that owns it.
  */
 export interface DetailedFacet<Facet extends WorkFacetId = WorkFacetId> extends NamedFacet<Facet> {
+  /** The same condition read from the other side. See `facet-details.paid.ts` for the per-dimension direction. */
+  contrast: string
   detail: string
 }
 
@@ -275,22 +279,33 @@ export interface FitAndFrictionData {
 }
 
 /**
- * The composed opening. `lead` names the world job and what it is made of; the paragraphs are the reader's
- * strongest features in the order the composer ranked them, each with its own kicker.
+ * A run of paragraphs under one heading. Three of them make the opening readable at eleven paragraphs: without
+ * the headings the section is one wall, and with them it is the two layers of letters and then the work read.
+ */
+export interface OpeningBlock {
+  heading: string
+  paragraphs: readonly ReportParagraph[]
+}
+
+/**
+ * The composed opening. `lead` names the world job and what it is made of; the blocks read every axis of both
+ * layers and then what the work answers point at. Nothing in here is ranked — see `compose.ts`.
  */
 export interface OpeningReadData {
+  blocks: readonly OpeningBlock[]
   lead: string
   closing: string
   codes: { gem: GemCode; inner: InnerCode }
-  paragraphs: readonly ReportParagraph[]
   /** The world job name, repeated as data so the renderer need not parse it back out of `lead`. */
   worldJobName: string
 }
 
 export interface ReflectionQuestion {
-  /** Why this question rather than another — the section it was drawn from, in the reader's words. */
+  /** Which section it was drawn from, in the reader's words, so they can go back and re-read that block. */
   source: string
   text: string
+  /** What a week of carrying the question shows that today cannot. Never a hint at the answer. */
+  why: string
 }
 
 export interface ReflectionQuestionsData {

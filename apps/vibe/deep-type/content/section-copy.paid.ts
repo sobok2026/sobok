@@ -19,7 +19,7 @@ export const SECTION_TITLES_KO = {
   contextShift: '고른 네 글자와 이번 답',
   threePaths: '세 갈래 경로',
   fitAndFriction: '맞물리는 지점과 부딪히는 지점',
-  openingRead: '먼저 읽는 자리',
+  openingRead: '여덟 축을 하나씩 읽기',
   reflectionQuestions: '들고 갈 세 가지 질문',
 } as const satisfies Record<ReportSectionKey, string>
 
@@ -43,7 +43,7 @@ export const SECTION_INTROS_KO = {
   contextShift: '스스로 고른 네 글자와 이번 답의 네 글자를 나란히 놓았어요. 어느 쪽이 맞는지 가리는 자리가 아니에요.',
   threePaths: '지금 자리에서 넓히기와 옆으로 옮기기와 새로 시험하기를 같은 무게로 놓았어요.',
   fitAndFriction: '이번 답에서 읽은 조건이에요. 실제 자리와 맞춰 보는 건 직접 해야 해요.',
-  openingRead: '이번 답에서 뚜렷하게 나온 것부터 읽었어요.',
+  openingRead: '여덟 축을 하나씩 놓고 이번 답이 어느 쪽에 놓였는지 읽었어요. 축끼리 견주지 않아요.',
   reflectionQuestions: '결과를 덮기 전에 세 가지만 들고 가요.',
 } as const satisfies Record<ReportSectionKey, string>
 
