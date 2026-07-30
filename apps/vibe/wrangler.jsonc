@@ -1,9 +1,6 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "vibe",
-  // A Worker WITH static assets: `main` handles /api/* (the deeptype paid backend — PortOne secrets and
-  // the Supabase/Hyperdrive DB must stay server-side); everything else is the static Next export in ./out,
-  // served directly at the edge.
   "main": "worker/index.ts",
   "compatibility_date": "2026-07-01",
   // Required by postgres.js (Supabase Postgres over the Workers TCP socket API via Hyperdrive).
@@ -39,16 +36,12 @@
   "define": { "DEEPTYPE_DB_SCHEMA": "'deeptype'" },
   "vars": {
     "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
-    // 실연동. Pinned per wrangler environment for the same reason the channel keys are; the build-side pair is
-    // the NEXT_PUBLIC_DEEPTYPE_PAY_TIER literal in the matching deploy job of .github/workflows/vibe-deploy.yml.
+    // 실연동. Must equal the NEXT_PUBLIC_DEEPTYPE_PAY_TIER literal in the matching deploy job of
+    // .github/workflows/vibe-deploy.yml — on a mismatch /checkout refuses what the paywall offers.
     "DEEPTYPE_PAY_TIER": "live",
-    // Every channel this deployment can spend, keyed by PortOne pgProvider. A new channel is one line here
-    // and one in env.stg — no binding, no resolver. deep-type/pay-method.ts owns which method rides which.
-    //
-    // A channel appears here ONLY once its 원천사 심사 is complete, and it is added in the same commit that adds
-    // it to `SELLABLE_CHANNELS.live`. Never a placeholder and never "": a key that exists but cannot charge
-    // opens a window that never approves, and a placeholder is truthy so nothing downstream can catch it. The
-    // key set here must equal `sellableChannels('live')` — `GET /api/deep-type/config` reports the difference.
+    // Keyed by PortOne pgProvider (deep-type/pay-method.ts owns which method rides which channel). A channel
+    // enters only once its 원천사 심사 is complete, in the same commit as `SELLABLE_CHANNELS.live` — never ""
+    // and never a placeholder. `GET /api/deep-type/config` reports any drift between the two.
     "DEEPTYPE_PORTONE_CHANNELS": {
       "tosspay_v2": "channel-key-d14e0af9-18be-457f-aa21-228e7265211f"
     },
@@ -97,28 +90,13 @@
       "secret_name": "deeptype-ga4-api-secret"
     }
   ],
-  // ── Test money, deployed apart ──────────────────────────────────────────────────────────────────────
-  // The PortOne test channel is separated by DEPLOYMENT and never by a runtime flag. /checkout is the single
-  // place a channel key is chosen, so a production build that could ever be talked into serving the test key
-  // is a production build that hands out paid reports for nothing. `DEEPTYPE_PAY_TIER` rides the same rule: it
-  // says which contract set this deployment holds, and nothing infers it from a hostname or a branch.
-  //
-  // `deploy` = `next build && wrangler deploy`, so a staging release is
-  //   NEXT_PUBLIC_TURNSTILE_SITE_KEY=<vibe widget> NEXT_PUBLIC_DEEPTYPE_PAY_TIER=test \
-  //     bun run build && wrangler deploy --env stg
-  // and it lands as the Worker `vibe-stg`.
-  //
-  // `main` / `assets` / `triggers` / `observability` / `compatibility_*` are inheritable and are NOT repeated.
-  // `vars`, `define`, `hyperdrive` and `secrets_store_secrets` are non-inheritable: everything below has to be
-  // restated in full, and anything omitted arrives as undefined rather than as the production value.
+  // `vars`, `define`, `hyperdrive` and `secrets_store_secrets` are NON-inheritable: a named environment must
+  // restate them in full, and anything omitted arrives as undefined rather than as the production value.
+  // (`main` / `assets` / `triggers` / `observability` / `compatibility_*` do inherit and are not repeated.)
   "env": {
     "stg": {
       // No `routes` here, exactly as at the top level: the custom domain is Terraform's
       // (account-vibe/workers.tf), and declaring it in both places would give one binding two owners.
-      //
-      // ORDER: a Workers custom domain attaches to a Worker that already exists, so the FIRST
-      // `wrangler deploy --env stg` has to run before that resource can apply — until then Cloudflare answers
-      // 404 `This Worker does not exist on your account.` The Worker is simply unreachable in between.
       "workers_dev": false,
       // Same Supabase project and the SAME two Hyperdrive configs as production — the connection string is
       // identical and only the schema the SQL names is different.
@@ -129,14 +107,12 @@
       ],
       "vars": {
         "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
-        // 테스트. 테스트 채널은 심사가 없어 상점에 붙은 다섯이 모두 결제되므로, 스테이징은 카탈로그 전체를 파는
-        // 유일한 배포이고 새 결제수단의 QA는 여기서만 할 수 있다.
+        // 테스트. 짝 규칙은 top-level의 같은 키 주석 참고.
         "DEEPTYPE_PAY_TIER": "test",
         "DEEPTYPE_PORTONE_CHANNELS": {
           "kakaopay": "channel-key-d80ebe96-61e3-49f9-b3eb-5dc22aee47b7",
           "kcp_v2": "channel-key-d48cde15-5f73-4ab2-9b40-2ec29d152ad5",
-          // 포트원 제공 샌드박스 판매자 계정 중 "한국"에 붙인 테스트 채널. 목록의 국가는 구매자 국가가 아니라
-          // 수취(판매자) 계정의 등록 국가이고, 실연동에서 연결할 본인 비즈니스 계정이 한국이라 테스트도 한국이다.
+          // 포트원 제공 "한국" 샌드박스 판매자 계정의 키 — 목록의 국가는 구매자가 아니라 수취 계정 기준.
           "paypal_v2": "channel-key-8a0c783e-608f-48f0-a2f1-842667a464bc",
           "tosspay_v2": "channel-key-70320dc7-8e65-4cf7-901b-7b834ae4f21a",
           "tosspayments": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88"
@@ -146,6 +122,8 @@
         "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",
         "DEEPTYPE_REPORT_MODEL": "claude-haiku-4-5-20251001",
         "DEEPTYPE_LLM_ENABLED": "1",
+        // "" on purpose: no destination = this deployment reports no revenue. Filling in the production id
+        // would put staging test purchases into the production GA4 property.
         "DEEPTYPE_GA4_MEASUREMENT_ID": ""
       },
       "secrets_store_secrets": [
@@ -181,8 +159,6 @@
           "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
           "secret_name": "deeptype-discord-webhook"
         },
-        // Same credential as production, and it is never spent: DEEPTYPE_GA4_MEASUREMENT_ID above is "",
-        // which is what stops confirmPurchase from sending. The kill switch is the destination, not the key.
         {
           "binding": "DEEPTYPE_GA4_API_SECRET",
           "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
