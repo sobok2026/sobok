@@ -14,7 +14,7 @@
 - **페이팔(SPB) = 두 번째 SDK 모양**: 스펙의 `open` 판별자로 갈린다. `'window'` 수단은 우리 버튼이 `requestPayment`로 창을 열고, 페이팔은 `'ui'` — `loadPaymentUI`가 **페이팔 자신의 버튼**을 `portone-ui-container`에 렌더하며 우리 버튼으로는 못 연다. 그래서 페이월은 2단계다: 폼 제출 → `/checkout`이 가격·paymentId를 승인 → 결제하기 버튼 자리에 페이팔 버튼이 나타나고 그동안 폼은 `fieldset disabled`로 얼린다(생성된 결제가 그 값에 고정돼 있으므로). 창 닫힘/거절은 attempt 단위라 버튼이 남고, `돌아가기`로 세션을 버리면 pending 행은 닫힌 창과 같은 경로(reconcile·purge)로 수렴한다.
 - **다통화 가격**: 페이팔은 KRW를 받지 않아 en·zh=USD 4.98, ja=JPY 698, ko=KRW 5,900(`deep-type/offer.ts` 한 곳, 통화당 가격 1개를 로케일이 참조). **모든 금액은 ISO 4217 minor unit 정수**(USD는 센트: 498=$4.98, KRW·JPY는 그대로)이고 PortOne `totalAmount`·DB·`/checkout` 응답이 같은 단위라 변환 없이 흐른다. 나누는 곳은 화면(`formatPrice`)과 GA4(major unit 필수, `majorUnits`) 둘뿐이다. CNY는 페이팔이 중국 내 계정에만 허용해서 못 쓴다 — zh가 USD인 이유.
 - **판매 가능 목록 = 카탈로그 ∩ 능력**: 카탈로그가 "무엇을 파는가"라면 `pay-method.ts`의 `SELLABLE_CHANNELS`가 "이 배포가 실제로 결제를 붙일 수 있는가"다. **키를 들고 있는 것과 팔 수 있는 것은 다른 사실이다** — 실연동 채널은 원천사 심사가 끝나기 전에는 창만 열리고 승인이 오지 않는다. 그래서 화면에 나가는 메뉴는 두 표의 교집합이고 `payMethodsFor(locale, tier)` 한 곳에서만 계산한다. 심사가 안 끝난 수단은 **아예 렌더되지 않는다** — 고를 수 있는데 승인이 안 되는 수단은 pending 행만 남기고 죽는다.
-- **tier**: `live`(실연동) / `test`(테스트) — 포트원 콘솔의 설정 모드와 같은 말이다. 워커는 `DEEPTYPE_PAY_TIER` var로, 페이월(정적 export라 워커 var를 못 읽는다)은 빌드 시 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER`로 받고, **둘을 짝지우는 결정은 `vibe-deploy.yml`의 GitHub Environment 변수 `VIBE_PAY_TIER` 하나**다. 호스트네임이나 브랜치에서 유도하지 않는다 — 결제 코드가 환경 이름으로 분기하면 프로덕션에서 반대편으로 갈 수 있다. 어긋나면 페이월이 내놓은 수단을 `/checkout`이 거절하므로 첫 QA에서 드러난다.
+- **tier**: `live`(실연동) / `test`(테스트) — 포트원 콘솔의 설정 모드와 같은 말이다. 워커는 `DEEPTYPE_PAY_TIER` var로, 페이월(정적 export라 워커 var를 못 읽는다)은 빌드 시 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER`로 받는다. **둘 다 배포 단위에 붙는 리터럴이다** — wrangler 환경 블록과 `vibe-deploy.yml`의 각 배포 job이 자기 tier를 하드코딩한다(`--env stg`를 하드코딩하는 job에서 tier가 `test` 아닌 값일 수 없다). 시크릿도 설정할 변수도 아니고, 호스트네임이나 브랜치에서 유도하지도 않는다. 어긋나면 페이월이 내놓은 수단을 `/checkout`이 거절하므로 첫 QA에서 드러난다.
 - **결제수단 추가 절차**(채널은 계속 늘어난다): ① `pay-method.ts`의 `PAY_METHODS`·`PAY_METHOD_SPEC`에 한 줄 ② 로케일 목록에 추가 ③ `SELLABLE_CHANNELS`에서 그 채널이 결제되는 tier마다 한 줄 ④ 각 wrangler 환경의 `DEEPTYPE_PORTONE_CHANNELS`에 채널 키 한 줄(③과 **같은 커밋**에서) ⑤ `_content` 4개 로케일에 라벨 ⑥ 그 PG가 bypass를 요구할 때만 `use-checkout`의 `BYPASS` 표에 한 줄. 바인딩도 리졸버도 분기도 건드리지 않는다.
 - **채널 키에 placeholder·빈 문자열을 두지 않는다.** 못 파는 채널은 맵에서 **빠져 있다**(`Partial<Record<...>>`). 빈 문자열은 `string`을 만족해 타입이 잡지 못하고 `requestPayment`까지 흘러가며, placeholder는 truthy라 falsy 검사로도 안 걸린다. `""`는 `DEEPTYPE_GA4_MEASUREMENT_ID`처럼 **없으면 생략하면 되는**(fail-open) 스칼라에만 쓴다 — 결제 능력은 fail-closed이고 집합이라 원소를 담지 않는 것이 부재의 정직한 표현이다.
 - **드리프트 점검**: `GET /api/deep-type/config`가 `payTier`, 바인딩된 채널, `unbound`(팔겠다고 했는데 키가 없음 → `/checkout`이 500 + Discord), `unsold`(키는 있는데 `SELLABLE_CHANNELS`에 안 넣음 → 돈 내는 채널이 숨어 있음), 로케일별 최종 메뉴를 함께 돌려준다. 배포 직후 이 한 번의 요청이 스모크 체크다.
@@ -79,12 +79,12 @@
   - `hyperdrive[].id` = `REPLACE_WITH_*_ID` → 2의 fresh/cached id
   - `secrets_store_secrets[].store_id` = 계정 Secrets Store id(7곳)
   - `vars.DEEPTYPE_PORTONE_STORE_ID` / `DEEPTYPE_PORTONE_CHANNELS` → 4의 값. 채널 맵은 **PG(pgProvider) 이름으로 키잉**한다 — 채널이 담는 건 결제수단이 아니라 계약이고, `tosspayments` 채널 하나가 카드도 가상계좌도 받는다. 어느 결제수단이 어느 채널을 타는지는 `deep-type/pay-method.ts`가 가진다. top-level은 **실연동** 채널, `env.stg`는 **테스트** 채널이다. **심사가 끝난 채널만 넣고 자리를 미리 만들어 두지 않는다** — 맵의 키 집합이 곧 `sellableChannels(tier)`여야 한다
-  - `vars.DEEPTYPE_PAY_TIER` = top-level `live`, `env.stg` `test`. 빌드 쪽 짝은 GitHub Environment 변수 `VIBE_PAY_TIER`(`production` → `live`, `staging` → `test`)이며 비어 있으면 빌드가 실패한다
+  - `vars.DEEPTYPE_PAY_TIER` = top-level `live`, `env.stg` `test`. 빌드 쪽 짝은 `vibe-deploy.yml` 각 배포 job의 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER` 리터럴(production job `live` · stg job `test`)이며 비어 있으면 빌드가 실패한다
   - `vars.DEEPTYPE_REPORT_MODEL` = `claude-haiku-4-5-20251001`처럼 별칭이 아닌 검증된 고정 model id
   - `vars.DEEPTYPE_PUBLIC_ORIGIN` / `DEEPTYPE_EMAIL_FROM` / `DEEPTYPE_EMAIL_REPLY_TO`가 실제 프로덕션 값인지 확인
   - `vars.DEEPTYPE_GA4_MEASUREMENT_ID` = `src/constants.ts`의 `GA4_MEASUREMENT_ID` 및 컨테이너 `LT - GA4 Measurement ID` 룩업의 `vibe.sobok.cc` 값과 **세 곳이 동일**해야 한다
 - **프론트 sitekey**: `apps/vibe/src/constants.ts`의 `TURNSTILE_SITE_KEY`가 `NEXT_PUBLIC_TURNSTILE_SITE_KEY`를 읽고, CI가 저장소 변수 `VIBE_TURNSTILE_SITE_KEY`로 주입해 빌드 시 인라인한다(값이 비면 빌드가 실패한다). 이 sitekey와 서버 `vibe-turnstile-secret`은 **같은 위젯 짝**이어야 함.
-- **프론트 tier**: 같은 파일의 `PAY_TIER`가 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER`를 읽는다. `live`/`test` 둘 중 하나가 아니면 빌드가 실패한다 — 안전한 기본값이 없는 변수라 그게 맞는 실패다. CI는 **GitHub Environment 변수** `VIBE_PAY_TIER`로 주입하므로 `production`(브랜치 정책상 `main` 전용)과 `staging` 두 환경에 각각 `live`·`test`를 등록해야 한다(sobok-ops `infra/github/sobok2026`). 로컬은 `.env.local`에 `test`.
+- **프론트 tier**: 같은 파일의 `PAY_TIER`가 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER`를 읽는다. `live`/`test` 둘 중 하나가 아니면 빌드가 실패한다 — 안전한 기본값이 없는 변수라 그게 맞는 실패다. CI에서는 **각 배포 job의 리터럴**이다(등록할 GitHub 변수 없음). 로컬은 `.env.local`에 `test`.
 
 ---
 
@@ -122,7 +122,7 @@ PR 없이 브랜치를 올려 보거나 스테이징을 특정 ref로 되돌릴 
 
 **PR에서 도는 것은 검증뿐이다**(`verify` job). `next build`와 유료 텍스트 유출 검사(`check:export`)를 `live`·`test` **두 tier 모두**에 대해 돌린다. lint.yml은 `bun run type`과 `bun test apps/vibe`까지만 하고 빌드는 하지 않으므로, 이 job이 없으면 빌드 깨짐이 머지된 뒤 프로덕션 배포에서 처음 드러난다.
 
-⚠️ **`verify`에 GitHub Environment를 붙이지 마라.** `pull_request`는 PR 브랜치의 워크플로 파일을 그대로 실행하므로, environment를 붙이는 순간 아무 게이트 없이 도는 job이 환경 시크릿을 쥐게 된다. tier를 `vars.VIBE_PAY_TIER` 대신 매트릭스로 넘기는 것도 같은 이유다. 같은 맥락에서 **레포 레벨 `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`는 존재하면 안 된다** — 레포 시크릿은 environment 없는 job에도 내려간다. 값은 `production`·`staging` 환경 시크릿에만 두고, 그래서 **stella·zwds·horn 워크플로도 `environment: production`을 선언하도록 함께 바꿨다**(안 그러면 그 셋의 배포가 크레덴셜을 못 찾는다). `verify`의 첫 스텝이 이 전제가 깨졌는지 매번 확인한다.
+⚠️ **`verify`에 GitHub Environment를 붙이지 마라.** `pull_request`는 PR 브랜치의 워크플로 파일을 그대로 실행하므로, environment를 붙이는 순간 아무 게이트 없이 도는 job이 환경 시크릿을 쥐게 된다. tier가 모든 job에서 리터럴인 것도 같은 계열이다 — 시크릿이 아닌 값을 environment에 두면 그 값을 읽으려고 job이 시크릿까지 쥐게 된다. 같은 맥락에서 **레포 레벨 `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`는 존재하면 안 된다** — 레포 시크릿은 environment 없는 job에도 내려간다. 값은 `production`·`staging` 환경 시크릿에만 두고, 그래서 **stella·zwds·horn 워크플로도 `environment: production`을 선언하도록 함께 바꿨다**(안 그러면 그 셋의 배포가 크레덴셜을 못 찾는다). `verify`의 첫 스텝이 이 전제가 깨졌는지 매번 확인한다.
 
 이 경계가 **보장하는 것과 보장하지 않는 것**을 정확히:
 
@@ -241,13 +241,12 @@ bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 �
 
 - [ ] Phase 0 산출물 전부 존재(Supabase·Hyperdrive×2·Secrets Store 7개·PortOne 스토어·Turnstile·Anthropic·Resend·GA4 API secret).
 - [ ] **CI 크레덴셜 이관** — `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`가 `production`·`staging` **환경 시크릿**에만 있고 **레포 레벨에서는 삭제**됨. 확인 방법: PR 하나를 열어 `verify`의 첫 스텝(`Assert this job holds no Cloudflare credential`)이 초록인지 본다. 넷 다 배포되는지도 확인 — stella/zwds/horn도 이제 `production` 환경을 쓴다.
-- [ ] `VIBE_PAY_TIER` **환경 변수** 등록: `production` = `live`, `staging` = `test`. 비면 빌드가 선다.
 - [ ] `stg` 라벨 존재(sobok-ops `infra/github/sobok2026/labels.tf` apply). 없으면 스테이징 배포를 트리거할 방법이 라벨 경로에는 없다.
 - [ ] `sobok-prod` roles.tf가 `deeptype`·`deeptype_stg` 두 스키마에 grant·default privileges 적용 완료.
 - [ ] `wrangler.jsonc` placeholder 전부 치환, `DEEPTYPE_LLM_ENABLED = "1"`, `DEEPTYPE_REPORT_MODEL`은 검증된 고정 id.
 - [ ] top-level `vars`에 새로 추가한 항목이 `env.stg`에도 들어갔는지(비상속 키).
 - [ ] **심사 완료된 실연동 채널만** `DEEPTYPE_PORTONE_CHANNELS`에 있고 그 키 집합이 `SELLABLE_CHANNELS.live`와 정확히 같음 — `GET /api/deep-type/config`의 `unbound`·`unsold`가 둘 다 빈 배열이고, `payMethods`의 네 로케일이 모두 비어 있지 않음.
-- [ ] GitHub Environment 변수 `VIBE_PAY_TIER` = `production` → `live`, `staging` → `test`. 배포된 페이월의 결제수단이 `config`의 `payMethods`와 일치.
+- [ ] 배포된 페이월의 결제수단이 `GET /api/deep-type/config`의 `payMethods`와 일치(빌드 리터럴 tier ↔ 워커 var tier 정합 확인).
 - [ ] 저장소 변수 `VIBE_TURNSTILE_SITE_KEY` = vibe 위젯 sitekey, 서버 `vibe-turnstile-secret` = 그 위젯의 secret(짝 일치), 위젯 호스트네임에 `vibe.sobok.cc`·`vibe-stg.sobok.cc` 둘 다 등록.
 - [ ] PortOne 콘솔 웹훅 URL이 **모드별로** 등록(실연동 = `vibe.sobok.cc`, 테스트 = `vibe-stg.sobok.cc`)되고 테스트 모드 시크릿이 `deeptype-portone-webhook-secret-stg`에 들어감.
 - [ ] 토스페이 실연동 MID의 **원천사 심사 완료** 확인. 페이팔은 **본인 PayPal Business 계정을 실연동 채널에 연결**하고 그 커밋에서 `SELLABLE_CHANNELS.live`+실연동 채널 맵에 `paypal_v2`를 함께 추가.

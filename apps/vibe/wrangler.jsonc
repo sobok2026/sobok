@@ -39,8 +39,8 @@
   "define": { "DEEPTYPE_DB_SCHEMA": "'deeptype'" },
   "vars": {
     "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
-    // 실연동. Pinned per wrangler environment for the same reason the channel keys are, and paired with the
-    // build's NEXT_PUBLIC_DEEPTYPE_PAY_TIER by one expression in .github/workflows/vibe-deploy.yml.
+    // 실연동. Pinned per wrangler environment for the same reason the channel keys are; the build-side pair is
+    // the NEXT_PUBLIC_DEEPTYPE_PAY_TIER literal in the matching deploy job of .github/workflows/vibe-deploy.yml.
     "DEEPTYPE_PAY_TIER": "live",
     // Every channel this deployment can spend, keyed by PortOne pgProvider. A new channel is one line here
     // and one in env.stg — no binding, no resolver. deep-type/pay-method.ts owns which method rides which.

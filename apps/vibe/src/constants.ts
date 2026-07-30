@@ -17,7 +17,9 @@ export const TURNSTILE_SITE_KEY = requireEnv(
   process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
 )
 // Which PortOne 설정 모드 this build's paywall renders the menu for. The Worker holds the same value as
-// `DEEPTYPE_PAY_TIER`, and the deploy that pairs them is one expression in `.github/workflows/vibe-deploy.yml`.
+// `DEEPTYPE_PAY_TIER`; both are literals pinned to the deployment unit — the wrangler env block on the Worker
+// side, each deploy job in `.github/workflows/vibe-deploy.yml` on this side. Never resolved from anything: the
+// job that hardcodes `--env stg` is the same job that hardcodes `test`, so the pair cannot drift apart.
 //
 // Required with no default, and the default is the reason: `test` would put every unapproved method on the
 // production paywall, and `live` would hide from staging the methods staging exists to QA. Neither is a safe

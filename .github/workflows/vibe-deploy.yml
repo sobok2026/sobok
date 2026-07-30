@@ -23,7 +23,8 @@ name: Vibe Deploy
 #    이 파일이 실제로 보장하는 것과 보장하지 않는 것을 정확히 적어 둔다. 과장하면 다음 사람이 없는
 #    보호를 믿는다.
 #      • 보장: 아무 게이트 없이 **모든 PR에서 도는 job(`verify`)은 크레덴셜을 쥐지 않는다.** 시크릿도
-#        environment도 참조하지 않고, tier조차 `vars.VIBE_PAY_TIER`가 아니라 매트릭스로 받는다.
+#        environment도 참조하지 않는다. tier는 어느 job에서든 리터럴이다 — 시크릿이 아니라 레포가
+#        소유한 닫힌 유니온이고, job의 정체(어느 워커에 배포하나)가 곧 값이라 참조할 것이 없다.
 #      • 보장하지 않음: `stg`는 `pull_request`로 도는 job이면서 `environment: staging`을 선언하므로
 #        토큰을 받는다. 그 토큰은 계정 범위라 `vibe`도 쓸 수 있다. 즉 **라벨을 붙일 수 있는 사람은
 #        이 파일을 고쳐 프로덕션 워커에 닿을 수 있다.** 그걸 막는 건 GitHub이 아니라 라벨을 붙일 권한
@@ -231,14 +232,17 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      # 결제수단 메뉴는 정적 export에 구워지므로 어느 PortOne 설정 모드로 파는지를 빌드가 알아야 한다. 워커 쪽
-      # 짝은 wrangler.jsonc의 `DEEPTYPE_PAY_TIER`이고, 둘이 어긋나면 페이월이 내놓은 수단을 /checkout이 거절한다.
-      # 그래서 값을 이 파일의 조건식이 아니라 GitHub Environment 변수에서 받는다 — 실연동 채널 키를 지키는 것과
-      # 같은 장치가 tier도 지키게 되고, 이 파일을 고쳐도 `production`에 `main` 아닌 ref가 닿지 못한다.
-      # 비어 있으면 `requirePayTier`가 빌드를 세운다. 추측 가능한 기본값이 없는 변수라 그게 맞는 실패다.
+      # 결제수단 메뉴는 정적 export에 구워지므로 어느 PortOne 설정 모드로 파는지를 빌드가 알아야 한다.
+      # 워커 쪽 짝은 wrangler.jsonc `env.stg`의 `DEEPTYPE_PAY_TIER`이고, 둘이 어긋나면 페이월이 내놓은
+      # 수단을 /checkout이 거절한다.
+      #
+      # 리터럴인 이유: 이 job의 정체가 이미 그 한 비트다. 아래 배포 스텝이 `--env stg`를 하드코딩하는
+      # job에서 tier는 `test` 아닌 값일 수 없고, 배포 명령과 같은 job 안에 나란히 적혀 함께 읽힌다.
+      # tier는 시크릿이 아니라 레포가 소유한 닫힌 유니온이라 environment 변수로 격리할 것도 없다 —
+      # 이 값을 아는 것은 아무 권한도 아니고, 설정을 요구하는 순간 첫 배포가 빈 값으로 선다.
       - name: Build static export
         env:
-          NEXT_PUBLIC_DEEPTYPE_PAY_TIER: ${{ vars.VIBE_PAY_TIER }}
+          NEXT_PUBLIC_DEEPTYPE_PAY_TIER: test
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
         run: bun run --filter=@sobok/vibe build
 
@@ -261,9 +265,9 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 10
-    # 어느 ref가 이 job으로 `production` 크레덴셜과 `VIBE_PAY_TIER=live`를 받는지는 이 파일의
-    # 조건식이 아니라 GitHub Environment가 정한다 — `production`에 `main` 전용 브랜치 정책이 걸려
-    # 있어(sobok-ops `infra/github/sobok2026`) 조건식을 지워도 다른 브랜치는 이 환경을 못 연다.
+    # 어느 ref가 이 job으로 `production` 크레덴셜을 받는지는 이 파일의 조건식이 아니라 GitHub
+    # Environment가 정한다 — `production`에 `main` 전용 브랜치 정책이 걸려 있어(sobok-ops
+    # `infra/github/sobok2026`) 조건식을 지워도 다른 브랜치는 이 환경을 못 연다.
     #
     # 정확히 해 두면, 이건 "프로덕션 워커에 아무도 못 쓴다"가 아니라 "이 환경은 `main`만 연다"이다.
     # Cloudflare 토큰이 계정 범위라 `staging` 토큰으로도 `vibe`를 쓸 수는 있다 — 헤더 주석 ② 참고.
@@ -293,11 +297,12 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      # tier의 출처는 스테이징과 같은 장치다(위 stg job의 주석 참고). `production` 환경 변수만이
-      # `live`를 내려줄 수 있고, 그 환경은 `main`에만 열려 있다.
+      # tier가 리터럴인 이유는 stg job의 같은 자리 주석 참고. `live`가 위험해지는 유일한 경로는 이
+      # job이 실연동 채널 키로 배포까지 가는 것인데, 그 배포 스텝은 `production` 환경 시크릿 없이는
+      # 돌지 못하고 그 환경은 `main`에만 열려 있다 — 지키는 것은 tier 값이 아니라 크레덴셜이다.
       - name: Build static export
         env:
-          NEXT_PUBLIC_DEEPTYPE_PAY_TIER: ${{ vars.VIBE_PAY_TIER }}
+          NEXT_PUBLIC_DEEPTYPE_PAY_TIER: live
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
         run: bun run --filter=@sobok/vibe build
 
