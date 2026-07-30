@@ -1,8 +1,8 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "stella",
-  // A Worker WITH static assets: `main` handles /api/* (the anonymous comment board — Supabase/Hyperdrive DB
-  // and Turnstile secrets must stay server-side); everything else is the static Next export in ./out.
+  // A Worker WITH static assets: `main` handles /api/* (comments and paid-card authority — Supabase/Hyperdrive
+  // DB and secrets must stay server-side); everything else is the static Next export in ./out.
   "main": "worker/index.ts",
   "compatibility_date": "2026-07-01",
   // Required by postgres.js (Supabase Postgres over the Workers TCP socket API via Hyperdrive).
@@ -35,7 +35,8 @@
   "hyperdrive": [
     {
       // Single origin over the SHARED Supabase Postgres, authenticating as the least-privilege `stella_app`
-      // role. Caching DISABLED — a just-posted comment must appear immediately (read-after-write board).
+      // role. Caching DISABLED — comments, entitlements, ownership, and guarantee progress require fresh
+      // read-after-write state.
       "binding": "HYPERDRIVE",
       "id": "fba6a34ba67a4d0588d71266b13d57b9"
     }

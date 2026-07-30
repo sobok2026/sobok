@@ -1,5 +1,6 @@
 // Cloudflare Worker bindings for apps/stella. Static assets are served via ASSETS; everything below powers
-// the anonymous comment board. Declared declaratively in sobok-ops (infra/cloudflare account-stella +
+// the dynamic APIs, including the anonymous comment board and the future paid-card mutations. Declared
+// declaratively in sobok-ops (infra/cloudflare account-stella +
 // infra/supabase, Terraform):
 //   - Hyperdrive config → cloudflare_hyperdrive_config over the SHARED Supabase Postgres, authenticating as
 //     the least-privilege `stella_app` role (SELECT/INSERT/UPDATE on the `stella` schema only — no access to
@@ -9,8 +10,8 @@
 export interface Bindings {
   // Static Next export (./out), served for every non-/api path.
   ASSETS: Fetcher
-  // Single Hyperdrive over the shared Supabase Postgres. Caching DISABLED (read-after-write board: a just-
-  // posted comment must appear immediately).
+  // Single Hyperdrive over the shared Supabase Postgres. Caching DISABLED: comments, paid entitlements,
+  // collection ownership, and redraw counters all require fresh read-after-write state.
   HYPERDRIVE: Hyperdrive
 
   // ── Plain vars (wrangler.jsonc `vars`, overridable by .dev.vars locally) ───────────────────────────
