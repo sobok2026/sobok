@@ -7,6 +7,7 @@ import { createPendingPurchase } from '~/db/queries/purchase'
 import { getResultForCheckoutByToken } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
+import { alertDiscord } from '~/lib/alert'
 import { resolveSku } from '~/lib/pricing'
 import { newPaymentId, normalizeEmail, randomToken, sha256Hex } from '~/lib/tokens'
 import { guardTurnstile } from '~/lib/turnstile'
@@ -87,8 +88,17 @@ route.post('/', async (c) => {
     // The locale is the stored one, not a client claim, so this is the point where the channel policy is
     // actually enforced. Checked before the pending row is written — a refused method must leave nothing
     // behind for the reconcile cron to chase.
-    if (!isPayMethodAllowed(result.locale, body.payMethod)) {
+    if (!isPayMethodAllowed(result.locale, c.env.DEEPTYPE_PAY_TIER, body.payMethod)) {
       return 'method-not-allowed' as const
+    }
+
+    // Resolved here rather than in the response, and for the same reason: a pending row whose window can never
+    // open is a row the 15-min cron re-checks against PortOne until retention purges it. The menu already says
+    // this method is sellable, so an absent key means this deployment's channel map and
+    // `sellableChannels(tier)` disagree — our mistake, caught before it costs a row.
+    const channelKey = channelKeyFor(c.env, body.payMethod)
+    if (!channelKey) {
+      return 'channel-unbound' as const
     }
 
     const sku = resolveSku(body.sku, result.locale)
@@ -113,7 +123,7 @@ route.post('/', async (c) => {
       gaSessionId: body.analytics?.sessionId ?? null,
     })
 
-    return sku
+    return { channelKey, sku }
   })
 
   // Deliberately the same generic 422 a malformed body gets: naming the policy would tell a prober which
@@ -121,6 +131,18 @@ route.post('/', async (c) => {
   // offers what `payMethodsFor` returned.
   if (detail === 'method-not-allowed') {
     return problem(422, 'invalid-request')
+  }
+  // Config, not request: 500 and a page, the same treatment a misconfigured Turnstile gets. A client cannot
+  // provoke it — the method it asked for is one the menu offered — so this cannot be turned into a flood, and
+  // it is worth waking up for because it means one of the methods on the paywall cannot be paid with.
+  if (detail === 'channel-unbound') {
+    console.error(`deeptype.checkout.channel_unbound (${c.env.DEEPTYPE_PAY_TIER}): ${body.payMethod}`)
+    c.executionCtx.waitUntil(
+      c.env.DEEPTYPE_DISCORD_WEBHOOK.get().then((url) =>
+        alertDiscord(url, `🚨 deeptype has no ${c.env.DEEPTYPE_PAY_TIER} channel key for \`${body.payMethod}\``),
+      ),
+    )
+    return problem(500, 'internal')
   }
   if (!detail) {
     return problem(404, 'result-not-found')
@@ -132,10 +154,10 @@ route.post('/', async (c) => {
     paymentId,
     accessToken,
     storeId: c.env.DEEPTYPE_PORTONE_STORE_ID,
-    channelKey: channelKeyFor(c.env, body.payMethod),
-    orderName: detail.orderName,
-    amount: detail.amount,
-    currency: detail.currency,
+    channelKey: detail.channelKey,
+    orderName: detail.sku.orderName,
+    amount: detail.sku.amount,
+    currency: detail.sku.currency,
   })
 })
 

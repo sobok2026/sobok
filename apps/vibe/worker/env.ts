@@ -5,7 +5,7 @@
 //   - true secrets → Cloudflare Secrets Store (cloudflare_secrets_store_secret), bound via
 //     wrangler `secrets_store_secrets`; accessed at runtime with `await binding.get()`
 //   - non-secret config (store id, channel keys, kill-switch, model) → wrangler `vars`
-import type { PortOneChannel } from '@deep-type/pay-method'
+import type { PayTier, PortOneChannel } from '@deep-type/pay-method'
 
 export interface Bindings {
   // Static Next export (./out), served for every non-/api path via env.ASSETS.fetch(request).
@@ -31,6 +31,12 @@ export interface Bindings {
   // Separate PortOne store (own settlement entity). storeId/channelKey are public (sent to the browser SDK).
   //
   DEEPTYPE_PORTONE_STORE_ID: string
+  // Which PortOne 설정 모드 this deployment's channel keys belong to — 'live' for 실연동, 'test' for 테스트.
+  // `@deep-type/pay-method` turns it into the menu, and the paywall's static bundle carries the same value as
+  // NEXT_PUBLIC_DEEPTYPE_PAY_TIER so both halves narrow the catalogue identically. Never derived from the
+  // hostname or a branch name: the tier is a fact about the contracts, and a value we could infer is a value
+  // that can be inferred wrong on the money path.
+  DEEPTYPE_PAY_TIER: PayTier
   // Every PortOne channel key this deployment can spend, keyed by PG — PortOne's own pgProvider ids, not the
   // payment methods they carry. `tosspayments` is the same key whether it opens a card window or a 가상계좌
   // one, and it backs two methods already; `@deep-type/pay-method` owns which method rides which channel.
@@ -43,7 +49,13 @@ export interface Bindings {
   // These keys are also the ONLY thing that separates test from live: the store id and the API secret are
   // issued per store and shared across both modes. That is why they are `vars` pinned per wrangler
   // environment rather than anything resolvable at runtime — see the `env.stg` block in wrangler.jsonc.
-  DEEPTYPE_PORTONE_CHANNELS: Record<PortOneChannel, string>
+  //
+  // `Partial` because a channel this deployment cannot charge on is ABSENT, never `""` and never a placeholder.
+  // Absence is out-of-band and the compiler tracks it, so every read has to decide what to do about it; an
+  // empty string satisfies `string` and would ride all the way into `requestPayment`, and a placeholder is
+  // worse still — it is truthy, so no amount of falsy-checking catches it. The key set here must equal
+  // `sellableChannels(DEEPTYPE_PAY_TIER)`; `GET /api/deep-type/config` reports the difference.
+  DEEPTYPE_PORTONE_CHANNELS: Partial<Record<PortOneChannel, string>>
   DEEPTYPE_PUBLIC_ORIGIN: string
   DEEPTYPE_EMAIL_FROM: string
   DEEPTYPE_EMAIL_REPLY_TO: string

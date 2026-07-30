@@ -1,7 +1,8 @@
 import { ApiError } from './api'
 
 // The Turnstile gate is the only thing in the checkout and re-open flows that answers 400, 403 or 503 —
-// every other failure in those routes is 413, 422, 402, 404, 409 or 410 — so the status alone identifies it.
+// every other failure in those routes is 413, 422, 402, 404, 409, 410 or — when our own config is broken —
+// 500, so the status alone identifies it.
 // See worker/lib/turnstile.ts for the mapping this mirrors.
 //
 // The split that earns its keep is `expired`: the solve ran past 300s or was already spent, and solving again
