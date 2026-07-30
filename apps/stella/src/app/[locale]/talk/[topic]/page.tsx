@@ -52,21 +52,27 @@ export default async function TalkPage({ params }: PageProps<'/[locale]/talk/[to
 
   const label = topicLabel(topic, t as unknown as Labeler)
   const initial = boards.get(`${locale}:${topic}`)?.page
+  const isCardTopic = topic.startsWith('card-')
 
   return (
     <main className="relative min-h-dvh bg-night-sky px-4 pb-24 pt-[calc(4.5rem+var(--safe-area-top))] text-foreground">
       <div className="mx-auto w-full max-w-xl">
         <Link
           className="inline-flex items-center gap-1 text-xs text-foreground-subtle underline-offset-2 hover:text-foreground-secondary hover:underline"
-          href={`/${locale}`}
+          href={isCardTopic ? `/${locale}/cards` : `/${locale}`}
         >
-          ← {tc('backToChart')}
+          ← {tc(isCardTopic ? 'backToCardReport' : 'backToChart')}
         </Link>
         <h1 className="mt-3 text-xl font-bold text-foreground">{label}</h1>
-        <p className="mt-1 text-sm text-foreground-subtle">{tc('subtitle')}</p>
+        <p className="mt-1 text-sm text-foreground-subtle">{tc(isCardTopic ? 'cardSubtitle' : 'subtitle')}</p>
 
         <div className="mt-6">
-          <CommentThread initial={initial} locale={locale} topicKey={topic} />
+          <CommentThread
+            bodyPlaceholder={tc(isCardTopic ? 'cardBodyPlaceholder' : 'bodyPlaceholder')}
+            initial={initial}
+            locale={locale}
+            topicKey={topic}
+          />
         </div>
       </div>
     </main>

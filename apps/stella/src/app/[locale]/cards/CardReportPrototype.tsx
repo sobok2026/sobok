@@ -285,14 +285,12 @@ export default function CardReportPrototype({ content, locale }: Props) {
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full opacity-70" />
 
       <div className="relative z-10 mx-auto w-full max-w-xl">
-        <header className="mx-auto mb-7 max-w-lg text-center">
+        <header className="mb-7 text-center">
           <p className="text-[10px] font-semibold uppercase tracking-[0.34em] text-accent sm:text-xs">
             {content.hero.eyebrow}
           </p>
           <HeroTitle tone="love">{content.hero.title}</HeroTitle>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-foreground-muted/90">
-            {content.hero.subtitle}
-          </p>
+          <p className="mt-3 text-sm leading-relaxed text-foreground-muted/90">{content.hero.subtitle}</p>
           <div
             className={`${styles.sampleChip} mx-auto mt-4 flex w-fit items-center gap-2 rounded-full border border-border bg-surface-2 px-3 py-1.5 text-[11px]`}
           >
@@ -348,7 +346,7 @@ export default function CardReportPrototype({ content, locale }: Props) {
                 <span className="text-4xl">✦</span>
               </div>
               <h2 className="mt-5 text-xl font-bold tracking-tight text-white">{content.pack.title}</h2>
-              <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-foreground-muted">{content.pack.body}</p>
+              <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{content.pack.body}</p>
               <div aria-hidden="true" className={styles.stackPreview}>
                 <span />
                 <span />
@@ -429,16 +427,14 @@ export default function CardReportPrototype({ content, locale }: Props) {
 
         {phase === 'report' && rarity && (
           <div className="space-y-4" id="report" ref={reportRef}>
-            <header className="mx-auto max-w-lg text-center">
+            <header className="text-center">
               <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">
                 {content.report.eyebrow}
               </p>
               <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                 {content.report.title}
               </h2>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-foreground-muted">
-                {content.report.intro}
-              </p>
+              <p className="mt-3 text-sm leading-relaxed text-foreground-muted">{content.report.intro}</p>
             </header>
 
             <div className="sticky top-[calc(0.75rem+var(--safe-area-top))] z-30 rounded-2xl border border-border bg-background/80 px-4 py-3 shadow-lg shadow-black/25 backdrop-blur-xl sm:top-16">
@@ -502,7 +498,7 @@ export default function CardReportPrototype({ content, locale }: Props) {
               <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{content.actions.commentBody}</p>
               <Link
                 className="mt-4 flex items-center justify-between rounded-2xl border border-border bg-surface px-4 py-3 text-sm font-semibold text-foreground transition hover:border-white/25 hover:bg-surface-2"
-                href={`/${locale}/talk/card-ariesLove`}
+                href={`/${locale}/talk/card-aries-love`}
                 onClick={() => track('guardian_comment_open', { card_id: 'aries.love', rarity })}
               >
                 <span>{content.actions.commentCta}</span>
@@ -512,14 +508,12 @@ export default function CardReportPrototype({ content, locale }: Props) {
               </Link>
             </section>
 
-            <section className={`${styles.tomorrowCard} rounded-3xl border border-border px-5 py-6`}>
+            <section className={`${styles.tomorrowCard} rounded-3xl border border-border px-4 py-6 sm:px-5`}>
               <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-accent">
                 {content.actions.returnEyebrow}
               </p>
-              <h2 className="mt-2 max-w-sm text-lg font-bold text-foreground">{content.actions.returnTitle}</h2>
-              <p className="mt-2 max-w-sm text-sm leading-relaxed text-foreground-muted">
-                {content.actions.returnBody}
-              </p>
+              <h2 className="mt-2 text-lg font-bold text-foreground">{content.actions.returnTitle}</h2>
+              <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{content.actions.returnBody}</p>
               <Link
                 className="relative z-10 mt-4 inline-flex rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground transition hover:bg-surface-3"
                 href={`/${locale}/today`}
@@ -536,7 +530,7 @@ export default function CardReportPrototype({ content, locale }: Props) {
               >
                 {content.actions.reset}
               </button>
-              <p className="max-w-sm text-center text-[10px] leading-relaxed text-foreground-faint">
+              <p className="text-center text-[10px] leading-relaxed text-foreground-faint">
                 {content.actions.prototypeNote}
               </p>
             </div>

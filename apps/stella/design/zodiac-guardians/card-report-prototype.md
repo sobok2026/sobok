@@ -48,7 +48,7 @@
 - 컬렉션 저장: 브라우저 `localStorage`의 버전 키 `stella.guardianCards.v1`
 - 저장 값: `aries.love:{rarity}`
 - 공유 링크: `/{locale}/cards?rarity={rarity}`
-- 댓글 주제: `card-ariesLove`
+- 댓글 주제: `card-aries-love`
 
 공유 링크로 진입하면 같은 희귀도의 리포트를 바로 연다. 실제 상품에서는 구매 내역과 컬렉션을
 서버 계정에 귀속하고, 공유용 이미지 합성 및 공개 범위를 별도로 연결해야 한다.

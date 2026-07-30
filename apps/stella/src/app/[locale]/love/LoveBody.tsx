@@ -213,7 +213,7 @@ export default function LoveBody({ data, homeHref, locale, onShare, shared }: Lo
             >
               {t('share.button')}
             </button>
-            <p className="max-w-sm text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
+            <p className="text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
           </>
         )}
       </div>
