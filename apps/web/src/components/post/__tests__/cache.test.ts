@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from 'bun:test'
 import type { GETV1PostLikedResponse, GETV1PostResponse } from '@sobok/contracts'
-import { PostFilter } from '@sobok/domain/post/filter'
-import { PostType } from '@sobok/domain/post/model'
+import { POST_FILTER } from '@sobok/domain/post/filter'
+import { POST_TYPE } from '@sobok/domain/post/model'
 import { type InfiniteData, QueryClient } from '@tanstack/react-query'
 
 import { QueryKeys } from '@/lib/react-query/query-keys'
@@ -28,7 +28,7 @@ function createInfiniteData(postIds: number[]): InfiniteData<GETV1PostResponse> 
           id,
           createdAt: new Date('2025-01-01T00:00:00.000Z'),
           content: `post-${id}`,
-          type: PostType.TEXT,
+          type: POST_TYPE.TEXT,
           author: { id: 1, imageURL: null, name: 'user1', nickname: 'User One' },
           mangaId: null,
           parentPostId: null,
@@ -50,8 +50,8 @@ describe('게시글 캐시 헬퍼', () => {
   })
 
   test('목록에서 글을 낙관적으로 제거하고 스냅샷으로 복구한다', () => {
-    queryClient.setQueryData(QueryKeys.posts(PostFilter.RECOMMEND), createInfiniteData([1, 2]))
-    queryClient.setQueryData(QueryKeys.posts(PostFilter.USER, undefined, 'user1'), createInfiniteData([1, 3]))
+    queryClient.setQueryData(QueryKeys.posts(POST_FILTER.RECOMMEND), createInfiniteData([1, 2]))
+    queryClient.setQueryData(QueryKeys.posts(POST_FILTER.USER, undefined, 'user1'), createInfiniteData([1, 3]))
 
     const snapshot = snapshotPostLists(queryClient)
 
@@ -59,12 +59,12 @@ describe('게시글 캐시 헬퍼', () => {
 
     expect(
       queryClient
-        .getQueryData<InfiniteData<GETV1PostResponse>>(QueryKeys.posts(PostFilter.RECOMMEND))
+        .getQueryData<InfiniteData<GETV1PostResponse>>(QueryKeys.posts(POST_FILTER.RECOMMEND))
         ?.pages[0]?.posts.map((post) => post.id),
     ).toEqual([2])
     expect(
       queryClient
-        .getQueryData<InfiniteData<GETV1PostResponse>>(QueryKeys.posts(PostFilter.USER, undefined, 'user1'))
+        .getQueryData<InfiniteData<GETV1PostResponse>>(QueryKeys.posts(POST_FILTER.USER, undefined, 'user1'))
         ?.pages[0]?.posts.map((post) => post.id),
     ).toEqual([3])
 
@@ -72,27 +72,27 @@ describe('게시글 캐시 헬퍼', () => {
 
     expect(
       queryClient
-        .getQueryData<InfiniteData<GETV1PostResponse>>(QueryKeys.posts(PostFilter.RECOMMEND))
+        .getQueryData<InfiniteData<GETV1PostResponse>>(QueryKeys.posts(POST_FILTER.RECOMMEND))
         ?.pages[0]?.posts.map((post) => post.id),
     ).toEqual([1, 2])
   })
 
   test('좋아요 수를 낙관적으로 변경하고 스냅샷으로 복구한다', () => {
-    queryClient.setQueryData(QueryKeys.posts(PostFilter.RECOMMEND), createInfiniteData([1]))
+    queryClient.setQueryData(QueryKeys.posts(POST_FILTER.RECOMMEND), createInfiniteData([1]))
 
     const snapshot = snapshotPostLikeInPostLists(queryClient, 1)
 
     applyPostLikeCountDeltaInPostLists(queryClient, 1, 1)
 
     expect(
-      queryClient.getQueryData<InfiniteData<GETV1PostResponse>>(QueryKeys.posts(PostFilter.RECOMMEND))?.pages[0]
+      queryClient.getQueryData<InfiniteData<GETV1PostResponse>>(QueryKeys.posts(POST_FILTER.RECOMMEND))?.pages[0]
         ?.posts[0]?.likeCount,
     ).toBe(1)
 
     restorePostLikeInPostLists(queryClient, 1, snapshot)
 
     expect(
-      queryClient.getQueryData<InfiniteData<GETV1PostResponse>>(QueryKeys.posts(PostFilter.RECOMMEND))?.pages[0]
+      queryClient.getQueryData<InfiniteData<GETV1PostResponse>>(QueryKeys.posts(POST_FILTER.RECOMMEND))?.pages[0]
         ?.posts[0]?.likeCount,
     ).toBe(0)
   })

@@ -114,8 +114,12 @@ export const SECTION_CLAIMS = {
   contextShift: ['persona_inner_gap', 'inner_axis_profile'],
   threePaths: ['life_work_profile', 'world_role_card'],
   fitAndFriction: ['life_work_profile', 'mind_axis_and_gem'],
+  // These two carry `llm_report` beside their own evidence rather than instead of it. The engine composes both
+  // and declares only what it read — the axis profile for the opening, the work profile for the questions —
+  // while `llm_report` stays licensed for the narration written over them. A section's permitted set is the
+  // union of what both of its possible authors may rest on, not what either one happens to use.
   openingRead: ['llm_report', 'inner_axis_profile', 'mind_axis_and_gem'],
-  reflectionQuestions: ['llm_report'],
+  reflectionQuestions: ['llm_report', 'life_work_profile'],
 } as const satisfies Record<ReportSectionKey, readonly ClaimableEvidenceId[]>
 
 /**
@@ -162,10 +166,13 @@ export function checkClaims(section: ReportSectionKey, claims: readonly string[]
 }
 
 export class ClaimBoundaryError extends Error {
-  constructor(readonly violations: readonly ClaimViolation[]) {
+  readonly violations: readonly ClaimViolation[]
+
+  constructor(violations: readonly ClaimViolation[]) {
     super(
       `report section claims out of bounds: ${violations.map((v) => `${v.section}/${v.claim} (${v.kind})`).join(', ')}`,
     )
+    this.violations = violations
   }
 }
 

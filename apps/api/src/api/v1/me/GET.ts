@@ -1,4 +1,4 @@
-import { AdultVerificationStatus, type GETV1MeResponse } from '@sobok/contracts'
+import type { GETV1MeResponse } from '@sobok/contracts'
 import { db } from '@sobok/db/app'
 import { user } from '@sobok/db/app/auth'
 import { bbatonVerificationTable } from '@sobok/db/app/bbaton'
@@ -80,10 +80,10 @@ export default route
 function getAdultStatus(adultFlag: boolean | null) {
   switch (adultFlag) {
     case false:
-      return AdultVerificationStatus.NOT_ADULT
+      return 'not-adult'
     case true:
-      return AdultVerificationStatus.ADULT
+      return 'adult'
     default:
-      return AdultVerificationStatus.UNVERIFIED
+      return 'unverified'
   }
 }

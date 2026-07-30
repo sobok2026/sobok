@@ -7,7 +7,7 @@ import { Link } from '@/i18n/navigation'
 import { getLocaleFromParams } from '@/i18n/server'
 
 import NavigationWithMobileMenu from './NavigationWithMobileMenu'
-import { PostFilterParams, postFilterSchema } from './schema'
+import { postFilterSchema } from './schema'
 
 export default async function Layout({ params, children }: LayoutProps<'/[locale]/posts/[filter]'>) {
   const validation = postFilterSchema.safeParse(await params)
@@ -19,8 +19,8 @@ export default async function Layout({ params, children }: LayoutProps<'/[locale
   const locale = await getLocaleFromParams(params)
   const t = await getTranslations({ locale, namespace: 'Community.posts' })
   const { filter } = validation.data
-  const isrecommend = filter === PostFilterParams.RECOMMEND
-  const isFollowing = filter === PostFilterParams.FOLLOWING
+  const isrecommend = filter === 'recommend'
+  const isFollowing = filter === 'following'
   const barClassName = 'absolute bottom-0 left-1/2 -translate-x-1/2 h-1 rounded w-14 data-[selected=true]:bg-surface-3'
 
   return (

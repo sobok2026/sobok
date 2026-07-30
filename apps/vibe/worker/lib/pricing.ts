@@ -1,16 +1,17 @@
-import { DEEP_TYPE_REPORT_ITEM, DEEP_TYPE_REPORT_OFFER, PRODUCT_NAME } from '@deep-type/offer'
+import { DEEP_TYPE_REPORT_OFFER, type OfferCurrency, PRODUCT_NAME, reportItemFor } from '@deep-type/offer'
+import type { Locale } from '@sobok/domain/locale'
+
+import type { Sku } from '~/db/schema'
 
 import type { GA4Item } from './ga4'
 
 // Server is the SOLE price authority. The client never supplies an amount; checkout looks the SKU up here
-// and the grant path verifies the PG-reported amount equals this. Minor units, KRW.
-export type Sku = 'report' | 'compat' | 'bundle'
-type Locale = 'ko' | 'en' | 'ja' | 'zh'
+// and the grant path verifies the PG-reported amount equals this. Minor units, per-locale currency — `ko`
+// charges KRW, the overseas locales charge what their PayPal rail settles (`en`/`zh` USD, `ja` JPY), and the
+// numbers live in `@deep-type/offer` so the paywall shows the same price this module charges.
 
 export interface SkuDetail {
-  amount: number
-  currency: string
-  item: GA4Item
+  offers: typeof DEEP_TYPE_REPORT_OFFER
   orderNames: Record<Locale, string>
 }
 
@@ -23,9 +24,7 @@ export interface SkuDetail {
 // comment here is now a test over that constant instead.
 export const SKU_CATALOG: Partial<Record<Sku, SkuDetail>> = {
   report: {
-    amount: DEEP_TYPE_REPORT_OFFER.amount,
-    currency: DEEP_TYPE_REPORT_OFFER.currency,
-    item: DEEP_TYPE_REPORT_ITEM,
+    offers: DEEP_TYPE_REPORT_OFFER,
     orderNames: PRODUCT_NAME,
   },
 }
@@ -33,21 +32,29 @@ export const SKU_CATALOG: Partial<Record<Sku, SkuDetail>> = {
 export function resolveSku(
   sku: string,
   locale: Locale,
-): (Omit<SkuDetail, 'item' | 'orderNames'> & { orderName: string; sku: Sku }) | null {
+): { amount: number; currency: OfferCurrency; orderName: string; sku: Sku } | null {
   const detail = SKU_CATALOG[sku as Sku]
 
   if (!detail) {
     return null
   }
 
+  const offer = detail.offers[locale]
+
   return {
-    amount: detail.amount,
-    currency: detail.currency,
+    amount: offer.amount,
+    currency: offer.currency,
     orderName: detail.orderNames[locale],
     sku: sku as Sku,
   }
 }
 
-export function skuItem(sku: Sku): GA4Item | null {
-  return SKU_CATALOG[sku]?.item ?? null
+// Currency-aware because GA4 wants item price/discount in the event's currency and in major units — the
+// stored purchase row is what says which currency this sale was in.
+export function skuItem(sku: Sku, currency: OfferCurrency): GA4Item | null {
+  if (!SKU_CATALOG[sku]) {
+    return null
+  }
+
+  return reportItemFor(currency)
 }

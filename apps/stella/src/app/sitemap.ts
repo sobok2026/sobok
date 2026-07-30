@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE, LOCALE_HREFLANG_TAGS, Locale } from '@sobok/domain/locale'
+import { DEFAULT_LOCALE, LOCALE_HREFLANG_TAGS, LOCALES } from '@sobok/domain/locale'
 import type { MetadataRoute } from 'next'
 
 import { ORIGIN } from '@/constants'
@@ -27,9 +27,7 @@ const ROUTES: Route[] = [
 
 function languagesFor(path: string): Record<string, string> {
   return {
-    ...Object.fromEntries(
-      Object.values(Locale).map((locale) => [LOCALE_HREFLANG_TAGS[locale], `${ORIGIN}/${locale}${path}`]),
-    ),
+    ...Object.fromEntries(LOCALES.map((locale) => [LOCALE_HREFLANG_TAGS[locale], `${ORIGIN}/${locale}${path}`])),
     'x-default': `${ORIGIN}/${DEFAULT_LOCALE}${path}`,
   }
 }
@@ -40,7 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return ROUTES.flatMap(({ path, changeFrequency, priority, altPriority }) => {
     const languages = languagesFor(path)
 
-    return Object.values(Locale).map((locale) => ({
+    return LOCALES.map((locale) => ({
       url: `${ORIGIN}/${locale}${path}`,
       lastModified,
       changeFrequency,

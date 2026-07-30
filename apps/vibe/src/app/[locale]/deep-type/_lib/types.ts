@@ -1,18 +1,10 @@
+// The axis shapes live in `deep-type/content/axis-content` — both programs read the axis tables, so the type
+// cannot belong to the route. Re-exported here because the screen types are assembled from this module.
+import type { AxisContent } from '@deep-type/content/axis-content'
 import type { AxisId, GemCode, WorkDimension } from '@deep-type/model'
 import type { PayMethod } from '@deep-type/pay-method'
 
-export type AxisPoleContent = {
-  description: string
-  label: string
-  reflection: string
-}
-
-export type AxisContent = {
-  description: string
-  first: AxisPoleContent
-  name: string
-  second: AxisPoleContent
-}
+export type { AxisContent, AxisPoleContent } from '@deep-type/content/axis-content'
 
 export type QuestionContent = {
   options: readonly [string, string, string, string]
@@ -26,8 +18,6 @@ export type QuestionPromptCatalog = Readonly<Record<string, string>>
 export type QuestionOptionCatalog = Readonly<Record<string, QuestionContent['options']>>
 
 export type DeepTypeUiText = {
-  /** 인공지능 기본법 제31조 제2항 mark, shown on every model-written block of the report. */
-  aiGeneratedLabel: string
   analyzingBody: string
   analyzingTitle: string
   backCta: string
@@ -102,6 +92,14 @@ export type DeepTypePaywallContent = {
   /** Shown while the engine report is already on screen and the narration is still being written. */
   narrativePendingNote: string
   notice: string
+  /**
+   * The SPB leg. `paypalHint` sits above PayPal's own button after `/checkout` approves — the screen's only
+   * explanation of why our pay button just became someone else's — and `paypalCancel` is the way back to an
+   * editable form. Required in every locale like `methodLabels`: a locale that gains PayPal later cannot ship
+   * the leg with blank copy.
+   */
+  paypalCancel: string
+  paypalHint: string
   processing: string
   /**
    * The last request of the paid block failing. Its own copy rather than `errorGeneric`, which names payment —

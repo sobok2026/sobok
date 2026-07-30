@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { BroadcastChannelKey, type UserSettingsBroadcastMessage } from '@/storage'
+import { BROADCAST_CHANNEL_KEY, type UserSettingsBroadcastMessage } from '@/storage'
 import { fetchAPIData } from '@/utils/api-request'
 import type { ProblemDetailsError } from '@/utils/fetch-response'
 
@@ -60,7 +60,7 @@ export default function usePatchMySettingsMutation() {
       const currentMe = queryClient.getQueryData<GETV1MeResponse | null>(QueryKeys.me)
 
       if (currentMe && typeof BroadcastChannel !== 'undefined') {
-        const channel = new BroadcastChannel(BroadcastChannelKey.USER_SETTINGS)
+        const channel = new BroadcastChannel(BROADCAST_CHANNEL_KEY.USER_SETTINGS)
 
         channel.postMessage({
           userId: currentMe.id,

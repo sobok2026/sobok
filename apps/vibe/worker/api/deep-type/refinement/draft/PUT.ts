@@ -1,7 +1,6 @@
+import { openDB, withDB } from '@sobok/edge/db/client'
 import { Hono } from 'hono'
 import { z } from 'zod'
-
-import { openFresh, withDB } from '~/db/client'
 import { saveRefinementDraft } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
@@ -31,7 +30,7 @@ route.put('/', async (c) => {
   // payload when the truthful answer is 410 about the row. Same ordering rule as POST /refinement.
   const body = await c.req.json().catch(() => null)
 
-  return withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  return withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const context = await requirePaidRefinementContext(db, c.get('accessToken'))
     if (context instanceof Response) {
       return context

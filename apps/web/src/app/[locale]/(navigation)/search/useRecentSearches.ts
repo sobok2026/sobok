@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-import { LocalStorageKey } from '@/storage'
+import { LOCAL_STORAGE_KEY } from '@/storage'
 import { MAX_RECENT_SEARCHES } from '@/ui-policy'
 
 export type RecentSearch = {
@@ -31,7 +31,7 @@ export default function useRecentSearches() {
       const updated = [newSearch, ...filtered].slice(0, MAX_RECENT_SEARCHES)
 
       try {
-        localStorage.setItem(LocalStorageKey.RECENT_SEARCHES, JSON.stringify(updated))
+        localStorage.setItem(LOCAL_STORAGE_KEY.RECENT_SEARCHES, JSON.stringify(updated))
       } catch (error) {
         console.error('saveRecentSearch:', error)
       }
@@ -44,7 +44,7 @@ export default function useRecentSearches() {
     setRecentSearches([])
 
     try {
-      localStorage.setItem(LocalStorageKey.RECENT_SEARCHES, JSON.stringify([]))
+      localStorage.setItem(LOCAL_STORAGE_KEY.RECENT_SEARCHES, JSON.stringify([]))
     } catch (error) {
       console.error('clearRecentSearches:', error)
     }
@@ -54,7 +54,7 @@ export default function useRecentSearches() {
     setIsAutoSaveEnabled(enabled)
 
     try {
-      localStorage.setItem(LocalStorageKey.RECENT_SEARCHES_ENABLED, String(enabled))
+      localStorage.setItem(LOCAL_STORAGE_KEY.RECENT_SEARCHES_ENABLED, String(enabled))
     } catch (error) {
       console.error('setAutoSaveEnabled:', error)
     }
@@ -63,11 +63,11 @@ export default function useRecentSearches() {
   // NOTE: 로컬 스토리지에서 최근 검색어 및 설정 불러오기
   useEffect(() => {
     try {
-      const enabledStored = localStorage.getItem(LocalStorageKey.RECENT_SEARCHES_ENABLED)
+      const enabledStored = localStorage.getItem(LOCAL_STORAGE_KEY.RECENT_SEARCHES_ENABLED)
       const enabled = enabledStored === null ? true : enabledStored === 'true'
       setIsAutoSaveEnabled(enabled)
 
-      const stored = localStorage.getItem(LocalStorageKey.RECENT_SEARCHES)
+      const stored = localStorage.getItem(LOCAL_STORAGE_KEY.RECENT_SEARCHES)
       if (stored) {
         const parsed: unknown = JSON.parse(stored)
 

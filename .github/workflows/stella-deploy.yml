@@ -21,6 +21,14 @@ jobs:
   deploy:
     name: Build and deploy to Cloudflare
     if: ${{ github.ref_name == 'main' }}
+    # Cloudflare 크레덴셜은 environment에만 산다. 레포 시크릿은 environment를 선언하지 않은 job에도
+    # 내려가고, 그런 job에는 PR이 고칠 수 있는 것(vibe-deploy.yml의 `verify`)이 섞여 있다 — 그래서
+    # `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`는 레포 레벨에 두지 않는다.
+    #
+    # 덤으로 위의 `if`가 혼자 지고 있던 짐을 GitHub이 나눠 진다. `workflow_dispatch`는 고른 ref의
+    # 워크플로 파일을 실행하므로 그 조건식은 스스로를 지우는 커밋 앞에서 무력한데, `production`
+    # 환경의 `main` 전용 브랜치 정책은 파일 밖에 있어서 지울 수 없다.
+    environment: production
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 10
     steps:

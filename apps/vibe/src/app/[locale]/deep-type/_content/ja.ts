@@ -1,3 +1,4 @@
+import { jaAxisContent } from '@deep-type/content/axes.ja'
 import { createDeepTypeContent } from './create-content'
 import { jaFreeQuestionOptions } from './question-options/ja.free'
 import { jaFreeQuestionPrompts } from './question-prompts/ja.free'
@@ -7,7 +8,6 @@ import { jaFreeQuestionPrompts } from './question-prompts/ja.free'
 export const deepTypeContent = createDeepTypeContent({
   metadata: { title: '', description: '' },
   ui: {
-    aiGeneratedLabel: '',
     analyzingBody: '',
     analyzingTitle: '',
     backCta: '',
@@ -52,7 +52,7 @@ export const deepTypeContent = createDeepTypeContent({
     minorNotice: '',
     cta: '',
     methodLabel: '',
-    methodLabels: { card: '', kakaopay: '', mobile: '', tosspay: '', transfer: '' },
+    methodLabels: { card: '', kakaopay: '', mobile: '', paypal: 'PayPal', tosspay: '', transfer: '' },
     discountTemplate: '',
     effortNote: '',
     emailLabel: '',
@@ -66,6 +66,8 @@ export const deepTypeContent = createDeepTypeContent({
     generatingTitle: '',
     narrativePendingNote: '',
     notice: '',
+    paypalCancel: '',
+    paypalHint: '',
     processing: '',
     refinementFailedBody: '',
     refinementFailedTitle: '',
@@ -87,56 +89,7 @@ export const deepTypeContent = createDeepTypeContent({
     workDimensions: { drain: '', environment: '', interest: '', need: '', purpose: '' },
     workStepLabel: '',
   },
-  axes: {
-    EI: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    SN: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    TF: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    JP: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    RM: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    OA: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    VH: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-    UO: {
-      name: '',
-      description: '',
-      first: { label: '', description: '', reflection: '' },
-      second: { label: '', description: '', reflection: '' },
-    },
-  },
+  axes: jaAxisContent,
   landing: {
     kicker: '',
     facts: [],

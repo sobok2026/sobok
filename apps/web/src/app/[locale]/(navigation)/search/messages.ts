@@ -1,9 +1,7 @@
-import { Locale } from '@sobok/domain/locale'
-
 import type { LocalizedMessages } from '@/i18n/messages'
 
 export const messages = {
-  [Locale.KO]: {
+  ko: {
     Search: {
       title: '작품 검색',
       activeFilters: '적용된 조건',
@@ -171,7 +169,7 @@ export const messages = {
       },
     },
   },
-  [Locale.EN]: {
+  en: {
     Search: {
       title: 'Work search',
       activeFilters: 'Active filters',
@@ -339,7 +337,7 @@ export const messages = {
       },
     },
   },
-  [Locale.JA]: {
+  ja: {
     Search: {
       title: '作品検索',
       activeFilters: '適用中の条件',
@@ -507,7 +505,7 @@ export const messages = {
       },
     },
   },
-  [Locale.ZH]: {
+  zh: {
     Search: {
       title: '作品搜索',
       activeFilters: '已应用条件',

@@ -1,5 +1,5 @@
-import { Locale } from '@sobok/domain/locale'
-import { PostFilter } from '@sobok/domain/post/filter'
+import { LOCALES } from '@sobok/domain/locale'
+import { POST_FILTER } from '@sobok/domain/post/filter'
 import type { PostType } from '@sobok/domain/post/model'
 import { MAX_POST_CONTENT_LENGTH, POST_PER_PAGE } from '@sobok/domain/post/policy'
 import { z } from 'zod'
@@ -33,22 +33,22 @@ export interface GETV1PostResponse {
   nextCursor: string | null
 }
 
-export const postFilterSchema = z.enum(PostFilter)
+export const postFilterSchema = z.enum(POST_FILTER)
 
 const getV1PostQueryBaseSchema = z.object({
   cursor: z.string().optional(),
   limit: z.coerce.number().int().positive().max(POST_PER_PAGE).default(POST_PER_PAGE),
-  locale: z.enum(Locale).default(Locale.KO),
+  locale: z.enum(LOCALES).default('ko'),
   mangaId: z.coerce.number().int().positive().optional(),
 })
 
 const getV1UserPostQuerySchema = getV1PostQueryBaseSchema.extend({
-  filter: z.enum([PostFilter.USER, PostFilter.USER_REPLY]),
+  filter: z.enum([POST_FILTER.USER, POST_FILTER.USER_REPLY]),
   username: z.string().min(1).max(32),
 })
 
 const getV1TimelinePostQuerySchema = getV1PostQueryBaseSchema.extend({
-  filter: z.enum([PostFilter.FOLLOWING, PostFilter.MANGA, PostFilter.RECOMMEND]).optional(),
+  filter: z.enum([POST_FILTER.FOLLOWING, POST_FILTER.MANGA, POST_FILTER.RECOMMEND]).optional(),
   username: z.never().optional(),
 })
 

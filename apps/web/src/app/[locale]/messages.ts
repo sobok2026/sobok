@@ -1,13 +1,12 @@
 import { APP_METADATA } from '@sobok/domain/app/metadata'
-import { Locale } from '@sobok/domain/locale'
 
 import type { LocalizedMessages } from '@/i18n/messages'
 
 export const messages = {
-  [Locale.KO]: {
+  ko: {
     Metadata: {
       app: {
-        description: APP_METADATA[Locale.KO].description,
+        description: APP_METADATA.ko.description,
       },
       newYear: {
         title: '새해 카운트다운',
@@ -225,10 +224,10 @@ export const messages = {
       emptyTitle: '비어 있는 결과예요',
     },
   },
-  [Locale.EN]: {
+  en: {
     Metadata: {
       app: {
-        description: APP_METADATA[Locale.EN].description,
+        description: APP_METADATA.en.description,
       },
       newYear: {
         title: 'New Year Countdown',
@@ -447,10 +446,10 @@ export const messages = {
       emptyTitle: 'Nothing here',
     },
   },
-  [Locale.JA]: {
+  ja: {
     Metadata: {
       app: {
-        description: APP_METADATA[Locale.JA].description,
+        description: APP_METADATA.ja.description,
       },
       newYear: {
         title: '新年カウントダウン',
@@ -667,10 +666,10 @@ export const messages = {
       emptyTitle: '空の結果です',
     },
   },
-  [Locale.ZH]: {
+  zh: {
     Metadata: {
       app: {
-        description: APP_METADATA[Locale.ZH].description,
+        description: APP_METADATA.zh.description,
       },
       newYear: {
         title: '新年倒计时',

@@ -1,6 +1,6 @@
 'use client'
 
-import { LOCALE_NATIVE_NAMES, Locale } from '@sobok/domain/locale'
+import { isLocale, LOCALE_NATIVE_NAMES, LOCALES, type Locale } from '@sobok/domain/locale'
 import { usePathname } from 'next/navigation'
 
 type Props = {
@@ -27,7 +27,7 @@ export default function LocaleSwitcher({ label, locale }: Props) {
   function hrefFor(nextLocale: Locale): string {
     const segments = pathname.split('/')
 
-    if (Object.values(Locale).includes(segments[1] as Locale)) {
+    if (isLocale(segments[1] ?? '')) {
       segments[1] = nextLocale
     } else {
       segments.splice(1, 0, nextLocale)
@@ -38,7 +38,7 @@ export default function LocaleSwitcher({ label, locale }: Props) {
 
   return (
     <nav aria-label={label} className="flex items-center gap-2.5 text-xs">
-      {Object.values(Locale).map((entry) =>
+      {LOCALES.map((entry) =>
         entry === locale ? (
           <span key={entry} aria-current="page" className="font-semibold text-foreground">
             <Label name={LOCALE_NATIVE_NAMES[entry]} />

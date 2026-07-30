@@ -1,17 +1,20 @@
 import type { AssessmentProfile, ItemAnswer, PersonaCode, PersonaSource, WorkAnswer } from '@deep-type/model'
+import type { OfferCurrency } from '@deep-type/offer'
 import type { PayMethod } from '@deep-type/pay-method'
 import type { GAIdentity } from '@sobok/analytics/ga-identity'
 import type { Locale } from '@sobok/domain/locale'
 
-import type { ReportSection } from '../../../../../worker/report/section-keys'
+import type { NarrativeSection, ReportSection } from '../../../../../worker/report/section-data'
 
 const BASE = '/api/deep-type'
 
-// The section vocabulary lives in the Worker tree and is imported, not restated. The copy that used to sit here
-// drifted from the server's list the moment the career sections landed, and nothing could have caught it: two
-// independent unions agree with each other by luck. `worker/report/section-keys.ts` is dependency-free for
-// exactly this import, the same arrangement as `worker/api/deep-type/actions.ts`.
-export type { ReportSection, ReportSectionKey } from '../../../../../worker/report/section-keys'
+// The section vocabulary and the section shapes live in the Worker tree and are imported, not restated. The
+// copy that used to sit here drifted from the server's list the moment the career sections landed, and nothing
+// could have caught it: two independent unions agree with each other by luck. `section-keys.ts` and
+// `section-data.ts` are dependency-free for exactly this import — every import inside them is `import type`,
+// so nothing from the paid content tables can reach the browser through this line.
+export type * from '../../../../../worker/report/section-data'
+export type { ReportSectionKey } from '../../../../../worker/report/section-keys'
 
 export type SessionInput = {
   answers: ItemAnswer[]
@@ -49,11 +52,13 @@ export class ApiError extends Error {
   // mean opposite things to the person reading the screen: a refunded purchase is over, while a retired
   // instrument or a purged answer set means "your report is still yours, the follow-up questions are not".
   // Null whenever the failure did not come back as a problem document — a proxy, an edge error, a 502.
-  constructor(
-    readonly status: number,
-    readonly slug: string | null = null,
-  ) {
+  readonly status: number
+  readonly slug: string | null
+
+  constructor(status: number, slug: string | null = null) {
     super(`deeptype api ${status}${slug ? ` ${slug}` : ''}`)
+    this.status = status
+    this.slug = slug
   }
 }
 
@@ -73,10 +78,11 @@ export function postSession(input: SessionInput): Promise<{ profile: AssessmentP
 
 export type CheckoutResponse = {
   accessToken: string
+  /** Minor units in `currency` — exactly what the PortOne SDK's `totalAmount` takes, no conversion between. */
   amount: number
   // The channel the server approved for the requested `payMethod`, and only that one.
   channelKey: string
-  currency: string
+  currency: OfferCurrency
   orderName: string
   paymentId: string
   storeId: string
@@ -184,7 +190,7 @@ export function postReopenExchange(token: string): Promise<ReopenExchangeRespons
 // LLM pass has not finished; while it is true the server has NOT stamped delivery, so the withdrawal right is
 // still open and the caller should keep polling.
 export type ReportDelivery = {
-  narrative: ReportSection[]
+  narrative: NarrativeSection[]
   narrativePending: boolean
   profile: AssessmentProfile
   sections: ReportSection[]

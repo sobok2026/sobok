@@ -31,18 +31,14 @@ const deletionFieldActionClassName = `absolute top-1/2 right-2 -translate-y-1/2 
   group-has-[input:focus:not(:placeholder-shown)]:opacity-100 group-has-[input:focus:not(:placeholder-shown)]:pointer-events-auto
   disabled:opacity-50`
 
-enum DeletionStep {
-  INITIAL,
-  CONFIRM,
-  FINAL,
-}
+type DeletionStep = 'confirm' | 'final' | 'initial'
 
 type Props = {
   email: string
 }
 
 export default function AccountDeletionForm({ email }: Props) {
-  const [step, setStep] = useState<DeletionStep>(DeletionStep.INITIAL)
+  const [step, setStep] = useState<DeletionStep>('initial')
   const [confirmText, setConfirmText] = useState('')
   const formRef = useRef<HTMLFormElement | null>(null)
   const queryClient = useQueryClient()
@@ -91,7 +87,7 @@ export default function AccountDeletionForm({ email }: Props) {
   return (
     <div className="space-y-6">
       {/* Step 1: Initial Warning */}
-      {step === DeletionStep.INITIAL && (
+      {step === 'initial' && (
         <div className="space-y-6">
           <div className="bg-red-950/20 border-2 border-red-900/50 rounded-xl p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -110,14 +106,14 @@ export default function AccountDeletionForm({ email }: Props) {
           <div className="flex gap-3">
             <button
               className="flex-1 px-4 py-3 bg-surface-2 hover:bg-surface-3 rounded-lg font-medium transition"
-              onClick={() => setStep(DeletionStep.INITIAL)}
+              onClick={() => setStep('initial')}
               type="button"
             >
               취소
             </button>
             <button
               className="flex-1 px-4 py-3 bg-red-900 hover:bg-red-800 text-foreground rounded-lg font-medium transition flex items-center justify-center gap-2"
-              onClick={() => setStep(DeletionStep.CONFIRM)}
+              onClick={() => setStep('confirm')}
               type="button"
             >
               계속 진행
@@ -127,7 +123,7 @@ export default function AccountDeletionForm({ email }: Props) {
       )}
 
       {/* Step 2: Confirmation */}
-      {step === DeletionStep.CONFIRM && (
+      {step === 'confirm' && (
         <div className="space-y-6">
           <div className="bg-surface border-2 border-border-2 rounded-xl p-6">
             <h2 className="text-lg font-semibold mb-4">정말로 삭제할까요?</h2>
@@ -154,7 +150,7 @@ export default function AccountDeletionForm({ email }: Props) {
               className="flex-1 px-4 py-3 bg-surface-2 hover:bg-surface-3 rounded-lg font-medium transition"
               disabled={isPending}
               onClick={() => {
-                setStep(DeletionStep.INITIAL)
+                setStep('initial')
                 setConfirmText('')
               }}
               type="button"
@@ -168,7 +164,7 @@ export default function AccountDeletionForm({ email }: Props) {
                 'flex items-center justify-center gap-2',
               )}
               disabled={!isConfirmTextValid || isPending}
-              onClick={() => setStep(DeletionStep.FINAL)}
+              onClick={() => setStep('final')}
               type="button"
             >
               {isConfirmTextValid && <Check className="size-4" />}
@@ -179,7 +175,7 @@ export default function AccountDeletionForm({ email }: Props) {
       )}
 
       {/* Step 3: Final Confirmation with Password */}
-      {step === DeletionStep.FINAL && (
+      {step === 'final' && (
         <form
           className="space-y-6"
           onInput={(e) => clearDeletionInputValidity(e.target)}
@@ -219,7 +215,7 @@ export default function AccountDeletionForm({ email }: Props) {
             <button
               className="flex-1 px-4 py-3 bg-surface-2 hover:bg-surface-3 rounded-lg font-medium transition"
               disabled={isPending}
-              onClick={() => setStep(DeletionStep.CONFIRM)}
+              onClick={() => setStep('confirm')}
               type="button"
             >
               이전 단계

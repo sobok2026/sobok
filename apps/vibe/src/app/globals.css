@@ -60,6 +60,17 @@ html {
   scrollbar-gutter: stable;
 }
 
+/* The bottom island floats over the document, so the browser's own scroll-into-view would park a newly
+   focused control underneath it — a 17px link lands fully hidden, which fails WCAG 2.4.11. The padding
+   reserves the island's band in every scroll the browser performs for us, tabbing included. It is scoped
+   to the same breakpoint as the island (`sm:hidden`) so wider viewports do not pay for chrome they do
+   not show; the pill's own clearance in the page column stays PageBody's job. */
+@media (width < 40rem) {
+  html {
+    scroll-padding-bottom: var(--spacing-bottom-nav);
+  }
+}
+
 body {
   color: var(--page-ink);
   background: var(--page-bg);

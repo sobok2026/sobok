@@ -1,8 +1,7 @@
+import type { Db } from '@sobok/edge/db/client'
 import { and, eq, inArray, lt, or, sql } from 'drizzle-orm'
-
 import type { ReportPassStatus } from '../../report/pipeline'
-import type { Db } from '../client'
-import { type ReportSection, reportTable } from '../schema'
+import { type NarrativeSection, type ReportSection, reportTable } from '../schema'
 
 /** The state machine is declared with the rest of the pass contract; this module only reads and writes it. */
 export type ReportStatus = ReportPassStatus
@@ -27,7 +26,7 @@ export async function getReportStatus(
 
 export interface DeliverableReport {
   /** Null until the narration pass commits. The engine body ships without it. */
-  narrative: ReportSection[] | null
+  narrative: NarrativeSection[] | null
   sections: ReportSection[]
 }
 
@@ -178,7 +177,7 @@ export async function finalizeNarrativeDone(
   purchaseId: number,
   lockToken: string,
   model: string,
-  narrative: readonly ReportSection[],
+  narrative: readonly NarrativeSection[],
 ): Promise<boolean> {
   const rows = await db
     .update(reportTable)

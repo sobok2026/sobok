@@ -1,4 +1,4 @@
-import { Locale } from '@sobok/domain/locale'
+import { LOCALES } from '@sobok/domain/locale'
 import { env } from '@sobok/env/client'
 import type { MetadataRoute } from 'next'
 
@@ -23,7 +23,7 @@ function localizedSitemapEntries(
   changeFrequency: NonNullable<MetadataRoute.Sitemap[number]['changeFrequency']>,
   priority: number,
 ): MetadataRoute.Sitemap {
-  return Object.values(Locale).map((locale) => ({
+  return LOCALES.map((locale) => ({
     url: new URL(getPathname({ href: path, locale }), NEXT_PUBLIC_APP_ORIGIN).toString(),
     changeFrequency,
     priority,

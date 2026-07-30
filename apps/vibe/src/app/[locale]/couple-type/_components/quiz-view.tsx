@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight, HeartWaves } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 import type { AxisValue, CoupleTypeAnswers, CoupleTypeContent } from '../_lib/types'
 import { MiniStat } from './mini-stat'
@@ -17,8 +18,6 @@ type QuizViewProps = {
   questions: CoupleTypeContent['questions']
   ui: CoupleTypeContent['ui']
 }
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 export function QuizView({
   answers,
@@ -136,7 +135,7 @@ export function QuizView({
             <button
               className={cn(
                 'inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-page-border bg-white px-5 font-bold text-page-ink/70 text-sm transition-colors hover:text-page-ink',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               onClick={onBack}
               type="button"
@@ -147,7 +146,7 @@ export function QuizView({
             <button
               className={cn(
                 'inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-page-ink px-6 font-black text-sm text-white transition-colors enabled:hover:bg-page-ink/92 disabled:cursor-not-allowed disabled:opacity-45',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               disabled={!canGoNext}
               onClick={onNext}

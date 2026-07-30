@@ -1,3 +1,4 @@
+import { BAND_RANK, rankFacetCounts } from './facets'
 import {
   type AgreementValue,
   type AssessmentProfile,
@@ -243,16 +244,6 @@ function resolveClarityBand(score: AxisScore): ClarityBand {
   return magnitude >= 7 ? 'distinct' : magnitude === 5 ? 'moderate' : 'faint'
 }
 
-const BAND_RANK = {
-  distinct3: 2,
-  moderate3: 1,
-  faint3: 0,
-  distinct: 2,
-  moderate: 1,
-  faint: 0,
-  tie: -1,
-} as const satisfies Record<TentativeBand | ClarityBand, number>
-
 function compareBands(band3: TentativeBand, band5: ClarityBand): BandShift {
   const before = BAND_RANK[band3]
   const after = BAND_RANK[band5]
@@ -330,15 +321,15 @@ function tallyFacets<Facet extends WorkFacetId>(
     counts[pick.facet] = (counts[pick.facet] ?? 0) + 1
   }
 
-  const ranked = facets.map((facet) => counts[facet] ?? 0).sort((a, b) => b - a)
-  const top = ranked[0] ?? 0
+  const typed = counts as Record<Facet, number>
+  const { leaders, separation } = rankFacetCounts(facets, typed)
 
   return {
-    counts: counts as Record<Facet, number>,
+    counts: typed,
     // Four options per item over six facets: each facet is offered two thirds of the item count.
     exposure: (answered * 4) / 6,
-    leaders: facets.filter((facet) => counts[facet] === top),
-    separation: top - (ranked[1] ?? 0),
+    leaders,
+    separation,
   }
 }
 
@@ -355,8 +346,7 @@ export function resolveDrainBand(counts: Readonly<Record<DrainFacet, number>>, e
     throw new InvalidAnswerSetError()
   }
 
-  const ranked = WORK_FACETS.drain.map((facet) => counts[facet]).sort((a, b) => b - a)
-  const separation = (ranked[0] ?? 0) - (ranked[1] ?? 0)
+  const { separation } = rankFacetCounts(WORK_FACETS.drain, counts)
   return separation >= 2 ? 'single' : separation === 1 ? 'double' : 'triple'
 }
 

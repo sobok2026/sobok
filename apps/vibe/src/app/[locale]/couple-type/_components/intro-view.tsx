@@ -2,11 +2,10 @@ import { ArrowRight, HeartWaves } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 import type { CoupleTypeContent } from '../_lib/types'
 import { MiniStat } from './mini-stat'
-
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
 /**
  * The landing this test did not have.
@@ -48,7 +47,7 @@ export function IntroView({ content, locale }: { content: CoupleTypeContent; loc
         <Link
           className={cn(
             'mt-9 inline-flex min-h-14 touch-manipulation items-center justify-center gap-2 rounded-2xl bg-page-accent px-6 font-black text-base text-white shadow-[0_24px_80px_var(--page-accent-glow)] transition-colors hover:bg-page-accent/92',
-            focusClassName,
+            FOCUS_CLASS_NAME,
           )}
           href={`/${locale}/couple-type/quiz`}
         >

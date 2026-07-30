@@ -12,7 +12,7 @@ export function monthsBefore(now: Date, months: number): Date {
   return shiftUtcMonths(now, -months)
 }
 
-export function yearsBefore(now: Date, years: number): Date {
+function yearsBefore(now: Date, years: number): Date {
   return shiftUtcMonths(now, -years * 12)
 }
 

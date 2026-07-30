@@ -1,4 +1,4 @@
-import { LibraryItemSort } from '@sobok/domain/library/sort'
+import type { LibraryItemSort } from '@sobok/domain/library/sort'
 import { and, asc, desc, eq, gt, lt, or, type SQL } from 'drizzle-orm'
 import type { AnyPgColumn } from 'drizzle-orm/pg-core'
 
@@ -25,16 +25,16 @@ export function getLibraryItemCursorCondition(
   const cursorTime = new Date(cursor.timestamp)
 
   switch (sort) {
-    case LibraryItemSort.CREATED_ASC:
+    case 'created-asc':
       return or(
         gt(columns.createdAt, cursorTime),
         and(eq(columns.createdAt, cursorTime), gt(columns.mangaId, cursor.mangaId)),
       )!
-    case LibraryItemSort.MANGA_ID_ASC:
+    case 'manga-id-asc':
       return gt(columns.mangaId, cursor.mangaId)
-    case LibraryItemSort.MANGA_ID_DESC:
+    case 'manga-id-desc':
       return lt(columns.mangaId, cursor.mangaId)
-    case LibraryItemSort.CREATED_DESC:
+    case 'created-desc':
       return or(
         lt(columns.createdAt, cursorTime),
         and(eq(columns.createdAt, cursorTime), lt(columns.mangaId, cursor.mangaId)),
@@ -44,13 +44,13 @@ export function getLibraryItemCursorCondition(
 
 export function getLibraryItemOrderByClauses(sort: LibraryItemSort, columns: LibraryItemColumns): SQL[] {
   switch (sort) {
-    case LibraryItemSort.CREATED_ASC:
+    case 'created-asc':
       return [asc(columns.createdAt), asc(columns.mangaId)]
-    case LibraryItemSort.MANGA_ID_ASC:
+    case 'manga-id-asc':
       return [asc(columns.mangaId)]
-    case LibraryItemSort.MANGA_ID_DESC:
+    case 'manga-id-desc':
       return [desc(columns.mangaId)]
-    case LibraryItemSort.CREATED_DESC:
+    case 'created-desc':
       return [desc(columns.createdAt), desc(columns.mangaId)]
   }
 }

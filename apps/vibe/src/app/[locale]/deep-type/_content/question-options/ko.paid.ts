@@ -1,7 +1,7 @@
 import type { QuestionOptionCatalog } from '../../_lib/types'
 
 // Option order is the scored polarity: a translator fills these four slots in place and never reorders them.
-export const koPaidQuestionOptions = {
+export const paidQuestionOptions = {
   'refine-inner-ei-2': [
     '누군가 먼저 다가올 때까지 기다려요',
     '상황을 살핀 뒤 필요한 대화만 나눠요',

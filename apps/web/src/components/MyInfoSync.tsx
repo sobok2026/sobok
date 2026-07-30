@@ -6,7 +6,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { QueryKeys } from '@/lib/react-query/query-keys'
 import useMeQuery from '@/query/useMeQuery'
-import { BroadcastChannelKey, type UserSettingsBroadcastMessage } from '@/storage'
+import { BROADCAST_CHANNEL_KEY, type UserSettingsBroadcastMessage } from '@/storage'
 import { hasAdultAccess } from '@/utils/adult-verification'
 
 export default function MyInfoSync() {
@@ -35,7 +35,7 @@ export default function MyInfoSync() {
       return
     }
 
-    const channel = new BroadcastChannel(BroadcastChannelKey.USER_SETTINGS)
+    const channel = new BroadcastChannel(BROADCAST_CHANNEL_KEY.USER_SETTINGS)
 
     channel.onmessage = (event: MessageEvent<UserSettingsBroadcastMessage>) => {
       queryClient.setQueryData<GETV1MeResponse | null>(QueryKeys.me, (current) => {

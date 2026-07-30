@@ -1,20 +1,20 @@
 import type { AssessmentProfile } from '@deep-type/model'
 import { scoreBaseAssessment } from '@deep-type/scoring'
+import { LOCALES } from '@sobok/domain/locale'
+import { openDB, withDB } from '@sobok/edge/db/client'
+import { randomToken } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
 import { z } from 'zod'
-
-import { openFresh, withDB } from '~/db/client'
 import { insertResult } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
-import { randomToken } from '~/lib/tokens'
 import { BaseAnswersSchema, BaseWorkAnswersSchema, DeclaredPersonaSchema } from '~/scoring/answer-schema'
 
 const SessionBody = z.object({
   answers: BaseAnswersSchema,
   declaredPersona: DeclaredPersonaSchema.default(null),
   personaSource: z.enum(['declared', 'guided']).default('declared'),
-  locale: z.enum(['ko', 'en', 'ja', 'zh']),
+  locale: z.enum(LOCALES),
   workAnswers: BaseWorkAnswersSchema,
 })
 
@@ -43,7 +43,7 @@ route.post('/', async (c) => {
   }
 
   const resultToken = randomToken()
-  await withDB(openFresh(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+  await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     insertResult(db, {
       baseAnswers: parsed.data.answers,
       baseProfile: profile,

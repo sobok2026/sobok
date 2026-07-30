@@ -1,4 +1,4 @@
-import { NotificationConditionType } from '@sobok/domain/notification/model'
+import { NOTIFICATION_CONDITION_TYPE, type NotificationConditionType } from '@sobok/domain/notification/model'
 import { MAX_CRITERIA_NAME_LENGTH } from '@sobok/domain/notification/policy'
 import { normalizeValue } from '@sobok/domain/utils/normalize-value'
 
@@ -16,31 +16,31 @@ export type ParsedSearchQuery = {
 }
 
 const CATEGORY_TO_TYPE_MAP: Record<string, NotificationConditionType> = {
-  series: NotificationConditionType.SERIES,
-  parody: NotificationConditionType.SERIES,
-  character: NotificationConditionType.CHARACTER,
-  tag: NotificationConditionType.TAG,
-  female: NotificationConditionType.TAG,
-  male: NotificationConditionType.TAG,
-  mixed: NotificationConditionType.TAG,
-  other: NotificationConditionType.TAG,
-  artist: NotificationConditionType.ARTIST,
-  group: NotificationConditionType.GROUP,
-  language: NotificationConditionType.LANGUAGE,
-  uploader: NotificationConditionType.UPLOADER,
+  series: NOTIFICATION_CONDITION_TYPE.SERIES,
+  parody: NOTIFICATION_CONDITION_TYPE.SERIES,
+  character: NOTIFICATION_CONDITION_TYPE.CHARACTER,
+  tag: NOTIFICATION_CONDITION_TYPE.TAG,
+  female: NOTIFICATION_CONDITION_TYPE.TAG,
+  male: NOTIFICATION_CONDITION_TYPE.TAG,
+  mixed: NOTIFICATION_CONDITION_TYPE.TAG,
+  other: NOTIFICATION_CONDITION_TYPE.TAG,
+  artist: NOTIFICATION_CONDITION_TYPE.ARTIST,
+  group: NOTIFICATION_CONDITION_TYPE.GROUP,
+  language: NOTIFICATION_CONDITION_TYPE.LANGUAGE,
+  uploader: NOTIFICATION_CONDITION_TYPE.UPLOADER,
   // Korean mappings
-  시리즈: NotificationConditionType.SERIES,
-  패러디: NotificationConditionType.SERIES,
-  캐릭터: NotificationConditionType.CHARACTER,
-  태그: NotificationConditionType.TAG,
-  여성: NotificationConditionType.TAG,
-  남성: NotificationConditionType.TAG,
-  혼합: NotificationConditionType.TAG,
-  기타: NotificationConditionType.TAG,
-  작가: NotificationConditionType.ARTIST,
-  그룹: NotificationConditionType.GROUP,
-  언어: NotificationConditionType.LANGUAGE,
-  업로더: NotificationConditionType.UPLOADER,
+  시리즈: NOTIFICATION_CONDITION_TYPE.SERIES,
+  패러디: NOTIFICATION_CONDITION_TYPE.SERIES,
+  캐릭터: NOTIFICATION_CONDITION_TYPE.CHARACTER,
+  태그: NOTIFICATION_CONDITION_TYPE.TAG,
+  여성: NOTIFICATION_CONDITION_TYPE.TAG,
+  남성: NOTIFICATION_CONDITION_TYPE.TAG,
+  혼합: NOTIFICATION_CONDITION_TYPE.TAG,
+  기타: NOTIFICATION_CONDITION_TYPE.TAG,
+  작가: NOTIFICATION_CONDITION_TYPE.ARTIST,
+  그룹: NOTIFICATION_CONDITION_TYPE.GROUP,
+  언어: NOTIFICATION_CONDITION_TYPE.LANGUAGE,
+  업로더: NOTIFICATION_CONDITION_TYPE.UPLOADER,
 }
 
 // TODO: 로직 검증 필요
@@ -167,10 +167,10 @@ function generateSuggestedName(parts: string[], conditions: ParsedCondition[]): 
     const priorityConditions = includedConditions
       .filter(
         (c) =>
-          c.type === NotificationConditionType.ARTIST ||
-          c.type === NotificationConditionType.SERIES ||
-          c.type === NotificationConditionType.CHARACTER ||
-          c.type === NotificationConditionType.UPLOADER,
+          c.type === NOTIFICATION_CONDITION_TYPE.ARTIST ||
+          c.type === NOTIFICATION_CONDITION_TYPE.SERIES ||
+          c.type === NOTIFICATION_CONDITION_TYPE.CHARACTER ||
+          c.type === NOTIFICATION_CONDITION_TYPE.UPLOADER,
       )
       .slice(0, 2)
 

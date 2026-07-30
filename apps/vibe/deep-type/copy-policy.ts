@@ -167,9 +167,18 @@ export const COPY_GATES: readonly CopyGate[] = [
  */
 export const KO_COPY_SOURCES: readonly string[] = [
   'deep-type/content/abilities.ts',
+  // The eight axis names, pole labels and reflection prompts. They used to be an `axes:` block inside
+  // `_content/ko.ts` and were scanned as part of it; moving them into deep-type/ so the rule engine could stop
+  // reaching into the route tree took them out of every gate's reach until this line was added. A source that
+  // moves has to move on this list in the same commit.
+  'deep-type/content/axes.ko.ts',
   'deep-type/content/band-labels.free.ts',
   'deep-type/content/band-labels.paid.ts',
   'deep-type/content/evidence-labels.ts',
+  'deep-type/content/facet-details.paid.ts',
+  'deep-type/content/opening.paid.ts',
+  'deep-type/content/reflection.paid.ts',
+  'deep-type/content/section-copy.paid.ts',
   'deep-type/content/work-labels.free.ts',
   'deep-type/content/work-labels.paid.ts',
   'deep-type/content/world-job-names.ts',
@@ -203,6 +212,12 @@ export const KO_COPY_SOURCES: readonly string[] = [
  * a comment is invisible to an AST scanner by construction.
  */
 export const TRADEMARK_SOURCES: readonly string[] = [
+  // All four locales, because TRADEMARK's patterns are the only non-Hangul ones and 'MBTI' can appear in any of
+  // them. The axis copy moved out of `_content/<locale>.ts` into these four modules.
+  'deep-type/content/axes.en.ts',
+  'deep-type/content/axes.ja.ts',
+  'deep-type/content/axes.ko.ts',
+  'deep-type/content/axes.zh.ts',
   'deep-type/offer.ts',
   'src/app/[locale]/deep-type/_content/ko.ts',
   'src/app/[locale]/deep-type/_lib/brand.ts',

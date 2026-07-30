@@ -1,4 +1,4 @@
-import { openFresh } from '../db/client'
+import { openDB } from '@sobok/edge/db/client'
 import {
   expireReportAccess,
   minimizeDeliveredAnswers,
@@ -14,7 +14,7 @@ import { daysBefore, monthsBefore } from '../lib/retention'
 
 // Daily retention purge (driven by the daily cron in wrangler.jsonc). Logged to Workers Observability.
 export async function runRetentionPurge(env: Bindings): Promise<void> {
-  const { db, sql } = openFresh(env.HYPERDRIVE_FRESH)
+  const { db, sql } = openDB(env.HYPERDRIVE_FRESH)
   try {
     const now = Date.now()
     const current = new Date(now)

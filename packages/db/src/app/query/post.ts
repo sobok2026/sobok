@@ -2,8 +2,8 @@ import { db } from '@sobok/db/app'
 import { user } from '@sobok/db/app/auth'
 import { postLikeTable, postTable } from '@sobok/db/app/post'
 import { userFollowTable } from '@sobok/db/app/user'
-import { PostFilter } from '@sobok/domain/post/filter'
-import { PostType } from '@sobok/domain/post/model'
+import { POST_FILTER, type PostFilter } from '@sobok/domain/post/filter'
+import { POST_TYPE } from '@sobok/domain/post/model'
 import { and, count, desc, eq, inArray, isNotNull, isNull, lt, or, type SQL } from 'drizzle-orm'
 import { alias } from 'drizzle-orm/pg-core'
 
@@ -82,15 +82,15 @@ export default async function selectPost({
     conditions.push(inArray(postTable.id, postIds))
   }
 
-  if (filter === PostFilter.MANGA) {
+  if (filter === POST_FILTER.MANGA) {
     conditions.push(isNotNull(postTable.mangaId))
   }
 
-  if (filter === PostFilter.USER) {
+  if (filter === POST_FILTER.USER) {
     conditions.push(isNull(postTable.parentPostId))
   }
 
-  if (filter === PostFilter.USER_REPLY) {
+  if (filter === POST_FILTER.USER_REPLY) {
     conditions.push(isNotNull(postTable.parentPostId))
   }
 
@@ -102,7 +102,7 @@ export default async function selectPost({
     conditions.push(eq(user.username, username.toLowerCase()))
   }
 
-  if (filter === PostFilter.FOLLOWING) {
+  if (filter === POST_FILTER.FOLLOWING) {
     if (!currentUserId) {
       throw new Error('currentUserId is required for following filter')
     }
@@ -122,7 +122,7 @@ export default async function selectPost({
     baseQuery = baseQuery.innerJoin(user, eq(postTable.userId, user.id))
   }
 
-  if (filter === PostFilter.FOLLOWING) {
+  if (filter === POST_FILTER.FOLLOWING) {
     baseQuery = baseQuery.innerJoin(userFollowTable, eq(userFollowTable.followeeId, postTable.userId))
   }
 
@@ -242,7 +242,7 @@ export default async function selectPost({
           : null
 
       const referredPost =
-        post.type === PostType.REPOST && referredPostId === null
+        post.type === POST_TYPE.REPOST && referredPostId === null
           ? ({ isDeleted: true } satisfies ReferredPostRow)
           : referredPostInnerId !== null && referredPostCreatedAt !== null
             ? ({

@@ -1,16 +1,18 @@
 import { FREE_DELIVERABLES_KO } from '@deep-type/free-deliverables'
-import { DEEP_TYPE_REPORT_OFFER, PRODUCT_NAME } from '@deep-type/offer'
-import { Locale } from '@sobok/domain/locale'
-
-import { previousVersionsOf } from './legal-archive'
+import { DEEP_TYPE_REPORT_OFFER, majorUnits, PRODUCT_NAME } from '@deep-type/offer'
+import type { Locale } from '@sobok/domain/locale'
 
 // The contract states the price and the product name, so it reads them from the same constants the checkout
 // charges and the PortOne 결제창 prints. 전자상거래법 제13조 제2항 제2호·제3호 make both pre-contract disclosures,
 // and a literal here would be a second copy free to drift from the one the buyer is actually charged.
-const PRICE_KO = `${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('ko-KR')}원`
-const PRICE_EN = `KRW ${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('en-US')}`
-const PRICE_JA = `${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('ja-JP')}ウォン`
-const PRICE_ZH = `${DEEP_TYPE_REPORT_OFFER.amount.toLocaleString('zh-CN')}韩元`
+//
+// Each locale discloses in ITS OWN settlement currency — `ko` charges KRW and the overseas locales charge
+// what PayPal settles (`en`/`zh` USD, `ja` JPY) — so the number a contract names is the number the statement
+// shows, with no issuer FX between them.
+const PRICE_KO = `${DEEP_TYPE_REPORT_OFFER.ko.amount.toLocaleString('ko-KR')}원`
+const PRICE_EN = `USD ${majorUnits('USD', DEEP_TYPE_REPORT_OFFER.en.amount).toFixed(2)}`
+const PRICE_JA = `${DEEP_TYPE_REPORT_OFFER.ja.amount.toLocaleString('ja-JP')}円`
+const PRICE_ZH = `${majorUnits('USD', DEEP_TYPE_REPORT_OFFER.zh.amount).toFixed(2)}美元`
 
 // Contact shown on the legal pages. Keep this a mailbox that is actually
 // monitored (or swap it) — AdSense reviewers and users may write to it.
@@ -28,7 +30,6 @@ export type LegalDoc = {
   effectiveDate?: string
   updatedDate: string
   version?: string
-  previousVersions?: { label: string; href: string }[]
   sections: LegalSection[]
 }
 
@@ -43,8 +44,6 @@ export type LegalContent = {
   effectiveLabel: string
   versionLabel: string
   contentsLabel: string
-  previousVersionsLabel: string
-  noPreviousVersions: string
   contactLabel: string
   nav: LegalNav
   privacy: LegalDoc
@@ -53,13 +52,11 @@ export type LegalContent = {
 }
 
 export const LEGAL = {
-  [Locale.KO]: {
+  ko: {
     updatedLabel: '최종 업데이트',
     effectiveLabel: '시행일',
     versionLabel: '버전',
     contentsLabel: '목차',
-    previousVersionsLabel: '이전 버전',
-    noPreviousVersions: '이전 버전은 개정 시 이곳에 공개합니다.',
     contactLabel: '문의',
     nav: {
       privacy: '개인정보처리방침',
@@ -69,10 +66,9 @@ export const LEGAL = {
     privacy: {
       title: '개인정보처리방침',
       description: '로빈리뷰가 결타레 서비스에서 이용자의 정보를 어떻게 다루는지 안내합니다.',
-      effectiveDate: '2026년 8월 4일',
-      updatedDate: '2026년 7월 28일',
-      version: '1.1',
-      previousVersions: previousVersionsOf(Locale.KO, 'privacy'),
+      effectiveDate: '2026년 8월 1일',
+      updatedDate: '2026년 7월 30일',
+      version: '1.0',
       sections: [
         {
           heading: '무료 테스트와 유료 리포트의 구분',
@@ -173,10 +169,9 @@ export const LEGAL = {
     terms: {
       title: '이용약관',
       description: '로빈리뷰가 운영하는 결타레 서비스 이용에 적용되는 약관입니다.',
-      effectiveDate: '2026년 8월 4일',
-      updatedDate: '2026년 7월 28일',
-      version: '1.1',
-      previousVersions: previousVersionsOf(Locale.KO, 'terms'),
+      effectiveDate: '2026년 8월 1일',
+      updatedDate: '2026년 7월 30일',
+      version: '1.0',
       sections: [
         {
           heading: '서비스 소개',
@@ -204,17 +199,9 @@ export const LEGAL = {
           heading: '콘텐츠의 제공',
           body: [
             '리포트는 결제 후 이어지는 심층 문항의 답을 서버가 채점해 만듭니다. 심층 문항은 무료 결과에서 이미 나온 여덟 글자를 다시 정하지 않고 각 축의 선명도를 확정합니다.',
-            '리포트는 두 단계로 제공됩니다. 회사의 규칙 엔진이 쓴 본문이 먼저 올라오고 인공지능이 쓰는 서술 문단이 이어서 붙습니다. 서술이 끝나기 전까지는 리포트를 아직 제공하지 않은 것으로 보며 이 시점에는 청약철회가 제한되지 않습니다. 서술 생성이 재시도 한도를 넘겨 실패하면 자동 취소 기능이나 고객센터를 통해 전액 환불을 요청할 수 있습니다.',
+            '리포트는 두 단계로 제공됩니다. 회사의 규칙 엔진이 쓴 본문이 먼저 올라오고 서술 문단이 이어서 붙습니다. 서술이 끝나기 전까지는 리포트를 아직 제공하지 않은 것으로 보며 이 시점에는 청약철회가 제한되지 않습니다. 서술 생성이 재시도 한도를 넘겨 실패하면 자동 취소 기능이나 고객센터를 통해 전액 환불을 요청할 수 있습니다.',
             '리포트는 내려받는 파일이 아니라 웹 화면으로 제공합니다. 자바스크립트를 켠 최신 브라우저가 필요하고 따로 설치할 프로그램은 없습니다. 재열람은 구매에 사용한 이메일을 받을 수 있어야 가능합니다.',
             '리포트와 이메일 재열람은 결제일부터 1년 동안 제공합니다. 구매 이메일을 입력하면 15분 동안 한 번만 쓸 수 있는 링크를 보내며 링크에서 이용자가 열기 버튼을 누른 뒤 리포트를 표시합니다. 1년 뒤에는 리포트·결과·이메일과 접근 권한을 삭제하므로 별도 복구를 보장하지 않습니다.',
-          ],
-        },
-        {
-          heading: '인공지능 생성 고지',
-          body: [
-            '리포트의 본문은 회사의 규칙 엔진이 작성하고 일부 서술 문단은 Anthropic의 생성형 인공지능이 씁니다. 회사는 인공지능 기본법 제31조 제1항에 따라 이 사실을 결제 전에 알리고 같은 조 제2항에 따라 리포트 화면에서 인공지능이 쓴 문단에 그 사실을 표시합니다.',
-            '인공지능은 여덟 글자와 선명도를 정하지 않습니다. 그 값은 회사의 프로그램이 이용자의 답에서 계산하며 인공지능은 이미 정해진 값을 문장으로 옮길 뿐입니다.',
-            '생성형 인공지능이 쓴 문장은 사실 확인을 거친 진술이 아니고 같은 답변이라도 표현이 달라질 수 있습니다. 인공지능 서술이 끝내 생성되지 않아도 규칙 엔진이 쓴 본문은 그대로 제공합니다.',
           ],
         },
         {
@@ -292,10 +279,9 @@ export const LEGAL = {
     refund: {
       title: '청약철회·환불 정책',
       description: `${PRODUCT_NAME.ko}의 청약철회와 환불에 관한 사항을 안내합니다.`,
-      effectiveDate: '2026년 8월 4일',
-      updatedDate: '2026년 7월 28일',
-      version: '1.1',
-      previousVersions: previousVersionsOf(Locale.KO, 'refund'),
+      effectiveDate: '2026년 8월 1일',
+      updatedDate: '2026년 7월 30일',
+      version: '1.0',
       sections: [
         {
           heading: '청약철회 기간',
@@ -315,7 +301,7 @@ export const LEGAL = {
           heading: '열람 전 전액 환불',
           body: [
             '결제한 뒤에도 리포트를 아직 열람하지 않았다면 언제든 전액 환불받을 수 있습니다. 리포트 화면의 환불 요청 기능으로 즉시 처리하거나 아래 문의처로 요청할 수 있습니다.',
-            '리포트는 규칙 엔진이 쓴 본문이 먼저 올라오고 인공지능 서술이 이어서 붙습니다. 서술이 끝나기 전까지는 콘텐츠 제공이 개시되지 않은 것으로 보므로 이 시점에는 청약철회가 제한되지 않습니다.',
+            '리포트는 규칙 엔진이 쓴 본문이 먼저 올라오고 서술 문단이 이어서 붙습니다. 서술이 끝나기 전까지는 콘텐츠 제공이 개시되지 않은 것으로 보므로 이 시점에는 청약철회가 제한되지 않습니다.',
             '리포트의 1년 재열람 기간은 환불 가능 기간을 늘리거나 이미 시작된 콘텐츠 제공을 되돌리는 의미가 아닙니다. 다만 리포트 생성이 최종 실패했거나 회사가 제공하지 못한 경우에는 전액 환불합니다.',
           ],
         },
@@ -354,13 +340,11 @@ export const LEGAL = {
     },
   },
 
-  [Locale.EN]: {
+  en: {
     updatedLabel: 'Last updated',
     effectiveLabel: 'Effective',
     versionLabel: 'Version',
     contentsLabel: 'Contents',
-    previousVersionsLabel: 'Previous versions',
-    noPreviousVersions: 'Previous versions will be published here when this document is revised.',
     contactLabel: 'Contact',
     nav: {
       privacy: 'Privacy Policy',
@@ -370,10 +354,9 @@ export const LEGAL = {
     privacy: {
       title: 'Privacy Policy',
       description: 'How Robin Review handles your information in vibe (DeepType).',
-      effectiveDate: 'August 4, 2026',
-      updatedDate: 'July 28, 2026',
-      version: '1.1',
-      previousVersions: previousVersionsOf(Locale.EN, 'privacy'),
+      effectiveDate: 'August 1, 2026',
+      updatedDate: 'July 30, 2026',
+      version: '1.0',
       sections: [
         {
           heading: 'Free quizzes vs. the paid report',
@@ -474,10 +457,9 @@ export const LEGAL = {
     terms: {
       title: 'Terms of Service',
       description: 'The terms that apply to using vibe (DeepType), operated by Robin Review.',
-      effectiveDate: 'August 4, 2026',
-      updatedDate: 'July 28, 2026',
-      version: '1.1',
-      previousVersions: previousVersionsOf(Locale.EN, 'terms'),
+      effectiveDate: 'August 1, 2026',
+      updatedDate: 'July 30, 2026',
+      version: '1.0',
       sections: [
         {
           heading: 'About the service',
@@ -505,17 +487,9 @@ export const LEGAL = {
           heading: 'Delivery of content',
           body: [
             'The report is built by the server from your answers to the in-depth items that follow payment. Those items do not set the eight letters of your free result a second time; they settle how clear each axis is.',
-            'The report is delivered in two stages. The body written by our rules engine appears first, and the narrative paragraphs written by AI are added after it. Until the narration settles, the report is treated as not yet delivered, and withdrawal is not restricted at that point. If narration reaches the retry limit without succeeding, you can request a full refund through the automatic cancellation control or support.',
+            'The report is delivered in two stages. The body written by our rules engine appears first, and the narrative paragraphs are added after it. Until the narration settles, the report is treated as not yet delivered, and withdrawal is not restricted at that point. If narration reaches the retry limit without succeeding, you can request a full refund through the automatic cancellation control or support.',
             'The report is delivered as a web page, not as a file to download. It requires a modern browser with JavaScript enabled, and there is no program to install. Re-opening it requires that you can receive mail at the address used for the purchase.',
             'The report and email reopening are available for 1 year from payment. Entering the purchase email sends a link that works once for 15 minutes; the report opens after you explicitly select the open button. After 1 year, the report, results, email, and access credential are deleted and recovery is not guaranteed.',
-          ],
-        },
-        {
-          heading: 'AI generation notice',
-          body: [
-            'The body of the report is written by our rules engine, and some narrative paragraphs are written by Anthropic’s generative AI. Under Article 31(1) of the Korean Framework Act on Artificial Intelligence, we tell you this before payment, and under Article 31(2) of the same Act we mark the AI-written paragraphs as such on the report screen.',
-            'The AI does not decide the eight letters or the clarity of each axis. Those values are computed by our own program from your answers, and the AI only puts already-fixed values into sentences.',
-            'Sentences written by generative AI are not fact-checked statements, and the wording can differ even for the same answers. If the AI narration is never produced, we still deliver the body written by the rules engine unchanged.',
           ],
         },
         {
@@ -593,10 +567,9 @@ export const LEGAL = {
     refund: {
       title: 'Withdrawal & Refund Policy',
       description: `How withdrawal and refunds work for the ${PRODUCT_NAME.en}.`,
-      effectiveDate: 'August 4, 2026',
-      updatedDate: 'July 28, 2026',
-      version: '1.1',
-      previousVersions: previousVersionsOf(Locale.EN, 'refund'),
+      effectiveDate: 'August 1, 2026',
+      updatedDate: 'July 30, 2026',
+      version: '1.0',
       sections: [
         {
           heading: 'Withdrawal period',
@@ -613,7 +586,7 @@ export const LEGAL = {
           heading: 'Full refund before opening',
           body: [
             'Even after payment, if you have not yet opened the report you can get a full refund at any time. Use the refund request on the report screen for immediate processing, or contact us below.',
-            'In the report, the body written by the rules engine appears first and the AI narration is added after it. Until the narration settles, delivery of the content is treated as not yet begun, so withdrawal is not restricted at that point.',
+            'In the report, the body written by the rules engine appears first and the narrative paragraphs are added after it. Until the narration settles, delivery of the content is treated as not yet begun, so withdrawal is not restricted at that point.',
             'The 1-year reopening period does not extend the refund period or reverse delivery that has already started. We do provide a full refund if final report generation fails or we cannot deliver the paid content.',
           ],
         },
@@ -651,13 +624,11 @@ export const LEGAL = {
       ],
     },
   },
-  [Locale.JA]: {
+  ja: {
     updatedLabel: '最終更新',
     effectiveLabel: '施行日',
     versionLabel: 'バージョン',
     contentsLabel: '目次',
-    previousVersionsLabel: '過去のバージョン',
-    noPreviousVersions: '改定時に過去のバージョンをここで公開します。',
     contactLabel: 'お問い合わせ',
     nav: {
       privacy: 'プライバシーポリシー',
@@ -667,10 +638,9 @@ export const LEGAL = {
     privacy: {
       title: 'プライバシーポリシー',
       description: 'Robin Review が vibe（DeepType）で利用者の情報をどのように扱うかについてご案内します。',
-      effectiveDate: '2026年8月4日',
-      updatedDate: '2026年7月28日',
-      version: '1.1',
-      previousVersions: previousVersionsOf(Locale.JA, 'privacy'),
+      effectiveDate: '2026年8月1日',
+      updatedDate: '2026年7月30日',
+      version: '1.0',
       sections: [
         {
           heading: '無料診断と有料レポートの区別',
@@ -771,10 +741,9 @@ export const LEGAL = {
     terms: {
       title: '利用規約',
       description: 'Robin Review が運営する vibe（DeepType）のご利用に適用される規約です。',
-      effectiveDate: '2026年8月4日',
-      updatedDate: '2026年7月28日',
-      version: '1.1',
-      previousVersions: previousVersionsOf(Locale.JA, 'terms'),
+      effectiveDate: '2026年8月1日',
+      updatedDate: '2026年7月30日',
+      version: '1.0',
       sections: [
         {
           heading: 'サービスについて',
@@ -802,17 +771,9 @@ export const LEGAL = {
           heading: 'コンテンツの提供',
           body: [
             'レポートは、決済後に続く詳細設問の回答をサーバーが採点して作成します。詳細設問は、無料結果ですでに出た八文字を決め直すことはなく、各軸の明瞭度を確定します。',
-            'レポートは2段階で提供します。当社のルールエンジンが書いた本文が先に表示され、人工知能が書く記述の段落が後から加わります。記述が終わるまではレポートをまだ提供していないものとみなし、この時点では申込撤回は制限されません。記述の生成が再試行の上限を超えて失敗した場合は、自動キャンセル機能またはサポートから全額返金を依頼できます。',
+            'レポートは2段階で提供します。当社のルールエンジンが書いた本文が先に表示され、記述の段落が後から加わります。記述が終わるまではレポートをまだ提供していないものとみなし、この時点では申込撤回は制限されません。記述の生成が再試行の上限を超えて失敗した場合は、自動キャンセル機能またはサポートから全額返金を依頼できます。',
             'レポートは、ダウンロードするファイルではなくウェブ画面で提供します。JavaScriptを有効にした最新のブラウザが必要で、別途インストールするプログラムはありません。再閲覧は、購入に使用したメールを受け取れることが条件となります。',
             'レポートとメールによる再閲覧は決済日から1年間利用できます。購入メールを入力すると15分以内に1回だけ使えるリンクを送り、利用者が開くボタンを選択した後に表示します。1年後はレポート・結果・メール・閲覧権限を削除し、復旧は保証しません。',
-          ],
-        },
-        {
-          heading: '人工知能生成の告知',
-          body: [
-            'レポートの本文は当社のルールエンジンが作成し、記述の段落の一部はAnthropicの生成AIが書きます。当社は人工知能基本法第31条第1項に基づきこの事実を決済前にお知らせし、同条第2項に基づきレポート画面で人工知能が書いた段落にその旨を表示します。',
-            '人工知能が八文字や明瞭度を決めることはありません。これらの値は当社のプログラムが利用者の回答から計算し、人工知能はすでに確定した値を文章に置き換えるだけです。',
-            '生成AIが書いた文章は事実確認を経た記述ではなく、同じ回答でも表現が変わることがあります。人工知能の記述が最後まで生成されなかった場合でも、ルールエンジンが書いた本文はそのまま提供します。',
           ],
         },
         {
@@ -890,10 +851,9 @@ export const LEGAL = {
     refund: {
       title: '申込撤回・返金ポリシー',
       description: `${PRODUCT_NAME.ja}の申込撤回と返金に関する事項をご案内します。`,
-      effectiveDate: '2026年8月4日',
-      updatedDate: '2026年7月28日',
-      version: '1.1',
-      previousVersions: previousVersionsOf(Locale.JA, 'refund'),
+      effectiveDate: '2026年8月1日',
+      updatedDate: '2026年7月30日',
+      version: '1.0',
       sections: [
         {
           heading: '申込撤回の期間',
@@ -910,7 +870,7 @@ export const LEGAL = {
           heading: '閲覧前の全額返金',
           body: [
             '決済後でもレポートをまだ閲覧していなければ、いつでも全額返金を受けられます。レポート画面の返金リクエスト機能で即時に処理するか、下記のお問い合わせ先までご連絡ください。',
-            'レポートは、ルールエンジンが書いた本文が先に表示され、人工知能の記述が後から加わります。記述が終わるまではコンテンツの提供が開始されていないものとみなすため、この時点では申込撤回は制限されません。',
+            'レポートは、ルールエンジンが書いた本文が先に表示され、記述の段落が後から加わります。記述が終わるまではコンテンツの提供が開始されていないものとみなすため、この時点では申込撤回は制限されません。',
             '1年間の再閲覧期間は返金可能期間を延長したり、すでに始まった提供を取り消したりするものではありません。ただしレポートの生成が最終的に失敗した場合、または当社が提供できない場合は全額返金します。',
           ],
         },
@@ -950,13 +910,11 @@ export const LEGAL = {
       ],
     },
   },
-  [Locale.ZH]: {
+  zh: {
     updatedLabel: '最后更新',
     effectiveLabel: '生效日期',
     versionLabel: '版本',
     contentsLabel: '目录',
-    previousVersionsLabel: '历史版本',
-    noPreviousVersions: '修订后将在此公布历史版本。',
     contactLabel: '联系方式',
     nav: {
       privacy: '隐私政策',
@@ -966,10 +924,9 @@ export const LEGAL = {
     privacy: {
       title: '隐私政策',
       description: '说明 Robin Review 在 vibe（DeepType）中如何处理您的信息。',
-      effectiveDate: '2026年8月4日',
-      updatedDate: '2026年7月28日',
-      version: '1.1',
-      previousVersions: previousVersionsOf(Locale.ZH, 'privacy'),
+      effectiveDate: '2026年8月1日',
+      updatedDate: '2026年7月30日',
+      version: '1.0',
       sections: [
         {
           heading: '免费测试与付费报告的区分',
@@ -1068,10 +1025,9 @@ export const LEGAL = {
     terms: {
       title: '服务条款',
       description: '适用于使用由 Robin Review 运营的 vibe（DeepType）的条款。',
-      effectiveDate: '2026年8月4日',
-      updatedDate: '2026年7月28日',
-      version: '1.1',
-      previousVersions: previousVersionsOf(Locale.ZH, 'terms'),
+      effectiveDate: '2026年8月1日',
+      updatedDate: '2026年7月30日',
+      version: '1.0',
       sections: [
         {
           heading: '关于服务',
@@ -1099,17 +1055,9 @@ export const LEGAL = {
           heading: '内容的提供',
           body: [
             '报告由服务器对付款后继续作答的深度题目进行评分后生成。深度题目不会重新决定免费结果中已经得出的八个字母，只确定各轴的清晰度。',
-            '报告分两个阶段提供。我们的规则引擎所写的正文先行显示，随后附上由人工智能撰写的叙述段落。在叙述完成之前，视为报告尚未提供，此时撤回不受限制。若叙述生成达到重试上限仍失败，可通过自动取消功能或客服申请全额退款。',
+            '报告分两个阶段提供。我们的规则引擎所写的正文先行显示，随后附上叙述段落。在叙述完成之前，视为报告尚未提供，此时撤回不受限制。若叙述生成达到重试上限仍失败，可通过自动取消功能或客服申请全额退款。',
             '报告以网页形式提供，不是可下载的文件。需要启用JavaScript的现代浏览器，无需另行安装任何程序。重新查看需要您能够收取购买时使用的邮箱。',
             '报告与邮件重新查看服务自付款之日起提供1年。输入购买邮箱后会发送15分钟内仅可使用一次的链接；您明确点击打开按钮后才会显示报告。1年后将删除报告、结果、邮箱和访问凭证，不保证恢复。',
-          ],
-        },
-        {
-          heading: '人工智能生成告知',
-          body: [
-            '报告的正文由我们的规则引擎撰写，部分叙述段落由 Anthropic 的生成式人工智能撰写。依据《人工智能基本法》第31条第1款，我们在支付前告知这一事实；依据同条第2款，我们在报告页面对人工智能撰写的段落作出标示。',
-            '人工智能不决定八个字母与清晰度。这些数值由我们的程序根据您的答案计算，人工智能只是把已经确定的数值写成句子。',
-            '生成式人工智能所写的句子并非经过事实核查的陈述，即使答案相同，表述也可能不同。即使人工智能的叙述最终没有生成，规则引擎所写的正文仍会照常提供。',
           ],
         },
         {
@@ -1183,10 +1131,9 @@ export const LEGAL = {
     refund: {
       title: '撤回·退款政策',
       description: `说明 ${PRODUCT_NAME.zh}的撤回与退款事宜。`,
-      effectiveDate: '2026年8月4日',
-      updatedDate: '2026年7月28日',
-      version: '1.1',
-      previousVersions: previousVersionsOf(Locale.ZH, 'refund'),
+      effectiveDate: '2026年8月1日',
+      updatedDate: '2026年7月30日',
+      version: '1.0',
       sections: [
         {
           heading: '撤回期限',
@@ -1203,7 +1150,7 @@ export const LEGAL = {
           heading: '查看前全额退款',
           body: [
             '即使已支付，只要尚未查看报告，随时可获得全额退款。可通过报告页面的退款申请功能即时处理，或联系下方联系方式。',
-            '报告先显示规则引擎所写的正文，随后附上人工智能的叙述。在叙述完成之前，视为内容的提供尚未开始，因此撤回不受限制。',
+            '报告先显示规则引擎所写的正文，随后附上叙述段落。在叙述完成之前，视为内容的提供尚未开始，因此撤回不受限制。',
             '1年的重新查看期限不会延长退款期限，也不会撤回已经开始的内容提供。但若报告最终生成失败，或我们无法提供已付款内容，将全额退款。',
           ],
         },

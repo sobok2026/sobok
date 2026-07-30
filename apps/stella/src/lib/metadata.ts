@@ -1,4 +1,10 @@
-import { DEFAULT_LOCALE, LOCALE_HREFLANG_TAGS, LOCALE_OPEN_GRAPH_TAGS, Locale } from '@sobok/domain/locale'
+import {
+  DEFAULT_LOCALE,
+  LOCALE_HREFLANG_TAGS,
+  LOCALE_OPEN_GRAPH_TAGS,
+  LOCALES,
+  type Locale,
+} from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 
 import { SITE_NAME } from '@/constants'
@@ -46,7 +52,7 @@ export function buildMetadata({
     alternates: {
       canonical,
       languages: {
-        ...Object.fromEntries(Object.values(Locale).map((entry) => [LOCALE_HREFLANG_TAGS[entry], `/${entry}${path}`])),
+        ...Object.fromEntries(LOCALES.map((entry) => [LOCALE_HREFLANG_TAGS[entry], `/${entry}${path}`])),
         // No language-neutral page exists (localePrefix: 'always'), so x-default
         // points at the default locale rather than a bare, unrouted path.
         'x-default': `/${DEFAULT_LOCALE}${path}`,
@@ -57,9 +63,9 @@ export function buildMetadata({
       description,
       images,
       locale: openGraphLocale,
-      alternateLocale: Object.values(Locale)
-        .map((entry) => LOCALE_OPEN_GRAPH_TAGS[entry])
-        .filter((entry) => entry !== openGraphLocale),
+      alternateLocale: LOCALES.map((entry) => LOCALE_OPEN_GRAPH_TAGS[entry]).filter(
+        (entry) => entry !== openGraphLocale,
+      ),
       siteName: SITE_NAME[locale],
       type: 'website',
       url: canonical,

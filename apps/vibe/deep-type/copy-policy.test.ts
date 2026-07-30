@@ -64,7 +64,7 @@ function literalsOf(file: string): Literal[] {
 /**
  * The key a property contributes to the path, including the computed form.
  *
- * `[Locale.KO]: {…}` is a ComputedPropertyName, and reading it as nothing collapsed the whole locale segment:
+ * `ko: {…}` is a ComputedPropertyName, and reading it as nothing collapsed the whole locale segment:
  * every literal in `legal.ts` and `pages.ts` arrived as `privacy.sections.body` with no ko/en/ja/zh anywhere,
  * so a gate could not be scoped to one locale even in principle. Taking the accessed member name gives
  * `KO.privacy.sections.body`, which is the path a reader of these files would have written by hand.

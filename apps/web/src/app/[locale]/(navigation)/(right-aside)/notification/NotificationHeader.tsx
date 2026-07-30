@@ -1,6 +1,6 @@
 'use client'
 
-import { NotificationFilter } from '@sobok/domain/notification/filter'
+import type { NotificationFilter } from '@sobok/domain/notification/filter'
 import { Book, Check, Filter, Loader2, Trash2 } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -9,7 +9,7 @@ import { twMerge } from 'tailwind-merge'
 
 import { useRouter } from '@/i18n/navigation'
 
-import { SearchParams } from './common'
+import { NOTIFICATION_PARAM } from './common'
 import { useNotificationSelection } from './NotificationProvider'
 import useNotificationActions from './useNotificationActions'
 import useNotificationInfiniteQuery from './useNotificationsInfiniteQuery'
@@ -25,7 +25,7 @@ export default function NotificationHeader() {
     useNotificationActions()
 
   const notifications = data?.pages.flatMap((page) => page.notifications) ?? []
-  const filter = searchParams.get(SearchParams.FILTER) as NotificationFilter | null
+  const filter = searchParams.get(NOTIFICATION_PARAM.FILTER) as NotificationFilter | null
 
   function setFilter(nextFilter: NotificationFilter | null) {
     router.replace(nextFilter === null ? '?' : `?filter=${nextFilter}`)
@@ -42,24 +42,16 @@ export default function NotificationHeader() {
           <FilterButton active={!filter} disabled={isActionPending} onClick={() => setFilter(null)}>
             <span>{t('filters.all')}</span>
           </FilterButton>
-          <FilterButton
-            active={filter === NotificationFilter.UNREAD}
-            disabled={isActionPending}
-            onClick={() => setFilter(NotificationFilter.UNREAD)}
-          >
+          <FilterButton active={filter === 'unread'} disabled={isActionPending} onClick={() => setFilter('unread')}>
             <span>{t('filters.unread')}</span>
           </FilterButton>
-          <FilterButton
-            active={filter === NotificationFilter.NEW_MANGA}
-            disabled={isActionPending}
-            onClick={() => setFilter(NotificationFilter.NEW_MANGA)}
-          >
+          <FilterButton active={filter === 'new'} disabled={isActionPending} onClick={() => setFilter('new')}>
             <Book className="size-5 shrink-0" />
             <span className="hidden sm:inline">{t('filters.newManga')}</span>
           </FilterButton>
         </div>
         <div className="flex items-center gap-1.5">
-          {filter === NotificationFilter.UNREAD && (
+          {filter === 'unread' && (
             <button
               type="button"
               className="px-2.5 py-1.5 text-sm font-medium text-foreground-muted hover:text-foreground-secondary transition disabled:opacity-50"

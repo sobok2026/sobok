@@ -1,24 +1,20 @@
+import { type AxisCopy, axisCopyFor } from '@deep-type/content/axis-copy'
+import { resolveWorldJob } from '@deep-type/content/world-job'
+import { type NamedFacet, nameFacets } from '@deep-type/facets'
 import {
-  type AssessmentProfile,
   AXIS_POLES,
   type AxisId,
   type BandCopy,
-  type DrainFacet,
-  type EnvironmentFacet,
-  type FreeAxisScore,
   GEM_AXES,
   type GemCode,
   type InnerCode,
-  type InterestFacet,
-  type NeedFacet,
+  isFirstPole,
   type PersonaSource,
-  type PurposeFacet,
+  type RefinedAssessmentProfile,
   type RefinedAxisScore,
   TYPE_AXES,
-  type WorkFacetId,
 } from '@deep-type/model'
-
-import { CLARITY_BANDS_FREE, CLARITY_NOTE_FREE, DRAIN_SPREAD_FREE } from '../../deep-type/content/band-labels.free'
+import type { Locale } from '@sobok/domain/locale'
 import {
   BAND_SHIFT_PAID,
   CLARITY_BANDS_PAID,
@@ -33,9 +29,6 @@ import {
   NEED_LABELS,
   PURPOSE_LABELS,
 } from '../../deep-type/content/work-labels.paid'
-import { WORLD_JOB_CORE, WORLD_JOB_FAMILY } from '../../deep-type/content/world-job'
-import { WORLD_JOB_NAMES } from '../../deep-type/content/world-job-names'
-import { type AxisCopy, axisCopyFor, type ReportLocale } from './axis-copy'
 import { INTERPRETATION_BOUNDARY } from './claims'
 
 // The narration boundary. What crosses it is what the engine has already settled, named in the reader's own
@@ -48,8 +41,6 @@ import { INTERPRETATION_BOUNDARY } from './claims'
 // comparison, so a model handed the numbers will rank the axes and the ranking will not survive one flipped
 // answer. The band is the settled reading, so the band is what travels.
 
-export type ClarityScale = 'settled' | 'tentative'
-
 export interface NamedPole {
   /** The letter as it appears in the code. Ambiguous alone — `O` is OA's and UO's — so never read without `id`. */
   code: string
@@ -58,7 +49,7 @@ export interface NamedPole {
 }
 
 export interface NamedAxis {
-  /** Copy for the band this axis landed in, already resolved. Which ruler it came from is `scale`. */
+  /** Copy for the band this axis landed in, already resolved. Always the paid ruler's. */
   band: BandCopy
   /** True when the paid items lean against the frozen letter. The letter still does not move. */
   evidenceSplit: boolean
@@ -68,40 +59,24 @@ export interface NamedAxis {
   meaning: string
   name: string
   poles: readonly [NamedPole, NamedPole]
-  scale: ClarityScale
-  /** Free-to-paid movement of the ruler. Null on the free tier, which has nothing to compare against. */
-  shift: BandCopy | null
-}
-
-export interface NamedFacet {
-  /** A concrete choice that expresses the facet. Authored copy, not advice composed per reader. */
-  action: string
-  id: WorkFacetId
-  label: string
+  /** Free-to-paid movement of the ruler. Never null: only a refined profile reaches the narrator. */
+  shift: BandCopy
 }
 
 export interface NamedDrainSignature {
-  /** Facets tied at the top count, in canonical order. Tied, not ranked — the free tier cannot separate them. */
+  /** Facets tied at the top count, in canonical order. Tied, not ranked — three items cannot separate them. */
   leaders: readonly NamedFacet[]
   meaning: string
   spread: BandCopy
 }
 
-export interface FreeNamedWorkProfile {
-  drain: NamedDrainSignature
-  scope: 'free'
-}
-
-export interface RefinedNamedWorkProfile {
+export interface NamedWorkProfile {
   drain: NamedDrainSignature
   environment: readonly NamedFacet[]
   interest: readonly NamedFacet[]
   need: readonly NamedFacet[]
   purpose: readonly NamedFacet[]
-  scope: 'refined'
 }
-
-export type NamedWorkProfile = FreeNamedWorkProfile | RefinedNamedWorkProfile
 
 export interface NamedWorldJob {
   core: { name: string; strength: string }
@@ -117,97 +92,59 @@ export interface ReportProfile {
   instrumentVersion: string
   /** §4.3: travels with the profile so no section can be assembled without it in reach. */
   interpretationBoundary: string
-  locale: ReportLocale
+  locale: Locale
   /** `unknown` is the omit condition for `contextShift` — there is no second reading to contrast against. */
   selfDeclaration: PersonaSource
-  tier: 'free' | 'refined'
   work: NamedWorkProfile
   worldJob: NamedWorldJob
 }
 
 /**
- * Structurally what `ResultForReport` is, declared here rather than imported: that type lives next to drizzle,
- * and pulling the query module in for one field name drags the Worker runtime globals into every program that
- * type-checks this file.
+ * Refined only, and the parameters are the two values rather than an object wrapping them.
+ *
+ * There used to be a free branch here — a whole second band resolver, a `scope: 'free'` work profile, a
+ * `'free' | 'refined'` tier field and a nullable `shift` — and none of it was reachable. The one caller is
+ * `planReportPasses`, which returns null fifteen lines earlier unless the stored profile's tier is `refined`,
+ * so the narrator has never once been handed a free profile. What the dead branch cost was not the lines: it
+ * made `shift` nullable in the JSON the model receives, for a case that cannot occur.
  */
-export interface ReportProfileSource {
-  locale: ReportLocale
-  profile: AssessmentProfile
-}
-
-export function buildReportProfile(result: ReportProfileSource): ReportProfile {
-  const { locale, profile } = result
+export function buildReportProfile(locale: Locale, profile: RefinedAssessmentProfile): ReportProfile {
   const copy = axisCopyFor(locale)
   const inner = profile.inner.code
   const gem = profile.gem.code
 
-  const shared = {
-    codes: { gem, inner },
-    instrumentVersion: profile.instrumentVersion,
-    interpretationBoundary: INTERPRETATION_BOUNDARY,
-    locale,
-    selfDeclaration: profile.personaSource,
-    worldJob: {
-      core: WORLD_JOB_CORE[gem],
-      family: WORLD_JOB_FAMILY[inner],
-      name: WORLD_JOB_NAMES[`${inner}_${gem}`],
-    },
-  }
-
-  if (profile.tier === 'free') {
-    return {
-      ...shared,
-      axes: {
-        gem: GEM_AXES.map((axis, index) => namedAxis(axis, gem[index], copy, freeBand(profile.gem.axes[axis]))),
-        inner: TYPE_AXES.map((axis, index) => namedAxis(axis, inner[index], copy, freeBand(profile.inner.axes[axis]))),
-      },
-      clarityNote: CLARITY_NOTE_FREE,
-      tier: 'free',
-      work: {
-        drain: {
-          leaders: namedFacets(profile.work.drain.leaders, DRAIN_LABELS),
-          meaning: DRAIN_SPREAD_MEANING,
-          spread: DRAIN_SPREAD_FREE[profile.work.drain.spread],
-        },
-        scope: 'free',
-      },
-    }
-  }
-
   return {
-    ...shared,
     axes: {
       gem: GEM_AXES.map((axis, index) => namedAxis(axis, gem[index], copy, refinedBand(profile.gem.axes[axis]))),
       inner: TYPE_AXES.map((axis, index) => namedAxis(axis, inner[index], copy, refinedBand(profile.inner.axes[axis]))),
     },
     clarityNote: CLARITY_NOTE_PAID,
-    tier: 'refined',
+    codes: { gem, inner },
+    instrumentVersion: profile.instrumentVersion,
+    interpretationBoundary: INTERPRETATION_BOUNDARY,
+    locale,
+    selfDeclaration: profile.personaSource,
     work: {
       drain: {
-        leaders: namedFacets(profile.work.drain.leaders, DRAIN_LABELS),
+        leaders: nameFacets(profile.work.drain.leaders, DRAIN_LABELS),
         meaning: DRAIN_SPREAD_MEANING,
         spread: DRAIN_SPREAD_PAID[profile.work.drain.spread],
       },
-      environment: namedFacets(profile.work.environment.leaders, ENVIRONMENT_LABELS),
-      interest: namedFacets(profile.work.interest.leaders, INTEREST_LABELS),
-      need: namedFacets(profile.work.need.leaders, NEED_LABELS),
-      purpose: namedFacets(profile.work.purpose.leaders, PURPOSE_LABELS),
-      scope: 'refined',
+      environment: nameFacets(profile.work.environment.leaders, ENVIRONMENT_LABELS),
+      interest: nameFacets(profile.work.interest.leaders, INTEREST_LABELS),
+      need: nameFacets(profile.work.need.leaders, NEED_LABELS),
+      purpose: nameFacets(profile.work.purpose.leaders, PURPOSE_LABELS),
     },
+    worldJob: resolveWorldJob(inner, gem),
   }
 }
 
-type ResolvedBand = Pick<NamedAxis, 'band' | 'evidenceSplit' | 'scale' | 'shift'>
-
-function freeBand(score: FreeAxisScore): ResolvedBand {
-  return { band: CLARITY_BANDS_FREE[score.band3], evidenceSplit: false, scale: 'tentative', shift: null }
-}
+type ResolvedBand = Pick<NamedAxis, 'band' | 'evidenceSplit' | 'shift'>
 
 function refinedBand(score: RefinedAxisScore): ResolvedBand {
   return {
     band: CLARITY_BANDS_PAID[score.band5],
     evidenceSplit: score.evidenceSplit,
-    scale: 'settled',
     shift: BAND_SHIFT_PAID[score.shift],
   }
 }
@@ -224,20 +161,11 @@ function namedAxis(axis: AxisId, letter: string | undefined, copy: AxisCopy, ban
   return {
     ...band,
     id: axis,
-    leading: letter === firstCode ? first : second,
+    leading: isFirstPole(axis, letter) ? first : second,
     meaning: content.description,
     name: content.name,
     poles: [first, second],
   }
-}
-
-type FacetLabels<Facet extends WorkFacetId> = Readonly<Record<Facet, { action: string; name: string }>>
-
-function namedFacets<Facet extends DrainFacet | EnvironmentFacet | InterestFacet | NeedFacet | PurposeFacet>(
-  leaders: readonly Facet[],
-  labels: FacetLabels<Facet>,
-): readonly NamedFacet[] {
-  return leaders.map((id) => ({ action: labels[id].action, id, label: labels[id].name }))
 }
 
 // Compile-time form of the research matrix's privacy clause on `llm_report`: per-item evidence does not leave

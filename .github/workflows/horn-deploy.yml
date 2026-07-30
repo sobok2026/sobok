@@ -21,6 +21,8 @@ jobs:
   deploy:
     name: Build and deploy to Cloudflare
     if: ${{ github.ref_name == 'main' }}
+    # 크레덴셜은 environment에만 산다 — 이유는 stella-deploy.yml의 같은 자리 주석 참고.
+    environment: production
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 10
     steps:

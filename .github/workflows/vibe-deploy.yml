@@ -1,22 +1,6 @@
 name: Vibe Deploy
 
-# `main` 푸시는 프로덕션(`vibe`), 그 외에는 스테이징(`vibe-stg`)으로 나간다.
-#
-# 스테이징은 기능 QA와 결제 QA를 모두 받는 환경이라 PR을 열면 자동으로 올라간다. 수동 실행은 PR 없이
-# 브랜치를 올려 보거나 스테이징을 특정 ref로 되돌릴 때 쓴다. `pull_request`는 머지 결과물(merge commit)을
-# 빌드하므로, QA가 확인하는 것이 실제로 머지됐을 때의 상태다.
-#
-# ⚠️ `vibe-stg` 워커는 하나뿐이다. PR 두 개가 동시에 QA를 받으면 나중 배포가 앞의 것을 덮는다 — 지금 뭐가
-# 올라가 있는지는 레포의 Deployments에서 본다. 동시 QA가 일상이 되면 PR별 preview(`wrangler versions
-# upload`)로 갈라야 하는데, 그때도 결제 경로만은 `vibe-stg`에 남는다: guardTurnstile이 호스트네임을
-# DEEPTYPE_PUBLIC_ORIGIN에서 뽑아서 preview 호스트로는 결제창을 못 연다.
-#
-# 어느 환경으로 가는지는 워크플로 안의 약속이 아니라 GitHub Environment가 강제한다: `production` 환경에
-# `main`만 배포할 수 있는 브랜치 정책이 걸려 있어(sobok-ops `infra/github/sobok2026`), 이 파일을 고쳐도
-# 다른 브랜치가 실연동 채널 키에 닿지 못한다.
-#
-# PR 배포는 시크릿이 필요하므로 같은 레포의 브랜치여야 한다. 포크 PR에는 시크릿이 내려가지 않아 배포
-# 스텝에서 멈춘다 — 협업자는 collaborator로 두고 브랜치를 이 레포에 직접 민다.
+# 배포 정책(라벨 점유·수동 실행·롤백)과 이 배치의 이유는 apps/vibe/DEPLOY.md §4.1이 소유한다.
 # `paths`가 두 번 적혀 있는 건 중복이 아니라 필요다 — GitHub Actions는 YAML 앵커를 지원하지 않는다.
 on:
   push:
@@ -26,30 +10,192 @@ on:
       - 'packages/**'
       - 'bun.lock'
       - '.github/workflows/vibe-deploy.yml'
+  # `labeled`가 있어야 라벨을 붙이는 순간 `staging`이 깨어난다. 나머지 셋은 `verify`용이고, 라벨을 이미
+  # 가진 PR에 새 커밋이 오면 `synchronize`가 스테이징을 최신으로 다시 올린다.
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, labeled]
     paths:
       - 'apps/vibe/**'
       - 'packages/**'
       - 'bun.lock'
       - '.github/workflows/vibe-deploy.yml'
   workflow_dispatch:
+    inputs:
+      force:
+        description: '다른 PR이 stg 라벨을 쥐고 있어도 강행한다'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
-concurrency:
-  # 환경별로 그룹을 나눈다. 같은 ref에서 프로덕션 배포와 스테이징 수동 배포가 서로를 취소하면 안 된다.
-  # 반면 스테이징끼리는 취소가 맞다 — 워커가 하나뿐이라 나중 실행이 어차피 앞의 것을 덮는다.
-  group: vibe-deploy-${{ github.event_name == 'push' && 'production' || 'staging' }}
-  cancel-in-progress: true
-
 jobs:
-  deploy:
-    name: Build and deploy to Cloudflare
-    environment: ${{ github.event_name == 'push' && 'production' || 'staging' }}
+  # lint.yml은 빌드를 하지 않으므로, `next build` 실패와 유료 문항 텍스트 유출이 main에 들어가기 전에
+  # 걸리는 곳은 여기뿐이다.
+  #
+  # 이 job에는 environment를 붙이지 마라 — 아무 게이트 없이 모든 PR에서 도는 job이 환경 시크릿을 쥐게
+  # 된다. tier가 리터럴인 것도 같은 이유다.
+  #
+  # tier 하나로만 빌드한다. tier는 빌드에 인라인되는 문자열이라 성패를 가르지 않고 유출 검사의 needle도
+  # tier와 무관하다 — tier가 실제로 가르는 것(로케일별 결제수단 메뉴)은 deep-type/pay-method.test.ts가
+  # lint.yml의 `bun test apps/vibe`에서 두 tier 모두 단정한다.
+  verify:
+    name: Verify vibe build
+    # `labeled`는 `staging`을 깨우려고 트리거에 넣은 것이지 코드가 바뀐 사건이 아니다. 걸러 내지 않으면
+    # 아무 라벨이나 붙일 때마다 이 job이 다시 돌고, cancel-in-progress가 같은 커밋을 검증 중이던 실행을
+    # 취소해 PR 체크에 아무것도 검증하지 않은 취소만 남는다.
+    if: github.event_name == 'pull_request' && github.event.action != 'labeled'
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 10
+    concurrency:
+      group: vibe-verify-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    steps:
+      # 레포 레벨 시크릿은 environment 없는 job에도 내려오므로, 누가 값을 레포 레벨로 되돌려 놓으면 이
+      # job이 토큰을 쥔다. 값은 `production`·`staging` 환경 시크릿에만 둔다.
+      - name: Assert this job holds no Cloudflare credential
+        env:
+          LEAKED_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          LEAKED_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$LEAKED_TOKEN" ] || [ -n "$LEAKED_ACCOUNT" ]; then
+            echo "레포 레벨 Cloudflare 시크릿이 존재합니다 — environment 없는 job에도 내려가므로" >&2
+            echo "값을 production·staging 환경 시크릿으로 옮기고 레포 레벨에서는 지우십시오." >&2
+            exit 1
+          fi
+          echo "레포 레벨 Cloudflare 시크릿 없음"
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - name: Restore Bun cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock', 'package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build static export
+        env:
+          NEXT_PUBLIC_DEEPTYPE_PAY_TIER: test
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
+        run: bun run --filter=@sobok/vibe build
+
+      # 유료 문항 텍스트는 지연 import 청크에 실려 나가므로, 실수로 새어 나간 것을 잡는 것은 빌드 산출물
+      # 스캔뿐이다.
+      - name: Assert no paid question text in the static export
+        run: bun run --filter=@sobok/vibe check:export
+
+  staging:
+    name: Deploy to staging (vibe-stg)
+    # 포크 PR에는 시크릿이 내려가지 않아 배포 스텝에서 멈추므로, 조용히 건너뛴다.
+    #
+    # `labeled` 조건이 따로 붙는 이유: 이미 `stg`를 가진 PR에 무관한 라벨을 붙여도 labels 배열에는 여전히
+    # `stg`가 있어서, 그것만으로는 같은 코드를 다시 올리게 된다.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       contains(github.event.pull_request.labels.*.name, 'stg') &&
+       (github.event.action != 'labeled' || github.event.label.name == 'stg'))
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    environment: staging
+    permissions:
+      contents: read
+      pull-requests: read
+    concurrency:
+      # 취소 없이 FIFO. 기본값 `single`은 대기 중인 실행을 새 실행으로 **교체**하므로 `queue: max`를 명시해야
+      # 순서가 지켜진다. (`queue: max`와 `cancel-in-progress: true`의 조합은 워크플로 검증 에러다.)
+      group: vibe-stg
+      queue: max
+      cancel-in-progress: false
+    steps:
+      - name: Claim the staging lane
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SELF: ${{ github.event.pull_request.number }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          set -euo pipefail
+          # 조회와 필터를 한 파이프라인에 두지 않는 이유: `|| true`는 grep이 전부 걸러내 exit 1을 낼 때만
+          # 필요한데, 같은 파이프라인에 붙이면 gh의 API 오류·레이트리밋·권한 축소·gh 부재까지 "아무도 안
+          # 쥐고 있음"으로 삼켜 잠금이 장애 때 조용히 사라진다. 조회가 실패하면 여기서 죽는 게 맞다.
+          labeled=$(gh pr list --repo "$GITHUB_REPOSITORY" --label stg --state open --json number --jq '.[].number')
+          holders=$(printf '%s\n' "$labeled" | grep -vx "${SELF:-}" || true)
+          if [ -z "$holders" ]; then
+            echo "스테이징 레인 점유 — 라벨을 쥔 다른 PR 없음"
+            exit 0
+          fi
+          echo "다른 PR이 stg 라벨을 쥐고 있습니다: $(printf '%s\n' "$holders" | sed 's/^/#/' | tr '\n' ' ')" >&2
+          if [ "${FORCE:-false}" = "true" ]; then
+            echo "force 입력이 켜져 있어 강행합니다." >&2
+            exit 0
+          fi
+          echo "그 PR에서 라벨을 떼고 다시 시도하거나, 수동 실행에서 force를 켜십시오." >&2
+          exit 1
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - name: Restore Bun cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock', 'package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # 결제수단 메뉴는 정적 export에 구워지므로 빌드가 tier를 알아야 한다. 워커 쪽 짝은 wrangler.jsonc의
+      # `DEEPTYPE_PAY_TIER`(`env.stg` = `test`, top-level = `live`)이고, 둘이 어긋나면 페이월이 내놓은 수단을
+      # /checkout이 거절한다.
+      - name: Build static export
+        env:
+          NEXT_PUBLIC_DEEPTYPE_PAY_TIER: test
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
+        run: bun run --filter=@sobok/vibe build
+
+      - name: Assert no paid question text in the static export
+        run: bun run --filter=@sobok/vibe check:export
+
+      # 이름 있는 wrangler 환경은 별개 워커 스크립트다: `deploy`는 `vibe`, `deploy --env stg`는 `vibe-stg`.
+      - name: Deploy to Cloudflare Workers (Static Assets)
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/vibe
+          packageManager: bun
+          command: deploy --env stg
+
+  production:
+    name: Deploy to production (vibe)
+    if: github.event_name == 'push'
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    # 어느 ref가 `production` 크레덴셜을 받는지는 위 조건식이 아니라 GitHub Environment가 정한다 —
+    # `production`에 `main` 전용 브랜치 정책이 걸려 있다(sobok-ops `infra/github/sobok2026`).
+    environment: production
+    concurrency:
+      group: vibe-production
+      queue: max
+      cancel-in-progress: false
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -72,17 +218,13 @@ jobs:
 
       - name: Build static export
         env:
+          NEXT_PUBLIC_DEEPTYPE_PAY_TIER: live
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
         run: bun run --filter=@sobok/vibe build
 
-      # The paid question text may not be readable in the static export. It rides in a lazily imported chunk,
-      # so the only thing that catches an accidental server prop is a scan of what shipped — and it has to run
-      # here rather than in lint.yml, which never builds. Between build and deploy: a leak must not ship.
       - name: Assert no paid question text in the static export
         run: bun run --filter=@sobok/vibe check:export
 
-      # A wrangler named environment is a SEPARATE Worker script: `deploy` ships `vibe`, `deploy --env stg`
-      # ships `vibe-stg`. One step chooses, so there is no path where both run.
       - name: Deploy to Cloudflare Workers (Static Assets)
         uses: cloudflare/wrangler-action@v4
         with:
@@ -90,4 +232,4 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: apps/vibe
           packageManager: bun
-          command: ${{ github.event_name == 'push' && 'deploy' || 'deploy --env stg' }}
+          command: deploy

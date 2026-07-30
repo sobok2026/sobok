@@ -1,4 +1,4 @@
-import { openFresh } from '../db/client'
+import { openDB } from '@sobok/edge/db/client'
 import { listStalePendingPurchases } from '../db/queries/purchase'
 import type { Bindings } from '../env'
 import { confirmPurchase } from './confirm'
@@ -15,7 +15,7 @@ export async function reconcileStalePending(env: Bindings): Promise<void> {
   ])
 
   const deps = { creds: { apiSecret, webhookSecret }, env }
-  const { db, sql } = openFresh(env.HYPERDRIVE_FRESH)
+  const { db, sql } = openDB(env.HYPERDRIVE_FRESH)
 
   try {
     const cutoff = new Date(Date.now() - STALE_MS)

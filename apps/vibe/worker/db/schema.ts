@@ -1,9 +1,9 @@
 import type { AssessmentProfile, ItemAnswer, PersonaSource, WorkAnswer } from '@deep-type/model'
+import { LOCALES } from '@sobok/domain/locale'
+import { createdAt, timestamps } from '@sobok/edge/db/columns'
 import { sql } from 'drizzle-orm'
 import { bigint, index, integer, jsonb, pgSchema, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
-
-import type { ReportSection } from '../report/section-keys'
-import { createdAt, timestamps } from './columns'
+import type { NarrativeSection, ReportSection } from '../report/section-data'
 import { DB_SCHEMA } from './schema-name'
 
 // The deeptype payments/report tables live in a DEDICATED schema on the SHARED sobok-prod Supabase Postgres
@@ -16,15 +16,28 @@ import { DB_SCHEMA } from './schema-name'
 // `pgSchema` to know the schema is declared, and a push that cannot see it drops the schema instead.
 export const deeptype = pgSchema(DB_SCHEMA)
 
-export const localeEnum = deeptype.enum('locale', ['ko', 'en', 'ja', 'zh'])
+export const localeEnum = deeptype.enum('locale', [...LOCALES])
 export const providerEnum = deeptype.enum('provider', ['portone'])
 export const skuEnum = deeptype.enum('sku', ['report', 'compat', 'bundle'])
 export const purchaseStatusEnum = deeptype.enum('purchase_status', ['pending', 'paid', 'failed', 'refunded'])
 export const reportStatusEnum = deeptype.enum('report_status', ['pending', 'generating', 'done', 'failed'])
 
-// The section vocabulary is NOT declared here any more. It moved to worker/report/section-keys.ts so the Next
-// client can import it without pulling drizzle and the `pgSchema()` side effect above into the browser bundle.
-export type { ReportSection } from '../report/section-keys'
+/**
+ * The sku domain, derived from the column rather than restated. Three values and not one: `compat` and `bundle`
+ * are in the Postgres enum, so a row can legitimately carry either and code that reads `purchase.sku` has to
+ * account for them — which is why `skuItem` returns null instead of asserting. Only `report` is sellable today
+ * (`/checkout` validates against `z.enum(['report'])`), and the linkage the other two need is a later phase.
+ *
+ * It was written out by hand in three places, and a fourth value added to the column would have type-checked in
+ * all of them.
+ */
+export type Sku = (typeof skuEnum.enumValues)[number]
+
+// The section vocabulary is NOT declared here any more. It moved to worker/report/section-{keys,data}.ts so
+// the Next client can import it without pulling drizzle and the `pgSchema()` side effect above into the
+// browser bundle. The two columns below hold different shapes on purpose: the engine stores structured
+// sections and the narrator stores prose written over them.
+export type { NarrativeSection, ReportSection } from '../report/section-data'
 
 // The paid pass is answered over two sittings, so the in-progress set is parked here between them. It is a
 // draft by definition: no length holds until the block is submitted, which is why it can never be fed to the
@@ -170,7 +183,7 @@ export const reportTable = deeptype.table(
     generatedAt: timestamp('generated_at', { precision: 3, withTimezone: true }),
     // Narrative pass. `report_status` is reused rather than cloned: the state machine is the same four states
     // and a second enum type with an identical value set would only add a name to keep in sync.
-    narrative: jsonb('narrative').$type<ReportSection[]>(),
+    narrative: jsonb('narrative').$type<NarrativeSection[]>(),
     narrativeStatus: reportStatusEnum('narrative_status').notNull().default('pending'),
     narrativeModel: varchar('narrative_model', { length: 64 }),
     narrativeError: text('narrative_error'),

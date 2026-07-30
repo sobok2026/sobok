@@ -1,16 +1,31 @@
-import { DEEP_TYPE_REPORT_ITEM, DEEP_TYPE_REPORT_OFFER } from '@deep-type/offer'
+import { DEEP_TYPE_REPORT_OFFER, majorUnits, reportItemFor } from '@deep-type/offer'
+import type { Locale } from '@sobok/domain/locale'
 
 // GA4 ecommerce payloads for the paid report. These are pushed under the `ecommerce` key (see
 // `trackEcommerce`), which is the ONLY shape the GA4 tag's "Send Ecommerce data → Data Layer" option reads.
-export const REPORT_OFFER_ECOMMERCE = {
-  currency: DEEP_TYPE_REPORT_OFFER.currency,
-  items: [DEEP_TYPE_REPORT_ITEM],
-  value: DEEP_TYPE_REPORT_OFFER.amount,
-} as const
+//
+// Functions of locale since the price went multi-currency: the funnel events must carry the same currency and
+// major-unit value the Worker's server-side `purchase` will close the funnel with, or GA4 splits the revenue
+// stream by currency mid-funnel.
+export function reportOfferEcommerce(locale: Locale) {
+  const offer = DEEP_TYPE_REPORT_OFFER[locale]
 
-export const REPORT_PROMOTION_ECOMMERCE = {
-  creative_slot: 'free_result_offer',
-  items: [DEEP_TYPE_REPORT_ITEM],
-  promotion_id: 'deep_type_report_40_off',
-  promotion_name: 'DeepType report 40% off',
-} as const
+  return {
+    currency: offer.currency,
+    items: [reportItemFor(offer.currency)],
+    value: majorUnits(offer.currency, offer.amount),
+  }
+}
+
+// The id names the offer, not a percent — the discount rounds differently per currency (KRW 40% · USD 38% ·
+// JPY 41%), and a promotion that renames itself per locale is three promotions in every GA4 report.
+export function reportPromotionEcommerce(locale: Locale) {
+  const offer = DEEP_TYPE_REPORT_OFFER[locale]
+
+  return {
+    creative_slot: 'free_result_offer',
+    items: [reportItemFor(offer.currency)],
+    promotion_id: 'deep_type_report_intro',
+    promotion_name: 'DeepType report intro offer',
+  }
+}

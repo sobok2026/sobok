@@ -4,9 +4,9 @@ import { FREE_WORK_ITEMS, WORK_ITEMS } from '@deep-type/questionnaire'
 
 import type { QuestionOptionCatalog, QuestionPromptCatalog } from '../_lib/types'
 import { koFreeQuestionOptions } from './question-options/ko.free'
-import { koPaidQuestionOptions } from './question-options/ko.paid'
+import { paidQuestionOptions as koPaidQuestionOptions } from './question-options/ko.paid'
 import { koFreeQuestionPrompts } from './question-prompts/ko.free'
-import { koPaidQuestionPrompts } from './question-prompts/ko.paid'
+import { paidQuestionPrompts as koPaidQuestionPrompts } from './question-prompts/ko.paid'
 
 // The two tiers ship as separate modules so paid text stays out of the free static export. Alignment is a
 // property of the whole forced-choice block, so they are rejoined here exactly as `question-similarity.test.ts`

@@ -1,7 +1,7 @@
 import '../globals.css'
 
 import GTMLoader from '@sobok/analytics/gtm-loader'
-import { LOCALE_LANGUAGE_TAGS, Locale } from '@sobok/domain/locale'
+import { LOCALE_LANGUAGE_TAGS, LOCALES } from '@sobok/domain/locale'
 import type { Metadata, Viewport } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
@@ -14,7 +14,7 @@ import AdSense from '@/lib/ads/AdSense'
 import JsonLd, { siteGraph } from '@/lib/JsonLd'
 
 export function generateStaticParams() {
-  return Object.values(Locale).map((locale) => ({ locale }))
+  return LOCALES.map((locale) => ({ locale }))
 }
 
 export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Promise<Metadata> {
@@ -69,9 +69,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
       <body className="flex min-h-dvh flex-col bg-page-bg text-page-ink antialiased">
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
-          <Header locale={locale} localeLabel={t('localeSwitcher')} />
+          <Header locale={locale} localeLabel={t('localeSwitcher')} navLabel={t('primaryNav')} />
           <PageBody>{children}</PageBody>
-          <BottomNav locale={locale} />
+          <BottomNav locale={locale} navLabel={t('primaryNav')} />
         </NextIntlClientProvider>
         <AdSense />
         <GTMLoader containerId={GTM_ID} productionOrigin={ORIGIN} />

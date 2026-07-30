@@ -2,7 +2,7 @@
 
 import type { DELETEV1NotificationCriteriaIdResponse, PATCHV1NotificationCriteriaIdResponse } from '@sobok/contracts'
 
-import { NotificationConditionType } from '@sobok/domain/notification/model'
+import { NOTIFICATION_CONDITION_TYPE } from '@sobok/domain/notification/model'
 import { formatDistanceToNow } from '@sobok/std'
 import { Toggle } from '@sobok/ui'
 import { useMutation } from '@tanstack/react-query'
@@ -24,13 +24,13 @@ interface NotificationCriteriaCardProps {
 }
 
 const CONDITION_TYPE_LABELS: Record<number, string> = {
-  [NotificationConditionType.SERIES]: '시리즈',
-  [NotificationConditionType.CHARACTER]: '캐릭터',
-  [NotificationConditionType.TAG]: '태그',
-  [NotificationConditionType.ARTIST]: '작가',
-  [NotificationConditionType.GROUP]: '그룹',
-  [NotificationConditionType.LANGUAGE]: '언어',
-  [NotificationConditionType.UPLOADER]: '업로더',
+  [NOTIFICATION_CONDITION_TYPE.SERIES]: '시리즈',
+  [NOTIFICATION_CONDITION_TYPE.CHARACTER]: '캐릭터',
+  [NOTIFICATION_CONDITION_TYPE.TAG]: '태그',
+  [NOTIFICATION_CONDITION_TYPE.ARTIST]: '작가',
+  [NOTIFICATION_CONDITION_TYPE.GROUP]: '그룹',
+  [NOTIFICATION_CONDITION_TYPE.LANGUAGE]: '언어',
+  [NOTIFICATION_CONDITION_TYPE.UPLOADER]: '업로더',
 }
 
 const LOCAL_MUTATION_ERROR_STATUSES = [400, 404, 409] as const

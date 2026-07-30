@@ -6,6 +6,7 @@ import {
   FREE_SAFE_SECTION_KEYS,
   NARRATED_SECTION_KEYS,
   PAID_SECTION_KEYS,
+  REPORT_DISPLAY_ORDER,
   REPORT_SECTION_CONTRACT,
   REPORT_SECTION_KEYS,
 } from './section-keys'
@@ -43,8 +44,8 @@ describe('report section vocabulary', () => {
       contextShift: { generator: 'HYBRID', inputSource: 'mixed', onFailure: 'omit-section' },
       threePaths: { generator: 'HYBRID', inputSource: 'paid', onFailure: 'keep-engine-body' },
       fitAndFriction: { generator: 'HYBRID', inputSource: 'paid', onFailure: 'keep-engine-body' },
-      openingRead: { generator: 'LLM', inputSource: 'mixed', onFailure: 'drop-section' },
-      reflectionQuestions: { generator: 'LLM', inputSource: 'mixed', onFailure: 'drop-section' },
+      openingRead: { generator: 'HYBRID', inputSource: 'mixed', onFailure: 'keep-engine-body' },
+      reflectionQuestions: { generator: 'HYBRID', inputSource: 'mixed', onFailure: 'keep-engine-body' },
     })
   })
 
@@ -64,12 +65,24 @@ describe('report section vocabulary', () => {
     )
   })
 
-  test('every LLM-only section drops rather than degrades', () => {
-    for (const key of REPORT_SECTION_KEYS) {
-      if (REPORT_SECTION_CONTRACT[key].generator === 'LLM') {
-        expect(REPORT_SECTION_CONTRACT[key].onFailure).toBe('drop-section')
-      }
+  // The vocabulary has no author-of-last-resort left. Every section has an engine author, so no section can be
+  // lost to a narration that never ran — which is the state every deployment with no model id is in.
+  test('no section depends on the narrator to exist', () => {
+    const generators = REPORT_SECTION_KEYS.map((key) => REPORT_SECTION_CONTRACT[key].generator)
+    expect(new Set(generators)).toEqual(new Set(['ENGINE', 'HYBRID']))
+    for (const key of NARRATED_SECTION_KEYS) {
+      expect(REPORT_SECTION_CONTRACT[key].onFailure).not.toBe('drop-section')
     }
+  })
+
+  // Reading order is a permutation of generation order, never a second list that can drift from it: a key
+  // missing here would silently never render, and a key repeated would render twice.
+  test('reading order is a permutation of the vocabulary', () => {
+    expect([...REPORT_DISPLAY_ORDER].sort()).toEqual([...REPORT_SECTION_KEYS].sort())
+    expect(new Set(REPORT_DISPLAY_ORDER).size).toBe(REPORT_SECTION_KEYS.length)
+    // The two the engine composes last are the two a reader meets first and last.
+    expect(REPORT_DISPLAY_ORDER[0]).toBe('openingRead')
+    expect(REPORT_DISPLAY_ORDER.at(-1)).toBe('reflectionQuestions')
   })
 
   test('the three careerContext-dependent sections are named', () => {

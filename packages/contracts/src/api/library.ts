@@ -8,8 +8,8 @@ import {
   RATING_PER_PAGE,
   READING_HISTORY_PER_PAGE,
 } from '@sobok/domain/library/policy'
-import { DEFAULT_LIBRARY_ITEM_SORT, LibraryItemSort, RatingSort } from '@sobok/domain/library/sort'
-import { Locale } from '@sobok/domain/locale'
+import { DEFAULT_LIBRARY_ITEM_SORT, LIBRARY_ITEM_SORTS, RATING_SORTS } from '@sobok/domain/library/sort'
+import { LOCALES } from '@sobok/domain/locale'
 import { POINT_CONSTANTS } from '@sobok/domain/points/model'
 import { isSingleEmoji } from '@sobok/domain/utils/emoji'
 import { z } from 'zod'
@@ -93,9 +93,9 @@ export interface GETV1LibraryItemsResponse {
 export const getV1LibraryItemsQuerySchema = z.object({
   cursor: z.string().optional(),
   limit: z.coerce.number().int().positive().max(LIBRARY_ITEMS_PER_PAGE).default(LIBRARY_ITEMS_PER_PAGE),
-  locale: z.enum(Locale),
+  locale: z.enum(LOCALES),
   scope: z.enum(['public', 'me']),
-  sort: z.enum(LibraryItemSort).default(DEFAULT_LIBRARY_ITEM_SORT),
+  sort: z.enum(LIBRARY_ITEM_SORTS).default(DEFAULT_LIBRARY_ITEM_SORT),
 })
 
 export const getV1ReadingHistoryQuerySchema = z.object({
@@ -106,7 +106,7 @@ export const getV1ReadingHistoryQuerySchema = z.object({
     .positive()
     .max(POINT_CONSTANTS.HISTORY_MAX_EXPANSION)
     .default(READING_HISTORY_PER_PAGE),
-  locale: z.enum(Locale),
+  locale: z.enum(LOCALES),
 })
 
 export interface ReadingHistoryItem {
@@ -206,7 +206,7 @@ export interface GETV1LibraryMangaResponse {
 export const getV1LibraryMangaQuerySchema = z.object({
   cursor: z.string().optional(),
   limit: z.coerce.number().int().positive().max(LIBRARY_ITEMS_PER_PAGE).default(LIBRARY_ITEMS_PER_PAGE),
-  locale: z.enum(Locale),
+  locale: z.enum(LOCALES),
 })
 
 export interface RatingItem {
@@ -224,8 +224,8 @@ export interface GETV1RatingsResponse {
 export const getV1RatingsQuerySchema = z.object({
   cursor: z.string().optional(),
   limit: z.coerce.number().int().positive().max(RATING_PER_PAGE).default(RATING_PER_PAGE),
-  locale: z.enum(Locale),
-  sort: z.enum(RatingSort).default(RatingSort.UPDATED_DESC),
+  locale: z.enum(LOCALES),
+  sort: z.enum(RATING_SORTS).default('updated-desc'),
 })
 
 export const deleteV1LibraryRatingBodySchema = z.object({

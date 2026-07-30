@@ -1,4 +1,4 @@
-import { PostFilter } from '@sobok/domain/post/filter'
+import { POST_FILTER, type PostFilter } from '@sobok/domain/post/filter'
 
 export const QueryKeys = {
   me: ['me'],
@@ -17,7 +17,7 @@ export const QueryKeys = {
 
   searchSuggestions: (query: string, locale: string, limit?: number) => ['search', 'suggestions', locale, query, limit],
   postsBase: ['posts'],
-  followingPosts: ['posts', PostFilter.FOLLOWING],
+  followingPosts: ['posts', POST_FILTER.FOLLOWING],
   posts: (filter: PostFilter, mangaId?: number, username?: string, locale?: string) => [
     'posts',
     filter,

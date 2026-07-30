@@ -14,19 +14,19 @@ import { Refresh, Share } from '@mynaui/icons-react'
 import { trackEcommerce } from '@sobok/analytics/browser'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
-
+import { useEffect, useRef } from 'react'
 import { useFlowFocusOverride } from '@/components/flow-focus'
+import { useShare } from '@/components/use-share'
 import { cn } from '@/utils/cn'
+import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
-import { formatKrw } from '../_lib/price'
-import { REPORT_PROMOTION_ECOMMERCE } from '../_lib/report-offer-analytics'
+import { formatPrice } from '../_lib/price'
+import { reportPromotionEcommerce } from '../_lib/report-offer-analytics'
 import { CARD_CLASS_NAME, GROUPED_LIST_CLASS_NAME, GROUPED_ROW_CLASS_NAME } from '../_lib/surface'
 import type { DeepTypeContent } from '../_lib/types'
 import { AbilityArtwork } from './ability-artwork'
-import { GemArtwork } from './gem-artwork'
-import { InnerArtwork } from './inner-artwork'
+import { GemArtwork, InnerArtwork } from './code-artwork'
 import { WorldJobHero } from './world-job-hero'
 
 type FreeResultViewProps = {
@@ -38,7 +38,6 @@ type FreeResultViewProps = {
   profile: FreeAssessmentProfile
 }
 
-const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 const [TYPE_HEADING, CORE_HEADING, JOB_HEADING, DRAIN_HEADING] = FREE_DELIVERABLES_KO
 
 /**
@@ -56,8 +55,9 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
   // sharing, and 'what else is here' is the question the site wants them to ask next.
   useFlowFocusOverride(false)
 
+  const offer = DEEP_TYPE_REPORT_OFFER[locale]
   const promotionRef = useRef<HTMLElement>(null)
-  const [shareFeedback, setShareFeedback] = useState('')
+  const { feedback: shareFeedback, share } = useShare({ copiedMessage: content.ui.reportShareCopied })
   const report = buildFreeReport(profile)
   const gemName = content.gemNames[profile.gem.code]
   const shareText = content.ui.reportShareText
@@ -76,7 +76,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
         if (!entry?.isIntersecting) {
           return
         }
-        trackEcommerce('view_promotion', REPORT_PROMOTION_ECOMMERCE, { locale })
+        trackEcommerce('view_promotion', reportPromotionEcommerce(locale), { locale })
         observer.disconnect()
       },
       { threshold: 0.5 },
@@ -92,30 +92,8 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
     if (!onUnlock) {
       return
     }
-    trackEcommerce('select_promotion', REPORT_PROMOTION_ECOMMERCE, { locale })
+    trackEcommerce('select_promotion', reportPromotionEcommerce(locale), { locale })
     onUnlock()
-  }
-
-  async function share() {
-    const shareData = { text: shareText, title: content.metadata.title, url: window.location.href }
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData)
-        return
-      } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') {
-          return
-        }
-      }
-    }
-
-    try {
-      await navigator.clipboard.writeText(`${shareText} ${DEEP_TYPE_BRAND_NAME[locale]}`)
-      setShareFeedback(content.ui.reportShareCopied)
-    } catch {
-      // Older/in-app browsers may expose neither a share sheet nor clipboard access.
-    }
   }
 
   return (
@@ -132,19 +110,19 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
             <p className="mx-auto mt-2 max-w-md text-page-ink/68 text-sm leading-7">{content.paywall.body}</p>
             <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
               <span className="text-page-ink/38 text-sm line-through">
-                {formatKrw(locale, DEEP_TYPE_REPORT_OFFER.listAmount)}
+                {formatPrice(locale, offer.currency, offer.listAmount)}
               </span>
               <span className="font-black text-page-accent text-xl">
-                {formatKrw(locale, DEEP_TYPE_REPORT_OFFER.amount)}
+                {formatPrice(locale, offer.currency, offer.amount)}
               </span>
               <span className="rounded-full bg-page-accent/12 px-2.5 py-1 font-black text-page-accent text-xs">
-                {content.paywall.discountTemplate.replace('{discount}', String(DEEP_TYPE_REPORT_OFFER.discountPercent))}
+                {content.paywall.discountTemplate.replace('{discount}', String(offer.discountPercent))}
               </span>
             </div>
             <button
               className={cn(
                 'mt-5 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_rgba(255,77,109,0.24)] transition-colors hover:bg-page-accent/92',
-                focusClassName,
+                FOCUS_CLASS_NAME,
               )}
               onClick={unlock}
               type="button"
@@ -219,7 +197,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
           <Link
             className={cn(
               'mt-4 inline-flex min-h-11 items-center font-bold text-page-accent text-sm underline underline-offset-4',
-              focusClassName,
+              FOCUS_CLASS_NAME,
             )}
             href={`/${locale}/deep-type/methodology`}
           >
@@ -231,9 +209,15 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
           <button
             className={cn(
               'inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-page-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_rgba(255,77,109,0.24)] transition-colors hover:bg-page-accent/92',
-              focusClassName,
+              FOCUS_CLASS_NAME,
             )}
-            onClick={share}
+            onClick={() =>
+              share({
+                copy: `${shareText} ${DEEP_TYPE_BRAND_NAME[locale]}`,
+                text: shareText,
+                title: content.metadata.title,
+              })
+            }
             type="button"
           >
             <Share aria-hidden="true" className="h-4 w-4" stroke={1.8} />
@@ -243,7 +227,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
           <button
             className={cn(
               'inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-page-border bg-white px-6 font-bold text-page-ink/70 text-sm transition-colors hover:text-page-ink',
-              focusClassName,
+              FOCUS_CLASS_NAME,
             )}
             onClick={onRestart}
             type="button"

@@ -1,24 +1,43 @@
+import { type PortOneChannel, payMethodsFor, sellableChannels } from '@deep-type/pay-method'
+import { LOCALES } from '@sobok/domain/locale'
 import { Hono } from 'hono'
 
 import type { AppEnv } from '~/env'
 
 const route = new Hono<AppEnv>()
 
-// Deploy smoke check, not a client dependency: nothing in the browser reads this, and `/checkout` is what
-// hands out the key a payment is actually opened with. It exists so a bad deploy — a `vars` block a named
-// environment forgot to restate, a channel the catalogue offers but this environment has no key for — is one
-// request away from being obvious instead of surfacing as a failed payment.
+// Deploy smoke check, not a client dependency: nothing in the browser ever calls this — the paywall's menu is
+// baked into the static bundle, and `/checkout` is what hands out the key a payment is actually opened with.
+// It exists because the menu being fixed in SOURCE does not make the deployed Worker match the source: `vars`
+// are non-inheritable, hand-restated per wrangler environment, and a block `env.stg` forgot or a mistyped
+// channel name is observable only in the running deployment. One curl after a deploy, per DEPLOY.md.
 //
-// The map arrives keyed by channel, which is what makes it readable: the question a deploy gets wrong is
-// which CONTRACT a key belongs to, and that is legible only against the PG's own name.
+// `unbound` and `unsold` name the two directions the channel map and `sellableChannels(tier)` can drift, so
+// neither has to be spotted by comparing lists by eye. `payMethods` is the menu each locale's picker will
+// actually render — the check that no locale was left with nothing to pay with.
 //
-// Store id and channel keys are the only PortOne values that may leave the Worker; the api secret and the
-// webhook secret never do.
-route.get('/', (c) =>
-  c.json({
+// Channel NAMES only, never the key values. The values are public in the narrow sense — `/checkout` sends the
+// approved one to any buyer's browser — but this check has no use for them: a wrong-but-present key is
+// indistinguishable from a right one until a real payment runs, so echoing them here would only hand the full
+// contract list to anyone who asks, one per sale instead.
+route.get('/', (c) => {
+  const bound = Object.keys(c.env.DEEPTYPE_PORTONE_CHANNELS) as PortOneChannel[]
+  const sellable = sellableChannels(c.env.DEEPTYPE_PAY_TIER)
+
+  return c.json({
+    payTier: c.env.DEEPTYPE_PAY_TIER,
+    // The narration destination-switch. null = engine-only reports — visible here because an env block that
+    // forgot to restate the var turns narration off with no other symptom.
+    reportModel: c.env.DEEPTYPE_REPORT_MODEL || null,
     storeId: c.env.DEEPTYPE_PORTONE_STORE_ID,
-    channelKeys: c.env.DEEPTYPE_PORTONE_CHANNELS,
-  }),
-)
+    channels: bound,
+    // Offered on the paywall, unpayable here: every entry is a method that reaches `/checkout` and 500s.
+    unbound: sellable.filter((channel) => !bound.includes(channel)),
+    // A key we hold and never spend. Harmless — nothing asks for it — but it means an approval landed and
+    // `SELLABLE_CHANNELS` was not told, so a method we are paying for is still hidden.
+    unsold: bound.filter((channel) => !sellable.includes(channel)),
+    payMethods: Object.fromEntries(LOCALES.map((locale) => [locale, payMethodsFor(locale, c.env.DEEPTYPE_PAY_TIER)])),
+  })
+})
 
 export default route

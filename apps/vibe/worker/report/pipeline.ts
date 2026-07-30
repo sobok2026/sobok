@@ -1,9 +1,9 @@
 import type { AssessmentProfile, PersonaCode } from '@deep-type/model'
+import type { Locale } from '@sobok/domain/locale'
 
-import type { ReportLocale } from './axis-copy'
 import { buildReportProfile, type ReportProfile } from './profile'
 import { generateEngineReport, mergeDrainSittings } from './rules'
-import type { ReportSection } from './section-keys'
+import type { ReportSection } from './section-data'
 
 // The two-pass contract, expressed as pure functions so the route is glue. Everything that decides whether a
 // report may be delivered, cached or stamped lives here: a Hono handler cannot be exercised without a
@@ -22,9 +22,14 @@ export const ENGINE_MODEL = 'rules-only'
 /** Recorded on `narrative_error` when the narrator was never asked. Failure of the pass, not of the report. */
 export const NARRATIVE_DISABLED_REASON = 'llm disabled'
 
-/** Explicit off switch. Absent means on — a missing var must not silently retire the narration. */
-export function isNarrativeEnabled(flag: string | undefined): boolean {
-  return flag !== '0'
+/**
+ * The narration switch IS the destination, exactly as GA4's is (`DEEPTYPE_GA4_MEASUREMENT_ID`): a deployment
+ * with no model id has nowhere to send the pass and skips it, and the shared Anthropic credential stays bound
+ * and unspent. No in-code default model — a fallback id here would be a second copy of what wrangler already
+ * pins, free to drift from it. Absent and "" both mean off; the report itself never depends on this.
+ */
+export function narrativeModelOf(value: string | undefined): string | null {
+  return value || null
 }
 
 /**
@@ -59,7 +64,7 @@ export interface ReportSourceRow {
   declaredPersona: PersonaCode | null
   freeProfile: AssessmentProfile
   freeWorkAnswersAt: Date | null
-  locale: ReportLocale
+  locale: Locale
   /** When the paid block landed. Null on rows that never took it. */
   refinedAt: Date | null
   refinedProfile: AssessmentProfile | null
@@ -100,6 +105,6 @@ export function planReportPasses(source: ReportSourceRow): ReportPassPlan | null
       model: ENGINE_MODEL,
       sections: document.sections,
     },
-    profile: buildReportProfile({ locale: source.locale, profile: refinedProfile }),
+    profile: buildReportProfile(source.locale, refinedProfile),
   }
 }
