@@ -1,6 +1,7 @@
 import { ArrowRight, ChartNoAxesColumnIncreasing, HeartWaves } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
 import Image from 'next/image'
+import Link from 'next/link'
 import { cn } from '@/utils/cn'
 import coupleGyeolRidgeImage from '../../../../../public/image/rarity/ridge.png'
 import type { GyeolContent } from '../_lib/types'
@@ -9,12 +10,11 @@ type IntroViewProps = {
   content: GyeolContent
   hasInvalidSharedResult: boolean
   locale: Locale
-  onStart: () => void
 }
 
 const focusClassName = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
 
-export function IntroView({ content, hasInvalidSharedResult, locale, onStart }: IntroViewProps) {
+export function IntroView({ content, hasInvalidSharedResult, locale }: IntroViewProps) {
   const keepHeadingBreakClassName = locale === 'ko' ? 'break-keep' : undefined
 
   return (
@@ -36,17 +36,16 @@ export function IntroView({ content, hasInvalidSharedResult, locale, onStart }: 
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-page-ink/68 leading-8 sm:text-xl">{content.ui.heroDescription}</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <button
+              <Link
                 className={cn(
                   'inline-flex min-h-14 touch-manipulation items-center justify-center gap-2 rounded-2xl bg-page-accent px-6 font-black text-base text-white shadow-[0_24px_80px_rgba(255,77,109,0.26)] transition-colors hover:bg-page-accent/92',
                   focusClassName,
                 )}
-                onClick={onStart}
-                type="button"
+                href={`/${locale}/couple-gyeol/quiz`}
               >
                 {content.ui.heroCta}
                 <ArrowRight aria-hidden="true" className="h-4 w-4" stroke={1.8} />
-              </button>
+              </Link>
               <a
                 className={cn(
                   'inline-flex min-h-14 touch-manipulation items-center justify-center rounded-2xl border border-page-border bg-white px-6 font-bold text-base text-page-ink transition-colors hover:border-page-accent/50',

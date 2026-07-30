@@ -97,19 +97,15 @@ bun run deploy
 
 ---
 
-## 4.1 스테이징(테스트 결제) 배포
+## 4.1 스테이징(기능·결제 QA) 배포
 
-**브랜치를 밀면 스테이징, `main`을 밀면 프로덕션**이다(`.github/workflows/vibe-deploy.yml`). 워크플로가 보는 건 `main`이냐 아니냐뿐이고, 브랜치 이름은 배포에 관여하지 않는다 — 규약은 `<type>/<app>-<요약>`(`feat/vibe-kakaopay`)으로 커밋 메시지의 type과 같은 단어를 쓴다.
+**PR을 열면 자동으로 `vibe-stg`에 올라간다.** `main` 푸시만 프로덕션(`vibe`)으로 가고, 그 외에는 전부 스테이징이다(`.github/workflows/vibe-deploy.yml`). PR 없이 브랜치를 올려 보거나 스테이징을 특정 ref로 되돌릴 때는 Actions에서 수동 실행한다.
 
-돈이 걸린 변경의 흐름은 이렇다:
+어느 환경으로 가는지는 워크플로 안의 약속이 아니라 **GitHub Environment가 강제한다** — `production` 환경에 `main`만 배포할 수 있는 브랜치 정책이 걸려 있어(sobok-ops `infra/github/sobok2026`), 이 워크플로를 고쳐도 다른 브랜치가 실연동 채널 키에 닿지 못한다.
 
-1. 브랜치를 만들어 푸시 → `vibe-stg`에 배포된다
-2. `vibe-stg.sobok.cc`에서 포트원 **테스트 채널**로 결제 E2E(5.L 포함)를 돌린다
-3. `main`에 머지 → `vibe`에 배포된다
+⚠️ **`vibe-stg` 워커는 하나뿐이다.** PR 두 개가 동시에 QA를 받으면 나중 배포가 앞의 것을 덮는다. 지금 뭐가 올라가 있는지는 레포의 **Deployments**에서 본다. 동시 QA가 일상이 되면 PR별 preview(`wrangler versions upload`)로 갈라야 하는데, 그때도 **결제 경로만은 `vibe-stg`에 남는다** — `guardTurnstile`이 호스트네임을 `DEEPTYPE_PUBLIC_ORIGIN`에서 뽑아서 preview 호스트로는 결제창을 못 연다.
 
-named environment는 별도 Worker 스크립트라 `deploy` 하나로는 `vibe`만 올라간다. 스테이징은 브랜치 수명을 따르므로 **머지 직후에는 프로덕션과 다른 코드를 들고 있다** — 배포 후 확인은 프로덕션에서 소액 실결제로 하고, 스테이징에서 한 검증은 머지 전 것으로 읽는다.
-
-로컬에서 직접 올려야 할 때만:
+로컬에서 직접 올려야 할 때:
 
 ```bash
 cd apps/vibe

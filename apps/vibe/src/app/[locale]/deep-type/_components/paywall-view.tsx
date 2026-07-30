@@ -15,6 +15,7 @@ import { DEEPTYPE_CHECKOUT_ACTION } from '../../../../../worker/api/deep-type/ac
 import { type FreeResult, useCheckout } from '../_hooks/use-checkout'
 import { formatKrw } from '../_lib/price'
 import { REPORT_OFFER_ECOMMERCE } from '../_lib/report-offer-analytics'
+import { CARD_CLASS_NAME } from '../_lib/surface'
 import type { DeepTypeContent } from '../_lib/types'
 
 type PaywallViewProps = {
@@ -100,10 +101,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
           ) : null}
         </section>
 
-        <form
-          className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-4 sm:p-6"
-          onSubmit={handleSubmit}
-        >
+        <form className={CARD_CLASS_NAME} onSubmit={handleSubmit}>
           <label className="block font-bold text-page-ink/70 text-sm" htmlFor="deeptype-email">
             {paywall.emailLabel}
           </label>

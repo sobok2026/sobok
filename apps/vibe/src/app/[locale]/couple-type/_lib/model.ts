@@ -6,6 +6,7 @@ import type {
   CoupleTypeAnswers,
   CoupleTypeCode,
   CoupleTypeQuestion,
+  CoupleTypeResult,
 } from './types'
 
 export const axisOrder = ['pace', 'expression', 'repair', 'bond'] as const
@@ -37,6 +38,20 @@ export function calculateCoupleTypeCode({
   const selected = axisOrder.map((axis) => resolveAxisValue({ answers, axis, axisDefinitions, questions })).join('')
 
   return selected as CoupleTypeCode
+}
+
+/**
+ * The result addressed by a URL, which is the whole state the result route carries.
+ *
+ * The four letters are their own serialisation — there is nothing to encode and nothing to version — and the
+ * content's result table is the only authority on which combinations exist. So an unknown or hand-edited code
+ * resolves to null and the caller sends the visitor back to the landing.
+ */
+export function parseCoupleTypeCode(
+  results: Record<CoupleTypeCode, CoupleTypeResult>,
+  value: string | null | undefined,
+): CoupleTypeCode | null {
+  return value && value in results ? (value as CoupleTypeCode) : null
 }
 
 export function getAxisOption({ axis, axisDefinitions, value }: GetAxisOptionParams): AxisOption {

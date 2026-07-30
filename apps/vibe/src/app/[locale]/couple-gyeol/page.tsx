@@ -5,7 +5,7 @@ import { Suspense } from 'react'
 import { buildLocalizedMetadata } from '@/i18n/metadata'
 import JsonLd, { webApplicationGraph } from '@/lib/JsonLd'
 
-import { CoupleGyeolFlow } from './_components/couple-rarity-screen'
+import { IntroFlow } from './_components/intro-flow'
 import { getGyeolContent } from './_lib/content'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/couple-gyeol'>): Promise<Metadata> {
@@ -44,7 +44,7 @@ export default async function CoupleGyeolPage({ params }: PageProps<'/[locale]/c
         })}
       />
       <Suspense fallback={<GyeolPageFallback />}>
-        <CoupleGyeolFlow content={content} locale={locale} />
+        <IntroFlow content={content} locale={locale} />
       </Suspense>
     </>
   )

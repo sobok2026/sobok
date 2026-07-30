@@ -11,6 +11,7 @@ import { cn } from '@/utils/cn'
 
 import type { ReportSection } from '../_lib/api'
 import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
+import { CARD_CLASS_NAME } from '../_lib/surface'
 import type { DeepTypeContent } from '../_lib/types'
 import { GemArtwork } from './gem-artwork'
 import { WorldJobHero } from './world-job-hero'
@@ -153,10 +154,7 @@ export function ReportView({
         ) : null}
 
         {renderedSections(sections, narrativeSections).map((section) => (
-          <section
-            className="rounded-3xl border border-page-border bg-page-surface p-4 sm:rounded-4xl sm:p-6"
-            key={section.key}
-          >
+          <section className={CARD_CLASS_NAME} key={section.key}>
             <h2 className="break-keep font-black text-lg">{section.title}</h2>
             {section.bodyIsGenerated ? <GeneratedLabel text={content.ui.aiGeneratedLabel} /> : null}
             <p className="mt-3 whitespace-pre-line break-keep text-page-ink/76 leading-8">{section.body}</p>
@@ -169,7 +167,7 @@ export function ReportView({
           </section>
         ))}
 
-        <section className="rounded-3xl border border-page-border bg-page-surface p-4 sm:rounded-4xl sm:p-6">
+        <section className={CARD_CLASS_NAME}>
           <h2 className="font-black text-lg">{content.ui.methodologyNoteTitle}</h2>
           <p className="mt-2 text-page-ink/64 text-sm leading-7">{content.ui.methodologyNoteBody}</p>
           <Link

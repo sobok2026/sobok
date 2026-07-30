@@ -7,6 +7,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 import BottomNav from '@/components/BottomNav'
 import Header from '@/components/Header'
+import PageBody from '@/components/PageBody'
 import { ADSENSE_ACCOUNT, GTM_ID, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import { getLocale } from '@/i18n/server'
 import AdSense from '@/lib/ads/AdSense'
@@ -69,9 +70,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
           <Header locale={locale} localeLabel={t('localeSwitcher')} />
-          <div className="flex flex-1 flex-col min-h-dvh pt-[calc(var(--spacing-header)+var(--safe-area-top))]">
-            {children}
-          </div>
+          <PageBody>{children}</PageBody>
           <BottomNav locale={locale} />
         </NextIntlClientProvider>
         <AdSense />

@@ -28,6 +28,9 @@
 
 @theme inline {
   --spacing-header: 4rem;
+  /* The bottom island's own height (2.625rem) plus the offset it floats at. A page that shows the island owes
+     this much clearance, or its last control ends up under the pill with nothing left to scroll. */
+  --spacing-bottom-nav: calc(2.625rem + max(0.5rem, var(--safe-area-bottom)));
 
   /* THEME_COLOR in src/constants.ts must stay in sync with --page-bg. */
   --color-page-accent: var(--page-accent);

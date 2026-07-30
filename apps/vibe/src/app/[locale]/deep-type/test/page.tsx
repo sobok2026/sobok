@@ -18,12 +18,17 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/deep-typ
 
   const content = await getDeepTypeContent(locale)
 
-  return buildLocalizedMetadata({
-    description: content.metadata.description,
-    locale,
-    pathname: '/deep-type/test',
-    title: `${content.metadata.title} - Test`,
-  })
+  return {
+    // A step in a process, so it stays out of search: the landing is what ads point at and what should rank, and
+    // a question screen with the same title one path deeper is a thin duplicate of it.
+    ...buildLocalizedMetadata({
+      description: content.metadata.description,
+      locale,
+      pathname: '/deep-type/test',
+      title: `${content.metadata.title} - Test`,
+    }),
+    robots: { follow: false, index: false },
+  }
 }
 
 export default async function DeepTypeTestPage({ params }: PageProps<'/[locale]/deep-type/test'>) {

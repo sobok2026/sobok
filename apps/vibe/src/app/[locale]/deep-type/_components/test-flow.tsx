@@ -8,6 +8,13 @@ import { useEffect, useReducer } from 'react'
 
 import { assertNever } from '../_lib/assert'
 import { FREE_HINT_INDEXES, FREE_RUN, FREE_SEGMENTS, TYPE_BLOCK_END } from '../_lib/free-run'
+import {
+  clearDeepTypeProgress,
+  type DeepTypeProgress,
+  type ProgressAnswer,
+  readDeepTypeProgress,
+  writeDeepTypeProgress,
+} from '../_lib/progress'
 import { writeSitting } from '../_lib/sitting'
 import { trackFreeDeclaration, trackFreeProgress } from '../_lib/test-progress-analytics'
 import type { DeepTypeContent } from '../_lib/types'
@@ -30,19 +37,38 @@ type TestState =
 
 type Declared = { code: PersonaCode | null; source: PersonaSource }
 
-/** Kept discriminated all the way to the writer so an option index can never land in an agreement level. */
-type Answer = { kind: 'likert'; value: ItemAnswer } | { kind: 'work'; value: WorkAnswer }
+/**
+ * Kept discriminated all the way to the writer so an option index can never land in an agreement level. Defined
+ * next to the store that has to reconstruct it after a reload.
+ */
+type Answer = ProgressAnswer
 
 type TestAction =
   | { declared: Declared; type: 'DECLARE' }
   | { type: 'GUIDE' }
   | { answer: Answer; type: 'ANSWER' }
   | { type: 'BACK' }
+  | { progress: DeepTypeProgress; type: 'RESTORE' }
 
 const INITIAL_TEST_STATE: TestState = { phase: 'declare' }
 
 function testReducer(state: TestState, action: TestAction): TestState {
   switch (action.type) {
+    case 'RESTORE': {
+      // Only ever from the initial state, so a late-arriving restore cannot overwrite answers already given in
+      // this render. A run whose answers were all in before the tab went away resumes at the screen that submits
+      // it rather than at a twenty-eighth question that does not exist.
+      if (state.phase !== 'declare') {
+        return state
+      }
+
+      const { answers, declaredPersona, personaSource } = action.progress
+      const declared: Declared = { code: declaredPersona, source: personaSource }
+
+      return answers.length >= FREE_RUN.length
+        ? { answers, declared, phase: 'analyzing' }
+        : { answers, declared, phase: 'run' }
+    }
     case 'DECLARE':
       return state.phase === 'declare' || state.phase === 'selfImage'
         ? { answers: [], declared: action.declared, phase: 'run' }
@@ -51,6 +77,13 @@ function testReducer(state: TestState, action: TestAction): TestState {
       return state.phase === 'declare' ? { phase: 'selfImage' } : state
     case 'ANSWER': {
       if (state.phase !== 'run') {
+        return state
+      }
+      // A second tap that lands before the next question paints carries the item the previous one answered. Filing
+      // it would put two answers under one id, and because the run is twenty-seven answers long either way, the
+      // last item would never be asked — a sitting that is paid for and quietly mis-tallied. So an answer is only
+      // accepted for the item the run is actually waiting for.
+      if (action.answer.value.itemId !== FREE_RUN[state.answers.length]?.id) {
         return state
       }
       const answers = [...state.answers, action.answer]
@@ -85,6 +118,28 @@ export function TestFlow({ content, locale }: TestFlowProps) {
     window.scrollTo({ top: 0 })
   }, [state.phase])
 
+  // Read after mount, not during render: this screen is prerendered at build time and `sessionStorage` does not
+  // exist there.
+  useEffect(() => {
+    const stored = readDeepTypeProgress()
+
+    if (stored) {
+      dispatch({ progress: stored, type: 'RESTORE' })
+    }
+  }, [])
+
+  // One writer for the whole run. Answering and declaring are the same event as far as recovery is concerned, so
+  // neither gets a path that skips the write, and the state that leaves the screen is the state that is stored.
+  useEffect(() => {
+    if (state.phase === 'run' || state.phase === 'analyzing') {
+      writeDeepTypeProgress({
+        answers: state.answers,
+        declaredPersona: state.declared.code,
+        personaSource: state.declared.source,
+      })
+    }
+  }, [state])
+
   const segmentLabels = { core: ui.segmentCoreLabel, drain: ui.segmentDrainLabel, type: ui.segmentTypeLabel }
   const segments = FREE_SEGMENTS.map(({ count, segment }) => ({ count, label: segmentLabels[segment] }))
 
@@ -103,6 +158,9 @@ export function TestFlow({ content, locale }: TestFlowProps) {
       likert: likertAnswers(state.answers),
       work: workAnswers(state.answers),
     })
+    // The sitting now holds everything the run held, so the in-progress copy stops being a recovery point and
+    // starts being a second answer set that could be restored over a finished one.
+    clearDeepTypeProgress()
     router.push(`/${locale}/deep-type/result`)
   }
 

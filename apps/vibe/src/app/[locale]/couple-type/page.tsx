@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { buildLocalizedMetadata } from '@/i18n/metadata'
 import JsonLd, { webApplicationGraph } from '@/lib/JsonLd'
 
-import { CoupleTypeFlow } from './_components/couple-type-screen'
+import { IntroView } from './_components/intro-view'
 import { getCoupleTypeContent } from './_lib/content'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/couple-type'>): Promise<Metadata> {
@@ -42,8 +42,8 @@ export default async function CoupleTypePage({ params }: PageProps<'/[locale]/co
           path: 'couple-type',
         })}
       />
-      <main className="flex flex-1 flex-col bg-page-bg text-page-ink">
-        <CoupleTypeFlow content={content} locale={locale} />
+      <main className="flex flex-1 flex-col bg-page-bg text-page-ink" id="main-content">
+        <IntroView content={content} locale={locale} />
       </main>
     </>
   )

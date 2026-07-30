@@ -74,14 +74,22 @@ const ABILITY_ARTWORK = {
   warmth_guard: warmthGuardArt,
 } satisfies Record<AbilitySlug, StaticImageData>
 
+/**
+ * The art leads at compact width and flanks the copy from `sm` up.
+ *
+ * Beside the copy it was a 96px column of a 768px square — one eighth of the illustration, which for most slugs
+ * is background — and it cost the text 128px of a 375px screen. On top it is the card's media band instead, at
+ * 3:2 because these are square compositions with the character between roughly 15% and 80% of the height, so a
+ * shallower crop keeps the subject that `aspect-video` would behead.
+ */
 export function AbilityArtwork({ slug }: { slug: AbilitySlug }) {
   return (
     <Image
       alt=""
-      className="w-24 shrink-0 self-stretch bg-page-soft object-cover sm:w-28"
+      className="aspect-3/2 h-auto w-full shrink-0 bg-page-soft object-cover sm:aspect-auto sm:w-28 sm:self-stretch"
       draggable={false}
       loading="lazy"
-      sizes="112px"
+      sizes="(min-width: 640px) 112px, calc(100vw - 4rem)"
       src={ABILITY_ARTWORK[slug]}
     />
   )
