@@ -3,6 +3,7 @@ import type { Messages } from './types'
 export const ja = {
   Common: {
     localeSwitcher: '言語選択',
+    primaryNav: 'メインメニュー',
     meta: {
       title: 'カップル相性診断',
       description: '結相性スコアと会話タイプ、2つの診断でふたりのバイブスをチェック。',
