@@ -69,9 +69,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
       <body className="flex min-h-dvh flex-col bg-page-bg text-page-ink antialiased">
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
-          <Header locale={locale} localeLabel={t('localeSwitcher')} />
+          <Header locale={locale} localeLabel={t('localeSwitcher')} navLabel={t('primaryNav')} />
           <PageBody>{children}</PageBody>
-          <BottomNav locale={locale} />
+          <BottomNav locale={locale} navLabel={t('primaryNav')} />
         </NextIntlClientProvider>
         <AdSense />
         <GTMLoader containerId={GTM_ID} productionOrigin={ORIGIN} />

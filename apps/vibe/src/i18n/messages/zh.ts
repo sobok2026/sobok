@@ -3,6 +3,7 @@ import type { Messages } from './types'
 export const zh = {
   Common: {
     localeSwitcher: '选择语言',
+    primaryNav: '主菜单',
     meta: {
       title: '情侣默契测试',
       description: '通过默契指数和对话类型两项测试,了解你们的相处氛围。',

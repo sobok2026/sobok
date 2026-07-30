@@ -12,9 +12,10 @@ import { PRIMARY_NAV } from './nav'
 type Props = {
   locale: Locale
   localeLabel: string
+  navLabel: string
 }
 
-export default function Header({ locale, localeLabel }: Props) {
+export default function Header({ locale, localeLabel, navLabel }: Props) {
   const pathname = usePathname()
   const focusedFlow = useFocusedFlow()
   const home = `/${locale}`
@@ -31,7 +32,7 @@ export default function Header({ locale, localeLabel }: Props) {
             wide viewports rather than a different problem. The logo and the locale switcher stay: the flow needs
             a deliberate exit, not no exit. */}
         {focusedFlow ? null : (
-          <nav aria-label="Primary" className="hidden items-center gap-1 sm:flex">
+          <nav aria-label={navLabel} className="hidden items-center gap-1 sm:flex">
             {PRIMARY_NAV[locale].map((item) => {
               const href = `${home}/${item.segment}`
               const active = pathname === href
