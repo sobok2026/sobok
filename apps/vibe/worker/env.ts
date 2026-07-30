@@ -4,7 +4,7 @@
 //   - Hyperdrive configs → cloudflare_hyperdrive_config (ids pasted into wrangler.jsonc)
 //   - true secrets → Cloudflare Secrets Store (cloudflare_secrets_store_secret), bound via
 //     wrangler `secrets_store_secrets`; accessed at runtime with `await binding.get()`
-//   - non-secret config (store id, channel keys, kill-switch, model) → wrangler `vars`
+//   - non-secret config (store id, channel keys, tier, model) → wrangler `vars`
 import type { PayTier, PortOneChannel } from '@deep-type/pay-method'
 
 export interface Bindings {
@@ -59,11 +59,11 @@ export interface Bindings {
   DEEPTYPE_PUBLIC_ORIGIN: string
   DEEPTYPE_EMAIL_FROM: string
   DEEPTYPE_EMAIL_REPLY_TO: string
-  // Pinned model override (defaults to claude-haiku-4-5-20251001 for reproducible report behavior).
+  // The narration pass's destination AND its switch, same shape as DEEPTYPE_GA4_MEASUREMENT_ID below: a
+  // pinned model id turns narration on, "" (or an absent var) means the pass is skipped and the shared
+  // Anthropic credential is never spent. No in-code default — the id would be a second copy free to drift
+  // from the one wrangler pins. The report itself never depends on this; the engine owns the paid body.
   DEEPTYPE_REPORT_MODEL?: string
-  // Narration killswitch. '0' ships reports with the rule-engine body alone; anything else (including an
-  // absent var) leaves narration on. It no longer gates the report itself — the engine owns that.
-  DEEPTYPE_LLM_ENABLED?: string
   // vibe's GA4 data stream — the destination of the server-side `purchase`. Public (it ships in the browser
   // too, via src/constants.ts); it is the paired API secret that is confidential.
   //

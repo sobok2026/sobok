@@ -27,6 +27,9 @@ route.get('/', (c) => {
 
   return c.json({
     payTier: c.env.DEEPTYPE_PAY_TIER,
+    // The narration destination-switch. null = engine-only reports — visible here because an env block that
+    // forgot to restate the var turns narration off with no other symptom.
+    reportModel: c.env.DEEPTYPE_REPORT_MODEL || null,
     storeId: c.env.DEEPTYPE_PORTONE_STORE_ID,
     channels: bound,
     // Offered on the paywall, unpayable here: every entry is a method that reaches `/checkout` and 500s.

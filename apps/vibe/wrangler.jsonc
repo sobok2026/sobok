@@ -21,12 +21,12 @@
   },
   "hyperdrive": [
     {
-      // FRESH = 돈·엔티틀먼트 경로(stale 금지);
+      // FRESH = 돈·엔티틀먼트 경로
       "binding": "HYPERDRIVE_FRESH",
       "id": "14e658152a554541b0e1a6712fc43787"
     },
     {
-      // CACHED = 완료된 리포트 본문 읽기 전용.
+      // CACHED = 완료된 리포트 본문 읽기 전용
       "binding": "HYPERDRIVE_CACHED",
       "id": "a2a2c4cb90d94e6fb08b0eb6727bb61d"
     }
@@ -51,9 +51,9 @@
     "DEEPTYPE_PUBLIC_ORIGIN": "https://vibe.sobok.cc",
     "DEEPTYPE_EMAIL_FROM": "sobok <sobok2026@gmail.com>",
     "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",
+    // 내레이션의 목적지이자 스위치다: ""면 내레이션 없이 룰 엔진 리포트만 나가고 유료 리포트는 여기에 기대지
+    // 않는다. 코드에 기본 모델이 없어 호출은 항상 여기 적힌 id로만 나간다.
     "DEEPTYPE_REPORT_MODEL": "claude-haiku-4-5-20251001",
-    // 내레이션 킬스위치일 뿐이다. "0"이면 룰 엔진 리포트만 나가고 유료 리포트는 여기에 기대지 않는다.
-    "DEEPTYPE_LLM_ENABLED": "1",
     "DEEPTYPE_GA4_MEASUREMENT_ID": "G-RHHX4JRYDS"
   },
   "secrets_store_secrets": [
@@ -124,7 +124,6 @@
         "DEEPTYPE_EMAIL_FROM": "sobok <sobok2026@gmail.com>",
         "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",
         "DEEPTYPE_REPORT_MODEL": "claude-haiku-4-5-20251001",
-        "DEEPTYPE_LLM_ENABLED": "1",
         // 일부러 ""다: 목적지가 없으면 이 배포는 revenue를 보내지 않는다. 프로덕션 id를 채우면 스테이징
         // 테스트 구매가 프로덕션 GA4 property에 들어간다.
         "DEEPTYPE_GA4_MEASUREMENT_ID": ""
