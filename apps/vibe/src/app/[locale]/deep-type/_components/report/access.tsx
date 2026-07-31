@@ -39,7 +39,7 @@ export function PurchaseReceipt({
       <div className="flex items-start gap-3">
         <CheckCircle aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-page-success" stroke={1.8} />
         <div className="min-w-0">
-          <h2 className="break-keep font-black text-lg text-page-ink" id="report-receipt-title">
+          <h2 className="font-black text-lg text-page-ink" id="report-receipt-title">
             {ui.reportReceiptTitle}
           </h2>
           <p className={cn('mt-1.5', REPORT_TYPE.copy)}>{ui.reportReceiptBody}</p>
@@ -75,7 +75,7 @@ export function ReportAccessNote({ content, locale }: { content: DeepTypeContent
 
   return (
     <section aria-labelledby="report-access-title" className={cn(CARD_CLASS_NAME, 'bg-page-soft/60')}>
-      <h2 className="break-keep font-black text-base text-page-ink" id="report-access-title">
+      <h2 className="font-black text-base text-page-ink" id="report-access-title">
         {ui.reportAccessTitle}
       </h2>
       <p className={cn('mt-2', REPORT_TYPE.meta)}>{ui.reportAccessBody}</p>

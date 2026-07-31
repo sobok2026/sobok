@@ -150,8 +150,8 @@ export function RefinementQuizView({
     return (
       <main className="flex flex-1 flex-col items-center justify-center bg-page-bg px-safe py-16 text-center text-page-ink">
         <div className="w-full max-w-sm" role="alert">
-          <h1 className="break-keep font-black text-xl">{paywall.refinementFailedTitle}</h1>
-          <p className="mt-3 break-keep text-page-ink-soft leading-7">{paywall.refinementFailedBody}</p>
+          <h1 className="font-black text-xl">{paywall.refinementFailedTitle}</h1>
+          <p className="mt-3 break-prose text-page-ink-soft leading-7">{paywall.refinementFailedBody}</p>
         </div>
         <button
           className="mt-6 inline-flex min-h-13 w-full max-w-sm items-center justify-center rounded-full bg-page-accent-strong px-6 font-black text-sm text-white transition-colors hover:bg-page-accent-strong/92 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent"

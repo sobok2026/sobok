@@ -106,7 +106,7 @@ export function ReportView({
         ))}
 
         <section className={cn(CARD_CLASS_NAME, 'mt-2')}>
-          <h2 className="break-keep font-black text-lg text-page-ink">{content.ui.methodologyNoteTitle}</h2>
+          <h2 className="font-black text-lg text-page-ink">{content.ui.methodologyNoteTitle}</h2>
           <p className={cn('mt-2', REPORT_TYPE.copy)}>{content.ui.methodologyNoteBody}</p>
           <Link
             className={cn(

@@ -1,0 +1,23 @@
+/* 언어별 기본 줄바꿈 (HTML lang 속성 기반) */
+@layer base {
+  /* 한국어: 어절 단위 줄바꿈 적용 및 가로 넘침 방지 */
+  :lang(ko) {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  /* 일본어: 문절 단위 줄바꿈 적용 및 가로 넘침 방지 */
+  :lang(ja) {
+    word-break: auto-phrase;
+    overflow-wrap: break-word;
+  }
+}
+
+/* 본문/긴 글 텍스트용 줄바꿈 유틸리티 */
+@utility break-prose {
+  word-break: normal;
+
+  &:lang(en) {
+    hyphens: auto;
+  }
+}

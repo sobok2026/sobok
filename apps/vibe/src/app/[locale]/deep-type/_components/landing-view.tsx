@@ -34,8 +34,6 @@ type LandingViewProps = {
  */
 export function LandingView({ content, locale, onStart }: LandingViewProps) {
   const { landing, ui } = content
-  const keepBreak = locale === 'ko' ? 'break-keep' : undefined
-
   return (
     <main className="flex flex-1 flex-col bg-page-bg px-safe pt-10 pb-32 text-page-ink" id="main-content">
       <div className="mx-auto w-full max-w-3xl">
@@ -43,10 +41,8 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
 
         <header className="mt-8">
           <span className="font-bold text-page-accent-strong text-sm">{landing.kicker}</span>
-          <h1 className={cn('mt-3 text-balance font-black text-4xl leading-tight sm:text-5xl', keepBreak)}>
-            {ui.landingTitle}
-          </h1>
-          <p className={cn('mt-5 text-page-ink-soft leading-8', keepBreak)}>{ui.landingSubtitle}</p>
+          <h1 className="mt-3 text-balance font-black text-4xl leading-tight sm:text-5xl">{ui.landingTitle}</h1>
+          <p className="mt-5 break-prose text-page-ink-soft leading-8">{ui.landingSubtitle}</p>
         </header>
 
         <figure className="mt-8 overflow-hidden rounded-4xl border border-page-border bg-page-soft">
@@ -67,14 +63,13 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
               key={fact.label}
             >
               <dt className="text-page-ink-muted text-xs">{fact.label}</dt>
-              <dd className="mt-1 break-keep font-black text-base">{fact.value}</dd>
+              <dd className="mt-1 font-black text-base">{fact.value}</dd>
             </div>
           ))}
         </dl>
 
         <CtaBlock
           className="mt-8"
-          keepBreak={keepBreak}
           label={ui.landingCta}
           locale={locale}
           meta={landing.ctaMeta}
@@ -91,9 +86,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
                 </span>
                 <div>
                   <p className="font-black">{deliverable}</p>
-                  <p className={cn('mt-1 text-page-ink-muted text-sm leading-6', keepBreak)}>
-                    {landing.getsBodies[index]}
-                  </p>
+                  <p className="mt-1 break-prose text-page-ink-muted text-sm leading-6">{landing.getsBodies[index]}</p>
                 </div>
               </li>
             ))}
@@ -103,8 +96,8 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
         <section className="mt-14 grid gap-3">
           {landing.asks.map((ask) => (
             <div className="rounded-3xl border border-page-border bg-page-soft/60 p-5" key={ask.question}>
-              <h2 className={cn('font-black text-lg leading-8', keepBreak)}>{ask.question}</h2>
-              <p className={cn('mt-2 text-page-ink-soft text-sm leading-7', keepBreak)}>{ask.body}</p>
+              <h2 className="font-black text-lg leading-8">{ask.question}</h2>
+              <p className="mt-2 break-prose text-page-ink-soft text-sm leading-7">{ask.body}</p>
             </div>
           ))}
         </section>
@@ -116,7 +109,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
                 className="flex items-center justify-between gap-4 rounded-3xl border border-page-border bg-page-surface px-5 py-4"
                 key={step.title}
               >
-                <p className={cn('flex gap-3 font-bold text-sm', keepBreak)}>
+                <p className="flex gap-3 font-bold text-sm">
                   <span className="text-page-accent-strong tabular-nums">{String(index + 1).padStart(2, '0')}</span>
                   {step.title}
                 </p>
@@ -132,7 +125,6 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
         <CtaBlock
           className="mt-12"
           ctaRole="closing"
-          keepBreak={keepBreak}
           label={ui.landingCta}
           locale={locale}
           meta={ui.landingNote}
@@ -150,7 +142,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
         </Link>
 
         <div className="mt-10 border-page-border border-t pt-6">
-          <p className={cn('text-page-ink-muted text-xs leading-6', keepBreak)}>{landing.offerNote}</p>
+          <p className="break-prose text-page-ink-muted text-xs leading-6">{landing.offerNote}</p>
         </div>
       </div>
 
@@ -162,7 +154,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
 function Section({ children, title }: { children: React.ReactNode; title: string }) {
   return (
     <section className="mt-14">
-      <h2 className="break-keep font-black text-2xl leading-tight">{title}</h2>
+      <h2 className="font-black text-2xl leading-tight">{title}</h2>
       {children}
     </section>
   )
@@ -171,7 +163,6 @@ function Section({ children, title }: { children: React.ReactNode; title: string
 function CtaBlock({
   className,
   ctaRole,
-  keepBreak,
   label,
   locale,
   meta,
@@ -180,8 +171,6 @@ function CtaBlock({
   className?: string
   /** Not an ARIA role — the marker the sticky bar's observer watches. */
   ctaRole: string
-  /** `break-keep` for ko. Without it the browser breaks inside a word and '원할 때' splits after '원'. */
-  keepBreak?: string
   label: string
   locale: Locale
   meta: string
@@ -201,7 +190,7 @@ function CtaBlock({
         {label}
         <ArrowRight aria-hidden="true" className="h-4 w-4" stroke={1.8} />
       </Link>
-      <p className={cn('mt-3 text-balance text-center text-page-ink-muted text-sm leading-6', keepBreak)}>{meta}</p>
+      <p className="mt-3 text-balance text-center text-page-ink-muted text-sm leading-6">{meta}</p>
     </div>
   )
 }

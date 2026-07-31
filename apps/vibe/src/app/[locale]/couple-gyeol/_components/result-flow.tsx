@@ -49,5 +49,5 @@ export function ResultFlow({ content, locale }: { content: GyeolContent; locale:
     router.push(`/${locale}/couple-gyeol`)
   }
 
-  return <ResultView content={content} isSharedResult={!ownRun} locale={locale} onRestart={restart} result={result} />
+  return <ResultView content={content} isSharedResult={!ownRun} onRestart={restart} result={result} />
 }

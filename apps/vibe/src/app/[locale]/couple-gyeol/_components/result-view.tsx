@@ -1,7 +1,6 @@
 'use client'
 
 import { Copy, HeartWaves, Refresh, Share, Sparkles } from '@mynaui/icons-react'
-import type { Locale } from '@sobok/domain/locale'
 import Image from 'next/image'
 import { useShare } from '@/components/use-share'
 import { cn } from '@/utils/cn'
@@ -13,7 +12,6 @@ import type { GyeolContent, GyeolResult } from '../_lib/types'
 type ResultViewProps = {
   content: GyeolContent
   isSharedResult: boolean
-  locale: Locale
   onRestart: () => void
   result: GyeolResult
 }
@@ -25,11 +23,10 @@ type GyeolScoreCardProps = {
   weaveIndex: number
 }
 
-export function ResultView({ content, isSharedResult, locale, onRestart, result }: ResultViewProps) {
+export function ResultView({ content, isSharedResult, onRestart, result }: ResultViewProps) {
   const { feedback: shareFeedback, share } = useShare({ copiedMessage: content.ui.copiedFeedback })
   const resultContent = content.results[result.code]
   const gradeContent = content.grades[result.grade]
-  const keepHeadingBreakClassName = locale === 'en' ? undefined : 'break-keep'
 
   const shareBody = formatText(content.ui.shareFallbackBody, {
     grade: gradeContent.label,
@@ -56,9 +53,7 @@ export function ResultView({ content, isSharedResult, locale, onRestart, result 
             mountainLabel={gradeContent.mountainLabel}
             weaveIndex={result.weaveIndex}
           />
-          <h1 className={cn('mt-7 font-black text-4xl leading-tight sm:text-6xl', keepHeadingBreakClassName)}>
-            {resultContent.nickname}
-          </h1>
+          <h1 className="mt-7 font-black text-4xl leading-tight sm:text-6xl">{resultContent.nickname}</h1>
           <p className="mt-5 text-white/70 leading-8">{resultContent.summary}</p>
           {isSharedResult ? (
             <p className="mt-4 font-bold text-page-accent-strong text-sm">{content.ui.shareLead}</p>

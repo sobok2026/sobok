@@ -24,7 +24,7 @@ export function PersonaDeclareView({ onDeclare, onGuide, ui }: PersonaDeclareVie
   return (
     <main className="flex flex-1 flex-col justify-center bg-page-bg px-safe py-10 text-page-ink" id="main-content">
       <div className="mx-auto w-full max-w-2xl py-4">
-        <h1 className="break-keep font-black text-3xl leading-tight">{ui.declareTitle}</h1>
+        <h1 className="font-black text-3xl leading-tight">{ui.declareTitle}</h1>
         <p className="mt-4 text-page-ink-soft leading-8">{ui.declareBody}</p>
 
         <div className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-4">

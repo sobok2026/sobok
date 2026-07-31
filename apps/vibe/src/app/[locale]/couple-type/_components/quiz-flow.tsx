@@ -76,7 +76,6 @@ export function QuizFlow({ content, locale }: { content: CoupleTypeContent; loca
       answers={answers}
       axisDefinitions={axisDefinitions}
       currentIndex={currentIndex}
-      locale={locale}
       onBack={goBack}
       onNext={goNext}
       onSelect={selectAnswer}

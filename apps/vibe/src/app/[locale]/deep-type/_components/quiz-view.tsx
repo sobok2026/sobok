@@ -40,7 +40,7 @@ export function QuizView({ backLabel, banner, hint, onAnswer, onBack, progress, 
         {banner}
 
         <div className="mt-6 rounded-3xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:rounded-4xl sm:p-8">
-          <h1 className="break-keep font-black text-xl leading-snug">{question.prompt}</h1>
+          <h1 className="font-black text-xl leading-snug">{question.prompt}</h1>
           <div className="mt-7 grid gap-3">
             {question.options.map((option, index) => (
               <button
