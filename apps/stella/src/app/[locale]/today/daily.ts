@@ -14,6 +14,22 @@ export type DayAnchor = {
   utcOffsetMinutes: number
 }
 
+/**
+ * The two pages that read one calendar day: /today and its next-day preview. They differ only in which day
+ * they anchor to and which copy they speak with — every step between is the same pipeline, so the value is
+ * threaded through as data rather than duplicated per page. It doubles as the share `kind` and the URL
+ * segment, both of which are lowercase; the message namespace is its capitalized twin.
+ */
+export type DailySurface = 'today' | 'tomorrow'
+
+/** Each surface's next-intl namespace. The copy differs even where the pipeline behind it does not. */
+export type DailyNamespace = 'Today' | 'Tomorrow'
+
+export const DAILY_NAMESPACE = {
+  today: 'Today',
+  tomorrow: 'Tomorrow',
+} as const satisfies Record<DailySurface, DailyNamespace>
+
 /** Captures the creator's calendar day without coupling it to the recipient's time zone. */
 export function localDayAnchor(date: Date = new Date()): DayAnchor {
   const noon = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12)
