@@ -96,6 +96,7 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
           clearPendingCheckout()
           window.location.assign(`/${locale}/deep-type`)
         }}
+        orderId={pending.paymentId}
       />
     )
   }
@@ -103,7 +104,7 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
   return (
     <main className="flex flex-1 items-center justify-center bg-page-bg px-safe py-12 text-page-ink" id="main-content">
       <section className="w-full max-w-lg rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 text-center shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
-        <p className="font-bold text-page-accent text-sm">{copy.eyebrow}</p>
+        <p className="font-bold text-page-accent-strong text-sm">{copy.eyebrow}</p>
         {phase === 'checking' ? (
           <div aria-live="polite" className="py-5">
             <div
@@ -111,16 +112,16 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
               className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent motion-reduce:animate-none"
             />
             <h1 className="mt-5 break-keep font-black text-2xl">{copy.checkingTitle}</h1>
-            <p className="mt-3 break-keep text-page-ink/64 leading-7">{copy.checkingBody}</p>
+            <p className="mt-3 break-keep text-page-ink-soft leading-7">{copy.checkingBody}</p>
           </div>
         ) : (
           <>
             <h1 className="mt-3 break-keep font-black text-2xl">{copy.errorTitle}</h1>
-            <p className="mt-3 break-keep text-page-ink/64 leading-7">{copy.errorBody}</p>
+            <p className="mt-3 break-keep text-page-ink-soft leading-7">{copy.errorBody}</p>
             {pending ? (
               <button
                 className={cn(
-                  'mt-6 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white hover:bg-page-accent/92',
+                  'mt-6 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent-strong px-6 font-black text-sm text-white hover:bg-page-accent-strong/92',
                   FOCUS_CLASS_NAME,
                 )}
                 onClick={() => verifyPayment(pending)}
@@ -131,7 +132,7 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
             ) : null}
             <Link
               className={cn(
-                'mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-page-border font-bold text-page-ink/70 text-sm hover:text-page-ink',
+                'mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-page-border font-bold text-page-ink-soft text-sm hover:text-page-ink',
                 FOCUS_CLASS_NAME,
               )}
               href={`/${locale}/deep-type/reopen`}
@@ -140,7 +141,7 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
             </Link>
             <Link
               className={cn(
-                'mt-2 inline-flex min-h-11 w-full items-center justify-center rounded-full font-bold text-page-ink/54 text-sm hover:text-page-ink',
+                'mt-2 inline-flex min-h-11 w-full items-center justify-center rounded-full font-bold text-page-ink-muted text-sm hover:text-page-ink',
                 FOCUS_CLASS_NAME,
               )}
               href={`/${locale}/deep-type`}

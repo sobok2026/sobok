@@ -17,6 +17,23 @@ export type QuestionContent = {
 export type QuestionPromptCatalog = Readonly<Record<string, string>>
 export type QuestionOptionCatalog = Readonly<Record<string, QuestionContent['options']>>
 
+/**
+ * The three runs of sections the report is read in. The server owns section ORDER (`REPORT_DISPLAY_ORDER`);
+ * this is the reader-facing division of that order into parts, and it exists because twelve peer sections in a
+ * row is a list, not a document.
+ *
+ * Contiguous by construction: `read` is everything the answers say about the person, `match` holds the three
+ * sections that put that reading against a role or a self-description, and `act` is what is left to try this
+ * week. A part that would have to jump over a section to stay whole is a sign the split is wrong.
+ */
+export type ReportPartId = 'act' | 'match' | 'read'
+
+export type ReportPartCopy = {
+  /** One line under the part title. Says what the run of sections below it is for. */
+  body: string
+  title: string
+}
+
 export type DeepTypeUiText = {
   analyzingBody: string
   analyzingTitle: string
@@ -37,11 +54,32 @@ export type DeepTypeUiText = {
   methodologyNoteBody: string
   methodologyNoteTitle: string
   reopenCta: string
+  /** Floating control on the report. Labelled rather than icon-only, because it is the only way back up. */
+  reportBackToTop: string
   reportDisclaimer: string
+  /**
+   * How to get back into a report that has already been paid for. The purchase e-mail is the only key that
+   * survives a closed tab, and until this existed the screen never said so — the promise was made on the
+   * paywall and then never repeated anywhere the buyer would look for it.
+   */
+  reportAccessBody: string
+  reportAccessTitle: string
+  /** Label over a work facet's one reversible choice, so it stops reading as a third descriptive line. */
+  reportFacetActionLabel: string
+  reportPartLabel: string
+  reportParts: Record<ReportPartId, ReportPartCopy>
+  reportPrintCta: string
+  /** Post-payment acknowledgement. Only the checkout return and the in-tab purchase pass an order id. */
+  reportReceiptBody: string
+  reportReceiptOrderLabel: string
+  reportReceiptSupportCta: string
+  reportReceiptTitle: string
   reportRestartCta: string
   reportShareCopied: string
   reportShareCta: string
   reportShareText: string
+  reportTocNote: string
+  reportTocTitle: string
   // The one interruption in the free run. It fires where the type letters are decided and nowhere else, so it
   // may name those four letters and may not promise anything the remaining fifteen items have not measured.
   revealBody: string

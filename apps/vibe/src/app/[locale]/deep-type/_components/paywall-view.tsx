@@ -13,7 +13,7 @@ import { cn } from '@/utils/cn'
 import { DEEPTYPE_CHECKOUT_ACTION } from '../../../../../worker/api/deep-type/actions'
 import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
-import { type FreeResult, type PaypalSession, useCheckout } from '../_hooks/use-checkout'
+import { type FreeResult, type PaypalSession, type SettledPayment, useCheckout } from '../_hooks/use-checkout'
 import { formatPrice } from '../_lib/price'
 import { reportOfferEcommerce } from '../_lib/report-offer-analytics'
 import { CARD_CLASS_NAME } from '../_lib/surface'
@@ -23,7 +23,7 @@ type PaywallViewProps = {
   content: DeepTypeContent
   freeResult: FreeResult
   onClose: () => void
-  onPaid: (accessToken: string) => void
+  onPaid: (payment: SettledPayment) => void
 }
 
 export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallViewProps) {
@@ -61,10 +61,10 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
 
     trackEcommerce('begin_checkout', reportOfferEcommerce(freeResult.locale), { locale: freeResult.locale })
     const email = String(new FormData(event.currentTarget).get('email') ?? '')
-    const accessToken = await start(email, turnstileToken, payMethod)
+    const settled = await start(email, turnstileToken, payMethod)
 
-    if (accessToken) {
-      onPaid(accessToken)
+    if (settled) {
+      onPaid(settled)
       return
     }
 
@@ -74,10 +74,10 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
   }
 
   async function handlePaypalSuccess() {
-    const accessToken = await finishPaypal()
+    const settled = await finishPaypal()
 
-    if (accessToken) {
-      onPaid(accessToken)
+    if (settled) {
+      onPaid(settled)
     }
   }
 
@@ -85,33 +85,33 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
     <main className="flex flex-1 flex-col bg-page-bg px-safe py-10 text-page-ink sm:py-14">
       <div className="mx-auto grid w-full max-w-xl gap-4">
         <section className="rounded-3xl sm:rounded-4xl border border-page-accent/35 bg-page-surface p-6 text-center shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
-          <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-page-accent/12 text-page-accent">
+          <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-page-accent/12 text-page-accent-strong">
             <Sparkles aria-hidden="true" className="h-7 w-7" stroke={1.8} />
           </span>
           <h1 className="mt-4 break-keep font-black text-2xl leading-snug">{paywall.title}</h1>
-          <p className="mx-auto mt-3 max-w-md text-page-ink/68 leading-7">{paywall.body}</p>
+          <p className="mx-auto mt-3 max-w-md text-page-ink-soft leading-7">{paywall.body}</p>
 
           <ul className="mt-6 grid gap-2 text-left">
             {paywall.benefits.map((item) => (
-              <li className="flex items-center gap-2 text-page-ink/78 leading-7" key={item}>
-                <CheckCircle aria-hidden="true" className="h-4 w-4 shrink-0 text-page-accent" stroke={1.8} />
+              <li className="flex items-center gap-2 text-page-ink leading-7" key={item}>
+                <CheckCircle aria-hidden="true" className="h-4 w-4 shrink-0 text-page-accent-strong" stroke={1.8} />
                 {item}
               </li>
             ))}
           </ul>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-            <span className="text-page-ink/40 line-through">{listPrice}</span>
-            <span className="font-black text-3xl text-page-accent">{price}</span>
-            <span className="rounded-full bg-page-accent/12 px-3 py-1 font-black text-page-accent text-xs">
+            <span className="text-page-ink-muted line-through">{listPrice}</span>
+            <span className="font-black text-3xl text-page-accent-strong">{price}</span>
+            <span className="rounded-full bg-page-accent/12 px-3 py-1 font-black text-page-accent-strong text-xs">
               {discountLabel}
             </span>
           </div>
-          <p className="mx-auto mt-3 max-w-md text-page-ink/54 text-sm leading-6">{paywall.effortNote}</p>
+          <p className="mx-auto mt-3 max-w-md text-page-ink-muted text-sm leading-6">{paywall.effortNote}</p>
           {/* O6, said twice on purpose. On the picker it is information; here it is disclosure, because this is
               the screen where money moves and a buyer who skipped the picker would otherwise learn afterwards. */}
           {freeResult.declaredPersona === null ? (
-            <p className="mx-auto mt-2 max-w-md text-page-ink/54 text-sm leading-6">{paywall.unknownPersonaNote}</p>
+            <p className="mx-auto mt-2 max-w-md text-page-ink-muted text-sm leading-6">{paywall.unknownPersonaNote}</p>
           ) : null}
         </section>
 
@@ -120,13 +120,13 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
               PayPal leg is open — the created payment is pinned to these values, and an edit here would be
               silently ignored by the window the buyer is about to open. */}
           <fieldset className="contents" disabled={status === 'paypal'}>
-            <label className="block font-bold text-page-ink/70 text-sm" htmlFor="deeptype-email">
+            <label className="block font-bold text-page-ink-soft text-sm" htmlFor="deeptype-email">
               {paywall.emailLabel}
             </label>
             <input
               autoComplete="email"
               className={cn(
-                'mt-2 min-h-12 w-full rounded-2xl border border-page-border bg-white px-4 font-medium text-page-ink outline-none placeholder:text-page-ink/36 focus-visible:border-page-accent',
+                'mt-2 min-h-12 w-full rounded-2xl border border-page-border bg-white px-4 font-medium text-page-ink outline-none placeholder:text-page-ink-muted focus-visible:border-page-accent',
                 FOCUS_CLASS_NAME,
               )}
               id="deeptype-email"
@@ -142,7 +142,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
               that cannot do anything, and every non-Korean locale has exactly one channel. */}
             {methods.length > 1 ? (
               <fieldset className="mt-5">
-                <legend className="font-bold text-page-ink/70 text-sm">{paywall.methodLabel}</legend>
+                <legend className="font-bold text-page-ink-soft text-sm">{paywall.methodLabel}</legend>
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   {methods.map((method) => (
                     <label
@@ -152,8 +152,8 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
                         // otherwise the whole picker is invisible to a keyboard.
                         'has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-page-accent',
                         payMethod === method
-                          ? 'border-page-accent bg-page-accent/10 text-page-accent'
-                          : 'border-page-border text-page-ink/62 hover:text-page-ink',
+                          ? 'border-page-accent bg-page-accent/10 text-page-accent-strong'
+                          : 'border-page-border text-page-ink-soft hover:text-page-ink',
                       )}
                       key={method}
                     >
@@ -181,7 +181,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
             {/* 전자상거래법 제13조 제3항 owes this to a minor at the moment the contract is formed, so it sits on the
               checkout rather than only in the terms. It is a notice and not a consent — nothing to tick, because
               the right it describes exists whether or not the buyer agrees to it. */}
-            <p className="mt-3 text-page-ink/54 text-xs leading-relaxed">{paywall.minorNotice}</p>
+            <p className="mt-3 text-page-ink-muted text-xs leading-relaxed">{paywall.minorNotice}</p>
 
             {/* Same reservation as the re-open form: the widget mounts late, so its box is held open from the
               first paint rather than pushing the pay button down mid-read. */}
@@ -211,7 +211,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
           ) : (
             <button
               className={cn(
-                'mt-6 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_rgba(255,77,109,0.24)] transition-colors hover:bg-page-accent/92 disabled:cursor-not-allowed disabled:bg-page-ink/20 disabled:shadow-none',
+                'mt-6 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent-strong px-6 font-black text-sm text-white shadow-[0_20px_60px_var(--page-accent-glow)] transition-colors hover:bg-page-accent-strong/92 disabled:cursor-not-allowed disabled:bg-page-ink/20 disabled:shadow-none',
                 FOCUS_CLASS_NAME,
               )}
               disabled={!turnstileToken || status === 'processing'}
@@ -222,14 +222,14 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
           )}
 
           {status === 'error' || errorMessage ? (
-            <p className="mt-3 text-center font-bold text-page-accent text-sm">
+            <p className="mt-3 text-center font-bold text-page-accent-strong text-sm">
               {errorMessage || paywall.errorGeneric}
             </p>
           ) : null}
 
-          <p className="mt-4 text-page-ink/40 text-xs leading-6">{paywall.notice}</p>
+          <p className="mt-4 text-page-ink-muted text-xs leading-6">{paywall.notice}</p>
 
-          <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-page-ink/40 text-xs">
+          <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-page-ink-muted text-xs">
             <Link className="underline underline-offset-2 hover:text-page-ink" href={`/${freeResult.locale}/terms`}>
               {LEGAL[freeResult.locale].nav.terms}
             </Link>
@@ -244,7 +244,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
 
         <button
           className={cn(
-            'mx-auto inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-bold text-page-ink/58 text-sm transition-colors hover:text-page-ink',
+            'mx-auto inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-bold text-page-ink-muted text-sm transition-colors hover:text-page-ink',
             FOCUS_CLASS_NAME,
           )}
           onClick={onClose}
@@ -260,7 +260,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
 
 function Consent({ label, name }: { label: string; name: string }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 text-left text-page-ink/74 text-sm leading-6">
+    <label className="flex cursor-pointer items-start gap-3 text-left text-page-ink text-sm leading-6">
       <input className="mt-0.5 h-5 w-5 shrink-0 accent-page-accent" name={name} required type="checkbox" />
       <span>{label}</span>
     </label>
@@ -309,11 +309,11 @@ function PaypalArea({ cancelLabel, hint, onCancel, onFail, onSuccess, session }:
 
   return (
     <div className="mt-6 grid gap-3">
-      <p className="text-center text-page-ink/62 text-sm leading-6">{hint}</p>
+      <p className="text-center text-page-ink-soft text-sm leading-6">{hint}</p>
       <div className="portone-ui-container min-h-13" />
       <button
         className={cn(
-          'justify-self-center rounded-full px-3 py-1 font-bold text-page-ink/58 text-sm underline underline-offset-2 transition-colors hover:text-page-ink',
+          'justify-self-center rounded-full px-3 py-1 font-bold text-page-ink-muted text-sm underline underline-offset-2 transition-colors hover:text-page-ink',
           FOCUS_CLASS_NAME,
         )}
         onClick={onCancel}

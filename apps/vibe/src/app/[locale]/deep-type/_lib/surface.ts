@@ -30,3 +30,30 @@ export const GROUPED_LIST_CLASS_NAME =
  * 16px is the closest step down the scale offers.
  */
 export const GROUPED_ROW_CLASS_NAME = 'py-4 sm:rounded-2xl sm:border sm:border-page-border sm:bg-white sm:p-4'
+
+/**
+ * THE REPORT'S TYPE SCALE.
+ *
+ * Five roles, in the order a section uses them, and nothing between them. The screens used to size and tone
+ * text at each call site, which produced twenty-odd inline combinations of `text-sm` against ten alpha steps
+ * of one ink; a section's third paragraph was quieter than its second for no reason anybody could state, and
+ * the quietest steps did not clear WCAG 4.5:1 at all.
+ *
+ * Sizes, not opacity, carry the hierarchy. Every tone here is one of the three opaque steps from
+ * `globals.css`, so any of them may sit on any of our surfaces and still pass.
+ *
+ * Body is 16px with 2rem leading. It was 14px, which is below what both the HIG (17px) and Material (16px)
+ * set for body copy, and this is a document somebody reads for twenty minutes rather than a form label.
+ */
+export const REPORT_TYPE = {
+  /** A section's h2. */
+  title: 'break-keep font-black text-page-ink text-xl leading-snug sm:text-2xl',
+  /** The authored line under a section title. A deck, so it is sized between the title and the body. */
+  deck: 'break-keep text-base text-page-ink-muted leading-7',
+  /** Reading copy: the openings, the readings, anything written to be read in sentences. */
+  body: 'break-keep text-base text-page-ink-soft leading-8',
+  /** Copy inside a card or a row, where the measure is already narrow. */
+  copy: 'break-keep text-[0.9375rem] text-page-ink-soft leading-7',
+  /** Captions, asides, and the closing note. The quietest step that still clears 4.5:1. */
+  meta: 'break-keep text-sm text-page-ink-muted leading-6',
+} as const

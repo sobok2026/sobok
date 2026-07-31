@@ -29,7 +29,7 @@ export function BandLadder({ axis }: { axis: AxisBandMovement }) {
         <span
           className={cn(
             'block h-3.5 w-1.5 rounded-full transition-colors',
-            rung <= axis.step ? 'bg-page-accent' : 'bg-page-border',
+            rung <= axis.step ? 'bg-page-accent-strong' : 'bg-page-border',
           )}
           key={rung}
         />
@@ -51,7 +51,7 @@ function ShiftMark({ direction }: { direction: AxisBandMovement['shiftDirection'
       className={cn(
         'ml-1 h-3 w-3',
         SHIFT_ROTATION[direction],
-        direction === 'same' ? 'text-page-ink/28' : 'text-page-accent',
+        direction === 'same' ? 'text-page-ink-muted' : 'text-page-accent-strong',
       )}
       fill="none"
       viewBox="0 0 12 12"
@@ -76,7 +76,7 @@ export function DrainStrands({ strands }: { strands: DrainSignatureData['strands
   }[strands]
 
   return (
-    <svg aria-hidden="true" className="h-14 w-20 shrink-0 text-page-accent" fill="none" viewBox="0 0 80 56">
+    <svg aria-hidden="true" className="h-14 w-20 shrink-0 text-page-accent-strong" fill="none" viewBox="0 0 80 56">
       <title />
       {paths.map((d) => (
         <path d={d} key={d} opacity="0.5" stroke="currentColor" strokeLinecap="round" strokeWidth="2" />
@@ -93,7 +93,7 @@ export function DrainStrands({ strands }: { strands: DrainSignatureData['strands
 export function QuestSpine({ day, last }: { day: number; last: boolean }) {
   return (
     <div aria-hidden="true" className="flex shrink-0 flex-col items-center self-stretch">
-      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-page-accent font-black text-[11px] text-white tabular-nums">
+      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-page-accent-strong font-black text-[11px] text-white tabular-nums">
         {day}
       </span>
       {last ? null : <span className="mt-1 w-px flex-1 bg-page-border" />}
@@ -115,14 +115,14 @@ export function CodeCompare({ axes }: { axes: readonly SelfReportAxis[] }) {
     <div aria-hidden="true" className="grid grid-cols-4 gap-1.5">
       {axes.map((axis) => (
         <div className="rounded-2xl border border-page-border bg-white px-1 py-3 text-center" key={axis.id}>
-          <p className="font-black text-page-ink/64 text-sm">{axis.declared.code}</p>
+          <p className="font-black text-page-ink-soft text-sm">{axis.declared.code}</p>
           <span
             className={cn(
               'mx-auto my-1.5 block h-2 w-2 rounded-full border-2',
-              axis.matched ? 'border-page-accent bg-page-accent' : 'border-page-ink/24 bg-transparent',
+              axis.matched ? 'border-page-accent-strong bg-page-accent-strong' : 'border-page-ink-muted bg-transparent',
             )}
           />
-          <p className={cn('font-black text-sm', axis.matched ? 'text-page-ink/64' : 'text-page-accent')}>
+          <p className={cn('font-black text-sm', axis.matched ? 'text-page-ink-soft' : 'text-page-accent-strong')}>
             {axis.measured.code}
           </p>
         </div>
@@ -136,7 +136,7 @@ export function PathFork() {
   return (
     <svg
       aria-hidden="true"
-      className="h-12 w-full text-page-accent"
+      className="h-12 w-full text-page-accent-strong"
       fill="none"
       viewBox="0 0 240 48"
       preserveAspectRatio="none"

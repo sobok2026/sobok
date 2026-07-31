@@ -81,6 +81,10 @@ const ABILITY_ARTWORK = {
  * is background — and it cost the text 128px of a 375px screen. On top it is the card's media band instead, at
  * 3:2 because these are square compositions with the character between roughly 15% and 80% of the height, so a
  * shallower crop keeps the subject that `aspect-video` would behead.
+ *
+ * Lazy WITH a blur placeholder. Lazy is right — a reader meets these a third of the way down a very long
+ * document — but until the placeholder existed each card left a bare tinted rectangle the height of a phone
+ * screen while it loaded, which reads as a broken image rather than as one arriving.
  */
 export function AbilityArtwork({ slug }: { slug: AbilitySlug }) {
   return (
@@ -89,6 +93,7 @@ export function AbilityArtwork({ slug }: { slug: AbilitySlug }) {
       className="aspect-3/2 h-auto w-full shrink-0 bg-page-soft object-cover sm:aspect-auto sm:w-28 sm:self-stretch"
       draggable={false}
       loading="lazy"
+      placeholder="blur"
       sizes="(min-width: 640px) 112px, calc(100vw - 4rem)"
       src={ABILITY_ARTWORK[slug]}
     />
