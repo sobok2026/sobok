@@ -59,12 +59,14 @@ export function DynamicReportView({
 
   return (
     <ReportView
+      accessExpiresAt={state.accessExpiresAt}
       content={content}
       locale={locale}
       narrativePending={state.narrativePending}
       narrativeSections={state.narrative}
       onRestart={onRestart}
       orderId={orderId}
+      paidAt={state.paidAt}
       profile={state.profile}
       sections={state.sections}
     />

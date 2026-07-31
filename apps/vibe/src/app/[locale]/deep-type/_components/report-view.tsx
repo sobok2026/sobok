@@ -13,7 +13,7 @@ import { DEEP_TYPE_BRAND_NAME } from '../_lib/brand'
 
 import { CARD_CLASS_NAME, REPORT_TYPE } from '../_lib/surface'
 import type { DeepTypeContent } from '../_lib/types'
-import { PurchaseReceipt, ReportAccessNote } from './report/access'
+import { ReportRecord } from './report/access'
 import { BackToTop } from './report/back-to-top'
 import { PartDivider, ReportContents } from './report/contents'
 import { ReportMasthead } from './report/masthead'
@@ -21,6 +21,8 @@ import { splitIntoParts } from './report/parts'
 import { ReportSectionView } from './report/section-view'
 
 type ReportViewProps = {
+  /** When access to this report runs out. Server-computed; the document quotes it rather than counting a year. */
+  accessExpiresAt?: string | null
   content: DeepTypeContent
   locale: Locale
   /** True while the narration is still being written. Delivery is not stamped yet and the poll keeps running. */
@@ -30,6 +32,8 @@ type ReportViewProps = {
   onRestart: () => void
   /** The payment this report was delivered for, on the two screens that know it. Absent everywhere else. */
   orderId?: string | null
+  /** ISO settlement date. The document is dated by it; absent, the cover carries no date. */
+  paidAt?: string | null
   profile: AssessmentProfile
   sections: readonly ReportSection[]
 }
@@ -52,12 +56,14 @@ type ReportViewProps = {
  * in one line rather than by greying anything out.
  */
 export function ReportView({
+  accessExpiresAt = null,
   content,
   locale,
   narrativePending = false,
   narrativeSections,
   onRestart,
   orderId,
+  paidAt = null,
   profile,
   sections,
 }: ReportViewProps) {
@@ -78,12 +84,18 @@ export function ReportView({
       {/* `data-print-flow` marks the column that has to drop to block flow on paper — see globals.css. Chrome
           cannot fragment a grid container across sheets without painting the next card over the last one. */}
       <div className="mx-auto grid w-full max-w-xl gap-4" data-print-flow>
-        <ReportMasthead content={content} gem={profile.gem.code} inner={profile.inner.code} locale={locale} />
+        <ReportMasthead
+          content={content}
+          gem={profile.gem.code}
+          inner={profile.inner.code}
+          locale={locale}
+          paidAt={paidAt}
+        />
 
-        {orderId ? <PurchaseReceipt content={content} locale={locale} orderId={orderId} /> : null}
-
+        {/* The note goes away on its own when the narration lands and twelve sections quietly grow a paragraph
+            each. Announced, because that is a change to the document nobody watching the screen has to see. */}
         {narrativePending ? (
-          <p className={cn('rounded-3xl bg-page-soft px-5 py-4', REPORT_TYPE.meta)}>
+          <p className={cn('rounded-3xl bg-page-soft px-5 py-4', REPORT_TYPE.meta)} role="status">
             {content.paywall.narrativePendingNote}
           </p>
         ) : null}
@@ -119,7 +131,7 @@ export function ReportView({
           </Link>
         </section>
 
-        <ReportAccessNote content={content} locale={locale} />
+        <ReportRecord accessExpiresAt={accessExpiresAt} content={content} locale={locale} orderId={orderId} />
 
         <div className="mt-2 grid gap-3 print:hidden">
           <button

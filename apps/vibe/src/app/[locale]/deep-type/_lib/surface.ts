@@ -15,6 +15,21 @@
 export const CARD_CLASS_NAME = 'rounded-3xl border border-page-border bg-page-surface p-4 sm:rounded-4xl sm:p-6'
 
 /**
+ * The lift under a page-level panel. Written once because three screens had the same literal and the paywall's
+ * copy had already drifted a hundredth in the alpha — a difference nobody can see and nobody can keep aligned
+ * by hand.
+ */
+export const PANEL_SHADOW_CLASS_NAME = 'shadow-[0_24px_90px_rgba(36,22,23,0.08)]'
+
+/**
+ * A screen that is one panel and nothing else: the checkout return, the re-open request, every terminal state
+ * of both. Wider padding than `CARD_CLASS_NAME` because nothing nests inside it, and `max-w-lg` rather than
+ * `max-w-xl` because its body is a paragraph and not a report.
+ */
+export const PANEL_CLASS_NAME =
+  'w-full max-w-lg rounded-3xl border border-page-border bg-page-surface p-6 sm:rounded-4xl sm:p-8'
+
+/**
  * The container for rows that would otherwise each be a card. Pair with a `sm:grid` and a `sm:gap-*` from the
  * caller, because how the boxes lay out from `sm` up is the caller's business and where the rules go is not.
  */

@@ -58,22 +58,34 @@ export type DeepTypeUiText = {
   reportBackToTop: string
   reportDisclaimer: string
   /**
-   * How to get back into a report that has already been paid for. The purchase e-mail is the only key that
-   * survives a closed tab, and until this existed the screen never said so — the promise was made on the
-   * paywall and then never repeated anywhere the buyer would look for it.
+   * The two halves of a strength card that mean opposite things. They were two identical grey quotes with no
+   * label, so which one was the warning could only be inferred from how the sentence ended.
    */
-  reportAccessBody: string
-  reportAccessTitle: string
+  reportCardShineLabel: string
+  reportCardWatchLabel: string
   /** Label over a work facet's one reversible choice, so it stops reading as a third descriptive line. */
   reportFacetActionLabel: string
+  /** `{date}` — the day the report was paid for. A dated document can be checked against the year it promises. */
+  reportIssuedTemplate: string
+  /**
+   * The moment the money moves, said on the screen right after it. Not the order record below — this is the
+   * amount and the address the receipt goes to, which is the last place a mistyped e-mail can be caught.
+   */
+  reportPaidBody: string
+  reportPaidEmailNote: string
+  reportPaidTitle: string
   reportPartLabel: string
   reportParts: Record<ReportPartId, ReportPartCopy>
   reportPrintCta: string
-  /** Post-payment acknowledgement. Only the checkout return and the in-tab purchase pass an order id. */
-  reportReceiptBody: string
-  reportReceiptOrderLabel: string
-  reportReceiptSupportCta: string
-  reportReceiptTitle: string
+  /**
+   * The order record at the foot of the document: what to quote, until when it opens, and where to write. One
+   * card, because a receipt at the top and an access note at the bottom were two halves of the same answer to
+   * "what do I do if something is wrong with this".
+   */
+  reportRecordAccess: string
+  reportRecordOrderLabel: string
+  reportRecordSupportCta: string
+  reportRecordTitle: string
   reportRestartCta: string
   reportShareCopied: string
   reportShareCta: string

@@ -24,13 +24,18 @@ export function ReportMasthead({
   gem,
   inner,
   locale,
+  paidAt,
 }: {
   content: DeepTypeContent
   gem: GemCode
   inner: InnerCode
   locale: Locale
+  paidAt: string | null
 }) {
   const worldJob = resolveWorldJob(inner, gem)
+  // Dated where a document is dated, and it prints. A report that promises a year of access and carries no
+  // date cannot be held to that promise once it has been saved to a PDF and filed.
+  const issued = paidAt ? new Intl.DateTimeFormat(locale, { dateStyle: 'long' }).format(new Date(paidAt)) : null
 
   return (
     <header
@@ -40,6 +45,9 @@ export function ReportMasthead({
       <p className="font-black text-page-accent-strong text-sm tracking-[0.14em]">{DEEP_TYPE_BRAND_NAME[locale]}</p>
       <h1 className="mt-3 font-black text-3xl text-page-ink leading-tight sm:text-4xl">{worldJob.name}</h1>
       <p className="mx-auto mt-3 max-w-md text-base text-page-ink-soft leading-8">{worldJob.family.method}</p>
+      {issued ? (
+        <p className="mt-3 text-page-ink-muted text-sm">{content.ui.reportIssuedTemplate.replace('{date}', issued)}</p>
+      ) : null}
 
       <div className="mt-6 grid grid-cols-2 gap-3">
         <CoverArt caption={content.ui.layerInner} code={inner}>

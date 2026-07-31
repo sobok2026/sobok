@@ -6,13 +6,14 @@ import type { Locale } from '@sobok/domain/locale'
 import { useRouter } from 'next/navigation'
 import { useEffect, useReducer, useState } from 'react'
 
-import type { SettledPayment } from '../_hooks/use-checkout'
 import { assertNever } from '../_lib/assert'
+import type { SettledPayment } from '../_lib/pending-checkout'
 import { clearSitting, type DeepTypeSitting, readSitting } from '../_lib/sitting'
 import type { DeepTypeContent } from '../_lib/types'
 import { DynamicReportView } from './dynamic-report-view'
 import { FreeResultView } from './free-result-view'
 import { IntroView } from './intro-view'
+import { PaidNotice } from './paid-notice'
 import { PaywallView } from './paywall-view'
 import { RefinementQuizView } from './refinement-quiz-view'
 
@@ -130,6 +131,7 @@ export function ResultFlow({ content, locale }: ResultFlowProps) {
           body={content.paywall.refinementIntroBody}
           cta={content.paywall.refinementIntroCta}
           hint={content.paywall.refinementIntroHint}
+          notice={<PaidNotice content={content} locale={locale} payment={state} />}
           onNext={() => dispatch({ type: 'BEGIN' })}
           title={content.paywall.refinementIntroTitle}
         />

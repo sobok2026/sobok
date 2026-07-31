@@ -56,7 +56,7 @@ function body(content: DeepTypeContent, section: ReportSection) {
     case 'worldJob':
       return <WorldJobSection content={content} data={section.data} />
     case 'strengthCards':
-      return <StrengthCardsSection data={section.data} />
+      return <StrengthCardsSection content={content} data={section.data} />
     case 'drainSignature':
       return <DrainSignatureSection content={content} data={section.data} />
     case 'happinessConditions':

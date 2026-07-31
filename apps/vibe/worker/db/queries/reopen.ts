@@ -58,6 +58,8 @@ export type ReopenedPurchase = {
   accessToken: string
   accessExpiresAt: Date
   locale: Locale
+  /** The order number the report prints. A buyer writing to support has nothing else to quote. */
+  paymentId: string
   refinementRequired: boolean
 }
 
@@ -67,6 +69,7 @@ export async function consumeReopenLink(db: Db, tokenHash: string, now: Date): P
       linkId: reopenAccessTable.id,
       accessToken: purchaseTable.accessToken,
       paidAt: purchaseTable.paidAt,
+      paymentId: purchaseTable.paymentId,
       locale: resultTable.locale,
       refinedProfile: resultTable.refinedProfile,
     })
@@ -112,6 +115,7 @@ export async function consumeReopenLink(db: Db, tokenHash: string, now: Date): P
     accessToken: row.accessToken,
     accessExpiresAt,
     locale: row.locale,
+    paymentId: row.paymentId,
     refinementRequired: row.refinedProfile === null,
   }
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { ArrowRight } from '@mynaui/icons-react'
+import type { ReactNode } from 'react'
 import { cn } from '@/utils/cn'
 import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
@@ -8,15 +9,22 @@ type IntroViewProps = {
   body: string
   cta: string
   hint: string
+  /**
+   * Rendered above the title. The checkout return puts its payment confirmation here rather than on a screen
+   * of its own: the purchase is settled and these questions are the next thing to do, so a tap between them
+   * buys nothing — but arriving at a questionnaire with no word about the money is what this slot fixes.
+   */
+  notice?: ReactNode
   onNext: () => void
   title: string
 }
 
 // Each chapter frames the context before its questions so the journey reads as distinct layers.
-export function IntroView({ body, cta, hint, onNext, title }: IntroViewProps) {
+export function IntroView({ body, cta, hint, notice, onNext, title }: IntroViewProps) {
   return (
     <main className="flex flex-1 flex-col justify-center bg-page-bg px-safe py-10 text-page-ink">
-      <div className="mx-auto w-full max-w-2xl text-center py-4">
+      <div className="mx-auto w-full max-w-2xl py-4 text-center">
+        {notice}
         <h1 className="font-black text-3xl leading-tight">{title}</h1>
         <p className="mx-auto mt-5 text-page-ink-soft leading-8">{body}</p>
         <p className="mx-auto mt-5 rounded-3xl bg-page-soft px-5 py-4 font-bold text-page-ink-soft text-sm leading-6">
