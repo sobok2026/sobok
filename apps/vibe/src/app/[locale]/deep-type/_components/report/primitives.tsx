@@ -59,20 +59,28 @@ export function SectionShell({ art, children, id, intro, narrative, number, titl
 /**
  * The report's labelled row, as a description list.
  *
- * It used to be one paragraph reading `label — value` with the VALUE in bold, which put the heaviest weight in
- * a section on its metadata: on a quest day the words after '오늘의 질문' came out darker than the task the day
- * is actually about. Label and value now differ by tone and position instead of by weight, and the pair is
- * `dt`/`dd` rather than two spans and an em dash that had to be hidden from screen readers.
+ * The label sits ABOVE the value at every width, and the two-column form is gone for good.
+ *
+ * It was `sm:grid-cols-[auto_1fr]` with a subgrid row, which failed three ways at once. The `auto` track sized
+ * itself to the longest label in the list, so a twelve-syllable label like '잘 맞을 가능성이 있는 이유' pushed
+ * every value in the block to the right; inside a two-column card the value column was then left with about
+ * 110px, which is four Korean syllables a line against the forty WCAG 1.4.8 asks for; and the row's own
+ * `gap-0.5` overrode the gutter the parent grid declared, because a subgrid inherits its parent's gutters only
+ * until it declares its own — so the longest labels ran straight into their values with two pixels between
+ * them ('양쪽 답이 섞인 축에너지 방향').
+ *
+ * Stacked, none of that can happen: the value always has the full measure, and a label of any length in any
+ * locale wraps into its own line rather than stealing from the value.
  */
 export function FieldList({ children }: { children: ReactNode }) {
-  return <dl className="grid gap-2 sm:grid-cols-[auto_1fr] sm:gap-x-4">{children}</dl>
+  return <dl className="grid gap-3">{children}</dl>
 }
 
 export function Field({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid gap-0.5 sm:col-span-2 sm:grid-cols-subgrid">
-      <dt className="break-keep text-page-ink-muted text-sm leading-6 sm:max-w-32">{label}</dt>
-      <dd className={REPORT_TYPE.copy}>{value}</dd>
+    <div>
+      <dt className="break-keep text-page-ink-muted text-sm leading-6">{label}</dt>
+      <dd className={cn('mt-0.5', REPORT_TYPE.copy)}>{value}</dd>
     </div>
   )
 }

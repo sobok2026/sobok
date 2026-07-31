@@ -174,16 +174,44 @@ html:lang(ja) body {
     background: #fff;
   }
 
-  /* The column reserves space for a fixed header and a floating island, neither of which prints. */
+  /*
+   * BLOCK FLOW, NOT FLEX OR GRID.
+   *
+   * This is the rule that makes a multi-page document come out right, and it is not cosmetic. Chrome does not
+   * fragment flex containers across pages at all, and it fragments nested grid containers unreliably: the part
+   * that does not fit is pushed to the next sheet while the row it belonged to keeps its full height, so the
+   * following card is painted over the tail of the one before it. That is exactly what a printed report looked
+   * like — section 12's card drawn across the last two days of the quest above it.
+   *
+   * The page column is `flex min-h-dvh flex-col`, `main` is `flex flex-1 flex-col`, and the document column is
+   * a `grid gap-4`; none of those layouts mean anything on paper, where there is one column and no viewport to
+   * fill. Dropping all three to block flow lets the fragmentainer do its job, and the gap they were spacing
+   * with comes back as a margin.
+   *
+   * Layouts INSIDE a section are left alone: a two-up figure or a four-column code compare is short enough to
+   * live on one sheet, and those are the places the grid is actually saying something.
+   */
   body > div {
+    display: block;
     min-height: 0;
     padding-top: 0;
     padding-bottom: 0;
   }
 
   main {
+    display: block;
     padding-top: 0;
     padding-bottom: 0;
+  }
+
+  [data-print-flow],
+  [data-print-flow] > div {
+    display: block;
+  }
+
+  [data-print-flow] > * + *,
+  [data-print-flow] > div > * + * {
+    margin-top: 6mm;
   }
 
   /* Ink on paper. Tints and shadows cost toner and say nothing a border does not. */
@@ -194,17 +222,23 @@ html:lang(ja) body {
     text-shadow: none !important;
   }
 
-  /* A heading may not be the last line on a sheet, and a card may not be split when it fits on one. */
+  /* A heading may not be the last line on a sheet. */
   h1,
   h2,
   h3 {
     break-after: avoid-page;
   }
 
+  /*
+   * `avoid` and not `avoid-page`: a strength card carrying an illustration, or a role family with its bullets,
+   * can be taller than the printable area of a sheet, and an item that cannot fit anywhere has to be allowed
+   * to split rather than be pushed forever. `avoid` is a request the fragmentainer may overrule; `avoid-page`
+   * on an oversized box is how content ends up overflowing the sheet it was forced onto.
+   */
   li,
   figure,
   blockquote {
-    break-inside: avoid-page;
+    break-inside: avoid;
   }
 }
 

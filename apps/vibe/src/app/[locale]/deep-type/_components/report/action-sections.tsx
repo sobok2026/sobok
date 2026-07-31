@@ -35,7 +35,10 @@ export function RoleFamiliesSection({ data }: { data: RoleFamiliesData }) {
               </FieldList>
             </div>
 
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            {/* One column. The document is a `max-w-xl` reading measure, so a two-up split inside a card left
+                each side about 250px — roughly fifteen Korean syllables a line, and every bullet wrapped three
+                times. Nothing in this report is wide enough to be set in columns. */}
+            <div className="mt-5 grid gap-5">
               <div>
                 <BlockHeading>{data.labels.dailyWork}</BlockHeading>
                 <BulletList items={card.family.dailyWork} />
@@ -211,7 +214,7 @@ export function FitAndFrictionSection({ data }: { data: FitAndFrictionData }) {
         </ul>
       </div>
 
-      <div className="mt-7 grid gap-6 sm:grid-cols-2">
+      <div className="mt-7 grid gap-7">
         <div>
           <BlockHeading>{data.labels.fit}</BlockHeading>
           <ul className="mt-3 grid gap-3">

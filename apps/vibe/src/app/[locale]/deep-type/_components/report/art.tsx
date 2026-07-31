@@ -131,15 +131,22 @@ export function CodeCompare({ axes }: { axes: readonly SelfReportAxis[] }) {
   )
 }
 
-/** Three routes leaving one point. Same stroke on all three: the section presents them at equal weight. */
+/**
+ * Three routes leaving one point. Same stroke on all three: the section presents them at equal weight.
+ *
+ * The aspect ratio is honoured rather than stretched. It used to carry `preserveAspectRatio="none"` on a
+ * `w-full h-12` box, which scales x and y independently: at 576px against a 240-unit viewBox the horizontal
+ * scale ran 2.4× the vertical, so the origin dot came out as a flat ellipse and the three strokes were thicker
+ * where they ran vertically than where they ran horizontally. `mx-auto` with a cap keeps the drawing at its
+ * drawn proportions on any width, which is the only way a circle stays a circle.
+ */
 export function PathFork() {
   return (
     <svg
       aria-hidden="true"
-      className="h-12 w-full text-page-accent-strong"
+      className="mx-auto block h-12 w-full max-w-60 text-page-accent-strong"
       fill="none"
       viewBox="0 0 240 48"
-      preserveAspectRatio="none"
     >
       <title />
       <path

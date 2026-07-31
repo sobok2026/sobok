@@ -75,7 +75,9 @@ export function ReportView({
 
   return (
     <main className="flex flex-1 flex-col bg-page-bg px-safe py-10 text-page-ink sm:py-14" id="main-content">
-      <div className="mx-auto grid w-full max-w-xl gap-4">
+      {/* `data-print-flow` marks the column that has to drop to block flow on paper — see globals.css. Chrome
+          cannot fragment a grid container across sheets without painting the next card over the last one. */}
+      <div className="mx-auto grid w-full max-w-xl gap-4" data-print-flow>
         <ReportMasthead content={content} gem={profile.gem.code} inner={profile.inner.code} locale={locale} />
 
         {orderId ? <PurchaseReceipt content={content} locale={locale} orderId={orderId} /> : null}

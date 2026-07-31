@@ -69,7 +69,7 @@ export function OpeningReadSection({ data }: { data: OpeningReadData }) {
  */
 export function WorldJobSection({ content, data }: { content: DeepTypeContent; data: WorldJobData }) {
   return (
-    <dl className={cn(GROUPED_LIST_CLASS_NAME, 'sm:grid sm:grid-cols-2 sm:gap-3')}>
+    <dl className={cn(GROUPED_LIST_CLASS_NAME, 'sm:grid sm:gap-3')}>
       <WorldJobHalf
         heading={data.family.name}
         label={content.ui.worldJobFamilyLabel}
