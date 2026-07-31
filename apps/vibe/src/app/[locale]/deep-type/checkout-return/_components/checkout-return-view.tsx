@@ -111,13 +111,13 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
               aria-hidden="true"
               className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent motion-reduce:animate-none"
             />
-            <h1 className="mt-5 break-keep font-black text-2xl">{copy.checkingTitle}</h1>
-            <p className="mt-3 break-keep text-page-ink-soft leading-7">{copy.checkingBody}</p>
+            <h1 className="mt-5 font-black text-2xl">{copy.checkingTitle}</h1>
+            <p className="mt-3 break-prose text-page-ink-soft leading-7">{copy.checkingBody}</p>
           </div>
         ) : (
           <>
-            <h1 className="mt-3 break-keep font-black text-2xl">{copy.errorTitle}</h1>
-            <p className="mt-3 break-keep text-page-ink-soft leading-7">{copy.errorBody}</p>
+            <h1 className="mt-3 font-black text-2xl">{copy.errorTitle}</h1>
+            <p className="mt-3 break-prose text-page-ink-soft leading-7">{copy.errorBody}</p>
             {pending ? (
               <button
                 className={cn(

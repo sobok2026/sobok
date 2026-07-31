@@ -17,7 +17,6 @@ import { MiniStat } from './mini-stat'
  */
 export function IntroView({ content, locale }: { content: CoupleTypeContent; locale: Locale }) {
   const { questions, ui } = content
-  const keepHeadingBreakClassName = locale === 'ko' ? 'break-keep' : undefined
 
   return (
     <section className="flex flex-1 flex-col justify-center px-safe py-10 sm:py-16">
@@ -26,12 +25,7 @@ export function IntroView({ content, locale }: { content: CoupleTypeContent; loc
           <HeartWaves aria-hidden="true" className="h-4 w-4 text-page-accent-strong" stroke={1.8} />
           {ui.heroEyebrow}
         </p>
-        <h1
-          className={cn(
-            'mt-6 text-balance font-black text-4xl leading-tight tracking-tight sm:text-5xl',
-            keepHeadingBreakClassName,
-          )}
-        >
+        <h1 className="mt-6 text-balance font-black text-4xl leading-tight tracking-tight sm:text-5xl">
           {ui.heroTitle}
         </h1>
         <p className="mt-5 text-lg text-page-ink-soft leading-8">{ui.heroDescription}</p>

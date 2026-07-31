@@ -38,10 +38,8 @@ export function ReportMasthead({
       id="report-top"
     >
       <p className="font-black text-page-accent-strong text-sm tracking-[0.14em]">{DEEP_TYPE_BRAND_NAME[locale]}</p>
-      <h1 className="mt-3 break-keep font-black text-3xl text-page-ink leading-tight sm:text-4xl">{worldJob.name}</h1>
-      <p className="mx-auto mt-3 max-w-md break-keep text-base text-page-ink-soft leading-8">
-        {worldJob.family.method}
-      </p>
+      <h1 className="mt-3 font-black text-3xl text-page-ink leading-tight sm:text-4xl">{worldJob.name}</h1>
+      <p className="mx-auto mt-3 max-w-md text-base text-page-ink-soft leading-8">{worldJob.family.method}</p>
 
       <div className="mt-6 grid grid-cols-2 gap-3">
         <CoverArt caption={content.ui.layerInner} code={inner}>
@@ -59,7 +57,7 @@ function CoverArt({ caption, children, code }: { caption: string; children: Reac
   return (
     <figure>
       {children}
-      <figcaption className="mt-2 break-keep text-page-ink-muted text-sm">
+      <figcaption className="mt-2 text-page-ink-muted text-sm">
         {caption}
         <span className="ml-1.5 font-black text-page-ink tracking-wide">{code}</span>
       </figcaption>

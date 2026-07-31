@@ -79,7 +79,7 @@ export function FieldList({ children }: { children: ReactNode }) {
 export function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="break-keep text-page-ink-muted text-sm leading-6">{label}</dt>
+      <dt className="text-page-ink-muted text-sm leading-6">{label}</dt>
       <dd className={cn('mt-0.5', REPORT_TYPE.copy)}>{value}</dd>
     </div>
   )
@@ -125,7 +125,7 @@ export function ConfidenceBadge({ label, level }: { label: string; level: keyof 
 export function FacetCard({ actionLabel, facet }: { actionLabel: string; facet: DetailedFacet }) {
   return (
     <li className={GROUPED_ROW_CLASS_NAME}>
-      <p className="break-keep font-black text-base text-page-ink leading-6">{facet.label}</p>
+      <p className="font-black text-base text-page-ink leading-6">{facet.label}</p>
       <p className={cn('mt-2', REPORT_TYPE.copy)}>{facet.detail}</p>
       <p className={cn('mt-3 border-page-border border-l-2 pl-3', REPORT_TYPE.meta)}>{facet.contrast}</p>
       <div className="mt-3 rounded-2xl bg-page-soft/70 px-3 py-2">
@@ -170,7 +170,7 @@ export function FacetChips({ facets }: { facets: readonly DetailedFacet[] }) {
 
 /** A heading for a block inside a section — one step below the section title, one above a row. */
 export function BlockHeading({ children }: { children: ReactNode }) {
-  return <h3 className="break-keep font-black text-base text-page-ink">{children}</h3>
+  return <h3 className="font-black text-base text-page-ink">{children}</h3>
 }
 
 /** The quiet closing line several sections end on, set off by a rule so it reads as the end of the section. */

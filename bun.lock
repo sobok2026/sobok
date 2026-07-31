@@ -160,6 +160,7 @@
         "@sobok/analytics": "workspace:*",
         "@sobok/domain": "workspace:*",
         "@sobok/edge": "workspace:*",
+        "@sobok/typography": "workspace:*",
         "@swisseph/browser": "1.1.0",
         "@tanstack/react-query": "^5.101.1",
         "downshift": "^9.0.0",
@@ -200,6 +201,7 @@
         "@sobok/analytics": "workspace:*",
         "@sobok/domain": "workspace:*",
         "@sobok/edge": "workspace:*",
+        "@sobok/typography": "workspace:*",
         "clsx": "^2.1.1",
         "drizzle-orm": "1.0.0-rc.4",
         "hono": "^4.12.27",
@@ -488,6 +490,10 @@
       "devDependencies": {
         "@types/ms": "^2.1.0",
       },
+    },
+    "packages/typography": {
+      "name": "@sobok/typography",
+      "version": "1.1.0",
     },
     "packages/ui": {
       "name": "@sobok/ui",
@@ -1152,6 +1158,8 @@
     "@sobok/std": ["@sobok/std@workspace:packages/std"],
 
     "@sobok/stella": ["@sobok/stella@workspace:apps/stella"],
+
+    "@sobok/typography": ["@sobok/typography@workspace:packages/typography"],
 
     "@sobok/ui": ["@sobok/ui@workspace:packages/ui"],
 

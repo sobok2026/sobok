@@ -34,7 +34,7 @@ export function OpeningReadSection({ data }: { data: OpeningReadData }) {
   return (
     <>
       {/* The reader's whole result in one sentence, so it is set one step above the body rather than at it. */}
-      <p className="break-keep font-medium text-[1.0625rem] text-page-ink leading-8">{data.lead}</p>
+      <p className="break-prose font-medium text-[1.0625rem] text-page-ink leading-8">{data.lead}</p>
 
       <div className="mt-8 grid gap-8">
         {data.blocks.map((block) => (
@@ -101,7 +101,7 @@ function WorldJobHalf({
     <div className={GROUPED_ROW_CLASS_NAME}>
       <dt className="font-black text-page-accent-strong text-sm tracking-wide">{label}</dt>
       <dd>
-        <p className="mt-1.5 break-keep font-black text-lg text-page-ink leading-snug">{heading}</p>
+        <p className="mt-1.5 font-black text-lg text-page-ink leading-snug">{heading}</p>
         {lines.map((line) => (
           <p className={cn('mt-1.5', REPORT_TYPE.meta)} key={line}>
             {line}
@@ -140,7 +140,7 @@ export function StrengthCardsSection({ data }: { data: StrengthCardsData }) {
                 >
                   <AbilityArtwork slug={card.slug} />
                   <div className="min-w-0 flex-1 p-4 sm:py-4 sm:pr-4 sm:pl-0">
-                    <p className="break-keep font-black text-base text-page-ink leading-6">{card.copy.name}</p>
+                    <p className="font-black text-base text-page-ink leading-6">{card.copy.name}</p>
                     <p className={cn('mt-2', REPORT_TYPE.copy)}>{card.copy.core}</p>
                     <p className={cn('mt-3 border-page-border border-l-2 pl-3', REPORT_TYPE.meta)}>{card.copy.shine}</p>
                     <p className={cn('mt-2 border-page-border border-l-2 pl-3', REPORT_TYPE.meta)}>{card.copy.watch}</p>
@@ -170,7 +170,7 @@ function BandMovementBlock({ data }: { data: StrengthCardsData }) {
         {data.bandMovement.map((axis) => (
           <li className="flex items-center justify-between gap-3" key={axis.id}>
             <div className="min-w-0">
-              <p className="break-keep font-bold text-[0.9375rem] text-page-ink">{axis.name}</p>
+              <p className="font-bold text-[0.9375rem] text-page-ink">{axis.name}</p>
               <p className={cn('mt-0.5', REPORT_TYPE.meta)}>
                 {axis.leading} · {axis.band.label} · {axis.shift.label}
               </p>
@@ -200,7 +200,7 @@ export function DrainSignatureSection({ content, data }: { content: DeepTypeCont
       <div className="flex items-center gap-4 rounded-3xl bg-page-soft/70 p-4">
         <DrainStrands strands={data.strands} />
         <div className="min-w-0">
-          <p className="break-keep font-black text-base text-page-accent-strong">{data.spread.label}</p>
+          <p className="font-black text-base text-page-accent-strong">{data.spread.label}</p>
           <p className={cn('mt-1', REPORT_TYPE.copy)}>{data.spread.detail}</p>
         </div>
       </div>

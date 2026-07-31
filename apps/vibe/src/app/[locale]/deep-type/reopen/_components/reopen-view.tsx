@@ -126,8 +126,8 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
 
         {phase === 'link-ready' ? (
           <>
-            <h1 className="mt-3 break-keep font-black text-2xl leading-snug">{copy.linkTitle}</h1>
-            <p className="mt-3 break-keep text-page-ink-soft leading-7">{copy.linkBody}</p>
+            <h1 className="mt-3 font-black text-2xl leading-snug">{copy.linkTitle}</h1>
+            <p className="mt-3 break-prose text-page-ink-soft leading-7">{copy.linkBody}</p>
             <button
               className={cn(
                 'mt-6 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-page-accent-strong px-6 font-black text-sm text-white transition-colors hover:bg-page-accent-strong/92',
@@ -144,8 +144,8 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
 
         {phase === 'accepted' ? (
           <div aria-live="polite">
-            <h1 className="mt-3 break-keep font-black text-2xl leading-snug">{copy.acceptedTitle}</h1>
-            <p className="mt-3 break-keep text-page-ink-soft leading-7">{copy.acceptedBody}</p>
+            <h1 className="mt-3 font-black text-2xl leading-snug">{copy.acceptedTitle}</h1>
+            <p className="mt-3 break-prose text-page-ink-soft leading-7">{copy.acceptedBody}</p>
           </div>
         ) : null}
 
@@ -158,8 +158,8 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
               </div>
             ) : (
               <>
-                <h1 className="mt-3 break-keep font-black text-2xl leading-snug">{copy.title}</h1>
-                <p className="mt-3 break-keep text-page-ink-soft leading-7">{copy.body}</p>
+                <h1 className="mt-3 font-black text-2xl leading-snug">{copy.title}</h1>
+                <p className="mt-3 break-prose text-page-ink-soft leading-7">{copy.body}</p>
               </>
             )}
 
@@ -280,7 +280,7 @@ function StatusPanel({ body, title }: { body: string; title: string }) {
         aria-hidden="true"
         className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent"
       />
-      <h1 className="mt-5 break-keep font-black text-xl">{title}</h1>
+      <h1 className="mt-5 font-black text-xl">{title}</h1>
       <p className="mt-2 text-page-ink-soft text-sm leading-6">{body}</p>
     </div>
   )

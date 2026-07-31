@@ -1,5 +1,4 @@
 import { ArrowLeft, ArrowRight, HeartWaves } from '@mynaui/icons-react'
-import type { Locale } from '@sobok/domain/locale'
 import { cn } from '@/utils/cn'
 import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
@@ -11,7 +10,6 @@ type QuizViewProps = {
   axisDefinitions: CoupleTypeContent['axisDefinitions']
   /** Held by the flow, not here: a run that cannot be resumed at the question it stopped at is not resumable. */
   currentIndex: number
-  locale: Locale
   onBack: () => void
   onNext: () => void
   onSelect: (questionId: string, value: AxisValue) => void
@@ -23,7 +21,6 @@ export function QuizView({
   answers,
   axisDefinitions,
   currentIndex,
-  locale,
   onBack,
   onNext,
   onSelect,
@@ -39,7 +36,6 @@ export function QuizView({
   const isComplete = answeredCount === totalQuestions
   const axis = axisDefinitions[currentQuestion.axis]
   const canGoNext = Boolean(selectedValue)
-  const keepHeadingBreakClassName = locale === 'ko' ? 'break-keep' : undefined
 
   const nextButtonLabel =
     isLastQuestion && selectedValue && isComplete
@@ -56,14 +52,7 @@ export function QuizView({
             <HeartWaves aria-hidden="true" className="h-4 w-4 text-page-accent-strong" stroke={1.8} />
             {ui.heroEyebrow}
           </p>
-          <h1
-            className={cn(
-              'mt-6 font-black text-4xl leading-tight lg:text-[2.8rem] xl:text-6xl',
-              keepHeadingBreakClassName,
-            )}
-          >
-            {ui.heroTitle}
-          </h1>
+          <h1 className="mt-6 font-black text-4xl leading-tight lg:text-[2.8rem] xl:text-6xl">{ui.heroTitle}</h1>
           <p className="mt-5 text-lg text-page-ink-soft leading-8">{ui.heroDescription}</p>
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
             <MiniStat
@@ -97,9 +86,7 @@ export function QuizView({
           </div>
 
           <fieldset className="mt-7">
-            <legend className={cn('font-black text-2xl leading-snug', keepHeadingBreakClassName)}>
-              {currentQuestion.question}
-            </legend>
+            <legend className="font-black text-2xl leading-snug">{currentQuestion.question}</legend>
             <div className="mt-6 grid gap-3">
               {currentQuestion.options.map((option) => {
                 const isSelected = selectedValue === option.value

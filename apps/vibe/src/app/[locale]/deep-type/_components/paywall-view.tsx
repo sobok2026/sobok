@@ -88,7 +88,7 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
           <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-page-accent/12 text-page-accent-strong">
             <Sparkles aria-hidden="true" className="h-7 w-7" stroke={1.8} />
           </span>
-          <h1 className="mt-4 break-keep font-black text-2xl leading-snug">{paywall.title}</h1>
+          <h1 className="mt-4 font-black text-2xl leading-snug">{paywall.title}</h1>
           <p className="mx-auto mt-3 max-w-md text-page-ink-soft leading-7">{paywall.body}</p>
 
           <ul className="mt-6 grid gap-2 text-left">

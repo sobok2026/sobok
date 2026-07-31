@@ -39,7 +39,7 @@ export function DynamicReportView({
     return (
       <main className="flex flex-1 flex-col items-center justify-center bg-page-bg px-safe py-16 text-center text-page-ink">
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent motion-reduce:animate-none" />
-        <h1 className="mt-6 break-keep font-black text-2xl">{content.paywall.generatingTitle}</h1>
+        <h1 className="mt-6 font-black text-2xl">{content.paywall.generatingTitle}</h1>
         <p className="mx-auto mt-3 max-w-sm text-page-ink-soft leading-7">{content.paywall.generatingBody}</p>
       </main>
     )

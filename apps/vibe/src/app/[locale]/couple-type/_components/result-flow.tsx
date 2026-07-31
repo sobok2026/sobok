@@ -48,7 +48,6 @@ export function ResultFlow({ content, locale }: { content: CoupleTypeContent; lo
     <ResultView
       answerCount={content.questions.length}
       axisDefinitions={content.axisDefinitions}
-      locale={locale}
       onEdit={edit}
       onRestart={restart}
       result={content.results[code]}

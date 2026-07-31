@@ -21,13 +21,18 @@ import type { ClarityBand } from '../model'
  * How firmly the axis landed, in the settled ruler's own terms. Keyed by `band5` so the opening cannot say
  * something the band tables below it contradict. Never says a letter could be different — the poles are frozen
  * (D1) and this is a statement about the spread of the answers, not about the letter.
+ *
+ * No subject, and that is not brevity: '이 축은' put the report's own unit of measurement in front of a reader
+ * who never sees it named anywhere else, and the obvious swap — '이 글자는' — would make the sentence a claim
+ * about the letter, which is the one thing D1 forbids. The note sits directly under the paragraph for its own
+ * axis, so what it is about is already on screen; starting at 답 says it is about the answers and nothing else.
  */
 export const BAND_FRAME = {
-  distinct: '이 축은 답이 한쪽으로 크게 몰렸어요.',
-  moderate: '이 축은 한쪽으로 기울었고 반대쪽을 고른 답도 남아 있어요.',
-  faint: '이 축은 양쪽이 비슷하게 놓였어요. 자리에 따라 다르게 나올 수 있는 쪽이에요.',
+  distinct: '답이 한쪽으로 크게 몰렸어요.',
+  moderate: '한쪽으로 기울었고 반대쪽을 고른 답도 남아 있어요.',
+  faint: '양쪽이 비슷하게 놓였어요. 자리에 따라 다르게 나올 수 있어요.',
   // Unreachable at five odd-weighted items, kept as a real cell for the same reason `CLARITY_BANDS_PAID.tie` is.
-  tie: '이 축은 양쪽 답이 같은 무게로 놓였어요.',
+  tie: '양쪽 답이 같은 무게로 놓였어요.',
 } as const satisfies Record<ClarityBand, string>
 
 /**
@@ -40,15 +45,18 @@ export const LEAD_JOIN =
 export const DRAIN_OPENING_TAIL = '무엇이 힘을 빼는지는 일의 양보다 조건 쪽에서 갈려요.'
 
 export const OPENING_CLOSING =
-  '여기까지가 여덟 축을 하나씩 읽은 것이에요. 아래 섹션은 같은 답을 조건과 장면으로 나눠서 봐요.'
+  '여기까지가 여덟 글자를 하나씩 읽은 것이에요. 아래 섹션은 같은 답을 조건과 장면으로 나눠서 봐요.'
 
 /**
  * Headings inside the opening, so eleven paragraphs read as three blocks instead of one wall. They are not
  * sections: the report's sections are `section-keys.ts` and these are the opening's own internal order.
+ *
+ * '네 글자', not '네 축'. The reader met these four as four letters on the free result and the block under this
+ * heading prints one paragraph per letter, so the heading counts what is under it in the words already learned.
  */
 export const OPENING_BLOCK = {
-  inner: '속유형 네 축',
-  gem: '마음의 코어 네 축',
+  inner: '속유형 네 글자',
+  gem: '마음의 코어 네 글자',
   work: '이번 답이 가리키는 결',
 } as const
 
