@@ -61,7 +61,7 @@ export function ChartShapeArt({ className, planets, shape }: ChartShapeArtProps)
 
   for (let index = 0; index < points.length; index++) {
     const next = points[(index + 1) % points.length]
-    const gap = (next.lon - points[index].lon + 360) % 360
+    const gap = norm360(next.lon - points[index].lon)
 
     if (gap > largestGap) {
       largestGap = gap

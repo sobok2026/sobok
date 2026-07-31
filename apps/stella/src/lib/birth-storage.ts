@@ -28,6 +28,11 @@ type LoadedBirth = {
   persistent: boolean
 }
 
+/**
+ * A real day on the calendar — the date exists and February 30th does not. It says nothing about what the
+ * date is FOR, which is why the share hash reuses it to check a reading's day: that day is whatever day the
+ * sender was reading, so it must not inherit the birth form's bounds.
+ */
 export function isCalendarDate(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return false
@@ -36,13 +41,21 @@ export function isCalendarDate(value: string): boolean {
   const [year, month, day] = value.split('-').map(Number)
   const date = new Date(Date.UTC(year, month - 1, day))
 
-  return (
-    year >= 1900 &&
-    year <= 2030 &&
-    date.getUTCFullYear() === year &&
-    date.getUTCMonth() === month - 1 &&
-    date.getUTCDate() === day
-  )
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
+}
+
+// The window the birth form itself offers (see BirthForm's min/max). A date outside it did not come from the
+// picker, so a stored or shared profile carrying one is corrupt rather than merely unusual.
+const BIRTH_YEAR_MIN = 1900
+const BIRTH_YEAR_MAX = 2030
+
+function isBirthDate(value: string): boolean {
+  if (!isCalendarDate(value)) {
+    return false
+  }
+
+  const year = Number(value.slice(0, 4))
+  return year >= BIRTH_YEAR_MIN && year <= BIRTH_YEAR_MAX
 }
 
 function isClockTime(value: string): boolean {
@@ -63,7 +76,7 @@ export function isStoredBirth(value: unknown): value is StoredBirth {
 
   return (
     typeof v.date === 'string' &&
-    isCalendarDate(v.date) &&
+    isBirthDate(v.date) &&
     typeof v.time === 'string' &&
     isClockTime(v.time) &&
     typeof v.timeKnown === 'boolean' &&
