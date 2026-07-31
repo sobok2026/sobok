@@ -6,13 +6,17 @@ import postgres from 'postgres'
 
 import type { CommentPage } from '@/lib/comments'
 
+import { encodeCursor } from '../../worker/lib/cursor'
+
 // Build-time bake of comment boards into the static export. Each /talk/[topic] page is prerendered with its
 // first page of comments already in the HTML (fresh SEO snapshot + no first-paint flash); the client then
 // re-fetches live on mount. Reads the DB DIRECTLY (not Hyperdrive — that is a runtime Worker binding), via
 // STELLA_POSTGRES_URL_DIRECT. When that env var is absent (local/offline build) the bake is skipped and every
 // board renders empty — the build never depends on DB reachability to succeed.
 //
-// Must match the Worker's list endpoint: newest-first, PAGE per page, opaque cursor = base64url(`ms.id`).
+// Must match the Worker's list endpoint: newest-first, PAGE per page. The cursor format itself is shared code
+// (worker/lib/cursor) rather than a parallel implementation — a baked page's nextCursor is spent against the
+// Worker, so the two cannot be allowed to drift.
 const PAGE = 20
 
 export interface BakedBoard {
@@ -28,10 +32,6 @@ interface Row {
   nickname: string | null
   body: string
   createdAt: Date
-}
-
-function encodeCursor(createdAt: Date, id: number): string {
-  return btoa(`${createdAt.getTime()}.${id}`).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 }
 
 let cache: Promise<Map<string, BakedBoard>> | null = null
@@ -103,7 +103,7 @@ async function load(): Promise<Map<string, BakedBoard>> {
             body: r.body,
             createdAt: r.createdAt.toISOString(),
           })),
-          nextCursor: hasMore && last ? encodeCursor(last.createdAt, last.id) : null,
+          nextCursor: hasMore && last ? encodeCursor({ createdAt: last.createdAt, id: last.id }) : null,
         },
       })
     }

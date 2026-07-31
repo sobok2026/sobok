@@ -8,6 +8,10 @@ const MAX_ENCODED_PAYLOAD_LENGTH = 512
 
 export type ShareKind = 'chart' | 'today' | 'tomorrow' | 'love'
 
+/**
+ * What a share link carries. One type for both directions: `buildShareURL` writes it and `decodeShareHash`
+ * reconstructs it, so a variant that gains a field can never be encoded without being decodable again.
+ */
 export type SharedPayload =
   | { kind: 'chart'; birth: StoredBirth }
   | { kind: 'today'; birth: StoredBirth; dateKey: string; utcOffsetMinutes: number }
@@ -31,12 +35,6 @@ type SerializedPayload = {
   o?: string
   z?: number
 }
-
-type ShareUrlInput =
-  | { kind: 'chart'; birth: StoredBirth }
-  | { kind: 'today'; birth: StoredBirth; dateKey: string; utcOffsetMinutes: number }
-  | { kind: 'tomorrow'; birth: StoredBirth; dateKey: string; utcOffsetMinutes: number }
-  | { kind: 'love'; birth: StoredBirth; asOf: Date }
 
 export type ShareLinkResult = 'web_share' | 'clipboard' | 'cancelled' | 'failed'
 
@@ -63,7 +61,7 @@ function fromBase64Url(text: string): string {
   return new TextDecoder().decode(bytes)
 }
 
-function encodePayload(input: ShareUrlInput): string {
+function encodePayload(input: SharedPayload): string {
   const payload: SerializedPayload = {
     d: input.birth.date,
     t: input.birth.time,
@@ -217,7 +215,7 @@ function isCalendarDateKey(value: string): boolean {
   return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
 }
 
-export function buildShareURL(locale: string, input: ShareUrlInput): string {
+export function buildShareURL(locale: string, input: SharedPayload): string {
   const url = new URL(resultPath(locale, input.kind), window.location.origin)
   url.hash = `${SHARE_PREFIX}${encodePayload(input)}`
   return url.toString()

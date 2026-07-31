@@ -5,6 +5,7 @@
 import { ASTROLOGY_GLYPH_UNITS_PER_EM, getAstrologyGlyphPath, isAstrologyGlyph } from '@/chart/astrology-glyph-paths'
 import type { ChartAspect, NatalChart } from '@/chart/types'
 import { HERO_TITLE_STYLE } from '@/components/hero-title-style'
+import { mulberry32 } from '@/lib/prng'
 import { CENTER, type Point, TOKEN, VIEW } from './wheel/geometry'
 import {
   buildWheelScene,
@@ -157,19 +158,6 @@ function createHeroTitleGradient(
   return gradient
 }
 
-/** Deterministic PRNG so the starfield is stable across re-renders of one chart. */
-function mulberry32(seed: number): () => number {
-  let a = seed
-
-  return () => {
-    a |= 0
-    a = (a + 0x6d2b79f5) | 0
-    let t = Math.imul(a ^ (a >>> 15), 1 | a)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
-
 function paintBackground(ctx: CanvasRenderingContext2D, color: ShareCardPalette) {
   const bg = ctx.createRadialGradient(WHEEL_CX, -120, 120, WHEEL_CX, 300, CARD_H)
   bg.addColorStop(0, color.glow)
@@ -178,6 +166,8 @@ function paintBackground(ctx: CanvasRenderingContext2D, color: ShareCardPalette)
   ctx.fillStyle = bg
   ctx.fillRect(0, 0, CARD_W, CARD_H)
 
+  // Fixed seed: the starfield must be identical on every render of every card, so two exports of the same
+  // chart are the same image.
   const rng = mulberry32(0x5713a)
   ctx.fillStyle = '#ffffff'
 
