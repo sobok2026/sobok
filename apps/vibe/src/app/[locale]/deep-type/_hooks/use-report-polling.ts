@@ -49,6 +49,7 @@ export function useReportPolling(accessToken: string): ReportPollState {
         if (controller.signal.aborted) {
           return
         }
+
         if (result.done) {
           delivered = true
           setState({

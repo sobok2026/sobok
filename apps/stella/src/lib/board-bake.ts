@@ -5,9 +5,6 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 
 import type { CommentPage } from '@/lib/comments'
-// The Worker owns the DB, so it owns the schema. This build-time reader imports that same (pure drizzle)
-// schema — one source of truth, so a column rename is a compile error here, not a silent bake failure.
-import { commentTable, commentThreadTable } from '../../worker/db/schema'
 
 // Build-time bake of comment boards into the static export. Each /talk/[topic] page is prerendered with its
 // first page of comments already in the HTML (fresh SEO snapshot + no first-paint flash); the client then
@@ -51,6 +48,11 @@ async function load(): Promise<Map<string, BakedBoard>> {
     return new Map()
   }
 
+  // The Worker owns the DB, so it owns the schema. Import its table declarations only when a bake connection
+  // exists: ordinary offline builds do not target either database environment and therefore must not need a
+  // schema fallback. A real bake still fails closed unless STELLA_DB_SCHEMA explicitly selects stella_stg or
+  // stella before this import executes.
+  const { commentTable, commentThreadTable } = await import('../../worker/db/schema/comment')
   const client = postgres(url, { max: 1, prepare: false, ssl: 'require' })
   const db = drizzle({ client })
 

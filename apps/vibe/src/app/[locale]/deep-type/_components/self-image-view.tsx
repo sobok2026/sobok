@@ -53,8 +53,8 @@ export function SelfImageView({ content, onDone, ui }: SelfImageViewProps) {
       banner={
         index === 0 ? (
           <div className="mt-6 rounded-3xl bg-page-soft px-5 py-4">
-            <p className="break-keep font-black">{content.title}</p>
-            <p className="mt-1 break-keep text-page-ink/62 text-sm leading-6">{content.body}</p>
+            <p className="font-black">{content.title}</p>
+            <p className="mt-1 break-prose text-page-ink-soft text-sm leading-6">{content.body}</p>
           </div>
         ) : undefined
       }

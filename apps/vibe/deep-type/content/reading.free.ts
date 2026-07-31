@@ -183,12 +183,12 @@ export const READING_CHAPTER = {
     title: '내 세계관 직업을 풀어 읽으면',
   },
   inner: {
-    intro: '속유형 네 글자는 일하는 방식이에요. 네 축이 하루 어디에서 보이는지 하나씩 놓았어요.',
-    title: '속유형 네 축이 보이는 자리',
+    intro: '속유형 네 글자는 일하는 방식이에요. 네 글자가 하루 어디에서 보이는지 하나씩 놓았어요.',
+    title: '속유형 네 글자가 보이는 자리',
   },
   gem: {
     intro: '마음의 코어 네 글자는 그 방식을 밀어 주는 힘이에요. 무엇이 힘을 넣고 무엇이 힘을 빼는지 봐요.',
-    title: '마음의 코어 네 축이 힘을 대는 자리',
+    title: '마음의 코어 네 글자가 힘을 대는 자리',
   },
   closing: {
     intro: '여기까지가 스물일곱 문항이 말해 줄 수 있는 범위예요.',
@@ -217,4 +217,4 @@ export const READING_CLOSING_PARAGRAPHS = [
 
 /** One line to close the whole reading on. Not advice — a place to put the reading down. */
 export const READING_CLOSING_NOTE =
-  '오늘 읽은 것 가운데 하나만 골라 이번 주에 확인해 봐요. 여덟 축을 다 들고 다닐 필요는 없어요.'
+  '오늘 읽은 것 가운데 하나만 골라 이번 주에 확인해 봐요. 여덟 글자를 다 들고 다닐 필요는 없어요.'

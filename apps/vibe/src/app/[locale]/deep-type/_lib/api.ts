@@ -206,13 +206,16 @@ export type ReportPoll = { done: false } | ({ done: true } & ReportDelivery)
 
 export async function getReport(accessToken: string, signal?: AbortSignal): Promise<ReportPoll> {
   const response = await fetch(`${BASE}/report`, { headers: { authorization: `Bearer ${accessToken}` }, signal })
+
   if (response.status === 202) {
     return { done: false }
   }
   if (!response.ok) {
     throw await toApiError(response)
   }
+
   const data = (await response.json()) as ReportDelivery
+
   return {
     done: true,
     narrative: data.narrative ?? [],

@@ -25,9 +25,9 @@ export function IntroView({ body, cta, hint, notice, onNext, title }: IntroViewP
     <main className="flex flex-1 flex-col justify-center bg-page-bg px-safe py-10 text-page-ink">
       <div className="mx-auto w-full max-w-2xl py-4 text-center">
         {notice}
-        <h1 className="break-keep font-black text-3xl leading-tight">{title}</h1>
-        <p className="mx-auto mt-5 text-page-ink/68 leading-8">{body}</p>
-        <p className="mx-auto mt-5 rounded-3xl bg-page-soft px-5 py-4 font-bold text-page-ink/72 text-sm leading-6">
+        <h1 className="font-black text-3xl leading-tight">{title}</h1>
+        <p className="mx-auto mt-5 text-page-ink-soft leading-8">{body}</p>
+        <p className="mx-auto mt-5 rounded-3xl bg-page-soft px-5 py-4 font-bold text-page-ink-soft text-sm leading-6">
           {hint}
         </p>
 

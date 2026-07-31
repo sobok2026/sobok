@@ -142,19 +142,19 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
             <FlowMessage body={copy.invalidBody} icon={DangerTriangle} takeFocus title={copy.invalidTitle} />
           ) : (
             <div className="text-center">
-              <h1 className="mt-3 break-keep font-black text-2xl leading-snug">{copy.title}</h1>
-              <p className="mt-3 break-keep text-page-ink/66 leading-7">{copy.body}</p>
+              <h1 className="mt-3 font-black text-2xl leading-snug">{copy.title}</h1>
+              <p className="mt-3 break-prose text-page-ink-soft leading-7">{copy.body}</p>
             </div>
           )}
 
           <form className="mt-6" onSubmit={requestLink}>
-            <label className="block font-bold text-page-ink/70 text-sm" htmlFor="deeptype-reopen-email">
+            <label className="block font-bold text-page-ink-soft text-sm" htmlFor="deeptype-reopen-email">
               {copy.emailLabel}
             </label>
             <input
               autoComplete="email"
               className={cn(
-                'mt-2 min-h-12 w-full rounded-2xl border border-page-border bg-white px-4 font-medium text-page-ink outline-none placeholder:text-page-ink/36 focus-visible:border-page-accent',
+                'mt-2 min-h-12 w-full rounded-2xl border border-page-border bg-white px-4 font-medium text-page-ink outline-none placeholder:text-page-ink-muted focus-visible:border-page-accent',
                 FOCUS_CLASS_NAME,
               )}
               id="deeptype-reopen-email"
@@ -189,11 +189,11 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
               {requestPending ? copy.requesting : copy.requestCta}
             </button>
             {requestError ? (
-              <p className="mt-3 text-center font-bold text-page-accent text-sm" role="alert">
+              <p className="mt-3 text-center font-bold text-page-accent-strong text-sm" role="alert">
                 {requestError}
               </p>
             ) : null}
-            <p className="mt-4 text-page-ink/44 text-xs leading-6">{copy.deliveryNote}</p>
+            <p className="mt-4 text-page-ink-muted text-xs leading-6">{copy.deliveryNote}</p>
           </form>
         </>
       ) : null}
@@ -292,12 +292,20 @@ function ReopenedReport({
           title={copy.reportFailedTitle}
           tone="danger"
         >
-          {refund === 'done' ? <p className="mt-4 text-page-ink/64 text-sm">{content.paywall.refundDone}</p> : null}
-          {refund === 'failed' ? <p className="mt-4 text-page-ink/64 text-sm">{content.paywall.refundFailed}</p> : null}
+          {refund === 'done' ? <p className="mt-4 text-page-ink-soft text-sm">{content.paywall.refundDone}</p> : null}
+          {refund === 'failed' ? (
+            <p className="mt-4 text-page-ink-soft text-sm">{content.paywall.refundFailed}</p>
+          ) : null}
         </FlowMessage>
+        {/* An accent outline rather than the panel's own secondary weight, because undoing a purchase is the
+            one action in this flow that is neither the happy path nor a neutral way out — the same treatment
+            the report's own failure screen gives it. */}
         {refund === 'idle' || refund === 'pending' ? (
           <button
-            className={cn(flowActionClassName('secondary'), 'mt-7 disabled:opacity-60')}
+            className={cn(
+              flowActionClassName('secondary'),
+              'mt-7 border-page-accent-strong/45 text-page-accent-strong hover:border-page-accent-strong/45 hover:bg-page-accent/8 hover:text-page-accent-strong disabled:opacity-60',
+            )}
             disabled={refund === 'pending'}
             onClick={requestRefund}
             type="button"
@@ -305,7 +313,7 @@ function ReopenedReport({
             {refund === 'pending' ? content.paywall.refundPending : content.paywall.refundCta}
           </button>
         ) : null}
-        <p className="mt-5 text-center text-page-ink/48 text-xs">
+        <p className="mt-5 text-center text-page-ink-muted text-xs">
           <a className="underline underline-offset-2" href={`mailto:${LEGAL_CONTACT_EMAIL}`}>
             {LEGAL_CONTACT_EMAIL}
           </a>
@@ -318,7 +326,7 @@ function ReopenedReport({
 
   return (
     <div className="flex flex-1 flex-col">
-      <p className="bg-page-soft px-safe py-3 text-center text-page-ink/52 text-xs">
+      <p className="bg-page-soft px-safe py-3 text-center text-page-ink-muted text-xs">
         {copy.accessUntil.replace('{date}', accessDate)}
       </p>
       <ReportView

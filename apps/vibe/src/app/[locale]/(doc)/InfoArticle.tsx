@@ -16,8 +16,8 @@ export default function InfoArticle({ page, channelsHeading, channels }: Props) 
     <main className="min-h-dvh bg-page-bg px-4 pt-[calc(4.5rem+var(--safe-area-top))] pb-24 text-page-ink sm:px-6 sm:pt-[calc(5rem+var(--safe-area-top))]">
       <article className="mx-auto max-w-2xl">
         <h1 className="font-bold text-3xl tracking-tight">{page.title}</h1>
-        <p className="mt-3 text-page-ink/62">{page.description}</p>
-        <p className="mt-2 text-page-ink/46 text-sm">
+        <p className="mt-3 text-page-ink-soft">{page.description}</p>
+        <p className="mt-2 text-page-ink-muted text-sm">
           {page.updatedLabel}: {page.updatedDate}
         </p>
 
@@ -38,14 +38,14 @@ export default function InfoArticle({ page, channelsHeading, channels }: Props) 
                 <li className="rounded-xl border border-page-border bg-page-surface px-4 py-3" key={channel.label}>
                   <div className="font-medium text-page-ink text-sm">{channel.label}</div>
                   <a
-                    className="mt-0.5 inline-block text-page-accent underline underline-offset-2 hover:text-page-ink"
+                    className="mt-0.5 inline-block text-page-accent-strong underline underline-offset-2 hover:text-page-ink"
                     href={channel.href}
                     rel={isExternal(channel.href) ? 'noopener noreferrer' : undefined}
                     target={isExternal(channel.href) ? '_blank' : undefined}
                   >
                     {channel.value}
                   </a>
-                  <p className="mt-1 text-page-ink/62 text-sm">{channel.description}</p>
+                  <p className="mt-1 text-page-ink-soft text-sm">{channel.description}</p>
                 </li>
               ))}
             </ul>

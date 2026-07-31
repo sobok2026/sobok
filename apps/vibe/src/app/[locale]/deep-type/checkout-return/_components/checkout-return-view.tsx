@@ -296,6 +296,7 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
           clearPendingCheckout()
           window.location.assign(`/${locale}/deep-type`)
         }}
+        orderId={phase.pending.paymentId}
       />
     )
   }
@@ -347,7 +348,7 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
         tone={TONE_BY_FAILURE[phase.failure]}
       >
         {phase.pgMessage ? (
-          <p className="mt-4 break-keep rounded-2xl bg-page-soft px-4 py-3 text-page-ink/62 text-sm leading-6">
+          <p className="mt-4 break-prose rounded-2xl bg-page-soft px-4 py-3 text-page-ink-soft text-sm leading-6">
             {copy.pgMessage.replace('{message}', phase.pgMessage)}
           </p>
         ) : null}
@@ -386,13 +387,13 @@ function PaidNotice({
       <CheckCircle aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-page-success" stroke={1.8} />
       <div>
         <p className="font-black text-sm">{copy.paid.title}</p>
-        <p className="mt-1 break-keep text-page-ink/68 text-sm leading-6">
+        <p className="mt-1 break-prose text-page-ink-soft text-sm leading-6">
           {copy.paid.body.replace('{price}', formatPrice(locale, pending.currency, pending.amount))}
         </p>
-        <p className="mt-1 break-keep text-page-ink/68 text-sm leading-6">
+        <p className="mt-1 break-prose text-page-ink-soft text-sm leading-6">
           {copy.paid.emailNote.replace('{email}', pending.email)}
         </p>
-        <p className="mt-2 break-all text-page-ink/40 text-xs leading-5">
+        <p className="mt-2 break-all text-page-ink-muted text-xs leading-5">
           {copy.orderReference.replace('{id}', pending.paymentId)}
         </p>
       </div>
@@ -406,7 +407,7 @@ function Reference({ copy, paymentId }: { copy: DeepTypeCheckoutReturnContent; p
     return null
   }
   return (
-    <p className="mt-4 break-all text-page-ink/40 text-xs leading-5">
+    <p className="mt-4 break-all text-page-ink-muted text-xs leading-5">
       {copy.orderReference.replace('{id}', paymentId)}
     </p>
   )

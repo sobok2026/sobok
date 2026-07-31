@@ -1,30 +1,8 @@
-import { LOCALES } from '@sobok/domain/locale'
 import { createdAt, timestamps } from '@sobok/edge/db/columns'
 import { sql } from 'drizzle-orm'
-import {
-  bigint,
-  boolean,
-  index,
-  integer,
-  pgSchema,
-  primaryKey,
-  text,
-  timestamp,
-  uniqueIndex,
-  varchar,
-} from 'drizzle-orm/pg-core'
+import { bigint, boolean, index, integer, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
+import { localeEnum, stella } from './common'
 
-// The anonymous comment board lives in a DEDICATED `stella` schema on the SHARED Supabase Postgres — NOT the
-// public schema, where the deeptype_* payment tables sit. This is load-bearing for isolation:
-//   • drizzle-kit push runs with schemaFilter:['stella'] as the OWNER, so it never sees (and never proposes
-//     dropping) the payment tables.
-//   • the runtime `stella_app` role has grants ONLY inside this schema — it cannot read/write payment rows.
-//   • the `stella` schema is NOT added to Supabase's exposed schemas, so PostgREST never surfaces ipHash /
-//     edit-token hashes over the anon REST API.
-// Plain tables, NOT RLS — access is enforced in the Worker (Turnstile + rate-limit + unguessable editToken).
-export const stella = pgSchema('stella')
-
-export const localeEnum = stella.enum('locale', [...LOCALES])
 export const commentStatusEnum = stella.enum('comment_status', ['visible', 'hidden', 'removed'])
 export const reportReasonEnum = stella.enum('report_reason', ['spam', 'abuse', 'sexual', 'privacy', 'other'])
 
@@ -90,17 +68,4 @@ export const commentReportTable = stella.table(
     createdAt,
   },
   (t) => [uniqueIndex('uq_stella_report_comment_ip').on(t.commentId, t.ipHash)],
-)
-
-// Atomic fixed-window rate limiter. Every write bumps its row via INSERT … ON CONFLICT DO UPDATE hits+1
-// RETURNING hits — race-free, unlike a SELECT count(*) + decide. Old windows are dropped by the retention cron.
-export const rateLimitTable = stella.table(
-  'rate_limit',
-  {
-    bucket: varchar({ length: 16 }).notNull(),
-    ipHash: varchar('ip_hash', { length: 64 }).notNull(),
-    windowStart: timestamp('window_start', { precision: 3, withTimezone: true }).notNull(),
-    hits: integer().notNull().default(1),
-  },
-  (t) => [primaryKey({ columns: [t.bucket, t.ipHash, t.windowStart] })],
 )

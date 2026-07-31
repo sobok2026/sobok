@@ -85,12 +85,6 @@
     0 18px 48px rgb(3 0 14 / 32%);
 }
 
-/* Hangul must not break inside an eojeol. Scoped to ko because zh/ja rely on breaking between
-   characters — forbidding it there would leave a long sentence with nowhere to wrap. */
-.pack:lang(ko) {
-  word-break: keep-all;
-}
-
 .packStack {
   position: relative;
   height: 10rem;

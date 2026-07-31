@@ -6,6 +6,7 @@ import type { Locale } from '@sobok/domain/locale'
 import { useRouter } from 'next/navigation'
 import { useEffect, useReducer, useState } from 'react'
 
+import type { SettledPayment } from '../_hooks/use-checkout'
 import { assertNever } from '../_lib/assert'
 import { clearSitting, type DeepTypeSitting, readSitting } from '../_lib/sitting'
 import type { DeepTypeContent } from '../_lib/types'
@@ -15,17 +16,20 @@ import { IntroView } from './intro-view'
 import { PaywallView } from './paywall-view'
 import { RefinementQuizView } from './refinement-quiz-view'
 
+// The settled payment travels with every post-payment phase, because the report at the end of them prints its
+// id as the order number. Carrying only the access token this far meant the one screen that owes the buyer a
+// receipt was also the one screen that had thrown the receipt away.
 type ResultState =
   | { phase: 'report' }
   | { phase: 'paywall' }
-  | { accessToken: string; phase: 'refinementIntro' }
-  | { accessToken: string; phase: 'refinement' }
-  | { accessToken: string; phase: 'dynamicReport' }
+  | (SettledPayment & { phase: 'refinementIntro' })
+  | (SettledPayment & { phase: 'refinement' })
+  | (SettledPayment & { phase: 'dynamicReport' })
 
 type ResultAction =
   | { type: 'UNLOCK' }
   | { type: 'CLOSE_PAYWALL' }
-  | { accessToken: string; type: 'PAID' }
+  | { payment: SettledPayment; type: 'PAID' }
   | { type: 'BEGIN' }
   | { type: 'REFINEMENT_DONE' }
 
@@ -36,11 +40,11 @@ function resultReducer(state: ResultState, action: ResultAction): ResultState {
     case 'CLOSE_PAYWALL':
       return state.phase === 'paywall' ? { phase: 'report' } : state
     case 'PAID':
-      return state.phase === 'paywall' ? { accessToken: action.accessToken, phase: 'refinementIntro' } : state
+      return state.phase === 'paywall' ? { ...action.payment, phase: 'refinementIntro' } : state
     case 'BEGIN':
-      return state.phase === 'refinementIntro' ? { accessToken: state.accessToken, phase: 'refinement' } : state
+      return state.phase === 'refinementIntro' ? { ...state, phase: 'refinement' } : state
     case 'REFINEMENT_DONE':
-      return state.phase === 'refinement' ? { accessToken: state.accessToken, phase: 'dynamicReport' } : state
+      return state.phase === 'refinement' ? { ...state, phase: 'dynamicReport' } : state
     default:
       return state
   }
@@ -117,7 +121,7 @@ export function ResultFlow({ content, locale }: ResultFlowProps) {
             workAnswers: sitting.work,
           }}
           onClose={() => dispatch({ type: 'CLOSE_PAYWALL' })}
-          onPaid={(accessToken) => dispatch({ accessToken, type: 'PAID' })}
+          onPaid={(payment) => dispatch({ payment, type: 'PAID' })}
         />
       )
     case 'refinementIntro':
@@ -148,6 +152,7 @@ export function ResultFlow({ content, locale }: ResultFlowProps) {
           fallbackProfile={profile}
           locale={locale}
           onRestart={handleRestart}
+          orderId={state.paymentId}
         />
       )
     default:

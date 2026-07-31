@@ -26,7 +26,7 @@ export default function Big3Card({ delay, glyph, hint, label, onClick, value }: 
       <span className="text-lg text-brand">{isAstrologyGlyph(glyph) ? <AstroGlyph glyph={glyph} /> : glyph}</span>
       <span className="text-[10px] uppercase tracking-widest text-foreground-subtle">{label}</span>
       <span className="text-sm font-bold text-foreground">{value}</span>
-      <span className="break-keep text-[10px] leading-tight text-foreground-faint wrap-anywhere">{hint}</span>
+      <span className="text-[10px] leading-tight text-foreground-faint wrap-anywhere">{hint}</span>
     </button>
   )
 }

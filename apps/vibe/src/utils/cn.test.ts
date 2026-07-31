@@ -21,10 +21,10 @@ describe('cn', () => {
         'bg-page-ink',
         'bg-page-accent',
         'text-page-ink',
-        'text-page-accent',
+        'text-page-accent-strong',
         'rounded-2xl',
         'rounded-3xl sm:rounded-4xl',
       ),
-    ).toBe('bg-page-accent text-page-accent rounded-3xl sm:rounded-4xl')
+    ).toBe('bg-page-accent text-page-accent-strong rounded-3xl sm:rounded-4xl')
   })
 })

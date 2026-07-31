@@ -150,11 +150,11 @@ export function RefinementQuizView({
     return (
       <main className="flex flex-1 flex-col items-center justify-center bg-page-bg px-safe py-16 text-center text-page-ink">
         <div className="w-full max-w-sm" role="alert">
-          <h1 className="break-keep font-black text-xl">{paywall.refinementFailedTitle}</h1>
-          <p className="mt-3 break-keep text-page-ink/64 leading-7">{paywall.refinementFailedBody}</p>
+          <h1 className="font-black text-xl">{paywall.refinementFailedTitle}</h1>
+          <p className="mt-3 break-prose text-page-ink-soft leading-7">{paywall.refinementFailedBody}</p>
         </div>
         <button
-          className="mt-6 inline-flex min-h-13 w-full max-w-sm items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white transition-colors hover:bg-page-accent/92 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent"
+          className="mt-6 inline-flex min-h-13 w-full max-w-sm items-center justify-center rounded-full bg-page-accent-strong px-6 font-black text-sm text-white transition-colors hover:bg-page-accent-strong/92 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent"
           onClick={() => void submit(answers, work)}
           type="button"
         >
@@ -179,7 +179,9 @@ export function RefinementQuizView({
   return (
     <div className="flex flex-1 flex-col">
       {draft.phase === 'ready' && draft.resumed ? (
-        <p className="bg-page-soft px-safe py-3 text-center font-bold text-page-ink/64 text-sm">{paywall.resumeNote}</p>
+        <p className="bg-page-soft px-safe py-3 text-center font-bold text-page-ink-soft text-sm">
+          {paywall.resumeNote}
+        </p>
       ) : null}
       <QuizView
         backLabel={content.ui.backCta}
@@ -200,7 +202,7 @@ function Waiting({ message }: { message: string }) {
         className="h-12 w-12 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent motion-reduce:animate-none"
         role="status"
       />
-      <p className="mt-6 font-bold text-page-ink/64">{message}</p>
+      <p className="mt-6 font-bold text-page-ink-soft">{message}</p>
     </main>
   )
 }

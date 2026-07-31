@@ -1,7 +1,8 @@
 import type { Locale } from '@sobok/domain/locale'
 import type { Db } from '@sobok/edge/db/client'
 import { and, eq, inArray, lt, or, sql } from 'drizzle-orm'
-import { commentReportTable, commentTable, commentThreadTable, rateLimitTable } from '../schema'
+import { commentReportTable, commentTable, commentThreadTable } from '../schema/comment'
+import { rateLimitTable } from '../schema/rate-limit'
 
 export interface CommentRow {
   publicId: string

@@ -19,8 +19,10 @@ import { PANEL_CLASS_NAME, PANEL_SHADOW_CLASS_NAME } from '../_lib/surface'
 /** Which of the three semantic colours a terminal state carries. `accent` is "recoverable, act on it". */
 export type FlowTone = 'accent' | 'danger' | 'success'
 
+// Tint from the brand pink, glyph from the strong accent: `--page-accent` is a surface colour and does not
+// clear 4.5:1 as a foreground, which is the split `globals.css` makes and the reason there are two.
 const MARK_CLASS_NAME: Record<FlowTone, string> = {
-  accent: 'bg-page-accent/12 text-page-accent',
+  accent: 'bg-page-accent/12 text-page-accent-strong',
   danger: 'bg-page-danger/10 text-page-danger',
   success: 'bg-page-success/10 text-page-success',
 }
@@ -31,7 +33,7 @@ export function FlowPanel({ children, eyebrow }: { children: ReactNode; eyebrow:
       <section className={cn(PANEL_CLASS_NAME, PANEL_SHADOW_CLASS_NAME)}>
         {/* Quiet, and deliberately so. This is a label saying which product the screen belongs to; the accent
             belongs to the state mark and the primary action, which are what the reader has to find. */}
-        <p className="text-center font-bold text-page-ink/40 text-xs tracking-[0.14em]">{eyebrow}</p>
+        <p className="text-center font-bold text-page-ink-muted text-xs tracking-[0.14em]">{eyebrow}</p>
         {children}
       </section>
     </main>
@@ -52,9 +54,9 @@ export function FlowStatus({ body, hint, title }: { body: string; hint?: string;
         aria-hidden="true"
         className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent motion-reduce:animate-none"
       />
-      <h1 className="mt-5 break-keep font-black text-2xl leading-snug">{title}</h1>
-      <p className="mt-3 break-keep text-page-ink/64 leading-7">{body}</p>
-      {hint ? <p className="mt-3 break-keep text-page-ink/48 text-sm leading-6">{hint}</p> : null}
+      <h1 className="mt-5 font-black text-2xl leading-snug">{title}</h1>
+      <p className="mt-3 break-prose text-page-ink-soft leading-7">{body}</p>
+      {hint ? <p className="mt-3 break-prose text-page-ink-muted text-sm leading-6">{hint}</p> : null}
     </div>
   )
 }
@@ -94,13 +96,13 @@ export function FlowMessage({ body, children, icon: Mark, takeFocus, title, tone
       {/* `tabIndex={-1}` so focus can be placed here and nowhere in the tab order. `outline-none` because the
           ring on a heading nobody tabbed to reads as a rendering fault, and the announcement is the feedback. */}
       <h1
-        className={cn('break-keep font-black text-2xl leading-snug outline-none', Mark ? 'mt-4' : 'mt-3')}
+        className={cn('font-black text-2xl leading-snug outline-none', Mark ? 'mt-4' : 'mt-3')}
         ref={heading}
         tabIndex={-1}
       >
         {title}
       </h1>
-      <p className="mt-3 break-keep text-page-ink/64 leading-7">{body}</p>
+      <p className="mt-3 break-prose text-page-ink-soft leading-7">{body}</p>
       {children}
     </div>
   )
@@ -117,10 +119,10 @@ export type FlowActionEmphasis = 'primary' | 'secondary' | 'tertiary'
 
 const ACTION_CLASS_NAME: Record<FlowActionEmphasis, string> = {
   primary:
-    'min-h-13 bg-page-accent px-6 font-black text-white shadow-[0_20px_60px_var(--page-accent-glow)] hover:bg-page-accent/92',
+    'min-h-13 bg-page-accent-strong px-6 font-black text-white shadow-[0_20px_60px_var(--page-accent-glow)] hover:bg-page-accent-strong/92',
   secondary:
-    'min-h-12 border border-page-border px-6 font-bold text-page-ink/70 hover:border-page-ink/24 hover:text-page-ink',
-  tertiary: 'min-h-11 px-4 font-bold text-page-ink/54 underline underline-offset-4 hover:text-page-ink',
+    'min-h-12 border border-page-border px-6 font-bold text-page-ink-soft hover:border-page-ink/24 hover:text-page-ink',
+  tertiary: 'min-h-11 px-4 font-bold text-page-ink-muted underline underline-offset-4 hover:text-page-ink',
 }
 
 export function flowActionClassName(emphasis: FlowActionEmphasis): string {

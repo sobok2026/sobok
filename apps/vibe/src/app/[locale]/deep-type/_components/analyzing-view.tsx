@@ -23,8 +23,8 @@ export function AnalyzingView({ body, onDone, title }: AnalyzingViewProps) {
         className="h-12 w-12 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent motion-reduce:animate-none"
         role="status"
       />
-      <h1 className="mt-8 break-keep font-black text-2xl leading-tight">{title}</h1>
-      <p className="mx-auto mt-3 max-w-sm text-page-ink/64 leading-7">{body}</p>
+      <h1 className="mt-8 font-black text-2xl leading-tight">{title}</h1>
+      <p className="mx-auto mt-3 max-w-sm text-page-ink-soft leading-7">{body}</p>
     </main>
   )
 }

@@ -24,14 +24,14 @@ export function PersonaDeclareView({ onDeclare, onGuide, ui }: PersonaDeclareVie
   return (
     <main className="flex flex-1 flex-col justify-center bg-page-bg px-safe py-10 text-page-ink" id="main-content">
       <div className="mx-auto w-full max-w-2xl py-4">
-        <h1 className="break-keep font-black text-3xl leading-tight">{ui.declareTitle}</h1>
-        <p className="mt-4 text-page-ink/68 leading-8">{ui.declareBody}</p>
+        <h1 className="font-black text-3xl leading-tight">{ui.declareTitle}</h1>
+        <p className="mt-4 text-page-ink-soft leading-8">{ui.declareBody}</p>
 
         <div className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-4">
           {PERSONA_CODES.map((code) => (
             <button
               className={cn(
-                'min-h-13 rounded-2xl border border-page-border bg-page-surface font-black text-base tabular-nums transition-colors hover:border-page-accent hover:bg-page-accent/8 hover:text-page-accent',
+                'min-h-13 rounded-2xl border border-page-border bg-page-surface font-black text-base tabular-nums transition-colors hover:border-page-accent hover:bg-page-accent/8 hover:text-page-accent-strong',
                 FOCUS_CLASS_NAME,
               )}
               key={code}
@@ -49,14 +49,14 @@ export function PersonaDeclareView({ onDeclare, onGuide, ui }: PersonaDeclareVie
             would be offering the dead end back, and it would cost a report section to save twenty seconds. */}
         <button
           className={cn(
-            'mt-3 min-h-14 w-full rounded-2xl border border-page-border bg-page-surface px-5 text-left font-bold text-page-ink transition-colors hover:border-page-accent hover:text-page-accent',
+            'mt-3 min-h-14 w-full rounded-2xl border border-page-border bg-page-surface px-5 text-left font-bold text-page-ink transition-colors hover:border-page-accent hover:text-page-accent-strong',
             FOCUS_CLASS_NAME,
           )}
           onClick={onGuide}
           type="button"
         >
           {ui.declareUnknownLabel}
-          <span className="mt-0.5 block font-medium text-page-ink/54 text-xs">{ui.declareUnknownHint}</span>
+          <span className="mt-0.5 block font-medium text-page-ink-muted text-xs">{ui.declareUnknownHint}</span>
         </button>
       </div>
     </main>

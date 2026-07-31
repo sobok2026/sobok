@@ -40,7 +40,7 @@
     // not cover it either.
     "@sobok/stella#build": {
       "dependsOn": ["^build"],
-      "env": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY"],
+      "env": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY", "STELLA_DB_SCHEMA"],
       "outputs": ["out/**", ".next/**"]
     },
     "@sobok/vibe#build": {

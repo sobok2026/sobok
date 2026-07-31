@@ -45,3 +45,42 @@ export const GROUPED_LIST_CLASS_NAME =
  * 16px is the closest step down the scale offers.
  */
 export const GROUPED_ROW_CLASS_NAME = 'py-4 sm:rounded-2xl sm:border sm:border-page-border sm:bg-white sm:p-4'
+
+/**
+ * THE REPORT'S TYPE SCALE.
+ *
+ * Five roles, in the order a section uses them, and nothing between them. The screens used to size and tone
+ * text at each call site, which produced twenty-odd inline combinations of `text-sm` against ten alpha steps
+ * of one ink; a section's third paragraph was quieter than its second for no reason anybody could state, and
+ * the quietest steps did not clear WCAG 4.5:1 at all.
+ *
+ * Sizes, not opacity, carry the hierarchy. Every tone here is one of the three opaque steps from
+ * `globals.css`, so any of them may sit on any of our surfaces and still pass.
+ *
+ * Body is 16px with 2rem leading. It was 14px, which is below what both the HIG (17px) and Material (16px)
+ * set for body copy, and this is a document somebody reads for twenty minutes rather than a form label.
+ *
+ * ONLY THE THREE READING ROLES SAY ANYTHING ABOUT BREAKING, AND THEY SAY IT ONCE.
+ *
+ * `@sobok/typography` sets the document's language policy in `@layer base`, so a title, a label, and a chip are
+ * already right in every locale with nothing declared here. Prose is the exception a selector cannot infer — no
+ * rule can tell a two-line label from a two-hundred-word reading — so `break-prose` rides on the three roles
+ * that are prose by definition, and no call site writes it. Measured at the 311px a phone gives this document,
+ * that exception is worth having: the display rule left up to 52px of the line unused in a body paragraph and
+ * spent a fifth line on a three-syllable widow.
+ *
+ * The free screens do not take this scale — they size text at each call site — so their paragraphs still name
+ * `break-prose` by hand. Folding them into a scale of their own is the way that ends.
+ */
+export const REPORT_TYPE = {
+  /** A section's h2. */
+  title: 'font-black text-page-ink text-xl leading-snug sm:text-2xl',
+  /** The authored line under a section title. A deck, so it is sized between the title and the body. */
+  deck: 'text-base text-page-ink-muted leading-7',
+  /** Reading copy: the openings, the readings, anything written to be read in sentences. */
+  body: 'break-prose text-base text-page-ink-soft leading-8',
+  /** Copy inside a card or a row, where the measure is already narrow. */
+  copy: 'break-prose text-[0.9375rem] text-page-ink-soft leading-7',
+  /** Captions, asides, and the closing note. The quietest step that still clears 4.5:1. */
+  meta: 'break-prose text-sm text-page-ink-muted leading-6',
+} as const
