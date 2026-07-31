@@ -40,9 +40,9 @@ export function SectionShell({ art, children, id, intro, narrative, number, titl
         <p aria-hidden="true" className="font-black text-page-accent-strong text-sm tabular-nums">
           {String(number).padStart(2, '0')}
         </p>
-        <h2 className={cn('mt-1', REPORT_TYPE.title)} id={`${id}-title`}>
+        <h3 className={cn('mt-1', REPORT_TYPE.title)} id={`${id}-title`}>
           {title}
-        </h2>
+        </h3>
         <p className={cn('mt-2', REPORT_TYPE.deck)}>{intro}</p>
       </header>
       {art ? <div className="mt-5">{art}</div> : null}
@@ -170,10 +170,30 @@ export function FacetChips({ facets }: { facets: readonly DetailedFacet[] }) {
 
 /** A heading for a block inside a section — one step below the section title, one above a row. */
 export function BlockHeading({ children }: { children: ReactNode }) {
-  return <h3 className="font-black text-base text-page-ink">{children}</h3>
+  return <h4 className="font-black text-base text-page-ink">{children}</h4>
 }
 
 /** The quiet closing line several sections end on, set off by a rule so it reads as the end of the section. */
 export function ClosingNote({ children }: { children: ReactNode }) {
   return <p className={cn('mt-6 border-page-border border-t pt-4', REPORT_TYPE.meta)}>{children}</p>
+}
+
+/**
+ * A named line under a card's body, for the fields that have a role rather than a remark.
+ *
+ * The left rule alone was doing too much work. A strength card printed `shine` and `watch` as two identical
+ * grey quotes one under the other — where this helps you and where it costs you, drawn the same, in the order
+ * they happened to be authored — so which was the warning could only be inferred from how the sentence ended.
+ * `FacetCard` had already solved the same problem for its one actionable line by labelling it.
+ *
+ * The plain rule survives for genuine asides, where there is nothing to name: an opening paragraph's footnote,
+ * a path's caveat. Labelled means the field is a role; unlabelled means it is a remark on the line above.
+ */
+export function LabeledNote({ children, label }: { children: ReactNode; label: string }) {
+  return (
+    <div className="border-page-border border-l-2 pl-3">
+      <p className="font-black text-page-ink-muted text-xs tracking-wide">{label}</p>
+      <p className={cn('mt-0.5', REPORT_TYPE.meta)}>{children}</p>
+    </div>
+  )
 }

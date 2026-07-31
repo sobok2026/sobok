@@ -28,6 +28,7 @@ import {
   flowActionClassName,
 } from '../../_components/flow-panel'
 import { IntroView } from '../../_components/intro-view'
+import { PaidNotice } from '../../_components/paid-notice'
 import { RefinementQuizView } from '../../_components/refinement-quiz-view'
 import { postVerify } from '../../_lib/api'
 import {
@@ -40,7 +41,6 @@ import {
 } from '../../_lib/checkout-outcome'
 import { trackCheckoutReturn } from '../../_lib/checkout-return-analytics'
 import { clearPendingCheckout, type PendingCheckout, readPendingCheckout } from '../../_lib/pending-checkout'
-import { formatPrice } from '../../_lib/price'
 import { readSittingWorkAnswers } from '../../_lib/sitting'
 import type { DeepTypeContent } from '../../_lib/types'
 
@@ -263,7 +263,7 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
         body={content.paywall.refinementIntroBody}
         cta={content.paywall.refinementIntroCta}
         hint={content.paywall.refinementIntroHint}
-        notice={<PaidNotice copy={copy} locale={locale} pending={phase.pending} />}
+        notice={<PaidNotice content={content} locale={locale} payment={phase.pending} />}
         onNext={() => setPhase({ kind: 'refinement', pending: phase.pending })}
         title={content.paywall.refinementIntroTitle}
       />
@@ -362,42 +362,6 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
         paymentId={target?.paymentId ?? ''}
       />
     </FlowPanel>
-  )
-}
-
-/**
- * The confirmation the screen never gave. A buyer came back from the PG, watched a spinner, and was handed a
- * questionnaire — with no statement anywhere that the payment had gone through, what it cost, or where the
- * receipt was going.
- *
- * The e-mail is on it deliberately. A mistyped address is the one error that permanently costs someone the
- * report they paid for, and this is the last screen where anyone can still catch it.
- */
-function PaidNotice({
-  copy,
-  locale,
-  pending,
-}: {
-  copy: DeepTypeCheckoutReturnContent
-  locale: Locale
-  pending: PendingCheckout
-}) {
-  return (
-    <div className="mx-auto mb-9 flex max-w-md items-start gap-3 rounded-3xl border border-page-success/24 bg-page-success/8 p-4 text-left">
-      <CheckCircle aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-page-success" stroke={1.8} />
-      <div>
-        <p className="font-black text-sm">{copy.paid.title}</p>
-        <p className="mt-1 break-prose text-page-ink-soft text-sm leading-6">
-          {copy.paid.body.replace('{price}', formatPrice(locale, pending.currency, pending.amount))}
-        </p>
-        <p className="mt-1 break-prose text-page-ink-soft text-sm leading-6">
-          {copy.paid.emailNote.replace('{email}', pending.email)}
-        </p>
-        <p className="mt-2 break-all text-page-ink-muted text-xs leading-5">
-          {copy.orderReference.replace('{id}', pending.paymentId)}
-        </p>
-      </div>
-    </div>
   )
 }
 

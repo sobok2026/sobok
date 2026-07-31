@@ -12,6 +12,9 @@ export type ReportPollState =
       narrative: NarrativeSection[]
       /** The engine report is on screen and the narration is still being written. */
       narrativePending: boolean
+      /** The day access runs out, and the settlement date the document is dated by. Null together. */
+      accessExpiresAt: string | null
+      paidAt: string | null
       profile: AssessmentProfile
       sections: ReportSection[]
     }
@@ -53,8 +56,10 @@ export function useReportPolling(accessToken: string): ReportPollState {
         if (result.done) {
           delivered = true
           setState({
+            accessExpiresAt: result.accessExpiresAt,
             narrative: result.narrative,
             narrativePending: result.narrativePending,
+            paidAt: result.paidAt,
             phase: 'done',
             profile: result.profile,
             sections: result.sections,

@@ -37,13 +37,17 @@ export interface PurchaseRow {
 }
 
 // Report gate: resolve the bearer access_token to its purchase (FRESH — entitlement must never be stale).
+//
+// `paidAt` rides along because the report is dated by it. A document promising a year of access with no date
+// on it cannot be checked against that promise once it has been printed and filed, and the settlement date is
+// the one the year is counted from — so the report and the access note quote the same day.
 export async function getPurchaseByAccessToken(
   db: Db,
   accessToken: string,
-): Promise<{ id: number; status: PurchaseStatus } | null> {
+): Promise<{ id: number; paidAt: Date | null; status: PurchaseStatus } | null> {
   const now = new Date()
   const [row] = await db
-    .select({ id: purchaseTable.id, status: purchaseTable.status })
+    .select({ id: purchaseTable.id, paidAt: purchaseTable.paidAt, status: purchaseTable.status })
     .from(purchaseTable)
     .where(
       and(

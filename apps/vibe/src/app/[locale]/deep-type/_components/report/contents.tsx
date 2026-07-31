@@ -73,19 +73,31 @@ export function PartDivider({ content, part }: { content: DeepTypeContent; part:
 
   return (
     <div className="px-1 pt-3">
-      <PartLabel number={part.number} template={content.ui.reportPartLabel} title={copy.title} />
+      {/* A real heading, and the level the sections under it are nested below. The parts are how this document
+          is divided; a <p> made that division visible to sighted readers and to nobody else. */}
+      <PartLabel as="h2" number={part.number} template={content.ui.reportPartLabel} title={copy.title} />
       <p className={cn('mt-2 max-w-md', REPORT_TYPE.meta)}>{copy.body}</p>
     </div>
   )
 }
 
-function PartLabel({ number, template, title }: { number: number; template: string; title: string }) {
+function PartLabel({
+  as: Tag = 'p',
+  number,
+  template,
+  title,
+}: {
+  as?: 'h2' | 'p'
+  number: number
+  template: string
+  title: string
+}) {
   return (
-    <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+    <Tag className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
       <span className="rounded-full bg-page-accent/12 px-2.5 py-0.5 font-black text-page-accent-strong text-xs">
         {template.replace('{number}', String(number))}
       </span>
       <span className="font-black text-lg text-page-ink">{title}</span>
-    </p>
+    </Tag>
   )
 }

@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { GA4_MEASUREMENT_ID } from '@/constants'
 
 import { postCheckout, postSession, postVerify, type SessionInput } from '../_lib/api'
-import { clearPendingCheckout, storePendingCheckout } from '../_lib/pending-checkout'
+import { clearPendingCheckout, type SettledPayment, storePendingCheckout } from '../_lib/pending-checkout'
 import type { DeepTypePaywallContent } from '../_lib/types'
 import { classifyApiError, type VerificationErrorKind } from '../_lib/verification-error'
 
@@ -18,15 +18,14 @@ import { classifyApiError, type VerificationErrorKind } from '../_lib/verificati
 export type CheckoutStatus = 'idle' | 'processing' | 'paypal' | 'error'
 export type FreeResult = SessionInput
 
-/** A `/checkout`-approved PayPal payment, holding exactly what `loadPaymentUI` and the finish leg need. */
-export type PaypalSession = { accessToken: string; paymentId: string; request: LoadPaymentUIRequest }
-
 /**
- * A settled payment. `paymentId` travels with the token because the report screen prints it as the order
- * number — a buyer writing to support has otherwise nothing to quote, and the id is already the one identifier
- * both PortOne and our own rows are keyed by.
+ * A `/checkout`-approved PayPal payment, holding exactly what `loadPaymentUI` and the finish leg need.
+ *
+ * `payment` carries the whole settled shape rather than the token and id alone: the finish leg hands it
+ * straight on to the screens that confirm the purchase, and reading the amount back out of the SDK request
+ * would be reading our own figures out of a third party's object.
  */
-export type SettledPayment = { accessToken: string; paymentId: string }
+export type PaypalSession = { payment: SettledPayment; request: LoadPaymentUIRequest }
 
 type PaywallErrorKey = 'errorGeneric' | 'errorUnavailable' | 'errorVerificationExpired' | 'errorVerificationFailed'
 
@@ -92,23 +91,23 @@ export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallCont
         turnstileToken,
       })
 
-      // The server-approved figures, not the offer table's: what the return screen confirms has to be what
-      // was actually charged, and only `/checkout`'s answer knows that.
-      storePendingCheckout({
+      // The server-approved figures, not the offer table's: what the confirmation screens print has to be
+      // what was actually charged, and only `/checkout`'s answer knows that.
+      const payment: SettledPayment = {
         accessToken: checkout.accessToken,
         amount: checkout.amount,
-        createdAt: Date.now(),
         currency: checkout.currency,
         email,
         paymentId: checkout.paymentId,
-      })
+      }
+
+      storePendingCheckout({ ...payment, createdAt: Date.now() })
 
       const spec = PAY_METHOD_SPEC[payMethod]
 
       if (spec.open === 'ui') {
         setPaypal({
-          accessToken: checkout.accessToken,
-          paymentId: checkout.paymentId,
+          payment,
           request: {
             channelKey: checkout.channelKey,
             currency: checkout.currency,
@@ -147,7 +146,7 @@ export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallCont
         return null
       }
 
-      return await verifyAndFinish(checkout.paymentId, checkout.accessToken)
+      return await verifyAndFinish(payment)
     } catch (error) {
       // A Turnstile refusal is the one failure the buyer can act on, and the paywall resets the widget right
       // after this returns — so saying "expired, confirm once more" is advice that actually completes a sale.
@@ -164,7 +163,7 @@ export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallCont
     }
 
     try {
-      const settled = await verifyAndFinish(paypal.paymentId, paypal.accessToken)
+      const settled = await verifyAndFinish(paypal.payment)
       if (settled) {
         setPaypal(null)
       }
@@ -192,8 +191,8 @@ export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallCont
     setErrorMessage('')
   }
 
-  async function verifyAndFinish(paymentId: string, accessToken: string): Promise<SettledPayment | null> {
-    const verified = await postVerify(paymentId)
+  async function verifyAndFinish(payment: SettledPayment): Promise<SettledPayment | null> {
+    const verified = await postVerify(payment.paymentId)
 
     if (verified.status !== 'paid') {
       setStatus('error')
@@ -202,7 +201,7 @@ export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallCont
 
     clearPendingCheckout()
     setStatus('idle')
-    return { accessToken, paymentId }
+    return payment
   }
 
   return { cancelPaypal, errorMessage, failPaypal, finishPaypal, paypal, start, status }

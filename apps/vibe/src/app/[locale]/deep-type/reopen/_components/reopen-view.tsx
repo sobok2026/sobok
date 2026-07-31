@@ -322,22 +322,21 @@ function ReopenedReport({
     )
   }
 
-  const accessDate = new Intl.DateTimeFormat(locale, { dateStyle: 'long' }).format(new Date(access.accessExpiresAt))
-
+  // No strip over the document. The expiry used to be announced twice on this route and nowhere on the other
+  // two — once in a band above the report and once inside it — so it says it where every route says it, in the
+  // order record at the foot, and this screen adds the order number the others already had.
   return (
-    <div className="flex flex-1 flex-col">
-      <p className="bg-page-soft px-safe py-3 text-center text-page-ink-muted text-xs">
-        {copy.accessUntil.replace('{date}', accessDate)}
-      </p>
-      <ReportView
-        content={content}
-        locale={locale}
-        narrativePending={report.narrativePending}
-        narrativeSections={report.narrative}
-        onRestart={() => window.location.assign(`/${locale}/deep-type`)}
-        profile={report.profile}
-        sections={report.sections}
-      />
-    </div>
+    <ReportView
+      accessExpiresAt={report.accessExpiresAt ?? access.accessExpiresAt}
+      content={content}
+      locale={locale}
+      narrativePending={report.narrativePending}
+      narrativeSections={report.narrative}
+      onRestart={() => window.location.assign(`/${locale}/deep-type`)}
+      orderId={access.paymentId}
+      paidAt={report.paidAt}
+      profile={report.profile}
+      sections={report.sections}
+    />
   )
 }

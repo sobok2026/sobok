@@ -13,7 +13,6 @@ export type DeepTypeCheckoutReturnContent = {
   eyebrow: string
   metadata: { description: string; title: string }
   orderReference: string
-  paid: { body: string; emailNote: string; title: string }
   paidElsewhere: { body: string; title: string }
   /** Frames the PG's own wording so it is never mistaken for ours. */
   pgMessage: string
@@ -28,11 +27,6 @@ export const DEEP_TYPE_CHECKOUT_RETURN = {
       title: '결제를 확인하고 있어요',
       body: '이 화면을 열어 두면 확인이 끝나는 대로 심화 문항으로 이어져요.',
       hint: '결제사 응답이 조금 늦어지고 있어요. 조금만 더 기다려 주세요.',
-    },
-    paid: {
-      title: '결제가 끝났어요',
-      body: '{price} 결제를 확인했어요. 완성된 리포트는 1년 동안 다시 열 수 있어요.',
-      emailNote: '영수증과 재열람 링크는 {email}로 보내요.',
     },
     paidElsewhere: {
       title: '결제는 확인됐어요',
@@ -90,11 +84,6 @@ export const DEEP_TYPE_CHECKOUT_RETURN = {
       body: 'Keep this window open. The follow-up questions start as soon as the payment is confirmed.',
       hint: 'The payment provider is taking a little longer than usual. Hang on a moment.',
     },
-    paid: {
-      title: 'Payment complete',
-      body: 'We confirmed your {price} payment. The finished report stays open to you for one year.',
-      emailNote: 'The receipt and your re-open link go to {email}.',
-    },
     paidElsewhere: {
       title: 'Your payment is confirmed',
       body: 'This browser no longer holds what it needs to continue. Request a link with your purchase email to open the report.',
@@ -148,11 +137,6 @@ export const DEEP_TYPE_CHECKOUT_RETURN = {
       body: 'この画面を閉じずにお待ちください。確認が済み次第、追加の質問へ進みます。',
       hint: '決済会社の応答が少し遅れています。もう少しお待ちください。',
     },
-    paid: {
-      title: '決済が完了しました',
-      body: '{price}のお支払いを確認しました。完成した鑑定書は1年間いつでも開けます。',
-      emailNote: '領収書と再閲覧リンクは{email}へお送りします。',
-    },
     paidElsewhere: {
       title: '決済は確認できました',
       body: 'このブラウザには続きに必要な情報が残っていません。購入時のメールで閲覧リンクを受け取ってお開きください。',
@@ -205,11 +189,6 @@ export const DEEP_TYPE_CHECKOUT_RETURN = {
       title: '正在确认付款',
       body: '请不要关闭此页面。确认完成后会立即进入进阶问题。',
       hint: '支付机构响应稍慢，请再稍等片刻。',
-    },
-    paid: {
-      title: '付款已完成',
-      body: '已确认{price}的付款。完成的报告可在一年内随时重新打开。',
-      emailNote: '收据与重新查看链接将发送至{email}。',
     },
     paidElsewhere: {
       title: '付款已确认',

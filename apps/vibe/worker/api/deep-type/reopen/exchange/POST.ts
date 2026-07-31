@@ -30,6 +30,7 @@ route.post('/', async (c) => {
     accessToken: reopened.accessToken,
     accessExpiresAt: reopened.accessExpiresAt.toISOString(),
     locale: reopened.locale,
+    paymentId: reopened.paymentId,
     refinementRequired: reopened.refinementRequired,
     status: 'ok',
   })

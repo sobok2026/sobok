@@ -12,7 +12,7 @@ import { GROUPED_LIST_CLASS_NAME, GROUPED_ROW_CLASS_NAME, REPORT_TYPE } from '..
 import type { DeepTypeContent } from '../../_lib/types'
 import { AbilityArtwork } from '../ability-artwork'
 import { BandLadder, DrainStrands } from './art'
-import { BlockHeading, ClosingNote, FacetList, Field, FieldList, Kicker } from './primitives'
+import { BlockHeading, ClosingNote, FacetList, Field, FieldList, Kicker, LabeledNote } from './primitives'
 
 // The six sections a reader reads to find out where they stand. Each one draws its own shape from its own
 // data — the composed opening as kicker paragraphs, the strength cards as cards with their art, the drain
@@ -123,7 +123,7 @@ function WorldJobHalf({
  * nobody asked at that point in the document — the axis it belongs to is not named anywhere near it — and the
  * band movement list below prints every axis with both its name and its letter.
  */
-export function StrengthCardsSection({ data }: { data: StrengthCardsData }) {
+export function StrengthCardsSection({ content, data }: { content: DeepTypeContent; data: StrengthCardsData }) {
   return (
     <>
       {data.emptyNote ? <p className={REPORT_TYPE.body}>{data.emptyNote}</p> : null}
@@ -142,8 +142,10 @@ export function StrengthCardsSection({ data }: { data: StrengthCardsData }) {
                   <div className="min-w-0 flex-1 p-4 sm:py-4 sm:pr-4 sm:pl-0">
                     <p className="font-black text-base text-page-ink leading-6">{card.copy.name}</p>
                     <p className={cn('mt-2', REPORT_TYPE.copy)}>{card.copy.core}</p>
-                    <p className={cn('mt-3 border-page-border border-l-2 pl-3', REPORT_TYPE.meta)}>{card.copy.shine}</p>
-                    <p className={cn('mt-2 border-page-border border-l-2 pl-3', REPORT_TYPE.meta)}>{card.copy.watch}</p>
+                    <div className="mt-3 grid gap-2">
+                      <LabeledNote label={content.ui.reportCardShineLabel}>{card.copy.shine}</LabeledNote>
+                      <LabeledNote label={content.ui.reportCardWatchLabel}>{card.copy.watch}</LabeledNote>
+                    </div>
                   </div>
                 </li>
               ))}

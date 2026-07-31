@@ -5,6 +5,7 @@ import { getDeliverableReport, getNarrativeStatus, getReportStatus } from '~/db/
 import { getResultForReport } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
+import { yearsAfter } from '~/lib/retention'
 import { reportDelivery } from '~/report/pipeline'
 
 const route = new Hono<AppEnv>()
@@ -45,6 +46,7 @@ route.get('/', async (c) => {
       const narrative = await getNarrativeStatus(db, purchase.id)
       return {
         delivery: reportDelivery(narrative?.status ?? 'pending'),
+        paidAt: purchase.paidAt,
         profile: result.profile,
         purchaseId: purchase.id,
       }
@@ -87,6 +89,15 @@ route.get('/', async (c) => {
     // The same condition, negated: while the report can still grow, the client keeps polling and the refund
     // CTA keeps working.
     narrativePending: !gate.delivery.stamp,
+    // The two dates the document carries: the day it was paid for, which dates it, and the day access to it
+    // runs out. The expiry is computed here and not in the browser — `yearsAfter` is the one definition of
+    // the year this product promises, and a second copy of that arithmetic on the client is a promise that
+    // can disagree with the row the re-open link is checked against.
+    //
+    // Both are null only on a paid row carrying no settlement timestamp, which nothing writes today; the
+    // screen prints no date rather than inventing one.
+    accessExpiresAt: gate.paidAt ? yearsAfter(gate.paidAt, 1).toISOString() : null,
+    paidAt: gate.paidAt?.toISOString() ?? null,
     profile: gate.profile,
     sections: stored.sections,
     status: 'done',

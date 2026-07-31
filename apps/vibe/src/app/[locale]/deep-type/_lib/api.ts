@@ -176,6 +176,7 @@ export type ReopenExchangeResponse = {
   accessExpiresAt: string
   accessToken: string
   locale: Locale
+  paymentId: string
   refinementRequired: boolean
 }
 
@@ -196,8 +197,12 @@ export function postReopenExchange(token: string): Promise<ReopenExchangeRespons
 // LLM pass has not finished; while it is true the server has NOT stamped delivery, so the withdrawal right is
 // still open and the caller should keep polling.
 export type ReportDelivery = {
+  /** ISO date this report stops being re-openable. Computed server-side so one definition of the year exists. */
+  accessExpiresAt: string | null
   narrative: NarrativeSection[]
   narrativePending: boolean
+  /** ISO settlement date, or null on a paid row that carries no timestamp. The document's own date. */
+  paidAt: string | null
   profile: AssessmentProfile
   sections: ReportSection[]
 }
@@ -217,9 +222,11 @@ export async function getReport(accessToken: string, signal?: AbortSignal): Prom
   const data = (await response.json()) as ReportDelivery
 
   return {
+    accessExpiresAt: data.accessExpiresAt ?? null,
     done: true,
     narrative: data.narrative ?? [],
     narrativePending: data.narrativePending,
+    paidAt: data.paidAt ?? null,
     profile: data.profile,
     sections: data.sections,
   }

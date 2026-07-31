@@ -43,14 +43,17 @@ export const deepTypeContent = createDeepTypeContent({
       '네 글자 옆에 붙은 선명도와 지치는 신호까지 같이 읽으면 어떤 자리에서 힘이 오래 가는지 보여요.',
     methodologyNoteTitle: '이 결과를 제대로 쓰는 법',
     reopenCta: '구매한 리포트 다시 열기',
-    reportAccessBody:
-      '이 리포트는 결제할 때 입력한 이메일로 1년 동안 다시 열 수 있어요. 링크를 저장해 두지 않아도 괜찮아요.',
-    reportAccessTitle: '나중에 다시 열려면',
     reportBackToTop: '맨 위로',
+    reportCardShineLabel: '이럴 때 잘 쓰여요',
+    reportCardWatchLabel: '이건 조심해요',
     // R4 and R5 of MIGRATION §5.4. R5 names the two moves this product may not push; the career gate reads the
     // negation that follows and lets the sentence stand.
     reportDisclaimer:
       '겉속유형은 자기 이해를 돕는 엔터테인먼트 콘텐츠예요. 심리 진단이나 의료 서비스가 아니고 전문 상담을 대신하지 않아요. 결과는 지금의 답에서 가장 가까운 역할을 보여줘요. 이직이나 퇴사를 권하는 조언이 아니에요.',
+    reportIssuedTemplate: '{date} 발행',
+    reportPaidBody: '{price} 결제를 확인했어요. 완성된 리포트는 1년 동안 다시 열 수 있어요.',
+    reportPaidEmailNote: '영수증과 재열람 링크는 {email}로 보내요.',
+    reportPaidTitle: '결제가 끝났어요',
     reportFacetActionLabel: '해 볼 수 있는 선택',
     reportPartLabel: '{number}부',
     reportParts: {
@@ -68,10 +71,10 @@ export const deepTypeContent = createDeepTypeContent({
       },
     },
     reportPrintCta: '인쇄하거나 PDF로 저장',
-    reportReceiptBody: '심화 문항 답까지 넣어 리포트를 만들었어요. 아래로 내려가면 바로 읽을 수 있어요.',
-    reportReceiptOrderLabel: '주문번호',
-    reportReceiptSupportCta: '문의하기',
-    reportReceiptTitle: '결제가 끝났어요',
+    reportRecordAccess: '{date}까지 구매에 쓴 이메일로 다시 열 수 있어요. 링크를 저장해 두지 않아도 괜찮아요.',
+    reportRecordOrderLabel: '주문번호',
+    reportRecordSupportCta: '문의하기',
+    reportRecordTitle: '주문과 열람',
     reportRestartCta: '처음부터 다시 풀기',
     reportShareCopied: '결과 문구를 복사했어요.',
     reportShareCta: '내 세계관 직업 공유',
