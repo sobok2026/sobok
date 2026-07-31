@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   poweredByHeader: false,
   reactCompiler: true,
+  transpilePackages: ['@sobok/typography'],
 
   // Overridable so a second `next dev` (e.g. another agent session) can run
   // against the same app dir without tripping Next 16's single-instance lock.

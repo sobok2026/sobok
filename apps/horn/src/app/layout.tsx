@@ -1,5 +1,6 @@
 import './globals.css'
 
+import FontStylesheets from '@sobok/typography/stylesheets'
 import type { Metadata, Viewport } from 'next'
 import { KO } from '@/content/ko'
 
@@ -32,6 +33,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
+      <FontStylesheets locale="ko" />
       <body className="antialiased">{children}</body>
     </html>
   )

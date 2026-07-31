@@ -2,6 +2,7 @@ import '../globals.css'
 
 import GTMLoader from '@sobok/analytics/gtm-loader'
 import { LOCALE_LANGUAGE_TAGS, LOCALES } from '@sobok/domain/locale'
+import FontStylesheets from '@sobok/typography/stylesheets'
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 import { NextIntlClientProvider } from 'next-intl'
@@ -51,20 +52,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
 
   return (
     <html lang={LOCALE_LANGUAGE_TAGS[locale]}>
-      {/* Korean (Hangul) — base Pretendard dynamic subset. */}
-      <link
-        href="/fonts/pretendard/1.3.9/variable/pretendardvariable-dynamic-subset.css"
-        precedence="font"
-        rel="stylesheet"
-      />
-      {/* Japanese (kana + JIS kanji) — Pretendard JP dynamic subset. */}
-      <link
-        href="/fonts/pretendard-jp/1.3.9/variable/pretendardvariable-jp-dynamic-subset.css"
-        precedence="font"
-        rel="stylesheet"
-      />
-      {/* Simplified Chinese — Noto Sans SC (Pretendard has no SC hanzi). */}
-      <link href="/fonts/noto-sans-sc/5.3.0/wght.css" precedence="font" rel="stylesheet" />
+      <FontStylesheets locale={locale} />
       <body className="antialiased">
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>

@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
   // belong here yet. If any of it ever enters the Next graph — the board-bake prerender path already reaches
   // into worker/db/schema, so moving worker/db/columns.ts into the package would do it — this list must gain
   // '@sobok/edge' or `next build` fails on raw .ts inside node_modules.
-  transpilePackages: ['@sobok/analytics', '@sobok/domain'],
+  transpilePackages: ['@sobok/analytics', '@sobok/domain', '@sobok/typography'],
 
   // Overridable so a second `next dev` (e.g. another agent session) can run
   // against the same app dir without tripping Next 16's single-instance lock.

@@ -104,6 +104,7 @@ const nextConfig: NextConfig = {
     '@sobok/http',
     '@sobok/observability',
     '@sobok/std',
+    '@sobok/typography',
     '@sobok/ui',
   ],
   ...(isProduction && {
