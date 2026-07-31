@@ -1,3 +1,4 @@
+import { SOBOK_X_HANDLE } from '@sobok/brand/identity'
 import {
   DEFAULT_LOCALE,
   LOCALE_HREFLANG_TAGS,
@@ -75,7 +76,7 @@ export function buildMetadata({
       description,
       images,
       card: 'summary_large_image',
-      site: '@sobok_cc',
+      site: SOBOK_X_HANDLE,
     },
   }
 }

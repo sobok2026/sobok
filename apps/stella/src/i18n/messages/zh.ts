@@ -1,4 +1,4 @@
-import type { Messages } from './types'
+import type { Messages } from '@sobok/site-i18n/messages'
 
 export const zh = {
   Constellation: {

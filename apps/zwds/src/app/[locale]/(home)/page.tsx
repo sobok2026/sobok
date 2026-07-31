@@ -1,10 +1,11 @@
+import { SOBOK_X_HANDLE } from '@sobok/brand/identity'
 import { LOCALE_OPEN_GRAPH_TAGS, LOCALES } from '@sobok/domain/locale'
+import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import FaqSection from '@/components/FaqSection'
 import { SITE_NAME } from '@/constants'
 import { FAQ } from '@/content/faq'
-import { getLocale } from '@/i18n/server'
 import JsonLd, { faqPageGraph, webApplicationGraph } from '@/lib/JsonLd'
 import ZwdsHome from './ZwdsHome'
 
@@ -51,7 +52,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
       description,
       images,
       card: 'summary_large_image',
-      site: '@sobok_cc',
+      site: SOBOK_X_HANDLE,
     },
   }
 }

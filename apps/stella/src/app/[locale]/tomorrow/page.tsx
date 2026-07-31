@@ -1,6 +1,6 @@
+import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
-import { getLocale } from '@/i18n/server'
 import { buildMetadata } from '@/lib/metadata'
 import TomorrowFlow from './TomorrowFlow'
 

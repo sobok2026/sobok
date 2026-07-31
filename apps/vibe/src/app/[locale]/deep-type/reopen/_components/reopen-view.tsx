@@ -2,10 +2,11 @@
 
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { DangerTriangle, Lock, MailOpen } from '@mynaui/icons-react'
+import { LEGAL_CONTACT_EMAIL } from '@sobok/brand/identity'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { type FormEvent, useEffect, useRef, useState } from 'react'
-import { LEGAL_CONTACT_EMAIL, TURNSTILE_SITE_KEY } from '@/constants'
+import { TURNSTILE_SITE_KEY } from '@/constants'
 import type { DeepTypeReopenContent } from '@/content/deep-type-reopen'
 import { cn } from '@/utils/cn'
 import { DEEPTYPE_REOPEN_ACTION } from '../../../../../../worker/api/deep-type/actions'

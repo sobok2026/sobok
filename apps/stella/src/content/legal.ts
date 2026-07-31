@@ -1,9 +1,5 @@
 import type { Locale } from '@sobok/domain/locale'
 
-// Contact shown on the legal pages. Keep this a mailbox that is actually
-// monitored (or swap it) — AdSense reviewers and users may write to it.
-export const LEGAL_CONTACT_EMAIL = 'sobok2026@gmail.com'
-
 export type LegalSection = {
   heading: string
   body: string[]

@@ -1,10 +1,10 @@
 'use client'
 
+import { ADSENSE_ACCOUNT } from '@sobok/brand/identity'
 import { usePathname } from 'next/navigation'
 import Script from 'next/script'
 import { useEffect, useState } from 'react'
-
-import { ADSENSE_ACCOUNT, ORIGIN } from '@/constants'
+import { ORIGIN } from '@/constants'
 
 const PRODUCTION_HOSTNAME = new URL(ORIGIN).hostname
 

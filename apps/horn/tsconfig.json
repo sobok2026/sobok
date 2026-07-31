@@ -1,16 +1,9 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@sobok/next-config/tsconfig.static-site.json",
   "compilerOptions": {
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "resolveJsonModule": true,
-    "types": ["node", "react", "react-dom"]
+    }
   },
   "include": ["next-env.d.ts", "*.ts", "src/**/*.ts", "src/**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules", ".next", "out"]

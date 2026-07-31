@@ -1,10 +1,10 @@
+import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import Footer from '@/components/Footer'
 import { SITE_NAME } from '@/constants'
 import { buildLocalizedMetadata } from '@/i18n/metadata'
-import { getLocale } from '@/i18n/server'
 import { FOCUS_CLASS_NAME } from '../../components/focus'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {

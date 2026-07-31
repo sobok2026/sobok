@@ -14,10 +14,6 @@ const PRICE_EN = `USD ${majorUnits('USD', DEEP_TYPE_REPORT_OFFER.en.amount).toFi
 const PRICE_JA = `${DEEP_TYPE_REPORT_OFFER.ja.amount.toLocaleString('ja-JP')}円`
 const PRICE_ZH = `${majorUnits('USD', DEEP_TYPE_REPORT_OFFER.zh.amount).toFixed(2)}美元`
 
-// Contact shown on the legal pages. Keep this a mailbox that is actually
-// monitored (or swap it) — AdSense reviewers and users may write to it.
-export const LEGAL_CONTACT_EMAIL = 'sobok2026@gmail.com'
-
 export type LegalSection = {
   id?: string
   heading: string

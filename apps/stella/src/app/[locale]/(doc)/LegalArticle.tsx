@@ -1,4 +1,5 @@
-import { LEGAL_CONTACT_EMAIL, type LegalContent, type LegalDoc } from '@/content/legal'
+import { LEGAL_CONTACT_EMAIL } from '@sobok/brand/identity'
+import type { LegalContent, LegalDoc } from '@/content/legal'
 import Paragraph from './Paragraph'
 
 type Props = {

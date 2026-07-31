@@ -1,6 +1,5 @@
+import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
-
-import { getLocale } from '@/i18n/server'
 
 import CardReportPrototype from './CardReportPrototype'
 import { CARD_REPORT_CONTENT } from './content'

@@ -1,7 +1,6 @@
+import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
-
 import { LEGAL } from '@/content/legal'
-import { getLocale } from '@/i18n/server'
 import { buildMetadata } from '@/lib/metadata'
 import LegalArticle from '../LegalArticle'
 
