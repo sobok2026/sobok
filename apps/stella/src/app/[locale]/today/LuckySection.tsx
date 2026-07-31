@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ELEMENT_COLORS } from '@/chart/data'
 import type { ElementId } from '@/chart/types'
 import cardStyles from '@/components/card.module.css'
+import type { DailyNamespace } from './daily'
 import { buildFoodMapLink } from './food-map'
 import type { LuckyRecommendations } from './recommendations/types'
 import type { SkyToday } from './sky'
@@ -16,18 +17,16 @@ const LUCKY_GLYPHS: Record<ElementId, string> = {
   water: '≈',
 }
 
-/** The two daily surfaces sharing this section — each brings its own copy under the same keys. */
-export type LuckyNamespace = 'Today' | 'Tomorrow'
-
 /** Exhaustive by construction — a new surface fails to compile until it names its analytics slice. */
-const CONTENT_TYPES: Record<LuckyNamespace, string> = {
+const CONTENT_TYPES: Record<DailyNamespace, string> = {
   Today: 'today_lucky',
   Tomorrow: 'tomorrow_lucky',
 }
 
 type LuckySectionProps = {
   lucky: LuckyRecommendations
-  namespace: LuckyNamespace
+  /** The two daily surfaces share this section — each brings its own copy under the same keys. */
+  namespace: DailyNamespace
   sky: SkyToday
 }
 

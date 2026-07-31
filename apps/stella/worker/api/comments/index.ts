@@ -5,7 +5,6 @@ import { sha256Hex } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import {
-  type Cursor,
   checkRateLimit,
   createComment,
   deleteComment,
@@ -16,6 +15,7 @@ import {
 } from '~/db/queries/comment'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
+import { decodeCursor, encodeCursor } from '~/lib/cursor'
 import { hashIp } from '~/lib/ip'
 import { MAX_BODY, sanitizeBody, sanitizeNickname } from '~/lib/text'
 import { newEditToken, newPublicId } from '~/lib/tokens'
@@ -81,27 +81,6 @@ async function withinLimits(
     }
   }
   return true
-}
-
-function encodeCursor(cursor: Cursor): string {
-  return btoa(`${cursor.createdAt.getTime()}.${cursor.id}`).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-}
-
-function decodeCursor(raw: string | undefined): Cursor | null {
-  if (!raw) {
-    return null
-  }
-  try {
-    const [ms, id] = atob(raw.replace(/-/g, '+').replace(/_/g, '/')).split('.')
-    const createdAt = new Date(Number(ms))
-    const numId = Number(id)
-    if (Number.isNaN(createdAt.getTime()) || !Number.isSafeInteger(numId)) {
-      return null
-    }
-    return { createdAt, id: numId }
-  } catch {
-    return null
-  }
 }
 
 export const comments = new Hono<AppEnv>()

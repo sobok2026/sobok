@@ -3,34 +3,20 @@ import { useTranslations } from 'next-intl'
 
 import { elementOfSign } from '@/chart/astrology'
 import { ELEMENT_COLORS, PLANET_GLYPHS } from '@/chart/data'
-import type { UnknownBirthTimeAnalysis } from '@/chart/ephemeris'
-import type { NatalChart } from '@/chart/types'
 import AstroGlyph from '@/components/AstroGlyph'
 import cardStyles from '@/components/card.module.css'
 import Reading from '@/components/Reading'
 import { SignFigure } from '@/components/SignFigure'
 import { aspectTone } from '@/content/interpretations/types'
-import type { StoredBirth } from '@/lib/birth-storage'
 
 import { seededPick } from './daily'
 import LuckySection from './LuckySection'
 import MoonPhase from './MoonPhase'
-import type { StationPlanetId, TodayReadings } from './readings/types'
-import type { LuckyRecommendations } from './recommendations/types'
-import type { SkyToday } from './sky'
-import type { PersonalToday } from './transits'
+import type { StationPlanetId } from './readings/types'
+import type { DailyReading } from './useDailyReading'
 
-/** Everything the page resolves asynchronously before the reading can render at once. */
-export type TodayData = {
-  dateKey: string
-  utcOffsetMinutes: number
-  birth: StoredBirth | null
-  sky: SkyToday
-  readings: TodayReadings
-  natal: NatalChart | null
-  unknownTime: UnknownBirthTimeAnalysis | null
-  personal: PersonalToday | null
-  lucky: LuckyRecommendations
+/** The shared daily reading plus the one thing only /today shows. */
+export type TodayData = DailyReading & {
   /** Tomorrow's lucky food name for the preview teaser — null on shared views, which pin a past day. */
   tomorrowFood: string | null
 }
