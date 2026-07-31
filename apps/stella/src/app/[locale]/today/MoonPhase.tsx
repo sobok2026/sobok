@@ -1,3 +1,5 @@
+import { norm360 } from '@/chart/astrology'
+
 const R = 42
 const C = 50
 
@@ -7,7 +9,7 @@ const C = 50
  * the northern-hemisphere evening sky.
  */
 function litPath(phaseAngle: number): string | null {
-  const angle = ((phaseAngle % 360) + 360) % 360
+  const angle = norm360(phaseAngle)
 
   if (angle < 1 || angle > 359) {
     return null // new moon — nothing lit

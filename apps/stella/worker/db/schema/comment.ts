@@ -1,10 +1,11 @@
-import { createdAt, timestamps } from '@sobok/edge/db/columns'
+import { COMMENT_REPORT_REASONS } from '@sobok/domain/comment/policy'
+import { createdAt, identityId, publicId, timestamps } from '@sobok/edge/db/columns'
 import { sql } from 'drizzle-orm'
 import { bigint, boolean, index, integer, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
 import { localeEnum, stella } from './common'
 
 export const commentStatusEnum = stella.enum('comment_status', ['visible', 'hidden', 'removed'])
-export const reportReasonEnum = stella.enum('report_reason', ['spam', 'abuse', 'sexual', 'privacy', 'other'])
+export const reportReasonEnum = stella.enum('report_reason', COMMENT_REPORT_REASONS)
 
 // One board per (locale, topicKey). topicKey is the persistent public identifier minted by the client's
 // versioned topicKey() (e.g. 'planet-sun-aries', 'aspect-sun-moon-trine') — an opaque string to the server,
@@ -12,7 +13,7 @@ export const reportReasonEnum = stella.enum('report_reason', ['spam', 'abuse', '
 export const commentThreadTable = stella.table(
   'comment_thread',
   {
-    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
+    id: identityId,
     locale: localeEnum().notNull(),
     topicKey: varchar('topic_key', { length: 48 }).notNull(),
     // Visible-comment count, maintained transactionally on create/remove/auto-hide.
@@ -28,10 +29,10 @@ export const commentThreadTable = stella.table(
 export const commentTable = stella.table(
   'comment',
   {
-    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
+    id: identityId,
     // Client-facing opaque ref (random, 12 chars). The sequential id is NEVER exposed — prevents enumeration
     // / id-walking to brigade or scrape the board.
-    publicId: varchar('public_id', { length: 24 }).notNull().unique(),
+    publicId,
     threadId: bigint('thread_id', { mode: 'number' })
       .notNull()
       .references(() => commentThreadTable.id, { onDelete: 'restrict' }),
@@ -59,7 +60,7 @@ export const commentTable = stella.table(
 export const commentReportTable = stella.table(
   'comment_report',
   {
-    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
+    id: identityId,
     commentId: bigint('comment_id', { mode: 'number' })
       .notNull()
       .references(() => commentTable.id, { onDelete: 'cascade' }),

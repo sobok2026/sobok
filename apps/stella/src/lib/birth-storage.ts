@@ -23,12 +23,12 @@ export type StoredBirth = {
 }
 
 /** A loaded birth plus whether it came from persistent (localStorage) storage. */
-export type LoadedBirth = {
+type LoadedBirth = {
   birth: StoredBirth
   persistent: boolean
 }
 
-function isCalendarDate(value: string): boolean {
+export function isCalendarDate(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return false
   }

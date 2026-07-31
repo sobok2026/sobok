@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 
+import { PLANET_GLYPHS } from '@/chart/data'
 import type { SignId } from '@/chart/types'
 import { SignFigure } from '@/components/SignFigure'
 
@@ -16,8 +17,8 @@ export function CoreSignatureArt({ moonSigns, risingSign, sunSign }: CoreSignatu
   const t = useTranslations('Constellation')
 
   const items = [
-    { glyph: '☉', id: 'sun', label: t('big3.sunLabel'), signs: [sunSign] },
-    { glyph: '☾', id: 'moon', label: t('big3.moonLabel'), signs: moonSigns },
+    { glyph: PLANET_GLYPHS.sun, id: 'sun', label: t('big3.sunLabel'), signs: [sunSign] },
+    { glyph: PLANET_GLYPHS.moon, id: 'moon', label: t('big3.moonLabel'), signs: moonSigns },
     { glyph: 'Asc', id: 'rising', label: t('big3.risingLabel'), signs: risingSign ? [risingSign] : [] },
   ] as const
 

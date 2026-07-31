@@ -2,6 +2,7 @@
 // distribution around the wheel. A single catchy characterization of the whole
 // chart. Heuristic by construction — the boundaries between shapes are soft.
 
+import { norm360 } from './astrology'
 import { PLANET_ORDER } from './data'
 import type { ChartShape, ChartShapeId, ComputedPlanetId, PlanetPosition } from './types'
 
@@ -10,7 +11,7 @@ type Body = { id: ComputedPlanetId; lon: number }
 export function findShape(planets: readonly PlanetPosition[]): ChartShape {
   const bodies: Body[] = PLANET_ORDER.map((id) => {
     const p = planets.find((q) => q.id === id)
-    return p ? { id, lon: ((p.lon % 360) + 360) % 360 } : null
+    return p ? { id, lon: norm360(p.lon) } : null
   })
     .filter((b): b is Body => b !== null)
     .sort((a, b) => a.lon - b.lon)

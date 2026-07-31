@@ -2,16 +2,16 @@
 // angles, rulership/dignity, stelliums and a weighting that ranks the chart's
 // loudest features. Pure math and tables — copy lives in `messages.ts`.
 
-import { angularGap, signOfLon } from './astrology'
+import { angularGap, ORBS, signOfLon } from './astrology'
 import { PLANET_ORDER, SIGNS } from './data'
 import type { ChartAspect, NatalChart, PlanetId, PlanetPosition, SignId } from './types'
 
-export type AngleId = 'ascendant' | 'midheaven'
+export type SignatureAngleId = 'ascendant' | 'midheaven'
 
 /** A body sitting on the Ascendant or Midheaven — the classic "angular planet" emphasis. */
 export type AngleConjunction = {
   planet: PlanetId
-  angle: AngleId
+  angle: SignatureAngleId
   orb: number
 }
 
@@ -27,7 +27,7 @@ export type Stellium = {
 
 /** One ranked highlight of the chart, ordered by `score` (higher = louder). */
 export type SignatureFeature =
-  | { kind: 'angle'; planet: PlanetId; angle: AngleId; orb: number; score: number }
+  | { kind: 'angle'; planet: PlanetId; angle: SignatureAngleId; orb: number; score: number }
   | { kind: 'aspect'; aspect: ChartAspect; score: number }
   | { kind: 'dignity'; planet: PlanetId; sign: SignId; dignity: StrongDignity; isChartRuler: boolean; score: number }
   | { kind: 'stellium'; stellium: Stellium; score: number }
@@ -110,11 +110,8 @@ export function dignityOf(planet: PlanetId, sign: SignId): Dignity | null {
   return null
 }
 
-/** Conjunctions to the angles. Wider than planet pairs is conventional; 8° keeps it consistent here. */
-const ANGLE_ORB = 8
-
-export function computeAngleConjunctions(chart: NatalChart): AngleConjunction[] {
-  const angles: { id: AngleId; lon: number | null }[] = [
+function computeAngleConjunctions(chart: NatalChart): AngleConjunction[] {
+  const angles: { id: SignatureAngleId; lon: number | null }[] = [
     { id: 'ascendant', lon: chart.ascendant },
     { id: 'midheaven', lon: chart.midheaven },
   ]
@@ -133,7 +130,7 @@ export function computeAngleConjunctions(chart: NatalChart): AngleConjunction[] 
 
       const orb = angularGap(p.lon, lon)
 
-      if (orb <= ANGLE_ORB) {
+      if (orb <= ORBS.angle) {
         result.push({ planet: p.id, angle: id, orb: Math.round(orb * 10) / 10 })
       }
     }
@@ -155,7 +152,7 @@ export function chartRuler(chart: NatalChart): { ascSign: SignId; ruler: PlanetI
 }
 
 /** Three or more bodies sharing a sign — a concentration worth calling out by itself. */
-export function findStelliums(planets: readonly PlanetPosition[]): Stellium[] {
+function findStelliums(planets: readonly PlanetPosition[]): Stellium[] {
   const bySign = new Map<SignId, PlanetId[]>()
 
   for (const p of planets) {
@@ -190,16 +187,8 @@ const ASPECT_BASE: Record<ChartAspect['type'], number> = {
   sextile: 14,
 }
 
-const ASPECT_ALLOWANCE: Record<ChartAspect['type'], number> = {
-  conjunction: 8,
-  opposition: 8,
-  square: 7,
-  trine: 7,
-  sextile: 6,
-}
-
 export function aspectScore(aspect: ChartAspect): number {
-  let score = ASPECT_BASE[aspect.type] + (ASPECT_ALLOWANCE[aspect.type] - aspect.orb) * 2.5
+  let score = ASPECT_BASE[aspect.type] + (ORBS.major[aspect.type] - aspect.orb) * 2.5
 
   // Partile (near-exact) aspects speak with outsized force in traditional practice.
   if (aspect.orb <= 0.5) {
@@ -229,7 +218,7 @@ export function computeSignature(chart: NatalChart, aspects: readonly ChartAspec
   const ruler = chartRuler(chart)
 
   for (const conj of computeAngleConjunctions(chart)) {
-    features.push({ kind: 'angle', ...conj, score: 55 + (ANGLE_ORB - conj.orb) * 3 })
+    features.push({ kind: 'angle', ...conj, score: 55 + (ORBS.angle - conj.orb) * 3 })
   }
 
   for (const aspect of aspects) {

@@ -3,7 +3,7 @@
 // the transits that color relationships. All copy lives in `./readings`.
 
 import ms from 'ms'
-import { closestAspect, houseOfLon, signOfLon } from '@/chart/astrology'
+import { big3, closestAspect, houseOfLon, norm360, reliableAspects, signOfLon } from '@/chart/astrology'
 import { PLANET_ORDER } from '@/chart/data'
 import { computeLongitudeSeries } from '@/chart/ephemeris'
 import { dignityOf } from '@/chart/signature'
@@ -102,12 +102,10 @@ export function deriveLoveProfile(
   const moon = chart.planets.find((p) => p.id === 'moon')
   const sun = chart.planets.find((p) => p.id === 'sun')
 
-  const reliableAspects = dateOnlyMoonSigns
-    ? aspects.filter((aspect) => aspect.a !== 'moon' && aspect.b !== 'moon')
-    : aspects
+  const filteredAspects = reliableAspects(aspects, dateOnlyMoonSigns !== undefined)
 
   const venusAspect =
-    reliableAspects
+    filteredAspects
       .filter((a) => (a.a === 'venus' && VENUS_PARTNERS.has(a.b)) || (a.b === 'venus' && VENUS_PARTNERS.has(a.a)))
       .sort((a, b) => a.orb - b.orb)[0] ?? null
 
@@ -127,13 +125,13 @@ export function deriveLoveProfile(
     venusSign,
     venusRetro: venus?.retrograde ?? false,
     marsSign: signOfLon(mars?.lon ?? 0),
-    risingSign: chart.ascendant === null ? null : signOfLon(chart.ascendant),
+    risingSign: big3(chart).risingSign,
     moonSigns: dateOnlyMoonSigns ?? [signOfLon(moon?.lon ?? 0)],
     venusAspect,
     descendantSign,
     solarDescendant: chart.ascendant === null,
     seventhHouse,
-    natalLove: deriveNatalLoveTone(venusSign, descendantSign, seventhHouse, reliableAspects),
+    natalLove: deriveNatalLoveTone(venusSign, descendantSign, seventhHouse, filteredAspects),
   }
 }
 
@@ -261,7 +259,7 @@ function collectRetrogradeWindows(
  */
 export async function scanLoveTransits(chart: NatalChart, now: Date): Promise<LoveWindow[]> {
   const venusLon = chart.planets.find((p) => p.id === 'venus')?.lon ?? null
-  const descendantLon = chart.ascendant === null ? null : (chart.ascendant + 180) % 360
+  const descendantLon = chart.ascendant === null ? null : norm360(chart.ascendant + 180)
   const dates: Date[] = []
 
   for (let day = 0; day <= SCAN_DAYS; day += STEP_DAYS) {

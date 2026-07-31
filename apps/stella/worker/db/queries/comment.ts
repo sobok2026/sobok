@@ -1,3 +1,4 @@
+import type { CommentReportReason as ReportReason } from '@sobok/domain/comment/policy'
 import type { Locale } from '@sobok/domain/locale'
 import type { Db } from '@sobok/edge/db/client'
 import { and, eq, inArray, lt, or, sql } from 'drizzle-orm'
@@ -36,15 +37,6 @@ export async function checkRateLimit(
 }
 
 // ── Reads ─────────────────────────────────────────────────────────────────────────────────────────────
-async function threadIdOf(db: Db, locale: Locale, topicKey: string): Promise<number | null> {
-  const [row] = await db
-    .select({ id: commentThreadTable.id })
-    .from(commentThreadTable)
-    .where(and(eq(commentThreadTable.locale, locale), eq(commentThreadTable.topicKey, topicKey)))
-    .limit(1)
-  return row?.id ?? null
-}
-
 export async function listComments(
   db: Db,
   locale: Locale,
@@ -52,7 +44,14 @@ export async function listComments(
   limit: number,
   before: Cursor | null,
 ): Promise<{ comments: CommentRow[]; nextCursor: Cursor | null }> {
-  const threadId = await threadIdOf(db, locale, topicKey)
+  const [thread] = await db
+    .select({ id: commentThreadTable.id })
+    .from(commentThreadTable)
+    .where(and(eq(commentThreadTable.locale, locale), eq(commentThreadTable.topicKey, topicKey)))
+    .limit(1)
+
+  const threadId = thread?.id ?? null
+
   if (threadId === null) {
     return { comments: [], nextCursor: null }
   }
@@ -94,14 +93,18 @@ export async function getCounts(db: Db, locale: Locale, topicKeys: string[]): Pr
   if (topicKeys.length === 0) {
     return {}
   }
+
   const rows = await db
     .select({ topicKey: commentThreadTable.topicKey, count: commentThreadTable.commentCount })
     .from(commentThreadTable)
     .where(and(eq(commentThreadTable.locale, locale), inArray(commentThreadTable.topicKey, topicKeys)))
+
   const out: Record<string, number> = {}
+
   for (const { topicKey, count } of rows) {
     out[topicKey] = count
   }
+
   return out
 }
 
@@ -192,8 +195,6 @@ export async function deleteComment(db: Db, publicId: string, editTokenHash: str
     return true
   })
 }
-
-export type ReportReason = 'spam' | 'abuse' | 'sexual' | 'privacy' | 'other'
 
 // Records a report (idempotent per reporter) and auto-hides once the report count reaches `threshold`.
 // Auto-hide is a REVERSIBLE triage state (status='hidden'), not a delete — an operator can restore it.

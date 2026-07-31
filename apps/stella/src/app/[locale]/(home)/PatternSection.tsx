@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 
+import { reliableBodies } from '@/chart/astrology'
 import { PLANET_GLYPHS } from '@/chart/data'
 import { findPatterns } from '@/chart/patterns'
 import { findShape } from '@/chart/shape'
@@ -12,7 +13,7 @@ import { ChartShapeArt } from './ChartShapeArt'
 
 export default function PatternSection({ chart, dateOnly = false }: { chart: NatalChart; dateOnly?: boolean }) {
   const t = useTranslations('Constellation')
-  const reliablePlanets = dateOnly ? chart.planets.filter((planet) => planet.id !== 'moon') : chart.planets
+  const reliablePlanets = reliableBodies(chart.planets, dateOnly)
   const patterns = findPatterns(reliablePlanets)
   const shape = dateOnly ? null : findShape(chart.planets)
 

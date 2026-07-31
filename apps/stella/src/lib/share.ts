@@ -1,4 +1,4 @@
-import { isStoredBirth, type StoredBirth } from './birth-storage'
+import { isCalendarDate, isStoredBirth, type StoredBirth } from './birth-storage'
 
 const SHARE_VERSION = 3
 const SHARE_PREFIX = `${SHARE_VERSION}.`
@@ -129,7 +129,7 @@ export function decodeShareHash(hash: string, kind: ShareKind): SharedPayload | 
       if (
         payload.a !== undefined ||
         typeof payload.o !== 'string' ||
-        !isCalendarDateKey(payload.o) ||
+        !isCalendarDate(payload.o) ||
         !isUtcOffsetMinutes(payload.z)
       ) {
         return null
@@ -203,16 +203,6 @@ function dateFromEpochSeconds(value: unknown): Date | null {
 
 function isUtcOffsetMinutes(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= -14 * 60 && value <= 14 * 60
-}
-
-function isCalendarDateKey(value: string): boolean {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return false
-  }
-
-  const [year, month, day] = value.split('-').map(Number)
-  const date = new Date(Date.UTC(year, month - 1, day))
-  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
 }
 
 export function buildShareURL(locale: string, input: SharedPayload): string {

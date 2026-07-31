@@ -22,14 +22,15 @@ const CONTROL = charClass([
   [0x0e, 0x1f],
   [0x7f, 0x9f],
 ])
+
 const BIDI = charClass([
   [0x200e, 0x200f],
   [0x202a, 0x202e],
   [0x2066, 0x2069],
 ])
+
 const ZALGO = /(\p{M}{4})\p{M}+/gu
 
-export const MAX_BODY = 500
 export const MAX_NICKNAME = 24
 
 export function sanitizeBody(raw: string): string {

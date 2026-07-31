@@ -1,9 +1,10 @@
 import type { Locale } from '@sobok/domain/locale'
 import type { Db } from '@sobok/edge/db/client'
-import { and, asc, eq, inArray, isNotNull, or, sql } from 'drizzle-orm'
+import { and, asc, eq, getColumns, inArray, isNotNull, or, sql } from 'drizzle-orm'
 import { drawInitialGuardianReport, drawLoveRedraw, type GuardianSelectedCard } from '../../guardian/draw'
 import {
   CURRENT_GUARDIAN_MANIFEST,
+  type GuardianFullReportProductSku,
   type GuardianProductSku,
   type GuardianRarity,
   type GuardianReportInputSnapshot,
@@ -38,6 +39,53 @@ export interface GuardianDraftRef {
   reportPublicId: string
 }
 
+/**
+ * The paid-report entitlement: a `full_report` purchase for this (collection, report, sku) that was paid and
+ * granted. The security/economy rule around paid reports lives here — the questionnaire flow and the
+ * fulfillment flow must agree on it.
+ */
+export async function findPaidFullReportPurchase(
+  db: Db,
+  input: { collectionId: number; reportId: number; sku: GuardianFullReportProductSku },
+): Promise<{ manifestVersion: string } | null> {
+  const [purchase] = await db
+    .select({ manifestVersion: guardianPurchaseTable.manifestVersion })
+    .from(guardianPurchaseTable)
+    .where(
+      and(
+        eq(guardianPurchaseTable.collectionId, input.collectionId),
+        eq(guardianPurchaseTable.reportId, input.reportId),
+        eq(guardianPurchaseTable.sku, input.sku),
+        eq(guardianPurchaseTable.kind, 'full_report'),
+        eq(guardianPurchaseTable.status, 'paid'),
+        isNotNull(guardianPurchaseTable.entitlementGrantedAt),
+      ),
+    )
+    .limit(1)
+
+  return purchase ?? null
+}
+
+/**
+ * Row-locked report lookup by the (collectionId, reportId) ownership pair. Every mutation flow that must
+ * serialize against the same report (purchase, questionnaire, fulfillment, redraw) goes through this one
+ * WHERE — a second, divergent copy would let two flows race on the same report.
+ */
+export async function lockedReportOf(
+  db: Db,
+  input: { collectionId: number; reportId: number },
+  lock = true,
+): Promise<typeof guardianReportTable.$inferSelect | null> {
+  const query = db
+    .select(getColumns(guardianReportTable))
+    .from(guardianReportTable)
+    .where(and(eq(guardianReportTable.id, input.reportId), eq(guardianReportTable.collectionId, input.collectionId)))
+    .limit(1)
+
+  const rows = lock ? await query.for('update') : await query
+  return rows[0] ?? null
+}
+
 export async function createGuestGuardianReportDraft(db: Db, input: NewGuestGuardianReport): Promise<GuardianDraftRef> {
   const manifest = CURRENT_GUARDIAN_MANIFEST
   const productSku = 'guardian-report-full-v1'
@@ -51,6 +99,7 @@ export async function createGuestGuardianReportDraft(db: Db, input: NewGuestGuar
         accessTokenHash: input.collectionAccessTokenHash,
       })
       .returning({ id: guardianCollectionTable.id })
+
     if (!collection) {
       throw new Error('Guardian collection insert returned no row')
     }
@@ -71,6 +120,7 @@ export async function createGuestGuardianReportDraft(db: Db, input: NewGuestGuar
         inputSnapshot: input.inputSnapshot,
       })
       .returning({ id: guardianReportTable.id })
+
     if (!report) {
       throw new Error('Guardian report insert returned no row')
     }
@@ -123,16 +173,7 @@ export async function createPendingGuardianPurchase(
   input: NewGuardianPurchase,
 ): Promise<CreateGuardianPurchaseResult> {
   return db.transaction(async (tx) => {
-    const [report] = await tx
-      .select({
-        status: guardianReportTable.status,
-        productSku: guardianReportTable.productSku,
-        manifestVersion: guardianReportTable.manifestVersion,
-      })
-      .from(guardianReportTable)
-      .where(and(eq(guardianReportTable.id, input.reportId), eq(guardianReportTable.collectionId, input.collectionId)))
-      .limit(1)
-      .for('update')
+    const report = await lockedReportOf(tx, input)
 
     if (!report) {
       return { status: 'report-not-found' as const }
@@ -382,22 +423,7 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
   db: Db,
   input: { collectionId: number; reportId: number },
 ): Promise<FulfillGuardianReportResult> {
-  const [report] = await db
-    .select({
-      publicId: guardianReportTable.publicId,
-      status: guardianReportTable.status,
-      manifestVersion: guardianReportTable.manifestVersion,
-      productSku: guardianReportTable.productSku,
-      inputSnapshot: guardianReportTable.inputSnapshot,
-      questionnaireAnswerSnapshot: guardianReportTable.questionnaireAnswerSnapshot,
-      questionnaireSignalSnapshot: guardianReportTable.questionnaireSignalSnapshot,
-      questionnaireCompletedAt: guardianReportTable.questionnaireCompletedAt,
-      cardSnapshot: guardianReportTable.cardSnapshot,
-    })
-    .from(guardianReportTable)
-    .where(and(eq(guardianReportTable.id, input.reportId), eq(guardianReportTable.collectionId, input.collectionId)))
-    .limit(1)
-    .for('update')
+  const report = await lockedReportOf(db, input)
 
   if (!report) {
     return { status: 'report-not-found' }
@@ -416,20 +442,11 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
     return { status: 'questionnaire-incomplete' }
   }
 
-  const [purchase] = await db
-    .select({ manifestVersion: guardianPurchaseTable.manifestVersion })
-    .from(guardianPurchaseTable)
-    .where(
-      and(
-        eq(guardianPurchaseTable.collectionId, input.collectionId),
-        eq(guardianPurchaseTable.reportId, input.reportId),
-        eq(guardianPurchaseTable.sku, report.productSku),
-        eq(guardianPurchaseTable.kind, 'full_report'),
-        eq(guardianPurchaseTable.status, 'paid'),
-        isNotNull(guardianPurchaseTable.entitlementGrantedAt),
-      ),
-    )
-    .limit(1)
+  const purchase = await findPaidFullReportPurchase(db, {
+    collectionId: input.collectionId,
+    reportId: input.reportId,
+    sku: report.productSku,
+  })
   if (!purchase || purchase.manifestVersion !== report.manifestVersion) {
     return { status: 'payment-required' }
   }
@@ -481,16 +498,7 @@ export async function grantGuardianAccountSaveReward(
   input: { collectionId: number; reportId: number },
 ): Promise<'granted' | 'already-granted' | 'report-not-found'> {
   return db.transaction(async (tx) => {
-    const [report] = await tx
-      .select({
-        status: guardianReportTable.status,
-        manifestVersion: guardianReportTable.manifestVersion,
-        loveFamilyId: guardianReportTable.loveFamilyId,
-      })
-      .from(guardianReportTable)
-      .where(and(eq(guardianReportTable.id, input.reportId), eq(guardianReportTable.collectionId, input.collectionId)))
-      .limit(1)
-      .for('update')
+    const report = await lockedReportOf(tx, input)
     if (report?.status !== 'fulfilled' || !report.loveFamilyId) {
       return 'report-not-found'
     }
@@ -545,15 +553,7 @@ export async function consumeGuardianRedraw(
       return { status: 'report-not-found' as const }
     }
 
-    const [report] = await tx
-      .select({
-        status: guardianReportTable.status,
-        loveFamilyId: guardianReportTable.loveFamilyId,
-      })
-      .from(guardianReportTable)
-      .where(and(eq(guardianReportTable.id, input.reportId), eq(guardianReportTable.collectionId, input.collectionId)))
-      .limit(1)
-      .for('update')
+    const report = await lockedReportOf(tx, input)
     if (report?.status !== 'fulfilled' || !report.loveFamilyId) {
       return { status: 'report-not-found' as const }
     }

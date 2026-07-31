@@ -3,13 +3,10 @@
 // edit/delete capability (editToken) is kept in localStorage, keyed by the comment's opaque publicId — it is
 // never sent to render a comment, only as `Authorization: Bearer` on the author's own edit/delete.
 
+import type { CommentReportReason as ReportReason } from '@sobok/domain/comment/policy'
+
 // `locale` crosses this boundary as a plain string (the app's Locale enum widens to it) and is validated
 // server-side against {ko,en,ja,zh}.
-export type ReportReason = 'spam' | 'abuse' | 'sexual' | 'privacy' | 'other'
-
-// Kept in sync with the server's MAX_BODY (worker/lib/text.ts). The server is the authority; this only drives
-// the client-side counter / maxLength.
-export const MAX_BODY = 500
 
 export interface Comment {
   publicId: string

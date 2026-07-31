@@ -2,7 +2,8 @@ import { track } from '@sobok/analytics/browser'
 import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { signOfLon } from '@/chart/astrology'
+import { big3 } from '@/chart/astrology'
+import { PLANET_GLYPHS } from '@/chart/data'
 import type { ChartAspect, NatalChart, SignId } from '@/chart/types'
 import { ORIGIN, SITE_NAME } from '@/constants'
 import type { StoredBirth } from '@/lib/birth-storage'
@@ -67,10 +68,8 @@ export function ConstellationActions({
     try {
       await document.fonts.ready
 
-      const sunLon = chart.planets.find((planet) => planet.id === 'sun')?.lon ?? 0
-      const moonLon = chart.planets.find((planet) => planet.id === 'moon')?.lon ?? 0
-      const risingSign = chart.ascendant !== null ? signOfLon(chart.ascendant) : null
-      const displayedMoonSigns = moonSigns ?? [signOfLon(moonLon)]
+      const { sunSign, moonSign, risingSign } = big3(chart)
+      const displayedMoonSigns = moonSigns ?? (moonSign ? [moonSign] : [])
 
       const blob = await createNatalShareCard(
         chart,
@@ -80,12 +79,12 @@ export function ConstellationActions({
           title: t('hero.title'),
           big3: [
             {
-              glyph: '☉',
+              glyph: PLANET_GLYPHS.sun,
               label: t('big3.sunLabel'),
-              value: t(`signs.${signOfLon(sunLon)}`),
+              value: sunSign ? t(`signs.${sunSign}`) : '',
             },
             {
-              glyph: '☾',
+              glyph: PLANET_GLYPHS.moon,
               label: t('big3.moonLabel'),
               value: displayedMoonSigns.map((sign) => t(`signs.${sign}`)).join(' ↔ '),
             },

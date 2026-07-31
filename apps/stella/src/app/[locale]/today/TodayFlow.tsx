@@ -13,7 +13,14 @@ export default function TodayFlow() {
   const share = useDailyShare('today', reading)
 
   return (
-    <DailyPageShell failed={failed} invalid={invalid} reading={reading} shared={shared} surface="today">
+    <DailyPageShell
+      dateKey={reading?.dateKey}
+      failed={failed}
+      invalid={invalid}
+      loading={!reading}
+      namespace="Today"
+      shared={shared}
+    >
       {reading && (
         <TodayBody
           data={{ ...reading, tomorrowFood: teaserFood }}

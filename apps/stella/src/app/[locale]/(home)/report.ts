@@ -4,7 +4,7 @@
 // component passes the data in and renders the result; next-intl only supplies
 // the small name vocabulary (planets, signs, house themes).
 
-import { elementCounts, houseOfLon, signOfLon } from '@/chart/astrology'
+import { elementCounts, houseOfLon, reliableAspects, reliableBodies, signOfLon } from '@/chart/astrology'
 import { ELEMENT_IDS } from '@/chart/data'
 import { chartRuler, computeSignature, dignityOf, SIGN_RULERS, type SignatureFeature } from '@/chart/signature'
 import type { ChartAspect, NatalChart, PlanetId } from '@/chart/types'
@@ -49,10 +49,7 @@ export function buildReport(
   options: ReportOptions = {},
 ): ReportChapter[] {
   const used = new Set<string>()
-
-  const reliablePlanets = options.moonSignUncertain
-    ? chart.planets.filter((planet) => planet.id !== 'moon')
-    : chart.planets
+  const reliablePlanets = reliableBodies(chart.planets, options.moonSignUncertain === true)
 
   const features = computeSignature(chart, aspects).filter((feature) => {
     if (!options.moonSignUncertain) {
@@ -60,7 +57,7 @@ export function buildReport(
     }
 
     if (feature.kind === 'aspect') {
-      return feature.aspect.a !== 'moon' && feature.aspect.b !== 'moon'
+      return reliableAspects([feature.aspect], options.moonSignUncertain).length > 0
     }
 
     if (feature.kind === 'stellium') {

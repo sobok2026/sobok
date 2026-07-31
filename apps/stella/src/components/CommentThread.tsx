@@ -1,6 +1,11 @@
 'use client'
 
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
+import {
+  COMMENT_REPORT_REASONS,
+  MAX_COMMENT_BODY_LENGTH,
+  type CommentReportReason as ReportReason,
+} from '@sobok/domain/comment/policy'
 import { type InfiniteData, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
@@ -13,17 +18,16 @@ import {
   fetchComments,
   forgetToken,
   getToken,
-  MAX_BODY,
   type PostInput,
   postComment,
-  type ReportReason,
   removeComment,
   reportComment,
   updateComment,
 } from '@/lib/comments'
 import { COMMENT_POST_ACTION, COMMENT_REPORT_ACTION } from '../../worker/api/comments/actions'
 
-const REPORT_REASONS: ReportReason[] = ['spam', 'abuse', 'sexual', 'privacy', 'other']
+const MAX_BODY = MAX_COMMENT_BODY_LENGTH
+
 const REASON_KEY = {
   spam: 'reasonSpam',
   abuse: 'reasonAbuse',
@@ -120,6 +124,7 @@ export default function CommentThread({ bodyPlaceholder, locale, topicKey, initi
       return { comments, mine }
     },
   })
+
   const comments = board.data?.comments ?? []
   const mine = board.data?.mine ?? EMPTY_IDS
 
@@ -287,7 +292,7 @@ export default function CommentThread({ bodyPlaceholder, locale, topicKey, initi
                 </div>
               ) : (
                 <>
-                  <p className="mt-0.5 whitespace-pre-wrap break-words leading-relaxed text-foreground-secondary">
+                  <p className="mt-0.5 whitespace-pre-wrap wrap-break-word leading-relaxed text-foreground-secondary">
                     {c.body}
                   </p>
                   <div className="mt-1 flex gap-3 text-[11px] text-foreground-faint">
@@ -373,7 +378,7 @@ function ReportButton({ publicId, t }: { publicId: string; t: Translate }) {
         onChange={(e) => setReason(e.target.value as ReportReason)}
         value={reason}
       >
-        {REPORT_REASONS.map((r) => (
+        {COMMENT_REPORT_REASONS.map((r) => (
           <option key={r} value={r}>
             {t(REASON_KEY[r])}
           </option>

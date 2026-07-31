@@ -5,8 +5,8 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useReducer, useRef, useState } from 'react'
 import { preload } from 'react-dom'
 
-import { computeAspects, elementCounts, signOfLon } from '@/chart/astrology'
-import { DEFAULT_CHART, ELEMENT_IDS } from '@/chart/data'
+import { big3, computeAspects, elementCounts, reliableAspects, reliableBodies, signOfLon } from '@/chart/astrology'
+import { DEFAULT_CHART, ELEMENT_IDS, PLANET_GLYPHS } from '@/chart/data'
 import type { AngleId, ChartAspect, HouseNumber, PlanetId, SignId } from '@/chart/types'
 import { HeroTitle } from '@/components/HeroTitle'
 import SharedLinkError from '@/components/SharedLinkError'
@@ -66,31 +66,22 @@ export default function Constellation() {
   const birthSummary = birth ? formatBirthSummary(birth, locale, t('form.timeUnknownShort')) : null
   const activeChart = data?.chart ?? DEFAULT_CHART
   const { ascendant, cusps } = activeChart
-
   const computedAspects = computeAspects(activeChart.planets)
   const unknownTime = data?.unknownTime ?? null
-  const aspects = unknownTime
-    ? computedAspects.filter((aspect) => aspect.a !== 'moon' && aspect.b !== 'moon')
-    : computedAspects
-
-  const sunLon = activeChart.planets.find((p) => p.id === 'sun')?.lon ?? 0
-  const moonLon = activeChart.planets.find((p) => p.id === 'moon')?.lon ?? 0
+  const aspects = reliableAspects(computedAspects, unknownTime !== null)
+  const { sunSign, moonSign, risingSign } = big3(activeChart)
   const moonSigns = unknownTime?.moonSigns ?? null
   const moonLongitudeRange = unknownTime?.moonLongitudeRange ?? null
-  const displayedMoonSigns = moonSigns ?? [signOfLon(moonLon)]
+  const displayedMoonSigns = moonSigns ?? (moonSign ? [moonSign] : [])
   const moonSignUncertain = displayedMoonSigns.length > 1
 
   // The comment board's stable topic key for the current selection (null when nothing is selected, or an
   // angle with no birth time — cases where no panel/board is shown).
   const commentTopic = commentTopicKey(selection, activeChart, moonSigns)
 
-  const balancePlanets = moonSignUncertain
-    ? activeChart.planets.filter((planet) => planet.id !== 'moon')
-    : activeChart.planets
-
+  const balancePlanets = reliableBodies(activeChart.planets, moonSignUncertain)
   const counts = elementCounts(balancePlanets)
   const dominant = ELEMENT_IDS.reduce((best, id) => (counts[id] > counts[best] ? id : best), ELEMENT_IDS[0])
-  const risingSign = ascendant !== null ? signOfLon(ascendant) : null
   const brightPlanets = computeBrightPlanets(selection, aspects, activeChart.planets, cusps, ascendant)
 
   if (selection?.kind === 'sign' && moonSigns?.includes(selection.id)) {
@@ -264,15 +255,15 @@ export default function Constellation() {
           <div className="mb-6 grid w-full grid-cols-3 gap-1.5 sm:gap-2" key={`big3-${runId}`}>
             <Big3Card
               delay={0.1}
-              glyph="☉"
+              glyph={PLANET_GLYPHS.sun}
               hint={t('big3.sunHint')}
               label={t('big3.sunLabel')}
               onClick={() => togglePlanet('sun')}
-              value={t(`signs.${signOfLon(sunLon)}`)}
+              value={sunSign ? t(`signs.${sunSign}`) : ''}
             />
             <Big3Card
               delay={0.2}
-              glyph="☾"
+              glyph={PLANET_GLYPHS.moon}
               hint={t('big3.moonHint')}
               label={t('big3.moonLabel')}
               onClick={() => togglePlanet('moon')}

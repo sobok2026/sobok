@@ -3,12 +3,11 @@
 // `signature.ts`. Pure geometry from longitudes, so it also sees the quincunxes
 // that `computeAspects` (major aspects only) doesn't surface.
 
-import { angularGap } from './astrology'
+import { angularGap, ORBS } from './astrology'
 import { PLANET_ORDER } from './data'
 import type { ChartPattern, ComputedPlanetId, PlanetPosition } from './types'
 
-// Pattern orbs — a touch tighter than the wheel's aspect orbs, per convention.
-const ORB = { trine: 8, sextile: 6, opposition: 8, square: 7, quincunx: 3 } as const
+const ORB = ORBS.pattern
 
 type Body = { id: ComputedPlanetId; lon: number }
 
