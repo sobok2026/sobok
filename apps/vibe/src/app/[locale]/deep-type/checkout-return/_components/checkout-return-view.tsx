@@ -12,10 +12,10 @@ import {
   Mail,
   Refresh,
 } from '@mynaui/icons-react'
+import { LEGAL_CONTACT_EMAIL } from '@sobok/brand/identity'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { LEGAL_CONTACT_EMAIL } from '@/constants'
 import type { DeepTypeCheckoutReturnAction, DeepTypeCheckoutReturnContent } from '@/content/deep-type-checkout-return'
 
 import { DynamicReportView } from '../../_components/dynamic-report-view'

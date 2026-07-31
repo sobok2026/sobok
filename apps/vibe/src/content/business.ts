@@ -1,6 +1,5 @@
+import { LEGAL_CONTACT_EMAIL } from '@sobok/brand/identity'
 import type { Locale } from '@sobok/domain/locale'
-
-import { LEGAL_CONTACT_EMAIL } from './legal'
 
 // Single source of truth for the seller-identity disclosure required by 전자상거래법 제10조 (전자상거래 등에서의
 // 소비자보호에 관한 법률). Every value here MUST match the PG (토스페이먼츠) merchant application and the

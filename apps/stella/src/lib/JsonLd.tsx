@@ -1,3 +1,4 @@
+import { SOBOK_X_URL } from '@sobok/brand/identity'
 import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
 
 import { ORIGIN, SITE_NAME } from '@/constants'
@@ -18,7 +19,7 @@ export function siteGraph(locale: Locale) {
         name: 'sobok',
         url: 'https://sobok.cc',
         logo: `${ORIGIN}/web-app-manifest-512x512.png`,
-        sameAs: ['https://x.com/sobok_cc'],
+        sameAs: [SOBOK_X_URL],
       },
       {
         '@type': 'WebSite',

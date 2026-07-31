@@ -1,9 +1,8 @@
 import type { Locale } from '@sobok/domain/locale'
-
+import type { Messages } from '@sobok/site-i18n/messages'
 import { en } from './en'
 import { ja } from './ja'
 import { ko } from './ko'
-import type { Messages } from './types'
 import { zh } from './zh'
 
 export const messages = {

@@ -15,8 +15,10 @@
   "dependencies": {
     "@marsidev/react-turnstile": "^1.5.3",
     "@sobok/analytics": "workspace:*",
+    "@sobok/brand": "workspace:*",
     "@sobok/domain": "workspace:*",
     "@sobok/edge": "workspace:*",
+    "@sobok/site-i18n": "workspace:*",
     "@sobok/typography": "workspace:*",
     "@swisseph/browser": "1.1.0",
     "@tanstack/react-query": "^5.101.1",
@@ -36,6 +38,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260701.0",
+    "@sobok/next-config": "workspace:*",
     "@tailwindcss/postcss": "^4.3.1",
     "@types/node": "^26.1.0",
     "@types/react": "19.2.17",

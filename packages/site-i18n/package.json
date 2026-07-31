@@ -1,0 +1,27 @@
+{
+  "name": "@sobok/site-i18n",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./messages": "./src/messages.ts",
+    "./request": "./src/request.ts",
+    "./routing": "./src/routing.ts",
+    "./server": "./src/server.ts"
+  },
+  "scripts": {
+    "type": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sobok/domain": "workspace:*"
+  },
+  "peerDependencies": {
+    "next": ">=16",
+    "next-intl": ">=4"
+  },
+  "devDependencies": {
+    "next": "16.2.11",
+    "next-intl": "^4.13.0",
+    "typescript": "^6.0.3"
+  }
+}

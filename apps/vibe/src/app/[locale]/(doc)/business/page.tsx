@@ -1,11 +1,10 @@
+import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-
 import BusinessInfo from '@/components/BusinessInfo'
 import { BUSINESS_LABELS } from '@/content/business'
 import { LEGAL } from '@/content/legal'
 import { buildLocalizedMetadata } from '@/i18n/metadata'
-import { getLocale } from '@/i18n/server'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/business'>): Promise<Metadata> {
   const locale = await getLocale(params)

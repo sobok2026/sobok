@@ -1,15 +1,7 @@
-import { hasLocale } from 'next-intl'
-import { getRequestConfig } from 'next-intl/server'
+import { createRequestConfig } from '@sobok/site-i18n/request'
 
 import { getMessages } from './messages'
-import { routing } from './routing'
 
-export default getRequestConfig(async ({ requestLocale }) => {
-  const requested = await requestLocale
-  const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale
-
-  return {
-    locale,
-    messages: getMessages(locale),
-  }
-})
+// The module `next-intl/plugin` is pointed at (see next.config.ts). Resolution is shared; the catalogue
+// it resolves into is this app's.
+export default createRequestConfig(getMessages)

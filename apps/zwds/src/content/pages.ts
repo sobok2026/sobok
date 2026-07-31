@@ -1,11 +1,5 @@
+import { LEGAL_CONTACT_EMAIL, SOBOK_X_HANDLE, SOBOK_X_URL } from '@sobok/brand/identity'
 import type { Locale } from '@sobok/domain/locale'
-
-import { LEGAL_CONTACT_EMAIL } from './legal'
-
-// SNS handle declared in the site metadata (twitter:site in layout/page).
-// Keep in sync if the handle ever changes.
-export const SOBOK_X_URL = 'https://x.com/sobok_cc'
-export const SOBOK_X_HANDLE = '@sobok_cc'
 
 export type PageSection = {
   heading: string

@@ -1,16 +1,11 @@
 import { isPayTier, type PayTier } from '@deep-type/pay-method'
-import type { Locale } from '@sobok/domain/locale'
+import { SOBOK_SERVICES } from '@sobok/brand/services'
 
-export const ADSENSE_ACCOUNT = 'ca-pub-5167766222238626' // keep in sync with public/ads.txt
 export const ORIGIN = 'https://vibe.sobok.cc'
-// Shared across all four sobok sites; the container routes to the right GA4 property by Page Hostname.
-// The app loads it itself (see GTMLoader) — Cloudflare's Google tag gateway proxies `/h8ou/*` but injects
-// nothing, so this is the only loader on the page.
-export const GTM_ID = 'GTM-MH37D28N'
 // vibe's GA4 data stream. The app needs it solely to read the first-party `_ga_<stream>` session cookie when
-// handing the server-side `purchase` event its session; all tag configuration lives in the container.
+// handing the server-side `purchase` event its session; all tag configuration lives in the container. The
+// GTM container id itself is brand-wide and lives in `@sobok/brand/identity`.
 export const GA4_MEASUREMENT_ID = 'G-RHHX4JRYDS'
-export const LEGAL_CONTACT_EMAIL = 'sobok2026@gmail.com'
 export const THEME_COLOR = '#fdfaf6' // keep in sync with --page-bg in src/app/globals.css
 export const TURNSTILE_SITE_KEY = requireEnv(
   'NEXT_PUBLIC_TURNSTILE_SITE_KEY',
@@ -26,12 +21,9 @@ export const TURNSTILE_SITE_KEY = requireEnv(
 // guess, so a build that was not told fails here instead of picking one.
 export const PAY_TIER = requirePayTier(process.env.NEXT_PUBLIC_DEEPTYPE_PAY_TIER)
 
-export const SITE_NAME = {
-  ko: '결타레',
-  en: 'vibe',
-  ja: 'vibe',
-  zh: 'vibe',
-} satisfies Record<Locale, string>
+// Read from the shared catalogue rather than written again here: the same four strings are what every
+// sibling site's footer links to this one by.
+export const SITE_NAME = SOBOK_SERVICES.vibe.name
 
 // Public values, but REQUIRED at build time — no fallback. The sitekey used to be hardcoded, which pinned
 // production's widget into the source: local development could not use a different widget, and a stale value

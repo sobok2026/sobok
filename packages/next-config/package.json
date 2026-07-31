@@ -1,0 +1,25 @@
+{
+  "name": "@sobok/next-config",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./next": "./src/next.ts",
+    "./postcss": "./postcss.mjs",
+    "./tsconfig.static-site.json": "./tsconfig.static-site.json"
+  },
+  "scripts": {
+    "type": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.3.1"
+  },
+  "peerDependencies": {
+    "next": ">=16"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "next": "16.2.11",
+    "typescript": "^6.0.3"
+  }
+}

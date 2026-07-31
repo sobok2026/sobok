@@ -1,10 +1,9 @@
 import { LOCALES } from '@sobok/domain/locale'
+import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
-
 import CommentThread from '@/components/CommentThread'
-import { getLocale } from '@/i18n/server'
 import { loadBakedBoards } from '@/lib/board-bake'
 import { allTopicKeys, type Labeler, topicLabel } from '@/lib/comment-topics'
 

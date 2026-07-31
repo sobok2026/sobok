@@ -1,9 +1,8 @@
 import { LOCALE_OPEN_GRAPH_TAGS, LOCALES } from '@sobok/domain/locale'
+import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
-
 import { SITE_NAME } from '@/constants'
 import { PAGES } from '@/content/pages'
-import { getLocale } from '@/i18n/server'
 import InfoArticle from '../InfoArticle'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/about'>): Promise<Metadata> {

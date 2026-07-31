@@ -1,7 +1,9 @@
 import '../globals.css'
 
 import GTMLoader from '@sobok/analytics/gtm-loader'
+import { ADSENSE_ACCOUNT, GTM_ID } from '@sobok/brand/identity'
 import { LOCALE_LANGUAGE_TAGS, LOCALES } from '@sobok/domain/locale'
+import { getLocale } from '@sobok/site-i18n/server'
 import FontStylesheets from '@sobok/typography/stylesheets'
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
@@ -10,8 +12,7 @@ import { getTranslations } from 'next-intl/server'
 import BirthProfileProvider from '@/components/BirthProfileProvider'
 import Footer from '@/components/Footer'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
-import { ADSENSE_ACCOUNT, GTM_ID, ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
-import { getLocale } from '@/i18n/server'
+import { ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
 import JsonLd, { siteGraph } from '@/lib/JsonLd'
 
 export function generateStaticParams() {

@@ -1,0 +1,15 @@
+{
+  // The compiler options every sobok static site shares. `paths`, `include` and `exclude` are deliberately
+  // absent: TypeScript resolves those relative to the file that declares them, so inheriting them here
+  // would point every app's `@/*` and source globs at this package instead of at the app.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "resolveJsonModule": true,
+    "types": ["node", "react", "react-dom"]
+  }
+}

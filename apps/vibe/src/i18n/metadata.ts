@@ -1,8 +1,7 @@
+import { SOBOK_X_HANDLE } from '@sobok/brand/identity'
 import { LOCALE_OPEN_GRAPH_TAGS, LOCALES, type Locale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
-
 import { SITE_NAME } from '@/constants'
-import { SOBOK_X_HANDLE } from '@/content/pages'
 
 import { getLocalizedPath } from './pathnames'
 

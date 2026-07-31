@@ -1,9 +1,9 @@
+import { otherServices } from '@sobok/brand/services'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { SITE_NAME } from '@/constants'
 import { LEGAL } from '@/content/legal'
 import { PAGES } from '@/content/pages'
-import { OTHER_SERVICES } from '@/content/services'
 
 export default function Footer({ locale }: { locale: Locale }) {
   const { nav } = LEGAL[locale]
@@ -29,7 +29,7 @@ export default function Footer({ locale }: { locale: Locale }) {
         </Link>
       </nav>
       <p className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-foreground-faint">
-        {OTHER_SERVICES.map((service) => (
+        {otherServices('stella').map((service) => (
           <a className="hover:text-foreground" href={`${service.href}/${locale}`} key={service.href}>
             {service.name[locale]}
           </a>

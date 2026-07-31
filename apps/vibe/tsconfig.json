@@ -1,16 +1,10 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@sobok/next-config/tsconfig.static-site.json",
   "compilerOptions": {
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "paths": {
       "@/*": ["./src/*"],
       "@deep-type/*": ["./deep-type/*"]
     },
-    "resolveJsonModule": true,
     "types": ["bun", "node", "react", "react-dom"]
   },
   // `worker/**/*.test.ts` rides along because the Worker program excludes test files (it has no `bun:test`
