@@ -28,7 +28,15 @@ STELLA_ALLOWED_HOSTNAMES="localhost"
 # the CLOUDFLARE_ prefix; the WRANGLER_ form is an older fallback):
 # CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="postgres://…"
 
-# drizzle-kit push target — DIRECT owner connection (bypasses Hyperdrive), Supabase session pooler. The
-# pooler serves Supabase's own CA (not in Node's trust store), so use sslmode=no-verify. Read only by the
-# schema-push tool (production talks to Postgres via Hyperdrive, not this URL):
+# drizzle-kit push and paid-questionnaire publication target — DIRECT owner connection (bypasses
+# Hyperdrive), Supabase session pooler. The pooler serves Supabase's own CA (not in Node's trust store), so
+# use sslmode=no-verify. Production runtime talks to Postgres via Hyperdrive, not this URL:
 # STELLA_POSTGRES_URL_DIRECT="postgres://postgres.<project-ref>:…@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=no-verify"
+#
+# Schema push has no default. Point the same direct owner URL at one namespace per command:
+#   STELLA_DB_SCHEMA=stella_stg bun run db:push
+#   STELLA_DB_SCHEMA=stella     bun run db:push
+# Questionnaire publication uses the same explicit schema boundary:
+#   STELLA_DB_SCHEMA=stella_stg bun run questionnaire:publish --file content/guardian-questionnaires/<version>.json
+#   STELLA_DB_SCHEMA=stella     bun run questionnaire:publish --file content/guardian-questionnaires/<version>.json \
+#     --expected-hash <staging-sha256>

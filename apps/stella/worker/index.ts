@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 
 import { comments } from './api/comments'
+import { guardianProducts } from './api/guardian-products'
 import { runRetentionPurge } from './cron/purge'
 import type { AppEnv, Bindings } from './env'
 
@@ -10,6 +11,7 @@ import type { AppEnv, Bindings } from './env'
 const app = new Hono<AppEnv>()
 
 app.route('/api/comments', comments)
+app.route('/api/guardian-products', guardianProducts)
 
 app.all('*', (c) => c.env.ASSETS.fetch(c.req.raw))
 
