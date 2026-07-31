@@ -23,7 +23,7 @@ export function MicroReveal({ body, code, template, title }: MicroRevealProps) {
         <Sparkles aria-hidden="true" className="h-4 w-4" stroke={1.8} />
         {title}
       </p>
-      <p className="mt-2 break-keep font-black text-lg leading-snug">{template.replace('{inner}', code)}</p>
+      <p className="mt-2 font-black text-lg leading-snug">{template.replace('{inner}', code)}</p>
       <p className="mt-1 text-page-ink-soft text-sm leading-6">{body}</p>
     </aside>
   )

@@ -1,5 +1,4 @@
 import { ArrowLeft, HeartWaves, MessageDots, Refresh } from '@mynaui/icons-react'
-import type { Locale } from '@sobok/domain/locale'
 import Image from 'next/image'
 import { cn } from '@/utils/cn'
 import { FOCUS_CLASS_NAME } from '../../../../components/focus'
@@ -9,16 +8,14 @@ import type { AxisValue, CoupleTypeContent, CoupleTypeResult } from '../_lib/typ
 type ResultViewProps = {
   answerCount: number
   axisDefinitions: CoupleTypeContent['axisDefinitions']
-  locale: Locale
   onEdit: () => void
   onRestart: () => void
   result: CoupleTypeResult
   ui: CoupleTypeContent['ui']
 }
 
-export function ResultView({ answerCount, axisDefinitions, locale, onEdit, onRestart, result, ui }: ResultViewProps) {
+export function ResultView({ answerCount, axisDefinitions, onEdit, onRestart, result, ui }: ResultViewProps) {
   const codeLetters = result.code.split('') as AxisValue[]
-  const keepHeadingBreakClassName = locale === 'ko' ? 'break-keep' : undefined
   const resultImageSrc = `/image/${result.code}.png`
 
   return (
@@ -39,9 +36,7 @@ export function ResultView({ answerCount, axisDefinitions, locale, onEdit, onRes
               width={1254}
             />
           </div>
-          <h1 className={cn('mt-7 font-black text-4xl leading-tight sm:text-6xl', keepHeadingBreakClassName)}>
-            {result.title}
-          </h1>
+          <h1 className="mt-7 font-black text-4xl leading-tight sm:text-6xl">{result.title}</h1>
           <p className="mt-5 font-black text-2xl text-page-accent-strong">{result.displayCode}</p>
           <p className="mt-5 text-white/70 leading-8">{result.summary}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">

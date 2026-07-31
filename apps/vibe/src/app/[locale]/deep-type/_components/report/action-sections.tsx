@@ -23,7 +23,7 @@ export function RoleFamiliesSection({ data }: { data: RoleFamiliesData }) {
         {data.cards.map((card) => (
           <li className="rounded-3xl border border-page-border bg-white p-4 sm:p-5" key={card.family.name}>
             <div className="flex items-start justify-between gap-3">
-              <p className="break-keep font-black text-page-ink text-lg leading-snug">{card.family.name}</p>
+              <p className="font-black text-page-ink text-lg leading-snug">{card.family.name}</p>
               <ConfidenceBadge label={card.confidenceLabel} level={card.confidence} />
             </div>
             <p className={cn('mt-2', REPORT_TYPE.copy)}>{card.family.summary}</p>
@@ -107,7 +107,7 @@ export function WeekQuestSection({ data }: { data: WeekQuestData }) {
             <QuestSpine day={day.day} last={index === data.days.length - 1} />
             <div className="min-w-0 flex-1 pb-1">
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                <p className="break-keep font-black text-base text-page-ink">{day.title}</p>
+                <p className="font-black text-base text-page-ink">{day.title}</p>
                 <span className="rounded-full bg-page-soft px-2 py-0.5 font-bold text-page-ink-muted text-xs tabular-nums">
                   {data.labels.minutes} {day.estimatedMinutes}
                   {data.labels.minutesUnit}
@@ -173,7 +173,7 @@ export function ContextShiftSection({ data }: { data: ContextShiftData }) {
                   axis.matched ? 'bg-page-ink-muted' : 'bg-page-accent',
                 )}
               />
-              <p className="break-keep font-black text-base text-page-ink">{axis.axisName}</p>
+              <p className="font-black text-base text-page-ink">{axis.axisName}</p>
               <p className="ml-auto shrink-0 text-page-ink-muted text-sm">
                 {axis.declared.label}
                 <span aria-hidden="true"> / </span>
@@ -220,7 +220,7 @@ export function FitAndFrictionSection({ data }: { data: FitAndFrictionData }) {
           <ul className="mt-3 grid gap-3">
             {data.fits.map((fit) => (
               <li className="rounded-2xl border border-page-border bg-white p-4" key={fit.title}>
-                <p className="break-keep font-black text-base text-page-ink">{fit.title}</p>
+                <p className="font-black text-base text-page-ink">{fit.title}</p>
                 <div className="mt-2.5">
                   <FieldList>
                     <Field label={data.labels.evidence} value={fit.evidence} />
@@ -238,7 +238,7 @@ export function FitAndFrictionSection({ data }: { data: FitAndFrictionData }) {
           <ul className="mt-3 grid gap-3">
             {data.frictions.map((friction) => (
               <li className="rounded-2xl border border-page-border bg-white p-4" key={friction.title}>
-                <p className="break-keep font-black text-base text-page-ink">{friction.title}</p>
+                <p className="font-black text-base text-page-ink">{friction.title}</p>
                 <p className={cn('mt-2', REPORT_TYPE.copy)}>{friction.condition}</p>
                 <div className="mt-2.5">
                   <FieldList>
@@ -266,7 +266,7 @@ export function ThreePathsSection({ data }: { data: ThreePathsData }) {
         {data.paths.map((path) => (
           <li className="rounded-3xl border border-page-border bg-white p-4 sm:p-5" key={path.id}>
             <div className="flex items-start justify-between gap-3">
-              <p className="break-keep font-black text-page-ink text-lg leading-snug">{path.title}</p>
+              <p className="font-black text-page-ink text-lg leading-snug">{path.title}</p>
               <ConfidenceBadge label={path.confidenceLabel} level={path.confidence} />
             </div>
             <p className={cn('mt-2', REPORT_TYPE.copy)}>{path.purpose}</p>
@@ -306,7 +306,7 @@ export function ReflectionQuestionsSection({ data }: { data: ReflectionQuestions
               {index + 1}
             </span>
             <div className="min-w-0">
-              <p className="break-keep font-bold text-[1.0625rem] text-page-ink leading-8">{question.text}</p>
+              <p className="break-prose font-bold text-[1.0625rem] text-page-ink leading-8">{question.text}</p>
               <p className={cn('mt-2', REPORT_TYPE.copy)}>{question.why}</p>
               <p className={cn('mt-2', REPORT_TYPE.meta)}>{question.source}</p>
             </div>

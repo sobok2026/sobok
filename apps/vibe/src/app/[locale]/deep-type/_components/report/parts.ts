@@ -40,9 +40,33 @@ export interface ReportPart {
   sections: readonly NumberedSection[]
 }
 
+/**
+ * The fragment each section is addressed by, in the casing a URL is written in.
+ *
+ * `#report-week-quest`, not the `#report-weekQuest` a section key would have produced. The key is a TypeScript
+ * identifier; a fragment is part of a link a reader copies out of the address bar, pastes into a message, and
+ * reads in the footer of a printed page, and camelCase in that position is our internal naming leaking into an
+ * address. Authored per key rather than derived by a regex, for the same reason the part table above is: a
+ * thirteenth section has to be given a slug instead of inheriting whatever a transform makes of its key.
+ */
+const SECTION_SLUG = {
+  openingRead: 'opening-read',
+  worldJob: 'world-job',
+  strengthCards: 'strength-cards',
+  drainSignature: 'drain-signature',
+  happinessConditions: 'happiness-conditions',
+  interestProfile: 'interest-profile',
+  roleFamilies: 'role-families',
+  contextShift: 'context-shift',
+  fitAndFriction: 'fit-and-friction',
+  threePaths: 'three-paths',
+  weekQuest: 'week-quest',
+  reflectionQuestions: 'reflection-questions',
+} as const satisfies Record<ReportSectionKey, string>
+
 /** The anchor a section is linked to from the contents list. One id per section key, stable across reports. */
 export function sectionAnchorId(key: ReportSectionKey): string {
-  return `report-${key}`
+  return `report-${SECTION_SLUG[key]}`
 }
 
 /**

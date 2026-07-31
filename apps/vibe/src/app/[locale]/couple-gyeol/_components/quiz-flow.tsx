@@ -80,7 +80,6 @@ export function QuizFlow({ content, locale }: { content: GyeolContent; locale: L
       answers={answers}
       content={content}
       currentIndex={currentIndex}
-      locale={locale}
       onBack={goBack}
       onNext={goNext}
       onSelect={selectAnswer}

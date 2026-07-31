@@ -107,7 +107,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
             className="rounded-3xl border border-page-accent/40 bg-page-accent/8 p-6 text-center sm:rounded-4xl sm:p-7"
             ref={promotionRef}
           >
-            <p className="break-keep font-black text-lg text-page-accent-strong">{content.paywall.title}</p>
+            <p className="font-black text-lg text-page-accent-strong">{content.paywall.title}</p>
             <p className="mx-auto mt-2 max-w-md text-page-ink-soft text-sm leading-7">{content.paywall.body}</p>
             <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
               <span className="text-page-ink-muted text-sm line-through">
@@ -159,7 +159,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
 
         <section className={CARD_CLASS_NAME}>
           <h2 className="font-black text-lg">{JOB_HEADING}</h2>
-          <p className="mt-2 break-keep font-black text-xl">{report.worldJob.name}</p>
+          <p className="mt-2 font-black text-xl">{report.worldJob.name}</p>
           <dl className={cn('mt-4', GROUPED_LIST_CLASS_NAME, 'sm:grid sm:grid-cols-2 sm:gap-2')}>
             <Facet
               label={content.ui.worldJobFamilyLabel}
@@ -181,8 +181,8 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
           <ul className={cn('mt-4', GROUPED_LIST_CLASS_NAME, 'sm:grid sm:gap-3')}>
             {report.drainSignature.leaders.map((facet) => (
               <li className={GROUPED_ROW_CLASS_NAME} key={facet.id}>
-                <p className="break-keep font-black text-sm">{facet.label}</p>
-                <p className="mt-1 break-keep text-page-ink-soft text-sm leading-6">{facet.action}</p>
+                <p className="font-black text-sm">{facet.label}</p>
+                <p className="mt-1 break-prose text-page-ink-soft text-sm leading-6">{facet.action}</p>
               </li>
             ))}
           </ul>
@@ -259,8 +259,8 @@ function AxisBands({ bands, content }: { bands: readonly FreeAxisBand[]; content
                 {axis.leading} · {pole.label}
               </span>
             </div>
-            <p className="mt-2 break-keep font-bold text-page-ink-soft text-xs leading-5">{axis.band.label}</p>
-            <p className="mt-1 break-keep text-page-ink-muted text-xs leading-5">{axis.band.detail}</p>
+            <p className="mt-2 font-bold text-page-ink-soft text-xs leading-5">{axis.band.label}</p>
+            <p className="mt-1 break-prose text-page-ink-muted text-xs leading-5">{axis.band.detail}</p>
           </li>
         )
       })}
@@ -295,15 +295,15 @@ function StrengthCards({ cards, title }: { cards: FreeStrengthCards; title: stri
             <AbilityArtwork slug={card.slug} />
             <div className="min-w-0 flex-1 p-4 sm:py-4 sm:pr-4 sm:pl-0">
               <div className="flex items-start justify-between gap-3">
-                <p className="break-keep font-black text-sm leading-5">{card.copy.name}</p>
+                <p className="font-black text-sm leading-5">{card.copy.name}</p>
                 <span className="inline-flex h-5 min-w-9 shrink-0 items-center justify-center rounded-full bg-page-soft px-2 font-bold text-page-ink-muted text-xs">
                   {card.poles.join('')}
                 </span>
               </div>
-              <p className="mt-2 break-keep text-page-ink-soft text-sm leading-6">{card.copy.core}</p>
-              <p className="mt-2 break-keep text-page-ink-muted text-xs leading-5">{card.copy.shine}</p>
-              <p className="mt-2 break-keep text-page-ink-muted text-xs leading-5">{card.copy.watch}</p>
-              <p className="mt-2 break-keep text-page-ink-muted text-xs leading-5">{card.band.label}</p>
+              <p className="mt-2 break-prose text-page-ink-soft text-sm leading-6">{card.copy.core}</p>
+              <p className="mt-2 break-prose text-page-ink-muted text-xs leading-5">{card.copy.shine}</p>
+              <p className="mt-2 break-prose text-page-ink-muted text-xs leading-5">{card.copy.watch}</p>
+              <p className="mt-2 text-page-ink-muted text-xs leading-5">{card.band.label}</p>
             </div>
           </li>
         ))}
@@ -324,23 +324,23 @@ function ReadingChapters({ reading }: { reading: FreeReading }) {
     <>
       {reading.chapters.map((chapter) => (
         <section className={CARD_CLASS_NAME} key={chapter.id}>
-          <h2 className="break-keep font-black text-lg">{chapter.title}</h2>
-          <p className="mt-1.5 break-keep text-page-ink-muted text-sm leading-6">{chapter.intro}</p>
+          <h2 className="font-black text-lg">{chapter.title}</h2>
+          <p className="mt-1.5 text-page-ink-muted text-sm leading-6">{chapter.intro}</p>
           <div className="mt-5 grid gap-5">
             {chapter.paragraphs.map((paragraph) => (
               <div key={paragraph.text}>
                 {paragraph.kicker ? (
                   <p className="font-black text-page-accent-strong text-xs tracking-wide">{paragraph.kicker}</p>
                 ) : null}
-                <p className="mt-1.5 break-keep text-page-ink-soft leading-8">{paragraph.text}</p>
+                <p className="mt-1.5 break-prose text-page-ink-soft leading-8">{paragraph.text}</p>
                 {paragraph.note ? (
-                  <p className="mt-2 break-keep text-page-ink-muted text-xs leading-5">{paragraph.note}</p>
+                  <p className="mt-2 break-prose text-page-ink-muted text-xs leading-5">{paragraph.note}</p>
                 ) : null}
               </div>
             ))}
           </div>
           {chapter.id === 'closing' ? (
-            <p className="mt-5 break-keep text-page-ink-muted text-xs leading-5">{reading.closing}</p>
+            <p className="mt-5 break-prose text-page-ink-muted text-xs leading-5">{reading.closing}</p>
           ) : null}
         </section>
       ))}
@@ -353,7 +353,7 @@ function Facet({ label, name, value }: { label: string; name: string; value: str
     <div className={GROUPED_ROW_CLASS_NAME}>
       <dt className="text-page-ink-muted text-xs">{label}</dt>
       <dd className="mt-1 font-black text-sm">{name}</dd>
-      <dd className="mt-1 break-keep text-page-ink-soft text-xs leading-5">{value}</dd>
+      <dd className="mt-1 break-prose text-page-ink-soft text-xs leading-5">{value}</dd>
     </div>
   )
 }

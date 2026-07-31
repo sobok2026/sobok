@@ -17,6 +17,7 @@
     "@sobok/analytics": "workspace:*",
     "@sobok/domain": "workspace:*",
     "@sobok/edge": "workspace:*",
+    "@sobok/typography": "workspace:*",
     "@swisseph/browser": "1.1.0",
     "@tanstack/react-query": "^5.101.1",
     "downshift": "^9.0.0",

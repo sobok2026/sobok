@@ -35,8 +35,13 @@ export function ReportContents({ content, parts }: { content: DeepTypeContent; p
               {part.sections.map(({ number, section }) => (
                 <li key={section.key}>
                   <a
+                    // The row a finger gets and the row a pointer lights up are the same box, and the box is
+                    // symmetric around its text: `py-2` on a 28px line is the 44px target both platforms ask
+                    // for, where `min-h-11` over `py-1.5` left 4px of the highlight hanging below the words.
+                    // `-mx-2 px-2` bleeds that box into the card's own padding so the highlight has room
+                    // around the text it covers while the numerals stay on the part label's left edge.
                     className={cn(
-                      'flex min-h-11 items-baseline gap-3 rounded-2xl py-1.5 transition-colors hover:bg-page-soft/70',
+                      '-mx-2 flex items-baseline gap-3 rounded-2xl p-2 transition-colors hover:bg-page-soft/70',
                       FOCUS_CLASS_NAME,
                     )}
                     href={`#${sectionAnchorId(section.key)}`}
@@ -47,9 +52,7 @@ export function ReportContents({ content, parts }: { content: DeepTypeContent; p
                     >
                       {String(number).padStart(2, '0')}
                     </span>
-                    <span className="min-w-0 break-keep font-bold text-[0.9375rem] text-page-ink leading-7">
-                      {section.title}
-                    </span>
+                    <span className="min-w-0 font-bold text-[0.9375rem] text-page-ink leading-7">{section.title}</span>
                   </a>
                 </li>
               ))}
@@ -82,7 +85,7 @@ function PartLabel({ number, template, title }: { number: number; template: stri
       <span className="rounded-full bg-page-accent/12 px-2.5 py-0.5 font-black text-page-accent-strong text-xs">
         {template.replace('{number}', String(number))}
       </span>
-      <span className="break-keep font-black text-lg text-page-ink">{title}</span>
+      <span className="font-black text-lg text-page-ink">{title}</span>
     </p>
   )
 }

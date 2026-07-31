@@ -14,8 +14,6 @@ type IntroViewProps = {
 }
 
 export function IntroView({ content, hasInvalidSharedResult, locale }: IntroViewProps) {
-  const keepHeadingBreakClassName = locale === 'ko' ? 'break-keep' : undefined
-
   return (
     <main className="flex flex-1 flex-col overflow-hidden bg-page-bg text-page-ink" id="main-content">
       <section className="px-safe py-10 sm:py-14 lg:py-18">
@@ -25,12 +23,7 @@ export function IntroView({ content, hasInvalidSharedResult, locale }: IntroView
               <HeartWaves aria-hidden="true" className="h-4 w-4 text-page-accent-strong" stroke={1.8} />
               {content.ui.heroEyebrow}
             </p>
-            <h1
-              className={cn(
-                'mt-6 text-balance font-black text-5xl leading-tight tracking-tight sm:text-6xl xl:text-7xl',
-                keepHeadingBreakClassName,
-              )}
-            >
+            <h1 className="mt-6 text-balance font-black text-5xl leading-tight tracking-tight sm:text-6xl xl:text-7xl">
               {content.ui.heroTitle}
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-page-ink-soft leading-8 sm:text-xl">

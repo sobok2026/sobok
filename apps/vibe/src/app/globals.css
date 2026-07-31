@@ -1,63 +1,37 @@
 @import 'tailwindcss' source(none);
+@import '@sobok/typography/styles.css';
 
 @source '..';
 
 :root {
-  /*
-   * TEXT COLOUR IS A THREE-STEP SCALE, NOT AN OPACITY DIAL.
-   *
-   * The palette used to be one ink plus whatever alpha a component reached for — twenty-three distinct values
-   * of `text-page-ink/NN` across the app, of which everything at or below /56 failed WCAG 2.1 AA 4.5:1 on our
-   * own surfaces (/48 measured 3.16:1, /40 measured 2.51:1). Alpha steps also mean the same class renders a
-   * different contrast on `--page-surface` than on `--page-soft`, so nothing could be checked once and trusted.
-   *
-   * These three are opaque, ordered, and all clear 4.5:1 against the darkest background text ever sits on
-   * (`--page-soft`, #f7eee6): ink 15.3:1, ink-soft 8.4:1, ink-muted 5.5:1. Body copy takes `ink-soft`,
-   * captions and asides take `ink-muted`, and anything quieter than `ink-muted` does not exist — a fourth step
-   * below it cannot pass, which is the point of there being three.
-   */
   --page-ink: #241617;
   --page-ink-soft: #54403f;
   --page-ink-muted: #75595b;
 
-  /*
-   * TWO ACCENTS, SPLIT BY WHAT THEY TOUCH.
-   *
-   * `--page-accent` is the brand pink and is a SURFACE colour: tints, borders, and decorative marks that carry
-   * no information of their own. It measures 3.16:1 on our surfaces and 3.21:1 under white, so it may not be
-   * text and may not sit under text.
-   *
-   * `--page-accent-strong` is the same hue taken down to where both directions pass — 4.9:1 on `--page-soft`,
-   * 5.6:1 under white — and it is what accent-coloured text, links, and filled CTAs use.
-   */
   --page-accent: #ff4d6d;
   --page-accent-strong: #c81e4a;
-  /* The colour under a primary CTA's drop shadow. Kept as a variable so the accent and its shadow can
-     never drift apart. */
   --page-accent-glow: rgba(200, 30, 74, 0.26);
+
   --page-bg: #fdfaf6;
   --page-border: #eadbd0;
-  /* Error text, so it is held to the same 4.5:1 as `--page-ink-muted`. The old #d93654 reached 3.98:1 on
-     `--page-soft`, which is where form errors are actually drawn. */
   --page-danger: #bf2440;
-  --page-gutter-x: 1rem;
-  --page-safe-inset-left: max(var(--page-gutter-x), var(--safe-area-inset-left));
-  --page-safe-inset-right: max(var(--page-gutter-x), var(--safe-area-inset-right));
   --page-soft: #f7eee6;
   --page-success: #147a4a;
   --page-surface: #fffdf9;
 
+  --page-gutter-x: 1rem;
+  --page-safe-left: max(var(--page-gutter-x), var(--safe-area-left));
+  --page-safe-right: max(var(--page-gutter-x), var(--safe-area-right));
+
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-area-inset-left: env(safe-area-inset-left, 0px);
-  --safe-area-inset-right: env(safe-area-inset-right, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
 }
 
 @theme inline {
   --spacing-header: 4rem;
-  /* The bottom island's own height (2.625rem) plus the offset it floats at. A page that shows the island owes
-     this much clearance, or its last control ends up under the pill with nothing left to scroll. */
-  --spacing-bottom-nav: calc(2.625rem + max(0.5rem, var(--safe-area-bottom)));
+  --spacing-bottom-nav: calc(3rem + max(0.5rem, var(--safe-area-bottom)));
 
   /* THEME_COLOR in src/constants.ts must stay in sync with --page-bg. */
   --color-page-accent: var(--page-accent);
@@ -74,8 +48,8 @@
 }
 
 @utility px-safe {
-  padding-inline-start: var(--page-safe-inset-left);
-  padding-inline-end: var(--page-safe-inset-right);
+  padding-inline-start: var(--page-safe-left);
+  padding-inline-end: var(--page-safe-right);
 }
 
 @utility pt-safe {
@@ -120,6 +94,26 @@ body {
     'Hiragino Sans',
     Meiryo,
     'Noto Sans JP',
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    sans-serif;
+}
+
+/* Base Pretendard covers no Simplified Chinese hanzi, so zh-CN leads with Noto
+   Sans SC and keeps a system SC stack as the offline fallback. */
+html:lang(zh-CN) body {
+  font-family:
+    'Noto Sans SC Variable',
+    'Pretendard Variable',
+    'PingFang SC',
+    'Microsoft YaHei',
+    'Noto Sans SC',
+    'Noto Sans CJK SC',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
     'Apple Color Emoji',
     'Segoe UI Emoji',
     'Segoe UI Symbol',
@@ -240,24 +234,4 @@ html:lang(ja) body {
   blockquote {
     break-inside: avoid;
   }
-}
-
-/* Base Pretendard covers no Simplified Chinese hanzi, so zh-CN leads with Noto
-   Sans SC and keeps a system SC stack as the offline fallback. */
-html:lang(zh-CN) body {
-  font-family:
-    'Noto Sans SC Variable',
-    'Pretendard Variable',
-    'PingFang SC',
-    'Microsoft YaHei',
-    'Noto Sans SC',
-    'Noto Sans CJK SC',
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-    sans-serif;
 }

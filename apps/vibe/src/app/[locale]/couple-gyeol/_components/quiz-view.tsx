@@ -1,5 +1,4 @@
 import { ArrowRight, HeartWaves } from '@mynaui/icons-react'
-import type { Locale } from '@sobok/domain/locale'
 import { cn } from '@/utils/cn'
 import { FOCUS_CLASS_NAME } from '../../../../components/focus'
 
@@ -9,13 +8,12 @@ type QuizViewProps = {
   answers: GyeolAnswers
   content: GyeolContent
   currentIndex: number
-  locale: Locale
   onBack: () => void
   onNext: () => void
   onSelect: (questionId: GyeolQuestionId, optionId: GyeolAnswers[keyof GyeolAnswers]) => void
 }
 
-export function QuizView({ answers, content, currentIndex, locale, onBack, onNext, onSelect }: QuizViewProps) {
+export function QuizView({ answers, content, currentIndex, onBack, onNext, onSelect }: QuizViewProps) {
   const question = content.questions[currentIndex]
   const selectedAnswer = answers[question.id]
   const answeredCount = Object.keys(answers).length
@@ -23,7 +21,6 @@ export function QuizView({ answers, content, currentIndex, locale, onBack, onNex
   const isLastQuestion = currentIndex === content.questions.length - 1
   const canGoNext = Boolean(selectedAnswer)
   const buttonLabel = isLastQuestion ? content.ui.resultButton : content.ui.nextButton
-  const keepHeadingBreakClassName = locale === 'en' ? undefined : 'break-keep'
 
   return (
     <section className="flex flex-1 flex-col justify-center bg-page-bg px-safe py-10 text-page-ink">
@@ -33,14 +30,7 @@ export function QuizView({ answers, content, currentIndex, locale, onBack, onNex
             <HeartWaves aria-hidden="true" className="h-4 w-4 text-page-accent-strong" stroke={1.8} />
             {content.ui.questionEyebrow}
           </p>
-          <h1
-            className={cn(
-              'mt-7 font-black text-4xl leading-tight tracking-tight sm:text-5xl',
-              keepHeadingBreakClassName,
-            )}
-          >
-            {content.ui.heroTitle}
-          </h1>
+          <h1 className="mt-7 font-black text-4xl leading-tight tracking-tight sm:text-5xl">{content.ui.heroTitle}</h1>
           <p className="mt-5 text-white/68 leading-8">{content.ui.modelNotice}</p>
           <div className="mt-8">
             <div className="flex items-center justify-between font-bold text-sm text-white/60">
@@ -60,11 +50,7 @@ export function QuizView({ answers, content, currentIndex, locale, onBack, onNex
 
         <form className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-5 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-7">
           <fieldset>
-            <legend
-              className={cn('font-black text-xl leading-tight tracking-tight sm:text-3xl', keepHeadingBreakClassName)}
-            >
-              {question.question}
-            </legend>
+            <legend className="font-black text-xl leading-tight tracking-tight sm:text-3xl">{question.question}</legend>
             <div className="mt-5 grid gap-3 sm:mt-7">
               {question.options.map((option) => {
                 const isSelected = selectedAnswer === option.id
