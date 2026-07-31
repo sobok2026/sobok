@@ -79,7 +79,7 @@ async function publish(content: GuardianQuestionnaireContent, contentHash: strin
   // Dynamic so validation does not need a database target. Importing the schema resolves STELLA_DB_SCHEMA at
   // module load; this fail-closed boundary prevents an omitted environment from publishing into production.
   const { guardianQuestionnaireVersionTable, guardianQuestionOptionTable, guardianQuestionTable } = await import(
-    '../worker/db/schema'
+    '../worker/db/schema/guardian-questionnaire'
   )
   const client = postgres(url, { max: 1, prepare: false, ssl: 'require' })
   const db = drizzle({ client })

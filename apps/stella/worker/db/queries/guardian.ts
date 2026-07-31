@@ -21,7 +21,7 @@ import {
   guardianPurchaseTable,
   guardianRedrawGrantTable,
   guardianReportTable,
-} from '../schema'
+} from '../schema/guardian'
 
 export interface NewGuestGuardianReport {
   collectionPublicId: string

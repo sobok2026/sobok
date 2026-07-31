@@ -17,7 +17,6 @@
     "binding": "ASSETS",
     "not_found_handling": "404-page",
     "html_handling": "drop-trailing-slash",
-    // API routes always hit the Worker first so they can never be shadowed by an asset.
     "run_worker_first": ["/api/*"]
   },
   // The hostnames a Turnstile solve is accepted from, comma-separated. This is a security pin, so the
