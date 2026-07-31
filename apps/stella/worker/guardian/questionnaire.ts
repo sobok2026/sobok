@@ -274,9 +274,7 @@ export function resolveGuardianQuestionnaireProgress(
     if (answer.type !== 'text') {
       throw new GuardianQuestionnaireStateError(`Question ${question.id} requires a text answer`)
     }
-    if (answer.text !== null && answer.text.length > GUARDIAN_MAX_TEXT_ANSWER_LENGTH) {
-      throw new GuardianQuestionnaireStateError(`Question ${question.id} text answer is too long`)
-    }
+
     questionId = question.nextQuestionId
   }
 

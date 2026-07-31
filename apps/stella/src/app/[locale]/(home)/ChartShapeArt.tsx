@@ -1,3 +1,4 @@
+import { norm360 } from '@/chart/astrology'
 import { PLANET_ORDER } from '@/chart/data'
 import type { ChartShape, ComputedPlanetId, PlanetPosition } from '@/chart/types'
 
@@ -38,7 +39,7 @@ export function ChartShapeArt({ className, planets, shape }: ChartShapeArtProps)
       return null
     }
 
-    const lon = ((planet.lon % 360) + 360) % 360
+    const lon = norm360(planet.lon)
     const angle = ((lon - 90) * Math.PI) / 180
 
     return {

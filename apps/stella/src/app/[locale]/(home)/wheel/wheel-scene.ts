@@ -2,7 +2,7 @@
 // and the share-card Canvas both consume this scene so geometry, visible content,
 // and resting styles come from one source in both outputs.
 
-import { elementOfSign, signOfLon } from '@/chart/astrology'
+import { angularGap, elementOfSign, norm360, signOfLon } from '@/chart/astrology'
 import { ASPECT_STYLE, ELEMENT_COLORS, PLANET_GLYPHS, SIGNS } from '@/chart/data'
 import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId, SignId } from '@/chart/types'
 import { annularSector, type PlacedPlanet, type Point, placePlanets, polar, RADIUS, VIEW } from './geometry'
@@ -176,30 +176,20 @@ export type WheelSceneOptions = {
   moonLongitudeRange?: readonly [start: number, end: number] | null
 }
 
-/** Smallest angle (deg) between two ecliptic longitudes. */
-function angleGap(a: number, b: number): number {
-  const d = Math.abs((((a - b) % 360) + 360) % 360)
-  return Math.min(d, 360 - d)
-}
-
-function normalizeLongitude(value: number): number {
-  return ((value % 360) + 360) % 360
-}
-
 function buildAngles(ascendant: number, midheaven: number | null): WheelAngle[] {
   const entries: { id: AngleId; lon: number; primary: boolean }[] = [
-    { id: 'asc', lon: normalizeLongitude(ascendant), primary: true },
-    { id: 'dsc', lon: normalizeLongitude(ascendant + 180), primary: false },
+    { id: 'asc', lon: norm360(ascendant), primary: true },
+    { id: 'dsc', lon: norm360(ascendant + 180), primary: false },
   ]
 
   if (midheaven !== null) {
-    entries.push({ id: 'mc', lon: normalizeLongitude(midheaven), primary: true })
-    entries.push({ id: 'ic', lon: normalizeLongitude(midheaven + 180), primary: false })
+    entries.push({ id: 'mc', lon: norm360(midheaven), primary: true })
+    entries.push({ id: 'ic', lon: norm360(midheaven + 180), primary: false })
   }
 
   return entries.map(({ id, lon, primary }) => {
     const nearest = entries.reduce(
-      (min, other) => (other.id === id ? min : Math.min(min, angleGap(lon, other.lon))),
+      (min, other) => (other.id === id ? min : Math.min(min, angularGap(lon, other.lon))),
       Number.POSITIVE_INFINITY,
     )
 
@@ -218,9 +208,9 @@ function buildAngles(ascendant: number, midheaven: number | null): WheelAngle[] 
 
 function buildMoonRange(range: readonly [start: number, end: number], anchor: number): WheelMoonRange {
   const [start, end] = range
-  const span = normalizeLongitude(end - start)
+  const span = norm360(end - start)
   const endUnwrapped = start + span
-  const middle = normalizeLongitude(start + span / 2)
+  const middle = norm360(start + span / 2)
   const rangeInner = RADIUS.trueMark - 4
   const rangeOuter = RADIUS.trueMark + 4
   const startSign = signOfLon(start)
@@ -303,7 +293,7 @@ export function buildWheelScene(
 
     cusps.forEach((lon, index) => {
       const n = (index + 1) as HouseNumber
-      const span = (((cusps[(index + 1) % 12] - lon) % 360) + 360) % 360
+      const span = norm360(cusps[(index + 1) % 12] - lon)
 
       const cuspStyle =
         index === 0 || index === 9

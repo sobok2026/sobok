@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import type { SignId } from '@/chart/types'
 import cardStyles from '@/components/card.module.css'
 import Reading from '@/components/Reading'
+import { ReadingActions } from '@/components/ReadingActions'
 import type { Interpretations } from '@/content/interpretations/types'
 import { aspectTone, fill, pairKey } from '@/content/interpretations/types'
 import type { StoredBirth } from '@/lib/birth-storage'
@@ -41,7 +42,6 @@ type LoveBodyProps = {
 export default function LoveBody({ data, homeHref, locale, onShare, shared }: LoveBodyProps) {
   const t = useTranslations('Love')
   const tc = useTranslations('Constellation')
-  const ts = useTranslations('Shared')
 
   const { readings, interpretations, profile, windows, timeKnown } = data
   const venusRetroText = profile.venusRetro ? interpretations.retro.venus?.[profile.venusSign] : undefined
@@ -196,27 +196,13 @@ export default function LoveBody({ data, homeHref, locale, onShare, shared }: Lo
       </section>
 
       {/* Actions */}
-      <div className="flex flex-col items-center gap-3 pt-1">
-        {shared ? (
-          <a
-            className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-            href={homeHref}
-          >
-            {ts('createOwn')}
-          </a>
-        ) : (
-          <>
-            <button
-              className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
-              onClick={onShare}
-              type="button"
-            >
-              {t('share.button')}
-            </button>
-            <p className="text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
-          </>
-        )}
-      </div>
+      <ReadingActions
+        homeHref={homeHref}
+        onShare={onShare}
+        shareLabel={t('share.button')}
+        shared={shared}
+        showPrivacy
+      />
     </div>
   )
 }

@@ -44,13 +44,12 @@ export type LuckyCopy = {
   action: string
 }
 
-export type LuckyFood = LuckyCandidate &
+type LuckyFood = LuckyCandidate &
   LuckyCopy & {
     id: string
   }
 
 export type LuckyColorDefinition = LuckyCandidate & {
-  id: LuckyColorId
   hex: `#${string}`
 }
 
@@ -59,7 +58,10 @@ export type LuckyContent = {
   colors: Record<LuckyColorId, LuckyCopy>
 }
 
-export type LuckyColor = LuckyColorDefinition & LuckyCopy
+type LuckyColor = LuckyColorDefinition &
+  LuckyCopy & {
+    id: LuckyColorId
+  }
 
 export type LuckyRecommendations = {
   personalized: boolean

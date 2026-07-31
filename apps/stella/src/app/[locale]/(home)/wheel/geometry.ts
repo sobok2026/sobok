@@ -1,7 +1,7 @@
 // Geometry that places everything on the SVG wheel: polar mapping, sector
 // paths, ring radii, token sizing and the overlap-avoiding planet layout.
 
-import { angularGap } from '@/chart/astrology'
+import { angularGap, norm360 } from '@/chart/astrology'
 import { PLANET_GLYPHS } from '@/chart/data'
 import type { PlanetPosition } from '@/chart/types'
 
@@ -140,7 +140,7 @@ function spreadLongitudes(lons: number[], minSep: number): number[] {
   let maxGap = -1
 
   for (let i = 0; i < n; i++) {
-    const gap = (((lons[(i + 1) % n] - lons[i]) % 360) + 360) % 360
+    const gap = norm360(lons[(i + 1) % n] - lons[i])
 
     if (gap > maxGap) {
       maxGap = gap
@@ -155,7 +155,7 @@ function spreadLongitudes(lons: number[], minSep: number): number[] {
   for (let k = 0; k < n; k++) {
     const idx = (cut + 1 + k) % n
     order[k] = idx
-    x[k] = k === 0 ? lons[idx] : x[k - 1] + ((((lons[idx] - lons[order[k - 1]]) % 360) + 360) % 360)
+    x[k] = k === 0 ? lons[idx] : x[k - 1] + norm360(lons[idx] - lons[order[k - 1]])
   }
 
   // 3. Re-centre overlapping runs until no neighbours are closer than `sep`.
@@ -192,7 +192,7 @@ function spreadLongitudes(lons: number[], minSep: number): number[] {
   const display = new Array<number>(n)
 
   for (let k = 0; k < n; k++) {
-    display[order[k]] = ((x[k] % 360) + 360) % 360
+    display[order[k]] = norm360(x[k])
   }
 
   return display

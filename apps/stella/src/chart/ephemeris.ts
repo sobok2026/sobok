@@ -3,11 +3,9 @@
 // The standard 1800–2400 ephemeris files are self-hosted and load only when a
 // chart or transit calculation is requested.
 
-import { signOfLon } from './astrology'
+import { norm360, signOfLon } from './astrology'
 import { PLANET_ORDER } from './data'
 import type { ComputedPlanetId, NatalChart, PlanetPosition, SignId } from './types'
-
-export type CityKey = string
 
 export type BirthInput = {
   year: number
@@ -59,8 +57,6 @@ const STANDARD_EPHEMERIS_FILES = STANDARD_EPHEMERIS_ASSETS.map(({ name, sha256 }
   name,
   url: `/ephemeris/${name.slice(0, -4)}.${sha256}.se1`,
 }))
-
-const norm360 = (x: number) => ((x % 360) + 360) % 360
 
 type SwissModule = typeof import('@swisseph/browser')
 type SwissEphemeris = InstanceType<SwissModule['SwissEphemeris']>
@@ -278,7 +274,7 @@ export async function computeBirthChartAnalysis(input: BirthInput): Promise<Birt
   return { chart, unknownTime }
 }
 
-export async function computeChart(input: BirthInput): Promise<NatalChart> {
+async function computeChart(input: BirthInput): Promise<NatalChart> {
   const [runtime, utc] = await Promise.all([
     getSwissRuntime(),
     localDateTimeToUtc(input, input.timeKnown ? input.hour : 12, input.timeKnown ? input.minute : 0),

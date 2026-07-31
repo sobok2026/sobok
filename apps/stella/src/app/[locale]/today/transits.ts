@@ -3,10 +3,10 @@ import type { NatalChart, PlanetPosition } from '@/chart/types'
 import { type AspectTone, aspectTone } from '@/content/interpretations/types'
 
 /** Natal bodies the transiting Moon is read against — the personal planets. */
-export const MOON_TARGETS = ['sun', 'moon', 'mercury', 'venus', 'mars'] as const
+const MOON_TARGETS = ['sun', 'moon', 'mercury', 'venus', 'mars'] as const
 export type MoonTargetId = (typeof MOON_TARGETS)[number]
 
-export const SLOW_PLANETS = ['jupiter', 'saturn', 'uranus', 'neptune', 'pluto'] as const
+const SLOW_PLANETS = ['jupiter', 'saturn', 'uranus', 'neptune', 'pluto'] as const
 export type SlowPlanetId = (typeof SLOW_PLANETS)[number]
 
 /** Natal points a slow transit is read against. */
@@ -24,7 +24,7 @@ export type PersonalToday = {
   slowTransit: SlowContact | null
 }
 
-export type PersonalTodayOptions = {
+type PersonalTodayOptions = {
   /** False for date-only births: the noon Moon longitude is not an exact natal point. */
   natalMoonExact?: boolean
 }

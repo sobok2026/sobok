@@ -1,3 +1,4 @@
+import { COMMENT_REPORT_REASONS, MAX_COMMENT_BODY_LENGTH } from '@sobok/domain/comment/policy'
 import { LOCALES } from '@sobok/domain/locale'
 import { alertDiscord } from '@sobok/edge/alert'
 import { type Db, openDB, withDB } from '@sobok/edge/db/client'
@@ -17,7 +18,7 @@ import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { decodeCursor, encodeCursor } from '~/lib/cursor'
 import { hashIp } from '~/lib/ip'
-import { MAX_BODY, sanitizeBody, sanitizeNickname } from '~/lib/text'
+import { sanitizeBody, sanitizeNickname } from '~/lib/text'
 import { newEditToken, newPublicId } from '~/lib/tokens'
 import { guardTurnstile } from '~/lib/turnstile'
 import { COMMENT_POST_ACTION, COMMENT_REPORT_ACTION } from './actions'
@@ -51,12 +52,12 @@ const TurnstileSchema = z.string().min(1).max(2048)
 const PostBody = z.object({
   locale: LocaleSchema,
   topic: TopicKeySchema,
-  body: z.string().min(1).max(MAX_BODY),
+  body: z.string().min(1).max(MAX_COMMENT_BODY_LENGTH),
   nickname: z.string().max(64).optional(),
   turnstileToken: TurnstileSchema,
 })
 const ReportBody = z.object({
-  reason: z.enum(['spam', 'abuse', 'sexual', 'privacy', 'other']),
+  reason: z.enum(COMMENT_REPORT_REASONS),
   turnstileToken: TurnstileSchema,
 })
 
@@ -199,7 +200,9 @@ comments.patch('/:publicId', async (c) => {
   if (!token) {
     return problem(403, 'forbidden')
   }
-  const parsed = z.object({ body: z.string().min(1).max(MAX_BODY) }).safeParse(await c.req.json().catch(() => null))
+  const parsed = z
+    .object({ body: z.string().min(1).max(MAX_COMMENT_BODY_LENGTH) })
+    .safeParse(await c.req.json().catch(() => null))
   if (!parsed.success) {
     return problem(422, 'invalid-request')
   }

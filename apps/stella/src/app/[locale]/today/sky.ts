@@ -2,7 +2,7 @@
 // from a chosen local-noon snapshot so the page is stable for a whole calendar
 // day (the one-update-per-day rhythm is deliberate).
 
-import { angularGap, signOfLon } from '@/chart/astrology'
+import { angularGap, norm360, signOfLon } from '@/chart/astrology'
 import { PLANET_ORDER } from '@/chart/data'
 import { computePositions } from '@/chart/ephemeris'
 import type { AspectType, ComputedPlanetId, PlanetPosition, SignId } from '@/chart/types'
@@ -48,7 +48,7 @@ const PHASES: readonly MoonPhaseId[] = [
 
 /** Bucket a Moon−Sun elongation into the eight phases (each centered on its exact angle). */
 export function moonPhaseOf(phaseAngle: number): MoonPhaseId {
-  const normalized = ((phaseAngle % 360) + 360) % 360
+  const normalized = norm360(phaseAngle)
   return PHASES[Math.floor(((normalized + 22.5) % 360) / 45)]
 }
 
@@ -118,7 +118,7 @@ export async function computeSkyToday(noonLocal: Date): Promise<SkyToday> {
   ])
 
   const moonLon = lonOf(noon, 'moon')
-  const phaseAngle = (((moonLon - lonOf(noon, 'sun')) % 360) + 360) % 360
+  const phaseAngle = norm360(moonLon - lonOf(noon, 'sun'))
   const stations: Station[] = []
 
   for (const id of STATION_BODIES) {

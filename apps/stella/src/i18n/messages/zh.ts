@@ -315,8 +315,6 @@ export const zh = {
       lastQuarter: '下弦月',
       waningCrescent: '残月',
     },
-    todayCta: '☾ 看看今天的流势',
-    loveCta: '♡ 看我的恋爱运',
   },
   Today: {
     meta: {

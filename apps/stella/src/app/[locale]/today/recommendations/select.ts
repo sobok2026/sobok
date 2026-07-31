@@ -1,12 +1,12 @@
 import type { Locale } from '@sobok/domain/locale'
 
-import { elementOfSign, signOfLon } from '@/chart/astrology'
+import { elementOfSign, signOfLon, signOfPlanet } from '@/chart/astrology'
 import type { ElementId, NatalChart, PlanetId, SignId } from '@/chart/types'
 import { type AspectTone, aspectTone } from '@/content/interpretations/types'
 import { dayOrdinal, seededPick } from '../daily'
 import type { MoonPhaseId, SkyToday } from '../sky'
 import type { PersonalToday } from '../transits'
-import { LUCKY_COLORS } from './palette'
+import { LUCKY_COLOR_ENTRIES } from './palette'
 import type { LuckyCandidate, LuckyContent, LuckyEnergy, LuckyRecommendations, LuckyTone } from './types'
 
 /**
@@ -75,7 +75,7 @@ export function selectLuckyRecommendations(input: SelectLuckyInput): LuckyRecomm
   )
 
   const colorDefinition = pickDaily(
-    LUCKY_COLORS,
+    LUCKY_COLOR_ENTRIES,
     `${rankSeed}:color`,
     day,
     dayElement,
@@ -172,8 +172,7 @@ function natalElement(natal: NatalChart | null, planet: PlanetId): ElementId | n
 }
 
 function natalSign(natal: NatalChart | null, planet: PlanetId): SignId | null {
-  const position = natal?.planets.find((entry) => entry.id === planet)
-  return position ? signOfLon(position.lon) : null
+  return natal ? signOfPlanet(natal, planet) : null
 }
 
 function resolveNatalMoonSign(natal: NatalChart | null, dateOnlySigns: readonly SignId[] | undefined): SignId | null {

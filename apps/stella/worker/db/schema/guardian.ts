@@ -1,4 +1,4 @@
-import { createdAt, timestamps } from '@sobok/edge/db/columns'
+import { createdAt, identityId, publicId, timestamps } from '@sobok/edge/db/columns'
 import { sql } from 'drizzle-orm'
 import {
   bigint,
@@ -55,8 +55,8 @@ export const guardianAcquisitionSourceEnum = stella.enum('guardian_acquisition_s
 // `guardian_collection` is the ownership aggregate before AND after sign-up. Guest checkout creates one;
 // the future Stella account layer claims that same row instead of copying cards or resetting pity progress.
 export const guardianCollectionTable = stella.table('guardian_collection', {
-  id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-  publicId: varchar('public_id', { length: 24 }).notNull().unique(),
+  id: identityId,
+  publicId,
   // The raw collection capability is returned once and never stored. Future account sessions can authorize
   // the same collection without this token; account claim clears this hash so the guest capability cannot
   // remain as a second, perpetual way into the account-owned collection.
@@ -70,8 +70,8 @@ export const guardianCollectionTable = stella.table('guardian_collection', {
 export const guardianReportTable = stella.table(
   'guardian_report',
   {
-    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    publicId: varchar('public_id', { length: 24 }).notNull().unique(),
+    id: identityId,
+    publicId,
     collectionId: bigint('collection_id', { mode: 'number' })
       .notNull()
       .references(() => guardianCollectionTable.id, { onDelete: 'restrict' }),
@@ -163,7 +163,7 @@ export const guardianQuestionAnswerTable = stella.table(
 export const guardianPurchaseTable = stella.table(
   'guardian_purchase',
   {
-    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
+    id: identityId,
     paymentId: varchar('payment_id', { length: 64 }).notNull().unique(),
     collectionId: bigint('collection_id', { mode: 'number' })
       .notNull()
@@ -204,7 +204,7 @@ export const guardianPurchaseTable = stella.table(
 export const guardianRedrawGrantTable = stella.table(
   'guardian_redraw_grant',
   {
-    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
+    id: identityId,
     grantKey: varchar('grant_key', { length: 96 }).notNull().unique(),
     collectionId: bigint('collection_id', { mode: 'number' })
       .notNull()
@@ -261,8 +261,8 @@ export const guardianGuaranteeProgressTable = stella.table(
 export const guardianCardAcquisitionTable = stella.table(
   'guardian_card_acquisition',
   {
-    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
-    publicId: varchar('public_id', { length: 24 }).notNull().unique(),
+    id: identityId,
+    publicId,
     collectionId: bigint('collection_id', { mode: 'number' })
       .notNull()
       .references(() => guardianCollectionTable.id, { onDelete: 'restrict' }),

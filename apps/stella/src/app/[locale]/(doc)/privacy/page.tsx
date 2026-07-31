@@ -2,7 +2,8 @@ import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 import { LEGAL } from '@/content/legal'
 import { buildMetadata } from '@/lib/metadata'
-import LegalArticle from '../LegalArticle'
+import DocArticle from '../DocArticle'
+import LegalContact from '../LegalContact'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/privacy'>): Promise<Metadata> {
   const locale = await getLocale(params)
@@ -14,6 +15,16 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/privacy'
 export default async function PrivacyPage({ params }: PageProps<'/[locale]/privacy'>) {
   const locale = await getLocale(params)
   const meta = LEGAL[locale]
+  const doc = meta.privacy
 
-  return <LegalArticle doc={meta.privacy} meta={meta} />
+  return (
+    <DocArticle
+      description={doc.description}
+      sections={doc.sections}
+      title={doc.title}
+      updatedDate={doc.updatedDate}
+      updatedLabel={meta.updatedLabel}
+      footer={<LegalContact heading={meta.contactLabel} />}
+    />
+  )
 }

@@ -317,8 +317,6 @@ export const ja = {
       lastQuarter: '下弦の月',
       waningCrescent: '明けの月',
     },
-    todayCta: '☾ 今日の流れを見る',
-    loveCta: '♡ 私の恋愛運を見る',
   },
   Today: {
     meta: {

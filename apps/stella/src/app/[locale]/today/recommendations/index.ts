@@ -1,14 +1,10 @@
-import type { Locale } from '@sobok/domain/locale'
+import { createLocaleLoaders } from '@/content/locale-loaders'
 
 import type { LuckyContent } from './types'
 
-const loaders: Record<Locale, () => Promise<LuckyContent>> = {
-  ko: () => import('./ko').then((module) => module.luckyContent),
-  en: () => import('./en').then((module) => module.luckyContent),
-  ja: () => import('./ja').then((module) => module.luckyContent),
-  zh: () => import('./zh').then((module) => module.luckyContent),
-}
-
-export function loadLuckyContent(locale: Locale): Promise<LuckyContent> {
-  return loaders[locale]()
-}
+export const loadLuckyContent = createLocaleLoaders<LuckyContent>({
+  ko: () => import('./ko').then((m) => m.luckyContent),
+  en: () => import('./en').then((m) => m.luckyContent),
+  ja: () => import('./ja').then((m) => m.luckyContent),
+  zh: () => import('./zh').then((m) => m.luckyContent),
+})

@@ -318,8 +318,6 @@ export const en = {
       lastQuarter: 'Last Quarter',
       waningCrescent: 'Waning Crescent',
     },
-    todayCta: '☾ See today’s flow',
-    loveCta: '♡ See my love reading',
   },
   Today: {
     meta: {

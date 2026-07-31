@@ -3,8 +3,8 @@
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 
-import { signOfLon } from '@/chart/astrology'
-import type { ChartAspect, NatalChart, PlanetId, SignId } from '@/chart/types'
+import { big3, signOfPlanet } from '@/chart/astrology'
+import type { ChartAspect, NatalChart, SignId } from '@/chart/types'
 import type { Interpretations } from '@/content/interpretations/types'
 
 import { CoreSignatureArt } from './CoreSignatureArt'
@@ -36,17 +36,10 @@ export default function ReportSection({
   // `t` only supplies the name vocabulary, so hand it across the seam as that type.
   const chapters = buildReport(chart, aspects, interpretations, t as Translator, { moonSignUncertain })
 
-  const signForBody = (id: PlanetId) => {
-    const body = chart.planets.find((planet) => planet.id === id)
-    return body ? signOfLon(body.lon) : null
-  }
-
-  const sunSign = signForBody('sun')
-  const moonSign = signForBody('moon')
+  const { sunSign, moonSign, risingSign } = big3(chart)
   const reportMoonSigns = moonSigns ?? (moonSign ? [moonSign] : [])
-  const risingSign = chart.ascendant === null ? null : signOfLon(chart.ascendant)
-  const southNodeSign = signForBody('southNode')
-  const northNodeSign = signForBody('northNode')
+  const southNodeSign = signOfPlanet(chart, 'southNode')
+  const northNodeSign = signOfPlanet(chart, 'northNode')
 
   return (
     <section className="w-full">

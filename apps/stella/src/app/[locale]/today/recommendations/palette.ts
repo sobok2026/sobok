@@ -1,201 +1,180 @@
-import type { LuckyColorDefinition } from './types'
+import { LUCKY_COLOR_IDS, type LuckyColorDefinition, type LuckyColorId } from './types'
 
 /**
  * Structural palette shared by every locale. Display names and copy stay in the
  * locale modules, while the stable ids and hex values keep a color unchanged
- * when a visitor switches language.
+ * when a visitor switches language. The Record keyed by `LuckyColorId` makes a
+ * missing, duplicated, or mistyped color a compile error.
  */
-export const LUCKY_COLORS = [
-  {
-    id: 'coralGlow',
+export const LUCKY_COLORS = {
+  coralGlow: {
     hex: '#f27d72',
     element: 'fire',
     resonatesWith: ['air'],
     energies: ['begin', 'build'],
     tones: ['lift', 'flow'],
   },
-  {
-    id: 'vermilion',
+  vermilion: {
     hex: '#d84a3a',
     element: 'fire',
     resonatesWith: ['earth'],
     energies: ['build', 'peak'],
     tones: ['lift', 'ground'],
   },
-  {
-    id: 'amberSpark',
+  amberSpark: {
     hex: '#e8a43a',
     element: 'fire',
     resonatesWith: ['air'],
     energies: ['begin', 'peak'],
     tones: ['lift', 'flow'],
   },
-  {
-    id: 'apricotLight',
+  apricotLight: {
     hex: '#f3a76f',
     element: 'fire',
     resonatesWith: ['water'],
     energies: ['begin', 'release'],
     tones: ['flow', 'lift'],
   },
-  {
-    id: 'roseFlame',
+  roseFlame: {
     hex: '#d95c78',
     element: 'fire',
     resonatesWith: ['water'],
     energies: ['peak', 'release'],
     tones: ['lift', 'ground'],
   },
-  {
-    id: 'wineRed',
+  wineRed: {
     hex: '#7b2d3d',
     element: 'fire',
     resonatesWith: ['earth'],
     energies: ['build', 'release'],
     tones: ['ground', 'flow'],
   },
-  {
-    id: 'mossGreen',
+  mossGreen: {
     hex: '#687454',
     element: 'earth',
     resonatesWith: ['water'],
     energies: ['build', 'release'],
     tones: ['ground', 'flow'],
   },
-  {
-    id: 'oliveLeaf',
+  oliveLeaf: {
     hex: '#7b7a45',
     element: 'earth',
     resonatesWith: ['fire'],
     energies: ['begin', 'release'],
     tones: ['ground', 'flow'],
   },
-  {
-    id: 'oatBeige',
+  oatBeige: {
     hex: '#c8b88a',
     element: 'earth',
     resonatesWith: ['air'],
     energies: ['begin', 'build'],
     tones: ['flow', 'ground'],
   },
-  {
-    id: 'sandGold',
+  sandGold: {
     hex: '#b89b72',
     element: 'earth',
     resonatesWith: ['fire'],
     energies: ['build', 'peak'],
     tones: ['lift', 'flow'],
   },
-  {
-    id: 'cedarBrown',
+  cedarBrown: {
     hex: '#8a6248',
     element: 'earth',
     resonatesWith: ['water'],
     energies: ['peak', 'release'],
     tones: ['ground', 'flow'],
   },
-  {
-    id: 'sageGreen',
+  sageGreen: {
     hex: '#91a184',
     element: 'earth',
     resonatesWith: ['air'],
     energies: ['begin', 'release'],
     tones: ['flow', 'ground'],
   },
-  {
-    id: 'skyBlue',
+  skyBlue: {
     hex: '#79b8d8',
     element: 'air',
     resonatesWith: ['water'],
     energies: ['begin', 'build'],
     tones: ['lift', 'flow'],
   },
-  {
-    id: 'mintBreeze',
+  mintBreeze: {
     hex: '#8fcbb8',
     element: 'air',
     resonatesWith: ['earth'],
     energies: ['begin', 'release'],
     tones: ['flow', 'lift'],
   },
-  {
-    id: 'lavenderMist',
+  lavenderMist: {
     hex: '#a99acb',
     element: 'air',
     resonatesWith: ['water'],
     energies: ['build', 'release'],
     tones: ['flow', 'ground'],
   },
-  {
-    id: 'silverCloud',
+  silverCloud: {
     hex: '#a8b0bc',
     element: 'air',
     resonatesWith: ['earth'],
     energies: ['peak', 'release'],
     tones: ['ground', 'flow'],
   },
-  {
-    id: 'lemonLight',
+  lemonLight: {
     hex: '#e1d36b',
     element: 'air',
     resonatesWith: ['fire'],
     energies: ['begin', 'peak'],
     tones: ['lift', 'flow'],
   },
-  {
-    id: 'iceBlue',
+  iceBlue: {
     hex: '#a6d5df',
     element: 'air',
     resonatesWith: ['water'],
     energies: ['build', 'release'],
     tones: ['flow', 'ground'],
   },
-  {
-    id: 'deepBlue',
+  deepBlue: {
     hex: '#3e5f8a',
     element: 'water',
     resonatesWith: ['earth'],
     energies: ['build', 'peak'],
     tones: ['ground', 'flow'],
   },
-  {
-    id: 'tealWave',
+  tealWave: {
     hex: '#3c8585',
     element: 'water',
     resonatesWith: ['air'],
     energies: ['begin', 'build'],
     tones: ['flow', 'lift'],
   },
-  {
-    id: 'indigoNight',
+  indigoNight: {
     hex: '#52528c',
     element: 'water',
     resonatesWith: ['fire'],
     energies: ['peak', 'release'],
     tones: ['ground', 'flow'],
   },
-  {
-    id: 'moonBlue',
+  moonBlue: {
     hex: '#6c8fb8',
     element: 'water',
     resonatesWith: ['air'],
     energies: ['begin', 'release'],
     tones: ['flow', 'ground'],
   },
-  {
-    id: 'plumShadow',
+  plumShadow: {
     hex: '#72526e',
     element: 'water',
     resonatesWith: ['fire'],
     energies: ['build', 'release'],
     tones: ['ground', 'lift'],
   },
-  {
-    id: 'pearlLilac',
+  pearlLilac: {
     hex: '#c4bed0',
     element: 'water',
     resonatesWith: ['earth'],
     energies: ['begin', 'peak'],
     tones: ['flow', 'lift'],
   },
-] as const satisfies readonly LuckyColorDefinition[]
+} as const satisfies Record<LuckyColorId, LuckyColorDefinition>
+
+export const LUCKY_COLOR_ENTRIES = LUCKY_COLOR_IDS.map((id) => ({ id, ...LUCKY_COLORS[id] }))

@@ -5,7 +5,9 @@ import { elementOfSign } from '@/chart/astrology'
 import { ELEMENT_COLORS, PLANET_GLYPHS } from '@/chart/data'
 import AstroGlyph from '@/components/AstroGlyph'
 import cardStyles from '@/components/card.module.css'
+import { PersonalizeCard } from '@/components/PersonalizeCard'
 import Reading from '@/components/Reading'
+import { ReadingActions } from '@/components/ReadingActions'
 import { SignFigure } from '@/components/SignFigure'
 import { aspectTone } from '@/content/interpretations/types'
 
@@ -31,7 +33,6 @@ type TodayBodyProps = {
 export default function TodayBody({ data, homeHref, onShare, shared }: TodayBodyProps) {
   const t = useTranslations('Today')
   const tc = useTranslations('Constellation')
-  const ts = useTranslations('Shared')
   const { sky, readings, personal, lucky, dateKey, unknownTime } = data
   const element = elementOfSign(sky.moonSign)
   const color = ELEMENT_COLORS[element]
@@ -138,15 +139,13 @@ export default function TodayBody({ data, homeHref, onShare, shared }: TodayBody
             )}
           </div>
         ) : (
-          <div className="mt-3 text-center">
-            <p className="text-sm font-semibold text-foreground-secondary">{t('personal.emptyTitle')}</p>
-            <p className="mx-auto mt-1 text-xs leading-relaxed text-foreground-subtle">{t('personal.emptyHint')}</p>
-            <Link
-              className="mt-4 inline-block rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-white active:scale-[0.98] motion-reduce:active:scale-100"
-              href={homeHref}
-            >
-              {t('personal.cta')}
-            </Link>
+          <div className="mt-3">
+            <PersonalizeCard
+              cta={t('personal.cta')}
+              hint={t('personal.emptyHint')}
+              homeHref={homeHref}
+              title={t('personal.emptyTitle')}
+            />
           </div>
         )}
       </section>
@@ -202,28 +201,14 @@ export default function TodayBody({ data, homeHref, onShare, shared }: TodayBody
       </section>
 
       {/* Actions */}
-      <div className="flex flex-col items-center gap-3 pt-1">
-        {shared ? (
-          <a
-            className="text-xs text-foreground-subtle underline-offset-4 transition hover:text-foreground-secondary hover:underline"
-            href={homeHref}
-          >
-            {ts('createOwn')}
-          </a>
-        ) : (
-          <>
-            <button
-              className="rounded-full border border-border-2 bg-surface-2 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur transition active:scale-95 motion-reduce:active:scale-100 hover:bg-surface-3"
-              onClick={onShare}
-              type="button"
-            >
-              {t('share.button')}
-            </button>
-            <p className="text-center text-[11px] leading-relaxed text-foreground-faint">{ts('privacy')}</p>
-          </>
-        )}
-        {shared && <p className="mt-1 text-xs text-foreground-faint">{t('tomorrow')}</p>}
-      </div>
+      <ReadingActions
+        homeHref={homeHref}
+        onShare={onShare}
+        shareLabel={t('share.button')}
+        shared={shared}
+        sharedFootnote={t('tomorrow')}
+        showPrivacy
+      />
     </div>
   )
 }

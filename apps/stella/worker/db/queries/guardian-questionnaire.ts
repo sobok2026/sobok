@@ -1,5 +1,5 @@
 import type { Db } from '@sobok/edge/db/client'
-import { and, asc, eq, isNotNull } from 'drizzle-orm'
+import { asc, eq } from 'drizzle-orm'
 import type { GuardianFullReportProductSku } from '../../guardian/manifest'
 import {
   GUARDIAN_MAX_TEXT_ANSWER_LENGTH,
@@ -13,13 +13,17 @@ import {
   resolveGuardianQuestionnaireProgress,
   toGuardianQuestionnaireClientStep,
 } from '../../guardian/questionnaire'
-import { guardianPurchaseTable, guardianQuestionAnswerTable, guardianReportTable } from '../schema/guardian'
+import { guardianQuestionAnswerTable, guardianReportTable } from '../schema/guardian'
 import {
   guardianQuestionnaireVersionTable,
   guardianQuestionOptionTable,
   guardianQuestionTable,
 } from '../schema/guardian-questionnaire'
-import { fulfillGuardianReportAfterQuestionnaireInTransaction } from './guardian'
+import {
+  findPaidFullReportPurchase,
+  fulfillGuardianReportAfterQuestionnaireInTransaction,
+  lockedReportOf,
+} from './guardian'
 
 interface LoadedGuardianQuestionnaire {
   content: GuardianQuestionnaireContent
@@ -167,17 +171,11 @@ async function findGuardianQuestionnaireReport(
   input: { collectionId: number; reportId: number },
   lock = false,
 ): Promise<{ productSku: GuardianFullReportProductSku; questionnaireVersion: string } | null> {
-  const query = db
-    .select({
-      productSku: guardianReportTable.productSku,
-      questionnaireVersion: guardianReportTable.questionnaireVersion,
-    })
-    .from(guardianReportTable)
-    .where(and(eq(guardianReportTable.id, input.reportId), eq(guardianReportTable.collectionId, input.collectionId)))
-    .limit(1)
-
-  const rows = lock ? await query.for('update') : await query
-  return rows[0] ?? null
+  const report = await lockedReportOf(db, input, lock)
+  if (!report) {
+    return null
+  }
+  return { productSku: report.productSku, questionnaireVersion: report.questionnaireVersion }
 }
 
 async function hasGuardianQuestionnaireEntitlement(
@@ -185,21 +183,13 @@ async function hasGuardianQuestionnaireEntitlement(
   input: { collectionId: number; reportId: number },
   productSku: GuardianFullReportProductSku,
 ): Promise<boolean> {
-  const [purchase] = await db
-    .select({ id: guardianPurchaseTable.id })
-    .from(guardianPurchaseTable)
-    .where(
-      and(
-        eq(guardianPurchaseTable.collectionId, input.collectionId),
-        eq(guardianPurchaseTable.reportId, input.reportId),
-        eq(guardianPurchaseTable.sku, productSku),
-        eq(guardianPurchaseTable.kind, 'full_report'),
-        eq(guardianPurchaseTable.status, 'paid'),
-        isNotNull(guardianPurchaseTable.entitlementGrantedAt),
-      ),
-    )
-    .limit(1)
-  return Boolean(purchase)
+  const purchase = await findPaidFullReportPurchase(db, {
+    collectionId: input.collectionId,
+    reportId: input.reportId,
+    sku: productSku,
+  })
+
+  return purchase !== null
 }
 
 async function loadGuardianQuestionnaire(db: Db, version: string): Promise<LoadedGuardianQuestionnaire> {

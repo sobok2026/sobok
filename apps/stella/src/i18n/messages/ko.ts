@@ -317,8 +317,6 @@ export const ko = {
       lastQuarter: '하현달',
       waningCrescent: '그믐달',
     },
-    todayCta: '☾ 오늘의 흐름 보기',
-    loveCta: '♡ 나의 연애운 보기',
   },
   Today: {
     meta: {

@@ -1,3 +1,4 @@
+import { identityId } from '@sobok/edge/db/columns'
 import { sql } from 'drizzle-orm'
 import {
   bigint,
@@ -26,7 +27,7 @@ export const guardianQuestionKindEnum = stella.enum('guardian_question_kind', ['
 export const guardianQuestionnaireVersionTable = stella.table(
   'guardian_questionnaire_version',
   {
-    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
+    id: identityId,
     version: varchar({ length: 64 }).notNull().unique(),
     schemaVersion: integer('schema_version').notNull(),
     productSku: varchar('product_sku', { length: 64 }).$type<GuardianFullReportProductSku>().notNull(),
@@ -48,7 +49,7 @@ export const guardianQuestionnaireVersionTable = stella.table(
 export const guardianQuestionTable = stella.table(
   'guardian_question',
   {
-    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
+    id: identityId,
     questionnaireVersionId: bigint('questionnaire_version_id', { mode: 'number' })
       .notNull()
       .references(() => guardianQuestionnaireVersionTable.id, { onDelete: 'cascade' }),
@@ -77,7 +78,7 @@ export const guardianQuestionTable = stella.table(
 export const guardianQuestionOptionTable = stella.table(
   'guardian_question_option',
   {
-    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
+    id: identityId,
     questionId: bigint('question_id', { mode: 'number' })
       .notNull()
       .references(() => guardianQuestionTable.id, { onDelete: 'cascade' }),

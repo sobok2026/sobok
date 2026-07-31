@@ -2,8 +2,11 @@ import type { AngleId, AspectType, PlanetId, SignId } from '@/chart/types'
 import { ASPECT_PAIR_ORDER } from '@/content/interpretations/types'
 
 // The full, finite vocabulary that comment topic keys are built from. Used to enumerate every /talk/[topic]
-// route at build time (generateStaticParams) and to render a topic's human title. These lists mirror the
-// domain types; `satisfies` catches a typo'd id, and the astrology vocabulary is stable.
+// route at build time (generateStaticParams) and to render a topic's human title. These lists are hand-kept
+// mirrors of the domain types; `satisfies` catches a typo'd id, and the astrology vocabulary is stable.
+// Derivation sources, if they ever move: SIGNS ← chart/data.ts SIGNS; PLANETS ← chart/data.ts PLANET_ORDER
+// + derived points (northNode/southNode/fortune/lilith/chiron); ANGLES ← chart/types.ts AngleId; ASPECT_TYPES
+// ← content/interpretations/types.ts AspectType (wheel-used subset).
 const SIGNS = [
   'aries',
   'taurus',
