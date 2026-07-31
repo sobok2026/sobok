@@ -1,20 +1,16 @@
 import type { Locale } from '@sobok/domain/locale'
 import type { Db } from '@sobok/edge/db/client'
-import { and, asc, eq, inArray, or, sql } from 'drizzle-orm'
+import { and, asc, eq, inArray, isNotNull, or, sql } from 'drizzle-orm'
+import { drawInitialGuardianReport, drawLoveRedraw, type GuardianSelectedCard } from '../../guardian/draw'
 import {
-  drawInitialGuardianCards,
-  drawLoveRedraw,
-  type GuardianSelectedCard,
-  selectGuardianFamilies,
-} from '../../guardian/draw'
-import {
-  GUARDIAN_MVP_MANIFEST,
+  CURRENT_GUARDIAN_MANIFEST,
   type GuardianProductSku,
   type GuardianRarity,
-  type GuardianSelectionContext,
+  type GuardianReportInputSnapshot,
   guardianManifest,
   guardianProduct,
   guardianProductPrice,
+  guardianQuestionnaireVersion,
 } from '../../guardian/manifest'
 import { newGuardianPublicId } from '../../guardian/tokens'
 import {
@@ -32,7 +28,7 @@ export interface NewGuestGuardianReport {
   collectionAccessTokenHash: string
   reportPublicId: string
   locale: Locale
-  inputSnapshot: GuardianSelectionContext
+  inputSnapshot: GuardianReportInputSnapshot
 }
 
 export interface GuardianDraftRef {
@@ -43,8 +39,9 @@ export interface GuardianDraftRef {
 }
 
 export async function createGuestGuardianReportDraft(db: Db, input: NewGuestGuardianReport): Promise<GuardianDraftRef> {
-  const manifest = GUARDIAN_MVP_MANIFEST
-  const familySnapshot = selectGuardianFamilies(input.inputSnapshot)
+  const manifest = CURRENT_GUARDIAN_MANIFEST
+  const productSku = 'guardian-report-full-v1'
+  const questionnaireVersion = guardianQuestionnaireVersion(productSku, input.locale, manifest)
 
   return db.transaction(async (tx) => {
     const [collection] = await tx
@@ -64,14 +61,14 @@ export async function createGuestGuardianReportDraft(db: Db, input: NewGuestGuar
         publicId: input.reportPublicId,
         collectionId: collection.id,
         locale: input.locale,
+        productSku,
         manifestVersion: manifest.manifestVersion,
         selectionRuleVersion: manifest.selectionRuleVersion,
         oddsVersion: manifest.oddsVersion,
         copyVersion: manifest.copyVersion,
         renderVersion: manifest.renderVersion,
+        questionnaireVersion,
         inputSnapshot: input.inputSnapshot,
-        familySnapshot,
-        loveFamilyId: familySnapshot.love,
       })
       .returning({ id: guardianReportTable.id })
     if (!report) {
@@ -125,13 +122,13 @@ export async function createPendingGuardianPurchase(
   db: Db,
   input: NewGuardianPurchase,
 ): Promise<CreateGuardianPurchaseResult> {
-  const manifest = GUARDIAN_MVP_MANIFEST
-  const product = guardianProduct(input.sku, manifest)
-  const price = guardianProductPrice(input.sku, input.market, manifest)
-
   return db.transaction(async (tx) => {
     const [report] = await tx
-      .select({ status: guardianReportTable.status })
+      .select({
+        status: guardianReportTable.status,
+        productSku: guardianReportTable.productSku,
+        manifestVersion: guardianReportTable.manifestVersion,
+      })
       .from(guardianReportTable)
       .where(and(eq(guardianReportTable.id, input.reportId), eq(guardianReportTable.collectionId, input.collectionId)))
       .limit(1)
@@ -140,8 +137,11 @@ export async function createPendingGuardianPurchase(
     if (!report) {
       return { status: 'report-not-found' as const }
     }
+    const manifest = guardianManifest(report.manifestVersion)
+    const product = guardianProduct(input.sku, manifest)
+    const price = guardianProductPrice(input.sku, input.market, manifest)
     if (
-      (product.kind === 'full_report' && report.status !== 'draft') ||
+      (product.kind === 'full_report' && (report.status !== 'draft' || product.sku !== report.productSku)) ||
       (product.kind === 'love_redraw' && report.status !== 'fulfilled')
     ) {
       return { status: 'report-state-conflict' as const }
@@ -153,7 +153,7 @@ export async function createPendingGuardianPurchase(
         .where(
           and(
             eq(guardianPurchaseTable.reportId, input.reportId),
-            eq(guardianPurchaseTable.sku, product.sku),
+            eq(guardianPurchaseTable.kind, 'full_report'),
             inArray(guardianPurchaseTable.status, ['pending', 'paid']),
           ),
         )
@@ -168,6 +168,7 @@ export async function createPendingGuardianPurchase(
       collectionId: input.collectionId,
       reportId: input.reportId,
       sku: product.sku,
+      kind: product.kind,
       amount: price.amountMinor,
       market: price.market,
       currency: price.currency,
@@ -193,12 +194,12 @@ export interface VerifiedGuardianPayment {
   paidAt: Date
 }
 
-export type FulfillGuardianPurchaseResult =
+export type ConfirmGuardianPurchaseResult =
   | {
       status: 'granted' | 'already-granted'
       kind: 'full_report'
       reportPublicId: string
-      cards: GuardianSelectedCard[]
+      questionnaireVersion: string
     }
   | {
       status: 'granted' | 'already-granted'
@@ -212,10 +213,10 @@ export type FulfillGuardianPurchaseResult =
  * Paid transition and entitlement grant are one transaction. Confirm-return, webhook, and reconciliation may
  * all call this function; the first wins the row lock and later callers receive `already-granted`.
  */
-export async function fulfillGuardianPurchase(
+export async function confirmGuardianPurchase(
   db: Db,
   payment: VerifiedGuardianPayment,
-): Promise<FulfillGuardianPurchaseResult> {
+): Promise<ConfirmGuardianPurchaseResult> {
   return db.transaction(async (tx) => {
     const [purchase] = await tx
       .select({
@@ -223,6 +224,7 @@ export async function fulfillGuardianPurchase(
         collectionId: guardianPurchaseTable.collectionId,
         reportId: guardianPurchaseTable.reportId,
         sku: guardianPurchaseTable.sku,
+        kind: guardianPurchaseTable.kind,
         amount: guardianPurchaseTable.amount,
         currency: guardianPurchaseTable.currency,
         status: guardianPurchaseTable.status,
@@ -246,6 +248,9 @@ export async function fulfillGuardianPurchase(
 
     const manifest = guardianManifest(purchase.manifestVersion)
     const product = guardianProduct(purchase.sku, manifest)
+    if (product.kind !== purchase.kind) {
+      return { status: 'purchase-state-conflict' as const }
+    }
     const [collection] = await tx
       .select({ id: guardianCollectionTable.id })
       .from(guardianCollectionTable)
@@ -260,10 +265,10 @@ export async function fulfillGuardianPurchase(
         publicId: guardianReportTable.publicId,
         collectionId: guardianReportTable.collectionId,
         status: guardianReportTable.status,
+        productSku: guardianReportTable.productSku,
         manifestVersion: guardianReportTable.manifestVersion,
-        familySnapshot: guardianReportTable.familySnapshot,
+        questionnaireVersion: guardianReportTable.questionnaireVersion,
         loveFamilyId: guardianReportTable.loveFamilyId,
-        cardSnapshot: guardianReportTable.cardSnapshot,
       })
       .from(guardianReportTable)
       .where(eq(guardianReportTable.id, purchase.reportId))
@@ -276,14 +281,11 @@ export async function fulfillGuardianPurchase(
 
     if (purchase.entitlementGrantedAt) {
       if (product.kind === 'full_report') {
-        if (!report.cardSnapshot) {
-          throw new Error('Fulfilled guardian report is missing its immutable card snapshot')
-        }
         return {
           status: 'already-granted' as const,
           kind: 'full_report' as const,
           reportPublicId: report.publicId,
-          cards: report.cardSnapshot,
+          questionnaireVersion: report.questionnaireVersion,
         }
       }
       return {
@@ -296,8 +298,10 @@ export async function fulfillGuardianPurchase(
 
     if (
       (product.kind === 'full_report' &&
-        (report.status !== 'draft' || report.manifestVersion !== purchase.manifestVersion)) ||
-      (product.kind === 'love_redraw' && report.status !== 'fulfilled')
+        (report.status !== 'draft' ||
+          report.productSku !== product.sku ||
+          report.manifestVersion !== purchase.manifestVersion)) ||
+      (product.kind === 'love_redraw' && (report.status !== 'fulfilled' || !report.loveFamilyId))
     ) {
       return { status: 'report-state-conflict' as const }
     }
@@ -315,36 +319,21 @@ export async function fulfillGuardianPurchase(
     }
 
     if (product.kind === 'full_report') {
-      const cards = drawInitialGuardianCards(report.familySnapshot, undefined, manifest)
-      for (const card of cards) {
-        await recordGuardianAcquisition(tx, {
-          collectionId: purchase.collectionId,
-          reportId: purchase.reportId,
-          grantId: null,
-          card,
-          source: 'initial_report',
-          guaranteeDue: false,
-          guaranteedUnowned: false,
-          manifestVersion: manifest.manifestVersion,
-          oddsVersion: manifest.oddsVersion,
-        })
-      }
-
-      const fulfilledAt = new Date()
-      await tx
-        .update(guardianReportTable)
-        .set({ status: 'fulfilled', cardSnapshot: cards, fulfilledAt })
-        .where(eq(guardianReportTable.id, purchase.reportId))
-      await stampGuardianEntitlementGranted(tx, purchase.id, fulfilledAt)
+      const grantedAt = new Date()
+      await stampGuardianEntitlementGranted(tx, purchase.id, grantedAt)
 
       return {
         status: 'granted' as const,
         kind: 'full_report' as const,
         reportPublicId: report.publicId,
-        cards,
+        questionnaireVersion: report.questionnaireVersion,
       }
     }
 
+    const loveFamilyId = report.loveFamilyId
+    if (!loveFamilyId) {
+      return { status: 'report-state-conflict' as const }
+    }
     await tx
       .insert(guardianRedrawGrantTable)
       .values({
@@ -352,7 +341,7 @@ export async function fulfillGuardianPurchase(
         collectionId: purchase.collectionId,
         reportId: purchase.reportId,
         purchaseId: purchase.id,
-        familyId: report.loveFamilyId,
+        familyId: loveFamilyId,
         kind: 'paid',
         totalCredits: product.redrawCredits,
         manifestVersion: manifest.manifestVersion,
@@ -370,6 +359,123 @@ export async function fulfillGuardianPurchase(
   })
 }
 
+export type FulfillGuardianReportResult =
+  | {
+      status: 'fulfilled' | 'already-fulfilled'
+      reportPublicId: string
+      cards: GuardianSelectedCard[]
+    }
+  | { status: 'report-not-found' | 'payment-required' | 'questionnaire-incomplete' }
+
+/**
+ * Standalone entry point for reconciliation. The final-answer path calls the in-transaction variant below so
+ * saving the last answer, pinning its snapshots, drawing once, and recording all four acquisitions are atomic.
+ */
+export async function fulfillGuardianReportAfterQuestionnaire(
+  db: Db,
+  input: { collectionId: number; reportId: number },
+): Promise<FulfillGuardianReportResult> {
+  return db.transaction((tx) => fulfillGuardianReportAfterQuestionnaireInTransaction(tx, input))
+}
+
+export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
+  db: Db,
+  input: { collectionId: number; reportId: number },
+): Promise<FulfillGuardianReportResult> {
+  const [report] = await db
+    .select({
+      publicId: guardianReportTable.publicId,
+      status: guardianReportTable.status,
+      manifestVersion: guardianReportTable.manifestVersion,
+      productSku: guardianReportTable.productSku,
+      inputSnapshot: guardianReportTable.inputSnapshot,
+      questionnaireAnswerSnapshot: guardianReportTable.questionnaireAnswerSnapshot,
+      questionnaireSignalSnapshot: guardianReportTable.questionnaireSignalSnapshot,
+      questionnaireCompletedAt: guardianReportTable.questionnaireCompletedAt,
+      cardSnapshot: guardianReportTable.cardSnapshot,
+    })
+    .from(guardianReportTable)
+    .where(and(eq(guardianReportTable.id, input.reportId), eq(guardianReportTable.collectionId, input.collectionId)))
+    .limit(1)
+    .for('update')
+
+  if (!report) {
+    return { status: 'report-not-found' }
+  }
+  if (report.status === 'fulfilled') {
+    if (!report.cardSnapshot) {
+      throw new Error('Fulfilled guardian report is missing its immutable card snapshot')
+    }
+    return {
+      status: 'already-fulfilled',
+      reportPublicId: report.publicId,
+      cards: report.cardSnapshot,
+    }
+  }
+  if (!report.questionnaireAnswerSnapshot || !report.questionnaireSignalSnapshot || !report.questionnaireCompletedAt) {
+    return { status: 'questionnaire-incomplete' }
+  }
+
+  const [purchase] = await db
+    .select({ manifestVersion: guardianPurchaseTable.manifestVersion })
+    .from(guardianPurchaseTable)
+    .where(
+      and(
+        eq(guardianPurchaseTable.collectionId, input.collectionId),
+        eq(guardianPurchaseTable.reportId, input.reportId),
+        eq(guardianPurchaseTable.sku, report.productSku),
+        eq(guardianPurchaseTable.kind, 'full_report'),
+        eq(guardianPurchaseTable.status, 'paid'),
+        isNotNull(guardianPurchaseTable.entitlementGrantedAt),
+      ),
+    )
+    .limit(1)
+  if (!purchase || purchase.manifestVersion !== report.manifestVersion) {
+    return { status: 'payment-required' }
+  }
+
+  const manifest = guardianManifest(report.manifestVersion)
+  const initial = drawInitialGuardianReport(
+    {
+      ...report.inputSnapshot,
+      paidAnswers: report.questionnaireAnswerSnapshot,
+      paidSignals: report.questionnaireSignalSnapshot,
+    },
+    { manifest },
+  )
+
+  for (const card of initial.cards) {
+    await recordGuardianAcquisition(db, {
+      collectionId: input.collectionId,
+      reportId: input.reportId,
+      grantId: null,
+      card,
+      source: 'initial_report',
+      guaranteeDue: false,
+      guaranteedUnowned: false,
+      manifestVersion: manifest.manifestVersion,
+      oddsVersion: manifest.oddsVersion,
+    })
+  }
+
+  await db
+    .update(guardianReportTable)
+    .set({
+      status: 'fulfilled',
+      familySnapshot: initial.families,
+      loveFamilyId: initial.families.love,
+      cardSnapshot: initial.cards,
+      fulfilledAt: new Date(),
+    })
+    .where(eq(guardianReportTable.id, input.reportId))
+
+  return {
+    status: 'fulfilled',
+    reportPublicId: report.publicId,
+    cards: initial.cards,
+  }
+}
+
 export async function grantGuardianAccountSaveReward(
   db: Db,
   input: { collectionId: number; reportId: number },
@@ -385,7 +491,7 @@ export async function grantGuardianAccountSaveReward(
       .where(and(eq(guardianReportTable.id, input.reportId), eq(guardianReportTable.collectionId, input.collectionId)))
       .limit(1)
       .for('update')
-    if (report?.status !== 'fulfilled') {
+    if (report?.status !== 'fulfilled' || !report.loveFamilyId) {
       return 'report-not-found'
     }
 
@@ -448,7 +554,7 @@ export async function consumeGuardianRedraw(
       .where(and(eq(guardianReportTable.id, input.reportId), eq(guardianReportTable.collectionId, input.collectionId)))
       .limit(1)
       .for('update')
-    if (report?.status !== 'fulfilled') {
+    if (report?.status !== 'fulfilled' || !report.loveFamilyId) {
       return { status: 'report-not-found' as const }
     }
 
@@ -528,19 +634,18 @@ export async function consumeGuardianRedraw(
       .where(
         and(
           eq(guardianCardOwnershipTable.collectionId, input.collectionId),
-          eq(guardianCardOwnershipTable.familyId, report.loveFamilyId),
+          eq(guardianCardOwnershipTable.familyId, scopeId),
         ),
       )
     const ownedEditionIds = new Set(ownedRows.map(({ editionId }) => editionId))
     const decision = drawLoveRedraw(
       {
-        familyId: report.loveFamilyId,
+        familyId: scopeId,
         ownedEditionIds,
         paidDrawsInCycle: progress.paidDrawsInCycle,
         creditKind: input.creditKind,
       },
-      undefined,
-      manifest,
+      { manifest },
     )
     const acquisitionPublicId = await recordGuardianAcquisition(tx, {
       collectionId: input.collectionId,

@@ -2,7 +2,7 @@ import type { Locale } from '@sobok/domain/locale'
 import type { Db } from '@sobok/edge/db/client'
 import { sha256Hex } from '@sobok/edge/tokens'
 import { createGuestGuardianReportDraft } from '../db/queries/guardian'
-import type { GuardianSelectionContext } from './manifest'
+import type { GuardianReportInputSnapshot } from './manifest'
 import { newGuardianAccessToken, newGuardianPublicId } from './tokens'
 
 /**
@@ -11,7 +11,7 @@ import { newGuardianAccessToken, newGuardianPublicId } from './tokens'
  */
 export async function prepareGuestGuardianReport(
   db: Db,
-  input: { locale: Locale; inputSnapshot: GuardianSelectionContext },
+  input: { locale: Locale; inputSnapshot: GuardianReportInputSnapshot },
 ): Promise<{
   collectionPublicId: string
   reportPublicId: string

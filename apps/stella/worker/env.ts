@@ -3,8 +3,8 @@
 // declaratively in sobok-ops (infra/cloudflare account-stella +
 // infra/supabase, Terraform):
 //   - Hyperdrive config → cloudflare_hyperdrive_config over the SHARED Supabase Postgres, authenticating as
-//     the least-privilege `stella_app` role (SELECT/INSERT/UPDATE on the `stella` schema only — no access to
-//     the deeptype payment tables).
+//     the least-privilege `stella_app` role (DML on only `stella` + `stella_stg` — no access to the deeptype
+//     payment tables). Every statement remains schema-qualified by its deployment build constant.
 //   - true secrets → Cloudflare Secrets Store, bound via wrangler `secrets_store_secrets`; read at runtime
 //     with `await binding.get()`.
 export interface Bindings {

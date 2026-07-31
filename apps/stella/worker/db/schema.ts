@@ -16,23 +16,39 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core'
 import type { GuardianFamilySelection, GuardianSelectedCard } from '../guardian/draw'
-import { GUARDIAN_RARITIES, GUARDIAN_REPORT_SLOTS, type GuardianSelectionContext } from '../guardian/manifest'
+import {
+  GUARDIAN_PRODUCT_KINDS,
+  GUARDIAN_RARITIES,
+  GUARDIAN_REPORT_SLOTS,
+  type GuardianFullReportProductSku,
+  type GuardianProductSku,
+  type GuardianReportInputSnapshot,
+} from '../guardian/manifest'
+import type {
+  GuardianQuestionnaireAnswerSnapshot,
+  GuardianQuestionnaireSignalSnapshot,
+  GuardianQuestionSignals,
+} from '../guardian/questionnaire'
+import { DB_SCHEMA } from './schema-name'
 
-// Stella's comment board and paid-card domain live in a DEDICATED `stella` schema on the SHARED Supabase
-// Postgres — NOT the public schema, where the deeptype_* payment tables sit. This is load-bearing for isolation:
-//   • drizzle-kit push runs with schemaFilter:['stella'] as the OWNER, so it never sees (and never proposes
-//     dropping) the payment tables.
-//   • the runtime `stella_app` role has grants ONLY inside this schema — it cannot read/write payment rows.
-//   • the `stella` schema is NOT added to Supabase's exposed schemas, so PostgREST never surfaces ipHash /
+// Stella's comment board and paid-card domain live in a DEDICATED schema on the SHARED Supabase Postgres —
+// production uses `stella`, staging uses `stella_stg`, and neither uses `public`. This is load-bearing:
+//   • drizzle-kit push is explicitly aimed at one schema as the OWNER, so it never sees (or proposes dropping)
+//     the other environment or another app's tables.
+//   • the runtime `stella_app` role can use both Stella schemas because both Workers share one Hyperdrive
+//     connection identity; schema-qualified SQL and a pg_catalog-only search_path prevent cross-environment
+//     fallback.
+//   • neither Stella schema is added to Supabase's exposed schemas, so PostgREST never surfaces ipHash /
 //     edit-token hashes over the anon REST API.
 // Plain tables, NOT RLS — access is enforced in the Worker. Comments use Turnstile/rate limits/edit tokens;
 // paid-card mutations additionally require fresh payment or collection/account authorization.
-export const stella = pgSchema('stella')
+export const stella = pgSchema(DB_SCHEMA)
 
 export const localeEnum = stella.enum('locale', [...LOCALES])
 export const commentStatusEnum = stella.enum('comment_status', ['visible', 'hidden', 'removed'])
 export const reportReasonEnum = stella.enum('report_reason', ['spam', 'abuse', 'sexual', 'privacy', 'other'])
 export const guardianReportStatusEnum = stella.enum('guardian_report_status', ['draft', 'fulfilled'])
+export const guardianProductKindEnum = stella.enum('guardian_product_kind', [...GUARDIAN_PRODUCT_KINDS])
 export const guardianPurchaseStatusEnum = stella.enum('guardian_purchase_status', [
   'pending',
   'paid',
@@ -47,6 +63,8 @@ export const guardianAcquisitionSourceEnum = stella.enum('guardian_acquisition_s
   'account_save_reward',
 ])
 export const guardianGrantKindEnum = stella.enum('guardian_grant_kind', ['paid', 'account_save_reward'])
+export const guardianQuestionPhaseEnum = stella.enum('guardian_question_phase', ['core', 'adaptive'])
+export const guardianQuestionKindEnum = stella.enum('guardian_question_kind', ['single_choice', 'free_text'])
 
 // One board per (locale, topicKey). topicKey is the persistent public identifier minted by the client's
 // versioned topicKey() (e.g. 'planet-sun-aries', 'aspect-sun-moon-trine') — an opaque string to the server,
@@ -126,6 +144,81 @@ export const rateLimitTable = stella.table(
 )
 
 // ── Zodiac Guardian paid product ─────────────────────────────────────────────────────────────────────
+// Paid prompts, option labels, branches, and signal weights are tracked as server content but never imported
+// into Next/static assets. The publisher inserts one validated, immutable version in a single transaction.
+// Runtime reads only the version pinned to a paid report and returns one allow-listed question at a time.
+export const guardianQuestionnaireVersionTable = stella.table(
+  'guardian_questionnaire_version',
+  {
+    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
+    version: varchar({ length: 64 }).notNull().unique(),
+    schemaVersion: integer('schema_version').notNull(),
+    productSku: varchar('product_sku', { length: 64 }).$type<GuardianFullReportProductSku>().notNull(),
+    locale: localeEnum().notNull(),
+    entryQuestionId: varchar('entry_question_id', { length: 64 }).notNull(),
+    coreQuestionCount: integer('core_question_count').notNull(),
+    maximumAdaptiveQuestions: integer('maximum_adaptive_questions').notNull(),
+    contentHash: varchar('content_hash', { length: 64 }).notNull(),
+    publishedAt: timestamp('published_at', { precision: 3, withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [
+    index('idx_stella_guardian_questionnaire_product_locale').on(t.productSku, t.locale, t.publishedAt),
+    check('ck_stella_guardian_questionnaire_schema_positive', sql`${t.schemaVersion} > 0`),
+    check('ck_stella_guardian_questionnaire_core_positive', sql`${t.coreQuestionCount} > 0`),
+    check('ck_stella_guardian_questionnaire_adaptive_nonnegative', sql`${t.maximumAdaptiveQuestions} >= 0`),
+  ],
+)
+
+export const guardianQuestionTable = stella.table(
+  'guardian_question',
+  {
+    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
+    questionnaireVersionId: bigint('questionnaire_version_id', { mode: 'number' })
+      .notNull()
+      .references(() => guardianQuestionnaireVersionTable.id, { onDelete: 'cascade' }),
+    questionId: varchar('question_id', { length: 64 }).notNull(),
+    position: integer().notNull(),
+    slot: guardianSlotEnum().notNull(),
+    phase: guardianQuestionPhaseEnum().notNull(),
+    kind: guardianQuestionKindEnum().notNull(),
+    prompt: text().notNull(),
+    supportingText: text('supporting_text'),
+    optional: boolean().notNull().default(false),
+    nextQuestionId: varchar('next_question_id', { length: 64 }),
+  },
+  (t) => [
+    uniqueIndex('uq_stella_guardian_question_version_id').on(t.questionnaireVersionId, t.questionId),
+    uniqueIndex('uq_stella_guardian_question_version_position').on(t.questionnaireVersionId, t.position),
+    check('ck_stella_guardian_question_position_nonnegative', sql`${t.position} >= 0`),
+    check(
+      'ck_stella_guardian_question_kind_shape',
+      sql`(${t.kind} = 'single_choice' and not ${t.optional} and ${t.nextQuestionId} is null)
+        or (${t.kind} = 'free_text' and ${t.optional})`,
+    ),
+  ],
+)
+
+export const guardianQuestionOptionTable = stella.table(
+  'guardian_question_option',
+  {
+    id: bigint({ mode: 'number' }).primaryKey().generatedByDefaultAsIdentity(),
+    questionId: bigint('question_id', { mode: 'number' })
+      .notNull()
+      .references(() => guardianQuestionTable.id, { onDelete: 'cascade' }),
+    optionId: varchar('option_id', { length: 64 }).notNull(),
+    position: integer().notNull(),
+    label: text().notNull(),
+    nextQuestionId: varchar('next_question_id', { length: 64 }),
+    signals: jsonb().$type<GuardianQuestionSignals>().notNull(),
+  },
+  (t) => [
+    uniqueIndex('uq_stella_guardian_option_question_id').on(t.questionId, t.optionId),
+    uniqueIndex('uq_stella_guardian_option_question_position').on(t.questionId, t.position),
+    check('ck_stella_guardian_option_position_nonnegative', sql`${t.position} >= 0`),
+    check('ck_stella_guardian_option_signals_object', sql`jsonb_typeof(${t.signals}) = 'object'`),
+  ],
+)
+
 // `guardian_collection` is the ownership aggregate before AND after sign-up. Guest checkout creates one;
 // the future Stella account layer claims that same row instead of copying cards or resetting pity progress.
 export const guardianCollectionTable = stella.table('guardian_collection', {
@@ -151,15 +244,22 @@ export const guardianReportTable = stella.table(
       .references(() => guardianCollectionTable.id, { onDelete: 'restrict' }),
     locale: localeEnum().notNull(),
     status: guardianReportStatusEnum().notNull().default('draft'),
+    productSku: varchar('product_sku', { length: 64 }).$type<GuardianFullReportProductSku>().notNull(),
     manifestVersion: varchar('manifest_version', { length: 64 }).notNull(),
     selectionRuleVersion: varchar('selection_rule_version', { length: 64 }).notNull(),
     oddsVersion: varchar('odds_version', { length: 64 }).notNull(),
     copyVersion: varchar('copy_version', { length: 64 }).notNull(),
     renderVersion: varchar('render_version', { length: 64 }).notNull(),
-    inputSnapshot: jsonb('input_snapshot').$type<GuardianSelectionContext>().notNull(),
-    familySnapshot: jsonb('family_snapshot').$type<GuardianFamilySelection>().notNull(),
+    questionnaireVersion: varchar('questionnaire_version', { length: 64 })
+      .notNull()
+      .references(() => guardianQuestionnaireVersionTable.version, { onDelete: 'restrict' }),
+    inputSnapshot: jsonb('input_snapshot').$type<GuardianReportInputSnapshot>().notNull(),
+    questionnaireAnswerSnapshot: jsonb('questionnaire_answer_snapshot').$type<GuardianQuestionnaireAnswerSnapshot>(),
+    questionnaireSignalSnapshot: jsonb('questionnaire_signal_snapshot').$type<GuardianQuestionnaireSignalSnapshot>(),
+    questionnaireCompletedAt: timestamp('questionnaire_completed_at', { precision: 3, withTimezone: true }),
+    familySnapshot: jsonb('family_snapshot').$type<GuardianFamilySelection>(),
     // Denormalized because every redraw must verify its target family without parsing a JSON snapshot.
-    loveFamilyId: varchar('love_family_id', { length: 64 }).notNull(),
+    loveFamilyId: varchar('love_family_id', { length: 64 }),
     cardSnapshot: jsonb('card_snapshot').$type<GuardianSelectedCard[]>(),
     fulfilledAt: timestamp('fulfilled_at', { precision: 3, withTimezone: true }),
     ...timestamps,
@@ -167,6 +267,60 @@ export const guardianReportTable = stella.table(
   (t) => [
     index('idx_stella_guardian_report_collection').on(t.collectionId, t.createdAt),
     index('idx_stella_guardian_report_status').on(t.status, t.createdAt),
+    check(
+      'ck_stella_guardian_questionnaire_snapshot_complete',
+      sql`(${t.questionnaireAnswerSnapshot} is null
+          and ${t.questionnaireSignalSnapshot} is null
+          and ${t.questionnaireCompletedAt} is null)
+        or (${t.questionnaireAnswerSnapshot} is not null
+          and ${t.questionnaireSignalSnapshot} is not null
+          and ${t.questionnaireCompletedAt} is not null)`,
+    ),
+    check(
+      'ck_stella_guardian_report_fulfillment_shape',
+      sql`(${t.status} = 'draft'
+          and ${t.familySnapshot} is null
+          and ${t.loveFamilyId} is null
+          and ${t.cardSnapshot} is null
+          and ${t.fulfilledAt} is null)
+        or (${t.status} = 'fulfilled'
+          and ${t.questionnaireAnswerSnapshot} is not null
+          and ${t.questionnaireSignalSnapshot} is not null
+          and ${t.questionnaireCompletedAt} is not null
+          and ${t.familySnapshot} is not null
+          and ${t.loveFamilyId} is not null
+          and ${t.cardSnapshot} is not null
+          and ${t.fulfilledAt} is not null)`,
+    ),
+  ],
+)
+
+// One row per answered question keeps autosave small and makes the current branch derivable after any
+// reconnect. The report receives an immutable ID-based answer/signal snapshot only when the branch completes.
+export const guardianQuestionAnswerTable = stella.table(
+  'guardian_question_answer',
+  {
+    reportId: bigint('report_id', { mode: 'number' })
+      .notNull()
+      .references(() => guardianReportTable.id, { onDelete: 'restrict' }),
+    questionId: bigint('question_id', { mode: 'number' })
+      .notNull()
+      .references(() => guardianQuestionTable.id, { onDelete: 'restrict' }),
+    kind: guardianQuestionKindEnum().notNull(),
+    optionId: bigint('option_id', { mode: 'number' }).references(() => guardianQuestionOptionTable.id, {
+      onDelete: 'restrict',
+    }),
+    textValue: text('text_value'),
+    ...timestamps,
+  },
+  (t) => [
+    primaryKey({ columns: [t.reportId, t.questionId] }),
+    index('idx_stella_guardian_answer_report_created').on(t.reportId, t.createdAt),
+    check(
+      'ck_stella_guardian_answer_kind_shape',
+      sql`(${t.kind} = 'single_choice' and ${t.optionId} is not null and ${t.textValue} is null)
+        or (${t.kind} = 'free_text' and ${t.optionId} is null)`,
+    ),
   ],
 )
 
@@ -184,7 +338,8 @@ export const guardianPurchaseTable = stella.table(
     reportId: bigint('report_id', { mode: 'number' })
       .notNull()
       .references(() => guardianReportTable.id, { onDelete: 'restrict' }),
-    sku: varchar({ length: 64 }).notNull(),
+    sku: varchar({ length: 64 }).$type<GuardianProductSku>().notNull(),
+    kind: guardianProductKindEnum().notNull(),
     amount: bigint({ mode: 'number' }).notNull(),
     market: varchar({ length: 8 }).notNull(),
     currency: varchar({ length: 3 }).notNull(),
@@ -205,7 +360,7 @@ export const guardianPurchaseTable = stella.table(
     index('idx_stella_guardian_purchase_pending').on(t.createdAt).where(sql`status = 'pending'`),
     uniqueIndex('uq_stella_guardian_purchase_active_full_report')
       .on(t.reportId)
-      .where(sql`status in ('pending', 'paid') and sku = 'guardian-report-full-v1'`),
+      .where(sql`status in ('pending', 'paid') and kind = 'full_report'`),
     uniqueIndex('uq_stella_guardian_purchase_provider_txn').on(t.provider, t.providerTxnId),
     check('ck_stella_guardian_purchase_amount_positive', sql`${t.amount} > 0`),
   ],

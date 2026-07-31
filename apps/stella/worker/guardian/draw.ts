@@ -1,15 +1,16 @@
 import {
-  GUARDIAN_MVP_MANIFEST,
+  CURRENT_GUARDIAN_MANIFEST,
   GUARDIAN_REPORT_SLOTS,
   type GuardianCardEdition,
   type GuardianCardFamily,
-  type GuardianEditionPool,
-  type GuardianFamilyPool,
+  type GuardianContextScoredEditionPool,
+  type GuardianContextScoredFamilyPool,
   type GuardianProductManifest,
   type GuardianReportSlot,
   type GuardianSelectionContext,
   type GuardianWeightedEdition,
   guardianEdition,
+  guardianEditionPool,
   guardianFamily,
 } from './manifest'
 
@@ -18,7 +19,13 @@ const UINT32_RANGE = 2 ** 32
 export type GuardianFamilyScorer = (
   family: GuardianCardFamily,
   context: GuardianSelectionContext,
-  pool: GuardianFamilyPool,
+  pool: GuardianContextScoredFamilyPool,
+) => number
+
+export type GuardianEditionScorer = (
+  edition: GuardianCardEdition,
+  context: GuardianSelectionContext,
+  pool: GuardianContextScoredEditionPool,
 ) => number
 
 export interface GuardianSelectedCard {
@@ -44,21 +51,33 @@ export interface GuardianRedrawDecision {
 
 type RandomInt = (maxExclusive: number) => number
 
-/**
- * The MVP scorer intentionally gives every candidate the same score. Because every current pool contains one
- * candidate, cards are fixed without creating an `if fixedCard` branch. A later chart/answer scorer replaces
- * this function while selection, snapshots, and draw persistence remain unchanged.
- */
-export const scoreMvpGuardianFamily: GuardianFamilyScorer = () => 0
+export interface GuardianDrawOptions {
+  manifest?: GuardianProductManifest
+  familyScorer?: GuardianFamilyScorer
+  editionScorer?: GuardianEditionScorer
+  randomInt?: RandomInt
+}
 
 export function selectGuardianFamilies(
   context: GuardianSelectionContext,
-  scorer: GuardianFamilyScorer = scoreMvpGuardianFamily,
-  manifest: GuardianProductManifest = GUARDIAN_MVP_MANIFEST,
+  options: Pick<GuardianDrawOptions, 'familyScorer' | 'manifest'> = {},
 ): GuardianFamilySelection {
+  const manifest = options.manifest ?? CURRENT_GUARDIAN_MANIFEST
+
   return Object.fromEntries(
     GUARDIAN_REPORT_SLOTS.map((slot) => {
       const pool = manifest.familyPools[slot]
+      if (pool.selection === 'single') {
+        const selected = pool.candidates[0]
+        if (!selected) {
+          throw new Error(`Guardian family pool ${pool.id} has no candidate`)
+        }
+        return [slot, selected.familyId]
+      }
+      const scorer = options.familyScorer
+      if (!scorer) {
+        throw new Error(`Guardian family pool ${pool.id} requires a context scorer`)
+      }
       const ranked = pool.candidates
         .map((candidate) => ({
           candidate,
@@ -76,26 +95,24 @@ export function selectGuardianFamilies(
 
 export function drawInitialGuardianReport(
   context: GuardianSelectionContext,
-  scorer: GuardianFamilyScorer = scoreMvpGuardianFamily,
-  randomInt: RandomInt = secureRandomInt,
-  manifest: GuardianProductManifest = GUARDIAN_MVP_MANIFEST,
+  options: GuardianDrawOptions = {},
 ): GuardianInitialDraw {
-  const families = selectGuardianFamilies(context, scorer, manifest)
-  return { families, cards: drawInitialGuardianCards(families, randomInt, manifest) }
+  const families = selectGuardianFamilies(context, options)
+  return { families, cards: drawInitialGuardianCards(context, families, options) }
 }
 
 export function drawInitialGuardianCards(
+  context: GuardianSelectionContext,
   families: GuardianFamilySelection,
-  randomInt: RandomInt = secureRandomInt,
-  manifest: GuardianProductManifest = GUARDIAN_MVP_MANIFEST,
+  options: Pick<GuardianDrawOptions, 'editionScorer' | 'manifest' | 'randomInt'> = {},
 ): GuardianSelectedCard[] {
+  const manifest = options.manifest ?? CURRENT_GUARDIAN_MANIFEST
+  const randomInt = options.randomInt ?? secureRandomInt
+
   const cards = GUARDIAN_REPORT_SLOTS.map((slot): GuardianSelectedCard => {
     const family = guardianFamily(families[slot], manifest)
-    const edition =
-      slot === 'love'
-        ? drawWeightedLoveEdition(family.id, new Set(), false, randomInt, manifest)
-        : guardianEdition(singleEditionId(family), manifest)
-
+    const pool = guardianEditionPool(family.id, manifest)
+    const edition = selectInitialGuardianEdition(context, pool, options.editionScorer, randomInt, manifest)
     return selectedCard(edition)
   })
 
@@ -109,9 +126,10 @@ export function drawLoveRedraw(
     paidDrawsInCycle: number
     creditKind: 'paid' | 'account_save_reward'
   },
-  randomInt: RandomInt = secureRandomInt,
-  manifest: GuardianProductManifest = GUARDIAN_MVP_MANIFEST,
+  options: Pick<GuardianDrawOptions, 'manifest' | 'randomInt'> = {},
 ): GuardianRedrawDecision {
+  const manifest = options.manifest ?? CURRENT_GUARDIAN_MANIFEST
+  const randomInt = options.randomInt ?? secureRandomInt
   const family = guardianFamily(input.familyId, manifest)
   if (family.slot !== 'love') {
     throw new Error(`Guardian redraw family ${family.id} is not a love-card family`)
@@ -123,10 +141,13 @@ export function drawLoveRedraw(
   }
 
   const guaranteeDue = input.creditKind === 'account_save_reward' || input.paidDrawsInCycle === interval - 1
-  const pool = loveEditionPoolFor(family.id, manifest)
+  const pool = guardianEditionPool(family.id, manifest)
+  if (pool.selection !== 'weighted_random') {
+    throw new Error(`Guardian redraw family ${family.id} does not use weighted_random editions`)
+  }
   const hasUnowned = pool.candidates.some(({ editionId }) => !input.ownedEditionIds.has(editionId))
   const guaranteedUnowned = guaranteeDue && hasUnowned
-  const edition = drawWeightedLoveEdition(family.id, input.ownedEditionIds, guaranteedUnowned, randomInt, manifest)
+  const edition = drawWeightedEdition(pool.candidates, input.ownedEditionIds, guaranteedUnowned, randomInt, manifest)
 
   return {
     card: selectedCard(edition),
@@ -154,25 +175,50 @@ export function secureRandomInt(maxExclusive: number): number {
   return random[0] % maxExclusive
 }
 
-function drawWeightedLoveEdition(
-  familyId: string,
+function drawWeightedEdition(
+  candidates: readonly GuardianWeightedEdition[],
   ownedEditionIds: ReadonlySet<string>,
   unownedOnly: boolean,
   randomInt: RandomInt,
   manifest: GuardianProductManifest,
 ): GuardianCardEdition {
-  const pool = loveEditionPoolFor(familyId, manifest)
-  const candidates = pool.candidates.filter(({ editionId }) => !unownedOnly || !ownedEditionIds.has(editionId))
-  const selected = weightedCandidate(candidates, randomInt)
+  const eligible = candidates.filter(({ editionId }) => !unownedOnly || !ownedEditionIds.has(editionId))
+  const selected = weightedCandidate(eligible, randomInt)
   return guardianEdition(selected.editionId, manifest)
 }
 
-function loveEditionPoolFor(familyId: string, manifest: GuardianProductManifest): GuardianEditionPool {
-  const pool = manifest.loveEditionPools.find((candidate) => candidate.familyId === familyId)
-  if (!pool) {
-    throw new Error(`Guardian love family ${familyId} has no published edition pool`)
+function selectInitialGuardianEdition(
+  context: GuardianSelectionContext,
+  pool: ReturnType<typeof guardianEditionPool>,
+  scorer: GuardianEditionScorer | undefined,
+  randomInt: RandomInt,
+  manifest: GuardianProductManifest,
+): GuardianCardEdition {
+  if (pool.selection === 'single') {
+    const selected = pool.candidates[0]
+    if (!selected) {
+      throw new Error(`Guardian edition pool ${pool.id} has no candidate`)
+    }
+    return guardianEdition(selected.editionId, manifest)
   }
-  return pool
+  if (pool.selection === 'weighted_random') {
+    return drawWeightedEdition(pool.candidates, new Set(), false, randomInt, manifest)
+  }
+  if (!scorer) {
+    throw new Error(`Guardian edition pool ${pool.id} requires a context scorer`)
+  }
+
+  const ranked = pool.candidates
+    .map((candidate) => ({
+      candidate,
+      score: scorer(guardianEdition(candidate.editionId, manifest), context, pool),
+    }))
+    .sort((left, right) => right.score - left.score || left.candidate.tieBreakOrder - right.candidate.tieBreakOrder)
+  const selected = ranked[0]
+  if (!selected || !Number.isFinite(selected.score)) {
+    throw new Error(`Guardian edition scorer did not produce a finite candidate for ${pool.familyId}`)
+  }
+  return guardianEdition(selected.candidate.editionId, manifest)
 }
 
 function weightedCandidate(
@@ -193,13 +239,6 @@ function weightedCandidate(
     }
   }
   throw new Error('Guardian weighted draw did not resolve a candidate')
-}
-
-function singleEditionId(family: GuardianCardFamily): string {
-  if (family.editionIds.length !== 1) {
-    throw new Error(`Guardian fixed family ${family.id} must have exactly one published edition`)
-  }
-  return family.editionIds[0]
 }
 
 function selectedCard(edition: GuardianCardEdition): GuardianSelectedCard {

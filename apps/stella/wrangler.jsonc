@@ -46,6 +46,9 @@
   "triggers": {
     "crons": ["0 3 * * *"]
   },
+  "define": {
+    "STELLA_DB_SCHEMA": "'stella'"
+  },
   "secrets_store_secrets": [
     {
       "binding": "STELLA_TURNSTILE_SECRET",
@@ -62,5 +65,43 @@
       "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
       "secret_name": "stella-discord-webhook"
     }
-  ]
+  ],
+  // `vars`, `define`, Hyperdrive, and Secrets Store bindings are non-inheritable. Repeat the complete set in
+  // the named environment so `wrangler deploy --env stg` creates a separate `stella-stg` Worker while reusing
+  // the same database connection pool and credentials. Only the qualified PostgreSQL schema and hostname pin
+  // differ.
+  "env": {
+    "stg": {
+      "workers_dev": false,
+      "define": {
+        "STELLA_DB_SCHEMA": "'stella_stg'"
+      },
+      "vars": {
+        "STELLA_ALLOWED_HOSTNAMES": "stella-stg.sobok.cc"
+      },
+      "hyperdrive": [
+        {
+          "binding": "HYPERDRIVE",
+          "id": "fba6a34ba67a4d0588d71266b13d57b9"
+        }
+      ],
+      "secrets_store_secrets": [
+        {
+          "binding": "STELLA_TURNSTILE_SECRET",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "stella-turnstile-secret"
+        },
+        {
+          "binding": "STELLA_IP_HASH_SALT",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "stella-ip-hash-salt"
+        },
+        {
+          "binding": "STELLA_DISCORD_WEBHOOK",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "stella-discord-webhook"
+        }
+      ]
+    }
+  }
 }
