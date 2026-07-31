@@ -1,7 +1,7 @@
 'use client'
 
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
-import { Lock } from '@mynaui/icons-react'
+import { DangerTriangle, Lock, MailOpen } from '@mynaui/icons-react'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { type FormEvent, useEffect, useRef, useState } from 'react'
@@ -11,6 +11,7 @@ import { cn } from '@/utils/cn'
 import { DEEPTYPE_REOPEN_ACTION } from '../../../../../../worker/api/deep-type/actions'
 import { FOCUS_CLASS_NAME } from '../../../../../components/focus'
 
+import { FlowMessage, FlowPanel, FlowStatus, flowActionClassName } from '../../_components/flow-panel'
 import { IntroView } from '../../_components/intro-view'
 import { RefinementQuizView } from '../../_components/refinement-quiz-view'
 import { ReportView } from '../../_components/report-view'
@@ -113,120 +114,96 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center bg-page-bg px-safe py-12 text-page-ink" id="main-content">
-      <section className="w-full max-w-lg rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
-        <p className="font-bold text-page-accent text-sm">{copy.eyebrow}</p>
+    <FlowPanel eyebrow={copy.eyebrow}>
+      {phase === 'checking' || phase === 'opening' ? (
+        <FlowStatus
+          body={phase === 'opening' ? copy.opening : copy.generatingBody}
+          title={phase === 'opening' ? copy.linkTitle : copy.generatingTitle}
+        />
+      ) : null}
 
-        {phase === 'checking' || phase === 'opening' ? (
-          <StatusPanel
-            body={phase === 'opening' ? copy.opening : copy.generatingBody}
-            title={phase === 'opening' ? copy.linkTitle : copy.generatingTitle}
-          />
-        ) : null}
+      {phase === 'link-ready' ? (
+        <>
+          <FlowMessage body={copy.linkBody} icon={Lock} takeFocus title={copy.linkTitle} />
+          <button className={cn(flowActionClassName('primary'), 'mt-7')} onClick={openReport} type="button">
+            <Lock aria-hidden="true" className="h-4 w-4" stroke={1.8} />
+            {copy.linkCta}
+          </button>
+        </>
+      ) : null}
 
-        {phase === 'link-ready' ? (
-          <>
-            <h1 className="mt-3 break-keep font-black text-2xl leading-snug">{copy.linkTitle}</h1>
-            <p className="mt-3 break-keep text-page-ink/66 leading-7">{copy.linkBody}</p>
-            <button
+      {phase === 'accepted' ? (
+        <FlowMessage body={copy.acceptedBody} icon={MailOpen} takeFocus title={copy.acceptedTitle} tone="success" />
+      ) : null}
+
+      {phase === 'request' ? (
+        <>
+          {invalidLink ? (
+            <FlowMessage body={copy.invalidBody} icon={DangerTriangle} takeFocus title={copy.invalidTitle} />
+          ) : (
+            <div className="text-center">
+              <h1 className="mt-3 break-keep font-black text-2xl leading-snug">{copy.title}</h1>
+              <p className="mt-3 break-keep text-page-ink/66 leading-7">{copy.body}</p>
+            </div>
+          )}
+
+          <form className="mt-6" onSubmit={requestLink}>
+            <label className="block font-bold text-page-ink/70 text-sm" htmlFor="deeptype-reopen-email">
+              {copy.emailLabel}
+            </label>
+            <input
+              autoComplete="email"
               className={cn(
-                'mt-6 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-page-accent px-6 font-black text-sm text-white transition-colors hover:bg-page-accent/92',
+                'mt-2 min-h-12 w-full rounded-2xl border border-page-border bg-white px-4 font-medium text-page-ink outline-none placeholder:text-page-ink/36 focus-visible:border-page-accent',
                 FOCUS_CLASS_NAME,
               )}
-              onClick={openReport}
-              type="button"
-            >
-              <Lock aria-hidden="true" className="h-4 w-4" stroke={1.8} />
-              {copy.linkCta}
-            </button>
-          </>
-        ) : null}
-
-        {phase === 'accepted' ? (
-          <div aria-live="polite">
-            <h1 className="mt-3 break-keep font-black text-2xl leading-snug">{copy.acceptedTitle}</h1>
-            <p className="mt-3 break-keep text-page-ink/66 leading-7">{copy.acceptedBody}</p>
-          </div>
-        ) : null}
-
-        {phase === 'request' ? (
-          <>
-            {invalidLink ? (
-              <div className="mt-4 rounded-3xl border border-page-accent/30 bg-page-accent/8 p-4" role="alert">
-                <h1 className="font-black text-lg text-page-accent">{copy.invalidTitle}</h1>
-                <p className="mt-2 text-page-ink/66 text-sm leading-6">{copy.invalidBody}</p>
-              </div>
-            ) : (
-              <>
-                <h1 className="mt-3 break-keep font-black text-2xl leading-snug">{copy.title}</h1>
-                <p className="mt-3 break-keep text-page-ink/66 leading-7">{copy.body}</p>
-              </>
-            )}
-
-            <form className="mt-6" onSubmit={requestLink}>
-              <label className="block font-bold text-page-ink/70 text-sm" htmlFor="deeptype-reopen-email">
-                {copy.emailLabel}
-              </label>
-              <input
-                autoComplete="email"
-                className={cn(
-                  'mt-2 min-h-12 w-full rounded-2xl border border-page-border bg-white px-4 font-medium text-page-ink outline-none placeholder:text-page-ink/36 focus-visible:border-page-accent',
-                  FOCUS_CLASS_NAME,
-                )}
-                id="deeptype-reopen-email"
-                inputMode="email"
-                maxLength={254}
-                name="email"
-                placeholder={copy.emailPlaceholder}
-                required
-                type="email"
+              id="deeptype-reopen-email"
+              inputMode="email"
+              maxLength={254}
+              name="email"
+              placeholder={copy.emailPlaceholder}
+              required
+              type="email"
+            />
+            {/* The challenge arrives from a third-party script and mounts into a container that is zero
+                height until then, so the button underneath jumps once the widget lands. Reserving the
+                widget's own box (300x72) keeps the form still while it loads. */}
+            <div className="mt-4 flex min-h-18 justify-center">
+              <Turnstile
+                onError={() => setTurnstileToken('')}
+                onExpire={() => setTurnstileToken('')}
+                onSuccess={setTurnstileToken}
+                options={{ action: DEEPTYPE_REOPEN_ACTION, responseField: false }}
+                ref={turnstileRef}
+                siteKey={TURNSTILE_SITE_KEY}
               />
-              {/* The challenge arrives from a third-party script and mounts into a container that is zero
-                  height until then, so the button underneath jumps once the widget lands. Reserving the
-                  widget's own box (300x72) keeps the form still while it loads. */}
-              <div className="mt-4 flex min-h-18 justify-center">
-                <Turnstile
-                  onError={() => setTurnstileToken('')}
-                  onExpire={() => setTurnstileToken('')}
-                  onSuccess={setTurnstileToken}
-                  options={{ action: DEEPTYPE_REOPEN_ACTION, responseField: false }}
-                  ref={turnstileRef}
-                  siteKey={TURNSTILE_SITE_KEY}
-                />
-              </div>
-              <button
-                className={cn(
-                  'mt-5 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white transition-colors hover:bg-page-accent/92 disabled:cursor-not-allowed disabled:bg-page-ink/20',
-                  FOCUS_CLASS_NAME,
-                )}
-                disabled={!turnstileToken || requestPending}
-                type="submit"
-              >
-                {requestPending ? copy.requesting : copy.requestCta}
-              </button>
-              {requestError ? (
-                <p className="mt-3 text-center font-bold text-page-accent text-sm" role="alert">
-                  {requestError}
-                </p>
-              ) : null}
-              <p className="mt-4 text-page-ink/44 text-xs leading-6">{copy.deliveryNote}</p>
-            </form>
-          </>
-        ) : null}
+            </div>
+            <button
+              className={cn(
+                flowActionClassName('primary'),
+                'mt-5 disabled:cursor-not-allowed disabled:bg-page-ink/20 disabled:shadow-none',
+              )}
+              disabled={!turnstileToken || requestPending}
+              type="submit"
+            >
+              {requestPending ? copy.requesting : copy.requestCta}
+            </button>
+            {requestError ? (
+              <p className="mt-3 text-center font-bold text-page-accent text-sm" role="alert">
+                {requestError}
+              </p>
+            ) : null}
+            <p className="mt-4 text-page-ink/44 text-xs leading-6">{copy.deliveryNote}</p>
+          </form>
+        </>
+      ) : null}
 
-        {phase !== 'checking' && phase !== 'opening' ? (
-          <Link
-            className={cn(
-              'mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full font-bold text-page-ink/54 text-sm hover:text-page-ink',
-              FOCUS_CLASS_NAME,
-            )}
-            href={`/${locale}/deep-type`}
-          >
-            {copy.startOverCta}
-          </Link>
-        ) : null}
-      </section>
-    </main>
+      {phase !== 'checking' && phase !== 'opening' ? (
+        <Link className={cn(flowActionClassName('tertiary'), 'mt-5')} href={`/${locale}/deep-type`}>
+          {copy.startOverCta}
+        </Link>
+      ) : null}
+    </FlowPanel>
   )
 }
 
@@ -273,19 +250,6 @@ function ReopenedAccess({
   return <ReopenedReport access={access} content={content} copy={copy} locale={locale} />
 }
 
-function StatusPanel({ body, title }: { body: string; title: string }) {
-  return (
-    <div aria-live="polite" className="py-6 text-center">
-      <div
-        aria-hidden="true"
-        className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent"
-      />
-      <h1 className="mt-5 break-keep font-black text-xl">{title}</h1>
-      <p className="mt-2 text-page-ink/62 text-sm leading-6">{body}</p>
-    </div>
-  )
-}
-
 function ReopenedReport({
   access,
   content,
@@ -312,40 +276,41 @@ function ReopenedReport({
 
   if (report.phase === 'generating') {
     return (
-      <main className="flex flex-1 items-center justify-center bg-page-bg px-safe py-16 text-page-ink">
-        <StatusPanel body={copy.generatingBody} title={copy.generatingTitle} />
-      </main>
+      <FlowPanel eyebrow={copy.eyebrow}>
+        <FlowStatus body={copy.generatingBody} title={copy.generatingTitle} />
+      </FlowPanel>
     )
   }
 
   if (report.phase === 'failed') {
     return (
-      <main className="flex flex-1 items-center justify-center bg-page-bg px-safe py-12 text-page-ink">
-        <section className="w-full max-w-lg rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 text-center sm:p-8">
-          <h1 className="font-black text-2xl">{copy.reportFailedTitle}</h1>
-          <p className="mt-3 text-page-ink/64 leading-7">{copy.reportFailedBody}</p>
+      <FlowPanel eyebrow={copy.eyebrow}>
+        <FlowMessage
+          body={copy.reportFailedBody}
+          icon={DangerTriangle}
+          takeFocus
+          title={copy.reportFailedTitle}
+          tone="danger"
+        >
           {refund === 'done' ? <p className="mt-4 text-page-ink/64 text-sm">{content.paywall.refundDone}</p> : null}
           {refund === 'failed' ? <p className="mt-4 text-page-ink/64 text-sm">{content.paywall.refundFailed}</p> : null}
-          {refund === 'idle' || refund === 'pending' ? (
-            <button
-              className={cn(
-                'mt-5 inline-flex min-h-11 items-center justify-center rounded-full border border-page-accent/50 px-5 font-bold text-page-accent text-sm hover:bg-page-accent/8 disabled:opacity-60',
-                FOCUS_CLASS_NAME,
-              )}
-              disabled={refund === 'pending'}
-              onClick={requestRefund}
-              type="button"
-            >
-              {refund === 'pending' ? content.paywall.refundPending : content.paywall.refundCta}
-            </button>
-          ) : null}
-          <p className="mt-5 text-page-ink/48 text-xs">
-            <a className="underline underline-offset-2" href={`mailto:${LEGAL_CONTACT_EMAIL}`}>
-              {LEGAL_CONTACT_EMAIL}
-            </a>
-          </p>
-        </section>
-      </main>
+        </FlowMessage>
+        {refund === 'idle' || refund === 'pending' ? (
+          <button
+            className={cn(flowActionClassName('secondary'), 'mt-7 disabled:opacity-60')}
+            disabled={refund === 'pending'}
+            onClick={requestRefund}
+            type="button"
+          >
+            {refund === 'pending' ? content.paywall.refundPending : content.paywall.refundCta}
+          </button>
+        ) : null}
+        <p className="mt-5 text-center text-page-ink/48 text-xs">
+          <a className="underline underline-offset-2" href={`mailto:${LEGAL_CONTACT_EMAIL}`}>
+            {LEGAL_CONTACT_EMAIL}
+          </a>
+        </p>
+      </FlowPanel>
     )
   }
 

@@ -171,6 +171,24 @@ export async function getRefinedProfile(db: Db, resultId: number): Promise<Asses
   return row?.profile ?? null
 }
 
+/**
+ * Whether the paid follow-up block is still unanswered, keyed by the id the browser comes back from the PG
+ * with. The same `refined_profile IS NULL` test `consumeReopenLink` makes — a buyer who returns to the
+ * checkout screen twice must not be walked through twenty-four questions the row already holds answers for.
+ *
+ * A missing join answers `true`: `result_id` is `ON DELETE SET NULL`, so a purged answer set lands here, and
+ * the refinement gate authors a precise 410 for that state while the report route would only say 404.
+ */
+export async function isRefinementPending(db: Db, paymentId: string): Promise<boolean> {
+  const [row] = await db
+    .select({ refinedProfile: resultTable.refinedProfile })
+    .from(purchaseTable)
+    .innerJoin(resultTable, eq(purchaseTable.resultId, resultTable.id))
+    .where(eq(purchaseTable.paymentId, paymentId))
+    .limit(1)
+  return row ? row.refinedProfile === null : true
+}
+
 // Everything the two report passes read, in one round trip. `getResultForReport` cannot serve this: the engine
 // needs BOTH sittings (the free one owns sections 1-3 and the free drain read the paid block is contrasted
 // against), and that function collapses them into whichever profile is newer.

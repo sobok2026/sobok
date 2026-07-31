@@ -107,8 +107,14 @@ export function postCheckout(input: CheckoutInput): Promise<CheckoutResponse> {
   return postJson('/checkout', input)
 }
 
-export function postVerify(paymentId: string): Promise<{ status: string }> {
-  return postJson('/verify', { paymentId })
+/**
+ * `refinementRequired` is meaningful only alongside `status: 'paid'` — false is what the server sends when
+ * there is no grant to describe, not a claim that the follow-up block is done.
+ */
+export type VerifyResponse = { refinementRequired: boolean; status: string }
+
+export function postVerify(paymentId: string, signal?: AbortSignal): Promise<VerifyResponse> {
+  return postJson('/verify', { paymentId }, undefined, signal)
 }
 
 // Acknowledgement only. The refined profile is paid content and arrives through `getReport`, which is the one

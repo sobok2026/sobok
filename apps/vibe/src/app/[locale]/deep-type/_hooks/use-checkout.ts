@@ -85,9 +85,14 @@ export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallCont
         turnstileToken,
       })
 
+      // The server-approved figures, not the offer table's: what the return screen confirms has to be what
+      // was actually charged, and only `/checkout`'s answer knows that.
       storePendingCheckout({
         accessToken: checkout.accessToken,
+        amount: checkout.amount,
         createdAt: Date.now(),
+        currency: checkout.currency,
+        email,
         paymentId: checkout.paymentId,
       })
 
