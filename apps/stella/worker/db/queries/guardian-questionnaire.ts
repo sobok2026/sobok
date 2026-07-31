@@ -13,14 +13,12 @@ import {
   resolveGuardianQuestionnaireProgress,
   toGuardianQuestionnaireClientStep,
 } from '../../guardian/questionnaire'
+import { guardianPurchaseTable, guardianQuestionAnswerTable, guardianReportTable } from '../schema/guardian'
 import {
-  guardianPurchaseTable,
-  guardianQuestionAnswerTable,
   guardianQuestionnaireVersionTable,
   guardianQuestionOptionTable,
   guardianQuestionTable,
-  guardianReportTable,
-} from '../schema'
+} from '../schema/guardian-questionnaire'
 import { fulfillGuardianReportAfterQuestionnaireInTransaction } from './guardian'
 
 interface LoadedGuardianQuestionnaire {

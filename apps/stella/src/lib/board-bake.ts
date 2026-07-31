@@ -52,7 +52,7 @@ async function load(): Promise<Map<string, BakedBoard>> {
   // exists: ordinary offline builds do not target either database environment and therefore must not need a
   // schema fallback. A real bake still fails closed unless STELLA_DB_SCHEMA explicitly selects stella_stg or
   // stella before this import executes.
-  const { commentTable, commentThreadTable } = await import('../../worker/db/schema')
+  const { commentTable, commentThreadTable } = await import('../../worker/db/schema/comment')
   const client = postgres(url, { max: 1, prepare: false, ssl: 'require' })
   const db = drizzle({ client })
 
