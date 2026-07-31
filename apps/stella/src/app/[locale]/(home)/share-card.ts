@@ -144,11 +144,14 @@ function addHeroGradientStops(gradient: CanvasGradient, colors: readonly [string
 function createHeroTitleGradient(
   ctx: CanvasRenderingContext2D,
   fontSize: number,
+  textWidth: number,
   color: ShareCardPalette,
 ): CanvasGradient {
   // HeroTitle uses a centered 24rem gradient behind 1.875rem text. Preserve
-  // that ratio at the share-card title's larger font size.
-  const width = fontSize * HERO_TITLE_STYLE.gradientWidthEm
+  // that ratio at the share-card title's larger font size. Canvas extends a
+  // gradient with its end stops, so a band narrower than the title would flatten
+  // its ends to solid cool/warm — widen to the title instead, matching the H1.
+  const width = Math.max(fontSize * HERO_TITLE_STYLE.gradientWidthEm, textWidth)
   const gradient = ctx.createLinearGradient(CARD_W / 2 - width / 2, 0, CARD_W / 2 + width / 2, 0)
   addHeroGradientStops(gradient, [color.cool, color.brand, color.warm])
   return gradient
@@ -453,7 +456,7 @@ function paintHeader(
   const maxWidth = CARD_W - MARGIN * 2
   const size = fitFont(ctx, content.title, HERO_TITLE_STYLE.fontWeight, 62, family, maxWidth)
   setFont(ctx, HERO_TITLE_STYLE.fontWeight, size, family)
-  ctx.fillStyle = createHeroTitleGradient(ctx, size, color)
+  ctx.fillStyle = createHeroTitleGradient(ctx, size, ctx.measureText(content.title).width, color)
   ctx.fillText(content.title, CARD_W / 2, HEADER_TITLE_Y)
 }
 
