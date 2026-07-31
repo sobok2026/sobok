@@ -31,24 +31,37 @@ needs the stack reads `getComputedStyle(document.body).fontFamily` rather than r
 
 ## Where the bytes come from
 
-The font files are not in the repo. They are pinned npm dependencies of this package, and
-`scripts/syncFonts.ts` publishes them into the `public/fonts/` of every app that depends on
-`@sobok/typography`. The root `postinstall` runs it, so `bun install` is the only step — a fresh
-clone, a new app, and a font upgrade all need nothing more. Those directories are git-ignored.
+Each app carries its own committed copy under `public/fonts/<family>/<version>/`, taken unmodified
+from the npm package named in `src/fonts.ts`. The copies are byte-identical, so git stores one blob
+set for all of them and a sixth app would add nothing to the history — the duplication is on disk,
+not in the repo.
 
 Serving from `public/` rather than importing the sheets through the bundler is what buys the two
 things that matter here: a versioned, immutable URL per family, and the ability to load only the
-families a locale needs. Bundling them would fold ~50 KB (brotli) of `@font-face` into a CSS file
-that changes on every design tweak, and would hand every locale all three families.
+families a locale needs. Bundling them would fold ~49 KB (brotli) of `@font-face` into a CSS bundle
+that is otherwise 5.5 KB and changes on every design tweak, and would hand every locale all three
+families.
 
 ## Upgrading a family
 
-1. Bump the version in this package's `dependencies`.
-2. Bump the matching `version` in `src/fonts.ts` — it is a URL segment, so it is a reviewed value.
-3. `bun install`.
+The three font packages are dev dependencies of this package for exactly this — they are never
+imported, they just put the source of a copy one `bun update` away and keep its version in the
+lockfile.
 
-The sync script refuses to run when those two disagree, so they cannot drift apart silently. Old
-version directories are removed on the next install.
+1. `bun update <package>` and bump the matching `version` in `src/fonts.ts`.
+2. Copy the new files into **every** app, at the new version directory. For Pretendard and
+   Pretendard JP that is `dist/web/variable/` plus `dist/LICENSE.txt`; for Noto Sans SC it is
+   `wght.css`, `files/`, and `LICENSE`.
+3. Delete the old version directories.
+
+Nothing enforces step 2, which is the price of having no build step: a half-finished upgrade leaves
+the apps disagreeing, and it will not fail a build — the served URL still resolves in the apps that
+were updated. `git diff --stat` on the font directories after step 3 is the check, and
+`diff -rq apps/stella/public/fonts apps/web/public/fonts` settles any doubt. A divergence also shows
+up as unexpected repo growth, since only identical copies deduplicate.
+
+The `<link>` URLs come from `fontStylesheetHref()`, so a version bumped in `src/fonts.ts` but not
+copied to disk produces a 404 rather than a stale font.
 
 ## Adding a locale
 
