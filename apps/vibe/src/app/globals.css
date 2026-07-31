@@ -41,23 +41,23 @@
      `--page-soft`, which is where form errors are actually drawn. */
   --page-danger: #bf2440;
   --page-gutter-x: 1rem;
-  --page-safe-inset-left: max(var(--page-gutter-x), var(--safe-area-inset-left));
-  --page-safe-inset-right: max(var(--page-gutter-x), var(--safe-area-inset-right));
+  --page-safe-left: max(var(--page-gutter-x), var(--safe-area-left));
+  --page-safe-right: max(var(--page-gutter-x), var(--safe-area-right));
   --page-soft: #f7eee6;
   --page-success: #147a4a;
   --page-surface: #fffdf9;
 
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-area-inset-left: env(safe-area-inset-left, 0px);
-  --safe-area-inset-right: env(safe-area-inset-right, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
 }
 
 @theme inline {
   --spacing-header: 4rem;
-  /* The bottom island's own height (2.625rem) plus the offset it floats at. A page that shows the island owes
+  /* The bottom island's own height (3rem) plus the offset it floats at. A page that shows the island owes
      this much clearance, or its last control ends up under the pill with nothing left to scroll. */
-  --spacing-bottom-nav: calc(2.625rem + max(0.5rem, var(--safe-area-bottom)));
+  --spacing-bottom-nav: calc(3rem + max(0.5rem, var(--safe-area-bottom)));
 
   /* THEME_COLOR in src/constants.ts must stay in sync with --page-bg. */
   --color-page-accent: var(--page-accent);
@@ -74,8 +74,8 @@
 }
 
 @utility px-safe {
-  padding-inline-start: var(--page-safe-inset-left);
-  padding-inline-end: var(--page-safe-inset-right);
+  padding-inline-start: var(--page-safe-left);
+  padding-inline-end: var(--page-safe-right);
 }
 
 @utility pt-safe {
