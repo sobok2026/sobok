@@ -30,7 +30,7 @@ export default function DeepTypeError({ error, reset }: Props) {
   return (
     <main className="flex flex-1 flex-col items-center justify-center bg-page-bg px-safe py-16 text-center text-page-ink">
       <h1 className="break-keep font-black text-2xl leading-tight">{copy.title}</h1>
-      {error.digest && <p className="mt-2 text-page-ink/50 text-xs">{error.digest}</p>}
+      {error.digest && <p className="mt-2 text-page-ink-muted text-xs">{error.digest}</p>}
 
       <button
         className={cn(

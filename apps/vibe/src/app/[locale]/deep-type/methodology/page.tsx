@@ -34,7 +34,7 @@ export default async function DeepTypeMethodologyPage({ params }: PageProps<'/[l
     <main className="flex flex-1 flex-col bg-page-bg px-safe py-10 text-page-ink sm:py-16" id="main-content">
       <article className="mx-auto w-full max-w-3xl">
         <h1 className="text-balance font-black text-3xl leading-tight sm:text-4xl">{methodology.title}</h1>
-        <p className="mt-5 max-w-2xl text-page-ink/68 leading-8">{methodology.intro}</p>
+        <p className="mt-5 max-w-2xl text-page-ink-soft leading-8">{methodology.intro}</p>
 
         <div className="mt-8 grid gap-4">
           <MethodSection body={methodology.modelBody} title={methodology.modelTitle} />
@@ -45,8 +45,8 @@ export default async function DeepTypeMethodologyPage({ params }: PageProps<'/[l
             <h2 className="font-black text-xl">{methodology.principlesTitle}</h2>
             <ul className="mt-4 grid gap-3">
               {methodology.principles.map((principle) => (
-                <li className="flex gap-3 text-page-ink/70 leading-7" key={principle}>
-                  <span aria-hidden="true" className="font-black text-page-accent">
+                <li className="flex gap-3 text-page-ink-soft leading-7" key={principle}>
+                  <span aria-hidden="true" className="font-black text-page-accent-strong">
                     •
                   </span>
                   {principle}
@@ -57,11 +57,11 @@ export default async function DeepTypeMethodologyPage({ params }: PageProps<'/[l
 
           <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 sm:p-8">
             <h2 className="font-black text-xl">{methodology.sourcesTitle}</h2>
-            <p className="mt-3 text-page-ink/64 text-sm leading-7">{methodology.sourcesIntro}</p>
+            <p className="mt-3 text-page-ink-soft text-sm leading-7">{methodology.sourcesIntro}</p>
             <ol className="mt-5 grid gap-4">
               {RESEARCH_SOURCES.map((source, index) => (
-                <li className="flex gap-3 text-page-ink/70 text-sm leading-7" key={source.href}>
-                  <span className="shrink-0 font-black text-page-accent">{index + 1}</span>
+                <li className="flex gap-3 text-page-ink-soft text-sm leading-7" key={source.href}>
+                  <span className="shrink-0 font-black text-page-accent-strong">{index + 1}</span>
                   <a
                     className="underline decoration-page-border underline-offset-4 hover:text-page-ink"
                     href={source.href}
@@ -91,7 +91,7 @@ function MethodSection({ body, title }: { body: string; title: string }) {
   return (
     <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 sm:p-8">
       <h2 className="font-black text-xl">{title}</h2>
-      <p className="mt-3 whitespace-pre-line text-page-ink/70 leading-8">{body}</p>
+      <p className="mt-3 whitespace-pre-line text-page-ink-soft leading-8">{body}</p>
     </section>
   )
 }

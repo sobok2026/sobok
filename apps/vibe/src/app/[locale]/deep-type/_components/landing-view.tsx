@@ -39,14 +39,14 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
   return (
     <main className="flex flex-1 flex-col bg-page-bg px-safe pt-10 pb-32 text-page-ink" id="main-content">
       <div className="mx-auto w-full max-w-3xl">
-        <p className="font-black text-page-ink/72 text-sm tracking-tight">{DEEP_TYPE_BRAND_NAME[locale]}</p>
+        <p className="font-black text-page-ink-soft text-sm tracking-tight">{DEEP_TYPE_BRAND_NAME[locale]}</p>
 
         <header className="mt-8">
-          <span className="font-bold text-page-accent text-sm">{landing.kicker}</span>
+          <span className="font-bold text-page-accent-strong text-sm">{landing.kicker}</span>
           <h1 className={cn('mt-3 text-balance font-black text-4xl leading-tight sm:text-5xl', keepBreak)}>
             {ui.landingTitle}
           </h1>
-          <p className={cn('mt-5 text-page-ink/66 leading-8', keepBreak)}>{ui.landingSubtitle}</p>
+          <p className={cn('mt-5 text-page-ink-soft leading-8', keepBreak)}>{ui.landingSubtitle}</p>
         </header>
 
         <figure className="mt-8 overflow-hidden rounded-4xl border border-page-border bg-page-soft">
@@ -66,7 +66,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
               className="rounded-3xl border border-page-border bg-page-surface px-3 py-4 text-center"
               key={fact.label}
             >
-              <dt className="text-page-ink/48 text-xs">{fact.label}</dt>
+              <dt className="text-page-ink-muted text-xs">{fact.label}</dt>
               <dd className="mt-1 break-keep font-black text-base">{fact.value}</dd>
             </div>
           ))}
@@ -86,12 +86,12 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
           <ol className="mt-5 grid gap-3">
             {FREE_DELIVERABLES_KO.map((deliverable, index) => (
               <li className="flex gap-4 rounded-3xl border border-page-border bg-page-surface p-5" key={deliverable}>
-                <span className="shrink-0 font-black text-page-accent text-sm tabular-nums">
+                <span className="shrink-0 font-black text-page-accent-strong text-sm tabular-nums">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <div>
                   <p className="font-black">{deliverable}</p>
-                  <p className={cn('mt-1 text-page-ink/58 text-sm leading-6', keepBreak)}>
+                  <p className={cn('mt-1 text-page-ink-muted text-sm leading-6', keepBreak)}>
                     {landing.getsBodies[index]}
                   </p>
                 </div>
@@ -104,7 +104,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
           {landing.asks.map((ask) => (
             <div className="rounded-3xl border border-page-border bg-page-soft/60 p-5" key={ask.question}>
               <h2 className={cn('font-black text-lg leading-8', keepBreak)}>{ask.question}</h2>
-              <p className={cn('mt-2 text-page-ink/62 text-sm leading-7', keepBreak)}>{ask.body}</p>
+              <p className={cn('mt-2 text-page-ink-soft text-sm leading-7', keepBreak)}>{ask.body}</p>
             </div>
           ))}
         </section>
@@ -117,10 +117,10 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
                 key={step.title}
               >
                 <p className={cn('flex gap-3 font-bold text-sm', keepBreak)}>
-                  <span className="text-page-accent tabular-nums">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="text-page-accent-strong tabular-nums">{String(index + 1).padStart(2, '0')}</span>
                   {step.title}
                 </p>
-                <span className="shrink-0 text-page-ink/48 text-xs">{step.duration}</span>
+                <span className="shrink-0 text-page-ink-muted text-xs">{step.duration}</span>
               </li>
             ))}
           </ol>
@@ -141,7 +141,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
 
         <Link
           className={cn(
-            'mx-auto mt-4 flex w-fit items-center rounded-full p-3 text-center font-bold text-page-ink/58 text-xs underline underline-offset-4 hover:text-page-ink',
+            'mx-auto mt-4 flex w-fit items-center rounded-full p-3 text-center font-bold text-page-ink-muted text-xs underline underline-offset-4 hover:text-page-ink',
             FOCUS_CLASS_NAME,
           )}
           href={`/${locale}/deep-type/reopen`}
@@ -150,7 +150,7 @@ export function LandingView({ content, locale, onStart }: LandingViewProps) {
         </Link>
 
         <div className="mt-10 border-page-border border-t pt-6">
-          <p className={cn('text-page-ink/44 text-xs leading-6', keepBreak)}>{landing.offerNote}</p>
+          <p className={cn('text-page-ink-muted text-xs leading-6', keepBreak)}>{landing.offerNote}</p>
         </div>
       </div>
 
@@ -191,7 +191,7 @@ function CtaBlock({
     <div className={className}>
       <Link
         className={cn(
-          'flex w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-page-accent py-4 font-black text-base text-white shadow-[0_24px_80px_var(--page-accent-glow)] transition-colors hover:bg-page-accent/92 sm:mx-auto sm:max-w-sm',
+          'flex w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-page-accent-strong py-4 font-black text-base text-white shadow-[0_24px_80px_var(--page-accent-glow)] transition-colors hover:bg-page-accent-strong/92 sm:mx-auto sm:max-w-sm',
           FOCUS_CLASS_NAME,
         )}
         data-cta-role={ctaRole}
@@ -201,7 +201,7 @@ function CtaBlock({
         {label}
         <ArrowRight aria-hidden="true" className="h-4 w-4" stroke={1.8} />
       </Link>
-      <p className={cn('mt-3 text-balance text-center text-page-ink/48 text-sm leading-6', keepBreak)}>{meta}</p>
+      <p className={cn('mt-3 text-balance text-center text-page-ink-muted text-sm leading-6', keepBreak)}>{meta}</p>
     </div>
   )
 }
@@ -271,7 +271,7 @@ function StickyCta({ content, locale, onStart }: LandingViewProps) {
       <div className="mx-auto w-full max-w-xs">
         <Link
           className={cn(
-            'flex w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-page-accent py-3.5 font-black text-sm text-white transition-colors hover:bg-page-accent/92',
+            'flex w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-page-accent-strong py-3.5 font-black text-sm text-white transition-colors hover:bg-page-accent-strong/92',
             FOCUS_CLASS_NAME,
           )}
           href={`/${locale}/deep-type/test`}

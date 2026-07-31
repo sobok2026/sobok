@@ -24,7 +24,7 @@ export function AnalyzingView({ body, onDone, title }: AnalyzingViewProps) {
         role="status"
       />
       <h1 className="mt-8 break-keep font-black text-2xl leading-tight">{title}</h1>
-      <p className="mx-auto mt-3 max-w-sm text-page-ink/64 leading-7">{body}</p>
+      <p className="mx-auto mt-3 max-w-sm text-page-ink-soft leading-7">{body}</p>
     </main>
   )
 }

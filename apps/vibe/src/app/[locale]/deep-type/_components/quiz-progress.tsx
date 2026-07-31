@@ -24,8 +24,8 @@ export function QuizProgress({ answered, segments }: QuizProgressProps) {
   return (
     <div>
       <div className="flex items-baseline justify-between gap-3">
-        <p className="font-bold text-page-ink/56 text-xs">{currentLabel(answered, segments)}</p>
-        <p className="text-page-ink/40 text-xs tabular-nums">
+        <p className="font-bold text-page-ink-muted text-xs">{currentLabel(answered, segments)}</p>
+        <p className="text-page-ink-muted text-xs tabular-nums">
           {Math.min(answered + 1, total)} / {total}
         </p>
       </div>

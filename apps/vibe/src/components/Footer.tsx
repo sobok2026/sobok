@@ -12,7 +12,7 @@ export default function Footer({ locale }: { locale: Locale }) {
   const { nav: pageNav } = PAGES[locale]
 
   return (
-    <footer className="border-page-border border-t px-4 pt-8 pb-[calc(5rem+var(--safe-area-bottom))] text-center text-page-ink/52 text-xs sm:pb-8">
+    <footer className="border-page-border border-t px-4 pt-8 pb-[calc(5rem+var(--safe-area-bottom))] text-center text-page-ink-muted text-xs sm:pb-8">
       <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
         <Link className="hover:text-page-ink" href={`/${locale}`}>
           {pageNav.home}
@@ -40,7 +40,7 @@ export default function Footer({ locale }: { locale: Locale }) {
         showHeading={false}
       />
 
-      <p className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-page-ink/40">
+      <p className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-page-ink-muted">
         {OTHER_SERVICES.map((service) => (
           <a className="hover:text-page-ink" href={`${service.href}/${locale}`} key={service.href}>
             {service.name[locale]}
@@ -48,7 +48,7 @@ export default function Footer({ locale }: { locale: Locale }) {
         ))}
       </p>
 
-      <p className="mt-2 text-page-ink/40">© 2026 {SITE_NAME[locale]} · vibe.sobok.cc</p>
+      <p className="mt-2 text-page-ink-muted">© 2026 {SITE_NAME[locale]} · vibe.sobok.cc</p>
     </footer>
   )
 }
