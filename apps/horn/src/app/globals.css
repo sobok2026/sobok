@@ -1,4 +1,5 @@
 @import 'tailwindcss' source(none);
+@import '@sobok/typography/styles.css';
 
 @source '..';
 
@@ -70,14 +71,6 @@ body {
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  font-family:
-    Pretendard,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Apple SD Gothic Neo',
-    'Segoe UI',
-    Roboto,
-    sans-serif;
 }
 
 @media (prefers-reduced-motion: reduce) {

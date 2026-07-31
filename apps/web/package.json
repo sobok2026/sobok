@@ -32,6 +32,7 @@
     "@sobok/http": "workspace:*",
     "@sobok/observability": "workspace:*",
     "@sobok/std": "workspace:*",
+    "@sobok/typography": "workspace:*",
     "@sobok/ui": "workspace:*",
     "@suspensive/react": "^3.21.2",
     "@t3-oss/env-core": "^0.13.11",

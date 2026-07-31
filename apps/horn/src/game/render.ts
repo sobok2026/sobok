@@ -6,8 +6,17 @@ import { forEachLakeNear } from './terrain'
 
 const EMOJI_FONT =
   '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", "EmojiOne Color", sans-serif'
-const TEXT_FONT =
-  '900 var(--s) "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", sans-serif'
+/**
+ * Canvas text borrows the document's own stack instead of restating one, so the floaters cannot end
+ * up in a different face than the HUD around them. @sobok/typography owns what that stack is; this
+ * only has to ask for it, once, after the body exists.
+ */
+let bodyFontFamily: string | undefined
+
+function textFont(size: number): string {
+  bodyFontFamily ??= getComputedStyle(document.body).fontFamily
+  return `900 ${size}px ${bodyFontFamily}`
+}
 const TAU = Math.PI * 2
 
 // Top-down city block tiling. Blocks are inset from tile edges; the inset gaps become the road grid.
@@ -394,7 +403,7 @@ export class Renderer {
       const a = Math.min(1, f.life / 0.5)
       ctx.save()
       ctx.globalAlpha = a
-      ctx.font = TEXT_FONT.replace('var(--s)', `${f.size}px`)
+      ctx.font = textFont(f.size)
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.lineWidth = 4

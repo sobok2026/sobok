@@ -4,8 +4,8 @@ import GTMLoader from '@sobok/analytics/gtm-loader'
 import { APP_METADATA, THEME_COLOR } from '@sobok/domain/app/metadata'
 import { LOCALES } from '@sobok/domain/locale'
 import { env } from '@sobok/env/client'
+import FontStylesheets from '@sobok/typography/stylesheets'
 import type { Metadata, Viewport } from 'next'
-import localFont from 'next/font/local'
 import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 import { ThemeProvider } from 'next-themes'
@@ -21,27 +21,6 @@ import QueryProvider from '@/lib/react-query/QueryProvider'
 import { THEMES } from '@/store/theme'
 
 const { NEXT_PUBLIC_APP_ORIGIN, NEXT_PUBLIC_GTM_ID } = env
-
-const PretendardVariable = localFont({
-  src: '../../fonts/PretendardVariable.400-700.3713.woff2',
-  display: 'swap',
-  weight: '400 700',
-  fallback: [
-    '-apple-system',
-    'BlinkMacSystemFont',
-    'system-ui',
-    'Roboto',
-    'Helvetica Neue',
-    'Segoe UI',
-    'Apple SD Gothic Neo',
-    'Noto Sans KR',
-    'Malgun Gothic',
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-    'sans-serif',
-  ],
-})
 
 export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Promise<Metadata> {
   const locale = await getLocaleFromParams(params)
@@ -97,7 +76,8 @@ export default async function RootLayout({ children, params }: Props) {
       <head>
         <meta content={appMetadata.shortName} name="apple-mobile-web-app-title" />
       </head>
-      <body className={`${PretendardVariable.className} antialiased h-full`}>
+      <FontStylesheets locale={locale} />
+      <body className="antialiased h-full">
         <ThemeProvider disableTransitionOnChange themes={THEMES}>
           <CapacitorNativeEffects />
           <NextIntlClientProvider>

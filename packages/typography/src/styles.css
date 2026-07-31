@@ -1,3 +1,10 @@
+/*
+ * sobok의 모든 앱에서 공통으로 사용하는 타이포그래피 정책.
+ *
+ * HTML 문서의 `lang` 속성을 기준으로 작동하며, 앱의 `globals.css`에서 이 파일을 불러옵니다.
+ * 이에 대응하는 `@font-face` 경로는 `FontStylesheets`를 통해 로케일별로 제공됩니다.
+ */
+
 /* 언어별 기본 줄바꿈 (HTML lang 속성 기반) */
 @layer base {
   /* 한국어: 어절 단위 줄바꿈 적용 및 가로 넘침 방지 */
@@ -10,6 +17,88 @@
   :lang(ja) {
     word-break: auto-phrase;
     overflow-wrap: break-word;
+  }
+
+  /*
+   * 한자(Han)는 유니코드 코드포인트를 공유하지만 언어별(ko/ja/zh) 자형이 다릅니다.
+   * `unicode-range`는 이를 구분할 수 없으므로 `:lang()`에 따른 `font-family` 순서로 자형을 결정합니다.
+   * 한국어/영어는 Pretendard, 일본어는 Pretendard JP, 중국어 간체는 Noto Sans SC를 우선 지정합니다.
+   */
+  body {
+    font-family:
+      'Pretendard Variable',
+      'Pretendard JP Variable',
+      'Noto Sans SC Variable',
+      -apple-system,
+      BlinkMacSystemFont,
+      system-ui,
+      Roboto,
+      'Helvetica Neue',
+      'Segoe UI',
+      'Apple SD Gothic Neo',
+      'Noto Sans KR',
+      'Malgun Gothic',
+      'Hiragino Sans',
+      Meiryo,
+      'Noto Sans JP',
+      'Apple Color Emoji',
+      'Segoe UI Emoji',
+      'Segoe UI Symbol',
+      sans-serif;
+  }
+
+  body:lang(ja) {
+    font-family:
+      'Pretendard JP Variable',
+      'Pretendard Variable',
+      'Noto Sans SC Variable',
+      -apple-system,
+      BlinkMacSystemFont,
+      system-ui,
+      Roboto,
+      'Helvetica Neue',
+      'Segoe UI',
+      'Hiragino Sans',
+      Meiryo,
+      'Noto Sans JP',
+      'Apple SD Gothic Neo',
+      'Noto Sans KR',
+      'Apple Color Emoji',
+      'Segoe UI Emoji',
+      'Segoe UI Symbol',
+      sans-serif;
+  }
+
+  body:lang(zh) {
+    font-family:
+      'Noto Sans SC Variable',
+      'Pretendard Variable',
+      'PingFang SC',
+      'Microsoft YaHei',
+      'Noto Sans SC',
+      'Noto Sans CJK SC',
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      'Apple Color Emoji',
+      'Segoe UI Emoji',
+      'Segoe UI Symbol',
+      sans-serif;
+  }
+
+  /*
+   * Pretendard JP로 폴백되는 일부 한자에 대해 한국어 자형(ss05)을 적용합니다.
+   */
+  body:lang(ko) {
+    font-feature-settings: 'ss05';
+  }
+
+  /*
+   * 한국어 문서 내 타 언어 태그([lang]) 요소는 한국어 자형(ss05)을 상속받지 않도록 초기화합니다.
+   */
+  :lang(ko) [lang]:not(:lang(ko)) {
+    font-feature-settings: normal;
   }
 }
 
