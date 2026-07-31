@@ -43,14 +43,41 @@ export const deepTypeContent = createDeepTypeContent({
       '네 글자 옆에 붙은 선명도와 지치는 신호까지 같이 읽으면 어떤 자리에서 힘이 오래 가는지 보여요.',
     methodologyNoteTitle: '이 결과를 제대로 쓰는 법',
     reopenCta: '구매한 리포트 다시 열기',
+    reportAccessBody:
+      '이 리포트는 결제할 때 입력한 이메일로 1년 동안 다시 열 수 있어요. 링크를 저장해 두지 않아도 괜찮아요.',
+    reportAccessTitle: '나중에 다시 열려면',
+    reportBackToTop: '맨 위로',
     // R4 and R5 of MIGRATION §5.4. R5 names the two moves this product may not push; the career gate reads the
     // negation that follows and lets the sentence stand.
     reportDisclaimer:
       '겉속유형은 자기 이해를 돕는 엔터테인먼트 콘텐츠예요. 심리 진단이나 의료 서비스가 아니고 전문 상담을 대신하지 않아요. 결과는 지금의 답에서 가장 가까운 역할을 보여줘요. 이직이나 퇴사를 권하는 조언이 아니에요.',
+    reportFacetActionLabel: '해 볼 수 있는 선택',
+    reportPartLabel: '{number}부',
+    reportParts: {
+      read: {
+        title: '이번 답이 말하는 나',
+        body: '여덟 축과 일과 행복 답이 어디에 놓였는지 하나씩 읽어요.',
+      },
+      match: {
+        title: '지금 자리와 맞춰 보기',
+        body: '읽은 내용을 역할과 조건에 대 보고 어디가 맞물리고 어디가 부딪히는지 봐요.',
+      },
+      act: {
+        title: '이번 주에 해 볼 것',
+        body: '고르는 사람은 나예요. 이번 주 안에 시험해 볼 수 있는 크기로만 놓았어요.',
+      },
+    },
+    reportPrintCta: '인쇄하거나 PDF로 저장',
+    reportReceiptBody: '심화 문항 답까지 넣어 리포트를 만들었어요. 아래로 내려가면 바로 읽을 수 있어요.',
+    reportReceiptOrderLabel: '주문번호',
+    reportReceiptSupportCta: '문의하기',
+    reportReceiptTitle: '결제가 끝났어요',
     reportRestartCta: '처음부터 다시 풀기',
     reportShareCopied: '결과 문구를 복사했어요.',
     reportShareCta: '내 세계관 직업 공유',
     reportShareText: '내 세계관 직업은 {job} · 속유형 {inner} · 마음의 코어 {gem}',
+    reportTocNote: '누르면 그 자리로 바로 가요.',
+    reportTocTitle: '리포트 차례',
     revealBody:
       '남은 문항은 무엇이 나를 움직이는지 물어요. 마음의 코어 네 글자가 채워지면 내 세계관 직업과 지치는 조건이 함께 나와요.',
     revealTemplate: '{inner}',

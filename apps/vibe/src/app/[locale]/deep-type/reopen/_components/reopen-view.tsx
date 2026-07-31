@@ -115,7 +115,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
   return (
     <main className="flex flex-1 items-center justify-center bg-page-bg px-safe py-12 text-page-ink" id="main-content">
       <section className="w-full max-w-lg rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
-        <p className="font-bold text-page-accent text-sm">{copy.eyebrow}</p>
+        <p className="font-bold text-page-accent-strong text-sm">{copy.eyebrow}</p>
 
         {phase === 'checking' || phase === 'opening' ? (
           <StatusPanel
@@ -127,10 +127,10 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
         {phase === 'link-ready' ? (
           <>
             <h1 className="mt-3 break-keep font-black text-2xl leading-snug">{copy.linkTitle}</h1>
-            <p className="mt-3 break-keep text-page-ink/66 leading-7">{copy.linkBody}</p>
+            <p className="mt-3 break-keep text-page-ink-soft leading-7">{copy.linkBody}</p>
             <button
               className={cn(
-                'mt-6 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-page-accent px-6 font-black text-sm text-white transition-colors hover:bg-page-accent/92',
+                'mt-6 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-page-accent-strong px-6 font-black text-sm text-white transition-colors hover:bg-page-accent-strong/92',
                 FOCUS_CLASS_NAME,
               )}
               onClick={openReport}
@@ -145,7 +145,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
         {phase === 'accepted' ? (
           <div aria-live="polite">
             <h1 className="mt-3 break-keep font-black text-2xl leading-snug">{copy.acceptedTitle}</h1>
-            <p className="mt-3 break-keep text-page-ink/66 leading-7">{copy.acceptedBody}</p>
+            <p className="mt-3 break-keep text-page-ink-soft leading-7">{copy.acceptedBody}</p>
           </div>
         ) : null}
 
@@ -153,24 +153,24 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
           <>
             {invalidLink ? (
               <div className="mt-4 rounded-3xl border border-page-accent/30 bg-page-accent/8 p-4" role="alert">
-                <h1 className="font-black text-lg text-page-accent">{copy.invalidTitle}</h1>
-                <p className="mt-2 text-page-ink/66 text-sm leading-6">{copy.invalidBody}</p>
+                <h1 className="font-black text-lg text-page-accent-strong">{copy.invalidTitle}</h1>
+                <p className="mt-2 text-page-ink-soft text-sm leading-6">{copy.invalidBody}</p>
               </div>
             ) : (
               <>
                 <h1 className="mt-3 break-keep font-black text-2xl leading-snug">{copy.title}</h1>
-                <p className="mt-3 break-keep text-page-ink/66 leading-7">{copy.body}</p>
+                <p className="mt-3 break-keep text-page-ink-soft leading-7">{copy.body}</p>
               </>
             )}
 
             <form className="mt-6" onSubmit={requestLink}>
-              <label className="block font-bold text-page-ink/70 text-sm" htmlFor="deeptype-reopen-email">
+              <label className="block font-bold text-page-ink-soft text-sm" htmlFor="deeptype-reopen-email">
                 {copy.emailLabel}
               </label>
               <input
                 autoComplete="email"
                 className={cn(
-                  'mt-2 min-h-12 w-full rounded-2xl border border-page-border bg-white px-4 font-medium text-page-ink outline-none placeholder:text-page-ink/36 focus-visible:border-page-accent',
+                  'mt-2 min-h-12 w-full rounded-2xl border border-page-border bg-white px-4 font-medium text-page-ink outline-none placeholder:text-page-ink-muted focus-visible:border-page-accent',
                   FOCUS_CLASS_NAME,
                 )}
                 id="deeptype-reopen-email"
@@ -196,7 +196,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
               </div>
               <button
                 className={cn(
-                  'mt-5 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent px-6 font-black text-sm text-white transition-colors hover:bg-page-accent/92 disabled:cursor-not-allowed disabled:bg-page-ink/20',
+                  'mt-5 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent-strong px-6 font-black text-sm text-white transition-colors hover:bg-page-accent-strong/92 disabled:cursor-not-allowed disabled:bg-page-ink/20',
                   FOCUS_CLASS_NAME,
                 )}
                 disabled={!turnstileToken || requestPending}
@@ -205,11 +205,11 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
                 {requestPending ? copy.requesting : copy.requestCta}
               </button>
               {requestError ? (
-                <p className="mt-3 text-center font-bold text-page-accent text-sm" role="alert">
+                <p className="mt-3 text-center font-bold text-page-accent-strong text-sm" role="alert">
                   {requestError}
                 </p>
               ) : null}
-              <p className="mt-4 text-page-ink/44 text-xs leading-6">{copy.deliveryNote}</p>
+              <p className="mt-4 text-page-ink-muted text-xs leading-6">{copy.deliveryNote}</p>
             </form>
           </>
         ) : null}
@@ -217,7 +217,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
         {phase !== 'checking' && phase !== 'opening' ? (
           <Link
             className={cn(
-              'mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full font-bold text-page-ink/54 text-sm hover:text-page-ink',
+              'mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full font-bold text-page-ink-muted text-sm hover:text-page-ink',
               FOCUS_CLASS_NAME,
             )}
             href={`/${locale}/deep-type`}
@@ -281,7 +281,7 @@ function StatusPanel({ body, title }: { body: string; title: string }) {
         className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent"
       />
       <h1 className="mt-5 break-keep font-black text-xl">{title}</h1>
-      <p className="mt-2 text-page-ink/62 text-sm leading-6">{body}</p>
+      <p className="mt-2 text-page-ink-soft text-sm leading-6">{body}</p>
     </div>
   )
 }
@@ -323,13 +323,15 @@ function ReopenedReport({
       <main className="flex flex-1 items-center justify-center bg-page-bg px-safe py-12 text-page-ink">
         <section className="w-full max-w-lg rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 text-center sm:p-8">
           <h1 className="font-black text-2xl">{copy.reportFailedTitle}</h1>
-          <p className="mt-3 text-page-ink/64 leading-7">{copy.reportFailedBody}</p>
-          {refund === 'done' ? <p className="mt-4 text-page-ink/64 text-sm">{content.paywall.refundDone}</p> : null}
-          {refund === 'failed' ? <p className="mt-4 text-page-ink/64 text-sm">{content.paywall.refundFailed}</p> : null}
+          <p className="mt-3 text-page-ink-soft leading-7">{copy.reportFailedBody}</p>
+          {refund === 'done' ? <p className="mt-4 text-page-ink-soft text-sm">{content.paywall.refundDone}</p> : null}
+          {refund === 'failed' ? (
+            <p className="mt-4 text-page-ink-soft text-sm">{content.paywall.refundFailed}</p>
+          ) : null}
           {refund === 'idle' || refund === 'pending' ? (
             <button
               className={cn(
-                'mt-5 inline-flex min-h-11 items-center justify-center rounded-full border border-page-accent/50 px-5 font-bold text-page-accent text-sm hover:bg-page-accent/8 disabled:opacity-60',
+                'mt-5 inline-flex min-h-11 items-center justify-center rounded-full border border-page-accent/50 px-5 font-bold text-page-accent-strong text-sm hover:bg-page-accent/8 disabled:opacity-60',
                 FOCUS_CLASS_NAME,
               )}
               disabled={refund === 'pending'}
@@ -339,7 +341,7 @@ function ReopenedReport({
               {refund === 'pending' ? content.paywall.refundPending : content.paywall.refundCta}
             </button>
           ) : null}
-          <p className="mt-5 text-page-ink/48 text-xs">
+          <p className="mt-5 text-page-ink-muted text-xs">
             <a className="underline underline-offset-2" href={`mailto:${LEGAL_CONTACT_EMAIL}`}>
               {LEGAL_CONTACT_EMAIL}
             </a>
@@ -353,7 +355,7 @@ function ReopenedReport({
 
   return (
     <div className="flex flex-1 flex-col">
-      <p className="bg-page-soft px-safe py-3 text-center text-page-ink/52 text-xs">
+      <p className="bg-page-soft px-safe py-3 text-center text-page-ink-muted text-xs">
         {copy.accessUntil.replace('{date}', accessDate)}
       </p>
       <ReportView

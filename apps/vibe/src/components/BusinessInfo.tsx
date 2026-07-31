@@ -21,8 +21,8 @@ export default function BusinessInfo({
       <dl className="grid gap-x-4 gap-y-1 sm:grid-cols-2">
         {BUSINESS_FIELD_ORDER.map((field) => (
           <div className="flex flex-wrap gap-x-2" key={field}>
-            <dt className="shrink-0 text-page-ink/45">{labels.fields[field]}</dt>
-            <dd className="text-page-ink/70">
+            <dt className="shrink-0 text-page-ink-muted">{labels.fields[field]}</dt>
+            <dd className="text-page-ink-soft">
               {field === 'email' ? (
                 <a className="underline underline-offset-2 hover:text-page-ink" href={`mailto:${BUSINESS.email}`}>
                   {BUSINESS.email}

@@ -8,12 +8,11 @@ import type {
   StrengthCardsData,
   WorldJobData,
 } from '../../_lib/api'
-import { GROUPED_LIST_CLASS_NAME, GROUPED_ROW_CLASS_NAME } from '../../_lib/surface'
+import { GROUPED_LIST_CLASS_NAME, GROUPED_ROW_CLASS_NAME, REPORT_TYPE } from '../../_lib/surface'
 import type { DeepTypeContent } from '../../_lib/types'
 import { AbilityArtwork } from '../ability-artwork'
-import { GemArtwork, InnerArtwork } from '../code-artwork'
 import { BandLadder, DrainStrands } from './art'
-import { BlockHeading, ClosingNote, FacetList, Field, Kicker } from './primitives'
+import { BlockHeading, ClosingNote, FacetList, Field, FieldList, Kicker } from './primitives'
 
 // The six sections a reader reads to find out where they stand. Each one draws its own shape from its own
 // data — the composed opening as kicker paragraphs, the strength cards as cards with their art, the drain
@@ -25,27 +24,31 @@ import { BlockHeading, ClosingNote, FacetList, Field, Kicker } from './primitive
  *
  * The band line sits UNDER the scene rather than inside it. It is the one thing on this screen the free result
  * could not say, and running it into the same paragraph as the pole's description made a statement about the
- * spread of the answers read as one more sentence about the reader.
+ * spread of the answers read as one more sentence about the reader. It sits behind a rule for the same reason:
+ * at four descending greys it was simply the fourth-quietest line in the block.
  *
- * `data.worldJobName` is not printed. The hero two cards above is the job name at 3xl, and repeating it here
- * put the same string on screen three times before the first finding.
+ * `data.worldJobName` is not printed. The cover is the job name at 3xl, and repeating it here put the same
+ * string on screen three times before the first finding.
  */
 export function OpeningReadSection({ data }: { data: OpeningReadData }) {
   return (
     <>
-      <p className="break-keep text-page-ink/72 leading-8">{data.lead}</p>
+      {/* The reader's whole result in one sentence, so it is set one step above the body rather than at it. */}
+      <p className="break-keep font-medium text-[1.0625rem] text-page-ink leading-8">{data.lead}</p>
 
-      <div className="mt-7 grid gap-7">
+      <div className="mt-8 grid gap-8">
         {data.blocks.map((block) => (
           <div key={block.heading}>
             <BlockHeading>{block.heading}</BlockHeading>
-            <div className="mt-3 grid gap-5">
+            <div className="mt-4 grid gap-6">
               {block.paragraphs.map((paragraph) => (
                 <div key={paragraph.kicker}>
                   <Kicker>{paragraph.kicker}</Kicker>
-                  <p className="mt-1.5 break-keep text-page-ink/72 text-sm leading-7">{paragraph.text}</p>
+                  <p className={cn('mt-2', REPORT_TYPE.body)}>{paragraph.text}</p>
                   {paragraph.note ? (
-                    <p className="mt-2 break-keep text-page-ink/48 text-xs leading-5">{paragraph.note}</p>
+                    <p className={cn('mt-2.5 border-page-border border-l-2 pl-3', REPORT_TYPE.meta)}>
+                      {paragraph.note}
+                    </p>
                   ) : null}
                 </div>
               ))}
@@ -59,41 +62,54 @@ export function OpeningReadSection({ data }: { data: OpeningReadData }) {
   )
 }
 
-/** `data.name` is the hero's h1 and is not repeated here. What this section adds is the two halves it is made of. */
+/**
+ * `data.name` is the cover's h1 and is not repeated here, and neither are the two code artworks — they moved
+ * to the cover, where they are the result rather than a full screen of decoration in the middle of section 02.
+ * What this section adds is the two halves the job is made of.
+ */
 export function WorldJobSection({ content, data }: { content: DeepTypeContent; data: WorldJobData }) {
   return (
-    <>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <figure>
-          <InnerArtwork innerCode={data.codes.inner} />
-          <figcaption className="mt-2 text-center text-page-ink/44 text-xs">
-            {content.ui.layerInner} · {data.codes.inner}
-          </figcaption>
-        </figure>
-        <figure>
-          <GemArtwork gemCode={data.codes.gem} />
-          <figcaption className="mt-2 text-center text-page-ink/44 text-xs">
-            {content.ui.layerGem} · {data.codes.gem}
-          </figcaption>
-        </figure>
-      </div>
+    <dl className={cn(GROUPED_LIST_CLASS_NAME, 'sm:grid sm:gap-3')}>
+      <WorldJobHalf
+        heading={data.family.name}
+        label={content.ui.worldJobFamilyLabel}
+        lines={[data.family.method, data.family.role]}
+        reading={data.reading.family}
+      />
+      <WorldJobHalf
+        heading={data.core.name}
+        label={content.ui.worldJobCoreLabel}
+        lines={[data.core.strength]}
+        reading={data.reading.core}
+      />
+    </dl>
+  )
+}
 
-      <dl className={cn('mt-5', GROUPED_LIST_CLASS_NAME, 'sm:grid sm:grid-cols-2 sm:gap-2')}>
-        <div className={GROUPED_ROW_CLASS_NAME}>
-          <dt className="text-page-ink/44 text-xs">{content.ui.worldJobFamilyLabel}</dt>
-          <dd className="mt-1 break-keep font-black text-sm">{data.family.name}</dd>
-          <dd className="mt-1.5 break-keep text-page-ink/68 text-sm leading-6">{data.family.method}</dd>
-          <dd className="mt-2 break-keep text-page-ink/48 text-xs leading-5">{data.family.role}</dd>
-          <dd className="mt-3 break-keep text-page-ink/72 text-sm leading-7">{data.reading.family}</dd>
-        </div>
-        <div className={GROUPED_ROW_CLASS_NAME}>
-          <dt className="text-page-ink/44 text-xs">{content.ui.worldJobCoreLabel}</dt>
-          <dd className="mt-1 break-keep font-black text-sm">{data.core.name}</dd>
-          <dd className="mt-1.5 break-keep text-page-ink/68 text-sm leading-6">{data.core.strength}</dd>
-          <dd className="mt-3 break-keep text-page-ink/72 text-sm leading-7">{data.reading.core}</dd>
-        </div>
-      </dl>
-    </>
+function WorldJobHalf({
+  heading,
+  label,
+  lines,
+  reading,
+}: {
+  heading: string
+  label: string
+  lines: readonly string[]
+  reading: string
+}) {
+  return (
+    <div className={GROUPED_ROW_CLASS_NAME}>
+      <dt className="font-black text-page-accent-strong text-sm tracking-wide">{label}</dt>
+      <dd>
+        <p className="mt-1.5 break-keep font-black text-lg text-page-ink leading-snug">{heading}</p>
+        {lines.map((line) => (
+          <p className={cn('mt-1.5', REPORT_TYPE.meta)} key={line}>
+            {line}
+          </p>
+        ))}
+        <p className={cn('mt-3 border-page-border border-t pt-3', REPORT_TYPE.copy)}>{reading}</p>
+      </dd>
+    </div>
   )
 }
 
@@ -102,17 +118,21 @@ export function WorldJobSection({ content, data }: { content: DeepTypeContent; d
  * `short` while the free screen showed the artwork and the longer `core` — so the report someone paid for was
  * the thinner of the two. All four authored fields are here, and `watch` in particular has never been on
  * screen at all.
+ *
+ * The pole letters that used to sit in a chip beside the card name are gone. `F` on its own answers a question
+ * nobody asked at that point in the document — the axis it belongs to is not named anywhere near it — and the
+ * band movement list below prints every axis with both its name and its letter.
  */
 export function StrengthCardsSection({ data }: { data: StrengthCardsData }) {
   return (
     <>
-      {data.emptyNote ? <p className="break-keep text-page-ink/68 leading-7">{data.emptyNote}</p> : null}
+      {data.emptyNote ? <p className={REPORT_TYPE.body}>{data.emptyNote}</p> : null}
 
-      <div className="grid gap-6">
+      <div className="grid gap-7">
         {data.groups.map((group) => (
           <div key={group.heading}>
             <BlockHeading>{group.heading}</BlockHeading>
-            <ul className="mt-3 grid gap-3">
+            <ul className="mt-3 grid gap-4">
               {group.cards.map((card) => (
                 <li
                   className="flex flex-col overflow-hidden rounded-3xl border border-page-border bg-white sm:flex-row sm:gap-4"
@@ -120,15 +140,10 @@ export function StrengthCardsSection({ data }: { data: StrengthCardsData }) {
                 >
                   <AbilityArtwork slug={card.slug} />
                   <div className="min-w-0 flex-1 p-4 sm:py-4 sm:pr-4 sm:pl-0">
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="break-keep font-black text-sm leading-5">{card.copy.name}</p>
-                      <span className="inline-flex h-5 min-w-9 shrink-0 items-center justify-center rounded-full bg-page-soft px-2 font-bold text-page-ink/56 text-xs">
-                        {card.poles.join('')}
-                      </span>
-                    </div>
-                    <p className="mt-2 break-keep text-page-ink/72 text-sm leading-6">{card.copy.core}</p>
-                    <p className="mt-2 break-keep text-page-ink/56 text-xs leading-5">{card.copy.shine}</p>
-                    <p className="mt-2 break-keep text-page-ink/44 text-xs leading-5">{card.copy.watch}</p>
+                    <p className="break-keep font-black text-base text-page-ink leading-6">{card.copy.name}</p>
+                    <p className={cn('mt-2', REPORT_TYPE.copy)}>{card.copy.core}</p>
+                    <p className={cn('mt-3 border-page-border border-l-2 pl-3', REPORT_TYPE.meta)}>{card.copy.shine}</p>
+                    <p className={cn('mt-2 border-page-border border-l-2 pl-3', REPORT_TYPE.meta)}>{card.copy.watch}</p>
                   </div>
                 </li>
               ))}
@@ -149,14 +164,14 @@ export function StrengthCardsSection({ data }: { data: StrengthCardsData }) {
  */
 function BandMovementBlock({ data }: { data: StrengthCardsData }) {
   return (
-    <div className={cn(data.groups.length > 0 && 'mt-7 border-page-border border-t pt-6')}>
+    <div className={cn(data.groups.length > 0 && 'mt-8 border-page-border border-t pt-6')}>
       <BlockHeading>{data.movementHeading}</BlockHeading>
-      <ul className="mt-3 grid gap-2.5">
+      <ul className="mt-3 grid gap-3">
         {data.bandMovement.map((axis) => (
           <li className="flex items-center justify-between gap-3" key={axis.id}>
             <div className="min-w-0">
-              <p className="break-keep font-bold text-sm">{axis.name}</p>
-              <p className="mt-0.5 break-keep text-page-ink/48 text-xs leading-5">
+              <p className="break-keep font-bold text-[0.9375rem] text-page-ink">{axis.name}</p>
+              <p className={cn('mt-0.5', REPORT_TYPE.meta)}>
                 {axis.leading} · {axis.band.label} · {axis.shift.label}
               </p>
             </div>
@@ -165,54 +180,58 @@ function BandMovementBlock({ data }: { data: StrengthCardsData }) {
         ))}
       </ul>
       {data.splitAxisNames.length > 0 ? (
-        <div className="mt-4 rounded-2xl bg-page-soft/70 p-3">
-          <Field label={data.splitLabel} value={data.splitAxisNames.join(' · ')} />
-          <p className="mt-1.5 break-keep text-page-ink/56 text-xs leading-5">{data.splitNote}</p>
+        <div className="mt-5 rounded-2xl bg-page-soft/70 p-3">
+          <FieldList>
+            <Field label={data.splitLabel} value={data.splitAxisNames.join(' · ')} />
+          </FieldList>
+          <p className={cn('mt-2', REPORT_TYPE.meta)}>{data.splitNote}</p>
         </div>
       ) : (
-        <p className="mt-4 break-keep text-page-ink/48 text-xs leading-5">{data.splitNote}</p>
+        <p className={cn('mt-5', REPORT_TYPE.meta)}>{data.splitNote}</p>
       )}
       <ClosingNote>{data.clarityNote}</ClosingNote>
     </div>
   )
 }
 
-export function DrainSignatureSection({ data }: { data: DrainSignatureData }) {
+export function DrainSignatureSection({ content, data }: { content: DeepTypeContent; data: DrainSignatureData }) {
   return (
     <>
       <div className="flex items-center gap-4 rounded-3xl bg-page-soft/70 p-4">
         <DrainStrands strands={data.strands} />
         <div className="min-w-0">
-          <p className="break-keep font-black text-page-accent text-sm">{data.spread.label}</p>
-          <p className="mt-1 break-keep text-page-ink/68 text-sm leading-6">{data.spread.detail}</p>
+          <p className="break-keep font-black text-base text-page-accent-strong">{data.spread.label}</p>
+          <p className={cn('mt-1', REPORT_TYPE.copy)}>{data.spread.detail}</p>
         </div>
       </div>
 
-      <div className="mt-5">
-        <FacetList facets={data.leaders} />
+      <div className="mt-6">
+        <FacetList actionLabel={content.ui.reportFacetActionLabel} facets={data.leaders} />
       </div>
 
       {/* The grouped list already draws a rule under itself at compact width, so a second divider here would
           put two lines a margin apart. From `sm` up the list loses its borders and this one has to appear. */}
       <div className="mt-6 sm:border-page-border sm:border-t sm:pt-5">
         <BlockHeading>{data.contrast.sentence}</BlockHeading>
-        <div className="mt-3 grid gap-1.5">
-          <Field
-            label={data.contrastLabels.free}
-            value={data.contrast.freeShown.map((facet) => facet.label).join(' · ')}
-          />
-          {data.contrast.added.length > 0 ? (
+        <div className="mt-3">
+          <FieldList>
             <Field
-              label={data.contrastLabels.added}
-              value={data.contrast.added.map((facet) => facet.label).join(' · ')}
+              label={data.contrastLabels.free}
+              value={data.contrast.freeShown.map((facet) => facet.label).join(' · ')}
             />
-          ) : null}
-          {data.contrast.dropped.length > 0 ? (
-            <Field
-              label={data.contrastLabels.dropped}
-              value={data.contrast.dropped.map((facet) => facet.label).join(' · ')}
-            />
-          ) : null}
+            {data.contrast.added.length > 0 ? (
+              <Field
+                label={data.contrastLabels.added}
+                value={data.contrast.added.map((facet) => facet.label).join(' · ')}
+              />
+            ) : null}
+            {data.contrast.dropped.length > 0 ? (
+              <Field
+                label={data.contrastLabels.dropped}
+                value={data.contrast.dropped.map((facet) => facet.label).join(' · ')}
+              />
+            ) : null}
+          </FieldList>
         </div>
       </div>
 
@@ -221,18 +240,24 @@ export function DrainSignatureSection({ data }: { data: DrainSignatureData }) {
   )
 }
 
-export function HappinessConditionsSection({ data }: { data: HappinessConditionsData }) {
+export function HappinessConditionsSection({
+  content,
+  data,
+}: {
+  content: DeepTypeContent
+  data: HappinessConditionsData
+}) {
   return (
     <>
       <BlockHeading>{data.headings.needs}</BlockHeading>
       <div className="mt-3">
-        <FacetList facets={data.needs} />
+        <FacetList actionLabel={content.ui.reportFacetActionLabel} facets={data.needs} />
       </div>
 
-      <div className="mt-6">
+      <div className="mt-7">
         <BlockHeading>{data.headings.environments}</BlockHeading>
         <div className="mt-3">
-          <FacetList facets={data.environments} />
+          <FacetList actionLabel={content.ui.reportFacetActionLabel} facets={data.environments} />
         </div>
       </div>
 
@@ -241,18 +266,18 @@ export function HappinessConditionsSection({ data }: { data: HappinessConditions
   )
 }
 
-export function InterestProfileSection({ data }: { data: InterestProfileData }) {
+export function InterestProfileSection({ content, data }: { content: DeepTypeContent; data: InterestProfileData }) {
   return (
     <>
       <BlockHeading>{data.headings.interests}</BlockHeading>
       <div className="mt-3">
-        <FacetList facets={data.interests} />
+        <FacetList actionLabel={content.ui.reportFacetActionLabel} facets={data.interests} />
       </div>
 
-      <div className="mt-6">
+      <div className="mt-7">
         <BlockHeading>{data.headings.purposes}</BlockHeading>
         <div className="mt-3">
-          <FacetList facets={data.purposes} />
+          <FacetList actionLabel={content.ui.reportFacetActionLabel} facets={data.purposes} />
         </div>
       </div>
 

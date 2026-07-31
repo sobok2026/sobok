@@ -30,7 +30,7 @@ export function QuizView({ answers, content, currentIndex, locale, onBack, onNex
       <div className="mx-auto grid w-full max-w-7xl gap-4 py-4 sm:gap-8 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
         <aside className="rounded-3xl sm:rounded-4xl bg-page-ink p-6 text-white shadow-[0_32px_110px_rgba(36,22,23,0.16)] sm:p-8">
           <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-bold text-sm text-white/78">
-            <HeartWaves aria-hidden="true" className="h-4 w-4 text-page-accent" stroke={1.8} />
+            <HeartWaves aria-hidden="true" className="h-4 w-4 text-page-accent-strong" stroke={1.8} />
             {content.ui.questionEyebrow}
           </p>
           <h1
@@ -74,7 +74,7 @@ export function QuizView({ answers, content, currentIndex, locale, onBack, onNex
                     className={cn(
                       'group flex min-h-20 cursor-pointer items-center gap-4 rounded-3xl border p-5 transition',
                       isSelected
-                        ? 'border-page-accent bg-[#fff3f0] shadow-[0_18px_50px_rgba(255,77,109,0.14)]'
+                        ? 'border-page-accent bg-[#fff3f0] shadow-[0_18px_50px_var(--page-accent-glow)]'
                         : 'border-page-border bg-white hover:border-page-accent/50 hover:bg-page-soft/50',
                     )}
                     key={option.id}
@@ -97,7 +97,7 @@ export function QuizView({ answers, content, currentIndex, locale, onBack, onNex
           <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
             <button
               className={cn(
-                'inline-flex min-h-12 items-center justify-center rounded-full border border-page-border bg-white px-5 font-bold text-page-ink/70 text-sm transition-colors hover:text-page-ink',
+                'inline-flex min-h-12 items-center justify-center rounded-full border border-page-border bg-white px-5 font-bold text-page-ink-soft text-sm transition-colors hover:text-page-ink',
                 FOCUS_CLASS_NAME,
               )}
               onClick={onBack}

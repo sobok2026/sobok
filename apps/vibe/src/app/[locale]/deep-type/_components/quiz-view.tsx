@@ -56,12 +56,12 @@ export function QuizView({ backLabel, banner, hint, onAnswer, onBack, progress, 
               </button>
             ))}
           </div>
-          {hint ? <p className="mt-5 text-page-ink/48 text-xs leading-5">{hint}</p> : null}
+          {hint ? <p className="mt-5 text-page-ink-muted text-xs leading-5">{hint}</p> : null}
         </div>
 
         <button
           className={cn(
-            'mt-5 inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-bold text-page-ink/58 text-sm transition-colors enabled:hover:text-page-ink disabled:cursor-not-allowed disabled:opacity-40',
+            'mt-5 inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-bold text-page-ink-muted text-sm transition-colors enabled:hover:text-page-ink disabled:cursor-not-allowed disabled:opacity-40',
             FOCUS_CLASS_NAME,
           )}
           disabled={!onBack}

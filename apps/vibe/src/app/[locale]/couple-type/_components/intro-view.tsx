@@ -23,7 +23,7 @@ export function IntroView({ content, locale }: { content: CoupleTypeContent; loc
     <section className="flex flex-1 flex-col justify-center px-safe py-10 sm:py-16">
       <div className="mx-auto w-full max-w-3xl">
         <p className="inline-flex items-center gap-2 rounded-full bg-page-ink px-4 py-2 font-bold text-sm text-white">
-          <HeartWaves aria-hidden="true" className="h-4 w-4 text-page-accent" stroke={1.8} />
+          <HeartWaves aria-hidden="true" className="h-4 w-4 text-page-accent-strong" stroke={1.8} />
           {ui.heroEyebrow}
         </p>
         <h1
@@ -34,7 +34,7 @@ export function IntroView({ content, locale }: { content: CoupleTypeContent; loc
         >
           {ui.heroTitle}
         </h1>
-        <p className="mt-5 text-lg text-page-ink/66 leading-8">{ui.heroDescription}</p>
+        <p className="mt-5 text-lg text-page-ink-soft leading-8">{ui.heroDescription}</p>
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
           <MiniStat
@@ -46,7 +46,7 @@ export function IntroView({ content, locale }: { content: CoupleTypeContent; loc
 
         <Link
           className={cn(
-            'mt-9 inline-flex min-h-14 touch-manipulation items-center justify-center gap-2 rounded-2xl bg-page-accent px-6 font-black text-base text-white shadow-[0_24px_80px_var(--page-accent-glow)] transition-colors hover:bg-page-accent/92',
+            'mt-9 inline-flex min-h-14 touch-manipulation items-center justify-center gap-2 rounded-2xl bg-page-accent-strong px-6 font-black text-base text-white shadow-[0_24px_80px_var(--page-accent-glow)] transition-colors hover:bg-page-accent-strong/92',
             FOCUS_CLASS_NAME,
           )}
           href={`/${locale}/couple-type/quiz`}
@@ -54,7 +54,7 @@ export function IntroView({ content, locale }: { content: CoupleTypeContent; loc
           {ui.introCta}
           <ArrowRight aria-hidden="true" className="h-4 w-4" stroke={1.8} />
         </Link>
-        <p className="mt-5 text-page-ink/56 text-sm leading-7">{ui.introNote}</p>
+        <p className="mt-5 text-page-ink-muted text-sm leading-7">{ui.introNote}</p>
       </div>
     </section>
   )

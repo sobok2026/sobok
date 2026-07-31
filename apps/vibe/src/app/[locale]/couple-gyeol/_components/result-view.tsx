@@ -47,7 +47,7 @@ export function ResultView({ content, isSharedResult, locale, onRestart, result 
       <div className="mx-auto grid w-full max-w-7xl gap-4 sm:gap-6 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
         <div className="rounded-[2.4rem] bg-page-ink p-6 text-white shadow-[0_36px_120px_rgba(36,22,23,0.2)] sm:p-8 lg:sticky lg:top-32 lg:-mt-px lg:self-start">
           <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-bold text-sm text-white/78">
-            <Sparkles aria-hidden="true" className="h-4 w-4 text-page-accent" stroke={1.8} />
+            <Sparkles aria-hidden="true" className="h-4 w-4 text-page-accent-strong" stroke={1.8} />
             {content.ui.resultEyebrow}
           </p>
           <GyeolScoreCard
@@ -60,13 +60,15 @@ export function ResultView({ content, isSharedResult, locale, onRestart, result 
             {resultContent.nickname}
           </h1>
           <p className="mt-5 text-white/70 leading-8">{resultContent.summary}</p>
-          {isSharedResult ? <p className="mt-4 font-bold text-page-accent text-sm">{content.ui.shareLead}</p> : null}
+          {isSharedResult ? (
+            <p className="mt-4 font-bold text-page-accent-strong text-sm">{content.ui.shareLead}</p>
+          ) : null}
         </div>
 
         <div className="grid gap-5">
           <section className="rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:p-8">
             <h2 className="font-black text-2xl">{content.ui.gradeTitle}</h2>
-            <p className="mt-4 text-page-ink/70 leading-8">{gradeContent.description}</p>
+            <p className="mt-4 text-page-ink-soft leading-8">{gradeContent.description}</p>
           </section>
 
           <AxisScoresSection content={content} result={result} />
@@ -75,7 +77,7 @@ export function ResultView({ content, isSharedResult, locale, onRestart, result 
             <h2 className="font-black text-2xl">{content.ui.reasonsTitle}</h2>
             <ul className="mt-5 grid gap-3">
               {resultContent.reasons.map((reason) => (
-                <li className="flex gap-3 rounded-2xl bg-[#f4fbf7] px-4 py-3 text-page-ink/72 leading-7" key={reason}>
+                <li className="flex gap-3 rounded-2xl bg-[#f4fbf7] px-4 py-3 text-page-ink-soft leading-7" key={reason}>
                   <HeartWaves aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-page-success" stroke={1.8} />
                   <span>{reason}</span>
                 </li>
@@ -85,23 +87,23 @@ export function ResultView({ content, isSharedResult, locale, onRestart, result 
 
           <section className="rounded-3xl sm:rounded-4xl bg-[#eef7ff] p-6 sm:p-8">
             <h2 className="font-black text-2xl">{content.ui.missionTitle}</h2>
-            <p className="mt-4 text-page-ink/70 leading-8">{resultContent.mission}</p>
+            <p className="mt-4 text-page-ink-soft leading-8">{resultContent.mission}</p>
           </section>
 
-          <section className="rounded-3xl sm:rounded-4xl bg-page-accent p-6 text-white shadow-[0_24px_90px_rgba(255,77,109,0.18)] sm:p-8">
+          <section className="rounded-3xl sm:rounded-4xl bg-page-accent-strong p-6 text-white shadow-[0_24px_90px_var(--page-accent-glow)] sm:p-8">
             <h2 className="font-black text-2xl">{content.ui.resultCardTitle}</h2>
             <p className="mt-4 max-w-2xl text-white/76 leading-8">{content.ui.resultCardBody}</p>
             <div className="mt-6 rounded-3xl bg-white p-5 text-page-ink">
-              <p className="font-bold text-page-ink/48 text-sm">{content.ui.shareLead}</p>
+              <p className="font-bold text-page-ink-muted text-sm">{content.ui.shareLead}</p>
               <p className="mt-2 font-black text-2xl tracking-[-0.04em]">
                 {gradeContent.label} · {resultContent.nickname}
               </p>
-              <p className="mt-3 text-page-ink/62 text-sm leading-6">{shareBody}</p>
+              <p className="mt-3 text-page-ink-soft text-sm leading-6">{shareBody}</p>
             </div>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <button
                 className={cn(
-                  'inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-5 font-black text-page-accent text-sm transition-colors hover:bg-white/90',
+                  'inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-5 font-black text-page-accent-strong text-sm transition-colors hover:bg-white/90',
                   FOCUS_CLASS_NAME,
                 )}
                 onClick={shareResult}
@@ -127,7 +129,7 @@ export function ResultView({ content, isSharedResult, locale, onRestart, result 
 
           <button
             className={cn(
-              'inline-flex min-h-12 w-fit items-center justify-center gap-2 rounded-full border border-page-border bg-white px-5 font-black text-page-ink/72 text-sm transition-colors hover:text-page-ink',
+              'inline-flex min-h-12 w-fit items-center justify-center gap-2 rounded-full border border-page-border bg-white px-5 font-black text-page-ink-soft text-sm transition-colors hover:text-page-ink',
               FOCUS_CLASS_NAME,
             )}
             onClick={onRestart}
@@ -164,9 +166,9 @@ function AxisScoresSection({ content, result }: Pick<ResultViewProps, 'content' 
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="font-black text-page-ink">{axisContent.label}</p>
-                  <p className="mt-1 text-page-ink/56 text-sm leading-6">{axisContent.description}</p>
+                  <p className="mt-1 text-page-ink-muted text-sm leading-6">{axisContent.description}</p>
                 </div>
-                <p className="shrink-0 font-black text-2xl text-page-accent">{axisScore}</p>
+                <p className="shrink-0 font-black text-2xl text-page-accent-strong">{axisScore}</p>
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-page-soft">
                 <div
@@ -202,7 +204,7 @@ function GyeolScoreCard({ gradeLabel, indexLabel, mountainLabel, weaveIndex }: G
           <p className="font-bold text-sm text-white/70">{indexLabel}</p>
           <p className="mt-1 font-black text-5xl">{weaveIndex}</p>
         </div>
-        <div className="rounded-2xl bg-page-accent/92 px-4 py-3 text-right text-white shadow-[0_16px_42px_rgba(255,77,109,0.24)] backdrop-blur">
+        <div className="rounded-2xl bg-page-accent-strong/92 px-4 py-3 text-right text-white shadow-[0_16px_42px_var(--page-accent-glow)] backdrop-blur">
           <p className="font-black text-3xl tracking-tight">{gradeLabel}</p>
           <p className="mt-1 font-bold text-white/76 text-xs">{mountainLabel}</p>
         </div>

@@ -1,4 +1,4 @@
-import type { NarrativeSection, ReportSection } from '../../_lib/api'
+import type { ReportSection } from '../../_lib/api'
 import type { DeepTypeContent } from '../../_lib/types'
 import {
   ContextShiftSection,
@@ -8,6 +8,7 @@ import {
   ThreePathsSection,
   WeekQuestSection,
 } from './action-sections'
+import { sectionAnchorId } from './parts'
 import { SectionShell } from './primitives'
 import {
   DrainSignatureSection,
@@ -21,7 +22,9 @@ import {
 interface ReportSectionViewProps {
   content: DeepTypeContent
   /** The model's paragraph for this section, or null. Always rendered under the engine's own section. */
-  narrative: NarrativeSection | null
+  narrative: string | null
+  /** Position in the whole document. Owned by `parts.ts`, never recomputed here. */
+  number: number
   section: ReportSection
 }
 
@@ -32,9 +35,15 @@ interface ReportSectionViewProps {
  * `{ key, title, body }` and printed the body, so a new section rendered as a paragraph and nobody had to
  * notice.
  */
-export function ReportSectionView({ content, narrative, section }: ReportSectionViewProps) {
+export function ReportSectionView({ content, narrative, number, section }: ReportSectionViewProps) {
   return (
-    <SectionShell intro={section.intro} narrative={narrative?.body ?? null} title={section.title}>
+    <SectionShell
+      id={sectionAnchorId(section.key)}
+      intro={section.intro}
+      narrative={narrative}
+      number={number}
+      title={section.title}
+    >
       {body(content, section)}
     </SectionShell>
   )
@@ -49,11 +58,11 @@ function body(content: DeepTypeContent, section: ReportSection) {
     case 'strengthCards':
       return <StrengthCardsSection data={section.data} />
     case 'drainSignature':
-      return <DrainSignatureSection data={section.data} />
+      return <DrainSignatureSection content={content} data={section.data} />
     case 'happinessConditions':
-      return <HappinessConditionsSection data={section.data} />
+      return <HappinessConditionsSection content={content} data={section.data} />
     case 'interestProfile':
-      return <InterestProfileSection data={section.data} />
+      return <InterestProfileSection content={content} data={section.data} />
     case 'roleFamilies':
       return <RoleFamiliesSection data={section.data} />
     case 'contextShift':
