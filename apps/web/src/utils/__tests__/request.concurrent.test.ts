@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { getRequestIP, getRequestUserAgent } from '@sobok/http/request'
+import { getRequestIp, getRequestUserAgent } from '@sobok/http/request'
 
 describe('request helpers', () => {
   test('CF-Connecting-IP를 가장 우선해서 사용한다', () => {
@@ -9,7 +9,7 @@ describe('request helpers', () => {
       'x-real-ip': '192.0.2.1',
     })
 
-    expect(getRequestIP(headers)).toBe('198.51.100.10')
+    expect(getRequestIp(headers)).toBe('198.51.100.10')
   })
 
   test('x-forwarded-for에서는 첫 번째 IP만 사용한다', () => {
@@ -17,11 +17,11 @@ describe('request helpers', () => {
       'x-forwarded-for': '203.0.113.1, 203.0.113.2, 203.0.113.3',
     })
 
-    expect(getRequestIP(headers)).toBe('203.0.113.1')
+    expect(getRequestIp(headers)).toBe('203.0.113.1')
   })
 
   test('IP 헤더가 없으면 unknown을 반환한다', () => {
-    expect(getRequestIP(new Headers())).toBe('unknown')
+    expect(getRequestIp(new Headers())).toBe('unknown')
   })
 
   test('user-agent가 없으면 sec-ch-ua로 대체한다', () => {

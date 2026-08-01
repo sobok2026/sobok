@@ -1,7 +1,7 @@
 import type { GETV1ChatMessagesResponse } from '@sobok/contracts'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { buildSearchParams, fetchAPIData } from '@/utils/api-request'
+import { buildSearchParams, fetchApiData } from '@/utils/api-request'
 
 export default function useChatMessageQuery(handle: string, options?: { refetchInterval?: number }) {
   return useInfiniteQuery({
@@ -9,7 +9,7 @@ export default function useChatMessageQuery(handle: string, options?: { refetchI
     queryFn: async ({ pageParam }) => {
       const searchParams = buildSearchParams({ before: pageParam })
       const url = `/api/v1/chat/artist/${handle}/message?${searchParams}`
-      const { data } = await fetchAPIData<GETV1ChatMessagesResponse>(url)
+      const { data } = await fetchApiData<GETV1ChatMessagesResponse>(url)
       return data
     },
     initialPageParam: undefined as string | undefined,

@@ -1,7 +1,7 @@
 import type { POSTV1ChatSubscriptionResponse } from '@sobok/contracts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export default function useSubscribeMutation(handle: string) {
   const queryClient = useQueryClient()
@@ -10,7 +10,7 @@ export default function useSubscribeMutation(handle: string) {
     mutationFn: async ({ paymentMethodId }: { paymentMethodId?: number }) => {
       const url = `/api/v1/chat/artist/${handle}/subscription`
 
-      const { data } = await fetchAPIData<POSTV1ChatSubscriptionResponse>(url, {
+      const { data } = await fetchApiData<POSTV1ChatSubscriptionResponse>(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(paymentMethodId === undefined ? {} : { paymentMethodId }),

@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import useFanChatRoom, { type ReplyTarget } from '../_hooks/useFanChatRoom'
 import useMessageJump from '../_hooks/useMessageJump'
-import { avatarURL } from '../_lib/chat'
+import { avatarUrl } from '../_lib/chat'
 import { type BubbleQuote, IncomingBubble, OutgoingBubble, QuotedMessage, toBubbleQuote } from './ChatBubbles'
 import ChatComposer from './ChatComposer'
 import ChatMessageList, { type ChatMessageListHandle } from './ChatMessageList'
@@ -102,7 +102,7 @@ export default function FanChatRoom({ artist, entitled, handle, replyTextLimit, 
 
     return (
       <IncomingBubble
-        avatarSrc={avatarURL(artist.displayName, artist.imageURL)}
+        avatarSrc={avatarUrl(artist.displayName, artist.imageURL)}
         createdAt={item.createdAt}
         isHighlighted={highlightedId === item.messageId}
         isSelected={isTarget}

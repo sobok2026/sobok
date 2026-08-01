@@ -1,6 +1,6 @@
 import '../globals.css'
 
-import GTMLoader from '@sobok/analytics/gtm-loader'
+import GtmLoader from '@sobok/analytics/gtm-loader'
 import { ADSENSE_ACCOUNT, GTM_ID } from '@sobok/brand/identity'
 import { LOCALE_LANGUAGE_TAGS, LOCALES } from '@sobok/domain/locale'
 import LocaleSwitcher from '@sobok/site-chrome/locale-switcher'
@@ -49,7 +49,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           <BirthProfileProvider key={locale}>{children}</BirthProfileProvider>
           <Footer locale={locale} />
         </NextIntlClientProvider>
-        <GTMLoader containerId={GTM_ID} productionOrigin={ORIGIN} />
+        <GtmLoader containerId={GTM_ID} productionOrigin={ORIGIN} />
         <Script
           async
           crossOrigin="anonymous"

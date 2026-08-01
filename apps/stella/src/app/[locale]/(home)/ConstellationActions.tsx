@@ -7,7 +7,7 @@ import { PLANET_GLYPHS } from '@/chart/data'
 import type { ChartAspect, NatalChart, SignId } from '@/chart/types'
 import { ORIGIN, SITE_NAME } from '@/constants'
 import type { StoredBirth } from '@/lib/birth-storage'
-import { buildShareURL, shareLink } from '@/lib/share'
+import { buildShareUrl, shareLink } from '@/lib/share'
 import { createNatalShareCard } from './share-card'
 import { HOUSE_NUMBERS } from './wheel/wheel-scene'
 
@@ -42,7 +42,7 @@ export function ConstellationActions({
     const method = await shareLink({
       title: t('meta.title'),
       text: t('share.text'),
-      url: buildShareURL(locale, { kind: 'chart', birth }),
+      url: buildShareUrl(locale, { kind: 'chart', birth }),
     })
 
     if (method === 'clipboard') {

@@ -1,6 +1,6 @@
 import { defineConfig } from 'drizzle-kit'
 
-import { postgresURLToDrizzleCredentials } from './drizzle.postgres'
+import { postgresUrlToDrizzleCredentials } from './drizzle.postgres'
 import { env } from './src/app/env'
 import { env as cliEnv } from './src/env.cli'
 
@@ -11,6 +11,6 @@ export default defineConfig({
   schema: 'src/app/schema/index.ts',
   dialect: 'postgresql',
   schemaFilter: ['public'],
-  dbCredentials: postgresURLToDrizzleCredentials(APP_POSTGRES_URL_DIRECT, APP_POSTGRES_CERTIFICATE),
+  dbCredentials: postgresUrlToDrizzleCredentials(APP_POSTGRES_URL_DIRECT, APP_POSTGRES_CERTIFICATE),
   strict: true,
 })

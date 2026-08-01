@@ -1,7 +1,7 @@
 import type { PUTV1ChatPayoutAccountBody, PUTV1ChatPayoutAccountResponse } from '@sobok/contracts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export default function useSavePayoutAccountMutation() {
   const queryClient = useQueryClient()
@@ -10,7 +10,7 @@ export default function useSavePayoutAccountMutation() {
     mutationFn: async (body: PUTV1ChatPayoutAccountBody) => {
       const url = '/api/v1/chat/studio/payout-account'
 
-      const { data } = await fetchAPIData<PUTV1ChatPayoutAccountResponse>(url, {
+      const { data } = await fetchApiData<PUTV1ChatPayoutAccountResponse>(url, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

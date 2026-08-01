@@ -1,5 +1,5 @@
 import { postV1SearchTrendingViewBodySchema } from '@sobok/contracts'
-import { getRequestIP } from '@sobok/http/request'
+import { getRequestIp } from '@sobok/http/request'
 import { Hono } from 'hono'
 import { createFactory } from 'hono/factory'
 
@@ -17,11 +17,11 @@ const middlewares = factory.createHandlers(zProblemValidator('json', postV1Searc
 
 trendingViewPostRoutes.post('/', ...middlewares, async (c) => {
   const { query } = c.req.valid('json')
-  const remoteIP = getRequestIP(c.req.raw.headers)
+  const remoteIp = getRequestIp(c.req.raw.headers)
 
   const rateLimit = await checkSearchTrendingViewRateLimit({
     query,
-    remoteIP,
+    remoteIp,
     userId: c.get('user')?.id,
   })
 

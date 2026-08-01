@@ -8,12 +8,12 @@ import type {
   POSTV1NotificationCriteriaResponse,
 } from '@sobok/contracts'
 
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export async function createNotificationCriteria(body: POSTV1NotificationCriteriaBody) {
   const url = '/api/v1/notification/criteria'
 
-  const { data } = await fetchAPIData<POSTV1NotificationCriteriaResponse>(url, {
+  const { data } = await fetchApiData<POSTV1NotificationCriteriaResponse>(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -25,7 +25,7 @@ export async function createNotificationCriteria(body: POSTV1NotificationCriteri
 export async function deleteNotificationCriteria(id: number) {
   const url = `/api/v1/notification/criteria/${id}`
 
-  const { data } = await fetchAPIData<DELETEV1NotificationCriteriaIdResponse>(url, {
+  const { data } = await fetchApiData<DELETEV1NotificationCriteriaIdResponse>(url, {
     method: 'DELETE',
   })
 
@@ -35,7 +35,7 @@ export async function deleteNotificationCriteria(id: number) {
 export async function updateNotificationCriteria(id: number, body: PATCHV1NotificationCriteriaIdBody) {
   const url = `/api/v1/notification/criteria/${id}`
 
-  const { data } = await fetchAPIData<PATCHV1NotificationCriteriaIdResponse>(url, {
+  const { data } = await fetchApiData<PATCHV1NotificationCriteriaIdResponse>(url, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

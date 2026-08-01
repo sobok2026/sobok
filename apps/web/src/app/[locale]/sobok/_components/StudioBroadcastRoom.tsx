@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl'
 import { useRef } from 'react'
 import { Link, useRouter } from '@/i18n/navigation'
 import useBroadcastRoom from '../_hooks/useBroadcastRoom'
-import { avatarURL } from '../_lib/chat'
+import { avatarUrl } from '../_lib/chat'
 import { OutgoingBubble } from './ChatBubbles'
 import ChatComposer from './ChatComposer'
 import ChatMessageList, { type ChatMessageListHandle } from './ChatMessageList'
@@ -58,7 +58,7 @@ export default function StudioBroadcastRoom({ handle }: { handle: string }) {
                     className="flex max-w-60 shrink-0 items-center gap-1.5 rounded-full bg-surface-2 py-1 pl-1 pr-3 transition-colors hover:bg-surface-3"
                   >
                     <img
-                      src={avatarURL(nickname, reply.image)}
+                      src={avatarUrl(nickname, reply.image)}
                       alt=""
                       className="h-5 w-5 shrink-0 rounded-full object-cover"
                     />

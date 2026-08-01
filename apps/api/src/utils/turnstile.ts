@@ -1,7 +1,7 @@
 import { PROBLEM, type ProblemSpec } from '@sobok/contracts'
 import { type TurnstileFailureReason, verifyTurnstile } from '@sobok/edge/turnstile'
 import { env as authEnv } from '@sobok/env/server.auth'
-import { getRequestIP } from '@sobok/http/request'
+import { getRequestIp } from '@sobok/http/request'
 import type { Context } from 'hono'
 
 import { problemResponse } from './problem'
@@ -20,14 +20,14 @@ const PROBLEM_BY_REASON: Record<TurnstileFailureReason, ProblemSpec> = {
 // 호스트 핀과 분류 규칙이 라우트마다 어긋날 수 없다. (better-auth 가 가로채는 auth 라우트는 captcha 플러그인이
 // 같은 일을 하되 자체 응답 형식을 쓴다.)
 export async function guardTurnstile(c: Context, expectedAction: string, token: string): Promise<Response | null> {
-  // getRequestIP 는 프록시 헤더에 클라이언트 주소가 없으면 문자열 'unknown' 을 돌려준다. 그대로 remoteip 으로
+  // getRequestIp 는 프록시 헤더에 클라이언트 주소가 없으면 문자열 'unknown' 을 돌려준다. 그대로 remoteip 으로
   // 넘기면 Cloudflare 가 존재하지 않는 주소를 채점하므로 생략하는 편이 낫다.
-  const requestIP = getRequestIP(c.req.raw.headers)
+  const requestIp = getRequestIp(c.req.raw.headers)
 
   const result = await verifyTurnstile(
     authEnv.TURNSTILE_SECRET_KEY,
     token,
-    requestIP === 'unknown' ? null : requestIP,
+    requestIp === 'unknown' ? null : requestIp,
     {
       allowedHostnames: TURNSTILE_ALLOWED_HOSTNAMES,
       expectedAction,

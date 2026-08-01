@@ -11,7 +11,7 @@ import { twMerge } from 'tailwind-merge'
 
 import useAdultAccessGuard from '@/hook/useAdultAccessGuard'
 import { Link } from '@/i18n/navigation'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 type Props = {
   mangaId: number
@@ -35,7 +35,7 @@ export default function MangaReportButton({ mangaId, className = '', labelClassN
     mutationFn: async (body) => {
       const url = `/api/v1/manga/${mangaId}/report`
 
-      const { data } = await fetchAPIData<POSTV1MangaIdReportResponse>(url, {
+      const { data } = await fetchApiData<POSTV1MangaIdReportResponse>(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

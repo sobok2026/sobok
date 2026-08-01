@@ -4,10 +4,10 @@ import { fireEvent, render } from '@testing-library/react'
 
 import MangaImage from '../MangaImage'
 
-const originalSourceURL = 'https://storage-6-10.k-hentai.org/storage/f2/74/original-5.webp'
-const originalMaterializeURL =
+const originalSourceUrl = 'https://storage-6-10.k-hentai.org/storage/f2/74/original-5.webp'
+const originalMaterializeUrl =
   'https://example.com/i/v2/manga/123/original/5.webp?u=https%3A%2F%2Fstorage-6-10.k-hentai.org%2Fstorage%2Ff2%2F74%2Foriginal-5.webp'
-const pictureOriginalSourceURL = 'https://storage-6-10.k-hentai.org/storage/f2/74/original-3.webp'
+const pictureOriginalSourceUrl = 'https://storage-6-10.k-hentai.org/storage/f2/74/original-3.webp'
 
 afterEach(() => {
   document.body.innerHTML = ''
@@ -15,10 +15,10 @@ afterEach(() => {
 
 describe('MangaImage 대체 경로', () => {
   test('원본 이미지는 직접 src 이후 쿼리 없는 확인 경로와 materialize 경로를 거쳐 로컬 대체 이미지로 내려간다', () => {
-    const { getByAltText } = render(<MangaImage imageIndex={4} mangaId={123} src={originalSourceURL} />)
+    const { getByAltText } = render(<MangaImage imageIndex={4} mangaId={123} src={originalSourceUrl} />)
     const image = getByAltText('manga-image-5')
 
-    expect(image.getAttribute('src')).toBe(originalSourceURL)
+    expect(image.getAttribute('src')).toBe(originalSourceUrl)
 
     fireEvent.error(image)
     expect(image.getAttribute('src')).toBe('https://soujpa.in/start/123/123_4.avif')
@@ -36,14 +36,14 @@ describe('MangaImage 대체 경로', () => {
     expect(image.getAttribute('src')).toBe('https://example.com/i/v2/manga/123/original/5.webp')
 
     fireEvent.error(image)
-    expect(image.getAttribute('src')).toBe(originalMaterializeURL)
+    expect(image.getAttribute('src')).toBe(originalMaterializeUrl)
 
     fireEvent.error(image)
     expect(image.getAttribute('src')).toBe('/image/fallback.svg')
   })
 
   test('프록시 URL을 표시할 때만 use-credentials crossOrigin 값을 붙인다', () => {
-    const { getByAltText } = render(<MangaImage imageIndex={4} mangaId={123} src={originalSourceURL} />)
+    const { getByAltText } = render(<MangaImage imageIndex={4} mangaId={123} src={originalSourceUrl} />)
     const image = getByAltText('manga-image-5')
 
     expect(image.getAttribute('crossorigin')).toBeNull()
@@ -63,7 +63,7 @@ describe('MangaImage 대체 경로', () => {
 
     fireEvent.error(image)
 
-    expect(image.getAttribute('src')).toBe(originalMaterializeURL)
+    expect(image.getAttribute('src')).toBe(originalMaterializeUrl)
     expect(image.getAttribute('crossorigin')).toBe('use-credentials')
 
     fireEvent.error(image)
@@ -137,7 +137,7 @@ describe('MangaImage 대체 경로', () => {
         pictures={[
           {
             media: '(min-width: 1200px)',
-            src: pictureOriginalSourceURL,
+            src: pictureOriginalSourceUrl,
             variant: 'original',
           },
         ]}
@@ -147,12 +147,12 @@ describe('MangaImage 대체 경로', () => {
     )
     const image = getByAltText('manga-image-3') as HTMLImageElement
 
-    expect(container.querySelector('source')?.getAttribute('srcset')).toBe(pictureOriginalSourceURL)
+    expect(container.querySelector('source')?.getAttribute('srcset')).toBe(pictureOriginalSourceUrl)
     expect(image.getAttribute('src')).toBe('https://cdn.imagedeliveries.com/123/thumbnails/3.webp')
 
     Object.defineProperty(image, 'currentSrc', {
       configurable: true,
-      value: pictureOriginalSourceURL,
+      value: pictureOriginalSourceUrl,
     })
 
     fireEvent.error(image)

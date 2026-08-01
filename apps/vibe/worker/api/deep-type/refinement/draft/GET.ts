@@ -1,4 +1,4 @@
-import { openDB, withDB } from '@sobok/edge/db/client'
+import { openDb, withDb } from '@sobok/edge/db/client'
 import { Hono } from 'hono'
 import { getRefinementDraft } from '~/db/queries/result'
 import type { AppEnv } from '~/env'
@@ -20,7 +20,7 @@ const route = new Hono<AppEnv>()
 // handing them back is the short path — shorter than a restore-time write, which would have to succeed before
 // the buyer could finish and would still lose to a closed tab.
 route.get('/', async (c) => {
-  return withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  return withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const context = await requirePaidRefinementContext(db, c.get('accessToken'))
     if (context instanceof Response) {
       return context

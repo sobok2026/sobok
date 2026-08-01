@@ -27,7 +27,7 @@ export function buildSearchParams(params: Record<string, SearchParamValue>): URL
   return searchParams
 }
 
-export async function fetchAPIData<T>(
+export async function fetchApiData<T>(
   input: string | Request | URL,
   init?: RequestInit,
 ): Promise<{ data: T; response: Response }> {

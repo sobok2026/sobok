@@ -3,7 +3,7 @@
 // Snapshot of the visitor's GA4 identity, taken while they are still in the browser, so a server can attach a
 // later Measurement Protocol event to the right user and session — the event may be emitted by a webhook or a
 // cron, where no browser exists.
-export type GAIdentity = {
+export type GaIdentity = {
   clientId: string
   sessionId: string | null
 }
@@ -13,7 +13,7 @@ export type GAIdentity = {
 // consent. Consent Mode stops WRITING cookies on withdrawal without deleting the ones already there, and
 // `_ga` is scoped to the registrable domain, so it may have been written by any other sobok.cc app. That is
 // why the server-side hit carries no consent block (see vibe's worker/lib/ga4.ts).
-export function readGAIdentity(measurementId: string): GAIdentity | null {
+export function readGaIdentity(measurementId: string): GaIdentity | null {
   const clientId = parseClientId(readCookie('_ga'))
   if (!clientId) {
     return null

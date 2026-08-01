@@ -1,6 +1,6 @@
 'use client'
 
-import { getSafeProfileImageURL } from '@sobok/std'
+import { getSafeProfileImageUrl } from '@sobok/std'
 import { Dialog, DialogBody, DialogFooter, DialogHeader } from '@sobok/ui'
 import { SquarePen } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -33,8 +33,8 @@ export default function ProfileEditButton({ me }: Props) {
   const [currentMe, setCurrentMe] = useState(me)
   const [showModal, setShowModal] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<ProfileFieldErrors>({})
-  const defaultProfileImageURL = getSafeProfileImageURL(currentMe.image ?? '')
-  const [profileImageURL, setProfileImageURL] = useState(defaultProfileImageURL)
+  const defaultProfileImageUrl = getSafeProfileImageUrl(currentMe.image ?? '')
+  const [profileImageURL, setProfileImageURL] = useState(defaultProfileImageUrl)
   const formRef = useRef<HTMLFormElement | null>(null)
   const t = useTranslations('Profile.edit')
   const tErrors = useTranslations('Errors')
@@ -114,7 +114,7 @@ export default function ProfileEditButton({ me }: Props) {
 
   function handleReset() {
     setFieldErrors({})
-    setProfileImageURL(defaultProfileImageURL)
+    setProfileImageURL(defaultProfileImageUrl)
     clearProfileValidity(formRef.current)
   }
 
@@ -127,11 +127,11 @@ export default function ProfileEditButton({ me }: Props) {
   useEffect(() => {
     if (!showModal) {
       formRef.current?.reset()
-      setProfileImageURL(defaultProfileImageURL)
+      setProfileImageURL(defaultProfileImageUrl)
       setFieldErrors({})
       clearProfileValidity(formRef.current)
     }
-  }, [defaultProfileImageURL, showModal])
+  }, [defaultProfileImageUrl, showModal])
 
   return (
     <>
@@ -243,12 +243,12 @@ export default function ProfileEditButton({ me }: Props) {
                     'w-full px-3 py-2 bg-surface-2 border border-border-2 rounded-lg placeholder-foreground-subtle focus:outline-none focus:ring-2 focus:ring-border-strong focus:border-transparent',
                     'aria-invalid:border-red-500 aria-invalid:focus:ring-red-500',
                   )}
-                  defaultValue={defaultProfileImageURL}
+                  defaultValue={defaultProfileImageUrl}
                   id={formId.image}
                   maxLength={256}
                   minLength={8}
                   name={formId.image}
-                  onChange={(e) => setProfileImageURL(getSafeProfileImageURL(e.currentTarget.value))}
+                  onChange={(e) => setProfileImageURL(getSafeProfileImageUrl(e.currentTarget.value))}
                   pattern="https?://.+"
                   placeholder="https://example.com/profile.jpg"
                   type="url"

@@ -17,8 +17,8 @@ export interface DbHandle {
 // - fetch_types:false Hyperdrive can't serve the type-introspection round trip postgres.js does on boot.
 // - prepare:false     Hyperdrive pools in transaction mode, so a prepared statement created on one backend
 //                     connection may not exist on the next — disable to avoid "prepared statement …" errors.
-// Always close the socket after the response — use `withDB`, or waitUntil(handle.sql.end({ timeout: 5 })).
-export function openDB(hyperdrive: Hyperdrive): DbHandle {
+// Always close the socket after the response — use `withDb`, or waitUntil(handle.sql.end({ timeout: 5 })).
+export function openDb(hyperdrive: Hyperdrive): DbHandle {
   const sql = postgres(hyperdrive.connectionString, {
     max: 5,
     fetch_types: false,
@@ -34,7 +34,7 @@ export function openDB(hyperdrive: Hyperdrive): DbHandle {
 // Run a unit of work against a per-request handle, then close the socket in the background after the response
 // is sent (the Workers-idiomatic way — never block the response on the TCP teardown). The ctx is structurally
 // typed so both Hono's `c.executionCtx` and the raw Workers `ExecutionContext` fit.
-export async function withDB<T>(
+export async function withDb<T>(
   handle: DbHandle,
   ctx: { waitUntil(promise: Promise<unknown>): void },
   fn: (db: Db) => Promise<T>,

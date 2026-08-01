@@ -145,7 +145,7 @@ function deserializeBirth(payload: Record<string, unknown>): StoredBirth | null 
   return isStoredBirth(birth) ? birth : null
 }
 
-export function buildShareURL(locale: string, birth: StoredBirth): string {
+export function buildShareUrl(locale: string, birth: StoredBirth): string {
   const url = new URL(`/${locale}`, window.location.origin)
   url.hash = `${SHARE_PREFIX}${encodePayload(birth)}`
   return url.toString()

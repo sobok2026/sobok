@@ -2,7 +2,7 @@
 
 import type { ChatRelayMessageDTO } from '@sobok/contracts'
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { getChatWebSocketURL } from '../_lib/chat'
+import { getChatWebSocketUrl } from '../_lib/chat'
 
 type ServerMessage =
   | { t: 'ready'; userId: number }
@@ -68,7 +68,7 @@ export default function ChatProvider({ children }: { children: ReactNode }) {
     // new WebSocket()은 동기적으로 던질 수 있다. (HTTPS 페이지의 ws:// mixed-content로 인한 SecurityError, CSP connect-src 위반, WeChat 등 인앱웹뷰 제약)
     let ws: WebSocket
     try {
-      ws = new WebSocket(getChatWebSocketURL())
+      ws = new WebSocket(getChatWebSocketUrl())
     } catch (error) {
       console.error('chat WebSocket 연결 실패:', error)
       scheduleReconnect()

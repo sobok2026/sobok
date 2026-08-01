@@ -1,4 +1,4 @@
-import { openDB, withDB } from '@sobok/edge/db/client'
+import { openDb, withDb } from '@sobok/edge/db/client'
 import { Hono } from 'hono'
 import { getPurchaseByAccessToken, stampReportViewed } from '~/db/queries/purchase'
 import { getDeliverableReport, getNarrativeStatus, getReportStatus } from '~/db/queries/report'
@@ -21,7 +21,7 @@ const route = new Hono<AppEnv>()
 route.get('/', async (c) => {
   const token = c.get('accessToken')
 
-  const gate = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  const gate = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const purchase = await getPurchaseByAccessToken(db, token)
 
     if (!purchase) {
@@ -64,19 +64,19 @@ route.get('/', async (c) => {
   }
 
   const cached = gate.delivery.readCached
-    ? await withDB(openDB(c.env.HYPERDRIVE_CACHED), c.executionCtx, (db) => getDeliverableReport(db, gate.purchaseId))
+    ? await withDb(openDb(c.env.HYPERDRIVE_CACHED), c.executionCtx, (db) => getDeliverableReport(db, gate.purchaseId))
     : null
 
   const stored =
     cached ??
-    (await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) => getDeliverableReport(db, gate.purchaseId)))
+    (await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) => getDeliverableReport(db, gate.purchaseId)))
 
   if (!stored) {
     return problem(502, 'report-generation-failed')
   }
 
   if (gate.delivery.stamp) {
-    const delivered = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    const delivered = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
       stampReportViewed(db, gate.purchaseId),
     )
     if (!delivered) {

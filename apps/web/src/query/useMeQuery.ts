@@ -4,11 +4,11 @@ import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export async function fetchMe() {
   const url = '/api/v1/me'
-  const { data } = await fetchAPIData<GETV1MeResponse>(url)
+  const { data } = await fetchApiData<GETV1MeResponse>(url)
   return data
 }
 

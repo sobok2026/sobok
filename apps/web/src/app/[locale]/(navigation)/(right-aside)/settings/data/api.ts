@@ -2,12 +2,12 @@
 
 import type { POSTV1MeExportBody, POSTV1MeExportResponse } from '@sobok/contracts'
 
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export async function exportUserData(body: POSTV1MeExportBody) {
   const url = '/api/v1/me/export'
 
-  const { data } = await fetchAPIData<POSTV1MeExportResponse>(url, {
+  const { data } = await fetchApiData<POSTV1MeExportResponse>(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

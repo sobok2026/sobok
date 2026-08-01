@@ -1,6 +1,6 @@
 import '../globals.css'
 
-import GTMLoader from '@sobok/analytics/gtm-loader'
+import GtmLoader from '@sobok/analytics/gtm-loader'
 import { GTM_ID } from '@sobok/brand/identity'
 import { LOCALE_LANGUAGE_TAGS, LOCALES } from '@sobok/domain/locale'
 import { getLocale } from '@sobok/site-i18n/server'
@@ -48,7 +48,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           <BottomNav locale={locale} navLabel={t('primaryNav')} />
         </NextIntlClientProvider>
         <AdSense />
-        <GTMLoader containerId={GTM_ID} productionOrigin={ORIGIN} />
+        <GtmLoader containerId={GTM_ID} productionOrigin={ORIGIN} />
       </body>
     </html>
   )

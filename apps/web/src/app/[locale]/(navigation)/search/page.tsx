@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/search'>
 
 export default async function Page({ searchParams }: PageProps<'/[locale]/search'>) {
   const t = await getTranslations('Search')
-  const params = getURLSearchParams(await searchParams)
+  const params = getUrlSearchParams(await searchParams)
 
   const filters = {
     sort: params.get(SearchParam.SORT),
@@ -66,7 +66,7 @@ export default async function Page({ searchParams }: PageProps<'/[locale]/search
   )
 }
 
-function getURLSearchParams(searchParams: Record<string, string | string[] | undefined>) {
+function getUrlSearchParams(searchParams: Record<string, string | string[] | undefined>) {
   const params = new URLSearchParams()
 
   for (const [key, value] of Object.entries(searchParams)) {

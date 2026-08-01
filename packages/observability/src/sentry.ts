@@ -201,20 +201,20 @@ const FIRST_PARTY_FRAME = /^app:\/\/\/_next\//i
 // Any frame that resolves to a real downloaded script
 const REMOTE_SCRIPT_URL = /^https?:\/\//i
 
-function isForeignScriptURL(url: string): boolean {
+function isForeignScriptUrl(url: string): boolean {
   return SENTRY_BROWSER_DENY_URLS.some((pattern) => pattern.test(url))
 }
 
-function getFrameURL(frame: StackFrame): string {
+function getFrameUrl(frame: StackFrame): string {
   return frame.filename ?? frame.abs_path ?? frame.module ?? ''
 }
 
 // The frame that actually threw — the last one with a real script URL, mirroring the Sentry SDK's own
 // denyUrls semantics (`_getLastValidUrl`). Frames like `<anonymous>` / `[native code]` (e.g. JSON.parse) sit
 // above the culprit script and are skipped.
-function getThrowSiteURL(frames: StackFrame[]): string {
+function getThrowSiteUrl(frames: StackFrame[]): string {
   for (const frame of [...frames].reverse()) {
-    const url = getFrameURL(frame)
+    const url = getFrameUrl(frame)
 
     if (url && url !== '<anonymous>' && url !== '[native code]') {
       return url
@@ -264,7 +264,7 @@ function isInjectedScriptError(event: ErrorEvent): boolean {
   // Injected/inline code has neither our bundle path (app:///_next/) nor a named remote file (http/https).
   // Document-URL frames (app:///<route>) land here too
   return frames.every((frame) => {
-    const url = getFrameURL(frame)
+    const url = getFrameUrl(frame)
     return !FIRST_PARTY_FRAME.test(url) && !REMOTE_SCRIPT_URL.test(url)
   })
 }
@@ -272,8 +272,8 @@ function isInjectedScriptError(event: ErrorEvent): boolean {
 /** True when any frame is our own bundle (app:///) and not a foreign script masquerading under that scheme. */
 function hasFirstPartyFrame(frames: StackFrame[]): boolean {
   return frames.some((frame) => {
-    const url = getFrameURL(frame)
-    return FIRST_PARTY_FRAME.test(url) && !isForeignScriptURL(url)
+    const url = getFrameUrl(frame)
+    return FIRST_PARTY_FRAME.test(url) && !isForeignScriptUrl(url)
   })
 }
 
@@ -295,7 +295,7 @@ export function isBrowserNoiseEvent(event: ErrorEvent): boolean {
 
   // Foreign scripts drop by throw site only: a third-party wrapper in the call ancestry (patched
   // fetch/addEventListener, synthetic clicks) must not hide an error thrown in OUR code — that user impact is real.
-  if (isForeignScriptURL(getThrowSiteURL(frames))) {
+  if (isForeignScriptUrl(getThrowSiteUrl(frames))) {
     return true
   }
 

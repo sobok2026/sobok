@@ -28,16 +28,16 @@ const userQueryLimiter = new RedisRateLimiter({
 
 type Params = {
   query: string
-  remoteIP: string
+  remoteIp: string
   userId?: string
 }
 
 type Result = { allowed: false; retryAfterSeconds: number } | { allowed: true }
 
-export async function checkSearchTrendingViewRateLimit({ query, remoteIP, userId }: Params): Promise<Result> {
+export async function checkSearchTrendingViewRateLimit({ query, remoteIp, userId }: Params): Promise<Result> {
   const checks = [
-    { limiter: ipLimiter, identifier: remoteIP },
-    { limiter: ipQueryLimiter, identifier: `${remoteIP}:${query}` },
+    { limiter: ipLimiter, identifier: remoteIp },
+    { limiter: ipQueryLimiter, identifier: `${remoteIp}:${query}` },
   ]
 
   if (userId) {

@@ -26,4 +26,4 @@ const client = new Pool({
   }),
 })
 
-export const chatDB = drizzle({ client })
+export const chatDb = drizzle({ client })

@@ -8,7 +8,7 @@ import { twMerge } from 'tailwind-merge'
 import { QueryKeys } from '@/lib/react-query/query-keys'
 import useMeQuery from '@/query/useMeQuery'
 import { hasAdultAccess } from '@/utils/adult-verification'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export default function NotificationCount() {
   const { data: unreadCount } = useNotificationUnreadCountQuery()
@@ -31,7 +31,7 @@ export default function NotificationCount() {
 
 async function fetchUnreadCount() {
   const url = '/api/v1/notification/unread-count'
-  const { data } = await fetchAPIData<GETV1NotificationUnreadCountResponse>(url)
+  const { data } = await fetchApiData<GETV1NotificationUnreadCountResponse>(url)
   return data
 }
 

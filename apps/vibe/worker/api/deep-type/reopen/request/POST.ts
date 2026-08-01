@@ -1,5 +1,5 @@
 import { LOCALES } from '@sobok/domain/locale'
-import { openDB, withDB } from '@sobok/edge/db/client'
+import { openDb, withDb } from '@sobok/edge/db/client'
 import { randomToken, sha256Hex } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
 import { z } from 'zod'
@@ -41,7 +41,7 @@ route.post('/', async (c) => {
   const emailHash = await sha256Hex(email)
   const now = new Date()
 
-  const links = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  const links = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const candidates = await listReopenCandidates(db, emailHash, now)
     const issued = await Promise.all(
       candidates.map(async (candidate) => {

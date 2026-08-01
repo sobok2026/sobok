@@ -1,4 +1,4 @@
-import { openDB, withDB } from '@sobok/edge/db/client'
+import { openDb, withDb } from '@sobok/edge/db/client'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { isRefinementPending } from '~/db/queries/result'
@@ -29,7 +29,7 @@ route.post('/', async (c) => {
   // Returned unauthenticated, like the rest of this route's answer. What it discloses to a holder of a
   // `dt_<uuid4>` payment id is one boolean about that payment's own report and no personal data — the same
   // trade `/reopen/exchange` already makes with its own credential.
-  const { outcome, refinementRequired } = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  const { outcome, refinementRequired } = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const confirmed = await confirmPurchase(db, { creds: portOneCreds, env: c.env }, parsed.data.paymentId)
     if (confirmed !== 'paid' && confirmed !== 'already-paid') {
       return { outcome: confirmed, refinementRequired: false }

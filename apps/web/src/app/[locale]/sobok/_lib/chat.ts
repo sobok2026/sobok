@@ -32,7 +32,7 @@ export function formatDateSeparator(ts: number, languageTag: string, labels: Dat
   return new Intl.DateTimeFormat(languageTag, { year: 'numeric', month: 'long', day: 'numeric' }).format(target)
 }
 
-export function getChatWebSocketURL(): string {
+export function getChatWebSocketUrl(): string {
   if (window.location.hostname === 'localhost') {
     return `${env.NEXT_PUBLIC_CHAT_WS_ORIGIN}/ws`
   }
@@ -40,7 +40,7 @@ export function getChatWebSocketURL(): string {
   return `wss://${window.location.host}/ws`
 }
 
-export function avatarURL(name: string, imageURL: string | null | undefined): string {
+export function avatarUrl(name: string, imageURL: string | null | undefined): string {
   return imageURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
 }
 

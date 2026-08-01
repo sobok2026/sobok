@@ -1,7 +1,7 @@
 import type { PUTV1ChatTaxTypeBody, PUTV1ChatTaxTypeResponse } from '@sobok/contracts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export default function useSaveTaxTypeMutation() {
   const queryClient = useQueryClient()
@@ -10,7 +10,7 @@ export default function useSaveTaxTypeMutation() {
     mutationFn: async (body: PUTV1ChatTaxTypeBody) => {
       const url = '/api/v1/chat/studio/tax-type'
 
-      const { data } = await fetchAPIData<PUTV1ChatTaxTypeResponse>(url, {
+      const { data } = await fetchApiData<PUTV1ChatTaxTypeResponse>(url, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

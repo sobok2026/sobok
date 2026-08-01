@@ -3,7 +3,7 @@ import type { Locale } from '@sobok/domain/locale'
 
 import type { Sku } from '~/db/schema'
 
-import type { GA4Item } from './ga4'
+import type { Ga4Item } from './ga4'
 
 // Server is the SOLE price authority. The client never supplies an amount; checkout looks the SKU up here
 // and the grant path verifies the PG-reported amount equals this. Minor units, per-locale currency — `ko`
@@ -51,7 +51,7 @@ export function resolveSku(
 
 // Currency-aware because GA4 wants item price/discount in the event's currency and in major units — the
 // stored purchase row is what says which currency this sale was in.
-export function skuItem(sku: Sku, currency: OfferCurrency): GA4Item | null {
+export function skuItem(sku: Sku, currency: OfferCurrency): Ga4Item | null {
   if (!SKU_CATALOG[sku]) {
     return null
   }

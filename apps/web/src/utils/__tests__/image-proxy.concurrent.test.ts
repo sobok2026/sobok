@@ -10,31 +10,31 @@ const proxyOrigin = new URL(env.NEXT_PUBLIC_IMAGE_PROXY_ORIGIN).origin
 
 describe('만화 이미지 프록시 유틸', () => {
   test('프록시 요청 URL을 queryless /i/v2/manga/:mangaId/:variant/:page 형태로 만든다', () => {
-    const requestURL = createSobokProxyMangaImageURL({
+    const requestUrl = createSobokProxyMangaImageURL({
       mangaId: 123,
       page: 5,
       variant: 'original',
     })
-    const parsedRequestURL = new URL(requestURL)
+    const parsedRequestUrl = new URL(requestUrl)
 
-    expect(parsedRequestURL.origin).toBe(proxyOrigin)
-    expect(parsedRequestURL.pathname).toBe('/i/v2/manga/123/original/5.webp')
-    expect(parsedRequestURL.search).toBe('')
+    expect(parsedRequestUrl.origin).toBe(proxyOrigin)
+    expect(parsedRequestUrl.pathname).toBe('/i/v2/manga/123/original/5.webp')
+    expect(parsedRequestUrl.search).toBe('')
   })
 
   test('프록시 materialize URL을 같은 경로 + ?u=<url> 형태로 만든다', () => {
-    const sourceURL = 'https://soujpa.in/start/123/123_4.avif'
-    const requestURL = createSobokProxyMangaImageURL({
-      sourceURL,
+    const sourceUrl = 'https://soujpa.in/start/123/123_4.avif'
+    const requestUrl = createSobokProxyMangaImageURL({
+      sourceUrl,
       mangaId: 123,
       page: 5,
       variant: 'original',
     })
-    const parsedRequestURL = new URL(requestURL)
+    const parsedRequestUrl = new URL(requestUrl)
 
-    expect(parsedRequestURL.origin).toBe(proxyOrigin)
-    expect(parsedRequestURL.pathname).toBe('/i/v2/manga/123/original/5.webp')
-    expect(parsedRequestURL.searchParams.get('u')).toBe(sourceURL)
+    expect(parsedRequestUrl.origin).toBe(proxyOrigin)
+    expect(parsedRequestUrl.pathname).toBe('/i/v2/manga/123/original/5.webp')
+    expect(parsedRequestUrl.searchParams.get('u')).toBe(sourceUrl)
   })
 
   test('프록시 요청 URL만 프록시 URL로 판별한다', () => {

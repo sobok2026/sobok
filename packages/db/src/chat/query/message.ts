@@ -1,7 +1,7 @@
 import { and, asc, count, desc, eq, gt, gte, inArray, lt, max, or, type SQL } from 'drizzle-orm'
 import { encodeTime, ulid } from 'ulid'
 
-import { chatDB } from '../db'
+import { chatDb } from '../db'
 import { chatBroadcastTable, chatDmMessageTable } from '../schema'
 import { clampPageSize } from './common'
 
@@ -33,7 +33,7 @@ export function buildBroadcast(input: AppendBroadcastInput): ChatBroadcastRow {
 }
 
 export async function putBroadcast(row: ChatBroadcastRow): Promise<void> {
-  await chatDB
+  await chatDb
     .insert(chatBroadcastTable)
     .values(row)
     .onConflictDoNothing({ target: [chatBroadcastTable.artistId, chatBroadcastTable.messageId] })
@@ -56,7 +56,7 @@ export function buildDmMessage(input: AppendDmMessageInput): ChatDmMessageRow {
 }
 
 export async function putDmMessage(row: ChatDmMessageRow): Promise<void> {
-  await chatDB
+  await chatDb
     .insert(chatDmMessageTable)
     .values(row)
     .onConflictDoNothing({
@@ -85,16 +85,16 @@ export async function getFanReplyGate({
   fanId,
 }: FanReplyGateKey): Promise<FanReplyGate | undefined> {
   const [anchorRows, lastBroadcastRows, lastAnswerRows] = await Promise.all([
-    chatDB
+    chatDb
       .select({ messageId: chatBroadcastTable.messageId })
       .from(chatBroadcastTable)
       .where(and(eq(chatBroadcastTable.artistId, artistId), eq(chatBroadcastTable.messageId, contextMessageId)))
       .limit(1),
-    chatDB
+    chatDb
       .select({ messageId: max(chatBroadcastTable.messageId) })
       .from(chatBroadcastTable)
       .where(eq(chatBroadcastTable.artistId, artistId)),
-    chatDB
+    chatDb
       .select({ messageId: max(chatDmMessageTable.messageId) })
       .from(chatDmMessageTable)
       .where(
@@ -115,7 +115,7 @@ export async function getFanReplyGate({
   const lastAnswerId = lastAnswerRows[0]?.messageId ?? ''
   const lastArtistMessageId = lastBroadcastId > lastAnswerId ? lastBroadcastId : lastAnswerId
 
-  const [row] = await chatDB
+  const [row] = await chatDb
     .select({ replies: count() })
     .from(chatDmMessageTable)
     .where(
@@ -174,7 +174,7 @@ export async function listBroadcast(artistId: number, options: ListBroadcastOpti
   const isForwardSync = Boolean(options.after) && !options.before
   const order = isForwardSync ? asc(chatBroadcastTable.messageId) : desc(chatBroadcastTable.messageId)
 
-  const rows = await chatDB
+  const rows = await chatDb
     .select()
     .from(chatBroadcastTable)
     .where(and(...conditions))
@@ -228,7 +228,7 @@ export async function getLatestBroadcastPerArtist(
     return new Map()
   }
 
-  const rows = await chatDB
+  const rows = await chatDb
     .selectDistinctOn([chatBroadcastTable.artistId])
     .from(chatBroadcastTable)
     .where(filter)
@@ -262,7 +262,7 @@ export async function listFanTimeline(input: ListFanTimelineInput): Promise<Chat
   const isForwardSync = Boolean(input.after) && !input.before
   const order = isForwardSync ? asc(chatDmMessageTable.messageId) : desc(chatDmMessageTable.messageId)
 
-  const rows = await chatDB
+  const rows = await chatDb
     .select()
     .from(chatDmMessageTable)
     .where(and(...conditions))
@@ -298,7 +298,7 @@ export async function listReplyRoomTimeline(
     conditions.push(lt(chatDmMessageTable.messageId, options.before))
   }
 
-  return chatDB
+  return chatDb
     .select()
     .from(chatDmMessageTable)
     .where(and(...conditions))
@@ -317,7 +317,7 @@ export async function getReplyRoomMessagesByIds(
     return new Map()
   }
 
-  const rows = await chatDB
+  const rows = await chatDb
     .select()
     .from(chatDmMessageTable)
     .where(
@@ -341,7 +341,7 @@ export async function getLatestArtistDmPerArtist(
     return new Map()
   }
 
-  const rows = await chatDB
+  const rows = await chatDb
     .selectDistinctOn([chatDmMessageTable.artistId])
     .from(chatDmMessageTable)
     .where(
@@ -367,7 +367,7 @@ export async function getDmMessagesByIds(
     return new Map()
   }
 
-  const rows = await chatDB
+  const rows = await chatDb
     .select()
     .from(chatDmMessageTable)
     .where(
@@ -390,7 +390,7 @@ export interface HasFanRepliesInput {
 // 한 팬이 한 아티스트에게 주어진 messageId 시간 창 안에 보낸 답장이 있는지 —
 // 청약철회 조건("해당 결제 기간 답장 미발신") 판정용.
 export async function hasFanRepliesInWindow({ fanId, artistId, window }: HasFanRepliesInput): Promise<boolean> {
-  const [row] = await chatDB
+  const [row] = await chatDb
     .select({ messageId: chatDmMessageTable.messageId })
     .from(chatDmMessageTable)
     .where(

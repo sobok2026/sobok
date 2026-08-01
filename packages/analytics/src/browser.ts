@@ -6,7 +6,7 @@
 //
 // Creating the array when missing keeps events safe before the container finishes loading; GTM drains
 // whatever is already queued. There is deliberately no environment gate: development loads the container too
-// (see GTMLoader), and gating here would leave GTM Preview with nothing to preview.
+// (see GtmLoader), and gating here would leave GTM Preview with nothing to preview.
 
 type AnalyticsObject = {
   readonly [key: string]: AnalyticsPrimitive | undefined

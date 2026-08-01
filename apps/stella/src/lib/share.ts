@@ -9,7 +9,7 @@ const MAX_ENCODED_PAYLOAD_LENGTH = 512
 export type ShareKind = 'chart' | 'today' | 'tomorrow' | 'love'
 
 /**
- * What a share link carries. One type for both directions: `buildShareURL` writes it and `decodeShareHash`
+ * What a share link carries. One type for both directions: `buildShareUrl` writes it and `decodeShareHash`
  * reconstructs it, so a variant that gains a field can never be encoded without being decodable again.
  */
 export type SharedPayload =
@@ -205,7 +205,7 @@ function isUtcOffsetMinutes(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= -14 * 60 && value <= 14 * 60
 }
 
-export function buildShareURL(locale: string, input: SharedPayload): string {
+export function buildShareUrl(locale: string, input: SharedPayload): string {
   const url = new URL(resultPath(locale, input.kind), window.location.origin)
   url.hash = `${SHARE_PREFIX}${encodePayload(input)}`
   return url.toString()

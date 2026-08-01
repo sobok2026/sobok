@@ -195,13 +195,13 @@ function getProblemCodeFromStatus(status: number): string {
 }
 
 function getProblemDetails(request: string | Request | URL, options: ProblemDetailsOptions): ProblemDetails {
-  const url = getRequestURL(request)
+  const url = getRequestUrl(request)
   const instance = options.instance ?? url.pathname + url.search
   const code = options.code ?? getProblemCodeFromStatus(options.status)
 
   return {
     ...options.extensions,
-    type: getProblemTypeURL(url.origin, code),
+    type: getProblemTypeUrl(url.origin, code),
     title: options.title ?? getReasonPhrase(options.status),
     status: options.status,
     detail: options.detail,
@@ -209,7 +209,7 @@ function getProblemDetails(request: string | Request | URL, options: ProblemDeta
   }
 }
 
-function getProblemTypeURL(origin: string, code: string): string {
+function getProblemTypeUrl(origin: string, code: string): string {
   const safeOrigin = trimTrailingSlashes(origin)
   const safeCode = encodeURIComponent(code)
 
@@ -222,7 +222,7 @@ function getProblemTypeURL(origin: string, code: string): string {
   }
 }
 
-function getRequestURL(request: string | Request | URL): URL {
+function getRequestUrl(request: string | Request | URL): URL {
   if (request instanceof Request) {
     return new URL(request.url)
   }

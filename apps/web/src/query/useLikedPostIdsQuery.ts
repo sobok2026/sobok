@@ -4,13 +4,13 @@ import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 import useMeQuery from './useMeQuery'
 
 export async function fetchLikedPostIds() {
   const url = '/api/v1/post/liked'
-  const { data } = await fetchAPIData<GETV1PostLikedResponse>(url)
+  const { data } = await fetchApiData<GETV1PostLikedResponse>(url)
   return data
 }
 
