@@ -2,7 +2,7 @@ import { isLocale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { buildLocalizedMetadata } from '@/i18n/metadata'
+import { buildMetadata } from '@/lib/seo'
 
 import { getDeepTypeContent } from '../_lib/content'
 import { RESEARCH_SOURCES } from '../_lib/research'
@@ -13,10 +13,10 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/deep-typ
     return {}
   }
   const content = await getDeepTypeContent(locale)
-  return buildLocalizedMetadata({
+  return buildMetadata({
     description: content.methodology.intro,
     locale,
-    pathname: '/deep-type/methodology',
+    path: '/deep-type/methodology',
     title: content.methodology.title,
   })
 }

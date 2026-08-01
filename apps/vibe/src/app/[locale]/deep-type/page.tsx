@@ -1,9 +1,9 @@
 import { isLocale } from '@sobok/domain/locale'
+import JsonLd from '@sobok/site-seo/json-ld'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { buildLocalizedMetadata } from '@/i18n/metadata'
-import JsonLd, { webApplicationGraph } from '@/lib/JsonLd'
+import { buildMetadata, webApplicationGraph } from '@/lib/seo'
 import { LandingView } from './_components/landing-view'
 import { getDeepTypeContent } from './_lib/content'
 
@@ -16,10 +16,10 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/deep-typ
 
   const content = await getDeepTypeContent(locale)
 
-  return buildLocalizedMetadata({
+  return buildMetadata({
     description: content.metadata.description,
     locale,
-    pathname: '/deep-type',
+    path: '/deep-type',
     title: content.metadata.title,
   })
 }

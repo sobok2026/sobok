@@ -19,6 +19,7 @@
     "@sobok/domain": "workspace:*",
     "@sobok/edge": "workspace:*",
     "@sobok/site-i18n": "workspace:*",
+    "@sobok/site-seo": "workspace:*",
     "@sobok/typography": "workspace:*",
     "@swisseph/browser": "1.1.0",
     "@tanstack/react-query": "^5.101.1",

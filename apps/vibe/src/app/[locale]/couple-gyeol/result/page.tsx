@@ -2,7 +2,7 @@ import { isLocale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { buildLocalizedMetadata } from '@/i18n/metadata'
+import { buildMetadata } from '@/lib/seo'
 
 import { ResultFlow } from '../_components/result-flow'
 import { getGyeolContent } from '../_lib/content'
@@ -19,10 +19,10 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/couple-g
   return {
     // The result of a process. What it says depends on a query parameter the crawler has no reason to hold, so
     // there is nothing here to index that the landing does not say better.
-    ...buildLocalizedMetadata({
+    ...buildMetadata({
       description: content.metadata.description,
       locale,
-      pathname: '/couple-gyeol/result',
+      path: '/couple-gyeol/result',
       title: `${content.metadata.title} - Result`,
     }),
     robots: { follow: false, index: false },

@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { DEEP_TYPE_CHECKOUT_RETURN } from '@/content/deep-type-checkout-return'
-import { buildLocalizedMetadata } from '@/i18n/metadata'
+import { buildMetadata } from '@/lib/seo'
 
 import { getDeepTypeContent } from '../_lib/content'
 import { CheckoutReturnView } from './_components/checkout-return-view'
@@ -17,10 +17,10 @@ export async function generateMetadata({
   }
   const copy = DEEP_TYPE_CHECKOUT_RETURN[locale]
   return {
-    ...buildLocalizedMetadata({
+    ...buildMetadata({
       description: copy.metadata.description,
       locale,
-      pathname: '/deep-type/checkout-return',
+      path: '/deep-type/checkout-return',
       title: copy.metadata.title,
     }),
     robots: { follow: false, index: false },

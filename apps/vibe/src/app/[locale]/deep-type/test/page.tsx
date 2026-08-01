@@ -1,10 +1,9 @@
 import { isLocale } from '@sobok/domain/locale'
+import JsonLd from '@sobok/site-seo/json-ld'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-
-import { buildLocalizedMetadata } from '@/i18n/metadata'
-import JsonLd, { webApplicationGraph } from '@/lib/JsonLd'
+import { buildMetadata, webApplicationGraph } from '@/lib/seo'
 
 import { TestFlow } from '../_components/test-flow'
 import { getDeepTypeContent } from '../_lib/content'
@@ -21,10 +20,10 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/deep-typ
   return {
     // A step in a process, so it stays out of search: the landing is what ads point at and what should rank, and
     // a question screen with the same title one path deeper is a thin duplicate of it.
-    ...buildLocalizedMetadata({
+    ...buildMetadata({
       description: content.metadata.description,
       locale,
-      pathname: '/deep-type/test',
+      path: '/deep-type/test',
       title: `${content.metadata.title} - Test`,
     }),
     robots: { follow: false, index: false },

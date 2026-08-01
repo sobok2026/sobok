@@ -4,16 +4,16 @@ import Link from 'next/link'
 import BusinessInfo from '@/components/BusinessInfo'
 import { BUSINESS_LABELS } from '@/content/business'
 import { LEGAL } from '@/content/legal'
-import { buildLocalizedMetadata } from '@/i18n/metadata'
+import { buildMetadata } from '@/lib/seo'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/business'>): Promise<Metadata> {
   const locale = await getLocale(params)
   const labels = BUSINESS_LABELS[locale]
 
-  return buildLocalizedMetadata({
+  return buildMetadata({
     description: labels.description,
     locale,
-    pathname: '/business',
+    path: '/business',
     title: labels.heading,
   })
 }

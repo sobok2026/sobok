@@ -4,17 +4,17 @@ import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import Footer from '@/components/Footer'
 import { SITE_NAME } from '@/constants'
-import { buildLocalizedMetadata } from '@/i18n/metadata'
+import { buildMetadata } from '@/lib/seo'
 import { FOCUS_CLASS_NAME } from '../../components/focus'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {
   const locale = await getLocale(params)
   const t = await getTranslations({ locale, namespace: 'Common.meta' })
 
-  return buildLocalizedMetadata({
+  return buildMetadata({
     description: t('description'),
     locale,
-    pathname: '/',
+    path: '/',
     title: t('title'),
   })
 }

@@ -1,7 +1,7 @@
 import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 import { PAGES } from '@/content/pages'
-import { buildMetadata } from '@/lib/metadata'
+import { buildMetadata } from '@/lib/seo'
 import DocArticle from '../DocArticle'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/about'>): Promise<Metadata> {

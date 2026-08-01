@@ -2,7 +2,7 @@ import { isLocale } from '@sobok/domain/locale'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { buildLocalizedMetadata } from '@/i18n/metadata'
+import { buildMetadata } from '@/lib/seo'
 
 import { ResultFlow } from '../_components/result-flow'
 import { getCoupleTypeContent } from '../_lib/content'
@@ -19,10 +19,10 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/couple-t
   return {
     // The result of a process. Which of the sixteen types it shows depends on a query parameter the crawler has
     // no reason to hold, so there is nothing here to index that the landing does not say better.
-    ...buildLocalizedMetadata({
+    ...buildMetadata({
       description: content.metadata.description,
       locale,
-      pathname: '/couple-type/result',
+      path: '/couple-type/result',
       title: `${content.metadata.title} - Result`,
     }),
     robots: { follow: false, index: false },

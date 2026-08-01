@@ -21,6 +21,7 @@
     "@sobok/domain": "workspace:*",
     "@sobok/edge": "workspace:*",
     "@sobok/site-i18n": "workspace:*",
+    "@sobok/site-seo": "workspace:*",
     "@sobok/typography": "workspace:*",
     "clsx": "^2.1.1",
     "drizzle-orm": "1.0.0-rc.4",
