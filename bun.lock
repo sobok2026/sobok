@@ -186,6 +186,7 @@
       "version": "0.1.0",
       "dependencies": {
         "@marsidev/react-turnstile": "^1.5.3",
+        "@portone/browser-sdk": "^0.1.9",
         "@sobok/analytics": "workspace:*",
         "@sobok/brand": "workspace:*",
         "@sobok/domain": "workspace:*",

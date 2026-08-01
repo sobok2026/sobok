@@ -163,6 +163,24 @@ export const guardianQuestionAnswerTable = stella.table(
   ],
 )
 
+// Milestones are durable questionnaire breakpoints, not client-only modals. A separate keyed table keeps the
+// current core reflection clean while allowing later 50–150 question editions to add checkpoints without new
+// report columns.
+export const guardianQuestionnaireMilestoneTable = stella.table(
+  'guardian_questionnaire_milestone',
+  {
+    reportId: bigint('report_id', { mode: 'number' })
+      .notNull()
+      .references(() => guardianReportTable.id, { onDelete: 'restrict' }),
+    milestoneId: varchar('milestone_id', { length: 64 }).notNull(),
+    acknowledgedAt: timestamp('acknowledged_at', { precision: 3, withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.reportId, t.milestoneId] }),
+    index('idx_stella_guardian_milestone_report').on(t.reportId, t.acknowledgedAt),
+  ],
+)
+
 // Public checkout may create `pending`; only server-verified payment paths may transition it or grant an
 // entitlement. The server manifest is the sole SKU/price source and every granted entitlement is tied back to
 // one paid purchase or to an explicitly named one-shot reward.

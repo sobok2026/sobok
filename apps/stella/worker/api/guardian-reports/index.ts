@@ -3,7 +3,11 @@ import { sha256Hex } from '@sobok/edge/tokens'
 import { type Context, Hono } from 'hono'
 import { z } from 'zod'
 import { resolveGuardianReportAccess } from '~/db/queries/guardian'
-import { getGuardianQuestionnaireStep, saveGuardianQuestionnaireAnswer } from '~/db/queries/guardian-questionnaire'
+import {
+  acknowledgeGuardianQuestionnaireMilestone,
+  getGuardianQuestionnaireStep,
+  saveGuardianQuestionnaireAnswer,
+} from '~/db/queries/guardian-questionnaire'
 import { readGuardianReport } from '~/db/queries/guardian-report'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
@@ -90,6 +94,33 @@ guardianReports.put('/:reportPublicId/answers/:id', async (c) => {
     return problem(404, 'report-not-found')
   }
   return c.json({ saved: result.status, step: result.step }, 200, NO_STORE_HEADERS)
+})
+
+// PUT /api/guardian-reports/:reportPublicId/milestones/:id — durably pass the currently reachable break.
+guardianReports.put('/:reportPublicId/milestones/:id', async (c) => {
+  const milestoneId = QuestionIdSchema.safeParse(c.req.param('id'))
+  if (!milestoneId.success) {
+    return problem(422, 'invalid-request')
+  }
+
+  const authorized = await withAuthorizedReport(c, (db, access) =>
+    acknowledgeGuardianQuestionnaireMilestone(db, { ...access, milestoneId: milestoneId.data }),
+  )
+  if (!authorized.authorized) {
+    return problem(403, 'forbidden')
+  }
+  const { result } = authorized
+
+  if (!('step' in result)) {
+    if (result.status === 'payment-required') {
+      return problem(402, 'payment-required')
+    }
+    if (result.status === 'milestone-conflict') {
+      return problem(409, 'milestone-conflict')
+    }
+    return problem(404, 'report-not-found')
+  }
+  return c.json({ acknowledged: result.status, step: result.step }, 200, NO_STORE_HEADERS)
 })
 
 // GET /api/guardian-reports/:reportPublicId — progress metadata while drafting, immutable cards and narrative once fulfilled.

@@ -6,6 +6,11 @@ import {
   type GuardianFullReportProductSku,
   type GuardianReportSlot,
 } from './manifest'
+import {
+  buildGuardianCoreMilestone,
+  GUARDIAN_CORE_MILESTONE_ID,
+  type GuardianQuestionnaireMilestoneView,
+} from './questionnaire-milestone'
 
 export const GUARDIAN_QUESTIONNAIRE_SCHEMA_VERSION = 1 as const
 export const GUARDIAN_CORE_QUESTIONS_PER_SLOT = 3 as const
@@ -100,6 +105,13 @@ export type GuardianQuestionnaireProgress =
       signalSnapshot: GuardianQuestionnaireSignalSnapshot
     }
   | {
+      status: 'milestone'
+      version: string
+      milestoneId: typeof GUARDIAN_CORE_MILESTONE_ID
+      answeredQuestionCount: number
+      signalSnapshot: GuardianQuestionnaireSignalSnapshot
+    }
+  | {
       status: 'optional-note'
       version: string
       note: GuardianFreeTextQuestion
@@ -131,6 +143,16 @@ export type GuardianQuestionnaireClientStep =
         supportingText: string | null
         options: readonly { id: string; label: string }[]
       }
+    }
+  | {
+      status: 'milestone'
+      version: string
+      progress: {
+        answered: number
+        minimumTotal: number
+        maximumTotal: number
+      }
+      milestone: GuardianQuestionnaireMilestoneView
     }
   | {
       status: 'optional-note'
@@ -287,6 +309,7 @@ export function parseGuardianQuestionnaireContent(input: unknown): GuardianQuest
 export function resolveGuardianQuestionnaireProgress(
   content: GuardianQuestionnaireContent,
   answers: GuardianQuestionnaireAnswerSnapshot,
+  acknowledgedMilestoneIds: ReadonlySet<string>,
 ): GuardianQuestionnaireProgress {
   const coreQuestions = content.questions.filter(
     (question): question is GuardianCoreQuestion => question.phase === 'core',
@@ -317,6 +340,16 @@ export function resolveGuardianQuestionnaireProgress(
     addChoiceAnswerSignals(question, answer, signals)
     consumedAnswerIds.add(question.id)
     answeredQuestionCount += 1
+  }
+
+  if (!acknowledgedMilestoneIds.has(GUARDIAN_CORE_MILESTONE_ID)) {
+    return {
+      status: 'milestone',
+      version: content.version,
+      milestoneId: GUARDIAN_CORE_MILESTONE_ID,
+      answeredQuestionCount,
+      signalSnapshot: signals,
+    }
   }
 
   const selectedAdaptiveQuestions: GuardianAdaptiveQuestion[] = []
@@ -393,6 +426,15 @@ export function toGuardianQuestionnaireClientStep(
       status: 'complete',
       version: progress.version,
       progress: stepProgress,
+    }
+  }
+
+  if (progress.status === 'milestone') {
+    return {
+      status: 'milestone',
+      version: progress.version,
+      progress: stepProgress,
+      milestone: buildGuardianCoreMilestone(content.locale, progress.signalSnapshot),
     }
   }
 

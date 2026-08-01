@@ -14,7 +14,11 @@ import {
   resolveGuardianQuestionnaireProgress,
   toGuardianQuestionnaireClientStep,
 } from '../../guardian/questionnaire'
-import { guardianQuestionAnswerTable, guardianReportTable } from '../schema/guardian'
+import {
+  guardianQuestionAnswerTable,
+  guardianQuestionnaireMilestoneTable,
+  guardianReportTable,
+} from '../schema/guardian'
 import {
   guardianQuestionnaireVersionTable,
   guardianQuestionOptionTable,
@@ -40,6 +44,10 @@ export type SaveGuardianQuestionnaireAnswerResult =
   | { status: 'saved' | 'already-saved'; step: GuardianQuestionnaireClientStep }
   | { status: 'report-not-found' | 'payment-required' | 'question-conflict' | 'invalid-answer' }
 
+export type AcknowledgeGuardianQuestionnaireMilestoneResult =
+  | { status: 'acknowledged' | 'already-acknowledged'; step: GuardianQuestionnaireClientStep }
+  | { status: 'report-not-found' | 'payment-required' | 'milestone-conflict' }
+
 /**
  * Returns only the current question projection. The server-only signal matrix and every not-yet-selected candidate
  * stay inside the Worker even though the whole immutable version is loaded in one small server-side query set.
@@ -62,7 +70,8 @@ export async function getGuardianQuestionnaireStep(
   }
 
   const answers = await loadGuardianQuestionnaireAnswers(db, input.reportId)
-  const progress = resolveGuardianQuestionnaireProgress(questionnaire.content, answers)
+  const milestones = await loadGuardianQuestionnaireMilestones(db, input.reportId)
+  const progress = resolveGuardianQuestionnaireProgress(questionnaire.content, answers, milestones)
   return {
     status: 'ok',
     step: toGuardianQuestionnaireClientStep(questionnaire.content, progress),
@@ -98,7 +107,8 @@ export async function saveGuardianQuestionnaireAnswer(
     }
 
     const answers = await loadGuardianQuestionnaireAnswers(tx, input.reportId)
-    const progress = resolveGuardianQuestionnaireProgress(questionnaire.content, answers)
+    const milestones = await loadGuardianQuestionnaireMilestones(tx, input.reportId)
+    const progress = resolveGuardianQuestionnaireProgress(questionnaire.content, answers, milestones)
     const currentQuestion =
       progress.status === 'question' ? progress.question : progress.status === 'optional-note' ? progress.note : null
 
@@ -144,7 +154,7 @@ export async function saveGuardianQuestionnaireAnswer(
       ...answers,
       [currentQuestion.id]: answer,
     }
-    const nextProgress = resolveGuardianQuestionnaireProgress(questionnaire.content, nextAnswers)
+    const nextProgress = resolveGuardianQuestionnaireProgress(questionnaire.content, nextAnswers, milestones)
 
     if (nextProgress.status === 'complete') {
       await tx
@@ -164,6 +174,54 @@ export async function saveGuardianQuestionnaireAnswer(
 
     return {
       status: 'saved' as const,
+      step: toGuardianQuestionnaireClientStep(questionnaire.content, nextProgress),
+    }
+  })
+}
+
+/** Acknowledges only the currently reachable milestone and returns the first adaptive question. */
+export async function acknowledgeGuardianQuestionnaireMilestone(
+  db: Db,
+  input: { collectionId: number; reportId: number; milestoneId: string },
+): Promise<AcknowledgeGuardianQuestionnaireMilestoneResult> {
+  return db.transaction(async (tx) => {
+    const report = await findGuardianQuestionnaireReport(tx, input, true)
+    if (!report) {
+      return { status: 'report-not-found' as const }
+    }
+
+    const questionnaire = await loadGuardianQuestionnaire(tx, report.questionnaireVersion)
+    if (questionnaire.content.productSku !== report.productSku) {
+      throw new Error(`Guardian report ${input.reportId} has a questionnaire for another product`)
+    }
+    if (!(await hasGuardianQuestionnaireEntitlement(tx, input, report.productSku))) {
+      return { status: 'payment-required' as const }
+    }
+
+    const answers = await loadGuardianQuestionnaireAnswers(tx, input.reportId)
+    const milestones = await loadGuardianQuestionnaireMilestones(tx, input.reportId)
+    const progress = resolveGuardianQuestionnaireProgress(questionnaire.content, answers, milestones)
+
+    if (milestones.has(input.milestoneId)) {
+      return {
+        status: 'already-acknowledged' as const,
+        step: toGuardianQuestionnaireClientStep(questionnaire.content, progress),
+      }
+    }
+    if (progress.status !== 'milestone' || progress.milestoneId !== input.milestoneId) {
+      return { status: 'milestone-conflict' as const }
+    }
+
+    await tx.insert(guardianQuestionnaireMilestoneTable).values({
+      reportId: input.reportId,
+      milestoneId: input.milestoneId,
+    })
+
+    const nextMilestones = new Set(milestones)
+    nextMilestones.add(input.milestoneId)
+    const nextProgress = resolveGuardianQuestionnaireProgress(questionnaire.content, answers, nextMilestones)
+    return {
+      status: 'acknowledged' as const,
       step: toGuardianQuestionnaireClientStep(questionnaire.content, nextProgress),
     }
   })
@@ -366,6 +424,16 @@ async function loadGuardianQuestionnaireAnswers(
       return [row.questionId, { type: 'text', text: row.textValue }]
     }),
   )
+}
+
+async function loadGuardianQuestionnaireMilestones(db: Db, reportId: number): Promise<ReadonlySet<string>> {
+  const rows = await db
+    .select({ milestoneId: guardianQuestionnaireMilestoneTable.milestoneId })
+    .from(guardianQuestionnaireMilestoneTable)
+    .where(eq(guardianQuestionnaireMilestoneTable.reportId, reportId))
+    .orderBy(asc(guardianQuestionnaireMilestoneTable.acknowledgedAt))
+
+  return new Set(rows.map(({ milestoneId }) => milestoneId))
 }
 
 function normalizeGuardianAnswer(

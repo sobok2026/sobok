@@ -464,6 +464,22 @@ export function guardianProductOrderName(
   return orderName
 }
 
+/** Launch availability is manifest data, not a locale branch in the HTTP or UI flow. */
+export function guardianFullReportIsAvailable(
+  locale: Locale,
+  market: string,
+  manifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST,
+): boolean {
+  const product = guardianProduct('guardian-report-full-v1', manifest)
+  return (
+    product.kind === 'full_report' &&
+    Boolean(product.orderNames[locale]) &&
+    Boolean(product.questionnaireVersions[locale]) &&
+    Boolean(product.reportCopyVersions[locale]) &&
+    product.prices.some((price) => price.market === market)
+  )
+}
+
 function validateGuardianManifest(manifest: GuardianProductManifest): void {
   const familyIds = new Set(manifest.families.map(({ id }) => id))
   const editionIds = new Set(manifest.editions.map(({ id }) => id))
