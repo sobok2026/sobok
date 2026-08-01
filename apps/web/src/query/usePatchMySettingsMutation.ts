@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { QueryKeys } from '@/lib/react-query/query-keys'
 import { BROADCAST_CHANNEL_KEY, type UserSettingsBroadcastMessage } from '@/storage'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 import type { ProblemDetailsError } from '@/utils/fetch-response'
 
 type MutationContext = {
@@ -23,7 +23,7 @@ export default function usePatchMySettingsMutation() {
     mutationFn: async (body) => {
       const url = '/api/v1/me/settings'
 
-      await fetchAPIData<void>(url, {
+      await fetchApiData<void>(url, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

@@ -61,13 +61,13 @@ describe('profile-edit-form', () => {
     const form = document.createElement('form')
     const nameInput = document.createElement('input')
     const nicknameInput = document.createElement('input')
-    const imageURLInput = document.createElement('input')
+    const imageUrlInput = document.createElement('input')
 
     nameInput.name = 'name'
     nicknameInput.name = 'nickname'
-    imageURLInput.name = 'imageURL'
+    imageUrlInput.name = 'imageURL'
 
-    form.append(nameInput, nicknameInput, imageURLInput)
+    form.append(nameInput, nicknameInput, imageUrlInput)
     document.body.append(form)
 
     const problem: ProblemDetails = {
@@ -87,11 +87,11 @@ describe('profile-edit-form', () => {
     })
     expect(applyProfileProblem(form, problem, fakeErrorsTranslator)).toBe(true)
     expect(nameInput.validationMessage).toBe('msg:field.name-conflict')
-    expect(imageURLInput.validationMessage).toBe('msg:field.invalid-protocol')
+    expect(imageUrlInput.validationMessage).toBe('msg:field.invalid-protocol')
 
     clearProfileValidity(form)
 
     expect(nameInput.validationMessage).toBe('')
-    expect(imageURLInput.validationMessage).toBe('')
+    expect(imageUrlInput.validationMessage).toBe('')
   })
 })

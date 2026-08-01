@@ -1,4 +1,4 @@
-import { openDB } from '@sobok/edge/db/client'
+import { openDb } from '@sobok/edge/db/client'
 import {
   nullifyOldCommentIps,
   nullifyOldReportIps,
@@ -14,7 +14,7 @@ const DAY = 86_400_000
 //  • soft-deleted (removed) and auto-hidden comments hard-deleted 30 days on (reversible-triage window).
 //  • expired rate-limit windows dropped (housekeeping).
 export async function runRetentionPurge(env: Bindings): Promise<void> {
-  const { db, sql } = openDB(env.HYPERDRIVE)
+  const { db, sql } = openDb(env.HYPERDRIVE)
   try {
     const now = Date.now()
     const commentIps = await nullifyOldCommentIps(db, new Date(now - 90 * DAY))

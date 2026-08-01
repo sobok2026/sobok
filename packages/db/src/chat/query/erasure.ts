@@ -1,6 +1,6 @@
 import { and, asc, eq, inArray, type SQL, sql } from 'drizzle-orm'
 
-import { chatDB } from '../db'
+import { chatDb } from '../db'
 import { chatDmMessageTable, chatReadCursorTable, chatReplyReadCursorTable } from '../schema'
 
 const ERASE_BATCH_SIZE = 5000
@@ -15,8 +15,8 @@ export interface EraseChatUserInput {
 // 1:1 되답장 — 는 구독 팬이 값을 치른 것이라 남긴다(App DB에서 페르소나는 tombstone). 멱등.
 export async function eraseChatUser({ userId }: EraseChatUserInput): Promise<void> {
   await eraseDmMessagesWhere(eq(chatDmMessageTable.fanId, userId))
-  await chatDB.delete(chatReadCursorTable).where(eq(chatReadCursorTable.userId, userId))
-  await chatDB.delete(chatReplyReadCursorTable).where(eq(chatReplyReadCursorTable.userId, userId))
+  await chatDb.delete(chatReadCursorTable).where(eq(chatReadCursorTable.userId, userId))
+  await chatDb.delete(chatReplyReadCursorTable).where(eq(chatReplyReadCursorTable.userId, userId))
 }
 
 interface DmMessageKey {
@@ -31,7 +31,7 @@ async function eraseDmMessagesWhere(condition: SQL): Promise<void> {
 
   while (true) {
     // 서브셀렉트가 커서 다음 키에서 시작하므로 이전 배치의 톰스톤 구간을 다시 읽지 않는다.
-    const batch = chatDB
+    const batch = chatDb
       .select({
         artistId: chatDmMessageTable.artistId,
         fanId: chatDmMessageTable.fanId,
@@ -46,7 +46,7 @@ async function eraseDmMessagesWhere(condition: SQL): Promise<void> {
       .orderBy(asc(chatDmMessageTable.artistId), asc(chatDmMessageTable.fanId), asc(chatDmMessageTable.messageId))
       .limit(ERASE_BATCH_SIZE)
 
-    const deleted = await chatDB.delete(chatDmMessageTable).where(inArray(keyTuple, batch)).returning({
+    const deleted = await chatDb.delete(chatDmMessageTable).where(inArray(keyTuple, batch)).returning({
       artistId: chatDmMessageTable.artistId,
       fanId: chatDmMessageTable.fanId,
       messageId: chatDmMessageTable.messageId,

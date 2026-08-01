@@ -1,6 +1,6 @@
 import { isPayMethodAllowed, PAY_METHODS } from '@deep-type/pay-method'
 import { alertDiscord } from '@sobok/edge/alert'
-import { openDB, withDB } from '@sobok/edge/db/client'
+import { openDb, withDb } from '@sobok/edge/db/client'
 import { randomToken, sha256Hex } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
 import { z } from 'zod'
@@ -79,7 +79,7 @@ route.post('/', async (c) => {
   const accessToken = randomToken()
   const now = new Date()
 
-  const detail = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  const detail = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const result = await getResultForCheckoutByToken(db, body.resultToken)
     if (!result) {
       return null

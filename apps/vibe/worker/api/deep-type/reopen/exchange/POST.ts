@@ -1,4 +1,4 @@
-import { openDB, withDB } from '@sobok/edge/db/client'
+import { openDb, withDb } from '@sobok/edge/db/client'
 import { sha256Hex } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
 import { z } from 'zod'
@@ -17,7 +17,7 @@ route.post('/', async (c) => {
   }
 
   const tokenHash = await sha256Hex(parsed.data.token)
-  const reopened = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+  const reopened = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     consumeReopenLink(db, tokenHash, new Date()),
   )
 

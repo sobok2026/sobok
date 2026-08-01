@@ -1,6 +1,6 @@
 import { and, count, eq, gt, inArray, isNull, or, sql } from 'drizzle-orm'
 
-import { chatDB } from '../db'
+import { chatDb } from '../db'
 import { chatBroadcastTable, chatDmMessageTable, chatReadCursorTable, chatReplyReadCursorTable } from '../schema'
 import { type ArtistBroadcastWindows, broadcastWindowsFilter } from './message'
 
@@ -13,7 +13,7 @@ export interface FanWatermarkInput {
 // 팬의 통합 타임라인 읽음 워터마크를 전진시킨다. GREATEST로 늦게 도착한 과거 요청이 커서를
 // 뒤로 돌리지 못하게 항상 앞으로만 전진시킨다.
 export async function setFanWatermark({ fanId, artistId, lastReadMessageId }: FanWatermarkInput): Promise<void> {
-  await chatDB
+  await chatDb
     .insert(chatReadCursorTable)
     .values({ userId: fanId, artistId, lastReadMessageId })
     .onConflictDoUpdate({
@@ -39,7 +39,7 @@ export async function setReplyRoomWatermark({
   messageId,
   lastReadMessageId,
 }: ReplyRoomWatermarkInput): Promise<void> {
-  await chatDB
+  await chatDb
     .insert(chatReplyReadCursorTable)
     .values({ userId: artistUserId, artistId, contextMessageId: messageId, lastReadMessageId })
     .onConflictDoUpdate({
@@ -72,7 +72,7 @@ export async function getReplyRoomWatermarks({
     return new Map()
   }
 
-  const rows = await chatDB
+  const rows = await chatDb
     .select({
       contextMessageId: chatReplyReadCursorTable.contextMessageId,
       lastReadMessageId: chatReplyReadCursorTable.lastReadMessageId,
@@ -102,7 +102,7 @@ export async function countBroadcastUnread(
     return new Map()
   }
 
-  const rows = await chatDB
+  const rows = await chatDb
     .select({ artistId: chatBroadcastTable.artistId, unread: count() })
     .from(chatBroadcastTable)
     .leftJoin(
@@ -130,7 +130,7 @@ export async function countDmUnread(fanId: string, artistIds: number[]): Promise
     return new Map()
   }
 
-  const rows = await chatDB
+  const rows = await chatDb
     .select({ artistId: chatDmMessageTable.artistId, unread: count() })
     .from(chatDmMessageTable)
     .leftJoin(
@@ -163,7 +163,7 @@ export async function countReplyRoomUnread(
     return new Map()
   }
 
-  const rows = await chatDB
+  const rows = await chatDb
     .select({ contextMessageId: chatDmMessageTable.contextMessageId, unread: count() })
     .from(chatDmMessageTable)
     .leftJoin(

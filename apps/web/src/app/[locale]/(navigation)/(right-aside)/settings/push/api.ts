@@ -7,12 +7,12 @@ import type {
   POSTV1MePushTestBody,
 } from '@sobok/contracts'
 
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export async function createPushSubscription(body: POSTV1MePushSubscriptionBody) {
   const url = '/api/v1/me/push/subscription'
 
-  const { data } = await fetchAPIData<POSTV1MePushSubscriptionResponse>(url, {
+  const { data } = await fetchApiData<POSTV1MePushSubscriptionResponse>(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -24,7 +24,7 @@ export async function createPushSubscription(body: POSTV1MePushSubscriptionBody)
 export async function deletePushSubscription(id: number) {
   const url = `/api/v1/me/push/subscription/${id}`
 
-  const { data } = await fetchAPIData<DELETEV1MePushSubscriptionIdResponse>(url, {
+  const { data } = await fetchApiData<DELETEV1MePushSubscriptionIdResponse>(url, {
     method: 'DELETE',
   })
 
@@ -32,7 +32,7 @@ export async function deletePushSubscription(id: number) {
 }
 
 export async function deletePushSubscriptionByEndpoint(body: DELETEV1MePushSubscriptionBody) {
-  await fetchAPIData<undefined>('/api/v1/me/push/subscription', {
+  await fetchApiData<undefined>('/api/v1/me/push/subscription', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -40,7 +40,7 @@ export async function deletePushSubscriptionByEndpoint(body: DELETEV1MePushSubsc
 }
 
 export async function sendTestPushNotification(body: POSTV1MePushTestBody) {
-  await fetchAPIData<undefined>('/api/v1/me/push/test', {
+  await fetchApiData<undefined>('/api/v1/me/push/test', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -48,7 +48,7 @@ export async function sendTestPushNotification(body: POSTV1MePushTestBody) {
 }
 
 export async function updatePushSettings(body: PATCHV1MePushSettingsBody) {
-  await fetchAPIData<undefined>('/api/v1/me/push/settings', {
+  await fetchApiData<undefined>('/api/v1/me/push/settings', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

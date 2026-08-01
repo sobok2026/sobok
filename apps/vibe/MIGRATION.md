@@ -837,7 +837,7 @@ PAID_ITEMS = PAID_LIKERT_ITEMS + PAID_WORK_ITEMS  = 37
 
 **로케일이 번역이 아니라 내용에서 갈라져 있었다 (실측 · 2026-07-28 해소)**: en/ja/zh의 `refinement[22]`는 ko와 다른 문항이었다(ko = 일정·휴식 공유 범위 / en·ja·zh = 필요한 연결을 직접 요청하는가). 비-ko 뱅크가 ko 개정 이전의 다른 문항 세트를 담고 있었고 TODO 90개는 그 위에 덧대진 것이다. **번역으로 복구되지 않고 재작성이어야 한다**는 판정은 그대로이고, 그래서 비-ko 카탈로그를 통째로 빈 문자열로 갈아 끼웠다 — 잘못된 문항이 남아 있는 것보다 비어 있는 편이 낫다.
 
-**해소 판정 1건 — GA4 purchase 미발사.** plan.md:490이 지목한 `browser.ts:22`의 `!/\/deep-type\/(?:checkout-return|reopen)(?:\/|$)/` 정규식은 **현 트리에 존재하지 않는다 (실측)**. `browser.ts`는 `trackEcommerce` + `readGAIdentity` 구조로 재작성됐고 서버측 Measurement Protocol이 `worker/lib/ga4.ts` 신규 + `confirm.ts:12,69`로 구현돼 있으며 `wrangler.jsonc:47,84-86`에 var·secret이 추가됐다. **단 `worker/lib/ga4.ts`는 미추적이다.** 결함은 코드에서 닫혔고 남은 것은 배포 확인(O8)이다.
+**해소 판정 1건 — GA4 purchase 미발사.** plan.md:490이 지목한 `browser.ts:22`의 `!/\/deep-type\/(?:checkout-return|reopen)(?:\/|$)/` 정규식은 **현 트리에 존재하지 않는다 (실측)**. `browser.ts`는 `trackEcommerce` + `readGaIdentity` 구조로 재작성됐고 서버측 Measurement Protocol이 `worker/lib/ga4.ts` 신규 + `confirm.ts:12,69`로 구현돼 있으며 `wrangler.jsonc:47,84-86`에 var·secret이 추가됐다. **단 `worker/lib/ga4.ts`는 미추적이다.** 결함은 코드에서 닫혔고 남은 것은 배포 확인(O8)이다.
 
 ---
 

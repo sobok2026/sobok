@@ -36,8 +36,8 @@ export function ReportRecord({
     : null
 
   return (
-    <section aria-labelledby="report-record-title" className={cn(CARD_CLASS_NAME, 'bg-page-soft/60')}>
-      <h2 className="font-black text-base text-page-ink" id="report-record-title">
+    <section aria-labelledby="report-record-title" className={cn(CARD_CLASS_NAME, 'bg-surface-2/60')}>
+      <h2 className="font-black text-base text-foreground" id="report-record-title">
         {ui.reportRecordTitle}
       </h2>
 
@@ -47,16 +47,16 @@ export function ReportRecord({
 
       {orderId ? (
         <dl className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <dt className="text-page-ink-muted text-sm">{ui.reportRecordOrderLabel}</dt>
+          <dt className="text-foreground-muted text-sm">{ui.reportRecordOrderLabel}</dt>
           {/* Selectable and figure-aligned: this is the string a buyer pastes into a support message. */}
-          <dd className="min-w-0 break-all font-bold text-page-ink text-sm tabular-nums">{orderId}</dd>
+          <dd className="min-w-0 break-all font-bold text-foreground text-sm tabular-nums">{orderId}</dd>
         </dl>
       ) : null}
 
       <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 print:hidden">
         <Link
           className={cn(
-            'inline-flex min-h-11 items-center font-bold text-page-accent-strong text-sm underline underline-offset-4',
+            'inline-flex min-h-11 items-center font-bold text-accent text-sm underline underline-offset-4',
             FOCUS_CLASS_NAME,
           )}
           href={`/${locale}/deep-type/reopen`}
@@ -65,7 +65,7 @@ export function ReportRecord({
         </Link>
         <Link
           className={cn(
-            'inline-flex min-h-11 items-center font-bold text-page-ink-soft text-sm underline underline-offset-4',
+            'inline-flex min-h-11 items-center font-bold text-foreground-secondary text-sm underline underline-offset-4',
             FOCUS_CLASS_NAME,
           )}
           href={`/${locale}/contact`}

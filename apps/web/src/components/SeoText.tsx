@@ -2,6 +2,6 @@ type Props = {
   className?: string
 }
 
-export default function SEOText({ className }: Props) {
+export default function SeoText({ className }: Props) {
   return <span className={className}>소복</span>
 }

@@ -1,9 +1,10 @@
 import '../globals.css'
 
-import GTMLoader from '@sobok/analytics/gtm-loader'
+import GtmLoader from '@sobok/analytics/gtm-loader'
 import { ADSENSE_ACCOUNT, GTM_ID } from '@sobok/brand/identity'
 import { LOCALE_LANGUAGE_TAGS, LOCALES } from '@sobok/domain/locale'
 import { getLocale } from '@sobok/site-i18n/server'
+import JsonLd from '@sobok/site-seo/json-ld'
 import FontStylesheets from '@sobok/typography/stylesheets'
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
@@ -15,8 +16,8 @@ import BottomNav from '@/components/BottomNav'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import QueryProvider from '@/components/QueryProvider'
-import { ORIGIN, SITE_NAME, THEME_COLOR } from '@/constants'
-import JsonLd, { siteGraph } from '@/lib/JsonLd'
+import { ORIGIN } from '@/constants'
+import { buildRootMetadata, buildViewport, siteGraph } from '@/lib/seo'
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }))
@@ -25,27 +26,11 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Promise<Metadata> {
   const locale = await getLocale(params)
   const t = await getTranslations({ locale, namespace: 'Constellation.meta' })
-  const siteName = SITE_NAME[locale]
 
-  return {
-    metadataBase: new URL(ORIGIN),
-    title: {
-      default: `${t('title')} - ${siteName}`,
-      template: `%s - ${siteName}`,
-    },
-    description: t('description'),
-    applicationName: siteName,
-    verification: { other: { 'google-adsense-account': ADSENSE_ACCOUNT } },
-  }
+  return buildRootMetadata({ locale, title: t('title'), description: t('description') })
 }
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  viewportFit: 'cover',
-  themeColor: THEME_COLOR,
-  colorScheme: 'dark',
-}
+export const viewport: Viewport = buildViewport()
 
 export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {
   const locale = await getLocale(params)
@@ -65,7 +50,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             <Toaster position="top-center" richColors theme="dark" />
           </QueryProvider>
         </NextIntlClientProvider>
-        <GTMLoader containerId={GTM_ID} productionOrigin={ORIGIN} />
+        <GtmLoader containerId={GTM_ID} productionOrigin={ORIGIN} />
         <Script
           async
           crossOrigin="anonymous"

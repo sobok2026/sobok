@@ -53,7 +53,7 @@ export class RoomRegistry {
 
       // JSON 객체/배열이 아닌 모든 것은 버립니다 — 단일 신뢰할 수 있는 퍼블리셔는 절대 그런 메시지를 내보내지 않으며,
       // 그것을 그대로 중계하면 모든 클라이언트의 스트림 파싱을 망가뜨릴 수 있습니다.
-      if (!isJSONContainer(message)) {
+      if (!isJsonContainer(message)) {
         console.error('chat relay: dropping non-JSON message', { channel, preview: message.slice(0, 64) })
         return
       }
@@ -165,7 +165,7 @@ export class RoomRegistry {
 }
 
 // 전체 구문 분석(parse) 비용을 치르지 않고도, 메시지를 망가뜨릴 수 있는 거짓 JSON 페이로드를 거부합니다.
-function isJSONContainer(message: string): boolean {
+function isJsonContainer(message: string): boolean {
   const first = message.charCodeAt(0)
   return first === 0x7b /* { */ || first === 0x5b /* [ */
 }

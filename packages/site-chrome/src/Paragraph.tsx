@@ -2,8 +2,10 @@ import { Fragment } from 'react'
 
 const URL_PATTERN = /(https?:\/\/[^\s]+?)(?=[.,)]?(?:\s|$))/g
 
-// Renders a paragraph, turning bare http(s) URLs into real links. Content is
-// authored by us in legal.ts / pages.ts, so there is no untrusted input here.
+/**
+ * One prose paragraph, with bare http(s) URLs turned into real links. The text is authored by us in each
+ * site's `legal.ts` / `pages.ts`, so there is no untrusted input to sanitize here.
+ */
 export default function Paragraph({ text }: { text: string }) {
   const nodes: React.ReactNode[] = []
   let lastIndex = 0
@@ -18,7 +20,7 @@ export default function Paragraph({ text }: { text: string }) {
 
     nodes.push(
       <a
-        className="text-accent underline underline-offset-2 hover:text-brand"
+        className="text-accent underline underline-offset-2 hover:text-foreground"
         href={url}
         key={start}
         rel="noopener noreferrer"

@@ -5,8 +5,8 @@ import {
   type ProblemDetails,
 } from '@sobok/http/problem-details'
 
-export class HTTPResponseError extends Error {
-  readonly name = 'HTTPResponseError'
+export class HttpResponseError extends Error {
+  readonly name = 'HttpResponseError'
 
   get isRetryable(): boolean {
     return this.status === 408 || this.status === 429 || this.status >= 500
@@ -78,14 +78,14 @@ export async function fetchResponseData<T>(
   }
 }
 
-async function createResponseError(response: Response): Promise<HTTPResponseError | ProblemDetailsError> {
+async function createResponseError(response: Response): Promise<HttpResponseError | ProblemDetailsError> {
   const problem = await readProblemDetails(response)
 
   if (problem) {
     return new ProblemDetailsError(problem, response)
   }
 
-  return new HTTPResponseError(response)
+  return new HttpResponseError(response)
 }
 
 function getRetryAfterSeconds(response?: Response): number | undefined {

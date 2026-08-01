@@ -1,9 +1,9 @@
 import { isLocale } from '@sobok/domain/locale'
+import JsonLd from '@sobok/site-seo/json-ld'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { buildLocalizedMetadata } from '@/i18n/metadata'
-import JsonLd, { webApplicationGraph } from '@/lib/JsonLd'
+import { buildMetadata, webApplicationGraph } from '@/lib/seo'
 
 import { IntroFlow } from './_components/intro-flow'
 import { getGyeolContent } from './_lib/content'
@@ -17,10 +17,10 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/couple-g
 
   const content = await getGyeolContent(locale)
 
-  return buildLocalizedMetadata({
+  return buildMetadata({
     description: content.metadata.description,
     locale,
-    pathname: '/couple-gyeol',
+    path: '/couple-gyeol',
     title: content.metadata.title,
   })
 }
@@ -52,8 +52,8 @@ export default async function CoupleGyeolPage({ params }: PageProps<'/[locale]/c
 
 function GyeolPageFallback() {
   return (
-    <main className="flex flex-1 items-center justify-center bg-page-bg px-safe py-16 text-page-ink">
-      <div className="h-12 w-12 rounded-full border-4 border-page-accent/20 border-t-page-accent" />
+    <main className="flex flex-1 items-center justify-center bg-background px-safe py-16 text-foreground">
+      <div className="h-12 w-12 rounded-full border-4 border-brand/20 border-t-brand" />
     </main>
   )
 }

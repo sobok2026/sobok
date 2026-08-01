@@ -18,13 +18,13 @@ type MicroRevealProps = {
  */
 export function MicroReveal({ body, code, template, title }: MicroRevealProps) {
   return (
-    <aside className="mt-4 rounded-3xl border border-page-accent/35 bg-page-accent/8 p-5">
-      <p className="flex items-center gap-2 font-black text-page-accent-strong text-xs">
+    <aside className="mt-4 rounded-3xl border border-brand/35 bg-brand/8 p-5">
+      <p className="flex items-center gap-2 font-black text-accent text-xs">
         <Sparkles aria-hidden="true" className="h-4 w-4" stroke={1.8} />
         {title}
       </p>
       <p className="mt-2 font-black text-lg leading-snug">{template.replace('{inner}', code)}</p>
-      <p className="mt-1 text-page-ink-soft text-sm leading-6">{body}</p>
+      <p className="mt-1 text-foreground-secondary text-sm leading-6">{body}</p>
     </aside>
   )
 }

@@ -1,7 +1,7 @@
 import type { AssessmentProfile } from '@deep-type/model'
 import { PAID_WORK_ITEMS } from '@deep-type/questionnaire'
 import { scoreRefinedAssessment } from '@deep-type/scoring'
-import { openDB, withDB } from '@sobok/edge/db/client'
+import { openDb, withDb } from '@sobok/edge/db/client'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { getRefinedProfile, persistRefinement } from '~/db/queries/result'
@@ -27,7 +27,7 @@ route.post('/', requireAccessToken, async (c) => {
   // row's state outranks the payload's shape, so the gates below run first.
   const body = await c.req.json().catch(() => null)
 
-  return withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  return withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const context = await requirePaidRefinementContext(db, c.get('accessToken'))
     if (context instanceof Response) {
       return context

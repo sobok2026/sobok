@@ -16,7 +16,7 @@ const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 
 if (import.meta.main) {
   try {
-    await syncAppSQL(env.APP_POSTGRES_URL_DIRECT)
+    await syncAppSql(env.APP_POSTGRES_URL_DIRECT)
   } catch (error) {
     console.error(error)
     process.exit(1)
@@ -29,17 +29,17 @@ type ApplySqlDirectoryOptions = {
 }
 
 async function applySqlDirectory(client: postgres.Sql, options: ApplySqlDirectoryOptions) {
-  const files = await readSQLFiles(options.directory)
+  const files = await readSqlFiles(options.directory)
 
   if (files.length === 0) {
     log(options.label, `no SQL files found in ${path.relative(process.cwd(), options.directory)}`)
     return
   }
 
-  await applySQLFiles(client, files, options)
+  await applySqlFiles(client, files, options)
 }
 
-async function applySQLFiles(client: postgres.Sql, files: string[], options: ApplySqlDirectoryOptions) {
+async function applySqlFiles(client: postgres.Sql, files: string[], options: ApplySqlDirectoryOptions) {
   for (const file of files) {
     log(options.label, `applying ${path.relative(process.cwd(), file)}`)
     await client.file(file)
@@ -52,7 +52,7 @@ function log(label: string, message: string) {
   console.log(`[${label}] ${message}`)
 }
 
-async function readSQLFiles(directory: string) {
+async function readSqlFiles(directory: string) {
   const directoryEntries = await readdir(directory, { withFileTypes: true }).catch((error: NodeJS.ErrnoException) => {
     if (error.code === 'ENOENT') {
       return []
@@ -67,7 +67,7 @@ async function readSQLFiles(directory: string) {
     .sort((left, right) => left.localeCompare(right))
 }
 
-async function syncAppSQL(url: string) {
+async function syncAppSql(url: string) {
   const client = postgres(url, {
     max: 1,
     idle_timeout: 5,
@@ -84,14 +84,14 @@ async function syncAppSQL(url: string) {
       label: 'app-function',
     })
 
-    await syncCronSQL(client, path.join(packageRoot, 'src/app/cron'))
+    await syncCronSql(client, path.join(packageRoot, 'src/app/cron'))
   } finally {
     await client.end({ timeout: 5 })
   }
 }
 
-async function syncCronSQL(client: postgres.Sql, directory: string) {
-  const files = await readSQLFiles(directory)
+async function syncCronSql(client: postgres.Sql, directory: string) {
+  const files = await readSqlFiles(directory)
 
   if (files.length === 0) {
     log('app-cron', `no SQL cron files found in ${path.relative(process.cwd(), directory)}`)
@@ -116,5 +116,5 @@ async function syncCronSQL(client: postgres.Sql, directory: string) {
     await client`create extension if not exists pg_cron`
   }
 
-  await applySQLFiles(client, files, { directory, label: 'app-cron' })
+  await applySqlFiles(client, files, { directory, label: 'app-cron' })
 }

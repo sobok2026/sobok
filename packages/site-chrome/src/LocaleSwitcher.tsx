@@ -1,6 +1,6 @@
 'use client'
 
-import { isLocale, LOCALE_NATIVE_NAMES, LOCALES, type Locale } from '@sobok/domain/locale'
+import { isLocale, LOCALE_LANGUAGE_TAGS, LOCALE_NATIVE_NAMES, LOCALES, type Locale } from '@sobok/domain/locale'
 import { usePathname } from 'next/navigation'
 
 type Props = {
@@ -8,8 +8,8 @@ type Props = {
   locale: Locale
 }
 
-// Every label always reserves its semibold width via an invisible bold twin stacked in the
-// same grid cell, so toggling the active locale's weight never shifts the row (CLS-free).
+// Every label always reserves its semibold width via an invisible bold twin stacked in the same grid cell,
+// so toggling the active locale's weight never shifts the row (CLS-free).
 function Label({ name }: { name: string }) {
   return (
     <span className="grid justify-items-center">
@@ -40,20 +40,23 @@ export default function LocaleSwitcher({ label, locale }: Props) {
     <nav aria-label={label} className="flex items-center gap-2.5 text-xs">
       {LOCALES.map((entry) =>
         entry === locale ? (
-          <span key={entry} aria-current="page" className="font-semibold text-foreground">
+          <span aria-current="page" className="font-semibold text-foreground" key={entry}>
             <Label name={LOCALE_NATIVE_NAMES[entry]} />
           </span>
         ) : (
+          // A full page load, not a client navigation: the messages for the target locale live in a different
+          // bundle, and `href` stays real so the link is still a link to a crawler and to middle-click.
+          // The query and hash ride along because a shared chart lives in the hash.
           <a
-            key={entry}
+            className="relative text-foreground-muted/80 transition-colors before:absolute before:-inset-x-1 before:-inset-y-2.5 before:content-[''] hover:text-foreground"
             href={hrefFor(entry)}
-            hrefLang={entry}
-            lang={entry}
+            hrefLang={LOCALE_LANGUAGE_TAGS[entry]}
+            key={entry}
+            lang={LOCALE_LANGUAGE_TAGS[entry]}
             onClick={(event) => {
               event.preventDefault()
               window.location.assign(`${hrefFor(entry)}${window.location.search}${window.location.hash}`)
             }}
-            className="relative text-foreground-muted/80 transition-colors before:absolute before:-inset-x-1 before:-inset-y-2.5 before:content-[''] hover:text-foreground"
           >
             <Label name={LOCALE_NATIVE_NAMES[entry]} />
           </a>

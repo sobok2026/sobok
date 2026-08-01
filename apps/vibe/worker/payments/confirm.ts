@@ -10,7 +10,7 @@ import {
 } from '../db/queries/purchase'
 import { ensurePendingReport } from '../db/queries/report'
 import type { Bindings } from '../env'
-import { sendGA4Purchase } from '../lib/ga4'
+import { sendGa4Purchase } from '../lib/ga4'
 import { skuItem } from '../lib/pricing'
 
 // Outcomes of converging a local purchase against PortOne's truth. Shared by /verify (browser return),
@@ -69,7 +69,7 @@ export async function confirmPurchase(db: Db, deps: ConfirmDeps, paymentId: stri
 
   await ensurePendingReport(db, purchase.id)
   // Winning the CAS is what makes this call the single place a purchase can ever be counted, so the revenue
-  // event belongs here and nowhere else. Awaited rather than deferred to waitUntil: `withDB` closes the pooled
+  // event belongs here and nowhere else. Awaited rather than deferred to waitUntil: `withDb` closes the pooled
   // connection the moment the caller returns, and clearing the identity afterwards needs it alive.
   await reportPurchase(db, deps.env, purchase, paymentId, paidAt)
   return 'paid'
@@ -116,7 +116,7 @@ async function reportPurchase(
     return
   }
 
-  const delivered = await sendGA4Purchase(
+  const delivered = await sendGa4Purchase(
     { apiSecret, measurementId: env.DEEPTYPE_GA4_MEASUREMENT_ID },
     {
       clientId: purchase.gaClientId,

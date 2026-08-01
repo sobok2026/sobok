@@ -1,11 +1,10 @@
 'use client'
 
 import type { Locale } from '@sobok/domain/locale'
+import LocaleSwitcher from '@sobok/site-chrome/locale-switcher'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
 import { SITE_NAME } from '@/constants'
-import LocaleSwitcher from './LocaleSwitcher'
 import { PRIMARY_NAV } from './nav'
 
 type Props = {

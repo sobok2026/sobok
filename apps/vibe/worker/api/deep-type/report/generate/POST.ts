@@ -1,6 +1,6 @@
 import { alertDiscord } from '@sobok/edge/alert'
 
-import { openDB, withDB } from '@sobok/edge/db/client'
+import { openDb, withDb } from '@sobok/edge/db/client'
 import { randomToken } from '@sobok/edge/tokens'
 import { type Context, Hono } from 'hono'
 import { getPurchaseByAccessToken } from '~/db/queries/purchase'
@@ -46,7 +46,7 @@ route.post('/', async (c) => {
   const token = c.get('accessToken')
   const lockToken = randomToken()
 
-  const claim = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
+  const claim = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     const purchase = await getPurchaseByAccessToken(db, token)
     if (!purchase) {
       return problem(404, 'purchase-not-found')
@@ -105,7 +105,7 @@ route.post('/', async (c) => {
     // `status='failed'` survives a total engine (§4.3): unusable stored input and a DB outage both land here,
     // and both need a state that says the buyer has nothing and may withdraw.
     if (!plan) {
-      await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+      await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
         finalizeReportFailed(db, claim.purchaseId, lockToken, 'engine input unusable'),
       )
       alertOps(c, '❌ deeptype engine report could not be built; inspect the restricted Worker logs')
@@ -114,7 +114,7 @@ route.post('/', async (c) => {
 
     const engine = plan.engine
     try {
-      await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+      await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
         finalizeReportDone(db, claim.purchaseId, lockToken, engine),
       )
     } catch (error) {
@@ -122,7 +122,7 @@ route.post('/', async (c) => {
         message: error instanceof Error ? error.message : String(error),
         purchaseId: claim.purchaseId,
       })
-      await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+      await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
         finalizeReportFailed(db, claim.purchaseId, lockToken, String(error).slice(0, 500)),
       )
       alertOps(c, '❌ deeptype report commit failed; inspect the restricted Worker logs')
@@ -138,7 +138,7 @@ route.post('/', async (c) => {
 // Second commit. Nothing in here may reject: it runs detached from the response, and the report it decorates
 // is already delivering.
 async function runNarrativePass(c: Context<AppEnv>, purchaseId: number, plan: ReportPassPlan | null): Promise<void> {
-  const status = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+  const status = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     getNarrativeStatus(db, purchaseId),
   )
   if (status && isReportSettled(status.status)) {
@@ -146,7 +146,7 @@ async function runNarrativePass(c: Context<AppEnv>, purchaseId: number, plan: Re
   }
 
   const lockToken = randomToken()
-  const locked = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+  const locked = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     acquireNarrativeLock(db, purchaseId, lockToken, staleBefore()),
   )
   // Someone else holds the lease, or the pass burned its retry budget. Either way this request is not the one
@@ -159,7 +159,7 @@ async function runNarrativePass(c: Context<AppEnv>, purchaseId: number, plan: Re
   // would never be stamped for a report that is otherwise complete.
   if (!plan) {
     console.error('deeptype.report.narrative-skipped', { purchaseId })
-    await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
       finalizeNarrativeFailed(db, purchaseId, lockToken, 'engine input unusable'),
     )
     return
@@ -173,7 +173,7 @@ async function runNarrativePass(c: Context<AppEnv>, purchaseId: number, plan: Re
   // report.
   if (!model || !apiKey) {
     console.error('deeptype.report.narrative-disabled', { model, purchaseId })
-    await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
       finalizeNarrativeFailed(db, purchaseId, lockToken, NARRATIVE_DISABLED_REASON),
     )
     // A missing key while a model is named is a misconfiguration; an empty model is the off switch itself.
@@ -192,7 +192,7 @@ async function runNarrativePass(c: Context<AppEnv>, purchaseId: number, plan: Re
     if (outcome.sections.length === 0) {
       const reason = `no narration accepted: ${outcome.dropped.map((drop) => `${drop.key}/${drop.reason}`).join(', ')}`
       console.error('deeptype.report.narrative-empty', { purchaseId, reason })
-      await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+      await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
         finalizeNarrativeFailed(db, purchaseId, lockToken, reason.slice(0, 500)),
       )
       return
@@ -205,7 +205,7 @@ async function runNarrativePass(c: Context<AppEnv>, purchaseId: number, plan: Re
       })
     }
 
-    await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
       finalizeNarrativeDone(db, purchaseId, lockToken, model, outcome.sections),
     )
   } catch (error) {
@@ -215,7 +215,7 @@ async function runNarrativePass(c: Context<AppEnv>, purchaseId: number, plan: Re
       purchaseId,
       stack: error instanceof Error ? error.stack : undefined,
     })
-    await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
       finalizeNarrativeFailed(db, purchaseId, lockToken, String(error).slice(0, 500)),
     )
     alertOps(c, '⚠️ deeptype narration failed; the engine report shipped without it')

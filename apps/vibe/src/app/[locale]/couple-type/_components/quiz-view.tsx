@@ -48,12 +48,12 @@ export function QuizView({
     <section className="flex flex-1 flex-col justify-center px-safe py-10 sm:py-16">
       <div className="mx-auto grid w-full max-w-7xl items-center gap-8 sm:px-6 lg:grid-cols-2 lg:px-8">
         <div className="hidden max-w-3xl lg:block">
-          <p className="inline-flex items-center gap-2 rounded-full bg-page-ink px-4 py-2 font-bold text-sm text-white">
-            <HeartWaves aria-hidden="true" className="h-4 w-4 text-page-accent-strong" stroke={1.8} />
+          <p className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2 font-bold text-sm text-white">
+            <HeartWaves aria-hidden="true" className="h-4 w-4 text-accent" stroke={1.8} />
             {ui.heroEyebrow}
           </p>
           <h1 className="mt-6 font-black text-4xl leading-tight lg:text-[2.8rem] xl:text-6xl">{ui.heroTitle}</h1>
-          <p className="mt-5 text-lg text-page-ink-soft leading-8">{ui.heroDescription}</p>
+          <p className="mt-5 text-lg text-foreground-secondary leading-8">{ui.heroDescription}</p>
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
             <MiniStat
               label={ui.questionCountLabel}
@@ -63,22 +63,22 @@ export function QuizView({
           </div>
         </div>
 
-        <form className="rounded-3xl sm:rounded-4xl border-page-border sm:border sm:bg-page-surface sm:p-6 sm:shadow-[0_32px_110px_rgba(36,22,23,0.12)]">
-          <div className="flex flex-col gap-4 border-page-border border-b pb-6 sm:flex-row sm:items-center sm:justify-between">
+        <form className="rounded-3xl sm:rounded-4xl border-border sm:border sm:bg-surface sm:p-6 sm:shadow-[0_32px_110px_rgba(36,22,23,0.12)]">
+          <div className="flex flex-col gap-4 border-border border-b pb-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="font-black text-page-accent-strong text-sm">
+              <p className="font-black text-accent text-sm">
                 {String(currentIndex + 1).padStart(2, '0')} / {String(totalQuestions).padStart(2, '0')}
               </p>
-              <p className="mt-1 font-bold text-page-ink-muted text-sm">{axis.label}</p>
+              <p className="mt-1 font-bold text-foreground-muted text-sm">{axis.label}</p>
             </div>
             <div className="min-w-40">
-              <div className="flex items-center justify-between text-page-ink-muted text-xs">
+              <div className="flex items-center justify-between text-foreground-muted text-xs">
                 <span>{formatText(ui.answeredCount, { count: answeredCount })}</span>
                 <span>{progressPercent}%</span>
               </div>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-page-soft">
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-surface-2">
                 <div
-                  className="h-full rounded-full bg-page-accent transition-[width] duration-300"
+                  className="h-full rounded-full bg-brand transition-[width] duration-300"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -96,14 +96,14 @@ export function QuizView({
                     className={cn(
                       'group flex cursor-pointer items-start gap-4 rounded-3xl border p-5 transition',
                       isSelected
-                        ? 'border-page-accent bg-[#fff3f0] shadow-[0_18px_50px_var(--page-accent-glow)]'
-                        : 'border-page-border bg-white hover:border-page-accent/50 hover:bg-page-soft/50',
+                        ? 'border-brand bg-[#fff3f0] shadow-[0_18px_50px_var(--accent-glow)]'
+                        : 'border-border bg-white hover:border-brand/50 hover:bg-surface-2/50',
                     )}
                     key={option.value}
                   >
                     <input
                       checked={isSelected}
-                      className="mt-1 h-5 w-5 shrink-0 accent-page-accent"
+                      className="mt-1 h-5 w-5 shrink-0 accent-brand"
                       name={currentQuestion.id}
                       onChange={() => onSelect(currentQuestion.id, option.value)}
                       type="radio"
@@ -121,7 +121,7 @@ export function QuizView({
           <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
             <button
               className={cn(
-                'inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-page-border bg-white px-5 font-bold text-page-ink-soft text-sm transition-colors hover:text-page-ink',
+                'inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-border bg-white px-5 font-bold text-foreground-secondary text-sm transition-colors hover:text-foreground',
                 FOCUS_CLASS_NAME,
               )}
               onClick={onBack}
@@ -132,7 +132,7 @@ export function QuizView({
             </button>
             <button
               className={cn(
-                'inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-page-ink px-6 font-black text-sm text-white transition-colors enabled:hover:bg-page-ink/92 disabled:cursor-not-allowed disabled:opacity-45',
+                'inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-foreground px-6 font-black text-sm text-white transition-colors enabled:hover:bg-foreground/92 disabled:cursor-not-allowed disabled:opacity-45',
                 FOCUS_CLASS_NAME,
               )}
               disabled={!canGoNext}

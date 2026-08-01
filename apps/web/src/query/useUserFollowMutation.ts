@@ -15,7 +15,7 @@ import {
 } from '@/components/post/cache'
 import { QueryKeys } from '@/lib/react-query/query-keys'
 import { showLoginRequiredToast } from '@/lib/toast'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 import type { ProblemDetailsError } from '@/utils/fetch-response'
 
 import useMeQuery from './useMeQuery'
@@ -44,7 +44,7 @@ type Variables = {
 export async function toggleUserFollowing(targetUserId: string, following: boolean) {
   const url = `/api/v1/user/${targetUserId}/follow`
 
-  const { data } = await fetchAPIData<SetUserFollowResponse>(url, {
+  const { data } = await fetchApiData<SetUserFollowResponse>(url, {
     method: following ? 'PUT' : 'DELETE',
   })
 

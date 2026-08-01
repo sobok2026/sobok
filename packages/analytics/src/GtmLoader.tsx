@@ -30,7 +30,7 @@ type Props = {
   productionOrigin: string
 }
 
-export default function GTMLoader({ containerId, productionOrigin }: Props) {
+export default function GtmLoader({ containerId, productionOrigin }: Props) {
   // A production build is also what `wrangler dev` and any preview deployment run, and `output: 'export'`
   // bakes one set of HTML for all of them — so the production origin can only be confirmed at runtime.
   const [allowed, setAllowed] = useState(IS_DEVELOPMENT)

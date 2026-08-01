@@ -1,7 +1,7 @@
 import type { AssessmentProfile } from '@deep-type/model'
 import { scoreBaseAssessment } from '@deep-type/scoring'
 import { LOCALES } from '@sobok/domain/locale'
-import { openDB, withDB } from '@sobok/edge/db/client'
+import { openDb, withDb } from '@sobok/edge/db/client'
 import { randomToken } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
 import { z } from 'zod'
@@ -43,7 +43,7 @@ route.post('/', async (c) => {
   }
 
   const resultToken = randomToken()
-  await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+  await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     insertResult(db, {
       baseAnswers: parsed.data.answers,
       baseProfile: profile,

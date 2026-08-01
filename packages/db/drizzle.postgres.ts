@@ -9,7 +9,7 @@ type DrizzlePostgresCredentials = {
   user?: string
 }
 
-export function postgresURLToDrizzleCredentials(
+export function postgresUrlToDrizzleCredentials(
   connectionURL: string,
   certificate?: string,
 ): DrizzlePostgresCredentials {
@@ -25,12 +25,12 @@ export function postgresURLToDrizzleCredentials(
   }
 }
 
-function resolvePostgresSSL(parsedURL: URL, certificate?: string): DrizzlePostgresCredentials['ssl'] {
+function resolvePostgresSSL(parsedUrl: URL, certificate?: string): DrizzlePostgresCredentials['ssl'] {
   if (certificate) {
     return { ca: certificate, rejectUnauthorized: true }
   }
 
-  const sslMode = parsedURL.searchParams.get('sslmode')
+  const sslMode = parsedUrl.searchParams.get('sslmode')
 
   if (sslMode === 'disable') {
     return false
@@ -42,7 +42,7 @@ function resolvePostgresSSL(parsedURL: URL, certificate?: string): DrizzlePostgr
 
   // drizzle-kit's pg driver treats 'prefer' as "require SSL", so local Postgres (CI services,
   // docker-compose dev) without TLS must default to no SSL instead.
-  if (['localhost', '127.0.0.1', '::1'].includes(parsedURL.hostname)) {
+  if (['localhost', '127.0.0.1', '::1'].includes(parsedUrl.hostname)) {
     return false
   }
 

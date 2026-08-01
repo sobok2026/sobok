@@ -144,18 +144,18 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
           ) : (
             <div className="text-center">
               <h1 className="mt-3 font-black text-2xl leading-snug">{copy.title}</h1>
-              <p className="mt-3 break-prose text-page-ink-soft leading-7">{copy.body}</p>
+              <p className="mt-3 break-prose text-foreground-secondary leading-7">{copy.body}</p>
             </div>
           )}
 
           <form className="mt-6" onSubmit={requestLink}>
-            <label className="block font-bold text-page-ink-soft text-sm" htmlFor="deeptype-reopen-email">
+            <label className="block font-bold text-foreground-secondary text-sm" htmlFor="deeptype-reopen-email">
               {copy.emailLabel}
             </label>
             <input
               autoComplete="email"
               className={cn(
-                'mt-2 min-h-12 w-full rounded-2xl border border-page-border bg-white px-4 font-medium text-page-ink outline-none placeholder:text-page-ink-muted focus-visible:border-page-accent',
+                'mt-2 min-h-12 w-full rounded-2xl border border-border bg-white px-4 font-medium text-foreground outline-none placeholder:text-foreground-muted focus-visible:border-brand',
                 FOCUS_CLASS_NAME,
               )}
               id="deeptype-reopen-email"
@@ -182,7 +182,7 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
             <button
               className={cn(
                 flowActionClassName('primary'),
-                'mt-5 disabled:cursor-not-allowed disabled:bg-page-ink/20 disabled:shadow-none',
+                'mt-5 disabled:cursor-not-allowed disabled:bg-foreground/20 disabled:shadow-none',
               )}
               disabled={!turnstileToken || requestPending}
               type="submit"
@@ -190,11 +190,11 @@ export function ReopenView({ content, copy, locale }: ReopenViewProps) {
               {requestPending ? copy.requesting : copy.requestCta}
             </button>
             {requestError ? (
-              <p className="mt-3 text-center font-bold text-page-accent-strong text-sm" role="alert">
+              <p className="mt-3 text-center font-bold text-accent text-sm" role="alert">
                 {requestError}
               </p>
             ) : null}
-            <p className="mt-4 text-page-ink-muted text-xs leading-6">{copy.deliveryNote}</p>
+            <p className="mt-4 text-foreground-muted text-xs leading-6">{copy.deliveryNote}</p>
           </form>
         </>
       ) : null}
@@ -293,9 +293,11 @@ function ReopenedReport({
           title={copy.reportFailedTitle}
           tone="danger"
         >
-          {refund === 'done' ? <p className="mt-4 text-page-ink-soft text-sm">{content.paywall.refundDone}</p> : null}
+          {refund === 'done' ? (
+            <p className="mt-4 text-foreground-secondary text-sm">{content.paywall.refundDone}</p>
+          ) : null}
           {refund === 'failed' ? (
-            <p className="mt-4 text-page-ink-soft text-sm">{content.paywall.refundFailed}</p>
+            <p className="mt-4 text-foreground-secondary text-sm">{content.paywall.refundFailed}</p>
           ) : null}
         </FlowMessage>
         {/* An accent outline rather than the panel's own secondary weight, because undoing a purchase is the
@@ -305,7 +307,7 @@ function ReopenedReport({
           <button
             className={cn(
               flowActionClassName('secondary'),
-              'mt-7 border-page-accent-strong/45 text-page-accent-strong hover:border-page-accent-strong/45 hover:bg-page-accent/8 hover:text-page-accent-strong disabled:opacity-60',
+              'mt-7 border-accent/45 text-accent hover:border-accent/45 hover:bg-brand/8 hover:text-accent disabled:opacity-60',
             )}
             disabled={refund === 'pending'}
             onClick={requestRefund}
@@ -314,7 +316,7 @@ function ReopenedReport({
             {refund === 'pending' ? content.paywall.refundPending : content.paywall.refundCta}
           </button>
         ) : null}
-        <p className="mt-5 text-center text-page-ink-muted text-xs">
+        <p className="mt-5 text-center text-foreground-muted text-xs">
           <a className="underline underline-offset-2" href={`mailto:${LEGAL_CONTACT_EMAIL}`}>
             {LEGAL_CONTACT_EMAIL}
           </a>

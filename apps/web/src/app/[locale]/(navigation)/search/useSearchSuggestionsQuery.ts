@@ -6,7 +6,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useLocale } from 'next-intl'
 
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { buildSearchParams, fetchAPIData } from '@/utils/api-request'
+import { buildSearchParams, fetchApiData } from '@/utils/api-request'
 
 type Params = {
   limit?: number
@@ -22,7 +22,7 @@ type Props = {
 export async function fetchSearchSuggestions({ limit, query, locale }: Params) {
   const searchParams = buildSearchParams({ locale, query, limit })
   const url = `/api/v1/search/suggestions?${searchParams}`
-  const { data } = await fetchAPIData<GETV1SearchSuggestionResponse>(url, { credentials: 'omit' })
+  const { data } = await fetchApiData<GETV1SearchSuggestionResponse>(url, { credentials: 'omit' })
   return data
 }
 

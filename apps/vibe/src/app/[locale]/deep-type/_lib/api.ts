@@ -1,7 +1,7 @@
 import type { AssessmentProfile, ItemAnswer, PersonaCode, PersonaSource, WorkAnswer } from '@deep-type/model'
 import type { OfferCurrency } from '@deep-type/offer'
 import type { PayMethod } from '@deep-type/pay-method'
-import type { GAIdentity } from '@sobok/analytics/ga-identity'
+import type { GaIdentity } from '@sobok/analytics/ga-identity'
 import type { Locale } from '@sobok/domain/locale'
 
 import type { NarrativeSection, ReportSection } from '../../../../../worker/report/section-data'
@@ -92,7 +92,7 @@ export type CheckoutInput = {
   ageConfirmed: boolean
   // GA4 identity snapshot taken on the paywall, so the Worker can attribute the server-side `purchase` to this
   // visitor's session. Null whenever `analytics_storage` is denied — the server then sends nothing.
-  analytics: GAIdentity | null
+  analytics: GaIdentity | null
   consentPrivacy: boolean
   consentWithdrawal: boolean
   email: string

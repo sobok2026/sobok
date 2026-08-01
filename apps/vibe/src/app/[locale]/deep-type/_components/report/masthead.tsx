@@ -39,14 +39,16 @@ export function ReportMasthead({
 
   return (
     <header
-      className="rounded-3xl border border-page-border bg-page-surface p-6 text-center shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:rounded-4xl sm:p-8 print:shadow-none"
+      className="rounded-3xl border border-border bg-surface p-6 text-center shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:rounded-4xl sm:p-8 print:shadow-none"
       id="report-top"
     >
-      <p className="font-black text-page-accent-strong text-sm tracking-[0.14em]">{DEEP_TYPE_BRAND_NAME[locale]}</p>
-      <h1 className="mt-3 font-black text-3xl text-page-ink leading-tight sm:text-4xl">{worldJob.name}</h1>
-      <p className="mx-auto mt-3 max-w-md text-base text-page-ink-soft leading-8">{worldJob.family.method}</p>
+      <p className="font-black text-accent text-sm tracking-[0.14em]">{DEEP_TYPE_BRAND_NAME[locale]}</p>
+      <h1 className="mt-3 font-black text-3xl text-foreground leading-tight sm:text-4xl">{worldJob.name}</h1>
+      <p className="mx-auto mt-3 max-w-md text-base text-foreground-secondary leading-8">{worldJob.family.method}</p>
       {issued ? (
-        <p className="mt-3 text-page-ink-muted text-sm">{content.ui.reportIssuedTemplate.replace('{date}', issued)}</p>
+        <p className="mt-3 text-foreground-muted text-sm">
+          {content.ui.reportIssuedTemplate.replace('{date}', issued)}
+        </p>
       ) : null}
 
       <div className="mt-6 grid grid-cols-2 gap-3">
@@ -65,9 +67,9 @@ function CoverArt({ caption, children, code }: { caption: string; children: Reac
   return (
     <figure>
       {children}
-      <figcaption className="mt-2 text-page-ink-muted text-sm">
+      <figcaption className="mt-2 text-foreground-muted text-sm">
         {caption}
-        <span className="ml-1.5 font-black text-page-ink tracking-wide">{code}</span>
+        <span className="ml-1.5 font-black text-foreground tracking-wide">{code}</span>
       </figcaption>
     </figure>
   )

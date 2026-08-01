@@ -1,7 +1,7 @@
 import type { POSTV1ChatSubscriptionRefundResponse } from '@sobok/contracts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 // 청약철회 — 조건(결제 7일 이내 + 이번 기간 답장 미발신)은 서버가 검증하고,
 // 불충족 사유는 problem code(refund-*)로 내려와 Errors 카탈로그 카피로 표시된다.
@@ -15,7 +15,7 @@ export default function useRefundSubscriptionMutation(handle: string) {
   return useMutation({
     mutationFn: async () => {
       const url = `/api/v1/chat/artist/${handle}/subscription/refund`
-      const { data } = await fetchAPIData<POSTV1ChatSubscriptionRefundResponse>(url, { method: 'POST' })
+      const { data } = await fetchApiData<POSTV1ChatSubscriptionRefundResponse>(url, { method: 'POST' })
       return data
     },
     onSuccess: () => {

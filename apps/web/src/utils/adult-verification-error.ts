@@ -1,10 +1,10 @@
 import { PROBLEM } from '@sobok/contracts'
 import { isProblemType } from '@sobok/http/problem-details'
 
-import { HTTPResponseError, ProblemDetailsError } from '@/utils/fetch-response'
+import { HttpResponseError, ProblemDetailsError } from '@/utils/fetch-response'
 
 export function isAdultVerificationRequiredError(error: unknown): boolean {
-  if (error instanceof HTTPResponseError && error.status === 403) {
+  if (error instanceof HttpResponseError && error.status === 403) {
     return true
   }
 

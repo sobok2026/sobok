@@ -2,7 +2,7 @@
 
 import { PAY_METHOD_SPEC, type PayMethod } from '@deep-type/pay-method'
 import type { LoadPaymentUIRequest } from '@portone/browser-sdk/v2'
-import { readGAIdentity } from '@sobok/analytics/ga-identity'
+import { readGaIdentity } from '@sobok/analytics/ga-identity'
 import { useState } from 'react'
 
 import { GA4_MEASUREMENT_ID } from '@/constants'
@@ -81,7 +81,7 @@ export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallCont
         ageConfirmed: true,
         // Captured here, on the last screen the buyer is guaranteed to see: the grant that emits `purchase` may
         // run in the PortOne webhook or the reconcile cron, long after this browser is gone.
-        analytics: readGAIdentity(GA4_MEASUREMENT_ID),
+        analytics: readGaIdentity(GA4_MEASUREMENT_ID),
         consentPrivacy: true,
         consentWithdrawal: true,
         email,

@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 import type { StoredBirth } from '@/lib/birth-storage'
-import { buildShareURL, shareLink } from '@/lib/share'
+import { buildShareUrl, shareLink } from '@/lib/share'
 
 import { DAILY_NAMESPACE } from './daily'
 import type { DailyReading } from './useDailyReading'
@@ -46,9 +46,9 @@ export function useDailyShare(
         return
       }
 
-      url = buildShareURL(locale, { kind: 'love', birth: reading.birth, asOf: reading.asOf })
+      url = buildShareUrl(locale, { kind: 'love', birth: reading.birth, asOf: reading.asOf })
     } else if (reading.birth && reading.dateKey && reading.utcOffsetMinutes !== undefined) {
-      url = buildShareURL(locale, {
+      url = buildShareUrl(locale, {
         kind: surface,
         birth: reading.birth,
         dateKey: reading.dateKey,

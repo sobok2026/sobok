@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import useMessageJump from '../_hooks/useMessageJump'
 import useReplyRoom from '../_hooks/useReplyRoom'
-import { avatarURL } from '../_lib/chat'
+import { avatarUrl } from '../_lib/chat'
 import { type BubbleQuote, IncomingBubble, OutgoingBubble, QuotedMessage, toBubbleQuote } from './ChatBubbles'
 import ChatComposer from './ChatComposer'
 import ChatMessageList, { type ChatMessageListHandle } from './ChatMessageList'
@@ -69,7 +69,7 @@ export default function StudioReplyRoom({ handle, messageId }: { handle: string;
 
     return (
       <IncomingBubble
-        avatarSrc={avatarURL(fanName, item.fan?.image)}
+        avatarSrc={avatarUrl(fanName, item.fan?.image)}
         createdAt={item.createdAt}
         isHighlighted={isHighlighted}
         isSelected={answerTarget?.replyMessageId === item.messageId}

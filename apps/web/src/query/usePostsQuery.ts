@@ -5,7 +5,7 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { useLocale } from 'next-intl'
 
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { buildSearchParams, fetchAPIData } from '@/utils/api-request'
+import { buildSearchParams, fetchApiData } from '@/utils/api-request'
 
 export type PostQuery = {
   filter: PostFilter
@@ -28,7 +28,7 @@ export default function usePostInfiniteQuery({ filter, mangaId, username }: Post
       })
 
       const url = `/api/v1/post?${searchParams}`
-      const { data } = await fetchAPIData<GETV1PostResponse>(url)
+      const { data } = await fetchApiData<GETV1PostResponse>(url)
       return data
     },
     getNextPageParam: (lastPage) => lastPage.nextCursor,

@@ -19,21 +19,24 @@ import { PANEL_CLASS_NAME, PANEL_SHADOW_CLASS_NAME } from '../_lib/surface'
 /** Which of the three semantic colours a terminal state carries. `accent` is "recoverable, act on it". */
 export type FlowTone = 'accent' | 'danger' | 'success'
 
-// Tint from the brand pink, glyph from the strong accent: `--page-accent` is a surface colour and does not
+// Tint from the brand pink, glyph from the strong accent: `--brand` is a surface colour and does not
 // clear 4.5:1 as a foreground, which is the split `globals.css` makes and the reason there are two.
 const MARK_CLASS_NAME: Record<FlowTone, string> = {
-  accent: 'bg-page-accent/12 text-page-accent-strong',
-  danger: 'bg-page-danger/10 text-page-danger',
-  success: 'bg-page-success/10 text-page-success',
+  accent: 'bg-brand/12 text-accent',
+  danger: 'bg-danger/10 text-danger',
+  success: 'bg-positive/10 text-positive',
 }
 
 export function FlowPanel({ children, eyebrow }: { children: ReactNode; eyebrow: string }) {
   return (
-    <main className="flex flex-1 items-center justify-center bg-page-bg px-safe py-12 text-page-ink" id="main-content">
+    <main
+      className="flex flex-1 items-center justify-center bg-background px-safe py-12 text-foreground"
+      id="main-content"
+    >
       <section className={cn(PANEL_CLASS_NAME, PANEL_SHADOW_CLASS_NAME)}>
         {/* Quiet, and deliberately so. This is a label saying which product the screen belongs to; the accent
             belongs to the state mark and the primary action, which are what the reader has to find. */}
-        <p className="text-center font-bold text-page-ink-muted text-xs tracking-[0.14em]">{eyebrow}</p>
+        <p className="text-center font-bold text-foreground-muted text-xs tracking-[0.14em]">{eyebrow}</p>
         {children}
       </section>
     </main>
@@ -52,11 +55,11 @@ export function FlowStatus({ body, hint, title }: { body: string; hint?: string;
     <div className="py-6 text-center" role="status">
       <div
         aria-hidden="true"
-        className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent motion-reduce:animate-none"
+        className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-brand/20 border-t-brand motion-reduce:animate-none"
       />
       <h1 className="mt-5 font-black text-2xl leading-snug">{title}</h1>
-      <p className="mt-3 break-prose text-page-ink-soft leading-7">{body}</p>
-      {hint ? <p className="mt-3 break-prose text-page-ink-muted text-sm leading-6">{hint}</p> : null}
+      <p className="mt-3 break-prose text-foreground-secondary leading-7">{body}</p>
+      {hint ? <p className="mt-3 break-prose text-foreground-muted text-sm leading-6">{hint}</p> : null}
     </div>
   )
 }
@@ -102,7 +105,7 @@ export function FlowMessage({ body, children, icon: Mark, takeFocus, title, tone
       >
         {title}
       </h1>
-      <p className="mt-3 break-prose text-page-ink-soft leading-7">{body}</p>
+      <p className="mt-3 break-prose text-foreground-secondary leading-7">{body}</p>
       {children}
     </div>
   )
@@ -118,11 +121,10 @@ export function FlowMessage({ body, children, icon: Mark, takeFocus, title, tone
 export type FlowActionEmphasis = 'primary' | 'secondary' | 'tertiary'
 
 const ACTION_CLASS_NAME: Record<FlowActionEmphasis, string> = {
-  primary:
-    'min-h-13 bg-page-accent-strong px-6 font-black text-white shadow-[0_20px_60px_var(--page-accent-glow)] hover:bg-page-accent-strong/92',
+  primary: 'min-h-13 bg-accent px-6 font-black text-white shadow-[0_20px_60px_var(--accent-glow)] hover:bg-accent/92',
   secondary:
-    'min-h-12 border border-page-border px-6 font-bold text-page-ink-soft hover:border-page-ink/24 hover:text-page-ink',
-  tertiary: 'min-h-11 px-4 font-bold text-page-ink-muted underline underline-offset-4 hover:text-page-ink',
+    'min-h-12 border border-border px-6 font-bold text-foreground-secondary hover:border-foreground/24 hover:text-foreground',
+  tertiary: 'min-h-11 px-4 font-bold text-foreground-muted underline underline-offset-4 hover:text-foreground',
 }
 
 export function flowActionClassName(emphasis: FlowActionEmphasis): string {

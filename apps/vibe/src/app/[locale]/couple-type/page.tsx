@@ -1,8 +1,8 @@
 import { isLocale } from '@sobok/domain/locale'
+import JsonLd from '@sobok/site-seo/json-ld'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { buildLocalizedMetadata } from '@/i18n/metadata'
-import JsonLd, { webApplicationGraph } from '@/lib/JsonLd'
+import { buildMetadata, webApplicationGraph } from '@/lib/seo'
 
 import { IntroView } from './_components/intro-view'
 import { getCoupleTypeContent } from './_lib/content'
@@ -16,10 +16,10 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/couple-t
 
   const content = await getCoupleTypeContent(locale)
 
-  return buildLocalizedMetadata({
+  return buildMetadata({
     description: content.metadata.description,
     locale,
-    pathname: '/couple-type',
+    path: '/couple-type',
     title: content.metadata.title,
   })
 }
@@ -42,7 +42,7 @@ export default async function CoupleTypePage({ params }: PageProps<'/[locale]/co
           path: 'couple-type',
         })}
       />
-      <main className="flex flex-1 flex-col bg-page-bg text-page-ink" id="main-content">
+      <main className="flex flex-1 flex-col bg-background text-foreground" id="main-content">
         <IntroView content={content} locale={locale} />
       </main>
     </>

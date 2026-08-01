@@ -6,12 +6,12 @@ import type {
   PATCHV1NotificationReadResponse,
 } from '@sobok/contracts'
 
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export async function deleteNotifications(body: DELETEV1NotificationBody) {
   const url = '/api/v1/notification'
 
-  const { data } = await fetchAPIData<DELETEV1NotificationResponse>(url, {
+  const { data } = await fetchApiData<DELETEV1NotificationResponse>(url, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -23,7 +23,7 @@ export async function deleteNotifications(body: DELETEV1NotificationBody) {
 export async function markAllNotificationsAsRead() {
   const url = '/api/v1/notification/read-all'
 
-  const { data } = await fetchAPIData<PATCHV1NotificationReadAllResponse>(url, {
+  const { data } = await fetchApiData<PATCHV1NotificationReadAllResponse>(url, {
     method: 'PATCH',
   })
 
@@ -33,7 +33,7 @@ export async function markAllNotificationsAsRead() {
 export async function markNotificationsAsRead(body: PATCHV1NotificationReadBody) {
   const url = '/api/v1/notification/read'
 
-  const { data } = await fetchAPIData<PATCHV1NotificationReadResponse>(url, {
+  const { data } = await fetchApiData<PATCHV1NotificationReadResponse>(url, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

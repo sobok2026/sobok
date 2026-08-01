@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server'
 
 import LinkPending from '@/components/LinkPending'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
-import SEOText from '@/components/SEOText'
+import SeoText from '@/components/SeoText'
 import { Link } from '@/i18n/navigation'
 import { getLocaleFromParams } from '@/i18n/server'
 
@@ -49,7 +49,7 @@ export default async function Home({ params }: PageProps<'/[locale]'>) {
         </Link>
         <CTAButton className={linkClassName} />
       </div>
-      <SEOText className="sr-only" />
+      <SeoText className="sr-only" />
     </main>
   )
 }

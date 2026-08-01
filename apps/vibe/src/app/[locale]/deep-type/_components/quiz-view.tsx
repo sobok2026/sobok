@@ -39,13 +39,13 @@ export function QuizView({ backLabel, banner, hint, onAnswer, onBack, progress, 
 
         {banner}
 
-        <div className="mt-6 rounded-3xl border border-page-border bg-page-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:rounded-4xl sm:p-8">
+        <div className="mt-6 rounded-3xl border border-border bg-surface p-6 shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:rounded-4xl sm:p-8">
           <h1 className="font-black text-xl leading-snug">{question.prompt}</h1>
           <div className="mt-7 grid gap-3">
             {question.options.map((option, index) => (
               <button
                 className={cn(
-                  'min-h-13 rounded-3xl border border-page-border bg-white p-4 text-left font-bold leading-6 transition-colors hover:border-page-accent/50 hover:bg-page-soft/50',
+                  'min-h-13 rounded-3xl border border-border bg-white p-4 text-left font-bold leading-6 transition-colors hover:border-brand/50 hover:bg-surface-2/50',
                   FOCUS_CLASS_NAME,
                 )}
                 key={option}
@@ -56,12 +56,12 @@ export function QuizView({ backLabel, banner, hint, onAnswer, onBack, progress, 
               </button>
             ))}
           </div>
-          {hint ? <p className="mt-5 text-page-ink-muted text-xs leading-5">{hint}</p> : null}
+          {hint ? <p className="mt-5 text-foreground-muted text-xs leading-5">{hint}</p> : null}
         </div>
 
         <button
           className={cn(
-            'mt-5 inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-bold text-page-ink-muted text-sm transition-colors enabled:hover:text-page-ink disabled:cursor-not-allowed disabled:opacity-40',
+            'mt-5 inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-bold text-foreground-muted text-sm transition-colors enabled:hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40',
             FOCUS_CLASS_NAME,
           )}
           disabled={!onBack}

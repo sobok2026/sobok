@@ -22,18 +22,18 @@ type IntroViewProps = {
 // Each chapter frames the context before its questions so the journey reads as distinct layers.
 export function IntroView({ body, cta, hint, notice, onNext, title }: IntroViewProps) {
   return (
-    <main className="flex flex-1 flex-col justify-center bg-page-bg px-safe py-10 text-page-ink">
+    <main className="flex flex-1 flex-col justify-center bg-background px-safe py-10 text-foreground">
       <div className="mx-auto w-full max-w-2xl py-4 text-center">
         {notice}
         <h1 className="font-black text-3xl leading-tight">{title}</h1>
-        <p className="mx-auto mt-5 text-page-ink-soft leading-8">{body}</p>
-        <p className="mx-auto mt-5 rounded-3xl bg-page-soft px-5 py-4 font-bold text-page-ink-soft text-sm leading-6">
+        <p className="mx-auto mt-5 text-foreground-secondary leading-8">{body}</p>
+        <p className="mx-auto mt-5 rounded-3xl bg-surface-2 px-5 py-4 font-bold text-foreground-secondary text-sm leading-6">
           {hint}
         </p>
 
         <button
           className={cn(
-            'mt-9 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-page-ink px-6 font-black text-sm text-white transition-colors hover:bg-page-ink/92 sm:w-auto',
+            'mt-9 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-foreground px-6 font-black text-sm text-white transition-colors hover:bg-foreground/92 sm:w-auto',
             FOCUS_CLASS_NAME,
           )}
           onClick={onNext}

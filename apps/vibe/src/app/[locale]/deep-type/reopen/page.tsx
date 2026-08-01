@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { DEEP_TYPE_REOPEN } from '@/content/deep-type-reopen'
-import { buildLocalizedMetadata } from '@/i18n/metadata'
+import { buildMetadata } from '@/lib/seo'
 
 import { getDeepTypeContent } from '../_lib/content'
 import { ReopenView } from './_components/reopen-view'
@@ -18,10 +18,10 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/deep-typ
   const copy = DEEP_TYPE_REOPEN[locale]
 
   return {
-    ...buildLocalizedMetadata({
+    ...buildMetadata({
       description: copy.metadata.description,
       locale,
-      pathname: '/deep-type/reopen',
+      path: '/deep-type/reopen',
       title: copy.metadata.title,
     }),
     robots: { follow: false, index: false },

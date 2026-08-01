@@ -4,13 +4,13 @@ import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 import { ProblemDetailsError } from '@/utils/fetch-response'
 
 export async function fetchPointsTurnstile() {
   try {
     const url = '/api/v1/points/turnstile'
-    const { data } = await fetchAPIData<GETV1PointTurnstileResponse>(url)
+    const { data } = await fetchApiData<GETV1PointTurnstileResponse>(url)
     return data
   } catch (error) {
     if (error instanceof ProblemDetailsError && (error.status === 401 || error.status === 403)) {

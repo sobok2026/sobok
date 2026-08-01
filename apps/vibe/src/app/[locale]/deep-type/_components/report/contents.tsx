@@ -41,18 +41,20 @@ export function ReportContents({ content, parts }: { content: DeepTypeContent; p
                     // `-mx-2 px-2` bleeds that box into the card's own padding so the highlight has room
                     // around the text it covers while the numerals stay on the part label's left edge.
                     className={cn(
-                      '-mx-2 flex items-baseline gap-3 rounded-2xl p-2 transition-colors hover:bg-page-soft/70',
+                      '-mx-2 flex items-baseline gap-3 rounded-2xl p-2 transition-colors hover:bg-surface-2/70',
                       FOCUS_CLASS_NAME,
                     )}
                     href={`#${sectionAnchorId(section.key)}`}
                   >
                     <span
                       aria-hidden="true"
-                      className="w-6 shrink-0 font-black text-page-ink-muted text-sm tabular-nums"
+                      className="w-6 shrink-0 font-black text-foreground-muted text-sm tabular-nums"
                     >
                       {String(number).padStart(2, '0')}
                     </span>
-                    <span className="min-w-0 font-bold text-[0.9375rem] text-page-ink leading-7">{section.title}</span>
+                    <span className="min-w-0 font-bold text-[0.9375rem] text-foreground leading-7">
+                      {section.title}
+                    </span>
                   </a>
                 </li>
               ))}
@@ -94,10 +96,10 @@ function PartLabel({
 }) {
   return (
     <Tag className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-      <span className="rounded-full bg-page-accent/12 px-2.5 py-0.5 font-black text-page-accent-strong text-xs">
+      <span className="rounded-full bg-brand/12 px-2.5 py-0.5 font-black text-accent text-xs">
         {template.replace('{number}', String(number))}
       </span>
-      <span className="font-black text-lg text-page-ink">{title}</span>
+      <span className="font-black text-lg text-foreground">{title}</span>
     </Tag>
   )
 }

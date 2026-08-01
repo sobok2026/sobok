@@ -19,7 +19,7 @@ import {
   TranslatedMessage,
 } from '@/lib/toast'
 import { UserVisibleError } from '@/utils/api-request'
-import { HTTPResponseError, ProblemDetailsError } from '@/utils/fetch-response'
+import { HttpResponseError, ProblemDetailsError } from '@/utils/fetch-response'
 
 import { handleUnauthorizedError } from './auth-state'
 
@@ -32,7 +32,7 @@ export function shouldRetryError(error: unknown, failureCount: number, maxRetrie
     return false
   }
 
-  if (error instanceof ProblemDetailsError || error instanceof HTTPResponseError) {
+  if (error instanceof ProblemDetailsError || error instanceof HttpResponseError) {
     return error.isRetryable
   }
 
@@ -149,7 +149,7 @@ function makeQueryClient() {
         gcTime: ms('20 minutes'),
         retry: (failureCount, error) => shouldRetryError(error, failureCount),
         retryDelay: (attemptIndex, error) => {
-          if (error instanceof ProblemDetailsError || error instanceof HTTPResponseError) {
+          if (error instanceof ProblemDetailsError || error instanceof HttpResponseError) {
             const retryAfterSeconds = error.retryAfterSeconds
             if (retryAfterSeconds) {
               return retryAfterSeconds * ms('1s')

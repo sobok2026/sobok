@@ -1,13 +1,13 @@
 import type { GETV1ChatThreadsResponse } from '@sobok/contracts'
 import { useQuery } from '@tanstack/react-query'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export default function useChatThreadsQuery() {
   return useQuery({
     queryKey: QueryKeys.chatThreads,
     queryFn: async () => {
-      const { data } = await fetchAPIData<GETV1ChatThreadsResponse>('/api/v1/chat/threads')
+      const { data } = await fetchApiData<GETV1ChatThreadsResponse>('/api/v1/chat/threads')
       return data
     },
     // Realtime chat list: refetch on remount/focus. ChatRealtime also invalidates this on

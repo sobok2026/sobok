@@ -9,7 +9,7 @@ import { toast } from 'sonner'
 import PasswordInput from '@/components/PasswordInput'
 import { useRouter } from '@/i18n/navigation'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 import { ProblemDetailsError } from '@/utils/fetch-response'
 
 export default function BBatonUnlinkSection() {
@@ -19,7 +19,7 @@ export default function BBatonUnlinkSection() {
 
   const unlinkMutation = useMutation({
     mutationFn: async ({ password }: { password: string }) => {
-      await fetchAPIData<undefined>('/api/v1/me/adult-verification', {
+      await fetchApiData<undefined>('/api/v1/me/adult-verification', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),

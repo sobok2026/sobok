@@ -11,7 +11,7 @@ export interface Bindings {
   // Static Next export (./out), served for every non-/api path via env.ASSETS.fetch(request).
   ASSETS: Fetcher
   // Two Hyperdrive configs over the SAME isolated Supabase Postgres (Seoul), differing only in caching. Which
-  // one a handler passes to `openDB` IS the caching decision — there is no fresh-vs-cached opener to pick, and
+  // one a handler passes to `openDb` IS the caching decision — there is no fresh-vs-cached opener to pick, and
   // there was never a real one: the two used to be separate functions with identical bodies, so the name
   // promised a guarantee that only the argument ever provided.
   //

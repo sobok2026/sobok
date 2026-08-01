@@ -6,7 +6,7 @@
   "exports": {
     "./browser": "./src/browser.ts",
     "./ga-identity": "./src/ga-identity.ts",
-    "./gtm-loader": "./src/GTMLoader.tsx"
+    "./gtm-loader": "./src/GtmLoader.tsx"
   },
   "scripts": {
     "type": "tsc --noEmit"

@@ -1,4 +1,4 @@
-import { openDB, withDB } from '@sobok/edge/db/client'
+import { openDb, withDb } from '@sobok/edge/db/client'
 import { Hono } from 'hono'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
@@ -15,7 +15,7 @@ const route = new Hono<AppEnv>()
 route.post('/', requireAccessToken, async (c) => {
   const portOneCreds = await creds(c)
 
-  const outcome = await withDB(openDB(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+  const outcome = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     requestWithdrawal(db, portOneCreds, c.get('accessToken')),
   )
 

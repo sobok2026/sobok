@@ -37,10 +37,10 @@ export function DynamicReportView({
 
   if (state.phase === 'generating') {
     return (
-      <main className="flex flex-1 flex-col items-center justify-center bg-page-bg px-safe py-16 text-center text-page-ink">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-page-accent/20 border-t-page-accent motion-reduce:animate-none" />
+      <main className="flex flex-1 flex-col items-center justify-center bg-background px-safe py-16 text-center text-foreground">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-brand/20 border-t-brand motion-reduce:animate-none" />
         <h1 className="mt-6 font-black text-2xl">{content.paywall.generatingTitle}</h1>
-        <p className="mx-auto mt-3 max-w-sm text-page-ink-soft leading-7">{content.paywall.generatingBody}</p>
+        <p className="mx-auto mt-3 max-w-sm text-foreground-secondary leading-7">{content.paywall.generatingBody}</p>
       </main>
     )
   }
@@ -90,14 +90,16 @@ function FailedReport({ accessToken, content, fallbackProfile, locale, onRestart
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="grid gap-2 bg-page-accent/10 px-safe py-3 text-center">
-        <p className="font-bold text-page-accent-strong text-sm">{content.paywall.fallbackNote}</p>
-        {refund === 'done' ? <p className="text-page-ink-soft text-sm">{content.paywall.refundDone}</p> : null}
-        {refund === 'failed' ? <p className="text-page-ink-soft text-sm">{content.paywall.refundFailed}</p> : null}
+      <div className="grid gap-2 bg-brand/10 px-safe py-3 text-center">
+        <p className="font-bold text-accent text-sm">{content.paywall.fallbackNote}</p>
+        {refund === 'done' ? <p className="text-foreground-secondary text-sm">{content.paywall.refundDone}</p> : null}
+        {refund === 'failed' ? (
+          <p className="text-foreground-secondary text-sm">{content.paywall.refundFailed}</p>
+        ) : null}
         {refund === 'idle' || refund === 'pending' ? (
           <button
             className={cn(
-              'mx-auto inline-flex min-h-10 items-center rounded-full border border-page-accent/50 px-4 font-bold text-page-accent-strong text-sm transition-colors hover:bg-page-accent/10 disabled:opacity-60',
+              'mx-auto inline-flex min-h-10 items-center rounded-full border border-brand/50 px-4 font-bold text-accent text-sm transition-colors hover:bg-brand/10 disabled:opacity-60',
               FOCUS_CLASS_NAME,
             )}
             disabled={refund === 'pending'}

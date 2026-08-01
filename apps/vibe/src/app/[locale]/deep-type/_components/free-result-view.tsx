@@ -98,31 +98,31 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
   }
 
   return (
-    <main className="flex flex-1 flex-col bg-page-bg px-safe py-10 text-page-ink sm:py-14" id="main-content">
+    <main className="flex flex-1 flex-col bg-background px-safe py-10 text-foreground sm:py-14" id="main-content">
       <div className="mx-auto grid w-full max-w-xl gap-4">
         <WorldJobHero content={content} gem={profile.gem.code} inner={profile.inner.code} />
 
         {onUnlock ? (
           <section
-            className="rounded-3xl border border-page-accent/40 bg-page-accent/8 p-6 text-center sm:rounded-4xl sm:p-7"
+            className="rounded-3xl border border-brand/40 bg-brand/8 p-6 text-center sm:rounded-4xl sm:p-7"
             ref={promotionRef}
           >
-            <p className="font-black text-lg text-page-accent-strong">{content.paywall.title}</p>
-            <p className="mx-auto mt-2 max-w-md text-page-ink-soft text-sm leading-7">{content.paywall.body}</p>
+            <p className="font-black text-lg text-accent">{content.paywall.title}</p>
+            <p className="mx-auto mt-2 max-w-md text-foreground-secondary text-sm leading-7">{content.paywall.body}</p>
             <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-              <span className="text-page-ink-muted text-sm line-through">
+              <span className="text-foreground-muted text-sm line-through">
                 {formatPrice(locale, offer.currency, offer.listAmount)}
               </span>
-              <span className="font-black text-page-accent-strong text-xl">
+              <span className="font-black text-accent text-xl">
                 {formatPrice(locale, offer.currency, offer.amount)}
               </span>
-              <span className="rounded-full bg-page-accent/12 px-2.5 py-1 font-black text-page-accent-strong text-xs">
+              <span className="rounded-full bg-brand/12 px-2.5 py-1 font-black text-accent text-xs">
                 {content.paywall.discountTemplate.replace('{discount}', String(offer.discountPercent))}
               </span>
             </div>
             <button
               className={cn(
-                'mt-5 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-page-accent-strong px-6 font-black text-sm text-white shadow-[0_20px_60px_var(--page-accent-glow)] transition-colors hover:bg-page-accent-strong/92',
+                'mt-5 inline-flex min-h-13 w-full items-center justify-center rounded-full bg-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_var(--accent-glow)] transition-colors hover:bg-accent/92',
                 FOCUS_CLASS_NAME,
               )}
               onClick={unlock}
@@ -133,13 +133,13 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
           </section>
         ) : null}
 
-        <div className="rounded-3xl border border-page-border bg-page-soft/60 p-4">
-          <p className="text-page-ink-soft text-xs leading-6">{report.clarityNote}</p>
+        <div className="rounded-3xl border border-border bg-surface-2/60 p-4">
+          <p className="text-foreground-secondary text-xs leading-6">{report.clarityNote}</p>
         </div>
 
         <section className={CARD_CLASS_NAME}>
           <h2 className="font-black text-lg">{TYPE_HEADING}</h2>
-          <p className="mt-1 font-black text-2xl text-page-accent-strong tracking-wide">{profile.inner.code}</p>
+          <p className="mt-1 font-black text-2xl text-accent tracking-wide">{profile.inner.code}</p>
           <div className="mt-4">
             <InnerArtwork innerCode={profile.inner.code} />
           </div>
@@ -148,7 +148,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
 
         <section className={CARD_CLASS_NAME}>
           <h2 className="font-black text-lg">{CORE_HEADING}</h2>
-          <p className="mt-1 font-black text-2xl text-page-accent-strong tracking-wide">
+          <p className="mt-1 font-black text-2xl text-accent tracking-wide">
             {gemName} · {profile.gem.code}
           </p>
           <div className="mt-4">
@@ -176,18 +176,18 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
 
         <section className={CARD_CLASS_NAME}>
           <h2 className="font-black text-lg">{DRAIN_HEADING}</h2>
-          <p className="mt-2 font-bold text-page-accent-strong text-sm">{report.drainSignature.spread.label}</p>
-          <p className="mt-1 text-page-ink-soft text-sm leading-6">{report.drainSignature.spread.detail}</p>
+          <p className="mt-2 font-bold text-accent text-sm">{report.drainSignature.spread.label}</p>
+          <p className="mt-1 text-foreground-secondary text-sm leading-6">{report.drainSignature.spread.detail}</p>
           <ul className={cn('mt-4', GROUPED_LIST_CLASS_NAME, 'sm:grid sm:gap-3')}>
             {report.drainSignature.leaders.map((facet) => (
               <li className={GROUPED_ROW_CLASS_NAME} key={facet.id}>
                 <p className="font-black text-sm">{facet.label}</p>
-                <p className="mt-1 break-prose text-page-ink-soft text-sm leading-6">{facet.action}</p>
+                <p className="mt-1 break-prose text-foreground-secondary text-sm leading-6">{facet.action}</p>
               </li>
             ))}
           </ul>
-          <p className="mt-4 text-page-ink-muted text-xs leading-5">{report.drainSignature.meaning}</p>
-          <p className="mt-1 text-page-ink-muted text-xs leading-5">{report.drainSignature.narrowNote}</p>
+          <p className="mt-4 text-foreground-muted text-xs leading-5">{report.drainSignature.meaning}</p>
+          <p className="mt-1 text-foreground-muted text-xs leading-5">{report.drainSignature.narrowNote}</p>
         </section>
 
         <StrengthCards cards={report.strengthCards} title={content.ui.strengthCardsTitle} />
@@ -196,10 +196,10 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
 
         <section className={CARD_CLASS_NAME}>
           <h2 className="font-black text-lg">{content.ui.methodologyNoteTitle}</h2>
-          <p className="mt-2 text-page-ink-soft text-sm leading-7">{content.ui.methodologyNoteBody}</p>
+          <p className="mt-2 text-foreground-secondary text-sm leading-7">{content.ui.methodologyNoteBody}</p>
           <Link
             className={cn(
-              'mt-4 inline-flex min-h-11 items-center font-bold text-page-accent-strong text-sm underline underline-offset-4',
+              'mt-4 inline-flex min-h-11 items-center font-bold text-accent text-sm underline underline-offset-4',
               FOCUS_CLASS_NAME,
             )}
             href={`/${locale}/deep-type/methodology`}
@@ -211,7 +211,7 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
         <div className="mt-2 grid gap-3">
           <button
             className={cn(
-              'inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-page-accent-strong px-6 font-black text-sm text-white shadow-[0_20px_60px_var(--page-accent-glow)] transition-colors hover:bg-page-accent-strong/92',
+              'inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_var(--accent-glow)] transition-colors hover:bg-accent/92',
               FOCUS_CLASS_NAME,
             )}
             onClick={() =>
@@ -226,10 +226,10 @@ export function FreeResultView({ content, locale, onRestart, onUnlock, profile }
             <Share aria-hidden="true" className="h-4 w-4" stroke={1.8} />
             {content.ui.reportShareCta}
           </button>
-          {shareFeedback ? <p className="text-center text-page-ink-muted text-sm">{shareFeedback}</p> : null}
+          {shareFeedback ? <p className="text-center text-foreground-muted text-sm">{shareFeedback}</p> : null}
           <button
             className={cn(
-              'inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-page-border bg-white px-6 font-bold text-page-ink-soft text-sm transition-colors hover:text-page-ink',
+              'inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-border bg-white px-6 font-bold text-foreground-secondary text-sm transition-colors hover:text-foreground',
               FOCUS_CLASS_NAME,
             )}
             onClick={onRestart}
@@ -255,12 +255,12 @@ function AxisBands({ bands, content }: { bands: readonly FreeAxisBand[]; content
           <li key={axis.id}>
             <div className="flex items-start justify-between gap-4">
               <p className="font-black text-sm">{copy.name}</p>
-              <span className="shrink-0 rounded-full bg-page-soft px-3 py-1 font-black text-page-accent-strong text-xs">
+              <span className="shrink-0 rounded-full bg-surface-2 px-3 py-1 font-black text-accent text-xs">
                 {axis.leading} · {pole.label}
               </span>
             </div>
-            <p className="mt-2 font-bold text-page-ink-soft text-xs leading-5">{axis.band.label}</p>
-            <p className="mt-1 break-prose text-page-ink-muted text-xs leading-5">{axis.band.detail}</p>
+            <p className="mt-2 font-bold text-foreground-secondary text-xs leading-5">{axis.band.label}</p>
+            <p className="mt-1 break-prose text-foreground-muted text-xs leading-5">{axis.band.detail}</p>
           </li>
         )
       })}
@@ -289,21 +289,21 @@ function StrengthCards({ cards, title }: { cards: FreeStrengthCards; title: stri
       <ul className="mt-4 grid gap-3">
         {ordered.map((card) => (
           <li
-            className="flex flex-col overflow-hidden rounded-3xl border border-page-border bg-white sm:flex-row sm:gap-4"
+            className="flex flex-col overflow-hidden rounded-3xl border border-border bg-white sm:flex-row sm:gap-4"
             key={card.slug}
           >
             <AbilityArtwork slug={card.slug} />
             <div className="min-w-0 flex-1 p-4 sm:py-4 sm:pr-4 sm:pl-0">
               <div className="flex items-start justify-between gap-3">
                 <p className="font-black text-sm leading-5">{card.copy.name}</p>
-                <span className="inline-flex h-5 min-w-9 shrink-0 items-center justify-center rounded-full bg-page-soft px-2 font-bold text-page-ink-muted text-xs">
+                <span className="inline-flex h-5 min-w-9 shrink-0 items-center justify-center rounded-full bg-surface-2 px-2 font-bold text-foreground-muted text-xs">
                   {card.poles.join('')}
                 </span>
               </div>
-              <p className="mt-2 break-prose text-page-ink-soft text-sm leading-6">{card.copy.core}</p>
-              <p className="mt-2 break-prose text-page-ink-muted text-xs leading-5">{card.copy.shine}</p>
-              <p className="mt-2 break-prose text-page-ink-muted text-xs leading-5">{card.copy.watch}</p>
-              <p className="mt-2 text-page-ink-muted text-xs leading-5">{card.band.label}</p>
+              <p className="mt-2 break-prose text-foreground-secondary text-sm leading-6">{card.copy.core}</p>
+              <p className="mt-2 break-prose text-foreground-muted text-xs leading-5">{card.copy.shine}</p>
+              <p className="mt-2 break-prose text-foreground-muted text-xs leading-5">{card.copy.watch}</p>
+              <p className="mt-2 text-foreground-muted text-xs leading-5">{card.band.label}</p>
             </div>
           </li>
         ))}
@@ -325,22 +325,22 @@ function ReadingChapters({ reading }: { reading: FreeReading }) {
       {reading.chapters.map((chapter) => (
         <section className={CARD_CLASS_NAME} key={chapter.id}>
           <h2 className="font-black text-lg">{chapter.title}</h2>
-          <p className="mt-1.5 text-page-ink-muted text-sm leading-6">{chapter.intro}</p>
+          <p className="mt-1.5 text-foreground-muted text-sm leading-6">{chapter.intro}</p>
           <div className="mt-5 grid gap-5">
             {chapter.paragraphs.map((paragraph) => (
               <div key={paragraph.text}>
                 {paragraph.kicker ? (
-                  <p className="font-black text-page-accent-strong text-xs tracking-wide">{paragraph.kicker}</p>
+                  <p className="font-black text-accent text-xs tracking-wide">{paragraph.kicker}</p>
                 ) : null}
-                <p className="mt-1.5 break-prose text-page-ink-soft leading-8">{paragraph.text}</p>
+                <p className="mt-1.5 break-prose text-foreground-secondary leading-8">{paragraph.text}</p>
                 {paragraph.note ? (
-                  <p className="mt-2 break-prose text-page-ink-muted text-xs leading-5">{paragraph.note}</p>
+                  <p className="mt-2 break-prose text-foreground-muted text-xs leading-5">{paragraph.note}</p>
                 ) : null}
               </div>
             ))}
           </div>
           {chapter.id === 'closing' ? (
-            <p className="mt-5 break-prose text-page-ink-muted text-xs leading-5">{reading.closing}</p>
+            <p className="mt-5 break-prose text-foreground-muted text-xs leading-5">{reading.closing}</p>
           ) : null}
         </section>
       ))}
@@ -351,9 +351,9 @@ function ReadingChapters({ reading }: { reading: FreeReading }) {
 function Facet({ label, name, value }: { label: string; name: string; value: string }) {
   return (
     <div className={GROUPED_ROW_CLASS_NAME}>
-      <dt className="text-page-ink-muted text-xs">{label}</dt>
+      <dt className="text-foreground-muted text-xs">{label}</dt>
       <dd className="mt-1 font-black text-sm">{name}</dd>
-      <dd className="mt-1 break-prose text-page-ink-soft text-xs leading-5">{value}</dd>
+      <dd className="mt-1 break-prose text-foreground-secondary text-xs leading-5">{value}</dd>
     </div>
   )
 }

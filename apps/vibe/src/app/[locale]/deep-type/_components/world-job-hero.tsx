@@ -24,9 +24,9 @@ export function WorldJobHero({ content, gem, inner }: WorldJobHeroProps) {
   const worldJob = resolveWorldJob(inner, gem)
 
   return (
-    <header className="rounded-3xl border border-page-border bg-page-surface p-6 text-center shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:rounded-4xl sm:p-8">
+    <header className="rounded-3xl border border-border bg-surface p-6 text-center shadow-[0_24px_90px_rgba(36,22,23,0.08)] sm:rounded-4xl sm:p-8">
       <h1 className="font-black text-3xl leading-tight sm:text-4xl">{worldJob.name}</h1>
-      <p className="mx-auto mt-3 max-w-md text-page-ink-soft leading-8">{worldJob.family.method}</p>
+      <p className="mx-auto mt-3 max-w-md text-foreground-secondary leading-8">{worldJob.family.method}</p>
 
       <div className="mt-6 grid grid-cols-2 gap-2">
         <CodeChip label={content.ui.layerInner} value={inner} />
@@ -38,11 +38,9 @@ export function WorldJobHero({ content, gem, inner }: WorldJobHeroProps) {
 
 function CodeChip({ accent, label, value }: { accent?: boolean; label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-page-border bg-white p-3 text-center">
-      <p className="text-page-ink-muted text-xs">{label}</p>
-      <p className={cn('mt-1 font-black text-sm tracking-wide', accent ? 'text-page-accent-strong' : 'text-page-ink')}>
-        {value}
-      </p>
+    <div className="rounded-2xl border border-border bg-white p-3 text-center">
+      <p className="text-foreground-muted text-xs">{label}</p>
+      <p className={cn('mt-1 font-black text-sm tracking-wide', accent ? 'text-accent' : 'text-foreground')}>{value}</p>
     </div>
   )
 }

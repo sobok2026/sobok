@@ -80,7 +80,7 @@ export function ReportView({
   const parts = splitIntoParts(sections)
 
   return (
-    <main className="flex flex-1 flex-col bg-page-bg px-safe py-10 text-page-ink sm:py-14" id="main-content">
+    <main className="flex flex-1 flex-col bg-background px-safe py-10 text-foreground sm:py-14" id="main-content">
       {/* `data-print-flow` marks the column that has to drop to block flow on paper — see globals.css. Chrome
           cannot fragment a grid container across sheets without painting the next card over the last one. */}
       <div className="mx-auto grid w-full max-w-xl gap-4" data-print-flow>
@@ -95,7 +95,7 @@ export function ReportView({
         {/* The note goes away on its own when the narration lands and twelve sections quietly grow a paragraph
             each. Announced, because that is a change to the document nobody watching the screen has to see. */}
         {narrativePending ? (
-          <p className={cn('rounded-3xl bg-page-soft px-5 py-4', REPORT_TYPE.meta)} role="status">
+          <p className={cn('rounded-3xl bg-surface-2 px-5 py-4', REPORT_TYPE.meta)} role="status">
             {content.paywall.narrativePendingNote}
           </p>
         ) : null}
@@ -118,11 +118,11 @@ export function ReportView({
         ))}
 
         <section className={cn(CARD_CLASS_NAME, 'mt-2')}>
-          <h2 className="font-black text-lg text-page-ink">{content.ui.methodologyNoteTitle}</h2>
+          <h2 className="font-black text-lg text-foreground">{content.ui.methodologyNoteTitle}</h2>
           <p className={cn('mt-2', REPORT_TYPE.copy)}>{content.ui.methodologyNoteBody}</p>
           <Link
             className={cn(
-              'mt-4 inline-flex min-h-11 items-center font-bold text-page-accent-strong text-sm underline underline-offset-4 print:hidden',
+              'mt-4 inline-flex min-h-11 items-center font-bold text-accent text-sm underline underline-offset-4 print:hidden',
               FOCUS_CLASS_NAME,
             )}
             href={`/${locale}/deep-type/methodology`}
@@ -136,7 +136,7 @@ export function ReportView({
         <div className="mt-2 grid gap-3 print:hidden">
           <button
             className={cn(
-              'inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-page-accent-strong px-6 font-black text-sm text-white shadow-[0_20px_60px_var(--page-accent-glow)] transition-colors hover:bg-page-accent-strong/92',
+              'inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-accent px-6 font-black text-sm text-white shadow-[0_20px_60px_var(--accent-glow)] transition-colors hover:bg-accent/92',
               FOCUS_CLASS_NAME,
             )}
             onClick={() =>
@@ -151,12 +151,12 @@ export function ReportView({
             <Share aria-hidden="true" className="h-4 w-4" stroke={1.8} />
             {content.ui.reportShareCta}
           </button>
-          {shareFeedback ? <p className="text-center text-page-ink-muted text-sm">{shareFeedback}</p> : null}
+          {shareFeedback ? <p className="text-center text-foreground-muted text-sm">{shareFeedback}</p> : null}
           {/* The browser's own print dialogue is also its 'save as PDF', so one control covers both and there
               is no second rendering of the document to keep in step with this one. */}
           <button
             className={cn(
-              'inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-page-border bg-white px-6 font-bold text-page-ink-soft text-sm transition-colors hover:text-page-ink',
+              'inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-border bg-white px-6 font-bold text-foreground-secondary text-sm transition-colors hover:text-foreground',
               FOCUS_CLASS_NAME,
             )}
             onClick={() => window.print()}
@@ -167,7 +167,7 @@ export function ReportView({
           </button>
           <button
             className={cn(
-              'inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-6 font-bold text-page-ink-muted text-sm transition-colors hover:text-page-ink',
+              'inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-6 font-bold text-foreground-muted text-sm transition-colors hover:text-foreground',
               FOCUS_CLASS_NAME,
             )}
             onClick={onRestart}

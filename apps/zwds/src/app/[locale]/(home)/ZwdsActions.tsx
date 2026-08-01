@@ -7,7 +7,7 @@ import { pickLabel } from '@/chart/labels'
 import type { ZwdsChart } from '@/chart/types'
 import { ORIGIN, SITE_NAME } from '@/constants'
 import type { StoredBirth } from '@/lib/birth-storage'
-import { buildShareURL, shareLink } from '@/lib/share'
+import { buildShareUrl, shareLink } from '@/lib/share'
 
 import { createChartShareCard } from './share-card'
 
@@ -49,7 +49,7 @@ export default function ZwdsActions({ birth, chart, shared }: Props) {
     const method = await shareLink({
       title: t('meta.title'),
       text: t('share.text'),
-      url: buildShareURL(locale, birth),
+      url: buildShareUrl(locale, birth),
     })
 
     if (method === 'clipboard') {

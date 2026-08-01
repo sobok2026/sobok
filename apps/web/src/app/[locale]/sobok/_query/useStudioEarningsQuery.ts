@@ -1,14 +1,14 @@
 import type { GETV1ChatStudioEarningsResponse } from '@sobok/contracts'
 import { useQuery } from '@tanstack/react-query'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export default function useStudioEarningsQuery() {
   return useQuery({
     queryKey: QueryKeys.chatStudioEarnings,
     queryFn: async () => {
       const url = '/api/v1/chat/studio/earnings'
-      const { data } = await fetchAPIData<GETV1ChatStudioEarningsResponse>(url)
+      const { data } = await fetchApiData<GETV1ChatStudioEarningsResponse>(url)
       return data
     },
     staleTime: 0,

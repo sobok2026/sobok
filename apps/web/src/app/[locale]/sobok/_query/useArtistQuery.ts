@@ -1,13 +1,13 @@
 import type { GETV1ChatArtistResponse } from '@sobok/contracts'
 import { useQuery } from '@tanstack/react-query'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export default function useArtistQuery(handle: string) {
   return useQuery({
     queryKey: QueryKeys.chatArtist(handle),
     queryFn: async () => {
-      const { data } = await fetchAPIData<GETV1ChatArtistResponse>(`/api/v1/chat/artist/${handle}`)
+      const { data } = await fetchApiData<GETV1ChatArtistResponse>(`/api/v1/chat/artist/${handle}`)
       return data
     },
     enabled: Boolean(handle),

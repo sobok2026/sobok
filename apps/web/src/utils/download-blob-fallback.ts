@@ -38,11 +38,11 @@ export async function createBlobFallbackZipWriter({ filename, options }: Options
 }
 
 function downloadBlob(blob: Blob, filename: string) {
-  const blobURL = URL.createObjectURL(blob)
+  const blobUrl = URL.createObjectURL(blob)
   const link = document.createElement('a')
-  link.href = blobURL
+  link.href = blobUrl
   link.download = filename
   link.click()
 
-  window.setTimeout(() => URL.revokeObjectURL(blobURL), OBJECT_URL_REVOKE_DELAY_MS)
+  window.setTimeout(() => URL.revokeObjectURL(blobUrl), OBJECT_URL_REVOKE_DELAY_MS)
 }

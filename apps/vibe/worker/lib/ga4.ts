@@ -17,12 +17,12 @@ const ENDPOINT = 'https://www.google-analytics.com/mp/collect'
 // that falls outside every report the revenue is compared against.
 const MAX_BACKDATE_MS = 72 * 60 * 60 * 1000
 
-export interface GA4Credentials {
+export interface Ga4Credentials {
   apiSecret: string
   measurementId: string
 }
 
-export interface GA4Item {
+export interface Ga4Item {
   discount?: number
   item_category?: string
   item_id: string
@@ -31,10 +31,10 @@ export interface GA4Item {
   quantity: number
 }
 
-export interface GA4Purchase {
+export interface Ga4Purchase {
   clientId: string
   currency: string
-  items: readonly GA4Item[]
+  items: readonly Ga4Item[]
   occurredAt: Date
   sessionId: string | null
   transactionId: string
@@ -43,7 +43,7 @@ export interface GA4Purchase {
 
 // Returns whether GA4 accepted the hit. Never throws: a measurement failure must not roll back a payment that
 // the PG has already settled.
-export async function sendGA4Purchase(creds: GA4Credentials, purchase: GA4Purchase): Promise<boolean> {
+export async function sendGa4Purchase(creds: Ga4Credentials, purchase: Ga4Purchase): Promise<boolean> {
   const backdated = Date.now() - purchase.occurredAt.getTime()
 
   if (backdated > MAX_BACKDATE_MS) {

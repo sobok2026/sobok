@@ -45,7 +45,7 @@ export default function NotificationCard({
   const t = useTranslations('Community.notification')
   const parsedData = notification.data ? (JSON.parse(notification.data) as NotificationData) : null
 
-  const mangaViewerURL = parsedData?.url
+  const mangaViewerUrl = parsedData?.url
   const isUnread = !notification.read
   const [hasBeenViewed, setHasBeenViewed] = useState(false)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -83,7 +83,7 @@ export default function NotificationCard({
       return
     }
 
-    if (!mangaViewerURL) {
+    if (!mangaViewerUrl) {
       e.preventDefault()
       return
     }
@@ -127,9 +127,9 @@ export default function NotificationCard({
         'group relative rounded-xl border transition flex gap-3 p-3 sm:gap-4 sm:p-4 overflow-hidden',
         'hover:border-border-strong hover:bg-surface/60 aria-selected:border-brand aria-selected:bg-brand/10',
         isUnread ? 'border-border-2 bg-surface/50' : 'border-border bg-surface/20',
-        mangaViewerURL && !selectionMode ? 'cursor-pointer' : '',
+        mangaViewerUrl && !selectionMode ? 'cursor-pointer' : '',
       )}
-      href={mangaViewerURL ?? ''}
+      href={mangaViewerUrl ?? ''}
       onClick={handleClick}
       prefetch={false}
       ref={cardRef}
@@ -182,7 +182,7 @@ export default function NotificationCard({
             className={twMerge(
               'font-medium line-clamp-1 transition',
               isUnread ? 'text-foreground' : 'text-foreground-secondary',
-              mangaViewerURL ? 'group-hover:text-brand' : '',
+              mangaViewerUrl ? 'group-hover:text-brand' : '',
             )}
           >
             {notification.title}

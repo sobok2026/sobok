@@ -1,7 +1,7 @@
 import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
-import { buildMetadata } from '@/lib/metadata'
+import { buildMetadata } from '@/lib/seo'
 import TomorrowFlow from './TomorrowFlow'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/tomorrow'>): Promise<Metadata> {

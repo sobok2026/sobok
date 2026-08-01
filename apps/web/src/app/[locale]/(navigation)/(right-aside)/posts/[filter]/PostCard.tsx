@@ -28,7 +28,7 @@ export default function PostCard({ post }: Props) {
   const author = post.author
   const authorName = author?.name
   const content = post.content ?? ''
-  const hasInternalURL = checkInternalURL(content)
+  const hasInternalUrl = checkInternalUrl(content)
   const isReply = post.parentPostId !== null
 
   const socialStats = [
@@ -59,7 +59,7 @@ export default function PostCard({ post }: Props) {
   return (
     <article className="relative w-full rounded-2xl border-2 bg-surface transition hover:bg-surface-2/70 hover:border-border-2/70">
       <div className="flex min-w-0 flex-col">
-        {hasInternalURL ? (
+        {hasInternalUrl ? (
           <div className="p-3">
             <p className="min-w-0 whitespace-pre-wrap break-all text-sm leading-relaxed line-clamp-4 text-foreground">
               {isReply && <ReplyMarker label={postT('replies')} />}
@@ -134,9 +134,9 @@ export function PostSkeleton({ showMangaCover }: { showMangaCover?: boolean }) {
   }
 }
 
-function checkInternalURL(text: string): boolean {
+function checkInternalUrl(text: string): boolean {
   for (const match of text.matchAll(urlMatchRegex)) {
-    if (safeParseURL(match[0])?.hostname.endsWith('sobok.cc')) {
+    if (safeParseUrl(match[0])?.hostname.endsWith('sobok.cc')) {
       return true
     }
   }
@@ -163,7 +163,7 @@ function renderTextWithLinks(text: string) {
     }
 
     const { url, trailing } = splitTrailingPunctuation(raw)
-    nodes.push(renderURL(url, `url-${index}-${matchCount}`))
+    nodes.push(renderUrl(url, `url-${index}-${matchCount}`))
 
     if (trailing) {
       nodes.push(trailing)
@@ -180,16 +180,16 @@ function renderTextWithLinks(text: string) {
   return nodes
 }
 
-function renderURL(url: string, key: string) {
-  const parsedURL = safeParseURL(url)
+function renderUrl(url: string, key: string) {
+  const parsedUrl = safeParseUrl(url)
 
-  if (!parsedURL) {
+  if (!parsedUrl) {
     return url
   }
 
-  if (parsedURL.hostname.endsWith('sobok.cc')) {
-    const postId = parsePostIdPathname(parsedURL.pathname)
-    const href = postId ? getPostDetailHref(postId) : parsedURL
+  if (parsedUrl.hostname.endsWith('sobok.cc')) {
+    const postId = parsePostIdPathname(parsedUrl.pathname)
+    const href = postId ? getPostDetailHref(postId) : parsedUrl
 
     return (
       <Link
@@ -199,8 +199,8 @@ function renderURL(url: string, key: string) {
         prefetch={false}
         title={url}
       >
-        {parsedURL.pathname}
-        {decodeURIComponent(parsedURL.search)}
+        {parsedUrl.pathname}
+        {decodeURIComponent(parsedUrl.search)}
       </Link>
     )
   }
@@ -224,7 +224,7 @@ function ReplyMarker({ label }: { label: string }) {
   )
 }
 
-function safeParseURL(url: string): URL | null {
+function safeParseUrl(url: string): URL | null {
   try {
     return new URL(url)
   } catch {

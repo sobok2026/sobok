@@ -1,10 +1,10 @@
 import { getLocale } from '@sobok/site-i18n/server'
+import JsonLd from '@sobok/site-seo/json-ld'
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import FaqSection from '@/components/FaqSection'
 import { FAQ } from '@/content/faq'
-import JsonLd, { faqPageGraph, subPageGraph } from '@/lib/JsonLd'
-import { buildMetadata } from '@/lib/metadata'
+import { buildMetadata, faqPageGraph, subPageGraph } from '@/lib/seo'
 import TodayFlow from './TodayFlow'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/today'>): Promise<Metadata> {

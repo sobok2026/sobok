@@ -1,7 +1,7 @@
 import type { PATCHV1ChatArtistBody, PATCHV1ChatArtistResponse } from '@sobok/contracts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { QueryKeys } from '@/lib/react-query/query-keys'
-import { fetchAPIData } from '@/utils/api-request'
+import { fetchApiData } from '@/utils/api-request'
 
 export default function useUpdateArtistMutation(handle: string) {
   const queryClient = useQueryClient()
@@ -10,7 +10,7 @@ export default function useUpdateArtistMutation(handle: string) {
     mutationFn: async (body: PATCHV1ChatArtistBody) => {
       const url = `/api/v1/chat/artist/${handle}`
 
-      const { data } = await fetchAPIData<PATCHV1ChatArtistResponse>(url, {
+      const { data } = await fetchApiData<PATCHV1ChatArtistResponse>(url, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

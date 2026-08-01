@@ -1,6 +1,6 @@
 import '../globals.css'
 
-import GTMLoader from '@sobok/analytics/gtm-loader'
+import GtmLoader from '@sobok/analytics/gtm-loader'
 import { APP_METADATA, THEME_COLOR } from '@sobok/domain/app/metadata'
 import { LOCALES } from '@sobok/domain/locale'
 import { env } from '@sobok/env/client'
@@ -12,7 +12,7 @@ import { ThemeProvider } from 'next-themes'
 import type { ReactNode } from 'react'
 import { Toaster } from 'sonner'
 import CapacitorNativeEffects from '@/components/CapacitorNativeEffects'
-import SEOText from '@/components/SEOText'
+import SeoText from '@/components/SeoText'
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
 import OverlayHost from '@/components/ui/OverlayHost'
 import { getLocaleFromParams } from '@/i18n/server'
@@ -92,9 +92,9 @@ export default async function RootLayout({ children, params }: Props) {
             <QueryProvider>{children}</QueryProvider>
           </NextIntlClientProvider>
           <ServiceWorkerRegistrar />
-          <GTMLoader containerId={NEXT_PUBLIC_GTM_ID} productionOrigin={NEXT_PUBLIC_APP_ORIGIN} />
+          <GtmLoader containerId={NEXT_PUBLIC_GTM_ID} productionOrigin={NEXT_PUBLIC_APP_ORIGIN} />
           <p className="h-0 overflow-hidden tracking-widest invisible">
-            <SEOText />
+            <SeoText />
           </p>
         </ThemeProvider>
       </body>
