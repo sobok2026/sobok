@@ -5,6 +5,274 @@
  * 이에 대응하는 `@font-face` 경로는 `FontStylesheets`를 통해 로케일별로 제공됩니다.
  */
 
+/*
+ * 웹폰트가 도착하기 전까지 쓰이는 대체 서체.
+ *
+ * `src`가 `local()`뿐이라 네트워크 요청이 없고, 해당 폰트가 없는 기기에서는 그냥 건너뛰어집니다.
+ * 존재 이유는 오직 메트릭입니다. 웹폰트는 `font-display: swap`으로 실려 오고 `@font-face` 시트를
+ * 읽어 첫 레이아웃을 끝낸 뒤에야 woff2를 받으러 가므로, 첫 페인트는 반드시 기기 폰트로 그려집니다.
+ * 이때 기기 폰트의 자폭이나 행간이 웹폰트와 다르면 교체 순간 문단이 다시 흐르며 레이아웃이
+ * 밀립니다(CLS). 여기서 기기 폰트를 웹폰트의 메트릭에 맞춰 두면 교체는 서체만 바꾸고 자리는
+ * 그대로 둡니다.
+ *
+ * `local()`은 패밀리명이 아니라 full name과 PostScript name으로만 매칭되므로 두 이름을 함께
+ * 적습니다. 패밀리명만 적으면 조용히 실패해 대체 서체가 통째로 무시됩니다.
+ *
+ * 세로 메트릭은 폰트 테이블(head/hhea)에서 그대로 읽은 값입니다.
+ *
+ *   Pretendard / Pretendard JP  upm 2048  ascender 1950  descender -494  lineGap 0  → 95.21% / 24.12% / 0%
+ *   Noto Sans SC                upm 1000  ascender 1160  descender -288  lineGap 0  → 116%    / 28.8%  / 0%
+ *
+ * 가로 비율은 각 앱 메시지 카탈로그의 문장을 통째로 그려 폭을 합산해 냈습니다. 글자별 자폭을
+ * 더하는 방식은 커닝이 빠져 라틴에서 1.3%p까지 어긋납니다.
+ *
+ *   한글          Pretendard : Apple SD Gothic Neo   99.91%  (생략)
+ *   가나·한자     Pretendard JP : Hiragino Sans       93.75%
+ *   한자          Noto Sans SC : PingFang SC         100.00% (생략)
+ *   공백·부호     Pretendard : Arial     400 90.63% · 600 87.19% · 700 85.69%
+ *   글자·숫자     Pretendard : Arial     400 101.82% · 600 97.65% · 700 99.67%
+ *   라틴 전체     Noto Sans SC : Arial   400 104.24% · 600 100.83% · 700 102.40%
+ *
+ * `size-adjust`는 `*-override`에 곱해집니다(override × size-adjust = 실제 비율). 그래서 override
+ * 값은 위 세로 목표를 그 페이스의 size-adjust로 나눈 것입니다. 가로 비율이 100%에서 0.5% 안쪽인
+ * 축은 `size-adjust`를 아예 생략했습니다.
+ *
+ * CJK는 굵기가 바뀌어도 자폭이 고정이라 한 값이면 되지만, 라틴은 Arial Bold가 Pretendard
+ * SemiBold보다 4% 넓어서 굵기 대역을 나눠야 합니다. 볼드 페이스를 따로 두는 두 번째 이유는
+ * 합성 볼드를 막는 것입니다. 후보 중 Helvetica Neue가 macOS에서는 더 잘 맞지만 Windows에는
+ * 없으므로, 두 플랫폼에 모두 있는 Arial을 기준으로 잡아 한 계수가 양쪽에 같이 통하게 했습니다.
+ *
+ * macOS 기기 폰트로 잰 값이라 Windows(맑은 고딕·Yu Gothic·Microsoft YaHei)와 Android(Noto Sans
+ * KR/JP/SC)의 자폭은 확인하지 못했습니다. 틀린 `size-adjust`는 없느니만 못하므로 그쪽 후보에는
+ * 자폭 보정 없이, 플랫폼과 무관하게 정확한 세로 메트릭만 적용됩니다.
+ */
+
+/*
+ * 라틴 — Pretendard 계열에 맞춤.
+ *
+ * 한 패밀리 안에서 공백·문장부호와 글자·숫자를 갈라 놓았습니다. Pretendard의 공백은 Arial보다
+ * 9% 좁은데 글자는 2% 넓어서, 한 계수로는 둘을 동시에 맞출 수 없습니다. 영문 문장은 두 오차가
+ * 서로 상쇄되어 합계가 맞아떨어지지만 한국어 문장의 라틴 범위는 대부분 공백이라 상쇄가 없고,
+ * 그래서 단일 계수로 맞추면 한국어에서만 10% 어긋납니다. 갈라 놓으면 계수가 로케일과 무관하게
+ * 일정해집니다(공백·부호 ko 90.35% : en 90.87%).
+ */
+@font-face {
+  font-family: 'Pretendard Fallback Latin';
+  src: local('Arial'), local('Helvetica Neue'), local('Roboto'), local('Liberation Sans');
+  font-weight: 400 500;
+  size-adjust: 90.63%;
+  ascent-override: 105.05%;
+  descent-override: 26.61%;
+  line-gap-override: 0%;
+  unicode-range: U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E, U+00A0-00BF, U+2000-206F, U+20A0-20CF;
+}
+
+@font-face {
+  font-family: 'Pretendard Fallback Latin';
+  src:
+    local('Arial Bold'), local('Arial-BoldMT'), local('Helvetica Neue Bold'), local('Roboto Bold'),
+    local('Liberation Sans Bold');
+  font-weight: 600;
+  size-adjust: 87.19%;
+  ascent-override: 109.2%;
+  descent-override: 27.66%;
+  line-gap-override: 0%;
+  unicode-range: U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E, U+00A0-00BF, U+2000-206F, U+20A0-20CF;
+}
+
+@font-face {
+  font-family: 'Pretendard Fallback Latin';
+  src:
+    local('Arial Bold'), local('Arial-BoldMT'), local('Helvetica Neue Bold'), local('Roboto Bold'),
+    local('Liberation Sans Bold');
+  font-weight: 700 900;
+  size-adjust: 85.69%;
+  ascent-override: 111.11%;
+  descent-override: 28.15%;
+  line-gap-override: 0%;
+  unicode-range: U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E, U+00A0-00BF, U+2000-206F, U+20A0-20CF;
+}
+
+@font-face {
+  font-family: 'Pretendard Fallback Latin';
+  src: local('Arial'), local('Helvetica Neue'), local('Roboto'), local('Liberation Sans');
+  font-weight: 400 500;
+  size-adjust: 101.82%;
+  ascent-override: 93.51%;
+  descent-override: 23.69%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-02FF, U+1E00-1EFF, U+2113, U+2122, U+2C60-2C7F, U+A720-A7FF, U+FEFF,
+    U+FFFD;
+}
+
+@font-face {
+  font-family: 'Pretendard Fallback Latin';
+  src:
+    local('Arial Bold'), local('Arial-BoldMT'), local('Helvetica Neue Bold'), local('Roboto Bold'),
+    local('Liberation Sans Bold');
+  font-weight: 600;
+  size-adjust: 97.65%;
+  ascent-override: 97.5%;
+  descent-override: 24.7%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-02FF, U+1E00-1EFF, U+2113, U+2122, U+2C60-2C7F, U+A720-A7FF, U+FEFF,
+    U+FFFD;
+}
+
+@font-face {
+  font-family: 'Pretendard Fallback Latin';
+  src:
+    local('Arial Bold'), local('Arial-BoldMT'), local('Helvetica Neue Bold'), local('Roboto Bold'),
+    local('Liberation Sans Bold');
+  font-weight: 700 900;
+  size-adjust: 99.67%;
+  ascent-override: 95.52%;
+  descent-override: 24.2%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-02FF, U+1E00-1EFF, U+2113, U+2122, U+2C60-2C7F, U+A720-A7FF, U+FEFF,
+    U+FFFD;
+}
+
+/*
+ * 한글 — Pretendard에 맞춤.
+ *
+ * 통합 한자(U+4E00-9FFF 등)는 일부러 빠져 있습니다. Pretendard는 한글과 한국형 호환 한자만
+ * 담고 통합 한자는 담지 않아서, 한국어 문서에서도 한자를 실제로 그리는 쪽은 Pretendard JP입니다
+ * (`LOCALE_FONT_FAMILIES.ko`가 JP 시트를 함께 받고 `ss05`로 한국 자형을 씌우는 이유). 대체 서체는
+ * 자기가 흉내 내는 웹 패밀리가 덮는 범위만 가져가야 하므로 한자는 JP 쪽 대체 서체 몫입니다.
+ */
+@font-face {
+  font-family: 'Pretendard Fallback Korean';
+  src:
+    local('Apple SD Gothic Neo Regular'), local('AppleSDGothicNeo-Regular'), local('Malgun Gothic'),
+    local('Noto Sans KR Regular'), local('NotoSansKR-Regular');
+  font-weight: 400 500;
+  ascent-override: 95.21%;
+  descent-override: 24.12%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+1100-11FF, U+3000-303F, U+3130-318F, U+3200-33FF, U+A960-A97F, U+AC00-D7FF, U+F900-FAFF, U+FE10-FE1F, U+FE30-FE4F,
+    U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'Pretendard Fallback Korean';
+  src:
+    local('Apple SD Gothic Neo Bold'), local('AppleSDGothicNeo-Bold'), local('Malgun Gothic Bold'),
+    local('Noto Sans KR Bold'), local('NotoSansKR-Bold');
+  font-weight: 600 900;
+  ascent-override: 95.21%;
+  descent-override: 24.12%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+1100-11FF, U+3000-303F, U+3130-318F, U+3200-33FF, U+A960-A97F, U+AC00-D7FF, U+F900-FAFF, U+FE10-FE1F, U+FE30-FE4F,
+    U+FF00-FFEF;
+}
+
+/* 가나·일본식 한자 — Pretendard JP에 맞춤. 전각의 0.9375라 보정이 가장 큽니다. */
+@font-face {
+  font-family: 'Pretendard JP Fallback';
+  src:
+    local('Hiragino Sans W3'), local('HiraginoSans-W3'), local('Yu Gothic Regular'), local('YuGothic-Regular'),
+    local('Noto Sans JP Regular'), local('NotoSansJP-Regular');
+  font-weight: 400 500;
+  size-adjust: 93.75%;
+  ascent-override: 101.56%;
+  descent-override: 25.73%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+2E80-2EFF, U+3000-30FF, U+31C0-31EF, U+31F0-31FF, U+3200-33FF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE10-FE1F,
+    U+FE30-FE4F, U+FF00-FFEF, U+20000-2A6DF, U+2F800-2FA1F;
+}
+
+@font-face {
+  font-family: 'Pretendard JP Fallback';
+  src:
+    local('Hiragino Sans W6'), local('HiraginoSans-W6'), local('Yu Gothic Bold'), local('YuGothic-Bold'),
+    local('Noto Sans JP Bold'), local('NotoSansJP-Bold');
+  font-weight: 600 900;
+  size-adjust: 93.75%;
+  ascent-override: 101.56%;
+  descent-override: 25.73%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+2E80-2EFF, U+3000-30FF, U+31C0-31EF, U+31F0-31FF, U+3200-33FF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE10-FE1F,
+    U+FE30-FE4F, U+FF00-FFEF, U+20000-2A6DF, U+2F800-2FA1F;
+}
+
+/* 라틴 — Noto Sans SC에 맞춤. 중국어 문서에서는 라틴도 이 패밀리가 그립니다. */
+@font-face {
+  font-family: 'Noto Sans SC Fallback Latin';
+  src: local('Arial'), local('Helvetica Neue'), local('Roboto'), local('Liberation Sans');
+  font-weight: 400 500;
+  size-adjust: 104.24%;
+  ascent-override: 111.28%;
+  descent-override: 27.63%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0000-02FF, U+1D00-1DBF, U+1E00-1EFF, U+2000-20CF, U+2113, U+2122, U+2C60-2C7F, U+A720-A7FF, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC Fallback Latin';
+  src:
+    local('Arial Bold'), local('Arial-BoldMT'), local('Helvetica Neue Bold'), local('Roboto Bold'),
+    local('Liberation Sans Bold');
+  font-weight: 600;
+  size-adjust: 100.83%;
+  ascent-override: 115.05%;
+  descent-override: 28.56%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0000-02FF, U+1D00-1DBF, U+1E00-1EFF, U+2000-20CF, U+2113, U+2122, U+2C60-2C7F, U+A720-A7FF, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC Fallback Latin';
+  src:
+    local('Arial Bold'), local('Arial-BoldMT'), local('Helvetica Neue Bold'), local('Roboto Bold'),
+    local('Liberation Sans Bold');
+  font-weight: 700 900;
+  size-adjust: 102.4%;
+  ascent-override: 113.28%;
+  descent-override: 28.13%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0000-02FF, U+1D00-1DBF, U+1E00-1EFF, U+2000-20CF, U+2113, U+2122, U+2C60-2C7F, U+A720-A7FF, U+FEFF, U+FFFD;
+}
+
+/* 간체 한자·가나 — Noto Sans SC에 맞춤 */
+@font-face {
+  font-family: 'Noto Sans SC Fallback';
+  src:
+    local('PingFang SC Regular'), local('PingFangSC-Regular'), local('Microsoft YaHei'), local('Noto Sans SC Regular'),
+    local('NotoSansSC-Regular');
+  font-weight: 400 500;
+  ascent-override: 116%;
+  descent-override: 28.8%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+2E80-2EFF, U+3000-30FF, U+31C0-31EF, U+31F0-31FF, U+3200-33FF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE10-FE1F,
+    U+FE30-FE4F, U+FF00-FFEF, U+20000-2A6DF, U+2F800-2FA1F;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC Fallback';
+  src:
+    local('PingFang SC Semibold'), local('PingFangSC-Semibold'), local('Microsoft YaHei Bold'),
+    local('Noto Sans SC Bold'), local('NotoSansSC-Bold');
+  font-weight: 600 900;
+  ascent-override: 116%;
+  descent-override: 28.8%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+2E80-2EFF, U+3000-30FF, U+31C0-31EF, U+31F0-31FF, U+3200-33FF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE10-FE1F,
+    U+FE30-FE4F, U+FF00-FFEF, U+20000-2A6DF, U+2F800-2FA1F;
+}
+
 /* 언어별 기본 줄바꿈 (HTML lang 속성 기반) */
 @layer base {
   /* 한국어: 어절 단위 줄바꿈 적용 및 가로 넘침 방지 */
@@ -23,68 +291,30 @@
    * 한자(Han)는 유니코드 코드포인트를 공유하지만 언어별(ko/ja/zh) 자형이 다릅니다.
    * `unicode-range`는 이를 구분할 수 없으므로 `:lang()`에 따른 `font-family` 순서로 자형을 결정합니다.
    * 한국어/영어는 Pretendard, 일본어는 Pretendard JP, 중국어 간체는 Noto Sans SC를 우선 지정합니다.
+   *
+   * 웹폰트 뒤에는 기기 폰트를 직접 늘어놓지 않고 위에서 선언한 대체 서체를 언어에 맞는 순서로
+   * 둡니다. 각 대체 서체가 자기 `unicode-range` 안에서만 뽑히므로 순서가 곧 자형 선택이고, 어느
+   * 쪽이 뽑히든 차지하는 자리는 웹폰트와 같습니다. 어느 대체 서체도 못 잡는 문자는 `system-ui`가
+   * 받습니다.
    */
   body {
     font-family:
-      'Pretendard Variable',
-      'Pretendard JP Variable',
-      'Noto Sans SC Variable',
-      -apple-system,
-      BlinkMacSystemFont,
-      system-ui,
-      Roboto,
-      'Helvetica Neue',
-      'Segoe UI',
-      'Apple SD Gothic Neo',
-      'Noto Sans KR',
-      'Malgun Gothic',
-      'Hiragino Sans',
-      Meiryo,
-      'Noto Sans JP',
-      'Apple Color Emoji',
-      'Segoe UI Emoji',
-      'Segoe UI Symbol',
-      sans-serif;
+      'Pretendard Variable', 'Pretendard JP Variable', 'Noto Sans SC Variable', 'Pretendard Fallback Latin',
+      'Pretendard Fallback Korean', 'Pretendard JP Fallback', 'Noto Sans SC Fallback', system-ui, 'Apple Color Emoji',
+      'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
   }
 
   body:lang(ja) {
     font-family:
-      'Pretendard JP Variable',
-      'Pretendard Variable',
-      'Noto Sans SC Variable',
-      -apple-system,
-      BlinkMacSystemFont,
-      system-ui,
-      Roboto,
-      'Helvetica Neue',
-      'Segoe UI',
-      'Hiragino Sans',
-      Meiryo,
-      'Noto Sans JP',
-      'Apple SD Gothic Neo',
-      'Noto Sans KR',
-      'Apple Color Emoji',
-      'Segoe UI Emoji',
-      'Segoe UI Symbol',
-      sans-serif;
+      'Pretendard JP Variable', 'Pretendard Variable', 'Noto Sans SC Variable', 'Pretendard Fallback Latin',
+      'Pretendard JP Fallback', 'Pretendard Fallback Korean', 'Noto Sans SC Fallback', system-ui, 'Apple Color Emoji',
+      'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
   }
 
   body:lang(zh) {
     font-family:
-      'Noto Sans SC Variable',
-      'Pretendard Variable',
-      'PingFang SC',
-      'Microsoft YaHei',
-      'Noto Sans SC',
-      'Noto Sans CJK SC',
-      system-ui,
-      -apple-system,
-      BlinkMacSystemFont,
-      'Segoe UI',
-      'Apple Color Emoji',
-      'Segoe UI Emoji',
-      'Segoe UI Symbol',
-      sans-serif;
+      'Noto Sans SC Variable', 'Pretendard Variable', 'Noto Sans SC Fallback Latin', 'Noto Sans SC Fallback',
+      'Pretendard Fallback Korean', system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
   }
 
   /*
