@@ -7,7 +7,7 @@
     "build": "next build",
     "preview": "STELLA_DB_SCHEMA=stella_stg next build && wrangler dev --env stg",
     "deploy": "STELLA_DB_SCHEMA=stella next build && wrangler deploy --env=\"\"",
-    "db:push": "drizzle-kit push",
+    "db:push": "drizzle-kit push --config drizzle.config.mjs",
     "questionnaire:validate": "bun run scripts/publish-guardian-questionnaire.ts --validate-only",
     "questionnaire:publish": "bun run scripts/publish-guardian-questionnaire.ts",
     "type": "next typegen && tsc --noEmit && tsc -p worker/tsconfig.json && tsc -p scripts/tsconfig.json"
