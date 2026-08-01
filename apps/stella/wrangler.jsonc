@@ -62,7 +62,7 @@
     {
       "binding": "STELLA_PORTONE_WEBHOOK_SECRET",
       "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-      "secret_name": "stella-portone-webhook-secret"
+      "secret_name": "portone-webhook-secret-live"
     },
     {
       "binding": "STELLA_TURNSTILE_SECRET",
@@ -113,7 +113,7 @@
         {
           "binding": "STELLA_PORTONE_WEBHOOK_SECRET",
           "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-          "secret_name": "stella-portone-webhook-secret-stg"
+          "secret_name": "portone-webhook-secret-test"
         },
         {
           "binding": "STELLA_TURNSTILE_SECRET",

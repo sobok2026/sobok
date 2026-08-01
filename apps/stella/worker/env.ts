@@ -32,10 +32,12 @@ export interface Bindings {
   // Siteverify secret for stella's own Turnstile widget (account-turnstile workspace; cutover off the shared
   // "sobok" widget is written in Terraform but not applied yet).
   STELLA_TURNSTILE_SECRET: SecretsStoreSecret
-  // Store-scoped V2 API secret. Browser-return confirm and signed webhooks both use it only to retrieve the
-  // server-authoritative payment state from PortOne.
+  // Stella-specific V2 API credential. It is issued independently from Vibe's credential but remains
+  // authorized at the shared Store boundary. Browser-return confirm and signed webhooks use it only to
+  // retrieve server-authoritative payment state from PortOne.
   STELLA_PORTONE_API_SECRET: SecretsStoreSecret
-  // PortOne issues separate webhook secrets for live and test mode; wrangler binds the matching value per env.
+  // The representative Store has one Standard Webhooks signer per live/test mode. Wrangler binds the same
+  // mode-specific account secret that Vibe uses; only this Worker's binding name is product-local.
   STELLA_PORTONE_WEBHOOK_SECRET: SecretsStoreSecret
   // Static HMAC key for pseudonymous IP hashing (rate-limit + report dedup). Never rotated (see lib/ip.ts).
   STELLA_IP_HASH_SALT: SecretsStoreSecret

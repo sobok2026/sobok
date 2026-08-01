@@ -318,8 +318,8 @@ paid ───── 환불 확인 ───────────────
 - 모바일을 포함하므로 `redirectUrl`을 항상 제공하고 반환값 방식과 리디렉션 방식을 모두 처리한다.
 - `storeId`와 `channelKey`는 공개 설정이지만 클라이언트가 임의로 고르는 값은 받지 않는다. 서버가
   허용한 결제수단에 대응하는 한 채널만 checkout 응답으로 보낸다.
-- API Secret과 Webhook Secret은 Stella 전용 Worker binding으로만 읽고 브라우저 번들·응답·로그에
-  넣지 않는다.
+- Stella용 API Secret과 대표 Store의 공용 Webhook Secret은 Stella Worker binding으로만 읽고
+  브라우저 번들·응답·로그에 넣지 않는다.
 - 대표 Store의 콘솔 기본 웹훅은 다른 제품도 사용하므로 Stella checkout은 배포별 고정
   `STELLA_PUBLIC_ORIGIN`으로 만든 `/api/guardian-webhooks/portone`을 `noticeUrls`로 반환한다. 브라우저는
   이 값을 결제 요청에 그대로 전달해 Store 기본 URL을 Stella 결제에 한해서 덮어쓴다.
@@ -355,10 +355,13 @@ Stella에 다음 설정이 필요하다.
 PortOne의 Store ID는 상점을 식별하고 channel key는 실제 PG 연결을 선택한다. API Secret은 결제
 거래를 제어하므로 서버에만 둔다.
 
-`STELLA_PORTONE_API_SECRET`에는 PG 채널 설정의 API key·secret key·client key가 아니라 PortOne
-연동 정보에서 별도로 발급한 **V2 API Secret**을 넣는다. 이 값은 Store 범위라 test/live 조회에 함께
-사용하고, `STELLA_PORTONE_WEBHOOK_SECRET`은 PortOne 설정 모드별로 발급한 live/staging 값을 각각
-바인딩한다.
+`STELLA_PORTONE_API_SECRET`에는 PG 채널 설정의 API key·secret key·client key가 아니라 Stella용으로
+별도 발급한 **V2 API Secret**을 넣는다. Vibe와 독립적으로 폐기·교체하지만 권한 경계는 같은 Store이며,
+Stella production과 staging이 함께 사용한다.
+
+`STELLA_PORTONE_WEBHOOK_SECRET`은 앱별 발급값이 아니다. 대표 Store가 PortOne 설정 모드별로 한 번만
+발급한 `portone-webhook-secret-live` 또는 `portone-webhook-secret-test`를 배포에 맞게 바인딩하며,
+Vibe도 같은 항목을 읽는다. 수신 URL만 Stella 결제 요청의 `noticeUrls`로 분리한다.
 
 - [PortOne 결제 연동 준비](https://developers.portone.io/opi/ko/integration/ready/readme)
 - [PortOne 연동 정보와 채널 관리](https://developers.portone.io/opi/ko/console/guide/channel-manage)
@@ -510,8 +513,9 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 - `STELLA_DB_SCHEMA`를 build-time에 schema-qualified SQL로 굽고 production fallback을 두지 않는다.
 - `stella_app` role은 두 schema의 table·sequence default privilege를 가지되 `search_path`는
   `pg_catalog`만 사용한다.
-- `sobok-ops`에는 `stella_stg` schema·grant, Stella PortOne Secrets Store 항목과 필요한 plain
-  var만 추가한다. Hyperdrive resource는 추가하지 않는다.
+- `sobok-ops`에는 `stella_stg` schema·grant, Stella 전용 PortOne API Secret과 대표 Store 공용
+  live/test Webhook Secret을 선언한다. Store ID·channel map·public origin은 앱의 Wrangler 설정이
+  소유하며 Hyperdrive resource는 추가하지 않는다.
 - 유료 질문 은행도 별도 데이터베이스를 만들지 않고 Git 원본을 각 Stella schema의 서버 콘텐츠
   테이블에 게시한다.
 - 실제 DB 반영은 앱 코드와 운영 binding이 준비된 뒤 같은 DB에 `drizzle-kit push`를
@@ -525,7 +529,8 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 3. 무료 결과의 두 질문·provisional 미리보기와 결제 뒤 질문·fulfillment 화면을 연결한다.
 4. pending 재조정과 미결제 checkout context 정리 cron을 연결한다.
 5. `/ko/cards`의 클라이언트 난수·로컬 소유권을 서버 상태로 교체한다.
-6. `sobok-ops`에 PortOne Store ID, channel map, API/Webhook Secret binding을 반영한다.
+6. **완료:** Wrangler에 Store ID·channel map·배포별 `noticeUrls`를, `sobok-ops`에 Stella API Secret과
+   공용 live/test Webhook Secret을 반영한다.
 7. 두 schema에 Drizzle 선언과 같은 questionnaire version을 게시한다.
 8. staging Worker와 PortOne 테스트 채널에서 결제·모바일 리디렉션·질문 재개·카드 공개를 확인한
    뒤 production을 배포한다.
@@ -578,7 +583,7 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 | 무료 결과 제안     | actions 뒤 주 제안과 장문 리포트 끝 보조 CTA 권장          | 무료 가치를 먼저 준 뒤 두 번만 자연스럽게 발견시킨다      |
 | 출생 입력          | 기존 무료 차트 핵심값 재사용, 추가 재입력 없음 권장        | 구매 전 중복 입력을 없앤다                                |
 
-다음 제품 결정은 장기 문항은행의 제작 범위와 production 1,024장의 제작 매트릭스다.
-토스페이 live channel key는 production 연결 전에 추가로 필요하다. PortOne API
-Secret과 test/live Webhook Secret은 채팅이나 public repository에 전달하지 않고 Secrets Store에
-넣는다. 유료 질문 원문은 Git의 questionnaire source 디렉터리에 커밋한 뒤 게시 CLI로 DB에 반영한다.
+다음 제품 결정은 장기 문항은행의 제작 범위와 production 1,024장의 제작 매트릭스다. Stella용 PortOne
+API Secret과 대표 Store의 live/test Webhook Secret은 채팅이나 public repository에 전달하지 않고
+각 HCP Terraform sensitive 변수에서 Secrets Store로 넣는다. 유료 질문 원문은 Git의 questionnaire
+source 디렉터리에 커밋한 뒤 게시 CLI로 DB에 반영한다.

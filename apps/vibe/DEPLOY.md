@@ -8,7 +8,7 @@
 
 - **워커 1개** = 정적 Next 에셋(`assets` 바인딩, `output: 'export'`) + `/api/deep-type/*` Hono 라우트(`run_worker_first`).
 - **Hyperdrive 2개**: `HYPERDRIVE_FRESH`(캐시 비활성 — 돈·엔티틀먼트 조회/쓰기), `HYPERDRIVE_CACHED`(완료된 리포트 본문 등 불변 읽기). **Supabase Postgres(세션 풀러, 서울 ap-northeast-2)** origin. 공개 CA라 CA 업로드 불필요(`sslmode=require`).
-- **Secrets Store**(계정당 1개): PortOne API/웹훅 시크릿, Anthropic 키, Resend 키, Turnstile 시크릿, Discord 웹훅, GA4 Measurement Protocol 시크릿. `await env.<binding>.get()`으로 읽음.
+- **Secrets Store**(계정당 1개): 제품별 PortOne API Secret, Store 공용 live/test Webhook Secret, Anthropic 키, Resend 키, Turnstile 시크릿, Discord 웹훅, GA4 Measurement Protocol 시크릿. `await env.<binding>.get()`으로 읽음.
 - **Cron 2개**: `*/15 * * * *` 결제 pending 재조정(`reconcileStalePending`), `0 3 * * *` 리텐션 purge(`runRetentionPurge`).
 - **결제수단 카탈로그**: V2는 채널 하나가 PG 하나라 결제수단 추가는 곧 채널 추가이고, 여러 채널을 한 창에서 고르게 해주는 UI가 없다(`loadPaymentUI`는 PayPal SPB 전용). 그래서 페이월이 먼저 고르게 하고 `requestPayment`에 채널 키와 `payMethod`를 함께 넘긴다. 무엇을 어느 로케일에 파는지는 워커와 페이월이 함께 쓰는 **`deep-type/pay-method.ts` 한 곳**에 있다 — 카탈로그는 `ko`에 카카오페이·토스페이·카드·계좌이체·휴대폰, 비한국어(en·ja·zh)에 **페이팔 단독**이다. 채널은 결제수단보다 적다: `kcp_v2` 하나가 계좌이체와 휴대폰을 함께 받는다. `/checkout`이 저장된 로케일로 다시 검증한 뒤 **승인한 채널 키 하나만** 내려준다 — 가격·채점·지급과 같은 서버 권위다.
 - **페이팔(SPB) = 두 번째 SDK 모양**: 스펙의 `open` 판별자로 갈린다. `'window'` 수단은 우리 버튼이 `requestPayment`로 창을 열고, 페이팔은 `'ui'` — `loadPaymentUI`가 **페이팔 자신의 버튼**을 `portone-ui-container`에 렌더하며 우리 버튼으로는 못 연다. 그래서 페이월은 2단계다: 폼 제출 → `/checkout`이 가격·paymentId를 승인 → 결제하기 버튼 자리에 페이팔 버튼이 나타나고 그동안 폼은 `fieldset disabled`로 얼린다(생성된 결제가 그 값에 고정돼 있으므로). 창 닫힘/거절은 attempt 단위라 버튼이 남고, `돌아가기`로 세션을 버리면 pending 행은 닫힌 창과 같은 경로(reconcile·purge)로 수렴한다.
@@ -53,12 +53,14 @@
 1. **Supabase 프로젝트(딥타입 전용)** — 대시보드에서 **서울(ap-northeast-2) + DB 비밀번호** 생성(billing·region·password는 out-of-band; 실결제 전 Pro 권장). `sobok-prod` 워크스페이스에 `import` 블록으로 입양(`import { to=supabase_project.deeptype, id=<project-ref> }`) + HCP 변수 `organization_id`·`pooler_host`(대시보드 Connect의 `aws-N-ap-northeast-2.pooler.supabase.com`)·`database_password`(sensitive)·`SUPABASE_ACCESS_TOKEN`(project variable set). apply 후 `plan`에 replace 없어야 함 → outputs `deeptype_pg_host/port/database/user/password`.
    **런타임 역할·권한도 이 워크스페이스가 소유한다**(`roles.tf`, `cyrilgdn/postgresql` provider): 최소권한 `deeptype_app`(+ stella용 `stella_app`) 역할·grant·default privileges를 세션 풀러로 접속해 생성하고 비밀번호를 `random_password`로 만들어 sensitive output으로 노출한다. ⚠️ 이 provider 때문에 **이 워크스페이스의 모든 plan/apply가 DB 접속을 요구**한다 — Free 플랜 일시정지 시 실패하므로 ops 실행 전 **Pro 유지(또는 사전 언포즈)** 필요.
 2. **Hyperdrive ×2 (`account-vibe`)** — `terraform apply` → 두 config id. **origin(host/port/db/user/password) 전부 `sobok-prod`에서 `terraform_remote_state`로 링크**(수동 복사·손-설정 비밀번호 없음, 별도 토큰 불필요 — 런 자체 크레덴셜). user는 최소권한 `deeptype_app.<ref>`(owner `postgres` 아님). 전제: ① `sobok-prod` 먼저 apply(outputs 존재) ② sobok-prod → account-vibe **Remote State Sharing** 활성화 ③ 데이터소스의 `organization`+워크스페이스 `name`이 실제 HCP와 정확히 일치(**org=`sobok2026`, ws=`sobok-prod`** — VCS-무시되는 cloud{} 블록의 "sobok"과 다름).
-3. **Secrets Store** — 계정 스토어 id 확보(`wrangler secrets-store store list` 또는 대시보드). `account-vibe`의 `secrets.tf`가 시크릿 7개를 push:
-   `deeptype-portone-api-secret` · `deeptype-portone-webhook-secret` · **`deeptype-portone-webhook-secret-stg`** · `deeptype-anthropic-api-key` · `deeptype-resend-api-key` · `deeptype-discord-webhook` · `deeptype-ga4-api-secret`. 굵은 것 하나만 스테이징 전용이다 — 포트원이 실연동/테스트 모드별로 웹훅 시크릿을 각각 발급하기 때문이고, 나머지는 두 배포가 공유한다. Turnstile 시크릿(`vibe-turnstile-secret`)만 예외로 **`account-turnstile` 워크스페이스**가 위젯과 함께 push한다.
-   값은 HCP Terraform 민감 변수(`account-vibe`)로 설정.
-4. **PortOne(딥타입 전용 스토어)** — 스토어 생성 → **store id + 카탈로그가 요구하는 채널 전부**(현재 `tosspayments`·`tosspay_v2`·`kakaopay`·`kcp_v2`·`paypal_v2`; 채널 키는 공개 vars). KCP의 사이트코드·PG-API 인증서·개인 키·키 비밀번호는 **포트원 콘솔에만** 넣는다 — 레포에도 Secrets Store에도 들어가지 않는다, **API secret + 웹훅 secret**(Secrets Store).
-   - **테스트 ↔ 실연동을 가르는 것은 채널 키뿐이다.** store id와 V2 API Secret은 상점 단위라 두 모드가 공유한다. 그래서 채널 키는 wrangler 환경에 고정하고 런타임에서 고르지 않는다(5.1 참고). `DEEPTYPE_PAY_TIER`도 같은 규칙이다 — 어느 계약 묶음을 들고 있는지는 배포의 사실이고 유도하지 않는다.
-   - **웹훅**은 [결제 연동] → [연동 관리] → [결제알림(Webhook) 관리]에서 **설정 모드(실연동/테스트)별로 URL을 따로** 등록하고 **시크릿도 환경별로 각각 발급**된다. 실연동 → `https://vibe.sobok.cc/api/deep-type/webhook`, 테스트 → `https://vibe-stg.sobok.cc/api/deep-type/webhook`. 웹훅은 상점 단위라 채널이 몇 개든 URL은 모드당 하나면 된다.
+3. **Secrets Store** — 계정 스토어 id 확보(`wrangler secrets-store store list` 또는 대시보드). 값의 발급·공유 경계별로 Terraform 소유권을 나눈다.
+   - `account-secrets-store`: 대표 Store가 모드별로 한 번만 발급하는 `portone-webhook-secret-live` · `portone-webhook-secret-test`. Vibe와 Stella가 같은 항목을 바인딩한다.
+   - `account-vibe`: Vibe용으로 별도 발급한 `deeptype-portone-api-secret`과 `deeptype-anthropic-api-key` · `deeptype-resend-api-key` · `deeptype-discord-webhook` · `deeptype-ga4-api-secret`.
+   - `account-turnstile`: 위젯과 함께 생성하는 `vibe-turnstile-secret`.
+     값은 각 HCP Terraform 워크스페이스의 sensitive 변수로 설정하고 public repo나 `*.tfvars`에 넣지 않는다.
+4. **PortOne(공용 대표 Store)** — 같은 사업·정산 경계의 Vibe와 Stella가 Store ID와 채널을 공유한다(현재 `tosspayments`·`tosspay_v2`·`kakaopay`·`kcp_v2`·`paypal_v2`; 채널 키는 공개 vars). KCP의 사이트코드·PG-API 인증서·개인 키·키 비밀번호는 **포트원 콘솔에만** 넣는다 — 레포나 Secrets Store에 복제하지 않는다. V2 API Secret은 제품별로 따로 발급하고 Webhook Secret만 Store·모드별 공용 항목을 쓴다.
+   - **테스트 ↔ 실연동을 가르는 것은 채널 키와 Webhook Secret binding이다.** Store ID와 Vibe용 V2 API Secret은 두 모드가 공유한다. 채널 키는 wrangler 환경에 고정하고 런타임에서 고르지 않는다(5.1 참고). `DEEPTYPE_PAY_TIER`도 같은 규칙이다 — 어느 계약 묶음을 들고 있는지는 배포의 사실이고 유도하지 않는다.
+   - **웹훅**은 [결제 연동] → [연동 관리] → [결제알림(Webhook) 관리]에서 설정 모드별 기본 URL을 둔다. 실연동 → `https://vibe.sobok.cc/api/deep-type/webhook`, 테스트 → `https://vibe-stg.sobok.cc/api/deep-type/webhook`. Stella 결제는 `noticeUrls`로 자기 URL을 지정해 이 기본값을 결제별로 덮어쓴다. 서명값은 URL이 아니라 Store의 live/test 모드에 속하므로 두 제품이 각각 `portone-webhook-secret-live` 또는 `portone-webhook-secret-test`를 바인딩한다.
    - **실연동 채널은 채널마다** 계약 → MID/CID 발급 → **원천사 심사 완료**까지 끝나야 결제가 붙는다. 심사 전 상점아이디는 결제창이 열려도 승인되지 않는다. 채널의 과세구분도 테스트 채널과 같게 맞춘다. 그래서 **심사가 끝난 채널만** `SELLABLE_CHANNELS.live`와 실연동 채널 맵에 **같은 커밋으로** 들어간다 — 키가 발급된 날이 아니라 승인이 떨어진 날이 기준이다. 심사가 진행 중인 동안 그 수단은 프로덕션 페이월에 나오지 않고 `vibe-stg`에서 테스트 채널로만 QA된다.
    - EN·JA·ZH 판매는 **페이팔(`paypal_v2`) 단독**이다. 테스트 채널은 포트원이 제공하는 **국가별 샌드박스 판매자 계정** 목록에서 만든다 — 목록의 국가는 구매자 국가가 아니라 **수취 계정의 등록 국가**라서 "한국"을 고른다(실연동에서 연결할 본인 PayPal Business 계정이 한국이므로). 실연동은 목록에서 고르는 게 아니라 **본인 PayPal Business 계정을 채널에 연결**하는 방식이고, 연결이 끝나는 날 `SELLABLE_CHANNELS.live`와 실연동 채널 맵에 `paypal_v2`를 같은 커밋으로 추가한다. 구매자 국적별 분기는 없다 — 판매자 계정 하나에 전 세계가 결제하고 창 현지화는 페이팔이 구매자 계정 로케일로 한다. 정기결제는 RT 별도라 SPB 일반결제만 쓴다.
 5. **Turnstile** — vibe **전용 위젯**(`account-turnstile` 워크스페이스, 호스트네임 `vibe.sobok.cc` + `vibe-stg.sobok.cc`)의 **sitekey**(GitHub 저장소 변수 `VIBE_TURNSTILE_SITE_KEY` → 프론트 빌드 env) + **secret**(Secrets Store, `vibe-turnstile-secret`). 아직 apply 전이며 `moved`/`import` 블록이 없어 apply 시 기존 공유 위젯이 파괴·재생성된다 — sitekey 교체와 반드시 한 번에 넘겨야 한다.
@@ -77,7 +79,7 @@
 
 - `apps/vibe/wrangler.jsonc`
   - `hyperdrive[].id` = `REPLACE_WITH_*_ID` → 2의 fresh/cached id
-  - `secrets_store_secrets[].store_id` = 계정 Secrets Store id(7곳)
+  - 모든 `secrets_store_secrets[].store_id` = 계정 Secrets Store id
   - `vars.DEEPTYPE_PORTONE_STORE_ID` / `DEEPTYPE_PORTONE_CHANNELS` → 4의 값. 채널 맵은 **PG(pgProvider) 이름으로 키잉**한다 — 채널이 담는 건 결제수단이 아니라 계약이고, `tosspayments` 채널 하나가 카드도 가상계좌도 받는다. 어느 결제수단이 어느 채널을 타는지는 `deep-type/pay-method.ts`가 가진다. top-level은 **실연동** 채널, `env.stg`는 **테스트** 채널이다. **심사가 끝난 채널만 넣고 자리를 미리 만들어 두지 않는다** — 맵의 키 집합이 곧 `sellableChannels(tier)`여야 한다
   - `vars.DEEPTYPE_PAY_TIER` = top-level `live`, `env.stg` `test`. 빌드 쪽 짝은 `vibe-deploy.yml` 각 배포 job의 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER` 리터럴(`production` job `live` · `staging` job `test`)이며 비어 있으면 빌드가 실패한다
   - `vars.DEEPTYPE_REPORT_MODEL` = `claude-haiku-4-5-20251001`처럼 별칭이 아닌 검증된 고정 model id. 내레이션의 목적지이자 스위치라 `""`면 내레이션이 꺼진다(GA4 measurement id와 같은 모양) — 코드에 기본 모델은 없다
@@ -239,7 +241,7 @@ bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 �
 
 ## 6. 라이브 전환 체크리스트
 
-- [ ] Phase 0 산출물 전부 존재(Supabase·Hyperdrive×2·Secrets Store 7개·PortOne 스토어·Turnstile·Anthropic·Resend·GA4 API secret).
+- [ ] Phase 0 산출물 전부 존재(Supabase·Hyperdrive×2·Vibe 전용 Secrets Store 항목 5개·공용 PortOne Webhook Secret 2개·Turnstile·PortOne 대표 Store).
 - [ ] **CI 크레덴셜 이관** — `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`가 `production`·`staging` **환경 시크릿**에만 있고 **레포 레벨에서는 삭제**됨. 확인 방법: PR 하나를 열어 `verify`의 첫 스텝(`Assert this job holds no Cloudflare credential`)이 초록인지 본다. 넷 다 배포되는지도 확인 — stella/zwds/horn도 이제 `production` 환경을 쓴다.
 - [ ] `stg` 라벨 존재(sobok-ops `infra/github/sobok2026/labels.tf` apply). 없으면 스테이징 배포를 트리거할 방법이 라벨 경로에는 없다.
 - [ ] `sobok-prod` roles.tf가 `deeptype`·`deeptype_stg` 두 스키마에 grant·default privileges 적용 완료.
@@ -248,7 +250,7 @@ bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 �
 - [ ] **심사 완료된 실연동 채널만** `DEEPTYPE_PORTONE_CHANNELS`에 있고 그 키 집합이 `SELLABLE_CHANNELS.live`와 정확히 같음 — `GET /api/deep-type/config`의 `unbound`·`unsold`가 둘 다 빈 배열이고, `payMethods`의 네 로케일이 모두 비어 있지 않음.
 - [ ] 배포된 페이월의 결제수단이 `GET /api/deep-type/config`의 `payMethods`와 일치(빌드 리터럴 tier ↔ 워커 var tier 정합 확인).
 - [ ] 저장소 변수 `VIBE_TURNSTILE_SITE_KEY` = vibe 위젯 sitekey, 서버 `vibe-turnstile-secret` = 그 위젯의 secret(짝 일치), 위젯 호스트네임에 `vibe.sobok.cc`·`vibe-stg.sobok.cc` 둘 다 등록.
-- [ ] PortOne 콘솔 웹훅 URL이 **모드별로** 등록(실연동 = `vibe.sobok.cc`, 테스트 = `vibe-stg.sobok.cc`)되고 테스트 모드 시크릿이 `deeptype-portone-webhook-secret-stg`에 들어감.
+- [ ] PortOne 콘솔 기본 웹훅 URL이 **모드별로** 등록(실연동 = `vibe.sobok.cc`, 테스트 = `vibe-stg.sobok.cc`)되고 서명값이 각각 `portone-webhook-secret-live`·`portone-webhook-secret-test`에 들어감. Stella 결제는 배포별 `noticeUrls`로 Stella URL을 덮어씀.
 - [ ] 토스페이 실연동 MID의 **원천사 심사 완료** 확인. 페이팔은 **본인 PayPal Business 계정을 실연동 채널에 연결**하고 그 커밋에서 `SELLABLE_CHANNELS.live`+실연동 채널 맵에 `paypal_v2`를 함께 추가.
 - [ ] Resend 발신 도메인 검증, SPF/DKIM/MX 정상, 인증 메일 클릭·오픈 추적 비활성.
 - [ ] Google 유럽/미국 메시지 게시 및 Consent Mode 광고·분석 통합 활성.

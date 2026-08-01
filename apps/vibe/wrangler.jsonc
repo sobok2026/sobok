@@ -54,7 +54,7 @@
     {
       "binding": "DEEPTYPE_PORTONE_WEBHOOK_SECRET",
       "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-      "secret_name": "deeptype-portone-webhook-secret"
+      "secret_name": "portone-webhook-secret-live"
     },
     {
       "binding": "DEEPTYPE_ANTHROPIC_API_KEY",
@@ -124,7 +124,7 @@
         {
           "binding": "DEEPTYPE_PORTONE_WEBHOOK_SECRET",
           "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-          "secret_name": "deeptype-portone-webhook-secret-stg"
+          "secret_name": "portone-webhook-secret-test"
         },
         {
           "binding": "DEEPTYPE_ANTHROPIC_API_KEY",

@@ -12,14 +12,15 @@
 STELLA_ALLOWED_HOSTNAMES="localhost"
 STELLA_PUBLIC_ORIGIN="http://localhost:8787"
 
-# The 5 true secrets are Cloudflare Secrets Store bindings (accessed via `await env.X.get()`). For local
+# The 5 top-level bindings are Cloudflare Secrets Store secrets (accessed via `await env.X.get()`). For local
 # dev, seed a LOCAL secrets store (no --remote) so they resolve offline — one per binding's secret_name:
-#   wrangler secrets-store secret create <STORE_ID> --name stella-portone-api-secret     --value "…" --scopes workers
-#   wrangler secrets-store secret create <STORE_ID> --name stella-portone-webhook-secret --value "…" --scopes workers
-#   wrangler secrets-store secret create <STORE_ID> --name stella-portone-webhook-secret-stg --value "…" --scopes workers
-#   wrangler secrets-store secret create <STORE_ID> --name stella-turnstile-secret --value "…" --scopes workers
-#   wrangler secrets-store secret create <STORE_ID> --name stella-ip-hash-salt     --value "…" --scopes workers
-#   wrangler secrets-store secret create <STORE_ID> --name stella-discord-webhook  --value ""  --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-portone-api-secret       --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name portone-webhook-secret-live     --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-turnstile-secret         --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-ip-hash-salt             --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-discord-webhook          --value ""  --scopes workers
+# `wrangler dev --env stg` binds the Store-wide test-mode signer instead:
+#   wrangler secrets-store secret create <STORE_ID> --name portone-webhook-secret-test     --value "…" --scopes workers
 # (empty discord value = alerts disabled.)
 #
 # The Turnstile value must be the DEV widget's real secret (`terraform output -raw dev_turnstile_secret_key`

@@ -24,7 +24,11 @@ export interface Bindings {
   HYPERDRIVE_CACHED: Hyperdrive
 
   // ── Secrets Store bindings (async: `await X.get()`) ─────────────────────────────────────────────
+  // Vibe-specific V2 API credential. It is issued independently from Stella's credential but remains
+  // authorized at the shared Store boundary.
   DEEPTYPE_PORTONE_API_SECRET: SecretsStoreSecret
+  // The representative Store has one Standard Webhooks signer per live/test mode. Wrangler binds the same
+  // mode-specific account secret that Stella uses; only this Worker's binding name is product-local.
   DEEPTYPE_PORTONE_WEBHOOK_SECRET: SecretsStoreSecret
   DEEPTYPE_ANTHROPIC_API_KEY: SecretsStoreSecret
   // Transactional re-open email API key.
@@ -37,8 +41,8 @@ export interface Bindings {
   DEEPTYPE_GA4_API_SECRET: SecretsStoreSecret
 
   // ── Plain vars (not secret) ─────────────────────────────────────────────────────────────────────
-  // Separate PortOne store (own settlement entity). storeId/channelKey are public (sent to the browser SDK).
-  //
+  // Shared representative PortOne Store. storeId/channelKey are public (sent to the browser SDK); Vibe owns
+  // its purchase records and API credential, not a separate Store.
   DEEPTYPE_PORTONE_STORE_ID: string
   // Which PortOne 설정 모드 this deployment's channel keys belong to — 'live' for 실연동, 'test' for 테스트.
   // `@deep-type/pay-method` turns it into the menu, and the paywall's static bundle carries the same value as
