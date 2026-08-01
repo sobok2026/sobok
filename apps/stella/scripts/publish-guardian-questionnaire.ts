@@ -10,6 +10,7 @@ import {
   GuardianQuestionnaireContentError,
   parseGuardianQuestionnaireContent,
 } from '../worker/guardian/questionnaire'
+import { validateGuardianReportCopyQuestionnaire } from '../worker/guardian/report'
 
 const { values } = parseArgs({
   options: {
@@ -41,6 +42,13 @@ try {
     throw new GuardianQuestionnaireContentError([
       `Product ${content.productSku} is ${product.kind}; paid questionnaires require a full_report product`,
     ])
+  }
+  if (product.questionnaireVersions[content.locale] === content.version) {
+    const copyVersion = product.reportCopyVersions[content.locale]
+    if (!copyVersion) {
+      throw new Error(`Product ${content.productSku} has no report copy for locale ${content.locale}`)
+    }
+    validateGuardianReportCopyQuestionnaire(copyVersion, content)
   }
 
   const contentHash = createHash('sha256').update(canonicalJson(content)).digest('hex')

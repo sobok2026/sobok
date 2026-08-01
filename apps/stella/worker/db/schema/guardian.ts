@@ -25,6 +25,7 @@ import type {
   GuardianQuestionnaireAnswerSnapshot,
   GuardianQuestionnaireSignalSnapshot,
 } from '../../guardian/questionnaire'
+import type { GuardianReportNarrativeSnapshot } from '../../guardian/report'
 import { localeEnum, stella } from './common'
 import {
   guardianQuestionKindEnum,
@@ -66,9 +67,9 @@ export const guardianCollectionTable = stella.table('guardian_collection', {
   ...timestamps,
 })
 
-// A paid report is append-only at the product level: inputs, selected families, versions, and the initial
-// four cards are snapshotted. Redraw acquisitions are separate rows, so old paid output never changes when
-// the live manifest, copy, odds, or artwork evolves.
+// A paid report is append-only at the product level: inputs, selected families, versions, the initial four
+// cards, and the rendered locale copy are snapshotted. Redraw acquisitions are separate rows, so old paid
+// output never changes when the live manifest, copy, odds, or artwork evolves.
 export const guardianReportTable = stella.table(
   'guardian_report',
   {
@@ -96,6 +97,7 @@ export const guardianReportTable = stella.table(
     // Denormalized because every redraw must verify its target family without parsing a JSON snapshot.
     loveFamilyId: varchar('love_family_id', { length: 64 }),
     cardSnapshot: jsonb('card_snapshot').$type<GuardianSelectedCard[]>(),
+    narrativeSnapshot: jsonb('narrative_snapshot').$type<GuardianReportNarrativeSnapshot>(),
     fulfilledAt: timestamp('fulfilled_at', { precision: 3, withTimezone: true }),
     ...timestamps,
   },
@@ -117,6 +119,7 @@ export const guardianReportTable = stella.table(
           and ${t.familySnapshot} is null
           and ${t.loveFamilyId} is null
           and ${t.cardSnapshot} is null
+          and ${t.narrativeSnapshot} is null
           and ${t.fulfilledAt} is null)
         or (${t.status} = 'fulfilled'
           and ${t.questionnaireAnswerSnapshot} is not null
@@ -125,6 +128,7 @@ export const guardianReportTable = stella.table(
           and ${t.familySnapshot} is not null
           and ${t.loveFamilyId} is not null
           and ${t.cardSnapshot} is not null
+          and ${t.narrativeSnapshot} is not null
           and ${t.fulfilledAt} is not null)`,
     ),
   ],

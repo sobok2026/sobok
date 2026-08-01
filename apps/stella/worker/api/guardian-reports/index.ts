@@ -92,7 +92,7 @@ guardianReports.put('/:reportPublicId/answers/:id', async (c) => {
   return c.json({ saved: result.status, step: result.step }, 200, NO_STORE_HEADERS)
 })
 
-// GET /api/guardian-reports/:reportPublicId — progress metadata while drafting, immutable cards once fulfilled.
+// GET /api/guardian-reports/:reportPublicId — progress metadata while drafting, immutable cards and narrative once fulfilled.
 guardianReports.get('/:reportPublicId', async (c) => {
   const authorized = await withAuthorizedReport(c, readGuardianReport)
   if (!authorized.authorized) {

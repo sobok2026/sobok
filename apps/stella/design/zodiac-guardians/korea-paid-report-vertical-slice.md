@@ -227,9 +227,13 @@ collection capability를 `Authorization: Bearer`로 전달한다. active `pendin
   호출해 새로고침, 웹훅 선착, 지연 완료가 모두 같은 UI 경로를 사용한다.
 - draft 응답에는 질문 진행률만 포함하고 전체 질문 은행, `familySnapshot`, `cardSnapshot`,
   선택된 희귀도를 포함하지 않는다.
-- fulfilled 응답만 네 `cardEditionId`, 카드 표시 메타데이터, 리포트 문구 버전을 제공한다.
-- fulfilled 카드에는 `cardEditionId`, `familyId`, `slot`, `rarity`, `artworkPath`, `messageKey`만
-  포함한다. 리포트 입력 snapshot, 답변, 누적 signal과 family snapshot은 반환하지 않는다.
+- fulfilled 응답만 네 `cardEditionId`, 카드 표시 메타데이터, 리포트 문구 버전과 렌더가 끝난
+  `narrative` snapshot을 제공한다.
+- fulfilled 카드에는 `cardEditionId`, `familyId`, `slot`, `rarity`, `artworkPath`만 포함한다.
+  `narrative`에는 hero, 네 section의 차트 요약·선택 답변별 상세 문단·조언·한 줄, closing만
+  포함한다. 리포트 입력 snapshot, 답변 ID, 누적 signal과 family snapshot은 반환하지 않는다.
+- 최종 응답의 상세 계약과 copy version 규칙은
+  [한국어 개인화 리포트 본문 엔진과 최종 계약](./paid-report-content-engine.md)을 따른다.
 
 ### 유료 질문 HTTP 계약
 
@@ -518,13 +522,14 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 
 1. **완료:** 중앙 payments Service Binding, Stella Queue consumer, 웹훅 이벤트 데이터를 연결한다.
 2. **완료:** confirm·payment event·report read API를 현재 guest checkout·paid questionnaire API에 연결한다.
-3. 무료 결과의 두 질문·provisional 미리보기와 결제 뒤 질문·fulfillment 화면을 연결한다.
-4. pending 재조정과 미결제 checkout context 정리 cron을 연결한다.
-5. `/ko/cards`의 클라이언트 난수·로컬 소유권을 서버 상태로 교체한다.
-6. **완료:** 중앙 Wrangler에 Store ID·channel map을, `sobok-ops`에 payments Secret·Queue·custom
+3. **완료:** 한국어 개인화 본문 엔진, 불변 narrative snapshot과 최종 report GET 계약을 연결한다.
+4. 무료 결과의 두 질문·provisional 미리보기와 결제 뒤 질문·fulfillment 화면을 연결한다.
+5. pending 재조정과 미결제 checkout context 정리 cron을 연결한다.
+6. `/ko/cards`의 클라이언트 난수·로컬 소유권을 서버 상태로 교체한다.
+7. **완료:** 중앙 Wrangler에 Store ID·channel map을, `sobok-ops`에 payments Secret·Queue·custom
    domain을 반영한다.
-7. 두 schema에 Drizzle 선언과 같은 questionnaire version을 게시한다.
-8. staging Worker와 PortOne 테스트 채널에서 결제·모바일 리디렉션·질문 재개·카드 공개를 확인한
+8. 두 schema에 Drizzle 선언과 같은 questionnaire version을 게시한다.
+9. staging Worker와 PortOne 테스트 채널에서 결제·모바일 리디렉션·질문 재개·카드 공개를 확인한
    뒤 production을 배포한다.
 
 ### 완료 기준
@@ -540,6 +545,8 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 - 같은 정규화 입력과 규칙 버전은 같은 기본 패밀리를 선택한다.
 - 질문 답변은 상세 리포트 본문과 한 줄을 실질적으로 바꾸고, production 후보가 늘어나면 기본
   패밀리와 원화에도 영향을 주지만 사랑 희귀도 확률은 바꾸지 않는다.
+- 선택형 16~20개의 각 답은 해당 주제의 상세 근거 문단에 남고, 합산 signal은 섹션 중심·조언·
+  한 줄과 전체 경로를 고른다. fulfilled 뒤에는 같은 본문을 다시 계산하지 않는다.
 - checkout은 복구 이메일을 요구하되 계정·비밀번호·전화번호를 요구하지 않는다.
 - 결제 전 응답에는 선택된 기본 패밀리 ID, 사랑 희귀도, 카드 앞면 원화가 나타나지 않는다.
 - 변조한 브라우저 성공 응답이나 금액으로 카드를 받을 수 없다.

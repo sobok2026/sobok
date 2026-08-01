@@ -77,7 +77,6 @@ export interface GuardianCardEdition {
   slot: GuardianReportSlot
   rarity: GuardianRarity | null
   artworkPath: string
-  messageKey: string
 }
 
 export interface GuardianFamilyCandidate {
@@ -158,6 +157,7 @@ export interface GuardianFullReportProductDefinition extends GuardianProductDefi
   sku: GuardianFullReportProductSku
   kind: 'full_report'
   questionnaireVersions: Partial<Record<Locale, string>>
+  reportCopyVersions: Partial<Record<Locale, string>>
 }
 
 export interface GuardianLoveRedrawProductDefinition extends GuardianProductDefinitionBase {
@@ -172,7 +172,6 @@ export interface GuardianProductManifest {
   manifestVersion: string
   selectionRuleVersion: string
   oddsVersion: string
-  copyVersion: string
   renderVersion: string
   weightScale: number
   guarantee: {
@@ -195,10 +194,9 @@ export interface GuardianProductManifest {
  * not explicitly published here.
  */
 export const CURRENT_GUARDIAN_MANIFEST = {
-  manifestVersion: 'guardian-paid-2026-07-31.1',
+  manifestVersion: 'guardian-paid-2026-08-01.1',
   selectionRuleVersion: 'guardian-family-selection-v1',
   oddsVersion: 'guardian-love-rarity-v1',
-  copyVersion: 'guardian-report-copy-v1',
   renderVersion: 'guardian-card-render-v1',
   weightScale: 10_000,
   guarantee: {
@@ -219,7 +217,6 @@ export const CURRENT_GUARDIAN_MANIFEST = {
       slot: 'self',
       rarity: null,
       artworkPath: '/images/zodiac-guardians/cancer-self.webp',
-      messageKey: 'cards.cancer.self',
     },
     {
       id: 'aries.love.orbit',
@@ -227,7 +224,6 @@ export const CURRENT_GUARDIAN_MANIFEST = {
       slot: 'love',
       rarity: 'orbit',
       artworkPath: '/images/zodiac-guardians/aries-love-orbit.webp',
-      messageKey: 'cards.aries.love.orbit',
     },
     {
       id: 'aries.love.nebula',
@@ -235,7 +231,6 @@ export const CURRENT_GUARDIAN_MANIFEST = {
       slot: 'love',
       rarity: 'nebula',
       artworkPath: '/images/zodiac-guardians/aries-love-nebula.webp',
-      messageKey: 'cards.aries.love.nebula',
     },
     {
       id: 'aries.love.eclipse',
@@ -243,7 +238,6 @@ export const CURRENT_GUARDIAN_MANIFEST = {
       slot: 'love',
       rarity: 'eclipse',
       artworkPath: '/images/zodiac-guardians/aries-love-eclipse.webp',
-      messageKey: 'cards.aries.love.eclipse',
     },
     {
       id: 'aries.love.stella',
@@ -251,7 +245,6 @@ export const CURRENT_GUARDIAN_MANIFEST = {
       slot: 'love',
       rarity: 'stella',
       artworkPath: '/images/zodiac-guardians/aries-love-stella.webp',
-      messageKey: 'cards.aries.love.stella',
     },
     {
       id: 'taurus.work.base',
@@ -259,7 +252,6 @@ export const CURRENT_GUARDIAN_MANIFEST = {
       slot: 'work',
       rarity: null,
       artworkPath: '/images/zodiac-guardians/taurus-work.webp',
-      messageKey: 'cards.taurus.work',
     },
     {
       id: 'libra.choice.base',
@@ -267,7 +259,6 @@ export const CURRENT_GUARDIAN_MANIFEST = {
       slot: 'choice',
       rarity: null,
       artworkPath: '/images/zodiac-guardians/libra-choice.webp',
-      messageKey: 'cards.libra.choice',
     },
   ],
   familyPools: {
@@ -336,6 +327,9 @@ export const CURRENT_GUARDIAN_MANIFEST = {
       questionnaireVersions: {
         ko: 'guardian-paid-ko-mvp-v1',
       },
+      reportCopyVersions: {
+        ko: 'guardian-report-copy-ko-v1',
+      },
     },
     {
       sku: 'guardian-love-redraw-1-v1',
@@ -381,6 +375,22 @@ export function guardianQuestionnaireVersion(
   const version = product.questionnaireVersions[locale]
   if (!version) {
     throw new Error(`Guardian product ${sku} has no questionnaire for locale ${locale}`)
+  }
+  return version
+}
+
+export function guardianReportCopyVersion(
+  sku: GuardianFullReportProductSku,
+  locale: Locale,
+  manifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST,
+): string {
+  const product = guardianProduct(sku, manifest)
+  if (product.kind !== 'full_report') {
+    throw new Error(`Guardian product ${sku} has no report copy for locale ${locale}`)
+  }
+  const version = product.reportCopyVersions[locale]
+  if (!version) {
+    throw new Error(`Guardian product ${sku} has no report copy for locale ${locale}`)
   }
   return version
 }
@@ -613,8 +623,18 @@ function validateGuardianManifest(manifest: GuardianProductManifest): void {
     if (product.kind === 'love_redraw' && (!Number.isSafeInteger(product.redrawCredits) || product.redrawCredits < 1)) {
       throw new Error(`Guardian redraw product ${product.sku} must grant at least one redraw`)
     }
-    if (product.kind === 'full_report' && Object.keys(product.questionnaireVersions).length === 0) {
-      throw new Error(`Guardian full-report product ${product.sku} has no questionnaire`)
+    if (product.kind === 'full_report') {
+      const questionnaireLocales = Object.keys(product.questionnaireVersions)
+      const copyLocales = Object.keys(product.reportCopyVersions)
+      if (questionnaireLocales.length === 0) {
+        throw new Error(`Guardian full-report product ${product.sku} has no questionnaire`)
+      }
+      if (
+        questionnaireLocales.some((locale) => !product.reportCopyVersions[locale as Locale]) ||
+        copyLocales.some((locale) => !product.questionnaireVersions[locale as Locale])
+      ) {
+        throw new Error(`Guardian full-report product ${product.sku} has mismatched questionnaire and copy locales`)
+      }
     }
   }
 }
