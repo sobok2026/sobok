@@ -2,6 +2,7 @@
 @import '@sobok/typography/styles.css';
 
 @source '..';
+@source '../../../../packages/site-chrome/src';
 
 @theme {
   /* --color-background must stay in sync with THEME_COLOR in src/constants.ts */

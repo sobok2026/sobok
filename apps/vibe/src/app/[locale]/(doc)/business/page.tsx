@@ -1,6 +1,8 @@
+import DocArticle from '@sobok/site-chrome/doc-article'
 import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+
 import BusinessInfo from '@/components/BusinessInfo'
 import { BUSINESS_LABELS } from '@/content/business'
 import { LEGAL } from '@/content/legal'
@@ -18,20 +20,19 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/business
   })
 }
 
+// The registration details are a table rather than prose, so this page has no `sections` — it is the shell
+// plus one block. It still goes through DocArticle so the page frame stays defined in exactly one place.
 export default async function BusinessPage({ params }: PageProps<'/[locale]/business'>) {
   const locale = await getLocale(params)
   const labels = BUSINESS_LABELS[locale]
-  const nav = LEGAL[locale].nav
+  const { nav } = LEGAL[locale]
 
   return (
-    <main className="min-h-dvh bg-background px-4 pt-[calc(4.5rem+var(--safe-area-top))] pb-24 text-foreground sm:px-6 sm:pt-[calc(5rem+var(--safe-area-top))]">
-      <article className="mx-auto max-w-2xl">
-        <h1 className="font-bold text-3xl tracking-tight">{labels.heading}</h1>
-        <p className="mt-3 text-foreground-secondary">{labels.description}</p>
-
-        <BusinessInfo className="mt-8 text-sm leading-6" locale={locale} showHeading={false} />
-
-        <nav className="mt-10 flex flex-wrap gap-x-5 gap-y-2 text-accent text-sm">
+    <DocArticle
+      className="bg-background"
+      description={labels.description}
+      footer={
+        <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-accent">
           <Link className="underline underline-offset-2 hover:text-foreground" href={`/${locale}/terms`}>
             {nav.terms}
           </Link>
@@ -42,7 +43,10 @@ export default async function BusinessPage({ params }: PageProps<'/[locale]/busi
             {nav.refund}
           </Link>
         </nav>
-      </article>
-    </main>
+      }
+      intro={<BusinessInfo className="mt-8 text-sm leading-6" locale={locale} showHeading={false} />}
+      sections={[]}
+      title={labels.heading}
+    />
   )
 }

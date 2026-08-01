@@ -1,8 +1,9 @@
 import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
+
 import { LEGAL } from '@/content/legal'
 import { buildMetadata } from '@/lib/seo'
-import LegalArticle from '../LegalArticle'
+import LegalDocArticle from '../LegalDocArticle'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/refund'>): Promise<Metadata> {
   const locale = await getLocale(params)
@@ -20,5 +21,5 @@ export default async function RefundPage({ params }: PageProps<'/[locale]/refund
   const locale = await getLocale(params)
   const meta = LEGAL[locale]
 
-  return <LegalArticle doc={meta.refund} meta={meta} />
+  return <LegalDocArticle doc={meta.refund} meta={meta} />
 }

@@ -2,6 +2,7 @@
 @import '@sobok/typography/styles.css';
 
 @source '..';
+@source '../../../../packages/site-chrome/src';
 
 /*
  * The names below are the vocabulary every sobok site shares. Only the names were unified: this is a warm light theme and those two are dark,

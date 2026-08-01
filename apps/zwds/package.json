@@ -12,6 +12,7 @@
     "@sobok/analytics": "workspace:*",
     "@sobok/brand": "workspace:*",
     "@sobok/domain": "workspace:*",
+    "@sobok/site-chrome": "workspace:*",
     "@sobok/site-i18n": "workspace:*",
     "@sobok/site-seo": "workspace:*",
     "@sobok/typography": "workspace:*",

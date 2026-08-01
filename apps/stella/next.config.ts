@@ -13,6 +13,7 @@ export default withNextIntl(
       '@sobok/analytics',
       '@sobok/brand',
       '@sobok/domain',
+      '@sobok/site-chrome',
       '@sobok/site-i18n',
       '@sobok/site-seo',
       '@sobok/typography',

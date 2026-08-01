@@ -18,6 +18,7 @@
     "@sobok/brand": "workspace:*",
     "@sobok/domain": "workspace:*",
     "@sobok/edge": "workspace:*",
+    "@sobok/site-chrome": "workspace:*",
     "@sobok/site-i18n": "workspace:*",
     "@sobok/site-seo": "workspace:*",
     "@sobok/typography": "workspace:*",

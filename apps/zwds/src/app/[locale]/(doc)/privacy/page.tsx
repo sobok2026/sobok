@@ -1,9 +1,10 @@
+import DocArticle from '@sobok/site-chrome/doc-article'
+import LegalContact from '@sobok/site-chrome/legal-contact'
 import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 
 import { LEGAL } from '@/content/legal'
 import { buildMetadata } from '@/lib/seo'
-import LegalArticle from '../LegalArticle'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/privacy'>): Promise<Metadata> {
   const locale = await getLocale(params)
@@ -15,6 +16,16 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/privacy'
 export default async function PrivacyPage({ params }: PageProps<'/[locale]/privacy'>) {
   const locale = await getLocale(params)
   const meta = LEGAL[locale]
+  const doc = meta.privacy
 
-  return <LegalArticle doc={meta.privacy} meta={meta} />
+  return (
+    <DocArticle
+      className="bg-night-palace"
+      description={doc.description}
+      footer={<LegalContact heading={meta.contactLabel} />}
+      metaLines={[`${meta.updatedLabel}: ${doc.updatedDate}`]}
+      sections={doc.sections}
+      title={doc.title}
+    />
+  )
 }
