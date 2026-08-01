@@ -1,0 +1,20 @@
+{
+  "name": "@sobok/scheduler-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --test-scheduled",
+    "deploy": "wrangler deploy",
+    "type:bindings": "wrangler types worker-configuration.generated.d.ts --env-interface CloudflareBindings --include-runtime=false",
+    "type": "wrangler types worker-configuration.generated.d.ts --env-interface CloudflareBindings --include-runtime=false --check && tsc --noEmit"
+  },
+  "dependencies": {
+    "@sobok/scheduler": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260801.1",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.110.0"
+  }
+}

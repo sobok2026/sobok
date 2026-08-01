@@ -3,7 +3,7 @@
 // Two deliberate choices the abuse model depends on:
 //  1. The salt is STATIC per purpose (a single Secrets Store value), NOT rotating — every anti-abuse
 //     control (fixed-window rate limit, one-report-per-reporter dedup) needs the hash to be stable for a
-//     given network. It is minimized instead by NULLing ipHash columns after 90 days (retention cron).
+//     given network. It is minimized instead by NULLing ipHash columns after 90 days (scheduled retention).
 //  2. The IP is normalized to its NETWORK before hashing, so a single actor can't mint unbounded distinct
 //     hashes: IPv6 → /64 prefix (the smallest block reliably assigned to one subscriber), IPv4 → the full
 //     /32. Without this an IPv6 /64 holder gets 2^64 identities and defeats every per-ipHash limit.

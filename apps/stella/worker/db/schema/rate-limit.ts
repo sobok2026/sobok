@@ -2,7 +2,7 @@ import { integer, primaryKey, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { stella } from './common'
 
 // Atomic fixed-window rate limiter. Every write bumps its row via INSERT … ON CONFLICT DO UPDATE hits+1
-// RETURNING hits — race-free, unlike a SELECT count(*) + decide. Old windows are dropped by the retention cron.
+// RETURNING hits — race-free, unlike a SELECT count(*) + decide. Old windows are dropped by scheduled retention.
 export const rateLimitTable = stella.table(
   'rate_limit',
   {

@@ -13,7 +13,9 @@
   받는다. 주문·리포트·권한 원장은 계속 Vibe DB가 소유한다.
 - **Secrets Store**(계정당 1개): Vibe Worker에는 Anthropic 키, Resend 키, Turnstile 시크릿, Discord
   웹훅, GA4 Measurement Protocol 시크릿만 바인딩한다. PortOne Secret은 중앙 payments Worker만 읽는다.
-- **Cron 2개**: `*/15 * * * *` 결제 pending 재조정(`reconcileStalePending`), `0 3 * * *` 리텐션 purge(`runRetentionPurge`).
+- **공용 scheduler**: 계정 단일 `apps/scheduler`가 `*/15 * * * *`에 결제 pending 재조정,
+  `0 3 * * *`에 리텐션 purge를 `VibeMaintenance` RPC로 호출한다. Vibe Worker 자체에는 Cron Trigger가
+  없다.
 - **결제수단 카탈로그**: V2는 채널 하나가 PG 하나라 결제수단 추가는 곧 채널 추가이고, 여러 채널을 한 창에서 고르게 해주는 UI가 없다(`loadPaymentUI`는 PayPal SPB 전용). 그래서 페이월이 먼저 고르게 하고 `requestPayment`에 채널 키와 `payMethod`를 함께 넘긴다. 무엇을 어느 로케일에 파는지는 워커와 페이월이 함께 쓰는 **`deep-type/pay-method.ts` 한 곳**에 있다 — 카탈로그는 `ko`에 카카오페이·토스페이·카드·계좌이체·휴대폰, 비한국어(en·ja·zh)에 **페이팔 단독**이다. 채널은 결제수단보다 적다: `kcp_v2` 하나가 계좌이체와 휴대폰을 함께 받는다. `/checkout`이 저장된 로케일로 다시 검증한 뒤 **승인한 채널 키 하나만** 내려준다 — 가격·채점·지급과 같은 서버 권위다.
 - **페이팔(SPB) = 두 번째 SDK 모양**: 스펙의 `open` 판별자로 갈린다. `'window'` 수단은 우리 버튼이 `requestPayment`로 창을 열고, 페이팔은 `'ui'` — `loadPaymentUI`가 **페이팔 자신의 버튼**을 `portone-ui-container`에 렌더하며 우리 버튼으로는 못 연다. 그래서 페이월은 2단계다: 폼 제출 → `/checkout`이 가격·paymentId를 승인 → 결제하기 버튼 자리에 페이팔 버튼이 나타나고 그동안 폼은 `fieldset disabled`로 얼린다(생성된 결제가 그 값에 고정돼 있으므로). 창 닫힘/거절은 attempt 단위라 버튼이 남고, `돌아가기`로 세션을 버리면 pending 행은 닫힌 창과 같은 경로(reconcile·purge)로 수렴한다.
 - **다통화 가격**: 페이팔은 KRW를 받지 않아 en·zh=USD 4.98, ja=JPY 698, ko=KRW 5,900(`deep-type/offer.ts` 한 곳, 통화당 가격 1개를 로케일이 참조). **모든 금액은 ISO 4217 minor unit 정수**(USD는 센트: 498=$4.98, KRW·JPY는 그대로)이고 PortOne `totalAmount`·DB·`/checkout` 응답이 같은 단위라 변환 없이 흐른다. 나누는 곳은 화면(`formatPrice`)과 GA4(major unit 필수, `majorUnits`) 둘뿐이다. CNY는 페이팔이 중국 내 계정에만 허용해서 못 쓴다 — zh가 USD인 이유.
@@ -179,7 +181,8 @@ bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 �
 - `vars` · `define` · `hyperdrive` · `secrets_store_secrets`는 **비상속**이라 `env.stg`에 전부 다시 적혀 있다. 새 var를 top-level에 추가하면 staging에도 같이 넣어야 하고, 빠뜨리면 `undefined`로 도착한다(`guardTurnstile`이 `DEEPTYPE_PUBLIC_ORIGIN` 누락을 `misconfigured`로 잡아 주는 이유).
 - **Turnstile**: Cloudflare의 always-pass 더미 시크릿은 `hostname`을 `example.com`으로 돌려주므로 이 검증기를 통과할 수 없다(`packages/edge/src/turnstile.ts`). 스테이징도 **실제 vibe 위젯**을 쓰고, `vibe-stg.sobok.cc`를 위젯 Hostname Management에 등록해야 한다. `vibe.sobok.cc`의 서브도메인이 아니라 형제 호스트라 자동 커버되지 않는다.
 - **GA4**: 스테이징은 `DEEPTYPE_GA4_MEASUREMENT_ID`가 빈 문자열이라 `confirmPurchase`가 Measurement Protocol 전송을 건너뛴다. 킬스위치는 **목적지이지 크레덴셜이 아니다** — 시크릿은 프로덕션과 같은 것을 바인딩하고 보낼 곳이 없어서 안 보낸다. 테스트 결제는 프로덕션 매출 지표에 잡히지 않는다. 브라우저 GTM은 hostname 룩업으로 property를 고르므로 `vibe-stg.sobok.cc`를 룩업 테이블에 넣지 않는 편이 안전하다.
-- **크론은 상속된다** — 스테이징도 재조정·purge를 자기 스키마에 대해 돌린다(E2E F가 이걸 검증한다).
+- **scheduler가 두 환경을 각각 호출한다** — `vibe`와 `vibe-stg` Service Binding이 같은 주기에 각자
+  production/staging schema를 정리한다(E2E F가 이걸 검증한다).
 
 ---
 
@@ -295,15 +298,20 @@ bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 �
 - [ ] 스테이징 E2E A–L 통과(특히 B/C/D/H/J/K/L — 돈·멱등·환불·재열람·페이팔/모바일 결제·측정·토스페이).
 - [ ] Discord 알림 채널 수신 확인.
 - [ ] `wrangler deploy` 후 스모크: `/config` 200, 무료 세션 200, 소액 실결제 1건 → 환불로 정리.
-- [ ] Cron 트리거 2개 활성(`*/15`, `0 3`).
+- [ ] `scheduler` Worker의 account-wide Cron Trigger 2개 활성(`*/15`, `0 3`), Vibe Worker의 Cron
+      Trigger는 0개.
 
 ---
 
 ## 7. 관측·운영
 
 - **알림**: 웹훅 금액 불일치, 리포트 생성 실패 시 Discord로 이벤트 종류만 통지(식별자는 제한된 Worker 로그에서 확인, 웹훅 URL 빈 값이면 조용히 비활성).
-- **재조정**: `*/15` cron이 `verify`를 놓친 pending을 PortOne 재조회로 마감.
-- **리텐션**: `0 3` cron이 미전환 결과와 pending/failed 구매 30일, 완료 리포트의 원본·심화 응답 3개월, 원본 웹훅 90일을 기준으로 정리한다. 결제 1년 뒤 이메일·접근 토큰·파생 결과·리포트를 삭제하고 최소 거래 기록만 5년까지 보관한 뒤 삭제한다. 일회용 재열람 토큰은 만료 즉시 다음 purge에서 삭제한다.
+- **재조정**: 공용 scheduler의 `*/15` trigger가 `VibeMaintenance`를 호출해 `verify`를 놓친 pending을
+  PortOne 재조회로 마감한다.
+- **리텐션**: 공용 scheduler의 `0 3` trigger가 `VibeMaintenance`를 호출해 미전환 결과와
+  pending/failed 구매 30일, 완료 리포트의 원본·심화 응답 3개월, 원본 웹훅 90일을 기준으로 정리한다.
+  결제 1년 뒤 이메일·접근 토큰·파생 결과·리포트를 삭제하고 최소 거래 기록만 5년까지 보관한 뒤
+  삭제한다. 일회용 재열람 토큰은 만료 즉시 다음 purge에서 삭제한다.
 - **재열람 보안**: 메일 링크는 15분·1회용 SHA-256 해시로 저장한다. 원본 토큰은 URL fragment에 두고, 화면에서 명시적으로 열기를 누르기 전에는 교환하지 않는다.
 - **결제 복귀 보안**: PortOne의 결제 id만 복귀 쿼리로 받고 즉시 URL에서 제거한다. 리포트 access token은 URL에 넣지 않고 탭 한정 `sessionStorage`에 최대 1시간 보관하며, 복귀 페이지에서는 **AdSense를 로드하지 않는다**(GTM은 측정 연속성 때문에 로드된다 — I-5 참고).
 - **환불 불변식**: `viewed_at != null`이면 환불 거부(청약철회 = 콘텐츠 미열람 한정).

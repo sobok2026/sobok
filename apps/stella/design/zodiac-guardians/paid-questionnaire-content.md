@@ -190,4 +190,5 @@ checkout은 questionnaire version을 고정하고 질문 API는 아직 공개되
 마지막 답변 transaction은 answer·signal snapshot, 카드 네 장과 함께 렌더가 끝난 한국어
 `narrative_snapshot`도 고정한다. 각 선택 답변이 상세 근거 문단으로 남는 방식과 최종 GET 응답은
 [한국어 개인화 리포트 본문 엔진과 최종 계약](./paid-report-content-engine.md)을 따른다. 남은 외부
-연결은 무료 미리보기 → checkout → 유료 질문 → 카드 공개 화면과 pending 재조정 cron이다.
+연결은 무료 미리보기 → checkout → 유료 질문 → 카드 공개 화면과 공용 scheduler 기반 pending
+재조정이다.

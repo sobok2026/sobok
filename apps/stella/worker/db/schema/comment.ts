@@ -44,7 +44,7 @@ export const commentTable = stella.table(
     body: text().notNull(),
     status: commentStatusEnum().notNull().default('visible'),
     reportCount: integer('report_count').notNull().default(0),
-    // Pseudonymous, network-normalized IP hash for abuse tracing. NULLed by the retention cron after 90 days.
+    // Pseudonymous, network-normalized IP hash for abuse tracing. NULLed by scheduled retention after 90 days.
     ipHash: varchar('ip_hash', { length: 64 }),
     ...timestamps,
   },

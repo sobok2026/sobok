@@ -341,7 +341,8 @@ paid ───── 환불 확인 ───────────────
 - Stella Queue consumer는 처리 완료 이벤트만 `webhook-id`, type, `paymentId`로 기록한다. Queue는
   at-least-once이므로 event ID unique와 구매 상태 전이 CAS로 멱등 처리하고, 실패는 재시도 뒤 DLQ로
   보낸다. raw payload는 저장하지 않으며 완료 이벤트 행은 90일 뒤 일일 purge에서 정리한다.
-- 15분 이상 `pending`인 구매는 별도 cron이 제한된 batch로 재조회한다.
+- 15분 이상 `pending`인 구매 재조회는 Stella maintenance RPC로 구현한 뒤 공용 scheduler의 기존
+  15분 주기에 추가한다. 제품 Worker에 별도 Cron Trigger를 만들지 않는다.
 - 결제 확인 경로는 웹훅 누락과 브라우저 이탈을 서로 보완해야 하며 어느 하나만 필수 경로가 되지
   않게 한다. PortOne도 브라우저 응답 유실에 대비해 웹훅 사용을 강하게 권장한다.
 
@@ -516,7 +517,8 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
   테이블에 게시한다.
 - 실제 DB 반영은 앱 코드와 운영 binding이 준비된 뒤 같은 DB에 `drizzle-kit push`를
   `stella_stg`, `stella` 순서로 각각 수행한다.
-- Worker cron은 기존 일일 purge와 15분 결제 재조정을 `event.cron`으로 분기한다.
+- 계정 단일 `apps/scheduler`가 Cron Trigger를 소유한다. Stella는 `StellaMaintenance` RPC로 일일 purge를
+  제공하고, pending 재조정 구현 시 같은 entrypoint에 capability를 추가한다.
 
 ## 11. 권장 구현 순서
 
@@ -524,7 +526,8 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 2. **완료:** confirm·payment event·report read API를 현재 guest checkout·paid questionnaire API에 연결한다.
 3. **완료:** 한국어 개인화 본문 엔진, 불변 narrative snapshot과 최종 report GET 계약을 연결한다.
 4. 무료 결과의 두 질문·provisional 미리보기와 결제 뒤 질문·fulfillment 화면을 연결한다.
-5. pending 재조정과 미결제 checkout context 정리 cron을 연결한다.
+5. pending 재조정과 미결제 checkout context 정리를 Stella maintenance RPC로 구현하고 공용 scheduler의
+   기존 주기에 연결한다.
 6. `/ko/cards`의 클라이언트 난수·로컬 소유권을 서버 상태로 교체한다.
 7. **완료:** 중앙 Wrangler에 Store ID·channel map을, `sobok-ops`에 payments Secret·Queue·custom
    domain을 반영한다.

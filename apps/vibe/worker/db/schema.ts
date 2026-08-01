@@ -124,7 +124,7 @@ export const purchaseTable = deeptype.table(
     // send, never cleared: a second reminder is worse than a missed one.
     reminderSentAt: timestamp('reminder_sent_at', { precision: 3, withTimezone: true }),
     // GA4 identity snapshotted in the browser at checkout, carried here because the grant that emits the
-    // server-side `purchase` may be performed by the webhook or the reconcile cron, with no browser attached.
+    // server-side `purchase` may be performed by the webhook or scheduled reconciliation, with no browser attached.
     // Both are null when `analytics_storage` was denied, and are cleared the moment the event is accepted —
     // they are single-use routing data, not part of the transaction record.
     gaClientId: varchar('ga_client_id', { length: 64 }),
