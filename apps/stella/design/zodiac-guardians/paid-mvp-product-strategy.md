@@ -15,7 +15,7 @@
 - `권장안`: 출시 전에 수치 또는 세부 동작을 최종 승인해야 하는 현재 추천값
 - 구현 상태: 상품 매니페스트·추첨·게스트 컬렉션·리포트·구매·획득·보장과 유료 질문의 불변
   콘텐츠 계약·실제 한국어 선택형 44개와 선택 메모 1개·DB·게시 CLI·답변별 진행·마지막 답변의 카드 fulfillment
-  기반 구현. 계정, PortOne, 공개 mutation API, DB push·문항 게시는 미구현
+  기반 구현. 중앙 PortOne 연동과 공개 mutation API는 구현됐고 계정, DB push·문항 게시는 미구현
 
 ## 1. 목표와 제품 원칙
 
@@ -423,8 +423,8 @@ MVP의 보장 범위는 `Stella 계정 × 카드 패밀리`로 둔다. 시즌 �
 - 결제 확인과 재조정:
   `apps/vibe/worker/payments/confirm.ts`,
   `apps/vibe/worker/payments/reconcile.ts`
-- PortOne 웹훅:
-  `apps/vibe/worker/api/deep-type/webhook/POST.ts`
+- 중앙 PortOne 웹훅과 제품 이벤트 라우팅:
+  `apps/payments/worker/index.ts`, `apps/vibe/worker/payments/events.ts`
 - 구매 결과 재열람 메일:
   `apps/vibe/worker/lib/reopen-email.ts`
 
@@ -437,8 +437,9 @@ MVP의 보장 범위는 `Stella 계정 × 카드 패밀리`로 둔다. 시즌 �
 - 토스페이 결제창은 `payMethod: "EASY_PAY"`로 호출한다.
 - 토스페이먼츠 결제창은 실결제 승인 뒤 별도 channel key를 활성화한다.
 - Store ID와 channel key는 브라우저 결제 요청에 포함되는 공개 식별값이다.
-- Stella용 PortOne API Secret과 대표 Store의 공용 test/live Webhook Secret은 Worker의
-  Secrets Store binding 밖으로 노출하지 않는다. PG의 서버 API·secret key는 PortOne 콘솔에만 둔다.
+- PortOne API Secret과 대표 Store의 공용 test/live Webhook Secret은 중앙 payments Worker의
+  Secrets Store binding 밖으로 노출하지 않는다. Stella Worker에는 PortOne 자격증명을 두지 않으며
+  PG의 서버 API·secret key는 PortOne 콘솔에만 둔다.
 - test channel은 `stella-stg`, live channel은 `stella` 배포에만 둔다.
 - 두 배포는 같은 Supabase 프로젝트·Postgres 데이터베이스와 같은 Hyperdrive config를 공유한다.
 
@@ -457,8 +458,8 @@ MVP의 보장 범위는 `Stella 계정 × 카드 패밀리`로 둔다. 시즌 �
   `pg_catalog`만 두어 비한정 테이블명이 우연히 production으로 해석되지 않게 한다.
 - `drizzle-kit push`는 같은 DB URL에 `STELLA_DB_SCHEMA=stella_stg`와 `stella`를 각각 지정해
   실행한다.
-- PortOne test/live channel map과 공용 Webhook Secret binding은 배포별 모드에 고정하고 브라우저가
-  tier를 선택하지 못하게 한다. Webhook Secret 원본은 대표 Store·모드별 하나를 Vibe와 공유한다.
+- 중앙 payments의 test/live channel map과 공용 Webhook Secret binding은 배포별 모드에 고정하고
+  브라우저가 tier를 선택하지 못하게 한다. 제품 Worker는 PortOne 자격증명을 갖지 않는다.
 
 이 방식은 Supabase 프로젝트, 데이터베이스, role, Hyperdrive를 늘리지 않으면서 테스트 구매와
 실제 컬렉션을 물리적인 테이블 namespace로 분리한다. 행마다 환경을 검사하는 방어 로직도 필요

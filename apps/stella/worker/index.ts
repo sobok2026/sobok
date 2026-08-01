@@ -1,3 +1,4 @@
+import { type PaymentEvent, PaymentEventSchema } from '@sobok/payments'
 import { Hono } from 'hono'
 
 import { comments } from './api/comments'
@@ -5,10 +6,10 @@ import { guardianCheckouts } from './api/guardian-checkouts'
 import { guardianProducts } from './api/guardian-products'
 import { guardianPurchases } from './api/guardian-purchases'
 import { guardianReports } from './api/guardian-reports'
-import { guardianWebhooks } from './api/guardian-webhooks'
 import { runRetentionPurge } from './cron/purge'
 import type { AppEnv, Bindings } from './env'
 import { problem } from './errors'
+import { handleGuardianPaymentEvent } from './payments/events'
 
 // apps/stella is a Worker-with-static-assets: the Next static export in ./out is served at the edge, and this
 // Worker runs only for /api/* (wrangler `run_worker_first: ["/api/*"]`). Anything reaching the Worker without
@@ -20,7 +21,6 @@ app.route('/api/guardian-checkouts', guardianCheckouts)
 app.route('/api/guardian-products', guardianProducts)
 app.route('/api/guardian-purchases', guardianPurchases)
 app.route('/api/guardian-reports', guardianReports)
-app.route('/api/guardian-webhooks', guardianWebhooks)
 
 app.all('/api/*', () => problem(404, 'not-found'))
 app.all('*', (c) => c.env.ASSETS.fetch(c.req.raw))
@@ -42,4 +42,15 @@ export default {
   scheduled: (_event: ScheduledController, env: Bindings, ctx: ExecutionContext) => {
     ctx.waitUntil(runRetentionPurge(env))
   },
-} satisfies ExportedHandler<Bindings>
+  queue: async (batch: MessageBatch<PaymentEvent>, env: Bindings, ctx: ExecutionContext) => {
+    for (const message of batch.messages) {
+      try {
+        await handleGuardianPaymentEvent(env, ctx, PaymentEventSchema.parse(message.body))
+        message.ack()
+      } catch (error) {
+        console.error('stella.payment_event.failed', error instanceof Error ? error.message : 'unknown')
+        message.retry()
+      }
+    }
+  },
+} satisfies ExportedHandler<Bindings, PaymentEvent>

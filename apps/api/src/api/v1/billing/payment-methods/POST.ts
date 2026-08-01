@@ -1,4 +1,3 @@
-import { inspectBillingKey, isBillingConfigured } from '@sobok/billing'
 import { type POSTV1PaymentMethodResponse, PROBLEM, postV1PaymentMethodBodySchema } from '@sobok/contracts'
 import { savePaymentMethod } from '@sobok/db/app/query/payment-method'
 import { Hono } from 'hono'
@@ -7,6 +6,7 @@ import { createFactory } from 'hono/factory'
 import type { Env } from '@/app'
 
 import { requireAuth } from '@/middleware/require-auth'
+import { payments } from '@/payments'
 import { problemResponse } from '@/utils/problem'
 import { zProblemValidator } from '@/utils/validator'
 
@@ -15,16 +15,16 @@ const factory = createFactory<Env>()
 const middlewares = factory.createHandlers(requireAuth, zProblemValidator('json', postV1PaymentMethodBodySchema))
 
 route.post('/', ...middlewares, async (c) => {
-  if (!isBillingConfigured()) {
+  if (!payments) {
     return problemResponse(c, { status: 503 })
   }
 
   const userId = c.get('user')!.id
   const { token } = c.req.valid('json')
 
-  let brief: Awaited<ReturnType<typeof inspectBillingKey>>
+  let brief: Awaited<ReturnType<typeof payments.inspectBillingKey>>
   try {
-    brief = await inspectBillingKey(token)
+    brief = await payments.inspectBillingKey(token)
   } catch (error) {
     console.error('billing: inspectBillingKey failed', error)
     return problemResponse(c, { status: 400 })

@@ -138,10 +138,11 @@ guardianCheckouts.post('/', async (c) => {
     return denied
   }
 
-  const channelKey = c.env.STELLA_PORTONE_CHANNELS?.tosspay_v2
-  const storeId = c.env.STELLA_PORTONE_STORE_ID
-  const publicOrigin = c.env.STELLA_PUBLIC_ORIGIN
-  if (!channelKey || !storeId || !publicOrigin) {
+  const paymentConfig = await c.env.PAYMENTS.checkoutConfig('tosspay_v2').catch((error) => {
+    console.error('stella.guardian_checkout.payments_unavailable', error instanceof Error ? error.name : 'unknown')
+    return null
+  })
+  if (!paymentConfig) {
     console.error('stella.guardian_checkout.channel_unbound (tosspay_v2)')
     c.executionCtx.waitUntil(
       c.env.STELLA_DISCORD_WEBHOOK.get().then((webhook) =>
@@ -210,14 +211,13 @@ guardianCheckouts.post('/', async (c) => {
         paymentId: outcome.paymentId,
         status: outcome.purchaseStatus,
         sku: outcome.sku,
-        storeId,
-        channelKey,
+        storeId: paymentConfig.storeId,
+        channelKey: paymentConfig.channelKey,
         payMethod: 'EASY_PAY' as const,
         orderName: outcome.orderName,
         amount: outcome.amount,
         market: outcome.market,
         currency: outcome.currency,
-        noticeUrls: [`${publicOrigin}/api/guardian-webhooks/portone`],
       },
     },
     'reportPublicId' in body ? 200 : 201,

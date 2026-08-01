@@ -12,7 +12,7 @@ import { resolveSku } from '~/lib/pricing'
 import { newPaymentId, normalizeEmail } from '~/lib/tokens'
 import { guardTurnstile } from '~/lib/turnstile'
 import { DEEPTYPE_CHECKOUT_ACTION } from '../actions'
-import { channelKeyFor } from '../channels'
+import { paymentConfigFor } from '../channels'
 
 // Phase 3: checkout → PortOne → verify / webhook.
 const CheckoutBody = z.object({
@@ -96,8 +96,8 @@ route.post('/', async (c) => {
     // open is a row the 15-min cron re-checks against PortOne until retention purges it. The menu already says
     // this method is sellable, so an absent key means this deployment's channel map and
     // `sellableChannels(tier)` disagree — our mistake, caught before it costs a row.
-    const channelKey = channelKeyFor(c.env, body.payMethod)
-    if (!channelKey) {
+    const paymentConfig = await paymentConfigFor(c.env, body.payMethod)
+    if (!paymentConfig) {
       return 'channel-unbound' as const
     }
 
@@ -123,7 +123,7 @@ route.post('/', async (c) => {
       gaSessionId: body.analytics?.sessionId ?? null,
     })
 
-    return { channelKey, sku }
+    return { paymentConfig, sku }
   })
 
   // Deliberately the same generic 422 a malformed body gets: naming the policy would tell a prober which
@@ -153,8 +153,8 @@ route.post('/', async (c) => {
   return c.json({
     paymentId,
     accessToken,
-    storeId: c.env.DEEPTYPE_PORTONE_STORE_ID,
-    channelKey: detail.channelKey,
+    storeId: detail.paymentConfig.storeId,
+    channelKey: detail.paymentConfig.channelKey,
     orderName: detail.sku.orderName,
     amount: detail.sku.amount,
     currency: detail.sku.currency,

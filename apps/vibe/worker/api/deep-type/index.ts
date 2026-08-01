@@ -10,7 +10,6 @@ import reopenRoutes from './reopen'
 import reportRoutes from './report'
 import sessionRoute from './session/POST'
 import verifyRoute from './verify/POST'
-import webhookRoute from './webhook/POST'
 
 // Mounted at /api/deep-type by the Worker entry. One sub-route per resource; each method lives in its own
 // GET.ts / POST.ts (mirrors apps/api). URLs are unchanged from the former single-file router.
@@ -20,7 +19,6 @@ deepType.route('/config', configRoute)
 deepType.route('/session', sessionRoute)
 deepType.route('/checkout', checkoutRoute)
 deepType.route('/verify', verifyRoute)
-deepType.route('/webhook', webhookRoute)
 deepType.route('/cancel', cancelRoute)
 deepType.route('/refinement', refinementRoutes)
 deepType.route('/report', reportRoutes)

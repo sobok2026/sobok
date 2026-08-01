@@ -1,6 +1,6 @@
-import type { BillingGateway } from '@sobok/billing'
 import { listStalePendingPayments, markPaymentFailed } from '@sobok/db/app/query/payment'
 import { confirmPayment } from '@sobok/db/app/query/subscription'
+import type { BillingGateway } from '@sobok/payments'
 
 // charge 성공과 confirmPayment 사이에 프로세스가 죽고 웹훅까지 유실되면 결제가 pending에
 // 갇힌다. 이 패스는 오래된 pending을 PG의 실제 상태로 수렴시킨다(웹훅의 마지막 안전망).
@@ -64,7 +64,7 @@ async function reconcileOne(
   if (remote.status === 'paid') {
     await confirmPayment(paymentId, {
       providerTxnId: remote.providerTxnId ?? paymentId,
-      paidAt: remote.paidAt ?? now,
+      paidAt: remote.paidAt ? new Date(remote.paidAt) : now,
       paymentMethodId: null,
       method: remote.method,
     })

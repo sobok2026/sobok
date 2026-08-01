@@ -6,8 +6,6 @@ import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { confirmPurchase } from '~/payments/confirm'
 
-import { creds } from '../creds'
-
 const VerifyBody = z.object({ paymentId: z.string().min(1).max(64) })
 
 const route = new Hono<AppEnv>()
@@ -20,8 +18,6 @@ route.post('/', async (c) => {
     return problem(422, 'invalid-request')
   }
 
-  const portOneCreds = await creds(c)
-
   // `refinementRequired` is read on the same connection as the grant, because the screen that asked this
   // question routes on the answer: sending a buyer whose paid block is already stored back into the
   // twenty-four questions makes them re-answer a set `POST /refinement` will discard as a no-op.
@@ -30,7 +26,7 @@ route.post('/', async (c) => {
   // `dt_<uuid4>` payment id is one boolean about that payment's own report and no personal data — the same
   // trade `/reopen/exchange` already makes with its own credential.
   const { outcome, refinementRequired } = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
-    const confirmed = await confirmPurchase(db, { creds: portOneCreds, env: c.env }, parsed.data.paymentId)
+    const confirmed = await confirmPurchase(db, { env: c.env }, parsed.data.paymentId)
     if (confirmed !== 'paid' && confirmed !== 'already-paid') {
       return { outcome: confirmed, refinementRequired: false }
     }

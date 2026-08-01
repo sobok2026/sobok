@@ -1,4 +1,5 @@
 import { describeError } from '@sobok/edge/errors'
+import { type PaymentEvent, PaymentEventSchema } from '@sobok/payments'
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { requestId } from 'hono/request-id'
@@ -7,6 +8,7 @@ import { deepType } from './api/deep-type'
 import type { AppEnv, Bindings } from './env'
 
 import { problem } from './errors'
+import { handleDeepTypePaymentEvent } from './payments/events'
 import { runRetentionPurge } from './payments/purge'
 import { reconcileStalePending } from './payments/reconcile'
 
@@ -42,4 +44,15 @@ export default {
   scheduled: (event: ScheduledController, env: Bindings, ctx: ExecutionContext) => {
     ctx.waitUntil(event.cron === PURGE_CRON ? runRetentionPurge(env) : reconcileStalePending(env))
   },
-} satisfies ExportedHandler<Bindings>
+  queue: async (batch: MessageBatch<PaymentEvent>, env: Bindings, ctx: ExecutionContext) => {
+    for (const message of batch.messages) {
+      try {
+        await handleDeepTypePaymentEvent(env, ctx, PaymentEventSchema.parse(message.body))
+        message.ack()
+      } catch (error) {
+        console.error('deeptype.payment_event.failed', describeError(error))
+        message.retry()
+      }
+    }
+  },
+} satisfies ExportedHandler<Bindings, PaymentEvent>

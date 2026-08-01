@@ -1,0 +1,9 @@
+# apps/payments is the only runtime that receives PortOne server credentials.
+# For local development, create the four Secrets Store entries referenced by wrangler.jsonc:
+#   payments-portone-api-secret-staging
+#   portone-webhook-secret-test
+#   payments-core-client-token
+#   payments-core-events-token
+#
+# The Store ID and test channel map are public and already pinned in wrangler.jsonc. Run `wrangler dev --env stg`
+# together with the app Workers when exercising Service Bindings locally.

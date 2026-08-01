@@ -13,7 +13,7 @@
     "docker:run": "docker run --rm --env-file .env.prod.runtime sobok-billing-worker-local"
   },
   "dependencies": {
-    "@sobok/billing": "workspace:*",
+    "@sobok/payments": "workspace:*",
     "@sobok/db": "workspace:*",
     "@sobok/domain": "workspace:*"
   },

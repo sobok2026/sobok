@@ -1,4 +1,3 @@
-import { getRemotePayment, isBillingConfigured } from '@sobok/billing'
 import { PROBLEM } from '@sobok/contracts'
 import { getPaymentByPaymentId } from '@sobok/db/app/query/payment'
 import { Hono } from 'hono'
@@ -8,6 +7,7 @@ import { z } from 'zod'
 import type { Env } from '@/app'
 
 import { requireAuth } from '@/middleware/require-auth'
+import { payments } from '@/payments'
 import { problemResponse } from '@/utils/problem'
 import { zProblemValidator } from '@/utils/validator'
 
@@ -21,7 +21,7 @@ const middlewares = factory.createHandlers(requireAuth, zProblemValidator('param
 
 // PG 매출전표(영수증)로 리다이렉트 — 본인 결제만. URL은 조회 시점에 PG에서 받아온다.
 route.get('/', ...middlewares, async (c) => {
-  if (!isBillingConfigured()) {
+  if (!payments) {
     return problemResponse(c, { status: 503 })
   }
 
@@ -33,9 +33,9 @@ route.get('/', ...middlewares, async (c) => {
     return problemResponse(c, { status: 404 })
   }
 
-  let remote: Awaited<ReturnType<typeof getRemotePayment>>
+  let remote: Awaited<ReturnType<typeof payments.getPayment>>
   try {
-    remote = await getRemotePayment(paymentId)
+    remote = await payments.getPayment(paymentId)
   } catch (error) {
     console.error('billing: receipt getPayment failed', { paymentId, error })
     return problemResponse(c, { status: 502 })

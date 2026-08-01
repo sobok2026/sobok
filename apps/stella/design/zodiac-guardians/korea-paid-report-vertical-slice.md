@@ -18,7 +18,7 @@
 - 후속 결제수단: 토스페이먼츠는 실결제 승인 뒤 활성화
 - 현재 구현: 상품 매니페스트, 추첨, 게스트 컬렉션·리포트·구매·획득·보장 도메인,
   실제 한국어 선택형 질문 44개와 선택 메모 1개, 불변 콘텐츠 계약·DB·게시 CLI·답변별 저장과 현재 문항 계산,
-  Turnstile·rate limit을 거치는 guest checkout, PortOne 원격 confirm·서명 웹훅, capability 기반 질문
+  Turnstile·rate limit을 거치는 guest checkout, 중앙 payments를 통한 PortOne confirm·검증 이벤트, capability 기반 질문
   GET/PUT과 draft/fulfilled report GET API
 - 아직 미연결: 15분 pending 재조정, 실제 DB push·문항 게시, 무료 결과와
   결제·질문·카드 공개 화면의 서버 상태, 이메일 복구 전송
@@ -98,6 +98,7 @@ sequenceDiagram
   participant B as Stella 웹
   participant W as Stella Worker
   participant D as stella DB
+  participant X as Sobok payments
   participant P as PortOne
 
   U->>B: 무료 차트 확인·미리보기 질문 2개
@@ -112,14 +113,19 @@ sequenceDiagram
   par 브라우저 복귀
     P-->>B: paymentId 또는 오류
     B->>W: 결제 확인 요청
+    W->>X: paymentId 결제 단건 조회
+    X->>P: 결제 단건 조회
+    P-->>X: 상태 + 금액 + 통화
+    X-->>W: 정규화된 결제 상태
   and 웹훅
-    P->>W: 서명된 결제 이벤트
+    P->>X: 서명된 결제 이벤트
+    X->>P: 결제 단건 조회
+    P-->>X: 상태 + 금액 + 통화
+    X-->>W: 검증된 Stella Queue 이벤트
   and 누락 복구
-    W->>W: 15분 pending 재조정
+    W->>X: 15분 pending 결제 재조회
   end
 
-  W->>P: paymentId 결제 단건 조회
-  P-->>W: 상태 + 금액 + 통화
   W->>D: paid + questionnaire entitlement
   W-->>B: 유료 질문 접근 가능
   loop 주제별 적응형 질문
@@ -147,7 +153,6 @@ sequenceDiagram
 | ------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------ |
 | `POST /api/guardian-checkouts`                          | Turnstile·rate limit | 무료 컨텍스트·이메일 검증, collection·pending 구매 생성·재사용                       |
 | `POST /api/guardian-purchases/:paymentId/confirm`       | 게스트 capability    | PortOne 원격 상태 조회, paid entitlement·questionnaire draft 생성                    |
-| `POST /api/guardian-webhooks/portone`                   | PortOne 서명         | 이벤트를 검증한 뒤 같은 구매 확정 함수 호출                                          |
 | `GET /api/guardian-reports/:reportPublicId`             | 게스트 capability    | 유료 질문 진행 메타데이터 또는 fulfilled 결과 조회                                   |
 | `GET /api/guardian-reports/:reportPublicId/question`    | paid capability      | 현재 session에서 허용된 다음 한 문항 조회                                            |
 | `PUT /api/guardian-reports/:reportPublicId/answers/:id` | paid capability      | 한 답변 저장, 다음 맞춤 문항 계산, 마지막 답변이면 카드 선택·report fulfillment 수행 |
@@ -204,7 +209,7 @@ collection capability를 `Authorization: Bearer`로 전달한다. active `pendin
 `cancelled`이고 report가 아직 draft면 같은 report에 새 pending 구매를 만든다.
 
 신규 응답은 `guest.{collectionPublicId,reportPublicId,accessToken}`과
-`payment.{paymentId,status,sku,storeId,channelKey,payMethod,orderName,amount,market,currency,noticeUrls}`로 나눈다.
+`payment.{paymentId,status,sku,storeId,channelKey,payMethod,orderName,amount,market,currency}`로 나눈다.
 재개 응답은 이미 Authorization으로 보낸 capability를 다시 싣지 않는다. 신규는 `201`, 재개는
 `200`이며 `payment.status`가 `pending`일 때만 브라우저가 결제창을 연다.
 가격과 PortOne 채널은 요청에서 받지 않고 매니페스트와 배포별 channel map에서만 정한다.
@@ -318,50 +323,37 @@ paid ───── 환불 확인 ───────────────
 - 모바일을 포함하므로 `redirectUrl`을 항상 제공하고 반환값 방식과 리디렉션 방식을 모두 처리한다.
 - `storeId`와 `channelKey`는 공개 설정이지만 클라이언트가 임의로 고르는 값은 받지 않는다. 서버가
   허용한 결제수단에 대응하는 한 채널만 checkout 응답으로 보낸다.
-- Stella용 API Secret과 대표 Store의 공용 Webhook Secret은 Stella Worker binding으로만 읽고
-  브라우저 번들·응답·로그에 넣지 않는다.
-- 대표 Store의 콘솔 기본 웹훅은 다른 제품도 사용하므로 Stella checkout은 배포별 고정
-  `STELLA_PUBLIC_ORIGIN`으로 만든 `/api/guardian-webhooks/portone`을 `noticeUrls`로 반환한다. 브라우저는
-  이 값을 결제 요청에 그대로 전달해 Store 기본 URL을 Stella 결제에 한해서 덮어쓴다.
-- PortOne 어댑터는 Stella Worker 호출부 가까이에 두고 Vibe 결제 테이블이나 계정을 공유하지 않는다.
+- PortOne API Secret, 대표 Store의 Webhook Secret, Store/channel map은 중앙 `apps/payments` Worker만
+  소유한다. Stella는 `PAYMENTS` Service Binding으로 `st_` 결제만 조회·취소할 수 있다.
+- 대표 Store의 콘솔 기본 웹훅은 실연동 `payments.sobok.cc`, 테스트 `payments-stg.sobok.cc`의 중앙
+  endpoint를 사용한다. checkout 응답이나 브라우저 결제 요청에 `noticeUrls`를 넣지 않는다.
+- 중앙화해도 Vibe 결제 테이블이나 계정을 공유하지 않는다. Stella 주문·리포트·카드 권한 원장은
+  계속 Stella schema가 소유한다.
 
 ### 웹훅과 재조정
 
-- 웹훅 버전은 현재 최신인 `2024-04-25`를 사용한다.
-- JSON 파싱 전에 raw body와 `webhook-id`, `webhook-signature`, `webhook-timestamp`로 서명을
-  검증한다.
-- 서명된 `Transaction.Paid` 이벤트도 지급 근거로 바로 사용하지 않고 PortOne 결제 단건 조회를
-  실행한다.
-- 유효한 웹훅은 이미 처리된 이벤트나 관심 없는 이벤트여도 2xx로 응답한다.
-- 처리 완료된 Stella 결제 이벤트만 `webhook-id`, type, `paymentId`로 기록한다. raw payload는 저장하지
-  않으며 일시 실패는 이벤트 행을 남기지 않아 PortOne 재시도를 허용한다. 완료 이벤트 행은 90일 뒤
-  일일 purge에서 정리한다.
+- 중앙 payments는 웹훅 버전 `2024-04-25`의 raw body와 서명 헤더를 검증하고, PortOne 결제 단건을
+  다시 조회한 뒤 `st_` 이벤트만 Stella 전용 Queue에 넣는다.
+- Stella Queue consumer는 처리 완료 이벤트만 `webhook-id`, type, `paymentId`로 기록한다. Queue는
+  at-least-once이므로 event ID unique와 구매 상태 전이 CAS로 멱등 처리하고, 실패는 재시도 뒤 DLQ로
+  보낸다. raw payload는 저장하지 않으며 완료 이벤트 행은 90일 뒤 일일 purge에서 정리한다.
 - 15분 이상 `pending`인 구매는 별도 cron이 제한된 batch로 재조회한다.
 - 결제 확인 경로는 웹훅 누락과 브라우저 이탈을 서로 보완해야 하며 어느 하나만 필수 경로가 되지
   않게 한다. PortOne도 브라우저 응답 유실에 대비해 웹훅 사용을 강하게 권장한다.
 
 ### 설정 경계
 
-Stella에 다음 설정이 필요하다.
+Stella에 다음 결제 설정이 필요하다.
 
-| 종류          | 이름                                   |
-| ------------- | -------------------------------------- |
-| plain var     | `STELLA_PORTONE_STORE_ID`              |
-| plain var     | 허용 결제수단별 Stella channel key map |
-| plain var     | `STELLA_PUBLIC_ORIGIN`                 |
-| Secrets Store | `STELLA_PORTONE_API_SECRET`            |
-| Secrets Store | `STELLA_PORTONE_WEBHOOK_SECRET`        |
+| 종류            | 이름                                                                           |
+| --------------- | ------------------------------------------------------------------------------ |
+| Service Binding | `PAYMENTS` → live `payments` / stg `payments-stg`, entrypoint `StellaPayments` |
+| Queue consumer  | live `stella-payment-events` / stg `stella-payment-events-stg`                 |
+| Queue DLQ       | 환경별 `*-dlq`                                                                 |
 
-PortOne의 Store ID는 상점을 식별하고 channel key는 실제 PG 연결을 선택한다. API Secret은 결제
-거래를 제어하므로 서버에만 둔다.
-
-`STELLA_PORTONE_API_SECRET`에는 PG 채널 설정의 API key·secret key·client key가 아니라 Stella용으로
-별도 발급한 **V2 API Secret**을 넣는다. Vibe와 독립적으로 폐기·교체하지만 권한 경계는 같은 Store이며,
-Stella production과 staging이 함께 사용한다.
-
-`STELLA_PORTONE_WEBHOOK_SECRET`은 앱별 발급값이 아니다. 대표 Store가 PortOne 설정 모드별로 한 번만
-발급한 `portone-webhook-secret-live` 또는 `portone-webhook-secret-test`를 배포에 맞게 바인딩하며,
-Vibe도 같은 항목을 읽는다. 수신 URL만 Stella 결제 요청의 `noticeUrls`로 분리한다.
+Store ID와 channel map은 `apps/payments/wrangler.jsonc`, V2 API Secret은 `account-payments`, 설정
+모드별 Webhook Secret은 `account-secrets-store`가 소유한다. Stella Worker에는 PortOne 자격증명을
+바인딩하지 않는다. 세부 운영 계약은 `apps/payments/README.md`를 따른다.
 
 - [PortOne 결제 연동 준비](https://developers.portone.io/opi/ko/integration/ready/readme)
 - [PortOne 연동 정보와 채널 관리](https://developers.portone.io/opi/ko/console/guide/channel-manage)
@@ -495,7 +487,7 @@ freeResult
 `무료 결과 방문당 매출`, 구매 후 카드 공개율, 완독률, 7일 재열람률을 함께 본다.
 
 운영 알림 대상은 금액·통화 불일치, 동일 구매의 반복 확정 실패, 오래된 pending backlog,
-PortOne API·웹훅 시크릿 설정 오류다. capability, 출생 입력, 질문 답변, 전체 결제 응답은 로그에
+중앙 payments 또는 PortOne 자격증명 설정 오류다. capability, 출생 입력, 질문 답변, 전체 결제 응답은 로그에
 남기지 않는다.
 
 Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 오류 처리를 적용해 결제
@@ -503,7 +495,7 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 
 ## 10. 인프라와 배포 경계
 
-- `stella-stg`와 `stella`는 별도 Worker 배포와 PortOne test/live channel map을 사용한다.
+- `stella-stg`와 `stella`는 별도 Worker 배포이며 각각 `payments-stg`, `payments` Service Binding을 사용한다.
 - Supabase 프로젝트와 Postgres 데이터베이스는 하나만 사용한다.
 - 두 Worker가 기존 제품 단위 `stella` Hyperdrive config 하나를 그대로 공유한다.
 - entitlement와 collection의 read-after-write가 필요하므로 Hyperdrive 캐시는 계속 끈다.
@@ -513,9 +505,9 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 - `STELLA_DB_SCHEMA`를 build-time에 schema-qualified SQL로 굽고 production fallback을 두지 않는다.
 - `stella_app` role은 두 schema의 table·sequence default privilege를 가지되 `search_path`는
   `pg_catalog`만 사용한다.
-- `sobok-ops`에는 `stella_stg` schema·grant, Stella 전용 PortOne API Secret과 대표 Store 공용
-  live/test Webhook Secret을 선언한다. Store ID·channel map·public origin은 앱의 Wrangler 설정이
-  소유하며 Hyperdrive resource는 추가하지 않는다.
+- `sobok-ops`에는 `stella_stg` schema·grant, 중앙 payments custom domain, Stella Queue/DLQ를
+  선언한다. Store ID·channel map과 PortOne 자격증명은 중앙 payments 경계가 소유하며 Stella용
+  Hyperdrive resource는 추가하지 않는다.
 - 유료 질문 은행도 별도 데이터베이스를 만들지 않고 Git 원본을 각 Stella schema의 서버 콘텐츠
   테이블에 게시한다.
 - 실제 DB 반영은 앱 코드와 운영 binding이 준비된 뒤 같은 DB에 `drizzle-kit push`를
@@ -524,13 +516,13 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 
 ## 11. 권장 구현 순서
 
-1. **완료:** Stella 전용 PortOne 어댑터, API·webhook 비밀 binding, 웹훅 이벤트 데이터를 만든다.
-2. **완료:** confirm·webhook·report read API를 현재 guest checkout·paid questionnaire API에 연결한다.
+1. **완료:** 중앙 payments Service Binding, Stella Queue consumer, 웹훅 이벤트 데이터를 연결한다.
+2. **완료:** confirm·payment event·report read API를 현재 guest checkout·paid questionnaire API에 연결한다.
 3. 무료 결과의 두 질문·provisional 미리보기와 결제 뒤 질문·fulfillment 화면을 연결한다.
 4. pending 재조정과 미결제 checkout context 정리 cron을 연결한다.
 5. `/ko/cards`의 클라이언트 난수·로컬 소유권을 서버 상태로 교체한다.
-6. **완료:** Wrangler에 Store ID·channel map·배포별 `noticeUrls`를, `sobok-ops`에 Stella API Secret과
-   공용 live/test Webhook Secret을 반영한다.
+6. **완료:** 중앙 Wrangler에 Store ID·channel map을, `sobok-ops`에 payments Secret·Queue·custom
+   domain을 반영한다.
 7. 두 schema에 Drizzle 선언과 같은 questionnaire version을 게시한다.
 8. staging Worker와 PortOne 테스트 채널에서 결제·모바일 리디렉션·질문 재개·카드 공개를 확인한
    뒤 production을 배포한다.
@@ -556,7 +548,7 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 - 결제 뒤 새로고침해도 같은 질문 진행 상태 또는 같은 네 카드와 리포트를 읽는다.
 - 브라우저가 닫혀도 웹훅·재조정으로 구매가 paid에 수렴한다.
 - 결제창을 중복 클릭해도 활성 전체 리포트 구매와 카드 스냅샷이 중복 생성되지 않는다.
-- PortOne API/Webhook Secret은 Worker 외부로 노출되지 않는다.
+- PortOne API/Webhook Secret은 중앙 payments Worker 외부로 노출되지 않는다.
 - 카드 공개부터 네 섹션 완독까지 기존 접근성과 reduced-motion 동작이 유지된다.
 - `stella-stg`와 `stella`는 같은 Hyperdrive ID를 사용하면서 각각 `stella_stg`, `stella` schema만
   명시적으로 조회한다.
@@ -583,7 +575,7 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 | 무료 결과 제안     | actions 뒤 주 제안과 장문 리포트 끝 보조 CTA 권장          | 무료 가치를 먼저 준 뒤 두 번만 자연스럽게 발견시킨다      |
 | 출생 입력          | 기존 무료 차트 핵심값 재사용, 추가 재입력 없음 권장        | 구매 전 중복 입력을 없앤다                                |
 
-다음 제품 결정은 장기 문항은행의 제작 범위와 production 1,024장의 제작 매트릭스다. Stella용 PortOne
-API Secret과 대표 Store의 live/test Webhook Secret은 채팅이나 public repository에 전달하지 않고
-각 HCP Terraform sensitive 변수에서 Secrets Store로 넣는다. 유료 질문 원문은 Git의 questionnaire
+다음 제품 결정은 장기 문항은행의 제작 범위와 production 1,024장의 제작 매트릭스다. 대표 Store의
+PortOne API Secret과 live/test Webhook Secret은 채팅이나 public repository에 전달하지 않고 중앙
+payments 관련 HCP Terraform sensitive 변수에서 Secrets Store로 넣는다. 유료 질문 원문은 Git의 questionnaire
 source 디렉터리에 커밋한 뒤 게시 CLI로 DB에 반영한다.

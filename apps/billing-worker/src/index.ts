@@ -1,4 +1,4 @@
-import { createBillingGateway } from '@sobok/billing'
+import { payments } from './payments'
 import { reconcileStalePendingPayments } from './reconcile'
 import { processDueSubscriptions } from './renew'
 import { closeMonthlyPayouts } from './settle'
@@ -11,15 +11,15 @@ const log = {
 
 async function main() {
   const startTime = Date.now()
-  const gateway = createBillingGateway()
+  const gateway = payments
 
   if (!gateway) {
-    log.error('PORTONE_API_SECRET is not configured — refusing to run a renewal pass')
+    log.error('PAYMENTS_SERVICE_URL/TOKEN is not configured — refusing to run a renewal pass')
 
     console.log(
       JSON.stringify({
         severity: 'ERROR',
-        message: 'Billing worker misconfigured: PORTONE_API_SECRET missing',
+        message: 'Billing worker misconfigured: central payments service is unavailable',
       }),
     )
 

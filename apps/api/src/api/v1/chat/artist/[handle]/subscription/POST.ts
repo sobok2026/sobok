@@ -1,4 +1,3 @@
-import { chargeWithBillingKey, describeChargeFailure, getRemotePayment, isBillingConfigured } from '@sobok/billing'
 import {
   chatHandleParamSchema,
   type POSTV1ChatSubscriptionResponse,
@@ -22,12 +21,14 @@ import {
   RENEWAL_GRACE_MS,
   SUBSCRIPTION_TARGET_CHAT_ARTIST,
 } from '@sobok/domain/subscription/policy'
+import { describeChargeFailure } from '@sobok/payments'
 import { Hono } from 'hono'
 import { createFactory } from 'hono/factory'
 
 import type { Env } from '@/app'
 
 import { requireAuth } from '@/middleware/require-auth'
+import { payments } from '@/payments'
 import { problemResponse } from '@/utils/problem'
 import { zProblemValidator } from '@/utils/validator'
 
@@ -43,7 +44,7 @@ const middlewares = factory.createHandlers(
 )
 
 route.post('/', ...middlewares, async (c) => {
-  if (!isBillingConfigured()) {
+  if (!payments) {
     return problemResponse(c, { status: 503 })
   }
 
@@ -175,7 +176,7 @@ route.post('/', ...middlewares, async (c) => {
         feeAmount: computeFeeAmount(invoice.amount, artist.feeBps),
       }))
 
-      const charge = await chargeWithBillingKey({
+      const charge = await payments.charge({
         paymentId,
         billingKey: paymentMethod.token,
         orderName,
@@ -185,7 +186,7 @@ route.post('/', ...middlewares, async (c) => {
 
       await confirmPayment(paymentId, {
         providerTxnId: charge.providerTxnId,
-        paidAt: charge.paidAt,
+        paidAt: new Date(charge.paidAt),
         paymentMethodId,
         method: paymentMethod.method,
       })
@@ -212,9 +213,13 @@ route.post('/', ...middlewares, async (c) => {
 })
 
 async function settleAmbiguousCharge(paymentId: string, paymentMethodId: number, cause: unknown): Promise<boolean> {
-  let remote: Awaited<ReturnType<typeof getRemotePayment>>
+  if (!payments) {
+    return false
+  }
+
+  let remote: Awaited<ReturnType<typeof payments.getPayment>>
   try {
-    remote = await getRemotePayment(paymentId)
+    remote = await payments.getPayment(paymentId)
   } catch (error) {
     console.error('subscribe: reconcile getPayment failed', { paymentId, error })
     return false
@@ -223,7 +228,7 @@ async function settleAmbiguousCharge(paymentId: string, paymentMethodId: number,
   if (remote.status === 'paid') {
     await confirmPayment(paymentId, {
       providerTxnId: remote.providerTxnId ?? paymentId,
-      paidAt: remote.paidAt ?? new Date(),
+      paidAt: remote.paidAt ? new Date(remote.paidAt) : new Date(),
       paymentMethodId,
       method: remote.method,
     })

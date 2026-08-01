@@ -1,11 +1,11 @@
 import type { Db } from '@sobok/edge/db/client'
-import type { GuardianRemotePayment } from '../billing/portone'
 import {
   type ConfirmGuardianPurchaseResult,
   confirmGuardianPurchase,
   type SettleGuardianPurchaseResult,
   settleGuardianPurchase,
 } from '../db/queries/guardian'
+import type { GuardianRemotePayment } from '../payments/client'
 
 export type SyncGuardianPaymentResult =
   | ConfirmGuardianPurchaseResult

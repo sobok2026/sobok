@@ -24,8 +24,8 @@ export interface PaymentMethodDTO {
   createdAt: string
 }
 
-// The "결제수단" screen data: the viewer's saved methods + the publishable PortOne keys the
-// client needs to issue a new one (absent when billing is not configured on the server).
+// The "결제수단" screen data: the viewer's saved methods + the publishable PortOne keys obtained through
+// central payments, which the browser needs to issue a new one (absent when billing is unavailable).
 export interface GETV1PaymentMethodsResponse {
   storeId?: string
   channelKey?: string

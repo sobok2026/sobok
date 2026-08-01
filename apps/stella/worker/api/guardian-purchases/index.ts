@@ -2,8 +2,6 @@ import { alertDiscord } from '@sobok/edge/alert'
 import { openDb, withDb } from '@sobok/edge/db/client'
 import { sha256Hex } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
-import { guardianPortOnePaymentCredentials } from '~/billing/credentials'
-import { type GuardianRemotePayment, getGuardianRemotePayment } from '~/billing/portone'
 import { resolveGuardianPurchaseAccess } from '~/db/queries/guardian'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
@@ -11,6 +9,7 @@ import { GuardianAccessTokenSchema, GuardianPaymentIdSchema } from '~/guardian/h
 import { syncGuardianPayment } from '~/guardian/payment'
 import { NO_STORE_HEADERS } from '~/lib/http'
 import { bearerToken } from '~/lib/request'
+import { type GuardianRemotePayment, getGuardianRemotePayment } from '~/payments/client'
 
 export const guardianPurchases = new Hono<AppEnv>()
 
@@ -42,8 +41,7 @@ guardianPurchases.post('/:paymentId/confirm', async (c) => {
 
   let remotePayment: GuardianRemotePayment
   try {
-    const credentials = await guardianPortOnePaymentCredentials(c.env)
-    remotePayment = await getGuardianRemotePayment(credentials, paymentId.data)
+    remotePayment = await getGuardianRemotePayment(c.env, paymentId.data)
   } catch (error) {
     console.error('stella.portone.confirm_lookup_failed', error instanceof Error ? error.name : 'non-Error thrown')
     return problem(503, 'service-unavailable', { headers: { 'retry-after': '5' } })

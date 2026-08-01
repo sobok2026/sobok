@@ -5,7 +5,6 @@ import { problem } from '~/errors'
 import { requestWithdrawal } from '~/payments/cancel'
 
 import { requireAccessToken } from '../access'
-import { creds } from '../creds'
 
 const route = new Hono<AppEnv>()
 
@@ -13,10 +12,8 @@ const route = new Hono<AppEnv>()
 // delivered (viewed_at IS NULL). Cancels at PortOne + flips the purchase to refunded (the
 // Transaction.Cancelled webhook is the backstop).
 route.post('/', requireAccessToken, async (c) => {
-  const portOneCreds = await creds(c)
-
   const outcome = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
-    requestWithdrawal(db, portOneCreds, c.get('accessToken')),
+    requestWithdrawal(db, c.env, c.get('accessToken')),
   )
 
   switch (outcome) {
