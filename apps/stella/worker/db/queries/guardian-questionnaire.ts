@@ -156,7 +156,7 @@ export async function saveGuardianQuestionnaireAnswer(
         })
         .where(eq(guardianReportTable.id, input.reportId))
 
-      const fulfillment = await fulfillGuardianReportAfterQuestionnaireInTransaction(tx, input)
+      const fulfillment = await fulfillGuardianReportAfterQuestionnaireInTransaction(tx, input, questionnaire.content)
       if (fulfillment.status !== 'fulfilled' && fulfillment.status !== 'already-fulfilled') {
         throw new Error(`Guardian report fulfillment failed after questionnaire: ${fulfillment.status}`)
       }

@@ -12,7 +12,8 @@ import {
 import type { Bindings } from '../env'
 import { daysBefore, monthsBefore } from '../lib/retention'
 
-// Daily retention purge (driven by the daily cron in wrangler.jsonc). Logged to Workers Observability.
+// Daily retention purge invoked by the shared scheduler through VibeMaintenance. Logged to Workers
+// Observability by this owning Worker so database details remain within the product boundary.
 export async function runRetentionPurge(env: Bindings): Promise<void> {
   const { db, sql } = openDb(env.HYPERDRIVE_FRESH)
   try {
@@ -20,8 +21,7 @@ export async function runRetentionPurge(env: Bindings): Promise<void> {
     const current = new Date(now)
     const abandonedPurchases = await purgeAbandonedPurchases(db, daysBefore(current, 30))
     const minimizedAnswers = await minimizeDeliveredAnswers(db, monthsBefore(current, 3))
-    // Rides the existing daily sweep on purpose. wrangler.jsonc declares exactly two crons (*/15 reconcile,
-    // 0 3 purge) and a third schedule for one UPDATE would be a new failure surface for no coverage.
+    // Rides the existing daily sweep so one retention RPC covers every Vibe retention policy.
     const abandonedRefinements = await purgeAbandonedRefinements(db, daysBefore(current, 90))
     const expiredAccess = await expireReportAccess(db, current)
     const transactionRecords = await purgeExpiredTransactionRecords(db, current)

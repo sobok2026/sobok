@@ -87,13 +87,13 @@ route.post('/', async (c) => {
 
     // The locale is the stored one, not a client claim, so this is the point where the channel policy is
     // actually enforced. Checked before the pending row is written — a refused method must leave nothing
-    // behind for the reconcile cron to chase.
+    // behind for scheduled reconciliation to chase.
     if (!isPayMethodAllowed(result.locale, c.env.DEEPTYPE_PAY_TIER, body.payMethod)) {
       return 'method-not-allowed' as const
     }
 
     // Resolved here rather than in the response, and for the same reason: a pending row whose window can never
-    // open is a row the 15-min cron re-checks against PortOne until retention purges it. The menu already says
+    // open is a row the 15-minute maintenance job re-checks against PortOne until retention purges it. The menu already says
     // this method is sellable, so an absent key means this deployment's channel map and
     // `sellableChannels(tier)` disagree — our mistake, caught before it costs a row.
     const paymentConfig = await paymentConfigFor(c.env, body.payMethod)

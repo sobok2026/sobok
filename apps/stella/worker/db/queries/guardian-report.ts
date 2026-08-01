@@ -7,6 +7,7 @@ import {
   guardianManifest,
 } from '../../guardian/manifest'
 import type { GuardianQuestionnaireClientStep } from '../../guardian/questionnaire'
+import type { GuardianReportNarrativeSnapshot } from '../../guardian/report'
 import { findPaidFullReportPurchase, lockedReportOf } from './guardian'
 import { getGuardianQuestionnaireStep } from './guardian-questionnaire'
 
@@ -42,8 +43,8 @@ export type GuardianReportView =
         slot: GuardianReportSlot
         rarity: GuardianRarity | null
         artworkPath: string
-        messageKey: string
       }[]
+      narrative: GuardianReportNarrativeSnapshot
     }
 
 export type ReadGuardianReportResult =
@@ -90,8 +91,11 @@ export async function readGuardianReport(
     }
   }
 
-  if (!report.cardSnapshot || !report.fulfilledAt) {
+  if (!report.cardSnapshot || !report.narrativeSnapshot || !report.fulfilledAt) {
     throw new Error(`Fulfilled guardian report ${report.id} has no immutable result snapshot`)
+  }
+  if (report.narrativeSnapshot.locale !== report.locale) {
+    throw new Error(`Guardian report ${report.id} narrative locale does not match its report`)
   }
   const manifest = guardianManifest(report.manifestVersion)
   return {
@@ -120,9 +124,9 @@ export async function readGuardianReport(
           slot: card.slot,
           rarity: card.rarity,
           artworkPath: edition.artworkPath,
-          messageKey: edition.messageKey,
         }
       }),
+      narrative: report.narrativeSnapshot,
     },
   }
 }

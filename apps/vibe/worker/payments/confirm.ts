@@ -14,7 +14,7 @@ import { skuItem } from '../lib/pricing'
 import { type DeepTypeRemotePayment, getRemotePayment } from './client'
 
 // Outcomes of converging a local purchase against PortOne's truth. Shared by /verify (browser return),
-// /webhook (Transaction.Paid), and the reconcile cron — whoever runs it first wins the CAS, the rest are
+// /webhook (Transaction.Paid), and scheduled reconciliation — whoever runs it first wins the CAS, the rest are
 // idempotent no-ops.
 export type ConfirmOutcome =
   | 'paid' // this call performed pending → paid

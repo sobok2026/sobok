@@ -7,7 +7,8 @@ const STALE_MS = 15 * 60 * 1000
 const BATCH = 100
 
 // The last safety net: a purchase stuck 'pending' >15 min means the process/webhook died between charge
-// and confirm. Re-converge each against PortOne (idempotent via the CAS). Runs on the 15-min cron.
+// and confirm. Re-converge each against PortOne (idempotent via the CAS). The shared scheduler invokes it
+// every 15 minutes through VibeMaintenance.
 export async function reconcileStalePending(env: Bindings): Promise<void> {
   const { db, sql } = openDb(env.HYPERDRIVE_FRESH)
 

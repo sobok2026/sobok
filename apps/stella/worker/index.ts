@@ -6,10 +6,11 @@ import { guardianCheckouts } from './api/guardian-checkouts'
 import { guardianProducts } from './api/guardian-products'
 import { guardianPurchases } from './api/guardian-purchases'
 import { guardianReports } from './api/guardian-reports'
-import { runRetentionPurge } from './cron/purge'
 import type { AppEnv, Bindings } from './env'
 import { problem } from './errors'
 import { handleGuardianPaymentEvent } from './payments/events'
+
+export { StellaMaintenance } from './maintenance'
 
 // apps/stella is a Worker-with-static-assets: the Next static export in ./out is served at the edge, and this
 // Worker runs only for /api/* (wrangler `run_worker_first: ["/api/*"]`). Anything reaching the Worker without
@@ -37,11 +38,6 @@ app.onError((error) => {
 
 export default {
   fetch: app.fetch,
-  // One cron (wrangler triggers.crons, daily 03:00): retention purge. It also keeps the SHARED Supabase
-  // project warm — a daily query is well under the free-tier 7-day inactivity pause window.
-  scheduled: (_event: ScheduledController, env: Bindings, ctx: ExecutionContext) => {
-    ctx.waitUntil(runRetentionPurge(env))
-  },
   queue: async (batch: MessageBatch<PaymentEvent>, env: Bindings, ctx: ExecutionContext) => {
     for (const message of batch.messages) {
       try {

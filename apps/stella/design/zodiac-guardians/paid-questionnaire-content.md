@@ -109,6 +109,8 @@ signal key는 리포트 문장 자체가 아니라 답변에서 확인된 의미
 - 선택 메모가 정확히 하나이고 JSON의 마지막 항목임
 - 모든 adaptive 선택 signal을 실제 option 중 하나가 생성함
 - 모든 선택지가 적어도 하나의 signal을 제공함
+- 현재 manifest가 가리키는 질문 version이면 모든 선택형 문항에 같은 slot의 한국어 상세 본문 frame이 있음
+- 한국어 본문 중심·조언·말투·종합 경로가 참조하는 signal을 실제 option이 생성함
 
 잘못된 콘텐츠는 요청 처리 중 다른 문항이나 점수로 대체하지 않고 게시 단계에서 거부한다.
 
@@ -178,13 +180,15 @@ Worker runtime은 기존 `stella_app` + Hyperdrive를 사용한다. sobok-ops의
 default privilege가 새 테이블·sequence에도 적용되므로 이 기능만을 위한 role, Hyperdrive,
 Supabase 프로젝트는 추가하지 않는다.
 
-## 다음 수직 연결
+## 현재 수직 연결
 
-실제 `guardian-paid-ko-mvp-v1.json`, guest checkout, 결제 entitlement 함수, capability 기반 질문
-GET/PUT, 마지막 답변의 report fulfillment 도메인은 구현되어 있다. checkout은 report에 현재
-questionnaire version을 고정하고 질문 API는 아직 공개되지 않은 문항이나 signal을 반환하지 않는다.
-남은 외부 연결은 다음과 같다.
+`guardian-paid-ko-mvp-v1.json`, guest checkout, 결제 entitlement, capability 기반 질문 GET/PUT,
+마지막 답변의 report fulfillment, PortOne confirm·webhook과 fulfilled report GET이 연결되어 있다.
+checkout은 questionnaire version을 고정하고 질문 API는 아직 공개되지 않은 문항이나 signal을
+반환하지 않는다.
 
-1. PortOne 원격 검증 성공을 기존 `paid` + 질문 entitlement 함수에 연결
-2. confirm·webhook·재조정이 같은 구매 확정 함수를 사용하게 연결
-3. 저장된 fulfilled snapshot을 report read API와 카드 공개 화면에 전달
+마지막 답변 transaction은 answer·signal snapshot, 카드 네 장과 함께 렌더가 끝난 한국어
+`narrative_snapshot`도 고정한다. 각 선택 답변이 상세 근거 문단으로 남는 방식과 최종 GET 응답은
+[한국어 개인화 리포트 본문 엔진과 최종 계약](./paid-report-content-engine.md)을 따른다. 남은 외부
+연결은 무료 미리보기 → checkout → 유료 질문 → 카드 공개 화면과 공용 scheduler 기반 pending
+재조정이다.

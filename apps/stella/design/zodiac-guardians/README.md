@@ -22,6 +22,7 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - 한국 첫 결제: PortOne V2 토스페이 직접 연동, 토스페이먼츠는 실결제 승인 뒤 추가
 - 결제 인프라: 중앙 `apps/payments`가 PortOne 자격증명·웹훅·채널 정책을 소유하고 Stella 주문·권한은
   Stella schema에 유지
+- 예약 실행: 계정 단일 `apps/scheduler`가 Cron Trigger를 소유하고 Stella의 내부 maintenance RPC를 호출
 - 유료 서버 도메인: 상품·추첨·게스트 컬렉션·리포트·구매·획득·보장 기반 구현, 공개 API 미연결
 - 공개 이름: `ko`, `zh`, `ja`, `en`별 독립 작업명 확정
 - 공개 이름 표시: 줄바꿈 없는 한 줄

@@ -53,11 +53,6 @@
       "id": "fba6a34ba67a4d0588d71266b13d57b9"
     }
   ],
-  // One cron (worker `scheduled` handler): daily 03:00 → retention purge (also keeps the shared Supabase
-  // project warm past the free-tier 7-day inactivity pause).
-  "triggers": {
-    "crons": ["0 3 * * *"]
-  },
   "define": {
     "STELLA_DB_SCHEMA": "'stella'"
   },

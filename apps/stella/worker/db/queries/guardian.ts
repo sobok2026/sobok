@@ -13,7 +13,10 @@ import {
   guardianProductOrderName,
   guardianProductPrice,
   guardianQuestionnaireVersion,
+  guardianReportCopyVersion,
 } from '../../guardian/manifest'
+import type { GuardianQuestionnaireContent } from '../../guardian/questionnaire'
+import { type GuardianReportNarrativeSnapshot, generateGuardianReportNarrative } from '../../guardian/report'
 import { newGuardianPublicId } from '../../guardian/tokens'
 import {
   guardianCardAcquisitionTable,
@@ -111,6 +114,7 @@ export async function createGuestGuardianCheckout(
   const price = guardianProductPrice(productSku, input.market, manifest)
   const orderName = guardianProductOrderName(productSku, input.locale, manifest)
   const questionnaireVersion = guardianQuestionnaireVersion(productSku, input.locale, manifest)
+  const copyVersion = guardianReportCopyVersion(productSku, input.locale, manifest)
 
   return db.transaction(async (tx) => {
     const [collection] = await tx
@@ -135,7 +139,7 @@ export async function createGuestGuardianCheckout(
         manifestVersion: manifest.manifestVersion,
         selectionRuleVersion: manifest.selectionRuleVersion,
         oddsVersion: manifest.oddsVersion,
-        copyVersion: manifest.copyVersion,
+        copyVersion,
         renderVersion: manifest.renderVersion,
         questionnaireVersion,
         inputSnapshot: input.inputSnapshot,
@@ -791,23 +795,14 @@ export type FulfillGuardianReportResult =
       status: 'fulfilled' | 'already-fulfilled'
       reportPublicId: string
       cards: GuardianSelectedCard[]
+      narrative: GuardianReportNarrativeSnapshot
     }
   | { status: 'report-not-found' | 'payment-required' | 'questionnaire-incomplete' }
-
-/**
- * Standalone entry point for reconciliation. The final-answer path calls the in-transaction variant below so
- * saving the last answer, pinning its snapshots, drawing once, and recording all four acquisitions are atomic.
- */
-export async function fulfillGuardianReportAfterQuestionnaire(
-  db: Db,
-  input: { collectionId: number; reportId: number },
-): Promise<FulfillGuardianReportResult> {
-  return db.transaction((tx) => fulfillGuardianReportAfterQuestionnaireInTransaction(tx, input))
-}
 
 export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
   db: Db,
   input: { collectionId: number; reportId: number },
+  questionnaire: GuardianQuestionnaireContent,
 ): Promise<FulfillGuardianReportResult> {
   const report = await lockedReportOf(db, input)
 
@@ -815,13 +810,14 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
     return { status: 'report-not-found' }
   }
   if (report.status === 'fulfilled') {
-    if (!report.cardSnapshot) {
-      throw new Error('Fulfilled guardian report is missing its immutable card snapshot')
+    if (!report.cardSnapshot || !report.narrativeSnapshot) {
+      throw new Error('Fulfilled guardian report is missing its immutable result snapshot')
     }
     return {
       status: 'already-fulfilled',
       reportPublicId: report.publicId,
       cards: report.cardSnapshot,
+      narrative: report.narrativeSnapshot,
     }
   }
   if (!report.questionnaireAnswerSnapshot || !report.questionnaireSignalSnapshot || !report.questionnaireCompletedAt) {
@@ -846,6 +842,15 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
     },
     { manifest },
   )
+  const narrative = generateGuardianReportNarrative({
+    locale: report.locale,
+    copyVersion: report.copyVersion,
+    questionnaire,
+    inputSnapshot: report.inputSnapshot,
+    answerSnapshot: report.questionnaireAnswerSnapshot,
+    signalSnapshot: report.questionnaireSignalSnapshot,
+    cards: initial.cards,
+  })
 
   for (const card of initial.cards) {
     await recordGuardianAcquisition(db, {
@@ -868,6 +873,7 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
       familySnapshot: initial.families,
       loveFamilyId: initial.families.love,
       cardSnapshot: initial.cards,
+      narrativeSnapshot: narrative,
       fulfilledAt: new Date(),
     })
     .where(eq(guardianReportTable.id, input.reportId))
@@ -876,6 +882,7 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
     status: 'fulfilled',
     reportPublicId: report.publicId,
     cards: initial.cards,
+    narrative,
   }
 }
 

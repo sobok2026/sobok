@@ -216,7 +216,7 @@ export async function reportComment(
   })
 }
 
-// ── Retention (daily cron; also keeps the shared Supabase project warm past the free-tier 7-day pause) ──
+// ── Scheduled retention (also keeps the shared Supabase project warm past the free-tier 7-day pause) ──
 export async function nullifyOldCommentIps(db: Db, cutoff: Date): Promise<number> {
   const rows = await db
     .update(commentTable)

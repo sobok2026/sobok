@@ -80,7 +80,7 @@ export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallCont
       const checkout = await postCheckout({
         ageConfirmed: true,
         // Captured here, on the last screen the buyer is guaranteed to see: the grant that emits `purchase` may
-        // run in the PortOne webhook or the reconcile cron, long after this browser is gone.
+        // run in the PortOne webhook or scheduled reconciliation, long after this browser is gone.
         analytics: readGaIdentity(GA4_MEASUREMENT_ID),
         consentPrivacy: true,
         consentWithdrawal: true,
@@ -183,7 +183,7 @@ export function useCheckout(freeResult: FreeResult, paywall: DeepTypePaywallCont
     setErrorMessage(message || paywall.errorGeneric)
   }
 
-  /** Back out of the two-step leg. The pending row is abandoned to the reconcile/purge crons, like any closed window. */
+  /** Back out of the two-step leg. Scheduled reconcile/purge handles the pending row like any closed window. */
   function cancelPaypal() {
     clearPendingCheckout()
     setPaypal(null)

@@ -542,9 +542,9 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
 
 ## 11. 서버 구현 기준
 
-2026-07-31 기준 유료 MVP의 서버 권위 데이터와 production 확장 기반은 다음과 같이 구현한다.
+2026-08-01 기준 유료 MVP의 서버 권위 데이터와 production 확장 기반은 다음과 같이 구현한다.
 
-- 현재 상품 매니페스트 `guardian-paid-2026-07-31.1`은 4개 패밀리·7개 에디션, SKU별 시장
+- 현재 상품 매니페스트 `guardian-paid-2026-08-01.1`은 4개 패밀리·7개 에디션, SKU별 시장
   가격표, 희귀도 가중치, 보장 규칙, 선택·문구·렌더 버전을 기록한다. production 출시에는 같은
   계약으로 최소 1,024개 에디션을 게시한다.
 - 현재 상품을 만드는 진입점만 `CURRENT_GUARDIAN_MANIFEST`를 선택한다. 생성된 리포트·구매·
@@ -564,6 +564,9 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
 - `guardian_collection`을 게스트와 계정이 공유하는 소유권 집합으로 사용한다. 계정 생성 시 이 집합을
   연결하고 카드나 보장 카운터를 복사하지 않는다.
 - 리포트 입력·선택 패밀리·최초 네 카드·각 버전을 `guardian_report`에 스냅샷으로 보존한다.
+- 완료된 한국어 hero·네 섹션·종합 문장도 `narrative_snapshot`에 렌더된 문자열로 보존한다. GET은
+  현재 copy로 다시 계산하지 않으며 상세 계약은
+  [한국어 개인화 리포트 본문 엔진과 최종 계약](./paid-report-content-engine.md)을 따른다.
 - 모든 획득은 `guardian_card_acquisition`에 추가하고, 빠른 조회용 보유 집계는
   `guardian_card_ownership`에 트랜잭션으로 함께 반영한다.
 - 재추첨권은 출처 없는 잔액 대신 `guardian_redraw_grant`로 기록한다. 결제와 계정 저장 보상을

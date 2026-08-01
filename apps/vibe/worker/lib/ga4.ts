@@ -1,7 +1,7 @@
 // Server-side GA4 delivery for the one event the browser must not own: `purchase`.
 //
 // The buyer's tab is gone or unreliable at the moment money is confirmed — PortOne redirects, the webhook can
-// beat the redirect, and the reconcile cron grants purchases hours later with no browser at all. The grant is
+// beat the redirect, and scheduled reconciliation grants purchases hours later with no browser at all. The grant is
 // a compare-and-swap in Postgres, so exactly one caller ever wins it, which makes it the only place a purchase
 // can be counted exactly once. Everything else in the funnel stays client-side, where it keeps full session
 // and attribution context.
@@ -47,7 +47,7 @@ export async function sendGa4Purchase(creds: Ga4Credentials, purchase: Ga4Purcha
   const backdated = Date.now() - purchase.occurredAt.getTime()
 
   if (backdated > MAX_BACKDATE_MS) {
-    // The gap itself is the alarm: a first grant this late means the reconcile cron has been failing for days.
+    // The gap itself is the alarm: a first grant this late means scheduled reconciliation has failed for days.
     console.warn('deeptype.ga4.backdated', purchase.transactionId, backdated)
   }
 

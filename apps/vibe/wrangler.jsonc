@@ -30,8 +30,6 @@
       "id": "a2a2c4cb90d94e6fb08b0eb6727bb61d"
     }
   ],
-  // 크론(워커 `scheduled` 핸들러): 15분마다 → 멈춘 'pending' 재조정, 매일 03:00 → 리텐션 purge.
-  "triggers": { "crons": ["*/15 * * * *", "0 3 * * *"] },
   "define": { "DEEPTYPE_DB_SCHEMA": "'deeptype'" },
   "services": [{ "binding": "PAYMENTS", "service": "payments", "entrypoint": "VibePayments" }],
   "queues": {
@@ -83,7 +81,7 @@
   ],
   // `vars`·`define`·`hyperdrive`·`secrets_store_secrets`는 상속되지 않는다: 이름 있는 환경은 전부 다시
   // 선언해야 하고 빠뜨린 키는 프로덕션 값이 아니라 undefined로 온다.
-  // (`main`/`assets`/`triggers`/`observability`/`compatibility_*`는 상속돼서 반복하지 않는다.)
+  // (`main`/`assets`/`observability`/`compatibility_*`는 상속돼서 반복하지 않는다.)
   "env": {
     "stg": {
       "workers_dev": false,
