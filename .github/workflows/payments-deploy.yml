@@ -1,0 +1,84 @@
+name: Payments Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/payments/**'
+      - 'packages/payments/**'
+      - 'bun.lock'
+      - '.github/workflows/payments-deploy.yml'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Deployment target
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - production
+
+permissions:
+  contents: read
+
+jobs:
+  staging:
+    name: Deploy to staging (payments-stg)
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.target == 'staging' }}
+    environment: staging
+    concurrency:
+      group: payments-stg
+      cancel-in-progress: false
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Check Worker contract
+        run: bun --filter=@sobok/payments-service type
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/payments
+          packageManager: bun
+          command: deploy --env stg
+
+  production:
+    name: Deploy to production (payments)
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' &&
+       inputs.target == 'production' &&
+       github.ref_name == 'main')
+    environment: production
+    concurrency:
+      group: payments-production
+      cancel-in-progress: false
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Check Worker contract
+        run: bun --filter=@sobok/payments-service type
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/payments
+          packageManager: bun
+          command: deploy --env=""

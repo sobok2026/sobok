@@ -4,8 +4,9 @@
 //   - Hyperdrive configs → cloudflare_hyperdrive_config (ids pasted into wrangler.jsonc)
 //   - true secrets → Cloudflare Secrets Store (cloudflare_secrets_store_secret), bound via
 //     wrangler `secrets_store_secrets`; accessed at runtime with `await binding.get()`
-//   - non-secret config (store id, channel keys, tier, model) → wrangler `vars`
-import type { PayTier, PortOneChannel } from '@deep-type/pay-method'
+//   - non-secret product config (tier, origin, model) → wrangler `vars`
+import type { PayTier } from '@deep-type/pay-method'
+import type { ScopedPaymentsService } from '@sobok/payments'
 
 export interface Bindings {
   // Static Next export (./out), served for every non-/api path via env.ASSETS.fetch(request).
@@ -22,10 +23,11 @@ export interface Bindings {
   // NOT back any status or entitlement read — the cache does not invalidate on writes, so it would hand a
   // refunded buyer their report back, or grant on a 'pending' that has since settled.
   HYPERDRIVE_CACHED: Hyperdrive
+  // Named Cloudflare RPC entrypoint on apps/payments. It accepts only `dt_` payment ids; all PortOne
+  // credentials, Store/channel configuration, and webhook verification remain outside Vibe.
+  PAYMENTS: ScopedPaymentsService
 
   // ── Secrets Store bindings (async: `await X.get()`) ─────────────────────────────────────────────
-  DEEPTYPE_PORTONE_API_SECRET: SecretsStoreSecret
-  DEEPTYPE_PORTONE_WEBHOOK_SECRET: SecretsStoreSecret
   DEEPTYPE_ANTHROPIC_API_KEY: SecretsStoreSecret
   // Transactional re-open email API key.
   DEEPTYPE_RESEND_API_KEY: SecretsStoreSecret
@@ -37,34 +39,12 @@ export interface Bindings {
   DEEPTYPE_GA4_API_SECRET: SecretsStoreSecret
 
   // ── Plain vars (not secret) ─────────────────────────────────────────────────────────────────────
-  // Separate PortOne store (own settlement entity). storeId/channelKey are public (sent to the browser SDK).
-  //
-  DEEPTYPE_PORTONE_STORE_ID: string
   // Which PortOne 설정 모드 this deployment's channel keys belong to — 'live' for 실연동, 'test' for 테스트.
   // `@deep-type/pay-method` turns it into the menu, and the paywall's static bundle carries the same value as
   // NEXT_PUBLIC_DEEPTYPE_PAY_TIER so both halves narrow the catalogue identically. Never derived from the
   // hostname or a branch name: the tier is a fact about the contracts, and a value we could infer is a value
   // that can be inferred wrong on the money path.
   DEEPTYPE_PAY_TIER: PayTier
-  // Every PortOne channel key this deployment can spend, keyed by PG — PortOne's own pgProvider ids, not the
-  // payment methods they carry. `tosspayments` is the same key whether it opens a card window or a 가상계좌
-  // one, and it backs two methods already; `@deep-type/pay-method` owns which method rides which channel.
-  //
-  // ONE var holding a map rather than one var per channel, and wrangler binds JSON in `vars` as a parsed
-  // object. Channels are added continuously, `vars` is non-inheritable, and one flat key per channel means a
-  // growing pair of blocks that must be edited in lockstep — a map makes a new channel one line in each
-  // environment and nothing here at all.
-  //
-  // These keys are also the ONLY thing that separates test from live: the store id and the API secret are
-  // issued per store and shared across both modes. That is why they are `vars` pinned per wrangler
-  // environment rather than anything resolvable at runtime — see the `env.stg` block in wrangler.jsonc.
-  //
-  // `Partial` because a channel this deployment cannot charge on is ABSENT, never `""` and never a placeholder.
-  // Absence is out-of-band and the compiler tracks it, so every read has to decide what to do about it; an
-  // empty string satisfies `string` and would ride all the way into `requestPayment`, and a placeholder is
-  // worse still — it is truthy, so no amount of falsy-checking catches it. The key set here must equal
-  // `sellableChannels(DEEPTYPE_PAY_TIER)`; `GET /api/deep-type/config` reports the difference.
-  DEEPTYPE_PORTONE_CHANNELS: Partial<Record<PortOneChannel, string>>
   DEEPTYPE_PUBLIC_ORIGIN: string
   DEEPTYPE_EMAIL_FROM: string
   DEEPTYPE_EMAIL_REPLY_TO: string

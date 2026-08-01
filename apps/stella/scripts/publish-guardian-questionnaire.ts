@@ -105,9 +105,9 @@ async function publish(content: GuardianQuestionnaireContent, contentHash: strin
           schemaVersion: content.schemaVersion,
           productSku: content.productSku,
           locale: content.locale,
-          entryQuestionId: content.entryQuestionId,
-          coreQuestionCount: content.coreQuestionCount,
-          maximumAdaptiveQuestions: content.maximumAdaptiveQuestions,
+          coreQuestionsPerSlot: content.coreQuestionsPerSlot,
+          requiredAdaptiveQuestionsPerSlot: content.requiredAdaptiveQuestionsPerSlot,
+          maximumAdaptiveQuestionsPerSlot: content.maximumAdaptiveQuestionsPerSlot,
           contentHash,
         })
         .returning({ id: guardianQuestionnaireVersionTable.id })
@@ -122,13 +122,18 @@ async function publish(content: GuardianQuestionnaireContent, contentHash: strin
             questionnaireVersionId: version.id,
             questionId: question.id,
             position,
-            slot: question.slot,
+            slot: question.phase === 'note' ? null : question.slot,
             phase: question.phase,
             kind: question.kind,
             prompt: question.prompt,
             supportingText: question.supportingText,
-            optional: question.kind === 'free_text',
-            nextQuestionId: question.kind === 'free_text' ? question.nextQuestionId : null,
+            selectionRole: question.phase === 'adaptive' ? question.selection.role : null,
+            selectionPriority: question.phase === 'adaptive' ? question.selection.priority : null,
+            selectionMinimumScore:
+              question.phase === 'adaptive' && question.selection.role === 'deepening'
+                ? question.selection.minimumScore
+                : null,
+            selectionSignalWeights: question.phase === 'adaptive' ? question.selection.signalWeights : null,
           })),
         )
         .returning({ id: guardianQuestionTable.id, questionId: guardianQuestionTable.questionId })
@@ -147,7 +152,6 @@ async function publish(content: GuardianQuestionnaireContent, contentHash: strin
           optionId: option.id,
           position,
           label: option.label,
-          nextQuestionId: option.nextQuestionId,
           signals: option.signals,
         }))
       })

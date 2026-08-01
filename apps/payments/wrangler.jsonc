@@ -1,0 +1,115 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "payments",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "vars": {
+    "PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
+    // The key set is the live contract set. Toss Payments is added only after its live approval completes.
+    "PORTONE_CHANNELS": {
+      "tosspay_v2": "channel-key-d14e0af9-18be-457f-aa21-228e7265211f"
+    },
+    "CORE_PAYMENT_EVENTS_URL": "https://sobok.cc/api/v1/internal/payment-events"
+  },
+  "queues": {
+    "producers": [
+      { "binding": "STELLA_PAYMENT_EVENTS", "queue": "stella-payment-events" },
+      { "binding": "VIBE_PAYMENT_EVENTS", "queue": "vibe-payment-events" },
+      { "binding": "CORE_PAYMENT_EVENTS", "queue": "core-payment-events" }
+    ],
+    "consumers": [
+      {
+        "queue": "core-payment-events",
+        "max_batch_size": 1,
+        "max_batch_timeout": 5,
+        "max_retries": 10,
+        "retry_delay": 60,
+        "dead_letter_queue": "core-payment-events-dlq"
+      }
+    ]
+  },
+  "secrets_store_secrets": [
+    {
+      "binding": "PORTONE_API_SECRET",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+      "secret_name": "payments-portone-api-secret-production"
+    },
+    {
+      "binding": "PORTONE_WEBHOOK_SECRET",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+      "secret_name": "portone-webhook-secret-live"
+    },
+    {
+      "binding": "PAYMENTS_CORE_CLIENT_TOKEN",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+      "secret_name": "payments-core-client-token"
+    },
+    {
+      "binding": "CORE_PAYMENT_EVENTS_TOKEN",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+      "secret_name": "payments-core-events-token"
+    }
+  ],
+  "env": {
+    "stg": {
+      "workers_dev": false,
+      "vars": {
+        "PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
+        "PORTONE_CHANNELS": {
+          "kakaopay": "channel-key-d80ebe96-61e3-49f9-b3eb-5dc22aee47b7",
+          "kcp_v2": "channel-key-d48cde15-5f73-4ab2-9b40-2ec29d152ad5",
+          "paypal_v2": "channel-key-8a0c783e-608f-48f0-a2f1-842667a464bc",
+          "tosspay_v2": "channel-key-70320dc7-8e65-4cf7-901b-7b834ae4f21a",
+          "tosspayments": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88"
+        },
+        "CORE_PAYMENT_EVENTS_URL": "https://sobok.cc/api/v1/internal/payment-events"
+      },
+      "queues": {
+        "producers": [
+          { "binding": "STELLA_PAYMENT_EVENTS", "queue": "stella-payment-events-stg" },
+          { "binding": "VIBE_PAYMENT_EVENTS", "queue": "vibe-payment-events-stg" },
+          { "binding": "CORE_PAYMENT_EVENTS", "queue": "core-payment-events-stg" }
+        ],
+        "consumers": [
+          {
+            "queue": "core-payment-events-stg",
+            "max_batch_size": 1,
+            "max_batch_timeout": 5,
+            "max_retries": 10,
+            "retry_delay": 60,
+            "dead_letter_queue": "core-payment-events-stg-dlq"
+          }
+        ]
+      },
+      "secrets_store_secrets": [
+        {
+          "binding": "PORTONE_API_SECRET",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "payments-portone-api-secret-staging"
+        },
+        {
+          "binding": "PORTONE_WEBHOOK_SECRET",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "portone-webhook-secret-test"
+        },
+        {
+          "binding": "PAYMENTS_CORE_CLIENT_TOKEN",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "payments-core-client-token"
+        },
+        {
+          "binding": "CORE_PAYMENT_EVENTS_TOKEN",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "payments-core-events-token"
+        }
+      ]
+    }
+  }
+}

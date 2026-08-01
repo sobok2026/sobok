@@ -1,6 +1,5 @@
 import { isOfferCurrency, majorUnits } from '@deep-type/offer'
 import type { Db } from '@sobok/edge/db/client'
-import { getRemotePayment, type PortOneCreds } from '../billing/portone'
 import {
   clearPurchaseAnalytics,
   getPurchaseByPaymentId,
@@ -12,6 +11,7 @@ import { ensurePendingReport } from '../db/queries/report'
 import type { Bindings } from '../env'
 import { sendGa4Purchase } from '../lib/ga4'
 import { skuItem } from '../lib/pricing'
+import { type DeepTypeRemotePayment, getRemotePayment } from './client'
 
 // Outcomes of converging a local purchase against PortOne's truth. Shared by /verify (browser return),
 // /webhook (Transaction.Paid), and the reconcile cron — whoever runs it first wins the CAS, the rest are
@@ -25,8 +25,8 @@ export type ConfirmOutcome =
   | 'refunded' // purchase already refunded
 
 export interface ConfirmDeps {
-  creds: PortOneCreds
   env: Bindings
+  payment?: DeepTypeRemotePayment
 }
 
 export async function confirmPurchase(db: Db, deps: ConfirmDeps, paymentId: string): Promise<ConfirmOutcome> {
@@ -43,7 +43,7 @@ export async function confirmPurchase(db: Db, deps: ConfirmDeps, paymentId: stri
   }
 
   // The grant decision depends ONLY on the PG's report, never on anything the client sent.
-  const remote = await getRemotePayment(deps.creds, paymentId)
+  const remote = deps.payment ?? (await getRemotePayment(deps.env, paymentId))
 
   if (remote.status !== 'paid') {
     return 'not-completed'

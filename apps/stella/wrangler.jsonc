@@ -31,6 +31,19 @@
   "vars": {
     "STELLA_ALLOWED_HOSTNAMES": "sobok.cc,stella.sobok.cc"
   },
+  "services": [{ "binding": "PAYMENTS", "service": "payments", "entrypoint": "StellaPayments" }],
+  "queues": {
+    "consumers": [
+      {
+        "queue": "stella-payment-events",
+        "max_batch_size": 1,
+        "max_batch_timeout": 5,
+        "max_retries": 10,
+        "retry_delay": 60,
+        "dead_letter_queue": "stella-payment-events-dlq"
+      }
+    ]
+  },
   "hyperdrive": [
     {
       // Single origin over the SHARED Supabase Postgres, authenticating as the least-privilege `stella_app`
@@ -77,6 +90,19 @@
       },
       "vars": {
         "STELLA_ALLOWED_HOSTNAMES": "stella-stg.sobok.cc"
+      },
+      "services": [{ "binding": "PAYMENTS", "service": "payments-stg", "entrypoint": "StellaPayments" }],
+      "queues": {
+        "consumers": [
+          {
+            "queue": "stella-payment-events-stg",
+            "max_batch_size": 1,
+            "max_batch_timeout": 5,
+            "max_retries": 10,
+            "retry_delay": 60,
+            "dead_letter_queue": "stella-payment-events-stg-dlq"
+          }
+        ]
       },
       "hyperdrive": [
         {

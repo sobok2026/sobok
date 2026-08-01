@@ -1,4 +1,3 @@
-import { cancelPayment, getRemotePayment, isBillingConfigured } from '@sobok/billing'
 import { chatHandleParamSchema, type POSTV1ChatSubscriptionRefundResponse, PROBLEM } from '@sobok/contracts'
 import { getChatArtistByHandle } from '@sobok/db/app/query/chat'
 import { applyPaymentRefunds, getLatestPaidInvoicePayment } from '@sobok/db/app/query/refund'
@@ -14,6 +13,7 @@ import ms from 'ms'
 import type { Env } from '@/app'
 
 import { requireAuth } from '@/middleware/require-auth'
+import { payments } from '@/payments'
 import { problemResponse } from '@/utils/problem'
 import { zProblemValidator } from '@/utils/validator'
 
@@ -29,7 +29,7 @@ const middlewares = factory.createHandlers(requireAuth, zProblemValidator('param
 // 최근 결제(현재 기간)를 전액 환불한다. 조건: 결제 7일 이내 + 그 기간에 답장 미발신(수신만 OK).
 // PG 취소 후 상태 반영은 웹훅과 같은 applyPaymentRefunds 경로로 수렴해 멱등이다.
 route.post('/', ...middlewares, async (c) => {
-  if (!isBillingConfigured()) {
+  if (!payments) {
     return problemResponse(c, { status: 503 })
   }
 
@@ -74,7 +74,7 @@ route.post('/', ...middlewares, async (c) => {
 
   // 취소 요청이 던져도(이미 취소됨 등) 아래 대사가 실제 상태로 수렴시키므로 삼키고 진행한다.
   try {
-    await cancelPayment({
+    await payments.cancelPayment({
       paymentId: candidate.paymentId,
       reason: '구매자 청약철회',
     })
@@ -85,9 +85,9 @@ route.post('/', ...middlewares, async (c) => {
     })
   }
 
-  let remote: Awaited<ReturnType<typeof getRemotePayment>>
+  let remote: Awaited<ReturnType<typeof payments.getPayment>>
   try {
-    remote = await getRemotePayment(candidate.paymentId)
+    remote = await payments.getPayment(candidate.paymentId)
   } catch (error) {
     console.error('refund: reconcile getPayment failed', {
       paymentId: candidate.paymentId,
@@ -99,7 +99,10 @@ route.post('/', ...middlewares, async (c) => {
     })
   }
 
-  const updated = await applyPaymentRefunds(candidate.paymentId, remote.refunds)
+  const updated = await applyPaymentRefunds(
+    candidate.paymentId,
+    remote.refunds.map((refund) => ({ ...refund, refundedAt: new Date(refund.refundedAt) })),
+  )
   const refundedTotal = remote.refunds.reduce((total, refund) => total + refund.amount, 0)
 
   if (refundedTotal < candidate.amount) {

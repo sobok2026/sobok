@@ -12,9 +12,10 @@ import type { Locale } from '@sobok/domain/locale'
  *     same key it takes CARD on, and it already backs two of our methods depending on the locale.
  *
  * Adding a method is one row in `PAY_METHOD_SPEC`, one entry per locale below, one entry in
- * `SELLABLE_CHANNELS` for every tier that may charge on it, one key in the `DEEPTYPE_PORTONE_CHANNELS` var of
- * each wrangler environment, one label per locale in `_content`, and — only if the PG requires one — one line
- * in the bypass table in `use-checkout`. Nothing else: no binding, no resolver, no branch.
+ * `SELLABLE_CHANNELS` for every tier that may charge on it, one key in the central payments Worker's
+ * `PORTONE_CHANNELS` map for that environment, one label per locale in `_content`, and — only if the PG
+ * requires one — one line in the bypass table in `use-checkout`. Nothing else: no binding, no resolver, no
+ * branch.
  *
  * Why the buyer picks at all: PortOne V2 has no window that spans channels — `loadPaymentUI` covers PayPal SPB
  * alone — so the paywall asks first and `/checkout` hands back the single key that choice earned.
@@ -47,7 +48,7 @@ export type PayMethod = (typeof PAY_METHODS)[number]
 
 /**
  * PortOne's own pgProvider identifiers, verbatim. The console prints these under `PG Provider`, the browser
- * SDK keys `bypass` by them, and `DEEPTYPE_PORTONE_CHANNELS` is keyed by them — one spelling for one thing, so
+ * SDK keys `bypass` by them, and the central `PORTONE_CHANNELS` map is keyed by them — one spelling for one thing, so
  * a channel key can never be traced to the wrong contract.
  */
 export type PortOneChannel = 'kakaopay' | 'kcp_v2' | 'paypal_v2' | 'tosspay_v2' | 'tosspayments'
@@ -100,10 +101,10 @@ export const PAY_METHOD_SPEC = {
  * A 실연동 channel does not charge because a key exists. 계약 → MID/CID 발급 → 원천사 심사 all have to finish
  * first, and before they do the window opens and the approval simply never comes — so "we hold a key" and "we
  * can sell" are different facts and this table is where the second one is recorded. A key is pasted into
- * `DEEPTYPE_PORTONE_CHANNELS` and a channel is added here in the same commit, never earlier: a half-filled slot
+ * the central `PORTONE_CHANNELS` map and a channel is added here in the same release, never earlier: a half-filled slot
  * looks configured, which is why no channel is ever listed with an empty or placeholder key instead.
  *
- * This is the build-time copy of each wrangler environment's `DEEPTYPE_PORTONE_CHANNELS` key set and has to
+ * This is the build-time copy of each central payments Worker environment's `PORTONE_CHANNELS` key set and has to
  * stay equal to it. A copy exists because the paywall is a static export: it cannot read a Worker var, and the
  * menu is settled once per deployment rather than per request, so source is where the constant belongs.
  * `GET /api/deep-type/config` compares the two and names the difference, so a divergence is one request away

@@ -1,27 +1,20 @@
 import { identityId } from '@sobok/edge/db/columns'
 import { sql } from 'drizzle-orm'
-import {
-  bigint,
-  boolean,
-  check,
-  index,
-  integer,
-  jsonb,
-  text,
-  timestamp,
-  uniqueIndex,
-  varchar,
-} from 'drizzle-orm/pg-core'
+import { bigint, check, index, integer, jsonb, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
 import { GUARDIAN_REPORT_SLOTS, type GuardianFullReportProductSku } from '../../guardian/manifest'
-import type { GuardianQuestionSignals } from '../../guardian/questionnaire'
+import type { GuardianAdaptiveQuestionRole, GuardianQuestionSignals } from '../../guardian/questionnaire'
 import { localeEnum, stella } from './common'
 
 export const guardianSlotEnum = stella.enum('guardian_slot', [...GUARDIAN_REPORT_SLOTS])
-export const guardianQuestionPhaseEnum = stella.enum('guardian_question_phase', ['core', 'adaptive'])
+export const guardianQuestionPhaseEnum = stella.enum('guardian_question_phase', ['core', 'adaptive', 'note'])
 export const guardianQuestionKindEnum = stella.enum('guardian_question_kind', ['single_choice', 'free_text'])
+export const guardianAdaptiveQuestionRoleEnum = stella.enum('guardian_adaptive_question_role', [
+  'required',
+  'deepening',
+])
 
 // ── Zodiac Guardian paid product ─────────────────────────────────────────────────────────────────────
-// Paid prompts, option labels, branches, and signal weights are tracked as server content but never imported
+// Paid prompts, option labels, adaptive selection policies, and signal weights are tracked as server content but never imported
 // into Next/static assets. The publisher inserts one validated, immutable version in a single transaction.
 // Runtime reads only the version pinned to a paid report and returns one allow-listed question at a time.
 export const guardianQuestionnaireVersionTable = stella.table(
@@ -32,17 +25,21 @@ export const guardianQuestionnaireVersionTable = stella.table(
     schemaVersion: integer('schema_version').notNull(),
     productSku: varchar('product_sku', { length: 64 }).$type<GuardianFullReportProductSku>().notNull(),
     locale: localeEnum().notNull(),
-    entryQuestionId: varchar('entry_question_id', { length: 64 }).notNull(),
-    coreQuestionCount: integer('core_question_count').notNull(),
-    maximumAdaptiveQuestions: integer('maximum_adaptive_questions').notNull(),
+    coreQuestionsPerSlot: integer('core_questions_per_slot').notNull(),
+    requiredAdaptiveQuestionsPerSlot: integer('required_adaptive_questions_per_slot').notNull(),
+    maximumAdaptiveQuestionsPerSlot: integer('maximum_adaptive_questions_per_slot').notNull(),
     contentHash: varchar('content_hash', { length: 64 }).notNull(),
     publishedAt: timestamp('published_at', { precision: 3, withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [
     index('idx_stella_guardian_questionnaire_product_locale').on(t.productSku, t.locale, t.publishedAt),
     check('ck_stella_guardian_questionnaire_schema_positive', sql`${t.schemaVersion} > 0`),
-    check('ck_stella_guardian_questionnaire_core_positive', sql`${t.coreQuestionCount} > 0`),
-    check('ck_stella_guardian_questionnaire_adaptive_nonnegative', sql`${t.maximumAdaptiveQuestions} >= 0`),
+    check('ck_stella_guardian_questionnaire_core_positive', sql`${t.coreQuestionsPerSlot} > 0`),
+    check(
+      'ck_stella_guardian_questionnaire_adaptive_range',
+      sql`${t.requiredAdaptiveQuestionsPerSlot} > 0
+        and ${t.maximumAdaptiveQuestionsPerSlot} >= ${t.requiredAdaptiveQuestionsPerSlot}`,
+    ),
   ],
 )
 
@@ -55,22 +52,48 @@ export const guardianQuestionTable = stella.table(
       .references(() => guardianQuestionnaireVersionTable.id, { onDelete: 'cascade' }),
     questionId: varchar('question_id', { length: 64 }).notNull(),
     position: integer().notNull(),
-    slot: guardianSlotEnum().notNull(),
+    slot: guardianSlotEnum(),
     phase: guardianQuestionPhaseEnum().notNull(),
     kind: guardianQuestionKindEnum().notNull(),
     prompt: text().notNull(),
     supportingText: text('supporting_text'),
-    optional: boolean().notNull().default(false),
-    nextQuestionId: varchar('next_question_id', { length: 64 }),
+    selectionRole: guardianAdaptiveQuestionRoleEnum('selection_role').$type<GuardianAdaptiveQuestionRole>(),
+    selectionPriority: integer('selection_priority'),
+    selectionMinimumScore: integer('selection_minimum_score'),
+    selectionSignalWeights: jsonb('selection_signal_weights').$type<GuardianQuestionSignals>(),
   },
   (t) => [
     uniqueIndex('uq_stella_guardian_question_version_id').on(t.questionnaireVersionId, t.questionId),
     uniqueIndex('uq_stella_guardian_question_version_position').on(t.questionnaireVersionId, t.position),
     check('ck_stella_guardian_question_position_nonnegative', sql`${t.position} >= 0`),
     check(
-      'ck_stella_guardian_question_kind_shape',
-      sql`(${t.kind} = 'single_choice' and not ${t.optional} and ${t.nextQuestionId} is null)
-        or (${t.kind} = 'free_text' and ${t.optional})`,
+      'ck_stella_guardian_question_shape',
+      sql`(${t.phase} = 'core'
+          and ${t.kind} = 'single_choice'
+          and ${t.slot} is not null
+          and ${t.selectionRole} is null
+          and ${t.selectionPriority} is null
+          and ${t.selectionMinimumScore} is null
+          and ${t.selectionSignalWeights} is null)
+        or (${t.phase} = 'adaptive'
+          and ${t.kind} = 'single_choice'
+          and ${t.slot} is not null
+          and ${t.selectionRole} is not null
+          and ${t.selectionPriority} >= 0
+          and ${t.selectionSignalWeights} is not null
+          and ((${t.selectionRole} = 'required' and ${t.selectionMinimumScore} is null)
+            or (${t.selectionRole} = 'deepening' and ${t.selectionMinimumScore} > 0)))
+        or (${t.phase} = 'note'
+          and ${t.kind} = 'free_text'
+          and ${t.slot} is null
+          and ${t.selectionRole} is null
+          and ${t.selectionPriority} is null
+          and ${t.selectionMinimumScore} is null
+          and ${t.selectionSignalWeights} is null)`,
+    ),
+    check(
+      'ck_stella_guardian_question_selection_signals_object',
+      sql`${t.selectionSignalWeights} is null or jsonb_typeof(${t.selectionSignalWeights}) = 'object'`,
     ),
   ],
 )
@@ -85,7 +108,6 @@ export const guardianQuestionOptionTable = stella.table(
     optionId: varchar('option_id', { length: 64 }).notNull(),
     position: integer().notNull(),
     label: text().notNull(),
-    nextQuestionId: varchar('next_question_id', { length: 64 }),
     signals: jsonb().$type<GuardianQuestionSignals>().notNull(),
   },
   (t) => [

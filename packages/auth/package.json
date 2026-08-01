@@ -15,7 +15,7 @@
   "dependencies": {
     "@better-auth/passkey": "^1.6.18",
     "@better-auth/redis-storage": "^1.6.18",
-    "@sobok/billing": "workspace:*",
+    "@sobok/payments": "workspace:*",
     "@sobok/contracts": "workspace:*",
     "@sobok/db": "workspace:*",
     "@sobok/domain": "workspace:*",

@@ -1,11 +1,17 @@
-import { revokeBillingKey } from '@sobok/billing'
 import { db } from '@sobok/db/app'
 import { chatArtistTable } from '@sobok/db/app/chat'
 import { invoiceTable } from '@sobok/db/app/invoice'
 import { paymentMethodTable, subscriptionTable } from '@sobok/db/app/subscription'
 import { userErasureTable } from '@sobok/db/app/user'
 import { SUBSCRIPTION_TARGET_CHAT_ARTIST } from '@sobok/domain/subscription/policy'
+import { env } from '@sobok/env/server.auth'
+import { createPaymentsClient } from '@sobok/payments'
 import { and, eq, inArray } from 'drizzle-orm'
+
+const payments =
+  env.PAYMENTS_SERVICE_URL && env.PAYMENTS_SERVICE_TOKEN
+    ? createPaymentsClient({ baseUrl: env.PAYMENTS_SERVICE_URL, token: env.PAYMENTS_SERVICE_TOKEN })
+    : null
 
 // better-auth deleteUser의 beforeDelete 훅 — user 행 삭제(cascade) 직전에 도메인 오프보딩을 수행한다.
 export async function offboardUserBeforeDelete(userId: string): Promise<void> {
@@ -60,7 +66,12 @@ export async function offboardUserBeforeDelete(userId: string): Promise<void> {
     return tokens.map((row) => row.token)
   })
 
-  const results = await Promise.allSettled(billingTokens.map((token) => revokeBillingKey(token)))
+  if (!payments && billingTokens.length > 0) {
+    console.error('delete user: central payments service is not configured; billing keys were not revoked')
+    return
+  }
+
+  const results = await Promise.allSettled(billingTokens.map((token) => payments!.revokeBillingKey(token)))
 
   for (const result of results) {
     if (result.status === 'rejected') {

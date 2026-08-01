@@ -1,5 +1,7 @@
+import type { ScopedPaymentsService } from '@sobok/payments'
+
 // Cloudflare Worker bindings for apps/stella. Static assets are served via ASSETS; everything below powers
-// the dynamic APIs, including the anonymous comment board and the future paid-card mutations. Declared
+// the dynamic APIs, including the anonymous comment board and paid-card mutations. Declared
 // declaratively in sobok-ops (infra/cloudflare account-stella +
 // infra/supabase, Terraform):
 //   - Hyperdrive config → cloudflare_hyperdrive_config over the SHARED Supabase Postgres, authenticating as
@@ -13,12 +15,14 @@ export interface Bindings {
   // Single Hyperdrive over the shared Supabase Postgres. Caching DISABLED: comments, paid entitlements,
   // collection ownership, and redraw counters all require fresh read-after-write state.
   HYPERDRIVE: Hyperdrive
+  // PortOne API, Store/channel selection, and webhook verification live only in apps/payments. This named
+  // entrypoint accepts Stella-prefixed payment ids and cannot operate on another app's order.
+  PAYMENTS: ScopedPaymentsService
 
   // ── Plain vars (wrangler.jsonc `vars`, overridable by .dev.vars locally) ───────────────────────────
   // Comma-separated hostnames a Turnstile solve is accepted from. Production value is committed in
   // wrangler.jsonc; local dev narrows it to `localhost` for the dev widget.
   STELLA_ALLOWED_HOSTNAMES: string
-
   // ── Secrets Store bindings (async: `await X.get()`) ────────────────────────────────────────────────
   // Siteverify secret for stella's own Turnstile widget (account-turnstile workspace; cutover off the shared
   // "sobok" widget is written in Terraform but not applied yet).

@@ -1,0 +1,128 @@
+import type { Locale } from '@sobok/domain/locale'
+import type { Db } from '@sobok/edge/db/client'
+import {
+  type GuardianRarity,
+  type GuardianReportSlot,
+  guardianEdition,
+  guardianManifest,
+} from '../../guardian/manifest'
+import type { GuardianQuestionnaireClientStep } from '../../guardian/questionnaire'
+import { findPaidFullReportPurchase, lockedReportOf } from './guardian'
+import { getGuardianQuestionnaireStep } from './guardian-questionnaire'
+
+interface GuardianReportVersions {
+  manifest: string
+  selectionRule: string
+  odds: string
+  questionnaire: string
+  copy: string
+  render: string
+}
+
+export type GuardianReportView =
+  | {
+      reportPublicId: string
+      status: 'questions'
+      locale: Locale
+      questionnaire: {
+        status: GuardianQuestionnaireClientStep['status']
+        version: string
+        progress: GuardianQuestionnaireClientStep['progress']
+      }
+    }
+  | {
+      reportPublicId: string
+      status: 'fulfilled'
+      locale: Locale
+      fulfilledAt: string
+      versions: GuardianReportVersions
+      cards: {
+        cardEditionId: string
+        familyId: string
+        slot: GuardianReportSlot
+        rarity: GuardianRarity | null
+        artworkPath: string
+        messageKey: string
+      }[]
+    }
+
+export type ReadGuardianReportResult =
+  | { status: 'ok'; report: GuardianReportView }
+  | { status: 'report-not-found' }
+  | { status: 'payment-required' }
+
+/** Capability ownership is resolved by the route; this query additionally enforces the live paid entitlement. */
+export async function readGuardianReport(
+  db: Db,
+  input: { collectionId: number; reportId: number },
+): Promise<ReadGuardianReportResult> {
+  const report = await lockedReportOf(db, input, false)
+  if (!report) {
+    return { status: 'report-not-found' }
+  }
+
+  const purchase = await findPaidFullReportPurchase(db, {
+    collectionId: input.collectionId,
+    reportId: input.reportId,
+    sku: report.productSku,
+  })
+  if (!purchase || purchase.manifestVersion !== report.manifestVersion) {
+    return { status: 'payment-required' }
+  }
+
+  if (report.status === 'draft') {
+    const stepResult = await getGuardianQuestionnaireStep(db, input)
+    if (stepResult.status !== 'ok') {
+      return stepResult
+    }
+    return {
+      status: 'ok',
+      report: {
+        reportPublicId: report.publicId,
+        status: 'questions',
+        locale: report.locale,
+        questionnaire: {
+          status: stepResult.step.status,
+          version: stepResult.step.version,
+          progress: stepResult.step.progress,
+        },
+      },
+    }
+  }
+
+  if (!report.cardSnapshot || !report.fulfilledAt) {
+    throw new Error(`Fulfilled guardian report ${report.id} has no immutable result snapshot`)
+  }
+  const manifest = guardianManifest(report.manifestVersion)
+  return {
+    status: 'ok',
+    report: {
+      reportPublicId: report.publicId,
+      status: 'fulfilled',
+      locale: report.locale,
+      fulfilledAt: report.fulfilledAt.toISOString(),
+      versions: {
+        manifest: report.manifestVersion,
+        selectionRule: report.selectionRuleVersion,
+        odds: report.oddsVersion,
+        questionnaire: report.questionnaireVersion,
+        copy: report.copyVersion,
+        render: report.renderVersion,
+      },
+      cards: report.cardSnapshot.map((card) => {
+        const edition = guardianEdition(card.editionId, manifest)
+        if (edition.familyId !== card.familyId || edition.slot !== card.slot || edition.rarity !== card.rarity) {
+          throw new Error(`Guardian report ${report.id} card snapshot does not match ${card.editionId}`)
+        }
+        return {
+          cardEditionId: card.editionId,
+          familyId: card.familyId,
+          slot: card.slot,
+          rarity: card.rarity,
+          artworkPath: edition.artworkPath,
+          messageKey: edition.messageKey,
+        }
+      }),
+    },
+  }
+}

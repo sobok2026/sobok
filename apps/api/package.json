@@ -20,7 +20,7 @@
     "@hono/otel": "^1.1.2",
     "@hono/zod-validator": "^0.7.6",
     "@sobok/auth": "workspace:*",
-    "@sobok/billing": "workspace:*",
+    "@sobok/payments": "workspace:*",
     "@sobok/contracts": "workspace:*",
     "@sobok/db": "workspace:*",
     "@sobok/domain": "workspace:*",

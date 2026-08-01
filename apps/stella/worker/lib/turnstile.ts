@@ -48,7 +48,7 @@ export async function guardTurnstile(
   // `rejected` during a bot wave would be.
   if (result.reason === 'misconfigured') {
     const webhook = await c.env.STELLA_DISCORD_WEBHOOK.get()
-    c.executionCtx.waitUntil(alertDiscord(webhook, '🚨 stella Turnstile is misconfigured; comments are down'))
+    c.executionCtx.waitUntil(alertDiscord(webhook, `🚨 stella Turnstile is misconfigured for \`${expectedAction}\``))
   }
 
   const { slug, status } = RESPONSE_BY_REASON[result.reason]

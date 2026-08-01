@@ -1,4 +1,3 @@
-import { revokeBillingKey } from '@sobok/billing'
 import { markPaymentMethodDeleted } from '@sobok/db/app/query/payment-method'
 import { Hono } from 'hono'
 import { createFactory } from 'hono/factory'
@@ -7,6 +6,7 @@ import { z } from 'zod'
 import type { Env } from '@/app'
 
 import { requireAuth } from '@/middleware/require-auth'
+import { payments } from '@/payments'
 import { problemResponse } from '@/utils/problem'
 import { zProblemValidator } from '@/utils/validator'
 
@@ -28,7 +28,7 @@ route.delete('/', ...middlewares, async (c) => {
   }
 
   try {
-    await revokeBillingKey(deleted.token)
+    await payments?.revokeBillingKey(deleted.token)
   } catch (error) {
     console.error('billing: revokeBillingKey failed', error)
   }

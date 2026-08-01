@@ -10,13 +10,14 @@
 # The Turnstile host pin must name the host you actually serve locally, because siteverify echoes back the
 # hostname the widget was solved on and the Worker rejects anything not in this list.
 STELLA_ALLOWED_HOSTNAMES="localhost"
-
-# The 3 true secrets are Cloudflare Secrets Store bindings (accessed via `await env.X.get()`). For local
+# The 3 top-level bindings are Cloudflare Secrets Store secrets (accessed via `await env.X.get()`). For local
 # dev, seed a LOCAL secrets store (no --remote) so they resolve offline — one per binding's secret_name:
-#   wrangler secrets-store secret create <STORE_ID> --name stella-turnstile-secret --value "…" --scopes workers
-#   wrangler secrets-store secret create <STORE_ID> --name stella-ip-hash-salt     --value "…" --scopes workers
-#   wrangler secrets-store secret create <STORE_ID> --name stella-discord-webhook  --value ""  --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-turnstile-secret         --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-ip-hash-salt             --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-discord-webhook          --value ""  --scopes workers
 # (empty discord value = alerts disabled.)
+# PortOne credentials now exist only in apps/payments. Run that Worker alongside Stella so the PAYMENTS
+# Service Binding resolves; no PortOne secret or channel key is copied into this app.
 #
 # The Turnstile value must be the DEV widget's real secret (`terraform output -raw dev_turnstile_secret_key`
 # in sobok-ops), NOT Cloudflare's 1x00…AA test key. The test key makes siteverify answer from the secret alone

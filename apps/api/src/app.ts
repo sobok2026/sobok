@@ -75,7 +75,7 @@ app.use('/api/v1/*', async (c, next) => {
 
 // 5. 애플리케이션 보안 계층
 app.use('*', (c, next) => {
-  if (c.req.path === '/api/v1/billing/portone/webhook') {
+  if (c.req.path === '/api/v1/internal/payment-events') {
     return next()
   }
 

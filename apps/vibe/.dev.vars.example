@@ -2,8 +2,6 @@
 # sobok-ops (Terraform) — nothing here is used in production.
 
 # Non-secret vars (mirror wrangler.jsonc `vars`):
-DEEPTYPE_PORTONE_STORE_ID=""
-DEEPTYPE_PORTONE_CHANNEL_KEY=""
 DEEPTYPE_PUBLIC_ORIGIN="http://localhost:3000"
 DEEPTYPE_EMAIL_FROM="vibe <reports@example.com>"
 DEEPTYPE_EMAIL_REPLY_TO="support@example.com"
@@ -12,15 +10,16 @@ DEEPTYPE_GA4_MEASUREMENT_ID="G-RHHX4JRYDS"
 # Narration destination AND switch: unset/"" = engine-only reports (no Anthropic spend in dev).
 # DEEPTYPE_REPORT_MODEL="claude-haiku-4-5-20251001"
 
-# The 6 true secrets are Cloudflare Secrets Store bindings (accessed via `await env.X.get()`). For local
+# The 5 top-level bindings are Cloudflare Secrets Store secrets (accessed via `await env.X.get()`). For local
 # dev, seed a LOCAL secrets store (no --remote) so they resolve offline — one per binding's secret_name:
-#   wrangler secrets-store secret create <STORE_ID> --name deeptype-portone-api-secret     --value "…" --scopes workers
-#   wrangler secrets-store secret create <STORE_ID> --name deeptype-portone-webhook-secret --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name deeptype-anthropic-api-key      --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name deeptype-resend-api-key         --value "…" --scopes workers
-#   wrangler secrets-store secret create <STORE_ID> --name vibe-turnstile-secret          --value "…" --scopes workers
-#   wrangler secrets-store secret create <STORE_ID> --name deeptype-discord-webhook        --value "" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name vibe-turnstile-secret           --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name deeptype-discord-webhook        --value ""  --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name deeptype-ga4-api-secret         --value ""  --scopes workers
 # (empty discord value = alerts disabled.)
+# PortOne credentials and the public Store/channel map now live only in apps/payments. Run that Worker with
+# Vibe locally so the PAYMENTS Service Binding resolves; do not copy its credentials into this app.
 #
 # The Turnstile value must be the DEV widget's real secret (`terraform output -raw dev_turnstile_secret_key`
 # in sobok-ops), NOT Cloudflare's 1x00…AA test key. The test key makes siteverify answer from the secret alone

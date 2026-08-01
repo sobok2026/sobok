@@ -20,16 +20,17 @@ const route = new Hono<AppEnv>()
 // approved one to any buyer's browser — but this check has no use for them: a wrong-but-present key is
 // indistinguishable from a right one until a real payment runs, so echoing them here would only hand the full
 // contract list to anyone who asks, one per sale instead.
-route.get('/', (c) => {
-  const bound = Object.keys(c.env.DEEPTYPE_PORTONE_CHANNELS) as PortOneChannel[]
+route.get('/', async (c) => {
+  const bound = (await c.env.PAYMENTS.availableChannels()) as PortOneChannel[]
   const sellable = sellableChannels(c.env.DEEPTYPE_PAY_TIER)
+  const firstConfig = bound[0] ? await c.env.PAYMENTS.checkoutConfig(bound[0]) : null
 
   return c.json({
     payTier: c.env.DEEPTYPE_PAY_TIER,
     // The narration destination-switch. null = engine-only reports — visible here because an env block that
     // forgot to restate the var turns narration off with no other symptom.
     reportModel: c.env.DEEPTYPE_REPORT_MODEL || null,
-    storeId: c.env.DEEPTYPE_PORTONE_STORE_ID,
+    storeId: firstConfig?.storeId ?? null,
     channels: bound,
     // Offered on the paywall, unpayable here: every entry is a method that reaches `/checkout` and 500s.
     unbound: sellable.filter((channel) => !bound.includes(channel)),

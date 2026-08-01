@@ -15,6 +15,8 @@ export const env = createEnv({
     KAKAO_CLIENT_SECRET: z.string().optional(),
     PASSKEY_ORIGIN: z.url().default('http://localhost:3000'),
     PASSKEY_RP_ID: z.string().default('localhost'),
+    PAYMENTS_SERVICE_URL: z.url().optional(),
+    PAYMENTS_SERVICE_TOKEN: z.string().min(32).optional(),
     TURNSTILE_SECRET_KEY: z.string(),
   },
   runtimeEnv: process.env,

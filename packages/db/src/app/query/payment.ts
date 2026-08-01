@@ -1,3 +1,4 @@
+import { newPaymentId } from '@sobok/payments'
 import { and, asc, desc, eq, gt, lt, sql, sum } from 'drizzle-orm'
 import { db } from '../db'
 import { paymentRefundTable, paymentTable } from '../schema/payment'
@@ -37,7 +38,7 @@ export async function ensureInvoicePayment(input: EnsureInvoicePaymentInput): Pr
   const [row] = await db
     .insert(paymentTable)
     .values({
-      paymentId: crypto.randomUUID(),
+      paymentId: newPaymentId('core'),
       userId: input.userId,
       invoiceId: input.invoiceId,
       orderName: input.orderName,

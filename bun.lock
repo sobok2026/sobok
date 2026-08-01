@@ -42,7 +42,6 @@
         "@opentelemetry/exporter-trace-otlp-http": "^0.219.0",
         "@opentelemetry/sdk-node": "^0.219.0",
         "@sobok/auth": "workspace:*",
-        "@sobok/billing": "workspace:*",
         "@sobok/contracts": "workspace:*",
         "@sobok/db": "workspace:*",
         "@sobok/domain": "workspace:*",
@@ -52,6 +51,7 @@
         "@sobok/http": "workspace:*",
         "@sobok/kv": "workspace:*",
         "@sobok/notifications": "workspace:*",
+        "@sobok/payments": "workspace:*",
         "@sobok/std": "workspace:*",
         "@t3-oss/env-core": "^0.13.11",
         "better-auth": "^1.6.18",
@@ -75,9 +75,9 @@
       "name": "@sobok/billing-worker",
       "version": "1.1.0",
       "dependencies": {
-        "@sobok/billing": "workspace:*",
         "@sobok/db": "workspace:*",
         "@sobok/domain": "workspace:*",
+        "@sobok/payments": "workspace:*",
       },
       "devDependencies": {
         "@types/bun": "^1.3.12",
@@ -154,6 +154,21 @@
         "wrangler": "^4.110.0",
       },
     },
+    "apps/payments": {
+      "name": "@sobok/payments-service",
+      "version": "0.1.0",
+      "dependencies": {
+        "@portone/server-sdk": "^0.19.0",
+        "@sobok/payments": "workspace:*",
+        "hono": "^4.12.27",
+        "zod": "^4.4.3",
+      },
+      "devDependencies": {
+        "@cloudflare/workers-types": "^4.20260701.0",
+        "typescript": "^6.0.3",
+        "wrangler": "^4.110.0",
+      },
+    },
     "apps/stella": {
       "name": "@sobok/stella",
       "version": "0.1.0",
@@ -163,6 +178,7 @@
         "@sobok/brand": "workspace:*",
         "@sobok/domain": "workspace:*",
         "@sobok/edge": "workspace:*",
+        "@sobok/payments": "workspace:*",
         "@sobok/site-chrome": "workspace:*",
         "@sobok/site-i18n": "workspace:*",
         "@sobok/site-seo": "workspace:*",
@@ -204,11 +220,11 @@
         "@marsidev/react-turnstile": "^1.5.3",
         "@mynaui/icons-react": "^0.4.2",
         "@portone/browser-sdk": "^0.1.9",
-        "@portone/server-sdk": "^0.19.0",
         "@sobok/analytics": "workspace:*",
         "@sobok/brand": "workspace:*",
         "@sobok/domain": "workspace:*",
         "@sobok/edge": "workspace:*",
+        "@sobok/payments": "workspace:*",
         "@sobok/site-chrome": "workspace:*",
         "@sobok/site-i18n": "workspace:*",
         "@sobok/site-seo": "workspace:*",
@@ -361,12 +377,12 @@
       "dependencies": {
         "@better-auth/passkey": "^1.6.18",
         "@better-auth/redis-storage": "^1.6.18",
-        "@sobok/billing": "workspace:*",
         "@sobok/contracts": "workspace:*",
         "@sobok/db": "workspace:*",
         "@sobok/domain": "workspace:*",
         "@sobok/env": "workspace:*",
         "@sobok/kv": "workspace:*",
+        "@sobok/payments": "workspace:*",
         "better-auth": "^1.6.18",
         "drizzle-orm": "1.0.0-rc.4",
         "zod": "^4.3.6",
@@ -376,18 +392,6 @@
       },
       "peerDependencies": {
         "react": ">=19",
-      },
-    },
-    "packages/billing": {
-      "name": "@sobok/billing",
-      "version": "1.0.0",
-      "dependencies": {
-        "@portone/server-sdk": "^0.19.0",
-        "@t3-oss/env-core": "^0.13.11",
-        "zod": "^4.3.6",
-      },
-      "devDependencies": {
-        "typescript": "^6.0.3",
       },
     },
     "packages/brand": {
@@ -416,6 +420,7 @@
       "version": "1.1.0",
       "dependencies": {
         "@sobok/domain": "workspace:*",
+        "@sobok/payments": "workspace:*",
         "@sobok/std": "workspace:*",
         "@t3-oss/env-core": "^0.13.11",
         "drizzle-orm": "1.0.0-rc.4",
@@ -522,6 +527,16 @@
       "version": "1.1.0",
       "devDependencies": {
         "@sentry/core": "10.62.0",
+      },
+    },
+    "packages/payments": {
+      "name": "@sobok/payments",
+      "version": "1.0.0",
+      "dependencies": {
+        "zod": "^4.4.3",
+      },
+      "devDependencies": {
+        "typescript": "^6.0.3",
       },
     },
     "packages/site-chrome": {
@@ -1235,8 +1250,6 @@
 
     "@sobok/auth": ["@sobok/auth@workspace:packages/auth"],
 
-    "@sobok/billing": ["@sobok/billing@workspace:packages/billing"],
-
     "@sobok/billing-worker": ["@sobok/billing-worker@workspace:apps/billing-worker"],
 
     "@sobok/brand": ["@sobok/brand@workspace:packages/brand"],
@@ -1270,6 +1283,10 @@
     "@sobok/notifications": ["@sobok/notifications@workspace:packages/notifications"],
 
     "@sobok/observability": ["@sobok/observability@workspace:packages/observability"],
+
+    "@sobok/payments": ["@sobok/payments@workspace:packages/payments"],
+
+    "@sobok/payments-service": ["@sobok/payments-service@workspace:apps/payments"],
 
     "@sobok/site-chrome": ["@sobok/site-chrome@workspace:packages/site-chrome"],
 

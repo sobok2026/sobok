@@ -4,36 +4,12 @@ import type { Db } from '@sobok/edge/db/client'
 import { and, eq, inArray, lt, or, sql } from 'drizzle-orm'
 import type { Cursor } from '../../lib/cursor'
 import { commentReportTable, commentTable, commentThreadTable } from '../schema/comment'
-import { rateLimitTable } from '../schema/rate-limit'
 
 export interface CommentRow {
   publicId: string
   nickname: string | null
   body: string
   createdAt: Date
-}
-
-// ── Rate limiting ─────────────────────────────────────────────────────────────────────────────────────
-// Atomic fixed-window counter. Returns true when the request is within the limit. Race-free: the increment
-// and the read are one statement (unlike SELECT count + decide). CF WAF rate-limit rules should sit in front
-// of this as edge-level defense-in-depth.
-export async function checkRateLimit(
-  db: Db,
-  bucket: string,
-  ipHash: string,
-  windowMs: number,
-  limit: number,
-): Promise<boolean> {
-  const windowStart = new Date(Math.floor(Date.now() / windowMs) * windowMs)
-  const [row] = await db
-    .insert(rateLimitTable)
-    .values({ bucket, ipHash, windowStart, hits: 1 })
-    .onConflictDoUpdate({
-      target: [rateLimitTable.bucket, rateLimitTable.ipHash, rateLimitTable.windowStart],
-      set: { hits: sql`${rateLimitTable.hits} + 1` },
-    })
-    .returning({ hits: rateLimitTable.hits })
-  return (row?.hits ?? 1) <= limit
 }
 
 // ── Reads ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -241,14 +217,6 @@ export async function reportComment(
 }
 
 // ── Retention (daily cron; also keeps the shared Supabase project warm past the free-tier 7-day pause) ──
-export async function purgeExpiredRateLimits(db: Db, cutoff: Date): Promise<number> {
-  const rows = await db
-    .delete(rateLimitTable)
-    .where(lt(rateLimitTable.windowStart, cutoff))
-    .returning({ bucket: rateLimitTable.bucket })
-  return rows.length
-}
-
 export async function nullifyOldCommentIps(db: Db, cutoff: Date): Promise<number> {
   const rows = await db
     .update(commentTable)

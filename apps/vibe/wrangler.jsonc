@@ -33,12 +33,21 @@
   // 크론(워커 `scheduled` 핸들러): 15분마다 → 멈춘 'pending' 재조정, 매일 03:00 → 리텐션 purge.
   "triggers": { "crons": ["*/15 * * * *", "0 3 * * *"] },
   "define": { "DEEPTYPE_DB_SCHEMA": "'deeptype'" },
+  "services": [{ "binding": "PAYMENTS", "service": "payments", "entrypoint": "VibePayments" }],
+  "queues": {
+    "consumers": [
+      {
+        "queue": "vibe-payment-events",
+        "max_batch_size": 1,
+        "max_batch_timeout": 5,
+        "max_retries": 10,
+        "retry_delay": 60,
+        "dead_letter_queue": "vibe-payment-events-dlq"
+      }
+    ]
+  },
   "vars": {
-    "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
     "DEEPTYPE_PAY_TIER": "live",
-    "DEEPTYPE_PORTONE_CHANNELS": {
-      "tosspay_v2": "channel-key-d14e0af9-18be-457f-aa21-228e7265211f"
-    },
     "DEEPTYPE_PUBLIC_ORIGIN": "https://vibe.sobok.cc",
     "DEEPTYPE_EMAIL_FROM": "sobok <sobok2026@gmail.com>",
     "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",
@@ -46,16 +55,6 @@
     "DEEPTYPE_GA4_MEASUREMENT_ID": "G-RHHX4JRYDS"
   },
   "secrets_store_secrets": [
-    {
-      "binding": "DEEPTYPE_PORTONE_API_SECRET",
-      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-      "secret_name": "deeptype-portone-api-secret"
-    },
-    {
-      "binding": "DEEPTYPE_PORTONE_WEBHOOK_SECRET",
-      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-      "secret_name": "deeptype-portone-webhook-secret"
-    },
     {
       "binding": "DEEPTYPE_ANTHROPIC_API_KEY",
       "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
@@ -89,6 +88,19 @@
     "stg": {
       "workers_dev": false,
       "define": { "DEEPTYPE_DB_SCHEMA": "'deeptype_stg'" },
+      "services": [{ "binding": "PAYMENTS", "service": "payments-stg", "entrypoint": "VibePayments" }],
+      "queues": {
+        "consumers": [
+          {
+            "queue": "vibe-payment-events-stg",
+            "max_batch_size": 1,
+            "max_batch_timeout": 5,
+            "max_retries": 10,
+            "retry_delay": 60,
+            "dead_letter_queue": "vibe-payment-events-stg-dlq"
+          }
+        ]
+      },
       "hyperdrive": [
         {
           "binding": "HYPERDRIVE_FRESH",
@@ -100,15 +112,7 @@
         }
       ],
       "vars": {
-        "DEEPTYPE_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
         "DEEPTYPE_PAY_TIER": "test",
-        "DEEPTYPE_PORTONE_CHANNELS": {
-          "kakaopay": "channel-key-d80ebe96-61e3-49f9-b3eb-5dc22aee47b7",
-          "kcp_v2": "channel-key-d48cde15-5f73-4ab2-9b40-2ec29d152ad5",
-          "paypal_v2": "channel-key-8a0c783e-608f-48f0-a2f1-842667a464bc",
-          "tosspay_v2": "channel-key-70320dc7-8e65-4cf7-901b-7b834ae4f21a",
-          "tosspayments": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88"
-        },
         "DEEPTYPE_PUBLIC_ORIGIN": "https://vibe-stg.sobok.cc",
         "DEEPTYPE_EMAIL_FROM": "sobok <sobok2026@gmail.com>",
         "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",
@@ -116,16 +120,6 @@
         "DEEPTYPE_GA4_MEASUREMENT_ID": ""
       },
       "secrets_store_secrets": [
-        {
-          "binding": "DEEPTYPE_PORTONE_API_SECRET",
-          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-          "secret_name": "deeptype-portone-api-secret"
-        },
-        {
-          "binding": "DEEPTYPE_PORTONE_WEBHOOK_SECRET",
-          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-          "secret_name": "deeptype-portone-webhook-secret-stg"
-        },
         {
           "binding": "DEEPTYPE_ANTHROPIC_API_KEY",
           "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",

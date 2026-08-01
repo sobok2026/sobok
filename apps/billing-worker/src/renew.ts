@@ -1,4 +1,3 @@
-import { type BillingGateway, describeChargeFailure } from '@sobok/billing'
 import { getChatArtistById } from '@sobok/db/app/query/chat'
 import { ensureOpenInvoice, voidOpenInvoice } from '@sobok/db/app/query/invoice'
 import { ensureInvoicePayment, markPaymentFailed } from '@sobok/db/app/query/payment'
@@ -16,6 +15,7 @@ import {
   RENEWAL_GRACE_MS,
   SUBSCRIPTION_TARGET_CHAT_ARTIST,
 } from '@sobok/domain/subscription/policy'
+import { type BillingGateway, describeChargeFailure } from '@sobok/payments'
 
 const PAGE_SIZE = 1000
 
@@ -192,7 +192,7 @@ async function handleDue(
 
     await confirmPayment(paymentId, {
       providerTxnId: charge.providerTxnId,
-      paidAt: charge.paidAt,
+      paidAt: new Date(charge.paidAt),
       // 실제 결제된 카드로 기록 — fallback 카드였다면 구독 지정 카드가 여기서 자가치유된다.
       paymentMethodId: paymentMethod.id,
       method: paymentMethod.method,
@@ -236,7 +236,7 @@ async function reconcileFailedCharge(
   if (remote.status === 'paid') {
     await confirmPayment(paymentId, {
       providerTxnId: remote.providerTxnId ?? paymentId,
-      paidAt: remote.paidAt ?? now,
+      paidAt: remote.paidAt ? new Date(remote.paidAt) : now,
       paymentMethodId,
       method: remote.method,
     })
