@@ -180,11 +180,11 @@ Supabase 프로젝트는 추가하지 않는다.
 
 ## 다음 수직 연결
 
-실제 `guardian-paid-ko-mvp-v1.json`과 guest draft, 결제 entitlement 함수, 질문 진행,
-마지막 답변의 report fulfillment 도메인은 구현되어 있다. 다음 구현은 이 계약 위에 다음을 외부
-흐름으로 연결한다.
+실제 `guardian-paid-ko-mvp-v1.json`, guest checkout, 결제 entitlement 함수, capability 기반 질문
+GET/PUT, 마지막 답변의 report fulfillment 도메인은 구현되어 있다. checkout은 report에 현재
+questionnaire version을 고정하고 질문 API는 아직 공개되지 않은 문항이나 signal을 반환하지 않는다.
+남은 외부 연결은 다음과 같다.
 
-1. guest checkout API에서 report와 현재 questionnaire version 고정
-2. PortOne 원격 검증 성공을 기존 `paid` + 질문 entitlement 함수에 연결
-3. 질문 GET/PUT API에서 collection capability 확인
-4. 저장된 fulfilled snapshot을 카드 공개 화면에 전달
+1. PortOne 원격 검증 성공을 기존 `paid` + 질문 entitlement 함수에 연결
+2. confirm·webhook·재조정이 같은 구매 확정 함수를 사용하게 연결
+3. 저장된 fulfilled snapshot을 report read API와 카드 공개 화면에 전달

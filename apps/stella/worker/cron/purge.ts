@@ -1,10 +1,6 @@
 import { openDb } from '@sobok/edge/db/client'
-import {
-  nullifyOldCommentIps,
-  nullifyOldReportIps,
-  purgeExpiredRateLimits,
-  purgeModeratedComments,
-} from '../db/queries/comment'
+import { nullifyOldCommentIps, nullifyOldReportIps, purgeModeratedComments } from '../db/queries/comment'
+import { purgeExpiredRateLimits } from '../db/queries/rate-limit'
 import type { Bindings } from '../env'
 
 const DAY = 86_400_000

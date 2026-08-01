@@ -43,6 +43,8 @@ export const guardianPurchaseStatusEnum = stella.enum('guardian_purchase_status'
   'pending',
   'paid',
   'failed',
+  'cancelled',
+  'review_required',
   'refunded',
 ])
 
@@ -157,9 +159,9 @@ export const guardianQuestionAnswerTable = stella.table(
   ],
 )
 
-// Payment-provider verification will be connected in a later phase. Until then no public route may create
-// or transition these rows. The server manifest is the sole SKU/price source and every granted entitlement
-// is tied back to one paid purchase or to an explicitly named one-shot reward.
+// Public checkout may create `pending`; only server-verified payment paths may transition it or grant an
+// entitlement. The server manifest is the sole SKU/price source and every granted entitlement is tied back to
+// one paid purchase or to an explicitly named one-shot reward.
 export const guardianPurchaseTable = stella.table(
   'guardian_purchase',
   {
@@ -173,9 +175,14 @@ export const guardianPurchaseTable = stella.table(
       .references(() => guardianReportTable.id, { onDelete: 'restrict' }),
     sku: varchar({ length: 64 }).$type<GuardianProductSku>().notNull(),
     kind: guardianProductKindEnum().notNull(),
+    orderName: varchar('order_name', { length: 128 }).notNull(),
     amount: bigint({ mode: 'number' }).notNull(),
     market: varchar({ length: 8 }).notNull(),
     currency: varchar({ length: 3 }).notNull(),
+    // The delivery spelling and the lowercase comparison value are both attached to the purchase. Full-report
+    // guest checkout requires them; redraw purchases may inherit recovery through the collection/account.
+    recoveryEmail: varchar('recovery_email', { length: 254 }),
+    recoveryEmailNormalized: varchar('recovery_email_normalized', { length: 254 }),
     manifestVersion: varchar('manifest_version', { length: 64 }).notNull(),
     provider: varchar({ length: 32 }).notNull().default('portone'),
     method: varchar({ length: 32 }),
@@ -190,12 +197,22 @@ export const guardianPurchaseTable = stella.table(
   },
   (t) => [
     index('idx_stella_guardian_purchase_collection').on(t.collectionId, t.createdAt),
+    index('idx_stella_guardian_purchase_recovery_email').on(t.recoveryEmailNormalized),
     index('idx_stella_guardian_purchase_pending').on(t.createdAt).where(sql`status = 'pending'`),
     uniqueIndex('uq_stella_guardian_purchase_active_full_report')
       .on(t.reportId)
-      .where(sql`status in ('pending', 'paid') and kind = 'full_report'`),
+      .where(sql`status in ('pending', 'paid', 'review_required') and kind = 'full_report'`),
     uniqueIndex('uq_stella_guardian_purchase_provider_txn').on(t.provider, t.providerTxnId),
     check('ck_stella_guardian_purchase_amount_positive', sql`${t.amount} > 0`),
+    check(
+      'ck_stella_guardian_purchase_recovery_email_pair',
+      sql`(${t.recoveryEmail} is null and ${t.recoveryEmailNormalized} is null)
+        or (${t.recoveryEmail} is not null and ${t.recoveryEmailNormalized} is not null)`,
+    ),
+    check(
+      'ck_stella_guardian_purchase_full_report_recovery_email',
+      sql`${t.kind} <> 'full_report' or ${t.recoveryEmail} is not null`,
+    ),
   ],
 )
 

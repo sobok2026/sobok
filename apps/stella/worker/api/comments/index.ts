@@ -1,23 +1,17 @@
 import { COMMENT_REPORT_REASONS, MAX_COMMENT_BODY_LENGTH } from '@sobok/domain/comment/policy'
 import { LOCALES } from '@sobok/domain/locale'
 import { alertDiscord } from '@sobok/edge/alert'
-import { type Db, openDb, withDb } from '@sobok/edge/db/client'
+import { openDb, withDb } from '@sobok/edge/db/client'
 import { sha256Hex } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
 import { z } from 'zod'
-import {
-  checkRateLimit,
-  createComment,
-  deleteComment,
-  editComment,
-  getCounts,
-  listComments,
-  reportComment,
-} from '~/db/queries/comment'
+import { createComment, deleteComment, editComment, getCounts, listComments, reportComment } from '~/db/queries/comment'
+import { withinRateLimits } from '~/db/queries/rate-limit'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { decodeCursor, encodeCursor } from '~/lib/cursor'
 import { hashIp } from '~/lib/ip'
+import { bearerToken, clientIp } from '~/lib/request'
 import { sanitizeBody, sanitizeNickname } from '~/lib/text'
 import { newEditToken, newPublicId } from '~/lib/tokens'
 import { guardTurnstile } from '~/lib/turnstile'
@@ -60,29 +54,6 @@ const ReportBody = z.object({
   reason: z.enum(COMMENT_REPORT_REASONS),
   turnstileToken: TurnstileSchema,
 })
-
-type HeaderReader = { req: { header(name: string): string | undefined } }
-
-function clientIp(c: HeaderReader): string | null {
-  return c.req.header('cf-connecting-ip') ?? null
-}
-
-function bearer(c: HeaderReader): string | null {
-  return c.req.header('authorization')?.match(/^Bearer\s+(\S+)$/i)?.[1] ?? null
-}
-
-async function withinLimits(
-  db: Db,
-  ipHash: string,
-  limits: readonly { bucket: string; windowMs: number; limit: number }[],
-): Promise<boolean> {
-  for (const { bucket, windowMs, limit } of limits) {
-    if (!(await checkRateLimit(db, bucket, ipHash, windowMs, limit))) {
-      return false
-    }
-  }
-  return true
-}
 
 export const comments = new Hono<AppEnv>()
 
@@ -163,7 +134,7 @@ comments.post('/', async (c) => {
   const editTokenHash = await sha256Hex(editToken)
 
   const outcome = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, async (db) => {
-    if (!(await withinLimits(db, ipHash ?? 'noip', POST_LIMITS))) {
+    if (!(await withinRateLimits(db, ipHash ?? 'noip', POST_LIMITS))) {
       return 'rate-limited' as const
     }
     return createComment(db, {
@@ -196,7 +167,7 @@ comments.patch('/:publicId', async (c) => {
   if (Number(c.req.header('content-length') ?? 0) > 4 * 1024) {
     return problem(413, 'payload-too-large')
   }
-  const token = bearer(c)
+  const token = bearerToken(c)
   if (!token) {
     return problem(403, 'forbidden')
   }
@@ -220,7 +191,7 @@ comments.patch('/:publicId', async (c) => {
 
 // DELETE /api/comments/:publicId — soft-delete own comment (Authorization: Bearer <editToken>).
 comments.delete('/:publicId', async (c) => {
-  const token = bearer(c)
+  const token = bearerToken(c)
   if (!token) {
     return problem(403, 'forbidden')
   }
@@ -256,7 +227,7 @@ comments.post('/:publicId/report', async (c) => {
   const ipHash = await hashIp(ip, await c.env.STELLA_IP_HASH_SALT.get())
 
   const result = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, async (db) => {
-    if (!(await withinLimits(db, ipHash ?? 'noip', REPORT_LIMITS))) {
+    if (!(await withinRateLimits(db, ipHash ?? 'noip', REPORT_LIMITS))) {
       return 'rate-limited' as const
     }
     return reportComment(db, {

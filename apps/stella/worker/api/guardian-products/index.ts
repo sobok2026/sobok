@@ -4,8 +4,8 @@ import { CURRENT_GUARDIAN_MANIFEST, guardianEdition } from '../../guardian/manif
 
 export const guardianProducts = new Hono<AppEnv>()
 
-// Public, immutable-by-version sales metadata only. Purchase creation, payment transition, credit use, and
-// collection reads stay unexposed until PortOne verification and Stella account/guest capabilities are wired.
+// Public, immutable-by-version sales metadata only. Payment transition, credit use, and collection reads stay
+// outside this route; checkout and paid-question reads use their own mutation/capability boundaries.
 guardianProducts.get('/current', (c) => {
   const manifest = CURRENT_GUARDIAN_MANIFEST
   const loveFamilyIds = new Set(manifest.families.filter(({ slot }) => slot === 'love').map(({ id }) => id))

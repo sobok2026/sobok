@@ -10,6 +10,23 @@ export const GUARDIAN_PRODUCT_SKUS = [
   ...GUARDIAN_FULL_REPORT_PRODUCT_SKUS,
   ...GUARDIAN_LOVE_REDRAW_PRODUCT_SKUS,
 ] as const
+export const GUARDIAN_PLANET_IDS = [
+  'sun',
+  'moon',
+  'mercury',
+  'venus',
+  'mars',
+  'jupiter',
+  'saturn',
+  'uranus',
+  'neptune',
+  'pluto',
+  'northNode',
+  'southNode',
+  'lilith',
+  'chiron',
+  'fortune',
+] as const
 
 export type GuardianReportSlot = (typeof GUARDIAN_REPORT_SLOTS)[number]
 export type GuardianRarity = (typeof GUARDIAN_RARITIES)[number]
@@ -17,18 +34,31 @@ export type GuardianProductKind = (typeof GUARDIAN_PRODUCT_KINDS)[number]
 export type GuardianFullReportProductSku = (typeof GUARDIAN_FULL_REPORT_PRODUCT_SKUS)[number]
 export type GuardianLoveRedrawProductSku = (typeof GUARDIAN_LOVE_REDRAW_PRODUCT_SKUS)[number]
 export type GuardianProductSku = (typeof GUARDIAN_PRODUCT_SKUS)[number]
+export type GuardianPlanetId = (typeof GUARDIAN_PLANET_IDS)[number]
 
-export type GuardianJsonValue =
-  | string
-  | number
-  | boolean
-  | null
-  | readonly GuardianJsonValue[]
-  | { readonly [key: string]: GuardianJsonValue }
+export interface GuardianPlanetPositionSnapshot {
+  id: GuardianPlanetId
+  lon: number
+  retrograde: boolean
+}
+
+export interface GuardianChartSnapshot {
+  timeKnown: boolean
+  planets: readonly GuardianPlanetPositionSnapshot[]
+  ascendant: number | null
+  midheaven: number | null
+  cusps: readonly number[] | null
+  moonLongitudeRange: readonly [start: number, end: number] | null
+}
+
+export interface GuardianPreviewAnswerSnapshot {
+  tone: 'comfort' | 'honesty' | 'action' | 'possibility'
+  movement: 'start' | 'continue' | 'recover' | 'release'
+}
 
 export interface GuardianReportInputSnapshot {
-  chart: Readonly<Record<string, GuardianJsonValue>>
-  previewAnswers: Readonly<Record<string, string>>
+  chart: GuardianChartSnapshot
+  previewAnswers: GuardianPreviewAnswerSnapshot
 }
 
 export interface GuardianSelectionContext extends GuardianReportInputSnapshot {
@@ -120,6 +150,7 @@ export interface GuardianPriceDefinition {
 }
 
 interface GuardianProductDefinitionBase {
+  orderNames: Partial<Record<Locale, string>>
   prices: readonly GuardianPriceDefinition[]
 }
 
@@ -300,6 +331,7 @@ export const CURRENT_GUARDIAN_MANIFEST = {
     {
       sku: 'guardian-report-full-v1',
       kind: 'full_report',
+      orderNames: { ko: '별자리 수호령 전체 리포트' },
       prices: [{ market: 'KR', currency: 'KRW', amountMinor: 3_900 }],
       questionnaireVersions: {
         ko: 'guardian-paid-ko-mvp-v1',
@@ -308,12 +340,14 @@ export const CURRENT_GUARDIAN_MANIFEST = {
     {
       sku: 'guardian-love-redraw-1-v1',
       kind: 'love_redraw',
+      orderNames: { ko: '별자리 수호령 사랑 카드 1회' },
       prices: [{ market: 'KR', currency: 'KRW', amountMinor: 700 }],
       redrawCredits: 1,
     },
     {
       sku: 'guardian-love-redraw-5-v1',
       kind: 'love_redraw',
+      orderNames: { ko: '별자리 수호령 사랑 카드 5회' },
       prices: [{ market: 'KR', currency: 'KRW', amountMinor: 2_500 }],
       redrawCredits: 5,
     },
@@ -406,6 +440,18 @@ export function guardianProductPrice(
     throw new Error(`Guardian product ${sku} has no price for market ${market}`)
   }
   return price
+}
+
+export function guardianProductOrderName(
+  sku: string,
+  locale: Locale,
+  manifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST,
+): string {
+  const orderName = guardianProduct(sku, manifest).orderNames[locale]
+  if (!orderName) {
+    throw new Error(`Guardian product ${sku} has no order name for locale ${locale}`)
+  }
+  return orderName
 }
 
 function validateGuardianManifest(manifest: GuardianProductManifest): void {
@@ -544,6 +590,10 @@ function validateGuardianManifest(manifest: GuardianProductManifest): void {
   }
 
   for (const product of manifest.products) {
+    const orderNames = Object.values(product.orderNames)
+    if (orderNames.length === 0 || orderNames.some((orderName) => !orderName || orderName.length > 128)) {
+      throw new Error(`Guardian product ${product.sku} has an invalid order name`)
+    }
     if (product.prices.length === 0) {
       throw new Error(`Guardian product ${product.sku} has no price`)
     }

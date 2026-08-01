@@ -17,9 +17,10 @@
 - 첫 실결제수단: 토스페이 직접 연동 `tosspay_v2`
 - 후속 결제수단: 토스페이먼츠는 실결제 승인 뒤 활성화
 - 현재 구현: 상품 매니페스트, 추첨, 게스트 컬렉션·리포트·구매·획득·보장 도메인,
-  실제 한국어 선택형 질문 44개와 선택 메모 1개, 불변 콘텐츠 계약·DB·게시 CLI·답변별 저장과 현재 문항 계산
-- 아직 미연결: 공개 mutation API, PortOne, 결제 웹훅·재조정, 실제 DB push·문항 게시,
-  화면의 서버 상태
+  실제 한국어 선택형 질문 44개와 선택 메모 1개, 불변 콘텐츠 계약·DB·게시 CLI·답변별 저장과 현재 문항 계산,
+  Turnstile·rate limit을 거치는 guest checkout과 capability 기반 질문 GET/PUT API
+- 아직 미연결: PortOne 원격 confirm·웹훅·재조정, fulfilled report 조회, 실제 DB push·문항 게시,
+  무료 결과와 결제·질문·카드 공개 화면의 서버 상태
 - 이 문서의 범위: 무료 질문 2개 → 분량 안내·복구 이메일 → 결제 → 서버 검증 → 유료 질문 → 카드 공개
 
 ## 1. 왜 이 흐름이 다음 작업인가
@@ -161,6 +162,8 @@ sequenceDiagram
 - 생년월일·시간·장소를 다시 묻거나 purchase context에 원본 출생 프로필로 저장하지 않는다. 계정 보관을
   선택하는 후속 단계에서만 원본 프로필을 별도로 저장한다.
 - 출생 시간을 모르는 결과에는 하우스와 각도 값을 보내지 않는다. 서버는 없는 값을 추정하지 않는다.
+- 출생 시간을 모르면 `moonLongitudeRange`를 함께 보내고, 시간을 아는 결과에서는 이 값을 `null`로
+  보낸다. 이후 scorer가 정오 달 위치를 확정값으로 오인하지 않게 `timeKnown`도 snapshot에 고정한다.
 - 미결제 purchase context는 짧은 보존 기간 뒤 pending 구매와 함께 삭제한다.
 
 ### Checkout
@@ -181,6 +184,30 @@ sequenceDiagram
 - 브라우저는 결제창을 열기 전에 `paymentId`, collection capability를 `sessionStorage`에
   저장해 모바일 리디렉션 뒤 복구한다.
 
+신규 `POST /api/guardian-checkouts` 요청은 다음 필드만 받는다.
+
+| 필드             | 계약                                                                    |
+| ---------------- | ----------------------------------------------------------------------- |
+| `locale`         | 현재는 `ko`만 허용                                                      |
+| `chart`          | `timeKnown`, 정규화된 행성 경도, 각도·하우스, 시간 미상 시 달 경도 범위 |
+| `previewAnswers` | `tone`, `movement`의 공개 선택지 ID                                     |
+| `email`          | trim·형식·254자 제한을 통과한 복구 이메일                               |
+| `turnstileToken` | action이 `guardian-checkout`인 solve                                    |
+
+`chart.planets`는 태양~명왕성, 남·북노드, 릴리트, 키론을 모두 포함하고 출생 시간을 아는
+경우에만 포르투나를 추가한다. 모든 경도는 `[0, 360)`이며 행성 ID는 중복될 수 없다.
+
+기존 checkout 재개 요청은 같은 endpoint에 `reportPublicId`, 새 `email`, `turnstileToken`만 보내고
+collection capability를 `Authorization: Bearer`로 전달한다. active `pending`이면 같은 `paymentId`를
+반환하며 이메일만 갱신하고, `paid`이면 이메일을 바꾸지 않는다. 이전 구매가 `failed` 또는
+`cancelled`이고 report가 아직 draft면 같은 report에 새 pending 구매를 만든다.
+
+신규 응답은 `guest.{collectionPublicId,reportPublicId,accessToken}`과
+`payment.{paymentId,status,sku,storeId,channelKey,payMethod,orderName,amount,market,currency}`로 나눈다.
+재개 응답은 이미 Authorization으로 보낸 capability를 다시 싣지 않는다. 신규는 `201`, 재개는
+`200`이며 `payment.status`가 `pending`일 때만 브라우저가 결제창을 연다.
+가격과 PortOne 채널은 요청에서 받지 않고 매니페스트와 배포별 channel map에서만 정한다.
+
 ### Confirm과 리포트 조회
 
 - confirm은 브라우저가 보낸 금액·통화·성공 여부를 사용하지 않는다.
@@ -192,6 +219,20 @@ sequenceDiagram
 - draft 응답에는 질문 진행률만 포함하고 전체 질문 은행, `familySnapshot`, `cardSnapshot`,
   선택된 희귀도를 포함하지 않는다.
 - fulfilled 응답만 네 `cardEditionId`, 카드 표시 메타데이터, 리포트 문구 버전을 제공한다.
+
+### 유료 질문 HTTP 계약
+
+- 두 API 모두 `Authorization: Bearer <collection capability>`를 요구하며 URL의 `reportPublicId`가
+  같은 collection 소유인지 한 DB 조인으로 확인한다.
+- `GET .../question`은 `{ "step": ... }`만 반환한다. step은 현재 한 문항, 선택 메모, 완료 중
+  하나이며 전체 문항 은행·선택 점수·누적 signal은 내려보내지 않는다.
+- `PUT .../answers/:id`는 선택형에 `{ "answer": { "type": "option", "optionId": "..." } }`,
+  선택 메모에 `{ "answer": { "type": "text", "text": "..." } }`를 받는다. 메모 건너뛰기는
+  `text: null`이다.
+- 성공 응답은 `{ "saved": "saved|already-saved", "step": ... }`다. 같은 답변 재전송은 멱등이고,
+  이미 지난 문항을 다른 값으로 바꾸면 `409`, entitlement 전에는 `402`를 반환한다.
+- 마지막 step 저장은 별도 공개 endpoint를 거치지 않고 답변 snapshot·signal snapshot·네 카드 선택·
+  acquisition 기록·report fulfillment를 기존 한 트랜잭션에서 끝낸다.
 
 ### 출시 선택 규칙 권장안
 
@@ -461,15 +502,14 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 
 ## 11. 권장 구현 순서
 
-1. 구매 상태에 `cancelled`, `review_required`를 반영하고 복구 이메일·웹훅 이벤트 데이터를 확정한다.
-2. Stella 전용 PortOne 어댑터, 환경 binding, 공통 구매 확정 함수를 만든다.
-3. guest checkout, confirm, webhook, paid questionnaire, report read API를 연결한다.
-4. 무료 결과의 두 질문·provisional 미리보기와 결제 뒤 질문·fulfillment 화면을 연결한다.
-5. pending 재조정과 미결제 checkout context 정리 cron을 연결한다.
-6. `/ko/cards`의 클라이언트 난수·로컬 소유권을 서버 상태로 교체한다.
-7. `sobok-ops`에 PortOne Store ID, channel map, API/Webhook Secret binding을 반영한다.
-8. 두 schema에 Drizzle 선언과 같은 questionnaire version을 게시한다.
-9. staging Worker와 PortOne 테스트 채널에서 결제·모바일 리디렉션·질문 재개·카드 공개를 확인한
+1. Stella 전용 PortOne 어댑터, API·webhook 비밀 binding, 웹훅 이벤트 데이터를 만든다.
+2. confirm·webhook·report read API를 현재 guest checkout·paid questionnaire API에 연결한다.
+3. 무료 결과의 두 질문·provisional 미리보기와 결제 뒤 질문·fulfillment 화면을 연결한다.
+4. pending 재조정과 미결제 checkout context 정리 cron을 연결한다.
+5. `/ko/cards`의 클라이언트 난수·로컬 소유권을 서버 상태로 교체한다.
+6. `sobok-ops`에 PortOne Store ID, channel map, API/Webhook Secret binding을 반영한다.
+7. 두 schema에 Drizzle 선언과 같은 questionnaire version을 게시한다.
+8. staging Worker와 PortOne 테스트 채널에서 결제·모바일 리디렉션·질문 재개·카드 공개를 확인한
    뒤 production을 배포한다.
 
 ### 완료 기준
