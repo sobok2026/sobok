@@ -42,6 +42,43 @@ families a locale needs. Bundling them would fold ~49 KB (brotli) of `@font-face
 that is otherwise 5.5 KB and changes on every design tweak, and would hand every locale all three
 families.
 
+## The fallback faces
+
+The vendored sheets ship `font-display: swap`, and their `woff2` files cannot be fetched until the
+sheet has been parsed and a first layout has run — so the first paint is _always_ drawn in a device
+font, and the web font replaces it a moment later. If the device font sets type at a different width
+or line height, that replacement reflows the page. That is the layout shift.
+
+So `styles.css` does not name device fonts in the stacks. It declares `local()`-only `@font-face`
+faces that pin a device font to the metrics of the web family it stands in for, and puts _those_ in
+the stacks. They cost nothing — no request, and a face whose `local()` finds nothing is skipped.
+
+Four rules keep them honest:
+
+- **A fallback face mirrors exactly one web family's coverage.** Pretendard carries no unified Han,
+  so Han on a Korean page is drawn by Pretendard JP — and therefore belongs to the JP fallback, not
+  the Korean one. Giving it to the wrong face reintroduces the shift it was meant to remove.
+- **`local()` matches full name and PostScript name, never the family name.** `local('PingFang SC')`
+  silently finds nothing; `local('PingFang SC Regular')` works. A missed name is invisible: the face
+  just reports `error` and the whole correction quietly stops applying.
+- **`size-adjust` multiplies the `*-override` values**, so each override is the target percentage
+  divided by that face's `size-adjust`.
+- **Every constant is measured, and the comment says how.** Vertical metrics are read from the
+  fonts' own `head`/`hhea`; widths come from rendering the apps' message catalogs and summing the
+  results, because summing per-character advances misses kerning and drifts by over a percentage
+  point on Latin.
+
+Latin needs finer splitting than CJK. CJK advances do not move with weight, but Arial Bold sets
+about 4% wider than Pretendard SemiBold, so the Latin faces are banded by weight — which also stops
+the browser synthesising bold. Latin is split again by `unicode-range`, because Pretendard's space is
+9% narrower than Arial's while its letters are 2% wider: English prose cancels the two errors out, a
+Korean sentence (whose Latin range is nearly all spaces) does not, and one coefficient cannot serve
+both. Split, the coefficients stop depending on the locale.
+
+Re-measure after any font upgrade. `size-adjust` values were measured on macOS device fonts; the
+Windows and Android candidates carry the vertical overrides — exact, and platform-independent — but
+no width correction, since a wrong `size-adjust` is worse than none.
+
 ## Upgrading a family
 
 The three font packages are dev dependencies of this package for exactly this — they are never
@@ -53,6 +90,7 @@ lockfile.
    Pretendard JP that is `dist/web/variable/` plus `dist/LICENSE.txt`; for Noto Sans SC it is
    `wght.css`, `files/`, and `LICENSE`.
 3. Delete the old version directories.
+4. Re-measure the fallback constants in `styles.css` against the new files.
 
 Nothing enforces step 2, which is the price of having no build step: a half-finished upgrade leaves
 the apps disagreeing, and it will not fail a build — the served URL still resolves in the apps that
