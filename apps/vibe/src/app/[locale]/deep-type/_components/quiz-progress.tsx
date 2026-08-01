@@ -24,8 +24,8 @@ export function QuizProgress({ answered, segments }: QuizProgressProps) {
   return (
     <div>
       <div className="flex items-baseline justify-between gap-3">
-        <p className="font-bold text-page-ink-muted text-xs">{currentLabel(answered, segments)}</p>
-        <p className="text-page-ink-muted text-xs tabular-nums">
+        <p className="font-bold text-foreground-muted text-xs">{currentLabel(answered, segments)}</p>
+        <p className="text-foreground-muted text-xs tabular-nums">
           {Math.min(answered + 1, total)} / {total}
         </p>
       </div>
@@ -44,12 +44,12 @@ export function QuizProgress({ answered, segments }: QuizProgressProps) {
 
           return (
             <div
-              className={cn('h-2 overflow-hidden rounded-full bg-page-soft')}
+              className={cn('h-2 overflow-hidden rounded-full bg-surface-2')}
               key={segment.label}
               style={{ flexGrow: segment.count }}
             >
               <div
-                className="h-full rounded-full bg-page-accent transition-[width] duration-300 motion-reduce:transition-none"
+                className="h-full rounded-full bg-brand transition-[width] duration-300 motion-reduce:transition-none"
                 style={{ width: `${(filled / segment.count) * 100}%` }}
               />
             </div>

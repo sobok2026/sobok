@@ -90,7 +90,7 @@ export function AbilityArtwork({ slug }: { slug: AbilitySlug }) {
   return (
     <Image
       alt=""
-      className="aspect-3/2 h-auto w-full shrink-0 bg-page-soft object-cover sm:aspect-auto sm:w-28 sm:self-stretch"
+      className="aspect-3/2 h-auto w-full shrink-0 bg-surface-2 object-cover sm:aspect-auto sm:w-28 sm:self-stretch"
       draggable={false}
       loading="lazy"
       placeholder="blur"

@@ -33,7 +33,7 @@ export default function BottomNav({ locale, navLabel }: { locale: Locale; navLab
       aria-label={navLabel}
       className="fixed inset-x-0 bottom-[max(0.5rem,var(--safe-area-bottom))] z-40 px-3 sm:hidden print:hidden"
     >
-      <div className="mx-auto flex max-w-xs items-center justify-around gap-1 rounded-full border border-page-border bg-page-bg/92 p-2 backdrop-blur-md">
+      <div className="mx-auto flex max-w-xs items-center justify-around gap-1 rounded-full border border-border bg-background/92 p-2 backdrop-blur-md">
         {items.map((item) => {
           const active = pathname === item.href
 
@@ -42,7 +42,7 @@ export default function BottomNav({ locale, navLabel }: { locale: Locale; navLab
               key={item.href}
               aria-current={active ? 'page' : undefined}
               className={`relative rounded-full py-2 text-xs transition-colors before:absolute before:-inset-x-5 before:-inset-y-2 before:content-[''] ${FOCUS_CLASS_NAME} ${
-                active ? 'font-semibold text-page-ink' : 'text-page-ink-soft hover:text-page-ink'
+                active ? 'font-semibold text-foreground' : 'text-foreground-secondary hover:text-foreground'
               }`}
               href={item.href}
             >

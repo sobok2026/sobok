@@ -24,21 +24,21 @@ export default async function BusinessPage({ params }: PageProps<'/[locale]/busi
   const nav = LEGAL[locale].nav
 
   return (
-    <main className="min-h-dvh bg-page-bg px-4 pt-[calc(4.5rem+var(--safe-area-top))] pb-24 text-page-ink sm:px-6 sm:pt-[calc(5rem+var(--safe-area-top))]">
+    <main className="min-h-dvh bg-background px-4 pt-[calc(4.5rem+var(--safe-area-top))] pb-24 text-foreground sm:px-6 sm:pt-[calc(5rem+var(--safe-area-top))]">
       <article className="mx-auto max-w-2xl">
         <h1 className="font-bold text-3xl tracking-tight">{labels.heading}</h1>
-        <p className="mt-3 text-page-ink-soft">{labels.description}</p>
+        <p className="mt-3 text-foreground-secondary">{labels.description}</p>
 
         <BusinessInfo className="mt-8 text-sm leading-6" locale={locale} showHeading={false} />
 
-        <nav className="mt-10 flex flex-wrap gap-x-5 gap-y-2 text-page-accent-strong text-sm">
-          <Link className="underline underline-offset-2 hover:text-page-ink" href={`/${locale}/terms`}>
+        <nav className="mt-10 flex flex-wrap gap-x-5 gap-y-2 text-accent text-sm">
+          <Link className="underline underline-offset-2 hover:text-foreground" href={`/${locale}/terms`}>
             {nav.terms}
           </Link>
-          <Link className="underline underline-offset-2 hover:text-page-ink" href={`/${locale}/privacy`}>
+          <Link className="underline underline-offset-2 hover:text-foreground" href={`/${locale}/privacy`}>
             {nav.privacy}
           </Link>
-          <Link className="underline underline-offset-2 hover:text-page-ink" href={`/${locale}/refund`}>
+          <Link className="underline underline-offset-2 hover:text-foreground" href={`/${locale}/refund`}>
             {nav.refund}
           </Link>
         </nav>

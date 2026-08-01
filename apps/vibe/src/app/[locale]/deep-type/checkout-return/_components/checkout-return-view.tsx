@@ -348,7 +348,7 @@ export function CheckoutReturnView({ content, copy, locale }: CheckoutReturnView
         tone={TONE_BY_FAILURE[phase.failure]}
       >
         {phase.pgMessage ? (
-          <p className="mt-4 break-prose rounded-2xl bg-page-soft px-4 py-3 text-page-ink-soft text-sm leading-6">
+          <p className="mt-4 break-prose rounded-2xl bg-surface-2 px-4 py-3 text-foreground-secondary text-sm leading-6">
             {copy.pgMessage.replace('{message}', phase.pgMessage)}
           </p>
         ) : null}
@@ -371,7 +371,7 @@ function Reference({ copy, paymentId }: { copy: DeepTypeCheckoutReturnContent; p
     return null
   }
   return (
-    <p className="mt-4 break-all text-page-ink-muted text-xs leading-5">
+    <p className="mt-4 break-all text-foreground-muted text-xs leading-5">
       {copy.orderReference.replace('{id}', paymentId)}
     </p>
   )

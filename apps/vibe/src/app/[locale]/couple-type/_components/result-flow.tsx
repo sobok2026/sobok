@@ -30,7 +30,7 @@ export function ResultFlow({ content, locale }: { content: CoupleTypeContent; lo
   if (!code) {
     return (
       <div className="flex flex-1 items-center justify-center px-safe py-16">
-        <div className="h-12 w-12 rounded-full border-4 border-page-accent/20 border-t-page-accent" />
+        <div className="h-12 w-12 rounded-full border-4 border-brand/20 border-t-brand" />
       </div>
     )
   }

@@ -28,13 +28,13 @@ export default function DeepTypeError({ error, reset }: Props) {
   }, [error])
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center bg-page-bg px-safe py-16 text-center text-page-ink">
+    <main className="flex flex-1 flex-col items-center justify-center bg-background px-safe py-16 text-center text-foreground">
       <h1 className="font-black text-2xl leading-tight">{copy.title}</h1>
-      {error.digest && <p className="mt-2 text-page-ink-muted text-xs">{error.digest}</p>}
+      {error.digest && <p className="mt-2 text-foreground-muted text-xs">{error.digest}</p>}
 
       <button
         className={cn(
-          'mt-9 inline-flex min-h-13 items-center justify-center rounded-full bg-page-ink px-6 font-black text-sm text-white transition-colors hover:bg-page-ink/92',
+          'mt-9 inline-flex min-h-13 items-center justify-center rounded-full bg-foreground px-6 font-black text-sm text-white transition-colors hover:bg-foreground/92',
           FOCUS_CLASS_NAME,
         )}
         onClick={reset}

@@ -38,7 +38,7 @@ export default async function CoupleGyeolQuizPage({ params }: PageProps<'/[local
   const content = await getGyeolContent(locale)
 
   return (
-    <main className="flex flex-1 flex-col bg-page-bg text-page-ink" id="main-content">
+    <main className="flex flex-1 flex-col bg-background text-foreground" id="main-content">
       <QuizFlow content={content} locale={locale} />
     </main>
   )

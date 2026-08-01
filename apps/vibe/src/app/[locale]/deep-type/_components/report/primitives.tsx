@@ -34,10 +34,10 @@ export function SectionShell({ art, children, id, intro, narrative, number, titl
       className={cn(CARD_CLASS_NAME, 'scroll-mt-[calc(var(--spacing-header)+var(--safe-area-top)+0.75rem)]')}
       id={id}
     >
-      <header className="border-page-border border-b pb-4">
+      <header className="border-border border-b pb-4">
         {/* The numeral is decorative: the contents list and the heading below already name the section, and a
             screen reader announcing '03' before every title would add twelve words that mean nothing. */}
-        <p aria-hidden="true" className="font-black text-page-accent-strong text-sm tabular-nums">
+        <p aria-hidden="true" className="font-black text-accent text-sm tabular-nums">
           {String(number).padStart(2, '0')}
         </p>
         <h3 className={cn('mt-1', REPORT_TYPE.title)} id={`${id}-title`}>
@@ -48,7 +48,7 @@ export function SectionShell({ art, children, id, intro, narrative, number, titl
       {art ? <div className="mt-5">{art}</div> : null}
       <div className="mt-6">{children}</div>
       {narrative ? (
-        <div className="mt-7 border-page-border border-t pt-5">
+        <div className="mt-7 border-border border-t pt-5">
           <p className={cn('whitespace-pre-line', REPORT_TYPE.body)}>{narrative}</p>
         </div>
       ) : null}
@@ -79,7 +79,7 @@ export function FieldList({ children }: { children: ReactNode }) {
 export function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-page-ink-muted text-sm leading-6">{label}</dt>
+      <dt className="text-foreground-muted text-sm leading-6">{label}</dt>
       <dd className={cn('mt-0.5', REPORT_TYPE.copy)}>{value}</dd>
     </div>
   )
@@ -87,13 +87,13 @@ export function Field({ label, value }: { label: string; value: string }) {
 
 /** A short label above a paragraph. The composed reading's kicker, and the strength groups' heading. */
 export function Kicker({ children }: { children: ReactNode }) {
-  return <p className="font-black text-page-accent-strong text-sm tracking-wide">{children}</p>
+  return <p className="font-black text-accent text-sm tracking-wide">{children}</p>
 }
 
 const CONFIDENCE_TONE = {
-  sufficient: 'bg-page-success/10 text-page-success',
-  needsCheck: 'bg-page-accent/12 text-page-accent-strong',
-  needsMoreInput: 'bg-page-soft text-page-ink-muted',
+  sufficient: 'bg-positive/10 text-positive',
+  needsCheck: 'bg-brand/12 text-accent',
+  needsMoreInput: 'bg-surface-2 text-foreground-muted',
 } as const
 
 /**
@@ -125,11 +125,11 @@ export function ConfidenceBadge({ label, level }: { label: string; level: keyof 
 export function FacetCard({ actionLabel, facet }: { actionLabel: string; facet: DetailedFacet }) {
   return (
     <li className={GROUPED_ROW_CLASS_NAME}>
-      <p className="font-black text-base text-page-ink leading-6">{facet.label}</p>
+      <p className="font-black text-base text-foreground leading-6">{facet.label}</p>
       <p className={cn('mt-2', REPORT_TYPE.copy)}>{facet.detail}</p>
-      <p className={cn('mt-3 border-page-border border-l-2 pl-3', REPORT_TYPE.meta)}>{facet.contrast}</p>
-      <div className="mt-3 rounded-2xl bg-page-soft/70 px-3 py-2">
-        <p className="font-black text-page-accent-strong text-xs tracking-wide">{actionLabel}</p>
+      <p className={cn('mt-3 border-border border-l-2 pl-3', REPORT_TYPE.meta)}>{facet.contrast}</p>
+      <div className="mt-3 rounded-2xl bg-surface-2/70 px-3 py-2">
+        <p className="font-black text-accent text-xs tracking-wide">{actionLabel}</p>
         <p className={cn('mt-1', REPORT_TYPE.meta)}>{facet.action}</p>
       </div>
     </li>
@@ -158,7 +158,7 @@ export function FacetChips({ facets }: { facets: readonly DetailedFacet[] }) {
     <ul className="flex flex-wrap gap-1.5">
       {facets.map((facet) => (
         <li
-          className="rounded-full border border-page-border bg-white px-3 py-1 font-bold text-page-ink-soft text-sm"
+          className="rounded-full border border-border bg-white px-3 py-1 font-bold text-foreground-secondary text-sm"
           key={facet.id}
         >
           {facet.label}
@@ -170,12 +170,12 @@ export function FacetChips({ facets }: { facets: readonly DetailedFacet[] }) {
 
 /** A heading for a block inside a section — one step below the section title, one above a row. */
 export function BlockHeading({ children }: { children: ReactNode }) {
-  return <h4 className="font-black text-base text-page-ink">{children}</h4>
+  return <h4 className="font-black text-base text-foreground">{children}</h4>
 }
 
 /** The quiet closing line several sections end on, set off by a rule so it reads as the end of the section. */
 export function ClosingNote({ children }: { children: ReactNode }) {
-  return <p className={cn('mt-6 border-page-border border-t pt-4', REPORT_TYPE.meta)}>{children}</p>
+  return <p className={cn('mt-6 border-border border-t pt-4', REPORT_TYPE.meta)}>{children}</p>
 }
 
 /**
@@ -191,8 +191,8 @@ export function ClosingNote({ children }: { children: ReactNode }) {
  */
 export function LabeledNote({ children, label }: { children: ReactNode; label: string }) {
   return (
-    <div className="border-page-border border-l-2 pl-3">
-      <p className="font-black text-page-ink-muted text-xs tracking-wide">{label}</p>
+    <div className="border-border border-l-2 pl-3">
+      <p className="font-black text-foreground-muted text-xs tracking-wide">{label}</p>
       <p className={cn('mt-0.5', REPORT_TYPE.meta)}>{children}</p>
     </div>
   )

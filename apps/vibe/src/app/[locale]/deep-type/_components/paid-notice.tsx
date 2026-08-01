@@ -31,14 +31,14 @@ export function PaidNotice({
   const { ui } = content
 
   return (
-    <div className="mx-auto mb-9 flex max-w-md items-start gap-3 rounded-3xl border border-page-success/24 bg-page-success/8 p-4 text-left">
-      <CheckCircle aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-page-success" stroke={1.8} />
+    <div className="mx-auto mb-9 flex max-w-md items-start gap-3 rounded-3xl border border-positive/24 bg-positive/8 p-4 text-left">
+      <CheckCircle aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-positive" stroke={1.8} />
       <div className="min-w-0">
         <p className="font-black text-sm">{ui.reportPaidTitle}</p>
-        <p className="mt-1 break-prose text-page-ink-soft text-sm leading-6">
+        <p className="mt-1 break-prose text-foreground-secondary text-sm leading-6">
           {ui.reportPaidBody.replace('{price}', formatPrice(locale, payment.currency, payment.amount))}
         </p>
-        <p className="mt-1 break-prose text-page-ink-soft text-sm leading-6">
+        <p className="mt-1 break-prose text-foreground-secondary text-sm leading-6">
           {ui.reportPaidEmailNote.replace('{email}', payment.email)}
         </p>
       </div>

@@ -34,7 +34,7 @@ export function OpeningReadSection({ data }: { data: OpeningReadData }) {
   return (
     <>
       {/* The reader's whole result in one sentence, so it is set one step above the body rather than at it. */}
-      <p className="break-prose font-medium text-[1.0625rem] text-page-ink leading-8">{data.lead}</p>
+      <p className="break-prose font-medium text-[1.0625rem] text-foreground leading-8">{data.lead}</p>
 
       <div className="mt-8 grid gap-8">
         {data.blocks.map((block) => (
@@ -46,9 +46,7 @@ export function OpeningReadSection({ data }: { data: OpeningReadData }) {
                   <Kicker>{paragraph.kicker}</Kicker>
                   <p className={cn('mt-2', REPORT_TYPE.body)}>{paragraph.text}</p>
                   {paragraph.note ? (
-                    <p className={cn('mt-2.5 border-page-border border-l-2 pl-3', REPORT_TYPE.meta)}>
-                      {paragraph.note}
-                    </p>
+                    <p className={cn('mt-2.5 border-border border-l-2 pl-3', REPORT_TYPE.meta)}>{paragraph.note}</p>
                   ) : null}
                 </div>
               ))}
@@ -99,15 +97,15 @@ function WorldJobHalf({
 }) {
   return (
     <div className={GROUPED_ROW_CLASS_NAME}>
-      <dt className="font-black text-page-accent-strong text-sm tracking-wide">{label}</dt>
+      <dt className="font-black text-accent text-sm tracking-wide">{label}</dt>
       <dd>
-        <p className="mt-1.5 font-black text-lg text-page-ink leading-snug">{heading}</p>
+        <p className="mt-1.5 font-black text-lg text-foreground leading-snug">{heading}</p>
         {lines.map((line) => (
           <p className={cn('mt-1.5', REPORT_TYPE.meta)} key={line}>
             {line}
           </p>
         ))}
-        <p className={cn('mt-3 border-page-border border-t pt-3', REPORT_TYPE.copy)}>{reading}</p>
+        <p className={cn('mt-3 border-border border-t pt-3', REPORT_TYPE.copy)}>{reading}</p>
       </dd>
     </div>
   )
@@ -135,12 +133,12 @@ export function StrengthCardsSection({ content, data }: { content: DeepTypeConte
             <ul className="mt-3 grid gap-4">
               {group.cards.map((card) => (
                 <li
-                  className="flex flex-col overflow-hidden rounded-3xl border border-page-border bg-white sm:flex-row sm:gap-4"
+                  className="flex flex-col overflow-hidden rounded-3xl border border-border bg-white sm:flex-row sm:gap-4"
                   key={card.slug}
                 >
                   <AbilityArtwork slug={card.slug} />
                   <div className="min-w-0 flex-1 p-4 sm:py-4 sm:pr-4 sm:pl-0">
-                    <p className="font-black text-base text-page-ink leading-6">{card.copy.name}</p>
+                    <p className="font-black text-base text-foreground leading-6">{card.copy.name}</p>
                     <p className={cn('mt-2', REPORT_TYPE.copy)}>{card.copy.core}</p>
                     <div className="mt-3 grid gap-2">
                       <LabeledNote label={content.ui.reportCardShineLabel}>{card.copy.shine}</LabeledNote>
@@ -166,13 +164,13 @@ export function StrengthCardsSection({ content, data }: { content: DeepTypeConte
  */
 function BandMovementBlock({ data }: { data: StrengthCardsData }) {
   return (
-    <div className={cn(data.groups.length > 0 && 'mt-8 border-page-border border-t pt-6')}>
+    <div className={cn(data.groups.length > 0 && 'mt-8 border-border border-t pt-6')}>
       <BlockHeading>{data.movementHeading}</BlockHeading>
       <ul className="mt-3 grid gap-3">
         {data.bandMovement.map((axis) => (
           <li className="flex items-center justify-between gap-3" key={axis.id}>
             <div className="min-w-0">
-              <p className="font-bold text-[0.9375rem] text-page-ink">{axis.name}</p>
+              <p className="font-bold text-[0.9375rem] text-foreground">{axis.name}</p>
               <p className={cn('mt-0.5', REPORT_TYPE.meta)}>
                 {axis.leading} · {axis.band.label} · {axis.shift.label}
               </p>
@@ -182,7 +180,7 @@ function BandMovementBlock({ data }: { data: StrengthCardsData }) {
         ))}
       </ul>
       {data.splitAxisNames.length > 0 ? (
-        <div className="mt-5 rounded-2xl bg-page-soft/70 p-3">
+        <div className="mt-5 rounded-2xl bg-surface-2/70 p-3">
           <FieldList>
             <Field label={data.splitLabel} value={data.splitAxisNames.join(' · ')} />
           </FieldList>
@@ -199,10 +197,10 @@ function BandMovementBlock({ data }: { data: StrengthCardsData }) {
 export function DrainSignatureSection({ content, data }: { content: DeepTypeContent; data: DrainSignatureData }) {
   return (
     <>
-      <div className="flex items-center gap-4 rounded-3xl bg-page-soft/70 p-4">
+      <div className="flex items-center gap-4 rounded-3xl bg-surface-2/70 p-4">
         <DrainStrands strands={data.strands} />
         <div className="min-w-0">
-          <p className="font-black text-base text-page-accent-strong">{data.spread.label}</p>
+          <p className="font-black text-base text-accent">{data.spread.label}</p>
           <p className={cn('mt-1', REPORT_TYPE.copy)}>{data.spread.detail}</p>
         </div>
       </div>
@@ -213,7 +211,7 @@ export function DrainSignatureSection({ content, data }: { content: DeepTypeCont
 
       {/* The grouped list already draws a rule under itself at compact width, so a second divider here would
           put two lines a margin apart. From `sm` up the list loses its borders and this one has to appear. */}
-      <div className="mt-6 sm:border-page-border sm:border-t sm:pt-5">
+      <div className="mt-6 sm:border-border sm:border-t sm:pt-5">
         <BlockHeading>{data.contrast.sentence}</BlockHeading>
         <div className="mt-3">
           <FieldList>

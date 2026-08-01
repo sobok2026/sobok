@@ -18,7 +18,7 @@ export default function Paragraph({ text }: { text: string }) {
 
     nodes.push(
       <a
-        className="text-page-accent-strong underline underline-offset-2 hover:text-page-ink"
+        className="text-accent underline underline-offset-2 hover:text-foreground"
         href={url}
         key={start}
         rel="noopener noreferrer"
@@ -35,7 +35,7 @@ export default function Paragraph({ text }: { text: string }) {
   }
 
   return (
-    <p className="mb-4 text-page-ink-soft leading-relaxed">
+    <p className="mb-4 text-foreground-secondary leading-relaxed">
       {nodes.map((node, i) => (
         <Fragment key={i}>{node}</Fragment>
       ))}

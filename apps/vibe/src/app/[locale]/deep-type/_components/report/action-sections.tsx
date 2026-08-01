@@ -21,9 +21,9 @@ export function RoleFamiliesSection({ data }: { data: RoleFamiliesData }) {
     <>
       <ul className="grid gap-4">
         {data.cards.map((card) => (
-          <li className="rounded-3xl border border-page-border bg-white p-4 sm:p-5" key={card.family.name}>
+          <li className="rounded-3xl border border-border bg-white p-4 sm:p-5" key={card.family.name}>
             <div className="flex items-start justify-between gap-3">
-              <p className="font-black text-page-ink text-lg leading-snug">{card.family.name}</p>
+              <p className="font-black text-foreground text-lg leading-snug">{card.family.name}</p>
               <ConfidenceBadge label={card.confidenceLabel} level={card.confidence} />
             </div>
             <p className={cn('mt-2', REPORT_TYPE.copy)}>{card.family.summary}</p>
@@ -49,21 +49,21 @@ export function RoleFamiliesSection({ data }: { data: RoleFamiliesData }) {
               </div>
             </div>
 
-            <div className="mt-5 rounded-2xl bg-page-soft/70 p-3">
+            <div className="mt-5 rounded-2xl bg-surface-2/70 p-3">
               <Kicker>{data.labels.experiment}</Kicker>
               <p className={cn('mt-1.5', REPORT_TYPE.copy)}>{card.family.experiment}</p>
             </div>
 
-            <div className="mt-4 border-page-border border-t pt-3">
+            <div className="mt-4 border-border border-t pt-3">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="font-black text-page-ink-soft text-sm">{data.labels.carryOver}</p>
+                <p className="font-black text-foreground-secondary text-sm">{data.labels.carryOver}</p>
                 <ConfidenceBadge label={card.carryOverLabel} level={card.carryOver.confidence} />
               </div>
               <p className={cn('mt-1.5', REPORT_TYPE.meta)}>{card.carryOver.text}</p>
             </div>
 
             <p className={cn('mt-3', REPORT_TYPE.meta)}>
-              <span className="text-page-ink-muted">{data.labels.examples}</span>
+              <span className="text-foreground-muted">{data.labels.examples}</span>
               <span aria-hidden="true"> · </span>
               {card.family.exampleRoles.join(' · ')}
             </p>
@@ -81,7 +81,7 @@ function BulletList({ items }: { items: readonly string[] }) {
     <ul className="mt-2 grid gap-2">
       {items.map((item) => (
         <li className={cn('flex gap-2', REPORT_TYPE.copy)} key={item}>
-          <span aria-hidden="true" className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-page-accent" />
+          <span aria-hidden="true" className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-brand" />
           <span className="min-w-0">{item}</span>
         </li>
       ))}
@@ -107,8 +107,8 @@ export function WeekQuestSection({ data }: { data: WeekQuestData }) {
             <QuestSpine day={day.day} last={index === data.days.length - 1} />
             <div className="min-w-0 flex-1 pb-1">
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                <p className="font-black text-base text-page-ink">{day.title}</p>
-                <span className="rounded-full bg-page-soft px-2 py-0.5 font-bold text-page-ink-muted text-xs tabular-nums">
+                <p className="font-black text-base text-foreground">{day.title}</p>
+                <span className="rounded-full bg-surface-2 px-2 py-0.5 font-bold text-foreground-muted text-xs tabular-nums">
                   {data.labels.minutes} {day.estimatedMinutes}
                   {data.labels.minutesUnit}
                 </span>
@@ -116,7 +116,7 @@ export function WeekQuestSection({ data }: { data: WeekQuestData }) {
               <p className={cn('mt-1', REPORT_TYPE.meta)}>{day.purpose}</p>
 
               {day.taskAnchor ? (
-                <div className="mt-3 rounded-2xl bg-page-accent/8 px-3 py-2">
+                <div className="mt-3 rounded-2xl bg-brand/8 px-3 py-2">
                   <FieldList>
                     <Field label={day.taskAnchor.label} value={day.taskAnchor.value} />
                   </FieldList>
@@ -124,7 +124,7 @@ export function WeekQuestSection({ data }: { data: WeekQuestData }) {
               ) : null}
               <p className={cn('mt-3', REPORT_TYPE.body)}>{day.task}</p>
 
-              <div className="mt-3 border-page-border border-t pt-3">
+              <div className="mt-3 border-border border-t pt-3">
                 <FieldList>
                   <Field label={data.labels.question} value={day.reflectionQuestion} />
                   <Field label={data.labels.done} value={day.completionCheck} />
@@ -148,17 +148,17 @@ export function WeekQuestSection({ data }: { data: WeekQuestData }) {
 export function ContextShiftSection({ data }: { data: ContextShiftData }) {
   return (
     <>
-      <div className="rounded-3xl bg-page-soft/70 p-4">
+      <div className="rounded-3xl bg-surface-2/70 p-4">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-page-ink-muted text-sm">{data.labels.declared}</span>
-          <span className="font-black text-page-ink-soft tracking-widest">{data.declaredCode}</span>
+          <span className="text-foreground-muted text-sm">{data.labels.declared}</span>
+          <span className="font-black text-foreground-secondary tracking-widest">{data.declaredCode}</span>
         </div>
         <div className="mt-3">
           <CodeCompare axes={data.axes} />
         </div>
         <div className="mt-3 flex items-center justify-between gap-3">
-          <span className="text-page-ink-muted text-sm">{data.labels.measured}</span>
-          <span className="font-black text-page-accent-strong tracking-widest">{data.measuredCode}</span>
+          <span className="text-foreground-muted text-sm">{data.labels.measured}</span>
+          <span className="font-black text-accent tracking-widest">{data.measuredCode}</span>
         </div>
       </div>
 
@@ -170,11 +170,11 @@ export function ContextShiftSection({ data }: { data: ContextShiftData }) {
                 aria-hidden="true"
                 className={cn(
                   'mt-2 h-1.5 w-1.5 shrink-0 self-start rounded-full',
-                  axis.matched ? 'bg-page-ink-muted' : 'bg-page-accent',
+                  axis.matched ? 'bg-foreground-muted' : 'bg-brand',
                 )}
               />
-              <p className="font-black text-base text-page-ink">{axis.axisName}</p>
-              <p className="ml-auto shrink-0 text-page-ink-muted text-sm">
+              <p className="font-black text-base text-foreground">{axis.axisName}</p>
+              <p className="ml-auto shrink-0 text-foreground-muted text-sm">
                 {axis.declared.label}
                 <span aria-hidden="true"> / </span>
                 {axis.measured.label}
@@ -193,7 +193,7 @@ export function ContextShiftSection({ data }: { data: ContextShiftData }) {
 export function FitAndFrictionSection({ data }: { data: FitAndFrictionData }) {
   return (
     <>
-      <div className="rounded-3xl bg-page-soft/70 p-4">
+      <div className="rounded-3xl bg-surface-2/70 p-4">
         <p className={REPORT_TYPE.copy}>{data.contextNote}</p>
         <div className="mt-3">
           <ConfidenceBadge label={`${data.labels.confidence} · ${data.confidenceLabel}`} level={data.confidence} />
@@ -205,7 +205,7 @@ export function FitAndFrictionSection({ data }: { data: FitAndFrictionData }) {
         <ul className="mt-3 flex flex-wrap gap-1.5">
           {data.conditions.map((facet) => (
             <li
-              className="rounded-full border border-page-border bg-white px-3 py-1 font-bold text-page-ink-soft text-sm"
+              className="rounded-full border border-border bg-white px-3 py-1 font-bold text-foreground-secondary text-sm"
               key={facet.id}
             >
               {facet.label}
@@ -219,15 +219,15 @@ export function FitAndFrictionSection({ data }: { data: FitAndFrictionData }) {
           <BlockHeading>{data.labels.fit}</BlockHeading>
           <ul className="mt-3 grid gap-3">
             {data.fits.map((fit) => (
-              <li className="rounded-2xl border border-page-border bg-white p-4" key={fit.title}>
-                <p className="font-black text-base text-page-ink">{fit.title}</p>
+              <li className="rounded-2xl border border-border bg-white p-4" key={fit.title}>
+                <p className="font-black text-base text-foreground">{fit.title}</p>
                 <div className="mt-2.5">
                   <FieldList>
                     <Field label={data.labels.evidence} value={fit.evidence} />
                     <Field label={data.labels.betterUse} value={fit.betterUse} />
                   </FieldList>
                 </div>
-                <p className={cn('mt-3 border-page-border border-l-2 pl-3', REPORT_TYPE.meta)}>{fit.possibility}</p>
+                <p className={cn('mt-3 border-border border-l-2 pl-3', REPORT_TYPE.meta)}>{fit.possibility}</p>
               </li>
             ))}
           </ul>
@@ -237,8 +237,8 @@ export function FitAndFrictionSection({ data }: { data: FitAndFrictionData }) {
           <BlockHeading>{data.labels.friction}</BlockHeading>
           <ul className="mt-3 grid gap-3">
             {data.frictions.map((friction) => (
-              <li className="rounded-2xl border border-page-border bg-white p-4" key={friction.title}>
-                <p className="font-black text-base text-page-ink">{friction.title}</p>
+              <li className="rounded-2xl border border-border bg-white p-4" key={friction.title}>
+                <p className="font-black text-base text-foreground">{friction.title}</p>
                 <p className={cn('mt-2', REPORT_TYPE.copy)}>{friction.condition}</p>
                 <div className="mt-2.5">
                   <FieldList>
@@ -264,21 +264,21 @@ export function ThreePathsSection({ data }: { data: ThreePathsData }) {
 
       <ul className="mt-2 grid gap-4">
         {data.paths.map((path) => (
-          <li className="rounded-3xl border border-page-border bg-white p-4 sm:p-5" key={path.id}>
+          <li className="rounded-3xl border border-border bg-white p-4 sm:p-5" key={path.id}>
             <div className="flex items-start justify-between gap-3">
-              <p className="font-black text-page-ink text-lg leading-snug">{path.title}</p>
+              <p className="font-black text-foreground text-lg leading-snug">{path.title}</p>
               <ConfidenceBadge label={path.confidenceLabel} level={path.confidence} />
             </div>
             <p className={cn('mt-2', REPORT_TYPE.copy)}>{path.purpose}</p>
             <BulletList items={path.actions} />
             {path.note ? (
-              <p className={cn('mt-3 border-page-border border-l-2 pl-3', REPORT_TYPE.meta)}>{path.note}</p>
+              <p className={cn('mt-3 border-border border-l-2 pl-3', REPORT_TYPE.meta)}>{path.note}</p>
             ) : null}
           </li>
         ))}
       </ul>
 
-      <div className="mt-6 rounded-2xl bg-page-soft/70 p-4">
+      <div className="mt-6 rounded-2xl bg-surface-2/70 p-4">
         <Kicker>{data.guardrailsHeading}</Kicker>
         <ul className="mt-2 grid gap-1.5">
           {data.guardrails.map((rail) => (
@@ -301,12 +301,12 @@ export function ReflectionQuestionsSection({ data }: { data: ReflectionQuestions
           <li className="flex gap-3" key={question.text}>
             <span
               aria-hidden="true"
-              className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-page-accent-strong/40 font-black text-page-accent-strong text-sm tabular-nums"
+              className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-accent/40 font-black text-accent text-sm tabular-nums"
             >
               {index + 1}
             </span>
             <div className="min-w-0">
-              <p className="break-prose font-bold text-[1.0625rem] text-page-ink leading-8">{question.text}</p>
+              <p className="break-prose font-bold text-[1.0625rem] text-foreground leading-8">{question.text}</p>
               <p className={cn('mt-2', REPORT_TYPE.copy)}>{question.why}</p>
               <p className={cn('mt-2', REPORT_TYPE.meta)}>{question.source}</p>
             </div>

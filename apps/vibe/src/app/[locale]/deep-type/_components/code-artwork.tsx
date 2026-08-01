@@ -83,7 +83,7 @@ const INNER_ARTWORK = {
 // Eager and high priority: this is the result screen's hero image, so it is the LCP candidate on the page the
 // reader waited for.
 const CLASS_NAME =
-  'mx-auto aspect-square h-auto w-full max-w-sm overflow-hidden rounded-2xl border border-page-border bg-page-soft object-cover sm:rounded-3xl'
+  'mx-auto aspect-square h-auto w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-surface-2 object-cover sm:rounded-3xl'
 // The paid report shows the pair side by side inside a `max-w-xl` column, so each one is at most half of that
 // minus the gutters — a `100vw` hint there would ask the browser for a candidate twice the size it will draw.
 const SIZES = '(min-width: 640px) 288px, calc(50vw - 2.5rem)'

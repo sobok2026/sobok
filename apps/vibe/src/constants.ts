@@ -6,7 +6,7 @@ export const ORIGIN = 'https://vibe.sobok.cc'
 // handing the server-side `purchase` event its session; all tag configuration lives in the container. The
 // GTM container id itself is brand-wide and lives in `@sobok/brand/identity`.
 export const GA4_MEASUREMENT_ID = 'G-RHHX4JRYDS'
-export const THEME_COLOR = '#fdfaf6' // keep in sync with --page-bg in src/app/globals.css
+export const THEME_COLOR = '#fdfaf6' // keep in sync with --background in src/app/globals.css
 export const TURNSTILE_SITE_KEY = requireEnv(
   'NEXT_PUBLIC_TURNSTILE_SITE_KEY',
   process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,

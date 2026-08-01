@@ -23,9 +23,9 @@ export default function Header({ locale, localeLabel, navLabel }: Props) {
   return (
     // `print:hidden`: a `fixed` header is painted onto every sheet, so printing the deep-type report without
     // this puts the site nav and the locale switcher across the top of a dozen pages.
-    <header className="fixed top-0 right-0 left-0 z-40 border-page-border/70 border-b bg-page-bg/88 px-safe pt-safe backdrop-blur-2xl print:hidden">
+    <header className="fixed top-0 right-0 left-0 z-40 border-border/70 border-b bg-background/88 px-safe pt-safe backdrop-blur-2xl print:hidden">
       <div className="mx-auto flex h-header w-full max-w-4xl items-center justify-between gap-4 px-4">
-        <Link className={`shrink-0 font-black text-page-ink tracking-tight ${FOCUS_CLASS_NAME}`} href={home}>
+        <Link className={`shrink-0 font-black text-foreground tracking-tight ${FOCUS_CLASS_NAME}`} href={home}>
           {SITE_NAME[locale]}
         </Link>
 
@@ -44,7 +44,7 @@ export default function Header({ locale, localeLabel, navLabel }: Props) {
                   key={item.segment}
                   aria-current={active ? 'page' : undefined}
                   className={`rounded-full px-3 py-1.5 font-semibold text-sm transition-colors ${FOCUS_CLASS_NAME} ${
-                    active ? 'bg-page-soft text-page-ink' : 'text-page-ink-soft hover:text-page-ink'
+                    active ? 'bg-surface-2 text-foreground' : 'text-foreground-secondary hover:text-foreground'
                   }`}
                   href={href}
                 >

@@ -42,7 +42,7 @@ export default async function CoupleTypePage({ params }: PageProps<'/[locale]/co
           path: 'couple-type',
         })}
       />
-      <main className="flex flex-1 flex-col bg-page-bg text-page-ink" id="main-content">
+      <main className="flex flex-1 flex-col bg-background text-foreground" id="main-content">
         <IntroView content={content} locale={locale} />
       </main>
     </>

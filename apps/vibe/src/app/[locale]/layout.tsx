@@ -40,7 +40,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           defaults are ordered correctly relative to the tags they gate. Duplicating them page-side would give
           two sources of truth for a legal control. See infra/gtm/sobok.cc/GTM-MH37D28N.json in sobok-ops. */}
       <FontStylesheets locale={locale} />
-      <body className="flex min-h-dvh flex-col bg-page-bg text-page-ink antialiased">
+      <body className="flex min-h-dvh flex-col bg-background text-foreground antialiased">
         <JsonLd data={siteGraph(locale)} />
         <NextIntlClientProvider>
           <Header locale={locale} localeLabel={t('localeSwitcher')} navLabel={t('primaryNav')} />

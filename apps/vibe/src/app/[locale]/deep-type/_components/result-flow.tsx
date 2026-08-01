@@ -93,8 +93,8 @@ export function ResultFlow({ content, locale }: ResultFlowProps) {
 
   if (!loaded || !sitting || !profile) {
     return (
-      <main className="flex flex-1 items-center justify-center bg-page-bg px-safe py-16 text-page-ink">
-        <div className="h-12 w-12 rounded-full border-4 border-page-accent/20 border-t-page-accent" />
+      <main className="flex flex-1 items-center justify-center bg-background px-safe py-16 text-foreground">
+        <div className="h-12 w-12 rounded-full border-4 border-brand/20 border-t-brand" />
       </main>
     )
   }

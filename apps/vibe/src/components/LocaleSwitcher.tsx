@@ -40,7 +40,7 @@ export default function LocaleSwitcher({ label, locale }: Props) {
     <nav aria-label={label} className="flex items-center gap-2.5 text-xs">
       {LOCALES.map((entry) =>
         entry === locale ? (
-          <span key={entry} aria-current="page" className="font-semibold text-page-ink">
+          <span key={entry} aria-current="page" className="font-semibold text-foreground">
             <Label name={LOCALE_NATIVE_NAMES[entry]} />
           </span>
         ) : (
@@ -53,7 +53,7 @@ export default function LocaleSwitcher({ label, locale }: Props) {
               event.preventDefault()
               window.location.assign(`${hrefFor(entry)}${window.location.search}${window.location.hash}`)
             }}
-            className="relative text-page-ink-muted transition-colors before:absolute before:-inset-x-1 before:-inset-y-2.5 before:content-[''] hover:text-page-ink"
+            className="relative text-foreground-muted transition-colors before:absolute before:-inset-x-1 before:-inset-y-2.5 before:content-[''] hover:text-foreground"
           >
             <Label name={LOCALE_NATIVE_NAMES[entry]} />
           </a>

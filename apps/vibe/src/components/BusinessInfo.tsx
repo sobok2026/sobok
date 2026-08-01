@@ -17,19 +17,19 @@ export default function BusinessInfo({
 
   return (
     <div className={className}>
-      {showHeading ? <h2 className="mb-3 font-semibold text-page-ink">{labels.heading}</h2> : null}
+      {showHeading ? <h2 className="mb-3 font-semibold text-foreground">{labels.heading}</h2> : null}
       <dl className="grid gap-x-4 gap-y-1 sm:grid-cols-2">
         {BUSINESS_FIELD_ORDER.map((field) => (
           <div className="flex flex-wrap gap-x-2" key={field}>
-            <dt className="shrink-0 text-page-ink-muted">{labels.fields[field]}</dt>
-            <dd className="text-page-ink-soft">
+            <dt className="shrink-0 text-foreground-muted">{labels.fields[field]}</dt>
+            <dd className="text-foreground-secondary">
               {field === 'email' ? (
-                <a className="underline underline-offset-2 hover:text-page-ink" href={`mailto:${BUSINESS.email}`}>
+                <a className="underline underline-offset-2 hover:text-foreground" href={`mailto:${BUSINESS.email}`}>
                   {BUSINESS.email}
                 </a>
               ) : field === 'mailOrderNumber' ? (
                 <a
-                  className="underline underline-offset-2 hover:text-page-ink"
+                  className="underline underline-offset-2 hover:text-foreground"
                   href={BUSINESS_INFO_LOOKUP_URL}
                   rel="noopener noreferrer"
                   target="_blank"

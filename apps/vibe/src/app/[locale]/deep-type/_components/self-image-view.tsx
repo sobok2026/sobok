@@ -52,9 +52,9 @@ export function SelfImageView({ content, onDone, ui }: SelfImageViewProps) {
       // screen would push the question itself below the fold on a phone.
       banner={
         index === 0 ? (
-          <div className="mt-6 rounded-3xl bg-page-soft px-5 py-4">
+          <div className="mt-6 rounded-3xl bg-surface-2 px-5 py-4">
             <p className="font-black">{content.title}</p>
-            <p className="mt-1 break-prose text-page-ink-soft text-sm leading-6">{content.body}</p>
+            <p className="mt-1 break-prose text-foreground-secondary text-sm leading-6">{content.body}</p>
           </div>
         ) : undefined
       }

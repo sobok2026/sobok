@@ -3,25 +3,38 @@
 
 @source '..';
 
+/*
+ * The names below are the vocabulary every sobok site shares. Only the names were unified: this is a warm light theme and those two are dark,
+ * so nothing here changed colour when the `page-*` prefix came off.
+ *
+ * The values stay as raw custom properties with `@theme inline` mapping them onto Tailwind's colour scale,
+ * rather than being declared in `@theme` directly, because the print rules and a few shadows read them
+ * through `var()` outside any utility.
+ */
 :root {
-  --page-ink: #241617;
-  --page-ink-soft: #54403f;
-  --page-ink-muted: #75595b;
+  /* THEME_COLOR in src/constants.ts must stay in sync with --background. */
+  --background: #fdfaf6;
+  --surface: #fffdf9;
+  --surface-2: #f7eee6;
 
-  --page-accent: #ff4d6d;
-  --page-accent-strong: #c81e4a;
-  --page-accent-glow: rgba(200, 30, 74, 0.26);
+  /* Foreground, high → low emphasis. vibe uses three levels. */
+  --foreground: #241617;
+  --foreground-secondary: #54403f;
+  --foreground-muted: #75595b;
 
-  --page-bg: #fdfaf6;
-  --page-border: #eadbd0;
-  --page-danger: #bf2440;
-  --page-soft: #f7eee6;
-  --page-success: #147a4a;
-  --page-surface: #fffdf9;
+  --border: #eadbd0;
 
-  --page-gutter-x: 1rem;
-  --page-safe-left: max(var(--page-gutter-x), var(--safe-area-left));
-  --page-safe-right: max(var(--page-gutter-x), var(--safe-area-right));
+  /* Brand is the saturated pink; accent is the darkened one that clears contrast on this light page. */
+  --brand: #ff4d6d;
+  --accent: #c81e4a;
+  --accent-glow: rgba(200, 30, 74, 0.26);
+
+  --danger: #bf2440;
+  --positive: #147a4a;
+
+  --gutter-x: 1rem;
+  --safe-left: max(var(--gutter-x), var(--safe-area-left));
+  --safe-right: max(var(--gutter-x), var(--safe-area-right));
 
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -33,23 +46,22 @@
   --spacing-header: 4rem;
   --spacing-bottom-nav: calc(3rem + max(0.5rem, var(--safe-area-bottom)));
 
-  /* THEME_COLOR in src/constants.ts must stay in sync with --page-bg. */
-  --color-page-accent: var(--page-accent);
-  --color-page-accent-strong: var(--page-accent-strong);
-  --color-page-bg: var(--page-bg);
-  --color-page-border: var(--page-border);
-  --color-page-danger: var(--page-danger);
-  --color-page-ink: var(--page-ink);
-  --color-page-ink-soft: var(--page-ink-soft);
-  --color-page-ink-muted: var(--page-ink-muted);
-  --color-page-soft: var(--page-soft);
-  --color-page-success: var(--page-success);
-  --color-page-surface: var(--page-surface);
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-foreground: var(--foreground);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-border: var(--border);
+  --color-brand: var(--brand);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-positive: var(--positive);
 }
 
 @utility px-safe {
-  padding-inline-start: var(--page-safe-left);
-  padding-inline-end: var(--page-safe-right);
+  padding-inline-start: var(--safe-left);
+  padding-inline-end: var(--safe-right);
 }
 
 @utility pt-safe {
@@ -76,8 +88,8 @@ html {
 }
 
 body {
-  color: var(--page-ink);
-  background: var(--page-bg);
+  color: var(--foreground);
+  background: var(--background);
 }
 
 /*

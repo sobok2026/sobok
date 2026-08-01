@@ -12,7 +12,7 @@
  * to spend, and the boxed look restored from `sm` up where `max-w-xl` caps the measure anyway and the inset
  * costs nothing. The paid report reached the same answer first with a bare `border-t` divider.
  */
-export const CARD_CLASS_NAME = 'rounded-3xl border border-page-border bg-page-surface p-4 sm:rounded-4xl sm:p-6'
+export const CARD_CLASS_NAME = 'rounded-3xl border border-border bg-surface p-4 sm:rounded-4xl sm:p-6'
 
 /**
  * The lift under a page-level panel. Written once because three screens had the same literal and the paywall's
@@ -26,15 +26,13 @@ export const PANEL_SHADOW_CLASS_NAME = 'shadow-[0_24px_90px_rgba(36,22,23,0.08)]
  * of both. Wider padding than `CARD_CLASS_NAME` because nothing nests inside it, and `max-w-lg` rather than
  * `max-w-xl` because its body is a paragraph and not a report.
  */
-export const PANEL_CLASS_NAME =
-  'w-full max-w-lg rounded-3xl border border-page-border bg-page-surface p-6 sm:rounded-4xl sm:p-8'
+export const PANEL_CLASS_NAME = 'w-full max-w-lg rounded-3xl border border-border bg-surface p-6 sm:rounded-4xl sm:p-8'
 
 /**
  * The container for rows that would otherwise each be a card. Pair with a `sm:grid` and a `sm:gap-*` from the
  * caller, because how the boxes lay out from `sm` up is the caller's business and where the rules go is not.
  */
-export const GROUPED_LIST_CLASS_NAME =
-  'divide-page-border divide-y border-page-border border-y sm:divide-y-0 sm:border-0'
+export const GROUPED_LIST_CLASS_NAME = 'divide-border divide-y border-border border-y sm:divide-y-0 sm:border-0'
 
 /**
  * One row of a `GROUPED_LIST_CLASS_NAME`. Vertical padding only at compact width so the row inherits the
@@ -44,7 +42,7 @@ export const GROUPED_LIST_CLASS_NAME =
  * want the inner radius to be the outer radius minus the padding between them — 32px minus 24px at `sm` — and
  * 16px is the closest step down the scale offers.
  */
-export const GROUPED_ROW_CLASS_NAME = 'py-4 sm:rounded-2xl sm:border sm:border-page-border sm:bg-white sm:p-4'
+export const GROUPED_ROW_CLASS_NAME = 'py-4 sm:rounded-2xl sm:border sm:border-border sm:bg-white sm:p-4'
 
 /**
  * THE REPORT'S TYPE SCALE.
@@ -74,13 +72,13 @@ export const GROUPED_ROW_CLASS_NAME = 'py-4 sm:rounded-2xl sm:border sm:border-p
  */
 export const REPORT_TYPE = {
   /** A section's h2. */
-  title: 'font-black text-page-ink text-xl leading-snug sm:text-2xl',
+  title: 'font-black text-foreground text-xl leading-snug sm:text-2xl',
   /** The authored line under a section title. A deck, so it is sized between the title and the body. */
-  deck: 'text-base text-page-ink-muted leading-7',
+  deck: 'text-base text-foreground-muted leading-7',
   /** Reading copy: the openings, the readings, anything written to be read in sentences. */
-  body: 'break-prose text-base text-page-ink-soft leading-8',
+  body: 'break-prose text-base text-foreground-secondary leading-8',
   /** Copy inside a card or a row, where the measure is already narrow. */
-  copy: 'break-prose text-[0.9375rem] text-page-ink-soft leading-7',
+  copy: 'break-prose text-[0.9375rem] text-foreground-secondary leading-7',
   /** Captions, asides, and the closing note. The quietest step that still clears 4.5:1. */
-  meta: 'break-prose text-sm text-page-ink-muted leading-6',
+  meta: 'break-prose text-sm text-foreground-muted leading-6',
 } as const

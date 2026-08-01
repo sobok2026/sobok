@@ -26,42 +26,42 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
   return (
     <>
-      <main className="flex flex-1 flex-col bg-page-bg px-safe py-14 text-page-ink sm:py-20">
+      <main className="flex flex-1 flex-col bg-background px-safe py-14 text-foreground sm:py-20">
         <div className="mx-auto w-full max-w-3xl">
-          <p className="font-bold text-page-accent-strong text-sm">{SITE_NAME[locale]}</p>
+          <p className="font-bold text-accent text-sm">{SITE_NAME[locale]}</p>
           <h1 className="mt-3 text-balance font-black text-4xl tracking-[-0.04em] sm:text-5xl">{t('heroTitle')}</h1>
-          <p className="mt-4 max-w-xl text-page-ink-soft leading-8">{t('heroSubtitle')}</p>
+          <p className="mt-4 max-w-xl text-foreground-secondary leading-8">{t('heroSubtitle')}</p>
 
           <div className="mt-10 grid gap-5">
             <Link
-              className={`group rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${FOCUS_CLASS_NAME}`}
+              className={`group rounded-3xl sm:rounded-4xl border border-border bg-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${FOCUS_CLASS_NAME}`}
               href={`${home}/couple-gyeol`}
             >
               <h2 className="font-black text-2xl tracking-[-0.03em]">{t('gyeolCard.title')}</h2>
-              <p className="mt-3 text-page-ink-soft leading-7">{t('gyeolCard.description')}</p>
-              <span className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-page-ink px-5 font-bold text-sm text-white transition-colors group-hover:bg-page-ink/92">
+              <p className="mt-3 text-foreground-secondary leading-7">{t('gyeolCard.description')}</p>
+              <span className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-foreground px-5 font-bold text-sm text-white transition-colors group-hover:bg-foreground/92">
                 {t('gyeolCard.cta')}
               </span>
             </Link>
 
             <Link
-              className={`group rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${FOCUS_CLASS_NAME}`}
+              className={`group rounded-3xl sm:rounded-4xl border border-border bg-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${FOCUS_CLASS_NAME}`}
               href={`${home}/couple-type`}
             >
               <h2 className="font-black text-2xl tracking-[-0.03em]">{t('typeCard.title')}</h2>
-              <p className="mt-3 text-page-ink-soft leading-7">{t('typeCard.description')}</p>
-              <span className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-page-ink px-5 font-bold text-sm text-white transition-colors group-hover:bg-page-ink/92">
+              <p className="mt-3 text-foreground-secondary leading-7">{t('typeCard.description')}</p>
+              <span className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-foreground px-5 font-bold text-sm text-white transition-colors group-hover:bg-foreground/92">
                 {t('typeCard.cta')}
               </span>
             </Link>
 
             <Link
-              className={`group rounded-3xl sm:rounded-4xl border border-page-border bg-page-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${FOCUS_CLASS_NAME}`}
+              className={`group rounded-3xl sm:rounded-4xl border border-border bg-surface p-7 shadow-[0_20px_70px_rgba(36,22,23,0.07)] transition-colors hover:bg-white ${FOCUS_CLASS_NAME}`}
               href={`${home}/deep-type`}
             >
               <h2 className="font-black text-2xl tracking-[-0.03em]">{t('deepTypeCard.title')}</h2>
-              <p className="mt-3 text-page-ink-soft leading-7">{t('deepTypeCard.description')}</p>
-              <span className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-page-ink px-5 font-bold text-sm text-white transition-colors group-hover:bg-page-ink/92">
+              <p className="mt-3 text-foreground-secondary leading-7">{t('deepTypeCard.description')}</p>
+              <span className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-foreground px-5 font-bold text-sm text-white transition-colors group-hover:bg-foreground/92">
                 {t('deepTypeCard.cta')}
               </span>
             </Link>

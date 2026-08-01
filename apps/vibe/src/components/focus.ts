@@ -8,5 +8,4 @@
  *
  * `outline` rather than a ring utility so it follows the element's border radius and survives `overflow: hidden`.
  */
-export const FOCUS_CLASS_NAME =
-  'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-page-accent'
+export const FOCUS_CLASS_NAME = 'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-brand'

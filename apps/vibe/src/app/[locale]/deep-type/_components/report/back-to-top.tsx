@@ -37,7 +37,7 @@ export function BackToTop({ label }: { label: string }) {
   return (
     <a
       className={cn(
-        'fixed right-4 bottom-[calc(var(--spacing-bottom-nav)+0.5rem)] z-30 inline-flex min-h-11 items-center gap-1.5 rounded-full border border-page-border bg-page-surface/94 pr-4 pl-3 font-bold text-page-ink-soft text-sm shadow-[0_10px_30px_rgba(36,22,23,0.12)] backdrop-blur transition-colors hover:text-page-ink sm:bottom-6 print:hidden',
+        'fixed right-4 bottom-[calc(var(--spacing-bottom-nav)+0.5rem)] z-30 inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-surface/94 pr-4 pl-3 font-bold text-foreground-secondary text-sm shadow-[0_10px_30px_rgba(36,22,23,0.12)] backdrop-blur transition-colors hover:text-foreground sm:bottom-6 print:hidden',
         FOCUS_CLASS_NAME,
       )}
       href="#report-top"
