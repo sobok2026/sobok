@@ -19,7 +19,7 @@ export function findShape(planets: readonly PlanetPosition[]): ChartShape {
   const n = bodies.length
 
   // gaps[i] = the empty arc running from bodies[i] to the next planet (wrapping).
-  const gaps = bodies.map((b, i) => (bodies[(i + 1) % n].lon - b.lon + 360) % 360)
+  const gaps = bodies.map((b, i) => norm360(bodies[(i + 1) % n].lon - b.lon))
 
   let i1 = 0
   for (let i = 1; i < n; i++) if (gaps[i] > gaps[i1]) i1 = i
