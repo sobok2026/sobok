@@ -128,8 +128,8 @@ export const guardianReportTable = stella.table(
   ],
 )
 
-// One row per answered question keeps autosave small and makes the current branch derivable after any
-// reconnect. The report receives an immutable ID-based answer/signal snapshot only when the branch completes.
+// One row per answered question keeps autosave small and makes the adaptive sequence derivable after any
+// reconnect. The report receives an immutable ID-based answer/signal snapshot only when the sequence completes.
 export const guardianQuestionAnswerTable = stella.table(
   'guardian_question_answer',
   {

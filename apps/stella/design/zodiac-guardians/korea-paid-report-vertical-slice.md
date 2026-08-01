@@ -10,16 +10,16 @@
 
 ## 문서 상태
 
-- 마지막 갱신: 2026-07-31
+- 마지막 갱신: 2026-08-01
 - 첫 시장과 로케일: `KR`, `ko`
 - 첫 SKU: `guardian-report-full-v1`, 3,900원
 - 결제 연동: PortOne V2 인증 결제
 - 첫 실결제수단: 토스페이 직접 연동 `tosspay_v2`
 - 후속 결제수단: 토스페이먼츠는 실결제 승인 뒤 활성화
 - 현재 구현: 상품 매니페스트, 추첨, 게스트 컬렉션·리포트·구매·획득·보장 도메인,
-  불변 유료 질문 콘텐츠 계약·DB·게시 CLI·답변별 저장과 현재 문항 계산
-- 아직 미연결: 실제 유료 질문 원본, 공개 mutation API, PortOne, 결제 웹훅·재조정,
-  실제 DB push, 화면의 서버 상태
+  실제 한국어 선택형 질문 44개와 선택 메모 1개, 불변 콘텐츠 계약·DB·게시 CLI·답변별 저장과 현재 문항 계산
+- 아직 미연결: 공개 mutation API, PortOne, 결제 웹훅·재조정, 실제 DB push·문항 게시,
+  화면의 서버 상태
 - 이 문서의 범위: 무료 질문 2개 → 분량 안내·복구 이메일 → 결제 → 서버 검증 → 유료 질문 → 카드 공개
 
 ## 1. 왜 이 흐름이 다음 작업인가
@@ -45,7 +45,7 @@
 - 전체 리포트 1개 SKU의 서버 가격
 - PortOne 결제창과 모바일 리디렉션 복귀
 - 브라우저 확인, 웹훅, 재조정의 서버 결제 검증
-- 결제 확인 뒤 12~20개의 적응형 유료 질문과 답변별 저장·재개
+- 결제 확인 뒤 16~20개의 적응형 선택 질문과 답변별 저장·재개
 - 전체 답변 기반 기본 카드 선택
 - 결제 후 네 카드의 순차 공개와 전체 웹 리포트
 - 같은 브라우저에서 새로고침·재접속했을 때 같은 결과 복구
@@ -68,7 +68,7 @@
 
 - 브라우저는 무료 차트 계산, 표시된 질문 답변, 결제수단, PortOne 결제창 실행만 담당한다.
 - SKU 가격, 통화, 시장, 주문명, 채널 키와 `paymentId`는 서버가 결정한다.
-- 유료 질문 원문·선택지·분기·점수는 Git JSON으로 관리하되 Next 정적 export에는 묶지 않는다.
+- 유료 질문 원문·선택지·적응형 선택 정책·점수는 Git JSON으로 관리하되 Next 정적 export에는 묶지 않는다.
   서버는 확인된 유료 entitlement에 다음 질문만 전달한다.
 - 브라우저의 결제 성공 응답이나 리디렉션 파라미터는 카드 지급 근거가 아니다.
 - 서버가 PortOne 결제 조회 결과의 상태, 금액, 통화를 로컬 pending 구매와 비교한다.
@@ -141,14 +141,14 @@ sequenceDiagram
 
 경로 이름은 구현 시 다음 형태를 기본값으로 사용한다.
 
-| API                                                     | 권한                 | 책임                                                                       |
-| ------------------------------------------------------- | -------------------- | -------------------------------------------------------------------------- |
-| `POST /api/guardian-checkouts`                          | Turnstile·rate limit | 무료 컨텍스트·이메일 검증, collection·pending 구매 생성·재사용             |
-| `POST /api/guardian-purchases/:paymentId/confirm`       | 게스트 capability    | PortOne 원격 상태 조회, paid entitlement·questionnaire draft 생성          |
-| `POST /api/guardian-webhooks/portone`                   | PortOne 서명         | 이벤트를 검증한 뒤 같은 구매 확정 함수 호출                                |
-| `GET /api/guardian-reports/:reportPublicId`             | 게스트 capability    | 유료 질문 진행 메타데이터 또는 fulfilled 결과 조회                         |
-| `GET /api/guardian-reports/:reportPublicId/question`    | paid capability      | 현재 session에서 허용된 다음 한 문항 조회                                  |
-| `PUT /api/guardian-reports/:reportPublicId/answers/:id` | paid capability      | 한 답변 저장, 분기 진행, 마지막 답변이면 카드 선택·report fulfillment 수행 |
+| API                                                     | 권한                 | 책임                                                                                 |
+| ------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------ |
+| `POST /api/guardian-checkouts`                          | Turnstile·rate limit | 무료 컨텍스트·이메일 검증, collection·pending 구매 생성·재사용                       |
+| `POST /api/guardian-purchases/:paymentId/confirm`       | 게스트 capability    | PortOne 원격 상태 조회, paid entitlement·questionnaire draft 생성                    |
+| `POST /api/guardian-webhooks/portone`                   | PortOne 서명         | 이벤트를 검증한 뒤 같은 구매 확정 함수 호출                                          |
+| `GET /api/guardian-reports/:reportPublicId`             | 게스트 capability    | 유료 질문 진행 메타데이터 또는 fulfilled 결과 조회                                   |
+| `GET /api/guardian-reports/:reportPublicId/question`    | paid capability      | 현재 session에서 허용된 다음 한 문항 조회                                            |
+| `PUT /api/guardian-reports/:reportPublicId/answers/:id` | paid capability      | 한 답변 저장, 다음 맞춤 문항 계산, 마지막 답변이면 카드 선택·report fulfillment 수행 |
 
 ### 무료 미리보기와 결제 컨텍스트
 
@@ -195,10 +195,10 @@ sequenceDiagram
 
 ### 출시 선택 규칙 권장안
 
-현재 두 질문은 무료 미리보기용으로 유지한다. 결제 후에는 네 주제마다 핵심 맥락 3개를 묻고
-답변에 따라 주제별 최대 2개의 후속 질문을 추가해 전체 12~20개를 제공하는 1차안을 사용한다.
-필수 문항은 모두 선택지 기반이며 자유 입력은 전체에서 선택 사항으로 최대 한 개만 제공한다.
-실제 문구, 선택지, 분기와 점수 행렬은 이 public 문서에 기록하지 않는다.
+현재 두 질문은 무료 미리보기용으로 유지한다. 결제 후에는 네 주제마다 핵심 맥락 3개와 누적
+답변으로 고른 필수 맞춤 질문 1개를 묻는다. 관련도 기준을 넘긴 주제에 심화 질문을 하나씩 더해
+전체 16~20개를 제공한다. 필수 문항은 모두 선택지 기반이며 자유 입력은 진행률이 끝난 뒤 별도
+선택 메모로 최대 한 개만 제공한다. 실제 문구, 선택지, 선택 정책과 점수 행렬은 versioned JSON에 둔다.
 
 | 슬롯     | 차트의 주축                             | 유료 질문의 구조적 역할         |
 | -------- | --------------------------------------- | ------------------------------- |
@@ -212,7 +212,7 @@ sequenceDiagram
   family pool의 후보가 각각 하나이므로 입력은 MVP 패밀리를 바꾸지 않는다.
 - 차트 관련성을 기본 축으로 두고 결제 후 주제 답변을 무료 공통 답변보다 강하게 반영한다. 정확한
   점수 행렬은 questionnaire Git version과 함께 서버 콘텐츠로 게시한다.
-- 12~20개의 답변은 네 주제 상세 리포트 본문, 섹션별 해석 초점, 전체 요약과 한 줄을 실질적으로
+- 16~20개의 선택 답변은 네 주제 상세 리포트 본문, 섹션별 해석 초점, 전체 요약과 한 줄을 실질적으로
   바꾼다. 선택 자유 입력을 작성했다면 본문 보조 맥락으로만 사용하고 미작성은 완료를 막지 않는다.
 - 자기이해 유료 답변은 태양 별자리 패밀리를 바꾸지 않고 장면·한 줄·해석의 초점을 바꾼다.
 - 하나의 보편적인 `위로=물` 매핑을 모든 슬롯에 재사용하지 않는다. 같은 답도 사랑, 일, 결정에서
@@ -365,7 +365,7 @@ PortOne의 Store ID는 상점을 식별하고 channel key는 실제 PG 연결을
   납품물을 짧게 열거한다.
 - 구매 CTA는 가격을 버튼 안에 포함한다:
   `네 카드와 전체 리포트 열기 · 3,900원`.
-- 구매 CTA를 누르면 유료 질문 원문 대신 `결제 후 12~20개 · 네 주제 · 약 4~7분 · 중간 저장`
+- 구매 CTA를 누르면 유료 질문 원문 대신 `결제 후 16~20개 · 네 주제 · 약 4~7분 · 중간 저장`
   안내와 납품물을 보여준다.
 - 같은 checkout sheet에서 복구 이메일을 받은 뒤 토스페이로 이동한다. 결제가 확인되면
   자기이해·사랑·일·결정 질문을 한 화면에 하나씩 제공하고 진행률, 뒤로 가기, 선택 수정을 지원한다.
@@ -461,24 +461,23 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 
 ## 11. 권장 구현 순서
 
-1. 실제 `guardian-paid-ko-mvp-v1.json` 문항·선택지·분기·signal을 작성하고 검증한다.
-2. 구매 상태에 `cancelled`, `review_required`를 반영하고 복구 이메일·웹훅 이벤트 데이터를 확정한다.
-3. Stella 전용 PortOne 어댑터, 환경 binding, 공통 구매 확정 함수를 만든다.
-4. guest checkout, confirm, webhook, paid questionnaire, report read API를 연결한다.
-5. 무료 결과의 두 질문·provisional 미리보기와 결제 뒤 질문·fulfillment 화면을 연결한다.
-6. pending 재조정과 미결제 checkout context 정리 cron을 연결한다.
-7. `/ko/cards`의 클라이언트 난수·로컬 소유권을 서버 상태로 교체한다.
-8. `sobok-ops`에 PortOne Store ID, channel map, API/Webhook Secret binding을 반영한다.
-9. 두 schema에 Drizzle 선언과 같은 questionnaire version을 게시한다.
-10. staging Worker와 PortOne 테스트 채널에서 결제·모바일 리디렉션·질문 재개·카드 공개를 확인한
-    뒤 production을 배포한다.
+1. 구매 상태에 `cancelled`, `review_required`를 반영하고 복구 이메일·웹훅 이벤트 데이터를 확정한다.
+2. Stella 전용 PortOne 어댑터, 환경 binding, 공통 구매 확정 함수를 만든다.
+3. guest checkout, confirm, webhook, paid questionnaire, report read API를 연결한다.
+4. 무료 결과의 두 질문·provisional 미리보기와 결제 뒤 질문·fulfillment 화면을 연결한다.
+5. pending 재조정과 미결제 checkout context 정리 cron을 연결한다.
+6. `/ko/cards`의 클라이언트 난수·로컬 소유권을 서버 상태로 교체한다.
+7. `sobok-ops`에 PortOne Store ID, channel map, API/Webhook Secret binding을 반영한다.
+8. 두 schema에 Drizzle 선언과 같은 questionnaire version을 게시한다.
+9. staging Worker와 PortOne 테스트 채널에서 결제·모바일 리디렉션·질문 재개·카드 공개를 확인한
+   뒤 production을 배포한다.
 
 ### 완료 기준
 
 - 기존 무료 결과는 결제하지 않아도 끝까지 읽을 수 있다.
 - 공유받은 타인의 차트에서는 checkout을 만들 수 없고 자신의 무료 차트 생성으로 이어진다.
 - 무료 질문 2개만 끝낸 사용자는 DB draft나 guest collection을 만들지 않는다.
-- 결제 전에 유료 질문의 범위와 예상 시간은 보이지만 원문·선택지·분기 데이터는 내려오지 않는다.
+- 결제 전에 유료 질문의 범위와 예상 시간은 보이지만 원문·선택지·선택 정책은 내려오지 않는다.
 - 서버가 결제를 확인하면 계정 생성 없이 유료 질문을 시작하고 답변마다 진행 상태가 저장된다.
 - 유료 질문을 모두 완료해야 기본 패밀리와 카드 에디션이 한 번만 선택된다. MVP의 단일 후보
   풀도 production과 같은 선택 함수를 통과한다.
@@ -511,8 +510,8 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 | DB 내부 경계       | 같은 DB의 `stella_stg`·`stella` schema 분리 확정           | 행별 환경 필터 없이 테스트 데이터를 분리한다              |
 | 게스트 이메일      | 결제 직전 필수, 계정 생성과 분리로 확정                    | 결제 후 기기 이탈에도 구매를 복구한다                     |
 | 질문 단계          | 무료 2개, 서버 결제 확인 뒤 유료 질문으로 확정             | 앱에서는 paid entitlement 뒤에만 유료 문항을 제공한다     |
-| 유료 질문 분량     | 주제별 핵심 3개+후속 0~2개, 전체 12~20개로 확정            | 풍부함과 구매 후 완료율을 함께 관리한다                   |
-| 자유 입력          | 필수 0개, 전체에서 선택 사항 최대 1개로 확정               | 표현 여지는 주되 카드 공개를 지연시키지 않는다            |
+| 유료 질문 분량     | 주제별 핵심 3개+필수 맞춤 1개+심화 0~1개, 전체 16~20개     | 모든 주제의 깊이와 구매 후 완료율을 함께 관리한다         |
+| 자유 입력          | 질문 수 밖의 선택 메모 최대 1개로 확정                     | 표현 여지는 주되 카드 공개를 지연시키지 않는다            |
 | 유료 질문 저장     | Git JSON을 같은 환경 schema의 불변 콘텐츠 행으로 게시      | 배포 재현성과 report별 version 고정을 함께 얻는다         |
 | 출시 카드 선택     | MVP 단일 후보, production은 전체 입력으로 패밀리 변경      | 같은 계약에서 후보만 늘린다                               |
 | 선택 점수          | 차트 중심, 유료 주제 답변은 무료 공통 답변보다 강하게 반영 | 관련성과 유료 개인화를 함께 확보한다                      |
