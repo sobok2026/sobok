@@ -2,8 +2,7 @@
 
 별자리 수호령 카드 리포트의 상품 구조, 가격, 추첨, 계정, 결제, 성장 루프를 한곳에 기록한다.
 캐릭터 외형과 원화 규칙은 [캐릭터 바이블](./character-bible.md), 장면 목록은
-[카드 카탈로그](./card-catalog.md), 현재 화면은
-[모바일 카드 리포트 프로토타입](./card-report-prototype.md)을 기준으로 한다. 한국 첫 결제 구현은
+[카드 카탈로그](./card-catalog.md)를 기준으로 한다. 현재 화면과 한국 첫 결제 구현은
 [한국 전체 리포트 결제·공개 수직 슬라이스](./korea-paid-report-vertical-slice.md)를 따른다.
 
 ## 문서 상태
@@ -15,7 +14,8 @@
 - `권장안`: 출시 전에 수치 또는 세부 동작을 최종 승인해야 하는 현재 추천값
 - 구현 상태: 상품 매니페스트·추첨·게스트 컬렉션·리포트·구매·획득·보장과 유료 질문의 불변
   콘텐츠 계약·실제 한국어 선택형 44개와 선택 메모 1개·DB·게시 CLI·답변별 진행·마지막 답변의 카드 fulfillment
-  기반 구현. 중앙 PortOne 연동과 공개 mutation API는 구현됐고 계정, DB push·문항 게시는 미구현
+  기반 구현. 중앙 PortOne 연동, 공개 mutation API, staging schema·질문 게시는 완료됐고 계정,
+  production schema·콘텐츠 게시와 이메일 복구 전송은 미구현
 
 ## 1. 목표와 제품 원칙
 
@@ -458,6 +458,9 @@ MVP의 보장 범위는 `Stella 계정 × 카드 패밀리`로 둔다. 시즌 �
   `pg_catalog`만 두어 비한정 테이블명이 우연히 production으로 해석되지 않게 한다.
 - `drizzle-kit push`는 같은 DB URL에 `STELLA_DB_SCHEMA=stella_stg`와 `stella`를 각각 지정해
   실행한다.
+- Worker와 정적 자산은 로컬 `wrangler deploy`로 배포하지 않는다. 커밋을 원격 브랜치에 올린 뒤
+  `.github/workflows/stella-deploy.yml`을 사용한다. staging은 해당 브랜치에서
+  `workflow_dispatch(target=staging)`, production은 `main` push로만 배포한다.
 - 중앙 payments의 test/live channel map과 공용 Webhook Secret binding은 배포별 모드에 고정하고
   브라우저가 tier를 선택하지 못하게 한다. 제품 Worker는 PortOne 자격증명을 갖지 않는다.
 

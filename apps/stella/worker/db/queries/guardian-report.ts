@@ -1,51 +1,8 @@
-import type { Locale } from '@sobok/domain/locale'
 import type { Db } from '@sobok/edge/db/client'
-import {
-  type GuardianRarity,
-  type GuardianReportSlot,
-  guardianEdition,
-  guardianManifest,
-} from '../../guardian/manifest'
-import type { GuardianQuestionnaireClientStep } from '../../guardian/questionnaire'
-import type { GuardianReportNarrativeSnapshot } from '../../guardian/report'
+import { guardianEdition, guardianManifest } from '../../guardian/manifest'
+import type { GuardianReportView } from '../../guardian/report'
 import { findPaidFullReportPurchase, lockedReportOf } from './guardian'
 import { getGuardianQuestionnaireStep } from './guardian-questionnaire'
-
-interface GuardianReportVersions {
-  manifest: string
-  selectionRule: string
-  odds: string
-  questionnaire: string
-  copy: string
-  render: string
-}
-
-export type GuardianReportView =
-  | {
-      reportPublicId: string
-      status: 'questions'
-      locale: Locale
-      questionnaire: {
-        status: GuardianQuestionnaireClientStep['status']
-        version: string
-        progress: GuardianQuestionnaireClientStep['progress']
-      }
-    }
-  | {
-      reportPublicId: string
-      status: 'fulfilled'
-      locale: Locale
-      fulfilledAt: string
-      versions: GuardianReportVersions
-      cards: {
-        cardEditionId: string
-        familyId: string
-        slot: GuardianReportSlot
-        rarity: GuardianRarity | null
-        artworkPath: string
-      }[]
-      narrative: GuardianReportNarrativeSnapshot
-    }
 
 export type ReadGuardianReportResult =
   | { status: 'ok'; report: GuardianReportView }

@@ -1,3 +1,4 @@
+import { LOCALES } from '@sobok/domain/locale'
 import { alertDiscord } from '@sobok/edge/alert'
 import { openDb, withDb } from '@sobok/edge/db/client'
 import { Hono } from 'hono'
@@ -6,7 +7,7 @@ import { withinRateLimits } from '~/db/queries/rate-limit'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { GuardianAccessTokenSchema, GuardianReportPublicIdSchema } from '~/guardian/http'
-import { GUARDIAN_PLANET_IDS } from '~/guardian/manifest'
+import { GUARDIAN_PLANET_IDS, guardianFullReportIsAvailable } from '~/guardian/manifest'
 import { prepareGuestGuardianCheckout, resumeGuestGuardianCheckout } from '~/guardian/service'
 import { NO_STORE_HEADERS, parseJson } from '~/lib/http'
 import { hashIp } from '~/lib/ip'
@@ -89,7 +90,7 @@ const CommonCheckoutBody = {
 const NewCheckoutBody = z
   .object({
     ...CommonCheckoutBody,
-    locale: z.literal('ko'),
+    locale: z.enum(LOCALES),
     chart: ChartSchema,
     previewAnswers: PreviewAnswersSchema,
   })
@@ -119,6 +120,9 @@ guardianCheckouts.post('/', async (c) => {
   }
 
   const body = parsed.data
+  if ('locale' in body && !guardianFullReportIsAvailable(body.locale, MARKET)) {
+    return problem(409, 'product-unavailable')
+  }
   let resumeToken: string | null = null
   if ('reportPublicId' in body) {
     const parsedToken = GuardianAccessTokenSchema.safeParse(bearerToken(c))

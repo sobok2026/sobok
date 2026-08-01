@@ -11,6 +11,7 @@ import type { AngleId, ChartAspect, HouseNumber, PlanetId, SignId } from '@/char
 import { HeroTitle } from '@/components/HeroTitle'
 import SharedLinkError from '@/components/SharedLinkError'
 import Starfield from '@/components/Starfield'
+import { GUARDIAN_REPORT_UI } from '@/content/guardian-report-ui'
 import { useBirthSource } from '@/hooks/useBirthSource'
 import type { StoredBirth } from '@/lib/birth-storage'
 
@@ -22,6 +23,7 @@ import { ConstellationActions } from './ConstellationActions'
 import { commentTopicKey } from './comment-topic'
 import DetailPanel from './DetailPanel'
 import ElementBalance from './ElementBalance'
+import GuardianOffer from './GuardianOffer'
 import PatternSection from './PatternSection'
 import ReportSection from './ReportSection'
 import {
@@ -43,6 +45,7 @@ export default function Constellation() {
   const t = useTranslations('Constellation')
   const ts = useTranslations('Shared')
   const locale = useLocale()
+  const guardianReport = GUARDIAN_REPORT_UI[locale]
   const birthSource = useBirthSource('chart')
 
   const { birth, save, shared } = birthSource
@@ -336,6 +339,12 @@ export default function Constellation() {
               moonSigns={moonSigns}
               shared={shared}
             />
+          </div>
+        )}
+
+        {data && birth && !shared && guardianReport.published && (
+          <div className="mt-6 w-full">
+            <GuardianOffer content={guardianReport.home} locale={locale} />
           </div>
         )}
 

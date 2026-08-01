@@ -1,12 +1,13 @@
 import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 
-import CardReportPrototype from './CardReportPrototype'
-import { CARD_REPORT_CONTENT } from './content'
+import { GUARDIAN_REPORT_UI } from '@/content/guardian-report-ui'
+
+import GuardianCardsEntry from './GuardianCardsEntry'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/cards'>): Promise<Metadata> {
   const locale = await getLocale(params)
-  const content = CARD_REPORT_CONTENT[locale]
+  const content = GUARDIAN_REPORT_UI[locale].paid
 
   return {
     title: content.meta.title,
@@ -18,5 +19,5 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/cards'>)
 export default async function GuardianCardsPage({ params }: PageProps<'/[locale]/cards'>) {
   const locale = await getLocale(params)
 
-  return <CardReportPrototype content={CARD_REPORT_CONTENT[locale]} locale={locale} />
+  return <GuardianCardsEntry locale={locale} />
 }

@@ -1,8 +1,9 @@
 import type { Locale } from '@sobok/domain/locale'
 import type { GuardianSelectedCard } from './draw'
-import type { GuardianReportInputSnapshot, GuardianReportSlot } from './manifest'
+import type { GuardianRarity, GuardianReportInputSnapshot, GuardianReportSlot } from './manifest'
 import type {
   GuardianQuestionnaireAnswerSnapshot,
+  GuardianQuestionnaireClientStep,
   GuardianQuestionnaireContent,
   GuardianQuestionnaireSignalSnapshot,
 } from './questionnaire'
@@ -92,6 +93,43 @@ export interface GuardianReportNarrativeSnapshot {
     } | null
   }
 }
+
+export interface GuardianReportVersions {
+  manifest: string
+  selectionRule: string
+  odds: string
+  questionnaire: string
+  copy: string
+  render: string
+}
+
+/** Capability-protected response shared by the Worker and the static browser client. */
+export type GuardianReportView =
+  | {
+      reportPublicId: string
+      status: 'questions'
+      locale: Locale
+      questionnaire: {
+        status: GuardianQuestionnaireClientStep['status']
+        version: string
+        progress: GuardianQuestionnaireClientStep['progress']
+      }
+    }
+  | {
+      reportPublicId: string
+      status: 'fulfilled'
+      locale: Locale
+      fulfilledAt: string
+      versions: GuardianReportVersions
+      cards: {
+        cardEditionId: string
+        familyId: string
+        slot: GuardianReportSlot
+        rarity: GuardianRarity | null
+        artworkPath: string
+      }[]
+      narrative: GuardianReportNarrativeSnapshot
+    }
 
 export interface GuardianReportNarrativeInput {
   locale: Locale
