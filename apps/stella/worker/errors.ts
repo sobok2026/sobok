@@ -16,10 +16,13 @@ export type ProblemSlug =
   | 'comment-not-found'
   | 'report-not-found'
   | 'payment-required'
+  | 'payment-mismatch'
+  | 'payment-conflict'
   | 'checkout-conflict'
   | 'question-conflict'
   | 'invalid-answer'
   | 'forbidden'
+  | 'invalid-webhook'
   | 'service-unavailable'
   | 'internal'
 

@@ -30,6 +30,7 @@
   // CUTOVER: drop 'sobok.cc' when apps/web takes the apex from this Worker.
   "vars": {
     "STELLA_ALLOWED_HOSTNAMES": "sobok.cc,stella.sobok.cc",
+    "STELLA_PUBLIC_ORIGIN": "https://stella.sobok.cc",
     "STELLA_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
     "STELLA_PORTONE_CHANNELS": {
       "tosspay_v2": "channel-key-d14e0af9-18be-457f-aa21-228e7265211f"
@@ -53,6 +54,16 @@
     "STELLA_DB_SCHEMA": "'stella'"
   },
   "secrets_store_secrets": [
+    {
+      "binding": "STELLA_PORTONE_API_SECRET",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+      "secret_name": "stella-portone-api-secret"
+    },
+    {
+      "binding": "STELLA_PORTONE_WEBHOOK_SECRET",
+      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+      "secret_name": "stella-portone-webhook-secret"
+    },
     {
       "binding": "STELLA_TURNSTILE_SECRET",
       "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
@@ -81,6 +92,7 @@
       },
       "vars": {
         "STELLA_ALLOWED_HOSTNAMES": "stella-stg.sobok.cc",
+        "STELLA_PUBLIC_ORIGIN": "https://stella-stg.sobok.cc",
         "STELLA_PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
         "STELLA_PORTONE_CHANNELS": {
           "tosspay_v2": "channel-key-70320dc7-8e65-4cf7-901b-7b834ae4f21a"
@@ -93,6 +105,16 @@
         }
       ],
       "secrets_store_secrets": [
+        {
+          "binding": "STELLA_PORTONE_API_SECRET",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "stella-portone-api-secret"
+        },
+        {
+          "binding": "STELLA_PORTONE_WEBHOOK_SECRET",
+          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
+          "secret_name": "stella-portone-webhook-secret-stg"
+        },
         {
           "binding": "STELLA_TURNSTILE_SECRET",
           "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",

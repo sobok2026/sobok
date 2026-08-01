@@ -4,6 +4,7 @@ import { type Context, Hono } from 'hono'
 import { z } from 'zod'
 import { resolveGuardianReportAccess } from '~/db/queries/guardian'
 import { getGuardianQuestionnaireStep, saveGuardianQuestionnaireAnswer } from '~/db/queries/guardian-questionnaire'
+import { readGuardianReport } from '~/db/queries/guardian-report'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { GuardianAccessTokenSchema, GuardianReportPublicIdSchema } from '~/guardian/http'
@@ -89,6 +90,23 @@ guardianReports.put('/:reportPublicId/answers/:id', async (c) => {
     return problem(404, 'report-not-found')
   }
   return c.json({ saved: result.status, step: result.step }, 200, NO_STORE_HEADERS)
+})
+
+// GET /api/guardian-reports/:reportPublicId — progress metadata while drafting, immutable cards once fulfilled.
+guardianReports.get('/:reportPublicId', async (c) => {
+  const authorized = await withAuthorizedReport(c, readGuardianReport)
+  if (!authorized.authorized) {
+    return problem(403, 'forbidden')
+  }
+  const { result } = authorized
+
+  if (result.status === 'payment-required') {
+    return problem(402, 'payment-required')
+  }
+  if (result.status === 'report-not-found') {
+    return problem(404, 'report-not-found')
+  }
+  return c.json({ report: result.report }, 200, NO_STORE_HEADERS)
 })
 
 async function withAuthorizedReport<T>(

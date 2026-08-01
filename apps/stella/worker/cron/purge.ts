@@ -1,5 +1,6 @@
 import { openDb } from '@sobok/edge/db/client'
 import { nullifyOldCommentIps, nullifyOldReportIps, purgeModeratedComments } from '../db/queries/comment'
+import { purgeProcessedGuardianWebhooks } from '../db/queries/guardian-webhook'
 import { purgeExpiredRateLimits } from '../db/queries/rate-limit'
 import type { Bindings } from '../env'
 
@@ -17,7 +18,11 @@ export async function runRetentionPurge(env: Bindings): Promise<void> {
     const reportIps = await nullifyOldReportIps(db, new Date(now - 90 * DAY))
     const moderated = await purgeModeratedComments(db, new Date(now - 30 * DAY))
     const rateLimits = await purgeExpiredRateLimits(db, new Date(now - DAY))
-    console.log('stella.comments.purge', JSON.stringify({ commentIps, reportIps, moderated, rateLimits }))
+    const guardianWebhooks = await purgeProcessedGuardianWebhooks(db, new Date(now - 90 * DAY))
+    console.log(
+      'stella.retention.purge',
+      JSON.stringify({ commentIps, reportIps, moderated, rateLimits, guardianWebhooks }),
+    )
   } finally {
     await sql.end({ timeout: 5 })
   }

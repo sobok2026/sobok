@@ -350,6 +350,53 @@ export async function resolveGuardianReportAccess(
   return row ?? null
 }
 
+export interface GuardianPurchaseAccess {
+  collectionId: number
+  reportId: number
+  reportPublicId: string
+  purchaseStatus: (typeof guardianPurchaseTable.$inferSelect)['status']
+}
+
+/** Resolves a payment only through the collection capability that owns it. */
+export async function resolveGuardianPurchaseAccess(
+  db: Db,
+  input: { accessTokenHash: string; paymentId: string },
+): Promise<GuardianPurchaseAccess | null> {
+  const [row] = await db
+    .select({
+      collectionId: guardianCollectionTable.id,
+      reportId: guardianReportTable.id,
+      reportPublicId: guardianReportTable.publicId,
+      purchaseStatus: guardianPurchaseTable.status,
+    })
+    .from(guardianCollectionTable)
+    .innerJoin(guardianPurchaseTable, eq(guardianPurchaseTable.collectionId, guardianCollectionTable.id))
+    .innerJoin(
+      guardianReportTable,
+      and(
+        eq(guardianReportTable.id, guardianPurchaseTable.reportId),
+        eq(guardianReportTable.collectionId, guardianCollectionTable.id),
+      ),
+    )
+    .where(
+      and(
+        eq(guardianCollectionTable.accessTokenHash, input.accessTokenHash),
+        eq(guardianPurchaseTable.paymentId, input.paymentId),
+      ),
+    )
+    .limit(1)
+  return row ?? null
+}
+
+export async function guardianPurchaseExists(db: Db, paymentId: string): Promise<boolean> {
+  const [row] = await db
+    .select({ id: guardianPurchaseTable.id })
+    .from(guardianPurchaseTable)
+    .where(eq(guardianPurchaseTable.paymentId, paymentId))
+    .limit(1)
+  return Boolean(row)
+}
+
 interface NewGuardianPurchaseBase {
   paymentId: string
   collectionId: number
@@ -630,6 +677,112 @@ export async function confirmGuardianPurchase(
       reportPublicId: report.publicId,
       credits: product.redrawCredits,
     }
+  })
+}
+
+export type SettleGuardianPurchaseResult =
+  | { status: 'failed' | 'cancelled' | 'refunded'; reportPublicId: string }
+  | { status: 'purchase-not-found' | 'purchase-state-conflict' | 'report-state-conflict' }
+
+/**
+ * Applies a server-read terminal PortOne state without granting anything. A cancellation seen before local
+ * confirmation closes the pending order; one seen after a paid grant revokes the paid entitlement as refunded.
+ */
+export async function settleGuardianPurchase(
+  db: Db,
+  input: {
+    paymentId: string
+    remoteStatus: 'failed' | 'refunded'
+    occurredAt: Date
+    failureCode?: string | null
+    failureMessage?: string | null
+  },
+): Promise<SettleGuardianPurchaseResult> {
+  return db.transaction(async (tx) => {
+    const [purchaseRef] = await tx
+      .select({
+        id: guardianPurchaseTable.id,
+        collectionId: guardianPurchaseTable.collectionId,
+        reportId: guardianPurchaseTable.reportId,
+      })
+      .from(guardianPurchaseTable)
+      .where(eq(guardianPurchaseTable.paymentId, input.paymentId))
+      .limit(1)
+    if (!purchaseRef) {
+      return { status: 'purchase-not-found' as const }
+    }
+
+    const [collection] = await tx
+      .select({ id: guardianCollectionTable.id })
+      .from(guardianCollectionTable)
+      .where(eq(guardianCollectionTable.id, purchaseRef.collectionId))
+      .limit(1)
+      .for('update')
+    if (!collection) {
+      return { status: 'report-state-conflict' as const }
+    }
+    const report = await lockedReportOf(tx, purchaseRef)
+    if (!report) {
+      return { status: 'report-state-conflict' as const }
+    }
+
+    const [purchase] = await tx
+      .select({ status: guardianPurchaseTable.status })
+      .from(guardianPurchaseTable)
+      .where(eq(guardianPurchaseTable.id, purchaseRef.id))
+      .limit(1)
+      .for('update')
+    if (!purchase) {
+      return { status: 'purchase-not-found' as const }
+    }
+
+    if (input.remoteStatus === 'failed') {
+      if (purchase.status === 'failed') {
+        return { status: 'failed' as const, reportPublicId: report.publicId }
+      }
+      if (purchase.status !== 'pending' && purchase.status !== 'review_required') {
+        return { status: 'purchase-state-conflict' as const }
+      }
+      await tx
+        .update(guardianPurchaseTable)
+        .set({
+          status: 'failed',
+          failureCode: input.failureCode?.slice(0, 64) || 'payment_failed',
+          failureMessage: input.failureMessage?.slice(0, 256) || null,
+        })
+        .where(eq(guardianPurchaseTable.id, purchaseRef.id))
+      return { status: 'failed' as const, reportPublicId: report.publicId }
+    }
+
+    if (purchase.status === 'refunded') {
+      return { status: 'refunded' as const, reportPublicId: report.publicId }
+    }
+    if (purchase.status === 'paid') {
+      await tx
+        .update(guardianPurchaseTable)
+        .set({
+          status: 'refunded',
+          refundedAt: input.occurredAt,
+          failureCode: null,
+          failureMessage: null,
+        })
+        .where(eq(guardianPurchaseTable.id, purchaseRef.id))
+      return { status: 'refunded' as const, reportPublicId: report.publicId }
+    }
+    if (!['pending', 'review_required', 'failed', 'cancelled'].includes(purchase.status)) {
+      return { status: 'purchase-state-conflict' as const }
+    }
+    if (purchase.status !== 'cancelled') {
+      await tx
+        .update(guardianPurchaseTable)
+        .set({
+          status: 'cancelled',
+          failureCode: 'payment_cancelled',
+          failureMessage: null,
+        })
+        .where(eq(guardianPurchaseTable.id, purchaseRef.id))
+    }
+    return { status: 'cancelled' as const, reportPublicId: report.publicId }
   })
 }
 

@@ -10,9 +10,13 @@
 # The Turnstile host pin must name the host you actually serve locally, because siteverify echoes back the
 # hostname the widget was solved on and the Worker rejects anything not in this list.
 STELLA_ALLOWED_HOSTNAMES="localhost"
+STELLA_PUBLIC_ORIGIN="http://localhost:8787"
 
-# The 3 true secrets are Cloudflare Secrets Store bindings (accessed via `await env.X.get()`). For local
+# The 5 true secrets are Cloudflare Secrets Store bindings (accessed via `await env.X.get()`). For local
 # dev, seed a LOCAL secrets store (no --remote) so they resolve offline — one per binding's secret_name:
+#   wrangler secrets-store secret create <STORE_ID> --name stella-portone-api-secret     --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-portone-webhook-secret --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-portone-webhook-secret-stg --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name stella-turnstile-secret --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name stella-ip-hash-salt     --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name stella-discord-webhook  --value ""  --scopes workers

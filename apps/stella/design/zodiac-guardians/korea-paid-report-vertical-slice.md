@@ -18,9 +18,10 @@
 - 후속 결제수단: 토스페이먼츠는 실결제 승인 뒤 활성화
 - 현재 구현: 상품 매니페스트, 추첨, 게스트 컬렉션·리포트·구매·획득·보장 도메인,
   실제 한국어 선택형 질문 44개와 선택 메모 1개, 불변 콘텐츠 계약·DB·게시 CLI·답변별 저장과 현재 문항 계산,
-  Turnstile·rate limit을 거치는 guest checkout과 capability 기반 질문 GET/PUT API
-- 아직 미연결: PortOne 원격 confirm·웹훅·재조정, fulfilled report 조회, 실제 DB push·문항 게시,
-  무료 결과와 결제·질문·카드 공개 화면의 서버 상태
+  Turnstile·rate limit을 거치는 guest checkout, PortOne 원격 confirm·서명 웹훅, capability 기반 질문
+  GET/PUT과 draft/fulfilled report GET API
+- 아직 미연결: 15분 pending 재조정, 실제 DB push·문항 게시, 무료 결과와
+  결제·질문·카드 공개 화면의 서버 상태, 이메일 복구 전송
 - 이 문서의 범위: 무료 질문 2개 → 분량 안내·복구 이메일 → 결제 → 서버 검증 → 유료 질문 → 카드 공개
 
 ## 1. 왜 이 흐름이 다음 작업인가
@@ -203,7 +204,7 @@ collection capability를 `Authorization: Bearer`로 전달한다. active `pendin
 `cancelled`이고 report가 아직 draft면 같은 report에 새 pending 구매를 만든다.
 
 신규 응답은 `guest.{collectionPublicId,reportPublicId,accessToken}`과
-`payment.{paymentId,status,sku,storeId,channelKey,payMethod,orderName,amount,market,currency}`로 나눈다.
+`payment.{paymentId,status,sku,storeId,channelKey,payMethod,orderName,amount,market,currency,noticeUrls}`로 나눈다.
 재개 응답은 이미 Authorization으로 보낸 capability를 다시 싣지 않는다. 신규는 `201`, 재개는
 `200`이며 `payment.status`가 `pending`일 때만 브라우저가 결제창을 연다.
 가격과 PortOne 채널은 요청에서 받지 않고 매니페스트와 배포별 channel map에서만 정한다.
@@ -214,11 +215,16 @@ collection capability를 `Authorization: Bearer`로 전달한다. active `pendin
 - capability가 해당 collection과 purchase에 연결되는지 먼저 확인한다.
 - 원격 상태가 `PAID`일 때만 로컬 구매와 금액·통화를 비교하고 유료 질문 entitlement를 지급한다.
 - 처리 중이거나 PortOne 조회가 일시 실패하면 `pending`을 유지한다.
+- PortOne에 결제가 아직 없거나 `READY`·`PAY_PENDING`이면 confirm은 `202`와 `pending`을 반환한다.
+  명시적 실패·취소·환불은 로컬 구매 상태를 수렴한 뒤 `200`으로 그 상태를 반환한다.
+- 금액·통화 불일치는 `review_required`로 고정하고 `409`를 반환해 같은 불일치를 무한 재조회하지 않는다.
 - 질문 진행과 카드 공개 데이터는 confirm의 일회성 응답에만 의존하지 않는다. confirm 뒤 리포트 조회 API를
   호출해 새로고침, 웹훅 선착, 지연 완료가 모두 같은 UI 경로를 사용한다.
 - draft 응답에는 질문 진행률만 포함하고 전체 질문 은행, `familySnapshot`, `cardSnapshot`,
   선택된 희귀도를 포함하지 않는다.
 - fulfilled 응답만 네 `cardEditionId`, 카드 표시 메타데이터, 리포트 문구 버전을 제공한다.
+- fulfilled 카드에는 `cardEditionId`, `familyId`, `slot`, `rarity`, `artworkPath`, `messageKey`만
+  포함한다. 리포트 입력 snapshot, 답변, 누적 signal과 family snapshot은 반환하지 않는다.
 
 ### 유료 질문 HTTP 계약
 
@@ -314,6 +320,9 @@ paid ───── 환불 확인 ───────────────
   허용한 결제수단에 대응하는 한 채널만 checkout 응답으로 보낸다.
 - API Secret과 Webhook Secret은 Stella 전용 Worker binding으로만 읽고 브라우저 번들·응답·로그에
   넣지 않는다.
+- 대표 Store의 콘솔 기본 웹훅은 다른 제품도 사용하므로 Stella checkout은 배포별 고정
+  `STELLA_PUBLIC_ORIGIN`으로 만든 `/api/guardian-webhooks/portone`을 `noticeUrls`로 반환한다. 브라우저는
+  이 값을 결제 요청에 그대로 전달해 Store 기본 URL을 Stella 결제에 한해서 덮어쓴다.
 - PortOne 어댑터는 Stella Worker 호출부 가까이에 두고 Vibe 결제 테이블이나 계정을 공유하지 않는다.
 
 ### 웹훅과 재조정
@@ -324,6 +333,9 @@ paid ───── 환불 확인 ───────────────
 - 서명된 `Transaction.Paid` 이벤트도 지급 근거로 바로 사용하지 않고 PortOne 결제 단건 조회를
   실행한다.
 - 유효한 웹훅은 이미 처리된 이벤트나 관심 없는 이벤트여도 2xx로 응답한다.
+- 처리 완료된 Stella 결제 이벤트만 `webhook-id`, type, `paymentId`로 기록한다. raw payload는 저장하지
+  않으며 일시 실패는 이벤트 행을 남기지 않아 PortOne 재시도를 허용한다. 완료 이벤트 행은 90일 뒤
+  일일 purge에서 정리한다.
 - 15분 이상 `pending`인 구매는 별도 cron이 제한된 batch로 재조회한다.
 - 결제 확인 경로는 웹훅 누락과 브라우저 이탈을 서로 보완해야 하며 어느 하나만 필수 경로가 되지
   않게 한다. PortOne도 브라우저 응답 유실에 대비해 웹훅 사용을 강하게 권장한다.
@@ -336,11 +348,17 @@ Stella에 다음 설정이 필요하다.
 | ------------- | -------------------------------------- |
 | plain var     | `STELLA_PORTONE_STORE_ID`              |
 | plain var     | 허용 결제수단별 Stella channel key map |
+| plain var     | `STELLA_PUBLIC_ORIGIN`                 |
 | Secrets Store | `STELLA_PORTONE_API_SECRET`            |
 | Secrets Store | `STELLA_PORTONE_WEBHOOK_SECRET`        |
 
 PortOne의 Store ID는 상점을 식별하고 channel key는 실제 PG 연결을 선택한다. API Secret은 결제
 거래를 제어하므로 서버에만 둔다.
+
+`STELLA_PORTONE_API_SECRET`에는 PG 채널 설정의 API key·secret key·client key가 아니라 PortOne
+연동 정보에서 별도로 발급한 **V2 API Secret**을 넣는다. 이 값은 Store 범위라 test/live 조회에 함께
+사용하고, `STELLA_PORTONE_WEBHOOK_SECRET`은 PortOne 설정 모드별로 발급한 live/staging 값을 각각
+바인딩한다.
 
 - [PortOne 결제 연동 준비](https://developers.portone.io/opi/ko/integration/ready/readme)
 - [PortOne 연동 정보와 채널 관리](https://developers.portone.io/opi/ko/console/guide/channel-manage)
@@ -502,8 +520,8 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 
 ## 11. 권장 구현 순서
 
-1. Stella 전용 PortOne 어댑터, API·webhook 비밀 binding, 웹훅 이벤트 데이터를 만든다.
-2. confirm·webhook·report read API를 현재 guest checkout·paid questionnaire API에 연결한다.
+1. **완료:** Stella 전용 PortOne 어댑터, API·webhook 비밀 binding, 웹훅 이벤트 데이터를 만든다.
+2. **완료:** confirm·webhook·report read API를 현재 guest checkout·paid questionnaire API에 연결한다.
 3. 무료 결과의 두 질문·provisional 미리보기와 결제 뒤 질문·fulfillment 화면을 연결한다.
 4. pending 재조정과 미결제 checkout context 정리 cron을 연결한다.
 5. `/ko/cards`의 클라이언트 난수·로컬 소유권을 서버 상태로 교체한다.

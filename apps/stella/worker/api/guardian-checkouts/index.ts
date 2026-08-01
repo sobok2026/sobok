@@ -140,7 +140,8 @@ guardianCheckouts.post('/', async (c) => {
 
   const channelKey = c.env.STELLA_PORTONE_CHANNELS?.tosspay_v2
   const storeId = c.env.STELLA_PORTONE_STORE_ID
-  if (!channelKey || !storeId) {
+  const publicOrigin = c.env.STELLA_PUBLIC_ORIGIN
+  if (!channelKey || !storeId || !publicOrigin) {
     console.error('stella.guardian_checkout.channel_unbound (tosspay_v2)')
     c.executionCtx.waitUntil(
       c.env.STELLA_DISCORD_WEBHOOK.get().then((webhook) =>
@@ -216,6 +217,7 @@ guardianCheckouts.post('/', async (c) => {
         amount: outcome.amount,
         market: outcome.market,
         currency: outcome.currency,
+        noticeUrls: [`${publicOrigin}/api/guardian-webhooks/portone`],
       },
     },
     'reportPublicId' in body ? 200 : 201,

@@ -24,11 +24,19 @@ export interface Bindings {
   // channel and production cannot accidentally open a test channel.
   STELLA_PORTONE_STORE_ID: string
   STELLA_PORTONE_CHANNELS: Partial<Record<StellaPortOneChannel, string>>
+  // Pinned origin used for PortOne noticeUrls. The representative Store is shared, so Stella payments must
+  // override the Store-level default webhook endpoint instead of inheriting another product's URL.
+  STELLA_PUBLIC_ORIGIN: string
 
   // ── Secrets Store bindings (async: `await X.get()`) ────────────────────────────────────────────────
   // Siteverify secret for stella's own Turnstile widget (account-turnstile workspace; cutover off the shared
   // "sobok" widget is written in Terraform but not applied yet).
   STELLA_TURNSTILE_SECRET: SecretsStoreSecret
+  // Store-scoped V2 API secret. Browser-return confirm and signed webhooks both use it only to retrieve the
+  // server-authoritative payment state from PortOne.
+  STELLA_PORTONE_API_SECRET: SecretsStoreSecret
+  // PortOne issues separate webhook secrets for live and test mode; wrangler binds the matching value per env.
+  STELLA_PORTONE_WEBHOOK_SECRET: SecretsStoreSecret
   // Static HMAC key for pseudonymous IP hashing (rate-limit + report dedup). Never rotated (see lib/ip.ts).
   STELLA_IP_HASH_SALT: SecretsStoreSecret
   // Discord webhook for moderation/ops alerts. Empty value disables alerting.
