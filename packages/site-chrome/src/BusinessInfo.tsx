@@ -1,9 +1,8 @@
+import { BUSINESS, BUSINESS_FIELD_ORDER, BUSINESS_INFO_LOOKUP_URL, BUSINESS_LABELS } from '@sobok/brand/business'
 import type { Locale } from '@sobok/domain/locale'
 
-import { BUSINESS, BUSINESS_FIELD_ORDER, BUSINESS_INFO_LOOKUP_URL, BUSINESS_LABELS } from '@/content/business'
-
 // Seller-identity disclosure (전자상거래법 §10). Rendered both in the sitewide Footer (compact) and on the
-// standalone /business page. Values come from the single source in content/business.ts.
+// standalone /business page, on every site that sells something. Values come from @sobok/brand/business.
 export default function BusinessInfo({
   locale,
   showHeading = true,

@@ -1,6 +1,7 @@
 import { FREE_DELIVERABLES_KO } from '@deep-type/free-deliverables'
 import { DEEP_TYPE_REPORT_OFFER, majorUnits, PRODUCT_NAME } from '@deep-type/offer'
 import type { Locale } from '@sobok/domain/locale'
+import type { LegalDoc, LegalDocLabels } from '@sobok/site-chrome/legal-doc-article'
 
 // The contract states the price and the product name, so it reads them from the same constants the checkout
 // charges and the PortOne 결제창 prints. 전자상거래법 제13조 제2항 제2호·제3호 make both pre-contract disclosures,
@@ -14,20 +15,7 @@ const PRICE_EN = `USD ${majorUnits('USD', DEEP_TYPE_REPORT_OFFER.en.amount).toFi
 const PRICE_JA = `${DEEP_TYPE_REPORT_OFFER.ja.amount.toLocaleString('ja-JP')}円`
 const PRICE_ZH = `${majorUnits('USD', DEEP_TYPE_REPORT_OFFER.zh.amount).toFixed(2)}美元`
 
-export type LegalSection = {
-  id?: string
-  heading: string
-  body: string[]
-}
-
-export type LegalDoc = {
-  title: string
-  description: string
-  effectiveDate?: string
-  updatedDate: string
-  version?: string
-  sections: LegalSection[]
-}
+export type { LegalDoc, LegalSection } from '@sobok/site-chrome/legal-doc-article'
 
 export type LegalNav = {
   privacy: string
@@ -35,12 +23,7 @@ export type LegalNav = {
   refund: string
 }
 
-export type LegalContent = {
-  updatedLabel: string
-  effectiveLabel: string
-  versionLabel: string
-  contentsLabel: string
-  contactLabel: string
+export type LegalContent = LegalDocLabels & {
   nav: LegalNav
   privacy: LegalDoc
   terms: LegalDoc

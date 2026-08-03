@@ -11,12 +11,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/business
   const locale = await getLocale(params)
   const labels = BUSINESS_LABELS[locale]
 
-  return buildMetadata({
-    description: labels.description,
-    locale,
-    path: '/business',
-    title: labels.heading,
-  })
+  return buildMetadata({ locale, path: '/business', title: labels.heading, description: labels.description })
 }
 
 // The registration details are a table rather than prose, so this page has no `sections` — it is the shell
@@ -28,19 +23,15 @@ export default async function BusinessPage({ params }: PageProps<'/[locale]/busi
 
   return (
     <DocArticle
-      className="bg-background"
+      className="bg-night-sky"
       description={labels.description}
       footer={
         <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-accent">
-          <Link className="underline underline-offset-2 hover:text-foreground" href={`/${locale}/terms`}>
-            {nav.terms}
-          </Link>
-          <Link className="underline underline-offset-2 hover:text-foreground" href={`/${locale}/privacy`}>
-            {nav.privacy}
-          </Link>
-          <Link className="underline underline-offset-2 hover:text-foreground" href={`/${locale}/refund`}>
-            {nav.refund}
-          </Link>
+          {(['terms', 'refund', 'privacy'] as const).map((doc) => (
+            <Link className="underline underline-offset-2 hover:text-foreground" href={`/${locale}/${doc}`} key={doc}>
+              {nav[doc]}
+            </Link>
+          ))}
         </nav>
       }
       intro={<BusinessInfo className="mt-8 text-sm leading-6" locale={locale} showHeading={false} />}

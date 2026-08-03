@@ -1,10 +1,15 @@
-import { LEGAL_CONTACT_EMAIL } from '@sobok/brand/identity'
 import type { Locale } from '@sobok/domain/locale'
+import { LEGAL_CONTACT_EMAIL } from './identity'
 
 // Single source of truth for the seller-identity disclosure required by 전자상거래법 제10조 (전자상거래 등에서의
-// 소비자보호에 관한 법률). Every value here MUST match the PG (토스페이먼츠) merchant application and the
-// 사업자등록증 exactly — a mismatch is a common PG-review rejection reason. "로빈리뷰" is an 개인사업자
-// (개인 과세사업자): the middle two digits of the 사업자등록번호 (373-03-02023 → "03") mark it individual, not a 법인.
+// 소비자보호에 관한 법률). Every value here MUST match the PG merchant application and the 사업자등록증 exactly —
+// a mismatch is a common PG-review rejection reason. "로빈리뷰" is an 개인사업자 (개인 과세사업자): the middle two
+// digits of the 사업자등록번호 (373-03-02023 → "03") mark it individual, not a 법인.
+//
+// Brand-level rather than per-app because one 통신판매업 신고 covers every sobok storefront: vibe sells the
+// DeepType report and stella sells the guardian report under this same registration. Two copies of a
+// registration number is not a duplication that merely risks drift — the disclosure is what the number is
+// filed against, so a site displaying a stale one is a filing violation, not a stale string.
 export const BUSINESS = {
   legalName: '로빈리뷰',
   representative: '곽태욱',
