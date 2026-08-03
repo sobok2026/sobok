@@ -1,9 +1,11 @@
+import type { GuardianSelectedCard } from './draw'
 import { GUARDIAN_REPORT_SLOTS, type GuardianCardEdition, type GuardianReportSlot } from './manifest'
 import type {
   GuardianQuestionnaireContent,
   GuardianQuestionnaireSignalSnapshot,
   GuardianSingleChoiceQuestion,
 } from './questionnaire'
+import { GUARDIAN_CARD_PRESENTATION_SCHEMA_VERSION, type GuardianCardPresentationSnapshot } from './redraw-contract'
 import type {
   GuardianReportNarrativeInput,
   GuardianReportNarrativeSection,
@@ -865,6 +867,32 @@ function loveCardOneLine(editionId: string, focus: string): string {
     throw new Error(`Guardian report copy has no love-card one-line for ${editionId}`)
   }
   return build(focus)
+}
+
+export function buildGuardianLoveCardPresentationKoV1(input: {
+  card: GuardianSelectedCard
+  artworkPath: string
+  signalSnapshot: GuardianQuestionnaireSignalSnapshot
+}): GuardianCardPresentationSnapshot {
+  if (input.card.slot !== 'love') {
+    throw new Error(`Guardian love-card presentation received ${input.card.slot}`)
+  }
+  const copy = sectionCardCopy(input.card)
+  const focus = strongestSignalCopy(input.signalSnapshot, LOVE_FOCUS)
+
+  return {
+    schemaVersion: GUARDIAN_CARD_PRESENTATION_SCHEMA_VERSION,
+    locale: 'ko',
+    cardEditionId: input.card.editionId,
+    familyId: input.card.familyId,
+    slot: input.card.slot,
+    rarity: input.card.rarity,
+    artworkPath: input.artworkPath,
+    title: copy.title,
+    guardians: copy.guardians,
+    artworkAlt: copy.artworkAlt,
+    oneLine: loveCardOneLine(input.card.editionId, focus.focus),
+  }
 }
 
 function chartCopy(input: GuardianReportNarrativeInput, slot: GuardianReportSlot) {

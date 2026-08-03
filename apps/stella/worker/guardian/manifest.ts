@@ -173,6 +173,7 @@ export interface GuardianProductManifest {
   selectionRuleVersion: string
   oddsVersion: string
   renderVersion: string
+  cardCopyVersions: Partial<Record<Locale, string>>
   weightScale: number
   guarantee: {
     ruleVersion: string
@@ -198,6 +199,7 @@ export const CURRENT_GUARDIAN_MANIFEST = {
   selectionRuleVersion: 'guardian-family-selection-v1',
   oddsVersion: 'guardian-love-rarity-v1',
   renderVersion: 'guardian-card-render-v1',
+  cardCopyVersions: { ko: 'guardian-report-copy-ko-v1' },
   weightScale: 10_000,
   guarantee: {
     ruleVersion: 'guardian-unowned-every-5-paid-v1',
@@ -464,6 +466,17 @@ export function guardianProductOrderName(
   return orderName
 }
 
+export function guardianCardCopyVersion(
+  locale: Locale,
+  manifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST,
+): string {
+  const version = manifest.cardCopyVersions[locale]
+  if (!version) {
+    throw new Error(`Guardian manifest ${manifest.manifestVersion} has no card copy for ${locale}`)
+  }
+  return version
+}
+
 /** Launch availability is manifest data, not a locale branch in the HTTP or UI flow. */
 export function guardianFullReportIsAvailable(
   locale: Locale,
@@ -484,12 +497,16 @@ function validateGuardianManifest(manifest: GuardianProductManifest): void {
   const familyIds = new Set(manifest.families.map(({ id }) => id))
   const editionIds = new Set(manifest.editions.map(({ id }) => id))
   const productSkus = new Set(manifest.products.map(({ sku }) => sku))
+  const cardCopyVersions = Object.entries(manifest.cardCopyVersions)
 
   if (familyIds.size !== manifest.families.length || editionIds.size !== manifest.editions.length) {
     throw new Error('Guardian manifest contains duplicate family or edition IDs')
   }
   if (productSkus.size !== manifest.products.length) {
     throw new Error('Guardian manifest contains duplicate product SKUs')
+  }
+  if (cardCopyVersions.length === 0 || cardCopyVersions.some(([, version]) => !version)) {
+    throw new Error('Guardian manifest has no valid locale card-copy version')
   }
   if (!Number.isSafeInteger(manifest.guarantee.paidDrawInterval) || manifest.guarantee.paidDrawInterval < 1) {
     throw new Error('Guardian guarantee interval must be positive')
@@ -617,8 +634,12 @@ function validateGuardianManifest(manifest: GuardianProductManifest): void {
 
   for (const product of manifest.products) {
     const orderNames = Object.values(product.orderNames)
+    const orderNameLocales = Object.keys(product.orderNames) as Locale[]
     if (orderNames.length === 0 || orderNames.some((orderName) => !orderName || orderName.length > 128)) {
       throw new Error(`Guardian product ${product.sku} has an invalid order name`)
+    }
+    if (orderNameLocales.some((locale) => !manifest.cardCopyVersions[locale])) {
+      throw new Error(`Guardian product ${product.sku} has an order locale without card copy`)
     }
     if (product.prices.length === 0) {
       throw new Error(`Guardian product ${product.sku} has no price`)

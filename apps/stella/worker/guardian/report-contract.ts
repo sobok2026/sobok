@@ -1,12 +1,13 @@
 import type { Locale } from '@sobok/domain/locale'
 import type { GuardianSelectedCard } from './draw'
-import type { GuardianRarity, GuardianReportInputSnapshot, GuardianReportSlot } from './manifest'
+import type { GuardianReportInputSnapshot, GuardianReportSlot } from './manifest'
 import type {
   GuardianQuestionnaireAnswerSnapshot,
   GuardianQuestionnaireClientStep,
   GuardianQuestionnaireContent,
   GuardianQuestionnaireSignalSnapshot,
 } from './questionnaire'
+import type { GuardianCardPresentationSnapshot } from './redraw-contract'
 
 export const GUARDIAN_REPORT_NARRATIVE_SCHEMA_VERSION = 1 as const
 
@@ -69,8 +70,9 @@ export interface GuardianReportNarrativeSection {
 
 /**
  * Fully rendered, locale-specific paid content. This object is stored once at fulfillment instead of keeping
- * selected copy keys that would require an old renderer forever. The capability-protected report API returns
- * this snapshot verbatim and never exposes the full copy/question banks.
+ * selected copy keys that would require an old renderer forever. A later explicit card selection may overlay
+ * only that acquisition's card presentation fields; chart clues, details, guidance, reflection and closing
+ * remain this immutable snapshot. The API never exposes the full copy/question banks.
  */
 export interface GuardianReportNarrativeSnapshot {
   schemaVersion: typeof GUARDIAN_REPORT_NARRATIVE_SCHEMA_VERSION
@@ -121,13 +123,10 @@ export type GuardianReportView =
       locale: Locale
       fulfilledAt: string
       versions: GuardianReportVersions
-      cards: {
-        cardEditionId: string
-        familyId: string
-        slot: GuardianReportSlot
-        rarity: GuardianRarity | null
-        artworkPath: string
-      }[]
+      cards: (GuardianCardPresentationSnapshot & {
+        acquisitionPublicId: string
+        acquisitionCount: number
+      })[]
       narrative: GuardianReportNarrativeSnapshot
     }
 

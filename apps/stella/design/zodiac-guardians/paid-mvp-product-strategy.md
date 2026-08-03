@@ -16,8 +16,9 @@
   콘텐츠 계약·실제 한국어 선택형 44개와 선택 메모 1개·DB·게시 CLI·답변별 진행·마지막 답변의 카드 fulfillment,
   중앙 PortOne 연동, 공개 랜딩과 분리된 무료 검사·무료 결과·유료 검사·유료 결과, checkout·질문·리포트 API,
   staging·production schema·문항 게시, 공용 scheduler 기반 pending 재조정과 30일 미결제 정리,
-  결제 완료 메일과 15분 1회용 재열람 링크 교환까지 구현. 새 복구 테이블·환경별 Resend secret의 운영 반영,
-  계정 귀속, 사랑 재추첨 UI·결제와 production 1,024장 카탈로그는 후속 작업
+  결제 완료 메일과 15분 1회용 재열람 링크 교환, 사랑 카드 재추첨 checkout·결제 확정·크레딧·추첨·
+  보관함·명시적 대표 카드 선택 UI/API까지 구현. 새 재추첨 스키마의 환경별 운영 반영, Stella 계정 귀속과
+  production 1,024장 카탈로그는 후속 작업
 
 ## 1. 목표와 제품 원칙
 
@@ -63,14 +64,18 @@
   바뀌지는 않는다.
 - production에서는 같은 후보 선택 계약에 패밀리와 에디션을 추가하고, 출생 차트와 질문 답변에
   따라 네 슬롯의 기본 패밀리와 원화가 달라지게 한다.
-- 현재 유료 결과는 서버가 저장한 매니페스트 버전·선택 컨텍스트·카드 스냅샷만 렌더한다. 브라우저
-  고정 카드나 희귀도 재추첨 경로는 두지 않는다.
+- 최초 유료 결과는 서버가 저장한 매니페스트 버전·선택 컨텍스트·카드 스냅샷으로 만든다. 이후 결과
+  조회는 서버에 명시적으로 걸어 둔 획득 카드만 합성하며 브라우저가 카드를 임의로 바꾸지 않는다.
 - production 정식 출시 시점에는 실제로 획득 가능한 3:4 에디션을 최소 1,024장 게시한다.
   `1,024`는 패밀리 수와 곱하는 숫자가 아니라 준비가 끝난 실제 일러스트의 총수다.
 - 질문 답변과 출생 차트는 사랑 희귀도 확률에는 영향을 주지 않는다.
 - 첫 구매 이후에는 전체 리포트를 다시 결제시키지 않고 사랑 카드만 저가로 재추첨할 수 있다.
 - 사랑 카드 재추첨에서는 일러스트와 카드의 한 줄 메시지만 바뀐다.
 - 이미 구매한 사랑 해석 본문과 나머지 세 카드의 해석은 바뀌지 않는다.
+- 새 사랑 카드는 획득 즉시 게스트 보관함에 추가하지만 현재 리포트에는 자동으로 적용하지 않는다.
+  사용자가 `이 카드를 리포트에 걸기`를 눌렀을 때만 대표 사랑 카드가 바뀐다.
+- 전체 리포트 구매 때 만든 게스트 보관함과 구매 이메일 재열람 권한으로 재추첨도 구매·사용할 수 있다.
+  계정 생성은 재추첨 결제의 선행 조건이 아니다.
 - 카드 원화는 3:4만 사용한다. 카드 뒷면, 프레임, 이름, 제목, 배지는 앱 UI에서 합성한다.
 - 출시 뒤 후보가 늘어나도 같은 선택 계약과 결과 형식을 유지한다.
 
@@ -249,7 +254,8 @@
 
 - 중복 획득을 허용한다.
 - 일정 횟수마다 미보유 카드를 보장한다.
-- 보유 상태는 Stella 계정에 귀속한다.
+- 첫 구매부터 보유 상태는 `guardian_collection`에 귀속한다. 처음에는 게스트 capability와 구매 이메일로
+  접근하고, 계정 생성 뒤에는 같은 collection을 Stella 계정이 인수한다.
 
 ### 유료 MVP 확정안
 
@@ -269,7 +275,8 @@
 - 새로운 카드 패밀리를 얻으면 그 패밀리의 수집과 보장 카운터가 별도로 시작된다.
 - UI에 `미보유 확정까지 2회`처럼 남은 횟수를 계속 표시한다.
 
-MVP의 보장 범위는 `Stella 계정 × 카드 패밀리`로 둔다. 시즌 앨범이 여러 개 생길 때도 스키마를
+MVP의 보장 범위는 `guardian_collection × 카드 패밀리 × 보장 규칙 버전`으로 둔다. 계정 귀속은 같은
+collection을 연결하므로 진행률이 초기화되지 않는다. 시즌 앨범이 여러 개 생길 때도 스키마를
 갈아엎지 않도록 내부적으로는 `guaranteeScopeId`를 두고, MVP에서는 카드 패밀리 ID를 사용한다.
 장기적으로 앨범별 보장이 더 적합한지는 실제 수집 행동을 보고 결정한다.
 
@@ -340,14 +347,18 @@ MVP의 보장 범위는 `Stella 계정 × 카드 패밀리`로 둔다. 시즌 �
   → 서버 결제 확인과 유료 질문 잠금 해제
   → 유료 개인화 선택형 질문 16~20개
   → 카드 선택과 즉시 공개
-  → 결과를 본 뒤 Stella 계정에 보관
-  → 컬렉션·재추첨·재방문
+  → 게스트 보관함과 구매 이메일 재열람으로 결과 보존
+  → 사랑 카드 재추첨 결제·획득
+  → 새 카드는 보관함에 추가, 선택 시에만 리포트 대표 카드 교체
+  → 획득 직후 Stella 계정 보관 제안
+  → 계정 생성 시 기존 게스트 collection을 그대로 귀속
 ```
 
 - 첫 결제 전에 회원가입을 강제하지 않는다.
 - 유료 질문의 개수 범위와 예상 소요시간은 결제 전에 알리되 원문은 결제 확인 뒤 제공한다.
 - 결제 성공과 질문 시작 사이에 계정 생성을 끼워 넣지 않는다.
-- 계정 보관은 사용자가 이미 가치를 확인한 직후 제안한다.
+- 계정 보관은 첫 카드 공개 또는 재추첨 획득처럼 사용자가 가치를 확인한 직후 제안한다. 게스트 구매와
+  재추첨은 계정 생성 없이 끝까지 가능해야 한다.
 - 게스트 이메일은 결제 직전 필수로 받으며 “영수증과 재열람 링크용, 계정 생성 아님”을 입력란
   바로 아래에 표시한다.
 - 게스트 구매는 복구 가능한 구매 접근 토큰과 이메일 전달 상태를 가진다.
@@ -535,22 +546,23 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
 
 기존 프로토타입 이벤트에 다음을 추가한다.
 
-| 이벤트                         | 의미                                 |
-| ------------------------------ | ------------------------------------ |
-| `guardian_checkout_start`      | 전체 리포트 결제를 시작함            |
-| `guardian_purchase_complete`   | 서버 검증된 전체 리포트 구매         |
-| `guardian_account_claim_start` | 결과를 Stella 계정에 보관하기 시작함 |
-| `guardian_account_claimed`     | 게스트 구매가 Stella 계정에 연결됨   |
-| `guardian_redraw_offer_view`   | 사랑 카드 재추첨 제안을 봄           |
-| `guardian_redraw_purchase`     | 재추첨권을 구매함                    |
-| `guardian_redraw_used`         | 재추첨권 한 장을 사용함              |
-| `guardian_duplicate_drawn`     | 보유 중인 에디션이 다시 나옴         |
-| `guardian_guarantee_progress`  | 미보유 보장 카운터가 변함            |
-| `guardian_unowned_guaranteed`  | 미보유 보장 추첨이 실행됨            |
-| `guardian_reopen_request_view` | 구매 이메일 재열람 화면을 봄         |
-| `guardian_reopen_requested`    | 구매 이메일로 재열람 메일을 요청함   |
-| `guardian_reopen_link_view`    | 이메일의 1회용 링크 화면을 엶        |
-| `guardian_report_reopen`       | 구매한 리포트를 다시 엶              |
+| 이벤트                              | 의미                                 |
+| ----------------------------------- | ------------------------------------ |
+| `guardian_checkout_start`           | 전체 리포트 결제를 시작함            |
+| `guardian_purchase_complete`        | 서버 검증된 전체 리포트 구매         |
+| `guardian_account_claim_start`      | 결과를 Stella 계정에 보관하기 시작함 |
+| `guardian_account_claimed`          | 게스트 구매가 Stella 계정에 연결됨   |
+| `guardian_redraw_offer_clicked`     | 전체 리포트에서 재추첨 화면으로 이동 |
+| `guardian_redraw_opened`            | 재추첨 보관함과 상품을 불러옴        |
+| `guardian_redraw_checkout_started`  | 재추첨권 결제를 시작함               |
+| `guardian_redraw_payment_confirmed` | 서버가 재추첨 결제를 확인함          |
+| `guardian_redraw_created`           | 크레딧 한 장을 사용해 카드를 획득함  |
+| `guardian_redraw_revealed`          | 카드 앞면을 실제로 공개함            |
+| `guardian_redraw_equipped`          | 획득 카드를 리포트 대표로 선택함     |
+| `guardian_reopen_request_view`      | 구매 이메일 재열람 화면을 봄         |
+| `guardian_reopen_requested`         | 구매 이메일로 재열람 메일을 요청함   |
+| `guardian_reopen_link_view`         | 이메일의 1회용 링크 화면을 엶        |
+| `guardian_report_reopen`            | 구매한 리포트를 다시 엶              |
 
 결제 완료 이벤트는 브라우저 콜백이 아니라 서버에서 최종 확인된 구매를 기준으로 기록한다.
 
@@ -583,9 +595,17 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
   [한국어 개인화 리포트 본문 엔진과 최종 계약](./paid-report-content-engine.md)을 따른다.
 - 모든 획득은 `guardian_card_acquisition`에 추가하고, 빠른 조회용 보유 집계는
   `guardian_card_ownership`에 트랜잭션으로 함께 반영한다.
+- 카드 획득 시 locale별 이름·대체 텍스트·한 줄과 원화 경로를 `presentation_snapshot`으로 고정한다.
+  이후 카탈로그나 문구를 개정해도 이미 공개한 카드 표현은 조용히 바뀌지 않는다.
+- `guardian_report_card_selection`은 슬롯별로 현재 걸어 둔 acquisition을 가리킨다. 최초 fulfillment가
+  네 슬롯을 채우고 재추첨은 이 포인터를 자동 변경하지 않으며, 명시적 선택 API만 사랑 슬롯을 바꾼다.
 - 재추첨권은 출처 없는 잔액 대신 `guardian_redraw_grant`로 기록한다. 결제와 계정 저장 보상을
   별도 grant로 구분하고 각각 한 번만 발급한다.
 - 유료권 차감, 미보유 판단, 추첨, 획득 이력, 보유 집계, 보장 카운터 변경을 한 DB 트랜잭션으로 묶는다.
+- 재추첨 checkout UUID는 같은 PortOne 주문을, draw UUID는 같은 acquisition을 반환한다. 네트워크 재시도나
+  더블 클릭이 새 주문을 만들거나 크레딧을 두 번 차감하지 않는다.
+- 공용 scheduler는 이미 지급된 크레딧·카드·결제 이력은 유지하고, 크레딧을 지급하지 않은 채 30일 지난
+  재추첨 pending·failed·cancelled 주문만 정리한다.
 - 결제 확인 반환, 웹훅, 재조정 작업은 같은 멱등 구매 확정 함수를 호출하며 전체 리포트 결제
   확정은 카드가 아니라 질문 entitlement만 지급한다.
 - 전체 리포트 entitlement와 durable 복구 메일 intent를 같은 구매 트랜잭션에서 만들고 실제 Resend
@@ -593,15 +613,18 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
   교환 성공 시 collection capability를 교체한다. 장기 capability 원문은 메일이나 URL에 넣지 않는다.
 - 마지막 유효 답변 저장, answer·signal snapshot, 패밀리 선택, 사랑 희귀도 추첨, 최초 네 장
   획득 이력과 `fulfilled` 전환은 하나의 report 트랜잭션으로 묶는다.
-- 공개 API는 상품·확률·보장 메타데이터와 guest checkout, 결제 확인, 유료 질문 진행, 최종 report 조회를
-  제공한다. 사랑 재추첨 구매·사용과 계정 귀속 mutation은 해당 UI와 소유권 경계를 완성한 뒤 공개한다.
+- capability 보호 API는 상품·확률·보장 메타데이터와 guest checkout, 결제 확인, 유료 질문 진행, 최종
+  report 조회에 더해 사랑 재추첨 상태·checkout·draw·대표 카드 선택을 제공한다. 계정 귀속 mutation은
+  Stella 전용 인증과 계정 소유권 경계를 완성한 뒤 추가한다.
 - production과 staging은 같은 제품 단위 Hyperdrive와 `stella_app` role을 사용한다. build-time
   schema만 각각 `stella`, `stella_stg`로 한정하고 Hyperdrive 캐시는 read-after-write 일관성을
   위해 계속 끈다.
 
-DB 스키마는 코드에 선언하지만 실제 반영은 이 저장소 규칙대로 `drizzle-kit push`와
-운영 binding을 함께 준비한 뒤 별도 운영 단계에서 수행한다. 2026-08-01에 `stella_stg`·`stella` 양쪽
-schema와 동일한 한국어 v1 문항 게시까지 완료했으며, 이후 버전도 같은 순서와 해시 검증을 따른다.
+DB 스키마는 코드에 선언하지만 실제 반영은 이 저장소 규칙대로 `drizzle-kit push`를 별도 운영 단계에서
+수행한다. 2026-08-01에 반영한 기존 `stella_stg`·`stella` schema와 한국어 v1 문항 위에 이번 재추첨의
+presentation·대표 카드 선택·checkout/draw 멱등 컬럼을 추가 반영해야 한다. 레거시 backfill 경로는 두지
+않으므로 기존 fulfillment 데이터를 유지할 환경이라면 적용 전에 해당 데이터를 비우고 깨끗한 계약으로
+다시 생성한다. 이후 문항 버전도 기존 게시 순서와 해시 검증을 따른다.
 
 한국 전체 리포트의 guest draft, checkout, confirm, webhook, report read API와 화면 상태의 구체적인
 계약은 [한국 전체 리포트 결제·공개 수직 슬라이스](./korea-paid-report-vertical-slice.md)에 고정한다.

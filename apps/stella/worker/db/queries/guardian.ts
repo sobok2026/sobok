@@ -5,9 +5,10 @@ import { drawInitialGuardianReport, drawLoveRedraw, type GuardianSelectedCard } 
 import {
   CURRENT_GUARDIAN_MANIFEST,
   type GuardianFullReportProductSku,
-  type GuardianLoveRedrawProductSku,
-  type GuardianRarity,
+  type GuardianProductManifest,
   type GuardianReportInputSnapshot,
+  guardianCardCopyVersion,
+  guardianEdition,
   guardianManifest,
   guardianProduct,
   guardianProductOrderName,
@@ -16,8 +17,12 @@ import {
   guardianReportCopyVersion,
 } from '../../guardian/manifest'
 import type { GuardianQuestionnaireContent } from '../../guardian/questionnaire'
-import { type GuardianReportNarrativeSnapshot, generateGuardianReportNarrative } from '../../guardian/report'
-import { newGuardianPublicId } from '../../guardian/tokens'
+import { GUARDIAN_CARD_PRESENTATION_SCHEMA_VERSION } from '../../guardian/redraw-contract'
+import {
+  type GuardianReportNarrativeSnapshot,
+  generateGuardianLoveCardPresentation,
+  generateGuardianReportNarrative,
+} from '../../guardian/report'
 import {
   guardianCardAcquisitionTable,
   guardianCardOwnershipTable,
@@ -28,6 +33,7 @@ import {
   guardianRedrawGrantTable,
   guardianReportTable,
 } from '../schema/guardian'
+import { recordGuardianAcquisition, selectGuardianReportCard } from './guardian-card'
 
 export interface NewGuestGuardianCheckout {
   collectionPublicId: string
@@ -428,103 +434,6 @@ export async function touchPendingGuardianPurchaseAfterReconciliation(
     .where(and(eq(guardianPurchaseTable.paymentId, paymentId), eq(guardianPurchaseTable.status, 'pending')))
 }
 
-interface NewGuardianPurchaseBase {
-  paymentId: string
-  collectionId: number
-  reportId: number
-  market: string
-}
-
-export type NewGuardianPurchase = NewGuardianPurchaseBase &
-  (
-    | {
-        sku: GuardianFullReportProductSku
-        recoveryEmail: string
-        recoveryEmailNormalized: string
-      }
-    | {
-        sku: GuardianLoveRedrawProductSku
-        recoveryEmail?: never
-        recoveryEmailNormalized?: never
-      }
-  )
-
-export type CreateGuardianPurchaseResult =
-  | {
-      status: 'created'
-      amount: number
-      market: string
-      currency: string
-      manifestVersion: string
-    }
-  | { status: 'report-not-found' | 'report-state-conflict' | 'active-purchase-exists' }
-
-/**
- * Persists only a server-priced pending order. Checkout may return these values to PortOne, but it must never
- * accept amount/currency from the browser.
- */
-export async function createPendingGuardianPurchase(
-  db: Db,
-  input: NewGuardianPurchase,
-): Promise<CreateGuardianPurchaseResult> {
-  return db.transaction(async (tx) => {
-    const report = await lockedReportOf(tx, input)
-
-    if (!report) {
-      return { status: 'report-not-found' as const }
-    }
-    const manifest = guardianManifest(report.manifestVersion)
-    const product = guardianProduct(input.sku, manifest)
-    const price = guardianProductPrice(input.sku, input.market, manifest)
-    const orderName = guardianProductOrderName(input.sku, report.locale, manifest)
-    if (
-      (product.kind === 'full_report' && (report.status !== 'draft' || product.sku !== report.productSku)) ||
-      (product.kind === 'love_redraw' && report.status !== 'fulfilled')
-    ) {
-      return { status: 'report-state-conflict' as const }
-    }
-    if (product.kind === 'full_report') {
-      const [activePurchase] = await tx
-        .select({ id: guardianPurchaseTable.id })
-        .from(guardianPurchaseTable)
-        .where(
-          and(
-            eq(guardianPurchaseTable.reportId, input.reportId),
-            eq(guardianPurchaseTable.kind, 'full_report'),
-            inArray(guardianPurchaseTable.status, ['pending', 'paid', 'review_required']),
-          ),
-        )
-        .limit(1)
-      if (activePurchase) {
-        return { status: 'active-purchase-exists' as const }
-      }
-    }
-
-    await tx.insert(guardianPurchaseTable).values({
-      paymentId: input.paymentId,
-      collectionId: input.collectionId,
-      reportId: input.reportId,
-      sku: product.sku,
-      kind: product.kind,
-      orderName,
-      amount: price.amountMinor,
-      market: price.market,
-      currency: price.currency,
-      recoveryEmail: input.recoveryEmail,
-      recoveryEmailNormalized: input.recoveryEmailNormalized,
-      manifestVersion: manifest.manifestVersion,
-    })
-
-    return {
-      status: 'created' as const,
-      amount: price.amountMinor,
-      market: price.market,
-      currency: price.currency,
-      manifestVersion: manifest.manifestVersion,
-    }
-  })
-}
-
 export interface VerifiedGuardianPayment {
   paymentId: string
   amount: number
@@ -884,17 +793,37 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
   })
 
   for (const card of initial.cards) {
-    await recordGuardianAcquisition(db, {
+    const edition = guardianEdition(card.editionId, manifest)
+    const section = narrative.sections.find((candidate) => candidate.slot === card.slot)
+    if (!section) {
+      throw new Error(`Guardian report narrative is missing its ${card.slot} presentation`)
+    }
+    const acquisition = await recordGuardianAcquisition(db, {
       collectionId: input.collectionId,
       reportId: input.reportId,
+      drawRequestId: null,
       grantId: null,
       card,
+      presentation: {
+        schemaVersion: GUARDIAN_CARD_PRESENTATION_SCHEMA_VERSION,
+        locale: report.locale,
+        cardEditionId: card.editionId,
+        familyId: card.familyId,
+        slot: card.slot,
+        rarity: card.rarity,
+        artworkPath: edition.artworkPath,
+        title: section.title,
+        guardians: section.guardians,
+        artworkAlt: section.artworkAlt,
+        oneLine: section.oneLine,
+      },
       source: 'initial_report',
       guaranteeDue: false,
       guaranteedUnowned: false,
       manifestVersion: manifest.manifestVersion,
       oddsVersion: manifest.oddsVersion,
     })
+    await selectGuardianReportCard(db, { reportId: input.reportId, slot: card.slot, acquisitionId: acquisition.id })
   }
 
   await db
@@ -926,6 +855,11 @@ export async function grantGuardianAccountSaveReward(
     if (report?.status !== 'fulfilled' || !report.loveFamilyId) {
       return 'report-not-found'
     }
+    const rewardManifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST
+    const rewardFamily = rewardManifest.families.find(({ id }) => id === report.loveFamilyId)
+    if (rewardFamily?.slot !== 'love' || !rewardManifest.cardCopyVersions[report.locale]) {
+      return 'report-not-found'
+    }
 
     const rows = await tx
       .insert(guardianRedrawGrantTable)
@@ -936,7 +870,7 @@ export async function grantGuardianAccountSaveReward(
         familyId: report.loveFamilyId,
         kind: 'account_save_reward',
         totalCredits: 1,
-        manifestVersion: report.manifestVersion,
+        manifestVersion: rewardManifest.manifestVersion,
       })
       .onConflictDoNothing({ target: guardianRedrawGrantTable.grantKey })
       .returning({ id: guardianRedrawGrantTable.id })
@@ -948,22 +882,21 @@ export type ConsumeGuardianRedrawResult =
   | {
       status: 'drawn'
       acquisitionPublicId: string
-      card: GuardianSelectedCard
+      presentation: (typeof guardianCardAcquisitionTable.$inferSelect)['presentationSnapshot']
       duplicate: boolean
       guaranteeDue: boolean
       guaranteedUnowned: boolean
-      remainingCreditsInGrant: number
-      paidDrawsInCycle: number
-      paidDrawsUntilGuarantee: number
+      created: boolean
     }
-  | { status: 'report-not-found' | 'no-credit' | 'guarantee-version-conflict' }
+  | { status: 'report-not-found' }
+  | { status: 'no-credit' }
 
 export async function consumeGuardianRedraw(
   db: Db,
   input: {
     collectionId: number
     reportId: number
-    creditKind: 'paid' | 'account_save_reward'
+    requestId: string
   },
 ): Promise<ConsumeGuardianRedrawResult> {
   return db.transaction(async (tx) => {
@@ -978,18 +911,48 @@ export async function consumeGuardianRedraw(
     }
 
     const report = await lockedReportOf(tx, input)
-    if (report?.status !== 'fulfilled' || !report.loveFamilyId) {
+    if (
+      report?.status !== 'fulfilled' ||
+      !report.loveFamilyId ||
+      !report.questionnaireSignalSnapshot ||
+      !report.fulfilledAt
+    ) {
       return { status: 'report-not-found' as const }
+    }
+
+    const [existing] = await tx
+      .select({
+        publicId: guardianCardAcquisitionTable.publicId,
+        presentation: guardianCardAcquisitionTable.presentationSnapshot,
+        duplicate: guardianCardAcquisitionTable.duplicate,
+        guaranteeDue: guardianCardAcquisitionTable.guaranteeDue,
+        guaranteedUnowned: guardianCardAcquisitionTable.guaranteedUnowned,
+      })
+      .from(guardianCardAcquisitionTable)
+      .where(
+        and(
+          eq(guardianCardAcquisitionTable.collectionId, input.collectionId),
+          eq(guardianCardAcquisitionTable.reportId, input.reportId),
+          eq(guardianCardAcquisitionTable.drawRequestId, input.requestId),
+        ),
+      )
+      .limit(1)
+    if (existing) {
+      return {
+        status: 'drawn' as const,
+        acquisitionPublicId: existing.publicId,
+        presentation: existing.presentation,
+        duplicate: existing.duplicate,
+        guaranteeDue: existing.guaranteeDue,
+        guaranteedUnowned: existing.guaranteedUnowned,
+        created: false,
+      }
     }
 
     const [grant] = await tx
       .select({
         id: guardianRedrawGrantTable.id,
-        purchaseId: guardianRedrawGrantTable.purchaseId,
-        familyId: guardianRedrawGrantTable.familyId,
         kind: guardianRedrawGrantTable.kind,
-        totalCredits: guardianRedrawGrantTable.totalCredits,
-        consumedCredits: guardianRedrawGrantTable.consumedCredits,
         manifestVersion: guardianRedrawGrantTable.manifestVersion,
       })
       .from(guardianRedrawGrantTable)
@@ -998,7 +961,6 @@ export async function consumeGuardianRedraw(
           eq(guardianRedrawGrantTable.collectionId, input.collectionId),
           eq(guardianRedrawGrantTable.reportId, input.reportId),
           eq(guardianRedrawGrantTable.familyId, report.loveFamilyId),
-          eq(guardianRedrawGrantTable.kind, input.creditKind),
           sql`${guardianRedrawGrantTable.consumedCredits} < ${guardianRedrawGrantTable.totalCredits}`,
           or(
             eq(guardianRedrawGrantTable.kind, 'account_save_reward'),
@@ -1028,12 +990,15 @@ export async function consumeGuardianRedraw(
         ruleVersion: manifest.guarantee.ruleVersion,
       })
       .onConflictDoNothing({
-        target: [guardianGuaranteeProgressTable.collectionId, guardianGuaranteeProgressTable.scopeId],
+        target: [
+          guardianGuaranteeProgressTable.collectionId,
+          guardianGuaranteeProgressTable.scopeId,
+          guardianGuaranteeProgressTable.ruleVersion,
+        ],
       })
 
     const [progress] = await tx
       .select({
-        ruleVersion: guardianGuaranteeProgressTable.ruleVersion,
         paidDrawsInCycle: guardianGuaranteeProgressTable.paidDrawsInCycle,
       })
       .from(guardianGuaranteeProgressTable)
@@ -1041,6 +1006,7 @@ export async function consumeGuardianRedraw(
         and(
           eq(guardianGuaranteeProgressTable.collectionId, input.collectionId),
           eq(guardianGuaranteeProgressTable.scopeId, scopeId),
+          eq(guardianGuaranteeProgressTable.ruleVersion, manifest.guarantee.ruleVersion),
         ),
       )
       .limit(1)
@@ -1048,10 +1014,6 @@ export async function consumeGuardianRedraw(
     if (!progress) {
       throw new Error('Guardian guarantee progress insert returned no row')
     }
-    if (progress.ruleVersion !== manifest.guarantee.ruleVersion) {
-      return { status: 'guarantee-version-conflict' as const }
-    }
-
     const ownedRows = await tx
       .select({ editionId: guardianCardOwnershipTable.editionId })
       .from(guardianCardOwnershipTable)
@@ -1067,16 +1029,26 @@ export async function consumeGuardianRedraw(
         familyId: scopeId,
         ownedEditionIds,
         paidDrawsInCycle: progress.paidDrawsInCycle,
-        creditKind: input.creditKind,
+        creditKind: grant.kind,
       },
       { manifest },
     )
-    const acquisitionPublicId = await recordGuardianAcquisition(tx, {
+    const edition = guardianEdition(decision.card.editionId, manifest)
+    const presentation = generateGuardianLoveCardPresentation({
+      locale: report.locale,
+      copyVersion: guardianCardCopyVersion(report.locale, manifest),
+      card: decision.card,
+      artworkPath: edition.artworkPath,
+      signalSnapshot: report.questionnaireSignalSnapshot,
+    })
+    const acquisition = await recordGuardianAcquisition(tx, {
       collectionId: input.collectionId,
       reportId: input.reportId,
+      drawRequestId: input.requestId,
       grantId: grant.id,
       card: decision.card,
-      source: input.creditKind === 'paid' ? 'paid_redraw' : 'account_save_reward',
+      presentation,
+      source: grant.kind === 'paid' ? 'paid_redraw' : 'account_save_reward',
       guaranteeDue: decision.guaranteeDue,
       guaranteedUnowned: decision.guaranteedUnowned,
       manifestVersion: manifest.manifestVersion,
@@ -1088,7 +1060,7 @@ export async function consumeGuardianRedraw(
       .set({ consumedCredits: sql`${guardianRedrawGrantTable.consumedCredits} + 1` })
       .where(eq(guardianRedrawGrantTable.id, grant.id))
 
-    if (input.creditKind === 'paid') {
+    if (grant.kind === 'paid') {
       await tx
         .update(guardianGuaranteeProgressTable)
         .set({ paidDrawsInCycle: decision.nextPaidDrawsInCycle })
@@ -1096,116 +1068,21 @@ export async function consumeGuardianRedraw(
           and(
             eq(guardianGuaranteeProgressTable.collectionId, input.collectionId),
             eq(guardianGuaranteeProgressTable.scopeId, scopeId),
+            eq(guardianGuaranteeProgressTable.ruleVersion, manifest.guarantee.ruleVersion),
           ),
         )
     }
 
-    const interval = manifest.guarantee.paidDrawInterval
     return {
       status: 'drawn' as const,
-      acquisitionPublicId,
-      card: decision.card,
-      duplicate: ownedEditionIds.has(decision.card.editionId),
+      acquisitionPublicId: acquisition.publicId,
+      presentation,
+      duplicate: acquisition.duplicate,
       guaranteeDue: decision.guaranteeDue,
       guaranteedUnowned: decision.guaranteedUnowned,
-      remainingCreditsInGrant: grant.totalCredits - grant.consumedCredits - 1,
-      paidDrawsInCycle: decision.nextPaidDrawsInCycle,
-      paidDrawsUntilGuarantee: interval - decision.nextPaidDrawsInCycle,
+      created: true,
     }
   })
-}
-
-export async function listGuardianOwnership(
-  db: Db,
-  collectionId: number,
-): Promise<
-  {
-    familyId: string
-    editionId: string
-    rarity: GuardianRarity | null
-    acquisitionCount: number
-    firstAcquiredAt: Date
-    lastAcquiredAt: Date
-  }[]
-> {
-  return db
-    .select({
-      familyId: guardianCardOwnershipTable.familyId,
-      editionId: guardianCardOwnershipTable.editionId,
-      rarity: guardianCardOwnershipTable.rarity,
-      acquisitionCount: guardianCardOwnershipTable.acquisitionCount,
-      firstAcquiredAt: guardianCardOwnershipTable.firstAcquiredAt,
-      lastAcquiredAt: guardianCardOwnershipTable.lastAcquiredAt,
-    })
-    .from(guardianCardOwnershipTable)
-    .where(eq(guardianCardOwnershipTable.collectionId, collectionId))
-    .orderBy(asc(guardianCardOwnershipTable.firstAcquiredAt), asc(guardianCardOwnershipTable.editionId))
-}
-
-type AcquisitionSource = 'initial_report' | 'paid_redraw' | 'account_save_reward'
-
-async function recordGuardianAcquisition(
-  db: Db,
-  input: {
-    collectionId: number
-    reportId: number
-    grantId: number | null
-    card: GuardianSelectedCard
-    source: AcquisitionSource
-    guaranteeDue: boolean
-    guaranteedUnowned: boolean
-    manifestVersion: string
-    oddsVersion: string
-  },
-): Promise<string> {
-  const [owned] = await db
-    .select({ editionId: guardianCardOwnershipTable.editionId })
-    .from(guardianCardOwnershipTable)
-    .where(
-      and(
-        eq(guardianCardOwnershipTable.collectionId, input.collectionId),
-        eq(guardianCardOwnershipTable.editionId, input.card.editionId),
-      ),
-    )
-    .limit(1)
-
-  const publicId = newGuardianPublicId()
-  const acquiredAt = new Date()
-  await db.insert(guardianCardAcquisitionTable).values({
-    publicId,
-    collectionId: input.collectionId,
-    reportId: input.reportId,
-    grantId: input.grantId,
-    slot: input.card.slot,
-    familyId: input.card.familyId,
-    editionId: input.card.editionId,
-    rarity: input.card.rarity,
-    source: input.source,
-    duplicate: Boolean(owned),
-    guaranteeDue: input.guaranteeDue,
-    guaranteedUnowned: input.guaranteedUnowned,
-    manifestVersion: input.manifestVersion,
-    oddsVersion: input.oddsVersion,
-    createdAt: acquiredAt,
-  })
-  await db
-    .insert(guardianCardOwnershipTable)
-    .values({
-      collectionId: input.collectionId,
-      editionId: input.card.editionId,
-      familyId: input.card.familyId,
-      rarity: input.card.rarity,
-      firstAcquiredAt: acquiredAt,
-      lastAcquiredAt: acquiredAt,
-    })
-    .onConflictDoUpdate({
-      target: [guardianCardOwnershipTable.collectionId, guardianCardOwnershipTable.editionId],
-      set: {
-        acquisitionCount: sql`${guardianCardOwnershipTable.acquisitionCount} + 1`,
-        lastAcquiredAt: acquiredAt,
-      },
-    })
-  return publicId
 }
 
 async function stampGuardianEntitlementGranted(db: Db, purchaseId: number, at: Date): Promise<void> {

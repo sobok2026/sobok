@@ -3,10 +3,12 @@
 import { track } from '@sobok/analytics/browser'
 import type { Locale } from '@sobok/domain/locale'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 import Starfield from '@/components/Starfield'
+import { GUARDIAN_LOVE_REDRAW_UI } from '@/content/guardian-love-redraw-ui'
 import { GUARDIAN_REPORT_UI, type GuardianReportPaidContent } from '@/content/guardian-report-ui'
 import {
   GuardianApiError,
@@ -260,6 +262,8 @@ function CardReveal({
 
 function GuardianReport({ content, report }: { content: GuardianReportPaidContent; report: FulfilledReport }) {
   const { narrative } = report
+  const redrawContent = GUARDIAN_LOVE_REDRAW_UI[report.locale]
+  const paths = guardianReportPaths(report.locale)
   const placements = placementSummary(narrative.sections)
   const closingRef = useRef<HTMLElement>(null)
 
@@ -304,16 +308,19 @@ function GuardianReport({ content, report }: { content: GuardianReportPaidConten
 
         <section aria-label={content.report.cardsLabel} className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {report.cards.map((card) => (
-            <figure className="rounded-2xl border border-white/10 bg-white/4 p-2 shadow-xl" key={card.cardEditionId}>
+            <figure
+              className="overflow-hidden rounded-2xl border border-white/10 bg-white/4 shadow-xl"
+              key={card.cardEditionId}
+            >
               <Image
                 alt={narrative.sections.find(({ slot }) => slot === card.slot)?.artworkAlt ?? ''}
-                className="aspect-[3/4] w-full rounded-xl object-cover"
+                className="aspect-[3/4] w-full object-cover"
                 height={480}
                 priority
                 src={card.artworkPath}
                 width={360}
               />
-              <figcaption className="flex items-center justify-between gap-2 px-1 pb-1 pt-2 text-[10px]">
+              <figcaption className="flex items-center justify-between gap-2 px-2.5 py-2 text-[10px]">
                 <span className="font-semibold text-white">{content.questionnaire.slotLabels[card.slot]}</span>
                 <span className="text-foreground-subtle">
                   {card.rarity ? content.reveal.rarityLabels[card.rarity] : content.reveal.signatureRarity}
@@ -322,6 +329,23 @@ function GuardianReport({ content, report }: { content: GuardianReportPaidConten
             </figure>
           ))}
         </section>
+
+        <aside className="mt-4 rounded-[2rem] border border-pink-200/20 bg-[linear-gradient(135deg,rgba(255,193,214,0.11),rgba(201,168,255,0.08))] p-5 sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-6">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">
+              {redrawContent.reportOffer.eyebrow}
+            </p>
+            <h2 className="mt-2 text-lg font-bold text-white">{redrawContent.reportOffer.title}</h2>
+            <p className="mt-2 max-w-xl text-xs leading-6 text-foreground-muted">{redrawContent.reportOffer.body}</p>
+          </div>
+          <Link
+            className="mt-4 inline-flex w-full shrink-0 items-center justify-center rounded-2xl bg-primary px-5 py-3 text-xs font-bold text-primary-foreground sm:mt-0 sm:w-auto"
+            href={paths.loveRedraw}
+            onClick={() => track('guardian_redraw_offer_clicked', { locale: report.locale, source: 'report_top' })}
+          >
+            {redrawContent.reportOffer.cta}
+          </Link>
+        </aside>
 
         <section className="mt-9 rounded-[2rem] border border-white/10 bg-[#120b24]/82 p-5 shadow-2xl sm:p-7">
           <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">

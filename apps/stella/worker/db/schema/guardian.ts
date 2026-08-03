@@ -25,6 +25,7 @@ import type {
   GuardianQuestionnaireAnswerSnapshot,
   GuardianQuestionnaireSignalSnapshot,
 } from '../../guardian/questionnaire'
+import type { GuardianCardPresentationSnapshot } from '../../guardian/redraw-contract'
 import type { GuardianReportNarrativeSnapshot } from '../../guardian/report'
 import { localeEnum, stella } from './common'
 import {
@@ -202,6 +203,9 @@ export const guardianPurchaseTable = stella.table(
     reportId: bigint('report_id', { mode: 'number' })
       .notNull()
       .references(() => guardianReportTable.id, { onDelete: 'restrict' }),
+    // Browser-generated UUID. It is required for redraw orders so a double click or retry resolves to the
+    // same PortOne payment id instead of minting another pending order.
+    checkoutRequestId: varchar('checkout_request_id', { length: 36 }),
     sku: varchar({ length: 64 }).$type<GuardianProductSku>().notNull(),
     kind: guardianProductKindEnum().notNull(),
     orderName: varchar('order_name', { length: 128 }).notNull(),
@@ -228,6 +232,9 @@ export const guardianPurchaseTable = stella.table(
     index('idx_stella_guardian_purchase_collection').on(t.collectionId, t.createdAt),
     index('idx_stella_guardian_purchase_recovery_email').on(t.recoveryEmailNormalized),
     index('idx_stella_guardian_purchase_pending').on(t.createdAt).where(sql`status = 'pending'`),
+    uniqueIndex('uq_stella_guardian_purchase_checkout_request')
+      .on(t.collectionId, t.checkoutRequestId)
+      .where(sql`${t.checkoutRequestId} is not null`),
     uniqueIndex('uq_stella_guardian_purchase_active_full_report')
       .on(t.reportId)
       .where(sql`status in ('pending', 'paid', 'review_required') and kind = 'full_report'`),
@@ -241,6 +248,11 @@ export const guardianPurchaseTable = stella.table(
     check(
       'ck_stella_guardian_purchase_full_report_recovery_email',
       sql`${t.kind} <> 'full_report' or ${t.recoveryEmail} is not null`,
+    ),
+    check(
+      'ck_stella_guardian_purchase_checkout_request_shape',
+      sql`(${t.kind} = 'full_report' and ${t.checkoutRequestId} is null)
+        or (${t.kind} = 'love_redraw' and ${t.checkoutRequestId} is not null)`,
     ),
   ],
 )
@@ -350,7 +362,7 @@ export const guardianGuaranteeProgressTable = stella.table(
     ...timestamps,
   },
   (t) => [
-    primaryKey({ columns: [t.collectionId, t.scopeId] }),
+    primaryKey({ columns: [t.collectionId, t.scopeId, t.ruleVersion] }),
     check('ck_stella_guardian_guarantee_nonnegative', sql`${t.paidDrawsInCycle} >= 0`),
   ],
 )
@@ -368,6 +380,9 @@ export const guardianCardAcquisitionTable = stella.table(
     reportId: bigint('report_id', { mode: 'number' })
       .notNull()
       .references(() => guardianReportTable.id, { onDelete: 'restrict' }),
+    // Present only for a redraw. The UUID is generated and durably retained by the browser until this
+    // acquisition is returned, making credit consumption idempotent across timeouts and retries.
+    drawRequestId: varchar('draw_request_id', { length: 36 }),
     grantId: bigint('grant_id', { mode: 'number' }).references(() => guardianRedrawGrantTable.id, {
       onDelete: 'restrict',
     }),
@@ -381,11 +396,21 @@ export const guardianCardAcquisitionTable = stella.table(
     guaranteedUnowned: boolean('guaranteed_unowned').notNull().default(false),
     manifestVersion: varchar('manifest_version', { length: 64 }).notNull(),
     oddsVersion: varchar('odds_version', { length: 64 }).notNull(),
+    presentationSnapshot: jsonb('presentation_snapshot').$type<GuardianCardPresentationSnapshot>().notNull(),
     createdAt,
   },
   (t) => [
     index('idx_stella_guardian_acquisition_collection').on(t.collectionId, t.createdAt),
     index('idx_stella_guardian_acquisition_report').on(t.reportId, t.createdAt),
+    index('idx_stella_guardian_acquisition_collection_family_edition').on(
+      t.collectionId,
+      t.familyId,
+      t.editionId,
+      t.createdAt,
+    ),
+    uniqueIndex('uq_stella_guardian_acquisition_draw_request')
+      .on(t.reportId, t.drawRequestId)
+      .where(sql`${t.drawRequestId} is not null`),
     uniqueIndex('uq_stella_guardian_acquisition_initial_slot')
       .on(t.reportId, t.slot)
       .where(sql`source = 'initial_report'`),
@@ -394,7 +419,33 @@ export const guardianCardAcquisitionTable = stella.table(
       sql`(${t.source} = 'initial_report' and ${t.grantId} is null)
         or (${t.source} <> 'initial_report' and ${t.grantId} is not null)`,
     ),
+    check(
+      'ck_stella_guardian_acquisition_request_shape',
+      sql`(${t.source} = 'initial_report' and ${t.drawRequestId} is null)
+        or (${t.source} <> 'initial_report' and ${t.drawRequestId} is not null)`,
+    ),
     check('ck_stella_guardian_guaranteed_requires_due', sql`not ${t.guaranteedUnowned} or ${t.guaranteeDue}`),
+  ],
+)
+
+// A report explicitly points at the acquisition shown in each slot. Initial fulfillment fills all four rows;
+// redraw never mutates them until the owner chooses "이 카드를 리포트에 걸기". The model already supports
+// future redraw products for the other slots without adding columns to guardian_report.
+export const guardianReportCardSelectionTable = stella.table(
+  'guardian_report_card_selection',
+  {
+    reportId: bigint('report_id', { mode: 'number' })
+      .notNull()
+      .references(() => guardianReportTable.id, { onDelete: 'restrict' }),
+    slot: guardianSlotEnum().notNull(),
+    acquisitionId: bigint('acquisition_id', { mode: 'number' })
+      .notNull()
+      .references(() => guardianCardAcquisitionTable.id, { onDelete: 'restrict' }),
+    ...timestamps,
+  },
+  (t) => [
+    primaryKey({ columns: [t.reportId, t.slot] }),
+    index('idx_stella_guardian_report_card_selection_acquisition').on(t.acquisitionId),
   ],
 )
 

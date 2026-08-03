@@ -20,6 +20,8 @@ export type ProblemSlug =
   | 'payment-mismatch'
   | 'payment-conflict'
   | 'checkout-conflict'
+  | 'redraw-credit-required'
+  | 'card-not-found'
   | 'product-unavailable'
   | 'question-conflict'
   | 'milestone-conflict'
