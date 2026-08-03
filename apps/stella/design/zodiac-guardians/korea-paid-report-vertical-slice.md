@@ -19,12 +19,15 @@
 - 현재 구현: 상품 매니페스트, 추첨, 게스트 컬렉션·리포트·구매·획득·보장 도메인,
   실제 한국어 선택형 질문 44개와 선택 메모 1개, 불변 콘텐츠 계약·DB·게시 CLI·답변별 저장과 현재 문항 계산,
   Turnstile·rate limit을 거치는 guest checkout, 중앙 payments를 통한 PortOne confirm·검증 이벤트, capability 기반 질문
-  GET/PUT과 draft/fulfilled report GET API, 홈의 소형 상품 카드, 전용 공개 랜딩, 무료 미리보기·잠금 결과·checkout,
+  GET/PUT과 draft/fulfilled report GET API, 홈의 소형 상품 카드, 전용 공개 랜딩, 독립 무료 검사·무료 결과·checkout,
   결제 후 질문·12개 핵심 답변의 서버 중간 결과·적응형 질문·카드 공개·상세 웹 리포트, 공용 scheduler 기반
-  15분 pending 결제 재조정
+  15분 pending 결제 재조정과 30일 미결제 checkout 정리, 결제 권한과 원자적으로 생성되는 메일 발송
+  intent·Resend 완료 메일·15분 1회용 재열람 링크 교환·구매 이메일 기반 재발급
 - 운영 반영: `stella_stg`·`stella` schema와 한국어 v1 문항 게시, PR #29의 production Worker 배포
-- 아직 미연결: 이메일 복구 전송·재열람 토큰 교환, 보존 기간이 지난 미결제 checkout context 정리
-- 아직 운영 검증하지 않음: PortOne 테스트 채널의 실제 결제·모바일 리디렉션·질문 재개·카드 공개 E2E
+- 운영 반영 필요: 복구 메일용 새 테이블을 `stella_stg`·`stella`에 적용하고 `account-stella`의
+  `stella_resend_api_key_staging`·`stella_resend_api_key_production`으로 환경별 Secrets Store 항목 생성
+- 아직 운영 검증하지 않음: PortOne 테스트 채널의 실제 결제·모바일 리디렉션·메일 수신·메일 링크로
+  질문 재개·카드 공개 E2E
 - 이 문서의 범위: 상품 랜딩 → 무료 질문 2개 → 잠금 미리보기·복구 이메일 → 결제 → 서버 검증 →
   핵심 질문 12개 → 중간 결과 → 적응형 질문 → 카드 공개 → 전체 웹 리포트
 
@@ -44,6 +47,7 @@
 ### 포함
 
 - 기존 무료 출생 차트 안의 소형 상품 CTA와 별도 `/[locale]/guardian-report` 공개 랜딩
+- `/[locale]/guardian-report/free`, `/free/result`, `/questions`, `/result`로 분리된 검사·결과 경로
 - 랜딩의 상품 설명, 예시 원화, 진행 순서, FAQ와 직접 방문자의 무료 차트 생성 복귀 경로
 - 무료 미리보기 질문 2개와 결제 전 유료 질문 분량·예상 시간 안내
 - 결제 직전 필수 게스트 복구 이메일
@@ -106,6 +110,7 @@ sequenceDiagram
   participant D as stella DB
   participant X as Sobok payments
   participant P as PortOne
+  participant M as Resend
 
   U->>B: 홈 상품 카드에서 전용 랜딩 진입
   B-->>U: 상품 설명·예시 원화·진행 순서
@@ -134,7 +139,9 @@ sequenceDiagram
     W->>X: 15분 pending 결제 재조회
   end
 
-  W->>D: paid + questionnaire entitlement
+  W->>D: paid + questionnaire entitlement + 메일 발송 intent
+  W->>M: 결제 완료·15분 1회용 링크 발송
+  M-->>U: 구매 이메일로 재열람 링크
   W-->>B: 유료 질문 접근 가능
   loop 네 주제의 핵심 질문 12개
     B->>W: 답변 저장·다음 질문 요청
@@ -154,6 +161,13 @@ sequenceDiagram
   B->>W: 권한 있는 리포트 조회
   W-->>B: 동일한 네 카드 snapshot
   B-->>U: 네 장 순차 공개 → 전체 리포트
+
+  opt 다른 브라우저에서 재열람
+    U->>B: 이메일 링크 열고 명시적으로 열기 선택
+    B->>W: 1회용 token 교환
+    W->>D: token 소비 + collection capability 교체
+    W-->>B: 새 capability + 질문/결과 경로
+  end
 ```
 
 동시에 여러 확인 경로가 도착해도 구매 행 잠금과 `entitlementGrantedAt`을 기준으로 유료 질문
@@ -170,6 +184,8 @@ sequenceDiagram
 | ---------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------ |
 | `POST /api/guardian-checkouts`                             | Turnstile·rate limit | 무료 컨텍스트·이메일 검증, collection·pending 구매 생성·재사용                       |
 | `POST /api/guardian-purchases/:paymentId/confirm`          | 게스트 capability    | PortOne 원격 상태 조회, paid entitlement·questionnaire draft 생성                    |
+| `POST /api/guardian-reopen/request`                        | Turnstile·rate limit | 구매 이메일의 최근 유료 리포트에 15분 1회용 링크 발급·메일 발송                      |
+| `POST /api/guardian-reopen/exchange`                       | 1회용 token          | 링크 소비, collection capability 교체, 질문 또는 결과 재개 정보 반환                 |
 | `GET /api/guardian-reports/:reportPublicId`                | 게스트 capability    | 유료 질문 진행 메타데이터 또는 fulfilled 결과 조회                                   |
 | `GET /api/guardian-reports/:reportPublicId/question`       | paid capability      | 현재 session에서 허용된 다음 한 문항 조회                                            |
 | `PUT /api/guardian-reports/:reportPublicId/answers/:id`    | paid capability      | 한 답변 저장, 다음 맞춤 문항 계산, 마지막 답변이면 카드 선택·report fulfillment 수행 |
@@ -188,7 +204,9 @@ sequenceDiagram
 - 출생 시간을 모르는 결과에는 하우스와 각도 값을 보내지 않는다. 서버는 없는 값을 추정하지 않는다.
 - 출생 시간을 모르면 `moonLongitudeRange`를 함께 보내고, 시간을 아는 결과에서는 이 값을 `null`로
   보낸다. 이후 scorer가 정오 달 위치를 확정값으로 오인하지 않게 `timeKnown`도 snapshot에 고정한다.
-- 미결제 purchase context는 짧은 보존 기간 뒤 pending 구매와 함께 삭제한다.
+- 결제로 이어지지 않은 guest checkout aggregate는 마지막 미결제 시도 생성일부터 30일 뒤 일일
+  retention purge에서 삭제한다. `pending`, `failed`, `cancelled`만 대상이며 `paid`, `refunded`,
+  `review_required`는 삭제하지 않는다.
 
 ### Checkout
 
@@ -426,6 +444,30 @@ Store ID와 channel map은 `apps/payments/wrangler.jsonc`, V2 API Secret은 `acc
   가진 교환 토큰으로 새 접근을 발급한다.
 - 이메일 정규화 값과 전달 상태는 구매 복구에 필요한 범위에서 구매와 연결한다.
 
+구현 계약은 다음과 같다.
+
+- 첫 전체 리포트의 `paid`·entitlement 전환 트랜잭션에서
+  `guardian_recovery_email_delivery` 발송 intent도 한 번만 만든다. 실제 Resend 호출은 커밋 뒤
+  `waitUntil`에서 실행하므로 발송 실패가 결제를 롤백하지 않는다.
+- 브라우저 confirm과 결제 Queue 이벤트가 즉시 발송을 시도한다. 둘 다 중단된 경우에도 기존 공용
+  scheduler의 15분 payment reconciliation이 대기·lease 만료 intent를 최대 5회까지 다시 처리한다.
+- 메일 URL은 `STELLA_PUBLIC_ORIGIN`으로만 만들며 one-time token은 fragment에 둔다. 재열람 화면은
+  fragment를 즉시 주소창에서 제거하고, 사용자가 `내 리포트 열기`를 누를 때만 서버와 교환한다.
+- DB에는 token 원문이 아닌 SHA-256 digest, 만료 시각, 사용 시각만 저장한다. 성공한 교환은 token을
+  한 번 소비하면서 collection capability를 새 값으로 교체하고, 이전 브라우저 capability는 폐기한다.
+- `/api/guardian-reopen/request`는 존재하는 구매 이메일인지와 무관하게 같은 `202 accepted`를
+  반환한다. Turnstile, IP rate limit, 이메일별 5분 발급 간격을 적용하며 최근 유료 리포트 최대 5개를
+  한 메일에 담는다.
+- 사용됐거나 만료된 token 행은 기존 일일 retention purge에서 정리한다. 메일 본문이나 URL에
+  장기 capability, 질문 답변, 출생 입력을 넣지 않는다.
+- production 발신은 `Stella <reports@stella.sobok.cc>`, staging 발신은 `Stella Staging`으로 구분하고
+  회신 주소는 운영 변수로 관리한다. Resend API key는 Vibe나 환경 사이에 공유하지 않고
+  `account-stella`가 `stella-resend-api-key-production`·`stella-resend-api-key-staging` Secrets Store
+  항목으로 소유한다. 발신 도메인의 open/click tracking은 끄고 1회용 URL을 재작성하지 않는다.
+
+환경별 secret 이름, schema 선반영 순서, 실제 이메일 수신 확인과 관측 지점은
+[결제 완료 메일·리포트 재열람 운영 Runbook](./email-reopen-operations.md)을 따른다.
+
 ## 8. 무료 결과에서 결제로 이어지는 화면
 
 기존 무료 출생 차트의 Big 3, 차트 휠, 세부 해석, 원소·각·패턴·장문 리포트를 삭제하거나 중간에서
@@ -475,6 +517,21 @@ Store ID와 channel map은 `apps/payments/wrangler.jsonc`, V2 API Secret은 `acc
 - 희귀도 확률과 미보유 보장 설명은 CTA 가까이에서 한 번에 열 수 있게 하고, 질문 응답이 희귀도
   확률을 바꾸지 않는다고 명시한다.
 
+### 공개 URL과 책임
+
+| URL                                     | 책임                                              | 검색 노출 |
+| --------------------------------------- | ------------------------------------------------- | --------- |
+| `/[locale]/guardian-report`             | 상품 가치·예시·가격·진행 순서·FAQ와 무료 검사 CTA | 공개      |
+| `/[locale]/guardian-report/free`        | 무료 질문 2개                                     | `noindex` |
+| `/[locale]/guardian-report/free/result` | 무료 한 줄·잠금 콘텐츠·복구 이메일·PortOne 결제   | `noindex` |
+| `/[locale]/guardian-report/questions`   | 결제 상태 확인·유료 질문·중간 결과                | `noindex` |
+| `/[locale]/guardian-report/result`      | 카드 순차 공개·완성 리포트                        | `noindex` |
+| `/[locale]/guardian-report/reopen`      | 이메일 링크 교환·구매 이메일 재발급               | `noindex` |
+
+랜딩은 마케팅 콘텐츠와 CTA만 소유한다. 검사와 결과를 랜딩 내부 단계로 렌더하지 않는다. 결제는 별도
+지속 상태가 아니라 무료 결과의 잠금 해제 행동이므로 무료 결과 화면에 둔다. 각 URL은 Next 정적 export의
+독립 HTML과 route chunk로 생성하고 내부 이동은 `next/link` 또는 App Router navigation을 사용한다.
+
 ### Checkout과 공개
 
 provisional 미리보기 뒤 한 화면짜리 checkout sheet를 열고 질문 분량과 결과물을 안내한다.
@@ -483,9 +540,8 @@ provisional 미리보기 뒤 한 화면짜리 checkout sheet를 열고 질문 �
 ```text
 homeOffer
   → productLanding
-  → previewQuestions
-  → provisionalPreview
-  → lockedReportPreview
+  → freeAssessment
+  → freeResult + lockedReportPreview
   → checkoutEmail
   → checkoutCreating
   → paymentOpen
@@ -499,13 +555,14 @@ homeOffer
   → report
 ```
 
-- 무료 질문 진행 상태는 checkout 전까지 브라우저 안에만 두고 서버 draft를 만들지 않는다. 유료
+- 무료 질문 완료 상태는 `sessionStorage`에 두고 checkout 전까지 서버 draft를 만들지 않는다. 유료
   질문 답변은 매 문항 서버 draft에 저장해 기기 이탈 뒤에도 복구한다.
-- report 공개 참조와 capability는 URL에 함께 싣지 않고 `sessionStorage`로 `/[locale]/cards`
-  화면에 넘긴다. 이메일 재열람은 짧은 교환 토큰으로 새 capability를 발급한다.
-- `/[locale]/cards`는 session이 없으면 랜딩으로 돌아가는 안내만 보여준다. 클라이언트 난수,
+- report 공개 참조와 capability는 URL에 함께 싣지 않고 `sessionStorage`로 `/questions`와 `/result`
+  사이에 넘긴다. 이메일 재열람은 짧은 교환 토큰으로 새 capability를 발급한다.
+- `/questions`와 `/result`는 session이 없으면 랜딩으로 돌아가는 안내만 보여준다. 클라이언트 난수,
   localStorage 컬렉션, query rarity, prototype report fallback은 두지 않고 fulfilled API의 카드
-  스냅샷만 사용한다.
+  스냅샷만 사용한다. `/questions`가 fulfilled를 읽으면 `/result`로, `/result`가 draft를 읽으면
+  `/questions`로 수렴한다.
 - `verifying`은 오류 화면이 아니라 결제 상태를 맞추는 정상 단계다.
 - 일시적인 `pending`이면 짧게 재조회하고, 이후에는 같은 브라우저에서 다시 확인할 수 있는 복구
   화면을 제공한다.
@@ -526,8 +583,11 @@ homeOffer
 | -------------------------------------------- | ---------------------------------------------------------- |
 | `guardian_offer_view`                        | 홈 상품 카드가 viewport에 처음 들어왔을 때                 |
 | `guardian_landing_open`                      | 홈 상품 CTA로 전용 랜딩에 이동할 때                        |
-| `guardian_preview_started`                   | 랜딩에서 첫 무료 질문을 시작할 때                          |
+| `guardian_landing_view`                      | 전용 랜딩이 실제로 열린 뒤                                 |
+| `guardian_preview_cta_selected`              | 랜딩의 무료 검사 CTA를 선택할 때                           |
+| `guardian_preview_started`                   | 독립 무료 검사 화면이 열린 뒤                              |
 | `guardian_preview_complete`                  | 무료 답변 2개를 모두 선택해 잠금 미리보기를 볼 때          |
+| `guardian_free_result_view`                  | 저장된 무료 답변으로 무료 결과를 열었을 때                 |
 | `guardian_paywall_open`                      | 가격·복구 이메일 checkout 영역을 열 때                     |
 | ecommerce `begin_checkout`                   | 서버 checkout을 만들고 PortOne 결제창을 열기 직전          |
 | `guardian_payment_confirmed`                 | 브라우저 복귀 경로에서 서버 검증된 paid 상태를 확인할 때   |
@@ -535,7 +595,8 @@ homeOffer
 | `guardian_questionnaire_milestone_completed` | 12개 핵심 답변의 개인화 중간 결과를 확인했을 때            |
 | `guardian_report_fulfilled`                  | fulfilled report snapshot을 브라우저가 처음 읽었을 때      |
 | `guardian_card_revealed`                     | 사용자가 실제 카드 앞면을 한 장 열었을 때                  |
-| `guardian_report_opened`                     | 공개를 마치거나 건너뛰어 전체 리포트를 열었을 때           |
+| `guardian_report_opened`                     | fulfilled 결과 화면을 성공적으로 불러왔을 때               |
+| `guardian_report_body_opened`                | 공개를 마치거나 건너뛰어 전체 본문을 열었을 때             |
 | `guardian_report_complete`                   | closing이 viewport에 들어와 전체 리포트 끝까지 도달했을 때 |
 
 매출 원장의 `guardian_purchase_complete`는 브라우저 이벤트가 아니라 구매 확정 함수가 처음 이긴
@@ -584,11 +645,12 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 1. **완료:** 중앙 payments Service Binding, Stella Queue consumer, 웹훅 이벤트 데이터를 연결한다.
 2. **완료:** confirm·payment event·report read API를 현재 guest checkout·paid questionnaire API에 연결한다.
 3. **완료:** 한국어 개인화 본문 엔진, 불변 narrative snapshot과 최종 report GET 계약을 연결한다.
-4. **완료:** 홈 상품 카드, 전용 랜딩, 무료 질문·잠금 미리보기와 결제 뒤 질문·fulfillment 화면을 연결한다.
+4. **완료:** 홈 상품 카드와 공개 랜딩을 유지하고 무료 검사·무료 결과·유료 검사·유료 결과를 독립
+   URL로 분리한다. checkout은 무료 결과의 잠금 해제 단계로 연결한다.
 5. **재조정 완료:** 15분 이상 pending인 구매를 최대 100개씩 중앙 payments로 다시 조회하고 기존 멱등
    결제 확정 함수로 수렴시킨다. production·staging 모두 공용 scheduler의 기존 15분 주기에 연결한다.
-   미결제 checkout context 삭제는 보존 기간 확정 뒤 일일 purge에 추가한다.
-6. **완료:** `/[locale]/cards`의 클라이언트 난수·로컬 소유권·prototype fallback을 서버 상태로 교체한다.
+   생성 후 30일이 지난 미결제 checkout aggregate 정리도 기존 일일 purge에 연결한다.
+6. **완료:** `/[locale]/guardian-report/questions`와 `/result`의 유료 흐름을 서버 상태로만 구동한다.
 7. **완료:** 중앙 Wrangler에 Store ID·channel map을, `sobok-ops`에 payments Secret·Queue·custom
    domain을 반영한다.
 8. **완료:** `guardian_questionnaire_milestone`을 `stella_stg`·`stella` 양쪽 schema에 반영하고 같은
@@ -597,6 +659,9 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
    테스트 결제·모바일 리디렉션·질문 재개·카드 공개의 실제 E2E는 별도로 수행한다.
 10. **완료:** production `stella` schema·문항 게시 뒤 PR #29를 `main`에 병합하고 production workflow와
     공개 URL smoke check를 완료했다.
+11. **코드 완료·운영 반영 대기:** entitlement와 원자적인 복구 메일 intent, Resend 발송·재시도,
+    15분 1회용 token 교환, 이메일 재발급 API와 `/reopen` 화면을 연결했다. 새 schema와
+    `stella-resend-api-key-staging`을 적용한 뒤 실제 수신 E2E를 수행한다.
 
 ### 2026-08-01 운영 반영 기록
 
@@ -662,8 +727,9 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 | 로케일 출시        | 공용 흐름·콘텐츠 타입 유지, 이번 단계는 한국어만 게시      | 번역 추가만으로 같은 경로를 확장한다                      |
 | 출생 입력          | 기존 무료 차트 핵심값 재사용, 추가 재입력 없음 권장        | 구매 전 중복 입력을 없앤다                                |
 
-출시 전 다음 우선순위는 실제 PortOne 테스트 결제 E2E, 이메일 복구·재열람 링크, 미결제 checkout
-보존 기간 확정과 purge다. 그다음 제품 결정은 사랑 카드 재추첨 화면·결제, Stella 계정 귀속,
+출시 전 다음 우선순위는 복구 메일 schema·secret의 staging 반영과 실제 PortOne 테스트 결제부터
+메일 수신·재열람까지의 E2E다. 그다음 제품
+결정은 사랑 카드 재추첨 화면·결제, Stella 계정 귀속,
 장기 문항은행의 제작 범위와 production 1,024장의 제작 매트릭스다. 대표 Store의 PortOne API Secret과
 live/test Webhook Secret은 채팅이나 public repository에 전달하지 않고 중앙 payments 관련 HCP Terraform
 sensitive 변수에서 Secrets Store로 넣는다. 유료 질문 원문은 Git의 questionnaire source 디렉터리에

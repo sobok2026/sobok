@@ -195,5 +195,6 @@ checkout은 questionnaire version을 고정하고 질문 API는 아직 공개되
 마지막 답변 transaction은 answer·signal snapshot, 카드 네 장과 함께 렌더가 끝난 한국어
 `narrative_snapshot`도 고정한다. 각 선택 답변이 상세 근거 문단으로 남는 방식과 최종 GET 응답은
 [한국어 개인화 리포트 본문 엔진과 최종 계약](./paid-report-content-engine.md)을 따른다. 무료 미리보기 →
-checkout → 유료 질문 → 카드 공개 화면도 연결되어 있다. 남은 외부 연결은 실제 PortOne 테스트 결제
-E2E와 이메일 복구·재열람 링크다.
+checkout → 유료 질문 → 카드 공개 화면과 결제 완료 메일·재열람 링크 교환도 연결되어 있다. 남은 외부
+연결은 복구 메일 schema·Secrets Store의 환경 반영과 실제 PortOne 테스트 결제부터 메일 수신·질문
+재개·카드 공개까지의 E2E다.

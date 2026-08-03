@@ -7,6 +7,7 @@ import { hasProcessedGuardianWebhook, recordProcessedGuardianWebhook } from '../
 import type { Bindings } from '../env'
 import { GuardianPaymentIdSchema } from '../guardian/http'
 import { syncGuardianPayment } from '../guardian/payment'
+import { dispatchGuardianRecoveryEmails } from '../guardian/recovery'
 import { toGuardianRemotePayment } from './client'
 
 /** Applies a centrally verified PortOne event. Queue delivery is at-least-once; the local event id and paid CAS
@@ -66,5 +67,8 @@ export async function handleGuardianPaymentEvent(
   }
   if (outcome.status === 'purchase-not-found' || outcome.status === 'pending') {
     throw new Error(`Stella payment event could not converge: ${outcome.status}`)
+  }
+  if ((outcome.status === 'granted' || outcome.status === 'already-granted') && outcome.kind === 'full_report') {
+    ctx.waitUntil(dispatchGuardianRecoveryEmails(env, { paymentId: paymentId.data }))
   }
 }

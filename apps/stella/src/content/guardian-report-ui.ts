@@ -27,6 +27,11 @@ type GuardianReportUiContent = {
   }
   landing: {
     back: string
+    navigation: {
+      backToLanding: string
+      backToFree: string
+      reopen: string
+    }
     hero: {
       eyebrow: string
       title: string
@@ -73,6 +78,9 @@ type GuardianReportUiContent = {
       chartRequiredBody: string
       chartRequiredCta: string
       chartLoading: string
+      missingTitle: string
+      missingBody: string
+      missingCta: string
     }
     purchase: {
       eyebrow: string
@@ -130,6 +138,31 @@ type GuardianReportUiContent = {
       title: string
       body: string
       cta: string
+      reopenCta: string
+    }
+    reopen: {
+      metaTitle: string
+      metaDescription: string
+      eyebrow: string
+      title: string
+      body: string
+      emailLabel: string
+      emailPlaceholder: string
+      requestCta: string
+      requesting: string
+      deliveryNote: string
+      linkTitle: string
+      linkBody: string
+      linkCta: string
+      opening: string
+      acceptedTitle: string
+      acceptedBody: string
+      invalidTitle: string
+      invalidBody: string
+      startOverCta: string
+      genericError: string
+      turnstileError: string
+      rateLimitedError: string
     }
     status: {
       verifyingTitle: string
@@ -219,6 +252,11 @@ const KO_CONTENT: GuardianReportUiContent = {
   },
   landing: {
     back: '무료 출생 차트로 돌아가기',
+    navigation: {
+      backToLanding: '상품 소개로 돌아가기',
+      backToFree: '무료 검사 다시 하기',
+      reopen: '구매한 리포트 다시 열기',
+    },
     hero: {
       eyebrow: 'STELLA PREMIUM READING',
       title: '별이 고른 네 장으로\n지금의 나를 깊이 읽어요',
@@ -340,6 +378,9 @@ const KO_CONTENT: GuardianReportUiContent = {
         '수호령 리포트는 출생 차트를 함께 읽어요. 차트를 만든 뒤 이 페이지로 돌아오면 무료 답변은 이 탭에 그대로 남아 있어요.',
       chartRequiredCta: '무료 출생 차트 만들기',
       chartLoading: '출생 차트의 별빛을 읽고 있어요…',
+      missingTitle: '먼저 무료 검사를 완료해주세요',
+      missingBody: '두 가지 짧은 질문에 답하면 개인화된 한 줄과 잠긴 리포트 구성을 바로 확인할 수 있어요.',
+      missingCta: '무료 검사 시작하기',
     },
     purchase: {
       eyebrow: 'FULL REPORT',
@@ -412,6 +453,31 @@ const KO_CONTENT: GuardianReportUiContent = {
       title: '이어볼 리포트가 없어요',
       body: '무료 미리보기와 결제를 시작한 브라우저에서 다시 열거나, 상품 페이지에서 새 리포트를 시작해주세요.',
       cta: '무료 미리보기로 이동',
+      reopenCta: '구매 이메일로 다시 열기',
+    },
+    reopen: {
+      metaTitle: '구매한 별자리 수호령 리포트 다시 열기',
+      metaDescription: '구매 이메일로 일회용 링크를 받아 별자리 수호령 리포트를 이어서 확인하세요.',
+      eyebrow: 'REPORT RECOVERY',
+      title: '구매한 리포트를 다시 열어요',
+      body: '결제할 때 입력한 이메일로 15분 동안 한 번 사용할 수 있는 링크를 보내드려요.',
+      emailLabel: '구매 이메일',
+      emailPlaceholder: 'you@example.com',
+      requestCta: '재열람 링크 받기',
+      requesting: '링크를 준비하고 있어요…',
+      deliveryNote: '구매 내역이 없더라도 같은 안내 화면을 보여드려요. 메일이 보이지 않으면 스팸함도 확인해주세요.',
+      linkTitle: '리포트를 열 준비가 됐어요',
+      linkBody: '아래 버튼을 누르면 이 링크를 한 번 사용하고, 이 브라우저에서 질문이나 결과를 이어볼 수 있어요.',
+      linkCta: '내 리포트 열기',
+      opening: '안전한 재열람 링크를 확인하고 있어요…',
+      acceptedTitle: '메일을 확인해주세요',
+      acceptedBody: '구매 내역이 있는 주소라면 곧 재열람 링크가 도착해요. 링크는 15분 동안 한 번만 사용할 수 있어요.',
+      invalidTitle: '이 링크를 사용할 수 없어요',
+      invalidBody: '이미 사용했거나 15분이 지났을 수 있어요. 구매 이메일로 새 링크를 받아주세요.',
+      startOverCta: '상품 소개로 돌아가기',
+      genericError: '링크를 준비하지 못했어요. 잠시 뒤 다시 시도해주세요.',
+      turnstileError: '보안 확인 시간이 지났어요. 다시 확인한 뒤 눌러주세요.',
+      rateLimitedError: '재열람 요청이 잠시 많아요. 조금 뒤 다시 시도해주세요.',
     },
     status: {
       verifyingTitle: '결제 결과를 확인하고 있어요',
@@ -505,6 +571,7 @@ function emptyContent(): GuardianReportUiContent {
     home: { eyebrow: empty, title: empty, body: empty, badges: [], sampleLabel: empty, cta: empty },
     landing: {
       back: empty,
+      navigation: { backToLanding: empty, backToFree: empty, reopen: empty },
       hero: {
         eyebrow: empty,
         title: empty,
@@ -542,6 +609,9 @@ function emptyContent(): GuardianReportUiContent {
         chartRequiredBody: empty,
         chartRequiredCta: empty,
         chartLoading: empty,
+        missingTitle: empty,
+        missingBody: empty,
+        missingCta: empty,
       },
       purchase: {
         eyebrow: empty,
@@ -582,7 +652,31 @@ function emptyContent(): GuardianReportUiContent {
     },
     paid: {
       meta: { title: empty, description: empty },
-      missing: { title: empty, body: empty, cta: empty },
+      missing: { title: empty, body: empty, cta: empty, reopenCta: empty },
+      reopen: {
+        metaTitle: empty,
+        metaDescription: empty,
+        eyebrow: empty,
+        title: empty,
+        body: empty,
+        emailLabel: empty,
+        emailPlaceholder: empty,
+        requestCta: empty,
+        requesting: empty,
+        deliveryNote: empty,
+        linkTitle: empty,
+        linkBody: empty,
+        linkCta: empty,
+        opening: empty,
+        acceptedTitle: empty,
+        acceptedBody: empty,
+        invalidTitle: empty,
+        invalidBody: empty,
+        startOverCta: empty,
+        genericError: empty,
+        turnstileError: empty,
+        rateLimitedError: empty,
+      },
       status: {
         verifyingTitle: empty,
         verifyingBody: empty,

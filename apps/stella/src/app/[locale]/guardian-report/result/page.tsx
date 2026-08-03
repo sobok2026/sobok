@@ -3,9 +3,9 @@ import type { Metadata } from 'next'
 
 import { GUARDIAN_REPORT_UI } from '@/content/guardian-report-ui'
 
-import GuardianCardsEntry from './GuardianCardsEntry'
+import GuardianPaidResult from '../_components/GuardianPaidResult'
 
-export async function generateMetadata({ params }: PageProps<'/[locale]/cards'>): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<'/[locale]/guardian-report/result'>): Promise<Metadata> {
   const locale = await getLocale(params)
   const content = GUARDIAN_REPORT_UI[locale].paid
 
@@ -16,8 +16,8 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/cards'>)
   }
 }
 
-export default async function GuardianCardsPage({ params }: PageProps<'/[locale]/cards'>) {
+export default async function GuardianPaidResultPage({ params }: PageProps<'/[locale]/guardian-report/result'>) {
   const locale = await getLocale(params)
 
-  return <GuardianCardsEntry locale={locale} />
+  return <GuardianPaidResult locale={locale} />
 }

@@ -7,6 +7,7 @@ import {
 } from '../db/queries/guardian'
 import type { Bindings } from '../env'
 import { syncGuardianPayment } from '../guardian/payment'
+import { dispatchGuardianRecoveryEmails } from '../guardian/recovery'
 import { getGuardianRemotePayment } from './client'
 
 const STALE_MS = 15 * 60 * 1000
@@ -91,6 +92,10 @@ export async function reconcileStaleGuardianPayments(env: Bindings): Promise<voi
   if (summary.reviewRequired > 0 || summary.conflicts > 0 || summary.errors > 0) {
     await alertReconciliationReview(env, summary.reviewRequired, summary.conflicts, summary.errors)
   }
+
+  // The durable delivery row is created with the entitlement. Running its bounded dispatcher here closes the
+  // crash gap even when browser confirmation and the verified payment event both ended before sending mail.
+  await dispatchGuardianRecoveryEmails(env)
 }
 
 async function alertReconciliationReview(

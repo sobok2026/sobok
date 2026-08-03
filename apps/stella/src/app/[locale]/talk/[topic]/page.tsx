@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server'
 import CommentThread from '@/components/CommentThread'
 import { loadBakedBoards } from '@/lib/board-bake'
 import { allTopicKeys, type Labeler, topicLabel } from '@/lib/comment-topics'
+import { guardianReportPaths } from '@/lib/guardian-paid'
 
 // Static export: every valid topic is prerendered; an unknown /talk/<x> 404s instead of being attempted at
 // runtime (there is no server).
@@ -52,13 +53,14 @@ export default async function TalkPage({ params }: PageProps<'/[locale]/talk/[to
   const label = topicLabel(topic, t as unknown as Labeler)
   const initial = boards.get(`${locale}:${topic}`)?.page
   const isCardTopic = topic.startsWith('card-')
+  const guardianPaths = guardianReportPaths(locale)
 
   return (
     <main className="relative min-h-dvh bg-night-sky px-4 pb-24 pt-[calc(4.5rem+var(--safe-area-top))] text-foreground">
       <div className="mx-auto w-full max-w-xl">
         <Link
           className="inline-flex items-center gap-1 text-xs text-foreground-subtle underline-offset-2 hover:text-foreground-secondary hover:underline"
-          href={isCardTopic ? `/${locale}/cards` : `/${locale}`}
+          href={isCardTopic ? guardianPaths.result : `/${locale}`}
         >
           ← {tc(isCardTopic ? 'backToCardReport' : 'backToChart')}
         </Link>

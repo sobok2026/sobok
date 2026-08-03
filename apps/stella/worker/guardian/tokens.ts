@@ -10,6 +10,10 @@ export function newGuardianAccessToken(): string {
   return randomToken(32)
 }
 
+export function newGuardianReopenToken(): string {
+  return randomToken(32)
+}
+
 // PortOne accepts an ASCII order id up to 64 characters. The prefix keeps Stella transactions recognizable
 // when the representative Store is shared with another product.
 export function newGuardianPaymentId(): string {

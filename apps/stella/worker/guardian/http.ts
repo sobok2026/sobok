@@ -5,6 +5,11 @@ export const GuardianAccessTokenSchema = z
   .length(43)
   .regex(/^[A-Za-z0-9_-]+$/)
 
+export const GuardianReopenTokenSchema = z
+  .string()
+  .length(43)
+  .regex(/^[A-Za-z0-9_-]+$/)
+
 export const GuardianReportPublicIdSchema = z
   .string()
   .length(16)

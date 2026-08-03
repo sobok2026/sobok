@@ -10,11 +10,20 @@
 # The Turnstile host pin must name the host you actually serve locally, because siteverify echoes back the
 # hostname the widget was solved on and the Worker rejects anything not in this list.
 STELLA_ALLOWED_HOSTNAMES="localhost"
-# The 3 top-level bindings are Cloudflare Secrets Store secrets (accessed via `await env.X.get()`). For local
+# Canonical origin and transactional email identity used by the Worker. Never derive recovery URLs from the
+# incoming Host header. A local mail sandbox may replace the sender, but production uses the verified
+# stella.sobok.cc domain declared in wrangler.jsonc.
+STELLA_PUBLIC_ORIGIN="http://localhost:3010"
+STELLA_EMAIL_FROM="Stella <reports@stella.sobok.cc>"
+STELLA_EMAIL_REPLY_TO="sobok2026@gmail.com"
+
+# The 4 top-level bindings are Cloudflare Secrets Store secrets (accessed via `await env.X.get()`). For local
 # dev, seed a LOCAL secrets store (no --remote) so they resolve offline — one per binding's secret_name:
 #   wrangler secrets-store secret create <STORE_ID> --name stella-turnstile-secret         --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name stella-ip-hash-salt             --value "…" --scopes workers
 #   wrangler secrets-store secret create <STORE_ID> --name stella-discord-webhook          --value ""  --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-resend-api-key-production --value "…" --scopes workers
+#   wrangler secrets-store secret create <STORE_ID> --name stella-resend-api-key-staging    --value "…" --scopes workers
 # (empty discord value = alerts disabled.)
 # PortOne credentials now exist only in apps/payments. Run that Worker alongside Stella so the PAYMENTS
 # Service Binding resolves; no PortOne secret or channel key is copied into this app.

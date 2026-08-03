@@ -24,6 +24,7 @@ import {
   guardianCollectionTable,
   guardianGuaranteeProgressTable,
   guardianPurchaseTable,
+  guardianRecoveryEmailDeliveryTable,
   guardianRedrawGrantTable,
   guardianReportTable,
 } from '../schema/guardian'
@@ -672,6 +673,10 @@ export async function confirmGuardianPurchase(
     if (product.kind === 'full_report') {
       const grantedAt = new Date()
       await stampGuardianEntitlementGranted(tx, purchase.id, grantedAt)
+      await tx
+        .insert(guardianRecoveryEmailDeliveryTable)
+        .values({ purchaseId: purchase.id })
+        .onConflictDoNothing({ target: guardianRecoveryEmailDeliveryTable.purchaseId })
 
       return {
         status: 'granted' as const,

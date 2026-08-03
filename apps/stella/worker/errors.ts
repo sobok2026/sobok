@@ -15,6 +15,7 @@ export type ProblemSlug =
   | 'thread-locked'
   | 'comment-not-found'
   | 'report-not-found'
+  | 'reopen-link-invalid'
   | 'payment-required'
   | 'payment-mismatch'
   | 'payment-conflict'

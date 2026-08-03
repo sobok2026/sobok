@@ -14,9 +14,10 @@
 - `권장안`: 출시 전에 수치 또는 세부 동작을 최종 승인해야 하는 현재 추천값
 - 구현 상태: 상품 매니페스트·추첨·게스트 컬렉션·리포트·구매·획득·보장과 유료 질문의 불변
   콘텐츠 계약·실제 한국어 선택형 44개와 선택 메모 1개·DB·게시 CLI·답변별 진행·마지막 답변의 카드 fulfillment,
-  중앙 PortOne 연동, 공개 랜딩과 checkout·질문·리포트 API, staging·production schema·문항 게시,
-  공용 scheduler 기반 pending 재조정까지 구현. 계정 귀속, 이메일 복구 전송, 사랑 재추첨 UI·결제와
-  production 1,024장 카탈로그는 후속 작업
+  중앙 PortOne 연동, 공개 랜딩과 분리된 무료 검사·무료 결과·유료 검사·유료 결과, checkout·질문·리포트 API,
+  staging·production schema·문항 게시, 공용 scheduler 기반 pending 재조정과 30일 미결제 정리,
+  결제 완료 메일과 15분 1회용 재열람 링크 교환까지 구현. 새 복구 테이블·환경별 Resend secret의 운영 반영,
+  계정 귀속, 사랑 재추첨 UI·결제와 production 1,024장 카탈로그는 후속 작업
 
 ## 1. 목표와 제품 원칙
 
@@ -62,8 +63,8 @@
   바뀌지는 않는다.
 - production에서는 같은 후보 선택 계약에 패밀리와 에디션을 추가하고, 출생 차트와 질문 답변에
   따라 네 슬롯의 기본 패밀리와 원화가 달라지게 한다.
-- 현재 `/[locale]/cards`의 고정 네 장과 균등 사랑 희귀도는 화면 검증용 프로토타입이며 유료 상품
-  규칙이 아니다.
+- 현재 유료 결과는 서버가 저장한 매니페스트 버전·선택 컨텍스트·카드 스냅샷만 렌더한다. 브라우저
+  고정 카드나 희귀도 재추첨 경로는 두지 않는다.
 - production 정식 출시 시점에는 실제로 획득 가능한 3:4 에디션을 최소 1,024장 게시한다.
   `1,024`는 패밀리 수와 곱하는 숫자가 아니라 준비가 끝난 실제 일러스트의 총수다.
 - 질문 답변과 출생 차트는 사랑 희귀도 확률에는 영향을 주지 않는다.
@@ -540,6 +541,9 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
 | `guardian_duplicate_drawn`     | 보유 중인 에디션이 다시 나옴         |
 | `guardian_guarantee_progress`  | 미보유 보장 카운터가 변함            |
 | `guardian_unowned_guaranteed`  | 미보유 보장 추첨이 실행됨            |
+| `guardian_reopen_request_view` | 구매 이메일 재열람 화면을 봄         |
+| `guardian_reopen_requested`    | 구매 이메일로 재열람 메일을 요청함   |
+| `guardian_reopen_link_view`    | 이메일의 1회용 링크 화면을 엶        |
 | `guardian_report_reopen`       | 구매한 리포트를 다시 엶              |
 
 결제 완료 이벤트는 브라우저 콜백이 아니라 서버에서 최종 확인된 구매를 기준으로 기록한다.
@@ -578,6 +582,9 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
 - 유료권 차감, 미보유 판단, 추첨, 획득 이력, 보유 집계, 보장 카운터 변경을 한 DB 트랜잭션으로 묶는다.
 - 결제 확인 반환, 웹훅, 재조정 작업은 같은 멱등 구매 확정 함수를 호출하며 전체 리포트 결제
   확정은 카드가 아니라 질문 entitlement만 지급한다.
+- 전체 리포트 entitlement와 durable 복구 메일 intent를 같은 구매 트랜잭션에서 만들고 실제 Resend
+  호출은 커밋 뒤 실행한다. 결제 완료 메일과 구매 이메일 재발급은 15분·1회용 token만 전달하고,
+  교환 성공 시 collection capability를 교체한다. 장기 capability 원문은 메일이나 URL에 넣지 않는다.
 - 마지막 유효 답변 저장, answer·signal snapshot, 패밀리 선택, 사랑 희귀도 추첨, 최초 네 장
   획득 이력과 `fulfilled` 전환은 하나의 report 트랜잭션으로 묶는다.
 - 공개 API는 상품·확률·보장 메타데이터와 guest checkout, 결제 확인, 유료 질문 진행, 최종 report 조회를
