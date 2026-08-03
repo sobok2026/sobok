@@ -5,6 +5,18 @@ import type { GuardianReportView } from '../../worker/guardian/report-contract'
 
 export { GUARDIAN_CHECKOUT_ACTION } from '../../worker/api/guardian-checkouts/actions'
 export { GUARDIAN_REOPEN_ACTION } from '../../worker/api/guardian-reopen/actions'
+// The offer as the buyer-facing screens state it. Build-time constants, not a fetch: the price is the single
+// most important fact on the landing page, and it used to arrive over the network — invisible to crawlers,
+// shifting the layout on arrival, and stuck on "가격 확인 중" for good whenever the request failed.
+export {
+  GUARDIAN_CURRENCY,
+  GUARDIAN_FREE_DELIVERABLES_KO,
+  GUARDIAN_MARKET,
+  GUARDIAN_REPORT_ITEM,
+  GUARDIAN_REPORT_NAME,
+  GUARDIAN_REPORT_PRICE,
+  GUARDIAN_REPORT_SKU,
+} from '../../worker/guardian/offer'
 export type { GuardianChartSnapshot, GuardianQuestionnaireClientStep, GuardianReportView }
 
 const CHECKOUT_SESSION_KEY = 'stella.guardianCheckout.v1'

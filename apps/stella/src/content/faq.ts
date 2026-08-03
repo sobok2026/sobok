@@ -4,7 +4,7 @@ import type { Locale } from '@sobok/domain/locale'
 // rather than next-intl messages so the answers stay crawlable prose and feed
 // FAQPage structured data. Written per tool page, ko is the canonical source.
 export type FaqItem = { q: string; a: string }
-export type FaqPageKey = 'constellation' | 'today' | 'love'
+export type FaqPageKey = 'constellation' | 'today' | 'love' | 'guardianReport'
 
 type FaqContent = { heading: string } & Record<FaqPageKey, FaqItem[]>
 
@@ -45,6 +45,28 @@ export const FAQ = {
       {
         q: '오늘의 흐름은 매일 바뀌나요?',
         a: '네, 행성과 달이 매일 움직여서 오늘의 무대와 행운 음식·색상도 자정마다 새로 떠요. 같은 날짜와 차트에서는 언제 다시 보아도 같은 추천을 확인할 수 있어요.',
+      },
+    ],
+    guardianReport: [
+      {
+        q: '무료 결과와 유료 리포트는 무엇이 다른가요?',
+        a: '무료 결과는 두 가지 마음 질문과 이미 만든 무료 출생 차트를 읽어 지금의 마음과 별자리 단서와 오늘의 한 걸음을 보여 줘요. 유료 리포트는 여기에 16~20개의 답을 더해 자기이해·사랑·일·결정 네 주제의 상세 본문과 네 장의 수호령 카드, 주제를 잇는 요약과 행동 문장까지 완성해요.',
+      },
+      {
+        q: '질문이 왜 사람마다 다른가요?',
+        a: '핵심 12문항은 모두 같아요. 그 뒤로는 앞선 답에서 더 살펴볼 필요가 있는 주제만 4~8문항으로 이어져요. 그래서 실제로 받는 질문은 16개에서 20개 사이가 돼요.',
+      },
+      {
+        q: '결제한 뒤 중간에 나가도 되나요?',
+        a: '답변은 한 문항씩 저장돼요. 같은 브라우저에서는 다시 돌아와 이어서 답할 수 있고, 구매할 때 입력한 이메일로 재열람 링크를 받아 다른 기기에서 이어갈 수도 있어요.',
+      },
+      {
+        q: '사랑 카드의 희귀도는 무엇인가요?',
+        a: '사랑 카드에는 오비트·네뷸라·이클립스·스텔라 네 단계 중 하나가 정해져요. 희귀도는 카드 그림의 결만 바꾸고 리포트 본문의 분량이나 내용은 바꾸지 않아요. 자기이해·일·결정 카드에는 희귀도가 없어요.',
+      },
+      {
+        q: '마음에 들지 않으면 환불되나요?',
+        a: '완성된 리포트를 열기 전에는 언제든 전액 환불받을 수 있어요. 맞춤 질문을 푸는 중이거나 중단한 상태도 여기에 해당해요. 리포트를 연 뒤에는 디지털 콘텐츠 특성상 청약철회가 제한되며 자세한 내용은 청약철회·환불 정책에 있어요.',
       },
     ],
     love: [
@@ -105,6 +127,28 @@ export const FAQ = {
         a: 'Yes — the planets and Moon move daily, so your stage, lucky food, and color refresh at midnight. The same date and chart always produce the same picks.',
       },
     ],
+    guardianReport: [
+      {
+        q: 'How does the free result differ from the paid report?',
+        a: 'The free result reads your two mood answers together with the free birth chart you already made, and shows where your heart is now, the placements behind it, and one step for today. The paid report adds 16–20 further answers and produces full text for all four themes — self, love, work and decisions — four guardian cards, and a summary that ties the themes together with concrete next actions.',
+      },
+      {
+        q: 'Why do people get different questions?',
+        a: 'The 12 core questions are the same for everyone. After those, only the themes your earlier answers left open continue, for another 4–8 questions. That is why the total lands somewhere between 16 and 20.',
+      },
+      {
+        q: 'Can I leave partway through after paying?',
+        a: 'Each answer is saved as you give it. You can come back in the same browser and continue, or have a reopen link sent to the email you used at checkout and continue on another device.',
+      },
+      {
+        q: 'What is the love card’s rarity?',
+        a: 'The love card is assigned one of four tiers: Orbit, Nebula, Eclipse or Stella. Rarity changes only the artwork; it does not change the length or the substance of the report. The self, work and decision cards have no rarity.',
+      },
+      {
+        q: 'Can I get a refund if I don’t like it?',
+        a: 'You can have a full refund at any time before you open the finished report — including while you are partway through the tailored questions, or after stopping. Once you open it, the right of withdrawal is limited because the content has been delivered; the Withdrawal & Refund Policy has the detail.',
+      },
+    ],
     love: [
       {
         q: 'How do you read my love life?',
@@ -163,6 +207,28 @@ export const FAQ = {
         a: 'はい。惑星と月は毎日動くので、今日の舞台とラッキーフード・カラーは深夜0時に更新されます。同じ日付と出生図なら、いつ見ても同じおすすめが表示されます。',
       },
     ],
+    guardianReport: [
+      {
+        q: '無料の結果と有料レポートは何が違いますか。',
+        a: '無料の結果は、二つの質問への回答とすでに作成した無料の出生チャートを読み、今の気持ち・星の手がかり・今日の一歩を示します。有料レポートはそこに16〜20問の回答を加え、自己理解・愛・仕事・決断の四つのテーマの詳しい本文と4枚の守護霊カード、テーマをつなぐ要約と行動の文まで仕上げます。',
+      },
+      {
+        q: 'なぜ人によって質問が違うのですか。',
+        a: '中心となる12問はすべての方に共通です。その後は、先の回答でさらに見る必要があるテーマだけが4〜8問続きます。そのため実際に受け取る質問は16問から20問の間になります。',
+      },
+      {
+        q: '決済後に途中で離れても大丈夫ですか。',
+        a: '回答は1問ずつ保存されます。同じブラウザなら戻って続きから回答でき、購入時のメールアドレスに再閲覧リンクを送って別の端末で続けることもできます。',
+      },
+      {
+        q: 'ラブカードのレア度とは何ですか。',
+        a: 'ラブカードにはオービット・ネビュラ・エクリプス・ステラの4段階のいずれかが割り当てられます。レア度が変えるのはカードの絵柄だけで、レポート本文の分量や内容は変わりません。自己理解・仕事・決断のカードにレア度はありません。',
+      },
+      {
+        q: '気に入らない場合は返金されますか。',
+        a: '完成したレポートを開く前ならいつでも全額返金を受けられます。個別質問に回答している途中や中断した状態も含みます。レポートを開いた後はデジタルコンテンツの性質上、契約解除が制限されます。詳しくは契約解除・返金ポリシーをご覧ください。',
+      },
+    ],
     love: [
       {
         q: '恋愛運はどう読みますか？',
@@ -219,6 +285,28 @@ export const FAQ = {
       {
         q: '今天的流势每天都会变吗？',
         a: '会的，行星和月亮每天都在移动，今天的舞台、幸运食物和幸运色会在午夜更新。同一日期与同一本命盘始终会得到相同推荐。',
+      },
+    ],
+    guardianReport: [
+      {
+        q: '免费结果与付费报告有什么区别？',
+        a: '免费结果会结合两道心境问题与你已生成的免费出生星盘，呈现当下的心境、背后的星象线索与今天可以走的一步。付费报告在此基础上再加入 16~20 道答案，完成自我理解、爱情、工作、决断四个主题的详细正文、四张守护灵卡片，以及串联主题的总结与行动建议。',
+      },
+      {
+        q: '为什么每个人的问题不一样？',
+        a: '12 道核心问题对所有人相同。之后只有前面答案中仍需深入的主题会继续，追加 4~8 道。因此实际收到的问题总数在 16 到 20 之间。',
+      },
+      {
+        q: '付款后中途离开可以吗？',
+        a: '答案会逐题保存。在同一浏览器中可以返回继续作答，也可以让系统把重新开启链接发送到结算时填写的邮箱，在其他设备上继续。',
+      },
+      {
+        q: '爱情卡片的稀有度是什么？',
+        a: '爱情卡片会获得轨道、星云、蚀、星辰四个等级之一。稀有度只改变卡面画作，不改变报告正文的篇幅或内容。自我理解、工作与决断卡片没有稀有度。',
+      },
+      {
+        q: '不满意可以退款吗？',
+        a: '在打开已完成的报告之前可随时全额退款，包括正在作答个性化问题或中途停止的情况。打开报告后，因数字内容的性质，撤回权将受到限制，详情见《撤回与退款政策》。',
       },
     ],
     love: [

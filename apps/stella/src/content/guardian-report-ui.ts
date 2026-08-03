@@ -1,14 +1,84 @@
 import type { Locale } from '@sobok/domain/locale'
+import type { ElementId } from '@/chart/types'
 import type { GuardianRarity, GuardianReportSlot } from '../../worker/guardian/manifest'
 
 export type GuardianPreviewTone = 'comfort' | 'honesty' | 'action' | 'possibility'
 export type GuardianPreviewMovement = 'start' | 'continue' | 'recover' | 'release'
 
 type PreviewQuestion<OptionId extends string> = {
+  header: {
+    title: string
+    body: string
+  }
   label: string
   prompt: string
   supportingText: string
   options: readonly { id: OptionId; label: string }[]
+}
+
+type FreeResultInsight = {
+  label: string
+  title: string
+  body: string
+}
+
+type GuardianFreeResultContent = {
+  hero: {
+    eyebrow: string
+    title: string
+    body: string
+    toneLines: Record<GuardianPreviewTone, string>
+    movementLines: Record<GuardianPreviewMovement, string>
+  }
+  reading: {
+    eyebrow: string
+    title: string
+    body: string
+    toneLabel: string
+    movementLabel: string
+    toneInsights: Record<GuardianPreviewTone, FreeResultInsight>
+    movementInsights: Record<GuardianPreviewMovement, FreeResultInsight>
+  }
+  chart: {
+    eyebrow: string
+    title: string
+    body: string
+    sunLabel: string
+    moonLabel: string
+    moonRangeLabel: string
+    risingLabel: string
+    risingUnknown: string
+    dominantLabel: string
+    bridge: (movement: string, element: string) => string
+    elements: Record<ElementId, FreeResultInsight & { glyph: string }>
+  }
+  action: {
+    eyebrow: string
+    title: string
+    body: string
+    reflectionLabel: string
+    actions: Record<GuardianPreviewMovement, Record<GuardianPreviewTone, string>>
+    reflections: Record<GuardianPreviewMovement, string>
+  }
+  paywall: {
+    eyebrow: string
+    titles: Record<GuardianPreviewMovement, string>
+    body: string
+    slots: Record<GuardianReportSlot, { label: string; glyph: string }>
+    sealedLabel: string
+    lockedTitle: string
+    lockedItems: readonly { title: string; preview: string }[]
+    unlock: string
+  }
+  states: {
+    chartRequiredTitle: string
+    chartRequiredBody: string
+    chartRequiredCta: string
+    chartLoading: string
+    missingTitle: string
+    missingBody: string
+    missingCta: string
+  }
 }
 
 type GuardianReportUiContent = {
@@ -37,9 +107,29 @@ type GuardianReportUiContent = {
       title: string
       body: string
       cta: string
-      secondaryCta: string
+      /** Under the CTA: what the paid step costs, before anyone has to click to find out. */
+      offerNote: (price: string) => string
       sampleLabel: string
       trustItems: readonly string[]
+    }
+    /** The one section that shows the product itself rather than describing it. */
+    sample: {
+      eyebrow: string
+      title: string
+      body: string
+      caption: string
+      section: {
+        label: string
+        title: string
+        guardians: string
+        oneLine: string
+        chartSummary: string
+        placements: readonly string[]
+        detail: { title: string; body: string }
+        guidance: { title: string; body: string }
+        reflection: string
+      }
+      continues: string
     }
     product: {
       eyebrow: string
@@ -54,46 +144,28 @@ type GuardianReportUiContent = {
     }
     quiz: {
       eyebrow: string
-      title: string
-      body: string
       tone: PreviewQuestion<GuardianPreviewTone>
       movement: PreviewQuestion<GuardianPreviewMovement>
       position: (current: number, total: number) => string
       next: string
       result: string
     }
-    preview: {
-      eyebrow: string
-      title: string
-      body: string
-      slots: Record<GuardianReportSlot, { label: string; glyph: string }>
-      toneLines: Record<GuardianPreviewTone, string>
-      movementLines: Record<GuardianPreviewMovement, string>
-      sealedLabel: string
-      lockedEyebrow: string
-      lockedTitle: string
-      lockedItems: readonly { title: string; preview: string }[]
-      unlock: string
-      chartRequiredTitle: string
-      chartRequiredBody: string
-      chartRequiredCta: string
-      chartLoading: string
-      missingTitle: string
-      missingBody: string
-      missingCta: string
-    }
+    freeResult: GuardianFreeResultContent
     purchase: {
       eyebrow: string
       title: string
       body: string
       includes: readonly string[]
-      priceLoading: string
       priceSuffix: string
       cta: string
-      oddsTitle: string
-      rarityLabels: Record<GuardianRarity, string>
-      guarantee: (interval: number) => string
-      guaranteeInitial: string
+      /** 전자상거래법 §13 wants the withdrawal terms readable before the offer is accepted, not only after. */
+      refundNote: string
+      refundLink: string
+    }
+    /** Mobile CTA bar, pinned once the hero's own call to action has scrolled away. */
+    stickyCta: {
+      label: (price: string) => string
+      cta: string
     }
     checkout: {
       title: string
@@ -105,6 +177,24 @@ type GuardianReportUiContent = {
       submit: string
       submitting: string
       close: string
+      /**
+       * 전자상거래법 §8(2) wants the buyer to confirm the order's terms before the contract forms, and §13(2)
+       * makes the product name, the price and the withdrawal terms the things that have to be confirmed. So
+       * the summary is not decoration — it is the disclosure, and the consents below it are the agreement.
+       */
+      orderTitle: string
+      orderProductLabel: string
+      orderPriceLabel: string
+      orderDeliveryLabel: string
+      orderDeliveryValue: string
+      consentTitle: string
+      consentAge: string
+      consentPrivacy: string
+      consentWithdrawal: string
+      consentRequired: string
+      minorNotice: string
+      /** Path segment under the locale root → label, for the documents linked beside the consents. */
+      docLinks: readonly { path: 'terms' | 'refund' | 'privacy'; label: string }[]
     }
     resume: {
       eyebrow: string
@@ -112,11 +202,6 @@ type GuardianReportUiContent = {
       body: string
       reportCta: string
       paymentCta: string
-    }
-    faq: {
-      eyebrow: string
-      title: string
-      items: readonly { question: string; answer: string }[]
     }
     errors: {
       answerRequired: string
@@ -261,10 +346,35 @@ const KO_CONTENT: GuardianReportUiContent = {
       eyebrow: 'STELLA PREMIUM READING',
       title: '별이 고른 네 장으로\n지금의 나를 깊이 읽어요',
       body: '출생 차트와 마음의 답을 함께 읽어 자기이해·사랑·일·결정에 관한 소장용 카드와 한 편의 리포트를 만들어요.',
-      cta: '2문항 무료 미리보기',
-      secondaryCta: '무엇을 받는지 먼저 보기',
+      cta: '2문항 무료로 시작하기',
+      offerNote: (price) => `전체 리포트는 ${price} 한 번 결제예요. 무료 결과를 보고 나서 정해도 늦지 않아요.`,
       sampleLabel: '실제 카드 예시',
-      trustItems: ['회원가입 없이 시작', '결제 전 무료 결과 확인', '결제 후 답변 자동 저장'],
+      trustItems: ['회원가입 없이 시작', '결제 전 무료 결과 확인', '열기 전에는 전액 환불'],
+    },
+    sample: {
+      eyebrow: 'INSIDE THE REPORT',
+      title: '리포트는 이렇게 쓰여 있어요',
+      body: '네 주제마다 한 장의 카드와 이만큼의 본문이 붙어요. 아래는 자기이해 편의 일부예요.',
+      caption: '실제 리포트 화면의 일부',
+      section: {
+        label: '자기이해',
+        title: '회복할 여백',
+        guardians: '게자리 수호령 · 달의 결',
+        oneLine: '지금은 더 잘해내는 것보다 아무것도 증명하지 않고 쉬는 시간이 너를 다시 반짝이게 해.',
+        chartSummary:
+          '달이 물의 자리에 놓여 감정의 파도를 먼저 감지하고, 토성이 네 번째 하우스를 지나며 안에서 버티는 힘을 시험하고 있어.',
+        placements: ['달 · 게자리', '토성 · 4하우스', '태양 · 12하우스'],
+        detail: {
+          title: '나를 지키는 방식',
+          body: '너는 힘들다는 신호를 밖으로 먼저 보내지 않아. 대신 하던 일의 밀도를 높여서 마음의 소란을 덮어. 그 방식은 짧게는 잘 통하지만 회복의 순서를 계속 뒤로 미뤄. 그래서 무너질 때는 예고 없이 한 번에 무너지는 것처럼 느껴져.',
+        },
+        guidance: {
+          title: '이번 주에 해볼 한 가지',
+          body: '하루에 한 번 아무 목적 없는 30분을 정해 두고, 그 시간에는 무엇도 완성하지 않기로 해. 쉬는 시간을 성과로 바꾸지 않는 연습이 지금의 너에게 가장 필요한 훈련이야.',
+        },
+        reflection: '증명하지 않아도 남아 있는 것이 진짜 내 것이야.',
+      },
+      continues: '이 아래로 사랑·일·결정 편이 같은 밀도로 이어져요',
     },
     product: {
       eyebrow: 'WHAT YOU RECEIVE',
@@ -301,7 +411,7 @@ const KO_CONTENT: GuardianReportUiContent = {
         {
           number: '02',
           title: '무료 결과와 잠긴 미리보기',
-          body: '개인화 한 줄과 전체 리포트의 구성을 먼저 확인해요.',
+          body: '지금의 마음을 읽은 작은 리포트와 오늘의 한 걸음을 먼저 받아요.',
         },
         { number: '03', title: '결제 후 맞춤 질문', body: '핵심 12문항과 답변에 따라 이어지는 4~8문항에 답해요.' },
         {
@@ -313,12 +423,14 @@ const KO_CONTENT: GuardianReportUiContent = {
     },
     quiz: {
       eyebrow: 'FREE PREVIEW',
-      title: '지금의 마음부터 가볍게 알려주세요',
-      body: '정답은 없어요. 가장 먼저 눈에 들어오는 답을 고르면 돼요.',
       tone: {
+        header: {
+          title: '지금의 마음부터 가볍게 알려주세요',
+          body: '정답은 없어요. 가장 먼저 눈에 들어오는 답을 고르면 돼요.',
+        },
         label: '듣고 싶은 목소리',
         prompt: '지금 수호령에게 어떤 이야기를 듣고 싶나요?',
-        supportingText: '결과 문장의 온도와 조언 방식을 정하는 답이에요.',
+        supportingText: '고른 목소리에 맞춰 결과를 들려드릴게요.',
         options: [
           { id: 'comfort', label: '다정한 위로' },
           { id: 'honesty', label: '솔직한 통찰' },
@@ -327,9 +439,13 @@ const KO_CONTENT: GuardianReportUiContent = {
         ],
       },
       movement: {
+        header: {
+          title: '이제 마지막 질문이에요',
+          body: '답을 고르면 바로 무료 결과를 보여드릴게요.',
+        },
         label: '지금의 방향',
         prompt: '지금 마음은 어느 쪽으로 움직이고 있나요?',
-        supportingText: '전체 리포트가 집중할 변화의 방향을 정하는 답이에요.',
+        supportingText: '고른 방향이 무료 결과를 여는 첫 단서가 돼요.',
         options: [
           { id: 'start', label: '새로 시작하고 싶어요' },
           { id: 'continue', label: '지금의 흐름을 이어가고 싶어요' },
@@ -341,59 +457,201 @@ const KO_CONTENT: GuardianReportUiContent = {
       next: '다음 질문',
       result: '무료 결과 보기',
     },
-    preview: {
-      eyebrow: 'YOUR FREE PREVIEW',
-      title: '지금 네 수호령이 먼저 건넨 말',
-      body: '이 한 줄은 무료 답변만 반영한 미리보기예요. 카드와 전체 본문은 더 깊은 답변이 모두 모인 뒤 정해져요.',
-      slots: {
-        self: { label: '자기이해', glyph: '☾' },
-        love: { label: '사랑', glyph: '♡' },
-        work: { label: '일', glyph: '✦' },
-        choice: { label: '결정', glyph: '◇' },
+    freeResult: {
+      hero: {
+        eyebrow: 'YOUR FREE READING',
+        title: '수호령이 먼저 읽은 지금의 마음',
+        body: '두 답에서 지금 필요한 방향과 오늘의 작은 행동까지 먼저 읽었어요. 무료 출생 차트가 있으면 별자리 단서도 함께 보여줘요. 네 주제의 상세 해석과 실제 카드는 더 깊은 답이 모두 모인 뒤 완성돼요.',
+        toneLines: {
+          comfort: '지금은 스스로를 다그치는 답보다 마음이 안심할 수 있는 말이 먼저 필요해요.',
+          honesty: '지금은 듣기 좋은 답보다 마음속에서 이미 알고 있는 사실을 바로 보는 일이 필요해요.',
+          action: '지금은 더 생각하는 것보다 작게라도 움직이며 확인하는 일이 필요해요.',
+          possibility: '지금은 하나의 결론보다 아직 열어보지 않은 가능성을 만나는 일이 필요해요.',
+        },
+        movementLines: {
+          start: '그 마음은 새로운 시작을 향하고 있어요.',
+          continue: '그 마음은 지금의 흐름을 더 단단하게 이어가고 싶어 해요.',
+          recover: '그 마음은 서두르기보다 잃어버린 리듬을 되찾고 싶어 해요.',
+          release: '그 마음은 오래 붙잡은 것을 내려놓고 다음 자리를 만들고 싶어 해요.',
+        },
       },
-      toneLines: {
-        comfort: '지금의 마음을 다그치지 않아도 괜찮아요.',
-        honesty: '이미 알고 있지만 미뤄 둔 마음이 한 가지 보여요.',
-        action: '작은 행동 하나가 흐름을 바꿀 때예요.',
-        possibility: '아직 이름 붙이지 않은 가능성이 가까이 있어요.',
+      reading: {
+        eyebrow: 'TWO CLUES',
+        title: '두 답 사이에서 보이는 지금의 마음',
+        body: '무엇을 듣고 싶은지와 어디로 향하고 싶은지를 함께 보면, 지금 필요한 방식이 조금 더 선명해져요.',
+        toneLabel: '지금 필요한 목소리',
+        movementLabel: '마음이 향하는 방향',
+        toneInsights: {
+          comfort: {
+            label: '다정한 위로',
+            title: '안심할 수 있어야 다시 움직일 수 있어요',
+            body: '다정한 위로를 고른 건 답을 몰라서라기보다, 스스로를 재촉하는 방식으로는 더 움직이기 어렵다는 신호에 가까워요. 안심할 자리를 먼저 만들면 다음 선택도 선명해질 수 있어요.',
+          },
+          honesty: {
+            label: '솔직한 통찰',
+            title: '돌려 말하지 않는 기준이 필요해요',
+            body: '솔직한 통찰을 고른 마음은 막연한 위로보다 이미 느끼고 있던 사실에 이름을 붙이고 싶어 해요. 불편하더라도 분명한 문장 하나가 오래 끌던 망설임을 줄여줄 수 있어요.',
+          },
+          action: {
+            label: '구체적인 행동',
+            title: '생각을 끝낼 작은 움직임이 필요해요',
+            body: '구체적인 행동을 고른 마음에는 이해만으로는 충분하지 않다는 감각이 있어요. 완벽한 계획보다 지금 확인할 수 있는 작은 행동 하나가 답을 현실에 가깝게 데려와요.',
+          },
+          possibility: {
+            label: '새로운 가능성',
+            title: '닫힌 결론보다 새 선택지가 필요해요',
+            body: '새로운 가능성을 고른 건 지금 가진 선택지만으로 마음을 설명하고 싶지 않다는 뜻에 가까워요. 당장 결정하지 않아도 다른 길이 있다는 감각이 숨을 돌릴 여백을 만들어줘요.',
+          },
+        },
+        movementInsights: {
+          start: {
+            label: '새로운 시작',
+            title: '확신을 기다리기보다 시작하며 확인하고 싶어요',
+            body: '새로 시작하고 싶은 마음은 지금까지를 모두 부정하려는 것이 아니라, 달라질 수 있다는 증거를 직접 만들고 싶어 해요. 첫걸음은 작아도 방향이 분명하면 충분해요.',
+          },
+          continue: {
+            label: '흐름 이어가기',
+            title: '버리는 것보다 지금의 흐름을 다듬고 싶어요',
+            body: '이어가고 싶은 마음에는 이미 쌓아온 시간과 감각을 쉽게 포기하지 않는 힘이 있어요. 같은 방식만 반복하기보다 지킬 것과 조정할 것을 나누면 흐름이 다시 살아나요.',
+          },
+          recover: {
+            label: '내 리듬 회복',
+            title: '예전으로가 아니라 내 리듬으로 돌아가고 싶어요',
+            body: '회복하고 싶은 마음은 무조건 빨리 괜찮아지는 것보다 소모된 감각을 알아차리는 데 가까워요. 지금의 나에게 맞는 속도를 다시 찾는 것이 다음 움직임의 시작이에요.',
+          },
+          release: {
+            label: '놓아주기',
+            title: '붙잡는 이유보다 놓은 뒤의 나를 보고 싶어요',
+            body: '놓고 싶은 마음은 그동안의 선택이 틀렸다는 뜻이 아니라, 이제 다른 것을 지키기 위해 자리를 만들고 싶다는 신호예요. 무엇을 끝낼지보다 무엇을 남길지 먼저 보면 덜 흔들려요.',
+          },
+        },
       },
-      movementLines: {
-        start: '새 출발은 완벽한 확신보다 작은 첫걸음에서 열려요.',
-        continue: '지금 쌓아 온 흐름을 믿고 한 걸음만 더 이어가 보세요.',
-        recover: '회복은 멈춤이 아니라 내 리듬을 다시 찾는 과정이에요.',
-        release: '놓아준 자리에 내게 맞는 다음 장면이 들어올 거예요.',
+      chart: {
+        eyebrow: 'BIRTH CHART CLUE',
+        title: '무료 출생 차트에서 가져온 한 가지 단서',
+        body: '이미 만든 무료 출생 차트에서 지금의 답과 맞닿는 부분만 골라 함께 놓았어요.',
+        sunLabel: '태양',
+        moonLabel: '달',
+        moonRangeLabel: '달 범위',
+        risingLabel: '상승',
+        risingUnknown: '태어난 시각이 필요해요',
+        dominantLabel: '지금 함께 볼 가장 강한 결',
+        bridge: (movement, element) =>
+          `지금 고른 ‘${movement}’ 방향도 ${element} 기운의 방식을 존중할 때 더 자연스럽게 이어져요.`,
+        elements: {
+          fire: {
+            label: '불',
+            glyph: '△',
+            title: '움직여 보며 답을 만드는 힘이 커요',
+            body: '불의 기운은 마음이 향하는 곳을 행동으로 확인하려 해요. 의욕을 한 번에 태우기보다 오늘 끝낼 수 있는 크기로 나누면 추진력이 오래가요.',
+          },
+          earth: {
+            label: '흙',
+            glyph: '□',
+            title: '손에 잡히는 변화에서 안심을 얻어요',
+            body: '흙의 기운은 말보다 실제로 달라진 조건에서 확신을 얻어요. 시간, 순서, 기준처럼 구체적인 한 가지를 정하면 마음도 함께 안정돼요.',
+          },
+          air: {
+            label: '바람',
+            glyph: '≋',
+            title: '이름 붙이고 연결할 때 길이 보여요',
+            body: '바람의 기운은 생각을 말이나 글로 꺼낼 때 선택지를 발견해요. 혼자 결론을 밀어붙이기보다 질문 하나를 정확히 만들면 다음 방향이 가벼워져요.',
+          },
+          water: {
+            label: '물',
+            glyph: '◡',
+            title: '마음이 납득해야 오래 움직일 수 있어요',
+            body: '물의 기운은 겉으로 맞는 답보다 안에서 편안해지는 답을 오래 지켜요. 감정을 없애려 하기보다 무엇을 지키려는 감정인지 살펴보면 힘이 생겨요.',
+          },
+        },
       },
-      sealedLabel: '결제 후 공개',
-      lockedEyebrow: 'LOCKED REPORT',
-      lockedTitle: '전체 리포트에 이어질 이야기',
-      lockedItems: [
-        { title: '나를 지키는 방식', preview: '감정이 흔들릴 때 반복되는 반응과 회복의 조건…' },
-        { title: '사랑이 움직이는 속도', preview: '다가감과 기다림 사이에서 관계가 필요로 하는 여백…' },
-        { title: '일의 리듬과 압박', preview: '성취를 만드는 힘과 에너지를 소모시키는 마찰…' },
-        { title: '결정을 막는 진짜 조건', preview: '비교가 길어지는 이유와 책임지고 싶은 선택의 방향…' },
-      ],
-      unlock: '네 장과 전체 이야기 열기',
-      chartRequiredTitle: '먼저 무료 출생 차트를 만들어주세요',
-      chartRequiredBody:
-        '수호령 리포트는 출생 차트를 함께 읽어요. 차트를 만든 뒤 이 페이지로 돌아오면 무료 답변은 이 탭에 그대로 남아 있어요.',
-      chartRequiredCta: '무료 출생 차트 만들기',
-      chartLoading: '출생 차트의 별빛을 읽고 있어요…',
-      missingTitle: '먼저 무료 검사를 완료해주세요',
-      missingBody: '두 가지 짧은 질문에 답하면 개인화된 한 줄과 잠긴 리포트 구성을 바로 확인할 수 있어요.',
-      missingCta: '무료 검사 시작하기',
+      action: {
+        eyebrow: 'ONE SMALL MOVE',
+        title: '오늘 바로 해볼 한 가지',
+        body: '거창한 결심보다 지금 고른 목소리와 방향에 맞는 작은 행동을 준비했어요.',
+        reflectionLabel: '오늘 마음에 남길 질문',
+        actions: {
+          start: {
+            comfort: '시작하고 싶은 일을 한 문장으로 적고, 가장 부담 없는 5분짜리 첫 동작만 골라보세요.',
+            honesty: '시작을 미루게 만든 진짜 이유를 한 문장으로 적고, 그래도 감수할 수 있는 비용 하나를 정해보세요.',
+            action: '10분 안에 끝낼 수 있는 첫 단계를 정해 오늘 일정에 바로 넣어보세요.',
+            possibility: '해보고 싶은 선택지 세 개를 적고, 결과를 쉽게 확인할 수 있는 작은 실험 하나를 골라보세요.',
+          },
+          continue: {
+            comfort: '지금까지 이어온 것 중 이미 잘하고 있는 한 가지를 적고, 오늘 같은 속도로 한 번만 더 반복해보세요.',
+            honesty: '계속하는 이유가 애정인지 관성인지 적어보고, 남길 것 하나와 바꿀 것 하나를 골라보세요.',
+            action: '다음 진행을 막는 병목 하나를 골라 15분 동안 그것만 정리해보세요.',
+            possibility: '현재 흐름을 버리지 않고 새롭게 바꿀 수 있는 10%를 하나 시험해보세요.',
+          },
+          recover: {
+            comfort: '오늘 에너지를 빼앗는 일 하나를 미뤄두고, 몸이 편안해지는 10분을 먼저 확보하세요.',
+            honesty: '괜찮은 척했던 순간 하나와 그때 실제로 필요했던 것을 한 문장씩 적어보세요.',
+            action: '회복을 위해 오늘 하지 않을 일 하나와 꼭 지킬 일 하나를 정하세요.',
+            possibility: '예전 방식으로 돌아가기보다 지금의 나에게 맞는 회복 방법 하나를 새로 시험해보세요.',
+          },
+          release: {
+            comfort: '놓고 싶은 것을 당장 없애려 하지 말고, 오늘 하루만 거리를 둘 방법 하나를 골라보세요.',
+            honesty: '이미 끝났음을 알고 있는 것과 아직 붙잡고 있는 이유를 나란히 적어보세요.',
+            action: '삭제, 취소, 거절 중 지금 할 수 있는 가장 작은 정리 하나를 실행하세요.',
+            possibility: '비워진 자리에 들어오면 좋을 감정이나 장면을 세 단어로 적어보세요.',
+          },
+        },
+        reflections: {
+          start: '완벽하지 않아도 시작할 수 있는 가장 작은 모습은 무엇일까요?',
+          continue: '계속 지키고 싶은 것과 이제 바꾸고 싶은 것은 각각 무엇일까요?',
+          recover: '회복한 내가 다시 갖고 싶은 하루의 감각은 무엇일까요?',
+          release: '놓고 나면 비로소 지킬 수 있는 것은 무엇일까요?',
+        },
+      },
+      paywall: {
+        eyebrow: 'GO DEEPER',
+        titles: {
+          start: '새로 시작하려는 마음을 네 삶의 네 장면으로 이어볼까요?',
+          continue: '이어가고 싶은 흐름이 어디에서 힘을 얻는지 더 깊이 볼까요?',
+          recover: '회복에 필요한 조건을 사랑, 일, 결정까지 연결해볼까요?',
+          release: '무엇을 남기고 놓을지 네 삶의 네 장면에서 살펴볼까요?',
+        },
+        body: '무료 결과는 지금의 방향과 오늘의 한 걸음을 보여줬어요. 전체 리포트는 출생 차트와 16~20개 답을 함께 읽어, 같은 마음이 자기이해·사랑·일·결정에서 어떻게 다르게 나타나는지 풀어줘요.',
+        slots: {
+          self: { label: '자기이해', glyph: '☾' },
+          love: { label: '사랑', glyph: '♡' },
+          work: { label: '일', glyph: '✦' },
+          choice: { label: '결정', glyph: '◇' },
+        },
+        sealedLabel: '결제 후 공개',
+        lockedTitle: '전체 리포트에서 이어지는 네 장면',
+        lockedItems: [
+          { title: '나를 지키는 방식', preview: '같은 마음이 반복되는 이유와 회복에 필요한 조건…' },
+          { title: '사랑이 움직이는 속도', preview: '다가감과 기다림 사이에서 관계가 필요로 하는 여백…' },
+          { title: '일의 리듬과 압박', preview: '성취를 만드는 힘과 에너지를 소모시키는 마찰…' },
+          { title: '결정을 가르는 기준', preview: '비교가 길어지는 이유와 책임지고 싶은 선택의 방향…' },
+        ],
+        unlock: '네 장과 전체 리포트 열기',
+      },
+      states: {
+        chartRequiredTitle: '무료 출생 차트를 더하면 결과가 완성돼요',
+        chartRequiredBody:
+          '두 답으로 읽은 마음과 오늘의 행동은 지금 확인할 수 있어요. 출생 차트를 만든 뒤 돌아오면 별자리 단서와 결제 버튼이 이어져요.',
+        chartRequiredCta: '무료 출생 차트 만들기',
+        chartLoading: '출생 차트에서 지금의 단서를 찾고 있어요…',
+        missingTitle: '먼저 무료 검사를 완료해주세요',
+        missingBody: '두 가지 짧은 질문에 답하면 지금의 마음, 출생 차트 단서, 오늘의 한 걸음을 바로 확인할 수 있어요.',
+        missingCta: '무료 검사 시작하기',
+      },
     },
     purchase: {
       eyebrow: 'FULL REPORT',
       title: '네 답이 모두 모인 뒤에만 정해지는 카드',
       body: '결제 직후 카드를 무작위로 보여주지 않아요. 핵심 질문과 맞춤 질문을 모두 마친 뒤 출생 차트와 답변을 함께 읽어 카드와 본문을 완성해요.',
       includes: ['수호령 카드 4장', '개인화 질문 16~20개', '네 주제 상세 본문', '시각 요약과 행동 문장'],
-      priceLoading: '가격 확인 중',
-      priceSuffix: '한 번 결제',
-      cta: '전체 리포트 시작하기',
-      oddsTitle: '사랑 카드 희귀도 확률',
-      rarityLabels: { orbit: '오비트', nebula: '네뷸라', eclipse: '이클립스', stella: '스텔라' },
-      guarantee: (interval) => `사랑 카드 유료 재추첨 ${interval}회마다 미보유 카드 1장 보장`,
-      guaranteeInitial: '첫 전체 리포트의 사랑 카드는 재추첨 보장 횟수에 포함되지 않아요.',
+      priceSuffix: '한 번 결제 · 구독 아님',
+      cta: '무료 미리보기부터 시작하기',
+      refundNote: '완성된 리포트를 열기 전에는 언제든 전액 환불받을 수 있어요.',
+      refundLink: '청약철회·환불 정책',
+    },
+    stickyCta: {
+      label: (price) => `전체 리포트 ${price} · 한 번 결제`,
+      cta: '무료로 시작하기',
     },
     checkout: {
       title: '리포트를 다시 찾을 이메일',
@@ -405,6 +663,24 @@ const KO_CONTENT: GuardianReportUiContent = {
       submit: '결제하고 맞춤 질문 시작하기',
       submitting: '결제창을 준비하고 있어요…',
       close: '이전으로',
+      orderTitle: '주문 내용',
+      orderProductLabel: '상품',
+      orderPriceLabel: '결제 금액',
+      orderDeliveryLabel: '제공 방식',
+      orderDeliveryValue: '맞춤 질문을 마치면 웹 화면으로 제공 · 1년간 재열람',
+      consentTitle: '결제 전 확인',
+      consentAge: '만 14세 이상입니다. 생년월일은 받지 않아요.',
+      consentPrivacy: '리포트 결제와 생성 그리고 재열람에 필요한 개인정보 수집·이용에 동의합니다.',
+      consentWithdrawal:
+        '완성된 리포트를 열기 전에는 언제든 전액 환불받을 수 있고, 리포트를 연 뒤에는 전자상거래법에 따라 청약철회가 제한된다는 점에 동의합니다.',
+      consentRequired: '결제를 진행하려면 위 세 가지를 모두 확인해주세요.',
+      minorNotice:
+        '미성년자가 법정대리인의 동의 없이 맺은 계약은 미성년자 본인이나 법정대리인이 취소할 수 있어요. 구매한 이메일과 함께 알려주시면 취소해 드려요.',
+      docLinks: [
+        { path: 'terms', label: '이용약관' },
+        { path: 'refund', label: '청약철회·환불 정책' },
+        { path: 'privacy', label: '개인정보처리방침' },
+      ],
     },
     resume: {
       eyebrow: 'CONTINUE',
@@ -412,25 +688,6 @@ const KO_CONTENT: GuardianReportUiContent = {
       body: '결제 결과를 확인하거나 중단했던 결제를 다시 열 수 있어요.',
       reportCta: '결제 결과·리포트 확인',
       paymentCta: '결제 다시 열기',
-    },
-    faq: {
-      eyebrow: 'BEFORE YOU BEGIN',
-      title: '시작하기 전에 궁금한 점',
-      items: [
-        {
-          question: '무료 결과와 유료 결과는 무엇이 다른가요?',
-          answer:
-            '무료 결과는 두 답을 반영한 한 줄과 잠긴 구성을 보여줘요. 유료 결과는 출생 차트와 16~20개 답을 바탕으로 네 장의 카드, 상세 본문, 연결 요약과 행동 문장을 완성해요.',
-        },
-        {
-          question: '질문이 왜 사람마다 다른가요?',
-          answer: '첫 12문항은 모두 같고, 이후에는 앞선 답에서 더 살펴볼 필요가 있는 주제만 4~8문항으로 이어져요.',
-        },
-        {
-          question: '결제 후 중간에 나가도 되나요?',
-          answer: '답변은 한 문항씩 저장돼요. 같은 브라우저와 탭에서는 다시 돌아와 이어서 답할 수 있어요.',
-        },
-      ],
     },
     errors: {
       answerRequired: '두 가지 무료 질문에 먼저 답해주세요.',
@@ -558,7 +815,10 @@ const KO_CONTENT: GuardianReportUiContent = {
 function emptyContent(): GuardianReportUiContent {
   const empty = ''
   const emptySlot = { label: empty, glyph: empty }
+  const emptyInsight = { label: empty, title: empty, body: empty }
+  const emptyElementInsight = { ...emptyInsight, glyph: empty }
   const emptyQuestion = {
+    header: { title: empty, body: empty },
     label: empty,
     prompt: empty,
     supportingText: empty,
@@ -577,55 +837,127 @@ function emptyContent(): GuardianReportUiContent {
         title: empty,
         body: empty,
         cta: empty,
-        secondaryCta: empty,
+        offerNote: () => empty,
         sampleLabel: empty,
         trustItems: [],
+      },
+      sample: {
+        eyebrow: empty,
+        title: empty,
+        body: empty,
+        caption: empty,
+        section: {
+          label: empty,
+          title: empty,
+          guardians: empty,
+          oneLine: empty,
+          chartSummary: empty,
+          placements: [],
+          detail: { title: empty, body: empty },
+          guidance: { title: empty, body: empty },
+          reflection: empty,
+        },
+        continues: empty,
       },
       product: { eyebrow: empty, title: empty, body: empty, items: [] },
       process: { eyebrow: empty, title: empty, steps: [] },
       quiz: {
         eyebrow: empty,
-        title: empty,
-        body: empty,
         tone: emptyQuestion,
         movement: emptyQuestion,
         position: () => empty,
         next: empty,
         result: empty,
       },
-      preview: {
-        eyebrow: empty,
-        title: empty,
-        body: empty,
-        slots: { self: emptySlot, love: emptySlot, work: emptySlot, choice: emptySlot },
-        toneLines: { comfort: empty, honesty: empty, action: empty, possibility: empty },
-        movementLines: { start: empty, continue: empty, recover: empty, release: empty },
-        sealedLabel: empty,
-        lockedEyebrow: empty,
-        lockedTitle: empty,
-        lockedItems: [],
-        unlock: empty,
-        chartRequiredTitle: empty,
-        chartRequiredBody: empty,
-        chartRequiredCta: empty,
-        chartLoading: empty,
-        missingTitle: empty,
-        missingBody: empty,
-        missingCta: empty,
+      freeResult: {
+        hero: {
+          eyebrow: empty,
+          title: empty,
+          body: empty,
+          toneLines: { comfort: empty, honesty: empty, action: empty, possibility: empty },
+          movementLines: { start: empty, continue: empty, recover: empty, release: empty },
+        },
+        reading: {
+          eyebrow: empty,
+          title: empty,
+          body: empty,
+          toneLabel: empty,
+          movementLabel: empty,
+          toneInsights: {
+            comfort: emptyInsight,
+            honesty: emptyInsight,
+            action: emptyInsight,
+            possibility: emptyInsight,
+          },
+          movementInsights: {
+            start: emptyInsight,
+            continue: emptyInsight,
+            recover: emptyInsight,
+            release: emptyInsight,
+          },
+        },
+        chart: {
+          eyebrow: empty,
+          title: empty,
+          body: empty,
+          sunLabel: empty,
+          moonLabel: empty,
+          moonRangeLabel: empty,
+          risingLabel: empty,
+          risingUnknown: empty,
+          dominantLabel: empty,
+          bridge: () => empty,
+          elements: {
+            fire: emptyElementInsight,
+            earth: emptyElementInsight,
+            air: emptyElementInsight,
+            water: emptyElementInsight,
+          },
+        },
+        action: {
+          eyebrow: empty,
+          title: empty,
+          body: empty,
+          reflectionLabel: empty,
+          actions: {
+            start: { comfort: empty, honesty: empty, action: empty, possibility: empty },
+            continue: { comfort: empty, honesty: empty, action: empty, possibility: empty },
+            recover: { comfort: empty, honesty: empty, action: empty, possibility: empty },
+            release: { comfort: empty, honesty: empty, action: empty, possibility: empty },
+          },
+          reflections: { start: empty, continue: empty, recover: empty, release: empty },
+        },
+        paywall: {
+          eyebrow: empty,
+          titles: { start: empty, continue: empty, recover: empty, release: empty },
+          body: empty,
+          slots: { self: emptySlot, love: emptySlot, work: emptySlot, choice: emptySlot },
+          sealedLabel: empty,
+          lockedTitle: empty,
+          lockedItems: [],
+          unlock: empty,
+        },
+        states: {
+          chartRequiredTitle: empty,
+          chartRequiredBody: empty,
+          chartRequiredCta: empty,
+          chartLoading: empty,
+          missingTitle: empty,
+          missingBody: empty,
+          missingCta: empty,
+        },
       },
       purchase: {
         eyebrow: empty,
         title: empty,
         body: empty,
         includes: [],
-        priceLoading: empty,
         priceSuffix: empty,
         cta: empty,
-        oddsTitle: empty,
-        rarityLabels: { orbit: empty, nebula: empty, eclipse: empty, stella: empty },
-        guarantee: () => empty,
-        guaranteeInitial: empty,
+        refundNote: empty,
+        refundLink: empty,
       },
+      stickyCta: { label: () => empty, cta: empty },
       checkout: {
         title: empty,
         body: empty,
@@ -636,9 +968,20 @@ function emptyContent(): GuardianReportUiContent {
         submit: empty,
         submitting: empty,
         close: empty,
+        orderTitle: empty,
+        orderProductLabel: empty,
+        orderPriceLabel: empty,
+        orderDeliveryLabel: empty,
+        orderDeliveryValue: empty,
+        consentTitle: empty,
+        consentAge: empty,
+        consentPrivacy: empty,
+        consentWithdrawal: empty,
+        consentRequired: empty,
+        minorNotice: empty,
+        docLinks: [],
       },
       resume: { eyebrow: empty, title: empty, body: empty, reportCta: empty, paymentCta: empty },
-      faq: { eyebrow: empty, title: empty, items: [] },
       errors: {
         answerRequired: empty,
         chartUnavailable: empty,

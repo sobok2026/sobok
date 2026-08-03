@@ -34,6 +34,11 @@ export type Ecommerce = {
   readonly items: readonly EcommerceItem[]
   readonly promotion_id?: string
   readonly promotion_name?: string
+  /**
+   * Required on `purchase`. GA4 deduplicates purchases by this id, which is what makes the event safe to fire
+   * from a screen a buyer can reload — pass the payment's own id, never a generated one.
+   */
+  readonly transaction_id?: string
   readonly value?: number
 }
 

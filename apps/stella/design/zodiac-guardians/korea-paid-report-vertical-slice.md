@@ -195,8 +195,9 @@ sequenceDiagram
 
 - 무료 질문 2개의 provisional 미리보기는 브라우저에서 만들고 DB 행이나 capability를 생성하지
   않는다.
-- provisional 미리보기는 태양 별자리 수호령과 답변별 로케일 문구만 조합하며 서버의 production
-  패밀리 scorer를 브라우저에 복제하지 않는다.
+- 무료 결과는 두 답의 조합별 마음 해석·오늘의 행동과 기존 무료 출생 차트에서 계산한 Big 3·원소
+  단서를 브라우저에서 조합한다. 서버의 production 패밀리 scorer나 카드 선택 규칙은 브라우저에
+  복제하지 않는다.
 - checkout은 `locale`, 무료 결과에서 이미 계산한 정규화된 차트 핵심값, 무료 답변 ID와 복구
   이메일만 받는다.
 - 생년월일·시간·장소를 다시 묻거나 purchase context에 원본 출생 프로필로 저장하지 않는다. 계정 보관을
@@ -501,13 +502,12 @@ Store ID와 channel map은 `apps/payments/wrangler.jsonc`, V2 API Secret은 `acc
 - 직접 랜딩에 들어왔지만 저장된 본인 출생 입력이 없으면 상품 소개와 무료 질문은 볼 수 있다.
   결제 CTA에서는 무료 차트 만들기로 명확히 복귀시키며 임의 기본 차트를 만들지 않는다.
 - 첫 CTA 뒤 두 무료 질문을 한 화면에 하나씩 보여준다.
-- 무료 답을 마치면 DB를 쓰지 않고 `자기이해`, `사랑`, `일`, `결정` 이름이 붙은 카드 뒷면 네
-  장과 한 줄 provisional teaser를 보여준다. `미리 본 방향`이라고 표시해 최종 카드가 정해졌다고
-  말하지 않는다.
-- teaser는 `네 리포트에는 시작하려는 마음과 지키려는 마음이 함께 보여요`처럼 입력을 반영한
-  종합 방향만 말한다. 정확한 카드 패밀리, 제목, 장면 원화, 사랑 희귀도는 공개하지 않는다.
-- sealed 미리보기에는 최종 리포트의 네 주제 제목과 일부 문장만 잠금 상태로 보여준다. 무료 차트
-  원문을 잠근 것처럼 보이지 않게 별도 유료 결과물임을 유지한다.
+- 무료 답을 마치면 DB를 쓰지 않고 두 답을 함께 읽은 핵심 문장, 각 답의 의미, 기존 무료 출생
+  차트에서 가져온 Big 3·주요 원소 단서, 답 조합별 오늘의 행동과 성찰 질문을 순서대로 보여준다.
+- 무료 결과는 약 1분 안에 끝까지 읽고 한 가지 행동을 가져갈 수 있는 작은 완결 리포트다. 기존 무료
+  차트에서 가져온 단서임을 명시해 무료 차트 원문을 새로 잠근 것처럼 보이지 않게 한다.
+- 그 뒤에 `자기이해`, `사랑`, `일`, `결정` 카드 뒷면 네 장과 유료에서 이어질 질문을 잠금 상태로
+  보여준다. 정확한 카드 패밀리, 제목, 장면 원화, 사랑 희귀도는 공개하지 않는다.
 - 구매 CTA는 가격을 버튼 안에 포함한다:
   `네 카드와 전체 리포트 열기 · 3,900원`.
 - 구매 CTA를 누르면 유료 질문 원문 대신 `결제 후 16~20개 · 네 주제 · 약 4~7분 · 중간 저장`
@@ -523,7 +523,7 @@ Store ID와 channel map은 `apps/payments/wrangler.jsonc`, V2 API Secret은 `acc
 | --------------------------------------- | ------------------------------------------------- | --------- |
 | `/[locale]/guardian-report`             | 상품 가치·예시·가격·진행 순서·FAQ와 무료 검사 CTA | 공개      |
 | `/[locale]/guardian-report/free`        | 무료 질문 2개                                     | `noindex` |
-| `/[locale]/guardian-report/free/result` | 무료 한 줄·잠금 콘텐츠·복구 이메일·PortOne 결제   | `noindex` |
+| `/[locale]/guardian-report/free/result` | 무료 마음 리딩·차트 단서·행동·잠금 콘텐츠·결제    | `noindex` |
 | `/[locale]/guardian-report/questions`   | 결제 상태 확인·유료 질문·중간 결과                | `noindex` |
 | `/[locale]/guardian-report/result`      | 카드 순차 공개·완성 리포트                        | `noindex` |
 | `/[locale]/guardian-report/reopen`      | 이메일 링크 교환·구매 이메일 재발급               | `noindex` |
@@ -534,7 +534,7 @@ Store ID와 channel map은 `apps/payments/wrangler.jsonc`, V2 API Secret은 `acc
 
 ### Checkout과 공개
 
-provisional 미리보기 뒤 한 화면짜리 checkout sheet를 열고 질문 분량과 결과물을 안내한다.
+무료 리포트와 잠긴 유료 결과물 뒤 한 화면짜리 checkout sheet를 열고 질문 분량과 결과물을 안내한다.
 이메일을 입력한 다음 토스페이로 이동하며 계정, 비밀번호, 전화번호는 요구하지 않는다.
 
 ```text
@@ -586,8 +586,11 @@ homeOffer
 | `guardian_landing_view`                      | 전용 랜딩이 실제로 열린 뒤                                 |
 | `guardian_preview_cta_selected`              | 랜딩의 무료 검사 CTA를 선택할 때                           |
 | `guardian_preview_started`                   | 독립 무료 검사 화면이 열린 뒤                              |
+| `guardian_preview_question_view`             | 무료 질문 단계가 화면에 표시됐을 때                        |
+| `guardian_preview_answer_selected`           | 무료 질문의 선택지를 고를 때                               |
 | `guardian_preview_complete`                  | 무료 답변 2개를 모두 선택해 잠금 미리보기를 볼 때          |
 | `guardian_free_result_view`                  | 저장된 무료 답변으로 무료 결과를 열었을 때                 |
+| `guardian_free_paywall_view`                 | 무료 리포트 뒤 유료 결과 제안이 viewport에 들어왔을 때     |
 | `guardian_paywall_open`                      | 가격·복구 이메일 checkout 영역을 열 때                     |
 | ecommerce `begin_checkout`                   | 서버 checkout을 만들고 PortOne 결제창을 열기 직전          |
 | `guardian_payment_confirmed`                 | 브라우저 복귀 경로에서 서버 검증된 paid 상태를 확인할 때   |

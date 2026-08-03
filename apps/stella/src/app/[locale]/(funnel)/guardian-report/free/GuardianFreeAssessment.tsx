@@ -4,7 +4,7 @@ import { track } from '@sobok/analytics/browser'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import Starfield from '@/components/Starfield'
 import {
@@ -31,6 +31,7 @@ export default function GuardianFreeAssessment({ locale }: { locale: Locale }) {
   const [tone, setTone] = useState<GuardianPreviewTone | null>(null)
   const [movement, setMovement] = useState<GuardianPreviewMovement | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const stepHeadingRef = useRef<HTMLHeadingElement>(null)
 
   useEffect(() => {
     const stored = readGuardianPreviewSession(locale)
@@ -41,13 +42,29 @@ export default function GuardianFreeAssessment({ locale }: { locale: Locale }) {
     track('guardian_preview_started', { locale })
   }, [locale])
 
+  useEffect(() => {
+    track('guardian_preview_question_view', { locale, question: step })
+  }, [locale, step])
+
+  useEffect(() => {
+    if (step !== 'movement') {
+      return
+    }
+
+    const frame = requestAnimationFrame(() => {
+      stepHeadingRef.current?.focus({ preventScroll: true })
+      stepHeadingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+
+    return () => cancelAnimationFrame(frame)
+  }, [step])
+
   function continueFromTone() {
     if (!tone) {
       return
     }
     setError(null)
     setStep('movement')
-    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   function showResult() {
@@ -87,8 +104,10 @@ export default function GuardianFreeAssessment({ locale }: { locale: Locale }) {
         >
           <header className="mb-7">
             <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-accent">{content.quiz.eyebrow}</p>
-            <h1 className="mt-3 text-2xl font-black text-white">{content.quiz.title}</h1>
-            <p className="mt-2 text-sm leading-6 text-foreground-muted">{content.quiz.body}</p>
+            <h1 className="mt-3 scroll-mt-6 text-2xl font-black text-white" ref={stepHeadingRef} tabIndex={-1}>
+              {question.header.title}
+            </h1>
+            <p className="mt-2 min-h-12 text-sm leading-6 text-foreground-muted">{question.header.body}</p>
           </header>
 
           <div className="flex items-center justify-between text-[11px] font-semibold text-foreground-subtle">
@@ -115,6 +134,11 @@ export default function GuardianFreeAssessment({ locale }: { locale: Locale }) {
                 key={option.id}
                 onClick={() => {
                   setError(null)
+                  track('guardian_preview_answer_selected', {
+                    locale,
+                    option_id: option.id,
+                    question: step,
+                  })
                   if (step === 'tone') {
                     setTone(option.id as GuardianPreviewTone)
                   } else {

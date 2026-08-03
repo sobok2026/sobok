@@ -12,8 +12,8 @@ export async function generateMetadata({
   const content = GUARDIAN_REPORT_UI[locale]
 
   return {
-    title: content.landing.preview.title,
-    description: content.landing.preview.body,
+    title: content.landing.freeResult.hero.title,
+    description: content.landing.freeResult.hero.body,
     robots: { index: false, follow: true },
   }
 }

@@ -14,11 +14,23 @@
     radial-gradient(circle at 48% 72%, rgb(105 184 255 / 8%), transparent 34rem);
 }
 
+/* Sized so the whole hero — promise, cards, button, price and trust row — clears one phone screen. The stack
+   grows back once there is room, which is why the small width is the base. */
 .heroCards {
+  --hero-card-stack: min(70vw, 17rem);
+
   position: relative;
-  width: min(84vw, 22rem);
-  height: min(112vw, 29rem);
+  width: var(--hero-card-stack);
+  /* Derived, not guessed: the front card is 62% of the width at 3:4, so it stands 0.827× the width tall. The
+     extra band below covers the rotated siblings' overhang and the caption pill that sits under them. */
+  height: calc(var(--hero-card-stack) * 0.827 + 2.5rem);
   margin-inline: auto;
+}
+
+@media (min-width: 40rem) {
+  .heroCards {
+    --hero-card-stack: min(84vw, 22rem);
+  }
 }
 
 .heroCard {

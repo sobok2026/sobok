@@ -1,6 +1,6 @@
 'use client'
 
-import { track } from '@sobok/analytics/browser'
+import { track, trackEcommerce } from '@sobok/analytics/browser'
 import type { Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -12,6 +12,9 @@ import {
   acknowledgeGuardianMilestone,
   clearGuardianCheckoutSession,
   confirmGuardianPurchase,
+  GUARDIAN_CURRENCY,
+  GUARDIAN_REPORT_ITEM,
+  GUARDIAN_REPORT_PRICE,
   GuardianApiError,
   type GuardianCheckoutSession,
   type GuardianQuestionnaireClientStep,
@@ -99,6 +102,14 @@ function GuardianQuestionnaireFlow({ session }: { session: GuardianCheckoutSessi
         return
       }
       track('guardian_payment_confirmed', { locale: session.locale })
+      // The only place a payment is known to have succeeded. Safe to reach twice — this screen is where the
+      // PG redirect lands, so a reload re-runs it — because GA4 deduplicates `purchase` by transaction_id.
+      trackEcommerce('purchase', {
+        currency: GUARDIAN_CURRENCY,
+        items: [GUARDIAN_REPORT_ITEM],
+        transaction_id: session.paymentId,
+        value: GUARDIAN_REPORT_PRICE,
+      })
       await loadQuestionnaire()
     } catch (error) {
       setState({ kind: 'error', message: reportErrorMessage(error, content) })

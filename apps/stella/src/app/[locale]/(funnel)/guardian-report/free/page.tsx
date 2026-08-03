@@ -10,8 +10,8 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/guardian
   const content = GUARDIAN_REPORT_UI[locale]
 
   return {
-    title: content.landing.quiz.title,
-    description: content.landing.quiz.body,
+    title: content.landing.quiz.tone.header.title,
+    description: content.landing.quiz.tone.header.body,
     robots: { index: false, follow: true },
   }
 }
