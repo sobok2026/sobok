@@ -13,13 +13,7 @@ export default function Footer({ locale }: { locale: Locale }) {
       // The bottom island floats over the page below `sm`, so the footer reserves its band there.
       className="pb-[calc(5rem+var(--safe-area-bottom))] sm:pb-8"
       // 전자상거래법 제10조: the seller's registration details have to be on every page, so they ride in the footer.
-      extra={
-        <BusinessInfo
-          className="mx-auto mt-6 max-w-xl text-left text-[0.6875rem] leading-5"
-          locale={locale}
-          showHeading={false}
-        />
-      }
+      extra={<BusinessInfo className="mx-auto mt-6 max-w-xl text-left text-[0.6875rem] leading-5" locale={locale} />}
       links={[
         { path: '', label: pageNav.home },
         { path: '/about', label: pageNav.about },
