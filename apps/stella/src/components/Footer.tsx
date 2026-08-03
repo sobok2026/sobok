@@ -14,7 +14,7 @@ export default function Footer({ className, locale }: { className?: string; loca
       className={className}
       // 전자상거래법 §10 asks for the seller identity on the storefront, not only on a page a buyer has to go
       // looking for. So it rides every footer, and /business carries the same table at readable size.
-      extra={<BusinessInfo className="mt-6 text-left text-[11px] leading-5 sm:text-center" locale={locale} />}
+      extra={<BusinessInfo className="mx-auto mt-6 max-w-xl text-[11px] leading-5" locale={locale} />}
       links={[
         { path: '', label: pageNav.home },
         { path: '/about', label: pageNav.about },

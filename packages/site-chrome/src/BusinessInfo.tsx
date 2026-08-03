@@ -16,8 +16,8 @@ export default function BusinessInfo({
 
   return (
     <div className={className}>
-      {showHeading ? <h2 className="mb-3 font-semibold text-foreground">{labels.heading}</h2> : null}
-      <dl className="grid gap-x-4 gap-y-1 sm:grid-cols-2">
+      {showHeading ? <h2 className="mb-3 text-center font-semibold text-foreground">{labels.heading}</h2> : null}
+      <dl className="grid gap-x-6 gap-y-1 text-left sm:grid-cols-2">
         {BUSINESS_FIELD_ORDER.map((field) => (
           <div className="flex flex-wrap gap-x-2" key={field}>
             <dt className="shrink-0 text-foreground-muted">{labels.fields[field]}</dt>

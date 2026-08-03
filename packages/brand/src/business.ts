@@ -65,7 +65,7 @@ export const BUSINESS_LABELS = {
       representative: '대표자',
       registrationNumber: '사업자등록번호',
       mailOrderNumber: '통신판매업신고번호',
-      address: '사업장 소재지',
+      address: '사업장 주소',
       phone: '전화번호',
       email: '전자우편',
       hostingProvider: '호스팅 제공자',
