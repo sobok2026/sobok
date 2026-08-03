@@ -83,7 +83,7 @@ export default function GuardianReportLanding({ locale }: { locale: Locale }) {
               <p className="mt-1 text-xs leading-5 text-foreground-muted">{content.resume.body}</p>
             </div>
             <Link
-              className="mt-4 block shrink-0 rounded-full bg-primary px-4 py-2 text-center text-xs font-bold text-primary-foreground sm:mt-0"
+              className="mt-4 block shrink-0 rounded-full cta bg-primary px-4 py-2 text-center text-xs font-bold text-primary-foreground sm:mt-0"
               href={paths.questions}
             >
               {content.resume.reportCta}
@@ -109,7 +109,7 @@ export default function GuardianReportLanding({ locale }: { locale: Locale }) {
 
             <div className="mt-6">
               <Link
-                className="block rounded-2xl bg-[linear-gradient(100deg,#fff3f8,#eadfff)] px-6 py-4 text-center text-sm font-bold text-[#24142e] shadow-[0_14px_40px_rgba(255,193,214,0.2)] transition hover:-translate-y-0.5"
+                className="block rounded-2xl bg-[linear-gradient(100deg,#fff3f8,#eadfff)] px-6 py-4 text-center text-sm font-bold text-[#24142e] shadow-[0_14px_40px_rgba(255,193,214,0.2)] cta"
                 href={startHref}
                 onClick={() => track('guardian_preview_cta_selected', { locale, source: 'landing_hero' })}
                 ref={heroCta}
@@ -339,7 +339,7 @@ function PurchaseDetails({
             </Link>
           </p>
           <Link
-            className="mt-5 block w-full rounded-2xl bg-primary px-5 py-4 text-center text-sm font-bold text-primary-foreground"
+            className="mt-5 block w-full rounded-2xl cta bg-primary px-5 py-4 text-center text-sm font-bold text-primary-foreground"
             href={startHref}
             onClick={() => track('guardian_preview_cta_selected', { locale, source: 'landing_offer' })}
           >

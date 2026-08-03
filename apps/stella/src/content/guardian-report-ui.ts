@@ -22,6 +22,11 @@ type FreeResultInsight = {
   body: string
 }
 
+/**
+ * Sections carry a standfirst only where it says something the section's own contents do not. Where a chart,
+ * a matrix or a labelled figure already answers "what am I looking at", the paragraph under the heading was
+ * just a third block of grey text before the reader reached anything — so those sections omit it.
+ */
 type GuardianFreeResultContent = {
   hero: {
     eyebrow: string
@@ -33,29 +38,31 @@ type GuardianFreeResultContent = {
   reading: {
     eyebrow: string
     title: string
-    body: string
     toneLabel: string
     movementLabel: string
+    /** Axis captions and the "1 of 16" line for the combination matrix. */
+    matrixToneAxis: string
+    matrixMovementAxis: string
+    matrixCaption: (total: number) => string
     toneInsights: Record<GuardianPreviewTone, FreeResultInsight>
     movementInsights: Record<GuardianPreviewMovement, FreeResultInsight>
   }
   chart: {
     eyebrow: string
     title: string
-    body: string
     sunLabel: string
     moonLabel: string
     moonRangeLabel: string
     risingLabel: string
     risingUnknown: string
     dominantLabel: string
+    balanceLabel: string
     bridge: (movement: string, element: string) => string
     elements: Record<ElementId, FreeResultInsight & { glyph: string }>
   }
   action: {
     eyebrow: string
     title: string
-    body: string
     reflectionLabel: string
     actions: Record<GuardianPreviewMovement, Record<GuardianPreviewTone, string>>
     reflections: Record<GuardianPreviewMovement, string>
@@ -66,9 +73,12 @@ type GuardianFreeResultContent = {
     body: string
     slots: Record<GuardianReportSlot, { label: string; glyph: string }>
     sealedLabel: string
+    sampleLabel: string
     lockedTitle: string
     lockedItems: readonly { title: string; preview: string }[]
     unlock: string
+    /** The CTA bar has room for a few characters, not for the full sentence. */
+    unlockShort: string
   }
   states: {
     chartRequiredTitle: string
@@ -96,7 +106,6 @@ type GuardianReportUiContent = {
     cta: string
   }
   landing: {
-    back: string
     navigation: {
       backToLanding: string
       backToFree: string
@@ -336,10 +345,9 @@ const KO_CONTENT: GuardianReportUiContent = {
     cta: '내 수호령 무료로 만나기',
   },
   landing: {
-    back: '무료 출생 차트로 돌아가기',
     navigation: {
       backToLanding: '상품 소개로 돌아가기',
-      backToFree: '무료 검사 다시 하기',
+      backToFree: '두 질문 다시 고르기',
       reopen: '구매한 리포트 다시 열기',
     },
     hero: {
@@ -441,11 +449,11 @@ const KO_CONTENT: GuardianReportUiContent = {
       movement: {
         header: {
           title: '이제 마지막 질문이에요',
-          body: '답을 고르면 바로 무료 결과를 보여드릴게요.',
+          body: '답을 고르면 바로 결과를 보여드릴게요.',
         },
         label: '지금의 방향',
         prompt: '지금 마음은 어느 쪽으로 움직이고 있나요?',
-        supportingText: '고른 방향이 무료 결과를 여는 첫 단서가 돼요.',
+        supportingText: '고른 방향이 결과를 여는 첫 단서가 돼요.',
         options: [
           { id: 'start', label: '새로 시작하고 싶어요' },
           { id: 'continue', label: '지금의 흐름을 이어가고 싶어요' },
@@ -455,13 +463,13 @@ const KO_CONTENT: GuardianReportUiContent = {
       },
       position: (current, total) => `${current} / ${total}`,
       next: '다음 질문',
-      result: '무료 결과 보기',
+      result: '결과 보기',
     },
     freeResult: {
       hero: {
         eyebrow: 'YOUR FREE READING',
         title: '수호령이 먼저 읽은 지금의 마음',
-        body: '두 답에서 지금 필요한 방향과 오늘의 작은 행동까지 먼저 읽었어요. 무료 출생 차트가 있으면 별자리 단서도 함께 보여줘요. 네 주제의 상세 해석과 실제 카드는 더 깊은 답이 모두 모인 뒤 완성돼요.',
+        body: '두 답에서 지금의 마음과 오늘 해볼 한 걸음을 읽었어요.',
         toneLines: {
           comfort: '지금은 스스로를 다그치는 답보다 마음이 안심할 수 있는 말이 먼저 필요해요.',
           honesty: '지금은 듣기 좋은 답보다 마음속에서 이미 알고 있는 사실을 바로 보는 일이 필요해요.',
@@ -478,9 +486,11 @@ const KO_CONTENT: GuardianReportUiContent = {
       reading: {
         eyebrow: 'TWO CLUES',
         title: '두 답 사이에서 보이는 지금의 마음',
-        body: '무엇을 듣고 싶은지와 어디로 향하고 싶은지를 함께 보면, 지금 필요한 방식이 조금 더 선명해져요.',
         toneLabel: '지금 필요한 목소리',
         movementLabel: '마음이 향하는 방향',
+        matrixToneAxis: '가로 · 목소리',
+        matrixMovementAxis: '세로 · 방향',
+        matrixCaption: (total) => `${total}가지 조합 가운데 지금의 나`,
         toneInsights: {
           comfort: {
             label: '다정한 위로',
@@ -528,14 +538,14 @@ const KO_CONTENT: GuardianReportUiContent = {
       },
       chart: {
         eyebrow: 'BIRTH CHART CLUE',
-        title: '무료 출생 차트에서 가져온 한 가지 단서',
-        body: '이미 만든 무료 출생 차트에서 지금의 답과 맞닿는 부분만 골라 함께 놓았어요.',
+        title: '출생 차트에서 가져온 한 가지 단서',
         sunLabel: '태양',
         moonLabel: '달',
         moonRangeLabel: '달 범위',
         risingLabel: '상승',
         risingUnknown: '태어난 시각이 필요해요',
         dominantLabel: '지금 함께 볼 가장 강한 결',
+        balanceLabel: '내 차트의 원소 분포',
         bridge: (movement, element) =>
           `지금 고른 ‘${movement}’ 방향도 ${element} 기운의 방식을 존중할 때 더 자연스럽게 이어져요.`,
         elements: {
@@ -568,7 +578,6 @@ const KO_CONTENT: GuardianReportUiContent = {
       action: {
         eyebrow: 'ONE SMALL MOVE',
         title: '오늘 바로 해볼 한 가지',
-        body: '거창한 결심보다 지금 고른 목소리와 방향에 맞는 작은 행동을 준비했어요.',
         reflectionLabel: '오늘 마음에 남길 질문',
         actions: {
           start: {
@@ -619,6 +628,7 @@ const KO_CONTENT: GuardianReportUiContent = {
           choice: { label: '결정', glyph: '◇' },
         },
         sealedLabel: '결제 후 공개',
+        sampleLabel: '실제 카드 예시',
         lockedTitle: '전체 리포트에서 이어지는 네 장면',
         lockedItems: [
           { title: '나를 지키는 방식', preview: '같은 마음이 반복되는 이유와 회복에 필요한 조건…' },
@@ -627,16 +637,17 @@ const KO_CONTENT: GuardianReportUiContent = {
           { title: '결정을 가르는 기준', preview: '비교가 길어지는 이유와 책임지고 싶은 선택의 방향…' },
         ],
         unlock: '네 장과 전체 리포트 열기',
+        unlockShort: '전체 리포트 열기',
       },
       states: {
-        chartRequiredTitle: '무료 출생 차트를 더하면 결과가 완성돼요',
+        chartRequiredTitle: '출생 차트를 더하면 결과가 완성돼요',
         chartRequiredBody:
           '두 답으로 읽은 마음과 오늘의 행동은 지금 확인할 수 있어요. 출생 차트를 만든 뒤 돌아오면 별자리 단서와 결제 버튼이 이어져요.',
-        chartRequiredCta: '무료 출생 차트 만들기',
+        chartRequiredCta: '출생 차트 만들기',
         chartLoading: '출생 차트에서 지금의 단서를 찾고 있어요…',
-        missingTitle: '먼저 무료 검사를 완료해주세요',
+        missingTitle: '먼저 두 질문에 답해주세요',
         missingBody: '두 가지 짧은 질문에 답하면 지금의 마음, 출생 차트 단서, 오늘의 한 걸음을 바로 확인할 수 있어요.',
-        missingCta: '무료 검사 시작하기',
+        missingCta: '두 질문에 답하기',
       },
     },
     purchase: {
@@ -655,8 +666,8 @@ const KO_CONTENT: GuardianReportUiContent = {
     },
     checkout: {
       title: '리포트를 다시 찾을 이메일',
-      body: '결제 영수증과 재열람 링크를 받을 주소예요. Stella 계정을 만드는 단계는 아니에요.',
-      emailLabel: '복구 이메일',
+      body: '결제 영수증과 리포트를 다시 여는 링크를 이 주소로 보내드려요. 광고 메일은 보내지 않아요.',
+      emailLabel: '구매 이메일',
       emailPlaceholder: 'you@example.com',
       emailHint: '오타가 있으면 리포트를 다시 찾기 어려워요.',
       securityHint: '안전한 결제를 위해 보안 확인을 완료해주세요.',
@@ -830,7 +841,6 @@ function emptyContent(): GuardianReportUiContent {
     meta: { title: empty, description: empty },
     home: { eyebrow: empty, title: empty, body: empty, badges: [], sampleLabel: empty, cta: empty },
     landing: {
-      back: empty,
       navigation: { backToLanding: empty, backToFree: empty, reopen: empty },
       hero: {
         eyebrow: empty,
@@ -880,9 +890,11 @@ function emptyContent(): GuardianReportUiContent {
         reading: {
           eyebrow: empty,
           title: empty,
-          body: empty,
           toneLabel: empty,
           movementLabel: empty,
+          matrixToneAxis: empty,
+          matrixMovementAxis: empty,
+          matrixCaption: () => empty,
           toneInsights: {
             comfort: emptyInsight,
             honesty: emptyInsight,
@@ -899,13 +911,13 @@ function emptyContent(): GuardianReportUiContent {
         chart: {
           eyebrow: empty,
           title: empty,
-          body: empty,
           sunLabel: empty,
           moonLabel: empty,
           moonRangeLabel: empty,
           risingLabel: empty,
           risingUnknown: empty,
           dominantLabel: empty,
+          balanceLabel: empty,
           bridge: () => empty,
           elements: {
             fire: emptyElementInsight,
@@ -917,7 +929,6 @@ function emptyContent(): GuardianReportUiContent {
         action: {
           eyebrow: empty,
           title: empty,
-          body: empty,
           reflectionLabel: empty,
           actions: {
             start: { comfort: empty, honesty: empty, action: empty, possibility: empty },
@@ -933,9 +944,11 @@ function emptyContent(): GuardianReportUiContent {
           body: empty,
           slots: { self: emptySlot, love: emptySlot, work: emptySlot, choice: emptySlot },
           sealedLabel: empty,
+          sampleLabel: empty,
           lockedTitle: empty,
           lockedItems: [],
           unlock: empty,
+          unlockShort: empty,
         },
         states: {
           chartRequiredTitle: empty,

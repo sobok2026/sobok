@@ -274,7 +274,7 @@ function GuardianQuestionnaireFlow({ session }: { session: GuardianCheckoutSessi
                 <h1 className="mt-4 text-xl font-bold text-white">{content.status.pendingTitle}</h1>
                 <p className="mt-2 text-sm leading-6 text-foreground-muted">{content.status.pendingBody}</p>
                 <button
-                  className="mt-6 w-full rounded-2xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground"
+                  className="mt-6 w-full rounded-2xl cta bg-primary px-5 py-3 text-sm font-bold text-primary-foreground"
                   onClick={reconcilePayment}
                   type="button"
                 >
@@ -304,7 +304,7 @@ function GuardianQuestionnaireFlow({ session }: { session: GuardianCheckoutSessi
                 <h1 className="mt-4 text-xl font-bold text-white">{content.status.terminalTitles[state.status]}</h1>
                 <p className="mt-2 text-sm leading-6 text-foreground-muted">{content.status.terminalBody}</p>
                 <Link
-                  className="mt-6 block w-full rounded-2xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground"
+                  className="mt-6 block w-full rounded-2xl cta bg-primary px-5 py-3 text-sm font-bold text-primary-foreground"
                   href={paths.landing}
                 >
                   {content.status.returnToPreview}
@@ -318,7 +318,7 @@ function GuardianQuestionnaireFlow({ session }: { session: GuardianCheckoutSessi
                 <h1 className="mt-4 text-xl font-bold text-white">{content.status.errorTitle}</h1>
                 <p className="mt-2 text-sm leading-6 text-foreground-muted">{state.message}</p>
                 <button
-                  className="mt-6 w-full rounded-2xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground"
+                  className="mt-6 w-full rounded-2xl cta bg-primary px-5 py-3 text-sm font-bold text-primary-foreground"
                   onClick={openQuestionnaire}
                   type="button"
                 >
@@ -432,7 +432,7 @@ function Questionnaire({
             {copy.noteLength(note.length, step.note.maxLength)}
           </div>
           <button
-            className="mt-4 w-full rounded-2xl bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground disabled:cursor-wait disabled:opacity-45"
+            className="mt-4 w-full rounded-2xl cta bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground disabled:cursor-wait disabled:opacity-45"
             disabled={saving}
             onClick={() => onSaveNote(note.trim() || null)}
             type="button"
@@ -504,7 +504,7 @@ function QuestionnaireMilestone({
 
       {answerError && <InlineError>{answerError}</InlineError>}
       <button
-        className="mt-6 w-full rounded-2xl bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground disabled:cursor-wait disabled:opacity-45"
+        className="mt-6 w-full rounded-2xl cta bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground disabled:cursor-wait disabled:opacity-45"
         disabled={saving}
         onClick={() => onContinue(milestone.id)}
         type="button"

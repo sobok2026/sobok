@@ -129,7 +129,7 @@ export default function GuardianReopen({ locale }: { locale: Locale }) {
               {content.linkBody}
             </Status>
             <button
-              className="mt-7 w-full rounded-2xl bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground"
+              className="mt-7 w-full rounded-2xl cta bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground"
               onClick={openReport}
               type="button"
             >
@@ -198,7 +198,7 @@ export default function GuardianReopen({ locale }: { locale: Locale }) {
                 </p>
               )}
               <button
-                className="mt-5 w-full rounded-2xl bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-45"
+                className="mt-5 w-full rounded-2xl cta bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-45"
                 disabled={!turnstileToken}
                 type="submit"
               >
