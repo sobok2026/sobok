@@ -7,15 +7,16 @@
 
 ## 문서 상태
 
-- 마지막 갱신: 2026-08-01
+- 마지막 갱신: 2026-08-03
 - 서비스 중심: 앞으로도 웹
 - 출시 순서: 한국 → 중국 본토 → 이후 미정
 - `확정`: 사용자가 명시적으로 결정한 내용
 - `권장안`: 출시 전에 수치 또는 세부 동작을 최종 승인해야 하는 현재 추천값
 - 구현 상태: 상품 매니페스트·추첨·게스트 컬렉션·리포트·구매·획득·보장과 유료 질문의 불변
-  콘텐츠 계약·실제 한국어 선택형 44개와 선택 메모 1개·DB·게시 CLI·답변별 진행·마지막 답변의 카드 fulfillment
-  기반 구현. 중앙 PortOne 연동, 공개 mutation API, staging schema·질문 게시는 완료됐고 계정,
-  production schema·콘텐츠 게시와 이메일 복구 전송은 미구현
+  콘텐츠 계약·실제 한국어 선택형 44개와 선택 메모 1개·DB·게시 CLI·답변별 진행·마지막 답변의 카드 fulfillment,
+  중앙 PortOne 연동, 공개 랜딩과 checkout·질문·리포트 API, staging·production schema·문항 게시,
+  공용 scheduler 기반 pending 재조정까지 구현. 계정 귀속, 이메일 복구 전송, 사랑 재추첨 UI·결제와
+  production 1,024장 카탈로그는 후속 작업
 
 ## 1. 목표와 제품 원칙
 
@@ -545,7 +546,7 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
 
 ## 11. 서버 구현 기준
 
-2026-08-01 기준 유료 MVP의 서버 권위 데이터와 production 확장 기반은 다음과 같이 구현한다.
+2026-08-03 기준 유료 MVP의 서버 권위 데이터와 production 확장 기반은 다음과 같이 구현한다.
 
 - 현재 상품 매니페스트 `guardian-paid-2026-08-01.1`은 4개 패밀리·7개 에디션, SKU별 시장
   가격표, 희귀도 가중치, 보장 규칙, 선택·문구·렌더 버전을 기록한다. production 출시에는 같은
@@ -579,14 +580,15 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
   확정은 카드가 아니라 질문 entitlement만 지급한다.
 - 마지막 유효 답변 저장, answer·signal snapshot, 패밀리 선택, 사랑 희귀도 추첨, 최초 네 장
   획득 이력과 `fulfilled` 전환은 하나의 report 트랜잭션으로 묶는다.
-- 공개 API는 현재 `GET /api/guardian-products/current`의 상품·확률·보장 메타데이터만 제공한다.
-  결제 전환과 재추첨 mutation은 PortOne 서버 검증과 Stella 인증이 연결되기 전에는 공개하지 않는다.
+- 공개 API는 상품·확률·보장 메타데이터와 guest checkout, 결제 확인, 유료 질문 진행, 최종 report 조회를
+  제공한다. 사랑 재추첨 구매·사용과 계정 귀속 mutation은 해당 UI와 소유권 경계를 완성한 뒤 공개한다.
 - production과 staging은 같은 제품 단위 Hyperdrive와 `stella_app` role을 사용한다. build-time
   schema만 각각 `stella`, `stella_stg`로 한정하고 Hyperdrive 캐시는 read-after-write 일관성을
   위해 계속 끈다.
 
 DB 스키마는 코드에 선언하지만 실제 반영은 이 저장소 규칙대로 `drizzle-kit push`와
-운영 binding을 함께 준비한 뒤 별도 운영 단계에서 수행한다.
+운영 binding을 함께 준비한 뒤 별도 운영 단계에서 수행한다. 2026-08-01에 `stella_stg`·`stella` 양쪽
+schema와 동일한 한국어 v1 문항 게시까지 완료했으며, 이후 버전도 같은 순서와 해시 검증을 따른다.
 
 한국 전체 리포트의 guest draft, checkout, confirm, webhook, report read API와 화면 상태의 구체적인
 계약은 [한국 전체 리포트 결제·공개 수직 슬라이스](./korea-paid-report-vertical-slice.md)에 고정한다.

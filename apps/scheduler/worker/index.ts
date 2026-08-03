@@ -30,6 +30,8 @@ function jobsFor(cron: string, env: Bindings): ScheduledJob[] {
       return [
         { name: 'vibe.production.reconcile-payments', run: () => env.VIBE_PRODUCTION.reconcilePendingPayments() },
         { name: 'vibe.staging.reconcile-payments', run: () => env.VIBE_STAGING.reconcilePendingPayments() },
+        { name: 'stella.production.reconcile-payments', run: () => env.STELLA_PRODUCTION.reconcilePendingPayments() },
+        { name: 'stella.staging.reconcile-payments', run: () => env.STELLA_STAGING.reconcilePendingPayments() },
       ]
     case RETENTION_CRON:
       return [

@@ -10,7 +10,7 @@
 
 ## 문서 상태
 
-- 마지막 갱신: 2026-08-01
+- 마지막 갱신: 2026-08-03
 - 첫 시장과 로케일: `KR`, `ko`
 - 첫 SKU: `guardian-report-full-v1`, 3,900원
 - 결제 연동: PortOne V2 인증 결제
@@ -20,8 +20,11 @@
   실제 한국어 선택형 질문 44개와 선택 메모 1개, 불변 콘텐츠 계약·DB·게시 CLI·답변별 저장과 현재 문항 계산,
   Turnstile·rate limit을 거치는 guest checkout, 중앙 payments를 통한 PortOne confirm·검증 이벤트, capability 기반 질문
   GET/PUT과 draft/fulfilled report GET API, 홈의 소형 상품 카드, 전용 공개 랜딩, 무료 미리보기·잠금 결과·checkout,
-  결제 후 질문·12개 핵심 답변의 서버 중간 결과·적응형 질문·카드 공개·상세 웹 리포트
-- 아직 미연결: 15분 pending 재조정, 새 milestone 테이블의 production DB 반영, 이메일 복구 전송
+  결제 후 질문·12개 핵심 답변의 서버 중간 결과·적응형 질문·카드 공개·상세 웹 리포트, 공용 scheduler 기반
+  15분 pending 결제 재조정
+- 운영 반영: `stella_stg`·`stella` schema와 한국어 v1 문항 게시, PR #29의 production Worker 배포
+- 아직 미연결: 이메일 복구 전송·재열람 토큰 교환, 보존 기간이 지난 미결제 checkout context 정리
+- 아직 운영 검증하지 않음: PortOne 테스트 채널의 실제 결제·모바일 리디렉션·질문 재개·카드 공개 E2E
 - 이 문서의 범위: 상품 랜딩 → 무료 질문 2개 → 잠금 미리보기·복구 이메일 → 결제 → 서버 검증 →
   핵심 질문 12개 → 중간 결과 → 적응형 질문 → 카드 공개 → 전체 웹 리포트
 
@@ -573,8 +576,8 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 - Worker와 정적 자산 배포는 로컬 Wrangler 명령으로 수행하지 않는다. 커밋을 원격 브랜치에 올린
   뒤 `.github/workflows/stella-deploy.yml`을 사용한다. staging은 해당 브랜치의 수동
   `workflow_dispatch(target=staging)`, production은 `main` push가 유일한 배포 경로다.
-- 계정 단일 `apps/scheduler`가 Cron Trigger를 소유한다. Stella는 `StellaMaintenance` RPC로 일일 purge를
-  제공하고, pending 재조정 구현 시 같은 entrypoint에 capability를 추가한다.
+- 계정 단일 `apps/scheduler`가 Cron Trigger를 소유한다. Stella는 `StellaMaintenance` RPC로 일일 purge와
+  15분 pending 결제 재조정을 제공하며 production·staging 모두 같은 scheduler 주기에 연결한다.
 
 ## 11. 권장 구현 순서
 
@@ -582,15 +585,28 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 2. **완료:** confirm·payment event·report read API를 현재 guest checkout·paid questionnaire API에 연결한다.
 3. **완료:** 한국어 개인화 본문 엔진, 불변 narrative snapshot과 최종 report GET 계약을 연결한다.
 4. **완료:** 홈 상품 카드, 전용 랜딩, 무료 질문·잠금 미리보기와 결제 뒤 질문·fulfillment 화면을 연결한다.
-5. pending 재조정과 미결제 checkout context 정리를 Stella maintenance RPC로 구현하고 공용 scheduler의
-   기존 주기에 연결한다.
+5. **재조정 완료:** 15분 이상 pending인 구매를 최대 100개씩 중앙 payments로 다시 조회하고 기존 멱등
+   결제 확정 함수로 수렴시킨다. production·staging 모두 공용 scheduler의 기존 15분 주기에 연결한다.
+   미결제 checkout context 삭제는 보존 기간 확정 뒤 일일 purge에 추가한다.
 6. **완료:** `/[locale]/cards`의 클라이언트 난수·로컬 소유권·prototype fallback을 서버 상태로 교체한다.
 7. **완료:** 중앙 Wrangler에 Store ID·channel map을, `sobok-ops`에 payments Secret·Queue·custom
    domain을 반영한다.
-8. **staging 완료:** 새 `guardian_questionnaire_milestone` 선언을 `stella_stg` schema에 반영한다.
-9. 변경을 커밋·push하고 해당 브랜치에서 `Stella Deploy`의 staging workflow를 실행해 PortOne 테스트
-   채널의 결제·모바일 리디렉션·질문 재개·카드 공개를 확인한다.
-10. production `stella` schema 반영을 먼저 완료한 뒤 `main`에 병합해 production workflow를 실행한다.
+8. **완료:** `guardian_questionnaire_milestone`을 `stella_stg`·`stella` 양쪽 schema에 반영하고 같은
+   `guardian-paid-ko-mvp-v1` 콘텐츠 해시를 게시한다.
+9. **일부 완료:** 브랜치의 `Stella Deploy` staging workflow와 HTTP/API smoke check는 성공했다. PortOne
+   테스트 결제·모바일 리디렉션·질문 재개·카드 공개의 실제 E2E는 별도로 수행한다.
+10. **완료:** production `stella` schema·문항 게시 뒤 PR #29를 `main`에 병합하고 production workflow와
+    공개 URL smoke check를 완료했다.
+
+### 2026-08-01 운영 반영 기록
+
+| 항목          | 결과                                                                                                                                                       |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DB            | `stella_stg`·`stella`에 `guardian_questionnaire_milestone`과 관련 제약 반영                                                                                |
+| 유료 문항     | 양쪽 schema에 `guardian-paid-ko-mvp-v1`, 45문항·176선택지 게시                                                                                             |
+| 콘텐츠 동일성 | SHA-256 `38b0f79a2b838f2fa7a461be7d269b39fa67c0c47d302939b88c46eb70d2c85e` 일치                                                                            |
+| 코드 배포     | [PR #29](https://github.com/sobok2026/sobok/pull/29) squash merge, [production workflow](https://github.com/sobok2026/sobok/actions/runs/30704300267) 성공 |
+| smoke check   | `stella.sobok.cc`의 한국어 상품 랜딩·카드 페이지·상품 API가 `200` 응답                                                                                     |
 
 ### 완료 기준
 
@@ -646,7 +662,9 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 | 로케일 출시        | 공용 흐름·콘텐츠 타입 유지, 이번 단계는 한국어만 게시      | 번역 추가만으로 같은 경로를 확장한다                      |
 | 출생 입력          | 기존 무료 차트 핵심값 재사용, 추가 재입력 없음 권장        | 구매 전 중복 입력을 없앤다                                |
 
-다음 제품 결정은 장기 문항은행의 제작 범위와 production 1,024장의 제작 매트릭스다. 대표 Store의
-PortOne API Secret과 live/test Webhook Secret은 채팅이나 public repository에 전달하지 않고 중앙
-payments 관련 HCP Terraform sensitive 변수에서 Secrets Store로 넣는다. 유료 질문 원문은 Git의 questionnaire
-source 디렉터리에 커밋한 뒤 게시 CLI로 DB에 반영한다.
+출시 전 다음 우선순위는 실제 PortOne 테스트 결제 E2E, 이메일 복구·재열람 링크, 미결제 checkout
+보존 기간 확정과 purge다. 그다음 제품 결정은 사랑 카드 재추첨 화면·결제, Stella 계정 귀속,
+장기 문항은행의 제작 범위와 production 1,024장의 제작 매트릭스다. 대표 Store의 PortOne API Secret과
+live/test Webhook Secret은 채팅이나 public repository에 전달하지 않고 중앙 payments 관련 HCP Terraform
+sensitive 변수에서 Secrets Store로 넣는다. 유료 질문 원문은 Git의 questionnaire source 디렉터리에
+커밋한 뒤 게시 CLI로 DB에 반영한다.

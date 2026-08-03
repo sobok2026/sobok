@@ -1,6 +1,6 @@
 import type { Locale } from '@sobok/domain/locale'
 import type { Db } from '@sobok/edge/db/client'
-import { and, asc, eq, getColumns, inArray, isNotNull, or, sql } from 'drizzle-orm'
+import { and, asc, eq, getColumns, inArray, isNotNull, lt, or, sql } from 'drizzle-orm'
 import { drawInitialGuardianReport, drawLoveRedraw, type GuardianSelectedCard } from '../../guardian/draw'
 import {
   CURRENT_GUARDIAN_MANIFEST,
@@ -399,6 +399,32 @@ export async function guardianPurchaseExists(db: Db, paymentId: string): Promise
     .where(eq(guardianPurchaseTable.paymentId, paymentId))
     .limit(1)
   return Boolean(row)
+}
+
+/** Oldest reconciliation attempt first, so abandoned checkouts cannot starve newer payments in a bounded batch. */
+export async function listStalePendingGuardianPurchases(
+  db: Db,
+  olderThan: Date,
+  limit: number,
+): Promise<{ paymentId: string }[]> {
+  return db
+    .select({ paymentId: guardianPurchaseTable.paymentId })
+    .from(guardianPurchaseTable)
+    .where(and(eq(guardianPurchaseTable.status, 'pending'), lt(guardianPurchaseTable.updatedAt, olderThan)))
+    .orderBy(asc(guardianPurchaseTable.updatedAt))
+    .limit(limit)
+}
+
+/** Keeps unresolved rows retryable while rotating the next bounded scheduler batch fairly. */
+export async function touchPendingGuardianPurchaseAfterReconciliation(
+  db: Db,
+  paymentId: string,
+  checkedAt: Date,
+): Promise<void> {
+  await db
+    .update(guardianPurchaseTable)
+    .set({ updatedAt: checkedAt })
+    .where(and(eq(guardianPurchaseTable.paymentId, paymentId), eq(guardianPurchaseTable.status, 'pending')))
 }
 
 interface NewGuardianPurchaseBase {

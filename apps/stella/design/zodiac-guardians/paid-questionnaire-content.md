@@ -180,15 +180,20 @@ Worker runtime은 기존 `stella_app` + Hyperdrive를 사용한다. sobok-ops의
 default privilege가 새 테이블·sequence에도 적용되므로 이 기능만을 위한 role, Hyperdrive,
 Supabase 프로젝트는 추가하지 않는다.
 
-## 현재 수직 연결
+## 현재 게시·수직 연결
+
+2026-08-01에 `guardian-paid-ko-mvp-v1`을 `stella_stg`·`stella` 양쪽 schema에 45문항·176선택지로
+게시했다. 두 환경의 SHA-256은
+`38b0f79a2b838f2fa7a461be7d269b39fa67c0c47d302939b88c46eb70d2c85e`로 같다.
 
 `guardian-paid-ko-mvp-v1.json`, guest checkout, 결제 entitlement, capability 기반 질문 GET/PUT,
-마지막 답변의 report fulfillment, PortOne confirm·webhook과 fulfilled report GET이 연결되어 있다.
+마지막 답변의 report fulfillment, PortOne confirm·webhook·15분 pending 재조정과 fulfilled report GET이
+연결되어 있다.
 checkout은 questionnaire version을 고정하고 질문 API는 아직 공개되지 않은 문항이나 signal을
 반환하지 않는다.
 
 마지막 답변 transaction은 answer·signal snapshot, 카드 네 장과 함께 렌더가 끝난 한국어
 `narrative_snapshot`도 고정한다. 각 선택 답변이 상세 근거 문단으로 남는 방식과 최종 GET 응답은
-[한국어 개인화 리포트 본문 엔진과 최종 계약](./paid-report-content-engine.md)을 따른다. 남은 외부
-연결은 무료 미리보기 → checkout → 유료 질문 → 카드 공개 화면과 공용 scheduler 기반 pending
-재조정이다.
+[한국어 개인화 리포트 본문 엔진과 최종 계약](./paid-report-content-engine.md)을 따른다. 무료 미리보기 →
+checkout → 유료 질문 → 카드 공개 화면도 연결되어 있다. 남은 외부 연결은 실제 PortOne 테스트 결제
+E2E와 이메일 복구·재열람 링크다.
