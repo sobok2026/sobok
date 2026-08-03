@@ -11,7 +11,6 @@
     "jock.svg",
     "ms-azuretools.vscode-docker",
     "ms-kubernetes-tools.vscode-kubernetes-tools",
-    "ReneSaarsoo.sql-formatter-vsc",
-    "visualstudioexptteam.vscodeintellicode"
+    "ReneSaarsoo.sql-formatter-vsc"
   ]
 }
