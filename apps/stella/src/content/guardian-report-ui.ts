@@ -304,6 +304,19 @@ type GuardianReportUiContent = {
     }
     report: {
       cardsLabel: string
+      accountSave: {
+        eyebrow: string
+        title: string
+        body: string
+        reward: string
+        signIn: string
+        save: string
+        saving: string
+        savedTitle: string
+        savedBody: string
+        library: string
+        error: string
+      }
       mapEyebrow: string
       mapTitle: string
       mapBody: string
@@ -797,6 +810,19 @@ const KO_CONTENT: GuardianReportUiContent = {
     },
     report: {
       cardsLabel: '선택된 수호령 카드',
+      accountSave: {
+        eyebrow: 'KEEP YOUR GUARDIANS',
+        title: '이 카드들을 소복 계정에 간직할까요?',
+        body: '구매한 리포트와 지금까지 모은 카드를 그대로 보관하고, 다른 기기에서도 다시 열 수 있어요.',
+        reward: '보관하면 사랑 카드 무료 재추첨 1회를 드려요.',
+        signIn: '소복 계정으로 보관하기',
+        save: '이 계정에 카드 보관하기',
+        saving: '카드를 안전하게 옮기는 중…',
+        savedTitle: '소복 계정에 안전하게 보관했어요',
+        savedBody: '게스트 열쇠는 닫혔고, 이제 로그인한 계정에서만 이 컬렉션을 열 수 있어요.',
+        library: '내 카드 보관함 보기',
+        error: '계정에 보관하지 못했어요. 잠시 뒤 다시 시도해주세요.',
+      },
       mapEyebrow: 'FOUR THEMES, ONE STORY',
       mapTitle: '네 주제가 이어지는 지도',
       mapBody: '각 카드의 한 줄은 따로 떨어진 답이 아니라 같은 마음이 다른 장면에서 드러난 모습이에요.',
@@ -1079,6 +1105,19 @@ function emptyContent(): GuardianReportUiContent {
       },
       report: {
         cardsLabel: empty,
+        accountSave: {
+          eyebrow: empty,
+          title: empty,
+          body: empty,
+          reward: empty,
+          signIn: empty,
+          save: empty,
+          saving: empty,
+          savedTitle: empty,
+          savedBody: empty,
+          library: empty,
+          error: empty,
+        },
         mapEyebrow: empty,
         mapTitle: empty,
         mapBody: empty,

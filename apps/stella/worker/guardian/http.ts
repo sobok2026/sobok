@@ -15,6 +15,8 @@ export const GuardianReportPublicIdSchema = z
   .length(16)
   .regex(/^[A-Za-z0-9_-]+$/)
 
+export const GuardianCollectionPublicIdSchema = GuardianReportPublicIdSchema
+
 export const GuardianPaymentIdSchema = z
   .string()
   .length(39)

@@ -5,7 +5,11 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./account-client": "./src/account-client.ts",
+    "./authority": "./src/authority.ts",
     "./client": "./src/client.ts",
+    "./contracts": "./src/contracts.ts",
+    "./relying-party": "./src/relying-party.ts",
     "./server": "./src/server.ts"
   },
   "scripts": {
@@ -13,6 +17,7 @@
     "generate": "bunx @better-auth/cli@latest generate --config src/auth.ts --output ../db/src/app/schema/auth.ts --yes && bunx biome check --write ../db/src/app/schema/auth.ts"
   },
   "dependencies": {
+    "@better-auth/oauth-provider": "1.6.23",
     "@better-auth/passkey": "^1.6.18",
     "@better-auth/redis-storage": "^1.6.18",
     "@sobok/payments": "workspace:*",
@@ -21,7 +26,7 @@
     "@sobok/domain": "workspace:*",
     "@sobok/env": "workspace:*",
     "@sobok/kv": "workspace:*",
-    "better-auth": "^1.6.18",
+    "better-auth": "^1.6.23",
     "drizzle-orm": "1.0.0-rc.4",
     "zod": "^4.3.6"
   },

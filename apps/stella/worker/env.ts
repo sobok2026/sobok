@@ -27,6 +27,9 @@ export interface Bindings {
   STELLA_PUBLIC_ORIGIN: string
   STELLA_EMAIL_FROM: string
   STELLA_EMAIL_REPLY_TO: string
+  // Central Sobok OIDC authority and this fixed first-party client identifier.
+  STELLA_ACCOUNTS_ISSUER: string
+  STELLA_OIDC_CLIENT_ID: string
   // ── Secrets Store bindings (async: `await X.get()`) ────────────────────────────────────────────────
   // Siteverify secret for stella's own Turnstile widget (account-turnstile workspace; cutover off the shared
   // "sobok" widget is written in Terraform but not applied yet).
@@ -37,6 +40,9 @@ export interface Bindings {
   STELLA_DISCORD_WEBHOOK: SecretsStoreSecret
   // Transactional guardian-report delivery and re-open email API key.
   STELLA_RESEND_API_KEY: SecretsStoreSecret
+  // Stella-local Better Auth session signing secret and central OIDC confidential-client secret.
+  STELLA_AUTH_SECRET: SecretsStoreSecret
+  STELLA_OIDC_CLIENT_SECRET: SecretsStoreSecret
 }
 
 export type AppEnv = { Bindings: Bindings }

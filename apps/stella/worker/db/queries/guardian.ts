@@ -1,6 +1,6 @@
 import type { Locale } from '@sobok/domain/locale'
 import type { Db } from '@sobok/edge/db/client'
-import { and, asc, eq, getColumns, inArray, isNotNull, lt, or, sql } from 'drizzle-orm'
+import { and, asc, desc, eq, getColumns, inArray, isNotNull, lt, or, sql } from 'drizzle-orm'
 import { drawInitialGuardianReport, drawLoveRedraw, type GuardianSelectedCard } from '../../guardian/draw'
 import {
   CURRENT_GUARDIAN_MANIFEST,
@@ -31,6 +31,7 @@ import {
   guardianPurchaseTable,
   guardianRecoveryEmailDeliveryTable,
   guardianRedrawGrantTable,
+  guardianReportCardSelectionTable,
   guardianReportTable,
 } from '../schema/guardian'
 import { recordGuardianAcquisition, selectGuardianReportCard } from './guardian-card'
@@ -345,18 +346,19 @@ export async function resolveGuardianCollection(
 
 export async function resolveGuardianReportAccess(
   db: Db,
-  input: { accessTokenHash: string; reportPublicId: string },
+  input: { accessTokenHash?: string; ownerUserId?: string; reportPublicId: string },
 ): Promise<{ collectionId: number; reportId: number } | null> {
+  const proofs = [
+    ...(input.ownerUserId ? [eq(guardianCollectionTable.ownerUserId, input.ownerUserId)] : []),
+    ...(input.accessTokenHash ? [eq(guardianCollectionTable.accessTokenHash, input.accessTokenHash)] : []),
+  ]
+  const owner = proofs.length === 1 ? proofs[0] : or(...proofs)
+  if (!owner) return null
   const [row] = await db
     .select({ collectionId: guardianCollectionTable.id, reportId: guardianReportTable.id })
     .from(guardianCollectionTable)
     .innerJoin(guardianReportTable, eq(guardianReportTable.collectionId, guardianCollectionTable.id))
-    .where(
-      and(
-        eq(guardianCollectionTable.accessTokenHash, input.accessTokenHash),
-        eq(guardianReportTable.publicId, input.reportPublicId),
-      ),
-    )
+    .where(and(owner, eq(guardianReportTable.publicId, input.reportPublicId)))
     .limit(1)
   return row ?? null
 }
@@ -371,8 +373,14 @@ export interface GuardianPurchaseAccess {
 /** Resolves a payment only through the collection capability that owns it. */
 export async function resolveGuardianPurchaseAccess(
   db: Db,
-  input: { accessTokenHash: string; paymentId: string },
+  input: { accessTokenHash?: string; ownerUserId?: string; paymentId: string },
 ): Promise<GuardianPurchaseAccess | null> {
+  const proofs = [
+    ...(input.ownerUserId ? [eq(guardianCollectionTable.ownerUserId, input.ownerUserId)] : []),
+    ...(input.accessTokenHash ? [eq(guardianCollectionTable.accessTokenHash, input.accessTokenHash)] : []),
+  ]
+  const owner = proofs.length === 1 ? proofs[0] : or(...proofs)
+  if (!owner) return null
   const [row] = await db
     .select({
       collectionId: guardianCollectionTable.id,
@@ -389,12 +397,7 @@ export async function resolveGuardianPurchaseAccess(
         eq(guardianReportTable.collectionId, guardianCollectionTable.id),
       ),
     )
-    .where(
-      and(
-        eq(guardianCollectionTable.accessTokenHash, input.accessTokenHash),
-        eq(guardianPurchaseTable.paymentId, input.paymentId),
-      ),
-    )
+    .where(and(owner, eq(guardianPurchaseTable.paymentId, input.paymentId)))
     .limit(1)
   return row ?? null
 }
@@ -875,6 +878,171 @@ export async function grantGuardianAccountSaveReward(
       .onConflictDoNothing({ target: guardianRedrawGrantTable.grantKey })
       .returning({ id: guardianRedrawGrantTable.id })
     return rows.length === 1 ? 'granted' : 'already-granted'
+  })
+}
+
+export type ClaimGuardianCollectionResult =
+  | { status: 'claimed' | 'already-claimed'; reward: 'granted' | 'already-granted' }
+  | { status: 'forbidden' }
+  | { status: 'report-not-found' }
+
+/**
+ * Converts the guest capability into account ownership without copying the collection or any card rows.
+ * The ownership change, capability revocation, and one-shot reward grant commit together.
+ */
+export async function claimGuardianCollection(
+  db: Db,
+  input: {
+    collectionPublicId: string
+    reportPublicId: string
+    accessTokenHash: string
+    ownerUserId: string
+  },
+): Promise<ClaimGuardianCollectionResult> {
+  return db.transaction(async (tx) => {
+    const [collection] = await tx
+      .select({
+        id: guardianCollectionTable.id,
+        accessTokenHash: guardianCollectionTable.accessTokenHash,
+        ownerUserId: guardianCollectionTable.ownerUserId,
+      })
+      .from(guardianCollectionTable)
+      .where(eq(guardianCollectionTable.publicId, input.collectionPublicId))
+      .limit(1)
+      .for('update')
+    if (!collection) return { status: 'forbidden' as const }
+    if (collection.ownerUserId && collection.ownerUserId !== input.ownerUserId) {
+      return { status: 'forbidden' as const }
+    }
+    if (!collection.ownerUserId && collection.accessTokenHash !== input.accessTokenHash) {
+      return { status: 'forbidden' as const }
+    }
+
+    const [report] = await tx
+      .select({
+        id: guardianReportTable.id,
+        status: guardianReportTable.status,
+        loveFamilyId: guardianReportTable.loveFamilyId,
+        locale: guardianReportTable.locale,
+      })
+      .from(guardianReportTable)
+      .where(
+        and(
+          eq(guardianReportTable.collectionId, collection.id),
+          eq(guardianReportTable.publicId, input.reportPublicId),
+        ),
+      )
+      .limit(1)
+      .for('update')
+    if (report?.status !== 'fulfilled' || !report.loveFamilyId) {
+      return { status: 'report-not-found' as const }
+    }
+
+    const rewardManifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST
+    const rewardFamily = rewardManifest.families.find(({ id }) => id === report.loveFamilyId)
+    if (rewardFamily?.slot !== 'love' || !rewardManifest.cardCopyVersions[report.locale]) {
+      return { status: 'report-not-found' as const }
+    }
+
+    const alreadyClaimed = collection.ownerUserId === input.ownerUserId
+    if (!alreadyClaimed) {
+      await tx
+        .update(guardianCollectionTable)
+        .set({ ownerUserId: input.ownerUserId, accessTokenHash: null })
+        .where(eq(guardianCollectionTable.id, collection.id))
+    }
+
+    const grants = await tx
+      .insert(guardianRedrawGrantTable)
+      .values({
+        grantKey: `account-save:${collection.id}`,
+        collectionId: collection.id,
+        reportId: report.id,
+        familyId: report.loveFamilyId,
+        kind: 'account_save_reward',
+        totalCredits: 1,
+        manifestVersion: rewardManifest.manifestVersion,
+      })
+      .onConflictDoNothing({ target: guardianRedrawGrantTable.grantKey })
+      .returning({ id: guardianRedrawGrantTable.id })
+
+    return {
+      status: alreadyClaimed ? ('already-claimed' as const) : ('claimed' as const),
+      reward: grants.length === 1 ? ('granted' as const) : ('already-granted' as const),
+    }
+  })
+}
+
+export type OwnedGuardianReportListItem = {
+  collectionPublicId: string
+  reportPublicId: string
+  locale: Locale
+  createdAt: Date
+  title: string
+  oneLine: string
+  artworkPaths: string[]
+}
+
+/**
+ * Account library projection. It deliberately returns immutable report presentation only — chart inputs,
+ * questionnaire answers, payment email, capability hashes, and internal numeric IDs never leave this query.
+ */
+export async function listOwnedGuardianReports(
+  db: Db,
+  input: { ownerUserId: string; limit: number },
+): Promise<OwnedGuardianReportListItem[]> {
+  const rows = await db
+    .select({
+      collectionPublicId: guardianCollectionTable.publicId,
+      reportPublicId: guardianReportTable.publicId,
+      locale: guardianReportTable.locale,
+      createdAt: guardianReportTable.createdAt,
+      narrative: guardianReportTable.narrativeSnapshot,
+      reportId: guardianReportTable.id,
+    })
+    .from(guardianCollectionTable)
+    .innerJoin(guardianReportTable, eq(guardianReportTable.collectionId, guardianCollectionTable.id))
+    .where(and(eq(guardianCollectionTable.ownerUserId, input.ownerUserId), eq(guardianReportTable.status, 'fulfilled')))
+    .orderBy(desc(guardianReportTable.createdAt), desc(guardianReportTable.publicId))
+    .limit(input.limit)
+
+  if (rows.length === 0) return []
+  const presentations = await db
+    .select({
+      reportId: guardianReportCardSelectionTable.reportId,
+      presentation: guardianCardAcquisitionTable.presentationSnapshot,
+    })
+    .from(guardianReportCardSelectionTable)
+    .innerJoin(
+      guardianCardAcquisitionTable,
+      eq(guardianCardAcquisitionTable.id, guardianReportCardSelectionTable.acquisitionId),
+    )
+    .where(
+      inArray(
+        guardianReportCardSelectionTable.reportId,
+        rows.map(({ reportId }) => reportId),
+      ),
+    )
+  const artworkByReport = new Map<number, string[]>()
+  for (const row of presentations) {
+    const paths = artworkByReport.get(row.reportId) ?? []
+    paths.push(row.presentation.artworkPath)
+    artworkByReport.set(row.reportId, paths)
+  }
+
+  return rows.flatMap((row) => {
+    if (!row.narrative) return []
+    return [
+      {
+        collectionPublicId: row.collectionPublicId,
+        reportPublicId: row.reportPublicId,
+        locale: row.locale,
+        createdAt: row.createdAt,
+        title: row.narrative.hero.title,
+        oneLine: row.narrative.hero.oneLine,
+        artworkPaths: artworkByReport.get(row.reportId) ?? [],
+      },
+    ]
   })
 }
 

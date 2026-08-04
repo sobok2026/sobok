@@ -2,6 +2,7 @@
 
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { track } from '@sobok/analytics/browser'
+import { SOBOK_OIDC_PROVIDER_ID } from '@sobok/auth/contracts'
 import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -10,6 +11,7 @@ import { type FormEvent, useEffect, useRef, useState } from 'react'
 import Starfield from '@/components/Starfield'
 import { TURNSTILE_SITE_KEY } from '@/constants'
 import { GUARDIAN_REPORT_UI } from '@/content/guardian-report-ui'
+import { stellaAuthClient } from '@/lib/auth-client'
 import {
   exchangeGuardianReopen,
   GUARDIAN_REOPEN_ACTION,
@@ -25,6 +27,7 @@ export default function GuardianReopen({ locale }: { locale: Locale }) {
   const content = GUARDIAN_REPORT_UI[locale].paid.reopen
   const paths = guardianReportPaths(locale)
   const router = useRouter()
+  const { data: accountSession } = stellaAuthClient.useSession()
   const [phase, setPhase] = useState<Phase>('checking')
   const [linkToken, setLinkToken] = useState('')
   const [invalidLink, setInvalidLink] = useState(false)
@@ -62,6 +65,22 @@ export default function GuardianReopen({ locale }: { locale: Locale }) {
     try {
       const reopened = await exchangeGuardianReopen(linkToken)
       const destination = guardianReportPaths(reopened.locale)
+      if (reopened.status === 'account') {
+        const reportURL = `${destination.result}?report=${encodeURIComponent(reopened.reportPublicId)}`
+        setLinkToken('')
+        track('guardian_report_reopen', { locale: reopened.locale, report_status: 'account' })
+        if (accountSession) {
+          router.replace(reportURL)
+          return
+        }
+        const result = await stellaAuthClient.signIn.oauth2({
+          providerId: SOBOK_OIDC_PROVIDER_ID,
+          callbackURL: reportURL,
+          errorCallbackURL: reportURL,
+        })
+        if (result.error) throw new Error('account sign-in failed')
+        return
+      }
       storeGuardianCheckoutSession({
         locale: reopened.locale,
         collectionPublicId: reopened.collectionPublicId,

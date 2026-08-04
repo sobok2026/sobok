@@ -27,6 +27,7 @@ import type {
 } from '../../guardian/questionnaire'
 import type { GuardianCardPresentationSnapshot } from '../../guardian/redraw-contract'
 import type { GuardianReportNarrativeSnapshot } from '../../guardian/report'
+import { stellaUser } from './auth'
 import { localeEnum, stella } from './common'
 import {
   guardianQuestionKindEnum,
@@ -64,16 +65,21 @@ export const guardianRecoveryEmailStatusEnum = stella.enum('guardian_recovery_em
 export const guardianReopenSourceEnum = stella.enum('guardian_reopen_source', ['purchase', 'request'])
 
 // `guardian_collection` is the ownership aggregate before AND after sign-up. Guest checkout creates one;
-// the future Stella account layer claims that same row instead of copying cards or resetting pity progress.
-export const guardianCollectionTable = stella.table('guardian_collection', {
-  id: identityId,
-  publicId,
-  // The raw collection capability is returned once and never stored. Future account sessions can authorize
-  // the same collection without this token; account claim clears this hash so the guest capability cannot
-  // remain as a second, perpetual way into the account-owned collection.
-  accessTokenHash: varchar('access_token_hash', { length: 64 }).unique(),
-  ...timestamps,
-})
+// the Stella account layer claims that same row instead of copying cards or resetting pity progress.
+export const guardianCollectionTable = stella.table(
+  'guardian_collection',
+  {
+    id: identityId,
+    publicId,
+    // The raw collection capability is returned once and never stored. An account session can authorize the
+    // same collection after claim; claim clears this hash so the guest capability cannot remain as a second,
+    // perpetual way into the account-owned collection.
+    accessTokenHash: varchar('access_token_hash', { length: 64 }).unique(),
+    ownerUserId: text('owner_user_id').references(() => stellaUser.id, { onDelete: 'restrict' }),
+    ...timestamps,
+  },
+  (t) => [index('idx_stella_guardian_collection_owner').on(t.ownerUserId)],
+)
 
 // A paid report is append-only at the product level: inputs, selected families, versions, the initial four
 // cards, and the rendered locale copy are snapshotted. Redraw acquisitions are separate rows, so old paid

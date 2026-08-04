@@ -1,5 +1,6 @@
 'use client'
 
+import { SOBOK_ACCOUNT_LABELS } from '@sobok/auth/contracts'
 import type { Locale } from '@sobok/domain/locale'
 import LocaleSwitcher from '@sobok/site-chrome/locale-switcher'
 import Link from 'next/link'
@@ -51,7 +52,15 @@ export default function Header({ locale, localeLabel }: Props) {
           </nav>
         </div>
 
-        <div className={`flex items-center ${HEADER_ISLAND}`}>
+        <div className={`flex items-center gap-1 ${HEADER_ISLAND}`}>
+          <Link
+            aria-label={SOBOK_ACCOUNT_LABELS[locale]}
+            className="relative rounded-full px-2.5 py-1.5 text-xs font-semibold text-foreground-muted transition-colors before:absolute before:-inset-1 before:content-[''] hover:text-foreground"
+            href={`/${locale}/account`}
+          >
+            <span aria-hidden>✦</span>
+            <span className="sr-only sm:not-sr-only sm:ml-1.5">{SOBOK_ACCOUNT_LABELS[locale]}</span>
+          </Link>
           <LocaleSwitcher label={localeLabel} locale={locale} />
         </div>
       </div>

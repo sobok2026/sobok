@@ -11,6 +11,7 @@ export default withNextIntl(
     // list must gain '@sobok/edge' or `next build` fails on raw .ts inside node_modules.
     transpilePackages: [
       '@sobok/analytics',
+      '@sobok/auth',
       '@sobok/brand',
       '@sobok/domain',
       '@sobok/site-chrome',

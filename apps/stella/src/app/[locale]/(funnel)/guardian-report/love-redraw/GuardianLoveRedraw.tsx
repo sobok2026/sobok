@@ -19,19 +19,19 @@ import {
   equipGuardianLoveCard,
   GUARDIAN_REDRAW_CHECKOUT_ACTION,
   GuardianApiError,
-  type GuardianCheckoutSession,
   type GuardianLoveRedrawResult,
   type GuardianLoveRedrawState,
   type GuardianRedrawCheckoutSession,
+  type GuardianReportAccess,
   getGuardianLoveRedraw,
   guardianReportPaths,
   readGuardianRedrawCheckoutSession,
   readOrCreateGuardianDrawRequest,
   storeGuardianRedrawCheckoutSession,
 } from '@/lib/guardian-paid'
-
+import GuardianAccountRequired from '../_components/GuardianAccountRequired'
 import GuardianMissingSession from '../_components/GuardianMissingSession'
-import { useGuardianCheckoutSession } from '../_components/useGuardianCheckoutSession'
+import { useGuardianReportAccess } from '../_components/useGuardianReportAccess'
 import revealStyles from '../paid-report.module.css'
 
 type PageState =
@@ -48,18 +48,21 @@ const RARITY_STYLE = {
 
 export default function GuardianLoveRedraw({ locale }: { locale: Locale }) {
   const content = GUARDIAN_LOVE_REDRAW_UI[locale]
-  const session = useGuardianCheckoutSession(locale)
+  const access = useGuardianReportAccess(locale)
 
-  if (session === undefined) {
+  if (access.kind === 'loading') {
     return <LoadingScreen copy={content.states.loading} />
   }
-  if (!session) {
+  if (access.kind === 'account-required') {
+    return <GuardianAccountRequired locale={locale} />
+  }
+  if (access.kind === 'missing' || !access.access.email) {
     return <GuardianMissingSession locale={locale} />
   }
-  return <GuardianLoveRedrawExperience session={session} />
+  return <GuardianLoveRedrawExperience session={{ ...access.access, email: access.access.email }} />
 }
 
-function GuardianLoveRedrawExperience({ session }: { session: GuardianCheckoutSession }) {
+function GuardianLoveRedrawExperience({ session }: { session: GuardianReportAccess & { email: string } }) {
   const content = GUARDIAN_LOVE_REDRAW_UI[session.locale]
   const paths = guardianReportPaths(session.locale)
   const [state, setState] = useState<PageState>({ kind: 'loading', confirming: false })
@@ -174,7 +177,7 @@ function GuardianLoveRedrawExperience({ session }: { session: GuardianCheckoutSe
         return
       }
 
-      const redirectUrl = `${window.location.origin}${paths.loveRedraw}`
+      const redirectUrl = `${window.location.origin}${paths.loveRedraw}?report=${encodeURIComponent(session.reportPublicId)}`
       const { requestPayment } = await import('@portone/browser-sdk/v2')
       const result = await requestPayment({
         channelKey: response.payment.channelKey,
@@ -317,6 +320,7 @@ function GuardianLoveRedrawExperience({ session }: { session: GuardianCheckoutSe
           }
         }}
         paths={paths}
+        reportPublicId={session.reportPublicId}
         result={reveal}
       />
     )
@@ -328,7 +332,10 @@ function GuardianLoveRedrawExperience({ session }: { session: GuardianCheckoutSe
     <main className="relative min-h-dvh bg-night-sky px-3 pb-[calc(6rem+var(--safe-area-bottom))] pt-[calc(5rem+var(--safe-area-top))] text-foreground sm:px-4">
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full opacity-50" />
       <div className="relative z-10 mx-auto w-full max-w-3xl">
-        <Link className="text-xs text-foreground-subtle hover:text-white" href={paths.result}>
+        <Link
+          className="text-xs text-foreground-subtle hover:text-white"
+          href={`${paths.result}?report=${encodeURIComponent(session.reportPublicId)}`}
+        >
           ← {content.navigation.backToReport}
         </Link>
 
@@ -471,6 +478,7 @@ function RevealScreen({
   onEquip,
   onFlip,
   paths,
+  reportPublicId,
   result,
 }: {
   content: (typeof GUARDIAN_LOVE_REDRAW_UI)[Locale]
@@ -481,6 +489,7 @@ function RevealScreen({
   onEquip: () => void
   onFlip: () => void
   paths: ReturnType<typeof guardianReportPaths>
+  reportPublicId: string
   result: GuardianLoveRedrawResult
 }) {
   const card = result.acquisition
@@ -575,7 +584,10 @@ function RevealScreen({
             <p className="mt-2 text-xs leading-6 text-foreground-subtle">{content.reveal.accountBody}</p>
           </aside>
         )}
-        <Link className="mt-6 inline-block text-xs text-foreground-subtle hover:text-white" href={paths.result}>
+        <Link
+          className="mt-6 inline-block text-xs text-foreground-subtle hover:text-white"
+          href={`${paths.result}?report=${encodeURIComponent(reportPublicId)}`}
+        >
           ← {content.navigation.backToReport}
         </Link>
       </div>

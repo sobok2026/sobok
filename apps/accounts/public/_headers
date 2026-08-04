@@ -1,0 +1,11 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), geolocation=(), microphone=(), payment=()
+  X-Frame-Options: DENY
+
+/.well-known/*
+  Cache-Control: public, max-age=300
+
+/api/*
+  Cache-Control: no-store

@@ -63,6 +63,24 @@ export type GuardianCheckoutSession = {
   createdAt: number
 }
 
+export type GuardianReportAccess = {
+  locale: Locale
+  reportPublicId: string
+  accessToken?: string
+  collectionPublicId?: string
+  email?: string
+}
+
+export type GuardianOwnedReport = {
+  collectionPublicId: string
+  reportPublicId: string
+  locale: Locale
+  createdAt: string
+  title: string
+  oneLine: string
+  artworkPaths: string[]
+}
+
 export type GuardianCheckoutPayment = {
   paymentId: string
   status: 'pending' | 'paid'
@@ -132,16 +150,22 @@ export type GuardianPurchaseConfirmation =
     }
   | { status: 'failed' | 'cancelled' | 'refunded'; reportPublicId: string }
 
-export type GuardianReopenExchange = {
-  status: 'ok'
-  accessToken: string
-  collectionPublicId: string
-  locale: Locale
-  paymentId: string
-  recoveryEmail: string
-  reportPublicId: string
-  reportStatus: 'draft' | 'fulfilled'
-}
+export type GuardianReopenExchange =
+  | {
+      status: 'guest'
+      accessToken: string
+      collectionPublicId: string
+      locale: Locale
+      paymentId: string
+      recoveryEmail: string
+      reportPublicId: string
+      reportStatus: 'draft' | 'fulfilled'
+    }
+  | {
+      status: 'account'
+      locale: Locale
+      reportPublicId: string
+    }
 
 export class GuardianApiError extends Error {
   readonly status: number
@@ -220,19 +244,22 @@ export function confirmGuardianPurchase(session: GuardianCheckoutSession): Promi
   return confirmGuardianPayment(session.accessToken, session.paymentId)
 }
 
-export function confirmGuardianPayment(accessToken: string, paymentId: string): Promise<GuardianPurchaseConfirmation> {
+export function confirmGuardianPayment(
+  accessToken: string | undefined,
+  paymentId: string,
+): Promise<GuardianPurchaseConfirmation> {
   return requestJson(`/api/guardian-purchases/${encodeURIComponent(paymentId)}/confirm`, jsonRequest({}, accessToken))
 }
 
-export function getGuardianLoveRedraw(session: GuardianCheckoutSession): Promise<GuardianLoveRedrawState> {
+export function getGuardianLoveRedraw(session: GuardianReportAccess): Promise<GuardianLoveRedrawState> {
   return requestJson<{ state: GuardianLoveRedrawState }>(
     `/api/guardian-reports/${encodeURIComponent(session.reportPublicId)}/love-redraw`,
-    { headers: { authorization: `Bearer ${session.accessToken}` } },
+    { headers: authorizationHeaders(session.accessToken) },
   ).then(({ state }) => state)
 }
 
 export function createGuardianLoveRedrawCheckout(
-  session: GuardianCheckoutSession,
+  session: GuardianReportAccess,
   input: { requestId: string; sku: string; turnstileToken: string },
 ): Promise<GuardianRedrawCheckoutResponse> {
   return requestJson(
@@ -242,7 +269,7 @@ export function createGuardianLoveRedrawCheckout(
 }
 
 export function drawGuardianLoveCard(
-  session: GuardianCheckoutSession,
+  session: GuardianReportAccess,
   requestId: string,
 ): Promise<GuardianLoveRedrawResult> {
   return requestJson<{ result: GuardianLoveRedrawResult }>(
@@ -252,7 +279,7 @@ export function drawGuardianLoveCard(
 }
 
 export function equipGuardianLoveCard(
-  session: GuardianCheckoutSession,
+  session: GuardianReportAccess,
   acquisitionPublicId: string,
 ): Promise<GuardianLoveRedrawState> {
   return requestJson<{ state: GuardianLoveRedrawState }>(
@@ -276,11 +303,26 @@ export function exchangeGuardianReopen(token: string): Promise<GuardianReopenExc
   return requestJson('/api/guardian-reopen/exchange', jsonRequest({ token }))
 }
 
-export function getGuardianReport(session: GuardianCheckoutSession): Promise<GuardianReportView> {
+export function getGuardianReport(session: GuardianReportAccess): Promise<GuardianReportView> {
   return requestJson<{ report: GuardianReportView }>(
     `/api/guardian-reports/${encodeURIComponent(session.reportPublicId)}`,
-    { headers: { authorization: `Bearer ${session.accessToken}` } },
+    { headers: authorizationHeaders(session.accessToken) },
   ).then(({ report }) => report)
+}
+
+export function listOwnedGuardianReports(): Promise<GuardianOwnedReport[]> {
+  return requestJson<{ items: GuardianOwnedReport[] }>('/api/guardian-collections').then(({ items }) => items)
+}
+
+export function claimGuardianCollection(session: GuardianCheckoutSession): Promise<{
+  status: 'claimed' | 'already-claimed'
+  reward: 'granted' | 'already-granted'
+  guestAccessRevoked: true
+}> {
+  return requestJson(
+    `/api/guardian-collections/${encodeURIComponent(session.collectionPublicId)}/claim`,
+    jsonRequest({ reportPublicId: session.reportPublicId }, session.accessToken),
+  )
 }
 
 export function getGuardianQuestion(session: GuardianCheckoutSession): Promise<GuardianQuestionnaireClientStep> {
@@ -315,6 +357,10 @@ export function acknowledgeGuardianMilestone(
       method: 'PUT',
     },
   ).then(({ step }) => step)
+}
+
+function authorizationHeaders(token?: string): HeadersInit {
+  return token ? { authorization: `Bearer ${token}` } : {}
 }
 
 export function readGuardianCheckoutSession(): GuardianCheckoutSession | null {

@@ -1,0 +1,38 @@
+{
+  "name": "@sobok/accounts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3014",
+    "build": "next build",
+    "oauth:bootstrap": "bun run scripts/bootstrap-oauth-client.ts",
+    "db:push": "drizzle-kit push --config drizzle.config.mjs",
+    "type": "next typegen && tsc --noEmit && tsc -p worker/tsconfig.json && tsc -p scripts/tsconfig.json"
+  },
+  "dependencies": {
+    "@marsidev/react-turnstile": "^1.5.3",
+    "@sobok/auth": "workspace:*",
+    "@sobok/edge": "workspace:*",
+    "better-auth": "^1.6.23",
+    "drizzle-orm": "1.0.0-rc.4",
+    "hono": "^4.12.27",
+    "next": "16.2.11",
+    "postgres": "^3.4.9",
+    "qrcode": "^1.5.4",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260701.0",
+    "@sobok/next-config": "workspace:*",
+    "@types/node": "^26.1.0",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@types/qrcode": "^1.5.6",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "drizzle-kit": "1.0.0-rc.4",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.110.0"
+  }
+}
