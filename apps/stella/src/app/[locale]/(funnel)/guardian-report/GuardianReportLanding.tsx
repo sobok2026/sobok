@@ -18,6 +18,7 @@ import {
   readGuardianPreviewSession,
 } from '@/lib/guardian-paid'
 
+import GuardianStickyCta from './_components/GuardianStickyCta'
 import styles from './guardian-report.module.css'
 
 type LandingContent = (typeof GUARDIAN_REPORT_UI)[Locale]['landing']
@@ -177,7 +178,14 @@ export default function GuardianReportLanding({ locale }: { locale: Locale }) {
         <PurchaseDetails content={content} locale={locale} price={price} startHref={startHref} />
       </div>
 
-      <StickyCta content={content} locale={locale} price={price} startHref={startHref} visible={heroCtaHidden} />
+      <GuardianStickyCta
+        cta={content.stickyCta.cta}
+        href={startHref}
+        note={content.stickyCta.note}
+        price={price}
+        onSelect={() => track('guardian_preview_cta_selected', { locale, source: 'landing_sticky' })}
+        visible={heroCtaHidden}
+      />
     </main>
   )
 }
@@ -348,45 +356,6 @@ function PurchaseDetails({
         </aside>
       </div>
     </section>
-  )
-}
-
-/**
- * Below `sm` the page runs several screens, and without this the only places to act are its first screen and
- * its last. The funnel layout reserves the band this sits in, so it never covers the footer.
- */
-function StickyCta({
-  content,
-  locale,
-  price,
-  startHref,
-  visible,
-}: {
-  content: LandingContent
-  locale: Locale
-  price: string
-  startHref: string
-  visible: boolean
-}) {
-  return (
-    <div
-      aria-hidden={!visible}
-      className={`fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0b0618]/92 px-3 pb-[calc(0.6rem+var(--safe-area-bottom))] pt-2.5 backdrop-blur transition-[opacity,translate] duration-200 motion-reduce:transition-none sm:hidden ${
-        visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-full opacity-0'
-      }`}
-    >
-      <div className="flex items-center gap-3">
-        <p className="min-w-0 flex-1 truncate text-[11px] text-foreground-subtle">{content.stickyCta.label(price)}</p>
-        <Link
-          className="shrink-0 rounded-full bg-[linear-gradient(100deg,#fff3f8,#eadfff)] px-5 py-2.5 text-xs font-bold text-[#24142e]"
-          href={startHref}
-          onClick={() => track('guardian_preview_cta_selected', { locale, source: 'landing_sticky' })}
-          tabIndex={visible ? undefined : -1}
-        >
-          {content.stickyCta.cta}
-        </Link>
-      </div>
-    </div>
   )
 }
 

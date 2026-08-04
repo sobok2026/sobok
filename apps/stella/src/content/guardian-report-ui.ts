@@ -77,8 +77,10 @@ type GuardianFreeResultContent = {
     lockedTitle: string
     lockedItems: readonly { title: string; preview: string }[]
     unlock: string
-    /** The CTA bar has room for a few characters, not for the full sentence. */
+    /** The CTA island has room for a few characters, not for the full sentence. */
     unlockShort: string
+    /** Sits beside the price in the island and yields to it when the screen is narrow. */
+    unlockNote: string
   }
   states: {
     chartRequiredTitle: string
@@ -173,7 +175,8 @@ type GuardianReportUiContent = {
     }
     /** Mobile CTA bar, pinned once the hero's own call to action has scrolled away. */
     stickyCta: {
-      label: (price: string) => string
+      /** Yields to the price when the screen is narrow, so the number is never the part that clips. */
+      note: string
       cta: string
     }
     checkout: {
@@ -651,6 +654,7 @@ const KO_CONTENT: GuardianReportUiContent = {
         ],
         unlock: '네 장과 전체 리포트 열기',
         unlockShort: '전체 리포트 열기',
+        unlockNote: '한 번 결제',
       },
       states: {
         chartRequiredTitle: '출생 차트를 더하면 결과가 완성돼요',
@@ -674,7 +678,7 @@ const KO_CONTENT: GuardianReportUiContent = {
       refundLink: '청약철회·환불 정책',
     },
     stickyCta: {
-      label: (price) => `전체 리포트 ${price} · 한 번 결제`,
+      note: '전체 리포트',
       cta: '무료로 시작하기',
     },
     checkout: {
@@ -975,6 +979,7 @@ function emptyContent(): GuardianReportUiContent {
           lockedItems: [],
           unlock: empty,
           unlockShort: empty,
+          unlockNote: empty,
         },
         states: {
           chartRequiredTitle: empty,
@@ -996,7 +1001,7 @@ function emptyContent(): GuardianReportUiContent {
         refundNote: empty,
         refundLink: empty,
       },
-      stickyCta: { label: () => empty, cta: empty },
+      stickyCta: { note: empty, cta: empty },
       checkout: {
         title: empty,
         body: empty,
