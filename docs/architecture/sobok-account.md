@@ -3,7 +3,9 @@
 ## 상태
 
 - 확정일: 2026-08-03
+- 최근 갱신: 2026-08-04
 - 공개 호스트: `accounts.sobok.cc`
+- staging 호스트: `accounts-stg.sobok.cc`
 - 기술 식별자: `Sobok`
 - 한국어 공개 이름: `소복 계정`
 - 인증 런타임: Cloudflare Worker + 정적 Next.js UI
@@ -28,6 +30,20 @@
 - `.sobok.cc` 공유 쿠키를 만들지 않는다. 중앙 계정 쿠키와 각 앱 쿠키는 모두 host-only다.
 - 로그인하지 않은 사용자의 구매를 계속 허용하고, 가치를 확인한 직후 계정 보관을 제안한다.
 - `packages/auth-core`를 추가하지 않는다. 공용 인증 계약과 factory는 하나의 `packages/auth`에 둔다.
+
+### 공개 URL 계약
+
+| URL                             | 역할                                                                  |
+| ------------------------------- | --------------------------------------------------------------------- |
+| `https://accounts.sobok.cc`     | production 계정 UI, Better Auth API, OIDC issuer의 유일한 기준 origin |
+| `https://accounts-stg.sobok.cc` | staging 계정 UI, Better Auth API, OIDC issuer의 유일한 기준 origin    |
+| `https://sobok.cc/accounts`     | 필요할 때 canonical accounts origin으로 보내는 편의용 `308` redirect  |
+| `https://sobok.cc/api/accounts` | 사용하지 않음. authority API proxy나 두 번째 인증 경계로 만들지 않음  |
+
+계정 UI와 Better Auth API는 같은 Worker와 origin에 둔다. Better Auth endpoint는 `/api/auth/*`, OIDC
+discovery는 issuer 루트의 `/.well-known/*`에 둔다. 편의 redirect는 중앙 session을 소유하거나 인증 API를
+중계하지 않는다. 이 계약으로 issuer, WebAuthn RP ID, OAuth callback, cookie 경계가 하나의 호스트에
+고정된다.
 
 ## 2. 시스템 경계
 
@@ -179,7 +195,26 @@ Stella 첫 구매와 사랑 카드 재추첨은 로그인 없이 끝까지 가�
 수정하지 않는다. `apps/accounts`와 각 앱 Worker가 binding, DB adapter, email 발송과 필요한 lifecycle
 hook을 factory에 주입한다.
 
-## 10. 구현 순서
+## 10. 소스 구현 기준선
+
+2026-08-04 기준으로 다음 범위가 앱 저장소와 인프라 저장소의 `main`에 구현되어 있다. 이 목록은 소스
+반영 상태이며 외부 제공자 콘솔 설정, HCP Terraform apply, schema push 또는 실제 배포 완료를 뜻하지
+않는다.
+
+- `apps/accounts`: 중앙 로그인·가입·계정 관리 UI, Better Auth Worker, `identity`/`identity_stg` schema,
+  이메일 Queue consumer와 OIDC client bootstrap 스크립트
+- `packages/auth`: authority와 relying-party factory, 안정적인 OIDC 계약, 비밀번호·username, magic link,
+  Google/One Tap, Kakao, passkey, TOTP/backup code, BBaton 연결 구성
+- `apps/stella`: 첫 OIDC relying party session, 게스트 `guardian_collection` 귀속, 계정 보관함과 stable
+  report 재열람, account-save 보상, 계정 세션 기반 리포트·재추첨 권한 확인
+- `sobok-ops`: `identity`/`identity_stg`와 `identity_app`, accounts Hyperdrive, 이메일 Queue/DLQ, 환경별
+  Secrets Store 항목, Stella OIDC client secret, accounts Turnstile, custom domain desired state
+
+`account-accounts`가 생성하는 `accounts_hyperdrive_id`가 아직 앱 설정에 들어가기 전이므로
+`apps/accounts/wrangler.jsonc`와 accounts 배포 workflow는 의도적으로 추가하지 않았다. 인프라를 먼저
+apply한 뒤 이 두 파일을 완성하고 GitHub Actions에서 Worker를 최초 배포한다.
+
+## 11. 출시 순서
 
 1. `apps/accounts` authority, `identity_stg` schema, staging domain과 인증 UI를 배포한다.
 2. 고정 Stella staging OIDC client를 등록하고 로그인·callback·host-only session을 검증한다.
