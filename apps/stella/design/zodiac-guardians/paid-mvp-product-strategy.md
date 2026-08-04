@@ -17,7 +17,8 @@
   중앙 PortOne 연동, 공개 랜딩과 분리된 무료 검사·무료 결과·유료 검사·유료 결과, checkout·질문·리포트 API,
   staging·production schema·문항 게시, 공용 scheduler 기반 pending 재조정과 30일 미결제 정리,
   결제 완료 메일과 15분 1회용 재열람 링크 교환, 사랑 카드 재추첨 checkout·결제 확정·크레딧·추첨·
-  보관함·명시적 대표 카드 선택 UI/API까지 구현. 새 재추첨 스키마의 환경별 운영 반영, Stella 계정 귀속과
+  보관함·명시적 대표 카드 선택 UI/API, 중앙 accounts Worker와 Stella OIDC session·게스트 collection 귀속·
+  계정 보관함·account-save 보상까지 코드 구현. 통합 계정 인프라 apply와 schema push·고정 client bootstrap,
   production 1,024장 카탈로그는 후속 작업
 
 ## 1. 목표와 제품 원칙
@@ -335,7 +336,7 @@ collection을 연결하므로 진행률이 초기화되지 않는다. 시즌 앨
 - 가격군은 익명 방문부터 결제까지 고정해 같은 사용자가 중간에 다른 가격을 보지 않게 한다.
 - 결제 전환율 하나가 아니라 `유효 미리보기 방문자당 매출`과 `첫 결제자 30일 매출`로 판단한다.
 
-## 7. 구매, Stella 계정, 저장
+## 7. 구매, Sobok 계정, 저장
 
 ### 권장 구매 흐름
 
@@ -350,7 +351,7 @@ collection을 연결하므로 진행률이 초기화되지 않는다. 시즌 앨
   → 게스트 보관함과 구매 이메일 재열람으로 결과 보존
   → 사랑 카드 재추첨 결제·획득
   → 새 카드는 보관함에 추가, 선택 시에만 리포트 대표 카드 교체
-  → 획득 직후 Stella 계정 보관 제안
+  → 획득 직후 소복 계정 보관 제안
   → 계정 생성 시 기존 게스트 collection을 그대로 귀속
 ```
 
@@ -362,21 +363,27 @@ collection을 연결하므로 진행률이 초기화되지 않는다. 시즌 앨
 - 게스트 이메일은 결제 직전 필수로 받으며 “영수증과 재열람 링크용, 계정 생성 아님”을 입력란
   바로 아래에 표시한다.
 - 게스트 구매는 복구 가능한 구매 접근 토큰과 이메일 전달 상태를 가진다.
-- 결제 후 계정을 만들면 게스트 구매, 보유 카드, 보장 카운터를 그 Stella 계정에 연결한다.
+- 결제 후 계정을 만들면 게스트 구매, 보유 카드, 보장 카운터를 그 Sobok 계정의 OIDC identity에
+  연결한다. 이메일이나 username을 소유권 병합 키로 사용하지 않는다.
 
-`Stella 계정에 보관하면 첫 미보유 사랑 카드 재추첨 1회`는 계정 전환과 수집 방법 학습을 위한
+`소복 계정에 보관하면 첫 미보유 사랑 카드 재추첨 1회`는 계정 전환과 수집 방법 학습을 위한
 실험 후보다. 적용한다면 이 무료 추첨은 유료 보장 카운터에 포함하지 않는다.
 
-### Stella 전용 계정
+### Sobok 통합 계정과 Stella 세션
 
-- Stella 계정, 세션, 쿠키, 인증 비밀, 사용자 테이블을 다른 Sobok 서비스 계정과 분리한다.
-- `packages/auth`의 구현 경험과 Better Auth 사용 패턴은 참고할 수 있지만 기존 계정 DB와 세션을
-  공유하지 않는다.
-- Stella Worker가 사용하는 `stella` 데이터 경계를 유지한다.
-- 한국의 초기 로그인 권장안은 카카오 로그인과 이메일 링크다.
+- 중앙 계정 원장, 인증 비밀과 로그인 UI는 `accounts.sobok.cc`의 `apps/accounts` Worker가 소유한다.
+- Stella는 고정 confidential OIDC client이며 authorization code + PKCE `S256`으로 로그인한다.
+- 중앙 계정과 Stella의 쿠키는 각각 host-only로 두고 `.sobok.cc` 공유 쿠키를 만들지 않는다.
+- Stella Worker가 앱별 세션, 공개 nickname, 구매, 카드, 리포트의 `stella` 데이터 경계를 유지한다.
+- 앱 데이터는 중앙 계정을 OIDC `(issuer, sub)`로 식별하고 이메일이나 username으로 연결하지 않는다.
+- 중앙 계정의 초기 인증 수단은 비밀번호·전역 username, Google, Kakao, magic link, passkey이며
+  비밀번호/username 로그인에만 TOTP를 자동 적용한다.
 - 전화번호는 첫 구매의 필수 입력으로 두지 않는다.
 - 한국 사용자가 결제·리포트 알림을 카카오톡으로 받겠다고 선택한 경우에만 구매 후 전화번호를 받는다.
 - 중국 본토의 계정 제공자와 결과 전달 채널은 아직 미정이다.
+
+상위 경계와 client 운영 계약은 [Sobok 통합 계정 아키텍처](../../../../docs/architecture/sobok-account.md)를
+따른다.
 
 ### 출생 정보 저장
 
@@ -415,7 +422,7 @@ collection을 연결하므로 진행률이 초기화되지 않는다. 시즌 앨
 
 ### 한국 채널의 역할 분리
 
-- 카카오 로그인 또는 카카오싱크: Stella 계정 식별
+- Kakao 로그인: Sobok 중앙 계정의 인증 수단
 - 카카오 공유: 사용자가 직접 실행하는 결과 공유
 - 알림톡: 결제와 리포트 복구 같은 거래성 전달
 - 카카오 채널 메시지: 재방문 마케팅
@@ -447,7 +454,8 @@ collection을 연결하므로 진행률이 초기화되지 않는다. 시즌 앨
 - 구매 결과 재열람 메일:
   `apps/vibe/worker/lib/reopen-email.ts`
 
-동작 패턴은 재사용하되 Vibe 구매 테이블이나 계정과 Stella 데이터를 공유하지 않는다.
+동작 패턴은 재사용하되 Vibe 구매 테이블과 Stella 구매 테이블은 공유하지 않는다. 계정 identity만
+중앙 Sobok OIDC issuer를 공통으로 사용한다.
 
 ### 한국 결제 확정 방향
 
@@ -521,7 +529,7 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
 결정하지 않았다. 중국 로케일 가격은 한국 원화 가격을 단순 환산하지 않고 현지 결제 전환을 따로
 측정한다.
 
-한국과 중국은 같은 카드 카탈로그와 Stella 계정을 사용할 수 있지만 결제 채널, 가격표, 로그인 제공자,
+한국과 중국은 같은 카드 카탈로그와 Sobok 계정을 사용할 수 있지만 결제 채널, 가격표, 로그인 제공자,
 전달 채널은 로케일별 설정으로 분리한다. 중국 본토용 별도 배포가 필요한지는 결제와 별개의 인프라
 결정으로 남긴다.
 
@@ -550,8 +558,8 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
 | ----------------------------------- | ------------------------------------ |
 | `guardian_checkout_start`           | 전체 리포트 결제를 시작함            |
 | `guardian_purchase_complete`        | 서버 검증된 전체 리포트 구매         |
-| `guardian_account_claim_start`      | 결과를 Stella 계정에 보관하기 시작함 |
-| `guardian_account_claimed`          | 게스트 구매가 Stella 계정에 연결됨   |
+| `guardian_account_claim_start`      | 결과를 Sobok 계정에 보관하기 시작함  |
+| `guardian_account_claimed`          | 게스트 구매가 Sobok 계정에 연결됨    |
 | `guardian_redraw_offer_clicked`     | 전체 리포트에서 재추첨 화면으로 이동 |
 | `guardian_redraw_opened`            | 재추첨 보관함과 상품을 불러옴        |
 | `guardian_redraw_checkout_started`  | 재추첨권 결제를 시작함               |
@@ -615,7 +623,7 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
   획득 이력과 `fulfilled` 전환은 하나의 report 트랜잭션으로 묶는다.
 - capability 보호 API는 상품·확률·보장 메타데이터와 guest checkout, 결제 확인, 유료 질문 진행, 최종
   report 조회에 더해 사랑 재추첨 상태·checkout·draw·대표 카드 선택을 제공한다. 계정 귀속 mutation은
-  Stella 전용 인증과 계정 소유권 경계를 완성한 뒤 추가한다.
+  Stella의 Sobok OIDC session과 `(issuer, sub)` 소유권 경계를 사용한다.
 - production과 staging은 같은 제품 단위 Hyperdrive와 `stella_app` role을 사용한다. build-time
   schema만 각각 `stella`, `stella_stg`로 한정하고 Hyperdrive 캐시는 read-after-write 일관성을
   위해 계속 끈다.
@@ -635,7 +643,7 @@ presentation·대표 카드 선택·checkout/draw 멱등 컬럼을 추가 반영
 
 - 웹 중심 서비스
 - 한국 → 중국 본토 → 이후 미정 순서
-- Stella 전용 계정
+- `accounts.sobok.cc` Sobok 통합 계정과 Stella host-only OIDC session
 - 계정 보관을 선택하면 출생일·시간·장소 서버 저장 가능
 - 첫 구매는 네 주제 전체 리포트
 - 유료 MVP는 4개 패밀리·7개 실제 에디션, production 출시는 실제 3:4 에디션 최소 1,024장
@@ -665,7 +673,6 @@ presentation·대표 카드 선택·checkout/draw 멱등 컬럼을 추가 반영
 
 - 유료 질문 UI는 한 화면에 한 문항, 답변 저장 응답에 다음 문항 반환
 - 앨범 첫 크기 12~24장
-- 한국 로그인: 카카오와 이메일 링크
 
 ### 아직 미정
 

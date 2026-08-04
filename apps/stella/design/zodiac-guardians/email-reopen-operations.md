@@ -143,4 +143,5 @@ Worker 구조화 로그:
 - staging·production schema 반영과 GitHub Actions 배포
 - 실제 PortOne 테스트 결제·모바일 복귀·이메일 수신·질문 재개·결과 재열람 E2E
 - 발송량과 고객 문의가 생긴 뒤 Resend delivery/bounce webhook과 운영 재발송 도구의 필요성 재평가
-- Stella 계정 귀속 뒤에는 이메일 token 대신 로그인 session을 기본 복구 경로로 전환
+- account-owned collection의 이메일 token은 stable report reference만 반환하고 새 guest capability를
+  발급하지 않는 코드가 구현됨. accounts/Stella schema·OIDC client 배포 뒤 staging에서 실제 재열람 확인

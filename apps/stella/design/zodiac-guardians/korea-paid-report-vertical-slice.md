@@ -66,7 +66,7 @@
 
 ### 제외
 
-- Stella 계정과 게스트 컬렉션 귀속
+- Sobok 계정과 게스트 컬렉션 귀속
 - 사랑 카드 재추첨 구매와 보장 카운터 UI
 - 카카오 로그인·알림톡
 - 중국 본토 결제
@@ -579,7 +579,7 @@ homeOffer
 - 최종 웹 리포트는 네 카드 모음, 네 주제 연결 지도, 반복 차트 단서, 주제별 상세 문단·조언·성찰,
   오늘 곁에 둘 네 문장과 closing을 순서대로 제공한다.
 - 3D 카드 뒤집기와 reduced motion 접근성을 유지한다.
-- Stella 계정 보관 제안은 네 카드와 요약을 공개한 뒤에만 보여준다.
+- 소복 계정 보관 제안은 네 카드와 요약을 공개한 뒤에만 보여준다.
 
 ## 9. 관측과 운영
 
@@ -736,7 +736,7 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 
 출시 전 다음 우선순위는 새 재추첨 schema의 staging 반영과 전체 리포트·재추첨 각각의 실제 PortOne
 테스트 결제부터 메일 재열람·카드 획득·대표 카드 교체까지 이어지는 수직 확인이다. 그다음 제품 결정은
-Stella 계정 귀속, 장기 문항은행의 제작 범위와 production 1,024장의 제작 매트릭스다. 대표 Store의 PortOne API Secret과
+Sobok 계정 귀속, 장기 문항은행의 제작 범위와 production 1,024장의 제작 매트릭스다. 대표 Store의 PortOne API Secret과
 live/test Webhook Secret은 채팅이나 public repository에 전달하지 않고 중앙 payments 관련 HCP Terraform
 sensitive 변수에서 Secrets Store로 넣는다. 유료 질문 원문은 Git의 questionnaire source 디렉터리에
 커밋한 뒤 게시 CLI로 DB에 반영한다.
