@@ -44,6 +44,7 @@ import {
   storeGuardianCheckoutSession,
 } from '@/lib/guardian-paid'
 
+import GuardianStickyCta from '../../_components/GuardianStickyCta'
 import styles from '../../guardian-report.module.css'
 
 type BirthChartAnalysis = Awaited<ReturnType<typeof computeBirthChartAnalysis>>
@@ -571,50 +572,14 @@ function FreeResultReading({
         </p>
       </section>
 
-      <UnlockBar
-        content={content}
-        onCheckout={onCheckout}
+      <GuardianStickyCta
+        cta={freeResult.paywall.unlockShort}
+        note={freeResult.paywall.unlockNote}
         price={price}
+        onSelect={onCheckout}
         visible={chartState.status === 'ready' && heroGone && !unlockOnScreen}
       />
     </article>
-  )
-}
-
-/**
- * Below `sm` the reading runs several screens and the unlock button lives at the very end of them. The funnel
- * layout reserves the band this sits in, so it never covers the footer.
- */
-function UnlockBar({
-  content,
-  onCheckout,
-  price,
-  visible,
-}: {
-  content: (typeof GUARDIAN_REPORT_UI)[Locale]['landing']
-  onCheckout: () => void
-  price: string
-  visible: boolean
-}) {
-  return (
-    <div
-      aria-hidden={!visible}
-      className={`fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0b0618]/92 px-4 pb-[calc(0.6rem+var(--safe-area-bottom))] pt-2.5 backdrop-blur transition-[opacity,translate] duration-200 motion-reduce:transition-none sm:hidden ${
-        visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-full opacity-0'
-      }`}
-    >
-      <div className="flex items-center gap-3">
-        <p className="min-w-0 flex-1 truncate text-[11px] text-foreground-subtle">{content.stickyCta.label(price)}</p>
-        <button
-          className="shrink-0 rounded-full bg-[linear-gradient(100deg,#fff3f8,#eadfff)] px-5 py-2.5 text-xs font-bold text-[#24142e]"
-          onClick={onCheckout}
-          tabIndex={visible ? undefined : -1}
-          type="button"
-        >
-          {content.freeResult.paywall.unlockShort}
-        </button>
-      </div>
-    </div>
   )
 }
 
