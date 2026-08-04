@@ -2,6 +2,7 @@ import { alertDiscord } from '@sobok/edge/alert'
 import { openDb, withDb } from '@sobok/edge/db/client'
 import { sha256Hex } from '@sobok/edge/tokens'
 import { Hono } from 'hono'
+import { withStellaSession } from '~/auth'
 import { resolveGuardianPurchaseAccess } from '~/db/queries/guardian'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
@@ -18,14 +19,19 @@ export const guardianPurchases = new Hono<AppEnv>()
 guardianPurchases.post('/:paymentId/confirm', async (c) => {
   const paymentId = GuardianPaymentIdSchema.safeParse(c.req.param('paymentId'))
   const token = GuardianAccessTokenSchema.safeParse(bearerToken(c))
-  if (!paymentId.success || !token.success) {
+  if (!paymentId.success) {
     return problem(403, 'forbidden')
   }
 
-  const accessTokenHash = await sha256Hex(token.data)
-  const access = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) =>
-    resolveGuardianPurchaseAccess(db, { accessTokenHash, paymentId: paymentId.data }),
-  )
+  const accessTokenHash = token.success ? await sha256Hex(token.data) : undefined
+  const access = await withStellaSession(c, (db, session) => {
+    if (!session && !accessTokenHash) return Promise.resolve(null)
+    return resolveGuardianPurchaseAccess(db, {
+      accessTokenHash,
+      ownerUserId: session?.user.id,
+      paymentId: paymentId.data,
+    })
+  })
   if (!access) {
     return problem(403, 'forbidden')
   }

@@ -42,6 +42,11 @@ bun dev
 - [`SECURITY.md`](SECURITY.md)
 - [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)
 
+## Architecture
+
+- [Sobok 통합 계정](docs/architecture/sobok-account.md)
+- [Sobok 통합 계정 최초 배포](docs/operations/sobok-account-rollout.md)
+
 ## License
 
 GPL-3.0. 자세한 내용은 [`LICENSE`](LICENSE)를 확인해 주세요.

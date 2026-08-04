@@ -101,6 +101,83 @@
   opacity: 0.42;
 }
 
+/*
+ * Free result blocks.
+ *
+ * On a 375px phone the reading used to nest four deep — page, card, section, box — and the innermost prose
+ * ran 17–20 Korean characters a line while the footer, nested in nothing, ran 29. So below `sm` none of these
+ * blocks is a box: a rule or a hairline marks them and the text keeps the full column. The boxes come back at
+ * `sm`, where there is width to spend on them.
+ */
+
+/** The payload of a section: today's move, the dominant element. Loud enough to find by scrolling. */
+.accentBlock {
+  padding-left: 1rem;
+  border-left: 2px solid rgb(255 193 214 / 50%);
+}
+
+/** Supporting text that belongs to the block above it — the bridge line, the reflection question. */
+.quietBlock {
+  padding-left: 1rem;
+  border-left: 1px solid rgb(255 255 255 / 14%);
+}
+
+/** Repeated peers: the two insight readings, the four locked scenes. */
+.listBlock {
+  padding-top: 1.25rem;
+  border-top: 1px solid rgb(255 255 255 / 8%);
+}
+
+.listBlock:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+@media (min-width: 40rem) {
+  .accentBlock {
+    padding: 1.5rem;
+    border: 1px solid rgb(255 193 214 / 18%);
+    border-radius: 1.5rem;
+    background: rgb(33 20 49 / 72%);
+    box-shadow: 0 18px 40px rgb(2 0 12 / 32%);
+  }
+
+  .quietBlock {
+    padding: 1rem 1.25rem;
+    border: 0;
+    border-radius: 1rem;
+    background: rgb(0 0 0 / 18%);
+  }
+
+  .listBlock,
+  .listBlock:first-child {
+    padding: 1.25rem;
+    border: 1px solid rgb(255 255 255 / 9%);
+    border-radius: 1.5rem;
+    background: rgb(255 255 255 / 4%);
+  }
+}
+
+/**
+ * One cell of the tone × movement grid. The empty ones stay barely there — borderless and low contrast — so
+ * sixteen of them read as a field with one position lit rather than as a table waiting to be filled in. 2:1
+ * keeps all four rows inside a thumb's reach on a phone.
+ */
+.matrixCell {
+  aspect-ratio: 2 / 1;
+  border-radius: 0.5rem;
+  background: rgb(255 255 255 / 5%);
+}
+
+.matrixCellActive {
+  composes: matrixCell;
+
+  background: rgb(255 193 214 / 78%);
+  box-shadow:
+    0 0 0 3px rgb(255 193 214 / 16%),
+    0 8px 24px rgb(255 193 214 / 24%);
+}
+
 .quizOption {
   min-height: 3.5rem;
   border: 1px solid rgb(255 255 255 / 10%);

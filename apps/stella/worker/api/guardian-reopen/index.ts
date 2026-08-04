@@ -68,8 +68,8 @@ guardianReopen.post('/request', async (c) => {
   return c.json({ status: 'accepted' }, 202, NO_STORE_HEADERS)
 })
 
-// Exchanges one short-lived token for a freshly rotated collection capability. The raw token is never logged
-// and the old browser capability stops authorizing the collection after this transaction commits.
+// Exchanges one short-lived token. Guest collections receive a freshly rotated capability; account-owned
+// collections receive only a stable report reference and must prove ownership with the Stella session.
 guardianReopen.post('/exchange', async (c) => {
   const body = await readBody(c.req.raw, ExchangeBody)
   if (!body) {
@@ -89,7 +89,7 @@ guardianReopen.post('/exchange', async (c) => {
     return problem(410, 'reopen-link-invalid')
   }
 
-  return c.json({ status: 'ok', accessToken, ...reopened }, 200, NO_STORE_HEADERS)
+  return c.json(reopened.status === 'guest' ? { ...reopened, accessToken } : reopened, 200, NO_STORE_HEADERS)
 })
 
 async function readBody<T extends z.ZodType>(request: Request, schema: T): Promise<z.infer<T> | null> {

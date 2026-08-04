@@ -1,8 +1,5 @@
-import { type Db, openDb, withDb } from '@sobok/edge/db/client'
-import { sha256Hex } from '@sobok/edge/tokens'
-import { type Context, Hono } from 'hono'
+import { Hono } from 'hono'
 import { z } from 'zod'
-import { resolveGuardianReportAccess } from '~/db/queries/guardian'
 import {
   acknowledgeGuardianQuestionnaireMilestone,
   getGuardianQuestionnaireStep,
@@ -11,10 +8,9 @@ import {
 import { readGuardianReport } from '~/db/queries/guardian-report'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
-import { GuardianAccessTokenSchema, GuardianReportPublicIdSchema } from '~/guardian/http'
 import { GUARDIAN_MAX_TEXT_ANSWER_LENGTH } from '~/guardian/questionnaire'
 import { NO_STORE_HEADERS, parseJson } from '~/lib/http'
-import { bearerToken } from '~/lib/request'
+import { withAuthorizedGuardianReport } from './access'
 
 const ANSWER_BODY_LIMIT_BYTES = 2 * 1024
 const QuestionIdSchema = z
@@ -41,7 +37,7 @@ export const guardianReports = new Hono<AppEnv>()
 
 // GET /api/guardian-reports/:reportPublicId/question — reveal only the one currently reachable paid step.
 guardianReports.get('/:reportPublicId/question', async (c) => {
-  const authorized = await withAuthorizedReport(c, getGuardianQuestionnaireStep)
+  const authorized = await withAuthorizedGuardianReport(c, getGuardianQuestionnaireStep)
   if (!authorized.authorized) {
     return problem(403, 'forbidden')
   }
@@ -69,7 +65,7 @@ guardianReports.put('/:reportPublicId/answers/:id', async (c) => {
     return problem(422, 'invalid-request')
   }
 
-  const authorized = await withAuthorizedReport(c, (db, access) =>
+  const authorized = await withAuthorizedGuardianReport(c, (db, access) =>
     saveGuardianQuestionnaireAnswer(db, {
       ...access,
       questionId: questionId.data,
@@ -103,7 +99,7 @@ guardianReports.put('/:reportPublicId/milestones/:id', async (c) => {
     return problem(422, 'invalid-request')
   }
 
-  const authorized = await withAuthorizedReport(c, (db, access) =>
+  const authorized = await withAuthorizedGuardianReport(c, (db, access) =>
     acknowledgeGuardianQuestionnaireMilestone(db, { ...access, milestoneId: milestoneId.data }),
   )
   if (!authorized.authorized) {
@@ -125,7 +121,7 @@ guardianReports.put('/:reportPublicId/milestones/:id', async (c) => {
 
 // GET /api/guardian-reports/:reportPublicId — progress metadata while drafting, immutable cards and narrative once fulfilled.
 guardianReports.get('/:reportPublicId', async (c) => {
-  const authorized = await withAuthorizedReport(c, readGuardianReport)
+  const authorized = await withAuthorizedGuardianReport(c, readGuardianReport)
   if (!authorized.authorized) {
     return problem(403, 'forbidden')
   }
@@ -139,23 +135,3 @@ guardianReports.get('/:reportPublicId', async (c) => {
   }
   return c.json({ report: result.report }, 200, NO_STORE_HEADERS)
 })
-
-async function withAuthorizedReport<T>(
-  c: Context<AppEnv>,
-  fn: (db: Db, access: { collectionId: number; reportId: number }) => Promise<T>,
-): Promise<{ authorized: true; result: T } | { authorized: false }> {
-  const reportPublicId = GuardianReportPublicIdSchema.safeParse(c.req.param('reportPublicId'))
-  const token = GuardianAccessTokenSchema.safeParse(bearerToken(c))
-  if (!reportPublicId.success || !token.success) {
-    return { authorized: false }
-  }
-
-  const accessTokenHash = await sha256Hex(token.data)
-  return withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, async (db) => {
-    const access = await resolveGuardianReportAccess(db, { accessTokenHash, reportPublicId: reportPublicId.data })
-    if (!access) {
-      return { authorized: false as const }
-    }
-    return { authorized: true as const, result: await fn(db, access) }
-  })
-}

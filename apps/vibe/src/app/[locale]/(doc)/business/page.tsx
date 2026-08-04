@@ -43,7 +43,7 @@ export default async function BusinessPage({ params }: PageProps<'/[locale]/busi
           </Link>
         </nav>
       }
-      intro={<BusinessInfo className="mt-8 text-sm leading-6" locale={locale} showHeading={false} />}
+      intro={<BusinessInfo className="mt-8 text-sm leading-6" locale={locale} />}
       sections={[]}
       title={labels.heading}
     />

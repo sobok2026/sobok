@@ -3,18 +3,24 @@
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { track, trackEcommerce } from '@sobok/analytics/browser'
 import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 
 import { big3, elementCounts, reliableBodies } from '@/chart/astrology'
-import { ELEMENT_IDS } from '@/chart/data'
+import { ELEMENT_COLORS, ELEMENT_IDS } from '@/chart/data'
 import { computeBirthChartAnalysis } from '@/chart/ephemeris'
-import type { NatalChart } from '@/chart/types'
+import type { NatalChart, SignId } from '@/chart/types'
 import { useBirthProfile } from '@/components/BirthProfileProvider'
+import { SignFigure } from '@/components/SignFigure'
 import Starfield from '@/components/Starfield'
 import { TURNSTILE_SITE_KEY } from '@/constants'
-import { GUARDIAN_REPORT_UI } from '@/content/guardian-report-ui'
+import {
+  GUARDIAN_REPORT_UI,
+  type GuardianPreviewMovement,
+  type GuardianPreviewTone,
+} from '@/content/guardian-report-ui'
 import { toBirthInput } from '@/lib/birth-storage'
 import {
   confirmGuardianPurchase,
@@ -218,7 +224,7 @@ export default function GuardianFreeResult({ locale }: { locale: Locale }) {
           <h1 className="mt-4 text-xl font-bold text-white">{content.freeResult.states.missingTitle}</h1>
           <p className="mt-2 text-sm leading-6 text-foreground-muted">{content.freeResult.states.missingBody}</p>
           <Link
-            className="mt-6 block rounded-2xl bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground"
+            className="mt-6 block rounded-2xl cta bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground"
             href={paths.free}
           >
             {content.freeResult.states.missingCta}
@@ -241,7 +247,7 @@ export default function GuardianFreeResult({ locale }: { locale: Locale }) {
           </div>
           <div className="mt-4 flex shrink-0 flex-wrap gap-2 sm:mt-0">
             <Link
-              className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground"
+              className="rounded-full cta bg-primary px-4 py-2 text-xs font-bold text-primary-foreground"
               href={paths.questions}
             >
               {content.resume.reportCta}
@@ -287,7 +293,7 @@ export default function GuardianFreeResult({ locale }: { locale: Locale }) {
           <h1 className="text-xl font-bold text-white">{content.resume.title}</h1>
           <p className="mt-2 text-sm leading-6 text-foreground-muted">{content.resume.body}</p>
           <Link
-            className="mt-6 block rounded-2xl bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground"
+            className="mt-6 block rounded-2xl cta bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground"
             href={paths.questions}
           >
             {content.resume.reportCta}
@@ -303,11 +309,11 @@ function ResultShell({ children, locale }: { children: React.ReactNode; locale: 
   const paths = guardianReportPaths(locale)
 
   return (
-    <main className="relative min-h-dvh bg-night-sky px-3 pb-[calc(5rem+var(--safe-area-bottom))] pt-[calc(5rem+var(--safe-area-top))] text-foreground sm:px-4">
+    <main className="relative min-h-dvh bg-night-sky px-4 pb-[calc(5.5rem+var(--safe-area-bottom))] pt-[calc(5rem+var(--safe-area-top))] text-foreground sm:px-6">
       <Starfield className="pointer-events-none absolute inset-0 h-full w-full opacity-55" />
       <div className="relative z-10 mx-auto w-full max-w-3xl">
         <Link
-          className="mb-7 inline-flex items-center gap-2 text-xs text-foreground-subtle transition hover:text-white"
+          className="mb-6 inline-flex items-center gap-2 text-xs text-foreground-subtle transition hover:text-white"
           href={paths.free}
         >
           <span aria-hidden>←</span>
@@ -332,6 +338,13 @@ function LoadingResult({ copy }: { copy: string }) {
   )
 }
 
+/** Reading body, at the size Korean wants on a phone. The `sm` step up is for the wider column, not the card. */
+const PROSE = 'text-[0.9375rem] leading-[1.75] text-foreground-muted sm:text-base sm:leading-[1.8]'
+
+const TONES = ['comfort', 'honesty', 'action', 'possibility'] as const
+const MOVEMENTS = ['start', 'continue', 'recover', 'release'] as const
+const COMBINATIONS = TONES.length * MOVEMENTS.length
+
 function FreeResultReading({
   chartState,
   content,
@@ -351,6 +364,10 @@ function FreeResultReading({
   const toneInsight = freeResult.reading.toneInsights[preview.tone]
   const movementInsight = freeResult.reading.movementInsights[preview.movement]
   const paywallRef = useRef<HTMLElement>(null)
+  const heroRef = useRef<HTMLElement>(null)
+  const unlockRef = useRef<HTMLButtonElement>(null)
+  const [heroGone, setHeroGone] = useState(false)
+  const [unlockOnScreen, setUnlockOnScreen] = useState(false)
 
   useEffect(() => {
     const paywall = paywallRef.current
@@ -373,38 +390,71 @@ function FreeResultReading({
     return () => observer.disconnect()
   }, [locale, preview.movement, preview.tone])
 
-  return (
-    <article className="overflow-hidden rounded-[2rem] border border-pink-200/15 bg-[#120b24]/90 shadow-2xl backdrop-blur">
-      <div className="p-5 sm:p-8">
-        <header className="text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-accent">{freeResult.hero.eyebrow}</p>
-          <h1 className="mt-3 text-balance text-2xl font-black text-white sm:text-3xl">{freeResult.hero.title}</h1>
-          <p className="mx-auto mt-3 max-w-xl text-xs leading-6 text-foreground-subtle sm:text-sm">
-            {freeResult.hero.body}
-          </p>
-        </header>
+  // The bar stands in for the unlock button while it is off screen — so it arrives once the hero is gone and
+  // steps aside again when the real button is in view, rather than sitting on top of it.
+  useEffect(() => {
+    const hero = heroRef.current
+    if (!hero) {
+      return
+    }
 
-        <blockquote className="mx-auto mt-7 max-w-xl rounded-3xl border border-pink-200/18 bg-[linear-gradient(145deg,rgba(255,193,214,0.12),rgba(201,168,255,0.07))] px-5 py-5 text-center text-sm font-semibold leading-7 text-pink-50 sm:px-7 sm:text-base sm:leading-8">
+    const observer = new IntersectionObserver(([entry]) => setHeroGone(!entry.isIntersecting))
+    observer.observe(hero)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const unlock = unlockRef.current
+    if (!unlock) {
+      setUnlockOnScreen(false)
+      return
+    }
+
+    const observer = new IntersectionObserver(([entry]) => setUnlockOnScreen(entry.isIntersecting))
+    observer.observe(unlock)
+    return () => observer.disconnect()
+  }, [chartState.status])
+
+  return (
+    // Below `sm` the page itself is the document: no frame, so every line keeps the full column. The card is
+    // an `sm` affordance, where the column is wider than the text wants to be anyway.
+    <article className="sm:overflow-hidden sm:rounded-[2rem] sm:border sm:border-pink-200/15 sm:bg-[#120b24]/90 sm:shadow-2xl sm:backdrop-blur">
+      <header className="sm:p-8" ref={heroRef}>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-accent">{freeResult.hero.eyebrow}</p>
+        <h1 className="mt-3 text-balance text-[1.75rem] font-black leading-[1.25] text-white sm:text-3xl">
+          {freeResult.hero.title}
+        </h1>
+        <p className={`mt-3 ${PROSE}`}>{freeResult.hero.body}</p>
+
+        <blockquote className="mt-6 rounded-3xl border border-pink-200/18 bg-[linear-gradient(145deg,rgba(255,193,214,0.13),rgba(201,168,255,0.07))] px-5 py-5 text-[1.0625rem] font-semibold leading-[1.7] text-pink-50 sm:px-7 sm:py-6 sm:text-lg">
           <span aria-hidden className="mb-2 block text-lg text-pink-200">
             ✦
           </span>
           {freeResult.hero.toneLines[preview.tone]} {freeResult.hero.movementLines[preview.movement]}
         </blockquote>
-      </div>
+      </header>
 
       <section
         aria-labelledby="guardian-free-reading-title"
-        className="border-t border-white/8 px-5 py-8 sm:px-8 sm:py-10"
+        className="mt-9 border-t border-white/8 pt-9 sm:mt-0 sm:px-8 sm:py-10"
       >
         <SectionHeading
-          body={freeResult.reading.body}
           eyebrow={freeResult.reading.eyebrow}
           id="guardian-free-reading-title"
           title={freeResult.reading.title}
         />
-        <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <InsightCard eyebrow={freeResult.reading.toneLabel} glyph="♡" insight={toneInsight} />
-          <InsightCard eyebrow={freeResult.reading.movementLabel} glyph="↗" insight={movementInsight} />
+
+        <CombinationMatrix
+          content={freeResult.reading}
+          movement={preview.movement}
+          movementLabel={movementInsight.label}
+          tone={preview.tone}
+          toneLabel={toneInsight.label}
+        />
+
+        <div className="mt-7 grid gap-5 sm:grid-cols-2 sm:gap-3">
+          <InsightBlock eyebrow={freeResult.reading.toneLabel} insight={toneInsight} />
+          <InsightBlock eyebrow={freeResult.reading.movementLabel} insight={movementInsight} />
         </div>
       </section>
 
@@ -412,32 +462,29 @@ function FreeResultReading({
 
       <section
         aria-labelledby="guardian-free-action-title"
-        className="border-t border-white/8 bg-[linear-gradient(145deg,rgba(255,193,214,0.08),rgba(201,168,255,0.04))] px-5 py-8 sm:px-8 sm:py-10"
+        className="mt-9 border-t border-white/8 pt-9 sm:mt-0 sm:bg-[linear-gradient(145deg,rgba(255,193,214,0.08),rgba(201,168,255,0.04))] sm:px-8 sm:py-10"
       >
         <SectionHeading
-          body={freeResult.action.body}
           eyebrow={freeResult.action.eyebrow}
           id="guardian-free-action-title"
           title={freeResult.action.title}
         />
-        <div className="mt-6 rounded-3xl border border-pink-200/18 bg-[#211431]/75 p-5 shadow-xl sm:p-6">
-          <p className="text-base font-bold leading-7 text-white">
+        <div className={`${styles.accentBlock} mt-6`}>
+          <p className="text-[1.0625rem] font-bold leading-[1.65] text-white">
             {freeResult.action.actions[preview.movement][preview.tone]}
           </p>
-          <div className="mt-5 border-t border-white/10 pt-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent">
-              {freeResult.action.reflectionLabel}
-            </p>
-            <p className="mt-2 text-sm leading-6 text-foreground-muted">
-              {freeResult.action.reflections[preview.movement]}
-            </p>
-          </div>
+        </div>
+        <div className={`${styles.quietBlock} mt-5`}>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent">
+            {freeResult.action.reflectionLabel}
+          </p>
+          <p className={`mt-1.5 ${PROSE}`}>{freeResult.action.reflections[preview.movement]}</p>
         </div>
       </section>
 
       <section
         aria-labelledby="guardian-free-paywall-title"
-        className="border-t border-white/8 bg-black/15 px-5 py-8 sm:px-8 sm:py-10"
+        className="mt-9 border-t border-white/8 pt-9 sm:mt-0 sm:bg-black/15 sm:px-8 sm:py-10"
         ref={paywallRef}
       >
         <SectionHeading
@@ -447,39 +494,53 @@ function FreeResultReading({
           title={freeResult.paywall.titles[preview.movement]}
         />
 
-        <ul className="mt-7 grid grid-cols-4 gap-2" aria-label={freeResult.paywall.lockedTitle}>
+        {/* One real card above the four sealed slots. The four slots say "there are four"; only the artwork
+            says what a card actually is, and this page carried no picture at all. It leads rather than sits
+            beside them because a 3:4 card and a row of 3:4 slots cannot be made the same height without
+            cropping the one thing here that is meant to be seen whole. */}
+        <figure className="m-0 mt-7">
+          <Image
+            alt=""
+            className="mx-auto w-36 rounded-2xl border border-white/15 shadow-[0_18px_44px_rgba(2,0,12,0.5)] sm:w-40"
+            height={480}
+            sizes="(min-width: 640px) 10rem, 9rem"
+            src="/images/zodiac-guardians/aries-love-stella.webp"
+            width={360}
+          />
+          <figcaption className="mt-2.5 text-center text-[10px] font-semibold text-foreground-subtle">
+            {freeResult.paywall.sampleLabel}
+          </figcaption>
+        </figure>
+
+        <ul className="mt-7 grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label={freeResult.paywall.lockedTitle}>
           {SLOT_ORDER.map((slot) => (
             <li key={slot}>
               <div className={styles.sealedCard}>
-                <span className="relative z-10 text-xl">{freeResult.paywall.slots[slot].glyph}</span>
-                <span className="absolute bottom-3 z-10 text-[9px] font-semibold">
-                  {freeResult.paywall.sealedLabel}
-                </span>
+                <span className="relative z-10 text-base">{freeResult.paywall.slots[slot].glyph}</span>
               </div>
-              <p className="mt-2 text-center text-[10px] font-semibold text-foreground-subtle">
+              <p className="mt-1.5 text-center text-[10px] font-semibold text-foreground-subtle">
                 {freeResult.paywall.slots[slot].label}
               </p>
             </li>
           ))}
         </ul>
+        <p className="mt-3 text-center text-[10px] font-semibold text-foreground-faint">
+          {freeResult.paywall.sealedLabel}
+        </p>
 
-        <div className="mt-7 rounded-3xl border border-white/8 bg-white/3 p-4 sm:p-5">
-          <h2 className="text-base font-bold text-white">{freeResult.paywall.lockedTitle}</h2>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        <div className="mt-8">
+          <h2 className="text-sm font-bold text-white">{freeResult.paywall.lockedTitle}</h2>
+          <div className="mt-4 grid gap-0 sm:grid-cols-2 sm:gap-2">
             {freeResult.paywall.lockedItems.map((item) => (
-              <article
-                className="relative overflow-hidden rounded-2xl border border-white/7 bg-black/15 p-3.5"
-                key={item.title}
-              >
+              <article className={`${styles.listBlock} relative`} key={item.title}>
                 <h3 className="text-xs font-bold text-foreground-secondary">{item.title}</h3>
-                <p className={`${styles.lockedCopy} mt-2 text-xs leading-5 text-foreground-subtle`}>{item.preview}</p>
-                <span className="absolute bottom-3 right-3 text-xs text-pink-200">⌁</span>
+                <p className={`${styles.lockedCopy} mt-1.5 text-xs leading-5 text-foreground-subtle`}>{item.preview}</p>
               </article>
             ))}
           </div>
         </div>
 
-        <ul className="mt-5 flex flex-wrap justify-center gap-2" aria-label={content.purchase.title}>
+        <ul className="mt-6 flex flex-wrap justify-center gap-2" aria-label={content.purchase.title}>
           {content.purchase.includes.map((item) => (
             <li
               className="rounded-full border border-pink-100/12 bg-pink-100/7 px-3 py-1.5 text-[10px] font-semibold text-pink-50/80"
@@ -492,8 +553,9 @@ function FreeResultReading({
 
         {chartState.status === 'ready' ? (
           <button
-            className="mt-6 w-full rounded-2xl bg-[linear-gradient(100deg,#fff3f8,#eadfff)] px-5 py-4 text-sm font-bold text-[#24142e] shadow-[0_14px_40px_rgba(255,193,214,0.18)] transition hover:-translate-y-0.5"
+            className="mt-6 w-full rounded-2xl bg-[linear-gradient(100deg,#fff3f8,#eadfff)] px-5 py-4 text-sm font-bold text-[#24142e] shadow-[0_14px_40px_rgba(255,193,214,0.18)] cta"
             onClick={onCheckout}
+            ref={unlockRef}
             type="button"
           >
             {freeResult.paywall.unlock}
@@ -508,46 +570,144 @@ function FreeResultReading({
           {GUARDIAN_FREE_DELIVERABLES_KO.join(' · ')}
         </p>
       </section>
+
+      <UnlockBar
+        content={content}
+        onCheckout={onCheckout}
+        price={price}
+        visible={chartState.status === 'ready' && heroGone && !unlockOnScreen}
+      />
     </article>
   )
 }
 
-function SectionHeading({ body, eyebrow, id, title }: { body: string; eyebrow: string; id: string; title: string }) {
+/**
+ * Below `sm` the reading runs several screens and the unlock button lives at the very end of them. The funnel
+ * layout reserves the band this sits in, so it never covers the footer.
+ */
+function UnlockBar({
+  content,
+  onCheckout,
+  price,
+  visible,
+}: {
+  content: (typeof GUARDIAN_REPORT_UI)[Locale]['landing']
+  onCheckout: () => void
+  price: string
+  visible: boolean
+}) {
+  return (
+    <div
+      aria-hidden={!visible}
+      className={`fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0b0618]/92 px-4 pb-[calc(0.6rem+var(--safe-area-bottom))] pt-2.5 backdrop-blur transition-[opacity,translate] duration-200 motion-reduce:transition-none sm:hidden ${
+        visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-full opacity-0'
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <p className="min-w-0 flex-1 truncate text-[11px] text-foreground-subtle">{content.stickyCta.label(price)}</p>
+        <button
+          className="shrink-0 rounded-full bg-[linear-gradient(100deg,#fff3f8,#eadfff)] px-5 py-2.5 text-xs font-bold text-[#24142e]"
+          onClick={onCheckout}
+          tabIndex={visible ? undefined : -1}
+          type="button"
+        >
+          {content.freeResult.paywall.unlockShort}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function SectionHeading({ body, eyebrow, id, title }: { body?: string; eyebrow: string; id: string; title: string }) {
   return (
     <header>
       <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">{eyebrow}</p>
-      <h2 className="mt-2 text-balance text-xl font-black leading-8 text-white" id={id}>
+      <h2 className="mt-2 text-balance text-xl font-black leading-[1.4] text-white" id={id}>
         {title}
       </h2>
-      <p className="mt-2 max-w-2xl text-sm leading-7 text-foreground-muted">{body}</p>
+      {body ? <p className={`mt-2.5 ${PROSE}`}>{body}</p> : null}
     </header>
   )
 }
 
-function InsightCard({
+/**
+ * The two free answers as a position rather than a sentence: sixteen cells, one lit.
+ *
+ * The grid is `aria-hidden` because the two chips above it already name the selection in words — a screen
+ * reader gains nothing from sixteen cells and loses the plot.
+ */
+function CombinationMatrix({
+  content,
+  movement,
+  movementLabel,
+  tone,
+  toneLabel,
+}: {
+  content: (typeof GUARDIAN_REPORT_UI)[Locale]['landing']['freeResult']['reading']
+  movement: GuardianPreviewMovement
+  movementLabel: string
+  tone: GuardianPreviewTone
+  toneLabel: string
+}) {
+  return (
+    <figure className="m-0 mt-6">
+      <div className="flex flex-wrap gap-2">
+        {[
+          { label: content.toneLabel, value: toneLabel },
+          { label: content.movementLabel, value: movementLabel },
+        ].map((chip) => (
+          <p
+            className="rounded-full border border-pink-200/25 bg-pink-100/10 px-3 py-1.5 text-[11px] font-semibold text-pink-50"
+            key={chip.label}
+          >
+            <span className="text-pink-200/70">{chip.label}</span>
+            <span className="mx-1.5 text-pink-200/40">·</span>
+            {chip.value}
+          </p>
+        ))}
+      </div>
+
+      <div aria-hidden className="mt-4">
+        <p className="flex justify-between text-[10px] font-semibold tracking-wide text-foreground-faint">
+          <span>{content.matrixMovementAxis}</span>
+          <span>{content.matrixToneAxis}</span>
+        </p>
+        <div className="mt-2 grid grid-cols-4 gap-1.5">
+          {MOVEMENTS.flatMap((row) =>
+            TONES.map((column) => (
+              <span
+                className={row === movement && column === tone ? styles.matrixCellActive : styles.matrixCell}
+                key={`${row}-${column}`}
+              />
+            )),
+          )}
+        </div>
+      </div>
+
+      <figcaption className="mt-2.5 text-[11px] text-foreground-subtle">
+        {content.matrixCaption(COMBINATIONS)}
+      </figcaption>
+    </figure>
+  )
+}
+
+function InsightBlock({
   eyebrow,
-  glyph,
   insight,
 }: {
   eyebrow: string
-  glyph: string
   insight: { label: string; title: string; body: string }
 }) {
   return (
-    <article className="rounded-3xl border border-white/9 bg-white/4 p-5">
+    <article className={styles.listBlock}>
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground-subtle">
-          <span aria-hidden className="mr-1.5 text-pink-200">
-            {glyph}
-          </span>
-          {eyebrow}
-        </p>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground-subtle">{eyebrow}</p>
         <span className="shrink-0 rounded-full bg-pink-100/9 px-2.5 py-1 text-[10px] font-semibold text-pink-100">
           {insight.label}
         </span>
       </div>
-      <h3 className="mt-4 text-base font-bold leading-6 text-white">{insight.title}</h3>
-      <p className="mt-2 text-sm leading-7 text-foreground-muted">{insight.body}</p>
+      <h3 className="mt-3 text-base font-bold leading-[1.5] text-white">{insight.title}</h3>
+      <p className={`mt-2 ${PROSE}`}>{insight.body}</p>
     </article>
   )
 }
@@ -564,16 +724,15 @@ function ChartClue({
   movementLabel: string
 }) {
   const t = useTranslations('Constellation')
+  const heading = (
+    <SectionHeading eyebrow={content.chart.eyebrow} id="guardian-chart-clue-title" title={content.chart.title} />
+  )
+  const shell = 'mt-9 border-t border-white/8 pt-9 sm:mt-0 sm:px-8 sm:py-10'
 
   if (chartState.status === 'loading') {
     return (
-      <section className="min-h-64 border-t border-white/8 px-5 py-8 sm:px-8 sm:py-10">
-        <SectionHeading
-          body={content.chart.body}
-          eyebrow={content.chart.eyebrow}
-          id="guardian-chart-clue-title"
-          title={content.chart.title}
-        />
+      <section className={`min-h-64 ${shell}`}>
+        {heading}
         <p className="mt-8 animate-pulse text-center text-xs text-foreground-subtle motion-reduce:animate-none">
           {content.states.chartLoading}
         </p>
@@ -583,18 +742,13 @@ function ChartClue({
 
   if (chartState.status === 'missing' || chartState.status === 'failed') {
     return (
-      <section className="border-t border-white/8 px-5 py-8 sm:px-8 sm:py-10">
-        <SectionHeading
-          body={content.chart.body}
-          eyebrow={content.chart.eyebrow}
-          id="guardian-chart-clue-title"
-          title={content.chart.title}
-        />
+      <section className={shell}>
+        {heading}
         <div className="mt-6 rounded-3xl border border-accent/20 bg-accent/8 p-5 text-center">
           <h3 className="text-sm font-bold text-white">{content.states.chartRequiredTitle}</h3>
           <p className="mt-2 text-xs leading-6 text-foreground-muted">{content.states.chartRequiredBody}</p>
           <Link
-            className="mt-4 inline-flex rounded-full bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground"
+            className="mt-4 inline-flex rounded-full cta bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground"
             href={`/${locale}`}
           >
             {content.states.chartRequiredCta}
@@ -612,71 +766,84 @@ function ChartClue({
   const dominant = ELEMENT_IDS.reduce((best, element) => (counts[element] > counts[best] ? element : best))
   const total = ELEMENT_IDS.reduce((sum, element) => sum + counts[element], 0)
   const elementInsight = content.chart.elements[dominant]
-  const placements = [
-    { label: content.chart.sunLabel, value: sunSign ? t(`signs.${sunSign}`) : '—' },
+  // A figure only where one sign is certain: an unknown rising has none, and a Moon that crossed a boundary
+  // has two, so drawing either one would claim a precision the chart does not have.
+  const placements: { label: string; sign: SignId | null; value: string }[] = [
+    { label: content.chart.sunLabel, sign: sunSign ?? null, value: sunSign ? t(`signs.${sunSign}`) : '—' },
     {
       label: moonUncertain ? content.chart.moonRangeLabel : content.chart.moonLabel,
+      sign: moonSigns.length === 1 ? moonSigns[0] : null,
       value: moonSigns.length > 0 ? moonSigns.map((sign) => t(`signs.${sign}`)).join(' / ') : '—',
     },
     {
       label: content.chart.risingLabel,
+      sign: risingSign ?? null,
       value: risingSign ? t(`signs.${risingSign}`) : content.chart.risingUnknown,
     },
   ]
 
   return (
-    <section aria-labelledby="guardian-chart-clue-title" className="border-t border-white/8 px-5 py-8 sm:px-8 sm:py-10">
-      <SectionHeading
-        body={content.chart.body}
-        eyebrow={content.chart.eyebrow}
-        id="guardian-chart-clue-title"
-        title={content.chart.title}
-      />
+    <section aria-labelledby="guardian-chart-clue-title" className={shell}>
+      {heading}
 
       <dl className="mt-6 grid grid-cols-3 gap-2">
         {placements.map((placement) => (
-          <div className="rounded-2xl border border-white/8 bg-white/3 px-3 py-3 text-center" key={placement.label}>
+          <div className="rounded-2xl border border-white/8 bg-white/3 px-2 py-4 text-center" key={placement.label}>
             <dt className="text-[10px] font-semibold text-foreground-subtle">{placement.label}</dt>
-            <dd className="mt-1 text-xs font-bold leading-5 text-white">{placement.value}</dd>
+            <dd className="mt-1.5">
+              {placement.sign ? <SignFigure className="mx-auto h-14 w-14" sign={placement.sign} /> : null}
+              <span className="mt-1 block text-[0.8125rem] font-bold leading-5 text-white">{placement.value}</span>
+            </dd>
           </div>
         ))}
       </dl>
 
-      <div className="mt-5 rounded-3xl border border-white/9 bg-white/4 p-5 sm:p-6">
-        <div className="flex items-start gap-4">
-          <span
-            aria-hidden
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-pink-100/10 text-lg text-pink-100"
-          >
-            {elementInsight.glyph}
-          </span>
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground-subtle">
-              {content.chart.dominantLabel} · {elementInsight.label}
-            </p>
-            <h3 className="mt-2 text-base font-bold leading-6 text-white">{elementInsight.title}</h3>
-          </div>
+      <figure className="m-0 mt-6">
+        <figcaption className="text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground-subtle">
+          {content.chart.balanceLabel}
+        </figcaption>
+        {/* One strip for the proportion, one legend row for the counts. Four tracks spent ~110px saying what
+            a share-of-whole reading needs a single bar to say; the counts are the part worth keeping, so
+            they move into the legend rather than disappearing. */}
+        <div aria-hidden className="mt-2.5 flex h-3 overflow-hidden rounded-full bg-white/8">
+          {ELEMENT_IDS.map((element) => (
+            <span
+              key={element}
+              style={{
+                background: ELEMENT_COLORS[element],
+                opacity: element === dominant ? 1 : 0.5,
+                width: `${total > 0 ? (counts[element] / total) * 100 : 0}%`,
+              }}
+            />
+          ))}
         </div>
+        <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
+          {ELEMENT_IDS.map((element) => (
+            <div className="flex items-center gap-1.5" key={element}>
+              <span
+                aria-hidden
+                className="size-2 shrink-0 rounded-full"
+                style={{ background: ELEMENT_COLORS[element], opacity: element === dominant ? 1 : 0.5 }}
+              />
+              <dt className={element === dominant ? 'text-xs font-bold text-white' : 'text-xs text-foreground-subtle'}>
+                {content.chart.elements[element].label}
+              </dt>
+              <dd className="text-xs tabular-nums text-foreground-subtle">{counts[element]}</dd>
+            </div>
+          ))}
+        </dl>
+      </figure>
 
-        <ul aria-hidden className="mt-5 grid grid-cols-4 gap-2">
-          {ELEMENT_IDS.map((element) => {
-            const insight = content.chart.elements[element]
-            const width =
-              counts[element] > 0 && total > 0 ? Math.max(8, Math.round((counts[element] / total) * 100)) : 0
+      <div className={`${styles.accentBlock} mt-6`}>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground-subtle">
+          {content.chart.dominantLabel} · {elementInsight.label}
+        </p>
+        <h3 className="mt-2 text-base font-bold leading-[1.5] text-white">{elementInsight.title}</h3>
+        <p className={`mt-2.5 ${PROSE}`}>{elementInsight.body}</p>
+      </div>
 
-            return (
-              <li key={element}>
-                <div className="h-1.5 overflow-hidden rounded-full bg-white/8">
-                  <span className="block h-full rounded-full bg-pink-200/70" style={{ width: `${width}%` }} />
-                </div>
-                <p className="mt-1.5 text-center text-[9px] font-semibold text-foreground-subtle">{insight.label}</p>
-              </li>
-            )
-          })}
-        </ul>
-
-        <p className="mt-5 text-sm leading-7 text-foreground-muted">{elementInsight.body}</p>
-        <p className="mt-3 rounded-2xl bg-black/15 px-4 py-3 text-xs leading-6 text-pink-50/85">
+      <div className={`${styles.quietBlock} mt-5`}>
+        <p className="text-[0.8125rem] leading-[1.7] text-pink-50/85">
           {content.chart.bridge(movementLabel, elementInsight.label)}
         </p>
       </div>
@@ -818,7 +985,7 @@ function CheckoutPanel({
         )}
 
         <button
-          className="mt-5 w-full rounded-2xl bg-primary px-5 py-4 text-sm font-bold text-primary-foreground disabled:cursor-wait disabled:opacity-45"
+          className="mt-5 w-full rounded-2xl cta bg-primary px-5 py-4 text-sm font-bold text-primary-foreground disabled:cursor-wait disabled:opacity-45"
           disabled={!tokenReady || submitting}
           type="submit"
         >

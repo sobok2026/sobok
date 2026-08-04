@@ -15,7 +15,7 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - 유료 답변 효과: 네 주제 상세 본문·해석 초점·한 줄을 실질적으로 변경
 - 유료 질문 소스: 원문·선택지·적응형 선택 정책·점수를 Git JSON으로 관리하고 DB에 불변 버전으로 게시
 - 반복 구매: 사랑 카드의 일러스트와 한 줄만 저가 재추첨
-- 계정과 출시: Stella 전용 웹 계정, 한국 → 중국 본토 → 이후 미정
+- 계정과 출시: `accounts.sobok.cc` Sobok 통합 계정, 한국 → 중국 본토 → 이후 미정
 - 게스트 구매: 결제 직전 이메일을 필수 복구 채널로 받고 계정 생성과 분리
 - 배포 경계: `stella-stg`와 `stella`는 분리하되 Supabase 프로젝트·DB와 Hyperdrive는 공유하고,
   Worker 배포는 `.github/workflows/stella-deploy.yml`만 수행
@@ -55,6 +55,10 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - [카드 카탈로그](./card-catalog.md): 48장 기본 카드와 희귀도 확장 규칙
 - [대표 카드 제작 기록](./cards/representative/README.md): 네 주제 원화, 공통 프롬프트, 제작 메모
 - [유료 카드 리포트 MVP와 확장 전략](./paid-mvp-product-strategy.md): 상품, 가격, 추첨, 계정, 결제, 성장 루프
+- [Sobok 통합 계정 아키텍처](../../../../docs/architecture/sobok-account.md): 중앙 authority, 앱별 세션, OIDC,
+  Stella 게스트 컬렉션 귀속
+- [Sobok 통합 계정 최초 배포](../../../../docs/operations/sobok-account-rollout.md): identity schema, accounts Worker,
+  Stella 고정 client bootstrap과 staging 수직 확인 순서
 - [한국 전체 리포트 결제·공개 수직 슬라이스](./korea-paid-report-vertical-slice.md): 상품 랜딩, 게스트 checkout, PortOne 검증, 결제 후 질문·중간 결과·카드 공개 구현 계약
 - [결제 완료 메일·리포트 재열람 운영 Runbook](./email-reopen-operations.md): Resend·Secrets Store·schema 반영 순서, staging 수직 확인, 관측 지점
 - [유료 질문 콘텐츠 계약과 게시](./paid-questionnaire-content.md): Git 문항은행 계약, 불변 DB 버전, staging·production 게시 절차

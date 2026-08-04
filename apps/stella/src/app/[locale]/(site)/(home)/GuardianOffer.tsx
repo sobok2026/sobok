@@ -90,7 +90,7 @@ export default function GuardianOffer({ content, locale }: Props) {
       </div>
 
       <Link
-        className="mt-5 block w-full rounded-2xl bg-[linear-gradient(100deg,#fff3f8,#eadfff)] px-5 py-3.5 text-center text-sm font-bold text-[#24142e] shadow-[0_12px_35px_rgba(255,193,214,0.18)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(255,193,214,0.25)]"
+        className="mt-5 block w-full rounded-2xl bg-[linear-gradient(100deg,#fff3f8,#eadfff)] px-5 py-3.5 text-center text-sm font-bold text-[#24142e] shadow-[0_12px_35px_rgba(255,193,214,0.18)] cta"
         href={`/${locale}/guardian-report`}
         onClick={() => track('guardian_landing_open', { locale, source: 'home_card' })}
       >

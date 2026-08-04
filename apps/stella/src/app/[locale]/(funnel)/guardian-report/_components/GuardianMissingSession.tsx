@@ -22,7 +22,7 @@ export default function GuardianMissingSession({ locale }: { locale: Locale }) {
         <h1 className="mt-4 text-xl font-bold text-white">{content.missing.title}</h1>
         <p className="mt-2 text-sm leading-6 text-foreground-muted">{content.missing.body}</p>
         <Link
-          className="mt-6 block rounded-2xl bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground"
+          className="mt-6 block rounded-2xl cta bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground"
           href={paths.reopen}
         >
           {content.missing.reopenCta}

@@ -1,9 +1,11 @@
 import { isLocale, type Locale } from '@sobok/domain/locale'
 import type { GuardianChartSnapshot, GuardianPreviewAnswerSnapshot } from '../../worker/guardian/manifest'
 import type { GuardianQuestionnaireAnswer, GuardianQuestionnaireClientStep } from '../../worker/guardian/questionnaire'
+import type { GuardianLoveRedrawResult, GuardianLoveRedrawState } from '../../worker/guardian/redraw-contract'
 import type { GuardianReportView } from '../../worker/guardian/report-contract'
 
 export { GUARDIAN_CHECKOUT_ACTION } from '../../worker/api/guardian-checkouts/actions'
+export { GUARDIAN_REDRAW_CHECKOUT_ACTION } from '../../worker/api/guardian-love-redraw/actions'
 export { GUARDIAN_REOPEN_ACTION } from '../../worker/api/guardian-reopen/actions'
 // The offer as the buyer-facing screens state it. Build-time constants, not a fetch: the price is the single
 // most important fact on the landing page, and it used to arrive over the network — invisible to crawlers,
@@ -17,10 +19,18 @@ export {
   GUARDIAN_REPORT_PRICE,
   GUARDIAN_REPORT_SKU,
 } from '../../worker/guardian/offer'
-export type { GuardianChartSnapshot, GuardianQuestionnaireClientStep, GuardianReportView }
+export type {
+  GuardianChartSnapshot,
+  GuardianLoveRedrawResult,
+  GuardianLoveRedrawState,
+  GuardianQuestionnaireClientStep,
+  GuardianReportView,
+}
 
 const CHECKOUT_SESSION_KEY = 'stella.guardianCheckout.v1'
 const PREVIEW_SESSION_KEY = 'stella.guardianPreview.v1'
+const REDRAW_CHECKOUT_SESSION_KEY = 'stella.guardianRedrawCheckout.v1'
+const REDRAW_DRAW_REQUEST_KEY_PREFIX = 'stella.guardianRedrawDraw.v1.'
 
 const PREVIEW_TONES = ['comfort', 'honesty', 'action', 'possibility'] as const
 const PREVIEW_MOVEMENTS = ['start', 'continue', 'recover', 'release'] as const
@@ -34,6 +44,7 @@ export function guardianReportPaths(locale: Locale) {
     questions: `${landing}/questions`,
     reopen: `${landing}/reopen`,
     result: `${landing}/result`,
+    loveRedraw: `${landing}/love-redraw`,
   } as const
 }
 
@@ -52,6 +63,24 @@ export type GuardianCheckoutSession = {
   createdAt: number
 }
 
+export type GuardianReportAccess = {
+  locale: Locale
+  reportPublicId: string
+  accessToken?: string
+  collectionPublicId?: string
+  email?: string
+}
+
+export type GuardianOwnedReport = {
+  collectionPublicId: string
+  reportPublicId: string
+  locale: Locale
+  createdAt: string
+  title: string
+  oneLine: string
+  artworkPaths: string[]
+}
+
 export type GuardianCheckoutPayment = {
   paymentId: string
   status: 'pending' | 'paid'
@@ -63,6 +92,21 @@ export type GuardianCheckoutPayment = {
   amount: number
   market: 'KR'
   currency: 'KRW'
+}
+
+export type GuardianRedrawCheckoutSession = {
+  reportPublicId: string
+  requestId: string
+  paymentId: string | null
+  sku: string
+  credits: number
+  amount: number
+  currency: string
+  createdAt: number
+}
+
+export type GuardianRedrawCheckoutResponse = {
+  payment: GuardianCheckoutPayment
 }
 
 export type GuardianCheckoutResponse = {
@@ -98,19 +142,30 @@ export type GuardianProductCatalog = {
 
 export type GuardianPurchaseConfirmation =
   | { status: 'pending'; reportPublicId: string }
-  | { status: 'paid'; reportPublicId: string }
+  | {
+      status: 'paid'
+      reportPublicId: string
+      kind: 'full_report' | 'love_redraw'
+      credits?: number
+    }
   | { status: 'failed' | 'cancelled' | 'refunded'; reportPublicId: string }
 
-export type GuardianReopenExchange = {
-  status: 'ok'
-  accessToken: string
-  collectionPublicId: string
-  locale: Locale
-  paymentId: string
-  recoveryEmail: string
-  reportPublicId: string
-  reportStatus: 'draft' | 'fulfilled'
-}
+export type GuardianReopenExchange =
+  | {
+      status: 'guest'
+      accessToken: string
+      collectionPublicId: string
+      locale: Locale
+      paymentId: string
+      recoveryEmail: string
+      reportPublicId: string
+      reportStatus: 'draft' | 'fulfilled'
+    }
+  | {
+      status: 'account'
+      locale: Locale
+      reportPublicId: string
+    }
 
 export class GuardianApiError extends Error {
   readonly status: number
@@ -186,10 +241,54 @@ export function resumeGuardianCheckout(
 }
 
 export function confirmGuardianPurchase(session: GuardianCheckoutSession): Promise<GuardianPurchaseConfirmation> {
+  return confirmGuardianPayment(session.accessToken, session.paymentId)
+}
+
+export function confirmGuardianPayment(
+  accessToken: string | undefined,
+  paymentId: string,
+): Promise<GuardianPurchaseConfirmation> {
+  return requestJson(`/api/guardian-purchases/${encodeURIComponent(paymentId)}/confirm`, jsonRequest({}, accessToken))
+}
+
+export function getGuardianLoveRedraw(session: GuardianReportAccess): Promise<GuardianLoveRedrawState> {
+  return requestJson<{ state: GuardianLoveRedrawState }>(
+    `/api/guardian-reports/${encodeURIComponent(session.reportPublicId)}/love-redraw`,
+    { headers: authorizationHeaders(session.accessToken) },
+  ).then(({ state }) => state)
+}
+
+export function createGuardianLoveRedrawCheckout(
+  session: GuardianReportAccess,
+  input: { requestId: string; sku: string; turnstileToken: string },
+): Promise<GuardianRedrawCheckoutResponse> {
   return requestJson(
-    `/api/guardian-purchases/${encodeURIComponent(session.paymentId)}/confirm`,
-    jsonRequest({}, session.accessToken),
+    `/api/guardian-reports/${encodeURIComponent(session.reportPublicId)}/love-redraw/checkouts`,
+    jsonRequest(input, session.accessToken),
   )
+}
+
+export function drawGuardianLoveCard(
+  session: GuardianReportAccess,
+  requestId: string,
+): Promise<GuardianLoveRedrawResult> {
+  return requestJson<{ result: GuardianLoveRedrawResult }>(
+    `/api/guardian-reports/${encodeURIComponent(session.reportPublicId)}/love-redraw/draws`,
+    jsonRequest({ requestId }, session.accessToken),
+  ).then(({ result }) => result)
+}
+
+export function equipGuardianLoveCard(
+  session: GuardianReportAccess,
+  acquisitionPublicId: string,
+): Promise<GuardianLoveRedrawState> {
+  return requestJson<{ state: GuardianLoveRedrawState }>(
+    `/api/guardian-reports/${encodeURIComponent(session.reportPublicId)}/love-redraw/equipped-card`,
+    {
+      ...jsonRequest({ acquisitionPublicId }, session.accessToken),
+      method: 'PUT',
+    },
+  ).then(({ state }) => state)
 }
 
 export function requestGuardianReopen(input: {
@@ -204,11 +303,26 @@ export function exchangeGuardianReopen(token: string): Promise<GuardianReopenExc
   return requestJson('/api/guardian-reopen/exchange', jsonRequest({ token }))
 }
 
-export function getGuardianReport(session: GuardianCheckoutSession): Promise<GuardianReportView> {
+export function getGuardianReport(session: GuardianReportAccess): Promise<GuardianReportView> {
   return requestJson<{ report: GuardianReportView }>(
     `/api/guardian-reports/${encodeURIComponent(session.reportPublicId)}`,
-    { headers: { authorization: `Bearer ${session.accessToken}` } },
+    { headers: authorizationHeaders(session.accessToken) },
   ).then(({ report }) => report)
+}
+
+export function listOwnedGuardianReports(): Promise<GuardianOwnedReport[]> {
+  return requestJson<{ items: GuardianOwnedReport[] }>('/api/guardian-collections').then(({ items }) => items)
+}
+
+export function claimGuardianCollection(session: GuardianCheckoutSession): Promise<{
+  status: 'claimed' | 'already-claimed'
+  reward: 'granted' | 'already-granted'
+  guestAccessRevoked: true
+}> {
+  return requestJson(
+    `/api/guardian-collections/${encodeURIComponent(session.collectionPublicId)}/claim`,
+    jsonRequest({ reportPublicId: session.reportPublicId }, session.accessToken),
+  )
 }
 
 export function getGuardianQuestion(session: GuardianCheckoutSession): Promise<GuardianQuestionnaireClientStep> {
@@ -243,6 +357,10 @@ export function acknowledgeGuardianMilestone(
       method: 'PUT',
     },
   ).then(({ step }) => step)
+}
+
+function authorizationHeaders(token?: string): HeadersInit {
+  return token ? { authorization: `Bearer ${token}` } : {}
 }
 
 export function readGuardianCheckoutSession(): GuardianCheckoutSession | null {
@@ -280,6 +398,67 @@ export function clearGuardianCheckoutSession(): void {
     sessionStorage.removeItem(CHECKOUT_SESSION_KEY)
   } catch {
     // A blocked storage API already behaves as though there were no resumable checkout.
+  }
+}
+
+export function readGuardianRedrawCheckoutSession(reportPublicId: string): GuardianRedrawCheckoutSession | null {
+  try {
+    const raw = sessionStorage.getItem(REDRAW_CHECKOUT_SESSION_KEY)
+    if (!raw) {
+      return null
+    }
+    const value = JSON.parse(raw) as Partial<GuardianRedrawCheckoutSession>
+    return value.reportPublicId === reportPublicId &&
+      typeof value.requestId === 'string' &&
+      (typeof value.paymentId === 'string' || value.paymentId === null) &&
+      typeof value.sku === 'string' &&
+      typeof value.credits === 'number' &&
+      typeof value.amount === 'number' &&
+      typeof value.currency === 'string' &&
+      typeof value.createdAt === 'number'
+      ? (value as GuardianRedrawCheckoutSession)
+      : null
+  } catch {
+    return null
+  }
+}
+
+export function storeGuardianRedrawCheckoutSession(session: GuardianRedrawCheckoutSession): void {
+  try {
+    sessionStorage.setItem(REDRAW_CHECKOUT_SESSION_KEY, JSON.stringify(session))
+  } catch {
+    throw new GuardianCheckoutStorageError()
+  }
+}
+
+export function clearGuardianRedrawCheckoutSession(): void {
+  try {
+    sessionStorage.removeItem(REDRAW_CHECKOUT_SESSION_KEY)
+  } catch {
+    // A blocked storage API already behaves as though there were no resumable redraw checkout.
+  }
+}
+
+export function readOrCreateGuardianDrawRequest(reportPublicId: string): string {
+  const key = `${REDRAW_DRAW_REQUEST_KEY_PREFIX}${reportPublicId}`
+  try {
+    const existing = sessionStorage.getItem(key)
+    if (existing) {
+      return existing
+    }
+    const requestId = crypto.randomUUID()
+    sessionStorage.setItem(key, requestId)
+    return requestId
+  } catch {
+    throw new GuardianCheckoutStorageError()
+  }
+}
+
+export function clearGuardianDrawRequest(reportPublicId: string): void {
+  try {
+    sessionStorage.removeItem(`${REDRAW_DRAW_REQUEST_KEY_PREFIX}${reportPublicId}`)
+  } catch {
+    // A blocked storage API cannot retain a stale request id.
   }
 }
 

@@ -7,6 +7,7 @@ import {
   guardianPurchaseTable,
   guardianQuestionAnswerTable,
   guardianQuestionnaireMilestoneTable,
+  guardianRedrawGrantTable,
   guardianReportTable,
 } from '../schema/guardian'
 
@@ -22,6 +23,31 @@ export type GuardianCheckoutPurgeResult = {
   reports: number
   answers: number
   milestones: number
+}
+
+/**
+ * A redraw checkout belongs to an already-paid report, so it cannot be removed by the whole-guest-aggregate
+ * purge below. Delete only old terminal/unpaid attempts that never granted credits; paid purchases and every
+ * purchase referenced by a grant remain durable.
+ */
+export async function purgeAbandonedGuardianRedrawPurchases(db: Db, cutoff: Date): Promise<number> {
+  const rows = await db
+    .delete(guardianPurchaseTable)
+    .where(
+      and(
+        eq(guardianPurchaseTable.kind, 'love_redraw'),
+        inArray(guardianPurchaseTable.status, ['pending', 'failed', 'cancelled']),
+        lt(guardianPurchaseTable.createdAt, cutoff),
+        notExists(
+          db
+            .select({ id: guardianRedrawGrantTable.id })
+            .from(guardianRedrawGrantTable)
+            .where(eq(guardianRedrawGrantTable.purchaseId, guardianPurchaseTable.id)),
+        ),
+      ),
+    )
+    .returning({ id: guardianPurchaseTable.id })
+  return rows.length
 }
 
 /**

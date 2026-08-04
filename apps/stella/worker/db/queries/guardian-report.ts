@@ -1,7 +1,7 @@
 import type { Db } from '@sobok/edge/db/client'
-import { guardianEdition, guardianManifest } from '../../guardian/manifest'
 import type { GuardianReportView } from '../../guardian/report'
 import { findPaidFullReportPurchase, lockedReportOf } from './guardian'
+import { listGuardianReportCards } from './guardian-card'
 import { getGuardianQuestionnaireStep } from './guardian-questionnaire'
 
 export type ReadGuardianReportResult =
@@ -9,7 +9,11 @@ export type ReadGuardianReportResult =
   | { status: 'report-not-found' }
   | { status: 'payment-required' }
 
-/** Capability ownership is resolved by the route; this query additionally enforces the live paid entitlement. */
+/**
+ * Capability ownership is resolved by the route; this query additionally enforces the live paid entitlement.
+ * The authored report body stays immutable while an explicitly equipped acquisition supplies the visible card
+ * presentation for its slot.
+ */
 export async function readGuardianReport(
   db: Db,
   input: { collectionId: number; reportId: number },
@@ -54,7 +58,38 @@ export async function readGuardianReport(
   if (report.narrativeSnapshot.locale !== report.locale) {
     throw new Error(`Guardian report ${report.id} narrative locale does not match its report`)
   }
-  const manifest = guardianManifest(report.manifestVersion)
+  const selectedCards = await listGuardianReportCards(db, input)
+  if (selectedCards.length !== report.narrativeSnapshot.sections.length) {
+    throw new Error(`Guardian report ${report.id} does not have exactly one equipped acquisition per slot`)
+  }
+  const selectedBySlot = new Map(selectedCards.map((selected) => [selected.presentation.slot, selected]))
+  const cards = report.narrativeSnapshot.sections.map((section) => {
+    const selected = selectedBySlot.get(section.slot)
+    if (!selected || selected.presentation.locale !== report.locale) {
+      throw new Error(`Guardian report ${report.id} has no locale-matched ${section.slot} acquisition`)
+    }
+    return {
+      ...selected.presentation,
+      acquisitionPublicId: selected.acquisitionPublicId,
+      acquisitionCount: selected.acquisitionCount,
+    }
+  })
+  const narrative = {
+    ...report.narrativeSnapshot,
+    sections: report.narrativeSnapshot.sections.map((section) => {
+      const presentation = selectedBySlot.get(section.slot)?.presentation
+      if (!presentation) {
+        throw new Error(`Guardian report ${report.id} has no ${section.slot} presentation`)
+      }
+      return {
+        ...section,
+        title: presentation.title,
+        guardians: presentation.guardians,
+        artworkAlt: presentation.artworkAlt,
+        oneLine: presentation.oneLine,
+      }
+    }),
+  }
   return {
     status: 'ok',
     report: {
@@ -70,20 +105,8 @@ export async function readGuardianReport(
         copy: report.copyVersion,
         render: report.renderVersion,
       },
-      cards: report.cardSnapshot.map((card) => {
-        const edition = guardianEdition(card.editionId, manifest)
-        if (edition.familyId !== card.familyId || edition.slot !== card.slot || edition.rarity !== card.rarity) {
-          throw new Error(`Guardian report ${report.id} card snapshot does not match ${card.editionId}`)
-        }
-        return {
-          cardEditionId: card.editionId,
-          familyId: card.familyId,
-          slot: card.slot,
-          rarity: card.rarity,
-          artworkPath: edition.artworkPath,
-        }
-      }),
-      narrative: report.narrativeSnapshot,
+      cards,
+      narrative,
     },
   }
 }

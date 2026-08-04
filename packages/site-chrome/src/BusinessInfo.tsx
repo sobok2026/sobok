@@ -3,20 +3,11 @@ import type { Locale } from '@sobok/domain/locale'
 
 // Seller-identity disclosure (전자상거래법 §10). Rendered both in the sitewide Footer (compact) and on the
 // standalone /business page, on every site that sells something. Values come from @sobok/brand/business.
-export default function BusinessInfo({
-  locale,
-  showHeading = true,
-  className,
-}: {
-  locale: Locale
-  showHeading?: boolean
-  className?: string
-}) {
+export default function BusinessInfo({ locale, className }: { locale: Locale; className?: string }) {
   const labels = BUSINESS_LABELS[locale]
 
   return (
     <div className={className}>
-      {showHeading ? <h2 className="mb-3 text-center font-semibold text-foreground">{labels.heading}</h2> : null}
       <dl className="grid gap-x-6 gap-y-1 text-left sm:grid-cols-2">
         {BUSINESS_FIELD_ORDER.map((field) => (
           <div className="flex flex-wrap gap-x-2" key={field}>

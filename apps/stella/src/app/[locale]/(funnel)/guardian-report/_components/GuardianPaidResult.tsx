@@ -1,24 +1,32 @@
 'use client'
 
 import { track } from '@sobok/analytics/browser'
+import { SOBOK_OIDC_PROVIDER_ID } from '@sobok/auth/contracts'
 import type { Locale } from '@sobok/domain/locale'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 import Starfield from '@/components/Starfield'
+import { GUARDIAN_LOVE_REDRAW_UI } from '@/content/guardian-love-redraw-ui'
 import { GUARDIAN_REPORT_UI, type GuardianReportPaidContent } from '@/content/guardian-report-ui'
+import { stellaAuthClient } from '@/lib/auth-client'
 import {
+  claimGuardianCollection,
+  clearGuardianCheckoutSession,
   GuardianApiError,
   type GuardianCheckoutSession,
+  type GuardianReportAccess,
   type GuardianReportView,
   getGuardianReport,
   guardianReportPaths,
 } from '@/lib/guardian-paid'
 
 import styles from '../paid-report.module.css'
+import GuardianAccountRequired from './GuardianAccountRequired'
 import GuardianMissingSession from './GuardianMissingSession'
-import { useGuardianCheckoutSession } from './useGuardianCheckoutSession'
+import { useGuardianReportAccess } from './useGuardianReportAccess'
 
 type FulfilledReport = Extract<GuardianReportView, { status: 'fulfilled' }>
 type ResultState =
@@ -28,22 +36,30 @@ type ResultState =
 
 export default function GuardianPaidResult({ locale }: { locale: Locale }) {
   const content = GUARDIAN_REPORT_UI[locale].paid
-  const session = useGuardianCheckoutSession(locale)
+  const state = useGuardianReportAccess(locale)
 
-  if (session === undefined) {
+  if (state.kind === 'loading') {
     return <LoadingResult copy={content.status.fulfillingTitle} />
   }
-
-  if (!session) {
+  if (state.kind === 'account-required') {
+    return <GuardianAccountRequired locale={locale} />
+  }
+  if (state.kind === 'missing') {
     return <GuardianMissingSession locale={locale} />
   }
 
-  return <GuardianResultLoader session={session} />
+  return <GuardianResultLoader access={state.access} checkout={state.checkout} />
 }
 
-function GuardianResultLoader({ session }: { session: GuardianCheckoutSession }) {
-  const content = GUARDIAN_REPORT_UI[session.locale].paid
-  const paths = guardianReportPaths(session.locale)
+function GuardianResultLoader({
+  access,
+  checkout,
+}: {
+  access: GuardianReportAccess
+  checkout: GuardianCheckoutSession | null
+}) {
+  const content = GUARDIAN_REPORT_UI[access.locale].paid
+  const paths = guardianReportPaths(access.locale)
   const router = useRouter()
   const [state, setState] = useState<ResultState>({ kind: 'loading' })
   const started = useRef(false)
@@ -59,7 +75,7 @@ function GuardianResultLoader({ session }: { session: GuardianCheckoutSession })
   async function loadResult() {
     setState({ kind: 'loading' })
     try {
-      const report = await getGuardianReport(session)
+      const report = await getGuardianReport(access)
       if (report.status !== 'fulfilled') {
         router.replace(paths.questions)
         return
@@ -76,7 +92,7 @@ function GuardianResultLoader({ session }: { session: GuardianCheckoutSession })
   }
 
   if (state.kind === 'fulfilled') {
-    return <GuardianReportExperience content={content} report={state.report} />
+    return <GuardianReportExperience checkout={checkout} content={content} report={state.report} />
   }
 
   return (
@@ -107,9 +123,11 @@ function GuardianResultLoader({ session }: { session: GuardianCheckoutSession })
 }
 
 function GuardianReportExperience({
+  checkout,
   content,
   report,
 }: {
+  checkout: GuardianCheckoutSession | null
   content: GuardianReportPaidContent
   report: FulfilledReport
 }) {
@@ -129,7 +147,7 @@ function GuardianReportExperience({
   if (view === 'reveal') {
     return <CardReveal content={content} onComplete={openReport} report={report} />
   }
-  return <GuardianReport content={content} report={report} />
+  return <GuardianReport checkout={checkout} content={content} report={report} />
 }
 
 function CardReveal({
@@ -258,8 +276,18 @@ function CardReveal({
   )
 }
 
-function GuardianReport({ content, report }: { content: GuardianReportPaidContent; report: FulfilledReport }) {
+function GuardianReport({
+  checkout,
+  content,
+  report,
+}: {
+  checkout: GuardianCheckoutSession | null
+  content: GuardianReportPaidContent
+  report: FulfilledReport
+}) {
   const { narrative } = report
+  const redrawContent = GUARDIAN_LOVE_REDRAW_UI[report.locale]
+  const paths = guardianReportPaths(report.locale)
   const placements = placementSummary(narrative.sections)
   const closingRef = useRef<HTMLElement>(null)
 
@@ -304,16 +332,19 @@ function GuardianReport({ content, report }: { content: GuardianReportPaidConten
 
         <section aria-label={content.report.cardsLabel} className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {report.cards.map((card) => (
-            <figure className="rounded-2xl border border-white/10 bg-white/4 p-2 shadow-xl" key={card.cardEditionId}>
+            <figure
+              className="overflow-hidden rounded-2xl border border-white/10 bg-white/4 shadow-xl"
+              key={card.cardEditionId}
+            >
               <Image
                 alt={narrative.sections.find(({ slot }) => slot === card.slot)?.artworkAlt ?? ''}
-                className="aspect-[3/4] w-full rounded-xl object-cover"
+                className="aspect-[3/4] w-full object-cover"
                 height={480}
                 priority
                 src={card.artworkPath}
                 width={360}
               />
-              <figcaption className="flex items-center justify-between gap-2 px-1 pb-1 pt-2 text-[10px]">
+              <figcaption className="flex items-center justify-between gap-2 px-2.5 py-2 text-[10px]">
                 <span className="font-semibold text-white">{content.questionnaire.slotLabels[card.slot]}</span>
                 <span className="text-foreground-subtle">
                   {card.rarity ? content.reveal.rarityLabels[card.rarity] : content.reveal.signatureRarity}
@@ -322,6 +353,25 @@ function GuardianReport({ content, report }: { content: GuardianReportPaidConten
             </figure>
           ))}
         </section>
+
+        <AccountSaveOffer checkout={checkout} content={content.report.accountSave} report={report} />
+
+        <aside className="mt-4 rounded-[2rem] border border-pink-200/20 bg-[linear-gradient(135deg,rgba(255,193,214,0.11),rgba(201,168,255,0.08))] p-5 sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-6">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">
+              {redrawContent.reportOffer.eyebrow}
+            </p>
+            <h2 className="mt-2 text-lg font-bold text-white">{redrawContent.reportOffer.title}</h2>
+            <p className="mt-2 max-w-xl text-xs leading-6 text-foreground-muted">{redrawContent.reportOffer.body}</p>
+          </div>
+          <Link
+            className="mt-4 inline-flex w-full shrink-0 items-center justify-center rounded-2xl bg-primary px-5 py-3 text-xs font-bold text-primary-foreground sm:mt-0 sm:w-auto"
+            href={`${paths.loveRedraw}?report=${encodeURIComponent(report.reportPublicId)}`}
+            onClick={() => track('guardian_redraw_offer_clicked', { locale: report.locale, source: 'report_top' })}
+          >
+            {redrawContent.reportOffer.cta}
+          </Link>
+        </aside>
 
         <section className="mt-9 rounded-[2rem] border border-white/10 bg-[#120b24]/82 p-5 shadow-2xl sm:p-7">
           <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">
@@ -473,6 +523,115 @@ function GuardianReport({ content, report }: { content: GuardianReportPaidConten
         </section>
       </div>
     </main>
+  )
+}
+
+type AccountSaveState = 'idle' | 'signing-in' | 'saving' | 'saved' | 'error'
+
+function AccountSaveOffer({
+  checkout,
+  content,
+  report,
+}: {
+  checkout: GuardianCheckoutSession | null
+  content: GuardianReportPaidContent['report']['accountSave']
+  report: FulfilledReport
+}) {
+  const { data: accountSession, isPending } = stellaAuthClient.useSession()
+  const [state, setState] = useState<AccountSaveState>(checkout ? 'idle' : 'saved')
+  const claimStarted = useRef(false)
+  const intentKey = `stella.guardianClaimIntent.v1.${report.reportPublicId}`
+
+  useEffect(() => {
+    if (!checkout || !accountSession || claimStarted.current) return
+    if (sessionStorage.getItem(intentKey) !== '1') return
+    claimStarted.current = true
+    void saveToAccount()
+  }, [accountSession, checkout, intentKey])
+
+  async function saveToAccount() {
+    if (!checkout) return
+    setState('saving')
+    try {
+      const result = await claimGuardianCollection(checkout)
+      sessionStorage.removeItem(intentKey)
+      clearGuardianCheckoutSession()
+      const stableURL = new URL(window.location.href)
+      stableURL.searchParams.set('report', report.reportPublicId)
+      window.history.replaceState(null, '', `${stableURL.pathname}${stableURL.search}`)
+      setState('saved')
+      track('guardian_collection_claimed', {
+        locale: report.locale,
+        reward: result.reward,
+        status: result.status,
+      })
+    } catch {
+      claimStarted.current = false
+      setState('error')
+    }
+  }
+
+  async function beginSave() {
+    if (!checkout || state === 'saving' || state === 'signing-in') return
+    track('guardian_account_claim_start', { locale: report.locale, signed_in: Boolean(accountSession) })
+    if (accountSession) {
+      claimStarted.current = true
+      await saveToAccount()
+      return
+    }
+
+    setState('signing-in')
+    sessionStorage.setItem(intentKey, '1')
+    const callbackURL = `${window.location.pathname}?report=${encodeURIComponent(report.reportPublicId)}`
+    const result = await stellaAuthClient.signIn.oauth2({
+      providerId: SOBOK_OIDC_PROVIDER_ID,
+      callbackURL,
+      errorCallbackURL: callbackURL,
+    })
+    if (result.error) {
+      sessionStorage.removeItem(intentKey)
+      setState('error')
+    }
+  }
+
+  const saved = state === 'saved'
+  return (
+    <aside className="mt-5 rounded-[2rem] border border-violet-200/20 bg-[linear-gradient(135deg,rgba(201,168,255,0.13),rgba(255,193,214,0.08))] p-5 sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-6">
+      <div>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">{content.eyebrow}</p>
+        <h2 className="mt-2 text-lg font-bold text-white">{saved ? content.savedTitle : content.title}</h2>
+        <p className="mt-2 max-w-xl text-xs leading-6 text-foreground-muted">
+          {saved ? content.savedBody : content.body}
+        </p>
+        {!saved && <p className="mt-2 text-xs font-semibold text-pink-100">{content.reward}</p>}
+        {state === 'error' && (
+          <p aria-live="polite" className="mt-2 text-xs leading-5 text-pink-200">
+            {content.error}
+          </p>
+        )}
+      </div>
+      {saved ? (
+        <Link
+          className="mt-4 inline-flex w-full shrink-0 items-center justify-center rounded-2xl border border-white/12 bg-white/7 px-5 py-3 text-xs font-bold text-pink-50 sm:mt-0 sm:w-auto"
+          href={`/${report.locale}/account`}
+        >
+          {content.library}
+        </Link>
+      ) : (
+        <button
+          className="mt-4 w-full shrink-0 rounded-2xl bg-primary px-5 py-3 text-xs font-bold text-primary-foreground disabled:opacity-50 sm:mt-0 sm:w-auto"
+          disabled={isPending || state === 'saving' || state === 'signing-in'}
+          onClick={beginSave}
+          type="button"
+        >
+          {state === 'saving' || state === 'signing-in'
+            ? content.saving
+            : accountSession
+              ? content.save
+              : content.signIn}
+        </button>
+      )}
+    </aside>
   )
 }
 

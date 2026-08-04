@@ -50,8 +50,10 @@ signal과 원래 답변의 역할은 분리한다.
 머물 때만 달 별자리 이름을 표시하며, 이 제한은 `hero.chartNote`에도 설명한다.
 
 사랑 카드의 title·대체 텍스트·한 줄은 실제 rarity edition을 반영한다. 희귀도는 기존 독립 난수 추첨
-결과를 읽기만 하며 질문 답변이나 본문 signal이 확률을 바꾸지 않는다. 사랑 카드 재추첨도 장기적으로
-같은 copy version과 답변 snapshot에서 새 edition용 한 줄만 만들고 상세 본문은 다시 생성하지 않는다.
+결과를 읽기만 하며 질문 답변이나 본문 signal이 확률을 바꾸지 않는다. 사랑 카드 재추첨은 구매에
+고정된 card copy version과 기존 답변 snapshot에서 새 edition용 presentation을 한 번 만들고 획득 행에
+보존한다. 사용자가 그 카드를 리포트에 걸면 카드 표현만 교체하며 chart·상세 문단·조언·성찰 질문은
+최초 `narrative_snapshot`을 그대로 사용한다.
 
 ## 불변 fulfillment
 

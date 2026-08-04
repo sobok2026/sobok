@@ -283,14 +283,21 @@ export async function insertGuardianReopenLinks(
   await db.insert(guardianReopenAccessTable).values(links.map((link) => ({ ...link, source: 'request' as const })))
 }
 
-export type ExchangedGuardianReopenAccess = {
-  collectionPublicId: string
-  locale: Locale
-  paymentId: string
-  recoveryEmail: string
-  reportPublicId: string
-  reportStatus: 'draft' | 'fulfilled'
-}
+export type ExchangedGuardianReopenAccess =
+  | {
+      status: 'guest'
+      collectionPublicId: string
+      locale: Locale
+      paymentId: string
+      recoveryEmail: string
+      reportPublicId: string
+      reportStatus: 'draft' | 'fulfilled'
+    }
+  | {
+      status: 'account'
+      locale: Locale
+      reportPublicId: string
+    }
 
 export async function exchangeGuardianReopenAccess(
   db: Db,
@@ -323,6 +330,7 @@ export async function exchangeGuardianReopenAccess(
       .select({
         accessTokenHash: guardianCollectionTable.accessTokenHash,
         id: guardianCollectionTable.id,
+        ownerUserId: guardianCollectionTable.ownerUserId,
         publicId: guardianCollectionTable.publicId,
       })
       .from(guardianCollectionTable)
@@ -367,7 +375,7 @@ export async function exchangeGuardianReopenAccess(
       .for('update')
 
     if (
-      !collection?.accessTokenHash ||
+      !collection ||
       !report ||
       !purchase ||
       !link ||
@@ -394,12 +402,24 @@ export async function exchangeGuardianReopenAccess(
       return null
     }
 
+    if (collection.ownerUserId) {
+      return {
+        status: 'account' as const,
+        locale: report.locale,
+        reportPublicId: report.publicId,
+      }
+    }
+    if (!collection.accessTokenHash) {
+      return null
+    }
+
     await tx
       .update(guardianCollectionTable)
       .set({ accessTokenHash: input.newAccessTokenHash })
       .where(eq(guardianCollectionTable.id, collection.id))
 
     return {
+      status: 'guest' as const,
       collectionPublicId: collection.publicId,
       locale: report.locale,
       paymentId: purchase.paymentId,

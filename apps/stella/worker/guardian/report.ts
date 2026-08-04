@@ -1,7 +1,10 @@
+import type { GuardianSelectedCard } from './draw'
 import { CURRENT_GUARDIAN_MANIFEST } from './manifest'
-import type { GuardianQuestionnaireContent } from './questionnaire'
+import type { GuardianQuestionnaireContent, GuardianQuestionnaireSignalSnapshot } from './questionnaire'
+import type { GuardianCardPresentationSnapshot } from './redraw-contract'
 import type { GuardianReportNarrativeInput, GuardianReportNarrativeSnapshot } from './report-contract'
 import {
+  buildGuardianLoveCardPresentationKoV1,
   buildGuardianReportNarrativeKoV1,
   GUARDIAN_REPORT_COPY_KO_V1,
   validateGuardianReportCardsKoV1,
@@ -23,6 +26,19 @@ export function generateGuardianReportNarrative(input: GuardianReportNarrativeIn
     return buildGuardianReportNarrativeKoV1(input)
   }
   throw new Error(`Unknown guardian report copy: ${input.copyVersion}/${input.locale}`)
+}
+
+export function generateGuardianLoveCardPresentation(input: {
+  locale: GuardianReportNarrativeInput['locale']
+  copyVersion: string
+  card: GuardianSelectedCard
+  artworkPath: string
+  signalSnapshot: GuardianQuestionnaireSignalSnapshot
+}): GuardianCardPresentationSnapshot {
+  if (input.copyVersion === GUARDIAN_REPORT_COPY_KO_V1 && input.locale === 'ko') {
+    return buildGuardianLoveCardPresentationKoV1(input)
+  }
+  throw new Error(`Unknown guardian love-card copy: ${input.copyVersion}/${input.locale}`)
 }
 
 /** Publication-time companion to the runtime generator: every selectable question needs authored report copy. */

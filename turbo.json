@@ -43,6 +43,11 @@
       "env": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY", "STELLA_DB_SCHEMA"],
       "outputs": ["out/**", ".next/**"]
     },
+    "@sobok/accounts#build": {
+      "dependsOn": ["^build"],
+      "env": ["ACCOUNTS_DB_SCHEMA", "NEXT_PUBLIC_GOOGLE_CLIENT_ID", "NEXT_PUBLIC_TURNSTILE_SITE_KEY"],
+      "outputs": ["out/**", ".next/**"]
+    },
     "@sobok/vibe#build": {
       "dependsOn": ["^build"],
       "env": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY"],

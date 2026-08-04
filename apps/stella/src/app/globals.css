@@ -76,6 +76,51 @@ body {
   background: var(--color-background);
 }
 
+/*
+ * Keyboard focus, everywhere. The site painted its own buttons and links onto a dark background but never
+ * styled focus, so the only ring was the UA default — and WCAG 2.4.7 is not optional on a page that asks for
+ * a card number. `:focus-visible` rather than `:focus` so a mouse click does not leave a ring behind.
+ */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/*
+ * Press and hover feedback for a call to action.
+ *
+ * Hover is mouse-only — Tailwind v4 wraps its `hover:` variant in `hover: hover`, and so does this — which
+ * means on a phone the only feedback a button can give is the press. That is the state that was missing:
+ * every funnel CTA had a hover lift and nothing at all under a thumb.
+ */
+.cta {
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.cta:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+@media (hover: hover) {
+  .cta:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta,
+  .cta:hover,
+  .cta:active {
+    transform: none;
+    transition: none;
+  }
+}
+
 /* With appearance:none, iOS WebKit centers date/time values and collapses the
    value row's height — pin both back to normal text behavior. */
 ::-webkit-date-and-time-value {

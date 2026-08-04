@@ -104,7 +104,7 @@ export default function GuardianFreeAssessment({ locale }: { locale: Locale }) {
         >
           <header className="mb-7">
             <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-accent">{content.quiz.eyebrow}</p>
-            <h1 className="mt-3 scroll-mt-6 text-2xl font-black text-white" ref={stepHeadingRef} tabIndex={-1}>
+            <h1 className="mt-3 scroll-mt-24 text-2xl font-black text-white" ref={stepHeadingRef} tabIndex={-1}>
               {question.header.title}
             </h1>
             <p className="mt-2 min-h-12 text-sm leading-6 text-foreground-muted">{question.header.body}</p>
@@ -159,7 +159,7 @@ export default function GuardianFreeAssessment({ locale }: { locale: Locale }) {
           )}
 
           <button
-            className="mt-6 w-full rounded-2xl bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-40"
+            className="mt-6 w-full rounded-2xl cta bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-40"
             disabled={!selected}
             onClick={step === 'tone' ? continueFromTone : showResult}
             type="button"

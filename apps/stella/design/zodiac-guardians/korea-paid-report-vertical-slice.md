@@ -23,8 +23,12 @@
   결제 후 질문·12개 핵심 답변의 서버 중간 결과·적응형 질문·카드 공개·상세 웹 리포트, 공용 scheduler 기반
   15분 pending 결제 재조정과 30일 미결제 checkout 정리, 결제 권한과 원자적으로 생성되는 메일 발송
   intent·Resend 완료 메일·15분 1회용 재열람 링크 교환·구매 이메일 기반 재발급
+- 이 수직 슬라이스 이후 구현: 게스트가 그대로 사용하는 사랑 카드 1회·5회 재추첨 checkout, 결제
+  확정·크레딧·멱등 추첨, 보관함, 사용자가 직접 선택하는 리포트 대표 카드 교체. 상세 계약은
+  [유료 카드 리포트 MVP와 확장 전략](./paid-mvp-product-strategy.md)의 5·7·11절을 따른다.
 - 운영 반영: `stella_stg`·`stella` schema와 한국어 v1 문항 게시, PR #29의 production Worker 배포
-- 운영 반영 필요: 복구 메일용 새 테이블을 `stella_stg`·`stella`에 적용하고 `account-stella`의
+- 운영 반영 필요: 재추첨 presentation·대표 카드 선택·checkout/draw 멱등 스키마를 `stella_stg`·`stella`에
+  적용하고 `account-stella`의
   `stella_resend_api_key_staging`·`stella_resend_api_key_production`으로 환경별 Secrets Store 항목 생성
 - 아직 운영 검증하지 않음: PortOne 테스트 채널의 실제 결제·모바일 리디렉션·메일 수신·메일 링크로
   질문 재개·카드 공개 E2E
@@ -62,7 +66,7 @@
 
 ### 제외
 
-- Stella 계정과 게스트 컬렉션 귀속
+- Sobok 계정과 게스트 컬렉션 귀속
 - 사랑 카드 재추첨 구매와 보장 카운터 UI
 - 카카오 로그인·알림톡
 - 중국 본토 결제
@@ -575,7 +579,7 @@ homeOffer
 - 최종 웹 리포트는 네 카드 모음, 네 주제 연결 지도, 반복 차트 단서, 주제별 상세 문단·조언·성찰,
   오늘 곁에 둘 네 문장과 closing을 순서대로 제공한다.
 - 3D 카드 뒤집기와 reduced motion 접근성을 유지한다.
-- Stella 계정 보관 제안은 네 카드와 요약을 공개한 뒤에만 보여준다.
+- 소복 계정 보관 제안은 네 카드와 요약을 공개한 뒤에만 보여준다.
 
 ## 9. 관측과 운영
 
@@ -730,10 +734,9 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 | 로케일 출시        | 공용 흐름·콘텐츠 타입 유지, 이번 단계는 한국어만 게시      | 번역 추가만으로 같은 경로를 확장한다                      |
 | 출생 입력          | 기존 무료 차트 핵심값 재사용, 추가 재입력 없음 권장        | 구매 전 중복 입력을 없앤다                                |
 
-출시 전 다음 우선순위는 복구 메일 schema·secret의 staging 반영과 실제 PortOne 테스트 결제부터
-메일 수신·재열람까지의 E2E다. 그다음 제품
-결정은 사랑 카드 재추첨 화면·결제, Stella 계정 귀속,
-장기 문항은행의 제작 범위와 production 1,024장의 제작 매트릭스다. 대표 Store의 PortOne API Secret과
+출시 전 다음 우선순위는 새 재추첨 schema의 staging 반영과 전체 리포트·재추첨 각각의 실제 PortOne
+테스트 결제부터 메일 재열람·카드 획득·대표 카드 교체까지 이어지는 수직 확인이다. 그다음 제품 결정은
+Sobok 계정 귀속, 장기 문항은행의 제작 범위와 production 1,024장의 제작 매트릭스다. 대표 Store의 PortOne API Secret과
 live/test Webhook Secret은 채팅이나 public repository에 전달하지 않고 중앙 payments 관련 HCP Terraform
 sensitive 변수에서 Secrets Store로 넣는다. 유료 질문 원문은 Git의 questionnaire source 디렉터리에
 커밋한 뒤 게시 CLI로 DB에 반영한다.
