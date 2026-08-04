@@ -4,11 +4,13 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./business-info": "./src/BusinessInfo.tsx",
     "./contact-channels": "./src/ContactChannels.tsx",
     "./doc-article": "./src/DocArticle.tsx",
     "./faq-section": "./src/FaqSection.tsx",
     "./footer": "./src/Footer.tsx",
     "./legal-contact": "./src/LegalContact.tsx",
+    "./legal-doc-article": "./src/LegalDocArticle.tsx",
     "./locale-switcher": "./src/LocaleSwitcher.tsx",
     "./paragraph": "./src/Paragraph.tsx"
   },

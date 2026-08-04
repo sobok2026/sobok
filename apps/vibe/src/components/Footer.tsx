@@ -1,8 +1,8 @@
 import type { Locale } from '@sobok/domain/locale'
+import BusinessInfo from '@sobok/site-chrome/business-info'
 import SiteFooter from '@sobok/site-chrome/footer'
 import { LEGAL } from '@/content/legal'
 import { PAGES } from '@/content/pages'
-import BusinessInfo from './BusinessInfo'
 
 export default function Footer({ locale }: { locale: Locale }) {
   const { nav } = LEGAL[locale]

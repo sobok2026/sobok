@@ -5,14 +5,13 @@ import LocaleSwitcher from '@sobok/site-chrome/locale-switcher'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { SITE_NAME } from '@/constants'
+import { HEADER_ISLAND } from './chrome'
 import { PRIMARY_NAV } from './nav'
 
 type Props = {
   locale: Locale
   localeLabel: string
 }
-
-const ISLAND = 'h-9 rounded-full border border-border bg-background/70 px-4 shadow-lg shadow-black/20 backdrop-blur-md'
 
 export default function Header({ locale, localeLabel }: Props) {
   const pathname = usePathname()
@@ -21,7 +20,7 @@ export default function Header({ locale, localeLabel }: Props) {
   return (
     <header className="absolute inset-x-0 top-0 z-40 pt-[calc(0.5rem+var(--safe-area-top))] pl-[max(0.5rem,var(--safe-area-left))] pr-[max(0.5rem,var(--safe-area-right))] sm:fixed">
       <div className="mx-auto flex items-center justify-between gap-3">
-        <div className={`flex items-center gap-2 ${ISLAND}`}>
+        <div className={`flex items-center gap-2 ${HEADER_ISLAND}`}>
           <Link
             className="relative shrink-0 text-sm font-semibold tracking-tight text-foreground before:absolute before:-inset-x-1 before:-inset-y-2 before:content-['']"
             href={home}
@@ -52,7 +51,7 @@ export default function Header({ locale, localeLabel }: Props) {
           </nav>
         </div>
 
-        <div className={`flex items-center ${ISLAND}`}>
+        <div className={`flex items-center ${HEADER_ISLAND}`}>
           <LocaleSwitcher label={localeLabel} locale={locale} />
         </div>
       </div>

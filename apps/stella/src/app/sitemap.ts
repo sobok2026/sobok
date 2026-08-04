@@ -16,7 +16,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/about', changeFrequency: 'monthly', priority: 0.5, altPriority: 0.4 },
     { path: '/contact', changeFrequency: 'yearly', priority: 0.4, altPriority: 0.4 },
     { path: '/terms', changeFrequency: 'yearly', priority: 0.3, altPriority: 0.3 },
+    { path: '/refund', changeFrequency: 'yearly', priority: 0.3, altPriority: 0.3 },
     { path: '/privacy', changeFrequency: 'yearly', priority: 0.3, altPriority: 0.3 },
+    { path: '/business', changeFrequency: 'yearly', priority: 0.3, altPriority: 0.3 },
   ])
   const guardianReportLocales = LOCALES.filter((locale) => GUARDIAN_REPORT_UI[locale].published)
   const guardianReportLanguages = {

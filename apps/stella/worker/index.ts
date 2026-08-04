@@ -5,6 +5,7 @@ import { comments } from './api/comments'
 import { guardianCheckouts } from './api/guardian-checkouts'
 import { guardianProducts } from './api/guardian-products'
 import { guardianPurchases } from './api/guardian-purchases'
+import { guardianReopen } from './api/guardian-reopen'
 import { guardianReports } from './api/guardian-reports'
 import type { AppEnv, Bindings } from './env'
 import { problem } from './errors'
@@ -21,6 +22,7 @@ app.route('/api/comments', comments)
 app.route('/api/guardian-checkouts', guardianCheckouts)
 app.route('/api/guardian-products', guardianProducts)
 app.route('/api/guardian-purchases', guardianPurchases)
+app.route('/api/guardian-reopen', guardianReopen)
 app.route('/api/guardian-reports', guardianReports)
 
 app.all('/api/*', () => problem(404, 'not-found'))

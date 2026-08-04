@@ -23,12 +23,19 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - 한국 첫 결제: PortOne V2 토스페이 직접 연동, 토스페이먼츠는 실결제 승인 뒤 추가
 - 결제 인프라: 중앙 `apps/payments`가 PortOne 자격증명·웹훅·채널 정책을 소유하고 Stella 주문·권한은
   Stella schema에 유지
-- 예약 실행: 계정 단일 `apps/scheduler`가 Cron Trigger를 소유하고 Stella의 내부 maintenance RPC를 호출
+- 예약 실행: 계정 단일 `apps/scheduler`가 Cron Trigger를 소유하고 Stella production·staging의 15분
+  pending 결제 재조정과 미결제 checkout 30일 정리를 포함한 일일 retention purge를 내부 maintenance RPC로 호출
 - 유료 서버 도메인: 상품·추첨·게스트 컬렉션·리포트·구매·획득·보장, checkout·질문·중간 결과·리포트 API 연결
+- 운영 게시: `stella_stg`·`stella` schema와 `guardian-paid-ko-mvp-v1` 동일 해시 게시, PR #29 production 배포 완료
+- 결제 후 복구: 결제 권한과 함께 durable 발송 intent를 만들고 Resend 완료 메일, 15분·1회용 재열람
+  링크 교환, 구매 이메일 기반 재발급 화면·API까지 구현
+- 다음 출시 작업: 새 복구 테이블·환경별 Resend Secrets Store 반영 뒤 PortOne 테스트 실결제와 이메일
+  수신을 포함한 E2E
 - 공개 이름: `ko`, `zh`, `ja`, `en`별 독립 작업명 확정
 - 공개 이름 표시: 줄바꿈 없는 한 줄
 - 대사, 카드 제목: 작업안
-- 유료 화면: `/[locale]/guardian-report` 공개 상품 랜딩과 capability 기반 `/[locale]/cards`, 유료 경로는 `noindex`
+- 유료 화면: 공개 `/[locale]/guardian-report` 랜딩과 독립 `/free`·`/free/result`·`/questions`·`/result`,
+  검사·결과 경로는 `noindex`
 
 이 폴더는 디자인 원본과 기획 문서를 보관한다. 앱에서 사용하는 최적화 WebP 에셋은
 `apps/stella/public/images/zodiac-guardians`에 따로 둔다.
@@ -49,6 +56,7 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - [대표 카드 제작 기록](./cards/representative/README.md): 네 주제 원화, 공통 프롬프트, 제작 메모
 - [유료 카드 리포트 MVP와 확장 전략](./paid-mvp-product-strategy.md): 상품, 가격, 추첨, 계정, 결제, 성장 루프
 - [한국 전체 리포트 결제·공개 수직 슬라이스](./korea-paid-report-vertical-slice.md): 상품 랜딩, 게스트 checkout, PortOne 검증, 결제 후 질문·중간 결과·카드 공개 구현 계약
+- [결제 완료 메일·리포트 재열람 운영 Runbook](./email-reopen-operations.md): Resend·Secrets Store·schema 반영 순서, staging 수직 확인, 관측 지점
 - [유료 질문 콘텐츠 계약과 게시](./paid-questionnaire-content.md): Git 문항은행 계약, 불변 DB 버전, staging·production 게시 절차
 
 ## 네 주제 대표 카드

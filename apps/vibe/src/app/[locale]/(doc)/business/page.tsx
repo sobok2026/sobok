@@ -1,10 +1,9 @@
+import { BUSINESS_LABELS } from '@sobok/brand/business'
+import BusinessInfo from '@sobok/site-chrome/business-info'
 import DocArticle from '@sobok/site-chrome/doc-article'
 import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-
-import BusinessInfo from '@/components/BusinessInfo'
-import { BUSINESS_LABELS } from '@/content/business'
 import { LEGAL } from '@/content/legal'
 import { buildMetadata } from '@/lib/seo'
 

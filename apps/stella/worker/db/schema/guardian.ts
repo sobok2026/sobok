@@ -54,6 +54,13 @@ export const guardianAcquisitionSourceEnum = stella.enum('guardian_acquisition_s
   'paid_redraw',
   'account_save_reward',
 ])
+export const guardianRecoveryEmailStatusEnum = stella.enum('guardian_recovery_email_status', [
+  'pending',
+  'sending',
+  'sent',
+  'failed',
+])
+export const guardianReopenSourceEnum = stella.enum('guardian_reopen_source', ['purchase', 'request'])
 
 // `guardian_collection` is the ownership aggregate before AND after sign-up. Guest checkout creates one;
 // the future Stella account layer claims that same row instead of copying cards or resetting pity progress.
@@ -235,6 +242,59 @@ export const guardianPurchaseTable = stella.table(
       'ck_stella_guardian_purchase_full_report_recovery_email',
       sql`${t.kind} <> 'full_report' or ${t.recoveryEmail} is not null`,
     ),
+  ],
+)
+
+// One durable delivery intent is born in the same transaction that grants a full-report purchase. Sending
+// happens after commit and may be retried by the shared scheduler, so an email outage can never roll back a
+// paid entitlement or leave a crash-sized gap between payment and delivery intent.
+export const guardianRecoveryEmailDeliveryTable = stella.table(
+  'guardian_recovery_email_delivery',
+  {
+    purchaseId: bigint('purchase_id', { mode: 'number' })
+      .primaryKey()
+      .references(() => guardianPurchaseTable.id, { onDelete: 'cascade' }),
+    status: guardianRecoveryEmailStatusEnum().notNull().default('pending'),
+    attempts: integer().notNull().default(0),
+    nextAttemptAt: timestamp('next_attempt_at', { precision: 3, withTimezone: true }).notNull().defaultNow(),
+    leaseExpiresAt: timestamp('lease_expires_at', { precision: 3, withTimezone: true }),
+    sentAt: timestamp('sent_at', { precision: 3, withTimezone: true }),
+    providerMessageId: varchar('provider_message_id', { length: 128 }),
+    lastErrorCode: varchar('last_error_code', { length: 64 }),
+    ...timestamps,
+  },
+  (t) => [
+    index('idx_stella_guardian_recovery_delivery_due').on(t.status, t.nextAttemptAt),
+    check('ck_stella_guardian_recovery_delivery_attempts_nonnegative', sql`${t.attempts} >= 0`),
+    check(
+      'ck_stella_guardian_recovery_delivery_shape',
+      sql`(${t.status} = 'pending' and ${t.leaseExpiresAt} is null and ${t.sentAt} is null)
+        or (${t.status} = 'sending' and ${t.leaseExpiresAt} is not null and ${t.sentAt} is null)
+        or (${t.status} = 'sent' and ${t.leaseExpiresAt} is null and ${t.sentAt} is not null)
+        or (${t.status} = 'failed' and ${t.leaseExpiresAt} is null and ${t.sentAt} is null)`,
+    ),
+  ],
+)
+
+// Short-lived, single-use email links carry only a random token. The database stores its digest, and a
+// successful exchange rotates the collection capability rather than exposing a long-lived credential in a
+// URL, edge log, referrer, or email provider payload outside the one message that must deliver it.
+export const guardianReopenAccessTable = stella.table(
+  'guardian_reopen_access',
+  {
+    id: identityId,
+    purchaseId: bigint('purchase_id', { mode: 'number' })
+      .notNull()
+      .references(() => guardianPurchaseTable.id, { onDelete: 'cascade' }),
+    source: guardianReopenSourceEnum().notNull(),
+    tokenHash: varchar('token_hash', { length: 64 }).notNull().unique(),
+    expiresAt: timestamp('expires_at', { precision: 3, withTimezone: true }).notNull(),
+    consumedAt: timestamp('consumed_at', { precision: 3, withTimezone: true }),
+    createdAt,
+  },
+  (t) => [
+    index('idx_stella_guardian_reopen_purchase').on(t.purchaseId, t.createdAt),
+    index('idx_stella_guardian_reopen_expires').on(t.expiresAt),
   ],
 )
 

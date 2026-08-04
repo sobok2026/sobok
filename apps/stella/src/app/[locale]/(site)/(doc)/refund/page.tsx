@@ -1,0 +1,19 @@
+import LegalDocArticle from '@sobok/site-chrome/legal-doc-article'
+import { getLocale } from '@sobok/site-i18n/server'
+import type { Metadata } from 'next'
+import { LEGAL } from '@/content/legal'
+import { buildMetadata } from '@/lib/seo'
+
+export async function generateMetadata({ params }: PageProps<'/[locale]/refund'>): Promise<Metadata> {
+  const locale = await getLocale(params)
+  const doc = LEGAL[locale].refund
+
+  return buildMetadata({ locale, path: '/refund', title: doc.title, description: doc.description })
+}
+
+export default async function RefundPage({ params }: PageProps<'/[locale]/refund'>) {
+  const locale = await getLocale(params)
+  const meta = LEGAL[locale]
+
+  return <LegalDocArticle className="bg-night-sky" doc={meta.refund} labels={meta} />
+}

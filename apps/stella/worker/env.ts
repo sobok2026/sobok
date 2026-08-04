@@ -23,6 +23,10 @@ export interface Bindings {
   // Comma-separated hostnames a Turnstile solve is accepted from. Production value is committed in
   // wrangler.jsonc; local dev narrows it to `localhost` for the dev widget.
   STELLA_ALLOWED_HOSTNAMES: string
+  // Canonical origin used to build one-time email links; never inferred from an incoming Host header.
+  STELLA_PUBLIC_ORIGIN: string
+  STELLA_EMAIL_FROM: string
+  STELLA_EMAIL_REPLY_TO: string
   // ── Secrets Store bindings (async: `await X.get()`) ────────────────────────────────────────────────
   // Siteverify secret for stella's own Turnstile widget (account-turnstile workspace; cutover off the shared
   // "sobok" widget is written in Terraform but not applied yet).
@@ -31,6 +35,8 @@ export interface Bindings {
   STELLA_IP_HASH_SALT: SecretsStoreSecret
   // Discord webhook for moderation/ops alerts. Empty value disables alerting.
   STELLA_DISCORD_WEBHOOK: SecretsStoreSecret
+  // Transactional guardian-report delivery and re-open email API key.
+  STELLA_RESEND_API_KEY: SecretsStoreSecret
 }
 
 export type AppEnv = { Bindings: Bindings }

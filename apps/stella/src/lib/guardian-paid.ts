@@ -4,9 +4,43 @@ import type { GuardianQuestionnaireAnswer, GuardianQuestionnaireClientStep } fro
 import type { GuardianReportView } from '../../worker/guardian/report-contract'
 
 export { GUARDIAN_CHECKOUT_ACTION } from '../../worker/api/guardian-checkouts/actions'
+export { GUARDIAN_REOPEN_ACTION } from '../../worker/api/guardian-reopen/actions'
+// The offer as the buyer-facing screens state it. Build-time constants, not a fetch: the price is the single
+// most important fact on the landing page, and it used to arrive over the network — invisible to crawlers,
+// shifting the layout on arrival, and stuck on "가격 확인 중" for good whenever the request failed.
+export {
+  GUARDIAN_CURRENCY,
+  GUARDIAN_FREE_DELIVERABLES_KO,
+  GUARDIAN_MARKET,
+  GUARDIAN_REPORT_ITEM,
+  GUARDIAN_REPORT_NAME,
+  GUARDIAN_REPORT_PRICE,
+  GUARDIAN_REPORT_SKU,
+} from '../../worker/guardian/offer'
 export type { GuardianChartSnapshot, GuardianQuestionnaireClientStep, GuardianReportView }
 
 const CHECKOUT_SESSION_KEY = 'stella.guardianCheckout.v1'
+const PREVIEW_SESSION_KEY = 'stella.guardianPreview.v1'
+
+const PREVIEW_TONES = ['comfort', 'honesty', 'action', 'possibility'] as const
+const PREVIEW_MOVEMENTS = ['start', 'continue', 'recover', 'release'] as const
+
+export function guardianReportPaths(locale: Locale) {
+  const landing = `/${locale}/guardian-report`
+  return {
+    landing,
+    free: `${landing}/free`,
+    freeResult: `${landing}/free/result`,
+    questions: `${landing}/questions`,
+    reopen: `${landing}/reopen`,
+    result: `${landing}/result`,
+  } as const
+}
+
+export type GuardianPreviewSession = GuardianPreviewAnswerSnapshot & {
+  locale: Locale
+  completedAt: number
+}
 
 export type GuardianCheckoutSession = {
   locale: Locale
@@ -66,6 +100,17 @@ export type GuardianPurchaseConfirmation =
   | { status: 'pending'; reportPublicId: string }
   | { status: 'paid'; reportPublicId: string }
   | { status: 'failed' | 'cancelled' | 'refunded'; reportPublicId: string }
+
+export type GuardianReopenExchange = {
+  status: 'ok'
+  accessToken: string
+  collectionPublicId: string
+  locale: Locale
+  paymentId: string
+  recoveryEmail: string
+  reportPublicId: string
+  reportStatus: 'draft' | 'fulfilled'
+}
 
 export class GuardianApiError extends Error {
   readonly status: number
@@ -147,6 +192,18 @@ export function confirmGuardianPurchase(session: GuardianCheckoutSession): Promi
   )
 }
 
+export function requestGuardianReopen(input: {
+  email: string
+  locale: Locale
+  turnstileToken: string
+}): Promise<{ status: 'accepted' }> {
+  return requestJson('/api/guardian-reopen/request', jsonRequest(input))
+}
+
+export function exchangeGuardianReopen(token: string): Promise<GuardianReopenExchange> {
+  return requestJson('/api/guardian-reopen/exchange', jsonRequest({ token }))
+}
+
 export function getGuardianReport(session: GuardianCheckoutSession): Promise<GuardianReportView> {
   return requestJson<{ report: GuardianReportView }>(
     `/api/guardian-reports/${encodeURIComponent(session.reportPublicId)}`,
@@ -223,5 +280,31 @@ export function clearGuardianCheckoutSession(): void {
     sessionStorage.removeItem(CHECKOUT_SESSION_KEY)
   } catch {
     // A blocked storage API already behaves as though there were no resumable checkout.
+  }
+}
+
+export function readGuardianPreviewSession(locale: Locale): GuardianPreviewSession | null {
+  try {
+    const raw = sessionStorage.getItem(PREVIEW_SESSION_KEY)
+    if (!raw) {
+      return null
+    }
+    const value = JSON.parse(raw) as Partial<GuardianPreviewSession>
+    return value.locale === locale &&
+      PREVIEW_TONES.some((tone) => tone === value.tone) &&
+      PREVIEW_MOVEMENTS.some((movement) => movement === value.movement) &&
+      typeof value.completedAt === 'number'
+      ? (value as GuardianPreviewSession)
+      : null
+  } catch {
+    return null
+  }
+}
+
+export function storeGuardianPreviewSession(session: GuardianPreviewSession): void {
+  try {
+    sessionStorage.setItem(PREVIEW_SESSION_KEY, JSON.stringify(session))
+  } catch {
+    throw new GuardianCheckoutStorageError()
   }
 }

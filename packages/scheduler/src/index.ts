@@ -10,4 +10,4 @@ export interface PendingPaymentMaintenanceService {
 
 export interface VibeMaintenanceService extends RetentionMaintenanceService, PendingPaymentMaintenanceService {}
 
-export type StellaMaintenanceService = RetentionMaintenanceService
+export interface StellaMaintenanceService extends RetentionMaintenanceService, PendingPaymentMaintenanceService {}

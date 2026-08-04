@@ -7,6 +7,7 @@ import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { GuardianAccessTokenSchema, GuardianPaymentIdSchema } from '~/guardian/http'
 import { syncGuardianPayment } from '~/guardian/payment'
+import { dispatchGuardianRecoveryEmails } from '~/guardian/recovery'
 import { NO_STORE_HEADERS } from '~/lib/http'
 import { bearerToken } from '~/lib/request'
 import { type GuardianRemotePayment, getGuardianRemotePayment } from '~/payments/client'
@@ -56,6 +57,9 @@ guardianPurchases.post('/:paymentId/confirm', async (c) => {
     return c.json({ status: 'pending', reportPublicId: access.reportPublicId }, 202, NO_STORE_HEADERS)
   }
   if (outcome.status === 'granted' || outcome.status === 'already-granted') {
+    if (outcome.kind === 'full_report') {
+      c.executionCtx.waitUntil(dispatchGuardianRecoveryEmails(c.env, { paymentId: paymentId.data }))
+    }
     return c.json(
       {
         status: 'paid',
