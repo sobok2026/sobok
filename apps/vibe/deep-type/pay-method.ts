@@ -12,8 +12,8 @@ import type { Locale } from '@sobok/domain/locale'
  *     same key it takes CARD on, and it already backs two of our methods depending on the locale.
  *
  * Adding a method is one row in `PAY_METHOD_SPEC`, one entry per locale below, one entry in
- * `SELLABLE_CHANNELS` for every tier that may charge on it, one key in the central payments Worker's
- * `PORTONE_CHANNELS` map for that environment, one label per locale in `_content`, and — only if the PG
+ * `SELLABLE_CHANNELS` for every deployment profile that may charge on it, one scoped key in the central
+ * payments Worker's `PORTONE_CHANNELS` map, one label per locale in `_content`, and — only if the PG
  * requires one — one line in the bypass table in `use-checkout`. Nothing else: no binding, no resolver, no
  * branch.
  *
@@ -32,7 +32,7 @@ import type { Locale } from '@sobok/domain/locale'
  * actually matters — let a caller pick a channel the locale was never offered.
  *
  * What a deployment can actually charge on is the second half of that: the catalogue says what we sell and
- * `SELLABLE_CHANNELS` says what this tier's contracts have been approved for. The menu is the intersection and
+ * `SELLABLE_CHANNELS` says what this deployment profile exposes. The menu is the intersection and
  * it is computed here alone, so the picker and `/checkout` cannot come to different conclusions about it.
  *
  * Typed structurally rather than against `Locale`: this module is compiled into the Worker, whose tsconfig
@@ -54,18 +54,18 @@ export type PayMethod = (typeof PAY_METHODS)[number]
 export type PortOneChannel = 'kakaopay' | 'kcp_v2' | 'paypal_v2' | 'tosspay_v2' | 'tosspayments'
 
 /**
- * PortOne's two 설정 모드, verbatim again: `live` is 실연동 and `test` is 테스트. This is the ONLY axis any
- * deployment difference in this module rides on, and it names the contract set a deployment holds rather than
- * the branch that built it — payment code must never branch on an environment name, because the moment it can
- * it can be talked into taking the other branch in production.
+ * Product deployment profiles, deliberately distinct from PortOne's per-channel `live`/`test` mode. A
+ * production deployment may temporarily expose a test channel on its real domain for PG review while its
+ * other channel remains live. The central payments catalogue owns those channel modes; this profile only
+ * keeps the statically exported picker and the Worker on the same menu.
  */
-export const PAY_TIERS = ['live', 'test'] as const
+export const PAY_PROFILES = ['production', 'staging'] as const
 
-export type PayTier = (typeof PAY_TIERS)[number]
+export type PayProfile = (typeof PAY_PROFILES)[number]
 
-/** Guards the build-time `NEXT_PUBLIC_DEEPTYPE_PAY_TIER`, which arrives as an unnarrowed string. */
-export function isPayTier(value: string): value is PayTier {
-  return (PAY_TIERS as readonly string[]).includes(value)
+/** Guards the build-time `NEXT_PUBLIC_DEEPTYPE_PAY_PROFILE`, which arrives as an unnarrowed string. */
+export function isPayProfile(value: string): value is PayProfile {
+  return (PAY_PROFILES as readonly string[]).includes(value)
 }
 
 /**
@@ -96,13 +96,15 @@ export const PAY_METHOD_SPEC = {
 } as const satisfies Record<PayMethod, PayMethodSpec>
 
 /**
- * Which channels actually take money on each tier, and the one line that gets edited the day an approval lands.
+ * Which channels each deployment exposes. This is a deployment menu, not a claim that every channel in one
+ * profile uses the same PortOne mode: production currently combines approved live Toss Pay with the Toss
+ * Payments test channel that card-company reviewers must open on the real service domain.
  *
  * A 실연동 channel does not charge because a key exists. 계약 → MID/CID 발급 → 원천사 심사 all have to finish
  * first, and before they do the window opens and the approval simply never comes — so "we hold a key" and "we
- * can sell" are different facts and this table is where the second one is recorded. A key is pasted into
- * the central `PORTONE_CHANNELS` map and a channel is added here in the same release, never earlier: a half-filled slot
- * looks configured, which is why no channel is ever listed with an empty or placeholder key instead.
+ * can sell" are different facts and this table is where the second one is recorded. A scoped entry is added to
+ * the central `PORTONE_CHANNELS` map and a channel is added here in the same release, never earlier: a
+ * half-filled slot looks configured, which is why no channel is ever listed with an empty or placeholder key.
  *
  * This is the build-time copy of each central payments Worker environment's `PORTONE_CHANNELS` key set and has to
  * stay equal to it. A copy exists because the paywall is a static export: it cannot read a Worker var, and the
@@ -111,16 +113,12 @@ export const PAY_METHOD_SPEC = {
  * rather than a payment window that opens and dies.
  */
 const SELLABLE_CHANNELS = {
-  // 원천사 심사(페이팔은 본인 비즈니스 계정 연결)가 끝난 채널만. 나머지는 승인이 떨어지는 날 여기와 wrangler
-  // 실연동 맵에 한 줄씩 함께 추가한다.
-  live: ['tosspay_v2'],
-  // 테스트 채널은 심사가 없으므로 상점에 붙은 다섯 모두가 곧바로 결제된다. 스테이징이 카탈로그 전체를 파는
-  // 유일한 배포이고, 그래서 새 결제수단의 QA는 여기서만 가능하다.
-  test: ['kakaopay', 'kcp_v2', 'paypal_v2', 'tosspay_v2', 'tosspayments'],
-} as const satisfies Record<PayTier, readonly PortOneChannel[]>
+  production: ['tosspay_v2', 'tosspayments'],
+  staging: ['kakaopay', 'kcp_v2', 'paypal_v2', 'tosspay_v2', 'tosspayments'],
+} as const satisfies Record<PayProfile, readonly PortOneChannel[]>
 
-export function sellableChannels(tier: PayTier): readonly PortOneChannel[] {
-  return SELLABLE_CHANNELS[tier]
+export function sellableChannels(profile: PayProfile): readonly PortOneChannel[] {
+  return SELLABLE_CHANNELS[profile]
 }
 
 /**
@@ -142,7 +140,7 @@ const PAY_METHODS_BY_LOCALE = {
   zh: ['paypal'],
   // Non-empty by type, which keeps the CATALOGUE from ever offering a locale nothing. Whether a deployment can
   // actually sell to that locale is `SELLABLE_CHANNELS`'s answer and no type reaches it, so it is a deploy rule
-  // instead: every tier's channel list must leave every locale with at least one method. `GET /config` prints
+  // instead: every profile's channel list must leave every launch locale with at least one method. `GET /config` prints
   // the resulting menu per locale for exactly that check, and the paywall takes `methods[0]` with no fallback
   // written on purpose — a deployment that broke the rule must look broken rather than quietly sell nothing.
 } as const satisfies Record<Locale, readonly [PayMethod, ...PayMethod[]]>
@@ -151,8 +149,8 @@ const PAY_METHODS_BY_LOCALE = {
  * The menu: 카탈로그 ∩ 능력. Both halves of the app call this — the paywall to render the picker, `/checkout` to
  * validate what came back — so the screen cannot offer a method the server would refuse.
  */
-export function payMethodsFor(locale: Locale, tier: PayTier): readonly PayMethod[] {
-  const sellable = SELLABLE_CHANNELS[tier] as readonly string[]
+export function payMethodsFor(locale: Locale, profile: PayProfile): readonly PayMethod[] {
+  const sellable = SELLABLE_CHANNELS[profile] as readonly string[]
   return PAY_METHODS_BY_LOCALE[locale].filter((method) => sellable.includes(PAY_METHOD_SPEC[method].channel))
 }
 
@@ -160,6 +158,6 @@ export function payMethodsFor(locale: Locale, tier: PayTier): readonly PayMethod
  * The server-side half. Takes an unnarrowed string because it guards a request body, and returns a type
  * predicate so the handler that passes it can go on to index the catalogue with it.
  */
-export function isPayMethodAllowed(locale: Locale, tier: PayTier, method: string): method is PayMethod {
-  return (payMethodsFor(locale, tier) as readonly string[]).includes(method)
+export function isPayMethodAllowed(locale: Locale, profile: PayProfile, method: string): method is PayMethod {
+  return (payMethodsFor(locale, profile) as readonly string[]).includes(method)
 }

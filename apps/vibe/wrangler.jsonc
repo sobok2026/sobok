@@ -45,7 +45,7 @@
     ]
   },
   "vars": {
-    "DEEPTYPE_PAY_TIER": "live",
+    "DEEPTYPE_PAY_PROFILE": "production",
     "DEEPTYPE_PUBLIC_ORIGIN": "https://vibe.sobok.cc",
     "DEEPTYPE_EMAIL_FROM": "sobok <sobok2026@gmail.com>",
     "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",
@@ -110,7 +110,7 @@
         }
       ],
       "vars": {
-        "DEEPTYPE_PAY_TIER": "test",
+        "DEEPTYPE_PAY_PROFILE": "staging",
         "DEEPTYPE_PUBLIC_ORIGIN": "https://vibe-stg.sobok.cc",
         "DEEPTYPE_EMAIL_FROM": "sobok <sobok2026@gmail.com>",
         "DEEPTYPE_EMAIL_REPLY_TO": "sobok2026@gmail.com",

@@ -8,11 +8,13 @@ import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { GuardianAccessTokenSchema, GuardianReportPublicIdSchema } from '~/guardian/http'
 import { GUARDIAN_PLANET_IDS, guardianFullReportIsAvailable } from '~/guardian/manifest'
+import { GUARDIAN_PAY_METHOD_SPEC, GUARDIAN_PAY_METHODS } from '~/guardian/pay-method'
 import { prepareGuestGuardianCheckout, resumeGuestGuardianCheckout } from '~/guardian/service'
 import { NO_STORE_HEADERS, parseJson } from '~/lib/http'
 import { hashIp } from '~/lib/ip'
 import { bearerToken, clientIp } from '~/lib/request'
 import { guardTurnstile } from '~/lib/turnstile'
+import { guardianPaymentConfigFor } from '~/payments/config'
 import { GUARDIAN_CHECKOUT_ACTION } from './actions'
 
 const BODY_LIMIT_BYTES = 16 * 1024
@@ -84,6 +86,7 @@ const PreviewAnswersSchema = z
 
 const CommonCheckoutBody = {
   email: z.string().trim().email().max(254),
+  payMethod: z.enum(GUARDIAN_PAY_METHODS),
   turnstileToken: z.string().min(1).max(2048),
 } as const
 
@@ -142,15 +145,15 @@ guardianCheckouts.post('/', async (c) => {
     return denied
   }
 
-  const paymentConfig = await c.env.PAYMENTS.checkoutConfig('tosspay_v2').catch((error) => {
+  const paymentConfig = await guardianPaymentConfigFor(c.env, body.payMethod).catch((error) => {
     console.error('stella.guardian_checkout.payments_unavailable', error instanceof Error ? error.name : 'unknown')
     return null
   })
   if (!paymentConfig) {
-    console.error('stella.guardian_checkout.channel_unbound (tosspay_v2)')
+    console.error(`stella.guardian_checkout.channel_unbound (${body.payMethod})`)
     c.executionCtx.waitUntil(
       c.env.STELLA_DISCORD_WEBHOOK.get().then((webhook) =>
-        alertDiscord(webhook, '🚨 stella guardian checkout has no PortOne Toss Pay channel'),
+        alertDiscord(webhook, `🚨 stella guardian checkout has no PortOne channel for \`${body.payMethod}\``),
       ),
     )
     return problem(503, 'service-unavailable', { headers: { 'retry-after': '30' } })
@@ -217,7 +220,7 @@ guardianCheckouts.post('/', async (c) => {
         sku: outcome.sku,
         storeId: paymentConfig.storeId,
         channelKey: paymentConfig.channelKey,
-        payMethod: 'EASY_PAY' as const,
+        payMethod: GUARDIAN_PAY_METHOD_SPEC[body.payMethod].sdkPayMethod,
         orderName: outcome.orderName,
         amount: outcome.amount,
         market: outcome.market,

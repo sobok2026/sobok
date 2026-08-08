@@ -1,5 +1,10 @@
 import { isLocale, type Locale } from '@sobok/domain/locale'
 import type { GuardianChartSnapshot, GuardianPreviewAnswerSnapshot } from '../../worker/guardian/manifest'
+import {
+  type GuardianPayMethod,
+  type GuardianSdkPayMethod,
+  isGuardianPayMethod,
+} from '../../worker/guardian/pay-method'
 import type { GuardianQuestionnaireAnswer, GuardianQuestionnaireClientStep } from '../../worker/guardian/questionnaire'
 import type { GuardianLoveRedrawResult, GuardianLoveRedrawState } from '../../worker/guardian/redraw-contract'
 import type { GuardianReportView } from '../../worker/guardian/report-contract'
@@ -19,10 +24,12 @@ export {
   GUARDIAN_REPORT_PRICE,
   GUARDIAN_REPORT_SKU,
 } from '../../worker/guardian/offer'
+export { GUARDIAN_PAY_METHODS } from '../../worker/guardian/pay-method'
 export type {
   GuardianChartSnapshot,
   GuardianLoveRedrawResult,
   GuardianLoveRedrawState,
+  GuardianPayMethod,
   GuardianQuestionnaireClientStep,
   GuardianReportView,
 }
@@ -60,6 +67,7 @@ export type GuardianCheckoutSession = {
   accessToken: string
   paymentId: string
   email: string
+  payMethod: GuardianPayMethod | null
   createdAt: number
 }
 
@@ -87,7 +95,7 @@ export type GuardianCheckoutPayment = {
   sku: string
   storeId: string
   channelKey: string
-  payMethod: 'EASY_PAY'
+  payMethod: GuardianSdkPayMethod
   orderName: string
   amount: number
   market: 'KR'
@@ -99,6 +107,7 @@ export type GuardianRedrawCheckoutSession = {
   requestId: string
   paymentId: string | null
   sku: string
+  payMethod: GuardianPayMethod
   credits: number
   amount: number
   currency: string
@@ -223,6 +232,7 @@ export function getGuardianProductCatalog(): Promise<GuardianProductCatalog> {
 export function createGuardianCheckout(input: {
   locale: Locale
   email: string
+  payMethod: GuardianPayMethod
   turnstileToken: string
   chart: GuardianChartSnapshot
   previewAnswers: GuardianPreviewAnswerSnapshot
@@ -232,7 +242,7 @@ export function createGuardianCheckout(input: {
 
 export function resumeGuardianCheckout(
   session: GuardianCheckoutSession,
-  input: { email: string; turnstileToken: string },
+  input: { email: string; payMethod: GuardianPayMethod; turnstileToken: string },
 ): Promise<GuardianCheckoutResponse> {
   return requestJson(
     '/api/guardian-checkouts',
@@ -260,7 +270,7 @@ export function getGuardianLoveRedraw(session: GuardianReportAccess): Promise<Gu
 
 export function createGuardianLoveRedrawCheckout(
   session: GuardianReportAccess,
-  input: { requestId: string; sku: string; turnstileToken: string },
+  input: { requestId: string; sku: string; payMethod: GuardianPayMethod; turnstileToken: string },
 ): Promise<GuardianRedrawCheckoutResponse> {
   return requestJson(
     `/api/guardian-reports/${encodeURIComponent(session.reportPublicId)}/love-redraw/checkouts`,
@@ -377,6 +387,7 @@ export function readGuardianCheckoutSession(): GuardianCheckoutSession | null {
       typeof value.accessToken === 'string' &&
       typeof value.paymentId === 'string' &&
       typeof value.email === 'string' &&
+      (value.payMethod === null || isGuardianPayMethod(value.payMethod)) &&
       typeof value.createdAt === 'number'
       ? (value as GuardianCheckoutSession)
       : null
@@ -412,6 +423,7 @@ export function readGuardianRedrawCheckoutSession(reportPublicId: string): Guard
       typeof value.requestId === 'string' &&
       (typeof value.paymentId === 'string' || value.paymentId === null) &&
       typeof value.sku === 'string' &&
+      isGuardianPayMethod(value.payMethod) &&
       typeof value.credits === 'number' &&
       typeof value.amount === 'number' &&
       typeof value.currency === 'string' &&

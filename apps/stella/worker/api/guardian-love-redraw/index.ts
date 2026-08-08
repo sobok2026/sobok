@@ -12,12 +12,14 @@ import { withinRateLimits } from '~/db/queries/rate-limit'
 import type { AppEnv } from '~/env'
 import { problem } from '~/errors'
 import { GUARDIAN_LOVE_REDRAW_PRODUCT_SKUS } from '~/guardian/manifest'
+import { GUARDIAN_PAY_METHOD_SPEC, GUARDIAN_PAY_METHODS } from '~/guardian/pay-method'
 import type { GuardianLoveRedrawResult } from '~/guardian/redraw-contract'
 import { newGuardianPaymentId } from '~/guardian/tokens'
 import { NO_STORE_HEADERS, parseJson } from '~/lib/http'
 import { hashIp } from '~/lib/ip'
 import { clientIp } from '~/lib/request'
 import { guardTurnstile } from '~/lib/turnstile'
+import { guardianPaymentConfigFor } from '~/payments/config'
 import { GUARDIAN_REDRAW_CHECKOUT_ACTION } from './actions'
 
 const MARKET = 'KR'
@@ -37,6 +39,7 @@ const CheckoutBody = z
   .object({
     requestId: RequestIdSchema,
     sku: z.enum(GUARDIAN_LOVE_REDRAW_PRODUCT_SKUS),
+    payMethod: z.enum(GUARDIAN_PAY_METHODS),
     turnstileToken: z.string().min(1).max(2048),
   })
   .strict()
@@ -77,7 +80,7 @@ guardianLoveRedraw.post('/:reportPublicId/love-redraw/checkouts', async (c) => {
     return denied
   }
 
-  const paymentConfig = await c.env.PAYMENTS.checkoutConfig('tosspay_v2').catch((error) => {
+  const paymentConfig = await guardianPaymentConfigFor(c.env, parsed.body.payMethod).catch((error) => {
     console.error(
       'stella.guardian_redraw_checkout.payments_unavailable',
       error instanceof Error ? error.name : 'unknown',
@@ -85,9 +88,13 @@ guardianLoveRedraw.post('/:reportPublicId/love-redraw/checkouts', async (c) => {
     return null
   })
   if (!paymentConfig) {
+    console.error(`stella.guardian_redraw_checkout.channel_unbound (${parsed.body.payMethod})`)
     c.executionCtx.waitUntil(
       c.env.STELLA_DISCORD_WEBHOOK.get().then((webhook) =>
-        alertDiscord(webhook, '🚨 stella guardian redraw checkout has no PortOne Toss Pay channel'),
+        alertDiscord(
+          webhook,
+          `🚨 stella guardian redraw checkout has no PortOne channel for \`${parsed.body.payMethod}\``,
+        ),
       ),
     )
     return problem(503, 'service-unavailable', { headers: { 'retry-after': '30' } })
@@ -134,7 +141,7 @@ guardianLoveRedraw.post('/:reportPublicId/love-redraw/checkouts', async (c) => {
         sku: outcome.sku,
         storeId: paymentConfig.storeId,
         channelKey: paymentConfig.channelKey,
-        payMethod: 'EASY_PAY' as const,
+        payMethod: GUARDIAN_PAY_METHOD_SPEC[parsed.body.payMethod].sdkPayMethod,
         orderName: outcome.orderName,
         amount: outcome.amount,
         market: outcome.market,

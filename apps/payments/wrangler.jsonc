@@ -12,9 +12,20 @@
   },
   "vars": {
     "PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
-    // The key set is the live contract set. Toss Payments is added only after its live approval completes.
+    // A channel records its own PortOne mode and the apps allowed to request it. Production intentionally mixes
+    // the approved Toss Pay live channel with the Toss Payments test channel needed on the real service domains
+    // during card-company review. Replace only the latter channel key + mode when live approval lands.
     "PORTONE_CHANNELS": {
-      "tosspay_v2": "channel-key-d14e0af9-18be-457f-aa21-228e7265211f"
+      "tosspay_v2": {
+        "channelKey": "channel-key-d14e0af9-18be-457f-aa21-228e7265211f",
+        "mode": "live",
+        "scopes": ["stella", "vibe"]
+      },
+      "tosspayments": {
+        "channelKey": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88",
+        "mode": "test",
+        "scopes": ["stella", "vibe"]
+      }
     },
     "CORE_PAYMENT_EVENTS_URL": "https://sobok.cc/api/v1/internal/payment-events"
   },
@@ -63,11 +74,31 @@
       "vars": {
         "PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
         "PORTONE_CHANNELS": {
-          "kakaopay": "channel-key-d80ebe96-61e3-49f9-b3eb-5dc22aee47b7",
-          "kcp_v2": "channel-key-d48cde15-5f73-4ab2-9b40-2ec29d152ad5",
-          "paypal_v2": "channel-key-8a0c783e-608f-48f0-a2f1-842667a464bc",
-          "tosspay_v2": "channel-key-70320dc7-8e65-4cf7-901b-7b834ae4f21a",
-          "tosspayments": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88"
+          "kakaopay": {
+            "channelKey": "channel-key-d80ebe96-61e3-49f9-b3eb-5dc22aee47b7",
+            "mode": "test",
+            "scopes": ["vibe"]
+          },
+          "kcp_v2": {
+            "channelKey": "channel-key-d48cde15-5f73-4ab2-9b40-2ec29d152ad5",
+            "mode": "test",
+            "scopes": ["vibe"]
+          },
+          "paypal_v2": {
+            "channelKey": "channel-key-8a0c783e-608f-48f0-a2f1-842667a464bc",
+            "mode": "test",
+            "scopes": ["vibe"]
+          },
+          "tosspay_v2": {
+            "channelKey": "channel-key-70320dc7-8e65-4cf7-901b-7b834ae4f21a",
+            "mode": "test",
+            "scopes": ["stella", "vibe"]
+          },
+          "tosspayments": {
+            "channelKey": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88",
+            "mode": "test",
+            "scopes": ["core", "stella", "vibe"]
+          }
         },
         "CORE_PAYMENT_EVENTS_URL": "https://sobok.cc/api/v1/internal/payment-events"
       },

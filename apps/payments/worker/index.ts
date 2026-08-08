@@ -3,6 +3,7 @@ import {
   PAYMENT_ID_PREFIX,
   type PaymentEvent,
   PaymentEventSchema,
+  type PaymentScope,
   paymentScopeOf,
   type ScopedPaymentsService,
 } from '@sobok/payments'
@@ -11,6 +12,7 @@ import { z } from 'zod'
 
 import type { AppEnv, Bindings } from './env'
 import {
+  availableChannels,
   cancelPayment,
   chargePayment,
   checkoutConfig,
@@ -22,7 +24,6 @@ import {
 
 const app = new Hono<AppEnv>()
 const WEBHOOK_BODY_LIMIT = 64 * 1024
-const CORE_CHANNELS = new Set(['tosspayments'])
 const BillingKeyBody = z.object({ billingKey: z.string().min(1).max(256) }).strict()
 const ChargeBody = z
   .object({
@@ -114,7 +115,7 @@ app.use('/v1/core/*', async (c, next) => {
 
 app.get('/v1/core/checkout-config', (c) => {
   const channel = c.req.query('channel') ?? ''
-  return c.json(CORE_CHANNELS.has(channel) ? checkoutConfig(c.env, channel) : null)
+  return c.json(checkoutConfig(c.env, 'core', channel))
 })
 
 app.post('/v1/core/billing-keys/inspect', async (c) => {
@@ -182,15 +183,14 @@ export default {
 } satisfies ExportedHandler<Bindings, PaymentEvent>
 
 abstract class ScopedPayments extends WorkerEntrypoint<Bindings> implements ScopedPaymentsService {
-  protected abstract readonly paymentPrefix: string
-  protected abstract channelAllowed(channel: string): boolean
+  protected abstract readonly scope: PaymentScope
 
   availableChannels(): Promise<string[]> {
-    return Promise.resolve(Object.keys(this.env.PORTONE_CHANNELS).filter((channel) => this.channelAllowed(channel)))
+    return Promise.resolve(availableChannels(this.env, this.scope))
   }
 
   checkoutConfig(channel: string) {
-    return Promise.resolve(this.channelAllowed(channel) ? checkoutConfig(this.env, channel) : null)
+    return Promise.resolve(checkoutConfig(this.env, this.scope, channel))
   }
 
   getPayment(paymentId: string) {
@@ -204,26 +204,18 @@ abstract class ScopedPayments extends WorkerEntrypoint<Bindings> implements Scop
   }
 
   private assertPaymentId(paymentId: string): void {
-    if (!paymentId.startsWith(this.paymentPrefix)) {
+    if (!paymentId.startsWith(PAYMENT_ID_PREFIX[this.scope])) {
       throw new Error('Payment id is outside this service boundary')
     }
   }
 }
 
 export class StellaPayments extends ScopedPayments {
-  protected readonly paymentPrefix = PAYMENT_ID_PREFIX.stella
-
-  protected channelAllowed(channel: string): boolean {
-    return channel === 'tosspay_v2' || channel === 'tosspayments'
-  }
+  protected readonly scope = 'stella'
 }
 
 export class VibePayments extends ScopedPayments {
-  protected readonly paymentPrefix = PAYMENT_ID_PREFIX.vibe
-
-  protected channelAllowed(_channel: string): boolean {
-    return true
-  }
+  protected readonly scope = 'vibe'
 }
 
 async function dispatchCoreEvent(env: Bindings, event: PaymentEvent): Promise<void> {

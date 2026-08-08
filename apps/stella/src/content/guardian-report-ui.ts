@@ -1,6 +1,7 @@
 import type { Locale } from '@sobok/domain/locale'
 import type { ElementId } from '@/chart/types'
 import type { GuardianRarity, GuardianReportSlot } from '../../worker/guardian/manifest'
+import type { GuardianPayMethod } from '../../worker/guardian/pay-method'
 
 export type GuardianPreviewTone = 'comfort' | 'honesty' | 'action' | 'possibility'
 export type GuardianPreviewMovement = 'start' | 'continue' | 'recover' | 'release'
@@ -181,6 +182,8 @@ type GuardianReportUiContent = {
       emailLabel: string
       emailPlaceholder: string
       emailHint: string
+      methodLabel: string
+      methodLabels: Record<GuardianPayMethod, string>
       securityHint: string
       submit: string
       submitting: string
@@ -680,6 +683,8 @@ const KO_CONTENT: GuardianReportUiContent = {
       emailLabel: '구매 이메일',
       emailPlaceholder: 'you@example.com',
       emailHint: '오타가 있으면 리포트를 다시 찾기 어려워요.',
+      methodLabel: '결제수단',
+      methodLabels: { tosspay: '토스페이', card: '신용·체크카드' },
       securityHint: '안전한 결제를 위해 보안 확인을 완료해주세요.',
       submit: '결제하고 맞춤 질문 시작하기',
       submitting: '결제창을 준비하고 있어요…',
@@ -998,6 +1003,8 @@ function emptyContent(): GuardianReportUiContent {
         emailLabel: empty,
         emailPlaceholder: empty,
         emailHint: empty,
+        methodLabel: empty,
+        methodLabels: { tosspay: empty, card: empty },
         securityHint: empty,
         submit: empty,
         submitting: empty,

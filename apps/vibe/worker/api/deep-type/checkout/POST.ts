@@ -88,14 +88,14 @@ route.post('/', async (c) => {
     // The locale is the stored one, not a client claim, so this is the point where the channel policy is
     // actually enforced. Checked before the pending row is written — a refused method must leave nothing
     // behind for scheduled reconciliation to chase.
-    if (!isPayMethodAllowed(result.locale, c.env.DEEPTYPE_PAY_TIER, body.payMethod)) {
+    if (!isPayMethodAllowed(result.locale, c.env.DEEPTYPE_PAY_PROFILE, body.payMethod)) {
       return 'method-not-allowed' as const
     }
 
     // Resolved here rather than in the response, and for the same reason: a pending row whose window can never
     // open is a row the 15-minute maintenance job re-checks against PortOne until retention purges it. The menu already says
     // this method is sellable, so an absent key means this deployment's channel map and
-    // `sellableChannels(tier)` disagree — our mistake, caught before it costs a row.
+    // `sellableChannels(profile)` disagree — our mistake, caught before it costs a row.
     const paymentConfig = await paymentConfigFor(c.env, body.payMethod)
     if (!paymentConfig) {
       return 'channel-unbound' as const
@@ -136,10 +136,10 @@ route.post('/', async (c) => {
   // provoke it — the method it asked for is one the menu offered — so this cannot be turned into a flood, and
   // it is worth waking up for because it means one of the methods on the paywall cannot be paid with.
   if (detail === 'channel-unbound') {
-    console.error(`deeptype.checkout.channel_unbound (${c.env.DEEPTYPE_PAY_TIER}): ${body.payMethod}`)
+    console.error(`deeptype.checkout.channel_unbound (${c.env.DEEPTYPE_PAY_PROFILE}): ${body.payMethod}`)
     c.executionCtx.waitUntil(
       c.env.DEEPTYPE_DISCORD_WEBHOOK.get().then((url) =>
-        alertDiscord(url, `🚨 deeptype has no ${c.env.DEEPTYPE_PAY_TIER} channel key for \`${body.payMethod}\``),
+        alertDiscord(url, `🚨 deeptype has no ${c.env.DEEPTYPE_PAY_PROFILE} channel key for \`${body.payMethod}\``),
       ),
     )
     return problem(500, 'internal')

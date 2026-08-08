@@ -1,8 +1,14 @@
-import type { PaymentEvent } from '@sobok/payments'
+import type { PaymentEvent, PaymentScope } from '@sobok/payments'
+
+export interface PortOneChannelConfig {
+  channelKey: string
+  mode: 'live' | 'test'
+  scopes: PaymentScope[]
+}
 
 export interface Bindings {
   PORTONE_STORE_ID: string
-  PORTONE_CHANNELS: Record<string, string>
+  PORTONE_CHANNELS: Record<string, PortOneChannelConfig>
   CORE_PAYMENT_EVENTS_URL: string
 
   PORTONE_API_SECRET: SecretsStoreSecret
