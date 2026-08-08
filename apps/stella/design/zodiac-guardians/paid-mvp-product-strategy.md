@@ -460,14 +460,16 @@ collection을 연결하므로 진행률이 초기화되지 않는다. 시즌 앨
 ### 한국 결제 확정 방향
 
 - PortOne V2와 기존 대표 Store를 사용한다.
-- 첫 실결제수단은 승인이 완료된 토스페이 직접 연동 `tosspay_v2`다.
-- 토스페이 결제창은 `payMethod: "EASY_PAY"`로 호출한다.
-- 토스페이먼츠 결제창은 실결제 승인 뒤 별도 channel key를 활성화한다.
+- production은 토스페이와 신용·체크카드 중 하나를 사용자가 고르게 한다.
+- 서버는 토스페이를 `tosspay_v2`·`EASY_PAY`, 카드를 `tosspayments`·`CARD`로 매핑한다.
+- 토스페이는 실연동, 토스페이먼츠는 카드사 심사 동안 테스트 채널을 사용한다. 승인 뒤 중앙
+  카탈로그의 카드 channel key와 `mode`만 실연동으로 교체한다.
 - Store ID와 channel key는 브라우저 결제 요청에 포함되는 공개 식별값이다.
 - PortOne API Secret과 대표 Store의 공용 test/live Webhook Secret은 중앙 payments Worker의
   Secrets Store binding 밖으로 노출하지 않는다. Stella Worker에는 PortOne 자격증명을 두지 않으며
   PG의 서버 API·secret key는 PortOne 콘솔에만 둔다.
-- test channel은 `stella-stg`, live channel은 `stella` 배포에만 둔다.
+- 중앙 channel entry는 `channelKey`·`mode`·제품 `scopes`를 함께 가지며 Stella RPC는 `stella`
+  scope가 있는 채널만 반환한다.
 - 두 배포는 같은 Supabase 프로젝트·Postgres 데이터베이스와 같은 Hyperdrive config를 공유한다.
 
 ### test/live 데이터 경계 확정안
@@ -477,19 +479,22 @@ collection을 연결하므로 진행률이 초기화되지 않는다. 시즌 앨
 
 - 두 Worker는 같은 `stella_app` role과 같은 Hyperdrive ID를 바인딩한다. Hyperdrive config와
   연결 풀을 추가하지 않는다.
-- production bundle은 `STELLA_DB_SCHEMA='stella'`, staging bundle은
-  `STELLA_DB_SCHEMA='stella_stg'`를 build-time 상수로 갖는다.
+- production bundle은 `SOBOK_DB_SCHEMA='stella'`, staging bundle은
+  `SOBOK_DB_SCHEMA='stella_stg'`를 build-time 상수로 갖는다.
 - 상수에는 production fallback을 두지 않는다. 빠뜨린 배포는 다른 환경에 쓰는 대신 시작에
   실패한다.
 - Drizzle table은 선택된 schema를 항상 SQL에 명시한다. `stella_app`의 `search_path`는
   `pg_catalog`만 두어 비한정 테이블명이 우연히 production으로 해석되지 않게 한다.
-- `drizzle-kit push`는 같은 DB URL에 `STELLA_DB_SCHEMA=stella_stg`와 `stella`를 각각 지정해
-  실행한다.
-- Worker와 정적 자산은 로컬 `wrangler deploy`로 배포하지 않는다. 커밋을 원격 브랜치에 올린 뒤
-  `.github/workflows/stella-deploy.yml`을 사용한다. staging은 해당 브랜치에서
-  `workflow_dispatch(target=staging)`, production은 `main` push로만 배포한다.
-- 중앙 payments의 test/live channel map과 공용 Webhook Secret binding은 배포별 모드에 고정하고
-  브라우저가 tier를 선택하지 못하게 한다. 제품 Worker는 PortOne 자격증명을 갖지 않는다.
+- staging은 `staging` 브랜치 push가 시작한 통합 워크플로가
+  `SOBOK_DB_SCHEMA=stella_stg`로 `drizzle-kit push`한 뒤 Worker를 배포한다. 명확한 비파괴 변경은
+  자동 적용하고 data loss나 rename hint가 필요한 변경은 배포를 멈춘다. production은 `main`의 수동
+  schema workflow에서 explain 결과를 검토한 뒤 별도 apply로 반영한다.
+- Worker와 정적 자산은 로컬 `wrangler deploy`로 배포하지 않는다. staging은 `staging`, production은
+  `main` 브랜치의 수동 전체 배포 workflow만 사용한다.
+- 중앙 payments의 channel entry에 test/live mode와 제품 scope를 고정하고 브라우저가 channel key나
+  mode를 선택하지 못하게 한다. production에서 시작한 테스트 결제 웹훅도 테스트 URL로 들어오므로
+  심사 거래는 브라우저 confirm과 production 재조정으로 완료한다. 제품 Worker는 PortOne 자격증명을
+  갖지 않는다.
 
 이 방식은 Supabase 프로젝트, 데이터베이스, role, Hyperdrive를 늘리지 않으면서 테스트 구매와
 실제 컬렉션을 물리적인 테이블 namespace로 분리한다. 행마다 환경을 검사하는 방어 로직도 필요
@@ -628,8 +633,8 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
   schema만 각각 `stella`, `stella_stg`로 한정하고 Hyperdrive 캐시는 read-after-write 일관성을
   위해 계속 끈다.
 
-DB 스키마는 코드에 선언하지만 실제 반영은 이 저장소 규칙대로 `drizzle-kit push`를 별도 운영 단계에서
-수행한다. 2026-08-01에 반영한 기존 `stella_stg`·`stella` schema와 한국어 v1 문항 위에 이번 재추첨의
+DB 스키마는 코드에 선언하고 staging은 통합 배포의 선행 단계, production은 명시적 운영 단계에서
+`drizzle-kit push`한다. 2026-08-01에 반영한 기존 `stella_stg`·`stella` schema와 한국어 v1 문항 위에 이번 재추첨의
 presentation·대표 카드 선택·checkout/draw 멱등 컬럼을 추가 반영해야 한다. 레거시 backfill 경로는 두지
 않으므로 기존 fulfillment 데이터를 유지할 환경이라면 적용 전에 해당 데이터를 비우고 깨끗한 계약으로
 다시 생성한다. 이후 문항 버전도 기존 게시 순서와 해시 검증을 따른다.

@@ -138,12 +138,10 @@ Worker는 pinned version 전체를 서버 내부에서 읽고 저장 답변을 �
 
 ## 게시 절차
 
-먼저 환경별 schema에 현재 Drizzle 선언을 반영한다.
-
-```bash
-STELLA_DB_SCHEMA=stella_stg STELLA_POSTGRES_URL_DIRECT=... bun run db:push
-STELLA_DB_SCHEMA=stella STELLA_POSTGRES_URL_DIRECT=... bun run db:push
-```
+staging schema는 변경을 `staging` 브랜치에 병합하면 `Staging Deploy`가 먼저 반영한다. 비파괴·명확한
+변경만 자동 적용되며 data loss나 rename hint가 필요하면 게시 전에 배포가 실패한다. production은
+게시 전에 `Production Schema` workflow의 plan을 검토하고 별도 apply 실행으로 현재 Drizzle 선언을
+반영한다. production 앱은 그 뒤 `Production Deploy` workflow로 수동 배포한다.
 
 Git에 커밋할 파일은 DB 연결 없이 검증할 수 있다.
 
@@ -155,7 +153,7 @@ bun run questionnaire:validate \
 staging에 원자적으로 게시한다.
 
 ```bash
-STELLA_DB_SCHEMA=stella_stg STELLA_POSTGRES_URL_DIRECT=... \
+SOBOK_DB_SCHEMA=stella_stg SOBOK_POSTGRES_URL_DIRECT=... \
   bun run questionnaire:publish \
   --file content/guardian-questionnaires/guardian-paid-ko-mvp-v1.json
 ```
@@ -164,7 +162,7 @@ CLI가 출력한 SHA-256을 staging 검수 기록에 남긴다. production은 �
 게시된다.
 
 ```bash
-STELLA_DB_SCHEMA=stella STELLA_POSTGRES_URL_DIRECT=... \
+SOBOK_DB_SCHEMA=stella SOBOK_POSTGRES_URL_DIRECT=... \
   bun run questionnaire:publish \
   --file content/guardian-questionnaires/guardian-paid-ko-mvp-v1.json \
   --expected-hash <staging-sha256>
@@ -175,7 +173,7 @@ STELLA_DB_SCHEMA=stella STELLA_POSTGRES_URL_DIRECT=... \
 바꾼 뒤 production에 같은 hash로 게시한다. 이미 생성된 report는 기존 pinned version을 계속
 사용한다.
 
-`STELLA_POSTGRES_URL_DIRECT`는 schema를 만들고 행을 게시할 수 있는 운영자 연결로만 사용한다.
+`SOBOK_POSTGRES_URL_DIRECT`는 선택한 Stella schema를 소유한 migrator 연결로만 사용한다.
 Worker runtime은 기존 `stella_app` + Hyperdrive를 사용한다. sobok-ops의 두 Stella schema
 default privilege가 새 테이블·sequence에도 적용되므로 이 기능만을 위한 role, Hyperdrive,
 Supabase 프로젝트는 추가하지 않는다.

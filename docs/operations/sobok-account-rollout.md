@@ -124,12 +124,12 @@ push한다.
 ```sh
 ACCOUNTS_DB_SCHEMA=identity_stg bun run --filter=@sobok/accounts db:push
 ACCOUNTS_DB_SCHEMA=identity bun run --filter=@sobok/accounts db:push
-STELLA_DB_SCHEMA=stella_stg bun run --filter=@sobok/stella db:push
-STELLA_DB_SCHEMA=stella bun run --filter=@sobok/stella db:push
 ```
 
-각 명령에는 대응하는 `*_POSTGRES_URL_DIRECT`가 필요하다. diff가 대상 schema 밖의 객체를 건드리면
-적용하지 않는다.
+Accounts 명령에는 대응하는 `ACCOUNTS_POSTGRES_URL_DIRECT`가 필요하다. Stella staging schema는
+staging 배포가 자동 push하고 production schema는 수동 plan/apply workflow가
+`SOBOK_DB_SCHEMA`와 schema 전용 `SOBOK_POSTGRES_URL_DIRECT`를 주입한다. 자세한 순서는
+[`product-releases.md`](product-releases.md)를 따른다.
 
 ## 4. accounts 최초 배포와 domain
 

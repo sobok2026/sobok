@@ -63,8 +63,19 @@ Workers Free의 현재 한도는 계정당 Queue 10,000개, 표준 작업 10,000
 공개 설정은 `apps/payments/wrangler.jsonc`가 소유한다.
 
 - `PORTONE_STORE_ID`
-- 환경별 `PORTONE_CHANNELS`: live에는 심사 완료 채널만, staging에는 테스트 채널만 둔다.
+- 환경별 `PORTONE_CHANNELS`: 각 항목은 `channelKey`, PortOne 설정 `mode`(`live`/`test`), 사용할 수
+  있는 제품 `scopes`를 함께 가진다. RPC entrypoint는 자기 scope가 없는 채널을 반환하지 않는다.
 - `CORE_PAYMENT_EVENTS_URL`
+
+현재 production 카탈로그는 제품 도메인에서 카드사 심사를 받을 수 있도록 Stella·Vibe scope에
+실연동 토스페이(`tosspay_v2`)와 테스트 토스페이먼츠 카드(`tosspayments`)를 함께 둔다. core에는
+둘 다 노출하지 않는다. 심사 승인이 끝나면 `tosspayments` 항목의 channel key를 실연동 키로 바꾸고
+`mode`를 `live`로 바꾸는 것이 전환의 전부다. 제품 UI나 checkout 분기는 다시 바꾸지 않는다.
+
+PortOne의 테스트 모드 웹훅은 production 화면에서 시작한 거래라도 `payments-stg` URL로 들어온다.
+따라서 production의 테스트 카드 심사 거래는 브라우저 confirm과 production scheduler 재조정을 완료
+경로로 사용하며, production Queue 웹훅 전달 검증 수단으로 사용하지 않는다. 웹훅까지 포함한 테스트
+결제 수직 확인은 staging에서 수행한다.
 
 비밀 값은 `sobok-ops/infra/cloudflare/account/sobok/payments`가 계정 Secrets Store에 만든다.
 
@@ -89,10 +100,11 @@ PG 채널 설정 화면의 MID, API key, secret key, client key를 레포나 Sec
 6. Stella와 Vibe를 배포해 Service Binding과 Queue consumer를 연결한다.
 7. PortOne 콘솔의 test/live 웹훅 URL을 위 중앙 URL로 바꾸고 호출 테스트를 수행한다.
 
-일반 배포는 `.github/workflows/payments-deploy.yml`을 사용한다. RPC contract를 바꿀 때는 먼저 기존
-호출자가 사용할 수 있는 additive provider 변경을 배포하고, 소비자를 배포한 다음 제거 변경을
-별도 배포한다. 중앙 서비스 장애 시 앱이 결제를 성공으로 추정하지 않으며, checkout·confirm·renew는
-재시도 가능한 실패로 닫힌다.
+staging 일반 배포는 `staging` 브랜치 push가 시작하는 `.github/workflows/staging-deploy.yml`이
+`payments-stg`를 Stella·Vibe보다 먼저 올린다. production은 schema 반영 후 수동 실행하는
+`.github/workflows/production-deploy.yml`이 Payments를 제품 앱보다 먼저 배포한다. RPC provider와
+제품 consumer는 같은 수동 릴리스에서 함께 변경한다. 중앙 서비스 장애 시 앱이 결제를 성공으로
+추정하지 않으며, checkout·confirm·renew는 재시도 가능한 실패로 닫힌다.
 
 로컬 실행은 실제 secret을 커밋하지 않고 `apps/payments/.dev.vars`에만 둔다.
 

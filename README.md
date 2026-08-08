@@ -46,6 +46,7 @@ bun dev
 
 - [Sobok 통합 계정](docs/architecture/sobok-account.md)
 - [Sobok 통합 계정 최초 배포](docs/operations/sobok-account-rollout.md)
+- [Product release 운영](docs/operations/product-releases.md)
 
 ## License
 

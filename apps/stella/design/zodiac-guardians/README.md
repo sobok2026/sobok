@@ -18,9 +18,9 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - 계정과 출시: `accounts.sobok.cc` Sobok 통합 계정, 한국 → 중국 본토 → 이후 미정
 - 게스트 구매: 결제 직전 이메일을 필수 복구 채널로 받고 계정 생성과 분리
 - 배포 경계: `stella-stg`와 `stella`는 분리하되 Supabase 프로젝트·DB와 Hyperdrive는 공유하고,
-  Worker 배포는 `.github/workflows/stella-deploy.yml`만 수행
+  staging은 `staging` 브랜치 push로 자동 배포하고 production schema와 앱은 `main`에서 각각 수동 반영
 - 가격·확률·미보유 보장 수치: 한국 유료 MVP 1차안 확정
-- 한국 첫 결제: PortOne V2 토스페이 직접 연동, 토스페이먼츠는 실결제 승인 뒤 추가
+- 한국 production 결제: 실연동 토스페이 + 카드사 심사용 테스트 토스페이먼츠 카드 선택
 - 결제 인프라: 중앙 `apps/payments`가 PortOne 자격증명·웹훅·채널 정책을 소유하고 Stella 주문·권한은
   Stella schema에 유지
 - 예약 실행: 계정 단일 `apps/scheduler`가 Cron Trigger를 소유하고 Stella production·staging의 15분
