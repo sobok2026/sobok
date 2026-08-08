@@ -158,26 +158,6 @@
   }
 }
 
-/**
- * One cell of the tone × movement grid. The empty ones stay barely there — borderless and low contrast — so
- * sixteen of them read as a field with one position lit rather than as a table waiting to be filled in. 2:1
- * keeps all four rows inside a thumb's reach on a phone.
- */
-.matrixCell {
-  aspect-ratio: 2 / 1;
-  border-radius: 0.5rem;
-  background: rgb(255 255 255 / 5%);
-}
-
-.matrixCellActive {
-  composes: matrixCell;
-
-  background: rgb(255 193 214 / 78%);
-  box-shadow:
-    0 0 0 3px rgb(255 193 214 / 16%),
-    0 8px 24px rgb(255 193 214 / 24%);
-}
-
 .quizOption {
   min-height: 3.5rem;
   border: 1px solid rgb(255 255 255 / 10%);

@@ -23,8 +23,8 @@ type FreeResultInsight = {
 }
 
 /**
- * Sections carry a standfirst only where it says something the section's own contents do not. Where a chart,
- * a matrix or a labelled figure already answers "what am I looking at", the paragraph under the heading was
+ * Sections carry a standfirst only where it says something the section's own contents do not. Where a chart
+ * or a labelled figure already answers "what am I looking at", the paragraph under the heading was
  * just a third block of grey text before the reader reached anything — so those sections omit it.
  */
 type GuardianFreeResultContent = {
@@ -40,10 +40,6 @@ type GuardianFreeResultContent = {
     title: string
     toneLabel: string
     movementLabel: string
-    /** Axis captions and the "1 of 16" line for the combination matrix. */
-    matrixToneAxis: string
-    matrixMovementAxis: string
-    matrixCaption: (total: number) => string
     toneInsights: Record<GuardianPreviewTone, FreeResultInsight>
     movementInsights: Record<GuardianPreviewMovement, FreeResultInsight>
   }
@@ -501,12 +497,9 @@ const KO_CONTENT: GuardianReportUiContent = {
       },
       reading: {
         eyebrow: 'TWO CLUES',
-        title: '두 답 사이에서 보이는 지금의 마음',
+        title: '두 답이 보여준 지금의 마음',
         toneLabel: '지금 필요한 목소리',
         movementLabel: '마음이 향하는 방향',
-        matrixToneAxis: '가로 · 목소리',
-        matrixMovementAxis: '세로 · 방향',
-        matrixCaption: (total) => `${total}가지 조합 가운데 지금의 나`,
         toneInsights: {
           comfort: {
             label: '다정한 위로',
@@ -922,9 +915,6 @@ function emptyContent(): GuardianReportUiContent {
           title: empty,
           toneLabel: empty,
           movementLabel: empty,
-          matrixToneAxis: empty,
-          matrixMovementAxis: empty,
-          matrixCaption: () => empty,
           toneInsights: {
             comfort: emptyInsight,
             honesty: emptyInsight,

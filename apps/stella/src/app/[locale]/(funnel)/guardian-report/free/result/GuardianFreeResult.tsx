@@ -16,11 +16,7 @@ import { useBirthProfile } from '@/components/BirthProfileProvider'
 import { SignFigure } from '@/components/SignFigure'
 import Starfield from '@/components/Starfield'
 import { TURNSTILE_SITE_KEY } from '@/constants'
-import {
-  GUARDIAN_REPORT_UI,
-  type GuardianPreviewMovement,
-  type GuardianPreviewTone,
-} from '@/content/guardian-report-ui'
+import { GUARDIAN_REPORT_UI } from '@/content/guardian-report-ui'
 import { toBirthInput } from '@/lib/birth-storage'
 import {
   confirmGuardianPurchase,
@@ -342,10 +338,6 @@ function LoadingResult({ copy }: { copy: string }) {
 /** Reading body, at the size Korean wants on a phone. The `sm` step up is for the wider column, not the card. */
 const PROSE = 'text-[0.9375rem] leading-[1.75] text-foreground-muted sm:text-base sm:leading-[1.8]'
 
-const TONES = ['comfort', 'honesty', 'action', 'possibility'] as const
-const MOVEMENTS = ['start', 'continue', 'recover', 'release'] as const
-const COMBINATIONS = TONES.length * MOVEMENTS.length
-
 function FreeResultReading({
   chartState,
   content,
@@ -445,15 +437,7 @@ function FreeResultReading({
           title={freeResult.reading.title}
         />
 
-        <CombinationMatrix
-          content={freeResult.reading}
-          movement={preview.movement}
-          movementLabel={movementInsight.label}
-          tone={preview.tone}
-          toneLabel={toneInsight.label}
-        />
-
-        <div className="mt-7 grid gap-5 sm:grid-cols-2 sm:gap-3">
+        <div className="mt-6 grid gap-5 sm:grid-cols-2 sm:gap-3">
           <InsightBlock eyebrow={freeResult.reading.toneLabel} insight={toneInsight} />
           <InsightBlock eyebrow={freeResult.reading.movementLabel} insight={movementInsight} />
         </div>
@@ -592,67 +576,6 @@ function SectionHeading({ body, eyebrow, id, title }: { body?: string; eyebrow: 
       </h2>
       {body ? <p className={`mt-2.5 ${PROSE}`}>{body}</p> : null}
     </header>
-  )
-}
-
-/**
- * The two free answers as a position rather than a sentence: sixteen cells, one lit.
- *
- * The grid is `aria-hidden` because the two chips above it already name the selection in words — a screen
- * reader gains nothing from sixteen cells and loses the plot.
- */
-function CombinationMatrix({
-  content,
-  movement,
-  movementLabel,
-  tone,
-  toneLabel,
-}: {
-  content: (typeof GUARDIAN_REPORT_UI)[Locale]['landing']['freeResult']['reading']
-  movement: GuardianPreviewMovement
-  movementLabel: string
-  tone: GuardianPreviewTone
-  toneLabel: string
-}) {
-  return (
-    <figure className="m-0 mt-6">
-      <div className="flex flex-wrap gap-2">
-        {[
-          { label: content.toneLabel, value: toneLabel },
-          { label: content.movementLabel, value: movementLabel },
-        ].map((chip) => (
-          <p
-            className="rounded-full border border-pink-200/25 bg-pink-100/10 px-3 py-1.5 text-[11px] font-semibold text-pink-50"
-            key={chip.label}
-          >
-            <span className="text-pink-200/70">{chip.label}</span>
-            <span className="mx-1.5 text-pink-200/40">·</span>
-            {chip.value}
-          </p>
-        ))}
-      </div>
-
-      <div aria-hidden className="mt-4">
-        <p className="flex justify-between text-[10px] font-semibold tracking-wide text-foreground-faint">
-          <span>{content.matrixMovementAxis}</span>
-          <span>{content.matrixToneAxis}</span>
-        </p>
-        <div className="mt-2 grid grid-cols-4 gap-1.5">
-          {MOVEMENTS.flatMap((row) =>
-            TONES.map((column) => (
-              <span
-                className={row === movement && column === tone ? styles.matrixCellActive : styles.matrixCell}
-                key={`${row}-${column}`}
-              />
-            )),
-          )}
-        </div>
-      </div>
-
-      <figcaption className="mt-2.5 text-[11px] text-foreground-subtle">
-        {content.matrixCaption(COMBINATIONS)}
-      </figcaption>
-    </figure>
   )
 }
 
