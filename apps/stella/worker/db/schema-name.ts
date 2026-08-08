@@ -12,7 +12,7 @@
  * drizzle-kit loads this module in Node and reads the environment variable instead. There is no default:
  * schema push and Worker startup must fail if their target was not selected explicitly.
  */
-declare const STELLA_DB_SCHEMA: string | undefined
+declare const SOBOK_DB_SCHEMA: string | undefined
 
 type StellaDbSchema = 'stella' | 'stella_stg'
 
@@ -21,24 +21,24 @@ function isStellaDbSchema(value: string | undefined): value is StellaDbSchema {
 }
 
 function resolveSchemaName(): StellaDbSchema {
-  if (typeof STELLA_DB_SCHEMA === 'string' && STELLA_DB_SCHEMA) {
-    if (isStellaDbSchema(STELLA_DB_SCHEMA)) {
-      return STELLA_DB_SCHEMA
+  if (typeof SOBOK_DB_SCHEMA === 'string' && SOBOK_DB_SCHEMA) {
+    if (isStellaDbSchema(SOBOK_DB_SCHEMA)) {
+      return SOBOK_DB_SCHEMA
     }
-    throw new Error(`Invalid STELLA_DB_SCHEMA: ${STELLA_DB_SCHEMA}`)
+    throw new Error(`Invalid SOBOK_DB_SCHEMA: ${SOBOK_DB_SCHEMA}`)
   }
 
   const fromNode = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
-    ?.STELLA_DB_SCHEMA
+    ?.SOBOK_DB_SCHEMA
   if (isStellaDbSchema(fromNode)) {
     return fromNode
   }
   if (fromNode) {
-    throw new Error(`Invalid STELLA_DB_SCHEMA: ${fromNode}`)
+    throw new Error(`Invalid SOBOK_DB_SCHEMA: ${fromNode}`)
   }
 
   throw new Error(
-    'STELLA_DB_SCHEMA is unset — set wrangler `define` for this environment, or the env var when running drizzle-kit',
+    'SOBOK_DB_SCHEMA is unset — set wrangler `define` for this environment, or the env var when running drizzle-kit',
   )
 }
 

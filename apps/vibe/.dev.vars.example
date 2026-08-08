@@ -32,5 +32,7 @@ DEEPTYPE_GA4_MEASUREMENT_ID="G-RHHX4JRYDS"
 # CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_FRESH="postgres://…"
 # CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_CACHED="postgres://…"
 
-# drizzle-kit push target — DIRECT owner connection (bypasses Hyperdrive), Supabase session pooler, sslmode=require:
-# DEEPTYPE_POSTGRES_URL_DIRECT="postgres://postgres.<project-ref>:…@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require"
+# drizzle-kit push target — the Vibe schema migrator connection (bypasses Hyperdrive), Supabase session
+# pooler, sslmode=require. Schema selection has no default:
+# SOBOK_POSTGRES_URL_DIRECT="postgres://vibe_stg_migrator.<project-ref>:…@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require"
+# SOBOK_DB_SCHEMA=deeptype_stg

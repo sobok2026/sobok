@@ -30,7 +30,7 @@
       "id": "a2a2c4cb90d94e6fb08b0eb6727bb61d"
     }
   ],
-  "define": { "DEEPTYPE_DB_SCHEMA": "'deeptype'" },
+  "define": { "SOBOK_DB_SCHEMA": "'deeptype'" },
   "services": [{ "binding": "PAYMENTS", "service": "payments", "entrypoint": "VibePayments" }],
   "queues": {
     "consumers": [
@@ -85,7 +85,7 @@
   "env": {
     "stg": {
       "workers_dev": false,
-      "define": { "DEEPTYPE_DB_SCHEMA": "'deeptype_stg'" },
+      "define": { "SOBOK_DB_SCHEMA": "'deeptype_stg'" },
       "services": [{ "binding": "PAYMENTS", "service": "payments-stg", "entrypoint": "VibePayments" }],
       "queues": {
         "consumers": [

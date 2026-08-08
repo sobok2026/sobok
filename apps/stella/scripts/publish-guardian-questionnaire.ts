@@ -25,9 +25,9 @@ const { values } = parseArgs({
 if (values.help || !values.file) {
   console.log(`Usage:
   bun run questionnaire:validate --file <questionnaire.json>
-  STELLA_DB_SCHEMA=stella_stg STELLA_POSTGRES_URL_DIRECT=<owner-url> \\
+  SOBOK_DB_SCHEMA=stella_stg SOBOK_POSTGRES_URL_DIRECT=<owner-url> \\
     bun run questionnaire:publish --file <questionnaire.json>
-  STELLA_DB_SCHEMA=stella STELLA_POSTGRES_URL_DIRECT=<owner-url> \\
+  SOBOK_DB_SCHEMA=stella SOBOK_POSTGRES_URL_DIRECT=<owner-url> \\
     bun run questionnaire:publish --file <questionnaire.json> --expected-hash <staging-sha256>
 
 Questionnaire sources are tracked under apps/stella/content/guardian-questionnaires/.`)
@@ -73,18 +73,18 @@ try {
 }
 
 async function publish(content: GuardianQuestionnaireContent, contentHash: string): Promise<void> {
-  const url = process.env.STELLA_POSTGRES_URL_DIRECT
+  const url = process.env.SOBOK_POSTGRES_URL_DIRECT
   if (!url) {
-    throw new Error('STELLA_POSTGRES_URL_DIRECT is required for publication')
+    throw new Error('SOBOK_POSTGRES_URL_DIRECT is required for publication')
   }
-  if (!process.env.STELLA_DB_SCHEMA) {
-    throw new Error('STELLA_DB_SCHEMA must explicitly be stella_stg or stella')
+  if (!process.env.SOBOK_DB_SCHEMA) {
+    throw new Error('SOBOK_DB_SCHEMA must explicitly be stella_stg or stella')
   }
-  if (process.env.STELLA_DB_SCHEMA === 'stella' && !values['expected-hash']) {
+  if (process.env.SOBOK_DB_SCHEMA === 'stella' && !values['expected-hash']) {
     throw new Error('Production publication requires --expected-hash from the validated staging publication')
   }
 
-  // Dynamic so validation does not need a database target. Importing the schema resolves STELLA_DB_SCHEMA at
+  // Dynamic so validation does not need a database target. Importing the schema resolves SOBOK_DB_SCHEMA at
   // module load; this fail-closed boundary prevents an omitted environment from publishing into production.
   const { guardianQuestionnaireVersionTable, guardianQuestionOptionTable, guardianQuestionTable } = await import(
     '../worker/db/schema/guardian-questionnaire'

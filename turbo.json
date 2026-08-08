@@ -40,7 +40,7 @@
     // not cover it either.
     "@sobok/stella#build": {
       "dependsOn": ["^build"],
-      "env": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY", "STELLA_DB_SCHEMA"],
+      "env": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY", "SOBOK_DB_SCHEMA"],
       "outputs": ["out/**", ".next/**"]
     },
     "@sobok/accounts#build": {
@@ -50,7 +50,7 @@
     },
     "@sobok/vibe#build": {
       "dependsOn": ["^build"],
-      "env": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY"],
+      "env": ["NEXT_PUBLIC_DEEPTYPE_PAY_PROFILE", "NEXT_PUBLIC_TURNSTILE_SITE_KEY", "SOBOK_DB_SCHEMA"],
       "outputs": ["out/**", ".next/**"]
     },
     "@sobok/zwds#build": {

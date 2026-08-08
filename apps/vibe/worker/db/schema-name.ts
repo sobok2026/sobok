@@ -19,25 +19,31 @@
  * this split exists to prevent is a staging deploy quietly writing into the real revenue tables — and a
  * fallback of `'deeptype'` is exactly that failure, spelled as a convenience.
  */
-declare const DEEPTYPE_DB_SCHEMA: string | undefined
+declare const SOBOK_DB_SCHEMA: string | undefined
 
-function resolveSchemaName(): string {
+type VibeDbSchema = 'deeptype' | 'deeptype_stg'
+
+function isVibeDbSchema(value: string | undefined): value is VibeDbSchema {
+  return value === 'deeptype' || value === 'deeptype_stg'
+}
+
+function resolveSchemaName(): VibeDbSchema {
   // Substituted branch (Worker bundle). `typeof` on an undeclared identifier is safe, which is what makes the
   // same expression legal in Node where the substitution never happened.
-  if (typeof DEEPTYPE_DB_SCHEMA === 'string' && DEEPTYPE_DB_SCHEMA) {
-    return DEEPTYPE_DB_SCHEMA
+  if (typeof SOBOK_DB_SCHEMA === 'string' && SOBOK_DB_SCHEMA) {
+    if (isVibeDbSchema(SOBOK_DB_SCHEMA)) return SOBOK_DB_SCHEMA
+    throw new Error(`Invalid SOBOK_DB_SCHEMA: ${SOBOK_DB_SCHEMA}`)
   }
 
   // Reached only under drizzle-kit. Read off `globalThis` rather than the bare `process`, which the Worker
   // tsconfig has no types for and which this file must not require the Worker to provide.
   const fromNode = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
-    ?.DEEPTYPE_DB_SCHEMA
-  if (fromNode) {
-    return fromNode
-  }
+    ?.SOBOK_DB_SCHEMA
+  if (isVibeDbSchema(fromNode)) return fromNode
+  if (fromNode) throw new Error(`Invalid SOBOK_DB_SCHEMA: ${fromNode}`)
 
   throw new Error(
-    'DEEPTYPE_DB_SCHEMA is unset — set wrangler `define` for this environment, or the env var when running drizzle-kit',
+    'SOBOK_DB_SCHEMA is unset — set wrangler `define` for this environment, or the env var when running drizzle-kit',
   )
 }
 

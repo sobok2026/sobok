@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --port 3010",
     "build": "next build",
-    "preview": "STELLA_DB_SCHEMA=stella_stg next build && wrangler dev --env stg",
+    "preview": "SOBOK_DB_SCHEMA=stella_stg next build && wrangler dev --env stg",
     "db:push": "drizzle-kit push --config drizzle.config.mjs",
     "questionnaire:validate": "bun run scripts/publish-guardian-questionnaire.ts --validate-only",
     "questionnaire:publish": "bun run scripts/publish-guardian-questionnaire.ts",

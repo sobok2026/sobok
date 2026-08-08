@@ -59,7 +59,7 @@
     }
   ],
   "define": {
-    "STELLA_DB_SCHEMA": "'stella'"
+    "SOBOK_DB_SCHEMA": "'stella'"
   },
   "secrets_store_secrets": [
     {
@@ -101,7 +101,7 @@
     "stg": {
       "workers_dev": false,
       "define": {
-        "STELLA_DB_SCHEMA": "'stella_stg'"
+        "SOBOK_DB_SCHEMA": "'stella_stg'"
       },
       "vars": {
         "STELLA_ALLOWED_HOSTNAMES": "stella-stg.sobok.cc",

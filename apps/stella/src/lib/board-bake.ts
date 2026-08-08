@@ -11,7 +11,7 @@ import { encodeCursor } from '../../worker/lib/cursor'
 // Build-time bake of comment boards into the static export. Each /talk/[topic] page is prerendered with its
 // first page of comments already in the HTML (fresh SEO snapshot + no first-paint flash); the client then
 // re-fetches live on mount. Reads the DB DIRECTLY (not Hyperdrive — that is a runtime Worker binding), via
-// STELLA_POSTGRES_URL_DIRECT. When that env var is absent (local/offline build) the bake is skipped and every
+// SOBOK_POSTGRES_URL_DIRECT. When that env var is absent (local/offline build) the bake is skipped and every
 // board renders empty — the build never depends on DB reachability to succeed.
 //
 // Must match the Worker's list endpoint: newest-first, PAGE per page. The cursor format itself is shared code
@@ -43,14 +43,14 @@ export function loadBakedBoards(): Promise<Map<string, BakedBoard>> {
 }
 
 async function load(): Promise<Map<string, BakedBoard>> {
-  const url = process.env.STELLA_POSTGRES_URL_DIRECT
+  const url = process.env.SOBOK_POSTGRES_URL_DIRECT
   if (!url) {
     return new Map()
   }
 
   // The Worker owns the DB, so it owns the schema. Import its table declarations only when a bake connection
   // exists: ordinary offline builds do not target either database environment and therefore must not need a
-  // schema fallback. A real bake still fails closed unless STELLA_DB_SCHEMA explicitly selects stella_stg or
+  // schema fallback. A real bake still fails closed unless SOBOK_DB_SCHEMA explicitly selects stella_stg or
   // stella before this import executes.
   const { commentTable, commentThreadTable } = await import('../../worker/db/schema/comment')
   const client = postgres(url, { max: 1, prepare: false, ssl: 'require' })
