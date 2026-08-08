@@ -110,7 +110,7 @@
 9. **GA4 Measurement Protocol** — GA4 관리 → 데이터 스트림 → `vibe.sobok.cc`(`G-RHHX4JRYDS`) → **Measurement Protocol API 비밀번호**를 발급해 `deeptype-ga4-api-secret`으로 저장한다(HCP 변수 `deeptype_ga4_api_secret`). 결제 승인 CAS를 이긴 호출만 `purchase`를 보낸다. 전송 여부를 정하는 건 **`DEEPTYPE_GA4_MEASUREMENT_ID`(배포별 var)** 이고 빈 문자열이면 전송만 생략된다 — 시크릿은 두 배포가 공유한다. 어느 쪽이 비어도 결제·리포트는 영향받지 않는다. GA4에서 `purchase`를 **키 이벤트로 표시**해야 Ads 전환 가져오기가 가능하다.
 10. **Discord**(선택) — 알림 웹훅 URL → Secrets Store(`account-vibe` HCP 변수 `deeptype_discord_webhook`). 빈 값이면 알림 no-op. Discord에는 구매·결제 식별자를 보내지 않고 이벤트 종류만 보낸다.
 
-> **drizzle-kit push**는 Hyperdrive를 우회해 Supabase 세션 풀러에 붙는다. Production과 staging은 각각 `vibe_prod_migrator`와 `vibe_stg_migrator`로 접속하며, 각 역할은 자기 schema 하나만 소유한다. 런타임 Worker는 이와 별개로 DML 전용 `deeptype_app`를 사용한다. **순서 불변식**: `sobok-prod` apply(schema owner·grant·default privileges)가 첫 staging 자동 push나 production 수동 apply보다 먼저다.
+> **drizzle-kit push**는 Hyperdrive를 우회해 Supabase 세션 풀러에 붙는다. Production과 staging은 각각 `vibe_prod_migrator`와 `vibe_stg_migrator`로 접속하며, 각 역할은 자기 schema 하나에만 `USAGE`/`CREATE`를 갖고 그 안에 만든 object만 소유한다. Schema 자체는 `postgres`가 소유한다. 런타임 Worker는 이와 별개로 DML 전용 `deeptype_app`를 사용한다. **순서 불변식**: `sobok-prod` apply(migrator·schema grant·default privileges)가 첫 staging 자동 push나 production 수동 apply보다 먼저다.
 
 ---
 

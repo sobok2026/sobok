@@ -173,7 +173,7 @@ SOBOK_DB_SCHEMA=stella SOBOK_POSTGRES_URL_DIRECT=... \
 바꾼 뒤 production에 같은 hash로 게시한다. 이미 생성된 report는 기존 pinned version을 계속
 사용한다.
 
-`SOBOK_POSTGRES_URL_DIRECT`는 선택한 Stella schema를 소유한 migrator 연결로만 사용한다.
+`SOBOK_POSTGRES_URL_DIRECT`는 선택한 Stella schema에만 DDL 권한을 갖는 migrator 연결로만 사용한다.
 Worker runtime은 기존 `stella_app` + Hyperdrive를 사용한다. sobok-ops의 두 Stella schema
 default privilege가 새 테이블·sequence에도 적용되므로 이 기능만을 위한 role, Hyperdrive,
 Supabase 프로젝트는 추가하지 않는다.

@@ -25,9 +25,9 @@ const { values } = parseArgs({
 if (values.help || !values.file) {
   console.log(`Usage:
   bun run questionnaire:validate --file <questionnaire.json>
-  SOBOK_DB_SCHEMA=stella_stg SOBOK_POSTGRES_URL_DIRECT=<owner-url> \\
+  SOBOK_DB_SCHEMA=stella_stg SOBOK_POSTGRES_URL_DIRECT=<migrator-url> \\
     bun run questionnaire:publish --file <questionnaire.json>
-  SOBOK_DB_SCHEMA=stella SOBOK_POSTGRES_URL_DIRECT=<owner-url> \\
+  SOBOK_DB_SCHEMA=stella SOBOK_POSTGRES_URL_DIRECT=<migrator-url> \\
     bun run questionnaire:publish --file <questionnaire.json> --expected-hash <staging-sha256>
 
 Questionnaire sources are tracked under apps/stella/content/guardian-questionnaires/.`)

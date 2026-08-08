@@ -40,7 +40,7 @@ fast-forward 직접 push가 가능하지만 삭제와 force-push는 별도 rules
 3. SQL과 운영 영향을 검토한 뒤 `mode=apply`, `confirmation=APPLY`로 다시 실행한다.
 4. 일반 `drizzle-kit push`가 실행된다. `--force`는 사용하지 않는다.
 
-각 제품은 별도 GitHub Environment와 별도 schema owner URL을 사용한다.
+각 제품은 별도 GitHub Environment와 별도 schema migrator URL을 사용한다.
 
 - `production-stella-schema`
 - `production-vibe-schema`
@@ -65,7 +65,7 @@ Schema 변경이 없다면 1~2를 생략한다.
 
 ## 설정과 권한
 
-Cloudflare credential은 `production`과 `staging` GitHub Environment에만 둔다. Schema owner URL은 네
+Cloudflare credential은 `production`과 `staging` GitHub Environment에만 둔다. Schema migrator URL은 네
 schema Environment에 각각 둔다.
 
 - `production-stella-schema`
@@ -77,8 +77,9 @@ Public Turnstile site key는 repository variable `STELLA_TURNSTILE_SITE_KEY`와
 `VIBE_TURNSTILE_SITE_KEY`로 관리한다. Secret이나 DB URL을 repository variable에 넣지 않는다.
 
 `sobok-ops/infra/supabase/prod`의 `product_schema_migrator_urls` sensitive output이 네
-`SOBOK_POSTGRES_URL_DIRECT` 값의 원본이다. 각 로그인 역할은 정확히 한 schema만 소유한다. 런타임
-역할은 schema 사용과 테이블 DML 권한만 갖는다.
+`SOBOK_POSTGRES_URL_DIRECT` 값의 원본이다. 각 로그인 역할은 정확히 한 schema에만 `USAGE`/
+`CREATE`를 갖고, 그 안에 직접 만든 object만 소유한다. Schema 자체는 `postgres`가 소유한다.
+런타임 역할은 schema 사용과 테이블 DML 권한만 갖는다.
 
 ## 새 제품 추가
 
@@ -89,7 +90,7 @@ Public Turnstile site key는 repository variable `STELLA_TURNSTILE_SITE_KEY`와
 3. `.github/workflows/production-deploy.yml`에 reusable app deploy job을 추가한다.
 4. Staging을 제공하면 `.github/workflows/staging-deploy.yml`에도 job을 추가한다.
 5. DB를 사용하면 staging schema matrix와 `.github/workflows/production-schema.yml`에 제품 job을
-   추가하고 `sobok-ops`에 schema owner와 GitHub Environment를 추가한다.
+   추가하고 `sobok-ops`에 schema migrator·grant와 GitHub Environment를 추가한다.
 6. Payments를 사용하면 중앙 payment scope·entrypoint와 제품 Service Binding을 추가한다.
 7. 공개 build 값이 있으면 app별 GitHub repository variable로 선언한다.
 
@@ -100,7 +101,7 @@ Public Turnstile site key는 repository variable `STELLA_TURNSTILE_SITE_KEY`와
 
 현재 product schema가 비어 있다는 전제에서 다음 순서로 전환한다.
 
-1. `sobok-ops/infra/supabase/prod`를 apply해 schema owner와 runtime default privileges를 만든다.
+1. `sobok-ops/infra/supabase/prod`를 apply해 schema migrator·grant와 runtime default privileges를 만든다.
 2. `sobok-ops/infra/github/sobok2026`을 apply해 Environment, branch policy, repository variable,
    required checks를 만든다.
 3. `product_schema_migrator_urls`의 각 값을 같은 이름의 GitHub schema Environment secret
