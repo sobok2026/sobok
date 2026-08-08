@@ -1,0 +1,102 @@
+name: Production Deploy
+
+run-name: Manually release production @ ${{ github.sha }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type DEPLOY to release every production app
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sobok-production
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify production release
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - name: Validate manual release
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$REF" != 'refs/heads/main' ]; then
+            echo 'Production releases must run from main.' >&2
+            exit 1
+          fi
+          if [ "$CONFIRMATION" != 'DEPLOY' ]; then
+            echo 'Type DEPLOY to confirm the production release.' >&2
+            exit 1
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Verify workspace
+        uses: ./.github/actions/verify-workspace
+
+      - name: Assert no generated-file drift
+        run: git diff --exit-code
+
+  payments:
+    name: Deploy payments
+    needs: verify
+    uses: ./.github/workflows/_payments-deploy.yml
+    with:
+      target: production
+
+  stella:
+    name: Deploy Stella
+    needs: payments
+    uses: ./.github/workflows/_app-deploy.yml
+    with:
+      package_name: '@sobok/stella'
+      directory: apps/stella
+      target: production
+      database_schema: stella
+      turnstile_site_key: ${{ vars.STELLA_TURNSTILE_SITE_KEY }}
+
+  vibe:
+    name: Deploy Vibe
+    needs: payments
+    uses: ./.github/workflows/_app-deploy.yml
+    with:
+      package_name: '@sobok/vibe'
+      directory: apps/vibe
+      target: production
+      database_schema: deeptype
+      turnstile_site_key: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
+      vibe_pay_profile: production
+      verify_export: true
+
+  zwds:
+    name: Deploy ZWDS
+    needs: payments
+    uses: ./.github/workflows/_app-deploy.yml
+    with:
+      package_name: '@sobok/zwds'
+      directory: apps/zwds
+      target: production
+
+  horn:
+    name: Deploy Horn
+    needs: payments
+    uses: ./.github/workflows/_app-deploy.yml
+    with:
+      package_name: '@sobok/horn'
+      directory: apps/horn
+      target: production

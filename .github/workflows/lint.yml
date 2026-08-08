@@ -27,17 +27,10 @@ jobs:
       - name: Set up Bun workspace
         uses: ./.github/actions/setup-bun
 
-      - name: Biome CI (format + lint + import order)
-        run: bunx biome ci .
-
-      - name: Prettier check (css, markdown, yaml, html)
-        run: bunx prettier --check '**/*.{css,md,yml,yaml,html}' --ignore-path .gitignore
-
-      # Until now nothing in CI ran tsc — the only gate was the .husky/pre-push hook, which `--no-verify`
-      # skips. Deploy workflows build the app they deploy, so a type error in a package that no deploy
-      # touches could reach main unnoticed.
-      - name: Type check
-        run: bun run type
+      # Shared with the staging deployment preflight so an administrator fast-forward push and a pull request
+      # are evaluated by the same repository-wide static checks.
+      - name: Verify workspace
+        uses: ./.github/actions/verify-workspace
 
       # Scoped to apps/vibe on purpose. The deep-type instrument is guarded almost entirely by assertions —
       # option polarity, reverse-flag pins, pole freeze, band cuts, claim boundaries — and none of them ran in
@@ -48,6 +41,46 @@ jobs:
       # this step means fixing those first — do it, then drop the path filter.
       - name: Unit tests (apps/vibe)
         run: bun test apps/vibe
+
+      - name: Assert no generated-file drift
+        run: git diff --exit-code
+
+  release-builds:
+    name: Release builds
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 25
+    env:
+      CI: true
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Build Stella
+        env:
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.STELLA_TURNSTILE_SITE_KEY }}
+          SOBOK_DB_SCHEMA: ${{ github.base_ref == 'staging' && 'stella_stg' || 'stella' }}
+        run: bun run --filter=@sobok/stella build
+
+      - name: Build Vibe
+        env:
+          NEXT_PUBLIC_DEEPTYPE_PAY_PROFILE: ${{ github.base_ref == 'staging' && 'staging' || 'production' }}
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
+          SOBOK_DB_SCHEMA: ${{ github.base_ref == 'staging' && 'deeptype_stg' || 'deeptype' }}
+        run: bun run --filter=@sobok/vibe build
+
+      - name: Verify Vibe static export
+        run: bun run --filter=@sobok/vibe check:export
+
+      - name: Build ZWDS
+        run: bun run --filter=@sobok/zwds build
+
+      - name: Build Horn
+        run: bun run --filter=@sobok/horn build
 
       - name: Assert no generated-file drift
         run: git diff --exit-code

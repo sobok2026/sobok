@@ -1,0 +1,109 @@
+name: Staging Deploy
+
+run-name: Automatically release staging @ ${{ github.sha }}
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sobok-staging
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify staging release
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - name: Validate release branch
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$REF" != 'refs/heads/staging' ]; then
+            echo 'Staging releases must run from the staging branch.' >&2
+            exit 1
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Verify workspace
+        uses: ./.github/actions/verify-workspace
+
+      - name: Assert no generated-file drift
+        run: git diff --exit-code
+
+  schema:
+    name: Push ${{ matrix.product }} staging schema
+    needs: verify
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix:
+        include:
+          - product: stella
+            directory: apps/stella
+            schema: stella_stg
+          - product: vibe
+            directory: apps/vibe
+            schema: deeptype_stg
+    environment:
+      name: staging-${{ matrix.product }}-schema
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Push schema with Drizzle
+        working-directory: ${{ matrix.directory }}
+        env:
+          CI: 'true'
+          SOBOK_DB_SCHEMA: ${{ matrix.schema }}
+          SOBOK_POSTGRES_URL_DIRECT: ${{ secrets.SOBOK_POSTGRES_URL_DIRECT }}
+        run: bunx drizzle-kit push --config drizzle.config.mjs
+
+  payments:
+    name: Deploy payments
+    needs: schema
+    uses: ./.github/workflows/_payments-deploy.yml
+    with:
+      target: staging
+
+  stella:
+    name: Deploy Stella
+    needs: payments
+    uses: ./.github/workflows/_app-deploy.yml
+    with:
+      package_name: '@sobok/stella'
+      directory: apps/stella
+      target: staging
+      database_schema: stella_stg
+      turnstile_site_key: ${{ vars.STELLA_TURNSTILE_SITE_KEY }}
+
+  vibe:
+    name: Deploy Vibe
+    needs: payments
+    uses: ./.github/workflows/_app-deploy.yml
+    with:
+      package_name: '@sobok/vibe'
+      directory: apps/vibe
+      target: staging
+      database_schema: deeptype_stg
+      turnstile_site_key: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
+      vibe_pay_profile: staging
+      verify_export: true
