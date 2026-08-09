@@ -55,11 +55,11 @@ jobs:
           - product: stella
             directory: apps/stella
             schema: stella_stg
-            migrator_secret: STELLA_POSTGRES_MIGRATOR_URL
+            migrator_secret: STELLA_POSTGRES_URL_DIRECT
           - product: vibe
             directory: apps/vibe
             schema: deeptype_stg
-            migrator_secret: VIBE_POSTGRES_MIGRATOR_URL
+            migrator_secret: VIBE_POSTGRES_URL_DIRECT
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15

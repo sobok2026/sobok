@@ -41,7 +41,7 @@ fast-forward 직접 push가 가능하지만 삭제와 force-push는 별도 rules
 4. 일반 `drizzle-kit push`가 실행된다. `--force`는 사용하지 않는다.
 
 Schema job도 실제 배포 대상인 `production` GitHub Environment를 사용한다. Stella는
-`STELLA_POSTGRES_MIGRATOR_URL`, Vibe는 `VIBE_POSTGRES_MIGRATOR_URL`만 자기 job의
+`STELLA_POSTGRES_URL_DIRECT`, Vibe는 `VIBE_POSTGRES_URL_DIRECT`만 자기 job의
 `SOBOK_POSTGRES_URL_DIRECT`로 명시적 매핑한다. 앱 배포 job은 이 DB secret을 참조하지 않는다.
 
 ## Production 앱 수동 배포
@@ -64,12 +64,12 @@ Schema 변경이 없다면 1~2를 생략한다.
 GitHub Environment는 실제 배포 대상인 `production`과 `staging` 두 개만 둔다. 각 Environment에
 Cloudflare credential과 해당 배포 대상의 제품별 schema migrator URL을 함께 등록한다.
 
-| Environment  | Secret                         | DB role/schema                       |
-| ------------ | ------------------------------ | ------------------------------------ |
-| `production` | `STELLA_POSTGRES_MIGRATOR_URL` | `stella_prod_migrator` / `stella`    |
-| `production` | `VIBE_POSTGRES_MIGRATOR_URL`   | `vibe_prod_migrator` / `deeptype`    |
-| `staging`    | `STELLA_POSTGRES_MIGRATOR_URL` | `stella_stg_migrator` / `stella_stg` |
-| `staging`    | `VIBE_POSTGRES_MIGRATOR_URL`   | `vibe_stg_migrator` / `deeptype_stg` |
+| Environment  | Secret                       | DB role/schema                       |
+| ------------ | ---------------------------- | ------------------------------------ |
+| `production` | `STELLA_POSTGRES_URL_DIRECT` | `stella_prod_migrator` / `stella`    |
+| `production` | `VIBE_POSTGRES_URL_DIRECT`   | `vibe_prod_migrator` / `deeptype`    |
+| `staging`    | `STELLA_POSTGRES_URL_DIRECT` | `stella_stg_migrator` / `stella_stg` |
+| `staging`    | `VIBE_POSTGRES_URL_DIRECT`   | `vibe_stg_migrator` / `deeptype_stg` |
 
 Public Turnstile site key는 repository variable `STELLA_TURNSTILE_SITE_KEY`와
 `VIBE_TURNSTILE_SITE_KEY`로 관리한다. Secret이나 DB URL을 repository variable에 넣지 않는다.

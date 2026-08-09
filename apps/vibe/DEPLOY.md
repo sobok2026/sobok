@@ -187,8 +187,8 @@ GitHub의 기본 single pending slot을 사용해 현재 실행은 끝까지 완
   차단하므로 change gate를 우회해도 force-push나 브랜치 삭제는 허용되지 않는다.
 - **DB는 하나의 staging 상태다.** `stella_stg`와 `deeptype_stg`도 `staging` 브랜치 최신 커밋과 함께
   전진한다. 파괴적 변경이나 rename처럼 판단이 필요한 변경은 자동 승인하지 않고 run을 실패시킨다.
-- `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`·`STELLA_POSTGRES_MIGRATOR_URL`·
-  `VIBE_POSTGRES_MIGRATOR_URL`은 `staging` Environment에 둔다. Schema matrix는 제품에 맞는
+- `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`·`STELLA_POSTGRES_URL_DIRECT`·
+  `VIBE_POSTGRES_URL_DIRECT`은 `staging` Environment에 둔다. Schema matrix는 제품에 맞는
   DB secret 하나만 `SOBOK_POSTGRES_URL_DIRECT`로 주입한다.
 - production schema와 앱 배포는 `main`에서 각각 수동 실행하고 둘 다 `production`
   Environment를 사용한다. Schema job만 제품별 DB secret을 참조하며 앱 배포 workflow에는
@@ -199,8 +199,8 @@ GitHub의 기본 single pending slot을 사용해 현재 실행은 끝까지 완
 
 ⚠️ **PR build에 GitHub Environment를 붙이지 마라.** `pull_request`는 PR 브랜치의 워크플로 파일을
 실행하므로, environment를 붙이는 순간 PR job이 환경 시크릿을 쥘 수 있다. 같은 이유로 레포 레벨
-`CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`·`STELLA_POSTGRES_MIGRATOR_URL`·
-`VIBE_POSTGRES_MIGRATOR_URL`은 존재하면 안 된다. 값은 보호된 `production`/`staging`
+`CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`·`STELLA_POSTGRES_URL_DIRECT`·
+`VIBE_POSTGRES_URL_DIRECT`은 존재하면 안 된다. 값은 보호된 `production`/`staging`
 Environment에만 둔다.
 
 이 경계가 **보장하는 것과 보장하지 않는 것**을 정확히:
@@ -331,7 +331,7 @@ rollback은 장애 완화용일 뿐이며 DB schema를 되돌리지 않으므로
 - [ ] Phase 0 산출물 전부 존재(Supabase·Hyperdrive×2·Vibe 전용 Secrets Store 항목 5개·중앙 payments
       Worker·Vibe Queue/DLQ·PortOne API Secret 1개·Webhook Secret 2개·Turnstile·PortOne 대표 Store).
 - [ ] **CI 크레덴셜 경계** — `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`·
-      `STELLA_POSTGRES_MIGRATOR_URL`·`VIBE_POSTGRES_MIGRATOR_URL`은 `production`·`staging`
+      `STELLA_POSTGRES_URL_DIRECT`·`VIBE_POSTGRES_URL_DIRECT`은 `production`·`staging`
       Environment에만 있고 레포 레벨에는 없음.
 - [ ] `sobok-ops`의 `staging-history`·`staging-change-gate` ruleset과 `staging` Environment branch
       policy 적용 완료. Admin fast-forward push는 허용되고 force-push·삭제는 차단됨.
