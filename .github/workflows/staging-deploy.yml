@@ -55,11 +55,12 @@ jobs:
           - product: stella
             directory: apps/stella
             schema: stella_stg
+            migrator_secret: STELLA_POSTGRES_MIGRATOR_URL
           - product: vibe
             directory: apps/vibe
             schema: deeptype_stg
-    environment:
-      name: staging-${{ matrix.product }}-schema
+            migrator_secret: VIBE_POSTGRES_MIGRATOR_URL
+    environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
     steps:
@@ -74,7 +75,7 @@ jobs:
         env:
           CI: 'true'
           SOBOK_DB_SCHEMA: ${{ matrix.schema }}
-          SOBOK_POSTGRES_URL_DIRECT: ${{ secrets.SOBOK_POSTGRES_URL_DIRECT }}
+          SOBOK_POSTGRES_URL_DIRECT: ${{ secrets[matrix.migrator_secret] }}
         run: bunx drizzle-kit push --config drizzle.config.mjs
 
   payments:

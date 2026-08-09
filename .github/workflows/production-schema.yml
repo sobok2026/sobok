@@ -58,7 +58,7 @@ jobs:
     name: ${{ inputs.mode }} Stella schema
     if: inputs.product == 'stella'
     needs: validate
-    environment: production-stella-schema
+    environment: production
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
     steps:
@@ -74,7 +74,7 @@ jobs:
           CI: 'true'
           MODE: ${{ inputs.mode }}
           SOBOK_DB_SCHEMA: stella
-          SOBOK_POSTGRES_URL_DIRECT: ${{ secrets.SOBOK_POSTGRES_URL_DIRECT }}
+          SOBOK_POSTGRES_URL_DIRECT: ${{ secrets.STELLA_POSTGRES_MIGRATOR_URL }}
         run: |
           if [ "$MODE" = 'plan' ]; then
             bunx drizzle-kit push --config drizzle.config.mjs --explain --verbose
@@ -86,7 +86,7 @@ jobs:
     name: ${{ inputs.mode }} Vibe schema
     if: inputs.product == 'vibe'
     needs: validate
-    environment: production-vibe-schema
+    environment: production
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
     steps:
@@ -102,7 +102,7 @@ jobs:
           CI: 'true'
           MODE: ${{ inputs.mode }}
           SOBOK_DB_SCHEMA: deeptype
-          SOBOK_POSTGRES_URL_DIRECT: ${{ secrets.SOBOK_POSTGRES_URL_DIRECT }}
+          SOBOK_POSTGRES_URL_DIRECT: ${{ secrets.VIBE_POSTGRES_MIGRATOR_URL }}
         run: |
           if [ "$MODE" = 'plan' ]; then
             bunx drizzle-kit push --config drizzle.config.mjs --explain --verbose

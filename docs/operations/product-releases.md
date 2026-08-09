@@ -19,7 +19,7 @@ Staging은 공유 통합 환경이므로 push된 commit 전체를 자동 반영�
 `.github/workflows/staging-deploy.yml`은 `staging` push마다 다음 순서를 수행한다.
 
 1. Environment 없이 repository 정적 검증을 수행한다.
-2. `staging-stella-schema`와 `staging-vibe-schema` Environment에서 schema를 순차 push한다.
+2. `staging` Environment의 제품별 migrator secret으로 schema를 순차 push한다.
 3. `payments-stg`를 배포한다.
 4. Stella와 Vibe staging Worker를 배포한다.
 
@@ -40,13 +40,9 @@ fast-forward 직접 push가 가능하지만 삭제와 force-push는 별도 rules
 3. SQL과 운영 영향을 검토한 뒤 `mode=apply`, `confirmation=APPLY`로 다시 실행한다.
 4. 일반 `drizzle-kit push`가 실행된다. `--force`는 사용하지 않는다.
 
-각 제품은 별도 GitHub Environment와 별도 schema migrator URL을 사용한다.
-
-- `production-stella-schema`
-- `production-vibe-schema`
-
-Environment secret 이름은 `SOBOK_POSTGRES_URL_DIRECT`다. 해당 credential은 다른 제품 schema나 앱
-배포 job에 전달되지 않는다.
+Schema job도 실제 배포 대상인 `production` GitHub Environment를 사용한다. Stella는
+`STELLA_POSTGRES_MIGRATOR_URL`, Vibe는 `VIBE_POSTGRES_MIGRATOR_URL`만 자기 job의
+`SOBOK_POSTGRES_URL_DIRECT`로 명시적 매핑한다. 앱 배포 job은 이 DB secret을 참조하지 않는다.
 
 ## Production 앱 수동 배포
 
@@ -65,19 +61,21 @@ Schema 변경이 없다면 1~2를 생략한다.
 
 ## 설정과 권한
 
-Cloudflare credential은 `production`과 `staging` GitHub Environment에만 둔다. Schema migrator URL은 네
-schema Environment에 각각 둔다.
+GitHub Environment는 실제 배포 대상인 `production`과 `staging` 두 개만 둔다. 각 Environment에
+Cloudflare credential과 해당 배포 대상의 제품별 schema migrator URL을 함께 등록한다.
 
-- `production-stella-schema`
-- `staging-stella-schema`
-- `production-vibe-schema`
-- `staging-vibe-schema`
+| Environment  | Secret                         | DB role/schema                       |
+| ------------ | ------------------------------ | ------------------------------------ |
+| `production` | `STELLA_POSTGRES_MIGRATOR_URL` | `stella_prod_migrator` / `stella`    |
+| `production` | `VIBE_POSTGRES_MIGRATOR_URL`   | `vibe_prod_migrator` / `deeptype`    |
+| `staging`    | `STELLA_POSTGRES_MIGRATOR_URL` | `stella_stg_migrator` / `stella_stg` |
+| `staging`    | `VIBE_POSTGRES_MIGRATOR_URL`   | `vibe_stg_migrator` / `deeptype_stg` |
 
 Public Turnstile site key는 repository variable `STELLA_TURNSTILE_SITE_KEY`와
 `VIBE_TURNSTILE_SITE_KEY`로 관리한다. Secret이나 DB URL을 repository variable에 넣지 않는다.
 
-`sobok-ops/infra/supabase/prod`의 `product_schema_migrator_urls` sensitive output이 네
-`SOBOK_POSTGRES_URL_DIRECT` 값의 원본이다. 각 로그인 역할은 정확히 한 schema에만 `USAGE`/
+`sobok-ops/infra/supabase/prod`의 `product_schema_migrator_urls` sensitive output이 Environment와
+secret 이름으로 중첩된 값의 원본이다. 각 로그인 역할은 정확히 한 schema에만 `USAGE`/
 `CREATE`를 갖고, 그 안에 직접 만든 object만 소유한다. Schema 자체는 `postgres`가 소유한다.
 런타임 역할은 schema 사용과 테이블 DML 권한만 갖는다.
 
@@ -90,7 +88,8 @@ Public Turnstile site key는 repository variable `STELLA_TURNSTILE_SITE_KEY`와
 3. `.github/workflows/production-deploy.yml`에 reusable app deploy job을 추가한다.
 4. Staging을 제공하면 `.github/workflows/staging-deploy.yml`에도 job을 추가한다.
 5. DB를 사용하면 staging schema matrix와 `.github/workflows/production-schema.yml`에 제품 job을
-   추가하고 `sobok-ops`에 schema migrator·grant와 GitHub Environment를 추가한다.
+   추가하고 `sobok-ops`에 schema migrator·grant를 추가한다. 새 GitHub Environment는 만들지
+   않고 기존 `production`/`staging`에 제품별 migrator secret을 추가한다.
 6. Payments를 사용하면 중앙 payment scope·entrypoint와 제품 Service Binding을 추가한다.
 7. 공개 build 값이 있으면 app별 GitHub repository variable로 선언한다.
 
@@ -104,8 +103,8 @@ Public Turnstile site key는 repository variable `STELLA_TURNSTILE_SITE_KEY`와
 1. `sobok-ops/infra/supabase/prod`를 apply해 schema migrator·grant와 runtime default privileges를 만든다.
 2. `sobok-ops/infra/github/sobok2026`을 apply해 Environment, branch policy, repository variable,
    required checks를 만든다.
-3. `product_schema_migrator_urls`의 각 값을 같은 이름의 GitHub schema Environment secret
-   `SOBOK_POSTGRES_URL_DIRECT`에 넣는다.
+3. `product_schema_migrator_urls`의 `production`/`staging` 하위 값을 같은 이름의 GitHub
+   Environment secret으로 넣는다.
 4. `staging` push로 staging schema와 staging을 제공하는 앱의 배포를 완료한다.
 5. Production schema를 제품별로 plan한 뒤 apply한다.
 6. Production 앱 배포 workflow를 수동 실행한다.
