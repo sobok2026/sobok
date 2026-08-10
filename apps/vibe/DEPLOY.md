@@ -128,7 +128,7 @@
   - `vars.DEEPTYPE_GA4_MEASUREMENT_ID` = `src/constants.ts`의 `GA4_MEASUREMENT_ID` 및 컨테이너 `LT - GA4 Measurement ID` 룩업의 `vibe.sobok.cc` 값과 **세 곳이 동일**해야 한다
 - **프론트 sitekey**: `apps/vibe/src/constants.ts`의 `TURNSTILE_SITE_KEY`가 `NEXT_PUBLIC_TURNSTILE_SITE_KEY`를 읽고, 배포 workflow가 저장소 변수 `VIBE_TURNSTILE_SITE_KEY`를 직접 주입한다(값이 비면 빌드가 실패한다). 이 sitekey와 서버 `vibe-turnstile-secret`은 **같은 위젯 짝**이어야 함.
 - **프론트 profile**: 같은 파일의 `PAY_PROFILE`이 `NEXT_PUBLIC_DEEPTYPE_PAY_PROFILE`을 읽는다.
-  `production`/`staging` 둘 중 하나가 아니면 빌드가 실패한다. CI에서는 재사용 workflow의
+  `production`/`staging` 둘 중 하나가 아니면 빌드가 실패한다. CI에서는 `deploy-app` composite action의
   `target` 입력을 그대로 사용한다(등록할 GitHub 변수 없음). 로컬은 `.env.local`에 `staging`.
 - **중앙 채널 카탈로그**: Store ID와 배포별 channel entry는 `apps/payments/wrangler.jsonc`에서
   관리한다. 각 entry는 `channelKey`·`mode`·제품 `scopes`를 가지며, Vibe의

@@ -65,6 +65,11 @@ Schema 변경이 없다면 1~2를 생략한다.
 GitHub Environment는 실제 배포 대상인 `production`과 `staging` 두 개만 둔다. 각 Environment에
 Cloudflare credential과 해당 배포 대상의 제품별 schema migrator URL을 함께 등록한다.
 
+Cloudflare credential을 사용하는 job은 `staging-deploy.yml`과 `production-deploy.yml`에 직접 선언하고
+각각 literal `staging` 또는 `production` Environment를 지정한다. 공통 빌드·배포 단계만
+`.github/actions/deploy-{payments,app}` composite action으로 재사용한다. 배포 credential을 repository
+secret으로 복제하거나 reusable workflow의 암시적 secret 전달에 의존하지 않는다.
+
 | Environment  | Secret                       | DB role/schema                       |
 | ------------ | ---------------------------- | ------------------------------------ |
 | `production` | `STELLA_POSTGRES_URL_DIRECT` | `stella_prod_migrator` / `stella`    |
@@ -91,7 +96,8 @@ secret 이름으로 중첩된 값의 원본이다. 이 output도 `sslmode=verify
 
 1. 앱 `package.json`에 표준 `build` script를 둔다.
 2. `wrangler.jsonc`에 production Worker와 필요하면 `stg` environment를 선언한다.
-3. `.github/workflows/production-deploy.yml`에 reusable app deploy job을 추가한다.
+3. `.github/workflows/production-deploy.yml`에 Environment를 명시한 app deploy job을 추가하고
+   `.github/actions/deploy-app`을 호출한다.
 4. Staging을 제공하면 `.github/workflows/staging-deploy.yml`에도 job을 추가한다.
 5. DB를 사용하면 staging schema matrix와 `.github/workflows/production-schema.yml`에 제품 job을
    추가하고 `sobok-ops`에 schema migrator·grant를 추가한다. 새 GitHub Environment는 만들지

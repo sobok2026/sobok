@@ -1,0 +1,86 @@
+name: Build and Deploy App Worker
+description: Build, optionally verify, and deploy one app after the caller selects a GitHub Environment.
+
+inputs:
+  package_name:
+    description: Bun workspace package to build.
+    required: true
+  directory:
+    description: App directory containing wrangler.jsonc.
+    required: true
+  target:
+    description: Cloudflare deployment target (`staging` or `production`).
+    required: true
+  database_schema:
+    description: Build-time PostgreSQL schema, if the app uses one.
+    required: false
+    default: ''
+  turnstile_site_key:
+    description: Public Turnstile site key, if the app uses one.
+    required: false
+    default: ''
+  vibe_pay_profile:
+    description: Vibe static payment profile, if applicable.
+    required: false
+    default: ''
+  verify_export:
+    description: Whether to run the app's check:export script after building.
+    required: false
+    default: 'false'
+  cloudflare_api_token:
+    description: Cloudflare API token from the caller job's GitHub Environment.
+    required: true
+  cloudflare_account_id:
+    description: Cloudflare account id from the caller job's GitHub Environment.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Validate deployment inputs
+      shell: bash
+      env:
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare_account_id }}
+        CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare_api_token }}
+        TARGET: ${{ inputs.target }}
+      run: |
+        case "$TARGET" in
+          staging|production) ;;
+          *) echo "Unsupported deployment target: $TARGET" >&2; exit 1 ;;
+        esac
+        if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+          echo 'CLOUDFLARE_API_TOKEN is unavailable to the environment-scoped deployment job.' >&2
+          exit 1
+        fi
+        if [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+          echo 'CLOUDFLARE_ACCOUNT_ID is unavailable to the environment-scoped deployment job.' >&2
+          exit 1
+        fi
+
+    - name: Set up Bun workspace
+      uses: ./.github/actions/setup-bun
+
+    - name: Build static export
+      shell: bash
+      env:
+        NEXT_PUBLIC_DEEPTYPE_PAY_PROFILE: ${{ inputs.vibe_pay_profile }}
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ inputs.turnstile_site_key }}
+        PACKAGE_NAME: ${{ inputs.package_name }}
+        SOBOK_DB_SCHEMA: ${{ inputs.database_schema }}
+      run: bun run --filter="$PACKAGE_NAME" build
+
+    - name: Verify static export
+      if: inputs.verify_export == 'true'
+      shell: bash
+      env:
+        PACKAGE_NAME: ${{ inputs.package_name }}
+      run: bun run --filter="$PACKAGE_NAME" check:export
+
+    - name: Deploy to Cloudflare Workers
+      uses: cloudflare/wrangler-action@v4
+      with:
+        apiToken: ${{ inputs.cloudflare_api_token }}
+        accountId: ${{ inputs.cloudflare_account_id }}
+        workingDirectory: ${{ inputs.directory }}
+        packageManager: bun
+        command: ${{ inputs.target == 'staging' && 'deploy --env stg' || 'deploy' }}

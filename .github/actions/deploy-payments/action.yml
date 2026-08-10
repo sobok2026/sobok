@@ -1,0 +1,52 @@
+name: Deploy Payments Worker
+description: Validate and deploy the central Payments Worker after the caller selects a GitHub Environment.
+
+inputs:
+  target:
+    description: Cloudflare deployment target (`staging` or `production`).
+    required: true
+  cloudflare_api_token:
+    description: Cloudflare API token from the caller job's GitHub Environment.
+    required: true
+  cloudflare_account_id:
+    description: Cloudflare account id from the caller job's GitHub Environment.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Validate deployment inputs
+      shell: bash
+      env:
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare_account_id }}
+        CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare_api_token }}
+        TARGET: ${{ inputs.target }}
+      run: |
+        case "$TARGET" in
+          staging|production) ;;
+          *) echo "Unsupported deployment target: $TARGET" >&2; exit 1 ;;
+        esac
+        if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+          echo 'CLOUDFLARE_API_TOKEN is unavailable to the environment-scoped deployment job.' >&2
+          exit 1
+        fi
+        if [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+          echo 'CLOUDFLARE_ACCOUNT_ID is unavailable to the environment-scoped deployment job.' >&2
+          exit 1
+        fi
+
+    - name: Set up Bun workspace
+      uses: ./.github/actions/setup-bun
+
+    - name: Check Worker contract
+      shell: bash
+      run: bun run --filter="@sobok/payments-service" type
+
+    - name: Deploy to Cloudflare Workers
+      uses: cloudflare/wrangler-action@v4
+      with:
+        apiToken: ${{ inputs.cloudflare_api_token }}
+        accountId: ${{ inputs.cloudflare_account_id }}
+        workingDirectory: apps/payments
+        packageManager: bun
+        command: ${{ inputs.target == 'staging' && 'deploy --env stg' || 'deploy' }}

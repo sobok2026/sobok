@@ -82,30 +82,60 @@ jobs:
   payments:
     name: Deploy payments
     needs: schema
-    uses: ./.github/workflows/_payments-deploy.yml
-    with:
-      target: staging
+    environment: staging
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Deploy Payments Worker
+        uses: ./.github/actions/deploy-payments
+        with:
+          target: staging
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   stella:
     name: Deploy Stella
     needs: payments
-    uses: ./.github/workflows/_app-deploy.yml
-    with:
-      package_name: '@sobok/stella'
-      directory: apps/stella
-      target: staging
-      database_schema: stella_stg
-      turnstile_site_key: ${{ vars.STELLA_TURNSTILE_SITE_KEY }}
+    environment: staging
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Build and deploy Stella
+        uses: ./.github/actions/deploy-app
+        with:
+          package_name: '@sobok/stella'
+          directory: apps/stella
+          target: staging
+          database_schema: stella_stg
+          turnstile_site_key: ${{ vars.STELLA_TURNSTILE_SITE_KEY }}
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   vibe:
     name: Deploy Vibe
     needs: payments
-    uses: ./.github/workflows/_app-deploy.yml
-    with:
-      package_name: '@sobok/vibe'
-      directory: apps/vibe
-      target: staging
-      database_schema: deeptype_stg
-      turnstile_site_key: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
-      vibe_pay_profile: staging
-      verify_export: true
+    environment: staging
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Build and deploy Vibe
+        uses: ./.github/actions/deploy-app
+        with:
+          package_name: '@sobok/vibe'
+          directory: apps/vibe
+          target: staging
+          database_schema: deeptype_stg
+          turnstile_site_key: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
+          vibe_pay_profile: staging
+          verify_export: 'true'
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
