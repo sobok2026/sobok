@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "next dev --port 3014",
     "build": "next build",
+    "type:bindings": "wrangler types worker-configuration.generated.d.ts --env-interface CloudflareBindings --strict-vars=false",
     "oauth:bootstrap": "NODE_EXTRA_CA_CERTS=../../certs/supabase/prod-ca-2021.crt bun run scripts/bootstrap-oauth-client.ts",
     "db:push": "NODE_EXTRA_CA_CERTS=../../certs/supabase/prod-ca-2021.crt drizzle-kit push --config drizzle.config.mjs",
-    "type": "next typegen && tsc --noEmit && tsc -p worker/tsconfig.json && tsc -p scripts/tsconfig.json"
+    "type": "wrangler types worker-configuration.generated.d.ts --env-interface CloudflareBindings --strict-vars=false --check && next typegen && tsc --noEmit && tsc -p worker/tsconfig.json && tsc -p scripts/tsconfig.json"
   },
   "dependencies": {
     "@marsidev/react-turnstile": "^1.5.3",

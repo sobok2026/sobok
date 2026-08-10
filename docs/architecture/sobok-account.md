@@ -197,22 +197,24 @@ hook을 factory에 주입한다.
 
 ## 10. 소스 구현 기준선
 
-2026-08-04 기준으로 다음 범위가 앱 저장소와 인프라 저장소의 `main`에 구현되어 있다. 이 목록은 소스
+2026-08-11 기준으로 다음 범위가 앱 저장소와 인프라 저장소에 구현되어 있다. 이 목록은 소스
 반영 상태이며 외부 제공자 콘솔 설정, HCP Terraform apply, schema push 또는 실제 배포 완료를 뜻하지
 않는다.
 
 - `apps/accounts`: 중앙 로그인·가입·계정 관리 UI, Better Auth Worker, `identity`/`identity_stg` schema,
-  이메일 Queue consumer와 OIDC client bootstrap 스크립트
+  이메일 Queue consumer, OIDC client bootstrap 스크립트, production/staging Wrangler binding
 - `packages/auth`: authority와 relying-party factory, 안정적인 OIDC 계약, 비밀번호·username, magic link,
   Google/One Tap, Kakao, passkey, TOTP/backup code, BBaton 연결 구성
 - `apps/stella`: 첫 OIDC relying party session, 게스트 `guardian_collection` 귀속, 계정 보관함과 stable
   report 재열람, account-save 보상, 계정 세션 기반 리포트·재추첨 권한 확인
-- `sobok-ops`: `identity`/`identity_stg`와 `identity_app`, accounts Hyperdrive, 이메일 Queue/DLQ, 환경별
-  Secrets Store 항목, Stella OIDC client secret, accounts Turnstile, custom domain desired state
+- `sobok-ops`: `identity`/`identity_stg`, runtime `identity_app`, 환경별 Accounts migrator, accounts Hyperdrive,
+  이메일 Queue/DLQ, 환경별 Secrets Store 항목, Stella OIDC client secret, accounts Turnstile, custom domain
+  desired state
+- `.github/workflows`: Accounts schema plan/apply와 environment-scoped production/staging Worker 배포
 
-`account-accounts`가 생성하는 `accounts_hyperdrive_id`가 아직 앱 설정에 들어가기 전이므로
-`apps/accounts/wrangler.jsonc`와 accounts 배포 workflow는 의도적으로 추가하지 않았다. 인프라를 먼저
-apply한 뒤 이 두 파일을 완성하고 GitHub Actions에서 Worker를 최초 배포한다.
+Wrangler config의 OAuth 공개 client ID는 빈 기본값으로 두고, `account-accounts` remote state에서
+GitHub Environment variable로 동기화한 값을 배포 시 `--var`로 주입한다. 따라서 제공자 application을
+교체해도 소스 저장소의 복사본과 runtime binding이 어긋나지 않는다.
 
 ## 11. 출시 순서
 

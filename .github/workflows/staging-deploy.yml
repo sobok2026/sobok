@@ -52,6 +52,10 @@ jobs:
       max-parallel: 1
       matrix:
         include:
+          - product: accounts
+            directory: apps/accounts
+            schema: identity_stg
+            migrator_secret: ACCOUNTS_POSTGRES_URL_DIRECT
           - product: stella
             directory: apps/stella
             schema: stella_stg
@@ -70,7 +74,18 @@ jobs:
       - name: Set up Bun workspace
         uses: ./.github/actions/setup-bun
 
-      - name: Push schema with Drizzle
+      - name: Push Accounts schema with Drizzle
+        if: matrix.product == 'accounts'
+        working-directory: ${{ matrix.directory }}
+        env:
+          ACCOUNTS_DB_SCHEMA: ${{ matrix.schema }}
+          ACCOUNTS_POSTGRES_URL_DIRECT: ${{ secrets[matrix.migrator_secret] }}
+          CI: 'true'
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
+        run: bunx drizzle-kit push --config drizzle.config.mjs
+
+      - name: Push product schema with Drizzle
+        if: matrix.product != 'accounts'
         working-directory: ${{ matrix.directory }}
         env:
           CI: 'true'
@@ -96,9 +111,32 @@ jobs:
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+  accounts:
+    name: Deploy Accounts
+    needs: schema
+    environment: staging
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Build and deploy Accounts
+        uses: ./.github/actions/deploy-app
+        with:
+          package_name: '@sobok/accounts'
+          directory: apps/accounts
+          target: staging
+          turnstile_site_key: ${{ vars.ACCOUNTS_TURNSTILE_SITE_KEY }}
+          accounts_google_client_id: ${{ vars.ACCOUNTS_GOOGLE_CLIENT_ID }}
+          accounts_kakao_client_id: ${{ vars.ACCOUNTS_KAKAO_CLIENT_ID }}
+          accounts_bbaton_client_id: ${{ vars.ACCOUNTS_BBATON_CLIENT_ID }}
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
   stella:
     name: Deploy Stella
-    needs: payments
+    needs: [payments, accounts]
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15

@@ -26,8 +26,12 @@ app.all('*', (c) => c.env.ASSETS.fetch(c.req.raw))
 
 app.onError((error, c) => {
   console.error(
-    'accounts.worker.unhandled',
-    error instanceof Error ? `${error.name}: ${error.message}\n${error.stack ?? ''}` : 'non-Error thrown',
+    JSON.stringify({
+      event: 'accounts.worker.unhandled',
+      error: error instanceof Error ? error.message : 'non-Error thrown',
+      errorName: error instanceof Error ? error.name : undefined,
+      stack: error instanceof Error ? error.stack : undefined,
+    }),
   )
   return c.json({ type: 'about:blank', title: 'Internal Server Error', status: 500 }, 500)
 })
@@ -40,7 +44,12 @@ export default {
         await deliverAccountEmail(env, message.body)
         message.ack()
       } catch (error) {
-        console.error('accounts.email.failed', error instanceof Error ? error.message : 'unknown')
+        console.error(
+          JSON.stringify({
+            event: 'accounts.email.failed',
+            error: error instanceof Error ? error.message : 'unknown',
+          }),
+        )
         message.retry({ delaySeconds: 60 })
       }
     }

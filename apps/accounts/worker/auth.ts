@@ -53,11 +53,11 @@ async function createAuthority(c: Context<AppEnv>): Promise<AuthorityHandle> {
       action: config.turnstileAction,
     },
     socialProviders: {
-      google: { clientId: c.env.ACCOUNTS_GOOGLE_CLIENT_ID, clientSecret: googleSecret },
-      kakao: { clientId: c.env.ACCOUNTS_KAKAO_CLIENT_ID, clientSecret: kakaoSecret },
+      google: { clientId: config.googleClientId, clientSecret: googleSecret },
+      kakao: { clientId: config.kakaoClientId, clientSecret: kakaoSecret },
     },
     bbaton: {
-      clientId: c.env.ACCOUNTS_BBATON_CLIENT_ID,
+      clientId: config.bbatonClientId,
       clientSecret: bbatonSecret,
       onVerified: async ({ profile, userId }) => {
         await handle.db.transaction(async (tx) => {

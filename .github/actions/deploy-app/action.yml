@@ -23,6 +23,18 @@ inputs:
     description: Vibe static payment profile, if applicable.
     required: false
     default: ''
+  accounts_google_client_id:
+    description: Accounts Google OAuth client id from the caller's GitHub Environment.
+    required: false
+    default: ''
+  accounts_kakao_client_id:
+    description: Accounts Kakao OAuth client id from the caller's GitHub Environment.
+    required: false
+    default: ''
+  accounts_bbaton_client_id:
+    description: Accounts BBaton client id from the caller's GitHub Environment.
+    required: false
+    default: ''
   verify_export:
     description: Whether to run the app's check:export script after building.
     required: false
@@ -40,8 +52,12 @@ runs:
     - name: Validate deployment inputs
       shell: bash
       env:
+        ACCOUNTS_BBATON_CLIENT_ID: ${{ inputs.accounts_bbaton_client_id }}
+        ACCOUNTS_GOOGLE_CLIENT_ID: ${{ inputs.accounts_google_client_id }}
+        ACCOUNTS_KAKAO_CLIENT_ID: ${{ inputs.accounts_kakao_client_id }}
         CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare_account_id }}
         CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare_api_token }}
+        PACKAGE_NAME: ${{ inputs.package_name }}
         TARGET: ${{ inputs.target }}
       run: |
         case "$TARGET" in
@@ -56,6 +72,14 @@ runs:
           echo 'CLOUDFLARE_ACCOUNT_ID is unavailable to the environment-scoped deployment job.' >&2
           exit 1
         fi
+        if [ "$PACKAGE_NAME" = '@sobok/accounts' ]; then
+          for name in ACCOUNTS_GOOGLE_CLIENT_ID ACCOUNTS_KAKAO_CLIENT_ID ACCOUNTS_BBATON_CLIENT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "$name is unavailable to the environment-scoped Accounts deployment job." >&2
+              exit 1
+            fi
+          done
+        fi
 
     - name: Set up Bun workspace
       uses: ./.github/actions/setup-bun
@@ -63,6 +87,7 @@ runs:
     - name: Build static export
       shell: bash
       env:
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ inputs.accounts_google_client_id }}
         NEXT_PUBLIC_DEEPTYPE_PAY_PROFILE: ${{ inputs.vibe_pay_profile }}
         NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ inputs.turnstile_site_key }}
         PACKAGE_NAME: ${{ inputs.package_name }}
@@ -76,7 +101,18 @@ runs:
         PACKAGE_NAME: ${{ inputs.package_name }}
       run: bun run --filter="$PACKAGE_NAME" check:export
 
+    - name: Deploy Accounts to Cloudflare Workers
+      if: inputs.package_name == '@sobok/accounts'
+      uses: cloudflare/wrangler-action@v4
+      with:
+        apiToken: ${{ inputs.cloudflare_api_token }}
+        accountId: ${{ inputs.cloudflare_account_id }}
+        workingDirectory: ${{ inputs.directory }}
+        packageManager: bun
+        command: ${{ inputs.target == 'staging' && format('deploy --env stg --var ACCOUNTS_GOOGLE_CLIENT_ID:{0} --var ACCOUNTS_KAKAO_CLIENT_ID:{1} --var ACCOUNTS_BBATON_CLIENT_ID:{2}', inputs.accounts_google_client_id, inputs.accounts_kakao_client_id, inputs.accounts_bbaton_client_id) || format('deploy --env="" --var ACCOUNTS_GOOGLE_CLIENT_ID:{0} --var ACCOUNTS_KAKAO_CLIENT_ID:{1} --var ACCOUNTS_BBATON_CLIENT_ID:{2}', inputs.accounts_google_client_id, inputs.accounts_kakao_client_id, inputs.accounts_bbaton_client_id) }}
+
     - name: Deploy to Cloudflare Workers
+      if: inputs.package_name != '@sobok/accounts'
       uses: cloudflare/wrangler-action@v4
       with:
         apiToken: ${{ inputs.cloudflare_api_token }}

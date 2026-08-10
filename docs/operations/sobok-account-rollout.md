@@ -6,25 +6,27 @@ authority가 아니다.
 
 ## 현재 진행 상태
 
-2026-08-04 기준 상태다. 소스 반영과 외부 시스템 반영을 구분하며, 운영자 확인 전에는 HCP 또는 외부
+2026-08-11 기준 상태다. 소스 반영과 외부 시스템 반영을 구분하며, 운영자 확인 전에는 HCP 또는 외부
 콘솔 작업을 완료로 간주하지 않는다.
 
 - [x] `apps/accounts` authority UI·Worker·DB schema·email consumer 구현
 - [x] 단일 `packages/auth`에 authority/relying-party/OIDC 계약 구현
 - [x] Stella OIDC session, 게스트 collection 귀속, 계정 보관함과 재열람 권한 흐름 구현
 - [x] `sobok-ops`에 accounts·Stella·Turnstile·Supabase·GitHub desired state 구현
-- [ ] Google·Kakao·BBaton production/staging application 발급 및 HCP 변수 입력 확인
-- [ ] Resend production/staging 발신 도메인 검증 및 제한된 sending key 입력 확인
-- [ ] HCP `account-accounts` workspace 생성·plan·apply 확인
-- [ ] `accounts_hyperdrive_id`를 반영한 `apps/accounts/wrangler.jsonc`와 accounts 배포 workflow 추가
+- [x] Google·Kakao·BBaton production/staging application 발급 및 HCP 변수 입력 확인
+- [ ] Resend `accounts.sobok.cc` 발신 도메인 검증 및 두 환경의 Sending access key 확인
+- [x] HCP `account-accounts` workspace 생성·plan·apply 확인
+- [ ] HCP `sobok-prod` Accounts migrator apply 후 GitHub Environment DB secret 교체
+- [x] `accounts_hyperdrive_id`를 반영한 `apps/accounts/wrangler.jsonc`와 accounts 배포 workflow 추가
 - [ ] `identity_stg`·`identity` schema push
 - [ ] accounts staging·production Worker 최초 배포 후 custom domain 연결
 - [ ] 두 환경의 `stella-web` client bootstrap
 - [ ] Stella staging 수직 흐름 확인 후 production 반영
 
-외부 작업의 실제 완료 여부가 확인되면 이 체크리스트를 갱신한다. 현재 저장소에
-`apps/accounts/wrangler.jsonc`와 accounts 배포 workflow가 없는 것은 Hyperdrive ID 생성 전 임시
-placeholder를 커밋하지 않기 위한 의도된 상태다.
+외부 작업의 실제 완료 여부가 확인되면 이 체크리스트를 갱신한다. GitHub의 `production`과 `staging`
+Environment에는 `ACCOUNTS_POSTGRES_URL_DIRECT` secret 자리가 등록되어 있고, HCP `sobok2026` apply가 공개
+OAuth client ID를 각 Environment에 동기화한 상태다. `sobok-prod`가 Accounts 전용 migrator를 apply한 뒤
+두 secret 값은 새 `product_schema_migrator_urls` output으로 교체해야 한다.
 
 ## 1. 외부 인증 애플리케이션
 
@@ -54,13 +56,17 @@ Google One Tap의 승인된 JavaScript origin도 두 accounts origin에 각각 �
 
 ### 계정 이메일
 
-Resend에는 production `accounts.sobok.cc`와 staging `accounts-stg.sobok.cc` 발신 도메인을 분리해
-검증한다. 각 환경에 해당 도메인으로 제한한 `Sending access` key를 만들고 HCP의 `accounts_resend_api_key_*`
-변수에 넣는다. 발신 도메인 DNS 레코드는 아직 `sobok-ops` Terraform에 선언되어 있지 않으므로 최초
-배포 전에 추가하거나, 제공자 콘솔에서 검증한 상태를 운영 문서에 명시해야 한다.
+Resend Free는 검증 도메인 1개를 제공하므로 production과 staging 모두 `accounts.sobok.cc` 하나를 쓴다.
+발신자는 각각 `Sobok Accounts <accounts@accounts.sobok.cc>`와
+`Sobok Accounts Staging <accounts-stg@accounts.sobok.cc>`이며, 답장을 받을 주소는
+`sobok2026@gmail.com`이다. Gmail 주소는 소유 도메인이 아니므로 Resend `From`으로 사용하지 않는다.
 
-실제 From 주소와 표시 이름은 아직 확정하지 않았다. 확정 전까지 예시 주소를 production 설정으로
-승격하지 않는다.
+Resend에서 `accounts.sobok.cc`를 검증하고 두 환경의 API key가 같은 도메인에 Sending access를 갖게 한
+뒤 HCP의 `accounts_resend_api_key_{production,staging}` 변수에 넣는다. 발신 도메인 DNS 레코드는 아직
+`sobok-ops` Terraform에 선언되어 있지 않으므로 최초 이메일 전송 전에 추가하거나, 제공자 콘솔에서
+검증한 상태를 운영 문서에 명시해야 한다. 무료 한도와 도메인 수는 변경될 수 있으므로
+[Resend Pricing](https://resend.com/pricing)과
+[domain 문서](https://resend.com/docs/dashboard/domains/introduction)를 배포 시 다시 확인한다.
 
 ## 2. HCP Terraform과 인프라 적용
 
@@ -88,15 +94,15 @@ plan 전에 다음 Remote State Sharing을 허용한다.
 `account-accounts` Terraform 변수는 다음 14개다. `{production,staging}` 표기는 두 변수를 각각 만든다는
 뜻이다. HCL은 모두 끄고 값만 입력한다.
 
-| 변수                                                 | Sensitive | 값 출처                                          |
-| ---------------------------------------------------- | --------- | ------------------------------------------------ |
-| `accounts_google_client_id_{production,staging}`     | No        | 환경별 Google OAuth Web application Client ID    |
-| `accounts_google_client_secret_{production,staging}` | Yes       | 같은 Google application Client secret            |
-| `accounts_kakao_client_id_{production,staging}`      | No        | 환경별 Kakao application REST API key            |
-| `accounts_kakao_client_secret_{production,staging}`  | Yes       | 같은 REST API key에 활성화한 Client secret       |
-| `accounts_bbaton_client_id_{production,staging}`     | No        | 환경별 BBaton API application Client ID          |
-| `accounts_bbaton_client_secret_{production,staging}` | Yes       | 같은 BBaton application Secret Key               |
-| `accounts_resend_api_key_{production,staging}`       | Yes       | 환경별 발신 도메인으로 제한한 Resend sending key |
+| 변수                                                 | Sensitive | 값 출처                                       |
+| ---------------------------------------------------- | --------- | --------------------------------------------- |
+| `accounts_google_client_id_{production,staging}`     | No        | 환경별 Google OAuth Web application Client ID |
+| `accounts_google_client_secret_{production,staging}` | Yes       | 같은 Google application Client secret         |
+| `accounts_kakao_client_id_{production,staging}`      | No        | 환경별 Kakao application REST API key         |
+| `accounts_kakao_client_secret_{production,staging}`  | Yes       | 같은 REST API key에 활성화한 Client secret    |
+| `accounts_bbaton_client_id_{production,staging}`     | No        | 환경별 BBaton API application Client ID       |
+| `accounts_bbaton_client_secret_{production,staging}` | Yes       | 같은 BBaton application Secret Key            |
+| `accounts_resend_api_key_{production,staging}`       | Yes       | `accounts.sobok.cc` Sending access key        |
 
 Better Auth authority secret과 `stella-web` OIDC client secret은 Terraform이 환경별로 생성하므로 사용자가
 HCP 변수로 만들지 않는다. 생성된 client secret은 문서나 로그에 복사하지 않고 one-time bootstrap 입력과
@@ -105,16 +111,18 @@ Stella Worker Secrets Store binding에만 사용한다.
 HCP Terraform의 VCS working directory와 remote-state sharing은
 `sobok-ops/infra/cloudflare/README.md`를 따른다. 적용 순서는 다음과 같다.
 
-1. `sobok-prod`: `identity`·`identity_stg` schema와 `identity_app` role
+1. `sobok-prod`: `identity`·`identity_stg` schema, runtime `identity_app`, 환경별
+   `accounts_{prod,stg}_migrator`와 `product_schema_migrator_urls` output
 2. `account-turnstile`: accounts widget와 secret
 3. `account-accounts`: accounts Hyperdrive, email Queue/DLQ, 환경별 authority/upstream OAuth/email secret,
    Stella OIDC client secret
 4. `account-stella`: Stella 환경별 relying-party session secret
 5. `sobok2026`: accounts Turnstile sitekey와 공개 upstream OAuth client ID를 GitHub environment로 동기화
 
-`account-accounts`의 `accounts_hyperdrive_id`는 공개 배포 식별자다. 이 값이 생긴 뒤에만
-`apps/accounts/wrangler.jsonc`의 두 환경에 같은 Hyperdrive binding을 기록한다. Secrets Store binding은
-환경별 secret 이름을 선택하고, Worker plain var에는 client ID만 둔다.
+`account-accounts`의 `accounts_hyperdrive_id`는 공개 배포 식별자다. 현재 값은
+`apps/accounts/wrangler.jsonc`의 두 환경에 같은 Hyperdrive binding으로 기록되어 있다. Secrets Store
+binding은 환경별 secret 이름을 선택하고, 공개 OAuth client ID는 HCP remote state에서 GitHub
+Environment로 동기화해 Actions가 배포 시 Worker plain var로 주입한다.
 
 ## 3. schema push
 
@@ -126,17 +134,19 @@ ACCOUNTS_DB_SCHEMA=identity_stg bun run --filter=@sobok/accounts db:push
 ACCOUNTS_DB_SCHEMA=identity bun run --filter=@sobok/accounts db:push
 ```
 
-Accounts 명령에는 `sslmode=verify-full`인 `ACCOUNTS_POSTGRES_URL_DIRECT`가 필요하다. `db:push`와
-`oauth:bootstrap` package script는 저장소의 Supabase CA를 `NODE_EXTRA_CA_CERTS`로 로드하며 다른 SSL
-mode의 schema URL은 Drizzle config가 거부한다. Stella staging schema는
-staging 배포가 자동 push하고 production schema는 수동 plan/apply workflow가
-`SOBOK_DB_SCHEMA`와 schema 전용 `SOBOK_POSTGRES_URL_DIRECT`를 주입한다. 자세한 순서는
-[`product-releases.md`](product-releases.md)를 따른다.
+Accounts 명령에는 `sslmode=verify-full`인 `ACCOUNTS_POSTGRES_URL_DIRECT`가 필요하다. 이 URL은
+`postgres`나 runtime `identity_app`이 아니라 production의 `accounts_prod_migrator`, staging의
+`accounts_stg_migrator`여야 한다. 각 role은 자기 identity schema에만 DDL 권한을 갖는다. `db:push`와
+`oauth:bootstrap` package script는 저장소의 Supabase CA를
+`NODE_EXTRA_CA_CERTS`로 로드한다. Drizzle config는 다른 SSL mode와 schema에 맞지 않는 role의 URL을
+거부한다. Accounts staging schema는 staging 배포가 자동 push하고 production schema는 수동 plan/apply
+workflow가 동명 변수를 주입한다. 자세한 순서는 [`product-releases.md`](product-releases.md)를 따른다.
 
 ## 4. accounts 최초 배포와 domain
 
-GitHub Actions에서 `accounts-stg`, `accounts` Worker를 먼저 만든다. `workers_dev=false`여도 Worker service는
-생성되므로 custom domain은 아직 없어도 된다. 두 Worker가 존재한 뒤 `account-workers`를 apply해
+GitHub Actions에서 staging과 production 배포 workflow로 `accounts-stg`, `accounts` Worker를 먼저 만든다.
+`workers_dev=false`여도 Worker service는 생성되므로 custom domain은 아직 없어도 된다. 두 Worker가
+존재한 뒤 `account-workers`를 apply해
 `accounts-stg.sobok.cc`, `accounts.sobok.cc`를 연결한다. 반대 순서는 Cloudflare 10007/404가 난다.
 
 well-known 문서와 health endpoint를 확인한다.

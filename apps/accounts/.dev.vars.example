@@ -1,5 +1,5 @@
-# Local accounts Worker configuration. Copy to `.dev.vars` (gitignored); production and staging bindings are
-# declared in wrangler.jsonc after the accounts Hyperdrive has been provisioned by sobok-ops.
+# Local accounts Worker configuration. Copy to `.dev.vars` (gitignored); production and staging bindings live
+# in wrangler.jsonc and their OAuth client IDs are injected by the environment-scoped deployment workflow.
 ACCOUNTS_PUBLIC_ORIGIN="http://localhost:3014"
 ACCOUNTS_ALLOWED_HOSTNAMES="localhost"
 ACCOUNTS_FIRST_PARTY_CLIENT_IDS="stella-local"

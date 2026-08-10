@@ -60,6 +60,14 @@ jobs:
       - name: Set up Bun workspace
         uses: ./.github/actions/setup-bun
 
+      # Accounts public OAuth IDs are environment-scoped, so an artifact that will never deploy uses a
+      # deliberately non-operational client id only to verify the static export on pull requests.
+      - name: Build Accounts
+        env:
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ci-release-build.apps.googleusercontent.com
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.ACCOUNTS_TURNSTILE_SITE_KEY }}
+        run: bun run --filter=@sobok/accounts build
+
       - name: Build Stella
         env:
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.STELLA_TURNSTILE_SITE_KEY }}

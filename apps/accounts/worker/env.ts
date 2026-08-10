@@ -1,25 +1,10 @@
 import type { SobokAuthorityEmail } from '@sobok/auth/authority'
 
-export interface Bindings {
-  ASSETS: Fetcher
-  HYPERDRIVE: Hyperdrive
+type AccountEmailBinding = {
   ACCOUNTS_EMAIL_QUEUE: Queue<SobokAuthorityEmail>
-
-  ACCOUNTS_PUBLIC_ORIGIN: string
-  ACCOUNTS_ALLOWED_HOSTNAMES: string
-  ACCOUNTS_FIRST_PARTY_CLIENT_IDS: string
-  ACCOUNTS_EMAIL_FROM: string
-  ACCOUNTS_EMAIL_REPLY_TO: string
-  ACCOUNTS_GOOGLE_CLIENT_ID: string
-  ACCOUNTS_KAKAO_CLIENT_ID: string
-  ACCOUNTS_BBATON_CLIENT_ID: string
-
-  ACCOUNTS_AUTH_SECRET: SecretsStoreSecret
-  ACCOUNTS_TURNSTILE_SECRET: SecretsStoreSecret
-  ACCOUNTS_GOOGLE_CLIENT_SECRET: SecretsStoreSecret
-  ACCOUNTS_KAKAO_CLIENT_SECRET: SecretsStoreSecret
-  ACCOUNTS_BBATON_CLIENT_SECRET: SecretsStoreSecret
-  ACCOUNTS_RESEND_API_KEY: SecretsStoreSecret
 }
+
+// Wrangler owns the binding surface. Only the Queue payload is refined from its generated `unknown` body.
+export type Bindings = Omit<CloudflareBindings, keyof AccountEmailBinding> & AccountEmailBinding
 
 export type AppEnv = { Bindings: Bindings }

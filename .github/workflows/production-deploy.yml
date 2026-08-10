@@ -69,9 +69,32 @@ jobs:
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+  accounts:
+    name: Deploy Accounts
+    needs: verify
+    environment: production
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Build and deploy Accounts
+        uses: ./.github/actions/deploy-app
+        with:
+          package_name: '@sobok/accounts'
+          directory: apps/accounts
+          target: production
+          turnstile_site_key: ${{ vars.ACCOUNTS_TURNSTILE_SITE_KEY }}
+          accounts_google_client_id: ${{ vars.ACCOUNTS_GOOGLE_CLIENT_ID }}
+          accounts_kakao_client_id: ${{ vars.ACCOUNTS_KAKAO_CLIENT_ID }}
+          accounts_bbaton_client_id: ${{ vars.ACCOUNTS_BBATON_CLIENT_ID }}
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
   stella:
     name: Deploy Stella
-    needs: payments
+    needs: [payments, accounts]
     environment: production
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15

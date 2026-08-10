@@ -10,6 +10,7 @@ on:
         required: true
         type: choice
         options:
+          - accounts
           - stella
           - vibe
       mode:
@@ -76,6 +77,35 @@ jobs:
           NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
           SOBOK_DB_SCHEMA: stella
           SOBOK_POSTGRES_URL_DIRECT: ${{ secrets.STELLA_POSTGRES_URL_DIRECT }}
+        run: |
+          if [ "$MODE" = 'plan' ]; then
+            bunx drizzle-kit push --config drizzle.config.mjs --explain --verbose
+          else
+            bunx drizzle-kit push --config drizzle.config.mjs
+          fi
+
+  accounts:
+    name: ${{ inputs.mode }} Accounts schema
+    if: inputs.product == 'accounts'
+    needs: validate
+    environment: production
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Run Drizzle
+        working-directory: apps/accounts
+        env:
+          ACCOUNTS_DB_SCHEMA: identity
+          ACCOUNTS_POSTGRES_URL_DIRECT: ${{ secrets.ACCOUNTS_POSTGRES_URL_DIRECT }}
+          CI: 'true'
+          MODE: ${{ inputs.mode }}
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
         run: |
           if [ "$MODE" = 'plan' ]; then
             bunx drizzle-kit push --config drizzle.config.mjs --explain --verbose

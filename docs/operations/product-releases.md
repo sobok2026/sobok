@@ -5,10 +5,10 @@
 
 ## 배포 모델
 
-| 대상       | 시작 방법                | DB schema                           | 앱                               |
-| ---------- | ------------------------ | ----------------------------------- | -------------------------------- |
-| staging    | `staging` push           | Stella·Vibe 자동 `drizzle-kit push` | Payments → Stella·Vibe 자동 배포 |
-| production | GitHub Actions 수동 실행 | 제품별 plan/apply 수동 실행         | Payments → 전체 앱 수동 배포     |
+| 대상       | 시작 방법                | DB schema                                    | 앱                                                           |
+| ---------- | ------------------------ | -------------------------------------------- | ------------------------------------------------------------ |
+| staging    | `staging` push           | Accounts·Stella·Vibe 자동 `drizzle-kit push` | Accounts와 Payments → Stella, Payments → Vibe 자동 배포      |
+| production | GitHub Actions 수동 실행 | 제품별 plan/apply 수동 실행                  | Accounts와 Payments → Stella, Payments → 나머지 앱 수동 배포 |
 
 Staging은 공유 통합 환경이므로 push된 commit 전체를 자동 반영한다. Production은 schema와 앱을 서로
 독립된 수동 workflow로 실행한다. 두 production workflow는 같은 concurrency group을 사용해 schema
@@ -20,8 +20,8 @@ Staging은 공유 통합 환경이므로 push된 commit 전체를 자동 반영�
 
 1. Environment 없이 repository 정적 검증을 수행한다.
 2. `staging` Environment의 제품별 migrator secret으로 schema를 순차 push한다.
-3. `payments-stg`를 배포한다.
-4. Stella와 Vibe staging Worker를 배포한다.
+3. 서로 의존하지 않는 `accounts-stg`와 `payments-stg`를 병렬 배포한다.
+4. Accounts issuer와 Payments가 모두 준비된 뒤 Stella를, Payments가 준비된 뒤 Vibe를 배포한다.
 
 Schema push는 각 앱의 `drizzle.config.mjs`를 직접 사용하고 `--force`를 사용하지 않는다. Drizzle가
 rename 판단이나 데이터 손실 승인을 요구하면 배포는 실패한다. Schema 단계가 실패하면 Payments와 앱은
@@ -36,23 +36,24 @@ fast-forward 직접 push가 가능하지만 삭제와 force-push는 별도 rules
 
 `.github/workflows/production-schema.yml`을 `main`에서 수동 실행한다.
 
-1. `product`에서 `stella` 또는 `vibe`를 선택한다.
+1. `product`에서 `accounts`, `stella`, `vibe` 중 하나를 선택한다.
 2. 먼저 `mode=plan`을 실행해 `drizzle-kit push --explain --verbose` 결과를 확인한다.
 3. SQL과 운영 영향을 검토한 뒤 `mode=apply`, `confirmation=APPLY`로 다시 실행한다.
 4. 일반 `drizzle-kit push`가 실행된다. `--force`는 사용하지 않는다.
 
-Schema job도 실제 배포 대상인 `production` GitHub Environment를 사용한다. Stella는
-`STELLA_POSTGRES_URL_DIRECT`, Vibe는 `VIBE_POSTGRES_URL_DIRECT`만 자기 job의
-`SOBOK_POSTGRES_URL_DIRECT`로 명시적 매핑한다. 앱 배포 job은 이 DB secret을 참조하지 않는다.
+Schema job도 실제 배포 대상인 `production` GitHub Environment를 사용한다. Accounts는
+`ACCOUNTS_POSTGRES_URL_DIRECT`를 앱의 동명 변수로 주입한다. Stella는 `STELLA_POSTGRES_URL_DIRECT`,
+Vibe는 `VIBE_POSTGRES_URL_DIRECT`만 자기 job의 `SOBOK_POSTGRES_URL_DIRECT`로 명시적 매핑한다. 앱
+배포 job은 이 DB secret을 참조하지 않는다.
 
 ## Production 앱 수동 배포
 
 필요한 production schema를 모두 반영한 뒤 `.github/workflows/production-deploy.yml`을 `main`에서
 수동 실행하고 `confirmation=DEPLOY`를 입력한다.
 
-Workflow는 repository를 다시 검증한 후 Payments를 먼저 배포하고 Stella, Vibe, ZWDS, Horn을
-배포한다. DB schema는 변경하지 않는다. Schema 변경과 앱 변경이 같은 release에 포함됐다면 아래 순서를
-반드시 지킨다.
+Workflow는 repository를 다시 검증한 후 서로 독립적인 Accounts와 Payments를 병렬 배포한다. 두 Worker가
+모두 준비된 뒤 Stella를 배포하고, Vibe·ZWDS·Horn은 Payments 뒤에 배포한다. DB schema는 변경하지
+않는다. Schema 변경과 앱 변경이 같은 release에 포함됐다면 아래 순서를 반드시 지킨다.
 
 1. 해당 제품 schema `plan`
 2. 해당 제품 schema `apply`
@@ -70,21 +71,26 @@ Cloudflare credential을 사용하는 job은 `staging-deploy.yml`과 `production
 `.github/actions/deploy-{payments,app}` composite action으로 재사용한다. 배포 credential을 repository
 secret으로 복제하거나 reusable workflow의 암시적 secret 전달에 의존하지 않는다.
 
-| Environment  | Secret                       | DB role/schema                       |
-| ------------ | ---------------------------- | ------------------------------------ |
-| `production` | `STELLA_POSTGRES_URL_DIRECT` | `stella_prod_migrator` / `stella`    |
-| `production` | `VIBE_POSTGRES_URL_DIRECT`   | `vibe_prod_migrator` / `deeptype`    |
-| `staging`    | `STELLA_POSTGRES_URL_DIRECT` | `stella_stg_migrator` / `stella_stg` |
-| `staging`    | `VIBE_POSTGRES_URL_DIRECT`   | `vibe_stg_migrator` / `deeptype_stg` |
+| Environment  | Secret                         | DB role/schema                           |
+| ------------ | ------------------------------ | ---------------------------------------- |
+| `production` | `ACCOUNTS_POSTGRES_URL_DIRECT` | `accounts_prod_migrator` / `identity`    |
+| `production` | `STELLA_POSTGRES_URL_DIRECT`   | `stella_prod_migrator` / `stella`        |
+| `production` | `VIBE_POSTGRES_URL_DIRECT`     | `vibe_prod_migrator` / `deeptype`        |
+| `staging`    | `ACCOUNTS_POSTGRES_URL_DIRECT` | `accounts_stg_migrator` / `identity_stg` |
+| `staging`    | `STELLA_POSTGRES_URL_DIRECT`   | `stella_stg_migrator` / `stella_stg`     |
+| `staging`    | `VIBE_POSTGRES_URL_DIRECT`     | `vibe_stg_migrator` / `deeptype_stg`     |
 
-Public Turnstile site key는 repository variable `STELLA_TURNSTILE_SITE_KEY`와
-`VIBE_TURNSTILE_SITE_KEY`로 관리한다. Secret이나 DB URL을 repository variable에 넣지 않는다.
+Public Turnstile site key는 repository variable `ACCOUNTS_TURNSTILE_SITE_KEY`,
+`STELLA_TURNSTILE_SITE_KEY`, `VIBE_TURNSTILE_SITE_KEY`로 관리한다. Accounts의 Google·Kakao·BBaton 공개
+client ID는 환경마다 다르므로 같은 이름의 GitHub Environment variable로 관리하고, 배포 workflow가
+정적 build와 Worker `--var`에 함께 주입한다. Secret이나 DB URL을 variable에 넣지 않는다.
 
-`sobok-ops/infra/supabase/prod`의 `product_schema_migrator_urls` sensitive output이 Environment와
-secret 이름으로 중첩된 값의 원본이다. 이 output도 `sslmode=verify-full`을 고정하며 다른 mode의 URL은
-앱별 Drizzle config가 거부한다. 각 로그인 역할은 정확히 한 schema에만 `USAGE`/
-`CREATE`를 갖고, 그 안에 직접 만든 object만 소유한다. Schema 자체는 `postgres`가 소유한다.
-런타임 역할은 schema 사용과 테이블 DML 권한만 갖는다.
+`sobok-ops/infra/supabase/prod`의 `product_schema_migrator_urls` sensitive output이 Accounts·Stella·Vibe
+Environment secret의 원본이다. Accounts는 Terraform이 생성한 환경별 전용 DDL role을 쓰며, `postgres`
+owner URL이나 runtime `identity_app` URL을 재사용하지 않는다. 모든 URL은 `sslmode=verify-full`을 고정한다.
+Accounts Drizzle config는 다른 mode뿐 아니라 schema와 짝이 맞지 않는 migrator 사용자도 거부한다. 각
+migrator 로그인 역할은 정확히 한 schema에만 `USAGE`/`CREATE`를 갖고 그 안에 직접 만든 object만 소유한다.
+Schema 자체는 `postgres`가 소유하고, runtime 역할은 schema 사용과 테이블 DML 권한만 갖는다.
 
 현재 Supabase Root 2021 CA는 2031-04-26에 만료된다. CA를 교체할 때는 이 저장소의
 `certs/supabase/prod-ca-2021.crt`와 `sobok-ops/infra/supabase/prod/certs/prod-ca-2021.crt`를 같은 PEM으로
