@@ -6,10 +6,9 @@ import { HEADER_ISLAND } from './chrome'
 /**
  * The paid funnel's header. It carries the wordmark and nothing else.
  *
- * The site header's other two affordances are both wrong here. The primary nav offers a buyer 오늘/연애 in the
- * middle of a purchase, and the locale switcher offers three locales the guardian report is not sold in — a
- * switch lands on an unpublished, `noindex` copy of the page with empty strings. The wordmark stays because a
- * page that asks for money has to say whose page it is.
+ * The site header's other affordances are wrong here. Primary navigation and the library link offer escape
+ * routes in the middle of a purchase, while the locale switcher offers locales where this product is not sold.
+ * The wordmark stays because a page that asks for money has to say whose page it is.
  */
 export default function FunnelHeader({ locale }: { locale: Locale }) {
   return (
