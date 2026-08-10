@@ -53,7 +53,7 @@ async function load(): Promise<Map<string, BakedBoard>> {
   // schema fallback. A real bake still fails closed unless SOBOK_DB_SCHEMA explicitly selects stella_stg or
   // stella before this import executes.
   const { commentTable, commentThreadTable } = await import('../../worker/db/schema/comment')
-  const client = postgres(url, { max: 1, prepare: false, ssl: 'require' })
+  const client = postgres(url, { max: 1, prepare: false, ssl: 'verify-full' })
   const db = drizzle({ client })
 
   try {

@@ -46,9 +46,9 @@ STELLA_EMAIL_REPLY_TO="sobok2026@gmail.com"
 # CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="postgres://…"
 
 # drizzle-kit push and paid-questionnaire publication target — schema migrator connection (bypasses
-# Hyperdrive), Supabase session pooler. The pooler serves Supabase's own CA (not in Node's trust store), so
-# use sslmode=no-verify. Production runtime talks to Postgres via Hyperdrive, not this URL:
-# SOBOK_POSTGRES_URL_DIRECT="postgres://stella_stg_migrator.<project-ref>:…@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=no-verify"
+# Hyperdrive), Supabase session pooler. The package scripts load the tracked Supabase root CA and the URL
+# must verify both the CA and pooler hostname. Production runtime talks to Postgres via Hyperdrive:
+# SOBOK_POSTGRES_URL_DIRECT="postgres://stella_stg_migrator.<project-ref>:…@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=verify-full"
 #
 # Schema push has no default. Use the migrator URL that owns the selected namespace:
 #   SOBOK_DB_SCHEMA=stella_stg bun run db:push

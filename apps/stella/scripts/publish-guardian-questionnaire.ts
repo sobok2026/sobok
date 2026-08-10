@@ -89,7 +89,7 @@ async function publish(content: GuardianQuestionnaireContent, contentHash: strin
   const { guardianQuestionnaireVersionTable, guardianQuestionOptionTable, guardianQuestionTable } = await import(
     '../worker/db/schema/guardian-questionnaire'
   )
-  const client = postgres(url, { max: 1, prepare: false, ssl: 'require' })
+  const client = postgres(url, { max: 1, prepare: false, ssl: 'verify-full' })
   const db = drizzle({ client })
 
   try {

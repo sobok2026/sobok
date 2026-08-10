@@ -8,6 +8,9 @@ const schema = process.env.SOBOK_DB_SCHEMA
 if (!directUrl) {
   throw new Error('SOBOK_POSTGRES_URL_DIRECT is required for schema push')
 }
+if (new URL(directUrl).searchParams.get('sslmode') !== 'verify-full') {
+  throw new Error('SOBOK_POSTGRES_URL_DIRECT must use sslmode=verify-full')
+}
 if (schema !== 'deeptype' && schema !== 'deeptype_stg') {
   throw new Error('SOBOK_DB_SCHEMA must explicitly be deeptype or deeptype_stg')
 }

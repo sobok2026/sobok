@@ -126,7 +126,9 @@ ACCOUNTS_DB_SCHEMA=identity_stg bun run --filter=@sobok/accounts db:push
 ACCOUNTS_DB_SCHEMA=identity bun run --filter=@sobok/accounts db:push
 ```
 
-Accounts 명령에는 대응하는 `ACCOUNTS_POSTGRES_URL_DIRECT`가 필요하다. Stella staging schema는
+Accounts 명령에는 `sslmode=verify-full`인 `ACCOUNTS_POSTGRES_URL_DIRECT`가 필요하다. `db:push`와
+`oauth:bootstrap` package script는 저장소의 Supabase CA를 `NODE_EXTRA_CA_CERTS`로 로드하며 다른 SSL
+mode의 schema URL은 Drizzle config가 거부한다. Stella staging schema는
 staging 배포가 자동 push하고 production schema는 수동 plan/apply workflow가
 `SOBOK_DB_SCHEMA`와 schema 전용 `SOBOK_POSTGRES_URL_DIRECT`를 주입한다. 자세한 순서는
 [`product-releases.md`](product-releases.md)를 따른다.

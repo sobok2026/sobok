@@ -73,6 +73,7 @@ jobs:
         env:
           CI: 'true'
           MODE: ${{ inputs.mode }}
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
           SOBOK_DB_SCHEMA: stella
           SOBOK_POSTGRES_URL_DIRECT: ${{ secrets.STELLA_POSTGRES_URL_DIRECT }}
         run: |
@@ -101,6 +102,7 @@ jobs:
         env:
           CI: 'true'
           MODE: ${{ inputs.mode }}
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
           SOBOK_DB_SCHEMA: deeptype
           SOBOK_POSTGRES_URL_DIRECT: ${{ secrets.VIBE_POSTGRES_URL_DIRECT }}
         run: |

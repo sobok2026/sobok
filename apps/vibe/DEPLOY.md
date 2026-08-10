@@ -7,7 +7,7 @@
 ## 1. 구조 한눈에
 
 - **워커 1개** = 정적 Next 에셋(`assets` 바인딩, `output: 'export'`) + `/api/deep-type/*` Hono 라우트(`run_worker_first`).
-- **Hyperdrive 2개**: `HYPERDRIVE_FRESH`(캐시 비활성 — 돈·엔티틀먼트 조회/쓰기), `HYPERDRIVE_CACHED`(완료된 리포트 본문 등 불변 읽기). **Supabase Postgres(세션 풀러, 서울 ap-northeast-2)** origin. 공개 CA라 CA 업로드 불필요(`sslmode=require`).
+- **Hyperdrive 2개**: `HYPERDRIVE_FRESH`(캐시 비활성 — 돈·엔티틀먼트 조회/쓰기), `HYPERDRIVE_CACHED`(완료된 리포트 본문 등 불변 읽기). **Supabase Postgres(세션 풀러, 서울 ap-northeast-2)** origin. `account-secrets-store`가 Supabase CA를 계정에 한 번 올리고 두 config 모두 `verify-full`로 CA와 hostname을 검증한다.
 - **중앙 결제 서비스**: `apps/payments`만 PortOne API·Store/channel map·웹훅 서명을 소유한다. Vibe는
   `PAYMENTS` Service Binding으로 checkout·조회·취소를 호출하고, 검증된 이벤트는 Vibe 전용 Queue로
   받는다. 주문·리포트·권한 원장은 계속 Vibe DB가 소유한다.
@@ -75,7 +75,7 @@
 0. **스테이징 스키마 권한** — `sobok-prod`의 `roles.tf`가 `deeptype`과 함께 **`deeptype_stg`** 스키마에도 최소권한 `deeptype_app` grant와 default privileges를 걸어야 한다. 스테이징은 같은 Supabase 프로젝트·같은 Hyperdrive·같은 역할을 쓰고 **스키마 이름만 다르므로**, 이 grant가 없으면 스테이징 워커는 첫 쿼리에서 permission denied로 죽는다.
 1. **Supabase 프로젝트(딥타입 전용)** — 대시보드에서 **서울(ap-northeast-2) + DB 비밀번호** 생성(billing·region·password는 out-of-band; 실결제 전 Pro 권장). `sobok-prod` 워크스페이스에 `import` 블록으로 입양(`import { to=supabase_project.deeptype, id=<project-ref> }`) + HCP 변수 `organization_id`·`pooler_host`(대시보드 Connect의 `aws-N-ap-northeast-2.pooler.supabase.com`)·`database_password`(sensitive)·`SUPABASE_ACCESS_TOKEN`(project variable set). apply 후 `plan`에 replace 없어야 함 → outputs `deeptype_pg_host/port/database/user/password`.
    **런타임 역할·권한도 이 워크스페이스가 소유한다**(`roles.tf`, `cyrilgdn/postgresql` provider): 최소권한 `deeptype_app`(+ stella용 `stella_app`) 역할·grant·default privileges를 세션 풀러로 접속해 생성하고 비밀번호를 `random_password`로 만들어 sensitive output으로 노출한다. ⚠️ 이 provider 때문에 **이 워크스페이스의 모든 plan/apply가 DB 접속을 요구**한다 — Free 플랜 일시정지 시 실패하므로 ops 실행 전 **Pro 유지(또는 사전 언포즈)** 필요.
-2. **Hyperdrive ×2 (`account-vibe`)** — `terraform apply` → 두 config id. **origin(host/port/db/user/password) 전부 `sobok-prod`에서 `terraform_remote_state`로 링크**(수동 복사·손-설정 비밀번호 없음, 별도 토큰 불필요 — 런 자체 크레덴셜). user는 최소권한 `deeptype_app.<ref>`(owner `postgres` 아님). 전제: ① `sobok-prod` 먼저 apply(outputs 존재) ② sobok-prod → account-vibe **Remote State Sharing** 활성화 ③ 데이터소스의 `organization`+워크스페이스 `name`이 실제 HCP와 정확히 일치(**org=`sobok2026`, ws=`sobok-prod`** — VCS-무시되는 cloud{} 블록의 "sobok"과 다름).
+2. **Hyperdrive ×2 (`account-vibe`)** — `terraform apply` → 두 config id. **origin(host/port/db/user/password) 전부 `sobok-prod`에서 `terraform_remote_state`로 링크**하고, Supabase CA id는 `account-secrets-store` output으로 링크한다(수동 복사·손-설정 비밀번호·인증서 id 없음). user는 최소권한 `deeptype_app.<ref>`(owner `postgres` 아님), TLS는 둘 다 `verify-full`. 전제: ① `sobok-prod`와 `account-secrets-store` 먼저 apply(outputs 존재) ② 두 workspace → account-vibe **Remote State Sharing** 활성화 ③ 데이터소스의 `organization`+워크스페이스 `name`이 실제 HCP와 정확히 일치(**org=`sobok2026`, ws=`sobok-prod`** — VCS-무시되는 cloud{} 블록의 "sobok"과 다름).
 3. **Secrets Store** — 계정 스토어 id 확보(`wrangler secrets-store store list` 또는 대시보드). 값의 발급·공유 경계별로 Terraform 소유권을 나눈다.
    - `account-secrets-store`: 대표 Store가 모드별로 한 번만 발급하는 `portone-webhook-secret-live` · `portone-webhook-secret-test`. 중앙 payments Worker만 바인딩한다.
    - `account-payments`: 대표 Store의 배포별 V2 API Secret
@@ -335,6 +335,8 @@ rollback은 장애 완화용일 뿐이며 DB schema를 되돌리지 않으므로
       Environment에만 있고 레포 레벨에는 없음.
 - [ ] `sobok-ops`의 `staging-history`·`staging-change-gate` ruleset과 `staging` Environment branch
       policy 적용 완료. Admin fast-forward push는 허용되고 force-push·삭제는 차단됨.
+- [ ] `account-secrets-store`의 Supabase CA가 생성되고 Accounts·Stella·Vibe Hyperdrive가 같은 CA id와
+      `sslmode=verify-full`을 사용함.
 - [ ] `sobok-prod` roles.tf가 `deeptype`·`deeptype_stg` 두 스키마에 grant·default privileges 적용 완료.
 - [ ] `wrangler.jsonc` placeholder 전부 치환, `DEEPTYPE_REPORT_MODEL`은 검증된 고정 id(내레이션의 목적지이자 스위치 — `""`면 룰 엔진 리포트만 나간다).
 - [ ] top-level `vars`에 새로 추가한 항목이 `env.stg`에도 들어갔는지(비상속 키).

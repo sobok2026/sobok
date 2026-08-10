@@ -25,7 +25,8 @@ Staging은 공유 통합 환경이므로 push된 commit 전체를 자동 반영�
 
 Schema push는 각 앱의 `drizzle.config.mjs`를 직접 사용하고 `--force`를 사용하지 않는다. Drizzle가
 rename 판단이나 데이터 손실 승인을 요구하면 배포는 실패한다. Schema 단계가 실패하면 Payments와 앱은
-배포하지 않는다.
+배포하지 않는다. 모든 direct URL은 `sslmode=verify-full`이어야 하며, job은 저장소에 고정한
+`certs/supabase/prod-ca-2021.crt`를 `NODE_EXTRA_CA_CERTS`로 로드해 CA와 pooler hostname을 검증한다.
 
 Staging branch는 일반 collaborator에게 PR과 required checks를 요구한다. Repository admin은 긴급한
 fast-forward 직접 push가 가능하지만 삭제와 force-push는 별도 ruleset으로 계속 차단한다. 직접 push도
@@ -75,9 +76,14 @@ Public Turnstile site key는 repository variable `STELLA_TURNSTILE_SITE_KEY`와
 `VIBE_TURNSTILE_SITE_KEY`로 관리한다. Secret이나 DB URL을 repository variable에 넣지 않는다.
 
 `sobok-ops/infra/supabase/prod`의 `product_schema_migrator_urls` sensitive output이 Environment와
-secret 이름으로 중첩된 값의 원본이다. 각 로그인 역할은 정확히 한 schema에만 `USAGE`/
+secret 이름으로 중첩된 값의 원본이다. 이 output도 `sslmode=verify-full`을 고정하며 다른 mode의 URL은
+앱별 Drizzle config가 거부한다. 각 로그인 역할은 정확히 한 schema에만 `USAGE`/
 `CREATE`를 갖고, 그 안에 직접 만든 object만 소유한다. Schema 자체는 `postgres`가 소유한다.
 런타임 역할은 schema 사용과 테이블 DML 권한만 갖는다.
+
+현재 Supabase Root 2021 CA는 2031-04-26에 만료된다. CA를 교체할 때는 이 저장소의
+`certs/supabase/prod-ca-2021.crt`와 `sobok-ops/infra/supabase/prod/certs/prod-ca-2021.crt`를 같은 PEM으로
+갱신하고, `account-secrets-store`와 모든 Hyperdrive workspace를 먼저 apply한 뒤 schema workflow를 실행한다.
 
 ## 새 제품 추가
 
@@ -100,11 +106,14 @@ secret 이름으로 중첩된 값의 원본이다. 각 로그인 역할은 정�
 
 현재 product schema가 비어 있다는 전제에서 다음 순서로 전환한다.
 
-1. `sobok-ops/infra/supabase/prod`를 apply해 schema migrator·grant와 runtime default privileges를 만든다.
-2. `sobok-ops/infra/github/sobok2026`을 apply해 Environment, branch policy, repository variable,
+1. `sobok-ops/infra/cloudflare/account/sobok/secrets-store`를 apply해 Supabase CA trust bundle을 만든다.
+2. `sobok-ops/infra/supabase/prod`를 apply해 schema migrator·grant, runtime default privileges와
+   `verify-full` migrator URL output을 만든다.
+3. Accounts·Stella·Vibe Cloudflare workspace를 apply해 모든 Hyperdrive origin에 `verify-full`을 반영한다.
+4. `sobok-ops/infra/github/sobok2026`을 apply해 Environment, branch policy, repository variable,
    required checks를 만든다.
-3. `product_schema_migrator_urls`의 `production`/`staging` 하위 값을 같은 이름의 GitHub
+5. `product_schema_migrator_urls`의 `production`/`staging` 하위 값을 같은 이름의 GitHub
    Environment secret으로 넣는다.
-4. `staging` push로 staging schema와 staging을 제공하는 앱의 배포를 완료한다.
-5. Production schema를 제품별로 plan한 뒤 apply한다.
-6. Production 앱 배포 workflow를 수동 실행한다.
+6. `staging` push로 staging schema와 staging을 제공하는 앱의 배포를 완료한다.
+7. Production schema를 제품별로 plan한 뒤 apply한다.
+8. Production 앱 배포 workflow를 수동 실행한다.

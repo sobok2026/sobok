@@ -74,6 +74,7 @@ jobs:
         working-directory: ${{ matrix.directory }}
         env:
           CI: 'true'
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
           SOBOK_DB_SCHEMA: ${{ matrix.schema }}
           SOBOK_POSTGRES_URL_DIRECT: ${{ secrets[matrix.migrator_secret] }}
         run: bunx drizzle-kit push --config drizzle.config.mjs

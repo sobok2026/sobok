@@ -44,7 +44,7 @@ for (const redirectUri of redirectUris) {
   }
 }
 
-const sql = postgres(databaseUrl, { max: 1, prepare: false })
+const sql = postgres(databaseUrl, { max: 1, prepare: false, ssl: 'verify-full' })
 const db = drizzle({ client: sql })
 
 try {
