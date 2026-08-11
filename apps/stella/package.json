@@ -6,7 +6,7 @@
     "dev": "next dev --port 3010",
     "build": "NODE_EXTRA_CA_CERTS=../../certs/supabase/prod-ca-2021.crt next build",
     "preview": "SOBOK_DB_SCHEMA=stella_stg bun run build && wrangler dev --env stg",
-    "db:push": "NODE_EXTRA_CA_CERTS=../../certs/supabase/prod-ca-2021.crt drizzle-kit push --config drizzle.config.mjs",
+    "db:push": "NODE_EXTRA_CA_CERTS=../../certs/supabase/prod-ca-2021.crt bunx --bun drizzle-kit push --config drizzle.config.ts",
     "questionnaire:validate": "bun run scripts/publish-guardian-questionnaire.ts --validate-only",
     "questionnaire:publish": "NODE_EXTRA_CA_CERTS=../../certs/supabase/prod-ca-2021.crt bun run scripts/publish-guardian-questionnaire.ts",
     "type": "next typegen && tsc --noEmit && tsc -p worker/tsconfig.json && tsc -p scripts/tsconfig.json"

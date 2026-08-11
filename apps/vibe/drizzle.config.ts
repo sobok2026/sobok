@@ -1,7 +1,6 @@
 import { defineConfig } from 'drizzle-kit'
 
-// Keep schema tooling independent from the Next application's extended tsconfig. A push has no default and
-// can see only the explicitly selected Vibe namespace.
+// A push has no default and can see only the explicitly selected Vibe namespace.
 const directUrl = process.env.SOBOK_POSTGRES_URL_DIRECT
 const schema = process.env.SOBOK_DB_SCHEMA
 

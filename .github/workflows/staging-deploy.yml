@@ -82,7 +82,7 @@ jobs:
           ACCOUNTS_POSTGRES_URL_DIRECT: ${{ secrets[matrix.migrator_secret] }}
           CI: 'true'
           NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
-        run: bunx drizzle-kit push --config drizzle.config.mjs
+        run: bunx --bun drizzle-kit push --config drizzle.config.ts
 
       - name: Push product schema with Drizzle
         if: matrix.product != 'accounts'
@@ -92,7 +92,7 @@ jobs:
           NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
           SOBOK_DB_SCHEMA: ${{ matrix.schema }}
           SOBOK_POSTGRES_URL_DIRECT: ${{ secrets[matrix.migrator_secret] }}
-        run: bunx drizzle-kit push --config drizzle.config.mjs
+        run: bunx --bun drizzle-kit push --config drizzle.config.ts
 
   payments:
     name: Deploy payments

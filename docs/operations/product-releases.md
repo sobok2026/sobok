@@ -23,9 +23,10 @@ Staging은 공유 통합 환경이므로 push된 commit 전체를 자동 반영�
 3. 서로 의존하지 않는 `accounts-stg`와 `payments-stg`를 병렬 배포한다.
 4. Accounts issuer와 Payments가 모두 준비된 뒤 Stella를, Payments가 준비된 뒤 Vibe를 배포한다.
 
-Schema push는 각 앱의 `drizzle.config.mjs`를 직접 사용하고 `--force`를 사용하지 않는다. Drizzle가
-rename 판단이나 데이터 손실 승인을 요구하면 배포는 실패한다. Schema 단계가 실패하면 Payments와 앱은
-배포하지 않는다. 모든 direct URL은 `sslmode=verify-full`이어야 하며, job은 저장소에 고정한
+Schema push는 각 앱의 `drizzle.config.ts`를 `bunx --bun drizzle-kit`으로 직접 사용하고 `--force`를
+사용하지 않는다. Bun으로 TypeScript config를 직접 로드해 앱의 workspace-extended tsconfig 해석에
+의존하지 않는다. Drizzle가 rename 판단이나 데이터 손실 승인을 요구하면 배포는 실패한다. Schema 단계가
+실패하면 Payments와 앱은 배포하지 않는다. 모든 direct URL은 `sslmode=verify-full`이어야 하며, job은 저장소에 고정한
 `certs/supabase/prod-ca-2021.crt`를 `NODE_EXTRA_CA_CERTS`로 로드해 CA와 pooler hostname을 검증한다.
 
 Staging branch는 일반 collaborator에게 PR과 required checks를 요구한다. Repository admin은 긴급한
