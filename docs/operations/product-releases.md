@@ -90,8 +90,8 @@ credential을 schema 작업에 재사용하지 않는다.
 `STELLA_OIDC_CLIENT_SECRET`은 `account-accounts` workspace의 같은 환경 sensitive output을 GitHub
 Environment secret으로 한 번 등록한다. Repository secret으로 만들거나 Terraform state에 GitHub secret
 평문을 복제하지 않는다. 같은 값은 Stella runtime에서 Secrets Store binding으로 읽고, 배포 workflow에서는
-OAuth client row의 최초 생성에만 사용한다. Bootstrap 스크립트는 값을 출력하지 않으며 같은 metadata로
-재실행하면 no-op, 검토된 metadata와 다르면 Worker 배포 전에 실패한다.
+OAuth client row의 최초 생성과 기존 credential 검증에 사용한다. Bootstrap 스크립트는 값을 출력하지 않으며
+같은 credential과 metadata로 재실행하면 no-op, 검토된 값과 다르면 Worker 배포 전에 실패한다.
 
 ## Hyperdrive ID 반영
 

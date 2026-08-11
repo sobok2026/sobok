@@ -39,7 +39,6 @@ runs:
     - name: Bootstrap fixed Stella client
       shell: bash
       env:
-        ACCOUNTS_PUBLIC_ORIGIN: ${{ inputs.target == 'staging' && 'https://accounts-stg.sobok.cc' || 'https://accounts.sobok.cc' }}
         CI: 'true'
         SOBOK_MIGRATOR_URL: ${{ inputs.accounts_migrator_url }}
         SOBOK_OAUTH_CLIENT_ID: stella-web

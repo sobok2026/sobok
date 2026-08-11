@@ -154,7 +154,6 @@ schema push 직후, production 배포 workflow는 Worker 배포 전에
 `.github/actions/bootstrap-stella-oauth-client`를 실행하며 다음 값을 bootstrap 스크립트에 전달한다.
 
 - `SOBOK_MIGRATOR_URL`: 해당 환경 Accounts migrator URL
-- `ACCOUNTS_PUBLIC_ORIGIN`
 - `SOBOK_OAUTH_CLIENT_ID=stella-web`
 - `SOBOK_OAUTH_CLIENT_SECRET`: 해당 Environment의 `STELLA_OIDC_CLIENT_SECRET`
 - `SOBOK_OAUTH_CLIENT_NAME=Stella`
@@ -162,8 +161,10 @@ schema push 직후, production 배포 workflow는 Worker 배포 전에
 - `SOBOK_OAUTH_REDIRECT_URIS`
 
 Bootstrap job은 `SOBOK_MIGRATOR_URL`이 `accounts_migrator`와 `sslmode=verify-full`을 사용하는지도 검증한다.
-같은 metadata 재실행은 no-op이다. 기존 row가 다른 redirect URI, scope, PKCE, consent 또는 token auth
-설정을 가지면 자동 수정하지 않고 이후 Worker 배포 전에 실패한다. Client secret은 로그에 출력하지 않는다.
+로그인 세션이 필요한 OAuth 관리 API나 동적 client 등록을 열지 않고, migrator로 검토된 고정 row만 생성한다.
+런타임과 bootstrap은 같은 명시적 secret hash 계약을 사용한다. 같은 credential과 metadata 재실행은 no-op이다.
+기존 row가 다른 credential, redirect URI, scope, PKCE, consent 또는 token auth 설정을 가지면 자동 수정하지 않고
+이후 Worker 배포 전에 실패한다. Client secret은 로그에 출력하지 않는다.
 
 ## 6. Stella 수직 확인
 

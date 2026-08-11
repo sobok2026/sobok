@@ -1,9 +1,7 @@
-import { createSobokAuthority } from '@sobok/auth/authority'
-import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { hashSobokOAuthClientSecret, SOBOK_OAUTH_CLIENT_SECRET_PREFIX } from '@sobok/auth/oauth-client-secret'
 import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
-import * as authSchema from '../worker/db/schema'
 import { oauthClient } from '../worker/db/schema'
 
 function required(name: string): string {
@@ -33,16 +31,19 @@ if (parsedDatabaseUrl.searchParams.get('sslmode') !== 'verify-full') {
 if (decodeURIComponent(parsedDatabaseUrl.username).split('.')[0] !== 'accounts_migrator') {
   throw new Error('SOBOK_MIGRATOR_URL must use accounts_migrator')
 }
-const origin = new URL(required('ACCOUNTS_PUBLIC_ORIGIN')).origin
 const clientId = required('SOBOK_OAUTH_CLIENT_ID')
 const fullClientSecret = required('SOBOK_OAUTH_CLIENT_SECRET')
 const clientName = required('SOBOK_OAUTH_CLIENT_NAME')
 const clientOrigin = new URL(required('SOBOK_OAUTH_CLIENT_ORIGIN')).origin
 const redirectUris = commaSeparated('SOBOK_OAUTH_REDIRECT_URIS')
-const secretPrefix = 'sobok_cs_'
 
-if (!fullClientSecret.startsWith(secretPrefix) || fullClientSecret.length < secretPrefix.length + 32) {
-  throw new Error(`SOBOK_OAUTH_CLIENT_SECRET must start with ${secretPrefix} and contain at least 32 random characters`)
+if (
+  !fullClientSecret.startsWith(SOBOK_OAUTH_CLIENT_SECRET_PREFIX) ||
+  fullClientSecret.length < SOBOK_OAUTH_CLIENT_SECRET_PREFIX.length + 32
+) {
+  throw new Error(
+    `SOBOK_OAUTH_CLIENT_SECRET must start with ${SOBOK_OAUTH_CLIENT_SECRET_PREFIX} and contain at least 32 random characters`,
+  )
 }
 for (const redirectUri of redirectUris) {
   const url = new URL(redirectUri)
@@ -55,67 +56,79 @@ const sql = postgres(databaseUrl, { max: 1, prepare: false, ssl: 'verify-full' }
 const db = drizzle({ client: sql })
 
 try {
+  const clientSecret = await hashSobokOAuthClientSecret(fullClientSecret.slice(SOBOK_OAUTH_CLIENT_SECRET_PREFIX.length))
+  const [created] = await db
+    .insert(oauthClient)
+    .values({
+      id: crypto.randomUUID(),
+      clientId,
+      clientSecret,
+      disabled: false,
+      skipConsent: true,
+      enableEndSession: false,
+      subjectType: 'public',
+      scopes: ['openid', 'profile', 'email'],
+      userId: null,
+      name: clientName,
+      uri: clientOrigin,
+      icon: null,
+      contacts: null,
+      tos: null,
+      policy: null,
+      softwareId: null,
+      softwareVersion: null,
+      softwareStatement: null,
+      redirectUris,
+      postLogoutRedirectUris: null,
+      tokenEndpointAuthMethod: 'client_secret_basic',
+      grantTypes: ['authorization_code'],
+      responseTypes: ['code'],
+      public: false,
+      type: 'web',
+      requirePKCE: true,
+      referenceId: null,
+      metadata: null,
+    })
+    .onConflictDoNothing({ target: oauthClient.clientId })
+    .returning({ clientId: oauthClient.clientId })
+
   const [existing] = await db.select().from(oauthClient).where(eq(oauthClient.clientId, clientId)).limit(1)
-  if (existing) {
-    if (
-      existing.name !== clientName ||
-      existing.uri !== clientOrigin ||
-      existing.tokenEndpointAuthMethod !== 'client_secret_basic' ||
-      existing.requirePKCE !== true ||
-      existing.skipConsent !== true ||
-      !sameValues(existing.redirectUris, redirectUris) ||
-      !sameValues(existing.scopes, ['openid', 'profile', 'email'])
-    ) {
-      throw new Error(`OAuth client ${clientId} already exists with different reviewed metadata`)
-    }
-    process.stdout.write(`OAuth client ${clientId} already exists; no changes made.\n`)
-    process.exitCode = 0
-  } else {
-    const auth = createSobokAuthority({
-      database: drizzleAdapter(db, { provider: 'pg', schema: authSchema }),
-      baseURL: origin,
-      issuer: origin,
-      // The admin method only hashes and inserts the reviewed OAuth credential; it does not validate or mint
-      // an authority session. Keeping this bootstrap-only value here avoids exporting the runtime signing
-      // secret from Secrets Store or Terraform merely to seed a client row.
-      secret: 'sobok-oauth-client-bootstrap-only-secret',
-      trustedOrigins: [origin],
-      passkey: { rpID: new URL(origin).hostname, origin },
-      turnstile: {
-        secretKey: 'bootstrap-not-used',
-        allowedHostnames: [new URL(origin).hostname],
-        action: 'sobok-auth',
-      },
-      firstPartyClientIds: [clientId],
-      sendEmail: async () => undefined,
-      defer: () => undefined,
-      oauthClientGenerators: {
-        clientId: () => clientId,
-        clientSecret: () => fullClientSecret.slice(secretPrefix.length),
-      },
-    })
-
-    const created = await auth.api.adminCreateOAuthClient({
-      body: {
-        client_name: clientName,
-        client_uri: clientOrigin,
-        redirect_uris: redirectUris,
-        scope: 'openid profile email',
-        token_endpoint_auth_method: 'client_secret_basic',
-        grant_types: ['authorization_code'],
-        response_types: ['code'],
-        type: 'web',
-        skip_consent: true,
-        require_pkce: true,
-        subject_type: 'public',
-      },
-    })
-
-    if (created.client_id !== clientId || created.client_secret !== fullClientSecret) {
-      throw new Error('OAuth provider returned credentials different from the reviewed bootstrap input')
-    }
-    process.stdout.write(`Created OAuth client ${clientId}. Secret was not printed.\n`)
+  if (
+    !existing ||
+    existing.clientSecret !== clientSecret ||
+    existing.disabled !== false ||
+    existing.skipConsent !== true ||
+    existing.enableEndSession !== false ||
+    existing.subjectType !== 'public' ||
+    !sameValues(existing.scopes, ['openid', 'profile', 'email']) ||
+    existing.userId !== null ||
+    existing.name !== clientName ||
+    existing.uri !== clientOrigin ||
+    existing.icon !== null ||
+    existing.contacts !== null ||
+    existing.tos !== null ||
+    existing.policy !== null ||
+    existing.softwareId !== null ||
+    existing.softwareVersion !== null ||
+    existing.softwareStatement !== null ||
+    !sameValues(existing.redirectUris, redirectUris) ||
+    existing.postLogoutRedirectUris !== null ||
+    existing.tokenEndpointAuthMethod !== 'client_secret_basic' ||
+    !sameValues(existing.grantTypes, ['authorization_code']) ||
+    !sameValues(existing.responseTypes, ['code']) ||
+    existing.public !== false ||
+    existing.type !== 'web' ||
+    existing.requirePKCE !== true ||
+    existing.referenceId !== null ||
+    existing.metadata !== null
+  ) {
+    throw new Error(`OAuth client ${clientId} already exists with a different reviewed credential or metadata`)
   }
+  process.stdout.write(
+    created
+      ? `Created OAuth client ${clientId}. Secret was not printed.\n`
+      : `OAuth client ${clientId} already exists; no changes made.\n`,
+  )
 } finally {
   await sql.end({ timeout: 5 })
 }
