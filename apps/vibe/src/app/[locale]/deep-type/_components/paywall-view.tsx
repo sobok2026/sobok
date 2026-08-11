@@ -7,7 +7,7 @@ import { ArrowLeft, CheckCircle, Sparkles } from '@mynaui/icons-react'
 import { trackEcommerce } from '@sobok/analytics/browser'
 import Link from 'next/link'
 import { type FormEvent, useEffect, useRef, useState } from 'react'
-import { PAY_TIER, TURNSTILE_SITE_KEY } from '@/constants'
+import { PAY_PROFILE, TURNSTILE_SITE_KEY } from '@/constants'
 import { LEGAL } from '@/content/legal'
 import { cn } from '@/utils/cn'
 import { DEEPTYPE_CHECKOUT_ACTION } from '../../../../../worker/api/deep-type/actions'
@@ -35,13 +35,13 @@ export function PaywallView({ content, freeResult, onClose, onPaid }: PaywallVie
   )
   const [turnstileToken, setTurnstileToken] = useState('')
   const turnstileRef = useRef<TurnstileInstance | undefined>(undefined)
-  // The same list the Worker enforces, from the same module and narrowed by the same tier — the screen cannot
+  // The same list the Worker enforces, from the same module and narrowed by the same profile — the screen cannot
   // offer a channel `/checkout` would refuse, and a method this deployment has no approved contract for is not
   // rendered at all rather than rendered and refused.
   //
   // The catalogue's order is the picker's order and its first entry is the default, so which method a decided
   // buyer lands on is edited in `@deep-type/pay-method` and not here.
-  const methods = payMethodsFor(freeResult.locale, PAY_TIER)
+  const methods = payMethodsFor(freeResult.locale, PAY_PROFILE)
   const [payMethod, setPayMethod] = useState<PayMethod>(methods[0])
 
   const offer = DEEP_TYPE_REPORT_OFFER[freeResult.locale]

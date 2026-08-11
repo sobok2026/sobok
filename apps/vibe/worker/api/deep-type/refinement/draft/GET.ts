@@ -1,7 +1,7 @@
 import { openDb, withDb } from '@sobok/edge/db/client'
+import { getRefinementDraft } from '@vibe-worker/db/queries/result'
+import type { AppEnv } from '@vibe-worker/env'
 import { Hono } from 'hono'
-import { getRefinementDraft } from '~/db/queries/result'
-import type { AppEnv } from '~/env'
 
 import { requirePaidRefinementContext, retiredAnswersProblem } from '../gate'
 

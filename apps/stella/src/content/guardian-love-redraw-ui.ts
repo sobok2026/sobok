@@ -1,5 +1,6 @@
 import type { Locale } from '@sobok/domain/locale'
 import type { GuardianRarity } from '../../worker/guardian/manifest'
+import type { GuardianPayMethod } from '../../worker/guardian/pay-method'
 
 export type GuardianLoveRedrawContent = {
   meta: { title: string; description: string }
@@ -23,6 +24,8 @@ export type GuardianLoveRedrawContent = {
     credits: (count: number) => string
     perDraw: (price: string) => string
     buy: (count: number, price: string) => string
+    methodLabel: string
+    methodLabels: Record<GuardianPayMethod, string>
     processing: string
     security: string
   }
@@ -92,6 +95,8 @@ const KO_CONTENT: GuardianLoveRedrawContent = {
     credits: (count) => `${count}회`,
     perDraw: (price) => `1회당 ${price}`,
     buy: (count, price) => `${count}회 · ${price} 결제하기`,
+    methodLabel: '결제수단',
+    methodLabels: { tosspay: '토스페이', card: '신용·체크카드' },
     processing: '결제창을 준비하는 중…',
     security: '결제 전에 보안 확인을 완료해주세요.',
   },
@@ -162,6 +167,8 @@ function emptyContent(): GuardianLoveRedrawContent {
       credits: () => empty,
       perDraw: () => empty,
       buy: () => empty,
+      methodLabel: empty,
+      methodLabels: { tosspay: empty, card: empty },
       processing: empty,
       security: empty,
     },

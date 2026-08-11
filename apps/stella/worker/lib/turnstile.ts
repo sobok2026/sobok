@@ -1,8 +1,8 @@
 import { alertDiscord } from '@sobok/edge/alert'
 import { type TurnstileFailureReason, type TurnstileResult, verifyTurnstile } from '@sobok/edge/turnstile'
+import type { AppEnv } from '@stella-worker/env'
+import { type ProblemSlug, problem } from '@stella-worker/errors'
 import type { Context } from 'hono'
-import type { AppEnv } from '~/env'
-import { type ProblemSlug, problem } from '~/errors'
 
 // The verifier's reason → what the client is allowed to see. Deliberately coarse: `rejected` never says
 // whether the hostname or the action was the pin that refused, and `misconfigured` never says the secret is

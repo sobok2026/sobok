@@ -1,10 +1,10 @@
 import { openDb, withDb } from '@sobok/edge/db/client'
 import { sha256Hex } from '@sobok/edge/tokens'
+import { consumeReopenLink } from '@vibe-worker/db/queries/reopen'
+import type { AppEnv } from '@vibe-worker/env'
+import { problem } from '@vibe-worker/errors'
 import { Hono } from 'hono'
 import { z } from 'zod'
-import { consumeReopenLink } from '~/db/queries/reopen'
-import type { AppEnv } from '~/env'
-import { problem } from '~/errors'
 
 const ExchangeBody = z.object({ token: z.string().length(43) })
 

@@ -15,14 +15,14 @@ export interface DbHandle {
 // of which binding you pass (a fresh-vs-cached config), which is the distinction that matters on money paths.
 // - max:5             Workers caps a script at 6 concurrent TCP connections; leave headroom.
 // - fetch_types:false Hyperdrive can't serve the type-introspection round trip postgres.js does on boot.
-// - prepare:false     Hyperdrive pools in transaction mode, so a prepared statement created on one backend
-//                     connection may not exist on the next — disable to avoid "prepared statement …" errors.
+// - prepare:true      Hyperdrive supports and caches Postgres.js prepared statements; disabling them adds
+//                     round trips and makes the cached binding less effective.
 // Always close the socket after the response — use `withDb`, or waitUntil(handle.sql.end({ timeout: 5 })).
 export function openDb(hyperdrive: Hyperdrive): DbHandle {
   const sql = postgres(hyperdrive.connectionString, {
     max: 5,
     fetch_types: false,
-    prepare: false,
+    prepare: true,
   })
 
   return {

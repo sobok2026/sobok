@@ -94,7 +94,10 @@ export const rateLimit = identity.table(
     count: integer().notNull(),
     lastRequest: bigint('last_request', { mode: 'number' }).notNull(),
   },
-  (table) => [uniqueIndex('uq_identity_rate_limit_key').on(table.key)],
+  (table) => [
+    uniqueIndex('uq_identity_rate_limit_key').on(table.key),
+    index('idx_identity_rate_limit_last_request').on(table.lastRequest),
+  ],
 )
 
 export const passkey = identity.table(

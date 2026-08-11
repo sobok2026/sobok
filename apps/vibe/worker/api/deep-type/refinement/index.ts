@@ -1,6 +1,5 @@
+import type { AppEnv } from '@vibe-worker/env'
 import { Hono } from 'hono'
-
-import type { AppEnv } from '~/env'
 
 import draftRoutes from './draft'
 import submitRoute from './POST'

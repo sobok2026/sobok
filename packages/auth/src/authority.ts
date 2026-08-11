@@ -7,6 +7,7 @@ import { getAuthenticatorName, passkey } from '@better-auth/passkey'
 import type { BetterAuthOptions } from 'better-auth'
 import { betterAuth } from 'better-auth/minimal'
 import { captcha, genericOAuth, haveIBeenPwned, jwt, magicLink, oneTap, twoFactor, username } from 'better-auth/plugins'
+import { z } from 'zod'
 import {
   BBATON_AUTHORIZATION_URL,
   BBATON_PROVIDER_ID,
@@ -20,17 +21,20 @@ import {
   SOBOK_ACCOUNT_TECHNICAL_NAME,
   SOBOK_AUTH_PATH,
   SOBOK_OIDC_SCOPES,
+  SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER,
   SOBOK_USERNAME_PATTERN,
 } from './contracts'
 
 type Database = NonNullable<BetterAuthOptions['database']>
 
-export type SobokAuthorityEmail = {
-  kind: 'email-verification' | 'magic-link' | 'password-reset'
-  to: string
-  url: string
-  name?: string
-}
+export const SobokAuthorityEmailSchema = z.object({
+  kind: z.enum(['email-verification', 'magic-link', 'password-reset']),
+  to: z.email(),
+  url: z.url(),
+  name: z.string().min(1).optional(),
+})
+
+export type SobokAuthorityEmail = z.infer<typeof SobokAuthorityEmailSchema>
 
 export type SobokSocialProvider = {
   clientId: string
@@ -86,6 +90,10 @@ export function createSobokAuthority(options: SobokAuthorityOptions) {
     advanced: {
       cookiePrefix: 'sobok_accounts',
       useSecureCookies: new URL(options.baseURL).protocol === 'https:',
+      ipAddress: {
+        ipAddressHeaders: [SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER],
+        ipv6Subnet: 128,
+      },
       backgroundTasks: { handler: options.defer },
     },
     session: {

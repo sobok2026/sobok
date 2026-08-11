@@ -5,6 +5,7 @@ import type {
   ChargeInput,
   ChargeResult,
   PaymentEvent,
+  PaymentScope,
   RemotePayment,
   RemoteRefund,
 } from '@sobok/payments'
@@ -22,9 +23,15 @@ async function apiClient(env: Bindings) {
   }
 }
 
-export function checkoutConfig(env: Bindings, channel: string) {
-  const channelKey = env.PORTONE_CHANNELS[channel]
-  return channelKey ? { storeId: env.PORTONE_STORE_ID, channelKey } : null
+export function availableChannels(env: Bindings, scope: PaymentScope): string[] {
+  return Object.entries(env.PORTONE_CHANNELS)
+    .filter(([, config]) => config.scopes.includes(scope))
+    .map(([channel]) => channel)
+}
+
+export function checkoutConfig(env: Bindings, scope: PaymentScope, channel: string) {
+  const config = env.PORTONE_CHANNELS[channel]
+  return config?.scopes.includes(scope) ? { storeId: env.PORTONE_STORE_ID, channelKey: config.channelKey } : null
 }
 
 export async function inspectBillingKey(env: Bindings, billingKey: string): Promise<BillingKeyBrief> {

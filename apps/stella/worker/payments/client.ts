@@ -23,7 +23,7 @@ export type GuardianRemotePayment =
   | { status: 'pending' | 'missing' | 'unknown'; paymentId: string }
 
 export async function getGuardianRemotePayment(env: Bindings, paymentId: string): Promise<GuardianRemotePayment> {
-  return toGuardianRemotePayment(await env.PAYMENTS.getPayment(paymentId))
+  return toGuardianRemotePayment(await env.STELLA_PAYMENTS.getPayment(paymentId))
 }
 
 export function toGuardianRemotePayment(payment: RemotePayment): GuardianRemotePayment {

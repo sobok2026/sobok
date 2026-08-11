@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "wrangler dev --test-scheduled",
     "deploy": "wrangler deploy",
-    "type:bindings": "wrangler types worker-configuration.generated.d.ts --env-interface CloudflareBindings --include-runtime=false",
-    "type": "wrangler types worker-configuration.generated.d.ts --env-interface CloudflareBindings --include-runtime=false --check && tsc --noEmit"
+    "type:bindings": "WRANGLER_WRITE_LOGS=false wrangler types worker-configuration.generated.d.ts --env-file=/dev/null --env-interface CloudflareBindings --include-runtime=false",
+    "type": "WRANGLER_WRITE_LOGS=false wrangler types worker-configuration.generated.d.ts --env-file=/dev/null --env-interface CloudflareBindings --include-runtime=false --check && tsc --noEmit"
   },
   "dependencies": {
     "@sobok/scheduler": "workspace:*"

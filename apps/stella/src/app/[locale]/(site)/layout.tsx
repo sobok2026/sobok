@@ -12,7 +12,7 @@ import Header from '@/components/Header'
  *
  * The ad script is the reason this split exists. Auto ads are placement-side, so a page inherits them from
  * nothing more than this tag being present — which would put a competitor's ad next to a ₩3,900 checkout. The
- * bottom nav is the second reason: three fixed escape routes under a buyer's thumb for the whole funnel.
+ * bottom nav is the second reason: four fixed escape routes under a buyer's thumb for the whole funnel.
  */
 export default async function SiteLayout({ children, params }: LayoutProps<'/[locale]'>) {
   const locale = await getLocale(params)

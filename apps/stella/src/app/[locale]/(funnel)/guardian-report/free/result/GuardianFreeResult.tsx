@@ -16,11 +16,7 @@ import { useBirthProfile } from '@/components/BirthProfileProvider'
 import { SignFigure } from '@/components/SignFigure'
 import Starfield from '@/components/Starfield'
 import { TURNSTILE_SITE_KEY } from '@/constants'
-import {
-  GUARDIAN_REPORT_UI,
-  type GuardianPreviewMovement,
-  type GuardianPreviewTone,
-} from '@/content/guardian-report-ui'
+import { GUARDIAN_REPORT_UI } from '@/content/guardian-report-ui'
 import { toBirthInput } from '@/lib/birth-storage'
 import {
   confirmGuardianPurchase,
@@ -28,6 +24,7 @@ import {
   GUARDIAN_CHECKOUT_ACTION,
   GUARDIAN_CURRENCY,
   GUARDIAN_FREE_DELIVERABLES_KO,
+  GUARDIAN_PAY_METHODS,
   GUARDIAN_REPORT_ITEM,
   GUARDIAN_REPORT_NAME,
   GUARDIAN_REPORT_PRICE,
@@ -36,6 +33,7 @@ import {
   type GuardianCheckoutResponse,
   type GuardianCheckoutSession,
   GuardianCheckoutStorageError,
+  type GuardianPayMethod,
   type GuardianPreviewSession,
   guardianReportPaths,
   readGuardianCheckoutSession,
@@ -65,6 +63,7 @@ export default function GuardianFreeResult({ locale }: { locale: Locale }) {
   const [existingSession, setExistingSession] = useState<GuardianCheckoutSession | null | undefined>(undefined)
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [email, setEmail] = useState('')
+  const [payMethod, setPayMethod] = useState<GuardianPayMethod>(GUARDIAN_PAY_METHODS[0])
   const [turnstileToken, setTurnstileToken] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -78,6 +77,9 @@ export default function GuardianFreeResult({ locale }: { locale: Locale }) {
     setExistingSession(matchingCheckout)
     if (matchingCheckout) {
       setEmail(matchingCheckout.email)
+      if (matchingCheckout.payMethod !== null) {
+        setPayMethod(matchingCheckout.payMethod)
+      }
     }
     if (storedPreview) {
       track('guardian_free_result_view', { locale, movement: storedPreview.movement, tone: storedPreview.tone })
@@ -142,7 +144,7 @@ export default function GuardianFreeResult({ locale }: { locale: Locale }) {
       const normalizedEmail = email.trim()
       let checkout: GuardianCheckoutResponse
       if (existingSession) {
-        checkout = await resumeGuardianCheckout(existingSession, { email: normalizedEmail, turnstileToken })
+        checkout = await resumeGuardianCheckout(existingSession, { email: normalizedEmail, payMethod, turnstileToken })
       } else {
         if (!preview || chartState.status !== 'ready' || !birthProfile.birth) {
           throw new Error('Guardian checkout context changed before submission')
@@ -150,6 +152,7 @@ export default function GuardianFreeResult({ locale }: { locale: Locale }) {
         checkout = await createGuardianCheckout({
           locale,
           email: normalizedEmail,
+          payMethod,
           turnstileToken,
           chart: toCheckoutChart(
             chartState.analysis.chart,
@@ -166,7 +169,7 @@ export default function GuardianFreeResult({ locale }: { locale: Locale }) {
         items: [GUARDIAN_REPORT_ITEM],
       })
 
-      const session = checkoutSession(checkout, existingSession, normalizedEmail, locale)
+      const session = checkoutSession(checkout, existingSession, normalizedEmail, locale, payMethod)
       storeGuardianCheckoutSession(session)
       setExistingSession(session)
 
@@ -272,10 +275,12 @@ export default function GuardianFreeResult({ locale }: { locale: Locale }) {
           locale={locale}
           onClose={() => setCheckoutOpen(false)}
           onEmailChange={setEmail}
+          onPayMethodChange={setPayMethod}
           onSubmit={submitCheckout}
           onTurnstileExpire={() => setTurnstileToken('')}
           onTurnstileSuccess={setTurnstileToken}
           price={price}
+          payMethod={payMethod}
           submitting={submitting}
           tokenReady={turnstileToken.length > 0}
           turnstile={turnstile}
@@ -341,10 +346,6 @@ function LoadingResult({ copy }: { copy: string }) {
 
 /** Reading body, at the size Korean wants on a phone. The `sm` step up is for the wider column, not the card. */
 const PROSE = 'text-[0.9375rem] leading-[1.75] text-foreground-muted sm:text-base sm:leading-[1.8]'
-
-const TONES = ['comfort', 'honesty', 'action', 'possibility'] as const
-const MOVEMENTS = ['start', 'continue', 'recover', 'release'] as const
-const COMBINATIONS = TONES.length * MOVEMENTS.length
 
 function FreeResultReading({
   chartState,
@@ -445,15 +446,7 @@ function FreeResultReading({
           title={freeResult.reading.title}
         />
 
-        <CombinationMatrix
-          content={freeResult.reading}
-          movement={preview.movement}
-          movementLabel={movementInsight.label}
-          tone={preview.tone}
-          toneLabel={toneInsight.label}
-        />
-
-        <div className="mt-7 grid gap-5 sm:grid-cols-2 sm:gap-3">
+        <div className="mt-6 grid gap-5 sm:grid-cols-2 sm:gap-3">
           <InsightBlock eyebrow={freeResult.reading.toneLabel} insight={toneInsight} />
           <InsightBlock eyebrow={freeResult.reading.movementLabel} insight={movementInsight} />
         </div>
@@ -592,67 +585,6 @@ function SectionHeading({ body, eyebrow, id, title }: { body?: string; eyebrow: 
       </h2>
       {body ? <p className={`mt-2.5 ${PROSE}`}>{body}</p> : null}
     </header>
-  )
-}
-
-/**
- * The two free answers as a position rather than a sentence: sixteen cells, one lit.
- *
- * The grid is `aria-hidden` because the two chips above it already name the selection in words — a screen
- * reader gains nothing from sixteen cells and loses the plot.
- */
-function CombinationMatrix({
-  content,
-  movement,
-  movementLabel,
-  tone,
-  toneLabel,
-}: {
-  content: (typeof GUARDIAN_REPORT_UI)[Locale]['landing']['freeResult']['reading']
-  movement: GuardianPreviewMovement
-  movementLabel: string
-  tone: GuardianPreviewTone
-  toneLabel: string
-}) {
-  return (
-    <figure className="m-0 mt-6">
-      <div className="flex flex-wrap gap-2">
-        {[
-          { label: content.toneLabel, value: toneLabel },
-          { label: content.movementLabel, value: movementLabel },
-        ].map((chip) => (
-          <p
-            className="rounded-full border border-pink-200/25 bg-pink-100/10 px-3 py-1.5 text-[11px] font-semibold text-pink-50"
-            key={chip.label}
-          >
-            <span className="text-pink-200/70">{chip.label}</span>
-            <span className="mx-1.5 text-pink-200/40">·</span>
-            {chip.value}
-          </p>
-        ))}
-      </div>
-
-      <div aria-hidden className="mt-4">
-        <p className="flex justify-between text-[10px] font-semibold tracking-wide text-foreground-faint">
-          <span>{content.matrixMovementAxis}</span>
-          <span>{content.matrixToneAxis}</span>
-        </p>
-        <div className="mt-2 grid grid-cols-4 gap-1.5">
-          {MOVEMENTS.flatMap((row) =>
-            TONES.map((column) => (
-              <span
-                className={row === movement && column === tone ? styles.matrixCellActive : styles.matrixCell}
-                key={`${row}-${column}`}
-              />
-            )),
-          )}
-        </div>
-      </div>
-
-      <figcaption className="mt-2.5 text-[11px] text-foreground-subtle">
-        {content.matrixCaption(COMBINATIONS)}
-      </figcaption>
-    </figure>
   )
 }
 
@@ -823,10 +755,12 @@ function CheckoutPanel({
   locale,
   onClose,
   onEmailChange,
+  onPayMethodChange,
   onSubmit,
   onTurnstileExpire,
   onTurnstileSuccess,
   price,
+  payMethod,
   submitting,
   tokenReady,
   turnstile,
@@ -837,10 +771,12 @@ function CheckoutPanel({
   locale: Locale
   onClose: () => void
   onEmailChange: (value: string) => void
+  onPayMethodChange: (method: GuardianPayMethod) => void
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
   onTurnstileExpire: () => void
   onTurnstileSuccess: (token: string) => void
   price: string
+  payMethod: GuardianPayMethod
   submitting: boolean
   tokenReady: boolean
   turnstile: React.RefObject<TurnstileInstance | null>
@@ -889,6 +825,33 @@ function CheckoutPanel({
           value={email}
         />
         <p className="mt-2 text-[11px] leading-5 text-foreground-faint">{content.checkout.emailHint}</p>
+
+        <fieldset className="mt-5">
+          <legend className="text-xs font-semibold text-foreground-secondary">{content.checkout.methodLabel}</legend>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {GUARDIAN_PAY_METHODS.map((method) => (
+              <label
+                className={`flex min-h-12 cursor-pointer items-center justify-center rounded-2xl border px-3 text-xs font-bold transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-pink-200/40 ${
+                  payMethod === method
+                    ? 'border-pink-200/45 bg-pink-100/12 text-pink-50'
+                    : 'border-white/10 bg-white/3 text-foreground-secondary hover:border-white/20 hover:text-white'
+                }`}
+                key={method}
+              >
+                <input
+                  checked={payMethod === method}
+                  className="sr-only"
+                  disabled={submitting}
+                  name="guardian-pay-method"
+                  onChange={() => onPayMethodChange(method)}
+                  type="radio"
+                  value={method}
+                />
+                {content.checkout.methodLabels[method]}
+              </label>
+            ))}
+          </div>
+        </fieldset>
 
         <div className="mt-5 rounded-2xl border border-white/8 bg-white/3 p-3">
           <Turnstile
@@ -982,6 +945,7 @@ function checkoutSession(
   existing: GuardianCheckoutSession | null,
   email: string,
   locale: Locale,
+  payMethod: GuardianPayMethod,
 ): GuardianCheckoutSession {
   const accessToken = checkout.guest.accessToken ?? existing?.accessToken
   if (!accessToken) {
@@ -994,6 +958,7 @@ function checkoutSession(
     accessToken,
     paymentId: checkout.payment.paymentId,
     email,
+    payMethod,
     createdAt: existing?.createdAt ?? Date.now(),
   }
 }

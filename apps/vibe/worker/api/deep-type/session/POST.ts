@@ -3,12 +3,12 @@ import { scoreBaseAssessment } from '@deep-type/scoring'
 import { LOCALES } from '@sobok/domain/locale'
 import { openDb, withDb } from '@sobok/edge/db/client'
 import { randomToken } from '@sobok/edge/tokens'
+import { insertResult } from '@vibe-worker/db/queries/result'
+import type { AppEnv } from '@vibe-worker/env'
+import { problem } from '@vibe-worker/errors'
+import { BaseAnswersSchema, BaseWorkAnswersSchema, DeclaredPersonaSchema } from '@vibe-worker/scoring/answer-schema'
 import { Hono } from 'hono'
 import { z } from 'zod'
-import { insertResult } from '~/db/queries/result'
-import type { AppEnv } from '~/env'
-import { problem } from '~/errors'
-import { BaseAnswersSchema, BaseWorkAnswersSchema, DeclaredPersonaSchema } from '~/scoring/answer-schema'
 
 const SessionBody = z.object({
   answers: BaseAnswersSchema,

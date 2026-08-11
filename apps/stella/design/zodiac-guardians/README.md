@@ -17,16 +17,16 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - 반복 구매: 사랑 카드의 일러스트와 한 줄만 저가 재추첨
 - 계정과 출시: `accounts.sobok.cc` Sobok 통합 계정, 한국 → 중국 본토 → 이후 미정
 - 게스트 구매: 결제 직전 이메일을 필수 복구 채널로 받고 계정 생성과 분리
-- 배포 경계: `stella-stg`와 `stella`는 분리하되 Supabase 프로젝트·DB와 Hyperdrive는 공유하고,
-  Worker 배포는 `.github/workflows/stella-deploy.yml`만 수행
+- 배포 경계: `stella-stg`와 `stella`는 환경별 Database Worker를 통해 분리된 Supabase project를 사용하고,
+  staging은 `staging` 브랜치 push로 자동 배포하고 production schema와 앱은 `main`에서 각각 수동 반영
 - 가격·확률·미보유 보장 수치: 한국 유료 MVP 1차안 확정
-- 한국 첫 결제: PortOne V2 토스페이 직접 연동, 토스페이먼츠는 실결제 승인 뒤 추가
+- 한국 production 결제: 실연동 토스페이 + 카드사 심사용 테스트 토스페이먼츠 카드 선택
 - 결제 인프라: 중앙 `apps/payments`가 PortOne 자격증명·웹훅·채널 정책을 소유하고 Stella 주문·권한은
   Stella schema에 유지
-- 예약 실행: 계정 단일 `apps/scheduler`가 Cron Trigger를 소유하고 Stella production·staging의 15분
-  pending 결제 재조정과 미결제 checkout 30일 정리를 포함한 일일 retention purge를 내부 maintenance RPC로 호출
+- 예약 실행: 계정 단일 `apps/scheduler`가 Database Worker의 maintenance RPC를 호출해 production·staging의
+  15분 pending 결제 재조정과 일일 retention purge를 실행
 - 유료 서버 도메인: 상품·추첨·게스트 컬렉션·리포트·구매·획득·보장, checkout·질문·중간 결과·리포트 API 연결
-- 운영 게시: `stella_stg`·`stella` schema와 `guardian-paid-ko-mvp-v1` 동일 해시 게시, PR #29 production 배포 완료
+- 운영 게시: staging·production 프로젝트의 `stella` schema에 `guardian-paid-ko-mvp-v1` 동일 해시 게시, PR #29 production 배포 완료
 - 결제 후 복구: 결제 권한과 함께 durable 발송 intent를 만들고 Resend 완료 메일, 15분·1회용 재열람
   링크 교환, 구매 이메일 기반 재발급 화면·API까지 구현
 - 다음 출시 작업: 새 복구 테이블·환경별 Resend Secrets Store 반영 뒤 PortOne 테스트 실결제와 이메일

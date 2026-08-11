@@ -2,14 +2,18 @@
   "name": "@sobok/stella",
   "version": "0.1.0",
   "private": true,
+  "exports": {
+    "./database-service": "./worker/service.ts"
+  },
   "scripts": {
     "dev": "next dev --port 3010",
-    "build": "next build",
-    "preview": "STELLA_DB_SCHEMA=stella_stg next build && wrangler dev --env stg",
-    "db:push": "drizzle-kit push --config drizzle.config.mjs",
+    "build": "NODE_EXTRA_CA_CERTS=../../certs/supabase/prod-ca-2021.crt next build",
+    "preview": "bun run build && wrangler dev --env stg",
+    "db:push": "NODE_EXTRA_CA_CERTS=../../certs/supabase/prod-ca-2021.crt bunx --bun drizzle-kit push --config drizzle.config.ts",
     "questionnaire:validate": "bun run scripts/publish-guardian-questionnaire.ts --validate-only",
-    "questionnaire:publish": "bun run scripts/publish-guardian-questionnaire.ts",
-    "type": "next typegen && tsc --noEmit && tsc -p worker/tsconfig.json && tsc -p scripts/tsconfig.json"
+    "questionnaire:publish": "NODE_EXTRA_CA_CERTS=../../certs/supabase/prod-ca-2021.crt bun run scripts/publish-guardian-questionnaire.ts",
+    "type:bindings": "WRANGLER_WRITE_LOGS=false wrangler types worker-configuration.generated.d.ts --env-file=/dev/null --env-interface StellaPublicBindings --include-runtime=false --strict-vars=false",
+    "type": "WRANGLER_WRITE_LOGS=false wrangler types worker-configuration.generated.d.ts --env-file=/dev/null --env-interface StellaPublicBindings --include-runtime=false --strict-vars=false --check && next typegen && tsc --noEmit && tsc -p worker/tsconfig.json && tsc -p scripts/tsconfig.json"
   },
   "dependencies": {
     "@marsidev/react-turnstile": "^1.5.3",
@@ -43,7 +47,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260701.0",
+    "@cloudflare/workers-types": "^5.20260811.1",
     "@sobok/next-config": "workspace:*",
     "@tailwindcss/postcss": "^4.3.1",
     "@types/node": "^26.1.0",

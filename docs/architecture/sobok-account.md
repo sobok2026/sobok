@@ -3,7 +3,7 @@
 ## 상태
 
 - 확정일: 2026-08-03
-- 최근 갱신: 2026-08-04
+- 최근 갱신: 2026-08-11
 - 공개 호스트: `accounts.sobok.cc`
 - staging 호스트: `accounts-stg.sobok.cc`
 - 기술 식별자: `Sobok`
@@ -53,7 +53,7 @@ Browser
   │    ├─ 중앙 로그인·가입·계정 관리 UI
   │    ├─ Better Auth authority session (host-only)
   │    ├─ OAuth 2.1 / OIDC authorize·token·userinfo·JWKS
-  │    └─ identity / identity_stg PostgreSQL schema
+  │    └─ 환경별 Supabase project의 identity PostgreSQL schema
   │
   ├─ stella.sobok.cc
   │    ├─ Stella UI와 Worker API
@@ -141,12 +141,17 @@ discovery 문서로 endpoint와 JWKS를 찾고 callback의 `iss`, state, nonce�
 
 ## 7. 데이터베이스와 배포
 
-- production schema: `identity`
-- staging schema: `identity_stg`
-- 두 환경은 기존 공용 Supabase PostgreSQL 프로젝트를 사용하되 schema와 Worker secret을 분리한다.
-- Worker의 PostgreSQL 연결은 Hyperdrive만 사용한다.
-- 돈·소유권·세션처럼 read-after-write가 필요한 조회에는 캐시되지 않은 Hyperdrive를 사용한다.
-- Drizzle migration 파일은 만들지 않고 환경을 명시해 `drizzle-kit push`한다.
+- 장기 환경 경계는 정확히 두 Supabase Pro project, `production`과 `staging`이다.
+- 두 project는 동일한 `identity` schema 계약을 사용한다. 환경 이름을 schema에 넣지 않는다.
+- 앱 추가는 두 project 안에 같은 앱 schema를 하나씩 추가하는 방식이며 project 수를 늘리지 않는다.
+- 각 project는 Database Worker 전용 `sobok_runtime` 하나와 제품별 `<app>_migrator`를 사용한다.
+- `database`와 `database-stg`만 PostgreSQL에 연결하며 공개 앱 Worker는 환경별 `DATABASE` Service Binding만
+  갖는다.
+- Hyperdrive는 환경마다 fresh/cached 두 개, 전체 네 개로 고정한다. Origin은 Supabase direct endpoint다.
+- 돈·소유권·세션·쓰기와 read-after-write 조회는 fresh를 사용하고, cached는 변경이 끝난 불변 본문에만
+  사용한다.
+- Drizzle migration 파일은 만들지 않고 해당 환경의 migrator URL로 `drizzle-kit push`한다.
+- Terraform은 기존 table·sequence 전체 grant와 migrator owner의 default privilege를 함께 관리한다.
 - Worker와 정적 Next export는 GitHub Actions에서 하나의 Workers Static Assets 배포 단위로 배포한다.
 - Terraform custom domain은 Worker가 최초 배포된 뒤 연결한다.
 
@@ -192,34 +197,38 @@ Stella 첫 구매와 사랑 카드 재추첨은 로그인 없이 끝까지 가�
 - OIDC identity `(issuer, subject)`의 타입과 정규화
 
 공용 패키지는 환경변수를 직접 읽거나 DB·Redis 연결을 열지 않고, 결제·Chat·앱 도메인 테이블을
-수정하지 않는다. `apps/accounts`와 각 앱 Worker가 binding, DB adapter, email 발송과 필요한 lifecycle
-hook을 factory에 주입한다.
+수정하지 않는다. 제품 코드는 제품 폴더에 남고, `apps/database`가 binding, DB adapter, email 발송과
+필요한 lifecycle hook을 factory에 주입하는 실행 경계를 제공한다.
 
 ## 10. 소스 구현 기준선
 
-2026-08-04 기준으로 다음 범위가 앱 저장소와 인프라 저장소의 `main`에 구현되어 있다. 이 목록은 소스
+2026-08-11 기준으로 다음 범위가 앱 저장소와 인프라 저장소에 구현되어 있다. 이 목록은 소스
 반영 상태이며 외부 제공자 콘솔 설정, HCP Terraform apply, schema push 또는 실제 배포 완료를 뜻하지
 않는다.
 
-- `apps/accounts`: 중앙 로그인·가입·계정 관리 UI, Better Auth Worker, `identity`/`identity_stg` schema,
-  이메일 Queue consumer와 OIDC client bootstrap 스크립트
+- `apps/accounts`: 중앙 로그인·가입·계정 관리 UI, Better Auth 도메인 코드, 고정 `identity` schema,
+  OIDC client bootstrap 스크립트, Database Worker Service Binding
+- `apps/database`: production/staging 동적 API, backend secret, Accounts email Queue, Stella/Vibe payment
+  event Queue와 maintenance RPC, 환경별 fresh/cached Hyperdrive
 - `packages/auth`: authority와 relying-party factory, 안정적인 OIDC 계약, 비밀번호·username, magic link,
   Google/One Tap, Kakao, passkey, TOTP/backup code, BBaton 연결 구성
 - `apps/stella`: 첫 OIDC relying party session, 게스트 `guardian_collection` 귀속, 계정 보관함과 stable
   report 재열람, account-save 보상, 계정 세션 기반 리포트·재추첨 권한 확인
-- `sobok-ops`: `identity`/`identity_stg`와 `identity_app`, accounts Hyperdrive, 이메일 Queue/DLQ, 환경별
-  Secrets Store 항목, Stella OIDC client secret, accounts Turnstile, custom domain desired state
+- `sobok-ops`: production/staging Supabase project, 환경별 `sobok_runtime`, 제품별 migrator, 전체 네 Hyperdrive,
+  이메일 Queue/DLQ, 환경별 Secrets Store 항목, Stella OIDC client secret, accounts Turnstile, custom domain
+  desired state
+- `.github/workflows`: Accounts schema plan/apply와 environment-scoped production/staging Worker 배포
 
-`account-accounts`가 생성하는 `accounts_hyperdrive_id`가 아직 앱 설정에 들어가기 전이므로
-`apps/accounts/wrangler.jsonc`와 accounts 배포 workflow는 의도적으로 추가하지 않았다. 인프라를 먼저
-apply한 뒤 이 두 파일을 완성하고 GitHub Actions에서 Worker를 최초 배포한다.
+Database Wrangler config의 OAuth 공개 client ID는 빈 기본값으로 두고, `account-accounts` remote state에서
+GitHub Environment variable로 동기화한 값을 Database Worker 배포 시 `--var`로 주입한다. Accounts 정적
+빌드는 Google client ID만 public build var로 받는다.
 
 ## 11. 출시 순서
 
-1. `apps/accounts` authority, `identity_stg` schema, staging domain과 인증 UI를 배포한다.
+1. staging Supabase project의 `identity` schema와 Accounts authority, staging domain을 배포한다.
 2. 고정 Stella staging OIDC client를 등록하고 로그인·callback·host-only session을 검증한다.
 3. Stella guest collection claim과 account-save reward를 연결한다.
-4. production client와 `identity` schema를 반영한다.
+4. production Supabase project의 동일한 `identity` schema와 production client를 반영한다.
 5. Vibe·ZWDS를 같은 relying-party 계약으로 순차 전환한다.
 6. Web·Chat에서 기존 `apps/api` 인증 의존성을 제거하고 중앙 계정으로 전환한다.
 7. 모든 소비자가 전환된 뒤 중앙 master secret을 보유한 이전 인증 경로를 제거한다.

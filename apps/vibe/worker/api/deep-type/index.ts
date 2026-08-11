@@ -1,6 +1,5 @@
+import type { AppEnv } from '@vibe-worker/env'
 import { Hono } from 'hono'
-
-import type { AppEnv } from '~/env'
 
 import cancelRoute from './cancel/POST'
 import checkoutRoute from './checkout/POST'

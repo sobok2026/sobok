@@ -441,6 +441,7 @@ terraform.rc
 # Certificates
 certificates
 *.crt
+!certs/supabase/prod-ca-2021.crt
 
 # Android signing
 android/keystore.properties

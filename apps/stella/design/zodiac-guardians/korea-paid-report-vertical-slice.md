@@ -10,12 +10,12 @@
 
 ## 문서 상태
 
-- 마지막 갱신: 2026-08-03
+- 마지막 갱신: 2026-08-08
 - 첫 시장과 로케일: `KR`, `ko`
 - 첫 SKU: `guardian-report-full-v1`, 3,900원
 - 결제 연동: PortOne V2 인증 결제
-- 첫 실결제수단: 토스페이 직접 연동 `tosspay_v2`
-- 후속 결제수단: 토스페이먼츠는 실결제 승인 뒤 활성화
+- production 결제수단: 실연동 토스페이 `tosspay_v2`, 심사용 테스트 토스페이먼츠 카드
+  `tosspayments`
 - 현재 구현: 상품 매니페스트, 추첨, 게스트 컬렉션·리포트·구매·획득·보장 도메인,
   실제 한국어 선택형 질문 44개와 선택 메모 1개, 불변 콘텐츠 계약·DB·게시 CLI·답변별 저장과 현재 문항 계산,
   Turnstile·rate limit을 거치는 guest checkout, 중앙 payments를 통한 PortOne confirm·검증 이벤트, capability 기반 질문
@@ -26,8 +26,8 @@
 - 이 수직 슬라이스 이후 구현: 게스트가 그대로 사용하는 사랑 카드 1회·5회 재추첨 checkout, 결제
   확정·크레딧·멱등 추첨, 보관함, 사용자가 직접 선택하는 리포트 대표 카드 교체. 상세 계약은
   [유료 카드 리포트 MVP와 확장 전략](./paid-mvp-product-strategy.md)의 5·7·11절을 따른다.
-- 운영 반영: `stella_stg`·`stella` schema와 한국어 v1 문항 게시, PR #29의 production Worker 배포
-- 운영 반영 필요: 재추첨 presentation·대표 카드 선택·checkout/draw 멱등 스키마를 `stella_stg`·`stella`에
+- 운영 반영: staging·production 프로젝트의 `stella` schema와 한국어 v1 문항 게시, PR #29의 production Worker 배포
+- 운영 반영 필요: 재추첨 presentation·대표 카드 선택·checkout/draw 멱등 스키마를 양쪽 프로젝트의 `stella` schema에
   적용하고 `account-stella`의
   `stella_resend_api_key_staging`·`stella_resend_api_key_production`으로 환경별 Secrets Store 항목 생성
 - 아직 운영 검증하지 않음: PortOne 테스트 채널의 실제 결제·모바일 리디렉션·메일 수신·메일 링크로
@@ -383,15 +383,16 @@ paid ───── 환불 확인 ───────────────
 ### 브라우저와 서버
 
 - 브라우저는 `@portone/browser-sdk/v2`의 `requestPayment`를 사용한다.
-- 첫 실결제 채널은 승인된 토스페이 직접 연동 `tosspay_v2`로 고정하고 `payMethod: "EASY_PAY"`를
-  사용한다.
-- 승인 중인 토스페이먼츠 결제창은 첫 흐름에 조건부 분기로 넣지 않는다. 실결제 승인이 끝나면
-  `CARD` 등의 결제수단과 channel key를 서버 channel map에 추가한다.
+- 전체 리포트와 사랑 카드 재추첨 checkout은 토스페이와 신용·체크카드 중 하나를 먼저 고르게 한다.
+  서버는 `tosspay`를 `tosspay_v2`·`EASY_PAY`, `card`를 `tosspayments`·`CARD`로 매핑하고 요청에서
+  channel key나 SDK 결제수단을 받지 않는다.
+- production의 토스페이는 실연동 채널, 토스페이먼츠 카드는 카드사 심사용 테스트 채널이다. 심사
+  승인 뒤 중앙 카탈로그의 카드 channel key와 `mode`만 실연동으로 교체하고 제품 흐름은 유지한다.
 - 모바일을 포함하므로 `redirectUrl`을 항상 제공하고 반환값 방식과 리디렉션 방식을 모두 처리한다.
 - `storeId`와 `channelKey`는 공개 설정이지만 클라이언트가 임의로 고르는 값은 받지 않는다. 서버가
   허용한 결제수단에 대응하는 한 채널만 checkout 응답으로 보낸다.
 - PortOne API Secret, 대표 Store의 Webhook Secret, Store/channel map은 중앙 `apps/payments` Worker만
-  소유한다. Stella는 `PAYMENTS` Service Binding으로 `st_` 결제만 조회·취소할 수 있다.
+  소유한다. Database Worker의 `STELLA_PAYMENTS` Service Binding은 `st_` 결제만 조회·취소할 수 있다.
 - 대표 Store의 콘솔 기본 웹훅은 실연동 `payments.sobok.cc`, 테스트 `payments-stg.sobok.cc`의 중앙
   endpoint를 사용한다. checkout 응답이나 브라우저 결제 요청에 `noticeUrls`를 넣지 않는다.
 - 중앙화해도 Vibe 결제 테이블이나 계정을 공유하지 않는다. Stella 주문·리포트·카드 권한 원장은
@@ -401,11 +402,11 @@ paid ───── 환불 확인 ───────────────
 
 - 중앙 payments는 웹훅 버전 `2024-04-25`의 raw body와 서명 헤더를 검증하고, PortOne 결제 단건을
   다시 조회한 뒤 `st_` 이벤트만 Stella 전용 Queue에 넣는다.
-- Stella Queue consumer는 처리 완료 이벤트만 `webhook-id`, type, `paymentId`로 기록한다. Queue는
+- Database Worker의 Stella Queue consumer는 처리 완료 이벤트만 `webhook-id`, type, `paymentId`로 기록한다. Queue는
   at-least-once이므로 event ID unique와 구매 상태 전이 CAS로 멱등 처리하고, 실패는 재시도 뒤 DLQ로
   보낸다. raw payload는 저장하지 않으며 완료 이벤트 행은 90일 뒤 일일 purge에서 정리한다.
-- 15분 이상 `pending`인 구매 재조회는 Stella maintenance RPC로 구현한 뒤 공용 scheduler의 기존
-  15분 주기에 추가한다. 제품 Worker에 별도 Cron Trigger를 만들지 않는다.
+- 15분 이상 `pending`인 구매 재조회는 Database Worker의 Stella maintenance RPC로 구현하고 공용
+  scheduler의 15분 주기에 연결한다. 공개 제품 Worker에는 Cron Trigger를 만들지 않는다.
 - 결제 확인 경로는 웹훅 누락과 브라우저 이탈을 서로 보완해야 하며 어느 하나만 필수 경로가 되지
   않게 한다. PortOne도 브라우저 응답 유실에 대비해 웹훅 사용을 강하게 권장한다.
 
@@ -413,15 +414,17 @@ paid ───── 환불 확인 ───────────────
 
 Stella에 다음 결제 설정이 필요하다.
 
-| 종류            | 이름                                                                           |
-| --------------- | ------------------------------------------------------------------------------ |
-| Service Binding | `PAYMENTS` → live `payments` / stg `payments-stg`, entrypoint `StellaPayments` |
-| Queue consumer  | live `stella-payment-events` / stg `stella-payment-events-stg`                 |
-| Queue DLQ       | 환경별 `*-dlq`                                                                 |
+| 종류            | 이름                                                                       |
+| --------------- | -------------------------------------------------------------------------- |
+| Service Binding | `STELLA_PAYMENTS` → live `payments` / stg `payments-stg`, `StellaPayments` |
+| Queue consumer  | live `stella-payment-events` / stg `stella-payment-events-stg`             |
+| Queue DLQ       | 환경별 `*-dlq`                                                             |
 
-Store ID와 channel map은 `apps/payments/wrangler.jsonc`, V2 API Secret은 `account-payments`, 설정
-모드별 Webhook Secret은 `account-secrets-store`가 소유한다. Stella Worker에는 PortOne 자격증명을
-바인딩하지 않는다. 세부 운영 계약은 `apps/payments/README.md`를 따른다.
+Store ID와 `channelKey`·`mode`·제품 `scopes` 카탈로그는 `apps/payments/wrangler.jsonc`, V2 API
+Secret은 `account-payments`, 설정 모드별 Webhook Secret은 `account-secrets-store`가 소유한다.
+Database Worker에도 PortOne 자격증명을 바인딩하지 않는다. production에서 시작한 테스트 거래의
+웹훅도 테스트 URL로 들어오므로 심사 거래의 완료는 브라우저 confirm과 production 재조정이
+담당한다. 세부 운영 계약은 `apps/payments/README.md`를 따른다.
 
 - [PortOne 결제 연동 준비](https://developers.portone.io/opi/ko/integration/ready/readme)
 - [PortOne 연동 정보와 채널 관리](https://developers.portone.io/opi/ko/console/guide/channel-manage)
@@ -624,28 +627,27 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 
 ## 10. 인프라와 배포 경계
 
-- `stella-stg`와 `stella`는 별도 Worker 배포이며 각각 `payments-stg`, `payments` Service Binding을 사용한다.
-- Supabase 프로젝트와 Postgres 데이터베이스는 하나만 사용한다.
-- 두 Worker가 기존 제품 단위 `stella` Hyperdrive config 하나를 그대로 공유한다.
+- `stella-stg`와 `stella`는 별도 공개 Worker 배포이며 각각 `database-stg`, `database` Service Binding을 사용한다.
+- production과 staging은 별도 Supabase Pro 프로젝트와 Postgres 데이터베이스를 사용한다.
+- `database-stg`와 `database`가 환경별 공용 fresh Hyperdrive를 사용한다.
 - entitlement와 collection의 read-after-write가 필요하므로 Hyperdrive 캐시는 계속 끈다.
-- 별도 Hyperdrive, DB role, Supabase 프로젝트를 만들지 않는다.
-- 확정 데이터 경계는 같은 DB 안의 `stella_stg`와 `stella` PostgreSQL schema다. staging과
-  production이 같은 테이블을 쓰며 행마다 `environment`를 검사하는 구조는 사용하지 않는다.
-- `STELLA_DB_SCHEMA`를 build-time에 schema-qualified SQL로 굽고 production fallback을 두지 않는다.
-- `stella_app` role은 두 schema의 table·sequence default privilege를 가지되 `search_path`는
+- 확정 데이터 경계는 환경별 프로젝트이며 두 프로젝트 모두 고정 `stella` PostgreSQL schema를 쓴다.
+  같은 테이블의 행마다 `environment`를 검사하는 구조는 사용하지 않는다.
+- `pgSchema('stella')`를 코드에 고정하고 런타임·빌드타임 schema 선택을 두지 않는다.
+- 각 프로젝트의 `sobok_runtime` role은 `stella` schema의 table·sequence DML 권한을 가지되 `search_path`는
   `pg_catalog`만 사용한다.
-- `sobok-ops`에는 `stella_stg` schema·grant, 중앙 payments custom domain, Stella Queue/DLQ를
-  선언한다. Store ID·channel map과 PortOne 자격증명은 중앙 payments 경계가 소유하며 Stella용
-  Hyperdrive resource는 추가하지 않는다.
-- 유료 질문 은행도 별도 데이터베이스를 만들지 않고 Git 원본을 각 Stella schema의 서버 콘텐츠
+- `sobok-ops`에는 양쪽 프로젝트의 `stella` schema·현재 object grant·future default privileges,
+  전체 네 Hyperdrive, 중앙 payments custom domain, Stella Queue/DLQ를 선언한다. Store ID·channel map과
+  PortOne 자격증명은 중앙 payments 경계가 소유한다.
+- 유료 질문 은행은 Git 원본을 각 환경 `stella` schema의 서버 콘텐츠
   테이블에 게시한다.
-- 실제 DB 반영은 앱 코드와 운영 binding이 준비된 뒤 같은 DB에 `drizzle-kit push`를
-  `stella_stg`, `stella` 순서로 각각 수행한다.
-- Worker와 정적 자산 배포는 로컬 Wrangler 명령으로 수행하지 않는다. 커밋을 원격 브랜치에 올린
-  뒤 `.github/workflows/stella-deploy.yml`을 사용한다. staging은 해당 브랜치의 수동
-  `workflow_dispatch(target=staging)`, production은 `main` push가 유일한 배포 경로다.
-- 계정 단일 `apps/scheduler`가 Cron Trigger를 소유한다. Stella는 `StellaMaintenance` RPC로 일일 purge와
-  15분 pending 결제 재조정을 제공하며 production·staging 모두 같은 scheduler 주기에 연결한다.
+- staging DB는 `staging` 브랜치 push가 시작한 `.github/workflows/staging-deploy.yml`이 Worker보다
+  먼저 staging의 `SOBOK_MIGRATOR_URL`로 `drizzle-kit push`한다. 비파괴·명확한 변경만 자동 적용하고
+  data loss나 rename hint가 필요한 변경은 전체 staging 배포를 중단한다. `--force`는 사용하지 않는다.
+- Worker와 정적 자산 배포는 로컬 Wrangler 명령으로 수행하지 않는다. staging은 `staging` 브랜치
+  push로 자동 배포하고 production schema와 앱은 `main`에서 각각 수동 workflow로 반영한다.
+- 계정 단일 `apps/scheduler`가 Cron Trigger를 소유한다. Database Worker는 `StellaMaintenance` RPC로 일일
+  purge와 15분 pending 결제 재조정을 제공한다.
 
 ## 11. 권장 구현 순서
 
@@ -660,7 +662,7 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 6. **완료:** `/[locale]/guardian-report/questions`와 `/result`의 유료 흐름을 서버 상태로만 구동한다.
 7. **완료:** 중앙 Wrangler에 Store ID·channel map을, `sobok-ops`에 payments Secret·Queue·custom
    domain을 반영한다.
-8. **완료:** `guardian_questionnaire_milestone`을 `stella_stg`·`stella` 양쪽 schema에 반영하고 같은
+8. **완료:** `guardian_questionnaire_milestone`을 양쪽 프로젝트의 `stella` schema에 반영하고 같은
    `guardian-paid-ko-mvp-v1` 콘텐츠 해시를 게시한다.
 9. **일부 완료:** 브랜치의 `Stella Deploy` staging workflow와 HTTP/API smoke check는 성공했다. PortOne
    테스트 결제·모바일 리디렉션·질문 재개·카드 공개의 실제 E2E는 별도로 수행한다.
@@ -674,8 +676,8 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 
 | 항목          | 결과                                                                                                                                                       |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DB            | `stella_stg`·`stella`에 `guardian_questionnaire_milestone`과 관련 제약 반영                                                                                |
-| 유료 문항     | 양쪽 schema에 `guardian-paid-ko-mvp-v1`, 45문항·176선택지 게시                                                                                             |
+| DB            | staging·production 프로젝트의 `stella` schema에 `guardian_questionnaire_milestone`과 관련 제약 반영                                                        |
+| 유료 문항     | 양쪽 프로젝트에 `guardian-paid-ko-mvp-v1`, 45문항·176선택지 게시                                                                                           |
 | 콘텐츠 동일성 | SHA-256 `38b0f79a2b838f2fa7a461be7d269b39fa67c0c47d302939b88c46eb70d2c85e` 일치                                                                            |
 | 코드 배포     | [PR #29](https://github.com/sobok2026/sobok/pull/29) squash merge, [production workflow](https://github.com/sobok2026/sobok/actions/runs/30704300267) 성공 |
 | smoke check   | `stella.sobok.cc`의 한국어 상품 랜딩·카드 페이지·상품 API가 `200` 응답                                                                                     |
@@ -707,32 +709,32 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 - 결제창을 중복 클릭해도 활성 전체 리포트 구매와 카드 스냅샷이 중복 생성되지 않는다.
 - PortOne API/Webhook Secret은 중앙 payments Worker 외부로 노출되지 않는다.
 - 카드 공개부터 네 섹션 완독까지 기존 접근성과 reduced-motion 동작이 유지된다.
-- `stella-stg`와 `stella`는 같은 Hyperdrive ID를 사용하면서 각각 `stella_stg`, `stella` schema만
+- `database-stg`와 `database`는 환경별 fresh Hyperdrive를 사용하고 각 프로젝트의 고정 `stella` schema만
   명시적으로 조회한다.
 
 ## 12. 구현 전에 필요한 제품·운영 결정
 
-| 결정               | 상태·권장안                                                | 이유                                                      |
-| ------------------ | ---------------------------------------------------------- | --------------------------------------------------------- |
-| 한국 PortOne Store | 기존 대표 Store 사용으로 확정                              | 같은 사업·정산 경계의 앱을 Store 이름만으로 나누지 않는다 |
-| 첫 실결제수단      | 토스페이 `tosspay_v2`·`EASY_PAY`로 확정                    | 실결제 승인이 완료된 가장 작은 채널부터 연다              |
-| 토스페이먼츠       | 실결제 승인 뒤 channel map에 추가                          | 승인 전 분기를 production UI에 노출하지 않는다            |
-| test/live 배포     | `stella-stg`와 `stella` 분리로 확정                        | test channel이 production에서 선택되지 않게 한다          |
-| DB·Hyperdrive      | 같은 Supabase DB·같은 Hyperdrive 공유로 확정               | Free plan 자원과 연결 풀을 늘리지 않는다                  |
-| DB 내부 경계       | 같은 DB의 `stella_stg`·`stella` schema 분리 확정           | 행별 환경 필터 없이 테스트 데이터를 분리한다              |
-| 게스트 이메일      | 결제 직전 필수, 계정 생성과 분리로 확정                    | 결제 후 기기 이탈에도 구매를 복구한다                     |
-| 질문 단계          | 무료 2개, 서버 결제 확인 뒤 유료 질문으로 확정             | 앱에서는 paid entitlement 뒤에만 유료 문항을 제공한다     |
-| 유료 질문 분량     | 주제별 핵심 3개+필수 맞춤 1개+심화 0~1개, 전체 16~20개     | 모든 주제의 깊이와 구매 후 완료율을 함께 관리한다         |
-| 중간 결과          | 핵심 12문항 뒤 모든 구매자에게 1회 제공                    | 첫 납품물을 주고 적응형 질문 전 이탈을 줄인다             |
-| 자유 입력          | 질문 수 밖의 선택 메모 최대 1개로 확정                     | 표현 여지는 주되 카드 공개를 지연시키지 않는다            |
-| 유료 질문 저장     | Git JSON을 같은 환경 schema의 불변 콘텐츠 행으로 게시      | 배포 재현성과 report별 version 고정을 함께 얻는다         |
-| 출시 카드 선택     | MVP 단일 후보, production은 전체 입력으로 패밀리 변경      | 같은 계약에서 후보만 늘린다                               |
-| 선택 점수          | 차트 중심, 유료 주제 답변은 무료 공통 답변보다 강하게 반영 | 관련성과 유료 개인화를 함께 확보한다                      |
-| MVP 카드 수        | 4개 패밀리·7개 실제 에디션으로 확정                        | 현재 완성 원화로 가장 작은 유료 흐름을 검증한다           |
-| production 카드 수 | 실제 게시 에디션 최소 1,024장으로 확정                     | 검수된 원화만 실제 카드 수로 센다                         |
-| 무료 결과 제안     | actions 뒤 소형 상품 카드 하나, 이후 전용 랜딩으로 확정    | 홈과 전환 흐름의 책임을 분리한다                          |
-| 로케일 출시        | 공용 흐름·콘텐츠 타입 유지, 이번 단계는 한국어만 게시      | 번역 추가만으로 같은 경로를 확장한다                      |
-| 출생 입력          | 기존 무료 차트 핵심값 재사용, 추가 재입력 없음 권장        | 구매 전 중복 입력을 없앤다                                |
+| 결정                | 상태·권장안                                                 | 이유                                                      |
+| ------------------- | ----------------------------------------------------------- | --------------------------------------------------------- |
+| 한국 PortOne Store  | 기존 대표 Store 사용으로 확정                               | 같은 사업·정산 경계의 앱을 Store 이름만으로 나누지 않는다 |
+| production 결제수단 | 토스페이와 신용·체크카드 선택으로 확정                      | 두 유료 흐름에서 같은 서버 검증 카탈로그를 사용한다       |
+| 토스페이먼츠        | production에는 심사용 test, 승인 뒤 같은 항목을 live로 교체 | 심사와 출시가 제품 UI 변경 없이 이어진다                  |
+| 채널 환경 경계      | 채널별 `mode`와 제품 `scopes`로 확정                        | 한 배포에서 심사용 test와 판매용 live를 명시적으로 섞는다 |
+| DB·Hyperdrive       | production/staging 프로젝트·Hyperdrive 분리로 확정          | 데이터·자격증명·연결 풀의 장애 경계를 환경별로 격리한다   |
+| DB 내부 경계        | 두 프로젝트 모두 고정 `stella` schema 사용                  | 행별 환경 필터나 동적 schema 선택 없이 환경을 분리한다    |
+| 게스트 이메일       | 결제 직전 필수, 계정 생성과 분리로 확정                     | 결제 후 기기 이탈에도 구매를 복구한다                     |
+| 질문 단계           | 무료 2개, 서버 결제 확인 뒤 유료 질문으로 확정              | 앱에서는 paid entitlement 뒤에만 유료 문항을 제공한다     |
+| 유료 질문 분량      | 주제별 핵심 3개+필수 맞춤 1개+심화 0~1개, 전체 16~20개      | 모든 주제의 깊이와 구매 후 완료율을 함께 관리한다         |
+| 중간 결과           | 핵심 12문항 뒤 모든 구매자에게 1회 제공                     | 첫 납품물을 주고 적응형 질문 전 이탈을 줄인다             |
+| 자유 입력           | 질문 수 밖의 선택 메모 최대 1개로 확정                      | 표현 여지는 주되 카드 공개를 지연시키지 않는다            |
+| 유료 질문 저장      | Git JSON을 같은 환경 schema의 불변 콘텐츠 행으로 게시       | 배포 재현성과 report별 version 고정을 함께 얻는다         |
+| 출시 카드 선택      | MVP 단일 후보, production은 전체 입력으로 패밀리 변경       | 같은 계약에서 후보만 늘린다                               |
+| 선택 점수           | 차트 중심, 유료 주제 답변은 무료 공통 답변보다 강하게 반영  | 관련성과 유료 개인화를 함께 확보한다                      |
+| MVP 카드 수         | 4개 패밀리·7개 실제 에디션으로 확정                         | 현재 완성 원화로 가장 작은 유료 흐름을 검증한다           |
+| production 카드 수  | 실제 게시 에디션 최소 1,024장으로 확정                      | 검수된 원화만 실제 카드 수로 센다                         |
+| 무료 결과 제안      | actions 뒤 소형 상품 카드 하나, 이후 전용 랜딩으로 확정     | 홈과 전환 흐름의 책임을 분리한다                          |
+| 로케일 출시         | 공용 흐름·콘텐츠 타입 유지, 이번 단계는 한국어만 게시       | 번역 추가만으로 같은 경로를 확장한다                      |
+| 출생 입력           | 기존 무료 차트 핵심값 재사용, 추가 재입력 없음 권장         | 구매 전 중복 입력을 없앤다                                |
 
 출시 전 다음 우선순위는 새 재추첨 schema의 staging 반영과 전체 리포트·재추첨 각각의 실제 PortOne
 테스트 결제부터 메일 재열람·카드 획득·대표 카드 교체까지 이어지는 수직 확인이다. 그다음 제품 결정은

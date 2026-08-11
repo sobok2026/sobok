@@ -17,10 +17,12 @@ import {
   createGuardianLoveRedrawCheckout,
   drawGuardianLoveCard,
   equipGuardianLoveCard,
+  GUARDIAN_PAY_METHODS,
   GUARDIAN_REDRAW_CHECKOUT_ACTION,
   GuardianApiError,
   type GuardianLoveRedrawResult,
   type GuardianLoveRedrawState,
+  type GuardianPayMethod,
   type GuardianRedrawCheckoutSession,
   type GuardianReportAccess,
   getGuardianLoveRedraw,
@@ -68,6 +70,7 @@ function GuardianLoveRedrawExperience({ session }: { session: GuardianReportAcce
   const [state, setState] = useState<PageState>({ kind: 'loading', confirming: false })
   const [error, setError] = useState<string | null>(null)
   const [turnstileToken, setTurnstileToken] = useState('')
+  const [payMethod, setPayMethod] = useState<GuardianPayMethod>(GUARDIAN_PAY_METHODS[0])
   const [checkoutSku, setCheckoutSku] = useState<string | null>(null)
   const [drawing, setDrawing] = useState(false)
   const [equippingId, setEquippingId] = useState<string | null>(null)
@@ -86,6 +89,9 @@ function GuardianLoveRedrawExperience({ session }: { session: GuardianReportAcce
 
   async function openCollection() {
     const pending = readGuardianRedrawCheckoutSession(session.reportPublicId)
+    if (pending) {
+      setPayMethod(pending.payMethod)
+    }
     setState({ kind: 'loading', confirming: Boolean(pending?.paymentId) })
     setError(null)
     try {
@@ -131,13 +137,14 @@ function GuardianLoveRedrawExperience({ session }: { session: GuardianReportAcce
 
     const previous = readGuardianRedrawCheckoutSession(session.reportPublicId)
     const checkout: GuardianRedrawCheckoutSession =
-      previous?.sku === product.sku
+      previous?.sku === product.sku && previous.payMethod === payMethod
         ? previous
         : {
             reportPublicId: session.reportPublicId,
             requestId: crypto.randomUUID(),
             paymentId: null,
             sku: product.sku,
+            payMethod,
             credits: product.credits,
             amount: product.price.amount,
             currency: product.price.currency,
@@ -149,6 +156,7 @@ function GuardianLoveRedrawExperience({ session }: { session: GuardianReportAcce
       const response = await createGuardianLoveRedrawCheckout(session, {
         requestId: checkout.requestId,
         sku: product.sku,
+        payMethod,
         turnstileToken,
       })
       const persisted = {
@@ -412,6 +420,32 @@ function GuardianLoveRedrawExperience({ session }: { session: GuardianReportAcce
           <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">{content.offer.eyebrow}</p>
           <h2 className="mt-2 text-xl font-bold text-white">{content.offer.title}</h2>
           <p className="mt-2 text-sm leading-6 text-foreground-muted">{content.offer.body}</p>
+          <fieldset className="mt-5">
+            <legend className="text-xs font-semibold text-foreground-secondary">{content.offer.methodLabel}</legend>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {GUARDIAN_PAY_METHODS.map((method) => (
+                <label
+                  className={`flex min-h-12 cursor-pointer items-center justify-center rounded-2xl border px-3 text-xs font-bold transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-pink-200/40 ${
+                    payMethod === method
+                      ? 'border-pink-200/45 bg-pink-100/12 text-pink-50'
+                      : 'border-white/10 bg-white/3 text-foreground-secondary hover:border-white/20 hover:text-white'
+                  }`}
+                  key={method}
+                >
+                  <input
+                    checked={payMethod === method}
+                    className="sr-only"
+                    disabled={Boolean(checkoutSku)}
+                    name="guardian-redraw-pay-method"
+                    onChange={() => setPayMethod(method)}
+                    type="radio"
+                    value={method}
+                  />
+                  {content.offer.methodLabels[method]}
+                </label>
+              ))}
+            </div>
+          </fieldset>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {redraw.products.map((product) => {
               const price = money(session.locale, product.price.currency, product.price.amount)

@@ -25,7 +25,7 @@ function sameValues(left: string[] | null, right: string[]): boolean {
   return JSON.stringify([...(left ?? [])].sort()) === JSON.stringify([...right].sort())
 }
 
-const databaseUrl = required('ACCOUNTS_POSTGRES_URL_DIRECT')
+const databaseUrl = required('SOBOK_MIGRATOR_URL')
 const origin = new URL(required('ACCOUNTS_PUBLIC_ORIGIN')).origin
 const clientId = required('SOBOK_OAUTH_CLIENT_ID')
 const fullClientSecret = required('SOBOK_OAUTH_CLIENT_SECRET')
@@ -44,7 +44,7 @@ for (const redirectUri of redirectUris) {
   }
 }
 
-const sql = postgres(databaseUrl, { max: 1, prepare: false })
+const sql = postgres(databaseUrl, { max: 1, prepare: false, ssl: 'verify-full' })
 const db = drizzle({ client: sql })
 
 try {

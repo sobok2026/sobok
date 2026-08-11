@@ -9,7 +9,7 @@ Stella 한국 유료 MVP의 결제 완료 메일과 구매 이메일 기반 재�
 - 마지막 갱신: 2026-08-03
 - 코드: 구현 및 정적 검증 완료
 - 운영 인프라: `sobok-ops`에 환경별 Resend secret 선언 완료, apply 대기
-- 데이터베이스: 새 enum·테이블 선언 완료, `stella_stg`·`stella` 반영 대기
+- 데이터베이스: 새 enum·테이블 선언 완료, staging·production 프로젝트의 `stella` schema 반영 대기
 - 외부 설정: `stella.sobok.cc` Resend 발신 도메인 확인과 환경별 API key 생성 필요
 - 실제 검증: PortOne 테스트 결제부터 이메일 수신·재열람까지 staging E2E 필요
 
@@ -79,25 +79,13 @@ incoming Host header로 메일 링크 origin을 만들지 않는다. 회신 주�
 1. Resend 발신 도메인의 DNS 확인을 완료한다.
 2. 환경별 API key를 만들고 HCP `account-stella`의 두 sensitive 변수를 설정한다.
 3. `sobok-ops`의 `account-stella` plan을 확인하고 apply해 Secrets Store 항목을 만든다.
-4. 앱 저장소의 새 schema를 먼저 staging에 반영한다.
-
-   ```bash
-   cd apps/stella
-   STELLA_DB_SCHEMA=stella_stg bun run db:push
-   ```
-
-5. 현재 브랜치의 `Stella Deploy` workflow를 `target=staging`으로 실행한다. 로컬 Wrangler 배포는 하지
-   않는다.
-6. 아래 staging 수직 흐름을 모두 확인한다.
-7. 같은 schema를 production에 반영한다.
-
-   ```bash
-   cd apps/stella
-   STELLA_DB_SCHEMA=stella bun run db:push
-   ```
-
-8. PR을 main에 병합해 production GitHub Actions 배포를 실행한다.
-9. 첫 production 구매의 발송 상태와 Worker log를 확인한다.
+4. 앱 변경을 `staging` 브랜치에 병합한다. `Staging Deploy`가 staging 프로젝트의 `stella` schema 변경을
+   자동 push하고 payments, Stella, Vibe 순서로 배포한다. 로컬 Wrangler 배포는 하지 않는다.
+5. 아래 staging 수직 흐름을 모두 확인한다.
+6. PR을 `main`에 병합한다.
+7. `Production Schema` workflow에서 Stella `plan`을 검토하고 별도 `apply` 실행으로 반영한 뒤
+   `Production Deploy` workflow를 수동 실행한다.
+8. 첫 production 구매의 발송 상태와 Worker log를 확인한다.
 
 schema 반영이 Worker 배포보다 먼저다. 새 코드는 entitlement 트랜잭션에서 새 발송 테이블을 바로 쓰므로
 테이블이 없는 환경에 먼저 배포하면 결제 확정이 실패한다.

@@ -17,22 +17,22 @@
   "services": [
     {
       "binding": "VIBE_PRODUCTION",
-      "service": "vibe",
+      "service": "database",
       "entrypoint": "VibeMaintenance"
     },
     {
       "binding": "VIBE_STAGING",
-      "service": "vibe-stg",
+      "service": "database-stg",
       "entrypoint": "VibeMaintenance"
     },
     {
       "binding": "STELLA_PRODUCTION",
-      "service": "stella",
+      "service": "database",
       "entrypoint": "StellaMaintenance"
     },
     {
       "binding": "STELLA_STAGING",
-      "service": "stella-stg",
+      "service": "database-stg",
       "entrypoint": "StellaMaintenance"
     }
   ]

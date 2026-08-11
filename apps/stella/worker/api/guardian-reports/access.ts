@@ -1,11 +1,11 @@
 import { type Db, openDb, withDb } from '@sobok/edge/db/client'
 import { sha256Hex } from '@sobok/edge/tokens'
+import { hasStellaSessionCookie, withStellaSession } from '@stella-worker/auth'
+import { resolveGuardianReportAccess } from '@stella-worker/db/queries/guardian'
+import type { AppEnv } from '@stella-worker/env'
+import { GuardianAccessTokenSchema, GuardianReportPublicIdSchema } from '@stella-worker/guardian/http'
+import { bearerToken } from '@stella-worker/lib/request'
 import type { Context } from 'hono'
-import { hasStellaSessionCookie, withStellaSession } from '~/auth'
-import { resolveGuardianReportAccess } from '~/db/queries/guardian'
-import type { AppEnv } from '~/env'
-import { GuardianAccessTokenSchema, GuardianReportPublicIdSchema } from '~/guardian/http'
-import { bearerToken } from '~/lib/request'
 
 export async function withAuthorizedGuardianReport<T>(
   c: Context<AppEnv>,
@@ -20,7 +20,7 @@ export async function withAuthorizedGuardianReport<T>(
 
   const accessTokenHash = token.success ? await sha256Hex(token.data) : undefined
   if (accessTokenHash && !hasStellaSessionCookie(c.req.raw)) {
-    return withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) => resolveAndRun(db, accessTokenHash))
+    return withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) => resolveAndRun(db, accessTokenHash))
   }
   return withStellaSession(c, async (db, session) => {
     if (!session && !accessTokenHash) {

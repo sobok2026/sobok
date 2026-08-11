@@ -1,7 +1,7 @@
 import { DEEP_TYPE_REPORT_OFFER, type OfferCurrency, PRODUCT_NAME, reportItemFor } from '@deep-type/offer'
 import type { Locale } from '@sobok/domain/locale'
 
-import type { Sku } from '~/db/schema'
+import type { Sku } from '@vibe-worker/db/schema'
 
 import type { Ga4Item } from './ga4'
 

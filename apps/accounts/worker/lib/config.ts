@@ -19,6 +19,13 @@ function absoluteOrigin(value: string): string {
   return url.origin
 }
 
+function required(value: string, name: string): string {
+  if (!value.trim()) {
+    throw new Error(`${name} is empty`)
+  }
+  return value
+}
+
 export function accountRuntimeConfig(env: Bindings) {
   const origin = absoluteOrigin(env.ACCOUNTS_PUBLIC_ORIGIN)
   const allowedHostnames = commaSeparated(env.ACCOUNTS_ALLOWED_HOSTNAMES)
@@ -30,6 +37,9 @@ export function accountRuntimeConfig(env: Bindings) {
     origin,
     allowedHostnames,
     firstPartyClientIds: commaSeparated(env.ACCOUNTS_FIRST_PARTY_CLIENT_IDS),
+    googleClientId: required(env.ACCOUNTS_GOOGLE_CLIENT_ID, 'ACCOUNTS_GOOGLE_CLIENT_ID'),
+    kakaoClientId: required(env.ACCOUNTS_KAKAO_CLIENT_ID, 'ACCOUNTS_KAKAO_CLIENT_ID'),
+    bbatonClientId: required(env.ACCOUNTS_BBATON_CLIENT_ID, 'ACCOUNTS_BBATON_CLIENT_ID'),
     turnstileAction: SOBOK_AUTH_TURNSTILE_ACTION,
   }
 }

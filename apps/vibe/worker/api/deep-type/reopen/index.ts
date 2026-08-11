@@ -1,6 +1,5 @@
+import type { AppEnv } from '@vibe-worker/env'
 import { Hono } from 'hono'
-
-import type { AppEnv } from '~/env'
 
 import exchangeRoute from './exchange/POST'
 import requestRoute from './request/POST'

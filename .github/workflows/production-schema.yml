@@ -1,0 +1,140 @@
+name: Production Schema
+
+run-name: ${{ inputs.mode }} ${{ inputs.product }} production schema @ ${{ github.sha }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      product:
+        description: Product schema to inspect or apply
+        required: true
+        type: choice
+        options:
+          - accounts
+          - stella
+          - vibe
+      mode:
+        description: Plan prints SQL; apply changes the database
+        required: true
+        default: plan
+        type: choice
+        options:
+          - plan
+          - apply
+      confirmation:
+        description: Type APPLY when mode is apply
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  # Schema inspection/apply and app release never overlap in production.
+  group: sobok-production
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate production schema request
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Validate ref and confirmation
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          MODE: ${{ inputs.mode }}
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$REF" != 'refs/heads/main' ]; then
+            echo 'Production schema workflows must run from main.' >&2
+            exit 1
+          fi
+          if [ "$MODE" = 'apply' ] && [ "$CONFIRMATION" != 'APPLY' ]; then
+            echo 'Type APPLY to confirm a production schema change.' >&2
+            exit 1
+          fi
+
+  stella:
+    name: ${{ inputs.mode }} Stella schema
+    if: inputs.product == 'stella'
+    needs: validate
+    environment: production
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Run Drizzle
+        working-directory: apps/stella
+        env:
+          CI: 'true'
+          MODE: ${{ inputs.mode }}
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
+          SOBOK_MIGRATOR_URL: ${{ secrets.STELLA_MIGRATOR_URL }}
+        run: |
+          if [ "$MODE" = 'plan' ]; then
+            bunx --bun drizzle-kit push --config drizzle.config.ts --explain --verbose
+          else
+            bunx --bun drizzle-kit push --config drizzle.config.ts
+          fi
+
+  accounts:
+    name: ${{ inputs.mode }} Accounts schema
+    if: inputs.product == 'accounts'
+    needs: validate
+    environment: production
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Run Drizzle
+        working-directory: apps/accounts
+        env:
+          CI: 'true'
+          MODE: ${{ inputs.mode }}
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
+          SOBOK_MIGRATOR_URL: ${{ secrets.ACCOUNTS_MIGRATOR_URL }}
+        run: |
+          if [ "$MODE" = 'plan' ]; then
+            bunx --bun drizzle-kit push --config drizzle.config.ts --explain --verbose
+          else
+            bunx --bun drizzle-kit push --config drizzle.config.ts
+          fi
+
+  vibe:
+    name: ${{ inputs.mode }} Vibe schema
+    if: inputs.product == 'vibe'
+    needs: validate
+    environment: production
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Run Drizzle
+        working-directory: apps/vibe
+        env:
+          CI: 'true'
+          MODE: ${{ inputs.mode }}
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
+          SOBOK_MIGRATOR_URL: ${{ secrets.VIBE_MIGRATOR_URL }}
+        run: |
+          if [ "$MODE" = 'plan' ]; then
+            bunx --bun drizzle-kit push --config drizzle.config.ts --explain --verbose
+          else
+            bunx --bun drizzle-kit push --config drizzle.config.ts
+          fi

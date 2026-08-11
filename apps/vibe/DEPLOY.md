@@ -1,34 +1,50 @@
 # DeepType (딥타입) — 배포·운영 런북
 
-`apps/vibe`의 딥타입 유료 리포트 백엔드를 **Cloudflare Workers(정적 에셋 + Hono API 한 워커)** 로 올리는 절차와, 돈이 걸린 경로를 스테이징에서 검증한 뒤 라이브로 전환하는 체크리스트다. 배포 인프라 선언은 `sobok-ops`(Terraform/HCP)에 있다.
+`apps/vibe`의 정적 사이트와 `apps/database`에서 실행되는 딥타입 API를 Cloudflare Workers로 배포하는
+절차와 돈이 걸린 경로를 스테이징에서 검증한 뒤 라이브로 전환하는 체크리스트다. 배포 인프라 선언은
+`sobok-ops`에 있다.
 
 ---
 
 ## 1. 구조 한눈에
 
-- **워커 1개** = 정적 Next 에셋(`assets` 바인딩, `output: 'export'`) + `/api/deep-type/*` Hono 라우트(`run_worker_first`).
-- **Hyperdrive 2개**: `HYPERDRIVE_FRESH`(캐시 비활성 — 돈·엔티틀먼트 조회/쓰기), `HYPERDRIVE_CACHED`(완료된 리포트 본문 등 불변 읽기). **Supabase Postgres(세션 풀러, 서울 ap-northeast-2)** origin. 공개 CA라 CA 업로드 불필요(`sslmode=require`).
-- **중앙 결제 서비스**: `apps/payments`만 PortOne API·Store/channel map·웹훅 서명을 소유한다. Vibe는
-  `PAYMENTS` Service Binding으로 checkout·조회·취소를 호출하고, 검증된 이벤트는 Vibe 전용 Queue로
-  받는다. 주문·리포트·권한 원장은 계속 Vibe DB가 소유한다.
-- **Secrets Store**(계정당 1개): Vibe Worker에는 Anthropic 키, Resend 키, Turnstile 시크릿, Discord
-  웹훅, GA4 Measurement Protocol 시크릿만 바인딩한다. PortOne Secret은 중앙 payments Worker만 읽는다.
+- **공개 Vibe Worker** = 정적 Next 에셋 + `/api/*`를 환경별 `DATABASE` Service Binding으로 전달하는 얇은
+  gateway. DB·backend secret·Queue를 갖지 않는다.
+- **Database Worker** = Vibe Hono API와 background job의 실행 경계. `database`/`database-stg`가 각각 같은
+  환경의 fresh/cached Hyperdrive를 사용한다. 전체 Hyperdrive는 앱 수와 무관하게 네 개다.
+- **Hyperdrive 2개/환경**: `HYPERDRIVE_FRESH`는 돈·entitlement 조회/쓰기, `HYPERDRIVE_CACHED`는 완료된
+  불변 리포트 본문 전용이다. 각 환경의 Supabase direct endpoint가 origin이고 네 config 모두
+  `verify-full`을 사용한다.
+- **중앙 결제 서비스**: `apps/payments`만 PortOne API·Store/channel map·웹훅 서명을 소유한다. Database
+  Worker의 `VIBE_PAYMENTS` binding이 checkout·조회·취소를 호출하고 검증된 이벤트 Queue를 소비한다.
+- **Secrets Store**: Vibe backend secret은 Database Worker에만 바인딩한다. PortOne Secret은 Payments
+  Worker만 읽는다.
 - **공용 scheduler**: 계정 단일 `apps/scheduler`가 `*/15 * * * *`에 결제 pending 재조정,
-  `0 3 * * *`에 리텐션 purge를 `VibeMaintenance` RPC로 호출한다. Vibe Worker 자체에는 Cron Trigger가
-  없다.
+  `0 3 * * *`에 리텐션 purge를 Database Worker의 `VibeMaintenance` RPC로 호출한다. 공개 Vibe Worker에는
+  Cron Trigger가 없다.
 - **결제수단 카탈로그**: V2는 채널 하나가 PG 하나라 결제수단 추가는 곧 채널 추가이고, 여러 채널을 한 창에서 고르게 해주는 UI가 없다(`loadPaymentUI`는 PayPal SPB 전용). 그래서 페이월이 먼저 고르게 하고 `requestPayment`에 채널 키와 `payMethod`를 함께 넘긴다. 무엇을 어느 로케일에 파는지는 워커와 페이월이 함께 쓰는 **`deep-type/pay-method.ts` 한 곳**에 있다 — 카탈로그는 `ko`에 카카오페이·토스페이·카드·계좌이체·휴대폰, 비한국어(en·ja·zh)에 **페이팔 단독**이다. 채널은 결제수단보다 적다: `kcp_v2` 하나가 계좌이체와 휴대폰을 함께 받는다. `/checkout`이 저장된 로케일로 다시 검증한 뒤 **승인한 채널 키 하나만** 내려준다 — 가격·채점·지급과 같은 서버 권위다.
 - **페이팔(SPB) = 두 번째 SDK 모양**: 스펙의 `open` 판별자로 갈린다. `'window'` 수단은 우리 버튼이 `requestPayment`로 창을 열고, 페이팔은 `'ui'` — `loadPaymentUI`가 **페이팔 자신의 버튼**을 `portone-ui-container`에 렌더하며 우리 버튼으로는 못 연다. 그래서 페이월은 2단계다: 폼 제출 → `/checkout`이 가격·paymentId를 승인 → 결제하기 버튼 자리에 페이팔 버튼이 나타나고 그동안 폼은 `fieldset disabled`로 얼린다(생성된 결제가 그 값에 고정돼 있으므로). 창 닫힘/거절은 attempt 단위라 버튼이 남고, `돌아가기`로 세션을 버리면 pending 행은 닫힌 창과 같은 경로(reconcile·purge)로 수렴한다.
 - **다통화 가격**: 페이팔은 KRW를 받지 않아 en·zh=USD 4.98, ja=JPY 698, ko=KRW 5,900(`deep-type/offer.ts` 한 곳, 통화당 가격 1개를 로케일이 참조). **모든 금액은 ISO 4217 minor unit 정수**(USD는 센트: 498=$4.98, KRW·JPY는 그대로)이고 PortOne `totalAmount`·DB·`/checkout` 응답이 같은 단위라 변환 없이 흐른다. 나누는 곳은 화면(`formatPrice`)과 GA4(major unit 필수, `majorUnits`) 둘뿐이다. CNY는 페이팔이 중국 내 계정에만 허용해서 못 쓴다 — zh가 USD인 이유.
-- **판매 가능 목록 = 카탈로그 ∩ 능력**: 카탈로그가 "무엇을 파는가"라면 `pay-method.ts`의 `SELLABLE_CHANNELS`가 "이 배포가 실제로 결제를 붙일 수 있는가"다. **키를 들고 있는 것과 팔 수 있는 것은 다른 사실이다** — 실연동 채널은 원천사 심사가 끝나기 전에는 창만 열리고 승인이 오지 않는다. 그래서 화면에 나가는 메뉴는 두 표의 교집합이고 `payMethodsFor(locale, tier)` 한 곳에서만 계산한다. 심사가 안 끝난 수단은 **아예 렌더되지 않는다** — 고를 수 있는데 승인이 안 되는 수단은 pending 행만 남기고 죽는다.
-- **tier**: `live`(실연동) / `test`(테스트) — 포트원 콘솔의 설정 모드와 같은 말이다. 워커는 `DEEPTYPE_PAY_TIER` var로, 페이월(정적 export라 워커 var를 못 읽는다)은 빌드 시 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER`로 받는다. **둘 다 배포 단위에 붙는 리터럴이다** — wrangler 환경 블록과 `vibe-deploy.yml`의 각 배포 job이 자기 tier를 하드코딩한다(`--env stg`를 하드코딩하는 job에서 tier가 `test` 아닌 값일 수 없다). 시크릿도 설정할 변수도 아니고, 호스트네임이나 브랜치에서 유도하지도 않는다. 어긋나면 페이월이 내놓은 수단을 `/checkout`이 거절하므로 첫 QA에서 드러난다.
+- **판매 가능 목록 = 카탈로그 ∩ 배포 프로필**: 카탈로그가 "무엇을 파는가"라면
+  `pay-method.ts`의 `SELLABLE_CHANNELS`가 각 배포가 노출할 채널을 정한다. 화면 메뉴는 두 표의
+  교집합이고 `payMethodsFor(locale, profile)` 한 곳에서만 계산한다. 현재 production 한국어 메뉴는
+  실연동 토스페이와 카드사 심사용 테스트 토스페이먼츠 카드, staging은 전체 테스트 수단이다.
+- **profile**: `production` / `staging`은 PortOne의 `live` / `test` 설정 모드가 아니라 제품 배포
+  메뉴 이름이다. 한 production 프로필 안에서도 채널별 모드는 다를 수 있다. 워커는
+  `DEEPTYPE_PAY_PROFILE`, 정적 페이월은 빌드 시 `NEXT_PUBLIC_DEEPTYPE_PAY_PROFILE`을 받으며 둘 다
+  배포 job에 리터럴로 고정한다. 시크릿·호스트네임·브랜치에서 유도하지 않는다. 어긋나면 페이월이
+  내놓은 수단을 `/checkout`이 거절하므로 첫 QA에서 드러난다.
 - **결제수단 추가 절차**(채널은 계속 늘어난다): ① `pay-method.ts`의 `PAY_METHODS`·`PAY_METHOD_SPEC`에
-  한 줄 ② 로케일 목록에 추가 ③ `SELLABLE_CHANNELS`에서 그 채널이 결제되는 tier마다 한 줄 ④ 중앙
-  `apps/payments/wrangler.jsonc`의 같은 환경 `PORTONE_CHANNELS`에 채널 키 한 줄 ⑤ `_content` 4개
-  로케일에 라벨 ⑥ 그 PG가 bypass를 요구할 때만 `use-checkout`의 `BYPASS` 표에 한 줄. ③과 ④는 같은
-  릴리스 단위로 배포한다.
+  한 줄 ② 로케일 목록에 추가 ③ `SELLABLE_CHANNELS`에서 노출할 profile마다 한 줄 ④ 중앙
+  `apps/payments/wrangler.jsonc`의 해당 배포 `PORTONE_CHANNELS`에 `channelKey`·`mode`·`vibe` scope를
+  추가 ⑤ `_content` 4개 로케일에 라벨 ⑥ 그 PG가 bypass를 요구할 때만 `use-checkout`의 `BYPASS`
+  표에 한 줄. ③과 ④는 같은 릴리스 단위로 배포한다.
 - **채널 키에 placeholder·빈 문자열을 두지 않는다.** 못 파는 채널은 맵에서 **빠져 있다**(`Partial<Record<...>>`). 빈 문자열은 `string`을 만족해 타입이 잡지 못하고 `requestPayment`까지 흘러가며, placeholder는 truthy라 falsy 검사로도 안 걸린다. `""`는 `DEEPTYPE_GA4_MEASUREMENT_ID`처럼 **없으면 생략하면 되는**(fail-open) 스칼라에만 쓴다 — 결제 능력은 fail-closed이고 집합이라 원소를 담지 않는 것이 부재의 정직한 표현이다.
-- **드리프트 점검**: `GET /api/deep-type/config`가 `payTier`, 바인딩된 채널, `unbound`(팔겠다고 했는데 키가 없음 → `/checkout`이 500 + Discord), `unsold`(키는 있는데 `SELLABLE_CHANNELS`에 안 넣음 → 돈 내는 채널이 숨어 있음), 로케일별 최종 메뉴를 함께 돌려준다. 배포 직후 이 한 번의 요청이 스모크 체크다.
-- **DB**: drizzle-kit `push`(버전 마이그레이션 없음). 테이블 5개(`deeptype_result/purchase/report/reopen_access/webhook_event`). 스키마 이름은 배포마다 다르다 — 프로덕션 `deeptype`, 스테이징 `deeptype_stg`. `pgSchema()`는 모듈 로드 시점에 실행돼 바인딩을 볼 수 없으므로 이름은 wrangler `define`으로 넣는 **빌드타임 상수**다(`worker/db/schema-name.ts`). 기본값은 없다 — 값이 비면 부팅에서 던진다.
+- **드리프트 점검**: `GET /api/deep-type/config`가 `payProfile`, Vibe scope로 바인딩된 채널,
+  `unbound`(팔겠다고 했는데 scoped entry가 없음 → `/checkout`이 500 + Discord), `unsold`(entry는
+  있는데 `SELLABLE_CHANNELS`에 안 넣음), 로케일별 최종 메뉴를 함께 돌려준다. 배포 직후 이 한 번의
+  요청이 스모크 체크다.
+- **DB**: drizzle-kit `push`(버전 마이그레이션 없음). production과 staging은 별도 Supabase 프로젝트이며 둘 다 고정 `deeptype` schema를 쓴다. `pgSchema('deeptype')`를 코드에 직접 선언하며 런타임 또는 빌드타임 schema 선택은 없다.
 - **분석 파이프라인**: GTM 컨테이너 `GTM-MH37D28N`(4개 사이트 공용) → GA4 `G-RHHX4JRYDS`. 컨테이너 로더는 **앱이 싣는다**(`@sobok/analytics/gtm-loader`, 4개 앱 공용). Cloudflare Google tag gateway는 zone에서 **프록시로만** 켜져 있고(`setUpTag` off) `/h8ou/*`를 서빙할 뿐 HTML에 아무것도 주입하지 않으므로, 이 컴포넌트를 빼면 측정이 통째로 사라진다. 브라우저는 `dataLayer`에 퍼널 이벤트만 push하고, 돈이 걸린 `purchase`는 **결제 승인 CAS를 이긴 Worker가 Measurement Protocol로 직접** 보낸다.
 - **측정 계약**: `3.0.0`. 문항별 의미가 구체적인 4개 선택지로 구성된 무료 50문항을 Worker가 재채점해 겉 16유형·속 16유형·보석 16분류를 만들고, 결제 후에는 모든 사용자에게 동일한 24개 심화 문항으로 속·보석을 재산출한다. 클라이언트가 보낸 유형 코드는 신뢰하지 않는다.
 
@@ -51,21 +67,30 @@
 
 ## 2. Phase 0 — 프로비저닝(라이브 전 1회)
 
-배포 인프라는 HCP Terraform(org `sobok2026`)의 **워크스페이스별 root**로 선언한다. 딥타입 결제에
-관련된 워크스페이스는 셋이다.
+배포 인프라는 HCP Terraform(org `sobok2026`)의 **워크스페이스별 root**로 선언한다. 관련
+워크스페이스는 다음과 같다.
 
-- `supabase` project / **`sobok-prod`**(`sobok-ops/infra/supabase/prod`) — 결제 DB.
-- `cloudflare` project / **`account-vibe`**(`sobok-ops/infra/cloudflare/account/sobok/vibe`) — Hyperdrive
-  2개, Vibe runtime secret, 커스텀 도메인 2개(`vibe` / `vibe-stg`).
+- `supabase` project / **`sobok-production`**(`sobok-ops/infra/supabase/production`)과
+  **`sobok-staging`**(`sobok-ops/infra/supabase/staging`) — 환경별 Pro 프로젝트.
+- `cloudflare` project / **`account-database`**(`sobok-ops/infra/cloudflare/account/sobok/database`) — 환경별
+  fresh/cached Hyperdrive 네 개.
+- `cloudflare` project / **`account-vibe`**(`sobok-ops/infra/cloudflare/account/sobok/vibe`) — Vibe runtime
+  secret과 커스텀 도메인 두 개(`vibe` / `vibe-stg`).
 - `cloudflare` project / **`account-payments`**(`sobok-ops/infra/cloudflare/account/sobok/payments`) —
   중앙 payments custom domain, PortOne API Secret, Vibe 결제 이벤트 Queue/DLQ.
 
 배포에 앞서 아래가 존재해야 하고, 각 산출물 id/시크릿을 3에서 config에 채운다.
 
-0. **스테이징 스키마 권한** — `sobok-prod`의 `roles.tf`가 `deeptype`과 함께 **`deeptype_stg`** 스키마에도 최소권한 `deeptype_app` grant와 default privileges를 걸어야 한다. 스테이징은 같은 Supabase 프로젝트·같은 Hyperdrive·같은 역할을 쓰고 **스키마 이름만 다르므로**, 이 grant가 없으면 스테이징 워커는 첫 쿼리에서 permission denied로 죽는다.
-1. **Supabase 프로젝트(딥타입 전용)** — 대시보드에서 **서울(ap-northeast-2) + DB 비밀번호** 생성(billing·region·password는 out-of-band; 실결제 전 Pro 권장). `sobok-prod` 워크스페이스에 `import` 블록으로 입양(`import { to=supabase_project.deeptype, id=<project-ref> }`) + HCP 변수 `organization_id`·`pooler_host`(대시보드 Connect의 `aws-N-ap-northeast-2.pooler.supabase.com`)·`database_password`(sensitive)·`SUPABASE_ACCESS_TOKEN`(project variable set). apply 후 `plan`에 replace 없어야 함 → outputs `deeptype_pg_host/port/database/user/password`.
-   **런타임 역할·권한도 이 워크스페이스가 소유한다**(`roles.tf`, `cyrilgdn/postgresql` provider): 최소권한 `deeptype_app`(+ stella용 `stella_app`) 역할·grant·default privileges를 세션 풀러로 접속해 생성하고 비밀번호를 `random_password`로 만들어 sensitive output으로 노출한다. ⚠️ 이 provider 때문에 **이 워크스페이스의 모든 plan/apply가 DB 접속을 요구**한다 — Free 플랜 일시정지 시 실패하므로 ops 실행 전 **Pro 유지(또는 사전 언포즈)** 필요.
-2. **Hyperdrive ×2 (`account-vibe`)** — `terraform apply` → 두 config id. **origin(host/port/db/user/password) 전부 `sobok-prod`에서 `terraform_remote_state`로 링크**(수동 복사·손-설정 비밀번호 없음, 별도 토큰 불필요 — 런 자체 크레덴셜). user는 최소권한 `deeptype_app.<ref>`(owner `postgres` 아님). 전제: ① `sobok-prod` 먼저 apply(outputs 존재) ② sobok-prod → account-vibe **Remote State Sharing** 활성화 ③ 데이터소스의 `organization`+워크스페이스 `name`이 실제 HCP와 정확히 일치(**org=`sobok2026`, ws=`sobok-prod`** — VCS-무시되는 cloud{} 블록의 "sobok"과 다름).
+0. **Supabase Pro 프로젝트 ×2** — 대시보드에서 production과 staging 프로젝트를 각각 서울
+   (`ap-northeast-2`)에 만들고 `sobok-production`·`sobok-staging` root의 import 블록으로 입양한다.
+   두 프로젝트 모두 `identity`, `stella`, `deeptype` schema, 환경별 `sobok_runtime`, 제품별 migrator를
+   같은 이름으로 갖는다. 환경 경계는 프로젝트이며 schema 이름에 환경 suffix를 붙이지 않는다.
+1. **역할·권한** — 공용 database module이 `sobok_runtime`과 `vibe_migrator`를 만들고, `sobok_runtime`에
+   모든 앱 schema의 현재 권한과 future default privilege를 선언한다. HCP와 Drizzle은 session pooler를
+   사용한다.
+2. **Hyperdrive ×4 (`account-database`)** — 환경마다 fresh/cached config를 하나씩 만든다. origin은 각
+   Supabase direct endpoint이고 user는 그 환경의 `sobok_runtime`이다. 두 Supabase workspace와
+   `account-secrets-store`의 Remote State Sharing을 `account-database`에 허용한다.
 3. **Secrets Store** — 계정 스토어 id 확보(`wrangler secrets-store store list` 또는 대시보드). 값의 발급·공유 경계별로 Terraform 소유권을 나눈다.
    - `account-secrets-store`: 대표 Store가 모드별로 한 번만 발급하는 `portone-webhook-secret-live` · `portone-webhook-secret-test`. 중앙 payments Worker만 바인딩한다.
    - `account-payments`: 대표 Store의 배포별 V2 API Secret
@@ -78,16 +103,20 @@
    `tosspayments`·`tosspay_v2`·`kakaopay`·`kcp_v2`·`paypal_v2`; 채널 키는 공개 vars). 앱 도메인마다
    하위 상점을 만들지 않는다. KCP의 사이트코드·PG-API 인증서·개인 키·키 비밀번호는 **포트원
    콘솔에만** 넣는다. V2 API Secret과 Store/channel map은 중앙 payments가 소유한다.
-   - **테스트 ↔ 실연동을 가르는 것은 중앙 payments 배포의 채널 키와 Webhook Secret binding이다.**
-     Store ID는 공유하고 V2 API Secret은 배포별 독립 교체를 위해 따로 발급하지만 둘 다 같은 Store
-     권한이다. Vibe의 `DEEPTYPE_PAY_TIER`는 같은 모드의 판매 카탈로그만 고르며 자격증명을 소유하지
-     않는다.
+   - **테스트 ↔ 실연동은 중앙 payments 카탈로그의 채널별 `mode`와 channel key가 가른다.** Store
+     ID는 공유하고 V2 API Secret은 배포별 독립 교체를 위해 따로 발급하지만 둘 다 같은 Store
+     권한이다. Vibe의 `DEEPTYPE_PAY_PROFILE`은 production/staging 메뉴만 고르며 자격증명이나 채널
+     모드를 소유하지 않는다.
    - **웹훅**은 [결제 연동] → [연동 관리] → [결제알림(Webhook) 관리]에서 설정 모드별 중앙 URL을
      둔다. 실연동은 `https://payments.sobok.cc/webhooks/portone`, 테스트는
      `https://payments-stg.sobok.cc/webhooks/portone`이다. payments가 서명과 결제 단건을 검증한 뒤
      `dt_` payment ID만 Vibe Queue에 넣는다.
-   - **실연동 채널은 채널마다** 계약 → MID/CID 발급 → **원천사 심사 완료**까지 끝나야 결제가 붙는다. 심사 전 상점아이디는 결제창이 열려도 승인되지 않는다. 채널의 과세구분도 테스트 채널과 같게 맞춘다. 그래서 **심사가 끝난 채널만** `SELLABLE_CHANNELS.live`와 실연동 채널 맵에 **같은 커밋으로** 들어간다 — 키가 발급된 날이 아니라 승인이 떨어진 날이 기준이다. 심사가 진행 중인 동안 그 수단은 프로덕션 페이월에 나오지 않고 `vibe-stg`에서 테스트 채널로만 QA된다.
-   - EN·JA·ZH 판매는 **페이팔(`paypal_v2`) 단독**이다. 테스트 채널은 포트원이 제공하는 **국가별 샌드박스 판매자 계정** 목록에서 만든다 — 목록의 국가는 구매자 국가가 아니라 **수취 계정의 등록 국가**라서 "한국"을 고른다(실연동에서 연결할 본인 PayPal Business 계정이 한국이므로). 실연동은 목록에서 고르는 게 아니라 **본인 PayPal Business 계정을 채널에 연결**하는 방식이고, 연결이 끝나는 날 `SELLABLE_CHANNELS.live`와 실연동 채널 맵에 `paypal_v2`를 같은 커밋으로 추가한다. 구매자 국적별 분기는 없다 — 판매자 계정 하나에 전 세계가 결제하고 창 현지화는 페이팔이 구매자 계정 로케일로 한다. 정기결제는 RT 별도라 SPB 일반결제만 쓴다.
+   - **production 카드사 심사 예외**: `SELLABLE_CHANNELS.production`은 토스페이와 토스페이먼츠를
+     노출한다. 중앙 production 카탈로그는 토스페이는 `live`, 토스페이먼츠는 `test`로 두고 둘 다
+     `vibe` scope를 갖는다. 카드사 승인 뒤 토스페이먼츠 entry의 channel key와 `mode`만 실연동으로
+     교체한다. 테스트 모드 웹훅은 `payments-stg`로 들어오므로 production 심사 거래는 브라우저
+     confirm과 production scheduler 재조정으로 완료하며, 웹훅까지 포함한 수직 QA는 staging에서 한다.
+   - EN·JA·ZH 판매는 **페이팔(`paypal_v2`) 단독**이다. 테스트 채널은 포트원이 제공하는 **국가별 샌드박스 판매자 계정** 목록에서 만든다 — 목록의 국가는 구매자 국가가 아니라 **수취 계정의 등록 국가**라서 "한국"을 고른다(실연동에서 연결할 본인 PayPal Business 계정이 한국이므로). 실연동은 목록에서 고르는 게 아니라 **본인 PayPal Business 계정을 채널에 연결**하는 방식이고, 연결이 끝나는 날 `SELLABLE_CHANNELS.production`과 중앙 production 카탈로그에 `mode: "live"`, `vibe` scope의 `paypal_v2`를 같은 커밋으로 추가한다. 구매자 국적별 분기는 없다 — 판매자 계정 하나에 전 세계가 결제하고 창 현지화는 페이팔이 구매자 계정 로케일로 한다. 정기결제는 RT 별도라 SPB 일반결제만 쓴다.
 5. **Turnstile** — vibe **전용 위젯**(`account-turnstile` 워크스페이스, 호스트네임 `vibe.sobok.cc` + `vibe-stg.sobok.cc`)의 **sitekey**(GitHub 저장소 변수 `VIBE_TURNSTILE_SITE_KEY` → 프론트 빌드 env) + **secret**(Secrets Store, `vibe-turnstile-secret`). 아직 apply 전이며 `moved`/`import` 블록이 없어 apply 시 기존 공유 위젯이 파괴·재생성된다 — sitekey 교체와 반드시 한 번에 넘겨야 한다.
 6. **Anthropic** — 리포트 생성용 API 키 → Secrets Store. 기본 모델은 재현 가능한 고정 스냅샷 `claude-haiku-4-5-20251001`이며, 교체는 품질 회귀 확인 후 `DEEPTYPE_REPORT_MODEL`로 명시한다.
 7. **Resend** — `sending_access` 전용 API 키를 `deeptype-resend-api-key`로 저장하고 `vibe.sobok.cc` 발신 도메인을 검증한다. Resend가 발급한 SPF/DKIM/MX 레코드는 Cloudflare DNS의 desired state에 옮긴 뒤 검증하며, 인증 링크가 중계 서비스에 노출되지 않도록 이 트랜잭션 발신 도메인의 **클릭 추적과 오픈 추적을 끈다**. 발신자는 `vibe <reports@vibe.sobok.cc>`, 회신 주소는 실제 모니터링하는 `sobok2026@gmail.com`이다. 발송은 같은 idempotency key로 일시 오류를 최대 3회 재시도한다.
@@ -96,99 +125,139 @@
 9. **GA4 Measurement Protocol** — GA4 관리 → 데이터 스트림 → `vibe.sobok.cc`(`G-RHHX4JRYDS`) → **Measurement Protocol API 비밀번호**를 발급해 `deeptype-ga4-api-secret`으로 저장한다(HCP 변수 `deeptype_ga4_api_secret`). 결제 승인 CAS를 이긴 호출만 `purchase`를 보낸다. 전송 여부를 정하는 건 **`DEEPTYPE_GA4_MEASUREMENT_ID`(배포별 var)** 이고 빈 문자열이면 전송만 생략된다 — 시크릿은 두 배포가 공유한다. 어느 쪽이 비어도 결제·리포트는 영향받지 않는다. GA4에서 `purchase`를 **키 이벤트로 표시**해야 Ads 전환 가져오기가 가능하다.
 10. **Discord**(선택) — 알림 웹훅 URL → Secrets Store(`account-vibe` HCP 변수 `deeptype_discord_webhook`). 빈 값이면 알림 no-op. Discord에는 구매·결제 식별자를 보내지 않고 이벤트 종류만 보낸다.
 
-> **drizzle-kit push**는 Hyperdrive를 우회해 Supabase에 **owner로 직접** 붙는다: `DEEPTYPE_POSTGRES_URL_DIRECT`를 Supabase **세션 풀러**(5432, `postgres.<ref>`) 또는 IPv6 가능 머신에서 direct 연결로 설정한다. 런타임 Worker는 이와 별개로 최소권한 `deeptype_app`로 접속한다. **순서 불변식**: `sobok-prod` apply(스키마·역할·grant·default privileges 생성)가 **첫 `db:push`보다 먼저** — 그래야 push가 만드는 테이블이 default privileges를 상속한다.
+> **drizzle-kit push**는 Hyperdrive를 우회해 해당 환경의 Supabase session pooler에 `vibe_migrator`로
+> 붙는다. 런타임은 direct-origin Hyperdrive를 통해 그 환경의 `sobok_runtime`만 사용한다.
 
 ---
 
 ## 3. Config 채우기(placeholder 치환)
 
-- `apps/vibe/wrangler.jsonc`
-  - `hyperdrive[].id` = `REPLACE_WITH_*_ID` → 2의 fresh/cached id
-  - 모든 `secrets_store_secrets[].store_id` = 계정 Secrets Store id
-  - `services[].service`는 top-level `payments`, `env.stg` `payments-stg`다. 결제 이벤트 consumer도 같은
-    tier의 `vibe-payment-events` 또는 `vibe-payment-events-stg`만 읽는다.
-  - `vars.DEEPTYPE_PAY_TIER` = top-level `live`, `env.stg` `test`. 빌드 쪽 짝은 `vibe-deploy.yml` 각 배포 job의 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER` 리터럴(`production` job `live` · `staging` job `test`)이며 비어 있으면 빌드가 실패한다
+- `apps/database/wrangler.jsonc`
+  - top-level과 `env.stg`의 fresh/cached ID = `account-database.hyperdrive_ids`
+  - Payments binding, Vibe Queue consumer, backend vars와 Secrets Store binding은 모두 이 config에 둔다.
+  - `vars.DEEPTYPE_PAY_PROFILE` = top-level `production`, `env.stg` `staging`. 빌드 쪽 짝은 각 배포
+    workflow가 직접 주입하는 `NEXT_PUBLIC_DEEPTYPE_PAY_PROFILE`이며 비어 있거나 다른 값이면 빌드가 실패한다
   - `vars.DEEPTYPE_REPORT_MODEL` = `claude-haiku-4-5-20251001`처럼 별칭이 아닌 검증된 고정 model id. 내레이션의 목적지이자 스위치라 `""`면 내레이션이 꺼진다(GA4 measurement id와 같은 모양) — 코드에 기본 모델은 없다
   - `vars.DEEPTYPE_PUBLIC_ORIGIN` / `DEEPTYPE_EMAIL_FROM` / `DEEPTYPE_EMAIL_REPLY_TO`가 실제 프로덕션 값인지 확인
-  - `vars.DEEPTYPE_GA4_MEASUREMENT_ID` = `src/constants.ts`의 `GA4_MEASUREMENT_ID` 및 컨테이너 `LT - GA4 Measurement ID` 룩업의 `vibe.sobok.cc` 값과 **세 곳이 동일**해야 한다
-- **프론트 sitekey**: `apps/vibe/src/constants.ts`의 `TURNSTILE_SITE_KEY`가 `NEXT_PUBLIC_TURNSTILE_SITE_KEY`를 읽고, CI가 저장소 변수 `VIBE_TURNSTILE_SITE_KEY`로 주입해 빌드 시 인라인한다(값이 비면 빌드가 실패한다). 이 sitekey와 서버 `vibe-turnstile-secret`은 **같은 위젯 짝**이어야 함.
-- **프론트 tier**: 같은 파일의 `PAY_TIER`가 `NEXT_PUBLIC_DEEPTYPE_PAY_TIER`를 읽는다. `live`/`test` 둘 중 하나가 아니면 빌드가 실패한다 — 안전한 기본값이 없는 변수라 그게 맞는 실패다. CI에서는 **각 배포 job의 리터럴**이다(등록할 GitHub 변수 없음). 로컬은 `.env.local`에 `test`.
-- **중앙 채널 맵**: Store ID와 환경별 channel key는 `apps/payments/wrangler.jsonc`에서 관리한다.
-  `SELLABLE_CHANNELS`와 같은 tier의 키 집합이 일치해야 하며 live에는 심사 완료 채널만 넣는다.
+  - `vars.DEEPTYPE_GA4_MEASUREMENT_ID` = `src/constants.ts`와 GTM lookup의 production 값과 일치
+- `apps/vibe/wrangler.jsonc`에는 static assets와 환경별 `DATABASE` Service Binding만 둔다.
+- **프론트 sitekey**: `apps/vibe/src/constants.ts`의 `TURNSTILE_SITE_KEY`가 `NEXT_PUBLIC_TURNSTILE_SITE_KEY`를 읽고, 배포 workflow가 저장소 변수 `VIBE_TURNSTILE_SITE_KEY`를 직접 주입한다(값이 비면 빌드가 실패한다). 이 sitekey와 서버 `vibe-turnstile-secret`은 **같은 위젯 짝**이어야 함.
+- **프론트 profile**: 같은 파일의 `PAY_PROFILE`이 `NEXT_PUBLIC_DEEPTYPE_PAY_PROFILE`을 읽는다.
+  `production`/`staging` 둘 중 하나가 아니면 빌드가 실패한다. CI에서는 `deploy-app` composite action의
+  `target` 입력을 그대로 사용한다(등록할 GitHub 변수 없음). 로컬은 `.env.local`에 `staging`.
+- **중앙 채널 카탈로그**: Store ID와 배포별 channel entry는 `apps/payments/wrangler.jsonc`에서
+  관리한다. 각 entry는 `channelKey`·`mode`·제품 `scopes`를 가지며, Vibe의
+  `SELLABLE_CHANNELS[profile]`과 해당 환경에서 `vibe` scope로 보이는 채널 집합이 일치해야 한다.
 
 ---
 
 ## 4. 스키마 push & 배포
 
+Staging은 브랜치 통합 workflow가 schema를 Worker보다 먼저 자동 반영한다. Production은 제품별 수동
+workflow에서 먼저 plan하고 별도 apply 실행으로 반영한 뒤 앱 배포 workflow를 수동 실행한다. 어느
+환경에서도 `--force`를 사용하지 않는다. 전체 순서는
+[`docs/operations/product-releases.md`](../../docs/operations/product-releases.md)를 따른다.
+
+로컬에서는 정적 검증만 수행한다. 운영 schema 반영은 GitHub Actions의 schema workflow에서만 수행한다.
+
 ```bash
 cd apps/vibe
-# DEEPTYPE_POSTGRES_URL_DIRECT(Supabase 세션 풀러, direct owner)를 drizzle-kit에 주입(로컬 1회).
-# DEEPTYPE_DB_SCHEMA는 기본값이 없다 — push가 어느 스키마를 향하는지 매번 명시해야 한다.
-DEEPTYPE_DB_SCHEMA=deeptype bun run db:push          # 프로덕션 (5 테이블 + 5 enum)
-DEEPTYPE_DB_SCHEMA=deeptype_stg bun run db:push  # 스테이징 (같은 DB, 다른 스키마)
-bun run type           # next typegen && tsc(프론트) && tsc(worker) — 0 이어야 함
-# deploy = `next build && wrangler deploy` — 정적 out/을 먼저 재빌드한다.
-# Turnstile sitekey는 NEXT_PUBLIC_TURNSTILE_SITE_KEY(CI 저장소 변수 VIBE_TURNSTILE_SITE_KEY)에서 빌드 시
-# 인라인된다. 프론트 sitekey와 서버 vibe-turnstile-secret은 반드시 같은 위젯 짝이어야 한다.
-bun run deploy
+bun run type # next typegen && tsc(프론트) && tsc(worker) — 0 이어야 함
 ```
 
 ---
 
 ## 4.1 스테이징(기능·결제 QA) 배포
 
-**PR을 여는 것만으로는 아무 데도 배포되지 않는다.** 스테이징은 **`stg` 라벨로 점유**한다 — PR에 라벨을 붙이면 `vibe-stg`에 올라가고, 이후 그 PR에 푸시할 때마다 자동으로 갱신된다. 라벨을 떼면 반납이다. `main` 푸시만 프로덕션(`vibe`)으로 간다(`.github/workflows/vibe-deploy.yml`).
+**PR을 여는 것만으로는 배포되지 않는다.** 스테이징의 유일한 소스는 보호된 `staging` 브랜치다.
+일반 경로는 PR을 `staging`에 병합하는 것이고, repository admin은 긴급하거나 작은 통합 변경일 때
+정상 fast-forward push로 change gate를 우회할 수 있다. 일반 collaborator는 계속 PR과 필수 체크를
+거쳐야 한다. 관리자도 force-push와 브랜치 삭제는 할 수 없다.
 
-PR 없이 브랜치를 올려 보거나 스테이징을 특정 ref로 되돌릴 때는 Actions에서 수동 실행한다(ref는 실행 화면에서 고른다).
+두 경로 모두 branch push event가 발생하면 `.github/workflows/staging-deploy.yml`이 브랜치 전체를 한
+릴리스로 배포한다. 순서는 다음과 같다.
 
-**라벨 점유는 확인 가능한 사실이다.** 배포 job의 첫 스텝이 열려 있는 PR 중 `stg` 라벨을 가진 것을 세고, 자기 말고 다른 PR이 쥐고 있으면 번호를 대며 멈춘다(조회가 실패하면 통과시키지 않고 죽는다 — 잠금은 fail-closed다). 강행이 필요하면 수동 실행의 `force` 입력을 켠다. concurrency는 `group: vibe-stg` 하나에 `cancel-in-progress: false` + `queue: max`라, 동시에 들어온 배포는 취소되지 않고 FIFO로 줄을 선다(기본값 `single`은 대기 중인 실행을 **교체**하므로 명시가 필요하다).
+1. Environment나 secret 없이 Biome, Prettier, repository-wide TypeScript 검증을 실행한다.
+2. `staging` Environment의 제품별 최소 권한 migrator로 staging 프로젝트의 `stella`와 `deeptype` schema를 조정한다.
+3. 중앙 `payments-stg`를 배포한다.
+4. Stella와 Vibe를 병렬로 빌드해 각각의 staging Worker를 배포한다.
 
-**수동 실행은 잠금이 아니라 탈출구다.** `workflow_dispatch`는 라벨을 남기지 않으므로 점유를 주장하지도, 남의 점유를 막지도 않는다(라벨을 쥔 PR이 있으면 멈추기는 한다). 두 사람이 동시에 수동 실행하면 `queue: max`가 순서만 세우고 나중 것이 앞의 것을 대체한다. **점유가 필요하면 PR에 라벨을 붙인다.**
+preflight가 실패하면 staging Environment와 DB migrator secret에 접근하지 않는다. DB 단계가 실패하면 어떤
+Worker도 배포하지 않고, payments가 실패하면 제품 Worker도 배포하지 않는다.
+새 `staging` 커밋이 들어와도 SQL 적용 중인 run은 취소하지 않는다. `concurrency: sobok-staging`과
+GitHub의 기본 single pending slot을 사용해 현재 실행은 끝까지 완료하고, 대기 중인 커밋은 가장 최신
+하나로 교체한다. 따라서 중간 커밋을 모두 순차 배포하지 않으면서도 drizzle 실행을 중간에 끊지 않고
+최종적으로 브랜치 최신 통합 상태에 수렴한다.
 
-- 라벨을 떼도 워커는 **마지막 배포를 계속 서빙한다**. 반납은 "다음 사람이 올려도 된다"는 뜻이지 스테이징이 비었다는 뜻이 아니다. 지금 뭐가 올라가 있는지는 레포의 **Deployments**에서 본다.
-- 라벨은 워크플로의 `paths` 필터에 걸리는 PR에서만 동작한다(`apps/vibe`, `packages`, `bun.lock`, 이 워크플로 자신). 그 밖의 PR에 라벨을 붙이면 워크플로가 아예 트리거되지 않아 조용히 아무 일도 일어나지 않는다.
-- **DB는 갈리지 않는다.** 스테이징이 하나이므로 `deeptype_stg` 스키마도 하나다. 라벨이 막는 것은 코드가 섞이는 것이지 데이터가 섞이는 것이 아니다.
-- 라벨은 `sobok-ops`의 `infra/github/sobok2026/labels.tf`가 선언한다. 워크플로가 리터럴 `stg`로 매칭하므로 **양쪽을 같이 고치지 않으면 스테이징 배포가 조용히 죽는다.**
+재실행은 Actions의 **Staging Deploy**에서 ref를 `staging`으로 골라 수동 실행한다. 워크플로 자체가
+다른 ref를 거부하고, `staging` GitHub Environment도 `staging` 브랜치만 허용한다. 현재 배포된 commit과
+상태는 저장소의 Deployments 및 해당 workflow run에서 확인한다.
 
-**PR에서 도는 것은 검증뿐이다**(`verify` job). `next build`와 유료 텍스트 유출 검사(`check:export`)를 `test` tier 한 번으로 돌린다 — tier는 빌드에 인라인되는 문자열이라 성패를 가르지 않고 유출 검사의 needle도 tier와 무관하며, tier가 실제로 가르는 것(로케일별 결제수단 메뉴)은 `deep-type/pay-method.test.ts`가 lint.yml의 `bun test apps/vibe`에서 두 tier 모두 단정한다(`live`의 en/ja/zh 빈 메뉴는 페이팔 심사 전까지 의도된 상태로 핀). lint.yml은 빌드는 하지 않으므로, 이 job이 없으면 빌드 깨짐이 머지된 뒤 프로덕션 배포에서 처음 드러난다.
+- **관리자 직접 push는 명시적인 편의 경로다.** `staging-change-gate`의 Admin `always` bypass가 정상
+  fast-forward update를 허용한다. `exempt`가 아니라 GitHub의 bypass 평가 경로를 사용하지만 확인
+  대화상자가 뜨는 임시 권한은 아니다. 역할 기반 허용이므로 일상 경로는 계속 PR로 유지한다. push가
+  수락된 뒤 preflight가 실패하면 Worker와 DB는 그대로지만 `staging` branch는 실패한 commit을 가리킨다.
+  이때도 force-push하지 않고 후속 fix 또는 revert commit으로 복구한다.
+- **history 보호는 별도다.** bypass actor가 없는 `staging-history`가 deletion과 non-fast-forward를
+  차단하므로 change gate를 우회해도 force-push나 브랜치 삭제는 허용되지 않는다.
+- **DB는 하나의 staging 릴리스 상태다.** staging 프로젝트의 `stella`와 `deeptype`도 `staging` 브랜치 최신 커밋과 함께
+  전진한다. 파괴적 변경이나 rename처럼 판단이 필요한 변경은 자동 승인하지 않고 run을 실패시킨다.
+- `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`·`STELLA_MIGRATOR_URL`·
+  `VIBE_MIGRATOR_URL`은 `staging` Environment에 둔다. Schema matrix는 제품에 맞는
+  DB secret 하나만 `SOBOK_MIGRATOR_URL`로 주입한다.
+- production schema와 앱 배포는 `main`에서 각각 수동 실행하고 둘 다 `production`
+  Environment를 사용한다. Schema job만 제품별 DB secret을 참조하며 앱 배포 workflow에는
+  DB URL을 전달하지 않는다.
 
-⚠️ **`verify`에 GitHub Environment를 붙이지 마라.** `pull_request`는 PR 브랜치의 워크플로 파일을 그대로 실행하므로, environment를 붙이는 순간 아무 게이트 없이 도는 job이 환경 시크릿을 쥐게 된다. tier가 모든 job에서 리터럴인 것도 같은 계열이다 — 시크릿이 아닌 값을 environment에 두면 그 값을 읽으려고 job이 시크릿까지 쥐게 된다. 같은 맥락에서 **레포 레벨 `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`는 존재하면 안 된다** — 레포 시크릿은 environment 없는 job에도 내려간다. 값은 `production`·`staging` 환경 시크릿에만 두고, 그래서 **stella·zwds·horn 워크플로도 `environment: production`을 선언하도록 함께 바꿨다**(안 그러면 그 셋의 배포가 크레덴셜을 못 찾는다). `verify`의 첫 스텝이 이 전제가 깨졌는지 매번 확인한다.
+**PR에서 도는 것은 검증뿐이다.** `lint.yml`의 `Release builds`가 네 앱을 명시적으로 빌드하고 Vibe의
+`check:export`까지 수행한다. 이 job에는 GitHub Environment를 붙이지 않는다.
+
+⚠️ **PR build에 GitHub Environment를 붙이지 마라.** `pull_request`는 PR 브랜치의 워크플로 파일을
+실행하므로, environment를 붙이는 순간 PR job이 환경 시크릿을 쥘 수 있다. 같은 이유로 레포 레벨
+`CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`·`STELLA_MIGRATOR_URL`·
+`VIBE_MIGRATOR_URL`은 존재하면 안 된다. 값은 보호된 `production`/`staging`
+Environment에만 둔다.
 
 이 경계가 **보장하는 것과 보장하지 않는 것**을 정확히:
 
-- **보장** — 아무 게이트 없이 모든 PR에서 도는 `verify`는 Cloudflare 크레덴셜을 쥐지 않는다.
-- **보장하지 않음** — `stg`는 `pull_request`로 돌면서 `environment: staging`을 선언하므로 토큰을 받는다. Cloudflare의 `Workers Scripts: Edit`은 스크립트 단위로 좁힐 수 없고 wrangler에는 OIDC 경로도 없어서 그 토큰은 `vibe`도 쓸 수 있다. **라벨을 붙일 수 있는 사람은 이 워크플로를 고쳐 프로덕션 워커에 닿을 수 있다.** 익명 공격자에게는 닫혀 있고, 협업자에게는 신뢰가 경계다 — 이미 `main`에 푸시할 수 있는 사람들과 같은 집합이다.
+- **보장** — 모든 PR에서 도는 product build는 Cloudflare와 DB migrator 크레덴셜을 쥐지 않는다.
+- **보장** — staging 크레덴셜은 보호된 `staging` 브랜치의 통합 워크플로만 받고, secret 없는
+  preflight가 먼저 통과한다. PR head에서 staging deployment job을 직접 실행하는 경로는 없다.
+- **보장하지 않음** — Cloudflare API token의 `Workers Scripts: Edit`은 스크립트 하나로 좁힐 수 없다.
+  따라서 `staging`에 변경을 병합하거나 관리자 fast-forward push를 할 수 있는 사람과 브랜치 보호가
+  신뢰 경계다.
 - 그리고 **스테이징은 저가치 환경이 아니다.** `env.stg`는 실연동과 같은 Anthropic 키·Resend
-  키·Discord 웹훅·GA4 시크릿과 **같은 Hyperdrive 두 개**(= 같은 Supabase 클러스터)를 바인딩한다.
-  PortOne 자격증명은 없지만 `payments-stg`를 통해 테스트 거래를 제어한다. 프로덕션 데이터와 갈라 주는
-  것은 `DEEPTYPE_DB_SCHEMA` 빌드타임 문자열 하나뿐이고, 그건 배포되는 코드가 바꿀 수 있다. 라벨은
-  실제 권한 부여다.
+  키·Discord 웹훅·GA4 시크릿을 바인딩하고 `payments-stg`를 통해 테스트 거래를 제어한다. 데이터와
+  자격증명은 production과 다른 Supabase 프로젝트·Hyperdrive·migrator URL로 격리하지만,
+  `staging` 브랜치 병합과 관리자 fast-forward push 권한은 여전히 실제 배포 권한이다.
 
-**롤백**은 별도 장치 없이 `bunx wrangler rollback`이다(필요하면 `--env stg`).
+**코드 롤백**은 정상 revert commit을 `staging`에 올려 같은 전체 파이프라인으로 재배포한다. 이 방식은
+Payments, Database Worker, 공개 앱 Worker와 schema 선언의 source revision을 다시 일치시킨다. Cloudflare의 즉시 Worker
+rollback은 장애 완화용일 뿐이며 DB schema를 되돌리지 않으므로 이후 반드시 Git revert로 수렴시킨다.
 
-로컬에서 직접 올려야 할 때:
+최초 custom domain 프로비저닝 전에도 로컬 deploy 대신 **Staging Deploy**를 먼저 실행한다.
 
-```bash
-cd apps/vibe
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=<vibe 위젯 sitekey> NEXT_PUBLIC_DEEPTYPE_PAY_TIER=test bun run build   # 값이 비면 빌드가 실패한다
-bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 없음)
-# 그 다음에 account-vibe apply → cloudflare_workers_custom_domain.vibe_stg 가 붙는다
-```
-
-- **순서 불변식**: 커스텀 도메인은 **이미 존재하는 Worker**에만 붙는다. 첫 `wrangler deploy --env stg`보다 `account-vibe` apply를 먼저 돌리면 `404 This Worker does not exist on your account.`로 실패한다(프로덕션 `vibe`도 같은 전제다). 배포와 apply 사이에는 워커가 잠시 도달 불가 상태로 존재하는데, 정상이다.
+- **순서 불변식**: 커스텀 도메인은 **이미 존재하는 Worker**에만 붙는다. 첫 Staging Deploy보다
+  `account-vibe` apply를 먼저 돌리면 `404 This Worker does not exist on your account.`로 실패한다
+  (프로덕션 `vibe`도 같은 전제다). 배포와 apply 사이에는 워커가 잠시 도달 불가 상태로 존재하는데,
+  정상이다.
 - **도메인 소유자는 Terraform 하나뿐이다.** `wrangler.jsonc`에는 top-level에도 `env.stg`에도 `routes`를 두지 않는다 — 양쪽에 선언하면 같은 바인딩에 주인이 둘이 된다.
-- **테스트 채널은 배포로만 갈린다.** `/checkout`이 채널 키를 정하는 유일한 지점이라, 프로덕션 빌드가 테스트 키를 내려줄 수 있는 경로가 하나라도 생기면 0원 결제로 유료 리포트가 나간다. 런타임 플래그·쿼리 파라미터로 모드를 바꾸지 않는다.
-- `vars` · `define` · `hyperdrive` · `secrets_store_secrets`는 **비상속**이라 `env.stg`에 전부 다시 적혀 있다. 새 var를 top-level에 추가하면 staging에도 같이 넣어야 하고, 빠뜨리면 `undefined`로 도착한다(`guardTurnstile`이 `DEEPTYPE_PUBLIC_ORIGIN` 누락을 `misconfigured`로 잡아 주는 이유).
+- **채널 모드는 중앙 카탈로그 entry로만 정한다.** `/checkout`이 scope를 검증해 채널 키를 내리는
+  유일한 지점이고, production의 테스트 카드는 심사 기간에만 명시적으로 둔다. 런타임 플래그나
+  쿼리 파라미터로 test/live를 바꾸지 않으며 승인 즉시 같은 entry를 실연동으로 교체한다.
+- Database Wrangler의 `vars`·`hyperdrive`·`services`·`queues`·`secrets_store_secrets`는 비상속이라
+  `env.stg`에 완전 선언한다. 공개 Vibe Wrangler는 assets와 `DATABASE` binding만 갖는다.
 - **Turnstile**: Cloudflare의 always-pass 더미 시크릿은 `hostname`을 `example.com`으로 돌려주므로 이 검증기를 통과할 수 없다(`packages/edge/src/turnstile.ts`). 스테이징도 **실제 vibe 위젯**을 쓰고, `vibe-stg.sobok.cc`를 위젯 Hostname Management에 등록해야 한다. `vibe.sobok.cc`의 서브도메인이 아니라 형제 호스트라 자동 커버되지 않는다.
 - **GA4**: 스테이징은 `DEEPTYPE_GA4_MEASUREMENT_ID`가 빈 문자열이라 `confirmPurchase`가 Measurement Protocol 전송을 건너뛴다. 킬스위치는 **목적지이지 크레덴셜이 아니다** — 시크릿은 프로덕션과 같은 것을 바인딩하고 보낼 곳이 없어서 안 보낸다. 테스트 결제는 프로덕션 매출 지표에 잡히지 않는다. 브라우저 GTM은 hostname 룩업으로 property를 고르므로 `vibe-stg.sobok.cc`를 룩업 테이블에 넣지 않는 편이 안전하다.
-- **scheduler가 두 환경을 각각 호출한다** — `vibe`와 `vibe-stg` Service Binding이 같은 주기에 각자
-  production/staging schema를 정리한다(E2E F가 이걸 검증한다).
+- **scheduler가 두 환경을 각각 호출한다** — `database`와 `database-stg`의 `VibeMaintenance`가 같은
+  주기에 각자 production/staging project를 정리한다(E2E F가 이걸 검증한다).
 
 ---
 
 ## 5. 스테이징 E2E 테스트 플랜(돈이 걸린 경로 우선)
 
-> `vibe-stg` 워커(4.1) + PortOne 테스트 채널 + 실제 vibe Turnstile 위젯 + `deeptype_stg` 스키마로 수행. 각 단계는 DB 행 상태와 Discord 알림을 함께 확인한다.
+> `vibe-stg` + `database-stg` + PortOne 테스트 채널 + 실제 Vibe Turnstile 위젯 + staging의
+> `deeptype` schema로 수행한다. 각 단계는 DB 행 상태와 Discord 알림을 함께 확인한다.
 
 **A. 정상 결제 → 리포트 → 열람**
 
@@ -275,30 +344,40 @@ bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 �
 
 ## 6. 라이브 전환 체크리스트
 
-- [ ] Phase 0 산출물 전부 존재(Supabase·Hyperdrive×2·Vibe 전용 Secrets Store 항목 5개·중앙 payments
+- [ ] Phase 0 산출물 전부 존재(Supabase Pro 프로젝트×2·Hyperdrive×4·Vibe 전용 Secrets Store 항목 5개·중앙 payments
       Worker·Vibe Queue/DLQ·PortOne API Secret 1개·Webhook Secret 2개·Turnstile·PortOne 대표 Store).
-- [ ] **CI 크레덴셜 이관** — `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`가 `production`·`staging` **환경 시크릿**에만 있고 **레포 레벨에서는 삭제**됨. 확인 방법: PR 하나를 열어 `verify`의 첫 스텝(`Assert this job holds no Cloudflare credential`)이 초록인지 본다. 넷 다 배포되는지도 확인 — stella/zwds/horn도 이제 `production` 환경을 쓴다.
-- [ ] `stg` 라벨 존재(sobok-ops `infra/github/sobok2026/labels.tf` apply). 없으면 스테이징 배포를 트리거할 방법이 라벨 경로에는 없다.
-- [ ] `sobok-prod` roles.tf가 `deeptype`·`deeptype_stg` 두 스키마에 grant·default privileges 적용 완료.
+- [ ] **CI 크레덴셜 경계** — `CLOUDFLARE_API_TOKEN`·`CLOUDFLARE_ACCOUNT_ID`·
+      `STELLA_MIGRATOR_URL`·`VIBE_MIGRATOR_URL`은 `production`·`staging`
+      Environment에만 있고 레포 레벨에는 없음.
+- [ ] `sobok-ops`의 `staging-history`·`staging-change-gate` ruleset과 `staging` Environment branch
+      policy 적용 완료. Admin fast-forward push는 허용되고 force-push·삭제는 차단됨.
+- [ ] `account-secrets-store`의 Supabase CA가 생성되고 네 Hyperdrive가 같은 CA id와
+      `sslmode=verify-full`을 사용함.
+- [ ] `sobok-production`·`sobok-staging`의 database module이 `deeptype` 현재 object grant와 future default privileges를 적용 완료.
 - [ ] `wrangler.jsonc` placeholder 전부 치환, `DEEPTYPE_REPORT_MODEL`은 검증된 고정 id(내레이션의 목적지이자 스위치 — `""`면 룰 엔진 리포트만 나간다).
-- [ ] top-level `vars`에 새로 추가한 항목이 `env.stg`에도 들어갔는지(비상속 키).
-- [ ] **심사 완료된 실연동 채널만** 중앙 `PORTONE_CHANNELS`에 있고 그 키 집합이
-      `SELLABLE_CHANNELS.live`와 정확히 같음 — `GET /api/deep-type/config`의 `unbound`·`unsold`가 둘 다
-      빈 배열이고, `payMethods`의 네 로케일이 모두 비어 있지 않음.
-- [ ] 배포된 페이월의 결제수단이 `GET /api/deep-type/config`의 `payMethods`와 일치(빌드 리터럴 tier ↔ 워커 var tier 정합 확인).
+- [ ] Database Wrangler의 top-level `vars`·service·queue·Hyperdrive·secret이 `env.stg`에도 완전 선언됐는지.
+- [ ] 중앙 `PORTONE_CHANNELS`의 각 entry에 올바른 `mode`와 `vibe` scope가 있고, 해당 환경에서
+      Vibe에 보이는 채널 집합이 `SELLABLE_CHANNELS[profile]`과 정확히 같음 —
+      `GET /api/deep-type/config`의 `unbound`·`unsold`가 둘 다 빈 배열이고 출시 로케일 메뉴가 비어
+      있지 않음. 심사 기간 production은 토스페이 `live` + 토스페이먼츠 `test`가 의도된 조합이다.
+- [ ] 배포된 페이월의 결제수단이 `GET /api/deep-type/config`의 `payMethods`와 일치(빌드 리터럴
+      profile ↔ 워커 var profile 정합 확인).
 - [ ] 저장소 변수 `VIBE_TURNSTILE_SITE_KEY` = vibe 위젯 sitekey, 서버 `vibe-turnstile-secret` = 그 위젯의 secret(짝 일치), 위젯 호스트네임에 `vibe.sobok.cc`·`vibe-stg.sobok.cc` 둘 다 등록.
 - [ ] PortOne 콘솔 기본 웹훅 URL이 **모드별 중앙 URL**로 등록(실연동 =
       `payments.sobok.cc/webhooks/portone`, 테스트 = `payments-stg.sobok.cc/webhooks/portone`)되고 서명값이
       각각 `portone-webhook-secret-live`·`portone-webhook-secret-test`에 들어감.
-- [ ] 토스페이 실연동 MID의 **원천사 심사 완료** 확인. 페이팔은 **본인 PayPal Business 계정을 실연동 채널에 연결**하고 그 커밋에서 `SELLABLE_CHANNELS.live`+실연동 채널 맵에 `paypal_v2`를 함께 추가.
+- [ ] 토스페이 실연동 MID의 **원천사 심사 완료** 확인. 토스페이먼츠 카드 승인 직후 production
+      entry를 실연동 channel key + `mode: "live"`로 교체. 페이팔은 **본인 PayPal Business 계정을
+      실연동 채널에 연결**하고 그 커밋에서 `SELLABLE_CHANNELS.production`과 중앙 production
+      카탈로그에 `paypal_v2`를 함께 추가.
 - [ ] Resend 발신 도메인 검증, SPF/DKIM/MX 정상, 인증 메일 클릭·오픈 추적 비활성.
 - [ ] Google 유럽/미국 메시지 게시 및 Consent Mode 광고·분석 통합 활성.
 - [ ] GTM 컨테이너 v3 import·게시 완료(`Consent Mode - 지역별 기본값` + 전자상거래 태그 4종), GA4에서 `purchase` 키 이벤트 표시.
-- [ ] `bun run type` = 0, `DEEPTYPE_DB_SCHEMA=deeptype`으로 `db:push` 완료(프로덕션 Supabase).
+- [ ] `bun run type` = 0, staging 자동 schema push 완료, production schema plan/apply 후 앱 수동 배포 완료.
 - [ ] 스테이징 E2E A–L 통과(특히 B/C/D/H/J/K/L — 돈·멱등·환불·재열람·페이팔/모바일 결제·측정·토스페이).
 - [ ] Discord 알림 채널 수신 확인.
 - [ ] `wrangler deploy` 후 스모크: `/config` 200, 무료 세션 200, 소액 실결제 1건 → 환불로 정리.
-- [ ] `scheduler` Worker의 account-wide Cron Trigger 2개 활성(`*/15`, `0 3`), Vibe Worker의 Cron
+- [ ] `scheduler` Worker의 account-wide Cron Trigger 2개 활성(`*/15`, `0 3`), 공개 Vibe Worker의 Cron
       Trigger는 0개.
 
 ---
@@ -306,9 +385,9 @@ bunx wrangler deploy --env stg   # Worker `vibe-stg` 생성 (아직 도메인 �
 ## 7. 관측·운영
 
 - **알림**: 웹훅 금액 불일치, 리포트 생성 실패 시 Discord로 이벤트 종류만 통지(식별자는 제한된 Worker 로그에서 확인, 웹훅 URL 빈 값이면 조용히 비활성).
-- **재조정**: 공용 scheduler의 `*/15` trigger가 `VibeMaintenance`를 호출해 `verify`를 놓친 pending을
+- **재조정**: 공용 scheduler의 `*/15` trigger가 Database Worker의 `VibeMaintenance`를 호출해 pending을
   PortOne 재조회로 마감한다.
-- **리텐션**: 공용 scheduler의 `0 3` trigger가 `VibeMaintenance`를 호출해 미전환 결과와
+- **리텐션**: 공용 scheduler의 `0 3` trigger가 Database Worker의 `VibeMaintenance`를 호출해 미전환 결과와
   pending/failed 구매 30일, 완료 리포트의 원본·심화 응답 3개월, 원본 웹훅 90일을 기준으로 정리한다.
   결제 1년 뒤 이메일·접근 토큰·파생 결과·리포트를 삭제하고 최소 거래 기록만 5년까지 보관한 뒤
   삭제한다. 일회용 재열람 토큰은 만료 즉시 다음 purge에서 삭제한다.

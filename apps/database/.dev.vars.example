@@ -1,0 +1,33 @@
+# Local configuration for the private Database Worker. Copy to `.dev.vars` (gitignored).
+# Product static-site variables remain in each product's `.env.local`; this file is backend-only.
+
+ACCOUNTS_PUBLIC_ORIGIN="http://localhost:3014"
+ACCOUNTS_ALLOWED_HOSTNAMES="localhost"
+ACCOUNTS_FIRST_PARTY_CLIENT_IDS="stella-local"
+ACCOUNTS_EMAIL_FROM="Sobok Accounts <accounts@example.invalid>"
+ACCOUNTS_EMAIL_REPLY_TO="developer@example.invalid"
+ACCOUNTS_GOOGLE_CLIENT_ID="<accounts-dev-google-client-id>"
+ACCOUNTS_KAKAO_CLIENT_ID="<accounts-dev-kakao-client-id>"
+ACCOUNTS_BBATON_CLIENT_ID="<accounts-dev-bbaton-client-id>"
+
+STELLA_ALLOWED_HOSTNAMES="localhost"
+STELLA_PUBLIC_ORIGIN="http://localhost:3010"
+STELLA_ACCOUNTS_ISSUER="http://localhost:3014"
+STELLA_OIDC_CLIENT_ID="stella-local"
+STELLA_EMAIL_FROM="Stella <reports@example.invalid>"
+STELLA_EMAIL_REPLY_TO="developer@example.invalid"
+
+DEEPTYPE_PAY_PROFILE="staging"
+DEEPTYPE_PUBLIC_ORIGIN="http://localhost:3000"
+DEEPTYPE_EMAIL_FROM="Vibe <reports@example.invalid>"
+DEEPTYPE_EMAIL_REPLY_TO="developer@example.invalid"
+DEEPTYPE_REPORT_MODEL=""
+DEEPTYPE_GA4_MEASUREMENT_ID=""
+
+# Both bindings must point at the same local/development Postgres. Their separate names preserve the
+# production routing contract; local Postgres does not emulate Hyperdrive query caching.
+# CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_FRESH="postgres://…"
+# CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_CACHED="postgres://…"
+
+# All credential bindings are Secrets Store bindings. Seed a local Secrets Store under the names declared
+# in wrangler.jsonc; never place secret values in this tracked example.

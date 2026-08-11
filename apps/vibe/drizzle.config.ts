@@ -1,15 +1,19 @@
 import { defineConfig } from 'drizzle-kit'
 
-import { DB_SCHEMA } from './worker/db/schema-name'
+const migratorUrl = process.env.SOBOK_MIGRATOR_URL
+if (!migratorUrl) throw new Error('SOBOK_MIGRATOR_URL is required for schema push')
 
-// `DB_SCHEMA` throws when DEEPTYPE_DB_SCHEMA is unset, and that is the point: push is the one command that
-// can create or drop tables, so it must be told which schema it is aimed at instead of defaulting into the
-// live one. `schemaFilter` then keeps the diff inside that schema — without it drizzle compares against every
-// schema on the database and proposes dropping the ones it does not own (`stella`, Supabase's own).
+const parsedUrl = new URL(migratorUrl)
+if (parsedUrl.searchParams.get('sslmode') !== 'verify-full') {
+  throw new Error('SOBOK_MIGRATOR_URL must use sslmode=verify-full')
+}
+if (decodeURIComponent(parsedUrl.username).split('.')[0] !== 'vibe_migrator') {
+  throw new Error('SOBOK_MIGRATOR_URL must use vibe_migrator')
+}
+
 export default defineConfig({
   schema: './worker/db/schema.ts',
   dialect: 'postgresql',
-  schemaFilter: [DB_SCHEMA],
-  dbCredentials: { url: process.env.DEEPTYPE_POSTGRES_URL_DIRECT ?? '' },
-  strict: true,
+  schemaFilter: ['deeptype'],
+  dbCredentials: { url: migratorUrl },
 })

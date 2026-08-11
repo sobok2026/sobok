@@ -26,7 +26,7 @@ export async function handleGuardianPaymentEvent(
     return
   }
 
-  const disposition = await withDb(openDb(env.HYPERDRIVE), ctx, async (db) => {
+  const disposition = await withDb(openDb(env.HYPERDRIVE_FRESH), ctx, async (db) => {
     if (await hasProcessedGuardianWebhook(db, event.eventId)) {
       return 'processed' as const
     }
@@ -41,7 +41,7 @@ export async function handleGuardianPaymentEvent(
     throw new Error(`Central payment event was not terminal: ${remotePayment.status}`)
   }
 
-  const outcome = await withDb(openDb(env.HYPERDRIVE), ctx, async (db) => {
+  const outcome = await withDb(openDb(env.HYPERDRIVE_FRESH), ctx, async (db) => {
     const synced = await syncGuardianPayment(db, remotePayment)
     if (synced.status !== 'purchase-not-found') {
       await recordProcessedGuardianWebhook(db, {

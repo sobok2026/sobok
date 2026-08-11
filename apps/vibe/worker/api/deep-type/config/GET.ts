@@ -1,8 +1,7 @@
 import { type PortOneChannel, payMethodsFor, sellableChannels } from '@deep-type/pay-method'
 import { LOCALES } from '@sobok/domain/locale'
+import type { AppEnv } from '@vibe-worker/env'
 import { Hono } from 'hono'
-
-import type { AppEnv } from '~/env'
 
 const route = new Hono<AppEnv>()
 
@@ -12,7 +11,7 @@ const route = new Hono<AppEnv>()
 // are non-inheritable, hand-restated per wrangler environment, and a block `env.stg` forgot or a mistyped
 // channel name is observable only in the running deployment. One curl after a deploy, per DEPLOY.md.
 //
-// `unbound` and `unsold` name the two directions the channel map and `sellableChannels(tier)` can drift, so
+// `unbound` and `unsold` name the two directions the scoped channel map and `sellableChannels(profile)` can drift, so
 // neither has to be spotted by comparing lists by eye. `payMethods` is the menu each locale's picker will
 // actually render — the check that no locale was left with nothing to pay with.
 //
@@ -21,12 +20,12 @@ const route = new Hono<AppEnv>()
 // indistinguishable from a right one until a real payment runs, so echoing them here would only hand the full
 // contract list to anyone who asks, one per sale instead.
 route.get('/', async (c) => {
-  const bound = (await c.env.PAYMENTS.availableChannels()) as PortOneChannel[]
-  const sellable = sellableChannels(c.env.DEEPTYPE_PAY_TIER)
-  const firstConfig = bound[0] ? await c.env.PAYMENTS.checkoutConfig(bound[0]) : null
+  const bound = (await c.env.VIBE_PAYMENTS.availableChannels()) as PortOneChannel[]
+  const sellable = sellableChannels(c.env.DEEPTYPE_PAY_PROFILE)
+  const firstConfig = bound[0] ? await c.env.VIBE_PAYMENTS.checkoutConfig(bound[0]) : null
 
   return c.json({
-    payTier: c.env.DEEPTYPE_PAY_TIER,
+    payProfile: c.env.DEEPTYPE_PAY_PROFILE,
     // The narration destination-switch. null = engine-only reports — visible here because an env block that
     // forgot to restate the var turns narration off with no other symptom.
     reportModel: c.env.DEEPTYPE_REPORT_MODEL || null,
@@ -37,7 +36,9 @@ route.get('/', async (c) => {
     // A key we hold and never spend. Harmless — nothing asks for it — but it means an approval landed and
     // `SELLABLE_CHANNELS` was not told, so a method we are paying for is still hidden.
     unsold: bound.filter((channel) => !sellable.includes(channel)),
-    payMethods: Object.fromEntries(LOCALES.map((locale) => [locale, payMethodsFor(locale, c.env.DEEPTYPE_PAY_TIER)])),
+    payMethods: Object.fromEntries(
+      LOCALES.map((locale) => [locale, payMethodsFor(locale, c.env.DEEPTYPE_PAY_PROFILE)]),
+    ),
   })
 })
 

@@ -88,6 +88,7 @@ export default function GuardianReopen({ locale }: { locale: Locale }) {
         accessToken: reopened.accessToken,
         paymentId: reopened.paymentId,
         email: reopened.recoveryEmail,
+        payMethod: null,
         createdAt: Date.now(),
       })
       setLinkToken('')

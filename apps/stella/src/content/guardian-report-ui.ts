@@ -1,6 +1,7 @@
 import type { Locale } from '@sobok/domain/locale'
 import type { ElementId } from '@/chart/types'
 import type { GuardianRarity, GuardianReportSlot } from '../../worker/guardian/manifest'
+import type { GuardianPayMethod } from '../../worker/guardian/pay-method'
 
 export type GuardianPreviewTone = 'comfort' | 'honesty' | 'action' | 'possibility'
 export type GuardianPreviewMovement = 'start' | 'continue' | 'recover' | 'release'
@@ -23,8 +24,8 @@ type FreeResultInsight = {
 }
 
 /**
- * Sections carry a standfirst only where it says something the section's own contents do not. Where a chart,
- * a matrix or a labelled figure already answers "what am I looking at", the paragraph under the heading was
+ * Sections carry a standfirst only where it says something the section's own contents do not. Where a chart
+ * or a labelled figure already answers "what am I looking at", the paragraph under the heading was
  * just a third block of grey text before the reader reached anything — so those sections omit it.
  */
 type GuardianFreeResultContent = {
@@ -40,10 +41,6 @@ type GuardianFreeResultContent = {
     title: string
     toneLabel: string
     movementLabel: string
-    /** Axis captions and the "1 of 16" line for the combination matrix. */
-    matrixToneAxis: string
-    matrixMovementAxis: string
-    matrixCaption: (total: number) => string
     toneInsights: Record<GuardianPreviewTone, FreeResultInsight>
     movementInsights: Record<GuardianPreviewMovement, FreeResultInsight>
   }
@@ -185,6 +182,8 @@ type GuardianReportUiContent = {
       emailLabel: string
       emailPlaceholder: string
       emailHint: string
+      methodLabel: string
+      methodLabels: Record<GuardianPayMethod, string>
       securityHint: string
       submit: string
       submitting: string
@@ -501,12 +500,9 @@ const KO_CONTENT: GuardianReportUiContent = {
       },
       reading: {
         eyebrow: 'TWO CLUES',
-        title: '두 답 사이에서 보이는 지금의 마음',
+        title: '두 답이 보여준 지금의 마음',
         toneLabel: '지금 필요한 목소리',
         movementLabel: '마음이 향하는 방향',
-        matrixToneAxis: '가로 · 목소리',
-        matrixMovementAxis: '세로 · 방향',
-        matrixCaption: (total) => `${total}가지 조합 가운데 지금의 나`,
         toneInsights: {
           comfort: {
             label: '다정한 위로',
@@ -687,6 +683,8 @@ const KO_CONTENT: GuardianReportUiContent = {
       emailLabel: '구매 이메일',
       emailPlaceholder: 'you@example.com',
       emailHint: '오타가 있으면 리포트를 다시 찾기 어려워요.',
+      methodLabel: '결제수단',
+      methodLabels: { tosspay: '토스페이', card: '신용·체크카드' },
       securityHint: '안전한 결제를 위해 보안 확인을 완료해주세요.',
       submit: '결제하고 맞춤 질문 시작하기',
       submitting: '결제창을 준비하고 있어요…',
@@ -922,9 +920,6 @@ function emptyContent(): GuardianReportUiContent {
           title: empty,
           toneLabel: empty,
           movementLabel: empty,
-          matrixToneAxis: empty,
-          matrixMovementAxis: empty,
-          matrixCaption: () => empty,
           toneInsights: {
             comfort: emptyInsight,
             honesty: emptyInsight,
@@ -1008,6 +1003,8 @@ function emptyContent(): GuardianReportUiContent {
         emailLabel: empty,
         emailPlaceholder: empty,
         emailHint: empty,
+        methodLabel: empty,
+        methodLabels: { tosspay: empty, card: empty },
         securityHint: empty,
         submit: empty,
         submitting: empty,

@@ -1,0 +1,17 @@
+name: Verify Bun workspace
+description: Run the repository-wide formatting, lint, and TypeScript checks without deployment credentials.
+
+runs:
+  using: composite
+  steps:
+    - name: Biome CI (format + lint + import order)
+      shell: bash
+      run: bunx biome ci .
+
+    - name: Prettier check (css, markdown, yaml, html)
+      shell: bash
+      run: bunx prettier --check '**/*.{css,md,yml,yaml,html}' --ignore-path .gitignore
+
+    - name: Type check
+      shell: bash
+      run: bun run type

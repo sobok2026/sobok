@@ -3,6 +3,7 @@ export const SOBOK_AUTH_PATH = '/api/auth'
 export const SOBOK_AUTH_TURNSTILE_ACTION = 'sobok-auth'
 export const SOBOK_OIDC_PROVIDER_ID = 'sobok'
 export const SOBOK_OIDC_SCOPES = ['openid', 'profile', 'email'] as const
+export const SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER = 'x-sobok-client-ip'
 export const SOBOK_USERNAME_PATTERN = /^[a-zA-Z0-9_.]+$/
 
 export const SOBOK_ACCOUNT_LABELS = {

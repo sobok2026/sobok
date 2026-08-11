@@ -40,17 +40,17 @@
     // not cover it either.
     "@sobok/stella#build": {
       "dependsOn": ["^build"],
-      "env": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY", "STELLA_DB_SCHEMA"],
+      "env": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY"],
       "outputs": ["out/**", ".next/**"]
     },
     "@sobok/accounts#build": {
       "dependsOn": ["^build"],
-      "env": ["ACCOUNTS_DB_SCHEMA", "NEXT_PUBLIC_GOOGLE_CLIENT_ID", "NEXT_PUBLIC_TURNSTILE_SITE_KEY"],
+      "env": ["NEXT_PUBLIC_GOOGLE_CLIENT_ID", "NEXT_PUBLIC_TURNSTILE_SITE_KEY"],
       "outputs": ["out/**", ".next/**"]
     },
     "@sobok/vibe#build": {
       "dependsOn": ["^build"],
-      "env": ["NEXT_PUBLIC_TURNSTILE_SITE_KEY"],
+      "env": ["NEXT_PUBLIC_DEEPTYPE_PAY_PROFILE", "NEXT_PUBLIC_TURNSTILE_SITE_KEY"],
       "outputs": ["out/**", ".next/**"]
     },
     "@sobok/zwds#build": {

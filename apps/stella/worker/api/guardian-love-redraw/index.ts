@@ -1,23 +1,25 @@
 import { alertDiscord } from '@sobok/edge/alert'
-import { Hono } from 'hono'
-import { z } from 'zod'
-import { withAuthorizedGuardianReport } from '~/api/guardian-reports/access'
-import { consumeGuardianRedraw } from '~/db/queries/guardian'
+import { withAuthorizedGuardianReport } from '@stella-worker/api/guardian-reports/access'
+import { consumeGuardianRedraw } from '@stella-worker/db/queries/guardian'
 import {
   createGuardianRedrawCheckout,
   equipGuardianLoveCard,
   readGuardianLoveRedraw,
-} from '~/db/queries/guardian-redraw'
-import { withinRateLimits } from '~/db/queries/rate-limit'
-import type { AppEnv } from '~/env'
-import { problem } from '~/errors'
-import { GUARDIAN_LOVE_REDRAW_PRODUCT_SKUS } from '~/guardian/manifest'
-import type { GuardianLoveRedrawResult } from '~/guardian/redraw-contract'
-import { newGuardianPaymentId } from '~/guardian/tokens'
-import { NO_STORE_HEADERS, parseJson } from '~/lib/http'
-import { hashIp } from '~/lib/ip'
-import { clientIp } from '~/lib/request'
-import { guardTurnstile } from '~/lib/turnstile'
+} from '@stella-worker/db/queries/guardian-redraw'
+import { withinRateLimits } from '@stella-worker/db/queries/rate-limit'
+import type { AppEnv } from '@stella-worker/env'
+import { problem } from '@stella-worker/errors'
+import { GUARDIAN_LOVE_REDRAW_PRODUCT_SKUS } from '@stella-worker/guardian/manifest'
+import { GUARDIAN_PAY_METHOD_SPEC, GUARDIAN_PAY_METHODS } from '@stella-worker/guardian/pay-method'
+import type { GuardianLoveRedrawResult } from '@stella-worker/guardian/redraw-contract'
+import { newGuardianPaymentId } from '@stella-worker/guardian/tokens'
+import { NO_STORE_HEADERS, parseJson } from '@stella-worker/lib/http'
+import { hashIp } from '@stella-worker/lib/ip'
+import { clientIp } from '@stella-worker/lib/request'
+import { guardTurnstile } from '@stella-worker/lib/turnstile'
+import { guardianPaymentConfigFor } from '@stella-worker/payments/config'
+import { Hono } from 'hono'
+import { z } from 'zod'
 import { GUARDIAN_REDRAW_CHECKOUT_ACTION } from './actions'
 
 const MARKET = 'KR'
@@ -37,6 +39,7 @@ const CheckoutBody = z
   .object({
     requestId: RequestIdSchema,
     sku: z.enum(GUARDIAN_LOVE_REDRAW_PRODUCT_SKUS),
+    payMethod: z.enum(GUARDIAN_PAY_METHODS),
     turnstileToken: z.string().min(1).max(2048),
   })
   .strict()
@@ -77,7 +80,7 @@ guardianLoveRedraw.post('/:reportPublicId/love-redraw/checkouts', async (c) => {
     return denied
   }
 
-  const paymentConfig = await c.env.PAYMENTS.checkoutConfig('tosspay_v2').catch((error) => {
+  const paymentConfig = await guardianPaymentConfigFor(c.env, parsed.body.payMethod).catch((error) => {
     console.error(
       'stella.guardian_redraw_checkout.payments_unavailable',
       error instanceof Error ? error.name : 'unknown',
@@ -85,9 +88,13 @@ guardianLoveRedraw.post('/:reportPublicId/love-redraw/checkouts', async (c) => {
     return null
   })
   if (!paymentConfig) {
+    console.error(`stella.guardian_redraw_checkout.channel_unbound (${parsed.body.payMethod})`)
     c.executionCtx.waitUntil(
       c.env.STELLA_DISCORD_WEBHOOK.get().then((webhook) =>
-        alertDiscord(webhook, '🚨 stella guardian redraw checkout has no PortOne Toss Pay channel'),
+        alertDiscord(
+          webhook,
+          `🚨 stella guardian redraw checkout has no PortOne channel for \`${parsed.body.payMethod}\``,
+        ),
       ),
     )
     return problem(503, 'service-unavailable', { headers: { 'retry-after': '30' } })
@@ -134,7 +141,7 @@ guardianLoveRedraw.post('/:reportPublicId/love-redraw/checkouts', async (c) => {
         sku: outcome.sku,
         storeId: paymentConfig.storeId,
         channelKey: paymentConfig.channelKey,
-        payMethod: 'EASY_PAY' as const,
+        payMethod: GUARDIAN_PAY_METHOD_SPEC[parsed.body.payMethod].sdkPayMethod,
         orderName: outcome.orderName,
         amount: outcome.amount,
         market: outcome.market,
