@@ -5,7 +5,7 @@ import type {
   GuardianQuestionnaireSignalSnapshot,
   GuardianSingleChoiceQuestion,
 } from './questionnaire'
-import { GUARDIAN_CARD_PRESENTATION_SCHEMA_VERSION, type GuardianCardPresentationSnapshot } from './redraw-contract'
+import type { GuardianCardPresentationSnapshot } from './redraw-contract'
 import type {
   GuardianReportNarrativeInput,
   GuardianReportNarrativeSection,
@@ -14,10 +14,8 @@ import type {
   GuardianReportPlacementBody,
   GuardianZodiacSign,
 } from './report-contract'
-import { GUARDIAN_REPORT_NARRATIVE_SCHEMA_VERSION, GUARDIAN_ZODIAC_SIGNS } from './report-contract'
+import { GUARDIAN_ZODIAC_SIGNS } from './report-contract'
 
-export const GUARDIAN_REPORT_COPY_KO_V1 = 'guardian-report-copy-ko-v1' as const
-const QUESTIONNAIRE_VERSION = 'guardian-paid-ko-mvp-v1' as const
 const ANSWER_TOKEN = '{answer}'
 
 interface QuestionFrame {
@@ -586,7 +584,7 @@ const LOVE_CARD_ONE_LINE_BY_EDITION = {
     `지금 사랑에서 가장 밝게 보이는 말: “${focus}”. 둘만의 약속을 실제 일상에서 반복할 작은 행동으로 바꿔 봐.`,
 } as const
 
-export function validateGuardianReportCardsKoV1(editions: readonly GuardianCardEdition[]): void {
+export function validateGuardianReportCardsKo(editions: readonly GuardianCardEdition[]): void {
   const editionIds = new Set(editions.map(({ id }) => id))
   const editionById = new Map(editions.map((edition) => [edition.id, edition]))
   const issues: string[] = []
@@ -614,13 +612,10 @@ export function validateGuardianReportCardsKoV1(editions: readonly GuardianCardE
   }
 }
 
-export function validateGuardianReportCopyKoV1(questionnaire: GuardianQuestionnaireContent): void {
+export function validateGuardianReportCopyKo(questionnaire: GuardianQuestionnaireContent): void {
   const issues: string[] = []
-  if (questionnaire.version !== QUESTIONNAIRE_VERSION) {
-    issues.push(`Copy ${GUARDIAN_REPORT_COPY_KO_V1} requires questionnaire ${QUESTIONNAIRE_VERSION}`)
-  }
   if (questionnaire.locale !== 'ko') {
-    issues.push(`Copy ${GUARDIAN_REPORT_COPY_KO_V1} requires locale ko`)
+    issues.push('Guardian report copy requires locale ko')
   }
 
   const choiceQuestions = questionnaire.questions.filter(
@@ -694,8 +689,8 @@ export function validateGuardianReportCopyKoV1(questionnaire: GuardianQuestionna
   }
 }
 
-export function buildGuardianReportNarrativeKoV1(input: GuardianReportNarrativeInput): GuardianReportNarrativeSnapshot {
-  validateGuardianReportCopyKoV1(input.questionnaire)
+export function buildGuardianReportNarrativeKo(input: GuardianReportNarrativeInput): GuardianReportNarrativeSnapshot {
+  validateGuardianReportCopyKo(input.questionnaire)
   const { answersBySlot, personalNote } = selectedAnswers(input)
   const cardsBySlot = selectedCards(input)
 
@@ -724,7 +719,6 @@ export function buildGuardianReportNarrativeKoV1(input: GuardianReportNarrativeI
   )
 
   return {
-    schemaVersion: GUARDIAN_REPORT_NARRATIVE_SCHEMA_VERSION,
     locale: 'ko',
     hero: {
       eyebrow: 'STELLA GUARDIAN REPORT',
@@ -869,7 +863,7 @@ function loveCardOneLine(editionId: string, focus: string): string {
   return build(focus)
 }
 
-export function buildGuardianLoveCardPresentationKoV1(input: {
+export function buildGuardianLoveCardPresentationKo(input: {
   card: GuardianSelectedCard
   artworkPath: string
   signalSnapshot: GuardianQuestionnaireSignalSnapshot
@@ -881,7 +875,6 @@ export function buildGuardianLoveCardPresentationKoV1(input: {
   const focus = strongestSignalCopy(input.signalSnapshot, LOVE_FOCUS)
 
   return {
-    schemaVersion: GUARDIAN_CARD_PRESENTATION_SCHEMA_VERSION,
     locale: 'ko',
     cardEditionId: input.card.editionId,
     familyId: input.card.familyId,

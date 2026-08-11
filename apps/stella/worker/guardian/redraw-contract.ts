@@ -1,15 +1,12 @@
 import type { Locale } from '@sobok/domain/locale'
 import type { GuardianLoveRedrawProductSku, GuardianRarity } from './manifest'
 
-export const GUARDIAN_CARD_PRESENTATION_SCHEMA_VERSION = 1 as const
-
 /**
  * Locale-rendered card copy is captured when the card is acquired. A later catalog or copy edit therefore
  * cannot silently change something a buyer already revealed, while the edition id still identifies the
  * collectible artwork across reports and accounts.
  */
 export interface GuardianCardPresentationSnapshot {
-  schemaVersion: typeof GUARDIAN_CARD_PRESENTATION_SCHEMA_VERSION
   locale: Locale
   cardEditionId: string
   familyId: string
@@ -48,7 +45,6 @@ export interface GuardianLoveRedrawState {
     available: number
   }
   guarantee: {
-    ruleVersion: string
     interval: number
     paidDrawsInCycle: number
     paidDrawsUntilGuarantee: number

@@ -42,11 +42,40 @@ export interface GuardianInitialDraw {
   cards: GuardianSelectedCard[]
 }
 
+export interface GuardianCardDrawSnapshot {
+  familySelection: {
+    poolId: string | null
+    method: 'single' | 'context_scored' | 'retained_report_family'
+    candidates: readonly {
+      familyId: string
+      tieBreakOrder: number | null
+    }[]
+    selectedFamilyId: string
+  }
+  editionSelection: {
+    poolId: string
+    method: 'single' | 'context_scored' | 'weighted_random'
+    candidates: readonly {
+      editionId: string
+      tieBreakOrder: number | null
+      weight: number | null
+    }[]
+    selectedEditionId: string
+    weightScale: number | null
+  }
+  guarantee: {
+    paidDrawInterval: number
+    scope: 'card_family'
+    due: boolean
+    applied: boolean
+  } | null
+}
+
 export interface GuardianRedrawDecision {
   card: GuardianSelectedCard
   guaranteeDue: boolean
   guaranteedUnowned: boolean
-  nextPaidDrawsInCycle: number
+  eligibleEditionIds: readonly string[]
 }
 
 type RandomInt = (maxExclusive: number) => number
@@ -153,8 +182,70 @@ export function drawLoveRedraw(
     card: selectedCard(edition),
     guaranteeDue,
     guaranteedUnowned,
-    nextPaidDrawsInCycle:
-      input.creditKind === 'paid' ? (guaranteeDue ? 0 : input.paidDrawsInCycle + 1) : input.paidDrawsInCycle,
+    eligibleEditionIds: pool.candidates
+      .filter(({ editionId }) => !guaranteedUnowned || !input.ownedEditionIds.has(editionId))
+      .map(({ editionId }) => editionId),
+  }
+}
+
+export function guardianCardDrawSnapshot(
+  card: GuardianSelectedCard,
+  options: {
+    manifest?: GuardianProductManifest
+    eligibleEditionIds?: readonly string[]
+    familySelection?: 'catalog' | 'retained_report_family'
+    guarantee?: Pick<GuardianRedrawDecision, 'guaranteeDue' | 'guaranteedUnowned'>
+  } = {},
+): GuardianCardDrawSnapshot {
+  const manifest = options.manifest ?? CURRENT_GUARDIAN_MANIFEST
+  const familyPool = manifest.familyPools[card.slot]
+  const editionPool = guardianEditionPool(card.familyId, manifest)
+  const eligibleEditionIds = options.eligibleEditionIds ? new Set(options.eligibleEditionIds) : null
+  const editionCandidates = editionPool.candidates
+    .filter((candidate) => !eligibleEditionIds || eligibleEditionIds.has(candidate.editionId))
+    .map((candidate) => ({
+      editionId: candidate.editionId,
+      tieBreakOrder:
+        'tieBreakOrder' in candidate && typeof candidate.tieBreakOrder === 'number' ? candidate.tieBreakOrder : null,
+      weight: 'weight' in candidate && typeof candidate.weight === 'number' ? candidate.weight : null,
+    }))
+
+  return {
+    familySelection:
+      options.familySelection === 'retained_report_family'
+        ? {
+            poolId: null,
+            method: 'retained_report_family',
+            candidates: [{ familyId: card.familyId, tieBreakOrder: null }],
+            selectedFamilyId: card.familyId,
+          }
+        : {
+            poolId: familyPool.id,
+            method: familyPool.selection,
+            candidates: familyPool.candidates.map((candidate) => ({
+              familyId: candidate.familyId,
+              tieBreakOrder: 'tieBreakOrder' in candidate ? candidate.tieBreakOrder : null,
+            })),
+            selectedFamilyId: card.familyId,
+          },
+    editionSelection: {
+      poolId: editionPool.id,
+      method: editionPool.selection,
+      candidates: editionCandidates,
+      selectedEditionId: card.editionId,
+      weightScale:
+        editionPool.selection === 'weighted_random'
+          ? editionCandidates.reduce((total, candidate) => total + (candidate.weight ?? 0), 0)
+          : null,
+    },
+    guarantee: options.guarantee
+      ? {
+          paidDrawInterval: manifest.guarantee.paidDrawInterval,
+          scope: manifest.guarantee.scope,
+          due: options.guarantee.guaranteeDue,
+          applied: options.guarantee.guaranteedUnowned,
+        }
+      : null,
   }
 }
 

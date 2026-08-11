@@ -4,11 +4,8 @@ import { CURRENT_GUARDIAN_MANIFEST, type GuardianProductKind } from './manifest'
  * The paid offer as the buyer-facing surfaces need to state it: the landing page, the terms, the refund
  * policy, the checkout summary and the GA4 item. One projection so those five cannot disagree.
  *
- * Derived from the manifest rather than declared beside it. The manifest is versioned and a published version
- * is immutable — a purchase pins one, and a retry has to reproduce the original result — so the price cannot
- * be lifted out into a constant the manifest then imports: editing that constant would silently rewrite a
- * version someone has already paid against. Deriving keeps the manifest authoritative and still leaves the
- * landing page with one build-time value instead of a fetch.
+ * Derived from the current catalog rather than declared beside it, keeping the buyer-facing build-time values
+ * aligned with the server's checkout source of truth.
  *
  * This module is imported by the browser. Everything here is already public (the catalog endpoint serves the
  * same numbers); the rest of the manifest — draw weights, edition ids, artwork paths — is not re-exported.
@@ -17,7 +14,7 @@ import { CURRENT_GUARDIAN_MANIFEST, type GuardianProductKind } from './manifest'
 function currentProduct(kind: GuardianProductKind) {
   const product = CURRENT_GUARDIAN_MANIFEST.products.find((candidate) => candidate.kind === kind)
   if (!product) {
-    throw new Error(`Guardian manifest ${CURRENT_GUARDIAN_MANIFEST.manifestVersion} has no ${kind} product`)
+    throw new Error(`Guardian catalog has no ${kind} product`)
   }
   return product
 }

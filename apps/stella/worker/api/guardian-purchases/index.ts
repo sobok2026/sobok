@@ -74,7 +74,6 @@ guardianPurchases.post('/:paymentId/confirm', async (c) => {
         grant: outcome.status,
         kind: outcome.kind,
         reportPublicId: outcome.reportPublicId,
-        ...('questionnaireVersion' in outcome ? { questionnaireVersion: outcome.questionnaireVersion } : {}),
         ...('credits' in outcome ? { credits: outcome.credits } : {}),
       },
       200,

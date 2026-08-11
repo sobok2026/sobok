@@ -1,6 +1,6 @@
 import type { Db } from '@sobok/edge/db/client'
 import { and, eq, sql } from 'drizzle-orm'
-import type { GuardianSelectedCard } from '../../guardian/draw'
+import type { GuardianCardDrawSnapshot, GuardianSelectedCard } from '../../guardian/draw'
 import type { GuardianCardPresentationSnapshot } from '../../guardian/redraw-contract'
 import { newGuardianPublicId } from '../../guardian/tokens'
 import {
@@ -23,8 +23,7 @@ export async function recordGuardianAcquisition(
     source: GuardianAcquisitionSource
     guaranteeDue: boolean
     guaranteedUnowned: boolean
-    manifestVersion: string
-    oddsVersion: string
+    drawSnapshot: GuardianCardDrawSnapshot
   },
 ): Promise<{ id: number; publicId: string; duplicate: boolean }> {
   const publicId = newGuardianPublicId()
@@ -75,8 +74,7 @@ export async function recordGuardianAcquisition(
       duplicate,
       guaranteeDue: input.guaranteeDue,
       guaranteedUnowned: input.guaranteedUnowned,
-      manifestVersion: input.manifestVersion,
-      oddsVersion: input.oddsVersion,
+      drawSnapshot: input.drawSnapshot,
       presentationSnapshot: input.presentation,
       createdAt: acquiredAt,
     })
