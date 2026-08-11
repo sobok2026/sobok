@@ -20,7 +20,7 @@ if (databaseRole !== expectedDatabaseRole) {
 }
 
 export default defineConfig({
-  schema: './worker/db/schema/*.ts',
+  schema: './worker/db/schema/index.ts',
   dialect: 'postgresql',
   schemaFilter: [schema],
   dbCredentials: { url: directUrl },
