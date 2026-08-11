@@ -1,16 +1,8 @@
-// Cloudflare Worker bindings for apps/vibe. Static assets are served via ASSETS; everything below is the
-// deeptype paid backend. Everything is declared declaratively in sobok-ops (Cloudflare + Supabase,
-// Terraform) — nothing is set imperatively:
-//   - Hyperdrive configs → cloudflare_hyperdrive_config (ids pasted into wrangler.jsonc)
-//   - true secrets → Cloudflare Secrets Store (cloudflare_secrets_store_secret), bound via
-//     wrangler `secrets_store_secrets`; accessed at runtime with `await binding.get()`
-//   - non-secret product config (payment profile, origin, model) → wrangler `vars`
+// Capability contract for Vibe code hosted by the private, environment-level Database Worker.
 import type { PayProfile } from '@deep-type/pay-method'
 import type { ScopedPaymentsService } from '@sobok/payments'
 
 export interface Bindings {
-  // Static Next export (./out), served for every non-/api path via env.ASSETS.fetch(request).
-  ASSETS: Fetcher
   // Two Hyperdrive configs over the SAME isolated Supabase Postgres (Seoul), differing only in caching. Which
   // one a handler passes to `openDb` IS the caching decision — there is no fresh-vs-cached opener to pick, and
   // there was never a real one: the two used to be separate functions with identical bodies, so the name
@@ -25,7 +17,7 @@ export interface Bindings {
   HYPERDRIVE_CACHED: Hyperdrive
   // Named Cloudflare RPC entrypoint on apps/payments. It accepts only `dt_` payment ids; all PortOne
   // credentials, Store/channel configuration, and webhook verification remain outside Vibe.
-  PAYMENTS: ScopedPaymentsService
+  VIBE_PAYMENTS: ScopedPaymentsService
 
   // ── Secrets Store bindings (async: `await X.get()`) ─────────────────────────────────────────────
   DEEPTYPE_ANTHROPIC_API_KEY: SecretsStoreSecret

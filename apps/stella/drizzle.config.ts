@@ -1,23 +1,19 @@
 import { defineConfig } from 'drizzle-kit'
 
-// A push can create or drop objects, so it must name its target explicitly. There is no schema fallback and
-// `schemaFilter` keeps the diff inside only `stella` or `stella_stg`.
-const directUrl = process.env.SOBOK_POSTGRES_URL_DIRECT
-const schema = process.env.SOBOK_DB_SCHEMA
+const migratorUrl = process.env.SOBOK_MIGRATOR_URL
+if (!migratorUrl) throw new Error('SOBOK_MIGRATOR_URL is required for schema push')
 
-if (!directUrl) {
-  throw new Error('SOBOK_POSTGRES_URL_DIRECT is required for schema push')
+const parsedUrl = new URL(migratorUrl)
+if (parsedUrl.searchParams.get('sslmode') !== 'verify-full') {
+  throw new Error('SOBOK_MIGRATOR_URL must use sslmode=verify-full')
 }
-if (new URL(directUrl).searchParams.get('sslmode') !== 'verify-full') {
-  throw new Error('SOBOK_POSTGRES_URL_DIRECT must use sslmode=verify-full')
-}
-if (schema !== 'stella' && schema !== 'stella_stg') {
-  throw new Error('SOBOK_DB_SCHEMA must explicitly be stella or stella_stg')
+if (decodeURIComponent(parsedUrl.username).split('.')[0] !== 'stella_migrator') {
+  throw new Error('SOBOK_MIGRATOR_URL must use stella_migrator')
 }
 
 export default defineConfig({
   schema: './worker/db/schema/*.ts',
   dialect: 'postgresql',
-  schemaFilter: [schema],
-  dbCredentials: { url: directUrl },
+  schemaFilter: ['stella'],
+  dbCredentials: { url: migratorUrl },
 })

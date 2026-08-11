@@ -26,7 +26,7 @@ const RETRY_DELAYS_MS = [60_000, 5 * 60_000, 30 * 60_000, 2 * 60 * 60_000, 6 * 6
  * shared 15-minute scheduler calls it without a payment id to recover a crashed or transiently failed send.
  */
 export async function dispatchGuardianRecoveryEmails(env: Bindings, input: { paymentId?: string } = {}): Promise<void> {
-  const { db, sql } = openDb(env.HYPERDRIVE)
+  const { db, sql } = openDb(env.HYPERDRIVE_FRESH)
 
   try {
     const candidates = input.paymentId
@@ -127,7 +127,7 @@ export async function sendRequestedGuardianReopenEmail(
   try {
     const apiKey = await env.STELLA_RESEND_API_KEY.get()
     const now = new Date()
-    const { db, sql } = openDb(env.HYPERDRIVE)
+    const { db, sql } = openDb(env.HYPERDRIVE_FRESH)
     let links: (GuardianReopenCandidate & {
       token: string
       tokenHash: string

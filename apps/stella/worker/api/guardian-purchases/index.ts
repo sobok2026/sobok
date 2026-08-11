@@ -1,17 +1,17 @@
 import { alertDiscord } from '@sobok/edge/alert'
 import { openDb, withDb } from '@sobok/edge/db/client'
 import { sha256Hex } from '@sobok/edge/tokens'
+import { withStellaSession } from '@stella-worker/auth'
+import { resolveGuardianPurchaseAccess } from '@stella-worker/db/queries/guardian'
+import type { AppEnv } from '@stella-worker/env'
+import { problem } from '@stella-worker/errors'
+import { GuardianAccessTokenSchema, GuardianPaymentIdSchema } from '@stella-worker/guardian/http'
+import { syncGuardianPayment } from '@stella-worker/guardian/payment'
+import { dispatchGuardianRecoveryEmails } from '@stella-worker/guardian/recovery'
+import { NO_STORE_HEADERS } from '@stella-worker/lib/http'
+import { bearerToken } from '@stella-worker/lib/request'
+import { type GuardianRemotePayment, getGuardianRemotePayment } from '@stella-worker/payments/client'
 import { Hono } from 'hono'
-import { withStellaSession } from '~/auth'
-import { resolveGuardianPurchaseAccess } from '~/db/queries/guardian'
-import type { AppEnv } from '~/env'
-import { problem } from '~/errors'
-import { GuardianAccessTokenSchema, GuardianPaymentIdSchema } from '~/guardian/http'
-import { syncGuardianPayment } from '~/guardian/payment'
-import { dispatchGuardianRecoveryEmails } from '~/guardian/recovery'
-import { NO_STORE_HEADERS } from '~/lib/http'
-import { bearerToken } from '~/lib/request'
-import { type GuardianRemotePayment, getGuardianRemotePayment } from '~/payments/client'
 
 export const guardianPurchases = new Hono<AppEnv>()
 
@@ -57,7 +57,9 @@ guardianPurchases.post('/:paymentId/confirm', async (c) => {
   if (remotePayment.status === 'unknown') {
     console.error('stella.portone.confirm_unknown_status')
   }
-  const outcome = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) => syncGuardianPayment(db, remotePayment))
+  const outcome = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    syncGuardianPayment(db, remotePayment),
+  )
 
   if (outcome.status === 'pending') {
     return c.json({ status: 'pending', reportPublicId: access.reportPublicId }, 202, NO_STORE_HEADERS)

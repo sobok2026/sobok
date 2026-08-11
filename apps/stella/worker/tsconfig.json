@@ -9,11 +9,11 @@
     "typeRoots": ["../../../node_modules", "../../../node_modules/@types"],
     "types": ["@cloudflare/workers-types"],
     "paths": {
-      "~/*": ["./*"]
+      "@stella-worker/*": ["./*"]
     },
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "../worker-configuration.generated.d.ts"]
 }

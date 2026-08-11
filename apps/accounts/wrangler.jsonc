@@ -1,11 +1,8 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "accounts",
-  // The Worker owns every dynamic authority route and serves the static Next export for the account UI.
   "main": "worker/index.ts",
-  "compatibility_date": "2026-08-10",
-  // postgres.js reaches Supabase through Hyperdrive's Workers TCP socket implementation.
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_date": "2026-08-11",
   "workers_dev": false,
   "preview_urls": false,
   "observability": {
@@ -19,145 +16,11 @@
     "html_handling": "drop-trailing-slash",
     "run_worker_first": ["/api/*", "/.well-known/*"]
   },
-  "define": {
-    "ACCOUNTS_DB_SCHEMA": "'identity'"
-  },
-  "vars": {
-    "ACCOUNTS_PUBLIC_ORIGIN": "https://accounts.sobok.cc",
-    "ACCOUNTS_ALLOWED_HOSTNAMES": "accounts.sobok.cc",
-    "ACCOUNTS_FIRST_PARTY_CLIENT_IDS": "stella-web",
-    "ACCOUNTS_EMAIL_FROM": "Sobok Accounts <accounts@accounts.sobok.cc>",
-    "ACCOUNTS_EMAIL_REPLY_TO": "sobok2026@gmail.com",
-    // These identifiers are sourced from account-accounts through GitHub Environment variables. The deploy
-    // workflow must override all three with --var; keeping them empty here prevents a stale committed copy.
-    "ACCOUNTS_GOOGLE_CLIENT_ID": "",
-    "ACCOUNTS_KAKAO_CLIENT_ID": "",
-    "ACCOUNTS_BBATON_CLIENT_ID": ""
-  },
-  "queues": {
-    "producers": [{ "binding": "ACCOUNTS_EMAIL_QUEUE", "queue": "accounts-email" }],
-    "consumers": [
-      {
-        "queue": "accounts-email",
-        "max_batch_size": 1,
-        "max_batch_timeout": 5,
-        "max_retries": 10,
-        "retry_delay": 60,
-        "dead_letter_queue": "accounts-email-dlq"
-      }
-    ]
-  },
-  "hyperdrive": [
-    {
-      // Production and staging share the least-privilege identity_app origin. Every query is schema-qualified,
-      // and caching is disabled on the Terraform-owned Hyperdrive because auth state requires fresh reads.
-      "binding": "HYPERDRIVE",
-      "id": "1e3e4dd0d20a4887b7eb7af53aec2b98"
-    }
-  ],
-  "secrets_store_secrets": [
-    {
-      "binding": "ACCOUNTS_AUTH_SECRET",
-      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-      "secret_name": "accounts-auth-secret-production"
-    },
-    {
-      "binding": "ACCOUNTS_TURNSTILE_SECRET",
-      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-      "secret_name": "accounts-turnstile-secret"
-    },
-    {
-      "binding": "ACCOUNTS_GOOGLE_CLIENT_SECRET",
-      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-      "secret_name": "accounts-google-client-secret-production"
-    },
-    {
-      "binding": "ACCOUNTS_KAKAO_CLIENT_SECRET",
-      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-      "secret_name": "accounts-kakao-client-secret-production"
-    },
-    {
-      "binding": "ACCOUNTS_BBATON_CLIENT_SECRET",
-      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-      "secret_name": "accounts-bbaton-client-secret-production"
-    },
-    {
-      "binding": "ACCOUNTS_RESEND_API_KEY",
-      "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-      "secret_name": "accounts-resend-key-production"
-    }
-  ],
-  // vars, define, queues, Hyperdrive, and Secrets Store bindings are non-inheritable. Repeat the complete
-  // environment-specific set so `wrangler deploy --env stg` creates the isolated `accounts-stg` service.
+  "services": [{ "binding": "DATABASE", "service": "database", "entrypoint": "AccountsService" }],
   "env": {
     "stg": {
       "workers_dev": false,
-      "define": {
-        "ACCOUNTS_DB_SCHEMA": "'identity_stg'"
-      },
-      "vars": {
-        "ACCOUNTS_PUBLIC_ORIGIN": "https://accounts-stg.sobok.cc",
-        "ACCOUNTS_ALLOWED_HOSTNAMES": "accounts-stg.sobok.cc",
-        "ACCOUNTS_FIRST_PARTY_CLIENT_IDS": "stella-web",
-        // Resend Free allows one verified domain. Separate local parts preserve environment visibility while
-        // both environments send from the single verified accounts.sobok.cc domain.
-        "ACCOUNTS_EMAIL_FROM": "Sobok Accounts Staging <accounts-stg@accounts.sobok.cc>",
-        "ACCOUNTS_EMAIL_REPLY_TO": "sobok2026@gmail.com",
-        "ACCOUNTS_GOOGLE_CLIENT_ID": "",
-        "ACCOUNTS_KAKAO_CLIENT_ID": "",
-        "ACCOUNTS_BBATON_CLIENT_ID": ""
-      },
-      "queues": {
-        "producers": [{ "binding": "ACCOUNTS_EMAIL_QUEUE", "queue": "accounts-email-stg" }],
-        "consumers": [
-          {
-            "queue": "accounts-email-stg",
-            "max_batch_size": 1,
-            "max_batch_timeout": 5,
-            "max_retries": 10,
-            "retry_delay": 60,
-            "dead_letter_queue": "accounts-email-stg-dlq"
-          }
-        ]
-      },
-      "hyperdrive": [
-        {
-          "binding": "HYPERDRIVE",
-          "id": "1e3e4dd0d20a4887b7eb7af53aec2b98"
-        }
-      ],
-      "secrets_store_secrets": [
-        {
-          "binding": "ACCOUNTS_AUTH_SECRET",
-          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-          "secret_name": "accounts-auth-secret-staging"
-        },
-        {
-          "binding": "ACCOUNTS_TURNSTILE_SECRET",
-          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-          "secret_name": "accounts-turnstile-secret"
-        },
-        {
-          "binding": "ACCOUNTS_GOOGLE_CLIENT_SECRET",
-          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-          "secret_name": "accounts-google-client-secret-staging"
-        },
-        {
-          "binding": "ACCOUNTS_KAKAO_CLIENT_SECRET",
-          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-          "secret_name": "accounts-kakao-client-secret-staging"
-        },
-        {
-          "binding": "ACCOUNTS_BBATON_CLIENT_SECRET",
-          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-          "secret_name": "accounts-bbaton-client-secret-staging"
-        },
-        {
-          "binding": "ACCOUNTS_RESEND_API_KEY",
-          "store_id": "ec3ebef58eda49c08006fc6528dbfbfe",
-          "secret_name": "accounts-resend-key-staging"
-        }
-      ]
+      "services": [{ "binding": "DATABASE", "service": "database-stg", "entrypoint": "AccountsService" }]
     }
   }
 }

@@ -6,9 +6,8 @@
     "moduleResolution": "bundler",
     "lib": ["ES2022"],
     "typeRoots": ["../../../node_modules", "../../../node_modules/@types"],
-    "paths": {
-      "~/*": ["./*"]
-    },
+    "types": ["@cloudflare/workers-types"],
+    "paths": {},
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true

@@ -19,7 +19,7 @@ const DAY = 86_400_000
 //  • consumed or expired one-time report links dropped on the next daily pass.
 //  • expired rate-limit windows dropped (housekeeping).
 export async function runRetentionPurge(env: Bindings): Promise<void> {
-  const { db, sql } = openDb(env.HYPERDRIVE)
+  const { db, sql } = openDb(env.HYPERDRIVE_FRESH)
   try {
     const now = Date.now()
     const commentIps = await nullifyOldCommentIps(db, new Date(now - 90 * DAY))

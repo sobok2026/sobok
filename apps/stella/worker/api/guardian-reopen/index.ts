@@ -1,19 +1,19 @@
 import { LOCALES } from '@sobok/domain/locale'
 import { openDb, withDb } from '@sobok/edge/db/client'
 import { sha256Hex } from '@sobok/edge/tokens'
+import { exchangeGuardianReopenAccess } from '@stella-worker/db/queries/guardian-reopen'
+import { withinRateLimits } from '@stella-worker/db/queries/rate-limit'
+import type { AppEnv } from '@stella-worker/env'
+import { problem } from '@stella-worker/errors'
+import { GuardianReopenTokenSchema } from '@stella-worker/guardian/http'
+import { sendRequestedGuardianReopenEmail } from '@stella-worker/guardian/recovery'
+import { newGuardianAccessToken } from '@stella-worker/guardian/tokens'
+import { NO_STORE_HEADERS, parseJson } from '@stella-worker/lib/http'
+import { hashIp } from '@stella-worker/lib/ip'
+import { clientIp } from '@stella-worker/lib/request'
+import { guardTurnstile } from '@stella-worker/lib/turnstile'
 import { Hono } from 'hono'
 import { z } from 'zod'
-import { exchangeGuardianReopenAccess } from '~/db/queries/guardian-reopen'
-import { withinRateLimits } from '~/db/queries/rate-limit'
-import type { AppEnv } from '~/env'
-import { problem } from '~/errors'
-import { GuardianReopenTokenSchema } from '~/guardian/http'
-import { sendRequestedGuardianReopenEmail } from '~/guardian/recovery'
-import { newGuardianAccessToken } from '~/guardian/tokens'
-import { NO_STORE_HEADERS, parseJson } from '~/lib/http'
-import { hashIp } from '~/lib/ip'
-import { clientIp } from '~/lib/request'
-import { guardTurnstile } from '~/lib/turnstile'
 import { GUARDIAN_REOPEN_ACTION } from './actions'
 
 const BODY_LIMIT_BYTES = 2 * 1024
@@ -48,7 +48,7 @@ guardianReopen.post('/request', async (c) => {
 
   const normalizedEmail = body.email.toLowerCase()
   const ipHash = await hashIp(ip, await c.env.STELLA_IP_HASH_SALT.get())
-  const allowed = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) =>
+  const allowed = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     withinRateLimits(db, ipHash ?? 'noip', REQUEST_LIMITS),
   )
   if (!allowed) {
@@ -78,7 +78,7 @@ guardianReopen.post('/exchange', async (c) => {
 
   const accessToken = newGuardianAccessToken()
   const [tokenHash, newAccessTokenHash] = await Promise.all([sha256Hex(body.token), sha256Hex(accessToken)])
-  const reopened = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) =>
+  const reopened = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     exchangeGuardianReopenAccess(db, {
       tokenHash,
       newAccessTokenHash,

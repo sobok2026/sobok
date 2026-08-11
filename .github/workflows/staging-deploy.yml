@@ -54,16 +54,13 @@ jobs:
         include:
           - product: accounts
             directory: apps/accounts
-            schema: identity_stg
-            migrator_secret: ACCOUNTS_POSTGRES_URL_DIRECT
+            migrator_secret: ACCOUNTS_MIGRATOR_URL
           - product: stella
             directory: apps/stella
-            schema: stella_stg
-            migrator_secret: STELLA_POSTGRES_URL_DIRECT
+            migrator_secret: STELLA_MIGRATOR_URL
           - product: vibe
             directory: apps/vibe
-            schema: deeptype_stg
-            migrator_secret: VIBE_POSTGRES_URL_DIRECT
+            migrator_secret: VIBE_MIGRATOR_URL
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
@@ -74,24 +71,12 @@ jobs:
       - name: Set up Bun workspace
         uses: ./.github/actions/setup-bun
 
-      - name: Push Accounts schema with Drizzle
-        if: matrix.product == 'accounts'
-        working-directory: ${{ matrix.directory }}
-        env:
-          ACCOUNTS_DB_SCHEMA: ${{ matrix.schema }}
-          ACCOUNTS_POSTGRES_URL_DIRECT: ${{ secrets[matrix.migrator_secret] }}
-          CI: 'true'
-          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
-        run: bunx --bun drizzle-kit push --config drizzle.config.ts
-
       - name: Push product schema with Drizzle
-        if: matrix.product != 'accounts'
         working-directory: ${{ matrix.directory }}
         env:
           CI: 'true'
           NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
-          SOBOK_DB_SCHEMA: ${{ matrix.schema }}
-          SOBOK_POSTGRES_URL_DIRECT: ${{ secrets[matrix.migrator_secret] }}
+          SOBOK_MIGRATOR_URL: ${{ secrets[matrix.migrator_secret] }}
         run: bunx --bun drizzle-kit push --config drizzle.config.ts
 
   payments:
@@ -111,9 +96,29 @@ jobs:
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+  database:
+    name: Deploy Database Worker
+    needs: payments
+    environment: staging
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Deploy Database Worker
+        uses: ./.github/actions/deploy-database
+        with:
+          target: staging
+          accounts_google_client_id: ${{ vars.ACCOUNTS_GOOGLE_CLIENT_ID }}
+          accounts_kakao_client_id: ${{ vars.ACCOUNTS_KAKAO_CLIENT_ID }}
+          accounts_bbaton_client_id: ${{ vars.ACCOUNTS_BBATON_CLIENT_ID }}
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
   accounts:
     name: Deploy Accounts
-    needs: schema
+    needs: database
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
@@ -129,14 +134,12 @@ jobs:
           target: staging
           turnstile_site_key: ${{ vars.ACCOUNTS_TURNSTILE_SITE_KEY }}
           accounts_google_client_id: ${{ vars.ACCOUNTS_GOOGLE_CLIENT_ID }}
-          accounts_kakao_client_id: ${{ vars.ACCOUNTS_KAKAO_CLIENT_ID }}
-          accounts_bbaton_client_id: ${{ vars.ACCOUNTS_BBATON_CLIENT_ID }}
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   stella:
     name: Deploy Stella
-    needs: [payments, accounts]
+    needs: [database, accounts]
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
@@ -150,14 +153,13 @@ jobs:
           package_name: '@sobok/stella'
           directory: apps/stella
           target: staging
-          database_schema: stella_stg
           turnstile_site_key: ${{ vars.STELLA_TURNSTILE_SITE_KEY }}
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   vibe:
     name: Deploy Vibe
-    needs: payments
+    needs: database
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
@@ -171,7 +173,6 @@ jobs:
           package_name: '@sobok/vibe'
           directory: apps/vibe
           target: staging
-          database_schema: deeptype_stg
           turnstile_site_key: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
           vibe_pay_profile: staging
           verify_export: 'true'

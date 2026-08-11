@@ -1,8 +1,7 @@
 import { type PortOneChannel, payMethodsFor, sellableChannels } from '@deep-type/pay-method'
 import { LOCALES } from '@sobok/domain/locale'
+import type { AppEnv } from '@vibe-worker/env'
 import { Hono } from 'hono'
-
-import type { AppEnv } from '~/env'
 
 const route = new Hono<AppEnv>()
 
@@ -21,9 +20,9 @@ const route = new Hono<AppEnv>()
 // indistinguishable from a right one until a real payment runs, so echoing them here would only hand the full
 // contract list to anyone who asks, one per sale instead.
 route.get('/', async (c) => {
-  const bound = (await c.env.PAYMENTS.availableChannels()) as PortOneChannel[]
+  const bound = (await c.env.VIBE_PAYMENTS.availableChannels()) as PortOneChannel[]
   const sellable = sellableChannels(c.env.DEEPTYPE_PAY_PROFILE)
-  const firstConfig = bound[0] ? await c.env.PAYMENTS.checkoutConfig(bound[0]) : null
+  const firstConfig = bound[0] ? await c.env.VIBE_PAYMENTS.checkoutConfig(bound[0]) : null
 
   return c.json({
     payProfile: c.env.DEEPTYPE_PAY_PROFILE,

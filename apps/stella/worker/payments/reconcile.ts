@@ -19,7 +19,7 @@ const BATCH_SIZE = 100
  * browser confirmation and verified queue events.
  */
 export async function reconcileStaleGuardianPayments(env: Bindings): Promise<void> {
-  const { db, sql } = openDb(env.HYPERDRIVE)
+  const { db, sql } = openDb(env.HYPERDRIVE_FRESH)
   const summary = {
     conflicts: 0,
     errors: 0,

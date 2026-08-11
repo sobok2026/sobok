@@ -4,7 +4,9 @@ import {
   sobokAuthorizationServerMetadata,
   sobokOpenIdConfiguration,
 } from '@sobok/auth/authority'
+import { SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER } from '@sobok/auth/contracts'
 import { openDb } from '@sobok/edge/db/client'
+import { withPseudonymousClientIp } from '@sobok/edge/ip'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { eq } from 'drizzle-orm'
 import type { Context } from 'hono'
@@ -15,6 +17,7 @@ import { accountRuntimeConfig } from './lib/config'
 
 type AuthorityHandle = {
   auth: SobokAuthority
+  ipHashSalt: string
   close: () => void
 }
 
@@ -28,9 +31,10 @@ async function requiredSecret(binding: SecretsStoreSecret, name: string): Promis
 
 async function createAuthority(c: Context<AppEnv>): Promise<AuthorityHandle> {
   const config = accountRuntimeConfig(c.env)
-  const handle = openDb(c.env.HYPERDRIVE)
-  const [secret, turnstileSecret, googleSecret, kakaoSecret, bbatonSecret] = await Promise.all([
+  const handle = openDb(c.env.HYPERDRIVE_FRESH)
+  const [secret, ipHashSalt, turnstileSecret, googleSecret, kakaoSecret, bbatonSecret] = await Promise.all([
     requiredSecret(c.env.ACCOUNTS_AUTH_SECRET, 'ACCOUNTS_AUTH_SECRET'),
+    requiredSecret(c.env.ACCOUNTS_IP_HASH_SALT, 'ACCOUNTS_IP_HASH_SALT'),
     requiredSecret(c.env.ACCOUNTS_TURNSTILE_SECRET, 'ACCOUNTS_TURNSTILE_SECRET'),
     requiredSecret(c.env.ACCOUNTS_GOOGLE_CLIENT_SECRET, 'ACCOUNTS_GOOGLE_CLIENT_SECRET'),
     requiredSecret(c.env.ACCOUNTS_KAKAO_CLIENT_SECRET, 'ACCOUNTS_KAKAO_CLIENT_SECRET'),
@@ -90,27 +94,34 @@ async function createAuthority(c: Context<AppEnv>): Promise<AuthorityHandle> {
 
   return {
     auth,
+    ipHashSalt,
     close: () => c.executionCtx.waitUntil(handle.sql.end({ timeout: 5 })),
   }
 }
 
-async function withAuthority(c: Context<AppEnv>, run: (auth: SobokAuthority) => Promise<Response>): Promise<Response> {
+async function withAuthority(
+  c: Context<AppEnv>,
+  run: (handle: AuthorityHandle) => Promise<Response>,
+): Promise<Response> {
   const handle = await createAuthority(c)
   try {
-    return await run(handle.auth)
+    return await run(handle)
   } finally {
     handle.close()
   }
 }
 
 export function handleAuth(c: Context<AppEnv>): Promise<Response> {
-  return withAuthority(c, (auth) => auth.handler(c.req.raw))
+  return withAuthority(c, async ({ auth, ipHashSalt }) => {
+    const request = await withPseudonymousClientIp(c.req.raw, ipHashSalt, SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER)
+    return auth.handler(request)
+  })
 }
 
 export function handleOpenIdConfiguration(c: Context<AppEnv>): Promise<Response> {
-  return withAuthority(c, (auth) => sobokOpenIdConfiguration(auth, c.req.raw))
+  return withAuthority(c, ({ auth }) => sobokOpenIdConfiguration(auth, c.req.raw))
 }
 
 export function handleAuthorizationServerMetadata(c: Context<AppEnv>): Promise<Response> {
-  return withAuthority(c, (auth) => sobokAuthorizationServerMetadata(auth, c.req.raw))
+  return withAuthority(c, ({ auth }) => sobokAuthorizationServerMetadata(auth, c.req.raw))
 }

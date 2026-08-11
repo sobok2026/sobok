@@ -48,10 +48,8 @@ async function load(): Promise<Map<string, BakedBoard>> {
     return new Map()
   }
 
-  // The Worker owns the DB, so it owns the schema. Import its table declarations only when a bake connection
-  // exists: ordinary offline builds do not target either database environment and therefore must not need a
-  // schema fallback. A real bake still fails closed unless SOBOK_DB_SCHEMA explicitly selects stella_stg or
-  // stella before this import executes.
+  // The Worker owns the DB schema. Import its table declarations only when a bake connection exists; the URL
+  // selects a project and both long-lived environments expose the same `stella` schema contract.
   const { commentTable, commentThreadTable } = await import('../../worker/db/schema/comment')
   const client = postgres(url, { max: 1, prepare: false, ssl: 'verify-full' })
   const db = drizzle({ client })

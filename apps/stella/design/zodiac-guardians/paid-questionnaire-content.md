@@ -1,7 +1,7 @@
 # 유료 질문 콘텐츠 계약과 게시
 
 유료 질문 원문·선택지·적응형 선택 정책·점수 행렬을 Git source of truth로 관리하고, 정적 JavaScript에는
-묶지 않으면서 `stella_stg`와 `stella`에 재현 가능한 불변 버전으로 게시하는 구현 계약이다.
+묶지 않으면서 staging과 production Supabase 프로젝트의 `stella` schema에 재현 가능한 불변 버전으로 게시하는 구현 계약이다.
 
 ## 현재 결정
 
@@ -153,8 +153,9 @@ bun run questionnaire:validate \
 staging에 원자적으로 게시한다.
 
 ```bash
-SOBOK_DB_SCHEMA=stella_stg SOBOK_POSTGRES_URL_DIRECT=... \
+SOBOK_MIGRATOR_URL=... \
   bun run questionnaire:publish \
+  --environment staging \
   --file content/guardian-questionnaires/guardian-paid-ko-mvp-v1.json
 ```
 
@@ -162,8 +163,9 @@ CLI가 출력한 SHA-256을 staging 검수 기록에 남긴다. production은 �
 게시된다.
 
 ```bash
-SOBOK_DB_SCHEMA=stella SOBOK_POSTGRES_URL_DIRECT=... \
+SOBOK_MIGRATOR_URL=... \
   bun run questionnaire:publish \
+  --environment production \
   --file content/guardian-questionnaires/guardian-paid-ko-mvp-v1.json \
   --expected-hash <staging-sha256>
 ```
@@ -173,14 +175,13 @@ SOBOK_DB_SCHEMA=stella SOBOK_POSTGRES_URL_DIRECT=... \
 바꾼 뒤 production에 같은 hash로 게시한다. 이미 생성된 report는 기존 pinned version을 계속
 사용한다.
 
-`SOBOK_POSTGRES_URL_DIRECT`는 선택한 Stella schema에만 DDL 권한을 갖는 migrator 연결로만 사용한다.
-Worker runtime은 기존 `stella_app` + Hyperdrive를 사용한다. sobok-ops의 두 Stella schema
-default privilege가 새 테이블·sequence에도 적용되므로 이 기능만을 위한 role, Hyperdrive,
-Supabase 프로젝트는 추가하지 않는다.
+`SOBOK_MIGRATOR_URL`은 해당 환경의 `stella` schema에만 DDL 권한을 갖는 `stella_migrator` 연결로만
+사용한다. Database Worker runtime은 해당 환경의 `sobok_runtime` + fresh Hyperdrive를 사용한다. `sobok-ops`의
+현재 object grant와 future default privileges가 새 테이블·sequence에도 적용된다.
 
 ## 현재 게시·수직 연결
 
-2026-08-01에 `guardian-paid-ko-mvp-v1`을 `stella_stg`·`stella` 양쪽 schema에 45문항·176선택지로
+2026-08-01에 `guardian-paid-ko-mvp-v1`을 staging·production 프로젝트의 `stella` schema에 45문항·176선택지로
 게시했다. 두 환경의 SHA-256은
 `38b0f79a2b838f2fa7a461be7d269b39fa67c0c47d302939b88c46eb70d2c85e`로 같다.
 

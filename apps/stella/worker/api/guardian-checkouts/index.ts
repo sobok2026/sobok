@@ -1,20 +1,20 @@
 import { LOCALES } from '@sobok/domain/locale'
 import { alertDiscord } from '@sobok/edge/alert'
 import { openDb, withDb } from '@sobok/edge/db/client'
+import { withinRateLimits } from '@stella-worker/db/queries/rate-limit'
+import type { AppEnv } from '@stella-worker/env'
+import { problem } from '@stella-worker/errors'
+import { GuardianAccessTokenSchema, GuardianReportPublicIdSchema } from '@stella-worker/guardian/http'
+import { GUARDIAN_PLANET_IDS, guardianFullReportIsAvailable } from '@stella-worker/guardian/manifest'
+import { GUARDIAN_PAY_METHOD_SPEC, GUARDIAN_PAY_METHODS } from '@stella-worker/guardian/pay-method'
+import { prepareGuestGuardianCheckout, resumeGuestGuardianCheckout } from '@stella-worker/guardian/service'
+import { NO_STORE_HEADERS, parseJson } from '@stella-worker/lib/http'
+import { hashIp } from '@stella-worker/lib/ip'
+import { bearerToken, clientIp } from '@stella-worker/lib/request'
+import { guardTurnstile } from '@stella-worker/lib/turnstile'
+import { guardianPaymentConfigFor } from '@stella-worker/payments/config'
 import { Hono } from 'hono'
 import { z } from 'zod'
-import { withinRateLimits } from '~/db/queries/rate-limit'
-import type { AppEnv } from '~/env'
-import { problem } from '~/errors'
-import { GuardianAccessTokenSchema, GuardianReportPublicIdSchema } from '~/guardian/http'
-import { GUARDIAN_PLANET_IDS, guardianFullReportIsAvailable } from '~/guardian/manifest'
-import { GUARDIAN_PAY_METHOD_SPEC, GUARDIAN_PAY_METHODS } from '~/guardian/pay-method'
-import { prepareGuestGuardianCheckout, resumeGuestGuardianCheckout } from '~/guardian/service'
-import { NO_STORE_HEADERS, parseJson } from '~/lib/http'
-import { hashIp } from '~/lib/ip'
-import { bearerToken, clientIp } from '~/lib/request'
-import { guardTurnstile } from '~/lib/turnstile'
-import { guardianPaymentConfigFor } from '~/payments/config'
 import { GUARDIAN_CHECKOUT_ACTION } from './actions'
 
 const BODY_LIMIT_BYTES = 16 * 1024
@@ -163,7 +163,7 @@ guardianCheckouts.post('/', async (c) => {
   const recoveryEmailNormalized = recoveryEmail.toLowerCase()
   const ipHash = await hashIp(ip, await c.env.STELLA_IP_HASH_SALT.get())
 
-  const outcome = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, async (db) => {
+  const outcome = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     if (!(await withinRateLimits(db, ipHash ?? 'noip', CHECKOUT_LIMITS))) {
       return { status: 'rate-limited' as const }
     }

@@ -10,13 +10,13 @@
     "types": ["@cloudflare/workers-types"],
     "paths": {
       "@deep-type/*": ["../deep-type/*"],
-      "~/*": ["./*"]
+      "@vibe-worker/*": ["./*"]
     },
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true
   },
   // The worker never loads a test file, and `bun:test` types are absent from `types` above on purpose.
-  "include": ["**/*.ts", "../deep-type/**/*.ts"],
+  "include": ["**/*.ts", "../deep-type/**/*.ts", "../worker-configuration.generated.d.ts"],
   "exclude": ["**/*.test.ts", "../deep-type/**/*.test.ts"]
 }

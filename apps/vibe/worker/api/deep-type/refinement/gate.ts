@@ -1,8 +1,8 @@
 import { INSTRUMENT_VERSION } from '@deep-type/model'
 
 import type { Db } from '@sobok/edge/db/client'
-import { getPurchaseResultByAccessToken, type PurchaseResultContext } from '~/db/queries/result'
-import { problem } from '~/errors'
+import { getPurchaseResultByAccessToken, type PurchaseResultContext } from '@vibe-worker/db/queries/result'
+import { problem } from '@vibe-worker/errors'
 
 // The entitlement gates every refinement path shares — submit and both draft methods. Kept in one place so
 // the draft endpoints can never become a way to touch a row the submit endpoint would have refused. Returns

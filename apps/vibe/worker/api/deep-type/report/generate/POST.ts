@@ -2,8 +2,7 @@ import { alertDiscord } from '@sobok/edge/alert'
 
 import { openDb, withDb } from '@sobok/edge/db/client'
 import { randomToken } from '@sobok/edge/tokens'
-import { type Context, Hono } from 'hono'
-import { getPurchaseByAccessToken } from '~/db/queries/purchase'
+import { getPurchaseByAccessToken } from '@vibe-worker/db/queries/purchase'
 import {
   acquireNarrativeLock,
   acquireReportLock,
@@ -13,18 +12,19 @@ import {
   finalizeReportFailed,
   getNarrativeStatus,
   getReportStatus,
-} from '~/db/queries/report'
-import { getReportSource } from '~/db/queries/result'
-import type { AppEnv } from '~/env'
-import { problem } from '~/errors'
-import { generateNarrative } from '~/report/claude'
+} from '@vibe-worker/db/queries/report'
+import { getReportSource } from '@vibe-worker/db/queries/result'
+import type { AppEnv } from '@vibe-worker/env'
+import { problem } from '@vibe-worker/errors'
+import { generateNarrative } from '@vibe-worker/report/claude'
 import {
   isReportSettled,
   NARRATIVE_DISABLED_REASON,
   narrativeModelOf,
   planReportPasses,
   type ReportPassPlan,
-} from '~/report/pipeline'
+} from '@vibe-worker/report/pipeline'
+import { type Context, Hono } from 'hono'
 
 const route = new Hono<AppEnv>()
 

@@ -15,6 +15,7 @@ import { validateGuardianReportCopyQuestionnaire } from '../worker/guardian/repo
 const { values } = parseArgs({
   options: {
     file: { type: 'string', short: 'f' },
+    environment: { type: 'string' },
     'expected-hash': { type: 'string' },
     'validate-only': { type: 'boolean', default: false },
     help: { type: 'boolean', short: 'h', default: false },
@@ -25,10 +26,11 @@ const { values } = parseArgs({
 if (values.help || !values.file) {
   console.log(`Usage:
   bun run questionnaire:validate --file <questionnaire.json>
-  SOBOK_DB_SCHEMA=stella_stg SOBOK_POSTGRES_URL_DIRECT=<migrator-url> \\
-    bun run questionnaire:publish --file <questionnaire.json>
-  SOBOK_DB_SCHEMA=stella SOBOK_POSTGRES_URL_DIRECT=<migrator-url> \\
-    bun run questionnaire:publish --file <questionnaire.json> --expected-hash <staging-sha256>
+  SOBOK_MIGRATOR_URL=<staging-migrator-url> \\
+    bun run questionnaire:publish --file <questionnaire.json> --environment staging
+  SOBOK_MIGRATOR_URL=<production-migrator-url> \\
+    bun run questionnaire:publish --file <questionnaire.json> --environment production \\
+      --expected-hash <staging-sha256>
 
 Questionnaire sources are tracked under apps/stella/content/guardian-questionnaires/.`)
   process.exit(values.help ? 0 : 1)
@@ -73,19 +75,19 @@ try {
 }
 
 async function publish(content: GuardianQuestionnaireContent, contentHash: string): Promise<void> {
-  const url = process.env.SOBOK_POSTGRES_URL_DIRECT
+  const url = process.env.SOBOK_MIGRATOR_URL
   if (!url) {
-    throw new Error('SOBOK_POSTGRES_URL_DIRECT is required for publication')
+    throw new Error('SOBOK_MIGRATOR_URL is required for publication')
   }
-  if (!process.env.SOBOK_DB_SCHEMA) {
-    throw new Error('SOBOK_DB_SCHEMA must explicitly be stella_stg or stella')
+  if (values.environment !== 'staging' && values.environment !== 'production') {
+    throw new Error('--environment must explicitly be staging or production')
   }
-  if (process.env.SOBOK_DB_SCHEMA === 'stella' && !values['expected-hash']) {
+  if (values.environment === 'production' && !values['expected-hash']) {
     throw new Error('Production publication requires --expected-hash from the validated staging publication')
   }
 
-  // Dynamic so validation does not need a database target. Importing the schema resolves SOBOK_DB_SCHEMA at
-  // module load; this fail-closed boundary prevents an omitted environment from publishing into production.
+  // Dynamic so validation does not load database declarations. The credential URL selects the environment's
+  // Supabase project; both projects intentionally use the same `stella` schema contract.
   const { guardianQuestionnaireVersionTable, guardianQuestionOptionTable, guardianQuestionTable } = await import(
     '../worker/db/schema/guardian-questionnaire'
   )

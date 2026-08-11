@@ -94,5 +94,8 @@ export const stellaAuthRateLimit = stella.table(
     count: integer().notNull(),
     lastRequest: bigint('last_request', { mode: 'number' }).notNull(),
   },
-  (table) => [uniqueIndex('uq_stella_auth_rate_limit_key').on(table.key)],
+  (table) => [
+    uniqueIndex('uq_stella_auth_rate_limit_key').on(table.key),
+    index('idx_stella_auth_rate_limit_last_request').on(table.lastRequest),
+  ],
 )

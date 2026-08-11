@@ -71,14 +71,12 @@ jobs:
       - name: Build Stella
         env:
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.STELLA_TURNSTILE_SITE_KEY }}
-          SOBOK_DB_SCHEMA: ${{ github.base_ref == 'staging' && 'stella_stg' || 'stella' }}
         run: bun run --filter=@sobok/stella build
 
       - name: Build Vibe
         env:
           NEXT_PUBLIC_DEEPTYPE_PAY_PROFILE: ${{ github.base_ref == 'staging' && 'staging' || 'production' }}
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
-          SOBOK_DB_SCHEMA: ${{ github.base_ref == 'staging' && 'deeptype_stg' || 'deeptype' }}
         run: bun run --filter=@sobok/vibe build
 
       - name: Verify Vibe static export

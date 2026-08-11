@@ -1,0 +1,25 @@
+{
+  "name": "@sobok/database",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --env stg",
+    "deploy": "wrangler deploy",
+    "type:bindings": "WRANGLER_WRITE_LOGS=false wrangler types worker-configuration.generated.d.ts --env-file=/dev/null --env-interface DatabaseBindings --include-runtime=false --strict-vars=false",
+    "type": "WRANGLER_WRITE_LOGS=false wrangler types worker-configuration.generated.d.ts --env-file=/dev/null --env-interface DatabaseBindings --include-runtime=false --strict-vars=false --check && tsc --noEmit"
+  },
+  "dependencies": {
+    "@sobok/accounts": "workspace:*",
+    "@sobok/auth": "workspace:*",
+    "@sobok/payments": "workspace:*",
+    "@sobok/scheduler": "workspace:*",
+    "@sobok/stella": "workspace:*",
+    "@sobok/vibe": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260811.1",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.110.0"
+  }
+}

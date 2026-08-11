@@ -3,18 +3,25 @@ import { LOCALES } from '@sobok/domain/locale'
 import { alertDiscord } from '@sobok/edge/alert'
 import { openDb, withDb } from '@sobok/edge/db/client'
 import { sha256Hex } from '@sobok/edge/tokens'
+import {
+  createComment,
+  deleteComment,
+  editComment,
+  getCounts,
+  listComments,
+  reportComment,
+} from '@stella-worker/db/queries/comment'
+import { withinRateLimits } from '@stella-worker/db/queries/rate-limit'
+import type { AppEnv } from '@stella-worker/env'
+import { problem } from '@stella-worker/errors'
+import { decodeCursor, encodeCursor } from '@stella-worker/lib/cursor'
+import { hashIp } from '@stella-worker/lib/ip'
+import { bearerToken, clientIp } from '@stella-worker/lib/request'
+import { sanitizeBody, sanitizeNickname } from '@stella-worker/lib/text'
+import { newEditToken, newPublicId } from '@stella-worker/lib/tokens'
+import { guardTurnstile } from '@stella-worker/lib/turnstile'
 import { Hono } from 'hono'
 import { z } from 'zod'
-import { createComment, deleteComment, editComment, getCounts, listComments, reportComment } from '~/db/queries/comment'
-import { withinRateLimits } from '~/db/queries/rate-limit'
-import type { AppEnv } from '~/env'
-import { problem } from '~/errors'
-import { decodeCursor, encodeCursor } from '~/lib/cursor'
-import { hashIp } from '~/lib/ip'
-import { bearerToken, clientIp } from '~/lib/request'
-import { sanitizeBody, sanitizeNickname } from '~/lib/text'
-import { newEditToken, newPublicId } from '~/lib/tokens'
-import { guardTurnstile } from '~/lib/turnstile'
 import { COMMENT_POST_ACTION, COMMENT_REPORT_ACTION } from './actions'
 
 const LIST_LIMIT = 20
@@ -69,7 +76,7 @@ comments.get('/', async (c) => {
   }
 
   const before = decodeCursor(c.req.query('cursor'))
-  const { comments: rows, nextCursor } = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) =>
+  const { comments: rows, nextCursor } = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     listComments(db, locale.data, topic.data, LIST_LIMIT, before),
   )
   return c.json(
@@ -94,7 +101,9 @@ comments.get('/counts', async (c) => {
     .filter((t) => TopicKeySchema.safeParse(t).success)
     .slice(0, COUNTS_MAX)
 
-  const counts = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) => getCounts(db, locale.data, topics))
+  const counts = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
+    getCounts(db, locale.data, topics),
+  )
   return c.json({ counts }, 200, { 'cache-control': 'no-store' })
 })
 
@@ -133,7 +142,7 @@ comments.post('/', async (c) => {
   const editToken = newEditToken()
   const editTokenHash = await sha256Hex(editToken)
 
-  const outcome = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, async (db) => {
+  const outcome = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     if (!(await withinRateLimits(db, ipHash ?? 'noip', POST_LIMITS))) {
       return 'rate-limited' as const
     }
@@ -183,7 +192,7 @@ comments.patch('/:publicId', async (c) => {
   }
 
   const editTokenHash = await sha256Hex(token)
-  const ok = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) =>
+  const ok = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     editComment(db, c.req.param('publicId'), editTokenHash, body),
   )
   return ok ? c.json({ ok: true }, 200, { 'cache-control': 'no-store' }) : problem(403, 'forbidden')
@@ -196,7 +205,7 @@ comments.delete('/:publicId', async (c) => {
     return problem(403, 'forbidden')
   }
   const editTokenHash = await sha256Hex(token)
-  const ok = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, (db) =>
+  const ok = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, (db) =>
     deleteComment(db, c.req.param('publicId'), editTokenHash),
   )
   return ok ? c.json({ ok: true }, 200, { 'cache-control': 'no-store' }) : problem(403, 'forbidden')
@@ -226,7 +235,7 @@ comments.post('/:publicId/report', async (c) => {
 
   const ipHash = await hashIp(ip, await c.env.STELLA_IP_HASH_SALT.get())
 
-  const result = await withDb(openDb(c.env.HYPERDRIVE), c.executionCtx, async (db) => {
+  const result = await withDb(openDb(c.env.HYPERDRIVE_FRESH), c.executionCtx, async (db) => {
     if (!(await withinRateLimits(db, ipHash ?? 'noip', REPORT_LIMITS))) {
       return 'rate-limited' as const
     }

@@ -470,23 +470,19 @@ collection을 연결하므로 진행률이 초기화되지 않는다. 시즌 앨
   PG의 서버 API·secret key는 PortOne 콘솔에만 둔다.
 - 중앙 channel entry는 `channelKey`·`mode`·제품 `scopes`를 함께 가지며 Stella RPC는 `stella`
   scope가 있는 채널만 반환한다.
-- 두 배포는 같은 Supabase 프로젝트·Postgres 데이터베이스와 같은 Hyperdrive config를 공유한다.
+- 두 배포는 환경별 Supabase project와 Database Worker의 공용 fresh Hyperdrive를 사용한다.
 
 ### test/live 데이터 경계 확정안
 
-같은 테이블에 `environment` 컬럼을 반복하고 모든 조회에 필터를 추가하지 않는다. 기존 Vibe의
-검증된 구조처럼 한 데이터베이스 안에서 PostgreSQL schema만 `stella_stg`와 `stella`로 나눈다.
+같은 테이블에 `environment` 컬럼을 반복하고 모든 조회에 필터를 추가하지 않는다. production과
+staging을 별도 Supabase Pro 프로젝트로 나누고 두 프로젝트 모두 고정 `stella` schema를 쓴다.
 
-- 두 Worker는 같은 `stella_app` role과 같은 Hyperdrive ID를 바인딩한다. Hyperdrive config와
-  연결 풀을 추가하지 않는다.
-- production bundle은 `SOBOK_DB_SCHEMA='stella'`, staging bundle은
-  `SOBOK_DB_SCHEMA='stella_stg'`를 build-time 상수로 갖는다.
-- 상수에는 production fallback을 두지 않는다. 빠뜨린 배포는 다른 환경에 쓰는 대신 시작에
-  실패한다.
-- Drizzle table은 선택된 schema를 항상 SQL에 명시한다. `stella_app`의 `search_path`는
-  `pg_catalog`만 두어 비한정 테이블명이 우연히 production으로 해석되지 않게 한다.
+- 공개 Worker는 환경별 Database Worker만 바인딩하고, Database Worker가 `sobok_runtime`과 fresh Hyperdrive를 바인딩한다.
+- Drizzle table은 `pgSchema('stella')`로 schema를 항상 SQL에 명시한다. 환경별 schema 상수나
+  production fallback은 없다.
+- `sobok_runtime`의 `search_path`는 `pg_catalog`만 두어 비한정 테이블명이 우연히 해석되지 않게 한다.
 - staging은 `staging` 브랜치 push가 시작한 통합 워크플로가
-  `SOBOK_DB_SCHEMA=stella_stg`로 `drizzle-kit push`한 뒤 Worker를 배포한다. 명확한 비파괴 변경은
+  staging의 `SOBOK_MIGRATOR_URL`로 `drizzle-kit push`한 뒤 Worker를 배포한다. 명확한 비파괴 변경은
   자동 적용하고 data loss나 rename hint가 필요한 변경은 배포를 멈춘다. production은 `main`의 수동
   schema workflow에서 explain 결과를 검토한 뒤 별도 apply로 반영한다.
 - Worker와 정적 자산은 로컬 `wrangler deploy`로 배포하지 않는다. staging은 `staging`, production은
@@ -496,9 +492,8 @@ collection을 연결하므로 진행률이 초기화되지 않는다. 시즌 앨
   심사 거래는 브라우저 confirm과 production 재조정으로 완료한다. 제품 Worker는 PortOne 자격증명을
   갖지 않는다.
 
-이 방식은 Supabase 프로젝트, 데이터베이스, role, Hyperdrive를 늘리지 않으면서 테스트 구매와
-실제 컬렉션을 물리적인 테이블 namespace로 분리한다. 행마다 환경을 검사하는 방어 로직도 필요
-없다.
+이 방식은 테스트 구매와 실제 컬렉션, 자격증명, 연결 풀, 장애 범위를 프로젝트 경계로 분리한다.
+행마다 환경을 검사하거나 schema를 동적으로 선택하는 방어 로직은 필요 없다.
 
 공식 연동 기준:
 [PortOne V2 토스페이](https://developers.portone.io/opi/ko/integration/pg/v2/tosspay-v2?v=v2),
@@ -629,12 +624,11 @@ PortOne 공식 문서상 현재 KICC 해외결제는 다음 범위를 지원한�
 - capability 보호 API는 상품·확률·보장 메타데이터와 guest checkout, 결제 확인, 유료 질문 진행, 최종
   report 조회에 더해 사랑 재추첨 상태·checkout·draw·대표 카드 선택을 제공한다. 계정 귀속 mutation은
   Stella의 Sobok OIDC session과 `(issuer, sub)` 소유권 경계를 사용한다.
-- production과 staging은 같은 제품 단위 Hyperdrive와 `stella_app` role을 사용한다. build-time
-  schema만 각각 `stella`, `stella_stg`로 한정하고 Hyperdrive 캐시는 read-after-write 일관성을
-  위해 계속 끈다.
+- production과 staging은 환경별 fresh Hyperdrive와 각 프로젝트의 `sobok_runtime` role을 사용한다.
+  schema는 둘 다 코드에 고정한 `stella`이며 Hyperdrive 캐시는 read-after-write 일관성을 위해 계속 끈다.
 
 DB 스키마는 코드에 선언하고 staging은 통합 배포의 선행 단계, production은 명시적 운영 단계에서
-`drizzle-kit push`한다. 2026-08-01에 반영한 기존 `stella_stg`·`stella` schema와 한국어 v1 문항 위에 이번 재추첨의
+`drizzle-kit push`한다. 2026-08-01에 양쪽 프로젝트의 `stella` schema에 반영한 한국어 v1 문항 위에 이번 재추첨의
 presentation·대표 카드 선택·checkout/draw 멱등 컬럼을 추가 반영해야 한다. 레거시 backfill 경로는 두지
 않으므로 기존 fulfillment 데이터를 유지할 환경이라면 적용 전에 해당 데이터를 비우고 깨끗한 계약으로
 다시 생성한다. 이후 문항 버전도 기존 게시 순서와 해시 검증을 따른다.
@@ -671,8 +665,8 @@ presentation·대표 카드 선택·checkout/draw 멱등 컬럼을 추가 반영
 - 사랑 카드 재추첨 5회 2,500원
 - 계정 보관 보상으로 첫 미보유 재추첨 1회
 - `stella-stg`와 `stella` 배포 분리
-- Supabase 프로젝트·Postgres 데이터베이스와 Hyperdrive config는 test/live가 공유
-- 같은 DB 안에서 `stella_stg`와 `stella` PostgreSQL schema 분리
+- Supabase project·Database Worker·fresh/cached Hyperdrive를 production/staging으로 분리
+- 두 프로젝트 모두 코드에 고정한 `stella` PostgreSQL schema 사용
 
 ### 출시 전 승인할 권장안
 

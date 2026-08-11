@@ -1,9 +1,11 @@
+import { SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER } from '@sobok/auth/contracts'
 import {
   createSobokRelyingParty,
   type SobokRelyingParty,
   type SobokRelyingPartySession,
 } from '@sobok/auth/relying-party'
 import { type Db, openDb } from '@sobok/edge/db/client'
+import { withPseudonymousClientIp } from '@sobok/edge/ip'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { getSessionCookie } from 'better-auth/cookies'
 import type { Context } from 'hono'
@@ -24,13 +26,16 @@ export function hasStellaSessionCookie(request: Request): boolean {
   return getSessionCookie(request, { cookiePrefix: STELLA_AUTH_COOKIE_PREFIX }) !== null
 }
 
-async function authorityFor(c: Context<AppEnv>): Promise<{ auth: SobokRelyingParty; db: Db; close: () => void }> {
-  const handle = openDb(c.env.HYPERDRIVE)
-  const [secret, clientSecret] = await Promise.all([
+async function authorityFor(
+  c: Context<AppEnv>,
+): Promise<{ auth: SobokRelyingParty; db: Db; ipHashSalt: string; close: () => void }> {
+  const handle = openDb(c.env.HYPERDRIVE_FRESH)
+  const [secret, clientSecret, ipHashSalt] = await Promise.all([
     c.env.STELLA_AUTH_SECRET.get(),
     c.env.STELLA_OIDC_CLIENT_SECRET.get(),
+    c.env.STELLA_IP_HASH_SALT.get(),
   ])
-  if (!secret || !clientSecret) {
+  if (!secret || !clientSecret || !ipHashSalt) {
     c.executionCtx.waitUntil(handle.sql.end({ timeout: 5 }))
     throw new Error('Stella auth secrets are not configured')
   }
@@ -51,6 +56,7 @@ async function authorityFor(c: Context<AppEnv>): Promise<{ auth: SobokRelyingPar
   return {
     auth,
     db: handle.db,
+    ipHashSalt,
     close: () => c.executionCtx.waitUntil(handle.sql.end({ timeout: 5 })),
   }
 }
@@ -58,7 +64,8 @@ async function authorityFor(c: Context<AppEnv>): Promise<{ auth: SobokRelyingPar
 export async function handleStellaAuth(c: Context<AppEnv>): Promise<Response> {
   const handle = await authorityFor(c)
   try {
-    return await handle.auth.handler(c.req.raw)
+    const request = await withPseudonymousClientIp(c.req.raw, handle.ipHashSalt, SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER)
+    return await handle.auth.handler(request)
   } finally {
     handle.close()
   }
@@ -70,7 +77,8 @@ export async function withStellaSession<T>(
 ): Promise<T> {
   const handle = await authorityFor(c)
   try {
-    const session = await handle.auth.api.getSession({ headers: c.req.raw.headers })
+    const request = await withPseudonymousClientIp(c.req.raw, handle.ipHashSalt, SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER)
+    const session = await handle.auth.api.getSession({ headers: request.headers })
     return await run(handle.db, session)
   } finally {
     handle.close()

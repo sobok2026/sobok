@@ -13,7 +13,7 @@ export interface DeepTypeRemotePayment {
 }
 
 export async function getRemotePayment(env: Bindings, paymentId: string): Promise<DeepTypeRemotePayment> {
-  return toDeepTypeRemotePayment(await env.PAYMENTS.getPayment(paymentId))
+  return toDeepTypeRemotePayment(await env.VIBE_PAYMENTS.getPayment(paymentId))
 }
 
 export function toDeepTypeRemotePayment(payment: RemotePayment): DeepTypeRemotePayment {
@@ -29,7 +29,7 @@ export function toDeepTypeRemotePayment(payment: RemotePayment): DeepTypeRemoteP
 }
 
 export function cancelPayment(env: Bindings, input: { paymentId: string; reason: string }): Promise<void> {
-  return env.PAYMENTS.cancelPayment(input)
+  return env.VIBE_PAYMENTS.cancelPayment(input)
 }
 
 function requiredDate(value: string): Date {

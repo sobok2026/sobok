@@ -69,9 +69,29 @@ jobs:
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+  database:
+    name: Deploy Database Worker
+    needs: payments
+    environment: production
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Deploy Database Worker
+        uses: ./.github/actions/deploy-database
+        with:
+          target: production
+          accounts_google_client_id: ${{ vars.ACCOUNTS_GOOGLE_CLIENT_ID }}
+          accounts_kakao_client_id: ${{ vars.ACCOUNTS_KAKAO_CLIENT_ID }}
+          accounts_bbaton_client_id: ${{ vars.ACCOUNTS_BBATON_CLIENT_ID }}
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
   accounts:
     name: Deploy Accounts
-    needs: verify
+    needs: database
     environment: production
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
@@ -87,14 +107,12 @@ jobs:
           target: production
           turnstile_site_key: ${{ vars.ACCOUNTS_TURNSTILE_SITE_KEY }}
           accounts_google_client_id: ${{ vars.ACCOUNTS_GOOGLE_CLIENT_ID }}
-          accounts_kakao_client_id: ${{ vars.ACCOUNTS_KAKAO_CLIENT_ID }}
-          accounts_bbaton_client_id: ${{ vars.ACCOUNTS_BBATON_CLIENT_ID }}
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   stella:
     name: Deploy Stella
-    needs: [payments, accounts]
+    needs: [database, accounts]
     environment: production
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
@@ -108,14 +126,13 @@ jobs:
           package_name: '@sobok/stella'
           directory: apps/stella
           target: production
-          database_schema: stella
           turnstile_site_key: ${{ vars.STELLA_TURNSTILE_SITE_KEY }}
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   vibe:
     name: Deploy Vibe
-    needs: payments
+    needs: database
     environment: production
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
@@ -129,7 +146,6 @@ jobs:
           package_name: '@sobok/vibe'
           directory: apps/vibe
           target: production
-          database_schema: deeptype
           turnstile_site_key: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
           vibe_pay_profile: production
           verify_export: 'true'

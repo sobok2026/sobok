@@ -7,6 +7,7 @@ import {
   SOBOK_AUTH_PATH,
   SOBOK_OIDC_PROVIDER_ID,
   SOBOK_OIDC_SCOPES,
+  SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER,
   sobokDiscoveryUrl,
 } from './contracts'
 
@@ -38,6 +39,10 @@ export function createSobokRelyingParty(options: SobokRelyingPartyOptions) {
     advanced: {
       cookiePrefix: options.cookiePrefix,
       useSecureCookies: new URL(options.baseURL).protocol === 'https:',
+      ipAddress: {
+        ipAddressHeaders: [SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER],
+        ipv6Subnet: 128,
+      },
       backgroundTasks: { handler: options.defer },
     },
     session: {

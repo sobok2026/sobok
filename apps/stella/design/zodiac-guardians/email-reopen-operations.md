@@ -9,7 +9,7 @@ Stella 한국 유료 MVP의 결제 완료 메일과 구매 이메일 기반 재�
 - 마지막 갱신: 2026-08-03
 - 코드: 구현 및 정적 검증 완료
 - 운영 인프라: `sobok-ops`에 환경별 Resend secret 선언 완료, apply 대기
-- 데이터베이스: 새 enum·테이블 선언 완료, `stella_stg`·`stella` 반영 대기
+- 데이터베이스: 새 enum·테이블 선언 완료, staging·production 프로젝트의 `stella` schema 반영 대기
 - 외부 설정: `stella.sobok.cc` Resend 발신 도메인 확인과 환경별 API key 생성 필요
 - 실제 검증: PortOne 테스트 결제부터 이메일 수신·재열람까지 staging E2E 필요
 
@@ -79,7 +79,7 @@ incoming Host header로 메일 링크 origin을 만들지 않는다. 회신 주�
 1. Resend 발신 도메인의 DNS 확인을 완료한다.
 2. 환경별 API key를 만들고 HCP `account-stella`의 두 sensitive 변수를 설정한다.
 3. `sobok-ops`의 `account-stella` plan을 확인하고 apply해 Secrets Store 항목을 만든다.
-4. 앱 변경을 `staging` 브랜치에 병합한다. `Staging Deploy`가 `stella_stg` schema의 안전한 변경을
+4. 앱 변경을 `staging` 브랜치에 병합한다. `Staging Deploy`가 staging 프로젝트의 `stella` schema 변경을
    자동 push하고 payments, Stella, Vibe 순서로 배포한다. 로컬 Wrangler 배포는 하지 않는다.
 5. 아래 staging 수직 흐름을 모두 확인한다.
 6. PR을 `main`에 병합한다.
