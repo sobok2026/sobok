@@ -13,11 +13,11 @@
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE_FRESH",
-      "id": "REPLACE_WITH_PRODUCTION_FRESH_HYPERDRIVE_ID"
+      "id": "8b899fb06f9448518a1e679618552da8"
     },
     {
       "binding": "HYPERDRIVE_CACHED",
-      "id": "REPLACE_WITH_PRODUCTION_CACHED_HYPERDRIVE_ID"
+      "id": "5257f1944a2a49848a7996997f56f8e6"
     }
   ],
   "services": [
@@ -173,11 +173,11 @@
       "hyperdrive": [
         {
           "binding": "HYPERDRIVE_FRESH",
-          "id": "REPLACE_WITH_STAGING_FRESH_HYPERDRIVE_ID"
+          "id": "ab55375903554c5dbf5457ba016db143"
         },
         {
           "binding": "HYPERDRIVE_CACHED",
-          "id": "REPLACE_WITH_STAGING_CACHED_HYPERDRIVE_ID"
+          "id": "ab215c84e693460fa649c77214394e02"
         }
       ],
       "services": [
