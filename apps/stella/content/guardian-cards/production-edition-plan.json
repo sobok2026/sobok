@@ -1,0 +1,250 @@
+{
+  "status": "work_order",
+  "productSku": "guardian-report-full-v1",
+  "locale": "ko",
+  "productionMinimumEditionCount": 1024,
+  "plannedEditionCount": 1056,
+  "editionIdPatterns": {
+    "self": "{familyId}.{narrativeContextId}.{renderTreatmentId}",
+    "love": "{familyId}.{narrativeThemeId}.{rarityId}",
+    "work": "{familyId}.{narrativeContextId}.{renderTreatmentId}",
+    "choice": "{familyId}.{narrativeContextId}.{renderTreatmentId}"
+  },
+  "materializationContract": {
+    "runtimeMayExpandMatrix": false,
+    "requiredPerEditionFields": ["id", "familyId", "slot", "rarity", "artworkPath", "title", "artworkAlt", "oneLine"],
+    "publishOnlyWhen": [
+      "The final 3:4 artwork exists in private object storage.",
+      "Korean title, artworkAlt, and oneLine have received editorial review.",
+      "The edition is explicitly present in the runtime catalog and its stable ID has passed publication review.",
+      "Selection scoring, rarity weights, and owned-card guarantees pass staging release checks."
+    ]
+  },
+  "nonLove": {
+    "familyCountPerSlot": 12,
+    "editionCountPerFamily": 16,
+    "selection": "context_scored",
+    "narrativeContextsBySlot": {
+      "self": [
+        {
+          "id": "present-weather",
+          "title": "지금 마음의 날씨",
+          "signalIntent": "현재 에너지와 감정 상태를 장면의 출발점으로 삼는다.",
+          "copyIntent": "진단보다 지금 상태를 정확히 알아차리는 문장으로 쓴다."
+        },
+        {
+          "id": "hidden-need",
+          "title": "숨은 필요",
+          "signalIntent": "휴식·표현·연결·성장 중 가장 강한 필요를 중심 소품으로 드러낸다.",
+          "copyIntent": "욕구를 결핍으로 규정하지 않고 회복 방향으로 번역한다."
+        },
+        {
+          "id": "coping-pattern",
+          "title": "익숙한 보호 방식",
+          "signalIntent": "위로·분석·행동·회피 같은 대처 습관의 장점과 과잉을 함께 보여 준다.",
+          "copyIntent": "습관을 비난하지 않고 한 단계 유연하게 쓰는 방법을 제안한다."
+        },
+        {
+          "id": "next-self",
+          "title": "다음의 나",
+          "signalIntent": "지키고 싶은 가치와 다음 행동을 하나의 열린 결말로 연결한다.",
+          "copyIntent": "오늘 실행할 수 있는 작은 변화로 마무리한다."
+        }
+      ],
+      "work": [
+        {
+          "id": "motivation",
+          "title": "움직이는 이유",
+          "signalIntent": "성취·안정·자율·의미 중 핵심 동기를 중심 빛으로 삼는다.",
+          "copyIntent": "직업명이 아니라 지금 일을 지속하게 하는 이유를 다룬다."
+        },
+        {
+          "id": "strength",
+          "title": "이미 가진 힘",
+          "signalIntent": "통찰·돌봄·추진·정리 등 반복해서 드러난 강점을 행동으로 보여 준다.",
+          "copyIntent": "추상적 칭찬 대신 강점이 작동한 구체적 장면을 쓴다."
+        },
+        {
+          "id": "pressure",
+          "title": "압박을 다루는 법",
+          "signalIntent": "속도·완벽주의·갈등·불확실성 아래에서 생기는 과잉 패턴을 시각화한다.",
+          "copyIntent": "번아웃을 미화하지 않고 줄이거나 나눌 수 있는 부담을 짚는다."
+        },
+        {
+          "id": "next-move",
+          "title": "다음 한 수",
+          "signalIntent": "지금 레버리지와 다음 한 걸음을 하나의 완결 가능한 과제로 만든다.",
+          "copyIntent": "사용자가 바로 옮길 수 있는 행동과 완료 기준을 함께 제시한다."
+        }
+      ],
+      "choice": [
+        {
+          "id": "desire",
+          "title": "원하는 쪽",
+          "signalIntent": "타인의 기대를 걷어 낸 뒤 남는 욕구와 직관을 중심 방향으로 삼는다.",
+          "copyIntent": "충동과 진짜 바람을 구분할 질문을 남긴다."
+        },
+        {
+          "id": "evidence",
+          "title": "확인할 단서",
+          "signalIntent": "결정에 필요한 사실·기준·불확실성을 도구와 표식으로 보여 준다.",
+          "copyIntent": "정보를 더 모을지 멈출지를 판단할 기준을 제시한다."
+        },
+        {
+          "id": "protected-value",
+          "title": "지켜야 할 것",
+          "signalIntent": "관계·정체성·자원·가능성 중 포기할 수 없는 가치를 경계선으로 표현한다.",
+          "copyIntent": "모든 것을 지키려 하지 말고 최우선 가치를 한 가지로 좁힌다."
+        },
+        {
+          "id": "reversible-step",
+          "title": "되돌릴 수 있는 첫걸음",
+          "signalIntent": "결정을 작게 시험하거나 시제품으로 확인할 수 있는 행동을 장면화한다.",
+          "copyIntent": "완전한 확신 대신 안전한 실험과 재평가 시점을 제시한다."
+        }
+      ]
+    },
+    "renderTreatments": [
+      {
+        "id": "close-emotion",
+        "title": "감정 클로즈업",
+        "composition": "중심 수호령의 표정과 고유 소품을 가까이 잡고 배경에는 충분한 여백을 둔다.",
+        "variationRequirement": "눈썹·입·손끝 중 두 요소 이상으로 감정을 읽을 수 있어야 한다."
+      },
+      {
+        "id": "action-beat",
+        "title": "행동의 순간",
+        "composition": "작은 실수, 멈춤, 고침 중 하나가 일어나는 중간 동작을 포착한다.",
+        "variationRequirement": "정적인 포즈가 아니라 원인과 다음 동작이 추론되는 장면이어야 한다."
+      },
+      {
+        "id": "shared-world",
+        "title": "관계와 환경",
+        "composition": "환경 또는 안전한 동료 한 명이 중심 수호령의 선택에 반응하도록 배치한다.",
+        "variationRequirement": "화면 중심 캐릭터는 최대 두 명이며 쌍둥이·물고기 수호령에는 외부 동료를 추가하지 않는다."
+      },
+      {
+        "id": "constellation-afterglow",
+        "title": "별자리 여운",
+        "composition": "행동 뒤 남은 별자리 궤적과 핵심 소품으로 열린 결말을 보여 준다.",
+        "variationRequirement": "차트 오버레이는 장면을 보조하고 카드 안에 글자를 구워 넣지 않는다."
+      }
+    ],
+    "targets": {
+      "self": 192,
+      "work": 192,
+      "choice": 192,
+      "total": 576
+    }
+  },
+  "love": {
+    "familyCount": 12,
+    "editionCountPerFamily": 40,
+    "selection": "weighted_random",
+    "weightScale": 10000,
+    "narrativeThemes": [
+      {
+        "id": "first-signal",
+        "title": "처음 내민 신호",
+        "artIntent": "고백 직전의 작은 표정이나 소품 이동으로 마음이 먼저 드러난다.",
+        "copyIntent": "빠른 결론 대신 알아차릴 수 있는 첫 신호를 말한다."
+      },
+      {
+        "id": "careful-approach",
+        "title": "서로의 속도",
+        "artIntent": "두 거리와 보폭이 한 화면에서 보이고 어느 쪽도 끌려가지 않는다.",
+        "copyIntent": "접근과 기다림 사이에서 합의할 수 있는 속도를 제안한다."
+      },
+      {
+        "id": "everyday-care",
+        "title": "일상의 돌봄",
+        "artIntent": "간식, 우산, 담요 같은 작은 행동이 관계의 온도를 만든다.",
+        "copyIntent": "한 번의 큰 표현보다 반복 가능한 애정을 말한다."
+      },
+      {
+        "id": "honest-conversation",
+        "title": "솔직한 대화",
+        "artIntent": "편지, 말풍선 없는 별방울, 열린 문 등 전달과 경청을 상징한다.",
+        "copyIntent": "추측을 줄이고 짧고 정확하게 묻거나 말할 문장을 준다."
+      },
+      {
+        "id": "shared-play",
+        "title": "함께 노는 마음",
+        "artIntent": "두 수호령이 같은 놀이에 서로 다른 방식으로 참여한다.",
+        "copyIntent": "관계를 평가하는 시간 밖에서 즐거움을 회복하게 한다."
+      },
+      {
+        "id": "boundary-and-space",
+        "title": "경계와 각자의 자리",
+        "artIntent": "연결선은 유지하되 두 캐릭터의 독립된 공간과 소품이 분명하다.",
+        "copyIntent": "거리 두기를 거절로 단정하지 않고 필요한 경계를 언어화한다."
+      },
+      {
+        "id": "distance-and-return",
+        "title": "멀어짐과 돌아옴",
+        "artIntent": "다른 방향의 움직임과 다시 만날 별표가 동시에 보인다.",
+        "copyIntent": "붙잡기보다 돌아올 조건과 시간을 합의하게 한다."
+      },
+      {
+        "id": "repair",
+        "title": "다시 잇기",
+        "artIntent": "끊어진 리본, 금 간 별소품, 젖은 편지를 함께 고치는 중간 장면이다.",
+        "copyIntent": "사과, 확인, 재발 방지 중 필요한 회복 행동을 구체화한다."
+      },
+      {
+        "id": "mutual-growth",
+        "title": "함께 자라기",
+        "artIntent": "한쪽이 끌어올리지 않고 서로 다른 발판에서 같은 높이를 향한다.",
+        "copyIntent": "희생이 아닌 상호 지지와 각자의 성장을 함께 다룬다."
+      },
+      {
+        "id": "future-promise",
+        "title": "앞으로의 약속",
+        "artIntent": "완성된 결말 대신 함께 표시한 다음 계절의 위치를 보여 준다.",
+        "copyIntent": "영원한 약속보다 확인 가능한 다음 약속을 남긴다."
+      }
+    ],
+    "rarities": [
+      {
+        "id": "orbit",
+        "editionCountPerFamily": 10,
+        "weightPerEdition": 550,
+        "totalWeightPerFamily": 5500,
+        "artDirection": "중심 수호령이 먼저 마음을 알아차리거나 신호를 보내는 단독 중심 장면.",
+        "copyDirection": "가능성을 과장하지 않고 지금 할 수 있는 작은 표현에 집중한다."
+      },
+      {
+        "id": "nebula",
+        "editionCountPerFamily": 10,
+        "weightPerEdition": 300,
+        "totalWeightPerFamily": 3000,
+        "artDirection": "시간대, 날씨, 의상 변화 속에서도 중심 수호령이 마음을 지속하는 장면.",
+        "copyDirection": "감정의 지속성과 관계의 리듬을 한 단계 더 깊게 다룬다."
+      },
+      {
+        "id": "eclipse",
+        "editionCountPerFamily": 10,
+        "weightPerEdition": 120,
+        "totalWeightPerFamily": 1200,
+        "artDirection": "안전한 관계 수호령 한 명이 경계를 건너오며 행동이 상호작용으로 바뀌는 장면. 쌍둥이·물고기는 내부 두 캐릭터의 상호작용을 강화한다.",
+        "copyDirection": "한쪽의 마음이 아니라 서로 주고받는 신호와 합의를 다룬다."
+      },
+      {
+        "id": "stella",
+        "editionCountPerFamily": 10,
+        "weightPerEdition": 30,
+        "totalWeightPerFamily": 300,
+        "artDirection": "두 마음의 행동이 완성되고 개인 차트의 별자리 궤적이 장면 전체에 섬세하게 겹치는 최종 구성.",
+        "copyDirection": "운명이나 관계 성공을 단정하지 않고 서로 선택한 행동의 희소성을 강조한다."
+      }
+    ],
+    "target": 480
+  },
+  "slotTargets": {
+    "self": 192,
+    "love": 480,
+    "work": 192,
+    "choice": 192,
+    "total": 1056
+  }
+}
