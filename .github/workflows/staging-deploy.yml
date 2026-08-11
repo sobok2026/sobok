@@ -79,9 +79,26 @@ jobs:
           SOBOK_MIGRATOR_URL: ${{ secrets[matrix.migrator_secret] }}
         run: bunx --bun drizzle-kit push --config drizzle.config.ts
 
+  oauth-client:
+    name: Bootstrap Stella staging OAuth client
+    needs: schema
+    environment: staging
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Bootstrap fixed Stella client
+        uses: ./.github/actions/bootstrap-stella-oauth-client
+        with:
+          target: staging
+          accounts_migrator_url: ${{ secrets.ACCOUNTS_MIGRATOR_URL }}
+          stella_oidc_client_secret: ${{ secrets.STELLA_OIDC_CLIENT_SECRET }}
+
   payments:
     name: Deploy payments
-    needs: schema
+    needs: oauth-client
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 10

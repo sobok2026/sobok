@@ -8,9 +8,9 @@
 ```text
 브라우저 → 제품 앱/API → payments → PortOne
                          ↑
-PortOne webhook → payments ─┬→ Stella Queue → Stella 주문 원장
-                            ├→ Vibe Queue   → Vibe 주문 원장
-                            └→ core Queue   → 인증된 callback → apps/api 구독 원장
+PortOne webhook → payments ─┬→ Stella Queue → Database Worker → Stella 주문 원장
+                            ├→ Vibe Queue   → Database Worker → Vibe 주문 원장
+                            └→ core Queue   → payments consumer → 인증된 callback → apps/api 구독 원장
 ```
 
 - 대표 PortOne Store 하나를 사용한다. `stella.sobok.cc`, `vibe.sobok.cc`, `sobok.cc`처럼 도메인이
@@ -88,6 +88,11 @@ PortOne의 테스트 모드 웹훅은 production 화면에서 시작한 거래�
 
 PG 채널 설정 화면의 MID, API key, secret key, client key를 레포나 Secrets Store로 복제하지 않는다.
 
+Queue/DLQ resource lifecycle도 `sobok-ops` Terraform이 소유한다. Worker 연결은 Wrangler만 소유한다.
+`apps/payments/wrangler.jsonc`는 모든 producer와 core consumer를, `apps/database/wrangler.jsonc`는
+Stella/Vibe consumer를 선언한다. Terraform `cloudflare_queue_consumer`나 Dashboard trigger를 함께
+사용하지 않는다.
+
 ## 배포
 
 최초 배포는 의존 순서를 지킨다.
@@ -97,13 +102,14 @@ PG 채널 설정 화면의 MID, API key, secret key, client key를 레포나 Sec
 3. `payments-stg`, `payments` Worker를 배포한다.
 4. `account-payments` 전체를 적용해 custom domain을 연결한다.
 5. core API·billing-worker의 URL과 방향별 토큰을 배포한다.
-6. Stella와 Vibe를 배포해 Service Binding과 Queue consumer를 연결한다.
-7. PortOne 콘솔의 test/live 웹훅 URL을 위 중앙 URL로 바꾸고 호출 테스트를 수행한다.
+6. Database Worker를 배포해 Payments Service Binding과 Stella/Vibe Queue consumer를 연결한다.
+7. Accounts·Stella·Vibe 공개 Worker를 배포해 Database Worker Service Binding을 연결한다.
+8. PortOne 콘솔의 test/live 웹훅 URL을 위 중앙 URL로 바꾸고 호출 테스트를 수행한다.
 
 staging 일반 배포는 `staging` 브랜치 push가 시작하는 `.github/workflows/staging-deploy.yml`이
-`payments-stg`를 Stella·Vibe보다 먼저 올린다. production은 schema 반영 후 수동 실행하는
-`.github/workflows/production-deploy.yml`이 Payments를 제품 앱보다 먼저 배포한다. RPC provider와
-제품 consumer는 같은 수동 릴리스에서 함께 변경한다. 중앙 서비스 장애 시 앱이 결제를 성공으로
+`payments-stg` → `database-stg` → 공개 앱 순으로 올린다. production은 schema 반영 후 수동 실행하는
+`.github/workflows/production-deploy.yml`이 Payments → Database Worker → 공개 앱 순서를 고정한다. RPC
+provider와 제품 consumer는 같은 릴리스에서 함께 변경한다. 중앙 서비스 장애 시 앱이 결제를 성공으로
 추정하지 않으며, checkout·confirm·renew는 재시도 가능한 실패로 닫힌다.
 
 로컬 실행은 실제 secret을 커밋하지 않고 `apps/payments/.dev.vars`에만 둔다.
@@ -116,7 +122,7 @@ bun --filter=@sobok/payments-service dev
 
 1. `packages/payments`에 충돌하지 않는 고정 payment ID 접두사를 추가한다.
 2. 중앙 Worker에 그 접두사만 허용하는 이름 있는 RPC entrypoint를 추가한다.
-3. 제품 전용 Queue와 DLQ를 만들고, 제품 Worker에 consumer를 하나만 연결한다.
+3. Terraform에 제품 전용 Queue/DLQ를 만들고 Database Worker Wrangler에 consumer를 하나만 연결한다.
 4. 제품 DB에 event ID unique와 상태 전이 CAS를 둔다. 중앙 결제 원장을 새로 만들지 않는다.
 5. 제품별 판매 가능 channel allowlist를 중앙 Worker에 명시한다.
 6. checkout·confirm·reconcile은 중앙 계약만 호출하고 PortOne Secret이나 서버 SDK를 제품에 넣지 않는다.

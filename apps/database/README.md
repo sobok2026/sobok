@@ -37,14 +37,28 @@ Worker에만 둔다.
 `StellaMaintenance`, `VibeMaintenance`를 호출한다. 제품 코드는 제품 폴더에 남고 이 Worker는 실행 권한과
 배포 단위만 소유한다.
 
+## 설정 소유권
+
+| 소유자                         | 범위                                                                                                                                |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `sobok-ops` Terraform          | Hyperdrive config, Queue/DLQ, Secrets Store 항목 등 Worker와 독립적인 resource lifecycle                                            |
+| `apps/database/wrangler.jsonc` | Hyperdrive·Secrets Store·Payments Service Binding, Accounts Queue producer, Accounts/Stella/Vibe Queue consumer trigger와 전달 설정 |
+
+한 설정을 두 도구가 함께 관리하지 않는다. 따라서 Terraform에는 `cloudflare_queue_consumer`를 선언하지 않고,
+Wrangler에는 Queue나 Hyperdrive 자체를 생성·삭제하는 절차를 두지 않는다. Cloudflare Dashboard는 조회
+전용이며 Worker 연결 변경은 GitHub Actions의 Wrangler 배포로만 반영한다.
+
 ## 배포
 
-배포 순서는 schema → Payments → Database Worker → 공개 앱 Worker다. 공개 앱을 먼저 배포하면 존재하지
-않는 Service Binding 대상 때문에 배포가 실패한다.
+배포 순서는 schema → 고정 Stella OAuth client bootstrap → Payments → Database Worker → 공개 앱 Worker다.
+공개 앱을 먼저 배포하면 존재하지 않는 Service Binding 대상 때문에 배포가 실패한다.
 
 Cloudflare Terraform의 `account-database.hyperdrive_ids`를 적용한 뒤 네 값을
 `apps/database/wrangler.jsonc`의 production/staging fresh/cached ID에 반영한다. OAuth 공개 client ID는
 GitHub Environment variable에서 Database Worker 배포 시 `--var`로 주입한다.
+
+Queue consumer를 다른 Worker로 옮길 때도 Dashboard에서 trigger를 제거하지 않는다. 이전 소유자의
+version-controlled Wrangler 선언을 먼저 제거·배포한 뒤 새 소유자를 배포하는 별도 릴리스로 처리한다.
 
 ```sh
 bun --filter=@sobok/database type

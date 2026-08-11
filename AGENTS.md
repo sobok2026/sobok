@@ -11,6 +11,16 @@
 - 이 repo는 앱 소스 코드를 관리한다.
 - Cloudflare Terraform 코드는 sibling repo `../sobok-ops`에 있다.
 
+## Cloudflare Ownership
+
+- Queue/DLQ, Hyperdrive config, Secrets Store 항목, Turnstile widget, custom domain, DNS·Zone 설정처럼
+  Worker와 독립적인 Cloudflare resource의 lifecycle은 `../sobok-ops` Terraform만 소유한다.
+- Worker script와 배포에 결합된 연결(`services`, Queue producer/consumer, Hyperdrive·Secrets Store binding,
+  vars, assets, trigger)은 이 repo의 각 `wrangler.jsonc`만 소유하고 GitHub Actions로 배포한다.
+- 같은 resource나 연결을 Terraform과 Wrangler 양쪽에 선언하지 않는다.
+- Cloudflare Dashboard는 조회 전용이다. 원격 변경은 HCP Terraform 또는 GitHub Actions의 Wrangler
+  배포로만 수행한다.
+
 ## Repo Rules
 
 - 이 repository는 public repo다.

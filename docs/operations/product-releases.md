@@ -38,20 +38,35 @@ Binding만 갖는다.
 
 새 앱은 기존 네 config를 재사용한다. 앱별 Hyperdrive나 Supabase project를 만들지 않는다.
 
+## Cloudflare 설정 소유권
+
+Cloudflare 설정은 `Terraform = resource lifecycle`, `Wrangler = Worker connection`으로 나눈다.
+
+- `sobok-ops` Terraform: Queue/DLQ, Hyperdrive config, Secrets Store 항목, Turnstile widget, custom domain,
+  DNS·Zone 설정처럼 Worker와 독립적으로 존재하는 resource
+- 앱의 `wrangler.jsonc`: Worker script/assets/vars, Service Binding, Queue producer/consumer, Hyperdrive와
+  Secrets Store binding, Worker trigger
+
+같은 대상은 한쪽에만 선언한다. 특히 Queue consumer와 retry/batch/DLQ 연결은 소비 Worker의
+`wrangler.jsonc`가 단독 소유하며 Terraform에 `cloudflare_queue_consumer`를 추가하지 않는다. Cloudflare
+Dashboard는 조회 전용이고 원격 변경은 HCP Terraform 또는 GitHub Actions의 Wrangler 배포로만 수행한다.
+
 ## 배포 모델
 
 Staging workflow 순서:
 
 1. 저장소 정적 검증
 2. 제품 schema를 `drizzle-kit push`
-3. Payments Worker 배포
-4. `database-stg` 배포
-5. Accounts/Vibe 공개 Worker 배포, Accounts 이후 Stella 공개 Worker 배포
+3. 고정 `stella-web` OAuth client를 멱등 bootstrap
+4. Payments Worker 배포
+5. `database-stg` 배포
+6. Accounts/Vibe 공개 Worker 배포, Accounts 이후 Stella 공개 Worker 배포
 
-Production은 제품별 schema plan/apply를 먼저 실행하고 수동 배포 workflow가 Payments → `database` → 공개
-앱 순서를 고정한다. 그 workflow가 성공하면 Scheduler workflow가 같은 production SHA를 checkout해
-`database`·`database-stg` maintenance binding을 배포한다. 따라서 최초 전환에서도 Scheduler가 Database
-Worker보다 먼저 배포되지 않는다. Schema와 앱 workflow는 같은 concurrency group을 사용한다.
+Production은 제품별 schema plan/apply를 먼저 실행하고 수동 배포 workflow가 고정 OAuth client bootstrap →
+Payments → `database` → 공개 앱 순서를 고정한다. 그 workflow가 성공하면 Scheduler workflow가 같은
+production SHA를 checkout해 `database`·`database-stg` maintenance binding을 배포한다. 따라서 최초
+전환에서도 Scheduler가 Database Worker보다 먼저 배포되지 않는다. Schema와 앱 workflow는 같은
+concurrency group을 사용한다.
 
 Database Worker 배포만 Accounts의 Google·Kakao·BBaton 공개 client ID를 runtime var로 받는다. Accounts
 정적 빌드는 Google client ID만 `NEXT_PUBLIC_GOOGLE_CLIENT_ID`로 받는다. DB URL과 secret은 공개 앱
@@ -61,15 +76,22 @@ Database Worker 배포만 Accounts의 Google·Kakao·BBaton 공개 client ID를 
 
 실제 배포 Environment는 `production`과 `staging` 두 개뿐이다.
 
-| Secret                  | Role / schema                    |
-| ----------------------- | -------------------------------- |
-| `ACCOUNTS_MIGRATOR_URL` | `accounts_migrator` / `identity` |
-| `STELLA_MIGRATOR_URL`   | `stella_migrator` / `stella`     |
-| `VIBE_MIGRATOR_URL`     | `vibe_migrator` / `deeptype`     |
+| Secret                      | 용도                                               |
+| --------------------------- | -------------------------------------------------- |
+| `ACCOUNTS_MIGRATOR_URL`     | `accounts_migrator` / `identity`                   |
+| `STELLA_MIGRATOR_URL`       | `stella_migrator` / `stella`                       |
+| `VIBE_MIGRATOR_URL`         | `vibe_migrator` / `deeptype`                       |
+| `STELLA_OIDC_CLIENT_SECRET` | 해당 환경 `stella-web` client bootstrap credential |
 
 같은 이름이라도 Environment마다 다른 Supabase project URL이다. URL은 session pooler와
 `sslmode=verify-full`을 사용하고 앱의 공통 `SOBOK_MIGRATOR_URL`에만 주입한다. Runtime credential이나 owner
 credential을 schema 작업에 재사용하지 않는다.
+
+`STELLA_OIDC_CLIENT_SECRET`은 `account-accounts` workspace의 같은 환경 sensitive output을 GitHub
+Environment secret으로 한 번 등록한다. Repository secret으로 만들거나 Terraform state에 GitHub secret
+평문을 복제하지 않는다. 같은 값은 Stella runtime에서 Secrets Store binding으로 읽고, 배포 workflow에서는
+OAuth client row의 최초 생성과 기존 credential 검증에 사용한다. Bootstrap 스크립트는 값을 출력하지 않으며
+같은 credential과 metadata로 재실행하면 no-op, 검토된 값과 다르면 Worker 배포 전에 실패한다.
 
 ## Hyperdrive ID 반영
 
@@ -78,9 +100,9 @@ HCP Terraform `account-database` workspace의 `hyperdrive_ids` output은 다음 
 - `production.fresh`, `production.cached`
 - `staging.fresh`, `staging.cached`
 
-Apply 전 `apps/database/wrangler.jsonc`의 ID는 `REPLACE_WITH_*` placeholder라 실제 배포가 불가능하다. Apply
-후 네 ID를 각 binding에 반영하고 `bun --filter=@sobok/database type`과 Wrangler dry-run을 수행한다. 한 ID를
-두 환경이나 두 cache policy에 재사용하지 않는다.
+Hyperdrive를 생성하거나 교체한 뒤 네 ID를 `apps/database/wrangler.jsonc`의 각 binding에 반영하고
+`bun --filter=@sobok/database type`과 Wrangler dry-run을 수행한다. 알 수 없는 ID나 placeholder가 남은
+revision은 배포하지 않으며, 한 ID를 두 환경이나 두 cache policy에 재사용하지 않는다.
 
 ## 새 제품 추가
 
@@ -89,7 +111,8 @@ Apply 전 `apps/database/wrangler.jsonc`의 ID는 `REPLACE_WITH_*` placeholder�
 3. 제품의 동적 코드를 Database Worker의 이름 있는 entrypoint로 노출한다.
 4. 공개 앱 Worker는 `DATABASE` Service Binding만 갖게 한다.
 5. Staging schema matrix와 production schema workflow에 migrator를 추가한다.
-6. 외부 서비스나 Queue가 필요하면 Database Worker에 최소 capability와 배포 선후관계를 추가한다.
+6. 외부 서비스나 Queue가 필요하면 Terraform에 resource를, Database Worker Wrangler에 최소 binding이나
+   consumer를 선언하고 배포 선후관계를 추가한다.
 
 Supabase project, GitHub Environment, Hyperdrive는 앱마다 추가하지 않는다.
 
@@ -100,8 +123,9 @@ Supabase project, GitHub Environment, Hyperdrive는 앱마다 추가하지 않�
 3. 두 Supabase workspace와 `account-secrets-store`의 Remote State Sharing을 `account-database`에 연다.
 4. `account-secrets-store`와 제품별 secret/Queue workspace를 apply한다.
 5. `account-database`를 apply하고 네 Hyperdrive ID를 Database Wrangler config에 반영한다.
-6. 환경별 migrator URL을 같은 GitHub Environment secret에 넣는다.
-7. Staging schema와 Workers를 배포한 뒤 production schema plan/apply와 Workers 배포를 수행한다.
+6. 환경별 migrator URL과 `STELLA_OIDC_CLIENT_SECRET`을 같은 GitHub Environment secret에 넣는다.
+7. Staging schema·OAuth client·Workers를 배포한 뒤 production schema plan/apply와 OAuth client·Workers
+   배포를 수행한다.
 
 CA 교체 시 앱 저장소와 ops 저장소의 `prod-ca-2021.crt`를 함께 갱신하고 Secrets Store와 네 Hyperdrive를
 schema 작업보다 먼저 apply한다.

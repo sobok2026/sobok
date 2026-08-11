@@ -10,6 +10,8 @@
     "enabled": true,
     "head_sampling_rate": 1
   },
+  // sobok-ops Terraform owns Hyperdrive and Queue/DLQ lifecycles. This file exclusively owns their
+  // Worker bindings, Queue consumer triggers, and delivery settings.
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE_FRESH",

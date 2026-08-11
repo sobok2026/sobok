@@ -24,6 +24,11 @@ import {
   SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER,
   SOBOK_USERNAME_PATTERN,
 } from './contracts'
+import {
+  hashSobokOAuthClientSecret,
+  SOBOK_OAUTH_CLIENT_SECRET_PREFIX,
+  verifySobokOAuthClientSecret,
+} from './oauth-client-secret'
 
 type Database = NonNullable<BetterAuthOptions['database']>
 
@@ -69,10 +74,6 @@ export type SobokAuthorityOptions = {
   sendEmail: (message: SobokAuthorityEmail) => Promise<void>
   defer: (promise: Promise<unknown>) => void
   beforeDeleteUser?: (userId: string) => Promise<void>
-  oauthClientGenerators?: {
-    clientId?: () => string
-    clientSecret?: () => string
-  }
 }
 
 export function createSobokAuthority(options: SobokAuthorityOptions) {
@@ -266,10 +267,12 @@ export function createSobokAuthority(options: SobokAuthorityOptions) {
         allowDynamicClientRegistration: false,
         allowUnauthenticatedClientRegistration: false,
         cachedTrustedClients: new Set(options.firstPartyClientIds ?? []),
-        generateClientId: options.oauthClientGenerators?.clientId,
-        generateClientSecret: options.oauthClientGenerators?.clientSecret,
+        storeClientSecret: {
+          hash: hashSobokOAuthClientSecret,
+          verify: verifySobokOAuthClientSecret,
+        },
         prefix: {
-          clientSecret: 'sobok_cs_',
+          clientSecret: SOBOK_OAUTH_CLIENT_SECRET_PREFIX,
           opaqueAccessToken: 'sobok_at_',
         },
         customIdTokenClaims: ({ scopes, user }) =>

@@ -9,6 +9,7 @@
     "./authority": "./src/authority.ts",
     "./client": "./src/client.ts",
     "./contracts": "./src/contracts.ts",
+    "./oauth-client-secret": "./src/oauth-client-secret.ts",
     "./relying-party": "./src/relying-party.ts",
     "./server": "./src/server.ts"
   },

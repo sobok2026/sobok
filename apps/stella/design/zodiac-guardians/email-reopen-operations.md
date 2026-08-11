@@ -80,7 +80,7 @@ incoming Host header로 메일 링크 origin을 만들지 않는다. 회신 주�
 2. 환경별 API key를 만들고 HCP `account-stella`의 두 sensitive 변수를 설정한다.
 3. `sobok-ops`의 `account-stella` plan을 확인하고 apply해 Secrets Store 항목을 만든다.
 4. 앱 변경을 `staging` 브랜치에 병합한다. `Staging Deploy`가 staging 프로젝트의 `stella` schema 변경을
-   자동 push하고 payments, Stella, Vibe 순서로 배포한다. 로컬 Wrangler 배포는 하지 않는다.
+   자동 push하고 Payments → Database Worker → 공개 앱 순서로 배포한다. 로컬 Wrangler 배포는 하지 않는다.
 5. 아래 staging 수직 흐름을 모두 확인한다.
 6. PR을 `main`에 병합한다.
 7. `Production Schema` workflow에서 Stella `plan`을 검토하고 별도 `apply` 실행으로 반영한 뒤

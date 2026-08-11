@@ -29,6 +29,8 @@
     },
     "CORE_PAYMENT_EVENTS_URL": "https://sobok.cc/api/v1/internal/payment-events"
   },
+  // sobok-ops Terraform owns Queue/DLQ lifecycles. This file owns the producers and core consumer;
+  // apps/database/wrangler.jsonc owns the Stella and Vibe consumers.
   "queues": {
     "producers": [
       { "binding": "STELLA_PAYMENT_EVENTS", "queue": "stella-payment-events" },
