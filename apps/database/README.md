@@ -50,8 +50,8 @@ Wrangler에는 Queue나 Hyperdrive 자체를 생성·삭제하는 절차를 두�
 
 ## 배포
 
-배포 순서는 schema → Payments → Database Worker → 공개 앱 Worker다. 공개 앱을 먼저 배포하면 존재하지
-않는 Service Binding 대상 때문에 배포가 실패한다.
+배포 순서는 schema → 고정 Stella OAuth client bootstrap → Payments → Database Worker → 공개 앱 Worker다.
+공개 앱을 먼저 배포하면 존재하지 않는 Service Binding 대상 때문에 배포가 실패한다.
 
 Cloudflare Terraform의 `account-database.hyperdrive_ids`를 적용한 뒤 네 값을
 `apps/database/wrangler.jsonc`의 production/staging fresh/cached ID에 반영한다. OAuth 공개 client ID는

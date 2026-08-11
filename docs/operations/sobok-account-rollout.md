@@ -16,7 +16,8 @@
 - [x] Better Auth client IP를 환경별 HMAC 가명값으로 처리하도록 구현
 - [ ] Supabase production/staging project를 Pro로 준비하고 두 HCP workspace apply
 - [x] Cloudflare Terraform apply 후 Wrangler에 production/staging Hyperdrive ID 네 개 반영
-- [ ] GitHub Environment에 환경별 migrator URL 입력
+- [x] GitHub Environment에 환경별 migrator URL과 Stella OIDC client secret 입력
+- [x] production/staging 배포의 고정 `stella-web` client 자동 bootstrap 구현
 - [ ] staging schema push와 Accounts/Stella 최초 배포
 - [ ] 두 환경의 `stella-web` client bootstrap
 - [ ] production schema와 앱 배포
@@ -147,18 +148,22 @@ issuer와 authorization/token/userinfo/JWKS endpoint는 모두 같은 환경의 
 | staging    | `https://stella-stg.sobok.cc` | `https://stella-stg.sobok.cc/api/auth/oauth2/callback/sobok` |
 | production | `https://stella.sobok.cc`     | `https://stella.sobok.cc/api/auth/oauth2/callback/sobok`     |
 
-`apps/accounts`에서 다음 값으로 `bun run oauth:bootstrap`을 실행한다.
+각 GitHub Environment에 `account-accounts`의 같은 환경 sensitive output을
+`STELLA_OIDC_CLIENT_SECRET` secret으로 등록한다. Repository secret으로 만들지 않는다. Staging workflow는
+schema push 직후, production 배포 workflow는 Worker 배포 전에
+`.github/actions/bootstrap-stella-oauth-client`를 실행하며 다음 값을 bootstrap 스크립트에 전달한다.
 
 - `SOBOK_MIGRATOR_URL`: 해당 환경 Accounts migrator URL
 - `ACCOUNTS_PUBLIC_ORIGIN`
 - `SOBOK_OAUTH_CLIENT_ID=stella-web`
-- `SOBOK_OAUTH_CLIENT_SECRET`: `account-accounts`의 같은 환경 sensitive output
+- `SOBOK_OAUTH_CLIENT_SECRET`: 해당 Environment의 `STELLA_OIDC_CLIENT_SECRET`
 - `SOBOK_OAUTH_CLIENT_NAME=Stella`
 - `SOBOK_OAUTH_CLIENT_ORIGIN`
 - `SOBOK_OAUTH_REDIRECT_URIS`
 
+Bootstrap job은 `SOBOK_MIGRATOR_URL`이 `accounts_migrator`와 `sslmode=verify-full`을 사용하는지도 검증한다.
 같은 metadata 재실행은 no-op이다. 기존 row가 다른 redirect URI, scope, PKCE, consent 또는 token auth
-설정을 가지면 자동 수정하지 않고 실패한다.
+설정을 가지면 자동 수정하지 않고 이후 Worker 배포 전에 실패한다. Client secret은 로그에 출력하지 않는다.
 
 ## 6. Stella 수직 확인
 

@@ -217,7 +217,8 @@ Stella 첫 구매와 사랑 카드 재추첨은 로그인 없이 끝까지 가�
 - `sobok-ops`: production/staging Supabase project, 환경별 `sobok_runtime`, 제품별 migrator, 전체 네 Hyperdrive
   config, 이메일 Queue/DLQ resource, 환경별 Secrets Store 항목, Stella OIDC client secret, accounts Turnstile,
   custom domain desired state
-- `.github/workflows`: Accounts schema plan/apply와 environment-scoped production/staging Worker 배포
+- `.github/workflows`: Accounts schema plan/apply, 고정 OIDC client bootstrap과 environment-scoped
+  production/staging Worker 배포
 
 Database Wrangler config의 OAuth 공개 client ID는 빈 기본값으로 두고, `account-accounts` remote state에서
 GitHub Environment variable로 동기화한 값을 Database Worker 배포 시 `--var`로 주입한다. Accounts 정적

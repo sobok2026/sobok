@@ -1,0 +1,50 @@
+name: Bootstrap Stella OAuth Client
+description: Idempotently register the fixed Stella client after the Accounts schema is available.
+
+inputs:
+  target:
+    description: Deployment target (`staging` or `production`).
+    required: true
+  accounts_migrator_url:
+    description: Environment-scoped Accounts migrator URL.
+    required: true
+  stella_oidc_client_secret:
+    description: Environment-scoped Stella OIDC client secret from the account-accounts workspace.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Validate bootstrap inputs
+      shell: bash
+      env:
+        ACCOUNTS_MIGRATOR_URL: ${{ inputs.accounts_migrator_url }}
+        STELLA_OIDC_CLIENT_SECRET: ${{ inputs.stella_oidc_client_secret }}
+        TARGET: ${{ inputs.target }}
+      run: |
+        case "$TARGET" in
+          staging|production) ;;
+          *) echo "Unsupported deployment target: $TARGET" >&2; exit 1 ;;
+        esac
+        for name in ACCOUNTS_MIGRATOR_URL STELLA_OIDC_CLIENT_SECRET; do
+          if [ -z "${!name}" ]; then
+            echo "$name is unavailable to the environment-scoped OAuth client bootstrap job." >&2
+            exit 1
+          fi
+        done
+
+    - name: Set up Bun workspace
+      uses: ./.github/actions/setup-bun
+
+    - name: Bootstrap fixed Stella client
+      shell: bash
+      env:
+        ACCOUNTS_PUBLIC_ORIGIN: ${{ inputs.target == 'staging' && 'https://accounts-stg.sobok.cc' || 'https://accounts.sobok.cc' }}
+        CI: 'true'
+        SOBOK_MIGRATOR_URL: ${{ inputs.accounts_migrator_url }}
+        SOBOK_OAUTH_CLIENT_ID: stella-web
+        SOBOK_OAUTH_CLIENT_NAME: Stella
+        SOBOK_OAUTH_CLIENT_ORIGIN: ${{ inputs.target == 'staging' && 'https://stella-stg.sobok.cc' || 'https://stella.sobok.cc' }}
+        SOBOK_OAUTH_CLIENT_SECRET: ${{ inputs.stella_oidc_client_secret }}
+        SOBOK_OAUTH_REDIRECT_URIS: ${{ inputs.target == 'staging' && 'https://stella-stg.sobok.cc/api/auth/oauth2/callback/sobok' || 'https://stella.sobok.cc/api/auth/oauth2/callback/sobok' }}
+      run: bun run --filter=@sobok/accounts oauth:bootstrap

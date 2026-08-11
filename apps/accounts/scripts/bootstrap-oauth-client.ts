@@ -26,6 +26,13 @@ function sameValues(left: string[] | null, right: string[]): boolean {
 }
 
 const databaseUrl = required('SOBOK_MIGRATOR_URL')
+const parsedDatabaseUrl = new URL(databaseUrl)
+if (parsedDatabaseUrl.searchParams.get('sslmode') !== 'verify-full') {
+  throw new Error('SOBOK_MIGRATOR_URL must use sslmode=verify-full')
+}
+if (decodeURIComponent(parsedDatabaseUrl.username).split('.')[0] !== 'accounts_migrator') {
+  throw new Error('SOBOK_MIGRATOR_URL must use accounts_migrator')
+}
 const origin = new URL(required('ACCOUNTS_PUBLIC_ORIGIN')).origin
 const clientId = required('SOBOK_OAUTH_CLIENT_ID')
 const fullClientSecret = required('SOBOK_OAUTH_CLIENT_SECRET')
