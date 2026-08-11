@@ -8,14 +8,14 @@
 2026-08-11 기준 소스 상태다. HCP apply, Supabase project 생성, GitHub secret 입력, Cloudflare 배포는 운영자
 확인 전 완료로 간주하지 않는다.
 
-- [x] Accounts authority UI·도메인 코드·email consumer와 고정 `identity` schema 구현
+- [x] Accounts authority UI·도메인 코드·email 처리기와 고정 `identity` schema 구현
 - [x] `packages/auth` authority/relying-party/OIDC 계약 구현
 - [x] Stella OIDC session과 guest collection 귀속 구현
 - [x] production/staging Supabase root와 공용 DB role/grant 모듈 구현
 - [x] 환경별 Database Worker와 전체 네 Hyperdrive desired state 구현
 - [x] Better Auth client IP를 환경별 HMAC 가명값으로 처리하도록 구현
 - [ ] Supabase production/staging project를 Pro로 준비하고 두 HCP workspace apply
-- [ ] Cloudflare Terraform apply 후 Wrangler의 `REPLACE_WITH_*_HYPERDRIVE_ID` 교체
+- [x] Cloudflare Terraform apply 후 Wrangler에 production/staging Hyperdrive ID 네 개 반영
 - [ ] GitHub Environment에 환경별 migrator URL 입력
 - [ ] staging schema push와 Accounts/Stella 최초 배포
 - [ ] 두 환경의 `stella-web` client bootstrap
@@ -75,6 +75,11 @@ Terraform은 각 project에 동일한 `identity`·`stella`·`deeptype` schema, D
 | Workspace         | `account-database`                        |
 | Working directory | `infra/cloudflare/account/sobok/database` |
 | Apply             | VCS-driven, manual apply                  |
+
+Cloudflare resource lifecycle은 `sobok-ops` Terraform이, Worker 연결은 앱 저장소의 `wrangler.jsonc`가
+소유한다. Queue/DLQ와 Hyperdrive config는 Terraform에서 만들고, producer/consumer·Service Binding·
+Hyperdrive binding은 Wrangler에서 연결한다. 같은 대상을 양쪽에서 관리하거나 Cloudflare Dashboard에서
+수동 변경하지 않는다.
 
 최초 plan 전에 Remote State Sharing을 연다.
 

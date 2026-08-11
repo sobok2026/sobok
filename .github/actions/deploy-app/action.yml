@@ -84,4 +84,4 @@ runs:
         accountId: ${{ inputs.cloudflare_account_id }}
         workingDirectory: ${{ inputs.directory }}
         packageManager: bun
-        command: ${{ inputs.target == 'staging' && 'deploy --env stg' || 'deploy' }}
+        command: ${{ inputs.target == 'staging' && 'deploy --env stg' || 'deploy --env=""' }}

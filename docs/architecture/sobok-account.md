@@ -208,15 +208,15 @@ Stella 첫 구매와 사랑 카드 재추첨은 로그인 없이 끝까지 가�
 
 - `apps/accounts`: 중앙 로그인·가입·계정 관리 UI, Better Auth 도메인 코드, 고정 `identity` schema,
   OIDC client bootstrap 스크립트, Database Worker Service Binding
-- `apps/database`: production/staging 동적 API, backend secret, Accounts email Queue, Stella/Vibe payment
-  event Queue와 maintenance RPC, 환경별 fresh/cached Hyperdrive
+- `apps/database`: production/staging 동적 API, backend secret binding, Accounts email Queue 연결,
+  Stella/Vibe payment event Queue consumer와 maintenance RPC, 환경별 fresh/cached Hyperdrive binding
 - `packages/auth`: authority와 relying-party factory, 안정적인 OIDC 계약, 비밀번호·username, magic link,
   Google/One Tap, Kakao, passkey, TOTP/backup code, BBaton 연결 구성
 - `apps/stella`: 첫 OIDC relying party session, 게스트 `guardian_collection` 귀속, 계정 보관함과 stable
   report 재열람, account-save 보상, 계정 세션 기반 리포트·재추첨 권한 확인
-- `sobok-ops`: production/staging Supabase project, 환경별 `sobok_runtime`, 제품별 migrator, 전체 네 Hyperdrive,
-  이메일 Queue/DLQ, 환경별 Secrets Store 항목, Stella OIDC client secret, accounts Turnstile, custom domain
-  desired state
+- `sobok-ops`: production/staging Supabase project, 환경별 `sobok_runtime`, 제품별 migrator, 전체 네 Hyperdrive
+  config, 이메일 Queue/DLQ resource, 환경별 Secrets Store 항목, Stella OIDC client secret, accounts Turnstile,
+  custom domain desired state
 - `.github/workflows`: Accounts schema plan/apply와 environment-scoped production/staging Worker 배포
 
 Database Wrangler config의 OAuth 공개 client ID는 빈 기본값으로 두고, `account-accounts` remote state에서
