@@ -282,10 +282,6 @@ function checkUnique(values: readonly string[], label: string, errors: string[])
   }
 }
 
-function countOccurrences(value: string, token: string): number {
-  return value.split(token).length - 1
-}
-
 function countFocusTokens(value: string): number {
   return value.match(FOCUS_TOKEN_PATTERN)?.length ?? 0
 }
