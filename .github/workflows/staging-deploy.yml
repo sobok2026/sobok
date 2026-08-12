@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
@@ -22,6 +23,14 @@ jobs:
     env:
       CI: 'true'
       NEXT_TELEMETRY_DISABLED: '1'
+    outputs:
+      accounts: ${{ steps.release_scope.outputs.accounts }}
+      database: ${{ steps.release_scope.outputs.database }}
+      oauth_client: ${{ steps.release_scope.outputs.oauth_client }}
+      payments: ${{ steps.release_scope.outputs.payments }}
+      prepare: ${{ steps.release_scope.outputs.prepare }}
+      stella: ${{ steps.release_scope.outputs.stella }}
+      vibe: ${{ steps.release_scope.outputs.vibe }}
     steps:
       - name: Validate release branch
         env:
@@ -32,8 +41,13 @@ jobs:
             exit 1
           fi
 
+      # A complete, blob-filtered history lets Turborepo compare against the last successful release without
+      # downloading historical asset contents. A shallow clone would conservatively mark every package affected.
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          filter: blob:none
 
       - name: Set up Bun workspace
         uses: ./.github/actions/setup-bun
@@ -44,23 +58,126 @@ jobs:
       - name: Assert no generated-file drift
         run: git diff --exit-code
 
-  schema:
-    name: Push ${{ matrix.product }} staging schema
+      - name: Resolve affected staging release scope
+        id: release_scope
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.sha }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          accounts=false
+          database=false
+          oauth_client=false
+          payments=false
+          stella=false
+          vibe=false
+          full_release=false
+          base_sha=''
+          reason='affected packages since the last successful staging release'
+
+          if [ "$EVENT_NAME" = 'workflow_dispatch' ]; then
+            full_release=true
+            reason='manual workflow dispatch'
+          else
+            base_sha="$(
+              gh api \
+                -H 'X-GitHub-Api-Version: 2022-11-28' \
+                "repos/$REPOSITORY/actions/workflows/staging-deploy.yml/runs?branch=staging&status=success&per_page=1" \
+                --jq '.workflow_runs[0].head_sha // ""'
+            )"
+
+            if [ -z "$base_sha" ]; then
+              full_release=true
+              reason='no previous successful staging release'
+            elif ! git merge-base --is-ancestor "$base_sha" "$HEAD_SHA"; then
+              full_release=true
+              reason='previous successful release is not an ancestor of the current revision'
+            elif ! git diff --quiet "$base_sha" "$HEAD_SHA" -- \
+              .github/actions \
+              .github/workflows/staging-deploy.yml \
+              certs/supabase/prod-ca-2021.crt \
+              package.json \
+              turbo.json; then
+              full_release=true
+              reason='release orchestration or global build configuration changed'
+            fi
+          fi
+
+          if [ "$full_release" = true ]; then
+            accounts=true
+            database=true
+            oauth_client=true
+            payments=true
+            stella=true
+            vibe=true
+            scope='all deployable packages'
+          else
+            affected_packages="$(
+              TURBO_SCM_BASE="$base_sha" TURBO_SCM_HEAD="$HEAD_SHA" \
+                bunx turbo run type --affected --only --dry=json |
+                jq -c '.packages'
+            )"
+
+            has_package() {
+              jq -e --arg package "$1" 'index($package) != null' <<<"$affected_packages" >/dev/null
+            }
+
+            if has_package '@sobok/accounts'; then
+              accounts=true
+              oauth_client=true
+            fi
+            if has_package '@sobok/database'; then database=true; fi
+            if has_package '@sobok/payments-service'; then payments=true; fi
+            if has_package '@sobok/stella'; then
+              stella=true
+              oauth_client=true
+            fi
+            if has_package '@sobok/vibe'; then vibe=true; fi
+
+            scope="$(jq -r 'if length == 0 then "none" else join(", ") end' <<<"$affected_packages")"
+          fi
+
+          if [ "$accounts" = true ] || [ "$stella" = true ] || [ "$vibe" = true ]; then
+            prepare=true
+          else
+            prepare=false
+          fi
+
+          {
+            echo "accounts=$accounts"
+            echo "database=$database"
+            echo "oauth_client=$oauth_client"
+            echo "payments=$payments"
+            echo "prepare=$prepare"
+            echo "stella=$stella"
+            echo "vibe=$vibe"
+          } >> "$GITHUB_OUTPUT"
+
+          {
+            echo '### Staging release scope'
+            echo
+            echo "- Reason: $reason"
+            echo "- Base: ${base_sha:-not applicable}"
+            echo "- Packages: $scope"
+            echo
+            echo '| Target | Release |'
+            echo '| --- | --- |'
+            echo "| Accounts | $accounts |"
+            echo "| Database | $database |"
+            echo "| OAuth client | $oauth_client |"
+            echo "| Payments | $payments |"
+            echo "| Stella | $stella |"
+            echo "| Vibe | $vibe |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  prepare:
+    name: Prepare affected staging products
     needs: verify
-    strategy:
-      fail-fast: true
-      max-parallel: 1
-      matrix:
-        include:
-          - product: accounts
-            directory: apps/accounts
-            migrator_secret: ACCOUNTS_MIGRATOR_URL
-          - product: stella
-            directory: apps/stella
-            migrator_secret: STELLA_MIGRATOR_URL
-          - product: vibe
-            directory: apps/vibe
-            migrator_secret: VIBE_MIGRATOR_URL
+    if: needs.verify.outputs.prepare == 'true'
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
@@ -71,25 +188,35 @@ jobs:
       - name: Set up Bun workspace
         uses: ./.github/actions/setup-bun
 
-      - name: Push product schema with Drizzle
-        working-directory: ${{ matrix.directory }}
+      - name: Push Accounts schema with Drizzle
+        if: needs.verify.outputs.accounts == 'true'
+        working-directory: apps/accounts
         env:
           CI: 'true'
           NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
-          SOBOK_MIGRATOR_URL: ${{ secrets[matrix.migrator_secret] }}
+          SOBOK_MIGRATOR_URL: ${{ secrets.ACCOUNTS_MIGRATOR_URL }}
         run: bunx --bun drizzle-kit push --config drizzle.config.ts
 
-  oauth-client:
-    name: Bootstrap Stella staging OAuth client
-    needs: schema
-    environment: staging
-    runs-on: ubuntu-24.04-arm
-    timeout-minutes: 10
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      - name: Push Stella schema with Drizzle
+        if: needs.verify.outputs.stella == 'true'
+        working-directory: apps/stella
+        env:
+          CI: 'true'
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
+          SOBOK_MIGRATOR_URL: ${{ secrets.STELLA_MIGRATOR_URL }}
+        run: bunx --bun drizzle-kit push --config drizzle.config.ts
+
+      - name: Push Vibe schema with Drizzle
+        if: needs.verify.outputs.vibe == 'true'
+        working-directory: apps/vibe
+        env:
+          CI: 'true'
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
+          SOBOK_MIGRATOR_URL: ${{ secrets.VIBE_MIGRATOR_URL }}
+        run: bunx --bun drizzle-kit push --config drizzle.config.ts
 
       - name: Bootstrap fixed Stella client
+        if: needs.verify.outputs.oauth_client == 'true'
         uses: ./.github/actions/bootstrap-stella-oauth-client
         with:
           target: staging
@@ -98,7 +225,14 @@ jobs:
 
   payments:
     name: Deploy payments
-    needs: oauth-client
+    needs: [verify, prepare]
+    if: >-
+      ${{
+        !cancelled() &&
+        needs.verify.result == 'success' &&
+        (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') &&
+        needs.verify.outputs.payments == 'true'
+      }}
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 10
@@ -115,7 +249,15 @@ jobs:
 
   database:
     name: Deploy Database Worker
-    needs: payments
+    needs: [verify, prepare, payments]
+    if: >-
+      ${{
+        !cancelled() &&
+        needs.verify.result == 'success' &&
+        (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') &&
+        (needs.payments.result == 'success' || needs.payments.result == 'skipped') &&
+        needs.verify.outputs.database == 'true'
+      }}
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 10
@@ -135,7 +277,16 @@ jobs:
 
   accounts:
     name: Deploy Accounts
-    needs: database
+    needs: [verify, prepare, payments, database]
+    if: >-
+      ${{
+        !cancelled() &&
+        needs.verify.result == 'success' &&
+        (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') &&
+        (needs.payments.result == 'success' || needs.payments.result == 'skipped') &&
+        (needs.database.result == 'success' || needs.database.result == 'skipped') &&
+        needs.verify.outputs.accounts == 'true'
+      }}
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
@@ -156,7 +307,17 @@ jobs:
 
   stella:
     name: Deploy Stella
-    needs: [database, accounts]
+    needs: [verify, prepare, payments, database, accounts]
+    if: >-
+      ${{
+        !cancelled() &&
+        needs.verify.result == 'success' &&
+        (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') &&
+        (needs.payments.result == 'success' || needs.payments.result == 'skipped') &&
+        (needs.database.result == 'success' || needs.database.result == 'skipped') &&
+        (needs.accounts.result == 'success' || needs.accounts.result == 'skipped') &&
+        needs.verify.outputs.stella == 'true'
+      }}
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
@@ -176,7 +337,16 @@ jobs:
 
   vibe:
     name: Deploy Vibe
-    needs: database
+    needs: [verify, prepare, payments, database]
+    if: >-
+      ${{
+        !cancelled() &&
+        needs.verify.result == 'success' &&
+        (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') &&
+        (needs.payments.result == 'success' || needs.payments.result == 'skipped') &&
+        (needs.database.result == 'success' || needs.database.result == 'skipped') &&
+        needs.verify.outputs.vibe == 'true'
+      }}
     environment: staging
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 15

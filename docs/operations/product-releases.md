@@ -53,14 +53,24 @@ Dashboard는 조회 전용이고 원격 변경은 HCP Terraform 또는 GitHub Ac
 
 ## 배포 모델
 
-Staging workflow 순서:
+Staging workflow는 마지막으로 성공한 staging workflow의 SHA부터 현재 SHA까지 Turborepo package graph로
+affected package를 계산한다. 직전 실행이 실패했더라도 그 변경분은 성공 기준 SHA 이후 범위에 계속 포함된다.
+이전 성공 실행이 없거나, 수동 실행이거나, 배포 action·workflow 또는 전역 build 설정이 바뀌면 전체 release로
+fallback한다. 배포 대상 package가 없으면 정적 검증만 수행한다.
 
-1. 저장소 정적 검증
-2. 제품 schema를 `drizzle-kit push`
-3. 고정 `stella-web` OAuth client를 멱등 bootstrap
-4. Payments Worker 배포
-5. `database-stg` 배포
-6. Accounts/Vibe 공개 Worker 배포, Accounts 이후 Stella 공개 Worker 배포
+Affected staging workflow 순서:
+
+1. 저장소 정적 검증과 release scope 계산
+2. 한 prepare job에서 affected 제품 schema를 `drizzle-kit push`하고, Accounts/Stella가 affected이면 고정
+   `stella-web` OAuth client를 멱등 bootstrap
+3. affected이면 Payments Worker 배포
+4. affected이면 `database-stg` 배포
+5. affected Accounts/Vibe 공개 Worker 배포, 둘 다 대상이면 병렬 실행하고 Accounts가 대상일 때 Stella는 Accounts
+   이후 배포
+
+각 단계는 앞선 provider가 이번 release 대상이면 그 성공을 기다리고, 대상이 아니면 이미 배포된 provider를
+그대로 사용한다. prepare job은 checkout과 dependency install을 한 번만 수행하고 제품 schema는 서로 다른
+schema와 migrator role로 제한한다.
 
 Production은 제품별 schema plan/apply를 먼저 실행하고 수동 배포 workflow가 고정 OAuth client bootstrap →
 Payments → `database` → 공개 앱 순서를 고정한다. 그 workflow가 성공하면 Scheduler workflow가 같은
@@ -110,7 +120,9 @@ revision은 배포하지 않으며, 한 ID를 두 환경이나 두 cache policy�
 2. 양쪽 Supabase workspace를 apply해 schema, migrator, `sobok_runtime` grant를 반영한다.
 3. 제품의 동적 코드를 Database Worker의 이름 있는 entrypoint로 노출한다.
 4. 공개 앱 Worker는 `DATABASE` Service Binding만 갖게 한다.
-5. Staging schema matrix와 production schema workflow에 migrator를 추가한다.
+5. Staging prepare job에 schema push step과 release scope output을 추가하고 production schema workflow에
+   migrator를 추가한다. 새 package를 Database Worker dependency로 선언해 package 변경 시 Database Worker도
+   affected가 되게 한다.
 6. 외부 서비스나 Queue가 필요하면 Terraform에 resource를, Database Worker Wrangler에 최소 binding이나
    consumer를 선언하고 배포 선후관계를 추가한다.
 

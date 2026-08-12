@@ -12,6 +12,17 @@ runs:
       shell: bash
       run: bunx prettier --check '**/*.{css,md,yml,yaml,html}' --ignore-path .gitignore
 
+    # Isolate the type-check graph so release-build artifacts never enter this cache.
+    - name: Restore type-check task cache
+      uses: actions/cache@v5
+      with:
+        path: .turbo/type-cache
+        key: ${{ runner.os }}-${{ runner.arch }}-turbo-type-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-${{ runner.arch }}-turbo-type-
+
     - name: Type check
       shell: bash
+      env:
+        TURBO_CACHE_DIR: .turbo/type-cache
       run: bun run type

@@ -1,5 +1,5 @@
 name: Bootstrap Stella OAuth Client
-description: Idempotently register the fixed Stella client after the Accounts schema is available.
+description: Idempotently register the fixed Stella client from a prepared Bun workspace after the Accounts schema is available.
 
 inputs:
   target:
@@ -32,9 +32,6 @@ runs:
             exit 1
           fi
         done
-
-    - name: Set up Bun workspace
-      uses: ./.github/actions/setup-bun
 
     - name: Bootstrap fixed Stella client
       shell: bash
