@@ -1,11 +1,54 @@
-import { spawn } from 'node:child_process'
-import { mkdir, readFile, rm } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
-import { basename, dirname, join, resolve } from 'node:path'
-import { setTimeout as delay } from 'node:timers/promises'
-import { fileURLToPath } from 'node:url'
+import { createHash } from 'node:crypto'
+import { readFile } from 'node:fs/promises'
+import { dirname, join, resolve } from 'node:path'
 import { parseArgs } from 'node:util'
-import { sha256Hex, validateReleaseDirectory } from './guardian-card-art'
+import { z } from 'zod'
+import { readAssetContract, validateReleaseDirectory } from './guardian-card-art'
+
+const listedObjectSchema = z
+  .object({
+    etag: z.string().min(1),
+    http_metadata: z
+      .object({
+        cacheControl: z.string().optional(),
+        contentType: z.string().optional(),
+      })
+      .passthrough()
+      .optional(),
+    key: z.string().min(1),
+    size: z.number().int().nonnegative(),
+    storage_class: z.string().min(1).optional(),
+  })
+  .passthrough()
+
+const listResponseSchema = z
+  .object({
+    result: z.array(listedObjectSchema),
+    result_info: z
+      .object({
+        cursor: z.string().optional(),
+        is_truncated: z.boolean().optional(),
+      })
+      .passthrough()
+      .optional(),
+    success: z.literal(true),
+  })
+  .passthrough()
+
+const uploadResponseSchema = z
+  .object({
+    result: z
+      .object({
+        etag: z.string().min(1),
+        key: z.string().min(1),
+        size: z.union([z.string(), z.number()]),
+      })
+      .passthrough(),
+    success: z.literal(true),
+  })
+  .passthrough()
+
+type ListedObject = z.infer<typeof listedObjectSchema>
 
 const { values } = parseArgs({
   options: {
@@ -29,99 +72,176 @@ if (!/^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$/.test(values.bucket)) {
   throw new Error('invalid R2 bucket name')
 }
 
+const accountId = requiredEnvironmentVariable('CLOUDFLARE_ACCOUNT_ID')
+const apiToken = requiredEnvironmentVariable('CLOUDFLARE_API_TOKEN')
 const manifestPath = resolve(values.manifest)
 const releaseDirectory = dirname(manifestPath)
-const { manifest } = await validateReleaseDirectory(manifestPath)
-const verificationDirectory = join(tmpdir(), `stella-guardian-r2-${process.pid}`)
-await mkdir(verificationDirectory, { recursive: true })
+const [{ manifest }, contract] = await Promise.all([validateReleaseDirectory(manifestPath), readAssetContract()])
+const deliveryEnvironment = Object.values(contract.environments).find(
+  (environment) => environment.bucket === values.bucket,
+)
+if (!deliveryEnvironment) {
+  throw new Error(`R2 bucket is not declared in the guardian asset contract: ${values.bucket}`)
+}
 
-let uploaded = 0
-let unchanged = 0
-try {
-  for (const asset of manifest.assets) {
+const releaseAssets = await Promise.all(
+  manifest.assets.map(async (asset) => {
     const localPath = join(releaseDirectory, `${asset.editionId}.webp`)
-    const remotePath = `${values.bucket}/${asset.objectKey}`
-    const downloadedPath = join(verificationDirectory, basename(asset.objectKey))
-
-    const existing = await runWrangler(['r2', 'object', 'get', remotePath, '--remote', '--file', downloadedPath])
-    if (existing.code === 0) {
-      const existingHash = sha256Hex(await readFile(downloadedPath))
-      if (existingHash !== asset.deliveryArtworkSha256) {
-        throw new Error(`${asset.editionId}: R2 object already exists with a different sha256; create a new edition ID`)
-      }
-      unchanged += 1
-      continue
-    }
-    if (!existing.stderr.toLowerCase().includes('specified key does not exist')) {
-      throw new Error(`${asset.editionId}: could not inspect existing R2 object\n${existing.stderr}`)
-    }
-
-    const put = await runWrangler([
-      'r2',
-      'object',
-      'put',
-      remotePath,
-      '--remote',
-      '--file',
+    return {
+      asset,
       localPath,
-      '--content-type',
-      manifest.contentType,
-      '--cache-control',
-      manifest.cacheControl,
-      '--storage-class',
-      'Standard',
-    ])
-    if (put.code !== 0) {
-      throw new Error(`${asset.editionId}: R2 upload failed\n${put.stderr}`)
+      md5: createHash('md5')
+        .update(await readFile(localPath))
+        .digest('hex'),
     }
+  }),
+)
 
-    const verify = await downloadRemoteObjectWithRetry(remotePath, downloadedPath)
-    if (verify.code !== 0) {
-      throw new Error(`${asset.editionId}: R2 verification download failed\n${verify.stderr}`)
-    }
-    const uploadedHash = sha256Hex(await readFile(downloadedPath))
-    if (uploadedHash !== asset.deliveryArtworkSha256) {
-      throw new Error(`${asset.editionId}: uploaded R2 object sha256 mismatch`)
-    }
-    uploaded += 1
+const existingObjects = await listRemoteObjects()
+const missingAssets = releaseAssets.filter(({ asset, md5 }) => {
+  const remoteObject = existingObjects.get(asset.objectKey)
+  if (!remoteObject) {
+    return true
   }
-} finally {
-  await rm(verificationDirectory, { recursive: true, force: true })
-}
+  validateRemoteObject(asset, md5, remoteObject)
+  return false
+})
 
-console.log(`deployed: ${uploaded} uploaded, ${unchanged} already identical, ${manifest.assetCount} total`)
-
-async function downloadRemoteObjectWithRetry(
-  remotePath: string,
-  downloadedPath: string,
-): Promise<{ code: number; stderr: string }> {
-  const attempts = 7
-  let result = { code: 1, stderr: '' }
-  for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    result = await runWrangler(['r2', 'object', 'get', remotePath, '--remote', '--file', downloadedPath])
-    if (result.code === 0 || !result.stderr.toLowerCase().includes('specified key does not exist')) {
-      return result
-    }
-    if (attempt < attempts) {
-      await delay(Math.min(2 ** (attempt - 1), 8) * 1_000)
-    }
-  }
-  return result
-}
-
-async function runWrangler(args: readonly string[]): Promise<{ code: number; stderr: string }> {
-  return await new Promise((resolveResult, reject) => {
-    const child = spawn('bunx', ['wrangler', ...args], {
-      cwd: fileURLToPath(new URL('..', import.meta.url)),
-      env: { ...process.env, CI: 'true', NO_COLOR: '1', WRANGLER_WRITE_LOGS: 'false' },
-      stdio: ['ignore', 'inherit', 'pipe'],
-    })
-    let stderr = ''
-    child.stderr.setEncoding('utf8')
-    child.stderr.on('data', (chunk: string) => {
-      stderr += chunk
-    })
-    child.on('error', reject)
-    child.on('close', (code) => resolveResult({ code: code ?? 1, stderr }))
+await mapConcurrent(missingAssets, 10, async ({ asset, localPath, md5 }) => {
+  const file = await readFile(localPath)
+  const response = await fetch(objectApiUrl(asset.objectKey), {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${apiToken}`,
+      'Cache-Control': manifest.cacheControl,
+      'Content-Length': String(file.byteLength),
+      'Content-Type': manifest.contentType,
+      'cf-r2-storage-class': 'Standard',
+    },
+    body: file,
   })
+  if (!response.ok) {
+    throw new Error(`${asset.editionId}: R2 upload failed (${response.status})\n${await response.text()}`)
+  }
+  const uploaded = uploadResponseSchema.parse(await response.json())
+  if (
+    uploaded.result.key !== asset.objectKey ||
+    Number(uploaded.result.size) !== asset.byteSize ||
+    uploaded.result.etag.replaceAll('"', '').toLowerCase() !== md5
+  ) {
+    throw new Error(`${asset.editionId}: R2 upload response does not match the release manifest`)
+  }
+})
+
+const deployedObjects = await listRemoteObjects()
+for (const { asset, md5 } of releaseAssets) {
+  const remoteObject = deployedObjects.get(asset.objectKey)
+  if (!remoteObject) {
+    throw new Error(`${asset.editionId}: R2 object is missing after deployment`)
+  }
+  validateRemoteObject(asset, md5, remoteObject)
+}
+
+await mapConcurrent(releaseAssets, 10, async ({ asset }) => {
+  const url = new URL(asset.objectKey, `${deliveryEnvironment.origin}/`)
+  url.searchParams.set('sha256', asset.deliveryArtworkSha256)
+  const response = await fetch(url, { headers: { 'Cache-Control': 'no-cache' } })
+  if (!response.ok) {
+    throw new Error(`${asset.editionId}: delivery origin verification failed (${response.status})`)
+  }
+  if (
+    response.headers.get('content-type') !== manifest.contentType ||
+    response.headers.get('cache-control') !== manifest.cacheControl
+  ) {
+    throw new Error(`${asset.editionId}: delivery origin HTTP metadata mismatch`)
+  }
+  const body = new Uint8Array(await response.arrayBuffer())
+  if (body.byteLength !== asset.byteSize) {
+    throw new Error(`${asset.editionId}: delivery origin byteSize mismatch`)
+  }
+  const hash = createHash('sha256').update(body).digest('hex')
+  if (hash !== asset.deliveryArtworkSha256) {
+    throw new Error(`${asset.editionId}: delivery origin sha256 mismatch`)
+  }
+})
+
+console.log(
+  `deployed: ${missingAssets.length} uploaded, ${manifest.assetCount - missingAssets.length} already identical, ${manifest.assetCount} verified through ${deliveryEnvironment.origin}`,
+)
+
+async function listRemoteObjects(): Promise<Map<string, ListedObject>> {
+  const objects = new Map<string, ListedObject>()
+  let cursor: string | undefined
+  do {
+    const url = new URL(
+      `https://api.cloudflare.com/client/v4/accounts/${accountId}/r2/buckets/${values.bucket}/objects`,
+    )
+    url.searchParams.set('per_page', '1000')
+    url.searchParams.set('prefix', 'guardian-cards/ko/')
+    if (cursor) {
+      url.searchParams.set('cursor', cursor)
+    }
+    const response = await fetch(url, { headers: { Authorization: `Bearer ${apiToken}` } })
+    if (!response.ok) {
+      throw new Error(`could not list R2 objects (${response.status})\n${await response.text()}`)
+    }
+    const page = listResponseSchema.parse(await response.json())
+    for (const object of page.result) {
+      objects.set(object.key, object)
+    }
+    cursor = page.result_info?.is_truncated ? page.result_info.cursor : undefined
+    if (page.result_info?.is_truncated && !cursor) {
+      throw new Error('truncated R2 object list did not include a cursor')
+    }
+  } while (cursor)
+  return objects
+}
+
+function validateRemoteObject(
+  asset: (typeof manifest.assets)[number],
+  expectedMd5: string,
+  remoteObject: ListedObject,
+): void {
+  const etag = remoteObject.etag.replaceAll('"', '').toLowerCase()
+  if (etag !== expectedMd5 || remoteObject.size !== asset.byteSize) {
+    throw new Error(`${asset.editionId}: R2 object already exists with different bytes; create a new edition ID`)
+  }
+  if (
+    remoteObject.http_metadata?.contentType !== manifest.contentType ||
+    remoteObject.http_metadata.cacheControl !== manifest.cacheControl ||
+    remoteObject.storage_class?.toLowerCase() !== 'standard'
+  ) {
+    throw new Error(`${asset.editionId}: R2 object HTTP metadata or storage class mismatch`)
+  }
+}
+
+function objectApiUrl(objectKey: string): string {
+  const encodedKey = objectKey.split('/').map(encodeURIComponent).join('/')
+  return `https://api.cloudflare.com/client/v4/accounts/${accountId}/r2/buckets/${values.bucket}/objects/${encodedKey}`
+}
+
+function requiredEnvironmentVariable(name: string): string {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(`${name} is required`)
+  }
+  return value
+}
+
+async function mapConcurrent<T>(
+  items: readonly T[],
+  concurrency: number,
+  task: (item: T) => Promise<void>,
+): Promise<void> {
+  let nextIndex = 0
+  const workers = Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+    while (nextIndex < items.length) {
+      const item = items[nextIndex]
+      nextIndex += 1
+      if (item !== undefined) {
+        await task(item)
+      }
+    }
+  })
+  await Promise.all(workers)
 }
