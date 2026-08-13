@@ -1,7 +1,10 @@
 import { spawn } from 'node:child_process'
-import { lstat, mkdir, readFile } from 'node:fs/promises'
-import { basename, dirname, resolve } from 'node:path'
+import { createReadStream, createWriteStream } from 'node:fs'
+import { type FileHandle, lstat, mkdir, mkdtemp, open, readFile, rename, rm } from 'node:fs/promises'
+import { basename, dirname, join, resolve } from 'node:path'
+import { pipeline } from 'node:stream/promises'
 import { parseArgs } from 'node:util'
+import { constants, createGzip } from 'node:zlib'
 import { sha256Hex, validateReleaseDirectory } from './guardian-card-art'
 
 const { values } = parseArgs({
@@ -35,34 +38,37 @@ if (await exists(archivePath)) {
 const { manifest } = await validateReleaseDirectory(manifestPath)
 const entries = ['manifest.json', ...manifest.assets.map((asset) => `${asset.editionId}.webp`)]
 await mkdir(dirname(archivePath), { recursive: true })
+const packagingDirectory = await mkdtemp(join(dirname(archivePath), '.guardian-art-package-'))
+const tarPath = join(packagingDirectory, 'guardian-card-art-release.tar')
+const packagedArchivePath = join(packagingDirectory, 'guardian-card-art-release.tar.gz')
+try {
+  await writeUstarArchive(tarPath, dirname(manifestPath), entries)
+  await pipeline(
+    createReadStream(tarPath),
+    createGzip({ level: constants.Z_BEST_COMPRESSION }),
+    createWriteStream(packagedArchivePath, { flags: 'wx' }),
+  )
 
-const create = await run('tar', [
-  '--create',
-  '--gzip',
-  '--no-xattrs',
-  '--file',
-  archivePath,
-  '--directory',
-  dirname(manifestPath),
-  ...entries,
-])
-if (create.code !== 0) {
-  throw new Error(`could not create release archive\n${create.stderr}`)
-}
+  const list = await run('tar', ['--list', '--gzip', '--file', packagedArchivePath])
+  if (list.code !== 0) {
+    throw new Error(`could not inspect release archive\n${list.stderr}`)
+  }
+  const archivedEntries = list.stdout.trim().split('\n').filter(Boolean)
+  if (JSON.stringify(archivedEntries) !== JSON.stringify(entries)) {
+    throw new Error('release archive entries do not match the validated WebP release directory')
+  }
 
-const list = await run('tar', ['--list', '--gzip', '--file', archivePath])
-if (list.code !== 0) {
-  throw new Error(`could not inspect release archive\n${list.stderr}`)
+  const archive = await readFile(packagedArchivePath)
+  if (archive.subarray(4, 8).some((byte) => byte !== 0)) {
+    throw new Error('release gzip header must use a deterministic zero timestamp')
+  }
+  await rename(packagedArchivePath, archivePath)
+  console.log(
+    `packaged: ${manifest.assetCount} WebP assets in ${archivePath} (${archive.byteLength.toLocaleString()} bytes, sha256 ${sha256Hex(archive)})`,
+  )
+} finally {
+  await rm(packagingDirectory, { recursive: true, force: true })
 }
-const archivedEntries = list.stdout.trim().split('\n').filter(Boolean)
-if (JSON.stringify(archivedEntries) !== JSON.stringify(entries)) {
-  throw new Error('release archive entries do not match the validated WebP release directory')
-}
-
-const archive = await readFile(archivePath)
-console.log(
-  `packaged: ${manifest.assetCount} WebP assets in ${archivePath} (${archive.byteLength.toLocaleString()} bytes, sha256 ${sha256Hex(archive)})`,
-)
 
 async function exists(path: string): Promise<boolean> {
   try {
@@ -73,6 +79,75 @@ async function exists(path: string): Promise<boolean> {
       return false
     }
     throw error
+  }
+}
+
+async function writeUstarArchive(path: string, directory: string, entries: readonly string[]): Promise<void> {
+  const archive = await open(path, 'wx')
+  try {
+    for (const entry of entries) {
+      const body = await readFile(join(directory, entry))
+      await writeAll(archive, createUstarHeader(entry, body.byteLength))
+      await writeAll(archive, body)
+      const paddingLength = (512 - (body.byteLength % 512)) % 512
+      if (paddingLength > 0) {
+        await writeAll(archive, Buffer.alloc(paddingLength))
+      }
+    }
+    await writeAll(archive, Buffer.alloc(1024))
+  } finally {
+    await archive.close()
+  }
+}
+
+function createUstarHeader(name: string, size: number): Buffer {
+  if (!/^[\x20-\x7e]+$/.test(name) || Buffer.byteLength(name) > 100) {
+    throw new Error(`release archive entry is not a portable ustar name: ${name}`)
+  }
+
+  const header = Buffer.alloc(512)
+  writeString(header, 0, 100, name)
+  writeOctal(header, 100, 8, 0o644)
+  writeOctal(header, 108, 8, 0)
+  writeOctal(header, 116, 8, 0)
+  writeOctal(header, 124, 12, size)
+  writeOctal(header, 136, 12, 0)
+  header.fill(0x20, 148, 156)
+  header[156] = 0x30
+  writeString(header, 257, 6, 'ustar')
+  writeString(header, 263, 2, '00')
+  writeString(header, 265, 32, 'root')
+  writeString(header, 297, 32, 'root')
+  writeOctal(header, 329, 8, 0)
+  writeOctal(header, 337, 8, 0)
+
+  const checksum = header.reduce((sum, byte) => sum + byte, 0)
+  const checksumText = `${checksum.toString(8).padStart(6, '0')}\0 `
+  Buffer.from(checksumText, 'ascii').copy(header, 148)
+  return header
+}
+
+function writeString(target: Buffer, offset: number, length: number, value: string): void {
+  const encoded = Buffer.from(value, 'ascii')
+  if (encoded.byteLength > length) {
+    throw new Error(`ustar field is too long: ${value}`)
+  }
+  encoded.copy(target, offset)
+}
+
+function writeOctal(target: Buffer, offset: number, length: number, value: number): void {
+  const encoded = `${value.toString(8).padStart(length - 1, '0')}\0`
+  writeString(target, offset, length, encoded)
+}
+
+async function writeAll(file: FileHandle, value: Uint8Array): Promise<void> {
+  let offset = 0
+  while (offset < value.byteLength) {
+    const { bytesWritten } = await file.write(value, offset, value.byteLength - offset)
+    if (bytesWritten === 0) {
+      throw new Error('could not finish writing release archive')
+    }
+    offset += bytesWritten
   }
 }
 
