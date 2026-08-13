@@ -6,3 +6,6 @@ apps/mobile/ios
 # parser escapes `*`/`_` and reflows these, corrupting path matching.
 **/_headers
 **/_redirects
+
+# Deterministic generated source of truth; byte equality is checked by its materializer.
+apps/stella/content/guardian-cards/production-art-batches-ko.json

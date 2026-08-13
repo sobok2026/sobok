@@ -18,6 +18,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `guardian-choice-edition-blueprints-ko.json` | `authoring`              | 결정 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고         |
 | `guardian-choice-editions-ko.json`           | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 결정 에디션 192개      |
 | `production-art-pilot-plan-ko.json`          | `visual_review_complete` | 별자리별 대표 원고·3:4 원화 후보 12개 시각 승인 완료                |
+| `production-art-batches-ko.json`             | `work_order`             | 1,056개 원화를 같은 제작 축의 12별자리 단위 88개 배치로 선언        |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                          |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 12개 WebP 배포 후보의 객체 키·원본/배포 SHA-256              |
 
@@ -198,6 +199,21 @@ object를 참조하지 않게 한다.
 배포 SHA-256만 추적한다. release bundle의 매니페스트가 Git의 이 파일과 byte 단위로 같지 않으면 GitHub
 Actions가 배포하지 않는다.
 
+## production 원화 배치
+
+`production-art-batches-ko.json`은 1,056개 에디션을 같은 주제·서사·표현 축의 12별자리 단위로 묶은
+88개 제작 배치다. 자기이해·일·결정은 `맥락 × 표현 방식`, 사랑은 `관계 서사 × 희귀도`가 한 배치를
+이룬다. 이 단위는 캐릭터별 외형을 비교하면서도 같은 시각 문법의 반복 여부를 한 장의 비교 시트에서
+검수하기 위한 것이다.
+
+승인된 파일럿 12개는 각각 서로 다른 배치에 하나씩 포함된다. 따라서 12개 배치는 파일럿 한 장과 신규
+11장으로 구성되고, 나머지 76개 배치는 신규 12장으로 구성되어 남은 원화는 정확히 1,044장이다. 이
+목록은 에디션 정본과 파일럿 원고 해시에서 materialize하며 다음 명령으로 다시 만든다.
+
+```bash
+bun --filter=@sobok/stella guardian-cards:materialize-art-batches
+```
+
 ## 검증
 
 repository root에서 다음 명령을 실행한다.
@@ -221,6 +237,7 @@ bun --filter=@sobok/stella guardian-cards:validate
 - 1,056개 원고의 길이·문장 수·조사 token·접근성·비단정 표현 기준
 - 대표 이미지 후보 12개의 별자리 1종씩, 네 주제, 사랑 희귀도 4종, 비사랑 표현 방식 4종 커버리지
 - 대표 후보의 현재 원고와 편집 검수 해시 일치, 사람 승인 전 이미지 제작 차단
+- 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 파일럿 12개를 제외한 잔여 1,044개 산식
 - R2 자산 계약의 1,056개 목표·환경별 버킷·WebP-only 객체 키와 승인 원본/배포 해시 연결
 - 모든 마스터 원화 장면에서 실제 출생 차트·개인 색을 제외하고 비개인화 광륜만 사용
 - 런타임 게시 전에 개별 에디션에 필요한 이미지·접근성·한 줄 원고 필드
