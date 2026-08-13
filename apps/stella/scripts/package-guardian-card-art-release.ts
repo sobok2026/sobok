@@ -39,6 +39,7 @@ await mkdir(dirname(archivePath), { recursive: true })
 const create = await run('tar', [
   '--create',
   '--gzip',
+  '--no-xattrs',
   '--file',
   archivePath,
   '--directory',
@@ -80,7 +81,10 @@ async function run(
   args: readonly string[],
 ): Promise<{ code: number; stdout: string; stderr: string }> {
   return await new Promise((resolveResult, reject) => {
-    const child = spawn(command, args, { stdio: ['ignore', 'pipe', 'pipe'] })
+    const child = spawn(command, args, {
+      env: { ...process.env, COPYFILE_DISABLE: '1' },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    })
     let stdout = ''
     let stderr = ''
     child.stdout.setEncoding('utf8')
