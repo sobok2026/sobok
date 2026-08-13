@@ -248,7 +248,8 @@ function materialize(blueprint: Blueprint) {
     status: 'editorial_draft',
     locale: blueprint.locale,
     slot: blueprint.slot,
-    assetPolicy: 'Artwork paths stay null until a reviewed 3:4 private-storage object exists.',
+    assetPolicy:
+      'Artwork paths stay null until a reviewed 1080x1440 WebP exists at its immutable Cloudflare R2 object key.',
     editionCount: editions.length,
     editions,
   }

@@ -14,7 +14,7 @@
     "runtimeMayExpandMatrix": false,
     "requiredPerEditionFields": ["id", "familyId", "slot", "rarity", "artworkPath", "title", "artworkAlt", "oneLine"],
     "publishOnlyWhen": [
-      "The final 3:4 artwork exists in private object storage.",
+      "The final 1080x1440 WebP exists at the edition's immutable Cloudflare R2 object key.",
       "Korean title, artworkAlt, and oneLine have received editorial review.",
       "The edition is explicitly present in the runtime catalog and its stable ID has passed publication review.",
       "Selection scoring, rarity weights, and owned-card guarantees pass staging release checks."
@@ -234,7 +234,7 @@
         "editionCountPerFamily": 10,
         "weightPerEdition": 30,
         "totalWeightPerFamily": 300,
-        "artDirection": "두 마음의 행동이 완성되고 개인 차트의 별자리 궤적이 장면 전체에 섬세하게 겹치는 최종 구성.",
+        "artDirection": "두 마음의 행동과 비개인화 광륜 언더레이만으로 장면이 완결되는 최종 구성. 실제 출생 차트 선과 개인 색은 마스터 원화 밖의 별도 오버레이로 합성한다.",
         "copyDirection": "운명이나 관계 성공을 단정하지 않고 서로 선택한 행동의 희소성을 강조한다."
       }
     ],

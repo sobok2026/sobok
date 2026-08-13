@@ -16,7 +16,7 @@
       "titleSuffix": "첫 선택",
       "previewTone": "action",
       "sceneSuffix": "문손잡이, 표식, 첫발 중 하나가 막 움직인 찰나를 포착해 선택의 원인과 다음 행동이 함께 보이게 한다.",
-      "artworkAltSuffix": "되돌릴 수 있는 첫 선택이 막 시작된 순간",
+      "artworkAltSuffix": "문손잡이와 표식과 첫발 중 하나가 움직이기 시작한 순간",
       "oneLineAction": "확신을 기다리기보다 지금 확인할 수 있는 가장 작은 행동 하나를 골라."
     },
     {
@@ -32,7 +32,7 @@
       "titleSuffix": "다음 길",
       "previewTone": "possibility",
       "sceneSuffix": "첫 선택 뒤 가슴의 Stella 별표가 귀환 지점과 다음 판단 시점을 잇는 별자리 궤적으로 번진다.",
-      "artworkAltSuffix": "첫 선택에서 귀환 지점과 다음 판단 시점으로 별자리 궤적이 이어진 장면",
+      "artworkAltSuffix": "가슴의 별표에서 귀환 지점 표식과 먼 쪽의 판단 표식으로 별자리 궤적이 이어진 장면",
       "oneLineAction": "다시 판단할 날짜와 그때 확인할 신호를 남겨 선택이 계속 움직이게 해."
     }
   ],

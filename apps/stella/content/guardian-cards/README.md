@@ -5,19 +5,21 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 
 ## 현재 상태
 
-| 파일                                         | 상태                  | 범위                                                                |
-| -------------------------------------------- | --------------------- | ------------------------------------------------------------------- |
-| `guardian-card-families-ko.json`             | `authoring`           | 12별자리 × 자기이해·사랑·일·결정, 총 48개 기본 패밀리의 한국어 원고 |
-| `production-edition-plan.json`               | `work_order`          | 실제 에디션 1,056개를 제작하기 위한 장면·표현·희귀도 매트릭스       |
-| `guardian-self-edition-blueprints-ko.json`   | `authoring`           | 자기이해 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고     |
-| `guardian-self-editions-ko.json`             | `editorial_draft`     | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 자기이해 에디션 192개  |
-| `guardian-love-edition-blueprints-ko.json`   | `authoring`           | 사랑 12패밀리의 서사 테마 120개와 네 희귀도의 한국어 원고           |
-| `guardian-love-editions-ko.json`             | `editorial_draft`     | 개별 ID·고정 가중치·원고를 명시한 사랑 에디션 480개                 |
-| `guardian-work-edition-blueprints-ko.json`   | `authoring`           | 일 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고           |
-| `guardian-work-editions-ko.json`             | `editorial_draft`     | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 일 에디션 192개        |
-| `guardian-choice-edition-blueprints-ko.json` | `authoring`           | 결정 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고         |
-| `guardian-choice-editions-ko.json`           | `editorial_draft`     | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 결정 에디션 192개      |
-| `production-art-pilot-plan-ko.json`          | `candidate_selection` | 별자리별 한 장씩 선정한 3:4 대표 이미지 후보 12개                   |
+| 파일                                         | 상태                     | 범위                                                                |
+| -------------------------------------------- | ------------------------ | ------------------------------------------------------------------- |
+| `guardian-card-families-ko.json`             | `authoring`              | 12별자리 × 자기이해·사랑·일·결정, 총 48개 기본 패밀리의 한국어 원고 |
+| `production-edition-plan.json`               | `work_order`             | 실제 에디션 1,056개를 제작하기 위한 장면·표현·희귀도 매트릭스       |
+| `guardian-self-edition-blueprints-ko.json`   | `authoring`              | 자기이해 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고     |
+| `guardian-self-editions-ko.json`             | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 자기이해 에디션 192개  |
+| `guardian-love-edition-blueprints-ko.json`   | `authoring`              | 사랑 12패밀리의 서사 테마 120개와 네 희귀도의 한국어 원고           |
+| `guardian-love-editions-ko.json`             | `editorial_draft`        | 개별 ID·고정 가중치·원고를 명시한 사랑 에디션 480개                 |
+| `guardian-work-edition-blueprints-ko.json`   | `authoring`              | 일 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고           |
+| `guardian-work-editions-ko.json`             | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 일 에디션 192개        |
+| `guardian-choice-edition-blueprints-ko.json` | `authoring`              | 결정 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고         |
+| `guardian-choice-editions-ko.json`           | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 결정 에디션 192개      |
+| `production-art-pilot-plan-ko.json`          | `visual_review_complete` | 별자리별 대표 원고·3:4 원화 후보 12개 시각 승인 완료                |
+| `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                          |
+| `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 12개 WebP 배포 후보의 객체 키·원본/배포 SHA-256              |
 
 파일명과 JSON에는 수동 버전을 두지 않는다. 각 파일이 현재 정본이며 변경 이력은 Git으로 추적한다. 이미
 게시한 카드의 의미나 원화를 실질적으로 바꿔야 한다면 기존 ID를 덮어쓰지 않고 새 에디션 ID를 만든다.
@@ -146,7 +148,12 @@ materialize했다. 콘텐츠 작업 목록의 남은 조합은 없으며, 다음
 - 장면과 원화에는 읽을 수 있는 제목·설명 문구를 굽지 않음
 
 이 검증 통과는 사람의 편집 승인을 대신하지 않는다. 모든 에디션의 `editorialStatus`는 여전히
-`draft`이며, 원화 후보로 고른 12개도 `editorialReviewStatus: pending` 상태다.
+`draft`다. 대표 후보 12개는 캐릭터 연속성·장면 제작 가능성·보이는 정보만 담은 대체 텍스트·비단정
+문구·비개인화 마스터 원화·기호만 사용하는 화면 표식의 사전 검수를 마쳐
+`editorialReviewStatus: approved` 상태다. 각 후보의 `editorialContentHash`는 제목·장면·대체 텍스트·
+한 줄·성찰 문구 등 사람이 승인한 정확한 원고를 고정한다. 원고가 바뀌면 검증이 실패하므로 다시
+검수한 뒤 해시를 갱신해야 한다. 이 승인은 12개 파일럿 원고만 대상으로 하며 나머지 에디션의
+`editorialStatus: draft`를 일괄 승인하지 않는다.
 
 ## 이미지 제작 시점
 
@@ -158,10 +165,38 @@ production 출시에 1,024장 이상의 실제 카드 이미지는 필수다. �
    구도·표정·소품을 먼저 확인한다.
 3. 승인된 캐릭터 시트와 에디션 `scene`을 사용해 주제 단위로 배치 제작한다.
 4. 80px 식별성, 중심 행동, 최대 두 캐릭터, 텍스트 미삽입을 검수한다.
-5. 승인 원본을 private object storage에 올린 뒤에만 `assetStatus`와 `artworkPath`를 채운다.
+5. 승인 원본을 1080×1440 WebP로 최적화하고 Cloudflare R2의 edition ID 기반 객체 키에 올린 뒤에만
+   `assetStatus`와 `artworkPath`를 채운다.
 
-따라서 현재 이미지가 없는 것은 생략이 아니라 의도된 제작 게이트다. 편집 중인 장면을 이미지로 먼저
-고정하지 않아 재작업을 줄이고, 런타임이 존재하지 않는 asset을 참조하지 않게 한다.
+현재 파일럿 12장의 로컬 원화 후보는 생성·시각 QA·사람의 최종 시각 승인을 마쳤다. 승인한 파일의
+SHA-256은 제작 목록의 `approvedArtworkSha256`에 고정한다. 후보와 비교 시트는 공개 Git에 포함하지 않는
+`apps/stella/private/guardian-art-pilot` 아래에서만 보관한다. R2 업로드 전까지
+`imageStatus`는 `approved_local_candidate`, `artworkPath`는 `null`로 유지한다. 로컬 후보 경로를 runtime이나
+공개 콘텐츠 manifest에 기록하지 않는다. 배포 후보 WebP도 `apps/stella/private/guardian-art-release`에
+생성하며 Git에는 포함하지 않는다.
+
+R2 resource는 sibling `sobok-ops`의 `infra/cloudflare/account/sobok/stella`가 선언한다. production은
+`stella-guardian-assets`와 `guardian-assets.sobok.cc`, staging은 `stella-guardian-assets-stg`와
+`guardian-assets-stg.sobok.cc`를 사용하고 `r2.dev`는 끈다. 객체 키는
+`guardian-cards/ko/{editionId}.webp`이며, 게시된 객체를 의미 있게 바꿀 때는 기존 키를 덮어쓰지 않고 새
+에디션 ID를 만든다. 앱 Worker가 R2를 프록시하지 않고 custom domain이 WebP를 직접 전달한다. 런타임은
+Database Worker의 Wrangler가 환경별로 소유하는 `STELLA_GUARDIAN_ASSET_ORIGIN`과 객체 키를 결합해
+`artworkPath`를 만든다.
+따라서 공개 읽기에 Worker R2 binding을 추가하지 않는다.
+
+Stella 등급도 마스터 원화 자체에는 사용자의 실제 출생 차트 선이나 개인 색을 넣지 않는다. 원화는
+옅은 비개인화 별자리 광륜만으로 완결하고, 실제 차트 선과 개인 색은 다운로드·공유 합성 단계의 별도
+오버레이로만 더한다. 장면 속 편지·표·달력·시간 표식은 읽을 수 있는 글자가 아니라 선·아이콘·도형으로
+표현한다.
+
+따라서 시각 승인 뒤에도 추적되는 제작 목록에 이미지 경로가 없는 것은 생략이 아니라 의도된 제작
+게이트다. 승인된 로컬 후보를 업로드된 운영 자산으로 오인하지 않고, 런타임이 존재하지 않는 R2
+object를 참조하지 않게 한다.
+
+현재 12개 승인 원본은 WebP quality 82·effort 6으로 최적화했다. 원본 PNG 약 31.4MB 대신 배포 후보 합계는
+약 2.0MB다. `guardian-card-assets-ko.json`은 파일 본문 대신 각 WebP의 객체 키·정확한 byte 수·원본과
+배포 SHA-256만 추적한다. release bundle의 매니페스트가 Git의 이 파일과 byte 단위로 같지 않으면 GitHub
+Actions가 배포하지 않는다.
 
 ## 검증
 
@@ -185,6 +220,9 @@ bun --filter=@sobok/stella guardian-cards:validate
 - 사랑 카드 네 희귀도와 패밀리별 10,000 가중치
 - 1,056개 원고의 길이·문장 수·조사 token·접근성·비단정 표현 기준
 - 대표 이미지 후보 12개의 별자리 1종씩, 네 주제, 사랑 희귀도 4종, 비사랑 표현 방식 4종 커버리지
+- 대표 후보의 현재 원고와 편집 검수 해시 일치, 사람 승인 전 이미지 제작 차단
+- R2 자산 계약의 1,056개 목표·환경별 버킷·WebP-only 객체 키와 승인 원본/배포 해시 연결
+- 모든 마스터 원화 장면에서 실제 출생 차트·개인 색을 제외하고 비개인화 광륜만 사용
 - 런타임 게시 전에 개별 에디션에 필요한 이미지·접근성·한 줄 원고 필드
 
 검증 성공 시 각 콘텐츠 source의 canonical JSON SHA-256을 출력한다. 편집 승인 기록에 이 해시를 남기면
@@ -195,10 +233,35 @@ bun --filter=@sobok/stella guardian-cards:validate
 1. 기본 패밀리 원고를 콘텐츠·브랜드 관점에서 승인한다.
 2. 현재 1,056개 편집 초안처럼 제작 계획의 각 조합을 개별 작업 카드로 materialize해 고유 ID,
    한국어 한 줄, 접근성 설명을 쓰고 에디션마다 편집 승인한다.
-3. 텍스트가 들어가지 않은 3:4 최종 원화를 만들고 private object storage의 실제 객체와 연결한다.
+3. 텍스트가 들어가지 않은 3:4 최종 원화를 WebP로 최적화하고 R2의 실제 객체와 연결한다.
 4. staging의 현재 런타임 카탈로그에 승인된 1,056개를 모두 명시한다.
 5. 답변 신호 기반 패밀리·에디션 선택과 사랑 희귀도·미보유 보장을 staging에서 확인한다.
 6. staging에서 승인한 동일 commit과 콘텐츠 hash를 production에 배포한다.
+
+## WebP 준비와 R2 배포
+
+승인 원본 매니페스트에서 WebP release bundle을 만든다. 이 명령은 원본 PNG 해시와 1080×1440 크기를
+검증한 뒤 WebP와 `manifest.json`만 출력한다.
+
+```bash
+bun --filter=@sobok/stella guardian-cards:prepare-art --source \
+  apps/stella/private/guardian-art-pilot/manifest.json --output \
+  apps/stella/private/guardian-art-release
+
+bun --filter=@sobok/stella guardian-cards:validate-art-release --manifest \
+  apps/stella/private/guardian-art-release/manifest.json
+
+bun --filter=@sobok/stella guardian-cards:package-art-release --manifest \
+  apps/stella/private/guardian-art-release/manifest.json --output \
+  apps/stella/private/guardian-card-art-release.tar.gz
+```
+
+시각 승인과 Git의 `guardian-card-assets-ko.json` 갱신 뒤, WebP와 같은 `manifest.json`을
+`guardian-card-art-release.tar.gz`로 묶어 immutable GitHub Release asset으로 올린다. 원격 R2 변경은
+로컬 CLI가 아니라 `Guardian Card Art Deploy` workflow만 수행한다. workflow는 environment branch gate,
+Terraform이 동기화한 버킷 이름, WebP-only bundle, Git 매니페스트 일치를 확인한다. 공개 origin은 Database
+Worker의 Wrangler가 소유한다. 같은 객체 키가 이미
+있으면 SHA-256이 같을 때만 건너뛰며 다르면 실패한다.
 
 구매 결과에는 카드 표현과 추첨 정책을 스냅샷으로 보존한다. 게시한 에디션의 제목·원고·이미지를 의미 있게
 바꾸려면 기존 에디션 ID를 덮어쓰지 않고 새 ID를 추가한다. 선택 정책의 변경 이력은 Git과 구매·획득

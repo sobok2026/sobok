@@ -280,7 +280,8 @@ function materialize(blueprint: Blueprint) {
     slot: blueprint.slot,
     oddsPolicy: 'Questionnaire signals guide interpretation only; rarity selection uses fixed weights.',
     weightScale: WEIGHT_SCALE,
-    assetPolicy: 'Artwork paths stay null until a reviewed 3:4 private-storage object exists.',
+    assetPolicy:
+      'Artwork paths stay null until a reviewed 1080x1440 WebP exists at its immutable Cloudflare R2 object key.',
     editionCount: editions.length,
     editions,
   }

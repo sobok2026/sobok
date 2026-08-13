@@ -1,0 +1,133 @@
+name: Guardian Card Art Deploy
+
+run-name: Deploy guardian-card WebP bundle to ${{ inputs.target }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: R2 delivery environment
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      release_tag:
+        description: GitHub release tag containing guardian-card-art-release.tar.gz
+        required: true
+        type: string
+      confirmation:
+        description: Type DEPLOY for production; staging ignores this input
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: guardian-card-art-${{ inputs.target }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Verify and deploy immutable WebP assets
+    environment: ${{ inputs.target }}
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    steps:
+      - name: Validate release request
+        shell: bash
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          REF: ${{ github.ref }}
+          TARGET: ${{ inputs.target }}
+        run: |
+          set -euo pipefail
+          case "$TARGET:$REF" in
+            staging:refs/heads/staging) ;;
+            production:refs/heads/main)
+              if [ "$CONFIRMATION" != 'DEPLOY' ]; then
+                echo 'Type DEPLOY to confirm production guardian-card art delivery.' >&2
+                exit 1
+              fi
+              ;;
+            *)
+              echo "Guardian-card art for $TARGET cannot deploy from $REF." >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Download immutable release bundle
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/guardian-card-art"
+          gh release download "$RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern guardian-card-art-release.tar.gz \
+            --dir "$RUNNER_TEMP"
+          if tar --list --gzip --file "$RUNNER_TEMP/guardian-card-art-release.tar.gz" | \
+            grep -Eq '(^/|(^|/)\.\.(/|$))'; then
+            echo 'Guardian-card release archive contains an unsafe path.' >&2
+            exit 1
+          fi
+          tar \
+            --extract \
+            --gzip \
+            --file "$RUNNER_TEMP/guardian-card-art-release.tar.gz" \
+            --directory "$RUNNER_TEMP/guardian-card-art" \
+            --no-same-owner \
+            --no-same-permissions
+
+      - name: Validate WebP-only release
+        working-directory: apps/stella
+        run: >-
+          bun run guardian-cards:validate-art-release --manifest
+          "$RUNNER_TEMP/guardian-card-art/manifest.json"
+
+      - name: Match the reviewed Git manifest
+        shell: bash
+        run: >-
+          cmp --silent
+          apps/stella/content/guardian-cards/guardian-card-assets-ko.json
+          "$RUNNER_TEMP/guardian-card-art/manifest.json"
+
+      - name: Validate Terraform-provided delivery target
+        shell: bash
+        env:
+          ASSET_BUCKET: ${{ vars.STELLA_GUARDIAN_ASSET_BUCKET }}
+          TARGET: ${{ inputs.target }}
+        run: |
+          set -euo pipefail
+          case "$TARGET" in
+            staging)
+              expected_bucket='stella-guardian-assets-stg'
+              ;;
+            production)
+              expected_bucket='stella-guardian-assets'
+              ;;
+          esac
+          if [ "$ASSET_BUCKET" != "$expected_bucket" ]; then
+            echo 'Terraform-provided guardian asset bucket does not match the selected environment.' >&2
+            exit 1
+          fi
+
+      - name: Upload and verify immutable R2 objects
+        working-directory: apps/stella
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          STELLA_GUARDIAN_ASSET_BUCKET: ${{ vars.STELLA_GUARDIAN_ASSET_BUCKET }}
+        run: >-
+          bun run scripts/deploy-guardian-card-art.ts
+          --manifest "$RUNNER_TEMP/guardian-card-art/manifest.json"
+          --bucket "$STELLA_GUARDIAN_ASSET_BUCKET"

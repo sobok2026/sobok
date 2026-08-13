@@ -32,7 +32,7 @@
       "titleSuffix": "별자리",
       "previewTone": "possibility",
       "sceneSuffix": "행동이 끝난 자리에서 가슴의 Stella 별표가 별자리 궤적으로 번져 다음 방향을 조용히 남긴다.",
-      "artworkAltSuffix": "행동 뒤 별자리 궤적이 다음 방향으로 이어진 장면",
+      "artworkAltSuffix": "가슴의 별표에서 중심 소품 너머로 별자리 궤적이 이어진 장면",
       "oneLineAction": "오늘 끝에 남길 표식 하나를 정해 다음의 네가 알아보게 해."
     }
   ],
@@ -134,8 +134,8 @@
       "sign": "gemini",
       "guardians": "재잘이 · 소곤이",
       "sharedGuardians": "재잘이 · 소곤이",
-      "sharedBeat": "재잘이가 말을 멈추고 소곤이가 고른 한 음을 끝까지 들으며 두 긴 귀가 가운데로 기운다.",
-      "sharedArtworkAlt": "서로의 한 음을 듣기 위해 가운데로 귀를 기울인 재잘이와 소곤이가 함께 보이는 장면",
+      "sharedBeat": "재잘이가 별방울을 내려놓고 소곤이가 고른 한 음을 끝까지 듣는 동안, 둘 사이 연결 리본이 느슨한 곡선으로 가라앉는다.",
+      "sharedArtworkAlt": "서로를 바라보며 별방울의 한 음을 듣는 재잘이와 소곤이가 함께 보이는 장면",
       "contexts": [
         {
           "id": "present-weather",

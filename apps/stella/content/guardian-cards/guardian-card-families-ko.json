@@ -145,7 +145,7 @@
       "dialogue": "“다른 음인데?” “그래서 화음이잖아!”",
       "oneLineTemplate": "서로 다른 마음을 지우지 않을 때 “{focus:가}” 너만의 화음으로 이어져.",
       "reflection": "서로 반대되지만 둘 다 진짜인 네 마음 두 가지를 적어 봐.",
-      "visualMotifs": ["서로 다른 별방울", "겹쳐지는 음파", "맞닿은 긴 귀"],
+      "visualMotifs": ["서로 다른 별방울", "겹쳐지는 음파", "느슨한 연결 리본"],
       "editionSignalAffinities": ["self.need.expression", "self.authentic.curiosity"]
     },
     {

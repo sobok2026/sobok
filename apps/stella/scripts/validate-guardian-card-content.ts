@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 import { z } from 'zod'
+import { assetContractSchema, releaseManifestSchema } from './guardian-card-art'
 
 const SIGNS = [
   'aries',
@@ -63,6 +64,16 @@ const FORBIDDEN_PREDICTION_PHRASES = [
   '절대 헤어',
   '절대 실패',
 ] as const
+const FORBIDDEN_MASTER_ART_PERSONALIZATION_PHRASES = [
+  '개인 차트',
+  '개인 색',
+  '출생 차트 선',
+  '생년월일',
+  '출생 시각',
+] as const
+const FORBIDDEN_CHARACTER_TRAITS: Readonly<Partial<Record<(typeof SIGNS)[number], readonly string[]>>> = {
+  gemini: ['긴 귀'],
+}
 
 const NON_LOVE_TREATMENT_RULES = {
   'close-emotion': { previewTone: 'comfort', tieBreakOrder: 0 },
@@ -367,7 +378,7 @@ const editionPlanSchema = z
 
 const artPilotPlanSchema = z
   .object({
-    status: z.literal('candidate_selection'),
+    status: z.literal('visual_review_complete'),
     locale: z.literal('ko'),
     purpose: z.string().trim().min(40),
     selectionContract: z
@@ -396,8 +407,53 @@ const artPilotPlanSchema = z
         maximumDisplayedGuardians: z.literal(2),
         bakedText: z.literal(false),
         legibleTextInsideArtwork: z.literal(false),
+        writtenMarks: z.literal('symbols_and_shapes_only'),
         characterCoverage: z.literal('55-65%'),
-        assetDestination: z.literal('private_object_storage_after_review'),
+        assetDestination: z.literal('cloudflare_r2_webp_after_review'),
+      })
+      .strict(),
+    editorialReviewContract: z
+      .object({
+        approvalAuthority: z.literal('human_editor'),
+        contentHashAlgorithm: z.literal('sha256-canonical-json'),
+        hashFields: z.tuple([
+          z.literal('id'),
+          z.literal('title'),
+          z.literal('guardians'),
+          z.literal('scene'),
+          z.literal('artworkAlt'),
+          z.literal('oneLineTemplate'),
+          z.literal('reflection'),
+        ]),
+        requiredChecks: z.tuple([
+          z.literal('character_continuity'),
+          z.literal('scene_feasibility'),
+          z.literal('visible_alt_text'),
+          z.literal('non_deterministic_copy'),
+          z.literal('non_personalized_master_art'),
+          z.literal('symbol_only_written_marks'),
+        ]),
+        imageGenerationRequires: z.literal('approved_editorial_hash'),
+      })
+      .strict(),
+    visualReviewContract: z
+      .object({
+        approvalAuthority: z.literal('human_editor'),
+        approvedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+        assetHashAlgorithm: z.literal('sha256'),
+        approvedImageStatus: z.literal('approved_local_candidate'),
+        productionAssetStatus: z.literal('not_uploaded'),
+        runtimeMayPublishLocalCandidate: z.literal(false),
+      })
+      .strict(),
+    deliveryReviewContract: z
+      .object({
+        provider: z.literal('cloudflare_r2'),
+        format: z.literal('webp'),
+        objectKeyTemplate: z.literal('guardian-cards/ko/{editionId}.webp'),
+        trackedManifest: z.literal('guardian-card-assets-ko.json'),
+        candidateStatus: z.literal('webp_prepared_not_uploaded'),
+        runtimeMayPublishPreparedCandidate: z.literal(false),
       })
       .strict(),
     pilots: z
@@ -410,8 +466,11 @@ const artPilotPlanSchema = z
             slot: z.enum(SLOTS),
             selectionReason: z.string().trim().min(25),
             visualReviewFocus: z.array(z.string().trim().min(10)).min(2).max(3),
-            editorialReviewStatus: z.literal('pending'),
-            imageStatus: z.literal('not_started'),
+            editorialReviewStatus: z.literal('approved'),
+            editorialContentHash: z.string().regex(/^[a-f0-9]{64}$/),
+            editorialReviewNote: z.string().trim().min(20).max(160),
+            imageStatus: z.literal('approved_local_candidate'),
+            approvedArtworkSha256: z.string().regex(/^[a-f0-9]{64}$/),
             artworkPath: z.null(),
           })
           .strict(),
@@ -436,6 +495,8 @@ type AnyEdition =
 const { values } = parseArgs({
   options: {
     'art-pilot': { type: 'string' },
+    'asset-contract': { type: 'string' },
+    'asset-manifest': { type: 'string' },
     families: { type: 'string' },
     'choice-editions': { type: 'string' },
     'love-editions': { type: 'string' },
@@ -451,7 +512,7 @@ const { values } = parseArgs({
 if (values.help) {
   console.log(`Usage:
   bun run guardian-cards:validate
-  bun run guardian-cards:validate --families <families.json> --self-editions <self-editions.json> --love-editions <love-editions.json> --work-editions <work-editions.json> --choice-editions <choice-editions.json> --plan <plan.json> --art-pilot <art-pilot.json> --questionnaire <questionnaire.json>`)
+  bun run guardian-cards:validate --families <families.json> --self-editions <self-editions.json> --love-editions <love-editions.json> --work-editions <work-editions.json> --choice-editions <choice-editions.json> --plan <plan.json> --art-pilot <art-pilot.json> --asset-contract <asset-contract.json> --asset-manifest <asset-manifest.json> --questionnaire <questionnaire.json>`)
   process.exit(0)
 }
 
@@ -474,6 +535,12 @@ const planPath =
 const artPilotPath =
   values['art-pilot'] ??
   fileURLToPath(new URL('../content/guardian-cards/production-art-pilot-plan-ko.json', import.meta.url))
+const assetContractPath =
+  values['asset-contract'] ??
+  fileURLToPath(new URL('../content/guardian-cards/guardian-card-asset-contract.json', import.meta.url))
+const assetManifestPath =
+  values['asset-manifest'] ??
+  fileURLToPath(new URL('../content/guardian-cards/guardian-card-assets-ko.json', import.meta.url))
 const questionnairePath =
   values.questionnaire ??
   fileURLToPath(new URL('../content/guardian-questionnaires/guardian-paid-ko.json', import.meta.url))
@@ -487,6 +554,8 @@ try {
     choiceEditionJson,
     planJson,
     artPilotJson,
+    assetContractJson,
+    assetManifestJson,
     questionnaireJson,
   ] = await Promise.all([
     readJson(familiesPath, 'family content'),
@@ -496,6 +565,8 @@ try {
     readJson(choiceEditionsPath, 'choice edition content'),
     readJson(planPath, 'edition plan'),
     readJson(artPilotPath, 'art pilot plan'),
+    readJson(assetContractPath, 'guardian card asset contract'),
+    readJson(assetManifestPath, 'guardian card asset manifest'),
     readJson(questionnairePath, 'questionnaire'),
   ])
   const familyContent = parseContent(familyContentSchema, familyJson, 'family content')
@@ -505,6 +576,8 @@ try {
   const choiceEditionContent = parseContent(choiceEditionContentSchema, choiceEditionJson, 'choice edition content')
   const editionPlan = parseContent(editionPlanSchema, planJson, 'edition plan')
   const artPilotPlan = parseContent(artPilotPlanSchema, artPilotJson, 'art pilot plan')
+  const assetContract = parseContent(assetContractSchema, assetContractJson, 'guardian card asset contract')
+  const assetManifest = parseContent(releaseManifestSchema, assetManifestJson, 'guardian card asset manifest')
   const questionnaireSignals = collectQuestionnaireSignals(questionnaireJson)
 
   validateFamilies(familyContent, questionnaireSignals)
@@ -514,6 +587,7 @@ try {
   validateChoiceEditions(choiceEditionContent, familyContent, editionPlan, questionnaireSignals)
   validateEditionPlan(editionPlan)
   validateArtPilotPlan(artPilotPlan, selfEditionContent, loveEditionContent, workEditionContent, choiceEditionContent)
+  validateAssetManifest(assetContract, assetManifest, artPilotPlan)
 
   const familyHash = contentHash(familyContent)
   const selfEditionHash = contentHash(selfEditionContent)
@@ -522,6 +596,7 @@ try {
   const choiceEditionHash = contentHash(choiceEditionContent)
   const planHash = contentHash(editionPlan)
   const artPilotHash = contentHash(artPilotPlan)
+  const assetManifestHash = contentHash(assetManifest)
   console.log(
     `validated: guardian-card-families-ko (${familyContent.locale}, ${familyContent.families.length} families, 12 per slot, sha256 ${familyHash})`,
   )
@@ -541,7 +616,10 @@ try {
     `validated: production-edition-plan (${editionPlan.plannedEditionCount} planned editions, 576 context-scored + 480 weighted love, sha256 ${planHash})`,
   )
   console.log(
-    `validated: production-art-pilot-plan-ko (${artPilotPlan.pilots.length} one-per-sign image candidates, sha256 ${artPilotHash})`,
+    `validated: production-art-pilot-plan-ko (${artPilotPlan.pilots.length} one-per-sign candidates, ${artPilotPlan.pilots.filter((pilot) => pilot.editorialReviewStatus === 'approved').length} editorially approved, sha256 ${artPilotHash})`,
+  )
+  console.log(
+    `validated: guardian-card-assets-ko (${assetManifest.assetCount} WebP release candidates, sha256 ${assetManifestHash})`,
   )
 } catch (error) {
   console.error(error instanceof Error ? error.message : 'Guardian card content validation failed')
@@ -645,6 +723,12 @@ function validateFamilies(content: FamilyContent, questionnaireSignals: Readonly
         errors.push(`${family.id}: signal ${signal} does not exist in the questionnaire source`)
       }
     }
+    validateCharacterContinuity(
+      family.id,
+      family.sign,
+      `${family.baseScene} ${family.baseArtworkAlt} ${family.visualMotifs.join(' ')}`,
+      errors,
+    )
   }
 
   for (const slot of SLOTS) {
@@ -766,6 +850,7 @@ function validateLoveEditions(
       errors.push(`${edition.id}: artworkAlt contains an unresolved token`)
     }
     validateEditorialCopy(edition, errors)
+    validateCharacterContinuity(edition.id, edition.sign, `${edition.scene} ${edition.artworkAlt}`, errors)
 
     const guardianCount = edition.guardians.split(' · ').length
     const expectedGuardianCount =
@@ -930,6 +1015,7 @@ function validateNonLoveEditions(
       errors.push(`${edition.id}: artworkAlt contains an unresolved token`)
     }
     validateEditorialCopy(edition, errors)
+    validateCharacterContinuity(edition.id, edition.sign, `${edition.scene} ${edition.artworkAlt}`, errors)
 
     const guardianCount = edition.guardians.split(' · ').length
     const expectedGuardianCount =
@@ -1041,6 +1127,21 @@ function validateEditorialCopy(
       errors.push(`${edition.id}: advice copy contains deterministic phrase ${phrase}`)
     }
   }
+
+  const masterArtworkCopy = `${edition.scene} ${edition.artworkAlt}`
+  for (const phrase of FORBIDDEN_MASTER_ART_PERSONALIZATION_PHRASES) {
+    if (masterArtworkCopy.includes(phrase)) {
+      errors.push(`${edition.id}: master artwork copy contains personalized element ${phrase}`)
+    }
+  }
+}
+
+function validateCharacterContinuity(id: string, sign: (typeof SIGNS)[number], copy: string, errors: string[]): void {
+  for (const trait of FORBIDDEN_CHARACTER_TRAITS[sign] ?? []) {
+    if (copy.includes(trait)) {
+      errors.push(`${id}: ${trait} conflicts with the ${sign} character sheet`)
+    }
+  }
 }
 
 function validateEditionPlan(plan: EditionPlan): void {
@@ -1114,6 +1215,14 @@ function validateEditionPlan(plan: EditionPlan): void {
   const loveWeight = plan.love.rarities.reduce((sum, rarity) => sum + rarity.totalWeightPerFamily, 0)
   if (loveWeight !== plan.love.weightScale) {
     errors.push(`love rarity weights must sum to ${plan.love.weightScale}, received ${loveWeight}`)
+  }
+  const stellaPlan = plan.love.rarities.find((rarity) => rarity.id === 'stella')
+  if (
+    !stellaPlan?.artDirection.includes('비개인화 광륜') ||
+    !stellaPlan.artDirection.includes('별도 오버레이') ||
+    stellaPlan.artDirection.includes('개인 차트')
+  ) {
+    errors.push('love.stella: master artwork must use a non-personalized halo and keep birth-chart data in an overlay')
   }
   const loveTarget = plan.love.familyCount * plan.love.editionCountPerFamily
   if (plan.love.target !== loveTarget) {
@@ -1209,6 +1318,12 @@ function validateArtPilotPlan(
     if (edition.editorialStatus !== 'draft' || edition.assetStatus !== 'not_started' || edition.artworkPath !== null) {
       errors.push(`${pilot.editionId}: pilot source must remain an unproduced editorial draft`)
     }
+    const expectedEditorialHash = editorialContentHash(edition)
+    if (pilot.editorialContentHash !== expectedEditorialHash) {
+      errors.push(
+        `${pilot.editionId}: editorialContentHash must match current reviewed copy (${expectedEditorialHash})`,
+      )
+    }
     const guardianCount = edition.guardians.split(' · ').length
     if (guardianCount > plan.renderContract.maximumDisplayedGuardians) {
       errors.push(
@@ -1237,6 +1352,75 @@ function validateArtPilotPlan(
   }
 
   throwValidationErrors('Guardian production art pilot plan', errors)
+}
+
+function validateAssetManifest(
+  contract: z.infer<typeof assetContractSchema>,
+  manifest: z.infer<typeof releaseManifestSchema>,
+  pilotPlan: ArtPilotPlan,
+): void {
+  const errors: string[] = []
+  if (contract.plannedAssetCount !== 1056) {
+    errors.push('asset contract plannedAssetCount must be 1056')
+  }
+  if (manifest.assetCount !== manifest.assets.length) {
+    errors.push(`asset manifest count ${manifest.assetCount} does not match ${manifest.assets.length} entries`)
+  }
+  if (manifest.contentType !== contract.deliveryContract.mimeType) {
+    errors.push('asset manifest contentType must match the delivery contract')
+  }
+  if (manifest.cacheControl !== contract.deliveryContract.cacheControl) {
+    errors.push('asset manifest cacheControl must match the delivery contract')
+  }
+  if (
+    pilotPlan.deliveryReviewContract.provider !== contract.provider ||
+    pilotPlan.deliveryReviewContract.format !== contract.deliveryContract.format ||
+    pilotPlan.deliveryReviewContract.objectKeyTemplate !== contract.objectKeyTemplate
+  ) {
+    errors.push('pilot delivery review contract must match the shared R2 asset contract')
+  }
+
+  checkUnique(
+    manifest.assets.map((asset) => asset.editionId),
+    'guardian asset edition id',
+    errors,
+  )
+  checkUnique(
+    manifest.assets.map((asset) => asset.objectKey),
+    'guardian asset object key',
+    errors,
+  )
+
+  const pilotById = new Map(pilotPlan.pilots.map((pilot) => [pilot.editionId, pilot]))
+  for (const asset of manifest.assets) {
+    const expectedKey = contract.objectKeyTemplate.replace('{editionId}', asset.editionId)
+    if (asset.objectKey !== expectedKey) {
+      errors.push(`${asset.editionId}: objectKey must be ${expectedKey}`)
+    }
+    if (
+      asset.width !== contract.deliveryContract.width ||
+      asset.height !== contract.deliveryContract.height ||
+      !asset.objectKey.endsWith('.webp')
+    ) {
+      errors.push(`${asset.editionId}: delivery must be a 1080x1440 WebP`)
+    }
+
+    const pilot = pilotById.get(asset.editionId)
+    if (pilot && asset.sourceArtworkSha256 !== pilot.approvedArtworkSha256) {
+      errors.push(`${asset.editionId}: release source hash must match the visually approved pilot artwork`)
+    }
+  }
+
+  if (manifest.assetCount === pilotPlan.pilots.length) {
+    checkExactIds(
+      manifest.assets.map((asset) => asset.editionId),
+      pilotPlan.pilots.map((pilot) => pilot.editionId),
+      'pilot release asset',
+      errors,
+    )
+  }
+
+  throwValidationErrors('Guardian card asset manifest', errors)
 }
 
 function validateEditionIdPattern(pattern: string, slot: string, isLove: boolean, errors: string[]): void {
@@ -1298,6 +1482,18 @@ function throwValidationErrors(label: string, errors: readonly string[]): void {
 
 function contentHash(value: unknown): string {
   return createHash('sha256').update(canonicalJson(value)).digest('hex')
+}
+
+function editorialContentHash(edition: AnyEdition): string {
+  return contentHash({
+    id: edition.id,
+    title: edition.title,
+    guardians: edition.guardians,
+    scene: edition.scene,
+    artworkAlt: edition.artworkAlt,
+    oneLineTemplate: edition.oneLineTemplate,
+    reflection: edition.reflection,
+  })
 }
 
 function canonicalJson(value: unknown): string {
