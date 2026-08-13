@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process'
 import { mkdir, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { basename, dirname, join, resolve } from 'node:path'
+import { setTimeout as delay } from 'node:timers/promises'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 import { sha256Hex, validateReleaseDirectory } from './guardian-card-art'
@@ -74,7 +75,7 @@ try {
       throw new Error(`${asset.editionId}: R2 upload failed\n${put.stderr}`)
     }
 
-    const verify = await runWrangler(['r2', 'object', 'get', remotePath, '--remote', '--file', downloadedPath])
+    const verify = await downloadRemoteObjectWithRetry(remotePath, downloadedPath)
     if (verify.code !== 0) {
       throw new Error(`${asset.editionId}: R2 verification download failed\n${verify.stderr}`)
     }
@@ -89,6 +90,24 @@ try {
 }
 
 console.log(`deployed: ${uploaded} uploaded, ${unchanged} already identical, ${manifest.assetCount} total`)
+
+async function downloadRemoteObjectWithRetry(
+  remotePath: string,
+  downloadedPath: string,
+): Promise<{ code: number; stderr: string }> {
+  const attempts = 7
+  let result = { code: 1, stderr: '' }
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    result = await runWrangler(['r2', 'object', 'get', remotePath, '--remote', '--file', downloadedPath])
+    if (result.code === 0 || !result.stderr.toLowerCase().includes('specified key does not exist')) {
+      return result
+    }
+    if (attempt < attempts) {
+      await delay(Math.min(2 ** (attempt - 1), 8) * 1_000)
+    }
+  }
+  return result
+}
 
 async function runWrangler(args: readonly string[]): Promise<{ code: number; stderr: string }> {
   return await new Promise((resolveResult, reject) => {
