@@ -90,10 +90,11 @@ const reviewEditionBaseSchema = z.object({
   distinctFrom: z.array(z.string().trim().min(10)).min(1).max(3),
   visualReviewFocus: z.array(z.string().trim().min(10)).min(2).max(3),
 })
-const reviewRequestedEditionSchema = reviewEditionBaseSchema
+const approvedEditionSchema = reviewEditionBaseSchema
   .extend({
-    editorialReviewStatus: z.literal('review_requested'),
-    imageStatus: z.literal('blocked_by_editorial_review'),
+    editorialReviewStatus: z.literal('approved'),
+    editorialApprovedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    imageStatus: z.literal('ready_for_generation'),
   })
   .strict()
 const approvedPilotEditionSchema = reviewEditionBaseSchema
@@ -105,10 +106,11 @@ const approvedPilotEditionSchema = reviewEditionBaseSchema
   .strict()
 const reviewPlanSchema = z
   .object({
-    status: z.literal('editorial_review_requested'),
+    status: z.literal('editorial_review_complete'),
     locale: z.literal('ko'),
     batchId: nonEmptyText,
     batchOrder: z.number().int().positive(),
+    editorialApprovedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     purpose: z.string().trim().min(40),
     sourceBatchPlan: z.literal('production-art-batches-ko.json'),
     selectionContract: z
@@ -169,7 +171,7 @@ const reviewPlanSchema = z
         commonPrompt: z.string().trim().min(300),
       })
       .strict(),
-    editions: z.array(z.union([reviewRequestedEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
+    editions: z.array(z.union([approvedEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
   })
   .strict()
 
@@ -219,7 +221,7 @@ try {
 
   validate(review, batches, pilot, selfEditions.editions)
   console.log(
-    `validated: production-art-batch-001-review-ko (${review.editions.length} editions, 1 approved pilot + 11 awaiting editorial approval, sha256 ${contentHash(review)})`,
+    `validated: production-art-batch-001-review-ko (${review.editions.length} editorially approved editions, 1 approved pilot + 11 ready for generation, sha256 ${contentHash(review)})`,
   )
 } catch (error) {
   console.error(error instanceof Error ? error.message : 'Guardian art batch review validation failed')
@@ -292,7 +294,7 @@ function validate(
   const sourceById = new Map(editions.map((edition) => [edition.id, edition]))
   const pilotById = new Map(pilotPlan.pilots.map((pilot) => [pilot.editionId, pilot]))
   let approvedPilotCount = 0
-  let reviewRequestedCount = 0
+  let approvedEditionCount = 0
   for (const edition of review.editions) {
     const source = sourceById.get(edition.editionId)
     if (!source) {
@@ -324,16 +326,19 @@ function validate(
         }
       }
     } else {
-      reviewRequestedCount += 1
+      approvedEditionCount += 1
       if (pilot) {
-        errors.push(`${edition.editionId}: an approved pilot cannot return to review_requested`)
+        errors.push(`${edition.editionId}: an approved pilot cannot be recorded as a new approval`)
+      }
+      if (edition.editorialApprovedOn !== review.editorialApprovedOn) {
+        errors.push(`${edition.editionId}: editorial approval date must match the batch approval date`)
       }
     }
   }
 
-  if (approvedPilotCount !== 1 || reviewRequestedCount !== 11) {
+  if (approvedPilotCount !== 1 || approvedEditionCount !== 11) {
     errors.push(
-      `expected 1 approved pilot and 11 review requests, received ${approvedPilotCount} and ${reviewRequestedCount}`,
+      `expected 1 approved pilot and 11 new approvals, received ${approvedPilotCount} and ${approvedEditionCount}`,
     )
   }
   for (const requiredPromptFragment of [
