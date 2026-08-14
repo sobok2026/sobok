@@ -145,9 +145,13 @@ for (const { asset, md5 } of releaseAssets) {
 await mapConcurrent(releaseAssets, 5, async ({ asset }) => {
   const url = new URL(asset.objectKey, `${deliveryEnvironment.origin}/`)
   url.searchParams.set('sha256', asset.deliveryArtworkSha256)
-  const { body, response } = await readDeliveryOrigin(url)
+  const { body, response } = await readDeliveryOrigin(url, asset.byteSize)
   if (!response.ok) {
     throw new Error(`${asset.editionId}: delivery origin verification failed (${response.status})`)
+  }
+  const expectedContentRange = `bytes 0-${asset.byteSize - 1}/${asset.byteSize}`
+  if (response.status !== 206 || response.headers.get('content-range') !== expectedContentRange) {
+    throw new Error(`${asset.editionId}: delivery origin byte range mismatch`)
   }
   if (
     response.headers.get('content-type') !== manifest.contentType ||
@@ -168,12 +172,13 @@ console.log(
   `deployed: ${missingAssets.length} uploaded, ${manifest.assetCount - missingAssets.length} already identical, ${manifest.assetCount} verified through ${deliveryEnvironment.origin}`,
 )
 
-async function readDeliveryOrigin(url: URL): Promise<{ body: Uint8Array; response: Response }> {
+async function readDeliveryOrigin(url: URL, byteSize: number): Promise<{ body: Uint8Array; response: Response }> {
   const maximumAttempts = 4
   let lastError: unknown
   for (let attempt = 1; attempt <= maximumAttempts; attempt += 1) {
     try {
       const response = await fetch(url, {
+        headers: { Range: `bytes=0-${byteSize - 1}` },
         signal: AbortSignal.timeout(20_000),
       })
       const body = new Uint8Array(await response.arrayBuffer())
