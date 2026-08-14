@@ -231,9 +231,9 @@ bun --filter=@sobok/stella guardian-cards:materialize-art-batches
 
 두 번째 배치는 같은 `self.present-weather` 원고를 `action-beat` 표현 방식으로 제작하는 신규 12개다.
 `production-art-batch-002-review-ko.json`에 현재 원고의 canonical SHA-256, 캐릭터별 행동이 막 시작되는
-순간, 첫 배치와 겹치지 않는 카메라·소품·운동 방향을 고정했다. 사람 편집 승인 전 상태인
-`editorial_review_ready`이므로 아직 이미지 생성이나 로컬 후보 매니페스트를 만들지 않는다. 승인 뒤에만
-각 항목을 `approved`로 바꾸고 같은 해시를 입력으로 imagegen을 실행한다.
+순간, 첫 배치와 겹치지 않는 카메라·소품·운동 방향을 고정했다. 사람 편집 승인을 완료해
+`editorial_review_complete`이며, 각 항목의 승인된 원고 해시와 구도를 입력으로 imagegen 원화 후보를
+제작한다. 생성한 PNG는 사람의 시각 승인 전까지 WebP 변환·R2 업로드·런타임 게시로 넘기지 않는다.
 
 ## 검증
 
