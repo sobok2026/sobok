@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
-import { readFile } from 'node:fs/promises'
+import { readdir, readFile } from 'node:fs/promises'
+import { basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 import { z } from 'zod'
@@ -19,6 +20,7 @@ const SIGNS = [
   'aquarius',
   'pisces',
 ] as const
+const SLOTS = ['self', 'love', 'work', 'choice'] as const
 const ELEMENT_BY_SIGN = {
   aries: 'fire',
   taurus: 'earth',
@@ -36,6 +38,7 @@ const ELEMENT_BY_SIGN = {
 
 const nonEmptyText = z.string().trim().min(1)
 const sha256 = z.string().regex(/^[a-f0-9]{64}$/)
+const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
 const editionSchema = z
   .object({
     id: nonEmptyText,
@@ -56,6 +59,9 @@ const batchPlanSchema = z
         .object({
           order: z.number().int().positive(),
           id: nonEmptyText,
+          slot: z.enum(SLOTS),
+          narrativeAxisId: nonEmptyText,
+          visualAxisId: nonEmptyText,
           editionIds: z.array(nonEmptyText),
           pilotEditionIds: z.array(nonEmptyText),
           remainingEditionIds: z.array(nonEmptyText),
@@ -80,6 +86,7 @@ const pilotPlanSchema = z
     ),
   })
   .passthrough()
+
 const reviewEditionBaseSchema = z.object({
   order: z.number().int().min(1).max(12),
   editionId: nonEmptyText,
@@ -91,10 +98,30 @@ const reviewEditionBaseSchema = z.object({
   distinctFrom: z.array(z.string().trim().min(10)).min(1).max(3),
   visualReviewFocus: z.array(z.string().trim().min(10)).min(2).max(3),
 })
-const approvedEditionSchema = reviewEditionBaseSchema
+const pendingEditionSchema = reviewEditionBaseSchema
+  .extend({
+    editorialReviewStatus: z.literal('pending_human_approval'),
+    imageStatus: z.literal('not_started'),
+  })
+  .strict()
+const editoriallyApprovedEditionSchema = reviewEditionBaseSchema
   .extend({
     editorialReviewStatus: z.literal('approved'),
-    editorialApprovedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    editorialApprovedOn: date,
+    imageStatus: z.literal('not_started'),
+  })
+  .strict()
+const generatedCandidateEditionSchema = reviewEditionBaseSchema
+  .extend({
+    editorialReviewStatus: z.literal('approved'),
+    editorialApprovedOn: date,
+    imageStatus: z.literal('generated_candidate'),
+  })
+  .strict()
+const visuallyApprovedEditionSchema = reviewEditionBaseSchema
+  .extend({
+    editorialReviewStatus: z.literal('approved'),
+    editorialApprovedOn: date,
     imageStatus: z.literal('approved_local_candidate'),
     approvedArtworkSha256: sha256,
   })
@@ -106,97 +133,137 @@ const approvedPilotEditionSchema = reviewEditionBaseSchema
     approvedArtworkSha256: sha256,
   })
   .strict()
-const reviewPlanSchema = z
+
+const selectionContractSchema = z
   .object({
-    status: z.literal('visual_review_complete'),
+    plannedEditionCount: z.literal(12),
+    approvedPilotEditionCount: z.number().int().min(0).max(1),
+    newEditionCount: z.number().int().min(11).max(12),
+    onePerSign: z.literal(true),
+    slot: z.enum(SLOTS),
+    narrativeAxisId: nonEmptyText,
+    visualAxisId: nonEmptyText,
+  })
+  .strict()
+const editorialReviewContractSchema = z
+  .object({
+    approvalAuthority: z.literal('human_editor'),
+    contentHashAlgorithm: z.literal('sha256-canonical-json'),
+    hashFields: z.tuple([
+      z.literal('id'),
+      z.literal('title'),
+      z.literal('guardians'),
+      z.literal('scene'),
+      z.literal('artworkAlt'),
+      z.literal('oneLineTemplate'),
+      z.literal('reflection'),
+    ]),
+    requiredChecks: z.tuple([
+      z.literal('character_continuity'),
+      z.literal('scene_feasibility'),
+      z.literal('visible_alt_text'),
+      z.literal('non_deterministic_copy'),
+      z.literal('non_personalized_master_art'),
+      z.literal('symbol_only_written_marks'),
+      z.literal('distinct_composition_within_batch'),
+    ]),
+    imageGenerationRequires: z.literal('approved_editorial_hash'),
+  })
+  .strict()
+const renderContractSchema = z
+  .object({
+    aspectRatio: z.literal('3:4'),
+    masterSize: z.literal('1080x1440'),
+    fullBleed: z.literal(true),
+    maximumDisplayedGuardians: z.literal(2),
+    bakedText: z.literal(false),
+    legibleTextInsideArtwork: z.literal(false),
+    writtenMarks: z.literal('symbols_and_shapes_only'),
+    characterCoverage: z.literal('55-65%'),
+    identityReferences: z
+      .object({
+        fire: z.literal('apps/stella/design/zodiac-guardians/sheets/fire.png'),
+        earth: z.literal('apps/stella/design/zodiac-guardians/sheets/earth.png'),
+        air: z.literal('apps/stella/design/zodiac-guardians/sheets/air.png'),
+        water: z.literal('apps/stella/design/zodiac-guardians/sheets/water.png'),
+      })
+      .strict(),
+    styleReference: z.literal('apps/stella/private/guardian-art-pilot/contact-sheet-final.png'),
+    commonPrompt: z.string().trim().min(300),
+  })
+  .strict()
+const visualReviewContractSchema = z
+  .object({
+    approvalAuthority: z.literal('human_editor'),
+    approvedOn: date,
+    assetHashAlgorithm: z.literal('sha256'),
+    approvedImageStatus: z.literal('approved_local_candidate'),
+    productionAssetStatus: z.literal('not_uploaded'),
+    runtimeMayPublishLocalCandidate: z.literal(false),
+  })
+  .strict()
+const reviewPlanBaseSchema = z
+  .object({
     locale: z.literal('ko'),
     batchId: nonEmptyText,
     batchOrder: z.number().int().positive(),
-    editorialApprovedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    generatedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     purpose: z.string().trim().min(40),
     sourceBatchPlan: z.literal('production-art-batches-ko.json'),
-    selectionContract: z
-      .object({
-        plannedEditionCount: z.literal(12),
-        approvedPilotEditionCount: z.literal(1),
-        newEditionCount: z.literal(11),
-        onePerSign: z.literal(true),
-        slot: z.literal('self'),
-        narrativeAxisId: z.literal('present-weather'),
-        visualAxisId: z.literal('close-emotion'),
-      })
-      .strict(),
-    editorialReviewContract: z
-      .object({
-        approvalAuthority: z.literal('human_editor'),
-        contentHashAlgorithm: z.literal('sha256-canonical-json'),
-        hashFields: z.tuple([
-          z.literal('id'),
-          z.literal('title'),
-          z.literal('guardians'),
-          z.literal('scene'),
-          z.literal('artworkAlt'),
-          z.literal('oneLineTemplate'),
-          z.literal('reflection'),
-        ]),
-        requiredChecks: z.tuple([
-          z.literal('character_continuity'),
-          z.literal('scene_feasibility'),
-          z.literal('visible_alt_text'),
-          z.literal('non_deterministic_copy'),
-          z.literal('non_personalized_master_art'),
-          z.literal('symbol_only_written_marks'),
-          z.literal('distinct_composition_within_batch'),
-        ]),
-        imageGenerationRequires: z.literal('approved_editorial_hash'),
-      })
-      .strict(),
-    renderContract: z
-      .object({
-        aspectRatio: z.literal('3:4'),
-        masterSize: z.literal('1080x1440'),
-        fullBleed: z.literal(true),
-        maximumDisplayedGuardians: z.literal(2),
-        bakedText: z.literal(false),
-        legibleTextInsideArtwork: z.literal(false),
-        writtenMarks: z.literal('symbols_and_shapes_only'),
-        characterCoverage: z.literal('55-65%'),
-        identityReferences: z
-          .object({
-            fire: z.literal('apps/stella/design/zodiac-guardians/sheets/fire.png'),
-            earth: z.literal('apps/stella/design/zodiac-guardians/sheets/earth.png'),
-            air: z.literal('apps/stella/design/zodiac-guardians/sheets/air.png'),
-            water: z.literal('apps/stella/design/zodiac-guardians/sheets/water.png'),
-          })
-          .strict(),
-        styleReference: z.literal('apps/stella/private/guardian-art-pilot/contact-sheet-final.png'),
-        commonPrompt: z.string().trim().min(300),
-      })
-      .strict(),
-    visualReviewContract: z
-      .object({
-        approvalAuthority: z.literal('human_editor'),
-        approvedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-        assetHashAlgorithm: z.literal('sha256'),
-        approvedImageStatus: z.literal('approved_local_candidate'),
-        productionAssetStatus: z.literal('not_uploaded'),
-        runtimeMayPublishLocalCandidate: z.literal(false),
-      })
-      .strict(),
-    editions: z.array(z.union([approvedEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
+    selectionContract: selectionContractSchema,
+    editorialReviewContract: editorialReviewContractSchema,
+    renderContract: renderContractSchema,
   })
   .strict()
+const editorialReviewReadySchema = reviewPlanBaseSchema
+  .extend({
+    status: z.literal('editorial_review_ready'),
+    preparedOn: date,
+    editions: z.array(z.union([pendingEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
+  })
+  .strict()
+const editorialReviewCompleteSchema = reviewPlanBaseSchema
+  .extend({
+    status: z.literal('editorial_review_complete'),
+    editorialApprovedOn: date,
+    editions: z.array(z.union([editoriallyApprovedEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
+  })
+  .strict()
+const visualReviewReadySchema = reviewPlanBaseSchema
+  .extend({
+    status: z.literal('visual_review_ready'),
+    editorialApprovedOn: date,
+    generatedOn: date,
+    editions: z.array(z.union([generatedCandidateEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
+  })
+  .strict()
+const visualReviewCompleteSchema = reviewPlanBaseSchema
+  .extend({
+    status: z.literal('visual_review_complete'),
+    editorialApprovedOn: date,
+    generatedOn: date,
+    visualReviewContract: visualReviewContractSchema,
+    editions: z.array(z.union([visuallyApprovedEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
+  })
+  .strict()
+const reviewPlanSchema = z.discriminatedUnion('status', [
+  editorialReviewReadySchema,
+  editorialReviewCompleteSchema,
+  visualReviewReadySchema,
+  visualReviewCompleteSchema,
+])
 
 type Edition = z.infer<typeof editionSchema>
 type ReviewPlan = z.infer<typeof reviewPlanSchema>
 
 const { values } = parseArgs({
   options: {
-    review: { type: 'string' },
+    review: { type: 'string', multiple: true },
     batches: { type: 'string' },
     pilot: { type: 'string' },
     'self-editions': { type: 'string' },
+    'love-editions': { type: 'string' },
+    'work-editions': { type: 'string' },
+    'choice-editions': { type: 'string' },
     'asset-manifest': { type: 'string' },
     help: { type: 'boolean', short: 'h', default: false },
   },
@@ -206,44 +273,60 @@ const { values } = parseArgs({
 if (values.help) {
   console.log(`Usage:
   bun run guardian-cards:validate-art-review
-  bun run scripts/validate-guardian-art-batch-review.ts --review <review.json> --asset-manifest <manifest.json>`)
+  bun run scripts/validate-guardian-art-batch-review.ts --review <review.json> [--review <review.json>]`)
   process.exit(0)
 }
 
-const reviewPath =
-  values.review ??
-  fileURLToPath(new URL('../content/guardian-cards/production-art-batch-001-review-ko.json', import.meta.url))
-const batchesPath =
-  values.batches ?? fileURLToPath(new URL('../content/guardian-cards/production-art-batches-ko.json', import.meta.url))
-const pilotPath =
-  values.pilot ?? fileURLToPath(new URL('../content/guardian-cards/production-art-pilot-plan-ko.json', import.meta.url))
-const selfEditionsPath =
-  values['self-editions'] ??
-  fileURLToPath(new URL('../content/guardian-cards/guardian-self-editions-ko.json', import.meta.url))
-const assetManifestPath =
-  values['asset-manifest'] ??
-  fileURLToPath(new URL('../content/guardian-cards/guardian-card-assets-ko.json', import.meta.url))
+const contentDirectory = fileURLToPath(new URL('../content/guardian-cards', import.meta.url))
+const batchesPath = values.batches ?? `${contentDirectory}/production-art-batches-ko.json`
+const pilotPath = values.pilot ?? `${contentDirectory}/production-art-pilot-plan-ko.json`
+const editionPaths = [
+  values['self-editions'] ?? `${contentDirectory}/guardian-self-editions-ko.json`,
+  values['love-editions'] ?? `${contentDirectory}/guardian-love-editions-ko.json`,
+  values['work-editions'] ?? `${contentDirectory}/guardian-work-editions-ko.json`,
+  values['choice-editions'] ?? `${contentDirectory}/guardian-choice-editions-ko.json`,
+]
+const assetManifestPath = values['asset-manifest'] ?? `${contentDirectory}/guardian-card-assets-ko.json`
 
 try {
-  const [reviewJson, batchesJson, pilotJson, selfEditionsJson, assetManifest] = await Promise.all([
-    readJson(reviewPath),
+  const reviewPaths = values.review ?? (await discoverReviewPaths(contentDirectory))
+  if (reviewPaths.length === 0) {
+    throw new Error(`No production art batch reviews found in ${contentDirectory}`)
+  }
+  const [batchesJson, pilotJson, assetManifest, ...editionSourceJsons] = await Promise.all([
     readJson(batchesPath),
     readJson(pilotPath),
-    readJson(selfEditionsPath),
     readReleaseManifest(assetManifestPath),
+    ...editionPaths.map(readJson),
   ])
-  const review = parse(reviewPlanSchema, reviewJson, 'guardian art batch review')
   const batches = parse(batchPlanSchema, batchesJson, 'guardian art batch plan')
   const pilot = parse(pilotPlanSchema, pilotJson, 'guardian art pilot plan')
-  const selfEditions = parse(editionSourceSchema, selfEditionsJson, 'self edition source')
-
-  validate(review, batches, pilot, selfEditions.editions, assetManifest)
-  console.log(
-    `validated: production-art-batch-001-review-ko (${review.editions.length} visually approved editions represented in the cumulative WebP release, sha256 ${contentHash(review)})`,
+  const editions = editionSourceJsons.flatMap(
+    (json, index) => parse(editionSourceSchema, json, `${SLOTS[index]} edition source`).editions,
   )
+  const editionIds = new Set(editions.map((edition) => edition.id))
+  if (editionIds.size !== editions.length) {
+    throw new Error('Guardian edition sources contain duplicate edition IDs')
+  }
+
+  for (const reviewPath of reviewPaths) {
+    const review = parse(reviewPlanSchema, await readJson(reviewPath), basename(reviewPath))
+    validate(review, batches, pilot, editions, assetManifest)
+    console.log(
+      `validated: ${basename(reviewPath, '.json')} (${review.status}, ${review.editions.length} editions, sha256 ${contentHash(review)})`,
+    )
+  }
 } catch (error) {
   console.error(error instanceof Error ? error.message : 'Guardian art batch review validation failed')
   process.exitCode = 1
+}
+
+async function discoverReviewPaths(directory: string): Promise<string[]> {
+  const names = await readdir(directory)
+  return names
+    .filter((name) => /^production-art-batch-\d{3}-review-ko\.json$/.test(name))
+    .toSorted()
+    .map((name) => `${directory}/${name}`)
 }
 
 async function readJson(path: string): Promise<unknown> {
@@ -284,11 +367,25 @@ function validate(
       'review edition',
       errors,
     )
-    if (batch.plannedEditionCount !== 12 || batch.remainingEditionCount !== 0) {
-      errors.push(`${review.batchId}: expected a completed 12-edition batch with no remaining editions`)
+    if (
+      review.selectionContract.slot !== batch.slot ||
+      review.selectionContract.narrativeAxisId !== batch.narrativeAxisId ||
+      review.selectionContract.visualAxisId !== batch.visualAxisId
+    ) {
+      errors.push(`${review.batchId}: selection contract must match the batch axes`)
     }
-    if (batch.productionStatus !== 'complete' || batch.pilotEditionIds.length !== 1) {
-      errors.push(`${review.batchId}: expected a complete batch containing exactly one approved pilot edition`)
+    if (
+      review.selectionContract.approvedPilotEditionCount !== batch.pilotEditionIds.length ||
+      review.selectionContract.newEditionCount !== batch.editionIds.length - batch.pilotEditionIds.length
+    ) {
+      errors.push(`${review.batchId}: selection counts must match the batch pilot coverage`)
+    }
+    if (review.status === 'visual_review_complete') {
+      if (batch.remainingEditionCount !== 0 || batch.productionStatus !== 'complete') {
+        errors.push(`${review.batchId}: a visually complete review requires a complete produced batch`)
+      }
+    } else if (batch.productionStatus === 'complete') {
+      errors.push(`${review.batchId}: a produced batch cannot have an incomplete review`)
     }
   }
 
@@ -310,14 +407,15 @@ function validate(
     errors,
   )
   checkUnique(
-    review.editions.map((edition) => edition.approvedArtworkSha256),
+    review.editions.flatMap((edition) => ('approvedArtworkSha256' in edition ? [edition.approvedArtworkSha256] : [])),
     'approved artwork hash',
     errors,
   )
-  if (review.generatedOn < review.editorialApprovedOn) {
+
+  if ('generatedOn' in review && review.generatedOn < review.editorialApprovedOn) {
     errors.push('candidate generation date cannot precede editorial approval date')
   }
-  if (review.visualReviewContract.approvedOn < review.generatedOn) {
+  if (review.status === 'visual_review_complete' && review.visualReviewContract.approvedOn < review.generatedOn) {
     errors.push('visual approval date cannot precede candidate generation date')
   }
 
@@ -325,7 +423,7 @@ function validate(
   const pilotById = new Map(pilotPlan.pilots.map((pilot) => [pilot.editionId, pilot]))
   const assetById = new Map(assetManifest.assets.map((asset) => [asset.editionId, asset]))
   let approvedPilotCount = 0
-  let approvedEditionCount = 0
+  let newEditionCount = 0
   for (const edition of review.editions) {
     const source = sourceById.get(edition.editionId)
     if (!source) {
@@ -338,15 +436,12 @@ function validate(
     if (edition.element !== ELEMENT_BY_SIGN[edition.sign]) {
       errors.push(`${edition.editionId}: element must be ${ELEMENT_BY_SIGN[edition.sign]}`)
     }
+    if (source.guardians.split(' · ').length > review.renderContract.maximumDisplayedGuardians) {
+      errors.push(`${edition.editionId}: source exceeds the maximum displayed guardian count`)
+    }
     const expectedHash = editorialContentHash(source)
     if (edition.editorialContentHash !== expectedHash) {
       errors.push(`${edition.editionId}: editorial hash must match current copy (${expectedHash})`)
-    }
-    const asset = assetById.get(edition.editionId)
-    if (!asset) {
-      errors.push(`${edition.editionId}: visually approved artwork is missing from the cumulative WebP release`)
-    } else if (asset.sourceArtworkSha256 !== edition.approvedArtworkSha256) {
-      errors.push(`${edition.editionId}: WebP release source hash must match the visually approved PNG`)
     }
 
     const pilot = pilotById.get(edition.editionId)
@@ -363,26 +458,41 @@ function validate(
         }
       }
     } else {
-      approvedEditionCount += 1
+      newEditionCount += 1
       if (pilot) {
-        errors.push(`${edition.editionId}: an approved pilot cannot be recorded as a new approval`)
+        errors.push(`${edition.editionId}: an approved pilot cannot be recorded as a new edition`)
       }
-      if (edition.editorialApprovedOn !== review.editorialApprovedOn) {
+      if (
+        review.status !== 'editorial_review_ready' &&
+        (!('editorialApprovedOn' in edition) || edition.editorialApprovedOn !== review.editorialApprovedOn)
+      ) {
         errors.push(`${edition.editionId}: editorial approval date must match the batch approval date`)
+      }
+    }
+
+    if (review.status === 'visual_review_complete') {
+      const asset = assetById.get(edition.editionId)
+      if (!asset) {
+        errors.push(`${edition.editionId}: visually approved artwork is missing from the cumulative WebP release`)
+      } else if (!('approvedArtworkSha256' in edition) || asset.sourceArtworkSha256 !== edition.approvedArtworkSha256) {
+        errors.push(`${edition.editionId}: WebP release source hash must match the visually approved PNG`)
       }
     }
   }
 
-  if (approvedPilotCount !== 1 || approvedEditionCount !== 11) {
+  if (
+    approvedPilotCount !== review.selectionContract.approvedPilotEditionCount ||
+    newEditionCount !== review.selectionContract.newEditionCount
+  ) {
     errors.push(
-      `expected 1 approved pilot and 11 new visually approved editions, received ${approvedPilotCount} and ${approvedEditionCount}`,
+      `review records ${approvedPilotCount} pilots and ${newEditionCount} new editions; selection contract expects ${review.selectionContract.approvedPilotEditionCount} and ${review.selectionContract.newEditionCount}`,
     )
   }
   for (const requiredPromptFragment of [
     '55–65%',
     'no readable text',
     'Do not bake actual birth-chart lines',
-    "Do not reuse the pilot card's centered stage",
+    'composition',
   ]) {
     if (!review.renderContract.commonPrompt.includes(requiredPromptFragment)) {
       errors.push(`commonPrompt must include: ${requiredPromptFragment}`)

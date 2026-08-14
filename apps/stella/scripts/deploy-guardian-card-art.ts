@@ -142,10 +142,10 @@ for (const { asset, md5 } of releaseAssets) {
   validateRemoteObject(asset, md5, remoteObject)
 }
 
-await mapConcurrent(releaseAssets, 10, async ({ asset }) => {
+await mapConcurrent(releaseAssets, 5, async ({ asset }) => {
   const url = new URL(asset.objectKey, `${deliveryEnvironment.origin}/`)
   url.searchParams.set('sha256', asset.deliveryArtworkSha256)
-  const response = await fetch(url, { headers: { 'Cache-Control': 'no-cache' } })
+  const response = await fetchDeliveryOrigin(url)
   if (!response.ok) {
     throw new Error(`${asset.editionId}: delivery origin verification failed (${response.status})`)
   }
@@ -168,6 +168,44 @@ await mapConcurrent(releaseAssets, 10, async ({ asset }) => {
 console.log(
   `deployed: ${missingAssets.length} uploaded, ${manifest.assetCount - missingAssets.length} already identical, ${manifest.assetCount} verified through ${deliveryEnvironment.origin}`,
 )
+
+async function fetchDeliveryOrigin(url: URL): Promise<Response> {
+  const maximumAttempts = 4
+  let lastError: unknown
+  for (let attempt = 1; attempt <= maximumAttempts; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        headers: { 'Cache-Control': 'no-cache' },
+        signal: AbortSignal.timeout(20_000),
+      })
+      if (response.ok || !isRetryableDeliveryStatus(response.status) || attempt === maximumAttempts) {
+        return response
+      }
+      await response.arrayBuffer()
+      console.warn(
+        `${url.pathname}: delivery origin returned ${response.status}; retrying (${attempt}/${maximumAttempts})`,
+      )
+    } catch (error) {
+      lastError = error
+      if (attempt === maximumAttempts) {
+        break
+      }
+      console.warn(`${url.pathname}: delivery origin request failed; retrying (${attempt}/${maximumAttempts})`)
+    }
+    await wait(1_000 * 2 ** (attempt - 1))
+  }
+  throw new Error(`${url.pathname}: delivery origin request failed after ${maximumAttempts} attempts`, {
+    cause: lastError,
+  })
+}
+
+function isRetryableDeliveryStatus(status: number): boolean {
+  return status === 408 || status === 425 || status === 429 || status >= 500
+}
+
+async function wait(milliseconds: number): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, milliseconds))
+}
 
 async function listRemoteObjects(): Promise<Map<string, ListedObject>> {
   const objects = new Map<string, ListedObject>()
