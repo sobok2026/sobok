@@ -174,7 +174,6 @@ async function readDeliveryOrigin(url: URL): Promise<{ body: Uint8Array; respons
   for (let attempt = 1; attempt <= maximumAttempts; attempt += 1) {
     try {
       const response = await fetch(url, {
-        headers: { 'Cache-Control': 'no-cache' },
         signal: AbortSignal.timeout(20_000),
       })
       const body = new Uint8Array(await response.arrayBuffer())
