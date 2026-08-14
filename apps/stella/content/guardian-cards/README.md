@@ -21,6 +21,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batches-ko.json`             | `work_order`             | 1,056개 원화를 같은 제작 축의 12별자리 단위 88개 배치로 선언        |
 | `production-art-batch-001-review-ko.json`    | `visual_review_complete` | 첫 production 배치 신규 PNG 11개 시각 승인·승인 해시 고정           |
 | `production-art-batch-002-review-ko.json`    | `visual_review_complete` | 두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
+| `production-art-batch-003-review-ko.json`    | `editorial_review_ready` | 세 번째 배치 12개 원고 해시·관계 구도 편집 승인 대기                |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                          |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 35개 WebP 배포 후보의 객체 키·원본/배포 SHA-256              |
 
@@ -240,6 +241,13 @@ contact sheet는 공개 Git에 포함하지 않는
 `apps/stella/private/guardian-art-production/self-present-weather-action-beat`에 보관한다. 승인 원본의
 SHA-256은 검수 파일과 누적 35개 WebP 매니페스트에 고정하며 환경별 R2 반영 이력은
 `Guardian Card Art Deploy` workflow가 남긴다.
+
+세 번째 배치는 같은 `self.present-weather` 원고를 `shared-world` 표현 방식으로 제작하는 신규 12개다.
+`production-art-batch-003-review-ko.json`에 현재 원고의 canonical SHA-256과 주인공의 감정을 대신
+해결하지 않고 곁을 지키는 동료 행동을 고정했다. 앞선 두 배치의 같은 별자리 카메라·소품·운동 방향을
+반복하지 않고, 두 캐릭터의 역할과 관계 여백이 80px에서도 분리되도록 12개 구도를 설계했다. 사람 편집
+승인 전 상태인 `editorial_review_ready`이므로 아직 이미지 생성이나 로컬 후보 매니페스트를 만들지 않는다.
+승인 뒤에만 각 항목을 `approved`로 바꾸고 고정한 원고 해시를 입력으로 imagegen을 실행한다.
 
 ## 검증
 
