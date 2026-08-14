@@ -1,0 +1,38 @@
+{
+  "provider": "cloudflare_r2",
+  "infrastructureOwner": "sobok-ops/infra/cloudflare/account/sobok/stella",
+  "objectDeploymentOwner": "sobok/.github/workflows/guardian-card-art-deploy.yml",
+  "runtimeOriginBinding": "STELLA_GUARDIAN_ASSET_ORIGIN",
+  "locale": "ko",
+  "plannedAssetCount": 1056,
+  "objectKeyTemplate": "guardian-cards/ko/{editionId}.webp",
+  "artworkPathTemplate": "{origin}/guardian-cards/ko/{editionId}.webp",
+  "editionIdPolicy": "Published artwork is immutable. A meaningful artwork change creates a new edition ID and object key.",
+  "sourceContract": {
+    "format": "png",
+    "width": 1080,
+    "height": 1440,
+    "trackedInGit": false
+  },
+  "deliveryContract": {
+    "format": "webp",
+    "mimeType": "image/webp",
+    "width": 1080,
+    "height": 1440,
+    "quality": 82,
+    "effort": 6,
+    "smartSubsample": true,
+    "cacheControl": "public, max-age=31536000, immutable",
+    "trackedInGit": false
+  },
+  "environments": {
+    "staging": {
+      "bucket": "stella-guardian-assets-stg",
+      "origin": "https://guardian-assets-stg.sobok.cc"
+    },
+    "production": {
+      "bucket": "stella-guardian-assets",
+      "origin": "https://guardian-assets.sobok.cc"
+    }
+  }
+}

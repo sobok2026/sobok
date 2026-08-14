@@ -12,7 +12,6 @@ import {
   type GuardianQuestionnaireMilestoneView,
 } from './questionnaire-milestone'
 
-export const GUARDIAN_QUESTIONNAIRE_SCHEMA_VERSION = 1 as const
 export const GUARDIAN_CORE_QUESTIONS_PER_SLOT = 3 as const
 export const GUARDIAN_REQUIRED_ADAPTIVE_QUESTIONS_PER_SLOT = 1 as const
 export const GUARDIAN_MAX_ADAPTIVE_QUESTIONS_PER_SLOT = 2 as const
@@ -75,18 +74,16 @@ export interface GuardianFreeTextQuestion extends GuardianQuestionCopy {
 export type GuardianQuestion = GuardianSingleChoiceQuestion | GuardianFreeTextQuestion
 
 /**
- * The paid source file contract. Prompts, labels, adaptive selection policies, and signal weights live in tracked JSON under
- * apps/stella/content; the publisher validates that source and atomically publishes it into Postgres.
+ * The server-bundled source contract. Prompts, labels, adaptive selection policies, and signal weights live
+ * in tracked JSON under apps/stella/content and are validated when the Worker module starts.
  */
 export interface GuardianQuestionnaireContent {
-  schemaVersion: typeof GUARDIAN_QUESTIONNAIRE_SCHEMA_VERSION
-  version: string
-  productSku: GuardianFullReportProductSku
-  locale: Locale
-  coreQuestionsPerSlot: typeof GUARDIAN_CORE_QUESTIONS_PER_SLOT
-  requiredAdaptiveQuestionsPerSlot: typeof GUARDIAN_REQUIRED_ADAPTIVE_QUESTIONS_PER_SLOT
-  maximumAdaptiveQuestionsPerSlot: typeof GUARDIAN_MAX_ADAPTIVE_QUESTIONS_PER_SLOT
-  questions: readonly GuardianQuestion[]
+  readonly productSku: GuardianFullReportProductSku
+  readonly locale: Locale
+  readonly coreQuestionsPerSlot: typeof GUARDIAN_CORE_QUESTIONS_PER_SLOT
+  readonly requiredAdaptiveQuestionsPerSlot: typeof GUARDIAN_REQUIRED_ADAPTIVE_QUESTIONS_PER_SLOT
+  readonly maximumAdaptiveQuestionsPerSlot: typeof GUARDIAN_MAX_ADAPTIVE_QUESTIONS_PER_SLOT
+  readonly questions: readonly GuardianQuestion[]
 }
 
 export type GuardianQuestionnaireAnswer =
@@ -99,28 +96,24 @@ export type GuardianQuestionnaireSignalSnapshot = Readonly<Record<string, number
 export type GuardianQuestionnaireProgress =
   | {
       status: 'question'
-      version: string
       question: GuardianSingleChoiceQuestion
       answeredQuestionCount: number
       signalSnapshot: GuardianQuestionnaireSignalSnapshot
     }
   | {
       status: 'milestone'
-      version: string
       milestoneId: typeof GUARDIAN_CORE_MILESTONE_ID
       answeredQuestionCount: number
       signalSnapshot: GuardianQuestionnaireSignalSnapshot
     }
   | {
       status: 'optional-note'
-      version: string
       note: GuardianFreeTextQuestion
       answeredQuestionCount: number
       signalSnapshot: GuardianQuestionnaireSignalSnapshot
     }
   | {
       status: 'complete'
-      version: string
       answeredQuestionCount: number
       signalSnapshot: GuardianQuestionnaireSignalSnapshot
     }
@@ -128,7 +121,6 @@ export type GuardianQuestionnaireProgress =
 export type GuardianQuestionnaireClientStep =
   | {
       status: 'question'
-      version: string
       progress: {
         answered: number
         minimumTotal: number
@@ -146,7 +138,6 @@ export type GuardianQuestionnaireClientStep =
     }
   | {
       status: 'milestone'
-      version: string
       progress: {
         answered: number
         minimumTotal: number
@@ -156,7 +147,6 @@ export type GuardianQuestionnaireClientStep =
     }
   | {
       status: 'optional-note'
-      version: string
       progress: {
         answered: number
         minimumTotal: number
@@ -172,7 +162,6 @@ export type GuardianQuestionnaireClientStep =
     }
   | {
       status: 'complete'
-      version: string
       progress: {
         answered: number
         minimumTotal: number
@@ -254,8 +243,6 @@ const FreeTextQuestionSchema = z
 
 const GuardianQuestionnaireContentSchema = z
   .object({
-    schemaVersion: z.literal(GUARDIAN_QUESTIONNAIRE_SCHEMA_VERSION),
-    version: ContentIdSchema,
     productSku: z.enum(GUARDIAN_FULL_REPORT_PRODUCT_SKUS),
     locale: z.enum(LOCALES),
     coreQuestionsPerSlot: z.literal(GUARDIAN_CORE_QUESTIONS_PER_SLOT),
@@ -304,7 +291,7 @@ export function parseGuardianQuestionnaireContent(input: unknown): GuardianQuest
 /**
  * Replays the immutable answer sequence and chooses each follow-up from the cumulative signal snapshot. The
  * first adaptive pass guarantees one question for every report slot; a second pass may add one deepening
- * question per slot when its published threshold is met. The optional note is a separate, unnumbered step.
+ * question per slot when its configured threshold is met. The optional note is a separate, unnumbered step.
  */
 export function resolveGuardianQuestionnaireProgress(
   content: GuardianQuestionnaireContent,
@@ -319,7 +306,7 @@ export function resolveGuardianQuestionnaireProgress(
   )
   const note = content.questions.find((question): question is GuardianFreeTextQuestion => question.phase === 'note')
   if (!note) {
-    throw new GuardianQuestionnaireStateError(`Questionnaire ${content.version} has no optional note`)
+    throw new GuardianQuestionnaireStateError('Guardian questionnaire has no optional note')
   }
 
   const signals: Record<string, number> = {}
@@ -331,7 +318,6 @@ export function resolveGuardianQuestionnaireProgress(
     if (!answer) {
       return {
         status: 'question',
-        version: content.version,
         question,
         answeredQuestionCount,
         signalSnapshot: signals,
@@ -345,7 +331,6 @@ export function resolveGuardianQuestionnaireProgress(
   if (!acknowledgedMilestoneIds.has(GUARDIAN_CORE_MILESTONE_ID)) {
     return {
       status: 'milestone',
-      version: content.version,
       milestoneId: GUARDIAN_CORE_MILESTONE_ID,
       answeredQuestionCount,
       signalSnapshot: signals,
@@ -362,7 +347,6 @@ export function resolveGuardianQuestionnaireProgress(
     if (!answer) {
       return {
         status: 'question',
-        version: content.version,
         question,
         answeredQuestionCount,
         signalSnapshot: signals,
@@ -378,7 +362,6 @@ export function resolveGuardianQuestionnaireProgress(
   if (!noteAnswer) {
     return {
       status: 'optional-note',
-      version: content.version,
       note,
       answeredQuestionCount,
       signalSnapshot: signals,
@@ -395,7 +378,6 @@ export function resolveGuardianQuestionnaireProgress(
 
   return {
     status: 'complete',
-    version: content.version,
     answeredQuestionCount,
     signalSnapshot: signals,
   }
@@ -424,7 +406,6 @@ export function toGuardianQuestionnaireClientStep(
   if (progress.status === 'complete') {
     return {
       status: 'complete',
-      version: progress.version,
       progress: stepProgress,
     }
   }
@@ -432,7 +413,6 @@ export function toGuardianQuestionnaireClientStep(
   if (progress.status === 'milestone') {
     return {
       status: 'milestone',
-      version: progress.version,
       progress: stepProgress,
       milestone: buildGuardianCoreMilestone(content.locale, progress.signalSnapshot),
     }
@@ -441,7 +421,6 @@ export function toGuardianQuestionnaireClientStep(
   if (progress.status === 'optional-note') {
     return {
       status: 'optional-note',
-      version: progress.version,
       progress: stepProgress,
       note: {
         id: progress.note.id,
@@ -456,7 +435,6 @@ export function toGuardianQuestionnaireClientStep(
   const { question } = progress
   return {
     status: 'question',
-    version: progress.version,
     progress: stepProgress,
     question: {
       id: question.id,
@@ -480,7 +458,7 @@ function addChoiceAnswerSignals(
   }
   const option = question.options.find((candidate) => candidate.id === answer.optionId)
   if (!option) {
-    throw new GuardianQuestionnaireStateError(`Question ${question.id} has no published option ${answer.optionId}`)
+    throw new GuardianQuestionnaireStateError(`Question ${question.id} has no option ${answer.optionId}`)
   }
   for (const [signal, value] of Object.entries(option.signals)) {
     signals[signal] = (signals[signal] ?? 0) + value
@@ -592,7 +570,7 @@ function questionnaireContentIssues(content: GuardianQuestionnaireContent): stri
 
   const notes = content.questions.filter(({ phase }) => phase === 'note')
   if (notes.length !== 1) {
-    issues.push(`Exactly one optional note must be published, found ${notes.length}`)
+    issues.push(`Exactly one optional note must be configured, found ${notes.length}`)
   } else if (content.questions.at(-1)?.id !== notes[0]?.id) {
     issues.push('The optional note must be the final item in the source file')
   }

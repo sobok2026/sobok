@@ -1,23 +1,24 @@
 import type { Locale } from '@sobok/domain/locale'
 import type { Db } from '@sobok/edge/db/client'
 import { and, asc, desc, eq, getColumns, inArray, isNotNull, lt, or, sql } from 'drizzle-orm'
-import { drawInitialGuardianReport, drawLoveRedraw, type GuardianSelectedCard } from '../../guardian/draw'
+import {
+  drawInitialGuardianReport,
+  drawLoveRedraw,
+  type GuardianSelectedCard,
+  guardianCardDrawSnapshot,
+} from '../../guardian/draw'
 import {
   CURRENT_GUARDIAN_MANIFEST,
   type GuardianFullReportProductSku,
   type GuardianProductManifest,
   type GuardianReportInputSnapshot,
-  guardianCardCopyVersion,
   guardianEdition,
-  guardianManifest,
   guardianProduct,
   guardianProductOrderName,
   guardianProductPrice,
-  guardianQuestionnaireVersion,
-  guardianReportCopyVersion,
+  guardianSupportsLocale,
 } from '../../guardian/manifest'
 import type { GuardianQuestionnaireContent } from '../../guardian/questionnaire'
-import { GUARDIAN_CARD_PRESENTATION_SCHEMA_VERSION } from '../../guardian/redraw-contract'
 import {
   type GuardianReportNarrativeSnapshot,
   generateGuardianLoveCardPresentation,
@@ -70,9 +71,9 @@ export interface GuardianGuestCheckoutRef {
 export async function findPaidFullReportPurchase(
   db: Db,
   input: { collectionId: number; reportId: number; sku: GuardianFullReportProductSku },
-): Promise<{ manifestVersion: string } | null> {
+): Promise<{ id: number } | null> {
   const [purchase] = await db
-    .select({ manifestVersion: guardianPurchaseTable.manifestVersion })
+    .select({ id: guardianPurchaseTable.id })
     .from(guardianPurchaseTable)
     .where(
       and(
@@ -121,8 +122,9 @@ export async function createGuestGuardianCheckout(
   }
   const price = guardianProductPrice(productSku, input.market, manifest)
   const orderName = guardianProductOrderName(productSku, input.locale, manifest)
-  const questionnaireVersion = guardianQuestionnaireVersion(productSku, input.locale, manifest)
-  const copyVersion = guardianReportCopyVersion(productSku, input.locale, manifest)
+  if (!guardianSupportsLocale(input.locale, manifest)) {
+    throw new Error(`Guardian report locale ${input.locale} is not supported`)
+  }
 
   return db.transaction(async (tx) => {
     const [collection] = await tx
@@ -144,12 +146,6 @@ export async function createGuestGuardianCheckout(
         collectionId: collection.id,
         locale: input.locale,
         productSku,
-        manifestVersion: manifest.manifestVersion,
-        selectionRuleVersion: manifest.selectionRuleVersion,
-        oddsVersion: manifest.oddsVersion,
-        copyVersion,
-        renderVersion: manifest.renderVersion,
-        questionnaireVersion,
         inputSnapshot: input.inputSnapshot,
       })
       .returning({ id: guardianReportTable.id })
@@ -164,13 +160,13 @@ export async function createGuestGuardianCheckout(
       reportId: report.id,
       sku: product.sku,
       kind: product.kind,
+      entitlementSnapshot: { kind: 'full_report' },
       orderName,
       amount: price.amountMinor,
       market: price.market,
       currency: price.currency,
       recoveryEmail: input.recoveryEmail,
       recoveryEmailNormalized: input.recoveryEmailNormalized,
-      manifestVersion: manifest.manifestVersion,
     })
 
     return {
@@ -237,7 +233,7 @@ export async function resumeGuestGuardianCheckout(
       return { status: 'report-not-found' as const }
     }
 
-    const manifest = guardianManifest(report.manifestVersion)
+    const manifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST
     const product = guardianProduct(report.productSku, manifest)
     if (product.kind !== 'full_report') {
       return { status: 'purchase-state-conflict' as const }
@@ -306,13 +302,13 @@ export async function resumeGuestGuardianCheckout(
       reportId: report.id,
       sku: product.sku,
       kind: product.kind,
+      entitlementSnapshot: { kind: 'full_report' },
       orderName,
       amount: price.amountMinor,
       market: price.market,
       currency: price.currency,
       recoveryEmail: input.recoveryEmail,
       recoveryEmailNormalized: input.recoveryEmailNormalized,
-      manifestVersion: manifest.manifestVersion,
     })
 
     return {
@@ -451,7 +447,6 @@ export type ConfirmGuardianPurchaseResult =
       status: 'granted' | 'already-granted'
       kind: 'full_report'
       reportPublicId: string
-      questionnaireVersion: string
     }
   | {
       status: 'granted' | 'already-granted'
@@ -507,10 +502,10 @@ export async function confirmGuardianPurchase(
         reportId: guardianPurchaseTable.reportId,
         sku: guardianPurchaseTable.sku,
         kind: guardianPurchaseTable.kind,
+        entitlementSnapshot: guardianPurchaseTable.entitlementSnapshot,
         amount: guardianPurchaseTable.amount,
         currency: guardianPurchaseTable.currency,
         status: guardianPurchaseTable.status,
-        manifestVersion: guardianPurchaseTable.manifestVersion,
         entitlementGrantedAt: guardianPurchaseTable.entitlementGrantedAt,
       })
       .from(guardianPurchaseTable)
@@ -534,9 +529,8 @@ export async function confirmGuardianPurchase(
       return { status: 'payment-mismatch' as const }
     }
 
-    const manifest = guardianManifest(purchase.manifestVersion)
-    const product = guardianProduct(purchase.sku, manifest)
-    if (product.kind !== purchase.kind) {
+    const entitlement = purchase.entitlementSnapshot
+    if (entitlement.kind !== purchase.kind) {
       return { status: 'purchase-state-conflict' as const }
     }
     if (report.collectionId !== purchase.collectionId || report.id !== purchase.reportId) {
@@ -544,28 +538,24 @@ export async function confirmGuardianPurchase(
     }
 
     if (purchase.entitlementGrantedAt) {
-      if (product.kind === 'full_report') {
+      if (entitlement.kind === 'full_report') {
         return {
           status: 'already-granted' as const,
           kind: 'full_report' as const,
           reportPublicId: report.publicId,
-          questionnaireVersion: report.questionnaireVersion,
         }
       }
       return {
         status: 'already-granted' as const,
         kind: 'love_redraw' as const,
         reportPublicId: report.publicId,
-        credits: product.redrawCredits,
+        credits: entitlement.redrawCredits,
       }
     }
 
     if (
-      (product.kind === 'full_report' &&
-        (report.status !== 'draft' ||
-          report.productSku !== product.sku ||
-          report.manifestVersion !== purchase.manifestVersion)) ||
-      (product.kind === 'love_redraw' && (report.status !== 'fulfilled' || !report.loveFamilyId))
+      (entitlement.kind === 'full_report' && (report.status !== 'draft' || report.productSku !== purchase.sku)) ||
+      (entitlement.kind === 'love_redraw' && (report.status !== 'fulfilled' || !report.loveFamilyId))
     ) {
       return { status: 'report-state-conflict' as const }
     }
@@ -582,7 +572,7 @@ export async function confirmGuardianPurchase(
         .where(eq(guardianPurchaseTable.id, purchase.id))
     }
 
-    if (product.kind === 'full_report') {
+    if (entitlement.kind === 'full_report') {
       const grantedAt = new Date()
       await stampGuardianEntitlementGranted(tx, purchase.id, grantedAt)
       await tx
@@ -594,7 +584,6 @@ export async function confirmGuardianPurchase(
         status: 'granted' as const,
         kind: 'full_report' as const,
         reportPublicId: report.publicId,
-        questionnaireVersion: report.questionnaireVersion,
       }
     }
 
@@ -611,8 +600,7 @@ export async function confirmGuardianPurchase(
         purchaseId: purchase.id,
         familyId: loveFamilyId,
         kind: 'paid',
-        totalCredits: product.redrawCredits,
-        manifestVersion: manifest.manifestVersion,
+        totalCredits: entitlement.redrawCredits,
       })
       .onConflictDoNothing({ target: guardianRedrawGrantTable.grantKey })
 
@@ -622,7 +610,7 @@ export async function confirmGuardianPurchase(
       status: 'granted' as const,
       kind: 'love_redraw' as const,
       reportPublicId: report.publicId,
-      credits: product.redrawCredits,
+      credits: entitlement.redrawCredits,
     }
   })
 }
@@ -772,11 +760,11 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
     reportId: input.reportId,
     sku: report.productSku,
   })
-  if (!purchase || purchase.manifestVersion !== report.manifestVersion) {
+  if (!purchase) {
     return { status: 'payment-required' }
   }
 
-  const manifest = guardianManifest(report.manifestVersion)
+  const manifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST
   const initial = drawInitialGuardianReport(
     {
       ...report.inputSnapshot,
@@ -787,7 +775,6 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
   )
   const narrative = generateGuardianReportNarrative({
     locale: report.locale,
-    copyVersion: report.copyVersion,
     questionnaire,
     inputSnapshot: report.inputSnapshot,
     answerSnapshot: report.questionnaireAnswerSnapshot,
@@ -808,7 +795,6 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
       grantId: null,
       card,
       presentation: {
-        schemaVersion: GUARDIAN_CARD_PRESENTATION_SCHEMA_VERSION,
         locale: report.locale,
         cardEditionId: card.editionId,
         familyId: card.familyId,
@@ -823,8 +809,7 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
       source: 'initial_report',
       guaranteeDue: false,
       guaranteedUnowned: false,
-      manifestVersion: manifest.manifestVersion,
-      oddsVersion: manifest.oddsVersion,
+      drawSnapshot: guardianCardDrawSnapshot(card, { manifest }),
     })
     await selectGuardianReportCard(db, { reportId: input.reportId, slot: card.slot, acquisitionId: acquisition.id })
   }
@@ -860,7 +845,7 @@ export async function grantGuardianAccountSaveReward(
     }
     const rewardManifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST
     const rewardFamily = rewardManifest.families.find(({ id }) => id === report.loveFamilyId)
-    if (rewardFamily?.slot !== 'love' || !rewardManifest.cardCopyVersions[report.locale]) {
+    if (rewardFamily?.slot !== 'love' || !guardianSupportsLocale(report.locale, rewardManifest)) {
       return 'report-not-found'
     }
 
@@ -873,7 +858,6 @@ export async function grantGuardianAccountSaveReward(
         familyId: report.loveFamilyId,
         kind: 'account_save_reward',
         totalCredits: 1,
-        manifestVersion: rewardManifest.manifestVersion,
       })
       .onConflictDoNothing({ target: guardianRedrawGrantTable.grantKey })
       .returning({ id: guardianRedrawGrantTable.id })
@@ -940,7 +924,7 @@ export async function claimGuardianCollection(
 
     const rewardManifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST
     const rewardFamily = rewardManifest.families.find(({ id }) => id === report.loveFamilyId)
-    if (rewardFamily?.slot !== 'love' || !rewardManifest.cardCopyVersions[report.locale]) {
+    if (rewardFamily?.slot !== 'love' || !guardianSupportsLocale(report.locale, rewardManifest)) {
       return { status: 'report-not-found' as const }
     }
 
@@ -961,7 +945,6 @@ export async function claimGuardianCollection(
         familyId: report.loveFamilyId,
         kind: 'account_save_reward',
         totalCredits: 1,
-        manifestVersion: rewardManifest.manifestVersion,
       })
       .onConflictDoNothing({ target: guardianRedrawGrantTable.grantKey })
       .returning({ id: guardianRedrawGrantTable.id })
@@ -1121,7 +1104,6 @@ export async function consumeGuardianRedraw(
       .select({
         id: guardianRedrawGrantTable.id,
         kind: guardianRedrawGrantTable.kind,
-        manifestVersion: guardianRedrawGrantTable.manifestVersion,
       })
       .from(guardianRedrawGrantTable)
       .where(
@@ -1148,33 +1130,27 @@ export async function consumeGuardianRedraw(
       return { status: 'no-credit' as const }
     }
 
-    const manifest = guardianManifest(grant.manifestVersion)
+    const manifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST
     const scopeId = report.loveFamilyId
     await tx
       .insert(guardianGuaranteeProgressTable)
       .values({
         collectionId: input.collectionId,
         scopeId,
-        ruleVersion: manifest.guarantee.ruleVersion,
       })
       .onConflictDoNothing({
-        target: [
-          guardianGuaranteeProgressTable.collectionId,
-          guardianGuaranteeProgressTable.scopeId,
-          guardianGuaranteeProgressTable.ruleVersion,
-        ],
+        target: [guardianGuaranteeProgressTable.collectionId, guardianGuaranteeProgressTable.scopeId],
       })
 
     const [progress] = await tx
       .select({
-        paidDrawsInCycle: guardianGuaranteeProgressTable.paidDrawsInCycle,
+        paidDrawCount: guardianGuaranteeProgressTable.paidDrawCount,
       })
       .from(guardianGuaranteeProgressTable)
       .where(
         and(
           eq(guardianGuaranteeProgressTable.collectionId, input.collectionId),
           eq(guardianGuaranteeProgressTable.scopeId, scopeId),
-          eq(guardianGuaranteeProgressTable.ruleVersion, manifest.guarantee.ruleVersion),
         ),
       )
       .limit(1)
@@ -1196,7 +1172,7 @@ export async function consumeGuardianRedraw(
       {
         familyId: scopeId,
         ownedEditionIds,
-        paidDrawsInCycle: progress.paidDrawsInCycle,
+        paidDrawsInCycle: progress.paidDrawCount % manifest.guarantee.paidDrawInterval,
         creditKind: grant.kind,
       },
       { manifest },
@@ -1204,7 +1180,6 @@ export async function consumeGuardianRedraw(
     const edition = guardianEdition(decision.card.editionId, manifest)
     const presentation = generateGuardianLoveCardPresentation({
       locale: report.locale,
-      copyVersion: guardianCardCopyVersion(report.locale, manifest),
       card: decision.card,
       artworkPath: edition.artworkPath,
       signalSnapshot: report.questionnaireSignalSnapshot,
@@ -1219,8 +1194,12 @@ export async function consumeGuardianRedraw(
       source: grant.kind === 'paid' ? 'paid_redraw' : 'account_save_reward',
       guaranteeDue: decision.guaranteeDue,
       guaranteedUnowned: decision.guaranteedUnowned,
-      manifestVersion: manifest.manifestVersion,
-      oddsVersion: manifest.oddsVersion,
+      drawSnapshot: guardianCardDrawSnapshot(decision.card, {
+        manifest,
+        eligibleEditionIds: decision.eligibleEditionIds,
+        familySelection: 'retained_report_family',
+        guarantee: decision,
+      }),
     })
 
     await tx
@@ -1231,12 +1210,11 @@ export async function consumeGuardianRedraw(
     if (grant.kind === 'paid') {
       await tx
         .update(guardianGuaranteeProgressTable)
-        .set({ paidDrawsInCycle: decision.nextPaidDrawsInCycle })
+        .set({ paidDrawCount: sql`${guardianGuaranteeProgressTable.paidDrawCount} + 1` })
         .where(
           and(
             eq(guardianGuaranteeProgressTable.collectionId, input.collectionId),
             eq(guardianGuaranteeProgressTable.scopeId, scopeId),
-            eq(guardianGuaranteeProgressTable.ruleVersion, manifest.guarantee.ruleVersion),
           ),
         )
     }

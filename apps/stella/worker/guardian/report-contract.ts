@@ -9,8 +9,6 @@ import type {
 } from './questionnaire'
 import type { GuardianCardPresentationSnapshot } from './redraw-contract'
 
-export const GUARDIAN_REPORT_NARRATIVE_SCHEMA_VERSION = 1 as const
-
 export const GUARDIAN_ZODIAC_SIGNS = [
   'aries',
   'taurus',
@@ -75,7 +73,6 @@ export interface GuardianReportNarrativeSection {
  * remain this immutable snapshot. The API never exposes the full copy/question banks.
  */
 export interface GuardianReportNarrativeSnapshot {
-  schemaVersion: typeof GUARDIAN_REPORT_NARRATIVE_SCHEMA_VERSION
   locale: Locale
   hero: {
     eyebrow: string
@@ -96,15 +93,6 @@ export interface GuardianReportNarrativeSnapshot {
   }
 }
 
-export interface GuardianReportVersions {
-  manifest: string
-  selectionRule: string
-  odds: string
-  questionnaire: string
-  copy: string
-  render: string
-}
-
 /** Capability-protected response shared by the Worker and the static browser client. */
 export type GuardianReportView =
   | {
@@ -113,7 +101,6 @@ export type GuardianReportView =
       locale: Locale
       questionnaire: {
         status: GuardianQuestionnaireClientStep['status']
-        version: string
         progress: GuardianQuestionnaireClientStep['progress']
       }
     }
@@ -122,7 +109,6 @@ export type GuardianReportView =
       status: 'fulfilled'
       locale: Locale
       fulfilledAt: string
-      versions: GuardianReportVersions
       cards: (GuardianCardPresentationSnapshot & {
         acquisitionPublicId: string
         acquisitionCount: number
@@ -132,7 +118,6 @@ export type GuardianReportView =
 
 export interface GuardianReportNarrativeInput {
   locale: Locale
-  copyVersion: string
   questionnaire: GuardianQuestionnaireContent
   inputSnapshot: GuardianReportInputSnapshot
   answerSnapshot: GuardianQuestionnaireAnswerSnapshot

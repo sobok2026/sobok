@@ -1,6 +1,7 @@
 import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 
+import Footer from '@/components/Footer'
 import { GUARDIAN_LOVE_REDRAW_UI } from '@/content/guardian-love-redraw-ui'
 
 import GuardianLoveRedraw from './GuardianLoveRedraw'
@@ -19,5 +20,10 @@ export async function generateMetadata({
 
 export default async function GuardianLoveRedrawPage({ params }: PageProps<'/[locale]/guardian-report/love-redraw'>) {
   const locale = await getLocale(params)
-  return <GuardianLoveRedraw locale={locale} />
+  return (
+    <>
+      <GuardianLoveRedraw locale={locale} />
+      <Footer locale={locale} />
+    </>
+  )
 }

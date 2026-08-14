@@ -11,9 +11,19 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - 유료 MVP: 4개 패밀리·7개 에디션으로 시작하고, production에서는 입력에 따라 네 기본 카드가 달라짐
 - 카드 에셋: 유료 MVP는 4개 패밀리·7개 에디션, production 출시는 실제 3:4 에디션 최소 1,024장
 - 질문 흐름: 무료 미리보기 2개, 결제 확인 뒤 선택형 16~20개, 별도 자유 입력은 선택 사항 최대 1개
-- 한국어 유료 질문 v1: 선택형 44개·선택지 176개와 선택 메모 1개, 네 주제 각 4~5개 출제
+- 한국어 유료 질문: 선택형 44개·선택지 176개와 선택 메모 1개, 네 주제 각 4~5개 출제
+- 한국어 카드 패밀리 원고: 12별자리 × 네 주제 48개 제목·장면·대사·한 줄·회고 질문 작성
+- production 카드 제작안: 자기이해 192장·사랑 480장·일 192장·결정 192장, 총 1,056개
+- 자기이해 production 원고: 192개 에디션 ID·제목·장면·접근성 설명·한 줄을 편집 초안으로 materialize
+- 사랑 production 원고: 480개 에디션 ID·제목·장면·접근성 설명·한 줄과 고정 희귀도 가중치를
+  편집 초안으로 materialize
+- 일 production 원고: 192개 에디션 ID·제목·장면·접근성 설명·한 줄을 편집 초안으로 materialize
+- 결정 production 원고: 192개 에디션 ID·제목·장면·접근성 설명·한 줄을 편집 초안으로 materialize
+- production 원고 1차 자동 편집 감사: 1,056개 길이·문장·한국어 조사 token·접근성·비단정 표현 검증
+- production 원화: 12별자리 파일럿과 첫 production 배치 신규 11개 최종 시각 승인 완료, 누적 최적화
+  WebP 23개와 R2 배포 매니페스트 고정
 - 유료 답변 효과: 네 주제 상세 본문·해석 초점·한 줄을 실질적으로 변경
-- 유료 질문 소스: 원문·선택지·적응형 선택 정책·점수를 Git JSON으로 관리하고 DB에 불변 버전으로 게시
+- 유료 질문 소스: 원문·선택지·적응형 선택 정책·점수를 Git JSON과 Database Worker 서버 번들로 관리
 - 반복 구매: 사랑 카드의 일러스트와 한 줄만 저가 재추첨
 - 계정과 출시: `accounts.sobok.cc` Sobok 통합 계정, 한국 → 중국 본토 → 이후 미정
 - 게스트 구매: 결제 직전 이메일을 필수 복구 채널로 받고 계정 생성과 분리
@@ -26,7 +36,7 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - 예약 실행: 계정 단일 `apps/scheduler`가 Database Worker의 maintenance RPC를 호출해 production·staging의
   15분 pending 결제 재조정과 일일 retention purge를 실행
 - 유료 서버 도메인: 상품·추첨·게스트 컬렉션·리포트·구매·획득·보장, checkout·질문·중간 결과·리포트 API 연결
-- 운영 게시: staging·production 프로젝트의 `stella` schema에 `guardian-paid-ko-mvp-v1` 동일 해시 게시, PR #29 production 배포 완료
+- 질문 배포: DB 게시 없이 동일 commit의 Database Worker 번들로 환경별 반영
 - 결제 후 복구: 결제 권한과 함께 durable 발송 intent를 만들고 Resend 완료 메일, 15분·1회용 재열람
   링크 교환, 구매 이메일 기반 재발급 화면·API까지 구현
 - 다음 출시 작업: 새 복구 테이블·환경별 Resend Secrets Store 반영 뒤 PortOne 테스트 실결제와 이메일
@@ -53,6 +63,8 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 
 - [캐릭터 바이블](./character-bible.md): 이름, 성격, 말투, 색상, 소품, 관계
 - [카드 카탈로그](./card-catalog.md): 48장 기본 카드와 희귀도 확장 규칙
+- [한국어 카드 원고와 production 제작 계획](../../content/guardian-cards/README.md): 48개 패밀리 원고,
+  1,056개 에디션 매트릭스, 검증과 게시 경계
 - [대표 카드 제작 기록](./cards/representative/README.md): 네 주제 원화, 공통 프롬프트, 제작 메모
 - [유료 카드 리포트 MVP와 확장 전략](./paid-mvp-product-strategy.md): 상품, 가격, 추첨, 계정, 결제, 성장 루프
 - [Sobok 통합 계정 아키텍처](../../../../docs/architecture/sobok-account.md): 중앙 authority, 앱별 세션, OIDC,
@@ -61,7 +73,7 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
   Stella 고정 client bootstrap과 staging 수직 확인 순서
 - [한국 전체 리포트 결제·공개 수직 슬라이스](./korea-paid-report-vertical-slice.md): 상품 랜딩, 게스트 checkout, PortOne 검증, 결제 후 질문·중간 결과·카드 공개 구현 계약
 - [결제 완료 메일·리포트 재열람 운영 Runbook](./email-reopen-operations.md): Resend·Secrets Store·schema 반영 순서, staging 수직 확인, 관측 지점
-- [유료 질문 콘텐츠 계약과 게시](./paid-questionnaire-content.md): Git 문항은행 계약, 불변 DB 버전, staging·production 게시 절차
+- [유료 질문 콘텐츠 계약과 배포](./paid-questionnaire-content.md): Git 문항은행, Worker 서버 번들, 문자열 답변 ID 계약
 
 ## 네 주제 대표 카드
 

@@ -1,21 +1,20 @@
 # 한국어 개인화 리포트 본문 엔진과 최종 계약
 
-## 현재 버전
+## 현재 구성
 
-| 항목                 | 값                                   |
-| -------------------- | ------------------------------------ |
-| 상품                 | `guardian-report-full-v1`            |
-| 질문                 | `guardian-paid-ko-mvp-v1`            |
-| 본문                 | `guardian-report-copy-ko-v1`         |
-| 본문 snapshot schema | `1`                                  |
-| 지원 locale          | `ko`                                 |
-| 서버 구현            | `worker/guardian/report*.ts`         |
-| 불변 저장 위치       | `guardian_report.narrative_snapshot` |
+| 항목           | 값                                   |
+| -------------- | ------------------------------------ |
+| 상품           | `guardian-report-full-v1`            |
+| 질문           | `guardian-paid-ko.json`              |
+| 본문           | `report-copy-ko.ts`                  |
+| 지원 locale    | `ko`                                 |
+| 서버 구현      | `worker/guardian/report*.ts`         |
+| 불변 저장 위치 | `guardian_report.narrative_snapshot` |
 
 본문 원본과 선택기는 Worker bundle에만 들어간다. Next 정적 앱에는 질문 은행이나 본문 선택표를
-import하지 않는다. 다른 locale은 기존 한국어 문장을 런타임 번역하지 않고 locale별 새 copy version과
-generator를 게시한다. full-report 상품의 `questionnaireVersions`와 `reportCopyVersions`가 locale별
-pointer를 나란히 가지며, checkout은 선택한 locale의 두 version을 report에 함께 고정한다.
+import하지 않는다. 다른 locale은 기존 한국어 문장을 런타임 번역하지 않고 locale별 질문 JSON과
+copy generator를 추가한다. 질문과 본문은 현재 배포된 Worker 번들이 정본이며 report에 별도 콘텐츠
+버전을 저장하지 않는다.
 
 ## 생성 입력과 선택 규칙
 
@@ -25,7 +24,7 @@ pointer를 나란히 가지며, checkout은 선택한 locale의 두 version을 r
 - 완료된 16~20개 선택 답변과 선택 메모
 - 선택 답변에서 합산한 signal snapshot
 - 한 번 선택한 네 family와 card edition
-- report가 고정한 questionnaire·copy version
+- 현재 Worker의 질문 콘텐츠와 locale별 본문 generator
 
 signal과 원래 답변의 역할은 분리한다.
 
@@ -50,8 +49,8 @@ signal과 원래 답변의 역할은 분리한다.
 머물 때만 달 별자리 이름을 표시하며, 이 제한은 `hero.chartNote`에도 설명한다.
 
 사랑 카드의 title·대체 텍스트·한 줄은 실제 rarity edition을 반영한다. 희귀도는 기존 독립 난수 추첨
-결과를 읽기만 하며 질문 답변이나 본문 signal이 확률을 바꾸지 않는다. 사랑 카드 재추첨은 구매에
-고정된 card copy version과 기존 답변 snapshot에서 새 edition용 presentation을 한 번 만들고 획득 행에
+결과를 읽기만 하며 질문 답변이나 본문 signal이 확률을 바꾸지 않는다. 사랑 카드 재추첨은 현재
+locale별 card copy와 기존 답변 snapshot에서 새 edition용 presentation을 한 번 만들고 획득 행에
 보존한다. 사용자가 그 카드를 리포트에 걸면 카드 표현만 교체하며 chart·상세 문단·조언·성찰 질문은
 최초 `narrative_snapshot`을 그대로 사용한다.
 
@@ -68,16 +67,16 @@ signal과 원래 답변의 역할은 분리한다.
   → card_snapshot + narrative_snapshot + fulfilled 전환
 ```
 
-위 작업은 report row lock을 잡은 하나의 DB transaction이다. 생성 도중 copy version, 선택 답변,
+위 작업은 report row lock을 잡은 하나의 DB transaction이다. 생성 도중 locale별 copy, 선택 답변,
 카드 또는 질문별 본문 frame이 맞지 않으면 transaction 전체가 실패하며 다른 문장으로 대체하지 않는다.
 이미 `fulfilled`인 report는 엔진을 다시 실행하지 않고 저장된 두 snapshot을 반환한다.
 
 `narrative_snapshot`에는 최종 사용자에게 보여 줄 한국어 문자열을 그대로 저장한다. 선택 key만 저장해
 나중의 renderer에 의존하지 않으므로 질문 문구나 copy 코드가 바뀌어도 구매한 결과는 달라지지 않는다.
-새 copy는 새 version으로 추가하고, 그 version을 참조하는 draft가 남아 있는 동안 기존 generator를
-삭제하지 않는다.
+draft report는 현재 배포된 generator로 완성한다. 이미 게시한 카드의 의미나 표현을 실질적으로 바꿀
+때는 기존 edition ID를 덮어쓰지 않고 새 ID를 추가한다.
 
-질문 게시 CLI는 현재 manifest가 가리키는 questionnaire를 검증할 때 다음 항목도 함께 확인한다.
+질문 콘텐츠 검증은 Worker 번들에 등록된 questionnaire에 대해 다음 항목도 함께 확인한다.
 
 - 선택형 44개 모두에 같은 slot의 상세 본문 frame이 있음
 - 모든 frame이 실제 선택 답변 문구를 한 번 이상 사용함
@@ -97,14 +96,6 @@ type FulfilledGuardianReport = {
   status: 'fulfilled'
   locale: 'ko'
   fulfilledAt: string
-  versions: {
-    manifest: string
-    selectionRule: string
-    odds: string
-    questionnaire: string
-    copy: string
-    render: string
-  }
   cards: Array<{
     cardEditionId: string
     familyId: string
@@ -113,7 +104,6 @@ type FulfilledGuardianReport = {
     artworkPath: string
   }>
   narrative: {
-    schemaVersion: 1
     locale: 'ko'
     hero: {
       eyebrow: string

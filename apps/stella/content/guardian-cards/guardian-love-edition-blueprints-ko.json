@@ -1,0 +1,1289 @@
+{
+  "status": "authoring",
+  "locale": "ko",
+  "slot": "love",
+  "rarities": [
+    {
+      "id": "orbit",
+      "titleSuffix": "Orbit",
+      "weight": 550,
+      "sceneSuffix": "핵심 소품과 표정에 가까이 머물며 관계의 첫 움직임이 화면 중심에서 또렷하게 보인다.",
+      "artworkAltSuffix": "화면 중심에 크게 놓인 핵심 소품과 수호령의 표정",
+      "oneLineAction": "상대의 답을 앞당기지 말고 지금 건넬 수 있는 가장 작은 신호부터 골라."
+    },
+    {
+      "id": "nebula",
+      "titleSuffix": "Nebula",
+      "weight": 300,
+      "sceneSuffix": "{nebulaBeat}",
+      "artworkAltSuffix": "{nebulaArtworkAlt}",
+      "oneLineAction": "한 번의 큰 표현보다 서로 알아볼 수 있는 반복과 리듬을 만들어 봐."
+    },
+    {
+      "id": "eclipse",
+      "titleSuffix": "Eclipse",
+      "weight": 120,
+      "sceneSuffix": "{sharedBeat}",
+      "artworkAltSuffix": "{sharedArtworkAlt}",
+      "oneLineAction": "혼자 해석하지 말고 두 사람이 실제로 주고받을 행동과 말을 맞춰 봐."
+    },
+    {
+      "id": "stella",
+      "titleSuffix": "Stella",
+      "weight": 30,
+      "sceneSuffix": "{stellaBeat}",
+      "artworkAltSuffix": "{stellaArtworkAlt}",
+      "oneLineAction": "운명을 단정하기보다 서로 다시 선택한 행동이 이어지도록 다음 약속을 남겨."
+    }
+  ],
+  "families": [
+    {
+      "familyId": "aries.love",
+      "sign": "aries",
+      "guardians": "몽실이",
+      "sharedGuardians": "몽실이 · 달콩이",
+      "nebulaBeat": "비 오는 저녁, 몽실이가 붉은 비옷으로 큰 하트를 감싸며 젖어도 알아볼 수 있는 작은 불빛을 켠다.",
+      "nebulaArtworkAlt": "붉은 비옷을 입고 비 속에서 큰 하트와 신호등을 지키는 몽실이",
+      "sharedBeat": "달콩이가 문 뒤에서 나와 하트의 반대쪽을 잡고, 몽실이는 당기던 힘을 풀어 둘의 속도를 맞춘다.",
+      "sharedArtworkAlt": "큰 하트를 양쪽에서 잡고 힘을 맞추는 몽실이와 달콩이가 함께 보이는 장면",
+      "stellaBeat": "몽실이와 달콩이가 함께 연 하트에서 두 수호령의 가슴 별표와 옅은 별자리 광륜이 하나의 열린 길로 이어진다.",
+      "stellaArtworkAlt": "함께 연 하트에서 두 수호령과 다음 길을 잇는 별자리 궤적이 피어나는 몽실이와 달콩이",
+      "themes": [
+        {
+          "id": "first-signal",
+          "titleStem": "먼저 날아간 하트",
+          "sceneCore": "몽실이가 자기 몸보다 큰 하트를 달 우체통으로 밀어 보내다 걸린 끝을 붙잡고, 상대가 알아볼 작은 붉은 리본을 남긴다.",
+          "artworkAltCore": "큰 하트를 달 우체통에 넣으며 끝에 붉은 리본을 남기는 몽실이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 먼저 움직이는 마음은 용기지만 상대가 알아보고 답할 여백까지 남길 때 진짜 신호가 돼.",
+          "reflection": "지금 부담 없이 먼저 보낼 수 있는 작은 호감 신호를 적어 봐.",
+          "interpretationSignals": ["love.pace.approach", "love.context.curious"]
+        },
+        {
+          "id": "careful-approach",
+          "titleStem": "한 걸음과 한 박자",
+          "sceneCore": "몽실이가 세 걸음 먼저 달린 뒤 출발선으로 한 걸음 돌아와, 상대의 보폭 옆에 자기 발자국을 새로 찍는다.",
+          "artworkAltCore": "먼저 달렸다가 돌아와 상대 보폭 옆에 발자국을 찍는 몽실이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 빠르게 다가가도 상대의 속도를 확인하는 한 박자가 있으면 직진이 압박이 되지 않아.",
+          "reflection": "네 속도와 상대의 속도를 맞추기 위해 물어볼 한 문장을 적어 봐.",
+          "interpretationSignals": ["love.speed.adjust", "love.pacing.assertive"]
+        },
+        {
+          "id": "everyday-care",
+          "titleStem": "서둘러 건넨 우산",
+          "sceneCore": "몽실이가 빗방울을 보자 작은 별우산을 먼저 펼쳐 상대 자리로 밀고, 자기가 젖은 어깨에는 뒤늦게 수건을 얹는다.",
+          "artworkAltCore": "별우산을 상대 자리로 먼저 밀고 자기 어깨에 수건을 얹는 몽실이",
+          "oneLineInsightTemplate": "“{focus:을}” 돌보는 마음은 빠른 행동으로 잘 드러나지만 네 몫까지 남겨야 다정함이 오래가.",
+          "reflection": "반복해서 건넬 수 있고 네 힘도 소진하지 않는 돌봄을 적어 봐.",
+          "interpretationSignals": ["love.expression.actions", "love.language.presence"]
+        },
+        {
+          "id": "honest-conversation",
+          "titleStem": "말보다 먼저 열린 문",
+          "sceneCore": "몽실이가 결론을 먼저 말하려다 열린 문턱에 앉아, 원하는 것과 걱정되는 것을 서로 다른 하트 쪽지에 적는다.",
+          "artworkAltCore": "열린 문턱에서 원하는 것과 걱정을 두 하트 쪽지에 적는 몽실이",
+          "oneLineInsightTemplate": "“{focus:을}” 솔직히 말할 때 결론만 밀어붙이지 않고 바람과 두려움을 함께 꺼내면 대화가 열려.",
+          "reflection": "상대에게 원하는 것과 함께 솔직히 말할 걱정을 한 문장씩 적어 봐.",
+          "interpretationSignals": ["love.need.honesty", "love.expression.direct"]
+        },
+        {
+          "id": "shared-play",
+          "titleStem": "같이 뛰는 혜성",
+          "sceneCore": "몽실이가 혜성 꼬리를 잡고 혼자 달리다 두 손잡이가 달린 별썰매로 바꿔, 승부 없이 함께 속도를 즐길 자리를 만든다.",
+          "artworkAltCore": "두 손잡이 별썰매를 준비하고 함께 달릴 자리를 만드는 몽실이",
+          "oneLineInsightTemplate": "“{focus}”에서 설렘을 지키려면 관계를 계속 평가하기보다 둘 다 웃을 작은 모험을 함께 만들어야 해.",
+          "reflection": "결과나 의미를 따지지 않고 함께 즐길 작은 활동을 적어 봐.",
+          "interpretationSignals": ["love.need.spark", "love.security.aliveness"]
+        },
+        {
+          "id": "boundary-and-space",
+          "titleStem": "멈춤 표지가 있는 사랑",
+          "sceneCore": "몽실이가 함께 달리는 길 한가운데 멈춤 표지와 각자 쉬는 작은 의자를 놓아, 가까움 속에서도 속도를 다시 고를 수 있게 한다.",
+          "artworkAltCore": "함께 달리는 길에 멈춤 표지와 두 개의 의자를 놓는 몽실이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 뜨거운 마음이 있어도 멈춤을 말할 수 있는 자리가 있어야 두 사람의 존엄과 선택이 살아 있어.",
+          "reflection": "가까워질수록 반드시 존중받고 싶은 멈춤 신호를 적어 봐.",
+          "interpretationSignals": ["love.protect.space", "love.protect.dignity"]
+        },
+        {
+          "id": "distance-and-return",
+          "titleStem": "돌아올 출발선",
+          "sceneCore": "몽실이가 멀어진 길을 쫓아 달리기 전 출발선에 돌아올 시간과 기다릴 범위를 붉은 깃발로 표시한다.",
+          "artworkAltCore": "멀어진 길 앞 출발선에 귀환 시간과 붉은 깃발을 남기는 몽실이",
+          "oneLineInsightTemplate": "“{focus}”에서 거리가 생겼을 때 바로 쫓기보다 다시 만날 시간과 대화 조건을 정하면 불안이 방향을 얻어.",
+          "reflection": "기다릴 수 있는 시간과 그 뒤 직접 확인할 질문을 적어 봐.",
+          "interpretationSignals": ["love.distance.unclear", "love.timing.talk"]
+        },
+        {
+          "id": "repair",
+          "titleStem": "다시 묶는 붉은 리본",
+          "sceneCore": "몽실이가 끊어진 붉은 리본을 급히 숨기지 않고 잘못 당긴 지점을 표시한 뒤, 사과 쪽지와 새 매듭을 나란히 놓는다.",
+          "artworkAltCore": "끊어진 붉은 리본에 잘못된 지점을 표시하고 새 매듭을 준비하는 몽실이",
+          "oneLineInsightTemplate": "“{focus:을}” 회복하려면 빨리 괜찮아지는 것보다 무엇이 끊겼는지 인정하고 다른 행동으로 다시 묶어야 해.",
+          "reflection": "사과할 사실과 다음에는 다르게 할 행동을 하나씩 적어 봐.",
+          "interpretationSignals": ["love.repair.truth", "love.next_step.conversation"]
+        },
+        {
+          "id": "mutual-growth",
+          "titleStem": "서로의 속도로 달리기",
+          "sceneCore": "몽실이가 한 줄짜리 경주로를 두 개의 나란한 길로 바꾸고, 각자의 목표 깃발과 중간에 만날 별표를 함께 세운다.",
+          "artworkAltCore": "나란한 두 길에 각자의 목표 깃발과 공동 별표를 세우는 몽실이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 함께 자란다는 건 같은 속도가 되는 게 아니라 각자의 목표를 지지하며 다시 만날 지점을 만드는 일이야.",
+          "reflection": "각자 키울 목표와 서로 도울 수 있는 한 가지를 적어 봐.",
+          "interpretationSignals": ["love.teamwork.communication", "love.pacing.collaborative"]
+        },
+        {
+          "id": "future-promise",
+          "titleStem": "다음 모퉁이의 약속",
+          "sceneCore": "몽실이가 영원히 이어진 길 대신 다음 모퉁이까지의 지도에 연락 시간과 함께할 행동을 작은 하트 표식으로 남긴다.",
+          "artworkAltCore": "다음 모퉁이까지의 지도에 연락 시간과 하트 표식을 남기는 몽실이",
+          "oneLineInsightTemplate": "“{focus}”의 미래는 큰 맹세보다 다음에 언제 무엇을 함께할지 확인 가능한 약속으로 더 단단해져.",
+          "reflection": "서로 실제로 지킬 수 있는 다음 약속과 날짜를 적어 봐.",
+          "interpretationSignals": ["love.reassurance.consistency", "love.readiness.building"]
+        }
+      ]
+    },
+    {
+      "familyId": "taurus.love",
+      "sign": "taurus",
+      "guardians": "차곡이",
+      "sharedGuardians": "차곡이 · 새봄이",
+      "nebulaBeat": "늦은 겨울밤, 차곡이가 두꺼운 초록 담요와 따뜻한 우유로 마지막 별쿠키가 식지 않게 오래 지킨다.",
+      "nebulaArtworkAlt": "겨울밤 초록 담요 아래에서 우유와 마지막 별쿠키를 지키는 차곡이",
+      "sharedBeat": "새봄이가 반듯하지 않은 쿠키 조각을 그대로 받아 들고, 차곡이는 더 큰 반쪽을 자연스럽게 상대 쪽에 놓는다.",
+      "sharedArtworkAlt": "나눈 별쿠키 조각을 서로 받아 드는 차곡이와 새봄이가 함께 보이는 장면",
+      "stellaBeat": "차곡이와 새봄이가 함께 심은 별씨앗에서 두 가슴 별표와 옅은 별자리 광륜이 계절의 나이테처럼 퍼진다.",
+      "stellaArtworkAlt": "함께 심은 별씨앗에서 계절 나이테와 별자리 궤적이 퍼지는 차곡이와 새봄이",
+      "themes": [
+        {
+          "id": "first-signal",
+          "titleStem": "오래 바라본 마지막 쿠키",
+          "sceneCore": "차곡이가 오래 아껴 둔 마지막 별쿠키를 반으로 나누기 전, 상대 자리에 따뜻한 접시와 작은 초록 리본을 먼저 놓는다.",
+          "artworkAltCore": "마지막 별쿠키 앞 상대 자리에 따뜻한 접시와 초록 리본을 놓는 차곡이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 천천히 준비한 작은 자리는 말보다 먼저 네 마음이 열리고 있다는 신호가 될 수 있어.",
+          "reflection": "부담 없이 호감을 보여 줄 수 있는 준비나 자리 하나를 적어 봐.",
+          "interpretationSignals": ["love.pace.observe", "love.context.curious"]
+        },
+        {
+          "id": "careful-approach",
+          "titleStem": "같은 속도의 찻잔",
+          "sceneCore": "차곡이가 두 찻잔의 온도가 비슷해질 때까지 기다리고, 상대가 손을 뻗은 뒤에야 자기 잔도 천천히 가까이 옮긴다.",
+          "artworkAltCore": "온도가 비슷한 두 찻잔을 상대 손짓에 맞춰 가까이 옮기는 차곡이",
+          "oneLineInsightTemplate": "“{focus:을}” 천천히 나누는 건 망설임이 아니라 둘 다 안심할 수 있는 속도를 함께 찾는 과정이야.",
+          "reflection": "관계가 편안하게 깊어지기 위해 필요한 속도와 확인 신호를 적어 봐.",
+          "interpretationSignals": ["love.pace.care", "love.pacing.patient"]
+        },
+        {
+          "id": "everyday-care",
+          "titleStem": "매일 반씩 나눈 쿠키",
+          "sceneCore": "차곡이가 특별한 날의 큰 상자 대신 매일 먹을 작은 별쿠키를 두 칸 통에 나누고, 빈 칸에는 다음날 날짜를 적는다.",
+          "artworkAltCore": "작은 별쿠키를 두 칸 통에 나누고 다음날 날짜를 적는 차곡이",
+          "oneLineInsightTemplate": "“{focus:을}” 지키는 사랑은 큰 선물보다 예측할 수 있게 반복되는 작은 행동에서 신뢰를 쌓아.",
+          "reflection": "무리 없이 매일이나 매주 반복할 수 있는 돌봄을 적어 봐.",
+          "interpretationSignals": ["love.expression.actions", "love.language.reliability"]
+        },
+        {
+          "id": "honest-conversation",
+          "titleStem": "천천히 꺼낸 한마디",
+          "sceneCore": "차곡이가 말 대신 쌓아 둔 별돌을 하나씩 내려놓고, 가장 아래 있던 필요를 짧은 문장으로 적어 상대 쪽에 건넨다.",
+          "artworkAltCore": "쌓아 둔 별돌 아래의 필요를 문장으로 적어 건네는 차곡이",
+          "oneLineInsightTemplate": "“{focus:을}” 행동으로만 보여 주면 상대가 다른 뜻으로 읽을 수 있으니 필요한 마음은 느려도 말로 꺼내야 해.",
+          "reflection": "행동 뒤에 숨겨 둔 필요를 짧고 구체적인 부탁으로 적어 봐.",
+          "interpretationSignals": ["love.need.honesty", "love.conversation.warmth"]
+        },
+        {
+          "id": "shared-play",
+          "titleStem": "느린 별소풍",
+          "sceneCore": "차곡이가 목적지 없는 작은 별소풍 바구니를 챙기고, 빨리 도착하기보다 마음에 드는 돌마다 쉬어 갈 담요를 편다.",
+          "artworkAltCore": "별소풍 바구니와 담요를 들고 천천히 쉬어 갈 돌을 고르는 차곡이",
+          "oneLineInsightTemplate": "“{focus}”에서 편안함만 반복되지 않게 둘의 속도에 맞는 새로운 즐거움을 조금씩 더해 봐.",
+          "reflection": "둘 다 부담 없이 새롭게 즐길 수 있는 느린 활동을 적어 봐.",
+          "interpretationSignals": ["love.need.spark", "love.security.aliveness"]
+        },
+        {
+          "id": "boundary-and-space",
+          "titleStem": "각자의 담요",
+          "sceneCore": "차곡이가 하나의 큰 담요를 잡아당기기보다 각자의 담요와 가운데 나눌 작은 쿠션을 놓아 편안한 거리를 만든다.",
+          "artworkAltCore": "각자의 담요와 가운데 공동 쿠션을 가지런히 놓는 차곡이",
+          "oneLineInsightTemplate": "“{focus}” 안에서도 각자의 휴식과 자원을 지킬 자리가 있어야 가까움이 부담 대신 안전함으로 남아.",
+          "reflection": "함께하는 시간과 각자 쉬는 시간을 어떻게 나누고 싶은지 적어 봐.",
+          "interpretationSignals": ["love.protect.space", "love.protect.safety"]
+        },
+        {
+          "id": "distance-and-return",
+          "titleStem": "식지 않게 남긴 자리",
+          "sceneCore": "차곡이가 비어 있는 상대 자리의 찻잔을 억지로 채우지 않고, 돌아올 때 다시 데울 수 있도록 작은 온도 표식을 남긴다.",
+          "artworkAltCore": "비어 있는 자리의 찻잔 옆에 다시 데울 온도 표식을 남기는 차곡이",
+          "oneLineInsightTemplate": "“{focus}”에서 거리가 생겨도 붙잡기보다 다시 이야기할 시간과 그동안 지킬 일상을 정하면 기다림이 덜 흔들려.",
+          "reflection": "기다리는 동안 지킬 일상과 다시 연락할 시점을 적어 봐.",
+          "interpretationSignals": ["love.distance.distant", "love.timing.space"]
+        },
+        {
+          "id": "repair",
+          "titleStem": "다시 데운 우유",
+          "sceneCore": "차곡이가 식어 버린 우유를 버리지 않고 왜 식었는지 작은 쪽지에 적은 뒤, 새 불빛으로 천천히 다시 데운다.",
+          "artworkAltCore": "식은 우유 옆에 이유 쪽지를 놓고 작은 불빛으로 다시 데우는 차곡이",
+          "oneLineInsightTemplate": "“{focus:을}” 회복하는 데는 서두른 화해보다 상한 지점을 존중하고 반복할 수 있는 새 행동이 필요해.",
+          "reflection": "다친 지점을 존중하기 위해 멈출 것과 새로 반복할 행동을 적어 봐.",
+          "interpretationSignals": ["love.repair.cooperation", "love.repair.dignity"]
+        },
+        {
+          "id": "mutual-growth",
+          "titleStem": "나란히 자란 별씨앗",
+          "sceneCore": "차곡이가 서로 다른 두 화분에 별씨앗을 심고, 가운데에는 물과 햇빛을 나눌 공동 일정을 작은 판에 적는다.",
+          "artworkAltCore": "서로 다른 두 화분과 가운데 공동 돌봄 일정을 놓는 차곡이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 함께 자란다는 건 하나의 화분이 되는 게 아니라 각자의 뿌리를 지키며 돌봄을 나누는 일이야.",
+          "reflection": "각자 키울 목표와 함께 나눌 현실적인 역할을 적어 봐.",
+          "interpretationSignals": ["love.teamwork.structure", "love.teamwork.roles"]
+        },
+        {
+          "id": "future-promise",
+          "titleStem": "다음 계절의 상자",
+          "sceneCore": "차곡이가 먼 미래의 큰 상자 대신 다음 계절에 열 작은 상자에 연락·시간·돈에 관한 약속 세 개를 담는다.",
+          "artworkAltCore": "다음 계절에 열 작은 상자에 세 개의 약속 쪽지를 담는 차곡이",
+          "oneLineInsightTemplate": "“{focus}”의 미래는 막연히 오래 가자는 말보다 다음 계절까지 실제로 지킬 약속을 함께 넣을 때 단단해져.",
+          "reflection": "다음 계절까지 서로 확인할 수 있는 약속 하나를 적어 봐.",
+          "interpretationSignals": ["love.reassurance.consistency", "love.readiness.building"]
+        }
+      ]
+    },
+    {
+      "familyId": "gemini.love",
+      "sign": "gemini",
+      "guardians": "재잘이 · 소곤이",
+      "sharedGuardians": "재잘이 · 소곤이",
+      "nebulaBeat": "바람 부는 새벽, 재잘이와 소곤이가 날아가는 두 편지를 작은 날개로 붙잡고 서로의 문장을 다시 천천히 읽는다.",
+      "nebulaArtworkAlt": "새벽바람에 날리는 두 편지를 붙잡고 다시 읽는 재잘이와 소곤이",
+      "sharedBeat": "재잘이가 먼저 말을 멈추고 소곤이가 고른 한 문장을 끝까지 들으며, 두 편지가 가운데에서 하나의 대화로 이어진다.",
+      "sharedArtworkAlt": "두 편지를 가운데에 놓고 서로의 한 문장을 끝까지 듣는 재잘이와 소곤이가 함께 보이는 장면",
+      "stellaBeat": "재잘이와 소곤이의 서로 다른 문장이 두 가슴 별표와 옅은 별자리 광륜을 따라 하나의 열린 별책으로 펼쳐진다.",
+      "stellaArtworkAlt": "서로 다른 문장이 별자리 궤적을 따라 하나의 열린 별책이 되는 재잘이와 소곤이",
+      "themes": [
+        {
+          "id": "first-signal",
+          "titleStem": "동시에 떠난 두 편지",
+          "sceneCore": "재잘이와 소곤이가 각자 쓴 호감 편지를 동시에 날린 뒤, 겹친 봉투에 상대가 답할 빈 줄을 하나 남긴다.",
+          "artworkAltCore": "동시에 날린 두 호감 편지에 답할 빈 줄을 남기는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 말이 먼저 넘쳐도 상대가 답할 빈 줄을 남기면 표현이 독백이 아니라 신호가 돼.",
+          "reflection": "전하고 싶은 말과 상대에게 묻고 싶은 질문을 하나씩 적어 봐.",
+          "interpretationSignals": ["love.pace.approach", "love.context.curious"]
+        },
+        {
+          "id": "careful-approach",
+          "titleStem": "번갈아 말하는 보폭",
+          "sceneCore": "재잘이와 소곤이가 두 걸음마다 말하는 사람을 바꾸는 별길을 만들고, 가운데에는 듣기만 하는 쉼표 발판을 둔다.",
+          "artworkAltCore": "말하는 차례와 듣는 쉼표가 표시된 별길을 걷는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 대화로 가까워질수록 말하는 속도만큼 듣고 확인하는 보폭도 함께 맞춰야 해.",
+          "reflection": "다음 대화에서 먼저 들을 것과 분명히 말할 것을 적어 봐.",
+          "interpretationSignals": ["love.speed.clarify", "love.pacing.conversation"]
+        },
+        {
+          "id": "everyday-care",
+          "titleStem": "매일 다른 인사",
+          "sceneCore": "재잘이와 소곤이가 매일 다른 별인사를 작은 카드에 적되, 같은 시간에 서로 안부를 묻는 표시만은 일정표에 남긴다.",
+          "artworkAltCore": "다른 별인사 카드와 같은 시간의 안부 표시를 준비하는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus:을}” 돌보는 말은 새롭고 재치 있어도 좋지만 반복해서 안부를 확인하는 자리가 함께 있어야 믿음이 돼.",
+          "reflection": "너답게 변화를 주면서도 꾸준히 반복할 안부 방식을 적어 봐.",
+          "interpretationSignals": ["love.language.verbal", "love.language.presence"]
+        },
+        {
+          "id": "honest-conversation",
+          "titleStem": "끝까지 듣는 두 귀",
+          "sceneCore": "재잘이와 소곤이가 동시에 열린 말풍선 하나씩을 접고, 상대 문장이 끝날 때까지 작은 날개를 내린 채 서로를 향해 몸을 기울인다.",
+          "artworkAltCore": "자기 말풍선을 접고 작은 날개를 내린 채 서로를 바라보는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus:을}” 솔직히 나누려면 재치 있는 답보다 상대의 문장이 끝난 뒤 확인하는 한마디가 더 중요해.",
+          "reflection": "상대 말을 들은 뒤 추측하지 않고 확인할 질문을 적어 봐.",
+          "interpretationSignals": ["love.need.honesty", "love.language.verbal"]
+        },
+        {
+          "id": "shared-play",
+          "titleStem": "둘만의 질문 놀이",
+          "sceneCore": "재잘이와 소곤이가 정답 없는 별질문 카드를 섞고, 서로의 예상 밖 답마다 작은 웃음별을 붙인다.",
+          "artworkAltCore": "정답 없는 별질문 카드와 웃음별을 나누는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus}”에서 서로를 분석하는 질문보다 함께 웃으며 새 모습을 발견하는 놀이가 설렘을 되살려.",
+          "reflection": "서로의 새로운 면을 가볍게 발견할 질문이나 놀이를 적어 봐.",
+          "interpretationSignals": ["love.need.spark", "love.security.aliveness"]
+        },
+        {
+          "id": "boundary-and-space",
+          "titleStem": "이어져도 다른 말풍선",
+          "sceneCore": "재잘이와 소곤이가 이어진 두 말풍선 사이에 각자만 쓸 수 있는 작은 여백 칸을 만들고, 답하지 않을 시간도 표시한다.",
+          "artworkAltCore": "이어진 두 말풍선 안에 각자의 여백과 답하지 않을 시간을 표시하는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus}” 안에서도 모든 생각을 즉시 공유하지 않을 여백이 있어야 대화가 의무가 아니라 선택으로 남아.",
+          "reflection": "연결되어 있어도 혼자 생각할 시간과 알려 줄 신호를 적어 봐.",
+          "interpretationSignals": ["love.protect.space", "love.language.respect"]
+        },
+        {
+          "id": "distance-and-return",
+          "titleStem": "돌아오는 문장",
+          "sceneCore": "재잘이와 소곤이가 멈춘 대화의 마지막 문장 아래에 다시 이야기할 날짜와 먼저 건넬 짧은 안부를 책갈피로 남긴다.",
+          "artworkAltCore": "멈춘 대화 아래 재개 날짜와 안부가 적힌 책갈피를 남기는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus}”에서 대화가 멀어졌을 때 끝없는 해석보다 다시 말할 시간과 시작 문장을 정하는 편이 선명해.",
+          "reflection": "다시 대화할 날짜와 첫 문장을 적어 봐.",
+          "interpretationSignals": ["love.distance.unclear", "love.timing.talk"]
+        },
+        {
+          "id": "repair",
+          "titleStem": "지운 뒤 다시 쓴 편지",
+          "sceneCore": "재잘이와 소곤이가 상처 준 문장을 완전히 가리지 않고 옆에 왜 그랬는지와 다음에 쓸 다른 문장을 새 잉크로 적는다.",
+          "artworkAltCore": "상처 준 문장 옆에 이유와 새 문장을 적는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus:을}” 회복하려면 말실수를 지우는 데서 끝나지 않고 어떤 문장으로 바꿀지 둘이 확인해야 해.",
+          "reflection": "다시 말하고 싶은 문장과 다음 대화의 규칙을 적어 봐.",
+          "interpretationSignals": ["love.repair.truth", "love.next_step.conversation"]
+        },
+        {
+          "id": "mutual-growth",
+          "titleStem": "서로의 질문으로 자라기",
+          "sceneCore": "재잘이와 소곤이가 각자의 질문 나무를 키우고, 가지가 만나는 곳에는 답 대신 서로 배운 것을 작은 별열매로 단다.",
+          "artworkAltCore": "각자의 질문 나무와 만나는 가지에 별열매를 다는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 함께 자란다는 건 같은 답을 갖는 게 아니라 서로의 질문으로 더 넓게 생각하는 일이야.",
+          "reflection": "상대 덕분에 새로 생각하게 된 질문이나 관점을 적어 봐.",
+          "interpretationSignals": ["love.teamwork.communication", "love.teamwork.autonomy"]
+        },
+        {
+          "id": "future-promise",
+          "titleStem": "다음 장의 공동 제목",
+          "sceneCore": "재잘이와 소곤이가 빈 별책의 다음 장 위에 함께할 일 하나와 각자 지킬 일 하나를 공동 제목 아래 적는다.",
+          "artworkAltCore": "빈 별책의 다음 장에 공동 약속과 각자의 약속을 적는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus}”의 미래는 이야기를 미리 완성하는 게 아니라 다음 장의 제목과 각자의 몫을 함께 정할 때 시작돼.",
+          "reflection": "다음 시기에 함께할 일과 각자 책임질 일을 하나씩 적어 봐.",
+          "interpretationSignals": ["love.reassurance.words", "love.security.clarity"]
+        }
+      ]
+    },
+    {
+      "familyId": "cancer.love",
+      "sign": "cancer",
+      "guardians": "달콩이",
+      "sharedGuardians": "달콩이 · 꼬옥이",
+      "nebulaBeat": "달빛 비가 내리는 밤, 달콩이가 달집 문 아래의 별빛과 두 개의 간식을 젖지 않게 작은 처마 안에 지킨다.",
+      "nebulaArtworkAlt": "달빛 비 속 달집 처마 아래에서 별빛 신호와 두 간식을 지키는 달콩이",
+      "sharedBeat": "꼬옥이가 문을 억지로 열지 않고 작은 간식 하나를 문밖에 놓으며, 달콩이는 안쪽에서 문틈을 조금 넓힌다.",
+      "sharedArtworkAlt": "달집 문 양쪽에서 간식을 두고 문틈을 넓히는 달콩이와 꼬옥이가 함께 보이는 장면",
+      "stellaBeat": "달콩이와 꼬옥이가 함께 연 달집 창에서 두 가슴 별표와 옅은 별자리 광륜이 안전한 둥근 궤도로 이어진다.",
+      "stellaArtworkAlt": "함께 연 달집 창에서 두 수호령을 감싸는 둥근 별자리 궤적이 피어나는 달콩이와 꼬옥이",
+      "themes": [
+        {
+          "id": "first-signal",
+          "titleStem": "문 아래의 작은 별빛",
+          "sceneCore": "달콩이가 닫힌 달집 문 안에 간식 두 개를 준비하고, 문 아래로 상대가 알아볼 작은 별빛 한 줄을 내보낸다.",
+          "artworkAltCore": "간식 두 개를 준비하고 달집 문 아래로 별빛 신호를 보내는 달콩이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 기다리는 마음을 숨기지 않고 작은 신호로 바꾸면 상대도 안전하게 다가올 길을 알 수 있어.",
+          "reflection": "알아주길 기다리던 마음을 작은 초대 신호로 바꿔 적어 봐.",
+          "interpretationSignals": ["love.pace.observe", "love.readiness.opening"]
+        },
+        {
+          "id": "careful-approach",
+          "titleStem": "한 집게만큼 가까이",
+          "sceneCore": "달콩이가 달집 전체를 열지 않고 작은 집게 하나를 문밖으로 내밀어, 상대의 반응에 맞춰 문틈의 크기를 천천히 조절한다.",
+          "artworkAltCore": "달집 문틈으로 집게 하나를 내밀고 상대 반응을 살피는 달콩이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 한 번에 마음 전체를 열지 않아도 작은 반응을 주고받으며 안전한 속도를 만들 수 있어.",
+          "reflection": "가까워지는 과정에서 먼저 확인하고 싶은 안전 신호를 적어 봐.",
+          "interpretationSignals": ["love.expression.cautious", "love.pacing.patient"]
+        },
+        {
+          "id": "everyday-care",
+          "titleStem": "두 개로 챙긴 간식",
+          "sceneCore": "달콩이가 자기 간식을 챙길 때 상대 몫도 같은 상자에 넣되, 이름표와 필요한 시간을 따로 붙여 억지로 건네지 않는다.",
+          "artworkAltCore": "두 간식에 각자의 이름표와 시간을 붙이는 달콩이",
+          "oneLineInsightTemplate": "“{focus:을}” 돌보는 다정함은 상대 몫을 미리 살피되 받을 방식과 시간을 선택하게 둘 때 더 편안해.",
+          "reflection": "상대가 선택할 여지를 남기며 건넬 수 있는 돌봄을 적어 봐.",
+          "interpretationSignals": ["love.expression.actions", "love.language.presence"]
+        },
+        {
+          "id": "honest-conversation",
+          "titleStem": "문을 열고 한마디",
+          "sceneCore": "달콩이가 문 뒤에 숨겨 둔 걱정 쪽지를 들고 문을 반쯤 열어, 알아주길 바란 마음을 구체적인 부탁 한 문장으로 바꾼다.",
+          "artworkAltCore": "달집 문을 반쯤 열고 걱정 쪽지를 부탁 문장으로 바꾸는 달콩이",
+          "oneLineInsightTemplate": "“{focus:을}” 지키려면 상대가 알아서 눈치채길 기다리기보다 필요한 안정과 걱정을 짧게 말해야 해.",
+          "reflection": "상대에게 알아달라고 기다리던 필요를 구체적인 부탁으로 적어 봐.",
+          "interpretationSignals": ["love.need.certainty", "love.conversation.warmth"]
+        },
+        {
+          "id": "shared-play",
+          "titleStem": "달집 앞 물놀이",
+          "sceneCore": "달콩이가 달집 안에서만 놀던 별방울을 문밖 작은 물웅덩이에 띄우고, 젖어도 금방 돌아올 수 있는 놀이 자리를 만든다.",
+          "artworkAltCore": "달집 앞 작은 물웅덩이에 별방울 놀이를 준비하는 달콩이",
+          "oneLineInsightTemplate": "“{focus}”에서 안전함을 해치지 않는 작은 놀이가 있으면 관계가 보호만 하는 공간에서 즐거운 공간으로 넓어져.",
+          "reflection": "안전하고 부담 없이 함께 웃을 수 있는 활동을 적어 봐.",
+          "interpretationSignals": ["love.need.spark", "love.security.aliveness"]
+        },
+        {
+          "id": "boundary-and-space",
+          "titleStem": "문이 있어도 이어진 마음",
+          "sceneCore": "달콩이가 달집 문을 닫아 쉴 수 있게 두면서도 문밖 별등과 다시 열 시간을 적은 표식을 함께 남긴다.",
+          "artworkAltCore": "닫힌 달집 문밖에 별등과 다시 열 시간이 적힌 표식을 남기는 달콩이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 혼자 쉬는 문이 있어도 연결을 끊는 게 아니며 돌아올 신호가 있으면 경계가 신뢰가 돼.",
+          "reflection": "혼자 있고 싶을 때 보낼 신호와 다시 연결할 시간을 적어 봐.",
+          "interpretationSignals": ["love.protect.safety", "love.protect.space"]
+        },
+        {
+          "id": "distance-and-return",
+          "titleStem": "꺼지지 않은 현관등",
+          "sceneCore": "달콩이가 멀어진 상대를 계속 창밖에서 찾지 않고 현관 별등 하나만 켠 뒤, 다시 이야기할 날짜를 달력에 표시한다.",
+          "artworkAltCore": "달집 현관 별등을 켜고 달력에 대화 날짜를 표시하는 달콩이",
+          "oneLineInsightTemplate": "“{focus}”에서 거리를 견디려면 계속 확인하는 대신 연결 의사를 남기고 다시 만날 때를 분명히 정해야 해.",
+          "reflection": "연결 의사를 보여 줄 한 신호와 다시 대화할 날짜를 적어 봐.",
+          "interpretationSignals": ["love.distance.tense", "love.timing.space"]
+        },
+        {
+          "id": "repair",
+          "titleStem": "젖은 편지를 말리는 밤",
+          "sceneCore": "달콩이가 비에 젖은 편지를 숨기지 않고 펼쳐 상처 난 문장을 표시하고, 옆에는 다시 안전해지기 위한 행동을 적는다.",
+          "artworkAltCore": "젖은 편지를 펼쳐 상처 난 문장과 회복 행동을 표시하는 달콩이",
+          "oneLineInsightTemplate": "“{focus:을}” 회복할 때 서둘러 문을 다시 열기보다 상처를 말리고 안전이 돌아올 행동을 확인해야 해.",
+          "reflection": "다시 안전해지기 위해 멈출 행동과 시작할 행동을 적어 봐.",
+          "interpretationSignals": ["love.repair.space", "love.repair.cooperation"]
+        },
+        {
+          "id": "mutual-growth",
+          "titleStem": "집 밖에서도 안전한 우리",
+          "sceneCore": "달콩이가 각자의 작은 집을 등에 멘 채 가운데 공동 정원을 만들고, 돌봄 역할과 혼자 쉴 자리를 함께 표시한다.",
+          "artworkAltCore": "각자의 작은 집과 가운데 공동 정원의 역할표를 준비하는 달콩이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 함께 자라려면 한 집에 숨는 게 아니라 각자의 안전을 지키며 공동의 삶을 돌봐야 해.",
+          "reflection": "각자 지킬 공간과 함께 돌볼 관계의 일을 하나씩 적어 봐.",
+          "interpretationSignals": ["love.teamwork.roles", "love.teamwork.communication"]
+        },
+        {
+          "id": "future-promise",
+          "titleStem": "다음 보름달의 자리",
+          "sceneCore": "달콩이가 먼 미래의 약속 대신 다음 보름달 달력에 만날 시간과 확인할 마음 한 가지를 작은 집 모양 표식으로 남긴다.",
+          "artworkAltCore": "다음 보름달 달력에 만날 시간과 집 모양 표식을 남기는 달콩이",
+          "oneLineInsightTemplate": "“{focus}”의 미래는 영원히 곁에 있겠다는 말보다 다음에 안전하게 만날 시간과 마음을 확인할 때 가까워져.",
+          "reflection": "다음에 만날 시간과 그때 서로 확인할 마음을 적어 봐.",
+          "interpretationSignals": ["love.reassurance.consistency", "love.readiness.building"]
+        }
+      ]
+    },
+    {
+      "familyId": "leo.love",
+      "sign": "leo",
+      "guardians": "해님이",
+      "sharedGuardians": "해님이 · 고르미",
+      "nebulaBeat": "노을 진 빈 무대에서 해님이가 금빛 망토로 옆자리 조명을 감싸며 박수 없이도 오래 빛을 지킨다.",
+      "nebulaArtworkAlt": "노을 진 빈 무대에서 금빛 망토로 옆자리 조명을 지키는 해님이",
+      "sharedBeat": "고르미가 옆자리 스포트라이트를 함께 조절하고, 해님이는 자기 조명을 줄이지 않은 채 두 빛의 경계를 맞춘다.",
+      "sharedArtworkAlt": "나란한 두 스포트라이트의 밝기와 경계를 맞추는 해님이와 고르미가 함께 보이는 장면",
+      "stellaBeat": "해님이와 고르미의 두 스포트라이트가 가슴 별표와 옅은 별자리 광륜을 따라 서로를 가리지 않는 하나의 큰 무대로 이어진다.",
+      "stellaArtworkAlt": "서로를 가리지 않는 두 조명과 별자리 궤적이 큰 무대로 이어지는 해님이와 고르미",
+      "themes": [
+        {
+          "id": "first-signal",
+          "titleStem": "먼저 비춘 옆자리",
+          "sceneCore": "해님이가 자기 무대 조명 하나를 옆자리로 돌리고, 상대가 알아볼 작은 금빛 별표를 의자 위에 남긴다.",
+          "artworkAltCore": "자기 무대 조명을 옆자리로 돌리고 금빛 별표를 남기는 해님이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 상대를 먼저 비추는 표현은 따뜻하지만 네 마음을 보여 주는 신호도 함께 있어야 해.",
+          "reflection": "상대를 빛내면서 네 호감도 분명히 드러낼 표현을 적어 봐.",
+          "interpretationSignals": ["love.expression.direct", "love.context.curious"]
+        },
+        {
+          "id": "careful-approach",
+          "titleStem": "같은 조명에 서는 법",
+          "sceneCore": "해님이가 상대를 무대로 바로 이끌지 않고 두 조명 사이에 중간 밝기의 작은 원을 만들어, 함께 설 속도를 묻는다.",
+          "artworkAltCore": "두 조명 사이에 중간 밝기의 원을 만들고 상대 속도를 묻는 해님이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 당당히 다가가도 상대가 준비된 밝기를 확인하면 설렘과 존중이 함께 살아 있어.",
+          "reflection": "상대가 편안한 거리와 표현 강도를 확인할 질문을 적어 봐.",
+          "interpretationSignals": ["love.speed.adjust", "love.pacing.assertive"]
+        },
+        {
+          "id": "everyday-care",
+          "titleStem": "관객 없는 응원",
+          "sceneCore": "해님이가 아무도 보지 않는 연습실 문 앞에 상대의 작은 성취를 축하하는 별스티커와 따뜻한 물을 놓는다.",
+          "artworkAltCore": "빈 연습실 문 앞에 축하 별스티커와 따뜻한 물을 놓는 해님이",
+          "oneLineInsightTemplate": "“{focus:을}” 돌보는 응원은 큰 박수보다 아무도 보지 않을 때도 반복되는 관심에서 믿음이 돼.",
+          "reflection": "상대의 작은 노력을 알아보고 반복해서 건넬 응원을 적어 봐.",
+          "interpretationSignals": ["love.expression.actions", "love.reassurance.actions"]
+        },
+        {
+          "id": "honest-conversation",
+          "titleStem": "왕관을 내려놓은 대화",
+          "sceneCore": "해님이가 왕관을 의자에 내려놓고 멋진 결론 대신 서운했던 마음과 원하는 변화를 두 장의 작은 대본에 적는다.",
+          "artworkAltCore": "왕관을 내려놓고 서운함과 원하는 변화를 두 대본에 적는 해님이",
+          "oneLineInsightTemplate": "“{focus:을}” 솔직히 말할 때 자존심을 지키려는 멋진 문장보다 상처와 부탁을 정확히 나누는 편이 강해.",
+          "reflection": "서운했던 사실과 앞으로 원하는 행동을 하나씩 적어 봐.",
+          "interpretationSignals": ["love.need.honesty", "love.conversation.vulnerability"]
+        },
+        {
+          "id": "shared-play",
+          "titleStem": "둘만의 앙코르",
+          "sceneCore": "해님이가 관객 없는 작은 무대에서 점수표를 치우고, 서로 우스운 동작을 따라 하는 둘만의 앙코르 자리를 만든다.",
+          "artworkAltCore": "점수표 없는 작은 무대에서 우스운 동작 놀이를 준비하는 해님이",
+          "oneLineInsightTemplate": "“{focus}”에서 잘 보이려는 긴장을 내려놓고 둘만 아는 웃음을 만들면 관계의 빛이 다시 따뜻해져.",
+          "reflection": "서로 잘해야 한다는 부담 없이 웃을 수 있는 활동을 적어 봐.",
+          "interpretationSignals": ["love.need.spark", "love.security.aliveness"]
+        },
+        {
+          "id": "boundary-and-space",
+          "titleStem": "각자의 스포트라이트",
+          "sceneCore": "해님이가 하나의 큰 조명을 나누어 쓰기보다 각자의 스포트라이트와 가운데 공동 무대를 분명한 선으로 표시한다.",
+          "artworkAltCore": "각자의 스포트라이트와 가운데 공동 무대의 경계를 그리는 해님이",
+          "oneLineInsightTemplate": "“{focus}” 안에서도 각자의 빛과 무대가 있어야 상대의 성취가 위협이 아니라 기쁨으로 남아.",
+          "reflection": "관계와 별개로 지키고 싶은 네 표현이나 성취의 자리를 적어 봐.",
+          "interpretationSignals": ["love.protect.dignity", "love.protect.space"]
+        },
+        {
+          "id": "distance-and-return",
+          "titleStem": "빈 객석에 남긴 표식",
+          "sceneCore": "해님이가 비어 있는 옆자리 조명을 계속 켜 두지 않고 다음 공연 날짜와 환영의 별표만 의자에 남긴다.",
+          "artworkAltCore": "빈 옆자리 의자에 다음 공연 날짜와 환영 별표를 남기는 해님이",
+          "oneLineInsightTemplate": "“{focus}”에서 거리가 생겼을 때 계속 빛을 보내기보다 다시 만날 자리와 의사를 분명히 남기는 편이 좋아.",
+          "reflection": "다시 만날 수 있는 자리와 그때 전할 첫 문장을 적어 봐.",
+          "interpretationSignals": ["love.distance.distant", "love.timing.restart"]
+        },
+        {
+          "id": "repair",
+          "titleStem": "다시 맞춘 무대 조명",
+          "sceneCore": "해님이가 한쪽만 비추던 조명 각도를 인정하고, 상대 자리에도 같은 밝기가 닿도록 새 표시와 조절 손잡이를 단다.",
+          "artworkAltCore": "한쪽만 비추던 무대 조명을 두 자리로 다시 맞추는 해님이",
+          "oneLineInsightTemplate": "“{focus:을}” 회복하려면 미안하다는 말과 함께 누구의 자리가 가려졌는지 보고 구조를 실제로 바꿔야 해.",
+          "reflection": "가려졌던 상대의 자리와 바꿀 구체적인 행동을 적어 봐.",
+          "interpretationSignals": ["love.repair.dignity", "love.repair.cooperation"]
+        },
+        {
+          "id": "mutual-growth",
+          "titleStem": "서로의 무대를 키우기",
+          "sceneCore": "해님이가 각자의 작은 무대와 가운데 협업 무대를 연결하고, 서로 응원할 때와 혼자 연습할 시간을 일정표에 나눈다.",
+          "artworkAltCore": "각자의 무대와 공동 무대를 연결하고 응원 일정을 나누는 해님이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 함께 자란다는 건 한 사람이 주인공이 되는 게 아니라 서로의 무대를 넓혀 주는 일이야.",
+          "reflection": "각자의 목표와 서로 응원할 구체적인 방식을 적어 봐.",
+          "interpretationSignals": ["love.teamwork.autonomy", "love.teamwork.communication"]
+        },
+        {
+          "id": "future-promise",
+          "titleStem": "다음 공연의 두 이름",
+          "sceneCore": "해님이가 미래의 큰 포스터 대신 다음 공연표에 두 사람 이름과 각자 맡을 한 가지를 같은 크기로 적는다.",
+          "artworkAltCore": "다음 공연표에 두 이름과 각자의 역할을 같은 크기로 적는 해님이",
+          "oneLineInsightTemplate": "“{focus}”의 미래는 화려한 약속보다 다음 장면에 두 사람의 이름과 몫이 함께 있을 때 현실이 돼.",
+          "reflection": "다음에 함께할 장면과 각자 맡을 행동을 적어 봐.",
+          "interpretationSignals": ["love.reassurance.actions", "love.readiness.building"]
+        }
+      ]
+    },
+    {
+      "familyId": "virgo.love",
+      "sign": "virgo",
+      "guardians": "새봄이",
+      "sharedGuardians": "새봄이 · 차곡이",
+      "nebulaBeat": "바람 부는 봄밤, 새봄이가 길이가 다른 별꽃을 억지로 맞추지 않고 느슨한 초록 리본으로 오래 감싼다.",
+      "nebulaArtworkAlt": "봄밤 바람 속 길이가 다른 별꽃을 느슨한 리본으로 감싸는 새봄이",
+      "sharedBeat": "차곡이가 삐뚤어진 꽃 한 송이를 고치지 않고 받아 들며, 새봄이는 정리하던 손을 멈추고 함께 웃는다.",
+      "sharedArtworkAlt": "삐뚤어진 꽃 한 송이를 그대로 받아 드는 차곡이와 손을 멈춘 새봄이가 함께 보이는 장면",
+      "stellaBeat": "새봄이와 차곡이가 함께 심은 서로 다른 별꽃 위로 두 가슴 별표와 옅은 별자리 광륜이 비대칭 화관처럼 이어진다.",
+      "stellaArtworkAlt": "서로 다른 별꽃 위로 비대칭 화관과 별자리 궤적이 이어지는 새봄이와 차곡이",
+      "themes": [
+        {
+          "id": "first-signal",
+          "titleStem": "삐뚤어진 첫 꽃",
+          "sceneCore": "새봄이가 가장 반듯한 꽃 대신 마음이 먼저 간 삐뚤어진 별꽃을 골라, 고치지 않은 채 작은 리본만 묶어 둔다.",
+          "artworkAltCore": "삐뚤어진 별꽃을 고치지 않고 작은 리본을 묶는 새봄이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 완벽하지 않아도 자꾸 눈이 가는 마음은 정리보다 먼저 존중할 작은 신호야.",
+          "reflection": "이유를 다 설명하지 못해도 마음이 가는 상대의 모습을 적어 봐.",
+          "interpretationSignals": ["love.pace.observe", "love.context.curious"]
+        },
+        {
+          "id": "careful-approach",
+          "titleStem": "고치지 않고 기다리는 시간",
+          "sceneCore": "새봄이가 관계의 다음 단계를 체크하지 않고 빈 칸 하나를 남겨, 상대가 자기 속도로 표시할 수 있게 연필을 옆에 둔다.",
+          "artworkAltCore": "관계 체크표에 빈 칸과 상대가 쓸 연필을 남기는 새봄이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 계획을 세우더라도 상대가 자기 속도로 채울 빈칸을 남기면 돌봄이 통제가 되지 않아.",
+          "reflection": "상대가 직접 선택하도록 비워 둘 단계나 시간을 적어 봐.",
+          "interpretationSignals": ["love.pace.care", "love.pacing.patient"]
+        },
+        {
+          "id": "everyday-care",
+          "titleStem": "매일 바꾼 작은 물",
+          "sceneCore": "새봄이가 큰 꽃다발보다 매일 별꽃 화병의 물을 갈고, 상대가 좋아한 온도와 시간을 작은 표에 기록한다.",
+          "artworkAltCore": "별꽃 화병의 물을 갈고 좋아한 온도와 시간을 기록하는 새봄이",
+          "oneLineInsightTemplate": "“{focus:을}” 돌보는 세심함은 상대를 고치는 데 쓰기보다 편안했던 작은 조건을 꾸준히 기억할 때 빛나.",
+          "reflection": "상대가 편안해했던 작은 조건 중 반복해 줄 수 있는 것을 적어 봐.",
+          "interpretationSignals": ["love.expression.actions", "love.language.reliability"]
+        },
+        {
+          "id": "honest-conversation",
+          "titleStem": "수정표 없는 한마디",
+          "sceneCore": "새봄이가 여러 번 고친 대화 초안을 접고, 지금 느끼는 것과 부탁할 것만 적은 작은 카드 두 장을 꺼낸다.",
+          "artworkAltCore": "여러 대화 초안을 접고 감정과 부탁 카드 두 장을 꺼내는 새봄이",
+          "oneLineInsightTemplate": "“{focus:을}” 말할 때 완벽한 문장을 기다리기보다 현재 감정과 구체적인 부탁을 나누면 충분해.",
+          "reflection": "지금 느끼는 것과 상대에게 부탁할 것을 한 문장씩 적어 봐.",
+          "interpretationSignals": ["love.need.honesty", "love.conversation.request"]
+        },
+        {
+          "id": "shared-play",
+          "titleStem": "규칙 없는 별꽃 놀이",
+          "sceneCore": "새봄이가 크기순으로 정리한 꽃을 다시 섞어 눈을 감고 고르는 놀이를 만들고, 틀린 조합에도 작은 웃음표를 붙인다.",
+          "artworkAltCore": "정리한 꽃을 섞어 눈을 감고 고르는 놀이를 준비하는 새봄이",
+          "oneLineInsightTemplate": "“{focus}”에서 잘 해내려는 긴장을 잠시 내려놓고 규칙 없는 놀이를 하면 관계가 다시 가벼워져.",
+          "reflection": "잘하지 않아도 함께 즐길 수 있는 서툰 활동을 적어 봐.",
+          "interpretationSignals": ["love.need.spark", "love.security.aliveness"]
+        },
+        {
+          "id": "boundary-and-space",
+          "titleStem": "고치지 않을 각자의 칸",
+          "sceneCore": "새봄이가 함께 쓰는 체크표에 서로 수정하지 않을 각자의 칸과 반드시 상의할 공동 칸을 다른 색으로 구분한다.",
+          "artworkAltCore": "체크표를 각자의 칸과 공동 칸으로 다른 색으로 나누는 새봄이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 서로를 돕더라도 고치지 않을 영역과 함께 결정할 영역을 나누어야 존중이 남아.",
+          "reflection": "각자 결정할 일과 반드시 함께 상의할 일을 하나씩 적어 봐.",
+          "interpretationSignals": ["love.protect.space", "love.language.respect"]
+        },
+        {
+          "id": "distance-and-return",
+          "titleStem": "접어 둔 체크표",
+          "sceneCore": "새봄이가 멀어진 이유를 끝없이 분석하던 체크표를 접고, 다시 대화할 날짜와 확인 질문 세 개만 겉면에 남긴다.",
+          "artworkAltCore": "긴 체크표를 접고 겉면에 대화 날짜와 질문 세 개를 남기는 새봄이",
+          "oneLineInsightTemplate": "“{focus}”에서 거리가 생겼을 때 모든 원인을 찾기보다 다시 확인할 시점과 핵심 질문을 정하는 편이 좋아.",
+          "reflection": "다시 대화할 날짜와 꼭 확인할 질문을 세 가지 안으로 적어 봐.",
+          "interpretationSignals": ["love.distance.unclear", "love.timing.talk"]
+        },
+        {
+          "id": "repair",
+          "titleStem": "금 간 화분을 함께 잇기",
+          "sceneCore": "새봄이가 금 간 별화분을 혼자 완벽히 숨기지 않고, 금의 원인과 둘이 나눌 수리 단계를 작은 표로 만든다.",
+          "artworkAltCore": "금 간 별화분 옆에 원인과 공동 수리 단계를 적는 새봄이",
+          "oneLineInsightTemplate": "“{focus:을}” 회복하려면 잘못을 분석하는 데서 끝나지 않고 두 사람이 할 수 있는 수리 행동을 나눠야 해.",
+          "reflection": "상처의 원인과 각자 맡을 회복 행동을 하나씩 적어 봐.",
+          "interpretationSignals": ["love.repair.cooperation", "love.repair.truth"]
+        },
+        {
+          "id": "mutual-growth",
+          "titleStem": "서로 다른 성장 눈금",
+          "sceneCore": "새봄이가 두 별싹의 다른 성장 속도를 각각 표시하고, 가운데 공동 물뿌리개와 돌봄 시간을 함께 둔다.",
+          "artworkAltCore": "다른 속도의 두 별싹과 가운데 공동 물뿌리개를 놓는 새봄이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 함께 자란다는 건 같은 눈금에 맞추는 게 아니라 각자의 성장에 필요한 돌봄을 알아보는 일이야.",
+          "reflection": "각자의 성장 방식과 서로 도울 수 있는 현실적인 행동을 적어 봐.",
+          "interpretationSignals": ["love.teamwork.roles", "love.teamwork.structure"]
+        },
+        {
+          "id": "future-promise",
+          "titleStem": "다음 계절의 한 칸",
+          "sceneCore": "새봄이가 먼 미래 계획표를 채우지 않고 다음 계절까지 지킬 약속 한 칸과 다시 검토할 날짜만 선명하게 표시한다.",
+          "artworkAltCore": "계획표에 다음 계절 약속 한 칸과 재검토 날짜를 표시하는 새봄이",
+          "oneLineInsightTemplate": "“{focus}”의 미래는 빈칸을 모두 채우는 계획보다 다음 계절에 확인할 한 약속에서 현실이 돼.",
+          "reflection": "다음 계절까지 지킬 약속과 다시 조정할 날짜를 적어 봐.",
+          "interpretationSignals": ["love.reassurance.consistency", "love.readiness.building"]
+        }
+      ]
+    },
+    {
+      "familyId": "libra.love",
+      "sign": "libra",
+      "guardians": "고르미",
+      "sharedGuardians": "고르미 · 해님이",
+      "nebulaBeat": "보랏빛 황혼, 고르미가 흔들리는 두 별추를 긴 리본으로 묶지 않고 각각의 받침 위에 안정되게 놓는다.",
+      "nebulaArtworkAlt": "보랏빛 황혼 속 두 별추를 각자의 받침에 안정되게 놓는 고르미",
+      "sharedBeat": "해님이가 자기 빛을 분명히 말하고 고르미도 양보 대신 원하는 몫을 꺼내, 가운데에 공동의 세 번째 별을 놓는다.",
+      "sharedArtworkAlt": "각자의 별과 가운데 공동의 세 번째 별을 놓는 고르미와 해님이가 함께 보이는 장면",
+      "stellaBeat": "고르미와 해님이의 세 별이 두 가슴 별표와 옅은 별자리 광륜을 따라 서로 다른 빛을 지닌 균형 고리로 이어진다.",
+      "stellaArtworkAlt": "각자의 빛을 지닌 세 별과 균형 고리의 별자리 궤적이 이어지는 고르미와 해님이",
+      "themes": [
+        {
+          "id": "first-signal",
+          "titleStem": "먼저 기운 작은 추",
+          "sceneCore": "고르미가 수평인 별저울을 보다가 상대 쪽에서 먼저 따뜻해진 작은 추를 발견하고, 이름 없는 분홍 리본을 살짝 건다.",
+          "artworkAltCore": "수평인 별저울의 따뜻해진 작은 추에 분홍 리본을 거는 고르미",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 이유가 같아도 먼저 따뜻해진 마음은 네가 관계 쪽으로 기울고 있다는 작은 신호야.",
+          "reflection": "상대 앞에서 유독 따뜻해지거나 편안해지는 순간을 적어 봐.",
+          "interpretationSignals": ["love.pace.observe", "love.context.curious"]
+        },
+        {
+          "id": "careful-approach",
+          "titleStem": "서로 다른 보폭의 가운데",
+          "sceneCore": "고르미가 서로 다른 두 보폭 사이에 중간 발판을 놓고, 누구도 한쪽 속도에 끌려가지 않도록 다음 걸음을 함께 정한다.",
+          "artworkAltCore": "서로 다른 두 보폭 사이에 중간 발판을 놓는 고르미",
+          "oneLineInsightTemplate": "“{focus:을}” 향한 속도는 한쪽의 양보가 아니라 둘 다 말할 수 있는 중간 보폭을 함께 만드는 일이야.",
+          "reflection": "각자가 편안한 속도와 함께 합의할 중간 지점을 적어 봐.",
+          "interpretationSignals": ["love.pacing.collaborative", "love.speed.adjust"]
+        },
+        {
+          "id": "everyday-care",
+          "titleStem": "한쪽씩 나눈 별",
+          "sceneCore": "고르미가 매일 해야 할 돌봄 별을 번갈아 나누고, 힘든 날에는 상대 별을 대신 드는 교환 표식을 함께 만든다.",
+          "artworkAltCore": "돌봄 별을 번갈아 나누고 교환 표식을 만드는 고르미",
+          "oneLineInsightTemplate": "“{focus:을}” 돌보는 일은 똑같이 반씩 나누는 것보다 그날의 힘을 말하고 몫을 다시 맞추는 데서 공평해져.",
+          "reflection": "반복되는 돌봄을 어떻게 나누고 힘든 날 어떻게 조정할지 적어 봐.",
+          "interpretationSignals": ["love.cooperation.divide", "love.teamwork.roles"]
+        },
+        {
+          "id": "honest-conversation",
+          "titleStem": "합의표 밖의 진심",
+          "sceneCore": "고르미가 모두에게 좋은 문장이 적힌 합의표를 내려놓고, 자기 마음이 원하는 것과 두려운 것을 빈 카드에 따로 쓴다.",
+          "artworkAltCore": "합의표를 내려놓고 원하는 것과 두려움을 빈 카드에 쓰는 고르미",
+          "oneLineInsightTemplate": "“{focus:을}” 솔직히 말할 때 좋은 분위기를 지키는 답보다 네 실제 욕구와 한계를 먼저 포함해야 해.",
+          "reflection": "합의 전에 빠뜨리지 말아야 할 네 욕구와 한계를 적어 봐.",
+          "interpretationSignals": ["love.need.honesty", "love.teamwork.communication"]
+        },
+        {
+          "id": "shared-play",
+          "titleStem": "저울 없이 고르는 놀이",
+          "sceneCore": "고르미가 어느 쪽이 더 좋은지 재는 저울을 덮고, 번갈아 뽑은 색으로 둘만의 별그림을 완성하는 놀이를 만든다.",
+          "artworkAltCore": "덮인 저울 옆에서 번갈아 뽑은 색으로 별그림을 만드는 고르미",
+          "oneLineInsightTemplate": "“{focus}”에서 매번 최선의 데이트를 고르려 하지 않고 우연과 웃음을 허용하면 설렘이 다시 들어와.",
+          "reflection": "비교하지 않고 번갈아 선택해 볼 가벼운 놀이를 적어 봐.",
+          "interpretationSignals": ["love.need.spark", "love.security.aliveness"]
+        },
+        {
+          "id": "boundary-and-space",
+          "titleStem": "같은 리본, 다른 자리",
+          "sceneCore": "고르미가 두 자리를 하나의 느슨한 리본으로 잇되, 각자의 의자 둘레에는 침범하지 않을 작은 원을 분명히 남긴다.",
+          "artworkAltCore": "느슨한 리본으로 이어진 두 의자와 각자의 경계원을 놓는 고르미",
+          "oneLineInsightTemplate": "“{focus}” 안에서 연결과 독립은 함께 있을 수 있고 각자의 자리를 말해야 리본이 묶임이 되지 않아.",
+          "reflection": "함께 나눌 것과 각자의 선택으로 남길 것을 하나씩 적어 봐.",
+          "interpretationSignals": ["love.protect.space", "love.teamwork.autonomy"]
+        },
+        {
+          "id": "distance-and-return",
+          "titleStem": "가운데 남긴 빈 의자",
+          "sceneCore": "고르미가 멀어진 두 자리 사이에 빈 의자를 남기고, 다시 대화할 날짜와 서로 준비할 한 가지를 작은 표에 적는다.",
+          "artworkAltCore": "멀어진 두 자리 사이 빈 의자에 대화 날짜 표를 놓는 고르미",
+          "oneLineInsightTemplate": "“{focus}”에서 거리가 생겼을 때 누가 먼저 양보할지 재기보다 다시 만날 자리와 준비를 함께 정해야 해.",
+          "reflection": "다시 대화할 자리와 각자 준비할 내용을 적어 봐.",
+          "interpretationSignals": ["love.distance.unclear", "love.timing.talk"]
+        },
+        {
+          "id": "repair",
+          "titleStem": "다시 맞춘 두 별추",
+          "sceneCore": "고르미가 기울어진 저울을 억지로 수평으로 누르지 않고, 각 별추에 쌓인 상처와 필요한 회복 행동을 새 무게로 붙인다.",
+          "artworkAltCore": "기울어진 별저울의 두 추에 상처와 회복 행동 표식을 붙이는 고르미",
+          "oneLineInsightTemplate": "“{focus:을}” 회복하는 균형은 같은 잘못을 찾는 게 아니라 각자 받은 영향과 바꿀 행동을 모두 올리는 일이야.",
+          "reflection": "각자가 받은 영향과 앞으로 바꿀 행동을 나눠 적어 봐.",
+          "interpretationSignals": ["love.repair.cooperation", "love.repair.dignity"]
+        },
+        {
+          "id": "mutual-growth",
+          "titleStem": "양보가 아닌 공동 선택",
+          "sceneCore": "고르미가 서로의 목표 별을 하나씩 유지하면서 가운데에 둘이 함께 키울 세 번째 별과 역할표를 새로 만든다.",
+          "artworkAltCore": "각자의 목표 별과 가운데 공동 별의 역할표를 만드는 고르미",
+          "oneLineInsightTemplate": "“{focus}” 안에서 함께 자란다는 건 한쪽 꿈을 줄이는 게 아니라 각자의 별과 공동의 별을 함께 돌보는 일이야.",
+          "reflection": "각자 지킬 목표와 둘이 함께 키울 목표를 하나씩 적어 봐.",
+          "interpretationSignals": ["love.teamwork.roles", "love.pacing.collaborative"]
+        },
+        {
+          "id": "future-promise",
+          "titleStem": "다음 약속의 두 서명",
+          "sceneCore": "고르미가 한쪽이 정한 계획표 대신 다음 시기의 공동 약속과 각자의 약속 아래에 같은 크기의 서명 칸 두 개를 둔다.",
+          "artworkAltCore": "공동 약속과 각자의 약속 아래 같은 크기 서명 칸을 두는 고르미",
+          "oneLineInsightTemplate": "“{focus}”의 미래는 한 사람이 맞춰 주는 계획이 아니라 둘 다 선택하고 서명한 다음 약속에서 시작돼.",
+          "reflection": "둘이 함께 정할 약속과 각자 책임질 약속을 적어 봐.",
+          "interpretationSignals": ["love.cooperation.plan", "love.reassurance.consistency"]
+        }
+      ]
+    },
+    {
+      "familyId": "scorpio.love",
+      "sign": "scorpio",
+      "guardians": "꼬옥이",
+      "sharedGuardians": "꼬옥이 · 달콩이",
+      "nebulaBeat": "별비 내리는 밤, 꼬옥이가 검은 보랏빛 우산을 상대 자리로 기울이며 하트 꼬리의 붉은 빛을 조금 드러낸다.",
+      "nebulaArtworkAlt": "별비 속 보랏빛 우산을 기울이고 하트 꼬리 빛을 드러낸 꼬옥이",
+      "sharedBeat": "달콩이가 열쇠를 요구하지 않고 문 앞에 별등을 놓으며, 꼬옥이는 안쪽에서 자물쇠 하나를 직접 푼다.",
+      "sharedArtworkAlt": "잠긴 문 양쪽에서 별등을 놓고 자물쇠를 푸는 꼬옥이와 달콩이가 함께 보이는 장면",
+      "stellaBeat": "꼬옥이와 달콩이가 함께 연 별상자에서 두 가슴 별표와 옅은 별자리 광륜이 서로의 경계를 지키는 깊은 고리로 이어진다.",
+      "stellaArtworkAlt": "함께 연 별상자에서 경계를 지키는 깊은 별자리 고리가 이어지는 꼬옥이와 달콩이",
+      "themes": [
+        {
+          "id": "first-signal",
+          "titleStem": "망토 밖으로 나온 하트",
+          "sceneCore": "꼬옥이가 무표정하게 망토를 여미지만 하트 꼬리 끝을 작은 별등 가까이에 두어 상대가 알아볼 붉은 빛을 남긴다.",
+          "artworkAltCore": "망토 밖 하트 꼬리 끝을 별등 가까이에 두는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 숨기려 해도 반복해 드러나는 작은 행동은 네 마음이 이미 보내는 신호일 수 있어.",
+          "reflection": "말보다 먼저 반복하고 있는 호감 행동을 적어 봐.",
+          "interpretationSignals": ["love.expression.protected", "love.context.curious"]
+        },
+        {
+          "id": "careful-approach",
+          "titleStem": "문 앞에서 기다리는 집게",
+          "sceneCore": "꼬옥이가 잠긴 문을 바로 열지 않고 문밖에 닿은 집게의 간격만큼 거리를 두며, 상대가 기다릴 수 있는지 먼저 살핀다.",
+          "artworkAltCore": "잠긴 문 앞에 집게를 내밀고 안전한 거리를 확인하는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 천천히 여는 마음은 불신이 아니라 서로 경계를 지킬 수 있는지 확인하는 과정이야.",
+          "reflection": "마음을 더 열기 전에 상대에게서 확인하고 싶은 행동을 적어 봐.",
+          "interpretationSignals": ["love.pace.distance", "love.pacing.patient"]
+        },
+        {
+          "id": "everyday-care",
+          "titleStem": "말없이 기울인 우산",
+          "sceneCore": "꼬옥이가 다른 쪽을 보는 척하면서 매일 같은 시간 우산을 상대 자리로 기울이고, 필요 없을 때 돌려놓을 손잡이도 남긴다.",
+          "artworkAltCore": "고개를 돌린 채 우산을 상대 자리로 기울이고 손잡이를 남기는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus:을}” 행동으로 지키는 다정함은 깊지만 상대가 그 뜻과 선택권을 알 수 있게 작은 설명도 필요해.",
+          "reflection": "행동으로만 보여 주던 돌봄과 함께 덧붙일 짧은 말을 적어 봐.",
+          "interpretationSignals": ["love.expression.actions", "love.language.reliability"]
+        },
+        {
+          "id": "honest-conversation",
+          "titleStem": "봉인을 푸는 한 문장",
+          "sceneCore": "꼬옥이가 별편지 봉인 전체를 뜯지 않고 가장 중요한 진심 한 문장만 보이게 열어, 상대에게 직접 건넨다.",
+          "artworkAltCore": "별편지 봉인을 조금 열어 중요한 한 문장을 건네는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus:을}” 솔직히 말하는 건 모든 비밀을 내놓는 일이 아니라 관계에 필요한 진실을 숨기지 않는 일이야.",
+          "reflection": "관계를 위해 지금 반드시 말해야 할 진실 한 문장을 적어 봐.",
+          "interpretationSignals": ["love.need.honesty", "love.conversation.limit"]
+        },
+        {
+          "id": "shared-play",
+          "titleStem": "비밀 신호 놀이",
+          "sceneCore": "꼬옥이가 둘만 알아볼 작은 하트 꼬리 신호와 별등 색을 정하고, 맞힐 때마다 자물쇠 대신 웃음별을 모은다.",
+          "artworkAltCore": "둘만의 하트 꼬리 신호와 별등 색 놀이를 준비하는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus}”에서 경계만 확인하지 않고 둘만의 안전한 장난을 만들면 깊이가 무거움만으로 남지 않아.",
+          "reflection": "둘만 알아볼 가볍고 안전한 신호나 놀이를 적어 봐.",
+          "interpretationSignals": ["love.need.spark", "love.security.aliveness"]
+        },
+        {
+          "id": "boundary-and-space",
+          "titleStem": "열쇠를 각자 가진 문",
+          "sceneCore": "꼬옥이가 관계의 문에 두 개의 열쇠 구멍을 만들고, 한쪽이 혼자 열 수 없는 공동 칸과 각자 잠글 칸을 구분한다.",
+          "artworkAltCore": "두 열쇠 구멍이 있는 문에 공동 칸과 각자 칸을 표시하는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 깊이 연결되어도 각자의 비밀과 공동의 진실을 나눌 기준이 있어야 신뢰가 강요가 되지 않아.",
+          "reflection": "각자 지킬 사적인 영역과 함께 투명해야 할 영역을 적어 봐.",
+          "interpretationSignals": ["love.protect.space", "love.protect.dignity"]
+        },
+        {
+          "id": "distance-and-return",
+          "titleStem": "꺼지지 않은 작은 등",
+          "sceneCore": "꼬옥이가 멀어진 문을 계속 두드리지 않고 작은 별등 하나와 다시 확인할 날짜를 두며, 그전까지 지킬 경계를 적는다.",
+          "artworkAltCore": "닫힌 문 앞에 작은 별등과 다시 확인할 날짜를 두는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus}”에서 거리가 생겼을 때 침묵을 끝으로 단정하지 말고 다시 확인할 때와 그동안의 경계를 분명히 해.",
+          "reflection": "다시 확인할 날짜와 그동안 서로 지킬 경계를 적어 봐.",
+          "interpretationSignals": ["love.distance.distant", "love.timing.space"]
+        },
+        {
+          "id": "repair",
+          "titleStem": "금 간 자물쇠의 새 매듭",
+          "sceneCore": "꼬옥이가 금 간 자물쇠를 새것으로 덮지 않고 깨진 원인을 표시한 뒤, 다시 잠그지 않을 행동을 붉은 실 매듭에 적는다.",
+          "artworkAltCore": "금 간 자물쇠와 원인 표식과 새 붉은 매듭을 놓는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus:을}” 회복하려면 신뢰가 깨진 사실을 직면하고 같은 균열을 막을 행동을 둘이 약속해야 해.",
+          "reflection": "깨진 신뢰의 원인과 반복을 막을 구체적인 행동을 적어 봐.",
+          "interpretationSignals": ["love.repair.truth", "love.repair.dignity"]
+        },
+        {
+          "id": "mutual-growth",
+          "titleStem": "지키면서 함께 깊어지기",
+          "sceneCore": "꼬옥이가 각자의 별상자와 가운데 함께 열 공동 상자를 놓고, 서로의 성장을 지지할 열쇠 사용법을 표에 적는다.",
+          "artworkAltCore": "각자의 별상자와 공동 상자와 열쇠 사용표를 놓는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 함께 깊어지는 건 모든 경계를 없애는 게 아니라 서로의 성장을 안전하게 열어 주는 일이야.",
+          "reflection": "각자 지킬 영역과 서로 열어 주고 싶은 성장의 기회를 적어 봐.",
+          "interpretationSignals": ["love.teamwork.autonomy", "love.teamwork.communication"]
+        },
+        {
+          "id": "future-promise",
+          "titleStem": "다음에 열 봉인",
+          "sceneCore": "꼬옥이가 먼 미래의 모든 봉인을 풀지 않고 다음에 함께 열 한 봉인에 날짜와 필요한 신뢰 행동을 새긴다.",
+          "artworkAltCore": "다음에 함께 열 봉인에 날짜와 신뢰 행동을 새기는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus}”의 미래는 모든 것을 약속하는 데서보다 다음에 함께 열 진실과 그전까지 지킬 행동을 정할 때 생겨.",
+          "reflection": "다음 단계 전에 서로 지킬 행동과 함께 확인할 날짜를 적어 봐.",
+          "interpretationSignals": ["love.reassurance.consistency", "love.security.clarity"]
+        }
+      ]
+    },
+    {
+      "familyId": "sagittarius.love",
+      "sign": "sagittarius",
+      "guardians": "총총이",
+      "sharedGuardians": "총총이 · 오름이",
+      "nebulaBeat": "별바람 부는 새벽, 총총이가 여행 망토 안쪽에 돌아올 지도와 두 개의 간식을 넣고 먼 길의 신호를 지킨다.",
+      "nebulaArtworkAlt": "새벽 별바람 속 여행 망토에 귀환 지도와 두 간식을 챙기는 총총이",
+      "sharedBeat": "오름이가 출발점에 단단한 귀환 표식을 세우고, 총총이는 가고 싶은 길과 돌아올 시간을 지도에 함께 표시한다.",
+      "sharedArtworkAlt": "지도에 떠날 길과 귀환 시간을 함께 표시하는 총총이와 오름이가 보이는 장면",
+      "stellaBeat": "총총이와 오름이의 서로 다른 길이 두 가슴 별표와 옅은 별자리 광륜을 따라 다음 여행의 공동 별표에서 다시 만난다.",
+      "stellaArtworkAlt": "서로 다른 두 길과 별자리 궤적이 공동 귀환 별표에서 만나는 총총이와 오름이",
+      "themes": [
+        {
+          "id": "first-signal",
+          "titleStem": "지도보다 먼저 찍힌 하트",
+          "sceneCore": "총총이가 새 여행 지도를 펼치기 전 상대가 있는 방향에 작은 하트 별표를 먼저 찍고, 돌아와 함께 볼 여백을 남긴다.",
+          "artworkAltCore": "새 여행 지도에서 상대 방향에 하트 별표와 여백을 남기는 총총이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 계획보다 먼저 찍힌 하트는 자유로운 마음 안에도 함께하고 싶은 방향이 생겼다는 신호야.",
+          "reflection": "새로운 경험 중 상대와 함께 나누고 싶은 장면을 적어 봐.",
+          "interpretationSignals": ["love.pace.approach", "love.context.curious"]
+        },
+        {
+          "id": "careful-approach",
+          "titleStem": "자유를 따라오는 보폭",
+          "sceneCore": "총총이가 먼 길로 먼저 달리지 않고 서로 편한 보폭과 혼자 탐험할 시간을 지도 옆 두 줄 일정에 나누어 적는다.",
+          "artworkAltCore": "지도 옆에 함께 걷는 시간과 혼자 탐험할 시간을 나누어 적는 총총이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 가까워질 때 함께 걷는 시간과 각자 움직일 자유를 동시에 말하면 속도가 구속이 되지 않아.",
+          "reflection": "함께할 시간과 각자 자유롭게 쓸 시간을 어떻게 나눌지 적어 봐.",
+          "interpretationSignals": ["love.speed.own", "love.protect.space"]
+        },
+        {
+          "id": "everyday-care",
+          "titleStem": "여행 가방의 두 간식",
+          "sceneCore": "총총이가 자기 여행 가방을 챙길 때 상대 몫의 간식과 연락 표식을 함께 넣고, 필요할 때 꺼낼 위치를 알려 준다.",
+          "artworkAltCore": "여행 가방에 상대 몫 간식과 연락 표식을 함께 넣는 총총이",
+          "oneLineInsightTemplate": "“{focus:을}” 돌보는 마음은 자유롭게 움직이면서도 상대가 필요할 때 찾을 수 있는 작은 준비에서 보여.",
+          "reflection": "멀리 있거나 바쁠 때도 반복할 수 있는 돌봄 신호를 적어 봐.",
+          "interpretationSignals": ["love.expression.actions", "love.language.presence"]
+        },
+        {
+          "id": "honest-conversation",
+          "titleStem": "멀리서도 분명한 말",
+          "sceneCore": "총총이가 긴 여행 이야기 사이에 지금 원하는 관계와 지키고 싶은 자유를 두 개의 선명한 표지판으로 세운다.",
+          "artworkAltCore": "긴 여행 지도에 관계의 바람과 자유를 두 표지판으로 세우는 총총이",
+          "oneLineInsightTemplate": "“{focus:을}” 솔직히 말할 때 설렘만 이야기하지 말고 관계에서 원하는 방향과 필요한 자유를 함께 알려 줘.",
+          "reflection": "관계에서 원하는 방향과 반드시 필요한 자유를 하나씩 적어 봐.",
+          "interpretationSignals": ["love.need.honesty", "love.conversation.limit"]
+        },
+        {
+          "id": "shared-play",
+          "titleStem": "표지판 없는 별소풍",
+          "sceneCore": "총총이가 목적지와 점수표 없는 짧은 별소풍 길을 고르고, 번갈아 방향을 정할 빈 표지판을 준비한다.",
+          "artworkAltCore": "목적지 없는 별소풍 길에 번갈아 쓸 빈 표지판을 놓는 총총이",
+          "oneLineInsightTemplate": "“{focus}”에서 계획 없는 작은 모험을 함께 만들면 서로의 호기심과 웃음을 새롭게 발견할 수 있어.",
+          "reflection": "둘이 번갈아 방향을 정할 수 있는 작은 모험을 적어 봐.",
+          "interpretationSignals": ["love.need.spark", "love.security.aliveness"]
+        },
+        {
+          "id": "boundary-and-space",
+          "titleStem": "각자의 지도, 같은 별표",
+          "sceneCore": "총총이가 각자의 여행 지도를 따로 펼치고, 꼭 함께 확인할 공동 별표와 방해하지 않을 빈 구역을 분명히 표시한다.",
+          "artworkAltCore": "각자의 두 지도에 공동 별표와 빈 구역을 표시하는 총총이",
+          "oneLineInsightTemplate": "“{focus}” 안에서도 각자의 지도가 있어야 함께하는 별표가 의무가 아니라 다시 고른 만남으로 남아.",
+          "reflection": "각자 자유롭게 결정할 영역과 함께 정할 영역을 적어 봐.",
+          "interpretationSignals": ["love.protect.space", "love.teamwork.autonomy"]
+        },
+        {
+          "id": "distance-and-return",
+          "titleStem": "돌아오는 길의 깃발",
+          "sceneCore": "총총이가 멀리 갈 길에만 깃발을 꽂지 않고 돌아올 출발점에도 같은 색 깃발과 연락 날짜를 남긴다.",
+          "artworkAltCore": "떠날 길과 귀환 출발점에 같은 색 깃발과 연락 날짜를 남기는 총총이",
+          "oneLineInsightTemplate": "“{focus}”에서 거리가 생겨도 돌아올 표식과 연락 시점이 있으면 자유가 불확실한 이탈로 느껴지지 않아.",
+          "reflection": "각자 시간을 보낸 뒤 다시 연결할 날짜와 방식을 적어 봐.",
+          "interpretationSignals": ["love.distance.distant", "love.timing.restart"]
+        },
+        {
+          "id": "repair",
+          "titleStem": "길을 잃고 다시 만난 곳",
+          "sceneCore": "총총이가 길을 잃은 지점을 숨기지 않고 지도에 표시한 뒤, 다음에는 헤어질 때 남길 연락과 귀환 규칙을 새로 그린다.",
+          "artworkAltCore": "길을 잃은 지점과 새 연락과 귀환 규칙을 지도에 그리는 총총이",
+          "oneLineInsightTemplate": "“{focus:을}” 회복하려면 길을 잃은 사실을 인정하고 다음에 서로를 찾을 구체적인 규칙을 만들어야 해.",
+          "reflection": "어긋난 지점과 다음에는 서로를 찾을 방법을 적어 봐.",
+          "interpretationSignals": ["love.repair.truth", "love.repair.cooperation"]
+        },
+        {
+          "id": "mutual-growth",
+          "titleStem": "서로의 세계를 넓히기",
+          "sceneCore": "총총이가 각자의 지도에서 새로 발견한 길을 교환하고, 상대가 가 보고 싶은 길에는 조언 대신 응원 별표를 남긴다.",
+          "artworkAltCore": "각자의 새 길 지도를 교환하고 응원 별표를 남기는 총총이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 함께 자란다는 건 같은 길만 걷는 게 아니라 서로의 세계가 넓어지도록 지지하는 일이야.",
+          "reflection": "상대의 독립적인 성장을 응원할 행동과 함께 탐험할 일을 적어 봐.",
+          "interpretationSignals": ["love.teamwork.autonomy", "love.teamwork.communication"]
+        },
+        {
+          "id": "future-promise",
+          "titleStem": "다음 여행의 귀환 날짜",
+          "sceneCore": "총총이가 먼 미래의 한 지도 대신 다음 여행의 출발·귀환 날짜와 서로 확인할 한 약속을 작은 표에 적는다.",
+          "artworkAltCore": "다음 여행의 출발과 귀환 날짜와 약속을 작은 표에 적는 총총이",
+          "oneLineInsightTemplate": "“{focus}”의 미래는 계속 함께 있겠다는 말보다 떠날 때와 돌아올 때를 서로 믿을 수 있게 만드는 데 있어.",
+          "reflection": "다음 각자 시간과 다시 만날 날짜와 약속을 적어 봐.",
+          "interpretationSignals": ["love.reassurance.consistency", "love.cooperation.plan"]
+        }
+      ]
+    },
+    {
+      "familyId": "capricorn.love",
+      "sign": "capricorn",
+      "guardians": "오름이",
+      "sharedGuardians": "오름이 · 총총이",
+      "nebulaBeat": "눈 내리는 새벽 계단에서 오름이가 두꺼운 작업 망토로 작은 발판을 덮고, 다음 날에도 흔들리지 않게 나사를 조인다.",
+      "nebulaArtworkAlt": "눈 내리는 새벽 계단에서 망토로 발판을 덮고 나사를 조이는 오름이",
+      "sharedBeat": "총총이가 발판 위에 먼저 올라 무게를 시험하고, 오름이는 말없이 받치던 손을 보여 주며 필요한 도움을 함께 정한다.",
+      "sharedArtworkAlt": "작은 발판의 무게를 함께 시험하고 도움을 정하는 오름이와 총총이가 보이는 장면",
+      "stellaBeat": "오름이와 총총이가 함께 놓은 발판에서 두 가슴 별표와 옅은 별자리 광륜이 서로 다른 보폭을 잇는 달빛 계단으로 이어진다.",
+      "stellaArtworkAlt": "함께 놓은 발판에서 서로 다른 보폭을 잇는 달빛 계단과 별자리 궤적이 이어지는 오름이와 총총이",
+      "themes": [
+        {
+          "id": "first-signal",
+          "titleStem": "첫 계단에 놓은 발판",
+          "sceneCore": "오름이가 상대가 오를지 묻기 전 첫 계단의 흔들리는 돌을 고치고, 알아볼 수 있는 작은 금빛 발판을 놓는다.",
+          "artworkAltCore": "첫 계단의 돌을 고치고 작은 금빛 발판을 놓는 오름이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 먼저 기반을 만드는 행동은 깊은 마음이지만 상대가 그 뜻을 알 수 있는 신호도 필요해.",
+          "reflection": "행동으로 준비한 마음과 함께 전할 짧은 말을 적어 봐.",
+          "interpretationSignals": ["love.expression.actions", "love.context.curious"]
+        },
+        {
+          "id": "careful-approach",
+          "titleStem": "서두르지 않는 나란함",
+          "sceneCore": "오름이가 자기 계획표만 따라 계단을 오르지 않고 두 사람의 일정과 에너지가 겹치는 구간에 나란한 발판을 놓는다.",
+          "artworkAltCore": "두 일정이 겹치는 계단 구간에 나란한 발판을 놓는 오름이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 안정적으로 가려면 한 사람의 계획보다 둘의 시간과 에너지가 실제로 만나는 속도를 찾아야 해.",
+          "reflection": "둘의 일정과 에너지를 고려한 현실적인 다음 단계를 적어 봐.",
+          "interpretationSignals": ["love.pacing.patient", "love.reality.schedule"]
+        },
+        {
+          "id": "everyday-care",
+          "titleStem": "매일 같은 시간의 간식",
+          "sceneCore": "오름이가 큰 고백 상자 대신 매일 같은 계단참에 작은 간식과 짧은 안부 쪽지를 놓고, 빠뜨린 날은 숨기지 않는다.",
+          "artworkAltCore": "같은 계단참에 작은 간식과 안부 쪽지를 놓는 오름이",
+          "oneLineInsightTemplate": "“{focus:을}” 돌보는 신뢰는 큰 약속보다 예측 가능한 행동과 지키지 못했을 때의 솔직함에서 쌓여.",
+          "reflection": "꾸준히 지킬 수 있는 행동과 지키지 못할 때 알릴 방법을 적어 봐.",
+          "interpretationSignals": ["love.language.reliability", "love.reassurance.actions"]
+        },
+        {
+          "id": "honest-conversation",
+          "titleStem": "짧지만 분명한 약속",
+          "sceneCore": "오름이가 길고 완벽한 계획서를 접고 지금 맡을 수 있는 책임과 할 수 없는 일을 두 줄 약속으로 적어 건넨다.",
+          "artworkAltCore": "긴 계획서를 접고 책임과 한계를 두 줄 약속으로 적는 오름이",
+          "oneLineInsightTemplate": "“{focus:을}” 솔직히 나누려면 말이 짧아도 맡을 책임과 한계를 분명히 알려 상대가 추측하지 않게 해야 해.",
+          "reflection": "관계에서 책임질 것과 지금 책임질 수 없는 것을 적어 봐.",
+          "interpretationSignals": ["love.need.honesty", "love.conversation.limit"]
+        },
+        {
+          "id": "shared-play",
+          "titleStem": "계단참의 작은 놀이",
+          "sceneCore": "오름이가 정상 일정표를 잠시 덮고 계단참마다 우스운 별스티커를 찾는 짧은 놀이와 휴식 시간을 계획한다.",
+          "artworkAltCore": "덮인 일정표 옆에서 계단참 별스티커 찾기 놀이를 준비하는 오름이",
+          "oneLineInsightTemplate": "“{focus}”에서 미래를 잘 만들려는 노력 사이에도 목적 없는 웃음과 휴식이 있어야 관계가 과제가 되지 않아.",
+          "reflection": "목표와 상관없이 함께 쉬고 웃을 작은 시간을 적어 봐.",
+          "interpretationSignals": ["love.need.spark", "love.security.aliveness"]
+        },
+        {
+          "id": "boundary-and-space",
+          "titleStem": "기대도 되는 각자의 난간",
+          "sceneCore": "오름이가 하나의 난간만 붙잡지 않도록 각자의 계단에 단단한 난간을 세우고, 도움을 요청할 공동 손잡이를 가운데 둔다.",
+          "artworkAltCore": "각자의 계단 난간과 가운데 공동 도움 손잡이를 세우는 오름이",
+          "oneLineInsightTemplate": "“{focus}” 안에서도 각자 버틸 기반과 도움을 청할 공동 손잡이가 함께 있어야 의존과 고립을 피할 수 있어.",
+          "reflection": "각자 책임질 기반과 서로 도움을 요청할 기준을 적어 봐.",
+          "interpretationSignals": ["love.protect.space", "love.teamwork.structure"]
+        },
+        {
+          "id": "distance-and-return",
+          "titleStem": "비워 두지 않은 돌아올 칸",
+          "sceneCore": "오름이가 멀어진 시간을 빈칸으로 두지 않고 각자 할 일과 다시 만날 날짜를 계획표에 적어 기다림의 끝을 보이게 한다.",
+          "artworkAltCore": "계획표에 각자 할 일과 다시 만날 날짜를 적는 오름이",
+          "oneLineInsightTemplate": "“{focus}”에서 거리가 생겼을 때 막연히 버티기보다 각자 할 일과 다시 만날 시점을 정하면 신뢰가 시간을 견뎌.",
+          "reflection": "거리 동안 각자 할 일과 다시 만날 날짜를 적어 봐.",
+          "interpretationSignals": ["love.distance.distant", "love.timing.restart"]
+        },
+        {
+          "id": "repair",
+          "titleStem": "흔들린 발판을 함께 고치기",
+          "sceneCore": "오름이가 흔들린 발판을 혼자 몰래 고치지 않고 깨진 나사와 책임표를 꺼내, 둘이 바꿀 순서를 함께 정한다.",
+          "artworkAltCore": "흔들린 발판의 깨진 나사와 공동 수리 순서를 펼치는 오름이",
+          "oneLineInsightTemplate": "“{focus:을}” 회복하려면 책임을 묵묵히 떠안기보다 무엇이 흔들렸고 각자 무엇을 바꿀지 보이게 해야 해.",
+          "reflection": "흔들린 신뢰의 원인과 각자가 맡을 수리 행동을 적어 봐.",
+          "interpretationSignals": ["love.repair.cooperation", "love.teamwork.roles"]
+        },
+        {
+          "id": "mutual-growth",
+          "titleStem": "같은 정상, 다른 보폭",
+          "sceneCore": "오름이가 서로 다른 두 계단에 각자의 성장 목표를 표시하고, 중간마다 만나 응원할 공동 계단참을 만든다.",
+          "artworkAltCore": "서로 다른 두 계단의 성장 목표와 공동 계단참을 표시하는 오름이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 함께 자란다는 건 같은 속도로 오르는 게 아니라 각자의 목표를 책임지며 중간에 다시 만나는 일이야.",
+          "reflection": "각자의 성장 목표와 중간에 서로 확인할 시점을 적어 봐.",
+          "interpretationSignals": ["love.teamwork.autonomy", "love.teamwork.structure"]
+        },
+        {
+          "id": "future-promise",
+          "titleStem": "다음 계절의 계획표",
+          "sceneCore": "오름이가 평생 계획표 대신 다음 계절의 만남·자원·역할 세 칸만 채우고, 조정 날짜를 마지막에 남긴다.",
+          "artworkAltCore": "다음 계절 계획표에 만남과 자원과 역할과 조정 날짜를 적는 오름이",
+          "oneLineInsightTemplate": "“{focus}”의 미래는 완벽한 장기 계획보다 다음 계절에 실제로 지킬 역할과 다시 조정할 약속에서 시작돼.",
+          "reflection": "다음 계절까지 함께 지킬 역할과 조정 날짜를 적어 봐.",
+          "interpretationSignals": ["love.cooperation.plan", "love.reassurance.consistency"]
+        }
+      ]
+    },
+    {
+      "familyId": "aquarius.love",
+      "sign": "aquarius",
+      "guardians": "방울이",
+      "sharedGuardians": "방울이 · 차곡이",
+      "nebulaBeat": "푸른 새벽 구름 속에서 방울이가 겨울 코트를 입고 파란 마음병의 온도를 지키며 설명 대신 물결 신호를 보낸다.",
+      "nebulaArtworkAlt": "푸른 새벽 구름 속 겨울 코트로 파란 마음병을 지키는 방울이",
+      "sharedBeat": "차곡이가 낯선 물결을 고치려 하지 않고 빈 이름표를 건네며, 방울이는 상대가 이해한 뜻을 새 병에 함께 적는다.",
+      "sharedArtworkAlt": "파란 마음병 옆에서 빈 이름표와 이해한 뜻을 함께 적는 방울이와 차곡이가 보이는 장면",
+      "stellaBeat": "방울이와 차곡이의 서로 다른 마음병이 두 가슴 별표와 옅은 별자리 광륜을 따라 각자의 색을 지닌 하나의 구름 정원으로 이어진다.",
+      "stellaArtworkAlt": "서로 다른 마음병과 별자리 궤적이 각자의 색을 지닌 구름 정원으로 이어지는 방울이와 차곡이",
+      "themes": [
+        {
+          "id": "first-signal",
+          "titleStem": "처음 건넨 파란 마음병",
+          "sceneCore": "방울이가 복잡한 도면을 접고 설명 없는 파란 마음병 하나를 상대 자리 가까이에 두며, 열어 볼 선택은 남겨 둔다.",
+          "artworkAltCore": "접힌 도면 옆 파란 마음병을 상대 자리 가까이에 놓는 방울이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 익숙한 말이 아니어도 네 방식의 작은 신호를 건네면 관계가 번역을 시작할 수 있어.",
+          "reflection": "네 방식으로 부담 없이 건넬 수 있는 호감 신호를 적어 봐.",
+          "interpretationSignals": ["love.expression.protected", "love.context.curious"]
+        },
+        {
+          "id": "careful-approach",
+          "titleStem": "번역할 시간을 둔 물결",
+          "sceneCore": "방울이가 자기 물결을 한꺼번에 병 밖으로 쏟지 않고 작은 파동 하나씩 보내, 상대가 이해한 뜻을 되돌려 줄 시간을 둔다.",
+          "artworkAltCore": "마음병에서 작은 파동을 하나씩 보내고 돌아오는 신호를 기다리는 방울이",
+          "oneLineInsightTemplate": "“{focus:을}” 향한 네 표현이 독특할수록 상대가 이해한 뜻을 확인할 시간까지 포함해야 가까워질 수 있어.",
+          "reflection": "네 표현을 상대가 어떻게 이해했는지 확인할 질문을 적어 봐.",
+          "interpretationSignals": ["love.speed.clarify", "love.pacing.conversation"]
+        },
+        {
+          "id": "everyday-care",
+          "titleStem": "매일 새로 이름 붙인 마음",
+          "sceneCore": "방울이가 매일 달라지는 감정 물결에 작은 이름표를 붙이고, 상대가 필요할 때 고를 수 있는 돌봄 병을 선반에 둔다.",
+          "artworkAltCore": "다른 감정 물결에 이름표를 붙이고 돌봄 병을 선반에 놓는 방울이",
+          "oneLineInsightTemplate": "“{focus:을}” 돌보는 방식이 매번 달라도 상대가 알아볼 이름과 선택권이 있으면 일상의 신뢰가 돼.",
+          "reflection": "상대가 필요에 따라 고를 수 있는 돌봄 방식 두 가지를 적어 봐.",
+          "interpretationSignals": ["love.language.presence", "love.reassurance.actions"]
+        },
+        {
+          "id": "honest-conversation",
+          "titleStem": "도면을 접고 말하기",
+          "sceneCore": "방울이가 관계를 설명한 복잡한 별도안을 접고, 지금 느끼는 것과 필요한 것을 파란 카드 두 장에 짧게 적는다.",
+          "artworkAltCore": "복잡한 별도안을 접고 감정과 필요를 파란 카드에 적는 방울이",
+          "oneLineInsightTemplate": "“{focus:을}” 솔직히 나눌 때 구조를 설명하기보다 지금의 감정과 필요한 반응부터 짧게 건네 봐.",
+          "reflection": "지금 느끼는 감정과 상대에게 원하는 반응을 적어 봐.",
+          "interpretationSignals": ["love.need.honesty", "love.conversation.request"]
+        },
+        {
+          "id": "shared-play",
+          "titleStem": "구름 위의 이상한 놀이",
+          "sceneCore": "방울이가 아무도 해보지 않은 구름 모양 맞히기와 마음병 소리 놀이를 만들고, 틀린 답마다 새로운 규칙을 붙인다.",
+          "artworkAltCore": "구름 모양과 마음병 소리로 새로운 놀이를 만드는 방울이",
+          "oneLineInsightTemplate": "“{focus}”에서 익숙한 데이트 공식 밖의 둘만의 놀이를 발명하면 관계가 새 언어를 얻어.",
+          "reflection": "둘의 취향을 섞어 새로 만들어 볼 놀이를 적어 봐.",
+          "interpretationSignals": ["love.need.spark", "love.security.aliveness"]
+        },
+        {
+          "id": "boundary-and-space",
+          "titleStem": "연결된 병, 각자의 물결",
+          "sceneCore": "방울이가 두 마음병을 느슨한 물결관으로 잇되 각 병의 뚜껑과 색은 그대로 두어, 연결과 독립을 함께 지킨다.",
+          "artworkAltCore": "각자의 색과 뚜껑을 유지한 두 마음병을 느슨한 물결관으로 잇는 방울이",
+          "oneLineInsightTemplate": "“{focus}” 안에서도 모든 감정과 시간을 합치지 않을 경계가 있어야 서로의 고유함이 사랑 안에 남아.",
+          "reflection": "함께 흐르게 할 것과 각자 병에 남겨 둘 것을 적어 봐.",
+          "interpretationSignals": ["love.protect.space", "love.teamwork.autonomy"]
+        },
+        {
+          "id": "distance-and-return",
+          "titleStem": "돌아오는 파란 신호",
+          "sceneCore": "방울이가 멀어진 물결을 계속 추적하지 않고 일정한 시간에 파란 신호 하나를 보내며, 답이 없을 때 기다릴 기간을 표시한다.",
+          "artworkAltCore": "멀어진 물결에 파란 신호를 보내고 기다릴 기간을 표시하는 방울이",
+          "oneLineInsightTemplate": "“{focus}”에서 거리가 생겼을 때 무한히 해석하지 말고 일정한 신호와 기다림의 끝을 정해 둬.",
+          "reflection": "보낼 안부 신호와 답을 기다릴 기간을 적어 봐.",
+          "interpretationSignals": ["love.distance.unclear", "love.timing.space"]
+        },
+        {
+          "id": "repair",
+          "titleStem": "새로 설계한 사과",
+          "sceneCore": "방울이가 고장 난 마음병을 새 장식으로 가리지 않고 원인·영향·다음 행동을 세 칸 도면에 그려 사과와 함께 건넨다.",
+          "artworkAltCore": "고장 난 마음병 옆 원인과 영향과 행동의 세 칸 도면을 그리는 방울이",
+          "oneLineInsightTemplate": "“{focus:을}” 회복하려면 의도를 설명하는 데서 멈추지 않고 상대가 받은 영향과 바꿀 설계를 함께 보여 줘야 해.",
+          "reflection": "네 의도와 상대가 받은 영향과 바꿀 행동을 나눠 적어 봐.",
+          "interpretationSignals": ["love.repair.truth", "love.repair.cooperation"]
+        },
+        {
+          "id": "mutual-growth",
+          "titleStem": "서로의 방식을 발명하기",
+          "sceneCore": "방울이가 각자의 작업대와 가운데 공동 실험대를 놓고, 서로의 아이디어를 고치지 않고 도울 규칙을 함께 만든다.",
+          "artworkAltCore": "각자의 작업대와 공동 실험대에 도움 규칙을 붙이는 방울이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 함께 자란다는 건 같은 방식이 되는 게 아니라 서로의 고유한 실험을 지지할 구조를 만드는 일이야.",
+          "reflection": "각자의 도전을 지지할 방식과 함께 시험할 프로젝트를 적어 봐.",
+          "interpretationSignals": ["love.teamwork.autonomy", "love.teamwork.structure"]
+        },
+        {
+          "id": "future-promise",
+          "titleStem": "다음 버전의 우리",
+          "sceneCore": "방울이가 완성본이라고 적힌 큰 도면을 지우고 다음 버전에서 함께 시험할 행동과 유지할 원리를 작은 칸에 적는다.",
+          "artworkAltCore": "관계 도면의 다음 버전에 시험할 행동과 유지할 원리를 적는 방울이",
+          "oneLineInsightTemplate": "“{focus}”의 미래는 완성된 답이 아니라 다음 버전에서 함께 시험하고 지킬 것을 계속 합의하는 과정이야.",
+          "reflection": "다음 시기에 새로 시험할 행동과 계속 지킬 원리를 적어 봐.",
+          "interpretationSignals": ["love.cooperation.plan", "love.reassurance.consistency"]
+        }
+      ]
+    },
+    {
+      "familyId": "pisces.love",
+      "sign": "pisces",
+      "guardians": "꿈별이 · 잠별이",
+      "sharedGuardians": "꿈별이 · 잠별이",
+      "nebulaBeat": "달빛 깊은 꿈바다에서 꿈별이와 잠별이가 다른 색의 잠옷을 입고 느슨한 별빛 고리를 놓치지 않은 채 물살을 탄다.",
+      "nebulaArtworkAlt": "달빛 꿈바다에서 다른 색 잠옷과 느슨한 별빛 고리로 이어진 꿈별이와 잠별이",
+      "sharedBeat": "꿈별이가 먼저 끌어당기지 않고 잠별이의 물살을 듣고, 둘은 가운데에서 힘을 빼고 지느러미를 다시 맞잡는다.",
+      "sharedArtworkAlt": "서로 다른 물살 사이에서 힘을 빼고 지느러미를 맞잡는 꿈별이와 잠별이가 함께 보이는 장면",
+      "stellaBeat": "꿈별이와 잠별이의 두 물살이 가슴 별표와 옅은 별자리 광륜을 따라 각자의 색을 잃지 않는 하나의 넓은 별빛 원으로 이어진다.",
+      "stellaArtworkAlt": "각자의 색을 지닌 두 물살과 별자리 궤적이 넓은 원으로 이어지는 꿈별이와 잠별이",
+      "themes": [
+        {
+          "id": "first-signal",
+          "titleStem": "먼저 맞닿은 지느러미",
+          "sceneCore": "꿈별이와 잠별이가 다른 꿈을 보다가 깨어 가운데에서 우연히 맞닿은 지느러미를 바로 떼지 않고 작은 별방울을 띄운다.",
+          "artworkAltCore": "다른 꿈구름 사이에서 맞닿은 지느러미와 작은 별방울을 보는 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 잠깐 맞닿은 마음을 서둘러 운명으로 부르지 않아도 머물러 본 순간 자체가 신호가 돼.",
+          "reflection": "상대와 연결됐다고 느낀 작고 구체적인 순간을 적어 봐.",
+          "interpretationSignals": ["love.pace.observe", "love.context.curious"]
+        },
+        {
+          "id": "careful-approach",
+          "titleStem": "다른 물살의 같은 속도",
+          "sceneCore": "꿈별이와 잠별이가 서로 다른 방향의 물살을 타면서 가운데 느슨한 별빛 고리의 당김이 편안한지 번갈아 확인한다.",
+          "artworkAltCore": "다른 물살을 타며 가운데 별빛 고리의 당김을 확인하는 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 같은 방향이 아니어도 연결의 힘과 속도를 서로 확인하면 무리 없이 가까워질 수 있어.",
+          "reflection": "각자의 속도를 지키며 연결을 확인할 신호를 적어 봐.",
+          "interpretationSignals": ["love.pacing.patient", "love.speed.follow"]
+        },
+        {
+          "id": "everyday-care",
+          "titleStem": "매일 건넨 꿈방울",
+          "sceneCore": "꿈별이와 잠별이가 거창한 꿈 대신 오늘 기억하고 싶은 작은 장면을 꿈방울 하나에 담아 같은 시간에 서로 건넨다.",
+          "artworkAltCore": "오늘의 작은 장면이 든 꿈방울을 같은 시간에 교환하는 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus:을}” 돌보는 연결은 모든 감정을 합치는 게 아니라 오늘의 작은 장면을 꾸준히 나누는 데서 깊어져.",
+          "reflection": "매일이나 매주 서로 나눌 수 있는 작은 장면이나 안부를 적어 봐.",
+          "interpretationSignals": ["love.language.presence", "love.reassurance.consistency"]
+        },
+        {
+          "id": "honest-conversation",
+          "titleStem": "꿈에서 깨어 말하기",
+          "sceneCore": "꿈별이와 잠별이가 상대 마음을 상상한 꿈구름을 걷어 내고, 실제로 느낀 것과 모르는 것을 두 개의 맑은 물방울에 적는다.",
+          "artworkAltCore": "상상 꿈구름을 걷고 감정과 모르는 것을 두 물방울에 적는 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus:을}” 솔직히 말하려면 상대 마음을 대신 느꼈다고 단정하지 말고 네 감정과 모르는 부분을 나눠야 해.",
+          "reflection": "네가 실제로 느낀 것과 상대에게 확인해야 할 것을 적어 봐.",
+          "interpretationSignals": ["love.need.honesty", "love.conversation.vulnerability"]
+        },
+        {
+          "id": "shared-play",
+          "titleStem": "둘만의 별물결 놀이",
+          "sceneCore": "꿈별이와 잠별이가 꿈바다에 서로 다른 색 물결을 만들어 가운데서 어떤 모양이 생기는지 웃으며 지켜본다.",
+          "artworkAltCore": "서로 다른 색 물결을 보내 가운데 생긴 모양을 보는 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus}”에서 감정의 깊이만 확인하지 않고 둘의 상상이 섞이는 놀이를 만들면 관계가 가벼운 숨을 쉬어.",
+          "reflection": "둘의 상상이나 취향을 섞어 함께 해볼 놀이를 적어 봐.",
+          "interpretationSignals": ["love.need.spark", "love.security.aliveness"]
+        },
+        {
+          "id": "boundary-and-space",
+          "titleStem": "맞잡아도 각자의 색",
+          "sceneCore": "꿈별이와 잠별이가 지느러미를 맞잡되 각자의 색 물결 둘레에 투명한 별빛 막을 두어 감정이 모두 섞이지 않게 한다.",
+          "artworkAltCore": "맞잡은 지느러미와 각자의 색 물결을 감싼 투명 별빛 막을 보는 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 깊이 느껴도 상대 감정과 네 감정을 나눌 경계가 있어야 희생 없이 연결될 수 있어.",
+          "reflection": "함께 느낄 감정과 각자 책임질 감정을 나눠 적어 봐.",
+          "interpretationSignals": ["love.protect.bond", "love.protect.space"]
+        },
+        {
+          "id": "distance-and-return",
+          "titleStem": "같은 원으로 돌아오기",
+          "sceneCore": "꿈별이와 잠별이가 반대 방향으로 흘러가면서도 다시 만날 별빛 원과 시간을 물살 아래에 같은 표식으로 남긴다.",
+          "artworkAltCore": "반대 물살 아래 같은 귀환 원과 시간 표식을 남기는 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus}”에서 거리가 생겨도 다시 만날 중심과 시간을 합의하면 각자의 물살을 타는 일이 이별로만 느껴지지 않아.",
+          "reflection": "각자 시간을 보낸 뒤 다시 만날 중심과 날짜를 적어 봐.",
+          "interpretationSignals": ["love.distance.distant", "love.timing.restart"]
+        },
+        {
+          "id": "repair",
+          "titleStem": "흐려진 경계를 다시 그리기",
+          "sceneCore": "꿈별이와 잠별이가 섞여 흐려진 두 물결을 탓하지 않고 각자의 색과 공동의 색을 새 별빛 선으로 다시 나눈다.",
+          "artworkAltCore": "섞인 두 물결에서 각자의 색과 공동 색을 별빛 선으로 다시 나누는 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus:을}” 회복하려면 누가 더 희생했는지보다 흐려진 경계를 인정하고 각자의 몫을 다시 돌려줘야 해.",
+          "reflection": "돌려받을 감정이나 책임과 함께 다시 나눌 몫을 적어 봐.",
+          "interpretationSignals": ["love.repair.space", "love.repair.dignity"]
+        },
+        {
+          "id": "mutual-growth",
+          "titleStem": "희생 없이 함께 깊어지기",
+          "sceneCore": "꿈별이와 잠별이가 각자의 꿈산호를 키우고 가운데 공동 물결에는 서로 필요한 돌봄과 혼자 할 성장을 구분해 적는다.",
+          "artworkAltCore": "각자의 꿈산호와 가운데 공동 물결의 돌봄표를 놓는 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus}” 안에서 함께 깊어지는 건 한쪽 물살에 사라지는 게 아니라 각자의 꿈을 지키며 돌봄을 나누는 일이야.",
+          "reflection": "각자의 꿈과 서로 돌볼 수 있는 현실적인 행동을 적어 봐.",
+          "interpretationSignals": ["love.teamwork.autonomy", "love.teamwork.roles"]
+        },
+        {
+          "id": "future-promise",
+          "titleStem": "다음 꿈의 중심 별",
+          "sceneCore": "꿈별이와 잠별이가 영원한 같은 꿈 대신 다음 꿈에서 다시 만날 중심 별과 그전까지 지킬 연결 신호를 함께 고른다.",
+          "artworkAltCore": "다음 꿈의 중심 별과 연결 신호를 함께 고르는 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus}”의 미래는 같은 꿈을 강요하는 게 아니라 다음에 만날 중심과 그동안 지킬 신호를 함께 정하는 데 있어.",
+          "reflection": "다음 시기에 함께 확인할 중심과 그전까지 보낼 연결 신호를 적어 봐.",
+          "interpretationSignals": ["love.reassurance.consistency", "love.protect.bond"]
+        }
+      ]
+    }
+  ]
+}

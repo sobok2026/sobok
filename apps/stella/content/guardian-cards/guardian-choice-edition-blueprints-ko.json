@@ -1,0 +1,593 @@
+{
+  "status": "authoring",
+  "locale": "ko",
+  "slot": "choice",
+  "treatments": [
+    {
+      "id": "close-emotion",
+      "titleSuffix": "마음",
+      "previewTone": "comfort",
+      "sceneSuffix": "표정과 손끝을 가까이 잡아 바람과 두려움이 동시에 읽히게 하고 선택지 밖에는 충분한 여백을 둔다.",
+      "artworkAltSuffix": "선택 앞의 표정과 손끝을 가까이 보여 주는 구도",
+      "oneLineAction": "정답을 고르기 전에 지금의 바람과 두려움부터 따로 이름 붙여 봐."
+    },
+    {
+      "id": "action-beat",
+      "titleSuffix": "첫 선택",
+      "previewTone": "action",
+      "sceneSuffix": "문손잡이, 표식, 첫발 중 하나가 막 움직인 찰나를 포착해 선택의 원인과 다음 행동이 함께 보이게 한다.",
+      "artworkAltSuffix": "문손잡이와 표식과 첫발 중 하나가 움직이기 시작한 순간",
+      "oneLineAction": "확신을 기다리기보다 지금 확인할 수 있는 가장 작은 행동 하나를 골라."
+    },
+    {
+      "id": "shared-world",
+      "titleSuffix": "대화",
+      "previewTone": "honesty",
+      "sceneSuffix": "{sharedBeat}",
+      "artworkAltSuffix": "{sharedArtworkAlt}",
+      "oneLineAction": "영향을 받는 사람에게 결론만 알리지 말고 지키고 싶은 이유도 함께 말해."
+    },
+    {
+      "id": "constellation-afterglow",
+      "titleSuffix": "다음 길",
+      "previewTone": "possibility",
+      "sceneSuffix": "첫 선택 뒤 가슴의 Stella 별표가 귀환 지점과 다음 판단 시점을 잇는 별자리 궤적으로 번진다.",
+      "artworkAltSuffix": "가슴의 별표에서 귀환 지점 표식과 먼 쪽의 판단 표식으로 별자리 궤적이 이어진 장면",
+      "oneLineAction": "다시 판단할 날짜와 그때 확인할 신호를 남겨 선택이 계속 움직이게 해."
+    }
+  ],
+  "families": [
+    {
+      "familyId": "aries.choice",
+      "sign": "aries",
+      "guardians": "몽실이",
+      "sharedGuardians": "몽실이 · 달콩이",
+      "sharedBeat": "달콩이가 열린 문을 닫지 않은 채 출발점에 귀환 별등을 놓고, 몽실이는 가고 싶은 이유를 짧게 말한다.",
+      "sharedArtworkAlt": "열린 문 앞에 귀환 별등을 놓는 달콩이와 이유를 말하는 몽실이가 함께 보이는 장면",
+      "contexts": [
+        {
+          "id": "desire",
+          "titleStem": "벌써 열린 붉은 문",
+          "sceneCore": "몽실이가 생각보다 먼저 붉은 문을 열고, 문 안에서 불어오는 바람에 반응한 가슴의 작은 불꽃을 내려다본다.",
+          "artworkAltCore": "붉은 문을 연 채 가슴의 작은 불꽃을 내려다보는 몽실이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 몸이 먼저 움직인 방향에는 타인의 기대보다 빠르게 드러난 네 진짜 바람이 있을 수 있어.",
+          "reflection": "설명하기 전에 이미 마음이나 몸이 먼저 향한 선택을 적어 봐.",
+          "selectionSignals": ["choice.inner.desire", "choice.compass.desire"]
+        },
+        {
+          "id": "evidence",
+          "titleStem": "문턱에 남긴 확인표",
+          "sceneCore": "몽실이가 열린 문턱에 멈춰 안쪽 길의 거리와 돌아올 길을 짧은 확인표에 그린 뒤, 필요한 사실에만 별표를 붙인다.",
+          "artworkAltCore": "열린 문턱에서 안쪽 거리와 귀환 길을 확인표에 그리는 몽실이",
+          "oneLineInsightTemplate": "“{focus:을}” 향한 추진력을 살리려면 모든 정보를 모으기보다 안전과 결과를 바꿀 핵심 사실부터 확인해야 해.",
+          "reflection": "이 선택의 안전이나 결과를 실제로 바꿀 정보 두 가지를 적어 봐.",
+          "selectionSignals": ["choice.need.criteria", "choice.compass.evidence"]
+        },
+        {
+          "id": "protected-value",
+          "titleStem": "불꽃을 지키는 경계",
+          "sceneCore": "몽실이가 두 길 사이에서 가장 크게 타오르는 불꽃 둘레에 작은 원을 그리고, 어느 문을 골라도 넘지 않을 선을 표시한다.",
+          "artworkAltCore": "두 길 사이의 불꽃 둘레에 지켜야 할 경계선을 그리는 몽실이",
+          "oneLineInsightTemplate": "“{focus:을}” 고를 때 네 용기와 가능성을 모두 쓰려면 무엇을 잃지 않을지 먼저 한 가지로 좁혀야 해.",
+          "reflection": "어느 선택에서도 포기하지 않을 네 정체성이나 가능성을 적어 봐.",
+          "selectionSignals": ["choice.protect.identity", "choice.protect.possibility"]
+        },
+        {
+          "id": "reversible-step",
+          "titleStem": "돌아올 수 있는 첫 질주",
+          "sceneCore": "몽실이가 낯선 길로 달리기 전 출발선에 돌아올 별표를 찍고, 첫 모퉁이까지만 다녀올 시간을 모래시계에 맞춘다.",
+          "artworkAltCore": "출발선에 귀환 별표를 찍고 첫 모퉁이까지 달릴 준비를 하는 몽실이",
+          "oneLineInsightTemplate": "“{focus:을}” 향한 첫걸음은 끝까지 약속하는 일이 아니라 짧게 가 보고 다시 고를 수 있게 만드는 일이야.",
+          "reflection": "오늘 시험할 범위와 돌아와 다시 판단할 시간을 적어 봐.",
+          "selectionSignals": ["choice.action.small_step", "choice.plan.reversible"]
+        }
+      ]
+    },
+    {
+      "familyId": "taurus.choice",
+      "sign": "taurus",
+      "guardians": "차곡이",
+      "sharedGuardians": "차곡이 · 새봄이",
+      "sharedBeat": "새봄이가 두 길의 조건을 간단한 표로 적고, 차곡이는 각 길에 오래 머물렀을 때의 온도를 천천히 설명한다.",
+      "sharedArtworkAlt": "두 길의 조건표를 든 새봄이와 바닥의 온도를 느끼는 차곡이가 함께 보이는 장면",
+      "contexts": [
+        {
+          "id": "desire",
+          "titleStem": "따뜻한 길이 부르는 쪽",
+          "sceneCore": "차곡이가 익숙한 돌길과 새싹 난 흙길에 한 발씩 올리고, 오래 머물고 싶은 쪽에서 따뜻해지는 발끝을 살핀다.",
+          "artworkAltCore": "돌길과 새싹 난 흙길에 한 발씩 올려 온도를 느끼는 차곡이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 오래 머물고 싶은 온도를 느끼는 감각은 편안함과 진짜 바람을 구분할 중요한 단서야.",
+          "reflection": "지금의 익숙함이 아니라 오래 머물고 싶은 장면을 구체적으로 적어 봐.",
+          "selectionSignals": ["choice.inner.desire", "choice.compass.peace"]
+        },
+        {
+          "id": "evidence",
+          "titleStem": "발밑의 실제 온도",
+          "sceneCore": "차곡이가 두 길의 비용과 시간을 작은 돌추로 올리고, 상상한 걱정과 확인된 숫자를 서로 다른 바구니에 나눈다.",
+          "artworkAltCore": "두 길의 비용과 시간을 돌추로 비교하고 걱정과 숫자를 나누는 차곡이",
+          "oneLineInsightTemplate": "“{focus:을}” 현실적으로 지키려면 막연한 불안보다 비용과 시간처럼 확인할 수 있는 조건을 먼저 바닥에 놓아야 해.",
+          "reflection": "선택을 비교하기 위해 확인할 비용과 시간의 숫자를 적어 봐.",
+          "selectionSignals": ["choice.need.criteria", "choice.action.numbers"]
+        },
+        {
+          "id": "protected-value",
+          "titleStem": "꼭 챙길 작은 가방",
+          "sceneCore": "차곡이가 길을 고르기 전 생활비·휴식·소중한 물건을 작은 가방에 담고, 가방이 안전한 문만 후보로 남긴다.",
+          "artworkAltCore": "생활비와 휴식 표식이 든 작은 가방을 들고 두 문을 살피는 차곡이",
+          "oneLineInsightTemplate": "“{focus:을}” 고를 때 안정과 자원을 지키는 건 변화에 소극적인 일이 아니라 지속할 수 있는 선택의 조건이야.",
+          "reflection": "이 선택에서 반드시 남겨 둘 돈과 시간의 안전선을 적어 봐.",
+          "selectionSignals": ["choice.protect.resources", "choice.safety_net.budget"]
+        },
+        {
+          "id": "reversible-step",
+          "titleStem": "한 발만 밟아 보는 길",
+          "sceneCore": "차곡이가 새싹 난 길 전체를 고르지 않고 첫 돌 하나만 밟아, 몸의 반응과 돌아올 발판의 단단함을 확인한다.",
+          "artworkAltCore": "새싹 난 길의 첫 돌을 한 발로 밟고 뒤의 발판을 확인하는 차곡이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 천천히 한 발만 시험하면 안정감을 버리지 않고도 새로운 정보를 얻을 수 있어.",
+          "reflection": "생활을 크게 바꾸지 않고 먼저 체험할 수 있는 한 단계를 적어 봐.",
+          "selectionSignals": ["choice.action.paced", "choice.safety_net.return"]
+        }
+      ]
+    },
+    {
+      "familyId": "gemini.choice",
+      "sign": "gemini",
+      "guardians": "재잘이 · 소곤이",
+      "sharedGuardians": "재잘이 · 소곤이",
+      "sharedBeat": "재잘이가 한 선택의 장점을 말하면 소곤이가 다른 선택에서 놓칠 것을 적고, 둘이 가운데에서 질문을 바꾸어 읽는다.",
+      "sharedArtworkAlt": "두 선택의 장점과 놓칠 것을 번갈아 읽는 재잘이와 소곤이가 함께 보이는 장면",
+      "contexts": [
+        {
+          "id": "desire",
+          "titleStem": "두 마음이 동시에 고른 것",
+          "sceneCore": "재잘이와 소곤이가 서로 다른 두 문을 가리키다가, 두 선택에 공통으로 그려진 작은 별기호를 동시에 발견한다.",
+          "artworkAltCore": "서로 다른 두 문에서 같은 작은 별기호를 발견한 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 마음이 나뉘어도 두 선택이 공통으로 향하는 바람을 찾으면 진짜 원하는 방향이 선명해져.",
+          "reflection": "두 선택 모두에서 기대하는 공통 장면이나 감정을 적어 봐.",
+          "selectionSignals": ["choice.inner.desire", "choice.compass.desire"]
+        },
+        {
+          "id": "evidence",
+          "titleStem": "돌아와 비교할 지도",
+          "sceneCore": "재잘이와 소곤이가 두 길을 짧게 다녀와 본 것과 느낀 것을 서로 다른 색으로 지도에 쓰고, 추측 칸은 비워 둔다.",
+          "artworkAltCore": "두 길에서 본 사실과 느낌을 다른 색으로 지도에 기록하는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus:을}” 비교할 때 머릿속 장단점보다 직접 시험해 얻은 사실과 반응이 더 믿을 만한 기준이 돼.",
+          "reflection": "두 선택을 짧게 시험해 각각 확인할 사실을 적어 봐.",
+          "selectionSignals": ["choice.test.trial", "choice.compass.evidence"]
+        },
+        {
+          "id": "protected-value",
+          "titleStem": "닫지 않을 가능성",
+          "sceneCore": "재잘이와 소곤이가 한 문을 고르면서도 다른 가능성을 지우지 않고, 나중에 다시 열 수 있는 작은 창을 지도에 남긴다.",
+          "artworkAltCore": "한 문을 고르며 다른 길에 다시 열 수 있는 작은 창을 남기는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus:을}” 고르는 동안 호기심과 가능성을 완전히 닫지 않는 조건이 있어야 선택 뒤에도 너답게 움직일 수 있어.",
+          "reflection": "한 선택을 하면서도 계속 열어 두고 싶은 가능성을 적어 봐.",
+          "selectionSignals": ["choice.protect.possibility", "choice.protect.identity"]
+        },
+        {
+          "id": "reversible-step",
+          "titleStem": "둘 다 짧게 가 보는 법",
+          "sceneCore": "재잘이와 소곤이가 각각 다른 길의 첫 표지판까지 다녀오기로 하고, 가운데 만날 시간과 비교 질문을 같은 시계에 적는다.",
+          "artworkAltCore": "두 길의 첫 표지판과 가운데 귀환 시간을 정하는 재잘이와 소곤이",
+          "oneLineInsightTemplate": "“{focus:을}” 한 번에 확정하지 않고 짧은 실험 둘로 나누면 생각이 아니라 경험으로 비교할 수 있어.",
+          "reflection": "각 선택을 작게 시험할 방법과 비교할 질문 하나를 적어 봐.",
+          "selectionSignals": ["choice.action.experiment", "choice.plan.reversible"]
+        }
+      ]
+    },
+    {
+      "familyId": "cancer.choice",
+      "sign": "cancer",
+      "guardians": "달콩이",
+      "sharedGuardians": "달콩이 · 꼬옥이",
+      "sharedBeat": "꼬옥이가 달집 문밖에서 답을 재촉하지 않고 필요한 질문 하나만 건네며, 달콩이는 지키고 싶은 관계를 말한다.",
+      "sharedArtworkAlt": "달집 문밖에서 질문 하나를 건네는 꼬옥이와 관계를 말하는 달콩이가 함께 보이는 장면",
+      "contexts": [
+        {
+          "id": "desire",
+          "titleStem": "달집 밖에서 반짝인 것",
+          "sceneCore": "달콩이가 달집 안의 안전한 자리에서 창밖 두 길을 보다가, 자꾸 시선이 머무는 작은 별빛에 집게를 조심스럽게 뻗는다.",
+          "artworkAltCore": "달집 창밖에서 자꾸 반짝이는 별빛에 집게를 뻗는 달콩이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 안전함만이 아니라 자꾸 시선이 머무는 장면에는 네가 실제로 원하는 연결이 숨어 있어.",
+          "reflection": "걱정을 잠시 내려놓았을 때 마음이 머무는 선택을 적어 봐.",
+          "selectionSignals": ["choice.inner.desire", "choice.compass.desire"]
+        },
+        {
+          "id": "evidence",
+          "titleStem": "문틈으로 묻는 한마디",
+          "sceneCore": "달콩이가 닫힌 문 뒤에서 상대의 반응을 상상하는 대신 문을 조금 열고, 관계에 영향을 주는 사실 하나를 직접 묻는다.",
+          "artworkAltCore": "달집 문을 조금 열고 밖의 상대에게 질문을 건네는 달콩이",
+          "oneLineInsightTemplate": "“{focus:가}” 관계와 얽혀 있다면 혼자 추측한 반응보다 안전한 자리에서 직접 확인한 한마디가 더 정확해.",
+          "reflection": "결정 전에 중요한 사람에게 직접 확인해야 할 질문을 적어 봐.",
+          "selectionSignals": ["choice.test.ask", "choice.action.conversation"]
+        },
+        {
+          "id": "protected-value",
+          "titleStem": "등에 남길 집",
+          "sceneCore": "달콩이가 어느 길을 가도 등에 멜 달집을 단단히 고정하고, 관계와 안전을 지킬 최소 조건을 문에 적는다.",
+          "artworkAltCore": "달집을 등에 고정하고 문에 관계와 안전 조건을 적는 달콩이",
+          "oneLineInsightTemplate": "“{focus:을}” 고를 때 소중한 관계를 지키는 건 변화하지 말라는 뜻이 아니라 안전한 연결 방식을 함께 가져가라는 뜻이야.",
+          "reflection": "이 선택 뒤에도 관계에서 반드시 지킬 대화나 약속을 적어 봐.",
+          "selectionSignals": ["choice.protect.relationship", "choice.safety_net.support"]
+        },
+        {
+          "id": "reversible-step",
+          "titleStem": "집게 하나만 내민 시험",
+          "sceneCore": "달콩이가 달집 전체를 옮기지 않고 낯선 물가에 작은 집게 하나만 내밀어, 수온과 자기 반응을 먼저 확인한다.",
+          "artworkAltCore": "달집 안에서 낯선 물가에 집게 하나만 내미는 달콩이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 안전한 범위만 먼저 시험하면 관계와 기반을 버리지 않고도 용기를 확인할 수 있어.",
+          "reflection": "지금의 안전을 유지하면서 먼저 시험할 수 있는 범위를 적어 봐.",
+          "selectionSignals": ["choice.action.paced", "choice.plan.support"]
+        }
+      ]
+    },
+    {
+      "familyId": "leo.choice",
+      "sign": "leo",
+      "guardians": "해님이",
+      "sharedGuardians": "해님이 · 고르미",
+      "sharedBeat": "고르미가 관객의 기대표를 내려놓고 해님이가 왕관 없이 원하는 장면을 말할 때까지 작은 조명만 지켜 준다.",
+      "sharedArtworkAlt": "기대표를 내려놓고 작은 조명을 지키는 고르미와 마음을 말하는 해님이가 함께 보이는 장면",
+      "contexts": [
+        {
+          "id": "desire",
+          "titleStem": "왕관 없이 원하는 무대",
+          "sceneCore": "해님이가 화려한 왕관을 의자에 두고 두 무대 사이에 선 뒤, 아무도 보지 않아도 오르고 싶은 작은 무대를 바라본다.",
+          "artworkAltCore": "왕관을 의자에 두고 아무도 없는 작은 무대를 바라보는 해님이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 보여 주기 좋은 선택을 걷어 내고도 남는 무대가 네가 진짜 원하는 방향에 가까워.",
+          "reflection": "아무에게도 보여 주지 않아도 선택하고 싶은 장면을 적어 봐.",
+          "selectionSignals": ["choice.inner.desire", "choice.compass.desire"]
+        },
+        {
+          "id": "evidence",
+          "titleStem": "조명 밖의 사실",
+          "sceneCore": "해님이가 화려한 홍보 조명을 끄고 두 선택의 실제 일정과 책임이 적힌 작은 작업등만 켜서 비교한다.",
+          "artworkAltCore": "화려한 조명을 끄고 일정과 책임표를 작은 작업등 아래 비교하는 해님이",
+          "oneLineInsightTemplate": "“{focus:을}” 고를 때 기대되는 이미지보다 조명 밖에서도 남는 일정과 책임을 봐야 선택을 오래 소유할 수 있어.",
+          "reflection": "멋져 보이는 이미지와 별개로 실제 감당할 일정과 책임을 적어 봐.",
+          "selectionSignals": ["choice.action.self_check", "choice.compass.evidence"]
+        },
+        {
+          "id": "protected-value",
+          "titleStem": "나를 잃지 않는 문",
+          "sceneCore": "해님이가 두 문 앞에서 왕관이 아니라 가슴의 Stella 별표 크기를 재고, 자기 존엄과 표현을 줄이지 않는 문만 남긴다.",
+          "artworkAltCore": "두 문 앞에서 가슴의 Stella 별표와 자기 경계를 살피는 해님이",
+          "oneLineInsightTemplate": "“{focus:을}” 위해 인정받고 싶은 마음을 내려놓더라도 네 존엄과 표현까지 작아지는 선택은 다시 살펴야 해.",
+          "reflection": "이 선택에서 절대 작아지게 두고 싶지 않은 네 모습을 적어 봐.",
+          "selectionSignals": ["choice.protect.identity", "choice.fear.self_loss"]
+        },
+        {
+          "id": "reversible-step",
+          "titleStem": "작은 무대의 첫 리허설",
+          "sceneCore": "해님이가 큰 무대 계약 대신 하루짜리 작은 리허설 표를 고르고, 끝난 뒤 자기 표정을 확인할 거울을 출구에 둔다.",
+          "artworkAltCore": "하루짜리 작은 무대 표와 출구의 거울을 준비하는 해님이",
+          "oneLineInsightTemplate": "“{focus:을}” 작은 리허설로 먼저 살아 보면 박수보다 네가 그 무대에서 어떤 사람이 되는지 확인할 수 있어.",
+          "reflection": "결정을 확정하기 전에 하루나 한 번만 경험해 볼 방법을 적어 봐.",
+          "selectionSignals": ["choice.action.small_step", "choice.aftercare.room"]
+        }
+      ]
+    },
+    {
+      "familyId": "virgo.choice",
+      "sign": "virgo",
+      "guardians": "새봄이",
+      "sharedGuardians": "새봄이 · 차곡이",
+      "sharedBeat": "차곡이가 새봄이의 긴 확인표에서 결과를 실제로 바꾸는 세 칸만 함께 고르고, 나머지는 다음 확인 상자로 옮긴다.",
+      "sharedArtworkAlt": "긴 확인표에서 중요한 세 칸을 고르는 차곡이와 새봄이가 함께 보이는 장면",
+      "contexts": [
+        {
+          "id": "desire",
+          "titleStem": "체크표 밖의 바람",
+          "sceneCore": "새봄이가 조건이 빼곡한 체크표 옆에서 종이를 흔드는 바람의 방향을 보고, 목록에 없던 자기 바람을 새 칸으로 적는다.",
+          "artworkAltCore": "빼곡한 체크표 옆에 목록에 없던 바람을 새 칸으로 적는 새봄이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 조건표에 없지만 계속 돌아오는 바람은 계산 밖에서도 존중해야 할 네 실제 욕구야.",
+          "reflection": "모든 조건을 만족하는 답과 별개로 네가 원하는 것을 적어 봐.",
+          "selectionSignals": ["choice.inner.desire", "choice.inner.obligation"]
+        },
+        {
+          "id": "evidence",
+          "titleStem": "확인할 세 칸",
+          "sceneCore": "새봄이가 긴 질문 목록에서 결정을 실제로 바꿀 사실 세 개만 남기고, 확인한 칸과 아직 모르는 칸을 다른 색으로 표시한다.",
+          "artworkAltCore": "긴 질문 목록에서 세 칸만 남겨 확인 상태를 표시하는 새봄이",
+          "oneLineInsightTemplate": "“{focus:을}” 판단할 정보는 많을수록 좋은 게 아니라 결론을 바꿀 기준과 연결되어 있을 때 충분해.",
+          "reflection": "답에 따라 선택이 실제로 달라질 핵심 질문 세 개를 적어 봐.",
+          "selectionSignals": ["choice.need.criteria", "choice.action.verify"]
+        },
+        {
+          "id": "protected-value",
+          "titleStem": "지워서는 안 될 기준",
+          "sceneCore": "새봄이가 비교표를 정리하며 시간·자원·존중 중 포기할 수 없는 기준에 금빛 테두리를 둘러 수정 대상에서 제외한다.",
+          "artworkAltCore": "비교표에서 포기할 수 없는 기준에 금빛 테두리를 두르는 새봄이",
+          "oneLineInsightTemplate": "“{focus:을}” 고르기 위해 모든 조건을 양보하면 결정 뒤의 네가 버티기 어려우니 핵심 기준 하나는 고정해야 해.",
+          "reflection": "협상하거나 조정하지 않을 최소 기준 한 가지를 적어 봐.",
+          "selectionSignals": ["choice.protect.resources", "choice.compass.responsibility"]
+        },
+        {
+          "id": "reversible-step",
+          "titleStem": "되돌아오는 짧은 다리",
+          "sceneCore": "새봄이가 완성되지 않은 확인표를 접고 첫 구간만 놓인 별다리를 건너, 끝의 귀환 표식과 관찰 항목을 점검한다.",
+          "artworkAltCore": "접은 확인표를 넣고 귀환 표식이 있는 짧은 별다리를 건너는 새봄이",
+          "oneLineInsightTemplate": "“{focus:을}” 향한 짧고 되돌릴 수 있는 실험은 확인을 포기하는 일이 아니라 더 정확한 사실을 얻는 방법이야.",
+          "reflection": "실험 범위와 중단 기준과 확인할 결과를 하나씩 적어 봐.",
+          "selectionSignals": ["choice.plan.reversible", "choice.action.research"]
+        }
+      ]
+    },
+    {
+      "familyId": "libra.choice",
+      "sign": "libra",
+      "guardians": "고르미",
+      "sharedGuardians": "고르미 · 몽실이",
+      "sharedBeat": "몽실이가 어느 문도 대신 열지 않고 고르미가 지키고 싶은 관계와 자기 몫을 말할 때까지 문턱 옆에 앉는다.",
+      "sharedArtworkAlt": "문을 대신 열지 않고 고르미의 말을 기다리는 몽실이가 함께 보이는 장면",
+      "contexts": [
+        {
+          "id": "desire",
+          "titleStem": "저울보다 먼저 기운 손",
+          "sceneCore": "고르미가 무게가 같은 두 선택을 저울에 두고도 먼저 손이 간 분홍 문손잡이의 따뜻함을 가만히 느낀다.",
+          "artworkAltCore": "수평인 저울 옆에서 먼저 손이 간 분홍 문손잡이를 잡는 고르미",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 이유가 비슷할 때 먼저 기운 손은 다른 사람의 답보다 네 안의 평화를 가리킬 수 있어.",
+          "reflection": "모두의 의견을 잠시 빼고 혼자라면 먼저 고를 방향을 적어 봐.",
+          "selectionSignals": ["choice.inner.desire", "choice.compass.peace"]
+        },
+        {
+          "id": "evidence",
+          "titleStem": "비교를 끝내는 기준",
+          "sceneCore": "고르미가 계속 늘어나는 비교표에서 결정에 필요한 기준 세 개만 남기고, 나머지 별추를 저울 밖 상자에 정리한다.",
+          "artworkAltCore": "비교표에 기준 세 개만 남기고 나머지 별추를 상자에 넣는 고르미",
+          "oneLineInsightTemplate": "“{focus:을}” 계속 비교하면 작은 차이만 커질 수 있으니 좋은 선택의 기준을 먼저 줄여야 판단이 끝나.",
+          "reflection": "이 선택을 좋은 답으로 만드는 기준을 세 가지 이내로 적어 봐.",
+          "selectionSignals": ["choice.need.criteria", "choice.action.simplify"]
+        },
+        {
+          "id": "protected-value",
+          "titleStem": "함께 지킬 선",
+          "sceneCore": "고르미가 관계를 잇는 리본과 자기 자리를 표시하는 선을 한 화면에 놓고, 어느 선택에서도 둘 다 끊기지 않을 조건을 쓴다.",
+          "artworkAltCore": "관계의 리본과 자기 자리의 경계선을 함께 정리하는 고르미",
+          "oneLineInsightTemplate": "“{focus:을}” 고를 때 관계를 존중하는 일과 네 몫을 지키는 일은 반대가 아니며 둘의 선을 함께 말해야 해.",
+          "reflection": "중요한 사람을 존중하면서도 네가 지킬 경계를 적어 봐.",
+          "selectionSignals": ["choice.protect.relationship", "choice.aftercare.respect"]
+        },
+        {
+          "id": "reversible-step",
+          "titleStem": "한 문만 잠시 열어 두기",
+          "sceneCore": "고르미가 두 문 중 하나를 시험 시간 동안만 열고, 다른 문에는 닫음이 아니라 다시 볼 날짜가 적힌 표식을 건다.",
+          "artworkAltCore": "한 문을 잠시 열고 다른 문에 재검토 날짜 표식을 거는 고르미",
+          "oneLineInsightTemplate": "“{focus:을}” 일정 기간만 시험하면 한쪽을 영원히 버린다는 부담 없이 실제 균형을 확인할 수 있어.",
+          "reflection": "한 선택을 시험할 기간과 다른 선택을 다시 볼 날짜를 적어 봐.",
+          "selectionSignals": ["choice.action.conversation", "choice.plan.support"]
+        }
+      ]
+    },
+    {
+      "familyId": "scorpio.choice",
+      "sign": "scorpio",
+      "guardians": "꼬옥이",
+      "sharedGuardians": "꼬옥이 · 달콩이",
+      "sharedBeat": "달콩이가 봉인을 열라고 재촉하지 않고 옆에 안전한 상자를 놓으며, 꼬옥이는 알아야 할 진실의 범위를 정한다.",
+      "sharedArtworkAlt": "봉인 옆에 안전한 상자를 놓는 달콩이와 확인 범위를 정하는 꼬옥이가 함께 보이는 장면",
+      "contexts": [
+        {
+          "id": "desire",
+          "titleStem": "봉인 아래 이미 있는 답",
+          "sceneCore": "꼬옥이가 두 봉인 중 손을 올릴 때 하트 꼬리가 먼저 빛나는 쪽을 보고, 숨겨 둔 욕구를 자기 앞에서는 인정한다.",
+          "artworkAltCore": "두 봉인 중 하트 꼬리가 빛나는 쪽에 손을 올린 꼬옥이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 감추려 해도 반복해 빛나는 쪽에는 네가 이미 알고 있지만 보호하던 바람이 있을 수 있어.",
+          "reflection": "다른 사람에게 말하기 전 스스로 인정해야 할 원하는 답을 적어 봐.",
+          "selectionSignals": ["choice.inner.desire", "choice.aftercare.honesty"]
+        },
+        {
+          "id": "evidence",
+          "titleStem": "빛이 새는 작은 틈",
+          "sceneCore": "꼬옥이가 봉인을 모두 풀지 않고 작은 틈으로 들어오는 빛을 관찰해, 사실과 두려움이 만든 상상을 서로 다른 문서에 적는다.",
+          "artworkAltCore": "봉인의 작은 틈으로 들어온 빛을 사실과 상상 문서에 나누는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus:을}” 판단할 때 가장 불편한 사실을 피하지 않되 모든 비밀을 한꺼번에 열 필요는 없어.",
+          "reflection": "결정에 꼭 필요한 사실과 아직 몰라도 되는 사실을 나눠 적어 봐.",
+          "selectionSignals": ["choice.compass.evidence", "choice.action.research"]
+        },
+        {
+          "id": "protected-value",
+          "titleStem": "열어도 지킬 상자",
+          "sceneCore": "꼬옥이가 선택의 문을 열기 전 안쪽의 소중한 상자 둘레에 경계선을 그리고, 진실과 정체성을 지킬 열쇠를 목에 건다.",
+          "artworkAltCore": "소중한 상자 둘레에 경계선을 긋고 열쇠를 목에 거는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus:을}” 고르는 과정에서 솔직해져도 네 정체성과 사적인 경계까지 넘겨줄 필요는 없어.",
+          "reflection": "결정 과정에서 공개할 것과 끝까지 네 것으로 지킬 것을 적어 봐.",
+          "selectionSignals": ["choice.protect.identity", "choice.protect.relationship"]
+        },
+        {
+          "id": "reversible-step",
+          "titleStem": "절반만 푸는 봉인",
+          "sceneCore": "꼬옥이가 별문서의 봉인 절반만 풀어 필요한 첫 정보만 확인하고, 다시 잠글 수 있는 매듭과 다음 확인 날짜를 남긴다.",
+          "artworkAltCore": "별문서의 봉인을 절반만 풀고 다시 묶을 매듭을 남기는 꼬옥이",
+          "oneLineInsightTemplate": "“{focus:을}” 향해 필요한 만큼만 봉인을 풀면 진실을 외면하지 않으면서도 감당할 속도를 지킬 수 있어.",
+          "reflection": "지금 확인할 범위와 더 깊이 들어가기 전 필요한 조건을 적어 봐.",
+          "selectionSignals": ["choice.action.verify", "choice.plan.reversible"]
+        }
+      ]
+    },
+    {
+      "familyId": "sagittarius.choice",
+      "sign": "sagittarius",
+      "guardians": "총총이",
+      "sharedGuardians": "총총이 · 오름이",
+      "sharedBeat": "오름이가 낯선 길 입구에 돌아올 날짜와 기준을 적어 주고, 총총이는 왜 가고 싶은지 지도에 직접 쓴다.",
+      "sharedArtworkAlt": "낯선 길의 귀환 날짜를 적는 오름이와 가고 싶은 이유를 쓰는 총총이가 함께 보이는 장면",
+      "contexts": [
+        {
+          "id": "desire",
+          "titleStem": "표지판 없이 끌리는 길",
+          "sceneCore": "총총이가 이름 없는 두 길 사이에서 지도를 접고, 생각만 해도 꼬리가 먼저 흔들리는 쪽의 바람을 따라 고개를 든다.",
+          "artworkAltCore": "지도를 접고 꼬리가 흔들리는 이름 없는 길을 바라보는 총총이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 이유보다 먼저 살아나는 호기심은 네 세계를 넓히고 싶은 진짜 욕구를 보여 줄 수 있어.",
+          "reflection": "두려움이 없다면 가장 먼저 가 보고 싶은 방향을 적어 봐.",
+          "selectionSignals": ["choice.compass.desire", "choice.inner.desire"]
+        },
+        {
+          "id": "evidence",
+          "titleStem": "지도에 찍을 기준점",
+          "sceneCore": "총총이가 넓은 빈 지도에 비용·기간·기회 세 기준점을 찍고, 모험을 막는 소문과 실제 정보를 다른 색으로 나눈다.",
+          "artworkAltCore": "빈 지도에 비용과 기간과 기회 기준점을 찍는 총총이",
+          "oneLineInsightTemplate": "“{focus:을}” 모험으로 만들려면 막연한 낙관 대신 비용과 기간과 돌아올 조건을 지도에 표시해야 해.",
+          "reflection": "떠나기 전에 반드시 확인할 현실 조건과 기회 신호를 적어 봐.",
+          "selectionSignals": ["choice.need.criteria", "choice.action.research"]
+        },
+        {
+          "id": "protected-value",
+          "titleStem": "남겨 둘 빈 지도",
+          "sceneCore": "총총이가 한 길을 고른 뒤에도 지도 한쪽에 아직 그리지 않은 빈 공간을 남겨, 다음 가능성을 완전히 지우지 않는다.",
+          "artworkAltCore": "한 길이 그려진 지도 한쪽에 빈 공간을 남기는 총총이",
+          "oneLineInsightTemplate": "“{focus:을}” 고를 때 모든 가능성을 닫지 않을 여백이 있어야 선택이 구속이 아니라 살아 있는 방향이 돼.",
+          "reflection": "현재 선택 안에서도 계속 열어 두고 싶은 가능성을 적어 봐.",
+          "selectionSignals": ["choice.protect.possibility", "choice.aftercare.room"]
+        },
+        {
+          "id": "reversible-step",
+          "titleStem": "돌아올 별표가 있는 탐험",
+          "sceneCore": "총총이가 낯선 길의 첫 전망대까지만 다녀올 표를 끊고, 출발점에는 귀환 시간과 중단 신호를 별표로 남긴다.",
+          "artworkAltCore": "첫 전망대 표를 들고 출발점에 귀환 시간 별표를 남기는 총총이",
+          "oneLineInsightTemplate": "“{focus:을}” 짧은 탐험으로 먼저 경험하면 가능성을 지키면서도 추측을 실제 정보로 바꿀 수 있어.",
+          "reflection": "첫 탐험의 범위와 돌아올 시간과 중단 신호를 적어 봐.",
+          "selectionSignals": ["choice.action.experiment", "choice.safety_net.return"]
+        }
+      ]
+    },
+    {
+      "familyId": "capricorn.choice",
+      "sign": "capricorn",
+      "guardians": "오름이",
+      "sharedGuardians": "오름이 · 총총이",
+      "sharedBeat": "총총이가 가장 높은 문을 가리키는 대신 오름이가 오래 책임질 수 있는 조건을 말할 때까지 두 문 사이의 계획표를 함께 본다.",
+      "sharedArtworkAlt": "두 문 사이의 계획표를 함께 보며 조건을 듣는 총총이와 오름이가 보이는 장면",
+      "contexts": [
+        {
+          "id": "desire",
+          "titleStem": "높이보다 오래 갈 문",
+          "sceneCore": "오름이가 가장 높은 황금문과 오래 걸을 수 있는 단단한 문을 번갈아 보고, 미래의 자기와 나란히 설 수 있는 쪽에 손을 얹는다.",
+          "artworkAltCore": "높은 황금문과 단단한 문 사이에서 오래 갈 문에 손을 얹는 오름이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 가장 높아 보이는 답보다 오래 책임지고 싶은 방향을 고르는 마음이 네 진짜 욕구에 가까워.",
+          "reflection": "성과나 체면을 빼고도 오래 책임지고 싶은 선택을 적어 봐.",
+          "selectionSignals": ["choice.compass.responsibility", "choice.inner.desire"]
+        },
+        {
+          "id": "evidence",
+          "titleStem": "계단 수를 세는 밤",
+          "sceneCore": "오름이가 두 문 뒤의 계단 수와 필요한 시간·비용을 계획표에 적고, 희망한 숫자와 확인된 숫자를 따로 표시한다.",
+          "artworkAltCore": "두 문의 계단 수와 시간과 비용을 계획표에 적는 오름이",
+          "oneLineInsightTemplate": "“{focus:을}” 책임 있는 선택으로 만들려면 의지보다 실제 시간과 비용과 지속 가능한 계단 수를 확인해야 해.",
+          "reflection": "두 선택에 필요한 시간과 비용과 지속 기간을 숫자로 적어 봐.",
+          "selectionSignals": ["choice.action.numbers", "choice.compass.evidence"]
+        },
+        {
+          "id": "protected-value",
+          "titleStem": "포기하지 않을 책임",
+          "sceneCore": "오름이가 여러 책임의 돌패 중 정말 자기 몫인 하나에 금빛 끈을 묶고, 체면 때문에 든 돌패는 조용히 내려놓는다.",
+          "artworkAltCore": "여러 책임 돌패 중 자기 몫 하나에 금빛 끈을 묶는 오름이",
+          "oneLineInsightTemplate": "“{focus:을}” 고를 때 책임감은 모든 부담을 떠안는 일이 아니라 끝까지 지킬 자기 몫을 분명히 하는 일이야.",
+          "reflection": "반드시 지킬 책임과 체면 때문에 붙든 책임을 나눠 적어 봐.",
+          "selectionSignals": ["choice.compass.responsibility", "choice.protect.resources"]
+        },
+        {
+          "id": "reversible-step",
+          "titleStem": "한 칸짜리 시범 등반",
+          "sceneCore": "오름이가 전체 산을 계약하지 않고 첫 계단 한 구간의 일정과 예산만 달력에 넣어, 끝에서 계속할지 판단하도록 한다.",
+          "artworkAltCore": "첫 계단 구간의 일정과 예산만 달력에 넣는 오름이",
+          "oneLineInsightTemplate": "“{focus:을}” 한 구간만 계획해 보면 큰 책임을 약속하기 전에 실제 용량과 지속 가능성을 확인할 수 있어.",
+          "reflection": "시범 기간과 사용할 예산과 계속할 기준을 적어 봐.",
+          "selectionSignals": ["choice.action.schedule", "choice.plan.financial_buffer"]
+        }
+      ]
+    },
+    {
+      "familyId": "aquarius.choice",
+      "sign": "aquarius",
+      "guardians": "방울이",
+      "sharedGuardians": "방울이 · 차곡이",
+      "sharedBeat": "차곡이가 새 구름 길의 현실 조건을 차분히 묻고, 방울이는 지킬 원리와 시험할 부분을 서로 다른 병에 담는다.",
+      "sharedArtworkAlt": "구름 길의 조건을 묻는 차곡이와 원리와 실험을 나누는 방울이가 함께 보이는 장면",
+      "contexts": [
+        {
+          "id": "desire",
+          "titleStem": "주어진 길 밖의 구름",
+          "sceneCore": "방울이가 두 정해진 길 사이에서 자꾸 떠오르는 구름 모양을 병 밖으로 꺼내, 아직 이름 없는 세 번째 방향을 바라본다.",
+          "artworkAltCore": "두 길 사이에 병에서 꺼낸 구름으로 세 번째 방향을 만드는 방울이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 어느 쪽도 마음에 들지 않는다면 네 욕구는 기존 답을 고르기보다 새 답을 만들라고 말할 수 있어.",
+          "reflection": "주어진 선택지 밖에서 네가 실제로 원하는 세 번째 모습을 적어 봐.",
+          "selectionSignals": ["choice.inner.desire", "choice.compass.desire"]
+        },
+        {
+          "id": "evidence",
+          "titleStem": "발명 전에 묻는 사실",
+          "sceneCore": "방울이가 새 구름 길의 도안을 그리기 전 실제 사용 장소와 필요한 자원을 작은 모형 위에 놓아 작동 조건을 확인한다.",
+          "artworkAltCore": "구름 길 모형 위에 사용 장소와 필요한 자원 표식을 놓는 방울이",
+          "oneLineInsightTemplate": "“{focus:을}” 새로운 답으로 만들려면 아이디어의 매력뿐 아니라 어디에서 누구에게 실제로 작동할지 확인해야 해.",
+          "reflection": "새 선택이 실제로 작동하려면 필요한 사람과 자원과 장소를 적어 봐.",
+          "selectionSignals": ["choice.action.prototype", "choice.compass.evidence"]
+        },
+        {
+          "id": "protected-value",
+          "titleStem": "내 방식이 남는 선택",
+          "sceneCore": "방울이가 두 선택의 설계도에서 바꿀 수 있는 부품과 자기 원리를 담은 핵심 병을 나누고, 핵심 병에는 손대지 않는다.",
+          "artworkAltCore": "두 설계도 옆에서 바꿀 부품과 지킬 핵심 병을 나누는 방울이",
+          "oneLineInsightTemplate": "“{focus:을}” 현실에 맞추더라도 네 고유한 방식과 가능성까지 지우면 선택 뒤의 너는 오래 머물기 어려워.",
+          "reflection": "조정할 수 있는 방식과 끝까지 남길 네 원리를 나눠 적어 봐.",
+          "selectionSignals": ["choice.protect.identity", "choice.protect.possibility"]
+        },
+        {
+          "id": "reversible-step",
+          "titleStem": "작은 구름 발판",
+          "sceneCore": "방울이가 완성된 새 길 대신 발 하나가 올라갈 구름 발판을 만들어, 무게와 방향이 맞는지 짧게 시험한다.",
+          "artworkAltCore": "두 길 사이에 작은 구름 발판을 만들고 한 발로 시험하는 방울이",
+          "oneLineInsightTemplate": "“{focus:을}” 작은 시제품으로 먼저 만들면 새 가능성을 설명만 하지 않고 실제 반응으로 판단할 수 있어.",
+          "reflection": "이번 주 안에 만들어 볼 가장 작은 시제품과 확인할 반응을 적어 봐.",
+          "selectionSignals": ["choice.action.prototype", "choice.plan.reversible"]
+        }
+      ]
+    },
+    {
+      "familyId": "pisces.choice",
+      "sign": "pisces",
+      "guardians": "꿈별이 · 잠별이",
+      "sharedGuardians": "꿈별이 · 잠별이",
+      "sharedBeat": "꿈별이가 끌리는 장면을 말하면 잠별이가 불안한 신호를 적고, 둘은 같은 중심 별 아래에서 두 말을 함께 읽는다.",
+      "sharedArtworkAlt": "끌리는 장면과 불안 신호를 같은 중심 별 아래에서 읽는 꿈별이와 잠별이가 함께 보이는 장면",
+      "contexts": [
+        {
+          "id": "desire",
+          "titleStem": "두 문이 가리키는 중심",
+          "sceneCore": "꿈별이와 잠별이가 반대 방향의 두 꿈문 앞에서 서로 다른 장면을 보지만, 두 문 안쪽에 같은 중심 별이 떠 있음을 발견한다.",
+          "artworkAltCore": "반대편 두 꿈문 안에서 같은 중심 별을 발견한 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus}” 앞에서 마음이 두 방향으로 흐르더라도 둘이 공통으로 지키려는 중심에는 네 진짜 바람이 있어.",
+          "reflection": "서로 다른 두 선택에서 공통으로 기대하는 감정이나 가치를 적어 봐.",
+          "selectionSignals": ["choice.inner.desire", "choice.compass.desire"]
+        },
+        {
+          "id": "evidence",
+          "titleStem": "꿈과 아침 사이의 단서",
+          "sceneCore": "꿈별이와 잠별이가 밤의 직관을 적은 병과 아침에 확인한 사실을 적은 병을 나란히 두고, 반복되는 신호에 별표를 붙인다.",
+          "artworkAltCore": "직관 병과 사실 병을 나란히 두고 반복 신호에 별표를 붙이는 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus:을}” 판단할 때 직관을 무시하지도 그대로 결론내리지도 말고 아침의 사실과 반복되는지 함께 살펴봐.",
+          "reflection": "반복되는 직관과 그것을 확인하거나 반박할 사실을 적어 봐.",
+          "selectionSignals": ["choice.need.trust", "choice.compass.evidence"]
+        },
+        {
+          "id": "protected-value",
+          "titleStem": "물살 속에 남길 나",
+          "sceneCore": "꿈별이와 잠별이가 두 물살 사이에서 관계를 잇는 지느러미와 각자의 색을 함께 지킬 별빛 고리를 만든다.",
+          "artworkAltCore": "두 물살 사이에서 연결과 각자의 색을 지킬 별빛 고리를 만드는 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus:을}” 고를 때 관계의 물살에 모두 섞이지 않고 네 감정과 정체성을 남길 자리가 필요해.",
+          "reflection": "함께 지킬 연결과 네 몫으로 남겨 둘 감정을 하나씩 적어 봐.",
+          "selectionSignals": ["choice.protect.relationship", "choice.protect.identity"]
+        },
+        {
+          "id": "reversible-step",
+          "titleStem": "한 바퀴만 돌아보는 길",
+          "sceneCore": "꿈별이와 잠별이가 서로 다른 꿈문을 완전히 통과하지 않고 별빛 원을 한 바퀴만 돌아, 출발점에서 몸과 마음의 반응을 나눈다.",
+          "artworkAltCore": "두 꿈문 사이의 별빛 원을 한 바퀴 돌아 출발점에 만난 꿈별이와 잠별이",
+          "oneLineInsightTemplate": "“{focus:을}” 한 바퀴만 먼저 경험하면 직관을 존중하면서도 돌아와 현실과 다시 맞출 여유가 생겨.",
+          "reflection": "작게 경험할 범위와 돌아와 확인할 감정과 사실을 적어 봐.",
+          "selectionSignals": ["choice.action.paced", "choice.plan.reversible"]
+        }
+      ]
+    }
+  ]
+}

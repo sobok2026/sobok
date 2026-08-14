@@ -11,6 +11,8 @@ export interface Bindings {
   STELLA_ALLOWED_HOSTNAMES: string
   // Canonical origin used to build one-time email links; never inferred from an incoming Host header.
   STELLA_PUBLIC_ORIGIN: string
+  // Public R2 custom-domain origin used only after an edition is promoted into the runtime manifest.
+  STELLA_GUARDIAN_ASSET_ORIGIN: string
   STELLA_EMAIL_FROM: string
   STELLA_EMAIL_REPLY_TO: string
   // Central Sobok OIDC authority and this fixed first-party client identifier.

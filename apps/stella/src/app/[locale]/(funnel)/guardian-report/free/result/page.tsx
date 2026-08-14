@@ -1,6 +1,7 @@
 import { getLocale } from '@sobok/site-i18n/server'
 import type { Metadata } from 'next'
 
+import Footer from '@/components/Footer'
 import { GUARDIAN_REPORT_UI } from '@/content/guardian-report-ui'
 
 import GuardianFreeResult from './GuardianFreeResult'
@@ -21,5 +22,11 @@ export async function generateMetadata({
 export default async function GuardianFreeResultPage({ params }: PageProps<'/[locale]/guardian-report/free/result'>) {
   const locale = await getLocale(params)
 
-  return <GuardianFreeResult locale={locale} />
+  return (
+    <>
+      <GuardianFreeResult locale={locale} />
+      {/* Below `sm` the checkout CTA floats over the page, so the footer reserves its band. */}
+      <Footer className="pb-[calc(5.5rem+var(--safe-area-bottom))] sm:pb-8" locale={locale} />
+    </>
+  )
 }

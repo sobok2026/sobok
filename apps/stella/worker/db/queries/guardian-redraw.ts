@@ -5,7 +5,6 @@ import {
   type GuardianLoveRedrawProductSku,
   type GuardianProductManifest,
   guardianEditionPool,
-  guardianManifest,
 } from '../../guardian/manifest'
 import type { GuardianLoveCardView, GuardianLoveRedrawState } from '../../guardian/redraw-contract'
 import {
@@ -37,7 +36,7 @@ export type CreateGuardianRedrawCheckoutResult =
   | { status: 'product-unavailable' }
   | { status: 'checkout-conflict' }
 
-/** New redraw sales use the active catalog and pin that version to the order and its eventual credit grant. */
+/** New redraw sales snapshot their exact localized name, price, currency, and eventual credit count. */
 export async function createGuardianRedrawCheckout(
   db: Db,
   input: {
@@ -69,7 +68,7 @@ export async function createGuardianRedrawCheckout(
       reportId: input.reportId,
       sku: report.productSku,
     })
-    if (!entitlement || entitlement.manifestVersion !== report.manifestVersion) {
+    if (!entitlement) {
       return { status: 'payment-required' as const }
     }
 
@@ -78,8 +77,8 @@ export async function createGuardianRedrawCheckout(
     const product = manifest.products.find(({ sku }) => sku === input.sku)
     const price = product?.prices.find(({ market }) => market === input.market)
     const orderName = product?.orderNames[report.locale]
-    const cardCopyVersion = manifest.cardCopyVersions[report.locale]
-    if (family?.slot !== 'love' || product?.kind !== 'love_redraw' || !price || !orderName || !cardCopyVersion) {
+    const localeSupported = manifest.supportedLocales.includes(report.locale)
+    if (family?.slot !== 'love' || product?.kind !== 'love_redraw' || !price || !orderName || !localeSupported) {
       return { status: 'product-unavailable' as const }
     }
 
@@ -130,11 +129,11 @@ export async function createGuardianRedrawCheckout(
       checkoutRequestId: input.requestId,
       sku: product.sku,
       kind: product.kind,
+      entitlementSnapshot: { kind: 'love_redraw', redrawCredits: product.redrawCredits },
       orderName,
       amount: price.amountMinor,
       market: price.market,
       currency: price.currency,
-      manifestVersion: manifest.manifestVersion,
     })
 
     return {
@@ -168,7 +167,7 @@ export async function readGuardianLoveRedraw(
     reportId: input.reportId,
     sku: report.productSku,
   })
-  if (!entitlement || entitlement.manifestVersion !== report.manifestVersion) {
+  if (!entitlement) {
     return { status: 'payment-required' }
   }
 
@@ -224,7 +223,6 @@ export async function readGuardianLoveRedraw(
       kind: guardianRedrawGrantTable.kind,
       totalCredits: guardianRedrawGrantTable.totalCredits,
       consumedCredits: guardianRedrawGrantTable.consumedCredits,
-      manifestVersion: guardianRedrawGrantTable.manifestVersion,
     })
     .from(guardianRedrawGrantTable)
     .where(
@@ -246,22 +244,19 @@ export async function readGuardianLoveRedraw(
     )
     .orderBy(asc(guardianRedrawGrantTable.createdAt), asc(guardianRedrawGrantTable.id))
 
-  const activeManifest: GuardianProductManifest = availableGrants[0]
-    ? guardianManifest(availableGrants[0].manifestVersion)
-    : CURRENT_GUARDIAN_MANIFEST
+  const activeManifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST
   const progressRows = await db
-    .select({ paidDrawsInCycle: guardianGuaranteeProgressTable.paidDrawsInCycle })
+    .select({ paidDrawCount: guardianGuaranteeProgressTable.paidDrawCount })
     .from(guardianGuaranteeProgressTable)
     .where(
       and(
         eq(guardianGuaranteeProgressTable.collectionId, input.collectionId),
         eq(guardianGuaranteeProgressTable.scopeId, report.loveFamilyId),
-        eq(guardianGuaranteeProgressTable.ruleVersion, activeManifest.guarantee.ruleVersion),
       ),
     )
     .limit(1)
-  const paidDrawsInCycle = progressRows[0]?.paidDrawsInCycle ?? 0
   const interval = activeManifest.guarantee.paidDrawInterval
+  const paidDrawsInCycle = (progressRows[0]?.paidDrawCount ?? 0) % interval
   const pool = guardianEditionPool(report.loveFamilyId, activeManifest)
   if (pool.selection !== 'weighted_random') {
     throw new Error(`Guardian love family ${report.loveFamilyId} does not have weighted redraw odds`)
@@ -274,8 +269,8 @@ export async function readGuardianLoveRedraw(
     }
     const price = product.prices.find(({ market }) => market === input.market)
     const orderName = product.orderNames[report.locale]
-    const cardCopyVersion = salesManifest.cardCopyVersions[report.locale]
-    return price && orderName && cardCopyVersion
+    const localeSupported = salesManifest.supportedLocales.includes(report.locale)
+    return price && orderName && localeSupported
       ? [
           {
             sku: product.sku,
@@ -303,7 +298,6 @@ export async function readGuardianLoveRedraw(
         available: availableGrants.reduce((total, grant) => total + grant.totalCredits - grant.consumedCredits, 0),
       },
       guarantee: {
-        ruleVersion: activeManifest.guarantee.ruleVersion,
         interval,
         paidDrawsInCycle,
         paidDrawsUntilGuarantee: interval - paidDrawsInCycle,
@@ -340,7 +334,7 @@ export async function equipGuardianLoveCard(
       reportId: input.reportId,
       sku: report.productSku,
     })
-    if (!entitlement || entitlement.manifestVersion !== report.manifestVersion) {
+    if (!entitlement) {
       return 'payment-required'
     }
 

@@ -13,12 +13,14 @@ import {
   uniqueIndex,
   varchar,
 } from 'drizzle-orm/pg-core'
-import type { GuardianFamilySelection, GuardianSelectedCard } from '../../guardian/draw'
+import type { GuardianCardDrawSnapshot, GuardianFamilySelection, GuardianSelectedCard } from '../../guardian/draw'
 import {
   GUARDIAN_PRODUCT_KINDS,
   GUARDIAN_RARITIES,
+  GUARDIAN_REPORT_SLOTS,
   type GuardianFullReportProductSku,
   type GuardianProductSku,
+  type GuardianPurchaseEntitlementSnapshot,
   type GuardianReportInputSnapshot,
 } from '../../guardian/manifest'
 import type {
@@ -29,17 +31,12 @@ import type { GuardianCardPresentationSnapshot } from '../../guardian/redraw-con
 import type { GuardianReportNarrativeSnapshot } from '../../guardian/report'
 import { stellaUser } from './auth'
 import { localeEnum, stella } from './common'
-import {
-  guardianQuestionKindEnum,
-  guardianQuestionnaireVersionTable,
-  guardianQuestionOptionTable,
-  guardianQuestionTable,
-  guardianSlotEnum,
-} from './guardian-questionnaire'
 
 export const guardianReportStatusEnum = stella.enum('guardian_report_status', ['draft', 'fulfilled'])
 export const guardianProductKindEnum = stella.enum('guardian_product_kind', [...GUARDIAN_PRODUCT_KINDS])
 export const guardianRarityEnum = stella.enum('guardian_rarity', [...GUARDIAN_RARITIES])
+export const guardianSlotEnum = stella.enum('guardian_slot', [...GUARDIAN_REPORT_SLOTS])
+export const guardianQuestionKindEnum = stella.enum('guardian_question_kind', ['single_choice', 'free_text'])
 export const guardianGrantKindEnum = stella.enum('guardian_grant_kind', ['paid', 'account_save_reward'])
 
 export const guardianPurchaseStatusEnum = stella.enum('guardian_purchase_status', [
@@ -81,9 +78,9 @@ export const guardianCollectionTable = stella.table(
   (t) => [index('idx_stella_guardian_collection_owner').on(t.ownerUserId)],
 )
 
-// A paid report is append-only at the product level: inputs, selected families, versions, the initial four
-// cards, and the rendered locale copy are snapshotted. Redraw acquisitions are separate rows, so old paid
-// output never changes when the live manifest, copy, odds, or artwork evolves.
+// A paid report is append-only at the product level: inputs, selected families, the initial four cards, and the
+// rendered locale copy are snapshotted. Redraw acquisitions are separate rows, so old paid output never changes
+// when the live catalog, copy, odds, or artwork evolves.
 export const guardianReportTable = stella.table(
   'guardian_report',
   {
@@ -95,14 +92,6 @@ export const guardianReportTable = stella.table(
     locale: localeEnum().notNull(),
     status: guardianReportStatusEnum().notNull().default('draft'),
     productSku: varchar('product_sku', { length: 64 }).$type<GuardianFullReportProductSku>().notNull(),
-    manifestVersion: varchar('manifest_version', { length: 64 }).notNull(),
-    selectionRuleVersion: varchar('selection_rule_version', { length: 64 }).notNull(),
-    oddsVersion: varchar('odds_version', { length: 64 }).notNull(),
-    copyVersion: varchar('copy_version', { length: 64 }).notNull(),
-    renderVersion: varchar('render_version', { length: 64 }).notNull(),
-    questionnaireVersion: varchar('questionnaire_version', { length: 64 })
-      .notNull()
-      .references(() => guardianQuestionnaireVersionTable.version, { onDelete: 'restrict' }),
     inputSnapshot: jsonb('input_snapshot').$type<GuardianReportInputSnapshot>().notNull(),
     questionnaireAnswerSnapshot: jsonb('questionnaire_answer_snapshot').$type<GuardianQuestionnaireAnswerSnapshot>(),
     questionnaireSignalSnapshot: jsonb('questionnaire_signal_snapshot').$type<GuardianQuestionnaireSignalSnapshot>(),
@@ -149,20 +138,17 @@ export const guardianReportTable = stella.table(
 )
 
 // One row per answered question keeps autosave small and makes the adaptive sequence derivable after any
-// reconnect. The report receives an immutable ID-based answer/signal snapshot only when the sequence completes.
+// reconnect. Semantic IDs are the durable contract with the server-bundled question set; they are never reused.
+// The report receives an immutable ID-based answer/signal snapshot only when the sequence completes.
 export const guardianQuestionAnswerTable = stella.table(
   'guardian_question_answer',
   {
     reportId: bigint('report_id', { mode: 'number' })
       .notNull()
       .references(() => guardianReportTable.id, { onDelete: 'restrict' }),
-    questionId: bigint('question_id', { mode: 'number' })
-      .notNull()
-      .references(() => guardianQuestionTable.id, { onDelete: 'restrict' }),
+    questionId: varchar('question_id', { length: 64 }).notNull(),
     kind: guardianQuestionKindEnum().notNull(),
-    optionId: bigint('option_id', { mode: 'number' }).references(() => guardianQuestionOptionTable.id, {
-      onDelete: 'restrict',
-    }),
+    optionId: varchar('option_id', { length: 64 }),
     textValue: text('text_value'),
     ...timestamps,
   },
@@ -214,6 +200,7 @@ export const guardianPurchaseTable = stella.table(
     checkoutRequestId: varchar('checkout_request_id', { length: 36 }),
     sku: varchar({ length: 64 }).$type<GuardianProductSku>().notNull(),
     kind: guardianProductKindEnum().notNull(),
+    entitlementSnapshot: jsonb('entitlement_snapshot').$type<GuardianPurchaseEntitlementSnapshot>().notNull(),
     orderName: varchar('order_name', { length: 128 }).notNull(),
     amount: bigint({ mode: 'number' }).notNull(),
     market: varchar({ length: 8 }).notNull(),
@@ -222,7 +209,6 @@ export const guardianPurchaseTable = stella.table(
     // guest checkout requires them; redraw purchases may inherit recovery through the collection/account.
     recoveryEmail: varchar('recovery_email', { length: 254 }),
     recoveryEmailNormalized: varchar('recovery_email_normalized', { length: 254 }),
-    manifestVersion: varchar('manifest_version', { length: 64 }).notNull(),
     provider: varchar({ length: 32 }).notNull().default('portone'),
     method: varchar({ length: 32 }),
     providerTxnId: varchar('provider_txn_id', { length: 128 }),
@@ -246,6 +232,7 @@ export const guardianPurchaseTable = stella.table(
       .where(sql`status in ('pending', 'paid', 'review_required') and kind = 'full_report'`),
     uniqueIndex('uq_stella_guardian_purchase_provider_txn').on(t.provider, t.providerTxnId),
     check('ck_stella_guardian_purchase_amount_positive', sql`${t.amount} > 0`),
+    check('ck_stella_guardian_purchase_entitlement_kind', sql`${t.entitlementSnapshot}->>'kind' = ${t.kind}::text`),
     check(
       'ck_stella_guardian_purchase_recovery_email_pair',
       sql`(${t.recoveryEmail} is null and ${t.recoveryEmailNormalized} is null)
@@ -336,7 +323,6 @@ export const guardianRedrawGrantTable = stella.table(
     kind: guardianGrantKindEnum().notNull(),
     totalCredits: integer('total_credits').notNull(),
     consumedCredits: integer('consumed_credits').notNull().default(0),
-    manifestVersion: varchar('manifest_version', { length: 64 }).notNull(),
     ...timestamps,
   },
   (t) => [
@@ -354,8 +340,8 @@ export const guardianRedrawGrantTable = stella.table(
   ],
 )
 
-// MVP uses familyId as scopeId. Keeping the scope opaque lets a later season choose an album-level guarantee
-// without changing the counter table or overloading the card-family column.
+// MVP uses familyId as scopeId. A monotonic paid-draw count survives policy interval changes without resetting
+// the counter; each acquisition snapshot retains the exact interval and guarantee application.
 export const guardianGuaranteeProgressTable = stella.table(
   'guardian_guarantee_progress',
   {
@@ -363,13 +349,12 @@ export const guardianGuaranteeProgressTable = stella.table(
       .notNull()
       .references(() => guardianCollectionTable.id, { onDelete: 'restrict' }),
     scopeId: varchar('scope_id', { length: 96 }).notNull(),
-    ruleVersion: varchar('rule_version', { length: 64 }).notNull(),
-    paidDrawsInCycle: integer('paid_draws_in_cycle').notNull().default(0),
+    paidDrawCount: integer('paid_draw_count').notNull().default(0),
     ...timestamps,
   },
   (t) => [
-    primaryKey({ columns: [t.collectionId, t.scopeId, t.ruleVersion] }),
-    check('ck_stella_guardian_guarantee_nonnegative', sql`${t.paidDrawsInCycle} >= 0`),
+    primaryKey({ columns: [t.collectionId, t.scopeId] }),
+    check('ck_stella_guardian_guarantee_nonnegative', sql`${t.paidDrawCount} >= 0`),
   ],
 )
 
@@ -400,8 +385,7 @@ export const guardianCardAcquisitionTable = stella.table(
     duplicate: boolean().notNull(),
     guaranteeDue: boolean('guarantee_due').notNull().default(false),
     guaranteedUnowned: boolean('guaranteed_unowned').notNull().default(false),
-    manifestVersion: varchar('manifest_version', { length: 64 }).notNull(),
-    oddsVersion: varchar('odds_version', { length: 64 }).notNull(),
+    drawSnapshot: jsonb('draw_snapshot').$type<GuardianCardDrawSnapshot>().notNull(),
     presentationSnapshot: jsonb('presentation_snapshot').$type<GuardianCardPresentationSnapshot>().notNull(),
     createdAt,
   },

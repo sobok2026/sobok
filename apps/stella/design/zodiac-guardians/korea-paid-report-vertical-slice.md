@@ -10,14 +10,14 @@
 
 ## 문서 상태
 
-- 마지막 갱신: 2026-08-08
+- 마지막 갱신: 2026-08-12
 - 첫 시장과 로케일: `KR`, `ko`
 - 첫 SKU: `guardian-report-full-v1`, 3,900원
 - 결제 연동: PortOne V2 인증 결제
 - production 결제수단: 실연동 토스페이 `tosspay_v2`, 심사용 테스트 토스페이먼츠 카드
   `tosspayments`
 - 현재 구현: 상품 매니페스트, 추첨, 게스트 컬렉션·리포트·구매·획득·보장 도메인,
-  실제 한국어 선택형 질문 44개와 선택 메모 1개, 불변 콘텐츠 계약·DB·게시 CLI·답변별 저장과 현재 문항 계산,
+  실제 한국어 선택형 질문 44개와 선택 메모 1개, Worker 번들 콘텐츠 계약·답변별 저장과 현재 문항 계산,
   Turnstile·rate limit을 거치는 guest checkout, 중앙 payments를 통한 PortOne confirm·검증 이벤트, capability 기반 질문
   GET/PUT과 draft/fulfilled report GET API, 홈의 소형 상품 카드, 전용 공개 랜딩, 독립 무료 검사·무료 결과·checkout,
   결제 후 질문·12개 핵심 답변의 서버 중간 결과·적응형 질문·카드 공개·상세 웹 리포트, 공용 scheduler 기반
@@ -26,7 +26,7 @@
 - 이 수직 슬라이스 이후 구현: 게스트가 그대로 사용하는 사랑 카드 1회·5회 재추첨 checkout, 결제
   확정·크레딧·멱등 추첨, 보관함, 사용자가 직접 선택하는 리포트 대표 카드 교체. 상세 계약은
   [유료 카드 리포트 MVP와 확장 전략](./paid-mvp-product-strategy.md)의 5·7·11절을 따른다.
-- 운영 반영: staging·production 프로젝트의 `stella` schema와 한국어 v1 문항 게시, PR #29의 production Worker 배포
+- 운영 반영: staging·production 프로젝트의 `stella` schema와 PR #29의 production Worker 배포
 - 운영 반영 필요: 재추첨 presentation·대표 카드 선택·checkout/draw 멱등 스키마를 양쪽 프로젝트의 `stella` schema에
   적용하고 `account-stella`의
   `stella_resend_api_key_staging`·`stella_resend_api_key_production`으로 환경별 Secrets Store 항목 생성
@@ -96,7 +96,7 @@
 - 결과 화면은 콜백 응답에 들어 있던 임시 카드가 아니라 저장된 리포트 스냅샷을 조회한다.
 
 질문 콘텐츠의 Git source와 런타임 전달 경계, 운영 절차는
-[유료 질문 콘텐츠 계약과 게시](./paid-questionnaire-content.md)를 따른다.
+[유료 질문 콘텐츠 계약과 배포](./paid-questionnaire-content.md)를 따른다.
 
 PortOne도 인증 결제의 금액 등이 브라우저에서 처리되므로, 성공한 `paymentId`를 서버로 보내 결제
 조회 API의 상태와 실제 금액을 검증하도록 요구한다.
@@ -149,7 +149,7 @@ sequenceDiagram
   W-->>B: 유료 질문 접근 가능
   loop 네 주제의 핵심 질문 12개
     B->>W: 답변 저장·다음 질문 요청
-    W->>D: versioned answer map 갱신
+    W->>D: 영구 question ID 기반 answer map 갱신
     W-->>B: 다음 한 문항
   end
   W-->>B: 핵심 답변 기반 개인화 중간 결과
@@ -158,7 +158,7 @@ sequenceDiagram
   W->>D: report + milestone acknowledgement
   loop 답변에 따라 선택된 적응형 질문 4~8개
     B->>W: 답변 저장·다음 질문 요청
-    W->>D: versioned answer map 갱신
+    W->>D: 영구 question ID 기반 answer map 갱신
     W-->>B: 다음 한 문항 또는 완료
   end
   W->>D: 패밀리 선택 + 사랑 희귀도 추첨 + snapshot + acquisitions
@@ -262,8 +262,8 @@ collection capability를 `Authorization: Bearer`로 전달한다. active `pendin
 - UI 콘텐츠는 `GUARDIAN_REPORT_UI`의 동일한 타입에 네 로케일을 모두 선언한다. 이번 출시는 한국어만
   `published`이고 다른 로케일 값은 빈 콘텐츠로 유지한다. 번역을 채우고 게시 상태를 바꾸면 같은
   화면과 API 흐름을 그대로 사용한다.
-- 서버 checkout 가능 여부는 하드코딩한 `locale === "ko"`가 아니라 상품명, 유료 질문 버전,
-  리포트 copy, 가격이 매니페스트에 함께 게시됐는지로 판단한다.
+- 서버 checkout 가능 여부는 상품명·가격·지원 locale이 현재 카탈로그에 있고 해당 locale 질문이
+  Worker 번들에 등록됐는지로 판단한다.
 - 검색 노출과 `hreflang`, sitemap은 게시된 로케일만 포함한다. 미게시 로케일 경로는 같은 렌더링
   계약을 유지하되 색인하지 않는다.
 
@@ -280,12 +280,12 @@ collection capability를 `Authorization: Bearer`로 전달한다. active `pendin
   호출해 새로고침, 웹훅 선착, 지연 완료가 모두 같은 UI 경로를 사용한다.
 - draft 응답에는 질문 진행률만 포함하고 전체 질문 은행, `familySnapshot`, `cardSnapshot`,
   선택된 희귀도를 포함하지 않는다.
-- fulfilled 응답만 네 `cardEditionId`, 카드 표시 메타데이터, 리포트 문구 버전과 렌더가 끝난
+- fulfilled 응답만 네 `cardEditionId`, 카드 표시 메타데이터와 렌더가 끝난
   `narrative` snapshot을 제공한다.
 - fulfilled 카드에는 `cardEditionId`, `familyId`, `slot`, `rarity`, `artworkPath`만 포함한다.
   `narrative`에는 hero, 네 section의 차트 요약·선택 답변별 상세 문단·조언·한 줄, closing만
   포함한다. 리포트 입력 snapshot, 답변 ID, 누적 signal과 family snapshot은 반환하지 않는다.
-- 최종 응답의 상세 계약과 copy version 규칙은
+- 최종 응답의 상세 계약과 locale별 snapshot 규칙은
   [한국어 개인화 리포트 본문 엔진과 최종 계약](./paid-report-content-engine.md)을 따른다.
 
 ### 유료 질문 HTTP 계약
@@ -313,7 +313,7 @@ collection capability를 `Authorization: Bearer`로 전달한다. active `pendin
 현재 두 질문은 무료 미리보기용으로 유지한다. 결제 후에는 네 주제마다 핵심 맥락 3개와 누적
 답변으로 고른 필수 맞춤 질문 1개를 묻는다. 관련도 기준을 넘긴 주제에 심화 질문을 하나씩 더해
 전체 16~20개를 제공한다. 필수 문항은 모두 선택지 기반이며 자유 입력은 진행률이 끝난 뒤 별도
-선택 메모로 최대 한 개만 제공한다. 실제 문구, 선택지, 선택 정책과 점수 행렬은 versioned JSON에 둔다.
+선택 메모로 최대 한 개만 제공한다. 실제 문구, 선택지, 선택 정책과 점수 행렬은 locale별 JSON에 둔다.
 
 | 슬롯     | 차트의 주축                             | 유료 질문의 구조적 역할         |
 | -------- | --------------------------------------- | ------------------------------- |
@@ -326,13 +326,13 @@ collection capability를 `Authorization: Bearer`로 전달한다. active `pendin
 - 유료 MVP는 자기이해·사랑·일·결정 각 한 패밀리, 총 4개 패밀리·7개 에디션만 게시한다. 네
   family pool의 후보가 각각 하나이므로 입력은 MVP 패밀리를 바꾸지 않는다.
 - 차트 관련성을 기본 축으로 두고 결제 후 주제 답변을 무료 공통 답변보다 강하게 반영한다. 정확한
-  점수 행렬은 questionnaire Git version과 함께 서버 콘텐츠로 게시한다.
+  점수 행렬은 questionnaire JSON과 함께 Worker 서버 콘텐츠로 배포한다.
 - 16~20개의 선택 답변은 네 주제 상세 리포트 본문, 섹션별 해석 초점, 전체 요약과 한 줄을 실질적으로
   바꾼다. 선택 자유 입력을 작성했다면 본문 보조 맥락으로만 사용하고 미작성은 완료를 막지 않는다.
 - 자기이해 유료 답변은 태양 별자리 패밀리를 바꾸지 않고 장면·한 줄·해석의 초점을 바꾼다.
 - 하나의 보편적인 `위로=물` 매핑을 모든 슬롯에 재사용하지 않는다. 같은 답도 사랑, 일, 결정에서
   다른 친화도를 갖는 작은 슬롯별 행렬로 관리한다.
-- 동일 점수는 `selectionRuleVersion`과 정규화 입력의 안정적인 hash로 해소한다. 같은 입력의
+- 동일 점수는 카탈로그에 명시한 `tieBreakOrder`와 후보 선언 순서로 해소한다. 같은 배포와 입력의
   재시도는 같은 패밀리가 나오고 임의 새로고침으로 카드를 탐색할 수 없다.
 - production에서 후보가 추가되면 답변은 기본 패밀리와 원화에도 실제 영향을 주지만, 답 하나를
   바꿀 때마다 네 장 모두 바뀐다고 약속하지 않는다.
@@ -351,8 +351,8 @@ collection capability를 `Authorization: Bearer`로 전달한다. active `pendin
 draft ── 유료 질문 완료 + 카드 선택 ──> fulfilled
 ```
 
-report draft는 checkout에서 pending 구매와 함께 만들어 questionnaire version과 무료 입력
-snapshot을 먼저 고정한다. 결제 확인 전에는 질문을 읽을 권한이 없고, 확인 뒤 같은 draft에 유료
+report draft는 checkout에서 pending 구매와 함께 만들어 locale과 무료 입력 snapshot을 먼저 고정한다.
+결제 확인 전에는 질문을 읽을 권한이 없고, 확인 뒤 같은 draft에 유료
 질문 진행 상태를 저장한다. 별도의 `awaiting_questions` 상태를 추가하지 않는다. fulfilled
 리포트는 현재 규칙으로 다시 계산하지 않는다.
 
@@ -639,8 +639,8 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 - `sobok-ops`에는 양쪽 프로젝트의 `stella` schema·현재 object grant·future default privileges,
   전체 네 Hyperdrive, 중앙 payments custom domain, Stella Queue/DLQ를 선언한다. Store ID·channel map과
   PortOne 자격증명은 중앙 payments 경계가 소유한다.
-- 유료 질문 은행은 Git 원본을 각 환경 `stella` schema의 서버 콘텐츠
-  테이블에 게시한다.
+- 유료 질문 은행은 Git 원본을 Database Worker의 서버 전용 번들에 포함하고, PostgreSQL에는 답변과
+  완료 snapshot만 저장한다.
 - staging DB는 `staging` 브랜치 push가 시작한 `.github/workflows/staging-deploy.yml`이 Worker보다
   먼저 staging의 `SOBOK_MIGRATOR_URL`로 `drizzle-kit push`한다. 비파괴·명확한 변경만 자동 적용하고
   data loss나 rename hint가 필요한 변경은 전체 staging 배포를 중단한다. `--force`는 사용하지 않는다.
@@ -662,11 +662,11 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 6. **완료:** `/[locale]/guardian-report/questions`와 `/result`의 유료 흐름을 서버 상태로만 구동한다.
 7. **완료:** 중앙 Wrangler에 Store ID·channel map을, `sobok-ops`에 payments Secret·Queue·custom
    domain을 반영한다.
-8. **완료:** `guardian_questionnaire_milestone`을 양쪽 프로젝트의 `stella` schema에 반영하고 같은
-   `guardian-paid-ko-mvp-v1` 콘텐츠 해시를 게시한다.
+8. **완료:** `guardian_questionnaire_milestone`을 schema에 선언하고 한국어 질문 45문항·176선택지를
+   Database Worker 번들에서 시작 시 검증한다.
 9. **일부 완료:** 브랜치의 `Stella Deploy` staging workflow와 HTTP/API smoke check는 성공했다. PortOne
    테스트 결제·모바일 리디렉션·질문 재개·카드 공개의 실제 E2E는 별도로 수행한다.
-10. **완료:** production `stella` schema·문항 게시 뒤 PR #29를 `main`에 병합하고 production workflow와
+10. **완료:** production `stella` schema 반영 뒤 PR #29를 `main`에 병합하고 production workflow와
     공개 URL smoke check를 완료했다.
 11. **코드 완료·운영 반영 대기:** entitlement와 원자적인 복구 메일 intent, Resend 발송·재시도,
     15분 1회용 token 교환, 이메일 재발급 API와 `/reopen` 화면을 연결했다. 새 schema와
@@ -674,13 +674,12 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 
 ### 2026-08-01 운영 반영 기록
 
-| 항목          | 결과                                                                                                                                                       |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DB            | staging·production 프로젝트의 `stella` schema에 `guardian_questionnaire_milestone`과 관련 제약 반영                                                        |
-| 유료 문항     | 양쪽 프로젝트에 `guardian-paid-ko-mvp-v1`, 45문항·176선택지 게시                                                                                           |
-| 콘텐츠 동일성 | SHA-256 `38b0f79a2b838f2fa7a461be7d269b39fa67c0c47d302939b88c46eb70d2c85e` 일치                                                                            |
-| 코드 배포     | [PR #29](https://github.com/sobok2026/sobok/pull/29) squash merge, [production workflow](https://github.com/sobok2026/sobok/actions/runs/30704300267) 성공 |
-| smoke check   | `stella.sobok.cc`의 한국어 상품 랜딩·카드 페이지·상품 API가 `200` 응답                                                                                     |
+| 항목        | 결과                                                                                                                                                       |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DB          | staging·production 프로젝트의 `stella` schema에 `guardian_questionnaire_milestone`과 관련 제약 반영                                                        |
+| 유료 문항   | 한국어 45문항·176선택지를 Git 원본과 Database Worker 서버 번들로 관리                                                                                      |
+| 코드 배포   | [PR #29](https://github.com/sobok2026/sobok/pull/29) squash merge, [production workflow](https://github.com/sobok2026/sobok/actions/runs/30704300267) 성공 |
+| smoke check | `stella.sobok.cc`의 한국어 상품 랜딩·카드 페이지·상품 API가 `200` 응답                                                                                     |
 
 ### 완료 기준
 
@@ -694,7 +693,7 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 - 유료 질문을 모두 완료해야 기본 패밀리와 카드 에디션이 한 번만 선택된다. MVP의 단일 후보
   풀도 production과 같은 선택 함수를 통과한다.
 - 결제 후 브라우저를 닫아도 복구 이메일로 남은 질문부터 이어서 할 수 있다.
-- 같은 정규화 입력과 규칙 버전은 같은 기본 패밀리를 선택한다.
+- 같은 배포 코드와 정규화 입력은 같은 기본 패밀리를 선택한다.
 - 질문 답변은 상세 리포트 본문과 한 줄을 실질적으로 바꾸고, production 후보가 늘어나면 기본
   패밀리와 원화에도 영향을 주지만 사랑 희귀도 확률은 바꾸지 않는다.
 - 선택형 16~20개의 각 답은 해당 주제의 상세 근거 문단에 남고, 합산 signal은 섹션 중심·조언·
@@ -727,7 +726,7 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 | 유료 질문 분량      | 주제별 핵심 3개+필수 맞춤 1개+심화 0~1개, 전체 16~20개      | 모든 주제의 깊이와 구매 후 완료율을 함께 관리한다         |
 | 중간 결과           | 핵심 12문항 뒤 모든 구매자에게 1회 제공                     | 첫 납품물을 주고 적응형 질문 전 이탈을 줄인다             |
 | 자유 입력           | 질문 수 밖의 선택 메모 최대 1개로 확정                      | 표현 여지는 주되 카드 공개를 지연시키지 않는다            |
-| 유료 질문 저장      | Git JSON을 같은 환경 schema의 불변 콘텐츠 행으로 게시       | 배포 재현성과 report별 version 고정을 함께 얻는다         |
+| 유료 질문 저장      | Git JSON을 Database Worker 서버 번들로 직접 배포            | DB 게시·pointer 없이 commit과 배포 이력만 관리한다        |
 | 출시 카드 선택      | MVP 단일 후보, production은 전체 입력으로 패밀리 변경       | 같은 계약에서 후보만 늘린다                               |
 | 선택 점수           | 차트 중심, 유료 주제 답변은 무료 공통 답변보다 강하게 반영  | 관련성과 유료 개인화를 함께 확보한다                      |
 | MVP 카드 수         | 4개 패밀리·7개 실제 에디션으로 확정                         | 현재 완성 원화로 가장 작은 유료 흐름을 검증한다           |
@@ -741,4 +740,4 @@ Stella API에도 request ID, 일관된 problem 응답, secure headers, 전역 �
 Sobok 계정 귀속, 장기 문항은행의 제작 범위와 production 1,024장의 제작 매트릭스다. 대표 Store의 PortOne API Secret과
 live/test Webhook Secret은 채팅이나 public repository에 전달하지 않고 중앙 payments 관련 HCP Terraform
 sensitive 변수에서 Secrets Store로 넣는다. 유료 질문 원문은 Git의 questionnaire source 디렉터리에
-커밋한 뒤 게시 CLI로 DB에 반영한다.
+커밋하고 Database Worker 번들로 배포한다.

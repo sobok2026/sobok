@@ -10,6 +10,7 @@ import JsonLd from '@sobok/site-seo/json-ld'
 import type { Metadata } from 'next'
 
 import FaqSection from '@/components/FaqSection'
+import Footer from '@/components/Footer'
 import { ORIGIN } from '@/constants'
 import { FAQ } from '@/content/faq'
 import { GUARDIAN_REPORT_UI } from '@/content/guardian-report-ui'
@@ -104,6 +105,8 @@ export default async function GuardianReportPage({ params }: PageProps<'/[locale
       <JsonLd data={faqPageGraph(FAQ[locale].guardianReport)} />
       <GuardianReportLanding locale={locale} />
       <FaqSection locale={locale} page="guardianReport" />
+      {/* Below `sm` the offer CTA floats over the page, so the footer reserves its band. */}
+      <Footer className="pb-[calc(5.5rem+var(--safe-area-bottom))] sm:pb-8" locale={locale} />
     </>
   )
 }

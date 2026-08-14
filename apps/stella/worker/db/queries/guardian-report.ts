@@ -28,7 +28,7 @@ export async function readGuardianReport(
     reportId: input.reportId,
     sku: report.productSku,
   })
-  if (!purchase || purchase.manifestVersion !== report.manifestVersion) {
+  if (!purchase) {
     return { status: 'payment-required' }
   }
 
@@ -45,7 +45,6 @@ export async function readGuardianReport(
         locale: report.locale,
         questionnaire: {
           status: stepResult.step.status,
-          version: stepResult.step.version,
           progress: stepResult.step.progress,
         },
       },
@@ -97,14 +96,6 @@ export async function readGuardianReport(
       status: 'fulfilled',
       locale: report.locale,
       fulfilledAt: report.fulfilledAt.toISOString(),
-      versions: {
-        manifest: report.manifestVersion,
-        selectionRule: report.selectionRuleVersion,
-        odds: report.oddsVersion,
-        questionnaire: report.questionnaireVersion,
-        copy: report.copyVersion,
-        render: report.renderVersion,
-      },
       cards,
       narrative,
     },

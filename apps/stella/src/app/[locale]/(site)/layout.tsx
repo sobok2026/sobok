@@ -3,7 +3,6 @@ import { getLocale } from '@sobok/site-i18n/server'
 import Script from 'next/script'
 import { getTranslations } from 'next-intl/server'
 import BottomNav from '@/components/BottomNav'
-import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 
 /**
@@ -13,6 +12,9 @@ import Header from '@/components/Header'
  * The ad script is the reason this split exists. Auto ads are placement-side, so a page inherits them from
  * nothing more than this tag being present — which would put a competitor's ad next to a ₩3,900 checkout. The
  * bottom nav is the second reason: four fixed escape routes under a buyer's thumb for the whole funnel.
+ *
+ * The footer is intentionally not site-wide. Home and document routes add the full footer in their own layouts;
+ * tools and account surfaces omit it so their reading flows end without unrelated navigation.
  */
 export default async function SiteLayout({ children, params }: LayoutProps<'/[locale]'>) {
   const locale = await getLocale(params)
@@ -22,7 +24,6 @@ export default async function SiteLayout({ children, params }: LayoutProps<'/[lo
     <>
       <Header locale={locale} localeLabel={t('localeSwitcher')} />
       {children}
-      <Footer locale={locale} />
       <BottomNav locale={locale} />
       <Script
         async

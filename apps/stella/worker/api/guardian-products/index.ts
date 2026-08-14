@@ -4,7 +4,7 @@ import { CURRENT_GUARDIAN_MANIFEST, guardianEdition } from '../../guardian/manif
 
 export const guardianProducts = new Hono<AppEnv>()
 
-// Public, immutable-by-version sales metadata only. Payment transition, credit use, and collection reads stay
+// Public sales metadata only. Payment transition, credit use, and collection reads stay
 // outside this route; checkout and paid-question reads use their own mutation/capability boundaries.
 guardianProducts.get('/current', (c) => {
   const manifest = CURRENT_GUARDIAN_MANIFEST
@@ -13,9 +13,6 @@ guardianProducts.get('/current', (c) => {
 
   return c.json(
     {
-      manifestVersion: manifest.manifestVersion,
-      selectionRuleVersion: manifest.selectionRuleVersion,
-      oddsVersion: manifest.oddsVersion,
       products: manifest.products.map((product) =>
         product.kind === 'full_report'
           ? {
@@ -49,7 +46,6 @@ guardianProducts.get('/current', (c) => {
         }),
       },
       guarantee: {
-        ruleVersion: manifest.guarantee.ruleVersion,
         paidDrawInterval: manifest.guarantee.paidDrawInterval,
         scope: manifest.guarantee.scope,
         unownedWhenAvailable: true,
@@ -63,8 +59,7 @@ guardianProducts.get('/current', (c) => {
     },
     200,
     {
-      // `/current` is a mutable pointer and includes price. A version-addressed catalog endpoint may be
-      // immutable later; this pointer must not show an old price while checkout uses a new manifest.
+      // `/current` includes mutable price and policy data, so it must match the catalog checkout uses now.
       'cache-control': 'no-store',
       'x-content-type-options': 'nosniff',
     },

@@ -156,8 +156,6 @@ interface GuardianProductDefinitionBase {
 export interface GuardianFullReportProductDefinition extends GuardianProductDefinitionBase {
   sku: GuardianFullReportProductSku
   kind: 'full_report'
-  questionnaireVersions: Partial<Record<Locale, string>>
-  reportCopyVersions: Partial<Record<Locale, string>>
 }
 
 export interface GuardianLoveRedrawProductDefinition extends GuardianProductDefinitionBase {
@@ -168,15 +166,14 @@ export interface GuardianLoveRedrawProductDefinition extends GuardianProductDefi
 
 export type GuardianProductDefinition = GuardianFullReportProductDefinition | GuardianLoveRedrawProductDefinition
 
+export type GuardianPurchaseEntitlementSnapshot =
+  | { kind: 'full_report' }
+  | { kind: 'love_redraw'; redrawCredits: number }
+
 export interface GuardianProductManifest {
-  manifestVersion: string
-  selectionRuleVersion: string
-  oddsVersion: string
-  renderVersion: string
-  cardCopyVersions: Partial<Record<Locale, string>>
+  supportedLocales: readonly Locale[]
   weightScale: number
   guarantee: {
-    ruleVersion: string
     paidDrawInterval: number
     scope: 'card_family'
   }
@@ -195,14 +192,9 @@ export interface GuardianProductManifest {
  * not explicitly published here.
  */
 export const CURRENT_GUARDIAN_MANIFEST = {
-  manifestVersion: 'guardian-paid-2026-08-01.1',
-  selectionRuleVersion: 'guardian-family-selection-v1',
-  oddsVersion: 'guardian-love-rarity-v1',
-  renderVersion: 'guardian-card-render-v1',
-  cardCopyVersions: { ko: 'guardian-report-copy-ko-v1' },
+  supportedLocales: ['ko'],
   weightScale: 10_000,
   guarantee: {
-    ruleVersion: 'guardian-unowned-every-5-paid-v1',
     paidDrawInterval: 5,
     scope: 'card_family',
   },
@@ -265,25 +257,25 @@ export const CURRENT_GUARDIAN_MANIFEST = {
   ],
   familyPools: {
     self: {
-      id: 'guardian-mvp-self-v1',
+      id: 'guardian-self-families',
       slot: 'self',
       selection: 'single',
       candidates: [{ familyId: 'cancer.self' }],
     },
     love: {
-      id: 'guardian-mvp-love-v1',
+      id: 'guardian-love-families',
       slot: 'love',
       selection: 'single',
       candidates: [{ familyId: 'aries.love' }],
     },
     work: {
-      id: 'guardian-mvp-work-v1',
+      id: 'guardian-work-families',
       slot: 'work',
       selection: 'single',
       candidates: [{ familyId: 'taurus.work' }],
     },
     choice: {
-      id: 'guardian-mvp-choice-v1',
+      id: 'guardian-choice-families',
       slot: 'choice',
       selection: 'single',
       candidates: [{ familyId: 'libra.choice' }],
@@ -291,13 +283,13 @@ export const CURRENT_GUARDIAN_MANIFEST = {
   },
   editionPools: [
     {
-      id: 'cancer-self-edition-v1',
+      id: 'cancer-self-editions',
       familyId: 'cancer.self',
       selection: 'single',
       candidates: [{ editionId: 'cancer.self.base' }],
     },
     {
-      id: 'aries-love-rarity-v1',
+      id: 'aries-love-editions',
       familyId: 'aries.love',
       selection: 'weighted_random',
       candidates: [
@@ -308,13 +300,13 @@ export const CURRENT_GUARDIAN_MANIFEST = {
       ],
     },
     {
-      id: 'taurus-work-edition-v1',
+      id: 'taurus-work-editions',
       familyId: 'taurus.work',
       selection: 'single',
       candidates: [{ editionId: 'taurus.work.base' }],
     },
     {
-      id: 'libra-choice-edition-v1',
+      id: 'libra-choice-editions',
       familyId: 'libra.choice',
       selection: 'single',
       candidates: [{ editionId: 'libra.choice.base' }],
@@ -326,12 +318,6 @@ export const CURRENT_GUARDIAN_MANIFEST = {
       kind: 'full_report',
       orderNames: { ko: '별자리 수호령 전체 리포트' },
       prices: [{ market: 'KR', currency: 'KRW', amountMinor: 3_900 }],
-      questionnaireVersions: {
-        ko: 'guardian-paid-ko-mvp-v1',
-      },
-      reportCopyVersions: {
-        ko: 'guardian-report-copy-ko-v1',
-      },
     },
     {
       sku: 'guardian-love-redraw-1-v1',
@@ -350,51 +336,11 @@ export const CURRENT_GUARDIAN_MANIFEST = {
   ],
 } as const satisfies GuardianProductManifest
 
-// Keep an old manifest registered while any purchase or unused redraw grant references it. Replacing an
-// object in place would make a retry produce a different result from the original paid transaction.
-const GUARDIAN_PUBLISHED_MANIFESTS: readonly GuardianProductManifest[] = [CURRENT_GUARDIAN_MANIFEST]
-const GUARDIAN_MANIFESTS = new Map(
-  GUARDIAN_PUBLISHED_MANIFESTS.map((manifest) => [manifest.manifestVersion, manifest] as const),
-)
-
-export function guardianManifest(version: string): GuardianProductManifest {
-  const manifest = GUARDIAN_MANIFESTS.get(version)
-  if (!manifest) {
-    throw new Error(`Unknown guardian manifest: ${version}`)
-  }
-  return manifest
-}
-
-export function guardianQuestionnaireVersion(
-  sku: GuardianFullReportProductSku,
+export function guardianSupportsLocale(
   locale: Locale,
   manifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST,
-): string {
-  const product = guardianProduct(sku, manifest)
-  if (product.kind !== 'full_report') {
-    throw new Error(`Guardian product ${sku} has no questionnaire for locale ${locale}`)
-  }
-  const version = product.questionnaireVersions[locale]
-  if (!version) {
-    throw new Error(`Guardian product ${sku} has no questionnaire for locale ${locale}`)
-  }
-  return version
-}
-
-export function guardianReportCopyVersion(
-  sku: GuardianFullReportProductSku,
-  locale: Locale,
-  manifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST,
-): string {
-  const product = guardianProduct(sku, manifest)
-  if (product.kind !== 'full_report') {
-    throw new Error(`Guardian product ${sku} has no report copy for locale ${locale}`)
-  }
-  const version = product.reportCopyVersions[locale]
-  if (!version) {
-    throw new Error(`Guardian product ${sku} has no report copy for locale ${locale}`)
-  }
-  return version
+): boolean {
+  return manifest.supportedLocales.includes(locale)
 }
 
 export function guardianFamily(
@@ -466,38 +412,11 @@ export function guardianProductOrderName(
   return orderName
 }
 
-export function guardianCardCopyVersion(
-  locale: Locale,
-  manifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST,
-): string {
-  const version = manifest.cardCopyVersions[locale]
-  if (!version) {
-    throw new Error(`Guardian manifest ${manifest.manifestVersion} has no card copy for ${locale}`)
-  }
-  return version
-}
-
-/** Launch availability is manifest data, not a locale branch in the HTTP or UI flow. */
-export function guardianFullReportIsAvailable(
-  locale: Locale,
-  market: string,
-  manifest: GuardianProductManifest = CURRENT_GUARDIAN_MANIFEST,
-): boolean {
-  const product = guardianProduct('guardian-report-full-v1', manifest)
-  return (
-    product.kind === 'full_report' &&
-    Boolean(product.orderNames[locale]) &&
-    Boolean(product.questionnaireVersions[locale]) &&
-    Boolean(product.reportCopyVersions[locale]) &&
-    product.prices.some((price) => price.market === market)
-  )
-}
-
 function validateGuardianManifest(manifest: GuardianProductManifest): void {
   const familyIds = new Set(manifest.families.map(({ id }) => id))
   const editionIds = new Set(manifest.editions.map(({ id }) => id))
   const productSkus = new Set(manifest.products.map(({ sku }) => sku))
-  const cardCopyVersions = Object.entries(manifest.cardCopyVersions)
+  const supportedLocales = new Set(manifest.supportedLocales)
 
   if (familyIds.size !== manifest.families.length || editionIds.size !== manifest.editions.length) {
     throw new Error('Guardian manifest contains duplicate family or edition IDs')
@@ -505,8 +424,8 @@ function validateGuardianManifest(manifest: GuardianProductManifest): void {
   if (productSkus.size !== manifest.products.length) {
     throw new Error('Guardian manifest contains duplicate product SKUs')
   }
-  if (cardCopyVersions.length === 0 || cardCopyVersions.some(([, version]) => !version)) {
-    throw new Error('Guardian manifest has no valid locale card-copy version')
+  if (supportedLocales.size === 0 || supportedLocales.size !== manifest.supportedLocales.length) {
+    throw new Error('Guardian manifest has no valid supported locale')
   }
   if (!Number.isSafeInteger(manifest.guarantee.paidDrawInterval) || manifest.guarantee.paidDrawInterval < 1) {
     throw new Error('Guardian guarantee interval must be positive')
@@ -638,8 +557,8 @@ function validateGuardianManifest(manifest: GuardianProductManifest): void {
     if (orderNames.length === 0 || orderNames.some((orderName) => !orderName || orderName.length > 128)) {
       throw new Error(`Guardian product ${product.sku} has an invalid order name`)
     }
-    if (orderNameLocales.some((locale) => !manifest.cardCopyVersions[locale])) {
-      throw new Error(`Guardian product ${product.sku} has an order locale without card copy`)
+    if (orderNameLocales.some((locale) => !supportedLocales.has(locale))) {
+      throw new Error(`Guardian product ${product.sku} has an unsupported order locale`)
     }
     if (product.prices.length === 0) {
       throw new Error(`Guardian product ${product.sku} has no price`)
@@ -660,22 +579,7 @@ function validateGuardianManifest(manifest: GuardianProductManifest): void {
     if (product.kind === 'love_redraw' && (!Number.isSafeInteger(product.redrawCredits) || product.redrawCredits < 1)) {
       throw new Error(`Guardian redraw product ${product.sku} must grant at least one redraw`)
     }
-    if (product.kind === 'full_report') {
-      const questionnaireLocales = Object.keys(product.questionnaireVersions)
-      const copyLocales = Object.keys(product.reportCopyVersions)
-      if (questionnaireLocales.length === 0) {
-        throw new Error(`Guardian full-report product ${product.sku} has no questionnaire`)
-      }
-      if (
-        questionnaireLocales.some((locale) => !product.reportCopyVersions[locale as Locale]) ||
-        copyLocales.some((locale) => !product.questionnaireVersions[locale as Locale])
-      ) {
-        throw new Error(`Guardian full-report product ${product.sku} has mismatched questionnaire and copy locales`)
-      }
-    }
   }
 }
 
-for (const manifest of GUARDIAN_PUBLISHED_MANIFESTS) {
-  validateGuardianManifest(manifest)
-}
+validateGuardianManifest(CURRENT_GUARDIAN_MANIFEST)
