@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "c0f7a628fde6950bebc0945d12d61298b5660a0226e67006187a19c0c56e94fa",
-    "assets": "37ff8353d71f0ab0e028f4f9b7729bba6e198adf06869df08c2fec5cdfa37cdb"
+    "assets": "2d335240986b63b7d6a8d35e4ae672e8557743162e338115e8acf09a0addc497"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,12 +16,12 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 35,
-    "remainingEditionCount": 1021,
+    "producedEditionCount": 47,
+    "remainingEditionCount": 1009,
     "pilotPartialBatchCount": 11,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 2,
-    "fullPendingBatchCount": 75,
+    "completedBatchCount": 3,
+    "fullPendingBatchCount": 74,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
     "visualApprovalAuthority": "human_editor",
@@ -101,23 +101,10 @@
         "pisces.self.present-weather.shared-world"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.self.present-weather.shared-world",
-        "taurus.self.present-weather.shared-world",
-        "gemini.self.present-weather.shared-world",
-        "cancer.self.present-weather.shared-world",
-        "leo.self.present-weather.shared-world",
-        "virgo.self.present-weather.shared-world",
-        "libra.self.present-weather.shared-world",
-        "scorpio.self.present-weather.shared-world",
-        "sagittarius.self.present-weather.shared-world",
-        "capricorn.self.present-weather.shared-world",
-        "aquarius.self.present-weather.shared-world",
-        "pisces.self.present-weather.shared-world"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 4,

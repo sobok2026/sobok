@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "self.present-weather.shared-world",
+  "batchOrder": 3,
+  "editorialApprovedOn": "2026-08-14",
+  "generatedOn": "2026-08-14",
+  "purpose": "같은 지금 마음의 날씨 원고를 누군가가 답을 대신 내리지 않고 곁을 지키는 관계 장면으로 확장하되, 주인공의 감정과 동료의 비언어적 지지가 80px에서도 분리되는 신규 원화 12개의 편집 승인을 받는다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "self",
+    "narrativeAxisId": "present-weather",
+    "visualAxisId": "shared-world"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Premium Stella guardian story illustration, full-bleed 3:4 master art. Show exactly the guardians named in the approved card and preserve each approved character-sheet identity and signature prop; never add a third figure. Keep a clear emotional protagonist and a supportive companion, except that the canonical Gemini and Pisces pairs may share focus. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes, exactly one large and one small eye highlight. Keep the guardians and relational beat at 55–65% of the frame and readable at 80px, with safe UI framing. Make support visible through distance, gaze, gesture, and one simple prop without solving, pushing, or choosing for the protagonist. Use symbols and shapes only: no readable text, title, badge, zodiac glyph, logo, or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Do not reuse any composition from the close-emotion or action-beat batches. Make every composition family, camera angle, pair silhouette, and support gesture visibly distinct within this batch."
+  },
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-14",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.self.present-weather.shared-world",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-14",
+      "editorialContentHash": "54fa6665ec4d2756a8cde32023818cdeb2044a40a25fb51c9b78f37469214305",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "746b435cb58ba53fba79c0c51be6fd0fea9734abcd6c6d350f5b8f335031d5dc",
+      "compositionFamily": "deep_path_rear_lantern",
+      "artDirection": "별빛 출발선을 정면이 아니라 길게 뻗은 길의 깊이 방향으로 본다. 몽실이는 화면 앞쪽에서 가슴 별표와 뒤의 발자국 사이로 시선을 꺾고, 달콩이는 한 걸음 뒤 낮은 돌 위에서 작은 별등을 들어 길만 밝혀 준다. 두 캐릭터 사이의 빈 길과 서로 다른 발 방향으로 재촉하지 않는 동행을 보인다.",
+      "distinctFrom": [
+        "첫 배치의 낮은 대각선 출발선 상반신과 두 번째 배치의 원형 트랙 오버헤드",
+        "달콩이가 몽실이의 손을 잡거나 결승 방향을 직접 가리키는 해결 장면"
+      ],
+      "visualReviewFocus": [
+        "앞쪽 몽실이와 뒤쪽 별등을 든 달콩이의 깊이·역할 분리",
+        "발자국과 가슴 별표, 비어 있는 길이 80px에서도 읽히는지"
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.self.present-weather.shared-world",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-14",
+      "editorialContentHash": "f6d7f93bb013655c4eb4c95535224616c5606e18138ae7c6a336e4c2a9f91076",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "36a5d385b78149824cdc14ceb205a266f5326e6eb29311bcbcd8c3d28d4348fb",
+      "compositionFamily": "vine_framed_waiting_triangle",
+      "artDirection": "늘어진 온실 덩굴이 차곡이·별씨앗·새봄이의 세 시각 중심을 삼각형으로 감싸는 넓은 3/4 구도다. 차곡이는 절반만 빛나는 별씨앗 옆에 앉아 손을 무릎에 두고, 새봄이는 옆자리에서 모래시계에 손대지 않은 두 손을 바구니 위에 포갠다. 모래시계와 두 사람 사이 여백으로 기다림을 공유한다.",
+      "distinctFrom": [
+        "첫 배치의 어두운 낮은 씨앗 클로즈업과 두 번째 배치의 세로 빛가리개·첫 싹",
+        "새봄이가 모래시계를 뒤집거나 씨앗을 대신 돌보는 장면"
+      ],
+      "visualReviewFocus": [
+        "절반만 빛나는 씨앗과 손대지 않은 모래시계의 상태 대비",
+        "차곡이의 황소 뿔·앞치마와 새봄이의 잎 귀·바구니가 분리되는지"
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.self.present-weather.shared-world",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-14",
+      "editorialContentHash": "98093110af0d2c581480173ce93ff3283217da970f14bdb474bb1c41795530c3",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "2f7df37a9a46f05c0348975f0d850ffb7928e41585fa6d8e1459769a1d348cde",
+      "compositionFamily": "profile_listening_cloud_bench",
+      "artDirection": "낮은 구름 벤치를 옆에서 본 평행한 프로필 구도다. 재잘이는 자기 별방울을 벤치 위에 내려놓고 몸을 소곤이 쪽으로 돌리며, 소곤이는 작은 별방울 한 개를 가슴 가까이 든다. 둘 사이 연결 리본은 당겨지지 않은 U자 곡선으로 벤치 아래에 가라앉고, 한 줄의 작은 음파만 서로의 시선 사이를 지난다.",
+      "distinctFrom": [
+        "첫 배치의 양옆 얼굴 근접·겹친 소리 파문과 두 번째 배치의 대각선 맞당김 모빌",
+        "두 캐릭터가 동시에 말하거나 리본을 팽팽하게 당기는 장면"
+      ],
+      "visualReviewFocus": [
+        "내려놓은 별방울과 끝까지 듣는 두 시선의 관계",
+        "두 별 캐릭터의 색·표정 차이와 느슨한 연결 리본이 80px에서 보이는지"
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.self.present-weather.shared-world",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-14",
+      "editorialContentHash": "efea482f4a852d1800fe00a7bfbaebc56ed27e0ed301ed6db2d888d27af7588b",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "71aa921f5823e61f675e30fbdc19a74108092d0533011f16f86e0c8eb30c6992",
+      "compositionFamily": "rainy_dollhouse_doorstep",
+      "artDirection": "비 오는 달집을 인형집처럼 비스듬히 잘라 실내 창가와 바깥 현관길을 한 화면에 둔다. 달콩이는 안쪽 창 아래에서 천을 내려놓고 젖은 눈가를 살피며, 꼬옥이는 바깥 문턱에 작은 별간식을 놓은 뒤 몸을 돌려 두 걸음 물러난다. 닫힌 문과 비어 있는 문턱 사이가 기다릴 권리를 남긴다.",
+      "distinctFrom": [
+        "첫 배치의 창문 옆모습 클로즈업과 두 번째 배치의 창밖 정면 닦기 동작",
+        "전갈 shared-world 카드의 정면 잠긴 문·별등 대기 구도"
+      ],
+      "visualReviewFocus": [
+        "실내 달콩이와 바깥에서 물러나는 꼬옥이가 건축 단면으로 분리되는지",
+        "문턱의 별간식이 초대가 아니라 조용한 배려로 읽히는지"
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.self.present-weather.shared-world",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-14",
+      "editorialContentHash": "0f125e8b05ad88b7915ee0175e8e49ed9c573c858e01c4aff0c2677df1f398b8",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "a97a8a6b28eb25bf93e02dd4c3730b346e407958329751d98dc5c1b91e5fa3ec",
+      "compositionFamily": "stage_edge_mirror_bridge",
+      "artDirection": "객석 눈높이에서 무대 가장자리를 가로로 길게 본다. 해님이는 박수가 끝난 무대 턱에 앉아 두 발을 늘어뜨리고 왕관을 만지며, 첫 줄의 고르미는 박수 치는 손 대신 작은 거울을 두 손으로 위쪽에 들어 준다. 무대 턱의 높이 차와 거울의 짧은 반사광이 두 사람 사이 다리가 된다.",
+      "distinctFrom": [
+        "파일럿의 무대 중앙 정면 거울 클로즈업과 두 번째 배치의 옆막 뒤 3/4 후면",
+        "고르미가 왕관을 고쳐 주거나 객석의 평가를 대신 전달하는 장면"
+      ],
+      "visualReviewFocus": [
+        "무대 턱 위 해님이와 첫 줄 고르미의 높이·역할 분리",
+        "빈 객석, 멎은 박수, 들어 올린 거울이 하나의 지지 행동으로 읽히는지"
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.self.present-weather.shared-world",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-14",
+      "editorialContentHash": "45d01d27dd6f3db2b4a9b0eb8bf87d9b0ee963c9e72065b212ac35f1bd55e558",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c50398a4c3b1762c8fa9bbde74448c09ac6f0caee8065e5d5c82fe8b45b619e0",
+      "compositionFamily": "accordion_checklist_rest_nook",
+      "artDirection": "글자 없는 도형 체크표를 병풍처럼 지그재그로 세워 작은 휴식 틈을 만든다. 새봄이는 접힌 종이 사이 바닥에 앉아 연필을 내려놓고 종이 리본의 들숨을 보며, 차곡이는 반대편에서 체크표 끝을 붙잡아 넘어지지 않게 지키고 별쿠키 하나를 종이 위에 둔다. 두 캐릭터의 손은 만나지 않는다.",
+      "distinctFrom": [
+        "첫 배치의 원형 책상 오버헤드와 두 번째 배치의 긴 책상 옆 시점·타일 밀기",
+        "차곡이가 체크표를 수정하거나 새봄이 대신 완료 표시를 하는 장면"
+      ],
+      "visualReviewFocus": [
+        "지그재그 종이 틈의 새봄이와 종이 끝을 지키는 차곡이의 역할",
+        "읽을 수 있는 글자 없이 도형 체크·내려놓은 연필·별쿠키가 분리되는지"
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.self.present-weather.shared-world",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-14",
+      "editorialContentHash": "a43096fbbc773e21b859226c823eb7f40197e25fd28925b1f00fabd6f38663c6",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "0546048c0ff9959432ed40da1615fc05948ca7c4bc6cbab5adad67647f79ca38",
+      "compositionFamily": "hanging_scale_floor_circle",
+      "artDirection": "큰 별저울을 화면 위 나뭇가지에 작게 매달고, 아래 둥근 바닥 방석에 고르미와 몽실이를 서로 다른 방향으로 앉힌다. 고르미는 수평 저울보다 먼저 따뜻해진 손바닥을 가슴 가까이 펴고, 몽실이는 두 별에서 몸을 돌려 고르미가 말할 때까지 깃발을 바닥에 내려놓는다. 아래쪽 관계가 중심이 되게 한다.",
+      "distinctFrom": [
+        "첫 배치의 완전 대칭 벽감 저울과 두 번째 배치의 사선 공중 다리·저울 놓기",
+        "몽실이가 어느 별을 고르라고 깃발이나 손가락으로 가리키는 장면"
+      ],
+      "visualReviewFocus": [
+        "위쪽 수평 저울보다 아래쪽 따뜻한 손바닥과 기다리는 시선이 먼저 읽히는지",
+        "내려놓은 깃발이 재촉을 멈춘 태도로 보이는지"
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.self.present-weather.shared-world",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-14",
+      "editorialContentHash": "3ab0074508ea09f3c14085cb79bd51dcace011670623137a487dda908c0e98c8",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "842fb3d7b96c06e90ff47400f615524de388217e5e5a12bb36649161eadbaf10",
+      "compositionFamily": "front_gate_lantern_light_pool",
+      "artDirection": "둥근 잠긴 문을 거의 정면으로 보되 문 전체와 넓은 바닥을 함께 담는다. 문 안쪽의 넓은 반투명 틈으로 꼬옥이의 얼굴과 여민 망토, 망토 사이 하트 꼬리의 붉은 빛이 보인다. 달콩이는 바깥 한쪽 끝에 앉아 열쇠 대신 별등을 바닥에 내려놓고, 등불의 타원형 빛은 문턱까지만 닿아 두 캐릭터 사이의 닫힌 공간을 남긴다.",
+      "distinctFrom": [
+        "첫 배치의 어두운 망토 상반신과 두 번째 배치의 붉은 역광 돌 회랑·잠금 해제",
+        "게자리 shared-world 카드의 비스듬한 달집 단면·별간식 현관길"
+      ],
+      "visualReviewFocus": [
+        "열쇠 없는 달콩이와 문 안쪽 꼬옥이의 경계가 존중되는지",
+        "하트 꼬리의 붉은 빛과 별등의 따뜻한 빛이 서로 다른 신호로 보이는지"
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.self.present-weather.shared-world",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-14",
+      "editorialContentHash": "dced0ce141d9d455682377761d3b7a0866eceaab8580e6ece8a5091eec0fc71d",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "b50d18894669df3bf5b2455aa0381da7e5f9bac4527509b8ede1c566ab0b2a90",
+      "compositionFamily": "map_foreground_hill_silhouette",
+      "artDirection": "바닥의 펼친 도형 지도를 아주 가까운 전경으로 두고 언덕 능선을 낮게 올려다본다. 오름이는 전경에서 두 손으로 지도 모서리와 귀환 표식을 눌러 바람을 막고, 총총이는 높은 중경에서 망원경으로 먼 별을 보면서 들뜬 꼬리를 내려다본다. 지도에서 총총이까지 이어지는 빈 하늘 사선이 탐색할 여유를 만든다.",
+      "distinctFrom": [
+        "첫 배치의 망원경 상체 근접과 두 번째 배치의 넓은 측면 전신·회전 발",
+        "오름이가 지도 경로를 정하거나 총총이의 망원경 방향을 바꾸는 장면"
+      ],
+      "visualReviewFocus": [
+        "전경의 지도 고정 역할과 중경의 자유로운 탐색 역할이 분명한지",
+        "혜성 목도리·꼬리·초승달 활과 오름이의 뿔·바다염소 꼬리가 섞이지 않는지"
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.self.present-weather.shared-world",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-14",
+      "editorialContentHash": "78e5771a2c7939cf4dabb2b643de8914f2fc0bd0f7a6cc762e6235bc188c3078",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "0af8fb50bbaa1e09bb80d87c5d1a382da66a4fca51b1a9ff32d9f58a295d7960",
+      "compositionFamily": "spiral_landing_blanket_vigil",
+      "artDirection": "나선 별계단의 안쪽 빈 공간을 가로질러 넓은 중간참 하나를 본다. 오름이는 중간참 벽에 기대 일정표를 무릎에 둔 채 무거운 발을 살피고, 총총이는 다음 계단이 아닌 낮은 난간에 담요를 걸어 둔 뒤 작은 별알람 옆에 함께 앉는다. 계단의 회전선은 위가 아니라 두 사람의 중간참으로 시선을 되돌린다.",
+      "distinctFrom": [
+        "첫 배치의 위로 사라지는 가파른 직선 계단과 두 번째 배치의 옆 단면·일정 타일 이동",
+        "총총이가 다음 칸을 가리키거나 오름이를 일으켜 세우는 장면"
+      ],
+      "visualReviewFocus": [
+        "나선 계단의 진행감보다 중간참의 담요·별알람·두 사람 관계가 먼저 보이는지",
+        "오름이의 바다염소 꼬리와 총총이의 활·목도리가 계단선에서 분리되는지"
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.self.present-weather.shared-world",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-14",
+      "editorialContentHash": "0e1283801d7562a907642696e8e0b24da1f0b465fc15d0df304a0e2e8efbcf80",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "a687c2d7f3ca5a99da21b692dd844a5fd21b1bb0d18a84677c40f87b82ce7f05",
+      "compositionFamily": "radial_color_pool_name_tag",
+      "artDirection": "둥근 별물 웅덩이를 위에서 비스듬히 내려다보고 여러 색 물결을 꽃잎처럼 방사형으로 펼친다. 방울이는 한쪽 마른 돌에서 낯선 청록 물결을 손끝으로 따라가고, 차곡이는 맞은편에서 아무 표시도 없는 빈 이름표를 물결 가까이에 내려놓되 붙이지 않는다. 두 사람 사이 원형 물길이 생각할 공간을 남긴다.",
+      "distinctFrom": [
+        "첫 배치의 화면을 가로지르는 큰 S자 물결과 두 번째 배치의 낮은 시점 청록 디딤돌",
+        "파일럿 choice shared-world의 작업대·구름 길 모형·두 마음병"
+      ],
+      "visualReviewFocus": [
+        "방사형 여러 색과 선택되지 않은 빈 이름표가 읽을 수 있는 글자 없이 보이는지",
+        "방울이의 물결 귀·별물병과 차곡이의 황소 뿔·앞치마가 구분되는지"
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.self.present-weather.shared-world",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-14",
+      "editorialContentHash": "b9f9ac59a44cb3c3ec9638b86ebf2a80d2091b0128721aa3b6804eb14c956488",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "105d18aa88b0120f42767f089d3bea19d3e99d7a3161be96fc653e7e63d8d399",
+      "compositionFamily": "vertical_cloud_tiers_wave_exchange",
+      "artDirection": "둥근 방의 위아래 높이가 다른 두 꿈구름을 계단식 옆모습으로 배치한다. 위쪽 꿈별이는 말하려던 손을 입가에서 멈추고, 아래쪽 잠별이는 느린 물결 한 줄을 중앙의 오늘 별로 건넨다. 서로 다른 색의 물결은 작은 별에서만 만나고 두 캐릭터의 둥근 연결 고리는 배경의 큰 원으로 둘을 감싼다.",
+      "distinctFrom": [
+        "첫 배치의 좌우 분할 꿈구름과 두 번째 배치의 오버헤드 구름 접기",
+        "두 캐릭터가 같은 표정·같은 속도로 동시에 말하거나 움직이는 장면"
+      ],
+      "visualReviewFocus": [
+        "위아래 구름 높이와 멈춘 말·건너오는 느린 물결의 서로 다른 속도",
+        "꿈별이와 잠별이가 외부 동료가 아니라 고유한 한 쌍으로 보이는지"
+      ]
+    }
+  ]
+}
