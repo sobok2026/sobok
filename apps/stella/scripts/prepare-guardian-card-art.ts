@@ -26,7 +26,7 @@ type SourceManifest = {
 
 const { values } = parseArgs({
   options: {
-    source: { type: 'string' },
+    source: { type: 'string', multiple: true },
     output: { type: 'string' },
     help: { type: 'boolean', short: 'h', default: false },
   },
@@ -35,38 +35,52 @@ const { values } = parseArgs({
 
 if (values.help) {
   console.log(`Usage:
-  bun run guardian-cards:prepare-art --source <approved-source-manifest.json> --output <release-directory>`)
+  bun run guardian-cards:prepare-art --source <approved-source-manifest.json> [--source <next-manifest.json>] --output <release-directory>`)
   process.exit(0)
 }
 
-if (!values.source || !values.output) {
-  throw new Error('--source and --output are required')
+if (!values.source || values.source.length === 0 || !values.output) {
+  throw new Error('at least one --source and --output are required')
 }
 
-const sourceManifestPath = resolve(values.source)
+const sourceManifestPaths = values.source.map((source) => resolve(source))
 const outputDirectory = resolve(values.output)
 const contract = await readAssetContract()
-const sourceManifest = JSON.parse(await readFile(sourceManifestPath, 'utf8')) as SourceManifest
-const selectedOutputs = sourceManifest.selectedOutputs
-if (sourceManifest.status !== 'human_visually_approved') {
-  throw new Error('source manifest must have human_visually_approved status')
-}
-if (
-  sourceManifest.outputContract?.format !== contract.sourceContract.format ||
-  sourceManifest.outputContract.width !== contract.sourceContract.width ||
-  sourceManifest.outputContract.height !== contract.sourceContract.height
-) {
-  throw new Error('source manifest output contract must match the tracked PNG source contract')
-}
-if (!Array.isArray(selectedOutputs) || selectedOutputs.length === 0) {
-  throw new Error('source manifest must contain at least one selectedOutputs entry')
-}
-if (
-  sourceManifest.reviewArtifacts?.approvedOutputCount !== selectedOutputs.length ||
-  !Array.isArray(sourceManifest.reviewArtifacts.pendingVisualApproval) ||
-  sourceManifest.reviewArtifacts.pendingVisualApproval.length !== 0
-) {
-  throw new Error('every selected source output must have completed human visual approval')
+const sourceManifests = await Promise.all(
+  sourceManifestPaths.map(async (sourceManifestPath) => ({
+    sourceManifestPath,
+    sourceManifest: JSON.parse(await readFile(sourceManifestPath, 'utf8')) as SourceManifest,
+  })),
+)
+const selectedSources: Array<{
+  sourceManifestPath: string
+  selected: { editionId?: unknown; filename?: unknown; sha256?: unknown }
+}> = []
+for (const { sourceManifestPath, sourceManifest } of sourceManifests) {
+  const selectedOutputs = sourceManifest.selectedOutputs
+  if (sourceManifest.status !== 'human_visually_approved') {
+    throw new Error(`${sourceManifestPath}: source manifest must have human_visually_approved status`)
+  }
+  if (
+    sourceManifest.outputContract?.format !== contract.sourceContract.format ||
+    sourceManifest.outputContract.width !== contract.sourceContract.width ||
+    sourceManifest.outputContract.height !== contract.sourceContract.height
+  ) {
+    throw new Error(`${sourceManifestPath}: output contract must match the tracked PNG source contract`)
+  }
+  if (!Array.isArray(selectedOutputs) || selectedOutputs.length === 0) {
+    throw new Error(`${sourceManifestPath}: source manifest must contain at least one selectedOutputs entry`)
+  }
+  if (
+    sourceManifest.reviewArtifacts?.approvedOutputCount !== selectedOutputs.length ||
+    !Array.isArray(sourceManifest.reviewArtifacts.pendingVisualApproval) ||
+    sourceManifest.reviewArtifacts.pendingVisualApproval.length !== 0
+  ) {
+    throw new Error(`${sourceManifestPath}: every selected source output must have completed human visual approval`)
+  }
+  for (const selected of selectedOutputs) {
+    selectedSources.push({ sourceManifestPath, selected })
+  }
 }
 
 const assets: ReleaseManifest['assets'][number][] = []
@@ -79,7 +93,7 @@ await rm(temporaryOutputDirectory, { recursive: true, force: true })
 await mkdir(temporaryOutputDirectory, { recursive: false })
 
 try {
-  for (const selected of selectedOutputs) {
+  for (const { sourceManifestPath, selected } of selectedSources) {
     if (
       typeof selected.editionId !== 'string' ||
       typeof selected.filename !== 'string' ||
