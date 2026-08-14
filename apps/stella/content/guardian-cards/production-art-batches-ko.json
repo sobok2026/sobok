@@ -7,7 +7,8 @@
     "love": "eab7268ce0ff4bcfaa0e0713b87df83aa7e728f1efeacc7736f82cb005e4b72c",
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
-    "pilot": "c0f7a628fde6950bebc0945d12d61298b5660a0226e67006187a19c0c56e94fa"
+    "pilot": "c0f7a628fde6950bebc0945d12d61298b5660a0226e67006187a19c0c56e94fa",
+    "assets": "a6f055a1f91b1df5ca035104742a8b10a0baf867e3852e1170cdcb5e24e0e95e"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -15,8 +16,11 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "remainingEditionCount": 1044,
-    "pilotPartialBatchCount": 12,
+    "producedEditionCount": 23,
+    "remainingEditionCount": 1033,
+    "pilotPartialBatchCount": 11,
+    "inProgressBatchCount": 0,
+    "completedBatchCount": 1,
     "fullPendingBatchCount": 76,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
@@ -45,22 +49,10 @@
         "pisces.self.present-weather.close-emotion"
       ],
       "pilotEditionIds": ["leo.self.present-weather.close-emotion"],
-      "remainingEditionIds": [
-        "aries.self.present-weather.close-emotion",
-        "taurus.self.present-weather.close-emotion",
-        "gemini.self.present-weather.close-emotion",
-        "cancer.self.present-weather.close-emotion",
-        "virgo.self.present-weather.close-emotion",
-        "libra.self.present-weather.close-emotion",
-        "scorpio.self.present-weather.close-emotion",
-        "sagittarius.self.present-weather.close-emotion",
-        "capricorn.self.present-weather.close-emotion",
-        "aquarius.self.present-weather.close-emotion",
-        "pisces.self.present-weather.close-emotion"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 11,
-      "productionStatus": "pilot_partial"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 2,

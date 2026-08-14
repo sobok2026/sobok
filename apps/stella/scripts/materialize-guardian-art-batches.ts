@@ -63,6 +63,18 @@ const editionSchema = z
   })
   .passthrough()
 const editionSourceSchema = z.object({ editions: z.array(editionSchema) }).passthrough()
+const assetManifestSchema = z
+  .object({
+    assets: z.array(
+      z
+        .object({
+          editionId: nonEmptyText,
+          sourceArtworkSha256: z.string().regex(/^[a-f0-9]{64}$/),
+        })
+        .passthrough(),
+    ),
+  })
+  .passthrough()
 const pilotPlanSchema = z
   .object({
     pilots: z.array(
@@ -85,6 +97,7 @@ const { values } = parseArgs({
     'work-editions': { type: 'string' },
     'choice-editions': { type: 'string' },
     pilot: { type: 'string' },
+    'asset-manifest': { type: 'string' },
     output: { type: 'string' },
     write: { type: 'boolean', default: false },
     check: { type: 'boolean', default: false },
@@ -119,6 +132,9 @@ const sourcePaths = {
 } as const
 const pilotPath =
   values.pilot ?? fileURLToPath(new URL('../content/guardian-cards/production-art-pilot-plan-ko.json', import.meta.url))
+const assetManifestPath =
+  values['asset-manifest'] ??
+  fileURLToPath(new URL('../content/guardian-cards/guardian-card-assets-ko.json', import.meta.url))
 const outputPath =
   values.output ?? fileURLToPath(new URL('../content/guardian-cards/production-art-batches-ko.json', import.meta.url))
 
@@ -130,11 +146,15 @@ try {
     choice: await readEditionSource(sourcePaths.choice, 'choice'),
   }
   const pilotPlan = await readPilotPlan(pilotPath)
-  const output = `${formatGeneratedJson(materialize(sources, pilotPlan))}\n`
+  const assetManifest = await readAssetManifest(assetManifestPath)
+  const plan = materialize(sources, pilotPlan, assetManifest)
+  const output = `${formatGeneratedJson(plan)}\n`
 
   if (values.write) {
     await writeFile(outputPath, output, 'utf8')
-    console.log(`materialized: ${outputPath} (88 art batches, 1,044 remaining editions)`)
+    console.log(
+      `materialized: ${outputPath} (${plan.productionContract.batchCount} art batches, ${plan.productionContract.remainingEditionCount.toLocaleString()} remaining editions)`,
+    )
   } else {
     const existing = await readFile(outputPath, 'utf8')
     if (existing !== output) {
@@ -142,7 +162,9 @@ try {
         `Guardian art batch plan is stale: run bun run guardian-cards:materialize-art-batches and commit ${outputPath}`,
       )
     }
-    console.log('checked: production-art-batches-ko (88 art batches, 1,044 remaining editions)')
+    console.log(
+      `checked: production-art-batches-ko (${plan.productionContract.batchCount} art batches, ${plan.productionContract.remainingEditionCount.toLocaleString()} remaining editions)`,
+    )
   }
 } catch (error) {
   console.error(error instanceof Error ? error.message : 'Guardian art batch materialization failed')
@@ -170,6 +192,14 @@ async function readPilotPlan(path: string) {
   return parsed.data
 }
 
+async function readAssetManifest(path: string) {
+  const parsed = assetManifestSchema.safeParse(await readJson(path))
+  if (!parsed.success) {
+    throw new Error(formatIssues('Invalid guardian card asset manifest', parsed.error))
+  }
+  return parsed.data
+}
+
 async function readJson(path: string): Promise<unknown> {
   try {
     return JSON.parse(await readFile(path, 'utf8')) as unknown
@@ -181,6 +211,7 @@ async function readJson(path: string): Promise<unknown> {
 function materialize(
   sources: Record<Slot, z.infer<typeof editionSourceSchema>>,
   pilotPlan: z.infer<typeof pilotPlanSchema>,
+  assetManifest: z.infer<typeof assetManifestSchema>,
 ) {
   const editions = SLOTS.flatMap((slot) => sources[slot].editions)
   const editionById = new Map(editions.map((edition) => [edition.id, edition]))
@@ -199,6 +230,21 @@ function materialize(
     }
     if (pilot.editorialContentHash !== editorialContentHash(edition)) {
       throw new Error(`${pilot.editionId}: pilot editorial hash is stale`)
+    }
+  }
+
+  const producedIds = new Set(assetManifest.assets.map((asset) => asset.editionId))
+  if (producedIds.size !== assetManifest.assets.length) {
+    throw new Error('guardian card asset manifest contains duplicate edition IDs')
+  }
+  for (const asset of assetManifest.assets) {
+    if (!editionById.has(asset.editionId)) {
+      throw new Error(`${asset.editionId}: guardian card asset does not exist in the production editions`)
+    }
+  }
+  for (const pilotId of pilotIds) {
+    if (!producedIds.has(pilotId)) {
+      throw new Error(`${pilotId}: approved pilot is missing from the guardian card asset manifest`)
     }
   }
 
@@ -224,7 +270,16 @@ function materialize(
     }
 
     const pilotEditionIds = editionIds.filter((editionId) => pilotIds.has(editionId))
-    const remainingEditionIds = editionIds.filter((editionId) => !pilotIds.has(editionId))
+    const remainingEditionIds = editionIds.filter((editionId) => !producedIds.has(editionId))
+    const producedEditionIds = editionIds.filter((editionId) => producedIds.has(editionId))
+    const productionStatus =
+      remainingEditionIds.length === 0
+        ? 'complete'
+        : producedEditionIds.length === 0
+          ? 'not_started'
+          : producedEditionIds.every((editionId) => pilotIds.has(editionId))
+            ? 'pilot_partial'
+            : 'in_progress'
     return {
       order: index + 1,
       id: batchId(definition),
@@ -236,7 +291,7 @@ function materialize(
       remainingEditionIds,
       plannedEditionCount: editionIds.length,
       remainingEditionCount: remainingEditionIds.length,
-      productionStatus: pilotEditionIds.length === 0 ? 'not_started' : 'pilot_partial',
+      productionStatus,
     }
   })
 
@@ -244,10 +299,16 @@ function materialize(
     throw new Error(`art batches cover ${coveredEditionIds.size} of ${editionById.size} editions`)
   }
   const pilotPartialBatchCount = batches.filter((batch) => batch.productionStatus === 'pilot_partial').length
+  const inProgressBatchCount = batches.filter((batch) => batch.productionStatus === 'in_progress').length
+  const completedBatchCount = batches.filter((batch) => batch.productionStatus === 'complete').length
+  const fullPendingBatchCount = batches.filter((batch) => batch.productionStatus === 'not_started').length
   const remainingEditionCount = batches.reduce((sum, batch) => sum + batch.remainingEditionCount, 0)
-  if (pilotPartialBatchCount !== 12 || remainingEditionCount !== 1_044) {
+  if (
+    remainingEditionCount !== editions.length - producedIds.size ||
+    pilotPartialBatchCount + inProgressBatchCount + completedBatchCount + fullPendingBatchCount !== batches.length
+  ) {
     throw new Error(
-      `expected 12 pilot-partial batches and 1,044 remaining editions, received ${pilotPartialBatchCount} and ${remainingEditionCount}`,
+      `art batch progress does not match ${producedIds.size} prepared production assets and ${batches.length} batches`,
     )
   }
 
@@ -261,6 +322,7 @@ function materialize(
       work: contentHash(sources.work),
       choice: contentHash(sources.choice),
       pilot: contentHash(pilotPlan),
+      assets: contentHash(assetManifest),
     },
     productionContract: {
       grouping: 'same_slot_narrative_and_visual_axis_across_twelve_signs',
@@ -268,9 +330,12 @@ function materialize(
       editionsPerFullBatch: 12,
       plannedEditionCount: editions.length,
       pilotEditionCount: pilotIds.size,
+      producedEditionCount: producedIds.size,
       remainingEditionCount,
       pilotPartialBatchCount,
-      fullPendingBatchCount: batches.length - pilotPartialBatchCount,
+      inProgressBatchCount,
+      completedBatchCount,
+      fullPendingBatchCount,
       editorialApprovalAuthority: 'human_editor',
       imageGenerationRequires: 'approved_editorial_hash',
       visualApprovalAuthority: 'human_editor',

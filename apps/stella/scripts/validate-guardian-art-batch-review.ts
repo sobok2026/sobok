@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 import { z } from 'zod'
+import { type ReleaseManifest, readReleaseManifest } from './guardian-card-art'
 
 const SIGNS = [
   'aries',
@@ -60,7 +61,7 @@ const batchPlanSchema = z
           remainingEditionIds: z.array(nonEmptyText),
           plannedEditionCount: z.number().int().positive(),
           remainingEditionCount: z.number().int().nonnegative(),
-          productionStatus: z.enum(['not_started', 'pilot_partial']),
+          productionStatus: z.enum(['not_started', 'pilot_partial', 'in_progress', 'complete']),
         })
         .passthrough(),
     ),
@@ -90,12 +91,12 @@ const reviewEditionBaseSchema = z.object({
   distinctFrom: z.array(z.string().trim().min(10)).min(1).max(3),
   visualReviewFocus: z.array(z.string().trim().min(10)).min(2).max(3),
 })
-const generatedCandidateEditionSchema = reviewEditionBaseSchema
+const approvedEditionSchema = reviewEditionBaseSchema
   .extend({
     editorialReviewStatus: z.literal('approved'),
     editorialApprovedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    imageStatus: z.literal('generated_local_candidate'),
-    candidateArtworkSha256: sha256,
+    imageStatus: z.literal('approved_local_candidate'),
+    approvedArtworkSha256: sha256,
   })
   .strict()
 const approvedPilotEditionSchema = reviewEditionBaseSchema
@@ -107,7 +108,7 @@ const approvedPilotEditionSchema = reviewEditionBaseSchema
   .strict()
 const reviewPlanSchema = z
   .object({
-    status: z.literal('visual_review_requested'),
+    status: z.literal('visual_review_complete'),
     locale: z.literal('ko'),
     batchId: nonEmptyText,
     batchOrder: z.number().int().positive(),
@@ -173,7 +174,17 @@ const reviewPlanSchema = z
         commonPrompt: z.string().trim().min(300),
       })
       .strict(),
-    editions: z.array(z.union([generatedCandidateEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
+    visualReviewContract: z
+      .object({
+        approvalAuthority: z.literal('human_editor'),
+        approvedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+        assetHashAlgorithm: z.literal('sha256'),
+        approvedImageStatus: z.literal('approved_local_candidate'),
+        productionAssetStatus: z.literal('not_uploaded'),
+        runtimeMayPublishLocalCandidate: z.literal(false),
+      })
+      .strict(),
+    editions: z.array(z.union([approvedEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
   })
   .strict()
 
@@ -186,6 +197,7 @@ const { values } = parseArgs({
     batches: { type: 'string' },
     pilot: { type: 'string' },
     'self-editions': { type: 'string' },
+    'asset-manifest': { type: 'string' },
     help: { type: 'boolean', short: 'h', default: false },
   },
   strict: true,
@@ -194,7 +206,7 @@ const { values } = parseArgs({
 if (values.help) {
   console.log(`Usage:
   bun run guardian-cards:validate-art-review
-  bun run scripts/validate-guardian-art-batch-review.ts --review <review.json>`)
+  bun run scripts/validate-guardian-art-batch-review.ts --review <review.json> --asset-manifest <manifest.json>`)
   process.exit(0)
 }
 
@@ -208,22 +220,26 @@ const pilotPath =
 const selfEditionsPath =
   values['self-editions'] ??
   fileURLToPath(new URL('../content/guardian-cards/guardian-self-editions-ko.json', import.meta.url))
+const assetManifestPath =
+  values['asset-manifest'] ??
+  fileURLToPath(new URL('../content/guardian-cards/guardian-card-assets-ko.json', import.meta.url))
 
 try {
-  const [reviewJson, batchesJson, pilotJson, selfEditionsJson] = await Promise.all([
+  const [reviewJson, batchesJson, pilotJson, selfEditionsJson, assetManifest] = await Promise.all([
     readJson(reviewPath),
     readJson(batchesPath),
     readJson(pilotPath),
     readJson(selfEditionsPath),
+    readReleaseManifest(assetManifestPath),
   ])
   const review = parse(reviewPlanSchema, reviewJson, 'guardian art batch review')
   const batches = parse(batchPlanSchema, batchesJson, 'guardian art batch plan')
   const pilot = parse(pilotPlanSchema, pilotJson, 'guardian art pilot plan')
   const selfEditions = parse(editionSourceSchema, selfEditionsJson, 'self edition source')
 
-  validate(review, batches, pilot, selfEditions.editions)
+  validate(review, batches, pilot, selfEditions.editions, assetManifest)
   console.log(
-    `validated: production-art-batch-001-review-ko (${review.editions.length} editorially approved editions, 1 approved pilot + 11 candidates awaiting human visual approval, sha256 ${contentHash(review)})`,
+    `validated: production-art-batch-001-review-ko (${review.editions.length} visually approved editions represented in the cumulative WebP release, sha256 ${contentHash(review)})`,
   )
 } catch (error) {
   console.error(error instanceof Error ? error.message : 'Guardian art batch review validation failed')
@@ -252,6 +268,7 @@ function validate(
   batchPlan: z.infer<typeof batchPlanSchema>,
   pilotPlan: z.infer<typeof pilotPlanSchema>,
   editions: Edition[],
+  assetManifest: ReleaseManifest,
 ): void {
   const errors: string[] = []
   const batch = batchPlan.batches.find((candidate) => candidate.id === review.batchId)
@@ -267,11 +284,11 @@ function validate(
       'review edition',
       errors,
     )
-    if (batch.plannedEditionCount !== 12 || batch.remainingEditionCount !== 11) {
-      errors.push(`${review.batchId}: expected a 12-edition batch with 11 remaining editions`)
+    if (batch.plannedEditionCount !== 12 || batch.remainingEditionCount !== 0) {
+      errors.push(`${review.batchId}: expected a completed 12-edition batch with no remaining editions`)
     }
-    if (batch.productionStatus !== 'pilot_partial' || batch.pilotEditionIds.length !== 1) {
-      errors.push(`${review.batchId}: expected exactly one approved pilot edition`)
+    if (batch.productionStatus !== 'complete' || batch.pilotEditionIds.length !== 1) {
+      errors.push(`${review.batchId}: expected a complete batch containing exactly one approved pilot edition`)
     }
   }
 
@@ -293,22 +310,22 @@ function validate(
     errors,
   )
   checkUnique(
-    review.editions.map((edition) =>
-      edition.imageStatus === 'approved_local_candidate'
-        ? edition.approvedArtworkSha256
-        : edition.candidateArtworkSha256,
-    ),
-    'candidate artwork hash',
+    review.editions.map((edition) => edition.approvedArtworkSha256),
+    'approved artwork hash',
     errors,
   )
   if (review.generatedOn < review.editorialApprovedOn) {
     errors.push('candidate generation date cannot precede editorial approval date')
   }
+  if (review.visualReviewContract.approvedOn < review.generatedOn) {
+    errors.push('visual approval date cannot precede candidate generation date')
+  }
 
   const sourceById = new Map(editions.map((edition) => [edition.id, edition]))
   const pilotById = new Map(pilotPlan.pilots.map((pilot) => [pilot.editionId, pilot]))
+  const assetById = new Map(assetManifest.assets.map((asset) => [asset.editionId, asset]))
   let approvedPilotCount = 0
-  let generatedCandidateCount = 0
+  let approvedEditionCount = 0
   for (const edition of review.editions) {
     const source = sourceById.get(edition.editionId)
     if (!source) {
@@ -325,6 +342,12 @@ function validate(
     if (edition.editorialContentHash !== expectedHash) {
       errors.push(`${edition.editionId}: editorial hash must match current copy (${expectedHash})`)
     }
+    const asset = assetById.get(edition.editionId)
+    if (!asset) {
+      errors.push(`${edition.editionId}: visually approved artwork is missing from the cumulative WebP release`)
+    } else if (asset.sourceArtworkSha256 !== edition.approvedArtworkSha256) {
+      errors.push(`${edition.editionId}: WebP release source hash must match the visually approved PNG`)
+    }
 
     const pilot = pilotById.get(edition.editionId)
     if (edition.editorialReviewStatus === 'approved_pilot') {
@@ -340,7 +363,7 @@ function validate(
         }
       }
     } else {
-      generatedCandidateCount += 1
+      approvedEditionCount += 1
       if (pilot) {
         errors.push(`${edition.editionId}: an approved pilot cannot be recorded as a new approval`)
       }
@@ -350,9 +373,9 @@ function validate(
     }
   }
 
-  if (approvedPilotCount !== 1 || generatedCandidateCount !== 11) {
+  if (approvedPilotCount !== 1 || approvedEditionCount !== 11) {
     errors.push(
-      `expected 1 approved pilot and 11 generated candidates, received ${approvedPilotCount} and ${generatedCandidateCount}`,
+      `expected 1 approved pilot and 11 new visually approved editions, received ${approvedPilotCount} and ${approvedEditionCount}`,
     )
   }
   for (const requiredPromptFragment of [
