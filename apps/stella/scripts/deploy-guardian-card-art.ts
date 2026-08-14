@@ -145,7 +145,7 @@ for (const { asset, md5 } of releaseAssets) {
 await mapConcurrent(releaseAssets, 5, async ({ asset }) => {
   const url = new URL(asset.objectKey, `${deliveryEnvironment.origin}/`)
   url.searchParams.set('sha256', asset.deliveryArtworkSha256)
-  const response = await fetchDeliveryOrigin(url)
+  const { body, response } = await readDeliveryOrigin(url)
   if (!response.ok) {
     throw new Error(`${asset.editionId}: delivery origin verification failed (${response.status})`)
   }
@@ -155,7 +155,6 @@ await mapConcurrent(releaseAssets, 5, async ({ asset }) => {
   ) {
     throw new Error(`${asset.editionId}: delivery origin HTTP metadata mismatch`)
   }
-  const body = new Uint8Array(await response.arrayBuffer())
   if (body.byteLength !== asset.byteSize) {
     throw new Error(`${asset.editionId}: delivery origin byteSize mismatch`)
   }
@@ -169,7 +168,7 @@ console.log(
   `deployed: ${missingAssets.length} uploaded, ${manifest.assetCount - missingAssets.length} already identical, ${manifest.assetCount} verified through ${deliveryEnvironment.origin}`,
 )
 
-async function fetchDeliveryOrigin(url: URL): Promise<Response> {
+async function readDeliveryOrigin(url: URL): Promise<{ body: Uint8Array; response: Response }> {
   const maximumAttempts = 4
   let lastError: unknown
   for (let attempt = 1; attempt <= maximumAttempts; attempt += 1) {
@@ -178,10 +177,10 @@ async function fetchDeliveryOrigin(url: URL): Promise<Response> {
         headers: { 'Cache-Control': 'no-cache' },
         signal: AbortSignal.timeout(20_000),
       })
+      const body = new Uint8Array(await response.arrayBuffer())
       if (response.ok || !isRetryableDeliveryStatus(response.status) || attempt === maximumAttempts) {
-        return response
+        return { body, response }
       }
-      await response.arrayBuffer()
       console.warn(
         `${url.pathname}: delivery origin returned ${response.status}; retrying (${attempt}/${maximumAttempts})`,
       )
