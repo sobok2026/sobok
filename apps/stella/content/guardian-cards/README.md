@@ -22,6 +22,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-001-review-ko.json`    | `visual_review_complete` | 첫 production 배치 신규 PNG 11개 시각 승인·승인 해시 고정           |
 | `production-art-batch-002-review-ko.json`    | `visual_review_complete` | 두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
 | `production-art-batch-003-review-ko.json`    | `visual_review_complete` | 세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
+| `production-art-batch-004-review-ko.json`    | `editorial_review_ready` | 네 번째 production 배치 12개 원고·별자리 여운 구도 사람 승인 대기   |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                          |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 47개 WebP 배포 후보의 객체 키·원본/배포 SHA-256              |
 
@@ -253,6 +254,13 @@ SHA-256은 검수 파일과 누적 35개 WebP 매니페스트에 고정하며 �
 `apps/stella/private/guardian-art-production/self-present-weather-shared-world`에 보관한다. 승인 원본의
 SHA-256은 검수 파일과 누적 47개 WebP 매니페스트에 고정하며 환경별 R2 반영 이력은
 `Guardian Card Art Deploy` workflow가 남긴다.
+
+네 번째 배치는 같은 `self.present-weather` 원고를 `constellation-afterglow` 표현 방식으로 제작할 신규
+12개다. `production-art-batch-004-review-ko.json`에 현재 원고의 canonical SHA-256과 행동이 가라앉은 뒤
+가슴의 Stella 별표에서 중심 소품 너머로 이어지는 비개인화 여운을 명시했다. 앞선 세 배치의 카메라·
+실루엣·빛 경로를 반복하지 않으며, 실제 별자리 배열·점성술 기호·출생 차트 원과 닮지 않는 성긴 점과
+단순 곡선만 사용한다. 현재 상태는 사람 편집 승인 대기이며, 12개 원고 해시와 구도가 승인되기 전에는
+PNG 후보를 생성하지 않는다.
 
 ## 검증
 

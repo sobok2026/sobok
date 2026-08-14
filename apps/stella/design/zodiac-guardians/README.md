@@ -26,6 +26,8 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
   원화 후보·보조 시각 QA·사람의 최종 시각 승인 완료
 - 세 번째 production 배치: `self.present-weather.shared-world` 12개 원고 해시와 해결을 대신하지 않는
   동료 관계 구도, PNG 후보·마스터/80px 보조 시각 QA·사람의 최종 시각 승인 완료
+- 네 번째 production 배치: `self.present-weather.constellation-afterglow` 12개 원고 해시와 실제 별자리·
+  출생 차트를 사용하지 않는 비개인화 여운 구도 명세 완료, 사람 편집 승인 대기·원화 미생성
 - 유료 답변 효과: 네 주제 상세 본문·해석 초점·한 줄을 실질적으로 변경
 - 유료 질문 소스: 원문·선택지·적응형 선택 정책·점수를 Git JSON과 Database Worker 서버 번들로 관리
 - 반복 구매: 사랑 카드의 일러스트와 한 줄만 저가 재추첨
