@@ -20,6 +20,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-pilot-plan-ko.json`          | `visual_review_complete` | 별자리별 대표 원고·3:4 원화 후보 12개 시각 승인 완료                |
 | `production-art-batches-ko.json`             | `work_order`             | 1,056개 원화를 같은 제작 축의 12별자리 단위 88개 배치로 선언        |
 | `production-art-batch-001-review-ko.json`    | `visual_review_complete` | 첫 production 배치 신규 PNG 11개 시각 승인·승인 해시 고정           |
+| `production-art-batch-002-review-ko.json`    | `editorial_review_ready` | 두 번째 배치 12개 원고 해시·행동 구도 편집 승인 대기                |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                          |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 23개 WebP 배포 후보의 객체 키·원본/배포 SHA-256              |
 
@@ -228,6 +229,12 @@ bun --filter=@sobok/stella guardian-cards:materialize-art-batches
 마쳤으므로 신규 항목은 `approved_local_candidate`다. 누적 23개 WebP release에는 이 11개와 기존 12개가
 함께 들어가며 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
 
+두 번째 배치는 같은 `self.present-weather` 원고를 `action-beat` 표현 방식으로 제작하는 신규 12개다.
+`production-art-batch-002-review-ko.json`에 현재 원고의 canonical SHA-256, 캐릭터별 행동이 막 시작되는
+순간, 첫 배치와 겹치지 않는 카메라·소품·운동 방향을 고정했다. 사람 편집 승인 전 상태인
+`editorial_review_ready`이므로 아직 이미지 생성이나 로컬 후보 매니페스트를 만들지 않는다. 승인 뒤에만
+각 항목을 `approved`로 바꾸고 같은 해시를 입력으로 imagegen을 실행한다.
+
 ## 검증
 
 repository root에서 다음 명령을 실행한다.
@@ -251,6 +258,7 @@ bun --filter=@sobok/stella guardian-cards:validate
 - 1,056개 원고의 길이·문장 수·조사 token·접근성·비단정 표현 기준
 - 대표 이미지 후보 12개의 별자리 1종씩, 네 주제, 사랑 희귀도 4종, 비사랑 표현 방식 4종 커버리지
 - 대표 후보의 현재 원고와 편집 검수 해시 일치, 사람 승인 전 이미지 제작 차단
+- 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 23개를 제외한 현재 잔여
   1,033개 산식
 - R2 자산 계약의 1,056개 목표·환경별 버킷·WebP-only 객체 키와 승인 원본/배포 해시 연결
