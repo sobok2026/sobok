@@ -3,7 +3,7 @@
   "locale": "ko",
   "contentType": "image/webp",
   "cacheControl": "public, max-age=31536000, immutable",
-  "assetCount": 23,
+  "assetCount": 35,
   "assets": [
     {
       "editionId": "aquarius.choice.evidence.shared-world",
@@ -11,6 +11,15 @@
       "sourceArtworkSha256": "ca71a40ac3852b5ffcc8c13fe859c6018e0c2b808503680c8ffe041310c76faa",
       "deliveryArtworkSha256": "751e0fb01968b580e5c0d52cae2cbfc3369dc5a32c4f259466399486dcf1aa45",
       "byteSize": 208420,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aquarius.self.present-weather.action-beat",
+      "objectKey": "guardian-cards/ko/aquarius.self.present-weather.action-beat.webp",
+      "sourceArtworkSha256": "3fa7ca6f257b2479a09edf30100543c60b6193baea1b1d7fd7b29475921910a0",
+      "deliveryArtworkSha256": "5703ce4a1f2d5acf807c288b38c9375ed7aec3c9853e6bd9e2ab32cd9bc11c6b",
+      "byteSize": 190038,
       "width": 1080,
       "height": 1440
     },
@@ -33,6 +42,15 @@
       "height": 1440
     },
     {
+      "editionId": "aries.self.present-weather.action-beat",
+      "objectKey": "guardian-cards/ko/aries.self.present-weather.action-beat.webp",
+      "sourceArtworkSha256": "17088a0ab767e7444d8d60abde2e062e73a9dfcbec9ea4ca4f0ffc5de32ef8b4",
+      "deliveryArtworkSha256": "81408933c1fb06cf24bf4c4f15235ac0c39fda8716ce3c1885b256e6958f006b",
+      "byteSize": 160640,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "aries.self.present-weather.close-emotion",
       "objectKey": "guardian-cards/ko/aries.self.present-weather.close-emotion.webp",
       "sourceArtworkSha256": "9734e2c3c4abd06ac23f9dbd2b99343c329411f3bdbebc5eab59ed9e2dc3f6a9",
@@ -51,11 +69,29 @@
       "height": 1440
     },
     {
+      "editionId": "cancer.self.present-weather.action-beat",
+      "objectKey": "guardian-cards/ko/cancer.self.present-weather.action-beat.webp",
+      "sourceArtworkSha256": "020e9cf0f976fa6ba81e5573a8f41e02149d6c05003ea4738bb663f5c01cad84",
+      "deliveryArtworkSha256": "e1b3bed2a37f6af63c3d0d1dde94a270b0e9568ada83e589f1fdf0e7500f89cf",
+      "byteSize": 212314,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "cancer.self.present-weather.close-emotion",
       "objectKey": "guardian-cards/ko/cancer.self.present-weather.close-emotion.webp",
       "sourceArtworkSha256": "81b9eaa47c3b4670e5e1cf4abebc6a63549c6d66628e028f4fb81526f4333938",
       "deliveryArtworkSha256": "9833c6759ea4f07a456b4f4424d979dc5e91c26b030f992ef90b211e32fda90f",
       "byteSize": 216498,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "capricorn.self.present-weather.action-beat",
+      "objectKey": "guardian-cards/ko/capricorn.self.present-weather.action-beat.webp",
+      "sourceArtworkSha256": "34ebe7acbe369621ec45b57f21c2a99db0eefc1b6ed5b085751f8574bf84cf71",
+      "deliveryArtworkSha256": "129af34c0ac221f0733d3d89c19c459ebd0d60296863e226861babf83c23ca4e",
+      "byteSize": 227576,
       "width": 1080,
       "height": 1440
     },
@@ -87,11 +123,29 @@
       "height": 1440
     },
     {
+      "editionId": "gemini.self.present-weather.action-beat",
+      "objectKey": "guardian-cards/ko/gemini.self.present-weather.action-beat.webp",
+      "sourceArtworkSha256": "ae911ebc92873bd0c00601f153350752fedd7d8f18806cd9c55a6851d900a9db",
+      "deliveryArtworkSha256": "18b39d4b82dad28ba82272c25147b12e6d76979f4dad98fac9cedba3d32e9283",
+      "byteSize": 178984,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "gemini.self.present-weather.close-emotion",
       "objectKey": "guardian-cards/ko/gemini.self.present-weather.close-emotion.webp",
       "sourceArtworkSha256": "74495b3cedc6dfba7bb5a17da84b944f91daa7d6428b613674fd8c4c902278d3",
       "deliveryArtworkSha256": "0beeb954bd00a33fe57bf72082b6b35edc7cd31f7e14fbe83b636d333a373275",
       "byteSize": 144808,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "leo.self.present-weather.action-beat",
+      "objectKey": "guardian-cards/ko/leo.self.present-weather.action-beat.webp",
+      "sourceArtworkSha256": "2b72ba17771f4b609a99cc8dd7683340f0918826f1ed0cc98181b0cc158b734a",
+      "deliveryArtworkSha256": "a5d8b921cc3962096334d663c17d30fd702cc3c7dbb5289c5fbc2836fc461e6e",
+      "byteSize": 151700,
       "width": 1080,
       "height": 1440
     },
@@ -114,6 +168,15 @@
       "height": 1440
     },
     {
+      "editionId": "libra.self.present-weather.action-beat",
+      "objectKey": "guardian-cards/ko/libra.self.present-weather.action-beat.webp",
+      "sourceArtworkSha256": "be312346c774092765aa602c21ba52b585682e9e063460c3161b731305fb01c9",
+      "deliveryArtworkSha256": "77aa8a97431849c7d251ae614d358a32a8eb98e1b1d27d8fcf467044e3f6c191",
+      "byteSize": 193356,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "libra.self.present-weather.close-emotion",
       "objectKey": "guardian-cards/ko/libra.self.present-weather.close-emotion.webp",
       "sourceArtworkSha256": "8dad8a8c26f9c997c777ae42638d1e06dc8fb4de9c2ec6d653e284f91f58d784",
@@ -128,6 +191,15 @@
       "sourceArtworkSha256": "d1307aa47520f7a7680b2e337a348c04a39400b1e7017aa3aec6e2e2fb5482ee",
       "deliveryArtworkSha256": "581d85b0be237d07400e91f27acbe1d84da6d71aca174bf55f6798f94833f0b7",
       "byteSize": 203218,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "pisces.self.present-weather.action-beat",
+      "objectKey": "guardian-cards/ko/pisces.self.present-weather.action-beat.webp",
+      "sourceArtworkSha256": "5f369eac564819c27c868376d72152ad5f08f7006f7f92044bb4ac8bbf2a634a",
+      "deliveryArtworkSha256": "bb45259ac077a79a8ca58b203165d2ec01c156b0efdbe55d5974b3bfe264c629",
+      "byteSize": 152468,
       "width": 1080,
       "height": 1440
     },
@@ -150,6 +222,15 @@
       "height": 1440
     },
     {
+      "editionId": "sagittarius.self.present-weather.action-beat",
+      "objectKey": "guardian-cards/ko/sagittarius.self.present-weather.action-beat.webp",
+      "sourceArtworkSha256": "98b40fa9f53c4a7ca2f23ad85f8b2c81ab29d4ccb8e60a27cee318638e7600df",
+      "deliveryArtworkSha256": "afa4ea454c63d482ee966d49d083396b238b4c64b1e8fed16fdd3f9705d62154",
+      "byteSize": 166132,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "sagittarius.self.present-weather.close-emotion",
       "objectKey": "guardian-cards/ko/sagittarius.self.present-weather.close-emotion.webp",
       "sourceArtworkSha256": "d13ded094ac070056019a9d4fdc960e37d9e68f856a6a93e6b1b25436bcfbe89",
@@ -168,11 +249,29 @@
       "height": 1440
     },
     {
+      "editionId": "scorpio.self.present-weather.action-beat",
+      "objectKey": "guardian-cards/ko/scorpio.self.present-weather.action-beat.webp",
+      "sourceArtworkSha256": "575dc98e908bb55ed49f474bf38b11216e230348f624df4ec05d85a63dcf6b95",
+      "deliveryArtworkSha256": "ff60f0f7bbdeef49212887d1ebc275474000e0cabcfe08019ffc0ceac8401391",
+      "byteSize": 117552,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "scorpio.self.present-weather.close-emotion",
       "objectKey": "guardian-cards/ko/scorpio.self.present-weather.close-emotion.webp",
       "sourceArtworkSha256": "eba654df40f6c03753b0872fee69cb904f39556712abd27ab52bc6c624fe0e4c",
       "deliveryArtworkSha256": "345377266cea82d695c183a971c2b59fb1e6614ca2c4992bbd231925f75d50e4",
       "byteSize": 105240,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "taurus.self.present-weather.action-beat",
+      "objectKey": "guardian-cards/ko/taurus.self.present-weather.action-beat.webp",
+      "sourceArtworkSha256": "723b5deffc8d026c0a189cd00e8e6f4123308ea6d394209328bdc6da8328686f",
+      "deliveryArtworkSha256": "4ca56c8fd45c8687e2fafe68095e16b976f5db359c9e88d9740a27f87f6c02b4",
+      "byteSize": 196474,
       "width": 1080,
       "height": 1440
     },
@@ -191,6 +290,15 @@
       "sourceArtworkSha256": "5f54e8228fd45f5e8720ddfd6b8783b7f38bbd88d9484690661fe33538579a33",
       "deliveryArtworkSha256": "c42e2e7c8cef1ba29cf6b7b5b20605e835e405d2ead5318c600042865a71f595",
       "byteSize": 206316,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "virgo.self.present-weather.action-beat",
+      "objectKey": "guardian-cards/ko/virgo.self.present-weather.action-beat.webp",
+      "sourceArtworkSha256": "90cacf7cf58e806d12d6a1747bb2936d98cf2e31249451677d2b8fb434bb62da",
+      "deliveryArtworkSha256": "0ddebfef3f8b45ff7dabb01bff724cf9ee66e1599056d2b29c15a12a093ebaee",
+      "byteSize": 183284,
       "width": 1080,
       "height": 1440
     },
