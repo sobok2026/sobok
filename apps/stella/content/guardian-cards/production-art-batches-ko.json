@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "c0f7a628fde6950bebc0945d12d61298b5660a0226e67006187a19c0c56e94fa",
-    "assets": "e32655d188322abb78270ed61f61d0bbd4e7a855f2152758b0090e669330ca6c"
+    "assets": "2e7f683eed592e78747b3f6a443467825bd1e44b6cf1df94686b7e351a54a9b8"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,12 +16,12 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 94,
-    "remainingEditionCount": 962,
+    "producedEditionCount": 106,
+    "remainingEditionCount": 950,
     "pilotPartialBatchCount": 10,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 7,
-    "fullPendingBatchCount": 71,
+    "completedBatchCount": 8,
+    "fullPendingBatchCount": 70,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
     "visualApprovalAuthority": "human_editor",
@@ -231,23 +231,10 @@
         "pisces.self.hidden-need.constellation-afterglow"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.self.hidden-need.constellation-afterglow",
-        "taurus.self.hidden-need.constellation-afterglow",
-        "gemini.self.hidden-need.constellation-afterglow",
-        "cancer.self.hidden-need.constellation-afterglow",
-        "leo.self.hidden-need.constellation-afterglow",
-        "virgo.self.hidden-need.constellation-afterglow",
-        "libra.self.hidden-need.constellation-afterglow",
-        "scorpio.self.hidden-need.constellation-afterglow",
-        "sagittarius.self.hidden-need.constellation-afterglow",
-        "capricorn.self.hidden-need.constellation-afterglow",
-        "aquarius.self.hidden-need.constellation-afterglow",
-        "pisces.self.hidden-need.constellation-afterglow"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 9,
