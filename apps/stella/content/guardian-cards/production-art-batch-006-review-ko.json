@@ -1,0 +1,281 @@
+{
+  "status": "editorial_review_ready",
+  "locale": "ko",
+  "batchId": "self.hidden-need.action-beat",
+  "batchOrder": 6,
+  "preparedOn": "2026-08-15",
+  "purpose": "자기이해의 숨은 필요를 실제로 옮기는 첫 동작으로 번역하되, 중심 소품이 막 움직이기 시작한 미완료 순간과 앞선 다섯 production 배치에 없던 카메라·운동축·실루엣을 사용하는 신규 원화 12개의 편집 승인을 받는다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "self",
+    "narrativeAxisId": "hidden-need",
+    "visualAxisId": "action-beat"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Premium Stella guardian story illustration, full-bleed 3:4 master art. Show exactly the guardians named in the approved card and preserve each approved character-sheet identity and signature prop; never add a third figure. Translate the canonical hidden need into its first action beat: the central need-bearing prop has just started moving, so the hesitation immediately before it and the unfinished next action remain visible together. Favor medium-wide or full-body staging, one clear motion axis, displaced props, and reactive cloth or limbs over the intimate close-up used in batch 5. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes, exactly one large and one small eye highlight. Keep the acting subject and central prop at 55–65% of the frame, readable at 80px, with generous breathing room and safe UI framing. Use symbols and shapes only: no readable text, sentence, name, map label, title, badge, zodiac glyph, logo, or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Do not reuse any composition, camera angle, silhouette, or prop staging from the five earlier production batches. Make every composition family, motion axis, and negative-space direction visibly distinct within this batch."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.self.hidden-need.action-beat",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "bad57c3cfdd868b73d272aa5ecfff5cfde64613cd6a242b7c8250d7c99f1db02",
+      "imageStatus": "not_started",
+      "compositionFamily": "sidewind_open_palms_flame_lift",
+      "artDirection": "넓은 바람 마당을 옆으로 가르는 중간 전신 구도다. 몽실이는 달리지 않고 몸을 3/4 방향으로 돌려 한쪽 뒷발만 바람 쪽으로 틀며, 막 펼친 두 손 한 뼘 위에서 작은 불꽃이 처음 떠오른다. 불꽃의 낮고 긴 꼬리는 화면 반대편 빈 공간으로 휘고 접은 혜성 깃발은 등 뒤에 붙여, 출발선·트랙·발자국 없이 원하는 바람을 따라가는 첫 방향 전환만 보인다.",
+      "distinctFrom": [
+        "앞선 배치의 대각선 출발선·원형 트랙 오버헤드·깊은 길·되짚는 여운과 배치 5의 얼굴·두 손 극근접 구도",
+        "불꽃을 던지거나 크게 키우고 몽실이가 이미 달려 나간 해결·질주 장면"
+      ],
+      "visualReviewFocus": [
+        "벌어진 두 손·한 뼘 떠오른 작은 불꽃·방향을 튼 뒷발이 80px에서도 한 동작으로 읽히는지",
+        "불꽃의 꼬리가 실제 별자리 선이나 공격하는 불덩이가 아니라 옆바람의 한 방향으로 보이는지"
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.self.hidden-need.action-beat",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "9125ef9aca0b33ee45ca390535e35b21479e123f5a21b143dd5372ad08ff1066",
+      "imageStatus": "not_started",
+      "compositionFamily": "splitfloor_note_slide_blanket_unroll",
+      "artDirection": "따뜻한 바닥과 차가운 바닥이 사선으로 만나는 넓은 옆모습 구도다. 차곡이는 낮게 몸을 숙여 도형만 있는 할 일 쪽지를 한 손으로 차가운 경계 밖으로 막 미끄러뜨리고, 다른 팔에는 김이 오르는 별찻잔을 안정적으로 받친다. 몸 뒤에서는 말린 담요가 반대 방향으로 낮은 초승달처럼 절반만 풀려, 담요 터널·온실·별씨앗 없이 증명을 내려놓고 쉴 자리를 만드는 두 움직임을 남긴다.",
+      "distinctFrom": [
+        "앞선 배치의 온실 바닥·세로 빛가리개·덩굴 프레임·화단 오버헤드와 배치 5의 담요 안 정면 터널 구도",
+        "쪽지를 완전히 치우고 담요 안에 누워 회복을 끝내거나 찻잔을 마신 뒤 다시 일하는 장면"
+      ],
+      "visualReviewFocus": [
+        "밖으로 미끄러지는 쪽지와 반대로 풀리는 담요, 몸에 붙인 찻잔의 세 운동 상태가 분리되는지",
+        "쪽지에는 읽을 수 있는 할 일이나 글자 없이 서로 다른 도형 몇 개만 남는지"
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.self.hidden-need.action-beat",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "933eeb4082f6f12a7d279190fb1dc519d8cff769497ce652ed4f118d08f66ac2",
+      "imageStatus": "not_started",
+      "compositionFamily": "diagonal_letter_unfurl_dual_marking",
+      "artDirection": "한 장의 긴 별편지가 왼쪽 위의 말린 끝에서 오른쪽 아래의 느슨한 끝으로 막 풀리는 넓은 대각선 구도다. 크림색 재잘이는 가까운 아래쪽에서 종이 끝을 받치며 짧은 분홍 선을 긋고, 더 작은 라벤더 소곤이는 먼 위쪽에서 보라 삼각 도형 하나를 찍는다. 두 손은 서로 반대 방향으로 움직이고 종이 중앙은 물결처럼 들린 넓은 여백으로 남겨, 양끝 얼굴 근접·별방울 모빌·구름 벤치 없이 서로 다른 목소리가 동시에 밖으로 나오는 첫 동작을 보인다.",
+      "distinctFrom": [
+        "앞선 배치의 양옆 파문·모빌 줄 당김·평행 벤치·낮은 V자와 배치 5의 맞은편 모서리 얼굴·고정된 큰 편지 구도",
+        "종이가 두 장으로 갈라지거나 두 캐릭터가 같은 표시를 써 하나의 문장으로 합치는 장면"
+      ],
+      "visualReviewFocus": [
+        "크림색 재잘이와 라벤더 소곤이의 크기·높이·손 방향·표식 색이 비대칭으로 분명한지",
+        "풀리는 한 장의 종이와 빈 중앙이 읽을 수 있는 문장이나 말풍선 없이도 유지되는지"
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.self.hidden-need.action-beat",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "5000fd333584f0b73d970994e3ce6686b46526fd6974993ecbd68b9bd065d5ed",
+      "imageStatus": "not_started",
+      "compositionFamily": "rear_crawl_star_roll_cushion_pair",
+      "artDirection": "달집의 긴 바닥을 뒤쪽 3/4 방향에서 낮게 바라보는 넓은 실내 구도다. 크기가 다른 방석 두 개는 앞쪽에 간격을 두고 놓이고, 달콩이는 먼 닫힌 문을 향해 몸 전체로 조심스럽게 기어가며 둥근 집게에서 작은 별빛 하나를 막 굴려 보낸다. 별빛은 바닥에 짧은 호만 남기고 아직 문틈에 닿기 전이며, 창·집 단면·문 장식 없이 빈 방석에서 움직이는 몸과 별빛으로 곁을 청하는 첫 행동을 보여 준다.",
+      "distinctFrom": [
+        "앞선 배치의 창 근접·바깥 창 닦기·인형집 단면·실내 창 반사와 배치 5의 문틈 바로 앞 얼굴·집게 근접 구도",
+        "문이 열리거나 문밖 인물이 나타나고 별빛이 이미 상대에게 도착한 해결 장면"
+      ],
+      "visualReviewFocus": [
+        "뒤쪽 전신 달콩이·간격이 다른 방석 두 개·굴러가는 별빛·먼 문틈이 깊이 순서대로 읽히는지",
+        "별빛의 짧은 호가 혜성 길이나 실제 별자리 배열이 아니라 바닥에서 막 굴러간 흔적으로 보이는지"
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.self.hidden-need.action-beat",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "affafb7b6a980553ae124f6ec6164910613fff04c8dba0bb3b98cc112aba07ec",
+      "imageStatus": "not_started",
+      "compositionFamily": "rear_shadowline_selflight_first_step",
+      "artDirection": "무대가 아닌 비어 있는 연습실 바닥의 빛과 그림자 경계를 뒤쪽 3/4 방향으로 넓게 본다. 꺼진 조명은 먼 바닥 한쪽에 옆으로 누운 어두운 원통으로만 남고, 해님이는 경계에서 가슴을 감쌌던 두 손을 막 벌려 Stella 별표의 작은 빛이 앞의 빈 바닥에 불규칙한 부채꼴로 번지는 것을 본다. 비뚤어진 왕관을 쓴 채 한 발만 자기 빛 쪽으로 옮겨, 거울·관객·무대 중앙 없이 외부 조명을 켜기 전 스스로 원하는 모습을 향하는 첫 걸음을 남긴다.",
+      "distinctFrom": [
+        "앞선 배치의 정면 손거울·옆막 뒤 거울·무대 턱 동료·천장 시점 바닥 거울과 배치 5의 검은 조명 입구 얼굴 근접 구도",
+        "꺼진 조명이 다시 켜지거나 해님이가 공연을 시작하고 박수받는 모습을 미리 완성한 장면"
+      ],
+      "visualReviewFocus": [
+        "뒤에서 보아도 민들레 갈기·비뚤어진 왕관·벌어진 두 손·옮기는 한 발이 해님이의 동작으로 읽히는지",
+        "바닥의 금빛이 외부 스포트라이트가 아니라 가슴 별표에서 시작한 작고 불완전한 자기 빛인지"
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.self.hidden-need.action-beat",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "b577ae2da979a10ab8d3886bf77a2dc4b1d524f83a13cbafc8c47426e517a7d7",
+      "imageStatus": "not_started",
+      "compositionFamily": "floor_ribbon_eraser_pull_flower_drop",
+      "artDirection": "맨바닥 위 도형 체크 띠가 화면 아래를 넓은 곡선으로 가로지르는 낮은 전신 구도다. 새봄이는 옆으로 한 걸음 물러나며 둥근 지우개를 마지막 칸 위로 막 끌어당기고, 지우개 가루는 손의 반대 방향으로 짧게 흩어진다. 다른 손에서 놓인 작은 꽃은 비워진 칸 위에 아직 닿기 전 공중에 머물러, 책상·연필·병풍·전경 종이 구멍 없이 비우기와 쉬는 표시가 이어지는 미완료 동작을 담는다.",
+      "distinctFrom": [
+        "앞선 배치의 원형 책상 오버헤드·긴 옆 책상·체크표 병풍·구멍 난 전경과 배치 5의 책상 모서리 지우개·꽃 근접 구도",
+        "꽃이 이미 붙은 완료 배지로 보이거나 새봄이가 빈칸을 다시 채워 체크표를 완성하는 장면"
+      ],
+      "visualReviewFocus": [
+        "끌리는 지우개·반대로 흩어지는 가루·공중의 꽃·물러나는 발이 하나의 시간 순서로 읽히는지",
+        "새싹 귀와 꽃받침 목, 손에서 떨어지는 실제 꽃이 서로 다른 크기와 위치로 분리되는지"
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.self.hidden-need.action-beat",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "daef4e9a6ef8c38e289e0bc6f5c7269f4a073f3653c4a925628b076eb4b1ceb2",
+      "imageStatus": "not_started",
+      "compositionFamily": "cropped_scale_chute_token_roll",
+      "artDirection": "별저울 전체가 아니라 낮은 한쪽 접시와 그 위로 이어지는 짧은 곡선 홈만 옆에서 보는 중간 전신 구도다. 고르미는 홈 바깥에서 무릎을 낮추고 가슴 별표와 같은 네 갈래 표시의 작은 추를 막 밀어 손끝에서 놓으며, 추는 여러 도형 추가 있는 접시 쪽으로 처음 굴러간다. 접시는 내려가기 시작해 화면 한쪽이 비고 긴 저울 귀는 반대쪽으로 들려, 완전한 수평·양쪽 접시·이름 글자 없이 자기 몫이 새 균형을 움직이는 찰나를 보인다.",
+      "distinctFrom": [
+        "앞선 배치의 완전 대칭 벽감·공중 다리 전체 저울·매달린 저울과 관계 원·두 접시 사이 저시점 및 배치 5의 접시 안 추 내리기 근접 구도",
+        "추가 이미 접시에 안착해 저울이 완벽한 수평으로 돌아오거나 승패를 결정하는 장면"
+      ],
+      "visualReviewFocus": [
+        "손끝을 떠난 네 갈래 추·짧은 곡선 홈·기울기 시작한 한 접시·반대로 들린 귀가 운동축을 만드는지",
+        "개인 추가 글자 이름·천칭자리 glyph·추가 캐릭터가 아니라 가슴 별표와 대응하는 단순 도형인지"
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.self.hidden-need.action-beat",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "51882b72ad1a269add99d0d9e4a3db6cc1b2e1ca6baa0b304e9d08f53c50149a",
+      "imageStatus": "not_started",
+      "compositionFamily": "diagonal_lightstrip_sealed_letter_slide",
+      "artDirection": "어두운 바닥을 가느다란 따뜻한 빛 띠가 오른쪽 위에서 왼쪽 아래로 비스듬히 자르는 넓은 구도다. 꼬옥이는 빛 바깥에 전신으로 무릎을 꿇고 두 손으로 봉인된 별편지를 막 밀어, 편지의 절반만 빛 안으로 들어간 순간을 바라본다. 망토 자락은 몸 뒤로 곧게 끌리고 하트 꼬리는 봉인을 건드리지 않은 채 드러나며, 문·자물쇠·회랑·나선 없이 열지 않은 진심을 자기 시야로 옮기는 첫 행동을 담는다.",
+      "distinctFrom": [
+        "앞선 배치의 여민 망토 근접·잠금 장치 저시점·잠긴 문 정면·망토 오버헤드 나선과 배치 5의 편지 모서리·손가락 극근접 구도",
+        "봉인이 뜯기거나 편지 안의 내용·읽을 수 있는 글자가 공개되고 다른 인물이 확인하는 장면"
+      ],
+      "visualReviewFocus": [
+        "어둠 속 전신 꼬옥이·두 손·빛 경계에 걸친 봉인 편지·곧게 놓인 하트 꼬리가 분리되는지",
+        "편지 안의 붉은 맥박이 빛 띠와 섞여 별자리 선·심전도·열린 틈처럼 보이지 않는지"
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.self.hidden-need.action-beat",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "72bb80cf75a021ed0d637c0bb4b75e640d98152beb80eb0fad7f2555027ba221",
+      "imageStatus": "not_started",
+      "compositionFamily": "lateral_blank_scroll_unfurl_pencil_touch",
+      "artDirection": "빈 지도 두루마리가 실내 바닥을 가로로 굴러가며 넓은 곡면으로 막 풀리는 낮은 측면 전신 구도다. 총총이는 한쪽 무릎으로 가까운 종이 끝을 붙잡고 다른 손의 별연필 끝을 새로 드러난 안쪽 여백에 처음 대며, 완성된 기존 지도는 몸 뒤에서 작은 삼각 접힘으로 닫혀 있다. 혜성 목도리와 초승달 활은 두루마리의 반대 방향으로 들려, 망원경·언덕·전경 지도 원근·완성된 경로 없이 아직 이름 없는 가능성을 여는 첫 동작을 보인다.",
+      "distinctFrom": [
+        "앞선 배치의 망원경 근접·넓은 회전 전신·언덕 아래 전경 지도·대형 렌즈와 배치 5의 무릎 위 빈 지도·멈춘 연필 근접 구도",
+        "빈 지도에 완성된 길·지명·별자리 경로를 그리거나 총총이가 이미 그 길로 출발한 장면"
+      ],
+      "visualReviewFocus": [
+        "굴러가는 말린 끝·새로 펼쳐지는 넓은 여백·처음 닿는 연필·닫힌 기존 지도의 상태가 분명한지",
+        "새 종이에 읽을 수 있는 글자나 경로 없이 연필 끝의 아주 작은 시작 표시만 남는지"
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.self.hidden-need.action-beat",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "e7e106578bbf240e4075f2eded03dddf7e5fc79d6a21512628c384c8c69d83f6",
+      "imageStatus": "not_started",
+      "compositionFamily": "rear_crossbody_blanket_snap_open",
+      "artDirection": "계단과 정상이 없는 평평한 휴식 방을 뒤쪽 3/4 방향으로 보는 넓은 전신 구도다. 오름이는 몸을 가로로 돌리며 접힌 담요의 두 모서리를 막 털어, 담요가 화면 아래에서 위로 비대칭 사다리꼴처럼 절반만 펼쳐진 공중 순간을 만든다. 낮춘 목표 깃발에는 닫힌 눈 도형의 휴식 표식이 붙어 있고 별알람은 바닥 한쪽에 작게 놓여, 담요와 반대쪽으로 휘는 아쿠아 꼬리까지 계획된 쉼의 첫 실행을 보여 준다.",
+      "distinctFrom": [
+        "앞선 배치의 가파른 계단·옆 단면 일정 재배치·나선 중간참·벽 투영 경로와 배치 5의 별알람 전경·접힌 담요 근접 구도",
+        "담요가 이미 바닥에 완전히 펴지고 오름이가 잠들었거나 알람 뒤 다시 목표로 출발한 장면"
+      ],
+      "visualReviewFocus": [
+        "공중에서 절반 펼쳐진 담요가 오름이의 흰 몸·보라 뿔·아쿠아 꼬리를 가리지 않는지",
+        "낮은 깃발의 휴식 표식이 읽을 수 있는 허가증 문구 없이 닫힌 눈 도형으로만 보이는지"
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.self.hidden-need.action-beat",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "85ed6599706458507dade1113f3516e9657fc84bd55d2c7d8a14619730570771",
+      "imageStatus": "not_started",
+      "compositionFamily": "rear_tiptoe_hanging_sheet_brush_arc",
+      "artDirection": "세로로 매단 큰 종이를 화면 오른쪽에 비대칭으로 두고 바닥 가까이에서 방울이의 뒤쪽 3/4 전신을 올려다본다. 방울이는 발끝을 들고 한 손의 넓은 물붓을 아래에서 위로 막 휘둘러, 물결 귀와 가슴 별표에서 딴 열린 곡선과 떨어진 네 갈래 점 하나를 아직 완성되지 않은 표식으로 그린다. 모두의 설명서는 왼쪽 아래 얕은 상자 안으로 접혀 내려가는 중이며, 별물병·웅덩이·아코디언 종이벽 없이 자기 언어를 밖으로 크게 옮기는 첫 동작을 담는다.",
+      "distinctFrom": [
+        "앞선 배치의 S자 물결·청록 디딤돌·방사형 웅덩이·전경 물병 렌즈와 배치 5의 정면 인물·완성 표식 보드·낮은 설명서 띠 구도",
+        "표식이 실제 물병자리 glyph·브랜드 로고·읽을 수 있는 설명이 되거나 다른 인물이 승인하는 장면"
+      ],
+      "visualReviewFocus": [
+        "뒤쪽에서도 물결 귀·들린 발끝·휘두르는 손·큰 종이의 미완성 표식이 하나의 상승 동작으로 읽히는지",
+        "접히는 설명서와 물붓의 작은 물방울이 추가 글자·별자리 점선·두 번째 표식으로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.self.hidden-need.action-beat",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "2f01c2c7f588c25a7c8160fa780f83dc198cbb343148eda52f01507f51441993",
+      "imageStatus": "not_started",
+      "compositionFamily": "lowangle_upright_bottle_twin_streams",
+      "artDirection": "세운 투명 물병의 바닥 가까이에서 병목을 올려다보는 낮은 시점의 비대칭 구도다. 큰 아쿠아 꿈별이는 가까운 왼쪽 아래에서 청록 물결 한 줄을 병 입구 안쪽 벽으로 막 흘려보내고, 작은 분홍 잠별이는 먼 오른쪽 위에서 분홍 물결을 반대쪽 벽으로 동시에 건넨다. 두 물결은 병 바닥에서 아직 닿지 않은 서로 다른 높이의 띠로 말리기 시작하며, 구름·오늘 별·수평선·대각선으로 함께 든 병 없이 다른 모습 그대로 한곳에 담는 첫 행동을 보인다.",
+      "distinctFrom": [
+        "앞선 배치의 좌우 꿈구름·오버헤드 구름 접기·세로 구름 층·수면 대각선과 배치 5의 두 캐릭터가 함께 든 대각선 물병 구도",
+        "두 물결이 하나의 색으로 섞이거나 병이 가득 차고 캐릭터 얼굴이 유리에 반사되어 늘어나는 장면"
+      ],
+      "visualReviewFocus": [
+        "가까운 큰 꿈별이와 먼 작은 잠별이, 세운 병, 반대 벽을 타는 두 물결이 의도한 깊이와 크기로 분리되는지",
+        "정확히 두 캐릭터만 보이고 서로 다른 색 띠가 병 안에서 섞이거나 제3의 물고기로 오인되지 않는지"
+      ]
+    }
+  ]
+}
