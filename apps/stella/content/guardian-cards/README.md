@@ -30,6 +30,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-009-review-ko.json`    | `visual_review_complete` | 아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-010-review-ko.json`    | `visual_review_complete` | 열 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
 | `production-art-batch-011-review-ko.json`    | `visual_review_complete` | 열한 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-012-review-ko.json`    | `editorial_review_ready` | 열두 번째 production 배치 신규 12개 원고·비개인화 여운 구도 편집 승인 대기  |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                  |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 142개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                     |
 
@@ -384,6 +385,16 @@ contact sheet, 앞선 여덟 배치 비교 contact sheet에서 캐릭터 정체�
 `apps/stella/private/guardian-art-production/self-coping-pattern-shared-world`에 보관한다. 현재 신규 12개는
 모두 사람의 최종 시각 승인을 마쳤다. 승인 원본의 SHA-256은 검수 파일과 누적 142개 WebP 매니페스트에
 고정하며 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
+
+열두 번째 배치는 같은 `self.coping-pattern` 원고를 `constellation-afterglow` 표현 방식으로 제작할 신규
+12개의 편집 검수안이다. `production-art-batch-012-review-ko.json`에 현재 원고의 canonical SHA-256과 익숙한
+보호 방식이 멈춘 뒤 감정·사실·경계를 다음의 내가 알아볼 수 있도록 남기는 비개인화 여운을 고정했다.
+같은 표현 방식인 배치 4·8과 같은 이야기의 배치 9·10·11에서 사용한 카메라·소품 실루엣·빛의 종료
+방향을 반복하지 않는다. 열두 장은 초승달 작업 매트 오버헤드, 선반 옆 단면, 세로 병풍형 도안,
+달집 옆 단면, 곡선 단과 왕관 홈, 정면 그림자 상자, 세로 투명 모자이크, 두 높이의 상자와 열쇠,
+원형 전망대 오버헤드, 별탑과 보관 홈 단면, 열린 초승달 감정 트레이, 물결 아치 안쪽처럼 서로 다른
+깊이와 열린 여운 방향을 사용한다. 현재 12개 원고 해시와 구도는 사람의 최종 편집 승인 대기 상태이며,
+승인 전에는 imagegen·WebP 변환·R2 업로드를 진행하지 않는다.
 
 ## 검증
 
