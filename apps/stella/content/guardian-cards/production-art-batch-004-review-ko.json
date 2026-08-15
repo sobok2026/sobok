@@ -1,5 +1,5 @@
 {
-  "status": "visual_review_ready",
+  "status": "visual_review_complete",
   "locale": "ko",
   "batchId": "self.present-weather.constellation-afterglow",
   "batchOrder": 4,
@@ -49,6 +49,14 @@
     "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
     "commonPrompt": "Premium Stella guardian story illustration, full-bleed 3:4 master art. Show exactly the guardians named in the approved card and preserve each approved character-sheet identity and signature prop. Stage the canonical scene after its decisive action has settled. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes, exactly one large and one small eye highlight. Keep the guardians and central afterglow at 55–65% of the frame and readable at 80px, with safe UI framing. From the four-point golden Stella chest mark, carry one sparse abstract afterglow through or just beyond the central prop toward one quiet future-facing direction. Use only a few warm points and at most one simple curved line; the trail must stay non-personalized and must not copy a real zodiac constellation, astrological glyph, chart wheel, or previously used path. Use symbols and shapes only: no readable text, title, badge, zodiac glyph, logo, or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Do not reuse any composition from the close-emotion, action-beat, or shared-world batches. Make every composition family, camera angle, silhouette, and afterglow direction visibly distinct within this batch."
   },
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-15",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
   "editions": [
     {
       "order": 1,
@@ -58,7 +66,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "82801bfa73612e6ef343b6cd49e310669bf6ac249a988c203e7d90a4c679e8ea",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "08a6d7c10ed0e9fc564719f1fb80fd7473764d773ca375076784c029c65755b9",
       "compositionFamily": "lateral_startline_returning_arc",
       "artDirection": "해 질 무렵의 출발선을 화면 아래에서 위로 가늘게 자르는 넓은 측면 구도다. 몽실이는 선을 이미 한 발 넘은 채 몸은 앞으로, 얼굴은 뒤의 세 발자국으로 돌리고 접은 혜성 깃발을 등 뒤에 낮게 둔다. 가슴 별표의 여운은 발자국을 거꾸로 짚은 뒤 빈 하늘로 한 번만 꺾여 사라져, 질주가 아니라 방금 남긴 마음의 흔적을 보여 준다.",
       "distinctFrom": [
@@ -78,7 +87,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "544b6276ef0a1a042fe430b2250051d4eaf8135877e1b288c5dbe01fedaa7d6f",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "5f058684eb4243b7eac6d86e421f68e8e02c142bc2036b26510b889645f0befe",
       "compositionFamily": "topdown_seedbed_breathing_ring",
       "artDirection": "타원형 온실 화단을 거의 수직으로 내려다본다. 차곡이는 화단 가장자리에 무릎을 모으고 두 손을 그 위에 둔 채, 중앙의 절반만 빛나는 별씨앗을 바라본다. 가슴 별표에서 나온 여운은 씨앗 둘레를 완전히 닫히지 않은 반원으로 천천히 감싸고 세 개의 잎맥 같은 점으로 끝나며, 빈 흙과 앞치마가 느린 호흡의 간격을 만든다.",
       "distinctFrom": [
@@ -98,7 +108,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "43f9588c972196d005fb75dffeec526cc27f0b2391c4d74dc74094084fcdb663",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "42d600113c1c6d0d0795c602c2acb54a4faccfe17524b310ded4a14d259f4144",
       "compositionFamily": "low_angle_twin_chime_canopy",
       "artDirection": "낮은 구름 바닥에서 재잘이와 소곤이를 올려다보는 벌어진 V자 구도다. 두 캐릭터는 서로 다른 별방울을 가슴 가까이 멈춰 들고 중앙 위쪽의 작은 소리 조각을 함께 바라본다. 각 가슴 별표에서 시작한 짧은 여운은 중앙 조각에서 한 번 만나 비대칭 아치 하나로 펼쳐지고, 느슨한 연결 리본은 아래쪽에 처져 또 하나의 원을 만들지 않는다.",
       "distinctFrom": [
@@ -118,7 +129,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "edd8dd2ab4705ae23e67ea6f2842767043dbd849d8b58eb8bc452067fbca1a7e",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "eb95353bf1beddfc5f38aae2c6633d20b1ab5f2b5571d92d6eeaf9680da2116d",
       "compositionFamily": "interior_window_crescent_reflection",
       "artDirection": "달집 실내 바닥 가까이에서 둥근 창을 비스듬히 올려다본다. 달콩이는 창 옆의 3/4 후면으로 앉아 닦던 집게 천을 무릎에 내려놓고, 물방울 사이 초승달 모양으로 맑아진 작은 틈에 비친 자기 눈가를 본다. 가슴 별표의 여운은 맑은 틈을 통과해 창밖 빗속의 세 점으로만 이어지고, 나머지 유리는 젖은 채 남는다.",
       "distinctFrom": [
@@ -138,7 +150,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "ea1247c3c3bfa3e57f76fd8326488dcb1dd5cca12d1db57c40a9025b9f527a76",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "873bf4549829f4bf1e8379072f981f2a6010ba71873fa707d8056e424f1d2b86",
       "compositionFamily": "rafters_spotlight_floor_mirror",
       "artDirection": "무대 천장 옆의 높은 시점에서 꺼져 가는 타원형 스포트라이트를 비스듬히 내려다본다. 해님이는 빛의 가장자리에 앉아 한 손으로 비뚤어진 왕관을 만지고, 작은 거울은 손이 아니라 앞쪽 무대 바닥에 놓여 자기 표정 일부만 비춘다. 가슴 별표의 여운은 거울에서 짧게 반사된 뒤 빈 마룻바닥을 가로질러 어두운 옆막 앞의 세 점으로 낮아진다.",
       "distinctFrom": [
@@ -158,7 +171,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "d137387991ced0fd36956a96b3050282ff93939e4fddc792c855b694f6c0eeae",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c859afe8919c73a9c1b25a749ec399e2e22d5d3a9f947966a860fd17b90e1380",
       "compositionFamily": "checklist_cutout_foreground_window",
       "artDirection": "별·원·세모 구멍만 난 체크표 한 장을 화면 가까운 전경 프레임으로 세우고 그 너머 새봄이를 본다. 새봄이는 3/4 방향으로 책상에서 한 걸음 물러나 연필을 내려놓고, 한 손을 가슴 가까이 둔 채 들리는 종이 리본을 바라본다. 가슴 별표의 여운은 아직 비어 있는 둥근 구멍 하나를 통과해 리본 끝의 작은 점으로 멎는다.",
       "distinctFrom": [
@@ -178,7 +192,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "705021521f76fe31d9e8cf57b446532762088e546504958a7a8be916a9d820b7",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "e7f407777deb3ea40521b1e11b264f68993f87ca87048fcd39b1e8b12d26bfa2",
       "compositionFamily": "between_scale_pans_warm_hand_arc",
       "artDirection": "같은 무게의 두 별저울 접시 사이 바닥에서 고르미를 낮게 올려다본다. 두 접시는 화면 양옆 전경에 서로 다른 크기로 걸리고 저울은 수평이지만, 고르미는 중앙에서 살짝 벗어나 먼저 따뜻해진 손바닥을 가슴 앞에 편다. 가슴 별표의 여운은 그 손바닥을 스친 뒤 저울과 연결되지 않은 열린 위쪽 공간으로 짧게 휘어 사라진다.",
       "distinctFrom": [
@@ -198,7 +213,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "395c64f3d897c9f902649eeeed59d9cf8b14117679bef944c92259833df169c3",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "45b1632dc9709bf7bafe63b4928abd57e861438a457bdb7505894f9a8d1fb46a",
       "compositionFamily": "overhead_cloak_spiral_heart_gap",
       "artDirection": "짙은 보라 바닥을 바로 위에서 내려다보고 꼬옥이가 느슨하게 풀린 망토 안쪽에 앉은 모습을 담는다. 망토 자락은 몸 둘레를 완전히 닫지 않는 한 번의 나선으로 펼쳐지고, 열린 틈에 하트 꼬리의 붉은 빛이 드러난다. 가슴 별표의 여운은 하트 빛을 한 번 스친 뒤 같은 틈으로 빠져나가 세 개의 따뜻한 점으로 끝난다.",
       "distinctFrom": [
@@ -218,7 +234,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "1f6d74a8d22a0aaf67eb35473883da827d029504b5d02736f204c7ab5bdc491b",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "2044e6aed3706a518960f92099a2df76ee98179469cb051ab2bbb7030da5a251",
       "compositionFamily": "telescope_lens_foreground_reflection",
       "artDirection": "둥근 망원경 렌즈를 화면 아래 전경에 크게 두고 그 뒤의 총총이를 비스듬한 3/4 전신으로 담는다. 총총이는 망원경을 눈에서 내린 채 몸을 숙여 들뜬 꼬리를 내려다보고, 렌즈에는 멀리 보던 별 하나만 작게 반사된다. 가슴 별표의 여운은 렌즈 가장자리를 스쳐 수평선 쪽으로 가늘게 나아가며 목도리와 꼬리는 반대 곡선으로 남는다.",
       "distinctFrom": [
@@ -238,7 +255,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "9193de0bfb4a727fc414983f4f71c6b46d4c9e9bcac7aef22b84eab4e3da1a4a",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "f72a4b46c69b5b81671d7ccea5ac0326d001a3ad74dc11ec0f6c81205b4f787c",
       "compositionFamily": "sidewall_projected_rest_path",
       "artDirection": "별계단 옆의 넓은 벽을 정면으로 보고 계단은 화면 아래에 낮은 띠처럼만 남긴다. 오름이는 넓은 중간 칸에 옆모습으로 앉아 도형 일정표를 무릎에 두고 무거운 앞발을 살피며, 등산 가방은 한 칸 아래에 내려놓는다. 가슴 별표의 여운은 벽 위에 투영된 짧은 점선처럼 수평으로 흐르다가 위쪽이 아닌 가방 가까운 휴식 표식에서 멎는다.",
       "distinctFrom": [
@@ -258,7 +276,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "85d777dd0c1983190e8bcc2b5d1c9aa1d2eb6cdb8d325e50531d4f723509deb8",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "fc729ca1f9df761b0f250f439efa7645b252d7e2894ee7bb078e42490def775e",
       "compositionFamily": "bottle_lens_color_separation",
       "artDirection": "열린 별물병을 화면 아래 전경의 큰 투명 렌즈처럼 두고 그 너머 방울이를 3/4 방향으로 본다. 방울이는 병에서 흘러나온 여러 색을 막지 않은 채 가장 낯선 청록 물결에 손끝을 가까이 댄다. 가슴 별표의 여운은 병 입구를 통과하며 한 번 굴절된 뒤 청록빛과 나란한 성긴 세 점으로 위쪽에 분리되고, 병 안에는 얼굴 반사를 만들지 않는다.",
       "distinctFrom": [
@@ -278,7 +297,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "1ca02e67bfcd6e49b1184312d22e1b01a90a541f50c1bc380c1d601fb24548d4",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "d1204064d43e6d88b987dcd9b1f2044917ad1568284840f23eee0ed754336d8e",
       "compositionFamily": "waterline_opposed_dawn_reflection",
       "artDirection": "꿈물의 수면 높이에서 새벽빛을 바라보고 꿈별이와 잠별이를 서로 반대 대각선의 낮은 꿈구름에 둔다. 두 캐릭터는 막 눈을 뜬 서로 다른 표정으로 가운데 수면의 오늘 별을 바라보며, 연결된 지느러미는 별 아래의 낮은 중심점에서만 만난다. 각 가슴 별표의 짧은 여운은 오늘 별의 반사에서 합쳐진 뒤 수평선 쪽 얕은 물결 하나로 멀어진다.",
       "distinctFrom": [
