@@ -1,6 +1,7 @@
 {
-  "status": "editorial_review_complete",
+  "status": "visual_review_ready",
   "editorialApprovedOn": "2026-08-16",
+  "generatedOn": "2026-08-16",
   "locale": "ko",
   "batchId": "self.next-self.action-beat",
   "batchOrder": 14,
@@ -57,7 +58,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "345ea07770f6f02ec0821ac302aae466fed9f0c03c892a2a807ba9cf0b4bf8e3",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "rear_threequarter_flagstaff_press_backglance",
       "artDirection": "바람 부는 낮은 바위턱을 뒤쪽 3/4 중간 전신으로 보고, 몽실이가 두 손으로 혜성 깃대 끝을 앞쪽 바위의 얕은 홈에 막 눌러 꽂는 순간을 잡는다. 한 뒷발은 따뜻한 출발 돌에 남고 다른 앞발은 아직 밟지 않은 작은 돌 위로 떠 있으며, 몸은 앞으로 기울지만 얼굴만 뒤쪽 출발점으로 돌아간다. 깃발 천은 화면 위를 가리지 않고 옆 빈 하늘로 길게 휘며, 바위 홈의 작은 별먼지는 아래로만 흩어져 출발과 돌아봄 사이의 첫 행동을 남긴다.",
       "distinctFrom": [
@@ -77,7 +78,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "4f0a43568b2fab08a7eade0777d4fa811919cca889de3c62bf92f9821933330f",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "highrear_lframe_marker_clip_lift",
       "artDirection": "작은 흙 화단과 ㄴ자 나무 측정틀을 뒤쪽 높은 3/4 시점으로 넓게 본다. 차곡이는 별싹 옆에 한쪽 무릎을 대고, 어제의 옅은 빈 원에 있던 금빛 집게 표식을 오늘 높이까지 한 칸 위로 막 밀어 올리며 다른 손으로 틀의 아래 가로 받침만 붙든다. 별싹의 잎 하나가 집게 움직임 반대쪽으로 살짝 흔들리고, 오늘 표식 바로 위에는 숫자 없는 가까운 빈 홈 하나만 남겨 거대한 목표나 완성된 성장을 만들지 않는다.",
       "distinctFrom": [
@@ -97,7 +98,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "a29d231739d20ce787da1a421d4586ece0fbc8623f2ba9767f0c249e8adb651a",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "wormseye_plane_release_map_diamond",
       "artDirection": "마름모꼴로 펼친 새 지도의 낮은 모서리 아래에서 위를 올려다보는 넓은 시점이다. 가까운 재잘이는 접은 별종이비행기를 한 손에서 막 놓아 화면 위 빈 하늘로 비스듬히 보내고, 먼 소곤이는 지도 반대 모서리를 눌러 들린 종이를 안정시키며 열린 곡선과 떨어진 점 두 개의 첫 표식을 긋는다. 재잘이 쪽 지도에는 갈라지는 짧은 선과 열린 원이 따로 남고, 비행기의 진행선과 두 표식은 서로 만나지 않으며 연결 리본은 두 캐릭터 뒤 바닥에서 느슨하게 흔들린다.",
       "distinctFrom": [
@@ -117,7 +118,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "1a22be91c9207508083e72e9bbf1c97e992f61b5898612b090dae70cd9ba0ecb",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "rear_watersedge_moonhouse_weightshift_splash",
       "artDirection": "낮은 별빛 물가를 향한 달콩이의 뒤쪽 3/4 중간 전신과 등에 멘 달집의 둥근 실루엣을 함께 본다. 달콩이는 한 집게로 등에 걸린 보랏빛 끈의 짧은 끝을 뒤로 막 당겨 별버클을 고정하고, 동시에 앞발 하나를 물에 내려 짧은 물결과 작은 물방울 두 개만 일으킨다. 뒷발은 마른 물가에 남고 달집은 물 쪽으로 아주 조금 기울지만 떨어지지 않으며, 먼 건너편·목적지·길은 넓은 빈 수면으로 남긴다.",
       "distinctFrom": [
@@ -137,7 +138,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "7768c5823ea51998037cfa08ffe8b7289f2f60298405f4480318f46dcdbc1bd2",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "wide_side_floorlamp_shutter_flip_shadow_rise",
       "artDirection": "객석이 없는 연습실을 옆에서 넓게 보고, 해님이가 왕관 없이 낮게 앉아 손바닥보다 작은 바닥 별조명의 반달 가리개를 한 손으로 막 뒤집어 여는 순간을 잡는다. 조명에서 나온 짧은 부채꼴 빛은 해님이의 몸 아래를 지나 맞은편 둥근 연습 천에 닿고, 얼굴 세부가 없는 단일 그림자 윤곽이 천 아래에서 절반만 올라오기 시작한다. 다른 손은 가슴 곁에서 막 떨어지고 앞발 하나만 빛 가장자리로 옮겨, 외부 허락이 아닌 자기 동작이 장면을 밝히게 한다.",
       "distinctFrom": [
@@ -157,7 +158,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "d359a151851021c5966a2cd509d5f79e2be954209a5d84f918febd1ef7329f99",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "underbridge_plank_dip_paperfold_tuck",
       "artDirection": "짧고 낮은 별다리의 첫 널판 아래쪽에서 새봄이의 전신을 비스듬히 올려다본다. 새봄이는 원·세모·별 칸만 있는 확인표를 한 손으로 반 접어 앞치마 주머니에 막 밀어 넣고, 앞발 하나가 첫 널판에 닿아 널판이 아주 조금 내려가며 매달린 별방울 하나만 흔들린다. 다른 발은 넓은 출발 받침에 남고 빈손은 난간을 잡지 않은 채 균형을 펴며, 다리는 두세 널판 뒤 부드러운 안개 여백에서 끝나 되돌릴 수 있는 시험으로 보인다.",
       "distinctFrom": [
@@ -177,7 +178,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "60f0384329d80b36c29582043d392859b2444adc5d3e61043ea9ead046f38b74",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "rearwide_scale_fold_tag_loop_cast",
       "artDirection": "낮은 길 입구를 뒤쪽 넓은 3/4 시점으로 보고, 고르미가 몸을 비틀어 두 동작을 서로 반대 호로 시작한다. 왼쪽 긴 팔은 접힌 별저울의 마지막 귀를 열린 가방 안으로 막 눕히고, 오른쪽 손은 글자 없는 하늘색 네 갈래 이름표의 느슨한 고리를 첫 따뜻한 돌 쪽으로 던져 고리가 공중에 열린 채 내려간다. 두 번째 길과 비교표는 화면 밖에 두고 첫 돌 뒤의 한 방향만 넓은 빈 색면으로 열며, 긴 귀와 가방 끈은 이름표와 겹치지 않게 반대쪽으로 흔들린다.",
       "distinctFrom": [
@@ -197,7 +198,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "51a1ce6c2dd783d3e842cf2b21d274fd47f5ba42c508d945e42f2c7404f51fa8",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "overhead_quarterdoor_stop_lightwedge_boxanchor",
       "artDirection": "작은 방과 별문을 바로 위에서 내려다보아 문짝의 짧은 회전 호와 따뜻한 빛의 좁은 부채꼴을 함께 본다. 꼬옥이는 몸을 안쪽으로 둥글게 말아 소중한 보라 상자 앞에 남고, 한 손바닥으로 열리는 문 가장자리를 막 멈춰 손 하나 너비의 틈만 만든다. 문밖 빛은 손끝과 바닥의 빈 띠까지만 들어와 상자 앞에서 끊기고, 하트 꼬리는 상자 옆을 감은 채 문 반대 방향으로 작은 곡선을 유지한다.",
       "distinctFrom": [
@@ -217,7 +218,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "edc5e6e9b8a394c317d3fbf5652d4511d20501fe739bc893ecc5329323fadc5e",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "sideprofile_returndisc_hoofpress_forwardstride",
       "artDirection": "낯선 길의 시작 경계를 옆모습 넓은 전신으로 보고, 총총이가 몸을 앞으로 옮기면서 뒤쪽 발굽으로 둥근 귀환 별원판을 낮은 표식돌 홈에 막 눌러 고정한다. 원판 둘레에는 숫자 대신 옅은 점·반원·빈 점의 세 단순한 시기 표식만 있고, 앞발 하나는 다른 질감의 밝은 바닥 위로 떠서 내려가는 중이다. 혜성 목도리와 꼬리는 출발 쪽으로 길게 휘고 초승달 활은 등에 고정해, 돌아올 기준과 궁금한 첫걸음이 반대 방향으로 동시에 읽히게 한다.",
       "distinctFrom": [
@@ -237,7 +238,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "6d3d8799a74a8526c649e647c8a8e285ab5d83f24b87f8e1bdbe5b21a4ee0630",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "highthreequarter_uplan_tile_drop_goldtab_flip",
       "artDirection": "긴 계획띠가 바닥에 넓은 U자로 놓인 장면을 높은 3/4 시점에서 본다. 오름이는 U자 안쪽에 무릎을 대고 닫힌 눈 모양의 회복 타일과 마주 보는 두 손 모양의 도움 타일을 각각 비어 있는 두 칸 위로 막 놓아, 타일이 손끝 아래 공중에 조금 떠 있게 한다. 띠의 가까운 끝에서는 금빛 한 계단 탭 하나만 위로 젖혀지기 시작하고 실제 돌계단은 화면 가장자리에 한 단만 남으며, 달·정상·긴 숫자 일정은 빈 바닥 밖으로 이어지지 않는다.",
       "distinctFrom": [
@@ -257,7 +258,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "9af4d3056ea83c53dd65090644bc28bbf77ea5476e37be3d6d78eab6dfaa18ba",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "diagonal_brushcast_cloudcoil_foothover",
       "artDirection": "서로 어긋난 두 낮은 바위 끝을 왼쪽 아래와 오른쪽 위에 두는 넓은 대각선 구도다. 방울이는 출발 바위에 한 발을 남기고 물붓을 아래에서 위로 큰 반원으로 막 휘둘러, 붓끝의 작은 구름 고리 하나가 두 바위 사이에서 단일 발판으로 뭉치기 시작하게 한다. 다른 앞발은 아직 구름에 닿지 않은 채 그 위에 떠 있고, 허리의 물방울 기록판에는 짧은 열린 곡선 하나만 흔들리며 두 번째 발판·완성 다리·성공 표식은 나타나지 않는다.",
       "distinctFrom": [
@@ -277,7 +278,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "16581a8d618eaf4acb91405670e1c34746c089c088e091b5a823d4c28c022774",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "rearwide_opposed_doorcurtain_sweep_centerstar",
       "artDirection": "두 꿈문의 얇은 반투명 가장자리를 화면 왼쪽 가까이와 오른쪽 먼 곳에 높이가 다르게 두고, 뒤쪽 넓은 시점에서 두 캐릭터의 반대 움직임을 본다. 큰 아쿠아 꿈별이는 왼쪽 문 가장자리를 바깥으로 막 밀고 작은 분홍 잠별이는 오른쪽 문을 반대 방향으로 여는 중이며, 각자의 청록·분홍 짧은 물결 띠는 문 안쪽으로만 휘어 서로 만나지 않는다. 두 문 사이 낮은 바닥에는 네 갈래 중심 별 하나만 담긴 얕은 그릇이 움직이지 않고 남아, 다른 선택이 같은 중심을 지나가되 하나의 궤도로 합쳐지지 않게 한다.",
       "distinctFrom": [
