@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "c0f7a628fde6950bebc0945d12d61298b5660a0226e67006187a19c0c56e94fa",
-    "assets": "4660cda0d17b49029e783bd35ee8cd1230004cc9610c622faa1e606cdd1e9227"
+    "assets": "e32655d188322abb78270ed61f61d0bbd4e7a855f2152758b0090e669330ca6c"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,11 +16,11 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 83,
-    "remainingEditionCount": 973,
-    "pilotPartialBatchCount": 11,
+    "producedEditionCount": 94,
+    "remainingEditionCount": 962,
+    "pilotPartialBatchCount": 10,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 6,
+    "completedBatchCount": 7,
     "fullPendingBatchCount": 71,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
@@ -205,22 +205,10 @@
         "pisces.self.hidden-need.shared-world"
       ],
       "pilotEditionIds": ["gemini.self.hidden-need.shared-world"],
-      "remainingEditionIds": [
-        "aries.self.hidden-need.shared-world",
-        "taurus.self.hidden-need.shared-world",
-        "cancer.self.hidden-need.shared-world",
-        "leo.self.hidden-need.shared-world",
-        "virgo.self.hidden-need.shared-world",
-        "libra.self.hidden-need.shared-world",
-        "scorpio.self.hidden-need.shared-world",
-        "sagittarius.self.hidden-need.shared-world",
-        "capricorn.self.hidden-need.shared-world",
-        "aquarius.self.hidden-need.shared-world",
-        "pisces.self.hidden-need.shared-world"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 11,
-      "productionStatus": "pilot_partial"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 8,
