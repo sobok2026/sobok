@@ -1,6 +1,7 @@
 {
-  "status": "editorial_review_complete",
+  "status": "visual_review_ready",
   "editorialApprovedOn": "2026-08-16",
+  "generatedOn": "2026-08-16",
   "locale": "ko",
   "batchId": "self.coping-pattern.shared-world",
   "batchOrder": 11,
@@ -57,7 +58,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "ea6c7abccf2bb2e4c4e504c51d96627fc9e76f0d806b89be53985ddb5126a793",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "stepped_workbay_screw_light_pool",
       "artDirection": "낮은 원형 정비 홈이 있는 작업장 바닥을 비스듬한 3/4 시점으로 넓게 본다. 왼쪽 높은 턱에는 넘어진 별기계와 두 손을 느슨하게 편 몽실이가 있고, 홈 바닥 중앙에는 빠진 나사 하나가 따로 놓인다. 오른쪽 아래 계단의 달콩이는 몽실이에게 다가가지 않고 한쪽 집게로 작은 별등을 중간 단 위에 낮게 들어 타원형 빛이 나사 옆까지만 닿게 하며 다른 집게는 무릎에 둔다. 서로 다른 높이의 두 캐릭터와 닿지 않는 빛이 원인을 함께 바라보되 수리를 대신하지 않는 곁을 만든다.",
       "distinctFrom": [
@@ -77,7 +78,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "9b7d2be3802d5a93f772c61080ee50cf109fbdeb9f68660e6a11541329186fbf",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "shallow_corner_shelf_shadow_watch",
       "artDirection": "낮은 선반과 옆벽이 만나는 얕은 방 모서리를 정면에서 조금 비껴 넓게 본다. 왼쪽의 차곡이는 기울어진 선반 모서리를 한쪽 어깨와 손으로 받치면서 다른 손으로 단단한 별받침을 그림자 경계까지 끌어온다. 새봄이는 한 몸 길이 떨어진 오른쪽 밝은 바닥의 낮은 방석에 앉아 두 손을 무릎 뒤로 물리고, 손대지 않은 모래시계는 두 캐릭터의 손에서 모두 떨어진 화면 아래 빈 중앙에 세워 둔다. 선반 그림자의 대각선과 비어 있는 중앙이 무게를 나누는 선택과 기다림을 분리한다.",
       "distinctFrom": [
@@ -97,7 +98,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "8ee656ffc54163548783bda6d878754b09d918439ef4ac36e80baca779cb9ad7",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "concentric_step_single_tone_listen",
       "artDirection": "얕은 반원형 소리 계단 세 칸을 정면 위쪽에서 비스듬히 내려다본다. 화살표 도형과 열린 갈고리 곡선·떨어진 점만 남은 별도안은 가장 높은 뒤쪽 단에 작게 말아 두고, 별방울 하나는 아래 중앙 단에 놓는다. 가까운 낮은 단의 재잘이는 빈 두 손을 무릎에 두고 몸과 큰 귀를 별방울 쪽으로 돌리며, 먼 높은 단의 소곤이는 별방울 위에서 손끝을 막 떼어 짧은 음파 한 줄만 남긴다. 연결 리본은 계단 뒤로 느슨하게 흐르고 두 얼굴은 같은 높이에 놓이지 않는다.",
       "distinctFrom": [
@@ -117,7 +118,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "9094b3802fbf2634da6a109082c203e5a9d5ad7156577f9a97a0272588cb7677",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "three_step_porch_signal_retreat",
       "artDirection": "달집 바깥의 둥근 현관 계단 세 칸을 아래 오른쪽에서 위 왼쪽으로 오르는 지그재그처럼 넓게 본다. 화면 위 왼쪽에는 문 아래만 잘려 보이고 달콩이는 안쪽 어둠에서 작은 집게 하나를 문틈에 남긴 채 몸을 뒤로 둔다. 가운데 계단에는 별간식 하나가 놓이며, 꼬옥이는 아래 오른쪽의 낮은 화단 돌 뒤까지 두 걸음 물러나 앉아 하트 꼬리를 자기 곁에 감고 문이 아니라 빈 계단을 바라본다. 문틈·간식·물러난 동료가 서로 닿지 않는 삼각형으로 기다릴 권리를 남긴다.",
       "distinctFrom": [
@@ -137,7 +138,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "9f65d48a311f4ef9168586cf060aa0666123ee50ea87af70ed4f1483973c58f7",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "seatback_window_mirror_diagonal",
       "artDirection": "빈 객석의 둥근 좌석 등받이 두 개 사이를 비대칭 전경 창처럼 사용해 무대 앞의 넓은 대각선을 본다. 가까운 오른쪽 통로의 고르미는 박수 치지 않고 작은 거울을 가슴 높이에서 위로 기울이며, 먼 왼쪽 무대 앞 바닥의 해님이는 웃음을 거둔 손을 입가에서 내리고 다른 손을 작은 무릎 상처 쪽에 멈춘다. 넘어진 왕관은 해님이 뒤의 빈 바닥에 작게 남고 거울에는 얼굴을 복제하지 않은 부드러운 빛면만 보인다. 좌석 사이 사선 여백이 평가 대신 자기 표정을 볼 시간을 건넨다.",
       "distinctFrom": [
@@ -157,7 +158,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "674143af1061a5b390362ff63f11fcb03a153ed97f524a7538648ad9e1a99919",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "open_tray_crossaxis_cookie_watch",
       "artDirection": "낮고 긴 정리함을 화면 아래 왼쪽에서 위 오른쪽으로 비스듬히 열어 두고 두 캐릭터를 서로 교차하는 축에 놓는다. 뒤쪽 왼편의 새봄이는 깨진 별화분 조각과 물방울 표식 옆에서 붓을 바닥에 내려놓고 한 손을 무릎으로 가져간다. 정리함 앞면을 넘어 내려오는 체크표의 빈 도형 칸 하나에는 별쿠키가 놓이고, 오른쪽 앞의 차곡이는 그 칸이나 쿠키에 손대지 않은 채 흘러내리는 종이의 아래 끝만 두 손으로 받쳐 지킨다. 조각 평면과 종이 수직면이 원인 찾기와 쉬는 시간을 분리한다.",
       "distinctFrom": [
@@ -177,7 +178,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "7646c9c5d93b004149e55144e3ad04320bbb971cd1fe942ad0ea7aa4d190c589",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "tilted_mosaic_ramp_waiting_step",
       "artDirection": "여러 색 별조각이 놓인 넓고 낮은 모자이크 경사판을 화면 아래 오른쪽에서 위 왼쪽으로 기울여 정면 가까이 본다. 위쪽의 고르미는 몸 뒤에서 꺼낸 연한 하늘색 네 갈래 조각을 가운데 빈자리 안에 내려놓되 가장자리와 틈을 남겨 맞물리지 않게 하고 손끝을 떼는 중이다. 경사판 아래 별도 낮은 단의 몽실이는 접은 혜성 깃발을 자기 등 뒤 바닥에 눕히고 두 손을 무릎에 둔 채 조각이 아니라 고르미의 얼굴을 기다린다. 경사판과 아래 단 사이의 넓은 빈 띠가 선택을 권하지 않는 곁을 만든다.",
       "distinctFrom": [
@@ -197,7 +198,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "c66789a21e01e179af6a078d5f5e9c50e7a0e5a05dd5aa276f383b5216eb929f",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "isometric_corner_key_lantern_islands",
       "artDirection": "낮은 보라 상자가 있는 왼쪽 안쪽 벽과 잠긴 둥근 문이 있는 오른쪽 벽이 만나는 L자 방 모서리를 높은 3/4 시점으로 넓게 본다. 꼬옥이는 상자 뒤에 몸과 하트 꼬리 대부분을 숨기되 끝의 붉은 곡선만 자기 쪽에 남기고, 작은 별열쇠 하나를 두 벽 사이의 밝은 중앙 타일에 내려놓는다. 달콩이는 오른쪽 문 옆의 낮은 돌방석에 앉아 별등을 별도 작은 받침 위에 켜 두고 두 집게를 몸 가까이 모은다. 등불 빛은 열쇠 앞에서 멈춰 상자·열쇠·문 앞 기다림이 세 섬처럼 떨어진다.",
       "distinctFrom": [
@@ -217,7 +218,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "3f4b8c024a0cedbed88ea5173899f670f05bd4cc6c82f1685f379c1da00d3ee5",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "low_fence_map_sail_opposed_gazes",
       "artDirection": "낮은 돌난간에 작은 도형 지도를 비스듬히 기대어 바람에 가운데만 얕은 돛처럼 들린 모습을 옆 뒤쪽에서 넓게 본다. 난간 너머 먼 바닥은 두 색 면으로만 갈라져 첫 분기를 암시한다. 왼쪽 높은 지면의 총총이는 열린 현재 위치 원에서 별연필을 막 떼고 몸은 지도 곁에 둔 채 고개만 화면 밖 먼 빈 하늘로 돌린다. 오른쪽 아래의 오름이는 귀환 표식 옆 지도 모서리 하나를 손바닥으로 눌러 바람만 막고, 다른 손과 시선은 총총이가 아닌 지도 아래 빈 공간에 둔다. 들린 지도 중심과 반대 방향의 두 시선이 돌아올 자리를 지키면서 탐색할 여유를 만든다.",
       "distinctFrom": [
@@ -237,7 +238,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "eab140bf5dd633c9e911ecbe7e137d6c5d5638747dcf5c938ccb9547819f3395",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "tower_shadow_blanket_crescent_vigil",
       "artDirection": "완성된 낮은 별탑을 화면 뒤 왼쪽에 두고 탑의 긴 그림자가 앞 오른쪽으로 비스듬히 흐르는 넓은 3/4 구도다. 그림자 경계의 오름이는 여분 블록 하나를 가슴 높이에 든 채 탑 기초의 원·세모·별 완료 도형을 내려다보고, 손은 탑에서 떨어져 있다. 그림자 밖 오른쪽의 총총이는 초승달처럼 반만 펼친 담요 곁에 앉아 활을 바닥에 내려놓고, 담요 앞 별알람에는 손대지 않은 채 바깥을 본다. 탑과 쉼 자리 사이의 긴 그림자 여백이 충분함을 확인할 시간을 지킨다.",
       "distinctFrom": [
@@ -257,7 +258,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "c450d3d72321dfd35e47469b3b593c89185831274abe26c73243970c5c694e4f",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "transparent_shelf_droplet_tag_levels",
       "artDirection": "두 낮은 돌 사이에 가로로 놓인 반투명 감정 시트를 얕은 선반처럼 만들고 바닥 높이에서 한쪽 아래와 반대쪽 위를 함께 본다. 시트 위에는 열린 물결 곡선·짧은 측정선·작은 화살표만 있고, 왼쪽 아래의 방울이는 가장자리 밖으로 떨어진 물방울 하나를 빈 손바닥으로 받으며 물붓은 자기 옆 바닥에 내려놓는다. 오른쪽 위의 차곡이는 시트와 떨어진 마른 돌 위에 빈 이름표를 내려놓되 붙이지 않고 두 손을 몸 쪽으로 거둔다. 수평 시트가 두 높이를 잇지만 물방울과 이름표의 의미는 열어 둔다.",
       "distinctFrom": [
@@ -277,7 +278,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "2ebc27d0ff5c8e0a9107532fcf968251aa1f4d4329618955903ab267079b90ec",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "crescent_cove_crosscurrent_listen",
       "artDirection": "얕은 초승달 모양 바위턱 두 개가 좁은 물길을 사이에 두고 어긋난 작은 만을 낮은 3/4 시점으로 본다. 가까운 왼쪽 아래 바위턱의 큰 아쿠아 꿈별이는 먼저 말하려던 지느러미를 입가 아래에 멈추고 몸 가까이의 청록 물결을 짧게 감는다. 먼 오른쪽 위 바위턱의 작은 분홍 잠별이는 느린 분홍 물결 한 줄을 가운데 물길로 보내며, 자기 색이 아닌 회보라 물결 한 줄은 두 바위 사이를 지나 뒤쪽 열린 바다로 빠져나간다. 두 높이와 교차하지 않는 세 물결이 돌려보냄과 끝까지 듣기를 함께 보인다.",
       "distinctFrom": [
