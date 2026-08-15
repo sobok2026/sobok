@@ -1,9 +1,10 @@
 {
-  "status": "editorial_review_complete",
+  "status": "visual_review_ready",
   "locale": "ko",
   "batchId": "self.hidden-need.action-beat",
   "batchOrder": 6,
   "editorialApprovedOn": "2026-08-15",
+  "generatedOn": "2026-08-15",
   "purpose": "자기이해의 숨은 필요를 실제로 옮기는 첫 동작으로 번역하되, 중심 소품이 막 움직이기 시작한 미완료 순간과 앞선 다섯 production 배치에 없던 카메라·운동축·실루엣을 사용하는 신규 원화 12개의 편집 승인을 받는다.",
   "sourceBatchPlan": "production-art-batches-ko.json",
   "selectionContract": {
@@ -57,7 +58,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "bad57c3cfdd868b73d272aa5ecfff5cfde64613cd6a242b7c8250d7c99f1db02",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "sidewind_open_palms_flame_lift",
       "artDirection": "넓은 바람 마당을 옆으로 가르는 중간 전신 구도다. 몽실이는 달리지 않고 몸을 3/4 방향으로 돌려 한쪽 뒷발만 바람 쪽으로 틀며, 막 펼친 두 손 한 뼘 위에서 작은 불꽃이 처음 떠오른다. 불꽃의 낮고 긴 꼬리는 화면 반대편 빈 공간으로 휘고 접은 혜성 깃발은 등 뒤에 붙여, 출발선·트랙·발자국 없이 원하는 바람을 따라가는 첫 방향 전환만 보인다.",
       "distinctFrom": [
@@ -77,7 +78,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "9125ef9aca0b33ee45ca390535e35b21479e123f5a21b143dd5372ad08ff1066",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "splitfloor_note_slide_blanket_unroll",
       "artDirection": "따뜻한 바닥과 차가운 바닥이 사선으로 만나는 넓은 옆모습 구도다. 차곡이는 낮게 몸을 숙여 도형만 있는 할 일 쪽지를 한 손으로 차가운 경계 밖으로 막 미끄러뜨리고, 다른 팔에는 김이 오르는 별찻잔을 안정적으로 받친다. 몸 뒤에서는 말린 담요가 반대 방향으로 낮은 초승달처럼 절반만 풀려, 담요 터널·온실·별씨앗 없이 증명을 내려놓고 쉴 자리를 만드는 두 움직임을 남긴다.",
       "distinctFrom": [
@@ -97,7 +98,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "933eeb4082f6f12a7d279190fb1dc519d8cff769497ce652ed4f118d08f66ac2",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "diagonal_letter_unfurl_dual_marking",
       "artDirection": "한 장의 긴 별편지가 왼쪽 위의 말린 끝에서 오른쪽 아래의 느슨한 끝으로 막 풀리는 넓은 대각선 구도다. 크림색 재잘이는 가까운 아래쪽에서 종이 끝을 받치며 짧은 분홍 선을 긋고, 더 작은 라벤더 소곤이는 먼 위쪽에서 보라 삼각 도형 하나를 찍는다. 두 손은 서로 반대 방향으로 움직이고 종이 중앙은 물결처럼 들린 넓은 여백으로 남겨, 양끝 얼굴 근접·별방울 모빌·구름 벤치 없이 서로 다른 목소리가 동시에 밖으로 나오는 첫 동작을 보인다.",
       "distinctFrom": [
@@ -117,7 +118,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "5000fd333584f0b73d970994e3ce6686b46526fd6974993ecbd68b9bd065d5ed",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "rear_crawl_star_roll_cushion_pair",
       "artDirection": "달집의 긴 바닥을 뒤쪽 3/4 방향에서 낮게 바라보는 넓은 실내 구도다. 크기가 다른 방석 두 개는 앞쪽에 간격을 두고 놓이고, 달콩이는 먼 닫힌 문을 향해 몸 전체로 조심스럽게 기어가며 둥근 집게에서 작은 별빛 하나를 막 굴려 보낸다. 별빛은 바닥에 짧은 호만 남기고 아직 문틈에 닿기 전이며, 창·집 단면·문 장식 없이 빈 방석에서 움직이는 몸과 별빛으로 곁을 청하는 첫 행동을 보여 준다.",
       "distinctFrom": [
@@ -137,7 +138,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "affafb7b6a980553ae124f6ec6164910613fff04c8dba0bb3b98cc112aba07ec",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "rear_shadowline_selflight_first_step",
       "artDirection": "무대가 아닌 비어 있는 연습실 바닥의 빛과 그림자 경계를 뒤쪽 3/4 방향으로 넓게 본다. 꺼진 조명은 먼 바닥 한쪽에 옆으로 누운 어두운 원통으로만 남고, 해님이는 경계에서 가슴을 감쌌던 두 손을 막 벌려 Stella 별표의 작은 빛이 앞의 빈 바닥에 불규칙한 부채꼴로 번지는 것을 본다. 비뚤어진 왕관을 쓴 채 한 발만 자기 빛 쪽으로 옮겨, 거울·관객·무대 중앙 없이 외부 조명을 켜기 전 스스로 원하는 모습을 향하는 첫 걸음을 남긴다.",
       "distinctFrom": [
@@ -157,7 +158,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "b577ae2da979a10ab8d3886bf77a2dc4b1d524f83a13cbafc8c47426e517a7d7",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "floor_ribbon_eraser_pull_flower_drop",
       "artDirection": "맨바닥 위 도형 체크 띠가 화면 아래를 넓은 곡선으로 가로지르는 낮은 전신 구도다. 새봄이는 옆으로 한 걸음 물러나며 둥근 지우개를 마지막 칸 위로 막 끌어당기고, 지우개 가루는 손의 반대 방향으로 짧게 흩어진다. 다른 손에서 놓인 작은 꽃은 비워진 칸 위에 아직 닿기 전 공중에 머물러, 책상·연필·병풍·전경 종이 구멍 없이 비우기와 쉬는 표시가 이어지는 미완료 동작을 담는다.",
       "distinctFrom": [
@@ -177,7 +178,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "daef4e9a6ef8c38e289e0bc6f5c7269f4a073f3653c4a925628b076eb4b1ceb2",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "cropped_scale_chute_token_roll",
       "artDirection": "별저울 전체가 아니라 낮은 한쪽 접시와 그 위로 이어지는 짧은 곡선 홈만 옆에서 보는 중간 전신 구도다. 고르미는 홈 바깥에서 무릎을 낮추고 가슴 별표와 같은 네 갈래 표시의 작은 추를 막 밀어 손끝에서 놓으며, 추는 여러 도형 추가 있는 접시 쪽으로 처음 굴러간다. 접시는 내려가기 시작해 화면 한쪽이 비고 긴 저울 귀는 반대쪽으로 들려, 완전한 수평·양쪽 접시·이름 글자 없이 자기 몫이 새 균형을 움직이는 찰나를 보인다.",
       "distinctFrom": [
@@ -197,7 +198,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "51882b72ad1a269add99d0d9e4a3db6cc1b2e1ca6baa0b304e9d08f53c50149a",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "diagonal_lightstrip_sealed_letter_slide",
       "artDirection": "어두운 바닥을 가느다란 따뜻한 빛 띠가 오른쪽 위에서 왼쪽 아래로 비스듬히 자르는 넓은 구도다. 꼬옥이는 빛 바깥에 전신으로 무릎을 꿇고 두 손으로 봉인된 별편지를 막 밀어, 편지의 절반만 빛 안으로 들어간 순간을 바라본다. 망토 자락은 몸 뒤로 곧게 끌리고 하트 꼬리는 봉인을 건드리지 않은 채 드러나며, 문·자물쇠·회랑·나선 없이 열지 않은 진심을 자기 시야로 옮기는 첫 행동을 담는다.",
       "distinctFrom": [
@@ -217,7 +218,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "72bb80cf75a021ed0d637c0bb4b75e640d98152beb80eb0fad7f2555027ba221",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "lateral_blank_scroll_unfurl_pencil_touch",
       "artDirection": "빈 지도 두루마리가 실내 바닥을 가로로 굴러가며 넓은 곡면으로 막 풀리는 낮은 측면 전신 구도다. 총총이는 한쪽 무릎으로 가까운 종이 끝을 붙잡고 다른 손의 별연필 끝을 새로 드러난 안쪽 여백에 처음 대며, 완성된 기존 지도는 몸 뒤에서 작은 삼각 접힘으로 닫혀 있다. 혜성 목도리와 초승달 활은 두루마리의 반대 방향으로 들려, 망원경·언덕·전경 지도 원근·완성된 경로 없이 아직 이름 없는 가능성을 여는 첫 동작을 보인다.",
       "distinctFrom": [
@@ -237,7 +238,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "e7e106578bbf240e4075f2eded03dddf7e5fc79d6a21512628c384c8c69d83f6",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "rear_crossbody_blanket_snap_open",
       "artDirection": "계단과 정상이 없는 평평한 휴식 방을 뒤쪽 3/4 방향으로 보는 넓은 전신 구도다. 오름이는 몸을 가로로 돌리며 접힌 담요의 두 모서리를 막 털어, 담요가 화면 아래에서 위로 비대칭 사다리꼴처럼 절반만 펼쳐진 공중 순간을 만든다. 낮춘 목표 깃발에는 닫힌 눈 도형의 휴식 표식이 붙어 있고 별알람은 바닥 한쪽에 작게 놓여, 담요와 반대쪽으로 휘는 아쿠아 꼬리까지 계획된 쉼의 첫 실행을 보여 준다.",
       "distinctFrom": [
@@ -257,7 +258,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "85ed6599706458507dade1113f3516e9657fc84bd55d2c7d8a14619730570771",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "rear_tiptoe_hanging_sheet_brush_arc",
       "artDirection": "세로로 매단 큰 종이를 화면 오른쪽에 비대칭으로 두고 바닥 가까이에서 방울이의 뒤쪽 3/4 전신을 올려다본다. 방울이는 발끝을 들고 한 손의 넓은 물붓을 아래에서 위로 막 휘둘러, 물결 귀와 가슴 별표에서 딴 열린 곡선과 떨어진 네 갈래 점 하나를 아직 완성되지 않은 표식으로 그린다. 모두의 설명서는 왼쪽 아래 얕은 상자 안으로 접혀 내려가는 중이며, 별물병·웅덩이·아코디언 종이벽 없이 자기 언어를 밖으로 크게 옮기는 첫 동작을 담는다.",
       "distinctFrom": [
@@ -277,7 +278,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "2f01c2c7f588c25a7c8160fa780f83dc198cbb343148eda52f01507f51441993",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "lowangle_upright_bottle_twin_streams",
       "artDirection": "세운 투명 물병의 바닥 가까이에서 병목을 올려다보는 낮은 시점의 비대칭 구도다. 큰 아쿠아 꿈별이는 가까운 왼쪽 아래에서 청록 물결 한 줄을 병 입구 안쪽 벽으로 막 흘려보내고, 작은 분홍 잠별이는 먼 오른쪽 위에서 분홍 물결을 반대쪽 벽으로 동시에 건넨다. 두 물결은 병 바닥에서 아직 닿지 않은 서로 다른 높이의 띠로 말리기 시작하며, 구름·오늘 별·수평선·대각선으로 함께 든 병 없이 다른 모습 그대로 한곳에 담는 첫 행동을 보인다.",
       "distinctFrom": [
