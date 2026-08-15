@@ -5,28 +5,28 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 
 ## 현재 상태
 
-| 파일                                         | 상태                     | 범위                                                                |
-| -------------------------------------------- | ------------------------ | ------------------------------------------------------------------- |
-| `guardian-card-families-ko.json`             | `authoring`              | 12별자리 × 자기이해·사랑·일·결정, 총 48개 기본 패밀리의 한국어 원고 |
-| `production-edition-plan.json`               | `work_order`             | 실제 에디션 1,056개를 제작하기 위한 장면·표현·희귀도 매트릭스       |
-| `guardian-self-edition-blueprints-ko.json`   | `authoring`              | 자기이해 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고     |
-| `guardian-self-editions-ko.json`             | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 자기이해 에디션 192개  |
-| `guardian-love-edition-blueprints-ko.json`   | `authoring`              | 사랑 12패밀리의 서사 테마 120개와 네 희귀도의 한국어 원고           |
-| `guardian-love-editions-ko.json`             | `editorial_draft`        | 개별 ID·고정 가중치·원고를 명시한 사랑 에디션 480개                 |
-| `guardian-work-edition-blueprints-ko.json`   | `authoring`              | 일 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고           |
-| `guardian-work-editions-ko.json`             | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 일 에디션 192개        |
-| `guardian-choice-edition-blueprints-ko.json` | `authoring`              | 결정 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고         |
-| `guardian-choice-editions-ko.json`           | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 결정 에디션 192개      |
-| `production-art-pilot-plan-ko.json`          | `visual_review_complete` | 별자리별 대표 원고·3:4 원화 후보 12개 시각 승인 완료                |
-| `production-art-batches-ko.json`             | `work_order`             | 1,056개 원화를 같은 제작 축의 12별자리 단위 88개 배치로 선언        |
-| `production-art-batch-001-review-ko.json`    | `visual_review_complete` | 첫 production 배치 신규 PNG 11개 시각 승인·승인 해시 고정           |
-| `production-art-batch-002-review-ko.json`    | `visual_review_complete` | 두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
-| `production-art-batch-003-review-ko.json`    | `visual_review_complete` | 세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
-| `production-art-batch-004-review-ko.json`    | `visual_review_complete` | 네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
-| `production-art-batch-005-review-ko.json`    | `visual_review_complete` | 다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정    |
-| `production-art-batch-006-review-ko.json`    | `editorial_review_ready` | 여섯 번째 production 배치 12개 원고·숨은 필요 첫 동작 승인 대기     |
-| `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                          |
-| `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 71개 WebP 배포 후보의 객체 키·원본/배포 SHA-256              |
+| 파일                                         | 상태                        | 범위                                                                |
+| -------------------------------------------- | --------------------------- | ------------------------------------------------------------------- |
+| `guardian-card-families-ko.json`             | `authoring`                 | 12별자리 × 자기이해·사랑·일·결정, 총 48개 기본 패밀리의 한국어 원고 |
+| `production-edition-plan.json`               | `work_order`                | 실제 에디션 1,056개를 제작하기 위한 장면·표현·희귀도 매트릭스       |
+| `guardian-self-edition-blueprints-ko.json`   | `authoring`                 | 자기이해 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고     |
+| `guardian-self-editions-ko.json`             | `editorial_draft`           | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 자기이해 에디션 192개  |
+| `guardian-love-edition-blueprints-ko.json`   | `authoring`                 | 사랑 12패밀리의 서사 테마 120개와 네 희귀도의 한국어 원고           |
+| `guardian-love-editions-ko.json`             | `editorial_draft`           | 개별 ID·고정 가중치·원고를 명시한 사랑 에디션 480개                 |
+| `guardian-work-edition-blueprints-ko.json`   | `authoring`                 | 일 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고           |
+| `guardian-work-editions-ko.json`             | `editorial_draft`           | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 일 에디션 192개        |
+| `guardian-choice-edition-blueprints-ko.json` | `authoring`                 | 결정 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고         |
+| `guardian-choice-editions-ko.json`           | `editorial_draft`           | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 결정 에디션 192개      |
+| `production-art-pilot-plan-ko.json`          | `visual_review_complete`    | 별자리별 대표 원고·3:4 원화 후보 12개 시각 승인 완료                |
+| `production-art-batches-ko.json`             | `work_order`                | 1,056개 원화를 같은 제작 축의 12별자리 단위 88개 배치로 선언        |
+| `production-art-batch-001-review-ko.json`    | `visual_review_complete`    | 첫 production 배치 신규 PNG 11개 시각 승인·승인 해시 고정           |
+| `production-art-batch-002-review-ko.json`    | `visual_review_complete`    | 두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
+| `production-art-batch-003-review-ko.json`    | `visual_review_complete`    | 세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
+| `production-art-batch-004-review-ko.json`    | `visual_review_complete`    | 네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
+| `production-art-batch-005-review-ko.json`    | `visual_review_complete`    | 다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정    |
+| `production-art-batch-006-review-ko.json`    | `editorial_review_complete` | 여섯 번째 production 배치 12개 원고·숨은 필요 첫 동작 편집 승인     |
+| `guardian-card-asset-contract.json`          | `delivery_contract`         | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                          |
+| `guardian-card-assets-ko.json`               | `release_candidate`         | 승인된 71개 WebP 배포 후보의 객체 키·원본/배포 SHA-256              |
 
 파일명과 JSON에는 수동 버전을 두지 않는다. 각 파일이 현재 정본이며 변경 이력은 Git으로 추적한다. 이미
 게시한 카드의 의미나 원화를 실질적으로 바꿔야 한다면 기존 ID를 덮어쓰지 않고 새 에디션 ID를 만든다.
@@ -290,8 +290,8 @@ contact sheet를 함께 비교해 캐릭터 정체성·중심 소품·카메라�
 직전의 망설임과 미완료 다음 행동이 함께 보이는 구도를 명시했다. 배치 5의 표정·손끝 근접 대신 중간
 전신과 한 개의 명확한 운동축을 사용하고, 앞선 다섯 배치의 출발선·온실·모빌·창·거울·저울·망원경·
 계단·물병 카메라와 소품 배치를 반복하지 않는다. 열두 장은 불꽃 띄우기, 쪽지 밀기, 편지 펼치기,
-별빛 굴리기처럼 서로 다른 운동 방향과 여백을 사용한다. 현재 12개 원고와 구도는 사람의 편집 승인
-대기이며 승인 전에는 PNG 후보를 생성하지 않는다.
+별빛 굴리기처럼 서로 다른 운동 방향과 여백을 사용한다. 12개 원고 해시와 구도의 사람 편집 승인을
+2026-08-15에 마쳤으며, 이 승인 정본으로만 PNG 후보를 생성한다.
 
 ## 검증
 
