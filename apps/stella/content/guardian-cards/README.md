@@ -23,6 +23,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-002-review-ko.json`    | `visual_review_complete` | 두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
 | `production-art-batch-003-review-ko.json`    | `visual_review_complete` | 세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
 | `production-art-batch-004-review-ko.json`    | `visual_review_complete` | 네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
+| `production-art-batch-005-review-ko.json`    | `editorial_review_ready` | 다섯 번째 production 배치 12개 원고·숨은 필요 근접 구도 승인 대기   |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                          |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 59개 WebP 배포 후보의 객체 키·원본/배포 SHA-256              |
 
@@ -268,6 +269,13 @@ Git에 포함하지 않는
 `apps/stella/private/guardian-art-production/self-present-weather-constellation-afterglow`에 보관한다.
 승인 원본의 SHA-256은 검수 파일과 누적 59개 WebP 매니페스트에 고정하며 환경별 R2 반영 이력은
 `Guardian Card Art Deploy` workflow가 남긴다.
+
+다섯 번째 배치는 `self.hidden-need` 원고를 `close-emotion` 표현 방식으로 제작할 신규 12개다.
+`production-art-batch-005-review-ko.json`에 현재 원고의 canonical SHA-256과 얼굴·손끝·중심 소품에서 숨은
+필요가 가까이 읽히는 구도를 명시했다. 앞선 `present-weather` 네 배치의 출발선·창·거울·저울·망원경·
+계단·물병 카메라를 반복하지 않고, 배치 안에서도 열두 가지 전경 프레임과 여백 방향을 구분한다. 읽을 수
+있는 편지·이름·지도·설명 대신 도형과 색면만 사용한다. 현재 12개 원고와 구도는 사람의 편집 승인
+대기이며 승인 전에는 PNG 후보를 생성하지 않는다.
 
 ## 검증
 
