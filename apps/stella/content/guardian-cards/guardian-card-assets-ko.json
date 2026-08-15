@@ -3,7 +3,7 @@
   "locale": "ko",
   "contentType": "image/webp",
   "cacheControl": "public, max-age=31536000, immutable",
-  "assetCount": 130,
+  "assetCount": 142,
   "assets": [
     {
       "editionId": "aquarius.choice.evidence.shared-world",
@@ -29,6 +29,15 @@
       "sourceArtworkSha256": "044444b2d972729da742825d7e36546aaa6b1b42fa8607c6f21f66435addb63a",
       "deliveryArtworkSha256": "dedfb4b40d549e059944f4d977f5ffbd957fd81a69a2eaa6825ca60ffca1aad8",
       "byteSize": 93786,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aquarius.self.coping-pattern.shared-world",
+      "objectKey": "guardian-cards/ko/aquarius.self.coping-pattern.shared-world.webp",
+      "sourceArtworkSha256": "e5050f9aabaee59db72a881074582224365e113f6d7eb79af3df05d5f6d627a5",
+      "deliveryArtworkSha256": "e9254a0927c947e115c61725fdca5da7dc614701a05d1d10ca3be527f61f4f71",
+      "byteSize": 202976,
       "width": 1080,
       "height": 1440
     },
@@ -132,6 +141,15 @@
       "height": 1440
     },
     {
+      "editionId": "aries.self.coping-pattern.shared-world",
+      "objectKey": "guardian-cards/ko/aries.self.coping-pattern.shared-world.webp",
+      "sourceArtworkSha256": "708382734fccd990440bd0c76bc4ad20bfdf879278d5037353c677c67bef9507",
+      "deliveryArtworkSha256": "db464c1fcccc5457d124afef4f8f5cc6899b983030a4b3659e12cfae1f36fe51",
+      "byteSize": 213826,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "aries.self.hidden-need.action-beat",
       "objectKey": "guardian-cards/ko/aries.self.hidden-need.action-beat.webp",
       "sourceArtworkSha256": "cde725cad485a7cb43e328cea90c5ff1515748e3532409adc68e27f076769483",
@@ -231,6 +249,15 @@
       "height": 1440
     },
     {
+      "editionId": "cancer.self.coping-pattern.shared-world",
+      "objectKey": "guardian-cards/ko/cancer.self.coping-pattern.shared-world.webp",
+      "sourceArtworkSha256": "5901f18fd1f6f0b1fc3f78099ca0d8159bbe129343873904f68e5f372cb5cb14",
+      "deliveryArtworkSha256": "3a1228a9bc4bf5fe5cea863641f6080b46bd618fb01676883f1454b9cc57e7d6",
+      "byteSize": 328928,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "cancer.self.hidden-need.action-beat",
       "objectKey": "guardian-cards/ko/cancer.self.hidden-need.action-beat.webp",
       "sourceArtworkSha256": "570c9726396a0d2c290c72baca3e2a4329ec245bfe729275dd95f707d3657c7a",
@@ -317,6 +344,15 @@
       "sourceArtworkSha256": "3d084e880d049cf3a5e62ead1a90a15399a32b16431a1b458642b4af6250bbd6",
       "deliveryArtworkSha256": "71fcce73c83729a85c9cebc6d2eb9ab56d0621709664c5038f40277760cdc94d",
       "byteSize": 161826,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "capricorn.self.coping-pattern.shared-world",
+      "objectKey": "guardian-cards/ko/capricorn.self.coping-pattern.shared-world.webp",
+      "sourceArtworkSha256": "2ddecb623ddcf500ad0a014071b1b168926a808badc9006c4bb15278b4eee252",
+      "deliveryArtworkSha256": "de56ce51b8580c97960192853a07fb3e61580b99a9220d3fceb611bad230a4db",
+      "byteSize": 236480,
       "width": 1080,
       "height": 1440
     },
@@ -420,6 +456,15 @@
       "height": 1440
     },
     {
+      "editionId": "gemini.self.coping-pattern.shared-world",
+      "objectKey": "guardian-cards/ko/gemini.self.coping-pattern.shared-world.webp",
+      "sourceArtworkSha256": "317add3d0bad1a2c7cdd5cb26fde16d7222c2b55d1c5973578532e02792575be",
+      "deliveryArtworkSha256": "95d98540de33184d1b46a8dff243f459959e4fce3a3f81fb52d7afa1122a4c42",
+      "byteSize": 229456,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "gemini.self.hidden-need.action-beat",
       "objectKey": "guardian-cards/ko/gemini.self.hidden-need.action-beat.webp",
       "sourceArtworkSha256": "c2b3a77a7be078353e059c70b9759c6e221c41edd4682fc6b21f06faa8ef70da",
@@ -506,6 +551,15 @@
       "sourceArtworkSha256": "69569dc47d8a4fc03d04172e49a6a21fa656ed04354d643fa5d0577306d85515",
       "deliveryArtworkSha256": "515381e1aafcb127a6aa03b35e116adc1fae3293171c8ceca70bdd39e7429c3e",
       "byteSize": 165028,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "leo.self.coping-pattern.shared-world",
+      "objectKey": "guardian-cards/ko/leo.self.coping-pattern.shared-world.webp",
+      "sourceArtworkSha256": "e43a30eb4dc62e333b94139ef4afc4edfd7cc08224731ab4367ae3fe0addcc79",
+      "deliveryArtworkSha256": "5f5392a5758cb358397ae8f5105ce11b0ed79663336c4a6a96da9d1067931c36",
+      "byteSize": 117730,
       "width": 1080,
       "height": 1440
     },
@@ -609,6 +663,15 @@
       "height": 1440
     },
     {
+      "editionId": "libra.self.coping-pattern.shared-world",
+      "objectKey": "guardian-cards/ko/libra.self.coping-pattern.shared-world.webp",
+      "sourceArtworkSha256": "ac5f2876eae6ceee78baf8ef9dfae44d0cf48901d14b065e1bc85df247138607",
+      "deliveryArtworkSha256": "f88287c38d57065a5351a35fa245589ef8ef7ea3217934b25fe5866dbe682c18",
+      "byteSize": 177742,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "libra.self.hidden-need.action-beat",
       "objectKey": "guardian-cards/ko/libra.self.hidden-need.action-beat.webp",
       "sourceArtworkSha256": "0f01bd25591b13cbabc887ddc0af262abab3c5d6362196d20ef5f06f722fa1e9",
@@ -704,6 +767,15 @@
       "sourceArtworkSha256": "20aef210936e73faff5983d2fc8b0fa758557286e7fac6274d6847fa42180c9a",
       "deliveryArtworkSha256": "0866bd1078f47205a5378e2f515a1d01d7af3bed6e7d41316235cb78b0e14ba5",
       "byteSize": 161400,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "pisces.self.coping-pattern.shared-world",
+      "objectKey": "guardian-cards/ko/pisces.self.coping-pattern.shared-world.webp",
+      "sourceArtworkSha256": "82fa85b971decf6eb96797bf93d4a4be8e4df7b5f658644a08ed4d0916cecb6f",
+      "deliveryArtworkSha256": "2441005d2277089260b8ceac46c5f3a7e2bfcfc5b669a9b0da3c05489044bdfd",
+      "byteSize": 198594,
       "width": 1080,
       "height": 1440
     },
@@ -807,6 +879,15 @@
       "height": 1440
     },
     {
+      "editionId": "sagittarius.self.coping-pattern.shared-world",
+      "objectKey": "guardian-cards/ko/sagittarius.self.coping-pattern.shared-world.webp",
+      "sourceArtworkSha256": "97dd5e87404d48d6965a82a54ca16c49aca45aa683697b3214012043391ff7af",
+      "deliveryArtworkSha256": "445c1697c676361cb3df6c8e3a28125d07968b2e2b64d0ca63f142450b9529b5",
+      "byteSize": 145672,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "sagittarius.self.hidden-need.action-beat",
       "objectKey": "guardian-cards/ko/sagittarius.self.hidden-need.action-beat.webp",
       "sourceArtworkSha256": "01b0a89e6d6b5d78eef1eb938371924ca59b888280624ca69d53750dc3503d99",
@@ -906,6 +987,15 @@
       "height": 1440
     },
     {
+      "editionId": "scorpio.self.coping-pattern.shared-world",
+      "objectKey": "guardian-cards/ko/scorpio.self.coping-pattern.shared-world.webp",
+      "sourceArtworkSha256": "6b4de922bbd1858c7e35d194ac70aac40aa02b8fa0aa190190d364c9bf93defb",
+      "deliveryArtworkSha256": "174f7989cef303d6dd205fc6c5dc50c33df21e400c4ec21ae5520068d1f5a295",
+      "byteSize": 114672,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "scorpio.self.hidden-need.action-beat",
       "objectKey": "guardian-cards/ko/scorpio.self.hidden-need.action-beat.webp",
       "sourceArtworkSha256": "6a90c4f97cc48bd30630e12114fe28b58c830f14400908afbde88b6e2a574acf",
@@ -992,6 +1082,15 @@
       "sourceArtworkSha256": "627753aef4f9feb251459b848232d8a5499382ac11297a81b72d7171ffc374da",
       "deliveryArtworkSha256": "27253c6bf10b5371c29449281c3922d52c197eff9c338ee4f877ae1f1ace4e7a",
       "byteSize": 203416,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "taurus.self.coping-pattern.shared-world",
+      "objectKey": "guardian-cards/ko/taurus.self.coping-pattern.shared-world.webp",
+      "sourceArtworkSha256": "641ea6a0fb12c84bf657d987e332d7294aec7c536262d379b454136a691ece6c",
+      "deliveryArtworkSha256": "846ab470bc2d0ae23fe0437a188e6502befa365e5b382b8babe216942727b885",
+      "byteSize": 159234,
       "width": 1080,
       "height": 1440
     },
@@ -1091,6 +1190,15 @@
       "sourceArtworkSha256": "4267ec27a4a3643dfcafc2a1af72bb385fcda556c95e649e24c98415da03f227",
       "deliveryArtworkSha256": "b55a067faeb64df4370f27f74bb6e3dedd517ede298af2b63697516da85b85e0",
       "byteSize": 129700,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "virgo.self.coping-pattern.shared-world",
+      "objectKey": "guardian-cards/ko/virgo.self.coping-pattern.shared-world.webp",
+      "sourceArtworkSha256": "fd94e4313d21bf1db7b325265ad310a5927ae1864bc543d46a6918d2a4def2a7",
+      "deliveryArtworkSha256": "50996590f394f43b3b22ffc41ca15e9d3ccf98ea02a5a8a5d5ddcd620b6e37a7",
+      "byteSize": 288412,
       "width": 1080,
       "height": 1440
     },
