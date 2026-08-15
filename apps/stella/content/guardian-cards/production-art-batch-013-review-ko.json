@@ -1,6 +1,7 @@
 {
-  "status": "editorial_review_complete",
+  "status": "visual_review_ready",
   "editorialApprovedOn": "2026-08-16",
+  "generatedOn": "2026-08-16",
   "locale": "ko",
   "batchId": "self.next-self.close-emotion",
   "batchOrder": 13,
@@ -57,7 +58,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "9a417138aee86e446c531983688a416d1545ebcd3eec9c41645e816077113e31",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "flagcloth_aperture_turnback_two_stones",
       "artDirection": "앞쪽 바위에 꽂힌 혜성 깃발의 천과 세로 깃대를 화면 왼쪽의 비대칭 전경 창처럼 크게 둔다. 천이 들리며 생긴 삼각형 틈 안으로 몸은 다음 길을 향한 채 얼굴만 뒤로 돌린 몽실이의 한쪽 뺨과 눈을 가까이 잡고, 아래 손끝은 바위의 깃대 매듭에서 막 힘을 뺀다. 화면 아래에는 출발점의 따뜻한 돌과 아직 밟지 않은 작은 돌 하나만 서로 다른 초점으로 남겨, 돌아봄과 다음 발걸음을 한 장에 두되 달리기나 완주를 보여 주지 않는다.",
       "distinctFrom": [
@@ -77,7 +78,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "bd2c445222ec7585ebd575b2e0ecb814385bb62a41c0a65e4cdda83e5769f053",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "stemside_measure_strip_fingertip_notches",
       "artDirection": "한 뼘 자란 별싹 줄기를 화면 가운데의 가는 세로축으로 두고 흙 높이보다 조금 위에서 옆으로 가까이 본다. 왼쪽에는 숫자 없는 짧은 나무 측정띠가 줄기와 평행하게 서고, 어제의 옅은 빈 원·오늘 손끝으로 긋는 금빛 짧은 선·그 바로 위의 가까운 빈 선까지 정확히 세 표식만 둔다. 오른쪽의 차곡이는 한 손으로 띠 아래를 느슨하게 받치고 혀를 내미는 집중 대신 작게 놀란 눈으로 오늘 표식을 바라보며, 화면 위쪽은 아직 자라지 않은 빈 공간으로 남긴다.",
       "distinctFrom": [
@@ -97,7 +98,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "2afca542d1c71e2db474145f2eb39c398685adaedb3ad305e921052ecc98354b",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "mapcurl_tunnel_plane_dual_open_marks",
       "artDirection": "새 지도의 아래쪽 가장자리를 느슨하게 한 번 말아 화면 앞에 낮은 타원형 종이 터널을 만들고 그 안쪽에서 두 얼굴과 손을 서로 다른 깊이로 올려다본다. 가까운 왼쪽의 재잘이는 한 지도 면에 갈라지는 짧은 선과 열린 원 하나를, 먼 오른쪽의 소곤이는 다른 면에 열린 곡선과 떨어진 점 두 개를 그리며 두 표식은 만나지 않는다. 접은 정답표로 만든 별종이비행기는 지도와 겹치지 않은 위쪽 빈 배경으로 작게 빠져나가고 연결 리본은 종이 터널 뒤에 느슨하게 놓는다.",
       "distinctFrom": [
@@ -117,7 +118,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "d2ac36db6a7e2e882afbfc5e575cf9d0680f92e006c82f058f8a38148772aafb",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "harness_buckle_face_waterline_firststep",
       "artDirection": "등에 멘 달집을 고정하는 두꺼운 보랏빛 끈과 둥근 별버클을 화면 앞쪽의 열린 고리처럼 크게 두고, 그 고리 너머 달콩이의 옆얼굴과 버클을 조이는 둥근 집게를 가깝게 본다. 달집의 초승달 지붕은 얼굴 뒤 한쪽에만 작게 보이고, 화면 아래 사선 물가에서는 앞발 하나가 얕은 별빛 물에 막 닿아 짧은 물결 한 겹만 만든다. 먼 풍경과 목적지는 비워 두어 집을 버리지 않은 안전함과 낯선 첫 감촉이 동시에 남게 한다.",
       "distinctFrom": [
@@ -137,7 +138,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "8e31ed1f953fb73e84f7c3c99b3bf6c449e6fbb4d8f6b5e603f8d20821487e7b",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "low_lamp_housing_underlight_shadow_edge",
       "artDirection": "무대 바닥의 손바닥보다 작은 둥근 별조명 몸체를 화면 아래의 낮은 반원 전경으로 두고, 그 바로 뒤에서 해님이의 손끝과 왕관 없는 얼굴을 비스듬히 올려다본다. 한 손가락이 글자 없는 네 갈래 스위치를 막 누르고 작은 빛이 뺨 아래만 따뜻하게 밝히며, 반대편 빈 바닥과 낮은 벽에는 얼굴 세부가 없는 해님이의 단일 그림자 윤곽만 길지 않게 생긴다. 객석·박수·거울·외부 스포트라이트는 보이지 않게 한다.",
       "distinctFrom": [
@@ -157,7 +158,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "6b1daac621dfb1ab983e35953f7e920c0295769ff072ca33fcba24cc1b91d3b2",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "pocketfold_bridge_rail_firstplank_glance",
       "artDirection": "짧은 별다리의 첫 난간 기둥을 화면 오른쪽의 가는 세로 전경으로 두고 새봄이의 허리 높이에서 얼굴과 두 손을 가까이 본다. 왼손은 원·세모·별 칸만 있는 확인표를 정확히 반으로 접어 앞치마 주머니에 절반쯤 넣고, 오른손은 난간 줄을 움켜쥐지 않고 손바닥으로 가볍게 대며 아래 앞발 하나만 첫 널판에 올린다. 다리의 나머지는 두세 널판 뒤 빈 여백으로 끊어 되돌아올 수 있는 작은 시험임을 남긴다.",
       "distinctFrom": [
@@ -177,7 +178,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "2944be1aea889bbc03cf67ebc42947e38f2516a149d398dc18b9b534f6944179",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "satchel_arc_folded_scale_blank_tag_loop",
       "artDirection": "열린 가방 입구의 둥근 가장자리를 화면 아래의 초승달 전경으로 크게 두고, 안쪽에는 접힌 별저울이 두 개의 짧은 귀 모양만 드러낸 채 잠겨 있다. 가방 너머 고르미의 얼굴은 한쪽으로 치우쳐 가까이 보이고, 손끝은 반대편 낮은 길표식의 첫 따뜻한 돌에 글자 없는 하늘색 네 갈래 이름표 하나를 느슨한 고리로 건다. 다른 길과 비교표는 화면 밖에 두고 표식 뒤 빈 방향을 넓게 열어 자기 선택 뒤의 책임과 여백을 함께 남긴다.",
       "distinctFrom": [
@@ -197,7 +198,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "fcfeef3606cd48c87fe84d9abf16bfc355159b269467b04dbd9a2fb8bf4187b0",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "palmswidth_vertical_doorband_box_depth",
       "artDirection": "별문의 문짝과 문틀을 화면 양옆의 서로 다른 폭을 가진 두 세로 띠로 두고, 그 사이 손바닥 너비의 열린 틈에서 꼬옥이의 한쪽 눈·뺨·문 안쪽을 함께 가까이 본다. 한 손은 틈을 더 넓히지 않도록 문 안쪽 가장자리에 평평하게 대고, 바깥의 따뜻한 빛은 손끝까지만 들어온다. 안쪽 뒤편의 소중한 보라 상자는 작고 온전한 직사각 실루엣으로 남기며 하트 꼬리는 상자 곁에 감되 문틈으로 나오지 않는다.",
       "distinctFrom": [
@@ -217,7 +218,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "5c299f04e8cf9bf1539d2ac1dbd235514f0ed02d917f53817053a08989bfe386",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "trailmarker_notch_return_token_sideglance",
       "artDirection": "낯선 길 입구의 낮은 둥근 표식돌을 화면 앞쪽 한쪽에 크게 두고, 표식돌 옆면의 숫자 없는 초승달 홈 세 개 중 가운데 홈에 총총이의 손끝이 작은 귀환 별토큰을 막 끼운다. 얼굴은 토큰 가까이에 옆모습으로 들어오지만 눈은 화면 반대편의 보이지 않는 길에서 오는 한 줄 호기심 빛을 바라보고, 앞발 하나만 표식돌 너머의 다른 질감 바닥에 닿는다. 지도·망원경·경로선 없이 돌아올 기준과 출발 감정을 같은 근접축에 둔다.",
       "distinctFrom": [
@@ -237,7 +238,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "ba922be8ecd5bcef367c46be0454c23a5af6058e372e90f26aae6c73eb2a77a8",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "plan_scroll_coil_three_symbol_cells_goldstep",
       "artDirection": "긴 계획표의 끝을 한 번 둥글게 말아 화면 왼쪽의 세로 타원 전경으로 만들고, 그 곁에 오름이의 졸린 얼굴과 두 손을 가까이 둔다. 말린 띠가 풀리며 보이는 세 칸에는 글자 대신 닫힌 눈 모양의 회복 표식·마주 보는 두 손 모양의 도움 표식·금빛 한 계단 표식이 차례로 놓이고, 한 손은 오늘의 금빛 칸만 부드럽게 누른다. 실제 계단은 화면 아래 한 단만 보이며 달·정상·완성된 긴 일정은 빈 배경 밖으로 이어지지 않는다.",
       "distinctFrom": [
@@ -257,7 +258,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "9c873442d64e23360308a083dd017952cd34e643bcb8dff33f421663105f61bb",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "cloudstep_compression_rockslot_reaction_mark",
       "artDirection": "서로 닿지 않는 두 낮은 바위 끝을 화면 양옆의 짧은 전경 벽처럼 두고 그 사이에 방울이가 막 만든 작은 구름 발판 하나를 낮은 옆시점으로 가까이 본다. 앞발 하나가 구름 위를 눌러 둥근 표면이 살짝 내려가고, 방울이의 얼굴은 바위 사이 위쪽에서 기대와 걱정이 섞인 표정으로 그 반응을 살핀다. 한 손의 작은 물방울 모양 기록판에는 숫자 없이 방금 생긴 눌림을 닮은 짧은 곡선 하나만 남기며 완성된 다리나 두 번째 발판은 만들지 않는다.",
       "distinctFrom": [
@@ -277,7 +278,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "af3d72763e03671ea3b96444333ab520bed3845367f692e438cb42b1811eb7c1",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "offset_doorframes_shared_star_compass_bowl",
       "artDirection": "서로 반대 방향을 향한 두 꿈문의 가장자리만 화면 왼쪽 가까이와 오른쪽 뒤편의 높이가 다른 세로 프레임으로 남긴다. 큰 아쿠아 꿈별이는 왼쪽 아래 전경에서, 작은 분홍 잠별이는 오른쪽 위 뒤편에서 각자 자기 문 쪽으로 몸을 돌리되 얼굴과 눈은 두 문 사이 아래에 놓인 얕은 나침반 그릇의 네 갈래 중심 별 하나를 함께 바라본다. 두 지느러미 끝은 그릇의 서로 다른 가장자리에만 가볍게 닿고 별에는 닿지 않아 서로 다른 직관과 같은 중심을 합치지 않은 채 유지한다.",
       "distinctFrom": [
