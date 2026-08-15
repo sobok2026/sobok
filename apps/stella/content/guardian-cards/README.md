@@ -29,6 +29,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-008-review-ko.json`    | `visual_review_complete` | 여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-009-review-ko.json`    | `visual_review_complete` | 아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-010-review-ko.json`    | `visual_review_complete` | 열 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-011-review-ko.json`    | `editorial_review_ready` | 열한 번째 production 배치 신규 12개 원고·관계 구도 최종 편집 승인 대기      |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                  |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 130개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                     |
 
@@ -367,6 +368,16 @@ contact sheet, 앞선 여덟 배치 비교 contact sheet에서 캐릭터 정체�
 `apps/stella/private/guardian-art-production/self-coping-pattern-action-beat`에 보관한다. 현재 신규 12개는
 모두 사람의 최종 시각 승인을 마쳤다. 승인 원본의 SHA-256은 검수 파일과 누적 130개 WebP 매니페스트에
 고정하며 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
+
+열한 번째 배치는 같은 `self.coping-pattern` 원고를 `shared-world` 표현 방식으로 제작할 신규 12개의 편집
+검수안이다. `production-art-batch-011-review-ko.json`에 현재 원고의 canonical SHA-256과 익숙한 보호 방식이
+끝까지 진행되기 전에 동료가 해결하거나 재촉하지 않고 빛·시간·공간·재료 하나를 지키는 관계 행동을
+고정했다. 같은 표현 방식인 배치 3·7과 바로 앞 배치 9·10의 카메라·캐릭터 높이·동료 행동·소품 배치를
+반복하지 않는다. 열두 장은 계단식 정비 홈의 별등, 선반 그림자 밖 모래시계, 반원 소리 계단, 세 칸
+현관 계단, 좌석 등받이 사이 거울, 열린 정리함과 체크표, 기울어진 모자이크 경사판, L자 방 모서리의
+열쇠와 별등, 난간에 들린 지도 돛, 별탑 그림자와 초승달 담요, 두 높이의 반투명 감정 시트, 어긋난
+초승달 바위턱처럼 서로 다른 관계축과 여백을 사용한다. 현재 원고 해시와 구도는 사람의 최종 편집 승인
+대기 상태이며 승인 전에는 imagegen 원화 생성을 진행하지 않는다.
 
 ## 검증
 
