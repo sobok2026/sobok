@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "editorialApprovedOn": "2026-08-16",
+  "generatedOn": "2026-08-16",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-16",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
+  "locale": "ko",
+  "batchId": "self.coping-pattern.constellation-afterglow",
+  "batchOrder": 12,
+  "purpose": "자기이해의 익숙한 보호 방식이 멈춘 뒤 남은 감정·사실·경계의 표식을 다음의 내가 알아볼 수 있는 비개인화 여운으로 번역하되, 앞선 열한 production 배치와 다른 카메라·소품 실루엣·빛의 종료 방향을 사용하는 신규 원화 12개의 편집 승인을 받는다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "self",
+    "narrativeAxisId": "coping-pattern",
+    "visualAxisId": "constellation-afterglow"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Premium Stella guardian story illustration, full-bleed 3:4 master art. Show exactly the guardians named in the approved card and preserve every approved character-sheet identity, relative size, silhouette, color, and signature prop; never add a third figure. Stage the canonical coping-pattern scene just after the automatic response has paused and its smallest noticing gesture has settled, while repair, closure, explanation, agreement, or recovery remains unfinished. From each visible four-point golden Stella chest mark, carry at most one sparse abstract afterglow through or just beyond the canonical central prop toward one quiet empty direction. Keep the guardian, prop, and afterglow at 55–65% of the frame and readable at 80px, with generous breathing room and safe UI framing. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes, exactly one large and one small eye highlight. Use only two to four warm points and at most one simple curved segment per chest mark; the trail is a non-personalized memory trace, never a real zodiac constellation, astrological glyph, chart wheel, route, completion diagram, or birth-chart geometry. Use symbols and simple shapes only: no readable text, sentence, name, label, map title, badge, zodiac glyph, logo, or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Do not reuse the fourth or eighth batch constellation-afterglow camera, silhouette, prop staging, or trail direction, nor the ninth through eleventh batch close-emotion, action-beat, and shared-world composition for the same coping-pattern story. Make every composition family, depth structure, negative-space direction, and afterglow ending visibly distinct within this batch."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.self.coping-pattern.constellation-afterglow",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-16",
+      "editorialContentHash": "65d104ec4fa36fb472f624c0ad22562079f9ef11848e85763c7e0227d625c26f",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "e9f45c299b2ab1f2669ebcb96871ba456cd91c713d214d66d8a27108fdc6bbc5",
+      "compositionFamily": "overhead_machine_crescent_screw_trace",
+      "artDirection": "둥근 작업 매트를 바로 위에서 내려다보되 매트 한쪽이 초승달처럼 잘려 열린 바닥을 만든다. 옆으로 넘어진 별기계는 왼쪽 위에 비스듬히 눕히고 몽실이는 오른쪽 아래에서 달리던 발을 접어 앉아 두 손을 허벅지에 내려놓는다. 작은 나사 하나는 기계와 몽실이 사이의 열린 바닥에 두며, 가슴 별표의 여운은 나사 곁을 한 번 스친 뒤 잘린 매트 밖의 빈 바닥에서 따뜻한 점 세 개로 멎는다. 기계를 세우거나 나사를 줍지 않은 채 원인을 알아본 뒤의 정적을 남긴다.",
+      "distinctFrom": [
+        "배치 4의 측면 출발선·되짚는 발자국과 배치 8의 뒤쪽 창턱·수직 불꽃 여운, 배치 9의 별기계 밑면 근접 구도",
+        "배치 10의 기울어진 바닥·구르는 나사 전신 동작과 배치 11의 계단식 정비 홈·동료 별등, 여운이 수리 순서나 실제 별자리 선이 되는 장면"
+      ],
+      "visualReviewFocus": [
+        "수직 시점의 넘어진 별기계·접어 앉은 몽실이·나사 하나·초승달처럼 열린 매트 바닥이 네 실루엣으로 분리되는지",
+        "여운은 나사 곁을 한 번만 지나 매트 밖 점 세 개에서 끝나며 나사를 줍거나 기계를 세우는 완료 동작·수리 경로로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.self.coping-pattern.constellation-afterglow",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-16",
+      "editorialContentHash": "a72ff503fe92be9a73bcf829dabeafcdc642ed968801b5ebcdfe5eda6799d9dc",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "552b4b8dd7f4374131c713ba4cdcfa58562f6939a3c86438cd7866a1c565d51d",
+      "compositionFamily": "orthographic_shelf_span_support_floor_echo",
+      "artDirection": "낮고 긴 선반을 화면 위쪽의 두꺼운 수평 띠처럼 두고 옆 단면에 가까운 정면 시점으로 본다. 차곡이는 왼쪽 끝에 옆모습으로 앉아 오래 받치던 두 손을 가슴 아래로 막 내렸고, 단단한 별받침은 오른쪽 안쪽에서 선반 모서리와 아직 아주 작은 틈을 남긴 채 무게를 나눈다. 가슴 별표의 여운은 바닥을 낮게 흐르며 받침을 스친 뒤 선반 반대편의 비어 있는 그늘에서 점 세 개로 사라진다. 선반은 완전히 수평이 되지 않고 한쪽 둥근 소품도 기울어진 채 남는다.",
+      "distinctFrom": [
+        "배치 4의 온실 화단 오버헤드와 배치 8의 담요 수평선·찻잔 김 여운, 배치 9의 선반 틈 안쪽 얼굴 근접",
+        "배치 10의 높은 시점 받침 미끄러뜨리기와 배치 11의 방 모서리·동료·모래시계, 선반이 완전히 고정되거나 여운이 완료 수평선이 되는 장면"
+      ],
+      "visualReviewFocus": [
+        "긴 선반 띠·손을 내린 차곡이·틈을 남긴 별받침·기울어진 둥근 소품이 단면 같은 네 높이로 읽히는지",
+        "낮은 여운은 받침을 한 번 스친 뒤 빈 그늘에서 끝나며 선반을 밀거나 받침을 완전히 끼우는 힘선으로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.self.coping-pattern.constellation-afterglow",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-16",
+      "editorialContentHash": "93a95d68ca3fbb2d71eadfa271e2cead6196698b27efb9bda944c22dfa7cc391",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "167a6712bef34aabb3e29ecd854f9e27e2f161ab6cd56b612fc82892f5408b81",
+      "compositionFamily": "upright_accordion_blueprint_two_bays",
+      "artDirection": "긴 별도안을 세로로 두 번만 접어 낮은 병풍 같은 세 면으로 세우고 정면에서 조금 비껴 본다. 가까운 왼쪽 면 앞의 재잘이는 화살표 도형 세 개를 그린 연필을 내려놓고, 먼 오른쪽 면 뒤의 더 작은 소곤이는 열린 갈고리 곡선과 떨어진 점 하나가 있는 면을 바라본다. 두 가슴 별표의 짧은 여운은 각자의 표식을 한 번씩 스친 뒤 가운데 접힘에서 만나지 않고 왼쪽 아래와 오른쪽 위의 서로 다른 빈 여백에서 끝난다. 연결 리본은 종이 뒤 바닥에 느슨하게 놓는다.",
+      "distinctFrom": [
+        "배치 4의 낮은 V자 별방울 캐노피와 배치 8의 모서리로 매단 편지·양쪽 출구, 배치 9의 가로 접힌 도면 능선 근접",
+        "배치 10의 움직이는 작업대 도안과 배치 11의 반원 소리 계단·별방울, 두 여운이 합쳐져 하나의 답·대칭 별자리·읽을 수 있는 물음표가 되는 장면"
+      ],
+      "visualReviewFocus": [
+        "세로 병풍형 도안의 세 면·가까운 큰 재잘이·먼 작은 소곤이·서로 다른 두 추상 표식이 깊이로 구분되는지",
+        "각 여운은 자기 면을 한 번만 스치고 반대 여백에서 끝나며 가운데 접힘·연결 리본·실제 쌍둥이자리 선과 이어지지 않는지"
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.self.coping-pattern.constellation-afterglow",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-16",
+      "editorialContentHash": "15a07dfac4fc63216af4e9ced5f6516d9c34ab26e085754455f377c2acd506aa",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "2ee2096765f05e7e79cf0bddfc39d5ad8fc1e4e41415a83b50762ff72e8074cb",
+      "compositionFamily": "sidecutaway_moonhouse_doorseam_echo",
+      "artDirection": "달집의 둥근 벽 한쪽을 인형집처럼 얕게 잘라 실내와 문 두께를 옆 단면으로 함께 본다. 달콩이는 안쪽 아래의 작은 반달 방석에 몸을 모아 앉고, 닫히다 멈춘 문 사이에는 둥근 집게 하나만 남겨 가느다란 따뜻한 틈을 만든다. 가슴 별표의 여운은 문을 여는 힘이 아니라 바닥의 낮은 곡선으로 집게 아래를 지나 문 바깥 빈 돌 하나 앞의 점 세 개에서 멎는다. 창·계단·경첩·두 번째 캐릭터 없이 숨은 뒤 돌아올 표식만 남긴다.",
+      "distinctFrom": [
+        "배치 4의 실내 창 반사와 배치 8의 천장 오버헤드 방석·문턱 그림자, 배치 9의 경첩 가까운 V자 문 근접",
+        "배치 10의 바깥 문짝 닫힘 호와 배치 11의 현관 세 계단·동료 기다림, 문이 다시 열리거나 여운이 출입 경로·게자리 배열이 되는 장면"
+      ],
+      "visualReviewFocus": [
+        "잘린 둥근 벽·안쪽 달콩이·문 사이 집게 하나·바깥 빈 돌이 단면의 네 공간으로 겹치지 않는지",
+        "여운은 집게 아래를 지나 돌 앞에서 짧게 끝나며 문을 밀어 여는 빛·완성된 연결선·두 번째 인물로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.self.coping-pattern.constellation-afterglow",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-16",
+      "editorialContentHash": "cc15f8fdbb45c085bd35d204b277a3fd259d557ed9adf34a1421c8c581297166",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "cd71e1ed8043d3aa2936de0e12bf14976ce4ed78caf46cce2964d8a278b6b847",
+      "compositionFamily": "curved_riser_profile_knee_crown_recess",
+      "artDirection": "둥근 낮은 단의 가장자리를 화면 가운데 긴 곡선으로 두고 옆모습에 가까운 낮은 시점으로 본다. 해님이는 단 위 오른쪽에 앉아 웃음을 거둔 한 손을 무릎의 작은 별 모양 찰과상 곁에 멈추고 다른 손은 바닥에 내려놓는다. 넘어진 왕관 하나는 왼쪽 아래 단 안쪽의 비어 있는 얕은 홈에 따로 눕힌다. 가슴 별표의 여운은 상처 곁을 한 번 스친 뒤 곡선 단 아래로 낮아져 왕관과 닿지 않는 홈 끝의 점 세 개에서 사라진다. 무대·거울·객석·조명 없이 아픔을 본 뒤의 숨만 남긴다.",
+      "distinctFrom": [
+        "배치 4의 높은 무대·바닥 거울과 배치 8의 의상실·접힌 커튼, 배치 9의 바닥 왕관·무릎 극근접",
+        "배치 10의 높은 시점 구르는 왕관과 배치 11의 객석 등받이·동료 거울, 상처가 사라지거나 왕관을 다시 쓰고 공연을 재개하는 장면"
+      ],
+      "visualReviewFocus": [
+        "곡선 단 위 해님이·멈춘 손·작은 찰과상·아래 홈의 왕관 하나가 위아래 두 층으로 분리되는지",
+        "여운은 상처를 스친 뒤 왕관에 닿지 않는 점 세 개로 끝나며 치료 광선·스포트라이트·사자자리 선으로 읽히지 않는지"
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.self.coping-pattern.constellation-afterglow",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-16",
+      "editorialContentHash": "882b817c983fa73bc241fce19f14f06c7958553c008bbbacf44c38e2ebd7786b",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "68a9abe2b87a58352e93733deafbc2ae0623f94abfd21b0b23feb69658a321a1",
+      "compositionFamily": "frontal_shallow_shadowbox_shard_droplet",
+      "artDirection": "낮고 얕은 정리 상자를 정면의 열린 그림자 상자처럼 세워 내부 칸 세 개를 서로 다른 깊이로 보이게 한다. 새봄이는 오른쪽 바깥에 3/4 옆모습으로 앉아 붓을 무릎 아래에 내려놓고, 큰 별화분 조각 두 개는 뒤쪽 칸에, 물방울 표식 하나가 있는 가장 작은 조각은 앞쪽 낮은 칸에 따로 둔다. 가슴 별표의 여운은 작은 조각을 한 번 스친 뒤 비어 있는 아래 칸의 따뜻한 점 세 개에서 멎는다. 원인을 뜻하는 선·점은 큰 조각에만 남고 물방울은 글자가 아닌 단순 도형 하나로 보인다.",
+      "distinctFrom": [
+        "배치 4의 체크표 구멍 전경과 배치 8의 삼각 종이 카드·꽃 여운, 배치 9의 깨진 화분 안쪽 테두리 근접",
+        "배치 10의 오버헤드 조각 부채와 배치 11의 열린 정리함·동료·체크표, 조각이 다시 붙거나 여운이 원인 분석표·완료 표시가 되는 장면"
+      ],
+      "visualReviewFocus": [
+        "세 깊이의 정리 칸·큰 조각 두 개·물방울이 있는 작은 조각 하나·바깥 새봄이가 정면 구도에서 분리되는지",
+        "여운은 작은 조각을 지나 빈 아래 칸에서 끝나며 물방울 이외의 글자·도장·실제 처녀자리 배열을 만들지 않는지"
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.self.coping-pattern.constellation-afterglow",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-16",
+      "editorialContentHash": "e32e6763af74572873b31d06e904b33e6f57d1851cbf04375e65776b5799fbf7",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "e7e95c94d9d2b78a7dc5bfe96ffe6e4770b0333f93e3d36f33bcaed60b201d42",
+      "compositionFamily": "backlit_vertical_mosaic_piece_projection",
+      "artDirection": "여러 색 별조각을 투명한 세로 모자이크 판에 느슨하게 올려 두고 판의 옆 뒤쪽에서 바닥 투영까지 함께 본다. 고르미는 왼쪽 뒤에 3/4 후면으로 서서 두 손을 몸 곁에 내렸고, 연한 하늘색 네 갈래 개인 조각 하나는 가운데 빈자리 안에 놓였지만 가장자리와 작은 틈을 남겨 맞물리지 않는다. 가슴 별표의 여운은 개인 조각을 통과한 듯 판 반대편 바닥에 열린 부채꼴 점 세 개로 투영된다. 저울·접시·경사판·두 번째 캐릭터 없이 자기 몫이 남긴 색과 여백만 본다.",
+      "distinctFrom": [
+        "배치 4의 두 저울 접시 사이 낮은 시점과 배치 8의 작은 저울·큰 벽 그림자, 배치 9의 퍼즐 표면 근접",
+        "배치 10의 뒤쪽 어깨 너머 조각 팔 동작과 배치 11의 기울어진 모자이크 경사판·동료, 조각이 완전히 끼워지거나 여운이 천칭자리 glyph·완성 고리가 되는 장면"
+      ],
+      "visualReviewFocus": [
+        "세로 투명 판·뒤쪽 고르미·가운데 틈을 남긴 네 갈래 조각·반대편 바닥 투영이 서로 다른 면으로 읽히는지",
+        "여운은 개인 조각을 한 번 통과한 점 세 개로만 보이며 조각 가장자리를 연결하거나 퍼즐을 완성하는 빛으로 읽히지 않는지"
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.self.coping-pattern.constellation-afterglow",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-16",
+      "editorialContentHash": "ef3251e48ffcebc4aedca06599243c9f1f5c346d9381e4227ea62ae1240b85c7",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "d7b3f21e03863c987a71a0ef2f50ed67600e706ccefb5123c263ae26c5950a61",
+      "compositionFamily": "splitlevel_box_plinth_key_below",
+      "artDirection": "낮은 단 두 개가 있는 작은 보관실을 정면에서 보고 위 단과 아래 단을 넓은 빈 띠로 분리한다. 닫힌 보라 상자는 위 단 왼쪽에 두고 꼬옥이는 그 뒤 오른쪽에서 얼굴과 가슴만 보이게 웅크리며 하트 꼬리는 상자 뒤에 숨긴다. 작은 별열쇠 하나는 아래 단의 얕은 둥근 홈에 따로 놓는다. 가슴 별표의 여운은 상자 모서리를 돌아 빈 띠를 비스듬히 내려와 열쇠 곁을 스친 뒤 아래 단 바깥쪽 점 세 개에서 멎는다. 상자·열쇠·숨은 꼬리가 다시 열 조건만 남기고 아무것도 열지 않는다.",
+      "distinctFrom": [
+        "배치 4의 오버헤드 망토 나선과 배치 8의 반투명 탁자 위아래 편지, 배치 9의 상자 모서리 근접",
+        "배치 10의 상자 그림자·공중 열쇠와 배치 11의 L자 방·문·동료 별등, 열쇠가 자물쇠에 들어가거나 여운이 문을 여는 경로·전갈자리 선이 되는 장면"
+      ],
+      "visualReviewFocus": [
+        "위 단의 상자와 일부 보이는 꼬옥이·숨은 하트 꼬리·아래 단 홈의 열쇠 하나가 두 높이로 명확히 분리되는지",
+        "여운은 열쇠 곁에서 열린 점 세 개로 끝나며 상자를 열거나 꼬리를 드러내는 강제 동작·자물쇠 빛으로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.self.coping-pattern.constellation-afterglow",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-16",
+      "editorialContentHash": "67535bb613dbe11e44facf3888b907b534809d39b4e3707c2893de5dbd4f0de7",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c721525bd343f853d149f99de9187b1b41264581e3d64bc55b76550715fc7870",
+      "compositionFamily": "birdseye_round_platform_fork_map_pause",
+      "artDirection": "첫 갈림길 앞의 둥근 돌 전망대를 바로 위에서 내려다보아 두 길은 화면 위 양옆의 색면으로만 짧게 갈라지게 한다. 총총이는 전망대 아래쪽에 무릎을 접어 앉아 활과 혜성 목도리를 몸 바깥의 한 곡선으로 내려놓고, 작은 도형 지도는 중앙에서 펼친다. 지도에는 글자나 완성 경로 없이 열린 갈림 도형과 방금 닫힌 현재 위치 원 하나만 남는다. 가슴 별표의 여운은 그 원을 스친 뒤 어느 길도 선택하지 않고 전망대의 비어 있는 왼쪽 가장자리 점 세 개에서 멎는다.",
+      "distinctFrom": [
+        "배치 4의 망원경 렌즈 전경과 배치 8의 낮은 시점 매단 두 지도·하늘 여운, 배치 9의 두 팔 사이 지도 근접",
+        "배치 10의 갈림길 낮은 정면 제동과 배치 11의 난간 지도 돛·동료, 여운이 길 하나를 가리키거나 실제 지도 경로·사수자리 화살표가 되는 장면"
+      ],
+      "visualReviewFocus": [
+        "원형 전망대·접어 앉은 총총이·중앙 지도·현재 위치 원·바깥으로 내린 활과 목도리가 오버헤드에서 분리되는지",
+        "여운은 현재 위치 원을 한 번만 스치고 길과 무관한 가장자리에서 끝나며 방향 추천·완성 경로·읽을 수 있는 지도 표식이 없는지"
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.self.coping-pattern.constellation-afterglow",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-16",
+      "editorialContentHash": "ec535ff3924ecef619b1c511108496616e2593b2315f6f4b8c198b22a1fd4fb2",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "0dc2a4e2c47de271a24fd10f6780a082bdae14edc5e8b4a4dfae13bab3f18f69",
+      "compositionFamily": "sidecutaway_tower_storage_niche_rest",
+      "artDirection": "완성된 낮은 별탑과 옆의 빈 보관 홈을 옆 단면처럼 한 화면에 두고 탑은 왼쪽의 단단한 수직면, 홈은 오른쪽의 어두운 반원으로 본다. 오름이는 두 공간 사이에 앉아 더 올리려던 여분 블록 하나를 무릎에 내려놓고, 탑 기초의 원·세모·별 완료 도형 세 칸을 바라본다. 가슴 별표의 여운은 세 도형 아래를 짧게 지나 탑 위가 아니라 빈 보관 홈 안의 점 세 개로 낮아진다. 블록은 탑에도 홈에도 아직 놓지 않아 충분함을 알아본 뒤의 선택 여백을 남긴다.",
+      "distinctFrom": [
+        "배치 4의 계단 옆 벽 투영·휴식 표식과 배치 8의 담요 요·낮춘 깃발, 배치 9의 탑 모서리 바닥 근접",
+        "배치 10의 높은 시점 탑 윗면·되가져오는 블록과 배치 11의 탑 그림자·동료 담요, 블록이 다시 쌓이거나 여운이 정상·염소자리 배열로 오르는 장면"
+      ],
+      "visualReviewFocus": [
+        "완성 탑 수직면·빈 반원 홈·사이의 오름이·무릎 위 블록 하나·기초 세 도형이 단면 구조로 구분되는지",
+        "여운은 완료 도형 아래에서 보관 홈으로 낮아질 뿐 탑 위로 오르거나 블록 위치를 지시하는 점선이 되지 않는지"
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.self.coping-pattern.constellation-afterglow",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-16",
+      "editorialContentHash": "4b772a418fef38989db0a8e08abbdc2fc40bd1910b282115fe03ee034262fb69",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "f9fa028239b75da3bbe28ac36db6f54f2f70d42bd95d041b67dc5c322475b847",
+      "compositionFamily": "overhead_open_crescent_wave_tray_droplet",
+      "artDirection": "완전한 원이 아닌 넓은 초승달 모양의 얕은 감정 트레이를 바로 위에서 내려다본다. 방울이는 열린 안쪽 가장자리 아래에 앉아 물붓을 몸 옆 바닥에 내려놓고, 트레이 안에는 짧은 측정선·점·작은 화살표와 느슨한 물결 하나만 남긴다. 계산 영역 밖으로 나온 실제 물방울 하나는 열린 틈 위 방울이의 손바닥에 그대로 놓인다. 가슴 별표의 여운은 물방울을 스친 뒤 트레이 바깥의 마른 바닥 점 세 개로 이어지며 안쪽 표식과 연결되지 않는다.",
+      "distinctFrom": [
+        "배치 4의 투명 물병 렌즈와 배치 8의 열린 종이 원통, 배치 9의 세로 감정 시트 너머 근접",
+        "배치 10의 옆으로 휘는 물결 띠·공중 물방울과 배치 11의 가로 반투명 선반·동료 이름표, 트레이가 원형 차트 휠·물병자리 glyph가 되거나 여운이 측정값을 완성하는 장면"
+      ],
+      "visualReviewFocus": [
+        "열린 초승달 트레이·안쪽 추상 표식·틈 아래 방울이·손바닥 위 물방울 하나·바깥 마른 바닥이 분리되는지",
+        "여운은 실제 물방울만 스치고 트레이 밖에서 끝나며 측정선·화살표·물결과 이어져 도표나 실제 별자리 선을 만들지 않는지"
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.self.coping-pattern.constellation-afterglow",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-16",
+      "editorialContentHash": "1462d44f3eb3f6583d79b92ca8cb4804dd787b43caf9e920578edf228e3e9ab3",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "5c1fd4198b679671b90a49ecfe209bbd3a2a9ef6f9e722a85a1a00014a022605",
+      "compositionFamily": "inside_wave_arch_third_current_exit",
+      "artDirection": "낮은 물결 아치 안쪽에서 열린 바다를 정면으로 바라보아 아치 양옆을 서로 다른 색의 얕은 물결 띠로 만든다. 큰 아쿠아 꿈별이는 가까운 왼쪽 아래, 작은 분홍 잠별이는 먼 오른쪽 위에 두고 각자의 청록·분홍 물결은 몸 가까운 아치 벽에서 짧게 멎는다. 자기 색이 아닌 회보라 물결 한 줄은 두 캐릭터 사이 중앙 통로를 지나 바깥 바다로 이미 빠져나가는 중이다. 두 가슴 별표의 짧은 여운은 각자 가까운 자기 색 물결만 한 번 스친 뒤 서로 만나지 않는 아치 가장자리 점 두 쌍으로 끝난다.",
+      "distinctFrom": [
+        "배치 4의 수면 높이 새벽 반사와 배치 8의 작은 병·큰 병 그림자, 배치 9의 얕은 바다 오버헤드",
+        "배치 10의 수면 위아래 옆 단면과 배치 11의 어긋난 초승달 바위턱·세 물결, 두 여운이나 세 물결이 섞여 실제 물고기자리 배열·제3의 캐릭터가 되는 장면"
+      ],
+      "visualReviewFocus": [
+        "가까운 큰 아쿠아 꿈별이·먼 작은 분홍 잠별이·양쪽 자기 색 물결·중앙으로 빠져나가는 회보라 물결이 아치 깊이로 분리되는지",
+        "가슴 여운 두 개는 각자 아치 가장자리의 짧은 점 두 쌍으로만 끝나며 중앙에서 합쳐지거나 제3 물결의 출구를 막지 않는지"
+      ]
+    }
+  ]
+}
