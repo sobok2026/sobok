@@ -25,6 +25,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-004-review-ko.json`    | `visual_review_complete` | 네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정      |
 | `production-art-batch-005-review-ko.json`    | `visual_review_complete` | 다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정    |
 | `production-art-batch-006-review-ko.json`    | `visual_review_complete` | 여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정    |
+| `production-art-batch-007-review-ko.json`    | `editorial_review_ready` | 일곱 번째 production 배치 파일럿 1개·신규 원화 11개 편집 승인 대기  |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                          |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 83개 WebP 배포 후보의 객체 키·원본/배포 SHA-256              |
 
@@ -298,6 +299,16 @@ contact sheet를 함께 비교해 캐릭터 정체성·중심 소품·카메라�
 `apps/stella/private/guardian-art-production/self-hidden-need-action-beat`에 보관한다. 교정본을 포함한 12개
 모두 사람의 최종 시각 승인을 마쳤다. 승인 원본의 SHA-256은 검수 파일과 누적 83개 WebP 매니페스트에
 고정하며 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
+
+일곱 번째 배치는 같은 `self.hidden-need` 원고를 `shared-world` 표현 방식으로 제작하며, 승인된 쌍둥이자리
+파일럿 1개와 신규 원화 11개로 구성한다. `production-art-batch-007-review-ko.json`에 현재 원고의 canonical
+SHA-256과 주인공의 필요를 대신 해결하거나 재촉하지 않고 곁에서 듣고·기다리고·공간을 지키는 동료의
+행동을 명시했다. 배치 3에서 같은 동료 조합에 사용한 깊은 길·인형집 단면·무대 턱·매달린 저울·전경
+지도와 배치 5·6의 근접·단독 행동 구도를 반복하지 않는다. 신규 열한 장은 가로 바람 단면, 담요 섬
+오버헤드, 문짝 평면 분할, 무대 뒤 역방향 깊이, 종이 아치, 창가 벤치, 낮은 복도 측면, 어긋난 지도
+오버헤드, 등을 맞댄 담요, 사선 이젤, 가로 물병처럼 서로 다른 관계축과 여백을 사용한다. 쌍둥이자리
+파일럿은 승인 PNG와 원본 SHA-256을 그대로 보존한다. 현재 신규 11개 원고와 구도는 사람의 편집 승인
+대기 상태이며 승인 전에는 원화 생성·WebP 변환·R2 업로드를 진행하지 않는다.
 
 ## 검증
 
