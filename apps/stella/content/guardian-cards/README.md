@@ -26,6 +26,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-005-review-ko.json`    | `visual_review_complete` | 다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-006-review-ko.json`    | `visual_review_complete` | 여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-007-review-ko.json`    | `visual_review_complete` | 일곱 번째 production 배치 파일럿 1개·신규 PNG 11개 시각 승인·승인 해시 고정 |
+| `production-art-batch-008-review-ko.json`    | `editorial_review_ready` | 여덟 번째 production 배치 신규 원화 12개 편집 검수 대기                     |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                  |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 94개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                      |
 
@@ -316,6 +317,15 @@ contact sheet를 함께 비교해 캐릭터 정체성·두 역할·중심 소품
 포함한 신규 11개와 보존한 파일럿 1개 모두 사람의 최종 시각 승인을 마쳤다. 신규 승인 원본의 SHA-256은
 검수 파일과 누적 94개 WebP 매니페스트에 고정하며 환경별 R2 반영 이력은 `Guardian Card Art Deploy`
 workflow가 남긴다.
+
+여덟 번째 배치는 같은 `self.hidden-need` 원고를 `constellation-afterglow` 표현 방식으로 제작할 신규 원화
+12개의 편집 검수안이다. `production-art-batch-008-review-ko.json`에 현재 원고의 canonical SHA-256과 행동이
+끝난 뒤에도 필요를 알아볼 수 있게 남는 비개인화 여운을 명시했다. 실제 별자리·점성술 glyph·출생 차트는
+사용하지 않으며, 배치 4의 같은 표현 방식과 배치 5~7의 숨은 필요 구도를 반복하지 않는다. 열두 장은
+후면 창턱, 바닥 높이 담요 수평선, 모서리로 선 편지, 천장 방석 오버헤드, 의상실의 접힌 커튼, 바닥의
+삼각 종이 카드, 벽에 비친 기울어진 저울, 반투명 탁자 아래, 매달린 두 지도, 담요 휴식 요, 열린 종이
+원통, 작은 물병과 큰 그림자처럼 서로 다른 카메라·중심 소품·여운 종료 방향을 사용한다. 사람의 편집
+승인 전에는 이미지 후보를 생성하거나 WebP·R2 배포물을 만들지 않는다.
 
 ## 검증
 
