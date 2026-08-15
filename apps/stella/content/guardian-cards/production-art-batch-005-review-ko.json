@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-15",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
+  "locale": "ko",
+  "batchId": "self.hidden-need.close-emotion",
+  "batchOrder": 5,
+  "editorialApprovedOn": "2026-08-15",
+  "generatedOn": "2026-08-15",
+  "purpose": "자기이해의 숨은 필요를 표정과 손끝, 필요를 드러내는 중심 소품의 가까운 장면으로 번역하되, 앞선 지금 마음의 날씨 네 배치와 다른 카메라·실루엣·여백을 사용하는 신규 원화 12개의 편집 승인을 받는다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "self",
+    "narrativeAxisId": "hidden-need",
+    "visualAxisId": "close-emotion"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Premium Stella guardian story illustration, full-bleed 3:4 master art. Show exactly the guardians named in the approved card and preserve each approved character-sheet identity and signature prop; never add a third figure. Translate the canonical hidden need into an intimate close-emotion moment through the face, fingertips, and one central need-bearing prop, without turning it into a solved outcome. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes, exactly one large and one small eye highlight. Keep the close emotional subject and central prop at 55–65% of the frame, readable at 80px, with generous breathing room and safe UI framing. Use symbols and shapes only: no readable text, sentence, name, map label, title, badge, zodiac glyph, logo, or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Do not reuse any composition, camera angle, silhouette, or prop staging from the four present-weather batches. Make every composition family and negative-space direction visibly distinct within this batch."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.self.hidden-need.close-emotion",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-15",
+      "editorialContentHash": "dc7dea024061fac4875ea5924da18546482eba7a220613649f634996329bddca",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "02631b3e3455a879259e0d61709858276cef11651fdf4529264ac8dd31a10c77",
+      "compositionFamily": "extreme_closeup_cupped_flame_breath",
+      "artDirection": "몽실이의 한쪽 뺨과 두 손을 화면 아래 모서리에 크게 두고, 손안의 꺼지지 않는 작은 불꽃을 옆에서 가까이 본다. 불꽃은 정면 위가 아니라 넓게 비운 화면 반대편으로 한 줄 바람에 기울고, 몽실이의 눈도 같은 방향을 조용히 따른다. 출발선·발자국·깃발 없이 얼굴과 손, 불꽃이 원하는 바람만 남긴다.",
+      "distinctFrom": [
+        "앞선 네 배치의 출발선·트랙·깊은 길·되짚는 발자국 구도",
+        "불꽃이 커지거나 몽실이가 앞으로 달려가는 해결·행동 장면"
+      ],
+      "visualReviewFocus": [
+        "뺨·두 손·작은 불꽃의 세 덩어리가 80px에서도 겹치지 않는지",
+        "불꽃과 시선이 향한 넓은 빈 공간이 새로운 경험을 원하는 필요로 읽히는지"
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.self.hidden-need.close-emotion",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-15",
+      "editorialContentHash": "039a15ad52a09596c81a659079fb141003525e5f36da4a5133356e88b0a2162d",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "cd697badeba5537e5d19990e37b7851f680f47a69bf39554c775e27c4cc47a07",
+      "compositionFamily": "blanket_tunnel_teacup_threshold",
+      "artDirection": "따뜻한 담요 안쪽의 낮은 시점에서 바깥을 내다보는 작은 터널 구도다. 차곡이는 담요 속에서 두 손으로 별무늬 찻잔을 안고 눈을 반쯤 감으며, 할 일 쪽지는 담요 경계 너머 차가운 바닥에 도형 표시만 보인 채 놓인다. 온실·씨앗·별탑 없이 담요의 둥근 입구와 찻잔 김이 아무것도 증명하지 않는 자리를 감싼다.",
+      "distinctFrom": [
+        "앞선 네 배치의 온실 바닥·빛가리개·덩굴 프레임·화단 오버헤드 구도",
+        "쪽지를 완성하거나 찻잔을 마시고 곧바로 다시 일하는 장면"
+      ],
+      "visualReviewFocus": [
+        "담요 안의 따뜻한 차곡이와 경계 밖 차가운 쪽지가 색과 깊이로 분리되는지",
+        "찻잔 김과 둥근 담요 입구가 얼굴을 가리거나 완전한 원 장식으로 뭉치지 않는지"
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.self.hidden-need.close-emotion",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-15",
+      "editorialContentHash": "5ff032f22bf2e39386cba29fd3a6400105da0e68a81112cb3221ea81778e41a6",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "12b1093398ddef204e3a2305230b68af1106360132e92d23c27369a2243e1733",
+      "compositionFamily": "opposed_corner_letter_center_void",
+      "artDirection": "한 장의 큰 별편지를 화면 가운데 비스듬히 놓고 재잘이의 얼굴과 손은 왼쪽 아래, 소곤이의 얼굴과 손은 오른쪽 위 모서리에서 서로 다른 크기로 들어온다. 두 손은 글자 대신 서로 다른 색의 짧은 선과 도형을 편지 양끝에 남기고, 가운데 넓은 종이 여백은 지우거나 채우지 않는다. 별방울·소리 파문·구름 벤치 없이 두 표정과 비어 있는 중심을 가까이 잡는다.",
+      "distinctFrom": [
+        "앞선 네 배치의 양옆 얼굴 대칭·모빌 당김·평행 벤치·낮은 V자 별방울 구도",
+        "두 캐릭터가 같은 문장이나 읽을 수 있는 글자를 쓰고 하나의 결론으로 합치는 장면"
+      ],
+      "visualReviewFocus": [
+        "크림색 재잘이와 라벤더 소곤이의 얼굴 크기·손 방향·표식 색이 서로 다른지",
+        "편지 중앙의 빈 여백이 실수나 미완성이 아니라 여러 목소리를 위한 자리로 읽히는지"
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.self.hidden-need.close-emotion",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-15",
+      "editorialContentHash": "19337b79dca643a7d756526f69228a6602285671463ff2f488fcc9e5c5affca7",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "de2a918b295bf46b33861298432b9b3579fdcdb427b3fc02fb20c900b08e1a10",
+      "compositionFamily": "floorlevel_door_slit_cushion_invitation",
+      "artDirection": "달집 실내 바닥 높이에서 닫힌 문 아래의 가느다란 틈을 수평으로 크게 본다. 달콩이의 얼굴은 화면 한쪽에 낮게 숙여지고 둥근 집게 한쪽이 작은 별빛을 틈 아래로 밀어 보내며, 뒤쪽에는 크기가 다른 방석 두 개가 포개지지 않게 놓인다. 창·비 반사·집 전체 단면 없이 문틈의 빛과 빈 방석 하나가 곁을 원하는 마음을 드러낸다.",
+      "distinctFrom": [
+        "앞선 네 배치의 둥근 창 근접·창밖 닦기·달집 단면 문턱·창 반사 구도",
+        "문이 열리거나 문밖 인물이 등장해 기다림이 즉시 해결되는 장면"
+      ],
+      "visualReviewFocus": [
+        "달콩이 얼굴·문틈 별빛·빈 방석이 낮은 수평 구도에서 각각 읽히는지",
+        "집게가 문을 억지로 여는 도구가 아니라 빛을 건네는 부드러운 손짓으로 보이는지"
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.self.hidden-need.close-emotion",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-15",
+      "editorialContentHash": "8865849fd8bb1d8a278c0f814dd48e8159f74059d3790895486d3ee52f2b7110",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "11ed781754e18ae7a02365fbc00dd2d221afb2ef20781667a69ea17aeac74e4b",
+      "compositionFamily": "unlit_spotlight_aperture_chest_cup",
+      "artDirection": "꺼진 조명의 검은 원통 입구를 화면 앞쪽의 불완전한 타원 프레임으로 두고, 그 너머 해님이의 얼굴과 가슴을 비스듬히 가까이 잡는다. 해님이는 왕관을 건드리지 않고 두 손으로 가슴의 네 갈래 Stella 별표를 감싸며, 작은 금빛은 눈동자 아래쪽에만 반사된다. 무대 중앙·거울·관객 없이 꺼진 외부 조명과 아직 남은 자기 빛의 대비에 집중한다.",
+      "distinctFrom": [
+        "앞선 네 배치의 정면 손거울·옆막 뒤 거울·무대 턱 동료·천장 시점 바닥 거울 구도",
+        "외부 조명이 다시 켜지거나 해님이가 관객 앞에서 공연을 시작하는 장면"
+      ],
+      "visualReviewFocus": [
+        "꺼진 조명 입구가 검은 원형 장식이 아니라 전경 프레임으로 읽히는지",
+        "갈기·두 손·가슴 별표의 작은 빛이 가까운 화면에서도 한 덩어리로 뭉치지 않는지"
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.self.hidden-need.close-emotion",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-15",
+      "editorialContentHash": "efe99c44f22270b87fc4289b780076450f8cde16bd6b6c8fcaf4782843781f85",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "412e843da3568c97ce8f342010515383bece35021ec778709a73340f657f5ff1",
+      "compositionFamily": "deskedge_eraser_dust_flower_macro",
+      "artDirection": "책상 모서리를 화면 아래에서 사선으로 크게 자르고, 새봄이의 얼굴과 한 손을 같은 높이의 옆모습 근접으로 둔다. 지우개가 마지막 도형 칸을 막 비운 자리에 가루가 작은 숨길처럼 남고, 다른 손은 그 빈칸 위에 작은 꽃 한 송이를 조심스럽게 올린다. 전체 체크표·연필·종이 프레임 없이 비워진 한 칸과 꽃, 안도하는 눈가만 보인다.",
+      "distinctFrom": [
+        "앞선 네 배치의 원형 책상 오버헤드·긴 옆 책상·체크표 병풍·도형 구멍 전경 구도",
+        "빈칸을 다시 채우거나 꽃을 완료 배지처럼 붙이는 성취 장면"
+      ],
+      "visualReviewFocus": [
+        "지우개 가루·비워진 칸·작은 꽃이 읽을 수 있는 문구 없이 순서대로 보이는지",
+        "새싹 귀와 꽃받침 목, 손에 든 실제 꽃이 서로 다른 위치와 크기로 구분되는지"
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.self.hidden-need.close-emotion",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-15",
+      "editorialContentHash": "e1f7106aafea6fb1ed9e7146c931cf2f30531f4ebfc5e0414a18513a2c332fae",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "bb01cd31769e59755775ab706e81407ca11f549f8fe84848332aec086db884ce",
+      "compositionFamily": "inside_scale_pan_personal_weight_lowering",
+      "artDirection": "별저울 한쪽 접시 안쪽에서 위를 올려다보는 시점으로, 접시의 둥근 가장자리를 화면 아래 전경에만 남긴다. 고르미는 여러 도형이 새겨진 작은 추들 사이로 자기 가슴 별표와 같은 네 갈래 표시의 추 하나를 천천히 내려놓고, 기울기보다 손끝을 바라본다. 저울 전체·양쪽 접시·문 없이 자기 몫이 관계 안으로 들어오는 순간을 가깝게 잡는다.",
+      "distinctFrom": [
+        "앞선 네 배치의 완전 대칭 저울·사선 공중 저울·매달린 전체 저울·두 접시 사이 저시점 구도",
+        "읽을 수 있는 이름을 추에 쓰거나 저울이 완벽한 수평으로 돌아오는 해결 장면"
+      ],
+      "visualReviewFocus": [
+        "전경 접시 가장자리·기존 도형 추·새 네 갈래 추·손끝의 깊이가 분리되는지",
+        "고르미의 긴 저울 귀가 실제 저울 부품이나 추가 접시처럼 오인되지 않는지"
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.self.hidden-need.close-emotion",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-15",
+      "editorialContentHash": "10da524a33227c1551d91783677b39463235197f4d759ececf49a48d27f4aa45",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "46dd51b38e51e2eaf9a970ecbcc646249f308467b199fd68e8e72768e8e7a108",
+      "compositionFamily": "envelope_edge_fingertip_pulse",
+      "artDirection": "봉인된 별편지의 낮은 종이 모서리와 그 위에 얹힌 꼬옥이의 손을 화면 앞쪽에 크게 두고, 얼굴은 뒤에서 한쪽 눈과 뺨만 보이도록 기울인다. 편지 안쪽의 붉은 빛은 봉인을 열지 않은 채 세 번의 작은 맥박처럼 손가락 사이와 종이 아래로만 번진다. 문·자물쇠·망토 나선 없이 닫힌 편지와 끝까지 느끼는 손의 접촉에 집중한다.",
+      "distinctFrom": [
+        "앞선 네 배치의 어두운 망토 상반신·저시점 회랑·정면 잠긴 문·망토 오버헤드 나선 구도",
+        "봉인을 뜯거나 편지 내용과 읽을 수 있는 글자가 드러나는 장면"
+      ],
+      "visualReviewFocus": [
+        "봉인된 편지·손가락·부분 얼굴이 붉은 빛 속에서도 세 깊이로 읽히는지",
+        "빛의 세 맥박이 실제 전갈자리 점 배열이나 심전도 문양처럼 보이지 않는지"
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.self.hidden-need.close-emotion",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-15",
+      "editorialContentHash": "e981971d470a90ec4d68ecd4907a18946416ff1b0e30afcb668e34b38587c75a",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "4bf29080eea307df628f445e251f0cf07ff8d41a9f338263059f91ec075875a1",
+      "compositionFamily": "kneelevel_blank_map_star_pencil_pause",
+      "artDirection": "총총이의 무릎 위에 펼친 완전히 빈 종이를 화면 아래의 넓은 사다리꼴로 두고, 얼굴과 별연필을 든 손을 오른쪽 위에서 가까이 내려다본다. 이미 표시된 지도는 접힌 채 몸 뒤 한쪽에 세워져 작은 색면으로만 남고, 별연필 끝은 빈 종이에 닿기 직전 멈춘다. 망원경·수평선·경로선 없이 익숙한 답 옆에 아직 이름 없는 가능성을 그릴 여백을 보여 준다.",
+      "distinctFrom": [
+        "앞선 네 배치의 망원경 근접·넓은 회전 자세·전경 지도 언덕·대형 렌즈 구도",
+        "빈 지도에 완성된 길이나 실제 지명·별자리 경로를 즉시 그려 넣는 장면"
+      ],
+      "visualReviewFocus": [
+        "접힌 기존 지도와 넓은 빈 종이, 멈춘 별연필 끝이 서로 다른 깊이로 읽히는지",
+        "혜성 목도리·초승달 활이 빈 종이의 중심을 가로질러 시선을 빼앗지 않는지"
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.self.hidden-need.close-emotion",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-15",
+      "editorialContentHash": "d6346c59cbbaee9453b6719cdfe9dce9fa8571857387327b21939d4c7538cb0a",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "5cebbad986b83b1c4b01cebd49d5b5ab9516222a6f4f9924b6c6a28beaf96ce2",
+      "compositionFamily": "alarm_foreground_rest_pass_blanket_fold",
+      "artDirection": "작은 별알람을 화면 아래 전경에 크게 두고 그 뒤에서 오름이의 졸린 얼굴과 두 손을 낮은 3/4 각도로 본다. 한 손은 글자 대신 닫힌 눈 도형이 있는 휴식 허가 표식을 낮춘 목표 깃발 옆에 붙이고, 다른 손은 아직 접힌 담요 끝을 자기 쪽으로 당긴다. 계단·일정표·정상 없이 알람을 맞춘 계획된 쉼의 세 소품만 가까이 모은다.",
+      "distinctFrom": [
+        "앞선 네 배치의 가파른 계단·옆 단면 일정 재배치·나선 중간참·벽 투영 휴식 경로 구도",
+        "알람이 울려 다시 오르거나 휴식 뒤 목표를 달성한 모습을 미리 보여 주는 장면"
+      ],
+      "visualReviewFocus": [
+        "전경 별알람·휴식 표식·담요 끝이 오름이 얼굴과 겹치지 않고 순서대로 읽히는지",
+        "바다염소의 아쿠아 꼬리와 보라 뿔이 접힌 담요·깃발과 다른 실루엣을 유지하는지"
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.self.hidden-need.close-emotion",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-15",
+      "editorialContentHash": "1b236d5a158643c2a67e06270c9ee6549548fff43f3be473fac5b29da69cc98d",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "2a2d203a12f22295c6ab718b7bd854aa26aee08d8796ab841228dd2086f543df",
+      "compositionFamily": "folded_manual_peek_personal_symbol",
+      "artDirection": "모두가 쓰는 설명서를 아코디언처럼 접어 화면 왼쪽 전경의 낮은 벽으로 만들고, 그 너머 방울이의 얼굴과 그리는 손을 오른쪽 가까이에 둔다. 큰 종이에는 읽을 수 있는 글자 대신 방울이의 물결 귀와 가슴 별표에서 따온 하나의 새로운 기하 표식이 막 완성되며, 방울이는 숨기지 않고 종이를 바깥쪽으로 기울인다. 물병·색 물결·웅덩이 없이 접힌 공통 형식과 열린 자기 언어를 대비한다.",
+      "distinctFrom": [
+        "앞선 네 배치의 S자 물결·청록 디딤돌·방사형 색 웅덩이·전경 물병 렌즈 구도",
+        "표식에 읽을 수 있는 설명을 붙이거나 다른 인물이 정답이라고 승인하는 장면"
+      ],
+      "visualReviewFocus": [
+        "접힌 설명서 벽·방울이 얼굴·큰 개인 표식이 좌우 깊이와 크기로 분리되는지",
+        "새 표식이 실제 물병자리 glyph·별자리 배열·브랜드 로고처럼 보이지 않는지"
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.self.hidden-need.close-emotion",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-15",
+      "editorialContentHash": "ec90fef53f81a5912bd09e9c17acc8432ec960ba8c0be9e9493e6307292bbe25",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "8d81893807fda5ef454f00b64cd6727b40e24457efe51a792428a8b10389494e",
+      "compositionFamily": "diagonal_pair_shared_bottle_color_layers",
+      "artDirection": "긴 투명 물병을 화면 아래에서 오른쪽 위로 비스듬히 놓고, 큰 아쿠아 꿈별이는 왼쪽 아래 전경에서 병의 아래쪽을, 작은 분홍 잠별이는 오른쪽 위 뒤편에서 병목을 함께 받친다. 병 안의 두 색 물결은 섞이지 않은 채 서로 다른 높이의 부드러운 띠로 나란히 머물고, 두 얼굴은 병 양끝 바깥에서 각자의 표정을 유지한다. 구름·오늘 별·수평선 없이 연결과 각자의 자리를 한 대각선에 담는다.",
+      "distinctFrom": [
+        "앞선 네 배치의 좌우 구름 대칭·오버헤드 접힘·세로 구름 층·수면 높이 대각선 구도",
+        "두 물결이 하나의 색으로 섞이거나 한 캐릭터의 얼굴이 병에 반사되어 늘어나는 장면"
+      ],
+      "visualReviewFocus": [
+        "전경의 큰 꿈별이·뒤쪽 작은 잠별이·대각선 물병의 크기와 깊이가 분명한지",
+        "병 안 두 색 띠가 경계를 지우지 않으면서도 하나의 용기 안에 안정적으로 머무는지"
+      ]
+    }
+  ]
+}
