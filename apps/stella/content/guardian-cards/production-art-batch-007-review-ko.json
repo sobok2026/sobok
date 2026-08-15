@@ -1,5 +1,13 @@
 {
-  "status": "visual_review_ready",
+  "status": "visual_review_complete",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-15",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
   "editorialApprovedOn": "2026-08-15",
   "generatedOn": "2026-08-15",
   "locale": "ko",
@@ -58,7 +66,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "d24dd03964beb146bcb0a541be4c8d7e7affe192ef9814a9abadeb6b62d8b13d",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "822ec6765190c0e7ec7c4f576afb90069c4f50bdaebef48e1d5b5bd70fdf902c",
       "compositionFamily": "crosswind_grass_profile_flame_lantern",
       "artDirection": "바람이 드는 낮은 풀밭을 정면에 가까운 넓은 가로 단면으로 보고, 키가 다른 풀잎 무더기를 화면 양끝에만 둔다. 몽실이는 앞쪽 경사에 3/4 옆모습으로 앉아 두 손의 작은 불꽃이 옆바람으로 기우는 각도를 살피고, 달콩이는 한 걸음 뒤의 높은 경사에서 별등을 가슴 아래로 낮춰 몽실이의 손과 얼굴만 은은하게 비춘다. 길·출발선·발자국 없이 서로 다른 높이에서 같은 바람을 바라보는 두 시선으로 재촉하지 않는 곁을 보인다.",
       "distinctFrom": [
@@ -78,7 +87,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "116dac3f323d32c3debbae3682fc0dea2d0bbd8efab1b1952906cf3b098a19c5",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "3bce8ee54c1adedc1aff96894a5c78403c4756e8358a359522ab7ffe19e81608",
       "compositionFamily": "overhead_blanket_island_untouched_hourglass",
       "artDirection": "불규칙하게 펼친 따뜻한 담요 한 장을 거의 위에서 내려다보고 차가운 바닥 속 작은 섬처럼 둔다. 차곡이는 담요 안쪽 아래에 몸을 둥글게 말아 별찻잔을 두 손으로 안고, 도형만 있는 할 일 쪽지는 담요 바깥 위쪽에 가지런히 놓는다. 새봄이는 담요 옆 가장자리에 나란히 앉아 뒤집지 않은 모래시계를 두 손에서 떨어진 바닥에 세워 두고 기다린다. 터널·온실·씨앗 없이 담요 경계와 손대지 않은 모래시계가 아무것도 증명하지 않는 시간을 함께 지킨다.",
       "distinctFrom": [
@@ -115,7 +125,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "19abeadab0d5c7eb4d7282694f088ebf44f70ea6d46749ebff14378e6ba900d2",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "45156c079bfc1cd3fbb989d3fbfc60405fd8cdcfa2aba11d90a4900135bf6822",
       "compositionFamily": "overhead_doorleaf_vertical_signal_gap",
       "artDirection": "닫힌 달집 문짝을 화면 가운데의 좁은 세로 띠처럼 두고 문 안과 현관 바깥을 높은 사선에서 함께 내려다본다. 안쪽 아래에는 크기가 다른 방석 두 개와 달콩이가 있고, 달콩이의 집게가 보낸 작은 별빛은 문 아래에 닿기 직전 멈춘다. 바깥 위에는 별간식을 내려놓은 꼬옥이가 문에서 두 걸음 물러나 앉아 하트 꼬리를 자기 곁에 둔다. 문 양쪽의 두 작은 신호와 비어 있는 문턱이 곁을 청하고 답을 기다리는 시간을 나눈다.",
       "distinctFrom": [
@@ -135,7 +146,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "e89a85e58d640244a1e1e6d012d4da30a60cc13cb214f3f0951a46e4b0331bcf",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "fc0263190534c4be04ec5efad145475215b01abad71e0c10a19738265f9bd326",
       "compositionFamily": "backstage_over_shoulder_firstrow_mirror",
       "artDirection": "무대 옆 뒤쪽에서 해님이의 어깨 너머로 빈 객석을 내려다보는 역방향 깊이 구도다. 해님이는 꺼진 조명 아래 화면 왼쪽 전경에 비스듬히 서서 두 손으로 가슴의 Stella 별표를 감싸고, 고르미는 대각선으로 떨어진 첫 줄 한쪽 좌석에서 박수 대신 작은 거울을 가슴 높이로 든다. 거울에는 해님이의 표정 일부만 작게 비치며, 두 사람 사이 빈 통로는 해님이가 먼저 자기 빛을 바라볼 시간을 남긴다.",
       "distinctFrom": [
@@ -156,7 +168,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "0124a186706fb3dd9659891a01a71504bf8b952a7a267abbdf7e3e333cdb3129",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "d4f7f9f2fadcfcbb9bb93ee2bd6f90cb9b38e392538dd2f8571b8141f3768a44",
       "compositionFamily": "breezy_paper_arch_cookie_anchor",
       "artDirection": "긴 체크표 한 장이 바람에 낮은 아치처럼 들린 순간을 바닥 높이의 넓은 옆모습으로 본다. 새봄이는 화면 왼쪽에서 마지막 도형 칸을 비운 뒤 작은 꽃을 그 빈칸 위에 올려 두고 손을 뗀다. 차곡이는 반대쪽에서 종이를 잡아당기지 않고 별쿠키 하나를 가장자리의 부드러운 문진처럼 놓아 종이만 지킨다. 두 캐릭터의 손은 만나지 않고, 들린 종이 아래의 빈 공간이 하지 않아도 되는 시간을 관계 사이에 만든다.",
       "distinctFrom": [
@@ -176,7 +189,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "7ff4af920649c097f57513fd05f3e5bf67cd447cad193fc4e01ccc6ea7445dde",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "5f766e8c02d92846882350c24572ce7a8dabf4bc3ca635b8a237ec36d769a587",
       "compositionFamily": "sidebench_offset_scale_furled_flag_wait",
       "artDirection": "긴 창가 벤치를 얕은 옆모습으로 보고 작은 별저울은 화면 왼쪽 3분의 1에 치우쳐 둔다. 고르미는 중앙 가까이 앉아 여러 도형 추가 놓인 낮은 접시에 가슴 별표와 같은 네 갈래 추를 더하고, 완전히 수평이 아닌 새 기울기를 바라본다. 몽실이는 오른쪽 같은 벤치에 간격을 두고 앉아 접은 혜성 깃발을 무릎 아래에 눕힌 채 저울이 아니라 고르미의 입을 기다린다. 창밖의 넓은 빈빛이 선택지를 늘리지 않는 곁을 남긴다.",
       "distinctFrom": [
@@ -196,7 +210,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "00c8b9568e75f9cd700053a1b176573b3e6cf11ff4be875ae26155257606818a",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "08cd544dc3b080256221a2d16a67927e85cbbd413b0a1c272feddaa3ab914127",
       "compositionFamily": "sidecut_corridor_letter_lantern_wait",
       "artDirection": "굽은 복도를 옆에서 낮게 잘라 보고 잠긴 문은 두 공간 사이의 좁고 어두운 세로 판처럼만 남긴다. 안쪽 가까운 벤치의 꼬옥이는 봉인된 별편지를 무릎에 놓고 한 손을 종이 위에 얹어 아래의 작은 붉은 맥박 세 점을 느낀다. 문 바깥 먼 쪽의 달콩이는 열쇠 없이 별등을 바닥에 내려놓고 한 몸 길이만큼 물러나 두 손을 무릎에 둔다. 별등 빛은 문 앞에서 멈추고 하트 꼬리는 편지 곁에 드러나, 공개를 요구하지 않는 기다림을 보인다.",
       "distinctFrom": [
@@ -217,7 +232,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "052347d068df9c06995bcd07366e376afa3e82093149bb3b39a62eda94e36222",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "ea4a0478803fb048428f803cf06cbde9a902ac394da03fe9002b828338a70f6f",
       "compositionFamily": "overhead_offset_maps_open_horizon",
       "artDirection": "바람 드는 평평한 마당을 거의 위에서 보고, 도형 경로만 있는 완성 지도는 왼쪽 위의 작은 접힌 사각형으로, 빈 지도는 오른쪽 아래의 넓고 비스듬한 사각형으로 서로 겹치지 않게 둔다. 총총이는 빈 지도 아래 모서리에 무릎을 대고 별연필을 든 손은 종이 위에 멈춘 채 고개만 화면의 넓은 빈 위쪽으로 든다. 오름이는 두 지도 사이 귀환 표식 옆에서 달바위로 종이 모서리 하나만 눌러, 총총이가 새 가능성을 바라보는 동안 돌아올 자리를 조용히 지킨다.",
       "distinctFrom": [
@@ -237,7 +253,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "cefa3b2e9035e8901e40043aa4da667996d6b581342d9cce2ff6623d04445c89",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "e10544632211f15a46f4c3bd70c19ad2f2298802bbcaee4610e58d8575349b27",
       "compositionFamily": "opposed_profiles_blanket_watch_alarm_bridge",
       "artDirection": "계단이 없는 평평한 달바위 쉼터를 눈높이의 넓은 옆모습으로 본다. 낮게 편 담요의 왼쪽에는 오름이가 무릎까지 몸을 덮고 기대앉아 있고, 뒤의 낮춘 목표 깃발에는 글자 대신 닫힌 눈 도형의 휴식 표식만 붙어 있다. 담요 오른쪽의 총총이는 오름이와 등을 느슨하게 맞댄 채 바깥을 향해 앉아 초승달 활을 바닥에 내려놓고, 두 캐릭터 사이 별알람을 건드리지 않는다. 서로 반대인 시선과 가운데 알람이 정해 둔 쉼을 함께 지키는 시간을 만든다.",
       "distinctFrom": [
@@ -257,7 +274,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "88a1075e217e33efd8fb96c69f2d17fe0a0232f8c6c94cf49dcbd524d99519ce",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "5770e2e32293fed23c55742f100a7e077f77d633c152516d22d9bdc26f1b3d09",
       "compositionFamily": "edgeon_easel_blank_tag_offer",
       "artDirection": "낮은 바닥 이젤과 큰 종이를 화면 가운데에서 비껴 보아 종이 면이 얕은 사선 칸막이가 되게 한다. 방울이는 앞쪽 왼편에서 넓은 물붓으로 물결 귀와 가슴 별표에서 딴 열린 곡선 하나와 떨어진 네 갈래 점을 그려 자기 언어를 밖으로 보인다. 차곡이는 종이 반대편 오른쪽에서 이젤 가장자리 너머로 빈 이름표를 선반 위에 내려놓되 붓이나 표식에는 손대지 않는다. 모두의 설명서는 이젤 아래에 작게 접힌 도형 묶음으로 닫아 둔다.",
       "distinctFrom": [
@@ -277,7 +295,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-15",
       "editorialContentHash": "6a5b6f1af1aa13a6939dd834daf0662b25b3a3c18fb120b6d388a748e82238ea",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c40aa31499edbc6cd5db000178b583e42031e4ee3ad58dfac32fa5f54fc9c55a",
       "compositionFamily": "horizontal_bottle_cradle_opposed_tempo",
       "artDirection": "긴 투명 별물병을 낮은 초승달 받침 위에 완전히 가로로 눕혀 화면 가운데 수평 띠로 둔다. 큰 아쿠아 꿈별이는 왼쪽 병 바닥 곁에서 먼저 말하려던 손을 입가 아래에 멈추고, 작은 분홍 잠별이는 오른쪽 병목 곁에서 느린 분홍 물결 한 줄만 병 안으로 건넨다. 병 안의 기존 청록 물결과 새 분홍 물결은 위아래가 아닌 앞뒤의 평행한 두 띠로 나란히 머물며 섞이지 않는다. 두 캐릭터의 연결된 지느러미는 받침 뒤에서만 만나 서로 다른 속도와 한 자리를 함께 지킨다.",
       "distinctFrom": [
