@@ -28,6 +28,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-007-review-ko.json`    | `visual_review_complete` | 일곱 번째 production 배치 파일럿 1개·신규 PNG 11개 시각 승인·승인 해시 고정 |
 | `production-art-batch-008-review-ko.json`    | `visual_review_complete` | 여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-009-review-ko.json`    | `visual_review_complete` | 아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-010-review-ko.json`    | `editorial_review_ready` | 열 번째 production 배치 신규 12개 원고·행동 구도 최종 편집 승인 대기        |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                  |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 118개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                     |
 
@@ -349,6 +350,16 @@ contact sheet, 앞선 여덟 배치 비교 contact sheet에서 캐릭터 정체�
 `apps/stella/private/guardian-art-production/self-coping-pattern-close-emotion`에 보관한다. 현재 신규 12개는
 모두 사람의 최종 시각 승인을 마쳤다. 승인 원본의 SHA-256은 검수 파일과 누적 118개 WebP 매니페스트에
 고정하며 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
+
+열 번째 배치는 같은 `self.coping-pattern` 원고를 `action-beat` 표현 방식으로 제작할 신규 12개의 편집
+검수안이다. `production-art-batch-010-review-ko.json`에 현재 원고의 canonical SHA-256과 익숙한 자동 반응의
+중심 소품이 움직이기 시작하면서 몸이 가장 작은 대안으로 방향을 바꾸는 첫 동작을 고정했다. 같은 표현
+방식인 배치 2·6과 바로 앞 배치 9의 카메라·실루엣·운동선·소품 배치를 반복하지 않는다. 열두 장은 기울어진
+별기계와 구르는 나사, 높은 시점의 선반과 미끄러지는 받침, 작업대 가장자리의 움직이는 도안, 바깥에서
+보는 문짝 호, 높은 시점의 구르는 왕관, 오버헤드 화분 조각 부채, 뒤쪽 퍼즐 팔 동작, 상자 그림자와
+떨어지는 열쇠, 분기점 정면 제동, 높은 시점의 탑과 되가져오는 블록, 옆으로 휘는 물결 띠, 수면 위아래로
+빠져나가는 제3 물결처럼 서로 다른 중간·전신 행동 구도를 사용한다. 현재 원고 해시와 구도는 사람의 최종
+편집 승인 대기 상태이며 승인 전에는 imagegen 원화 생성을 진행하지 않는다.
 
 ## 검증
 
