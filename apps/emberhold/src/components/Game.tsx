@@ -321,6 +321,7 @@ function preloadPhaseLayer(phase: Phase, nearingEnding: boolean) {
 
 const GAMEPLAY_PRELOAD_IDLE_TIMEOUT_MS = 2_400
 const GAMEPLAY_PRELOAD_FALLBACK_DELAY_MS = 1_200
+const UPDATE_HANDOFF_TIMEOUT_MS = 10_000
 
 type IdleScheduler = {
   requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number
@@ -3022,6 +3023,10 @@ export default function Game() {
   const [standalone, setStandalone] = useState(false)
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null)
   const [updateReady, setUpdateReady] = useState(false)
+  const [updateApplying, setUpdateApplying] = useState(false)
+  const [updateDelayed, setUpdateDelayed] = useState(false)
+  const [updateFailed, setUpdateFailed] = useState(false)
+  const [offlineNoticeDismissed, setOfflineNoticeDismissed] = useState(false)
   const [tutorialStep, setTutorialStep] = useState<TutorialStep | null>(null)
   const [mobileRosterOpen, setMobileRosterOpen] = useState(false)
   const [compactViewport, setCompactViewport] = useState(false)
@@ -3077,6 +3082,7 @@ export default function Game() {
   const suppressNavigationPop = useRef(false)
   const waitingServiceWorker = useRef<ServiceWorker | null>(null)
   const applyingUpdate = useRef(false)
+  const updateApplyTimeout = useRef<number | null>(null)
   const reloadingAfterControllerChange = useRef(false)
   const soundOn = settings.sound
 
@@ -5287,54 +5293,95 @@ export default function Game() {
         : runtimeState === 'ready'
           ? '오프라인 준비 완료'
           : '온라인 연결'
-  const runtimeNotice = !online ? 'offline' : updateReady ? 'update' : null
   const campaignStagePending = !showTitle && phase === 'camp' && !campaignStageReady
+  const runtimeNoticeSafe =
+    ready &&
+    sessionAccess === 'active' &&
+    !showArchive &&
+    !showSettings &&
+    !showExpeditionMenu &&
+    !showInstallHelp &&
+    !showGuide &&
+    !mobileRosterOpen &&
+    (showTitle
+      ? !showDifficulty && !installPending && !sharePending && pendingReplacementRiftCode === null
+      : phase === 'camp' &&
+        !campaignStagePending &&
+        tutorialStep === null &&
+        eventDecisionNotice === null &&
+        growthCeremony === null &&
+        marchSealCeremony === null &&
+        riskDepartureConfirmation === null)
+  const runtimeNotice = runtimeNoticeSafe
+    ? updateApplying
+      ? updateDelayed
+        ? 'waiting-update'
+        : 'applying-update'
+      : showTitle
+        ? null
+        : !online && !offlineNoticeDismissed
+          ? 'offline'
+          : updateFailed
+            ? 'update-error'
+            : updateReady
+              ? 'update'
+              : null
+    : null
   const activeLayer: ActiveLayer | null =
     sessionAccess !== 'active'
       ? 'session'
-      : showInstallHelp
-        ? 'install'
-        : showArchive
-          ? 'archive'
-          : showSettings
-            ? 'settings'
-            : showExpeditionMenu
-              ? 'menu'
-              : showTitle
-                ? 'title'
-                : showGuide
-                  ? 'guide'
-                  : campaignStagePending
-                    ? 'battle'
-                    : phase === 'event'
-                      ? 'event'
-                      : phase === 'battling'
-                        ? 'battle'
-                        : phase === 'interlude'
-                          ? 'interlude'
-                          : phase === 'finale'
-                            ? 'finale'
-                            : phase === 'relic'
-                              ? 'relic'
-                              : phase === 'promotion'
-                                ? 'promotion'
-                                : phase === 'result'
-                                  ? 'result'
-                                  : phase === 'won' || phase === 'lost'
-                                    ? 'ending'
-                                    : null
+      : updateApplying
+        ? 'update'
+        : showInstallHelp
+          ? 'install'
+          : showArchive
+            ? 'archive'
+            : showSettings
+              ? 'settings'
+              : showExpeditionMenu
+                ? 'menu'
+                : showTitle
+                  ? 'title'
+                  : showGuide
+                    ? 'guide'
+                    : campaignStagePending
+                      ? 'battle'
+                      : phase === 'event'
+                        ? 'event'
+                        : phase === 'battling'
+                          ? 'battle'
+                          : phase === 'interlude'
+                            ? 'interlude'
+                            : phase === 'finale'
+                              ? 'finale'
+                              : phase === 'relic'
+                                ? 'relic'
+                                : phase === 'promotion'
+                                  ? 'promotion'
+                                  : phase === 'result'
+                                    ? 'result'
+                                    : phase === 'won' || phase === 'lost'
+                                      ? 'ending'
+                                      : null
   const gameIsBlocked = activeLayer !== null || phase === 'battling'
   const documentScrollLocked = gameIsBlocked || (compactViewport && mobileRosterOpen)
   const navigationGuardNeeded =
     ready &&
     sessionAccess === 'active' &&
-    (!showTitle || showDifficulty || showArchive || showSettings || showExpeditionMenu || showInstallHelp)
+    (!showTitle ||
+      showDifficulty ||
+      showArchive ||
+      showSettings ||
+      showExpeditionMenu ||
+      showInstallHelp ||
+      updateApplying)
   const backupRestorePreviewVisible = backupRestorePreview !== null
   const activeMilestone = milestoneQueue[0] ?? null
   const activeMilestoneId = activeMilestone?.id ?? null
   const eventDecisionNoticeId = eventDecisionNotice?.id ?? null
   const milestoneVisible =
     activeMilestone !== null &&
+    !updateApplying &&
     sessionAccess === 'active' &&
     !showSettings &&
     !showArchive &&
@@ -5793,8 +5840,14 @@ export default function Game() {
     const syncDisplayMode = () => {
       setStandalone(displayMode.matches || Boolean((navigator as StandaloneNavigator).standalone))
     }
-    const handleOnline = () => setOnline(true)
-    const handleOffline = () => setOnline(false)
+    const handleOnline = () => {
+      setOnline(true)
+      setOfflineNoticeDismissed(false)
+    }
+    const handleOffline = () => {
+      setOnline(false)
+      setOfflineNoticeDismissed(false)
+    }
     const handleInstallPrompt = (event: Event) => {
       event.preventDefault()
       setInstallPrompt(event as InstallPromptEvent)
@@ -5822,9 +5875,13 @@ export default function Game() {
       let hadController = Boolean(navigator.serviceWorker.controller)
       const handleControllerChange = () => {
         if (disposed) return
+        clearUpdateApplyTimeout()
         setOfflineReady(true)
         waitingServiceWorker.current = null
         setUpdateReady(false)
+        setUpdateApplying(false)
+        setUpdateDelayed(false)
+        setUpdateFailed(false)
         applyingUpdate.current = false
         if (hadController && !reloadingAfterControllerChange.current) {
           reloadingAfterControllerChange.current = true
@@ -5838,6 +5895,8 @@ export default function Game() {
         if (disposed || !worker || !navigator.serviceWorker.controller) return
         waitingServiceWorker.current = worker
         setUpdateReady(true)
+        setUpdateDelayed(false)
+        setUpdateFailed(false)
       }
       const watchInstallingWorker = () => {
         removeInstallingStateListener?.()
@@ -5851,8 +5910,14 @@ export default function Game() {
           if (worker.state === 'installed') {
             markUpdateReady(serviceWorkerRegistration?.waiting ?? worker)
           } else if (worker.state === 'redundant' && waitingServiceWorker.current === worker) {
+            const handoffInterrupted = applyingUpdate.current
+            clearUpdateApplyTimeout()
             waitingServiceWorker.current = null
             setUpdateReady(false)
+            applyingUpdate.current = false
+            setUpdateApplying(false)
+            setUpdateDelayed(false)
+            setUpdateFailed(handoffInterrupted)
           }
         }
         worker.addEventListener('statechange', handleStateChange)
@@ -5892,6 +5957,7 @@ export default function Game() {
       removeControllerListener?.()
       removeUpdateFoundListener?.()
       removeInstallingStateListener?.()
+      clearUpdateApplyTimeout()
     }
   }, [])
 
@@ -6226,6 +6292,7 @@ export default function Game() {
       clearRuntimeTimer(growthCeremonyTimer)
       clearRuntimeTimer(marchSealTimer)
       clearRuntimeTimer(milestoneDismissTimer)
+      clearUpdateApplyTimeout()
       stopAudioPlayback(true)
       cancelHaptics()
     }
@@ -6344,11 +6411,52 @@ export default function Game() {
     window.location.reload()
   }
 
+  function clearUpdateApplyTimeout() {
+    if (updateApplyTimeout.current === null) return
+    window.clearTimeout(updateApplyTimeout.current)
+    updateApplyTimeout.current = null
+  }
+
+  function dismissOfflineNotice() {
+    setOfflineNoticeDismissed(true)
+    announce('오프라인 알림을 닫았습니다. 진행은 이 기기에 계속 저장됩니다.')
+  }
+
+  function watchUpdateHandoff(worker: ServiceWorker) {
+    clearUpdateApplyTimeout()
+    updateApplyTimeout.current = window.setTimeout(() => {
+      updateApplyTimeout.current = null
+      if (!applyingUpdate.current) return
+
+      if (worker.state === 'activated') {
+        persistLatestSnapshot()
+        window.location.reload()
+        return
+      }
+      if (worker.state === 'activating') {
+        setUpdateDelayed(true)
+        watchUpdateHandoff(worker)
+        return
+      }
+
+      applyingUpdate.current = false
+      setUpdateApplying(false)
+      setUpdateDelayed(false)
+      setUpdateFailed(true)
+      announce('새 빌드가 활성화를 시작하지 못했습니다. 현재 원정은 그대로이며 다시 시도할 수 있습니다.')
+    }, UPDATE_HANDOFF_TIMEOUT_MS)
+  }
+
   function reloadUpdatedGame() {
     if (applyingUpdate.current) return
+    if (!ready || sessionAccess !== 'active' || restoringBackup.current || applyingBackupRestore.current) {
+      announce('체크포인트 확인이 끝난 뒤 새 빌드를 적용할 수 있습니다.')
+      return
+    }
     const worker = waitingServiceWorker.current
     if (!worker) {
       setUpdateReady(false)
+      setUpdateFailed(false)
       announce('새 빌드의 준비 상태를 다시 확인합니다.')
       return
     }
@@ -6364,12 +6472,20 @@ export default function Game() {
     }
 
     applyingUpdate.current = true
+    clearUpdateApplyTimeout()
+    setUpdateApplying(true)
+    setUpdateDelayed(false)
+    setUpdateFailed(false)
     try {
       worker.postMessage({ type: 'SKIP_WAITING' })
-      setUpdateReady(false)
+      watchUpdateHandoff(worker)
       announce('체크포인트를 보존했습니다. 최신 빌드로 전환합니다.')
     } catch {
+      clearUpdateApplyTimeout()
       applyingUpdate.current = false
+      setUpdateApplying(false)
+      setUpdateDelayed(false)
+      setUpdateFailed(true)
       announce('새 빌드를 적용하지 못했습니다. 현재 플레이는 그대로 유지됩니다.')
     }
   }
@@ -8674,12 +8790,20 @@ export default function Game() {
         runtimeNotice={runtimeNotice}
         onRetrySession={retrySessionAccess}
         onApplyUpdate={reloadUpdatedGame}
+        onDismissOffline={dismissOfflineNotice}
         onDismissMilestone={dismissActiveMilestone}
       />
 
       {showTitle ? (
         <TitleScreen
-          blocked={sessionAccess !== 'active' || showArchive || showInstallHelp || showSettings || showExpeditionMenu}
+          blocked={
+            sessionAccess !== 'active' ||
+            updateApplying ||
+            showArchive ||
+            showInstallHelp ||
+            showSettings ||
+            showExpeditionMenu
+          }
           showDifficulty={showDifficulty}
           selectedDifficulty={selectedDifficulty}
           setupMode={setupMode}
@@ -8707,6 +8831,8 @@ export default function Game() {
           bestScore={bestScore}
           runtimeState={runtimeState}
           runtimeStateCopy={runtimeStateCopy}
+          updateAvailable={runtimeNoticeSafe && (updateReady || updateFailed)}
+          updateFailed={updateFailed}
           soundOn={soundOn}
           setShowDifficulty={setShowDifficulty}
           setSelectedDifficulty={setSelectedDifficulty}
@@ -8721,6 +8847,7 @@ export default function Game() {
           prepareIncomingRift={prepareIncomingRift}
           dismissIncomingRift={dismissIncomingRift}
           askToDiscardCurrentCampaign={askToDiscardCurrentCampaign}
+          onApplyUpdate={reloadUpdatedGame}
           installGame={installGame}
           preloadEnterGame={() => {
             if (hasProgress) preloadPhaseLayer(phase, game.day >= MAX_NIGHTS - 1)

@@ -161,6 +161,7 @@ type MotionPreference = 'system' | 'reduced'
 type BattlePace = 'cinematic' | 'swift'
 export type ActiveLayer =
   | 'session'
+  | 'update'
   | 'title'
   | 'install'
   | 'guide'

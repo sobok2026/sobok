@@ -2,7 +2,7 @@ import type { RefObject } from 'react'
 import type { GrowthCeremony, MarchSealCeremony, MilestoneNotice, SessionAccess } from './game-model'
 import { KIND_META, LEGACY_UPGRADES, MASTERY_CONTRACTS, SPECIALIZATIONS, TIER_LABELS } from './game-model'
 
-type RuntimeNoticeState = 'offline' | 'update'
+type RuntimeNoticeState = 'offline' | 'update' | 'applying-update' | 'waiting-update' | 'update-error'
 
 export type EventDecisionNotice = {
   id: string
@@ -40,6 +40,7 @@ type GameFeedbackProps = {
   runtimeNotice: RuntimeNoticeState | null
   onRetrySession: () => void
   onApplyUpdate: () => void
+  onDismissOffline: () => void
   onDismissMilestone: () => void
 }
 
@@ -330,25 +331,94 @@ function MilestoneNoticeView({
   )
 }
 
-function RuntimeNotice({ state, onApplyUpdate }: { state: RuntimeNoticeState; onApplyUpdate: () => void }) {
+function RuntimeNotice({
+  state,
+  onApplyUpdate,
+  onDismissOffline,
+}: {
+  state: RuntimeNoticeState
+  onApplyUpdate: () => void
+  onDismissOffline: () => void
+}) {
   const offline = state === 'offline'
+  const delayed = state === 'waiting-update'
+  const applying = state === 'applying-update' || delayed
+  const failed = state === 'update-error'
+  const title = offline
+    ? '오프라인 원정'
+    : delayed
+      ? '새 불씨를 깨우는 중'
+      : applying
+        ? '새 불씨로 전환 중'
+        : failed
+          ? '전환이 지연되고 있습니다'
+          : '새 불씨가 준비됐습니다'
+  const description = offline
+    ? '연결 없이 플레이 중입니다. 진행은 이 기기에 계속 저장됩니다.'
+    : delayed
+      ? '브라우저가 새 캐시를 활성화하고 있습니다. 완료되는 즉시 저장한 체크포인트로 다시 엽니다.'
+      : applying
+        ? '체크포인트 저장을 마쳤습니다. 캐시를 교대하고 원정 화면을 다시 엽니다.'
+        : failed
+          ? '현재 플레이와 체크포인트는 그대로입니다. 준비된 빌드를 다시 요청할 수 있습니다.'
+          : '현재 체크포인트를 보존한 채 최신 빌드로 전환할 수 있습니다.'
+  const detail = offline
+    ? '알림을 닫아도 오프라인 상태는 계속 유지됩니다.'
+    : delayed
+      ? '전환 중에는 원정 입력을 안전하게 잠급니다.'
+      : applying
+        ? '이 과정은 보통 몇 초 안에 끝납니다.'
+        : failed
+          ? '재시도해도 현재 기록은 먼저 보존됩니다.'
+          : '업데이트는 제목 화면 또는 안전한 야영지에서만 시작됩니다.'
 
-  return (
-    <aside className="runtime-notice" data-state={state} role="status" aria-live="polite" aria-atomic="true">
-      <span aria-hidden="true">{offline ? '❄' : '✦'}</span>
+  const content = (
+    <>
+      <span className="runtime-notice-icon" aria-hidden="true">
+        {offline ? '❄' : applying ? '↻' : failed ? '!' : '✦'}
+      </span>
       <div>
-        <strong>{offline ? '오프라인 원정' : '새 불씨가 준비됐습니다'}</strong>
-        <p>
-          {offline
-            ? '연결 없이 플레이 중입니다. 진행은 이 기기에 계속 저장됩니다.'
-            : '현재 체크포인트를 보존한 채 최신 빌드로 전환할 수 있습니다.'}
-        </p>
+        {!applying || delayed ? (
+          <span className="settings-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
+            {title}. {description}
+          </span>
+        ) : null}
+        <strong id="runtime-notice-title">{title}</strong>
+        <p id="runtime-notice-description">{description}</p>
+        <small>{detail}</small>
       </div>
-      {state === 'update' ? (
+      {offline ? (
+        <button type="button" onClick={onDismissOffline}>
+          알림 닫기
+        </button>
+      ) : state === 'update' || failed ? (
         <button type="button" onClick={onApplyUpdate}>
-          업데이트 적용
+          {failed ? '다시 시도' : '업데이트 적용'}
         </button>
       ) : null}
+    </>
+  )
+
+  if (applying) {
+    return (
+      <aside
+        className="runtime-notice"
+        data-state={state}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="runtime-notice-title"
+        aria-describedby="runtime-notice-description"
+        data-focus-scope="update"
+        tabIndex={-1}
+      >
+        {content}
+      </aside>
+    )
+  }
+
+  return (
+    <aside className="runtime-notice" data-state={state}>
+      {content}
     </aside>
   )
 }
@@ -420,6 +490,7 @@ export function GameFeedback({
   runtimeNotice,
   onRetrySession,
   onApplyUpdate,
+  onDismissOffline,
   onDismissMilestone,
 }: GameFeedbackProps) {
   return (
@@ -437,7 +508,9 @@ export function GameFeedback({
           onDismiss={onDismissMilestone}
         />
       ) : null}
-      {runtimeNotice ? <RuntimeNotice state={runtimeNotice} onApplyUpdate={onApplyUpdate} /> : null}
+      {runtimeNotice ? (
+        <RuntimeNotice state={runtimeNotice} onApplyUpdate={onApplyUpdate} onDismissOffline={onDismissOffline} />
+      ) : null}
     </>
   )
 }

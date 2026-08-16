@@ -8977,6 +8977,23 @@ body {
   color: #91dfc4;
 }
 
+.title-update {
+  border-color: rgba(255, 188, 107, 0.34);
+  background: linear-gradient(145deg, rgba(255, 166, 78, 0.13), transparent 68%), rgba(20, 14, 13, 0.84);
+  color: #f2bd82;
+}
+
+.title-update:hover,
+.title-update:focus-visible {
+  border-color: rgba(255, 205, 145, 0.72);
+  background: linear-gradient(145deg, rgba(255, 166, 78, 0.22), transparent 68%), rgba(25, 16, 13, 0.94);
+}
+
+.title-update[data-state='error'] {
+  border-color: rgba(255, 139, 107, 0.44);
+  color: #ffb09b;
+}
+
 .title-install:disabled {
   cursor: progress;
   opacity: 0.68;
@@ -9029,7 +9046,30 @@ body {
   background: rgba(27, 20, 17, 0.96);
 }
 
-.runtime-notice > span {
+.runtime-notice[data-state='update-error'] {
+  border-color: rgba(255, 139, 107, 0.46);
+  background: rgba(31, 15, 16, 0.98);
+}
+
+.runtime-notice:is([data-state='applying-update'], [data-state='waiting-update']) {
+  z-index: 260;
+  top: 50%;
+  width: min(calc(100vw - 32px), 580px);
+  min-height: 132px;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 15px;
+  padding: 20px;
+  border-color: rgba(255, 199, 130, 0.5);
+  background: radial-gradient(circle at 12% 8%, rgba(255, 161, 74, 0.16), transparent 42%), rgba(17, 14, 14, 0.99);
+  box-shadow:
+    0 0 0 100vmax rgba(1, 7, 11, 0.76),
+    0 28px 90px rgba(0, 0, 0, 0.7),
+    inset 0 1px rgba(255, 226, 188, 0.08);
+  transform: translate(-50%, -50%);
+  animation: runtime-handoff-in 220ms ease-out both;
+}
+
+.runtime-notice > .runtime-notice-icon {
   display: grid;
   width: 32px;
   height: 38px;
@@ -9039,9 +9079,23 @@ body {
   font-family: Georgia, serif;
 }
 
-.runtime-notice[data-state='update'] > span {
+.runtime-notice:is([data-state='applying-update'], [data-state='waiting-update']) > .runtime-notice-icon {
+  width: 46px;
+  height: 52px;
+  border-color: rgba(255, 198, 128, 0.5);
+  color: #ffd29f;
+  font-size: 1.5rem;
+  animation: runtime-handoff-turn 1.1s ease-in-out infinite;
+}
+
+.runtime-notice:is([data-state='update'], [data-state='update-error']) > .runtime-notice-icon {
   border-color: rgba(255, 188, 107, 0.34);
   color: var(--ember-bright);
+}
+
+.runtime-notice[data-state='update-error'] > .runtime-notice-icon {
+  border-color: rgba(255, 139, 107, 0.48);
+  color: #ffb09b;
 }
 
 .runtime-notice > div {
@@ -9061,6 +9115,23 @@ body {
   line-height: 1.4;
 }
 
+.runtime-notice small {
+  margin-top: 3px;
+  color: #829ba2;
+  font-size: var(--text-micro);
+  line-height: 1.35;
+}
+
+.runtime-notice:is([data-state='applying-update'], [data-state='waiting-update']) strong {
+  color: #ffe0ba;
+  font-size: var(--text-body);
+}
+
+.runtime-notice:is([data-state='applying-update'], [data-state='waiting-update']) p {
+  color: #d7c5b1;
+  font-size: var(--text-small);
+}
+
 .runtime-notice button {
   min-height: 36px;
   padding: 7px 10px;
@@ -9071,11 +9142,61 @@ body {
   font-size: var(--text-label);
 }
 
+.runtime-notice[data-state='offline'] button {
+  border-color: rgba(113, 217, 255, 0.3);
+  background: rgba(113, 217, 255, 0.08);
+  color: #b8eaff;
+}
+
+.runtime-notice button:hover,
+.runtime-notice button:focus-visible {
+  border-color: rgba(255, 205, 145, 0.68);
+  background: rgba(255, 174, 88, 0.18);
+}
+
+.runtime-notice[data-state='offline'] button:hover,
+.runtime-notice[data-state='offline'] button:focus-visible {
+  border-color: rgba(151, 231, 255, 0.7);
+  background: rgba(113, 217, 255, 0.16);
+}
+
 @keyframes runtime-notice-in {
   from {
     opacity: 0;
     transform: translate(-50%, -10px);
   }
+}
+
+@keyframes runtime-handoff-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 12px));
+  }
+}
+
+@keyframes runtime-handoff-turn {
+  50% {
+    transform: rotate(180deg) scale(1.08);
+    filter: brightness(1.2);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.game-shell[data-contrast='high'] .runtime-notice {
+  border-color: currentColor;
+  background: #061219;
+}
+
+.game-shell[data-contrast='high']
+  .runtime-notice:is([data-state='update'], [data-state='applying-update'], [data-state='waiting-update']) {
+  background: #17100b;
+}
+
+.game-shell[data-contrast='high'] .runtime-notice[data-state='update-error'] {
+  background: #1d0b0b;
 }
 
 @media (max-width: 520px) {
@@ -9116,7 +9237,8 @@ body {
     text-align: left;
   }
 
-  .title-install {
+  .title-install,
+  .title-update {
     grid-column: 1 / -1;
   }
 
@@ -9127,6 +9249,11 @@ body {
 
   .runtime-notice {
     grid-template-columns: 32px minmax(0, 1fr);
+  }
+
+  .runtime-notice:is([data-state='applying-update'], [data-state='waiting-update']) {
+    grid-template-columns: 46px minmax(0, 1fr);
+    padding: 17px;
   }
 
   .runtime-notice button {
@@ -9141,7 +9268,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .runtime-notice {
+  .runtime-notice,
+  .runtime-notice:is([data-state='applying-update'], [data-state='waiting-update']) > .runtime-notice-icon {
     animation: none;
   }
 }

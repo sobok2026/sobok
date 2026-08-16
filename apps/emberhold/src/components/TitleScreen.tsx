@@ -66,6 +66,8 @@ type TitleScreenProps = {
   bestScore: number
   runtimeState: RuntimeState
   runtimeStateCopy: string
+  updateAvailable: boolean
+  updateFailed: boolean
   soundOn: boolean
   setShowDifficulty: (show: boolean) => void
   setSelectedDifficulty: (difficulty: Difficulty | null) => void
@@ -81,6 +83,7 @@ type TitleScreenProps = {
   prepareIncomingRift: () => void
   dismissIncomingRift: () => void
   askToDiscardCurrentCampaign: () => void
+  onApplyUpdate: () => void
   installGame: () => Promise<void>
   startCampaign: (
     difficulty: Difficulty,
@@ -120,6 +123,8 @@ export function TitleScreen({
   bestScore,
   runtimeState,
   runtimeStateCopy,
+  updateAvailable,
+  updateFailed,
   soundOn,
   setShowDifficulty,
   setSelectedDifficulty,
@@ -135,6 +140,7 @@ export function TitleScreen({
   prepareIncomingRift,
   dismissIncomingRift,
   askToDiscardCurrentCampaign,
+  onApplyUpdate,
   installGame,
   startCampaign,
 }: TitleScreenProps) {
@@ -690,6 +696,16 @@ export function TitleScreen({
                   onClick={askToDiscardCurrentCampaign}
                 >
                   새 원정
+                </button>
+              ) : null}
+              {updateAvailable ? (
+                <button
+                  className="title-secondary title-update"
+                  type="button"
+                  data-state={updateFailed ? 'error' : 'ready'}
+                  onClick={onApplyUpdate}
+                >
+                  {updateFailed ? '업데이트 다시 시도' : '새 불씨 적용'}
                 </button>
               ) : null}
               {!standalone ? (
