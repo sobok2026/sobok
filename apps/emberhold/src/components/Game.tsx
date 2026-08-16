@@ -2542,7 +2542,7 @@ function highestRecordedScoreFor(game: GameState | null, meta: MetaState): numbe
 function restoreSavedBattle(value: unknown, game: GameState): BattleResult | null {
   if (
     !isRecord(value) ||
-    !hasExactKeys(value, ['day', 'focusLane']) ||
+    !hasExactKeys(value, ['runId', 'battles', 'day', 'focusLane']) ||
     game.status !== 'playing' ||
     pendingPromotionFor(game) !== null ||
     game.pendingRelic ||
@@ -2552,6 +2552,8 @@ function restoreSavedBattle(value: unknown, game: GameState): BattleResult | nul
   }
   const checkpoint = value as Partial<SavedBattle>
   if (
+    checkpoint.runId !== game.runId ||
+    checkpoint.battles !== game.battles ||
     checkpoint.day !== game.day ||
     typeof checkpoint.focusLane !== 'number' ||
     !Number.isInteger(checkpoint.focusLane) ||
@@ -7449,8 +7451,19 @@ export default function Game() {
     dismissMarchSealCeremony()
     resolvingBattle.current = false
     setRiskDepartureConfirmation(null)
-    writeStoredValue(STORAGE_KEY, JSON.stringify(game))
-    writeStoredValue(BATTLE_STORAGE_KEY, JSON.stringify({ day: game.day, focusLane } satisfies SavedBattle))
+    const battleCheckpointStored =
+      writeStoredValue(STORAGE_KEY, JSON.stringify(game)) &&
+      writeStoredValue(
+        BATTLE_STORAGE_KEY,
+        JSON.stringify({ runId: game.runId, battles: game.battles, day: game.day, focusLane } satisfies SavedBattle),
+      )
+    if (!battleCheckpointStored) {
+      removeStoredValues(BATTLE_STORAGE_KEY)
+      if (!storageWarningShown.current) {
+        storageWarningShown.current = true
+        announce('교전 복구 기록을 저장하지 못했습니다. 앱을 닫으면 마지막 캠프 기록으로 돌아갑니다.')
+      }
+    }
     setSelectedUnitId(null)
     setMobileRosterOpen(false)
     setBattleResult(result)

@@ -525,6 +525,8 @@ export type TacticalAdjustment =
     }
 
 export type SavedBattle = {
+  runId: number
+  battles: number
   day: number
   focusLane: number
 }
