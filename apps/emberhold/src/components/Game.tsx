@@ -5409,7 +5409,7 @@ export default function Game() {
   }, [sessionAccess])
 
   useEffect(() => {
-    const query = window.matchMedia('(max-width: 760px)')
+    const query = window.matchMedia('(max-width: 760px), (max-height: 520px) and (pointer: coarse)')
     const syncViewport = () => setCompactViewport(query.matches)
     syncViewport()
     query.addEventListener('change', syncViewport)

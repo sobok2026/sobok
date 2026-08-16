@@ -62,7 +62,11 @@ export function MobileCommandDock({
           aria-label="불씨 대기소 닫기"
         />
       ) : null}
-      <nav className="mobile-command-dock" aria-label="모바일 원정 명령">
+      <nav
+        className="mobile-command-dock"
+        aria-label="모바일 원정 명령"
+        data-roster-open={rosterOpen ? 'true' : 'false'}
+      >
         {!rosterOpen ? (
           <div
             className="mobile-battle-status"
@@ -137,6 +141,7 @@ export function MobileCommandDock({
           type="button"
           onClick={onShowBattlefield}
           aria-pressed={!rosterOpen}
+          aria-label={`전장, 예상 방어 ${projectedWins} / 3`}
         >
           <span aria-hidden="true">⚔</span>
           <div>
@@ -152,6 +157,7 @@ export function MobileCommandDock({
           aria-expanded={rosterOpen}
           aria-controls="mobile-roster-sheet"
           aria-haspopup="dialog"
+          aria-label={`불씨 대기소, 생존자 ${rosterCount}명`}
         >
           <span aria-hidden="true">◆</span>
           <div>
