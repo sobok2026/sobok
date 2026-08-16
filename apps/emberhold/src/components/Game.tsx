@@ -3073,6 +3073,10 @@ export default function Game() {
   const relicForecastActive = campaignRuntimeActive && phase === 'relic'
   const laneForecastActive = campForecastActive || promotionForecastActive || relicForecastActive
   const battlePreviewActive = campForecastActive || promotionForecastActive
+  const endingScreenActive = phase === 'won' || phase === 'lost'
+  const achievementAnalysisActive = showTitle || showArchive || showExpeditionMenu || endingScreenActive
+  const retrospectiveAnalysisActive = showTitle || showArchive || endingScreenActive
+  const legacyRecommendationActive = showArchive || endingScreenActive
   const battleResultFor = useMemo(() => {
     const cache = new Map<string, BattleResult | null>()
 
@@ -3190,33 +3194,42 @@ export default function Game() {
   const currentEndingId = endingFor(game, game.status === 'won')
   const currentEnding = ENDINGS[currentEndingId]
   const completedCurrentEndingId = game.status === 'playing' ? null : currentEndingId
-  const unlockedAchievementIds = new Set(meta.achievements)
-  for (const record of meta.history) unlockedAchievementIds.add(ENDING_ACHIEVEMENTS[record.ending])
-  if (completedCurrentEndingId) unlockedAchievementIds.add(ENDING_ACHIEVEMENTS[completedCurrentEndingId])
-  const endingDiscoveryEntries: EndingDiscoveryEntry[] = ENDING_IDS.map((endingId) => {
-    const recordCount = meta.history.filter((record) => record.ending === endingId).length
-    const current = completedCurrentEndingId === endingId
-    return {
-      id: endingId,
-      current,
-      recordCount,
-      discovered: unlockedAchievementIds.has(ENDING_ACHIEVEMENTS[endingId]),
-    }
-  })
+  const unlockedAchievementIds = new Set(achievementAnalysisActive ? meta.achievements : [])
+  if (achievementAnalysisActive) {
+    for (const record of meta.history) unlockedAchievementIds.add(ENDING_ACHIEVEMENTS[record.ending])
+    if (completedCurrentEndingId) unlockedAchievementIds.add(ENDING_ACHIEVEMENTS[completedCurrentEndingId])
+  }
+  const endingDiscoveryEntries: EndingDiscoveryEntry[] = retrospectiveAnalysisActive
+    ? ENDING_IDS.map((endingId) => {
+        const recordCount = meta.history.filter((record) => record.ending === endingId).length
+        const current = completedCurrentEndingId === endingId
+        return {
+          id: endingId,
+          current,
+          recordCount,
+          discovered: unlockedAchievementIds.has(ENDING_ACHIEVEMENTS[endingId]),
+        }
+      })
+    : []
   const endingDiscoveredCount = endingDiscoveryEntries.filter((entry) => entry.discovered).length
-  const nextWinningEndingId =
-    WINNING_ENDING_IDS.find((endingId) => !endingDiscoveryEntries.find((entry) => entry.id === endingId)?.discovered) ??
-    null
+  const nextWinningEndingId = retrospectiveAnalysisActive
+    ? (WINNING_ENDING_IDS.find(
+        (endingId) => !endingDiscoveryEntries.find((entry) => entry.id === endingId)?.discovered,
+      ) ?? null)
+    : null
   const nextWinningEndingRoute = nextWinningEndingId ? ENDING_ROUTES[nextWinningEndingId] : null
-  const showEndingRouteRecommendation = meta.history.length > 0 || completedCurrentEndingId !== null
+  const showEndingRouteRecommendation =
+    retrospectiveAnalysisActive && (meta.history.length > 0 || completedCurrentEndingId !== null)
   const difficultyProtocol = DIFFICULTIES[game.difficulty]
   const protocolMasteryProgress = protocolMasteryProgressFor(game, game.status === 'won')
-  const protocolMasteryUnlocked = unlockedAchievementIds.has(protocolMasteryProgress.achievement)
+  const protocolMasteryUnlocked = meta.achievements.includes(protocolMasteryProgress.achievement)
   const protocolMasteryRecognized = protocolMasteryUnlocked || protocolMasteryProgress.completed
   const masteredProtocolCount =
-    (Object.keys(PROTOCOL_MASTERIES) as Difficulty[]).filter((difficulty) =>
-      unlockedAchievementIds.has(PROTOCOL_MASTERIES[difficulty].achievement),
-    ).length + (protocolMasteryProgress.completed && !protocolMasteryUnlocked ? 1 : 0)
+    (retrospectiveAnalysisActive
+      ? (Object.keys(PROTOCOL_MASTERIES) as Difficulty[]).filter((difficulty) =>
+          unlockedAchievementIds.has(PROTOCOL_MASTERIES[difficulty].achievement),
+        ).length
+      : 0) + (endingScreenActive && protocolMasteryProgress.completed && !protocolMasteryUnlocked ? 1 : 0)
   const priorDefeatCount = Math.max(0, game.battles - game.victories)
   const recoveryRecruitDiscount = Math.min(6, priorDefeatCount * 2)
   const nextRecoveryRecruitDiscount = Math.min(6, (priorDefeatCount + 1) * 2)
@@ -3239,8 +3252,12 @@ export default function Game() {
   const pendingPromotionUnit = pendingPromotionFor(game)
   const promotionChoices = pendingPromotionUnit ? SPECIALIZATIONS_BY_KIND[pendingPromotionUnit.kind] : []
   const activeResonances = activeResonancesFor(game.relics)
-  const unownedLegacyIds = LEGACY_IDS.filter((legacyId) => !meta.legacy.includes(legacyId))
-  const affordableLegacyIds = unownedLegacyIds.filter((legacyId) => LEGACY_UPGRADES[legacyId].cost <= meta.embers)
+  const unownedLegacyIds = legacyRecommendationActive
+    ? LEGACY_IDS.filter((legacyId) => !meta.legacy.includes(legacyId))
+    : []
+  const affordableLegacyIds = legacyRecommendationActive
+    ? unownedLegacyIds.filter((legacyId) => LEGACY_UPGRADES[legacyId].cost <= meta.embers)
+    : []
   const resonanceStatuses = RESONANCE_IDS.map((resonanceId) => ({
     id: resonanceId,
     owned: RESONANCES[resonanceId].requirements.filter((relicId) => game.relics.includes(relicId)).length,
@@ -3447,21 +3464,27 @@ export default function Game() {
     autofocus: index === firstAvailableEventChoiceIndex,
   }))
   const endingWon = game.status === 'won'
-  const mercyDecisionCount = game.decisions.filter((decision) => MERCY_DECISIONS.has(decision)).length
-  const completedEndingTrials = trialStatuses.filter((trial) => trial.completed)
-  const unfinishedEndingTrial = [...trialStatuses]
-    .filter((trial) => !trial.completed)
-    .sort((left, right) => right.current / right.target - left.current / left.target)[0]
-  const endingComparisonKey = expeditionComparisonKey({
-    seed: game.runSeed,
-    difficulty: game.difficulty,
-    oath: game.oath,
-    masteryContract: game.masteryContract,
-    activeLegacy: game.activeLegacy,
-  })
-  const comparableEndingRecords = meta.history.filter(
-    (record) => expeditionComparisonKey(record) === endingComparisonKey,
-  )
+  const mercyDecisionCount = endingScreenActive
+    ? game.decisions.filter((decision) => MERCY_DECISIONS.has(decision)).length
+    : 0
+  const completedEndingTrials = endingScreenActive ? trialStatuses.filter((trial) => trial.completed) : []
+  const unfinishedEndingTrial = endingScreenActive
+    ? [...trialStatuses]
+        .filter((trial) => !trial.completed)
+        .sort((left, right) => right.current / right.target - left.current / left.target)[0]
+    : undefined
+  const endingComparisonKey = endingScreenActive
+    ? expeditionComparisonKey({
+        seed: game.runSeed,
+        difficulty: game.difficulty,
+        oath: game.oath,
+        masteryContract: game.masteryContract,
+        activeLegacy: game.activeLegacy,
+      })
+    : null
+  const comparableEndingRecords = endingComparisonKey
+    ? meta.history.filter((record) => expeditionComparisonKey(record) === endingComparisonKey)
+    : []
   const endingComparisonCount = Math.max(1, comparableEndingRecords.length)
   const endingComparisonPosition =
     1 + comparableEndingRecords.filter((record) => record.runId !== game.runId && record.score > game.score).length
@@ -3470,70 +3493,74 @@ export default function Game() {
     game.score,
   )
   const endingIsComparisonBest = game.score > 0 && game.score >= endingComparisonBestScore
-  const endingPathSeal = (() => {
-    if (!endingWon) {
-      return {
-        id: 'path',
-        glyph: currentEnding.glyph,
-        label: '남겨진 경로',
-        title: `ACT ${currentAct.number} · ${currentAct.title}`,
-        description: `왕관 ${game.bossesDefeated}개를 파괴하고 ${game.day}일차까지 길을 남겼습니다.`,
-      }
-    }
-    if (currentEndingId === 'hearth-dawn') {
-      return {
-        id: 'path',
-        glyph: '✦',
-        label: '결말의 기준',
-        title: `나눈 불씨 ${mercyDecisionCount} / ${MAX_NIGHTS}`,
-        description: '자비의 선택을 8회 이상 이어 모두의 새벽을 열었습니다.',
-      }
-    }
-    if (currentEndingId === 'ember-crown') {
-      return {
-        id: 'path',
-        glyph: '♜',
-        label: '결말의 기준',
-        title: `왕관 명성 ${game.score.toLocaleString('ko-KR')}`,
-        description: `자비의 선택 ${mercyDecisionCount}회 · 명성 ${EMBER_CROWN_SCORE.toLocaleString('ko-KR')} 이상으로 새 왕관을 벼렸습니다.`,
-      }
-    }
-    return {
-      id: 'path',
-      glyph: '◇',
-      label: '결말의 기준',
-      title: '왕좌를 비운 원정대',
-      description: `자비의 선택 ${mercyDecisionCount}회 · 왕관 대신 각자의 화로를 남겼습니다.`,
-    }
-  })()
-  const endingTacticalSeal = [
-    {
-      id: 'intent',
-      glyph: '⌁',
-      label: '전술 서명',
-      title: '눈보라 해독자',
-      description: `승리한 밤에 적 의도 ${game.intentsCountered}회를 읽고 명령으로 끊었습니다.`,
-      weight: game.intentsCountered / TRIALS['intent-reader'].target,
-    },
-    {
-      id: 'perfect',
-      glyph: '◆',
-      label: '전술 서명',
-      title: '흠 없는 방벽',
-      description: `세 전선을 모두 지킨 밤을 ${game.perfectNights}회 만들었습니다.`,
-      weight: game.perfectNights / TRIALS['unbroken-four'].target,
-    },
-    {
-      id: 'formation',
-      glyph: '≋',
-      label: '전술 서명',
-      title: '세 갈래 지휘',
-      description: `세 병과 대열로 ${game.unitedVictories}번의 승리를 연결했습니다.`,
-      weight: game.unitedVictories / TRIALS['united-front'].target,
-    },
-  ].sort((left, right) => right.weight - left.weight)[0]
-  const endingBuildSeal =
-    activeResonances.length > 0
+  const endingPathSeal = endingScreenActive
+    ? (() => {
+        if (!endingWon) {
+          return {
+            id: 'path',
+            glyph: currentEnding.glyph,
+            label: '남겨진 경로',
+            title: `ACT ${currentAct.number} · ${currentAct.title}`,
+            description: `왕관 ${game.bossesDefeated}개를 파괴하고 ${game.day}일차까지 길을 남겼습니다.`,
+          }
+        }
+        if (currentEndingId === 'hearth-dawn') {
+          return {
+            id: 'path',
+            glyph: '✦',
+            label: '결말의 기준',
+            title: `나눈 불씨 ${mercyDecisionCount} / ${MAX_NIGHTS}`,
+            description: '자비의 선택을 8회 이상 이어 모두의 새벽을 열었습니다.',
+          }
+        }
+        if (currentEndingId === 'ember-crown') {
+          return {
+            id: 'path',
+            glyph: '♜',
+            label: '결말의 기준',
+            title: `왕관 명성 ${game.score.toLocaleString('ko-KR')}`,
+            description: `자비의 선택 ${mercyDecisionCount}회 · 명성 ${EMBER_CROWN_SCORE.toLocaleString('ko-KR')} 이상으로 새 왕관을 벼렸습니다.`,
+          }
+        }
+        return {
+          id: 'path',
+          glyph: '◇',
+          label: '결말의 기준',
+          title: '왕좌를 비운 원정대',
+          description: `자비의 선택 ${mercyDecisionCount}회 · 왕관 대신 각자의 화로를 남겼습니다.`,
+        }
+      })()
+    : null
+  const endingTacticalSeal = endingScreenActive
+    ? [
+        {
+          id: 'intent',
+          glyph: '⌁',
+          label: '전술 서명',
+          title: '눈보라 해독자',
+          description: `승리한 밤에 적 의도 ${game.intentsCountered}회를 읽고 명령으로 끊었습니다.`,
+          weight: game.intentsCountered / TRIALS['intent-reader'].target,
+        },
+        {
+          id: 'perfect',
+          glyph: '◆',
+          label: '전술 서명',
+          title: '흠 없는 방벽',
+          description: `세 전선을 모두 지킨 밤을 ${game.perfectNights}회 만들었습니다.`,
+          weight: game.perfectNights / TRIALS['unbroken-four'].target,
+        },
+        {
+          id: 'formation',
+          glyph: '≋',
+          label: '전술 서명',
+          title: '세 갈래 지휘',
+          description: `세 병과 대열로 ${game.unitedVictories}번의 승리를 연결했습니다.`,
+          weight: game.unitedVictories / TRIALS['united-front'].target,
+        },
+      ].sort((left, right) => right.weight - left.weight)[0]
+    : null
+  const endingBuildSeal = endingScreenActive
+    ? activeResonances.length > 0
       ? {
           id: 'build',
           glyph: RESONANCES[activeResonances[0]].glyph,
@@ -3559,8 +3586,9 @@ export default function Game() {
             title: `각인 유물 ${game.relics.length}개`,
             description: '독립 유물 효과와 자원 운용으로 긴 밤을 버텼습니다.',
           }
-  const endingCommanderTitle =
-    currentEndingId === 'hearth-dawn'
+    : null
+  const endingCommanderTitle = endingScreenActive
+    ? currentEndingId === 'hearth-dawn'
       ? '불씨를 나누는 수호자'
       : currentEndingId === 'ember-crown'
         ? '왕관을 벼린 정복자'
@@ -3571,19 +3599,24 @@ export default function Game() {
             : currentEndingId === 'frozen-choir'
               ? '성가를 거스른 기록자'
               : '왕좌까지 걸은 선봉'
-  const endingDossierSeals = [endingPathSeal, endingTacticalSeal, endingBuildSeal]
+    : ''
+  const endingDossierSeals =
+    endingPathSeal && endingTacticalSeal && endingBuildSeal ? [endingPathSeal, endingTacticalSeal, endingBuildSeal] : []
   const nextChallengeDifficulty: Difficulty = endingWon
     ? game.difficulty === 'story'
       ? 'expedition'
       : 'whiteout'
     : game.difficulty
   const legacyRecommendationPool = affordableLegacyIds.length > 0 ? affordableLegacyIds : unownedLegacyIds
-  const recommendedLegacyId =
-    LEGACY_RECOMMENDATION_ORDER[game.status === 'lost' ? 'story' : nextChallengeDifficulty].find((legacyId) =>
-      legacyRecommendationPool.includes(legacyId),
-    ) ?? null
-  const endingLegacyRewardBreakdown = legacyRewardBreakdownFor(game, endingWon)
-  const endingLegacyMastery = legacyMasteryFor(meta)
+  const recommendedLegacyId = legacyRecommendationActive
+    ? (LEGACY_RECOMMENDATION_ORDER[game.status === 'lost' ? 'story' : nextChallengeDifficulty].find((legacyId) =>
+        legacyRecommendationPool.includes(legacyId),
+      ) ?? null)
+    : null
+  const endingLegacyRewardBreakdown = endingScreenActive
+    ? legacyRewardBreakdownFor(game, endingWon)
+    : { renown: 0, crowns: 0, trials: 0, protocol: 0, dawn: 0, recovery: 0, total: 0 }
+  const endingLegacyMastery = endingScreenActive ? legacyMasteryFor(meta) : null
   const nextUnmasteredContract = endingLegacyMastery
     ? (MASTERY_CONTRACT_IDS.find(
         (contractId) =>
@@ -3597,6 +3630,18 @@ export default function Game() {
       ) ?? null)
     : null
   const endingMasteryDirective = (() => {
+    if (!endingScreenActive) {
+      return {
+        state: 'dormant',
+        glyph: '',
+        kicker: '',
+        title: '',
+        description: '',
+        progress: 0,
+        progressLabel: '',
+        target: '',
+      }
+    }
     if (!endingWon) {
       const clearedNights = Math.max(0, game.day - 1)
       const primaryFailure = game.failureInsights[0]
@@ -7779,7 +7824,7 @@ export default function Game() {
         : '',
       `${DIFFICULTIES[game.difficulty].name} · ${OATHS[game.oath].name} · 개인 과업 ${completedTrials}/3`,
       `원정 교범 ${protocolMasteryProgress.name} · ${protocolMasteryRecognized ? '숙련 인장' : `${protocolMasteryProgress.metricLabel} ${protocolMasteryProgress.currentLabel}`} · 총 ${masteredProtocolCount}/3`,
-      `지휘관 서명 ${endingCommanderTitle} · ${endingTacticalSeal.title}`,
+      `지휘관 서명 ${endingCommanderTitle} · ${endingTacticalSeal?.title ?? ''}`,
       `서약 연대기 ${oathChronicle.title} · 왕관 개입 ${oathInterventionCount}/3`,
       endingFinalVow ? `최후 맹세 ${endingFinalVow.name} · ${endingFinalVow.legacyTitle}` : '',
       `유물 ${game.relics.length}개 · ${activeResonances.length > 0 ? `공명 ${activeResonances.map((resonanceId) => RESONANCES[resonanceId].name).join(', ')}` : '완성된 공명 없음'}`,
