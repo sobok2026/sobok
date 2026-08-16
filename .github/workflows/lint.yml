@@ -88,5 +88,8 @@ jobs:
       - name: Build Horn
         run: bun run --filter=@sobok/horn build
 
+      - name: Build Emberhold
+        run: bun run --filter=@sobok/emberhold build
+
       - name: Assert no generated-file drift
         run: git diff --exit-code
