@@ -3066,6 +3066,7 @@ export default function Game() {
           : phase === 'event' || phase === 'interlude' || game.heat <= 25
             ? 'whiteout'
             : 'hearth'
+  const campaignRuntimeActive = !showTitle
   const currentEvent = campaignEventFor(game.runSeed, game.day)
   const oathAvailableEventChoices = currentEvent.choices.filter(
     (choice) => !choice.oathOnly || choice.oathOnly === game.oath,
@@ -3302,7 +3303,8 @@ export default function Game() {
         ? '왕관전까지 1일'
         : `왕관전까지 ${eventDaysToCrown}일`
   const hasUpgradeableSurvivor = game.slots.some((unit) => unit !== null && unit.tier < MAX_TIER)
-  const eventChoiceForecasts = currentEventChoices.map((choice): EventChoiceForecast => {
+  const forecastableEventChoices = campaignRuntimeActive ? currentEventChoices : []
+  const eventChoiceForecasts = forecastableEventChoices.map((choice): EventChoiceForecast => {
     const recruitConverts = Boolean(choice.recruit && rosterCount >= ROSTER_SIZE)
     const upgradeConverts = Boolean(choice.upgrade && !hasUpgradeableSurvivor)
     const conversionMorale = (recruitConverts ? 5 : 0) + (upgradeConverts ? 5 : 0)
@@ -3414,7 +3416,7 @@ export default function Game() {
       conversionMorale,
     }
   })
-  const eventChoiceEntries = currentEventChoices.map((choice, index) => ({
+  const eventChoiceEntries = forecastableEventChoices.map((choice, index) => ({
     choice,
     forecast: eventChoiceForecasts[index],
     unavailable: Boolean(choice.requiresSupplies && game.supplies < choice.requiresSupplies),
@@ -3688,7 +3690,7 @@ export default function Game() {
   const nextRecruitKind = UNIT_ROTATION[game.recruits % UNIT_ROTATION.length]
   const nextRecruitTierOneCount = game.slots.filter((unit) => unit?.kind === nextRecruitKind && unit.tier === 1).length
   const lineupUnits = game.lineup.map((id) => findUnit(game, id))
-  const lineupReady = lineupUnits.every((unit) => unit !== null)
+  const lineupReady = campaignRuntimeActive && lineupUnits.every((unit) => unit !== null)
   const formationKindCount = new Set(lineupUnits.flatMap((unit) => (unit ? [unit.kind] : []))).size
   const tierTwoLineCount = lineupUnits.filter((unit) => unit && unit.tier >= 2).length
   const tierThreeLineCount = lineupUnits.filter((unit) => unit && unit.tier >= 3).length
@@ -3738,10 +3740,12 @@ export default function Game() {
     finalMarchImprints: activeFinalMarchImprints,
     finalVow: activeFinalVow,
   }
-  const forecastLanes = lineupUnits.map((unit, lane) =>
+  const forecastLineupUnits = campaignRuntimeActive ? lineupUnits : []
+  const forecastLanes = forecastLineupUnits.map((unit, lane) =>
     unit ? resolveLane(unit, enemies[lane], lane, battleContext) : null,
   )
-  const enemyFormationEntries = enemies.map((enemy, lane) => {
+  const forecastEnemies = campaignRuntimeActive ? enemies : []
+  const enemyFormationEntries = forecastEnemies.map((enemy, lane) => {
     const intentCountered = ORDER_META[game.orders[lane]].counters === enemy.intent
     const doctrineForecast = enemyDoctrineEffectFor(enemy, lane, battleContext, intentCountered, lineupUnits[lane])
     return {
@@ -3755,11 +3759,12 @@ export default function Game() {
   })
   const campBattlePreview = lineupReady ? createBattleResult(game, focusLane) : null
   const currentForecastWins = forecastLanes.filter((lane) => lane?.won).length
-  const scoredDeploymentForecasts: Array<{ forecast: DeploymentForecast; score: number }> = selectedUnit
+  const selectedUnitForForecast = campaignRuntimeActive ? selectedUnit : null
+  const scoredDeploymentForecasts: Array<{ forecast: DeploymentForecast; score: number }> = selectedUnitForForecast
     ? BATTLE_LANES.map((lane) => {
         const sourceLane = selectedUnitLane >= 0 ? selectedUnitLane : null
         const targetUnitId = game.lineup[lane]
-        const nextLineup = lineupAfterDeployment(game.lineup, selectedUnit.id, lane)
+        const nextLineup = lineupAfterDeployment(game.lineup, selectedUnitForForecast.id, lane)
         const nextLineupUnits = nextLineup.map((unitId) => findUnit(game, unitId))
         const lineupReadyAfter = nextLineupUnits.every((unit) => unit !== null)
         const previewContext: BattleContext = {
@@ -3770,7 +3775,8 @@ export default function Game() {
         const previewLanes = nextLineupUnits.map((unit, previewLane) =>
           unit ? resolveLane(unit, enemies[previewLane], previewLane, previewContext) : null,
         )
-        const laneForecast = previewLanes[lane] ?? resolveLane(selectedUnit, enemies[lane], lane, previewContext)
+        const laneForecast =
+          previewLanes[lane] ?? resolveLane(selectedUnitForForecast, enemies[lane], lane, previewContext)
         const projectedBattle = lineupReadyAfter ? createBattleResult({ ...game, lineup: nextLineup }, focusLane) : null
         const winsAfter = previewLanes.filter((preview) => preview?.won).length
         const currentLaneForecast = forecastLanes[lane]
@@ -3851,14 +3857,15 @@ export default function Game() {
   const highestDeploymentCandidates = scoredDeploymentForecasts.filter(({ score }) => score === highestDeploymentScore)
   const recommendedDeploymentLane =
     highestDeploymentCandidates.length === 1 ? highestDeploymentCandidates[0].forecast.lane : null
-  const promotionChoiceInsights = pendingPromotionUnit
+  const promotionUnitForForecast = campaignRuntimeActive ? pendingPromotionUnit : null
+  const promotionChoiceInsights = promotionUnitForForecast
     ? promotionChoices.map((specializationId) => {
-        const lane = game.lineup.indexOf(pendingPromotionUnit.id)
-        const specializedUnit: Unit = { ...pendingPromotionUnit, specialization: specializationId }
+        const lane = game.lineup.indexOf(promotionUnitForForecast.id)
+        const specializedUnit: Unit = { ...promotionUnitForForecast, specialization: specializationId }
         const currentLane = lane >= 0 ? forecastLanes[lane] : null
         const specializedLane = lane >= 0 ? resolveLane(specializedUnit, enemies[lane], lane, battleContext) : null
         const specializedSlots = game.slots.map((unit) =>
-          unit?.id === pendingPromotionUnit.id ? specializedUnit : unit,
+          unit?.id === promotionUnitForForecast.id ? specializedUnit : unit,
         )
         const specializedBattlePreview = lineupReady
           ? createBattleResult({ ...game, slots: specializedSlots }, focusLane)
@@ -3903,7 +3910,7 @@ export default function Game() {
     : []
   const rankedPromotionChoiceInsights = [...promotionChoiceInsights].sort((left, right) => right.score - left.score)
   const recommendedSpecializationId =
-    pendingPromotionUnit &&
+    promotionUnitForForecast &&
     rankedPromotionChoiceInsights[0]?.deployed &&
     rankedPromotionChoiceInsights[0].score > (rankedPromotionChoiceInsights[1]?.score ?? Number.NEGATIVE_INFINITY)
       ? rankedPromotionChoiceInsights[0].specializationId
@@ -4809,7 +4816,7 @@ export default function Game() {
   const tutorialTierTwoRosterCount = game.slots.filter((unit) => unit && unit.tier >= 2).length
   const tutorialTierTwoLineCount = lineupUnits.filter((unit) => unit && unit.tier >= 2).length
   const tutorialCounterCount = tutorialStep ? tutorialCounterCountFor(game) : 0
-  const tutorialNeedsFocusForecast = tutorialStep === 'focus' || tutorialStep === 'battle'
+  const tutorialNeedsFocusForecast = campaignRuntimeActive && (tutorialStep === 'focus' || tutorialStep === 'battle')
   const tutorialFocusOptions = ([0, 1, 2] as const).map((lane) => {
     const result = tutorialNeedsFocusForecast ? createBattleResult(game, lane) : null
     return {
@@ -5068,7 +5075,8 @@ export default function Game() {
           title: '첫 유물이 원정대의 빌드 방향을 정합니다',
           description: '유물 두 개의 조합은 생존·전술·진형·보급 중 하나의 공명을 완성합니다.',
         })
-  const relicChoices = game.pendingRelic ? relicChoicesFor(game.day - 1, game.relics, game.runSeed) : []
+  const relicChoices =
+    campaignRuntimeActive && game.pendingRelic ? relicChoicesFor(game.day - 1, game.relics, game.runSeed) : []
   const neutralForecastCount = forecastLanes.filter((lane) => lane?.relation === 'neutral').length
   const relicChoiceInsights = relicChoices.map((relicId) => {
     const resonancePreview = resonancePreviewFor(relicId, game.relics)
