@@ -5717,6 +5717,11 @@ export default function Game() {
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const focusableSelector =
       'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
+    const focusableElements = (container: HTMLElement) =>
+      Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+        (element) =>
+          !element.hidden && !element.closest('[inert], [aria-hidden="true"]') && element.getClientRects().length > 0,
+      )
     let scope: HTMLElement | null = null
     let focusFirst: number | null = null
     let focusObserver: MutationObserver | null = null
@@ -5727,8 +5732,9 @@ export default function Game() {
       scope = nextScope
       if (focusFirst !== null) window.clearTimeout(focusFirst)
       focusFirst = window.setTimeout(() => {
-        const preferred = nextScope.querySelector<HTMLElement>('[data-autofocus]:not(:disabled)')
-        const first = preferred ?? nextScope.querySelector<HTMLElement>(focusableSelector)
+        const focusable = focusableElements(nextScope)
+        const preferred = focusable.find((element) => element.hasAttribute('data-autofocus'))
+        const first = preferred ?? focusable[0]
         ;(first ?? nextScope).focus({ preventScroll: true })
       }, 0)
       if (!nextScope.classList.contains('deferred-game-layer')) focusObserver?.disconnect()
@@ -5743,6 +5749,7 @@ export default function Game() {
       const visibleScope = currentScope()
       if (!visibleScope) return
       if (event.key === 'Escape') {
+        let handled = true
         if (activeLayer === 'install') setShowInstallHelp(false)
         else if (activeLayer === 'archive') closeArchive()
         else if (activeLayer === 'settings') closeSettings()
@@ -5753,14 +5760,15 @@ export default function Game() {
         else if (activeLayer === 'title' && showDifficulty) {
           if (selectedDifficulty) setSelectedDifficulty(null)
           else setShowDifficulty(false)
+        } else handled = false
+        if (handled) {
+          event.preventDefault()
+          event.stopPropagation()
         }
         return
       }
       if (event.key !== 'Tab') return
-      const focusable = Array.from(visibleScope.querySelectorAll<HTMLElement>(focusableSelector)).filter(
-        (element) =>
-          !element.hidden && element.getAttribute('aria-hidden') !== 'true' && element.getClientRects().length > 0,
-      )
+      const focusable = focusableElements(visibleScope)
       if (focusable.length === 0) {
         event.preventDefault()
         visibleScope.focus({ preventScroll: true })
@@ -5770,10 +5778,10 @@ export default function Game() {
       const last = focusable[focusable.length - 1]
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault()
-        last.focus()
+        last.focus({ preventScroll: true })
       } else if (!event.shiftKey && document.activeElement === last) {
         event.preventDefault()
-        first.focus()
+        first.focus({ preventScroll: true })
       }
     }
     document.addEventListener('keydown', onKeyDown)
@@ -6447,7 +6455,9 @@ export default function Game() {
     playSound('select', soundOn)
     scheduleFrame(() => {
       document.querySelector<HTMLElement>('.battle-panel')?.scrollIntoView({ block: 'start' })
-      if (compactViewport) document.querySelector<HTMLButtonElement>('.mobile-command-dock > button')?.focus()
+      if (compactViewport) {
+        document.querySelector<HTMLButtonElement>('.mobile-command-dock > button')?.focus({ preventScroll: true })
+      }
     })
   }
 
@@ -7159,6 +7169,10 @@ export default function Game() {
     )
   }
 
+  function battlePlanAnnouncement(result: BattleResult | null) {
+    return result ? ` · 예상 방어 ${result.wins} / 3 · ${result.victory ? '승리선 확보' : '승리선 미확보'}` : ''
+  }
+
   function chooseFocusLane(lane: number) {
     if (phase !== 'camp') return false
     if (lane !== focusLane && !beginCampMutation()) return false
@@ -7183,7 +7197,7 @@ export default function Game() {
       )
       return true
     }
-    announce(`${lane + 1}전선에 화로의 힘을 집중합니다.`)
+    announce(`${lane + 1}전선 화로 집중${battlePlanAnnouncement(focusedResult)}`)
     return true
   }
 
@@ -7197,6 +7211,7 @@ export default function Game() {
     }
     if (!beginCampMutation()) return false
     const nextGame = { ...game, orders: nextOrders }
+    const nextBattleResult = createBattleResult(nextGame, focusLane)
     const addsTutorialCounter = tutorialCounterCountFor(nextGame) > tutorialCounterCount
     setGame(nextGame)
     if (tutorialStep === 'orders' && addsTutorialCounter) {
@@ -7206,7 +7221,7 @@ export default function Game() {
     announce(
       tutorialStep === 'orders' && !addsTutorialCounter
         ? `${lane + 1}전선 · ${ORDER_META[order].name} 명령 · 아직 새 파훼가 아닙니다. 청록색으로 표시된 다른 명령을 골라 주세요.`
-        : `${lane + 1}전선 · ${ORDER_META[order].name} 명령`,
+        : `${lane + 1}전선 · ${ORDER_META[order].name} 명령${battlePlanAnnouncement(nextBattleResult)}`,
     )
     return true
   }
@@ -7219,7 +7234,9 @@ export default function Game() {
       if (!chooseFocusLane(tacticalAdjustment.lane)) return
     }
     vibrate(12)
-    announce(`전술 모의 적용 · ${tacticalRehearsal.title} · ${tacticalRehearsal.status}`)
+    announce(
+      `전술 모의 적용 · ${tacticalRehearsal.title} · ${tacticalRehearsal.status} · 적용 후 예상 방어 ${tacticalAdjustment.result.wins} / 3${tacticalAdjustment.result.victory ? ' · 출전 가능' : ''}`,
+    )
     scheduleFrame(() => {
       const selector =
         tacticalAdjustment.kind === 'order'

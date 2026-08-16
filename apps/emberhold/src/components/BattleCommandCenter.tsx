@@ -278,7 +278,6 @@ function TacticalOrders({
           data-state={tacticalRehearsal.state}
           data-route={tacticalRehearsal.routeSteps.length > 0 ? 'true' : undefined}
           aria-label="참모의 전체 전술 모의"
-          aria-live="polite"
         >
           <span aria-hidden="true">{tacticalRehearsal.glyph}</span>
           <div>
@@ -423,7 +422,7 @@ export function BattleLaunch({
       data-risk-armed={riskDepartureForecast?.armed ? 'true' : undefined}
     >
       <div className="battle-action-copy">
-        <div className="battle-forecast" aria-live="polite" aria-atomic="true">
+        <div className="battle-forecast">
           <span className={`forecast-light ${forecastReady ? 'is-ready' : ''}`} aria-hidden="true" />
           <div>
             <strong>{forecastTitle}</strong>
@@ -487,8 +486,6 @@ export function BattleLaunch({
             data-armed={riskDepartureForecast.armed ? 'true' : 'false'}
             data-terminal={riskDepartureForecast.endsExpedition ? 'true' : undefined}
             aria-label="후퇴 위험과 귀환 자원 예측"
-            aria-live="polite"
-            aria-atomic="true"
           >
             <header>
               <span aria-hidden="true">!</span>
@@ -560,13 +557,7 @@ export function BattleLaunch({
           </aside>
         ) : null}
         {legacyForecastEntries.length > 0 ? (
-          <aside
-            className="battle-legacy-forecast"
-            id="battle-legacy-forecast"
-            aria-label="계승 유산 전투 예측"
-            aria-live="polite"
-            aria-atomic="true"
-          >
+          <aside className="battle-legacy-forecast" id="battle-legacy-forecast" aria-label="계승 유산 전투 예측">
             <header>
               <span>INHERITED EFFECTS</span>
               <b>{legacyForecastEntries.filter((entry) => entry.state === 'applied').length} 실효 보정</b>
@@ -591,8 +582,6 @@ export function BattleLaunch({
             id="battle-contract-forecast"
             data-state={masteryContractForecast.triggered ? 'applied' : 'waiting'}
             aria-label="영원 계약 전투 예측"
-            aria-live="polite"
-            aria-atomic="true"
           >
             <span aria-hidden="true">{MASTERY_CONTRACTS[masteryContractForecast.id].glyph}</span>
             <div>

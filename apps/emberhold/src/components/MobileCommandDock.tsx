@@ -75,7 +75,7 @@ export function MobileCommandDock({
             data-risk-armed={riskDepartureForecast?.armed ? 'true' : undefined}
             data-terminal={riskDepartureForecast?.endsExpedition ? 'true' : undefined}
           >
-            <div role="status" aria-live="polite" aria-atomic="true">
+            <div>
               <span aria-hidden="true" />
               <p>
                 <strong>
