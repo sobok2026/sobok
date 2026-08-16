@@ -458,6 +458,7 @@ export function BattleResultDialog({
   const finalCrownMissingFronts = Math.max(0, REQUIRED_LANE_WINS - battleResult.wins)
   const finalCrownReturnHeat = Math.max(0, Math.min(100, game.heat + battleResult.heatDelta))
   const defeatEndsRun = !battleResult.victory && finalCrownReturnHeat === 0
+  const resultOutcome = battleResult.victory ? 'victory' : defeatEndsRun ? 'terminal' : 'retreat'
   const projectedRecoverySupplies = game.recoverySupplies + (battleResult.victory ? 0 : battleResult.supplyReward)
   const projectedSupplies = game.supplies + battleResult.supplyReward
   const projectedMorale = Math.max(0, Math.min(100, game.morale + battleResult.moraleDelta))
@@ -488,6 +489,19 @@ export function BattleResultDialog({
         : finalCrownMechanicBlocked
           ? '칙령 미달'
           : '전선 후퇴'
+  const resultSignal = finalCrownMastered
+    ? 'PERFECT SHATTER'
+    : battleResult.victory
+      ? battleResult.boss
+        ? 'CROWN BROKEN'
+        : battleResult.wins === 3
+          ? 'ALL FRONTS HELD'
+          : 'WATCH SECURED'
+      : defeatEndsRun
+        ? 'LAST EMBER SEALED'
+        : finalCrownMechanicBlocked
+          ? 'EDICT LOCKED'
+          : 'RETREAT SECURED'
   const continueLabel = battleResult.victory
     ? game.day === MAX_NIGHTS
       ? '무너진 왕좌 너머, 마지막 새벽으로'
@@ -585,17 +599,34 @@ export function BattleResultDialog({
     (game.masteryContract ? 1 : 0)
 
   return (
-    <div className="modal-backdrop" role="presentation">
+    <div
+      className="modal-backdrop result-backdrop"
+      data-boss={battleResult.boss ? 'true' : 'false'}
+      data-outcome={resultOutcome}
+      role="presentation"
+    >
       <section
         className={`result-card ${battleResult.victory ? 'is-victory' : 'is-defeat'}${firstVictoryPreview ? ' is-first-victory' : ''}${firstCrownMarchResult ? ' is-first-crown-march' : ''}${secondCrownResult ? ' is-second-crown' : ''}${finalCrownResult ? ' is-final-crown' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="result-title"
+        aria-describedby="result-lead"
         data-focus-scope="result"
         tabIndex={-1}
       >
-        <div className="result-emblem" aria-hidden="true">
-          <span>{finalCrownResult ? (battleResult.victory ? '☼' : '♜') : battleResult.victory ? '✦' : '❄'}</span>
+        <div className="result-verdict-handoff" data-outcome={resultOutcome} aria-hidden="true">
+          <div className="result-verdict-fronts">
+            {battleResult.lanes.map((lane) => (
+              <span data-state={lane.won ? 'held' : 'broken'} key={`verdict-front-${lane.lane}`}>
+                <b>0{lane.lane + 1}</b>
+                <i />
+              </span>
+            ))}
+          </div>
+          <div className="result-emblem">
+            <span>{finalCrownResult ? (battleResult.victory ? '☼' : '♜') : battleResult.victory ? '✦' : '❄'}</span>
+          </div>
+          <small>{resultSignal}</small>
         </div>
         <p className="eyebrow">
           {finalCrownResult ? 'FINAL CROWN VERDICT' : `NIGHT ${String(game.day).padStart(2, '0')} REPORT`}
@@ -619,7 +650,7 @@ export function BattleResultDialog({
                 ? '마지막 불씨 소멸'
                 : '방어선 붕괴'}
         </h2>
-        <p className="result-lead">
+        <p className="result-lead" id="result-lead">
           {battleResult.victory
             ? finalCrownResult
               ? finalCrownMastered
@@ -645,7 +676,7 @@ export function BattleResultDialog({
 
         <section
           className="result-settlement"
-          data-outcome={battleResult.victory ? 'victory' : defeatEndsRun ? 'terminal' : 'retreat'}
+          data-outcome={resultOutcome}
           aria-label={`전투 결산 ${resultGrade} 등급 · ${resultGradeTitle}`}
         >
           <header>

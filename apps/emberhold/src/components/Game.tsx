@@ -7742,26 +7742,28 @@ export default function Game() {
     )
   }
 
+  function revealBattleResult(sound: SoundEffect, vibration: number | number[]) {
+    setPhase('result')
+    scheduleFrame(() => {
+      playSound(sound, soundOn)
+      vibrate(vibration)
+    })
+  }
+
   function completeBattleCinema(result: BattleResult) {
     if (phase !== 'battling') return
-    setPhase('result')
-    playSound(result.victory ? 'win' : 'lose', soundOn)
-    vibrate(result.victory ? [25, 35, 25, 35, 45] : [80, 40, 100])
+    revealBattleResult(result.victory ? 'win' : 'lose', result.victory ? [25, 35, 25, 35, 45] : [80, 40, 100])
   }
 
   function skipBattleCinema() {
     if (phase !== 'battling' || !battleResult) return
     const shatteredActCrown = battleResult.boss && battleResult.victory && (game.day === 4 || game.day === 8)
-    setPhase('result')
     if (finalMarchGate) {
       const doctrineBroken = battleResult.lanes.some(
         (lane) => lane.enemy.doctrine === finalMarchGate.doctrine && lane.doctrineBroken,
       )
-      playSound(
+      revealBattleResult(
         battleResult.victory ? (doctrineBroken ? 'seal' : 'impact') : doctrineBroken ? 'impact' : 'lose',
-        soundOn,
-      )
-      vibrate(
         battleResult.victory
           ? doctrineBroken
             ? [18, 30, 30, 36, 54]
@@ -7773,7 +7775,7 @@ export default function Game() {
       return
     }
 
-    playSound(
+    revealBattleResult(
       game.day === MAX_NIGHTS && battleResult.victory
         ? 'finale'
         : shatteredActCrown
@@ -7781,9 +7783,6 @@ export default function Game() {
           : battleResult.victory
             ? 'win'
             : 'lose',
-      soundOn,
-    )
-    vibrate(
       battleResult.victory
         ? shatteredActCrown
           ? game.day === 8
