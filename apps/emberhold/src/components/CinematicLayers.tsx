@@ -20,6 +20,7 @@ import {
   ENEMY_DOCTRINES,
   FINAL_CROWN_REQUIRED_SEALS,
   FINAL_CROWN_SEALS,
+  FINAL_MARCH_GATES,
   INTENT_META,
   KIND_META,
   MAX_NIGHTS,
@@ -41,6 +42,7 @@ type Snowflake = {
 type BattleCinemaProps = {
   battleResult: BattleResult
   battleStep: number
+  decisiveLane: number
   game: GameState
   currentActNumber: number
   storyTitle: string
@@ -53,6 +55,7 @@ type BattleCinemaProps = {
   activeFinalVow: { id: string; glyph: string; name: string } | null
   battleOpeningNarration: string
   snow: readonly Snowflake[]
+  revealBattleClimax: () => void
   skipBattleCinema: () => void
   finalCrownSealFor: (lane: number) => FinalCrownSeal | null
   finalCrownSealBroken: (
@@ -71,13 +74,86 @@ type BattleTimelineTask = {
   run: () => void
 }
 
-type BattleCinemaDirectorProps = Omit<BattleCinemaProps, 'battleStep' | 'skipBattleCinema'> & {
+type BattleCinemaDirectorProps = Omit<
+  BattleCinemaProps,
+  'battleStep' | 'decisiveLane' | 'revealBattleClimax' | 'skipBattleCinema'
+> & {
   motion: GameSettings['motion']
   battlePace: GameSettings['battlePace']
-  onLaneImpact: (lane: LaneResult, result: BattleResult) => void
+  onLaneImpact: (lane: LaneResult, result: BattleResult, decisive: boolean) => void
   onClimax: (result: BattleResult) => void
   onComplete: (result: BattleResult) => void
   onSkip: () => void
+}
+
+function decisiveLaneFor(
+  battleResult: BattleResult,
+  crownBrokenForLane: ((lane: LaneResult) => boolean) | null,
+): number {
+  let wins = 0
+  let losses = 0
+  let brokenCrowns = 0
+  let activeCrowns = 0
+
+  for (const lane of battleResult.lanes) {
+    if (lane.won) wins += 1
+    else losses += 1
+    if (crownBrokenForLane) {
+      if (crownBrokenForLane(lane)) brokenCrowns += 1
+      else activeCrowns += 1
+    }
+
+    if (
+      battleResult.victory
+        ? wins >= REQUIRED_LANE_WINS && (!crownBrokenForLane || brokenCrowns >= FINAL_CROWN_REQUIRED_SEALS)
+        : losses >= REQUIRED_LANE_WINS || (crownBrokenForLane !== null && activeCrowns >= FINAL_CROWN_REQUIRED_SEALS)
+    ) {
+      return lane.lane
+    }
+  }
+
+  return battleResult.lanes[battleResult.lanes.length - 1]?.lane ?? 0
+}
+
+function battleCinemaTimingFor({
+  battleResult,
+  day,
+  battlePace,
+  reducedMotion,
+  hasCrownClimax,
+  hasFinalMarchClimax,
+}: {
+  battleResult: BattleResult
+  day: number
+  battlePace: GameSettings['battlePace']
+  reducedMotion: boolean
+  hasCrownClimax: boolean
+  hasFinalMarchClimax: boolean
+}) {
+  const paceScale = battlePace === 'swift' ? 0.58 : 1
+  const hasPostBattleClimax = hasCrownClimax || hasFinalMarchClimax
+  const climaxHold = hasCrownClimax
+    ? reducedMotion
+      ? day === MAX_NIGHTS
+        ? 1700
+        : day === 8
+          ? 1600
+          : 1500
+      : Math.round((day === MAX_NIGHTS ? 1280 : day === 8 ? 1240 : 1180) * paceScale)
+    : hasFinalMarchClimax
+      ? reducedMotion
+        ? 1300
+        : Math.round(900 * paceScale)
+      : 0
+
+  return {
+    introDelay: reducedMotion ? 40 : Math.round((battleResult.boss ? 780 : 560) * paceScale),
+    laneDelay: reducedMotion ? 80 : Math.round((battleResult.boss ? 1080 : 920) * paceScale),
+    climaxHold,
+    completionTail: reducedMotion
+      ? 100
+      : Math.round((hasPostBattleClimax ? 260 : battleResult.boss ? 900 : 720) * paceScale),
+  }
 }
 
 export function BattleCinemaDirector({
@@ -89,10 +165,21 @@ export function BattleCinemaDirector({
   onClimax,
   onComplete,
   onSkip,
+  finalCrownSealBroken,
   ...cinemaProps
 }: BattleCinemaDirectorProps) {
   const [battleStep, setBattleStep] = useState(-1)
   const timeline = useRef<BattleTimelineTask[]>([])
+  const climaxTriggered = useRef(false)
+  const hasCrownClimax = battleResult.boss && (game.day === 4 || game.day === 8 || game.day === MAX_NIGHTS)
+  const hasFinalMarchClimax = FINAL_MARCH_GATES.some((gate) => gate.night === game.day)
+  const hasPostBattleClimax = hasCrownClimax || hasFinalMarchClimax
+  const decisiveLane = decisiveLaneFor(
+    battleResult,
+    game.day === MAX_NIGHTS
+      ? (lane) => finalCrownSealBroken(lane.lane, battleResult.focusLane, lane.countered, lane.relation)
+      : null,
+  )
 
   function clearTimeline() {
     for (const task of timeline.current) {
@@ -134,39 +221,33 @@ export function BattleCinemaDirector({
 
   const revealLane = useEffectEvent((lane: LaneResult) => {
     setBattleStep(lane.lane)
-    onLaneImpact(lane, battleResult)
+    onLaneImpact(lane, battleResult, lane.lane === decisiveLane)
   })
   const revealClimax = useEffectEvent(() => {
+    climaxTriggered.current = true
     setBattleStep(battleResult.lanes.length)
     onClimax(battleResult)
   })
   const completeCinema = useEffectEvent(() => onComplete(battleResult))
 
   useEffect(() => {
+    climaxTriggered.current = false
     const reducedMotion = motion === 'reduced' || window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const paceScale = battlePace === 'swift' ? 0.58 : 1
-    const introDelay = reducedMotion ? 40 : Math.round((battleResult.boss ? 780 : 560) * paceScale)
-    const laneDelay = reducedMotion ? 80 : Math.round((battleResult.boss ? 1080 : 920) * paceScale)
-    const hasCrownClimax = battleResult.boss && (game.day === 4 || game.day === MAX_NIGHTS)
+    const timing = battleCinemaTimingFor({
+      battleResult,
+      day: game.day,
+      battlePace,
+      reducedMotion,
+      hasCrownClimax,
+      hasFinalMarchClimax,
+    })
 
     for (const lane of battleResult.lanes) {
-      schedule(introDelay + lane.lane * laneDelay, () => revealLane(lane))
+      schedule(timing.introDelay + lane.lane * timing.laneDelay, () => revealLane(lane))
     }
-    const lanesCompleteAt = introDelay + battleResult.lanes.length * laneDelay
-    if (hasCrownClimax) schedule(lanesCompleteAt, revealClimax)
-    const climaxHold = hasCrownClimax
-      ? reducedMotion
-        ? game.day === MAX_NIGHTS
-          ? 1700
-          : 1500
-        : Math.round((game.day === MAX_NIGHTS ? 1280 : 1180) * paceScale)
-      : 0
-    schedule(
-      lanesCompleteAt +
-        climaxHold +
-        (reducedMotion ? 100 : Math.round((hasCrownClimax ? 260 : battleResult.boss ? 900 : 720) * paceScale)),
-      completeCinema,
-    )
+    const lanesCompleteAt = timing.introDelay + battleResult.lanes.length * timing.laneDelay
+    if (hasPostBattleClimax) schedule(lanesCompleteAt, revealClimax)
+    schedule(lanesCompleteAt + timing.climaxHold + timing.completionTail, completeCinema)
 
     const syncActivity = () => {
       if (document.visibilityState === 'hidden' || !document.hasFocus()) pauseTimeline()
@@ -190,7 +271,34 @@ export function BattleCinemaDirector({
       window.removeEventListener('pageshow', syncActivity)
       clearTimeline()
     }
-  }, [battlePace, battleResult, game.day, motion])
+  }, [
+    battlePace,
+    battleResult,
+    decisiveLane,
+    game.day,
+    hasCrownClimax,
+    hasFinalMarchClimax,
+    hasPostBattleClimax,
+    motion,
+  ])
+
+  function revealClimaxNow() {
+    if (!hasPostBattleClimax || climaxTriggered.current || battleStep >= battleResult.lanes.length) return
+    clearTimeline()
+    climaxTriggered.current = true
+    setBattleStep(battleResult.lanes.length)
+    onClimax(battleResult)
+    const reducedMotion = motion === 'reduced' || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const timing = battleCinemaTimingFor({
+      battleResult,
+      day: game.day,
+      battlePace,
+      reducedMotion,
+      hasCrownClimax,
+      hasFinalMarchClimax,
+    })
+    schedule(timing.climaxHold + timing.completionTail, () => onComplete(battleResult))
+  }
 
   function skipCinema() {
     clearTimeline()
@@ -202,8 +310,11 @@ export function BattleCinemaDirector({
       {...cinemaProps}
       battleResult={battleResult}
       battleStep={battleStep}
+      decisiveLane={decisiveLane}
       game={game}
+      revealBattleClimax={revealClimaxNow}
       skipBattleCinema={skipCinema}
+      finalCrownSealBroken={finalCrownSealBroken}
     />
   )
 }
@@ -211,6 +322,7 @@ export function BattleCinemaDirector({
 export function BattleCinema({
   battleResult,
   battleStep,
+  decisiveLane,
   game,
   currentActNumber,
   storyTitle,
@@ -223,6 +335,7 @@ export function BattleCinema({
   activeFinalVow,
   battleOpeningNarration,
   snow,
+  revealBattleClimax,
   skipBattleCinema,
   finalCrownSealFor,
   finalCrownSealBroken,
@@ -245,8 +358,34 @@ export function BattleCinema({
   const activeCinemaCrownState =
     battleStep >= 0 ? (resultCrownStates.find((state) => state.lane.lane === battleStep) ?? null) : null
   const firstCrownClimax = battleResult.boss && game.day === 4 && battleStep >= battleResult.lanes.length
+  const secondCrownClimax = battleResult.boss && game.day === 8 && battleStep >= battleResult.lanes.length
   const finalCrownClimax = game.day === MAX_NIGHTS && battleStep >= battleResult.lanes.length
   const firstCrownCounterCount = battleResult.lanes.filter((lane) => lane.countered).length
+  const secondCrownShieldBroken = battleResult.focusLane === 1
+  const secondCrownHeartLane = battleResult.lanes[1]
+  const secondCrownDirectBreak = secondCrownShieldBroken && secondCrownHeartLane.won
+  const currentFinalMarchGate = FINAL_MARCH_GATES.find((gate) => gate.night === game.day) ?? null
+  const finalMarchDoctrineLane = currentFinalMarchGate
+    ? (battleResult.lanes.find((lane) => lane.enemy.doctrine === currentFinalMarchGate.doctrine) ?? null)
+    : null
+  const finalMarchDoctrineBroken = finalMarchDoctrineLane?.doctrineBroken ?? false
+  const finalMarchGateClimax = Boolean(currentFinalMarchGate) && battleStep >= battleResult.lanes.length
+  const finalMarchGateState = battleResult.victory
+    ? finalMarchDoctrineBroken
+      ? 'mastered'
+      : 'breached'
+    : finalMarchDoctrineBroken
+      ? 'fractured'
+      : 'held'
+  const revealedLaneCount = Math.max(0, Math.min(battleResult.lanes.length, battleStep + 1))
+  const revealedLanes = battleResult.lanes.slice(0, revealedLaneCount)
+  const revealedWinCount = revealedLanes.filter((lane) => lane.won).length
+  const revealedCrownBreakCount = resultCrownStates.filter(
+    (state) => state.broken && state.lane.lane < revealedLaneCount,
+  ).length
+  const crownClimaxAvailable = battleResult.boss && (game.day === 4 || game.day === 8 || game.day === MAX_NIGHTS)
+  const canRevealBattleClimax =
+    (crownClimaxAvailable || currentFinalMarchGate !== null) && battleStep < battleResult.lanes.length
 
   return (
     <div
@@ -259,6 +398,7 @@ export function BattleCinema({
       data-impact={battleStep < 0 ? 'intro' : battleStep}
       data-boss={battleResult.boss ? 'true' : 'false'}
       data-boss-day={battleResult.boss ? game.day : undefined}
+      data-decisive-active={battleStep === decisiveLane ? 'true' : 'false'}
       data-final-crown={game.day === MAX_NIGHTS ? 'true' : 'false'}
       tabIndex={-1}
     >
@@ -345,6 +485,141 @@ export function BattleCinema({
             </div>
           </div>
         ) : null}
+        {secondCrownClimax ? (
+          <div
+            className="cinema-heart-climax"
+            data-outcome={battleResult.victory ? 'won' : 'lost'}
+            data-shield={secondCrownShieldBroken ? 'broken' : 'active'}
+            aria-hidden="true"
+          >
+            <div className="cinema-heart-climax-visual">
+              <div className="cinema-heart-core">
+                <i />
+                <i />
+                <i />
+                <b>{currentBossMechanic?.glyph ?? '⬡'}</b>
+                <small>{secondCrownShieldBroken ? 'SHIELD DOWN' : 'SHIELD ACTIVE'}</small>
+              </div>
+              <div className="cinema-heart-fronts">
+                {battleResult.lanes.map((lane) => (
+                  <span
+                    data-focus={battleResult.focusLane === lane.lane ? 'true' : 'false'}
+                    data-outcome={lane.won ? 'won' : 'lost'}
+                    data-role={lane.lane === 1 ? 'heart' : 'artery'}
+                    key={lane.lane}
+                  >
+                    <b>0{lane.lane + 1}</b>
+                    <div>
+                      <small>{lane.lane === 1 ? 'HEART SHIELD' : 'FROZEN ARTERY'}</small>
+                      <strong>
+                        {lane.lane === 1
+                          ? secondCrownShieldBroken
+                            ? '심장 방벽 해제'
+                            : '심장 방벽 유지'
+                          : lane.won
+                            ? '측면 혈관 절단'
+                            : '측면 혈관 박동'}
+                      </strong>
+                    </div>
+                    <i>{battleResult.focusLane === lane.lane ? 'FIRE' : lane.won ? 'SEVER' : 'PULSE'}</i>
+                  </span>
+                ))}
+              </div>
+              <div className="cinema-heart-verdict-copy">
+                <small>
+                  SECOND CROWN VERDICT · SHIELD {secondCrownShieldBroken ? 'DOWN' : 'ACTIVE'} · FRONTS{' '}
+                  {battleResult.wins} / 3
+                </small>
+                <strong>
+                  {battleResult.victory
+                    ? secondCrownDirectBreak
+                      ? '푸른 심장 정면 파쇄'
+                      : secondCrownShieldBroken
+                        ? '방벽의 균열로 박동을 끊는다'
+                        : '측면 혈관이 심장을 멈춘다'
+                    : secondCrownShieldBroken
+                      ? '갈라진 방벽이 다시 얼어붙는다'
+                      : '푸른 심장이 박동을 되찾는다'}
+                </strong>
+                <p>
+                  {battleResult.victory
+                    ? secondCrownDirectBreak
+                      ? '화로의 불길이 중앙 방벽과 심장 전선을 함께 꿰뚫고 두 번째 왕관 조각을 갈라냅니다.'
+                      : secondCrownShieldBroken
+                        ? `중앙 방벽에 낸 균열로 지켜 낸 전선 ${battleResult.wins}곳의 불씨가 스며들어 푸른 박동을 멈춥니다.`
+                        : `지켜 낸 전선 ${battleResult.wins}곳의 압박이 얼어붙은 측면 혈관을 끊어, 남은 방벽째 심장을 굶겨 멈춥니다.`
+                    : secondCrownShieldBroken
+                      ? `중앙 방벽은 해제했지만 지킨 전선은 ${battleResult.wins}곳. 남은 혈관이 파편을 끌어당겨 심장을 복원합니다.`
+                      : `화로가 중앙에 닿지 못한 채 지킨 전선은 ${battleResult.wins}곳. 심장 방벽이 박동을 증폭해 왕관 조각을 다시 봉합합니다.`}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        {finalMarchGateClimax && currentFinalMarchGate ? (
+          <div className="cinema-gate-climax" data-state={finalMarchGateState} aria-hidden="true">
+            <div className="cinema-gate-climax-visual">
+              <div className="cinema-gate-sigil">
+                <i />
+                <i />
+                <b>{currentFinalMarchGate.glyph}</b>
+                <small>GATE 0{currentFinalMarchGate.night - 8} / 03</small>
+              </div>
+              <ol className="cinema-gate-path">
+                {FINAL_MARCH_GATES.map((gate) => {
+                  const state =
+                    gate.night < game.day ? 'passed' : gate.night > game.day ? 'locked' : finalMarchGateState
+                  return (
+                    <li data-state={state} key={gate.night}>
+                      <span>{gate.glyph}</span>
+                      <div>
+                        <small>{gate.label}</small>
+                        <strong>{gate.name}</strong>
+                      </div>
+                      <i>
+                        {state === 'passed'
+                          ? 'PASSED'
+                          : state === 'locked'
+                            ? 'LOCKED'
+                            : state === 'mastered'
+                              ? 'MASTERED'
+                              : state === 'breached'
+                                ? 'BREACHED'
+                                : state === 'fractured'
+                                  ? 'FRACTURED'
+                                  : 'HELD'}
+                      </i>
+                    </li>
+                  )
+                })}
+              </ol>
+              <div className="cinema-gate-verdict-copy">
+                <small>
+                  LAST MARCH VERDICT · {ENEMY_DOCTRINES[currentFinalMarchGate.doctrine].name} · FRONTS{' '}
+                  {battleResult.wins} / 3
+                </small>
+                <strong>
+                  {battleResult.victory
+                    ? finalMarchDoctrineBroken
+                      ? `${currentFinalMarchGate.name} 완전 파훼`
+                      : `${currentFinalMarchGate.name} 강행 돌파`
+                    : finalMarchDoctrineBroken
+                      ? '교리는 꺾였으나 관문은 닫힌다'
+                      : `${currentFinalMarchGate.name}이 행군을 밀어낸다`}
+                </strong>
+                <p>
+                  {battleResult.victory
+                    ? finalMarchDoctrineBroken
+                      ? `${currentFinalMarchGate.lesson} ${currentFinalMarchGate.crownPreparation}이 왕좌 앞 전술 해법으로 증명됩니다.`
+                      : `전선 ${battleResult.wins}곳의 힘으로 관문은 열었지만 ${ENEMY_DOCTRINES[currentFinalMarchGate.doctrine].name} 해법은 완성하지 못했습니다. 다음 진군에서 왕관 준비 조건을 다시 확인하세요.`
+                    : finalMarchDoctrineBroken
+                      ? `${ENEMY_DOCTRINES[currentFinalMarchGate.doctrine].name}은 꺾었습니다. 두 번째 승리 전선만 확보하면 같은 전술로 관문을 열 수 있습니다.`
+                      : `${ENEMY_DOCTRINES[currentFinalMarchGate.doctrine].counterplay} 전선을 재정비해 같은 관문에 다시 도전하세요.`}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : null}
         {finalCrownClimax ? (
           <div className="cinema-crown-climax" data-outcome={battleResult.victory ? 'won' : 'lost'} aria-hidden="true">
             <div className="cinema-crown-climax-visual">
@@ -419,8 +694,25 @@ export function BattleCinema({
           </div>
           <div className="cinema-controls">
             <span>{storyWeather}</span>
-            <button type="button" onClick={skipBattleCinema} data-autofocus="true">
-              연출 건너뛰기 ›
+            {canRevealBattleClimax ? (
+              <button
+                className="cinema-climax-jump"
+                type="button"
+                onClick={revealBattleClimax}
+                data-autofocus="true"
+                aria-label="전선별 연출을 줄이고 이번 전투의 핵심 절정 판정 보기"
+              >
+                절정 보기
+              </button>
+            ) : null}
+            <button
+              className="cinema-result-skip"
+              type="button"
+              onClick={skipBattleCinema}
+              data-autofocus={canRevealBattleClimax ? undefined : 'true'}
+              aria-label="전투 연출을 건너뛰고 결과 보기"
+            >
+              결과로 ›
             </button>
           </div>
         </header>
@@ -440,15 +732,31 @@ export function BattleCinema({
                 ? battleResult.victory
                   ? `세 전선의 판정이 왕관 조각에 닿습니다. 적 의도 ${firstCrownCounterCount}개를 끊고 전선 ${battleResult.wins}곳을 지켜 빈 갑옷의 심장을 갈랐습니다.`
                   : `적 의도 ${firstCrownCounterCount}개를 끊고 전선 ${battleResult.wins}곳을 지켰습니다. 남은 메아리가 왕관 조각을 다시 봉합합니다.`
-                : finalCrownClimax
+                : secondCrownClimax
                   ? battleResult.victory
-                    ? `세 전선의 판정이 하나로 겹칩니다. 지켜 낸 전선 ${battleResult.wins}곳이 왕관의 지배를 끊고 칙령 ${resultCrownBreakCount}개를 갈랐습니다.`
-                    : `해제한 칙령은 ${resultCrownBreakCount}개. 남은 왕관의 압박이 전선을 되감습니다.`
-                  : activeCinemaCrownState?.seal
-                    ? `${activeCinemaCrownState.seal.name} ${activeCinemaCrownState.broken ? '해제. 왕관 조각이 갈라졌습니다.' : '유지. 왕의 압박이 증폭됩니다.'} ${survivorName(activeCinemaCrownState.lane.unit)}의 전선은 ${activeCinemaCrownState.lane.won ? '끝내 자리를 지켰습니다.' : '칙령 아래 밀려났습니다.'}`
-                    : battleResult.lanes[battleStep].won
-                      ? `${battleStep + 1}전선 · ${survivorName(battleResult.lanes[battleStep].unit)}의 대열이 ${battleResult.lanes[battleStep].enemy.doctrine && battleResult.lanes[battleStep].doctrineBroken ? `${ENEMY_DOCTRINES[battleResult.lanes[battleStep].enemy.doctrine].name} 교리를 무너뜨리고` : battleResult.lanes[battleStep].countered ? '적 의도를 끊고' : '정면 충돌을 버티며'} 방어선을 되찾았습니다.`
-                      : `${battleStep + 1}전선 · ${battleResult.lanes[battleStep].enemy.name}의 ${battleResult.lanes[battleStep].enemy.doctrine && !battleResult.lanes[battleStep].doctrineBroken ? `${ENEMY_DOCTRINES[battleResult.lanes[battleStep].enemy.doctrine].name} 교리가` : '압력이'} 방어선을 밀어냈습니다.`}
+                    ? secondCrownShieldBroken
+                      ? `화로를 중앙에 집중해 심장 방벽을 해제했습니다. 지켜 낸 전선 ${battleResult.wins}곳의 불씨가 푸른 박동을 멈춥니다.`
+                      : `지켜 낸 전선 ${battleResult.wins}곳이 측면 혈관을 끊었습니다. 중앙 방벽에 갇힌 푸른 심장이 끝내 박동을 멈춥니다.`
+                    : secondCrownShieldBroken
+                      ? `중앙 심장 방벽은 해제했지만 지킨 전선은 ${battleResult.wins}곳입니다. 남은 혈관이 심장을 다시 봉합합니다.`
+                      : `화로가 중앙에 닿지 못했고 지킨 전선은 ${battleResult.wins}곳입니다. 심장 방벽이 푸른 박동을 되살립니다.`
+                  : finalMarchGateClimax && currentFinalMarchGate
+                    ? battleResult.victory
+                      ? finalMarchDoctrineBroken
+                        ? `${ENEMY_DOCTRINES[currentFinalMarchGate.doctrine].name} 교리를 완전히 꺾고 전선 ${battleResult.wins}곳을 지켰습니다. ${currentFinalMarchGate.name}이 열립니다.`
+                        : `전선 ${battleResult.wins}곳을 지켜 ${currentFinalMarchGate.name}을 강행 돌파했습니다. 교리 해법은 다음 전투 준비에 남습니다.`
+                      : finalMarchDoctrineBroken
+                        ? `${ENEMY_DOCTRINES[currentFinalMarchGate.doctrine].name} 교리는 꺾었지만 지킨 전선은 ${battleResult.wins}곳입니다. 두 번째 승리선을 확보해야 합니다.`
+                        : `${currentFinalMarchGate.name}의 압박이 유지됩니다. ${ENEMY_DOCTRINES[currentFinalMarchGate.doctrine].counterplay}`
+                    : finalCrownClimax
+                      ? battleResult.victory
+                        ? `세 전선의 판정이 하나로 겹칩니다. 지켜 낸 전선 ${battleResult.wins}곳이 왕관의 지배를 끊고 칙령 ${resultCrownBreakCount}개를 갈랐습니다.`
+                        : `해제한 칙령은 ${resultCrownBreakCount}개. 남은 왕관의 압박이 전선을 되감습니다.`
+                      : activeCinemaCrownState?.seal
+                        ? `${activeCinemaCrownState.seal.name} ${activeCinemaCrownState.broken ? '해제. 왕관 조각이 갈라졌습니다.' : '유지. 왕의 압박이 증폭됩니다.'} ${survivorName(activeCinemaCrownState.lane.unit)}의 전선은 ${activeCinemaCrownState.lane.won ? '끝내 자리를 지켰습니다.' : '칙령 아래 밀려났습니다.'}`
+                        : battleResult.lanes[battleStep].won
+                          ? `${battleStep + 1}전선 · ${survivorName(battleResult.lanes[battleStep].unit)}의 대열이 ${battleResult.lanes[battleStep].enemy.doctrine && battleResult.lanes[battleStep].doctrineBroken ? `${ENEMY_DOCTRINES[battleResult.lanes[battleStep].enemy.doctrine].name} 교리를 무너뜨리고` : battleResult.lanes[battleStep].countered ? '적 의도를 끊고' : '정면 충돌을 버티며'} 방어선을 되찾았습니다.`
+                          : `${battleStep + 1}전선 · ${battleResult.lanes[battleStep].enemy.name}의 ${battleResult.lanes[battleStep].enemy.doctrine && !battleResult.lanes[battleStep].doctrineBroken ? `${ENEMY_DOCTRINES[battleResult.lanes[battleStep].enemy.doctrine].name} 교리가` : '압력이'} 방어선을 밀어냈습니다.`}
           </p>
         </div>
 
@@ -465,11 +773,15 @@ export function BattleCinema({
             return (
               <article
                 className={`${revealed ? 'is-revealed' : ''} ${active ? 'is-active' : ''}`}
+                data-decisive={lane.lane === decisiveLane ? 'true' : 'false'}
                 data-outcome={revealed ? (lane.won ? 'won' : 'lost') : 'pending'}
                 key={`cinema-${lane.lane}`}
               >
                 <div className="cinema-lane-label">
-                  <span>전선 0{lane.lane + 1}</span>
+                  <span>
+                    전선 0{lane.lane + 1}
+                    {revealed && lane.lane === decisiveLane ? <b className="cinema-decisive-tag">결정 전선</b> : null}
+                  </span>
                   <div>
                     {crownSeal ? (
                       <b className="cinema-crown-state" data-state={crownBroken ? 'broken' : 'active'}>
@@ -570,11 +882,49 @@ export function BattleCinema({
                   : firstCrownClimax
                     ? '첫 왕관 파쇄 판정'
                     : '메아리 차단 판정'
-                : battleStep < 0
-                  ? '교전 개시'
-                  : '전선 충돌'}{' '}
-            · {Math.max(0, Math.min(3, battleStep + 1))} / 3
+                : battleResult.boss && game.day === 8
+                  ? battleStep < 0
+                    ? '빙하 심장 박동'
+                    : secondCrownClimax
+                      ? '두 번째 왕관 파쇄 판정'
+                      : '심장 방벽 판정'
+                  : currentFinalMarchGate
+                    ? battleStep < 0
+                      ? `제${currentFinalMarchGate.night - 8}관문 접근`
+                      : finalMarchGateClimax
+                        ? `제${currentFinalMarchGate.night - 8}관문 돌파 판정`
+                        : `${ENEMY_DOCTRINES[currentFinalMarchGate.doctrine].name} 파훼 판정`
+                    : battleStep < 0
+                      ? '교전 개시'
+                      : '전선 충돌'}
+            {battleStep === decisiveLane ? ' · 승패 결정 전선' : ''} · {Math.max(0, Math.min(3, battleStep + 1))} / 3
           </span>
+          <div className="cinema-live-thresholds">
+            <b
+              data-state={
+                revealedWinCount >= REQUIRED_LANE_WINS
+                  ? 'met'
+                  : battleStep >= decisiveLane && battleResult.wins < REQUIRED_LANE_WINS
+                    ? 'missed'
+                    : 'open'
+              }
+            >
+              전선 {revealedWinCount} / {REQUIRED_LANE_WINS}
+            </b>
+            {game.day === MAX_NIGHTS ? (
+              <b
+                data-state={
+                  revealedCrownBreakCount >= FINAL_CROWN_REQUIRED_SEALS
+                    ? 'met'
+                    : battleStep >= decisiveLane && resultCrownBreakCount < FINAL_CROWN_REQUIRED_SEALS
+                      ? 'missed'
+                      : 'open'
+                }
+              >
+                칙령 {revealedCrownBreakCount} / {FINAL_CROWN_REQUIRED_SEALS}
+              </b>
+            ) : null}
+          </div>
           <i>
             <b style={{ width: `${Math.max(0, Math.min(100, ((battleStep + 1) / 3) * 100))}%` }} />
           </i>
@@ -736,24 +1086,32 @@ type FinaleVowView = {
 
 type FinaleSequenceProps = {
   game: GameState
-  finalCrownForecastCount: number
+  finalCrownBreakCount: number
+  finalCrownWins: number
+  finalCrownMasteryBonus: number
   endingFinalVow: FinaleVowView | null
   revealFinalEnding: () => void
 }
 
 export function FinaleSequence({
   game,
-  finalCrownForecastCount,
+  finalCrownBreakCount,
+  finalCrownWins,
+  finalCrownMasteryBonus,
   endingFinalVow,
   revealFinalEnding,
 }: FinaleSequenceProps) {
+  const finalCrownMastered = finalCrownBreakCount === FINAL_CROWN_SEALS.length
+
   return (
     <div
       className="finale-sequence"
       role="dialog"
       aria-modal="true"
       aria-labelledby="finale-title"
+      aria-describedby="finale-summary"
       data-focus-scope="finale"
+      data-mastery={finalCrownMastered ? 'true' : 'false'}
       tabIndex={-1}
     >
       <div className="finale-art" aria-hidden="true">
@@ -767,6 +1125,32 @@ export function FinaleSequence({
       </div>
       <section>
         <p className="eyebrow">FINAL INTERLUDE · THE THAW</p>
+        <ol className="finale-threshold-path" aria-label="왕좌에서 새벽 기록까지의 피날레 진행">
+          <li data-state="complete">
+            <span>01</span>
+            <div>
+              <small>THRONE</small>
+              <strong>왕좌 붕괴</strong>
+            </div>
+            <b>완료</b>
+          </li>
+          <li data-state="complete">
+            <span>02</span>
+            <div>
+              <small>WHITEOUT</small>
+              <strong>눈보라 소멸</strong>
+            </div>
+            <b>완료</b>
+          </li>
+          <li data-state="active">
+            <span>03</span>
+            <div>
+              <small>DAWN</small>
+              <strong>새벽 기록</strong>
+            </div>
+            <b>현재</b>
+          </li>
+        </ol>
         <section className="finale-crowns" aria-label="세 왕관 조각 파괴 완료">
           {[4, 8, 12].map((day) => {
             const mechanic = BOSS_MECHANICS[day]
@@ -780,12 +1164,28 @@ export function FinaleSequence({
           })}
         </section>
         <h2 id="finale-title">왕의 눈보라가 멎었다</h2>
-        <p>
-          {finalCrownForecastCount === FINAL_CROWN_SEALS.length
+        <p id="finale-summary">
+          {finalCrownMastered
             ? '세 칙령이 모두 갈라진 순간, 백색 왕의 이름까지 눈보라 속에서 지워졌습니다.'
-            : `${finalCrownForecastCount}개의 칙령을 꺾고 방어선을 지켜 내자, 남은 왕관도 주인을 잃고 무너졌습니다.`}{' '}
+            : `${finalCrownBreakCount}개의 칙령을 꺾고 방어선을 지켜 내자, 남은 왕관도 주인을 잃고 무너졌습니다.`}{' '}
           하늘과 땅의 경계가 돌아오고, 원정대가 지켜 온 불씨가 수백 년 만의 첫 수평선을 밝힙니다.
         </p>
+        <aside className="finale-battle-verdict" data-mastery={finalCrownMastered ? 'true' : 'false'}>
+          <span aria-hidden="true">{finalCrownMastered ? '✦' : '♜'}</span>
+          <div>
+            <small>FINAL BATTLE RECORD · ACTUAL VERDICT</small>
+            <strong>{finalCrownMastered ? '삼중 왕관 완전 파쇄' : '왕관의 승리 조건 돌파'}</strong>
+            <p>
+              마지막 전투에서 전선 {finalCrownWins} / 3을 지키고 칙령 {finalCrownBreakCount} / 3을 실제로 해제했습니다.
+              이 판정이 그대로 원정의 마지막 기록에 남습니다.
+            </p>
+          </div>
+          <b>
+            {finalCrownMasteryBonus > 0
+              ? `완전 파쇄 +${finalCrownMasteryBonus.toLocaleString('ko-KR')}`
+              : 'DAWN UNSEALED'}
+          </b>
+        </aside>
         {endingFinalVow ? (
           <aside className="finale-vow" data-vow={endingFinalVow.id} aria-label="새벽에 남은 최후의 맹세">
             <span aria-hidden="true">{endingFinalVow.glyph}</span>
@@ -799,12 +1199,12 @@ export function FinaleSequence({
         ) : null}
         <div className="finale-ledger">
           <span>
-            <small>견딘 밤</small>
-            <strong>12 / 12</strong>
+            <small>파괴한 왕관</small>
+            <strong>3 / 3</strong>
           </span>
           <span>
             <small>해제한 최종 칙령</small>
-            <strong>{finalCrownForecastCount} / 3</strong>
+            <strong>{finalCrownBreakCount} / 3</strong>
           </span>
           <span>
             <small>남은 온기</small>
@@ -820,7 +1220,7 @@ export function FinaleSequence({
           <cite>— 마지막 화로의 기록</cite>
         </blockquote>
         <button type="button" onClick={revealFinalEnding} data-autofocus="true">
-          <span>새벽의 이름 기록하기</span>
+          <span>새벽의 이름과 결말 기록하기</span>
           <i aria-hidden="true">›</i>
         </button>
       </section>

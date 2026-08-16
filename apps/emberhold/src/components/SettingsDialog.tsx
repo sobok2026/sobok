@@ -50,7 +50,7 @@ export function SettingsDialog({
           <p className="eyebrow">FIELD CONFIGURATION</p>
           <h2 id="settings-title">내게 맞는 원정 환경</h2>
           <p id="settings-lead">
-            사운드와 화면, 전투 흐름을 즉시 조정합니다. 모든 설정은 이 기기에 하나의 형식으로 저장됩니다.
+            사운드와 화면, 원정 흐름을 즉시 조정합니다. 모든 설정은 이 기기에 하나의 형식으로 저장됩니다.
           </p>
         </header>
 
@@ -193,16 +193,16 @@ export function SettingsDialog({
               <span aria-hidden="true">››</span>
               <div>
                 <p>SESSION</p>
-                <h3 id="settings-session-title">전투 흐름과 빠른 조작</h3>
+                <h3 id="settings-session-title">원정 템포와 빠른 조작</h3>
               </div>
             </header>
             <div className="settings-choice settings-pace">
               <span>
-                <b>전투 연출 속도</b>
-                <small>첫 원정은 시네마틱, 반복 플레이는 신속 모드를 권장합니다.</small>
+                <b>원정 연출 템포</b>
+                <small>신속 모드는 선택과 결과를 보존하고 전투·성장·기록 연출만 압축합니다.</small>
               </span>
               <fieldset>
-                <legend className="settings-visually-hidden">전투 연출 속도</legend>
+                <legend className="settings-visually-hidden">원정 연출 템포</legend>
                 <button
                   type="button"
                   data-selected={settings.battlePace === 'cinematic' ? 'true' : 'false'}

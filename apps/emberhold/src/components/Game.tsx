@@ -11,7 +11,7 @@ import { BattleReadiness } from './BattleReadiness'
 import { CampaignHud } from './CampaignHud'
 import { CampActions, CampUndoNotice, QuartermasterLedger } from './CampInvestments'
 import { CampOverview } from './CampOverview'
-import { CampRosterGrid, SelectedUnitReadout } from './CampRoster'
+import { CampRosterGrid, type RosterMergeReadiness, SelectedUnitReadout } from './CampRoster'
 import { DragGhostPreview, GameFeedback } from './GameFeedback'
 import type {
   AchievementId,
@@ -24,6 +24,7 @@ import type {
   BossMechanic,
   CampUndo,
   CampUndoKind,
+  DeploymentForecast,
   Difficulty,
   DragSession,
   EndingDiscoveryEntry,
@@ -40,18 +41,21 @@ import type {
   GameBackup,
   GameSettings,
   GameState,
+  GrowthCeremony,
   InstallPromptEvent,
   LaneResult,
   LegacyId,
+  LegacyRewardBreakdown,
   MarchSealCeremony,
+  MasteryContractId,
   MetaState,
   MilestoneNotice,
   NightCondition,
-  NightConditionId,
   OathId,
   Phase,
   ProtocolMasteryProgress,
   RelicId,
+  RenownLedger,
   ResonanceId,
   RunMode,
   SavedBattle,
@@ -75,8 +79,8 @@ import {
   ACTS,
   activeDecisionEchoFor,
   BOSS_MECHANICS,
-  CAMPAIGN_EVENTS,
   CAMPAIGN_PACE_BENCHMARKS,
+  campaignEventFor,
   DIFFICULTIES,
   decisionEchoBonusFor,
   decisionsMatchCampaign,
@@ -93,6 +97,7 @@ import {
   ENEMY_POWER,
   ENEMY_TIERS,
   EXPEDITION_RANKS,
+  expeditionComparisonKey,
   FINAL_CROWN_MASTERY_SCORE,
   FINAL_CROWN_REQUIRED_SEALS,
   FINAL_CROWN_SEALS,
@@ -105,16 +110,19 @@ import {
   finalVowFor,
   INITIAL_META,
   INTENT_META,
+  inheritedPowerEnabledFor,
   KIND_META,
   LEGACY_IDS,
   LEGACY_UPGRADES,
+  legacyMasteryFor,
+  MASTERY_CONTRACT_IDS,
+  MASTERY_CONTRACTS,
   MAX_HISTORY,
   MAX_NIGHTS,
   MAX_TIER,
   MERCY_DECISIONS,
-  NIGHT_CONDITION_IDS,
-  NIGHT_CONDITIONS,
   NIGHT_STORIES,
+  nightConditionFor,
   OATH_CHRONICLE_ACHIEVEMENTS,
   OATH_CHRONICLES,
   OATH_IDS,
@@ -131,11 +139,15 @@ import {
   RESONANCES,
   ROSTER_SIZE,
   retreatSupplyFor,
+  runCodeFor,
+  runCodeFromText,
   SPECIALIZATION_IDS,
   SPECIALIZATIONS,
   SPECIALIZATIONS_BY_KIND,
   SURVIVOR_EPITHETS,
   SURVIVOR_NAMES,
+  seededValue,
+  seedForRunCode,
   TIER_LABELS,
   TRIAL_IDS,
   TRIALS,
@@ -162,6 +174,7 @@ import {
   preloadProgressionDialogs,
   preloadSettingsDialog,
 } from './game-preloads'
+import { LegacyDepartureBriefing } from './LegacyLoadout'
 import { MobileCommandDock } from './MobileCommandDock'
 import { TitleScreen } from './TitleScreen'
 import { TutorialCoach } from './TutorialCoach'
@@ -268,6 +281,7 @@ const META_KEY = `${STORAGE_PREFIX}legacy`
 const RESTORE_STAGING_KEY = `${STORAGE_PREFIX}restore-staging`
 const PLAY_SESSION_LOCK = `${STORAGE_PREFIX}play-session`
 const NAVIGATION_HISTORY_KEY = '__emberholdNavigation'
+const SHARED_RIFT_QUERY_KEY = 'rift'
 const BACKUP_STORAGE_KEYS = [
   STORAGE_KEY,
   BATTLE_STORAGE_KEY,
@@ -277,6 +291,7 @@ const BACKUP_STORAGE_KEYS = [
   META_KEY,
 ] as const
 const CURRENT_STORAGE_KEYS = new Set([...BACKUP_STORAGE_KEYS, RESTORE_STAGING_KEY])
+const BATTLE_LANES = [0, 1, 2] as const
 
 type NavigationHistoryMarker = 'base' | 'guard'
 
@@ -305,6 +320,26 @@ function pushNavigationHistoryGuard() {
   window.history.pushState(navigationHistoryState('guard'), '')
 }
 
+function linkedRiftCodeForCurrentUrl(): string | null {
+  const linkedCode = new URL(window.location.href).searchParams.get(SHARED_RIFT_QUERY_KEY)
+  return linkedCode ? runCodeFromText(linkedCode) : null
+}
+
+function clearLinkedRiftFromCurrentUrl() {
+  const url = new URL(window.location.href)
+  if (!url.searchParams.has(SHARED_RIFT_QUERY_KEY)) return
+  url.searchParams.delete(SHARED_RIFT_QUERY_KEY)
+  window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`)
+}
+
+function sharedRiftUrlFor(code: string): string {
+  const url = new URL(window.location.href)
+  url.search = ''
+  url.hash = ''
+  url.searchParams.set(SHARED_RIFT_QUERY_KEY, code)
+  return url.toString()
+}
+
 const DEFAULT_SETTINGS: GameSettings = {
   sound: true,
   effectsVolume: 82,
@@ -317,6 +352,32 @@ const DEFAULT_SETTINGS: GameSettings = {
 }
 
 const BATTLE_ORDER_SEQUENCE: [BattleOrder, BattleOrder, BattleOrder] = ['hold', 'assault', 'support']
+
+type TacticalPlanCandidate = {
+  focusLane: number
+  orders: BattleOrder[]
+  result: BattleResult
+  commandSpent: number
+  changeCount: number
+  rank: number[]
+}
+
+type TacticalRouteStep =
+  | { kind: 'order'; lane: number; order: BattleOrder; label: string }
+  | { kind: 'focus'; lane: number; order: null; label: string }
+
+type TacticalRoutePlan = {
+  adjustment: TacticalAdjustment
+  result: BattleResult
+  commandSpent: number
+  steps: string[]
+}
+
+const LEGACY_RECOMMENDATION_ORDER: Record<Difficulty, readonly LegacyId[]> = {
+  story: ['banked-ember', 'supply-cache', 'veteran-oath', 'command-seal', 'salvagers-instinct', 'chroniclers-ink'],
+  expedition: ['supply-cache', 'command-seal', 'veteran-oath', 'banked-ember', 'salvagers-instinct', 'chroniclers-ink'],
+  whiteout: ['command-seal', 'veteran-oath', 'banked-ember', 'supply-cache', 'salvagers-instinct', 'chroniclers-ink'],
+}
 const FOCUS_LANE_BY_KEY: Readonly<Record<string, number>> = {
   Digit1: 0,
   Digit2: 1,
@@ -448,14 +509,17 @@ const INITIAL_GAME: GameState = {
   difficulty: 'expedition',
   mode: 'standard',
   oath: 'hearthkeepers',
+  masteryContract: null,
   runId: 1,
   runSeed: 1,
   activeLegacy: [],
   heat: 84,
   supplies: 58,
+  recoverySupplies: 0,
   morale: 64,
   recruits: 0,
   score: 0,
+  renownLedger: createEmptyRenownLedger(),
   perfectNights: 0,
   intentsCountered: 0,
   unitedVictories: 0,
@@ -469,6 +533,7 @@ const INITIAL_GAME: GameState = {
   decisions: [],
   legacyAwarded: false,
   legacyReward: 0,
+  failureInsights: [],
   slots: [
     { id: 'warden-a', kind: 'warden', tier: 1, specialization: null },
     { id: 'ranger-a', kind: 'ranger', tier: 1, specialization: null },
@@ -495,28 +560,97 @@ function createInitialGame(
   runId = 1,
   meta: MetaState = INITIAL_META,
   campaignStarted = false,
+  masteryContract: MasteryContractId | null = null,
 ): GameState {
+  const inheritedPowerEnabled = inheritedPowerEnabledFor(mode)
+  const activeMasteryContract = inheritedPowerEnabled ? masteryContract : null
+  const contract = activeMasteryContract ? MASTERY_CONTRACTS[activeMasteryContract] : null
+  const activeLegacy = inheritedPowerEnabled ? meta.legacy : []
   const game: GameState = {
     ...INITIAL_GAME,
     campaignStarted,
     difficulty,
     mode,
     oath,
+    masteryContract: activeMasteryContract,
     runSeed,
     runId,
-    activeLegacy: [...meta.legacy],
+    activeLegacy: [...activeLegacy],
+    renownLedger: createEmptyRenownLedger(),
     heat: Math.min(
       100,
       DIFFICULTIES[difficulty].startingHeat +
-        (meta.legacy.includes('banked-ember') ? 10 : 0) -
-        (oath === 'salvagers' && campaignStarted ? 10 : 0),
+        (activeLegacy.includes('banked-ember') ? 10 : 0) -
+        (oath === 'salvagers' && campaignStarted ? 10 : 0) +
+        (contract?.startingHeatDelta ?? 0),
     ),
-    supplies: DIFFICULTIES[difficulty].startingSupplies + (meta.legacy.includes('supply-cache') ? 20 : 0),
+    supplies: Math.max(
+      0,
+      DIFFICULTIES[difficulty].startingSupplies +
+        (activeLegacy.includes('supply-cache') ? 20 : 0) +
+        (contract?.startingSuppliesDelta ?? 0),
+    ),
     slots: INITIAL_GAME.slots.map((unit) => (unit ? { ...unit } : null)),
     lineup: [...INITIAL_GAME.lineup],
   }
-  if (meta.legacy.includes('veteran-oath') && game.slots[0]) game.slots[0] = { ...game.slots[0], tier: 2 }
+  if (activeLegacy.includes('veteran-oath') && game.slots[0]) game.slots[0] = { ...game.slots[0], tier: 2 }
   return game
+}
+
+function createEmptyRenownLedger(): RenownLedger {
+  return {
+    battle: { total: 0, legacyBonus: 0, contractBonus: 0 },
+    event: { total: 0, legacyBonus: 0, contractBonus: 0 },
+    marchSeal: { total: 0, legacyBonus: 0, contractBonus: 0 },
+  }
+}
+
+function cloneRenownLedger(ledger: RenownLedger): RenownLedger {
+  return {
+    battle: { ...ledger.battle },
+    event: { ...ledger.event },
+    marchSeal: { ...ledger.marchSeal },
+  }
+}
+
+function addRenownLedgerEntry(
+  ledger: RenownLedger,
+  source: keyof RenownLedger,
+  total: number,
+  legacyBonus: number,
+  contractBonus: number,
+): RenownLedger {
+  const current = ledger[source]
+  return {
+    ...ledger,
+    [source]: {
+      total: current.total + total,
+      legacyBonus: current.legacyBonus + legacyBonus,
+      contractBonus: current.contractBonus + contractBonus,
+    },
+  }
+}
+
+function masteryContractScoreFor(inheritedScore: number, masteryContract: MasteryContractId | null): number {
+  return Math.round(inheritedScore * (masteryContract ? MASTERY_CONTRACTS[masteryContract].scoreScale : 1))
+}
+
+function expeditionRenownScaleFor(difficulty: Difficulty, oath: OathId, encounterScale = 1): number {
+  return DIFFICULTIES[difficulty].scoreScale * OATHS[oath].scoreScale * encounterScale
+}
+
+function recoverySuppliesAfterSpend(recoverySupplies: number, spentSupplies: number): number {
+  return Math.max(0, recoverySupplies - Math.max(0, spentSupplies))
+}
+
+function maximumRecoverySuppliesFor(difficulty: Difficulty, defeatCount: number): number {
+  const initialRecovery = DIFFICULTIES[difficulty].defeatSupply
+  const taperedDefeats = Math.min(Math.max(0, defeatCount), Math.ceil((initialRecovery - 2) / 2))
+  return (
+    taperedDefeats * initialRecovery -
+    taperedDefeats * (taperedDefeats - 1) +
+    Math.max(0, defeatCount - taperedDefeats) * 2
+  )
 }
 
 let sharedAudioContext: AudioContext | null = null
@@ -942,13 +1076,6 @@ function cancelHaptics() {
   if (typeof navigator !== 'undefined' && 'vibrate' in navigator) navigator.vibrate(0)
 }
 
-function seededValue(seed: number, salt: number): number {
-  let value = (seed ^ Math.imul(salt + 1, 0x9e3779b1)) >>> 0
-  value = Math.imul(value ^ (value >>> 16), 0x21f0aaad)
-  value = Math.imul(value ^ (value >>> 15), 0x735a2d97)
-  return (value ^ (value >>> 15)) >>> 0
-}
-
 function createRandomSeed(): number {
   if (typeof globalThis.crypto !== 'undefined' && 'getRandomValues' in globalThis.crypto) {
     const value = new Uint32Array(1)
@@ -956,6 +1083,13 @@ function createRandomSeed(): number {
     return (value[0] % 2_147_483_646) + 1
   }
   return (Date.now() % 2_147_483_646) + 1
+}
+
+function createUniqueRunId(meta: MetaState): number {
+  const existingRunIds = new Set(meta.history.map((record) => record.runId))
+  let candidate = createRandomSeed()
+  while (existingRunIds.has(candidate)) candidate = candidate === 2_147_483_647 ? 1 : candidate + 1
+  return candidate
 }
 
 function dailySeedForNow(): number {
@@ -967,26 +1101,6 @@ function dailySeedForNow(): number {
     hash = Math.imul(hash, 16_777_619)
   }
   return ((hash >>> 0) % 2_147_483_646) + 1
-}
-
-function runCodeFor(seed: number): string {
-  return seed.toString(36).toUpperCase().padStart(6, '0').slice(-6)
-}
-
-function seedForRunCode(code: string): number | null {
-  const normalized = code.trim().toUpperCase()
-  if (!/^[0-9A-Z]{1,6}$/.test(normalized)) return null
-  const seed = Number.parseInt(normalized, 36)
-  return isIntegerInRange(seed, 1, 2_147_483_647) ? seed : null
-}
-
-function nightConditionFor(seed: number, day: number): NightCondition & { id: NightConditionId } {
-  const index = seededValue(seed, day * 31 + 7) % NIGHT_CONDITION_IDS.length
-  let id = NIGHT_CONDITION_IDS[index]
-  if (day > 1 && id === nightConditionFor(seed, day - 1).id) {
-    id = NIGHT_CONDITION_IDS[(index + 1) % NIGHT_CONDITION_IDS.length]
-  }
-  return { id, ...NIGHT_CONDITIONS[id] }
 }
 
 function trialsFor(seed: number): TrialId[] {
@@ -1257,6 +1371,73 @@ function specializationBonusFor(
   return 0
 }
 
+function promotionPathFitCopy(
+  specializationId: SpecializationId,
+  lane: number,
+  focusLane: number,
+  order: BattleOrder | null,
+  laneResult: LaneResult | null,
+  heat: number,
+  active: boolean,
+): { status: string; detail: string } {
+  if (lane < 0 || order === null) {
+    return {
+      status: '대기소 · 배치 후 판정',
+      detail: `출전 전선을 정하면 ${SPECIALIZATIONS[specializationId].subtitle} 조건과 실제 전투력을 계산합니다.`,
+    }
+  }
+
+  const status = active ? `현재 ${lane + 1}전선 · 즉시 발동` : `현재 ${lane + 1}전선 · 조건 대기`
+  if (specializationId === 'ember-bulwark') {
+    return {
+      status,
+      detail: active
+        ? '화로 집중과 같은 전선이라 이번 교전부터 보너스가 전부 적용됩니다.'
+        : `화로 집중을 ${lane + 1}전선으로 옮기면 발동합니다. 현재 집중은 ${focusLane + 1}전선입니다.`,
+    }
+  }
+  if (specializationId === 'oath-anchor') {
+    return {
+      status,
+      detail: active
+        ? '현재 방벽 명령과 맞물려 이번 교전부터 발동합니다.'
+        : '이 전선의 명령을 방벽으로 바꾸면 발동합니다.',
+    }
+  }
+  if (specializationId === 'storm-eye') {
+    return {
+      status,
+      detail: active
+        ? '현재 명령이 적 의도를 파훼해 이번 교전부터 발동합니다.'
+        : '적 의도를 파훼하는 명령으로 바꾸면 발동합니다.',
+    }
+  }
+  if (specializationId === 'ghost-string') {
+    return {
+      status,
+      detail: active
+        ? '현재 적에게 병과 우세라 이번 교전부터 발동합니다.'
+        : laneResult?.relation === 'disadvantage'
+          ? '현재는 병과 열세입니다. 도끼 적이 있는 우세 전선에 배치하면 발동합니다.'
+          : '도끼 적을 상대하는 병과 우세 전선에 배치하면 발동합니다.',
+    }
+  }
+  if (specializationId === 'frost-breaker') {
+    return {
+      status,
+      detail: active
+        ? '현재 돌격 명령과 맞물려 이번 교전부터 발동합니다.'
+        : '이 전선의 명령을 돌격으로 바꾸면 발동합니다.',
+    }
+  }
+  return {
+    status,
+    detail: active
+      ? `현재 화로 온기 ${heat}%로 위기 돌파 조건이 발동합니다.`
+      : `화로 온기를 50% 이하로 관리하면 발동합니다. 현재 온기는 ${heat}%입니다.`,
+  }
+}
+
 function resonanceCombatBonusFor(
   lane: number,
   context: BattleContext,
@@ -1475,7 +1656,7 @@ function createBattleResult(game: GameState, focusLane: number): BattleResult | 
   const enemies = createEnemies(game.day, game.runSeed)
   const units = game.lineup.map((unitId) => findUnit(game, unitId))
   if (units.some((unit) => unit === null)) return null
-  const decisionEcho = activeDecisionEchoFor(game.decisions, game.day)
+  const decisionEcho = activeDecisionEchoFor(game.decisions, game.day, game.runSeed)
   const finalVow = game.day === MAX_NIGHTS ? finalVowFor(game.decisions) : null
 
   const context: BattleContext = {
@@ -1525,7 +1706,13 @@ function createBattleResult(game: GameState, focusLane: number): BattleResult | 
   const supplyLegacy = game.activeLegacy.includes('salvagers-instinct') ? 8 : 0
   const supplyRelic = game.relics.includes('salvagers-pack') ? 18 : 0
   const supplyResonance = activeResonances.includes('long-road-ledger') ? 10 : 0
-  const oathSupply = game.oath === 'hearthkeepers' ? -6 : game.oath === 'salvagers' ? 12 : 0
+  const oathSupply = OATHS[game.oath].victorySupplyDelta
+  const victorySupplyBase =
+    22 + game.day * 3 + (story.boss ? 18 : 0) + supplyRelic + supplyResonance + oathSupply + condition.supplyDelta
+  const scaledVictorySupply = (legacyBonus: number) =>
+    Math.max(0, Math.round((victorySupplyBase + legacyBonus) * difficulty.supplyScale) + protocolSupplyBonus)
+  const victorySupplyReward = scaledVictorySupply(supplyLegacy)
+  const legacySupplyBonus = victory ? victorySupplyReward - scaledVictorySupply(0) : 0
   const oathHeatShield = game.oath === 'hearthkeepers' ? 2 : 0
   const resonanceHeatShield = activeResonances.includes('ember-pulse') && game.heat <= 50 ? 2 : 0
   const decisionHeatShield = decisionEcho?.heatShield ?? 0
@@ -1556,12 +1743,14 @@ function createBattleResult(game: GameState, focusLane: number): BattleResult | 
       crownMasteryBaseBonus +
       bossBonus
     : 0
+  const scoreScaleWithoutLegacy = expeditionRenownScaleFor(game.difficulty, game.oath, condition.scoreScale)
+  const scoreScaleWithLegacy = scoreScaleWithoutLegacy * (game.activeLegacy.includes('chroniclers-ink') ? 1.08 : 1)
+  const inheritedScoreReward = Math.round(rawScore * scoreScaleWithLegacy)
+  const scoreReward = masteryContractScoreFor(inheritedScoreReward, game.masteryContract)
+  const legacyScoreBonus = victory ? inheritedScoreReward - Math.round(rawScore * scoreScaleWithoutLegacy) : 0
+  const contractScoreBonus = victory ? scoreReward - inheritedScoreReward : 0
   const scoreScale =
-    difficulty.scoreScale *
-    OATHS[game.oath].scoreScale *
-    condition.scoreScale *
-    (game.activeLegacy.includes('chroniclers-ink') ? 1.08 : 1)
-  const scoreReward = Math.round(rawScore * scoreScale)
+    scoreScaleWithLegacy * (game.masteryContract ? MASTERY_CONTRACTS[game.masteryContract].scoreScale : 1)
   const crownMasteryBonus =
     crownMasteryBaseBonus > 0 ? scoreReward - Math.round((rawScore - crownMasteryBaseBonus) * scoreScale) : 0
   const heatDelta = victory ? Math.min(0, victoryHeat) : Math.min(-6, defeatHeat)
@@ -1573,22 +1762,8 @@ function createBattleResult(game: GameState, focusLane: number): BattleResult | 
     victory,
     wins,
     lanes,
-    supplyReward: victory
-      ? Math.max(
-          0,
-          Math.round(
-            (22 +
-              game.day * 3 +
-              (story.boss ? 18 : 0) +
-              supplyLegacy +
-              supplyRelic +
-              supplyResonance +
-              oathSupply +
-              condition.supplyDelta) *
-              difficulty.supplyScale,
-          ) + protocolSupplyBonus,
-        )
-      : retreatSupplyFor(game.difficulty, game.battles - game.victories),
+    supplyReward: victory ? victorySupplyReward : retreatSupplyFor(game.difficulty, game.battles - game.victories),
+    legacySupplyBonus,
     protocolSupplyBonus,
     protocolScoreBonus,
     crownBreakCount,
@@ -1604,6 +1779,8 @@ function createBattleResult(game: GameState, focusLane: number): BattleResult | 
         ? -7 + condition.moraleDelta
         : -12 + counterCount * 2 + condition.moraleDelta,
     scoreReward,
+    legacyScoreBonus,
+    contractScoreBonus,
     focusLane,
     boss: story.boss,
   }
@@ -1808,20 +1985,86 @@ function isStoredUnit(value: unknown): value is Unit {
   )
 }
 
+const FAILURE_INSIGHT_KEYS = ['lane', 'cause', 'glyph', 'label', 'detail', 'action', 'gap', 'priority'] as const
+const FAILURE_CAUSE_PRIORITIES: Record<FailureInsight['cause'], number> = {
+  crown: 0,
+  doctrine: 1,
+  intent: 2,
+  affinity: 3,
+  tier: 4,
+  power: 5,
+}
+
+function isStoredFailureInsight(value: unknown): value is FailureInsight {
+  if (!isRecord(value) || !hasExactKeys(value, FAILURE_INSIGHT_KEYS)) return false
+  const cause = value.cause
+  if (
+    cause !== 'crown' &&
+    cause !== 'doctrine' &&
+    cause !== 'intent' &&
+    cause !== 'affinity' &&
+    cause !== 'tier' &&
+    cause !== 'power'
+  ) {
+    return false
+  }
+  return (
+    isIntegerInRange(value.lane, 0, 2) &&
+    typeof value.glyph === 'string' &&
+    value.glyph.length > 0 &&
+    value.glyph.length <= 8 &&
+    typeof value.label === 'string' &&
+    value.label.length > 0 &&
+    value.label.length <= 80 &&
+    typeof value.detail === 'string' &&
+    value.detail.length > 0 &&
+    value.detail.length <= 400 &&
+    typeof value.action === 'string' &&
+    value.action.length > 0 &&
+    value.action.length <= 400 &&
+    isIntegerInRange(value.gap, 0) &&
+    value.priority === FAILURE_CAUSE_PRIORITIES[cause]
+  )
+}
+
+function hasValidFailureInsights(value: unknown): value is FailureInsight[] {
+  if (
+    !Array.isArray(value) ||
+    value.length > 3 ||
+    !value.every(isStoredFailureInsight) ||
+    !hasUniqueValues(value.map((insight) => insight.lane))
+  ) {
+    return false
+  }
+  return value.every(
+    (insight, index) =>
+      index === 0 ||
+      value[index - 1].priority < insight.priority ||
+      (value[index - 1].priority === insight.priority && value[index - 1].gap >= insight.gap),
+  )
+}
+
+function cloneFailureInsights(insights: readonly FailureInsight[]): FailureInsight[] {
+  return insights.map((insight) => ({ ...insight }))
+}
+
 const GAME_STATE_KEYS = [
   'campaignStarted',
   'day',
   'difficulty',
   'mode',
   'oath',
+  'masteryContract',
   'runId',
   'runSeed',
   'activeLegacy',
   'heat',
   'supplies',
+  'recoverySupplies',
   'morale',
   'recruits',
   'score',
+  'renownLedger',
   'perfectNights',
   'intentsCountered',
   'unitedVictories',
@@ -1835,14 +2078,49 @@ const GAME_STATE_KEYS = [
   'decisions',
   'legacyAwarded',
   'legacyReward',
+  'failureInsights',
   'slots',
   'lineup',
   'status',
 ] as const
 
+const RENOWN_LEDGER_KEYS = ['battle', 'event', 'marchSeal'] as const
+const RENOWN_LEDGER_ENTRY_KEYS = ['total', 'legacyBonus', 'contractBonus'] as const
+
+function parseStoredRenownLedger(value: unknown): RenownLedger | null {
+  if (!isRecord(value) || !hasExactKeys(value, RENOWN_LEDGER_KEYS)) return null
+
+  const entries = RENOWN_LEDGER_KEYS.map((source) => value[source])
+  if (
+    entries.some(
+      (entry) =>
+        !isRecord(entry) ||
+        !hasExactKeys(entry, RENOWN_LEDGER_ENTRY_KEYS) ||
+        !isIntegerInRange(entry.total, 0) ||
+        !isIntegerInRange(entry.legacyBonus, 0) ||
+        !isIntegerInRange(entry.contractBonus, 0) ||
+        entry.legacyBonus + entry.contractBonus > entry.total,
+    )
+  ) {
+    return null
+  }
+
+  return cloneRenownLedger(value as RenownLedger)
+}
+
 function parseStoredGame(value: unknown): GameState | null {
   if (!isRecord(value) || !hasExactKeys(value, GAME_STATE_KEYS)) return null
   const game = value as GameState
+  const renownLedger = parseStoredRenownLedger(game.renownLedger)
+  const renownTotal = renownLedger
+    ? renownLedger.battle.total + renownLedger.event.total + renownLedger.marchSeal.total
+    : -1
+  const legacyRenownTotal = renownLedger
+    ? renownLedger.battle.legacyBonus + renownLedger.event.legacyBonus + renownLedger.marchSeal.legacyBonus
+    : -1
+  const contractRenownTotal = renownLedger
+    ? renownLedger.battle.contractBonus + renownLedger.event.contractBonus + renownLedger.marchSeal.contractBonus
+    : -1
 
   const hasValidLegacy =
     Array.isArray(game.activeLegacy) &&
@@ -1863,7 +2141,7 @@ function parseStoredGame(value: unknown): GameState | null {
     game.decisions.length <= MAX_NIGHTS &&
     game.decisions.every((decision) => typeof decision === 'string' && decision.length > 0) &&
     hasUniqueValues(game.decisions) &&
-    decisionsMatchCampaign(game.decisions, game.eventResolvedForDay, game.oath)
+    decisionsMatchCampaign(game.decisions, game.eventResolvedForDay, game.oath, game.runSeed)
   const hasValidSlots =
     Array.isArray(game.slots) &&
     game.slots.length === ROSTER_SIZE &&
@@ -1872,6 +2150,7 @@ function parseStoredGame(value: unknown): GameState | null {
     Array.isArray(game.lineup) &&
     game.lineup.length === 3 &&
     game.lineup.every((unitId) => unitId === null || (typeof unitId === 'string' && unitId.length > 0))
+  const hasValidOutcomeInsights = hasValidFailureInsights(game.failureInsights)
 
   if (
     typeof game.campaignStarted !== 'boolean' ||
@@ -1879,14 +2158,23 @@ function parseStoredGame(value: unknown): GameState | null {
     (game.difficulty !== 'story' && game.difficulty !== 'expedition' && game.difficulty !== 'whiteout') ||
     (game.mode !== 'standard' && game.mode !== 'daily' && game.mode !== 'shared') ||
     !OATH_IDS.includes(game.oath) ||
+    (game.masteryContract !== null && !MASTERY_CONTRACT_IDS.includes(game.masteryContract)) ||
+    (game.masteryContract !== null && game.mode !== 'standard') ||
     !isIntegerInRange(game.runId, 1, 2_147_483_647) ||
     !isIntegerInRange(game.runSeed, 1, 2_147_483_647) ||
     !hasValidLegacy ||
+    (!inheritedPowerEnabledFor(game.mode) && game.activeLegacy.length !== 0) ||
     !isIntegerInRange(game.heat, 0, 100) ||
     !isIntegerInRange(game.supplies, 0) ||
+    !isIntegerInRange(game.recoverySupplies, 0, game.supplies) ||
     !isIntegerInRange(game.morale, 0, 100) ||
     !isIntegerInRange(game.recruits, 0) ||
     !isIntegerInRange(game.score, 0) ||
+    renownLedger === null ||
+    renownTotal !== game.score ||
+    (!game.activeLegacy.includes('chroniclers-ink') && legacyRenownTotal !== 0) ||
+    (game.masteryContract === null && contractRenownTotal !== 0) ||
+    (game.masteryContract !== null && game.activeLegacy.length !== LEGACY_IDS.length) ||
     !isIntegerInRange(game.perfectNights, 0, MAX_NIGHTS) ||
     !isIntegerInRange(game.intentsCountered, 0, MAX_NIGHTS * 3) ||
     !isIntegerInRange(game.unitedVictories, 0, MAX_NIGHTS) ||
@@ -1900,11 +2188,14 @@ function parseStoredGame(value: unknown): GameState | null {
     !hasValidDecisions ||
     typeof game.legacyAwarded !== 'boolean' ||
     !isIntegerInRange(game.legacyReward, 0) ||
+    !hasValidOutcomeInsights ||
     !hasValidSlots ||
     !hasValidLineup ||
     (game.status !== 'playing' && game.status !== 'won' && game.status !== 'lost') ||
     (game.status === 'won' && game.day !== MAX_NIGHTS) ||
     (game.status === 'lost' && game.heat !== 0) ||
+    (game.status === 'lost' && game.failureInsights.length === 0) ||
+    (game.status !== 'lost' && game.failureInsights.length !== 0) ||
     (game.status === 'playing' && game.legacyAwarded) ||
     (game.status !== 'playing' && !game.legacyAwarded)
   ) {
@@ -1923,10 +2214,15 @@ function parseStoredGame(value: unknown): GameState | null {
     game.bossesDefeated > game.victories ||
     game.perfectNights > game.victories ||
     game.intentsCountered > game.battles * 3 ||
-    game.unitedVictories > game.victories
+    game.unitedVictories > game.victories ||
+    game.recoverySupplies > maximumRecoverySuppliesFor(game.difficulty, game.battles - game.victories)
   ) {
     return null
   }
+
+  const expectedLegacyReward =
+    game.status === 'playing' ? 0 : legacyRewardBreakdownFor(game, game.status === 'won').total
+  if (game.legacyReward !== expectedLegacyReward) return null
 
   return {
     ...game,
@@ -1934,6 +2230,8 @@ function parseStoredGame(value: unknown): GameState | null {
     relics: [...game.relics],
     orders: [...game.orders],
     decisions: [...game.decisions],
+    failureInsights: cloneFailureInsights(game.failureInsights),
+    renownLedger,
     slots,
     lineup: [...game.lineup],
   }
@@ -1945,10 +2243,14 @@ const EXPEDITION_RECORD_KEYS = [
   'mode',
   'difficulty',
   'oath',
+  'masteryContract',
+  'activeLegacy',
   'ending',
   'won',
   'day',
   'score',
+  'legacyReward',
+  'failureInsights',
   'perfectNights',
   'trialsCompleted',
   'relics',
@@ -1965,25 +2267,47 @@ function isStoredExpeditionRecord(value: unknown): value is ExpeditionRecord {
     record.relics.length <= RELIC_NIGHTS.size &&
     record.relics.every((relicId) => RELIC_IDS.includes(relicId)) &&
     hasUniqueValues(record.relics)
+  const hasValidActiveLegacy =
+    Array.isArray(record.activeLegacy) &&
+    record.activeLegacy.length <= LEGACY_IDS.length &&
+    record.activeLegacy.every((legacyId) => LEGACY_IDS.includes(legacyId)) &&
+    hasUniqueValues(record.activeLegacy)
+  const hasValidOutcomeInsights = hasValidFailureInsights(record.failureInsights)
   return (
     isIntegerInRange(record.runId, 1, 2_147_483_647) &&
     isIntegerInRange(record.seed, 1, 2_147_483_647) &&
     (record.mode === 'standard' || record.mode === 'daily' || record.mode === 'shared') &&
     (record.difficulty === 'story' || record.difficulty === 'expedition' || record.difficulty === 'whiteout') &&
     OATH_IDS.includes(record.oath) &&
+    (record.masteryContract === null || MASTERY_CONTRACT_IDS.includes(record.masteryContract)) &&
+    (record.masteryContract === null || record.mode === 'standard') &&
+    hasValidActiveLegacy &&
+    (record.mode === 'standard' || record.activeLegacy.length === 0) &&
+    (record.masteryContract === null || record.activeLegacy.length === LEGACY_IDS.length) &&
     ENDING_IDS.includes(record.ending) &&
     typeof record.won === 'boolean' &&
     hasMatchingEnding &&
     isIntegerInRange(record.day, 1, MAX_NIGHTS) &&
     (!record.won || record.day === MAX_NIGHTS) &&
     isIntegerInRange(record.score, 0) &&
+    isIntegerInRange(record.legacyReward, 0) &&
+    hasValidOutcomeInsights &&
+    (record.won ? record.failureInsights.length === 0 : record.failureInsights.length > 0) &&
     isIntegerInRange(record.perfectNights, 0, record.day) &&
     isIntegerInRange(record.trialsCompleted, 0, 3) &&
     hasValidRelics
   )
 }
 
-const META_STATE_KEYS = ['embers', 'completedRuns', 'legacy', 'achievements', 'discoveredRelics', 'history'] as const
+const META_STATE_KEYS = [
+  'embers',
+  'completedRuns',
+  'legacy',
+  'masteredContracts',
+  'achievements',
+  'discoveredRelics',
+  'history',
+] as const
 
 function parseStoredMeta(value: unknown): MetaState | null {
   if (!isRecord(value) || !hasExactKeys(value, META_STATE_KEYS)) return null
@@ -1998,6 +2322,11 @@ function parseStoredMeta(value: unknown): MetaState | null {
     meta.achievements.length <= ACHIEVEMENT_IDS.length &&
     meta.achievements.every((achievement) => ACHIEVEMENT_IDS.includes(achievement)) &&
     hasUniqueValues(meta.achievements)
+  const hasValidMasteredContracts =
+    Array.isArray(meta.masteredContracts) &&
+    meta.masteredContracts.length <= MASTERY_CONTRACT_IDS.length &&
+    meta.masteredContracts.every((contractId) => MASTERY_CONTRACT_IDS.includes(contractId)) &&
+    hasUniqueValues(meta.masteredContracts)
   const hasValidRelics =
     Array.isArray(meta.discoveredRelics) &&
     meta.discoveredRelics.length <= RELIC_IDS.length &&
@@ -2013,6 +2342,7 @@ function parseStoredMeta(value: unknown): MetaState | null {
     !isIntegerInRange(meta.embers, 0) ||
     !isIntegerInRange(meta.completedRuns, 0) ||
     !hasValidLegacy ||
+    !hasValidMasteredContracts ||
     !hasValidAchievements ||
     !hasValidRelics ||
     !hasValidHistory
@@ -2020,14 +2350,42 @@ function parseStoredMeta(value: unknown): MetaState | null {
     return null
   }
 
+  const mastery = legacyMasteryFor(meta)
+  if (
+    meta.completedRuns < meta.history.filter((record) => record.won).length ||
+    (meta.masteredContracts.length > 0 && mastery === null) ||
+    meta.masteredContracts.some(
+      (contractId) => mastery === null || mastery.level < MASTERY_CONTRACTS[contractId].requiredMasteryLevel,
+    ) ||
+    meta.history.some(
+      (record) =>
+        record.masteryContract !== null &&
+        (mastery === null || mastery.level < MASTERY_CONTRACTS[record.masteryContract].requiredMasteryLevel),
+    ) ||
+    meta.history.some((record) => record.activeLegacy.some((legacyId) => !meta.legacy.includes(legacyId))) ||
+    meta.history.some((record) => record.relics.some((relicId) => !meta.discoveredRelics.includes(relicId))) ||
+    meta.history.some(
+      (record) =>
+        record.won && record.masteryContract !== null && !meta.masteredContracts.includes(record.masteryContract),
+    )
+  ) {
+    return null
+  }
+
   return {
     ...meta,
     legacy: [...meta.legacy],
+    masteredContracts: [...meta.masteredContracts],
     achievements: [
       ...new Set([...meta.achievements, ...meta.history.map((record) => ENDING_ACHIEVEMENTS[record.ending])]),
     ],
     discoveredRelics: [...meta.discoveredRelics],
-    history: meta.history.map((record) => ({ ...record, relics: [...record.relics] })),
+    history: meta.history.map((record) => ({
+      ...record,
+      activeLegacy: [...record.activeLegacy],
+      failureInsights: cloneFailureInsights(record.failureInsights),
+      relics: [...record.relics],
+    })),
   }
 }
 
@@ -2041,8 +2399,13 @@ function parseGameBackup(value: unknown): GameBackup | null {
   if (
     game === null ||
     meta === null ||
+    !masteryContractAvailableFor(game.masteryContract, meta) ||
+    game.activeLegacy.some((legacyId) => !meta.legacy.includes(legacyId)) ||
+    game.relics.some((relicId) => !meta.discoveredRelics.includes(relicId)) ||
+    !gameHistoryMatches(game, meta, false) ||
     settings === null ||
     !isIntegerInRange(value.bestScore, 0) ||
+    value.bestScore < highestRecordedScoreFor(game, meta) ||
     (value.guide !== null && value.guide !== GUIDE_SEEN && value.guide !== GUIDE_REPLAY)
   ) {
     return null
@@ -2054,6 +2417,12 @@ function parseGameBackup(value: unknown): GameBackup | null {
     bestScore: value.bestScore,
     guide: value.guide,
   }
+}
+
+function masteryContractAvailableFor(contractId: MasteryContractId | null, meta: MetaState): boolean {
+  if (contractId === null) return true
+  const mastery = legacyMasteryFor(meta)
+  return mastery !== null && mastery.level >= MASTERY_CONTRACTS[contractId].requiredMasteryLevel
 }
 
 type InterruptedRestoreRecovery = 'none' | 'completed' | 'reset'
@@ -2084,6 +2453,12 @@ function readBestScore(): number {
   return score
 }
 
+function highestRecordedScoreFor(game: GameState | null, meta: MetaState): number {
+  let highestScore = game && game.status !== 'playing' ? game.score : 0
+  for (const record of meta.history) highestScore = Math.max(highestScore, record.score)
+  return highestScore
+}
+
 function restoreSavedBattle(value: unknown, game: GameState): BattleResult | null {
   if (
     !isRecord(value) ||
@@ -2111,6 +2486,21 @@ function restoreSavedBattle(value: unknown, game: GameState): BattleResult | nul
 function findUnit(game: GameState, id: string | null): Unit | null {
   if (!id) return null
   return game.slots.find((unit) => unit?.id === id) ?? null
+}
+
+function lineupAfterDeployment(
+  lineup: readonly (string | null)[],
+  unitId: string,
+  targetLane: number,
+): Array<string | null> {
+  const nextLineup = [...lineup]
+  const sourceLane = nextLineup.indexOf(unitId)
+  if (sourceLane === targetLane) return nextLineup
+
+  const targetUnitId = nextLineup[targetLane] ?? null
+  if (sourceLane >= 0) nextLineup[sourceLane] = targetUnitId
+  nextLineup[targetLane] = unitId
+  return nextLineup
 }
 
 function tutorialCounterCountFor(game: GameState): number {
@@ -2174,13 +2564,43 @@ function commandLimitFor(
   )
 }
 
-function legacyRewardFor(game: GameState, won: boolean): number {
-  const difficultyBonus = game.difficulty === 'whiteout' ? 7 : game.difficulty === 'expedition' ? 3 : 0
-  const trialReward = completedTrialsFor(game, won).reduce((total, trialId) => total + TRIALS[trialId].reward, 0)
-  return Math.max(
-    2,
-    Math.floor(game.score / 4_500) + game.bossesDefeated * 2 + difficultyBonus + (won ? 8 : 0) + trialReward,
-  )
+function eventScoreRewardFor(
+  choice: EventChoice,
+  difficulty: Difficulty,
+  oath: OathId,
+  legacy: readonly LegacyId[],
+  masteryContract: MasteryContractId | null,
+) {
+  const baseScore = choice.score ?? 0
+  const expeditionScale = expeditionRenownScaleFor(difficulty, oath)
+  const expeditionScore = Math.round(baseScore * expeditionScale)
+  const inheritedScore = Math.round(baseScore * expeditionScale * (legacy.includes('chroniclers-ink') ? 1.08 : 1))
+  const scoreGain = masteryContractScoreFor(inheritedScore, masteryContract)
+  return {
+    scoreGain,
+    legacyScoreBonus: inheritedScore - expeditionScore,
+    contractScoreBonus: scoreGain - inheritedScore,
+    masteryContract,
+  }
+}
+
+function legacyRewardBreakdownFor(game: GameState, won: boolean): LegacyRewardBreakdown {
+  const renown = Math.floor(game.score / 4_500)
+  const crowns = game.bossesDefeated * 2
+  const trials = completedTrialsFor(game, won).reduce((total, trialId) => total + TRIALS[trialId].reward, 0)
+  const protocol = won ? (game.difficulty === 'whiteout' ? 7 : game.difficulty === 'expedition' ? 3 : 0) : 0
+  const dawn = won ? 8 : 0
+  const earned = renown + crowns + trials + protocol + dawn
+  const recovery = !won && earned === 0 && game.victories > 0 ? 1 : 0
+  return {
+    renown,
+    crowns,
+    trials,
+    protocol,
+    dawn,
+    recovery,
+    total: earned + recovery,
+  }
 }
 
 function rankEntryForScore(score: number) {
@@ -2236,6 +2656,65 @@ function crownApproachMilestone(runId: number, night: number, mechanic: BossMech
   }
 }
 
+function legacyLoadoutMilestone(game: GameState): MilestoneNotice | null {
+  if (game.activeLegacy.length === 0) return null
+  const names = game.activeLegacy.map((legacyId) => LEGACY_UPGRADES[legacyId].name)
+  const visibleNames = names.slice(0, 3).join(' · ')
+  const remaining = names.length - 3
+  return {
+    id: `legacy-loadout-${game.runId}`,
+    kind: 'legacy',
+    glyph: game.activeLegacy.length === 1 ? LEGACY_UPGRADES[game.activeLegacy[0]].glyph : '✦',
+    kicker: 'EXPEDITION LEGACY LOADED',
+    title: `계승 유산 ${game.activeLegacy.length}개 적용`,
+    description: `${visibleNames}${remaining > 0 ? ` 외 ${remaining}개` : ''}`,
+    detail: 'DAY 01 · 현재 원정에 고정 · 첫 선택부터 적용',
+  }
+}
+
+function legacyMasteryMilestoneFor(previousMeta: MetaState, nextMeta: MetaState): MilestoneNotice | null {
+  const previousMastery = legacyMasteryFor(previousMeta)
+  const nextMastery = legacyMasteryFor(nextMeta)
+  if (!nextMastery || (previousMastery && nextMastery.level <= previousMastery.level)) return null
+  const unlocked = previousMastery === null
+  const levelsRaised = nextMastery.level - (previousMastery?.level ?? 0)
+  const previousLevel = previousMastery?.level ?? -1
+  const unlockedContracts = MASTERY_CONTRACT_IDS.filter((contractId) => {
+    const requiredLevel = MASTERY_CONTRACTS[contractId].requiredMasteryLevel
+    return requiredLevel > previousLevel && requiredLevel <= nextMastery.level
+  })
+  const contractUnlockDetail =
+    unlockedContracts.length > 0
+      ? ` · 영원 계약 ${unlockedContracts.map((contractId) => MASTERY_CONTRACTS[contractId].name).join(' · ')} 개방`
+      : ''
+  return {
+    id: `legacy-mastery-${nextMastery.level}-${nextMeta.completedRuns}-${nextMeta.embers}`,
+    kind: 'legacy',
+    glyph: nextMastery.glyph,
+    kicker: unlocked ? 'EVERLASTING LEGACY UNLOCKED' : 'EVERLASTING LEGACY RAISED',
+    title: unlocked && nextMastery.level === 0 ? '영원 인장 트랙 개방' : nextMastery.title,
+    description: unlocked
+      ? '여섯 유산을 완성했습니다. 이제 남는 불씨 30마다 전투력과 무관한 영구 명예 인장이 이어집니다.'
+      : `${nextMastery.sealLabel} · ${nextMastery.title}`,
+    detail: unlocked
+      ? `${nextMastery.sealLabel} · ${nextMastery.nextTitle}까지 불씨 ${nextMastery.remaining}${contractUnlockDetail}`
+      : `영원 인장 ${previousMastery.level} → ${nextMastery.level}${levelsRaised > 1 ? ` · 한 번에 ${levelsRaised}단계 상승` : ''}${contractUnlockDetail}`,
+  }
+}
+
+function masteryContractMilestone(contractId: MasteryContractId): MilestoneNotice {
+  const contract = MASTERY_CONTRACTS[contractId]
+  return {
+    id: `mastery-contract-${contractId}`,
+    kind: 'legacy',
+    glyph: contract.glyph,
+    kicker: 'ETERNAL COVENANT MASTERED',
+    title: `${contract.name} 정복`,
+    description: `${contract.burden}을 끝까지 지키고 새벽에 도달했습니다.`,
+    detail: `${contract.reward} · 영원 계약 숙련 기록에 영구 보존`,
+  }
+}
+
 function createExpeditionRecord(game: GameState, won: boolean): ExpeditionRecord {
   return {
     runId: game.runId,
@@ -2243,14 +2722,54 @@ function createExpeditionRecord(game: GameState, won: boolean): ExpeditionRecord
     mode: game.mode,
     difficulty: game.difficulty,
     oath: game.oath,
+    masteryContract: game.masteryContract,
+    activeLegacy: [...game.activeLegacy],
     ending: endingFor(game, won),
     won,
     day: game.day,
     score: game.score,
+    legacyReward: game.legacyReward,
+    failureInsights: cloneFailureInsights(game.failureInsights),
     perfectNights: game.perfectNights,
     trialsCompleted: completedTrialsFor(game, won).length,
     relics: [...game.relics],
   }
+}
+
+function expeditionRecordMatchesGame(record: ExpeditionRecord, game: GameState): boolean {
+  if (game.status === 'playing') return false
+  const expected = createExpeditionRecord(game, game.status === 'won')
+  return (
+    record.runId === expected.runId &&
+    record.seed === expected.seed &&
+    record.mode === expected.mode &&
+    record.difficulty === expected.difficulty &&
+    record.oath === expected.oath &&
+    record.masteryContract === expected.masteryContract &&
+    record.activeLegacy.length === expected.activeLegacy.length &&
+    record.activeLegacy.every((legacyId, index) => legacyId === expected.activeLegacy[index]) &&
+    record.ending === expected.ending &&
+    record.won === expected.won &&
+    record.day === expected.day &&
+    record.score === expected.score &&
+    record.legacyReward === expected.legacyReward &&
+    record.failureInsights.length === expected.failureInsights.length &&
+    record.failureInsights.every((insight, index) => {
+      const expectedInsight = expected.failureInsights[index]
+      return FAILURE_INSIGHT_KEYS.every((key) => insight[key] === expectedInsight[key])
+    }) &&
+    record.perfectNights === expected.perfectNights &&
+    record.trialsCompleted === expected.trialsCompleted &&
+    record.relics.length === expected.relics.length &&
+    record.relics.every((relicId, index) => relicId === expected.relics[index])
+  )
+}
+
+function gameHistoryMatches(game: GameState, meta: MetaState, allowMissingTerminalRecord: boolean): boolean {
+  const matchingRecord = meta.history.find((record) => record.runId === game.runId)
+  if (game.status === 'playing') return matchingRecord === undefined
+  if (!matchingRecord) return allowMissingTerminalRecord
+  return expeditionRecordMatchesGame(matchingRecord, game)
 }
 
 function cloneGameState(game: GameState): GameState {
@@ -2260,6 +2779,8 @@ function cloneGameState(game: GameState): GameState {
     relics: [...game.relics],
     orders: [...game.orders],
     decisions: [...game.decisions],
+    failureInsights: cloneFailureInsights(game.failureInsights),
+    renownLedger: cloneRenownLedger(game.renownLedger),
     slots: game.slots.map((unit) => (unit ? { ...unit } : null)),
     lineup: [...game.lineup],
   }
@@ -2271,12 +2792,19 @@ export default function Game() {
   const [phase, setPhase] = useState<Phase>('event')
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null)
   const [battleResult, setBattleResult] = useState<BattleResult | null>(null)
+  const [riskDepartureConfirmation, setRiskDepartureConfirmation] = useState<{
+    game: GameState
+    focusLane: number
+  } | null>(null)
   const [focusLane, setFocusLane] = useState(0)
   const [showTitle, setShowTitle] = useState(true)
   const [showDifficulty, setShowDifficulty] = useState(false)
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | null>(null)
   const [setupMode, setSetupMode] = useState<RunMode>('standard')
+  const [selectedMasteryContract, setSelectedMasteryContract] = useState<MasteryContractId | null>(null)
   const [sharedCode, setSharedCode] = useState('')
+  const [incomingRiftCode, setIncomingRiftCode] = useState<string | null>(null)
+  const [pendingReplacementRiftCode, setPendingReplacementRiftCode] = useState<string | null>(null)
   const [showArchive, setShowArchive] = useState(false)
   const [archiveTab, setArchiveTab] = useState<ArchiveTab>('map')
   const [showGuide, setShowGuide] = useState(false)
@@ -2297,6 +2825,7 @@ export default function Game() {
   const [storageProtection, setStorageProtection] = useState<StorageProtection>('checking')
   const [bestScore, setBestScore] = useState(0)
   const [campUndo, setCampUndo] = useState<CampUndo | null>(null)
+  const [growthCeremony, setGrowthCeremony] = useState<GrowthCeremony | null>(null)
   const [marchSealCeremony, setMarchSealCeremony] = useState<MarchSealCeremony | null>(null)
   const [pendingLegacyPurchase, setPendingLegacyPurchase] = useState<LegacyId | null>(null)
   const [sessionAccess, setSessionAccess] = useState<SessionAccess>('checking')
@@ -2310,6 +2839,7 @@ export default function Game() {
   const dragPosition = useRef({ x: 0, y: 0 })
   const animationFrames = useRef(new Set<number>())
   const toastTimer = useRef<number | null>(null)
+  const growthCeremonyTimer = useRef<number | null>(null)
   const marchSealTimer = useRef<number | null>(null)
   const milestoneSoundId = useRef<string | null>(null)
   const queuedMilestoneIds = useRef(new Set<string>())
@@ -2343,7 +2873,7 @@ export default function Game() {
           : phase === 'event' || phase === 'interlude' || game.heat <= 25
             ? 'whiteout'
             : 'hearth'
-  const currentEvent = CAMPAIGN_EVENTS[game.day - 1]
+  const currentEvent = campaignEventFor(game.runSeed, game.day)
   const oathAvailableEventChoices = currentEvent.choices.filter(
     (choice) => !choice.oathOnly || choice.oathOnly === game.oath,
   )
@@ -2379,7 +2909,7 @@ export default function Game() {
   const oathInterventionPath = oathChronicle.stages.map((stage) => {
     const choiceId = game.decisions[stage.day - 1]
     const choice = choiceId
-      ? CAMPAIGN_EVENTS[stage.day - 1]?.choices.find((candidate) => candidate.id === choiceId)
+      ? campaignEventFor(game.runSeed, stage.day).choices.find((candidate) => candidate.id === choiceId)
       : null
     const state =
       choice?.oathOnly === game.oath
@@ -2394,7 +2924,7 @@ export default function Game() {
     return { stage, choice, state }
   })
   const oathInterventionCount = oathInterventionCountFor(game.oath, game.decisions)
-  const activeDecisionEcho = activeDecisionEchoFor(game.decisions, game.day)
+  const activeDecisionEcho = activeDecisionEchoFor(game.decisions, game.day, game.runSeed)
   const endingFinalVow = finalVowFor(game.decisions)
   const activeFinalVow = game.day === MAX_NIGHTS ? endingFinalVow : null
   const activeFinalMarchImprints = finalMarchImprintsFor(game.decisions, game.day)
@@ -2402,7 +2932,7 @@ export default function Game() {
     const sourceIndex = index + 8
     const choiceId = game.decisions[sourceIndex]
     const choice = choiceId
-      ? CAMPAIGN_EVENTS[sourceIndex]?.choices.find((candidate) => candidate.id === choiceId)
+      ? campaignEventFor(game.runSeed, sourceIndex + 1).choices.find((candidate) => candidate.id === choiceId)
       : null
     const imprint = choice?.marchImprint ? FINAL_MARCH_IMPRINTS[choice.marchImprint] : null
     const state = imprint ? 'sealed' : gate.night === game.day ? 'current' : gate.night < game.day ? 'missed' : 'ahead'
@@ -2493,8 +3023,6 @@ export default function Game() {
   const activeResonances = activeResonancesFor(game.relics)
   const unownedLegacyIds = LEGACY_IDS.filter((legacyId) => !meta.legacy.includes(legacyId))
   const affordableLegacyIds = unownedLegacyIds.filter((legacyId) => LEGACY_UPGRADES[legacyId].cost <= meta.embers)
-  const nextLegacyId =
-    [...unownedLegacyIds].sort((left, right) => LEGACY_UPGRADES[left].cost - LEGACY_UPGRADES[right].cost)[0] ?? null
   const resonanceStatuses = RESONANCE_IDS.map((resonanceId) => ({
     id: resonanceId,
     owned: RESONANCES[resonanceId].requirements.filter((relicId) => game.relics.includes(relicId)).length,
@@ -2523,6 +3051,54 @@ export default function Game() {
   const stokeHeatGain = Math.min(stokeHeat, Math.max(0, 100 - game.heat))
   const stokeCost = stokeHeatGain > 0 ? Math.max(1, Math.ceil((stokeBaseCost * stokeHeatGain) / stokeHeat)) : 0
   const rosterCount = game.slots.filter(Boolean).length
+  const campMergeWarmth =
+    (game.relics.includes('living-ember') ? 7 : 3) +
+    (game.oath === 'hearthkeepers' ? 3 : 0) +
+    DIFFICULTIES[game.difficulty].mergeHeatBonus
+  const campMergeHeatGain = Math.min(100, game.heat + campMergeWarmth) - game.heat
+  const rosterMergeCounts = new Map<string, number>()
+  for (const unit of game.slots) {
+    if (!unit) continue
+    const key = `${unit.kind}:${unit.tier}`
+    rosterMergeCounts.set(key, (rosterMergeCounts.get(key) ?? 0) + 1)
+  }
+  let mergeReadyPairCount = 0
+  if (rosterCount > 3) {
+    for (const [key, count] of rosterMergeCounts) {
+      const tier = Number(key.split(':')[1])
+      if (tier < MAX_TIER) mergeReadyPairCount += Math.floor(count / 2)
+    }
+    mergeReadyPairCount = Math.min(mergeReadyPairCount, rosterCount - 3)
+  }
+  const mergeReadinessByUnit = new Map<string, RosterMergeReadiness>()
+  if (rosterCount > 3) {
+    for (const unit of game.slots) {
+      if (!unit || unit.tier >= MAX_TIER) continue
+      const partnerCount = (rosterMergeCounts.get(`${unit.kind}:${unit.tier}`) ?? 0) - 1
+      if (partnerCount < 1) continue
+      const toTier = unit.tier + 1
+      mergeReadinessByUnit.set(unit.id, {
+        partnerCount,
+        fromTier: unit.tier,
+        toTier,
+        powerBefore: PLAYER_POWER[unit.tier],
+        powerAfter: PLAYER_POWER[toTier],
+        heatGain: campMergeHeatGain,
+        opensPromotion: toTier === 3,
+        specializationMayReset:
+          unit.tier === 3 &&
+          game.slots.some(
+            (candidate) =>
+              candidate !== null &&
+              candidate.id !== unit.id &&
+              candidate.kind === unit.kind &&
+              candidate.tier === unit.tier &&
+              candidate.specialization !== unit.specialization,
+          ),
+        chainReady: rosterCount > 4 && toTier < MAX_TIER && (rosterMergeCounts.get(`${unit.kind}:${toTier}`) ?? 0) > 0,
+      })
+    }
+  }
   const veteranCount = game.slots.filter((unit) => unit && unit.tier >= 3).length
   const eventDaysToCrown = Math.max(0, nextCrownNight - game.day)
   const eventCrownHeatFloor = eventDaysToCrown === 0 ? 50 : eventDaysToCrown === 1 ? 42 : 30
@@ -2537,10 +3113,16 @@ export default function Game() {
     const recruitConverts = Boolean(choice.recruit && rosterCount >= ROSTER_SIZE)
     const upgradeConverts = Boolean(choice.upgrade && !hasUpgradeableSurvivor)
     const conversionMorale = (recruitConverts ? 5 : 0) + (upgradeConverts ? 5 : 0)
+    const scoreReward = eventScoreRewardFor(choice, game.difficulty, game.oath, game.activeLegacy, game.masteryContract)
     const recruitsSurvivor = Boolean(choice.recruit && !recruitConverts)
     const projectedSupplies = Math.max(0, game.supplies + (choice.supplies ?? 0))
     const projectedHeat = Math.max(1, Math.min(100, game.heat + (choice.heat ?? 0)))
     const projectedMorale = Math.max(0, Math.min(100, game.morale + (choice.morale ?? 0) + conversionMorale))
+    const projectedRecoverySupplies = recoverySuppliesAfterSpend(
+      game.recoverySupplies,
+      Math.max(0, -(choice.supplies ?? 0)),
+    )
+    const recoverySuppliesSpent = game.recoverySupplies - projectedRecoverySupplies
     const projectedRosterCount = Math.min(ROSTER_SIZE, rosterCount + (recruitsSurvivor ? 1 : 0))
     const projectedRecruitCount = game.recruits + (recruitsSurvivor ? 1 : 0)
     const projectedRecruitCost = recruitCostForCount(projectedRecruitCount)
@@ -2568,8 +3150,11 @@ export default function Game() {
         label: '보급 부족',
         detail: `선택하려면 ◈ ${(choice.requiresSupplies ?? 0) - game.supplies}이 더 필요합니다.`,
         projectedSupplies,
+        projectedRecoverySupplies,
+        recoverySuppliesSpent,
         projectedHeat,
         projectedMorale,
+        ...scoreReward,
         conversionMorale,
       }
     }
@@ -2585,8 +3170,11 @@ export default function Game() {
           ? `온기 ${projectedHeat}% · 화로 1회 예비까지 ◈ ${stokeBaseCost - projectedSupplies} 부족합니다.`
           : `사기 ${projectedMorale} · 다음 패배가 원정대를 크게 흔들 수 있습니다.`,
         projectedSupplies,
+        projectedRecoverySupplies,
+        recoverySuppliesSpent,
         projectedHeat,
         projectedMorale,
+        ...scoreReward,
         conversionMorale,
       }
     }
@@ -2604,8 +3192,11 @@ export default function Game() {
         label: '압박 구간',
         detail,
         projectedSupplies,
+        projectedRecoverySupplies,
+        recoverySuppliesSpent,
         projectedHeat,
         projectedMorale,
+        ...scoreReward,
         conversionMorale,
       }
     }
@@ -2622,8 +3213,11 @@ export default function Game() {
           ? '왕관 경보선과 화로 1회 예비를 모두 여유 있게 넘깁니다.'
           : `온기 경보선 ${eventCrownHeatFloor}% 기준으로 다음 야영을 운용할 수 있습니다.`,
       projectedSupplies,
+      projectedRecoverySupplies,
+      recoverySuppliesSpent,
       projectedHeat,
       projectedMorale,
+      ...scoreReward,
       conversionMorale,
     }
   })
@@ -2639,11 +3233,24 @@ export default function Game() {
   const unfinishedEndingTrial = [...trialStatuses]
     .filter((trial) => !trial.completed)
     .sort((left, right) => right.current / right.target - left.current / left.target)[0]
-  const recentEndingPosition = Math.min(
-    Math.max(1, meta.history.length),
-    1 + meta.history.filter((record) => record.runId !== game.runId && record.score > game.score).length,
+  const endingComparisonKey = expeditionComparisonKey({
+    seed: game.runSeed,
+    difficulty: game.difficulty,
+    oath: game.oath,
+    masteryContract: game.masteryContract,
+    activeLegacy: game.activeLegacy,
+  })
+  const comparableEndingRecords = meta.history.filter(
+    (record) => expeditionComparisonKey(record) === endingComparisonKey,
   )
-  const endingIsPersonalBest = game.score > 0 && game.score >= bestScore
+  const endingComparisonCount = Math.max(1, comparableEndingRecords.length)
+  const endingComparisonPosition =
+    1 + comparableEndingRecords.filter((record) => record.runId !== game.runId && record.score > game.score).length
+  const endingComparisonBestScore = comparableEndingRecords.reduce(
+    (highestScore, record) => Math.max(highestScore, record.score),
+    game.score,
+  )
+  const endingIsComparisonBest = game.score > 0 && game.score >= endingComparisonBestScore
   const endingPathSeal = (() => {
     if (!endingWon) {
       return {
@@ -2751,18 +3358,38 @@ export default function Game() {
       ? 'expedition'
       : 'whiteout'
     : game.difficulty
+  const legacyRecommendationPool = affordableLegacyIds.length > 0 ? affordableLegacyIds : unownedLegacyIds
+  const recommendedLegacyId =
+    LEGACY_RECOMMENDATION_ORDER[game.status === 'lost' ? 'story' : nextChallengeDifficulty].find((legacyId) =>
+      legacyRecommendationPool.includes(legacyId),
+    ) ?? null
+  const endingLegacyRewardBreakdown = legacyRewardBreakdownFor(game, endingWon)
+  const endingLegacyMastery = legacyMasteryFor(meta)
+  const nextUnmasteredContract = endingLegacyMastery
+    ? (MASTERY_CONTRACT_IDS.find(
+        (contractId) =>
+          endingLegacyMastery.level >= MASTERY_CONTRACTS[contractId].requiredMasteryLevel &&
+          !meta.masteredContracts.includes(contractId),
+      ) ?? null)
+    : null
+  const nextLockedContract = endingLegacyMastery
+    ? (MASTERY_CONTRACT_IDS.find(
+        (contractId) => endingLegacyMastery.level < MASTERY_CONTRACTS[contractId].requiredMasteryLevel,
+      ) ?? null)
+    : null
   const endingMasteryDirective = (() => {
     if (!endingWon) {
       const clearedNights = Math.max(0, game.day - 1)
+      const primaryFailure = game.failureInsights[0]
       return {
         state: 'rematch',
-        glyph: '↺',
-        kicker: 'REMATCH DIRECTIVE',
-        title: `${game.day}일차에서 같은 균열 복구`,
-        description: `${DIFFICULTIES[game.difficulty].name} · ${OATHS[game.oath].name}과 원정 코드 ${runCodeFor(game.runSeed)}를 그대로 재현해 배운 해법을 즉시 시험할 수 있습니다.`,
+        glyph: primaryFailure?.glyph ?? '↺',
+        kicker: 'VERIFIED REMATCH DIRECTIVE',
+        title: `DAY ${String(game.day).padStart(2, '0')} 패인을 고쳐 동일 균열 재도전`,
+        description: `${primaryFailure ? `${primaryFailure.label}: ${primaryFailure.action} ` : ''}${DIFFICULTIES[game.difficulty].name} · ${OATHS[game.oath].name}과 원정 코드 ${runCodeFor(game.runSeed)}를 유지한 채 처음부터 다시 출정합니다.`,
         progress: Math.round((clearedNights / MAX_NIGHTS) * 100),
         progressLabel: `${clearedNights} / ${MAX_NIGHTS} 밤 돌파`,
-        target: `남은 ${MAX_NIGHTS - clearedNights}밤`,
+        target: `DAY ${String(game.day).padStart(2, '0')} 처방`,
       }
     }
     if (nextWinningEndingId && nextWinningEndingRoute) {
@@ -2825,12 +3452,41 @@ export default function Game() {
         target: `+${trial.reward} 불씨`,
       }
     }
+    if (nextUnmasteredContract) {
+      const contract = MASTERY_CONTRACTS[nextUnmasteredContract]
+      return {
+        state: 'contract',
+        glyph: contract.glyph,
+        kicker: 'ETERNAL COVENANT MASTERY',
+        title: `${contract.name} 계약 정복`,
+        description: `${contract.burden}을 원정 끝까지 지키고 새벽에 도달하세요. ${contract.reward}은 기본·유산 명성과 분리해 결산됩니다. 표준 원정 설정에서 선택할 수 있습니다.`,
+        progress: Math.round((meta.masteredContracts.length / MASTERY_CONTRACT_IDS.length) * 100),
+        progressLabel: `영원 계약 정복 ${meta.masteredContracts.length} / ${MASTERY_CONTRACT_IDS.length}`,
+        target: contract.reward,
+      }
+    }
+    if (nextLockedContract && endingLegacyMastery) {
+      const contract = MASTERY_CONTRACTS[nextLockedContract]
+      return {
+        state: 'contract',
+        glyph: contract.glyph,
+        kicker: 'NEXT ETERNAL SEAL',
+        title: `영원 인장 ${contract.requiredMasteryLevel} · ${contract.name} 개방`,
+        description: `완성한 유산 뒤에 불씨 ${endingLegacyMastery.remaining}을 더 모으면 ${contract.burden}과 ${contract.reward}을 맞바꾸는 다음 계약이 열립니다.`,
+        progress: endingLegacyMastery.progress,
+        progressLabel: `불씨 ${endingLegacyMastery.current} / ${endingLegacyMastery.target}`,
+        target: `+${endingLegacyMastery.remaining} 불씨`,
+      }
+    }
     return {
       state: 'legend',
       glyph: '☼',
       kicker: 'LEGENDARY EXPEDITION COMPLETE',
       title: '이 원정의 모든 숙련 목표 달성',
-      description: '다른 서약과 오늘의 균열에서 완전히 새로운 지휘 기록을 남기고 같은 새벽에 도달해 보세요.',
+      description:
+        meta.masteredContracts.length === MASTERY_CONTRACT_IDS.length
+          ? '세 영원 계약까지 모두 정복했습니다. 다른 서약과 계약 조합으로 완전히 새로운 최고 기록을 남겨 보세요.'
+          : '다른 서약과 오늘의 균열에서 완전히 새로운 지휘 기록을 남기고 같은 새벽에 도달해 보세요.',
       progress: 100,
       progressLabel: 'S 등급 · 백색 종말 · 개인 과업 완수',
       target: '새 전설',
@@ -2847,8 +3503,29 @@ export default function Game() {
   const lineupTierTotal = lineupUnits.reduce((total, unit) => total + (unit?.tier ?? 0), 0)
   const baseCommandLimit = commandLimitFor(game.morale, game.activeLegacy, game.oath, currentCondition, game.difficulty)
   const doctrineCommandFloor = currentEliteDoctrine?.commandFloor ?? 1
-  const commandLimit = Math.max(baseCommandLimit, doctrineCommandFloor)
-  const doctrineCommandRelief = commandLimit - baseCommandLimit
+  const commandLimitBeforeContract = Math.max(baseCommandLimit, doctrineCommandFloor)
+  const masteryContractCommandDelta = game.masteryContract ? MASTERY_CONTRACTS[game.masteryContract].commandDelta : 0
+  const commandLimit = Math.max(1, commandLimitBeforeContract + masteryContractCommandDelta)
+  const doctrineCommandRelief = commandLimitBeforeContract - baseCommandLimit
+  const commandSealActive = game.activeLegacy.includes('command-seal')
+  const commandLimitWithoutLegacy = Math.max(
+    commandLimitFor(
+      game.morale,
+      game.activeLegacy.filter((legacyId) => legacyId !== 'command-seal'),
+      game.oath,
+      currentCondition,
+      game.difficulty,
+    ),
+    doctrineCommandFloor,
+  )
+  const commandLimitWithoutLegacyAndWithContract = Math.max(1, commandLimitWithoutLegacy + masteryContractCommandDelta)
+  const legacyCommandContribution = commandSealActive
+    ? {
+        limit: commandLimit,
+        limitBeforeLegacy: commandLimitWithoutLegacyAndWithContract,
+        appliedBonus: commandLimit - commandLimitWithoutLegacyAndWithContract,
+      }
+    : null
   const commandSpent = game.orders.reduce((total, order) => total + ORDER_META[order].cost, 0)
   const battleContext: BattleContext = {
     relics: game.relics,
@@ -2884,6 +3561,186 @@ export default function Game() {
     }
   })
   const campBattlePreview = lineupReady ? createBattleResult(game, focusLane) : null
+  const currentForecastWins = forecastLanes.filter((lane) => lane?.won).length
+  const scoredDeploymentForecasts: Array<{ forecast: DeploymentForecast; score: number }> = selectedUnit
+    ? BATTLE_LANES.map((lane) => {
+        const sourceLane = selectedUnitLane >= 0 ? selectedUnitLane : null
+        const targetUnitId = game.lineup[lane]
+        const nextLineup = lineupAfterDeployment(game.lineup, selectedUnit.id, lane)
+        const nextLineupUnits = nextLineup.map((unitId) => findUnit(game, unitId))
+        const lineupReadyAfter = nextLineupUnits.every((unit) => unit !== null)
+        const previewContext: BattleContext = {
+          ...battleContext,
+          formationKinds: nextLineupUnits.flatMap((unit) => (unit ? [unit.kind] : [])),
+          formationTiers: nextLineupUnits.flatMap((unit) => (unit ? [unit.tier] : [])),
+        }
+        const previewLanes = nextLineupUnits.map((unit, previewLane) =>
+          unit ? resolveLane(unit, enemies[previewLane], previewLane, previewContext) : null,
+        )
+        const laneForecast = previewLanes[lane] ?? resolveLane(selectedUnit, enemies[lane], lane, previewContext)
+        const projectedBattle = lineupReadyAfter ? createBattleResult({ ...game, lineup: nextLineup }, focusLane) : null
+        const winsAfter = previewLanes.filter((preview) => preview?.won).length
+        const currentLaneForecast = forecastLanes[lane]
+        const currentWon = currentLaneForecast?.won ?? null
+        const victoryBefore = campBattlePreview?.victory ?? false
+        const victoryAfter = projectedBattle?.victory ?? false
+        const securesLane = currentWon !== true && laneForecast.won
+        const losesLane = currentWon === true && !laneForecast.won
+        const securesVictory = !victoryBefore && victoryAfter
+        const losesVictory = victoryBefore && !victoryAfter
+        const powerDelta = currentLaneForecast ? laneForecast.playerPower - currentLaneForecast.playerPower : null
+        const action: DeploymentForecast['action'] =
+          sourceLane === lane
+            ? 'current'
+            : sourceLane !== null
+              ? targetUnitId
+                ? 'swap'
+                : 'move'
+              : targetUnitId
+                ? 'replace'
+                : 'deploy'
+        const outcome: DeploymentForecast['outcome'] =
+          action === 'current'
+            ? 'current'
+            : losesVictory
+              ? 'risk'
+              : securesVictory
+                ? 'breakthrough'
+                : !lineupReady && lineupReadyAfter
+                  ? 'improve'
+                  : losesLane || winsAfter < currentForecastWins
+                    ? 'risk'
+                    : securesLane
+                      ? 'breakthrough'
+                      : winsAfter > currentForecastWins || (powerDelta !== null && powerDelta > 0)
+                        ? 'improve'
+                        : 'steady'
+        const forecast: DeploymentForecast = {
+          lane,
+          action,
+          outcome,
+          relation: laneForecast.relation,
+          playerPower: laneForecast.playerPower,
+          enemyPower: laneForecast.enemyPower,
+          won: laneForecast.won,
+          currentWon,
+          powerDelta,
+          winsBefore: currentForecastWins,
+          winsAfter,
+          lineupReadyBefore: lineupReady,
+          lineupReadyAfter,
+          victoryBefore,
+          victoryAfter,
+          securesLane,
+          losesLane,
+          securesVictory,
+          losesVictory,
+          sourceLane,
+          targetUnitId,
+        }
+        const formationMargin = previewLanes.reduce(
+          (total, preview) =>
+            total + (preview ? Math.max(-500, Math.min(500, preview.playerPower - preview.enemyPower)) : -750),
+          0,
+        )
+        const score =
+          (victoryAfter ? 1_000_000 : 0) +
+          (lineupReadyAfter ? 100_000 : 0) +
+          (projectedBattle?.crownBreakCount ?? 0) * 20_000 +
+          winsAfter * 10_000 +
+          formationMargin
+
+        return { forecast, score }
+      })
+    : []
+  const deploymentForecasts = scoredDeploymentForecasts.map(({ forecast }) => forecast)
+  const highestDeploymentScore = Math.max(...scoredDeploymentForecasts.map(({ score }) => score))
+  const highestDeploymentCandidates = scoredDeploymentForecasts.filter(({ score }) => score === highestDeploymentScore)
+  const recommendedDeploymentLane =
+    highestDeploymentCandidates.length === 1 ? highestDeploymentCandidates[0].forecast.lane : null
+  const promotionChoiceInsights = pendingPromotionUnit
+    ? promotionChoices.map((specializationId) => {
+        const lane = game.lineup.indexOf(pendingPromotionUnit.id)
+        const specializedUnit: Unit = { ...pendingPromotionUnit, specialization: specializationId }
+        const currentLane = lane >= 0 ? forecastLanes[lane] : null
+        const specializedLane = lane >= 0 ? resolveLane(specializedUnit, enemies[lane], lane, battleContext) : null
+        const specializedSlots = game.slots.map((unit) =>
+          unit?.id === pendingPromotionUnit.id ? specializedUnit : unit,
+        )
+        const specializedBattlePreview = lineupReady
+          ? createBattleResult({ ...game, slots: specializedSlots }, focusLane)
+          : null
+        const active = specializedLane?.specializationActive ?? false
+        const fit = promotionPathFitCopy(
+          specializationId,
+          lane,
+          focusLane,
+          lane >= 0 ? game.orders[lane] : null,
+          currentLane,
+          game.heat,
+          active,
+        )
+        const playerPowerBefore = currentLane?.playerPower ?? null
+        const playerPowerAfter = specializedLane?.playerPower ?? null
+        const projectedWinsBefore = campBattlePreview?.wins ?? null
+        const projectedWinsAfter = specializedBattlePreview?.wins ?? null
+        const securesVictory = Boolean(
+          specializedBattlePreview?.victory && campBattlePreview && !campBattlePreview.victory,
+        )
+        const score =
+          (specializedBattlePreview?.victory ? 10_000 : 0) +
+          (projectedWinsAfter ?? 0) * 1_000 +
+          (active ? 500 : 0) +
+          Math.max(0, (playerPowerAfter ?? 0) - (playerPowerBefore ?? 0))
+
+        return {
+          specializationId,
+          deployed: lane >= 0,
+          active,
+          status: fit.status,
+          detail: fit.detail,
+          playerPowerBefore,
+          playerPowerAfter,
+          projectedWinsBefore,
+          projectedWinsAfter,
+          securesVictory,
+          score,
+        }
+      })
+    : []
+  const rankedPromotionChoiceInsights = [...promotionChoiceInsights].sort((left, right) => right.score - left.score)
+  const recommendedSpecializationId =
+    pendingPromotionUnit &&
+    rankedPromotionChoiceInsights[0]?.deployed &&
+    rankedPromotionChoiceInsights[0].score > (rankedPromotionChoiceInsights[1]?.score ?? Number.NEGATIVE_INFINITY)
+      ? rankedPromotionChoiceInsights[0].specializationId
+      : null
+  const legacyRewardForecast = {
+    available: lineupReady && commandSpent <= commandLimit,
+    supply: game.activeLegacy.includes('salvagers-instinct')
+      ? {
+          triggered: campBattlePreview?.victory ?? false,
+          bonus: campBattlePreview?.legacySupplyBonus ?? 0,
+          total: campBattlePreview?.supplyReward ?? 0,
+        }
+      : null,
+    renown: game.activeLegacy.includes('chroniclers-ink')
+      ? {
+          triggered: campBattlePreview?.victory ?? false,
+          bonus: campBattlePreview?.legacyScoreBonus ?? 0,
+          total: campBattlePreview ? campBattlePreview.scoreReward - campBattlePreview.contractScoreBonus : 0,
+        }
+      : null,
+  }
+  const masteryContractForecast = game.masteryContract
+    ? {
+        id: game.masteryContract,
+        available: lineupReady && commandSpent <= commandLimit,
+        triggered: Boolean(campBattlePreview?.victory && lineupReady && commandSpent <= commandLimit),
+        bonus: campBattlePreview?.contractScoreBonus ?? 0,
+        total: campBattlePreview?.scoreReward ?? 0,
+      }
+    : null
   const projectedWins = forecastLanes.filter((lane) => lane?.won).length
   const decisionEchoForecastCount = forecastLanes.filter((lane) => lane?.decisionEchoActive).length
   const finalMarchImprintForecasts = activeFinalMarchImprints.map((imprint) => ({
@@ -2912,6 +3769,40 @@ export default function Game() {
     commandSpent <= commandLimit &&
     projectedWins >= REQUIRED_LANE_WINS &&
     (game.day !== MAX_NIGHTS || finalCrownForecastCount >= FINAL_CROWN_REQUIRED_SEALS)
+  const riskDepartureAvailable = Boolean(
+    phase === 'camp' &&
+      tutorialStep === null &&
+      !pendingPromotionUnit &&
+      lineupReady &&
+      commandSpent <= commandLimit &&
+      campBattlePreview &&
+      !campBattlePreview.victory,
+  )
+  const riskDepartureArmed = Boolean(
+    riskDepartureAvailable &&
+      riskDepartureConfirmation?.game === game &&
+      riskDepartureConfirmation.focusLane === focusLane,
+  )
+  const riskDepartureForecast =
+    riskDepartureAvailable && campBattlePreview
+      ? {
+          armed: riskDepartureArmed,
+          reason:
+            game.day === MAX_NIGHTS &&
+            campBattlePreview.wins >= REQUIRED_LANE_WINS &&
+            campBattlePreview.crownBreakCount < FINAL_CROWN_REQUIRED_SEALS
+              ? `왕관 칙령 ${campBattlePreview.crownBreakCount} / ${FINAL_CROWN_REQUIRED_SEALS} · 최종 승리 조건 미달`
+              : `방어 ${campBattlePreview.wins} / 3 · ${3 - campBattlePreview.wins}개 전선 붕괴 예상`,
+          supplyReward: campBattlePreview.supplyReward,
+          suppliesBefore: game.supplies,
+          suppliesAfter: game.supplies + campBattlePreview.supplyReward,
+          heatBefore: game.heat,
+          heatAfter: Math.max(0, Math.min(100, game.heat + campBattlePreview.heatDelta)),
+          moraleBefore: game.morale,
+          moraleAfter: Math.max(0, Math.min(100, game.morale + campBattlePreview.moraleDelta)),
+          endsExpedition: game.heat + campBattlePreview.heatDelta <= 0,
+        }
+      : null
   const battleStartDisabled =
     !lineupReady ||
     commandSpent > commandLimit ||
@@ -2928,9 +3819,15 @@ export default function Game() {
           ? '훈련 진행'
           : projectedBattleVictory
             ? '방어 시작'
-            : '위험 출전'
+            : riskDepartureArmed
+              ? riskDepartureForecast?.endsExpedition
+                ? '원정 종료 확정'
+                : '출전 확정'
+              : riskDepartureForecast?.endsExpedition
+                ? '원정 종료 위험'
+                : '위험 출전'
   const battleActionReady = !battleStartDisabled && !pendingPromotionUnit && projectedBattleVictory
-  const tacticalAdjustment = (() => {
+  const directTacticalAdjustment = (() => {
     if (phase !== 'camp' || showTitle || tutorialStep !== null || !lineupReady || !campBattlePreview) return null
 
     const currentRank = tacticalPlanRank(campBattlePreview, game.day, commandSpent <= commandLimit, commandSpent)
@@ -2979,6 +3876,155 @@ export default function Game() {
     )[0]
     return best && compareTacticalRanks(best.rank, currentRank) > 0 ? best : null
   })()
+  const tacticalRoute = useMemo<TacticalRoutePlan | null>(() => {
+    if (phase !== 'camp' || showTitle || tutorialStep !== null || !lineupReady) return null
+    const currentResult = createBattleResult(game, focusLane)
+    if (!currentResult || currentResult.victory) return null
+
+    const currentRank = tacticalPlanRank(currentResult, game.day, commandSpent <= commandLimit, commandSpent)
+    let bestVictory: TacticalPlanCandidate | null = null
+    let bestFallback: TacticalPlanCandidate | null = null
+
+    for (const firstOrder of BATTLE_ORDER_SEQUENCE) {
+      for (const secondOrder of BATTLE_ORDER_SEQUENCE) {
+        for (const thirdOrder of BATTLE_ORDER_SEQUENCE) {
+          const orders: BattleOrder[] = [firstOrder, secondOrder, thirdOrder]
+          const candidateCommandSpent = orders.reduce((total, order) => total + ORDER_META[order].cost, 0)
+          if (candidateCommandSpent > commandLimit) continue
+
+          for (const candidateFocusLane of BATTLE_LANES) {
+            const changeCount =
+              orders.reduce((total, order, lane) => total + Number(order !== game.orders[lane]), 0) +
+              Number(candidateFocusLane !== focusLane)
+            if (changeCount === 0) continue
+            const result = createBattleResult({ ...game, orders }, candidateFocusLane)
+            if (!result) continue
+            const candidate: TacticalPlanCandidate = {
+              focusLane: candidateFocusLane,
+              orders,
+              result,
+              commandSpent: candidateCommandSpent,
+              changeCount,
+              rank: tacticalPlanRank(result, game.day, true, candidateCommandSpent),
+            }
+
+            if (result.victory) {
+              if (
+                !bestVictory ||
+                candidate.changeCount < bestVictory.changeCount ||
+                (candidate.changeCount === bestVictory.changeCount &&
+                  compareTacticalRanks(candidate.rank, bestVictory.rank) > 0)
+              ) {
+                bestVictory = candidate
+              }
+              continue
+            }
+
+            if (
+              !bestFallback ||
+              compareTacticalRanks(candidate.rank, bestFallback.rank) > 0 ||
+              (compareTacticalRanks(candidate.rank, bestFallback.rank) === 0 &&
+                candidate.changeCount < bestFallback.changeCount)
+            ) {
+              bestFallback = candidate
+            }
+          }
+        }
+      }
+    }
+
+    const target = bestVictory ?? bestFallback
+    if (!target || compareTacticalRanks(target.rank, currentRank) <= 0) return null
+
+    const routeSteps: TacticalRouteStep[] = []
+    for (const lane of BATTLE_LANES) {
+      const order = target.orders[lane]
+      if (order === game.orders[lane]) continue
+      routeSteps.push({
+        kind: 'order',
+        lane,
+        order,
+        label: `0${lane + 1} ${ORDER_META[order].name}`,
+      })
+    }
+    if (target.focusLane !== focusLane) {
+      routeSteps.push({
+        kind: 'focus',
+        lane: target.focusLane,
+        order: null,
+        label: `집중 0${target.focusLane + 1}`,
+      })
+    }
+
+    const immediateSteps: Array<{ step: TacticalRouteStep; adjustment: TacticalAdjustment }> = []
+    for (const step of routeSteps) {
+      if (step.kind === 'order') {
+        const orders = game.orders.map((order, lane) => (lane === step.lane ? step.order : order))
+        const nextCommandSpent = orders.reduce((total, order) => total + ORDER_META[order].cost, 0)
+        if (nextCommandSpent > commandLimit && nextCommandSpent >= commandSpent) continue
+        const result = createBattleResult({ ...game, orders }, focusLane)
+        if (!result) continue
+        immediateSteps.push({
+          step,
+          adjustment: {
+            kind: 'order',
+            lane: step.lane,
+            order: step.order,
+            result,
+            commandSpent: nextCommandSpent,
+            rank: tacticalPlanRank(result, game.day, nextCommandSpent <= commandLimit, nextCommandSpent),
+          },
+        })
+        continue
+      }
+
+      if (commandSpent > commandLimit) continue
+      const result = createBattleResult(game, step.lane)
+      if (!result) continue
+      immediateSteps.push({
+        step,
+        adjustment: {
+          kind: 'focus',
+          lane: step.lane,
+          order: null,
+          result,
+          commandSpent,
+          rank: tacticalPlanRank(result, game.day, true, commandSpent),
+        },
+      })
+    }
+
+    let next = immediateSteps[0] ?? null
+    for (const candidate of immediateSteps.slice(1)) {
+      if (!next) {
+        next = candidate
+        continue
+      }
+      const candidateImproves = compareTacticalRanks(candidate.adjustment.rank, currentRank) > 0
+      const nextImproves = compareTacticalRanks(next.adjustment.rank, currentRank) > 0
+      if (
+        (candidateImproves && !nextImproves) ||
+        (candidateImproves === nextImproves &&
+          compareTacticalRanks(candidate.adjustment.rank, next.adjustment.rank) > 0)
+      ) {
+        next = candidate
+      }
+    }
+    if (!next) return null
+
+    return {
+      adjustment: next.adjustment,
+      result: target.result,
+      commandSpent: target.commandSpent,
+      steps: [next.step.label, ...routeSteps.filter((step) => step !== next?.step).map((step) => step.label)],
+    }
+  }, [commandLimit, commandSpent, focusLane, game, lineupReady, phase, showTitle, tutorialStep])
+  const tacticalRouteActive = Boolean(
+    tacticalRoute && tacticalRoute.steps.length > 1 && !directTacticalAdjustment?.result.victory,
+  )
+  const tacticalAdjustment = directTacticalAdjustment?.result.victory
+    ? directTacticalAdjustment
+    : (tacticalRoute?.adjustment ?? directTacticalAdjustment)
   const tacticalRehearsal = (() => {
     if (phase !== 'camp' || showTitle || tutorialStep !== null || !lineupReady || !campBattlePreview) return null
     if (!tacticalAdjustment) {
@@ -2988,38 +4034,40 @@ export default function Game() {
       return {
         state: campBattlePreview.victory ? 'steady' : 'locked',
         glyph: campBattlePreview.victory ? '✓' : '△',
-        kicker: 'TACTICAL REHEARSAL · CURRENT PLAN',
+        kicker: campBattlePreview.victory ? 'TACTICAL REHEARSAL · CURRENT PLAN' : 'FULL TACTICAL SEARCH · 81 PLANS',
         title: perfected
           ? '현재 계획이 완벽 방어선입니다'
           : campBattlePreview.victory
             ? '현재 계획의 승리선을 유지하세요'
-            : '한 단계 수정만으로는 승리선이 열리지 않습니다',
+            : '현재 대열로 가능한 승리 조합이 없습니다',
         description: campBattlePreview.victory
           ? `방어 ${campBattlePreview.wins} / 3 · 지금보다 나은 단일 명령·집중 변경이 없습니다.`
-          : '대열 상성이나 생존자 등급을 보강한 뒤 다시 모의하세요.',
-        status: campBattlePreview.victory ? `방어 ${campBattlePreview.wins} / 3` : '대열 보강',
+          : '명령 한도와 집중 전선을 포함한 81개 조합을 모두 모의했습니다. 생존자 등급이나 병과 상성을 보강하세요.',
+        status: campBattlePreview.victory ? `방어 ${campBattlePreview.wins} / 3` : '성장 필요',
+        actionLabel: '한 단계 적용',
+        routeSteps: [],
       }
     }
 
+    const tacticalOutcome = tacticalRouteActive && tacticalRoute ? tacticalRoute.result : tacticalAdjustment.result
+    const tacticalOutcomeCommandSpent =
+      tacticalRouteActive && tacticalRoute ? tacticalRoute.commandSpent : tacticalAdjustment.commandSpent
     const currentCounterCount = campBattlePreview.lanes.filter((lane) => lane.countered).length
-    const nextCounterCount = tacticalAdjustment.result.lanes.filter((lane) => lane.countered).length
+    const nextCounterCount = tacticalOutcome.lanes.filter((lane) => lane.countered).length
     const currentMargin = campBattlePreview.lanes.reduce((total, lane) => total + lane.playerPower - lane.enemyPower, 0)
-    const nextMargin = tacticalAdjustment.result.lanes.reduce(
-      (total, lane) => total + lane.playerPower - lane.enemyPower,
-      0,
-    )
+    const nextMargin = tacticalOutcome.lanes.reduce((total, lane) => total + lane.playerPower - lane.enemyPower, 0)
     const currentReturnHeat = Math.max(0, Math.min(100, game.heat + campBattlePreview.heatDelta))
-    const nextReturnHeat = Math.max(0, Math.min(100, game.heat + tacticalAdjustment.result.heatDelta))
+    const nextReturnHeat = Math.max(0, Math.min(100, game.heat + tacticalOutcome.heatDelta))
     const impacts: string[] = []
-    if (tacticalAdjustment.commandSpent < commandSpent) {
-      impacts.push(`지휘 ${commandSpent} → ${tacticalAdjustment.commandSpent}`)
+    if (tacticalOutcomeCommandSpent !== commandSpent) {
+      impacts.push(`지휘 ${commandSpent} → ${tacticalOutcomeCommandSpent}`)
     }
-    if (!campBattlePreview.victory && tacticalAdjustment.result.victory) impacts.push('승리선 확보')
-    if (tacticalAdjustment.result.wins !== campBattlePreview.wins) {
-      impacts.push(`방어 ${campBattlePreview.wins} → ${tacticalAdjustment.result.wins}`)
+    if (!campBattlePreview.victory && tacticalOutcome.victory) impacts.push('승리선 확보')
+    if (tacticalOutcome.wins !== campBattlePreview.wins) {
+      impacts.push(`방어 ${campBattlePreview.wins} → ${tacticalOutcome.wins}`)
     }
-    if (tacticalAdjustment.result.crownBreakCount !== campBattlePreview.crownBreakCount) {
-      impacts.push(`칙령 ${campBattlePreview.crownBreakCount} → ${tacticalAdjustment.result.crownBreakCount}`)
+    if (tacticalOutcome.crownBreakCount !== campBattlePreview.crownBreakCount) {
+      impacts.push(`칙령 ${campBattlePreview.crownBreakCount} → ${tacticalOutcome.crownBreakCount}`)
     }
     if (nextReturnHeat > currentReturnHeat) impacts.push(`귀환 온기 ${currentReturnHeat}% → ${nextReturnHeat}%`)
     if (nextCounterCount !== currentCounterCount) impacts.push(`파훼 ${currentCounterCount} → ${nextCounterCount}`)
@@ -3037,8 +4085,11 @@ export default function Game() {
           : tacticalAdjustment.order === 'support'
             ? '인접 전선의 지원망까지 함께 계산했습니다.'
             : `${adjustedLane.playerPower} 대 ${adjustedLane.enemyPower}의 교전값을 개선합니다.`
-    const status =
-      tacticalAdjustment.commandSpent < commandSpent
+    const status = tacticalRouteActive
+      ? tacticalOutcome.victory
+        ? `승리까지 ${tacticalRoute?.steps.length ?? 0}단계`
+        : `최선까지 ${tacticalRoute?.steps.length ?? 0}단계`
+      : tacticalAdjustment.commandSpent < commandSpent
         ? `지휘 −${commandSpent - tacticalAdjustment.commandSpent}`
         : !campBattlePreview.victory && tacticalAdjustment.result.victory
           ? '승리선 확보'
@@ -3055,54 +4106,98 @@ export default function Game() {
                     : '예측 개선'
 
     return {
-      state: !campBattlePreview.victory && tacticalAdjustment.result.victory ? 'breakthrough' : 'improve',
-      glyph: tacticalAdjustment.kind === 'order' ? '⌘' : '✦',
-      kicker: `TACTICAL REHEARSAL · FRONT 0${tacticalAdjustment.lane + 1}`,
+      state: !campBattlePreview.victory && tacticalOutcome.victory ? 'breakthrough' : 'improve',
+      glyph: tacticalRouteActive ? '◎' : tacticalAdjustment.kind === 'order' ? '⌘' : '✦',
+      kicker: tacticalRouteActive
+        ? `FULL TACTICAL ROUTE · ${tacticalRoute?.steps.length ?? 0} MOVES`
+        : `TACTICAL REHEARSAL · FRONT 0${tacticalAdjustment.lane + 1}`,
       title:
         tacticalAdjustment.kind === 'order'
           ? `${tacticalAdjustment.lane + 1}전선을 ${ORDER_META[tacticalAdjustment.order].name} 명령으로 전환`
           : `화로 집중을 ${tacticalAdjustment.lane + 1}전선으로 이동`,
-      description: `${reason}${impacts.length > 0 ? ` ${impacts.slice(0, 3).join(' · ')}` : ''}`,
+      description: tacticalRouteActive
+        ? `첫 단계입니다. ${reason} 경로 완료 시 ${impacts.length > 0 ? impacts.slice(0, 3).join(' · ') : `방어 ${tacticalOutcome.wins} / 3`}입니다.`
+        : `${reason}${impacts.length > 0 ? ` ${impacts.slice(0, 3).join(' · ')}` : ''}`,
       status,
+      actionLabel: tacticalRouteActive ? '1단계 적용' : '한 단계 적용',
+      routeSteps: tacticalRouteActive ? (tacticalRoute?.steps ?? []) : [],
     }
   })()
+  let recoverableLaneForecast: LaneResult | null = null
+  for (const laneForecast of forecastLanes) {
+    if (!laneForecast || laneForecast.won) continue
+    const gap = laneForecast.enemyPower - laneForecast.playerPower
+    if (!recoverableLaneForecast) {
+      recoverableLaneForecast = laneForecast
+      continue
+    }
+    const currentGap = recoverableLaneForecast.enemyPower - recoverableLaneForecast.playerPower
+    if (gap < currentGap || (gap === currentGap && laneForecast.lane < recoverableLaneForecast.lane)) {
+      recoverableLaneForecast = laneForecast
+    }
+  }
+  const recoveryReason = recoverableLaneForecast
+    ? recoverableLaneForecast.relation === 'disadvantage'
+      ? `${KIND_META[recoverableLaneForecast.enemy.kind].name} 적에게 상성 열세`
+      : !recoverableLaneForecast.countered
+        ? `${INTENT_META[recoverableLaneForecast.intent].name} 의도 미파훼`
+        : recoverableLaneForecast.lane !== focusLane
+          ? '화로 집중이 다른 전선에 있음'
+          : '상성·명령 적용 뒤에도 전력 부족'
+    : '출전 대열을 다시 확인하세요'
+  const battleRecoveryDirective =
+    tacticalAdjustment && tacticalRehearsal
+      ? `${tacticalRehearsal.title} · ${tacticalRehearsal.status}`
+      : recoverableLaneForecast
+        ? `0${recoverableLaneForecast.lane + 1}전선 ${recoverableLaneForecast.enemyPower - recoverableLaneForecast.playerPower} 부족 · ${recoveryReason}`
+        : '대열을 보강하세요'
   const projectedCrownMasteryScore =
     campBattlePreview?.crownMasteryBonus && campBattlePreview.crownMasteryBonus > 0
       ? campBattlePreview.crownMasteryBonus
       : Math.round(
           FINAL_CROWN_MASTERY_SCORE *
-            difficultyProtocol.scoreScale *
-            OATHS[game.oath].scoreScale *
+            expeditionRenownScaleFor(game.difficulty, game.oath) *
             currentCondition.scoreScale *
             (game.activeLegacy.includes('chroniclers-ink') ? 1.08 : 1),
         )
   const focusBonusPercent = (game.relics.includes('watchtower-lens') ? 42 : 28) + currentCondition.focusBonus * 100
   const battleForecastDetail =
-    commandSpent > commandLimit
-      ? '방벽 명령으로 지휘 부담을 낮추세요'
-      : !lineupReady
-        ? '대기소에서 생존자를 배치하세요'
-        : game.day === MAX_NIGHTS
-          ? projectedWins < REQUIRED_LANE_WINS
-            ? `붕괴 위험 · 방어 ${projectedWins} / ${REQUIRED_LANE_WINS} · 전선을 보강하세요`
-            : finalCrownForecastCount < FINAL_CROWN_REQUIRED_SEALS
-              ? `왕관 봉인 · 칙령 ${finalCrownForecastCount} / ${FINAL_CROWN_REQUIRED_SEALS} · 전술 조건을 바꾸세요`
-              : finalCrownForecastCount === FINAL_CROWN_SEALS.length
-                ? `완전 파쇄 예상 · 추가 명성 +${projectedCrownMasteryScore.toLocaleString('ko-KR')}`
-                : `최종 승리 예상 · 칙령 ${finalCrownForecastCount} / ${FINAL_CROWN_REQUIRED_SEALS} · 방어 ${projectedWins} / ${REQUIRED_LANE_WINS}`
-          : activeDecisionEcho?.heatShield
-            ? `${projectedBattleVictory ? '승리 예상' : '붕괴 위험'} · 귀환 온기 손실 최대 ${activeDecisionEcho.heatShield} 감소`
-            : activeDecisionEcho
-              ? `${projectedBattleVictory ? '승리 예상' : '붕괴 위험'} · 과거 결정 ${decisionEchoForecastCount} / 3 전선 발동`
-              : projectedBattleVictory
-                ? '승리 예상 · 명령을 확인하세요'
-                : '붕괴 위험 · 상성·집중·명령을 바꾸세요'
-  const battleForecastTitle =
-    commandSpent > commandLimit
-      ? '명령 점수가 초과됐어요'
-      : lineupReady
-        ? `예상 방어 ${projectedWins} / 3`
-        : '전선이 비어 있어요'
+    riskDepartureArmed && riskDepartureForecast
+      ? `두 번째 입력 시 후퇴 보급 +${riskDepartureForecast.supplyReward} · 온기 ${riskDepartureForecast.heatBefore}% → ${riskDepartureForecast.heatAfter}% · 사기 ${riskDepartureForecast.moraleBefore} → ${riskDepartureForecast.moraleAfter}`
+      : commandSpent > commandLimit
+        ? '방벽 명령으로 지휘 부담을 낮추세요'
+        : !lineupReady
+          ? '대기소에서 생존자를 배치하세요'
+          : game.day === MAX_NIGHTS
+            ? projectedWins < REQUIRED_LANE_WINS
+              ? `붕괴 위험 · ${battleRecoveryDirective}`
+              : finalCrownForecastCount < FINAL_CROWN_REQUIRED_SEALS
+                ? `왕관 봉인 · 칙령 ${finalCrownForecastCount} / ${FINAL_CROWN_REQUIRED_SEALS} · ${
+                    tacticalAdjustment && tacticalRehearsal ? tacticalRehearsal.title : '파훼·집중·상성 조건을 바꾸세요'
+                  }`
+                : finalCrownForecastCount === FINAL_CROWN_SEALS.length
+                  ? `완전 파쇄 예상 · 추가 명성 +${projectedCrownMasteryScore.toLocaleString('ko-KR')}`
+                  : `최종 승리 예상 · 칙령 ${finalCrownForecastCount} / ${FINAL_CROWN_REQUIRED_SEALS} · 방어 ${projectedWins} / ${REQUIRED_LANE_WINS}`
+            : !projectedBattleVictory
+              ? `붕괴 위험 · ${battleRecoveryDirective}`
+              : activeDecisionEcho?.heatShield
+                ? `${projectedBattleVictory ? '승리 예상' : '붕괴 위험'} · 귀환 온기 손실 최대 ${activeDecisionEcho.heatShield} 감소`
+                : activeDecisionEcho
+                  ? `${projectedBattleVictory ? '승리 예상' : '붕괴 위험'} · 과거 결정 ${decisionEchoForecastCount} / 3 전선 발동`
+                  : projectedBattleVictory
+                    ? '승리 예상 · 명령을 확인하세요'
+                    : '붕괴 위험 · 상성·집중·명령을 바꾸세요'
+  const battleForecastTitle = riskDepartureForecast?.endsExpedition
+    ? riskDepartureArmed
+      ? '온기 소진 · 원정 종료 확인'
+      : '패배 시 온기 0% · 원정 종료'
+    : riskDepartureArmed
+      ? '위험 출전 · 두 번째 입력 대기'
+      : commandSpent > commandLimit
+        ? '명령 점수가 초과됐어요'
+        : lineupReady
+          ? `예상 방어 ${projectedWins} / 3`
+          : '전선이 비어 있어요'
   const battleActionLabel =
     phase === 'battling'
       ? '교전 중'
@@ -3116,7 +4211,13 @@ export default function Game() {
               ? '현장 훈련 진행 중'
               : projectedBattleVictory
                 ? `${game.day}일차 방어 시작`
-                : `${game.day}일차 위험 출전`
+                : riskDepartureArmed
+                  ? riskDepartureForecast?.endsExpedition
+                    ? `${game.day}일차 원정 종료 확정`
+                    : `${game.day}일차 후퇴 위험 확정`
+                  : riskDepartureForecast?.endsExpedition
+                    ? `${game.day}일차 원정 종료 위험`
+                    : `${game.day}일차 위험 출전`
   const currentEliteLane = currentEliteEncounter?.lane ?? null
   const currentEliteDoctrineForecast =
     currentEliteLane === null
@@ -3207,25 +4308,35 @@ export default function Game() {
   const marchSealUnlocked = game.day >= 9 && lineupReady && marchSealVeteranLines === 3
   const marchSealStokeReserve = stokeBaseCost * Math.min(2, MAX_NIGHTS - game.day + 1)
   const marchSealGrowthReserve = lineupUnits.some((unit) => unit && unit.tier < MAX_TIER) ? recruitCost : 0
-  const taperedRetreatCount = Math.min(priorDefeatCount, Math.ceil((difficultyProtocol.defeatSupply - 2) / 2))
-  const marchSealRetreatReserve =
-    taperedRetreatCount * difficultyProtocol.defeatSupply -
-    taperedRetreatCount * (taperedRetreatCount - 1) +
-    Math.max(0, priorDefeatCount - taperedRetreatCount) * 2
-  const marchSealReserve = Math.max(quartermasterReserve, marchSealStokeReserve + marchSealGrowthReserve)
-  const marchSealSupplies = marchSealUnlocked
-    ? Math.floor(Math.max(0, game.supplies - marchSealReserve - marchSealRetreatReserve) / 10) * 10
-    : 0
+  const marchSealRecoveryReserve = game.recoverySupplies
+  const marchSealReserve = Math.max(
+    quartermasterReserve,
+    marchSealStokeReserve + marchSealGrowthReserve,
+    marchSealRecoveryReserve,
+  )
+  const marchSealSupplies = marchSealUnlocked ? Math.floor(Math.max(0, game.supplies - marchSealReserve) / 10) * 10 : 0
+  const marchSealLegacyActive = game.activeLegacy.includes('chroniclers-ink')
+  const marchSealBaseScoreRate = Math.max(1, Math.round(10 * expeditionRenownScaleFor(game.difficulty, game.oath)))
+  const marchSealInheritedScoreRate = Math.max(
+    1,
+    Math.round(10 * expeditionRenownScaleFor(game.difficulty, game.oath) * (marchSealLegacyActive ? 1.08 : 1)),
+  )
   const marchSealScoreRate = Math.max(
     1,
     Math.round(
       10 *
-        difficultyProtocol.scoreScale *
-        OATHS[game.oath].scoreScale *
-        (game.activeLegacy.includes('chroniclers-ink') ? 1.08 : 1),
+        expeditionRenownScaleFor(game.difficulty, game.oath) *
+        (marchSealLegacyActive ? 1.08 : 1) *
+        (game.masteryContract ? MASTERY_CONTRACTS[game.masteryContract].scoreScale : 1),
     ),
   )
   const marchSealScore = marchSealSupplies * marchSealScoreRate
+  const marchSealLegacyScoreBonus = marchSealLegacyActive
+    ? marchSealSupplies * (marchSealInheritedScoreRate - marchSealBaseScoreRate)
+    : 0
+  const marchSealContractScoreBonus = game.masteryContract
+    ? marchSealSupplies * (marchSealScoreRate - marchSealInheritedScoreRate)
+    : 0
   const marchSealRankEntry = rankEntryForScore(game.score + marchSealScore)
   const marchSealRaisesRank = marchSealRankEntry.minimum > liveRankEntry.minimum
   const quartermasterBriefing = (() => {
@@ -3285,11 +4396,11 @@ export default function Game() {
         state: 'surplus',
         label: 'MARCH SURPLUS',
         title: `잉여 보급 ${marchSealSupplies} → 명성 +${marchSealScore.toLocaleString('ko-KR')}`,
-        description: `화로·성장 예비 ${marchSealReserve}을 남기고${
-          marchSealRetreatReserve > 0
-            ? ` 누적 후퇴 보급 ${marchSealRetreatReserve}은 제외합니다.`
+        description: `화로·성장·복구 보호선 ${marchSealReserve}을 남기고${
+          marchSealRecoveryReserve > 0
+            ? ` 아직 쓰지 않은 복구 보급 ${marchSealRecoveryReserve}을 보호합니다.`
             : ' 후퇴 보급은 섞지 않습니다.'
-        }${marchSealRaisesRank ? ` 현재 기록은 ${marchSealRankEntry.rank} 등급까지 상승합니다.` : ''}`,
+        }${marchSealLegacyScoreBonus > 0 ? ` 기록관의 잉크가 실제 명성 +${marchSealLegacyScoreBonus.toLocaleString('ko-KR')}을 더합니다.` : ''}${marchSealContractScoreBonus > 0 && game.masteryContract ? ` ${MASTERY_CONTRACTS[game.masteryContract].name} 계약이 +${marchSealContractScoreBonus.toLocaleString('ko-KR')}을 더합니다.` : ''}${marchSealRaisesRank ? ` 현재 기록은 ${marchSealRankEntry.rank} 등급까지 상승합니다.` : ''}`,
       }
     }
     if (rosterCount >= ROSTER_SIZE) {
@@ -3429,13 +4540,12 @@ export default function Game() {
         }))
       : []
   const resultCrownBreakCount = battleResult?.crownBreakCount ?? 0
-  const finalCrownMechanicBlocked = Boolean(
-    battleResult &&
-      !battleResult.victory &&
-      game.day === MAX_NIGHTS &&
-      battleResult.wins >= REQUIRED_LANE_WINS &&
-      resultCrownBreakCount < FINAL_CROWN_REQUIRED_SEALS,
-  )
+  const finalCrownMechanicBlocked =
+    battleResult !== null &&
+    !battleResult.victory &&
+    game.day === MAX_NIGHTS &&
+    battleResult.wins >= REQUIRED_LANE_WINS &&
+    resultCrownBreakCount < FINAL_CROWN_REQUIRED_SEALS
   const defeatInsights =
     battleResult && !battleResult.victory
       ? battleResult.lanes
@@ -3766,20 +4876,6 @@ export default function Game() {
           description: '유물 두 개의 조합은 생존·전술·진형·보급 중 하나의 공명을 완성합니다.',
         })
   const relicChoices = game.pendingRelic ? relicChoicesFor(game.day - 1, game.relics, game.runSeed) : []
-  const mergeReadyPairCount =
-    rosterCount <= 3
-      ? 0
-      : (Object.keys(KIND_META) as UnitKind[]).reduce(
-          (total, kind) =>
-            total +
-            Array.from({ length: MAX_TIER - 1 }, (_, index) => index + 1).reduce(
-              (kindTotal, tier) =>
-                kindTotal +
-                Math.floor(game.slots.filter((unit) => unit?.kind === kind && unit.tier === tier).length / 2),
-              0,
-            ),
-          0,
-        )
   const neutralForecastCount = forecastLanes.filter((lane) => lane?.relation === 'neutral').length
   const relicChoiceInsights = relicChoices.map((relicId) => {
     const resonancePreview = resonancePreviewFor(relicId, game.relics)
@@ -3903,6 +4999,14 @@ export default function Game() {
   const activeMilestoneId = activeMilestone?.id ?? null
   const milestoneVisible =
     activeMilestone !== null &&
+    sessionAccess === 'active' &&
+    !showSettings &&
+    !showArchive &&
+    !showExpeditionMenu &&
+    !showInstallHelp &&
+    !showGuide &&
+    !showDifficulty &&
+    growthCeremony === null &&
     marchSealCeremony === null &&
     phase !== 'battling' &&
     phase !== 'result' &&
@@ -4117,6 +5221,13 @@ export default function Game() {
 
   useEffect(() => {
     if (sessionAccess !== 'active') return
+    const linkedRiftCode = linkedRiftCodeForCurrentUrl()
+    if (linkedRiftCode) {
+      setIncomingRiftCode(linkedRiftCode)
+      setSharedCode(linkedRiftCode)
+    } else {
+      clearLinkedRiftFromCurrentUrl()
+    }
     const interruptedRestoreRecovery = recoverInterruptedBackupRestore()
     removeUnknownStoredValues()
 
@@ -4124,10 +5235,25 @@ export default function Game() {
     const storedGame = interruptedRestoreRecovery === 'reset' ? undefined : readStoredJson(STORAGE_KEY)
     const parsedMeta = storedMeta === undefined ? { ...INITIAL_META } : parseStoredMeta(storedMeta)
     const parsedGame = storedGame === undefined ? null : parseStoredGame(storedGame)
-    const hasInvalidProgress =
-      (storedMeta !== undefined && parsedMeta === null) || (storedGame !== undefined && parsedGame === null)
-    const hydratedGame = hasInvalidProgress ? null : parsedGame
-    const baseHydratedMeta = hasInvalidProgress ? { ...INITIAL_META } : (parsedMeta ?? { ...INITIAL_META })
+    const hasInvalidMeta = storedMeta !== undefined && parsedMeta === null
+    const metaAchievementRepairNeeded =
+      parsedMeta !== null &&
+      isRecord(storedMeta) &&
+      Array.isArray(storedMeta.achievements) &&
+      parsedMeta.achievements.length > storedMeta.achievements.length
+    const hasInvalidGame =
+      (storedGame !== undefined && parsedGame === null) ||
+      (parsedGame !== null &&
+        (parsedMeta === null ||
+          !masteryContractAvailableFor(parsedGame.masteryContract, parsedMeta) ||
+          parsedGame.activeLegacy.some((legacyId) => !parsedMeta.legacy.includes(legacyId)) ||
+          !gameHistoryMatches(parsedGame, parsedMeta, true)))
+    const hydratedGame = hasInvalidMeta || hasInvalidGame ? null : parsedGame
+    const baseHydratedMeta = hasInvalidMeta ? { ...INITIAL_META } : (parsedMeta ?? { ...INITIAL_META })
+    const terminalRunMissingFromMeta =
+      hydratedGame !== null &&
+      hydratedGame.status !== 'playing' &&
+      !baseHydratedMeta.history.some((record) => record.runId === hydratedGame.runId)
     const restoredProtocolMastery =
       hydratedGame?.status === 'won' ? protocolMasteryProgressFor(hydratedGame, true) : null
     const restoredOathChronicleAchievement =
@@ -4139,18 +5265,59 @@ export default function Game() {
     const restoredAchievementIds = [
       restoredProtocolMastery?.completed ? restoredProtocolMastery.achievement : null,
       restoredOathChronicleAchievement,
+      terminalRunMissingFromMeta && hydratedGame
+        ? ENDING_ACHIEVEMENTS[endingFor(hydratedGame, hydratedGame.status === 'won')]
+        : null,
+      terminalRunMissingFromMeta && hydratedGame?.status === 'won' ? 'seventh-dawn' : null,
+      terminalRunMissingFromMeta && hydratedGame?.status === 'won' && hydratedGame.difficulty === 'whiteout'
+        ? 'whiteout-victor'
+        : null,
+      terminalRunMissingFromMeta && hydratedGame?.status === 'won' && hydratedGame.mode === 'daily'
+        ? 'shared-dawn'
+        : null,
+      terminalRunMissingFromMeta &&
+      hydratedGame &&
+      completedTrialsFor(hydratedGame, hydratedGame.status === 'won').length === 3
+        ? 'threefold-oath'
+        : null,
+      terminalRunMissingFromMeta && hydratedGame && hydratedGame.bossesDefeated >= 3 ? 'crown-breaker' : null,
     ].filter((achievement): achievement is AchievementId => achievement !== null)
     const hydratedAchievements = [...new Set([...baseHydratedMeta.achievements, ...restoredAchievementIds])]
-    const hydratedMeta =
-      hydratedAchievements.length > baseHydratedMeta.achievements.length
-        ? { ...baseHydratedMeta, achievements: hydratedAchievements }
+    const hydratedDiscoveredRelics = hydratedGame
+      ? [...new Set([...baseHydratedMeta.discoveredRelics, ...hydratedGame.relics])]
+      : baseHydratedMeta.discoveredRelics
+    let hydratedMeta =
+      hydratedAchievements.length > baseHydratedMeta.achievements.length ||
+      hydratedDiscoveredRelics.length > baseHydratedMeta.discoveredRelics.length
+        ? {
+            ...baseHydratedMeta,
+            achievements: hydratedAchievements,
+            discoveredRelics: hydratedDiscoveredRelics,
+          }
         : baseHydratedMeta
+    if (terminalRunMissingFromMeta && hydratedGame) {
+      const won = hydratedGame.status === 'won'
+      const restoredRecord = createExpeditionRecord(hydratedGame, won)
+      const restoredMasteredContract = won ? hydratedGame.masteryContract : null
+      hydratedMeta = {
+        ...hydratedMeta,
+        embers: hydratedMeta.embers + hydratedGame.legacyReward,
+        completedRuns: hydratedMeta.completedRuns + (won ? 1 : 0),
+        masteredContracts:
+          restoredMasteredContract && !hydratedMeta.masteredContracts.includes(restoredMasteredContract)
+            ? [...hydratedMeta.masteredContracts, restoredMasteredContract]
+            : hydratedMeta.masteredContracts,
+        history: [restoredRecord, ...hydratedMeta.history].slice(0, MAX_HISTORY),
+      }
+    }
 
-    if (hasInvalidProgress) {
+    if (hasInvalidMeta) {
       removeStoredValues(STORAGE_KEY, BATTLE_STORAGE_KEY, META_KEY, BEST_SCORE_KEY)
+    } else if (hasInvalidGame) {
+      removeStoredValues(STORAGE_KEY, BATTLE_STORAGE_KEY)
     }
     setMeta(hydratedMeta)
-    if (!hasInvalidProgress && hydratedMeta !== baseHydratedMeta) {
+    if (!hasInvalidMeta && (hydratedMeta !== baseHydratedMeta || metaAchievementRepairNeeded)) {
       writeStoredValue(META_KEY, JSON.stringify(hydratedMeta))
     }
 
@@ -4198,12 +5365,21 @@ export default function Game() {
     if (storedSettings !== undefined && parsedSettings === null) removeStoredValues(SETTINGS_KEY)
     setSettings(hydratedSettings)
     applyRuntimeSettings(hydratedSettings)
-    setBestScore(interruptedRestoreRecovery === 'reset' ? 0 : readBestScore())
+    const storedBestScore = interruptedRestoreRecovery === 'reset' ? 0 : readBestScore()
+    const hydratedBestScore = Math.max(storedBestScore, highestRecordedScoreFor(hydratedGame, hydratedMeta))
+    setBestScore(hydratedBestScore)
+    if (!hasInvalidMeta && hydratedBestScore > storedBestScore) {
+      writeStoredValue(BEST_SCORE_KEY, String(hydratedBestScore))
+    }
     setReady(true)
     if (interruptedRestoreRecovery === 'completed') {
       announce('중단됐던 백업 복원을 안전하게 완료했습니다.')
     } else if (interruptedRestoreRecovery === 'reset') {
       announce('완료되지 않은 복원 기록을 정리하고 새 기록으로 시작합니다.')
+    } else if (terminalRunMissingFromMeta) {
+      announce('완결 직후 누락된 원정과 보상을 체크포인트에서 복구했습니다.')
+    } else if (hasInvalidGame && !hasInvalidMeta) {
+      announce('현재 규칙과 맞지 않는 원정은 정리하고 유산·업적·최고 기록은 보존했습니다.')
     }
   }, [sessionAccess])
 
@@ -4644,7 +5820,8 @@ export default function Game() {
     }
     const syncDismissTimer = () => {
       if (dismissTimer !== null) window.clearTimeout(dismissTimer)
-      dismissTimer = document.visibilityState === 'visible' ? window.setTimeout(dismissCurrent, 4800) : null
+      const displayDuration = settings.battlePace === 'swift' ? 2800 : 4800
+      dismissTimer = document.visibilityState === 'visible' ? window.setTimeout(dismissCurrent, displayDuration) : null
     }
     syncDismissTimer()
     document.addEventListener('visibilitychange', syncDismissTimer)
@@ -4652,7 +5829,7 @@ export default function Game() {
       if (dismissTimer !== null) window.clearTimeout(dismissTimer)
       document.removeEventListener('visibilitychange', syncDismissTimer)
     }
-  }, [activeMilestoneId, milestoneVisible])
+  }, [activeMilestoneId, milestoneVisible, settings.battlePace])
 
   useEffect(() => {
     return () => {
@@ -4660,6 +5837,7 @@ export default function Game() {
       animationFrames.current.clear()
       if (dragFrame.current !== null) window.cancelAnimationFrame(dragFrame.current)
       if (toastTimer.current !== null) window.clearTimeout(toastTimer.current)
+      if (growthCeremonyTimer.current !== null) window.clearTimeout(growthCeremonyTimer.current)
       if (marchSealTimer.current !== null) window.clearTimeout(marchSealTimer.current)
       stopAudioPlayback(true)
       cancelHaptics()
@@ -4681,6 +5859,18 @@ export default function Game() {
     if (fresh.length > 0) setMilestoneQueue((current) => [...current, ...fresh])
   }
 
+  function dismissActiveMilestone() {
+    if (!activeMilestoneId) return
+    setMilestoneQueue((current) => (current[0]?.id === activeMilestoneId ? current.slice(1) : current))
+    playSound('select', soundOn)
+  }
+
+  function dismissGrowthCeremony() {
+    if (growthCeremonyTimer.current !== null) window.clearTimeout(growthCeremonyTimer.current)
+    growthCeremonyTimer.current = null
+    setGrowthCeremony(null)
+  }
+
   function dismissMarchSealCeremony() {
     if (marchSealTimer.current !== null) window.clearTimeout(marchSealTimer.current)
     marchSealTimer.current = null
@@ -4696,8 +5886,48 @@ export default function Game() {
     }
     setSelectedDifficulty(null)
     setSetupMode('standard')
+    setSelectedMasteryContract(null)
     setSharedCode('')
     setShowDifficulty(true)
+  }
+
+  function openIncomingRiftSetup(code: string) {
+    setIncomingRiftCode(null)
+    setPendingReplacementRiftCode(null)
+    setSharedCode(code)
+    setSetupMode('shared')
+    setSelectedMasteryContract(null)
+    setSelectedDifficulty(null)
+    setShowDifficulty(true)
+    setShowTitle(true)
+    clearLinkedRiftFromCurrentUrl()
+    playSound('select', soundOn)
+    announce(`공유 균열 ${code}를 불러왔습니다. 위험도와 서약을 선택하세요.`)
+  }
+
+  function prepareIncomingRift() {
+    if (!incomingRiftCode) return
+    if (!hasProgress) {
+      openIncomingRiftSetup(incomingRiftCode)
+      return
+    }
+    preloadExpeditionMenu()
+    setPendingReplacementRiftCode(incomingRiftCode)
+    setShowNewCampaignConfirm(true)
+    setShowExpeditionMenu(true)
+    playSound('select', soundOn)
+    announce('현재 체크포인트를 지우기 전에 공유 균열 전환을 다시 확인합니다.')
+  }
+
+  function dismissIncomingRift() {
+    if (!incomingRiftCode) return
+    const dismissedCode = incomingRiftCode
+    setIncomingRiftCode(null)
+    setPendingReplacementRiftCode(null)
+    setSharedCode((current) => (current === dismissedCode ? '' : current))
+    clearLinkedRiftFromCurrentUrl()
+    playSound('select', soundOn)
+    announce(`공유 균열 ${dismissedCode} 초대를 닫았습니다.`)
   }
 
   async function installGame() {
@@ -4869,12 +6099,14 @@ export default function Game() {
   function openExpeditionMenu() {
     if (showTitle || phase !== 'camp') return
     preloadExpeditionMenu()
+    setPendingReplacementRiftCode(null)
     setShowNewCampaignConfirm(false)
     setShowExpeditionMenu(true)
     playSound('select', soundOn)
   }
 
   function closeExpeditionMenu() {
+    setPendingReplacementRiftCode(null)
     setShowNewCampaignConfirm(false)
     setShowExpeditionMenu(false)
     playSound('select', soundOn)
@@ -4882,6 +6114,7 @@ export default function Game() {
 
   function openSettingsFromMenu() {
     preloadSettingsDialog()
+    setPendingReplacementRiftCode(null)
     setShowNewCampaignConfirm(false)
     setShowExpeditionMenu(false)
     setShowSettings(true)
@@ -4890,12 +6123,14 @@ export default function Game() {
 
   function askToDiscardCurrentCampaign() {
     preloadExpeditionMenu()
+    setPendingReplacementRiftCode(null)
     setShowNewCampaignConfirm(true)
     setShowExpeditionMenu(true)
     playSound('select', soundOn)
   }
 
   function cancelDiscardCampaign() {
+    setPendingReplacementRiftCode(null)
     setShowNewCampaignConfirm(false)
     if (showTitle) setShowExpeditionMenu(false)
     playSound('select', soundOn)
@@ -4904,6 +6139,7 @@ export default function Game() {
   function returnToTitle() {
     writeStoredValue(STORAGE_KEY, JSON.stringify(game))
     writeStoredValue(META_KEY, JSON.stringify(meta))
+    setRiskDepartureConfirmation(null)
     setShowNewCampaignConfirm(false)
     setShowExpeditionMenu(false)
     setShowDifficulty(false)
@@ -4915,11 +6151,16 @@ export default function Game() {
   }
 
   function prepareNextChallenge() {
+    setRiskDepartureConfirmation(null)
+    setIncomingRiftCode(null)
+    setPendingReplacementRiftCode(null)
+    clearLinkedRiftFromCurrentUrl()
     setShowNewCampaignConfirm(false)
     setShowExpeditionMenu(false)
     setMobileRosterOpen(false)
     setSelectedDifficulty(nextChallengeDifficulty)
     setSetupMode(game.mode)
+    setSelectedMasteryContract(game.mode === 'standard' ? game.masteryContract : null)
     setSharedCode(game.mode === 'shared' ? runCodeFor(game.runSeed) : '')
     setShowTitle(true)
     setShowDifficulty(true)
@@ -4930,19 +6171,32 @@ export default function Game() {
   }
 
   function discardCurrentCampaign() {
-    const freshGame = createInitialGame('expedition', 'hearthkeepers', 'standard', 1, createRandomSeed(), meta, false)
+    const replacementRiftCode = pendingReplacementRiftCode
+    const freshGame = createInitialGame(
+      'expedition',
+      'hearthkeepers',
+      'standard',
+      1,
+      createUniqueRunId(meta),
+      meta,
+      false,
+    )
     removeStoredValues(BATTLE_STORAGE_KEY)
     writeStoredValue(STORAGE_KEY, JSON.stringify(freshGame))
     setGame(freshGame)
     setPhase('event')
     setFocusLane(0)
     setBattleResult(null)
+    setRiskDepartureConfirmation(null)
     setMilestoneQueue([])
     setSelectedUnitId(null)
     setMobileRosterOpen(false)
     setTutorialStep(null)
-    setSetupMode('standard')
-    setSharedCode('')
+    setIncomingRiftCode(null)
+    setPendingReplacementRiftCode(null)
+    setSetupMode(replacementRiftCode ? 'shared' : 'standard')
+    setSelectedMasteryContract(null)
+    setSharedCode(replacementRiftCode ?? '')
     setSelectedDifficulty(null)
     setShowNewCampaignConfirm(false)
     setShowExpeditionMenu(false)
@@ -4950,8 +6204,13 @@ export default function Game() {
     setShowTitle(true)
     resolvingBattle.current = false
     resolvingChoice.current = null
+    clearLinkedRiftFromCurrentUrl()
     playSound('fire', soundOn)
-    announce('현재 원정 기록을 정리했습니다. 유산과 업적은 그대로 남아 있습니다.')
+    announce(
+      replacementRiftCode
+        ? `현재 원정 기록을 정리하고 공유 균열 ${replacementRiftCode}를 준비했습니다. 위험도와 서약을 선택하세요.`
+        : '현재 원정 기록을 정리했습니다. 유산과 업적은 그대로 남아 있습니다.',
+    )
   }
 
   function closeGuide() {
@@ -5057,6 +6316,12 @@ export default function Game() {
     playSound('select', soundOn)
   }
 
+  function clearDeploymentSelection() {
+    setSelectedUnitId(null)
+    playSound('select', soundOn)
+    announce('배치 모의를 닫았습니다. 현재 대열을 유지합니다.')
+  }
+
   function quickDeploySelectedUnit(lane: number) {
     if (!selectedUnit || phase !== 'camp') return
     deployUnit(lane, selectedUnit.id)
@@ -5084,19 +6349,30 @@ export default function Game() {
 
   function commitMetaProgress(ids: AchievementId[], emberReward = 0, completedRun = false, record?: ExpeditionRecord) {
     const fresh = ids.filter((id) => !meta.achievements.includes(id))
-    if (fresh.length === 0 && emberReward === 0 && !completedRun && !record) return fresh
+    const masteredContract = record?.won ? record.masteryContract : null
+    const freshMasteredContract =
+      masteredContract && !meta.masteredContracts.includes(masteredContract) ? masteredContract : null
+    if (fresh.length === 0 && emberReward === 0 && !completedRun && !record && !freshMasteredContract) return fresh
     const nextMeta: MetaState = {
       ...meta,
       embers: meta.embers + emberReward,
       completedRuns: meta.completedRuns + (completedRun ? 1 : 0),
+      masteredContracts: freshMasteredContract
+        ? [...meta.masteredContracts, freshMasteredContract]
+        : meta.masteredContracts,
       achievements: [...new Set([...meta.achievements, ...fresh])],
       history: record
         ? [record, ...meta.history.filter((entry) => entry.runId !== record.runId)].slice(0, MAX_HISTORY)
         : meta.history,
     }
+    const legacyMasteryMilestone = legacyMasteryMilestoneFor(meta, nextMeta)
     writeStoredValue(META_KEY, JSON.stringify(nextMeta))
     setMeta(nextMeta)
-    enqueueMilestones(fresh.map(achievementMilestone))
+    enqueueMilestones([
+      ...fresh.map(achievementMilestone),
+      ...(freshMasteredContract ? [masteryContractMilestone(freshMasteredContract)] : []),
+      ...(legacyMasteryMilestone ? [legacyMasteryMilestone] : []),
+    ])
     return fresh
   }
 
@@ -5109,14 +6385,14 @@ export default function Game() {
     }
     purchasingLegacy.current = true
     setPendingLegacyPurchase(null)
-    setMeta((current) => {
-      if (current.legacy.includes(legacyId) || current.embers < upgrade.cost) return current
-      return {
-        ...current,
-        embers: current.embers - upgrade.cost,
-        legacy: [...current.legacy, legacyId],
-      }
-    })
+    const nextMeta: MetaState = {
+      ...meta,
+      embers: meta.embers - upgrade.cost,
+      legacy: [...meta.legacy, legacyId],
+    }
+    const legacyMasteryMilestone = legacyMasteryMilestoneFor(meta, nextMeta)
+    writeStoredValue(META_KEY, JSON.stringify(nextMeta))
+    setMeta(nextMeta)
     enqueueMilestones([
       {
         id: `legacy-${legacyId}`,
@@ -5127,6 +6403,7 @@ export default function Game() {
         description: upgrade.description,
         detail: `유산 불씨 ${upgrade.cost} 사용 · 다음 원정부터 적용`,
       },
+      ...(legacyMasteryMilestone ? [legacyMasteryMilestone] : []),
     ])
   }
 
@@ -5161,24 +6438,49 @@ export default function Game() {
     oath: OathId,
     mode: RunMode,
     requestedSeed?: number | null,
+    requestedMasteryContract: MasteryContractId | null = selectedMasteryContract,
     exactSeed?: number,
   ) {
     if (mode === 'shared' && (requestedSeed === null || requestedSeed === undefined) && exactSeed === undefined) {
       announce('공유받은 원정 코드를 먼저 입력해 주세요.')
       return
     }
+    setIncomingRiftCode(null)
+    setPendingReplacementRiftCode(null)
+    clearLinkedRiftFromCurrentUrl()
     preloadCampaignEventDialog()
     const runSeed =
       exactSeed ??
       (mode === 'daily' ? dailySeedForNow() : mode === 'shared' ? (requestedSeed ?? 1) : createRandomSeed())
-    const initial = createInitialGame(difficulty, oath, mode, runSeed, createRandomSeed(), meta, true)
+    const mastery = legacyMasteryFor(meta)
+    const masteryContract =
+      inheritedPowerEnabledFor(mode) &&
+      requestedMasteryContract &&
+      mastery &&
+      mastery.level >= MASTERY_CONTRACTS[requestedMasteryContract].requiredMasteryLevel
+        ? requestedMasteryContract
+        : null
+    const initial = createInitialGame(
+      difficulty,
+      oath,
+      mode,
+      runSeed,
+      createUniqueRunId(meta),
+      meta,
+      true,
+      masteryContract,
+    )
+    const inheritanceMilestone = legacyLoadoutMilestone(initial)
     setGame(initial)
     setPhase('event')
     setFocusLane(0)
-    setMilestoneQueue([])
+    setRiskDepartureConfirmation(null)
+    if (inheritanceMilestone) queuedMilestoneIds.current.add(inheritanceMilestone.id)
+    setMilestoneQueue(inheritanceMilestone ? [inheritanceMilestone] : [])
     setShowTitle(false)
     setShowDifficulty(false)
     setSelectedDifficulty(null)
+    setSelectedMasteryContract(masteryContract)
     setShowArchive(false)
     setShowGuide(false)
     setTutorialStep(readStoredValue(GUIDE_KEY) === GUIDE_SEEN ? null : 'merge')
@@ -5191,14 +6493,21 @@ export default function Game() {
     writeStoredValue(STORAGE_KEY, JSON.stringify(initial))
     playSound('fire', soundOn)
     announce(
-      `${mode === 'daily' ? '오늘의 균열' : mode === 'shared' ? '공유 균열' : DIFFICULTIES[difficulty].name} · ${OATHS[oath].name}이 시작됐습니다.`,
+      `${mode === 'daily' ? '오늘의 균열' : mode === 'shared' ? '공유 균열' : DIFFICULTIES[difficulty].name} · ${OATHS[oath].name}이 시작됐습니다.${masteryContract ? ` ${MASTERY_CONTRACTS[masteryContract].name} 계약이 적용됩니다.` : ''}${initial.activeLegacy.length > 0 ? ` 계승 유산 ${initial.activeLegacy.length}개가 첫 선택부터 적용됩니다.` : ''}${!inheritedPowerEnabledFor(mode) ? ' 동일 코드 비교를 위해 계승 유산과 영원 계약은 봉인됩니다.' : ''}`,
     )
   }
 
   function replayExpedition() {
     if (phase !== 'won' && phase !== 'lost') return
     const replayMode = game.mode === 'daily' && game.runSeed !== dailySeedForNow() ? 'shared' : game.mode
-    startCampaign(game.difficulty, game.oath, replayMode, replayMode === 'shared' ? game.runSeed : null, game.runSeed)
+    startCampaign(
+      game.difficulty,
+      game.oath,
+      replayMode,
+      replayMode === 'shared' ? game.runSeed : null,
+      replayMode === 'standard' ? game.masteryContract : null,
+      game.runSeed,
+    )
   }
 
   function resolveCampaignEvent(choice: EventChoice) {
@@ -5248,18 +6557,39 @@ export default function Game() {
       } else bonusMorale += 5
     }
 
-    const scoreScale = game.activeLegacy.includes('chroniclers-ink') ? 1.08 : 1
+    const eventScoreReward = eventScoreRewardFor(
+      choice,
+      game.difficulty,
+      game.oath,
+      game.activeLegacy,
+      game.masteryContract,
+    )
+    const eventSupplySpend = Math.max(0, -(choice.supplies ?? 0))
     const nextGame: GameState = {
       ...game,
       supplies: Math.max(0, game.supplies + (choice.supplies ?? 0)),
+      recoverySupplies: recoverySuppliesAfterSpend(game.recoverySupplies, eventSupplySpend),
       heat: Math.max(1, Math.min(100, game.heat + (choice.heat ?? 0))),
       morale: Math.max(0, Math.min(100, game.morale + (choice.morale ?? 0) + bonusMorale)),
-      score: game.score + Math.round((choice.score ?? 0) * scoreScale),
+      score: game.score + eventScoreReward.scoreGain,
+      renownLedger: addRenownLedgerEntry(
+        game.renownLedger,
+        'event',
+        eventScoreReward.scoreGain,
+        eventScoreReward.legacyScoreBonus,
+        eventScoreReward.contractScoreBonus,
+      ),
       recruits,
       slots,
       decisions: [...game.decisions, choice.id],
       eventResolvedForDay: game.day,
     }
+    const recoverySuppliesSpent = game.recoverySupplies - nextGame.recoverySupplies
+    const eventBaseScore = choice.score ?? 0
+    const eventExpeditionScore =
+      eventScoreReward.scoreGain - eventScoreReward.legacyScoreBonus - eventScoreReward.contractScoreBonus
+    const eventExpeditionScoreDelta = eventExpeditionScore - eventBaseScore
+    const eventScoreAdjusted = eventScoreReward.scoreGain !== eventBaseScore
     const opensPromotion = pendingPromotionFor(nextGame) !== null
     writeStoredValue(STORAGE_KEY, JSON.stringify(nextGame))
     setGame(nextGame)
@@ -5278,6 +6608,12 @@ export default function Game() {
     const eventNotes = [
       upgradeAnnouncement,
       bonusMorale > 0 ? `빈자리가 없어 사기 +${bonusMorale}로 전환` : '',
+      recoverySuppliesSpent > 0 ? `복구 보급 -${recoverySuppliesSpent} · 보호 잔액 ${nextGame.recoverySupplies}` : '',
+      eventScoreReward.scoreGain > 0 && (!choice.outcome.includes('명성') || eventScoreAdjusted)
+        ? eventScoreAdjusted
+          ? `사건 명성 +${eventBaseScore.toLocaleString('ko-KR')}${eventExpeditionScoreDelta !== 0 ? ` · 위험도·서약 ${eventExpeditionScoreDelta > 0 ? '+' : '−'}${Math.abs(eventExpeditionScoreDelta).toLocaleString('ko-KR')}` : ''}${eventScoreReward.legacyScoreBonus > 0 ? ` · 기록관의 잉크 +${eventScoreReward.legacyScoreBonus.toLocaleString('ko-KR')}` : ''}${eventScoreReward.contractScoreBonus > 0 && game.masteryContract ? ` · ${MASTERY_CONTRACTS[game.masteryContract].name} +${eventScoreReward.contractScoreBonus.toLocaleString('ko-KR')}` : ''} · 실제 +${eventScoreReward.scoreGain.toLocaleString('ko-KR')}`
+          : `명성 +${eventScoreReward.scoreGain.toLocaleString('ko-KR')}`
+        : '',
       choice.echo ? `${choice.echo.triggerDay}일차 후속 결과 기록` : '',
       choice.marchImprint
         ? `${FINAL_MARCH_IMPRINTS[choice.marchImprint].name} · ${FINAL_MARCH_IMPRINTS[choice.marchImprint].effect}`
@@ -5290,6 +6626,7 @@ export default function Game() {
   }
 
   function rememberCampAction(kind: CampUndoKind, label: string, detail: string) {
+    dismissGrowthCeremony()
     if (kind !== 'march-seal') dismissMarchSealCeremony()
     setCampUndo({
       kind,
@@ -5303,6 +6640,7 @@ export default function Game() {
 
   function undoCampAction() {
     if (!campUndo || (phase !== 'camp' && phase !== 'promotion')) return
+    dismissGrowthCeremony()
     if (campUndo.kind === 'march-seal') dismissMarchSealCeremony()
     const restoredGame: GameState = {
       ...cloneGameState(campUndo.game),
@@ -5365,23 +6703,42 @@ export default function Game() {
         upgradedTier === 3 || (upgradedTier === 4 && source.specialization !== target.specialization)
           ? null
           : target.specialization
-      slots[targetIndex] = { ...target, tier: upgradedTier, specialization }
-      const mergeWarmth =
-        (game.relics.includes('living-ember') ? 7 : 3) +
-        (game.oath === 'hearthkeepers' ? 3 : 0) +
-        DIFFICULTIES[game.difficulty].mergeHeatBonus
+      const upgradedUnit: Unit = { ...target, tier: upgradedTier, specialization }
+      slots[targetIndex] = upgradedUnit
+      const nextHeat = Math.min(100, game.heat + campMergeWarmth)
       const nextGame: GameState = {
         ...game,
-        heat: Math.min(100, game.heat + mergeWarmth),
+        heat: nextHeat,
         slots,
         lineup: replaceLineupAfterMerge(source.id, target.id),
       }
-      const opensPromotion = needsPromotion(slots[targetIndex])
+      const opensPromotion = needsPromotion(upgradedUnit)
       rememberCampAction(
         'merge',
         `${survivorName(target)} 합성`,
-        `${KIND_META[target.kind].name} ${TIER_LABELS[target.tier]} 두 명 → ${TIER_LABELS[upgradedTier]} · 온기 +${mergeWarmth}`,
+        `${KIND_META[target.kind].name} ${TIER_LABELS[target.tier]} 두 명 → ${TIER_LABELS[upgradedTier]} · 온기 +${campMergeHeatGain}`,
       )
+      setGrowthCeremony({
+        id: Date.now(),
+        unitId: target.id,
+        name: survivorName(target),
+        kind: target.kind,
+        fromTier: target.tier,
+        toTier: upgradedTier,
+        powerBefore: PLAYER_POWER[target.tier],
+        powerAfter: PLAYER_POWER[upgradedTier],
+        heatBefore: game.heat,
+        heatAfter: nextHeat,
+        warmth: campMergeHeatGain,
+        opensPromotion,
+        specialization,
+      })
+      if (!opensPromotion) {
+        const reducedMotion =
+          settings.motion === 'reduced' || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        const ceremonyDuration = reducedMotion ? 900 : settings.battlePace === 'swift' ? 1500 : 2600
+        growthCeremonyTimer.current = window.setTimeout(dismissGrowthCeremony, ceremonyDuration)
+      }
       setGame(nextGame)
       setSelectedUnitId(target.id)
       if (tutorialStep === 'merge') setTutorialStep('deploy')
@@ -5393,8 +6750,8 @@ export default function Game() {
       vibrate([18, 35, 24])
       announce(
         opensPromotion
-          ? `${survivorName(target)} ${TIER_LABELS[upgradedTier]} 등급 완성 · 화로 +${mergeWarmth} · 베테랑 진급을 선택하세요.`
-          : `${survivorName(target)} ${TIER_LABELS[upgradedTier]} 등급 완성 · 화로 +${mergeWarmth}`,
+          ? `${survivorName(target)} ${TIER_LABELS[upgradedTier]} 등급 완성 · 화로 +${campMergeHeatGain} · 베테랑 진급을 선택하세요.`
+          : `${survivorName(target)} ${TIER_LABELS[upgradedTier]} 등급 완성 · 화로 +${campMergeHeatGain}`,
       )
       return
     }
@@ -5410,9 +6767,15 @@ export default function Game() {
   function handleRosterTap(unitId: string) {
     if (phase !== 'camp') return
     if (!selectedUnitId) {
+      const unit = findUnit(game, unitId)
+      const mergeReadiness = mergeReadinessByUnit.get(unitId)
       setSelectedUnitId(unitId)
       playSound('select', soundOn)
-      announce('같은 병사를 고르면 합치고, 전선을 고르면 배치해요.')
+      announce(
+        unit && mergeReadiness
+          ? `${survivorName(unit)} 선택 · 합성 짝 ${mergeReadiness.partnerCount}명 · ${TIER_LABELS[mergeReadiness.toTier]} 등급과 전투력 ${mergeReadiness.powerAfter} 미리보기`
+          : '같은 병사를 고르면 합치고, 전선을 고르면 배치해요.',
+      )
       return
     }
 
@@ -5431,7 +6794,12 @@ export default function Game() {
 
     setSelectedUnitId(unitId)
     playSound('select', soundOn)
-    announce('서로 같은 병과와 등급만 합칠 수 있어요.')
+    const nextMergeReadiness = mergeReadinessByUnit.get(unitId)
+    announce(
+      nextMergeReadiness && target
+        ? `${survivorName(target)} 선택 · 같은 병과·등급 짝 ${nextMergeReadiness.partnerCount}명을 밝혔습니다.`
+        : '서로 같은 병과와 등급만 합칠 수 있어요.',
+    )
   }
 
   function handleEmptySlot(targetIndex: number) {
@@ -5454,22 +6822,49 @@ export default function Game() {
       return
     }
 
-    const lineup = game.lineup.map((id) => (id === unit.id ? null : id))
-    lineup[lane] = unit.id
+    const sourceLane = game.lineup.indexOf(unit.id)
+    const targetUnit = findUnit(game, game.lineup[lane])
+    const completesTutorialDeploy = tutorialStep === 'deploy' && unit.tier >= 2
+    if (sourceLane === lane) {
+      setSelectedUnitId(unit.id)
+      if (completesTutorialDeploy) {
+        setTutorialStep('orders')
+        setMobileRosterOpen(false)
+        playSound('deploy', soundOn)
+        vibrate(12)
+      }
+      announce(
+        tutorialStep === 'deploy' && !completesTutorialDeploy
+          ? `${lane + 1}전선의 ${survivorName(unit)} 배치 유지 · 현장 훈련은 II 등급 생존자를 기다립니다.`
+          : completesTutorialDeploy
+            ? `${lane + 1}전선의 ${survivorName(unit)} 강화 배치 확인 · 다음은 전선 명령입니다.`
+            : `${lane + 1}전선의 ${survivorName(unit)} 배치를 유지합니다.`,
+      )
+      return
+    }
+
+    const lineup = lineupAfterDeployment(game.lineup, unit.id, lane)
     setCampUndo(null)
     setGame({ ...game, lineup })
     setSelectedUnitId(unit.id)
-    const completesTutorialDeploy = tutorialStep === 'deploy' && unit.tier >= 2
     if (completesTutorialDeploy) {
       setTutorialStep('orders')
       setMobileRosterOpen(false)
     }
     playSound('deploy', soundOn)
     vibrate(12)
+    const deploymentMessage =
+      sourceLane >= 0 && targetUnit
+        ? `${sourceLane + 1}전선 ${survivorName(unit)} ↔ ${lane + 1}전선 ${survivorName(targetUnit)} · 자리 교환`
+        : sourceLane >= 0
+          ? `${sourceLane + 1}전선에서 ${lane + 1}전선으로 ${survivorName(unit)} 이동`
+          : targetUnit
+            ? `${lane + 1}전선에 ${survivorName(unit)} 배치 · ${survivorName(targetUnit)} 대기소 복귀`
+            : `${lane + 1}전선에 ${survivorName(unit)} 배치`
     announce(
       tutorialStep === 'deploy' && !completesTutorialDeploy
-        ? `${lane + 1}전선에 ${survivorName(unit)} 배치 · 현장 훈련은 II 등급 생존자를 기다립니다.`
-        : `${lane + 1}전선에 ${survivorName(unit)} 배치`,
+        ? `${deploymentMessage} · 현장 훈련은 II 등급 생존자를 기다립니다.`
+        : deploymentMessage,
     )
   }
 
@@ -5494,21 +6889,25 @@ export default function Game() {
     }
     const slots = [...game.slots]
     slots[emptyIndex] = unit
+    const nextRecoverySupplies = recoverySuppliesAfterSpend(game.recoverySupplies, recruitCost)
+    const recoverySpend = game.recoverySupplies - nextRecoverySupplies
+    const recoveryNote = recoverySpend > 0 ? ` · 복구분 -${recoverySpend}` : ''
     rememberCampAction(
       'recruit',
       '신호탄 사용',
-      `${survivorName(unit)} 합류 · ${KIND_META[unit.kind].name} I · 보급품 -${recruitCost}`,
+      `${survivorName(unit)} 합류 · ${KIND_META[unit.kind].name} I · 보급품 -${recruitCost}${recoveryNote}`,
     )
     setGame({
       ...game,
       supplies: game.supplies - recruitCost,
+      recoverySupplies: nextRecoverySupplies,
       recruits: game.recruits + 1,
       slots,
     })
     setSelectedUnitId(unit.id)
     playSound('recruit', soundOn)
     vibrate([12, 24, 12])
-    announce(`${survivorName(unit)} 합류 · 불빛을 따라 도착했어요.`)
+    announce(`${survivorName(unit)} 합류 · 불빛을 따라 도착했어요${recoveryNote}`)
   }
 
   function stokeFire() {
@@ -5522,15 +6921,23 @@ export default function Game() {
       return
     }
 
+    const nextRecoverySupplies = recoverySuppliesAfterSpend(game.recoverySupplies, stokeCost)
+    const recoverySpend = game.recoverySupplies - nextRecoverySupplies
+    const recoveryNote = recoverySpend > 0 ? ` · 복구분 -${recoverySpend}` : ''
     rememberCampAction(
       'stoke',
       '화로 투자',
-      `보급품 -${stokeCost} · 온기 ${game.heat}% → ${game.heat + stokeHeatGain}%`,
+      `보급품 -${stokeCost}${recoveryNote} · 온기 ${game.heat}% → ${game.heat + stokeHeatGain}%`,
     )
-    setGame({ ...game, supplies: game.supplies - stokeCost, heat: game.heat + stokeHeatGain })
+    setGame({
+      ...game,
+      supplies: game.supplies - stokeCost,
+      recoverySupplies: nextRecoverySupplies,
+      heat: game.heat + stokeHeatGain,
+    })
     playSound('fire', soundOn)
     vibrate(18)
-    announce(`화로에 필요한 만큼 장작을 넣었어요 · 보급품 -${stokeCost} · 온기 +${stokeHeatGain}`)
+    announce(`화로에 필요한 만큼 장작을 넣었어요 · 보급품 -${stokeCost}${recoveryNote} · 온기 +${stokeHeatGain}`)
   }
 
   function sealMarchSupplies() {
@@ -5541,43 +6948,65 @@ export default function Game() {
     }
     if (marchSealSupplies < 10) {
       announce(
-        `화로·성장 예비 ${marchSealReserve}${marchSealRetreatReserve > 0 ? `과 후퇴 보급 ${marchSealRetreatReserve}` : ''}을 제외한 잉여 보급 10 이상이 필요해요.`,
+        `화로·성장·복구 보호선 ${marchSealReserve}${marchSealRecoveryReserve > 0 ? ` · 남은 복구 보급 ${marchSealRecoveryReserve} 포함` : ''}을 제외한 잉여 보급 10 이상이 필요해요.`,
       )
       return
     }
 
     const nextScore = game.score + marchSealScore
     const rankNote = marchSealRaisesRank ? ` · ${marchSealRankEntry.rank} 등급 도달` : ''
+    const legacyNote =
+      marchSealLegacyScoreBonus > 0 ? ` · 기록관의 잉크 +${marchSealLegacyScoreBonus.toLocaleString('ko-KR')}` : ''
+    const contractNote =
+      marchSealContractScoreBonus > 0 && game.masteryContract
+        ? ` · ${MASTERY_CONTRACTS[game.masteryContract].name} +${marchSealContractScoreBonus.toLocaleString('ko-KR')}`
+        : ''
     rememberCampAction(
       'march-seal',
       '행군 보급 봉인',
-      `보급품 -${marchSealSupplies} · 명성 +${marchSealScore.toLocaleString('ko-KR')} · 전술 예비 ${marchSealReserve}${marchSealRetreatReserve > 0 ? ` · 후퇴 보급 ${marchSealRetreatReserve} 제외` : ''}${rankNote}`,
+      `보급품 -${marchSealSupplies} · 명성 +${marchSealScore.toLocaleString('ko-KR')}${legacyNote}${contractNote} · 보호선 ${marchSealReserve}${marchSealRecoveryReserve > 0 ? ` · 남은 복구 보급 ${marchSealRecoveryReserve} 포함` : ''}${rankNote}`,
     )
     dismissMarchSealCeremony()
     setMarchSealCeremony({
       id: Date.now(),
       supplies: marchSealSupplies,
       scoreGain: marchSealScore,
+      legacyScoreBonus: marchSealLegacyScoreBonus,
+      contractScoreBonus: marchSealContractScoreBonus,
+      masteryContract: game.masteryContract,
       scoreBefore: game.score,
       scoreAfter: nextScore,
       reserve: marchSealReserve,
-      retreatReserve: marchSealRetreatReserve,
+      recoveryReserve: marchSealRecoveryReserve,
       rankBefore: liveRankEntry.rank,
       rankAfter: marchSealRankEntry.rank,
     })
     const reducedMotion = settings.motion === 'reduced' || window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    marchSealTimer.current = window.setTimeout(dismissMarchSealCeremony, reducedMotion ? 1800 : 2400)
-    setGame({ ...game, supplies: game.supplies - marchSealSupplies, score: nextScore })
+    const ceremonyDuration = reducedMotion ? 900 : settings.battlePace === 'swift' ? 1450 : 2400
+    marchSealTimer.current = window.setTimeout(dismissMarchSealCeremony, ceremonyDuration)
+    setGame({
+      ...game,
+      supplies: game.supplies - marchSealSupplies,
+      score: nextScore,
+      renownLedger: addRenownLedgerEntry(
+        game.renownLedger,
+        'marchSeal',
+        marchSealScore,
+        marchSealLegacyScoreBonus,
+        marchSealContractScoreBonus,
+      ),
+    })
     playSound('seal', soundOn)
     vibrate([16, 22, 34, 30, 54])
     announce(
-      `잉여 보급 ${marchSealSupplies}을 마지막 행군 기록으로 봉인했습니다 · 명성 +${marchSealScore.toLocaleString('ko-KR')}${rankNote}`,
+      `잉여 보급 ${marchSealSupplies}을 마지막 행군 기록으로 봉인했습니다 · 명성 +${marchSealScore.toLocaleString('ko-KR')}${legacyNote}${contractNote}${rankNote}`,
     )
   }
 
   function chooseFocusLane(lane: number) {
     if (phase !== 'camp') return
     const focusedResult = createBattleResult(game, lane)
+    setRiskDepartureConfirmation(null)
     setFocusLane(lane)
     playSound('select', soundOn)
     if (tutorialStep === 'focus') {
@@ -5644,6 +7073,18 @@ export default function Game() {
     })
   }
 
+  function cancelRiskDeparture() {
+    if (!riskDepartureArmed) return
+    setRiskDepartureConfirmation(null)
+    playSound('select', soundOn)
+    vibrate(12)
+    announce('위험 출전 확인을 취소했습니다. 현재 계획을 계속 조정할 수 있습니다.')
+    scheduleFrame(() => {
+      const selector = compactViewport ? '.mobile-battle-action:not(:disabled)' : '.primary-action:not(:disabled)'
+      document.querySelector<HTMLButtonElement>(selector)?.focus({ preventScroll: true })
+    })
+  }
+
   function chooseSpecialization(specializationId: SpecializationId) {
     if (phase !== 'promotion' || !pendingPromotionUnit) return
     if (SPECIALIZATIONS[specializationId].kind !== pendingPromotionUnit.kind) return
@@ -5656,7 +7097,12 @@ export default function Game() {
     )
     const nextGame: GameState = { ...game, slots }
     const remainingPromotion = pendingPromotionFor(nextGame)
+    const promotionGrowth = growthCeremony?.unitId === pendingPromotionUnit.id ? growthCeremony : null
+    const fromTier = promotionGrowth?.fromTier ?? Math.max(1, pendingPromotionUnit.tier - 1)
+    const powerBefore = promotionGrowth?.powerBefore ?? PLAYER_POWER[fromTier]
+    const powerAfter = promotionGrowth?.powerAfter ?? PLAYER_POWER[pendingPromotionUnit.tier]
     setCampUndo(null)
+    dismissGrowthCeremony()
     writeStoredValue(STORAGE_KEY, JSON.stringify(nextGame))
     setGame(nextGame)
     setSelectedUnitId(pendingPromotionUnit.id)
@@ -5671,10 +7117,36 @@ export default function Game() {
             ? 'event'
             : 'camp',
     )
+    enqueueMilestones([
+      {
+        id: `growth-${game.runId}-${game.day}-${pendingPromotionUnit.id}-${pendingPromotionUnit.tier}-${specializationId}`,
+        kind: 'growth',
+        glyph: SPECIALIZATIONS[specializationId].glyph,
+        kicker: `VETERAN PATH FORGED · TIER ${TIER_LABELS[pendingPromotionUnit.tier]}`,
+        title: `${survivorName(pendingPromotionUnit)} · ${SPECIALIZATIONS[specializationId].name}`,
+        description: `${KIND_META[pendingPromotionUnit.kind].name} ${TIER_LABELS[fromTier]} → ${TIER_LABELS[pendingPromotionUnit.tier]} · 기본 전투력 ${powerBefore} → ${powerAfter}`,
+        detail: SPECIALIZATIONS[specializationId].description,
+      },
+    ])
     resolvingChoice.current = null
-    playSound('relic', soundOn)
+    playSound(pendingPromotionUnit.tier === MAX_TIER ? 'seal' : 'relic', soundOn)
     vibrate([22, 30, 22, 42, 28])
     announce(`${survivorName(pendingPromotionUnit)} · ${SPECIALIZATIONS[specializationId].name}의 길을 택했습니다.`)
+  }
+
+  function previewSpecialization(specializationId: SpecializationId) {
+    if (phase !== 'promotion' || !pendingPromotionUnit) return
+    if (SPECIALIZATIONS[specializationId].kind !== pendingPromotionUnit.kind) return
+    const insight = promotionChoiceInsights.find((candidate) => candidate.specializationId === specializationId)
+    const powerCopy =
+      insight?.playerPowerBefore !== null &&
+      insight?.playerPowerBefore !== undefined &&
+      insight.playerPowerAfter !== null
+        ? ` · 현재 전선 ${insight.playerPowerBefore} → ${insight.playerPowerAfter}`
+        : ''
+    playSound('select', soundOn)
+    vibrate(12)
+    announce(`${SPECIALIZATIONS[specializationId].name} 미리보기 · ${insight?.status ?? '조건 확인'}${powerCopy}`)
   }
 
   function continueActInterlude() {
@@ -5687,10 +7159,22 @@ export default function Game() {
 
   function revealFinalEnding() {
     if (phase !== 'finale' || game.status !== 'won') return
+    setBattleResult(null)
     setPhase('won')
     playSound('fire', soundOn)
     vibrate([28, 34, 28, 34, 52, 40, 72])
     announce(`${currentEnding.title} · 원정의 결말이 기록되었습니다.`)
+  }
+
+  function previewRelicChoice(relicId: RelicId) {
+    if (phase !== 'relic' || !game.pendingRelic) return
+    const resonancePreview = resonancePreviewFor(relicId, game.relics)
+    const completesResonance = resonancePreview?.completes === true
+    playSound('select', soundOn)
+    vibrate(completesResonance ? [12, 22, 20] : 12)
+    announce(
+      `${RELICS[relicId].name} 선택 · ${completesResonance && resonancePreview ? `${RESONANCES[resonancePreview.id].name} 공명을 완성할 수 있습니다.` : '효과를 확인한 뒤 각인을 확정하세요.'}`,
+    )
   }
 
   function chooseRelic(relicId: RelicId) {
@@ -5729,7 +7213,7 @@ export default function Game() {
     }
     if (unlocksResonanceAchievement) milestones.push(achievementMilestone('first-resonance'))
     enqueueMilestones(milestones)
-    playSound('relic', soundOn)
+    playSound(completesResonance ? 'seal' : 'relic', soundOn)
     vibrate(completesResonance ? [24, 30, 24, 30, 55, 36, 70] : [20, 35, 20, 45, 30])
     announce(
       `${RELICS[relicId].name} 각인${completesResonance && resonancePreview ? ` · ${RESONANCES[resonancePreview.id].name} 공명 완성` : ''}`,
@@ -5764,9 +7248,28 @@ export default function Game() {
       return
     }
     if (tutorialStep === 'battle') finishTutorial('현장 훈련 완료 · 첫 교전을 개시합니다.')
+    const riskDepartureConfirmed =
+      riskDepartureConfirmation?.game === game && riskDepartureConfirmation.focusLane === focusLane
+    if (!result.victory && !riskDepartureConfirmed) {
+      const returnHeat = Math.max(0, Math.min(100, game.heat + result.heatDelta))
+      const returnMorale = Math.max(0, Math.min(100, game.morale + result.moraleDelta))
+      setRiskDepartureConfirmation({ game, focusLane })
+      setMobileRosterOpen(false)
+      playSound('lose', soundOn)
+      vibrate([18, 30, 18])
+      announce(
+        `후퇴 위험 확인${returnHeat === 0 ? ' · 귀환 온기 0%로 원정이 종료됩니다' : ''} · 같은 계획으로 한 번 더 누르면 출전합니다 · 보급 +${result.supplyReward} · 온기 ${game.heat}% → ${returnHeat}% · 사기 ${game.morale} → ${returnMorale}`,
+      )
+      scheduleFrame(() => {
+        const selector = compactViewport ? '.mobile-battle-action:not(:disabled)' : '.primary-action:not(:disabled)'
+        document.querySelector<HTMLButtonElement>(selector)?.focus({ preventScroll: true })
+      })
+      return
+    }
 
     dismissMarchSealCeremony()
     resolvingBattle.current = false
+    setRiskDepartureConfirmation(null)
     writeStoredValue(STORAGE_KEY, JSON.stringify(game))
     writeStoredValue(BATTLE_STORAGE_KEY, JSON.stringify({ day: game.day, focusLane } satisfies SavedBattle))
     setSelectedUnitId(null)
@@ -5777,21 +7280,63 @@ export default function Game() {
     vibrate([30, 45, 45])
   }
 
-  function playBattleLaneImpact(lane: LaneResult, result: BattleResult) {
+  function playBattleLaneImpact(lane: LaneResult, result: BattleResult, decisive: boolean) {
     const crownBroken =
       game.day === MAX_NIGHTS && finalCrownSealBroken(lane.lane, result.focusLane, lane.countered, lane.relation)
-    playSound(crownBroken ? 'crown' : lane.won ? 'impact' : 'lose', soundOn)
-    vibrate(crownBroken ? [24, 24, 42, 28, 62] : lane.won ? 20 : [45, 30, 45])
+    const impactSound = crownBroken
+      ? 'crown'
+      : decisive
+        ? result.victory
+          ? result.boss
+            ? 'seal'
+            : 'impact'
+          : 'lose'
+        : lane.won
+          ? 'impact'
+          : 'lose'
+    playSound(impactSound, soundOn)
+    vibrate(
+      crownBroken
+        ? [24, 24, 42, 28, 62]
+        : decisive
+          ? result.victory
+            ? [18, 22, 38, 24, 62]
+            : [58, 32, 78, 38, 96]
+          : lane.won
+            ? 20
+            : [45, 30, 45],
+    )
   }
 
   function playBattleClimax(result: BattleResult) {
+    if (finalMarchGate) {
+      const doctrineBroken = result.lanes.some(
+        (lane) => lane.enemy.doctrine === finalMarchGate.doctrine && lane.doctrineBroken,
+      )
+      playSound(result.victory ? (doctrineBroken ? 'seal' : 'impact') : doctrineBroken ? 'impact' : 'lose', soundOn)
+      vibrate(
+        result.victory
+          ? doctrineBroken
+            ? [20, 34, 34, 38, 52, 30, 72]
+            : [30, 26, 54, 30, 68]
+          : doctrineBroken
+            ? [30, 52, 30, 88, 72]
+            : [70, 40, 94],
+      )
+      return
+    }
+
     playSound(result.victory ? (game.day === MAX_NIGHTS ? 'finale' : 'crown') : 'lose', soundOn)
     vibrate(
       result.victory
         ? game.day === MAX_NIGHTS
           ? [22, 24, 42, 30, 64, 34, 86]
-          : [24, 22, 38, 26, 56, 30, 72]
-        : [70, 34, 92],
+          : game.day === 8
+            ? [34, 74, 34, 142, 58, 28, 82]
+            : [24, 22, 38, 26, 56, 30, 72]
+        : game.day === 8
+          ? [46, 82, 46, 154, 96]
+          : [70, 34, 92],
     )
   }
 
@@ -5804,11 +7349,32 @@ export default function Game() {
 
   function skipBattleCinema() {
     if (phase !== 'battling' || !battleResult) return
+    const shatteredActCrown = battleResult.boss && battleResult.victory && (game.day === 4 || game.day === 8)
     setPhase('result')
+    if (finalMarchGate) {
+      const doctrineBroken = battleResult.lanes.some(
+        (lane) => lane.enemy.doctrine === finalMarchGate.doctrine && lane.doctrineBroken,
+      )
+      playSound(
+        battleResult.victory ? (doctrineBroken ? 'seal' : 'impact') : doctrineBroken ? 'impact' : 'lose',
+        soundOn,
+      )
+      vibrate(
+        battleResult.victory
+          ? doctrineBroken
+            ? [18, 30, 30, 36, 54]
+            : [26, 24, 52]
+          : doctrineBroken
+            ? [28, 46, 28, 72]
+            : [55, 30, 70],
+      )
+      return
+    }
+
     playSound(
       game.day === MAX_NIGHTS && battleResult.victory
         ? 'finale'
-        : game.day === 4 && battleResult.boss && battleResult.victory
+        : shatteredActCrown
           ? 'crown'
           : battleResult.victory
             ? 'win'
@@ -5816,7 +7382,13 @@ export default function Game() {
       soundOn,
     )
     vibrate(
-      battleResult.victory ? (game.day === 4 && battleResult.boss ? [22, 20, 38, 24, 58] : [20, 25, 35]) : [55, 30, 70],
+      battleResult.victory
+        ? shatteredActCrown
+          ? game.day === 8
+            ? [28, 64, 28, 120, 64]
+            : [22, 20, 38, 24, 58]
+          : [20, 25, 35]
+        : [55, 30, 70],
     )
   }
 
@@ -5829,10 +7401,26 @@ export default function Game() {
   async function shareExpedition() {
     if (phase !== 'won' && phase !== 'lost') return
     const won = phase === 'won'
+    const runCode = runCodeFor(game.runSeed)
+    const shareUrl = sharedRiftUrlFor(runCode)
     const completedTrials = completedTrialsFor(game, won).length
+    const outcomeFailure = game.failureInsights[0] ?? null
+    const legacyRenownBonus =
+      game.renownLedger.battle.legacyBonus +
+      game.renownLedger.event.legacyBonus +
+      game.renownLedger.marchSeal.legacyBonus
+    const contractRenownBonus =
+      game.renownLedger.battle.contractBonus +
+      game.renownLedger.event.contractBonus +
+      game.renownLedger.marchSeal.contractBonus
     const text = [
       `마지막 불씨 · ${currentEnding.title}`,
       `원정 등급 ${expeditionRank(game.score, won)} · 명성 ${game.score.toLocaleString('ko-KR')}`,
+      `명성 기여 전투 ${game.renownLedger.battle.total.toLocaleString('ko-KR')} · 사건 ${game.renownLedger.event.total.toLocaleString('ko-KR')} · 행군 봉인 ${game.renownLedger.marchSeal.total.toLocaleString('ko-KR')}`,
+      legacyRenownBonus > 0 ? `기록관의 잉크 실제 기여 +${legacyRenownBonus.toLocaleString('ko-KR')}` : '',
+      game.masteryContract
+        ? `영원 계약 ${MASTERY_CONTRACTS[game.masteryContract].name} · 실제 기여 +${contractRenownBonus.toLocaleString('ko-KR')} · ${MASTERY_CONTRACTS[game.masteryContract].burden}${meta.masteredContracts.includes(game.masteryContract) ? ' · 정복 기록' : ''}`
+        : '',
       `${DIFFICULTIES[game.difficulty].name} · ${OATHS[game.oath].name} · 개인 과업 ${completedTrials}/3`,
       `원정 교범 ${protocolMasteryProgress.name} · ${protocolMasteryRecognized ? '숙련 인장' : `${protocolMasteryProgress.metricLabel} ${protocolMasteryProgress.currentLabel}`} · 총 ${masteredProtocolCount}/3`,
       `지휘관 서명 ${endingCommanderTitle} · ${endingTacticalSeal.title}`,
@@ -5840,27 +7428,40 @@ export default function Game() {
       endingFinalVow ? `최후 맹세 ${endingFinalVow.name} · ${endingFinalVow.legacyTitle}` : '',
       `유물 ${game.relics.length}개 · ${activeResonances.length > 0 ? `공명 ${activeResonances.map((resonanceId) => RESONANCES[resonanceId].name).join(', ')}` : '완성된 공명 없음'}`,
       `새벽 도감 ${endingDiscoveredCount}/${ENDING_IDS.length} 결말 발견`,
-      `${game.mode === 'daily' ? '오늘의 균열' : game.mode === 'shared' ? '공유 균열' : '원정'} 코드 ${runCodeFor(game.runSeed)}`,
+      `${game.mode === 'daily' ? '오늘의 균열' : game.mode === 'shared' ? '공유 균열' : '원정'} 코드 ${runCode}`,
+      outcomeFailure
+        ? `최종 패인 전선 0${outcomeFailure.lane + 1} · ${outcomeFailure.label} · 처방: ${outcomeFailure.action}`
+        : '',
       `다음 목표 ${endingMasteryDirective.title}`,
     ]
       .filter(Boolean)
       .join('\n')
 
-    try {
-      const share = navigator.share?.bind(navigator)
-      if (share) {
-        await share({ title: '마지막 불씨', text, url: window.location.href })
+    const share = navigator.share?.bind(navigator)
+    let nativeShareFailed = false
+    if (share) {
+      try {
+        await share({ title: '마지막 불씨', text, url: shareUrl })
         announce('원정 기록을 공유했습니다.')
         return
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return
+        nativeShareFailed = true
       }
+    }
+
+    try {
       if (navigator.clipboard) {
-        await navigator.clipboard.writeText(`${text}\n${window.location.href}`)
-        announce('원정 기록을 클립보드에 복사했습니다.')
+        await navigator.clipboard.writeText(`${text}\n${shareUrl}`)
+        announce(
+          nativeShareFailed
+            ? '공유 창 대신 원정 기록과 초대 링크를 복사했습니다.'
+            : '원정 기록과 초대 링크를 복사했습니다.',
+        )
         return
       }
       announce('이 브라우저는 기록 공유를 지원하지 않습니다.')
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') return
+    } catch {
       announce('기록을 공유하지 못했습니다. 다시 시도해 주세요.')
     }
   }
@@ -5873,6 +7474,9 @@ export default function Game() {
     }
     const nextHeat = Math.max(0, Math.min(100, game.heat + battleResult.heatDelta))
     const nextSupplies = game.supplies + battleResult.supplyReward
+    const nextRecoverySupplies = battleResult.victory
+      ? game.recoverySupplies
+      : game.recoverySupplies + battleResult.supplyReward
     const nextMorale = Math.max(0, Math.min(100, game.morale + battleResult.moraleDelta))
     const nextScore = game.score + battleResult.scoreReward
     const nextPerfectNights = game.perfectNights + (battleResult.victory && battleResult.wins === 3 ? 1 : 0)
@@ -5889,8 +7493,16 @@ export default function Game() {
       ...game,
       heat: nextHeat,
       supplies: nextSupplies,
+      recoverySupplies: nextRecoverySupplies,
       morale: nextMorale,
       score: nextScore,
+      renownLedger: addRenownLedgerEntry(
+        game.renownLedger,
+        'battle',
+        battleResult.scoreReward,
+        battleResult.legacyScoreBonus,
+        battleResult.contractScoreBonus,
+      ),
       perfectNights: nextPerfectNights,
       intentsCountered: nextIntentsCountered,
       unitedVictories: nextUnitedVictories,
@@ -5941,7 +7553,7 @@ export default function Game() {
         achievementCandidates.push(OATH_CHRONICLE_ACHIEVEMENTS[nextGame.oath])
       }
       achievementCandidates.push(ENDING_ACHIEVEMENTS[endingFor(nextGame, true)])
-      const reward = legacyRewardFor(nextGame, true)
+      const reward = legacyRewardBreakdownFor(nextGame, true).total
       const completed = {
         ...nextGame,
         status: 'won' as const,
@@ -5952,21 +7564,26 @@ export default function Game() {
       setGame(completed)
       commitMetaProgress(achievementCandidates, reward, true, createExpeditionRecord(completed, true))
       saveBestScore(nextScore)
-      setBattleResult(null)
       setPhase('finale')
+      playSound('finale', soundOn)
+      vibrate([20, 28, 28, 34, 42, 36, 62, 42, 84])
+      announce(
+        `백색 왕의 왕좌가 무너졌습니다. 최종 전선 ${battleResult.wins}곳 · 칙령 ${battleResult.crownBreakCount}개 파쇄. 마지막 새벽으로 향합니다.`,
+      )
       return
     }
 
     if (nextHeat === 0) {
       if (completedTrialsFor(nextGame, false).length === 3) achievementCandidates.push('threefold-oath')
       achievementCandidates.push(ENDING_ACHIEVEMENTS[endingFor(nextGame, false)])
-      const reward = legacyRewardFor(nextGame, false)
+      const reward = legacyRewardBreakdownFor(nextGame, false).total
       const failed = {
         ...nextGame,
         heat: 0,
         status: 'lost' as const,
         legacyAwarded: true,
         legacyReward: reward,
+        failureInsights: cloneFailureInsights(defeatInsights),
       }
       persistOutcome(failed)
       setGame(failed)
@@ -5974,6 +7591,9 @@ export default function Game() {
       saveBestScore(nextScore)
       setBattleResult(null)
       setPhase('lost')
+      playSound('lose', soundOn)
+      vibrate([64, 38, 86, 44, 112])
+      announce('마지막 불씨가 꺼졌습니다. 이번 원정의 결말과 다음 공략 목표를 기록합니다.')
       return
     }
 
@@ -5997,6 +7617,10 @@ export default function Game() {
     setFocusLane(battleResult.victory ? 0 : battleResult.focusLane)
     setPhase(opensInterlude ? 'interlude' : grantsRelic ? 'relic' : battleResult.victory ? 'event' : 'camp')
     if (!grantsRelic && !opensInterlude) {
+      if (!battleResult.victory && game.day === MAX_NIGHTS) {
+        playSound('fire', soundOn)
+        vibrate([18, 28, 24, 34, 38])
+      }
       const statusMessage = battleResult.victory
         ? '새벽이 밝았습니다. 다음 경로를 선택하세요.'
         : primaryFailureInsight
@@ -6030,6 +7654,7 @@ export default function Game() {
     }
     if (!session.dragging && distance > 7) {
       session.dragging = true
+      setSelectedUnitId(session.unitId)
       setDraggingUnitId(session.unitId)
     }
     if (session.dragging) moveDragGhost(event.clientX, event.clientY)
@@ -6102,6 +7727,10 @@ export default function Game() {
           openGuide={openGuide}
           openExpeditionMenu={openExpeditionMenu}
         />
+
+        {game.campaignStarted && game.day === 1 && game.activeLegacy.length > 0 && !showTitle ? (
+          <LegacyDepartureBriefing legacyIds={game.activeLegacy} />
+        ) : null}
 
         {tutorialStep && tutorialCopy && phase === 'camp' && !showTitle && !showGuide && !showArchive ? (
           <TutorialCoach
@@ -6194,12 +7823,16 @@ export default function Game() {
               <PlayerFormation
                 lineupUnits={lineupUnits}
                 forecasts={forecastLanes}
+                selectedUnit={selectedUnit}
+                deploymentForecasts={deploymentForecasts}
+                recommendedDeploymentLane={recommendedDeploymentLane}
                 selectedUnitId={selectedUnitId}
                 focusLane={focusLane}
                 tutorialDeploy={tutorialStep === 'deploy'}
                 activeDecisionEcho={activeDecisionEcho}
                 activeFinalVow={activeFinalVow}
                 getSurvivorName={survivorName}
+                onClearSelection={clearDeploymentSelection}
                 onDeploy={deployUnit}
               />
 
@@ -6214,7 +7847,10 @@ export default function Game() {
                 enemyIntents={battleContext.enemyIntents}
                 commandSpent={commandSpent}
                 commandLimit={commandLimit}
+                commandLimitBeforeContract={commandLimitBeforeContract}
                 doctrineCommandRelief={doctrineCommandRelief}
+                legacyCommand={legacyCommandContribution}
+                masteryContract={game.masteryContract}
                 tacticalRehearsal={tacticalRehearsal}
                 tacticalAdjustmentAvailable={tacticalAdjustment !== null}
                 onChooseFocusLane={chooseFocusLane}
@@ -6227,9 +7863,16 @@ export default function Game() {
               forecastReady={battleActionReady}
               forecastTitle={battleForecastTitle}
               forecastDetail={battleForecastDetail}
+              laneForecasts={forecastLanes}
+              recommendedLane={tacticalAdjustment?.lane ?? null}
+              legacyCommand={legacyCommandContribution}
+              legacyRewardForecast={legacyRewardForecast}
+              masteryContractForecast={masteryContractForecast}
+              riskDepartureForecast={riskDepartureForecast}
               actionLabel={battleActionLabel}
               actionDisabled={battleStartDisabled}
               tutorialBattle={tutorialStep === 'battle'}
+              onCancelRiskDeparture={cancelRiskDeparture}
               onStartBattle={startBattle}
             />
           </section>
@@ -6243,6 +7886,7 @@ export default function Game() {
           >
             <CampOverview
               rosterCount={rosterCount}
+              mergeReadyPairCount={mergeReadyPairCount}
               oath={game.oath}
               mode={game.mode}
               runCode={runCodeFor(game.runSeed)}
@@ -6254,12 +7898,15 @@ export default function Game() {
               ownedRelics={game.relics}
               activeResonances={activeResonances}
               resonanceStatuses={resonanceStatuses}
+              activeLegacy={game.activeLegacy}
+              inactiveLegacyCount={Math.max(0, meta.legacy.length - game.activeLegacy.length)}
               getResonanceForRelic={resonanceForRelic}
               onClose={showBattlefield}
             />
 
             <CampRosterGrid
               slots={game.slots}
+              mergeReadinessByUnit={mergeReadinessByUnit}
               selectedUnitId={selectedUnitId}
               draggingUnitId={draggingUnitId}
               tutorialMerge={tutorialStep === 'merge'}
@@ -6276,6 +7923,7 @@ export default function Game() {
             <QuartermasterLedger
               day={game.day}
               supplies={game.supplies}
+              recoverySupplies={game.recoverySupplies}
               spendable={quartermasterSpendable}
               reserve={quartermasterReserve}
               briefing={quartermasterBriefing}
@@ -6336,9 +7984,22 @@ export default function Game() {
                       unlocked: marchSealUnlocked,
                       supplies: marchSealSupplies,
                       reserve: marchSealReserve,
-                      retreatReserve: marchSealRetreatReserve,
+                      recoveryReserve: marchSealRecoveryReserve,
                       scoreRate: marchSealScoreRate,
                       score: marchSealScore,
+                      legacy: marchSealLegacyActive
+                        ? {
+                            baseScoreRate: marchSealBaseScoreRate,
+                            scoreBonus: marchSealLegacyScoreBonus,
+                          }
+                        : null,
+                      contract: game.masteryContract
+                        ? {
+                            id: game.masteryContract,
+                            inheritedScoreRate: marchSealInheritedScoreRate,
+                            scoreBonus: marchSealContractScoreBonus,
+                          }
+                        : null,
                       veteranLines: marchSealVeteranLines,
                       disabled: phase !== 'camp' || !marchSealUnlocked || marchSealSupplies < 10,
                     }
@@ -6354,6 +8015,9 @@ export default function Game() {
             <SelectedUnitReadout
               selectedUnit={selectedUnit}
               selectedUnitLane={selectedUnitLane}
+              deploymentForecasts={deploymentForecasts}
+              recommendedDeploymentLane={recommendedDeploymentLane}
+              mergeReadiness={selectedUnit ? (mergeReadinessByUnit.get(selectedUnit.id) ?? null) : null}
               rosterCount={rosterCount}
               getSurvivorName={survivorName}
               onQuickDeploy={quickDeploySelectedUnit}
@@ -6370,9 +8034,22 @@ export default function Game() {
             battleDisabled={battleStartDisabled}
             battleReady={battleActionReady}
             battleActionLabel={mobileBattleActionLabel}
+            battleForecastTitle={battleForecastTitle}
             battleForecastDetail={battleForecastDetail}
+            riskDepartureForecast={riskDepartureForecast}
+            tacticalSuggestion={
+              tacticalAdjustment && tacticalRehearsal
+                ? {
+                    title: tacticalRehearsal.title,
+                    status: tacticalRehearsal.status,
+                    actionLabel: tacticalRehearsal.actionLabel,
+                  }
+                : null
+            }
             onShowBattlefield={showBattlefield}
             onShowRoster={showMobileRoster}
+            onApplyTacticalSuggestion={applyTacticalAdjustment}
+            onCancelRiskDeparture={cancelRiskDeparture}
             onStartBattle={startBattle}
           />
         ) : null}
@@ -6387,12 +8064,14 @@ export default function Game() {
       <GameFeedback
         sessionAccess={sessionAccess}
         toast={toast}
+        growthCeremony={!showTitle && phase === 'camp' ? growthCeremony : null}
         marchSealCeremony={marchSealCeremony}
         milestone={milestoneVisible ? activeMilestone : null}
         milestoneQueueSize={milestoneQueue.length}
         runtimeNotice={runtimeNotice}
         onRetrySession={retrySessionAccess}
         onApplyUpdate={reloadUpdatedGame}
+        onDismissMilestone={dismissActiveMilestone}
       />
 
       {showTitle ? (
@@ -6401,8 +8080,10 @@ export default function Game() {
           showDifficulty={showDifficulty}
           selectedDifficulty={selectedDifficulty}
           setupMode={setupMode}
+          selectedMasteryContract={selectedMasteryContract}
           sharedCode={sharedCode}
           sharedSeed={sharedSeed}
+          incomingRiftCode={incomingRiftCode}
           unlockedAchievementIds={unlockedAchievementIds}
           showEndingRouteRecommendation={showEndingRouteRecommendation}
           nextWinningEndingId={nextWinningEndingId}
@@ -6425,12 +8106,15 @@ export default function Game() {
           setShowDifficulty={setShowDifficulty}
           setSelectedDifficulty={setSelectedDifficulty}
           setSetupMode={setSetupMode}
+          setSelectedMasteryContract={setSelectedMasteryContract}
           setSharedCode={setSharedCode}
           setShowInstallHelp={setShowInstallHelp}
           openArchive={openArchive}
           openSettings={openSettings}
           toggleSound={toggleSound}
           enterGame={enterGame}
+          prepareIncomingRift={prepareIncomingRift}
+          dismissIncomingRift={dismissIncomingRift}
           askToDiscardCurrentCampaign={askToDiscardCurrentCampaign}
           installGame={installGame}
           preloadEnterGame={() => {
@@ -6470,7 +8154,9 @@ export default function Game() {
           game={game}
           masteredProtocolCount={masteredProtocolCount}
           meta={meta}
+          nextChallengeDifficulty={nextChallengeDifficulty}
           pendingLegacyPurchase={pendingLegacyPurchase}
+          recommendedLegacyId={recommendedLegacyId}
           unlockedAchievementIds={unlockedAchievementIds}
           closeArchive={closeArchive}
           setArchiveTab={setArchiveTab}
@@ -6521,10 +8207,12 @@ export default function Game() {
         />
       ) : null}
 
-      {phase === 'finale' && game.status === 'won' && !showTitle ? (
+      {phase === 'finale' && game.status === 'won' && battleResult && !showTitle ? (
         <FinaleSequence
           game={game}
-          finalCrownForecastCount={finalCrownForecastCount}
+          finalCrownBreakCount={battleResult.crownBreakCount}
+          finalCrownWins={battleResult.wins}
+          finalCrownMasteryBonus={battleResult.crownMasteryBonus}
           endingFinalVow={endingFinalVow}
           revealFinalEnding={revealFinalEnding}
         />
@@ -6533,6 +8221,7 @@ export default function Game() {
       {showExpeditionMenu ? (
         <ExpeditionMenu
           showNewCampaignConfirm={showNewCampaignConfirm}
+          replacementRiftCode={pendingReplacementRiftCode}
           game={game}
           meta={meta}
           currentActNumber={currentAct.number}
@@ -6572,9 +8261,14 @@ export default function Game() {
 
       {phase === 'promotion' && pendingPromotionUnit && !showTitle ? (
         <PromotionDialog
+          key={pendingPromotionUnit.id}
           pendingPromotionUnit={pendingPromotionUnit}
           promotionChoices={promotionChoices}
+          promotionChoiceInsights={promotionChoiceInsights}
+          recommendedSpecializationId={recommendedSpecializationId}
+          growthCeremony={growthCeremony?.unitId === pendingPromotionUnit.id ? growthCeremony : null}
           campUndo={campUndo}
+          previewSpecialization={previewSpecialization}
           chooseSpecialization={chooseSpecialization}
           undoCampAction={undoCampAction}
           survivorName={survivorName}
@@ -6589,6 +8283,7 @@ export default function Game() {
           relicChoiceInsights={relicChoiceInsights}
           recommendedRelicId={recommendedRelicId}
           activeResonances={activeResonances}
+          previewRelicChoice={previewRelicChoice}
           chooseRelic={chooseRelic}
           resonancePreviewFor={resonancePreviewFor}
         />
@@ -6619,6 +8314,7 @@ export default function Game() {
           difficultyProtocol={difficultyProtocol}
           resultProtocolCopy={resultProtocolCopy}
           resultProtocolMastery={resultProtocolMastery}
+          legacyCommand={legacyCommandContribution}
           survivorName={survivorName}
           continueAfterBattle={continueAfterBattle}
         />
@@ -6642,17 +8338,20 @@ export default function Game() {
           oathInterventionCount={oathInterventionCount}
           oathInterventionPath={oathInterventionPath}
           endingCommanderTitle={endingCommanderTitle}
-          endingIsPersonalBest={endingIsPersonalBest}
-          recentEndingPosition={recentEndingPosition}
+          endingIsComparisonBest={endingIsComparisonBest}
+          endingComparisonCount={endingComparisonCount}
+          endingComparisonPosition={endingComparisonPosition}
+          endingComparisonBestScore={endingComparisonBestScore}
           endingDossierSeals={endingDossierSeals}
           completedTrialCount={completedEndingTrials.length}
           activeResonances={activeResonances}
           trialStatuses={trialStatuses}
           endingDiscoveryEntries={endingDiscoveryEntries}
           endingMasteryDirective={endingMasteryDirective}
+          legacyRewardBreakdown={endingLegacyRewardBreakdown}
           unownedLegacyIds={unownedLegacyIds}
           affordableLegacyIds={affordableLegacyIds}
-          nextLegacyId={nextLegacyId}
+          recommendedLegacyId={recommendedLegacyId}
           runCode={runCodeFor(game.runSeed)}
           nextWinningEndingId={nextWinningEndingId}
           nextChallengeDifficulty={nextChallengeDifficulty}

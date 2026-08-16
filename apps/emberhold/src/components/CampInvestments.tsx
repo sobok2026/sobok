@@ -1,5 +1,5 @@
-import type { CampUndo, UnitKind } from './game-model'
-import { KIND_META } from './game-model'
+import type { CampUndo, MasteryContractId, UnitKind } from './game-model'
+import { KIND_META, LEGACY_UPGRADES, MASTERY_CONTRACTS } from './game-model'
 
 type RecruitCostView = {
   cost: number
@@ -37,6 +37,7 @@ type CampaignPaceView = {
 type QuartermasterLedgerProps = {
   day: number
   supplies: number
+  recoverySupplies: number
   spendable: number
   reserve: number
   briefing: QuartermasterBriefingView
@@ -48,6 +49,7 @@ type QuartermasterLedgerProps = {
 export function QuartermasterLedger({
   day,
   supplies,
+  recoverySupplies,
   spendable,
   reserve,
   briefing,
@@ -71,7 +73,8 @@ export function QuartermasterLedger({
           <dt>운용 가능 보급</dt>
           <dd>◈ {spendable}</dd>
           <small>
-            보유 {supplies} · 예비 {reserve}
+            보유 {supplies} · 전술 예비 {reserve}
+            {recoverySupplies > 0 ? ` · 복구분 ◈ ${recoverySupplies} 사용 가능` : ''}
           </small>
         </div>
         <div>
@@ -145,9 +148,18 @@ type MarchSealActionView = {
   unlocked: boolean
   supplies: number
   reserve: number
-  retreatReserve: number
+  recoveryReserve: number
   scoreRate: number
   score: number
+  legacy: {
+    baseScoreRate: number
+    scoreBonus: number
+  } | null
+  contract: {
+    id: MasteryContractId
+    inheritedScoreRate: number
+    scoreBonus: number
+  } | null
   veteranLines: number
   disabled: boolean
 }
@@ -205,7 +217,7 @@ export function CampActions({ recruit, stoke, marchSeal, onRecruit, onStoke, onS
           onClick={onSealMarchSupplies}
           data-ready={marchSeal.unlocked && marchSeal.supplies >= 10 ? 'true' : 'false'}
           disabled={marchSeal.disabled}
-          title="앞으로 필요한 화로 1~2회와 미완성 성장 1회의 보급을 남기고, 누적 후퇴 복구 보급을 제외한 10보급 단위의 잉여만 명성으로 봉인합니다."
+          title="앞으로 필요한 화로 1~2회와 미완성 성장 1회의 보급, 아직 사용하지 않은 후퇴 복구 보급 중 가장 큰 보호선을 남기고 10보급 단위의 진짜 잉여만 명성으로 봉인합니다."
         >
           <span className="march-seal-symbol" aria-hidden="true">
             ♜
@@ -216,9 +228,52 @@ export function CampActions({ recruit, stoke, marchSeal, onRecruit, onStoke, onS
               {!marchSeal.unlocked
                 ? `출전 대열 III+ ${marchSeal.veteranLines} / 3 필요`
                 : marchSeal.supplies >= 10
-                  ? `보급 ${marchSeal.supplies} 인계 · 예비 ${marchSeal.reserve} 유지${marchSeal.retreatReserve > 0 ? ` · 후퇴분 ${marchSeal.retreatReserve} 제외` : ''} · 1보급당 명성 ${marchSeal.scoreRate}`
-                  : `예비 ${marchSeal.reserve} 유지${marchSeal.retreatReserve > 0 ? ` · 후퇴분 ${marchSeal.retreatReserve} 제외` : ''} · 잉여 보급 10 이상 필요`}
+                  ? `보급 ${marchSeal.supplies} 인계 · 보호선 ${marchSeal.reserve} 유지${marchSeal.recoveryReserve > 0 ? ` · 복구분 ${marchSeal.recoveryReserve} 보호` : ''} · 1보급당 명성 ${marchSeal.scoreRate}`
+                  : `보호선 ${marchSeal.reserve} 유지${marchSeal.recoveryReserve > 0 ? ` · 복구분 ${marchSeal.recoveryReserve} 보호` : ''} · 잉여 보급 10 이상 필요`}
             </small>
+            {marchSeal.legacy ? (
+              <em className="march-seal-legacy-attribution" data-applied={marchSeal.score > 0 ? 'true' : 'false'}>
+                <b aria-hidden="true">{LEGACY_UPGRADES['chroniclers-ink'].glyph}</b>
+                <span>
+                  <small>INHERITED RENOWN · {LEGACY_UPGRADES['chroniclers-ink'].name}</small>
+                  <strong>
+                    {marchSeal.score > 0
+                      ? `기본 +${(
+                          marchSeal.score - marchSeal.legacy.scoreBonus - (marchSeal.contract?.scoreBonus ?? 0)
+                        ).toLocaleString(
+                          'ko-KR',
+                        )} → 유산 적용 +${(marchSeal.score - (marchSeal.contract?.scoreBonus ?? 0)).toLocaleString('ko-KR')}`
+                      : `기본 환산 ${marchSeal.legacy.baseScoreRate} → 유산 적용 ${marchSeal.contract?.inheritedScoreRate ?? marchSeal.scoreRate} · 봉인 대기`}
+                  </strong>
+                </span>
+                <b>
+                  {marchSeal.legacy.scoreBonus > 0
+                    ? `+${marchSeal.legacy.scoreBonus.toLocaleString('ko-KR')} 기여`
+                    : '×1.08 적재'}
+                </b>
+              </em>
+            ) : null}
+            {marchSeal.contract ? (
+              <em
+                className="march-seal-legacy-attribution is-contract"
+                data-applied={marchSeal.score > 0 ? 'true' : 'false'}
+              >
+                <b aria-hidden="true">{MASTERY_CONTRACTS[marchSeal.contract.id].glyph}</b>
+                <span>
+                  <small>ETERNAL COVENANT · {MASTERY_CONTRACTS[marchSeal.contract.id].name}</small>
+                  <strong>
+                    {marchSeal.score > 0
+                      ? `계승 후 +${(marchSeal.score - marchSeal.contract.scoreBonus).toLocaleString('ko-KR')} → 실제 +${marchSeal.score.toLocaleString('ko-KR')}`
+                      : `계승 환산 ${marchSeal.contract.inheritedScoreRate} → 계약 적용 ${marchSeal.scoreRate} · 봉인 대기`}
+                  </strong>
+                </span>
+                <b>
+                  {marchSeal.contract.scoreBonus > 0
+                    ? `+${marchSeal.contract.scoreBonus.toLocaleString('ko-KR')} 기여`
+                    : `×${MASTERY_CONTRACTS[marchSeal.contract.id].scoreScale.toFixed(2)} 적재`}
+                </b>
+              </em>
+            ) : null}
           </span>
           <b>
             {marchSeal.unlocked

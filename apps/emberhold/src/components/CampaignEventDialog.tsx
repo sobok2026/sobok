@@ -3,12 +3,13 @@ import './deferred.css'
 import Image from 'next/image'
 import campaignArt from '@/app/campaign-panorama.webp'
 import type { EventChoice, EventChoiceForecast, OathId } from './game-model'
-import { FINAL_MARCH_IMPRINTS, FINAL_VOWS, MAX_NIGHTS, OATHS } from './game-model'
+import { FINAL_MARCH_IMPRINTS, FINAL_VOWS, LEGACY_UPGRADES, MASTERY_CONTRACTS, MAX_NIGHTS, OATHS } from './game-model'
 
 type CampaignEventView = {
   title: string
   location: string
   body: string
+  routeVariant?: 1 | 2
 }
 
 type OathInterventionView = {
@@ -101,6 +102,19 @@ function DecisionEcho({ echo }: { echo: DecisionEchoView }) {
   )
 }
 
+function SeededRoute({ variant }: { variant: 1 | 2 }) {
+  return (
+    <aside className="event-seeded-route" data-variant={variant} aria-label={`원정 코드 고정 갈림길 ${variant}번`}>
+      <span aria-hidden="true">⌁</span>
+      <div>
+        <small>CODE-BOUND WAYPOINT · ROUTE 0{variant} / 02</small>
+        <strong>원정 코드가 고른 갈림길</strong>
+      </div>
+      <p>같은 코드는 이 사건과 선택지, 4일 뒤 돌아올 후속 결과까지 그대로 재현합니다.</p>
+    </aside>
+  )
+}
+
 function ChoiceRouteLedger({
   crownTiming,
   crownHeatFloor,
@@ -147,7 +161,7 @@ function FinalMarchLedger({ day, path }: { day: number; path: readonly FinalMarc
                 {entry.imprint
                   ? `${entry.choiceTitle} · ${entry.imprint.effect}`
                   : entry.state === 'current'
-                    ? '아래 두 경로는 서로 다른 최종 왕관 해법을 강화합니다.'
+                    ? '아래 세 경로는 서로 다른 최종 왕관 해법을 강화합니다.'
                     : entry.crownPreparation}
               </p>
             </div>
@@ -168,15 +182,31 @@ function ChoiceForecast({
   forecast,
   descriptionId,
 }: Pick<EventChoiceEntry, 'choice' | 'forecast'> & { descriptionId: string }) {
+  const eventScore = choice.score ?? 0
+  const expeditionScore = forecast.scoreGain - forecast.legacyScoreBonus - forecast.contractScoreBonus
+  const expeditionScoreDelta = expeditionScore - eventScore
+
   return (
     <dl
       className="event-choice-forecast"
       data-state={forecast.state}
       aria-label={`${choice.title} 선택 직후 경로 예측`}
     >
-      <div>
+      <div
+        className="event-supply-forecast"
+        data-recovery-spent={forecast.recoverySuppliesSpent > 0 ? 'true' : 'false'}
+      >
         <dt>보급</dt>
-        <dd>◈ {forecast.projectedSupplies}</dd>
+        <dd>
+          <strong>◈ {forecast.projectedSupplies}</strong>
+          {forecast.recoverySuppliesSpent > 0 ? (
+            <small>
+              복구분 −{forecast.recoverySuppliesSpent} · 보호 {forecast.projectedRecoverySupplies}
+            </small>
+          ) : forecast.projectedRecoverySupplies > 0 ? (
+            <small>복구분 {forecast.projectedRecoverySupplies} 유지</small>
+          ) : null}
+        </dd>
       </div>
       <div>
         <dt>온기</dt>
@@ -185,6 +215,38 @@ function ChoiceForecast({
       <div>
         <dt>사기</dt>
         <dd>{forecast.projectedMorale}</dd>
+      </div>
+      <div
+        className="event-renown-forecast"
+        data-expedition-rule={expeditionScoreDelta !== 0 ? 'true' : 'false'}
+        data-legacy={forecast.legacyScoreBonus > 0 ? 'true' : 'false'}
+        data-contract={forecast.contractScoreBonus > 0 ? 'true' : 'false'}
+      >
+        <dt>명성</dt>
+        <dd>
+          <strong>{forecast.scoreGain > 0 ? `+${forecast.scoreGain.toLocaleString('ko-KR')}` : '—'}</strong>
+          {expeditionScoreDelta !== 0 ? (
+            <small className="event-expedition-attribution">
+              <span aria-hidden="true">◇</span>
+              위험도·서약 {expeditionScoreDelta > 0 ? '+' : '−'}
+              {Math.abs(expeditionScoreDelta).toLocaleString('ko-KR')} · 사건 +{eventScore.toLocaleString('ko-KR')}
+            </small>
+          ) : null}
+          {forecast.legacyScoreBonus > 0 ? (
+            <small>
+              <span aria-hidden="true">{LEGACY_UPGRADES['chroniclers-ink'].glyph}</span>
+              {LEGACY_UPGRADES['chroniclers-ink'].name} +{forecast.legacyScoreBonus.toLocaleString('ko-KR')} ·{' '}
+              {expeditionScoreDelta !== 0 ? '원정 규칙 후' : '기본'} +{expeditionScore.toLocaleString('ko-KR')}
+            </small>
+          ) : null}
+          {forecast.contractScoreBonus > 0 && forecast.masteryContract ? (
+            <small className="event-contract-attribution">
+              <span aria-hidden="true">{MASTERY_CONTRACTS[forecast.masteryContract].glyph}</span>
+              {MASTERY_CONTRACTS[forecast.masteryContract].name} +{forecast.contractScoreBonus.toLocaleString('ko-KR')}{' '}
+              · 계승 후 +{(forecast.scoreGain - forecast.contractScoreBonus).toLocaleString('ko-KR')}
+            </small>
+          ) : null}
+        </dd>
       </div>
       <div className="event-route-verdict">
         <dt>
@@ -240,6 +302,15 @@ function EventChoices({
     <div className="event-choices">
       {entries.map(({ choice, forecast, unavailable, autofocus }, index) => {
         const convertsToMorale = forecast.conversionMorale > 0
+        const eventScore = choice.score ?? 0
+        const scoreAdjusted = forecast.scoreGain !== eventScore
+        const choiceOutcome = convertsToMorale
+          ? `${choice.outcome} · 사기 +${forecast.conversionMorale}로 전환`
+          : choice.outcome
+        const scoreOutcome =
+          forecast.scoreGain > 0 && (!choice.outcome.includes('명성') || scoreAdjusted)
+            ? `${choiceOutcome} · ${scoreAdjusted ? '원정 보정 후 실제 ' : ''}명성 +${forecast.scoreGain.toLocaleString('ko-KR')}`
+            : choiceOutcome
         const outcomeId = `event-choice-${choice.id}-outcome`
         const forecastId = `event-choice-${choice.id}-forecast`
         return (
@@ -266,13 +337,7 @@ function EventChoices({
                 <small className="event-emergency-label">EMERGENCY ROUTE · 보급 고갈 시 개방</small>
               ) : null}
               <p>{choice.description}</p>
-              <b id={outcomeId}>
-                {unavailable
-                  ? `보급품 ${choice.requiresSupplies} 필요`
-                  : convertsToMorale
-                    ? `${choice.outcome} · 사기 +${forecast.conversionMorale}로 전환`
-                    : choice.outcome}
-              </b>
+              <b id={outcomeId}>{unavailable ? `보급품 ${choice.requiresSupplies} 필요` : scoreOutcome}</b>
               <ChoiceForecast choice={choice} forecast={forecast} descriptionId={forecastId} />
               <ChoiceConsequences choice={choice} />
             </div>
@@ -335,6 +400,7 @@ export function CampaignEventDialog({
             </b>
           </header>
           <p className="event-narrative">{event.body}</p>
+          {event.routeVariant ? <SeededRoute variant={event.routeVariant} /> : null}
           {oathIntervention ? <OathIntervention intervention={oathIntervention} /> : null}
           {decisionEcho ? <DecisionEcho echo={decisionEcho} /> : null}
           <ChoiceRouteLedger crownTiming={crownTiming} crownHeatFloor={crownHeatFloor} stokeBaseCost={stokeBaseCost} />

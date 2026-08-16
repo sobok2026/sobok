@@ -1,5 +1,6 @@
 import type { RefObject } from 'react'
-import type { MarchSealCeremony, MilestoneNotice, SessionAccess } from './game-model'
+import type { GrowthCeremony, MarchSealCeremony, MilestoneNotice, SessionAccess } from './game-model'
+import { KIND_META, LEGACY_UPGRADES, MASTERY_CONTRACTS, SPECIALIZATIONS, TIER_LABELS } from './game-model'
 
 type RuntimeNoticeState = 'offline' | 'update'
 
@@ -12,12 +13,14 @@ type DragGhostPreviewProps = {
 type GameFeedbackProps = {
   sessionAccess: SessionAccess
   toast: string
+  growthCeremony: GrowthCeremony | null
   marchSealCeremony: MarchSealCeremony | null
   milestone: MilestoneNotice | null
   milestoneQueueSize: number
   runtimeNotice: RuntimeNoticeState | null
   onRetrySession: () => void
   onApplyUpdate: () => void
+  onDismissMilestone: () => void
 }
 
 export function DragGhostPreview({ active, glyph, ghostRef }: DragGhostPreviewProps) {
@@ -37,6 +40,63 @@ function ToastNotice({ message }: { message: string }) {
   )
 }
 
+function GrowthNotice({ ceremony }: { ceremony: GrowthCeremony }) {
+  const specialization = ceremony.specialization ? SPECIALIZATIONS[ceremony.specialization] : null
+
+  return (
+    <aside className={`growth-ceremony kind-${ceremony.kind}`} key={ceremony.id} aria-hidden="true">
+      <section className="growth-ceremony-card">
+        <header>
+          <small>SURVIVOR ASCENDED · TIER FORGED</small>
+          <strong>{ceremony.name}, 한계를 넘다</strong>
+          <p>
+            {KIND_META[ceremony.kind].name} {TIER_LABELS[ceremony.fromTier]} 두 생존자의 경험이 하나의 더 강한 전력으로
+            이어졌습니다.
+          </p>
+        </header>
+        <div className="growth-ceremony-forge">
+          <span>
+            <i>{KIND_META[ceremony.kind].glyph}</i>
+            <b>{TIER_LABELS[ceremony.fromTier]}</b>
+          </span>
+          <em>+</em>
+          <span>
+            <i>{KIND_META[ceremony.kind].glyph}</i>
+            <b>{TIER_LABELS[ceremony.fromTier]}</b>
+          </span>
+          <em>→</em>
+          <span className="is-ascended">
+            <i>{KIND_META[ceremony.kind].glyph}</i>
+            <b>{TIER_LABELS[ceremony.toTier]}</b>
+          </span>
+        </div>
+        <dl className="growth-ceremony-ledger">
+          <div>
+            <dt>기본 전투력</dt>
+            <dd>
+              {ceremony.powerBefore} <i>→</i> <strong>{ceremony.powerAfter}</strong>
+            </dd>
+            <small>+{ceremony.powerAfter - ceremony.powerBefore}</small>
+          </div>
+          <div>
+            <dt>화로 온기</dt>
+            <dd>
+              {ceremony.heatBefore}% <i>→</i> <strong>{ceremony.heatAfter}%</strong>
+            </dd>
+            <small>+{ceremony.warmth}</small>
+          </div>
+        </dl>
+        <footer>
+          <span>
+            {specialization ? `${specialization.glyph} ${specialization.name} 유지` : '새 등급 전력 배치 가능'}
+          </span>
+          <b>{ceremony.opensPromotion ? '베테랑의 길이 열렸습니다' : `TIER ${TIER_LABELS[ceremony.toTier]} 완성`}</b>
+        </footer>
+      </section>
+    </aside>
+  )
+}
+
 function MarchSealNotice({ ceremony }: { ceremony: MarchSealCeremony }) {
   const rankRaised = ceremony.rankBefore !== ceremony.rankAfter
 
@@ -53,6 +113,15 @@ function MarchSealNotice({ ceremony }: { ceremony: MarchSealCeremony }) {
         행군 보급 {ceremony.supplies}을 봉인해 명성 {ceremony.scoreGain.toLocaleString('ko-KR')}을 얻었습니다. 현재 명성{' '}
         {ceremony.scoreAfter.toLocaleString('ko-KR')}, {ceremony.rankAfter} 등급
         {rankRaised ? '으로 상승했습니다.' : '입니다.'}
+        {ceremony.legacyScoreBonus > 0
+          ? ` 기록관의 잉크가 기본 명성 ${(ceremony.scoreGain - ceremony.legacyScoreBonus - ceremony.contractScoreBonus).toLocaleString('ko-KR')}에 ${ceremony.legacyScoreBonus.toLocaleString('ko-KR')}을 더했습니다.`
+          : ''}
+        {ceremony.contractScoreBonus > 0 && ceremony.masteryContract
+          ? ` ${MASTERY_CONTRACTS[ceremony.masteryContract].name} 계약이 계승 후 명성 ${(ceremony.scoreGain - ceremony.contractScoreBonus).toLocaleString('ko-KR')}에 ${ceremony.contractScoreBonus.toLocaleString('ko-KR')}을 더했습니다.`
+          : ''}
+        {ceremony.recoveryReserve > 0
+          ? ` 아직 사용하지 않은 복구 보급 ${ceremony.recoveryReserve}은 보호했습니다.`
+          : ''}
       </span>
       <section className="march-seal-ceremony-card" aria-hidden="true">
         <div className="march-seal-ceremony-crest">
@@ -79,6 +148,33 @@ function MarchSealNotice({ ceremony }: { ceremony: MarchSealCeremony }) {
             <strong>+{ceremony.scoreGain.toLocaleString('ko-KR')}</strong>
           </span>
         </div>
+        {ceremony.legacyScoreBonus > 0 ? (
+          <div className="march-seal-legacy-verdict">
+            <span aria-hidden="true">{LEGACY_UPGRADES['chroniclers-ink'].glyph}</span>
+            <div>
+              <small>INHERITED RENOWN · {LEGACY_UPGRADES['chroniclers-ink'].name}</small>
+              <strong>
+                기본 +
+                {(ceremony.scoreGain - ceremony.legacyScoreBonus - ceremony.contractScoreBonus).toLocaleString('ko-KR')}{' '}
+                → 유산 적용 +{(ceremony.scoreGain - ceremony.contractScoreBonus).toLocaleString('ko-KR')}
+              </strong>
+            </div>
+            <b>+{ceremony.legacyScoreBonus.toLocaleString('ko-KR')} 기여</b>
+          </div>
+        ) : null}
+        {ceremony.contractScoreBonus > 0 && ceremony.masteryContract ? (
+          <div className="march-seal-legacy-verdict is-contract">
+            <span aria-hidden="true">{MASTERY_CONTRACTS[ceremony.masteryContract].glyph}</span>
+            <div>
+              <small>ETERNAL COVENANT · {MASTERY_CONTRACTS[ceremony.masteryContract].name}</small>
+              <strong>
+                계승 후 +{(ceremony.scoreGain - ceremony.contractScoreBonus).toLocaleString('ko-KR')} → 실제 +
+                {ceremony.scoreGain.toLocaleString('ko-KR')}
+              </strong>
+            </div>
+            <b>+{ceremony.contractScoreBonus.toLocaleString('ko-KR')} 기여</b>
+          </div>
+        ) : null}
         <div className="march-seal-scoreline">
           <span>{ceremony.scoreBefore.toLocaleString('ko-KR')}</span>
           <i />
@@ -86,8 +182,8 @@ function MarchSealNotice({ ceremony }: { ceremony: MarchSealCeremony }) {
         </div>
         <footer>
           <span>
-            전술 예비 ◈ {ceremony.reserve} 유지
-            {ceremony.retreatReserve > 0 ? ` · 후퇴 복구분 ◈ ${ceremony.retreatReserve} 제외` : ''}
+            화로·성장·복구 보호선 ◈ {ceremony.reserve} 유지
+            {ceremony.recoveryReserve > 0 ? ` · 남은 복구분 ◈ ${ceremony.recoveryReserve} 보호` : ''}
           </span>
           <b>
             {rankRaised
@@ -104,22 +200,26 @@ function MilestoneNoticeView({
   milestone,
   queueSize,
   shifted,
+  onDismiss,
 }: {
   milestone: MilestoneNotice
   queueSize: number
   shifted: boolean
+  onDismiss: () => void
 }) {
   const remainingCount = Math.max(0, queueSize - 1)
+  const actionLabel = remainingCount > 0 ? '다음 기록' : '확인'
 
   return (
     <aside
       className={`milestone-notice ${shifted ? 'is-shifted' : ''}`}
       data-kind={milestone.kind}
       key={milestone.id}
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
+      aria-label={`${milestone.kicker}: ${milestone.title}`}
     >
+      <span className="settings-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
+        {milestone.title}. {milestone.description}. {milestone.detail}
+      </span>
       <span className="milestone-sigil" aria-hidden="true">
         <b>{milestone.glyph}</b>
       </span>
@@ -129,12 +229,22 @@ function MilestoneNoticeView({
         <p>{milestone.description}</p>
         <em>{milestone.detail}</em>
       </div>
-      {remainingCount > 0 ? (
-        <span className="milestone-queue">
-          <span aria-hidden="true">+{remainingCount}</span>
-          <span className="settings-visually-hidden">뒤이어 표시할 마일스톤 {remainingCount}개</span>
-        </span>
-      ) : null}
+      <div className="milestone-actions">
+        {remainingCount > 0 ? (
+          <span className="milestone-queue">
+            <span aria-hidden="true">+{remainingCount}</span>
+            <span className="settings-visually-hidden">뒤이어 표시할 기록 {remainingCount}개</span>
+          </span>
+        ) : null}
+        <button
+          className="milestone-dismiss"
+          type="button"
+          onClick={onDismiss}
+          aria-label={`${milestone.title} ${actionLabel}${remainingCount > 0 ? `, 남은 기록 ${remainingCount}개` : ''}`}
+        >
+          {actionLabel}
+        </button>
+      </div>
       <i className="milestone-timer" aria-hidden="true" />
     </aside>
   )
@@ -222,20 +332,28 @@ function SessionGuard({ state, onRetry }: { state: Exclude<SessionAccess, 'activ
 export function GameFeedback({
   sessionAccess,
   toast,
+  growthCeremony,
   marchSealCeremony,
   milestone,
   milestoneQueueSize,
   runtimeNotice,
   onRetrySession,
   onApplyUpdate,
+  onDismissMilestone,
 }: GameFeedbackProps) {
   return (
     <>
       {sessionAccess !== 'active' ? <SessionGuard state={sessionAccess} onRetry={onRetrySession} /> : null}
       <ToastNotice message={toast} />
+      {growthCeremony ? <GrowthNotice ceremony={growthCeremony} /> : null}
       {marchSealCeremony ? <MarchSealNotice ceremony={marchSealCeremony} /> : null}
       {milestone ? (
-        <MilestoneNoticeView milestone={milestone} queueSize={milestoneQueueSize} shifted={runtimeNotice !== null} />
+        <MilestoneNoticeView
+          milestone={milestone}
+          queueSize={milestoneQueueSize}
+          shifted={runtimeNotice !== null}
+          onDismiss={onDismissMilestone}
+        />
       ) : null}
       {runtimeNotice ? <RuntimeNotice state={runtimeNotice} onApplyUpdate={onApplyUpdate} /> : null}
     </>

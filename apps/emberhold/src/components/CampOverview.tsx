@@ -1,5 +1,6 @@
-import type { EventChoice, OathId, RelicId, ResonanceId, RunMode, TrialId } from './game-model'
+import type { EventChoice, LegacyId, OathId, RelicId, ResonanceId, RunMode, TrialId } from './game-model'
 import { OATHS, RELICS, RESONANCE_IDS, RESONANCES, ROSTER_SIZE, TRIALS } from './game-model'
+import { ActiveLegacyRack } from './LegacyLoadout'
 
 type OathInterventionView = {
   stage: {
@@ -26,6 +27,7 @@ type ResonanceStatusView = {
 
 type CampOverviewProps = {
   rosterCount: number
+  mergeReadyPairCount: number
   oath: OathId
   mode: RunMode
   runCode: string
@@ -37,12 +39,15 @@ type CampOverviewProps = {
   ownedRelics: readonly RelicId[]
   activeResonances: readonly ResonanceId[]
   resonanceStatuses: readonly ResonanceStatusView[]
+  activeLegacy: readonly LegacyId[]
+  inactiveLegacyCount: number
   getResonanceForRelic: (relicId: RelicId) => ResonanceId | null
   onClose: () => void
 }
 
 export function CampOverview({
   rosterCount,
+  mergeReadyPairCount,
   oath,
   mode,
   runCode,
@@ -54,6 +59,8 @@ export function CampOverview({
   ownedRelics,
   activeResonances,
   resonanceStatuses,
+  activeLegacy,
+  inactiveLegacyCount,
   getResonanceForRelic,
   onClose,
 }: CampOverviewProps) {
@@ -72,10 +79,18 @@ export function CampOverview({
         </button>
       </div>
 
-      <p className="camp-instruction" data-merge-locked={rosterCount <= 3 ? 'true' : 'false'}>
+      <p
+        className="camp-instruction"
+        data-merge-locked={rosterCount <= 3 ? 'true' : 'false'}
+        data-merge-ready={mergeReadyPairCount > 0 ? 'true' : 'false'}
+      >
         {rosterCount <= 3 ? (
           <>
             세 전선을 지킬 마지막 인원입니다. <strong>신호탄 전까지 합성 잠김</strong>
+          </>
+        ) : mergeReadyPairCount > 0 ? (
+          <>
+            지금 합성 가능한 짝 <strong>{mergeReadyPairCount}쌍</strong> · 빛나는 카드를 선택해 결과를 확인하세요.
           </>
         ) : (
           <>
@@ -152,6 +167,8 @@ export function CampOverview({
           ))}
         </div>
       </section>
+
+      <ActiveLegacyRack legacyIds={activeLegacy} inactiveCount={inactiveLegacyCount} mode={mode} />
 
       <section className="relic-rack" aria-label="보유 유물">
         <div className="relic-rack-heading">

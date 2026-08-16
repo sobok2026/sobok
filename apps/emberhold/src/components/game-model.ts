@@ -18,6 +18,35 @@ export type SpecializationId =
   | 'last-brand'
 export type Difficulty = 'story' | 'expedition' | 'whiteout'
 export type RunMode = 'standard' | 'daily' | 'shared'
+
+export function inheritedPowerEnabledFor(mode: RunMode): boolean {
+  return mode === 'standard'
+}
+
+export function runCodeFor(seed: number): string {
+  return seed.toString(36).toUpperCase().padStart(6, '0').slice(-6)
+}
+
+export function seedForRunCode(code: string): number | null {
+  const normalized = code.trim().toUpperCase()
+  if (!/^[0-9A-Z]{1,6}$/.test(normalized)) return null
+  const seed = Number.parseInt(normalized, 36)
+  return Number.isSafeInteger(seed) && seed >= 1 && seed <= 2_147_483_647 ? seed : null
+}
+
+export function runCodeFromText(text: string): string | null {
+  const normalized = text.trim().toUpperCase()
+  const queryCode = normalized.match(/[?&]RIFT=([0-9A-Z]{1,6})(?=$|[&#\s])/)?.[1]
+  const labeledCode = normalized.match(
+    /(?:원정|균열|RIFT|EXPEDITION)?\s*(?:코드|CODE)\s*[:·#-]?\s*([0-9A-Z]{1,6})(?=$|[^0-9A-Z])/,
+  )?.[1]
+  const candidate = queryCode ?? labeledCode ?? (/^[0-9A-Z]{1,6}$/.test(normalized) ? normalized : null)
+  if (!candidate) return null
+  const seed = seedForRunCode(candidate)
+  return seed === null ? null : runCodeFor(seed)
+}
+
+export type MasteryContractId = 'fading-hearth' | 'winter-rations' | 'silent-standard'
 export type OathId = 'hearthkeepers' | 'signal-corps' | 'salvagers'
 export type NightConditionId =
   | 'crown-pressure'
@@ -38,10 +67,13 @@ type FinalVowId = 'shared-flame' | 'perfected-edge' | 'hearth-circle' | 'signal-
 type FinalMarchImprintId =
   | 'linked-hearths'
   | 'measured-rations'
+  | 'starless-route'
   | 'ghost-formation'
   | 'folded-retreat'
+  | 'burning-vanguard'
   | 'unveiled-command'
   | 'raised-ember'
+  | 'woven-standard'
 export type BattleOrder = 'hold' | 'assault' | 'support'
 export type EnemyIntent = 'siege' | 'flank' | 'suppress'
 type EnemyDoctrineId =
@@ -123,7 +155,7 @@ export type SoundEffect =
   | 'milestone'
   | 'seal'
 export type SoundscapeMood = 'title' | 'hearth' | 'whiteout' | 'battle' | 'boss' | 'dawn' | 'mourning'
-type MilestoneKind = 'achievement' | 'rank' | 'resonance' | 'legacy' | 'crown'
+type MilestoneKind = 'achievement' | 'rank' | 'resonance' | 'legacy' | 'crown' | 'growth'
 export type ArchiveTab = 'map' | 'chronicle' | 'codex' | 'legacy'
 type MotionPreference = 'system' | 'reduced'
 type BattlePace = 'cinematic' | 'swift'
@@ -215,6 +247,18 @@ export type Unit = {
   specialization: SpecializationId | null
 }
 
+export type RenownLedgerEntry = {
+  total: number
+  legacyBonus: number
+  contractBonus: number
+}
+
+export type RenownLedger = {
+  battle: RenownLedgerEntry
+  event: RenownLedgerEntry
+  marchSeal: RenownLedgerEntry
+}
+
 export type Enemy = {
   id: string
   kind: UnitKind
@@ -231,14 +275,17 @@ export type GameState = {
   difficulty: Difficulty
   mode: RunMode
   oath: OathId
+  masteryContract: MasteryContractId | null
   runId: number
   runSeed: number
   activeLegacy: LegacyId[]
   heat: number
   supplies: number
+  recoverySupplies: number
   morale: number
   recruits: number
   score: number
+  renownLedger: RenownLedger
   perfectNights: number
   intentsCountered: number
   unitedVictories: number
@@ -252,6 +299,7 @@ export type GameState = {
   decisions: string[]
   legacyAwarded: boolean
   legacyReward: number
+  failureInsights: FailureInsight[]
   slots: Array<Unit | null>
   lineup: Array<string | null>
   status: GameStatus
@@ -263,19 +311,56 @@ export type ExpeditionRecord = {
   mode: RunMode
   difficulty: Difficulty
   oath: OathId
+  masteryContract: MasteryContractId | null
+  activeLegacy: LegacyId[]
   ending: EndingId
   won: boolean
   day: number
   score: number
+  legacyReward: number
+  failureInsights: FailureInsight[]
   perfectNights: number
   trialsCompleted: number
   relics: RelicId[]
+}
+
+export function expeditionComparisonKey(
+  record: Pick<ExpeditionRecord, 'seed' | 'difficulty' | 'oath' | 'masteryContract' | 'activeLegacy'>,
+): string {
+  const legacyLoadout = [...record.activeLegacy].sort().join(',')
+  return [record.seed, record.difficulty, record.oath, record.masteryContract ?? 'none', legacyLoadout || 'none'].join(
+    '|',
+  )
+}
+
+export type LegacyRewardBreakdown = {
+  renown: number
+  crowns: number
+  trials: number
+  protocol: number
+  dawn: number
+  recovery: number
+  total: number
+}
+
+export type LegacyMasteryProgress = {
+  level: number
+  sealLabel: string
+  glyph: string
+  title: string
+  description: string
+  current: number
+  target: number
+  remaining: number
+  progress: number
+  nextTitle: string
 }
 
 export type MetaState = {
   embers: number
   completedRuns: number
   legacy: LegacyId[]
+  masteredContracts: MasteryContractId[]
   achievements: AchievementId[]
   discoveredRelics: RelicId[]
   history: ExpeditionRecord[]
@@ -328,6 +413,30 @@ export type LaneResult = {
   won: boolean
 }
 
+export type DeploymentForecast = {
+  lane: number
+  action: 'current' | 'deploy' | 'replace' | 'move' | 'swap'
+  outcome: 'current' | 'breakthrough' | 'improve' | 'steady' | 'risk'
+  relation: LaneResult['relation']
+  playerPower: number
+  enemyPower: number
+  won: boolean
+  currentWon: boolean | null
+  powerDelta: number | null
+  winsBefore: number
+  winsAfter: number
+  lineupReadyBefore: boolean
+  lineupReadyAfter: boolean
+  victoryBefore: boolean
+  victoryAfter: boolean
+  securesLane: boolean
+  losesLane: boolean
+  securesVictory: boolean
+  losesVictory: boolean
+  sourceLane: number | null
+  targetUnitId: string | null
+}
+
 type FailureCause = 'crown' | 'doctrine' | 'intent' | 'affinity' | 'tier' | 'power'
 
 export type FailureInsight = {
@@ -347,12 +456,31 @@ export type MarchSealCeremony = {
   id: number
   supplies: number
   scoreGain: number
+  legacyScoreBonus: number
+  contractScoreBonus: number
+  masteryContract: MasteryContractId | null
   scoreBefore: number
   scoreAfter: number
   reserve: number
-  retreatReserve: number
+  recoveryReserve: number
   rankBefore: ExpeditionRank
   rankAfter: ExpeditionRank
+}
+
+export type GrowthCeremony = {
+  id: number
+  unitId: string
+  name: string
+  kind: UnitKind
+  fromTier: number
+  toTier: number
+  powerBefore: number
+  powerAfter: number
+  heatBefore: number
+  heatAfter: number
+  warmth: number
+  opensPromotion: boolean
+  specialization: SpecializationId | null
 }
 
 export type BattleResult = {
@@ -360,6 +488,7 @@ export type BattleResult = {
   wins: number
   lanes: LaneResult[]
   supplyReward: number
+  legacySupplyBonus: number
   protocolSupplyBonus: number
   protocolScoreBonus: number
   crownBreakCount: number
@@ -371,6 +500,8 @@ export type BattleResult = {
   heatDelta: number
   moraleDelta: number
   scoreReward: number
+  legacyScoreBonus: number
+  contractScoreBonus: number
   focusLane: number
   boss: boolean
 }
@@ -674,15 +805,22 @@ export type EventChoiceForecast = {
   label: string
   detail: string
   projectedSupplies: number
+  projectedRecoverySupplies: number
+  recoverySuppliesSpent: number
   projectedHeat: number
   projectedMorale: number
+  scoreGain: number
+  legacyScoreBonus: number
+  contractScoreBonus: number
+  masteryContract: MasteryContractId | null
   conversionMorale: number
 }
 
-type CampaignEvent = {
+export type CampaignEvent = {
   title: string
   location: string
   body: string
+  routeVariant?: 1 | 2
   choices: EventChoice[]
 }
 
@@ -944,6 +1082,7 @@ export const OATHS: Record<
     benefit: string
     burden: string
     scoreScale: number
+    victorySupplyDelta: number
   }
 > = {
   hearthkeepers: {
@@ -954,15 +1093,17 @@ export const OATHS: Record<
     benefit: '합성 온기 +3 · 온기 손실 2 감소 · 명성 +8%',
     burden: '승리 보급품 -6',
     scoreScale: 1.08,
+    victorySupplyDelta: -6,
   },
   'signal-corps': {
     name: '신호단의 서약',
     subtitle: '명령과 파훼',
     glyph: '⌘',
-    description: '명령을 하나 더 내릴 수 있지만, 읽지 못한 적 의도는 더 치명적입니다.',
+    description: '전리품 일부를 신호망에 쓰며 명령을 하나 더 내리지만, 읽지 못한 적 의도는 더 치명적입니다.',
     benefit: '매 전투 명령 점수 +1 · 명성 +12%',
-    burden: '파훼하지 못한 의도 위력 증가',
+    burden: '승리 보급품 -8 · 파훼하지 못한 의도 위력 증가',
     scoreScale: 1.12,
+    victorySupplyDelta: -8,
   },
   salvagers: {
     name: '회수대의 서약',
@@ -972,6 +1113,7 @@ export const OATHS: Record<
     benefit: '신호탄 -4 · 승리 보급품 +12 · 명성 +10%',
     burden: '시작 온기 -10',
     scoreScale: 1.1,
+    victorySupplyDelta: 12,
   },
 }
 
@@ -1368,6 +1510,16 @@ export const FINAL_MARCH_IMPRINTS: Record<FinalMarchImprintId, FinalMarchImprint
     condition: 'mixed-orders',
     laneBonus: 0.05,
   },
+  'starless-route': {
+    glyph: '⌁',
+    label: 'GATE I · STARLESS ROUTE',
+    name: '별 없는 길표',
+    story: '피난민이 눈 위에 남긴 미세한 흔적이 화로의 위치를 감춘 채 왕좌까지 이어집니다.',
+    effect: '화로 집중 전선에서 의도 파훼 시 전투력 +10%',
+    crownLink: '첫 번째 칙령과 중앙 왕좌를 한 전선에서 동시에 끊습니다.',
+    condition: 'focus-countered',
+    laneBonus: 0.1,
+  },
   'ghost-formation': {
     glyph: '♜',
     label: 'GATE II · GHOST FORMATION',
@@ -1386,6 +1538,16 @@ export const FINAL_MARCH_IMPRINTS: Record<FinalMarchImprintId, FinalMarchImprint
     effect: '방벽 명령 전선 전투력 +9%',
     crownLink: '왕좌의 압박을 견디며 두 전선 승리선을 지킬 힘을 남깁니다.',
     condition: 'hold',
+    laneBonus: 0.09,
+  },
+  'burning-vanguard': {
+    glyph: '↟',
+    label: 'GATE II · BURNING VANGUARD',
+    name: '불길 돌격선',
+    story: '타 사라질 지도를 칼날마다 새긴 선봉대가 물러설 길 없이 왕좌를 향해 돌진합니다.',
+    effect: '돌격 명령 전선 전투력 +9%',
+    crownLink: '동결 왕좌의 방벽을 정면 돌파할 세 번째 해법을 남깁니다.',
+    condition: 'assault',
     laneBonus: 0.09,
   },
   'unveiled-command': {
@@ -1408,20 +1570,36 @@ export const FINAL_MARCH_IMPRINTS: Record<FinalMarchImprintId, FinalMarchImprint
     condition: 'advantage',
     laneBonus: 0.11,
   },
+  'woven-standard': {
+    glyph: '≋',
+    label: 'GATE III · WOVEN STANDARD',
+    name: '한데 꿰맨 군기',
+    story: '서로 다른 세 부대의 군기가 하나로 이어져, 각기 다른 명령을 같은 행군 박자로 묶습니다.',
+    effect: '명령 2종 이상 배치 시 모든 전선 전투력 +7%',
+    crownLink: '세 칙령에 서로 다른 명령으로 응답하면서 전선 전체를 보강합니다.',
+    condition: 'mixed-orders',
+    laneBonus: 0.07,
+  },
 }
 
 export const MERCY_DECISIONS = new Set([
   'n01-rescue',
   'n02-ring',
+  'n02-courier',
   'n03-study',
+  'n03-relight',
   'n04-wall',
   'n04-hearth-route',
   'n05-answer',
+  'n05-coupling',
   'n06-mask',
+  'n06-return',
   'n07-choir',
+  'n07-release',
   'n08-feed',
   'n08-hearth-pulse',
   'n09-share',
+  'n09-starless-route',
   'n10-ghosts',
   'n11-listen',
   'n12-oath',
@@ -2150,6 +2328,7 @@ export const CAMPAIGN_EVENTS: CampaignEvent[] = [
     title: '금이 간 종',
     location: '바람 협곡',
     body: '피난민들이 두고 간 경보 종이 얼음에 반쯤 묻혀 있다. 울리면 적도, 생존자도 불빛의 위치를 알게 된다.',
+    routeVariant: 1,
     choices: [
       {
         id: 'n02-ring',
@@ -2191,6 +2370,7 @@ export const CAMPAIGN_EVENTS: CampaignEvent[] = [
     title: '주인 없는 갑옷',
     location: '침묵의 도로',
     body: '길가에 늘어선 갑옷은 모두 안이 비어 있다. 흉갑 안쪽에는 같은 전투가 수백 번 기록돼 있다.',
+    routeVariant: 1,
     choices: [
       {
         id: 'n03-study',
@@ -2354,6 +2534,7 @@ export const CAMPAIGN_EVENTS: CampaignEvent[] = [
     title: '성벽 아래의 목소리',
     location: '유리 협곡',
     body: '얼음 아래에서 원정대원들의 이름을 하나씩 부른다. 마지막 목소리는 아직 태어나지 않은 아이의 것이다.',
+    routeVariant: 1,
     choices: [
       {
         id: 'n05-answer',
@@ -2397,6 +2578,7 @@ export const CAMPAIGN_EVENTS: CampaignEvent[] = [
     title: '유리 가면의 순례자',
     location: '얼음 회랑',
     body: '순례자의 가면 하나가 바닥에 놓여 있다. 쓰면 성당의 길이 선명해지지만 거울 속 표정이 사라진다.',
+    routeVariant: 1,
     choices: [
       {
         id: 'n06-mask',
@@ -2438,6 +2620,7 @@ export const CAMPAIGN_EVENTS: CampaignEvent[] = [
     title: '기도 없는 합창',
     location: '공허 성당',
     body: '합창은 듣는 사람의 심장 박자를 빼앗는다. 노래에 박자를 맞추거나, 화약으로 공명을 끊을 수 있다.',
+    routeVariant: 1,
     choices: [
       {
         id: 'n07-choir',
@@ -2583,7 +2766,7 @@ export const CAMPAIGN_EVENTS: CampaignEvent[] = [
   {
     title: '별이 없는 식사',
     location: '극야 평원',
-    body: '굶주린 피난민 무리가 불빛을 따라왔다. 식량은 모두가 먹기에 부족하고, 길은 왕좌를 향해 한 방향뿐이다.',
+    body: '굶주린 피난민 무리가 불빛을 따라왔다. 식량은 모두가 먹기에 부족하지만, 그들은 별 없이 왕좌를 피하는 길을 기억한다.',
     choices: [
       {
         id: 'n09-share',
@@ -2605,12 +2788,22 @@ export const CAMPAIGN_EVENTS: CampaignEvent[] = [
         morale: -9,
         marchImprint: 'measured-rations',
       },
+      {
+        id: 'n09-starless-route',
+        title: '별 없는 길을 함께 그린다',
+        description: '식량 대신 화로 곁의 시간을 나눈다. 피난민의 발자국이 불빛을 숨긴 왕좌 우회로로 이어진다.',
+        outcome: '명성 +220 · 사기 +8 · 온기 -7',
+        score: 220,
+        morale: 8,
+        heat: -7,
+        marchImprint: 'starless-route',
+      },
     ],
   },
   {
     title: '불타는 지도',
     location: '왕의 옛길',
-    body: '지도 위 길이 하나씩 타 사라진다. 죽은 정찰대의 불빛을 따라가거나 남은 종이를 회수해야 한다.',
+    body: '지도 위 길이 하나씩 타 사라진다. 죽은 정찰대의 불빛을 따르거나, 남은 종이를 회수하거나, 사라질 길을 칼날에 새겨야 한다.',
     choices: [
       {
         id: 'n10-ghosts',
@@ -2631,12 +2824,23 @@ export const CAMPAIGN_EVENTS: CampaignEvent[] = [
         score: 120,
         marchImprint: 'folded-retreat',
       },
+      {
+        id: 'n10-burning-vanguard',
+        title: '타는 길을 칼날에 새긴다',
+        description: '왕좌까지 남은 선을 선봉대의 무기마다 새긴다. 지도는 사라져도 돌격 방향은 잊히지 않는다.',
+        outcome: '온기 +10 · 명성 +180 · 보급품 -14',
+        supplies: -14,
+        heat: 10,
+        score: 180,
+        requiresSupplies: 14,
+        marchImprint: 'burning-vanguard',
+      },
     ],
   },
   {
     title: '마지막 전령',
     location: '검은 빙벽',
-    body: '왕의 전령이 무기를 내려놓고 말한다. “그 불씨는 원래 왕의 심장이었다. 돌려주면 모두 살 수 있다.”',
+    body: '왕의 전령이 무기와 세 갈래 군기를 내려놓고 말한다. “그 불씨는 원래 왕의 심장이었다. 돌려주면 모두 살 수 있다.”',
     choices: [
       {
         id: 'n11-listen',
@@ -2656,6 +2860,17 @@ export const CAMPAIGN_EVENTS: CampaignEvent[] = [
         supplies: 12,
         morale: -5,
         marchImprint: 'raised-ember',
+      },
+      {
+        id: 'n11-woven-standard',
+        title: '세 군기를 하나로 꿰맨다',
+        description: '왕의 문장을 뜯어 내고 세 부대의 천을 잇는다. 서로 다른 명령이 하나의 행군 박자로 정렬된다.',
+        outcome: '사기 +15 · 명성 +220 · 보급품 -14',
+        supplies: -14,
+        morale: 15,
+        score: 220,
+        requiresSupplies: 14,
+        marchImprint: 'woven-standard',
       },
     ],
   },
@@ -2722,18 +2937,265 @@ export const CAMPAIGN_EVENTS: CampaignEvent[] = [
   },
 ]
 
-const CAMPAIGN_CHOICE_IDS_BY_DAY = CAMPAIGN_EVENTS.map((event) => new Set(event.choices.map((choice) => choice.id)))
+const ALTERNATE_CAMPAIGN_EVENTS: Partial<Record<number, CampaignEvent>> = {
+  2: {
+    title: '얼어붙은 우편마차',
+    location: '바람 협곡 · 끊긴 우편로',
+    body: '전복된 우편마차 아래에서 전령 하나가 숨을 몰아쉰다. 봉인된 편지는 남쪽으로 향하고, 차축에는 아직 쓸 기름이 남아 있다.',
+    routeVariant: 2,
+    choices: [
+      {
+        id: 'n02-courier',
+        title: '전령을 깨워 길을 잇는다',
+        description: '식량을 나누고 얼어붙은 다리를 묶는다. 전령은 마지막 편지를 품고 원정대에 합류한다.',
+        outcome: '신병 합류 · 사기 +9 · 보급품 -8',
+        supplies: -8,
+        morale: 9,
+        recruit: true,
+        requiresSupplies: 8,
+        echo: {
+          triggerDay: 6,
+          glyph: '⌁',
+          name: '답장을 품은 전령',
+          story: '살려 보낸 편지의 답장이 얼음 회랑에 먼저 도착해 인접 전선 사이의 안전한 길을 표시합니다.',
+          effect: '인접 지원을 받는 전선 전투력 +14%',
+          condition: 'supported',
+          laneBonus: 0.14,
+        },
+      },
+      {
+        id: 'n02-axle',
+        title: '차축과 등유를 회수한다',
+        description: '마차를 해체해 수레와 화로를 손본다. 보내지 못한 편지는 눈 속에서 다시 얼어붙는다.',
+        outcome: '보급품 +18 · 온기 +8 · 사기 -7',
+        supplies: 18,
+        heat: 8,
+        morale: -7,
+        echo: {
+          triggerDay: 6,
+          glyph: '▰',
+          name: '우편마차의 철제 차축',
+          story: '회수한 차축이 얼음 회랑의 좁은 입구를 가로막는 버팀대로 다시 조립됩니다.',
+          effect: '방벽 명령 전선 전투력 +13%',
+          condition: 'hold',
+          laneBonus: 0.13,
+        },
+      },
+    ],
+  },
+  3: {
+    title: '거꾸로 선 망루',
+    location: '침묵의 도로 · 매몰된 감시선',
+    body: '뿌리째 뽑힌 망루가 눈 속에 거꾸로 박혀 있다. 지하가 된 꼭대기에서 꺼져 가는 신호와 온전한 렌즈 하나가 발견된다.',
+    routeVariant: 2,
+    choices: [
+      {
+        id: 'n03-relight',
+        title: '마지막 신호를 다시 밝힌다',
+        description: '화로 불씨를 떼어 남쪽 감시선이 볼 때까지 렌즈 뒤에 붙든다.',
+        outcome: '명성 +280 · 사기 +8 · 온기 -6',
+        score: 280,
+        morale: 8,
+        heat: -6,
+        echo: {
+          triggerDay: 7,
+          glyph: '⌘',
+          name: '뒤집힌 망루의 응답',
+          story: '다시 밝힌 감시선이 공허 성당의 거짓 성가가 시작되는 박자를 멀리서 끊어 알립니다.',
+          effect: '적 의도를 파훼한 전선 전투력 +15%',
+          condition: 'countered',
+          laneBonus: 0.15,
+        },
+      },
+      {
+        id: 'n03-lens',
+        title: '신호 렌즈를 떼어 낸다',
+        description: '빛을 포기하고 온전한 유리와 황동을 보급 수레에 싣는다.',
+        outcome: '보급품 +28 · 사기 -6',
+        supplies: 28,
+        morale: -6,
+        echo: {
+          triggerDay: 7,
+          glyph: '◉',
+          name: '거꾸로 비춘 성당',
+          story: '떼어 둔 렌즈가 성당의 파동을 한 전선에 모아, 화로 신호와 파훼 명령이 겹치는 순간을 드러냅니다.',
+          effect: '집중 전선에서 의도 파훼 시 전투력 +20%',
+          condition: 'focus-countered',
+          laneBonus: 0.2,
+        },
+      },
+    ],
+  },
+  5: {
+    title: '끊어진 설원 열차',
+    location: '유리 협곡 · 매달린 궤도',
+    body: '피난 열차의 마지막 객차가 협곡 가장자리에 매달려 있다. 연결쇠를 묶으면 사람을 구할 수 있지만, 화물칸을 떨구면 보급로가 열린다.',
+    routeVariant: 2,
+    choices: [
+      {
+        id: 'n05-coupling',
+        title: '연결쇠를 다시 묶는다',
+        description: '식량 자루의 끈까지 풀어 객차를 끌어올린다. 살아남은 기관수가 원정대의 길을 맡는다.',
+        outcome: '신병 합류 · 사기 +13 · 보급품 -12',
+        supplies: -12,
+        morale: 13,
+        recruit: true,
+        requiresSupplies: 12,
+        echo: {
+          triggerDay: 9,
+          glyph: '≋',
+          name: '이어 붙인 피난 열차',
+          story: '구조한 기관수가 극야 평원의 얼어붙은 선로를 찾아 인접 전선의 지원대를 곧장 실어 나릅니다.',
+          effect: '인접 지원을 받는 전선 전투력 +16%',
+          condition: 'supported',
+          laneBonus: 0.16,
+        },
+      },
+      {
+        id: 'n05-drop',
+        title: '화물칸을 협곡 아래로 떨군다',
+        description: '무게가 줄자 앞 객차가 살아난다. 원정대는 부서진 화물에서 쓸 것을 챙긴다.',
+        outcome: '보급품 +28 · 명성 +150 · 사기 -8',
+        supplies: 28,
+        score: 150,
+        morale: -8,
+        echo: {
+          triggerDay: 9,
+          glyph: '◉',
+          name: '가벼워진 돌파선',
+          story: '협곡에서 버린 무게만큼 대열이 빨라져 극야 평원의 한 전선에 화로와 병력을 집중시킵니다.',
+          effect: '화로 집중 전선 전투력 +15%',
+          condition: 'focus',
+          laneBonus: 0.15,
+        },
+      },
+    ],
+  },
+  6: {
+    title: '이름을 가둔 수정',
+    location: '얼음 회랑 · 거울 저장고',
+    body: '벽 속 수정마다 잊힌 순례자의 이름이 갇혀 있다. 기억을 돌려주면 길잡이가 깨어나고, 수정을 태우면 왕의 옛길이 불빛으로 드러난다.',
+    routeVariant: 2,
+    choices: [
+      {
+        id: 'n06-return',
+        title: '기억을 주인에게 돌려준다',
+        description:
+          '수정에 손을 대고 이름을 하나씩 부른다. 깨어난 길잡이가 가장 약한 생존자에게 잊힌 전투법을 가르친다.',
+        outcome: '전선 우선 생존자 강화 · 사기 +10 · 온기 -8',
+        upgrade: true,
+        morale: 10,
+        heat: -8,
+        echo: {
+          triggerDay: 10,
+          glyph: '◇',
+          name: '되찾은 순례자의 눈',
+          story: '이름을 되찾은 길잡이가 왕의 옛길에서 적 병과가 갈라지는 순간을 먼저 짚어 냅니다.',
+          effect: '병과 우세 전선 전투력 +16%',
+          condition: 'advantage',
+          laneBonus: 0.16,
+        },
+      },
+      {
+        id: 'n06-burn-memory',
+        title: '수정을 길표로 태운다',
+        description: '이름은 사라지지만 푸른 불빛이 회랑 끝까지 이어진다.',
+        outcome: '온기 +17 · 명성 +140 · 사기 -6',
+        heat: 17,
+        score: 140,
+        morale: -6,
+        echo: {
+          triggerDay: 10,
+          glyph: '◉',
+          name: '기억을 태운 길표',
+          story: '푸른 길표가 죽은 정찰대의 불빛과 겹쳐 화로가 가리키는 단 하나의 돌파선을 밝힙니다.',
+          effect: '화로 집중 전선 전투력 +15%',
+          condition: 'focus',
+          laneBonus: 0.15,
+        },
+      },
+    ],
+  },
+  7: {
+    title: '숨을 쉬는 파이프',
+    location: '공허 성당 · 지하 오르간',
+    body: '무너진 오르간의 파이프 안에서 아직 따뜻한 숨이 오간다. 갇힌 이들을 꺼내거나, 파이프를 녹여 성당을 가를 무기를 만들 수 있다.',
+    routeVariant: 2,
+    choices: [
+      {
+        id: 'n07-release',
+        title: '파이프를 열어 숨을 돌려준다',
+        description: '밀폐된 관을 하나씩 열자 살아 있는 목소리가 적의 합창 위에 새로운 박자를 만든다.',
+        outcome: '사기 +15 · 명성 +220 · 온기 -7',
+        heat: -7,
+        morale: 15,
+        score: 220,
+        echo: {
+          triggerDay: 11,
+          glyph: '≋',
+          name: '서로 다른 숨의 행군가',
+          story: '구해 낸 이들의 서로 다른 박자가 검은 빙벽 앞에서 세 명령을 하나의 진군가로 엮습니다.',
+          effect: '두 종류 이상의 명령 배치 시 모든 전투력 +11%',
+          condition: 'mixed-orders',
+          laneBonus: 0.11,
+        },
+      },
+      {
+        id: 'n07-pipes',
+        title: '파이프를 녹여 돌격창을 만든다',
+        description: '남은 숨은 멎지만 황동이 가장 약한 전선의 무기로 다시 태어난다.',
+        outcome: '전선 우선 생존자 강화 · 보급품 -15',
+        supplies: -15,
+        upgrade: true,
+        requiresSupplies: 15,
+        echo: {
+          triggerDay: 11,
+          glyph: '↟',
+          name: '황동 숨결의 돌격창',
+          story: '녹여 만든 창이 검은 빙벽의 첫 균열에서 공명을 일으켜 돌격 대열을 밀어 줍니다.',
+          effect: '돌격 명령 전선 전투력 +17%',
+          condition: 'assault',
+          laneBonus: 0.17,
+        },
+      },
+    ],
+  },
+}
+
+export function seededValue(seed: number, salt: number): number {
+  let value = (seed ^ Math.imul(salt + 1, 0x9e3779b1)) >>> 0
+  value = Math.imul(value ^ (value >>> 16), 0x21f0aaad)
+  value = Math.imul(value ^ (value >>> 15), 0x735a2d97)
+  return (value ^ (value >>> 15)) >>> 0
+}
+
+export function nightConditionFor(seed: number, day: number): NightCondition & { id: NightConditionId } {
+  const normalizedDay = Math.max(1, Math.min(MAX_NIGHTS, Math.trunc(day)))
+  const index = seededValue(seed, normalizedDay * 31 + 7) % NIGHT_CONDITION_IDS.length
+  let id = NIGHT_CONDITION_IDS[index]
+  if (normalizedDay > 1 && id === nightConditionFor(seed, normalizedDay - 1).id) {
+    id = NIGHT_CONDITION_IDS[(index + 1) % NIGHT_CONDITION_IDS.length]
+  }
+  return { id, ...NIGHT_CONDITIONS[id] }
+}
+
+export function campaignEventFor(runSeed: number, day: number): CampaignEvent {
+  const normalizedDay = Math.max(1, Math.min(MAX_NIGHTS, Math.trunc(day)))
+  const baseEvent = CAMPAIGN_EVENTS[normalizedDay - 1]
+  const alternateEvent = ALTERNATE_CAMPAIGN_EVENTS[normalizedDay]
+  return alternateEvent && seededValue(runSeed, normalizedDay * 43 + 911) % 2 === 1 ? alternateEvent : baseEvent
+}
 
 export function decisionsMatchCampaign(
   decisions: readonly string[],
   eventResolvedForDay: number,
   oath: OathId,
+  runSeed: number,
 ): boolean {
   return (
     decisions.length === eventResolvedForDay &&
     decisions.every((decision, index) => {
-      if (CAMPAIGN_CHOICE_IDS_BY_DAY[index]?.has(decision) !== true) return false
-      const choice = CAMPAIGN_EVENTS[index]?.choices.find((candidate) => candidate.id === decision)
+      const choice = campaignEventFor(runSeed, index + 1).choices.find((candidate) => candidate.id === decision)
       return Boolean(choice && (!choice.oathOnly || choice.oathOnly === oath))
     })
   )
@@ -2749,11 +3211,16 @@ export function oathInterventionCountFor(oath: OathId, decisions: readonly strin
   }).length
 }
 
-export function activeDecisionEchoFor(decisions: readonly string[], day: number): ActiveDecisionEcho | null {
-  const chosen = new Set(decisions)
-  for (let sourceIndex = 0; sourceIndex < CAMPAIGN_EVENTS.length; sourceIndex += 1) {
-    const event = CAMPAIGN_EVENTS[sourceIndex]
-    const choice = event.choices.find((candidate) => chosen.has(candidate.id) && candidate.echo?.triggerDay === day)
+export function activeDecisionEchoFor(
+  decisions: readonly string[],
+  day: number,
+  runSeed: number,
+): ActiveDecisionEcho | null {
+  for (let sourceIndex = 0; sourceIndex < decisions.length; sourceIndex += 1) {
+    const event = campaignEventFor(runSeed, sourceIndex + 1)
+    const choice = event.choices.find(
+      (candidate) => candidate.id === decisions[sourceIndex] && candidate.echo?.triggerDay === day,
+    )
     if (!choice?.echo) continue
     return {
       ...choice.echo,
@@ -2869,14 +3336,140 @@ export function finalMarchImprintBonusFor(
   }
 }
 
-export const LEGACY_UPGRADES: Record<LegacyId, { name: string; glyph: string; cost: number; description: string }> = {
-  'banked-ember': { name: '보관된 불씨', glyph: '✦', cost: 6, description: '다음 원정의 시작 온기 +10' },
-  'supply-cache': { name: '숨겨 둔 창고', glyph: '▣', cost: 8, description: '다음 원정의 시작 보급품 +20' },
-  'veteran-oath': { name: '노병의 서약', glyph: '◆', cost: 12, description: '첫 수호대가 II 등급으로 출정' },
-  'command-seal': { name: '지휘관의 인장', glyph: '⌘', cost: 14, description: '매 전투 명령 점수 +1' },
-  'chroniclers-ink': { name: '기록관의 잉크', glyph: '≋', cost: 18, description: '모든 명성 획득량 +8%' },
-  'salvagers-instinct': { name: '회수꾼의 감각', glyph: '◈', cost: 20, description: '승리 보급품 +8' },
+export const LEGACY_UPGRADES: Record<
+  LegacyId,
+  { name: string; glyph: string; cost: number; description: string; strategy: string }
+> = {
+  'banked-ember': {
+    name: '보관된 불씨',
+    glyph: '✦',
+    cost: 6,
+    description: '다음 원정의 시작 온기 +10',
+    strategy: '온기 부족으로 멈춘 원정의 초반 안전 구간을 가장 빠르게 넓힙니다.',
+  },
+  'supply-cache': {
+    name: '숨겨 둔 창고',
+    glyph: '▣',
+    cost: 10,
+    description: '다음 원정의 시작 보급품 +20',
+    strategy: '신호탄·화로·유료 결단의 첫 막 선택지를 동시에 늘립니다.',
+  },
+  'veteran-oath': {
+    name: '노병의 서약',
+    glyph: '◆',
+    cost: 16,
+    description: '첫 수호대가 II 등급으로 출정',
+    strategy: '첫 왕관 전까지 필요한 합성 횟수를 줄여 성장 병목을 앞당겨 풉니다.',
+  },
+  'command-seal': {
+    name: '지휘관의 인장',
+    glyph: '⌘',
+    cost: 22,
+    description: '매 전투 명령 점수 +1',
+    strategy: '복합 명령 여유가 적은 높은 위험도에서 의도 파훼 선택을 한 단계 넓힙니다.',
+  },
+  'chroniclers-ink': {
+    name: '기록관의 잉크',
+    glyph: '≋',
+    cost: 28,
+    description: '모든 명성 획득량 +8%',
+    strategy: '불꽃의 왕관과 상위 원정 등급을 노리는 완주 기록의 명성 상한을 높입니다.',
+  },
+  'salvagers-instinct': {
+    name: '회수꾼의 감각',
+    glyph: '◈',
+    cost: 34,
+    description: '승리 보급품 +8',
+    strategy: '긴 원정의 매 승리를 다음 성장과 화로 투자로 이어 주는 후반 경제 핵심입니다.',
+  },
 }
+
+export const MASTERY_CONTRACTS: Record<
+  MasteryContractId,
+  {
+    name: string
+    glyph: string
+    label: string
+    description: string
+    burden: string
+    reward: string
+    scoreScale: number
+    startingHeatDelta: number
+    startingSuppliesDelta: number
+    commandDelta: number
+    requiredMasteryLevel: number
+  }
+> = {
+  'fading-hearth': {
+    name: '잦아드는 화로',
+    glyph: '✧',
+    label: 'COVENANT I · FADING HEARTH',
+    description: '계승한 온기를 스스로 덜어 내고, 더 차가운 첫걸음으로 원정 기록을 다시 증명합니다.',
+    burden: '시작 온기 −20',
+    reward: '모든 명성 ×1.10',
+    scoreScale: 1.1,
+    startingHeatDelta: -20,
+    startingSuppliesDelta: 0,
+    commandDelta: 0,
+    requiredMasteryLevel: 0,
+  },
+  'winter-rations': {
+    name: '겨울의 배급',
+    glyph: '◈',
+    label: 'COVENANT II · WINTER RATIONS',
+    description: '숨겨 둔 창고의 몫까지 북부에 남기고, 빠듯한 성장선으로 마지막 행군을 이어 갑니다.',
+    burden: '시작 보급품 −35',
+    reward: '모든 명성 ×1.14',
+    scoreScale: 1.14,
+    startingHeatDelta: 0,
+    startingSuppliesDelta: -35,
+    commandDelta: 0,
+    requiredMasteryLevel: 1,
+  },
+  'silent-standard': {
+    name: '침묵의 군기',
+    glyph: '⚑',
+    label: 'COVENANT III · SILENT STANDARD',
+    description: '지휘관의 인장을 봉하고, 더 적은 명령만으로 세 전선의 의도를 꿰뚫습니다.',
+    burden: '매 전투 명령 한도 −1',
+    reward: '모든 명성 ×1.18',
+    scoreScale: 1.18,
+    startingHeatDelta: 0,
+    startingSuppliesDelta: 0,
+    commandDelta: -1,
+    requiredMasteryLevel: 2,
+  },
+}
+
+export const LEGACY_MASTERY_STEP = 30
+
+const LEGACY_MASTERY_RANKS = [
+  {
+    glyph: '◇',
+    title: '완성된 계승자',
+    description: '여섯 유산을 모두 이었습니다. 이제 남는 불씨가 영원 인장을 벼립니다.',
+  },
+  {
+    glyph: '✦',
+    title: '북부의 기록자',
+    description: '반복된 새벽을 하나의 인장으로 남겨 다음 원정대가 길을 잃지 않게 합니다.',
+  },
+  {
+    glyph: '♜',
+    title: '세 왕관의 증인',
+    description: '무너뜨린 왕관과 되찾은 새벽을 북부의 영구 연대기에 새겼습니다.',
+  },
+  {
+    glyph: '❄',
+    title: '백야의 수호자',
+    description: '가장 긴 눈보라 뒤에도 다시 출정한 지휘관의 이름이 설원에 남습니다.',
+  },
+  {
+    glyph: '☼',
+    title: '영원의 화로지기',
+    description: '완성 이후의 모든 원정을 끝없는 명예 인장으로 이어 갑니다.',
+  },
+] as const
 
 export const ACHIEVEMENTS: Record<AchievementId, { name: string; glyph: string; description: string }> = {
   'first-watch': { name: '첫 번째 망루', glyph: '01', description: '처음으로 한 밤의 전투에서 승리' },
@@ -2932,6 +3525,7 @@ export const INITIAL_META: MetaState = {
   embers: 0,
   completedRuns: 0,
   legacy: [],
+  masteredContracts: [],
   achievements: [],
   discoveredRelics: [],
   history: [],
@@ -2940,12 +3534,34 @@ export const INITIAL_META: MetaState = {
 export const RELIC_IDS = Object.keys(RELICS) as RelicId[]
 export const RESONANCE_IDS = Object.keys(RESONANCES) as ResonanceId[]
 export const LEGACY_IDS = Object.keys(LEGACY_UPGRADES) as LegacyId[]
+export const MASTERY_CONTRACT_IDS = Object.keys(MASTERY_CONTRACTS) as MasteryContractId[]
 export const ACHIEVEMENT_IDS = Object.keys(ACHIEVEMENTS) as AchievementId[]
 export const OATH_IDS = Object.keys(OATHS) as OathId[]
 export const NIGHT_CONDITION_IDS = Object.keys(NIGHT_CONDITIONS) as NightConditionId[]
 export const TRIAL_IDS = Object.keys(TRIALS) as TrialId[]
 export const RELIC_NIGHTS = new Set([2, 4, 6, 8, 10])
 export const MAX_HISTORY = 8
+
+export function legacyMasteryFor(meta: Pick<MetaState, 'embers' | 'legacy'>): LegacyMasteryProgress | null {
+  if (meta.legacy.length !== LEGACY_IDS.length) return null
+  const level = Math.floor(meta.embers / LEGACY_MASTERY_STEP)
+  const current = meta.embers % LEGACY_MASTERY_STEP
+  const rank = LEGACY_MASTERY_RANKS[Math.min(level, LEGACY_MASTERY_RANKS.length - 1)]
+  const nextLevel = level + 1
+  const nextRank = LEGACY_MASTERY_RANKS[Math.min(nextLevel, LEGACY_MASTERY_RANKS.length - 1)]
+  return {
+    level,
+    sealLabel: level === 0 ? '영원 인장 준비' : `영원 인장 ${level}`,
+    glyph: rank.glyph,
+    title: level > LEGACY_MASTERY_RANKS.length - 1 ? `${rank.title} · ${level}` : rank.title,
+    description: rank.description,
+    current,
+    target: LEGACY_MASTERY_STEP,
+    remaining: LEGACY_MASTERY_STEP - current,
+    progress: Math.round((current / LEGACY_MASTERY_STEP) * 100),
+    nextTitle: nextLevel > LEGACY_MASTERY_RANKS.length - 1 ? `${nextRank.title} · ${nextLevel}` : nextRank.title,
+  }
+}
 
 export const TIER_LABELS = ['0', 'I', 'II', 'III', 'IV']
 export const PLAYER_POWER = [0, 18, 40, 86, 180]

@@ -6,6 +6,7 @@ import type {
   Difficulty,
   EndingId,
   GameState,
+  MasteryContractId,
   MetaState,
   OathId,
   RunMode,
@@ -14,11 +15,16 @@ import {
   DIFFICULTIES,
   type ENDING_ROUTES,
   ENDINGS,
+  inheritedPowerEnabledFor,
+  legacyMasteryFor,
+  MASTERY_CONTRACT_IDS,
+  MASTERY_CONTRACTS,
   OATH_CHRONICLE_ACHIEVEMENTS,
   OATH_CHRONICLES,
   OATH_IDS,
   OATHS,
   PROTOCOL_MASTERIES,
+  runCodeFromText,
 } from './game-model'
 import {
   preloadArchiveDialog,
@@ -27,6 +33,7 @@ import {
   preloadHelpDialogs,
   preloadSettingsDialog,
 } from './game-preloads'
+import { LegacySetupLoadout } from './LegacyLoadout'
 
 type RuntimeState = 'offline' | 'installed' | 'ready' | 'online'
 
@@ -35,8 +42,10 @@ type TitleScreenProps = {
   showDifficulty: boolean
   selectedDifficulty: Difficulty | null
   setupMode: RunMode
+  selectedMasteryContract: MasteryContractId | null
   sharedCode: string
   sharedSeed: number | null
+  incomingRiftCode: string | null
   unlockedAchievementIds: ReadonlySet<AchievementId>
   showEndingRouteRecommendation: boolean
   nextWinningEndingId: EndingId | null
@@ -59,6 +68,7 @@ type TitleScreenProps = {
   setShowDifficulty: (show: boolean) => void
   setSelectedDifficulty: (difficulty: Difficulty | null) => void
   setSetupMode: (mode: RunMode) => void
+  setSelectedMasteryContract: (contract: MasteryContractId | null) => void
   setSharedCode: (code: string) => void
   setShowInstallHelp: (show: boolean) => void
   openArchive: (tab: ArchiveTab) => void
@@ -66,9 +76,17 @@ type TitleScreenProps = {
   toggleSound: () => void
   enterGame: () => void
   preloadEnterGame: () => void
+  prepareIncomingRift: () => void
+  dismissIncomingRift: () => void
   askToDiscardCurrentCampaign: () => void
   installGame: () => Promise<void>
-  startCampaign: (difficulty: Difficulty, oath: OathId, mode: RunMode, requestedSeed?: number | null) => void
+  startCampaign: (
+    difficulty: Difficulty,
+    oath: OathId,
+    mode: RunMode,
+    requestedSeed?: number | null,
+    masteryContract?: MasteryContractId | null,
+  ) => void
 }
 
 export function TitleScreen({
@@ -76,8 +94,10 @@ export function TitleScreen({
   showDifficulty,
   selectedDifficulty,
   setupMode,
+  selectedMasteryContract,
   sharedCode,
   sharedSeed,
+  incomingRiftCode,
   unlockedAchievementIds,
   showEndingRouteRecommendation,
   nextWinningEndingId,
@@ -100,6 +120,7 @@ export function TitleScreen({
   setShowDifficulty,
   setSelectedDifficulty,
   setSetupMode,
+  setSelectedMasteryContract,
   setSharedCode,
   setShowInstallHelp,
   openArchive,
@@ -107,11 +128,15 @@ export function TitleScreen({
   toggleSound,
   enterGame,
   preloadEnterGame,
+  prepareIncomingRift,
+  dismissIncomingRift,
   askToDiscardCurrentCampaign,
   installGame,
   startCampaign,
 }: TitleScreenProps) {
   const firstExpedition = meta.completedRuns === 0 && meta.history.length === 0
+  const legacyMastery = legacyMasteryFor(meta)
+  const masteryContractEligible = inheritedPowerEnabledFor(setupMode)
 
   return (
     <div
@@ -201,6 +226,11 @@ export function TitleScreen({
                     </b>
                   </em>
                 </div>
+                <LegacySetupLoadout
+                  legacyIds={meta.legacy}
+                  mode={setupMode}
+                  onOpenArchive={() => openArchive('legacy')}
+                />
                 {firstExpedition && setupMode === 'standard' ? (
                   <section className="first-expedition-route" aria-label="첫 원정 추천 조합">
                     <span aria-hidden="true">✦</span>
@@ -213,7 +243,7 @@ export function TitleScreen({
                       type="button"
                       onPointerEnter={preloadCampaignEventDialog}
                       onFocus={preloadCampaignEventDialog}
-                      onClick={() => startCampaign(selectedDifficulty, 'hearthkeepers', 'standard')}
+                      onClick={() => startCampaign(selectedDifficulty, 'hearthkeepers', 'standard', null, null)}
                     >
                       추천 조합으로 바로 출정 <i aria-hidden="true">›</i>
                     </button>
@@ -228,25 +258,31 @@ export function TitleScreen({
                     onClick={() => setSetupMode('standard')}
                   >
                     <b>새 균열</b>
-                    <span>매번 다른 전선·의도·유물</span>
+                    <span>매번 다른 사건·전선·유물</span>
                   </button>
                   <button
                     type="button"
                     data-active={setupMode === 'daily' ? 'true' : 'false'}
                     aria-pressed={setupMode === 'daily'}
-                    onClick={() => setSetupMode('daily')}
+                    onClick={() => {
+                      setSetupMode('daily')
+                      setSelectedMasteryContract(null)
+                    }}
                   >
                     <b>오늘의 균열</b>
-                    <span>오늘은 모두 같은 원정 경로</span>
+                    <span>같은 길 · 계승 전력 0개</span>
                   </button>
                   <button
                     type="button"
                     data-active={setupMode === 'shared' ? 'true' : 'false'}
                     aria-pressed={setupMode === 'shared'}
-                    onClick={() => setSetupMode('shared')}
+                    onClick={() => {
+                      setSetupMode('shared')
+                      setSelectedMasteryContract(null)
+                    }}
                   >
                     <b>공유 균열</b>
-                    <span>원정 코드로 같은 길에 도전</span>
+                    <span>같은 코드 · 계승 전력 0개</span>
                   </button>
                   {setupMode === 'shared' ? (
                     <label className="shared-code-entry">
@@ -259,6 +295,12 @@ export function TitleScreen({
                         spellCheck="false"
                         maxLength={6}
                         placeholder="예: 7X2F9K"
+                        onPaste={(event) => {
+                          const pastedCode = runCodeFromText(event.clipboardData.getData('text'))
+                          if (!pastedCode) return
+                          event.preventDefault()
+                          setSharedCode(pastedCode)
+                        }}
                         onChange={(event) =>
                           setSharedCode(
                             event.currentTarget.value
@@ -269,11 +311,113 @@ export function TitleScreen({
                         }
                       />
                       <small data-valid={sharedSeed ? 'true' : 'false'}>
-                        {sharedSeed ? '동일한 적·균열·유물·과업을 불러옵니다.' : '영문과 숫자 1~6자'}
+                        {sharedSeed
+                          ? '동일한 사건·적·균열·유물·과업을 불러옵니다.'
+                          : '여섯 자리 코드·공유문·초대 링크 붙여넣기 지원'}
                       </small>
                     </label>
                   ) : null}
                 </fieldset>
+                {legacyMastery ? (
+                  <section
+                    className="mastery-contract-setup"
+                    data-eligible={masteryContractEligible ? 'true' : 'false'}
+                    aria-labelledby="mastery-contract-title"
+                  >
+                    <header>
+                      <span aria-hidden="true">{legacyMastery.glyph}</span>
+                      <div>
+                        <small>ETERNAL SEAL · OPTIONAL ENDGAME COVENANT</small>
+                        <h3 id="mastery-contract-title">영원 계약</h3>
+                        <p>완성한 유산의 힘을 스스로 제한하고, 표준 원정의 모든 명성에 도전 배율을 새깁니다.</p>
+                      </div>
+                      <b>
+                        {masteryContractEligible
+                          ? selectedMasteryContract
+                            ? `${MASTERY_CONTRACTS[selectedMasteryContract].name} 선택`
+                            : '계약 없음 · 표준 기록'
+                          : '비교 규칙 보호'}
+                      </b>
+                    </header>
+                    <fieldset className="mastery-contract-grid">
+                      <legend className="settings-visually-hidden">영원 계약 선택</legend>
+                      <button
+                        type="button"
+                        data-active={selectedMasteryContract === null ? 'true' : 'false'}
+                        disabled={!masteryContractEligible}
+                        aria-pressed={selectedMasteryContract === null}
+                        onClick={() => setSelectedMasteryContract(null)}
+                      >
+                        <span aria-hidden="true">◇</span>
+                        <small>STANDARD RECORD</small>
+                        <strong>계약 없이 출정</strong>
+                        <p>
+                          {masteryContractEligible
+                            ? '계승 유산은 그대로 적용하고 추가 부담이나 도전 배율 없이 기록합니다.'
+                            : '계승 유산과 영원 계약을 모두 봉인하고 현재 코드의 선택과 전술만 기록합니다.'}
+                        </p>
+                        <dl>
+                          <div>
+                            <dt>부담</dt>
+                            <dd>없음</dd>
+                          </div>
+                          <div>
+                            <dt>명성</dt>
+                            <dd>×1.00</dd>
+                          </div>
+                        </dl>
+                        <b>{selectedMasteryContract === null ? '✓ 선택됨' : '표준 기록 선택'}</b>
+                      </button>
+                      {MASTERY_CONTRACT_IDS.map((contractId) => {
+                        const contract = MASTERY_CONTRACTS[contractId]
+                        const unlocked = legacyMastery.level >= contract.requiredMasteryLevel
+                        const mastered = meta.masteredContracts.includes(contractId)
+                        const active = selectedMasteryContract === contractId
+                        return (
+                          <button
+                            type="button"
+                            data-active={active ? 'true' : 'false'}
+                            data-locked={!unlocked ? 'true' : 'false'}
+                            data-mastered={mastered ? 'true' : 'false'}
+                            disabled={!masteryContractEligible || !unlocked}
+                            aria-pressed={active}
+                            onClick={() => setSelectedMasteryContract(contractId)}
+                            key={contractId}
+                          >
+                            <span aria-hidden="true">{contract.glyph}</span>
+                            <small>{contract.label}</small>
+                            <strong>{contract.name}</strong>
+                            <p>{contract.description}</p>
+                            <dl>
+                              <div>
+                                <dt>부담</dt>
+                                <dd>{contract.burden}</dd>
+                              </div>
+                              <div>
+                                <dt>명성</dt>
+                                <dd>×{contract.scoreScale.toFixed(2)}</dd>
+                              </div>
+                            </dl>
+                            <b>
+                              {!unlocked
+                                ? `영원 인장 ${contract.requiredMasteryLevel} 필요`
+                                : active
+                                  ? `✓ 계약 선택됨${mastered ? ' · 정복 기록' : ''}`
+                                  : mastered
+                                    ? '✓ 정복 완료 · 다시 선택'
+                                    : `${contract.reward} · 선택`}
+                            </b>
+                          </button>
+                        )
+                      })}
+                    </fieldset>
+                    <footer>
+                      {masteryContractEligible
+                        ? `선택한 계약은 이번 원정이 끝날 때까지 유지되며, 결산에서 기본·유산·계약 명성을 각각 분리합니다. 영구 정복 기록 ${meta.masteredContracts.length} / ${MASTERY_CONTRACT_IDS.length}.`
+                        : `${setupMode === 'daily' ? '오늘의 균열' : '공유 균열'}은 같은 코드의 공정한 기록 비교를 위해 계승 유산과 영원 계약을 모두 적용하지 않습니다.`}
+                    </footer>
+                  </section>
+                ) : null}
                 {showEndingRouteRecommendation && nextWinningEndingId && nextWinningEndingRoute ? (
                   <aside className="setup-ending-route" aria-label="추천 미발견 결말 경로">
                     <span aria-hidden="true">{ENDINGS[nextWinningEndingId].glyph}</span>
@@ -312,7 +456,9 @@ export function TitleScreen({
                         }
                         onPointerEnter={preloadCampaignEventDialog}
                         onFocus={preloadCampaignEventDialog}
-                        onClick={() => startCampaign(selectedDifficulty, oathId, setupMode, sharedSeed)}
+                        onClick={() =>
+                          startCampaign(selectedDifficulty, oathId, setupMode, sharedSeed, selectedMasteryContract)
+                        }
                         key={oathId}
                       >
                         <span aria-hidden="true">
@@ -410,8 +556,12 @@ export function TitleScreen({
                   })}
                 </div>
                 <div className="difficulty-legacy">
-                  <span>적용 유산 {meta.legacy.length}개</span>
-                  <span>보유 불씨 {meta.embers}</span>
+                  <span>
+                    {inheritedPowerEnabledFor(setupMode) ? `적용 유산 ${meta.legacy.length}개` : '계승 전력 0개'}
+                  </span>
+                  <span>
+                    {legacyMastery ? `${legacyMastery.sealLabel} · 불씨 ${meta.embers}` : `보유 불씨 ${meta.embers}`}
+                  </span>
                   <span>숙련 인장 {masteredProtocolCount} / 3</span>
                 </div>
               </>
@@ -427,6 +577,33 @@ export function TitleScreen({
               <li>매 원정 달라지는 전선</li>
               <li>서약·진급·유물 공명</li>
             </ul>
+            {incomingRiftCode ? (
+              <section className="incoming-rift-invitation" aria-labelledby="incoming-rift-title">
+                <span aria-hidden="true">⌁</span>
+                <div>
+                  <small>SHARED RIFT INVITATION · META-FREE</small>
+                  <strong id="incoming-rift-title">공유 균열 {incomingRiftCode}</strong>
+                  <p>
+                    같은 사건·적·균열·유물·과업을 계승 전력 0으로 불러옵니다.
+                    {hasProgress
+                      ? ' 현재 체크포인트는 확인 없이 덮어쓰지 않습니다.'
+                      : ' 위험도와 서약은 직접 선택합니다.'}
+                  </p>
+                </div>
+                <footer>
+                  <button
+                    type="button"
+                    onClick={prepareIncomingRift}
+                    data-autofocus={!hasProgress ? 'true' : undefined}
+                  >
+                    {hasProgress ? '현재 원정 확인 후 준비' : '이 균열 준비'}
+                  </button>
+                  <button type="button" onClick={dismissIncomingRift}>
+                    초대 닫기
+                  </button>
+                </footer>
+              </section>
+            ) : null}
             {ready && hasProgress ? (
               <section className="resume-checkpoint" aria-label="저장된 원정 체크포인트">
                 <header>
@@ -441,6 +618,7 @@ export function TitleScreen({
                   </strong>
                   <p>
                     {difficultyProtocolName} · {OATHS[game.oath].name}
+                    {game.masteryContract ? ` · ${MASTERY_CONTRACTS[game.masteryContract].name}` : ''}
                   </p>
                 </div>
                 <dl>
@@ -506,8 +684,10 @@ export function TitleScreen({
               ) : null}
             </div>
             <div className="title-record">
-              <span>개인 최고 {bestScore.toLocaleString('ko-KR')}</span>
-              <span>유산 불씨 {meta.embers}</span>
+              <span>전체 원정 최고 {bestScore.toLocaleString('ko-KR')}</span>
+              <span>
+                {legacyMastery ? `${legacyMastery.sealLabel} · 불씨 ${meta.embers}` : `유산 불씨 ${meta.embers}`}
+              </span>
               <span>완주 {meta.completedRuns}</span>
             </div>
           </>

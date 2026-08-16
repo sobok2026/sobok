@@ -1,6 +1,17 @@
 import type { CSSProperties } from 'react'
 import type { ArchiveTab, ExpeditionRank, GameState } from './game-model'
-import { MAX_NIGHTS, NIGHT_STORIES } from './game-model'
+import {
+  BOSS_MECHANICS,
+  ELITE_ENCOUNTERS,
+  ENEMY_DOCTRINES,
+  ENEMY_TIERS,
+  inheritedPowerEnabledFor,
+  MASTERY_CONTRACTS,
+  MAX_NIGHTS,
+  NIGHT_STORIES,
+  nightConditionFor,
+  TIER_LABELS,
+} from './game-model'
 import { preloadArchiveDialog, preloadExpeditionMenu, preloadHelpDialogs, preloadSettingsDialog } from './game-preloads'
 
 type RankEntryView = {
@@ -35,6 +46,19 @@ function heatTone(heat: number): 'warm' | 'cool' | 'critical' {
   return 'warm'
 }
 
+function enemyTierProfileFor(day: number): string {
+  const counts = new Map<number, number>()
+  for (const tier of ENEMY_TIERS[day - 1]) counts.set(tier, (counts.get(tier) ?? 0) + 1)
+  return [...counts.entries()]
+    .sort(([left], [right]) => left - right)
+    .map(([tier, count]) => `${TIER_LABELS[tier]}${count > 1 ? `×${count}` : ''}`)
+    .join(' · ')
+}
+
+function enemyTierTotalFor(day: number): number {
+  return ENEMY_TIERS[day - 1].reduce((total, tier) => total + tier, 0)
+}
+
 export function CampaignHud({
   game,
   actNumber,
@@ -56,6 +80,29 @@ export function CampaignHud({
   openExpeditionMenu,
 }: CampaignHudProps) {
   const heatStyle = { '--heat-level': `${game.heat}%` } as CSSProperties
+  const riftForecast = Array.from({ length: Math.min(3, MAX_NIGHTS - game.day + 1) }, (_, offset) => {
+    const day = game.day + offset
+    const story = NIGHT_STORIES[day - 1]
+    const condition = nightConditionFor(game.runSeed, day)
+    const elite = ELITE_ENCOUNTERS[day]
+    const doctrine = elite ? ENEMY_DOCTRINES[elite.doctrine] : null
+    const boss = BOSS_MECHANICS[day]
+    const tierGain = day > 1 ? enemyTierTotalFor(day) - enemyTierTotalFor(day - 1) : 0
+    const pressure = boss ? boss.name : elite && doctrine ? `${elite.name} · ${doctrine.name}` : '정규 적 전열'
+    const signal = boss ? 'CROWN' : tierGain > 0 ? 'TIER UP' : elite ? 'ELITE' : offset === 0 ? 'NOW' : 'SCOUTED'
+    const tone = boss ? 'crown' : tierGain > 0 ? 'rising' : elite ? 'elite' : 'steady'
+
+    return {
+      day,
+      title: story.title,
+      condition,
+      formation: enemyTierProfileFor(day),
+      pressure,
+      signal,
+      tone,
+      current: offset === 0,
+    }
+  })
 
   return (
     <>
@@ -179,6 +226,28 @@ export function CampaignHud({
         </p>
       </div>
 
+      {!inheritedPowerEnabledFor(game.mode) ? (
+        <aside className="active-mastery-contract" data-comparison="true" aria-label="동일 코드 비교용 계승 전력 봉인">
+          <span aria-hidden="true">◇</span>
+          <div>
+            <small>CODE COMPARISON · META-FREE</small>
+            <strong>{game.mode === 'daily' ? '오늘의 균열' : '공유 균열'} · 공정 적재</strong>
+          </div>
+          <p>보유한 계승 유산과 영원 계약을 전력·보상에서 제외합니다.</p>
+          <b>계승 전력 0</b>
+        </aside>
+      ) : game.masteryContract ? (
+        <aside className="active-mastery-contract" aria-label="현재 원정의 영원 계약">
+          <span aria-hidden="true">{MASTERY_CONTRACTS[game.masteryContract].glyph}</span>
+          <div>
+            <small>{MASTERY_CONTRACTS[game.masteryContract].label}</small>
+            <strong>{MASTERY_CONTRACTS[game.masteryContract].name}</strong>
+          </div>
+          <p>{MASTERY_CONTRACTS[game.masteryContract].burden}</p>
+          <b>{MASTERY_CONTRACTS[game.masteryContract].reward}</b>
+        </aside>
+      ) : null}
+
       <section className="campaign-march" aria-label={`12일 원정 진행 · 현재 ${game.day}일`}>
         <div className="march-copy">
           <span>ACT {actNumber} · MARCH STATUS</span>
@@ -224,6 +293,36 @@ export function CampaignHud({
               ? `${nextRankEntry.rank}까지 ${(nextRankEntry.minimum - game.score).toLocaleString('ko-KR')}`
               : '최고 기준 도달'}
           </small>
+        </div>
+        <div className="march-forecast">
+          <header>
+            <span>RIFT FORECAST · CODE-BOUND</span>
+            <strong>{game.day === MAX_NIGHTS ? '왕좌 앞 마지막 밤' : '앞으로 3밤 작전 예보'}</strong>
+            <small>적 등급·밤의 변칙·정예 교리는 이 원정 코드에 고정됩니다.</small>
+          </header>
+          <ol aria-label={`현재 ${game.day}일부터 ${riftForecast.at(-1)?.day ?? game.day}일까지 균열 예보`}>
+            {riftForecast.map((entry) => (
+              <li
+                data-tone={entry.tone}
+                data-current={entry.current ? 'true' : 'false'}
+                aria-current={entry.current ? 'step' : undefined}
+                key={`rift-forecast-${entry.day}`}
+              >
+                <div>
+                  <span>DAY {String(entry.day).padStart(2, '0')}</span>
+                  <b>{entry.signal}</b>
+                </div>
+                <strong>{entry.title}</strong>
+                <p>
+                  <span aria-hidden="true">{entry.condition.glyph}</span>
+                  {entry.condition.name} · {entry.condition.description}
+                </p>
+                <small>
+                  적 {entry.formation} · {entry.pressure}
+                </small>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
     </>

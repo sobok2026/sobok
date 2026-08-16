@@ -11,6 +11,7 @@ import type {
   EventChoice,
   GameState,
   LegacyId,
+  LegacyRewardBreakdown,
   MetaState,
   ProtocolMasteryProgress,
   ResonanceId,
@@ -21,7 +22,11 @@ import {
   BOSS_MECHANICS,
   DIFFICULTIES,
   ENDINGS,
+  inheritedPowerEnabledFor,
+  LEGACY_IDS,
   LEGACY_UPGRADES,
+  legacyMasteryFor,
+  MASTERY_CONTRACTS,
   MAX_NIGHTS,
   OATHS,
   RESONANCES,
@@ -82,6 +87,43 @@ type TrialStatusView = {
   completed: boolean
 }
 
+const RENOWN_LEDGER_SOURCES = [
+  {
+    id: 'battle',
+    glyph: '⚔',
+    label: 'BATTLE VERDICTS',
+    title: '교전과 왕관 파쇄',
+    description: '승리, 완벽 방어, 의도 파훼와 왕관전 보정을 모두 반영한 실제 귀환 명성',
+  },
+  {
+    id: 'event',
+    glyph: '◇',
+    label: 'ROUTE DECISIONS',
+    title: '경로 선택과 결단',
+    description: '밤의 사건과 서약 경로에서 선택 직후 확정된 실제 명성',
+  },
+  {
+    id: 'marchSeal',
+    glyph: '≋',
+    label: 'MARCH SEALS',
+    title: '행군 보급 봉인',
+    description: '화로·성장·후퇴 예비를 남기고 진짜 잉여 보급만 봉인해 얻은 실제 명성',
+  },
+] as const
+
+const LEGACY_REWARD_SOURCES: Array<{
+  id: Exclude<keyof LegacyRewardBreakdown, 'total'>
+  label: string
+  detail: string
+}> = [
+  { id: 'renown', label: '명성 기록', detail: '명성 4,500당 1' },
+  { id: 'crowns', label: '왕관 파쇄', detail: '격파한 보스당 2' },
+  { id: 'trials', label: '개인 과업', detail: '완수한 과업 보상' },
+  { id: 'protocol', label: '위험도 완주', detail: '완주할 때만 확정' },
+  { id: 'dawn', label: '마지막 새벽', detail: '12일 완주 보상' },
+  { id: 'recovery', label: '복구 기록', detail: '첫 승리 뒤 무보상 종료 보호' },
+]
+
 type EndingScreenProps = {
   outcome: EndingOutcome
   blocked: boolean
@@ -99,17 +141,20 @@ type EndingScreenProps = {
   oathInterventionCount: number
   oathInterventionPath: readonly OathInterventionPathView[]
   endingCommanderTitle: string
-  endingIsPersonalBest: boolean
-  recentEndingPosition: number
+  endingIsComparisonBest: boolean
+  endingComparisonCount: number
+  endingComparisonPosition: number
+  endingComparisonBestScore: number
   endingDossierSeals: readonly DossierSealView[]
   completedTrialCount: number
   activeResonances: readonly ResonanceId[]
   trialStatuses: readonly TrialStatusView[]
   endingDiscoveryEntries: EndingDiscoveryEntry[]
   endingMasteryDirective: MasteryDirectiveView
+  legacyRewardBreakdown: LegacyRewardBreakdown
   unownedLegacyIds: readonly LegacyId[]
   affordableLegacyIds: readonly LegacyId[]
-  nextLegacyId: LegacyId | null
+  recommendedLegacyId: LegacyId | null
   runCode: string
   nextWinningEndingId: EndingId | null
   nextChallengeDifficulty: Difficulty
@@ -136,17 +181,20 @@ export function EndingScreen({
   oathInterventionCount,
   oathInterventionPath,
   endingCommanderTitle,
-  endingIsPersonalBest,
-  recentEndingPosition,
+  endingIsComparisonBest,
+  endingComparisonCount,
+  endingComparisonPosition,
+  endingComparisonBestScore,
   endingDossierSeals,
   completedTrialCount,
   activeResonances,
   trialStatuses,
   endingDiscoveryEntries,
   endingMasteryDirective,
+  legacyRewardBreakdown,
   unownedLegacyIds,
   affordableLegacyIds,
-  nextLegacyId,
+  recommendedLegacyId,
   runCode,
   nextWinningEndingId,
   nextChallengeDifficulty,
@@ -156,6 +204,29 @@ export function EndingScreen({
   openArchive,
 }: EndingScreenProps) {
   const endingWon = outcome === 'won'
+  const comparisonRun = !inheritedPowerEnabledFor(game.mode)
+  const primaryFailureInsight = game.failureInsights[0] ?? null
+  const legacyComplete = unownedLegacyIds.length === 0
+  const legacyMastery = legacyMasteryFor(meta)
+  const legacyReady = affordableLegacyIds.length > 0
+  const featuredLegacyId = recommendedLegacyId
+  const featuredLegacy = featuredLegacyId ? LEGACY_UPGRADES[featuredLegacyId] : null
+  const legacyRouteState = legacyComplete ? 'complete' : legacyReady ? 'ready' : 'progress'
+  const chroniclersInkActive = game.activeLegacy.includes('chroniclers-ink')
+  const masteryContractMastered = game.masteryContract ? meta.masteredContracts.includes(game.masteryContract) : false
+  const legacyRenownBonus =
+    game.renownLedger.battle.legacyBonus + game.renownLedger.event.legacyBonus + game.renownLedger.marchSeal.legacyBonus
+  const contractRenownBonus =
+    game.renownLedger.battle.contractBonus +
+    game.renownLedger.event.contractBonus +
+    game.renownLedger.marchSeal.contractBonus
+  const inheritedRenown = game.score - contractRenownBonus
+  const baseRenown = inheritedRenown - legacyRenownBonus
+  const leadingRenownSource = RENOWN_LEDGER_SOURCES.reduce((leader, source) =>
+    game.renownLedger[source.id].total > game.renownLedger[leader.id].total ? source : leader,
+  )
+  const leadingRenownShare =
+    game.score > 0 ? Math.round((game.renownLedger[leadingRenownSource.id].total / game.score) * 100) : 0
 
   return (
     <div
@@ -164,6 +235,7 @@ export function EndingScreen({
       role="dialog"
       aria-modal="true"
       aria-labelledby="ending-title"
+      aria-describedby="ending-description"
       data-focus-scope="ending"
       inert={blocked ? true : undefined}
       tabIndex={-1}
@@ -189,8 +261,10 @@ export function EndingScreen({
         <span className="ending-rank">
           원정 등급 <b>{expeditionRankLabel}</b>
         </span>
-        <h2 id="ending-title">{currentEnding.title}</h2>
-        <p>{currentEnding.description}</p>
+        <h2 id="ending-title" data-autofocus="true" tabIndex={-1}>
+          {currentEnding.title}
+        </h2>
+        <p id="ending-description">{currentEnding.description}</p>
         <blockquote className="ending-epilogue">
           <p>“{currentEnding.epilogue}”</p>
           <cite>— {currentEnding.witness}</cite>
@@ -260,11 +334,401 @@ export function EndingScreen({
             <span>원정 서약</span>
             <strong>{OATHS[game.oath].name}</strong>
           </div>
+          {game.masteryContract ? (
+            <div className="ending-contract-stat">
+              <span>영원 계약</span>
+              <strong>
+                {MASTERY_CONTRACTS[game.masteryContract].name}
+                {masteryContractMastered ? ' · 정복' : ''}
+              </strong>
+            </div>
+          ) : null}
+          {comparisonRun ? (
+            <div>
+              <span>비교 적재</span>
+              <strong>계승 전력 0개</strong>
+            </div>
+          ) : null}
           <div>
             <span>{game.mode === 'daily' ? '오늘의 균열' : game.mode === 'shared' ? '공유 균열' : '원정 코드'}</span>
             <strong>{runCode}</strong>
           </div>
         </div>
+        <section
+          className="ending-renown-ledger"
+          data-legacy={chroniclersInkActive ? 'active' : 'none'}
+          data-contract={game.masteryContract ? 'active' : 'none'}
+          aria-labelledby="ending-renown-ledger-title"
+        >
+          <header>
+            <div>
+              <small>FINAL RENOWN AUDIT · EXACT ATTRIBUTION</small>
+              <h3 id="ending-renown-ledger-title">명성 기여 장부</h3>
+              <p>
+                {game.score > 0
+                  ? `${leadingRenownSource.title}이 전체 명성의 ${leadingRenownShare}%로 가장 큰 경로였습니다. 세 경로의 합계가 최종 기록과 정확히 일치합니다.`
+                  : '명성을 얻기 전에 원정이 끝났습니다. 세 획득 경로는 모두 0으로 봉인되었습니다.'}
+              </p>
+            </div>
+            <strong>
+              <span>FINAL RENOWN</span>
+              <b>{game.score.toLocaleString('ko-KR')}</b>
+              <small>원장 합계 일치</small>
+            </strong>
+          </header>
+          <div className="ending-renown-sources">
+            {RENOWN_LEDGER_SOURCES.map((source) => {
+              const entry = game.renownLedger[source.id]
+              const share = game.score > 0 ? Math.round((entry.total / game.score) * 100) : 0
+              return (
+                <article data-empty={entry.total === 0 ? 'true' : 'false'} key={source.id}>
+                  <header>
+                    <span aria-hidden="true">{source.glyph}</span>
+                    <div>
+                      <small>{source.label}</small>
+                      <strong>{source.title}</strong>
+                    </div>
+                    <b>+{entry.total.toLocaleString('ko-KR')}</b>
+                  </header>
+                  <p>{source.description}</p>
+                  <div
+                    className="ending-renown-share"
+                    role="progressbar"
+                    aria-label={`${source.title}의 최종 명성 기여율`}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={share}
+                  >
+                    <i style={{ width: `${share}%` }} />
+                  </div>
+                  <footer>
+                    <span>전체 기여 {share}%</span>
+                    <strong>
+                      {entry.legacyBonus > 0 || entry.contractBonus > 0
+                        ? `${entry.legacyBonus > 0 ? `잉크 +${entry.legacyBonus.toLocaleString('ko-KR')}` : ''}${entry.legacyBonus > 0 && entry.contractBonus > 0 ? ' · ' : ''}${entry.contractBonus > 0 ? `계약 +${entry.contractBonus.toLocaleString('ko-KR')}` : ''}`
+                        : `기본 +${entry.total.toLocaleString('ko-KR')}`}
+                    </strong>
+                  </footer>
+                </article>
+              )
+            })}
+          </div>
+          <footer className="ending-renown-legacy">
+            <span aria-hidden="true">{chroniclersInkActive ? LEGACY_UPGRADES['chroniclers-ink'].glyph : '◇'}</span>
+            <div>
+              <small>
+                {chroniclersInkActive
+                  ? 'ACTIVE LEGACY · RENOWN CONTRIBUTION'
+                  : comparisonRun
+                    ? 'CODE COMPARISON · META-FREE RENOWN'
+                    : 'LEGACY RENOWN MODIFIER'}
+              </small>
+              <strong>
+                {chroniclersInkActive
+                  ? `${LEGACY_UPGRADES['chroniclers-ink'].name} · 실제 +${legacyRenownBonus.toLocaleString('ko-KR')}`
+                  : comparisonRun
+                    ? '계승 유산·영원 계약 없이 완주'
+                    : '명성 계승 효과 없이 완주'}
+              </strong>
+              <p>
+                {chroniclersInkActive
+                  ? legacyRenownBonus > 0
+                    ? '각 보상에서 ×1.08과 반올림을 적용한 뒤 생긴 추가분만 합산했습니다.'
+                    : '유산은 장착됐지만 이번 원정에서는 명성 보상이 확정되기 전에 기록이 끝났습니다.'
+                  : comparisonRun
+                    ? '보유한 영구 전력은 기록에 남겨 두고, 동일 코드의 위험도·서약·선택·전술만으로 최종 명성을 계산했습니다.'
+                    : '전투·사건·행군 봉인의 원래 규칙만으로 최종 명성을 계산했습니다.'}
+              </p>
+            </div>
+            <dl>
+              <div>
+                <dt>기본 명성</dt>
+                <dd>{baseRenown.toLocaleString('ko-KR')}</dd>
+              </div>
+              <div data-highlight={legacyRenownBonus > 0 ? 'true' : 'false'}>
+                <dt>잉크 기여</dt>
+                <dd>+{legacyRenownBonus.toLocaleString('ko-KR')}</dd>
+              </div>
+              <div>
+                <dt>{game.masteryContract ? '계승 소계' : '최종 명성'}</dt>
+                <dd>{inheritedRenown.toLocaleString('ko-KR')}</dd>
+              </div>
+            </dl>
+          </footer>
+          {game.masteryContract ? (
+            <footer className="ending-renown-contract">
+              <span aria-hidden="true">{MASTERY_CONTRACTS[game.masteryContract].glyph}</span>
+              <div>
+                <small>{MASTERY_CONTRACTS[game.masteryContract].label} · EXACT CONTRIBUTION</small>
+                <strong>
+                  {MASTERY_CONTRACTS[game.masteryContract].name} · 실제 +{contractRenownBonus.toLocaleString('ko-KR')}
+                  {masteryContractMastered ? ' · 영구 정복 기록' : ''}
+                </strong>
+                <p>
+                  각 명성 보상에서 유산 적용을 마친 뒤 ×{MASTERY_CONTRACTS[game.masteryContract].scoreScale.toFixed(2)}
+                  와 반올림으로 생긴 추가분만 합산했습니다. {MASTERY_CONTRACTS[game.masteryContract].burden}도 원정
+                  전체에 유지됐습니다.
+                </p>
+              </div>
+              <dl>
+                <div>
+                  <dt>계승 후 명성</dt>
+                  <dd>{inheritedRenown.toLocaleString('ko-KR')}</dd>
+                </div>
+                <div data-highlight={contractRenownBonus > 0 ? 'true' : 'false'}>
+                  <dt>계약 기여</dt>
+                  <dd>+{contractRenownBonus.toLocaleString('ko-KR')}</dd>
+                </div>
+                <div>
+                  <dt>최종 명성</dt>
+                  <dd>{game.score.toLocaleString('ko-KR')}</dd>
+                </div>
+              </dl>
+            </footer>
+          ) : null}
+        </section>
+        {!endingWon && primaryFailureInsight ? (
+          <section className="ending-final-debrief" aria-labelledby="ending-final-debrief-title">
+            <header>
+              <div>
+                <small>FINAL DEBRIEF · PERSISTED TACTICAL RECORD</small>
+                <h3 id="ending-final-debrief-title">마지막 전투의 패인과 다음 처방</h3>
+                <p>
+                  결과 화면에서 확인한 전선별 분석을 원정 기록에 봉인했습니다. 앱을 닫아도 같은 균열 재도전 때 다시
+                  확인할 수 있습니다.
+                </p>
+              </div>
+              <strong>
+                <span>원정 종료</span>
+                DAY {String(game.day).padStart(2, '0')}
+                <small>{runCode}</small>
+              </strong>
+            </header>
+            <div className="ending-debrief-primary">
+              <span aria-hidden="true">{primaryFailureInsight.glyph}</span>
+              <div>
+                <small>가장 먼저 수정 · 전선 0{primaryFailureInsight.lane + 1}</small>
+                <strong>{primaryFailureInsight.label}</strong>
+                <p>{primaryFailureInsight.action}</p>
+              </div>
+              <b>격차 {primaryFailureInsight.gap}</b>
+            </div>
+            <ol aria-label="마지막 전투 전선별 패배 원인">
+              {game.failureInsights.map((insight) => (
+                <li data-cause={insight.cause} key={insight.lane}>
+                  <span>0{insight.lane + 1}</span>
+                  <div>
+                    <strong>{insight.label}</strong>
+                    <p>{insight.detail}</p>
+                    <em>{insight.action}</em>
+                  </div>
+                  <b>{insight.gap > 0 ? `−${insight.gap}` : '근소 열세'}</b>
+                </li>
+              ))}
+            </ol>
+            <footer>
+              <p>
+                재도전은 실패 지점에서 이어지는 방식이 아닙니다. 같은 적·사건·유물 경로를 유지한 채 첫날부터 다시 시작해
+                처방의 효과를 정확히 비교합니다.
+              </p>
+              <button type="button" onClick={replayExpedition}>
+                <span>
+                  <strong>처방대로 동일 균열 재도전</strong>
+                  <small>{runCode} · 처음부터 다시 출정</small>
+                </span>
+                <i aria-hidden="true">↺</i>
+              </button>
+            </footer>
+          </section>
+        ) : null}
+        <section
+          className="ending-next-runway"
+          data-state={legacyRouteState}
+          aria-labelledby="ending-next-runway-title"
+        >
+          <header>
+            <div>
+              <small>
+                {game.legacyReward > 0
+                  ? 'EXPEDITION REWARD SECURED · AUTO-BANKED'
+                  : 'EXPEDITION RECORD CLOSED · NO SHORT-RUN BONUS'}
+              </small>
+              <h3 id="ending-next-runway-title">
+                {game.legacyReward > 0
+                  ? `유산 불씨 +${game.legacyReward}가 보관되었습니다`
+                  : '이번 원정은 유산 불씨를 남기지 못했습니다'}
+              </h3>
+              <p>
+                {game.legacyReward > 0
+                  ? comparisonRun
+                    ? '별도 수령 없이 현재 보유 불씨에 합산됐습니다. 새로 계승한 효과는 표준 원정에서 적용되며 코드 비교 모드에서는 계속 봉인됩니다.'
+                    : '별도 수령 없이 현재 보유 불씨에 합산됐습니다. 계승을 먼저 고르면 다음 원정의 첫날부터 효과가 적용됩니다.'
+                  : '위험도 보너스는 완주할 때만 열립니다. 명성·왕관·과업을 남기거나 첫 밤을 돌파한 뒤 원정이 끝나면 복구 불씨를 확보합니다.'}
+              </p>
+            </div>
+            <strong>
+              <span>현재 보유</span>
+              <b>{meta.embers}</b>
+              <small>LEGACY EMBERS</small>
+            </strong>
+          </header>
+          <dl className="ending-ember-ledger" aria-label={`이번 원정 유산 불씨 합계 ${game.legacyReward}`}>
+            {LEGACY_REWARD_SOURCES.map((source) => (
+              <div data-earned={legacyRewardBreakdown[source.id] > 0 ? 'true' : 'false'} key={source.id}>
+                <dt>{source.label}</dt>
+                <dd>+{legacyRewardBreakdown[source.id]}</dd>
+                <small>{source.detail}</small>
+              </div>
+            ))}
+          </dl>
+          <ol aria-label="다음 원정 준비 단계">
+            <li data-state="complete">
+              <span>01</span>
+              <div>
+                <small>REWARD</small>
+                <strong>보상 자동 보관</strong>
+              </div>
+              <b>완료</b>
+            </li>
+            <li data-state={legacyRouteState}>
+              <span>02</span>
+              <div>
+                <small>LEGACY</small>
+                <strong>
+                  {legacyMastery ? legacyMastery.sealLabel : legacyReady ? '영구 강화 선택' : '불씨 축적'}
+                </strong>
+              </div>
+              <b>
+                {legacyMastery
+                  ? `${legacyMastery.current} / ${legacyMastery.target}`
+                  : legacyReady
+                    ? '선택 가능'
+                    : `${meta.embers} 불씨`}
+              </b>
+            </li>
+            <li data-state="ready">
+              <span>03</span>
+              <div>
+                <small>NEXT RUN</small>
+                <strong>{nextWinningEndingId ? '미발견 결말 설계' : '다음 도전 설계'}</strong>
+              </div>
+              <b>{DIFFICULTIES[nextChallengeDifficulty].name}</b>
+            </li>
+          </ol>
+          <article className="ending-featured-legacy" data-state={legacyRouteState}>
+            <span aria-hidden="true">{legacyComplete ? '✦' : (featuredLegacy?.glyph ?? '◇')}</span>
+            <div>
+              <small>
+                {legacyComplete
+                  ? 'LEGACY COLLECTION COMPLETE'
+                  : legacyReady
+                    ? `RECOMMENDED LEGACY · ${DIFFICULTIES[nextChallengeDifficulty].name}`
+                    : 'NEXT LEGACY TARGET'}
+              </small>
+              <strong>{legacyComplete ? '여섯 유산 계승 완료' : (featuredLegacy?.name ?? '다음 유산 준비 중')}</strong>
+              <p>
+                {legacyComplete
+                  ? comparisonRun
+                    ? '완성한 영구 강화는 표준 원정에서 적용되며 오늘의·공유 균열에서는 공정 비교를 위해 봉인됩니다.'
+                    : '완성한 모든 영구 강화가 다음 원정의 시작부터 적용됩니다.'
+                  : `${featuredLegacy?.strategy ?? '다음 원정의 계승 준비가 완료됐습니다.'}${comparisonRun ? ' 표준 원정에서 적용됩니다.' : ''}`}
+              </p>
+            </div>
+            <b>
+              {legacyComplete
+                ? `${meta.legacy.length} / ${LEGACY_IDS.length}`
+                : legacyReady && featuredLegacy
+                  ? `지금 계승 · ${featuredLegacy.cost}`
+                  : featuredLegacy
+                    ? `${featuredLegacy.cost - meta.embers} 불씨 남음`
+                    : 'READY'}
+            </b>
+          </article>
+          {legacyMastery ? (
+            <article className="ending-legacy-mastery" data-level={legacyMastery.level}>
+              <span aria-hidden="true">{legacyMastery.glyph}</span>
+              <div>
+                <small>EVERLASTING LEGACY · PRESTIGE TRACK</small>
+                <strong>{legacyMastery.title}</strong>
+                <p>{legacyMastery.description}</p>
+              </div>
+              <b>{legacyMastery.sealLabel}</b>
+              <footer>
+                <div
+                  role="progressbar"
+                  aria-label={`${legacyMastery.nextTitle}까지 불씨 진행률`}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={legacyMastery.progress}
+                >
+                  <i style={{ width: `${legacyMastery.progress}%` }} />
+                </div>
+                <span>
+                  {legacyMastery.nextTitle}까지 불씨 {legacyMastery.remaining}
+                </span>
+              </footer>
+            </article>
+          ) : null}
+          <footer>
+            <button
+              className="ending-runway-primary"
+              data-action={!endingWon ? 'rematch' : legacyReady ? 'legacy' : 'challenge'}
+              type="button"
+              onClick={!endingWon ? replayExpedition : legacyReady ? () => openArchive('legacy') : prepareNextChallenge}
+            >
+              <span>
+                <strong>
+                  {!endingWon ? '동일 균열 즉시 재도전' : legacyReady ? '유산 계승부터 선택하기' : '다음 도전 설계하기'}
+                </strong>
+                <small>
+                  {!endingWon
+                    ? `${runCode} · 전술 처방을 적용해 처음부터 출정`
+                    : legacyReady
+                      ? `${affordableLegacyIds.length}개 영구 강화 구매 가능`
+                      : legacyComplete
+                        ? '모든 유산을 적용해 새 경로 선택'
+                        : `${DIFFICULTIES[nextChallengeDifficulty].name} · 서약 선택`}
+                </small>
+              </span>
+              <i aria-hidden="true">›</i>
+            </button>
+            <button
+              className="ending-runway-secondary"
+              type="button"
+              onClick={
+                !endingWon
+                  ? prepareNextChallenge
+                  : legacyReady
+                    ? prepareNextChallenge
+                    : legacyComplete
+                      ? replayExpedition
+                      : () => openArchive('legacy')
+              }
+            >
+              <span>
+                <strong>
+                  {!endingWon
+                    ? '다른 규칙으로 재설계'
+                    : legacyReady
+                      ? '계승 없이 다음 도전'
+                      : legacyComplete
+                        ? '같은 균열 재도전'
+                        : '유산 목표 확인'}
+                </strong>
+                <small>
+                  {!endingWon
+                    ? `${DIFFICULTIES[nextChallengeDifficulty].name} · 서약과 모드 다시 선택`
+                    : legacyReady
+                      ? `${DIFFICULTIES[nextChallengeDifficulty].name} · 나중에 계승 가능`
+                      : legacyComplete
+                        ? `${runCode} · 동일한 경로`
+                        : `${featuredLegacy?.name ?? '다음 유산'}까지 진행 확인`}
+                </small>
+              </span>
+              <i aria-hidden="true">{endingWon && legacyComplete && !legacyReady ? '↺' : '›'}</i>
+            </button>
+          </footer>
+        </section>
         <section
           className="ending-protocol-mastery"
           data-difficulty={game.difficulty}
@@ -366,9 +830,11 @@ export function EndingScreen({
                   : `${game.day}일차까지 내린 선택과 교전은 실패 기록이 아니라 같은 균열을 돌파할 정확한 출발점으로 남습니다.`}
               </p>
             </div>
-            <span data-best={endingIsPersonalBest ? 'true' : 'false'}>
-              <small>{endingIsPersonalBest ? 'PERSONAL BEST' : `RECENT ${Math.max(1, meta.history.length)}`}</small>
-              <strong>{endingIsPersonalBest ? '개인 최고 기록' : `최근 원정 중 #${recentEndingPosition}`}</strong>
+            <span data-best={endingIsComparisonBest ? 'true' : 'false'}>
+              <small>{endingIsComparisonBest ? 'RIFT BEST' : `SAME RIFT · ${endingComparisonCount}`}</small>
+              <strong>
+                {endingIsComparisonBest ? '동일 균열 최고 기록' : `동일 균열 중 #${endingComparisonPosition}`}
+              </strong>
             </span>
           </header>
           <div className="ending-dossier-seals">
@@ -385,16 +851,18 @@ export function EndingScreen({
           </div>
           <dl>
             <div>
-              <dt>최근 기록 순위</dt>
-              <dd>#{recentEndingPosition}</dd>
+              <dt>동일 균열 순위</dt>
+              <dd>
+                #{endingComparisonPosition} / {endingComparisonCount}
+              </dd>
             </div>
             <div>
-              <dt>개인 최고 명성</dt>
+              <dt>동일 균열 최고</dt>
+              <dd>{endingComparisonBestScore.toLocaleString('ko-KR')}</dd>
+            </div>
+            <div>
+              <dt>전체 원정 최고</dt>
               <dd>{bestScore.toLocaleString('ko-KR')}</dd>
-            </div>
-            <div>
-              <dt>개인 과업</dt>
-              <dd>{completedTrialCount} / 3</dd>
             </div>
           </dl>
         </section>
@@ -468,51 +936,24 @@ export function EndingScreen({
             <span>{endingMasteryDirective.progressLabel}</span>
           </footer>
         </section>
-        <section
-          className="ending-legacy-forecast"
-          data-state={
-            unownedLegacyIds.length === 0 ? 'complete' : affordableLegacyIds.length > 0 ? 'ready' : 'progress'
-          }
-          aria-label="다음 원정 유산 준비"
-        >
-          <span aria-hidden="true">
-            {unownedLegacyIds.length === 0 ? '✦' : LEGACY_UPGRADES[(affordableLegacyIds[0] ?? nextLegacyId)!].glyph}
-          </span>
-          <div>
-            <small>NEXT EXPEDITION LEGACY</small>
-            <strong>
-              {unownedLegacyIds.length === 0
-                ? '모든 유산 계승 완료'
-                : affordableLegacyIds.length > 0
-                  ? `지금 계승 가능한 유산 ${affordableLegacyIds.length}개`
-                  : nextLegacyId
-                    ? `${LEGACY_UPGRADES[nextLegacyId].name}까지 불씨 ${LEGACY_UPGRADES[nextLegacyId].cost - meta.embers}개`
-                    : '다음 유산 준비 중'}
-            </strong>
-            <p>
-              {unownedLegacyIds.length === 0
-                ? '완성한 여섯 유산 효과가 다음 원정의 시작부터 모두 적용됩니다.'
-                : affordableLegacyIds.length > 0
-                  ? `${affordableLegacyIds
-                      .slice(0, 2)
-                      .map((legacyId) => LEGACY_UPGRADES[legacyId].name)
-                      .join(
-                        ' · ',
-                      )}${affordableLegacyIds.length > 2 ? ` 외 ${affordableLegacyIds.length - 2}개` : ''} 중 원하는 계승을 선택할 수 있습니다.`
-                  : nextLegacyId
-                    ? LEGACY_UPGRADES[nextLegacyId].description
-                    : '다음 원정의 계승 준비가 완료됐습니다.'}
-            </p>
-          </div>
-          <b>{meta.embers} 불씨</b>
-        </section>
-        <div className="ending-actions">
-          <button className="ending-rematch-action" type="button" onClick={replayExpedition} data-autofocus="true">
+        <div className="ending-actions" data-ending={outcome}>
+          <button
+            className="ending-legacy-action"
+            data-ready={legacyReady ? 'true' : 'false'}
+            type="button"
+            onClick={() => openArchive('legacy')}
+          >
             <span>
-              <strong>같은 균열 재도전</strong>
-              <small>{runCode} · 동일한 적과 유물 경로</small>
+              <strong>{legacyMastery ? legacyMastery.sealLabel : `유산 계승 · ${meta.embers}`}</strong>
+              <small>
+                {legacyMastery
+                  ? `${legacyMastery.nextTitle}까지 불씨 ${legacyMastery.remaining}`
+                  : legacyReady
+                    ? `${affordableLegacyIds.length}개 영구 강화 선택 가능`
+                    : '다음 원정 영구 강화'}
+              </small>
             </span>
-            <i aria-hidden="true">↺</i>
+            <i aria-hidden="true">›</i>
           </button>
           <button className="ending-next-action" type="button" onClick={prepareNextChallenge}>
             <span>
@@ -525,19 +966,19 @@ export function EndingScreen({
             </span>
             <i aria-hidden="true">›</i>
           </button>
+          <button className="ending-rematch-action" type="button" onClick={replayExpedition}>
+            <span>
+              <strong>같은 균열 재도전</strong>
+              <small>{runCode} · 동일한 적과 유물 경로</small>
+            </span>
+            <i aria-hidden="true">↺</i>
+          </button>
           <button className="share-action" type="button" onClick={() => void shareExpedition()}>
             <span>
               <strong>기록 공유</strong>
               <small>결말·서약 연대기·다음 목표</small>
             </span>
             <i aria-hidden="true">↗</i>
-          </button>
-          <button type="button" onClick={() => openArchive('legacy')}>
-            <span>
-              <strong>{unownedLegacyIds.length === 0 ? '유산 기록' : `유산 계승 · ${meta.embers}`}</strong>
-              <small>다음 원정 영구 강화</small>
-            </span>
-            <i aria-hidden="true">›</i>
           </button>
         </div>
       </section>

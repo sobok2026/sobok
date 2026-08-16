@@ -6,6 +6,7 @@ import { preloadSettingsDialog } from './game-preloads'
 
 type ExpeditionMenuProps = {
   showNewCampaignConfirm: boolean
+  replacementRiftCode: string | null
   game: GameState
   meta: MetaState
   currentActNumber: number
@@ -23,6 +24,7 @@ type ExpeditionMenuProps = {
 
 export function ExpeditionMenu({
   showNewCampaignConfirm,
+  replacementRiftCode,
   game,
   meta,
   currentActNumber,
@@ -37,6 +39,8 @@ export function ExpeditionMenu({
   returnToTitle,
   askToDiscardCurrentCampaign,
 }: ExpeditionMenuProps) {
+  const replacingWithSharedRift = replacementRiftCode !== null
+
   return (
     <div className="modal-backdrop expedition-menu-backdrop" role="presentation">
       <section
@@ -53,7 +57,13 @@ export function ExpeditionMenu({
           className="modal-close"
           type="button"
           onClick={showNewCampaignConfirm ? cancelDiscardCampaign : closeExpeditionMenu}
-          aria-label={showNewCampaignConfirm ? '새 원정 확인 취소' : '원정 메뉴 닫기'}
+          aria-label={
+            showNewCampaignConfirm
+              ? replacingWithSharedRift
+                ? '공유 균열 전환 취소'
+                : '새 원정 확인 취소'
+              : '원정 메뉴 닫기'
+          }
         >
           ×
         </button>
@@ -61,11 +71,15 @@ export function ExpeditionMenu({
         {showNewCampaignConfirm ? (
           <>
             <header className="expedition-menu-heading danger-heading">
-              <p className="eyebrow">RELEASE THE CURRENT EMBER</p>
-              <h2 id="expedition-menu-title">현재 원정을 끝낼까요?</h2>
+              <p className="eyebrow">
+                {replacingWithSharedRift ? 'ACCEPT THE SHARED RIFT' : 'RELEASE THE CURRENT EMBER'}
+              </p>
+              <h2 id="expedition-menu-title">
+                {replacingWithSharedRift ? '공유 균열로 전환할까요?' : '현재 원정을 끝낼까요?'}
+              </h2>
               <p id="expedition-menu-lead">
                 이 원정의 체크포인트는 삭제되며 되돌릴 수 없습니다. 누적 유산과 업적, 지난 완주 기록은 그대로
-                보존됩니다.
+                보존됩니다.{replacingWithSharedRift ? ' 확인하면 초대받은 코드를 원정 설정에 안전하게 불러옵니다.' : ''}
               </p>
             </header>
             <section className="discard-checkpoint" aria-label="삭제할 원정 체크포인트">
@@ -81,6 +95,16 @@ export function ExpeditionMenu({
                 </p>
               </div>
             </section>
+            {replacementRiftCode ? (
+              <section className="replacement-rift" aria-label={`불러올 공유 균열 ${replacementRiftCode}`}>
+                <span aria-hidden="true">⌁</span>
+                <div>
+                  <small>INCOMING RIFT · META-FREE</small>
+                  <strong>공유 균열 {replacementRiftCode}</strong>
+                  <p>현재 기록을 지운 뒤 위험도와 서약을 선택합니다. 계승 유산과 영원 계약은 적용되지 않습니다.</p>
+                </div>
+              </section>
+            ) : null}
             <section className="preserved-progress" aria-label="보존되는 유산 기록">
               <span>
                 <small>유산 불씨</small>
@@ -102,7 +126,7 @@ export function ExpeditionMenu({
                 원정 유지
               </button>
               <button className="discard-confirm" type="button" onClick={discardCurrentCampaign}>
-                현재 원정 삭제
+                {replacingWithSharedRift ? '삭제하고 코드 불러오기' : '현재 원정 삭제'}
               </button>
             </footer>
           </>
