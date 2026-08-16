@@ -6989,6 +6989,7 @@ body {
     max-height: min(80dvh, 760px);
     overflow-x: hidden;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     border-color: rgba(144, 216, 229, 0.28);
     border-radius: 18px 18px 7px 7px;
@@ -7129,6 +7130,7 @@ body {
     border: 0;
     background: rgba(1, 6, 9, 0.68);
     backdrop-filter: blur(4px);
+    touch-action: none;
   }
 
   .mobile-command-dock {

@@ -4991,6 +4991,7 @@ export default function Game() {
                                   ? 'ending'
                                   : null
   const gameIsBlocked = activeLayer !== null || phase === 'battling'
+  const documentScrollLocked = gameIsBlocked || (compactViewport && mobileRosterOpen)
   const navigationGuardNeeded =
     ready &&
     sessionAccess === 'active' &&
@@ -5583,13 +5584,13 @@ export default function Game() {
   }, [campUndo, phase])
 
   useEffect(() => {
-    if (!gameIsBlocked) return
+    if (!documentScrollLocked) return
     const previousOverflow = document.documentElement.style.overflow
     document.documentElement.style.overflow = 'hidden'
     return () => {
       document.documentElement.style.overflow = previousOverflow
     }
-  }, [gameIsBlocked])
+  }, [documentScrollLocked])
 
   useEffect(() => {
     if (!activeLayer) return
@@ -5700,7 +5701,7 @@ export default function Game() {
     if (event.key === 'Escape' || event.code === 'KeyP') {
       event.preventDefault()
       if (event.key === 'Escape' && mobileRosterOpen) {
-        setMobileRosterOpen(false)
+        showBattlefield()
         announce('전장 지휘 화면으로 돌아갑니다.')
       } else {
         openExpeditionMenu()
@@ -5743,8 +5744,8 @@ export default function Game() {
     if (event.code === 'KeyR') {
       event.preventDefault()
       if (compactViewport) {
-        setMobileRosterOpen((current) => !current)
-        playSound('select', soundOn)
+        if (mobileRosterOpen) showBattlefield()
+        else showMobileRoster()
         announce(mobileRosterOpen ? '전장 지휘 화면으로 돌아갑니다.' : '생존자 대기소를 펼쳤습니다.')
       } else {
         const rosterAction = document.querySelector<HTMLElement>('.camp-panel button:not(:disabled)')
@@ -6305,6 +6306,7 @@ export default function Game() {
 
   function showBattlefield() {
     setMobileRosterOpen(false)
+    playSound('select', soundOn)
     scheduleFrame(() => {
       document.querySelector<HTMLElement>('.battle-panel')?.scrollIntoView({ block: 'start' })
       if (compactViewport) document.querySelector<HTMLButtonElement>('.mobile-command-dock > button')?.focus()
@@ -6313,6 +6315,11 @@ export default function Game() {
 
   function showMobileRoster() {
     setMobileRosterOpen(true)
+    scheduleFrame(() => {
+      document.querySelector<HTMLButtonElement>('#mobile-roster-sheet .mobile-sheet-close')?.focus({
+        preventScroll: true,
+      })
+    })
     playSound('select', soundOn)
   }
 
@@ -7745,7 +7752,13 @@ export default function Game() {
         ) : null}
 
         <div className="game-layout">
-          <section className="battle-panel panel" aria-labelledby="battle-title" aria-busy={phase === 'battling'}>
+          <section
+            className="battle-panel panel"
+            aria-labelledby="battle-title"
+            aria-busy={phase === 'battling'}
+            aria-hidden={compactViewport && mobileRosterOpen ? true : undefined}
+            inert={compactViewport && mobileRosterOpen ? true : undefined}
+          >
             <BattleBriefing
               day={game.day}
               difficulty={game.difficulty}
@@ -7878,8 +7891,11 @@ export default function Game() {
           </section>
 
           <section
+            id="mobile-roster-sheet"
             className="camp-panel panel"
+            role={compactViewport ? 'dialog' : undefined}
             aria-labelledby="camp-title"
+            aria-describedby={compactViewport ? 'camp-instruction' : undefined}
             aria-hidden={compactViewport && !mobileRosterOpen ? true : undefined}
             data-mobile-open={mobileRosterOpen ? 'true' : 'false'}
             inert={compactViewport && !mobileRosterOpen ? true : undefined}

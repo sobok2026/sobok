@@ -80,6 +80,7 @@ export function CampOverview({
       </div>
 
       <p
+        id="camp-instruction"
         className="camp-instruction"
         data-merge-locked={rosterCount <= 3 ? 'true' : 'false'}
         data-merge-ready={mergeReadyPairCount > 0 ? 'true' : 'false'}

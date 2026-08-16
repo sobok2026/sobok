@@ -150,6 +150,8 @@ export function MobileCommandDock({
           type="button"
           onClick={onShowRoster}
           aria-expanded={rosterOpen}
+          aria-controls="mobile-roster-sheet"
+          aria-haspopup="dialog"
         >
           <span aria-hidden="true">◆</span>
           <div>
