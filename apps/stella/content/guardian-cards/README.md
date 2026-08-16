@@ -43,6 +43,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-022-review-ko.json`    | `visual_review_complete` | 스물두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-023-review-ko.json`    | `visual_review_complete` | 스물세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-024-review-ko.json`    | `visual_review_complete` | 스물네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-025-review-ko.json`    | `editorial_review_ready` | 스물다섯 번째 production 배치 신규 12개 원고·구도 사람 편집 검토 대기         |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 297개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -626,6 +627,18 @@ contact sheet에서 정본 정체성, 독립 조절점, 열린 공동 구조, �
 사람의 최종 시각 승인을 마쳤다. 승인 원본의 SHA-256은 검수 파일과 누적 297개 WebP 매니페스트에
 고정하며 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
 
+스물다섯 번째 배치는 `love.everyday-care` 원고를 `orbit` 희귀도로 제작할 신규 12개 편집 검토안이다.
+`production-art-batch-025-review-ko.json`에 현재 원고의 canonical SHA-256과, 상대를 화면에 확정하지
+않으면서도 자기 몫을 남긴 채 무리 없이 반복할 수 있는 작은 돌봄 행동을 고정했다. 우산꽂이의 자기
+수건 칸, 쿠키 통의 빈 리필 칸, 플립 스탠드의 빈 다음 카드, 간식 포드의 독립 뚜껑, 수납칸의 반환
+클립, 화병의 조건 슬라이더, 돌봄 주머니의 교환 고리, 우산 회전축의 되돌림 손잡이, 여행 가방의 꺼냄
+고리, 계단참의 드러난 누락 칸, 돌봄 병 사이의 선택 틈, 꿈방울 받침의 빈 다음 칸처럼 서로 다른 반복
+단서와 수령 여백을 사용한다. 같은 배치에서 우산이 겹치는 양자리와 전갈자리는 각각 펼친 우산 전체를
+보는 탑뷰 우산꽂이·자기 수건과 캐노피를 잘라 낸 손잡이 높이 회전축·반환 손잡이로 분리했다. 첫 신호
+Orbit과 바로 앞 careful-approach Orbit·Nebula·Eclipse·Stella의 메시지 전달·속도 조절·보호 경계·상호
+교환·공동 구조를 반복하지 않는다. 현재 12개 모두 사람의 편집 검토 대기 상태이며, 원고 해시와 구도를
+승인하기 전에는 imagegen 후보 제작과 배포 자산 편입을 시작하지 않는다.
+
 ## 검증
 
 repository root에서 다음 명령을 실행한다.
@@ -669,6 +682,9 @@ bun --filter=@sobok/stella guardian-cards:validate
 - 스물네 번째 production 배치 신규 12개 원고 해시와 두 수호령이 독립 조절점을 유지한 채 다시 열 수
   있는 공동 구조를 만드는 Stella 장면, 첫 신호 Stella·바로 앞 Orbit·Nebula·Eclipse 비반복, 신규 PNG
   후보·마스터/80px·이전 스물세 배치 비교 보조 시각 QA·사람의 최종 시각 승인·WebP/R2 배포 완료
+- 스물다섯 번째 production 배치 신규 12개 원고 해시와 자기 몫·상대 선택권을 남긴 반복 가능한 작은
+  돌봄 행동, 첫 신호 Orbit·careful-approach 네 희귀도·앞선 일상 소품 비반복 및 사람의 편집 승인 전
+  신규 이미지 제작 차단
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 297개를 제외한 현재 잔여
   759개 산식
