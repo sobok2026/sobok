@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "c0f7a628fde6950bebc0945d12d61298b5660a0226e67006187a19c0c56e94fa",
-    "assets": "a0d32fac17ea0c68f6cec69a4cd8bc9327f19c15fe952574180e51f8b7563caa"
+    "assets": "5dbeb79ffa7ddc722bbce3dcf62fea4908522efa1f69e9359f29c50144c7d40a"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,12 +16,12 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 166,
-    "remainingEditionCount": 890,
+    "producedEditionCount": 178,
+    "remainingEditionCount": 878,
     "pilotPartialBatchCount": 10,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 13,
-    "fullPendingBatchCount": 65,
+    "completedBatchCount": 14,
+    "fullPendingBatchCount": 64,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
     "visualApprovalAuthority": "human_editor",
@@ -387,23 +387,10 @@
         "pisces.self.next-self.action-beat"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.self.next-self.action-beat",
-        "taurus.self.next-self.action-beat",
-        "gemini.self.next-self.action-beat",
-        "cancer.self.next-self.action-beat",
-        "leo.self.next-self.action-beat",
-        "virgo.self.next-self.action-beat",
-        "libra.self.next-self.action-beat",
-        "scorpio.self.next-self.action-beat",
-        "sagittarius.self.next-self.action-beat",
-        "capricorn.self.next-self.action-beat",
-        "aquarius.self.next-self.action-beat",
-        "pisces.self.next-self.action-beat"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 15,
