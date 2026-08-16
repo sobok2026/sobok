@@ -3067,6 +3067,24 @@ export default function Game() {
             ? 'whiteout'
             : 'hearth'
   const campaignRuntimeActive = !showTitle
+  const battleResultFor = useMemo(() => {
+    const cache = new Map<string, BattleResult | null>()
+
+    return (candidateFocusLane: number, candidateGame: GameState = game) => {
+      // Render-time simulations only vary the current game's orders, lineup, or specialized slots.
+      const key = JSON.stringify([
+        candidateFocusLane,
+        candidateGame.orders,
+        candidateGame.lineup,
+        candidateGame.slots.map((unit) => (unit ? [unit.id, unit.kind, unit.tier, unit.specialization] : null)),
+      ])
+      if (cache.has(key)) return cache.get(key) ?? null
+
+      const result = createBattleResult(candidateGame, candidateFocusLane)
+      cache.set(key, result)
+      return result
+    }
+  }, [game])
   const currentEvent = campaignEventFor(game.runSeed, game.day)
   const oathAvailableEventChoices = currentEvent.choices.filter(
     (choice) => !choice.oathOnly || choice.oathOnly === game.oath,
@@ -3740,24 +3758,26 @@ export default function Game() {
     finalMarchImprints: activeFinalMarchImprints,
     finalVow: activeFinalVow,
   }
+  const campBattlePreview = lineupReady ? battleResultFor(focusLane) : null
   const forecastLineupUnits = campaignRuntimeActive ? lineupUnits : []
-  const forecastLanes = forecastLineupUnits.map((unit, lane) =>
-    unit ? resolveLane(unit, enemies[lane], lane, battleContext) : null,
-  )
+  const forecastLanes = campBattlePreview
+    ? campBattlePreview.lanes
+    : forecastLineupUnits.map((unit, lane) => (unit ? resolveLane(unit, enemies[lane], lane, battleContext) : null))
   const forecastEnemies = campaignRuntimeActive ? enemies : []
   const enemyFormationEntries = forecastEnemies.map((enemy, lane) => {
     const intentCountered = ORDER_META[game.orders[lane]].counters === enemy.intent
-    const doctrineForecast = enemyDoctrineEffectFor(enemy, lane, battleContext, intentCountered, lineupUnits[lane])
+    const laneForecast = forecastLanes[lane]
+    const doctrineBroken =
+      laneForecast?.doctrineBroken ??
+      enemyDoctrineEffectFor(enemy, lane, battleContext, intentCountered, lineupUnits[lane]).broken
     return {
       enemy,
       lane,
-      doctrineBroken: doctrineForecast.broken,
+      doctrineBroken,
       estimatedThreat:
-        forecastLanes[lane]?.enemyPower ??
-        enemyPowerFor(enemy, lane, battleContext, intentCountered, lineupUnits[lane]),
+        laneForecast?.enemyPower ?? enemyPowerFor(enemy, lane, battleContext, intentCountered, lineupUnits[lane]),
     }
   })
-  const campBattlePreview = lineupReady ? createBattleResult(game, focusLane) : null
   const currentForecastWins = forecastLanes.filter((lane) => lane?.won).length
   const selectedUnitForForecast = campaignRuntimeActive ? selectedUnit : null
   const scoredDeploymentForecasts: Array<{ forecast: DeploymentForecast; score: number }> = selectedUnitForForecast
@@ -3772,12 +3792,14 @@ export default function Game() {
           formationKinds: nextLineupUnits.flatMap((unit) => (unit ? [unit.kind] : [])),
           formationTiers: nextLineupUnits.flatMap((unit) => (unit ? [unit.tier] : [])),
         }
-        const previewLanes = nextLineupUnits.map((unit, previewLane) =>
-          unit ? resolveLane(unit, enemies[previewLane], previewLane, previewContext) : null,
-        )
+        const projectedBattle = lineupReadyAfter ? battleResultFor(focusLane, { ...game, lineup: nextLineup }) : null
+        const previewLanes = projectedBattle
+          ? projectedBattle.lanes
+          : nextLineupUnits.map((unit, previewLane) =>
+              unit ? resolveLane(unit, enemies[previewLane], previewLane, previewContext) : null,
+            )
         const laneForecast =
           previewLanes[lane] ?? resolveLane(selectedUnitForForecast, enemies[lane], lane, previewContext)
-        const projectedBattle = lineupReadyAfter ? createBattleResult({ ...game, lineup: nextLineup }, focusLane) : null
         const winsAfter = previewLanes.filter((preview) => preview?.won).length
         const currentLaneForecast = forecastLanes[lane]
         const currentWon = currentLaneForecast?.won ?? null
@@ -3863,13 +3885,17 @@ export default function Game() {
         const lane = game.lineup.indexOf(promotionUnitForForecast.id)
         const specializedUnit: Unit = { ...promotionUnitForForecast, specialization: specializationId }
         const currentLane = lane >= 0 ? forecastLanes[lane] : null
-        const specializedLane = lane >= 0 ? resolveLane(specializedUnit, enemies[lane], lane, battleContext) : null
         const specializedSlots = game.slots.map((unit) =>
           unit?.id === promotionUnitForForecast.id ? specializedUnit : unit,
         )
         const specializedBattlePreview = lineupReady
-          ? createBattleResult({ ...game, slots: specializedSlots }, focusLane)
+          ? battleResultFor(focusLane, { ...game, slots: specializedSlots })
           : null
+        const specializedLane =
+          lane >= 0
+            ? (specializedBattlePreview?.lanes[lane] ??
+              resolveLane(specializedUnit, enemies[lane], lane, battleContext))
+            : null
         const active = specializedLane?.specializationActive ?? false
         const fit = promotionPathFitCopy(
           specializationId,
@@ -4027,7 +4053,7 @@ export default function Game() {
                 ? '원정 종료 위험'
                 : '위험 출전'
   const battleActionReady = !battleStartDisabled && !pendingPromotionUnit && projectedBattleVictory
-  const directTacticalAdjustment = (() => {
+  const directTacticalAdjustment = useMemo(() => {
     if (phase !== 'camp' || showTitle || tutorialStep !== null || !lineupReady || !campBattlePreview) return null
 
     const currentRank = tacticalPlanRank(campBattlePreview, game.day, commandSpent <= commandLimit, commandSpent)
@@ -4039,7 +4065,7 @@ export default function Game() {
         const nextOrders = game.orders.map((current, index) => (index === lane ? order : current))
         const nextSpent = nextOrders.reduce((total, current) => total + ORDER_META[current].cost, 0)
         if (nextSpent > commandLimit && nextSpent >= commandSpent) continue
-        const result = createBattleResult({ ...game, orders: nextOrders }, focusLane)
+        const result = battleResultFor(focusLane, { ...game, orders: nextOrders })
         if (!result) continue
         candidates.push({
           kind: 'order',
@@ -4055,7 +4081,7 @@ export default function Game() {
     if (commandSpent <= commandLimit) {
       for (const lane of [0, 1, 2]) {
         if (lane === focusLane) continue
-        const result = createBattleResult(game, lane)
+        const result = battleResultFor(lane)
         if (!result) continue
         candidates.push({
           kind: 'focus',
@@ -4075,10 +4101,21 @@ export default function Game() {
         left.lane - right.lane,
     )[0]
     return best && compareTacticalRanks(best.rank, currentRank) > 0 ? best : null
-  })()
+  }, [
+    battleResultFor,
+    campBattlePreview,
+    commandLimit,
+    commandSpent,
+    focusLane,
+    game,
+    lineupReady,
+    phase,
+    showTitle,
+    tutorialStep,
+  ])
   const tacticalRoute = useMemo<TacticalRoutePlan | null>(() => {
     if (phase !== 'camp' || showTitle || tutorialStep !== null || !lineupReady) return null
-    const currentResult = createBattleResult(game, focusLane)
+    const currentResult = campBattlePreview
     if (!currentResult || currentResult.victory) return null
 
     const currentRank = tacticalPlanRank(currentResult, game.day, commandSpent <= commandLimit, commandSpent)
@@ -4097,7 +4134,7 @@ export default function Game() {
               orders.reduce((total, order, lane) => total + Number(order !== game.orders[lane]), 0) +
               Number(candidateFocusLane !== focusLane)
             if (changeCount === 0) continue
-            const result = createBattleResult({ ...game, orders }, candidateFocusLane)
+            const result = battleResultFor(candidateFocusLane, { ...game, orders })
             if (!result) continue
             const candidate: TacticalPlanCandidate = {
               focusLane: candidateFocusLane,
@@ -4162,7 +4199,7 @@ export default function Game() {
         const orders = game.orders.map((order, lane) => (lane === step.lane ? step.order : order))
         const nextCommandSpent = orders.reduce((total, order) => total + ORDER_META[order].cost, 0)
         if (nextCommandSpent > commandLimit && nextCommandSpent >= commandSpent) continue
-        const result = createBattleResult({ ...game, orders }, focusLane)
+        const result = battleResultFor(focusLane, { ...game, orders })
         if (!result) continue
         immediateSteps.push({
           step,
@@ -4179,7 +4216,7 @@ export default function Game() {
       }
 
       if (commandSpent > commandLimit) continue
-      const result = createBattleResult(game, step.lane)
+      const result = battleResultFor(step.lane)
       if (!result) continue
       immediateSteps.push({
         step,
@@ -4218,7 +4255,18 @@ export default function Game() {
       commandSpent: target.commandSpent,
       steps: [next.step.label, ...routeSteps.filter((step) => step !== next?.step).map((step) => step.label)],
     }
-  }, [commandLimit, commandSpent, focusLane, game, lineupReady, phase, showTitle, tutorialStep])
+  }, [
+    battleResultFor,
+    campBattlePreview,
+    commandLimit,
+    commandSpent,
+    focusLane,
+    game,
+    lineupReady,
+    phase,
+    showTitle,
+    tutorialStep,
+  ])
   const tacticalRouteActive = Boolean(
     tacticalRoute && tacticalRoute.steps.length > 1 && !directTacticalAdjustment?.result.victory,
   )
@@ -4818,7 +4866,7 @@ export default function Game() {
   const tutorialCounterCount = tutorialStep ? tutorialCounterCountFor(game) : 0
   const tutorialNeedsFocusForecast = campaignRuntimeActive && (tutorialStep === 'focus' || tutorialStep === 'battle')
   const tutorialFocusOptions = ([0, 1, 2] as const).map((lane) => {
-    const result = tutorialNeedsFocusForecast ? createBattleResult(game, lane) : null
+    const result = tutorialNeedsFocusForecast ? battleResultFor(lane) : null
     return {
       lane,
       result,
@@ -7288,7 +7336,7 @@ export default function Game() {
   function chooseFocusLane(lane: number) {
     if (phase !== 'camp') return false
     if (lane !== focusLane && !beginCampMutation()) return false
-    const focusedResult = createBattleResult(game, lane)
+    const focusedResult = battleResultFor(lane)
     setRiskDepartureConfirmation(null)
     setFocusLane(lane)
     playSound('select', soundOn)
@@ -7323,7 +7371,7 @@ export default function Game() {
     }
     if (!beginCampMutation()) return false
     const nextGame = { ...game, orders: nextOrders }
-    const nextBattleResult = createBattleResult(nextGame, focusLane)
+    const nextBattleResult = battleResultFor(focusLane, nextGame)
     const addsTutorialCounter = tutorialCounterCountFor(nextGame) > tutorialCounterCount
     setGame(nextGame)
     if (tutorialStep === 'orders' && addsTutorialCounter) {
@@ -7527,7 +7575,7 @@ export default function Game() {
       announce('현재 사기로 감당할 수 없는 명령입니다. 한 전선을 방벽으로 돌려 주세요.')
       return
     }
-    const result = createBattleResult(game, focusLane)
+    const result = battleResultFor(focusLane)
     if (!result || !lineupReady || forecastLanes.some((lane) => lane === null)) {
       announce('세 전선에 생존자를 모두 배치해야 해요.')
       return
