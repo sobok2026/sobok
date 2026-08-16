@@ -41,9 +41,11 @@ type Snowflake = {
 
 type BattleCinemaProps = {
   battleResult: BattleResult
+  activeLane: number
   battleStep: number
   decisiveLane: number
   game: GameState
+  battlePace: GameSettings['battlePace']
   currentActNumber: number
   storyTitle: string
   storyWeather: string
@@ -76,10 +78,9 @@ type BattleTimelineTask = {
 
 type BattleCinemaDirectorProps = Omit<
   BattleCinemaProps,
-  'battleStep' | 'decisiveLane' | 'revealBattleClimax' | 'skipBattleCinema'
+  'activeLane' | 'battleStep' | 'decisiveLane' | 'revealBattleClimax' | 'skipBattleCinema'
 > & {
   motion: GameSettings['motion']
-  battlePace: GameSettings['battlePace']
   onLaneImpact: (lane: LaneResult, result: BattleResult, decisive: boolean) => void
   onClimax: (result: BattleResult) => void
   onComplete: (result: BattleResult) => void
@@ -115,6 +116,23 @@ function decisiveLaneFor(
   return battleResult.lanes[battleResult.lanes.length - 1]?.lane ?? 0
 }
 
+const BATTLE_CINEMA_CHARGE_DURATION = 920
+const BATTLE_CINEMA_IMPACT_DURATION = 650
+const BATTLE_CINEMA_CAMERA_DURATION = 620
+const BATTLE_CINEMA_COLLISION_PROGRESS = 0.55
+const BATTLE_CINEMA_IMPACT_PEAK_PROGRESS = 0.36
+
+function battleCinemaMotionFor(battlePace: GameSettings['battlePace']) {
+  const paceScale = battlePace === 'swift' ? 0.58 : 1
+  const chargeDuration = Math.round(BATTLE_CINEMA_CHARGE_DURATION * paceScale)
+  const impactDuration = Math.round(BATTLE_CINEMA_IMPACT_DURATION * paceScale)
+  const cameraDuration = Math.round(BATTLE_CINEMA_CAMERA_DURATION * paceScale)
+  const impactCueDelay = Math.round(BATTLE_CINEMA_CHARGE_DURATION * BATTLE_CINEMA_COLLISION_PROGRESS * paceScale)
+  const impactDelay = Math.max(0, impactCueDelay - Math.round(impactDuration * BATTLE_CINEMA_IMPACT_PEAK_PROGRESS))
+
+  return { paceScale, chargeDuration, impactDuration, cameraDuration, impactCueDelay, impactDelay }
+}
+
 function battleCinemaTimingFor({
   battleResult,
   day,
@@ -130,7 +148,7 @@ function battleCinemaTimingFor({
   hasCrownClimax: boolean
   hasFinalMarchClimax: boolean
 }) {
-  const paceScale = battlePace === 'swift' ? 0.58 : 1
+  const { paceScale, impactCueDelay } = battleCinemaMotionFor(battlePace)
   const hasPostBattleClimax = hasCrownClimax || hasFinalMarchClimax
   const climaxHold = hasCrownClimax
     ? reducedMotion
@@ -149,6 +167,7 @@ function battleCinemaTimingFor({
   return {
     introDelay: reducedMotion ? 40 : Math.round((battleResult.boss ? 780 : 560) * paceScale),
     laneDelay: reducedMotion ? 80 : Math.round((battleResult.boss ? 1080 : 920) * paceScale),
+    impactCueDelay: reducedMotion ? 0 : impactCueDelay,
     climaxHold,
     completionTail: reducedMotion
       ? 100
@@ -168,6 +187,7 @@ export function BattleCinemaDirector({
   finalCrownSealBroken,
   ...cinemaProps
 }: BattleCinemaDirectorProps) {
+  const [activeLane, setActiveLane] = useState(-1)
   const [battleStep, setBattleStep] = useState(-1)
   const timeline = useRef<BattleTimelineTask[]>([])
   const climaxTriggered = useRef(false)
@@ -219,12 +239,14 @@ export function BattleCinemaDirector({
     for (const task of timeline.current) armTask(task)
   }
 
-  const revealLane = useEffectEvent((lane: LaneResult) => {
+  const engageLane = useEffectEvent((lane: LaneResult) => setActiveLane(lane.lane))
+  const resolveLane = useEffectEvent((lane: LaneResult) => {
     setBattleStep(lane.lane)
     onLaneImpact(lane, battleResult, lane.lane === decisiveLane)
   })
   const revealClimax = useEffectEvent(() => {
     climaxTriggered.current = true
+    setActiveLane(battleResult.lanes.length)
     setBattleStep(battleResult.lanes.length)
     onClimax(battleResult)
   })
@@ -243,7 +265,9 @@ export function BattleCinemaDirector({
     })
 
     for (const lane of battleResult.lanes) {
-      schedule(timing.introDelay + lane.lane * timing.laneDelay, () => revealLane(lane))
+      const engagementAt = timing.introDelay + lane.lane * timing.laneDelay
+      schedule(engagementAt, () => engageLane(lane))
+      schedule(engagementAt + timing.impactCueDelay, () => resolveLane(lane))
     }
     const lanesCompleteAt = timing.introDelay + battleResult.lanes.length * timing.laneDelay
     if (hasPostBattleClimax) schedule(lanesCompleteAt, revealClimax)
@@ -286,6 +310,7 @@ export function BattleCinemaDirector({
     if (!hasPostBattleClimax || climaxTriggered.current || battleStep >= battleResult.lanes.length) return
     clearTimeline()
     climaxTriggered.current = true
+    setActiveLane(battleResult.lanes.length)
     setBattleStep(battleResult.lanes.length)
     onClimax(battleResult)
     const reducedMotion = motion === 'reduced' || window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -308,8 +333,10 @@ export function BattleCinemaDirector({
   return (
     <BattleCinema
       {...cinemaProps}
+      activeLane={activeLane}
       battleResult={battleResult}
       battleStep={battleStep}
+      battlePace={battlePace}
       decisiveLane={decisiveLane}
       game={game}
       revealBattleClimax={revealClimaxNow}
@@ -321,9 +348,11 @@ export function BattleCinemaDirector({
 
 export function BattleCinema({
   battleResult,
+  activeLane,
   battleStep,
   decisiveLane,
   game,
+  battlePace,
   currentActNumber,
   storyTitle,
   storyWeather,
@@ -341,6 +370,7 @@ export function BattleCinema({
   finalCrownSealBroken,
   survivorName,
 }: BattleCinemaProps) {
+  const cinemaMotion = battleCinemaMotionFor(battlePace)
   const resultCrownStates =
     game.day === MAX_NIGHTS
       ? battleResult.lanes.map((lane) => ({
@@ -398,8 +428,16 @@ export function BattleCinema({
       data-impact={battleStep < 0 ? 'intro' : battleStep}
       data-boss={battleResult.boss ? 'true' : 'false'}
       data-boss-day={battleResult.boss ? game.day : undefined}
-      data-decisive-active={battleStep === decisiveLane ? 'true' : 'false'}
+      data-decisive-active={activeLane === decisiveLane ? 'true' : 'false'}
       data-final-crown={game.day === MAX_NIGHTS ? 'true' : 'false'}
+      style={
+        {
+          '--cinema-charge-duration': `${cinemaMotion.chargeDuration}ms`,
+          '--cinema-impact-duration': `${cinemaMotion.impactDuration}ms`,
+          '--cinema-impact-delay': `${cinemaMotion.impactDelay}ms`,
+          '--cinema-camera-duration': `${cinemaMotion.cameraDuration}ms`,
+        } as CSSProperties
+      }
       tabIndex={-1}
     >
       <section>
@@ -763,13 +801,39 @@ export function BattleCinema({
         <div className="cinema-lanes">
           {battleResult.lanes.map((lane) => {
             const revealed = battleStep >= lane.lane
-            const active = battleStep === lane.lane
+            const active = activeLane === lane.lane
             const maxPower = Math.max(lane.playerPower, lane.enemyPower)
             const powerDelta = Math.abs(lane.playerPower - lane.enemyPower)
             const crownSeal = game.day === MAX_NIGHTS ? finalCrownSealFor(lane.lane) : null
             const crownBroken = crownSeal
               ? finalCrownSealBroken(lane.lane, battleResult.focusLane, lane.countered, lane.relation)
               : false
+            const impactCue = crownSeal
+              ? crownBroken
+                ? 'crown-break'
+                : 'crown-held'
+              : lane.enemy.doctrine
+                ? lane.doctrineBroken
+                  ? 'doctrine-break'
+                  : 'doctrine-held'
+                : lane.countered
+                  ? 'counter'
+                  : lane.won
+                    ? 'hold'
+                    : 'break'
+            const impactLabel = crownSeal
+              ? crownBroken
+                ? '칙령 해제'
+                : '칙령 유지'
+              : lane.enemy.doctrine
+                ? lane.doctrineBroken
+                  ? '교리 파훼'
+                  : '교리 압박'
+                : lane.countered
+                  ? '의도 파훼'
+                  : lane.won
+                    ? '전선 우위'
+                    : '전선 열세'
             return (
               <article
                 className={`${revealed ? 'is-revealed' : ''} ${active ? 'is-active' : ''}`}
@@ -818,7 +882,7 @@ export function BattleCinema({
                 <div
                   className="cinema-duel"
                   role="img"
-                  aria-label={`${survivorName(lane.unit)} ${KIND_META[lane.unit.kind].name} ${lane.playerPower} 대 ${lane.enemy.name} ${lane.enemyPower}`}
+                  aria-label={`${survivorName(lane.unit)} ${KIND_META[lane.unit.kind].name} ${lane.playerPower} 대 ${lane.enemy.name} ${lane.enemyPower}, ${revealed ? impactLabel : '교전 접근 중'}`}
                 >
                   <div className={`cinema-combatant player-combatant kind-${lane.unit.kind}`}>
                     <span className="combatant-figure">
@@ -828,10 +892,14 @@ export function BattleCinema({
                     </span>
                     <small>{survivorName(lane.unit)}</small>
                   </div>
-                  <div className="cinema-impact" data-outcome={lane.won ? 'won' : 'lost'}>
+                  <div
+                    className="cinema-impact"
+                    data-cue={revealed ? impactCue : 'approach'}
+                    data-outcome={revealed ? (lane.won ? 'won' : 'lost') : 'pending'}
+                  >
                     <i />
                     <span>{revealed ? powerDelta : '·'}</span>
-                    <b>{revealed ? (lane.won ? '우위' : '열세') : '접근'}</b>
+                    <b>{revealed ? impactLabel : '접근'}</b>
                   </div>
                   <div className={`cinema-combatant enemy-combatant kind-${lane.enemy.kind}`}>
                     <span className="combatant-figure">

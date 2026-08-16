@@ -6853,15 +6853,15 @@ body {
 }
 
 .battle-cinema[data-impact='0'] > section {
-  animation: camera-hit-one 620ms ease-out both;
+  animation: camera-hit-one var(--cinema-camera-duration, 620ms) ease-out both;
 }
 
 .battle-cinema[data-impact='1'] > section {
-  animation: camera-hit-two 620ms ease-out both;
+  animation: camera-hit-two var(--cinema-camera-duration, 620ms) ease-out both;
 }
 
 .battle-cinema[data-impact='2'] > section {
-  animation: camera-hit-three 620ms ease-out both;
+  animation: camera-hit-three var(--cinema-camera-duration, 620ms) ease-out both;
 }
 
 @keyframes tutorial-arrive {

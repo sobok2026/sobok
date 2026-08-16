@@ -3742,7 +3742,8 @@
 }
 
 .battle-cinema[data-decisive-active='true'] .cinema-art-grade {
-  animation: decisive-cinema-vignette 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: decisive-cinema-vignette var(--cinema-impact-duration, 650ms) var(--cinema-impact-delay, 272ms)
+    cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .battle-cinema .cinema-lanes article[data-decisive='true'][data-outcome='lost'].is-active {
@@ -3757,7 +3758,8 @@
   box-shadow: inset 0 0 54px rgba(var(--decisive-rgb), 0.11);
   content: '';
   pointer-events: none;
-  animation: decisive-front-flash 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: decisive-front-flash var(--cinema-impact-duration, 650ms) var(--cinema-impact-delay, 272ms)
+    cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .battle-cinema .cinema-lanes article.is-active::before,
@@ -3944,6 +3946,7 @@
   border-radius: 50%;
   background: radial-gradient(circle, rgba(226, 250, 255, 0.94), rgba(96, 212, 236, 0.2) 28%, transparent 66%);
   box-shadow: 0 0 36px rgba(113, 224, 245, 0.28);
+  color: #a9dfe8;
   opacity: 0;
 }
 
@@ -3981,7 +3984,7 @@
 
 .cinema-impact b {
   align-self: start;
-  color: #a9dfe8;
+  color: inherit;
   font-size: var(--text-micro);
 }
 
@@ -3989,18 +3992,59 @@
   border-color: rgba(255, 121, 103, 0.52);
   background: radial-gradient(circle, rgba(255, 225, 218, 0.9), rgba(255, 92, 69, 0.2) 30%, transparent 68%);
   box-shadow: 0 0 34px rgba(255, 95, 74, 0.25);
+  color: #ff9b8f;
+}
+
+.cinema-impact[data-cue='counter'] {
+  border-color: rgba(147, 235, 255, 0.68);
+  background: radial-gradient(circle, rgba(235, 253, 255, 0.96), rgba(58, 205, 234, 0.28) 30%, transparent 68%);
+  box-shadow: 0 0 42px rgba(73, 215, 241, 0.34);
+  color: #a9efff;
+}
+
+.cinema-impact[data-cue='doctrine-break'] {
+  border-color: rgba(144, 244, 197, 0.7);
+  background: radial-gradient(circle, rgba(235, 255, 246, 0.96), rgba(58, 218, 151, 0.28) 30%, transparent 68%);
+  box-shadow: 0 0 44px rgba(62, 221, 156, 0.34);
+  color: #a8f5d0;
+}
+
+.cinema-impact[data-cue='doctrine-held'] {
+  border-color: rgba(255, 172, 100, 0.72);
+  background: radial-gradient(circle, rgba(255, 242, 224, 0.96), rgba(255, 119, 62, 0.3) 30%, transparent 68%);
+  box-shadow: 0 0 44px rgba(255, 117, 58, 0.34);
+  color: #ffc892;
+}
+
+.cinema-impact[data-cue='crown-break'] {
+  border-color: rgba(255, 225, 145, 0.82);
+  background: radial-gradient(circle, #fff9dc, rgba(255, 192, 73, 0.36) 30%, transparent 68%);
+  box-shadow:
+    0 0 48px rgba(255, 198, 79, 0.46),
+    0 0 84px rgba(255, 151, 58, 0.2);
+  color: #ffe29f;
+}
+
+.cinema-impact[data-cue='crown-held'] {
+  border-color: rgba(255, 133, 122, 0.78);
+  background: radial-gradient(circle, rgba(255, 233, 226, 0.96), rgba(226, 65, 65, 0.34) 30%, transparent 68%);
+  box-shadow:
+    0 0 46px rgba(255, 89, 73, 0.38),
+    0 0 78px rgba(160, 53, 95, 0.2);
+  color: #ffaaa0;
 }
 
 .cinema-lanes article.is-active .player-combatant {
-  animation: defender-charge 920ms cubic-bezier(0.2, 0.82, 0.22, 1) both;
+  animation: defender-charge var(--cinema-charge-duration, 920ms) cubic-bezier(0.2, 0.82, 0.22, 1) both;
 }
 
 .cinema-lanes article.is-active .enemy-combatant {
-  animation: enemy-charge 920ms cubic-bezier(0.2, 0.82, 0.22, 1) both;
+  animation: enemy-charge var(--cinema-charge-duration, 920ms) cubic-bezier(0.2, 0.82, 0.22, 1) both;
 }
 
 .cinema-lanes article.is-active .cinema-impact {
-  animation: clash-burst 760ms 310ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: clash-burst var(--cinema-impact-duration, 650ms) var(--cinema-impact-delay, 272ms)
+    cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .cinema-lanes article[data-decisive='true'].is-active .cinema-impact {
@@ -4130,6 +4174,15 @@
   background-color: #07151b;
 }
 
+.game-shell[data-contrast='high'] .cinema-impact {
+  border-width: 2px;
+  border-color: currentColor;
+  background: #07151b;
+  box-shadow:
+    0 0 0 2px #07151b,
+    0 0 30px currentColor;
+}
+
 @keyframes decisive-front-flash {
   from {
     opacity: 0;
@@ -4163,6 +4216,10 @@
 .game-shell[data-motion='reduced'] .battle-cinema .cinema-lanes article[data-decisive='true'].is-active::after,
 .game-shell[data-motion='reduced'] .battle-cinema[data-decisive-active='true'] .cinema-art-grade {
   animation: none;
+}
+
+.game-shell[data-motion='reduced'] .cinema-lanes article.is-active .cinema-impact {
+  animation-delay: 0ms !important;
 }
 
 .battle-cinema[data-boss='true'] .cinema-art img {
@@ -4352,6 +4409,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cinema-lanes article.is-active .cinema-impact {
+    animation-delay: 0ms !important;
     transform: translate(-50%, -50%) scale(0.82);
     opacity: 0.82;
   }

@@ -7684,17 +7684,16 @@ export default function Game() {
   function playBattleLaneImpact(lane: LaneResult, result: BattleResult, decisive: boolean) {
     const crownBroken =
       game.day === MAX_NIGHTS && finalCrownSealBroken(lane.lane, result.focusLane, lane.countered, lane.relation)
+    const doctrineBroken = Boolean(lane.enemy.doctrine && lane.doctrineBroken)
     const impactSound = crownBroken
       ? 'crown'
-      : decisive
-        ? result.victory
-          ? result.boss
-            ? 'seal'
-            : 'impact'
-          : 'lose'
-        : lane.won
-          ? 'impact'
-          : 'lose'
+      : decisive && !result.victory
+        ? 'lose'
+        : doctrineBroken || (decisive && result.boss)
+          ? 'seal'
+          : lane.won
+            ? 'impact'
+            : 'lose'
     playSound(impactSound, soundOn)
     vibrate(
       crownBroken
@@ -7703,9 +7702,11 @@ export default function Game() {
           ? result.victory
             ? [18, 22, 38, 24, 62]
             : [58, 32, 78, 38, 96]
-          : lane.won
-            ? 20
-            : [45, 30, 45],
+          : doctrineBroken
+            ? [16, 18, 26, 20, 48]
+            : lane.won
+              ? 20
+              : [45, 30, 45],
     )
   }
 
