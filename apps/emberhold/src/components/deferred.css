@@ -437,6 +437,196 @@
   }
 }
 
+/* Veteran event decisions: keep new consequences open and file repeated story context behind one deliberate read. */
+
+.event-card[data-veteran='true'] {
+  grid-template-columns: minmax(184px, 0.36fr) minmax(0, 1.64fr);
+  width: min(100%, 1100px);
+}
+
+.event-card[data-veteran='true'] .event-art {
+  min-height: 460px;
+}
+
+.event-card[data-veteran='true'] .event-body {
+  align-content: start;
+  padding: 22px 24px;
+}
+
+.event-card[data-veteran='true'] .event-body h2 {
+  font-size: clamp(24px, 3vw, 34px);
+}
+
+.veteran-event-story {
+  --veteran-story-rgb: 103, 199, 219;
+  overflow: hidden;
+  margin-top: 13px;
+  border: 1px solid rgba(var(--veteran-story-rgb), 0.22);
+  background:
+    radial-gradient(circle at 0 50%, rgba(var(--veteran-story-rgb), 0.1), transparent 34%), rgba(2, 11, 16, 0.5);
+}
+
+.veteran-event-story > summary {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto 20px;
+  min-height: 62px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 11px;
+  background: linear-gradient(90deg, rgba(var(--veteran-story-rgb), 0.055), transparent 76%);
+  cursor: pointer;
+  list-style: none;
+  transition: background 160ms ease;
+}
+
+.veteran-event-story > summary::-webkit-details-marker {
+  display: none;
+}
+
+.veteran-event-story > summary::marker {
+  content: '';
+}
+
+.veteran-event-story > summary:hover {
+  background: linear-gradient(90deg, rgba(var(--veteran-story-rgb), 0.12), transparent 82%);
+}
+
+.veteran-event-story > summary:focus-visible {
+  outline: 2px solid rgba(var(--veteran-story-rgb), 0.72);
+  outline-offset: -2px;
+}
+
+.veteran-event-story > summary > span:first-child {
+  display: grid;
+  width: 36px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(var(--veteran-story-rgb), 0.34);
+  background: rgba(var(--veteran-story-rgb), 0.07);
+  color: rgb(var(--veteran-story-rgb));
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 18px;
+  text-shadow: 0 0 14px rgba(var(--veteran-story-rgb), 0.3);
+}
+
+.veteran-event-story-copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.veteran-event-story-copy small {
+  overflow: hidden;
+  color: rgba(var(--veteran-story-rgb), 0.8);
+  font-size: var(--text-label);
+  font-weight: 820;
+  letter-spacing: 0.055em;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.veteran-event-story-copy strong {
+  overflow: hidden;
+  color: #e4eff1;
+  font-size: var(--text-body);
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.veteran-event-story > summary > b {
+  padding: 5px 7px;
+  border: 1px solid rgba(var(--veteran-story-rgb), 0.23);
+  background: rgba(var(--veteran-story-rgb), 0.055);
+  color: rgb(var(--veteran-story-rgb));
+  font-size: var(--text-label);
+  white-space: nowrap;
+}
+
+.veteran-event-story > summary > i {
+  color: rgba(var(--veteran-story-rgb), 0.78);
+  font-size: 18px;
+  font-style: normal;
+  text-align: center;
+  transition: transform 180ms ease;
+}
+
+.veteran-event-story[open] > summary > i {
+  transform: rotate(180deg);
+}
+
+.veteran-event-story > div {
+  padding: 0 11px 11px;
+  border-top: 1px solid rgba(var(--veteran-story-rgb), 0.12);
+}
+
+.veteran-event-story .event-narrative {
+  margin-top: 11px;
+}
+
+.veteran-event-story .event-seeded-route {
+  margin-top: 9px;
+}
+
+.event-card[data-veteran='true'] .veteran-event-story + .event-oath-intervention,
+.event-card[data-veteran='true'] .veteran-event-story + .event-decision-echo,
+.event-card[data-veteran='true'] .event-choice-ledger {
+  margin-top: 12px;
+}
+
+.game-shell[data-contrast='high'] .veteran-event-story {
+  border-color: rgb(var(--veteran-story-rgb));
+  background-color: #06151c;
+}
+
+.game-shell[data-contrast='high'] .veteran-event-story-copy strong,
+.game-shell[data-contrast='high'] .veteran-event-story .event-narrative {
+  color: #edf6f7;
+}
+
+@media (max-width: 760px) {
+  .event-card[data-veteran='true'] {
+    display: block;
+  }
+
+  .event-card[data-veteran='true'] .event-art {
+    min-height: 132px;
+  }
+
+  .event-card[data-veteran='true'] .event-body {
+    padding: 17px 14px;
+  }
+}
+
+@media (max-width: 440px) {
+  .veteran-event-story > summary {
+    grid-template-columns: 38px minmax(0, 1fr) 18px;
+    gap: 8px;
+    padding-inline: 9px;
+  }
+
+  .veteran-event-story > summary > b {
+    display: none;
+  }
+
+  .veteran-event-story > div {
+    padding-inline: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veteran-event-story > summary,
+  .veteran-event-story > summary > i {
+    transition: none;
+  }
+}
+
+.game-shell[data-motion='reduced'] .veteran-event-story > summary,
+.game-shell[data-motion='reduced'] .veteran-event-story > summary > i {
+  transition: none;
+}
+
 /* Veteran permanent choices: preserve exact comparisons while shortening repeat introductions. */
 
 .promotion-body > header[data-veteran='true'] {

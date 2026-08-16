@@ -53,6 +53,7 @@ type EventChoiceEntry = {
 
 type CampaignEventDialogProps = {
   blocked: boolean
+  veteranBriefing: boolean
   actNumber: number
   day: number
   event: CampaignEventView
@@ -112,6 +113,32 @@ function SeededRoute({ variant }: { variant: 1 | 2 }) {
       </div>
       <p>같은 코드는 이 사건과 선택지, 4일 뒤 돌아올 후속 결과까지 그대로 재현합니다.</p>
     </aside>
+  )
+}
+
+function EventStoryRecord({ event, veteranBriefing }: { event: CampaignEventView; veteranBriefing: boolean }) {
+  const story = (
+    <>
+      <p className="event-narrative">{event.body}</p>
+      {event.routeVariant ? <SeededRoute variant={event.routeVariant} /> : null}
+    </>
+  )
+
+  if (!veteranBriefing) return story
+
+  return (
+    <details className="veteran-event-story">
+      <summary>
+        <span aria-hidden="true">⌁</span>
+        <span className="veteran-event-story-copy">
+          <small>VETERAN STORY FILE · 서사 열람</small>
+          <strong>{event.location}의 사건 서사</strong>
+        </span>
+        <b>{event.routeVariant ? `CODE ROUTE 0${event.routeVariant}` : '사건 기록'}</b>
+        <i aria-hidden="true">⌄</i>
+      </summary>
+      <div>{story}</div>
+    </details>
   )
 }
 
@@ -351,6 +378,7 @@ function EventChoices({
 
 export function CampaignEventDialog({
   blocked,
+  veteranBriefing,
   actNumber,
   day,
   event,
@@ -368,6 +396,7 @@ export function CampaignEventDialog({
     <div className="modal-backdrop event-backdrop" role="presentation" inert={blocked ? true : undefined}>
       <section
         className="event-card"
+        data-veteran={veteranBriefing ? 'true' : 'false'}
         role="dialog"
         aria-modal="true"
         aria-labelledby="event-title"
@@ -399,8 +428,7 @@ export function CampaignEventDialog({
               {day} / {MAX_NIGHTS}
             </b>
           </header>
-          <p className="event-narrative">{event.body}</p>
-          {event.routeVariant ? <SeededRoute variant={event.routeVariant} /> : null}
+          <EventStoryRecord event={event} veteranBriefing={veteranBriefing} />
           {oathIntervention ? <OathIntervention intervention={oathIntervention} /> : null}
           {decisionEcho ? <DecisionEcho echo={decisionEcho} /> : null}
           <ChoiceRouteLedger crownTiming={crownTiming} crownHeatFloor={crownHeatFloor} stokeBaseCost={stokeBaseCost} />

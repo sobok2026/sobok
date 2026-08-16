@@ -5928,7 +5928,7 @@ export default function Game() {
     if (!activeLayer) return
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const focusableSelector =
-      'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
+      'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), summary, [tabindex]:not([tabindex="-1"])'
     const elementIsVisible = (element: HTMLElement) =>
       !element.hidden && !element.closest('[inert], [aria-hidden="true"]') && element.getClientRects().length > 0
     const focusableElements = (container: HTMLElement) =>
@@ -8577,6 +8577,7 @@ export default function Game() {
       {phase === 'event' && !showTitle && !showGuide ? (
         <CampaignEventDialog
           blocked={showArchive}
+          veteranBriefing={veteranBriefing}
           actNumber={currentAct.number}
           day={game.day}
           event={currentEvent}
