@@ -29,6 +29,14 @@ needs the stack reads `getComputedStyle(document.body).fontFamily` rather than r
 `@sobok/typography` also has to be in the app's `transpilePackages`, because the package ships raw
 `.tsx`.
 
+### Closed Korean copy surfaces
+
+A Korean app whose complete rendered copy is authored in-repo may set
+`includeKoreanHanWebfont={false}` only when its build first rejects unified Han and kana codepoints.
+That exception leaves the locale default unchanged for every other app and removes the Pretendard JP
+sheet from that one document. Do not use it for user-authored, CMS, API, or otherwise remote text;
+those surfaces must keep the default Korean Han webfont.
+
 ## Where the bytes come from
 
 Each app carries its own committed copy under `public/fonts/<family>/<version>/`, taken unmodified
