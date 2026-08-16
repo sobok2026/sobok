@@ -41,6 +41,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-020-review-ko.json`    | `visual_review_complete` | 스무 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
 | `production-art-batch-021-review-ko.json`    | `visual_review_complete` | 스물한 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-022-review-ko.json`    | `visual_review_complete` | 스물두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-023-review-ko.json`    | `editorial_review_ready` | 스물세 번째 production 배치 신규 12개 Eclipse 구도 편집 검수 대기             |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 273개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -586,6 +587,17 @@ Git에 포함하지 않는 `apps/stella/private/guardian-art-production/love-car
 신규 12개는 모두 사람의 최종 시각 승인을 마쳤다. 승인 원본의 SHA-256은 검수 파일과 누적 273개 WebP
 매니페스트에 고정하며 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
 
+스물세 번째 배치는 같은 `love.careful-approach` 원고를 `eclipse` 희귀도로 제작할 신규 12개 편집
+검수안이다. `production-art-batch-023-review-ko.json`에 현재 원고의 canonical SHA-256과, 정해진 두
+수호령이 각자의 속도·선택권·조절점을 유지한 채 실제 신호와 행동을 주고받는 하나의 연속 장면을
+고정했다. 하트 회전문의 독립 속도 다이얼, 원형 찻잔 보관함의 준비 탭, 지그재그 공중 보폭길의 쉼표
+승강판, 문턱 터널의 간식 셔틀, 프리즘 양면의 독립 조명, 온실 작업대의 빈 계획 바퀴, 두 공중 다리의
+회전 접점, 경첩 쪽 문틈의 별등 썰매, 지도 돛의 두 일정 띠, 절벽 창 안 겹침 발판, 상하 파동관의 왕복
+표식, 열린 물살 아치의 분리 구슬처럼 서로 다른 속도 경계·상호 동작·카메라 깊이를 사용한다. 첫 신호
+Eclipse와 바로 앞 Orbit·Nebula의 소품·경계·구도를 반복하지 않고, 공동 지점도 잠그거나 완성하지 않아
+관계 확정·영구 결합·한쪽의 속도 포기로 보이지 않게 한다. 현재 12개 정본 원고 해시와 구도는 사람의
+편집 검수 대기 상태이며, 최종 편집 승인 전에는 imagegen 입력이나 신규 이미지 제작을 시작하지 않는다.
+
 ## 검증
 
 repository root에서 다음 명령을 실행한다.
@@ -623,6 +635,9 @@ bun --filter=@sobok/stella guardian-cards:validate
   조절 행동, 첫 신호 Orbit·앞선 근접 장면 비반복 및 사람의 편집 승인 전 신규 이미지 제작 차단
 - 스물두 번째 production 배치 신규 12개 원고 해시와 날씨 속에서도 상대 선택 자리를 비워 두는 보호
   속도 장면, 첫 신호 Nebula·바로 앞 Orbit 비반복 및 사람의 편집 승인 전 신규 이미지 제작 차단
+- 스물세 번째 production 배치 신규 12개 원고 해시와 두 수호령이 각자의 선택권을 유지하며 속도를
+  실제 행동으로 맞추는 Eclipse 장면, 첫 신호 Eclipse·바로 앞 Orbit·Nebula 비반복 및 사람의 편집 승인 전
+  신규 이미지 제작 차단
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 273개를 제외한 현재 잔여
   783개 산식
