@@ -61,6 +61,10 @@
       "dependsOn": ["^build"],
       "outputs": ["out/**", ".next/**"]
     },
+    "@sobok/emberhold#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["out/**", ".next/**"]
+    },
     "dev": {
       "dependsOn": ["^build"],
       "cache": false,
