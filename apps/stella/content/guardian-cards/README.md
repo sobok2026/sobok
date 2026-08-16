@@ -38,6 +38,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-017-review-ko.json`    | `visual_review_complete` | 열일곱 번째 production 배치 파일럿 1개·신규 PNG 11개 시각 승인·승인 해시 고정 |
 | `production-art-batch-018-review-ko.json`    | `visual_review_complete` | 열여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-019-review-ko.json`    | `visual_review_complete` | 열아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-020-review-ko.json`    | `editorial_review_ready` | 스무 번째 production 배치 신규 12개 정본 해시·고유 구도 사람 편집 승인 대기   |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 237개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -530,6 +531,18 @@ Git에 포함하지 않는 `apps/stella/private/guardian-art-production/love-fir
 신규 12개는 모두 사람의 최종 시각 승인을 마쳤다. 승인 원본의 SHA-256은 검수 파일과 누적 237개 WebP
 매니페스트에 고정하며 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
 
+스무 번째 배치는 같은 `love.first-signal` 원고를 `stella` 희귀도로 제작할 신규 12개 편집 검수안이다.
+`production-art-batch-020-review-ko.json`에 현재 원고의 canonical SHA-256과, 정해진 두 수호령이 함께 만든
+소품·공간에서 각자의 가슴 별빛이 출발해 잠시 관계를 맺은 뒤 다시 열리거나 갈라지는 다음 단계 구조를
+고정했다. 열린 하트 내부의 두 덮개와 전진 갈래, 흙 단면의 씨앗과 열린 나이테, 책등 아래의 묶이지 않은
+다음 페이지, 양쪽 반달 창짝과 위가 빈 광륜, 리깅 위에서 본 열린 U자 무대, 뿌리 굴 위 비대칭 화관,
+삼각 모빌의 빈 꼭짓점, 별상자 안 직각 덮개와 끊긴 깊이 호, 산등성이 공동 별표에서 다시 갈라지는 길,
+첫 발판 위 보폭이 다른 두 계단, 구름 정원의 빈 화분과 독립 수로, 넓은 물살 원의 열린 틈처럼 서로 다른
+공동 구조·깊이 축·빛 종료 방향을 사용한다. 실제 별자리 배열·출생 차트·개인 색·닫힌 운명 고리·확정된
+관계나 미래는 넣지 않는다. 12개 모두 현재 `pending_human_approval`이며 사람이 원고 해시와 구도를
+승인하기 전에는 이미지 생성을 시작하지 않는다. 이 단계에서는 누적 승인 WebP 237개와 잔여 819개
+산식을 바꾸지 않는다.
+
 ## 검증
 
 repository root에서 다음 명령을 실행한다.
@@ -560,6 +573,8 @@ bun --filter=@sobok/stella guardian-cards:validate
 - 열아홉 번째 production 배치 신규 12개 원고 해시와 지정된 두 수호령이 선택권을 유지하며 첫 신호를
   상호작용으로 바꾸는 Eclipse 고유 구도, Orbit·Nebula·앞선 관계 장면 비반복 및 사람의 시각 승인 전
   배포 후보 확정 차단
+- 스무 번째 production 배치 신규 12개 원고 해시와 함께 만든 다음 단계를 다시 선택할 수 있게 여는
+  Stella 고유 구도, Orbit·Nebula·Eclipse·앞선 별자리 여운 비반복 및 사람의 편집 승인 전 이미지 생성 차단
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 237개를 제외한 현재 잔여
   819개 산식

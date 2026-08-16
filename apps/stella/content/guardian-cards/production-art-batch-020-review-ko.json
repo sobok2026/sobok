@@ -1,0 +1,281 @@
+{
+  "status": "editorial_review_ready",
+  "preparedOn": "2026-08-16",
+  "locale": "ko",
+  "batchId": "love.first-signal.stella",
+  "batchOrder": 20,
+  "purpose": "사랑의 첫 신호를 주고받은 뒤에도 각자의 선택을 유지하며 다시 이어 갈 수 있는 다음 행동으로 확장한다. 신규 열두 별자리는 Orbit의 단독 신호, Nebula의 보호, Eclipse의 첫 상호 응답을 반복하지 않고, 두 수호령이 함께 만든 소품이나 공간에서 출발한 옅은 비개인화 별빛이 열린 다음 단계로 이어지는 Stella 원화의 편집 승인을 받는다. 완성된 관계나 정해진 운명 대신 다시 선택할 수 있는 간격과 열린 끝을 남긴다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "love",
+    "narrativeAxisId": "first-signal",
+    "visualAxisId": "stella"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Premium Stella zodiac-guardian story illustration for the Stella rarity, full-bleed 3:4 master art. Show exactly the two named canonical guardians in the approved card and preserve each character-sheet identity, relative size, silhouette, color, eye highlights, chest Stella star, and signature prop; do not merge bodies, swap features, duplicate a guardian, or add an unseen romantic recipient or third figure. For Gemini and Pisces, preserve the canonical internal pair and never add another character. Merge the approved first-signal object and co-created Stella beat into one continuous place and moment rather than a collage, split panel, before-and-after sequence, or symbolic diagram. Each guardian must keep an independent body position and contact point while jointly tending one revisitable next-step structure. Let two faint non-personalized light routes begin at small glows aligned with the guardians' chest stars, briefly relate through the shared object or marker, and then remain visibly open, separable, or unfinished with a deliberate gap. The image must read as a renewed invitation and another available choice, never a completed confession, fixed relationship status, permanent bond, destined match, promised arrival, or guaranteed future. Keep the two guardians, shared focal structure, and open light route at 55–65% of the frame and readable at 80px, with safe UI framing. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes, exactly one large and one small eye highlight. Use symbols and simple shapes only: no readable text, sentence, name, label, title, badge, number, date, zodiac glyph, logo, or watermark. Letters, books, maps, plans, markers, bottles, tags, and time cues may contain only blank fields, dots, notches, open curves, or simple abstract icons. Do not bake actual birth-chart lines or personal colors into the master art. Keep every halo sparse, pale, abstract, and deliberately incomplete; do not draw a recognizable zodiac arrangement, horoscope wheel, natal chart, closed magic circle, infinity sign, or literal celestial omen. Do not reuse Batch 017's Orbit camera, dominant solitary prop, empty-recipient axis, or hand-withdrawal composition; Batch 018's weather layer, protective shelter, pocket, awning, umbrella, or solitary preservation composition; or Batch 019's single boundary-crossing exchange, eclipse-shaped overlap, door negotiation, shared handoff, or turn-taking composition. Make every compositionFamily, camera height, shared structure, depth axis, gesture pair, light-route exit, and negative-space shape visibly distinct within this batch and from earlier constellation-afterglow and shared-world relationship art."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.love.first-signal.stella",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "9534aad9667192b2ab6a313c21b9e894c51234880089ff77ebd5410d7a9540f6",
+      "imageStatus": "not_started",
+      "compositionFamily": "inside_openheart_vgate_twinflaps_forwardfork",
+      "artDirection": "열린 큰 하트 우편물의 내부에서 바깥을 올려다보는 낮은 시점이다. 왼쪽의 몽실이와 오른쪽의 달콩이는 하트의 서로 다른 덮개를 각자 한 손으로 열어 V자 출구를 만들고, 붉은 리본 끝은 뒤쪽 초승달 우체통으로만 이어진다. 두 가슴 별표에서 출발한 옅은 점선은 중앙의 작은 발판 별 하나 곁에서 잠깐 가까워진 뒤 위쪽 열린 하늘을 향한 두 갈래로 다시 벌어져 프레임 밖에서 끝난다.",
+      "distinctFrom": [
+        "Batch 017의 왼쪽 달리기·혼자 미는 큰 하트와 Batch 018의 비옷 지붕·빗물 높이 대신 하트 내부 카메라와 양쪽 덮개가 만든 V자 출구를 사용한다.",
+        "Batch 019의 우체통 옆문·하트 반대쪽 맞잡기·느슨한 리본 교환을 반복하지 않고 각자 연 덮개와 잠시 가까워졌다 다시 갈라지는 두 전진 궤적을 고정한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이의 보라 나선뿔과 달콩이의 달집·둥근 집게·상대 크기가 유지되고 정확히 두 수호령만 보이는지",
+        "붉은 리본은 몸을 묶지 않고 두 가슴 별빛은 실제 별자리나 닫힌 운명 고리 없이 중앙 별 곁에서 가까워진 뒤 열린 두 갈래로 끝나는지"
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.love.first-signal.stella",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "9d013f5177c8a6cada4890a6427cfac16a36f21c2ef6a9810e70d4e1f193bf8d",
+      "imageStatus": "not_started",
+      "compositionFamily": "furrow_crosssection_counterpress_seed_open_growthrings",
+      "artDirection": "얕은 별씨앗 고랑의 흙 단면을 화면 아래 전경에 크게 둔 낮은 횡단 시점이다. 왼쪽의 차곡이와 오른쪽의 새봄이는 중앙 씨앗의 서로 다른 흙벽을 각자 눌러 주되 손은 겹치지 않고, 뒤쪽 낮은 돌에는 초록 리본과 나뉜 별쿠키 두 조각만 남는다. 분리된 두 뿌리 끝과 가슴 별빛에서 번진 계절 나이테는 씨앗 둘레를 완전히 닫지 않는 비대칭 호 세 개가 되어 위쪽 빈 하늘로 열린다.",
+      "distinctFrom": [
+        "Batch 017의 빈 의자 식탁과 Batch 018의 성에 낀 창·담요 덮개 대신 흙 단면을 가로지르는 고랑 카메라와 두 손의 독립된 흙벽을 사용한다.",
+        "Batch 019의 대각선 식탁·두 접시·쿠키 교환을 반복하지 않고 함께 심되 합쳐지지 않는 뿌리와 위가 열린 계절 나이테로 지속 가능한 다음 행동을 보여 준다."
+      ],
+      "visualReviewFocus": [
+        "차곡이의 커스터드 송아지 실루엣·보라 앞머리와 새봄이의 새싹 귀·꽃받침 목이 섞이지 않고 두 수호령만 보이는지",
+        "씨앗은 하나지만 두 손과 뿌리는 분리되고, 나이테 호는 실제 별자리·완성된 화관·영구 결합처럼 닫히지 않은 채 위쪽 틈을 남기는지"
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.love.first-signal.stella",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "6160101f26748c19eeeec79def009900a3d906064c36c03e36d92d5595104d8c",
+      "imageStatus": "not_started",
+      "compositionFamily": "bookspine_wormeye_counterturn_accordion_openpage",
+      "artDirection": "펼친 별책의 낮은 책등 위에서 양쪽 페이지를 올려다보는 벌레눈 시점이다. 큰 재잘이는 왼쪽 바깥 잎, 작은 소곤이는 오른쪽 안쪽 잎을 서로 반대 방향으로 넘기며 각자의 편지는 표지 양끝 주머니에 분리해 둔다. 두 가슴 별빛과 점·열린 곡선뿐인 서로 다른 문장 흔적은 아코디언처럼 선 페이지 가장자리를 따라 중앙의 묶이지 않은 빈 한 장까지 이어지고, 그 앞의 넓은 V자 틈에서 멈춘다.",
+      "distinctFrom": [
+        "Batch 017의 공중 교차 봉투와 Batch 018의 세로 바람막이·엇갈린 편지 높이 대신 책등 벌레눈 카메라와 반대 방향으로 넘어가는 페이지 두 장을 사용한다.",
+        "Batch 019의 오버헤드 듣기 원·겹친 편지·차례표를 반복하지 않고 독립 편지 주머니와 묶이지 않은 다음 페이지가 만든 깊은 V자 여백을 고정한다."
+      ],
+      "visualReviewFocus": [
+        "큰 크림색 재잘이와 작은 라벤더 소곤이의 상대 크기·반쪽 별·한 줄 정본 연결 리본이 유지되고 제3의 캐릭터가 없는지",
+        "페이지와 편지에는 읽을 수 있는 글자가 없고 서로 다른 점·열린 곡선의 흔적은 합쳐진 문장이나 닫힌 별자리 대신 비어 있는 다음 한 장에서 멈추는지"
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.love.first-signal.stella",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "1ba92a86b30d4c8b0323315c04a047725953b82ec1bd7e3bda617af84bfc2508",
+      "imageStatus": "not_started",
+      "compositionFamily": "roundwindow_sill_duallatch_incomplete_safehalo_topgap",
+      "artDirection": "둥근 달집 창의 바깥 창턱 높이에서 열린 실내를 비스듬히 들여다본다. 안쪽 왼편 달콩이와 바깥 오른편 꼬옥이는 반달형 두 창짝의 서로 다른 걸쇠를 각자 풀어 양쪽으로 열고, 간식 두 개는 달콩이 쪽 낮은 선반에 그대로 둔다. 두 가슴 별빛은 창틀을 따라 서로 다른 방향으로 오르다가 위쪽 한 뼘을 비운 불완전한 둥근 광륜이 되고, 열린 틈 너머로 각자 돌아갈 바닥이 함께 보인다.",
+      "distinctFrom": [
+        "Batch 017의 닫힌 문 아래 신호와 Batch 018의 처마·비 장막·마른 선반 대신 둥근 창턱 카메라와 양쪽 반달 창짝을 사용한다.",
+        "Batch 019의 얇은 문짝 경계·바깥 간식·안쪽 문틈 넓히기를 반복하지 않고 두 독립 걸쇠와 위가 열린 창틀 광륜으로 함께 연 뒤의 안전한 여백을 만든다."
+      ],
+      "visualReviewFocus": [
+        "달집과 둥근 집게의 달콩이, 자주색 몸·망토·하트 꼬리의 꼬옥이가 창 안팎에서 섞이지 않고 정확히 두 수호령만 보이는지",
+        "각자 자기 창짝과 바닥을 유지하고 광륜은 완전한 원·실제 별자리·잠금 없는 영구 개방이 아니라 위쪽 틈이 남은 다음 선택으로 읽히는지"
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.love.first-signal.stella",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "21e78b1f50c1b38ebe8cefb11bfb91d25927e9d1b261637d19d1c16cb0a2ca99",
+      "imageStatus": "not_started",
+      "compositionFamily": "rigging_topdown_twin_turntables_u_stage_openfront",
+      "artDirection": "무대 위 높은 리깅에서 아래를 내려다보는 사선 오버헤드 장면이다. 왼쪽 반원 회전판의 해님이와 오른쪽 작은 회전판의 고르미는 각자 다른 손잡이로 자기 조명 방향을 돌리고, 금빛 별표가 놓인 중앙 바닥은 누구도 차지하지 않은 채 비워 둔다. 금빛과 분홍빛 두 빔은 서로 겹치지 않고 넓은 U자 무대 테두리의 양변이 되며, 두 가슴 별빛은 열린 앞쪽 모서리 두 곳으로 따로 빠져나간다.",
+      "distinctFrom": [
+        "Batch 017의 빈 옆자리 높이와 Batch 018의 커튼 끝·망토 지붕 대신 리깅 오버헤드와 크기가 다른 두 회전판을 사용한다.",
+        "Batch 019의 조명통 사이 저시점·아몬드형 빛 겹침·중앙 경계 맞추기를 반복하지 않고 서로 겹치지 않는 U자 빔과 열린 무대 앞면을 고정한다."
+      ],
+      "visualReviewFocus": [
+        "민들레 태양 갈기와 비뚤어진 종이 왕관의 해님이, 저울 귀와 파랑·분홍 실루엣의 고르미가 각각 자기 회전판에서 바뀌지 않는지",
+        "두 조명은 어느 한쪽을 가리거나 합쳐지지 않고 U자 테두리의 앞면과 별빛 두 끝이 열려 있어 공동 무대가 고정된 관계나 완성된 공연처럼 보이지 않는지"
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.love.first-signal.stella",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "d592d8196dc860a7830cda1a3f0ce226f71200d5c2d262c50113c04f820b62c7",
+      "imageStatus": "not_started",
+      "compositionFamily": "root_hollow_lowup_splitbeds_asymmetric_wreath_gap",
+      "artDirection": "두 화단 사이 작은 뿌리 굴 안에서 위를 올려다보는 낮은 시점이다. 왼쪽의 새봄이는 느슨한 리본이 묶인 삐뚤어진 별꽃을, 오른쪽의 차곡이는 높이가 다른 둥근 별꽃을 각자의 흙주머니에 심고 손을 서로 다른 줄기 아래에 둔다. 분리된 뿌리와 두 가슴 별빛은 중앙 빈 흙을 침범하지 않은 채 높이가 다른 꽃잎 호를 따라 비대칭 화관을 만들고, 오른쪽 위 한 송이 폭의 틈에서 끝난다.",
+      "distinctFrom": [
+        "Batch 017의 꽃받침 높이 단독 꽃과 Batch 018의 바구니 안 저시점·세 송이 묶음 대신 뿌리 굴 카메라와 분리된 두 흙주머니를 사용한다.",
+        "Batch 019의 꽃잎 틈 카메라·한 줄기 맞받기·빈 분류 틀을 반복하지 않고 서로 다른 꽃을 각자 심는 손과 뿌리 아래 음영이 만든 열린 비대칭 화관을 고정한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이의 새싹 귀·꽃받침 목과 차곡이의 송아지 실루엣·보라 앞머리가 유지되고 삐뚤어진 꽃과 둥근 꽃이 각각 한 송이씩 보이는지",
+        "두 꽃의 모양과 뿌리는 교정되거나 합쳐지지 않고 화관과 별빛은 완전한 왕관·실제 별자리 없이 오른쪽 위의 분명한 틈을 남기는지"
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.love.first-signal.stella",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "caea1819d866702035c2c06880532d9262e231cbc589fbea310351063d89b35c",
+      "imageStatus": "not_started",
+      "compositionFamily": "under_triangular_mobile_threependants_open_balance_orbit",
+      "artDirection": "속이 빈 삼각형 균형 모빌 아래에서 세 꼭짓점을 올려다본다. 왼쪽의 고르미는 푸른 별 추를, 오른쪽의 해님이는 금빛 별 추를 각자의 줄 끝에 걸고, 가운데 따뜻한 세 번째 별은 독립된 짧은 줄에서 자유롭게 흔들린다. 두 가슴 별빛은 모빌의 서로 다른 변을 따라가다 중앙 별 아래에서 간격을 맞춘 뒤, 삼각형의 비어 있는 아래 꼭짓점을 통과하는 두 열린 호로 갈라진다.",
+      "distinctFrom": [
+        "Batch 017의 저울 들보 아래 단일 추와 Batch 018의 바닥 길·두 받침·S자 리본 대신 삼각 모빌 아래 카메라와 세 개의 독립 현을 사용한다.",
+        "Batch 019의 저울 축 고리 창·공동 받침·세 번째 별 맞들기를 반복하지 않고 각자 건 별과 자유롭게 흔들리는 중앙 별, 비어 있는 아래 꼭짓점을 고정한다."
+      ],
+      "visualReviewFocus": [
+        "고르미의 저울 모양 긴 귀와 해님이의 태양 갈기·종이 왕관, 서로 다른 줄에 걸린 푸른 별·금빛 별·따뜻한 중앙 별이 구분되는지",
+        "모빌은 수평을 강요하는 저울이나 실제 별자리 도식이 아니고, 두 별빛 호와 삼각형 아래 꼭짓점이 닫히지 않아 각자의 빛과 다음 조절 가능성이 남는지"
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.love.first-signal.stella",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "2fcdac287ad01bdf2c40f1ad35190ee1b467a0d95e746c560d85fe96e1deebf0",
+      "imageStatus": "not_started",
+      "compositionFamily": "inside_starbox_corner_perpendicular_dualflaps_depthring_break",
+      "artDirection": "열린 별상자 바닥의 안쪽 모서리에서 서로 직각인 두 벽을 올려다본다. 안쪽 왼편 꼬옥이는 가까운 덮개를 자기 손으로 들고 하트 꼬리 끝을 작은 별등 곁에 두며, 바깥 오른편 달콩이는 다른 축의 덮개만 둥근 집게로 받친다. 두 가슴 별빛은 각자의 상자 벽에 깊이가 다른 끊긴 호를 그리고 모서리에서 이어 붙지 않은 채, 위쪽 대각선 출구 두 곳으로 따로 열린다.",
+      "distinctFrom": [
+        "Batch 017의 바닥 별등·등 뒤 인물과 Batch 018의 우산 아래 빈 반쪽 대신 별상자 내부 모서리와 직각인 두 덮개를 전경 구조로 사용한다.",
+        "Batch 019의 문 인방 탑다운·자물쇠 하나 풀기·경계 앞 별등을 반복하지 않고 상자 안팎의 두 개방 축과 서로 다른 벽에 남은 끊긴 깊이 호를 고정한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이의 자주색 몸·망토·하트 꼬리와 달콩이의 달집·둥근 집게가 상자 안팎에서 섞이지 않고 별등은 하나만 보이는지",
+        "각 수호령은 자기 덮개만 열고 두 광륜은 모서리에서 하나의 닫힌 고리·자물쇠 해제 완료·영구 개방처럼 합쳐지지 않는지"
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.love.first-signal.stella",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "6efd79cc0e44d2dbb06c4bfba546e1a7bca61d6705e2a7f905b61826ac0ff217",
+      "imageStatus": "not_started",
+      "compositionFamily": "birdseye_saddle_twintrails_waystar_open_refork",
+      "artDirection": "낮은 산등성이의 작은 안부를 새가 내려다보듯 비스듬한 고각으로 잡는다. 왼쪽 아래 길의 총총이와 오른쪽 아래 길의 오름이는 중앙 공동 별표 양쪽에 서로 다른 색의 둥근 경로 돌을 하나씩 놓고, 접힌 무문자 지도는 총총이의 가방 옆에 닫아 둔다. 두 가슴 별빛과 발자국 길은 별표 곁에서 잠깐 나란해진 뒤 위쪽의 서로 다른 열린 능선으로 다시 갈라지며 목적지나 도착 인물은 보이지 않는다.",
+      "distinctFrom": [
+        "Batch 017의 무릎 위 지도와 Batch 018의 망토 주머니 속 접힌 지도 대신 실제 산등성이를 내려다보는 고각과 두 외부 보행로를 사용한다.",
+        "Batch 019의 원통 지도 장축·귀환 기둥·차례로 놓는 경로 돌을 반복하지 않고 지도를 닫은 채 공동 별표에서 잠시 나란했다 다시 갈라지는 지형 길을 고정한다."
+      ],
+      "visualReviewFocus": [
+        "총총이의 구름 망아지·혜성 목도리·등 뒤 초승달 활과 오름이의 흰 바다염소 몸·아쿠아 꼬리가 서로 다른 길 위에서 유지되는지",
+        "공동 별표와 두 경로 돌에는 글자·좌표·실제 별자리·정해진 목적지가 없고 위쪽 두 길은 다시 선택할 수 있도록 서로 다른 프레임 끝으로 열리는지"
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.love.first-signal.stella",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "46b3071744b38b856139ab11423e3975f51bb3cd8854ba7e49ba912e201a0c33",
+      "imageStatus": "not_started",
+      "compositionFamily": "underlanding_wormeye_counterbrace_staggered_twinlanes",
+      "artDirection": "첫 공동 발판 아래에서 위쪽 달빛 계단 사이를 올려다보는 긴 벌레눈 시점이다. 왼쪽의 오름이는 발판 한쪽 받침못을, 오른쪽의 총총이는 반대쪽 고정띠를 각자 잡아 같은 첫 판을 수평으로 놓되 서로의 손이나 발을 붙들지 않는다. 두 가슴 별빛은 발판 위에서 잠깐 평행해졌다가 서로 다른 보폭의 디딤돌 두 줄을 따라 어긋난 높이로 오르고, 정상 없이 열린 상단 여백에서 각각 멈춘다.",
+      "distinctFrom": [
+        "Batch 017의 첫 돌 아래 옆시점과 Batch 018의 작업 망토 삼각 틈·나사 확인 대신 공동 발판 바로 아래 장축과 양쪽 받침 동작을 사용한다.",
+        "Batch 019의 발판 모서리 정면·상하 두 층·한 발 무게 시험을 반복하지 않고 같은 높이의 독립 손 두 개와 보폭이 다른 평행 계단 두 줄을 고정한다."
+      ],
+      "visualReviewFocus": [
+        "오름이의 흰 바다염소·아쿠아 꼬리와 총총이의 구름 망아지·혜성 목도리·등 뒤 활이 발판 양쪽에서 분명히 구분되는지",
+        "첫 발판만 함께 놓였고 그 위 두 계단 줄은 하나의 사다리·정상·보장된 도착으로 합쳐지지 않으며 서로 다른 보폭과 열린 상단을 유지하는지"
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.love.first-signal.stella",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "012372f7f1238af3ba1324bd44f0f13a0bcca5628195286e4f0a146603e14a72",
+      "imageStatus": "not_started",
+      "compositionFamily": "cloudgarden_overhead_twinbottle_channels_emptycenter_gap",
+      "artDirection": "둥근 구름 정원을 바로 위에서 내려다보고, 왼쪽의 방울이와 오른쪽의 차곡이는 서로 다른 작은 화단에 각자의 마음병을 세운다. 파란 병의 열린 물결과 따뜻한 병의 점 두 개는 글자 없는 별빛 수로를 각자 흐르며 중앙의 비어 있는 화분 둘레 한쪽에서만 나란해졌다가 다시 자기 화단으로 열린다. 두 가슴 별빛은 정원 바깥선을 완전히 두르지 않고 아래쪽 출입구 폭만큼 비워 둔다.",
+      "distinctFrom": [
+        "Batch 017의 빈자리 시점·파란 병 하나와 Batch 018의 코트 주머니·병 밖 파문 막대 대신 구름 정원 완전 오버헤드와 두 개의 독립 화단을 사용한다.",
+        "Batch 019의 새 투명 병 렌즈·빈 이름표 슬리브·양쪽 표식 삽입을 반복하지 않고 서로 다른 병과 중앙의 빈 화분을 우회하는 두 열린 수로를 고정한다."
+      ],
+      "visualReviewFocus": [
+        "방울이의 물결 귀·하늘색 몸·별물방울과 차곡이의 커스터드 송아지 실루엣·보라 앞머리가 각자 화단에서 바뀌지 않는지",
+        "병·수로·화분에는 읽을 수 있는 이름표나 문장이 없고 두 흐름과 정원 외곽은 합쳐진 색·닫힌 별자리 정원 없이 중앙 빈자리와 아래 출입구를 남기는지"
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.love.first-signal.stella",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "1a2f72361c5edec37b89604ce65c79dcce215f74b22a21d4ec01ddf5d466009c",
+      "imageStatus": "not_started",
+      "compositionFamily": "inside_open_watercircle_countercurrents_singlefinhinge",
+      "artDirection": "넓은 별빛 물살 원의 비어 있는 가운데에서 바깥 둘레를 바라보는 방사형 시점이다. 큰 아쿠아 꿈별이는 왼쪽 앞 물살, 작은 분홍 잠별이는 오른쪽 뒤 물살을 서로 반대 방향으로 헤엄치며 중앙 가까운 지느러미 끝만 한 번 가볍게 맞댄다. 두 가슴 별빛과 각자의 색을 지닌 물살은 몸을 합치지 않고 넓은 원 가장자리를 돌아 오른쪽 위의 한 수호령 폭만큼 비운 틈에서 끝나며, 작은 별방울 하나는 접점 위에만 뜬다.",
+      "distinctFrom": [
+        "Batch 017의 별방울 높이 근접·수평 지느러미와 Batch 018의 물결 아래 대각선 쌍·U자 빛줄기 대신 빈 원 중심 방사형 카메라와 서로 반대인 둘레 물살을 사용한다.",
+        "Batch 019의 중앙 거품 기둥·상하 어긋난 두 전신·수직 응답 축을 반복하지 않고 한 점의 지느러미 접촉에서 바깥으로 도는 넓은 색 분리 원과 오른쪽 위 틈을 고정한다."
+      ],
+      "visualReviewFocus": [
+        "큰 아쿠아 꿈별이와 작은 분홍 잠별이의 정본 색·상대 크기·쌍둥이 지느러미·연결 궤도가 유지되고 제3의 물고기나 중복 몸이 없는지",
+        "지느러미 끝 한 점 외에는 몸과 물살이 합쳐지지 않고 넓은 원은 실제 별자리·영원한 결속·무한대 기호 없이 오른쪽 위의 명확한 틈으로 열리는지"
+      ]
+    }
+  ]
+}
