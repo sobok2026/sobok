@@ -3,7 +3,7 @@
   "locale": "ko",
   "contentType": "image/webp",
   "cacheControl": "public, max-age=31536000, immutable",
-  "assetCount": 213,
+  "assetCount": 225,
   "assets": [
     {
       "editionId": "aquarius.choice.evidence.shared-world",
@@ -11,6 +11,15 @@
       "sourceArtworkSha256": "ca71a40ac3852b5ffcc8c13fe859c6018e0c2b808503680c8ffe041310c76faa",
       "deliveryArtworkSha256": "751e0fb01968b580e5c0d52cae2cbfc3369dc5a32c4f259466399486dcf1aa45",
       "byteSize": 208420,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aquarius.love.first-signal.nebula",
+      "objectKey": "guardian-cards/ko/aquarius.love.first-signal.nebula.webp",
+      "sourceArtworkSha256": "c065398d5d99faff483c9c30594e0522729c0d0756a846ef99fe38bc595659c1",
+      "deliveryArtworkSha256": "93cca7f95783209cbf2e1f0e6dfb265e6d8033a2c7c2b733025588fe9b2d4f0c",
+      "byteSize": 103552,
       "width": 1080,
       "height": 1440
     },
@@ -164,6 +173,15 @@
       "sourceArtworkSha256": "a687c2d7f3ca5a99da21b692dd844a5fd21b1bb0d18a84677c40f87b82ce7f05",
       "deliveryArtworkSha256": "57ffa01551759e01e704e247b912cada0d73ff64f2b3f19581231c139f88894c",
       "byteSize": 291176,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aries.love.first-signal.nebula",
+      "objectKey": "guardian-cards/ko/aries.love.first-signal.nebula.webp",
+      "sourceArtworkSha256": "177b12ff4713dbc04e9b8550521d6284ec9284560b548c63cd829974cd3b7193",
+      "deliveryArtworkSha256": "45e20de76e6ae23d935d6839857a3a363f40f85ae13cec0c55c0868ca7ebbd52",
+      "byteSize": 171766,
       "width": 1080,
       "height": 1440
     },
@@ -330,6 +348,15 @@
       "height": 1440
     },
     {
+      "editionId": "cancer.love.first-signal.nebula",
+      "objectKey": "guardian-cards/ko/cancer.love.first-signal.nebula.webp",
+      "sourceArtworkSha256": "e118c069fbc6966bad7a33508224944ef4399ab8f738cb252ccb5b8da83985ad",
+      "deliveryArtworkSha256": "891665a5e304ae0f115b72c79ad84eac406690fdd8be83608c76d83b1aabb024",
+      "byteSize": 171876,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "cancer.love.first-signal.orbit",
       "objectKey": "guardian-cards/ko/cancer.love.first-signal.orbit.webp",
       "sourceArtworkSha256": "88f16d52ab7ef5f843598459f0cef63472f2181cd38533f8d7d9a70ead5ad7f7",
@@ -479,6 +506,15 @@
       "sourceArtworkSha256": "71aa921f5823e61f675e30fbdc19a74108092d0533011f16f86e0c8eb30c6992",
       "deliveryArtworkSha256": "596d055fc35990b9ebf594732123ae8ebea07f40158893b6831d7a9bf6c33e68",
       "byteSize": 257518,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "capricorn.love.first-signal.nebula",
+      "objectKey": "guardian-cards/ko/capricorn.love.first-signal.nebula.webp",
+      "sourceArtworkSha256": "044a73531da102e762c3a08f3183e86272361a20e47518dc96f1bf7db555b706",
+      "deliveryArtworkSha256": "e7d9a3258c2814b3da7f2986fa829fcd410aefdef07a231dafb866e7402a3862",
+      "byteSize": 156138,
       "width": 1080,
       "height": 1440
     },
@@ -645,6 +681,15 @@
       "height": 1440
     },
     {
+      "editionId": "gemini.love.first-signal.nebula",
+      "objectKey": "guardian-cards/ko/gemini.love.first-signal.nebula.webp",
+      "sourceArtworkSha256": "e75c309e55ddb1275be74654661634837db6a6767d778fecdb637be72edcb7be",
+      "deliveryArtworkSha256": "fd70728250f1ff3c20231e126d28737a1f033f44e6e1ecaae7d697156a982667",
+      "byteSize": 167354,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "gemini.love.first-signal.orbit",
       "objectKey": "guardian-cards/ko/gemini.love.first-signal.orbit.webp",
       "sourceArtworkSha256": "275d4c334cce0b15c584b85b7ff2321b0f766ae6dd52e9da32a5a12f90b2f54b",
@@ -794,6 +839,15 @@
       "sourceArtworkSha256": "2f7df37a9a46f05c0348975f0d850ffb7928e41585fa6d8e1459769a1d348cde",
       "deliveryArtworkSha256": "b71aadadfcf8d038f47f3896b1bf89d7d4a7b65a27add6ada37e19a5c183736d",
       "byteSize": 101306,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "leo.love.first-signal.nebula",
+      "objectKey": "guardian-cards/ko/leo.love.first-signal.nebula.webp",
+      "sourceArtworkSha256": "d53d4908973ab682ccd4586beb017c8987c349259a30474d87a7628399d93ed2",
+      "deliveryArtworkSha256": "517ff013d523b4430d9f639a655e96f2be4a721cd43b76471bd6e281c3ec658d",
+      "byteSize": 149850,
       "width": 1080,
       "height": 1440
     },
@@ -960,6 +1014,15 @@
       "height": 1440
     },
     {
+      "editionId": "libra.love.first-signal.nebula",
+      "objectKey": "guardian-cards/ko/libra.love.first-signal.nebula.webp",
+      "sourceArtworkSha256": "01d58be260708b789945c1e973fe644f4b61d9e157126349d07dad62d9f0e73e",
+      "deliveryArtworkSha256": "677d7f676c3ae6d4ee5c8216d918ca76434a77b37b293cffa5dfac0a586f3599",
+      "byteSize": 256632,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "libra.love.first-signal.orbit",
       "objectKey": "guardian-cards/ko/libra.love.first-signal.orbit.webp",
       "sourceArtworkSha256": "52c210e6035190fdb6001ae42a5055ff5ecb10765b72c67d76341918b4ac7083",
@@ -1109,6 +1172,15 @@
       "sourceArtworkSha256": "0546048c0ff9959432ed40da1615fc05948ca7c4bc6cbab5adad67647f79ca38",
       "deliveryArtworkSha256": "bcf013c88f93ef93e3293013d157079b2ad56f758d57d892e76f3cd7d6b9bd79",
       "byteSize": 192204,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "pisces.love.first-signal.nebula",
+      "objectKey": "guardian-cards/ko/pisces.love.first-signal.nebula.webp",
+      "sourceArtworkSha256": "f4dab7c4fb4622fd1fbadd705d2386f8344450a5504c52e5646f2af1baf55c6b",
+      "deliveryArtworkSha256": "e177e072204d3163eeeb77771b43f0bc54c7ce5a935c3cf7ad648eef5a1636f1",
+      "byteSize": 230686,
       "width": 1080,
       "height": 1440
     },
@@ -1284,6 +1356,15 @@
       "height": 1440
     },
     {
+      "editionId": "sagittarius.love.first-signal.nebula",
+      "objectKey": "guardian-cards/ko/sagittarius.love.first-signal.nebula.webp",
+      "sourceArtworkSha256": "113a674aa3f2408243fa1df5fa85a3b1c0b1c08ba088f5b74c32ddbcb6a98f5e",
+      "deliveryArtworkSha256": "60e5b5cec64030d9524003a6acdbb32734e2d3aa5be727094ba19c5ae5a20850",
+      "byteSize": 291208,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "sagittarius.love.first-signal.orbit",
       "objectKey": "guardian-cards/ko/sagittarius.love.first-signal.orbit.webp",
       "sourceArtworkSha256": "95b6580b1ba49579cea498b9a4649909a48e8d3b8daf4baf2ecc4cad67a91f53",
@@ -1433,6 +1514,15 @@
       "sourceArtworkSha256": "b50d18894669df3bf5b2455aa0381da7e5f9bac4527509b8ede1c566ab0b2a90",
       "deliveryArtworkSha256": "052f3691048ca31e327588da61d05378f0a5175a2ab3b8bb737f3e1e83da239a",
       "byteSize": 214872,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "scorpio.love.first-signal.nebula",
+      "objectKey": "guardian-cards/ko/scorpio.love.first-signal.nebula.webp",
+      "sourceArtworkSha256": "eb162196767444c64cdb8a53b99667108e68ad2eed2a311d3ffd46c036cd0a81",
+      "deliveryArtworkSha256": "e94d687d471bdd42a5343689d565c52036a5c9e8c6c3df8750046c08c4826f75",
+      "byteSize": 153182,
       "width": 1080,
       "height": 1440
     },
@@ -1599,6 +1689,15 @@
       "height": 1440
     },
     {
+      "editionId": "taurus.love.first-signal.nebula",
+      "objectKey": "guardian-cards/ko/taurus.love.first-signal.nebula.webp",
+      "sourceArtworkSha256": "c1df35eb9b8add942c290af2b22bce15132e1e9fd652f3a08ef83537b47bd37a",
+      "deliveryArtworkSha256": "22ad686391dde0b7f7c4cf465417dc4e8d14c5df838d89ee4671746f7ca3a9dc",
+      "byteSize": 243756,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "taurus.love.first-signal.orbit",
       "objectKey": "guardian-cards/ko/taurus.love.first-signal.orbit.webp",
       "sourceArtworkSha256": "f50a7554c577f97ddd9dc1b0405c7f158d8fb93cf8659f94181cd3a4d2f6d61d",
@@ -1757,6 +1856,15 @@
       "sourceArtworkSha256": "5f54e8228fd45f5e8720ddfd6b8783b7f38bbd88d9484690661fe33538579a33",
       "deliveryArtworkSha256": "c42e2e7c8cef1ba29cf6b7b5b20605e835e405d2ead5318c600042865a71f595",
       "byteSize": 206316,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "virgo.love.first-signal.nebula",
+      "objectKey": "guardian-cards/ko/virgo.love.first-signal.nebula.webp",
+      "sourceArtworkSha256": "ba408d493c85b7b304a4d29662583d92de27c3ca2b9da7d74236d327b2599822",
+      "deliveryArtworkSha256": "2731f5e42c3c6a10a92cb8c7abcbfcb5bba9163eed303d8b5ee0ff933d50931b",
+      "byteSize": 106302,
       "width": 1080,
       "height": 1440
     },
