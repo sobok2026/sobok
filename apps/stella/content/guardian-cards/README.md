@@ -39,6 +39,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-018-review-ko.json`    | `visual_review_complete` | 열여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-019-review-ko.json`    | `visual_review_complete` | 열아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-020-review-ko.json`    | `visual_review_complete` | 스무 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-021-review-ko.json`    | `editorial_review_ready` | 스물한 번째 production 배치 신규 12개 Orbit 속도 조절 구도 편집 승인 대기     |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 249개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -548,6 +549,17 @@ Git에 포함하지 않는 `apps/stella/private/guardian-art-production/love-fir
 최종 시각 승인을 마쳤다. 승인 원본의 SHA-256은 검수 파일과 누적 249개 WebP 매니페스트에 고정하며 환경별
 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
 
+스물한 번째 배치는 `love.careful-approach` 원고를 `orbit` 희귀도로 제작할 신규 12개 편집 검수안이다.
+`production-art-batch-021-review-ko.json`에 현재 원고의 canonical SHA-256과, 중심 수호령이 자기 속도만
+조절한 뒤 상대의 선택을 기다리는 되돌릴 수 있는 근접 행동을 고정했다. 되돌아온 발과 보폭 띠, 온도를
+맞춘 두 찻잔 받침, 말하기 발판 사이 빈 쉼판, 달집 이음매의 한 집게 폭, 세 밝기 사이 중간 원, 빈 단계
+탭과 내려놓은 연필, 두 보폭 리본 사이 탈착식 발판, 잠긴 문 앞 거리 집게, 두 시간 띠의 독립 별클립,
+겹친 일정 레일의 반쯤 놓인 발판, 단일 파동 뒤 빈 되돌림 홈, 옆으로 본 열린 장력 호처럼 서로 다른
+속도 조절 소품·카메라 높이·응답 여백을 사용한다. 쌍둥이자리와 물고기자리는 정본 내부 쌍만 배치하고,
+나머지는 지정된 수호령 하나만 배치한다. 상대의 몸·손·그림자·이미 온 답은 그리지 않으며 비어 있는
+홈이나 추상 표식도 관계 성사·기다림 통과·미래 약속으로 만들지 않는다. 사람의 최종 편집 승인 전에는
+imagegen 입력과 신규 PNG 후보를 만들지 않으며 누적 승인 WebP 249개와 잔여 807개 산식도 바뀌지 않는다.
+
 ## 검증
 
 repository root에서 다음 명령을 실행한다.
@@ -581,6 +593,8 @@ bun --filter=@sobok/stella guardian-cards:validate
 - 스무 번째 production 배치 신규 12개 원고 해시와 함께 만든 다음 단계를 다시 선택할 수 있게 여는
   Stella 고유 구도, Orbit·Nebula·Eclipse·앞선 별자리 여운 비반복 및 사람의 시각 승인 전 배포 후보 확정
   차단
+- 스물한 번째 production 배치 신규 12개 원고 해시와 상대를 화면에 확정하지 않는 되돌릴 수 있는 속도
+  조절 행동, 첫 신호 Orbit·앞선 근접 장면 비반복 및 사람의 편집 승인 전 신규 이미지 제작 차단
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 249개를 제외한 현재 잔여
   807개 산식
