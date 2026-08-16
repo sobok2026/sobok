@@ -1714,28 +1714,6 @@
   grid-template-columns: repeat(4, 1fr);
 }
 
-.ending-rank {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 14px;
-  color: #789098;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-}
-
-.ending-rank b {
-  color: var(--ember-bright);
-  font-family: Georgia, serif;
-  font-size: 29px;
-  line-height: 1;
-}
-
-[data-ending='lost'] .ending-rank b {
-  color: var(--frost);
-}
-
 .ending-stats {
   grid-template-columns: repeat(3, 1fr);
 }
@@ -13547,6 +13525,124 @@
   }
 }
 
+.ending-arrival-seals {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin: 17px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.ending-arrival-seals li {
+  --arrival-rgb: 255, 184, 99;
+  --arrival-delay: 120ms;
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 76px;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+  padding: 10px;
+  border: 1px solid rgba(var(--arrival-rgb), 0.3);
+  background: radial-gradient(circle at 4% 20%, rgba(var(--arrival-rgb), 0.14), transparent 38%), rgba(3, 13, 18, 0.82);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.035);
+  animation: ending-arrival-seal-in 460ms var(--arrival-delay) cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.ending-arrival-seals li:nth-child(2) {
+  --arrival-delay: 220ms;
+  --arrival-rgb: 112, 210, 229;
+}
+
+.ending-arrival-seals li:nth-child(3) {
+  --arrival-delay: 320ms;
+  --arrival-rgb: 139, 177, 183;
+}
+
+.ending-arrival-seals li[data-earned='true'] {
+  --arrival-rgb: 103, 233, 187;
+}
+
+.ending-screen[data-ending='lost'] .ending-arrival-seals li[data-seal='ending'] {
+  --arrival-rgb: 111, 210, 228;
+}
+
+.ending-arrival-seals li::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 28%, rgba(var(--arrival-rgb), 0.16) 48%, transparent 68%);
+  content: '';
+  transform: translateX(-130%);
+  animation: ending-arrival-seal-glint 680ms calc(var(--arrival-delay) + 180ms) ease-out both;
+  pointer-events: none;
+}
+
+.ending-arrival-seals li > i {
+  display: grid;
+  width: 40px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid rgba(var(--arrival-rgb), 0.38);
+  background: rgba(var(--arrival-rgb), 0.07);
+  color: rgb(var(--arrival-rgb));
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 18px;
+  font-style: normal;
+}
+
+.ending-arrival-seals li > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.ending-arrival-seals small {
+  color: rgba(var(--arrival-rgb), 0.82);
+  font-size: var(--text-micro);
+  font-weight: 820;
+  letter-spacing: 0.07em;
+}
+
+.ending-arrival-seals strong {
+  overflow: hidden;
+  color: #f3ebe0;
+  font-size: var(--text-body);
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ending-arrival-seals b {
+  overflow: hidden;
+  color: #8fa5a8;
+  font-size: var(--text-label);
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes ending-arrival-seal-in {
+  from {
+    opacity: 0;
+    transform: translateY(9px) scale(0.985);
+  }
+}
+
+@keyframes ending-arrival-seal-glint {
+  0% {
+    transform: translateX(-130%);
+  }
+
+  100% {
+    transform: translateX(130%);
+  }
+}
+
 .ending-session-handoff {
   --handoff-rgb: 111, 210, 228;
   display: grid;
@@ -13564,7 +13660,7 @@
     0 18px 54px rgba(0, 0, 0, 0.3),
     inset 0 1px rgba(255, 255, 255, 0.04);
   text-align: left;
-  animation: ending-session-handoff-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: ending-session-handoff-in 420ms 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .ending-session-handoff[data-action='rematch'] {
@@ -13664,11 +13760,29 @@
   background: #06151b;
 }
 
+.game-shell[data-contrast='high'] .ending-arrival-seals li {
+  border-color: rgb(var(--arrival-rgb));
+  background: #06151b;
+}
+
 .game-shell[data-contrast='high'] .ending-session-handoff p {
   color: #d7e5e6;
 }
 
 @media (max-width: 620px) {
+  .ending-arrival-seals {
+    grid-template-columns: 1fr;
+  }
+
+  .ending-arrival-seals li {
+    min-height: 60px;
+    padding: 8px 10px;
+  }
+
+  .ending-arrival-seals li > i {
+    height: 42px;
+  }
+
   .ending-session-handoff {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -13684,7 +13798,14 @@
   animation: none;
 }
 
+.game-shell[data-motion='reduced'] .ending-arrival-seals li,
+.game-shell[data-motion='reduced'] .ending-arrival-seals li::after {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .ending-arrival-seals li,
+  .ending-arrival-seals li::after,
   .ending-session-handoff {
     animation: none;
   }
@@ -14868,7 +14989,6 @@
 .relic-options > button > b,
 .relic-card > footer,
 .story-report span,
-.ending-rank,
 .event-body > header > div > span,
 .event-body > header > b,
 .event-choices > button > span,

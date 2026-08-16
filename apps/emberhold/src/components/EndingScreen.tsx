@@ -298,9 +298,6 @@ export function EndingScreen({
         <span className="ending-mark" aria-hidden="true">
           <b>{currentEnding.glyph}</b>
         </span>
-        <span className="ending-rank">
-          원정 등급 <b>{expeditionRankLabel}</b>
-        </span>
         <h2 id="ending-title" data-autofocus="true" tabIndex={-1}>
           {currentEnding.title}
         </h2>
@@ -309,6 +306,32 @@ export function EndingScreen({
           <p>“{currentEnding.epilogue}”</p>
           <cite>— {currentEnding.witness}</cite>
         </blockquote>
+        <ul className="ending-arrival-seals" aria-label="이번 원정에 확정된 결말과 귀환 보상">
+          <li data-seal="ending">
+            <i aria-hidden="true">{currentEnding.glyph}</i>
+            <div>
+              <small>ENDING SEALED</small>
+              <strong>{currentEnding.title}</strong>
+              <b>{endingWon ? '마지막 새벽 기록 완료' : `ACT ${currentActNumber} 생존 기록 보존`}</b>
+            </div>
+          </li>
+          <li data-seal="rank">
+            <i aria-hidden="true">{expeditionRankLabel}</i>
+            <div>
+              <small>FINAL RANK</small>
+              <strong>{expeditionRankLabel} 등급 확정</strong>
+              <b>명성 {game.score.toLocaleString('ko-KR')}</b>
+            </div>
+          </li>
+          <li data-earned={game.legacyReward > 0 ? 'true' : 'false'} data-seal="reward">
+            <i aria-hidden="true">{game.legacyReward > 0 ? '✦' : '◇'}</i>
+            <div>
+              <small>LEGACY BANKED</small>
+              <strong>{game.legacyReward > 0 ? `+${game.legacyReward} 불씨` : '귀환 기록 보존'}</strong>
+              <b>현재 보유 {meta.embers} 불씨</b>
+            </div>
+          </li>
+        </ul>
         <section
           className="ending-session-handoff"
           data-action={handoffAction.id}
