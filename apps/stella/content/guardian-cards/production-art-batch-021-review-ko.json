@@ -1,7 +1,15 @@
 {
-  "status": "visual_review_ready",
+  "status": "visual_review_complete",
   "editorialApprovedOn": "2026-08-16",
   "generatedOn": "2026-08-16",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-16",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
   "locale": "ko",
   "batchId": "love.careful-approach.orbit",
   "batchOrder": 21,
@@ -58,7 +66,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "b98f4b28a919b6c566d6f6c1c48571f06a49e1346cf2333c24eae27351f689af",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "85dd26277e44231555c3c82d794e145c36543aae99d82248d48f2a11a956dc0e",
       "compositionFamily": "heelheight_returnstep_stridecomb_pausebead",
       "artDirection": "글자와 숫자가 없는 짧은 보폭 띠를 발꿈치 높이에서 옆으로 가깝게 본다. 몽실이는 띠 뒤쪽의 촘촘한 세 발자국에서 출발점 쪽으로 한 발 돌아선 자세로, 앞발 하나를 별구슬이 멈춘 홈 곁의 새 발자국 자리에 천천히 내려놓는다. 상대의 몸이나 발 대신 간격이 긴 빈 타원 홈 하나만 옆줄에 남기고, 혜성 깃발은 접어 화면 아래에 눕혀 직진보다 되돌아와 맞추는 한 박자를 중심에 둔다.",
       "distinctFrom": [
@@ -78,7 +87,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "ad6033fa683ae244285351704df79d3d405efb45488979d0566a9621b2d12246",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "56381df01d41c37a10b02c6ff422718451b92e780abe843053b2849aaa5963ac",
       "compositionFamily": "floorlevel_twin_warmingnests_steamgauge_cupslide",
       "artDirection": "둥근 코르크 보온 받침 두 개를 바닥 높이에서 앞뒤로 엇갈려 가깝게 본다. 차곡이는 가까운 자기 별찻잔만 초승달 홈 한 칸 앞으로 미는 중이고, 먼 찻잔은 손대지 않은 채 같은 높이의 짧은 김 세 줄과 손잡이 곁의 비어 있는 응답 홈만 보인다. 식탁·의자·상대 손·별쿠키 없이 두 잔의 온도와 아직 끝까지 닿지 않은 받침 사이 틈으로 기다린 뒤 움직이는 속도를 보여 준다.",
       "distinctFrom": [
@@ -98,7 +108,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "5b028ec70dfaa65463e0bbf1592d072243f1f828842a2d9c06a0da5fcf60bf4d",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "df17d57922d70bb8f0a899108305ff82c5e9b4852acca3ee27ccd50132fb3769",
       "compositionFamily": "anklelevel_zigzag_turntiles_blankpause_cadence",
       "artDirection": "두 걸음마다 방향이 살짝 꺾이는 낮은 별발판 띠를 발목 높이의 사선으로 가깝게 본다. 큰 재잘이는 점 두 개가 있는 앞 발판에서 입을 막 다문 자세로 멈추고, 작은 소곤이는 열린 곡선 하나가 있는 뒤 발판에서 가운데의 무표식 초승달 쉼판을 바라본다. 정본 연결 리본은 발판 바깥을 느슨하게 지나며, 편지·책·말풍선 없이 서로 다른 추상 표식 두 개와 비어 있는 듣기 판으로 번갈아 말하는 보폭을 만든다.",
       "distinctFrom": [
@@ -118,7 +129,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "459641d609a47dd1115322bae721f1bd1922de95a9de1ec7b4d7eda7e3a84743",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "852789dfc8cbc629256344341955de4b41a221539343651df63f804366803f5d",
       "compositionFamily": "shellseam_macro_crescent_iris_singleclaw_responsegap",
       "artDirection": "달집 외벽의 둥근 이음매를 화면 한쪽의 커다란 초승달 곡선으로 자른 극근접 장면이다. 안쪽 달콩이는 얼굴과 몸을 집 안에 둔 채 정확히 한 집게만 직물 셔터의 작은 틈 밖으로 내밀고, 다른 집게는 안쪽 당김끈을 잡아 틈의 폭을 조절한다. 바깥에는 상대 대신 한 몸 길이 앞의 빈 별구슬 홈만 두며, 직사각형 문·창·문턱 없이 집게 끝과 홈 사이의 가변 간격을 중심에 둔다.",
       "distinctFrom": [
@@ -138,7 +150,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "08ed83066a04bb5cda4b4c1e9ef4067b804912513b4f94ad9fe40de382d8c785",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "577d2a8caa0bd144d8958602d5c0d76564d17c4b935c6d16efa4c13bd807d635",
       "compositionFamily": "shoulderclose_threewell_dimmer_middlelight_responseslot",
       "artDirection": "해님이의 어깨와 한 손, 부채꼴 밝기판을 눈높이에서 비스듬히 가깝게 잡는다. 판의 양끝에는 강한 금빛 원과 약한 보랏빛 원이 떨어져 있고, 해님이는 자기 쪽 작은 손잡이만 움직여 가운데의 중간 밝기 반투명 원을 막 켠 뒤 반대편의 빈 응답 홈을 바라본다. 무대·객석·조명통·다른 인물 없이 세 밝기 원과 멈춘 손으로 함께 설 강도를 묻는 순간을 남긴다.",
       "distinctFrom": [
@@ -158,7 +171,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "dba4b2800d2c53d9c3d615b2b47c5dbb3a8429944eeb178020394dac1e6ffce0",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "3aabc9abf086d9643232398d1e943814e8df4c77a90d18658045473a6ef27e3f",
       "compositionFamily": "pencilferrule_macro_sidefold_blanksteptab",
       "artDirection": "관계 단계 띠를 한 번 세워 접은 옆면과 연필의 금속 끝을 같은 높이에서 크게 본다. 새봄이는 도형 표시가 있는 앞 단계들에서 손을 완전히 떼고, 마지막의 아무 표시 없는 네모 탭 옆 홈에 연필을 가로로 내려놓되 뾰족한 끝은 빈칸 반대쪽을 향하게 한다. 책상 전체·지우개·꽃·상대 손 없이 세워진 종이 모서리, 비어 있는 탭, 쓰지 않은 연필 사이의 작은 그늘로 고치지 않고 기다리는 시간을 만든다.",
       "distinctFrom": [
@@ -178,7 +192,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "7ad30da79246d3cd63a7da84bdd8f2607799fabb21b3492cb8c2a585c47a23c9",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "e9a01cb8d013af91282d7405a76adbc50aa93e4fccfc0566caf5f8a3c6af5146",
       "compositionFamily": "oblique_stride_ribbons_removable_middlepad_openjoin",
       "artDirection": "간격이 짧은 보폭 리본과 긴 보폭 리본을 바닥에 평행하게 두고 무릎 높이에서 비스듬히 가깝게 본다. 고르미는 두 리본 사이 빈 구간에 폭신한 중간 발판을 내려놓지만 어느 쪽에도 잠그지 않고, 발판 양끝의 결합 홈은 모두 비운 채 자기 손을 막 떼려 한다. 저울·접시·추·다른 발 없이 서로 다른 간격의 홈 두 줄과 움직일 수 있는 가운데 발판으로 합의할 속도를 열어 둔다.",
       "distinctFrom": [
@@ -198,7 +213,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "5d505f1c1d803538d7059c52b581c6ef771277a1a5f7b17a200fe589270ebf34",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "704424a91556f9dca052f43dd805659a8c635deefbb244e172741a0c9368ca4e",
       "compositionFamily": "floormacro_spacingclip_croppedlatch_waitline",
       "artDirection": "바닥 가까이에서 잠긴 문짝을 화면 오른쪽 끝의 얇은 세로 띠로만 잘라 본다. 꼬옥이는 문선에 부드러운 U자 거리 집게 한쪽 끝만 닿게 내밀고 자기 몸은 정확히 집게 한 폭 뒤의 짧은 선에서 멈추며, 봉인된 걸쇠는 위쪽 잘린 모서리에 닫힌 채 남긴다. 문 너머에는 인물·손·그림자 없이 비어 있는 작은 응답 홈 하나만 두고, 하트 꼬리는 꼬옥이 몸 곁에 감아 기다릴 수 있는 거리를 지킨다.",
       "distinctFrom": [
@@ -218,7 +234,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "d5c3db4de148ab4d098441d1144cdd120c336d9f6db7ca6a9ff2c4d6ce77e614",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "3100a54ea58b3df6ef3b009adcb6a749d8419ec45f8723c5ddcb3d25dabb172e",
       "compositionFamily": "saddlecloth_close_dual_timebands_freedomclips",
       "artDirection": "총총이의 여행 안장천 위를 어깨 너머에서 가깝게 내려다보고, 천을 가로지르는 짧은 시간 띠 두 줄만 중심에 둔다. 위 띠에는 나란한 점 두 개, 아래 띠에는 열린 초승달 하나만 반복하며 총총이는 서로 묶이지 않은 별클립을 각 띠의 첫 빈 홈 곁에 하나씩 놓는다. 접힌 무문자 지도는 화면 끝에 작은 모서리만 남기고, 활은 등에 고정해 함께 걷는 시간과 혼자 탐험할 시간을 출발 전에 분리한다.",
       "distinctFrom": [
@@ -238,7 +255,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "d1bfa929dfcd3af4046f631aa07e1668d38626ac1da28e5744777fff9efcf1af",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "a47e00614c827b4e85ff21eeb2505045196d3c5ff8e8e1f812007570a7be8b3f",
       "compositionFamily": "sideprofile_overlap_timetrails_doublewidth_landing",
       "artDirection": "서로 다른 높이와 간격으로 꺾인 두 일정 레일이 잠깐 겹치는 한 구간을 옆 단면으로 가깝게 본다. 오름이는 겹친 홈 사이에 두 발 폭의 나란한 발판을 절반만 밀어 넣고, 잠금 못은 빈 구멍 옆에 내려둔 채 두 레일의 다음 칸을 모두 프레임 밖으로 남긴다. 계단 전체·정상·상대 발 없이 기호 점만 있는 두 레일, 반쯤 놓인 공동 발판, 손을 멈춘 오름이로 실제 시간과 에너지가 만나는지 확인한다.",
       "distinctFrom": [
@@ -258,7 +276,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "9488ab56c3b94024ebc3aa6d7f8c7097dca69004eea53a784ea965db4c304440",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "159dab3544230b15ed39dd64435e03fa55486ebf6ec56e5164d4fedef405c75d",
       "compositionFamily": "surfacelevel_singlewave_echodish_blankreturnslot",
       "artDirection": "얕은 별모양 울림 접시의 수면 높이에서 방울이의 얼굴과 멈춘 병 기울기를 가깝게 본다. 화면 한쪽에 일부만 보이는 마음병 주둥이에서 파란 열린 파동 하나만 접시로 건너가고, 방울이는 더 따르지 않은 채 반대편의 비어 있는 되돌림 홈을 바라본다. 탁자·이름표·두 번째 병·상대 손 없이 한 파동, 잔잔한 접시, 아무 표시 없는 빈 홈으로 이해한 뜻이 돌아올 시간을 남긴다.",
       "distinctFrom": [
@@ -278,7 +297,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "0198a64d72878ad399fb256cf6b5c57f05559295b466e1308d5a2c1c45190794",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "37cd5471179cde22c28df044a6501a6d9d5713af090d0aa297709a24f87ae45f",
       "compositionFamily": "sidecurrent_openclasp_tensionarc_alternate_testtabs",
       "artDirection": "서로 반대 방향으로 흐르는 두 얕은 물살 사이를 옆 단면으로 가깝게 본다. 큰 아쿠아 꿈별이는 앞쪽 물살에서 정본 연결 궤도의 열린 장력 탭 하나를 가볍게 누르고, 작은 분홍 잠별이는 뒤쪽 물살에서 반대 탭 위 지느러미를 멈춘 채 당김을 살핀다. 궤도는 정면 원이 아니라 화면을 비스듬히 가로지르는 짧은 별빛 호로 보이며 가운데 잠금쇠의 두 끝을 벌려, 번갈아 확인할 수 있는 느슨한 연결만 남긴다.",
       "distinctFrom": [
