@@ -18,6 +18,7 @@ import type {
   Unit,
 } from './game-model'
 import {
+  BOSS_MECHANICS,
   ENEMY_DOCTRINES,
   FINAL_CROWN_REQUIRED_SEALS,
   FINAL_CROWN_SEALS,
@@ -328,6 +329,7 @@ type FinalMarchGateView = {
   glyph: string
   label: string
   lesson: string
+  crownPreparation: string
   doctrine: keyof typeof ENEMY_DOCTRINES
 }
 
@@ -440,6 +442,36 @@ export function BattleResultDialog({
     ? (FIRST_CROWN_MARCH.find((stage) => stage.night === firstCrownMarchResult.night + 1) ?? null)
     : null
   const nextFirstCrownStory = nextFirstCrownStage ? NIGHT_STORIES[nextFirstCrownStage.night - 1] : null
+  const nextFinalMarchStory = finalMarchGate && game.day < MAX_NIGHTS ? NIGHT_STORIES[game.day] : null
+  const finalCrownMechanic = BOSS_MECHANICS[MAX_NIGHTS] ?? null
+  const finalMarchHandoff =
+    battleResult.victory && finalMarchGate && nextFinalMarchStory
+      ? nextFinalMarchGate
+        ? {
+            final: false,
+            routeLabel: `GATE 0${nextFinalMarchGate.night - 8} / 03`,
+            targetGlyph: nextFinalMarchGate.glyph,
+            targetLabel: nextFinalMarchGate.label,
+            targetName: nextFinalMarchGate.name,
+            threatName: ENEMY_DOCTRINES[nextFinalMarchGate.doctrine].name,
+            directive: ENEMY_DOCTRINES[nextFinalMarchGate.doctrine].counterplay,
+            preparation: nextFinalMarchGate.crownPreparation,
+            story: nextFinalMarchStory,
+          }
+        : finalCrownMechanic
+          ? {
+              final: true,
+              routeLabel: 'FINAL CROWN',
+              targetGlyph: finalCrownMechanic.glyph,
+              targetLabel: `${finalCrownMechanic.epithet} · ${finalCrownMechanic.phase}`,
+              targetName: finalCrownMechanic.name,
+              threatName: '삼중 왕관 칙령',
+              directive: finalCrownMechanic.pressureCopy,
+              preparation: `세 관문의 교훈과 누적 각인을 결집해 칙령 ${FINAL_CROWN_REQUIRED_SEALS}개와 전선 ${REQUIRED_LANE_WINS}곳을 함께 확보합니다.`,
+              story: nextFinalMarchStory,
+            }
+          : null
+      : null
   const secondCrownResult = game.day === 8 && battleResult.boss
   const secondCrownShieldBroken = battleResult.focusLane === 1
   const secondCrownHeartLane = battleResult.lanes[1]
@@ -507,13 +539,17 @@ export function BattleResultDialog({
       ? '무너진 왕좌 너머, 마지막 새벽으로'
       : firstVictoryPreview
         ? '첫 승리를 기록하고 2일차로'
-        : firstCrownMarchResult?.night === 2
-          ? '첫 유물 각인 선택하기'
-          : firstCrownMarchResult?.night === 3
-            ? '첫 왕관으로 진군하기'
-            : battleResult.boss
-              ? '왕관 조각 회수하기'
-              : '다음 경로 선택하기'
+        : finalMarchHandoff
+          ? finalMarchHandoff.final
+            ? `NIGHT ${MAX_NIGHTS} · 백색 왕의 왕좌로 진군하기`
+            : `NIGHT ${game.day + 1} · 다음 관문으로 진군하기`
+          : firstCrownMarchResult?.night === 2
+            ? '첫 유물 각인 선택하기'
+            : firstCrownMarchResult?.night === 3
+              ? '첫 왕관으로 진군하기'
+              : battleResult.boss
+                ? '왕관 조각 회수하기'
+                : '다음 경로 선택하기'
     : finalCrownResult
       ? defeatEndsRun
         ? '마지막 불씨의 결말 기록하기'
@@ -1193,13 +1229,48 @@ export function BattleResultDialog({
               </div>
               <b>{battleResult.victory ? (resolvedDoctrineLane?.doctrineBroken ? 'MASTERED' : 'BREACHED') : 'RETRY'}</b>
             </div>
-            <footer>
-              {battleResult.victory
-                ? nextFinalMarchGate
-                  ? `다음 관문 · NIGHT ${String(nextFinalMarchGate.night).padStart(2, '0')} ${nextFinalMarchGate.name}`
-                  : '세 관문 돌파 · 백색 왕의 왕좌가 열립니다.'
-                : `귀환 온기 ${Math.max(0, game.heat + battleResult.heatDelta)}% · 전선을 재정비해 다시 돌파하세요.`}
-            </footer>
+            {finalMarchHandoff ? (
+              <footer className="result-final-gate-handoff" data-final={finalMarchHandoff.final ? 'true' : 'false'}>
+                <div className="result-final-gate-route" aria-hidden="true">
+                  <span data-state="cleared">GATE 0{finalMarchGate.night - 8} CLEARED</span>
+                  <i />
+                  <span data-state="next">{finalMarchHandoff.routeLabel}</span>
+                </div>
+                <div className="result-final-gate-next">
+                  <span aria-hidden="true">{finalMarchHandoff.targetGlyph}</span>
+                  <div>
+                    <small>
+                      NEXT NIGHT {String(game.day + 1).padStart(2, '0')} · {finalMarchHandoff.story.location} ·{' '}
+                      {finalMarchHandoff.story.weather}
+                    </small>
+                    <strong>{finalMarchHandoff.story.title}</strong>
+                    <p>{finalMarchHandoff.story.omen}</p>
+                  </div>
+                  <b>
+                    <small>{finalMarchHandoff.targetLabel}</small>
+                    {finalMarchHandoff.targetName}
+                  </b>
+                </div>
+                <dl aria-label="다음 밤 위험과 왕관 준비">
+                  <div>
+                    <dt>다음 위협 · {finalMarchHandoff.threatName}</dt>
+                    <dd>{finalMarchHandoff.directive}</dd>
+                  </div>
+                  <div>
+                    <dt>{finalMarchHandoff.final ? '왕좌 진입 조건' : '왕관전 연결'}</dt>
+                    <dd>{finalMarchHandoff.preparation}</dd>
+                  </div>
+                </dl>
+              </footer>
+            ) : (
+              <footer>
+                {battleResult.victory
+                  ? nextFinalMarchGate
+                    ? `다음 관문 · NIGHT ${String(nextFinalMarchGate.night).padStart(2, '0')} ${nextFinalMarchGate.name}`
+                    : '세 관문 돌파 · 백색 왕의 왕좌가 열립니다.'
+                  : `귀환 온기 ${Math.max(0, game.heat + battleResult.heatDelta)}% · 전선을 재정비해 다시 돌파하세요.`}
+              </footer>
+            )}
           </section>
         ) : null}
 
