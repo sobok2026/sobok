@@ -1,6 +1,7 @@
 {
-  "status": "editorial_review_complete",
+  "status": "visual_review_ready",
   "editorialApprovedOn": "2026-08-16",
+  "generatedOn": "2026-08-16",
   "locale": "ko",
   "batchId": "self.next-self.constellation-afterglow",
   "batchOrder": 16,
@@ -57,7 +58,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "d0406760ddc329f8e39af0f03035b7845be15ff4b99bfd1b01d34fde98adf588",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "lowfront_rockgap_flagknot_startledge_echo",
       "artDirection": "아직 밟지 않은 다음 돌의 낮은 높이에서 두 비대칭 바위 사이 틈으로 출발 쪽을 되돌아본다. 중간 바위턱의 몽실이는 몸과 한 앞발을 카메라 쪽 빈 간격으로 향하되 얼굴만 아래 출발 돌로 돌리고, 이미 꽂은 혜성 깃대는 화면 왼쪽 중간에 가늘게 세운다. 가슴 별표의 여운은 느슨해진 깃대 매듭 그림자를 한 번 스친 뒤 몽실이의 발과 다음 돌을 피하여 아래 출발턱의 빈 면에서 따뜻한 점 세 개로 멎는다. 깃발 천은 옆 하늘로만 흘러 전경 창이나 승리 표식이 되지 않는다.",
       "distinctFrom": [
@@ -77,7 +78,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "8be344e5818ebdf36fd2cea32479d839ca8712882fbdcae5f475c9a3a368ea0f",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "soillevel_leafgap_marker_floor_echo",
       "artDirection": "별싹의 낮은 잎 아래 흙 높이에서 화단을 가로질러 보는 얕은 시점이다. 가까운 오른쪽의 별싹 줄기와 잎 하나 사이로 숫자 없는 짧은 세로 측정막대가 모서리처럼 보이고, 어제의 옅은 빈 원 위 오늘 높이에 금빛 집게 하나만 고정한다. 먼 왼쪽의 차곡이는 표시를 마친 두 손을 앞치마 위에 내려놓고 오늘 집게와 바로 위의 가까운 빈 홈을 바라본다. 가슴 별표의 여운은 오늘 집게를 한 번 스친 뒤 위로 자라지 않고 화단 바깥 낮은 빈 바닥의 따뜻한 점 세 개에서 끝난다.",
       "distinctFrom": [
@@ -97,7 +98,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "1091c1a21ec582bf338ecb4f40d1da09a0bd05bb4f261a78c59921af603eb4f2",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "topdown_offset_map_plane_rest_dual_margin_echo",
       "artDirection": "바닥에 비스듬히 펼친 불규칙한 새 지도를 바로 위에서 내려다보되 네 모서리 중 하나를 화면 밖으로 열어 둔다. 큰 재잘이는 왼쪽 아래 지도 가장자리, 작은 소곤이는 오른쪽 위 바깥 바닥에 서로 다른 방향으로 앉고, 접은 별종이비행기는 지도 밖 위쪽의 작은 그물에 멈춰 둔다. 지도에는 재잘이 쪽의 갈라진 짧은 선·열린 원과 소곤이 쪽의 열린 곡선·떨어진 점 두 개만 따로 남긴다. 두 가슴 여운은 각자 가까운 표식을 한 번씩 스친 뒤 지도 중앙에서 만나지 않고 왼쪽 바닥과 오른쪽 빈 모서리의 점 두 쌍으로 서로 다르게 끝난다.",
       "distinctFrom": [
@@ -117,7 +118,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "a6b582e9217c5c7b6b80aded1ff72a07c78ff18d7bb7d6cd7df7f7be6aed9a8f",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "lowfront_shoreline_moonhouse_shadow_safety_echo",
       "artDirection": "빈 별빛 수면 바로 위의 낮은 정면에서 물가를 올려다보고, 달콩이의 앞발 하나는 가까운 얕은 물에, 다른 발은 뒤의 마른 돌에 남긴다. 단단히 멘 달집의 초승달 지붕과 둥근 별버클은 달콩이 뒤 한쪽으로 온전히 보이고, 달집이 만든 부드러운 초승달 그림자는 마른 출발턱으로만 길게 눕는다. 가슴 별표의 여운은 별버클을 한 번 스친 뒤 물이나 먼 풍경으로 가지 않고 뒤쪽 달집 그림자 안의 따뜻한 점 세 개로 돌아가 멎는다. 수면 앞쪽은 목적지 없는 넓은 여백으로 둔다.",
       "distinctFrom": [
@@ -137,7 +138,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "0ece1a3c445b90055b3bc7e7e78d236803586f54868e762e2e9d723c512a237b",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "topdown_asymmetric_lightfan_shadow_notch_echo",
       "artDirection": "객석이 없는 연습실 바닥을 바로 위에서 내려다보고 작은 바닥 별조명을 왼쪽 아래, 왕관 없는 해님이를 중앙에서 살짝 벗어나게 둔다. 해님이는 스위치에서 손을 거둔 채 빛의 가장자리에 앉아 오른쪽 빈 바닥에 생긴 얼굴 세부 없는 자기 그림자 윤곽을 바라본다. 조명의 짧은 비대칭 부채꼴은 화면 절반 전에 끝나고 그림자도 완성된 전신 대신 열린 어깨선까지만 남는다. 가슴 별표의 여운은 네 갈래 스위치를 한 번 스친 뒤 빛 바깥 위쪽의 어두운 바닥 점 세 개에서 멎어 조명 광선과 분리된다.",
       "distinctFrom": [
@@ -157,7 +158,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "773cfe5570e62351aefad6c47e00ff805ed4c765e7230dd9010f2867124a6385",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "birdseye_diagonal_firstplank_pocket_startpad_echo",
       "artDirection": "짧은 별다리와 출발 받침을 높은 비스듬한 시점에서 내려다보아 첫 널판만 화면 중앙의 대각선 띠로 온전히 보이게 한다. 새봄이는 한 앞발을 첫 널판에, 다른 발을 넓은 출발 받침에 남기고 반 접은 확인표를 앞치마 주머니에 넣은 뒤 두 손을 비운다. 확인표 끝의 원·세모·별 도형 중 빈 원 하나만 주머니 밖에 작게 보이고, 다리는 두 번째 널판 뒤 안개 여백에서 끊긴다. 가슴 별표의 여운은 빈 원을 한 번 스친 뒤 다리 쪽이 아닌 출발 받침 가장자리의 따뜻한 점 세 개에서 끝난다.",
       "distinctFrom": [
@@ -177,7 +178,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "cc83b2cf4f90a9e44163bebda128a4ec046dac0289e0ba32d494197b232f8790",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "edgeon_waypost_blanktag_verge_shadow_echo",
       "artDirection": "첫 따뜻한 돌 옆의 낮은 길표식 기둥을 거의 모서리만 보이는 가는 세로축으로 두고 허리 높이에서 옆으로 본다. 글자 없는 연한 하늘색 네 갈래 이름표는 기둥 한쪽에 느슨하게 걸려 앞뒤 면이 조금 벌어지고, 고르미는 반대편 중간 깊이에서 손을 내린 채 이름표와 넓은 빈 길가를 바라본다. 접힌 별저울이 든 닫힌 가방은 고르미 뒤 바닥에 작게 둔다. 가슴 별표의 여운은 이름표의 빈 중심을 한 번 스친 뒤 길의 진행 방향이 아닌 옆 풀 없는 빈 가장자리의 따뜻한 점 세 개에서 멎는다.",
       "distinctFrom": [
@@ -197,7 +198,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "c3fb02fca70fae9da5ea8f349a504ffc037e77059f5d47ebee1390b1f031d3cc",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "inside_boxside_lowrear_doorseam_safewall_echo",
       "artDirection": "방 안쪽의 낮은 보라 상자 뒤에서 별문 쪽을 바라보아 상자 윗모서리를 화면 아래의 짧은 전경 띠로 둔다. 중간 깊이의 꼬옥이는 상자와 문 사이에 몸을 둥글게 세우고 한 손바닥으로 문을 손 하나 너비에서 멈추며, 바깥의 따뜻한 빛은 손끝과 문턱의 좁은 띠까지만 들어온다. 하트 꼬리는 상자 안쪽을 감아 문 반대편에 남긴다. 가슴 별표의 여운은 상자 가까운 모서리를 한 번 돌아 문틈이 아닌 오른쪽 빈 실내 벽의 따뜻한 점 세 개에서 멎어 솔직함의 범위와 안전한 안쪽을 함께 남긴다.",
       "distinctFrom": [
@@ -217,7 +218,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "f29c19eef3d9ee630c3b0049b19e9ec6adc83fe92aaa6614696b62ac0818a066",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "frontfrom_newground_returnmarker_backecho",
       "artDirection": "낯선 길의 첫 바닥 쪽에서 출발점을 향해 낮게 되돌아보는 정면 구도다. 총총이는 카메라 가까운 다른 질감의 바닥에 앞발 하나를 내려놓고 몸은 앞으로 오되 얼굴만 옆의 열린 하늘을 보며, 뒤쪽 뒷발굽 곁 낮은 표식돌에는 둥근 귀환 별원판 하나가 남는다. 원판 둘레에는 숫자 대신 옅은 점·반원·빈 점 세 표식만 둔다. 가슴 별표의 여운은 귀환 원판을 한 번 스친 뒤 카메라 쪽 길이 아니라 출발턱 옆 빈 하늘 아래의 따뜻한 점 세 개에서 멎고, 활은 등에 고정한다.",
       "distinctFrom": [
@@ -237,7 +238,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "ed74e087e37d183daaf8c0448ceb01737288db50bf972eef0d395b6dfb0360ec",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "round_planning_drum_goldtab_restnotch_echo",
       "artDirection": "낮은 원통형 계획북을 비스듬한 3/4 시점으로 보고 짧은 계획띠가 원통 둘레를 한 바퀴 미만으로 느슨하게 감싸게 한다. 오름이는 오른쪽 바닥에 앉아 원통 앞면의 닫힌 눈 회복 도형·마주 보는 두 손 도움 도형 사이 오늘의 금빛 한 계단 탭에서 손을 거둔다. 실제 돌계단은 왼쪽 아래에 한 단만 두고, 원통 위와 뒤는 빈 공간으로 남긴다. 가슴 별표의 여운은 금빛 탭을 한 번 스친 뒤 위로 오르지 않고 원통 밑의 열린 초승달 쉼 홈 안 따뜻한 점 세 개에서 멎는다.",
       "distinctFrom": [
@@ -257,7 +258,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "bd4849afc2fa12fde69d585c801440319774ab488be0035351d3a0059a522fbd",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "beneath_clouddisk_footpress_reaction_echo",
       "artDirection": "두 바위 사이의 단일 구름 발판 아래에서 위를 올려다보아 둥근 구름 밑면을 화면 가운데의 반투명 원반처럼 둔다. 발판 위 방울이의 한 앞발이 표면을 살짝 눌러 밑면에 부드러운 작은 함몰 그림자 하나만 보이고, 다른 발과 물붓은 출발 바위에 남는다. 방울이는 허리의 물방울 기록판에 숫자 없는 열린 짧은 반응 곡선 하나를 바라본다. 가슴 별표의 여운은 기록판의 곡선을 한 번 스친 뒤 구름·두 바위를 잇지 않고 화면 옆 빈 하늘의 따뜻한 점 세 개에서 멎는다.",
       "distinctFrom": [
@@ -277,7 +278,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "4e185da6e296e9ffa1d1db86d5442370740b95fef4c7ff0c7bc7d49c0b311af1",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "highoverhead_opposed_doorshadows_centerbowl_dualecho",
       "artDirection": "넓은 꿈뜰 바닥을 높은 수직 시점으로 내려다보고 두 꿈문 자체는 화면 왼쪽 아래와 오른쪽 위 모서리 밖에 두며, 서로 다른 방향의 열린 문그림자 두 개만 바닥에 짧게 들인다. 큰 아쿠아 꿈별이는 왼쪽 그림자 곁, 작은 분홍 잠별이는 오른쪽 그림자 곁에 크기 차이를 유지해 앉고, 두 캐릭터 사이에는 네 갈래 중심 별 하나가 담긴 얕은 그릇을 독립된 둥근 받침 위에 둔다. 두 가슴 여운은 그릇의 서로 다른 가장자리를 한 번씩 스친 뒤 서로 만나거나 원을 닫지 않고 왼쪽 빈 바닥과 오른쪽 빈 바닥의 점 두 쌍으로 끝난다.",
       "distinctFrom": [
