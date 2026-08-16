@@ -8712,6 +8712,7 @@ export default function Game() {
       {phase === 'promotion' && pendingPromotionUnit && !showTitle ? (
         <PromotionDialog
           key={pendingPromotionUnit.id}
+          veteranBriefing={veteranBriefing}
           pendingPromotionUnit={pendingPromotionUnit}
           promotionChoices={promotionChoices}
           promotionChoiceInsights={promotionChoiceInsights}
@@ -8727,6 +8728,7 @@ export default function Game() {
 
       {phase === 'relic' && game.pendingRelic && !showTitle ? (
         <RelicDialog
+          veteranBriefing={veteranBriefing}
           game={game}
           currentBuildDoctrine={currentBuildDoctrine}
           relicChoices={relicChoices}

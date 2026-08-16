@@ -37,6 +37,15 @@ import {
   TIER_LABELS,
 } from './game-model'
 
+const CHOICE_INDEX_BY_KEY: Readonly<Record<string, number>> = {
+  Digit1: 0,
+  Digit2: 1,
+  Digit3: 2,
+  Numpad1: 0,
+  Numpad2: 1,
+  Numpad3: 2,
+}
+
 export type PromotionChoiceInsight = {
   specializationId: SpecializationId
   deployed: boolean
@@ -51,6 +60,7 @@ export type PromotionChoiceInsight = {
 }
 
 type PromotionDialogProps = {
+  veteranBriefing: boolean
   pendingPromotionUnit: Unit
   promotionChoices: readonly SpecializationId[]
   promotionChoiceInsights: readonly PromotionChoiceInsight[]
@@ -64,6 +74,7 @@ type PromotionDialogProps = {
 }
 
 export function PromotionDialog({
+  veteranBriefing,
   pendingPromotionUnit,
   promotionChoices,
   promotionChoiceInsights,
@@ -110,6 +121,7 @@ export function PromotionDialog({
       <section
         className={`promotion-card kind-${pendingPromotionUnit.kind}`}
         data-selection={selectedSpecializationId ? 'true' : 'false'}
+        data-veteran={veteranBriefing ? 'true' : 'false'}
         role="dialog"
         aria-modal="true"
         aria-labelledby="promotion-title"
@@ -117,6 +129,21 @@ export function PromotionDialog({
         data-focus-scope="promotion"
         tabIndex={-1}
         onKeyDown={(event) => {
+          const choiceIndex = veteranBriefing ? CHOICE_INDEX_BY_KEY[event.code] : undefined
+          const specializationShortcut = choiceIndex === undefined ? undefined : promotionChoices[choiceIndex]
+          if (
+            specializationShortcut &&
+            !event.repeat &&
+            !event.metaKey &&
+            !event.ctrlKey &&
+            !event.altKey &&
+            !event.shiftKey
+          ) {
+            event.preventDefault()
+            event.stopPropagation()
+            selectSpecialization(specializationShortcut)
+            return
+          }
           if (event.key === 'Escape' && selectedSpecializationId) {
             event.preventDefault()
             event.stopPropagation()
@@ -156,15 +183,30 @@ export function PromotionDialog({
           </div>
         </div>
         <div className="promotion-body">
-          <header>
+          <header data-veteran={veteranBriefing ? 'true' : 'false'}>
             <p className="eyebrow">VETERAN PROMOTION · CHOOSE A PATH</p>
             <h2 id="promotion-title">
-              {pendingPromotionUnit.tier === MAX_TIER ? '전설의 길을 완성하세요' : '한 생존자가 베테랑이 되었습니다'}
+              {veteranBriefing
+                ? '다음 전술 진급을 선택하세요'
+                : pendingPromotionUnit.tier === MAX_TIER
+                  ? '전설의 길을 완성하세요'
+                  : '한 생존자가 베테랑이 되었습니다'}
             </h2>
             <p id="promotion-lead">
-              두 길을 눌러 현재 전선의 실제 전투력과 승리선을 비교하세요. 선택은 아래에서 다시 확정하기 전까지 기록되지
-              않습니다.
+              {veteranBriefing
+                ? '숫자키 1·2로 미리 보고 실제 전투력과 승리선 변화만 비교하세요. 아래 확정 전에는 기록되지 않습니다.'
+                : '두 길을 눌러 현재 전선의 실제 전투력과 승리선을 비교하세요. 선택은 아래에서 다시 확정하기 전까지 기록되지 않습니다.'}
             </p>
+            {veteranBriefing ? (
+              <div className="veteran-choice-shortcuts">
+                <span>
+                  <kbd>1</kbd> 첫 길
+                </span>
+                <span>
+                  <kbd>2</kbd> 둘째 길
+                </span>
+              </div>
+            ) : null}
           </header>
           <section className="promotion-growth-summary" id="promotion-growth-summary" aria-label="진급 성장 결과">
             <div className="promotion-growth-tier" aria-hidden="true">
@@ -197,6 +239,7 @@ export function PromotionDialog({
                   type="button"
                   onClick={() => selectSpecialization(specializationId)}
                   aria-pressed={selected}
+                  aria-keyshortcuts={veteranBriefing ? String(index + 1) : undefined}
                   data-selected={selected ? 'true' : 'false'}
                   data-recommended={recommended ? 'true' : 'false'}
                   data-specialization-id={specializationId}
@@ -1595,6 +1638,7 @@ type ResonancePreviewView = {
 }
 
 type RelicDialogProps = {
+  veteranBriefing: boolean
   game: GameState
   currentBuildDoctrine: BuildDoctrineView
   relicChoices: readonly RelicId[]
@@ -1607,6 +1651,7 @@ type RelicDialogProps = {
 }
 
 export function RelicDialog({
+  veteranBriefing,
   game,
   currentBuildDoctrine,
   relicChoices,
@@ -1649,22 +1694,48 @@ export function RelicDialog({
     >
       <section
         className="relic-card"
+        data-veteran={veteranBriefing ? 'true' : 'false'}
         role="dialog"
         aria-modal="true"
         aria-labelledby="relic-title"
         data-focus-scope="relic"
         tabIndex={-1}
         onKeyDown={(event) => {
+          const choiceIndex = veteranBriefing ? CHOICE_INDEX_BY_KEY[event.code] : undefined
+          const relicShortcut = choiceIndex === undefined ? undefined : relicChoices[choiceIndex]
+          if (relicShortcut && !event.repeat && !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey) {
+            event.preventDefault()
+            event.stopPropagation()
+            selectRelicForPreview(relicShortcut)
+            return
+          }
           if (event.key !== 'Escape' || !selectedRelicId) return
           event.preventDefault()
           event.stopPropagation()
           clearRelicPreview()
         }}
       >
-        <header>
+        <header data-veteran={veteranBriefing ? 'true' : 'false'}>
           <p className="eyebrow">NIGHT {String(game.day - 1).padStart(2, '0')} · RELIC RECOVERED</p>
-          <h2 id="relic-title">얼음 아래에서 발견한 것</h2>
-          <p>하나의 유물만 화로에 각인할 수 있습니다. 선택은 이번 원정이 끝날 때까지 이어집니다.</p>
+          <h2 id="relic-title">{veteranBriefing ? '다음 유물을 각인하세요' : '얼음 아래에서 발견한 것'}</h2>
+          <p>
+            {veteranBriefing
+              ? '숫자키 1·2·3으로 미리 보고 현재 전술 적합도와 공명 완성 여부를 비교하세요.'
+              : '하나의 유물만 화로에 각인할 수 있습니다. 선택은 이번 원정이 끝날 때까지 이어집니다.'}
+          </p>
+          {veteranBriefing ? (
+            <div className="veteran-choice-shortcuts">
+              <span>
+                <kbd>1</kbd> 후보 1
+              </span>
+              <span>
+                <kbd>2</kbd> 후보 2
+              </span>
+              <span>
+                <kbd>3</kbd> 후보 3
+              </span>
+            </div>
+          ) : null}
         </header>
         <section className="relic-build-context" data-state={currentBuildDoctrine.state} aria-label="현재 원정 빌드">
           <span aria-hidden="true">{currentBuildDoctrine.id ? RESONANCES[currentBuildDoctrine.id].glyph : '∞'}</span>
@@ -1698,6 +1769,7 @@ export function RelicDialog({
                 type="button"
                 onClick={() => selectRelicForPreview(relicId)}
                 aria-pressed={selectedRelicId === relicId}
+                aria-keyshortcuts={veteranBriefing ? String(index + 1) : undefined}
                 data-autofocus={recommended ? 'true' : undefined}
                 data-recommended={recommended ? 'true' : 'false'}
                 data-selected={selectedRelicId === relicId ? 'true' : 'false'}
