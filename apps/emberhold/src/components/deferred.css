@@ -13484,6 +13484,149 @@
   }
 }
 
+.ending-session-handoff {
+  --handoff-rgb: 111, 210, 228;
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 0.62fr);
+  align-items: center;
+  gap: 18px;
+  margin-top: 16px;
+  padding: 15px;
+  border: 1px solid rgba(var(--handoff-rgb), 0.4);
+  background:
+    radial-gradient(circle at 2% 0, rgba(var(--handoff-rgb), 0.15), transparent 34%),
+    linear-gradient(120deg, rgba(4, 18, 24, 0.96), rgba(3, 12, 17, 0.92));
+  box-shadow:
+    0 18px 54px rgba(0, 0, 0, 0.3),
+    inset 0 1px rgba(255, 255, 255, 0.04);
+  text-align: left;
+  animation: ending-session-handoff-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.ending-session-handoff[data-action='rematch'] {
+  --handoff-rgb: 241, 120, 99;
+}
+
+.ending-session-handoff[data-action='legacy'] {
+  --handoff-rgb: 103, 233, 187;
+}
+
+.ending-session-handoff > div {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.ending-session-handoff > div > small {
+  color: rgba(var(--handoff-rgb), 0.84);
+  font-size: var(--text-micro);
+  font-weight: 820;
+  letter-spacing: 0.08em;
+}
+
+.ending-session-handoff h3 {
+  margin: 0;
+  color: #f3f9f7;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(20px, 2.8vw, 27px);
+  line-height: 1.2;
+}
+
+.ending-session-handoff p {
+  max-width: 680px;
+  margin: 0;
+  color: #a7babd;
+  font-size: var(--text-small);
+  line-height: 1.55;
+}
+
+.ending-session-handoff > button {
+  display: grid;
+  min-width: 0;
+  min-height: 72px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  padding: 11px 14px;
+  border: 1px solid rgba(var(--handoff-rgb), 0.65);
+  background: linear-gradient(105deg, rgba(var(--handoff-rgb), 0.3), rgba(var(--handoff-rgb), 0.12));
+  box-shadow: inset 0 -2px rgba(var(--handoff-rgb), 0.16);
+  color: #f5fffb;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ending-session-handoff > button > span {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.ending-session-handoff > button strong {
+  font-size: var(--text-body);
+}
+
+.ending-session-handoff > button small {
+  overflow: hidden;
+  color: currentcolor;
+  font-size: var(--text-label);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.72;
+}
+
+.ending-session-handoff > button i {
+  color: rgb(var(--handoff-rgb));
+  font-size: 23px;
+  font-style: normal;
+}
+
+.ending-session-handoff > button:hover,
+.ending-session-handoff > button:focus-visible {
+  border-color: rgb(var(--handoff-rgb));
+  background: linear-gradient(105deg, rgba(var(--handoff-rgb), 0.4), rgba(var(--handoff-rgb), 0.17));
+  filter: brightness(1.08);
+}
+
+@keyframes ending-session-handoff-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.game-shell[data-contrast='high'] .ending-session-handoff {
+  border-color: rgb(var(--handoff-rgb));
+  background: #06151b;
+}
+
+.game-shell[data-contrast='high'] .ending-session-handoff p {
+  color: #d7e5e6;
+}
+
+@media (max-width: 620px) {
+  .ending-session-handoff {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 13px;
+  }
+
+  .ending-session-handoff > button {
+    min-height: 62px;
+  }
+}
+
+.game-shell[data-motion='reduced'] .ending-session-handoff {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ending-session-handoff {
+    animation: none;
+  }
+}
+
 .ending-final-debrief {
   --debrief-rgb: 241, 120, 99;
   width: 100%;
@@ -13675,10 +13818,6 @@
 }
 
 .ending-final-debrief > footer {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(250px, 0.62fr);
-  align-items: center;
-  gap: 14px;
   padding: 11px;
   border-top: 1px solid rgba(var(--debrief-rgb), 0.13);
   background: rgba(2, 8, 12, 0.36);
@@ -13689,45 +13828,6 @@
   color: #9f8f8e;
   font-size: var(--text-label);
   line-height: 1.55;
-}
-
-.ending-final-debrief > footer button {
-  display: grid;
-  min-height: 58px;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  padding: 9px 12px;
-  border: 1px solid rgba(var(--debrief-rgb), 0.52);
-  background: linear-gradient(105deg, rgba(151, 58, 44, 0.94), rgba(193, 91, 57, 0.94));
-  color: #fff0e8;
-  cursor: pointer;
-  text-align: left;
-}
-
-.ending-final-debrief > footer button > span {
-  display: grid;
-  gap: 2px;
-}
-
-.ending-final-debrief > footer button strong {
-  font-size: var(--text-small);
-}
-
-.ending-final-debrief > footer button small {
-  color: #f0c4b7;
-  font-size: var(--text-micro);
-}
-
-.ending-final-debrief > footer button i {
-  font-size: 21px;
-  font-style: normal;
-}
-
-.ending-final-debrief > footer button:hover,
-.ending-final-debrief > footer button:focus-visible {
-  border-color: rgb(var(--debrief-rgb));
-  filter: brightness(1.1);
 }
 
 .game-shell[data-contrast='high'] .ending-final-debrief {
@@ -13753,8 +13853,7 @@
 }
 
 @media (max-width: 620px) {
-  .ending-final-debrief > header,
-  .ending-final-debrief > footer {
+  .ending-final-debrief > header {
     grid-template-columns: 1fr;
   }
 
@@ -14008,72 +14107,6 @@
   white-space: nowrap;
 }
 
-.ending-next-runway > footer {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 7px;
-  padding: 0 10px 10px;
-}
-
-.ending-next-runway > footer button {
-  display: grid;
-  min-width: 0;
-  min-height: 62px;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 13px;
-  border: 1px solid rgba(145, 199, 208, 0.2);
-  background: rgba(4, 16, 21, 0.72);
-  color: #bdd0d1;
-  cursor: pointer;
-  text-align: left;
-}
-
-.ending-next-runway > footer button > span {
-  display: grid;
-  min-width: 0;
-  gap: 3px;
-}
-
-.ending-next-runway > footer button strong {
-  font-size: var(--text-body);
-}
-
-.ending-next-runway > footer button small {
-  color: currentcolor;
-  font-size: var(--text-micro);
-  opacity: 0.72;
-}
-
-.ending-next-runway > footer button i {
-  font-size: 20px;
-  font-style: normal;
-}
-
-.ending-next-runway > footer .ending-runway-primary {
-  border-color: rgba(var(--runway-rgb), 0.44);
-  background: linear-gradient(105deg, rgba(var(--runway-rgb), 0.28), rgba(var(--runway-rgb), 0.12));
-  color: #fff2df;
-}
-
-.ending-next-runway > footer .ending-runway-primary[data-action='legacy'] {
-  background: linear-gradient(105deg, rgba(42, 132, 102, 0.88), rgba(29, 88, 77, 0.9));
-  color: #dcfff2;
-}
-
-.ending-next-runway > footer .ending-runway-primary[data-action='rematch'] {
-  border-color: rgba(255, 133, 105, 0.56);
-  background: linear-gradient(105deg, rgba(151, 58, 44, 0.94), rgba(193, 91, 57, 0.94));
-  color: #fff0e8;
-}
-
-.ending-next-runway > footer button:hover,
-.ending-next-runway > footer button:focus-visible {
-  border-color: rgba(var(--runway-rgb), 0.8);
-  filter: brightness(1.1);
-}
-
 .ending-actions .ending-legacy-action {
   border-color: rgba(255, 184, 99, 0.34);
   background: linear-gradient(105deg, rgba(111, 62, 31, 0.84), rgba(74, 45, 27, 0.86));
@@ -14087,18 +14120,32 @@
   box-shadow: inset 0 -2px rgba(119, 244, 200, 0.18);
 }
 
+.ending-actions button[data-primary='true'] {
+  order: -1;
+  grid-column: 1 / -1;
+  min-height: 72px;
+  border-color: rgba(255, 224, 180, 0.64);
+  box-shadow:
+    0 12px 34px rgba(0, 0, 0, 0.24),
+    inset 0 -2px rgba(255, 255, 255, 0.12);
+}
+
+.ending-actions .ending-rematch-action[data-primary='false'] {
+  border-color: rgba(255, 193, 119, 0.26);
+  background: linear-gradient(105deg, rgba(122, 69, 43, 0.72), rgba(103, 63, 42, 0.76));
+  color: #e8cdb6;
+}
+
 .game-shell[data-contrast='high'] .ending-next-runway {
   border-color: rgb(var(--runway-rgb));
   background: #061218;
 }
 
-.game-shell[data-contrast='high']
-  :is(.ending-next-runway > header p, .ending-featured-legacy p, .ending-next-runway > footer button small) {
+.game-shell[data-contrast='high'] :is(.ending-next-runway > header p, .ending-featured-legacy p) {
   color: #d6e2e1;
 }
 
-.game-shell[data-contrast='high']
-  :is(.ending-next-runway > ol li, .ending-featured-legacy, .ending-next-runway > footer button) {
+.game-shell[data-contrast='high'] :is(.ending-next-runway > ol li, .ending-featured-legacy) {
   border-color: rgba(var(--runway-rgb), 0.68);
   background: #07171d;
 }
@@ -14141,10 +14188,6 @@
   .ending-featured-legacy > b {
     grid-column: 2;
     width: fit-content;
-  }
-
-  .ending-next-runway > footer {
-    grid-template-columns: 1fr;
   }
 }
 

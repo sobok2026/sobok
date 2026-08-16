@@ -227,6 +227,44 @@ export function EndingScreen({
   )
   const leadingRenownShare =
     game.score > 0 ? Math.round((game.renownLedger[leadingRenownSource.id].total / game.score) * 100) : 0
+  const handoffAction = !endingWon
+    ? {
+        id: 'rematch',
+        kicker: 'TACTICAL REMATCH READY · RECORD SEALED',
+        title: '패인을 보존한 채 같은 균열을 다시 연다',
+        description: primaryFailureInsight
+          ? `${primaryFailureInsight.label} 처방이 기록됐습니다. 같은 적·사건·유물 경로에서 수정한 전술만 정확히 비교합니다.`
+          : '마지막 대열과 원정 경로가 기록됐습니다. 같은 조건을 유지한 채 첫날부터 다시 출정합니다.',
+        label: '동일 균열 즉시 재도전',
+        detail: `${runCode} · 처음부터 다시 출정`,
+        glyph: '↺',
+        run: replayExpedition,
+      }
+    : legacyReady
+      ? {
+          id: 'legacy',
+          kicker: 'REWARD BANKED · LEGACY READY',
+          title: '새 불씨로 다음 원정의 계승을 먼저 완성한다',
+          description: `${affordableLegacyIds.length}개 영구 강화를 지금 선택할 수 있습니다. 선택한 효과는 다음 표준 원정의 첫날부터 적용됩니다.`,
+          label: '유산 계승부터 선택하기',
+          detail: `보유 불씨 ${meta.embers} · 구매 가능 ${affordableLegacyIds.length}개`,
+          glyph: '›',
+          run: () => openArchive('legacy'),
+        }
+      : {
+          id: 'challenge',
+          kicker: 'DAWN SECURED · NEXT ROUTE READY',
+          title: nextWinningEndingId
+            ? '미발견 새벽으로 향할 다음 원정을 설계한다'
+            : '더 높은 규칙의 다음 원정을 설계한다',
+          description: nextWinningEndingId
+            ? `${ENDINGS[nextWinningEndingId].title} 경로와 ${DIFFICULTIES[nextChallengeDifficulty].name} 규칙을 출정 전에 함께 확인합니다.`
+            : `${DIFFICULTIES[nextChallengeDifficulty].name} 규칙과 새 서약을 출정 전에 다시 선택합니다.`,
+          label: nextWinningEndingId ? '미발견 결말 설계' : '다음 도전 설계',
+          detail: `${DIFFICULTIES[nextChallengeDifficulty].name} · 서약 선택`,
+          glyph: '›',
+          run: prepareNextChallenge,
+        }
 
   return (
     <div
@@ -269,6 +307,25 @@ export function EndingScreen({
           <p>“{currentEnding.epilogue}”</p>
           <cite>— {currentEnding.witness}</cite>
         </blockquote>
+        <section
+          className="ending-session-handoff"
+          data-action={handoffAction.id}
+          data-ending={outcome}
+          aria-labelledby="ending-session-handoff-title"
+        >
+          <div>
+            <small>{handoffAction.kicker}</small>
+            <h3 id="ending-session-handoff-title">{handoffAction.title}</h3>
+            <p>{handoffAction.description}</p>
+          </div>
+          <button type="button" onClick={handoffAction.run}>
+            <span>
+              <strong>{handoffAction.label}</strong>
+              <small>{handoffAction.detail}</small>
+            </span>
+            <i aria-hidden="true">{handoffAction.glyph}</i>
+          </button>
+        </section>
         <section className="ending-journey" aria-label="세 막 원정 경로">
           {ACTS.map((act) => {
             const mechanic = BOSS_MECHANICS[act.range[1]]
@@ -529,15 +586,8 @@ export function EndingScreen({
             <footer>
               <p>
                 재도전은 실패 지점에서 이어지는 방식이 아닙니다. 같은 적·사건·유물 경로를 유지한 채 첫날부터 다시 시작해
-                처방의 효과를 정확히 비교합니다.
+                처방의 효과를 정확히 비교합니다. 위의 빠른 재도전 또는 마지막 종료 선택에서 출정할 수 있습니다.
               </p>
-              <button type="button" onClick={replayExpedition}>
-                <span>
-                  <strong>처방대로 동일 균열 재도전</strong>
-                  <small>{runCode} · 처음부터 다시 출정</small>
-                </span>
-                <i aria-hidden="true">↺</i>
-              </button>
             </footer>
           </section>
         ) : null}
@@ -669,65 +719,6 @@ export function EndingScreen({
               </footer>
             </article>
           ) : null}
-          <footer>
-            <button
-              className="ending-runway-primary"
-              data-action={!endingWon ? 'rematch' : legacyReady ? 'legacy' : 'challenge'}
-              type="button"
-              onClick={!endingWon ? replayExpedition : legacyReady ? () => openArchive('legacy') : prepareNextChallenge}
-            >
-              <span>
-                <strong>
-                  {!endingWon ? '동일 균열 즉시 재도전' : legacyReady ? '유산 계승부터 선택하기' : '다음 도전 설계하기'}
-                </strong>
-                <small>
-                  {!endingWon
-                    ? `${runCode} · 전술 처방을 적용해 처음부터 출정`
-                    : legacyReady
-                      ? `${affordableLegacyIds.length}개 영구 강화 구매 가능`
-                      : legacyComplete
-                        ? '모든 유산을 적용해 새 경로 선택'
-                        : `${DIFFICULTIES[nextChallengeDifficulty].name} · 서약 선택`}
-                </small>
-              </span>
-              <i aria-hidden="true">›</i>
-            </button>
-            <button
-              className="ending-runway-secondary"
-              type="button"
-              onClick={
-                !endingWon
-                  ? prepareNextChallenge
-                  : legacyReady
-                    ? prepareNextChallenge
-                    : legacyComplete
-                      ? replayExpedition
-                      : () => openArchive('legacy')
-              }
-            >
-              <span>
-                <strong>
-                  {!endingWon
-                    ? '다른 규칙으로 재설계'
-                    : legacyReady
-                      ? '계승 없이 다음 도전'
-                      : legacyComplete
-                        ? '같은 균열 재도전'
-                        : '유산 목표 확인'}
-                </strong>
-                <small>
-                  {!endingWon
-                    ? `${DIFFICULTIES[nextChallengeDifficulty].name} · 서약과 모드 다시 선택`
-                    : legacyReady
-                      ? `${DIFFICULTIES[nextChallengeDifficulty].name} · 나중에 계승 가능`
-                      : legacyComplete
-                        ? `${runCode} · 동일한 경로`
-                        : `${featuredLegacy?.name ?? '다음 유산'}까지 진행 확인`}
-                </small>
-              </span>
-              <i aria-hidden="true">{endingWon && legacyComplete && !legacyReady ? '↺' : '›'}</i>
-            </button>
-          </footer>
         </section>
         <section
           className="ending-protocol-mastery"
@@ -940,6 +931,7 @@ export function EndingScreen({
           <button
             className="ending-legacy-action"
             data-ready={legacyReady ? 'true' : 'false'}
+            data-primary={endingWon && legacyReady ? 'true' : 'false'}
             type="button"
             onClick={() => openArchive('legacy')}
           >
@@ -955,7 +947,12 @@ export function EndingScreen({
             </span>
             <i aria-hidden="true">›</i>
           </button>
-          <button className="ending-next-action" type="button" onClick={prepareNextChallenge}>
+          <button
+            className="ending-next-action"
+            data-primary={endingWon && !legacyReady ? 'true' : 'false'}
+            type="button"
+            onClick={prepareNextChallenge}
+          >
             <span>
               <strong>{nextWinningEndingId ? '미발견 결말 설계' : '다음 도전 설계'}</strong>
               <small>
@@ -966,7 +963,12 @@ export function EndingScreen({
             </span>
             <i aria-hidden="true">›</i>
           </button>
-          <button className="ending-rematch-action" type="button" onClick={replayExpedition}>
+          <button
+            className="ending-rematch-action"
+            data-primary={!endingWon ? 'true' : 'false'}
+            type="button"
+            onClick={replayExpedition}
+          >
             <span>
               <strong>같은 균열 재도전</strong>
               <small>{runCode} · 동일한 적과 유물 경로</small>
