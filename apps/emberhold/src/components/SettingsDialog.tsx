@@ -3,11 +3,30 @@ import './deferred.css'
 import type { ChangeEvent, RefObject } from 'react'
 import type { GameSettings, StorageProtection } from './game-model'
 
+export type BackupRecordSummary = {
+  checkpoint: string
+  context: string
+  score: number
+  bestScore: number
+  embers: number
+  completedRuns: number
+  legacyCount: number
+  achievementCount: number
+  historyCount: number
+}
+
+export type BackupRestorePreview = {
+  fileName: string
+  current: BackupRecordSummary
+  incoming: BackupRecordSummary
+}
+
 type SettingsDialogProps = {
   settings: GameSettings
   storageProtection: StorageProtection
   storageRequestPending: boolean
   restorePending: boolean
+  backupRestorePreview: BackupRestorePreview | null
   backupInputRef: RefObject<HTMLInputElement | null>
   closeSettings: () => void
   toggleSound: () => void
@@ -17,7 +36,50 @@ type SettingsDialogProps = {
   requestPersistentStorage: () => Promise<void>
   exportGameBackup: () => void
   restoreGameBackup: (event: ChangeEvent<HTMLInputElement>) => Promise<void>
+  cancelGameBackupRestore: () => void
+  confirmGameBackupRestore: () => void
   resetSettings: () => void
+}
+
+function BackupRecordCard({
+  label,
+  summary,
+  incoming,
+}: {
+  label: string
+  summary: BackupRecordSummary
+  incoming: boolean
+}) {
+  return (
+    <article className="backup-record-card" data-incoming={incoming ? 'true' : 'false'}>
+      <header>
+        <small>{label}</small>
+        <strong>{summary.checkpoint}</strong>
+        <p>{summary.context}</p>
+      </header>
+      <dl>
+        <div>
+          <dt>현재 명성</dt>
+          <dd>{summary.score.toLocaleString('ko-KR')}</dd>
+        </div>
+        <div>
+          <dt>최고 명성</dt>
+          <dd>{summary.bestScore.toLocaleString('ko-KR')}</dd>
+        </div>
+        <div>
+          <dt>유산 불씨</dt>
+          <dd>{summary.embers.toLocaleString('ko-KR')}</dd>
+        </div>
+        <div>
+          <dt>완주</dt>
+          <dd>{summary.completedRuns.toLocaleString('ko-KR')}</dd>
+        </div>
+      </dl>
+      <p>
+        유산 {summary.legacyCount} · 업적 {summary.achievementCount} · 연대기 {summary.historyCount}
+      </p>
+    </article>
+  )
 }
 
 export function SettingsDialog({
@@ -25,6 +87,7 @@ export function SettingsDialog({
   storageProtection,
   storageRequestPending,
   restorePending,
+  backupRestorePreview,
   backupInputRef,
   closeSettings,
   toggleSound,
@@ -34,8 +97,12 @@ export function SettingsDialog({
   requestPersistentStorage,
   exportGameBackup,
   restoreGameBackup,
+  cancelGameBackupRestore,
+  confirmGameBackupRestore,
   resetSettings,
 }: SettingsDialogProps) {
+  const applyingRestore = restorePending && backupRestorePreview !== null
+
   return (
     <div className="modal-backdrop settings-backdrop" role="presentation">
       <section
@@ -45,9 +112,18 @@ export function SettingsDialog({
         aria-labelledby="settings-title"
         aria-describedby="settings-lead"
         data-focus-scope="settings"
+        data-restore-applying={applyingRestore ? 'true' : 'false'}
+        aria-busy={applyingRestore}
+        inert={applyingRestore ? true : undefined}
         tabIndex={-1}
       >
-        <button className="modal-close" type="button" onClick={closeSettings} aria-label="설정 닫기">
+        <button
+          className="modal-close"
+          type="button"
+          onClick={closeSettings}
+          aria-label={backupRestorePreview || restorePending ? '백업 복원 취소' : '설정 닫기'}
+          disabled={restorePending && backupRestorePreview !== null}
+        >
           ×
         </button>
         <header className="settings-heading">
@@ -323,7 +399,11 @@ export function SettingsDialog({
               ) : null}
             </div>
             <div className="backup-actions">
-              <button type="button" onClick={exportGameBackup} disabled={restorePending}>
+              <button
+                type="button"
+                onClick={exportGameBackup}
+                disabled={restorePending || backupRestorePreview !== null}
+              >
                 <span aria-hidden="true">↓</span>
                 <div>
                   <strong>백업 파일 저장</strong>
@@ -333,8 +413,11 @@ export function SettingsDialog({
               <button
                 type="button"
                 onClick={() => backupInputRef.current?.click()}
-                disabled={storageProtection === 'unavailable' || restorePending}
+                disabled={storageProtection === 'unavailable' || restorePending || backupRestorePreview !== null}
                 aria-busy={restorePending}
+                aria-controls="backup-restore-preview"
+                aria-expanded={backupRestorePreview !== null}
+                data-backup-restore-trigger="true"
               >
                 <span aria-hidden="true">↑</span>
                 <div>
@@ -353,17 +436,82 @@ export function SettingsDialog({
                 hidden
               />
             </div>
+            {backupRestorePreview ? (
+              <section
+                className="backup-restore-preview"
+                id="backup-restore-preview"
+                aria-labelledby="backup-restore-preview-title"
+                aria-describedby="backup-restore-preview-warning"
+              >
+                <header>
+                  <span aria-hidden="true">!</span>
+                  <div>
+                    <small>VERIFIED BACKUP · 적용 전</small>
+                    <h4 id="backup-restore-preview-title">복원 전에 두 기록을 비교하세요</h4>
+                    <p>
+                      <b title={backupRestorePreview.fileName}>{backupRestorePreview.fileName}</b>의 현재 형식을
+                      검증했습니다.
+                    </p>
+                  </div>
+                </header>
+                <div className="backup-restore-comparison">
+                  <BackupRecordCard label="현재 기기 기록" summary={backupRestorePreview.current} incoming={false} />
+                  <span className="backup-restore-arrow" aria-hidden="true">
+                    →
+                  </span>
+                  <BackupRecordCard label="복원 후 기록" summary={backupRestorePreview.incoming} incoming />
+                </div>
+                <p className="backup-restore-warning" id="backup-restore-preview-warning">
+                  확정하면 현재 원정·유산·업적·연대기·설정 전체가 오른쪽 기록으로 교체되고 앱을 다시 시작합니다.
+                </p>
+                <footer>
+                  <button
+                    type="button"
+                    onClick={cancelGameBackupRestore}
+                    disabled={restorePending}
+                    data-backup-restore-cancel="true"
+                    data-autofocus="true"
+                  >
+                    현재 기록 유지
+                  </button>
+                  <button type="button" onClick={exportGameBackup} disabled={restorePending}>
+                    현재 기록 먼저 백업
+                  </button>
+                  <button
+                    className="backup-restore-confirm"
+                    type="button"
+                    onClick={confirmGameBackupRestore}
+                    disabled={restorePending || storageProtection === 'unavailable'}
+                    aria-busy={restorePending}
+                  >
+                    {restorePending ? '기록 교체 중' : '백업으로 교체 후 다시 시작'}
+                  </button>
+                </footer>
+              </section>
+            ) : null}
             <p className="settings-data-note">
-              백업에는 별도 버전이나 이전 형식 변환이 없습니다. 형식이 다르거나 손상된 파일은 복원하지 않습니다.
+              백업에는 별도 버전이나 이전 형식 변환이 없습니다. 형식이 다르거나 손상된 파일은 복원하지 않으며, 검증된
+              파일도 비교 후 확정하기 전에는 현재 기록을 바꾸지 않습니다.
             </p>
           </section>
         </div>
 
         <footer className="settings-footer">
-          <button className="settings-reset" type="button" onClick={resetSettings}>
+          <button
+            className="settings-reset"
+            type="button"
+            onClick={resetSettings}
+            disabled={restorePending || backupRestorePreview !== null}
+          >
             기본값 복원
           </button>
-          <button className="settings-done" type="button" onClick={closeSettings} data-autofocus="true">
+          <button
+            className="settings-done"
+            type="button"
+            onClick={closeSettings}
+            data-autofocus="true"
+            disabled={restorePending || backupRestorePreview !== null}
+          >
             <span>설정 완료</span>
             <i aria-hidden="true">›</i>
           </button>

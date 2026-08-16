@@ -170,6 +170,7 @@ import {
   preloadSettingsDialog,
 } from './game-preloads'
 import { LegacyDepartureBriefing } from './LegacyLoadout'
+import type { BackupRecordSummary, BackupRestorePreview } from './SettingsDialog'
 import { TitleScreen } from './TitleScreen'
 import { SNOW_PARTICLES, WorldBackdrop } from './WorldBackdrop'
 
@@ -2597,6 +2598,28 @@ function parseGameBackup(value: unknown): GameBackup | null {
   }
 }
 
+function backupRecordSummary(game: GameState, meta: MetaState, bestScore: number): BackupRecordSummary {
+  const checkpoint = !game.campaignStarted
+    ? '새 원정 대기'
+    : game.status === 'playing'
+      ? `NIGHT ${String(game.day).padStart(2, '0')} 진행 중`
+      : game.status === 'won'
+        ? '최종 새벽 도달'
+        : `NIGHT ${String(game.day).padStart(2, '0')} 원정 종료`
+
+  return {
+    checkpoint,
+    context: `${DIFFICULTIES[game.difficulty].name} · ${OATHS[game.oath].name} · 균열 ${runCodeFor(game.runSeed)}`,
+    score: game.score,
+    bestScore,
+    embers: meta.embers,
+    completedRuns: meta.completedRuns,
+    legacyCount: meta.legacy.length,
+    achievementCount: meta.achievements.length,
+    historyCount: meta.history.length,
+  }
+}
+
 function masteryContractAvailableFor(contractId: MasteryContractId | null, meta: MetaState): boolean {
   if (contractId === null) return true
   const mastery = legacyMasteryFor(meta)
@@ -3008,6 +3031,7 @@ export default function Game() {
   const [installPending, setInstallPending] = useState(false)
   const [storageRequestPending, setStorageRequestPending] = useState(false)
   const [restorePending, setRestorePending] = useState(false)
+  const [backupRestorePreview, setBackupRestorePreview] = useState<BackupRestorePreview | null>(null)
   const [sharePending, setSharePending] = useState(false)
   const [bestScore, setBestScore] = useState(0)
   const [campUndo, setCampUndo] = useState<CampUndo | null>(null)
@@ -3033,6 +3057,8 @@ export default function Game() {
   const milestoneSoundId = useRef<string | null>(null)
   const queuedMilestoneIds = useRef(new Set<string>())
   const backupInputRef = useRef<HTMLInputElement>(null)
+  const pendingBackupRestore = useRef<GameBackup | null>(null)
+  const backupRestoreRequest = useRef(0)
   const campMutationInFlight = useRef(false)
   const battleLaunchInFlight = useRef(false)
   const resolvingBattle = useRef(false)
@@ -3043,6 +3069,7 @@ export default function Game() {
   const installInFlight = useRef(false)
   const storageRequestInFlight = useRef(false)
   const restoringBackup = useRef(false)
+  const applyingBackupRestore = useRef(false)
   const shareInFlight = useRef(false)
   const sessionLockRelease = useRef<(() => void) | null>(null)
   const audioRecoveryInFlight = useRef(false)
@@ -5302,6 +5329,7 @@ export default function Game() {
     ready &&
     sessionAccess === 'active' &&
     (!showTitle || showDifficulty || showArchive || showSettings || showExpeditionMenu || showInstallHelp)
+  const backupRestorePreviewVisible = backupRestorePreview !== null
   const activeMilestone = milestoneQueue[0] ?? null
   const activeMilestoneId = activeMilestone?.id ?? null
   const eventDecisionNoticeId = eventDecisionNotice?.id ?? null
@@ -5389,6 +5417,10 @@ export default function Game() {
       return !showTitle || showInstallHelp || showSettings || showExpeditionMenu || showDifficulty
     }
     if (showSettings) {
+      if (backupRestorePreviewVisible || restorePending) {
+        closeSettings()
+        return true
+      }
       closeSettings()
       return !showTitle || showInstallHelp || showArchive || showExpeditionMenu || showDifficulty
     }
@@ -5929,6 +5961,21 @@ export default function Game() {
     }
   }, [documentScrollLocked])
 
+  const handleFocusScopeEscape = useEffectEvent((): boolean => {
+    if (activeLayer === 'install') setShowInstallHelp(false)
+    else if (activeLayer === 'archive') closeArchive()
+    else if (activeLayer === 'settings') closeSettings()
+    else if (activeLayer === 'menu') {
+      if (showNewCampaignConfirm) cancelDiscardCampaign()
+      else closeExpeditionMenu()
+    } else if (activeLayer === 'guide') closeGuide()
+    else if (activeLayer === 'title' && showDifficulty) {
+      if (selectedDifficulty) setSelectedDifficulty(null)
+      else setShowDifficulty(false)
+    } else return false
+    return true
+  })
+
   useEffect(() => {
     if (!activeLayer) return
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
@@ -5967,19 +6014,7 @@ export default function Game() {
       const visibleScope = currentScope()
       if (!visibleScope) return
       if (event.key === 'Escape') {
-        let handled = true
-        if (activeLayer === 'install') setShowInstallHelp(false)
-        else if (activeLayer === 'archive') closeArchive()
-        else if (activeLayer === 'settings') closeSettings()
-        else if (activeLayer === 'menu') {
-          if (showNewCampaignConfirm) cancelDiscardCampaign()
-          else closeExpeditionMenu()
-        } else if (activeLayer === 'guide') closeGuide()
-        else if (activeLayer === 'title' && showDifficulty) {
-          if (selectedDifficulty) setSelectedDifficulty(null)
-          else setShowDifficulty(false)
-        } else handled = false
-        if (handled) {
+        if (handleFocusScopeEscape()) {
           event.preventDefault()
           event.stopPropagation()
         }
@@ -6009,7 +6044,7 @@ export default function Game() {
       document.removeEventListener('keydown', onKeyDown)
       if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true })
     }
-  }, [activeLayer, ready, selectedDifficulty, showDifficulty, showNewCampaignConfirm])
+  }, [activeLayer, ready])
 
   useEffect(() => {
     if (!ready || showTitle || phase !== 'camp') return
@@ -6365,6 +6400,11 @@ export default function Game() {
   }
 
   function closeSettings() {
+    if (applyingBackupRestore.current) return
+    if (backupRestorePreviewVisible || restorePending) {
+      cancelGameBackupRestore()
+      return
+    }
     setShowSettings(false)
     playSound('select', soundOn)
   }
@@ -6444,34 +6484,89 @@ export default function Game() {
       input.value = ''
       return
     }
+    const requestId = backupRestoreRequest.current + 1
+    backupRestoreRequest.current = requestId
+    pendingBackupRestore.current = null
+    setBackupRestorePreview(null)
     restoringBackup.current = true
     setRestorePending(true)
-    let reloadScheduled = false
+    announce('백업 파일을 검증합니다. 완료 전까지 현재 기록은 바뀌지 않습니다.')
     try {
       if (file.size > 1_000_000) throw new Error('Backup file is too large.')
       const backup = parseGameBackup(JSON.parse(await file.text()))
+      if (backupRestoreRequest.current !== requestId) return
       if (!backup) {
         announce('현재 데이터 형식과 일치하지 않는 백업입니다. 기존 기록은 그대로 유지됩니다.')
+        scheduleFrame(() =>
+          document
+            .querySelector<HTMLButtonElement>('[data-backup-restore-trigger="true"]')
+            ?.focus({ preventScroll: true }),
+        )
         return
       }
-      if (!localStorageAvailable() || !replaceStoredBackup(backup)) {
-        setStorageProtection('unavailable')
-        announce('이 기기에 백업을 복원할 수 없습니다. 기존 기록은 그대로 유지됩니다.')
-        return
-      }
-      reloadScheduled = true
-      playSound('relic', soundOn)
-      announce('백업 검증과 교체를 마쳤습니다. 복원된 기록을 불러옵니다.')
-      window.setTimeout(() => window.location.reload(), 180)
+      pendingBackupRestore.current = backup
+      setBackupRestorePreview({
+        fileName: file.name,
+        current: backupRecordSummary(game, meta, bestScore),
+        incoming: backupRecordSummary(backup.game, backup.meta, backup.bestScore),
+      })
+      playSound('select', soundOn)
+      announce('백업 검증을 마쳤습니다. 현재 기록과 복원 후 기록을 비교한 뒤 교체를 확정하세요.')
+      scheduleFrame(() =>
+        document
+          .querySelector<HTMLButtonElement>('[data-backup-restore-cancel="true"]')
+          ?.focus({ preventScroll: true }),
+      )
     } catch {
+      if (backupRestoreRequest.current !== requestId) return
       announce('백업 파일을 읽지 못했습니다. 기존 기록은 그대로 유지됩니다.')
+      scheduleFrame(() =>
+        document
+          .querySelector<HTMLButtonElement>('[data-backup-restore-trigger="true"]')
+          ?.focus({ preventScroll: true }),
+      )
     } finally {
       input.value = ''
-      if (!reloadScheduled) {
+      if (backupRestoreRequest.current === requestId) {
         restoringBackup.current = false
         setRestorePending(false)
       }
     }
+  }
+
+  function cancelGameBackupRestore(returnFocus = true) {
+    if (applyingBackupRestore.current) return
+    backupRestoreRequest.current += 1
+    pendingBackupRestore.current = null
+    restoringBackup.current = false
+    setRestorePending(false)
+    setBackupRestorePreview(null)
+    if (backupInputRef.current) backupInputRef.current.value = ''
+    if (!returnFocus) return
+    playSound('select', soundOn)
+    announce('백업 복원을 취소했습니다. 현재 기록을 그대로 유지합니다.')
+    scheduleFrame(() =>
+      document.querySelector<HTMLButtonElement>('[data-backup-restore-trigger="true"]')?.focus({ preventScroll: true }),
+    )
+  }
+
+  function confirmGameBackupRestore() {
+    const backup = pendingBackupRestore.current
+    if (!backup || restoringBackup.current || applyingBackupRestore.current) return
+    restoringBackup.current = true
+    applyingBackupRestore.current = true
+    setRestorePending(true)
+    if (!localStorageAvailable() || !replaceStoredBackup(backup)) {
+      applyingBackupRestore.current = false
+      restoringBackup.current = false
+      setRestorePending(false)
+      setStorageProtection('unavailable')
+      announce('이 기기에 백업을 복원할 수 없습니다. 기존 기록은 그대로 유지됩니다.')
+      return
+    }
+    playSound('relic', soundOn)
+    announce('백업 교체를 마쳤습니다. 복원된 기록을 불러옵니다.')
+    window.setTimeout(() => window.location.reload(), 180)
   }
 
   function openExpeditionMenu() {
@@ -8757,6 +8852,7 @@ export default function Game() {
           storageProtection={storageProtection}
           storageRequestPending={storageRequestPending}
           restorePending={restorePending}
+          backupRestorePreview={backupRestorePreview}
           backupInputRef={backupInputRef}
           closeSettings={closeSettings}
           toggleSound={toggleSound}
@@ -8766,6 +8862,8 @@ export default function Game() {
           requestPersistentStorage={requestPersistentStorage}
           exportGameBackup={exportGameBackup}
           restoreGameBackup={restoreGameBackup}
+          cancelGameBackupRestore={cancelGameBackupRestore}
+          confirmGameBackupRestore={confirmGameBackupRestore}
           resetSettings={resetSettings}
         />
       ) : null}
