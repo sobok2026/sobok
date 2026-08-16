@@ -8528,6 +8528,12 @@ body {
   transition-duration: 0.001ms !important;
 }
 
+.game-shell[data-runtime='paused'] *,
+.game-shell[data-runtime='paused'] *::before,
+.game-shell[data-runtime='paused'] *::after {
+  animation-play-state: paused !important;
+}
+
 .game-shell[data-motion='reduced'] .milestone-notice {
   animation: none !important;
 }

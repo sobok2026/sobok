@@ -729,6 +729,7 @@ function maximumRecoverySuppliesFor(difficulty: Difficulty, defeatCount: number)
 let sharedAudioContext: AudioContext | null = null
 let sharedAudioOutput: GainNode | null = null
 let ambientSession: AmbientSession | null = null
+const MAX_ACTIVE_AUDIO_SOURCES = 24
 const activeEffectStops = new Set<() => void>()
 const ambientCleanupTimers = new Map<number, () => void>()
 let activeAudioMix = {
@@ -762,6 +763,11 @@ function trackAudioEffect(source: AudioScheduledSourceNode, nodes: AudioNode[]) 
       // The source may already have completed naturally.
     }
     cleanup()
+  }
+  while (activeEffectStops.size >= MAX_ACTIVE_AUDIO_SOURCES) {
+    const oldestStop = activeEffectStops.values().next().value
+    if (!oldestStop) break
+    oldestStop()
   }
   activeEffectStops.add(stop)
   source.addEventListener('ended', cleanup, { once: true })
@@ -1101,6 +1107,7 @@ function startAmbience(enabled: boolean, mood: SoundscapeMood) {
     nodes,
   }
   for (const node of nodes) node.start()
+  flushAmbientCleanups()
 }
 
 function stopAmbience(immediate = false) {
@@ -2886,6 +2893,7 @@ export default function Game() {
   const [showNewCampaignConfirm, setShowNewCampaignConfirm] = useState(false)
   const [showInstallHelp, setShowInstallHelp] = useState(false)
   const [online, setOnline] = useState(true)
+  const [runtimeActive, setRuntimeActive] = useState(true)
   const [offlineReady, setOfflineReady] = useState(false)
   const [standalone, setStandalone] = useState(false)
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null)
@@ -2928,6 +2936,7 @@ export default function Game() {
   const resolvingChoice = useRef<string | null>(null)
   const purchasingLegacy = useRef(false)
   const storageWarningShown = useRef(false)
+  const runtimeActiveRef = useRef(true)
   const installInFlight = useRef(false)
   const storageRequestInFlight = useRef(false)
   const restoringBackup = useRef(false)
@@ -5270,6 +5279,9 @@ export default function Game() {
   }, [])
 
   const suspendRuntime = useEffectEvent(() => {
+    if (!runtimeActiveRef.current) return
+    runtimeActiveRef.current = false
+    setRuntimeActive(false)
     persistLatestSnapshot()
     pauseRuntimeTimer(toastTimer)
     pauseRuntimeTimer(growthCeremonyTimer)
@@ -5281,8 +5293,11 @@ export default function Game() {
   })
 
   const resumeRuntime = useEffectEvent(() => {
-    resetDragGhost()
     if (document.visibilityState !== 'visible' || !document.hasFocus()) return
+    if (runtimeActiveRef.current) return
+    runtimeActiveRef.current = true
+    setRuntimeActive(true)
+    resetDragGhost()
     resumeRuntimeTimer(toastTimer)
     resumeRuntimeTimer(growthCeremonyTimer)
     resumeRuntimeTimer(marchSealTimer)
@@ -5901,6 +5916,7 @@ export default function Game() {
     window.addEventListener('focus', syncRuntimeActivity)
     window.addEventListener('pagehide', onPageHide)
     window.addEventListener('pageshow', onPageShow)
+    syncRuntimeActivity()
     return () => {
       document.removeEventListener('visibilitychange', onVisibilityChange)
       document.removeEventListener('freeze', onPageHide)
@@ -7851,6 +7867,7 @@ export default function Game() {
       className="game-shell"
       data-phase={phase}
       data-network={online ? 'online' : 'offline'}
+      data-runtime={runtimeActive ? 'active' : 'paused'}
       data-roster-open={mobileRosterOpen ? 'true' : 'false'}
       data-tutorial={tutorialStep ?? 'complete'}
       data-motion={settings.motion}
