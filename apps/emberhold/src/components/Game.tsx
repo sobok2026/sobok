@@ -294,6 +294,51 @@ const CURRENT_STORAGE_KEYS = new Set([...BACKUP_STORAGE_KEYS, RESTORE_STAGING_KE
 const BATTLE_LANES = [0, 1, 2] as const
 
 type NavigationHistoryMarker = 'base' | 'guard'
+type PausableRuntimeTimer = {
+  timer: number | null
+  dueAt: number
+  remaining: number
+  run: () => void
+}
+type RuntimeTimerRef = { current: PausableRuntimeTimer | null }
+
+function clearRuntimeTimer(timerRef: RuntimeTimerRef) {
+  const task = timerRef.current
+  if (task && task.timer !== null) window.clearTimeout(task.timer)
+  timerRef.current = null
+}
+
+function resumeRuntimeTimer(timerRef: RuntimeTimerRef) {
+  const task = timerRef.current
+  if (!task || task.timer !== null) return
+  const delay = Math.max(0, task.remaining)
+  task.dueAt = performance.now() + delay
+  task.timer = window.setTimeout(() => {
+    task.timer = null
+    if (timerRef.current !== task) return
+    timerRef.current = null
+    task.run()
+  }, delay)
+}
+
+function startRuntimeTimer(timerRef: RuntimeTimerRef, duration: number, run: () => void) {
+  clearRuntimeTimer(timerRef)
+  timerRef.current = {
+    timer: null,
+    dueAt: 0,
+    remaining: Math.max(0, duration),
+    run,
+  }
+  if (document.visibilityState === 'visible' && document.hasFocus()) resumeRuntimeTimer(timerRef)
+}
+
+function pauseRuntimeTimer(timerRef: RuntimeTimerRef) {
+  const task = timerRef.current
+  if (!task || task.timer === null) return
+  window.clearTimeout(task.timer)
+  task.timer = null
+  task.remaining = Math.max(0, task.dueAt - performance.now())
+}
 
 function readNavigationHistoryMarker(): NavigationHistoryMarker | null {
   const state = window.history.state
@@ -2838,9 +2883,10 @@ export default function Game() {
   const dragFrame = useRef<number | null>(null)
   const dragPosition = useRef({ x: 0, y: 0 })
   const animationFrames = useRef(new Set<number>())
-  const toastTimer = useRef<number | null>(null)
-  const growthCeremonyTimer = useRef<number | null>(null)
-  const marchSealTimer = useRef<number | null>(null)
+  const toastTimer = useRef<PausableRuntimeTimer | null>(null)
+  const growthCeremonyTimer = useRef<PausableRuntimeTimer | null>(null)
+  const marchSealTimer = useRef<PausableRuntimeTimer | null>(null)
+  const milestoneDismissTimer = useRef<PausableRuntimeTimer | null>(null)
   const milestoneSoundId = useRef<string | null>(null)
   const queuedMilestoneIds = useRef(new Set<string>())
   const backupInputRef = useRef<HTMLInputElement>(null)
@@ -5098,7 +5144,7 @@ export default function Game() {
       return true
     }
     if (mobileRosterOpen) {
-      setMobileRosterOpen(false)
+      showBattlefield()
       announce('전장 지휘 화면으로 돌아갑니다.')
       return true
     }
@@ -5182,6 +5228,10 @@ export default function Game() {
 
   const suspendRuntime = useEffectEvent(() => {
     persistLatestSnapshot()
+    pauseRuntimeTimer(toastTimer)
+    pauseRuntimeTimer(growthCeremonyTimer)
+    pauseRuntimeTimer(marchSealTimer)
+    pauseRuntimeTimer(milestoneDismissTimer)
     stopAudioPlayback(true)
     cancelHaptics()
     resetDragGhost()
@@ -5190,6 +5240,10 @@ export default function Game() {
   const resumeRuntime = useEffectEvent(() => {
     resetDragGhost()
     if (document.visibilityState !== 'visible' || !document.hasFocus()) return
+    resumeRuntimeTimer(toastTimer)
+    resumeRuntimeTimer(growthCeremonyTimer)
+    resumeRuntimeTimer(marchSealTimer)
+    resumeRuntimeTimer(milestoneDismissTimer)
     if (audioUnlocked && soundOn) startAmbience(true, soundscapeMood)
   })
 
@@ -5815,20 +5869,13 @@ export default function Game() {
       vibrate([18, 32, 26, 38, 42])
     }
 
-    let dismissTimer: number | null = null
     const dismissCurrent = () => {
       setMilestoneQueue((current) => (current[0]?.id === activeMilestoneId ? current.slice(1) : current))
     }
-    const syncDismissTimer = () => {
-      if (dismissTimer !== null) window.clearTimeout(dismissTimer)
-      const displayDuration = settings.battlePace === 'swift' ? 2800 : 4800
-      dismissTimer = document.visibilityState === 'visible' ? window.setTimeout(dismissCurrent, displayDuration) : null
-    }
-    syncDismissTimer()
-    document.addEventListener('visibilitychange', syncDismissTimer)
+    const displayDuration = settings.battlePace === 'swift' ? 2800 : 4800
+    startRuntimeTimer(milestoneDismissTimer, displayDuration, dismissCurrent)
     return () => {
-      if (dismissTimer !== null) window.clearTimeout(dismissTimer)
-      document.removeEventListener('visibilitychange', syncDismissTimer)
+      clearRuntimeTimer(milestoneDismissTimer)
     }
   }, [activeMilestoneId, milestoneVisible, settings.battlePace])
 
@@ -5837,9 +5884,10 @@ export default function Game() {
       for (const frame of animationFrames.current) window.cancelAnimationFrame(frame)
       animationFrames.current.clear()
       if (dragFrame.current !== null) window.cancelAnimationFrame(dragFrame.current)
-      if (toastTimer.current !== null) window.clearTimeout(toastTimer.current)
-      if (growthCeremonyTimer.current !== null) window.clearTimeout(growthCeremonyTimer.current)
-      if (marchSealTimer.current !== null) window.clearTimeout(marchSealTimer.current)
+      clearRuntimeTimer(toastTimer)
+      clearRuntimeTimer(growthCeremonyTimer)
+      clearRuntimeTimer(marchSealTimer)
+      clearRuntimeTimer(milestoneDismissTimer)
       stopAudioPlayback(true)
       cancelHaptics()
     }
@@ -5847,8 +5895,7 @@ export default function Game() {
 
   function announce(message: string) {
     setToast(message)
-    if (toastTimer.current !== null) window.clearTimeout(toastTimer.current)
-    toastTimer.current = window.setTimeout(() => setToast(''), 2400)
+    startRuntimeTimer(toastTimer, 2400, () => setToast(''))
   }
 
   function enqueueMilestones(notices: MilestoneNotice[]) {
@@ -5867,14 +5914,12 @@ export default function Game() {
   }
 
   function dismissGrowthCeremony() {
-    if (growthCeremonyTimer.current !== null) window.clearTimeout(growthCeremonyTimer.current)
-    growthCeremonyTimer.current = null
+    clearRuntimeTimer(growthCeremonyTimer)
     setGrowthCeremony(null)
   }
 
   function dismissMarchSealCeremony() {
-    if (marchSealTimer.current !== null) window.clearTimeout(marchSealTimer.current)
-    marchSealTimer.current = null
+    clearRuntimeTimer(marchSealTimer)
     setMarchSealCeremony(null)
   }
 
@@ -6744,7 +6789,7 @@ export default function Game() {
         const reducedMotion =
           settings.motion === 'reduced' || window.matchMedia('(prefers-reduced-motion: reduce)').matches
         const ceremonyDuration = reducedMotion ? 900 : settings.battlePace === 'swift' ? 1500 : 2600
-        growthCeremonyTimer.current = window.setTimeout(dismissGrowthCeremony, ceremonyDuration)
+        startRuntimeTimer(growthCeremonyTimer, ceremonyDuration, dismissGrowthCeremony)
       }
       setGame(nextGame)
       setSelectedUnitId(target.id)
@@ -6990,7 +7035,7 @@ export default function Game() {
     })
     const reducedMotion = settings.motion === 'reduced' || window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const ceremonyDuration = reducedMotion ? 900 : settings.battlePace === 'swift' ? 1450 : 2400
-    marchSealTimer.current = window.setTimeout(dismissMarchSealCeremony, ceremonyDuration)
+    startRuntimeTimer(marchSealTimer, ceremonyDuration, dismissMarchSealCeremony)
     setGame({
       ...game,
       supplies: game.supplies - marchSealSupplies,
