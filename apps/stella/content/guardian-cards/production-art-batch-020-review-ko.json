@@ -1,6 +1,7 @@
 {
-  "status": "editorial_review_complete",
+  "status": "visual_review_ready",
   "editorialApprovedOn": "2026-08-16",
+  "generatedOn": "2026-08-16",
   "locale": "ko",
   "batchId": "love.first-signal.stella",
   "batchOrder": 20,
@@ -57,7 +58,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "9534aad9667192b2ab6a313c21b9e894c51234880089ff77ebd5410d7a9540f6",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "inside_openheart_vgate_twinflaps_forwardfork",
       "artDirection": "열린 큰 하트 우편물의 내부에서 바깥을 올려다보는 낮은 시점이다. 왼쪽의 몽실이와 오른쪽의 달콩이는 하트의 서로 다른 덮개를 각자 한 손으로 열어 V자 출구를 만들고, 붉은 리본 끝은 뒤쪽 초승달 우체통으로만 이어진다. 두 가슴 별표에서 출발한 옅은 점선은 중앙의 작은 발판 별 하나 곁에서 잠깐 가까워진 뒤 위쪽 열린 하늘을 향한 두 갈래로 다시 벌어져 프레임 밖에서 끝난다.",
       "distinctFrom": [
@@ -77,7 +78,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "9d013f5177c8a6cada4890a6427cfac16a36f21c2ef6a9810e70d4e1f193bf8d",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "furrow_crosssection_counterpress_seed_open_growthrings",
       "artDirection": "얕은 별씨앗 고랑의 흙 단면을 화면 아래 전경에 크게 둔 낮은 횡단 시점이다. 왼쪽의 차곡이와 오른쪽의 새봄이는 중앙 씨앗의 서로 다른 흙벽을 각자 눌러 주되 손은 겹치지 않고, 뒤쪽 낮은 돌에는 초록 리본과 나뉜 별쿠키 두 조각만 남는다. 분리된 두 뿌리 끝과 가슴 별빛에서 번진 계절 나이테는 씨앗 둘레를 완전히 닫지 않는 비대칭 호 세 개가 되어 위쪽 빈 하늘로 열린다.",
       "distinctFrom": [
@@ -97,7 +98,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "6160101f26748c19eeeec79def009900a3d906064c36c03e36d92d5595104d8c",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "bookspine_wormeye_counterturn_accordion_openpage",
       "artDirection": "펼친 별책의 낮은 책등 위에서 양쪽 페이지를 올려다보는 벌레눈 시점이다. 큰 재잘이는 왼쪽 바깥 잎, 작은 소곤이는 오른쪽 안쪽 잎을 서로 반대 방향으로 넘기며 각자의 편지는 표지 양끝 주머니에 분리해 둔다. 두 가슴 별빛과 점·열린 곡선뿐인 서로 다른 문장 흔적은 아코디언처럼 선 페이지 가장자리를 따라 중앙의 묶이지 않은 빈 한 장까지 이어지고, 그 앞의 넓은 V자 틈에서 멈춘다.",
       "distinctFrom": [
@@ -117,7 +118,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "1ba92a86b30d4c8b0323315c04a047725953b82ec1bd7e3bda617af84bfc2508",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "roundwindow_sill_duallatch_incomplete_safehalo_topgap",
       "artDirection": "둥근 달집 창의 바깥 창턱 높이에서 열린 실내를 비스듬히 들여다본다. 안쪽 왼편 달콩이와 바깥 오른편 꼬옥이는 반달형 두 창짝의 서로 다른 걸쇠를 각자 풀어 양쪽으로 열고, 간식 두 개는 달콩이 쪽 낮은 선반에 그대로 둔다. 두 가슴 별빛은 창틀을 따라 서로 다른 방향으로 오르다가 위쪽 한 뼘을 비운 불완전한 둥근 광륜이 되고, 열린 틈 너머로 각자 돌아갈 바닥이 함께 보인다.",
       "distinctFrom": [
@@ -137,7 +138,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "21e78b1f50c1b38ebe8cefb11bfb91d25927e9d1b261637d19d1c16cb0a2ca99",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "rigging_topdown_twin_turntables_u_stage_openfront",
       "artDirection": "무대 위 높은 리깅에서 아래를 내려다보는 사선 오버헤드 장면이다. 왼쪽 반원 회전판의 해님이와 오른쪽 작은 회전판의 고르미는 각자 다른 손잡이로 자기 조명 방향을 돌리고, 금빛 별표가 놓인 중앙 바닥은 누구도 차지하지 않은 채 비워 둔다. 금빛과 분홍빛 두 빔은 서로 겹치지 않고 넓은 U자 무대 테두리의 양변이 되며, 두 가슴 별빛은 열린 앞쪽 모서리 두 곳으로 따로 빠져나간다.",
       "distinctFrom": [
@@ -157,7 +158,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "d592d8196dc860a7830cda1a3f0ce226f71200d5c2d262c50113c04f820b62c7",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "root_hollow_lowup_splitbeds_asymmetric_wreath_gap",
       "artDirection": "두 화단 사이 작은 뿌리 굴 안에서 위를 올려다보는 낮은 시점이다. 왼쪽의 새봄이는 느슨한 리본이 묶인 삐뚤어진 별꽃을, 오른쪽의 차곡이는 높이가 다른 둥근 별꽃을 각자의 흙주머니에 심고 손을 서로 다른 줄기 아래에 둔다. 분리된 뿌리와 두 가슴 별빛은 중앙 빈 흙을 침범하지 않은 채 높이가 다른 꽃잎 호를 따라 비대칭 화관을 만들고, 오른쪽 위 한 송이 폭의 틈에서 끝난다.",
       "distinctFrom": [
@@ -177,7 +178,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "caea1819d866702035c2c06880532d9262e231cbc589fbea310351063d89b35c",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "under_triangular_mobile_threependants_open_balance_orbit",
       "artDirection": "속이 빈 삼각형 균형 모빌 아래에서 세 꼭짓점을 올려다본다. 왼쪽의 고르미는 푸른 별 추를, 오른쪽의 해님이는 금빛 별 추를 각자의 줄 끝에 걸고, 가운데 따뜻한 세 번째 별은 독립된 짧은 줄에서 자유롭게 흔들린다. 두 가슴 별빛은 모빌의 서로 다른 변을 따라가다 중앙 별 아래에서 간격을 맞춘 뒤, 삼각형의 비어 있는 아래 꼭짓점을 통과하는 두 열린 호로 갈라진다.",
       "distinctFrom": [
@@ -197,7 +198,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "2fcdac287ad01bdf2c40f1ad35190ee1b467a0d95e746c560d85fe96e1deebf0",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "inside_starbox_corner_perpendicular_dualflaps_depthring_break",
       "artDirection": "열린 별상자 바닥의 안쪽 모서리에서 서로 직각인 두 벽을 올려다본다. 안쪽 왼편 꼬옥이는 가까운 덮개를 자기 손으로 들고 하트 꼬리 끝을 작은 별등 곁에 두며, 바깥 오른편 달콩이는 다른 축의 덮개만 둥근 집게로 받친다. 두 가슴 별빛은 각자의 상자 벽에 깊이가 다른 끊긴 호를 그리고 모서리에서 이어 붙지 않은 채, 위쪽 대각선 출구 두 곳으로 따로 열린다.",
       "distinctFrom": [
@@ -217,7 +218,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "6efd79cc0e44d2dbb06c4bfba546e1a7bca61d6705e2a7f905b61826ac0ff217",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "birdseye_saddle_twintrails_waystar_open_refork",
       "artDirection": "낮은 산등성이의 작은 안부를 새가 내려다보듯 비스듬한 고각으로 잡는다. 왼쪽 아래 길의 총총이와 오른쪽 아래 길의 오름이는 중앙 공동 별표 양쪽에 서로 다른 색의 둥근 경로 돌을 하나씩 놓고, 접힌 무문자 지도는 총총이의 가방 옆에 닫아 둔다. 두 가슴 별빛과 발자국 길은 별표 곁에서 잠깐 나란해진 뒤 위쪽의 서로 다른 열린 능선으로 다시 갈라지며 목적지나 도착 인물은 보이지 않는다.",
       "distinctFrom": [
@@ -237,7 +238,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "46b3071744b38b856139ab11423e3975f51bb3cd8854ba7e49ba912e201a0c33",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "underlanding_wormeye_counterbrace_staggered_twinlanes",
       "artDirection": "첫 공동 발판 아래에서 위쪽 달빛 계단 사이를 올려다보는 긴 벌레눈 시점이다. 왼쪽의 오름이는 발판 한쪽 받침못을, 오른쪽의 총총이는 반대쪽 고정띠를 각자 잡아 같은 첫 판을 수평으로 놓되 서로의 손이나 발을 붙들지 않는다. 두 가슴 별빛은 발판 위에서 잠깐 평행해졌다가 서로 다른 보폭의 디딤돌 두 줄을 따라 어긋난 높이로 오르고, 정상 없이 열린 상단 여백에서 각각 멈춘다.",
       "distinctFrom": [
@@ -257,7 +258,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "012372f7f1238af3ba1324bd44f0f13a0bcca5628195286e4f0a146603e14a72",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "cloudgarden_overhead_twinbottle_channels_emptycenter_gap",
       "artDirection": "둥근 구름 정원을 바로 위에서 내려다보고, 왼쪽의 방울이와 오른쪽의 차곡이는 서로 다른 작은 화단에 각자의 마음병을 세운다. 파란 병의 열린 물결과 따뜻한 병의 점 두 개는 글자 없는 별빛 수로를 각자 흐르며 중앙의 비어 있는 화분 둘레 한쪽에서만 나란해졌다가 다시 자기 화단으로 열린다. 두 가슴 별빛은 정원 바깥선을 완전히 두르지 않고 아래쪽 출입구 폭만큼 비워 둔다.",
       "distinctFrom": [
@@ -277,7 +278,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "1a2f72361c5edec37b89604ce65c79dcce215f74b22a21d4ec01ddf5d466009c",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "inside_open_watercircle_countercurrents_singlefinhinge",
       "artDirection": "넓은 별빛 물살 원의 비어 있는 가운데에서 바깥 둘레를 바라보는 방사형 시점이다. 큰 아쿠아 꿈별이는 왼쪽 앞 물살, 작은 분홍 잠별이는 오른쪽 뒤 물살을 서로 반대 방향으로 헤엄치며 중앙 가까운 지느러미 끝만 한 번 가볍게 맞댄다. 두 가슴 별빛과 각자의 색을 지닌 물살은 몸을 합치지 않고 넓은 원 가장자리를 돌아 오른쪽 위의 한 수호령 폭만큼 비운 틈에서 끝나며, 작은 별방울 하나는 접점 위에만 뜬다.",
       "distinctFrom": [
