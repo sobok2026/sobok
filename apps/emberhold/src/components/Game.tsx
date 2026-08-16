@@ -8326,6 +8326,8 @@ export default function Game() {
                 inert={compactViewport && !mobileRosterOpen ? true : undefined}
               >
                 <CampOverview
+                  day={game.day}
+                  veteranBriefing={veteranBriefing}
                   rosterCount={rosterCount}
                   mergeReadyPairCount={mergeReadyPairCount}
                   oath={game.oath}
@@ -8363,6 +8365,7 @@ export default function Game() {
 
                 <QuartermasterLedger
                   day={game.day}
+                  veteranBriefing={veteranBriefing}
                   supplies={game.supplies}
                   recoverySupplies={game.recoverySupplies}
                   spendable={quartermasterSpendable}

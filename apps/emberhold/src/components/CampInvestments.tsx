@@ -36,6 +36,7 @@ type CampaignPaceView = {
 
 type QuartermasterLedgerProps = {
   day: number
+  veteranBriefing: boolean
   supplies: number
   recoverySupplies: number
   spendable: number
@@ -48,6 +49,7 @@ type QuartermasterLedgerProps = {
 
 export function QuartermasterLedger({
   day,
+  veteranBriefing,
   supplies,
   recoverySupplies,
   spendable,
@@ -57,18 +59,9 @@ export function QuartermasterLedger({
   returnForecast,
   pace,
 }: QuartermasterLedgerProps) {
-  return (
-    <aside className="quartermaster-ledger" data-state={briefing.state} aria-label="보급관의 전투 귀환 예산">
-      <header>
-        <span aria-hidden="true">▣</span>
-        <div>
-          <small>QUARTERMASTER FORECAST · NIGHT {String(day).padStart(2, '0')}</small>
-          <strong>{briefing.title}</strong>
-          <p>{briefing.description}</p>
-        </div>
-        <b>{briefing.label}</b>
-      </header>
-      <dl>
+  const ledgerDetails = (
+    <>
+      <dl className="quartermaster-accounts">
         <div>
           <dt>운용 가능 보급</dt>
           <dd>◈ {spendable}</dd>
@@ -115,7 +108,7 @@ export function QuartermasterLedger({
           </span>
         </div>
       </dl>
-      <footer>
+      <footer className="quartermaster-formula">
         신호탄 비용 · 기본 18 + 밤 {recruit.nightPressure} + 구조 규모 {recruit.scalePressure}
         {recruit.difficultyDelta !== 0
           ? ` · 위험도 ${recruit.difficultyDelta > 0 ? '+' : ''}${recruit.difficultyDelta}`
@@ -124,6 +117,48 @@ export function QuartermasterLedger({
         {recruit.recoveryDiscount > 0 ? ` · 후퇴 복구 −${recruit.recoveryDiscount}` : ''} · 성장선은 출전 3명의 등급
         합계로 계산
       </footer>
+    </>
+  )
+
+  return (
+    <aside className="quartermaster-ledger" data-state={briefing.state} aria-label="보급관의 전투 귀환 예산">
+      <header>
+        <span aria-hidden="true">▣</span>
+        <div>
+          <small>QUARTERMASTER FORECAST · NIGHT {String(day).padStart(2, '0')}</small>
+          <strong>{briefing.title}</strong>
+          <p>{briefing.description}</p>
+        </div>
+        <b>{briefing.label}</b>
+      </header>
+      {veteranBriefing ? (
+        <details className="quartermaster-veteran-ledger" key={day}>
+          <summary>
+            <span>
+              <small>운용 보급</small>
+              <strong>◈ {spendable}</strong>
+            </span>
+            <span>
+              <small>다음 신호탄</small>
+              <strong>◈ {recruit.cost}</strong>
+            </span>
+            <span data-state={returnForecast ? (returnForecast.victory ? 'ready' : 'warning') : 'pending'}>
+              <small>계획 귀환</small>
+              <strong>{returnForecast ? `◈ ${returnForecast.supplies}` : '대열 필요'}</strong>
+            </span>
+            <span data-state={pace.growthGap === 0 ? 'ready' : 'warning'}>
+              <small>성장선</small>
+              <strong>
+                {pace.lineupTierTotal} / {pace.target}
+              </strong>
+            </span>
+            <i aria-hidden="true">⌄</i>
+          </summary>
+          <div>{ledgerDetails}</div>
+        </details>
+      ) : (
+        ledgerDetails
+      )}
     </aside>
   )
 }

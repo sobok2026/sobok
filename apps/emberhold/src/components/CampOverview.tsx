@@ -26,6 +26,8 @@ type ResonanceStatusView = {
 }
 
 type CampOverviewProps = {
+  day: number
+  veteranBriefing: boolean
   rosterCount: number
   mergeReadyPairCount: number
   oath: OathId
@@ -46,6 +48,8 @@ type CampOverviewProps = {
 }
 
 export function CampOverview({
+  day,
+  veteranBriefing,
   rosterCount,
   mergeReadyPairCount,
   oath,
@@ -64,42 +68,9 @@ export function CampOverview({
   getResonanceForRelic,
   onClose,
 }: CampOverviewProps) {
-  return (
+  const completedTrialCount = trialStatuses.filter((status) => status.completed).length
+  const dossierContent = (
     <>
-      <div className="panel-heading camp-heading">
-        <div>
-          <p className="eyebrow">SURVIVORS</p>
-          <h2 id="camp-title">불씨 대기소</h2>
-        </div>
-        <span className="capacity">
-          {rosterCount} / {ROSTER_SIZE}
-        </span>
-        <button className="mobile-sheet-close" type="button" onClick={onClose} aria-label="불씨 대기소 닫기">
-          ×
-        </button>
-      </div>
-
-      <p
-        id="camp-instruction"
-        className="camp-instruction"
-        data-merge-locked={rosterCount <= 3 ? 'true' : 'false'}
-        data-merge-ready={mergeReadyPairCount > 0 ? 'true' : 'false'}
-      >
-        {rosterCount <= 3 ? (
-          <>
-            세 전선을 지킬 마지막 인원입니다. <strong>신호탄 전까지 합성 잠김</strong>
-          </>
-        ) : mergeReadyPairCount > 0 ? (
-          <>
-            지금 합성 가능한 짝 <strong>{mergeReadyPairCount}쌍</strong> · 빛나는 카드를 선택해 결과를 확인하세요.
-          </>
-        ) : (
-          <>
-            같은 병과·등급을 <strong>겹쳐서 합성</strong>하세요.
-          </>
-        )}
-      </p>
-
       <section className="expedition-ledger" aria-labelledby="ledger-title">
         <header>
           <span aria-hidden="true">
@@ -225,6 +196,65 @@ export function CampOverview({
           </div>
         ) : null}
       </section>
+    </>
+  )
+
+  return (
+    <>
+      <div className="panel-heading camp-heading">
+        <div>
+          <p className="eyebrow">SURVIVORS</p>
+          <h2 id="camp-title">불씨 대기소</h2>
+        </div>
+        <span className="capacity">
+          {rosterCount} / {ROSTER_SIZE}
+        </span>
+        <button className="mobile-sheet-close" type="button" onClick={onClose} aria-label="불씨 대기소 닫기">
+          ×
+        </button>
+      </div>
+
+      <p
+        id="camp-instruction"
+        className="camp-instruction"
+        data-merge-locked={rosterCount <= 3 ? 'true' : 'false'}
+        data-merge-ready={mergeReadyPairCount > 0 ? 'true' : 'false'}
+      >
+        {rosterCount <= 3 ? (
+          <>
+            세 전선을 지킬 마지막 인원입니다. <strong>신호탄 전까지 합성 잠김</strong>
+          </>
+        ) : mergeReadyPairCount > 0 ? (
+          <>
+            지금 합성 가능한 짝 <strong>{mergeReadyPairCount}쌍</strong> · 빛나는 카드를 선택해 결과를 확인하세요.
+          </>
+        ) : (
+          <>
+            같은 병과·등급을 <strong>겹쳐서 합성</strong>하세요.
+          </>
+        )}
+      </p>
+
+      {veteranBriefing ? (
+        <details className="veteran-camp-dossier" key={day}>
+          <summary>
+            <span className="veteran-camp-dossier-sigil" aria-hidden="true">
+              {OATHS[oath].glyph}
+            </span>
+            <span className="veteran-camp-dossier-copy">
+              <small>VETERAN DOSSIER · DAY {String(day).padStart(2, '0')}</small>
+              <strong>
+                {OATHS[oath].name} · 과업 {completedTrialCount} / {trialStatuses.length} · 유물 {ownedRelics.length} / 5
+              </strong>
+            </span>
+            <b>공명 {activeResonances.length}</b>
+            <i aria-hidden="true">⌄</i>
+          </summary>
+          <div>{dossierContent}</div>
+        </details>
+      ) : (
+        dossierContent
+      )}
     </>
   )
 }
