@@ -1,6 +1,7 @@
 const BUILD_FINGERPRINT = '__EMBERHOLD_BUILD__'
 const CACHE_PREFIX = 'emberhold-offline-'
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_FINGERPRINT}`
+const CACHE_RETIREMENT_MARKER_URL = `${self.location.origin}/__emberhold-cache-retirement__`
 const CORE_ASSETS = [
   '/',
   '/index.html',
@@ -34,6 +35,14 @@ async function cacheAsset(cache, path) {
   await cache.put(request, response)
 }
 
+async function updateRuntimeCache(cache, request, response) {
+  try {
+    await cache.put(request, response)
+  } catch {
+    // A successful network response remains usable when optional runtime caching fails.
+  }
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     (async () => {
@@ -56,15 +65,31 @@ self.addEventListener('message', (event) => {
   if (event.data?.type === 'SKIP_WAITING') event.waitUntil(self.skipWaiting())
 })
 
+async function rotateBuildCaches() {
+  const cacheNames = await caches.keys()
+  const previousBuildCaches = cacheNames.filter(
+    (cacheName) => cacheName.startsWith(CACHE_PREFIX) && cacheName !== CACHE_NAME,
+  )
+  await Promise.all(
+    previousBuildCaches.map(async (cacheName) => {
+      try {
+        const cache = await caches.open(cacheName)
+        if (await cache.match(CACHE_RETIREMENT_MARKER_URL)) {
+          await caches.delete(cacheName)
+          return
+        }
+        await cache.put(CACHE_RETIREMENT_MARKER_URL, new Response(BUILD_FINGERPRINT))
+      } catch {
+        // Cache cleanup must never prevent the complete new build from activating.
+      }
+    }),
+  )
+}
+
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
-      const cacheNames = await caches.keys()
-      await Promise.all(
-        cacheNames
-          .filter((cacheName) => cacheName.startsWith('emberhold-') && cacheName !== CACHE_NAME)
-          .map((cacheName) => caches.delete(cacheName)),
-      )
+      await rotateBuildCaches()
       await self.clients.claim()
     })(),
   )
@@ -74,7 +99,7 @@ async function navigationResponse(request) {
   const cache = await caches.open(CACHE_NAME)
   try {
     const response = await fetch(request)
-    if (response.ok) await cache.put(request, response.clone())
+    if (response.ok) await updateRuntimeCache(cache, request, response.clone())
     return response
   } catch {
     const fallbackPath = new URL(request.url).pathname === '/' ? '/' : '/404.html'
@@ -87,14 +112,39 @@ async function navigationResponse(request) {
   }
 }
 
+async function matchRetainedAsset(request) {
+  if (!new URL(request.url).pathname.startsWith('/_next/static/')) return null
+  const cacheNames = await caches.keys()
+  for (let index = cacheNames.length - 1; index >= 0; index -= 1) {
+    const cacheName = cacheNames[index]
+    if (!cacheName.startsWith(CACHE_PREFIX) || cacheName === CACHE_NAME) continue
+    try {
+      const cached = await caches.open(cacheName).then((cache) => cache.match(request, { ignoreSearch: true }))
+      if (cached) return cached
+    } catch {
+      // A missing retired cache should fall through to the original network response.
+    }
+  }
+  return null
+}
+
 async function assetResponse(request) {
   const cache = await caches.open(CACHE_NAME)
   const cached = await cache.match(request, { ignoreSearch: true })
   if (cached) return cached
 
-  const response = await fetch(request)
-  if (response.ok) await cache.put(request, response.clone())
-  return response
+  try {
+    const response = await fetch(request)
+    if (response.ok) {
+      await updateRuntimeCache(cache, request, response.clone())
+      return response
+    }
+    return (await matchRetainedAsset(request)) ?? response
+  } catch (error) {
+    const retained = await matchRetainedAsset(request)
+    if (retained) return retained
+    throw error
+  }
 }
 
 self.addEventListener('fetch', (event) => {
