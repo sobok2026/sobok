@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import survivorTriadArt from '@/app/survivor-triad.webp'
 import './deferred.css'
 
@@ -353,6 +353,47 @@ type FirstVictoryPreviewView = {
   omen: string
 }
 
+type VeteranResultDossierProps = {
+  active: boolean
+  day: number
+  victory: boolean
+  wins: number
+  countered: number
+  recordCount: number
+  children: ReactNode
+}
+
+function VeteranResultDossier({
+  active,
+  day,
+  victory,
+  wins,
+  countered,
+  recordCount,
+  children,
+}: VeteranResultDossierProps) {
+  if (!active) return <>{children}</>
+
+  return (
+    <details className="veteran-result-dossier" data-outcome={victory ? 'victory' : 'retreat'}>
+      <summary>
+        <span className="veteran-result-dossier-sigil" aria-hidden="true">
+          {victory ? '✦' : '❄'}
+        </span>
+        <span className="veteran-result-dossier-copy">
+          <small>VETERAN NIGHT FILE · NIGHT {String(day).padStart(2, '0')}</small>
+          <strong>
+            {victory ? '방어 기록' : '후퇴 기록'} · 전선 {wins} / 3 · 의도 파훼 {countered} / 3
+          </strong>
+        </span>
+        <b>{recordCount}개 기록</b>
+        <i aria-hidden="true">⌄</i>
+      </summary>
+      <div className="veteran-result-dossier-body">{children}</div>
+    </details>
+  )
+}
+
 const FIRST_CROWN_RESULT_COPY = [
   {
     night: 2,
@@ -372,6 +413,7 @@ const FIRST_CROWN_RESULT_COPY = [
 ] as const
 
 type BattleResultDialogProps = {
+  veteranBriefing: boolean
   battleResult: BattleResult
   game: GameState
   currentStoryReport: string
@@ -405,6 +447,7 @@ type BattleResultDialogProps = {
 }
 
 export function BattleResultDialog({
+  veteranBriefing,
   battleResult,
   game,
   currentStoryReport,
@@ -633,6 +676,15 @@ export function BattleResultDialog({
     (activeResonances.length > 0 ? 1 : 0) +
     (battleLegacyEntries.length > 0 ? 1 : 0) +
     (game.masteryContract ? 1 : 0)
+  const resultCounteredCount = battleResult.lanes.filter((lane) => lane.countered).length
+  const recurringRecordCount =
+    1 +
+    (firstVictoryPreview ? 1 : 0) +
+    (firstCrownMarchResult ? 1 : 0) +
+    (secondCrownResult ? 1 : 0) +
+    (resultFinalMarchImprints.length > 0 ? 1 : 0) +
+    (battleResult.decisionEcho ? 1 : 0)
+  const compactVeteranResult = veteranBriefing && !battleResult.boss && !finalMarchGate
 
   return (
     <div
@@ -822,230 +874,244 @@ export function BattleResultDialog({
           </footer>
         </section>
 
-        {firstVictoryPreview ? (
-          <section className="first-victory-moment" aria-label="첫 승리 이정표와 다음 밤 예고">
-            <header>
-              <span aria-hidden="true">01</span>
-              <div>
-                <small>NEW CHRONICLE ENTRY · FIRST WATCH</small>
-                <strong>첫 번째 망루가 살아남았습니다</strong>
-                <p>
-                  당신의 첫 명령이 눈보라를 멈췄습니다. 이 승리는 계속하기와 함께 영구 업적과 현재 원정 기록에
-                  새겨집니다.
-                </p>
-              </div>
-              <b>첫 번째 망루</b>
-            </header>
-            <dl aria-label="첫 승리 전술 성과">
-              <div>
-                <dt>지킨 전선</dt>
-                <dd>{battleResult.wins} / 3</dd>
-              </div>
-              <div>
-                <dt>읽어낸 의도</dt>
-                <dd>{battleResult.lanes.filter((lane) => lane.countered).length} / 3</dd>
-              </div>
-              <div>
-                <dt>귀환 온기</dt>
-                <dd>{Math.max(0, Math.min(100, game.heat + battleResult.heatDelta))}%</dd>
-              </div>
-            </dl>
-            <footer>
-              <div>
-                <small>
-                  NEXT NIGHT {String(firstVictoryPreview.nextNight).padStart(2, '0')} · {firstVictoryPreview.location} ·{' '}
-                  {firstVictoryPreview.weather}
-                </small>
-                <strong>{firstVictoryPreview.title}</strong>
-                <p>{firstVictoryPreview.omen}</p>
-              </div>
-              <span>새 위협</span>
-            </footer>
-          </section>
-        ) : null}
+        <VeteranResultDossier
+          active={compactVeteranResult}
+          day={game.day}
+          victory={battleResult.victory}
+          wins={battleResult.wins}
+          countered={resultCounteredCount}
+          recordCount={recurringRecordCount}
+          key={`${game.day}-${game.battles}`}
+        >
+          {firstVictoryPreview ? (
+            <section className="first-victory-moment" aria-label="첫 승리 이정표와 다음 밤 예고">
+              <header>
+                <span aria-hidden="true">01</span>
+                <div>
+                  <small>NEW CHRONICLE ENTRY · FIRST WATCH</small>
+                  <strong>첫 번째 망루가 살아남았습니다</strong>
+                  <p>
+                    당신의 첫 명령이 눈보라를 멈췄습니다. 이 승리는 계속하기와 함께 영구 업적과 현재 원정 기록에
+                    새겨집니다.
+                  </p>
+                </div>
+                <b>첫 번째 망루</b>
+              </header>
+              <dl aria-label="첫 승리 전술 성과">
+                <div>
+                  <dt>지킨 전선</dt>
+                  <dd>{battleResult.wins} / 3</dd>
+                </div>
+                <div>
+                  <dt>읽어낸 의도</dt>
+                  <dd>{resultCounteredCount} / 3</dd>
+                </div>
+                <div>
+                  <dt>귀환 온기</dt>
+                  <dd>{Math.max(0, Math.min(100, game.heat + battleResult.heatDelta))}%</dd>
+                </div>
+              </dl>
+              <footer>
+                <div>
+                  <small>
+                    NEXT NIGHT {String(firstVictoryPreview.nextNight).padStart(2, '0')} · {firstVictoryPreview.location}{' '}
+                    · {firstVictoryPreview.weather}
+                  </small>
+                  <strong>{firstVictoryPreview.title}</strong>
+                  <p>{firstVictoryPreview.omen}</p>
+                </div>
+                <span>새 위협</span>
+              </footer>
+            </section>
+          ) : null}
 
-        {firstCrownMarchResult && firstCrownResultCopy ? (
-          <section
-            className="first-crown-result"
-            data-final={firstCrownMarchResult.night === 4 ? 'true' : 'false'}
-            aria-label={`첫 왕관 행군 ${firstCrownMarchResult.night}단계 완료`}
-          >
-            <header>
-              <span aria-hidden="true">{firstCrownMarchResult.glyph}</span>
-              <div>
-                <small>
-                  FIRST CROWN MARCH · NIGHT 0{firstCrownMarchResult.night} / 04 · {firstCrownMarchResult.label}
-                </small>
-                <strong>{firstCrownResultCopy.title}</strong>
-                <p>{firstCrownResultCopy.description}</p>
-              </div>
-              <b>{firstCrownMarchResult.reward}</b>
-            </header>
-            <footer>
-              {nextFirstCrownStage && nextFirstCrownStory ? (
-                <>
-                  <span>
-                    <b>NEXT · NIGHT 0{nextFirstCrownStage.night}</b> {nextFirstCrownStory.title}
-                  </span>
-                  <strong>{nextFirstCrownStage.reward}</strong>
-                </>
-              ) : (
-                <>
-                  <span>
-                    <b>ACT I COMPLETE</b> 첫 왕관의 막간이 열립니다.
-                  </span>
-                  <strong>제2막 해금</strong>
-                </>
-              )}
-            </footer>
-          </section>
-        ) : null}
+          {firstCrownMarchResult && firstCrownResultCopy ? (
+            <section
+              className="first-crown-result"
+              data-final={firstCrownMarchResult.night === 4 ? 'true' : 'false'}
+              aria-label={`첫 왕관 행군 ${firstCrownMarchResult.night}단계 완료`}
+            >
+              <header>
+                <span aria-hidden="true">{firstCrownMarchResult.glyph}</span>
+                <div>
+                  <small>
+                    FIRST CROWN MARCH · NIGHT 0{firstCrownMarchResult.night} / 04 · {firstCrownMarchResult.label}
+                  </small>
+                  <strong>{firstCrownResultCopy.title}</strong>
+                  <p>{firstCrownResultCopy.description}</p>
+                </div>
+                <b>{firstCrownMarchResult.reward}</b>
+              </header>
+              <footer>
+                {nextFirstCrownStage && nextFirstCrownStory ? (
+                  <>
+                    <span>
+                      <b>NEXT · NIGHT 0{nextFirstCrownStage.night}</b> {nextFirstCrownStory.title}
+                    </span>
+                    <strong>{nextFirstCrownStage.reward}</strong>
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      <b>ACT I COMPLETE</b> 첫 왕관의 막간이 열립니다.
+                    </span>
+                    <strong>제2막 해금</strong>
+                  </>
+                )}
+              </footer>
+            </section>
+          ) : null}
 
-        {secondCrownResult ? (
-          <section className="second-crown-result" data-state={secondCrownResultState} aria-label="빙하 심장 방벽 판정">
-            <header>
-              <span aria-hidden="true">⬡</span>
-              <div>
-                <small>SECOND CROWN VERDICT · HEART SHIELD</small>
-                <strong>
-                  {battleResult.victory
-                    ? secondCrownResultState === 'direct'
-                      ? '중앙 방벽과 푸른 심장을 함께 꿰뚫었습니다'
-                      : secondCrownResultState === 'breached'
-                        ? '방벽의 균열로 푸른 박동을 끊었습니다'
-                        : '측면 혈관을 끊어 심장을 멈췄습니다'
-                    : secondCrownShieldBroken
-                      ? '방벽은 갈랐지만 푸른 심장이 재생합니다'
-                      : '심장 방벽이 왕관 조각을 다시 봉합합니다'}
-                </strong>
-                <p>
+          {secondCrownResult ? (
+            <section
+              className="second-crown-result"
+              data-state={secondCrownResultState}
+              aria-label="빙하 심장 방벽 판정"
+            >
+              <header>
+                <span aria-hidden="true">⬡</span>
+                <div>
+                  <small>SECOND CROWN VERDICT · HEART SHIELD</small>
+                  <strong>
+                    {battleResult.victory
+                      ? secondCrownResultState === 'direct'
+                        ? '중앙 방벽과 푸른 심장을 함께 꿰뚫었습니다'
+                        : secondCrownResultState === 'breached'
+                          ? '방벽의 균열로 푸른 박동을 끊었습니다'
+                          : '측면 혈관을 끊어 심장을 멈췄습니다'
+                      : secondCrownShieldBroken
+                        ? '방벽은 갈랐지만 푸른 심장이 재생합니다'
+                        : '심장 방벽이 왕관 조각을 다시 봉합합니다'}
+                  </strong>
+                  <p>
+                    {battleResult.victory
+                      ? secondCrownShieldBroken
+                        ? '화로의 중앙 집중이 방벽을 해제했습니다. 지켜 낸 전선의 불씨가 균열 안으로 스며들어 두 번째 왕관 조각을 파괴했습니다.'
+                        : '중앙 방벽은 남았지만 지켜 낸 전선들이 얼어붙은 혈관을 끊었습니다. 고립된 심장이 멎으며 극야로 가는 길이 열렸습니다.'
+                      : secondCrownShieldBroken
+                        ? '중앙 집중으로 방벽은 해제했습니다. 다음 시도에서는 두 번째 승리 전선을 확보해 심장의 재생 경로까지 끊어야 합니다.'
+                        : '화로를 중앙 2전선에 집중하면 심장 방벽의 위협 보정이 해제됩니다. 방벽을 먼저 끊고 두 전선을 지키세요.'}
+                  </p>
+                </div>
+                <b>
                   {battleResult.victory
                     ? secondCrownShieldBroken
-                      ? '화로의 중앙 집중이 방벽을 해제했습니다. 지켜 낸 전선의 불씨가 균열 안으로 스며들어 두 번째 왕관 조각을 파괴했습니다.'
-                      : '중앙 방벽은 남았지만 지켜 낸 전선들이 얼어붙은 혈관을 끊었습니다. 고립된 심장이 멎으며 극야로 가는 길이 열렸습니다.'
+                      ? '방벽 해제 · 왕관 파쇄'
+                      : '혈관 절단 · 우회 파쇄'
                     : secondCrownShieldBroken
-                      ? '중앙 집중으로 방벽은 해제했습니다. 다음 시도에서는 두 번째 승리 전선을 확보해 심장의 재생 경로까지 끊어야 합니다.'
-                      : '화로를 중앙 2전선에 집중하면 심장 방벽의 위협 보정이 해제됩니다. 방벽을 먼저 끊고 두 전선을 지키세요.'}
-                </p>
-              </div>
-              <b>
-                {battleResult.victory
-                  ? secondCrownShieldBroken
-                    ? '방벽 해제 · 왕관 파쇄'
-                    : '혈관 절단 · 우회 파쇄'
-                  : secondCrownShieldBroken
-                    ? '방벽 해제 · 전선 부족'
-                    : '방벽 유지 · 재생'}
-              </b>
-            </header>
-            <dl>
-              <div>
-                <dt>화로 집중</dt>
-                <dd>
-                  {battleResult.focusLane + 1}전선 · {secondCrownShieldBroken ? '방벽 해제' : '방벽 유지'}
-                </dd>
-              </div>
-              <div>
-                <dt>심장 전선</dt>
-                <dd>{secondCrownHeartLane.won ? '유지' : '붕괴'}</dd>
-              </div>
-              <div>
-                <dt>전체 방어선</dt>
-                <dd>{battleResult.wins} / 3</dd>
-              </div>
-            </dl>
-            <footer>
-              <span>
-                {battleResult.victory
-                  ? '푸른 심장의 마지막 박동이 극야 평원의 왕관 경보로 바뀝니다.'
-                  : '명령과 배치는 그대로 다시 읽을 수 있습니다. 화로 위치와 두 번째 승리선을 먼저 조정하세요.'}
-              </span>
-              <strong>{battleResult.victory ? 'ACT II COMPLETE' : 'HEARTBEAT CONTINUES'}</strong>
-            </footer>
-          </section>
-        ) : null}
+                      ? '방벽 해제 · 전선 부족'
+                      : '방벽 유지 · 재생'}
+                </b>
+              </header>
+              <dl>
+                <div>
+                  <dt>화로 집중</dt>
+                  <dd>
+                    {battleResult.focusLane + 1}전선 · {secondCrownShieldBroken ? '방벽 해제' : '방벽 유지'}
+                  </dd>
+                </div>
+                <div>
+                  <dt>심장 전선</dt>
+                  <dd>{secondCrownHeartLane.won ? '유지' : '붕괴'}</dd>
+                </div>
+                <div>
+                  <dt>전체 방어선</dt>
+                  <dd>{battleResult.wins} / 3</dd>
+                </div>
+              </dl>
+              <footer>
+                <span>
+                  {battleResult.victory
+                    ? '푸른 심장의 마지막 박동이 극야 평원의 왕관 경보로 바뀝니다.'
+                    : '명령과 배치는 그대로 다시 읽을 수 있습니다. 화로 위치와 두 번째 승리선을 먼저 조정하세요.'}
+                </span>
+                <strong>{battleResult.victory ? 'ACT II COMPLETE' : 'HEARTBEAT CONTINUES'}</strong>
+              </footer>
+            </section>
+          ) : null}
 
-        <div className="lane-report">
-          {battleResult.lanes.map((lane) => (
-            <div className={lane.won ? 'won' : 'lost'} key={lane.lane}>
-              <span>0{lane.lane + 1}</span>
-              <strong>{survivorName(lane.unit)}</strong>
-              <i>vs</i>
-              <strong>{lane.enemy.name}</strong>
-              <b>
-                {lane.enemy.doctrine
-                  ? `${lane.doctrineBroken ? '교리 파훼' : '교리 압박'}·${lane.won ? '승리' : '패배'}`
-                  : lane.resonanceIds.length > 0
-                    ? `공명 +${Math.round(lane.resonanceBonus * 100)}%·${lane.won ? '승리' : '패배'}`
-                    : lane.specializationActive
-                      ? `진급 +${Math.round(lane.specializationBonus * 100)}%·${lane.won ? '승리' : '패배'}`
-                      : lane.countered
-                        ? `파훼·${lane.won ? '승리' : '패배'}`
-                        : lane.won
-                          ? '승리'
-                          : '패배'}
-              </b>
-            </div>
-          ))}
-        </div>
-
-        {resultFinalMarchImprints.length > 0 ? (
-          <section className="result-final-march-imprints" aria-label="마지막 행군 각인 전투 결과">
-            <header>
-              <span aria-hidden="true">⚑</span>
-              <div>
-                <small>LAST MARCH VERDICT · CHOICE CONSEQUENCES</small>
-                <strong>행군의 선택이 전선에서 회수되었습니다</strong>
+          <div className="lane-report">
+            {battleResult.lanes.map((lane) => (
+              <div className={lane.won ? 'won' : 'lost'} key={lane.lane}>
+                <span>0{lane.lane + 1}</span>
+                <strong>{survivorName(lane.unit)}</strong>
+                <i>vs</i>
+                <strong>{lane.enemy.name}</strong>
+                <b>
+                  {lane.enemy.doctrine
+                    ? `${lane.doctrineBroken ? '교리 파훼' : '교리 압박'}·${lane.won ? '승리' : '패배'}`
+                    : lane.resonanceIds.length > 0
+                      ? `공명 +${Math.round(lane.resonanceBonus * 100)}%·${lane.won ? '승리' : '패배'}`
+                      : lane.specializationActive
+                        ? `진급 +${Math.round(lane.specializationBonus * 100)}%·${lane.won ? '승리' : '패배'}`
+                        : lane.countered
+                          ? `파훼·${lane.won ? '승리' : '패배'}`
+                          : lane.won
+                            ? '승리'
+                            : '패배'}
+                </b>
               </div>
-              <b>{resultFinalMarchImprintCount} / 3 전선 강화</b>
-            </header>
-            <ol>
-              {resultFinalMarchImprints.map(({ imprint, activeLanes }) => (
-                <li data-active={activeLanes > 0 ? 'true' : 'false'} key={imprint.id}>
-                  <span aria-hidden="true">{imprint.glyph}</span>
-                  <div>
-                    <small>
-                      DAY {String(imprint.sourceDay).padStart(2, '0')} · {imprint.sourceChoice}
-                    </small>
-                    <strong>{imprint.name}</strong>
-                    <p>{imprint.crownLink}</p>
-                  </div>
-                  <b>{activeLanes > 0 ? `${activeLanes} / 3 발동` : '조건 미충족'}</b>
-                </li>
-              ))}
-            </ol>
-          </section>
-        ) : null}
+            ))}
+          </div>
 
-        {battleResult.decisionEcho ? (
-          <section
-            className="result-decision-echo"
-            data-triggered={battleResult.decisionHeatProtected > 0 || resultDecisionEchoCount > 0 ? 'true' : 'false'}
-            aria-label="이전 결정의 전투 결과"
-          >
-            <span aria-hidden="true">{battleResult.decisionEcho.glyph}</span>
-            <div>
-              <small>
-                PAST DECISION VERDICT · DAY {String(battleResult.decisionEcho.sourceDay).padStart(2, '0')} ·{' '}
-                {battleResult.decisionEcho.sourceChoice}
-              </small>
-              <strong>{battleResult.decisionEcho.name}</strong>
-              <p>{battleResult.decisionEcho.story}</p>
-            </div>
-            <em>
-              <b>
-                {battleResult.decisionHeatShield > 0
-                  ? battleResult.decisionHeatProtected > 0
-                    ? `실제 온기 손실 ${battleResult.decisionHeatProtected} 감소`
-                    : '추가 온기 감소 없음'
-                  : resultDecisionEchoCount > 0
-                    ? `${resultDecisionEchoCount} / 3 전선 발동`
-                    : '발동 조건 미충족'}
-              </b>
-              {battleResult.decisionEcho.effect}
-            </em>
-          </section>
-        ) : null}
+          {resultFinalMarchImprints.length > 0 ? (
+            <section className="result-final-march-imprints" aria-label="마지막 행군 각인 전투 결과">
+              <header>
+                <span aria-hidden="true">⚑</span>
+                <div>
+                  <small>LAST MARCH VERDICT · CHOICE CONSEQUENCES</small>
+                  <strong>행군의 선택이 전선에서 회수되었습니다</strong>
+                </div>
+                <b>{resultFinalMarchImprintCount} / 3 전선 강화</b>
+              </header>
+              <ol>
+                {resultFinalMarchImprints.map(({ imprint, activeLanes }) => (
+                  <li data-active={activeLanes > 0 ? 'true' : 'false'} key={imprint.id}>
+                    <span aria-hidden="true">{imprint.glyph}</span>
+                    <div>
+                      <small>
+                        DAY {String(imprint.sourceDay).padStart(2, '0')} · {imprint.sourceChoice}
+                      </small>
+                      <strong>{imprint.name}</strong>
+                      <p>{imprint.crownLink}</p>
+                    </div>
+                    <b>{activeLanes > 0 ? `${activeLanes} / 3 발동` : '조건 미충족'}</b>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ) : null}
+
+          {battleResult.decisionEcho ? (
+            <section
+              className="result-decision-echo"
+              data-triggered={battleResult.decisionHeatProtected > 0 || resultDecisionEchoCount > 0 ? 'true' : 'false'}
+              aria-label="이전 결정의 전투 결과"
+            >
+              <span aria-hidden="true">{battleResult.decisionEcho.glyph}</span>
+              <div>
+                <small>
+                  PAST DECISION VERDICT · DAY {String(battleResult.decisionEcho.sourceDay).padStart(2, '0')} ·{' '}
+                  {battleResult.decisionEcho.sourceChoice}
+                </small>
+                <strong>{battleResult.decisionEcho.name}</strong>
+                <p>{battleResult.decisionEcho.story}</p>
+              </div>
+              <em>
+                <b>
+                  {battleResult.decisionHeatShield > 0
+                    ? battleResult.decisionHeatProtected > 0
+                      ? `실제 온기 손실 ${battleResult.decisionHeatProtected} 감소`
+                      : '추가 온기 감소 없음'
+                    : resultDecisionEchoCount > 0
+                      ? `${resultDecisionEchoCount} / 3 전선 발동`
+                      : '발동 조건 미충족'}
+                </b>
+                {battleResult.decisionEcho.effect}
+              </em>
+            </section>
+          ) : null}
+        </VeteranResultDossier>
 
         {battleResult.finalVow ? (
           <section className="result-final-vow" data-vow={battleResult.finalVow.id} aria-label="최후의 맹세 전투 결과">

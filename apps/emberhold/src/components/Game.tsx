@@ -8741,6 +8741,7 @@ export default function Game() {
 
       {phase === 'result' && battleResult && !showTitle ? (
         <BattleResultDialog
+          veteranBriefing={veteranBriefing}
           battleResult={battleResult}
           game={game}
           currentStoryReport={currentStory.report}

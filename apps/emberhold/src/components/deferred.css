@@ -16293,6 +16293,115 @@
   font-size: var(--text-small);
 }
 
+.veteran-result-dossier {
+  --veteran-result-rgb: 235, 159, 78;
+  overflow: hidden;
+  margin-top: 16px;
+  border: 1px solid rgba(var(--veteran-result-rgb), 0.24);
+  background:
+    radial-gradient(circle at 0 50%, rgba(var(--veteran-result-rgb), 0.1), transparent 34%), rgba(2, 11, 16, 0.5);
+  text-align: left;
+}
+
+.veteran-result-dossier[data-outcome='retreat'] {
+  --veteran-result-rgb: 104, 200, 226;
+}
+
+.veteran-result-dossier > summary {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto 22px;
+  min-height: 68px;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 12px;
+  background: linear-gradient(90deg, rgba(var(--veteran-result-rgb), 0.055), transparent 76%);
+  cursor: pointer;
+  list-style: none;
+  transition: background 160ms ease;
+}
+
+.veteran-result-dossier > summary::-webkit-details-marker {
+  display: none;
+}
+
+.veteran-result-dossier > summary::marker {
+  content: '';
+}
+
+.veteran-result-dossier > summary:hover {
+  background: linear-gradient(90deg, rgba(var(--veteran-result-rgb), 0.12), transparent 82%);
+}
+
+.veteran-result-dossier > summary:focus-visible {
+  outline: 2px solid rgba(var(--veteran-result-rgb), 0.7);
+  outline-offset: -2px;
+}
+
+.veteran-result-dossier-sigil {
+  display: grid;
+  width: 40px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid rgba(var(--veteran-result-rgb), 0.38);
+  background: radial-gradient(circle, rgba(var(--veteran-result-rgb), 0.15), rgba(2, 11, 16, 0.3) 70%);
+  color: rgb(var(--veteran-result-rgb));
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 18px;
+  text-shadow: 0 0 16px rgba(var(--veteran-result-rgb), 0.32);
+}
+
+.veteran-result-dossier-copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.veteran-result-dossier-copy small {
+  overflow: hidden;
+  color: rgba(var(--veteran-result-rgb), 0.82);
+  font-size: var(--text-label);
+  font-weight: 820;
+  letter-spacing: 0.065em;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.veteran-result-dossier-copy strong {
+  overflow: hidden;
+  color: #e6f0f1;
+  font-size: var(--text-body);
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.veteran-result-dossier > summary > b {
+  padding: 5px 7px;
+  border: 1px solid rgba(var(--veteran-result-rgb), 0.24);
+  background: rgba(var(--veteran-result-rgb), 0.055);
+  color: rgb(var(--veteran-result-rgb));
+  font-size: var(--text-label);
+  white-space: nowrap;
+}
+
+.veteran-result-dossier > summary > i {
+  color: rgba(var(--veteran-result-rgb), 0.78);
+  font-size: 18px;
+  font-style: normal;
+  text-align: center;
+  transition: transform 180ms ease;
+}
+
+.veteran-result-dossier[open] > summary > i {
+  transform: rotate(180deg);
+}
+
+.veteran-result-dossier-body {
+  padding: 0 10px 10px;
+  border-top: 1px solid rgba(var(--veteran-result-rgb), 0.12);
+}
+
 .result-contribution-ledger {
   overflow: hidden;
   margin-top: 16px;
@@ -16398,9 +16507,18 @@
 }
 
 .game-shell[data-contrast='high'] .result-settlement,
+.game-shell[data-contrast='high'] .veteran-result-dossier,
 .game-shell[data-contrast='high'] .result-contribution-ledger {
   border-color: rgb(var(--settlement-rgb, 126, 200, 220));
   background-color: #06141b;
+}
+
+.game-shell[data-contrast='high'] .veteran-result-dossier {
+  border-color: rgb(var(--veteran-result-rgb));
+}
+
+.game-shell[data-contrast='high'] .veteran-result-dossier-copy strong {
+  color: #f1f8f8;
 }
 
 .game-shell[data-contrast='high'] .result-settlement-thresholds > span,
@@ -16459,6 +16577,12 @@
   .result-settlement .result-settlement-continue {
     width: 100%;
   }
+
+  .veteran-result-dossier > summary {
+    grid-template-columns: 40px minmax(0, 1fr) auto 20px;
+    gap: 9px;
+    padding-inline: 10px;
+  }
 }
 
 @media (max-width: 420px) {
@@ -16484,6 +16608,18 @@
     grid-template-columns: minmax(0, 1fr) auto 18px;
     padding-inline: 10px;
   }
+
+  .veteran-result-dossier > summary {
+    grid-template-columns: 40px minmax(0, 1fr) 18px;
+  }
+
+  .veteran-result-dossier > summary > b {
+    display: none;
+  }
+
+  .veteran-result-dossier-body {
+    padding-inline: 7px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -16495,6 +16631,11 @@
   .result-contribution-ledger > summary > i {
     transition: none;
   }
+
+  .veteran-result-dossier > summary,
+  .veteran-result-dossier > summary > i {
+    transition: none;
+  }
 }
 
 .game-shell[data-motion='reduced'] .result-settlement,
@@ -16503,6 +16644,11 @@
 }
 
 .game-shell[data-motion='reduced'] .result-contribution-ledger > summary > i {
+  transition: none;
+}
+
+.game-shell[data-motion='reduced'] .veteran-result-dossier > summary,
+.game-shell[data-motion='reduced'] .veteran-result-dossier > summary > i {
   transition: none;
 }
 
