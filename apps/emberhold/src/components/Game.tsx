@@ -5928,11 +5928,10 @@ export default function Game() {
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const focusableSelector =
       'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
+    const elementIsVisible = (element: HTMLElement) =>
+      !element.hidden && !element.closest('[inert], [aria-hidden="true"]') && element.getClientRects().length > 0
     const focusableElements = (container: HTMLElement) =>
-      Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter(
-        (element) =>
-          !element.hidden && !element.closest('[inert], [aria-hidden="true"]') && element.getClientRects().length > 0,
-      )
+      Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter(elementIsVisible)
     let scope: HTMLElement | null = null
     let focusFirst: number | null = null
     let focusObserver: MutationObserver | null = null
@@ -5944,7 +5943,9 @@ export default function Game() {
       if (focusFirst !== null) window.clearTimeout(focusFirst)
       focusFirst = window.setTimeout(() => {
         const focusable = focusableElements(nextScope)
-        const preferred = focusable.find((element) => element.hasAttribute('data-autofocus'))
+        const preferred = Array.from(nextScope.querySelectorAll<HTMLElement>('[data-autofocus]')).find(
+          (element) => elementIsVisible(element) && (element.matches(focusableSelector) || element.tabIndex === -1),
+        )
         const first = preferred ?? focusable[0]
         ;(first ?? nextScope).focus({ preventScroll: true })
       }, 0)
@@ -6510,9 +6511,11 @@ export default function Game() {
     setRiskDepartureConfirmation(null)
     setIncomingRiftCode(null)
     setPendingReplacementRiftCode(null)
+    setPendingLegacyPurchase(null)
     clearLinkedRiftFromCurrentUrl()
     setShowNewCampaignConfirm(false)
     setShowExpeditionMenu(false)
+    setShowArchive(false)
     setMobileRosterOpen(false)
     setSelectedDifficulty(nextChallengeDifficulty)
     setSetupMode(game.mode)
@@ -6520,7 +6523,10 @@ export default function Game() {
     setSharedCode(game.mode === 'shared' ? runCodeFor(game.runSeed) : '')
     setShowTitle(true)
     setShowDifficulty(true)
-    playSound('select', soundOn)
+    scheduleFrame(() => {
+      playSound('select', soundOn)
+      vibrate([12, 20, 28])
+    })
     announce(
       `${DIFFICULTIES[nextChallengeDifficulty].name} · ${nextWinningEndingId ? `${ENDINGS[nextWinningEndingId].title}을 향할` : '다음 원정의'} 서약을 선택하세요.`,
     )
@@ -6701,10 +6707,14 @@ export default function Game() {
 
   function openArchive(tab: ArchiveTab) {
     preloadArchiveDialog()
+    const endingRewardHandoff = tab === 'legacy' && game.status !== 'playing'
     setPendingLegacyPurchase(null)
     setArchiveTab(tab)
     setShowArchive(true)
-    playSound('select', soundOn)
+    scheduleFrame(() => {
+      playSound(endingRewardHandoff ? 'relic' : 'select', soundOn)
+      if (endingRewardHandoff) vibrate([12, 18, 26])
+    })
   }
 
   function closeArchive() {
@@ -8514,6 +8524,7 @@ export default function Game() {
           incomingRiftCode={incomingRiftCode}
           unlockedAchievementIds={unlockedAchievementIds}
           showEndingRouteRecommendation={showEndingRouteRecommendation}
+          completedEndingId={completedCurrentEndingId}
           nextWinningEndingId={nextWinningEndingId}
           nextWinningEndingRoute={nextWinningEndingRoute}
           meta={meta}
@@ -8579,6 +8590,7 @@ export default function Game() {
         <ArchiveDialog
           archiveTab={archiveTab}
           bestScore={bestScore}
+          completedEndingId={completedCurrentEndingId}
           endingDiscoveryEntries={endingDiscoveryEntries}
           game={game}
           masteredProtocolCount={masteredProtocolCount}
@@ -8588,6 +8600,7 @@ export default function Game() {
           recommendedLegacyId={recommendedLegacyId}
           unlockedAchievementIds={unlockedAchievementIds}
           closeArchive={closeArchive}
+          prepareNextChallenge={prepareNextChallenge}
           setArchiveTab={setArchiveTab}
           setPendingLegacyPurchase={setPendingLegacyPurchase}
           requestLegacyPurchase={requestLegacyPurchase}

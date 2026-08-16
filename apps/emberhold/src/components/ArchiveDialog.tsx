@@ -6,6 +6,7 @@ import type {
   ArchiveTab,
   Difficulty,
   EndingDiscoveryEntry,
+  EndingId,
   ExpeditionRank,
   ExpeditionRecord,
   GameState,
@@ -54,6 +55,7 @@ import {
 type ArchiveDialogProps = {
   archiveTab: ArchiveTab
   bestScore: number
+  completedEndingId: EndingId | null
   endingDiscoveryEntries: EndingDiscoveryEntry[]
   game: GameState
   masteredProtocolCount: number
@@ -63,6 +65,7 @@ type ArchiveDialogProps = {
   recommendedLegacyId: LegacyId | null
   unlockedAchievementIds: ReadonlySet<AchievementId>
   closeArchive: () => void
+  prepareNextChallenge: () => void
   setArchiveTab: (tab: ArchiveTab) => void
   setPendingLegacyPurchase: (legacyId: LegacyId | null) => void
   requestLegacyPurchase: (legacyId: LegacyId) => void
@@ -76,6 +79,7 @@ type ArchiveDialogProps = {
 export function ArchiveDialog({
   archiveTab,
   bestScore,
+  completedEndingId,
   endingDiscoveryEntries,
   game,
   masteredProtocolCount,
@@ -85,6 +89,7 @@ export function ArchiveDialog({
   recommendedLegacyId,
   unlockedAchievementIds,
   closeArchive,
+  prepareNextChallenge,
   setArchiveTab,
   setPendingLegacyPurchase,
   requestLegacyPurchase,
@@ -98,6 +103,7 @@ export function ArchiveDialog({
   const pendingLegacyUpgrade = pendingLegacyPurchase ? LEGACY_UPGRADES[pendingLegacyPurchase] : null
   const recommendedLegacyUpgrade = recommendedLegacyId ? LEGACY_UPGRADES[recommendedLegacyId] : null
   const legacyMastery = legacyMasteryFor(meta)
+  const completedEnding = completedEndingId ? ENDINGS[completedEndingId] : null
   const inheritedLegacyCost = meta.legacy.reduce((total, legacyId) => total + LEGACY_UPGRADES[legacyId].cost, 0)
   const totalLegacyCost = LEGACY_IDS.reduce((total, legacyId) => total + LEGACY_UPGRADES[legacyId].cost, 0)
   const legacyCollectionProgress = Math.round((inheritedLegacyCost / totalLegacyCost) * 100)
@@ -632,6 +638,40 @@ export function ArchiveDialog({
                   {meta.embers}
                 </strong>
               </header>
+              {completedEnding ? (
+                <section
+                  className="legacy-route-summary legacy-return-handoff"
+                  data-outcome={game.status}
+                  aria-labelledby="legacy-return-handoff-title"
+                >
+                  <span aria-hidden="true">{completedEnding.glyph}</span>
+                  <div>
+                    <small>LAST EXPEDITION REWARD · NEXT LEGACY HANDOFF</small>
+                    <strong id="legacy-return-handoff-title">
+                      {completedEnding.title}의 보상이 계승으로 이어집니다
+                    </strong>
+                    <p>
+                      {game.legacyReward > 0
+                        ? `이번 원정의 불씨 +${game.legacyReward}가 보관되었습니다.`
+                        : '이번 원정은 추가 불씨 없이 전술 기록을 남겼습니다.'}{' '}
+                      {recommendedLegacyUpgrade
+                        ? `${DIFFICULTIES[nextChallengeDifficulty].name}에는 ${recommendedLegacyUpgrade.name} 계승을 추천합니다.`
+                        : '모든 영구 유산이 준비되어 다음 도전 설계로 바로 이동할 수 있습니다.'}
+                    </p>
+                  </div>
+                  <b>
+                    귀환 +{game.legacyReward} · 보유 {meta.embers}
+                  </b>
+                  <footer>
+                    <span>유산 선택은 건너뛰어도 되며, 보관된 불씨와 원정 기록은 그대로 유지됩니다.</span>
+                    <button type="button" onClick={prepareNextChallenge}>
+                      <strong>계승을 마치고 다음 원정 설계</strong>
+                      <small>{DIFFICULTIES[nextChallengeDifficulty].name} · 서약 선택</small>
+                      <i aria-hidden="true">›</i>
+                    </button>
+                  </footer>
+                </section>
+              ) : null}
               <section
                 className="legacy-route-summary"
                 data-state={

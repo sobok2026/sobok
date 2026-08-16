@@ -48,6 +48,7 @@ type TitleScreenProps = {
   incomingRiftCode: string | null
   unlockedAchievementIds: ReadonlySet<AchievementId>
   showEndingRouteRecommendation: boolean
+  completedEndingId: EndingId | null
   nextWinningEndingId: EndingId | null
   nextWinningEndingRoute: (typeof ENDING_ROUTES)[EndingId] | null
   meta: MetaState
@@ -101,6 +102,7 @@ export function TitleScreen({
   incomingRiftCode,
   unlockedAchievementIds,
   showEndingRouteRecommendation,
+  completedEndingId,
   nextWinningEndingId,
   nextWinningEndingRoute,
   meta,
@@ -139,6 +141,7 @@ export function TitleScreen({
   const firstExpedition = meta.completedRuns === 0 && meta.history.length === 0
   const legacyMastery = legacyMasteryFor(meta)
   const masteryContractEligible = inheritedPowerEnabledFor(setupMode)
+  const completedEnding = completedEndingId ? ENDINGS[completedEndingId] : null
 
   return (
     <div
@@ -196,6 +199,31 @@ export function TitleScreen({
             </button>
             {selectedDifficulty ? (
               <>
+                {completedEnding ? (
+                  <aside
+                    className="setup-ending-route setup-return-handoff"
+                    data-outcome={game.status}
+                    data-autofocus="true"
+                    aria-label="직전 원정에서 다음 도전으로 이어진 기록"
+                    tabIndex={-1}
+                  >
+                    <span aria-hidden="true">{completedEnding.glyph}</span>
+                    <div>
+                      <small>LAST EXPEDITION SEALED · NEXT BRIEF OPEN</small>
+                      <strong>
+                        {completedEnding.title} → {DIFFICULTIES[selectedDifficulty].name}
+                      </strong>
+                      <p>
+                        {nextWinningEndingId
+                          ? `직전 기록과 보상을 보존했습니다. 다음 목표는 ${ENDINGS[nextWinningEndingId].title}, 추천 서약은 아래에 표시됩니다.`
+                          : `직전 기록과 보상을 보존했습니다. ${DIFFICULTIES[selectedDifficulty].name}에서 새 서약과 기록 목표를 선택하세요.`}
+                      </p>
+                    </div>
+                    <b>
+                      명성 {game.score.toLocaleString('ko-KR')} · 귀환 +{game.legacyReward} · 보유 {meta.embers}
+                    </b>
+                  </aside>
+                ) : null}
                 <p className="eyebrow">STEP 02 · CHOOSE AN EXPEDITION OATH</p>
                 <h2 id="title-heading">이번 원정의 방식</h2>
                 <p className="title-tagline">

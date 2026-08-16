@@ -11262,6 +11262,22 @@ body {
   background: radial-gradient(circle at 0 50%, rgba(var(--route-rgb), 0.12), transparent 26%), rgba(5, 14, 19, 0.76);
 }
 
+.setup-return-handoff {
+  margin: 0 0 13px;
+  animation: setup-return-handoff-in 440ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.setup-return-handoff[data-outcome='lost'] {
+  --route-rgb: 111, 210, 228;
+}
+
+@keyframes setup-return-handoff-in {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+}
+
 .setup-ending-route > span {
   display: grid;
   width: 39px;
@@ -11334,6 +11350,16 @@ body {
 
 .game-shell[data-contrast='high'] .oath-grid > button[data-ending-recommended='true'] {
   border-color: #f3bd80;
+}
+
+.game-shell[data-motion='reduced'] .setup-return-handoff {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .setup-return-handoff {
+    animation: none;
+  }
 }
 
 @media (max-width: 760px), (max-height: 520px) and (pointer: coarse) {
