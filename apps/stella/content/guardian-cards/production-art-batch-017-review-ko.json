@@ -1,7 +1,15 @@
 {
-  "status": "visual_review_ready",
+  "status": "visual_review_complete",
   "editorialApprovedOn": "2026-08-16",
   "generatedOn": "2026-08-16",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-16",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
   "locale": "ko",
   "batchId": "love.first-signal.orbit",
   "batchOrder": 17,
@@ -78,7 +86,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "e7fea1c36cad91de9d1ce30b4d3ca385bae84d4c4735589e48d538013df53cd9",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "f50a7554c577f97ddd9dc1b0405c7f158d8fb93cf8659f94181cd3a4d2f6d61d",
       "compositionFamily": "emptychair_height_tableedge_plate_ribbon_pause",
       "artDirection": "상대가 앉을 빈 의자 높이에서 낮은 나무 테이블 모서리를 비스듬히 본다. 가까운 왼쪽의 따뜻한 접시에는 아직 나누지 않은 마지막 별쿠키 하나가 있고, 접시 가장자리의 짧은 초록 리본만 빈 자리 쪽을 향한다. 오른쪽 뒤의 차곡이는 두 손을 앞치마 위로 거둔 채 접시를 바라보고, 빈 의자는 등받이 한 모서리만 보여 상대의 등장이나 답을 만들지 않는다.",
       "distinctFrom": [
@@ -98,7 +107,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "fd1b2709060cde1470061f05185070794cd83d2a06066b950aa1caa4a6aafc8f",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "275d4c334cce0b15c584b85b7ff2321b0f766ae6dd52e9da32a5a12f90b2f54b",
       "compositionFamily": "lowup_crossing_envelopes_dual_release_blank_reply",
       "artDirection": "작은 우편 바구니의 바닥 높이에서 열린 하늘 쪽을 올려다본다. 큰 재잘이는 왼쪽 아래, 작은 소곤이는 오른쪽 아래에서 각자 글자 없는 봉투 하나를 막 놓고 손을 반대 방향으로 거두며, 두 봉투는 화면 가운데 공중에서 모서리만 겹친다. 겹친 봉투의 열린 덮개에는 아무 표식도 없는 길쭉한 빈 칸 하나만 남고, 두 편지의 꼬리 리본은 서로 묶이거나 하트·궤도가 되지 않는다.",
       "distinctFrom": [
@@ -118,7 +128,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "d3ba92415c6ae5e8476287fe77d269009cc4be17df890a6d28df1bc6e7367a23",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "88f16d52ab7ef5f843598459f0cef63472f2181cd38533f8d7d9a70ead5ad7f7",
       "compositionFamily": "threshold_macro_snacktray_underdoor_lightline",
       "artDirection": "닫힌 달집 문 안쪽의 바닥 높이에서 문턱을 가까이 잡는다. 왼쪽의 달콩이는 초승달 쟁반 위 별간식 두 개 뒤에 앉아 한 집게로 작은 네 갈래 별빛 조각을 문 아래 틈까지 밀어 둔 뒤 집게를 거둔다. 문은 화면 오른쪽의 넓은 세로 면으로 닫힌 채 남고, 따뜻한 빛은 바깥으로 한 줄만 새어 나가며 손잡이·노크·바깥 실루엣이나 들어오는 답은 보이지 않는다.",
       "distinctFrom": [
@@ -138,7 +149,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "d214d7ae1c446f6d162a6099d2102244d87e947c6980a51e257d8b919cd422c2",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c36f8b077a7c9276704f7f24d63216878c19f5a3e938896b8fed2766946feed0",
       "compositionFamily": "emptyseat_backrest_foreground_sidebeam_starcard",
       "artDirection": "비어 있는 옆자리의 좌석 높이에서 등받이와 좌판을 화면 왼쪽 전경에 크게 둔다. 좌판에는 글자 없는 작은 금빛 네 갈래 별표 하나가 놓이고, 오른쪽 뒤의 왕관 없는 해님이는 벽에 고정된 작은 조명 머리를 자기 쪽에서 빈 의자 쪽으로 막 돌린 뒤 손을 내린다. 좁은 빛면은 별표와 좌판까지만 닿고 객석·박수·상대의 몸이나 의자에 앉는 움직임은 만들지 않는다.",
       "distinctFrom": [
@@ -158,7 +170,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "456523b061ad5774037d55f70d8118736824af5a260b264e785f63068ca869a4",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "4caeda14ee838b9571c56c2e5e517995a9c03a4148b5c3443df344f93baf43b2",
       "compositionFamily": "flowerlevel_crooked_bloom_loose_ribbon_release",
       "artDirection": "삐뚤어진 별꽃의 꽃받침 높이에서 얕게 옆을 본다. 화면 오른쪽 앞의 별꽃 한 송이는 줄기가 살짝 굽고 꽃잎 하나가 다른 방향을 보며, 작은 보라 리본은 그 모양을 바로잡지 않는 느슨한 매듭으로만 묶인다. 왼쪽 뒤의 새봄이는 빈 두 손을 가슴 가까이 거두고 꽃을 바라보며, 반듯한 꽃들은 색이 약한 먼 배경 띠로만 남겨 비교표나 완성 기준이 되지 않는다.",
       "distinctFrom": [
@@ -178,7 +191,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "3a5710bdbdf2235fdbb8227e0f6996ed595c77489c792e1b560717e41e305d2b",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "52c210e6035190fdb6001ae42a5055ff5ecb10765b72c67d76341918b4ac7083",
       "compositionFamily": "underbeam_edgeon_warmweight_pinkribbon",
       "artDirection": "수평인 별저울의 가는 들보 바로 아래에서 거의 모서리만 보이는 낮은 옆시점이다. 가까운 오른쪽 접시의 작은 별추 하나만 은은하게 따뜻해지고, 고르미가 건 연분홍 리본은 추 아래로 짧게 늘어지되 어느 이름이나 방향도 표시하지 않는다. 왼쪽 뒤의 고르미는 리본에서 손끝을 뗀 채 작은 추를 바라보고, 반대 접시는 흐린 가장자리만 보여 두 선택지나 상대를 만들지 않는다.",
       "distinctFrom": [
@@ -198,7 +212,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "553f1e95b213b0c0debae5c08a62c44c73af5299ecf80df9d9d9d8fd35a1712d",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "80758feb11d15840cbc55eb1f308ccb32a33a83184bd26e3e952c6ea0e563d57",
       "compositionFamily": "floorlamp_foreground_backprofile_tailhalo",
       "artDirection": "바닥의 작은 별등 높이에서 꼬옥이의 등 뒤 3/4 모습을 올려다본다. 화면 왼쪽 아래 전경의 별등은 낮은 붉은 빛 원 하나만 만들고, 오른쪽의 꼬옥이는 무표정한 옆얼굴로 망토 앞을 여미지만 하트 꼬리 끝은 망토 밖 바닥의 빛 가장자리에 조용히 둔다. 꼬리는 별등에 닿거나 불을 켜지 않으며 문·자물쇠·상자·두 번째 캐릭터 없이 반복해 드러난 작은 행동만 남긴다.",
       "distinctFrom": [
@@ -218,7 +233,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "74e190804a66e0d5e2a6f594f0492d9fcf3b823bd791fbca05017ec23fa9eb28",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "95b6580b1ba49579cea498b9a4649909a48e8d3b8daf4baf2ecc4cad67a91f53",
       "compositionFamily": "lapmap_close_heartstamp_blank_sharefield",
       "artDirection": "총총이의 무릎과 접힌 새 여행 지도를 높은 앞쪽 3/4 근접으로 본다. 지도 한쪽 모서리에는 글자 없는 작은 하트형 별도장 하나만 찍혀 있고, 그 곁에는 돌아와 함께 볼 넓은 빈 원형 칸이 선 없이 남는다. 총총이는 도장을 찍은 앞발을 지도 위에서 들어 올린 채 예상보다 먼저 남은 표시를 바라보고, 초승달 활은 등 뒤 어깨에 고정해 지도나 진행 방향을 가리키지 않는다.",
       "distinctFrom": [
@@ -238,7 +254,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "674efdfacc514369fbb6d2e81fdd15dd0a936af9e7767e206ad5294077cfeb20",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "55448e9d4aefef31f29f21808b614f6bd0e4be1bc1294eb0fbf72d3f300fc371",
       "compositionFamily": "underfirststep_goldboard_wobblegap_toolpause",
       "artDirection": "첫 계단의 흔들리는 돌 바로 아래 틈에서 낮게 옆을 본다. 화면 위쪽의 첫 돌은 한쪽이 아주 조금 떠 있고, 그 아래에는 오름이가 끼워 둔 작은 금빛 발판 한 장이 수평으로 빛난다. 왼쪽 뒤의 오름이는 마지막 나사를 조인 작은 도구를 돌에서 떼고 발판을 살피며, 위 계단들은 첫 모서리 뒤에서 잘려 정상·도착지·상대의 발이나 오르는 장면을 보여 주지 않는다.",
       "distinctFrom": [
@@ -258,7 +275,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "40fb34427412203f68937746caf06a94bcf9649c2652e7d0367e0bdfefe71326",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c67ce1da2ebb14197839786e61aa858464c25c184f42e9d21486c6a4e6b2ad77",
       "compositionFamily": "emptyseat_pov_blueheartbottle_foldedplan_gap",
       "artDirection": "비어 있는 상대 자리 높이에서 낮은 탁자 너머 방울이를 바라본다. 화면 앞쪽 한편에는 라벨 없는 파란 마음병 하나가 닫힌 채 놓이고, 복잡한 도면은 글자 없이 접혀 병 아래 모서리만 받친다. 뒤쪽의 방울이는 두 손을 몸 가까이 거두고 병을 바라보며, 카메라 가까운 빈 탁자 가장자리는 열어 볼지 그대로 둘 선택의 여백으로 남기되 상대의 손·얼굴·반응은 넣지 않는다.",
       "distinctFrom": [
@@ -278,7 +296,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "dfa5c2af07800c1b34a58cf81f0b0ed362c083cfb50fbd9c5f5ffe214259a0c1",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "68297eb292a15df2a7403786a8d2da0d20ea9ec883c17801868393f30fbecad6",
       "compositionFamily": "bellheight_crossedfins_splitdreamcloud_close",
       "artDirection": "가운데 떠오른 작은 별방울 높이에서 두 꿈구름 사이를 가깝게 본다. 큰 아쿠아 꿈별이는 왼쪽 위의 푸른 구름, 작은 분홍 잠별이는 오른쪽 아래의 분홍 구름에서 막 깨어 몸을 각자 구름에 남긴 채, 중앙 아래에서 우연히 맞닿은 지느러미 끝을 바로 떼지 않는다. 두 캐릭터는 맞닿은 점 위의 별방울을 바라보고, 구름·물결·빛은 서로 원을 닫거나 한 몸·운명 고리가 되지 않는다.",
       "distinctFrom": [
