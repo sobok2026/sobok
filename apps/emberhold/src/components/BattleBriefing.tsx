@@ -40,24 +40,20 @@ type BattleBriefingProps = {
   condition: ConditionView
   protocol: DifficultyProtocolView
   masteryForecast: MasteryForecastView
+  veteranBriefing: boolean
 }
 
-export function BattleBriefing({ day, difficulty, story, condition, protocol, masteryForecast }: BattleBriefingProps) {
-  return (
+export function BattleBriefing({
+  day,
+  difficulty,
+  story,
+  condition,
+  protocol,
+  masteryForecast,
+  veteranBriefing,
+}: BattleBriefingProps) {
+  const detailedBriefing = (
     <>
-      <div className="panel-heading battle-heading">
-        <div>
-          <p className="eyebrow">
-            ACT {story.act} · NIGHT {String(day).padStart(2, '0')} · {story.location}
-          </p>
-          <h2 id="battle-title">{story.title}</h2>
-        </div>
-        <div className="storm-badge">
-          <span aria-hidden="true">❄</span>
-          {story.weather} · {day === MAX_NIGHTS ? '대빙설 경보' : `${day + 2}단계`}
-        </div>
-      </div>
-
       <div className="night-omen">
         <span aria-hidden="true">“</span>
         <p>{story.omen}</p>
@@ -100,6 +96,60 @@ export function BattleBriefing({ day, difficulty, story, condition, protocol, ma
           <small>{masteryForecast.detail}</small>
         </em>
       </section>
+    </>
+  )
+
+  return (
+    <>
+      <div className="panel-heading battle-heading">
+        <div>
+          <p className="eyebrow">
+            ACT {story.act} · NIGHT {String(day).padStart(2, '0')} · {story.location}
+          </p>
+          <h2 id="battle-title">{story.title}</h2>
+        </div>
+        <div className="storm-badge">
+          <span aria-hidden="true">❄</span>
+          {story.weather} · {day === MAX_NIGHTS ? '대빙설 경보' : `${day + 2}단계`}
+        </div>
+      </div>
+
+      {veteranBriefing ? (
+        <section
+          className="veteran-night-briefing"
+          data-boss={story.boss ? 'true' : 'false'}
+          aria-label="숙련 지휘 브리핑"
+        >
+          <header>
+            <span aria-hidden="true">{condition.glyph}</span>
+            <div>
+              <small>VETERAN COMMAND · {story.boss ? 'CROWN ENCOUNTER' : 'FIELD WATCH'}</small>
+              <strong>
+                {condition.name} · {protocol.ruleName}
+              </strong>
+              <p>{story.rule}</p>
+            </div>
+            <em data-state={masteryForecast.state}>
+              <small>{protocol.combatSummary}</small>
+              <b>{masteryForecast.label}</b>
+            </em>
+          </header>
+
+          <details key={day}>
+            <summary>
+              <span>
+                <small>OPTIONAL FIELD NOTES</small>
+                <strong>밤의 징조·균열 설명·교범 숙련 산식</strong>
+              </span>
+              <b>세부 브리핑</b>
+              <i aria-hidden="true">⌄</i>
+            </summary>
+            <div className="veteran-night-details">{detailedBriefing}</div>
+          </details>
+        </section>
+      ) : (
+        detailedBriefing
+      )}
     </>
   )
 }

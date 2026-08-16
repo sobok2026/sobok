@@ -4898,6 +4898,7 @@ export default function Game() {
   })()
   const tutorialCopy = tutorialStep ? TUTORIAL_COPY[tutorialStep] : null
   const tutorialIndex = tutorialStep ? TUTORIAL_ORDER.indexOf(tutorialStep) + 1 : 0
+  const veteranBriefing = tutorialStep === null && meta.completedRuns > 0
   const trainingRecovery = tutorialStep
     ? 'resume'
     : game.status === 'playing' && game.day === 1 && game.battles === 0
@@ -8188,6 +8189,7 @@ export default function Game() {
                   condition={currentCondition}
                   protocol={difficultyProtocol}
                   masteryForecast={protocolMasteryForecast}
+                  veteranBriefing={veteranBriefing}
                 />
 
                 <BattleReadiness

@@ -8310,6 +8310,232 @@ body {
   }
 }
 
+/* Veteran briefing: preserve the changing rules while collapsing repeated campaign exposition after a clear. */
+
+.veteran-night-briefing {
+  --veteran-rgb: 103, 214, 226;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(var(--veteran-rgb), 0.2);
+  background: radial-gradient(circle at 0 0, rgba(var(--veteran-rgb), 0.1), transparent 34%), rgba(2, 11, 16, 0.42);
+}
+
+.veteran-night-briefing[data-boss='true'] {
+  --veteran-rgb: 255, 180, 101;
+}
+
+.veteran-night-briefing > header {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) minmax(170px, 0.42fr);
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+}
+
+.veteran-night-briefing > header > span {
+  display: grid;
+  width: 40px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid rgba(var(--veteran-rgb), 0.36);
+  background: rgba(var(--veteran-rgb), 0.07);
+  color: rgb(var(--veteran-rgb));
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 18px;
+  text-shadow: 0 0 16px rgba(var(--veteran-rgb), 0.28);
+}
+
+.veteran-night-briefing > header > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.veteran-night-briefing > header > div small {
+  color: rgba(var(--veteran-rgb), 0.8);
+  font-size: var(--text-label);
+  font-weight: 820;
+  letter-spacing: 0.055em;
+  line-height: 1.35;
+}
+
+.veteran-night-briefing > header > div strong {
+  overflow: hidden;
+  color: #e8f1f1;
+  font-size: var(--text-emphasis);
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.veteran-night-briefing > header > div p {
+  margin: 0;
+  color: #91a9ae;
+  font-size: var(--text-small);
+  line-height: 1.5;
+}
+
+.veteran-night-briefing > header > em {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+  padding: 8px 10px;
+  border-left: 2px solid rgba(var(--veteran-rgb), 0.4);
+  background: rgba(var(--veteran-rgb), 0.055);
+  font-style: normal;
+}
+
+.veteran-night-briefing > header > em[data-state='ready'],
+.veteran-night-briefing > header > em[data-state='mastered'] {
+  border-left-color: rgba(103, 233, 187, 0.64);
+  background: rgba(103, 233, 187, 0.075);
+}
+
+.veteran-night-briefing > header > em[data-state='warning'] {
+  border-left-color: rgba(239, 140, 97, 0.68);
+  background: rgba(225, 94, 66, 0.065);
+}
+
+.veteran-night-briefing > header > em small {
+  overflow: hidden;
+  color: #88a0a5;
+  font-size: var(--text-label);
+  font-style: normal;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.veteran-night-briefing > header > em b {
+  overflow: hidden;
+  color: rgb(var(--veteran-rgb));
+  font-size: var(--text-small);
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.veteran-night-briefing > details > summary {
+  display: grid;
+  min-height: 50px;
+  grid-template-columns: minmax(0, 1fr) auto 18px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-top: 1px solid rgba(var(--veteran-rgb), 0.09);
+  background: rgba(var(--veteran-rgb), 0.025);
+  cursor: pointer;
+  list-style: none;
+}
+
+.veteran-night-briefing > details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.veteran-night-briefing > details > summary:hover {
+  background: rgba(var(--veteran-rgb), 0.07);
+}
+
+.veteran-night-briefing > details > summary:focus-visible {
+  outline: 2px solid rgba(var(--veteran-rgb), 0.76);
+  outline-offset: -3px;
+}
+
+.veteran-night-briefing > details > summary > span {
+  display: grid;
+  gap: 1px;
+}
+
+.veteran-night-briefing > details > summary small {
+  color: rgba(var(--veteran-rgb), 0.7);
+  font-size: var(--text-label);
+  font-weight: 780;
+  letter-spacing: 0.045em;
+}
+
+.veteran-night-briefing > details > summary strong {
+  color: #bdd0d2;
+  font-size: var(--text-small);
+}
+
+.veteran-night-briefing > details > summary > b {
+  color: rgb(var(--veteran-rgb));
+  font-size: var(--text-label);
+}
+
+.veteran-night-briefing > details > summary > i {
+  color: rgb(var(--veteran-rgb));
+  font-size: 16px;
+  font-style: normal;
+  transition: transform 160ms ease;
+}
+
+.veteran-night-briefing > details[open] > summary > i {
+  transform: rotate(180deg);
+}
+
+.veteran-night-details {
+  border-top: 1px solid rgba(var(--veteran-rgb), 0.1);
+  background: rgba(0, 7, 10, 0.32);
+}
+
+.veteran-night-details > .difficulty-protocol-strip {
+  border-bottom: 0;
+}
+
+.game-shell[data-contrast='high'] .veteran-night-briefing {
+  border-color: #88dbe5;
+  background: #071c22;
+}
+
+.game-shell[data-contrast='high'] .veteran-night-briefing > header > div p,
+.game-shell[data-contrast='high'] .veteran-night-briefing > header > em small,
+.game-shell[data-contrast='high'] .veteran-night-briefing > details > summary strong {
+  color: #d8e6e7;
+}
+
+.game-shell[data-contrast='high'] .veteran-night-briefing > details > summary {
+  background: #0a252c;
+}
+
+@media (max-width: 760px), (max-height: 520px) and (pointer: coarse) {
+  .veteran-night-briefing > header {
+    grid-template-columns: 42px minmax(0, 1fr);
+    padding-inline: 10px;
+  }
+
+  .veteran-night-briefing > header > em {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .veteran-night-briefing > header > div strong {
+    white-space: normal;
+  }
+
+  .veteran-night-briefing > details > summary {
+    grid-template-columns: minmax(0, 1fr) 18px;
+    padding-inline: 10px;
+  }
+
+  .veteran-night-briefing > details > summary > b {
+    display: none;
+  }
+}
+
+.game-shell[data-motion='reduced'] .veteran-night-briefing > details > summary > i {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veteran-night-briefing > details > summary > i {
+    transition: none;
+  }
+}
+
 /* Installable app shell, offline state, and checkpoint recovery. */
 
 .title-content:not(.is-difficulty) {
