@@ -3067,6 +3067,12 @@ export default function Game() {
             ? 'whiteout'
             : 'hearth'
   const campaignRuntimeActive = !showTitle
+  const eventForecastActive = campaignRuntimeActive && phase === 'event'
+  const campForecastActive = campaignRuntimeActive && phase === 'camp'
+  const promotionForecastActive = campaignRuntimeActive && phase === 'promotion'
+  const relicForecastActive = campaignRuntimeActive && phase === 'relic'
+  const laneForecastActive = campForecastActive || promotionForecastActive || relicForecastActive
+  const battlePreviewActive = campForecastActive || promotionForecastActive
   const battleResultFor = useMemo(() => {
     const cache = new Map<string, BattleResult | null>()
 
@@ -3321,7 +3327,7 @@ export default function Game() {
         ? '왕관전까지 1일'
         : `왕관전까지 ${eventDaysToCrown}일`
   const hasUpgradeableSurvivor = game.slots.some((unit) => unit !== null && unit.tier < MAX_TIER)
-  const forecastableEventChoices = campaignRuntimeActive ? currentEventChoices : []
+  const forecastableEventChoices = eventForecastActive ? currentEventChoices : []
   const eventChoiceForecasts = forecastableEventChoices.map((choice): EventChoiceForecast => {
     const recruitConverts = Boolean(choice.recruit && rosterCount >= ROSTER_SIZE)
     const upgradeConverts = Boolean(choice.upgrade && !hasUpgradeableSurvivor)
@@ -3708,7 +3714,7 @@ export default function Game() {
   const nextRecruitKind = UNIT_ROTATION[game.recruits % UNIT_ROTATION.length]
   const nextRecruitTierOneCount = game.slots.filter((unit) => unit?.kind === nextRecruitKind && unit.tier === 1).length
   const lineupUnits = game.lineup.map((id) => findUnit(game, id))
-  const lineupReady = campaignRuntimeActive && lineupUnits.every((unit) => unit !== null)
+  const lineupReady = laneForecastActive && lineupUnits.every((unit) => unit !== null)
   const formationKindCount = new Set(lineupUnits.flatMap((unit) => (unit ? [unit.kind] : []))).size
   const tierTwoLineCount = lineupUnits.filter((unit) => unit && unit.tier >= 2).length
   const tierThreeLineCount = lineupUnits.filter((unit) => unit && unit.tier >= 3).length
@@ -3758,12 +3764,12 @@ export default function Game() {
     finalMarchImprints: activeFinalMarchImprints,
     finalVow: activeFinalVow,
   }
-  const campBattlePreview = lineupReady ? battleResultFor(focusLane) : null
-  const forecastLineupUnits = campaignRuntimeActive ? lineupUnits : []
+  const campBattlePreview = battlePreviewActive && lineupReady ? battleResultFor(focusLane) : null
+  const forecastLineupUnits = laneForecastActive ? lineupUnits : []
   const forecastLanes = campBattlePreview
     ? campBattlePreview.lanes
     : forecastLineupUnits.map((unit, lane) => (unit ? resolveLane(unit, enemies[lane], lane, battleContext) : null))
-  const forecastEnemies = campaignRuntimeActive ? enemies : []
+  const forecastEnemies = campForecastActive ? enemies : []
   const enemyFormationEntries = forecastEnemies.map((enemy, lane) => {
     const intentCountered = ORDER_META[game.orders[lane]].counters === enemy.intent
     const laneForecast = forecastLanes[lane]
@@ -3779,7 +3785,7 @@ export default function Game() {
     }
   })
   const currentForecastWins = forecastLanes.filter((lane) => lane?.won).length
-  const selectedUnitForForecast = campaignRuntimeActive ? selectedUnit : null
+  const selectedUnitForForecast = campForecastActive ? selectedUnit : null
   const scoredDeploymentForecasts: Array<{ forecast: DeploymentForecast; score: number }> = selectedUnitForForecast
     ? BATTLE_LANES.map((lane) => {
         const sourceLane = selectedUnitLane >= 0 ? selectedUnitLane : null
@@ -3879,7 +3885,7 @@ export default function Game() {
   const highestDeploymentCandidates = scoredDeploymentForecasts.filter(({ score }) => score === highestDeploymentScore)
   const recommendedDeploymentLane =
     highestDeploymentCandidates.length === 1 ? highestDeploymentCandidates[0].forecast.lane : null
-  const promotionUnitForForecast = campaignRuntimeActive ? pendingPromotionUnit : null
+  const promotionUnitForForecast = promotionForecastActive ? pendingPromotionUnit : null
   const promotionChoiceInsights = promotionUnitForForecast
     ? promotionChoices.map((specializationId) => {
         const lane = game.lineup.indexOf(promotionUnitForForecast.id)
@@ -4864,7 +4870,7 @@ export default function Game() {
   const tutorialTierTwoRosterCount = game.slots.filter((unit) => unit && unit.tier >= 2).length
   const tutorialTierTwoLineCount = lineupUnits.filter((unit) => unit && unit.tier >= 2).length
   const tutorialCounterCount = tutorialStep ? tutorialCounterCountFor(game) : 0
-  const tutorialNeedsFocusForecast = campaignRuntimeActive && (tutorialStep === 'focus' || tutorialStep === 'battle')
+  const tutorialNeedsFocusForecast = campForecastActive && (tutorialStep === 'focus' || tutorialStep === 'battle')
   const tutorialFocusOptions = ([0, 1, 2] as const).map((lane) => {
     const result = tutorialNeedsFocusForecast ? battleResultFor(lane) : null
     return {
@@ -5124,7 +5130,7 @@ export default function Game() {
           description: '유물 두 개의 조합은 생존·전술·진형·보급 중 하나의 공명을 완성합니다.',
         })
   const relicChoices =
-    campaignRuntimeActive && game.pendingRelic ? relicChoicesFor(game.day - 1, game.relics, game.runSeed) : []
+    relicForecastActive && game.pendingRelic ? relicChoicesFor(game.day - 1, game.relics, game.runSeed) : []
   const neutralForecastCount = forecastLanes.filter((lane) => lane?.relation === 'neutral').length
   const relicChoiceInsights = relicChoices.map((relicId) => {
     const resonancePreview = resonancePreviewFor(relicId, game.relics)
