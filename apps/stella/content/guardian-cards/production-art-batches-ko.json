@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "c0f7a628fde6950bebc0945d12d61298b5660a0226e67006187a19c0c56e94fa",
-    "assets": "461108a9c79ff766d0dc1b30f657cc65ffe68b8a59ec48ec28c2da8b7dfdaf9b"
+    "assets": "f8d34b1b69be3a3f6a08c68406c97db7714fb4ba2811e941156a009aa429240e"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,12 +16,12 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 261,
-    "remainingEditionCount": 795,
+    "producedEditionCount": 273,
+    "remainingEditionCount": 783,
     "pilotPartialBatchCount": 9,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 21,
-    "fullPendingBatchCount": 58,
+    "completedBatchCount": 22,
+    "fullPendingBatchCount": 57,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
     "visualApprovalAuthority": "human_editor",
@@ -595,23 +595,10 @@
         "pisces.love.careful-approach.nebula"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.careful-approach.nebula",
-        "taurus.love.careful-approach.nebula",
-        "gemini.love.careful-approach.nebula",
-        "cancer.love.careful-approach.nebula",
-        "leo.love.careful-approach.nebula",
-        "virgo.love.careful-approach.nebula",
-        "libra.love.careful-approach.nebula",
-        "scorpio.love.careful-approach.nebula",
-        "sagittarius.love.careful-approach.nebula",
-        "capricorn.love.careful-approach.nebula",
-        "aquarius.love.careful-approach.nebula",
-        "pisces.love.careful-approach.nebula"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 23,
