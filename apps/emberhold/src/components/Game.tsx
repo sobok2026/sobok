@@ -260,12 +260,51 @@ function preloadPhaseLayer(phase: Phase, nearingEnding: boolean) {
   if (phase === 'won' || phase === 'lost' || nearingEnding) preloadEndingScreen()
 }
 
-function preloadGameplayStage(phase: Phase, nearingEnding: boolean) {
+const GAMEPLAY_PRELOAD_IDLE_TIMEOUT_MS = 2_400
+const GAMEPLAY_PRELOAD_FALLBACK_DELAY_MS = 1_200
+
+type IdleScheduler = {
+  requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number
+  cancelIdleCallback?: (handle: number) => void
+}
+
+function preloadGameplayStage(phase: Phase, nearingEnding: boolean): () => void {
   preloadPhaseLayer(phase, nearingEnding)
+
+  let cancelled = false
+  let idleHandle: number | null = null
+  let fallbackTimer: number | null = null
+
   if (phase === 'camp' || phase === 'event') {
-    preloadCinematicLayers()
-    preloadProgressionDialogs()
-    preloadExpeditionMenu()
+    const idleScheduler = window as unknown as IdleScheduler
+    const preloadFutureLayers = async () => {
+      const loaders: ReadonlyArray<() => Promise<unknown>> = [
+        loadCinematicLayers,
+        loadProgressionDialogs,
+        loadExpeditionMenu,
+      ]
+      for (const load of loaders) {
+        if (cancelled || document.visibilityState !== 'visible' || !document.hasFocus()) return
+        await load().catch(() => undefined)
+      }
+    }
+    const startPreload = () => {
+      idleHandle = null
+      fallbackTimer = null
+      if (!cancelled) void preloadFutureLayers()
+    }
+
+    if (idleScheduler.requestIdleCallback) {
+      idleHandle = idleScheduler.requestIdleCallback(startPreload, { timeout: GAMEPLAY_PRELOAD_IDLE_TIMEOUT_MS })
+    } else {
+      fallbackTimer = window.setTimeout(startPreload, GAMEPLAY_PRELOAD_FALLBACK_DELAY_MS)
+    }
+  }
+
+  return () => {
+    cancelled = true
+    if (idleHandle !== null) (window as unknown as IdleScheduler).cancelIdleCallback?.(idleHandle)
+    if (fallbackTimer !== null) window.clearTimeout(fallbackTimer)
   }
 }
 
@@ -5665,9 +5704,9 @@ export default function Game() {
   }, [meta, ready, sessionAccess])
 
   useEffect(() => {
-    if (!ready || showTitle) return
-    preloadGameplayStage(phase, game.day >= MAX_NIGHTS - 1)
-  }, [game.day, phase, ready, showTitle])
+    if (!ready || showTitle || !runtimeActive) return
+    return preloadGameplayStage(phase, game.day >= MAX_NIGHTS - 1)
+  }, [game.day, phase, ready, runtimeActive, showTitle])
 
   useEffect(() => {
     if (!ready || sessionAccess !== 'active') return
