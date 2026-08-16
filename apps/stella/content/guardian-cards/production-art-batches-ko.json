@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "c0f7a628fde6950bebc0945d12d61298b5660a0226e67006187a19c0c56e94fa",
-    "assets": "f8d34b1b69be3a3f6a08c68406c97db7714fb4ba2811e941156a009aa429240e"
+    "assets": "d3fa32d4773a5a9322787dfb2fdd99cdfc3055331eb840b75026b9c7a2e2262a"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,12 +16,12 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 273,
-    "remainingEditionCount": 783,
+    "producedEditionCount": 285,
+    "remainingEditionCount": 771,
     "pilotPartialBatchCount": 9,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 22,
-    "fullPendingBatchCount": 57,
+    "completedBatchCount": 23,
+    "fullPendingBatchCount": 56,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
     "visualApprovalAuthority": "human_editor",
@@ -621,23 +621,10 @@
         "pisces.love.careful-approach.eclipse"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.careful-approach.eclipse",
-        "taurus.love.careful-approach.eclipse",
-        "gemini.love.careful-approach.eclipse",
-        "cancer.love.careful-approach.eclipse",
-        "leo.love.careful-approach.eclipse",
-        "virgo.love.careful-approach.eclipse",
-        "libra.love.careful-approach.eclipse",
-        "scorpio.love.careful-approach.eclipse",
-        "sagittarius.love.careful-approach.eclipse",
-        "capricorn.love.careful-approach.eclipse",
-        "aquarius.love.careful-approach.eclipse",
-        "pisces.love.careful-approach.eclipse"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 24,
