@@ -5,7 +5,7 @@ import type { ChangeEvent, PointerEvent as ReactPointerEvent } from 'react'
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react'
 import { CampaignHud } from './CampaignHud'
 import type { RosterMergeReadiness } from './CampRoster'
-import { DragGhostPreview, GameFeedback } from './GameFeedback'
+import { DragGhostPreview, type EventDecisionNotice, GameFeedback } from './GameFeedback'
 import type {
   AchievementId,
   ActiveLayer,
@@ -3011,6 +3011,7 @@ export default function Game() {
   const [sharePending, setSharePending] = useState(false)
   const [bestScore, setBestScore] = useState(0)
   const [campUndo, setCampUndo] = useState<CampUndo | null>(null)
+  const [eventDecisionNotice, setEventDecisionNotice] = useState<EventDecisionNotice | null>(null)
   const [growthCeremony, setGrowthCeremony] = useState<GrowthCeremony | null>(null)
   const [marchSealCeremony, setMarchSealCeremony] = useState<MarchSealCeremony | null>(null)
   const [pendingLegacyPurchase, setPendingLegacyPurchase] = useState<LegacyId | null>(null)
@@ -3025,6 +3026,7 @@ export default function Game() {
   const dragPosition = useRef({ x: 0, y: 0 })
   const animationFrames = useRef(new Set<number>())
   const toastTimer = useRef<PausableRuntimeTimer | null>(null)
+  const eventDecisionTimer = useRef<PausableRuntimeTimer | null>(null)
   const growthCeremonyTimer = useRef<PausableRuntimeTimer | null>(null)
   const marchSealTimer = useRef<PausableRuntimeTimer | null>(null)
   const milestoneDismissTimer = useRef<PausableRuntimeTimer | null>(null)
@@ -5302,6 +5304,7 @@ export default function Game() {
     (!showTitle || showDifficulty || showArchive || showSettings || showExpeditionMenu || showInstallHelp)
   const activeMilestone = milestoneQueue[0] ?? null
   const activeMilestoneId = activeMilestone?.id ?? null
+  const eventDecisionNoticeId = eventDecisionNotice?.id ?? null
   const milestoneVisible =
     activeMilestone !== null &&
     sessionAccess === 'active' &&
@@ -5496,6 +5499,7 @@ export default function Game() {
     setRuntimeActive(false)
     persistLatestSnapshot()
     pauseRuntimeTimer(toastTimer)
+    pauseRuntimeTimer(eventDecisionTimer)
     pauseRuntimeTimer(growthCeremonyTimer)
     pauseRuntimeTimer(marchSealTimer)
     pauseRuntimeTimer(milestoneDismissTimer)
@@ -5511,6 +5515,7 @@ export default function Game() {
     setRuntimeActive(true)
     resetDragGhost()
     resumeRuntimeTimer(toastTimer)
+    resumeRuntimeTimer(eventDecisionTimer)
     resumeRuntimeTimer(growthCeremonyTimer)
     resumeRuntimeTimer(marchSealTimer)
     resumeRuntimeTimer(milestoneDismissTimer)
@@ -6150,6 +6155,15 @@ export default function Game() {
   }, [])
 
   useEffect(() => {
+    if (!eventDecisionNoticeId || phase !== 'camp' || showTitle) return
+    const reducedMotion = settings.motion === 'reduced' || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const noticeDuration = reducedMotion ? 1200 : settings.battlePace === 'swift' ? 2000 : 3400
+    startRuntimeTimer(eventDecisionTimer, noticeDuration, () => {
+      setEventDecisionNotice((current) => (current?.id === eventDecisionNoticeId ? null : current))
+    })
+  }, [eventDecisionNoticeId, phase, settings.battlePace, settings.motion, showTitle])
+
+  useEffect(() => {
     if (!activeMilestoneId || !milestoneVisible) return
     if (milestoneSoundId.current !== activeMilestoneId) {
       milestoneSoundId.current = activeMilestoneId
@@ -6173,6 +6187,7 @@ export default function Game() {
       animationFrames.current.clear()
       if (dragFrame.current !== null) window.cancelAnimationFrame(dragFrame.current)
       clearRuntimeTimer(toastTimer)
+      clearRuntimeTimer(eventDecisionTimer)
       clearRuntimeTimer(growthCeremonyTimer)
       clearRuntimeTimer(marchSealTimer)
       clearRuntimeTimer(milestoneDismissTimer)
@@ -6204,6 +6219,11 @@ export default function Game() {
   function dismissGrowthCeremony() {
     clearRuntimeTimer(growthCeremonyTimer)
     setGrowthCeremony(null)
+  }
+
+  function dismissEventDecisionNotice() {
+    clearRuntimeTimer(eventDecisionTimer)
+    setEventDecisionNotice(null)
   }
 
   function dismissMarchSealCeremony() {
@@ -6497,6 +6517,7 @@ export default function Game() {
   function returnToTitle() {
     writeStoredValue(STORAGE_KEY, JSON.stringify(game))
     writeStoredValue(META_KEY, JSON.stringify(meta))
+    dismissEventDecisionNotice()
     setRiskDepartureConfirmation(null)
     setShowNewCampaignConfirm(false)
     setShowExpeditionMenu(false)
@@ -6509,6 +6530,7 @@ export default function Game() {
   }
 
   function prepareNextChallenge() {
+    dismissEventDecisionNotice()
     setRiskDepartureConfirmation(null)
     setIncomingRiftCode(null)
     setPendingReplacementRiftCode(null)
@@ -6545,6 +6567,7 @@ export default function Game() {
       false,
     )
     removeStoredValues(BATTLE_STORAGE_KEY)
+    dismissEventDecisionNotice()
     writeStoredValue(STORAGE_KEY, JSON.stringify(freshGame))
     setGame(freshGame)
     setPhase('event')
@@ -6848,6 +6871,7 @@ export default function Game() {
       masteryContract,
     )
     const inheritanceMilestone = legacyLoadoutMilestone(initial)
+    dismissEventDecisionNotice()
     setGame(initial)
     setPhase('event')
     setFocusLane(0)
@@ -6964,11 +6988,6 @@ export default function Game() {
       eventResolvedForDay: game.day,
     }
     const recoverySuppliesSpent = game.recoverySupplies - nextGame.recoverySupplies
-    const eventBaseScore = choice.score ?? 0
-    const eventExpeditionScore =
-      eventScoreReward.scoreGain - eventScoreReward.legacyScoreBonus - eventScoreReward.contractScoreBonus
-    const eventExpeditionScoreDelta = eventExpeditionScore - eventBaseScore
-    const eventScoreAdjusted = eventScoreReward.scoreGain !== eventBaseScore
     const opensPromotion = pendingPromotionFor(nextGame) !== null
     writeStoredValue(STORAGE_KEY, JSON.stringify(nextGame))
     setGame(nextGame)
@@ -6984,24 +7003,57 @@ export default function Game() {
       soundOn,
     )
     vibrate(choice.finalVow ? [20, 28, 34, 32, 58] : choice.marchImprint || choice.oathOnly ? [18, 24, 34] : 18)
-    const eventNotes = [
+    const decisionKind: EventDecisionNotice['kind'] = choice.finalVow
+      ? 'vow'
+      : choice.marchImprint
+        ? 'imprint'
+        : choice.oathOnly
+          ? 'oath'
+          : choice.echo
+            ? 'echo'
+            : 'standard'
+    const decisionGlyph = choice.finalVow
+      ? FINAL_VOWS[choice.finalVow].glyph
+      : choice.marchImprint
+        ? FINAL_MARCH_IMPRINTS[choice.marchImprint].glyph
+        : choice.oathOnly
+          ? OATHS[choice.oathOnly].glyph
+          : (choice.echo?.glyph ?? '✦')
+    const decisionSignal = choice.finalVow
+      ? `${FINAL_VOWS[choice.finalVow].name} · ${FINAL_VOWS[choice.finalVow].effect}`
+      : choice.marchImprint
+        ? `${FINAL_MARCH_IMPRINTS[choice.marchImprint].name} · ${FINAL_MARCH_IMPRINTS[choice.marchImprint].effect}`
+        : choice.oathOnly
+          ? `${OATHS[choice.oathOnly].name} 전용 결단이 봉인됐습니다.`
+          : choice.echo
+            ? `${choice.echo.name} · NIGHT ${String(choice.echo.triggerDay).padStart(2, '0')}에 회수`
+            : '선택 결과가 다음 야영 자원에 반영됐습니다.'
+    const decisionOutcome = [
+      choice.outcome,
       upgradeAnnouncement,
       bonusMorale > 0 ? `빈자리가 없어 사기 +${bonusMorale}로 전환` : '',
-      recoverySuppliesSpent > 0 ? `복구 보급 -${recoverySuppliesSpent} · 보호 잔액 ${nextGame.recoverySupplies}` : '',
-      eventScoreReward.scoreGain > 0 && (!choice.outcome.includes('명성') || eventScoreAdjusted)
-        ? eventScoreAdjusted
-          ? `사건 명성 +${eventBaseScore.toLocaleString('ko-KR')}${eventExpeditionScoreDelta !== 0 ? ` · 위험도·서약 ${eventExpeditionScoreDelta > 0 ? '+' : '−'}${Math.abs(eventExpeditionScoreDelta).toLocaleString('ko-KR')}` : ''}${eventScoreReward.legacyScoreBonus > 0 ? ` · 기록관의 잉크 +${eventScoreReward.legacyScoreBonus.toLocaleString('ko-KR')}` : ''}${eventScoreReward.contractScoreBonus > 0 && game.masteryContract ? ` · ${MASTERY_CONTRACTS[game.masteryContract].name} +${eventScoreReward.contractScoreBonus.toLocaleString('ko-KR')}` : ''} · 실제 +${eventScoreReward.scoreGain.toLocaleString('ko-KR')}`
-          : `명성 +${eventScoreReward.scoreGain.toLocaleString('ko-KR')}`
-        : '',
-      choice.echo ? `${choice.echo.triggerDay}일차 후속 결과 기록` : '',
-      choice.marchImprint
-        ? `${FINAL_MARCH_IMPRINTS[choice.marchImprint].name} · ${FINAL_MARCH_IMPRINTS[choice.marchImprint].effect}`
-        : '',
-      choice.finalVow ? `${FINAL_VOWS[choice.finalVow].name} · ${FINAL_VOWS[choice.finalVow].effect}` : '',
-      choice.oathOnly ? `${OATHS[choice.oathOnly].name} 전용 결단` : '',
-    ].filter(Boolean)
-    const eventOutcome = eventNotes.length > 0 ? `${choice.outcome} · ${eventNotes.join(' · ')}` : choice.outcome
-    announce(opensPromotion ? `${eventOutcome} · 베테랑 진급 가능` : eventOutcome)
+    ]
+      .filter(Boolean)
+      .join(' · ')
+    dismissEventDecisionNotice()
+    setEventDecisionNotice({
+      id: `${game.runId}-event-${game.day}-${choice.id}`,
+      day: game.day,
+      kind: decisionKind,
+      glyph: decisionGlyph,
+      title: choice.title,
+      outcome: decisionOutcome,
+      signal: decisionSignal,
+      suppliesBefore: game.supplies,
+      suppliesAfter: nextGame.supplies,
+      recoverySuppliesSpent,
+      heatBefore: game.heat,
+      heatAfter: nextGame.heat,
+      moraleBefore: game.morale,
+      moraleAfter: nextGame.morale,
+      scoreGain: eventScoreReward.scoreGain,
+      nextAction: opensPromotion ? '베테랑 진급으로 인계' : '야영 지휘소로 인계',
+    })
   }
 
   function rememberCampAction(kind: CampUndoKind, label: string, detail: string) {
@@ -8508,6 +8560,18 @@ export default function Game() {
       <GameFeedback
         sessionAccess={sessionAccess}
         toast={toast}
+        eventDecision={
+          !showTitle &&
+          !showArchive &&
+          !showSettings &&
+          !showExpeditionMenu &&
+          !showGuide &&
+          !showInstallHelp &&
+          sessionAccess === 'active' &&
+          phase === 'camp'
+            ? eventDecisionNotice
+            : null
+        }
         growthCeremony={!showTitle && phase === 'camp' ? growthCeremony : null}
         marchSealCeremony={marchSealCeremony}
         milestone={milestoneVisible ? activeMilestone : null}

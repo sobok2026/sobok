@@ -4,6 +4,25 @@ import { KIND_META, LEGACY_UPGRADES, MASTERY_CONTRACTS, SPECIALIZATIONS, TIER_LA
 
 type RuntimeNoticeState = 'offline' | 'update'
 
+export type EventDecisionNotice = {
+  id: string
+  day: number
+  kind: 'standard' | 'oath' | 'echo' | 'imprint' | 'vow'
+  glyph: string
+  title: string
+  outcome: string
+  signal: string
+  suppliesBefore: number
+  suppliesAfter: number
+  recoverySuppliesSpent: number
+  heatBefore: number
+  heatAfter: number
+  moraleBefore: number
+  moraleAfter: number
+  scoreGain: number
+  nextAction: string
+}
+
 type DragGhostPreviewProps = {
   active: boolean
   glyph: string
@@ -13,6 +32,7 @@ type DragGhostPreviewProps = {
 type GameFeedbackProps = {
   sessionAccess: SessionAccess
   toast: string
+  eventDecision: EventDecisionNotice | null
   growthCeremony: GrowthCeremony | null
   marchSealCeremony: MarchSealCeremony | null
   milestone: MilestoneNotice | null
@@ -37,6 +57,66 @@ function ToastNotice({ message }: { message: string }) {
       <span aria-hidden="true">✦</span>
       {message}
     </div>
+  )
+}
+
+function EventDecisionNoticeView({ notice }: { notice: EventDecisionNotice }) {
+  return (
+    <aside
+      className="event-decision-notice"
+      data-kind={notice.kind}
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <span className="settings-visually-hidden">
+        {notice.day}일차 결정, {notice.title} 확정. {notice.outcome}. 보급 {notice.suppliesBefore}에서{' '}
+        {notice.suppliesAfter}, 온기 {notice.heatBefore}%에서 {notice.heatAfter}%, 사기 {notice.moraleBefore}에서{' '}
+        {notice.moraleAfter}, 명성 {notice.scoreGain > 0 ? `+${notice.scoreGain}` : '변화 없음'}. {notice.signal}.{' '}
+        {notice.nextAction}.
+      </span>
+      <section aria-hidden="true">
+        <span className="event-decision-notice-glyph">{notice.glyph}</span>
+        <header>
+          <small>DECISION SEALED · NIGHT {String(notice.day).padStart(2, '0')}</small>
+          <strong>{notice.title}</strong>
+          <p>{notice.signal}</p>
+        </header>
+        <dl>
+          <div>
+            <dt>보급</dt>
+            <dd>
+              {notice.suppliesBefore} <i>→</i> <strong>{notice.suppliesAfter}</strong>
+            </dd>
+          </div>
+          <div>
+            <dt>온기</dt>
+            <dd>
+              {notice.heatBefore}% <i>→</i> <strong>{notice.heatAfter}%</strong>
+            </dd>
+          </div>
+          <div>
+            <dt>사기</dt>
+            <dd>
+              {notice.moraleBefore} <i>→</i> <strong>{notice.moraleAfter}</strong>
+            </dd>
+          </div>
+          <div>
+            <dt>명성</dt>
+            <dd>
+              <strong>{notice.scoreGain > 0 ? `+${notice.scoreGain.toLocaleString('ko-KR')}` : '—'}</strong>
+            </dd>
+          </div>
+        </dl>
+        <footer>
+          <span>
+            {notice.outcome}
+            {notice.recoverySuppliesSpent > 0 ? ` · 복구 보급 −${notice.recoverySuppliesSpent}` : ''}
+          </span>
+          <b>{notice.nextAction}</b>
+        </footer>
+      </section>
+    </aside>
   )
 }
 
@@ -332,6 +412,7 @@ function SessionGuard({ state, onRetry }: { state: Exclude<SessionAccess, 'activ
 export function GameFeedback({
   sessionAccess,
   toast,
+  eventDecision,
   growthCeremony,
   marchSealCeremony,
   milestone,
@@ -345,6 +426,7 @@ export function GameFeedback({
     <>
       {sessionAccess !== 'active' ? <SessionGuard state={sessionAccess} onRetry={onRetrySession} /> : null}
       <ToastNotice message={toast} />
+      {eventDecision ? <EventDecisionNoticeView notice={eventDecision} key={eventDecision.id} /> : null}
       {growthCeremony ? <GrowthNotice ceremony={growthCeremony} /> : null}
       {marchSealCeremony ? <MarchSealNotice ceremony={marchSealCeremony} /> : null}
       {milestone ? (

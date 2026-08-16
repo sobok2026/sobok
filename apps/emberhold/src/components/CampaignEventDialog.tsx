@@ -1,6 +1,7 @@
 import './deferred.css'
 
 import Image from 'next/image'
+import { useState } from 'react'
 import campaignArt from '@/app/campaign-panorama.webp'
 import type { EventChoice, EventChoiceForecast, OathId } from './game-model'
 import { FINAL_MARCH_IMPRINTS, FINAL_VOWS, LEGACY_UPGRADES, MASTERY_CONTRACTS, MAX_NIGHTS, OATHS } from './game-model'
@@ -66,6 +67,17 @@ type CampaignEventDialogProps = {
   choiceEntries: readonly EventChoiceEntry[]
   onChooseChoice: (choice: EventChoice) => void
   onOpenMap: () => void
+}
+
+const EVENT_CHOICE_INDEX_BY_KEY: Readonly<Record<string, number>> = {
+  Digit1: 0,
+  Digit2: 1,
+  Digit3: 2,
+  Digit4: 3,
+  Numpad1: 0,
+  Numpad2: 1,
+  Numpad3: 2,
+  Numpad4: 3,
 }
 
 function OathIntervention({ intervention }: { intervention: OathInterventionView }) {
@@ -318,26 +330,121 @@ function ChoiceConsequences({ choice }: { choice: EventChoice }) {
   )
 }
 
+function eventChoiceOutcome(choice: EventChoice, forecast: EventChoiceForecast) {
+  const convertsToMorale = forecast.conversionMorale > 0
+  const eventScore = choice.score ?? 0
+  const scoreAdjusted = forecast.scoreGain !== eventScore
+  const choiceOutcome = convertsToMorale
+    ? `${choice.outcome} · 사기 +${forecast.conversionMorale}로 전환`
+    : choice.outcome
+
+  return forecast.scoreGain > 0 && (!choice.outcome.includes('명성') || scoreAdjusted)
+    ? `${choiceOutcome} · ${scoreAdjusted ? '원정 보정 후 실제 ' : ''}명성 +${forecast.scoreGain.toLocaleString('ko-KR')}`
+    : choiceOutcome
+}
+
+function eventCommitment(choice: EventChoice) {
+  if (choice.finalVow) {
+    const vow = FINAL_VOWS[choice.finalVow]
+    return { glyph: vow.glyph, title: vow.name, detail: vow.effect }
+  }
+  if (choice.marchImprint) {
+    const imprint = FINAL_MARCH_IMPRINTS[choice.marchImprint]
+    return { glyph: imprint.glyph, title: imprint.name, detail: imprint.effect }
+  }
+  if (choice.echo) {
+    return {
+      glyph: choice.echo.glyph,
+      title: choice.echo.name,
+      detail: choice.echo.effect,
+    }
+  }
+  if (choice.oathOnly) {
+    const oath = OATHS[choice.oathOnly]
+    return { glyph: oath.glyph, title: oath.name, detail: choice.outcome }
+  }
+  return { glyph: '✦', title: '이번 원정의 새 경로', detail: choice.outcome }
+}
+
+function EventChoiceCommitDock({
+  entry,
+  onCancel,
+  onConfirm,
+}: {
+  entry: EventChoiceEntry
+  onCancel: () => void
+  onConfirm: () => void
+}) {
+  const { choice, forecast } = entry
+  const commitment = eventCommitment(choice)
+  const titleId = `event-commit-${choice.id}-title`
+
+  return (
+    <aside className="event-commit-dock" data-state={forecast.state} aria-live="polite" aria-labelledby={titleId}>
+      <span className="event-commit-glyph" aria-hidden="true">
+        {commitment.glyph}
+      </span>
+      <div className="event-commit-copy">
+        <small>DECISION PREVIEW · 확정 전</small>
+        <strong id={titleId}>{choice.title}</strong>
+        <p>{eventChoiceOutcome(choice, forecast)}</p>
+      </div>
+      <dl className="event-commit-resources" aria-label="선택 확정 후 자원">
+        <div>
+          <dt>보급</dt>
+          <dd>◈ {forecast.projectedSupplies}</dd>
+        </div>
+        <div>
+          <dt>온기</dt>
+          <dd>{forecast.projectedHeat}%</dd>
+        </div>
+        <div>
+          <dt>사기</dt>
+          <dd>{forecast.projectedMorale}</dd>
+        </div>
+        <div>
+          <dt>명성</dt>
+          <dd>{forecast.scoreGain > 0 ? `+${forecast.scoreGain.toLocaleString('ko-KR')}` : '—'}</dd>
+        </div>
+      </dl>
+      <div className="event-commit-verdict" data-state={forecast.state}>
+        <span>
+          {forecast.route} · {forecast.label}
+        </span>
+        <strong>{commitment.title}</strong>
+        <p>{commitment.detail}</p>
+        {forecast.recoverySuppliesSpent > 0 ? (
+          <small>
+            복구 보급 −{forecast.recoverySuppliesSpent} · 보호 {forecast.projectedRecoverySupplies}
+          </small>
+        ) : null}
+      </div>
+      <footer>
+        <button type="button" onClick={onCancel}>
+          다른 길 비교
+        </button>
+        <button type="button" onClick={onConfirm}>
+          <span>{choice.title} 확정</span>
+          <i aria-hidden="true">›</i>
+        </button>
+      </footer>
+    </aside>
+  )
+}
+
 function EventChoices({
   entries,
-  onChooseChoice,
+  selectedChoiceId,
+  onPreviewChoice,
 }: {
   entries: readonly EventChoiceEntry[]
-  onChooseChoice: (choice: EventChoice) => void
+  selectedChoiceId: string | null
+  onPreviewChoice: (choice: EventChoice) => void
 }) {
   return (
     <div className="event-choices">
       {entries.map(({ choice, forecast, unavailable, autofocus }, index) => {
-        const convertsToMorale = forecast.conversionMorale > 0
-        const eventScore = choice.score ?? 0
-        const scoreAdjusted = forecast.scoreGain !== eventScore
-        const choiceOutcome = convertsToMorale
-          ? `${choice.outcome} · 사기 +${forecast.conversionMorale}로 전환`
-          : choice.outcome
-        const scoreOutcome =
-          forecast.scoreGain > 0 && (!choice.outcome.includes('명성') || scoreAdjusted)
-            ? `${choiceOutcome} · ${scoreAdjusted ? '원정 보정 후 실제 ' : ''}명성 +${forecast.scoreGain.toLocaleString('ko-KR')}`
-            : choiceOutcome
+        const selected = selectedChoiceId === choice.id
         const outcomeId = `event-choice-${choice.id}-outcome`
         const forecastId = `event-choice-${choice.id}-forecast`
         return (
@@ -347,9 +454,13 @@ function EventChoices({
             data-emergency={choice.emergencyOnly ? 'true' : undefined}
             data-oath={choice.oathOnly}
             data-route-state={forecast.state}
+            data-selected={selected ? 'true' : 'false'}
             data-autofocus={autofocus ? 'true' : undefined}
+            data-event-choice-id={choice.id}
+            aria-pressed={selected}
+            aria-keyshortcuts={index < 4 ? String(index + 1) : undefined}
             aria-describedby={`${outcomeId} ${forecastId}`}
-            onClick={() => onChooseChoice(choice)}
+            onClick={() => onPreviewChoice(choice)}
             key={choice.id}
           >
             <span>0{index + 1}</span>
@@ -364,11 +475,13 @@ function EventChoices({
                 <small className="event-emergency-label">EMERGENCY ROUTE · 보급 고갈 시 개방</small>
               ) : null}
               <p>{choice.description}</p>
-              <b id={outcomeId}>{unavailable ? `보급품 ${choice.requiresSupplies} 필요` : scoreOutcome}</b>
+              <b id={outcomeId}>
+                {unavailable ? `보급품 ${choice.requiresSupplies} 필요` : eventChoiceOutcome(choice, forecast)}
+              </b>
               <ChoiceForecast choice={choice} forecast={forecast} descriptionId={forecastId} />
               <ChoiceConsequences choice={choice} />
             </div>
-            <i aria-hidden="true">›</i>
+            <i aria-hidden="true">{selected ? '✓' : '›'}</i>
           </button>
         )
       })}
@@ -392,16 +505,69 @@ export function CampaignEventDialog({
   onChooseChoice,
   onOpenMap,
 }: CampaignEventDialogProps) {
+  const [selectedChoiceId, setSelectedChoiceId] = useState<string | null>(null)
+  const selectedEntry = selectedChoiceId
+    ? (choiceEntries.find((entry) => entry.choice.id === selectedChoiceId && !entry.unavailable) ?? null)
+    : null
+
+  function previewChoice(choice: EventChoice, moveFocus = false) {
+    if (selectedChoiceId === choice.id) return
+    setSelectedChoiceId(choice.id)
+    if (!moveFocus) return
+    window.requestAnimationFrame(() => {
+      document.querySelector<HTMLButtonElement>(`[data-event-choice-id="${choice.id}"]`)?.focus({ preventScroll: true })
+    })
+  }
+
+  function clearChoicePreview() {
+    const previousChoiceId = selectedChoiceId
+    setSelectedChoiceId(null)
+    window.requestAnimationFrame(() => {
+      if (!previousChoiceId) return
+      document
+        .querySelector<HTMLButtonElement>(`[data-event-choice-id="${previousChoiceId}"]`)
+        ?.focus({ preventScroll: true })
+    })
+  }
+
   return (
-    <div className="modal-backdrop event-backdrop" role="presentation" inert={blocked ? true : undefined}>
+    <div
+      className="modal-backdrop event-backdrop"
+      data-selection={selectedEntry ? 'true' : 'false'}
+      role="presentation"
+      inert={blocked ? true : undefined}
+    >
       <section
         className="event-card"
         data-veteran={veteranBriefing ? 'true' : 'false'}
         role="dialog"
         aria-modal="true"
         aria-labelledby="event-title"
+        aria-describedby="event-choice-instruction"
         data-focus-scope="event"
         tabIndex={-1}
+        onKeyDown={(event) => {
+          const choiceIndex = EVENT_CHOICE_INDEX_BY_KEY[event.code]
+          const shortcutEntry = choiceIndex === undefined ? undefined : choiceEntries[choiceIndex]
+          if (
+            shortcutEntry &&
+            !shortcutEntry.unavailable &&
+            !event.repeat &&
+            !event.metaKey &&
+            !event.ctrlKey &&
+            !event.altKey &&
+            !event.shiftKey
+          ) {
+            event.preventDefault()
+            event.stopPropagation()
+            previewChoice(shortcutEntry.choice, true)
+            return
+          }
+          if (event.key !== 'Escape' || !selectedEntry) return
+          event.preventDefault()
+          event.stopPropagation()
+          clearChoicePreview()
+        }}
       >
         <div className="event-art" aria-hidden="true">
           <Image
@@ -431,15 +597,26 @@ export function CampaignEventDialog({
           <EventStoryRecord event={event} veteranBriefing={veteranBriefing} />
           {oathIntervention ? <OathIntervention intervention={oathIntervention} /> : null}
           {decisionEcho ? <DecisionEcho echo={decisionEcho} /> : null}
+          <p className="event-choice-instruction" id="event-choice-instruction">
+            경로 카드를 눌러 선택 후 수치를 고정하고, 아래에서 확정하기 전까지 다른 길과 비교할 수 있습니다.
+          </p>
           <ChoiceRouteLedger crownTiming={crownTiming} crownHeatFloor={crownHeatFloor} stokeBaseCost={stokeBaseCost} />
           {finalMarchPath ? <FinalMarchLedger day={day} path={finalMarchPath} /> : null}
-          <EventChoices entries={choiceEntries} onChooseChoice={onChooseChoice} />
+          <EventChoices entries={choiceEntries} selectedChoiceId={selectedChoiceId} onPreviewChoice={previewChoice} />
           <footer>
-            <span>결정은 이후 전투와 이번 원정의 결말에 남습니다.</span>
+            <span>아래에서 확정한 결정만 이후 전투와 이번 원정의 결말에 남습니다.</span>
             <button type="button" onClick={onOpenMap}>
               원정 지도 보기
             </button>
           </footer>
+
+          {selectedEntry ? (
+            <EventChoiceCommitDock
+              entry={selectedEntry}
+              onCancel={clearChoicePreview}
+              onConfirm={() => onChooseChoice(selectedEntry.choice)}
+            />
+          ) : null}
         </div>
       </section>
     </div>

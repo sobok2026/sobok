@@ -17378,6 +17378,590 @@
   animation: none;
 }
 
+/* Event choice confirmation: preview irreversible run decisions before sealing them. */
+
+.event-choice-instruction {
+  margin: 14px 0 0;
+  padding: 8px 10px;
+  border-left: 2px solid rgba(117, 208, 226, 0.42);
+  background: linear-gradient(90deg, rgba(79, 176, 196, 0.08), transparent 72%);
+  color: #a5bcc1;
+  font-size: var(--text-small);
+  line-height: 1.5;
+}
+
+.event-choice-instruction + .event-choice-ledger {
+  margin-top: 10px;
+}
+
+.event-choices > button[data-selected='true'] {
+  border-color: rgba(255, 186, 103, 0.72);
+  background: radial-gradient(circle at 0 28%, rgba(255, 161, 74, 0.16), transparent 34%), rgba(39, 22, 19, 0.76);
+  box-shadow:
+    inset 3px 0 #f3ad68,
+    0 0 0 1px rgba(255, 190, 113, 0.08),
+    0 16px 38px rgba(0, 0, 0, 0.18);
+  transform: translateX(4px);
+}
+
+.event-choices > button[data-selected='true'] > span,
+.event-choices > button[data-selected='true'] > i {
+  color: #ffc884;
+}
+
+.event-choices > button[data-selected='true'] > i {
+  font-size: 15px;
+  font-weight: 820;
+}
+
+.event-backdrop[data-selection='true'] {
+  padding-bottom: max(188px, env(safe-area-inset-bottom));
+}
+
+.event-commit-dock {
+  --event-commit-rgb: 111, 201, 222;
+  position: fixed;
+  z-index: 220;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: 50%;
+  display: grid;
+  width: min(calc(100vw - 28px), 1040px);
+  grid-template-columns: 52px minmax(0, 1.18fr) minmax(300px, 0.98fr);
+  align-items: center;
+  gap: 8px 12px;
+  padding: 11px 12px;
+  overflow: hidden;
+  border: 1px solid rgba(var(--event-commit-rgb), 0.42);
+  background:
+    radial-gradient(circle at 0 50%, rgba(var(--event-commit-rgb), 0.15), transparent 30%),
+    linear-gradient(125deg, rgba(255, 255, 255, 0.035), transparent 34%), rgba(3, 15, 21, 0.98);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.62),
+    inset 0 1px rgba(255, 255, 255, 0.05);
+  transform: translateX(-50%);
+  backdrop-filter: blur(24px);
+  animation: event-commit-arrive 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.event-commit-dock[data-state='critical'] {
+  --event-commit-rgb: 255, 111, 111;
+}
+
+.event-commit-dock[data-state='strained'] {
+  --event-commit-rgb: 240, 168, 92;
+}
+
+.event-commit-dock[data-state='secure'] {
+  --event-commit-rgb: 117, 225, 185;
+}
+
+.event-commit-dock::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  content: '';
+  background: linear-gradient(90deg, transparent, rgb(var(--event-commit-rgb)), transparent);
+  opacity: 0.72;
+}
+
+.event-commit-glyph {
+  display: grid;
+  width: 48px;
+  height: 58px;
+  grid-column: 1;
+  grid-row: 1;
+  place-items: center;
+  border: 1px solid rgba(var(--event-commit-rgb), 0.4);
+  background: radial-gradient(circle, rgba(var(--event-commit-rgb), 0.14), rgba(2, 11, 16, 0.3) 72%);
+  color: rgb(var(--event-commit-rgb));
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 21px;
+  text-shadow: 0 0 18px rgba(var(--event-commit-rgb), 0.4);
+}
+
+.event-commit-copy {
+  display: grid;
+  min-width: 0;
+  grid-column: 2;
+  grid-row: 1;
+  gap: 2px;
+}
+
+.event-commit-copy > small {
+  color: rgba(var(--event-commit-rgb), 0.86);
+  font-size: var(--text-label);
+  font-weight: 820;
+  letter-spacing: 0.055em;
+}
+
+.event-commit-copy > strong {
+  overflow: hidden;
+  color: #edf5f6;
+  font-size: var(--text-emphasis);
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-commit-copy > p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  -webkit-box-orient: vertical;
+  color: #a7bdc1;
+  font-size: var(--text-small);
+  line-height: 1.4;
+  -webkit-line-clamp: 2;
+}
+
+.event-commit-resources {
+  display: grid;
+  grid-column: 1 / span 2;
+  grid-row: 2;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(var(--event-commit-rgb), 0.2);
+  background: rgba(var(--event-commit-rgb), 0.1);
+}
+
+.event-commit-resources > div {
+  display: flex;
+  min-width: 0;
+  min-height: 38px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  padding: 5px 8px;
+  background: rgba(2, 12, 17, 0.88);
+}
+
+.event-commit-resources dt,
+.event-commit-resources dd {
+  margin: 0;
+}
+
+.event-commit-resources dt {
+  color: #849fa5;
+  font-size: var(--text-label);
+}
+
+.event-commit-resources dd {
+  color: #e4f0f1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--text-small);
+  font-weight: 820;
+  white-space: nowrap;
+}
+
+.event-commit-verdict {
+  display: grid;
+  min-width: 0;
+  min-height: 58px;
+  grid-column: 3;
+  grid-row: 1;
+  align-content: center;
+  gap: 2px;
+  padding: 7px 9px;
+  border: 1px solid rgba(var(--event-commit-rgb), 0.18);
+  background: rgba(var(--event-commit-rgb), 0.055);
+}
+
+.event-commit-verdict > span,
+.event-commit-verdict > small {
+  color: rgb(var(--event-commit-rgb));
+  font-size: var(--text-label);
+  font-weight: 780;
+  line-height: 1.3;
+}
+
+.event-commit-verdict > strong {
+  overflow: hidden;
+  color: #e4eff1;
+  font-size: var(--text-small);
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-commit-verdict > p {
+  overflow: hidden;
+  margin: 0;
+  color: #9bb2b7;
+  font-size: var(--text-label);
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-commit-dock > footer {
+  display: grid;
+  grid-column: 3;
+  grid-row: 2;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: 6px;
+}
+
+.event-commit-dock > footer button {
+  min-width: 0;
+  min-height: 42px;
+  padding: 7px 9px;
+  border: 1px solid rgba(var(--event-commit-rgb), 0.22);
+  background: rgba(2, 11, 16, 0.58);
+  color: #9bb2b7;
+  cursor: pointer;
+  font-size: var(--text-label);
+  font-weight: 760;
+}
+
+.event-commit-dock > footer button:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  border-color: rgba(var(--event-commit-rgb), 0.55);
+  background: linear-gradient(90deg, rgba(var(--event-commit-rgb), 0.18), rgba(var(--event-commit-rgb), 0.08));
+  color: #edf6f7;
+}
+
+.event-commit-dock > footer button:hover,
+.event-commit-dock > footer button:focus-visible {
+  border-color: rgba(var(--event-commit-rgb), 0.82);
+  background-color: rgba(var(--event-commit-rgb), 0.14);
+  outline: none;
+}
+
+.event-commit-dock > footer button:focus-visible {
+  box-shadow: 0 0 0 2px rgba(var(--event-commit-rgb), 0.42);
+}
+
+.event-commit-dock > footer button i {
+  font-size: 17px;
+  font-style: normal;
+}
+
+.event-backdrop[inert] .event-commit-dock {
+  display: none;
+}
+
+.game-shell[data-contrast='high'] :is(.event-choice-instruction, .event-commit-dock, .event-commit-verdict) {
+  border-color: rgb(var(--event-commit-rgb, 111, 201, 222));
+  background-color: #06151c;
+}
+
+.game-shell[data-contrast='high'] .event-choices > button[data-selected='true'] {
+  border-color: #ffd09a;
+  outline: 2px solid #ffd09a;
+  outline-offset: -2px;
+}
+
+@keyframes event-commit-arrive {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 18px) scale(0.985);
+  }
+}
+
+@media (max-width: 900px) {
+  .event-backdrop[data-selection='true'] {
+    padding-bottom: max(286px, env(safe-area-inset-bottom));
+  }
+
+  .event-commit-dock {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 8px 10px;
+  }
+
+  .event-commit-glyph {
+    width: 44px;
+    height: 52px;
+  }
+
+  .event-commit-copy {
+    grid-column: 2;
+  }
+
+  .event-commit-resources,
+  .event-commit-verdict,
+  .event-commit-dock > footer {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .event-backdrop[data-selection='true'] {
+    padding-bottom: max(316px, env(safe-area-inset-bottom));
+  }
+
+  .event-choices > button[data-selected='true'] {
+    transform: none;
+  }
+
+  .event-commit-dock {
+    bottom: max(7px, env(safe-area-inset-bottom));
+    width: calc(100vw - 14px);
+    max-height: min(60vh, 410px);
+    padding: 9px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .event-commit-copy > p {
+    -webkit-line-clamp: 1;
+  }
+
+  .event-commit-resources {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .event-commit-verdict > p {
+    display: none;
+  }
+
+  .event-commit-dock > footer button {
+    padding-inline: 7px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .event-commit-dock {
+    animation: none;
+  }
+}
+
+.game-shell[data-motion='reduced'] .event-commit-dock {
+  animation: none;
+}
+
+/* Event decision receipt: carry the sealed choice into the next camp without blocking play. */
+
+.event-decision-notice {
+  --event-notice-rgb: 111, 201, 222;
+  position: fixed;
+  z-index: 178;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  left: max(18px, env(safe-area-inset-left));
+  width: min(calc(100vw - 36px), 430px);
+  pointer-events: none;
+  animation: event-decision-life 3.4s ease both;
+}
+
+.event-decision-notice[data-kind='oath'] {
+  --event-notice-rgb: 245, 174, 99;
+}
+
+.event-decision-notice[data-kind='echo'] {
+  --event-notice-rgb: 127, 211, 225;
+}
+
+.event-decision-notice[data-kind='imprint'] {
+  --event-notice-rgb: 241, 157, 83;
+}
+
+.event-decision-notice[data-kind='vow'] {
+  --event-notice-rgb: 185, 143, 239;
+}
+
+.event-decision-notice > section {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 9px 11px;
+  overflow: hidden;
+  padding: 11px 12px;
+  border: 1px solid rgba(var(--event-notice-rgb), 0.4);
+  background:
+    radial-gradient(circle at 0 0, rgba(var(--event-notice-rgb), 0.16), transparent 38%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.035), transparent 38%), rgba(3, 15, 21, 0.96);
+  box-shadow:
+    0 22px 70px rgba(0, 0, 0, 0.52),
+    inset 0 1px rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(22px);
+}
+
+.event-decision-notice-glyph {
+  display: grid;
+  width: 44px;
+  height: 52px;
+  place-items: center;
+  border: 1px solid rgba(var(--event-notice-rgb), 0.4);
+  background: rgba(var(--event-notice-rgb), 0.07);
+  color: rgb(var(--event-notice-rgb));
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 19px;
+  text-shadow: 0 0 17px rgba(var(--event-notice-rgb), 0.4);
+}
+
+.event-decision-notice > section > header {
+  display: grid;
+  min-width: 0;
+  align-content: center;
+  gap: 2px;
+}
+
+.event-decision-notice > section > header small {
+  color: rgba(var(--event-notice-rgb), 0.85);
+  font-size: var(--text-label);
+  font-weight: 820;
+  letter-spacing: 0.05em;
+}
+
+.event-decision-notice > section > header strong {
+  overflow: hidden;
+  color: #edf6f7;
+  font-size: var(--text-emphasis);
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-decision-notice > section > header p {
+  overflow: hidden;
+  margin: 0;
+  color: #a5bcc1;
+  font-size: var(--text-small);
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-decision-notice dl {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(var(--event-notice-rgb), 0.16);
+  background: rgba(var(--event-notice-rgb), 0.09);
+}
+
+.event-decision-notice dl > div {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+  padding: 6px 7px;
+  background: rgba(2, 11, 16, 0.84);
+}
+
+.event-decision-notice dt,
+.event-decision-notice dd {
+  margin: 0;
+}
+
+.event-decision-notice dt {
+  color: #829da3;
+  font-size: var(--text-label);
+}
+
+.event-decision-notice dd {
+  color: #c5d7da;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--text-label);
+  font-weight: 720;
+  white-space: nowrap;
+}
+
+.event-decision-notice dd i {
+  color: rgba(var(--event-notice-rgb), 0.68);
+  font-style: normal;
+}
+
+.event-decision-notice dd strong {
+  color: #edf6f7;
+}
+
+.event-decision-notice footer {
+  display: flex;
+  min-width: 0;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: #91a9ae;
+  font-size: var(--text-label);
+  line-height: 1.4;
+}
+
+.event-decision-notice footer > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-decision-notice footer > b {
+  flex: none;
+  color: rgb(var(--event-notice-rgb));
+  white-space: nowrap;
+}
+
+.game-shell[data-battle-pace='swift'] .event-decision-notice {
+  animation-duration: 2s;
+}
+
+.game-shell[data-contrast='high'] .event-decision-notice > section {
+  border-color: rgb(var(--event-notice-rgb));
+  background-color: #06151c;
+}
+
+@keyframes event-decision-life {
+  0% {
+    opacity: 0;
+    transform: translate3d(-18px, 8px, 0) scale(0.98);
+  }
+  10%,
+  88% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-8px, 4px, 0) scale(0.99);
+  }
+}
+
+@media (max-width: 760px), (max-height: 520px) and (pointer: coarse) {
+  .event-decision-notice {
+    right: max(10px, env(safe-area-inset-right));
+    bottom: calc(82px + env(safe-area-inset-bottom));
+    left: max(10px, env(safe-area-inset-left));
+    width: auto;
+  }
+}
+
+@media (max-width: 440px) {
+  .event-decision-notice > section {
+    grid-template-columns: 42px minmax(0, 1fr);
+    padding: 9px;
+  }
+
+  .event-decision-notice-glyph {
+    width: 40px;
+    height: 48px;
+  }
+
+  .event-decision-notice dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .event-decision-notice footer > span {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .event-decision-notice {
+    animation: none;
+  }
+}
+
+.game-shell[data-motion='reduced'] .event-decision-notice {
+  animation: none;
+}
+
 /* Keep promotion preview overrides after the deferred screen base cascade. */
 
 .promotion-card {
