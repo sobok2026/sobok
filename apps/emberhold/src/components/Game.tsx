@@ -385,6 +385,34 @@ function sharedRiftUrlFor(code: string): string {
   return url.toString()
 }
 
+async function copyTextToClipboard(value: string): Promise<boolean> {
+  try {
+    if (typeof navigator.clipboard?.writeText === 'function') {
+      await navigator.clipboard.writeText(value)
+      return true
+    }
+  } catch {
+    // Fall through to the user-gesture-compatible legacy copy path.
+  }
+
+  const activeElement = document.activeElement instanceof HTMLElement ? document.activeElement : null
+  const textarea = document.createElement('textarea')
+  textarea.value = value
+  textarea.readOnly = true
+  textarea.setAttribute('aria-hidden', 'true')
+  textarea.style.cssText = 'position:fixed;inset:0 auto auto 0;width:1px;height:1px;opacity:0;pointer-events:none'
+  document.body.append(textarea)
+  textarea.select()
+  try {
+    return document.execCommand('copy')
+  } catch {
+    return false
+  } finally {
+    textarea.remove()
+    activeElement?.focus({ preventScroll: true })
+  }
+}
+
 const DEFAULT_SETTINGS: GameSettings = {
   sound: true,
   effectsVolume: 82,
@@ -2868,6 +2896,10 @@ export default function Game() {
   const [settings, setSettings] = useState<GameSettings>({ ...DEFAULT_SETTINGS })
   const [audioUnlocked, setAudioUnlocked] = useState(false)
   const [storageProtection, setStorageProtection] = useState<StorageProtection>('checking')
+  const [installPending, setInstallPending] = useState(false)
+  const [storageRequestPending, setStorageRequestPending] = useState(false)
+  const [restorePending, setRestorePending] = useState(false)
+  const [sharePending, setSharePending] = useState(false)
   const [bestScore, setBestScore] = useState(0)
   const [campUndo, setCampUndo] = useState<CampUndo | null>(null)
   const [growthCeremony, setGrowthCeremony] = useState<GrowthCeremony | null>(null)
@@ -2896,7 +2928,10 @@ export default function Game() {
   const resolvingChoice = useRef<string | null>(null)
   const purchasingLegacy = useRef(false)
   const storageWarningShown = useRef(false)
+  const installInFlight = useRef(false)
+  const storageRequestInFlight = useRef(false)
   const restoringBackup = useRef(false)
+  const shareInFlight = useRef(false)
   const sessionLockRelease = useRef<(() => void) | null>(null)
   const audioRecoveryInFlight = useRef(false)
   const navigationGuardArmed = useRef(false)
@@ -5993,15 +6028,23 @@ export default function Game() {
   }
 
   async function installGame() {
-    if (!installPrompt) return
+    const prompt = installPrompt
+    if (!prompt || installInFlight.current) return
+    installInFlight.current = true
+    setInstallPending(true)
     try {
-      await installPrompt.prompt()
-      const choice = await installPrompt.userChoice
+      await prompt.prompt()
+      const choice = await prompt.userChoice
       setInstallPrompt(null)
       announce(choice.outcome === 'accepted' ? 'Emberhold 설치를 시작합니다.' : '설치는 언제든 다시 선택할 수 있어요.')
     } catch {
       setInstallPrompt(null)
+      preloadHelpDialogs()
       setShowInstallHelp(true)
+      announce('설치 요청을 열지 못했습니다. 이 기기의 설치 방법을 안내합니다.')
+    } finally {
+      installInFlight.current = false
+      setInstallPending(false)
     }
   }
 
@@ -6084,6 +6127,7 @@ export default function Game() {
   }
 
   async function requestPersistentStorage() {
+    if (storageRequestInFlight.current) return
     if (storageProtection === 'unavailable') {
       announce('이 브라우저에서는 기기 저장소를 사용할 수 없습니다.')
       return
@@ -6093,6 +6137,8 @@ export default function Game() {
       announce('이 브라우저는 자동 정리 제외 요청을 지원하지 않습니다. 백업 파일을 함께 보관해 주세요.')
       return
     }
+    storageRequestInFlight.current = true
+    setStorageRequestPending(true)
     setStorageProtection('checking')
     try {
       const persistent = await navigator.storage.persist()
@@ -6105,6 +6151,9 @@ export default function Game() {
     } catch {
       setStorageProtection('standard')
       announce('기록 보호 상태를 바꾸지 못했습니다. 현재 저장과 백업 기능은 계속 사용할 수 있습니다.')
+    } finally {
+      storageRequestInFlight.current = false
+      setStorageRequestPending(false)
     }
   }
 
@@ -6134,6 +6183,13 @@ export default function Game() {
     const input = event.currentTarget
     const file = input.files?.[0]
     if (!file) return
+    if (restoringBackup.current) {
+      input.value = ''
+      return
+    }
+    restoringBackup.current = true
+    setRestorePending(true)
+    let reloadScheduled = false
     try {
       if (file.size > 1_000_000) throw new Error('Backup file is too large.')
       const backup = parseGameBackup(JSON.parse(await file.text()))
@@ -6141,20 +6197,23 @@ export default function Game() {
         announce('현재 데이터 형식과 일치하지 않는 백업입니다. 기존 기록은 그대로 유지됩니다.')
         return
       }
-      restoringBackup.current = true
       if (!localStorageAvailable() || !replaceStoredBackup(backup)) {
-        restoringBackup.current = false
         setStorageProtection('unavailable')
         announce('이 기기에 백업을 복원할 수 없습니다. 기존 기록은 그대로 유지됩니다.')
         return
       }
+      reloadScheduled = true
       playSound('relic', soundOn)
+      announce('백업 검증과 교체를 마쳤습니다. 복원된 기록을 불러옵니다.')
       window.setTimeout(() => window.location.reload(), 180)
     } catch {
-      restoringBackup.current = false
       announce('백업 파일을 읽지 못했습니다. 기존 기록은 그대로 유지됩니다.')
     } finally {
       input.value = ''
+      if (!reloadScheduled) {
+        restoringBackup.current = false
+        setRestorePending(false)
+      }
     }
   }
 
@@ -7524,22 +7583,28 @@ export default function Game() {
       .filter(Boolean)
       .join('\n')
 
-    const share = navigator.share?.bind(navigator)
-    let nativeShareFailed = false
-    if (share) {
-      try {
-        await share({ title: '마지막 불씨', text, url: shareUrl })
-        announce('원정 기록을 공유했습니다.')
-        return
-      } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') return
-        nativeShareFailed = true
-      }
-    }
-
+    if (shareInFlight.current) return
+    shareInFlight.current = true
+    setSharePending(true)
     try {
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(`${text}\n${shareUrl}`)
+      const share = navigator.share?.bind(navigator)
+      let nativeShareFailed = false
+      if (share) {
+        try {
+          await share({ title: '마지막 불씨', text, url: shareUrl })
+          announce('원정 기록을 공유했습니다.')
+          return
+        } catch (error) {
+          if (error instanceof DOMException && error.name === 'AbortError') {
+            announce('기록 공유를 취소했습니다. 원정 기록은 그대로 유지됩니다.')
+            return
+          }
+          nativeShareFailed = true
+        }
+      }
+
+      const copied = await copyTextToClipboard(`${text}\n${shareUrl}`)
+      if (copied) {
         announce(
           nativeShareFailed
             ? '공유 창 대신 원정 기록과 초대 링크를 복사했습니다.'
@@ -7550,6 +7615,9 @@ export default function Game() {
       announce('이 브라우저는 기록 공유를 지원하지 않습니다.')
     } catch {
       announce('기록을 공유하지 못했습니다. 다시 시도해 주세요.')
+    } finally {
+      shareInFlight.current = false
+      setSharePending(false)
     }
   }
 
@@ -8195,6 +8263,7 @@ export default function Game() {
           rosterCount={rosterCount}
           standalone={standalone}
           installPrompt={installPrompt !== null}
+          installPending={installPending}
           bestScore={bestScore}
           runtimeState={runtimeState}
           runtimeStateCopy={runtimeStateCopy}
@@ -8338,6 +8407,8 @@ export default function Game() {
         <SettingsDialog
           settings={settings}
           storageProtection={storageProtection}
+          storageRequestPending={storageRequestPending}
+          restorePending={restorePending}
           backupInputRef={backupInputRef}
           closeSettings={closeSettings}
           toggleSound={toggleSound}
@@ -8453,6 +8524,7 @@ export default function Game() {
           nextChallengeDifficulty={nextChallengeDifficulty}
           replayExpedition={replayExpedition}
           prepareNextChallenge={prepareNextChallenge}
+          sharePending={sharePending}
           shareExpedition={shareExpedition}
           openArchive={openArchive}
         />

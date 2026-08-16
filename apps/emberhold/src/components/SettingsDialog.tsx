@@ -6,6 +6,8 @@ import type { GameSettings, StorageProtection } from './game-model'
 type SettingsDialogProps = {
   settings: GameSettings
   storageProtection: StorageProtection
+  storageRequestPending: boolean
+  restorePending: boolean
   backupInputRef: RefObject<HTMLInputElement | null>
   closeSettings: () => void
   toggleSound: () => void
@@ -21,6 +23,8 @@ type SettingsDialogProps = {
 export function SettingsDialog({
   settings,
   storageProtection,
+  storageRequestPending,
+  restorePending,
   backupInputRef,
   closeSettings,
   toggleSound,
@@ -277,7 +281,7 @@ export function SettingsDialog({
                 <h3 id="settings-data-title">기록 보호와 백업</h3>
               </div>
             </header>
-            <div className="storage-protection" data-state={storageProtection}>
+            <div className="storage-protection" data-state={storageProtection} aria-busy={storageRequestPending}>
               <span aria-hidden="true">
                 {storageProtection === 'persistent'
                   ? '◆'
@@ -295,7 +299,9 @@ export function SettingsDialog({
                     : storageProtection === 'unavailable'
                       ? '기기 저장소 사용 불가'
                       : storageProtection === 'checking'
-                        ? '보호 상태 확인 중'
+                        ? storageRequestPending
+                          ? '보호 승인 확인 중'
+                          : '보호 상태 확인 중'
                         : '기본 기기 저장'}
                 </strong>
                 <p>
@@ -304,7 +310,9 @@ export function SettingsDialog({
                     : storageProtection === 'unavailable'
                       ? '현재 플레이는 가능하지만 앱을 닫으면 기록이 남지 않을 수 있습니다. 먼저 백업 파일을 보관하세요.'
                       : storageProtection === 'checking'
-                        ? '이 기기가 게임 기록 보호 요청을 지원하는지 확인하고 있습니다.'
+                        ? storageRequestPending
+                          ? '브라우저에 자동 정리 제외를 요청했습니다. 승인 결과를 기다리고 있습니다.'
+                          : '이 기기가 게임 기록 보호 요청을 지원하는지 확인하고 있습니다.'
                         : '현재 기록은 이 기기에 저장됩니다. 지원하는 브라우저에서는 자동 정리 제외를 요청할 수 있습니다.'}
                 </p>
               </div>
@@ -315,7 +323,7 @@ export function SettingsDialog({
               ) : null}
             </div>
             <div className="backup-actions">
-              <button type="button" onClick={exportGameBackup}>
+              <button type="button" onClick={exportGameBackup} disabled={restorePending}>
                 <span aria-hidden="true">↓</span>
                 <div>
                   <strong>백업 파일 저장</strong>
@@ -325,12 +333,15 @@ export function SettingsDialog({
               <button
                 type="button"
                 onClick={() => backupInputRef.current?.click()}
-                disabled={storageProtection === 'unavailable'}
+                disabled={storageProtection === 'unavailable' || restorePending}
+                aria-busy={restorePending}
               >
                 <span aria-hidden="true">↑</span>
                 <div>
-                  <strong>백업 파일 복원</strong>
-                  <small>현재 형식이 정확히 일치할 때만 교체</small>
+                  <strong>{restorePending ? '백업 검증 중' : '백업 파일 복원'}</strong>
+                  <small>
+                    {restorePending ? '기존 기록을 보호하며 파일 확인 중' : '현재 형식이 정확히 일치할 때만 교체'}
+                  </small>
                 </div>
               </button>
               <input
@@ -338,6 +349,7 @@ export function SettingsDialog({
                 type="file"
                 accept="application/json,.json"
                 onChange={(event) => void restoreGameBackup(event)}
+                disabled={restorePending}
                 hidden
               />
             </div>

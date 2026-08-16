@@ -61,6 +61,7 @@ type TitleScreenProps = {
   rosterCount: number
   standalone: boolean
   installPrompt: boolean
+  installPending: boolean
   bestScore: number
   runtimeState: RuntimeState
   runtimeStateCopy: string
@@ -113,6 +114,7 @@ export function TitleScreen({
   rosterCount,
   standalone,
   installPrompt,
+  installPending,
   bestScore,
   runtimeState,
   runtimeStateCopy,
@@ -678,8 +680,10 @@ export function TitleScreen({
                       setShowInstallHelp(true)
                     }
                   }}
+                  disabled={installPending}
+                  aria-busy={installPending}
                 >
-                  앱 설치
+                  {installPending ? '설치 요청 확인 중' : '앱 설치'}
                 </button>
               ) : null}
             </div>

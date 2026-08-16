@@ -9194,10 +9194,15 @@
   color: #d3f4e8;
 }
 
-.ending-actions button:hover,
-.ending-actions button:focus-visible {
+.ending-actions button:hover:not(:disabled),
+.ending-actions button:focus-visible:not(:disabled) {
   border-color: rgba(255, 224, 180, 0.7);
   filter: brightness(1.08);
+}
+
+.ending-actions button:disabled {
+  cursor: progress;
+  opacity: 0.68;
 }
 
 .game-shell[data-contrast='high'] :is(.ending-commander-dossier, .ending-mastery-directive) {

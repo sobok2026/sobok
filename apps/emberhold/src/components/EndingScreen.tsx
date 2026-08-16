@@ -160,6 +160,7 @@ type EndingScreenProps = {
   nextChallengeDifficulty: Difficulty
   replayExpedition: () => void
   prepareNextChallenge: () => void
+  sharePending: boolean
   shareExpedition: () => Promise<void>
   openArchive: (tab: ArchiveTab) => void
 }
@@ -200,6 +201,7 @@ export function EndingScreen({
   nextChallengeDifficulty,
   replayExpedition,
   prepareNextChallenge,
+  sharePending,
   shareExpedition,
   openArchive,
 }: EndingScreenProps) {
@@ -975,10 +977,16 @@ export function EndingScreen({
             </span>
             <i aria-hidden="true">↺</i>
           </button>
-          <button className="share-action" type="button" onClick={() => void shareExpedition()}>
+          <button
+            className="share-action"
+            type="button"
+            onClick={() => void shareExpedition()}
+            disabled={sharePending}
+            aria-busy={sharePending}
+          >
             <span>
-              <strong>기록 공유</strong>
-              <small>결말·서약 연대기·다음 목표</small>
+              <strong>{sharePending ? '공유 결과 기다리는 중' : '기록 공유'}</strong>
+              <small>{sharePending ? '공유 창 또는 복사 권한 확인 중' : '결말·서약 연대기·다음 목표'}</small>
             </span>
             <i aria-hidden="true">↗</i>
           </button>

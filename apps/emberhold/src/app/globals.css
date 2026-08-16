@@ -8262,6 +8262,11 @@ body {
   color: #91dfc4;
 }
 
+.title-install:disabled {
+  cursor: progress;
+  opacity: 0.68;
+}
+
 .runtime-state {
   display: inline-flex;
   align-items: center;
