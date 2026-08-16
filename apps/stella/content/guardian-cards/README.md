@@ -36,6 +36,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-015-review-ko.json`    | `visual_review_complete` | 열다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-016-review-ko.json`    | `visual_review_complete` | 열여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-017-review-ko.json`    | `visual_review_complete` | 열일곱 번째 production 배치 파일럿 1개·신규 PNG 11개 시각 승인·승인 해시 고정 |
+| `production-art-batch-018-review-ko.json`    | `editorial_review_ready` | 열여덟 번째 production 배치 신규 12개 원고 해시·구도 편집 승인 대기           |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 213개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -495,6 +496,16 @@ sheet에서 캐릭터 정체성·한 중심 소품·첫 신호의 미완료 상�
 제외한 신규 11개는 모두 사람의 최종 시각 승인을 마쳤다. 승인 원본의 SHA-256은 검수 파일과 누적 213개
 WebP 매니페스트에 고정하며 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
 
+열여덟 번째 배치는 같은 `love.first-signal` 원고를 `nebula` 희귀도로 제작하는 신규 12개 편집
+검수안이다. 이미 건넨 첫 신호 하나를 비·눈·바람·황혼·새벽 가운데서 옷·덮개·주머니·처마·받침·우산
+같은 보호 구조 하나로 오래 알아볼 수 있게 지키는 두 장면을 하나의 연속된 순간으로 합친다. 상대의
+등장·답·합의·관계 성사·미래 확정은 만들지 않는다. 빗물 높이의 비옷 지붕, 성에 낀 창 너머 담요 덮개,
+세로 바람막이 양면의 열린 편지, 처마 밑 마른 선반, 커튼 밑 망토 반원, 꽃바구니 안 저각, 독립된 두
+받침 사이의 풀린 리본, 빈 우산 반쪽, 망토 주머니 안쪽, 작업 망토의 삼각 틈, 겨울 코트 안주머니,
+물결 아래 열린 U자 빛줄기처럼 서로 다른 카메라·날씨 경계·보호 실루엣을 고정했다. 12개 정본 원고
+해시와 구도는 사람의 편집 승인을 기다리며, 승인 전에는 imagegen 원화 후보를 만들지 않는다. 따라서
+누적 WebP는 213개, production 잔여량은 843개로 유지한다.
+
 ## 검증
 
 repository root에서 다음 명령을 실행한다.
@@ -520,6 +531,8 @@ bun --filter=@sobok/stella guardian-cards:validate
 - 대표 후보의 현재 원고와 편집 검수 해시 일치, 사람 승인 전 이미지 제작 차단
 - 열일곱 번째 production 배치의 승인 파일럿 1개·신규 11개 원고 해시와 Orbit 고유 구도, 편집 승인 전
   신규 이미지 제작 및 사람의 시각 승인 전 배포 후보 확정 차단
+- 열여덟 번째 production 배치 신규 12개 원고 해시와 날씨 속 첫 신호를 지키는 Nebula 고유 구도,
+  Orbit·승인 게자리 Nebula 파일럿 비반복 및 사람의 편집 승인 전 이미지 제작 차단
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 213개를 제외한 현재 잔여
   843개 산식
