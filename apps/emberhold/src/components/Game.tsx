@@ -7539,18 +7539,15 @@ export default function Game() {
 
   function continueActInterlude() {
     if (phase !== 'interlude' || !currentActTransition) return
-    setPhase(game.pendingRelic ? 'relic' : game.eventResolvedForDay < game.day ? 'event' : 'camp')
-    playSound('relic', soundOn)
-    vibrate([22, 34, 28, 42, 34])
+    const nextPhase = game.pendingRelic ? 'relic' : game.eventResolvedForDay < game.day ? 'event' : 'camp'
+    revealPhase(nextPhase, nextPhase === 'relic' ? 'relic' : 'fire', [22, 34, 28, 42, 34])
     announce(`제${currentActTransition.toAct}막 · ${ACTS[currentActTransition.toAct - 1].title}`)
   }
 
   function revealFinalEnding() {
     if (phase !== 'finale' || game.status !== 'won') return
     setBattleResult(null)
-    setPhase('won')
-    playSound('fire', soundOn)
-    vibrate([28, 34, 28, 34, 52, 40, 72])
+    revealPhase('won', 'fire', [28, 34, 28, 34, 52, 40, 72])
     announce(`${currentEnding.title} · 원정의 결말이 기록되었습니다.`)
   }
 
@@ -7585,7 +7582,7 @@ export default function Game() {
     writeStoredValue(META_KEY, JSON.stringify(nextMeta))
     setGame(nextGame)
     setMeta(nextMeta)
-    setPhase(game.eventResolvedForDay < game.day ? 'event' : 'camp')
+    const nextPhase = game.eventResolvedForDay < game.day ? 'event' : 'camp'
     const milestones: MilestoneNotice[] = []
     if (completesResonance && resonancePreview) {
       const resonance = RESONANCES[resonancePreview.id]
@@ -7601,8 +7598,11 @@ export default function Game() {
     }
     if (unlocksResonanceAchievement) milestones.push(achievementMilestone('first-resonance'))
     enqueueMilestones(milestones)
-    playSound(completesResonance ? 'seal' : 'relic', soundOn)
-    vibrate(completesResonance ? [24, 30, 24, 30, 55, 36, 70] : [20, 35, 20, 45, 30])
+    revealPhase(
+      nextPhase,
+      completesResonance ? 'seal' : 'relic',
+      completesResonance ? [24, 30, 24, 30, 55, 36, 70] : [20, 35, 20, 45, 30],
+    )
     announce(
       `${RELICS[relicId].name} 각인${completesResonance && resonancePreview ? ` · ${RESONANCES[resonancePreview.id].name} 공명 완성` : ''}`,
     )
@@ -7742,8 +7742,8 @@ export default function Game() {
     )
   }
 
-  function revealBattleResult(sound: SoundEffect, vibration: number | number[]) {
-    setPhase('result')
+  function revealPhase(nextPhase: Phase, sound: SoundEffect, vibration: number | number[]) {
+    setPhase(nextPhase)
     scheduleFrame(() => {
       playSound(sound, soundOn)
       vibrate(vibration)
@@ -7752,7 +7752,7 @@ export default function Game() {
 
   function completeBattleCinema(result: BattleResult) {
     if (phase !== 'battling') return
-    revealBattleResult(result.victory ? 'win' : 'lose', result.victory ? [25, 35, 25, 35, 45] : [80, 40, 100])
+    revealPhase('result', result.victory ? 'win' : 'lose', result.victory ? [25, 35, 25, 35, 45] : [80, 40, 100])
   }
 
   function skipBattleCinema() {
@@ -7762,7 +7762,8 @@ export default function Game() {
       const doctrineBroken = battleResult.lanes.some(
         (lane) => lane.enemy.doctrine === finalMarchGate.doctrine && lane.doctrineBroken,
       )
-      revealBattleResult(
+      revealPhase(
+        'result',
         battleResult.victory ? (doctrineBroken ? 'seal' : 'impact') : doctrineBroken ? 'impact' : 'lose',
         battleResult.victory
           ? doctrineBroken
@@ -7775,7 +7776,8 @@ export default function Game() {
       return
     }
 
-    revealBattleResult(
+    revealPhase(
+      'result',
       game.day === MAX_NIGHTS && battleResult.victory
         ? 'finale'
         : shatteredActCrown
@@ -7974,9 +7976,7 @@ export default function Game() {
       setGame(completed)
       commitMetaProgress(achievementCandidates, reward, true, createExpeditionRecord(completed, true))
       saveBestScore(nextScore)
-      setPhase('finale')
-      playSound('finale', soundOn)
-      vibrate([20, 28, 28, 34, 42, 36, 62, 42, 84])
+      revealPhase('finale', 'finale', [20, 28, 28, 34, 42, 36, 62, 42, 84])
       announce(
         `백색 왕의 왕좌가 무너졌습니다. 최종 전선 ${battleResult.wins}곳 · 칙령 ${battleResult.crownBreakCount}개 파쇄. 마지막 새벽으로 향합니다.`,
       )
@@ -8000,9 +8000,7 @@ export default function Game() {
       commitMetaProgress(achievementCandidates, reward, false, createExpeditionRecord(failed, false))
       saveBestScore(nextScore)
       setBattleResult(null)
-      setPhase('lost')
-      playSound('lose', soundOn)
-      vibrate([64, 38, 86, 44, 112])
+      revealPhase('lost', 'fire', [36, 44, 58, 50, 78])
       announce('마지막 불씨가 꺼졌습니다. 이번 원정의 결말과 다음 공략 목표를 기록합니다.')
       return
     }
@@ -8025,12 +8023,17 @@ export default function Game() {
     commitMetaProgress(achievementCandidates)
     setBattleResult(null)
     setFocusLane(battleResult.victory ? 0 : battleResult.focusLane)
-    setPhase(opensInterlude ? 'interlude' : grantsRelic ? 'relic' : battleResult.victory ? 'event' : 'camp')
+    const nextPhase = opensInterlude ? 'interlude' : grantsRelic ? 'relic' : battleResult.victory ? 'event' : 'camp'
+    const nextSound: SoundEffect = opensInterlude ? 'crown' : grantsRelic ? 'relic' : 'fire'
+    const nextVibration = opensInterlude
+      ? [20, 28, 38, 30, 54]
+      : grantsRelic
+        ? [18, 26, 22, 38]
+        : battleResult.victory
+          ? [16, 22, 30]
+          : [20, 30, 24, 38]
+    revealPhase(nextPhase, nextSound, nextVibration)
     if (!grantsRelic && !opensInterlude) {
-      if (!battleResult.victory && game.day === MAX_NIGHTS) {
-        playSound('fire', soundOn)
-        vibrate([18, 28, 24, 34, 38])
-      }
       const statusMessage = battleResult.victory
         ? '새벽이 밝았습니다. 다음 경로를 선택하세요.'
         : primaryFailureInsight
