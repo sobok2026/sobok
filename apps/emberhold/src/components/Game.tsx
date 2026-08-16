@@ -8194,6 +8194,7 @@ export default function Game() {
 
                 <BattleReadiness
                   day={game.day}
+                  veteranBriefing={veteranBriefing}
                   storyBoss={currentStory.boss}
                   nextCrownMechanic={nextCrownMechanic}
                   firstCrownBriefing={firstCrownBriefing}

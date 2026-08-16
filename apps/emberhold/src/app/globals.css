@@ -9643,7 +9643,7 @@ body {
   color: #cceee2;
 }
 
-.first-crown-briefing > footer {
+.first-crown-footer {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(140px, 0.32fr);
   align-items: center;
@@ -9654,7 +9654,7 @@ body {
   background: rgba(1, 8, 12, 0.4);
 }
 
-.first-crown-briefing > footer > span {
+.first-crown-footer > span {
   overflow: hidden;
   color: #8da7ae;
   font-size: var(--text-label);
@@ -9663,19 +9663,19 @@ body {
   white-space: nowrap;
 }
 
-.first-crown-briefing > footer > span b {
+.first-crown-footer > span b {
   margin-right: 7px;
   color: rgba(var(--crown-brief-rgb), 0.9);
 }
 
-.first-crown-briefing > footer > i {
+.first-crown-footer > i {
   display: block;
   height: 4px;
   overflow: hidden;
   background: rgba(130, 181, 191, 0.12);
 }
 
-.first-crown-briefing > footer > i > b {
+.first-crown-footer > i > b {
   display: block;
   height: 100%;
   background: linear-gradient(90deg, #5ca5b4, rgb(var(--crown-brief-rgb)));
@@ -9689,7 +9689,7 @@ body {
 }
 
 .game-shell[data-contrast='high'] .first-crown-next-command > p,
-.game-shell[data-contrast='high'] .first-crown-briefing > footer > span {
+.game-shell[data-contrast='high'] .first-crown-footer > span {
   color: #c4d8dc;
 }
 
@@ -9756,11 +9756,11 @@ body {
     border-bottom: 1px solid rgba(139, 195, 205, 0.09);
   }
 
-  .first-crown-briefing > footer {
+  .first-crown-footer {
     grid-template-columns: 1fr;
   }
 
-  .first-crown-briefing > footer > span {
+  .first-crown-footer > span {
     white-space: normal;
   }
 }
@@ -9986,7 +9986,7 @@ body {
   text-align: center;
 }
 
-.act-two-build-compass > footer {
+.act-two-build-footer {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
@@ -9996,17 +9996,17 @@ body {
   background: rgba(1, 8, 12, 0.4);
 }
 
-.act-two-build-compass > footer > span {
+.act-two-build-footer > span {
   color: #8da7ae;
   font-size: var(--text-label);
   line-height: 1.4;
 }
 
-.act-two-build-compass > footer > span:last-child {
+.act-two-build-footer > span:last-child {
   text-align: right;
 }
 
-.act-two-build-compass > footer b {
+.act-two-build-footer b {
   margin-right: 6px;
   color: rgba(var(--build-rgb), 0.9);
 }
@@ -10057,12 +10057,12 @@ body {
     border-bottom: 0;
   }
 
-  .act-two-build-compass > footer {
+  .act-two-build-footer {
     grid-template-columns: 1fr;
     gap: 4px;
   }
 
-  .act-two-build-compass > footer > span:last-child {
+  .act-two-build-footer > span:last-child {
     text-align: left;
   }
 }
@@ -10340,7 +10340,7 @@ body {
   color: #d2e2e4;
 }
 
-.final-march-gauntlet > footer {
+.final-march-footer {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -10350,14 +10350,14 @@ body {
   background: rgba(1, 7, 11, 0.46);
 }
 
-.final-march-gauntlet > footer dl {
+.final-march-footer dl {
   display: grid;
   grid-template-columns: repeat(4, minmax(82px, 1fr));
   gap: 5px;
   margin: 0;
 }
 
-.final-march-gauntlet > footer dl > div {
+.final-march-footer dl > div {
   display: flex;
   min-width: 0;
   align-items: center;
@@ -10369,38 +10369,38 @@ body {
   background: rgba(54, 96, 105, 0.035);
 }
 
-.final-march-gauntlet > footer dt,
-.final-march-gauntlet > footer dd {
+.final-march-footer dt,
+.final-march-footer dd {
   margin: 0;
   font-size: var(--text-micro);
   white-space: nowrap;
 }
 
-.final-march-gauntlet > footer dt {
+.final-march-footer dt {
   overflow: hidden;
   color: #69848c;
   text-overflow: ellipsis;
 }
 
-.final-march-gauntlet > footer dd {
+.final-march-footer dd {
   color: #adc2c7;
   font-weight: 760;
 }
 
-.final-march-gauntlet > footer dl > div[data-ready='true'] dd {
+.final-march-footer dl > div[data-ready='true'] dd {
   color: #92d9c0;
 }
 
-.final-march-gauntlet > footer dl > div[data-danger='true'] {
+.final-march-footer dl > div[data-danger='true'] {
   border-color: rgba(255, 99, 88, 0.26);
   background: rgba(168, 50, 42, 0.075);
 }
 
-.final-march-gauntlet > footer dl > div[data-danger='true'] dd {
+.final-march-footer dl > div[data-danger='true'] dd {
   color: #ef9389;
 }
 
-.final-march-gauntlet > footer > p {
+.final-march-footer > p {
   margin: 0;
   color: #8ba2a8;
   font-size: var(--text-label);
@@ -10408,7 +10408,7 @@ body {
   white-space: nowrap;
 }
 
-.final-march-gauntlet > footer > p b {
+.final-march-footer > p b {
   margin-right: 6px;
   color: rgba(var(--gauntlet-rgb), 0.9);
 }
@@ -10432,11 +10432,11 @@ body {
     border-bottom: 1px solid rgba(var(--gauntlet-rgb), 0.11);
   }
 
-  .final-march-gauntlet > footer {
+  .final-march-footer {
     grid-template-columns: 1fr;
   }
 
-  .final-march-gauntlet > footer > p {
+  .final-march-footer > p {
     text-align: right;
   }
 }
@@ -10491,13 +10491,153 @@ body {
     min-height: 0;
   }
 
-  .final-march-gauntlet > footer dl {
+  .final-march-footer dl {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .final-march-gauntlet > footer > p {
+  .final-march-footer > p {
     text-align: left;
     white-space: normal;
+  }
+}
+
+/* Veteran readiness: keep the next command visible and move completed campaign context behind one native disclosure. */
+
+.act-two-build-compass[data-veteran='true'] .act-two-build-body,
+.final-march-gauntlet[data-veteran='true'] .final-march-body {
+  grid-template-columns: 1fr;
+}
+
+.act-two-build-compass[data-veteran='true'] .act-two-build-directive,
+.final-march-gauntlet[data-veteran='true'] .final-march-directive {
+  border-right: 0;
+}
+
+.veteran-readiness-details {
+  --readiness-detail-rgb: 116, 204, 220;
+  border-top: 1px solid rgba(var(--readiness-detail-rgb), 0.12);
+  background: rgba(1, 8, 12, 0.22);
+}
+
+.veteran-readiness-details[data-scope='first-crown'] {
+  --readiness-detail-rgb: var(--crown-brief-rgb);
+}
+
+.veteran-readiness-details[data-scope='build'] {
+  --readiness-detail-rgb: var(--build-rgb);
+}
+
+.veteran-readiness-details[data-scope='final-march'] {
+  --readiness-detail-rgb: var(--gauntlet-rgb);
+}
+
+.veteran-readiness-details > summary {
+  display: grid;
+  min-height: 50px;
+  grid-template-columns: minmax(0, 1fr) auto 18px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: linear-gradient(90deg, rgba(var(--readiness-detail-rgb), 0.055), transparent 74%);
+  cursor: pointer;
+  list-style: none;
+}
+
+.veteran-readiness-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.veteran-readiness-details > summary:hover {
+  background: rgba(var(--readiness-detail-rgb), 0.075);
+}
+
+.veteran-readiness-details > summary:focus-visible {
+  outline: 2px solid rgba(var(--readiness-detail-rgb), 0.76);
+  outline-offset: -3px;
+}
+
+.veteran-readiness-details > summary > span {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+.veteran-readiness-details > summary small {
+  overflow: hidden;
+  color: rgba(var(--readiness-detail-rgb), 0.76);
+  font-size: var(--text-label);
+  font-weight: 800;
+  letter-spacing: 0.055em;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.veteran-readiness-details > summary strong {
+  overflow: hidden;
+  color: #c1d4d7;
+  font-size: var(--text-small);
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.veteran-readiness-details > summary > b {
+  padding: 6px 8px;
+  border: 1px solid rgba(var(--readiness-detail-rgb), 0.2);
+  background: rgba(var(--readiness-detail-rgb), 0.045);
+  color: rgb(var(--readiness-detail-rgb));
+  font-size: var(--text-label);
+  white-space: nowrap;
+}
+
+.veteran-readiness-details > summary > i {
+  color: rgb(var(--readiness-detail-rgb));
+  font-size: 16px;
+  font-style: normal;
+  transition: transform 160ms ease;
+}
+
+.veteran-readiness-details[open] > summary > i {
+  transform: rotate(180deg);
+}
+
+.veteran-readiness-details > div {
+  border-top: 1px solid rgba(var(--readiness-detail-rgb), 0.1);
+  background: rgba(0, 7, 10, 0.32);
+}
+
+.game-shell[data-contrast='high'] .veteran-readiness-details {
+  border-color: rgba(var(--readiness-detail-rgb), 0.58);
+  background: #07161c;
+}
+
+.game-shell[data-contrast='high'] .veteran-readiness-details > summary {
+  background: #0a2027;
+}
+
+.game-shell[data-contrast='high'] .veteran-readiness-details > summary strong {
+  color: #e1edef;
+}
+
+@media (max-width: 560px) {
+  .veteran-readiness-details > summary {
+    grid-template-columns: minmax(0, 1fr) 18px;
+    padding-inline: 10px;
+  }
+
+  .veteran-readiness-details > summary > b {
+    display: none;
+  }
+}
+
+.game-shell[data-motion='reduced'] .veteran-readiness-details > summary > i {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veteran-readiness-details > summary > i {
+    transition: none;
   }
 }
 
