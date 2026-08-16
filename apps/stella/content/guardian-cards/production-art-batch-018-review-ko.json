@@ -1,6 +1,7 @@
 {
-  "status": "editorial_review_complete",
+  "status": "visual_review_ready",
   "editorialApprovedOn": "2026-08-16",
+  "generatedOn": "2026-08-16",
   "locale": "ko",
   "batchId": "love.first-signal.nebula",
   "batchOrder": 18,
@@ -57,7 +58,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "5b7983bd47284844ec6b15f06c24dd91223e303e84c5f883a1f91eb2e743e681",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "puddlelevel_raincape_heart_shelter_signal_lamp",
       "artDirection": "비가 고인 길바닥 높이에서 붉은 비옷 끝 아래를 비스듬히 올려다본다. 화면 중앙의 큰 하트는 비옷을 낮은 지붕처럼 두르고, 왼쪽 뒤의 몽실이는 바람이 오는 쪽에서 두 앞발로 옷자락을 눌러 젖지 않게 지킨다. 하트 아래에는 붉은 리본 끝과 작은 네 갈래 불빛 하나만 함께 빛나며, 초승달 우체통은 먼 오른쪽 위에 잘린 어두운 테두리로만 남아 도착을 보여 주지 않는다.",
       "distinctFrom": [
@@ -77,7 +78,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "492e13160213c5d6eda140bf7647aa4f047c2e066e51bf2c966ecc0579f825d5",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "frostwindow_reverse_blanket_cloche_cookie_milk",
       "artDirection": "성에 낀 둥근 창 바깥에서 따뜻한 실내 선반을 들여다보는 역방향 장면이다. 화면 안쪽 중앙에는 두꺼운 초록 담요가 낮은 덮개처럼 놓이고, 차곡이가 한 모서리만 들어 올린 틈으로 온전한 마지막 별쿠키 한 개와 따뜻한 우유 한 잔이 보인다. 차곡이는 담요를 다시 내리기 직전 두 손으로 바람 틈만 막고, 창 안팎의 온도 차와 작은 초록 리본 하나가 오래 준비한 자리임을 보여 준다.",
       "distinctFrom": [
@@ -97,7 +98,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "65eb3b421186a165549826e1b69189e6856a723a8be824c6fccfa7daa4a3f010",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "vertical_windbreak_twin_letters_staggered_readback",
       "artDirection": "바람막이 천의 좁은 세로 모서리를 화면 가운데 두고 새벽바람을 옆에서 본다. 큰 재잘이는 왼쪽 위, 작은 소곤이는 오른쪽 아래에서 각자 열린 무문자 편지 한 장을 천의 서로 다른 면에 작은 날개로 붙잡고, 상대 높이의 단순한 점·곡선 표식을 천천히 다시 바라본다. 정본 연결 리본은 두 캐릭터 뒤에서 느슨하게 처지고, 편지 둘과 바람 선은 서로 겹치거나 한 하트·한 답안이 되지 않는다.",
       "distinctFrom": [
@@ -117,7 +118,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "f1d0b5017588253d5a9e54302a11deb2da1549c2fc0cc7960244378d2a811748",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "eavedrip_longaxis_dryshelf_snacks_signal",
       "artDirection": "작은 처마의 빗방울 끝에서 안쪽 마른 선반을 따라 길게 들여다보는 낮은 장축 장면이다. 가까운 전경에는 초승달 쟁반 위 별간식 두 개가 놓이고, 깊은 배경의 닫힌 문은 아래 모서리와 한 줄 별빛만 보인다. 중간의 달콩이는 처마 끈을 고정한 집게를 몸 쪽으로 거두며, 비는 화면 한쪽 바깥 세로 장막으로만 떨어져 간식과 신호 사이의 마른 길을 침범하지 않는다.",
       "distinctFrom": [
@@ -137,7 +138,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "7172f1166e8d135512c2df595c43b36ca746662272279720eba652012e0c1fc5",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "curtainhem_floor_cape_canopy_sidefootlight",
       "artDirection": "무대 옆 커튼의 낮은 천 끝 아래에서 노을 진 빈 바닥을 가로질러 본다. 중앙의 작은 옆자리 조명은 금빛 망토가 낮은 반원 지붕처럼 감싸고, 글자 없는 네 갈래 별표 하나가 빛 가장자리 안에 놓인다. 오른쪽 뒤의 왕관 없는 해님이는 망토 집게에서 손을 뗀 채 조명이 계속 켜져 있는지 살피며, 객석과 빈 의자는 프레임 밖에 두고 박수나 관객의 반사광도 만들지 않는다.",
       "distinctFrom": [
@@ -157,7 +158,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "5890ef35c88e5ef7692847004a33cc10b41176afc899167a9da0125baa9b54d9",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "basketwell_lowup_uneven_blooms_green_wrap",
       "artDirection": "낮은 꽃바구니 안쪽 바닥에서 테두리 너머 봄밤 하늘을 올려다본다. 길이가 서로 다른 별꽃 세 송이는 화면 가운데에서 각기 다른 높이와 방향을 유지하고, 느슨한 초록 리본이 줄기 아래만 한 번 감싸 바람에 흩어지지 않게 한다. 뒤쪽의 새봄이는 두 손으로 바구니 양옆을 붙들 뿐 꽃잎이나 줄기를 바로잡지 않고, 바람은 꽃 사이의 빈틈으로 빠져나간다.",
       "distinctFrom": [
@@ -177,7 +178,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "6e9362cd0233f0778dbc7c4dc5835c8690b3e620ece80fa678380e11e4351030",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "groundlane_twin_plinths_unbound_ribbon_twilight",
       "artDirection": "두 낮은 받침 사이의 좁은 바닥 길에서 보랏빛 황혼을 향해 올려다본다. 왼쪽 가까운 받침과 오른쪽 먼 받침에는 작은 별추 하나씩이 각각 안정되어 있고, 긴 연분홍 리본은 두 추에 묶이지 않은 채 가운데 바닥을 느슨한 S자로 지나가며 끝 사이에 분명한 틈을 남긴다. 뒤쪽의 고르미는 먼 받침 아래의 작은 쐐기에서 손을 뗀 채 두 추가 흔들리지 않는지만 바라본다.",
       "distinctFrom": [
@@ -197,7 +198,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "c62c30efb41452f64bd8a454bbffc8aac47bb919a41b5a5a82d82db89fd16bad",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "underumbrella_emptyhalf_diagonal_tailglow_starrain",
       "artDirection": "검은 보랏빛 우산 아래 비어 있는 마른 반쪽에서 바깥 별비를 바라보는 시점이다. 우산의 대각선 손잡이는 화면 반대편의 꼬옥이에게 이어지고, 꼬옥이는 몸을 젖는 가장자리 쪽에 둔 채 우산 지붕만 빈 공간 쪽으로 기울인다. 여민 망토 아래 하트 꼬리 끝의 붉은 빛은 우산 가장자리 가까이 작게 드러나지만 바닥이나 다른 손에 닿지 않으며, 별등·문·의자는 넣지 않는다.",
       "distinctFrom": [
@@ -217,7 +218,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "7f1abe1a8dd6d6352f41c74bfb1676cfe6f25cb99c02170fb51948dff016752f",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "inside_cloak_pocket_returnmap_snackpair_crosswind",
       "artDirection": "여행 망토의 열린 안주머니 안쪽에서 별바람 부는 새벽을 내다보는 독특한 포켓 시점이다. 가까운 주머니 바닥에는 접힌 귀환 지도 한 모서리와 별간식 두 개가 분리되어 있고, 지도에는 작은 하트형 별표 하나와 열린 곡선 하나만 보인다. 바깥의 총총이는 한 앞발로 주머니 덮개를 막 내리며 초승달 활은 등에 고정하고, 먼 길은 색이 약한 수평선으로만 남겨 목적지나 상대 위치를 정하지 않는다.",
       "distinctFrom": [
@@ -237,7 +238,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "7ed3a41d932bfccaeacc3708ced3bad4b41b520101d622747a8a14537c9d8965",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "through_cape_aperture_goldstep_screw_snow",
       "artDirection": "두꺼운 작업 망토가 만든 비대칭 삼각 틈을 전경 프레임으로 삼아 눈 내리는 새벽의 첫 발판을 본다. 중앙 아래의 작은 금빛 발판은 망토 아래 마른 채 놓이고, 오른쪽의 오름이는 한 나사에 도구를 수직으로 맞춘 뒤 마지막 반 바퀴에서 멈춰 흔들림을 확인한다. 계단은 위쪽에 눈 덮인 두 모서리만 보이고, 상대의 발·정상·완성된 길이나 두 번째 발판은 프레임 밖에 둔다.",
       "distinctFrom": [
@@ -257,7 +258,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "fbd558e083e127520c52db2b114e0a303d494c9e348af95c707597240a6023e4",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "coatpocket_niche_blueheartbottle_openwavebars",
       "artDirection": "푸른 새벽 구름 위에서 방울이의 두꺼운 겨울 코트 안주머니 높이를 가깝게 본다. 닫힌 파란 마음병은 폭신한 주머니 안에 곧게 서 있고, 병 속 S자 물결에서 나온 듯한 세 개의 열린 파문 막대가 유리 표면 바깥의 찬 공기에서 짧게 흐려진다. 뒤쪽의 방울이는 두 손으로 코트 깃만 여민 채 병에서 손을 떼고 파문을 바라보며, 도면·탁자·빈 의자·읽을 수 있는 라벨은 넣지 않는다.",
       "distinctFrom": [
@@ -277,7 +278,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-16",
       "editorialContentHash": "c6d6628f5642f180a5ba9f5861b05702aacf89754de581d759e8437fe9433c41",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "underwave_diagonal_pair_openloop_pajama_current",
       "artDirection": "달빛 꿈바다의 물결 마루 아래에서 대각선 위쪽을 바라본다. 큰 아쿠아 꿈별이는 왼쪽 앞, 작은 분홍 잠별이는 오른쪽 뒤에서 서로 다른 색 잠옷을 입고 같은 물살을 타되 몸과 지느러미는 맞닿지 않는다. 두 캐릭터의 가까운 지느러미 곁에는 느슨한 U자 별빛 고리 한 줄이 흐르고 아래쪽 한 곳이 열린 채이며, 꿈구름·별방울·세 번째 인물·닫힌 원은 만들지 않는다.",
       "distinctFrom": [
