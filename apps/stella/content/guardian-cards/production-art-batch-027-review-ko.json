@@ -1,0 +1,281 @@
+{
+  "status": "editorial_review_ready",
+  "preparedOn": "2026-08-17",
+  "locale": "ko",
+  "batchId": "love.everyday-care.eclipse",
+  "batchOrder": 27,
+  "purpose": "사랑의 everyday-care를 지정된 두 수호령이 각자의 선택권·조절점·자기 몫을 유지한 채 실제로 주고받는 작은 돌봄 행동으로 확장한다. 신규 열두 장은 앞선 첫 신호·조심스러운 다가감 Eclipse의 상호작용과 바로 앞 Orbit·Nebula의 일상 소품·보호 장치를 반복하지 않고, 매번 다시 조정할 수 있는 서로 다른 Eclipse 장면으로 고정한다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "love",
+    "narrativeAxisId": "everyday-care",
+    "visualAxisId": "eclipse"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Premium Stella zodiac-guardian story illustration for the Eclipse rarity, full-bleed 3:4 master art. Show exactly the two named guardians in the approved card and preserve both character-sheet identities, relative size, silhouette, color, eye highlights, chest Stella star, clothing, and signature prop; never add another hand, face, shadow, reflection, silhouette, third figure, duplicated guardian, or unseen romantic recipient. Merge the approved everyday-care beat and Eclipse mutual-action beat into one continuous scene rather than a collage or split panel: both named guardians are visibly active, but each keeps an independent foothold, control, portion, release point, and right to pause. Their small repeated care action must become a real exchange without compulsory touch, fused bodies, a single shared control, a fixed relationship, or proof that the routine continues forever. Represent repetition only with two or three unlabeled dots, notches, removable beads, open refill points, separated abstract icons, or one visibly empty next position. Keep one return grip, unused socket, open vent, unlocked choice point, dry receiving notch, or separate resting place available after the exchange. Keep the two guardians, central care object, and separate control points at 55–65% of the frame and readable at 80px, with safe UI framing and one clear depth axis. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes, exactly one large and one small eye highlight. Use symbols and simple shapes only: no readable text, sentence, name, label, title, badge, number, date, clock numeral, weekday, calendar, zodiac glyph, map coordinate, logo, or watermark. Cards, notes, schedules, maps, bottle labels, contact markers, condition cues, and route boards may contain only blank fields, dots, notches, separated open curves, leaves, droplets, or simple abstract icons. Do not bake actual birth-chart lines or personal colors into the master art. Do not draw a literal solar or lunar eclipse, recognizable zodiac arrangement, horoscope wheel, natal chart, closed magic circle, infinity sign, binding cord, guaranteed reply, promised arrival, completed relationship, or endless compulsory routine. Do not reuse Batch 019's mailbox side cut, diagonal table seam, overhead listening ring, doorjamb long axis, twin lamp barrels, flower-petal handoff, fulcrum ring, lintel door top view, map drum, tread-edge platform, bottle lens, or bubble column; do not reuse Batch 023's heart gate, tea caddy, switchback starwalk, threshold tunnel, prism, greenhouse bench, split-stride bridge, hinge-side door wedge, map sail, cliff window, parallel wave tubes, or current arch; do not reuse Batch 025's umbrella-caddy top view, cookie tin, flip stand, snack case, practice cubby, vase side cut, wall pockets, umbrella swivel base, zipper pocket, landing niches, bottle shelf, or dream-bubble cradle; and do not reuse Batch 026's umbrella rack, knit hammock, mesh lantern, bead-curtain snack rail, slatted windscreen, dew curtain, crescent wind scoop, rain-window umbrella rail, scarf rail, care post, cloud cradle, or inside-bubble fisheye. Keep Aries beneath one open umbrella canopy with a heart-shaped shaft coupling and self towel, while Scorpio is beneath a separately suspended canopy crossrail with one return grip and exactly one released latch. For Gemini and Pisces, show only their canonical internal pair as the two named guardians. Make every compositionFamily, camera height, central mechanism, repetition cue, negative-space shape, gesture direction, control location, and response gap visibly distinct within this batch and from all earlier relationship art."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.love.everyday-care.eclipse",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "288afe0a7c8e4a2766abd5d41a370b2ca508831da51114dbc4d9e334a760bef8",
+      "imageStatus": "not_started",
+      "compositionFamily": "inside_open_canopy_radialribs_heartswivel_selftowel_slackline",
+      "artDirection": "펼친 별우산의 안쪽 천 아래에서 방사형 살과 손잡이 축을 천장처럼 올려다보는 초저각 장면이다. 왼쪽의 몽실이는 한 앞발로 자기 젖은 어깨의 작은 수건을 붙들고, 다른 앞발로 손잡이 축의 큰 하트 회전 결합부 한쪽을 민다. 오른쪽 문에서 스스로 나온 달콩이는 반대쪽 손잡이를 두 집게로 잡고, 몽실이가 힘을 풀자 붉은 장력선은 두 수호령 사이에서 열린 곡선으로 느슨해진다.",
+      "distinctFrom": [
+        "Batch 019의 우체통 옆문·투입구 하트와 Batch 023의 하트 회전문·보폭 경사로 대신 펼친 우산 천 아래 방사 살과 손잡이 축의 회전 결합부를 중심 구조로 사용한다.",
+        "Batch 025의 우산꽂이 수직 탑뷰와 Batch 026의 거치대 내부·상대 부재를 반복하지 않고, 두 수호령을 캐노피 아래 서로 다른 깊이와 독립 발자리에 둔다."
+      ],
+      "visualReviewFocus": [
+        "몽실이의 구름 털·보라 나선뿔·가슴 별표와 달콩이의 초승달 집 몸·둥근 보라 집게, 펼친 별우산 정확히 한 개와 작은 수건 한 개가 유지되는지",
+        "두 수호령은 하트 결합부의 반대쪽을 잡고 몽실이의 붉은 장력선은 열린 곡선으로 느슨해져, 빠른 돌봄이 강제 이동이나 자기 소진으로 닫히지 않는지"
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.love.everyday-care.eclipse",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "2fbbcf94d71865a6a25b85d1d83ae1eba6aa418baad8d08b1c60b917789e13d2",
+      "imageStatus": "not_started",
+      "compositionFamily": "inside_woven_lunchroll_cutaway_twinleafpaddles_unevencookie_turn",
+      "artDirection": "말아 둔 초록색 직조 점심보의 속 빈 나선 통로를 사선 절개로 들여다본다. 가운데 낮은 실패 축에는 서로 닿지 않는 잎 모양 회전 받침 두 개가 달리고, 별쿠키 정확히 한 개를 나눈 반듯하지 않은 두 조각이 각각 놓인다. 왼쪽의 차곡이는 더 큰 조각 받침을 오른쪽 새봄이 쪽 열린 멈춤점으로 돌리고, 새봄이는 자기 받침의 삐뚤어진 조각을 그대로 받으며 뒤의 다음 빈 구슬 홈은 열어 둔다.",
+      "distinctFrom": [
+        "Batch 019의 대각선 테이블 이음선·교차 접시와 Batch 023의 찻잔 보관함·방사형 찻잔 받침 대신 직조 점심보 안쪽의 나선 통로와 잎 모양 회전 받침을 사용한다.",
+        "Batch 025의 쿠키 통 고정 칸과 Batch 026의 뜨개 해먹 쿠키 소매를 반복하지 않고, 하나의 쿠키를 나눈 두 조각과 열린 다음 구슬 홈을 서로 다른 깊이에 둔다."
+      ],
+      "visualReviewFocus": [
+        "차곡이의 커스터드 송아지 실루엣·보라 앞머리·앞치마와 새봄이의 큰 잎 귀·이마 별꽃·잎목도리, 별쿠키 한 개에서 나온 두 조각이 유지되는지",
+        "차곡이는 큰 조각을 새봄이 쪽으로 돌리되 각자의 잎 받침과 멈춤점은 분리되고 다음 홈은 비어 있어 매일의 나눔이 고정 반반이나 의무로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.love.everyday-care.eclipse",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "381498de25a607d182970a030fadb4f2fba2dd86359a41d5787ae5f430816caf",
+      "imageStatus": "not_started",
+      "compositionFamily": "crosssection_twin_whispershells_greetingtabs_listeningcup_pausegate",
+      "artDirection": "서로 마주 보되 붙지 않는 두 개의 폭신한 속삭임 조개를 옆 단면으로 길게 본다. 큰 재잘이는 왼쪽 조개의 점 두 개 인사 탭 앞에서 말하던 앞발을 가슴에 멈추고, 작은 소곤이는 오른쪽 조개에서 자신이 고른 열린 곡선 탭을 가운데의 부드러운 듣기 컵으로 천천히 민다. 정본 분홍 리본은 두 조개 바깥을 느슨하게 지나며, 듣기 컵 뒤의 세 번째 빈 탭 홈은 열린 채 남는다.",
+      "distinctFrom": [
+        "Batch 019의 원형 듣기 매트 탑뷰와 Batch 023의 지그재그 별발판·편지 다리 대신 두 속삭임 조개의 수평 단면과 가운데 듣기 컵을 사용한다.",
+        "Batch 025의 플립 스탠드와 Batch 026의 매달린 망사등을 반복하지 않고, 두 방향의 음향 통로·멈춘 발화 동작·빈 다음 탭 홈으로 대화 차례를 분리한다."
+      ],
+      "visualReviewFocus": [
+        "큰 크림색 재잘이와 작은 라벤더 소곤이의 상대 크기·작은 날개·가슴 별표·느슨한 정본 분홍 연결 리본이 유지되고 다른 인물이 없는지",
+        "인사 탭에는 점과 열린 곡선 외 글자가 없고 재잘이는 먼저 멈춘 채 소곤이의 탭이 듣기 컵에 도착할 자리를 남겨, 꾸준한 안부가 일방 발화로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.love.everyday-care.eclipse",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "771d4fe7939db936f57ab19c36953c0a1428a9a8d828984231a053118ed5721a",
+      "imageStatus": "not_started",
+      "compositionFamily": "oblique_topdown_moondoor_iris_twin_snackrafts_counteropen_gap",
+      "artDirection": "달집의 둥근 꽃잎형 문을 바닥 면처럼 보이게 비스듬한 탑뷰로 내려다본다. 문 안쪽 아래의 달콩이는 방사형 문잎 하나를 자기 집게로 반대 방향에 돌려 초승달 틈을 넓히고, 바깥 위쪽의 꼬옥이는 문을 밀지 않은 채 점 표식 간식 뗏목 하나를 경계 앞에 놓는다. 달콩이 쪽 열린 곡선 표식 간식 뗏목과 바깥 뗏목은 따로 놓이며, 둘 사이의 마른 수령 홈은 비어 있다.",
+      "distinctFrom": [
+        "Batch 019의 문설주 장축 측면과 Batch 023의 문턱 미끄럼틀 저각 대신 꽃잎형 둥근 문 전체를 비스듬히 내려다보는 방사형 탑뷰를 사용한다.",
+        "Batch 025의 두 칸 간식 상자와 Batch 026의 물방울 구슬막·초승달 레일을 반복하지 않고, 독립 간식 뗏목 두 개와 서로 반대 방향으로 열리는 문잎을 사용한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이의 초승달 집과 한 몸인 실루엣·둥근 보라 집게와 꼬옥이의 자주색 몸·망토·하트 꼬리, 간식 뗏목 정확히 두 개가 유지되는지",
+        "꼬옥이는 문을 밀거나 열쇠를 요구하지 않고 달콩이가 안쪽에서 문잎 하나를 직접 돌리며, 두 표식과 빈 수령 홈이 각자의 시간·방식 선택을 남기는지"
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.love.everyday-care.eclipse",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "cdf0e710f854cbe296afd324b974210d12d7d0b0a21e23ce84a49e93824c65b1",
+      "imageStatus": "not_started",
+      "compositionFamily": "inside_shadowseam_twin_barnhoods_parallelbeams_caretray",
+      "artDirection": "빈 연습실 바닥을 가르는 두 부채꼴 빛 사이의 좁은 그림자 틈 안에서 조명 방향을 거꾸로 올려다본다. 왼쪽의 해님이는 자기 금빛 조명의 독립 후드 레버를 그대로 붙들고, 오른쪽의 고르미는 분홍빛 조명의 다른 후드만 돌려 두 빛의 가장자리를 나란히 맞춘다. 빛은 섞이지 않고, 그림자 틈 앞의 비어 있는 돌봄 쟁반에는 따뜻한 물 한 병과 글자 없는 별토큰 한 개가 서로 떨어져 놓인다.",
+      "distinctFrom": [
+        "Batch 019의 두 조명통 사이 정면과 Batch 023의 프리즘 뒤 빛섬 대신 빛 사이의 가느다란 그림자 틈 내부를 카메라 위치로 삼고 독립 조명 후드를 올려다본다.",
+        "Batch 025의 개인 수납칸과 Batch 026의 문 경첩 살창을 반복하지 않고, 비어 있는 중앙 돌봄 쟁반과 평행한 두 빛 경계로 관객 없는 응원을 보여 준다."
+      ],
+      "visualReviewFocus": [
+        "해님이의 황금 갈기·비뚤어진 종이 왕관·가슴 별표와 고르미의 파랑·분홍 구름 몸·저울 모양 긴 귀, 물병 한 개·별토큰 한 개가 유지되는지",
+        "해님이는 자기 빛을 줄이지 않고 두 수호령은 서로 다른 후드 레버를 잡으며 쟁반도 비어 있는 연습 자리 앞에 놓여, 응원이 경쟁·무대 박수·자기 희생으로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.love.everyday-care.eclipse",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "571f60e332cf8acabb1ca802da6d2d286adc7e2ded106ed830a7aa2779d19cdf",
+      "imageStatus": "not_started",
+      "compositionFamily": "below_translucent_capillarytable_upview_twinvalves_crookedflower_pause",
+      "artDirection": "반투명 모세관 작업대 아래에서 별꽃 화병 바닥과 두 수호령을 올려다본다. 왼쪽의 새봄이는 자기 쪽 물갈이 밸브를 연 뒤 삐뚤어진 별꽃 한 송이를 곧게 펴려던 앞발을 가슴 쪽에 멈추고, 오른쪽의 차곡이는 꽃의 굽은 줄기를 부드러운 잎 받침으로 그대로 받아 든다. 작업대 속에는 물방울·열린 곡선 조건 구슬이 분리되어 흐르고 다음 빈 조건 홈과 반대쪽 밸브는 열려 있다.",
+      "distinctFrom": [
+        "Batch 019의 꽃잎 사이 직접 전달과 Batch 023의 온실 작업대 장축 대신 반투명 작업대 아래에서 화병 바닥과 모세관을 올려다보는 역저각을 사용한다.",
+        "Batch 025의 화병 물높이 옆 단면과 Batch 026의 잎 이슬 커튼·물 캡슐을 반복하지 않고, 작업대 내부 조건 구슬과 두 독립 밸브를 돌봄 조절점으로 둔다."
+      ],
+      "visualReviewFocus": [
+        "새봄이의 큰 잎 귀·이마 별꽃·잎목도리와 차곡이의 커스터드 송아지 실루엣·보라 앞머리·앞치마, 삐뚤어진 별꽃 정확히 한 송이가 유지되는지",
+        "새봄이의 정리 손은 멈추고 차곡이는 굽은 줄기를 그대로 받으며 조건 구슬에 글자·숫자·온도가 없어, 세심함이 상대를 고치는 정답표로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.love.everyday-care.eclipse",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "2589e7b2ee75a2cd01707333331bc4a57cebcfe6b1425b4a12bd15a68fe89432",
+      "imageStatus": "not_started",
+      "compositionFamily": "low_tidalchannel_three_reedboats_dualgates_neutral_thirdstar",
+      "artDirection": "얕은 보랏빛 물길의 수면 높이에서 세 갈래 갈대 배가 드나드는 낮은 수로를 길게 본다. 왼쪽의 고르미는 푸른 자기 별 배의 옆문을 독립 손잡이로 열고, 오른쪽의 해님이는 금빛 자기 별 배의 다른 옆문을 잡은 채 각자 원하는 몫을 중앙으로 내보인다. 가운데 자유롭게 도는 작은 나룻배에는 공동의 세 번째 별과 양면색 교환 표식이 놓이지만 어느 배에도 잠기지 않고, 다음 빈 선착장은 열려 있다.",
+      "distinctFrom": [
+        "Batch 019의 별저울 축 고리·공동 받침과 Batch 023의 두 공중 다리·회전 발판 대신 낮은 물길과 독립 갈대 배 세 척의 수평 이동을 사용한다.",
+        "Batch 025의 벽걸이 주머니와 Batch 026의 초승달 바람받이·독립 별컵을 반복하지 않고, 자유 나룻배의 세 번째 별과 열린 다음 선착장으로 몫 재조정을 남긴다."
+      ],
+      "visualReviewFocus": [
+        "고르미의 파랑·분홍 구름 몸·저울 모양 긴 귀와 해님이의 황금 갈기·비뚤어진 종이 왕관, 푸른 별·금빛 별·공동 별 정확히 세 개가 유지되는지",
+        "두 수호령은 자기 배의 손잡이만 잡고 중앙 나룻배와 교환 표식은 어느 쪽에도 잠기지 않아, 공평함이 고정 반반이나 자동 희생으로 닫히지 않는지"
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.love.everyday-care.eclipse",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "a9cfce5176fe2e2c55c33c1391ab12df20e6e1b56387a0584e71addfa9637779",
+      "imageStatus": "not_started",
+      "compositionFamily": "under_canopy_crossrail_returngrip_lanterncounterweight_singlelatch",
+      "artDirection": "공중에 매단 보랏빛 우산 캐노피 아래에서 비스듬히 가로지르는 짧은 경계 레일을 올려다본다. 왼쪽의 꼬옥이는 여러 꽃잎형 멈춤쇠 중 정확히 하나만 자기 집게로 풀어 우산을 오른쪽으로 기울이고, 오른쪽의 달콩이는 열쇠를 요구하지 않은 채 작은 별등을 레일 바깥 균형추에 건다. 두 수호령 사이에는 빈 되돌림 손잡이가 남고, 꼬옥이의 하트 꼬리 빛은 자기 발자리 안에서만 열린 곡선을 만든다.",
+      "distinctFrom": [
+        "Batch 019의 인방 탑뷰 문·자물쇠와 Batch 023의 경첩 옆 문틈·별등 썰매 대신 문짝을 화면에서 빼고 공중 우산 아래의 사선 경계 레일을 사용한다.",
+        "Batch 025의 우산 회전 받침과 Batch 026의 빗물 창·천장 레일을 반복하지 않고, 캐노피 아래 교차 시점·외부 별등 균형추·가운데 빈 되돌림 손잡이를 분리한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이의 자주색 몸·망토·하트 꼬리와 달콩이의 초승달 집 몸·둥근 보라 집게, 보랏빛 우산 정확히 한 개·별등 한 개가 유지되는지",
+        "꼬옥이는 멈춤쇠 하나만 직접 풀고 달콩이는 열쇠 없이 별등을 바깥 균형추에 걸며 되돌림 손잡이가 비어 있어, 말없는 돌봄이 침입·감시·고정 결속으로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.love.everyday-care.eclipse",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "435cc1f0811cc72ce2cc0c1d244e4ef9911fffa5b3cdc5a7d9d519a44f5983f6",
+      "imageStatus": "not_started",
+      "compositionFamily": "beneath_folding_wayfindertable_dualroutes_returnpeg_twinsnacktube",
+      "artDirection": "열린 여행 가방 바닥에 붙은 반투명 길찾기 판 아래에서 두 수호령을 올려다본다. 왼쪽의 총총이는 등에 초승달 활을 고정한 채 분리된 구슬로 열린 길 곡선을 만들고, 오른쪽의 오름이는 자기 레버로 단단한 귀환 말뚝을 출발 홈에 세운다. 판 가장자리의 투명 사선 관에는 간식 캡슐 정확히 두 개와 점·열린 곡선 연락 구슬이 따로 들어 있고, 빈 목적지 소켓과 두 독립 슬라이더는 잠기지 않는다.",
+      "distinctFrom": [
+        "Batch 019의 여행 북 끝 지도와 Batch 023의 접이식 지도 돛·귀환 닻 대신 열린 여행 가방 바닥판 아래에서 위를 보는 반투명 역저각을 사용한다.",
+        "Batch 025의 지퍼 주머니와 Batch 026의 혜성 목도리 레일을 반복하지 않고, 사선 간식 관·독립 경로 슬라이더·빈 목적지 소켓으로 출발과 귀환 리듬을 나눈다."
+      ],
+      "visualReviewFocus": [
+        "총총이의 구름 망아지 몸·라벤더 갈기·혜성 목도리·등 뒤 초승달 활과 오름이의 흰 바다염소 상체·보라 뿔·청록 물고기 꼬리·등산 가방, 간식 캡슐 정확히 두 개가 유지되는지",
+        "길찾기 판에는 글자·숫자·좌표·시각이 없고 두 수호령은 자기 슬라이더만 조절하며 목적지 소켓이 비어 있어, 돌봄 준비가 이동 통제나 귀환 보장으로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.love.everyday-care.eclipse",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "919e914cfc49d51d930e68e1e403502c8ee6b4a56ac21dad8f6a63f0583957e4",
+      "imageStatus": "not_started",
+      "compositionFamily": "inside_telescoping_stepjack_cutaway_duallevers_weighttest_missedbead",
+      "artDirection": "단 하나의 계단참 아래에 펼친 짧은 망원식 지지잭 내부를 절개해 위아래를 함께 본다. 위쪽의 총총이는 한 앞발만 작은 시험판에 올리고 나머지 발은 자기 돌에 남기며, 아래쪽의 오름이는 숨기지 않은 지지 레버에서 손을 떼어 받치던 힘을 보여 준다. 둘은 서로 다른 도움 탭을 가운데 열린 홈 쪽으로 돌리되 잠그지 않고, 가장자리에는 간식 한 개·점과 열린 곡선 안부 타일 한 개·빠뜨린 날의 빈 구슬 한 개가 따로 놓인다.",
+      "distinctFrom": [
+        "Batch 019의 첫 발판 모서리 정면과 Batch 023의 절벽 관찰창·겹침 다리 대신 하나의 계단참 아래 망원식 지지잭 내부 절개를 사용한다.",
+        "Batch 025의 계단참 탑뷰 반복 홈과 Batch 026의 눈더미 뒤 돌봄 기둥을 반복하지 않고, 위아래 두 레버·열린 도움 홈·드러난 빈 구슬로 솔직한 지원을 보여 준다."
+      ],
+      "visualReviewFocus": [
+        "오름이의 흰 바다염소 상체·보라 뿔·청록 물고기 꼬리·등산 가방과 총총이의 구름 망아지 몸·라벤더 갈기·혜성 목도리, 간식·안부 타일·빈 구슬이 각각 정확히 하나인지",
+        "총총이는 자기 발로 무게를 시험하고 오름이는 받치던 레버를 드러내며 도움 탭도 잠기지 않아, 꾸준한 돌봄이 숨은 통제나 일방적 구조로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.love.everyday-care.eclipse",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "959b90ff54c27d92aa7116e48ceab976939f49777bce5fbfbc4dfe7d9924ee90",
+      "imageStatus": "not_started",
+      "compositionFamily": "sidecut_labelloom_closedbottles_dualsymbolweave_openblanksleeve",
+      "artDirection": "작은 접이식 이름표 베틀을 옆 단면으로 길게 보고 양끝의 두 수호령과 닫힌 돌봄 병 두 개를 한 화면에 둔다. 왼쪽의 방울이는 파란 마음병 곁 자기 북에서 열린 물결 표식을 보내고, 오른쪽의 차곡이는 새 투명 병 곁 다른 북에서 떨어진 둥근 점 두 개를 보낸다. 가운데 차곡이가 건넨 빈 슬리브는 두 표식이 글자처럼 붙지 않은 채 들어갈 만큼 열려 있고, 각 병의 선택 손잡이와 다음 빈 슬리브는 분리되어 남는다.",
+      "distinctFrom": [
+        "Batch 019의 새 병을 통과하는 렌즈 시점과 Batch 023의 평행 파동관 대신 낮은 접이식 베틀의 수평 단면과 서로 반대 방향의 표식 북을 사용한다.",
+        "Batch 025의 병 선반과 Batch 026의 구름받침 물방울 요람을 반복하지 않고, 닫힌 두 병은 양끝에 두고 가운데 열린 빈 슬리브에서만 뜻을 함께 조정한다."
+      ],
+      "visualReviewFocus": [
+        "방울이의 흰 구름 몸·연파랑 물결 귀·가슴 별표와 차곡이의 커스터드 송아지 실루엣·보라 앞머리·앞치마, 닫힌 돌봄 병 정확히 두 개가 유지되는지",
+        "열린 물결과 점 두 개는 글자처럼 합쳐지지 않고 두 병의 손잡이와 다음 슬리브도 열려 있어, 감정에 이름 붙이기가 정답 강요나 하나의 돌봄 방식으로 닫히지 않는지"
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.love.everyday-care.eclipse",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "pending_human_approval",
+      "editorialContentHash": "6fde3d825825b51ddbc673f5e595741d1b4a012a1cf78b9581c2f48890fcb236",
+      "imageStatus": "not_started",
+      "compositionFamily": "edgeon_elongated_dreamlens_midcurrent_twinreleasefins_openvent",
+      "artDirection": "원형이 아닌 길쭉한 렌즈 모양 꿈방울 정확히 하나를 수평 가장자리에서 얇게 본다. 큰 아쿠아 꿈별이는 왼쪽 물살의 독립 해제 지느러미에서 자기 선을 놓고, 작은 분홍 잠별이는 오른쪽의 다른 지느러미에서 힘을 풀어 두 흐름이 가운데에서 나란히 지나게 한다. 오늘의 비개인화 별점·잎빛은 방울 안에 작게 남고 둘의 안쪽 지느러미 끝만 가볍게 다시 닿으며, 위쪽 숨구멍과 뒤의 다음 빈 소켓은 열린다.",
+      "distinctFrom": [
+        "Batch 019의 세로 거품 기둥과 Batch 023의 초승달 물살 아치 대신 수평으로 눌린 렌즈형 꿈방울의 얇은 가장자리 시점을 사용한다.",
+        "Batch 025의 수면 꿈방울 받침과 Batch 026의 꿈방울 내부 어안 시점을 반복하지 않고, 바깥 양끝의 독립 해제 지느러미와 평행한 두 물살을 중심 동작으로 둔다."
+      ],
+      "visualReviewFocus": [
+        "큰 아쿠아 꿈별이와 작은 분홍 잠별이의 상대 크기·서로 다른 잠옷·가슴 별표와 길쭉한 꿈방울 정확히 한 개가 유지되고 다른 인물이 없는지",
+        "둘은 각자 자기 선에서 힘을 풀고 안쪽 지느러미 끝만 가볍게 다시 맞대며 숨구멍과 다음 소켓이 열려 있어, 매일의 연결이 감정 합치기나 의무 교환으로 보이지 않는지"
+      ]
+    }
+  ]
+}

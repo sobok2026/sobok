@@ -45,6 +45,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-024-review-ko.json`    | `visual_review_complete` | 스물네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-025-review-ko.json`    | `visual_review_complete` | 스물다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
 | `production-art-batch-026-review-ko.json`    | `visual_review_complete` | 스물여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
+| `production-art-batch-027-review-ko.json`    | `editorial_review_ready` | 스물일곱 번째 production 배치 신규 12개 원고·구도 사람의 편집 검토 대기       |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 321개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -664,6 +665,18 @@ careful-approach Nebula의 보호 구조를 반복하지 않으며, 양자리와
 사람의 최종 시각 승인을 마쳤다. 승인 원본의 SHA-256은 검수 파일과 누적 321개 WebP 매니페스트에
 고정하며 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
 
+스물일곱 번째 배치는 같은 `love.everyday-care` 원고를 `eclipse` 희귀도로 제작할 신규 12개 편집
+검토안이다. `production-art-batch-027-review-ko.json`에 현재 원고의 canonical SHA-256과, 지정된 두
+수호령이 각자의 선택권·조절점·자기 몫을 유지한 채 작은 돌봄을 실제로 주고받는 장면을 고정했다. 우산
+캐노피 아래 하트 회전축, 직조 점심보의 잎 받침, 속삭임 조개의 듣기 컵, 달집 원형 문의 간식 뗏목,
+두 빛 사이 그림자 틈, 모세관 작업대 아래의 두 밸브, 세 갈래 갈대 배 수로, 우산 아래 경계 레일,
+여행 가방 바닥의 길찾기 판, 계단참 아래 망원식 지지잭, 이름표 베틀, 수평 렌즈형 꿈방울처럼 서로
+다른 상호작용 장치·카메라·빈 다음 선택 자리를 사용한다. 첫 신호·조심스러운 다가감 Eclipse와 바로 앞
+everyday-care Orbit·Nebula의 구도를 반복하지 않으며, 양자리와 전갈자리의 우산도 각각 캐노피 안쪽
+방사 살·하트 회전축과 캐노피 아래 사선 경계 레일·별등 균형추로 분리했다. 현재 12개 모두
+`pending_human_approval`·`not_started`이며 사람의 최종 편집 승인으로 원고 해시를 확정하기 전에는
+imagegen 입력이나 원화 후보로 사용하지 않는다.
+
 ## 검증
 
 repository root에서 다음 명령을 실행한다.
@@ -713,6 +726,9 @@ bun --filter=@sobok/stella guardian-cards:validate
 - 스물여섯 번째 production 배치 신규 12개 원고 해시와 날씨 속에서도 자기 몫·상대 선택권을 남기는
   반복 가능한 작은 돌봄 보호 장면, 첫 신호·careful-approach Nebula·바로 앞 Orbit 비반복, 신규 PNG
   후보·마스터/80px·이전 스물다섯 배치 비교 보조 시각 QA·사람의 최종 시각 승인·WebP/R2 배포 완료
+- 스물일곱 번째 production 배치 신규 12개 원고 해시와 지정된 두 수호령이 각자의 조절점·선택권을
+  유지하며 반복 가능한 작은 돌봄을 실제로 주고받는 Eclipse 장면, 첫 신호·careful-approach Eclipse·
+  바로 앞 Orbit·Nebula 비반복 및 사람의 편집 승인 전 신규 이미지 제작 차단
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 321개를 제외한 현재 잔여
   735개 산식
