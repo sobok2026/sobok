@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "c0f7a628fde6950bebc0945d12d61298b5660a0226e67006187a19c0c56e94fa",
-    "assets": "d9d7600017f95918971796fb020f2a99aa0b52a0fcc300de9dd0caf1d15aad6c"
+    "assets": "612f02db38e7b556876fa5dda17880f6c7d0761639d8f732e83a0658eaa55579"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,12 +16,12 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 225,
-    "remainingEditionCount": 831,
+    "producedEditionCount": 237,
+    "remainingEditionCount": 819,
     "pilotPartialBatchCount": 9,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 18,
-    "fullPendingBatchCount": 61,
+    "completedBatchCount": 19,
+    "fullPendingBatchCount": 60,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
     "visualApprovalAuthority": "human_editor",
@@ -517,23 +517,10 @@
         "pisces.love.first-signal.eclipse"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.first-signal.eclipse",
-        "taurus.love.first-signal.eclipse",
-        "gemini.love.first-signal.eclipse",
-        "cancer.love.first-signal.eclipse",
-        "leo.love.first-signal.eclipse",
-        "virgo.love.first-signal.eclipse",
-        "libra.love.first-signal.eclipse",
-        "scorpio.love.first-signal.eclipse",
-        "sagittarius.love.first-signal.eclipse",
-        "capricorn.love.first-signal.eclipse",
-        "aquarius.love.first-signal.eclipse",
-        "pisces.love.first-signal.eclipse"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 20,
