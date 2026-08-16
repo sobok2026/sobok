@@ -400,6 +400,7 @@ export function BattleCinema({
     : null
   const finalMarchDoctrineBroken = finalMarchDoctrineLane?.doctrineBroken ?? false
   const finalMarchGateClimax = Boolean(currentFinalMarchGate) && battleStep >= battleResult.lanes.length
+  const finalCrownApproach = game.day === MAX_NIGHTS && activeLane < 0
   const finalMarchGateState = battleResult.victory
     ? finalMarchDoctrineBroken
       ? 'mastered'
@@ -473,6 +474,33 @@ export function BattleCinema({
             />
           ))}
         </div>
+        {finalCrownApproach ? (
+          <div className="cinema-crown-approach" aria-hidden="true">
+            <div className="cinema-crown-approach-visual">
+              <small>THREE GATES CLEARED · FINAL CROWN</small>
+              <div className="cinema-crown-approach-path">
+                {FINAL_MARCH_GATES.map((gate) => (
+                  <span key={gate.night}>
+                    <b>{gate.glyph}</b>
+                    <small>GATE 0{gate.night - 8}</small>
+                  </span>
+                ))}
+                <strong>
+                  <b>{currentBossMechanic?.glyph ?? '♜'}</b>
+                  <small>WHITE KING</small>
+                </strong>
+              </div>
+              <div className="cinema-crown-approach-copy">
+                <strong>세 관문이 마지막 왕좌로 닫힌다</strong>
+                <p>
+                  {activeFinalVow
+                    ? `${activeFinalVow.name}의 맹세와 행군의 모든 각인이 백색 왕 앞에 집결합니다.`
+                    : '열두 밤의 명령과 행군의 모든 각인이 백색 왕 앞에 집결합니다.'}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : null}
         {firstCrownClimax ? (
           <div
             className="cinema-fragment-climax"

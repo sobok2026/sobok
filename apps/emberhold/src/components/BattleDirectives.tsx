@@ -65,8 +65,8 @@ type BattleDirectivesProps = {
   finalCrownForecast: readonly (FinalCrownSeal & { broken: boolean })[]
   finalCrownForecastCount: number
   projectedWins: number
-  tierThreeLineCount: number
-  tierFourLineCount: number
+  commandSpent: number
+  commandLimit: number
   projectedCrownMasteryScore: number
   currentEliteEncounter: EliteEncounterView | null | undefined
   currentEliteDoctrine: EliteDoctrineView | null | undefined
@@ -90,14 +90,75 @@ export function BattleDirectives({
   finalCrownForecast,
   finalCrownForecastCount,
   projectedWins,
-  tierThreeLineCount,
-  tierFourLineCount,
+  commandSpent,
+  commandLimit,
   projectedCrownMasteryScore,
   currentEliteEncounter,
   currentEliteDoctrine,
   doctrineCommandRelief,
   doctrineCommandFloor,
 }: BattleDirectivesProps) {
+  const nextFinalCrownSeal = finalCrownForecast.find((seal) => !seal.broken) ?? null
+  const finalCrownCommand =
+    day === MAX_NIGHTS
+      ? !lineupReady
+        ? {
+            state: 'blocked',
+            glyph: '◇',
+            kicker: 'THRONE COMMAND · FORMATION REQUIRED',
+            title: '세 전선을 먼저 완성하세요',
+            description: '왕좌 판정은 세 생존자의 명령·집중·상성을 동시에 읽은 뒤에만 열립니다.',
+            badge: '배치 필요',
+          }
+        : commandSpent > commandLimit
+          ? {
+              state: 'blocked',
+              glyph: '⌘',
+              kicker: 'THRONE COMMAND · COMMAND OVERLOAD',
+              title: `지휘 부담을 ${commandSpent - commandLimit} 낮추세요`,
+              description: '비용 0인 방벽 명령으로 바꾸면 현재 대열을 유지한 채 왕좌 판정을 다시 열 수 있습니다.',
+              badge: `-${commandSpent - commandLimit} 지휘`,
+            }
+          : projectedWins < REQUIRED_LANE_WINS
+            ? {
+                state: 'danger',
+                glyph: '!',
+                kicker: 'THRONE COMMAND · FRONT LINE FIRST',
+                title: `붕괴 전선 ${REQUIRED_LANE_WINS - projectedWins}곳을 먼저 되찾으세요`,
+                description:
+                  '칙령을 해제해도 두 전선을 지키지 못하면 왕관은 무너지지 않습니다. 아래 참모 모의의 첫 수부터 적용하세요.',
+                badge: `전선 ${projectedWins} / ${REQUIRED_LANE_WINS}`,
+              }
+            : finalCrownForecastCount < FINAL_CROWN_REQUIRED_SEALS && nextFinalCrownSeal
+              ? {
+                  state: 'danger',
+                  glyph: nextFinalCrownSeal.glyph,
+                  kicker: `THRONE COMMAND · ${nextFinalCrownSeal.label}`,
+                  title: `${nextFinalCrownSeal.name}부터 해제하세요`,
+                  description: nextFinalCrownSeal.requirement,
+                  badge: `칙령 ${finalCrownForecastCount} / ${FINAL_CROWN_REQUIRED_SEALS}`,
+                }
+              : projectedBattleVictory && finalCrownForecastCount === FINAL_CROWN_SEALS.length
+                ? {
+                    state: 'mastered',
+                    glyph: '✦',
+                    kicker: 'THRONE COMMAND · PERFECT SHATTER',
+                    title: '세 칙령 완전 파쇄 준비가 끝났습니다',
+                    description: `승리 조건을 넘어 왕의 이름까지 지우는 추가 명성 +${projectedCrownMasteryScore.toLocaleString('ko-KR')} 경로입니다.`,
+                    badge: 'S+ ROUTE',
+                  }
+                : {
+                    state: 'ready',
+                    glyph: '♜',
+                    kicker: 'THRONE COMMAND · VICTORY LINE SEALED',
+                    title: '왕좌 파쇄 승리선이 봉인됐습니다',
+                    description: nextFinalCrownSeal
+                      ? `${nextFinalCrownSeal.name}까지 해제하면 완전 파쇄 명성 +${projectedCrownMasteryScore.toLocaleString('ko-KR')}을 확보합니다.`
+                      : '현재 명령과 대열을 유지하면 백색 왕의 지배를 끝낼 수 있습니다.',
+                    badge: `${FINAL_CROWN_REQUIRED_SEALS} + ${REQUIRED_LANE_WINS} READY`,
+                  }
+      : null
+
   return (
     <>
       {currentBossMechanic ? (
@@ -212,8 +273,12 @@ export function BattleDirectives({
         </section>
       ) : null}
 
-      {day === MAX_NIGHTS ? (
-        <section className="final-crown-directive" aria-label="백색 왕의 세 왕관 칙령">
+      {day === MAX_NIGHTS && finalCrownCommand ? (
+        <section
+          className="final-crown-directive"
+          data-state={finalCrownCommand.state}
+          aria-label="백색 왕의 최종 결전 지휘"
+        >
           <header>
             <div>
               <span>TRIPLE CROWN BREAK</span>
@@ -223,55 +288,84 @@ export function BattleDirectives({
               {projectedBattleVictory ? '최종 승리 예상' : '승리 조건 점검'}
             </b>
           </header>
-          <div>
-            {finalCrownForecast.map((seal) => (
-              <article data-state={seal.broken ? 'broken' : 'active'} key={seal.name}>
-                <span aria-hidden="true">{seal.glyph}</span>
-                <div>
-                  <small>
-                    {seal.label} · 전선 0{seal.lane + 1}
-                  </small>
-                  <strong>{seal.name}</strong>
-                  <p>{seal.requirement}</p>
-                  <em>{seal.pressure}</em>
-                </div>
-                <b>{seal.broken ? '해제 예상' : '압박 활성'}</b>
-              </article>
-            ))}
-          </div>
-          <footer className="final-crown-readiness">
-            <p>
-              승리 조건은 칙령 {FINAL_CROWN_REQUIRED_SEALS}개 해제와 전선 {REQUIRED_LANE_WINS}곳 방어입니다. 세 칙령을
-              모두 해제하면 완전 파쇄 명성이 추가됩니다.
-            </p>
-            <dl aria-label="최종 왕관 승리 준비도">
-              <div data-ready={finalCrownForecastCount >= FINAL_CROWN_REQUIRED_SEALS ? 'true' : 'false'}>
-                <dt>칙령 해제</dt>
-                <dd>
-                  {finalCrownForecastCount} / {FINAL_CROWN_REQUIRED_SEALS}
-                </dd>
+          <ol className="final-crown-equation" aria-label="최종 왕관 승리 방정식">
+            <li data-state="complete">
+              <span>01</span>
+              <div>
+                <small>LAST MARCH</small>
+                <strong>관문 3 / 3</strong>
               </div>
-              <div data-ready={projectedWins >= REQUIRED_LANE_WINS ? 'true' : 'false'}>
-                <dt>방어 예상</dt>
-                <dd>
-                  {projectedWins} / {REQUIRED_LANE_WINS}
-                </dd>
+            </li>
+            <li data-state={finalCrownForecastCount >= FINAL_CROWN_REQUIRED_SEALS ? 'complete' : 'missing'}>
+              <span>02</span>
+              <div>
+                <small>CROWN EDICTS</small>
+                <strong>
+                  칙령 {finalCrownForecastCount} / {FINAL_CROWN_REQUIRED_SEALS}
+                </strong>
               </div>
-              <div data-ready={tierThreeLineCount >= REQUIRED_LANE_WINS ? 'true' : 'false'}>
-                <dt>성장 전선</dt>
-                <dd>
-                  III+ {tierThreeLineCount} · IV {tierFourLineCount}
-                </dd>
+            </li>
+            <li data-state={projectedWins >= REQUIRED_LANE_WINS ? 'complete' : 'missing'}>
+              <span>03</span>
+              <div>
+                <small>HELD FRONTS</small>
+                <strong>
+                  전선 {projectedWins} / {REQUIRED_LANE_WINS}
+                </strong>
               </div>
-              <div
-                data-ready={
-                  projectedBattleVictory && finalCrownForecastCount === FINAL_CROWN_SEALS.length ? 'true' : 'false'
-                }
-              >
-                <dt>완전 파쇄</dt>
-                <dd>+{projectedCrownMasteryScore.toLocaleString('ko-KR')}</dd>
+            </li>
+            <li data-state={projectedBattleVictory ? 'victory' : 'missing'}>
+              <span>♜</span>
+              <div>
+                <small>FINAL VERDICT</small>
+                <strong>{projectedBattleVictory ? '왕좌 파쇄' : '왕관 유지'}</strong>
               </div>
-            </dl>
+            </li>
+          </ol>
+          <aside className="final-crown-command" data-state={finalCrownCommand.state}>
+            <span aria-hidden="true">{finalCrownCommand.glyph}</span>
+            <div>
+              <small>{finalCrownCommand.kicker}</small>
+              <strong>{finalCrownCommand.title}</strong>
+              <p>{finalCrownCommand.description}</p>
+            </div>
+            <b>{finalCrownCommand.badge}</b>
+          </aside>
+          <details className="final-crown-edicts" open={!projectedBattleVictory}>
+            <summary>
+              <span>
+                <small>EDICT LEDGER · 세부 판정</small>
+                <strong>세 왕관 칙령 확인</strong>
+              </span>
+              <b>{finalCrownForecastCount} / 3 해제 예상</b>
+              <i aria-hidden="true">⌄</i>
+            </summary>
+            <div>
+              {finalCrownForecast.map((seal) => (
+                <article data-state={seal.broken ? 'broken' : 'active'} key={seal.name}>
+                  <span aria-hidden="true">{seal.glyph}</span>
+                  <div>
+                    <small>
+                      {seal.label} · 전선 0{seal.lane + 1}
+                    </small>
+                    <strong>{seal.name}</strong>
+                    <p>{seal.requirement}</p>
+                    <em>{seal.pressure}</em>
+                  </div>
+                  <b>{seal.broken ? '해제 예상' : '압박 활성'}</b>
+                </article>
+              ))}
+            </div>
+          </details>
+          <footer className="final-crown-reward">
+            <span>
+              <small>MASTERY BOUNTY</small>
+              <strong>세 칙령 완전 파쇄</strong>
+            </span>
+            <p>승리 조건을 넘겨 모든 칙령을 해제하면 왕관 숙련 명성을 추가로 획득합니다.</p>
+            <b data-ready={finalCrownForecastCount === FINAL_CROWN_SEALS.length ? 'true' : 'false'}>
+              +{projectedCrownMasteryScore.toLocaleString('ko-KR')}
+            </b>
           </footer>
         </section>
       ) : null}

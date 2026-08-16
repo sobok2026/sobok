@@ -9790,6 +9790,253 @@
   }
 }
 
+.battle-cinema > section > .cinema-crown-approach {
+  --approach-rgb: 255, 186, 105;
+  --approach-duration: 740ms;
+  position: absolute;
+  z-index: 11;
+  display: grid;
+  place-items: center;
+  inset: 0;
+  overflow: hidden;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(var(--approach-rgb), 0.18), transparent 31%),
+    linear-gradient(180deg, rgba(2, 8, 12, 0.76), rgba(2, 8, 12, 0.96));
+  opacity: 0;
+  pointer-events: none;
+  backdrop-filter: blur(7px);
+  animation: crown-approach-veil var(--approach-duration) cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.game-shell[data-battle-pace='swift'] .cinema-crown-approach {
+  --approach-duration: 430ms;
+}
+
+.cinema-crown-approach-visual {
+  display: grid;
+  width: min(100%, 660px);
+  justify-items: center;
+  gap: 18px;
+  color: #f8eee1;
+  text-align: center;
+  animation: crown-approach-rise var(--approach-duration) cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cinema-crown-approach-visual > small {
+  color: rgba(var(--approach-rgb), 0.86);
+  font-size: var(--text-label);
+  font-weight: 850;
+  letter-spacing: 0.12em;
+}
+
+.cinema-crown-approach-path {
+  position: relative;
+  display: grid;
+  width: min(100%, 580px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.cinema-crown-approach-path::before {
+  position: absolute;
+  z-index: 0;
+  top: 27px;
+  right: 11%;
+  left: 11%;
+  height: 1px;
+  background: linear-gradient(90deg, #62c9aa, rgba(103, 233, 187, 0.72) 58%, rgb(var(--approach-rgb)));
+  box-shadow: 0 0 16px rgba(var(--approach-rgb), 0.2);
+  content: '';
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: crown-approach-line calc(var(--approach-duration) * 0.72) ease-out calc(var(--approach-duration) * 0.08)
+    both;
+}
+
+.cinema-crown-approach-path > span,
+.cinema-crown-approach-path > strong {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  color: #83ddc0;
+  animation: crown-approach-node calc(var(--approach-duration) * 0.62) cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cinema-crown-approach-path > span:nth-child(2) {
+  animation-delay: calc(var(--approach-duration) * 0.08);
+}
+
+.cinema-crown-approach-path > span:nth-child(3) {
+  animation-delay: calc(var(--approach-duration) * 0.16);
+}
+
+.cinema-crown-approach-path > strong {
+  color: rgb(var(--approach-rgb));
+  animation-delay: calc(var(--approach-duration) * 0.24);
+}
+
+.cinema-crown-approach-path b {
+  display: grid;
+  width: 50px;
+  height: 56px;
+  place-items: center;
+  border: 1px solid currentColor;
+  background: rgba(3, 14, 19, 0.92);
+  box-shadow:
+    inset 0 0 20px color-mix(in srgb, currentColor 10%, transparent),
+    0 0 20px color-mix(in srgb, currentColor 12%, transparent);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 21px;
+}
+
+.cinema-crown-approach-path > strong b {
+  width: 60px;
+  border-color: rgba(var(--approach-rgb), 0.72);
+  background: radial-gradient(circle, rgba(var(--approach-rgb), 0.16), transparent 68%), rgba(14, 11, 10, 0.92);
+  font-size: 28px;
+  text-shadow: 0 0 22px rgba(var(--approach-rgb), 0.6);
+}
+
+.cinema-crown-approach-path small {
+  color: currentColor;
+  font-size: var(--text-label);
+  font-weight: 800;
+  letter-spacing: 0.055em;
+}
+
+.cinema-crown-approach-copy {
+  display: grid;
+  max-width: 580px;
+  justify-items: center;
+  gap: 6px;
+}
+
+.cinema-crown-approach-copy strong {
+  color: #fff3e6;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(30px, 5.4vw, 52px);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+  text-shadow: 0 10px 32px rgba(0, 0, 0, 0.68);
+}
+
+.cinema-crown-approach-copy p {
+  max-width: 52ch;
+  margin: 0;
+  color: #c8b9ab;
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+
+@keyframes crown-approach-veil {
+  0% {
+    opacity: 0;
+  }
+
+  12%,
+  72% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes crown-approach-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+
+  22%,
+  76% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-6px) scale(1.01);
+  }
+}
+
+@keyframes crown-approach-line {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes crown-approach-node {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.88);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.game-shell[data-contrast='high'] .cinema-crown-approach {
+  background: #02090e;
+}
+
+.game-shell[data-contrast='high'] .cinema-crown-approach-path b {
+  background: #07151b;
+}
+
+@media (max-width: 620px) {
+  .battle-cinema > section > .cinema-crown-approach {
+    padding: 16px;
+  }
+
+  .cinema-crown-approach-visual {
+    gap: 14px;
+  }
+
+  .cinema-crown-approach-path {
+    gap: 7px;
+  }
+
+  .cinema-crown-approach-path b {
+    width: 42px;
+    height: 48px;
+    font-size: 18px;
+  }
+
+  .cinema-crown-approach-path > strong b {
+    width: 48px;
+    font-size: 23px;
+  }
+
+  .cinema-crown-approach-path::before {
+    top: 23px;
+  }
+
+  .cinema-crown-approach-copy strong {
+    font-size: clamp(29px, 9vw, 42px);
+  }
+
+  .cinema-crown-approach-copy p {
+    font-size: var(--text-small);
+  }
+}
+
+.game-shell[data-motion='reduced'] .cinema-crown-approach {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinema-crown-approach {
+    display: none;
+  }
+}
+
 .battle-cinema > section > .cinema-crown-climax {
   --climax-rgb: 255, 186, 105;
   --climax-duration: 1380ms;

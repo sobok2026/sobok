@@ -8227,8 +8227,8 @@ export default function Game() {
                   finalCrownForecast={finalCrownForecast}
                   finalCrownForecastCount={finalCrownForecastCount}
                   projectedWins={projectedWins}
-                  tierThreeLineCount={tierThreeLineCount}
-                  tierFourLineCount={tierFourLineCount}
+                  commandSpent={commandSpent}
+                  commandLimit={commandLimit}
                   projectedCrownMasteryScore={projectedCrownMasteryScore}
                   currentEliteEncounter={currentEliteEncounter}
                   currentEliteDoctrine={currentEliteDoctrine}
