@@ -2890,6 +2890,8 @@ export default function Game() {
   const milestoneSoundId = useRef<string | null>(null)
   const queuedMilestoneIds = useRef(new Set<string>())
   const backupInputRef = useRef<HTMLInputElement>(null)
+  const campMutationInFlight = useRef(false)
+  const battleLaunchInFlight = useRef(false)
   const resolvingBattle = useRef(false)
   const resolvingChoice = useRef<string | null>(null)
   const purchasingLegacy = useRef(false)
@@ -5070,6 +5072,12 @@ export default function Game() {
     animationFrames.current.add(frame)
   }
 
+  function beginCampMutation() {
+    if (campMutationInFlight.current) return false
+    campMutationInFlight.current = true
+    return true
+  }
+
   function moveDragGhost(x: number, y: number) {
     dragPosition.current.x = x
     dragPosition.current.y = y
@@ -5632,6 +5640,14 @@ export default function Game() {
   useEffect(() => {
     purchasingLegacy.current = false
   }, [meta])
+
+  useEffect(() => {
+    campMutationInFlight.current = false
+  }, [focusLane, game])
+
+  useEffect(() => {
+    if (phase === 'camp') battleLaunchInFlight.current = false
+  }, [phase])
 
   useEffect(() => {
     if (campUndo && phase !== 'camp' && phase !== 'promotion') setCampUndo(null)
@@ -6248,6 +6264,8 @@ export default function Game() {
     setShowExpeditionMenu(false)
     setShowDifficulty(true)
     setShowTitle(true)
+    campMutationInFlight.current = false
+    battleLaunchInFlight.current = false
     resolvingBattle.current = false
     resolvingChoice.current = null
     clearLinkedRiftFromCurrentUrl()
@@ -6376,7 +6394,7 @@ export default function Game() {
 
   function quickDeploySelectedUnit(lane: number) {
     if (!selectedUnit || phase !== 'camp') return
-    deployUnit(lane, selectedUnit.id)
+    if (!deployUnit(lane, selectedUnit.id)) return
     setMobileRosterOpen(false)
     scheduleFrame(() => {
       const laneButton = document.querySelector<HTMLButtonElement>(`.lineup-slot[data-lane-index="${lane}"]`)
@@ -6539,6 +6557,8 @@ export default function Game() {
     setMobileRosterOpen(false)
     setSelectedUnitId(null)
     setBattleResult(null)
+    campMutationInFlight.current = false
+    battleLaunchInFlight.current = false
     resolvingBattle.current = false
     resolvingChoice.current = null
     removeStoredValues(STORAGE_KEY, BATTLE_STORAGE_KEY)
@@ -6692,6 +6712,7 @@ export default function Game() {
 
   function undoCampAction() {
     if (!campUndo || (phase !== 'camp' && phase !== 'promotion')) return
+    if (!beginCampMutation()) return
     dismissGrowthCeremony()
     if (campUndo.kind === 'march-seal') dismissMarchSealCeremony()
     const restoredGame: GameState = {
@@ -6730,6 +6751,7 @@ export default function Game() {
 
     const slots = [...game.slots]
     if (!target) {
+      if (!beginCampMutation()) return
       slots[targetIndex] = source
       slots[sourceIndex] = null
       setCampUndo(null)
@@ -6748,6 +6770,7 @@ export default function Game() {
         announce('세 전선을 지킬 마지막 3명은 합칠 수 없어요. 신호탄으로 생존자를 먼저 구조하세요.')
         return
       }
+      if (!beginCampMutation()) return
 
       slots[sourceIndex] = null
       const upgradedTier = target.tier + 1
@@ -6808,6 +6831,7 @@ export default function Game() {
       return
     }
 
+    if (!beginCampMutation()) return
     slots[sourceIndex] = target
     slots[targetIndex] = source
     setCampUndo(null)
@@ -6860,7 +6884,7 @@ export default function Game() {
   }
 
   function deployUnit(lane: number, explicitUnitId?: string) {
-    if (phase !== 'camp') return
+    if (phase !== 'camp') return false
     const unitId = explicitUnitId ?? selectedUnitId
     const unit = findUnit(game, unitId)
     if (!unit) {
@@ -6871,7 +6895,7 @@ export default function Game() {
       } else {
         announce('먼저 대기소에서 생존자를 선택하세요.')
       }
-      return
+      return false
     }
 
     const sourceLane = game.lineup.indexOf(unit.id)
@@ -6892,10 +6916,11 @@ export default function Game() {
             ? `${lane + 1}전선의 ${survivorName(unit)} 강화 배치 확인 · 다음은 전선 명령입니다.`
             : `${lane + 1}전선의 ${survivorName(unit)} 배치를 유지합니다.`,
       )
-      return
+      return true
     }
 
     const lineup = lineupAfterDeployment(game.lineup, unit.id, lane)
+    if (!beginCampMutation()) return false
     setCampUndo(null)
     setGame({ ...game, lineup })
     setSelectedUnitId(unit.id)
@@ -6918,6 +6943,7 @@ export default function Game() {
         ? `${deploymentMessage} · 현장 훈련은 II 등급 생존자를 기다립니다.`
         : deploymentMessage,
     )
+    return true
   }
 
   function recruit() {
@@ -6931,6 +6957,7 @@ export default function Game() {
       announce(`보급품이 ${recruitCost - game.supplies} 부족해요.`)
       return
     }
+    if (!beginCampMutation()) return
 
     const kind = UNIT_ROTATION[game.recruits % UNIT_ROTATION.length]
     const unit: Unit = {
@@ -6972,6 +6999,7 @@ export default function Game() {
       announce('장작을 살 보급품이 부족해요.')
       return
     }
+    if (!beginCampMutation()) return
 
     const nextRecoverySupplies = recoverySuppliesAfterSpend(game.recoverySupplies, stokeCost)
     const recoverySpend = game.recoverySupplies - nextRecoverySupplies
@@ -7004,6 +7032,7 @@ export default function Game() {
       )
       return
     }
+    if (!beginCampMutation()) return
 
     const nextScore = game.score + marchSealScore
     const rankNote = marchSealRaisesRank ? ` · ${marchSealRankEntry.rank} 등급 도달` : ''
@@ -7056,7 +7085,8 @@ export default function Game() {
   }
 
   function chooseFocusLane(lane: number) {
-    if (phase !== 'camp') return
+    if (phase !== 'camp') return false
+    if (lane !== focusLane && !beginCampMutation()) return false
     const focusedResult = createBattleResult(game, lane)
     setRiskDepartureConfirmation(null)
     setFocusLane(lane)
@@ -7065,30 +7095,32 @@ export default function Game() {
       if (focusedResult && focusedResult.wins >= REQUIRED_LANE_WINS) {
         setTutorialStep('battle')
         announce(`${lane + 1}전선 집중 · 예상 방어 ${focusedResult.wins} / 3 · 첫 교전 준비 완료`)
-        return
+        return true
       }
       if (tutorialRecommendedFocusWins < REQUIRED_LANE_WINS) {
         announce(
           `${lane + 1}전선 집중 · 최고 예상도 ${tutorialRecommendedFocusWins} / 3입니다. 청록색 명령을 하나 더 맞춰 주세요.`,
         )
-        return
+        return true
       }
       announce(
         `${lane + 1}전선 집중 시 예상 방어 ${focusedResult?.wins ?? 0} / 3 · 추천은 0${tutorialRecommendedFocusLane + 1} 전선입니다.`,
       )
-      return
+      return true
     }
     announce(`${lane + 1}전선에 화로의 힘을 집중합니다.`)
+    return true
   }
 
   function chooseOrder(lane: number, order: BattleOrder) {
-    if (phase !== 'camp') return
+    if (phase !== 'camp') return false
     const nextOrders = game.orders.map((current, index) => (index === lane ? order : current))
     const nextSpent = nextOrders.reduce((total, current) => total + ORDER_META[current].cost, 0)
     if (nextSpent > commandLimit && nextSpent >= commandSpent) {
       announce(`명령 점수가 ${nextSpent - commandLimit} 부족합니다. 현재 부담보다 낮추는 방벽 명령부터 적용해 주세요.`)
-      return
+      return false
     }
+    if (!beginCampMutation()) return false
     const nextGame = { ...game, orders: nextOrders }
     const addsTutorialCounter = tutorialCounterCountFor(nextGame) > tutorialCounterCount
     setGame(nextGame)
@@ -7101,14 +7133,15 @@ export default function Game() {
         ? `${lane + 1}전선 · ${ORDER_META[order].name} 명령 · 아직 새 파훼가 아닙니다. 청록색으로 표시된 다른 명령을 골라 주세요.`
         : `${lane + 1}전선 · ${ORDER_META[order].name} 명령`,
     )
+    return true
   }
 
   function applyTacticalAdjustment() {
     if (phase !== 'camp' || !tacticalAdjustment || !tacticalRehearsal) return
     if (tacticalAdjustment.kind === 'order') {
-      chooseOrder(tacticalAdjustment.lane, tacticalAdjustment.order)
+      if (!chooseOrder(tacticalAdjustment.lane, tacticalAdjustment.order)) return
     } else {
-      chooseFocusLane(tacticalAdjustment.lane)
+      if (!chooseFocusLane(tacticalAdjustment.lane)) return
     }
     vibrate(12)
     announce(`전술 모의 적용 · ${tacticalRehearsal.title} · ${tacticalRehearsal.status}`)
@@ -7274,6 +7307,7 @@ export default function Game() {
 
   function startBattle() {
     if (phase !== 'camp') return
+    if (campMutationInFlight.current || battleLaunchInFlight.current) return
     if (pendingPromotionUnit) {
       setPhase('promotion')
       setMobileRosterOpen(false)
@@ -7319,6 +7353,7 @@ export default function Game() {
       return
     }
 
+    battleLaunchInFlight.current = true
     dismissMarchSealCeremony()
     resolvingBattle.current = false
     setRiskDepartureConfirmation(null)
