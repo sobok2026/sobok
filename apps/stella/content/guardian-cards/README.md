@@ -40,6 +40,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-019-review-ko.json`    | `visual_review_complete` | 열아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-020-review-ko.json`    | `visual_review_complete` | 스무 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
 | `production-art-batch-021-review-ko.json`    | `visual_review_complete` | 스물한 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-022-review-ko.json`    | `editorial_review_ready` | 스물두 번째 production 배치 신규 12개 Nebula 보호 속도 구도 편집 승인 대기    |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 261개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -567,6 +568,17 @@ contact sheet에서 정본 정체성, 단일 속도 조절 행동, 비어 있는
 12개는 모두 사람의 최종 시각 승인을 마쳤다. 승인 원본의 SHA-256은 검수 파일과 누적 261개 WebP
 매니페스트에 고정하며 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
 
+스물두 번째 배치는 같은 `love.careful-approach` 원고를 `nebula` 희귀도로 제작할 신규 12개 편집
+검수안이다. `production-art-batch-022-review-ko.json`에 현재 원고의 canonical SHA-256과, 자기 쪽
+접근 표식만 조절한 수호령이 비·눈·바람·안개·물살 속 보호 경계를 유지하면서 상대의 선택 자리를 비워
+두는 하나의 연속 장면을 고정했다. 물웅덩이 반사의 접이식 바람막이, 성에 벽의 두 칸 보온 서랍, 타원
+바람주머니의 빈 듣기 주머니, 빗사슬 옆 주름 통로, 안개막 아래 접이식 반사판, 열린 잎 지붕의 화분,
+V자 바람막이의 독립 별추 주머니, 홈통 반사의 꼬리 후드, 안장가방 두 관찰창, 계단 아래 돌 바람받이,
+구름 터널의 보온 소매와 단일 파동, 두 물살 사이 열린 S자 끈처럼 서로 다른 날씨 경계·보호 실루엣·
+응답 여백을 사용한다. 첫 신호 Nebula의 보호 구조와 바로 앞 Orbit의 조절 소품을 그대로 반복하지 않고,
+상대의 몸·손·그림자·답·합의·관계 확정도 화면에 만들지 않는다. 사람의 최종 편집 승인 전에는 imagegen
+입력과 신규 PNG 후보를 만들지 않으며 누적 승인 WebP 261개와 잔여 795개 산식도 바뀌지 않는다.
+
 ## 검증
 
 repository root에서 다음 명령을 실행한다.
@@ -602,6 +614,8 @@ bun --filter=@sobok/stella guardian-cards:validate
   차단
 - 스물한 번째 production 배치 신규 12개 원고 해시와 상대를 화면에 확정하지 않는 되돌릴 수 있는 속도
   조절 행동, 첫 신호 Orbit·앞선 근접 장면 비반복 및 사람의 편집 승인 전 신규 이미지 제작 차단
+- 스물두 번째 production 배치 신규 12개 원고 해시와 날씨 속에서도 상대 선택 자리를 비워 두는 보호
+  속도 장면, 첫 신호 Nebula·바로 앞 Orbit 비반복 및 사람의 편집 승인 전 신규 이미지 제작 차단
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 261개를 제외한 현재 잔여
   795개 산식
