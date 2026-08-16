@@ -8994,6 +8994,26 @@ body {
   color: #ffb09b;
 }
 
+.title-storage-utility[data-state='error'] {
+  border-color: rgba(255, 139, 107, 0.42);
+  background: rgba(112, 35, 32, 0.2);
+  color: #ffc0af;
+}
+
+.title-storage-risk {
+  border-color: rgba(255, 139, 107, 0.46);
+  background: linear-gradient(145deg, rgba(197, 65, 52, 0.2), transparent 70%), rgba(26, 12, 14, 0.88);
+  color: #ffc0af;
+}
+
+.title-storage-risk:hover,
+.title-storage-risk:focus-visible,
+.title-storage-utility[data-state='error']:hover,
+.title-storage-utility[data-state='error']:focus-visible {
+  border-color: rgba(255, 173, 149, 0.78);
+  background-color: rgba(127, 42, 37, 0.32);
+}
+
 .title-install:disabled {
   cursor: progress;
   opacity: 0.68;
@@ -9051,6 +9071,11 @@ body {
   background: rgba(31, 15, 16, 0.98);
 }
 
+.runtime-notice[data-state='storage-error'] {
+  border-color: rgba(255, 139, 107, 0.5);
+  background: linear-gradient(110deg, rgba(126, 38, 33, 0.18), transparent 42%), rgba(30, 13, 15, 0.98);
+}
+
 .runtime-notice:is([data-state='applying-update'], [data-state='waiting-update']) {
   z-index: 260;
   top: 50%;
@@ -9096,6 +9121,11 @@ body {
 .runtime-notice[data-state='update-error'] > .runtime-notice-icon {
   border-color: rgba(255, 139, 107, 0.48);
   color: #ffb09b;
+}
+
+.runtime-notice[data-state='storage-error'] > .runtime-notice-icon {
+  border-color: rgba(255, 139, 107, 0.52);
+  color: #ffc0af;
 }
 
 .runtime-notice > div {
@@ -9148,6 +9178,12 @@ body {
   color: #b8eaff;
 }
 
+.runtime-notice[data-state='storage-error'] button {
+  border-color: rgba(255, 139, 107, 0.4);
+  background: rgba(197, 65, 52, 0.13);
+  color: #ffc0af;
+}
+
 .runtime-notice button:hover,
 .runtime-notice button:focus-visible {
   border-color: rgba(255, 205, 145, 0.68);
@@ -9158,6 +9194,12 @@ body {
 .runtime-notice[data-state='offline'] button:focus-visible {
   border-color: rgba(151, 231, 255, 0.7);
   background: rgba(113, 217, 255, 0.16);
+}
+
+.runtime-notice[data-state='storage-error'] button:hover,
+.runtime-notice[data-state='storage-error'] button:focus-visible {
+  border-color: rgba(255, 173, 149, 0.76);
+  background: rgba(197, 65, 52, 0.24);
 }
 
 @keyframes runtime-notice-in {
@@ -9199,6 +9241,10 @@ body {
   background: #1d0b0b;
 }
 
+.game-shell[data-contrast='high'] .runtime-notice[data-state='storage-error'] {
+  background: #210b0b;
+}
+
 @media (max-width: 520px) {
   .title-content:not(.is-difficulty) {
     max-height: calc(100dvh - 116px);
@@ -9238,7 +9284,8 @@ body {
   }
 
   .title-install,
-  .title-update {
+  .title-update,
+  .title-storage-risk {
     grid-column: 1 / -1;
   }
 

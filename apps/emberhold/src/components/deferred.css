@@ -8839,6 +8839,17 @@
   color: #ef9a8e;
 }
 
+.storage-protection[data-state='unavailable'] > button {
+  border-color: rgba(235, 119, 104, 0.38);
+  background: rgba(194, 75, 63, 0.12);
+  color: #ffc0b6;
+}
+
+.storage-protection > button:disabled {
+  cursor: progress;
+  opacity: 0.64;
+}
+
 .storage-protection[data-state='checking'] > span {
   animation: storage-pulse 1.2s ease-in-out infinite alternate;
 }

@@ -66,6 +66,7 @@ type TitleScreenProps = {
   bestScore: number
   runtimeState: RuntimeState
   runtimeStateCopy: string
+  storageUnavailable: boolean
   updateAvailable: boolean
   updateFailed: boolean
   soundOn: boolean
@@ -123,6 +124,7 @@ export function TitleScreen({
   bestScore,
   runtimeState,
   runtimeStateCopy,
+  storageUnavailable,
   updateAvailable,
   updateFailed,
   soundOn,
@@ -174,11 +176,14 @@ export function TitleScreen({
           </button>
           <button
             type="button"
+            className="title-storage-utility"
+            data-state={storageUnavailable ? 'error' : 'ready'}
             onPointerEnter={preloadSettingsDialog}
             onFocus={preloadSettingsDialog}
             onClick={openSettings}
+            aria-label={storageUnavailable ? '기록 저장 중단됨, 설정 열기' : '설정 열기'}
           >
-            ⚙ SETTINGS
+            {storageUnavailable ? '! STORAGE' : '⚙ SETTINGS'}
           </button>
           <button
             type="button"
@@ -696,6 +701,17 @@ export function TitleScreen({
                   onClick={askToDiscardCurrentCampaign}
                 >
                   새 원정
+                </button>
+              ) : null}
+              {storageUnavailable ? (
+                <button
+                  className="title-secondary title-storage-risk"
+                  type="button"
+                  onPointerEnter={preloadSettingsDialog}
+                  onFocus={preloadSettingsDialog}
+                  onClick={openSettings}
+                >
+                  기록 보호 복구
                 </button>
               ) : null}
               {updateAvailable ? (

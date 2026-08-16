@@ -34,6 +34,7 @@ type SettingsDialogProps = {
   updateSettings: (patch: Partial<GameSettings>) => void
   previewSound: () => void
   requestPersistentStorage: () => Promise<void>
+  retryStorageAccess: () => Promise<void>
   exportGameBackup: () => void
   restoreGameBackup: (event: ChangeEvent<HTMLInputElement>) => Promise<void>
   cancelGameBackupRestore: () => void
@@ -95,6 +96,7 @@ export function SettingsDialog({
   updateSettings,
   previewSound,
   requestPersistentStorage,
+  retryStorageAccess,
   exportGameBackup,
   restoreGameBackup,
   cancelGameBackupRestore,
@@ -357,7 +359,12 @@ export function SettingsDialog({
                 <h3 id="settings-data-title">기록 보호와 백업</h3>
               </div>
             </header>
-            <div className="storage-protection" data-state={storageProtection} aria-busy={storageRequestPending}>
+            <div
+              className="storage-protection"
+              data-state={storageProtection}
+              aria-busy={storageRequestPending}
+              aria-live="polite"
+            >
               <span aria-hidden="true">
                 {storageProtection === 'persistent'
                   ? '◆'
@@ -376,7 +383,7 @@ export function SettingsDialog({
                       ? '기기 저장소 사용 불가'
                       : storageProtection === 'checking'
                         ? storageRequestPending
-                          ? '보호 승인 확인 중'
+                          ? '기기 저장 상태 확인 중'
                           : '보호 상태 확인 중'
                         : '기본 기기 저장'}
                 </strong>
@@ -384,17 +391,29 @@ export function SettingsDialog({
                   {storageProtection === 'persistent'
                     ? '브라우저 자동 정리 대상에서 제외되도록 승인됐습니다. 사용자가 직접 삭제하는 경우는 제외됩니다.'
                     : storageProtection === 'unavailable'
-                      ? '현재 플레이는 가능하지만 앱을 닫으면 기록이 남지 않을 수 있습니다. 먼저 백업 파일을 보관하세요.'
+                      ? '저장소를 복구하기 전에는 새 선택과 교전 결과를 확정하지 않습니다. 현재 상태는 백업 파일로 보관할 수 있습니다.'
                       : storageProtection === 'checking'
                         ? storageRequestPending
-                          ? '브라우저에 자동 정리 제외를 요청했습니다. 승인 결과를 기다리고 있습니다.'
+                          ? '기기 저장소 연결과 자동 정리 보호 상태를 확인하고 있습니다.'
                           : '이 기기가 게임 기록 보호 요청을 지원하는지 확인하고 있습니다.'
                         : '현재 기록은 이 기기에 저장됩니다. 지원하는 브라우저에서는 자동 정리 제외를 요청할 수 있습니다.'}
                 </p>
               </div>
-              {storageProtection === 'standard' ? (
-                <button type="button" onClick={() => void requestPersistentStorage()}>
-                  보호 강화
+              {storageProtection === 'standard' ||
+              storageProtection === 'unavailable' ||
+              (storageProtection === 'checking' && storageRequestPending) ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    void (storageProtection === 'unavailable' ? retryStorageAccess() : requestPersistentStorage())
+                  }
+                  disabled={storageRequestPending}
+                >
+                  {storageRequestPending
+                    ? '확인 중'
+                    : storageProtection === 'unavailable'
+                      ? '저장소 다시 확인'
+                      : '보호 강화'}
                 </button>
               ) : null}
             </div>
@@ -413,7 +432,13 @@ export function SettingsDialog({
               <button
                 type="button"
                 onClick={() => backupInputRef.current?.click()}
-                disabled={storageProtection === 'unavailable' || restorePending || backupRestorePreview !== null}
+                disabled={
+                  storageProtection === 'unavailable' ||
+                  storageProtection === 'checking' ||
+                  storageRequestPending ||
+                  restorePending ||
+                  backupRestorePreview !== null
+                }
                 aria-busy={restorePending}
                 aria-controls="backup-restore-preview"
                 aria-expanded={backupRestorePreview !== null}
@@ -432,7 +457,7 @@ export function SettingsDialog({
                 type="file"
                 accept="application/json,.json"
                 onChange={(event) => void restoreGameBackup(event)}
-                disabled={restorePending}
+                disabled={storageRequestPending || restorePending}
                 hidden
               />
             </div>
@@ -481,7 +506,12 @@ export function SettingsDialog({
                     className="backup-restore-confirm"
                     type="button"
                     onClick={confirmGameBackupRestore}
-                    disabled={restorePending || storageProtection === 'unavailable'}
+                    disabled={
+                      storageRequestPending ||
+                      restorePending ||
+                      storageProtection === 'checking' ||
+                      storageProtection === 'unavailable'
+                    }
                     aria-busy={restorePending}
                   >
                     {restorePending ? '기록 교체 중' : '백업으로 교체 후 다시 시작'}

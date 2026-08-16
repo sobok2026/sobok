@@ -2014,6 +2014,32 @@ function writeStoredValue(key: string, value: string): boolean {
   }
 }
 
+type StoredValueChange = readonly [key: string, value: string | null]
+
+function replaceStoredValues(changes: readonly StoredValueChange[]): boolean {
+  const previousValues = new Map<string, string | null>()
+  try {
+    for (const [key] of changes) {
+      if (!previousValues.has(key)) previousValues.set(key, window.localStorage.getItem(key))
+    }
+    for (const [key, value] of changes) {
+      if (value === null) window.localStorage.removeItem(key)
+      else window.localStorage.setItem(key, value)
+    }
+    return true
+  } catch {
+    for (const [key, value] of previousValues) {
+      try {
+        if (value === null) window.localStorage.removeItem(key)
+        else window.localStorage.setItem(key, value)
+      } catch {
+        // A persistent warning keeps the in-memory run from appearing safely stored.
+      }
+    }
+    return false
+  }
+}
+
 function localStorageAvailable(): boolean {
   const probeKey = `${STORAGE_PREFIX}storage-probe`
   try {
@@ -3070,6 +3096,9 @@ export default function Game() {
   const resolvingChoice = useRef<string | null>(null)
   const purchasingLegacy = useRef(false)
   const storageWarningShown = useRef(false)
+  const storageAvailableAtHydration = useRef(true)
+  const storedGameSnapshot = useRef<string | null>(null)
+  const storedMetaSnapshot = useRef<string | null>(null)
   const runtimeActiveRef = useRef(true)
   const installInFlight = useRef(false)
   const storageRequestInFlight = useRef(false)
@@ -5319,13 +5348,15 @@ export default function Game() {
         : 'applying-update'
       : showTitle
         ? null
-        : !online && !offlineNoticeDismissed
-          ? 'offline'
-          : updateFailed
-            ? 'update-error'
-            : updateReady
-              ? 'update'
-              : null
+        : storageProtection === 'unavailable'
+          ? 'storage-error'
+          : !online && !offlineNoticeDismissed
+            ? 'offline'
+            : updateFailed
+              ? 'update-error'
+              : updateReady
+                ? 'update'
+                : null
     : null
   const activeLayer: ActiveLayer | null =
     sessionAccess !== 'active'
@@ -5412,6 +5443,46 @@ export default function Game() {
     return true
   }
 
+  function reportStorageFailure(message: string) {
+    setStorageProtection('unavailable')
+    if (storageWarningShown.current) return
+    storageWarningShown.current = true
+    announce(message)
+  }
+
+  function storeValues(changes: readonly StoredValueChange[]) {
+    if (!storageAvailableAtHydration.current) return false
+    const singleChange = changes.length === 1 ? changes[0] : null
+    const stored =
+      singleChange && singleChange[1] !== null
+        ? writeStoredValue(singleChange[0], singleChange[1])
+        : replaceStoredValues(changes)
+    if (!stored) return false
+    for (const [key, value] of changes) {
+      if (key === STORAGE_KEY) storedGameSnapshot.current = value
+      else if (key === META_KEY) storedMetaSnapshot.current = value
+    }
+    return true
+  }
+
+  function requireStoredValues(changes: readonly StoredValueChange[], message: string) {
+    if (storeValues(changes)) return true
+    reportStorageFailure(message)
+    preloadSettingsDialog()
+    setShowSettings(true)
+    return false
+  }
+
+  function requireStoredGame(nextGame: GameState, message: string) {
+    return requireStoredValues([[STORAGE_KEY, JSON.stringify(nextGame)]], message)
+  }
+
+  function requireStoredCampGame(nextGame: GameState) {
+    if (requireStoredGame(nextGame, '변경한 원정 기록을 저장할 수 없어 행동을 적용하지 않았습니다.')) return true
+    campMutationInFlight.current = false
+    return false
+  }
+
   function moveDragGhost(x: number, y: number) {
     dragPosition.current.x = x
     dragPosition.current.y = y
@@ -5434,9 +5505,15 @@ export default function Game() {
 
   const persistLatestSnapshot = useEffectEvent(() => {
     if (!ready || restoringBackup.current || sessionAccess !== 'active') return
-    writeStoredValue(STORAGE_KEY, JSON.stringify(game))
-    writeStoredValue(META_KEY, JSON.stringify(meta))
-    writeStoredValue(SETTINGS_KEY, JSON.stringify(settings))
+    if (
+      !storeValues([
+        [STORAGE_KEY, JSON.stringify(game)],
+        [META_KEY, JSON.stringify(meta)],
+        [SETTINGS_KEY, JSON.stringify(settings)],
+      ])
+    ) {
+      reportStorageFailure('현재 체크포인트를 기기 저장소에 확정할 수 없습니다.')
+    }
   })
 
   const armNavigationGuard = useEffectEvent(() => {
@@ -5630,6 +5707,8 @@ export default function Game() {
 
   useEffect(() => {
     if (sessionAccess !== 'active') return
+    const storageAvailable = localStorageAvailable()
+    storageAvailableAtHydration.current = storageAvailable
     const linkedRiftCode = linkedRiftCodeForCurrentUrl()
     if (linkedRiftCode) {
       setIncomingRiftCode(linkedRiftCode)
@@ -5637,8 +5716,8 @@ export default function Game() {
     } else {
       clearLinkedRiftFromCurrentUrl()
     }
-    const interruptedRestoreRecovery = recoverInterruptedBackupRestore()
-    removeUnknownStoredValues()
+    const interruptedRestoreRecovery = storageAvailable ? recoverInterruptedBackupRestore() : 'none'
+    if (storageAvailable) removeUnknownStoredValues()
 
     const storedMeta = interruptedRestoreRecovery === 'reset' ? undefined : readStoredJson(META_KEY)
     const storedGame = interruptedRestoreRecovery === 'reset' ? undefined : readStoredJson(STORAGE_KEY)
@@ -5720,13 +5799,13 @@ export default function Game() {
       }
     }
 
-    if (hasInvalidMeta) {
+    if (storageAvailable && hasInvalidMeta) {
       removeStoredValues(STORAGE_KEY, BATTLE_STORAGE_KEY, META_KEY, BEST_SCORE_KEY)
-    } else if (hasInvalidGame) {
+    } else if (storageAvailable && hasInvalidGame) {
       removeStoredValues(STORAGE_KEY, BATTLE_STORAGE_KEY)
     }
     setMeta(hydratedMeta)
-    if (!hasInvalidMeta && (hydratedMeta !== baseHydratedMeta || metaAchievementRepairNeeded)) {
+    if (storageAvailable && !hasInvalidMeta && (hydratedMeta !== baseHydratedMeta || metaAchievementRepairNeeded)) {
       writeStoredValue(META_KEY, JSON.stringify(hydratedMeta))
     }
 
@@ -5738,7 +5817,7 @@ export default function Game() {
         setFocusLane(restoredBattle.focusLane)
         setPhase('result')
       } else {
-        removeStoredValues(BATTLE_STORAGE_KEY)
+        if (storageAvailable) removeStoredValues(BATTLE_STORAGE_KEY)
         setPhase(
           hydratedGame.status === 'won'
             ? 'won'
@@ -5756,28 +5835,28 @@ export default function Game() {
         )
       }
     } else {
-      removeStoredValues(BATTLE_STORAGE_KEY)
+      if (storageAvailable) removeStoredValues(BATTLE_STORAGE_KEY)
     }
 
     const storedGuideValue = interruptedRestoreRecovery === 'reset' ? null : readStoredValue(GUIDE_KEY)
     const storedGuide = storedGuideValue === GUIDE_SEEN || storedGuideValue === GUIDE_REPLAY ? storedGuideValue : null
-    if (storedGuideValue !== null && storedGuide === null) removeStoredValues(GUIDE_KEY)
+    if (storageAvailable && storedGuideValue !== null && storedGuide === null) removeStoredValues(GUIDE_KEY)
     const shouldRunTutorial =
       storedGuide !== GUIDE_SEEN && (!hydratedGame || (hydratedGame.day === 1 && hydratedGame.battles === 0))
-    if (!shouldRunTutorial && storedGuide === null) writeStoredValue(GUIDE_KEY, GUIDE_SEEN)
+    if (storageAvailable && !shouldRunTutorial && storedGuide === null) writeStoredValue(GUIDE_KEY, GUIDE_SEEN)
     setShowGuide(false)
     setTutorialStep(shouldRunTutorial ? (hydratedGame ? inferTutorialStep(hydratedGame) : 'merge') : null)
 
     const storedSettings = interruptedRestoreRecovery === 'reset' ? undefined : readStoredJson(SETTINGS_KEY)
     const parsedSettings = storedSettings === undefined ? { ...DEFAULT_SETTINGS } : parseStoredSettings(storedSettings)
     const hydratedSettings = parsedSettings ?? { ...DEFAULT_SETTINGS }
-    if (storedSettings !== undefined && parsedSettings === null) removeStoredValues(SETTINGS_KEY)
+    if (storageAvailable && storedSettings !== undefined && parsedSettings === null) removeStoredValues(SETTINGS_KEY)
     setSettings(hydratedSettings)
     applyRuntimeSettings(hydratedSettings)
     const storedBestScore = interruptedRestoreRecovery === 'reset' ? 0 : readBestScore()
     const hydratedBestScore = Math.max(storedBestScore, highestRecordedScoreFor(hydratedGame, hydratedMeta))
     setBestScore(hydratedBestScore)
-    if (!hasInvalidMeta && hydratedBestScore > storedBestScore) {
+    if (storageAvailable && !hasInvalidMeta && hydratedBestScore > storedBestScore) {
       writeStoredValue(BEST_SCORE_KEY, String(hydratedBestScore))
     }
     setReady(true)
@@ -5963,17 +6042,29 @@ export default function Game() {
 
   useEffect(() => {
     if (!ready || sessionAccess !== 'active') return
-    if (!writeStoredValue(STORAGE_KEY, JSON.stringify(game)) && !storageWarningShown.current) {
-      storageWarningShown.current = true
-      announce('이 브라우저에서는 원정 기록을 저장할 수 없습니다.')
+    if (!storageAvailableAtHydration.current) {
+      reportStorageFailure('시작할 때 기기 저장소를 열지 못해 기존 기록을 보호하고 있습니다.')
+      return
+    }
+    const snapshot = JSON.stringify(game)
+    if (storedGameSnapshot.current === snapshot) return
+    if (writeStoredValue(STORAGE_KEY, snapshot)) storedGameSnapshot.current = snapshot
+    else {
+      reportStorageFailure('이 브라우저에서는 원정 기록을 저장할 수 없습니다.')
     }
   }, [game, ready, sessionAccess])
 
   useEffect(() => {
     if (!ready || sessionAccess !== 'active') return
-    if (!writeStoredValue(META_KEY, JSON.stringify(meta)) && !storageWarningShown.current) {
-      storageWarningShown.current = true
-      announce('이 브라우저에서는 유산 기록을 저장할 수 없습니다.')
+    if (!storageAvailableAtHydration.current) {
+      reportStorageFailure('시작할 때 기기 저장소를 열지 못해 기존 기록을 보호하고 있습니다.')
+      return
+    }
+    const snapshot = JSON.stringify(meta)
+    if (storedMetaSnapshot.current === snapshot) return
+    if (writeStoredValue(META_KEY, snapshot)) storedMetaSnapshot.current = snapshot
+    else {
+      reportStorageFailure('이 브라우저에서는 유산 기록을 저장할 수 없습니다.')
     }
   }, [meta, ready, sessionAccess])
 
@@ -6460,14 +6551,13 @@ export default function Game() {
       announce('새 빌드의 준비 상태를 다시 확인합니다.')
       return
     }
-    const snapshotStored = [
-      writeStoredValue(STORAGE_KEY, JSON.stringify(game)),
-      writeStoredValue(META_KEY, JSON.stringify(meta)),
-      writeStoredValue(SETTINGS_KEY, JSON.stringify(settings)),
-    ].every(Boolean)
+    const snapshotStored = storeValues([
+      [STORAGE_KEY, JSON.stringify(game)],
+      [META_KEY, JSON.stringify(meta)],
+      [SETTINGS_KEY, JSON.stringify(settings)],
+    ])
     if (!snapshotStored) {
-      storageWarningShown.current = true
-      announce('체크포인트를 저장할 수 없어 업데이트를 중단했습니다.')
+      reportStorageFailure('체크포인트를 저장할 수 없어 업데이트를 중단했습니다.')
       return
     }
 
@@ -6493,9 +6583,8 @@ export default function Game() {
   function persistSettings(nextSettings: GameSettings) {
     setSettings(nextSettings)
     applyRuntimeSettings(nextSettings)
-    if (!writeStoredValue(SETTINGS_KEY, JSON.stringify(nextSettings)) && !storageWarningShown.current) {
-      storageWarningShown.current = true
-      announce('이 브라우저에서는 설정을 저장할 수 없습니다.')
+    if (!storageAvailableAtHydration.current || !writeStoredValue(SETTINGS_KEY, JSON.stringify(nextSettings))) {
+      reportStorageFailure('이 브라우저에서는 설정을 저장할 수 없습니다.')
     }
   }
 
@@ -6570,14 +6659,69 @@ export default function Game() {
     }
   }
 
-  function exportGameBackup() {
+  function currentGuideRecord() {
     const storedGuide = readStoredValue(GUIDE_KEY)
+    if (storedGuide === GUIDE_SEEN || storedGuide === GUIDE_REPLAY) return storedGuide
+    return game.campaignStarted && tutorialStep === null ? GUIDE_SEEN : null
+  }
+
+  async function retryStorageAccess() {
+    if (storageRequestInFlight.current) return
+    storageRequestInFlight.current = true
+    setStorageRequestPending(true)
+    setStorageProtection('checking')
+    try {
+      if (!localStorageAvailable()) {
+        setStorageProtection('unavailable')
+        announce('기기 저장소를 아직 사용할 수 없습니다. 현재 상태를 백업 파일로 보관해 주세요.')
+        return
+      }
+      if (!storageAvailableAtHydration.current) {
+        announce('기기 저장소 연결이 돌아왔습니다. 기존 기록을 보호하며 다시 불러옵니다.')
+        window.setTimeout(() => window.location.reload(), 180)
+        return
+      }
+      const currentGuide = currentGuideRecord()
+      const snapshot: StoredValueChange[] = [
+        [STORAGE_KEY, JSON.stringify(game)],
+        [META_KEY, JSON.stringify(meta)],
+        [SETTINGS_KEY, JSON.stringify(settings)],
+        [BEST_SCORE_KEY, String(bestScore)],
+      ]
+      if (currentGuide) snapshot.push([GUIDE_KEY, currentGuide])
+      if (!storeValues(snapshot)) {
+        setStorageProtection('unavailable')
+        announce('기기 저장소를 아직 사용할 수 없습니다. 현재 상태를 백업 파일로 보관해 주세요.')
+        return
+      }
+
+      storageWarningShown.current = false
+      if (typeof navigator.storage?.persisted !== 'function') {
+        setStorageProtection('standard')
+        announce('기기 저장소 연결을 복구하고 현재 체크포인트를 확정했습니다.')
+        return
+      }
+      const persistent = await navigator.storage.persisted().catch(() => false)
+      setStorageProtection(persistent ? 'persistent' : 'standard')
+      announce(
+        persistent
+          ? '기기 저장소 연결과 강화된 기록 보호를 확인했습니다.'
+          : '기기 저장소 연결을 복구하고 현재 체크포인트를 확정했습니다.',
+      )
+    } finally {
+      storageRequestInFlight.current = false
+      setStorageRequestPending(false)
+    }
+  }
+
+  function exportGameBackup() {
+    const currentGuide = currentGuideRecord()
     const backup: GameBackup = {
       game,
       meta,
       settings,
       bestScore,
-      guide: storedGuide === GUIDE_SEEN || storedGuide === GUIDE_REPLAY ? storedGuide : null,
+      guide: currentGuide,
     }
     const blob = new Blob([`${JSON.stringify(backup, null, 2)}\n`], { type: 'application/json;charset=utf-8' })
     const url = URL.createObjectURL(blob)
@@ -6726,8 +6870,14 @@ export default function Game() {
   }
 
   function returnToTitle() {
-    writeStoredValue(STORAGE_KEY, JSON.stringify(game))
-    writeStoredValue(META_KEY, JSON.stringify(meta))
+    if (
+      !storeValues([
+        [STORAGE_KEY, JSON.stringify(game)],
+        [META_KEY, JSON.stringify(meta)],
+      ])
+    ) {
+      reportStorageFailure('타이틀로 돌아가기 전에 현재 체크포인트를 저장하지 못했습니다.')
+    }
     dismissEventDecisionNotice()
     setRiskDepartureConfirmation(null)
     setShowNewCampaignConfirm(false)
@@ -6777,9 +6927,18 @@ export default function Game() {
       meta,
       false,
     )
-    removeStoredValues(BATTLE_STORAGE_KEY)
+    if (
+      !requireStoredValues(
+        [
+          [STORAGE_KEY, JSON.stringify(freshGame)],
+          [BATTLE_STORAGE_KEY, null],
+        ],
+        '새 원정 준비 기록을 저장할 수 없어 현재 원정을 유지합니다.',
+      )
+    ) {
+      return
+    }
     dismissEventDecisionNotice()
-    writeStoredValue(STORAGE_KEY, JSON.stringify(freshGame))
     setGame(freshGame)
     setPhase('event')
     setFocusLane(0)
@@ -6824,7 +6983,10 @@ export default function Game() {
 
   function finishTutorial(message = '현장 훈련 완료 · 이제부터 판단은 원정대장에게 달렸습니다.') {
     setTutorialStep(null)
-    writeStoredValue(GUIDE_KEY, GUIDE_SEEN)
+    if (!storageAvailableAtHydration.current || !writeStoredValue(GUIDE_KEY, GUIDE_SEEN)) {
+      reportStorageFailure(`${message} · 훈련 완료 기록은 저장소 복구 뒤 다시 확정합니다.`)
+      return
+    }
     announce(message)
   }
 
@@ -6853,7 +7015,8 @@ export default function Game() {
       )
       return
     }
-    const queued = writeStoredValue(GUIDE_KEY, GUIDE_REPLAY)
+    const queued = storageAvailableAtHydration.current && writeStoredValue(GUIDE_KEY, GUIDE_REPLAY)
+    if (!queued) reportStorageFailure('다음 원정의 현장 훈련 예약을 저장할 수 없습니다.')
     announce(
       queued
         ? '현재 원정은 유지합니다. 다음 새 원정의 첫 캠프에서 현장 훈련을 다시 시작합니다.'
@@ -6958,12 +7121,12 @@ export default function Game() {
     playSound('select', soundOn)
   }
 
-  function commitMetaProgress(ids: AchievementId[], emberReward = 0, completedRun = false, record?: ExpeditionRecord) {
+  function metaProgressFor(ids: AchievementId[], emberReward = 0, completedRun = false, record?: ExpeditionRecord) {
     const fresh = ids.filter((id) => !meta.achievements.includes(id))
     const masteredContract = record?.won ? record.masteryContract : null
     const freshMasteredContract =
       masteredContract && !meta.masteredContracts.includes(masteredContract) ? masteredContract : null
-    if (fresh.length === 0 && emberReward === 0 && !completedRun && !record && !freshMasteredContract) return fresh
+    if (fresh.length === 0 && emberReward === 0 && !completedRun && !record && !freshMasteredContract) return null
     const nextMeta: MetaState = {
       ...meta,
       embers: meta.embers + emberReward,
@@ -6977,14 +7140,14 @@ export default function Game() {
         : meta.history,
     }
     const legacyMasteryMilestone = legacyMasteryMilestoneFor(meta, nextMeta)
-    writeStoredValue(META_KEY, JSON.stringify(nextMeta))
-    setMeta(nextMeta)
-    enqueueMilestones([
-      ...fresh.map(achievementMilestone),
-      ...(freshMasteredContract ? [masteryContractMilestone(freshMasteredContract)] : []),
-      ...(legacyMasteryMilestone ? [legacyMasteryMilestone] : []),
-    ])
-    return fresh
+    return {
+      nextMeta,
+      milestones: [
+        ...fresh.map(achievementMilestone),
+        ...(freshMasteredContract ? [masteryContractMilestone(freshMasteredContract)] : []),
+        ...(legacyMasteryMilestone ? [legacyMasteryMilestone] : []),
+      ],
+    }
   }
 
   function purchaseLegacy(legacyId: LegacyId) {
@@ -6995,14 +7158,22 @@ export default function Game() {
       return
     }
     purchasingLegacy.current = true
-    setPendingLegacyPurchase(null)
     const nextMeta: MetaState = {
       ...meta,
       embers: meta.embers - upgrade.cost,
       legacy: [...meta.legacy, legacyId],
     }
     const legacyMasteryMilestone = legacyMasteryMilestoneFor(meta, nextMeta)
-    writeStoredValue(META_KEY, JSON.stringify(nextMeta))
+    if (
+      !requireStoredValues(
+        [[META_KEY, JSON.stringify(nextMeta)]],
+        '유산 계승 기록을 저장할 수 없어 불씨를 사용하지 않았습니다.',
+      )
+    ) {
+      purchasingLegacy.current = false
+      return
+    }
+    setPendingLegacyPurchase(null)
     setMeta(nextMeta)
     enqueueMilestones([
       {
@@ -7056,9 +7227,6 @@ export default function Game() {
       announce('공유받은 원정 코드를 먼저 입력해 주세요.')
       return
     }
-    setIncomingRiftCode(null)
-    setPendingReplacementRiftCode(null)
-    clearLinkedRiftFromCurrentUrl()
     preloadCampaignEventDialog()
     const runSeed =
       exactSeed ??
@@ -7082,6 +7250,20 @@ export default function Game() {
       masteryContract,
     )
     const inheritanceMilestone = legacyLoadoutMilestone(initial)
+    if (
+      !requireStoredValues(
+        [
+          [STORAGE_KEY, JSON.stringify(initial)],
+          [BATTLE_STORAGE_KEY, null],
+        ],
+        '새 원정 체크포인트를 저장할 수 없어 출정을 시작하지 않았습니다.',
+      )
+    ) {
+      return
+    }
+    setIncomingRiftCode(null)
+    setPendingReplacementRiftCode(null)
+    clearLinkedRiftFromCurrentUrl()
     dismissEventDecisionNotice()
     setGame(initial)
     setPhase('event')
@@ -7103,8 +7285,6 @@ export default function Game() {
     battleLaunchInFlight.current = false
     resolvingBattle.current = false
     resolvingChoice.current = null
-    removeStoredValues(STORAGE_KEY, BATTLE_STORAGE_KEY)
-    writeStoredValue(STORAGE_KEY, JSON.stringify(initial))
     playSound('fire', soundOn)
     announce(
       `${mode === 'daily' ? '오늘의 균열' : mode === 'shared' ? '공유 균열' : DIFFICULTIES[difficulty].name} · ${OATHS[oath].name}이 시작됐습니다.${masteryContract ? ` ${MASTERY_CONTRACTS[masteryContract].name} 계약이 적용됩니다.` : ''}${initial.activeLegacy.length > 0 ? ` 계승 유산 ${initial.activeLegacy.length}개가 첫 선택부터 적용됩니다.` : ''}${!inheritedPowerEnabledFor(mode) ? ' 동일 코드 비교를 위해 계승 유산과 영원 계약은 봉인됩니다.' : ''}`,
@@ -7200,7 +7380,10 @@ export default function Game() {
     }
     const recoverySuppliesSpent = game.recoverySupplies - nextGame.recoverySupplies
     const opensPromotion = pendingPromotionFor(nextGame) !== null
-    writeStoredValue(STORAGE_KEY, JSON.stringify(nextGame))
+    if (!requireStoredGame(nextGame, '사건 결단을 저장할 수 없어 선택을 확정하지 않았습니다.')) {
+      resolvingChoice.current = null
+      return
+    }
     setGame(nextGame)
     setPhase(opensPromotion ? 'promotion' : 'camp')
     if (opensPromotion) setMobileRosterOpen(false)
@@ -7289,7 +7472,7 @@ export default function Game() {
       ...cloneGameState(campUndo.game),
       orders: [...game.orders],
     }
-    writeStoredValue(STORAGE_KEY, JSON.stringify(restoredGame))
+    if (!requireStoredCampGame(restoredGame)) return
     setGame(restoredGame)
     setPhase('camp')
     setSelectedUnitId(campUndo.selectedUnitId)
@@ -7324,8 +7507,10 @@ export default function Game() {
       if (!beginCampMutation()) return
       slots[targetIndex] = source
       slots[sourceIndex] = null
+      const nextGame = { ...game, slots }
+      if (!requireStoredCampGame(nextGame)) return
       setCampUndo(null)
-      setGame({ ...game, slots })
+      setGame(nextGame)
       setSelectedUnitId(source.id)
       playSound('select', soundOn)
       return
@@ -7358,6 +7543,7 @@ export default function Game() {
         lineup: replaceLineupAfterMerge(source.id, target.id),
       }
       const opensPromotion = needsPromotion(upgradedUnit)
+      if (!requireStoredCampGame(nextGame)) return
       rememberCampAction(
         'merge',
         `${survivorName(target)} 합성`,
@@ -7404,8 +7590,10 @@ export default function Game() {
     if (!beginCampMutation()) return
     slots[sourceIndex] = target
     slots[targetIndex] = source
+    const nextGame = { ...game, slots }
+    if (!requireStoredCampGame(nextGame)) return
     setCampUndo(null)
-    setGame({ ...game, slots })
+    setGame(nextGame)
     setSelectedUnitId(source.id)
     playSound('select', soundOn)
   }
@@ -7491,8 +7679,10 @@ export default function Game() {
 
     const lineup = lineupAfterDeployment(game.lineup, unit.id, lane)
     if (!beginCampMutation()) return false
+    const nextGame = { ...game, lineup }
+    if (!requireStoredCampGame(nextGame)) return false
     setCampUndo(null)
-    setGame({ ...game, lineup })
+    setGame(nextGame)
     setSelectedUnitId(unit.id)
     if (completesTutorialDeploy) {
       setTutorialStep('orders')
@@ -7541,18 +7731,20 @@ export default function Game() {
     const nextRecoverySupplies = recoverySuppliesAfterSpend(game.recoverySupplies, recruitCost)
     const recoverySpend = game.recoverySupplies - nextRecoverySupplies
     const recoveryNote = recoverySpend > 0 ? ` · 복구분 -${recoverySpend}` : ''
-    rememberCampAction(
-      'recruit',
-      '신호탄 사용',
-      `${survivorName(unit)} 합류 · ${KIND_META[unit.kind].name} I · 보급품 -${recruitCost}${recoveryNote}`,
-    )
-    setGame({
+    const nextGame: GameState = {
       ...game,
       supplies: game.supplies - recruitCost,
       recoverySupplies: nextRecoverySupplies,
       recruits: game.recruits + 1,
       slots,
-    })
+    }
+    if (!requireStoredCampGame(nextGame)) return
+    rememberCampAction(
+      'recruit',
+      '신호탄 사용',
+      `${survivorName(unit)} 합류 · ${KIND_META[unit.kind].name} I · 보급품 -${recruitCost}${recoveryNote}`,
+    )
+    setGame(nextGame)
     setSelectedUnitId(unit.id)
     playSound('recruit', soundOn)
     vibrate([12, 24, 12])
@@ -7574,17 +7766,19 @@ export default function Game() {
     const nextRecoverySupplies = recoverySuppliesAfterSpend(game.recoverySupplies, stokeCost)
     const recoverySpend = game.recoverySupplies - nextRecoverySupplies
     const recoveryNote = recoverySpend > 0 ? ` · 복구분 -${recoverySpend}` : ''
+    const nextGame: GameState = {
+      ...game,
+      supplies: game.supplies - stokeCost,
+      recoverySupplies: nextRecoverySupplies,
+      heat: game.heat + stokeHeatGain,
+    }
+    if (!requireStoredCampGame(nextGame)) return
     rememberCampAction(
       'stoke',
       '화로 투자',
       `보급품 -${stokeCost}${recoveryNote} · 온기 ${game.heat}% → ${game.heat + stokeHeatGain}%`,
     )
-    setGame({
-      ...game,
-      supplies: game.supplies - stokeCost,
-      recoverySupplies: nextRecoverySupplies,
-      heat: game.heat + stokeHeatGain,
-    })
+    setGame(nextGame)
     playSound('fire', soundOn)
     vibrate(18)
     announce(`화로에 필요한 만큼 장작을 넣었어요 · 보급품 -${stokeCost}${recoveryNote} · 온기 +${stokeHeatGain}`)
@@ -7612,6 +7806,19 @@ export default function Game() {
       marchSealContractScoreBonus > 0 && game.masteryContract
         ? ` · ${MASTERY_CONTRACTS[game.masteryContract].name} +${marchSealContractScoreBonus.toLocaleString('ko-KR')}`
         : ''
+    const nextGame: GameState = {
+      ...game,
+      supplies: game.supplies - marchSealSupplies,
+      score: nextScore,
+      renownLedger: addRenownLedgerEntry(
+        game.renownLedger,
+        'marchSeal',
+        marchSealScore,
+        marchSealLegacyScoreBonus,
+        marchSealContractScoreBonus,
+      ),
+    }
+    if (!requireStoredCampGame(nextGame)) return
     rememberCampAction(
       'march-seal',
       '행군 보급 봉인',
@@ -7635,18 +7842,7 @@ export default function Game() {
     const reducedMotion = settings.motion === 'reduced' || window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const ceremonyDuration = reducedMotion ? 900 : settings.battlePace === 'swift' ? 1450 : 2400
     startRuntimeTimer(marchSealTimer, ceremonyDuration, dismissMarchSealCeremony)
-    setGame({
-      ...game,
-      supplies: game.supplies - marchSealSupplies,
-      score: nextScore,
-      renownLedger: addRenownLedgerEntry(
-        game.renownLedger,
-        'marchSeal',
-        marchSealScore,
-        marchSealLegacyScoreBonus,
-        marchSealContractScoreBonus,
-      ),
-    })
+    setGame(nextGame)
     playSound('seal', soundOn)
     vibrate([16, 22, 34, 30, 54])
     announce(
@@ -7698,6 +7894,7 @@ export default function Game() {
     const nextGame = { ...game, orders: nextOrders }
     const nextBattleResult = battleResultFor(focusLane, nextGame)
     const addsTutorialCounter = tutorialCounterCountFor(nextGame) > tutorialCounterCount
+    if (!requireStoredCampGame(nextGame)) return false
     setGame(nextGame)
     if (tutorialStep === 'orders' && addsTutorialCounter) {
       setTutorialStep('focus')
@@ -7763,9 +7960,12 @@ export default function Game() {
     const fromTier = promotionGrowth?.fromTier ?? Math.max(1, pendingPromotionUnit.tier - 1)
     const powerBefore = promotionGrowth?.powerBefore ?? PLAYER_POWER[fromTier]
     const powerAfter = promotionGrowth?.powerAfter ?? PLAYER_POWER[pendingPromotionUnit.tier]
+    if (!requireStoredGame(nextGame, '베테랑 진급 기록을 저장할 수 없어 선택을 확정하지 않았습니다.')) {
+      resolvingChoice.current = null
+      return
+    }
     setCampUndo(null)
     dismissGrowthCeremony()
-    writeStoredValue(STORAGE_KEY, JSON.stringify(nextGame))
     setGame(nextGame)
     setSelectedUnitId(pendingPromotionUnit.id)
     setPhase(
@@ -7852,8 +8052,18 @@ export default function Game() {
         ? [...meta.achievements, 'first-resonance' as const]
         : meta.achievements,
     }
-    writeStoredValue(STORAGE_KEY, JSON.stringify(nextGame))
-    writeStoredValue(META_KEY, JSON.stringify(nextMeta))
+    if (
+      !requireStoredValues(
+        [
+          [STORAGE_KEY, JSON.stringify(nextGame)],
+          [META_KEY, JSON.stringify(nextMeta)],
+        ],
+        '유물 각인 기록을 저장할 수 없어 선택을 확정하지 않았습니다.',
+      )
+    ) {
+      resolvingChoice.current = null
+      return
+    }
     setGame(nextGame)
     setMeta(nextMeta)
     const nextPhase = game.eventResolvedForDay < game.day ? 'event' : 'camp'
@@ -7910,7 +8120,6 @@ export default function Game() {
       announce(`첫 교전은 전선 ${REQUIRED_LANE_WINS}곳 방어가 필요합니다. 추천 집중 전선을 다시 확인해 주세요.`)
       return
     }
-    if (tutorialStep === 'battle') finishTutorial('현장 훈련 완료 · 첫 교전을 개시합니다.')
     const riskDepartureConfirmed =
       riskDepartureConfirmation?.game === game && riskDepartureConfirmation.focusLane === focusLane
     if (!result.victory && !riskDepartureConfirmed) {
@@ -7931,22 +8140,30 @@ export default function Game() {
     }
 
     battleLaunchInFlight.current = true
+    if (
+      !requireStoredValues(
+        [
+          [STORAGE_KEY, JSON.stringify(game)],
+          [
+            BATTLE_STORAGE_KEY,
+            JSON.stringify({
+              runId: game.runId,
+              battles: game.battles,
+              day: game.day,
+              focusLane,
+            } satisfies SavedBattle),
+          ],
+        ],
+        '교전 복구 체크포인트를 저장할 수 없어 출전을 시작하지 않았습니다.',
+      )
+    ) {
+      battleLaunchInFlight.current = false
+      return
+    }
     dismissMarchSealCeremony()
     resolvingBattle.current = false
     setRiskDepartureConfirmation(null)
-    const battleCheckpointStored =
-      writeStoredValue(STORAGE_KEY, JSON.stringify(game)) &&
-      writeStoredValue(
-        BATTLE_STORAGE_KEY,
-        JSON.stringify({ runId: game.runId, battles: game.battles, day: game.day, focusLane } satisfies SavedBattle),
-      )
-    if (!battleCheckpointStored) {
-      removeStoredValues(BATTLE_STORAGE_KEY)
-      if (!storageWarningShown.current) {
-        storageWarningShown.current = true
-        announce('교전 복구 기록을 저장하지 못했습니다. 앱을 닫으면 마지막 캠프 기록으로 돌아갑니다.')
-      }
-    }
+    if (tutorialStep === 'battle') finishTutorial('현장 훈련 완료 · 첫 교전을 개시합니다.')
     setSelectedUnitId(null)
     setMobileRosterOpen(false)
     setBattleResult(result)
@@ -8069,12 +8286,6 @@ export default function Game() {
     )
   }
 
-  function saveBestScore(score: number) {
-    if (score <= bestScore) return
-    setBestScore(score)
-    writeStoredValue(BEST_SCORE_KEY, String(score))
-  }
-
   async function shareExpedition() {
     if (phase !== 'won' && phase !== 'lost') return
     const won = phase === 'won'
@@ -8155,9 +8366,6 @@ export default function Game() {
   function continueAfterBattle() {
     if (!battleResult || resolvingBattle.current) return
     resolvingBattle.current = true
-    const persistOutcome = (nextGame: GameState) => {
-      if (writeStoredValue(STORAGE_KEY, JSON.stringify(nextGame))) removeStoredValues(BATTLE_STORAGE_KEY)
-    }
     const nextHeat = Math.max(0, Math.min(100, game.heat + battleResult.heatDelta))
     const nextSupplies = game.supplies + battleResult.supplyReward
     const nextRecoverySupplies = battleResult.victory
@@ -8200,18 +8408,17 @@ export default function Game() {
     const previousRankEntry = rankEntryForScore(game.score)
     const earnedRankEntry = rankEntryForScore(nextScore)
     const runContinues = nextHeat > 0 || (battleResult.victory && game.day >= MAX_NIGHTS)
+    const battleProgressMilestones: MilestoneNotice[] = []
     if (runContinues && earnedRankEntry.minimum > previousRankEntry.minimum) {
-      enqueueMilestones([
-        {
-          id: `rank-${game.runId}-${earnedRankEntry.rank}`,
-          kind: 'rank',
-          glyph: earnedRankEntry.rank,
-          kicker: 'RENOWN RANK RAISED',
-          title: `${earnedRankEntry.rank} 등급 · ${earnedRankEntry.title}`,
-          description: earnedRankEntry.description,
-          detail: `누적 명성 ${nextScore.toLocaleString('ko-KR')} · 새 등급 진입`,
-        },
-      ])
+      battleProgressMilestones.push({
+        id: `rank-${game.runId}-${earnedRankEntry.rank}`,
+        kind: 'rank',
+        glyph: earnedRankEntry.rank,
+        kicker: 'RENOWN RANK RAISED',
+        title: `${earnedRankEntry.rank} 등급 · ${earnedRankEntry.title}`,
+        description: earnedRankEntry.description,
+        detail: `누적 명성 ${nextScore.toLocaleString('ko-KR')} · 새 등급 진입`,
+      })
     }
 
     const achievementCandidates: AchievementId[] = []
@@ -8225,6 +8432,25 @@ export default function Game() {
     }
     if (battleResult.victory && nextHeat <= 20) achievementCandidates.push('last-spark')
     if (nextBosses >= 3) achievementCandidates.push('crown-breaker')
+
+    function commitOutcome(
+      outcome: GameState,
+      metaProgress: ReturnType<typeof metaProgressFor>,
+      recordBestScore: boolean,
+    ) {
+      const changes: StoredValueChange[] = [[STORAGE_KEY, JSON.stringify(outcome)]]
+      if (metaProgress) changes.push([META_KEY, JSON.stringify(metaProgress.nextMeta)])
+      if (recordBestScore && outcome.score > bestScore) changes.push([BEST_SCORE_KEY, String(outcome.score)])
+      changes.push([BATTLE_STORAGE_KEY, null])
+      if (!requireStoredValues(changes, '교전 결산을 저장할 수 없어 결과 확정을 멈췄습니다.')) {
+        resolvingBattle.current = false
+        return false
+      }
+      setGame(outcome)
+      if (metaProgress) setMeta(metaProgress.nextMeta)
+      if (recordBestScore && outcome.score > bestScore) setBestScore(outcome.score)
+      return true
+    }
 
     if (battleResult.victory && game.day >= MAX_NIGHTS) {
       achievementCandidates.push('seventh-dawn')
@@ -8246,10 +8472,9 @@ export default function Game() {
         legacyAwarded: true,
         legacyReward: reward,
       }
-      persistOutcome(completed)
-      setGame(completed)
-      commitMetaProgress(achievementCandidates, reward, true, createExpeditionRecord(completed, true))
-      saveBestScore(nextScore)
+      const metaProgress = metaProgressFor(achievementCandidates, reward, true, createExpeditionRecord(completed, true))
+      if (!commitOutcome(completed, metaProgress, true)) return
+      enqueueMilestones([...battleProgressMilestones, ...(metaProgress?.milestones ?? [])])
       revealPhase('finale', 'finale', [20, 28, 28, 34, 42, 36, 62, 42, 84])
       announce(
         `백색 왕의 왕좌가 무너졌습니다. 최종 전선 ${battleResult.wins}곳 · 칙령 ${battleResult.crownBreakCount}개 파쇄. 마지막 새벽으로 향합니다.`,
@@ -8269,10 +8494,9 @@ export default function Game() {
         legacyReward: reward,
         failureInsights: cloneFailureInsights(defeatInsights),
       }
-      persistOutcome(failed)
-      setGame(failed)
-      commitMetaProgress(achievementCandidates, reward, false, createExpeditionRecord(failed, false))
-      saveBestScore(nextScore)
+      const metaProgress = metaProgressFor(achievementCandidates, reward, false, createExpeditionRecord(failed, false))
+      if (!commitOutcome(failed, metaProgress, true)) return
+      enqueueMilestones([...battleProgressMilestones, ...(metaProgress?.milestones ?? [])])
       setBattleResult(null)
       revealPhase('lost', 'fire', [36, 44, 58, 50, 78])
       announce('마지막 불씨가 꺼졌습니다. 이번 원정의 결말과 다음 공략 목표를 기록합니다.')
@@ -8289,12 +8513,12 @@ export default function Game() {
     }
     const approachingCrown = battleResult.victory ? BOSS_MECHANICS[continued.day] : undefined
     if (approachingCrown) {
-      enqueueMilestones([crownApproachMilestone(game.runId, continued.day, approachingCrown)])
+      battleProgressMilestones.push(crownApproachMilestone(game.runId, continued.day, approachingCrown))
     }
     const opensInterlude = battleResult.victory && battleResult.boss && ACT_TRANSITIONS[continued.day] !== undefined
-    persistOutcome(continued)
-    setGame(continued)
-    commitMetaProgress(achievementCandidates)
+    const metaProgress = metaProgressFor(achievementCandidates)
+    if (!commitOutcome(continued, metaProgress, false)) return
+    enqueueMilestones([...battleProgressMilestones, ...(metaProgress?.milestones ?? [])])
     setBattleResult(null)
     setFocusLane(battleResult.victory ? 0 : battleResult.focusLane)
     const nextPhase = opensInterlude ? 'interlude' : grantsRelic ? 'relic' : battleResult.victory ? 'event' : 'camp'
@@ -8791,6 +9015,7 @@ export default function Game() {
         onRetrySession={retrySessionAccess}
         onApplyUpdate={reloadUpdatedGame}
         onDismissOffline={dismissOfflineNotice}
+        onOpenSettings={openSettings}
         onDismissMilestone={dismissActiveMilestone}
       />
 
@@ -8831,6 +9056,7 @@ export default function Game() {
           bestScore={bestScore}
           runtimeState={runtimeState}
           runtimeStateCopy={runtimeStateCopy}
+          storageUnavailable={storageProtection === 'unavailable'}
           updateAvailable={runtimeNoticeSafe && (updateReady || updateFailed)}
           updateFailed={updateFailed}
           soundOn={soundOn}
@@ -8987,6 +9213,7 @@ export default function Game() {
           updateSettings={updateSettings}
           previewSound={() => playSound('select', soundOn)}
           requestPersistentStorage={requestPersistentStorage}
+          retryStorageAccess={retryStorageAccess}
           exportGameBackup={exportGameBackup}
           restoreGameBackup={restoreGameBackup}
           cancelGameBackupRestore={cancelGameBackupRestore}
