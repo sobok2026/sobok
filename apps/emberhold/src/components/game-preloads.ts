@@ -41,6 +41,7 @@ function preloadDeferredModule(load: () => Promise<unknown>) {
 }
 
 export const loadArchiveDialog = createDeferredModuleLoader(() => import('./ArchiveDialog'))
+export const loadCampaignComponents = createDeferredModuleLoader(() => import('./CampaignComponents'))
 export const loadCampaignEventDialog = createDeferredModuleLoader(() => import('./CampaignEventDialog'))
 export const loadCinematicLayers = createDeferredModuleLoader(() => import('./CinematicLayers'))
 export const loadEndingScreen = createDeferredModuleLoader(() => import('./EndingScreen'))
@@ -51,6 +52,10 @@ export const loadSettingsDialog = createDeferredModuleLoader(() => import('./Set
 
 export function preloadArchiveDialog() {
   preloadDeferredModule(loadArchiveDialog)
+}
+
+export function preloadCampaignComponents() {
+  preloadDeferredModule(loadCampaignComponents)
 }
 
 export function preloadCampaignEventDialog() {

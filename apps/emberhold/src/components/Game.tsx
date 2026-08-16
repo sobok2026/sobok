@@ -3,15 +3,8 @@
 import dynamic from 'next/dynamic'
 import type { ChangeEvent, PointerEvent as ReactPointerEvent } from 'react'
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react'
-import { BattleBriefing } from './BattleBriefing'
-import { BattleCommandControls, BattleLaunch } from './BattleCommandCenter'
-import { BattleDirectives } from './BattleDirectives'
-import { EnemyFormation, PlayerFormation } from './BattleFormations'
-import { BattleReadiness } from './BattleReadiness'
 import { CampaignHud } from './CampaignHud'
-import { CampActions, CampUndoNotice, QuartermasterLedger } from './CampInvestments'
-import { CampOverview } from './CampOverview'
-import { CampRosterGrid, type RosterMergeReadiness, SelectedUnitReadout } from './CampRoster'
+import type { RosterMergeReadiness } from './CampRoster'
 import { DragGhostPreview, GameFeedback } from './GameFeedback'
 import type {
   AchievementId,
@@ -158,6 +151,7 @@ import {
 } from './game-model'
 import {
   loadArchiveDialog,
+  loadCampaignComponents,
   loadCampaignEventDialog,
   loadCinematicLayers,
   loadEndingScreen,
@@ -166,6 +160,7 @@ import {
   loadProgressionDialogs,
   loadSettingsDialog,
   preloadArchiveDialog,
+  preloadCampaignComponents,
   preloadCampaignEventDialog,
   preloadCinematicLayers,
   preloadEndingScreen,
@@ -175,12 +170,10 @@ import {
   preloadSettingsDialog,
 } from './game-preloads'
 import { LegacyDepartureBriefing } from './LegacyLoadout'
-import { MobileCommandDock } from './MobileCommandDock'
 import { TitleScreen } from './TitleScreen'
-import { TutorialCoach } from './TutorialCoach'
 import { SNOW_PARTICLES, WorldBackdrop } from './WorldBackdrop'
 
-function DeferredGameLayer({ label, scope }: { label: string; scope: ActiveLayer }) {
+function DeferredGameLayer({ label, scope }: { label: string; scope?: ActiveLayer }) {
   return (
     <div
       className="deferred-game-layer"
@@ -203,6 +196,70 @@ function DeferredGameLayer({ label, scope }: { label: string; scope: ActiveLayer
 const ArchiveDialog = dynamic(() => loadArchiveDialog().then((module) => module.ArchiveDialog), {
   ssr: false,
   loading: () => <DeferredGameLayer label="원정 기록을 펼치는 중" scope="archive" />,
+})
+const CampaignStageGate = dynamic(() => loadCampaignComponents().then((module) => module.CampaignStageGate), {
+  ssr: false,
+  loading: () => <DeferredGameLayer label="원정 지휘소를 준비하는 중" scope="battle" />,
+})
+const BattleBriefing = dynamic(() => loadCampaignComponents().then((module) => module.BattleBriefing), {
+  ssr: false,
+  loading: () => null,
+})
+const BattleCommandControls = dynamic(() => loadCampaignComponents().then((module) => module.BattleCommandControls), {
+  ssr: false,
+  loading: () => null,
+})
+const BattleLaunch = dynamic(() => loadCampaignComponents().then((module) => module.BattleLaunch), {
+  ssr: false,
+  loading: () => null,
+})
+const BattleDirectives = dynamic(() => loadCampaignComponents().then((module) => module.BattleDirectives), {
+  ssr: false,
+  loading: () => null,
+})
+const EnemyFormation = dynamic(() => loadCampaignComponents().then((module) => module.EnemyFormation), {
+  ssr: false,
+  loading: () => null,
+})
+const PlayerFormation = dynamic(() => loadCampaignComponents().then((module) => module.PlayerFormation), {
+  ssr: false,
+  loading: () => null,
+})
+const BattleReadiness = dynamic(() => loadCampaignComponents().then((module) => module.BattleReadiness), {
+  ssr: false,
+  loading: () => null,
+})
+const CampActions = dynamic(() => loadCampaignComponents().then((module) => module.CampActions), {
+  ssr: false,
+  loading: () => null,
+})
+const CampUndoNotice = dynamic(() => loadCampaignComponents().then((module) => module.CampUndoNotice), {
+  ssr: false,
+  loading: () => null,
+})
+const QuartermasterLedger = dynamic(() => loadCampaignComponents().then((module) => module.QuartermasterLedger), {
+  ssr: false,
+  loading: () => null,
+})
+const CampOverview = dynamic(() => loadCampaignComponents().then((module) => module.CampOverview), {
+  ssr: false,
+  loading: () => null,
+})
+const CampRosterGrid = dynamic(() => loadCampaignComponents().then((module) => module.CampRosterGrid), {
+  ssr: false,
+  loading: () => null,
+})
+const SelectedUnitReadout = dynamic(() => loadCampaignComponents().then((module) => module.SelectedUnitReadout), {
+  ssr: false,
+  loading: () => null,
+})
+const MobileCommandDock = dynamic(() => loadCampaignComponents().then((module) => module.MobileCommandDock), {
+  ssr: false,
+  loading: () => null,
+})
+const TutorialCoach = dynamic(() => loadCampaignComponents().then((module) => module.TutorialCoach), {
+  ssr: false,
+  loading: () => null,
 })
 const CampaignEventDialog = dynamic(() => loadCampaignEventDialog().then((module) => module.CampaignEventDialog), {
   ssr: false,
@@ -254,6 +311,7 @@ const SettingsDialog = dynamic(() => loadSettingsDialog().then((module) => modul
 })
 
 function preloadPhaseLayer(phase: Phase, nearingEnding: boolean) {
+  if (phase === 'camp') preloadCampaignComponents()
   if (phase === 'event') preloadCampaignEventDialog()
   if (phase === 'battling' || phase === 'interlude' || phase === 'finale') preloadCinematicLayers()
   if (phase === 'promotion' || phase === 'relic' || phase === 'result') preloadProgressionDialogs()
@@ -279,6 +337,7 @@ function preloadGameplayStage(phase: Phase, nearingEnding: boolean): () => void 
     const idleScheduler = window as unknown as IdleScheduler
     const preloadFutureLayers = async () => {
       const loaders: ReadonlyArray<() => Promise<unknown>> = [
+        loadCampaignComponents,
         loadCinematicLayers,
         loadProgressionDialogs,
         loadExpeditionMenu,
@@ -2935,6 +2994,7 @@ export default function Game() {
   const [showInstallHelp, setShowInstallHelp] = useState(false)
   const [online, setOnline] = useState(true)
   const [runtimeActive, setRuntimeActive] = useState(true)
+  const [campaignStageReady, setCampaignStageReady] = useState(false)
   const [offlineReady, setOfflineReady] = useState(false)
   const [standalone, setStandalone] = useState(false)
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null)
@@ -5091,6 +5151,7 @@ export default function Game() {
           ? '오프라인 준비 완료'
           : '온라인 연결'
   const runtimeNotice = !online ? 'offline' : updateReady ? 'update' : null
+  const campaignStagePending = !showTitle && phase === 'camp' && !campaignStageReady
   const activeLayer: ActiveLayer | null =
     sessionAccess !== 'active'
       ? 'session'
@@ -5106,23 +5167,25 @@ export default function Game() {
                 ? 'title'
                 : showGuide
                   ? 'guide'
-                  : phase === 'event'
-                    ? 'event'
-                    : phase === 'battling'
-                      ? 'battle'
-                      : phase === 'interlude'
-                        ? 'interlude'
-                        : phase === 'finale'
-                          ? 'finale'
-                          : phase === 'relic'
-                            ? 'relic'
-                            : phase === 'promotion'
-                              ? 'promotion'
-                              : phase === 'result'
-                                ? 'result'
-                                : phase === 'won' || phase === 'lost'
-                                  ? 'ending'
-                                  : null
+                  : campaignStagePending
+                    ? 'battle'
+                    : phase === 'event'
+                      ? 'event'
+                      : phase === 'battling'
+                        ? 'battle'
+                        : phase === 'interlude'
+                          ? 'interlude'
+                          : phase === 'finale'
+                            ? 'finale'
+                            : phase === 'relic'
+                              ? 'relic'
+                              : phase === 'promotion'
+                                ? 'promotion'
+                                : phase === 'result'
+                                  ? 'result'
+                                  : phase === 'won' || phase === 'lost'
+                                    ? 'ending'
+                                    : null
   const gameIsBlocked = activeLayer !== null || phase === 'battling'
   const documentScrollLocked = gameIsBlocked || (compactViewport && mobileRosterOpen)
   const navigationGuardNeeded =
@@ -7945,370 +8008,375 @@ export default function Game() {
       data-battle-pace={settings.battlePace}
       data-soundscape={soundscapeMood}
     >
-      <div className="game-stage" inert={gameIsBlocked ? true : undefined}>
+      <div className="game-stage" inert={gameIsBlocked && !campaignStagePending ? true : undefined}>
         <WorldBackdrop actNumber={currentAct.number} showCampaignArt={!showTitle} />
 
-        <CampaignHud
-          game={game}
-          actNumber={currentAct.number}
-          actTitle={currentAct.title}
-          bossBattle={currentStory.boss}
-          currentBossName={currentBossMechanic?.name ?? null}
-          nextCrownNight={nextCrownNight}
-          nextCrownName={nextCrownMechanic?.name ?? null}
-          marchSealActive={marchSealCeremony !== null}
-          nextRankEntry={nextRankEntry}
-          liveRank={liveRankEntry.rank}
-          liveRankProgress={liveRankProgress}
-          soundOn={soundOn}
-          emberPulseActive={activeResonances.includes('ember-pulse')}
-          toggleSound={toggleSound}
-          openSettings={openSettings}
-          openArchive={openArchive}
-          openGuide={openGuide}
-          openExpeditionMenu={openExpeditionMenu}
-        />
-
-        {game.campaignStarted && game.day === 1 && game.activeLegacy.length > 0 && !showTitle ? (
-          <LegacyDepartureBriefing legacyIds={game.activeLegacy} />
-        ) : null}
-
-        {tutorialStep && tutorialCopy && phase === 'camp' && !showTitle && !showGuide && !showArchive ? (
-          <TutorialCoach
-            step={tutorialStep}
-            copy={tutorialCopy}
-            stepIndex={tutorialIndex}
-            objective={tutorialObjective}
-            actionLabel={tutorialActionLabel}
-            onSkip={skipTutorial}
-            onFocusTarget={focusTutorialTarget}
+        {!showTitle ? (
+          <CampaignHud
+            game={game}
+            actNumber={currentAct.number}
+            actTitle={currentAct.title}
+            bossBattle={currentStory.boss}
+            currentBossName={currentBossMechanic?.name ?? null}
+            nextCrownNight={nextCrownNight}
+            nextCrownName={nextCrownMechanic?.name ?? null}
+            marchSealActive={marchSealCeremony !== null}
+            nextRankEntry={nextRankEntry}
+            liveRank={liveRankEntry.rank}
+            liveRankProgress={liveRankProgress}
+            soundOn={soundOn}
+            emberPulseActive={activeResonances.includes('ember-pulse')}
+            toggleSound={toggleSound}
+            openSettings={openSettings}
+            openArchive={openArchive}
+            openGuide={openGuide}
+            openExpeditionMenu={openExpeditionMenu}
           />
         ) : null}
 
-        <div className="game-layout">
-          <section
-            className="battle-panel panel"
-            aria-labelledby="battle-title"
-            aria-busy={phase === 'battling'}
-            aria-hidden={compactViewport && mobileRosterOpen ? true : undefined}
-            inert={compactViewport && mobileRosterOpen ? true : undefined}
-          >
-            <BattleBriefing
-              day={game.day}
-              difficulty={game.difficulty}
-              story={currentStory}
-              condition={currentCondition}
-              protocol={difficultyProtocol}
-              masteryForecast={protocolMasteryForecast}
-            />
+        {phase === 'camp' && !showTitle ? (
+          <>
+            <CampaignStageGate onReady={setCampaignStageReady} />
 
-            <BattleReadiness
-              day={game.day}
-              storyBoss={currentStory.boss}
-              nextCrownMechanic={nextCrownMechanic}
-              firstCrownBriefing={firstCrownBriefing}
-              firstCrownReadyCount={firstCrownReadyCount}
-              firstCrownSignals={firstCrownSignals}
-              currentBuildDoctrine={currentBuildDoctrine}
-              activeResonanceCount={activeResonances.length}
-              ownedRelics={game.relics}
-              startedResonanceStatuses={startedResonanceStatuses}
-              nextRelicNight={nextRelicNight}
-              finalMarchGate={finalMarchGate}
-              finalMarchBriefing={finalMarchBriefing}
-              currentDoctrineBroken={currentEliteDoctrineForecast?.broken ?? false}
-              finalMarchForecastAvailable={finalMarchBattlePreview !== null}
-              projectedReturnHeat={projectedReturnHeat}
-              tierThreeLineCount={tierThreeLineCount}
-              formationKindCount={formationKindCount}
-            />
+            {game.campaignStarted && game.day === 1 && game.activeLegacy.length > 0 ? (
+              <LegacyDepartureBriefing legacyIds={game.activeLegacy} />
+            ) : null}
 
-            <BattleDirectives
-              day={game.day}
-              actNumber={currentStory.act}
-              currentBossMechanic={currentBossMechanic}
-              activeDecisionEcho={activeDecisionEcho}
-              lineupReady={lineupReady}
-              decisionEchoForecastCount={decisionEchoForecastCount}
-              finalMarchImprintCount={activeFinalMarchImprints.length}
-              finalMarchImprintForecasts={finalMarchImprintForecasts}
-              finalMarchImprintForecastCount={finalMarchImprintForecastCount}
-              activeFinalVow={activeFinalVow}
-              finalVowForecastCount={finalVowForecastCount}
-              projectedBattleVictory={projectedBattleVictory}
-              finalCrownForecast={finalCrownForecast}
-              finalCrownForecastCount={finalCrownForecastCount}
-              projectedWins={projectedWins}
-              tierThreeLineCount={tierThreeLineCount}
-              tierFourLineCount={tierFourLineCount}
-              projectedCrownMasteryScore={projectedCrownMasteryScore}
-              currentEliteEncounter={currentEliteEncounter}
-              currentEliteDoctrine={currentEliteDoctrine}
-              doctrineCommandRelief={doctrineCommandRelief}
-              doctrineCommandFloor={doctrineCommandFloor}
-            />
-
-            <div className="battle-stage">
-              <div className="stage-label enemy-label">
-                <span>빙결 군단</span>
-                <i />
-              </div>
-
-              <EnemyFormation entries={enemyFormationEntries} />
-
-              <div className="clash-line" aria-hidden="true">
-                <span />
-                <b>VS</b>
-                <span />
-              </div>
-
-              <div className="stage-label player-label">
-                <span>우리 전선</span>
-                <i />
-              </div>
-
-              <PlayerFormation
-                lineupUnits={lineupUnits}
-                forecasts={forecastLanes}
-                selectedUnit={selectedUnit}
-                deploymentForecasts={deploymentForecasts}
-                recommendedDeploymentLane={recommendedDeploymentLane}
-                selectedUnitId={selectedUnitId}
-                focusLane={focusLane}
-                tutorialDeploy={tutorialStep === 'deploy'}
-                activeDecisionEcho={activeDecisionEcho}
-                activeFinalVow={activeFinalVow}
-                getSurvivorName={survivorName}
-                onClearSelection={clearDeploymentSelection}
-                onDeploy={deployUnit}
+            {tutorialStep && tutorialCopy && !showGuide && !showArchive ? (
+              <TutorialCoach
+                step={tutorialStep}
+                copy={tutorialCopy}
+                stepIndex={tutorialIndex}
+                objective={tutorialObjective}
+                actionLabel={tutorialActionLabel}
+                onSkip={skipTutorial}
+                onFocusTarget={focusTutorialTarget}
               />
+            ) : null}
 
-              <BattleCommandControls
-                focusLane={focusLane}
-                focusBonusPercent={focusBonusPercent}
-                focusResonanceActive={activeResonances.includes('whiteout-sight')}
-                tutorialFocus={tutorialStep === 'focus'}
-                tutorialOrders={tutorialStep === 'orders'}
-                tutorialRecommendedFocusLane={tutorialRecommendedFocusLane}
-                orders={game.orders}
-                enemyIntents={battleContext.enemyIntents}
-                commandSpent={commandSpent}
-                commandLimit={commandLimit}
-                commandLimitBeforeContract={commandLimitBeforeContract}
-                doctrineCommandRelief={doctrineCommandRelief}
-                legacyCommand={legacyCommandContribution}
-                masteryContract={game.masteryContract}
-                tacticalRehearsal={tacticalRehearsal}
-                tacticalAdjustmentAvailable={tacticalAdjustment !== null}
-                onChooseFocusLane={chooseFocusLane}
-                onChooseOrder={chooseOrder}
-                onApplyTacticalAdjustment={applyTacticalAdjustment}
-              />
+            <div className="game-layout">
+              <section
+                className="battle-panel panel"
+                aria-labelledby="battle-title"
+                aria-hidden={compactViewport && mobileRosterOpen ? true : undefined}
+                inert={compactViewport && mobileRosterOpen ? true : undefined}
+              >
+                <BattleBriefing
+                  day={game.day}
+                  difficulty={game.difficulty}
+                  story={currentStory}
+                  condition={currentCondition}
+                  protocol={difficultyProtocol}
+                  masteryForecast={protocolMasteryForecast}
+                />
+
+                <BattleReadiness
+                  day={game.day}
+                  storyBoss={currentStory.boss}
+                  nextCrownMechanic={nextCrownMechanic}
+                  firstCrownBriefing={firstCrownBriefing}
+                  firstCrownReadyCount={firstCrownReadyCount}
+                  firstCrownSignals={firstCrownSignals}
+                  currentBuildDoctrine={currentBuildDoctrine}
+                  activeResonanceCount={activeResonances.length}
+                  ownedRelics={game.relics}
+                  startedResonanceStatuses={startedResonanceStatuses}
+                  nextRelicNight={nextRelicNight}
+                  finalMarchGate={finalMarchGate}
+                  finalMarchBriefing={finalMarchBriefing}
+                  currentDoctrineBroken={currentEliteDoctrineForecast?.broken ?? false}
+                  finalMarchForecastAvailable={finalMarchBattlePreview !== null}
+                  projectedReturnHeat={projectedReturnHeat}
+                  tierThreeLineCount={tierThreeLineCount}
+                  formationKindCount={formationKindCount}
+                />
+
+                <BattleDirectives
+                  day={game.day}
+                  actNumber={currentStory.act}
+                  currentBossMechanic={currentBossMechanic}
+                  activeDecisionEcho={activeDecisionEcho}
+                  lineupReady={lineupReady}
+                  decisionEchoForecastCount={decisionEchoForecastCount}
+                  finalMarchImprintCount={activeFinalMarchImprints.length}
+                  finalMarchImprintForecasts={finalMarchImprintForecasts}
+                  finalMarchImprintForecastCount={finalMarchImprintForecastCount}
+                  activeFinalVow={activeFinalVow}
+                  finalVowForecastCount={finalVowForecastCount}
+                  projectedBattleVictory={projectedBattleVictory}
+                  finalCrownForecast={finalCrownForecast}
+                  finalCrownForecastCount={finalCrownForecastCount}
+                  projectedWins={projectedWins}
+                  tierThreeLineCount={tierThreeLineCount}
+                  tierFourLineCount={tierFourLineCount}
+                  projectedCrownMasteryScore={projectedCrownMasteryScore}
+                  currentEliteEncounter={currentEliteEncounter}
+                  currentEliteDoctrine={currentEliteDoctrine}
+                  doctrineCommandRelief={doctrineCommandRelief}
+                  doctrineCommandFloor={doctrineCommandFloor}
+                />
+
+                <div className="battle-stage">
+                  <div className="stage-label enemy-label">
+                    <span>빙결 군단</span>
+                    <i />
+                  </div>
+
+                  <EnemyFormation entries={enemyFormationEntries} />
+
+                  <div className="clash-line" aria-hidden="true">
+                    <span />
+                    <b>VS</b>
+                    <span />
+                  </div>
+
+                  <div className="stage-label player-label">
+                    <span>우리 전선</span>
+                    <i />
+                  </div>
+
+                  <PlayerFormation
+                    lineupUnits={lineupUnits}
+                    forecasts={forecastLanes}
+                    selectedUnit={selectedUnit}
+                    deploymentForecasts={deploymentForecasts}
+                    recommendedDeploymentLane={recommendedDeploymentLane}
+                    selectedUnitId={selectedUnitId}
+                    focusLane={focusLane}
+                    tutorialDeploy={tutorialStep === 'deploy'}
+                    activeDecisionEcho={activeDecisionEcho}
+                    activeFinalVow={activeFinalVow}
+                    getSurvivorName={survivorName}
+                    onClearSelection={clearDeploymentSelection}
+                    onDeploy={deployUnit}
+                  />
+
+                  <BattleCommandControls
+                    focusLane={focusLane}
+                    focusBonusPercent={focusBonusPercent}
+                    focusResonanceActive={activeResonances.includes('whiteout-sight')}
+                    tutorialFocus={tutorialStep === 'focus'}
+                    tutorialOrders={tutorialStep === 'orders'}
+                    tutorialRecommendedFocusLane={tutorialRecommendedFocusLane}
+                    orders={game.orders}
+                    enemyIntents={battleContext.enemyIntents}
+                    commandSpent={commandSpent}
+                    commandLimit={commandLimit}
+                    commandLimitBeforeContract={commandLimitBeforeContract}
+                    doctrineCommandRelief={doctrineCommandRelief}
+                    legacyCommand={legacyCommandContribution}
+                    masteryContract={game.masteryContract}
+                    tacticalRehearsal={tacticalRehearsal}
+                    tacticalAdjustmentAvailable={tacticalAdjustment !== null}
+                    onChooseFocusLane={chooseFocusLane}
+                    onChooseOrder={chooseOrder}
+                    onApplyTacticalAdjustment={applyTacticalAdjustment}
+                  />
+                </div>
+
+                <BattleLaunch
+                  forecastReady={battleActionReady}
+                  forecastTitle={battleForecastTitle}
+                  forecastDetail={battleForecastDetail}
+                  laneForecasts={forecastLanes}
+                  recommendedLane={tacticalAdjustment?.lane ?? null}
+                  legacyCommand={legacyCommandContribution}
+                  legacyRewardForecast={legacyRewardForecast}
+                  masteryContractForecast={masteryContractForecast}
+                  riskDepartureForecast={riskDepartureForecast}
+                  actionLabel={battleActionLabel}
+                  actionDisabled={battleStartDisabled}
+                  tutorialBattle={tutorialStep === 'battle'}
+                  onCancelRiskDeparture={cancelRiskDeparture}
+                  onStartBattle={startBattle}
+                />
+              </section>
+
+              <section
+                id="mobile-roster-sheet"
+                className="camp-panel panel"
+                role={compactViewport ? 'dialog' : undefined}
+                aria-labelledby="camp-title"
+                aria-describedby={compactViewport ? 'camp-instruction' : undefined}
+                aria-hidden={compactViewport && !mobileRosterOpen ? true : undefined}
+                data-mobile-open={mobileRosterOpen ? 'true' : 'false'}
+                inert={compactViewport && !mobileRosterOpen ? true : undefined}
+              >
+                <CampOverview
+                  rosterCount={rosterCount}
+                  mergeReadyPairCount={mergeReadyPairCount}
+                  oath={game.oath}
+                  mode={game.mode}
+                  runCode={runCodeFor(game.runSeed)}
+                  heat={game.heat}
+                  oathChronicleTitle={oathChronicle.title}
+                  oathInterventionCount={oathInterventionCount}
+                  oathInterventionPath={oathInterventionPath}
+                  trialStatuses={trialStatuses}
+                  ownedRelics={game.relics}
+                  activeResonances={activeResonances}
+                  resonanceStatuses={resonanceStatuses}
+                  activeLegacy={game.activeLegacy}
+                  inactiveLegacyCount={Math.max(0, meta.legacy.length - game.activeLegacy.length)}
+                  getResonanceForRelic={resonanceForRelic}
+                  onClose={showBattlefield}
+                />
+
+                <CampRosterGrid
+                  slots={game.slots}
+                  mergeReadinessByUnit={mergeReadinessByUnit}
+                  selectedUnitId={selectedUnitId}
+                  draggingUnitId={draggingUnitId}
+                  tutorialMerge={tutorialStep === 'merge'}
+                  getSurvivorName={survivorName}
+                  getUnitPower={unitPower}
+                  onRosterTap={handleRosterTap}
+                  onEmptySlot={handleEmptySlot}
+                  onUnitPointerDown={onUnitPointerDown}
+                  onUnitPointerMove={onUnitPointerMove}
+                  onUnitPointerUp={onUnitPointerUp}
+                  onUnitPointerCancel={onUnitPointerCancel}
+                />
+
+                <QuartermasterLedger
+                  day={game.day}
+                  supplies={game.supplies}
+                  recoverySupplies={game.recoverySupplies}
+                  spendable={quartermasterSpendable}
+                  reserve={quartermasterReserve}
+                  briefing={quartermasterBriefing}
+                  recruit={{
+                    cost: recruitCost,
+                    afterNext: recruitCostAfterNext,
+                    nightPressure: recruitNightPressure,
+                    scalePressure: recruitScalePressure,
+                    difficultyDelta: difficultyProtocol.recruitCostDelta,
+                    discount: recruitDiscount,
+                    recoveryDiscount: recoveryRecruitDiscount,
+                  }}
+                  returnForecast={
+                    campBattlePreview
+                      ? {
+                          victory: campBattlePreview.victory,
+                          supplyReward: campBattlePreview.supplyReward,
+                          supplies: projectedCampReturnSupplies,
+                          heat: projectedCampReturnHeat,
+                        }
+                      : null
+                  }
+                  pace={{
+                    growthGap: campaignPaceGrowthGap,
+                    lineupTierTotal,
+                    target: campaignPaceTierTarget,
+                    crownGrowth: campaignPaceBenchmark.crownGrowth,
+                    progress: campaignPaceProgress,
+                    heatGap: campaignPaceHeatGap,
+                  }}
+                />
+
+                <CampActions
+                  recruit={{
+                    kind: nextRecruitKind,
+                    pairReady: nextRecruitTierOneCount > 0,
+                    reserveRisk: game.supplies >= recruitCost && !recruitKeepsReserve,
+                    reserve: quartermasterReserve,
+                    cost: recruitCost,
+                    afterNext: recruitCostAfterNext,
+                    nightPressure: recruitNightPressure,
+                    scalePressure: recruitScalePressure,
+                    difficultyDelta: difficultyProtocol.recruitCostDelta,
+                    discount: recruitDiscount,
+                    recoveryDiscount: recoveryRecruitDiscount,
+                    disabled: rosterCount >= ROSTER_SIZE || game.supplies < recruitCost,
+                  }}
+                  stoke={{
+                    heat: game.heat,
+                    heatGain: stokeHeatGain,
+                    baseCost: stokeBaseCost,
+                    cost: stokeCost,
+                    disabled: game.supplies < stokeCost || game.heat >= 100,
+                  }}
+                  marchSeal={
+                    game.day >= 9
+                      ? {
+                          unlocked: marchSealUnlocked,
+                          supplies: marchSealSupplies,
+                          reserve: marchSealReserve,
+                          recoveryReserve: marchSealRecoveryReserve,
+                          scoreRate: marchSealScoreRate,
+                          score: marchSealScore,
+                          legacy: marchSealLegacyActive
+                            ? {
+                                baseScoreRate: marchSealBaseScoreRate,
+                                scoreBonus: marchSealLegacyScoreBonus,
+                              }
+                            : null,
+                          contract: game.masteryContract
+                            ? {
+                                id: game.masteryContract,
+                                inheritedScoreRate: marchSealInheritedScoreRate,
+                                scoreBonus: marchSealContractScoreBonus,
+                              }
+                            : null,
+                          veteranLines: marchSealVeteranLines,
+                          disabled: !marchSealUnlocked || marchSealSupplies < 10,
+                        }
+                      : null
+                  }
+                  onRecruit={recruit}
+                  onStoke={stokeFire}
+                  onSealMarchSupplies={sealMarchSupplies}
+                />
+
+                <CampUndoNotice undo={campUndo} onUndo={undoCampAction} />
+
+                <SelectedUnitReadout
+                  selectedUnit={selectedUnit}
+                  selectedUnitLane={selectedUnitLane}
+                  deploymentForecasts={deploymentForecasts}
+                  recommendedDeploymentLane={recommendedDeploymentLane}
+                  mergeReadiness={selectedUnit ? (mergeReadinessByUnit.get(selectedUnit.id) ?? null) : null}
+                  rosterCount={rosterCount}
+                  getSurvivorName={survivorName}
+                  onQuickDeploy={quickDeploySelectedUnit}
+                />
+              </section>
             </div>
 
-            <BattleLaunch
-              forecastReady={battleActionReady}
-              forecastTitle={battleForecastTitle}
-              forecastDetail={battleForecastDetail}
-              laneForecasts={forecastLanes}
-              recommendedLane={tacticalAdjustment?.lane ?? null}
-              legacyCommand={legacyCommandContribution}
-              legacyRewardForecast={legacyRewardForecast}
-              masteryContractForecast={masteryContractForecast}
+            <MobileCommandDock
+              rosterOpen={mobileRosterOpen}
+              projectedWins={projectedWins}
+              rosterCount={rosterCount}
+              day={game.day}
+              battleDisabled={battleStartDisabled}
+              battleReady={battleActionReady}
+              battleActionLabel={mobileBattleActionLabel}
+              battleForecastTitle={battleForecastTitle}
+              battleForecastDetail={battleForecastDetail}
               riskDepartureForecast={riskDepartureForecast}
-              actionLabel={battleActionLabel}
-              actionDisabled={battleStartDisabled}
-              tutorialBattle={tutorialStep === 'battle'}
+              tacticalSuggestion={
+                tacticalAdjustment && tacticalRehearsal
+                  ? {
+                      title: tacticalRehearsal.title,
+                      status: tacticalRehearsal.status,
+                      actionLabel: tacticalRehearsal.actionLabel,
+                    }
+                  : null
+              }
+              onShowBattlefield={showBattlefield}
+              onShowRoster={showMobileRoster}
+              onApplyTacticalSuggestion={applyTacticalAdjustment}
               onCancelRiskDeparture={cancelRiskDeparture}
               onStartBattle={startBattle}
             />
-          </section>
 
-          <section
-            id="mobile-roster-sheet"
-            className="camp-panel panel"
-            role={compactViewport ? 'dialog' : undefined}
-            aria-labelledby="camp-title"
-            aria-describedby={compactViewport ? 'camp-instruction' : undefined}
-            aria-hidden={compactViewport && !mobileRosterOpen ? true : undefined}
-            data-mobile-open={mobileRosterOpen ? 'true' : 'false'}
-            inert={compactViewport && !mobileRosterOpen ? true : undefined}
-          >
-            <CampOverview
-              rosterCount={rosterCount}
-              mergeReadyPairCount={mergeReadyPairCount}
-              oath={game.oath}
-              mode={game.mode}
-              runCode={runCodeFor(game.runSeed)}
-              heat={game.heat}
-              oathChronicleTitle={oathChronicle.title}
-              oathInterventionCount={oathInterventionCount}
-              oathInterventionPath={oathInterventionPath}
-              trialStatuses={trialStatuses}
-              ownedRelics={game.relics}
-              activeResonances={activeResonances}
-              resonanceStatuses={resonanceStatuses}
-              activeLegacy={game.activeLegacy}
-              inactiveLegacyCount={Math.max(0, meta.legacy.length - game.activeLegacy.length)}
-              getResonanceForRelic={resonanceForRelic}
-              onClose={showBattlefield}
+            <DragGhostPreview
+              active={draggingUnitId !== null}
+              ghostRef={dragGhostRef}
+              glyph={KIND_META[findUnit(game, draggingUnitId)?.kind ?? 'warden'].glyph}
             />
-
-            <CampRosterGrid
-              slots={game.slots}
-              mergeReadinessByUnit={mergeReadinessByUnit}
-              selectedUnitId={selectedUnitId}
-              draggingUnitId={draggingUnitId}
-              tutorialMerge={tutorialStep === 'merge'}
-              getSurvivorName={survivorName}
-              getUnitPower={unitPower}
-              onRosterTap={handleRosterTap}
-              onEmptySlot={handleEmptySlot}
-              onUnitPointerDown={onUnitPointerDown}
-              onUnitPointerMove={onUnitPointerMove}
-              onUnitPointerUp={onUnitPointerUp}
-              onUnitPointerCancel={onUnitPointerCancel}
-            />
-
-            <QuartermasterLedger
-              day={game.day}
-              supplies={game.supplies}
-              recoverySupplies={game.recoverySupplies}
-              spendable={quartermasterSpendable}
-              reserve={quartermasterReserve}
-              briefing={quartermasterBriefing}
-              recruit={{
-                cost: recruitCost,
-                afterNext: recruitCostAfterNext,
-                nightPressure: recruitNightPressure,
-                scalePressure: recruitScalePressure,
-                difficultyDelta: difficultyProtocol.recruitCostDelta,
-                discount: recruitDiscount,
-                recoveryDiscount: recoveryRecruitDiscount,
-              }}
-              returnForecast={
-                campBattlePreview
-                  ? {
-                      victory: campBattlePreview.victory,
-                      supplyReward: campBattlePreview.supplyReward,
-                      supplies: projectedCampReturnSupplies,
-                      heat: projectedCampReturnHeat,
-                    }
-                  : null
-              }
-              pace={{
-                growthGap: campaignPaceGrowthGap,
-                lineupTierTotal,
-                target: campaignPaceTierTarget,
-                crownGrowth: campaignPaceBenchmark.crownGrowth,
-                progress: campaignPaceProgress,
-                heatGap: campaignPaceHeatGap,
-              }}
-            />
-
-            <CampActions
-              recruit={{
-                kind: nextRecruitKind,
-                pairReady: nextRecruitTierOneCount > 0,
-                reserveRisk: game.supplies >= recruitCost && !recruitKeepsReserve,
-                reserve: quartermasterReserve,
-                cost: recruitCost,
-                afterNext: recruitCostAfterNext,
-                nightPressure: recruitNightPressure,
-                scalePressure: recruitScalePressure,
-                difficultyDelta: difficultyProtocol.recruitCostDelta,
-                discount: recruitDiscount,
-                recoveryDiscount: recoveryRecruitDiscount,
-                disabled: phase !== 'camp' || rosterCount >= ROSTER_SIZE || game.supplies < recruitCost,
-              }}
-              stoke={{
-                heat: game.heat,
-                heatGain: stokeHeatGain,
-                baseCost: stokeBaseCost,
-                cost: stokeCost,
-                disabled: phase !== 'camp' || game.supplies < stokeCost || game.heat >= 100,
-              }}
-              marchSeal={
-                game.day >= 9
-                  ? {
-                      unlocked: marchSealUnlocked,
-                      supplies: marchSealSupplies,
-                      reserve: marchSealReserve,
-                      recoveryReserve: marchSealRecoveryReserve,
-                      scoreRate: marchSealScoreRate,
-                      score: marchSealScore,
-                      legacy: marchSealLegacyActive
-                        ? {
-                            baseScoreRate: marchSealBaseScoreRate,
-                            scoreBonus: marchSealLegacyScoreBonus,
-                          }
-                        : null,
-                      contract: game.masteryContract
-                        ? {
-                            id: game.masteryContract,
-                            inheritedScoreRate: marchSealInheritedScoreRate,
-                            scoreBonus: marchSealContractScoreBonus,
-                          }
-                        : null,
-                      veteranLines: marchSealVeteranLines,
-                      disabled: phase !== 'camp' || !marchSealUnlocked || marchSealSupplies < 10,
-                    }
-                  : null
-              }
-              onRecruit={recruit}
-              onStoke={stokeFire}
-              onSealMarchSupplies={sealMarchSupplies}
-            />
-
-            <CampUndoNotice undo={campUndo} onUndo={undoCampAction} />
-
-            <SelectedUnitReadout
-              selectedUnit={selectedUnit}
-              selectedUnitLane={selectedUnitLane}
-              deploymentForecasts={deploymentForecasts}
-              recommendedDeploymentLane={recommendedDeploymentLane}
-              mergeReadiness={selectedUnit ? (mergeReadinessByUnit.get(selectedUnit.id) ?? null) : null}
-              rosterCount={rosterCount}
-              getSurvivorName={survivorName}
-              onQuickDeploy={quickDeploySelectedUnit}
-            />
-          </section>
-        </div>
-
-        {phase === 'camp' && !showTitle ? (
-          <MobileCommandDock
-            rosterOpen={mobileRosterOpen}
-            projectedWins={projectedWins}
-            rosterCount={rosterCount}
-            day={game.day}
-            battleDisabled={battleStartDisabled}
-            battleReady={battleActionReady}
-            battleActionLabel={mobileBattleActionLabel}
-            battleForecastTitle={battleForecastTitle}
-            battleForecastDetail={battleForecastDetail}
-            riskDepartureForecast={riskDepartureForecast}
-            tacticalSuggestion={
-              tacticalAdjustment && tacticalRehearsal
-                ? {
-                    title: tacticalRehearsal.title,
-                    status: tacticalRehearsal.status,
-                    actionLabel: tacticalRehearsal.actionLabel,
-                  }
-                : null
-            }
-            onShowBattlefield={showBattlefield}
-            onShowRoster={showMobileRoster}
-            onApplyTacticalSuggestion={applyTacticalAdjustment}
-            onCancelRiskDeparture={cancelRiskDeparture}
-            onStartBattle={startBattle}
-          />
+          </>
         ) : null}
-
-        <DragGhostPreview
-          active={draggingUnitId !== null}
-          ghostRef={dragGhostRef}
-          glyph={KIND_META[findUnit(game, draggingUnitId)?.kind ?? 'warden'].glyph}
-        />
       </div>
 
       <GameFeedback

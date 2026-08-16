@@ -644,6 +644,7 @@ export function TitleScreen({
                 className="title-primary"
                 type="button"
                 onPointerEnter={preloadEnterGame}
+                onPointerDown={preloadEnterGame}
                 onFocus={preloadEnterGame}
                 onClick={enterGame}
                 disabled={!ready}
