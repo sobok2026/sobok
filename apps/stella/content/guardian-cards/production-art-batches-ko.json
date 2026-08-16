@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "c0f7a628fde6950bebc0945d12d61298b5660a0226e67006187a19c0c56e94fa",
-    "assets": "c7480a77f3e553ea392249d22e2eab221afe2dbb17f99d69b54782961fc24249"
+    "assets": "e2d598caf549e597e5dd325c6b9851eb678b4cdc250f3fa634323d434840554f"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,12 +16,12 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 297,
-    "remainingEditionCount": 759,
+    "producedEditionCount": 309,
+    "remainingEditionCount": 747,
     "pilotPartialBatchCount": 9,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 24,
-    "fullPendingBatchCount": 55,
+    "completedBatchCount": 25,
+    "fullPendingBatchCount": 54,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
     "visualApprovalAuthority": "human_editor",
@@ -673,23 +673,10 @@
         "pisces.love.everyday-care.orbit"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.everyday-care.orbit",
-        "taurus.love.everyday-care.orbit",
-        "gemini.love.everyday-care.orbit",
-        "cancer.love.everyday-care.orbit",
-        "leo.love.everyday-care.orbit",
-        "virgo.love.everyday-care.orbit",
-        "libra.love.everyday-care.orbit",
-        "scorpio.love.everyday-care.orbit",
-        "sagittarius.love.everyday-care.orbit",
-        "capricorn.love.everyday-care.orbit",
-        "aquarius.love.everyday-care.orbit",
-        "pisces.love.everyday-care.orbit"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 26,
