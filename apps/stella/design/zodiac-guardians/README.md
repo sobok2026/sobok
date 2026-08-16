@@ -20,8 +20,8 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - 일 production 원고: 192개 에디션 ID·제목·장면·접근성 설명·한 줄을 편집 초안으로 materialize
 - 결정 production 원고: 192개 에디션 ID·제목·장면·접근성 설명·한 줄을 편집 초안으로 materialize
 - production 원고 1차 자동 편집 감사: 1,056개 길이·문장·한국어 조사 token·접근성·비단정 표현 검증
-- production 원화: 12별자리 파일럿과 production 배치 24개의 신규 285개 최종 시각 승인 완료, 누적 최적화
-  WebP 297개와 R2 배포 매니페스트 고정
+- production 원화: 12별자리 파일럿과 production 배치 25개의 신규 297개 최종 시각 승인 완료, 누적 최적화
+  WebP 309개와 R2 배포 매니페스트 고정
 - 두 번째 production 배치: `self.present-weather.action-beat` 12개 원고 해시와 첫 배치 비반복 행동 구도,
   원화 후보·보조 시각 QA·사람의 최종 시각 승인 완료
 - 세 번째 production 배치: `self.present-weather.shared-world` 12개 원고 해시와 해결을 대신하지 않는
@@ -104,7 +104,7 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - 스물다섯 번째 production 배치: `love.everyday-care.orbit` 신규 12개 정본 원고 해시와 상대를
   화면에 확정하지 않고 자기 몫·상대 선택권을 남긴 반복 가능한 작은 돌봄 행동, 첫 신호 Orbit·
   careful-approach 네 희귀도와 다른 근접 소품·수령 여백·반복 단서 고정, 신규 PNG 후보·마스터/
-  80px·이전 스물네 배치 비교 보조 시각 QA 완료·사람의 최종 시각 검토 대기
+  80px·이전 스물네 배치 비교 보조 시각 QA·사람의 최종 시각 승인·WebP/R2 배포 완료
 - 유료 답변 효과: 네 주제 상세 본문·해석 초점·한 줄을 실질적으로 변경
 - 유료 질문 소스: 원문·선택지·적응형 선택 정책·점수를 Git JSON과 Database Worker 서버 번들로 관리
 - 반복 구매: 사랑 카드의 일러스트와 한 줄만 저가 재추첨
