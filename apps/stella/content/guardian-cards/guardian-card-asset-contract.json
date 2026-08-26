@@ -5,9 +5,10 @@
   "runtimeOriginBinding": "STELLA_GUARDIAN_ASSET_ORIGIN",
   "locale": "ko",
   "plannedAssetCount": 1056,
-  "objectKeyTemplate": "guardian-cards/ko/{editionId}.webp",
-  "artworkPathTemplate": "{origin}/guardian-cards/ko/{editionId}.webp",
-  "editionIdPolicy": "Published artwork is immutable. A meaningful artwork change creates a new edition ID and object key.",
+  "legacyObjectKeyTemplate": "guardian-cards/ko/{editionId}.webp",
+  "objectKeyTemplate": "guardian-cards/ko/{editionId}.{deliverySha256_12}.webp",
+  "artworkPathTemplate": "{origin}/{objectKey}",
+  "editionIdPolicy": "Edition IDs stay stable for artwork corrections. Meaningful card-content changes create a new edition ID; corrected or new artwork uses a content-addressed object key and never overwrites published bytes.",
   "sourceContract": {
     "format": "png",
     "width": 1080,

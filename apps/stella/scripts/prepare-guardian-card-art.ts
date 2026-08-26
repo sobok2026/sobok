@@ -3,9 +3,10 @@ import { basename, dirname, join, resolve } from 'node:path'
 import { parseArgs } from 'node:util'
 import sharp from 'sharp'
 import {
-  objectKeyForEdition,
+  objectKeyForDelivery,
   type ReleaseManifest,
   readAssetContract,
+  readReleaseManifest,
   releaseManifestSchema,
   sha256Hex,
 } from './guardian-card-art'
@@ -28,6 +29,7 @@ const { values } = parseArgs({
   options: {
     source: { type: 'string', multiple: true },
     output: { type: 'string' },
+    baseline: { type: 'string' },
     help: { type: 'boolean', short: 'h', default: false },
   },
   strict: true,
@@ -35,7 +37,7 @@ const { values } = parseArgs({
 
 if (values.help) {
   console.log(`Usage:
-  bun run guardian-cards:prepare-art --source <approved-source-manifest.json> [--source <next-manifest.json>] --output <release-directory>`)
+  bun run guardian-cards:prepare-art --source <approved-source-manifest.json> [--source <next-manifest.json>] [--baseline <previous-release-manifest.json>] --output <release-directory>`)
   process.exit(0)
 }
 
@@ -46,6 +48,11 @@ if (!values.source || values.source.length === 0 || !values.output) {
 const sourceManifestPaths = values.source.map((source) => resolve(source))
 const outputDirectory = resolve(values.output)
 const contract = await readAssetContract()
+const baselineAssets = new Map(
+  values.baseline
+    ? (await readReleaseManifest(resolve(values.baseline))).assets.map((asset) => [asset.editionId, asset])
+    : [],
+)
 const sourceManifests = await Promise.all(
   sourceManifestPaths.map(async (sourceManifestPath) => ({
     sourceManifestPath,
@@ -147,11 +154,18 @@ try {
       throw new Error(`${selected.editionId}: optimized delivery must be 1080x1440 WebP`)
     }
 
+    const deliveryArtworkSha256 = sha256Hex(delivery)
+    const baselineAsset = baselineAssets.get(selected.editionId)
+    const objectKey =
+      baselineAsset?.deliveryArtworkSha256 === deliveryArtworkSha256 && baselineAsset.byteSize === delivery.byteLength
+        ? baselineAsset.objectKey
+        : objectKeyForDelivery(selected.editionId, deliveryArtworkSha256)
+
     assets.push({
       editionId: selected.editionId,
-      objectKey: objectKeyForEdition(selected.editionId),
+      objectKey,
       sourceArtworkSha256: sourceHash,
-      deliveryArtworkSha256: sha256Hex(delivery),
+      deliveryArtworkSha256,
       byteSize: delivery.byteLength,
       width: contract.deliveryContract.width,
       height: contract.deliveryContract.height,

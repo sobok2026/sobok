@@ -52,7 +52,7 @@
   "deliveryReviewContract": {
     "provider": "cloudflare_r2",
     "format": "webp",
-    "objectKeyTemplate": "guardian-cards/ko/{editionId}.webp",
+    "objectKeyTemplate": "guardian-cards/ko/{editionId}.{deliverySha256_12}.webp",
     "trackedManifest": "guardian-card-assets-ko.json",
     "candidateStatus": "webp_prepared_not_uploaded",
     "runtimeMayPublishPreparedCandidate": false

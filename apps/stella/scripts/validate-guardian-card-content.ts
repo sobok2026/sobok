@@ -450,7 +450,7 @@ const artPilotPlanSchema = z
       .object({
         provider: z.literal('cloudflare_r2'),
         format: z.literal('webp'),
-        objectKeyTemplate: z.literal('guardian-cards/ko/{editionId}.webp'),
+        objectKeyTemplate: z.literal('guardian-cards/ko/{editionId}.{deliverySha256_12}.webp'),
         trackedManifest: z.literal('guardian-card-assets-ko.json'),
         candidateStatus: z.literal('webp_prepared_not_uploaded'),
         runtimeMayPublishPreparedCandidate: z.literal(false),
@@ -1393,9 +1393,12 @@ function validateAssetManifest(
 
   const pilotById = new Map(pilotPlan.pilots.map((pilot) => [pilot.editionId, pilot]))
   for (const asset of manifest.assets) {
-    const expectedKey = contract.objectKeyTemplate.replace('{editionId}', asset.editionId)
-    if (asset.objectKey !== expectedKey) {
-      errors.push(`${asset.editionId}: objectKey must be ${expectedKey}`)
+    const legacyKey = contract.legacyObjectKeyTemplate.replace('{editionId}', asset.editionId)
+    const contentAddressedKey = contract.objectKeyTemplate
+      .replace('{editionId}', asset.editionId)
+      .replace('{deliverySha256_12}', asset.deliveryArtworkSha256.slice(0, 12))
+    if (asset.objectKey !== legacyKey && asset.objectKey !== contentAddressedKey) {
+      errors.push(`${asset.editionId}: objectKey must be the preserved legacy key or ${contentAddressedKey}`)
     }
     if (
       asset.width !== contract.deliveryContract.width ||
