@@ -46,6 +46,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-025-review-ko.json`    | `visual_review_complete` | 스물다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
 | `production-art-batch-026-review-ko.json`    | `visual_review_complete` | 스물여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
 | `production-art-batch-027-review-ko.json`    | `visual_review_complete` | 스물일곱 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
+| `production-art-batch-028-review-ko.json`    | `editorial_review_ready` | 스물여덟 번째 production 배치 신규 12개 원고·구도 사람의 편집 검토 대기       |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 333개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -690,6 +691,18 @@ everyday-care Orbit·Nebula의 구도를 반복하지 않으며, 양자리와 �
 사람의 시각 승인을 마쳤다. 승인 원본 SHA-256과 신규 WebP의 콘텐츠 주소형 객체 키는 누적 333개
 매니페스트에 고정한다.
 
+스물여덟 번째 배치는 같은 `love.everyday-care` 원고를 `stella` 희귀도로 제작할 신규 12개 편집
+검토안이다. `production-art-batch-028-review-ko.json`에 현재 원고의 canonical SHA-256과, 지정된 두
+수호령이 각자의 선택권·조절점·자기 몫을 유지한 채 반복 가능한 작은 돌봄에서 다시 열 수 있는 공동
+구조를 만드는 장면을 고정했다. 빗물 수로의 하트 수문, 수직 별씨앗 승강기, 두 인사 카드 연, 달집
+모서리 창과 접이식 창턱, 무대 뒤 발광 거울, 잎 수로와 기울임 물컵, 세 별 수직 승강 틀, 별상자 뚜껑
+위 이중 빗물 덮개, 세운 여행 가방의 수직 선반, 계단참 옆 돌봄 서랍, 구름 덩굴시렁, 두 물결 단의
+단일 꿈방울 릴레이처럼 서로 다른 구조·카메라·빈 다음 선택 자리를 사용한다. 첫 신호·조심스러운 다가감
+Stella와 바로 앞 everyday-care Orbit·Nebula·Eclipse의 구도를 반복하지 않으며, 양자리와 전갈자리의
+우산도 각각 지면 옆모습의 분할 하트 수문과 별상자 뚜껑을 내려다보는 이중 빗물 덮개로 분리했다. 현재
+12개 모두 `pending_human_approval`·`not_started`이며 사람의 최종 편집 승인으로 원고 해시를 확정하기
+전에는 imagegen 입력이나 원화 후보로 사용하지 않는다.
+
 ## 검증
 
 repository root에서 다음 명령을 실행한다.
@@ -744,6 +757,10 @@ bun --filter=@sobok/stella guardian-cards:validate
   유지하며 반복 가능한 작은 돌봄을 실제로 주고받는 Eclipse 장면, 첫 신호·careful-approach Eclipse·
   바로 앞 Orbit·Nebula 비반복, 신규 PNG 후보·마스터/80px·이전 스물여섯 배치 비교 보조 시각 QA·정본
   외형 교정·사람의 최종 시각 승인·콘텐츠 주소형 WebP/R2 배포
+- 스물여덟 번째 production 배치 신규 12개 원고 해시와 지정된 두 수호령이 각자의 조절점·선택권을
+  유지하며 반복 가능한 작은 돌봄에서 다시 열 수 있는 공동 구조를 만드는 Stella 장면, 첫 신호·
+  careful-approach Stella·바로 앞 Orbit·Nebula·Eclipse 비반복 및 사람의 편집 승인 전 신규 이미지
+  제작 차단
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 333개를 제외한 현재 잔여
   723개 산식
