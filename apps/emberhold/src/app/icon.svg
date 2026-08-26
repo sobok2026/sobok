@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#102c3b" />
+      <stop offset="1" stop-color="#040b11" />
+    </linearGradient>
+    <radialGradient id="ember" cx="50%" cy="50%" r="55%">
+      <stop offset="0" stop-color="#fff0b8" />
+      <stop offset="0.35" stop-color="#ffb24e" />
+      <stop offset="1" stop-color="#bd492b" />
+    </radialGradient>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="18" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="108" fill="url(#sky)" />
+  <path d="M0 354 113 222l51 60 86-124 74 104 47-51 141 164v137H0Z" fill="#173542" />
+  <path d="m0 407 137-101 70 53 100-120 75 103 45-35 85 77v128H0Z" fill="#0a1d27" />
+  <path d="m113 222 51 60-29-9-20 33-34-17Zm137-64 74 104-42-29-27 35-30-41Zm121 53 47 55-30-15-20 23-25-25Z" fill="#87b8c4" opacity=".42" />
+  <circle cx="256" cy="300" r="104" fill="#f47738" opacity=".2" filter="url(#glow)" />
+  <path d="M256 168c31 44 74 81 74 139 0 47-32 84-74 84s-74-37-74-84c0-41 21-72 53-106-3 34 8 51 21 60 17-24 21-51 0-93Z" fill="url(#ember)" />
+  <path d="M256 247c16 23 31 42 31 67 0 21-13 38-31 38s-31-17-31-38c0-17 9-33 24-50-1 17 3 27 7 34 9-15 10-31 0-51Z" fill="#fff6cd" />
+  <path d="M121 405h270v26H121z" fill="#061016" />
+  <path d="M157 360h198v55H157z" fill="#0b2029" stroke="#6596a2" stroke-width="6" />
+  <path d="M194 415v-76h124v76M218 339v-35h76v35" fill="none" stroke="#9cc2ca" stroke-width="9" />
+  <path d="M232 382h48" stroke="#ffcc7a" stroke-width="8" stroke-linecap="round" />
+</svg>
