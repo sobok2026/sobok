@@ -47,6 +47,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-026-review-ko.json`    | `visual_review_complete` | 스물여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
 | `production-art-batch-027-review-ko.json`    | `visual_review_complete` | 스물일곱 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
 | `production-art-batch-028-review-ko.json`    | `visual_review_complete` | 스물여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
+| `production-art-batch-029-review-ko.json`    | `editorial_review_ready` | 스물아홉 번째 production 배치 신규 12개 원고·구도 사람의 편집 검토 대기       |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 345개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -710,6 +711,18 @@ built-in imagegen PNG 후보 12개를 제작하고 1080×1440 마스터·80px co
 최종 시각 승인을 마쳤으며 승인 원본 SHA-256과 신규 WebP의 콘텐츠 주소형 객체 키는 누적 345개
 매니페스트에 고정한다. 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
 
+스물아홉 번째 배치는 `love.honest-conversation` 원고를 `orbit` 희귀도로 제작할 신규 12개 편집
+검토안이다. `production-art-batch-029-review-ko.json`에 현재 원고의 canonical SHA-256과, 상대의 답이나
+관계 결론을 화면에 미리 만들지 않은 채 바람·걱정·감정·부탁·한계·모르는 부분을 가까운 첫 표현으로
+드러내는 장면을 고정했다. 열린 문턱의 두 하트 잎, 별돌 아래 잎 서랍, 두 말조개의 빈 듣기 홈, 달집
+경첩 옆의 양면 부탁 타일, 왕관과 두 대본 슬랫, 접힌 초안 폴리오의 두 잎 카드, 엎은 합의 부채와 두
+구름 토큰, 한 꽃잎만 연 봉인 편지, 두 길깃발, 접은 계획 폴리오와 두 돌 약속 탭, 접히는 기하 종이틀의
+두 파란 창, 갈라진 꿈휘장의 투명 물방울 두 개처럼 서로 다른 소품 실루엣·카메라·빈 응답 자리를
+사용한다. 원고 속 문장·쪽지·표지판·대본·도안은 읽을 수 있는 글자나 가짜 글줄 없이 별·물방울·잎·
+열린 곡선 같은 분리된 추상 기호로만 번역한다. 첫 신호·조심스러운 다가감·일상 돌봄 Orbit의 거대한
+신호·속도 장치·돌봄 수납 구조를 반복하지 않는다. 현재 신규 12개는 사람의 편집 검토 대기 상태이며
+승인 전에는 imagegen 입력이나 이미지 후보를 만들지 않는다.
+
 ## 검증
 
 repository root에서 다음 명령을 실행한다.
@@ -768,6 +781,9 @@ bun --filter=@sobok/stella guardian-cards:validate
   유지하며 반복 가능한 작은 돌봄에서 다시 열 수 있는 공동 구조를 만드는 Stella 장면, 첫 신호·
   careful-approach Stella·바로 앞 Orbit·Nebula·Eclipse 비반복, 신규 PNG 후보·마스터/80px·이전
   스물일곱 배치 비교 보조 시각 QA·사람의 최종 시각 승인·콘텐츠 주소형 WebP/R2 배포
+- 스물아홉 번째 production 배치 신규 12개 원고 해시와 상대의 답·합의·관계 결론을 미리 만들지 않고
+  바람·걱정·감정·부탁·한계·모르는 부분을 글자 없는 추상 기호로 드러내는 Orbit 고유 근접 장면,
+  첫 신호·careful-approach·everyday-care Orbit 비반복 및 사람의 편집 승인 전 신규 이미지 제작 차단
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 345개를 제외한 현재 잔여
   711개 산식
