@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "editorialApprovedOn": "2026-08-26",
+  "generatedOn": "2026-08-26",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-26",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
+  "locale": "ko",
+  "batchId": "love.honest-conversation.orbit",
+  "batchOrder": 29,
+  "purpose": "사랑의 honest-conversation 원고를 상대의 답이나 관계 결론을 화면에 미리 만들지 않는 가까운 첫 표현으로 확장한다. 신규 열두 장은 말하고 싶은 바람·걱정·감정·부탁·한계를 글자 없는 서로 다른 상징 장치로 드러내되, 앞선 세 Orbit 배치의 거대한 첫 신호·속도 조절·일상 돌봄 소품을 반복하지 않는 장면으로 고정한다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "love",
+    "narrativeAxisId": "honest-conversation",
+    "visualAxisId": "orbit"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Premium Stella zodiac-guardian story illustration for the Orbit rarity, full-bleed 3:4 master art. Show exactly the single guardian or canonical internal pair named in the approved card and preserve every character-sheet identity, relative size, silhouette, color, simple dark-purple pupils, exactly one large and one small eye highlight, chest Stella star, clothing, and signature prop; never add an unseen romantic recipient, another hand, face, shadow, reflection, silhouette, third figure, or duplicated guardian. Treat honest conversation as one intimate close-focus act of making one real feeling, need, request, fear, responsibility, freedom, or unknown visible without forcing a reply: the named guardian opens, folds, turns, separates, places, or offers one dominant symbol-only object cluster, then leaves a neutral empty receiving point, unjoined ring, unused clip, open ledge, blank center, or unoccupied next position. Never depict the other person's answer, agreement, forgiveness, touch, relationship status, or future as already given. For Gemini and Pisces, show only their canonical internal pair; keep both identities and relative sizes, but do not turn their internal exchange into an unseen third person's reply. Keep the named guardian and central conversation object at 55–65% of the frame and readable at 80px, with safe UI framing, one clear close-focus depth axis, and a facial expression that remains visible. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes. Use symbols and simple shapes only: no readable text, sentence, name, label, title, badge, number, date, clock numeral, weekday, calendar, question mark, zodiac glyph, arrowed route, logo, or watermark. Notes, scripts, letters, plans, cards, signs, speech shapes, diagrams, promises, and response spaces may contain only blank fields, dots, droplets, leaves, stars, separated open curves, removable notches, or simple abstract icons; do not imitate handwriting or pseudo-text lines. Do not bake actual birth-chart lines or personal colors into the master art. Do not draw a recognizable zodiac arrangement, horoscope wheel, natal chart, closed magic circle, infinity sign, fixed bond, binding cord, guaranteed reply, completed reconciliation, or proof that honesty was rewarded. Do not reuse Batch 017's giant heart, crescent mailbox, empty-recipient seating, message-delivery staging, or hand-withdrawal compositions; Batch 021's stride strips, warming nests, dimmer wells, spacing clips, schedule rails, echo dish, or tension arc; or Batch 025's umbrella caddy, cookie tin, flip stand, snack case, practice cubby, vase side cut, wall pockets, umbrella swivel base, zipper pocket, landing niches, bottle shelf, or dream-bubble cradle. Do not reuse the weather shelters, two-guardian mutual exchanges, or jointly built afterglow structures of Batches 026–028. Make every compositionFamily, camera height, symbol carrier, folded-object silhouette, negative-space shape, gesture direction, and response gap visibly distinct within this batch and from all earlier relationship art."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.love.honest-conversation.orbit",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-26",
+      "editorialContentHash": "264b092afd7c3c159c15ca5fcce83858c5fa1779ea8c512bb92c407b06b96c79",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "28ff1d8faff323038a92d096dd62c6cb08dd761e15c77079fe809854cf6b2ab9",
+      "compositionFamily": "highoblique_open_threshold_twin_heartleaves_flagdown_replygap",
+      "artDirection": "열린 문턱을 실내 위쪽 사선에서 내려다보고 문틀의 대각선과 바깥의 빈 빛을 함께 잡는다. 몽실이는 접은 혜성 깃발을 자기 곁 바닥에 내려둔 채, 서로 닿지 않는 작은 하트 잎 두 장을 문턱의 독립 받침에 놓는다. 따뜻한 별이 있는 잎은 원하는 것, 보랏빛 물방울이 있는 잎은 걱정을 나타내며, 바깥쪽의 빈 초승달 수령 홈과 넓은 여백에는 상대의 몸·발·그림자·답을 넣지 않는다.",
+      "distinctFrom": [
+        "Batch 017의 왼쪽 달리기·몸보다 큰 하트·초승달 우체통 대신 위쪽 사선의 열린 문턱과 손바닥보다 작은 두 하트 잎을 사용한다.",
+        "Batch 021의 보폭 띠와 Batch 025의 우산꽂이를 반복하지 않으며, 같은 Batch 029 게자리의 문짝 옆단면·뒤집는 단일 토큰과 달리 양자리는 문턱 탑면·분리된 두 잎·접힌 깃발을 중심에 둔다."
+      ],
+      "visualReviewFocus": [
+        "몽실이의 구름 털·보라 나선뿔·가슴 별표와 접힌 혜성 깃발, 하트 잎 정확히 두 장이 유지되고 다른 수호령이 없는지",
+        "두 잎에는 별·물방울 외 글자나 가짜 문장이 없고 바깥 수령 홈이 비어 있어, 바람과 걱정을 함께 꺼낸 행동이 상대의 답이나 열린 관계로 완결되지 않는지"
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.love.honest-conversation.orbit",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-26",
+      "editorialContentHash": "822b600713aa807fba44ba07cfa8da9454dbc81be84209ea24b8c7a9bdfb71bc",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "2809ab4505e17f5ed4ea3e022fd563bf32fa6ff52296ad5f7d229acfe126f5ba",
+      "compositionFamily": "inside_hollow_starstack_lowup_bottom_leafdrawer_needtoken",
+      "artDirection": "낮은 별돌 받침의 빈 중심 홈 안에서 차곡이와 기울어진 작은 탑을 올려다본다. 차곡이는 별돌 정확히 세 개 중 하나를 옆의 낮은 쉼받침에 내려놓고, 남은 두 돌 아래에서 얕은 잎 서랍을 당겨 별 하나와 열린 잎 모양만 있는 필요 토큰을 드러낸다. 토큰은 바깥의 빈 수령 턱까지 절반만 나오고, 쿠키·접시·식탁·상대 손 없이 천천히 말로 꺼낼 필요와 멈출 자리를 함께 남긴다.",
+      "distinctFrom": [
+        "Batch 017의 빈 의자 식탁·별쿠키와 Batch 021의 두 찻잔 보온 받침 대신 별돌 탑 내부 저각·바닥 잎 서랍·절반 나온 필요 토큰을 사용한다.",
+        "Batch 025의 두 쿠키 칸·리필 슬라이더를 반복하지 않고 정확히 세 개의 별돌 중 하나를 내려놓은 높이 변화와 가장 아래의 단일 잎 토큰을 중심 사건으로 삼는다."
+      ],
+      "visualReviewFocus": [
+        "차곡이의 커스터드 송아지 실루엣·보라 앞머리·앞치마와 별돌 정확히 세 개, 얕은 잎 서랍 한 개가 유지되는지",
+        "필요 토큰에는 별과 열린 잎 모양 외 글자·부탁 문장·화살표가 없고 수령 턱이 비어 있어, 행동 뒤의 필요를 꺼냈지만 이미 전달·수락된 장면으로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.love.honest-conversation.orbit",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-26",
+      "editorialContentHash": "7a21b0e7874bc8cb113cd5fea5be8e61ccf2c0f5b4a182db24054041eb39db90",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "32b70750e0384f7266eeb32d35ba615181c033ab7558d5e6a47d1f3699185d68",
+      "compositionFamily": "between_twin_speechshells_centerpov_folded_bubbles_loweredwings",
+      "artDirection": "가운데의 비어 있는 둥근 듣기 홈 높이에서 양쪽의 폭신한 말조개 두 개를 마주 본다. 왼쪽의 큰 재잘이는 점 두 개만 있는 자기 말조개를 안쪽으로 접고, 오른쪽의 작은 소곤이는 열린 곡선 하나만 있는 다른 말조개를 접으며 둘 다 작은 날개를 아래로 내린다. 정본 분홍 연결 리본은 두 몸 뒤에서 느슨하게 이어지지만 중앙 홈을 지나거나 묶지 않고, 두 수호령은 각자의 받침에 남아 서로의 표정 쪽으로만 몸을 기울인다.",
+      "distinctFrom": [
+        "Batch 017의 공중 교차 봉투와 Batch 021의 지그재그 말차례 발판 대신 중앙 듣기 홈 시점·좌우 말조개·내려간 날개를 사용한다.",
+        "Batch 025의 탁상 플립 카드와 고정 안부 구슬을 반복하지 않고 두 입체 말조개를 각자 접는 대칭 아닌 옆 깊이와 비어 있는 가운데 홈으로 듣는 순간을 만든다."
+      ],
+      "visualReviewFocus": [
+        "큰 크림색 재잘이와 작은 라벤더 소곤이의 상대 크기·작은 날개·가슴 별표·느슨한 정본 분홍 연결 리본이 유지되고 내부 쌍 외 인물이 없는지",
+        "말조개 정확히 두 개에는 점 두 개와 열린 곡선 외 글자·문장·말풍선 꼬리가 없고 중앙 듣기 홈이 비어 있어, 재치 있는 답보다 상대 문장이 끝날 자리가 먼저 보이는지"
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.love.honest-conversation.orbit",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-26",
+      "editorialContentHash": "5942db8508f495405580c6d8b69c0045686b60f2b5768a019dcdd05c6816a1c8",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "3b7212dc48008770736887e603d8f070be44349646571cae5d44d7dde0c48a62",
+      "compositionFamily": "hingeside_halfmoon_door_profile_reversible_requesttile_openledge",
+      "artDirection": "달집의 둥근 문 경첩 바로 옆에서 반쯤 열린 문짝을 얇은 초승달 옆단면으로 본다. 안쪽 달콩이는 한 집게로 문을 자기 쪽에서 멈추고, 다른 집게로 물방울 면을 뒤집어 작은 별과 열린 곡선 면이 보이는 단일 부탁 타일을 바깥의 접이식 선반까지 절반만 민다. 문 밖 선반 끝과 수령 홈은 비어 있고 바깥 인물·손·노크·발자국 없이 달콩이의 걱정 섞인 얼굴과 자기가 정한 문 폭을 함께 보여 준다.",
+      "distinctFrom": [
+        "Batch 017의 닫힌 문 아래 간식 쟁반과 Batch 021의 달집 외벽 이음매·한 집게 틈 대신 반쯤 열린 문짝의 경첩 옆단면과 뒤집는 단일 타일을 사용한다.",
+        "Batch 025의 간식 상자 내부·두 포드를 반복하지 않으며, 같은 Batch 029 양자리의 위쪽 문턱·두 하트 잎과 달리 게자리는 얇은 초승달 문 단면·자기 쪽 멈춤 집게·단일 접이식 선반으로 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이의 초승달 집과 한 몸인 실루엣·둥근 보라 집게, 반쯤 열린 문 한 짝과 양면 부탁 타일 정확히 한 개가 유지되는지",
+        "타일에는 물방울·별·열린 곡선 외 부탁 문장이나 글자가 없고 문 밖 수령 홈이 비어 있어, 알아주길 기다리던 필요를 말했지만 응답까지 확정하지 않는지"
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.love.honest-conversation.orbit",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-26",
+      "editorialContentHash": "150aa3aac829e75787105a09994aca193034f89f0b5fdaffc10851c03b225534",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "994dbac7861f492c5330c9e3cb4e5a8e7f27934d770100c78f6c1ce1c5379c3d",
+      "compositionFamily": "highthreequarter_crownstool_twin_script_slats_open_cuegap",
+      "artDirection": "빈 분장실 바닥을 높은 앞쪽 3/4 시점으로 내려다보되 해님이의 얼굴이 보이게 한다. 화면 위 모서리의 작은 둥근 스툴에는 비뚤어진 종이 왕관을 내려놓고, 왕관 없는 해님이는 바닥의 부채꼴 경첩에 좁은 대본 슬랫 정확히 두 장을 펼친다. 한 슬랫에는 물방울과 작은 하트, 다른 슬랫에는 열린 별과 새 잎만 두며 가운데 세 번째 큐 홈은 비워, 서운함과 원하는 변화를 멋진 결론 없이 나란히 드러낸다.",
+      "distinctFrom": [
+        "Batch 017의 빈 옆자리·별표·측면 조명과 Batch 021의 세 밝기 판 대신 높은 분장실 바닥 시점·왕관 스툴·두 좁은 대본 슬랫을 사용한다.",
+        "Batch 025의 개인 수납칸·물병·별스티커를 반복하지 않고, 같은 Batch 029의 다른 종이 장면과 달리 부채꼴 경첩·무대 소품형 슬랫·빈 중앙 큐 홈으로 실루엣을 고정한다."
+      ],
+      "visualReviewFocus": [
+        "해님이의 황금 갈기·가슴 별표와 스툴에 내려놓은 비뚤어진 종이 왕관, 좁은 대본 슬랫 정확히 두 장이 유지되는지",
+        "슬랫에는 물방울·하트·열린 별·잎 외 대사·문장·가짜 글줄이 없고 가운데 큐 홈이 비어 있어, 상처와 부탁을 드러낸 뒤 상대 반응을 연출하지 않는지"
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.love.honest-conversation.orbit",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-26",
+      "editorialContentHash": "ae4fb8878dcb44376cebec91f5a59e15db46aaed36a9117dbcbc4605e4b10a4c",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "ff0792602e00eea8df14195a62acac3796ac98177ce5010833060b28e6fcace2",
+      "compositionFamily": "inside_folded_folio_tunnel_twin_leafcards_blank_revisionfan",
+      "artDirection": "여러 번 접은 대화 초안 폴리오의 낮은 안쪽에서 바깥의 새봄이를 올려다본다. 글자 없는 초안들은 뒤쪽에서 닫힌 아코디언 부채처럼 접혀 있고, 새봄이는 앞의 서로 다른 잎 주머니에서 작은 잎 카드 정확히 두 장만 꺼낸다. 왼쪽 카드에는 물방울 하나, 오른쪽 카드에는 열린 잎과 씨앗 하나만 있으며, 가운데 수정 탭은 아무 표시 없이 접힌 채 남겨 완벽한 문장보다 현재 감정과 부탁을 먼저 보이게 한다.",
+      "distinctFrom": [
+        "Batch 017의 굽은 별꽃·느슨한 리본과 Batch 021의 단계 띠·연필을 반복하지 않고 접힌 폴리오 내부 저각·아코디언 초안·두 잎 주머니를 사용한다.",
+        "Batch 025의 화병 수면 단면·배수 밸브를 쓰지 않으며, 같은 Batch 029 사자자리의 바닥 대본 슬랫과 물병자리의 평면 도안 창과 달리 종이 터널 안쪽 깊이와 잎 모양 카드로 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이의 큰 잎 귀·이마 별꽃·잎목도리와 접힌 무문자 초안 부채, 잎 카드 정확히 두 장이 유지되는지",
+        "카드에는 물방울·열린 잎·씨앗 외 글자·체크표·가짜 문장이 없고 수정 탭이 닫혀 있어, 더 고치기보다 지금 느낀 것과 부탁할 것을 꺼내는 순간인지"
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.love.honest-conversation.orbit",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-26",
+      "editorialContentHash": "933888f44fa8c13764383ea3d0f82f63d04bd08d904c48a379e7316053ab3b23",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "9962c7149c74087c034dfc9e71d5e900b88290f7e53937d8dc64778a071668be",
+      "compositionFamily": "backside_consensusfan_lowup_twin_cloudtokens_independent_clips",
+      "artDirection": "접어서 바닥에 엎어 둔 큰 합의 부채의 무문자 뒷면 아래에서 고르미를 낮게 올려다본다. 고르미는 파란 독립 클립에 따뜻한 별이 있는 구름 토큰을, 분홍 독립 클립에 보랏빛 물방울과 열린 곡선이 있는 다른 구름 토큰을 건다. 두 토큰 사이의 결합 고리는 비워 두고 저울·접시·추 없이, 모두에게 좋은 답을 가렸을 때 드러나는 자기 욕구와 두려움을 서로 합치지 않은 채 보여 준다.",
+      "distinctFrom": [
+        "Batch 017의 저울 들보·따뜻한 추와 Batch 021의 두 보폭 리본·중간 발판 대신 엎은 합의 부채의 뒷면·독립 클립·구름 토큰을 사용한다.",
+        "Batch 025의 벽걸이 돌봄 주머니와 교환 클립을 반복하지 않고 토큰을 수납하거나 옮기지 않으며, 낮은 부채 아래 시점과 비어 있는 결합 고리로 합의 전의 자기 목소리를 분리한다."
+      ],
+      "visualReviewFocus": [
+        "고르미의 파랑·분홍 구름 몸·저울 모양 긴 귀와 서로 다른 구름 토큰 정확히 두 개, 독립 클립 두 개가 유지되는지",
+        "합의 부채와 토큰에는 항목·문장·글자·저울 눈금이 없고 가운데 결합 고리가 비어 있어, 좋은 분위기보다 욕구와 한계를 포함하지만 이미 합의된 장면은 아닌지"
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.love.honest-conversation.orbit",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-26",
+      "editorialContentHash": "9768e4794db145755ddcf5b3558894f354f5c7de64f1d152dad0431cef068416",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "8c252dc62ef7d5378374aab0926a1348855c06d5530fc351ab045994d05a84a6",
+      "compositionFamily": "letteredge_macro_single_petalseal_truthwindow_empty_receiver",
+      "artDirection": "두꺼운 별편지의 모서리 높이에서 봉인 꽃잎과 꼬옥이의 옆얼굴을 극근접으로 본다. 꼬옥이는 여러 겹 봉인 중 꽃잎형 걸쇠 정확히 하나만 열어 좁은 진실 창을 드러내고, 창 안에는 별 하나와 끊긴 열린 곡선 하나만 보이게 한다. 편지는 짧은 분리형 받침 위로 빈 초승달 수령 홈 쪽에 직접 내밀되 닿지 않으며, 나머지 봉인과 하트 꼬리는 꼬옥이 몸 곁에 닫힌 채 남겨 필요한 진실과 지킬 사생활을 함께 구분한다.",
+      "distinctFrom": [
+        "Batch 017의 바닥 별등·등 뒤 실루엣과 Batch 021의 잘린 잠긴 문·거리 집게 대신 별편지 모서리 매크로·단일 꽃잎 걸쇠·좁은 진실 창을 사용한다.",
+        "Batch 025의 우산 회전 받침을 반복하지 않고 우산·문·조명 없이 봉인 편지 자체를 중심 소품으로 두며, 받침과 수령 홈 사이의 짧은 빈 틈으로 직접 말하되 강요하지 않는 거리를 만든다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이의 자주색 몸·망토·하트 꼬리와 별편지 한 장, 열린 꽃잎 걸쇠 정확히 한 개가 유지되고 나머지 봉인은 닫혀 있는지",
+        "진실 창에는 별과 열린 곡선 외 실제 문장·가짜 글줄이 없고 수령 홈이 비어 있어, 모든 비밀을 공개하거나 상대가 이미 편지를 받은 장면으로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.love.honest-conversation.orbit",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-26",
+      "editorialContentHash": "b7dd906c472aec9a068a861ee7bc25181e5f2ac0db44fb9967c41ff8aa228dcf",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "38d9e9bb97b3a4007011f15b388022eb3a7278d1bfadef4d571f1e4ce06636ad",
+      "compositionFamily": "groundlevel_twin_detachable_wayflags_storyribbon_open_horizon",
+      "artDirection": "긴 여행 이야기를 뜻하는 넓은 무문자 리본이 느슨하게 말린 바닥을 지면 높이에서 본다. 총총이는 서로 떨어진 낮은 소켓에 떼어 낼 수 있는 길깃발 정확히 두 개를 세우며, 한 깃발에는 나란한 별 두 개와 열린 길목을, 다른 깃발에는 바깥을 향한 혜성과 넓은 빈 원을 둔다. 화살표·지도 경로·목적지 없이 두 깃발 사이와 뒤의 수평선을 넓게 비워, 원하는 관계 방향과 반드시 지킬 자유를 동시에 선명하게 남긴다.",
+      "distinctFrom": [
+        "Batch 017의 무릎 지도·하트 도장과 Batch 021의 안장천 시간 띠·별클립 대신 지면의 느슨한 이야기 리본·독립 소켓·두 길깃발을 사용한다.",
+        "Batch 025의 지퍼 주머니·간식·연락 구슬을 반복하지 않고 가방을 열지 않으며, 지도 없는 열린 수평선과 떼어 낼 수 있는 두 표식만으로 방향과 자유를 분리한다."
+      ],
+      "visualReviewFocus": [
+        "총총이의 구름 망아지 몸·라벤더 갈기·혜성 목도리·등 뒤 초승달 활과 길깃발 정확히 두 개가 유지되는지",
+        "깃발과 리본에는 글자·표지명·화살표·좌표·지도선이 없고 두 소켓과 수평선이 열려 있어, 관계 방향과 자유를 말했지만 함께 갈 목적지나 동행을 확정하지 않는지"
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.love.honest-conversation.orbit",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-26",
+      "editorialContentHash": "4ebdf6a878a7bc8b215525ae203707463c308d79aa51b3097556d0dd7e8cfc95",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "9eee9f0293f6bfa42c10184c64cf479a08be26dcd890ca2ff0e1b371bfda1380",
+      "compositionFamily": "edgeon_accordionplan_twin_stonetabs_open_limitcut",
+      "artDirection": "길고 두꺼운 계획 폴리오를 접는 모서리를 낮은 옆시점으로 가깝게 본다. 오름이는 글자 없는 아코디언 면들을 자기 쪽 덮개 안으로 접고, 앞의 별도 받침에 짧은 돌 약속 탭 정확히 두 개를 나란하지 않은 높이로 세운다. 금빛 별이 단단한 홈에 놓인 탭은 맡을 책임을, 끝이 열린 빈 홈 모양인 탭은 지금 할 수 없는 일을 나타내며, 두 탭 사이와 바깥 수령 자리는 잠금 없이 비워 짧지만 분명한 책임과 한계를 함께 보인다.",
+      "distinctFrom": [
+        "Batch 017의 첫 계단 아래 발판과 Batch 021의 겹친 일정 레일·공동 발판 대신 계단 없는 아코디언 폴리오 옆면과 독립 돌 탭 두 개를 사용한다.",
+        "Batch 025의 계단참 반복 홈·간식·안부 카드를 반복하지 않고 계획의 긴 면을 접어 배경으로만 남기며, 서로 다른 높이의 두 약속 탭과 열린 바깥 수령 자리만 중심에 둔다."
+      ],
+      "visualReviewFocus": [
+        "오름이의 흰 바다염소 상체·보라 뿔·청록 물고기 꼬리·등산 가방과 돌 약속 탭 정확히 두 개가 유지되는지",
+        "폴리오와 탭에는 계획 문장·목록·숫자·일정선이 없고 한계 탭의 끝과 바깥 자리가 열려 있어, 책임과 불가능을 말했지만 무리한 완수나 상대의 동의를 약속하지 않는지"
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.love.honest-conversation.orbit",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-26",
+      "editorialContentHash": "74244cf32478ea70dc54a86ee759ec81fc3e4e89e734796ad24c77da0ee56f31",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "3c63129c5eeeb97d4d8d0fed76a2d2887f228d3a7df6d26016fc39ddeb34e123",
+      "compositionFamily": "overhead_folding_starframework_twin_bluepanes_center_gap",
+      "artDirection": "복잡하지만 별자리 배열이 아닌 기하 종이틀을 거의 수직 탑뷰로 내려다본다. 방울이는 여러 빈 선과 면이 있는 도안을 가운데에서 접어 닫으면서, 서로 닿지 않는 둥근 클립에 반투명 파란 창 정확히 두 장을 따로 건다. 한 창에는 작은 물결과 물방울, 다른 창에는 열린 곡선과 바깥을 향한 별 하나만 두고 중앙 클립은 비워, 구조 설명 대신 지금 감정과 필요한 반응을 짧게 분리한다.",
+      "distinctFrom": [
+        "Batch 017의 닫힌 마음병·빈자리 시점과 Batch 021의 단일 파동·울림 접시 대신 탑뷰의 접히는 기하 종이틀과 반투명 파란 창 두 장을 사용한다.",
+        "Batch 025의 두 돌봄 병·선반·중앙 선택 틈을 반복하지 않으며, 같은 Batch 029 처녀자리의 폴리오 내부 저각과 달리 평면 접힘 운동·둥근 독립 클립·비어 있는 중앙 클립으로 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이의 흰 구름 몸·연파랑 물결 귀·가슴 별표와 반투명 파란 창 정확히 두 장, 비어 있는 중앙 클립이 유지되는지",
+        "종이틀이 실제 별자리·출생 차트·닫힌 마법 원을 만들지 않고 창에도 물결·물방울·열린 곡선·별 외 글자나 도면 표기가 없어, 감정과 필요한 반응만 먼저 읽히는지"
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.love.honest-conversation.orbit",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-26",
+      "editorialContentHash": "3512c73dc3394e5cd7b23c7d101eaf9daa0a35d30652d1c44279f6efde37192e",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "a8307671fe1b3ff1a92b42e4af6e3c6bc9166451851b37d08bfd5f8f5dd437a3",
+      "compositionFamily": "inside_split_dreamveil_vertical_twin_clear_drops_unknown_opening",
+      "artDirection": "두 갈래 꿈구름 휘장 사이의 세로 틈 안에서 큰 아쿠아 꿈별이와 작은 분홍 잠별이를 가깝게 본다. 두 수호령은 각자 자기 쪽 구름 끝을 바깥으로 걷어 상상 장면을 가리고, 서로 다른 높이에 투명 물방울 정확히 두 개를 남긴다. 아래 물방울에는 작은 색 물결과 별 하나만, 위 물방울에는 중심을 비운 열린 곡선 하나만 두며 지느러미와 물살은 닿거나 고리로 이어지지 않아 실제 감정과 아직 모르는 부분을 분리한다.",
+      "distinctFrom": [
+        "Batch 017의 맞닿은 지느러미·두 꿈구름과 Batch 021의 장력 호·열린 잠금쇠 대신 세로로 갈라진 꿈휘장·독립된 투명 물방울 두 개·중앙 빈 틈을 사용한다.",
+        "Batch 025의 수면 받침·단일 꿈방울·해제 탭을 반복하지 않고 받침 없는 서로 다른 높이의 두 물방울과 양쪽으로 걷힌 구름으로 상상과 사실을 나눈다."
+      ],
+      "visualReviewFocus": [
+        "큰 아쿠아 꿈별이와 작은 분홍 잠별이의 상대 크기·색·정본 실루엣과 크고 중앙을 보는 단순 보라 눈동자, 투명 물방울 정확히 두 개가 유지되는지",
+        "물방울 안에는 실제 인물·글자·질문표·사진이 없고 위 물방울의 중심과 중앙 구름 틈이 비어 있으며 지느러미도 닿지 않아, 상대 마음을 안다고 단정하거나 두 감정을 합치지 않는지"
+      ]
+    }
+  ]
+}

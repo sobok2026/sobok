@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "0ee96aad586d2573fd91f04bb4327ee9b85e1d0aae8418572acf5fc6e14eaedd",
-    "assets": "86df4605937437a48a59b603982a96e9e5a141c726e46c9ea192df13c3695f73"
+    "assets": "6ee50aa336cc1f9036906d29b01cae9f9f985756b7575d9e594261211ce40aeb"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,12 +16,12 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 345,
-    "remainingEditionCount": 711,
+    "producedEditionCount": 357,
+    "remainingEditionCount": 699,
     "pilotPartialBatchCount": 9,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 28,
-    "fullPendingBatchCount": 51,
+    "completedBatchCount": 29,
+    "fullPendingBatchCount": 50,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
     "visualApprovalAuthority": "human_editor",
@@ -777,23 +777,10 @@
         "pisces.love.honest-conversation.orbit"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.honest-conversation.orbit",
-        "taurus.love.honest-conversation.orbit",
-        "gemini.love.honest-conversation.orbit",
-        "cancer.love.honest-conversation.orbit",
-        "leo.love.honest-conversation.orbit",
-        "virgo.love.honest-conversation.orbit",
-        "libra.love.honest-conversation.orbit",
-        "scorpio.love.honest-conversation.orbit",
-        "sagittarius.love.honest-conversation.orbit",
-        "capricorn.love.honest-conversation.orbit",
-        "aquarius.love.honest-conversation.orbit",
-        "pisces.love.honest-conversation.orbit"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 30,
