@@ -1,6 +1,7 @@
 {
-  "status": "editorial_review_complete",
+  "status": "visual_review_ready",
   "editorialApprovedOn": "2026-08-26",
+  "generatedOn": "2026-08-26",
   "locale": "ko",
   "batchId": "love.everyday-care.stella",
   "batchOrder": 28,
@@ -57,7 +58,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "466b1efed9f587b0a851319d1e746c9fe0f6e68fbfdb3363c0294f4fef6a14d8",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "groundlevel_rainchannel_leaning_umbrella_splitheart_weir_openfork",
       "artDirection": "빗물 고인 돌길의 얕은 수로와 서로 떨어진 마른 발판 두 개를 지면 높이의 넓은 옆모습으로 본다. 왼쪽 몽실이는 작은 별우산 정확히 한 개를 오른쪽 달콩이 쪽으로 기울인 채 한 앞발로 손잡이를 잡고, 자기 젖은 어깨에는 작은 수건을 얹는다. 두 수호령은 수로 가운데 낮은 하트 수문의 서로 다른 반쪽 걸쇠를 각자 열며, 두 가슴 별빛은 잠깐 나란해진 뒤 빈 마른 돌 하나를 지나 화면 위쪽 두 갈래로 다시 열린다.",
       "distinctFrom": [
@@ -77,7 +78,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "2a94a2bf79873c844f217bfebd22d883e3e1e5e6edefa2a45b1e3df075cb85c2",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "inside_seedlift_lowup_twin_cookiebaskets_countercranks_open_leafcanopy",
       "artDirection": "투명한 수직 별씨앗 승강기의 바닥 안쪽에서 위로 열린 잎 천장을 올려다본다. 왼쪽 차곡이와 오른쪽 새봄이는 서로 다른 높이의 잎 바구니 손잡이를 각자 돌리고, 바구니마다 작은 별쿠키 정확히 한 개씩을 두되 가운데 별씨앗 받침에는 양쪽 흙주걱이 겹치지 않게 닿는다. 새싹과 두 가슴 별빛은 계절색 잎 세 장을 따라 비대칭 천장을 만들고, 위쪽의 빈 잎 자리와 다음 빈 씨앗 컵을 향해 열린다.",
       "distinctFrom": [
@@ -97,7 +98,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "4b8ee33afda77a2de6b4f445e4368e2d3bbde96f62cc03ecd2721855814ec481",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "lowup_greeting_kites_twinspools_fixed_checkin_open_starbook_sky",
       "artDirection": "낮은 구름 언덕에서 서로 다른 높이로 뜬 인사 카드 연 두 개를 올려다보는 열린 하늘 구도다. 큰 재잘이는 점 두 개 카드 연의 왼쪽 실패를, 작은 소곤이는 열린 곡선 카드 연의 오른쪽 실패를 각자 돌리고, 정본 분홍 연결 리본은 두 몸 뒤로 느슨하게 지나며 가운데의 둥근 안부 구슬은 낮은 말뚝에 그대로 남는다. 두 연줄과 가슴 별빛은 하늘에서 펼친 별책의 양쪽 페이지 같은 꺾인 면을 만들지만 책등 자리는 비어 있고, 무표식 다음 연꼬리 하나가 열린 위쪽 여백을 가리킨다.",
       "distinctFrom": [
@@ -117,7 +118,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "a34328e6ecd22b028e359b3053b75f016d4ff77d5208ebe998a530cb5ae0db2b",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "outside_cornerbay_foldoutsill_twin_snackpods_countershutters_open_bracket",
       "artDirection": "달집의 둥근 벽 두 면이 만나는 모서리 창을 바깥 낮은 사선에서 바라보고, 서로 직각인 창짝과 접이식 창턱을 한 화면에 둔다. 안쪽 왼편 달콩이는 초승달 창짝을 자기 집게로 열고, 바깥 오른편 꼬옥이는 하트 꼬리를 몸 곁에 둔 채 다른 창짝의 접이식 받침만 펼치며 점·열린 곡선 표식의 간식 포드 두 개는 서로 다른 창턱에 놓인다. 두 가슴 별빛은 벽 모서리를 돌아 넓은 둥근 괄호처럼 이어지다가 위쪽 한 창 폭을 비우고, 아래에는 빈 수령 소켓 하나가 남는다.",
       "distinctFrom": [
@@ -137,7 +138,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "ea2bc6d3961ab3e32c868074eab6dca6909150bdb0036dba70e8df3cca21b7da",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "backstage_floorview_twin_footlight_mirrors_open_proscenium_keystone",
       "artDirection": "텅 빈 연습 무대 뒤 바닥 높이에서 앞쪽을 내다보며 낮은 발광 거울 두 장과 열린 프로시니엄을 함께 올려다본다. 왼쪽 해님이는 금빛 바닥 거울의 자기 회전 탭을, 오른쪽 고르미는 분홍빛 거울의 별도 탭을 돌려 두 빛이 서로를 가리지 않은 채 양쪽 막 가장자리로 오르게 하고, 문 밖 낮은 돌봄 쟁반에는 따뜻한 물 한 병과 글자 없는 별스티커 한 장만 둔다. 두 가슴 별빛은 커다란 무대 아치 양변을 만들지만 위쪽 중앙 맞춤돌 한 칸과 앞쪽 관객 자리는 비어 있어 다음 응원을 강요하지 않는다.",
       "distinctFrom": [
@@ -157,7 +158,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "8c04c3d252d9e84b3a57d6ffe89a2813139f15433482aee64f5b448dbdee03b1",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "overhead_leaf_aqueduct_twin_tiltcups_conditionpebbles_open_flowercrown",
       "artDirection": "높이가 다른 별꽃 화단 두 개와 그 사이의 열린 잎 수로를 수직에 가까운 고각으로 내려다본다. 왼쪽 새봄이는 깨끗한 물이 든 작은 잎컵을 자기 기울임 받침에서 화병 쪽으로 돌리고, 오른쪽 차곡이는 굽은 줄기를 고치지 않은 채 물방울·열린 곡선 조건 조약돌 중 하나를 별도 홈으로 옮기며 다음 홈은 비운다. 서로 다른 별꽃 세 송이와 두 가슴 별빛은 비대칭 꽃관의 양쪽 가지가 되지만 오른쪽 위 꽃 한 송이 폭이 열려 있고, 물길도 두 독립 받침으로 다시 갈라진다.",
       "distinctFrom": [
@@ -177,7 +178,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "5f456a745761fb60d02d873e8cd5a3957c9682ce32818de57b3071462fdb9cfb",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "sideview_three_star_elevator_twinwinches_neutral_exchangebay_open_arc",
       "artDirection": "세 개의 별 운반대가 서로 다른 높이로 매달린 가느다란 수직 승강 틀을 넓은 옆모습으로 본다. 왼쪽 고르미는 푸른 자기 별 운반대의 작은 윈치를, 오른쪽 해님이는 금빛 자기 별 운반대의 다른 윈치를 각자 돌리고, 가운데 자유 회전 교환대에는 공동의 따뜻한 세 번째 별과 양면색 교환 표식이 어느 줄에도 잠기지 않은 채 놓인다. 두 가슴 별빛은 승강 틀 바깥에서 열린 균형 호를 그리지만 위쪽 빈 고리 앞에서 끊기며, 다음 빈 운반대는 아래 독립 대기 홈에 남는다.",
       "distinctFrom": [
@@ -197,7 +198,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "2a31f04abd2e93d85e6dcfa2cb583699444d3a6a2942b6681ec67fa3e46e2aa8",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "high_oblique_starbox_lid_tiltumbrella_dualrainflaps_open_deptharc",
       "artDirection": "열린 별상자의 넓은 뚜껑을 얕은 빗물 지형처럼 써서 위쪽 사선 고각으로 내려다본다. 왼쪽 높은 마른 면의 꼬옥이는 고개를 살짝 돌린 채 보랏빛 우산 정확히 한 개를 달콩이 쪽으로 기울이는 자기 손잡이를 잡고, 오른쪽 낮은 초승달 발판의 달콩이는 별상자 반대쪽 빗물 덮개만 둥근 집게로 열어 빈 되돌림 손잡이와 점·열린 곡선 설명 구슬을 드러낸다. 두 가슴 별빛은 상자 안쪽 깊이가 다른 두 호를 따라가다 앞 모서리 한 폭을 비우고 밖으로 따로 빠져나가며 하트 꼬리 빛은 꼬옥이 발판 안에서만 열린다.",
       "distinctFrom": [
@@ -217,7 +218,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "cacc6ef61a404686029dbff9c8272369cc3e8fdff0e37542221cf033296e27ca",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "inside_upright_bag_vertical_shelves_twinsnacks_waystar_open_roofroutes",
       "artDirection": "세워 둔 여행 가방의 열린 안쪽 바닥에서 바깥을 올려다보며 높이가 다른 세로 선반과 양쪽 입구를 함께 본다. 왼쪽 총총이는 등에 초승달 활을 고정하고 점 두 개 연락 표식이 달린 자기 선반을 가리키며, 오른쪽 오름이는 열린 곡선 표식의 다른 선반을 펼쳐 정확히 두 개의 간식 캡슐을 서로 다른 높이에 놓고 가운데의 떼어 낼 수 있는 공동 길별을 자기 고리에 잠그지 않는다. 두 가슴 별빛은 가방 양쪽 솔기를 따라 오르다 길별 곁에서 잠깐 가까워지고 위쪽 서로 다른 출구로 다시 갈라지며, 가장 아래 빈 선반은 열린 채 남는다.",
       "distinctFrom": [
@@ -237,7 +238,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "577a2ece4234699d64e8e981659a280c6433aa2177abb5d9fab8170313b866fc",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "edgeon_foldout_landing_drawer_missedbead_twinstridewedges_open_toprung",
       "artDirection": "단 하나의 계단참 옆면에서 접어 내린 얕은 돌봄 서랍과 서로 다른 보폭 홈 두 줄을 수평으로 본다. 왼쪽 아래 오름이는 서랍에 작은 간식 한 개와 점·열린 곡선만 있는 무문자 안부 타일을 놓고 빠뜨린 날의 빈 구슬 홈을 가리지 않으며, 오른쪽 위 총총이는 자기 짧은 보폭 쐐기를 다른 홈에 끼우되 잠금핀은 옆 빈 소켓에 둔다. 두 수호령이 각자 놓은 높이가 다른 발판과 두 가슴 별빛은 어긋난 달빛 계단을 만들지만 맨 위 다음 디딤면은 비어 있고 화면 밖 두 방향으로 열린다.",
       "distinctFrom": [
@@ -257,7 +258,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "fbed7c792736963e2d225c97cde0d944245e7b033ffbe282060b8c4f0696299c",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "inside_cloudtrellis_lowup_twin_hangingbottles_symbolleaves_open_gardenarch",
       "artDirection": "속이 빈 구름 덩굴시렁 아래에서 위로 열린 정원 아치를 올려다보며 서로 다른 돌봄 병 두 개를 양쪽 가지에 매단다. 왼쪽 방울이는 파란 병의 자기 고리에 열린 물결 모양 잎표식을 걸고, 오른쪽 차곡이는 따뜻한 안개 병의 다른 고리에 떨어진 점 두 개 잎표식을 걸며 각 병의 선택 손잡이는 바깥을 향하고 가운데 반환 고리는 비어 있다. 두 가슴 별빛과 서로 다른 색의 안개 가지는 한 구름 정원 안에서 잠깐 나란해지지만 아치 꼭대기 한 폭을 비우고 각자의 바깥 가지로 다시 열린다.",
       "distinctFrom": [
@@ -277,7 +278,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "1d2743dc3d264f90ca6e2721d523ecd023b2ee4752dcb4b6290c4e5f79e73fc5",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "overhead_twin_tide_terraces_single_dreambubble_relay_open_comma",
       "artDirection": "높이가 다른 두 물결 단과 가운데 떠 있는 작은 잎 받침을 수직에 가까운 고각으로 내려다본다. 큰 아쿠아 꿈별이는 왼쪽 아래 단의 자기 해제 지느러미에서, 작은 분홍 잠별이는 오른쪽 위 단의 다른 해제 지느러미에서 오늘의 비개인화 별점·잎빛만 든 둥근 꿈방울 정확히 하나를 가운데 받침으로 이어 주며, 같은 높이의 무문자 둥근 홈 두 개는 서로 떨어져 남는다. 각자의 색을 지닌 두 물살과 가슴 별빛은 넓은 쉼표 모양의 열린 별빛 호를 만들지만 위쪽 출구에서 만나지 않고, 뒤의 다음 빈 잎 받침으로 따로 빠져나간다.",
       "distinctFrom": [
