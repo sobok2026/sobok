@@ -16,8 +16,9 @@ export const assetContractSchema = z
     runtimeOriginBinding: z.literal('STELLA_GUARDIAN_ASSET_ORIGIN'),
     locale: z.literal('ko'),
     plannedAssetCount: z.literal(1056),
-    objectKeyTemplate: z.literal('guardian-cards/ko/{editionId}.webp'),
-    artworkPathTemplate: z.literal('{origin}/guardian-cards/ko/{editionId}.webp'),
+    legacyObjectKeyTemplate: z.literal('guardian-cards/ko/{editionId}.webp'),
+    objectKeyTemplate: z.literal('guardian-cards/ko/{editionId}.{deliverySha256_12}.webp'),
+    artworkPathTemplate: z.literal('{origin}/{objectKey}'),
     editionIdPolicy: z.string().trim().min(20),
     sourceContract: z
       .object({
@@ -106,9 +107,10 @@ export async function readReleaseManifest(path: string): Promise<ReleaseManifest
     throw new Error('release assets must be sorted by editionId')
   }
   for (const asset of manifest.assets) {
-    const expectedObjectKey = objectKeyForEdition(asset.editionId)
-    if (asset.objectKey !== expectedObjectKey) {
-      throw new Error(`${asset.editionId}: objectKey must be ${expectedObjectKey}`)
+    const legacyObjectKey = legacyObjectKeyForEdition(asset.editionId)
+    const contentAddressedObjectKey = objectKeyForDelivery(asset.editionId, asset.deliveryArtworkSha256)
+    if (asset.objectKey !== legacyObjectKey && asset.objectKey !== contentAddressedObjectKey) {
+      throw new Error(`${asset.editionId}: objectKey must be the preserved legacy key or ${contentAddressedObjectKey}`)
     }
     if (editionIds.has(asset.editionId)) {
       throw new Error(`duplicate editionId: ${asset.editionId}`)
@@ -168,8 +170,12 @@ export async function validateReleaseDirectory(
   return { manifest, totalBytes }
 }
 
-export function objectKeyForEdition(id: string): string {
+export function legacyObjectKeyForEdition(id: string): string {
   return `guardian-cards/ko/${id}.webp`
+}
+
+export function objectKeyForDelivery(id: string, deliverySha256: string): string {
+  return `guardian-cards/ko/${id}.${deliverySha256.slice(0, 12)}.webp`
 }
 
 export function sha256Hex(value: Uint8Array): string {
