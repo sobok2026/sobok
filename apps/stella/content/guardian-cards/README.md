@@ -46,9 +46,9 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-025-review-ko.json`    | `visual_review_complete` | 스물다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
 | `production-art-batch-026-review-ko.json`    | `visual_review_complete` | 스물여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
 | `production-art-batch-027-review-ko.json`    | `visual_review_complete` | 스물일곱 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
-| `production-art-batch-028-review-ko.json`    | `visual_review_ready`    | 스물여덟 번째 production 배치 신규 PNG 12개 사람의 최종 시각 검토 대기        |
+| `production-art-batch-028-review-ko.json`    | `visual_review_complete` | 스물여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
-| `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 333개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
+| `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 345개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
 파일명과 JSON에는 수동 버전을 두지 않는다. 각 파일이 현재 정본이며 변경 이력은 Git으로 추적한다. 카드
 원고와 의미를 바꾸면 새 에디션 ID를 만들고, 같은 에디션의 원화 교정은 ID를 유지한 채 WebP 해시를 넣은
@@ -225,7 +225,7 @@ Stella 등급도 마스터 원화 자체에는 사용자의 실제 출생 차트
 게이트다. 승인된 로컬 후보를 업로드된 운영 자산으로 오인하지 않고, 런타임이 존재하지 않는 R2
 object를 참조하지 않게 한다.
 
-현재 파일럿 12개와 production 배치 27개의 신규 321개, 총 333개 승인 원본을 WebP quality 82·effort 6으로
+현재 파일럿 12개와 production 배치 28개의 신규 333개, 총 345개 승인 원본을 WebP quality 82·effort 6으로
 최적화했다. 누적 배포 후보 합계는 63,700,448 bytes다.
 `guardian-card-assets-ko.json`은 파일 본문 대신 각
 WebP의 객체 키·정확한 byte 수·원본과 배포 SHA-256만 추적한다. release bundle의 매니페스트가 Git의 이
@@ -240,7 +240,7 @@ WebP의 객체 키·정확한 byte 수·원본과 배포 SHA-256만 추적한다
 
 승인된 파일럿 12개는 각각 서로 다른 배치에 하나씩 포함된다. 따라서 12개 배치는 파일럿 한 장과 신규
 11장으로 구성되고, 나머지 76개 배치는 신규 12장으로 구성된다. 파일럿만 승인했을 때의 시작 잔여량은
-1,044장이며 스물일곱 production 배치의 신규 321개까지 승인·WebP 준비한 현재 잔여량은 723장이다. 이 목록은
+1,044장이며 스물여덟 production 배치의 신규 333개까지 승인·WebP 준비한 현재 잔여량은 711장이다. 이 목록은
 에디션 정본, 파일럿 원고 해시, 누적 WebP 매니페스트에서 materialize하며 다음 명령으로 다시 만든다.
 
 ```bash
@@ -706,8 +706,9 @@ built-in imagegen PNG 후보 12개를 제작하고 1080×1440 마스터·80px co
 부재와 구도 비반복을 보조 검수했다. 쌍둥이자리 인사 연의 여분 점 두 개와 게자리의 닫힌 별빛 고리는
 장면·캐릭터·나머지 소품을 유지한 제한 편집으로 바로잡았으며 수정 전 후보도 보존했다. 선택본과 비교
 시트는 공개 Git에 포함하지 않는
-`apps/stella/private/guardian-art-production/love-everyday-care-stella`에 보관한다. 현재 신규 12개는
-사람의 최종 시각 검토 대기 상태이며 승인 전에는 WebP 배포 후보나 R2 객체로 편입하지 않는다.
+`apps/stella/private/guardian-art-production/love-everyday-care-stella`에 보관한다. 2026-08-26 사람의
+최종 시각 승인을 마쳤으며 승인 원본 SHA-256과 신규 WebP의 콘텐츠 주소형 객체 키는 누적 345개
+매니페스트에 고정한다. 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가 남긴다.
 
 ## 검증
 
@@ -766,10 +767,10 @@ bun --filter=@sobok/stella guardian-cards:validate
 - 스물여덟 번째 production 배치 신규 12개 원고 해시와 지정된 두 수호령이 각자의 조절점·선택권을
   유지하며 반복 가능한 작은 돌봄에서 다시 열 수 있는 공동 구조를 만드는 Stella 장면, 첫 신호·
   careful-approach Stella·바로 앞 Orbit·Nebula·Eclipse 비반복, 신규 PNG 후보·마스터/80px·이전
-  스물일곱 배치 비교 보조 시각 QA 및 사람의 최종 시각 승인 전 배포 자산 편입 차단
+  스물일곱 배치 비교 보조 시각 QA·사람의 최종 시각 승인·콘텐츠 주소형 WebP/R2 배포
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
-- 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 333개를 제외한 현재 잔여
-  723개 산식
+- 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 345개를 제외한 현재 잔여
+  711개 산식
 - R2 자산 계약의 1,056개 목표·환경별 버킷·WebP-only 객체 키와 승인 원본/배포 해시 연결
 - 모든 마스터 원화 장면에서 실제 출생 차트·개인 색을 제외하고 비개인화 광륜만 사용
 - 런타임 게시 전에 개별 에디션에 필요한 이미지·접근성·한 줄 원고 필드
@@ -822,15 +823,16 @@ bun --filter=@sobok/stella guardian-cards:prepare-art \
   --source private/guardian-art-production/love-everyday-care-orbit/manifest.json \
   --source private/guardian-art-production/love-everyday-care-nebula/identity-approved-manifest.json \
   --source private/guardian-art-production/love-everyday-care-eclipse/identity-approved-manifest.json \
+  --source private/guardian-art-production/love-everyday-care-stella/manifest.json \
   --baseline content/guardian-cards/guardian-card-assets-ko.json \
-  --output private/guardian-art-release-333
+  --output private/guardian-art-release-345
 
 bun --filter=@sobok/stella guardian-cards:validate-art-release --manifest \
-  private/guardian-art-release-333/manifest.json
+  private/guardian-art-release-345/manifest.json
 
 bun --filter=@sobok/stella guardian-cards:package-art-release --manifest \
-  private/guardian-art-release-333/manifest.json --output \
-  private/releases/guardian-art-release-333/guardian-card-art-release.tar.gz
+  private/guardian-art-release-345/manifest.json --output \
+  private/releases/guardian-art-release-345/guardian-card-art-release.tar.gz
 ```
 
 `--source`는 사람 시각 승인이 끝난 매니페스트마다 반복한다. `--baseline`은 같은 WebP 바이트의 기존 키를

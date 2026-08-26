@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "0ee96aad586d2573fd91f04bb4327ee9b85e1d0aae8418572acf5fc6e14eaedd",
-    "assets": "f41c16710e4b3cca89878bde16b1d6aa0102150717d9edaf4e03be8f24593724"
+    "assets": "86df4605937437a48a59b603982a96e9e5a141c726e46c9ea192df13c3695f73"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,12 +16,12 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 333,
-    "remainingEditionCount": 723,
+    "producedEditionCount": 345,
+    "remainingEditionCount": 711,
     "pilotPartialBatchCount": 9,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 27,
-    "fullPendingBatchCount": 52,
+    "completedBatchCount": 28,
+    "fullPendingBatchCount": 51,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
     "visualApprovalAuthority": "human_editor",
@@ -751,23 +751,10 @@
         "pisces.love.everyday-care.stella"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.everyday-care.stella",
-        "taurus.love.everyday-care.stella",
-        "gemini.love.everyday-care.stella",
-        "cancer.love.everyday-care.stella",
-        "leo.love.everyday-care.stella",
-        "virgo.love.everyday-care.stella",
-        "libra.love.everyday-care.stella",
-        "scorpio.love.everyday-care.stella",
-        "sagittarius.love.everyday-care.stella",
-        "capricorn.love.everyday-care.stella",
-        "aquarius.love.everyday-care.stella",
-        "pisces.love.everyday-care.stella"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 29,
