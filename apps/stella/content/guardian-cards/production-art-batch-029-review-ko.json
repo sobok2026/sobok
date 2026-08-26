@@ -1,6 +1,7 @@
 {
-  "status": "editorial_review_complete",
+  "status": "visual_review_ready",
   "editorialApprovedOn": "2026-08-26",
+  "generatedOn": "2026-08-26",
   "locale": "ko",
   "batchId": "love.honest-conversation.orbit",
   "batchOrder": 29,
@@ -57,7 +58,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "264b092afd7c3c159c15ca5fcce83858c5fa1779ea8c512bb92c407b06b96c79",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "highoblique_open_threshold_twin_heartleaves_flagdown_replygap",
       "artDirection": "열린 문턱을 실내 위쪽 사선에서 내려다보고 문틀의 대각선과 바깥의 빈 빛을 함께 잡는다. 몽실이는 접은 혜성 깃발을 자기 곁 바닥에 내려둔 채, 서로 닿지 않는 작은 하트 잎 두 장을 문턱의 독립 받침에 놓는다. 따뜻한 별이 있는 잎은 원하는 것, 보랏빛 물방울이 있는 잎은 걱정을 나타내며, 바깥쪽의 빈 초승달 수령 홈과 넓은 여백에는 상대의 몸·발·그림자·답을 넣지 않는다.",
       "distinctFrom": [
@@ -77,7 +78,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "822b600713aa807fba44ba07cfa8da9454dbc81be84209ea24b8c7a9bdfb71bc",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "inside_hollow_starstack_lowup_bottom_leafdrawer_needtoken",
       "artDirection": "낮은 별돌 받침의 빈 중심 홈 안에서 차곡이와 기울어진 작은 탑을 올려다본다. 차곡이는 별돌 정확히 세 개 중 하나를 옆의 낮은 쉼받침에 내려놓고, 남은 두 돌 아래에서 얕은 잎 서랍을 당겨 별 하나와 열린 잎 모양만 있는 필요 토큰을 드러낸다. 토큰은 바깥의 빈 수령 턱까지 절반만 나오고, 쿠키·접시·식탁·상대 손 없이 천천히 말로 꺼낼 필요와 멈출 자리를 함께 남긴다.",
       "distinctFrom": [
@@ -97,7 +98,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "7a21b0e7874bc8cb113cd5fea5be8e61ccf2c0f5b4a182db24054041eb39db90",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "between_twin_speechshells_centerpov_folded_bubbles_loweredwings",
       "artDirection": "가운데의 비어 있는 둥근 듣기 홈 높이에서 양쪽의 폭신한 말조개 두 개를 마주 본다. 왼쪽의 큰 재잘이는 점 두 개만 있는 자기 말조개를 안쪽으로 접고, 오른쪽의 작은 소곤이는 열린 곡선 하나만 있는 다른 말조개를 접으며 둘 다 작은 날개를 아래로 내린다. 정본 분홍 연결 리본은 두 몸 뒤에서 느슨하게 이어지지만 중앙 홈을 지나거나 묶지 않고, 두 수호령은 각자의 받침에 남아 서로의 표정 쪽으로만 몸을 기울인다.",
       "distinctFrom": [
@@ -117,7 +118,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "5942db8508f495405580c6d8b69c0045686b60f2b5768a019dcdd05c6816a1c8",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "hingeside_halfmoon_door_profile_reversible_requesttile_openledge",
       "artDirection": "달집의 둥근 문 경첩 바로 옆에서 반쯤 열린 문짝을 얇은 초승달 옆단면으로 본다. 안쪽 달콩이는 한 집게로 문을 자기 쪽에서 멈추고, 다른 집게로 물방울 면을 뒤집어 작은 별과 열린 곡선 면이 보이는 단일 부탁 타일을 바깥의 접이식 선반까지 절반만 민다. 문 밖 선반 끝과 수령 홈은 비어 있고 바깥 인물·손·노크·발자국 없이 달콩이의 걱정 섞인 얼굴과 자기가 정한 문 폭을 함께 보여 준다.",
       "distinctFrom": [
@@ -137,7 +138,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "150aa3aac829e75787105a09994aca193034f89f0b5fdaffc10851c03b225534",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "highthreequarter_crownstool_twin_script_slats_open_cuegap",
       "artDirection": "빈 분장실 바닥을 높은 앞쪽 3/4 시점으로 내려다보되 해님이의 얼굴이 보이게 한다. 화면 위 모서리의 작은 둥근 스툴에는 비뚤어진 종이 왕관을 내려놓고, 왕관 없는 해님이는 바닥의 부채꼴 경첩에 좁은 대본 슬랫 정확히 두 장을 펼친다. 한 슬랫에는 물방울과 작은 하트, 다른 슬랫에는 열린 별과 새 잎만 두며 가운데 세 번째 큐 홈은 비워, 서운함과 원하는 변화를 멋진 결론 없이 나란히 드러낸다.",
       "distinctFrom": [
@@ -157,7 +158,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "ae4fb8878dcb44376cebec91f5a59e15db46aaed36a9117dbcbc4605e4b10a4c",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "inside_folded_folio_tunnel_twin_leafcards_blank_revisionfan",
       "artDirection": "여러 번 접은 대화 초안 폴리오의 낮은 안쪽에서 바깥의 새봄이를 올려다본다. 글자 없는 초안들은 뒤쪽에서 닫힌 아코디언 부채처럼 접혀 있고, 새봄이는 앞의 서로 다른 잎 주머니에서 작은 잎 카드 정확히 두 장만 꺼낸다. 왼쪽 카드에는 물방울 하나, 오른쪽 카드에는 열린 잎과 씨앗 하나만 있으며, 가운데 수정 탭은 아무 표시 없이 접힌 채 남겨 완벽한 문장보다 현재 감정과 부탁을 먼저 보이게 한다.",
       "distinctFrom": [
@@ -177,7 +178,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "933888f44fa8c13764383ea3d0f82f63d04bd08d904c48a379e7316053ab3b23",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "backside_consensusfan_lowup_twin_cloudtokens_independent_clips",
       "artDirection": "접어서 바닥에 엎어 둔 큰 합의 부채의 무문자 뒷면 아래에서 고르미를 낮게 올려다본다. 고르미는 파란 독립 클립에 따뜻한 별이 있는 구름 토큰을, 분홍 독립 클립에 보랏빛 물방울과 열린 곡선이 있는 다른 구름 토큰을 건다. 두 토큰 사이의 결합 고리는 비워 두고 저울·접시·추 없이, 모두에게 좋은 답을 가렸을 때 드러나는 자기 욕구와 두려움을 서로 합치지 않은 채 보여 준다.",
       "distinctFrom": [
@@ -197,7 +198,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "9768e4794db145755ddcf5b3558894f354f5c7de64f1d152dad0431cef068416",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "letteredge_macro_single_petalseal_truthwindow_empty_receiver",
       "artDirection": "두꺼운 별편지의 모서리 높이에서 봉인 꽃잎과 꼬옥이의 옆얼굴을 극근접으로 본다. 꼬옥이는 여러 겹 봉인 중 꽃잎형 걸쇠 정확히 하나만 열어 좁은 진실 창을 드러내고, 창 안에는 별 하나와 끊긴 열린 곡선 하나만 보이게 한다. 편지는 짧은 분리형 받침 위로 빈 초승달 수령 홈 쪽에 직접 내밀되 닿지 않으며, 나머지 봉인과 하트 꼬리는 꼬옥이 몸 곁에 닫힌 채 남겨 필요한 진실과 지킬 사생활을 함께 구분한다.",
       "distinctFrom": [
@@ -217,7 +218,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "b7dd906c472aec9a068a861ee7bc25181e5f2ac0db44fb9967c41ff8aa228dcf",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "groundlevel_twin_detachable_wayflags_storyribbon_open_horizon",
       "artDirection": "긴 여행 이야기를 뜻하는 넓은 무문자 리본이 느슨하게 말린 바닥을 지면 높이에서 본다. 총총이는 서로 떨어진 낮은 소켓에 떼어 낼 수 있는 길깃발 정확히 두 개를 세우며, 한 깃발에는 나란한 별 두 개와 열린 길목을, 다른 깃발에는 바깥을 향한 혜성과 넓은 빈 원을 둔다. 화살표·지도 경로·목적지 없이 두 깃발 사이와 뒤의 수평선을 넓게 비워, 원하는 관계 방향과 반드시 지킬 자유를 동시에 선명하게 남긴다.",
       "distinctFrom": [
@@ -237,7 +238,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "4ebdf6a878a7bc8b215525ae203707463c308d79aa51b3097556d0dd7e8cfc95",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "edgeon_accordionplan_twin_stonetabs_open_limitcut",
       "artDirection": "길고 두꺼운 계획 폴리오를 접는 모서리를 낮은 옆시점으로 가깝게 본다. 오름이는 글자 없는 아코디언 면들을 자기 쪽 덮개 안으로 접고, 앞의 별도 받침에 짧은 돌 약속 탭 정확히 두 개를 나란하지 않은 높이로 세운다. 금빛 별이 단단한 홈에 놓인 탭은 맡을 책임을, 끝이 열린 빈 홈 모양인 탭은 지금 할 수 없는 일을 나타내며, 두 탭 사이와 바깥 수령 자리는 잠금 없이 비워 짧지만 분명한 책임과 한계를 함께 보인다.",
       "distinctFrom": [
@@ -257,7 +258,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "74244cf32478ea70dc54a86ee759ec81fc3e4e89e734796ad24c77da0ee56f31",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "overhead_folding_starframework_twin_bluepanes_center_gap",
       "artDirection": "복잡하지만 별자리 배열이 아닌 기하 종이틀을 거의 수직 탑뷰로 내려다본다. 방울이는 여러 빈 선과 면이 있는 도안을 가운데에서 접어 닫으면서, 서로 닿지 않는 둥근 클립에 반투명 파란 창 정확히 두 장을 따로 건다. 한 창에는 작은 물결과 물방울, 다른 창에는 열린 곡선과 바깥을 향한 별 하나만 두고 중앙 클립은 비워, 구조 설명 대신 지금 감정과 필요한 반응을 짧게 분리한다.",
       "distinctFrom": [
@@ -277,7 +278,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-26",
       "editorialContentHash": "3512c73dc3394e5cd7b23c7d101eaf9daa0a35d30652d1c44279f6efde37192e",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "inside_split_dreamveil_vertical_twin_clear_drops_unknown_opening",
       "artDirection": "두 갈래 꿈구름 휘장 사이의 세로 틈 안에서 큰 아쿠아 꿈별이와 작은 분홍 잠별이를 가깝게 본다. 두 수호령은 각자 자기 쪽 구름 끝을 바깥으로 걷어 상상 장면을 가리고, 서로 다른 높이에 투명 물방울 정확히 두 개를 남긴다. 아래 물방울에는 작은 색 물결과 별 하나만, 위 물방울에는 중심을 비운 열린 곡선 하나만 두며 지느러미와 물살은 닿거나 고리로 이어지지 않아 실제 감정과 아직 모르는 부분을 분리한다.",
       "distinctFrom": [
