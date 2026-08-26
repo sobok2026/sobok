@@ -3,7 +3,7 @@
   "locale": "ko",
   "contentType": "image/webp",
   "cacheControl": "public, max-age=31536000, immutable",
-  "assetCount": 321,
+  "assetCount": 333,
   "assets": [
     {
       "editionId": "aquarius.choice.evidence.shared-world",
@@ -51,11 +51,20 @@
       "height": 1440
     },
     {
+      "editionId": "aquarius.love.everyday-care.eclipse",
+      "objectKey": "guardian-cards/ko/aquarius.love.everyday-care.eclipse.67c9fc4c4f08.webp",
+      "sourceArtworkSha256": "cf6de5538beab836f5156808aec9623c93d5483fbfcabcb95640d0717102be2e",
+      "deliveryArtworkSha256": "67c9fc4c4f08e04f7a8e2ba3174ac6bb90be4a510059e3dbcdd047a04caa7bf9",
+      "byteSize": 265508,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "aquarius.love.everyday-care.nebula",
-      "objectKey": "guardian-cards/ko/aquarius.love.everyday-care.nebula.webp",
-      "sourceArtworkSha256": "0ca1459ef130e9872516b7fb6fa39105788d08ee6f7f9973ee660c4815273e8c",
-      "deliveryArtworkSha256": "ab52b3b90af470ea8be52b52e2993a5586410a3731706259db6f65f3e5c806a4",
-      "byteSize": 180266,
+      "objectKey": "guardian-cards/ko/aquarius.love.everyday-care.nebula.ebb9a4276fe0.webp",
+      "sourceArtworkSha256": "81fa2df000b85dcfef8c16e0b01ac9967e5ce1005dcf0cc476c7f0bc48d4996d",
+      "deliveryArtworkSha256": "ebb9a4276fe04095f444bc82bf50ab2d6b1eb8379a7c0dfc0521db56eff5b3b0",
+      "byteSize": 156480,
       "width": 1080,
       "height": 1440
     },
@@ -285,11 +294,20 @@
       "height": 1440
     },
     {
+      "editionId": "aries.love.everyday-care.eclipse",
+      "objectKey": "guardian-cards/ko/aries.love.everyday-care.eclipse.f43ddeebe5a5.webp",
+      "sourceArtworkSha256": "beaee91b116cdd9184db83673dbb3e341fd828adde910cb3b903605ac6671e3a",
+      "deliveryArtworkSha256": "f43ddeebe5a5fee39890e036cc7eb77bcd8a8fde521325119a56a9427d8f2e19",
+      "byteSize": 242764,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "aries.love.everyday-care.nebula",
-      "objectKey": "guardian-cards/ko/aries.love.everyday-care.nebula.webp",
-      "sourceArtworkSha256": "12257c8528c1dd9591d16cf0398a3f6a25c9fb49933886a2d366716bc0499814",
-      "deliveryArtworkSha256": "2edf4b1b6971c50cb9b83c2c50cf10b5b3af44bd76b09bc8e1b0efdfe81464e0",
-      "byteSize": 222508,
+      "objectKey": "guardian-cards/ko/aries.love.everyday-care.nebula.978304c0bb4a.webp",
+      "sourceArtworkSha256": "93830954952c1d156ea7aabed6263e64baa49c83a453d72959b0d24f8a603821",
+      "deliveryArtworkSha256": "978304c0bb4a4b5a58a5a58f0e2dd2de1f4814b844457ab5ee65ebd5871286c1",
+      "byteSize": 189106,
       "width": 1080,
       "height": 1440
     },
@@ -528,11 +546,20 @@
       "height": 1440
     },
     {
+      "editionId": "cancer.love.everyday-care.eclipse",
+      "objectKey": "guardian-cards/ko/cancer.love.everyday-care.eclipse.b9c462f26671.webp",
+      "sourceArtworkSha256": "ec4fe3bc873a02eaad34dce81157d13bee6cfe32b9ec3fa53ffdee61dcae827a",
+      "deliveryArtworkSha256": "b9c462f26671fb49702b80bcff6d1b74e825b0ce74140a16cb4d2f208b379010",
+      "byteSize": 344036,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "cancer.love.everyday-care.nebula",
-      "objectKey": "guardian-cards/ko/cancer.love.everyday-care.nebula.webp",
-      "sourceArtworkSha256": "794d277e4263f3517e4fbd31ac787667fed77b050f223e06b316a59a43558193",
-      "deliveryArtworkSha256": "1a2214e303f2d3ae9cbb7a590711813e7d7139c40245cc7fb96d9a30094fec35",
-      "byteSize": 306326,
+      "objectKey": "guardian-cards/ko/cancer.love.everyday-care.nebula.994d49c1acba.webp",
+      "sourceArtworkSha256": "9906985e3a39172f45314ab1f49d067c189ae973343e77a5c9d5a02eae22672d",
+      "deliveryArtworkSha256": "994d49c1acba3e536d17b4b40c36687d2aa677d7e3e3810e7bb9b5060eb289cc",
+      "byteSize": 227110,
       "width": 1080,
       "height": 1440
     },
@@ -762,11 +789,20 @@
       "height": 1440
     },
     {
+      "editionId": "capricorn.love.everyday-care.eclipse",
+      "objectKey": "guardian-cards/ko/capricorn.love.everyday-care.eclipse.8758de8df4bf.webp",
+      "sourceArtworkSha256": "5cf7f0ce5e4303e1f72dd2df02fea45110462a43a0be11ad4afeaf9c7030b2bf",
+      "deliveryArtworkSha256": "8758de8df4bf0a93b1bcd72e8c736ca8f47222f5f5359a04fb8c86ec570918c7",
+      "byteSize": 287256,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "capricorn.love.everyday-care.nebula",
-      "objectKey": "guardian-cards/ko/capricorn.love.everyday-care.nebula.webp",
-      "sourceArtworkSha256": "26726168b71b525b22eb932293bbd74dd914d23a3ba5d9a88e8c61dd9094d24f",
-      "deliveryArtworkSha256": "d61e3ce9bca75b226905875b5db5798d1028fa5c1de40cc88e494665ad0a27ce",
-      "byteSize": 222604,
+      "objectKey": "guardian-cards/ko/capricorn.love.everyday-care.nebula.4cede8840eab.webp",
+      "sourceArtworkSha256": "0781a714fd682ec3b1cd0e6a3962880197597d3e8866dbb932820c38b7144393",
+      "deliveryArtworkSha256": "4cede8840eab22d726a25063e4e7e88f5a89850f8e59ffbf8ff1387fef4bf7cc",
+      "byteSize": 215572,
       "width": 1080,
       "height": 1440
     },
@@ -1005,11 +1041,20 @@
       "height": 1440
     },
     {
+      "editionId": "gemini.love.everyday-care.eclipse",
+      "objectKey": "guardian-cards/ko/gemini.love.everyday-care.eclipse.63f6c904ff0d.webp",
+      "sourceArtworkSha256": "4649a1551fd6d015bcd8a5bbdac66ea224fe95e64d3af7ef166924824ca13646",
+      "deliveryArtworkSha256": "63f6c904ff0d61469b2e3418a2b8f648cafc0d8faf005abf0a35bbb203514d98",
+      "byteSize": 226032,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "gemini.love.everyday-care.nebula",
-      "objectKey": "guardian-cards/ko/gemini.love.everyday-care.nebula.webp",
-      "sourceArtworkSha256": "9c385cefca61b6723f180c1e34625f6806415b73b389f23ef66c4c65c51d1ce2",
-      "deliveryArtworkSha256": "a2d6c981093eab24067e80465bf58fd8512d2722e928a5996915be3f47da6724",
-      "byteSize": 358234,
+      "objectKey": "guardian-cards/ko/gemini.love.everyday-care.nebula.796733674225.webp",
+      "sourceArtworkSha256": "3dae02a89bc50c6001ad3d09f2c6d224d0727ee0d3188dbc6fd2a1f434303d83",
+      "deliveryArtworkSha256": "796733674225b908623ee945f6f904dc0679c15816edf76d65e8b4fea2a7a067",
+      "byteSize": 329128,
       "width": 1080,
       "height": 1440
     },
@@ -1239,11 +1284,20 @@
       "height": 1440
     },
     {
+      "editionId": "leo.love.everyday-care.eclipse",
+      "objectKey": "guardian-cards/ko/leo.love.everyday-care.eclipse.00324ee9e6e3.webp",
+      "sourceArtworkSha256": "f572c2cbcca9325dbc07c873b50d3a72c18bb01c9cb08652f266fbb32c739e72",
+      "deliveryArtworkSha256": "00324ee9e6e357d41724890570c05175a2682193bb070206c8a94cbf1c65a5fc",
+      "byteSize": 254286,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "leo.love.everyday-care.nebula",
-      "objectKey": "guardian-cards/ko/leo.love.everyday-care.nebula.webp",
-      "sourceArtworkSha256": "fe3e267a6fab94d706007693dd8182a8d5b5a6a2ccc7bcc82bda1b08a2385013",
-      "deliveryArtworkSha256": "bd131f986731ca04c5d0c1937a569cac0979b29e7664f9a3564e5188b7f46aa3",
-      "byteSize": 150040,
+      "objectKey": "guardian-cards/ko/leo.love.everyday-care.nebula.853059e5d542.webp",
+      "sourceArtworkSha256": "a5609c98ff668ed2bcb292702493ced99b2cccf6bb2f539fa7b6760b82f2edf5",
+      "deliveryArtworkSha256": "853059e5d5425f77785e43d950e36d5b1d049bf63e7a787f0c4b0fdacf767dae",
+      "byteSize": 138006,
       "width": 1080,
       "height": 1440
     },
@@ -1482,11 +1536,20 @@
       "height": 1440
     },
     {
+      "editionId": "libra.love.everyday-care.eclipse",
+      "objectKey": "guardian-cards/ko/libra.love.everyday-care.eclipse.a04aa95428a2.webp",
+      "sourceArtworkSha256": "bcc877dc814ab275f1417de1f5e37a632d388bc3d7dae227143f2252d45dfaff",
+      "deliveryArtworkSha256": "a04aa95428a25e4ce3a9c579b7c0dc24ed18fbe3de409c22920e00fbe0855606",
+      "byteSize": 298776,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "libra.love.everyday-care.nebula",
-      "objectKey": "guardian-cards/ko/libra.love.everyday-care.nebula.webp",
-      "sourceArtworkSha256": "ea348130b16a034a0d3963550b4300d04f58b9bfd19cf468e94517e28fb51f22",
-      "deliveryArtworkSha256": "ae8e7dbd85a941da9932e1fc9f2e2efa2b008730785ca5b0318d1c0f74f01d8d",
-      "byteSize": 214924,
+      "objectKey": "guardian-cards/ko/libra.love.everyday-care.nebula.8c3b365e7b90.webp",
+      "sourceArtworkSha256": "4fc345c08c2391eb4f6c980dd154597316a4a7358a72d7cb636c7f4aad8f47cf",
+      "deliveryArtworkSha256": "8c3b365e7b9009a6b52b9e7af50e9404ea2fc5d6f0422d36e20b10b36f622309",
+      "byteSize": 186590,
       "width": 1080,
       "height": 1440
     },
@@ -1716,11 +1779,20 @@
       "height": 1440
     },
     {
+      "editionId": "pisces.love.everyday-care.eclipse",
+      "objectKey": "guardian-cards/ko/pisces.love.everyday-care.eclipse.4fcf08591ca5.webp",
+      "sourceArtworkSha256": "18253b4966d3e7ef7716bdb44fd1c653cd7fa6794fbb45c6ce950d5830b7386f",
+      "deliveryArtworkSha256": "4fcf08591ca5b869264c815ef3eb795ff99b22d6a6032a273d7f931ff11e82d1",
+      "byteSize": 228192,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "pisces.love.everyday-care.nebula",
-      "objectKey": "guardian-cards/ko/pisces.love.everyday-care.nebula.webp",
-      "sourceArtworkSha256": "4a2d7178dbdd7e774622f40acf5dd56b67bcf538ea33e43729ad76a6dae46956",
-      "deliveryArtworkSha256": "29ac5971e2dfbb1d7087b6e2d9a22e8f6d53d783c1d75a1eb633ae920ec04d41",
-      "byteSize": 163374,
+      "objectKey": "guardian-cards/ko/pisces.love.everyday-care.nebula.77489d326f59.webp",
+      "sourceArtworkSha256": "a6d436970453f84d77fc5706fa62c761c64d57eff48e4f959e16931922b9c094",
+      "deliveryArtworkSha256": "77489d326f59de142fa5ff710c179a4f49ec02cae9e0e7520bd67667b7c8821d",
+      "byteSize": 164044,
       "width": 1080,
       "height": 1440
     },
@@ -1968,11 +2040,20 @@
       "height": 1440
     },
     {
+      "editionId": "sagittarius.love.everyday-care.eclipse",
+      "objectKey": "guardian-cards/ko/sagittarius.love.everyday-care.eclipse.4d5132d3e163.webp",
+      "sourceArtworkSha256": "d0ea6f54bc47c8694a5c480cf3f2c38a6353f8b129a9d0dcff5df7e0b8192800",
+      "deliveryArtworkSha256": "4d5132d3e163ee250c535a3335f3ac9d7e65e48e7ed985f497c4a0c649db6f4d",
+      "byteSize": 273390,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "sagittarius.love.everyday-care.nebula",
-      "objectKey": "guardian-cards/ko/sagittarius.love.everyday-care.nebula.webp",
-      "sourceArtworkSha256": "ee7f780681bc8306ee38eb95f792365ab29615a7155917f4b289fe91133121d5",
-      "deliveryArtworkSha256": "ece6e76fb046e8787a09de69cbad59fadd05c516629ad985350251214c47535d",
-      "byteSize": 153318,
+      "objectKey": "guardian-cards/ko/sagittarius.love.everyday-care.nebula.5264f1c4f129.webp",
+      "sourceArtworkSha256": "1be7e6971f2049a3a0854354d3f217dc07ccf8509e5546deb2bc0e85d5338b46",
+      "deliveryArtworkSha256": "5264f1c4f12967569dea2ddbe4e5a559dc4b6ee5cdb66e8e0c1f6aeb469bcdec",
+      "byteSize": 151212,
       "width": 1080,
       "height": 1440
     },
@@ -2202,11 +2283,20 @@
       "height": 1440
     },
     {
+      "editionId": "scorpio.love.everyday-care.eclipse",
+      "objectKey": "guardian-cards/ko/scorpio.love.everyday-care.eclipse.0caa9deda999.webp",
+      "sourceArtworkSha256": "1c6b33aa7704ca7b666b15628eb222a634c4de2b9f79e52787fc4a7b7f673360",
+      "deliveryArtworkSha256": "0caa9deda99995b949db580bde0f8a40ec952f5289da42f334f5bc57953a9adb",
+      "byteSize": 291566,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "scorpio.love.everyday-care.nebula",
-      "objectKey": "guardian-cards/ko/scorpio.love.everyday-care.nebula.webp",
-      "sourceArtworkSha256": "d48a7ac11bfb3dc1b17915cebe6e37b3bc8fc9e650b637ec710ea35116c0cc24",
-      "deliveryArtworkSha256": "8c97f43544c36d4f121b5cd8b8782d99481cb0599b6e72420045c6de823fc8e1",
-      "byteSize": 139390,
+      "objectKey": "guardian-cards/ko/scorpio.love.everyday-care.nebula.a8accb65c46f.webp",
+      "sourceArtworkSha256": "a7291ad710ffd0eb73d21d6b004ab165dc5bb11a0a9690e73bfd7c1132fd50de",
+      "deliveryArtworkSha256": "a8accb65c46f53c70a87db3ab173d2120e962efac14fed6dc00eb720b7b6e852",
+      "byteSize": 139082,
       "width": 1080,
       "height": 1440
     },
@@ -2445,11 +2535,20 @@
       "height": 1440
     },
     {
+      "editionId": "taurus.love.everyday-care.eclipse",
+      "objectKey": "guardian-cards/ko/taurus.love.everyday-care.eclipse.03c63256c30e.webp",
+      "sourceArtworkSha256": "632f7dabf8f2fdd79dc024c7db7f95fdbd2e49b6a84f8378e755f9725a1208f8",
+      "deliveryArtworkSha256": "03c63256c30e988f205238d3e89d1d6de8b9e957d6d0295bed0c7d8dd9f5ed41",
+      "byteSize": 230206,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "taurus.love.everyday-care.nebula",
-      "objectKey": "guardian-cards/ko/taurus.love.everyday-care.nebula.webp",
-      "sourceArtworkSha256": "daa67bdf6baff4d659c6fd6b1cd78a4548b9c139a6d3d7f069a5ee20b56e2f6a",
-      "deliveryArtworkSha256": "69c5cb250011a0958fcd7cf8d9d54e702bb973ac081d7c6cd6bbac4b8c8436be",
-      "byteSize": 218866,
+      "objectKey": "guardian-cards/ko/taurus.love.everyday-care.nebula.d7ddd1eac8ac.webp",
+      "sourceArtworkSha256": "4c4a4090e78134bc7e7c5e8a64cfca1829e03aa4d0024e13744ac921148cb9db",
+      "deliveryArtworkSha256": "d7ddd1eac8ac1651967773d260da659f75f06cfab697cecfb17ec11b6d5e1f22",
+      "byteSize": 205772,
       "width": 1080,
       "height": 1440
     },
@@ -2688,11 +2787,20 @@
       "height": 1440
     },
     {
+      "editionId": "virgo.love.everyday-care.eclipse",
+      "objectKey": "guardian-cards/ko/virgo.love.everyday-care.eclipse.454337b51409.webp",
+      "sourceArtworkSha256": "2afb14862d0a7ea130e718d6b6fa1572d622ed1bf8029a03f5102cbe34cfac03",
+      "deliveryArtworkSha256": "454337b5140927d028430eb270f8d78c70285f4b2719dfce13d93e9e26959355",
+      "byteSize": 311868,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "virgo.love.everyday-care.nebula",
-      "objectKey": "guardian-cards/ko/virgo.love.everyday-care.nebula.webp",
-      "sourceArtworkSha256": "561f4382de4db2a1c77b39b2a34a53cefe8b9edf2b446aeafa99bd105235ca20",
-      "deliveryArtworkSha256": "377a1f652c7c9030cf21bc6f674e4f9093ea61279e012e93d07f0ce14e66400c",
-      "byteSize": 165946,
+      "objectKey": "guardian-cards/ko/virgo.love.everyday-care.nebula.931f835b703a.webp",
+      "sourceArtworkSha256": "5cb2827cee965bc82a9fa840d5d0cc09df7f354311c7b81fc1408fac017f119b",
+      "deliveryArtworkSha256": "931f835b703a39734cdb7e3eeb3cebc4249184a693a5f77f6d6e4c43eafe985a",
+      "byteSize": 165098,
       "width": 1080,
       "height": 1440
     },
