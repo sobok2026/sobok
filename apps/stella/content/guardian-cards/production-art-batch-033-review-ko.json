@@ -1,6 +1,7 @@
 {
-  "status": "editorial_review_complete",
+  "status": "visual_review_ready",
   "editorialApprovedOn": "2026-08-27",
+  "generatedOn": "2026-08-27",
   "locale": "ko",
   "batchId": "love.shared-play.orbit",
   "batchOrder": 33,
@@ -57,7 +58,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "81ab5f4cab2c3ed1f9d17fc095bef7fbe5bd088663a264d37700aeff48fb3646",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "noselevel_cropped_star_sled_twin_swivelgrips_comet_streamer_empty_second_footpad",
       "artDirection": "별썰매의 둥근 앞코와 두 회전 손잡이를 눈높이 가까이에서 사선으로 잡고 바퀴·레일·목적지는 화면 밖에 둔다. 몽실이는 접은 혜성 깃발을 썰매 옆 고리에 고정한 뒤 자기 쪽 붉은 손잡이를 한 칸 돌리며 한 앞발로 별발판을 눌러 짧은 빛꼬리 구슬을 굴린다. 반대 손잡이와 두 번째 발판은 비어 있고 승부선·점수·상대 몸 없이, 썰매 앞의 열린 곡선 빛만 화면 옆으로 빠져나간다.",
       "distinctFrom": [
@@ -77,7 +78,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "c8fd71e87f63fb9f6612950ef6f46ab31a17615b586c704515563d34d1b3b5c0",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "blanketroll_height_open_picnic_satchel_restpebble_pockets_empty_companion_cup",
       "artDirection": "말아 둔 조각담요 높이의 낮은 옆시점에서 앞면이 열린 작은 별소풍 가방과 서로 다른 촉감의 쉼돌 주머니 세 칸을 가깝게 본다. 차곡이는 목적지 표식 없이 잎무늬 쉼돌 하나를 골라 자기 담요 고리에 끼우고, 가방 안의 별쿠키 두 개 중 자기 몫 하나만 작은 잎접시에 둔다. 반대 접시와 동행 컵은 비워 두며, 풀린 담요 끝은 길이 아니라 짧은 물결처럼 화면 바깥으로 열린다.",
       "distinctFrom": [
@@ -97,7 +98,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "2b8a65dc6e8f8b415e81f9a89a37906d2f6ea0923a69638af99173bab9e87bb9",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "inside_symbol_tumbler_twin_sideknobs_prompt_tiles_laughbead_tray_empty_wild_slot",
       "artDirection": "투명한 짧은 별기호 굴림통 안쪽 높이에서 양옆 손잡이와 아래 웃음구슬 받침을 정면 가까이 본다. 큰 재잘이는 점 두 개·작은 잎이 있는 기호 타일을 자기 손잡이로 굴리고, 작은 소곤이는 열린 곡선·물방울 타일을 반대 손잡이로 뒤집어 서로의 예상 밖 조합을 바라본다. 중앙에는 작은 웃음별 구슬 하나만 떨어지고, 글자 없는 빈 와일드 슬롯 하나와 다음 구슬 자리는 비워 두며 정본 분홍 리본은 굴림통 뒤로 느슨하게 지난다.",
       "distinctFrom": [
@@ -117,7 +118,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "2c62808ccffe837e58eded38f2548cbd37c3f5ea6b7e7b696343a618e31e7fd0",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "puddleedge_macro_star_droplet_pinwheel_crescent_scoop_dry_return_mat_empty_second_scoop",
       "artDirection": "달집 문이 아닌 집 가까이의 마른 초승달 발매트와 작은 물웅덩이 가장자리를 수면 높이 극근접으로 본다. 달콩이는 둥근 보라 집게로 자기 초승달 국자에서 별방울 하나를 떨어뜨려 잎 네 장 물바람개비를 돌리고, 몸과 다른 집게는 마른 발매트 위에 안전하게 남긴다. 물웅덩이 반대쪽의 두 번째 국자와 작은 발자리 하나는 비어 있고, 튄 물방울은 짧은 열린 호로만 흩어진다.",
       "distinctFrom": [
@@ -137,7 +138,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "9c372fa5842da778a585e1395cb9ebaf11da24ceedb813b3cced6fe32d491f61",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "floorpad_close_wobble_pose_tiles_crown_aside_empty_echo_pad_scorecloth_folded",
       "artDirection": "무대나 객석을 자르고 푹신한 두 칸 흔들동작 매트를 바닥 눈높이에서 정면 가까이 본다. 해님이는 비뚤어진 종이 왕관을 옆 쿠션에 내려두고, 별·열린 곡선만 있는 우스운 자세 타일 하나를 자기 칸에 꽂은 뒤 한 발을 옆으로 들고 갈기를 살짝 기울인다. 점수판은 무문자 천 아래 완전히 덮고 반대 흔들판과 다음 자세 홈은 비워 두며, 발끝의 짧은 금빛 흔들선만 열린 채 남긴다.",
       "distinctFrom": [
@@ -157,7 +158,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "4a9ba29d4c6343146145d9a525ada08f8e69e6bbebeffb6599de0c038617f605",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "bagmouth_pov_mixed_starflowers_lookaway_draw_crooked_combo_empty_laugh_clip",
       "artDirection": "부드러운 잎주머니 입구 안쪽에서 섞인 별꽃 머리와 바깥의 새봄이를 올려다보는 가까운 시점이다. 새봄이는 정리표나 크기 줄 없이 얼굴을 옆으로 돌린 채 주머니에서 서로 다른 꽃잎의 삐뚤어진 별꽃 하나를 뽑고, 다른 앞발로 자기 이마 별꽃이 흐트러지지 않게 잡는다. 뽑은 꽃은 고치지 않고 낮은 U자 받침에 두며, 반대 뽑기 고리와 웃음별 클립 하나는 비워 둔다.",
       "distinctFrom": [
@@ -177,7 +178,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "4eef360f10afd8a0deb64d4da58d711980b142bc973c35b0cb6625030a960fdb",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "canvascorner_macro_covered_scale_base_color_pouch_irregular_shapes_empty_turn_clip",
       "artDirection": "저울 전체가 아니라 천으로 덮인 받침 한 모서리와 비정형 삼각 그림판을 어깨 높이 근접으로 비스듬히 본다. 고르미는 눈금을 가린 채 작은 주머니에서 파란 초승달 조각 하나를 무작위로 뽑아, 이미 떨어져 있는 분홍 점·금빛 별 조각 곁의 자기 자석 홈에 붙인다. 조각들은 별그림을 완성하거나 균형을 이루지 않고 반대편 색 주머니와 다음 차례 클립은 비워 두며, 짧은 색띠 하나만 화면 밖으로 열린다.",
       "distinctFrom": [
@@ -197,7 +198,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "019d2be58e12bd7a9a112c4ab5e2c57978c705bd0f919b62b6934f43eefcd5f0",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "tailheight_signal_rack_three_color_droplets_open_curve_pose_laughpouch_empty_reply_peg",
       "artDirection": "꼬옥이의 분홍 하트 꼬리 높이에서 낮은 신호걸이의 서로 떨어진 색방울 세 개와 작은 웃음별 주머니를 옆으로 가깝게 본다. 꼬옥이는 망토를 여민 채 꼬리 끝으로 열린 S자 신호를 만들고 자기 집게로 보랏빛 색방울 하나만 가볍게 흔들어, 주머니에 웃음별 하나를 넣는다. 자물쇠·문·암호표 없이 반대 신호 집게와 빈 응답 못 하나를 그대로 남기며 색빛은 짧은 점선 호로 흩어진다.",
       "distinctFrom": [
@@ -217,7 +218,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "947710c3966493ad9ccdfff29970752d4a5a27848f05c7a67b91956c54159c2a",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "hooflevel_soft_shape_die_split_steppingstones_blank_flag_socket_empty_second_toss_rest",
       "artDirection": "총총이의 앞발과 부드러운 별모양 선택 주사위를 발굽 높이에서 가까이 보고, 숫자·화살표 없는 두 갈래 디딤돌은 첫 돌까지만 화면 양옆에 자른다. 총총이는 초승달 활을 등에 고정한 채 별·잎·물방울 면만 있는 주사위를 낮게 굴리고 자기 쪽 빈 깃발 소켓에 아무 표식 없는 짧은 천 조각을 꽂으려 한다. 반대 던지기 받침과 두 번째 깃발 소켓은 비우고, 구르는 점 세 개는 어느 길에도 닿기 전에 열린다.",
       "distinctFrom": [
@@ -237,7 +238,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "7ddc2923661919e743feb47fc8a259e1e99f2f542b324522fb5de1df8c21a902",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "landingbench_close_hidden_star_patches_lifted_cushion_facedown_plan_empty_rest_patch",
       "artDirection": "계단 전체를 자르고 넓은 계단참 벤치의 쿠션과 숨은 별조각 홈을 손 높이에서 가깝게 본다. 오름이는 정상 일정표를 글자 없는 면이 위로 오게 접어 가방 옆에 두고, 자기 쪽 쿠션 모서리를 들어 우스운 표정 없는 말랑별 조각 하나를 찾아 앞발 곁에 놓는다. 다음 쿠션의 별 홈과 반대쪽 휴식 패치는 비어 있으며, 청록 꼬리는 벤치 아래 자기 공간에 느슨하게 놓인다.",
       "distinctFrom": [
@@ -257,7 +258,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "849d256f3051a7c2b151e1ba92b953d1f766c42e02252d9ca4537a426759ba5c",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "ribbed_cloudpad_close_sealed_bottle_roll_soundbeads_shape_tabs_empty_rule_clip",
       "artDirection": "푹신한 구름 골판과 닫힌 파란 마음병을 탁자 모서리 높이에서 정면 가까이 본다. 방울이는 병을 열거나 내용을 따르지 않고 자기 쪽 짧은 손잡이로 골판 위를 한 번 굴려, 병 안의 서로 다른 색 소리구슬이 작은 구름·잎 모양 탭을 튀게 한다. 방울이는 예상 밖 모양을 보며 다음 규칙을 뜻하는 빈 클립을 열어 두고, 반대 굴림 손잡이와 두 번째 구름 홈은 비우며 파동은 한쪽으로 열린다.",
       "distinctFrom": [
@@ -277,7 +278,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "1724a84c2bf4b9326c5094feea2e28a153b6a8f68937b705395a10ee2e32f54a",
-      "imageStatus": "not_started",
+      "imageStatus": "generated_candidate",
       "compositionFamily": "trayrim_pov_twin_fin_paddles_separate_color_ripples_open_splash_shape_empty_third_cove",
       "artDirection": "길쭉한 얕은 물결놀이 받침의 낮은 테두리 안쪽에서 큰 아쿠아 꿈별이와 작은 분홍 잠별이를 마주 올려다본다. 꿈별이는 아쿠아 지느러미 패들로 왼쪽 물결을 한 번 누르고, 잠별이는 더 작은 분홍 패들로 오른쪽 물결을 튕겨 중앙에 이름 없는 열린 별빛 물보라 하나를 잠깐 만든다. 두 색은 각자 물가로 돌아가 섞이지 않고 뒤쪽 세 번째 물결 홈은 비우며, 정본 연결 여운은 짧은 두 곡선으로만 남는다.",
       "distinctFrom": [
