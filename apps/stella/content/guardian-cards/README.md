@@ -49,6 +49,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-028-review-ko.json`    | `visual_review_complete` | 스물여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
 | `production-art-batch-029-review-ko.json`    | `visual_review_complete` | 스물아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정          |
 | `production-art-batch-030-review-ko.json`    | `visual_review_complete` | 서른 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-031-review-ko.json`    | `editorial_review_ready` | 서른한 번째 production 배치 신규 12개 편집 검토 준비, 사람 승인 대기          |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 369개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -752,6 +753,20 @@ honest-conversation Orbit의 근접 소품을 반복하지 않는다. 2026-08-27
 객체 키는 누적 369개 매니페스트에 고정한다. 환경별 R2 반영 이력은 `Guardian Card Art Deploy` workflow가
 남긴다.
 
+서른한 번째 배치는 `love.honest-conversation` 원고를 `eclipse` 희귀도로 제작할 신규 12개 편집 검토안이다.
+`production-art-batch-031-review-ko.json`에 현재 원고의 canonical SHA-256과, 정해진 두 수호령이 실제로
+감정·필요·부탁·한계·모르는 부분을 주고받되 각자의 조절점과 다음 선택을 유지하는 장면을 고정했다. 열린
+혜성 대화 레일의 두 진실 타일, 도자 종 내부의 필요 돌과 잎 수령판, 매달린 두 공명 갈비의 소리 타일,
+달집 외벽 발코니의 부탁 타일과 듣기 스쿱, 반투명 무대 바닥 아래의 두 진실 블록, 열린 표본틀의 두
+상징 잎과 삐뚤어진 별꽃, 열린 육각 모래 탁자의 진실 돌과 공동 별, 자수정 지오드의 단일 진실 면,
+두 갈래 지평 망원경의 관계·자유 렌즈, 열린 지지 아치의 책임·한계 돌, 파란 공명 탁자의 두 물결 키,
+초승달 물결 실로폰의 두 투명 원판처럼 서로 다른 실루엣·카메라·양방향 행동·빈 다음 자리를 사용한다.
+앞선 첫 신호·조심스러운 다가감·일상 돌봄 Eclipse의 우체통·문·조명·저울·지도·병·꿈방울 구조와 바로
+앞 honest-conversation Orbit·Nebula의 근접·날씨 보호 소품을 반복하지 않는다. 원고 속 쪽지·대본·계획·
+표지판·도안은 읽을 수 있는 글자나 가짜 글줄 없이 별·물방울·잎·점·열린 곡선 같은 분리된 추상 기호로만
+번역한다. 2026-08-27 사람 편집 검토를 위해 준비했으며 현재 12개 모두 `pending_human_approval`이다.
+사람의 편집 승인과 canonical hash 고정 전에는 imagegen 입력·PNG 후보 생성·WebP/R2 반영을 허용하지 않는다.
+
 ## 검증
 
 repository root에서 다음 명령을 실행한다.
@@ -819,6 +834,10 @@ bun --filter=@sobok/stella guardian-cards:validate
   careful-approach·everyday-care Nebula와 바로 앞 honest-conversation Orbit 비반복, 편집 승인 해시 기반
   신규 PNG 후보·마스터/80px·이전 스물아홉 배치 비교 보조 시각 QA·사람의 최종 시각 승인·콘텐츠
   주소형 WebP/R2 배포 후보 고정
+- 서른한 번째 production 배치 신규 12개 원고 해시와 정해진 두 수호령이 감정·필요·부탁·한계·모르는
+  부분을 실제로 주고받으면서도 각자의 조절점·공개 범위·빈 다음 선택을 유지하는 Eclipse 장면, 앞선
+  첫 신호·careful-approach·everyday-care Eclipse와 바로 앞 honest-conversation Orbit·Nebula 비반복,
+  사람의 편집 승인과 canonical hash 고정 전 imagegen·WebP/R2 반영 차단
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 369개를 제외한 현재 잔여
   687개 산식
