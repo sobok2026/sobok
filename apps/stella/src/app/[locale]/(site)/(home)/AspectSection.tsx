@@ -23,11 +23,25 @@ const OVERFLOW_MIN = 2
 export interface AspectSectionProps {
   aspects: readonly ChartAspect[]
   onSelect: (asp: ChartAspect) => void
+  onPreview?: (asp: ChartAspect) => void
+  previewKey?: string
   selection: Selection
+  storyMode?: boolean
+}
+
+export function aspectStoryKey(aspect: ChartAspect): string {
+  return `${aspect.a}:${aspect.b}:${aspect.type}`
 }
 
 /** The tappable aspect list under the wheel, grouped into harmony vs. tension. */
-export default function AspectSection({ aspects, onSelect, selection }: AspectSectionProps) {
+export default function AspectSection({
+  aspects,
+  onSelect,
+  onPreview,
+  previewKey,
+  selection,
+  storyMode = false,
+}: AspectSectionProps) {
   const t = useTranslations('Constellation')
 
   if (aspects.length === 0) {
@@ -41,14 +55,17 @@ export default function AspectSection({ aspects, onSelect, selection }: AspectSe
     <section className="p-4 rounded-2xl border bg-surface sm:p-5">
       <h2 className="text-sm font-bold text-foreground">{t('aspects.title')}</h2>
       <p className="mt-1 text-xs text-foreground-subtle">{t('aspects.intro')}</p>
-      <div className="mt-4 sm:grid sm:grid-cols-2 sm:gap-4">
+      <div className={storyMode ? 'mt-4 space-y-5' : 'mt-4 sm:grid sm:grid-cols-2 sm:gap-4'}>
         {harmony.length > 0 && (
           <AspectGroup
             accent="var(--color-positive)"
             aspects={harmony}
             label={t('aspects.harmonyGroup')}
             onSelect={onSelect}
+            onPreview={onPreview}
+            previewKey={previewKey}
             selection={selection}
+            storyMode={storyMode}
           />
         )}
         {tension.length > 0 && (
@@ -57,7 +74,10 @@ export default function AspectSection({ aspects, onSelect, selection }: AspectSe
             aspects={tension}
             label={t('aspects.tensionGroup')}
             onSelect={onSelect}
+            onPreview={onPreview}
+            previewKey={previewKey}
             selection={selection}
+            storyMode={storyMode}
           />
         )}
       </div>
@@ -70,21 +90,34 @@ interface AspectGroupProps {
   aspects: readonly ChartAspect[]
   label: string
   onSelect: (asp: ChartAspect) => void
+  onPreview?: (asp: ChartAspect) => void
+  previewKey?: string
   selection: Selection
+  storyMode: boolean
 }
 
-function AspectGroup({ accent, aspects, label, onSelect, selection }: AspectGroupProps) {
+function AspectGroup({
+  accent,
+  aspects,
+  label,
+  onSelect,
+  onPreview,
+  previewKey,
+  selection,
+  storyMode,
+}: AspectGroupProps) {
   const t = useTranslations('Constellation')
   const [expanded, setExpanded] = useState(false)
 
   // Strongest aspects first, so a collapsed list keeps the ones that matter most.
   const ranked = useMemo(() => [...aspects].sort((a, b) => aspectScore(b) - aspectScore(a)), [aspects])
 
-  const collapsible = ranked.length >= DEFAULT_VISIBLE + OVERFLOW_MIN
+  const visibleLimit = storyMode ? 8 : DEFAULT_VISIBLE
+  const collapsible = ranked.length >= visibleLimit + OVERFLOW_MIN
 
   // The selected one always stays visible, so exclude it from the count.
   const hiddenCount =
-    collapsible && !expanded ? ranked.slice(DEFAULT_VISIBLE).filter((a) => !isAspectSelection(selection, a)).length : 0
+    collapsible && !expanded ? ranked.slice(visibleLimit).filter((a) => !isAspectSelection(selection, a)).length : 0
 
   return (
     <div className="mt-3">
@@ -95,13 +128,18 @@ function AspectGroup({ accent, aspects, label, onSelect, selection }: AspectGrou
         {ranked.map((asp, i) => {
           const { color, glyph } = ASPECT_STYLE[asp.type]
           const active = isAspectSelection(selection, asp)
-          const hidden = collapsible && i >= DEFAULT_VISIBLE && !expanded && !active
+          const storyKey = aspectStoryKey(asp)
+          const previewed = storyKey === previewKey
+          const hidden = collapsible && i >= visibleLimit && !expanded && !active
 
           return (
-            <li className={hidden ? 'hidden' : ''} key={`${asp.a}-${asp.b}-${asp.type}`}>
+            <li className={hidden ? 'hidden' : ''} key={storyKey}>
               <button
-                className={`flex w-full items-center gap-2.5 rounded-xl px-2 py-2 text-left transition hover:bg-surface-2 sm:gap-3 sm:px-2.5 ${active ? 'bg-surface-3 ring-1 ring-ring' : ''}`}
+                className={`flex w-full items-center gap-2.5 rounded-xl px-2 py-2 text-left transition hover:bg-surface-2 sm:gap-3 sm:px-2.5 ${active ? 'bg-surface-3 ring-1 ring-ring' : previewed ? 'bg-accent/10 ring-1 ring-accent/20' : ''}`}
+                data-orbit-aspect={storyKey}
+                onFocus={() => onPreview?.(asp)}
                 onClick={() => onSelect(asp)}
+                onPointerEnter={() => onPreview?.(asp)}
                 type="button"
               >
                 <span className="w-10 shrink-0 text-center text-base" style={{ color }}>

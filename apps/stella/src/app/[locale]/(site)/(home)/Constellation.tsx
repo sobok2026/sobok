@@ -2,7 +2,7 @@
 
 import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
 import { useLocale, useTranslations } from 'next-intl'
-import { useReducer, useRef, useState } from 'react'
+import { useMemo, useReducer, useRef, useState } from 'react'
 import { preload } from 'react-dom'
 
 import { big3, computeAspects, elementCounts, reliableAspects, reliableBodies, signOfLon } from '@/chart/astrology'
@@ -15,7 +15,6 @@ import { GUARDIAN_REPORT_UI } from '@/content/guardian-report-ui'
 import { useBirthSource } from '@/hooks/useBirthSource'
 import type { StoredBirth } from '@/lib/birth-storage'
 
-import AspectSection from './AspectSection'
 import Big3Card from './Big3Card'
 import BirthForm from './BirthForm'
 import CommentEntry from './CommentEntry'
@@ -24,6 +23,7 @@ import { commentTopicKey } from './comment-topic'
 import DetailPanel from './DetailPanel'
 import ElementBalance from './ElementBalance'
 import GuardianOffer from './GuardianOffer'
+import OrbitStory from './OrbitStory'
 import PatternSection from './PatternSection'
 import ReportSection from './ReportSection'
 import {
@@ -69,9 +69,10 @@ export default function Constellation() {
   const birthSummary = birth ? formatBirthSummary(birth, locale, t('form.timeUnknownShort')) : null
   const activeChart = data?.chart ?? DEFAULT_CHART
   const { ascendant, cusps } = activeChart
-  const computedAspects = computeAspects(activeChart.planets)
   const unknownTime = data?.unknownTime ?? null
-  const aspects = reliableAspects(computedAspects, unknownTime !== null)
+  const dateOnly = unknownTime !== null
+  const computedAspects = useMemo(() => computeAspects(activeChart.planets), [activeChart.planets])
+  const aspects = useMemo(() => reliableAspects(computedAspects, dateOnly), [computedAspects, dateOnly])
   const { sunSign, moonSign, risingSign } = big3(activeChart)
   const moonSigns = unknownTime?.moonSigns ?? null
   const moonLongitudeRange = unknownTime?.moonLongitudeRange ?? null
@@ -186,13 +187,13 @@ export default function Constellation() {
   }
 
   return (
-    <main className="relative min-h-dvh overflow-hidden bg-night-sky px-3 pb-16 pt-[calc(4.5rem+var(--safe-area-top))] text-foreground sm:px-4">
+    <main className="relative min-h-dvh overflow-x-clip bg-night-sky px-3 pb-16 pt-[calc(4.5rem+var(--safe-area-top))] text-foreground sm:px-4">
       {data && <ZodiacImagePreloads />}
-      <Starfield className="pointer-events-none absolute inset-0 h-full w-full" />
+      <Starfield className="pointer-events-none fixed inset-0 h-dvh w-screen" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-xl flex-col items-center">
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center">
         {/* Hero */}
-        <header className="mb-6 w-full text-center">
+        <header className="mb-6 w-full max-w-xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{t('hero.eyebrow')}</p>
           <HeroTitle>{t('hero.title')}</HeroTitle>
           <p className="mt-3 text-sm leading-relaxed text-foreground-muted/90">{t('hero.subtitle')}</p>
@@ -255,7 +256,7 @@ export default function Constellation() {
 
         {/* Big 3 (after compute) */}
         {revealed && (
-          <div className="mb-6 grid w-full grid-cols-3 gap-1.5 sm:gap-2" key={`big3-${runId}`}>
+          <div className="mb-6 grid w-full max-w-xl grid-cols-3 gap-1.5 sm:gap-2" key={`big3-${runId}`}>
             <Big3Card
               delay={0.1}
               glyph={PLANET_GLYPHS.sun}
@@ -284,7 +285,7 @@ export default function Constellation() {
         )}
 
         {/* Wheel — goes edge-to-edge on mobile (<sm) to reclaim width for legibility. */}
-        <div className="relative -mx-3 scroll-mt-4 w-[calc(100%+1.5rem)] sm:mx-0 sm:w-full" ref={wheelRef}>
+        <div className="relative -mx-3 scroll-mt-4 w-[calc(100%+1.5rem)] max-w-xl sm:mx-0 sm:w-full" ref={wheelRef}>
           <ChartWheel
             aspects={aspects}
             chart={activeChart}
@@ -316,7 +317,7 @@ export default function Constellation() {
 
         {/* Detail panel + its per-topic comment board */}
         {data && (
-          <div className="mt-4 w-full" key={`panel-${selectionKey(selection)}`}>
+          <div className="mt-4 w-full max-w-xl" key={`panel-${selectionKey(selection)}`}>
             <DetailPanel
               ascendant={ascendant}
               chart={data.chart}
@@ -330,7 +331,7 @@ export default function Constellation() {
         )}
 
         {data && (
-          <div className="mt-6 w-full">
+          <div className="mt-6 w-full max-w-xl">
             <ConstellationActions
               aspects={aspects}
               birth={birth}
@@ -343,22 +344,32 @@ export default function Constellation() {
         )}
 
         {data && birth && !shared && guardianReport.published && (
-          <div className="mt-6 w-full">
+          <div className="mt-6 w-full max-w-xl">
             <GuardianOffer content={guardianReport.home} locale={locale} />
           </div>
         )}
 
         {/* Elements + aspects + report */}
         {data && (
-          <div className="mt-9 w-full space-y-9 sm:mt-6 sm:space-y-6" key={`extras-${runId}`}>
-            <ElementBalance
-              counts={counts}
-              dominant={dominant}
-              note={moonSignUncertain ? t('elements.moonExcluded') : undefined}
-              total={balancePlanets.length}
+          <div className="mt-9 flex w-full flex-col items-center gap-9 sm:mt-6 sm:gap-6" key={`extras-${runId}`}>
+            <div className="w-full max-w-xl">
+              <ElementBalance
+                counts={counts}
+                dominant={dominant}
+                note={moonSignUncertain ? t('elements.moonExcluded') : undefined}
+                total={balancePlanets.length}
+              />
+            </div>
+            <OrbitStory
+              aspects={aspects}
+              chart={data.chart}
+              moonLongitudeRange={moonLongitudeRange}
+              onSelect={toggleAspectAndScroll}
+              selection={selection}
             />
-            <AspectSection aspects={aspects} onSelect={toggleAspectAndScroll} selection={selection} />
-            <PatternSection chart={data.chart} dateOnly={unknownTime !== null} />
+            <div className="w-full max-w-xl">
+              <PatternSection chart={data.chart} dateOnly={dateOnly} />
+            </div>
             <ReportSection
               aspects={aspects}
               chart={data.chart}

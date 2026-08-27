@@ -1,0 +1,294 @@
+{
+  "status": "visual_review_ready",
+  "editorialApprovedOn": "2026-08-27",
+  "generatedOn": "2026-08-27",
+  "locale": "ko",
+  "batchId": "love.shared-play.orbit",
+  "batchOrder": 33,
+  "purpose": "사랑의 shared-play 원고를 상대의 참여나 관계 결론을 미리 만들지 않는 가까운 첫 놀이 제안으로 확장한다. 신규 열두 장은 정해진 수호령이 승부·평가·완성 압박 없이 작은 놀이를 준비하거나 시작하되, 외부 상대의 자리·도구·선택권은 비워 두고 앞선 네 Orbit 배치와 바로 앞 honest-conversation Nebula·Eclipse·Stella의 소품·카메라를 반복하지 않는 장면으로 고정한다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "love",
+    "narrativeAxisId": "shared-play",
+    "visualAxisId": "orbit"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium Stella zodiac-guardian card master artwork for the Orbit rarity, full-bleed 3:4. Show exactly the single guardian or canonical internal pair named in the approved card and preserve every character-sheet identity, relative size, silhouette, color, simple dark-purple pupils, exactly one large and one small eye highlight, chest Stella star, clothing, and signature prop; never add an unseen romantic recipient, another hand, face, shadow, reflection, silhouette, third figure, or duplicated guardian. Translate shared play into one intimate close-focus first invitation rather than an already accepted date, collage, or split panel: the named guardian prepares or begins one lightweight game with one dominant physical play device, performs one concrete playful action, and leaves the second grip, portion, pad, scoop, socket, turn, response peg, landing, rest, rule clip, or outer position visibly empty and usable. Keep scoring, ranking, winning, audience approval, perfect execution, fixed rules, mandatory participation, romantic touch, agreement, reconciliation, relationship status, and a guaranteed next meeting out of the image. For Gemini and Pisces, show only their canonical internal pair playing within the same device; preserve both identities and relative sizes, and never turn their internal play into an unseen third person's response. Keep the named guardian, face, playful action, and central device at 55–65% of the frame and readable at 80px, with safe UI framing and one clear close-focus depth axis. Use an open Orbit accent as a short offset arc, rolling bead, tossed shape, splash, flutter, or motion trail that never closes into a ring. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes. Use symbols and simple shapes only: no readable text, sentence, name, label, title, badge, score, number, date, clock face, clock numeral, weekday, calendar, question mark, zodiac glyph, arrowed route, map coordinate, logo, watermark, handwriting, or pseudo-text lines. Cards, schedules, scoreboards, signs, rules, drawings, stickers, and prompts may contain only blank fields, dots, droplets, leaves, stars, separated open curves, removable notches, or simple abstract icons. Do not bake actual birth-chart lines or personal colors into the master art. Do not draw a recognizable zodiac arrangement, horoscope wheel, natal chart, closed magic circle, heart loop, infinity sign, binding cord, or merged identity. Do not reuse Batch 017's giant heart, crescent mailbox, empty-recipient seating, message-delivery staging, or hand-withdrawal compositions; Batch 021's stride strips, warming nests, dimmer wells, spacing clips, schedule rails, echo dish, or tension arc; Batch 025's umbrella caddy, cookie tin, flip stand, snack case, practice cubby, vase side cut, wall pockets, umbrella swivel base, zipper pocket, landing niches, bottle shelf, or dream-bubble cradle; or Batch 029's threshold heart leaves, star drawer, speech shells, half-moon door, script fan, folio tunnel, consensus fan, truth window, way flags, accordion plan, folding star frame, or split dream veil. Do not reuse the weather shelters, two-guardian mutual exchanges, or jointly maintained Stella structures of Batches 018-020, 022-024, 026-028, or 030-032. Make every compositionFamily, camera height, dominant play-device silhouette, negative-space shape, playful gesture, empty participant position, and open motion accent visibly distinct within this batch and from all earlier relationship art. No text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.love.shared-play.orbit",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "81ab5f4cab2c3ed1f9d17fc095bef7fbe5bd088663a264d37700aeff48fb3646",
+      "imageStatus": "generated_candidate",
+      "compositionFamily": "noselevel_cropped_star_sled_twin_swivelgrips_comet_streamer_empty_second_footpad",
+      "artDirection": "별썰매의 둥근 앞코와 두 회전 손잡이를 눈높이 가까이에서 사선으로 잡고 바퀴·레일·목적지는 화면 밖에 둔다. 몽실이는 접은 혜성 깃발을 썰매 옆 고리에 고정한 뒤 자기 쪽 붉은 손잡이를 한 칸 돌리며 한 앞발로 별발판을 눌러 짧은 빛꼬리 구슬을 굴린다. 반대 손잡이와 두 번째 발판은 비어 있고 승부선·점수·상대 몸 없이, 썰매 앞의 열린 곡선 빛만 화면 옆으로 빠져나간다.",
+      "distinctFrom": [
+        "Batch 017의 거대한 하트·초승달 우체통과 Batch 021의 보폭 띠 대신, 전달이나 속도 합의가 아닌 앞코가 잘린 두 손잡이 별썰매의 첫 장난을 사용한다.",
+        "Batch 024의 케이블카 정거장과 Batch 029의 문턱·길깃발, Batch 032의 온기돌 화로를 반복하지 않고 회전 손잡이·별발판·빈 두 번째 자리로 참여 선택을 남긴다."
+      ],
+      "visualReviewFocus": [
+        "몽실이의 크림 구름 털·보라 나선뿔·가슴 별표·접힌 혜성 깃발과 단순한 진보라 눈동자가 유지되고 다른 수호령·손·그림자가 없는지",
+        "손잡이와 발판이 정확히 두 자리이며 반대 자리가 비어 있고 빛꼬리가 닫힌 궤도나 완주선이 되지 않아 놀이 제안이 참여 확정·승부로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.love.shared-play.orbit",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "c8fd71e87f63fb9f6612950ef6f46ab31a17615b586c704515563d34d1b3b5c0",
+      "imageStatus": "generated_candidate",
+      "compositionFamily": "blanketroll_height_open_picnic_satchel_restpebble_pockets_empty_companion_cup",
+      "artDirection": "말아 둔 조각담요 높이의 낮은 옆시점에서 앞면이 열린 작은 별소풍 가방과 서로 다른 촉감의 쉼돌 주머니 세 칸을 가깝게 본다. 차곡이는 목적지 표식 없이 잎무늬 쉼돌 하나를 골라 자기 담요 고리에 끼우고, 가방 안의 별쿠키 두 개 중 자기 몫 하나만 작은 잎접시에 둔다. 반대 접시와 동행 컵은 비워 두며, 풀린 담요 끝은 길이 아니라 짧은 물결처럼 화면 바깥으로 열린다.",
+      "distinctFrom": [
+        "Batch 017의 빈 의자 테이블·마지막 쿠키와 Batch 025의 두 칸 쿠키 통 대신 목적지 없는 열린 소풍 가방·쉼돌 주머니·말린 담요를 사용한다.",
+        "Batch 021의 보온 받침과 Batch 032의 점토 찬장을 반복하지 않고 자기 몫 접시·빈 반대 접시·동행 컵으로 느린 놀이의 선택권을 분리한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이의 커스터드 송아지 몸·보라 앞머리·앞치마·가슴 별표와 단순한 진보라 눈동자가 유지되고 다른 수호령이나 빈 자리의 몸 일부가 없는지",
+        "별쿠키가 정확히 두 개이되 하나만 자기 접시에 있고 반대 접시·컵은 비어 있으며 담요가 길·일정표·완성된 피크닉 장면으로 확장되지 않는지"
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.love.shared-play.orbit",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "2b8a65dc6e8f8b415e81f9a89a37906d2f6ea0923a69638af99173bab9e87bb9",
+      "imageStatus": "generated_candidate",
+      "compositionFamily": "inside_symbol_tumbler_twin_sideknobs_prompt_tiles_laughbead_tray_empty_wild_slot",
+      "artDirection": "투명한 짧은 별기호 굴림통 안쪽 높이에서 양옆 손잡이와 아래 웃음구슬 받침을 정면 가까이 본다. 큰 재잘이는 점 두 개·작은 잎이 있는 기호 타일을 자기 손잡이로 굴리고, 작은 소곤이는 열린 곡선·물방울 타일을 반대 손잡이로 뒤집어 서로의 예상 밖 조합을 바라본다. 중앙에는 작은 웃음별 구슬 하나만 떨어지고, 글자 없는 빈 와일드 슬롯 하나와 다음 구슬 자리는 비워 두며 정본 분홍 리본은 굴림통 뒤로 느슨하게 지난다.",
+      "distinctFrom": [
+        "Batch 017의 교차 봉투, Batch 025의 플립 스탠드, Batch 029의 말조개처럼 메시지를 전달·확인하는 장치 대신 두 손잡이 기호 굴림통을 사용한다.",
+        "Batch 024의 이야기 부채와 Batch 032의 별쿠션 주머니를 반복하지 않고 뒤집히는 기호 타일·단일 웃음구슬·빈 와일드 슬롯으로 정답 없는 놀이를 만든다."
+      ],
+      "visualReviewFocus": [
+        "큰 크림색 재잘이와 작은 라벤더 소곤이의 상대 크기·작은 날개·가슴 별표·느슨한 정본 분홍 연결 리본·단순한 진보라 눈동자가 유지되고 제3의 새가 없는지",
+        "기호 타일에는 글자·물음표·가짜 글줄이 없고 웃음구슬은 하나뿐이며 빈 슬롯이 남아 질문 놀이에 정답·점수·외부 상대의 반응이 만들어지지 않는지"
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.love.shared-play.orbit",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "2c62808ccffe837e58eded38f2548cbd37c3f5ea6b7e7b696343a618e31e7fd0",
+      "imageStatus": "generated_candidate",
+      "compositionFamily": "puddleedge_macro_star_droplet_pinwheel_crescent_scoop_dry_return_mat_empty_second_scoop",
+      "artDirection": "달집 문이 아닌 집 가까이의 마른 초승달 발매트와 작은 물웅덩이 가장자리를 수면 높이 극근접으로 본다. 달콩이는 둥근 보라 집게로 자기 초승달 국자에서 별방울 하나를 떨어뜨려 잎 네 장 물바람개비를 돌리고, 몸과 다른 집게는 마른 발매트 위에 안전하게 남긴다. 물웅덩이 반대쪽의 두 번째 국자와 작은 발자리 하나는 비어 있고, 튄 물방울은 짧은 열린 호로만 흩어진다.",
+      "distinctFrom": [
+        "Batch 017의 닫힌 달집 문턱과 Batch 021의 외벽 셔터, Batch 029의 반달 문처럼 집의 출입을 다루지 않고 마른 귀환 매트 옆 작은 물웅덩이에 집중한다.",
+        "Batch 018·022·026·030의 비 보호 장치와 Batch 032의 초승달 자갈 만을 반복하지 않고 별방울 국자·잎 물바람개비·빈 두 번째 국자로 안전한 장난을 만든다."
+      ],
+      "visualReviewFocus": [
+        "달콩이의 초승달 집과 한 몸인 실루엣·둥근 보라 집게·가슴 별표·단순한 진보라 눈동자가 유지되고 다른 게·수호령·바깥 손이 없는지",
+        "달콩이 몸과 한 집게가 마른 매트에 남고 반대 국자·발자리가 비어 있으며 물보라가 홍수·닫힌 물고리·상대의 참여 흔적으로 커지지 않는지"
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.love.shared-play.orbit",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "9c372fa5842da778a585e1395cb9ebaf11da24ceedb813b3cced6fe32d491f61",
+      "imageStatus": "generated_candidate",
+      "compositionFamily": "floorpad_close_wobble_pose_tiles_crown_aside_empty_echo_pad_scorecloth_folded",
+      "artDirection": "무대나 객석을 자르고 푹신한 두 칸 흔들동작 매트를 바닥 눈높이에서 정면 가까이 본다. 해님이는 비뚤어진 종이 왕관을 옆 쿠션에 내려두고, 별·열린 곡선만 있는 우스운 자세 타일 하나를 자기 칸에 꽂은 뒤 한 발을 옆으로 들고 갈기를 살짝 기울인다. 점수판은 무문자 천 아래 완전히 덮고 반대 흔들판과 다음 자세 홈은 비워 두며, 발끝의 짧은 금빛 흔들선만 열린 채 남긴다.",
+      "distinctFrom": [
+        "Batch 017의 빈 옆자리 조명과 Batch 021의 밝기판, Batch 025의 연습실 수납칸 대신 객석·조명 없는 두 칸 흔들동작 매트를 사용한다.",
+        "Batch 024의 스크림 무대와 Batch 031의 반투명 무대 바닥을 반복하지 않고 왕관을 내려둔 우스운 자세·덮인 점수판·빈 반대 판으로 평가 없는 앙코르를 만든다."
+      ],
+      "visualReviewFocus": [
+        "해님이의 황금 태양 갈기·가슴 별표·옆 쿠션의 비뚤어진 종이 왕관·단순한 진보라 눈동자가 유지되고 관객·상대·추가 얼굴이 없는지",
+        "점수판이 완전히 덮이고 반대 흔들판·다음 자세 홈이 비어 있으며 해님이의 동작이 우승 포즈·공연 완성·박수받는 장면으로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.love.shared-play.orbit",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "4a9ba29d4c6343146145d9a525ada08f8e69e6bbebeffb6599de0c038617f605",
+      "imageStatus": "generated_candidate",
+      "compositionFamily": "bagmouth_pov_mixed_starflowers_lookaway_draw_crooked_combo_empty_laugh_clip",
+      "artDirection": "부드러운 잎주머니 입구 안쪽에서 섞인 별꽃 머리와 바깥의 새봄이를 올려다보는 가까운 시점이다. 새봄이는 정리표나 크기 줄 없이 얼굴을 옆으로 돌린 채 주머니에서 서로 다른 꽃잎의 삐뚤어진 별꽃 하나를 뽑고, 다른 앞발로 자기 이마 별꽃이 흐트러지지 않게 잡는다. 뽑은 꽃은 고치지 않고 낮은 U자 받침에 두며, 반대 뽑기 고리와 웃음별 클립 하나는 비워 둔다.",
+      "distinctFrom": [
+        "Batch 017의 삐뚤어진 꽃 한 송이 전달과 Batch 025의 화병 물갈이, Batch 029의 접힌 폴리오를 반복하지 않고 섞인 꽃잎 주머니 안쪽 시점을 사용한다.",
+        "Batch 024의 꽃 격자와 Batch 032의 별못판·별꽃 받침 대신 고치지 않는 무작위 꽃 조합·빈 뽑기 고리·웃음별 클립으로 서툰 놀이를 남긴다."
+      ],
+      "visualReviewFocus": [
+        "새봄이의 큰 잎 귀·이마 별꽃·잎목도리·가슴 별표·단순한 진보라 눈동자가 유지되고 다른 수호령이나 꽃 속 얼굴이 없는지",
+        "뽑은 별꽃이 일부러 삐뚤어진 서로 다른 꽃잎 조합이며 정렬·등급·정답 표시가 없고 반대 고리와 웃음 클립이 비어 있는지"
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.love.shared-play.orbit",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "4eef360f10afd8a0deb64d4da58d711980b142bc973c35b0cb6625030a960fdb",
+      "imageStatus": "generated_candidate",
+      "compositionFamily": "canvascorner_macro_covered_scale_base_color_pouch_irregular_shapes_empty_turn_clip",
+      "artDirection": "저울 전체가 아니라 천으로 덮인 받침 한 모서리와 비정형 삼각 그림판을 어깨 높이 근접으로 비스듬히 본다. 고르미는 눈금을 가린 채 작은 주머니에서 파란 초승달 조각 하나를 무작위로 뽑아, 이미 떨어져 있는 분홍 점·금빛 별 조각 곁의 자기 자석 홈에 붙인다. 조각들은 별그림을 완성하거나 균형을 이루지 않고 반대편 색 주머니와 다음 차례 클립은 비워 두며, 짧은 색띠 하나만 화면 밖으로 열린다.",
+      "distinctFrom": [
+        "Batch 017의 별저울 추와 Batch 021의 보폭 리본, Batch 025의 돌봄 주머니처럼 비교·조율하는 장치 대신 눈금을 가린 받침과 비정형 그림판을 사용한다.",
+        "Batch 032의 불완전한 해 모자이크와 세 물받이를 반복하지 않고 흩어진 색 조각·자기 자석 홈·빈 다음 차례 클립으로 우연한 공동 그림의 첫 수를 남긴다."
+      ],
+      "visualReviewFocus": [
+        "고르미의 파랑·분홍 구름 몸·저울 모양 긴 귀·가슴 별표·단순한 진보라 눈동자가 유지되고 다른 수호령·손·거울상이 없는지",
+        "저울 눈금은 천에 가려지고 색 조각은 완성된 별자리·점수표·균형 도형을 만들지 않으며 반대 주머니와 차례 클립이 비어 있는지"
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.love.shared-play.orbit",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "019d2be58e12bd7a9a112c4ab5e2c57978c705bd0f919b62b6934f43eefcd5f0",
+      "imageStatus": "generated_candidate",
+      "compositionFamily": "tailheight_signal_rack_three_color_droplets_open_curve_pose_laughpouch_empty_reply_peg",
+      "artDirection": "꼬옥이의 분홍 하트 꼬리 높이에서 낮은 신호걸이의 서로 떨어진 색방울 세 개와 작은 웃음별 주머니를 옆으로 가깝게 본다. 꼬옥이는 망토를 여민 채 꼬리 끝으로 열린 S자 신호를 만들고 자기 집게로 보랏빛 색방울 하나만 가볍게 흔들어, 주머니에 웃음별 하나를 넣는다. 자물쇠·문·암호표 없이 반대 신호 집게와 빈 응답 못 하나를 그대로 남기며 색빛은 짧은 점선 호로 흩어진다.",
+      "distinctFrom": [
+        "Batch 017의 바닥 별등과 Batch 021의 잠긴 문·거리 집게, Batch 025의 회전 우산을 반복하지 않고 꼬리 자세와 세 색방울만 있는 낮은 신호걸이를 사용한다.",
+        "Batch 029의 봉인 편지 창과 Batch 031의 자수정 진실 면을 반복하지 않고 단일 웃음별·빈 응답 못·열린 꼬리 신호로 비밀이 아닌 가벼운 장난을 만든다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이의 자주색 전갈 몸·큰 집게·망토·분홍 하트 꼬리·가슴 별표·단순한 진보라 눈동자가 유지되고 화난 눈썹이나 다른 수호령이 없는지",
+        "색방울은 정확히 세 개이고 웃음별은 하나뿐이며 자물쇠·암호 글자·상대 반응 없이 반대 집게와 응답 못이 비어 있는지"
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.love.shared-play.orbit",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "947710c3966493ad9ccdfff29970752d4a5a27848f05c7a67b91956c54159c2a",
+      "imageStatus": "generated_candidate",
+      "compositionFamily": "hooflevel_soft_shape_die_split_steppingstones_blank_flag_socket_empty_second_toss_rest",
+      "artDirection": "총총이의 앞발과 부드러운 별모양 선택 주사위를 발굽 높이에서 가까이 보고, 숫자·화살표 없는 두 갈래 디딤돌은 첫 돌까지만 화면 양옆에 자른다. 총총이는 초승달 활을 등에 고정한 채 별·잎·물방울 면만 있는 주사위를 낮게 굴리고 자기 쪽 빈 깃발 소켓에 아무 표식 없는 짧은 천 조각을 꽂으려 한다. 반대 던지기 받침과 두 번째 깃발 소켓은 비우고, 구르는 점 세 개는 어느 길에도 닿기 전에 열린다.",
+      "distinctFrom": [
+        "Batch 017의 접힌 지도·하트 도장과 Batch 021의 시간 띠, Batch 029의 두 길깃발처럼 경로·시간·관계 방향을 정하지 않고 숫자 없는 부드러운 선택 주사위를 사용한다.",
+        "Batch 024의 케이블카와 Batch 032의 구름 절벽 쉼터를 반복하지 않고 잘린 첫 디딤돌·빈 두 번째 던지기 받침·깃발 소켓으로 목적지 없는 한 차례만 보여 준다."
+      ],
+      "visualReviewFocus": [
+        "총총이의 구름 망아지 몸·라벤더 갈기·혜성 목도리·가슴 별표·등 뒤 초승달 활·단순한 진보라 눈동자가 유지되고 다른 수호령·발·그림자가 없는지",
+        "주사위 면에 숫자·글자·화살표가 없고 두 길은 첫 돌 이후 잘리며 반대 던지기 받침과 깃발 소켓이 비어 있어 목적지·승부 결과가 확정되지 않는지"
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.love.shared-play.orbit",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "7ddc2923661919e743feb47fc8a259e1e99f2f542b324522fb5de1df8c21a902",
+      "imageStatus": "generated_candidate",
+      "compositionFamily": "landingbench_close_hidden_star_patches_lifted_cushion_facedown_plan_empty_rest_patch",
+      "artDirection": "계단 전체를 자르고 넓은 계단참 벤치의 쿠션과 숨은 별조각 홈을 손 높이에서 가깝게 본다. 오름이는 정상 일정표를 글자 없는 면이 위로 오게 접어 가방 옆에 두고, 자기 쪽 쿠션 모서리를 들어 우스운 표정 없는 말랑별 조각 하나를 찾아 앞발 곁에 놓는다. 다음 쿠션의 별 홈과 반대쪽 휴식 패치는 비어 있으며, 청록 꼬리는 벤치 아래 자기 공간에 느슨하게 놓인다.",
+      "distinctFrom": [
+        "Batch 017의 첫 계단 보강과 Batch 021의 겹친 일정 레일, Batch 025의 반복 계단참 홈처럼 목표를 유지·점검하지 않고 단 하나의 휴식 벤치에서 숨은 별 찾기를 사용한다.",
+        "Batch 028의 접이식 계단 서랍과 Batch 032의 달빛 작업대를 반복하지 않고 들어 올린 쿠션·뒤집어 둔 계획·빈 휴식 패치로 목적 없는 놀이 시간을 남긴다."
+      ],
+      "visualReviewFocus": [
+        "오름이의 흰 바다염소 상체·보라 뿔·청록 물고기 꼬리·등산 가방·가슴 별표·단순한 진보라 눈동자가 유지되고 다른 수호령이나 잘린 발이 없는지",
+        "계단은 한 계단참만 보이고 일정표에는 글자·숫자가 없으며 다음 쿠션 홈과 휴식 패치가 비어 있어 별 찾기가 목표 달성·과제표로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.love.shared-play.orbit",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "849d256f3051a7c2b151e1ba92b953d1f766c42e02252d9ca4537a426759ba5c",
+      "imageStatus": "generated_candidate",
+      "compositionFamily": "ribbed_cloudpad_close_sealed_bottle_roll_soundbeads_shape_tabs_empty_rule_clip",
+      "artDirection": "푹신한 구름 골판과 닫힌 파란 마음병을 탁자 모서리 높이에서 정면 가까이 본다. 방울이는 병을 열거나 내용을 따르지 않고 자기 쪽 짧은 손잡이로 골판 위를 한 번 굴려, 병 안의 서로 다른 색 소리구슬이 작은 구름·잎 모양 탭을 튀게 한다. 방울이는 예상 밖 모양을 보며 다음 규칙을 뜻하는 빈 클립을 열어 두고, 반대 굴림 손잡이와 두 번째 구름 홈은 비우며 파동은 한쪽으로 열린다.",
+      "distinctFrom": [
+        "Batch 017의 탁자 위 닫힌 마음병과 Batch 021의 울림 접시, Batch 025의 병 선반처럼 마음을 전달·선택하는 장치 대신 닫힌 병 자체를 굴리는 소리 놀이로 사용한다.",
+        "Batch 030의 구름 잠망경과 Batch 031의 공명 탁자, Batch 032의 오로라 뜰을 반복하지 않고 구름 골판·병 속 소리구슬·빈 규칙 클립으로 즉석 규칙을 남긴다."
+      ],
+      "visualReviewFocus": [
+        "방울이의 흰 구름 몸·연파랑 물결 귀·가슴 별표·닫힌 파란 마음병·단순한 진보라 눈동자가 유지되고 다른 수호령이나 병 속 얼굴이 없는지",
+        "마음병은 끝까지 닫혀 있고 탭은 단순 도형뿐이며 반대 손잡이·두 번째 홈·규칙 클립이 비어 있어 소리 놀이가 감정 공개·정답 맞히기로 바뀌지 않는지"
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.love.shared-play.orbit",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "1724a84c2bf4b9326c5094feea2e28a153b6a8f68937b705395a10ee2e32f54a",
+      "imageStatus": "generated_candidate",
+      "compositionFamily": "trayrim_pov_twin_fin_paddles_separate_color_ripples_open_splash_shape_empty_third_cove",
+      "artDirection": "길쭉한 얕은 물결놀이 받침의 낮은 테두리 안쪽에서 큰 아쿠아 꿈별이와 작은 분홍 잠별이를 마주 올려다본다. 꿈별이는 아쿠아 지느러미 패들로 왼쪽 물결을 한 번 누르고, 잠별이는 더 작은 분홍 패들로 오른쪽 물결을 튕겨 중앙에 이름 없는 열린 별빛 물보라 하나를 잠깐 만든다. 두 색은 각자 물가로 돌아가 섞이지 않고 뒤쪽 세 번째 물결 홈은 비우며, 정본 연결 여운은 짧은 두 곡선으로만 남는다.",
+      "distinctFrom": [
+        "Batch 017의 맞닿은 지느러미·꿈구름과 Batch 021의 장력 호, Batch 025의 단일 꿈방울 받침을 반복하지 않고 두 독립 지느러미 패들의 한 번씩 튀기는 동작을 사용한다.",
+        "Batch 024의 물결 부채 삼각주, Batch 031의 물결 실로폰, Batch 032의 갈라진 모래톱을 반복하지 않고 길쭉한 얕은 받침·열린 물보라 모양·빈 세 번째 홈으로 상상 놀이를 만든다."
+      ],
+      "visualReviewFocus": [
+        "큰 아쿠아 꿈별이와 작은 분홍 잠별이의 상대 크기·서로 다른 잠옷·가슴 별표·정본 색·단순한 진보라 눈동자와 정확히 하나씩의 지느러미 패들이 유지되고 제3의 물고기가 없는지",
+        "두 물결 색과 몸이 합쳐지지 않고 중앙 물보라는 닫힌 하트·고리·특정 모양이 아니며 세 번째 물결 홈이 비어 있어 놀이 결과가 운명 표식으로 굳지 않는지"
+      ]
+    }
+  ]
+}

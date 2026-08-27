@@ -10,6 +10,7 @@ import type { NatalChart } from '@/chart/types'
 import AstroGlyph from '@/components/AstroGlyph'
 
 import { ChartShapeArt } from './ChartShapeArt'
+import PatternArt from './PatternArt'
 
 export default function PatternSection({ chart, dateOnly = false }: { chart: NatalChart; dateOnly?: boolean }) {
   const t = useTranslations('Constellation')
@@ -47,13 +48,18 @@ export default function PatternSection({ chart, dateOnly = false }: { chart: Nat
                   </span>
                   <span className="text-sm font-semibold text-foreground">{t(`patterns.name.${p.type}`)}</span>
                 </div>
-                <p className="mt-1 text-[11px] text-foreground-faint">
-                  {p.planets.map((id) => t(`planets.${id}`)).join(' · ')}
-                  {p.apex ? ` — ${t('patterns.apex')}: ${t(`planets.${p.apex}`)}` : ''}
-                </p>
-                <p className="mt-1.5 text-xs leading-relaxed text-foreground-secondary">
-                  {t(`patterns.body.${p.type}`)}
-                </p>
+                <div className="mt-2 grid items-center gap-2 sm:grid-cols-[8rem_1fr] sm:gap-3">
+                  <PatternArt pattern={p} planets={chart.planets} />
+                  <div>
+                    <p className="text-[11px] text-foreground-faint">
+                      {p.planets.map((id) => t(`planets.${id}`)).join(' · ')}
+                      {p.apex ? ` — ${t('patterns.apex')}: ${t(`planets.${p.apex}`)}` : ''}
+                    </p>
+                    <p className="mt-1.5 text-xs leading-relaxed text-foreground-secondary">
+                      {t(`patterns.body.${p.type}`)}
+                    </p>
+                  </div>
+                </div>
               </li>
             ))}
           </ul>

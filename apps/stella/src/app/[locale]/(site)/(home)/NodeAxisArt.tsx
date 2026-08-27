@@ -7,6 +7,8 @@ import type { SignId } from '@/chart/types'
 import AstroGlyph from '@/components/AstroGlyph'
 import { SignFigure } from '@/components/SignFigure'
 
+import styles from './constellation.module.css'
+
 type NodeAxisArtProps = {
   familiarLabel: string
   growthLabel: string
@@ -55,7 +57,9 @@ export function NodeAxisArt({ familiarLabel, growthLabel, northSign, southSign }
     >
       <NodeEndpoint label={familiarLabel} node="southNode" sign={southSign} />
       <div className="flex items-center px-1 sm:px-2">
-        <div className="h-0.5 min-w-0 flex-1 rounded-full bg-linear-to-r from-foreground-subtle/60 via-accent/65 to-accent/80 forced-colors:bg-[CanvasText]" />
+        <div
+          className={`${styles.nodeAxisTrack} h-0.5 min-w-0 flex-1 rounded-full bg-linear-to-r from-foreground-subtle/60 via-accent/65 to-accent/80 forced-colors:bg-[CanvasText]`}
+        />
         <svg
           className="-ml-px h-3 w-2.5 shrink-0 text-accent/80 forced-colors:text-[CanvasText]"
           focusable="false"
