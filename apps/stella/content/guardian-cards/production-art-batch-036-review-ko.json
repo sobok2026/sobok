@@ -1,0 +1,293 @@
+{
+  "status": "editorial_review_complete",
+  "editorialApprovedOn": "2026-08-27",
+  "locale": "ko",
+  "batchId": "love.shared-play.stella",
+  "batchOrder": 36,
+  "purpose": "사랑의 shared-play 원고를 정해진 두 수호령이 앞선 놀이의 결과를 각자의 가슴 별표와 옅은 별자리 광륜으로 다시 열 수 있는 Stella 장면으로 확장한다. 신규 열두 장은 승부·평가·관객·완성 압박 없이 두 수호령의 독립된 몸·발자리·조절점·색을 유지하고, 한 번 만난 놀이빛이 닫힌 운명 표식이 아니라 큰 간격·빈 갈래·열린 다음 자리로 다시 풀리게 하며, 앞선 네 Stella 배치와 바로 앞 shared-play Orbit·Nebula·Eclipse의 소품·카메라·주실루엣을 반복하지 않는 장면으로 고정한다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "love",
+    "narrativeAxisId": "shared-play",
+    "visualAxisId": "stella"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium Stella zodiac-guardian card master artwork for the Stella rarity, full-bleed 3:4. Show exactly the two named guardians, or exactly the canonical internal pair for Gemini and Pisces, and preserve every character-sheet identity, relative size, silhouette, color, simple dark-purple pupils, exactly one large and one small eye highlight, chest Stella star, clothing, and signature prop; never add an unseen romantic recipient, another hand, face, character-shaped shadow, reflection, silhouette, third figure, or duplicated guardian. Merge the approved shared-play act and its Stella continuation into one continuous scene rather than a collage or split panel, emphasizing the source-authored second beat: each guardian contributes a visibly independent chest-star path, gesture, foothold, control point, or color to one light, garden, path, stage, page, box, seed, or current structure that remains revisitable. The two contributions may cross or meet once, but must keep separate identities and release points and then reopen into a large gap, blank branch, unused notch, open seam, empty soil wedge, blank next air, or path leaving the frame. Never turn play into a contest, performance for an audience, test, ranking, compulsory bond, merged identity, finished shared emblem, or guaranteed relationship outcome. Use Stella warmth as separate gold, cyan, lavender, pink, or source-authored light paths with visible paper texture and deep violet negative space. The light may suggest only Aries's source-authored open-heart negative gap without a physical heart, while Scorpio may retain only its canonical heart tail tip; add no other heart. Never close light into a complete heart, ring, infinity sign, magic circle, horoscope wheel, recognizable zodiac arrangement, natal chart, actual birth-chart lines, occult sign, or enclosing halo. Do not bake actual birth-chart lines or personal colors into the master art. Keep the two guardians, their independent controls, the active shared play, and the open continuation at 55–65% of the frame and readable at 80px, with safe UI framing and one clear depth axis. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes. Use symbols and simple shapes only: no readable text, sentence, name, label, title, badge, score, number, date, clock face, clock numeral, weekday, calendar, question mark, zodiac glyph, arrowed route, map coordinate, logo, watermark, handwriting, or pseudo-text lines. Cards, pages, signs, schedules, scoreboards, rules, drawings, plans, prompts, and name fields may contain only large separated dots, droplets, leaves, stars, open curves, removable notches, or simple abstract icons. Do not reuse Batch 020's open-heart V gate, seed furrow and growth rings, accordion book spine, round window and incomplete halo, twin-turntable U stage, root hollow and wreath, triangular mobile, star-box corner, twin ground trails and waystar, solid moonlight steps, top-down bottle cloud garden, or open water circle. Do not reuse Batch 024's heart lantern, season chime, story fan, moon roof vent, scrim light loom, flower trellis crown, balance arch, star-box shaft, cable-car route, lattice tower, weather loom, or fan delta negative circle. Do not reuse Batch 028's split-heart rain weir, seed lift, greeting kites, corner-bay window, footlight mirrors, leaf aqueduct crown, three-star elevator, rain star-box lid, upright travel bag, landing drawer, bottle cloud trellis, or tide terraces. Do not reuse Batch 032's glowstone hearth, revolving clay pantry, cushion symbol pockets, crescent pebble cove, sun mosaic, star pegboard, three-basin fountain, star cactus, sky rest deck, modular moon workbench, aurora court, or split moon sandbar. Do not reuse Batch 033's star sled, picnic satchel, symbol tumbler, puddle pinwheel, wobble mat, flower draw bag, covered scale canvas, signal rack, shape die and stepping stones, hidden-star cushion bench, rolling sound bottle, or wave tray and paddles; Batch 034's rain discs, cookie shadow, vapor charades, rain strings, cloud drum, seed tufts, color-light leaves, basalt recesses, starseeds, snowballs, tuning forks, or color wakes; or Batch 035's stargrass gaps, wobble spinners, solid cloudfold, moonleaf floats, shadow flaps, petal clusters, jelly strips, shadow-band tail and claw, moonrock notches, half-moon sticker covers, occluded bottle curl, or diagonal mooncoral. Make every compositionFamily, camera height, dominant silhouette, light direction, playful gesture, control location, optional continuation, negative-space shape, and depth axis visibly distinct within this batch and from all earlier relationship art. No text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.love.shared-play.stella",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "79c2111cfaf600b22fb586edd59964e1fe55d844ddacbdf93d4ba237e9f43447",
+      "imageStatus": "not_started",
+      "compositionFamily": "high_oblique_twin_crimson_cometfans_openheart_negativegap_receding_openway",
+      "artDirection": "세로 3:4의 보랏빛 황혼 들판을 높은 사선 3/4로 내려다본다. 왼쪽 몽실이와 오른쪽 달콩이는 접은 혜성 깃발과 달집·별등을 정본대로 유지한 채 떨어진 자리에서 각자의 가슴 별표를 연다. 두 별표에서 나온 넓은 진홍 혜성빛 부채 두 갈래는 서로 닿지 않은 채 아래로 휘어, 위와 아래가 모두 열린 짙은 음영 틈으로만 미완성 하트를 암시한다. 두 수호령 사이에서 시작한 옅은 금빛 별잔광은 하나의 넓은 열린 길 안에서 나란히 흐르다가 끝부분이 서로 다른 열린 곡선으로 풀려 화면 깊이와 프레임 밖으로 이어진다. 실물 하트·문·수문·하트등·썰매·손잡이·원반·과녁·완주선은 두지 않는다.",
+      "distinctFrom": [
+        "Batch 033의 두 손잡이 별썰매, Batch 034의 빗물 별원반, Batch 035의 별풀 빛틈 대신 두 가슴 별표에서 직접 열린 진홍 혜성빛 부채와 금빛 잔광 길을 만든다.",
+        "Batch 020의 열린 하트 V문, Batch 024의 하트 랜턴, Batch 028의 분할 하트 수문, Batch 032의 화덕을 반복하지 않고 실물 하트가 전혀 없는 높은 사선 음영 gap 구성을 사용한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이의 크림 구름 털·보라 나선뿔·접은 혜성 깃발과 달콩이의 초승달 집 몸·둥근 집게·별등, 단순 진보라 눈과 큰 1개·작은 1개 하이라이트가 정확히 유지되는지",
+        "80px에서도 진홍 부채 두 갈래의 위·아래 끝이 모두 닿지 않아 닫힌 하트가 되지 않고, 금빛 잔광은 프레임 밖으로 이어지는 하나의 넓은 열린 길로 읽히는지"
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.love.shared-play.stella",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "bc58c3992b415a5f62fa1a6b6c801357360cf821719d5ce8ff9e404a6a4ab4e5",
+      "imageStatus": "not_started",
+      "compositionFamily": "steep_overhead_offcenter_starseed_diagonal_three_seasonlobes_blank_soilwedge",
+      "artDirection": "세로 3:4의 크림·보라 황혼 흙밭을 가파른 탑뷰 사선으로 내려다보고 좌하단에서 벗어난 지점에 새싹이 막 난 별씨앗 하나를 둔다. 왼쪽 아래 차곡이는 씨앗의 자기 쪽 흙 가장자리를 앞발로 누르고, 위쪽 새봄이는 떨어진 반대 흙 가장자리에 자기 앞발을 대어 손과 몸을 겹치지 않는다. 두 가슴 별표에서 씨앗으로 모인 옅은 빛은 호박빛·세이지빛·라벤더빛 계절 로브 정확히 세 갈래로 갈라져 우상향 대각선에 퍼진다. 세 로브는 시작 중심·폭·길이·굽이가 서로 다르고 사이마다 어두운 흙틈이 있어 동심원·나이테·꽃잎·과녁으로 닫히지 않는다. 화면 우상단의 큰 흙쐐기는 빛·씨앗·발자국 없이 비워 다음 계절의 선택을 남긴다. 바구니·담요·쿠키·눈벽·팽이·달력 표식은 넣지 않는다.",
+      "distinctFrom": [
+        "Batch 033의 별소풍 바구니·담요, Batch 034의 쿠키 그림자·눈벽, Batch 035의 회전 재료 대신 하나의 비대칭 별씨앗에서 갈라지는 세 계절빛 로브를 사용한다.",
+        "Batch 020의 별씨앗 성장 고랑·열린 나이테, Batch 024의 풍경, Batch 028의 씨앗 들어 올리기, Batch 032의 점토 저장 장면과 달리 좌하단 편심점과 분리된 대각선 로브·빈 우상단 흙쐐기를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이의 크림 황소 얼굴·라벤더 뿔·보라 소지품과 새봄이의 새싹 귀·잎 장식이 섞이지 않고, 두 수호령이 별씨앗의 서로 다른 경계에 독립적으로 닿는지",
+        "80px에서도 별씨앗은 정확히 하나, 호박·세이지·라벤더 로브는 정확히 세 갈래의 다른 실루엣으로 분리되고 우상단의 넓은 흙쐐기가 비어 있어 나이테·동심원·꽃으로 읽히지 않는지"
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.love.shared-play.stella",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "e6568f0503f810e6331b420b2f5bb855c810411a3b186869521093a102a9ee2e",
+      "imageStatus": "not_started",
+      "compositionFamily": "steep_aerial_paperless_twin_lightpages_dark_spine_blank_outer_notch",
+      "artDirection": "세로 3:4의 깊은 남보라 구름 협곡을 가파른 공중 탑뷰 대각으로 내려다본다. 큰 크림색 재잘이는 왼쪽 아래, 작은 라벤더 소곤이는 오른쪽 위에서 정본 분홍 연결 리본을 두 몸 뒤로 느슨하게 유지하고 각자 한 날개와 가슴 별표로 자기 쪽 반투명 빛면을 펼친다. 재잘이 쪽에는 서로 떨어진 점 두 개와 잎 하나, 소곤이 쪽에는 물방울 하나·열린 곡선 하나·네 갈래 별 하나만 크게 흩어 두어 줄이나 문장이 되지 않게 한다. 두 빛면은 종이 없이 열린 별책의 양쪽 면처럼 퍼지지만 넓은 짙은 중앙 책등 틈에서 끝까지 닿지 않고, 소곤이 쪽 바깥 모서리에는 남보라 하늘로 열린 무점등 홈 하나를 남긴다. 실제 책·카드·질문표·글줄·물음표·굴림통·안개 형상·제3의 새는 넣지 않는다.",
+      "distinctFrom": [
+        "Batch 033의 질문 카드 굴림통, Batch 034의 안개 몸짓 맞히기, Batch 035의 구름 접기 대신 종이 없는 두 개의 공중 빛면과 큰 단순 상징만 사용한다.",
+        "Batch 020의 실제 책장·책등, Batch 024의 펼친 부채, Batch 028의 연, Batch 032의 쿠션 주머니를 반복하지 않고 깊은 구름 협곡의 비접촉 빛면·중앙 암부·빈 바깥 홈으로 구성한다."
+      ],
+      "visualReviewFocus": [
+        "큰 크림색 재잘이와 작은 라벤더 소곤이만 보이고 정본 상대 크기·날개·분홍 연결 리본·단순 진보라 눈과 정확한 두 눈 하이라이트가 유지되는지",
+        "80px에서도 왼쪽의 점 2개와 잎 1개, 오른쪽의 물방울·열린 곡선·네 갈래 별이 큰 독립 도형으로 읽히며 중앙 책등 틈과 오른쪽 바깥 무점등 홈이 닫히지 않는지"
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.love.shared-play.stella",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "f52f79abb903b41076ae7a5ca373a887becbfb3465d5d9d0c2485d6e78d2cfcc",
+      "imageStatus": "not_started",
+      "compositionFamily": "exterior_highrear_threequarter_moonhouse_open_crescentwalk_twin_drypads_foreground_returngap",
+      "artDirection": "세로 3:4의 보랏빛 밤 달집과 놀이 자리를 바깥의 높은 후사선 3/4로 내려다보고 달집은 화면 왼쪽 뒤에 두며 작은 열린 별창은 배경의 빛 증거로만 남긴다. 달콩이는 달집 앞 왼쪽 마른 받침, 꼬옥이는 떨어진 오른쪽 마른 둥근 받침에 각자 서서 몸·집게·발자리를 겹치지 않고 서로를 바라본다. 두 가슴 별표에서 나온 옅은 금빛은 달집 바깥을 크게 돌아 뒤쪽에서 이어지는 두꺼운 비대칭 초승달 보행빛이 되고, 전경에서는 두 끝을 한 수호령 몸통 너비보다 넓게 벌려 어두운 귀환 틈을 남긴다. 이 틈은 다음에 다시 돌지 고르는 열린 선택이며 원·광륜·하트·울타리로 닫히지 않는다. 창짝·걸쇠·문턱 장치·물웅덩이·국자·빗물현·물달잎·부표는 넣지 않고 꼬옥이의 정본 하트 꼬리 끝 외 다른 하트는 금지한다.",
+      "distinctFrom": [
+        "Batch 033의 물웅덩이 국자 놀이, Batch 034의 빗물현, Batch 035의 갈라진 수면·물달잎·부표 대신 물이 없는 마른 받침 두 곳과 열린 초승달 보행빛을 사용한다.",
+        "Batch 020의 둥근 중심 창·이중 걸쇠·미완성 광륜, Batch 024의 지붕 통풍구, Batch 028의 모서리 창, Batch 032의 자갈 만을 반복하지 않고 창을 작은 배경 증거로 낮춘 외부 고사선 구성과 넓은 전경 귀환 gap을 사용한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이의 초승달 집 몸·둥근 집게·별등과 꼬옥이의 보라 전갈 몸·집게·정본 하트 꼬리 끝이 정확히 분리되고 두 수호령이 별도의 마른 받침에 서는지",
+        "80px에서도 두꺼운 보행빛이 달집 주위를 돌되 전경에서 한 수호령 몸통 너비 이상 열려 있고, 닫힌 원·halo·하트나 물·반사·제3 캐릭터로 읽히지 않는지"
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.love.shared-play.stella",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "c4a5a777160a9a97ab56d16214e17c8d09646c0dc7eb2949adb7b5df085f7ea5",
+      "imageStatus": "not_started",
+      "compositionFamily": "stagewing_eyelevel_crossstage_dual_open_cheststar_light_apron_mismatched_encore_poses",
+      "artDirection": "3:4 세로 화면의 무대 건축이 보이지 않는 빈 놀이바닥을 옆날개 쪽 수호령 눈높이에서 가로질러 본다. 왼쪽 해님이는 두 발을 바닥에 붙인 채 앞발 하나만 높이 들고, 오른쪽 고르미는 두 앞발을 낮게 모은 채 긴 귀를 한쪽으로 기울이고 한 발만 옆으로 내디뎌 서로 닮았지만 명백히 다른 우스운 동작을 주고받는다. 물리 스포트라이트 없이 두 가슴 Stella 별표에서 나온 금빛·파랑분홍 광로가 각자의 몸을 가리지 않고 바닥 양쪽으로 넓어져 하나의 열린 에이프런형 놀이빛을 만든다. 두 광로는 뒤쪽과 아래쪽의 넓은 어두운 틈 앞에서 각각 멈춰 닫힌 고리나 완성된 공연장이 되지 않으며, 관객·점수·무대 장치는 넣지 않는다.",
+      "distinctFrom": [
+        "Batch 033의 흔들동작 매트, Batch 034의 구름북·채, Batch 035의 반가림 천을 반복하지 않고 소품 없는 두 상이한 전신 몸짓과 가슴별 광로만 사용한다.",
+        "Batch 019의 쌍 스포트라이트와 Batch 020의 U자 회전판 무대, Batch 024의 스크림 조명 베틀, Batch 028의 발광 거울, Batch 032의 해 모자이크를 피하고 물리 조명기구·무대 건축 없는 열린 놀이바닥을 주실루엣으로 삼는다."
+      ],
+      "visualReviewFocus": [
+        "해님이의 황금 민들레 갈기·비뚤어진 종이 왕관·가슴별·별꼬리와 고르미의 파랑분홍 구름 몸·긴 저울형 귀·가슴별, 두 guardian의 단순 진보라 동공과 눈마다 큰 하이라이트 1개+작은 하이라이트 1개가 유지되는지",
+        "해님이만 앞발을 들고 두 발을 접지하며 고르미만 귀 기울임과 옆걸음을 하는지, 두 가슴별 광로가 물리 조명·객석·점수 없이 넓은 gap을 남겨 닫힌 고리·하트·완성 공연으로 읽히지 않는지"
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.love.shared-play.stella",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "20c3ae1df3343c988b14668217e3d58906f359958c4c84309d06917808a4c071",
+      "imageStatus": "not_started",
+      "compositionFamily": "flowerheight_deepcorridor_staggered_mixed_starflowers_two_broken_diagonal_lightbranches_blank_soil",
+      "artDirection": "3:4 세로 화면의 크기·높이·꽃잎 조합이 서로 다른 별꽃 사이를 꽃높이의 깊은 사선으로 본다. 앞쪽 새봄이는 삐뚤어진 크림초록 별꽃 밑동의 흙만 다독이고, 뒤쪽 차곡이는 별도 위치의 둥근 보라금빛 별꽃 밑동만 눌러 어느 꽃도 고치거나 정렬하지 않는다. 오른쪽에는 다음 꽃을 다시 선택할 수 있는 넓은 빈 흙 한 폭을 남긴다. 두 가슴 Stella 별표의 호박빛·라벤더빛 광로는 서로 다른 높이의 꽃과 잎 그림자가 섞인 끊긴 대각 가지 두 개로 올라가 한 번 어긋나지만 접촉하지 않으며, 머리 위를 두르는 화관·왕관·고리 대신 빈 흙 쪽으로 각각 열린다.",
+      "distinctFrom": [
+        "Batch 033의 꽃 뽑기 주머니·U자 받침, Batch 034의 바람에 날리는 씨앗송이, Batch 035의 세 꽃잎 묶음을 반복하지 않고 이미 심긴 서로 다른 별꽃과 열린 흙길의 지속 장면을 사용한다.",
+        "Batch 020의 뿌리 굴 화단·화관, Batch 024의 꽃 격자·왕관, Batch 028의 잎 수로·꽃관, Batch 032의 별못판을 피하고 꽃높이 깊이축과 비접촉 broken light branches 두 개로 분리한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이의 큰 초록 잎 귀·이마 별꽃·잎목도리·가슴별과 차곡이의 커스터드 송아지 몸·보라 앞머리·뿔·앞치마·초록 어깨담요·가슴별, 두 얼굴의 정확한 진보라 눈 하이라이트가 유지되는지",
+        "서로 다른 꽃이 크기순으로 정렬되지 않고 두 guardian이 각자 밑동만 다루는지, 호박빛·라벤더빛 가지가 서로 닿거나 머리 위 화관으로 닫히지 않으며 오른쪽 빈 흙이 판독되는지"
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.love.shared-play.stella",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "90472f54d11e4712f7704bddf310e48b9da327d47128a9763f58ec7c2ec7856f",
+      "imageStatus": "not_started",
+      "compositionFamily": "steep_oblique_three_freestanding_star_lights_dual_separate_comma_sweeps_large_gap",
+      "artDirection": "3:4 세로 화면의 비어 있는 보라색 놀이바닥을 가파른 사선 고각으로 본다. 파랑·분홍·금빛의 독립 접이식 별빛등 정확히 세 개를 서로 다른 깊이에 세우고, 왼쪽 아래 고르미는 파란 별빛등의 자기 받침만 돌리며 오른쪽 위 해님이는 금빛 별빛등의 별도 받침만 돌린다. 분홍 별빛등은 가운데 뒤쪽에 누구에게도 잠기지 않은 untouched 상태로 선다. 고르미와 해님이의 가슴 Stella 별표에서 나온 파랑분홍·금빛 광륜은 서로 닿지 않는 비대칭 열린 쉼표형 sweep 두 개로만 남고, 우하단의 넓은 빈 바닥을 사이에 두어 S자·무한대·균형 고리로 닫히지 않는다.",
+      "distinctFrom": [
+        "Batch 033의 덮인 저울·캔버스·색주머니, Batch 034의 색빛잎, Batch 035의 반투명 색띠를 반복하지 않고 줄·저울·그림판 없는 독립 별빛등 세 개를 사용한다.",
+        "Batch 020의 삼각 모빌, Batch 024의 균형 아치, Batch 028의 세 별 승강기, Batch 032의 세 물받이를 피하고 바닥에 독립해 선 별빛등과 비접촉 comma sweep 두 개로 구성한다."
+      ],
+      "visualReviewFocus": [
+        "고르미의 파랑분홍 구름 몸·긴 저울형 귀·가슴별과 해님이의 황금 갈기·비뚤어진 왕관·가슴별·별꼬리, 두 guardian의 단순 진보라 눈과 정확한 하이라이트가 유지되는지",
+        "놀이 별빛등이 파랑·분홍·금빛 정확히 세 개이고 분홍 하나는 untouched인지, 광륜은 정확히 두 개만 서로 멀리 떨어져 열린 채 남아 닫힌 고리·S·무한대·완성 별자리로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.love.shared-play.stella",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "1cdc9b84fd1e34c36eccb36719bcf46846e4924d5bce0cfd799365312366e217",
+      "imageStatus": "not_started",
+      "compositionFamily": "chestlevel_frontal_edgeon_open_starbox_nested_separate_c_depthlanes_blank_next_star_socket",
+      "artDirection": "3:4 세로 화면의 낮은 보라색 놀이바닥을 가슴높이 정면에서 보고, 얕은 별상자를 화면 아래 중앙에 납작한 edge-on 형태로 완전히 연다. 왼쪽 꼬옥이는 왼쪽 덮개 바깥 모서리만 자기 집게로 잡고 정본 분홍 하트 꼬리 끝을 작게 기울이며, 오른쪽 달콩이는 온전한 초승달집 안에서 오른쪽 덮개 모서리만 별도 집게로 잡고 몸쪽 고리의 작은 별등을 그대로 둔다. 상자 중앙의 다음 웃음별 홈은 비어 있다. 두 가슴 Stella 별표의 자주분홍·라벤더금빛 광로는 상자 각자 수로를 거쳐 깊이가 다른 열린 C자 레인 두 개로 솟고, 서로 접촉하거나 닫히지 않은 채 우상단의 큰 출구로 따로 끝난다.",
+      "distinctFrom": [
+        "Batch 033의 신호걸이·색방울, Batch 034의 현무암 오목틈, Batch 035의 사선 그림자 띠와 신체 가림을 반복하지 않고 두 독립 덮개 모서리와 빈 중앙 별홈을 사용한다.",
+        "Batch 020의 별상자 내부 모서리 저각, Batch 024의 급고각 빛기둥, Batch 028의 빗물 지형 뚜껑, Batch 032의 별선인장을 피하고 정면 edge-on 상자와 분리된 C자 깊이 레인으로 만든다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이의 자주색 전갈 몸·큰 집게·망토·가슴별·정본 분홍 하트 꼬리와 달콩이의 온전한 초승달집·둥근 집게·이마별·가슴별·몸쪽 별등, 두 얼굴의 진보라 눈 하이라이트가 유지되는지",
+        "중앙 별홈이 비어 있고 두 수호령이 서로 다른 덮개만 잡으며 C자 깊이 레인 두 개가 접촉·폐쇄되지 않는지, 정본 꼬리 끝 외 추가 하트·자물쇠·암호·오컬트 기호·제3자가 없는지"
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.love.shared-play.stella",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "98bf88f16ba029d40384769bec3ceab37e188a6c3cba55f6a59e9b33cbdf4664",
+      "imageStatus": "not_started",
+      "compositionFamily": "valley_floor_lowup_twin_cheststar_routes_shared_waypoint_open_split",
+      "artDirection": "세로 3:4의 별밤 초원 골짜기 바닥에서 올려다보는 극저 로우앵글로, 총총이와 오름이를 높이가 다른 좌우 자연 능선에 독립적으로 둔다. 총총이의 금분홍 가슴별 광로와 오름이의 청록·라일락 광로는 서로 다른 곡률로 하늘에 올라 상단 중앙의 작은 4-point Stella 별에서 한 번만 잠깐 겹친다. 이 별은 목적지나 점수 표식이 아닌 비고정 waypoint이며, 이후 두 광로는 화살촉 없는 서로 다른 열린 꼬리로 다시 갈라져 프레임 양쪽 빈 하늘로 이어진다. 초승달 활은 몸 옆의 비활성 정체성 소품으로만 남기고, 지도·표지판·깃발·연·주사위·물리 경로는 그리지 않는다.",
+      "distinctFrom": [
+        "Batch 020의 지면 쌍둥이 길과 Batch 032의 V자 구름 절벽 쉼터를 반복하지 않고, 지면 경로 없이 두 가슴별에서 하늘로만 올라가는 비물질 광로와 비고정 waypoint를 사용한다.",
+        "Batch 033의 주사위·징검돌·깃발 소켓, Batch 034의 구름별씨·교차바람, Batch 035의 달바위 피크 홈을 모두 배제한다."
+      ],
+      "visualReviewFocus": [
+        "총총이의 크림색 구름 망아지 몸·라벤더 갈기·혜성 목도리·초승달 활과 오름이의 흰 바다염소 상체·보라 뿔·청록 꼬리·가방, 단순 진보라 눈과 눈마다 큰 하이라이트 1개·작은 하이라이트 1개가 유지되는지 확인한다.",
+        "80px에서도 중앙 4-point 별이 목적지나 점수로 보이지 않고, 두 광로가 한 번만 겹친 뒤 화살표 없이 분리되어 열린 다음 하늘을 남기는지 확인한다."
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.love.shared-play.stella",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "3d09aeea46f011b6b967efea6a13c1e111634e6ce71be82b1ea62100ad44bdec",
+      "imageStatus": "not_started",
+      "compositionFamily": "profile_lowup_shared_start_separate_footholds_loose_moonlight_ribbons_blank_next_air",
+      "artDirection": "세로 3:4 달빛 공중을 올려다보는 낮은 측면 로우앵글로, 하단의 하나뿐인 반투명 시작 발판에 오름이와 총총이를 나란히 둔다. 같은 발판 안에서도 오름이의 청록 발자리와 총총이의 금분홍 발자리는 빈 틈으로 분리한다. 두 가슴 별표의 옅은 광륜은 폭·길이·간격이 다른 짧고 긴 달빛 띠를 공중 우상향으로 느슨하게 번갈아 밝힌다. 빛띠는 난간·번호·평가 표식이 없는 비고형 리본이며, 가장 높은 띠 뒤의 우상단은 단독 끝별이나 목적지 없이 넓은 빈 밤하늘로 남긴다.",
+      "distinctFrom": [
+        "Batch 020의 고형 달빛 계단과 Batch 032의 모듈 달빛 작업대를 반복하지 않고, 하나의 분리된 시작 발자리와 느슨한 비고형 달빛 띠만 사용한다.",
+        "Batch 033의 벤치·쿠션·숨은 별, Batch 034의 눈뭉치·겹친 계단참, Batch 035의 벽 별·초승달 가림판을 모두 배제한다."
+      ],
+      "visualReviewFocus": [
+        "오름이의 흰 바다염소 상체·보라 뿔·청록 꼬리·가방과 총총이의 크림색 구름 망아지 몸·라벤더 갈기·혜성 목도리, 단순 진보라 눈과 정확한 두 눈 하이라이트가 유지되는지 확인한다.",
+        "80px에서도 하나의 시작 발판 안 두 발자리가 색과 간격으로 분리되고, 빛띠가 사다리·시험 코스·점수 경로로 보이지 않으며 상단 다음 자리가 완전히 열려 있는지 확인한다."
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.love.shared-play.stella",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "8f627d401defd57e92c7e5820e0ef057380b6e63b0e3acf9766c479454d798bf",
+      "imageStatus": "not_started",
+      "compositionFamily": "high_oblique_suspended_cloudblossom_fans_open_canopy_blank_branch",
+      "artDirection": "세로 3:4의 깊은 구름 하늘을 45도 하이 오블리크로 보고, 방울이와 차곡이를 서로 다른 높이의 작은 구름 솜 위에 독립적으로 둔다. 방울이의 청록 가슴별 광로는 자기 앞발의 청록 조절점에서 낮은 공중 cloud-blossom fan으로, 차곡이의 금보라 광로는 별도 조절점에서 더 높은 fan으로 펼쳐진다. 두 색 가지는 중앙 깊이에서 앞뒤로 한 번 교차하지만 섞이거나 결합하지 않고 서로 떨어진 끝으로 열린다. 지면 정원·화단·수로·병 없이 비대칭 suspended canopy만 만들고, 우상단에는 가지가 닿지 않은 넓은 빈 갈래와 구름 공간을 남긴다.",
+      "distinctFrom": [
+        "Batch 020의 둥근 top-down 쌍병 구름 정원·두 화단·수로와 Batch 032의 오로라 뜰을 반복하지 않고, 바닥 없는 공중 비대칭 cloud-blossom canopy를 사용한다.",
+        "Batch 033의 구르는 소리병, Batch 034의 안개·튜닝 포크, Batch 035의 대각 cloudbank·홈·가려진 병을 모두 배제한다."
+      ],
+      "visualReviewFocus": [
+        "방울이의 흰 구름 몸·연파랑 물결 귀와 이마 컬·보라 발끝, 차곡이의 커스터드 몸·보라 앞머리·뿔·앞치마와 단순 진보라 눈이 유지되고 병이 전혀 없는지 확인한다.",
+        "80px에서도 guardian별 조절점 두 개와 서로 다른 색·높이의 광로, 비결합 교차, 떨어진 끝과 우상단의 빈 다음 갈래가 구분되며 닫힌 canopy·하트·고리가 생기지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.love.shared-play.stella",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "501970d7e1aab4f535acf05f720b740900e707ffd4b90758ceb68e9447b399fd",
+      "imageStatus": "not_started",
+      "compositionFamily": "seafloor_extreme_lowup_twin_color_ribbon_canopy_open_dome_seam",
+      "artDirection": "세로 3:4 꿈바다 바닥에서 수면을 향한 극저 로우앵글로, 큰 파랑 꿈별이를 near-left, 작은 분홍 잠별이를 far-right의 서로 다른 깊이에 둔다. 꿈별이의 가슴별에서는 파랑·청록 light-ribbon fan이 좌상단 수면으로, 잠별이의 가슴별에서는 분홍·라일락 fan이 우상단 수면으로 각각 뒤집힌 대각 canopy처럼 올라간다. 두 fan은 서로 다른 깊이와 색을 유지하고 가장자리가 닿지 않는다. 중앙 세로 seam과 하단 절반은 빛막·물살·소품 없는 열린 짙은 물로 남겨 넓은 별빛 원의 일부 호만 암시하며, 원판·열린 물원·고리·enclosure 실루엣은 만들지 않는다.",
+      "distinctFrom": [
+        "Batch 020의 열린 물원·counter-current와 Batch 024의 negative-circle fan delta를 반복하지 않고, 두 빛막을 물고기 위 좌우 수면으로만 올려 중앙 seam과 하단 절반을 완전히 연다.",
+        "Batch 032의 갈라진 모래톱, Batch 033의 받침·패들 물보라, Batch 034의 지느러미 wake·lightbed, Batch 035의 대각 달산호·fin touch를 모두 배제한다."
+      ],
+      "visualReviewFocus": [
+        "큰 아쿠아 꿈별이와 작은 분홍 잠별이의 상대 크기·정본 색·서로 다른 파랑/분홍 잠옷·가슴 별표·단순 진보라 눈과 눈마다 큰 하이라이트 1개·작은 하이라이트 1개가 유지되는지 확인한다.",
+        "80px에서도 두 비접촉 ribbon fan이 물고기 위 좌우로만 올라가고 중앙 세로 seam과 하단 절반이 열린 물로 남아 원·고리·하트·중앙 암흑 enclosure로 읽히지 않으며 제3 물고기가 없는지 확인한다."
+      ]
+    }
+  ]
+}
