@@ -57,7 +57,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-036-review-ko.json`    | `visual_review_ready`    | 서른여섯 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기            |
 | `production-art-batch-037-review-ko.json`    | `visual_review_ready`    | 서른일곱 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기            |
 | `production-art-batch-038-review-ko.json`    | `visual_review_ready`    | 서른여덟 번째 production 배치 파일럿 1개·신규 PNG 11개 사람 시각 승인, 일괄 배포 대기 |
-| `production-art-batch-039-review-ko.json`    | `visual_review_ready`    | 서른아홉 번째 production 배치 신규 PNG 12개 시각 검토 준비, 사람 승인 대기            |
+| `production-art-batch-039-review-ko.json`    | `visual_review_ready`    | 서른아홉 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기            |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                            |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 393개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                               |
 
@@ -927,8 +927,9 @@ Cancer PNG는 바이트 단위로 재사용하고 새 장면은 앞선 다섯 Ne
 수량, 열린 조절점과 단일 접점에 한정한 교정을 거쳤으며 수정 전 후보도 보존했다. 마스터·80px·직전
 배치 비교와 기존 승인 원화 464장에 대한 5,634건 유사도 보조 QA에서 exact·near duplicate가 없었다.
 선택본은 공개 Git에 포함하지 않는
-`apps/stella/private/guardian-art-production/love-boundary-and-space-eclipse`에 보관하며 사람의 최종
-시각 승인을 기다린다. WebP 최적화와 R2·staging·production 배포는 이후 배치와 함께 일괄 진행한다.
+`apps/stella/private/guardian-art-production/love-boundary-and-space-eclipse`에 보관한다. 2026-08-28 사람의
+최종 시각 승인을 기록했으며 WebP 최적화와 R2·staging·production 배포는 이후 배치와 함께 일괄
+진행한다.
 
 ## 검증
 
