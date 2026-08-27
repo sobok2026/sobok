@@ -53,7 +53,7 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-032-review-ko.json`    | `visual_review_complete` | 서른두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-033-review-ko.json`    | `visual_review_ready`    | 서른세 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기      |
 | `production-art-batch-034-review-ko.json`    | `visual_review_ready`    | 서른네 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기      |
-| `production-art-batch-035-review-ko.json`    | `visual_review_ready`    | 서른다섯 번째 production 배치 신규 PNG 12개 교차 QA 완료·사람 시각 승인 대기  |
+| `production-art-batch-035-review-ko.json`    | `visual_review_ready`    | 서른다섯 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기    |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 393개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -855,8 +855,8 @@ Orbit·Nebula의 놀이 소품·날씨 동작, greeting card kite를 반복하�
 달산호와 후면 3/4를 제한 교정했으며 수정 전 후보도 보존했다. 마스터·80px·직전 배치 비교와 기존
 승인 원화 393장에 대한 4,782건 유사도 보조 QA에서 exact·near duplicate가 없었다. 선택본은 공개
 Git에 포함하지 않는 `apps/stella/private/guardian-art-production/love-shared-play-eclipse`에 보관한다.
-현재 12개 모두 사람의 최종 시각 승인 대기 상태이며 WebP 최적화와 R2·staging·production 배포는 이후
-배치와 함께 일괄 진행한다.
+2026-08-27 사람의 최종 시각 승인을 기록했으며 WebP 최적화와 R2·staging·production 배포는 이후 배치와
+함께 일괄 진행한다.
 
 ## 검증
 
