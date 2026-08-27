@@ -26,7 +26,7 @@ export default function Starfield({ className }: { className?: string }) {
     // functions below don't need the guard's flow narrowing.
     const canvas = el
     const ctx = context
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 
     let width = 0
     let height = 0
@@ -34,6 +34,7 @@ export default function Starfield({ className }: { className?: string }) {
     let shooting: Shooting | null = null
     let raf = 0
     let nextShoot = 1500
+    let reduced = motionQuery.matches
 
     function seed() {
       const density = Math.min(220, Math.floor((width * height) / 7000))
@@ -49,9 +50,11 @@ export default function Starfield({ className }: { className?: string }) {
     }
 
     function resize() {
-      const parent = canvas.parentElement
-      width = parent?.clientWidth ?? window.innerWidth
-      height = parent?.clientHeight ?? window.innerHeight
+      // The star field is fixed to the viewport. The result page can grow to
+      // several thousand pixels; sizing a continuously repainted canvas to the
+      // whole document would allocate a huge backing buffer on high-DPR screens.
+      width = window.innerWidth
+      height = window.innerHeight
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
 
       canvas.width = width * dpr
@@ -134,24 +137,58 @@ export default function Starfield({ className }: { className?: string }) {
         }
       }
 
-      if (!reduced) {
+      if (!reduced && document.visibilityState === 'visible') {
         raf = requestAnimationFrame(draw)
       }
     }
 
-    resize()
+    function stop() {
+      cancelAnimationFrame(raf)
+      raf = 0
+    }
 
-    if (reduced) {
-      draw(0)
-    } else {
+    function start() {
+      stop()
+
+      if (reduced || document.visibilityState !== 'visible') {
+        draw(0)
+        return
+      }
+
       raf = requestAnimationFrame(draw)
     }
 
-    window.addEventListener('resize', resize)
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'visible') {
+        start()
+      } else {
+        stop()
+      }
+    }
+
+    function handleMotionChange(event: MediaQueryListEvent) {
+      reduced = event.matches
+      shooting = null
+      start()
+    }
+
+    function handleResize() {
+      resize()
+      start()
+    }
+
+    resize()
+    start()
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    motionQuery.addEventListener('change', handleMotionChange)
+    window.addEventListener('resize', handleResize)
 
     return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('resize', resize)
+      stop()
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      motionQuery.removeEventListener('change', handleMotionChange)
+      window.removeEventListener('resize', handleResize)
     }
   }, [])
 
