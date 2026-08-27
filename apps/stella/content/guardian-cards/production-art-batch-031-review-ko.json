@@ -1,7 +1,15 @@
 {
-  "status": "visual_review_ready",
+  "status": "visual_review_complete",
   "editorialApprovedOn": "2026-08-27",
   "generatedOn": "2026-08-27",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-27",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
   "locale": "ko",
   "batchId": "love.honest-conversation.eclipse",
   "batchOrder": 31,
@@ -58,7 +66,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "34b9b826dca7933225f6b0831643e8de0c564bcf859b22060a6f037941774d01",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "66062adffc6b42b6e2ce25c3a49d167e43d79203a45fbd1b3130c3c006957843",
       "compositionFamily": "along_open_cometrail_floorlevel_twin_truthtiles_independent_brakes_empty_center_socket",
       "artDirection": "보랏빛 Eclipse 광장에서 끝이 열린 짧은 혜성형 대화 레일을 바닥 높이의 긴 장축으로 본다. 왼쪽 가까이의 몽실이는 접은 혜성 깃발을 몸 곁에 두고, 따뜻한 별 바람 타일과 보랏빛 물방울 걱정 타일을 서로 다른 슬라이더에 놓은 뒤 밀던 붉은 브레이크에서 한 앞발을 뗀다. 오른쪽의 달콩이는 자기 쪽 독립 듣기 패들을 둥근 집게로 같은 높이까지 돌리되 타일을 잡아당기지 않고, 두 슬라이더 사이의 다음 응답 소켓은 비워 둔다.",
       "distinctFrom": [
@@ -78,7 +87,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "5d93748aac42782f3cf650423a1327b717564b55e47b290619cfc4ee9f9ee22b",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c4edcec47583b34ebf44e0c80d987138e04a5f16e4043bc6dbe5815e63e6c0b1",
       "compositionFamily": "inside_terraced_claybell_lowup_bottom_needstone_leaf_receiver_uneven_cookie_shelves",
       "artDirection": "여러 별돌이 층층이 걸린 속 빈 도자 종 내부에서 아래쪽을 올려다본다. 왼쪽의 차곡이는 가장 아래 받침에서 별 하나와 열린 잎만 새긴 단일 필요 돌을 빼내 낮은 점토 패들로 천천히 민다. 오른쪽의 새봄이는 모양을 고치지 않은 별쿠키 작은 조각을 자기 잎 선반에 든 채 독립 잎 수령판을 필요 돌 아래로 돌리고, 차곡이는 더 큰 쿠키 조각을 새봄이 쪽 별도 열린 선반에 놓되 가운데 확인 홈은 비워 둔다.",
       "distinctFrom": [
@@ -98,7 +108,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "0ce32012641488a800268ff02bf2972aa918cab0c9590b71a0133eb06c9c0c1b",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "93565f760875755dbd8598b921e50b75fcd0a65c9c0bf2e0131713e3d56fd568",
       "compositionFamily": "under_suspended_echo_ribs_lowup_twin_soundtiles_pausebead_empty_followup_chime",
       "artDirection": "깊은 보라 그림자 위에 매달린 서로 다른 높이의 열린 공명 갈비 두 개를 아래에서 올려다본다. 큰 재잘이는 왼쪽 갈비의 점 두 개 소리 타일을 한 번 울린 뒤 말하던 날개를 가슴에 내리고 자기 정지 구슬을 홈에 놓는다. 작은 소곤이는 오른쪽 갈비의 열린 곡선 타일을 끝까지 밀고, 재잘이는 들은 뜻을 확인하는 반쪽 별 구슬을 중앙의 부드러운 받침 쪽으로 옮기되 소곤이 타일과 붙이지 않는다. 뒤의 후속 질문 종은 비어 있다.",
       "distinctFrom": [
@@ -118,7 +129,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "0e15a29ae7fe59dfbddfcc9606175ad690a3491661fbc6bb734882d74eebb0e5",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "7bd8758866a8c83efcdda0bf6710f338cad6c4c39ddbb66af3eebd532611c951",
       "compositionFamily": "outside_moonbalcony_highoblique_requesttile_twin_crescent_scoops_snacksaucer_open_returncup",
       "artDirection": "달집 바깥 높은 벽에 붙은 작은 초승달 대화 발코니를 위쪽 사선에서 내려다보되 문짝은 프레임 밖에 둔다. 안쪽의 달콩이는 걱정 물방울 면을 별과 열린 곡선 부탁 면으로 뒤집은 단일 양면 타일을 자기 초승달 스쿱에 놓는다. 바깥의 꼬옥이는 발코니를 밀지 않고 작은 간식 하나를 독립 접시에 내려놓은 뒤 자기 쪽 빈 듣기 스쿱을 타일과 마주 보게 돌리며, 두 스쿱 사이의 되돌림 컵은 비워 둔다.",
       "distinctFrom": [
@@ -138,7 +150,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "c1c503f63f9e5b2acd7d00ec974c40c2bf7f1ecb86da178fee49ab854f1ecb35",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "3ddac4cbd2ec5c71fded8f89ff982b5ed8d8291ffbe781d785bc60677943fea6",
       "compositionFamily": "under_translucent_stagefloor_upview_crownhook_twin_truthblocks_dual_resonanceplates_empty_cue",
       "artDirection": "빈 무대의 반투명 바닥 아래에서 두 수호령과 발밑 장치를 올려다본다. 왼쪽의 해님이는 비뚤어진 종이 왕관을 옆 단일 못에 걸고, 물방울과 작은 하트가 있는 서운함 블록과 열린 별과 잎이 있는 변화 블록을 서로 다른 바닥 슬롯에 내려놓는다. 오른쪽의 고르미는 자기 파랑·분홍 공명판 두 개를 각 블록 아래에 따로 맞춰 들은 내용을 되비추되 해님이 블록을 움직이지 않고, 가운데 다음 큐 소켓은 비워 둔다.",
       "distinctFrom": [
@@ -158,7 +171,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "229c9f74559ea376761f550c1ee7455767bead841541b84b41a4ad97710d4bf0",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "fe982aaf1b7e59a553670ef2f0ba0afe416228d0695416380da4b3b5eb7b6081",
       "compositionFamily": "inside_open_herbarium_frame_diagonal_twin_symbolleaves_crookedflower_cradle_unlatched_reedit_clip",
       "artDirection": "잠기지 않은 투명 식물 표본틀 안쪽에서 열린 모서리를 따라 두 수호령을 대각선으로 본다. 왼쪽의 새봄이는 여러 번 고친 무문자 초안을 닫힌 잎 주머니에 넣고, 물방울 감정 잎과 열린 씨앗 부탁 잎 정확히 두 장을 서로 다른 높이의 집게에 건다. 오른쪽의 차곡이는 삐뚤어진 별꽃 한 송이를 곧게 펴지 않고 부드러운 U자 받침에 받아 들며, 새봄이는 교정 빗에서 손을 떼고 가운데 재수정 집게는 열린 채 남긴다.",
       "distinctFrom": [
@@ -178,7 +192,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "79e96f5ab4cca6d239e9fa2a2d85912c379eba34979e2571c09a3b47be549cdc",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "6a7b83888a41aef8e93511eb3b6fcec047261546263d8e88a0787b7fd545bb08",
       "compositionFamily": "topdown_irregular_sandtable_split_truthpebbles_dual_rakes_unclaimed_thirdstar_open_exit",
       "artDirection": "닫힌 원이 아닌 가장자리 한쪽이 열린 불규칙 육각 모래 탁자를 거의 수직으로 내려다본다. 고르미는 자기 쪽 푸른 모래에 따뜻한 별·열린 잎 욕구 돌과 보랏빛 물방울·끊긴 곡선 두려움 돌을 따로 놓고, 해님이는 반대편 금빛 모래에 자기 작은 별 하나를 둔다. 두 수호령은 서로 다른 짧은 갈퀴로 이름 없는 공동의 세 번째 별을 가운데의 잠기지 않은 홈까지 밀되 손과 모래를 섞지 않고, 홈 뒤 열린 출구는 비워 둔다.",
       "distinctFrom": [
@@ -198,7 +213,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "0eadd4fcab08b260f358d9bac7e6a0e6e3bec42521c641a17fc8854031683327",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "2bf8970b39aacc9e55768ba624b1b9bc32b8ba994f462b1774de02a42cc7c348",
       "compositionFamily": "inside_amethyst_geode_crack_outview_single_truthfacet_acknowledgement_pebble_empty_next_notch",
       "artDirection": "꽃처럼 닫힌 자수정 진실 지오드 안쪽에서 좁은 균열 너머 바깥을 본다. 안쪽의 꼬옥이는 여러 어두운 결정 면 가운데 별 하나와 열린 곡선 하나가 있는 단일 진실 면만 자기 집게로 바깥쪽에 기울이고, 나머지 면은 몸 쪽에서 닫아 둔다. 바깥의 달콩이는 틈에 손이나 열쇠를 넣지 않고 점 두 개가 있는 들음 자갈을 독립 받침에 놓으며, 지오드 가장자리의 다음 공개 홈은 비워 둔다.",
       "distinctFrom": [
@@ -218,7 +234,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "ce41c5f51af02a9841d275cfca073d304e7a0046b118b10aaa43158a00c4282b",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "6cbaf1a478fdc1400988deec1d530f4263d9fffdda91b6ad3b39768c48c19be3",
       "compositionFamily": "behind_dual_horizon_telescope_lowrear_relationship_lens_freedom_lens_return_beads_open_destination",
       "artDirection": "Eclipse 새벽 언덕에서 두 갈래로 열린 낮은 지평 망원경을 뒤쪽 저각으로 올려다본다. 총총이는 등에 초승달 활을 고정하고 왼쪽 렌즈에 나란한 두 별과 열린 쉼터, 오른쪽 렌즈에 바깥 혜성과 넓은 빈 원이 있는 투명 판을 각각 끼운다. 오름이는 렌즈를 돌리지 않고 자기 쪽 받침에 서로 떨어진 귀환 리듬 구슬 정확히 세 개를 놓고, 두 수호령은 독립 초점 손잡이를 각자 잡은 채 가운데 목적지 소켓은 비워 둔다.",
       "distinctFrom": [
@@ -238,7 +255,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "4ad65df54737e894a97730c7a7d5783ce846ea0461293ff77593ff0e7793e425",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "5e70f47cbe510fcea19089d273303e3bb7e1ed27b5abd43044f0611194ae592b",
       "compositionFamily": "inside_open_counterweight_arch_upview_duty_limit_stones_testhandle_helpwedge_unset_pin",
       "artDirection": "닫힌 고리가 아닌 윗부분이 열린 금빛 돌 지지 아치 안쪽에서 두 수호령과 장치를 올려다본다. 오름이는 별이 있는 책임 돌을 위쪽 받침에, 끝이 열린 곡선의 한계 돌을 아래쪽 내려놓음 쟁반에 따로 두고 숨겼던 작은 도움 쐐기를 옆 선반에 드러낸다. 총총이는 자기 독립 시험 손잡이로 책임 돌만 조금 들어 무게를 확인하되 오름이 손을 잡지 않고, 가운데 고정 핀과 두 번째 책임 홈은 비워 둔다.",
       "distinctFrom": [
@@ -258,7 +276,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "676c7f215144907e71c704345a90640ed5aa62305398198d0b2cd6ca5140ac6c",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "fbfec6fc369ac0691d6a738a19881f526a4ead8ffd08116869ffc1485585e56f",
       "compositionFamily": "sidecut_blue_resonance_table_twin_wavetongues_round_replybeats_closed_bottle_open_recheck_port",
       "artDirection": "낮고 속이 빈 파란 공명 탁자를 옆 단면으로 길게 본다. 왼쪽의 방울이는 복잡한 무문자 별도안을 접어 닫힌 파란 마음병 아래에 두고, 따뜻한 색 물결 감정 키와 열린 물결 필요 키를 서로 다른 공명 혀에 놓는다. 오른쪽의 차곡이는 두 물결을 고치지 않고 자기 쪽 독립 패드에 떨어진 둥근 점 두 개를 차례로 두어 들은 리듬을 되돌리며, 가운데 다시 확인 포트와 새 빈 키 자리는 열어 둔다.",
       "distinctFrom": [
@@ -278,7 +297,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "ba54e938f2370a803884e8ded4e6939ddd4ed47e83667d6dfb69506039a1aae9",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "15cc09c746cafcc203525ca5973f45e98426214c3c33141ec1a3839eafa5620e",
       "compositionFamily": "below_floating_tide_xylophone_upview_twin_clear_truthdiscs_relaxed_fins_open_recheck_rest",
       "artDirection": "꿈바다의 떠 있는 초승달형 물결 실로폰 아래에서 두 수호령과 투명 건반을 올려다본다. 큰 아쿠아 꿈별이는 색 물결과 별이 있는 실제 감정 원판을 왼쪽 건반에, 작은 분홍 잠별이는 중심이 빈 열린 곡선의 모르는 부분 원판을 오른쪽 건반에 각자 놓는다. 둘은 상상 꿈구름 조각을 바깥에 내려놓고 독립 해제 지느러미에서 힘을 푼 뒤 안쪽 지느러미를 중앙의 부드러운 듣기 받침 양끝에 따로 대며, 위의 재확인 받침은 비워 둔다.",
       "distinctFrom": [

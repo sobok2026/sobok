@@ -3,7 +3,7 @@
   "locale": "ko",
   "contentType": "image/webp",
   "cacheControl": "public, max-age=31536000, immutable",
-  "assetCount": 369,
+  "assetCount": 381,
   "assets": [
     {
       "editionId": "aquarius.choice.evidence.shared-world",
@@ -119,6 +119,15 @@
       "sourceArtworkSha256": "a0506d651ceb39104bd8db002e8d646bf4d0fee462b2afdf088108d544a70219",
       "deliveryArtworkSha256": "ec7ec0ec0b1fc6c3515b888215ce8e372f641cce77d1c172141840e87a71c311",
       "byteSize": 271562,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aquarius.love.honest-conversation.eclipse",
+      "objectKey": "guardian-cards/ko/aquarius.love.honest-conversation.eclipse.520649200fb2.webp",
+      "sourceArtworkSha256": "fbfec6fc369ac0691d6a738a19881f526a4ead8ffd08116869ffc1485585e56f",
+      "deliveryArtworkSha256": "520649200fb259b6fd39153a3dd84aa0873ef9bd2f01676458f660f1f924cfbe",
+      "byteSize": 327388,
       "width": 1080,
       "height": 1440
     },
@@ -389,6 +398,15 @@
       "sourceArtworkSha256": "2ef6c5bb80604f161f8fb0257c8f605909c62373cdcceabae8de286cafa50f21",
       "deliveryArtworkSha256": "4dad357df62b21418b676368019c6864ee1d720416b7bdb9658af807fc850018",
       "byteSize": 161348,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aries.love.honest-conversation.eclipse",
+      "objectKey": "guardian-cards/ko/aries.love.honest-conversation.eclipse.dd8e393e84ae.webp",
+      "sourceArtworkSha256": "66062adffc6b42b6e2ce25c3a49d167e43d79203a45fbd1b3130c3c006957843",
+      "deliveryArtworkSha256": "dd8e393e84aeb57446eeeee4b6fa0b44152036252fb56b1c28d87b98cd0d6d30",
+      "byteSize": 287466,
       "width": 1080,
       "height": 1440
     },
@@ -672,6 +690,15 @@
       "height": 1440
     },
     {
+      "editionId": "cancer.love.honest-conversation.eclipse",
+      "objectKey": "guardian-cards/ko/cancer.love.honest-conversation.eclipse.fd428aba4cb2.webp",
+      "sourceArtworkSha256": "7bd8758866a8c83efcdda0bf6710f338cad6c4c39ddbb66af3eebd532611c951",
+      "deliveryArtworkSha256": "fd428aba4cb25cb8848a00397a9c46b0702ecb1240d8bed8d69ca4b02bba247c",
+      "byteSize": 256768,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "cancer.love.honest-conversation.nebula",
       "objectKey": "guardian-cards/ko/cancer.love.honest-conversation.nebula.196a51536648.webp",
       "sourceArtworkSha256": "b8bfd653c37ed4ccf1435b01870e1c2d31a5dfd367730b8b4b8c23e40ac3646e",
@@ -938,6 +965,15 @@
       "sourceArtworkSha256": "c0d467d1b22c4d013d6eda066a4702a18e96eb3c0ee28905571988672b7825ac",
       "deliveryArtworkSha256": "40426d5fa801ca1cdd7f9b36f55125b63437d703650d93c5f6f2a45e4984edc1",
       "byteSize": 235428,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "capricorn.love.honest-conversation.eclipse",
+      "objectKey": "guardian-cards/ko/capricorn.love.honest-conversation.eclipse.f7ca1c321d16.webp",
+      "sourceArtworkSha256": "5e70f47cbe510fcea19089d273303e3bb7e1ed27b5abd43044f0611194ae592b",
+      "deliveryArtworkSha256": "f7ca1c321d16145c5fc3e2939c73686dcecf3b21e679ffc42bdbd93c82f92788",
+      "byteSize": 260258,
       "width": 1080,
       "height": 1440
     },
@@ -1221,6 +1257,15 @@
       "height": 1440
     },
     {
+      "editionId": "gemini.love.honest-conversation.eclipse",
+      "objectKey": "guardian-cards/ko/gemini.love.honest-conversation.eclipse.34a472f6b2ca.webp",
+      "sourceArtworkSha256": "93565f760875755dbd8598b921e50b75fcd0a65c9c0bf2e0131713e3d56fd568",
+      "deliveryArtworkSha256": "34a472f6b2ca8b7c12bca97f15ab894386bcadd101adbb9e88ac0b831e88ae82",
+      "byteSize": 225796,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "gemini.love.honest-conversation.nebula",
       "objectKey": "guardian-cards/ko/gemini.love.honest-conversation.nebula.da0812f2dd21.webp",
       "sourceArtworkSha256": "3de60d9a7638765f30bfc86cd394910db6c9e3fef5a7598fd4b4a5f18d85239d",
@@ -1487,6 +1532,15 @@
       "sourceArtworkSha256": "a3c87c1e145aa56ac06a4615e2b9cc470a52b4b1ea7af7b41fbefd6d46fb0260",
       "deliveryArtworkSha256": "320100bf5fd6a859fb538859eebfcd32af05f7823577406870f2b651aa609dc0",
       "byteSize": 248052,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "leo.love.honest-conversation.eclipse",
+      "objectKey": "guardian-cards/ko/leo.love.honest-conversation.eclipse.fae7d2317d74.webp",
+      "sourceArtworkSha256": "3ddac4cbd2ec5c71fded8f89ff982b5ed8d8291ffbe781d785bc60677943fea6",
+      "deliveryArtworkSha256": "fae7d2317d7497031cf9908f3950bbef6b0e5bed3674b54669d208ab41ee4ef0",
+      "byteSize": 189440,
       "width": 1080,
       "height": 1440
     },
@@ -1770,6 +1824,15 @@
       "height": 1440
     },
     {
+      "editionId": "libra.love.honest-conversation.eclipse",
+      "objectKey": "guardian-cards/ko/libra.love.honest-conversation.eclipse.dffd4d335b92.webp",
+      "sourceArtworkSha256": "6a7b83888a41aef8e93511eb3b6fcec047261546263d8e88a0787b7fd545bb08",
+      "deliveryArtworkSha256": "dffd4d335b92b0dec40cff1e4d117eecca4ce6f31e7ff5a6d6d74c9a610d4f26",
+      "byteSize": 213288,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "libra.love.honest-conversation.nebula",
       "objectKey": "guardian-cards/ko/libra.love.honest-conversation.nebula.ffc94587478c.webp",
       "sourceArtworkSha256": "c331979087063d684cc18825230bfc1d74777796a55b1a57ad1dcb94afa4d9f7",
@@ -2045,6 +2108,15 @@
       "sourceArtworkSha256": "d1307aa47520f7a7680b2e337a348c04a39400b1e7017aa3aec6e2e2fb5482ee",
       "deliveryArtworkSha256": "581d85b0be237d07400e91f27acbe1d84da6d71aca174bf55f6798f94833f0b7",
       "byteSize": 203218,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "pisces.love.honest-conversation.eclipse",
+      "objectKey": "guardian-cards/ko/pisces.love.honest-conversation.eclipse.5db06903d6ac.webp",
+      "sourceArtworkSha256": "15cc09c746cafcc203525ca5973f45e98426214c3c33141ec1a3839eafa5620e",
+      "deliveryArtworkSha256": "5db06903d6ac0bf659a1114bde75222523117b83170fc6e1d9cdd6e4c68d1035",
+      "byteSize": 261022,
       "width": 1080,
       "height": 1440
     },
@@ -2328,6 +2400,15 @@
       "height": 1440
     },
     {
+      "editionId": "sagittarius.love.honest-conversation.eclipse",
+      "objectKey": "guardian-cards/ko/sagittarius.love.honest-conversation.eclipse.7ef6c88adc0e.webp",
+      "sourceArtworkSha256": "6cbaf1a478fdc1400988deec1d530f4263d9fffdda91b6ad3b39768c48c19be3",
+      "deliveryArtworkSha256": "7ef6c88adc0ea32b3573d49cab40bc2509657d902d4f0f25e6d0f49d158696ea",
+      "byteSize": 237388,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "sagittarius.love.honest-conversation.nebula",
       "objectKey": "guardian-cards/ko/sagittarius.love.honest-conversation.nebula.77a443c6404f.webp",
       "sourceArtworkSha256": "dfc96c9bdf2fd20629ec73d956386f47abdc5700eb99f1943ca5f8035c899e54",
@@ -2594,6 +2675,15 @@
       "sourceArtworkSha256": "d8665f110c0fdb12a5282f2d95959d1bea4bff2b63c13f5e263422af38271de6",
       "deliveryArtworkSha256": "e81c92b9c80fed73b25484244d477ccb71f34cec0740e93dc4e3c9251fd68cc7",
       "byteSize": 233256,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "scorpio.love.honest-conversation.eclipse",
+      "objectKey": "guardian-cards/ko/scorpio.love.honest-conversation.eclipse.5ca7fd802bf3.webp",
+      "sourceArtworkSha256": "2bf8970b39aacc9e55768ba624b1b9bc32b8ba994f462b1774de02a42cc7c348",
+      "deliveryArtworkSha256": "5ca7fd802bf37d3f238b8435aacf12da6457fe31223331a4cab3ea399e2ba6eb",
+      "byteSize": 264376,
       "width": 1080,
       "height": 1440
     },
@@ -2877,6 +2967,15 @@
       "height": 1440
     },
     {
+      "editionId": "taurus.love.honest-conversation.eclipse",
+      "objectKey": "guardian-cards/ko/taurus.love.honest-conversation.eclipse.a42d13d89871.webp",
+      "sourceArtworkSha256": "c4edcec47583b34ebf44e0c80d987138e04a5f16e4043bc6dbe5815e63e6c0b1",
+      "deliveryArtworkSha256": "a42d13d8987116b2b36cf22ede180f8c3cccc199dc23a62d4b8f5f3089863c0b",
+      "byteSize": 211404,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "taurus.love.honest-conversation.nebula",
       "objectKey": "guardian-cards/ko/taurus.love.honest-conversation.nebula.cc5de753254d.webp",
       "sourceArtworkSha256": "eed24f20a2d25646a78774b46ae21de64538f7cc1bea0a6a273ba66c5b444bd5",
@@ -3152,6 +3251,15 @@
       "sourceArtworkSha256": "110b80b429e8ac5b12894b3c53735b2d963739238921e6541e311ac3ad599ab9",
       "deliveryArtworkSha256": "46233d0a7fa18589f977621061baa5c311e7005da73422e0b0610b71d1704cdc",
       "byteSize": 206380,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "virgo.love.honest-conversation.eclipse",
+      "objectKey": "guardian-cards/ko/virgo.love.honest-conversation.eclipse.1d92f947cb5c.webp",
+      "sourceArtworkSha256": "fe982aaf1b7e59a553670ef2f0ba0afe416228d0695416380da4b3b5eb7b6081",
+      "deliveryArtworkSha256": "1d92f947cb5c762e3b8f139f98e45cbd77bc1a04e1afc405d1a5c34b14ebeeba",
+      "byteSize": 256092,
       "width": 1080,
       "height": 1440
     },
