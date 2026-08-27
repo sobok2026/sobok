@@ -91,7 +91,7 @@ for (const { sourceManifestPath, sourceManifest } of sourceManifests) {
 }
 
 const assets: ReleaseManifest['assets'][number][] = []
-const editionIds = new Set<string>()
+const sourceHashByEditionId = new Map<string, string>()
 const outputParent = dirname(outputDirectory)
 const temporaryOutputDirectory = join(outputParent, `.${basename(outputDirectory)}-${process.pid}.tmp`)
 await mkdir(outputDirectory, { recursive: true })
@@ -108,11 +108,6 @@ try {
     ) {
       throw new Error('each selected output requires editionId, filename, and sha256 strings')
     }
-    if (editionIds.has(selected.editionId)) {
-      throw new Error(`duplicate editionId: ${selected.editionId}`)
-    }
-    editionIds.add(selected.editionId)
-
     if (basename(selected.filename) !== selected.filename || !selected.filename.endsWith('.png')) {
       throw new Error(`${selected.editionId}: source filename must be a local PNG basename`)
     }
@@ -132,6 +127,15 @@ try {
     ) {
       throw new Error(`${selected.editionId}: source must be 1080x1440 PNG`)
     }
+
+    const existingSourceHash = sourceHashByEditionId.get(selected.editionId)
+    if (existingSourceHash) {
+      if (existingSourceHash !== sourceHash) {
+        throw new Error(`${selected.editionId}: duplicate approved sources contain different PNG bytes`)
+      }
+      continue
+    }
+    sourceHashByEditionId.set(selected.editionId, sourceHash)
 
     const outputFilename = `${selected.editionId}.webp`
     const outputPath = join(temporaryOutputDirectory, outputFilename)
