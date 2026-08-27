@@ -1,7 +1,15 @@
 {
-  "status": "visual_review_ready",
+  "status": "visual_review_complete",
   "editorialApprovedOn": "2026-08-27",
   "generatedOn": "2026-08-27",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-27",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
   "locale": "ko",
   "batchId": "love.shared-play.stella",
   "batchOrder": 36,
@@ -58,7 +66,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "79c2111cfaf600b22fb586edd59964e1fe55d844ddacbdf93d4ba237e9f43447",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "high_oblique_twin_crimson_cometfans_openheart_negativegap_receding_openway",
       "artDirection": "세로 3:4의 보랏빛 황혼 들판을 높은 사선 3/4로 내려다본다. 왼쪽 몽실이와 오른쪽 달콩이는 접은 혜성 깃발과 달집·별등을 정본대로 유지한 채 떨어진 자리에서 각자의 가슴 별표를 연다. 두 별표에서 나온 넓은 진홍 혜성빛 부채 두 갈래는 서로 닿지 않은 채 아래로 휘어, 위와 아래가 모두 열린 짙은 음영 틈으로만 미완성 하트를 암시한다. 두 수호령 사이에서 시작한 옅은 금빛 별잔광은 하나의 넓은 열린 길 안에서 나란히 흐르다가 끝부분이 서로 다른 열린 곡선으로 풀려 화면 깊이와 프레임 밖으로 이어진다. 실물 하트·문·수문·하트등·썰매·손잡이·원반·과녁·완주선은 두지 않는다.",
       "distinctFrom": [
@@ -68,7 +76,8 @@
       "visualReviewFocus": [
         "몽실이의 크림 구름 털·보라 나선뿔·접은 혜성 깃발과 달콩이의 초승달 집 몸·둥근 집게·별등, 단순 진보라 눈과 큰 1개·작은 1개 하이라이트가 정확히 유지되는지",
         "80px에서도 진홍 부채 두 갈래의 위·아래 끝이 모두 닿지 않아 닫힌 하트가 되지 않고, 금빛 잔광은 프레임 밖으로 이어지는 하나의 넓은 열린 길로 읽히는지"
-      ]
+      ],
+      "approvedArtworkSha256": "0c5fe81ae21dcfa5a870b34d56e671218b7bc80990b1fa62fb37b4fb367d1611"
     },
     {
       "order": 2,
@@ -78,7 +87,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "bc58c3992b415a5f62fa1a6b6c801357360cf821719d5ce8ff9e404a6a4ab4e5",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "steep_overhead_offcenter_starseed_diagonal_three_seasonlobes_blank_soilwedge",
       "artDirection": "세로 3:4의 크림·보라 황혼 흙밭을 가파른 탑뷰 사선으로 내려다보고 좌하단에서 벗어난 지점에 새싹이 막 난 별씨앗 하나를 둔다. 왼쪽 아래 차곡이는 씨앗의 자기 쪽 흙 가장자리를 앞발로 누르고, 위쪽 새봄이는 떨어진 반대 흙 가장자리에 자기 앞발을 대어 손과 몸을 겹치지 않는다. 두 가슴 별표에서 씨앗으로 모인 옅은 빛은 호박빛·세이지빛·라벤더빛 계절 로브 정확히 세 갈래로 갈라져 우상향 대각선에 퍼진다. 세 로브는 시작 중심·폭·길이·굽이가 서로 다르고 사이마다 어두운 흙틈이 있어 동심원·나이테·꽃잎·과녁으로 닫히지 않는다. 화면 우상단의 큰 흙쐐기는 빛·씨앗·발자국 없이 비워 다음 계절의 선택을 남긴다. 바구니·담요·쿠키·눈벽·팽이·달력 표식은 넣지 않는다.",
       "distinctFrom": [
@@ -88,7 +97,8 @@
       "visualReviewFocus": [
         "차곡이의 크림 황소 얼굴·라벤더 뿔·보라 소지품과 새봄이의 새싹 귀·잎 장식이 섞이지 않고, 두 수호령이 별씨앗의 서로 다른 경계에 독립적으로 닿는지",
         "80px에서도 별씨앗은 정확히 하나, 호박·세이지·라벤더 로브는 정확히 세 갈래의 다른 실루엣으로 분리되고 우상단의 넓은 흙쐐기가 비어 있어 나이테·동심원·꽃으로 읽히지 않는지"
-      ]
+      ],
+      "approvedArtworkSha256": "6a898c0098f36807f3f2dcaf8c9ccf673f26ee53a7f793dfcd21317b02159b03"
     },
     {
       "order": 3,
@@ -98,7 +108,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "e6568f0503f810e6331b420b2f5bb855c810411a3b186869521093a102a9ee2e",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "steep_aerial_paperless_twin_lightpages_dark_spine_blank_outer_notch",
       "artDirection": "세로 3:4의 깊은 남보라 구름 협곡을 가파른 공중 탑뷰 대각으로 내려다본다. 큰 크림색 재잘이는 왼쪽 아래, 작은 라벤더 소곤이는 오른쪽 위에서 정본 분홍 연결 리본을 두 몸 뒤로 느슨하게 유지하고 각자 한 날개와 가슴 별표로 자기 쪽 반투명 빛면을 펼친다. 재잘이 쪽에는 서로 떨어진 점 두 개와 잎 하나, 소곤이 쪽에는 물방울 하나·열린 곡선 하나·네 갈래 별 하나만 크게 흩어 두어 줄이나 문장이 되지 않게 한다. 두 빛면은 종이 없이 열린 별책의 양쪽 면처럼 퍼지지만 넓은 짙은 중앙 책등 틈에서 끝까지 닿지 않고, 소곤이 쪽 바깥 모서리에는 남보라 하늘로 열린 무점등 홈 하나를 남긴다. 실제 책·카드·질문표·글줄·물음표·굴림통·안개 형상·제3의 새는 넣지 않는다.",
       "distinctFrom": [
@@ -108,7 +118,8 @@
       "visualReviewFocus": [
         "큰 크림색 재잘이와 작은 라벤더 소곤이만 보이고 정본 상대 크기·날개·분홍 연결 리본·단순 진보라 눈과 정확한 두 눈 하이라이트가 유지되는지",
         "80px에서도 왼쪽의 점 2개와 잎 1개, 오른쪽의 물방울·열린 곡선·네 갈래 별이 큰 독립 도형으로 읽히며 중앙 책등 틈과 오른쪽 바깥 무점등 홈이 닫히지 않는지"
-      ]
+      ],
+      "approvedArtworkSha256": "f981b009cfb8bd2953523b032104f5093754643a7e0f9f1341cfafba3aed6e35"
     },
     {
       "order": 4,
@@ -118,7 +129,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "f52f79abb903b41076ae7a5ca373a887becbfb3465d5d9d0c2485d6e78d2cfcc",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "exterior_highrear_threequarter_moonhouse_open_crescentwalk_twin_drypads_foreground_returngap",
       "artDirection": "세로 3:4의 보랏빛 밤 달집과 놀이 자리를 바깥의 높은 후사선 3/4로 내려다보고 달집은 화면 왼쪽 뒤에 두며 작은 열린 별창은 배경의 빛 증거로만 남긴다. 달콩이는 달집 앞 왼쪽 마른 받침, 꼬옥이는 떨어진 오른쪽 마른 둥근 받침에 각자 서서 몸·집게·발자리를 겹치지 않고 서로를 바라본다. 두 가슴 별표에서 나온 옅은 금빛은 달집 바깥을 크게 돌아 뒤쪽에서 이어지는 두꺼운 비대칭 초승달 보행빛이 되고, 전경에서는 두 끝을 한 수호령 몸통 너비보다 넓게 벌려 어두운 귀환 틈을 남긴다. 이 틈은 다음에 다시 돌지 고르는 열린 선택이며 원·광륜·하트·울타리로 닫히지 않는다. 창짝·걸쇠·문턱 장치·물웅덩이·국자·빗물현·물달잎·부표는 넣지 않고 꼬옥이의 정본 하트 꼬리 끝 외 다른 하트는 금지한다.",
       "distinctFrom": [
@@ -128,7 +139,8 @@
       "visualReviewFocus": [
         "달콩이의 초승달 집 몸·둥근 집게·별등과 꼬옥이의 보라 전갈 몸·집게·정본 하트 꼬리 끝이 정확히 분리되고 두 수호령이 별도의 마른 받침에 서는지",
         "80px에서도 두꺼운 보행빛이 달집 주위를 돌되 전경에서 한 수호령 몸통 너비 이상 열려 있고, 닫힌 원·halo·하트나 물·반사·제3 캐릭터로 읽히지 않는지"
-      ]
+      ],
+      "approvedArtworkSha256": "c21a8bfb78fb5527128b902fa295cb6c4f60803fb43d5b602930aaaa62fa4641"
     },
     {
       "order": 5,
@@ -138,7 +150,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "c4a5a777160a9a97ab56d16214e17c8d09646c0dc7eb2949adb7b5df085f7ea5",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "stagewing_eyelevel_crossstage_dual_open_cheststar_light_apron_mismatched_encore_poses",
       "artDirection": "3:4 세로 화면의 무대 건축이 보이지 않는 빈 놀이바닥을 옆날개 쪽 수호령 눈높이에서 가로질러 본다. 왼쪽 해님이는 두 발을 바닥에 붙인 채 앞발 하나만 높이 들고, 오른쪽 고르미는 두 앞발을 낮게 모은 채 긴 귀를 한쪽으로 기울이고 한 발만 옆으로 내디뎌 서로 닮았지만 명백히 다른 우스운 동작을 주고받는다. 물리 스포트라이트 없이 두 가슴 Stella 별표에서 나온 금빛·파랑분홍 광로가 각자의 몸을 가리지 않고 바닥 양쪽으로 넓어져 하나의 열린 에이프런형 놀이빛을 만든다. 두 광로는 뒤쪽과 아래쪽의 넓은 어두운 틈 앞에서 각각 멈춰 닫힌 고리나 완성된 공연장이 되지 않으며, 관객·점수·무대 장치는 넣지 않는다.",
       "distinctFrom": [
@@ -148,7 +160,8 @@
       "visualReviewFocus": [
         "해님이의 황금 민들레 갈기·비뚤어진 종이 왕관·가슴별·별꼬리와 고르미의 파랑분홍 구름 몸·긴 저울형 귀·가슴별, 두 guardian의 단순 진보라 동공과 눈마다 큰 하이라이트 1개+작은 하이라이트 1개가 유지되는지",
         "해님이만 앞발을 들고 두 발을 접지하며 고르미만 귀 기울임과 옆걸음을 하는지, 두 가슴별 광로가 물리 조명·객석·점수 없이 넓은 gap을 남겨 닫힌 고리·하트·완성 공연으로 읽히지 않는지"
-      ]
+      ],
+      "approvedArtworkSha256": "c634015daf0d1ac698646284d6beadb08a9c3661d0e7e8f76059affaa2fad49d"
     },
     {
       "order": 6,
@@ -158,7 +171,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "20c3ae1df3343c988b14668217e3d58906f359958c4c84309d06917808a4c071",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "flowerheight_deepcorridor_staggered_mixed_starflowers_two_broken_diagonal_lightbranches_blank_soil",
       "artDirection": "3:4 세로 화면의 크기·높이·꽃잎 조합이 서로 다른 별꽃 사이를 꽃높이의 깊은 사선으로 본다. 앞쪽 새봄이는 삐뚤어진 크림초록 별꽃 밑동의 흙만 다독이고, 뒤쪽 차곡이는 별도 위치의 둥근 보라금빛 별꽃 밑동만 눌러 어느 꽃도 고치거나 정렬하지 않는다. 오른쪽에는 다음 꽃을 다시 선택할 수 있는 넓은 빈 흙 한 폭을 남긴다. 두 가슴 Stella 별표의 호박빛·라벤더빛 광로는 서로 다른 높이의 꽃과 잎 그림자가 섞인 끊긴 대각 가지 두 개로 올라가 한 번 어긋나지만 접촉하지 않으며, 머리 위를 두르는 화관·왕관·고리 대신 빈 흙 쪽으로 각각 열린다.",
       "distinctFrom": [
@@ -168,7 +181,8 @@
       "visualReviewFocus": [
         "새봄이의 큰 초록 잎 귀·이마 별꽃·잎목도리·가슴별과 차곡이의 커스터드 송아지 몸·보라 앞머리·뿔·앞치마·초록 어깨담요·가슴별, 두 얼굴의 정확한 진보라 눈 하이라이트가 유지되는지",
         "서로 다른 꽃이 크기순으로 정렬되지 않고 두 guardian이 각자 밑동만 다루는지, 호박빛·라벤더빛 가지가 서로 닿거나 머리 위 화관으로 닫히지 않으며 오른쪽 빈 흙이 판독되는지"
-      ]
+      ],
+      "approvedArtworkSha256": "d8e58217ec5b2139dc2e738d79e7ce838e2c35c93e1254a650b31b81e31d98b2"
     },
     {
       "order": 7,
@@ -178,7 +192,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "90472f54d11e4712f7704bddf310e48b9da327d47128a9763f58ec7c2ec7856f",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "steep_oblique_three_freestanding_star_lights_dual_separate_comma_sweeps_large_gap",
       "artDirection": "3:4 세로 화면의 비어 있는 보라색 놀이바닥을 가파른 사선 고각으로 본다. 파랑·분홍·금빛의 독립 접이식 별빛등 정확히 세 개를 서로 다른 깊이에 세우고, 왼쪽 아래 고르미는 파란 별빛등의 자기 받침만 돌리며 오른쪽 위 해님이는 금빛 별빛등의 별도 받침만 돌린다. 분홍 별빛등은 가운데 뒤쪽에 누구에게도 잠기지 않은 untouched 상태로 선다. 고르미와 해님이의 가슴 Stella 별표에서 나온 파랑분홍·금빛 광륜은 서로 닿지 않는 비대칭 열린 쉼표형 sweep 두 개로만 남고, 우하단의 넓은 빈 바닥을 사이에 두어 S자·무한대·균형 고리로 닫히지 않는다.",
       "distinctFrom": [
@@ -188,7 +202,8 @@
       "visualReviewFocus": [
         "고르미의 파랑분홍 구름 몸·긴 저울형 귀·가슴별과 해님이의 황금 갈기·비뚤어진 왕관·가슴별·별꼬리, 두 guardian의 단순 진보라 눈과 정확한 하이라이트가 유지되는지",
         "놀이 별빛등이 파랑·분홍·금빛 정확히 세 개이고 분홍 하나는 untouched인지, 광륜은 정확히 두 개만 서로 멀리 떨어져 열린 채 남아 닫힌 고리·S·무한대·완성 별자리로 보이지 않는지"
-      ]
+      ],
+      "approvedArtworkSha256": "9953c814a2df23c620723f112b94f4313c245c4570f940d65cf1edb015d30c65"
     },
     {
       "order": 8,
@@ -198,7 +213,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "1cdc9b84fd1e34c36eccb36719bcf46846e4924d5bce0cfd799365312366e217",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "chestlevel_frontal_edgeon_open_starbox_nested_separate_c_depthlanes_blank_next_star_socket",
       "artDirection": "3:4 세로 화면의 낮은 보라색 놀이바닥을 가슴높이 정면에서 보고, 얕은 별상자를 화면 아래 중앙에 납작한 edge-on 형태로 완전히 연다. 왼쪽 꼬옥이는 왼쪽 덮개 바깥 모서리만 자기 집게로 잡고 정본 분홍 하트 꼬리 끝을 작게 기울이며, 오른쪽 달콩이는 온전한 초승달집 안에서 오른쪽 덮개 모서리만 별도 집게로 잡고 몸쪽 고리의 작은 별등을 그대로 둔다. 상자 중앙의 다음 웃음별 홈은 비어 있다. 두 가슴 Stella 별표의 자주분홍·라벤더금빛 광로는 상자 각자 수로를 거쳐 깊이가 다른 열린 C자 레인 두 개로 솟고, 서로 접촉하거나 닫히지 않은 채 우상단의 큰 출구로 따로 끝난다.",
       "distinctFrom": [
@@ -208,7 +223,8 @@
       "visualReviewFocus": [
         "꼬옥이의 자주색 전갈 몸·큰 집게·망토·가슴별·정본 분홍 하트 꼬리와 달콩이의 온전한 초승달집·둥근 집게·이마별·가슴별·몸쪽 별등, 두 얼굴의 진보라 눈 하이라이트가 유지되는지",
         "중앙 별홈이 비어 있고 두 수호령이 서로 다른 덮개만 잡으며 C자 깊이 레인 두 개가 접촉·폐쇄되지 않는지, 정본 꼬리 끝 외 추가 하트·자물쇠·암호·오컬트 기호·제3자가 없는지"
-      ]
+      ],
+      "approvedArtworkSha256": "c30197ec110ef65e8d851679fcaac27b36428d7eca10e17d203170b76d09971a"
     },
     {
       "order": 9,
@@ -218,7 +234,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "98bf88f16ba029d40384769bec3ceab37e188a6c3cba55f6a59e9b33cbdf4664",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "valley_floor_lowup_twin_cheststar_routes_shared_waypoint_open_split",
       "artDirection": "세로 3:4의 별밤 초원 골짜기 바닥에서 올려다보는 극저 로우앵글로, 총총이와 오름이를 높이가 다른 좌우 자연 능선에 독립적으로 둔다. 총총이의 금분홍 가슴별 광로와 오름이의 청록·라일락 광로는 서로 다른 곡률로 하늘에 올라 상단 중앙의 작은 4-point Stella 별에서 한 번만 잠깐 겹친다. 이 별은 목적지나 점수 표식이 아닌 비고정 waypoint이며, 이후 두 광로는 화살촉 없는 서로 다른 열린 꼬리로 다시 갈라져 프레임 양쪽 빈 하늘로 이어진다. 초승달 활은 몸 옆의 비활성 정체성 소품으로만 남기고, 지도·표지판·깃발·연·주사위·물리 경로는 그리지 않는다.",
       "distinctFrom": [
@@ -228,7 +244,8 @@
       "visualReviewFocus": [
         "총총이의 크림색 구름 망아지 몸·라벤더 갈기·혜성 목도리·초승달 활과 오름이의 흰 바다염소 상체·보라 뿔·청록 꼬리·가방, 단순 진보라 눈과 눈마다 큰 하이라이트 1개·작은 하이라이트 1개가 유지되는지 확인한다.",
         "80px에서도 중앙 4-point 별이 목적지나 점수로 보이지 않고, 두 광로가 한 번만 겹친 뒤 화살표 없이 분리되어 열린 다음 하늘을 남기는지 확인한다."
-      ]
+      ],
+      "approvedArtworkSha256": "2a0e2804c272a73bb356cca85fd6ebbf106a692f26b2d1302da039a8ae342d05"
     },
     {
       "order": 10,
@@ -238,7 +255,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "3d09aeea46f011b6b967efea6a13c1e111634e6ce71be82b1ea62100ad44bdec",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "profile_lowup_shared_start_separate_footholds_loose_moonlight_ribbons_blank_next_air",
       "artDirection": "세로 3:4 달빛 공중을 올려다보는 낮은 측면 로우앵글로, 하단의 하나뿐인 반투명 시작 발판에 오름이와 총총이를 나란히 둔다. 같은 발판 안에서도 오름이의 청록 발자리와 총총이의 금분홍 발자리는 빈 틈으로 분리한다. 두 가슴 별표의 옅은 광륜은 폭·길이·간격이 다른 짧고 긴 달빛 띠를 공중 우상향으로 느슨하게 번갈아 밝힌다. 빛띠는 난간·번호·평가 표식이 없는 비고형 리본이며, 가장 높은 띠 뒤의 우상단은 단독 끝별이나 목적지 없이 넓은 빈 밤하늘로 남긴다.",
       "distinctFrom": [
@@ -248,7 +265,8 @@
       "visualReviewFocus": [
         "오름이의 흰 바다염소 상체·보라 뿔·청록 꼬리·가방과 총총이의 크림색 구름 망아지 몸·라벤더 갈기·혜성 목도리, 단순 진보라 눈과 정확한 두 눈 하이라이트가 유지되는지 확인한다.",
         "80px에서도 하나의 시작 발판 안 두 발자리가 색과 간격으로 분리되고, 빛띠가 사다리·시험 코스·점수 경로로 보이지 않으며 상단 다음 자리가 완전히 열려 있는지 확인한다."
-      ]
+      ],
+      "approvedArtworkSha256": "4357c158719e4ae45ab00de813db2fe8aa1307eecde5696a2f826e5f7c626be2"
     },
     {
       "order": 11,
@@ -258,7 +276,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "8f627d401defd57e92c7e5820e0ef057380b6e63b0e3acf9766c479454d798bf",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "high_oblique_suspended_cloudblossom_fans_open_canopy_blank_branch",
       "artDirection": "세로 3:4의 깊은 구름 하늘을 45도 하이 오블리크로 보고, 방울이와 차곡이를 서로 다른 높이의 작은 구름 솜 위에 독립적으로 둔다. 방울이의 청록 가슴별 광로는 자기 앞발의 청록 조절점에서 낮은 공중 cloud-blossom fan으로, 차곡이의 금보라 광로는 별도 조절점에서 더 높은 fan으로 펼쳐진다. 두 색 가지는 중앙 깊이에서 앞뒤로 한 번 교차하지만 섞이거나 결합하지 않고 서로 떨어진 끝으로 열린다. 지면 정원·화단·수로·병 없이 비대칭 suspended canopy만 만들고, 우상단에는 가지가 닿지 않은 넓은 빈 갈래와 구름 공간을 남긴다.",
       "distinctFrom": [
@@ -268,7 +286,8 @@
       "visualReviewFocus": [
         "방울이의 흰 구름 몸·연파랑 물결 귀와 이마 컬·보라 발끝, 차곡이의 커스터드 몸·보라 앞머리·뿔·앞치마와 단순 진보라 눈이 유지되고 병이 전혀 없는지 확인한다.",
         "80px에서도 guardian별 조절점 두 개와 서로 다른 색·높이의 광로, 비결합 교차, 떨어진 끝과 우상단의 빈 다음 갈래가 구분되며 닫힌 canopy·하트·고리가 생기지 않는지 확인한다."
-      ]
+      ],
+      "approvedArtworkSha256": "e8a180efd0bc75f9aa10b646b815d79dbdcf4af12f528694955ccd888f5d3b68"
     },
     {
       "order": 12,
@@ -278,7 +297,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "501970d7e1aab4f535acf05f720b740900e707ffd4b90758ceb68e9447b399fd",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "seafloor_extreme_lowup_twin_color_ribbon_canopy_open_dome_seam",
       "artDirection": "세로 3:4 꿈바다 바닥에서 수면을 향한 극저 로우앵글로, 큰 파랑 꿈별이를 near-left, 작은 분홍 잠별이를 far-right의 서로 다른 깊이에 둔다. 꿈별이의 가슴별에서는 파랑·청록 light-ribbon fan이 좌상단 수면으로, 잠별이의 가슴별에서는 분홍·라일락 fan이 우상단 수면으로 각각 뒤집힌 대각 canopy처럼 올라간다. 두 fan은 서로 다른 깊이와 색을 유지하고 가장자리가 닿지 않는다. 중앙 세로 seam과 하단 절반은 빛막·물살·소품 없는 열린 짙은 물로 남겨 넓은 별빛 원의 일부 호만 암시하며, 원판·열린 물원·고리·enclosure 실루엣은 만들지 않는다.",
       "distinctFrom": [
@@ -288,7 +307,8 @@
       "visualReviewFocus": [
         "큰 아쿠아 꿈별이와 작은 분홍 잠별이의 상대 크기·정본 색·서로 다른 파랑/분홍 잠옷·가슴 별표·단순 진보라 눈과 눈마다 큰 하이라이트 1개·작은 하이라이트 1개가 유지되는지 확인한다.",
         "80px에서도 두 비접촉 ribbon fan이 물고기 위 좌우로만 올라가고 중앙 세로 seam과 하단 절반이 열린 물로 남아 원·고리·하트·중앙 암흑 enclosure로 읽히지 않으며 제3 물고기가 없는지 확인한다."
-      ]
+      ],
+      "approvedArtworkSha256": "247233f18091df7452672677bc694b3f0ab74355083e5225a835f90606053bf3"
     }
   ]
 }

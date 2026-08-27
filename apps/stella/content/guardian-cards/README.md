@@ -5,62 +5,62 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 
 ## 현재 상태
 
-| 파일                                         | 상태                     | 범위                                                                                  |
-| -------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------- |
-| `guardian-card-families-ko.json`             | `authoring`              | 12별자리 × 자기이해·사랑·일·결정, 총 48개 기본 패밀리의 한국어 원고                   |
-| `production-edition-plan.json`               | `work_order`             | 실제 에디션 1,056개를 제작하기 위한 장면·표현·희귀도 매트릭스                         |
-| `guardian-self-edition-blueprints-ko.json`   | `authoring`              | 자기이해 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고                       |
-| `guardian-self-editions-ko.json`             | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 자기이해 에디션 192개                    |
-| `guardian-love-edition-blueprints-ko.json`   | `authoring`              | 사랑 12패밀리의 서사 테마 120개와 네 희귀도의 한국어 원고                             |
-| `guardian-love-editions-ko.json`             | `editorial_draft`        | 개별 ID·고정 가중치·원고를 명시한 사랑 에디션 480개                                   |
-| `guardian-work-edition-blueprints-ko.json`   | `authoring`              | 일 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고                             |
-| `guardian-work-editions-ko.json`             | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 일 에디션 192개                          |
-| `guardian-choice-edition-blueprints-ko.json` | `authoring`              | 결정 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고                           |
-| `guardian-choice-editions-ko.json`           | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 결정 에디션 192개                        |
-| `production-art-pilot-plan-ko.json`          | `visual_review_complete` | 별자리별 대표 원고·3:4 원화 후보 12개 시각 승인 완료                                  |
-| `production-art-batches-ko.json`             | `work_order`             | 1,056개 원화를 같은 제작 축의 12별자리 단위 88개 배치로 선언                          |
-| `production-art-batch-001-review-ko.json`    | `visual_review_complete` | 첫 production 배치 신규 PNG 11개 시각 승인·승인 해시 고정                             |
-| `production-art-batch-002-review-ko.json`    | `visual_review_complete` | 두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                        |
-| `production-art-batch-003-review-ko.json`    | `visual_review_complete` | 세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                        |
-| `production-art-batch-004-review-ko.json`    | `visual_review_complete` | 네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                        |
-| `production-art-batch-005-review-ko.json`    | `visual_review_complete` | 다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                      |
-| `production-art-batch-006-review-ko.json`    | `visual_review_complete` | 여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                      |
-| `production-art-batch-007-review-ko.json`    | `visual_review_complete` | 일곱 번째 production 배치 파일럿 1개·신규 PNG 11개 시각 승인·승인 해시 고정           |
-| `production-art-batch-008-review-ko.json`    | `visual_review_complete` | 여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                      |
-| `production-art-batch-009-review-ko.json`    | `visual_review_complete` | 아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                      |
-| `production-art-batch-010-review-ko.json`    | `visual_review_complete` | 열 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                        |
-| `production-art-batch-011-review-ko.json`    | `visual_review_complete` | 열한 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                      |
-| `production-art-batch-012-review-ko.json`    | `visual_review_complete` | 열두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                      |
-| `production-art-batch-013-review-ko.json`    | `visual_review_complete` | 열세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                      |
-| `production-art-batch-014-review-ko.json`    | `visual_review_complete` | 열네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                      |
-| `production-art-batch-015-review-ko.json`    | `visual_review_complete` | 열다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                    |
-| `production-art-batch-016-review-ko.json`    | `visual_review_complete` | 열여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                    |
-| `production-art-batch-017-review-ko.json`    | `visual_review_complete` | 열일곱 번째 production 배치 파일럿 1개·신규 PNG 11개 시각 승인·승인 해시 고정         |
-| `production-art-batch-018-review-ko.json`    | `visual_review_complete` | 열여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                    |
-| `production-art-batch-019-review-ko.json`    | `visual_review_complete` | 열아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                    |
-| `production-art-batch-020-review-ko.json`    | `visual_review_complete` | 스무 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                      |
-| `production-art-batch-021-review-ko.json`    | `visual_review_complete` | 스물한 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                    |
-| `production-art-batch-022-review-ko.json`    | `visual_review_complete` | 스물두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                    |
-| `production-art-batch-023-review-ko.json`    | `visual_review_complete` | 스물세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                    |
-| `production-art-batch-024-review-ko.json`    | `visual_review_complete` | 스물네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                    |
-| `production-art-batch-025-review-ko.json`    | `visual_review_complete` | 스물다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                  |
-| `production-art-batch-026-review-ko.json`    | `visual_review_complete` | 스물여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                  |
-| `production-art-batch-027-review-ko.json`    | `visual_review_complete` | 스물일곱 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                  |
-| `production-art-batch-028-review-ko.json`    | `visual_review_complete` | 스물여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                  |
-| `production-art-batch-029-review-ko.json`    | `visual_review_complete` | 스물아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                  |
-| `production-art-batch-030-review-ko.json`    | `visual_review_complete` | 서른 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                      |
-| `production-art-batch-031-review-ko.json`    | `visual_review_complete` | 서른한 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                    |
-| `production-art-batch-032-review-ko.json`    | `visual_review_complete` | 서른두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                    |
-| `production-art-batch-033-review-ko.json`    | `visual_review_ready`    | 서른세 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기              |
-| `production-art-batch-034-review-ko.json`    | `visual_review_ready`    | 서른네 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기              |
-| `production-art-batch-035-review-ko.json`    | `visual_review_ready`    | 서른다섯 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기            |
-| `production-art-batch-036-review-ko.json`    | `visual_review_ready`    | 서른여섯 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기            |
-| `production-art-batch-037-review-ko.json`    | `visual_review_ready`    | 서른일곱 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기            |
-| `production-art-batch-038-review-ko.json`    | `visual_review_ready`    | 서른여덟 번째 production 배치 파일럿 1개·신규 PNG 11개 사람 시각 승인, 일괄 배포 대기 |
-| `production-art-batch-039-review-ko.json`    | `visual_review_ready`    | 서른아홉 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기            |
-| `production-art-batch-040-review-ko.json`    | `visual_review_ready`    | 마흔 번째 production 배치 신규 PNG 12개 시각 검토 준비, 사람 승인 대기                |
-| `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                            |
-| `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 393개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                               |
+| 파일                                         | 상태                     | 범위                                                                            |
+| -------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------- |
+| `guardian-card-families-ko.json`             | `authoring`              | 12별자리 × 자기이해·사랑·일·결정, 총 48개 기본 패밀리의 한국어 원고             |
+| `production-edition-plan.json`               | `work_order`             | 실제 에디션 1,056개를 제작하기 위한 장면·표현·희귀도 매트릭스                   |
+| `guardian-self-edition-blueprints-ko.json`   | `authoring`              | 자기이해 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고                 |
+| `guardian-self-editions-ko.json`             | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 자기이해 에디션 192개              |
+| `guardian-love-edition-blueprints-ko.json`   | `authoring`              | 사랑 12패밀리의 서사 테마 120개와 네 희귀도의 한국어 원고                       |
+| `guardian-love-editions-ko.json`             | `editorial_draft`        | 개별 ID·고정 가중치·원고를 명시한 사랑 에디션 480개                             |
+| `guardian-work-edition-blueprints-ko.json`   | `authoring`              | 일 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고                       |
+| `guardian-work-editions-ko.json`             | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 일 에디션 192개                    |
+| `guardian-choice-edition-blueprints-ko.json` | `authoring`              | 결정 12패밀리의 서사 맥락 48개와 네 표현 방식의 한국어 원고                     |
+| `guardian-choice-editions-ko.json`           | `editorial_draft`        | 개별 ID·제목·장면·접근성 설명·한 줄을 명시한 결정 에디션 192개                  |
+| `production-art-pilot-plan-ko.json`          | `visual_review_complete` | 별자리별 대표 원고·3:4 원화 후보 12개 시각 승인 완료                            |
+| `production-art-batches-ko.json`             | `work_order`             | 1,056개 원화를 같은 제작 축의 12별자리 단위 88개 배치로 선언                    |
+| `production-art-batch-001-review-ko.json`    | `visual_review_complete` | 첫 production 배치 신규 PNG 11개 시각 승인·승인 해시 고정                       |
+| `production-art-batch-002-review-ko.json`    | `visual_review_complete` | 두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                  |
+| `production-art-batch-003-review-ko.json`    | `visual_review_complete` | 세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                  |
+| `production-art-batch-004-review-ko.json`    | `visual_review_complete` | 네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                  |
+| `production-art-batch-005-review-ko.json`    | `visual_review_complete` | 다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                |
+| `production-art-batch-006-review-ko.json`    | `visual_review_complete` | 여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                |
+| `production-art-batch-007-review-ko.json`    | `visual_review_complete` | 일곱 번째 production 배치 파일럿 1개·신규 PNG 11개 시각 승인·승인 해시 고정     |
+| `production-art-batch-008-review-ko.json`    | `visual_review_complete` | 여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                |
+| `production-art-batch-009-review-ko.json`    | `visual_review_complete` | 아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                |
+| `production-art-batch-010-review-ko.json`    | `visual_review_complete` | 열 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                  |
+| `production-art-batch-011-review-ko.json`    | `visual_review_complete` | 열한 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                |
+| `production-art-batch-012-review-ko.json`    | `visual_review_complete` | 열두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                |
+| `production-art-batch-013-review-ko.json`    | `visual_review_complete` | 열세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                |
+| `production-art-batch-014-review-ko.json`    | `visual_review_complete` | 열네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                |
+| `production-art-batch-015-review-ko.json`    | `visual_review_complete` | 열다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-016-review-ko.json`    | `visual_review_complete` | 열여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-017-review-ko.json`    | `visual_review_complete` | 열일곱 번째 production 배치 파일럿 1개·신규 PNG 11개 시각 승인·승인 해시 고정   |
+| `production-art-batch-018-review-ko.json`    | `visual_review_complete` | 열여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-019-review-ko.json`    | `visual_review_complete` | 열아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-020-review-ko.json`    | `visual_review_complete` | 스무 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                |
+| `production-art-batch-021-review-ko.json`    | `visual_review_complete` | 스물한 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-022-review-ko.json`    | `visual_review_complete` | 스물두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-023-review-ko.json`    | `visual_review_complete` | 스물세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-024-review-ko.json`    | `visual_review_complete` | 스물네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-025-review-ko.json`    | `visual_review_complete` | 스물다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-026-review-ko.json`    | `visual_review_complete` | 스물여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-027-review-ko.json`    | `visual_review_complete` | 스물일곱 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-028-review-ko.json`    | `visual_review_complete` | 스물여덟 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-029-review-ko.json`    | `visual_review_complete` | 스물아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-030-review-ko.json`    | `visual_review_complete` | 서른 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                |
+| `production-art-batch-031-review-ko.json`    | `visual_review_complete` | 서른한 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-032-review-ko.json`    | `visual_review_complete` | 서른두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-033-review-ko.json`    | `visual_review_complete` | 서른세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-034-review-ko.json`    | `visual_review_complete` | 서른네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-035-review-ko.json`    | `visual_review_complete` | 서른다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-036-review-ko.json`    | `visual_review_complete` | 서른여섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-037-review-ko.json`    | `visual_review_complete` | 서른일곱 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-038-review-ko.json`    | `visual_review_complete` | 서른여덟 번째 production 배치 파일럿 1개·신규 PNG 11개 시각 승인·승인 해시 고정 |
+| `production-art-batch-039-review-ko.json`    | `visual_review_complete` | 서른아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
+| `production-art-batch-040-review-ko.json`    | `visual_review_complete` | 마흔 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                |
+| `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                      |
+| `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 488개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                         |
 
 파일명과 JSON에는 수동 버전을 두지 않는다. 각 파일이 현재 정본이며 변경 이력은 Git으로 추적한다. 카드
 원고와 의미를 바꾸면 새 에디션 ID를 만들고, 같은 에디션의 원화 교정은 ID를 유지한 채 WebP 해시를 넣은
@@ -237,8 +237,8 @@ Stella 등급도 마스터 원화 자체에는 사용자의 실제 출생 차트
 게이트다. 승인된 로컬 후보를 업로드된 운영 자산으로 오인하지 않고, 런타임이 존재하지 않는 R2
 object를 참조하지 않게 한다.
 
-현재 파일럿 12개와 production 배치 32개의 신규 381개, 총 393개 승인 원본을 WebP quality 82·effort 6으로
-최적화했다. 누적 배포 후보 합계는 77,862,350 bytes다.
+현재 파일럿 12개와 production 배치 40개의 고유 신규 476개, 총 488개 승인 원본을 WebP quality 82·effort 6으로
+최적화했다. 누적 배포 후보 합계는 97,003,092 bytes다.
 `guardian-card-assets-ko.json`은 파일 본문 대신 각
 WebP의 객체 키·정확한 byte 수·원본과 배포 SHA-256만 추적한다. release bundle의 매니페스트가 Git의 이
 파일과 byte 단위로 같지 않으면 GitHub Actions가 배포하지 않는다.
@@ -252,7 +252,7 @@ WebP의 객체 키·정확한 byte 수·원본과 배포 SHA-256만 추적한다
 
 승인된 파일럿 12개는 각각 서로 다른 배치에 하나씩 포함된다. 따라서 12개 배치는 파일럿 한 장과 신규
 11장으로 구성되고, 나머지 76개 배치는 신규 12장으로 구성된다. 파일럿만 승인했을 때의 시작 잔여량은
-1,044장이며 서른두 번째 production 배치의 신규 381개까지 승인·WebP 준비한 현재 잔여량은 663장이다. 이 목록은
+1,044장이며 마흔 번째 production 배치의 고유 신규 476개까지 승인·WebP 준비한 현재 잔여량은 568장이다. 이 목록은
 에디션 정본, 파일럿 원고 해시, 누적 WebP 매니페스트에서 materialize하며 다음 명령으로 다시 만든다.
 
 ```bash
@@ -817,8 +817,7 @@ honest-conversation Nebula·Eclipse·Stella의 날씨 보호·양방향 교환·
 물고기자리의 열린 물보라를 제한 수정했다. 마스터·80px·직전 배치·앞선 32개 배치 비교와 기존 승인
 원화 393장 유사도 QA를 통과한 선택본은 공개 Git에 포함하지 않는
 `apps/stella/private/guardian-art-production/love-shared-play-orbit`에 보관한다. 12개 모두 사람의 최종
-시각 승인을 마쳤지만 WebP 최적화와 R2 반영은 이후 배치와 일괄 진행하기로 했으므로, 공개 검수 파일은
-누적 배포 매니페스트가 준비될 때까지 `visual_review_ready`와 `generated_candidate` 상태를 유지한다.
+시각 승인을 마쳤고 승인 원본 SHA-256을 누적 488개 WebP 배포 매니페스트에 고정했다.
 
 서른네 번째 배치는 `love.shared-play` 원고를 `nebula` 희귀도로 제작할 신규 12개 편집 검토안이다.
 `production-art-batch-034-review-ko.json`에 현재 원고의 canonical SHA-256과, 비·눈·바람·보랏빛 황혼·
@@ -837,9 +836,7 @@ honest-conversation Nebula·Eclipse·Stella의 날씨 보호·양방향 교환·
 전갈자리의 왼쪽 오목틈 실루엣을 제한 수정했으며 수정 전 후보도 보존했다. 마스터·80px·직전 배치·
 앞선 33개 배치 비교와 기존 승인 원화 393장 유사도 보조 QA를 통과한 선택본은 공개 Git에 포함하지
 않는 `apps/stella/private/guardian-art-production/love-shared-play-nebula`에 보관한다. 12개 모두 사람의
-최종 시각 승인을 마쳤지만 WebP 최적화와 R2 반영은 이후 배치와 일괄 진행하기로 했으므로, 공개 검수
-파일은 누적 배포 매니페스트가 준비될 때까지 `visual_review_ready`와 `generated_candidate` 상태를
-유지한다.
+최종 시각 승인을 마쳤고 승인 원본 SHA-256을 누적 488개 WebP 배포 매니페스트에 고정했다.
 
 서른다섯 번째 배치는 `love.shared-play` 원고를 `eclipse` 희귀도로 제작할 신규 12개 편집 검토안이다.
 `production-art-batch-035-review-ko.json`에 현재 원고의 canonical SHA-256과, 지정된 두 수호령 또는
@@ -860,8 +857,8 @@ Orbit·Nebula의 놀이 소품·날씨 동작, greeting card kite를 반복하�
 달산호와 후면 3/4를 제한 교정했으며 수정 전 후보도 보존했다. 마스터·80px·직전 배치 비교와 기존
 승인 원화 393장에 대한 4,782건 유사도 보조 QA에서 exact·near duplicate가 없었다. 선택본은 공개
 Git에 포함하지 않는 `apps/stella/private/guardian-art-production/love-shared-play-eclipse`에 보관한다.
-2026-08-27 사람의 최종 시각 승인을 기록했으며 WebP 최적화와 R2·staging·production 배포는 이후 배치와
-함께 일괄 진행한다.
+2026-08-27 사람의 최종 시각 승인을 기록했고 승인 원본 SHA-256을 누적 488개 WebP 배포 매니페스트에
+고정했다.
 
 서른여섯 번째 배치는 `love.shared-play` 원고를 `stella` 희귀도로 제작한 신규 12개 배치다.
 `production-art-batch-036-review-ko.json`에 현재 원고의 canonical SHA-256과 두 수호령의 독립된 몸·
@@ -879,7 +876,7 @@ canonical hash를 고정한 뒤 built-in imagegen으로 PNG 12개를 병렬 생�
 교정했으며 수정 전 후보도 보존했다. 마스터·80px·직전 배치 비교와 기존 승인 원화 429장에 대한
 5,214건 유사도 보조 QA에서 exact·near duplicate가 없었다. 선택본은 공개 Git에 포함하지 않는
 `apps/stella/private/guardian-art-production/love-shared-play-stella`에 보관한다. 2026-08-27 사람의 최종
-시각 승인을 기록했으며 WebP 최적화와 R2·staging·production 배포는 이후 배치와 함께 일괄 진행한다.
+시각 승인을 기록했고 승인 원본 SHA-256을 누적 488개 WebP 배포 매니페스트에 고정했다.
 
 서른일곱 번째 배치는 `love.boundary-and-space` 원고를 `orbit` 희귀도로 제작할 신규 12개 편집
 검토안이다. `production-art-batch-037-review-ko.json`에 현재 원고의 canonical SHA-256과 원고에 지정된
@@ -896,8 +893,8 @@ pool, 세 색 체크판, felt island 위 두 의자와 느슨한 리본, 개인�
 깊이축과 상보 별 반쪽을 제한 교정했으며 수정 전 후보도 보존했다. 마스터·80px·직전 배치 비교와 기존
 승인 원화 441장에 대한 5,358건 유사도 보조 QA에서 exact·near duplicate가 없었다. 선택본은 공개
 Git에 포함하지 않는 `apps/stella/private/guardian-art-production/love-boundary-and-space-orbit`에
-보관한다. 2026-08-27 사람의 최종 시각 승인을 기록했으며 WebP 최적화와 R2·staging·production 배포는
-이후 배치와 함께 일괄 진행한다.
+보관한다. 2026-08-27 사람의 최종 시각 승인을 기록했고 승인 원본 SHA-256을 누적 488개 WebP 배포
+매니페스트에 고정했다.
 
 서른여덟 번째 배치는 `love.boundary-and-space` 원고를 `nebula` 희귀도로 제작한 Cancer 승인 파일럿
 1개와 신규 11개 배치다. `production-art-batch-038-review-ko.json`에 현재 원고의 canonical SHA-256,
@@ -914,8 +911,7 @@ Cancer PNG는 바이트 단위로 재사용하고 새 장면은 앞선 다섯 Ne
 5,501건 유사도 보조 QA에서 inherited Cancer 자체 비교 1건을 제외하고 exact·near duplicate가 없었다.
 선택본은 공개 Git에 포함하지 않는
 `apps/stella/private/guardian-art-production/love-boundary-and-space-nebula`에 보관한다. 2026-08-28 사람의
-최종 시각 승인을 기록했으며 WebP 최적화와 R2·staging·production 배포는 이후 배치와 함께 일괄
-진행한다.
+최종 시각 승인을 기록했고 승인 원본 SHA-256을 누적 488개 WebP 배포 매니페스트에 고정했다.
 
 서른아홉 번째 배치는 `love.boundary-and-space` 원고를 `eclipse` 희귀도로 제작한 신규 12개 배치다.
 `production-art-batch-039-review-ko.json`에 현재 원고의 canonical SHA-256과 원고가 지정한
@@ -929,8 +925,7 @@ Cancer PNG는 바이트 단위로 재사용하고 새 장면은 앞선 다섯 Ne
 배치 비교와 기존 승인 원화 464장에 대한 5,634건 유사도 보조 QA에서 exact·near duplicate가 없었다.
 선택본은 공개 Git에 포함하지 않는
 `apps/stella/private/guardian-art-production/love-boundary-and-space-eclipse`에 보관한다. 2026-08-28 사람의
-최종 시각 승인을 기록했으며 WebP 최적화와 R2·staging·production 배포는 이후 배치와 함께 일괄
-진행한다.
+최종 시각 승인을 기록했고 승인 원본 SHA-256을 누적 488개 WebP 배포 매니페스트에 고정했다.
 
 마흔 번째 배치는 `love.boundary-and-space` 원고를 `stella` 희귀도로 제작한 신규 12개다.
 `production-art-batch-040-review-ko.json`에 현재 원고의 canonical SHA-256과 정확히 두 수호령만 보이는
@@ -943,8 +938,9 @@ Stella 배치와 직전 boundary-and-space Orbit·Nebula·Eclipse를 반복하�
 수량, 독립 조절점, 카메라 축과 계보 중복에 한정한 교정을 거쳤으며 수정 전·미채택 후보도 보존했다.
 마스터·실제 80px·현재 배치 66쌍·기존 승인 원화 476장에 대한 총 5,778건 보조 QA에서 exact·near
 duplicate가 없었다. 선택본은 공개 Git에 포함하지 않는
-`apps/stella/private/guardian-art-production/love-boundary-and-space-stella`에 보관하며, 사람의 최종
-시각 승인을 기다린다. WebP 최적화와 R2·staging·production 배포는 이후 배치와 함께 일괄 진행한다.
+`apps/stella/private/guardian-art-production/love-boundary-and-space-stella`에 보관한다. 2026-08-28 사람의
+최종 시각 승인을 기록했고 승인 원본 SHA-256을 누적 488개 WebP 배포 매니페스트에 고정했다. 환경별
+R2 반영 이력은 동일한 immutable GitHub Release를 입력으로 쓰는 `Guardian Card Art Deploy` workflow가 남긴다.
 
 ## 검증
 
@@ -1027,20 +1023,23 @@ bun --filter=@sobok/stella guardian-cards:validate
   Orbit 근접 장면, 앞선 first-signal·careful-approach·everyday-care·honest-conversation Orbit와 바로 앞
   honest-conversation Nebula·Eclipse·Stella 비반복, 편집 승인 해시 기반 신규 PNG 후보·마스터/80px·
   직전 및 앞선 32개 배치 비교·승인 원화 393장 유사도 보조 QA·여섯 제한 수정·사람의 최종 시각 승인,
-  이후 배치와 일괄 진행할 때까지 WebP/R2 반영 차단
+  누적 488개 WebP 배포 매니페스트 고정
 - 서른네 번째 production 배치 신규 12개 원고 해시와 날씨 자체가 속도·모양·소리·우연을 바꾸는
   shared-play Nebula 장면, 앞선 first-signal·careful-approach·everyday-care·honest-conversation Nebula와
   바로 앞 shared-play Orbit·Batch 028 인사 카드 연 비반복, 편집 승인 해시 기반 세 에이전트 병렬 신규
   PNG 후보·마스터/80px·직전 및 앞선 33개 배치 비교·승인 원화 393장 유사도 보조 QA·다섯 제한 수정
-  완료·사람의 최종 시각 승인, 이후 배치와 일괄 진행할 때까지 WebP/R2 반영 차단
+  완료·사람의 최종 시각 승인·누적 488개 WebP 배포 매니페스트 고정
 - 서른다섯 번째 production 배치 신규 12개 원고 해시와 두 named guardians가 부분 가림·온광·냉광
   경계를 한 가지 무승부 놀이의 변수로 함께 다루면서 각자의 몸·발자리·조작점과 untouched 다음 차례를
   유지하는 shared-play Eclipse 장면, 앞선 first-signal·careful-approach·everyday-care·honest-conversation
   Eclipse와 바로 앞 shared-play Orbit·Nebula 비반복, 세 에이전트 병렬 설계·단일 수호령 초안 일곱 개
-  통합 교정 완료·사람의 최종 편집 승인 대기·이미지 생성 차단
+  통합 교정·신규 PNG 12개 마스터/80px·계보 비교·사람의 최종 시각 승인·누적 WebP 배포 매니페스트 고정
+- 서른여섯 번째부터 마흔 번째 production 배치까지 shared-play Stella와 boundary-and-space 네 희귀도의
+  PNG 60개를 승인하고, 배치 38의 기존 Cancer 1개는 동일 바이트로 재사용해 고유 신규 59개만 추가한
+  누적 488개 WebP release bundle 고정
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
-- 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 393개를 제외한 현재 잔여
-  663개 산식
+- 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 488개를 제외한 현재 잔여
+  568개 산식
 - R2 자산 계약의 1,056개 목표·환경별 버킷·WebP-only 객체 키와 승인 원본/배포 해시 연결
 - 모든 마스터 원화 장면에서 실제 출생 차트·개인 색을 제외하고 비개인화 광륜만 사용
 - 런타임 게시 전에 개별 에디션에 필요한 이미지·접근성·한 줄 원고 필드
@@ -1098,19 +1097,29 @@ bun --filter=@sobok/stella guardian-cards:prepare-art \
   --source private/guardian-art-production/love-honest-conversation-nebula/manifest.json \
   --source private/guardian-art-production/love-honest-conversation-eclipse/manifest.json \
   --source private/guardian-art-production/love-honest-conversation-stella/manifest.json \
+  --source private/guardian-art-production/love-shared-play-orbit/manifest.json \
+  --source private/guardian-art-production/love-shared-play-nebula/manifest.json \
+  --source private/guardian-art-production/love-shared-play-eclipse/manifest.json \
+  --source private/guardian-art-production/love-shared-play-stella/manifest.json \
+  --source private/guardian-art-production/love-boundary-and-space-orbit/manifest.json \
+  --source private/guardian-art-production/love-boundary-and-space-nebula/manifest.json \
+  --source private/guardian-art-production/love-boundary-and-space-eclipse/manifest.json \
+  --source private/guardian-art-production/love-boundary-and-space-stella/manifest.json \
   --baseline content/guardian-cards/guardian-card-assets-ko.json \
-  --output private/guardian-art-release-393
+  --output private/guardian-art-release-488
 
 bun --filter=@sobok/stella guardian-cards:validate-art-release --manifest \
-  private/guardian-art-release-393/manifest.json
+  private/guardian-art-release-488/manifest.json
 
 bun --filter=@sobok/stella guardian-cards:package-art-release --manifest \
-  private/guardian-art-release-393/manifest.json --output \
-  private/releases/guardian-art-release-393/guardian-card-art-release.tar.gz
+  private/guardian-art-release-488/manifest.json --output \
+  private/releases/guardian-art-release-488/guardian-card-art-release.tar.gz
 ```
 
-`--source`는 사람 시각 승인이 끝난 매니페스트마다 반복한다. `--baseline`은 같은 WebP 바이트의 기존 키를
-재사용하고 교정·신규 바이트에만 해시 키를 만든다. 출력은 모든 source를 합친 누적 release다.
+`--source`는 사람 시각 승인이 끝난 매니페스트마다 반복한다. 같은 에디션의 동일 승인 PNG가 파일럿과
+production 매니페스트에 함께 있으면 한 번만 포함하고, 바이트가 다르면 실패한다. `--baseline`은 같은
+WebP 바이트의 기존 키를 재사용하고 교정·신규 바이트에만 해시 키를 만든다. 출력은 모든 source를 합친
+누적 release다.
 
 시각 승인과 Git의 `guardian-card-assets-ko.json` 갱신 뒤, WebP와 같은 `manifest.json`을
 `guardian-card-art-release.tar.gz`로 묶어 immutable GitHub Release asset으로 올린다. 원격 R2 변경은
