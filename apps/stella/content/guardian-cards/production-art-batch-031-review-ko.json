@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "editorialApprovedOn": "2026-08-27",
+  "generatedOn": "2026-08-27",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-27",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
+  "locale": "ko",
+  "batchId": "love.honest-conversation.eclipse",
+  "batchOrder": 31,
+  "purpose": "사랑의 honest-conversation 원고를 정해진 두 수호령이 서로의 말을 실제로 듣고 자기 몫의 다음 행동을 고르는 Eclipse 장면으로 확장한다. 신규 열두 장은 감정·필요·부탁·한계를 글자 없는 독립 상징으로 교환하되 각자의 조절점과 공개 범위를 유지하고, 합의·용서·관계 결론을 강제하지 않으며 앞선 Eclipse 세 배치와 바로 앞 Orbit·Nebula의 소품·카메라를 반복하지 않는 장면으로 고정한다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "love",
+    "narrativeAxisId": "honest-conversation",
+    "visualAxisId": "eclipse"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Premium Stella zodiac-guardian story illustration for the Eclipse rarity, full-bleed 3:4 master art. Show exactly the two named guardians, or exactly the canonical internal pair for Gemini and Pisces, and preserve every character-sheet identity, relative size, silhouette, color, simple dark-purple pupils, exactly one large and one small eye highlight, chest Stella star, clothing, and signature prop; never add an unseen romantic recipient, another hand, face, shadow, reflection, silhouette, third figure, or duplicated guardian. Translate the approved honest-conversation copy into one concrete two-way exchange rather than a collage or split panel: the first guardian makes one real feeling, need, request, fear, responsibility, freedom, or unknown visible through separated symbol-only tiles, stones, facets, paddles, plates, keys, or discs, and the second guardian performs a distinct listening, checking, receiving, or clarification action with a separate control point. Both guardians must keep their own grip, brake, handle, tray, socket, or release point; leave one central latch, next cue, follow-up chime, correction port, recheck rest, destination socket, or confirmation position open so being heard does not become guaranteed agreement. The exchange may show a pause, recognition, or one chosen response, but never automatic consent, forgiveness, reconciliation, compulsory disclosure, merged identity, fixed bond, or a completed relationship outcome. Keep the two named guardians and the conversation device at 55–65% of the frame and readable at 80px, with safe UI framing and one clear depth axis. Use Eclipse contrast as offset deep-violet shadow with separate warm and cool pools or crescent edges, never a closed eclipse halo, magic circle, horoscope wheel, recognizable zodiac arrangement, natal chart, or actual birth-chart lines. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes. Use symbols and simple shapes only: no readable text, sentence, name, label, title, badge, number, date, clock numeral, weekday, calendar, question mark, zodiac glyph, arrowed route, logo, watermark, handwriting, or pseudo-text lines. Notes, scripts, plans, cards, signs, diagrams, promises, response spaces, and timing marks may contain only blank fields, dots, droplets, leaves, stars, separated open curves, removable notches, or simple abstract icons. Do not bake actual birth-chart lines or personal colors into the master art. Do not reuse Batch 019's mailbox shared heart, split-cookie table, overhead listening ring and letters, doorjamb snack exchange, twin spotlights, crooked-flower handoff, fulcrum third star, lock-door lantern, map drum, stair weight test, bottle lens, or bubble-column fin touch; Batch 023's heart stride gate, tea caddy, switchback letter bridge, threshold snack slider, prism light island, greenhouse plan wheel, rotary stride bridge, hinge-door lantern sled, map sail, cliff bridge, wave tubes and new bottle, or current arch; or Batch 027's umbrella canopy, woven lunch roll, whisper shells, moon-door snack rafts, twin lamp hoods, capillary flower table, reed boats, umbrella rail and lantern, suitcase wayfinder, step jack, label loom and bottles, or elongated dream lens. Do not reuse Batch 029's threshold heart leaves, star drawer, speech shells, half-moon door, script fan, folio tunnel, consensus fan, letter truth window, way flags, accordion plan, folding star frame, or split dream veil; or Batch 030's rain signal cone, whisper tube, wind comb, rain well, perforated stage scrim, flower-stem bridge, reed chimneys, letter capsule, direction rotor, snow hinge, cloud periscope, or moon-current sluice. Make every compositionFamily, camera height, dominant silhouette, symbol carrier, negative-space shape, gesture direction, two-way action, and open next position visibly distinct within this batch and from all earlier relationship art."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.love.honest-conversation.eclipse",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "34b9b826dca7933225f6b0831643e8de0c564bcf859b22060a6f037941774d01",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "66062adffc6b42b6e2ce25c3a49d167e43d79203a45fbd1b3130c3c006957843",
+      "compositionFamily": "along_open_cometrail_floorlevel_twin_truthtiles_independent_brakes_empty_center_socket",
+      "artDirection": "보랏빛 Eclipse 광장에서 끝이 열린 짧은 혜성형 대화 레일을 바닥 높이의 긴 장축으로 본다. 왼쪽 가까이의 몽실이는 접은 혜성 깃발을 몸 곁에 두고, 따뜻한 별 바람 타일과 보랏빛 물방울 걱정 타일을 서로 다른 슬라이더에 놓은 뒤 밀던 붉은 브레이크에서 한 앞발을 뗀다. 오른쪽의 달콩이는 자기 쪽 독립 듣기 패들을 둥근 집게로 같은 높이까지 돌리되 타일을 잡아당기지 않고, 두 슬라이더 사이의 다음 응답 소켓은 비워 둔다.",
+      "distinctFrom": [
+        "Batch 019의 우체통·공동 큰 하트와 Batch 023의 보폭 경사로·하트 회전문 대신, 문이나 하트 없이 끝이 열린 혜성 레일과 분리된 두 진실 타일을 사용한다.",
+        "Batch 027의 별우산 손잡이·장력선과 Batch 029·030의 문턱 하트 잎·신호 원뿔 셔터를 반복하지 않고, 바닥 장축·두 독립 브레이크·빈 중앙 소켓으로 속도를 맞춘다."
+      ],
+      "visualReviewFocus": [
+        "몽실이의 구름 털·보라 나선뿔·가슴 별표·접힌 혜성 깃발과 달콩이의 초승달 집 몸·둥근 보라 집게가 섞이지 않고 정확히 두 수호령만 보이는지",
+        "별 타일과 물방울 타일은 분리되고 몽실이의 브레이크와 달콩이의 듣기 패들이 독립적이며, 중앙 응답 소켓이 비어 있어 결론·동의가 자동 완성되지 않는지"
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.love.honest-conversation.eclipse",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "5d93748aac42782f3cf650423a1327b717564b55e47b290619cfc4ee9f9ee22b",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c4edcec47583b34ebf44e0c80d987138e04a5f16e4043bc6dbe5815e63e6c0b1",
+      "compositionFamily": "inside_terraced_claybell_lowup_bottom_needstone_leaf_receiver_uneven_cookie_shelves",
+      "artDirection": "여러 별돌이 층층이 걸린 속 빈 도자 종 내부에서 아래쪽을 올려다본다. 왼쪽의 차곡이는 가장 아래 받침에서 별 하나와 열린 잎만 새긴 단일 필요 돌을 빼내 낮은 점토 패들로 천천히 민다. 오른쪽의 새봄이는 모양을 고치지 않은 별쿠키 작은 조각을 자기 잎 선반에 든 채 독립 잎 수령판을 필요 돌 아래로 돌리고, 차곡이는 더 큰 쿠키 조각을 새봄이 쪽 별도 열린 선반에 놓되 가운데 확인 홈은 비워 둔다.",
+      "distinctFrom": [
+        "Batch 019의 대각선 테이블·교차 접시와 Batch 023의 찻잔 보관함·회전 받침 대신, 속 빈 도자 종의 수직 층과 바닥 필요 돌을 중심으로 한다.",
+        "Batch 027의 직조 점심보 나선·쿠키 회전축과 Batch 029·030의 별돌 서랍·속삭임 관 캡슐을 반복하지 않고, 아래에서 올려다보는 점토 패들·독립 잎 수령판·빈 확인 홈을 사용한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이의 커스터드 송아지 몸·보라 앞머리·앞치마와 새봄이의 큰 잎 귀·이마 별꽃·잎목도리, 단일 필요 돌과 별쿠키 한 개에서 나온 두 조각이 유지되는지",
+        "필요 돌에는 별·열린 잎 외 글자가 없고 쿠키 조각은 서로 다른 선반에 있으며, 새봄이의 수령판과 중앙 확인 홈이 열려 있어 부탁의 수락이 강제되지 않는지"
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.love.honest-conversation.eclipse",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "0ce32012641488a800268ff02bf2972aa918cab0c9590b71a0133eb06c9c0c1b",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "93565f760875755dbd8598b921e50b75fcd0a65c9c0bf2e0131713e3d56fd568",
+      "compositionFamily": "under_suspended_echo_ribs_lowup_twin_soundtiles_pausebead_empty_followup_chime",
+      "artDirection": "깊은 보라 그림자 위에 매달린 서로 다른 높이의 열린 공명 갈비 두 개를 아래에서 올려다본다. 큰 재잘이는 왼쪽 갈비의 점 두 개 소리 타일을 한 번 울린 뒤 말하던 날개를 가슴에 내리고 자기 정지 구슬을 홈에 놓는다. 작은 소곤이는 오른쪽 갈비의 열린 곡선 타일을 끝까지 밀고, 재잘이는 들은 뜻을 확인하는 반쪽 별 구슬을 중앙의 부드러운 받침 쪽으로 옮기되 소곤이 타일과 붙이지 않는다. 뒤의 후속 질문 종은 비어 있다.",
+      "distinctFrom": [
+        "Batch 019의 탑뷰 듣기 원과 겹친 편지, Batch 023의 지그재그 별발판·편지 다리 대신, 인물 아래의 저각과 매달린 두 공명 갈비·소리 타일을 사용한다.",
+        "Batch 027의 속삭임 조개·듣기 컵과 Batch 029·030의 말조개·바람빗 목소리 꽃잎을 반복하지 않고, 정지 구슬·확인 구슬·빈 후속 질문 종으로 듣기의 순서를 보여 준다."
+      ],
+      "visualReviewFocus": [
+        "큰 크림색 재잘이와 작은 라벤더 소곤이의 상대 크기·작은 날개·가슴 별표·느슨한 정본 분홍 연결 리본이 유지되고 제3의 새가 없는지",
+        "점 두 개 타일과 열린 곡선 타일이 합쳐지지 않고 재잘이의 날개가 내려가며, 확인 구슬과 빈 후속 종이 답변 완성 대신 듣기와 재확인으로 읽히는지"
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.love.honest-conversation.eclipse",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "0e15a29ae7fe59dfbddfcc9606175ad690a3491661fbc6bb734882d74eebb0e5",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "7bd8758866a8c83efcdda0bf6710f338cad6c4c39ddbb66af3eebd532611c951",
+      "compositionFamily": "outside_moonbalcony_highoblique_requesttile_twin_crescent_scoops_snacksaucer_open_returncup",
+      "artDirection": "달집 바깥 높은 벽에 붙은 작은 초승달 대화 발코니를 위쪽 사선에서 내려다보되 문짝은 프레임 밖에 둔다. 안쪽의 달콩이는 걱정 물방울 면을 별과 열린 곡선 부탁 면으로 뒤집은 단일 양면 타일을 자기 초승달 스쿱에 놓는다. 바깥의 꼬옥이는 발코니를 밀지 않고 작은 간식 하나를 독립 접시에 내려놓은 뒤 자기 쪽 빈 듣기 스쿱을 타일과 마주 보게 돌리며, 두 스쿱 사이의 되돌림 컵은 비워 둔다.",
+      "distinctFrom": [
+        "Batch 019·023·027의 문설주·문턱 터널·꽃잎형 달집 문과 간식 교환을 반복하지 않고, 문이 보이지 않는 외벽 발코니와 서로 분리된 초승달 스쿱을 사용한다.",
+        "Batch 029의 반쯤 열린 문·양면 타일과 Batch 030의 지붕 빗물 우물·부탁 원판 대신, 높은 사선·독립 간식 접시·상대가 직접 돌리는 빈 듣기 스쿱으로 실제 응답을 만든다."
+      ],
+      "visualReviewFocus": [
+        "달콩이의 초승달 집과 한 몸인 실루엣·둥근 보라 집게와 꼬옥이의 자주색 몸·망토·하트 꼬리, 양면 부탁 타일 한 개·간식 한 개가 유지되는지",
+        "꼬옥이가 달집이나 타일을 잡아당기지 않고 자기 듣기 스쿱만 돌리며 되돌림 컵이 비어 있어, 부탁을 들은 장면이 곧 수락·문 개방·화해로 바뀌지 않는지"
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.love.honest-conversation.eclipse",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "c1c503f63f9e5b2acd7d00ec974c40c2bf7f1ecb86da178fee49ab854f1ecb35",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "3ddac4cbd2ec5c71fded8f89ff982b5ed8d8291ffbe781d785bc60677943fea6",
+      "compositionFamily": "under_translucent_stagefloor_upview_crownhook_twin_truthblocks_dual_resonanceplates_empty_cue",
+      "artDirection": "빈 무대의 반투명 바닥 아래에서 두 수호령과 발밑 장치를 올려다본다. 왼쪽의 해님이는 비뚤어진 종이 왕관을 옆 단일 못에 걸고, 물방울과 작은 하트가 있는 서운함 블록과 열린 별과 잎이 있는 변화 블록을 서로 다른 바닥 슬롯에 내려놓는다. 오른쪽의 고르미는 자기 파랑·분홍 공명판 두 개를 각 블록 아래에 따로 맞춰 들은 내용을 되비추되 해님이 블록을 움직이지 않고, 가운데 다음 큐 소켓은 비워 둔다.",
+      "distinctFrom": [
+        "Batch 019의 두 조명통·겹친 빛과 Batch 023의 무광 프리즘·빛섬, Batch 027의 조명 후드·그림자 틈 대신 조명을 핵심 소품으로 쓰지 않는 무대 바닥 아래 저각을 사용한다.",
+        "Batch 029의 대본 부채와 Batch 030의 구멍 난 막·대본 프리즘을 반복하지 않고, 단단한 진실 블록·고르미의 독립 공명판·빈 중앙 큐로 상처와 부탁을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이의 황금 태양 갈기·가슴 별표·옆 못의 비뚤어진 종이 왕관과 고르미의 파랑·분홍 구름 몸·저울 모양 긴 귀, 진실 블록 정확히 두 개가 유지되는지",
+        "블록에는 물방울·하트·열린 별·잎 외 대사나 가짜 글줄이 없고 고르미는 자기 공명판만 조절하며 중앙 큐가 비어 있어 멋진 결론·박수·합의가 완성되지 않는지"
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.love.honest-conversation.eclipse",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "229c9f74559ea376761f550c1ee7455767bead841541b84b41a4ad97710d4bf0",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "fe982aaf1b7e59a553670ef2f0ba0afe416228d0695416380da4b3b5eb7b6081",
+      "compositionFamily": "inside_open_herbarium_frame_diagonal_twin_symbolleaves_crookedflower_cradle_unlatched_reedit_clip",
+      "artDirection": "잠기지 않은 투명 식물 표본틀 안쪽에서 열린 모서리를 따라 두 수호령을 대각선으로 본다. 왼쪽의 새봄이는 여러 번 고친 무문자 초안을 닫힌 잎 주머니에 넣고, 물방울 감정 잎과 열린 씨앗 부탁 잎 정확히 두 장을 서로 다른 높이의 집게에 건다. 오른쪽의 차곡이는 삐뚤어진 별꽃 한 송이를 곧게 펴지 않고 부드러운 U자 받침에 받아 들며, 새봄이는 교정 빗에서 손을 떼고 가운데 재수정 집게는 열린 채 남긴다.",
+      "distinctFrom": [
+        "Batch 019의 꽃잎 사이 손맞춤, Batch 023의 온실 계획 바퀴, Batch 027의 모세관 작업대 아래 화병을 반복하지 않고 열린 투명 표본틀 내부와 대각선 깊이를 사용한다.",
+        "Batch 029의 접힌 폴리오 터널·잎 카드와 Batch 030의 별꽃 줄기 다리·씨앗 소매 대신, 닫힌 초안 주머니·높이가 다른 두 상징 잎·잠기지 않은 재수정 집게를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이의 큰 잎 귀·이마 별꽃·잎목도리와 차곡이의 커스터드 송아지 몸·보라 앞머리·앞치마, 삐뚤어진 별꽃 한 송이와 상징 잎 정확히 두 장이 유지되는지",
+        "초안에는 글자가 보이지 않고 차곡이가 꽃을 바로잡지 않으며 새봄이의 교정 손과 중앙 재수정 집게가 열려 있어, 완벽한 문장·정답·수락으로 닫히지 않는지"
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.love.honest-conversation.eclipse",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "79e96f5ab4cca6d239e9fa2a2d85912c379eba34979e2571c09a3b47be549cdc",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "6a7b83888a41aef8e93511eb3b6fcec047261546263d8e88a0787b7fd545bb08",
+      "compositionFamily": "topdown_irregular_sandtable_split_truthpebbles_dual_rakes_unclaimed_thirdstar_open_exit",
+      "artDirection": "닫힌 원이 아닌 가장자리 한쪽이 열린 불규칙 육각 모래 탁자를 거의 수직으로 내려다본다. 고르미는 자기 쪽 푸른 모래에 따뜻한 별·열린 잎 욕구 돌과 보랏빛 물방울·끊긴 곡선 두려움 돌을 따로 놓고, 해님이는 반대편 금빛 모래에 자기 작은 별 하나를 둔다. 두 수호령은 서로 다른 짧은 갈퀴로 이름 없는 공동의 세 번째 별을 가운데의 잠기지 않은 홈까지 밀되 손과 모래를 섞지 않고, 홈 뒤 열린 출구는 비워 둔다.",
+      "distinctFrom": [
+        "Batch 019의 별저울 축·공동 받침과 Batch 023의 회전 보폭 다리, Batch 027의 세 갈래 갈대 배를 반복하지 않고 저울·다리·배 없는 열린 육각 모래 탁자를 사용한다.",
+        "Batch 029의 엎은 합의 부채·구름 토큰과 Batch 030의 두 갈대 굴뚝·진실 창 대신, 탑뷰의 분리된 모래 면·두 독립 갈퀴·잠기지 않은 세 번째 별 홈을 사용한다."
+      ],
+      "visualReviewFocus": [
+        "고르미의 파랑·분홍 구름 몸·저울 모양 긴 귀와 해님이의 황금 갈기·비뚤어진 종이 왕관, 욕구 돌·두려움 돌·해님이 별·공동 별의 네 위치가 구분되는지",
+        "모래 탁자가 닫힌 마법진·별자리판처럼 보이지 않고 두 갈퀴와 모래 면이 분리되며 출구가 열려 있어, 공동 별을 놓는 행동이 자동 합의나 고정된 반반으로 읽히지 않는지"
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.love.honest-conversation.eclipse",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "0eadd4fcab08b260f358d9bac7e6a0e6e3bec42521c641a17fc8854031683327",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "2bf8970b39aacc9e55768ba624b1b9bc32b8ba994f462b1774de02a42cc7c348",
+      "compositionFamily": "inside_amethyst_geode_crack_outview_single_truthfacet_acknowledgement_pebble_empty_next_notch",
+      "artDirection": "꽃처럼 닫힌 자수정 진실 지오드 안쪽에서 좁은 균열 너머 바깥을 본다. 안쪽의 꼬옥이는 여러 어두운 결정 면 가운데 별 하나와 열린 곡선 하나가 있는 단일 진실 면만 자기 집게로 바깥쪽에 기울이고, 나머지 면은 몸 쪽에서 닫아 둔다. 바깥의 달콩이는 틈에 손이나 열쇠를 넣지 않고 점 두 개가 있는 들음 자갈을 독립 받침에 놓으며, 지오드 가장자리의 다음 공개 홈은 비워 둔다.",
+      "distinctFrom": [
+        "Batch 019·023의 잠긴 문·별등과 Batch 027의 우산 레일·멈춤쇠를 반복하지 않고 문·자물쇠·우산·등불이 없는 자수정 지오드 내부 시점을 사용한다.",
+        "Batch 029의 봉인 편지 꽃잎과 Batch 030의 장축 편지 캡슐·진실 슬릿 대신, 한 결정 면의 자발적 기울기와 달콩이의 별도 들음 자갈·빈 다음 공개 홈으로 공개 범위를 지킨다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이의 자주색 전갈 몸·큰 집게·망토·분홍 하트 꼬리와 달콩이의 초승달 집 몸·둥근 집게, 열린 진실 면 정확히 하나와 들음 자갈 한 개가 유지되는지",
+        "달콩이가 균열 안으로 손대지 않고 진실 면에는 별·열린 곡선 외 문장이 없으며 나머지 결정과 다음 홈이 닫히거나 비어 있어, 한 진실의 공유가 모든 비밀 공개·용서로 확대되지 않는지"
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.love.honest-conversation.eclipse",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "ce41c5f51af02a9841d275cfca073d304e7a0046b118b10aaa43158a00c4282b",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "6cbaf1a478fdc1400988deec1d530f4263d9fffdda91b6ad3b39768c48c19be3",
+      "compositionFamily": "behind_dual_horizon_telescope_lowrear_relationship_lens_freedom_lens_return_beads_open_destination",
+      "artDirection": "Eclipse 새벽 언덕에서 두 갈래로 열린 낮은 지평 망원경을 뒤쪽 저각으로 올려다본다. 총총이는 등에 초승달 활을 고정하고 왼쪽 렌즈에 나란한 두 별과 열린 쉼터, 오른쪽 렌즈에 바깥 혜성과 넓은 빈 원이 있는 투명 판을 각각 끼운다. 오름이는 렌즈를 돌리지 않고 자기 쪽 받침에 서로 떨어진 귀환 리듬 구슬 정확히 세 개를 놓고, 두 수호령은 독립 초점 손잡이를 각자 잡은 채 가운데 목적지 소켓은 비워 둔다.",
+      "distinctFrom": [
+        "Batch 019의 여행 북·긴 지도와 Batch 023의 지도 돛·일정 띠, Batch 027의 가방 길찾기 판을 반복하지 않고 지도·표지판·경로 선 없는 두 갈래 지평 망원경을 사용한다.",
+        "Batch 029의 길깃발과 Batch 030의 비나침반 회전체·방향 날개 대신, 뒤쪽 저각·관계 렌즈와 자유 렌즈·오름이의 분리된 귀환 구슬·빈 목적지 소켓으로 방향을 대화한다."
+      ],
+      "visualReviewFocus": [
+        "총총이의 구름 망아지 몸·라벤더 갈기·혜성 목도리·등 뒤 초승달 활과 오름이의 흰 바다염소 상체·보라 뿔·청록 꼬리·등산 가방이 유지되는지",
+        "관계 렌즈와 자유 렌즈가 분리되고 귀환 구슬은 정확히 세 개이며 글자·숫자·시계·화살표가 없고 목적지 소켓이 비어 있어, 자유와 귀환이 강제 일정이나 확정된 미래로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.love.honest-conversation.eclipse",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "4ad65df54737e894a97730c7a7d5783ce846ea0461293ff77593ff0e7793e425",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "5e70f47cbe510fcea19089d273303e3bb7e1ed27b5abd43044f0611194ae592b",
+      "compositionFamily": "inside_open_counterweight_arch_upview_duty_limit_stones_testhandle_helpwedge_unset_pin",
+      "artDirection": "닫힌 고리가 아닌 윗부분이 열린 금빛 돌 지지 아치 안쪽에서 두 수호령과 장치를 올려다본다. 오름이는 별이 있는 책임 돌을 위쪽 받침에, 끝이 열린 곡선의 한계 돌을 아래쪽 내려놓음 쟁반에 따로 두고 숨겼던 작은 도움 쐐기를 옆 선반에 드러낸다. 총총이는 자기 독립 시험 손잡이로 책임 돌만 조금 들어 무게를 확인하되 오름이 손을 잡지 않고, 가운데 고정 핀과 두 번째 책임 홈은 비워 둔다.",
+      "distinctFrom": [
+        "Batch 019의 첫 계단 발판과 Batch 023의 절벽 지그재그 다리, Batch 027의 망원식 계단 지지잭을 반복하지 않고 계단·다리·계획서 없는 열린 돌 지지 아치 내부를 사용한다.",
+        "Batch 029의 접은 계획 폴리오·약속 탭과 Batch 030의 눈받침 경첩·약속 판 대신, 위아래로 분리된 책임·한계 돌과 총총이의 독립 시험 손잡이·보이는 도움 쐐기·빈 고정 핀을 사용한다."
+      ],
+      "visualReviewFocus": [
+        "오름이의 흰 바다염소 상체·보라 뿔·청록 물고기 꼬리·등산 가방과 총총이의 구름 망아지 몸·혜성 목도리·등 뒤 활, 책임 돌·한계 돌·도움 쐐기가 각각 하나인지",
+        "책임 돌만 시험 손잡이에 반응하고 한계 돌은 내려놓음 쟁반에 남으며 고정 핀과 추가 홈이 비어 있어, 도움 확인이 무제한 책임·완성된 약속·신체 구속으로 보이지 않는지"
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.love.honest-conversation.eclipse",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "676c7f215144907e71c704345a90640ed5aa62305398198d0b2cd6ca5140ac6c",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "fbfec6fc369ac0691d6a738a19881f526a4ead8ffd08116869ffc1485585e56f",
+      "compositionFamily": "sidecut_blue_resonance_table_twin_wavetongues_round_replybeats_closed_bottle_open_recheck_port",
+      "artDirection": "낮고 속이 빈 파란 공명 탁자를 옆 단면으로 길게 본다. 왼쪽의 방울이는 복잡한 무문자 별도안을 접어 닫힌 파란 마음병 아래에 두고, 따뜻한 색 물결 감정 키와 열린 물결 필요 키를 서로 다른 공명 혀에 놓는다. 오른쪽의 차곡이는 두 물결을 고치지 않고 자기 쪽 독립 패드에 떨어진 둥근 점 두 개를 차례로 두어 들은 리듬을 되돌리며, 가운데 다시 확인 포트와 새 빈 키 자리는 열어 둔다.",
+      "distinctFrom": [
+        "Batch 019의 새 병 굴절 렌즈와 Batch 023의 평행 파동관·새 병, Batch 027의 이름표 베틀·두 병을 반복하지 않고 병은 닫힌 보조 소품으로만 두고 공명 탁자와 두 물결 키를 중심으로 한다.",
+        "Batch 029의 접히는 별틀·두 파란 창과 Batch 030의 구름 잠망경·감정 창·마음병을 반복하지 않고, 옆 단면의 공명 혀·차곡이의 둥근 응답 박자·열린 재확인 포트를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "방울이의 흰 구름 몸·연파랑 물결 귀·가슴 별표·닫힌 파란 마음병과 차곡이의 커스터드 송아지 몸·보라 앞머리·앞치마, 물결 키 정확히 두 개가 유지되는지",
+        "별도안과 키에 글자·가짜 글줄이 없고 차곡이의 점 두 개가 물결을 덮거나 고치지 않으며 재확인 포트가 열려 있어, 한 번의 설명이 완전한 이해로 확정되지 않는지"
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.love.honest-conversation.eclipse",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-27",
+      "editorialContentHash": "ba54e938f2370a803884e8ded4e6939ddd4ed47e83667d6dfb69506039a1aae9",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "15cc09c746cafcc203525ca5973f45e98426214c3c33141ec1a3839eafa5620e",
+      "compositionFamily": "below_floating_tide_xylophone_upview_twin_clear_truthdiscs_relaxed_fins_open_recheck_rest",
+      "artDirection": "꿈바다의 떠 있는 초승달형 물결 실로폰 아래에서 두 수호령과 투명 건반을 올려다본다. 큰 아쿠아 꿈별이는 색 물결과 별이 있는 실제 감정 원판을 왼쪽 건반에, 작은 분홍 잠별이는 중심이 빈 열린 곡선의 모르는 부분 원판을 오른쪽 건반에 각자 놓는다. 둘은 상상 꿈구름 조각을 바깥에 내려놓고 독립 해제 지느러미에서 힘을 푼 뒤 안쪽 지느러미를 중앙의 부드러운 듣기 받침 양끝에 따로 대며, 위의 재확인 받침은 비워 둔다.",
+      "distinctFrom": [
+        "Batch 019의 거품 기둥과 직접 지느러미 맞댐, Batch 023의 열린 물살 아치, Batch 027의 길쭉한 꿈방울 렌즈를 반복하지 않고 아래에서 올려다보는 초승달 물결 실로폰과 분리된 두 투명 원판을 사용한다.",
+        "Batch 029의 갈라진 꿈휘장·물방울과 Batch 030의 세로 달물살 수문·확인문 대신, 독립 건반·듣기 받침의 서로 다른 양끝·빈 재확인 받침으로 실제 감정과 모르는 부분을 나눈다."
+      ],
+      "visualReviewFocus": [
+        "큰 아쿠아 꿈별이와 작은 분홍 잠별이의 상대 크기·서로 다른 잠옷·가슴 별표·정본 색과 투명 진실 원판 정확히 두 개가 유지되고 제3의 물고기가 없는지",
+        "두 원판에는 색 물결·별·열린 곡선 외 글자가 없고 지느러미끼리 직접 묶이거나 당기지 않으며 재확인 받침이 비어 있어, 들음이 마음 읽기·합쳐진 물살·완전한 합의로 보이지 않는지"
+      ]
+    }
+  ]
+}
