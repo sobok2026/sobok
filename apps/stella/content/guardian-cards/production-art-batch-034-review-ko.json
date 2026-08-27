@@ -1,7 +1,15 @@
 {
-  "status": "visual_review_ready",
+  "status": "visual_review_complete",
   "editorialApprovedOn": "2026-08-27",
   "generatedOn": "2026-08-27",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-27",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
   "locale": "ko",
   "batchId": "love.shared-play.nebula",
   "batchOrder": 34,
@@ -58,7 +66,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "bd1979041504d3d198b2781e6ff490c9e82464e9333d8dd3fe98474eb762db17",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "crossslope_trackingwide_rain_starskip_disc_single_splash_unused_second_disc_open_runninglane",
       "artDirection": "비 오는 저녁의 완만한 언덕을 가로지르는 중거리 추적 측면으로 잡아 왼쪽 아래 빗줄기에서 오른쪽 위 젖은 풀밭까지 긴 대각선을 연다. 붉은 비옷을 입고 접은 혜성 깃발을 등에 고정한 몽실이는 얕은 빗물막 위로 말랑한 네 갈래 별원반 하나를 앞발로 밀며 달리고, 원반은 한 번만 튀어 서로 떨어진 물방울과 짧은 열린 빛호를 만든다. 오른쪽의 조금 높은 마른 풀에는 같은 모양의 두 번째 원반과 한 몸 너비의 달리기 자리를 발자국 없이 비워 두며, 큰 하트·연·연줄·썰매·손잡이·완주선·다른 몸은 넣지 않는다.",
       "distinctFrom": [
@@ -68,7 +76,8 @@
       "visualReviewFocus": [
         "몽실이의 크림색 구름 털·보라 나선뿔·가슴 Stella 별표·붉은 비옷·등의 접힌 혜성 깃발과 단순한 진보라 눈동자가 유지되고 빗속에 다른 얼굴·손·그림자가 없는지",
         "별원반은 정확히 두 개이되 하나만 빗물 위를 튀고 다른 하나와 달리기 자리는 untouched 상태이며, 물보라가 닫힌 궤도·승부선·별자리 배열이 되지 않는지"
-      ]
+      ],
+      "approvedArtworkSha256": "0252a994408b6786575fb6c25eaeeb7488957d49c791163628326d06a4c95df9"
     },
     {
       "order": 2,
@@ -78,7 +87,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "6cb7efc78ca188b216452877ba050fd8cb3137b84598ff2ed9f419101efbf16f",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "snowbank_broadside_moonshadow_cookieplay_blank_outer_projection",
       "artDirection": "늦은 겨울밤의 달빛을 등진 차곡이와 바람에 깎인 넓은 눈벽을 눈벽 높이의 긴 측면 구도로 잡는다. 커스터드색 송아지 차곡이는 초록 담요를 덮개가 아니라 어깨 숄로 두르고 보라 앞머리·앞치마·가슴 별표를 드러낸 채, 온전한 별쿠키 하나를 달빛 앞에서 천천히 기울여 눈벽 왼쪽에 일부러 찌그러진 부드러운 별그림자 하나를 만든다. 눈벽 오른쪽 절반과 그 앞의 평평한 눈자리는 어떤 그림자·소품·발자국도 없이 밝게 비워 다른 모양을 보탤지 고를 수 있게 하고, 의자·접시·컵·소풍 가방·목적지 표식은 넣지 않는다.",
       "distinctFrom": [
@@ -88,7 +97,8 @@
       "visualReviewFocus": [
         "차곡이의 커스터드색 송아지 몸·보라 앞머리·앞치마·가슴 Stella 별표와 어깨의 초록 담요, 온전한 별쿠키 하나가 유지되고 눈벽에 다른 인물이나 손의 그림자가 생기지 않는지",
         "쿠키 그림자는 단순하고 일부러 비뚤어진 별 하나뿐이며 글자·숫자·별자리 선·점수 표시가 없고 오른쪽 눈벽과 눈자리가 크게 비어 있는지"
-      ]
+      ],
+      "approvedArtworkSha256": "f2fe23e8cbbb8f4acdde0b6d9d7b4d363395854aaa6e6f8df99a1c263430ab83"
     },
     {
       "order": 3,
@@ -98,7 +108,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "0fc67495fb5985562ebc2da8f00d2d322551a959b5505bbe3192b5ff1bb9d373",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "cloudheight_widefront_dawn_vapor_charades_internal_pair_unshaped_outer_tail",
       "artDirection": "바람 부는 새벽 구름 높이에서 큰 크림색 재잘이를 왼쪽 아래에, 작은 라벤더색 소곤이를 오른쪽 위에 둔 넓은 정면 공중 구도로 잡는다. 재잘이와 소곤이는 느슨한 정본 분홍 연결 리본을 두 몸 뒤로 유지한 채 각자 작은 날개 하나로 같은 긴 안개띠의 서로 다른 지점을 불어, 가까운 두 구간에 잎과 물방울을 닮은 흐트러진 열린 모양을 잠깐 만들고 그 사이에 작은 웃음별 하나만 띄운다. 안개띠의 오른쪽 끝과 그 앞 구름 여백은 어떤 형태나 인물도 없이 화면 밖으로 열어 다음 모양을 고를 자리를 남기며, 세 번째 새·외부 손·편지·카드·타일·말풍선은 넣지 않는다.",
       "distinctFrom": [
@@ -108,7 +118,8 @@
       "visualReviewFocus": [
         "큰 크림색 재잘이와 작은 라벤더색 소곤이의 상대 크기·작은 날개·가슴 Stella 별표·두 몸 뒤의 느슨한 분홍 연결 리본과 단순한 진보라 눈동자가 유지되고 제3의 새가 없는지",
         "분홍 연결 리본과 흰 안개띠가 분리되고 안개에는 잎·물방울·웃음별 외 물음표·글자·가짜 글줄·별자리 모양이 없으며 오른쪽 끝이 완전히 미형성 상태인지"
-      ]
+      ],
+      "approvedArtworkSha256": "2ceb022bb0ddf74f54d1e1d61302eb36ef85b6748d2ca2b1482b374b179891f7"
     },
     {
       "order": 4,
@@ -118,7 +129,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "e02fd3d12fb4165e733bf396c7f7c0cf91848702ae9f1eefb49e92da4df5d665",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "wide_threequarter_moonrain_offsetposts_waterharp_single_tap_empty_outer_stream",
       "artDirection": "달빛 비가 내리는 밤, 달콩이의 온전한 달집 실루엣과 서로 어긋난 두 낮은 기둥 사이로 떨어지는 세 가닥의 열린 빗물현을 비스듬한 중거리 3/4 구도로 함께 잡는다. 달콩이는 몸과 안쪽 집게를 마른 둥근 돌턱에 남기고 바깥 집게 하나로 서로 닿지 않는 빗물현 중 가장 짧은 한 줄의 별방울만 가볍게 톡 쳐, 크기가 다른 단순 광점이 한 번 떨리게 하며 작은 별등은 달집 몸쪽 고리에 고정한다. 바깥쪽 긴 빗물현과 달콩이 한 몸 너비의 마른 옆자리는 손대지 않은 채 열어 두고, 처마·문·물웅덩이·국자·바람개비·다른 게·손·그림자는 넣지 않는다.",
       "distinctFrom": [
@@ -128,7 +139,8 @@
       "visualReviewFocus": [
         "달콩이의 초승달 집과 한 몸인 실루엣·둥근 보라 집게·가슴 Stella 별표·몸쪽 고리의 작은 별등과 단순한 진보라 눈동자가 유지되고 다른 게·수호령·외부 손이 없는지",
         "빗물현은 서로 닿지 않는 정확히 세 가닥과 별방울만 가지며 글자·숫자·악보·별자리 배열이 없고 바깥 긴 현과 마른 옆자리가 untouched 상태인지"
-      ]
+      ],
+      "approvedArtworkSha256": "df6a49fe9d4411909c5852ebbe78088e3f8a95b16e9d774e63e9aabd27e2503f"
     },
     {
       "order": 5,
@@ -138,7 +150,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "f8bd24dd3c7313cfee9363e5127e9f0505eea35e68902b51325753775e0ad8e3",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "chestlevel_centered_midwide_sunset_heatthunder_plush_drum_silly_pose_unused_second_beater",
       "artDirection": "여름 노을이 기울고 먼 열기천둥이 한 번 울리는 열린 풀언덕을 가슴 높이의 중앙 중원경으로 본다. 비뚤어진 종이 왕관을 쓴 해님이는 금빛 망토가 옆노을을 받게 한 채 둥근 구름북을 자기 쪽 말랑 채 하나로 톡 치고, 한 발을 엉뚱하게 옆으로 든 우스운 자세를 따라 한다. 북 위에는 점수나 표식 없이 비대칭 별먼지 세 점만 튀고 반대편 풀에는 두 번째 채와 한 몸 너비의 빈 따라 하기 자리를 그대로 두며, 무대·객석·조명·점수판·박수·다른 몸은 넣지 않는다.",
       "distinctFrom": [
@@ -148,7 +160,8 @@
       "visualReviewFocus": [
         "해님이의 황금 태양 갈기·가슴 Stella 별표·비뚤어진 종이 왕관·금빛 망토·단순한 진보라 눈동자와 구름북·말랑 채 정확히 두 개가 유지되고 관객·상대·추가 얼굴이 없는지",
         "해님이는 채 하나만 사용하고 두 번째 채와 빈 풀자리는 untouched 상태이며 별먼지가 점수·박수·완성된 공연·별자리 배열로 보이지 않는지"
-      ]
+      ],
+      "approvedArtworkSha256": "6797a6ceacd6597fee9f696b15ce9ef3ead8fae2ba0cb120a16c534b3bb454e3"
     },
     {
       "order": 6,
@@ -158,7 +171,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "e02c662adc07b28c535e75e97e538f8104dd251edf131f3a6884183f11a049bc",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "shoulderlevel_diagonal_midshot_spring_crosswind_three_starflower_seedtufts_one_airborne_two_untouched",
       "artDirection": "바람 부는 봄밤의 열린 풀비탈을 어깨 높이의 사선 중근경으로 보고, 꽃잎 길이와 높이가 서로 다른 별꽃 씨앗송이 정확히 세 개를 앞뒤로 흩어 둔다. 새봄이는 느슨한 초록 리본을 몸에 묶지 않고 목둘레에서 짧게 날리며 한쪽 눈을 살짝 찡그린 채 가장 가까운 씨앗송이 하나만 앞발로 톡 건드리고, 섞인 씨앗은 열린 부채꼴로 엉뚱한 방향에 날아간다. 나머지 두 송이와 반대편 넓은 풀자리는 전혀 흔들리지 않게 비워 두며, 바구니·체크표·정리선·뽑기 고리·웃음 클립·다른 몸은 넣지 않는다.",
       "distinctFrom": [
@@ -168,7 +181,8 @@
       "visualReviewFocus": [
         "새봄이의 큰 잎 귀·이마 별꽃·잎목도리·가슴 Stella 별표·느슨한 초록 리본과 단순한 진보라 눈동자가 유지되고 씨앗이나 꽃 속에 얼굴이 생기지 않는지",
         "별꽃 씨앗송이는 정확히 세 개이되 하나만 흩어지고 두 개는 온전하며 크기순 정렬·정답·점수·완성된 꽃별자리 없이 빈 풀자리가 남는지"
-      ]
+      ],
+      "approvedArtworkSha256": "6e20f06a82f83a205df2f5db8d80a3ee8d62db55da849cb78d7924ae00cf28c2"
     },
     {
       "order": 7,
@@ -178,7 +192,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "abadff1cb664ba4b46247db323d4618c366f55ef5bf356540b284aacc085cf7b",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "groundfog_rearthreequarter_twilight_three_colorlightleaves_single_earcatch_incomplete_starreflection",
       "artDirection": "보랏빛 황혼의 낮은 안개가 사선으로 흐르는 들판을 뒤쪽 낮은 3/4 시점으로 보고, 파랑·분홍·금빛의 반투명 색빛잎 정확히 세 장을 서로 다른 높이에 띄운다. 고르미는 저울을 펼치지 않은 채 긴 왼쪽 귀 가장자리로 파란 색빛잎 하나만 받아, 안개 위에 서로 닿지 않는 세 조각의 일부러 삐뚤어진 미완성 별빛을 잠깐 비춘다. 분홍·금빛 색빛잎과 오른쪽의 넓은 안개자리는 잡히거나 비치지 않은 채 계속 흘러가며, 받침·저울추·긴 리본·그림판·색주머니·연·다른 손·반사는 넣지 않는다.",
       "distinctFrom": [
@@ -188,7 +202,8 @@
       "visualReviewFocus": [
         "고르미의 파랑·분홍 구름 몸·저울 모양 긴 귀·가슴 Stella 별표·단순한 진보라 눈동자와 파랑·분홍·금빛 색빛잎 정확히 세 장이 분리되는지",
         "파란 잎 하나만 귀에 닿고 나머지 두 잎과 오른쪽 안개가 untouched 상태이며 안개 빛조각이 완성된 별·저울·점수표·별자리 배열을 만들지 않는지"
-      ]
+      ],
+      "approvedArtworkSha256": "93bcd12dec619609b6708b9e0b9e1e65acc5db31808f93f73650bd59859f0518"
     },
     {
       "order": 8,
@@ -198,7 +213,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "03e37bcde5c75fb6b858990e95d38066543871206dbb1bacf1c98f51296d8778",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "telephoto_foglayer_midwide_starrain_basalt_three_recesses_tailglow_peek_one_occupied_two_empty",
       "artDirection": "늦가을 별비와 바다 안개가 겹치는 현무암 벽을 망원 중원경으로 압축해, 높이가 다른 자연 오목틈 정확히 세 곳을 한 화면에 둔다. 망토를 여민 꼬옥이는 왼쪽 오목틈에서 얼굴과 한 집게만 살짝 내밀고, 자기 곁의 접힌 검보라 우산 아래로 분홍 하트 꼬리 끝의 붉은 빛을 짧은 열린 S자처럼 젖은 돌에 비춰 작은 웃음별 한 점만 만든다. 가운데와 오른쪽 오목틈은 발자국·그림자·소품 없이 비워 두며, 신호걸이·색방울·자물쇠·암호표·다른 몸은 넣지 않는다.",
       "distinctFrom": [
@@ -208,7 +223,8 @@
       "visualReviewFocus": [
         "꼬옥이의 자주색 전갈 몸·큰 집게·망토·분홍 하트 꼬리·가슴 Stella 별표·단순한 진보라 눈동자와 곁의 접힌 검보라 우산이 유지되고 화난 눈썹이나 추가 얼굴이 없는지",
         "자연 오목틈은 정확히 세 곳이되 왼쪽만 꼬옥이가 차지하고 나머지 둘은 흔적 없이 비어 있으며 꼬리 빛과 웃음별이 자물쇠·암호·완성 신호로 보이지 않는지"
-      ]
+      ],
+      "approvedArtworkSha256": "f8901f4354c84368edfc5bd5ddc51124fd94b7f8fdd1dae39107ba100a464678"
     },
     {
       "order": 9,
@@ -218,7 +234,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "861f3a6434989177605ec317724403b104285306748f0c0251b8263748d2ff10",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "distant_horizon_crosswind_starseed_sails_one_released_one_unreleased_empty_ridgechoice",
       "artDirection": "별풀이 옆으로 눕는 푸른 새벽 능선을 수평 원경으로 넓게 보고, 여행 망토를 입고 초승달 활을 등에 고정한 총총이를 왼쪽 아래에 둔다. 총총이는 줄도 손잡이도 없는 말랑한 구름별씨 하나를 열린 앞발에서 놓아 별·잎·물방울을 닮은 솜털이 교차바람에 정답 없는 방향으로 흩어지는 것을 한 걸음만 따라간다. 화면 반대편의 초승달 모양 풀둥지에는 온전한 두 번째 구름별씨와 넓은 빈 능선을 발자국 없이 남기며, 연·연줄·실패·지도·표지판·깃발·주사위·디딤돌·목적지는 넣지 않는다.",
       "distinctFrom": [
@@ -228,7 +244,8 @@
       "visualReviewFocus": [
         "총총이의 구름 망아지 몸·라벤더 갈기·혜성 목도리·가슴 Stella 별표·여행 망토·등 뒤 초승달 활과 단순한 진보라 눈동자, 구름별씨 정확히 두 개가 분리되는지",
         "별씨에는 줄·실패·얼굴·글자·화살표가 없고 하나만 날아가며 풀둥지의 두 번째 씨앗과 빈 능선에 발자국·손·그림자·도착 표식이 없는지"
-      ]
+      ],
+      "approvedArtworkSha256": "0aa9201f87c982b8871767b63fb27fba2ce2b32acff99d75365422105f61e64e"
     },
     {
       "order": 10,
@@ -238,7 +255,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "34a9c7e95f74c91eca1aa13ed145449bb7d6373e26574a9e7dc234a1dbbd3f28",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "telephoto_riserstack_crosssnow_softstarsnowball_single_bounce_unused_second_ball_empty_lower_landing",
       "artDirection": "가로눈이 스치는 잿빛 새벽의 세 계단참을 맞은편 벽 너머 망원 압축 시점으로 위아래 포갠다. 두꺼운 작업 망토를 입은 오름이는 글자 없는 면으로 접은 정상 일정표를 등산 가방에 넣고, 위 계단참의 말랑한 눈별 공 하나를 청록 꼬리 끝으로 살짝 밀어 바로 아래 모서리에서 한 번만 튀게 해 비뚤어진 눈가루 모자를 만든다. 아래 계단참에는 온전한 두 번째 눈별 공과 넓은 빈 놀이 자리를 어떤 자국도 없이 두며, 별스티커·벤치·쿠션·숨은 홈·과녁·점수·완주선·다른 몸은 넣지 않는다.",
       "distinctFrom": [
@@ -248,7 +265,8 @@
       "visualReviewFocus": [
         "오름이의 흰 바다염소 상체·보라 뿔·청록 물고기 꼬리·등산 가방·가슴 Stella 별표·작업 망토와 단순한 진보라 눈동자, 눈별 공 정확히 두 개가 분리되는지",
         "눈별 공 하나만 한 번 튀고 아래 공과 눈밭에는 발자국·굴림 자국이 없으며 별스티커·숨은 물건·과녁·점수·완주 결과로 보이지 않는지"
-      ]
+      ],
+      "approvedArtworkSha256": "ef1ccd12b7c4a62e08b0d8bd41fe9cc4b29c10216286edf0552a9921f698e2cd"
     },
     {
       "order": 11,
@@ -258,7 +276,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "e0d5d729431b3284b77a39759a2b6dc660381301dcb8f73e0f2966f2fa7dba9e",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "banked_mediumlong_rimefog_tuningfork_resonance_sealed_bottle_empty_second_fork",
       "artDirection": "서리 안개가 사선으로 흘러가는 푸른 새벽의 열린 구름등성이를 살짝 기울인 중원경으로 본다. 겨울 코트를 입은 방울이는 닫힌 파란 마음병을 코트 안쪽에 곧게 품고 병과 닿지 않게 든 끝이 열린 두 갈래 음차의 둥근 끝을 작은 서리돌에 한 번 톡 친다. 병 속 물결은 쏟아지지 않은 채 한 번만 떨리고 병 바깥의 짧은 열린 파동이 서리 안개를 정답 없는 비대칭 구름 실루엣으로 잠깐 밀어낸다. 반대편 빈 구름둔덕에는 무표식 두 번째 음차와 넓은 빈 서는 자리를 두며, 규칙 카드·모양 탭·클립·소리구슬·다른 몸은 넣지 않는다.",
       "distinctFrom": [
@@ -268,7 +286,8 @@
       "visualReviewFocus": [
         "방울이의 흰 구름 몸·연파랑 물결 귀·보라 발끝·가슴 Stella 별표·겨울 코트와 닫힌 파란 마음병·단순한 진보라 눈동자, 끝이 열린 음차 정확히 두 개가 분리되는지",
         "마음병이 굴러가거나 열리지 않고 소리구슬·모양 탭·규칙 클립이 생기지 않으며 두 번째 음차와 빈 구름자리에 손·발·그림자·반사가 없는지"
-      ]
+      ],
+      "approvedArtworkSha256": "2c7914dd5795cffd5d92aeb97d141bd872cff608de2beffb8518f95bda267583"
     },
     {
       "order": 12,
@@ -278,7 +297,7 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-27",
       "editorialContentHash": "95856f3b92c5a63005ac9c391319471612d60669adbc41c83b70bab3df8f7e76",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
       "compositionFamily": "frontal_midwater_planktonfall_twin_outerfin_wakes_open_shape_untouched_third_lightbed",
       "artDirection": "달빛 깊은 꿈바다에서 발광 플랑크톤이 성기게 내려오는 순간을 정면 중수심 원경으로 본다. 큰 아쿠아 꿈별이는 왼쪽 앞, 작은 분홍 잠별이는 오른쪽 뒤에서 서로 다른 잠옷을 입고 정본 연결 궤도는 두 몸 뒤를 잇는 느슨한 열린 호 하나로 유지한 채, 각자 바깥쪽 지느러미로 분리된 아쿠아·분홍 빛씨밭을 한 번씩 스쳐 서로 다른 색의 열린 물결 자국을 띄운다. 두 자국은 중앙에서 가장자리만 스쳐 이름 붙일 수 없는 비대칭 열린 모양을 만들고 아래 전경의 연한 세 번째 빛씨밭과 넓은 접근 틈은 전혀 흔들리지 않은 채 비워 두며, 제3의 물고기·도구·그림자·닫힌 고리는 넣지 않는다.",
       "distinctFrom": [
@@ -288,7 +307,8 @@
       "visualReviewFocus": [
         "큰 아쿠아 꿈별이와 작은 분홍 잠별이의 상대 크기·정본 색·서로 다른 잠옷·가슴 Stella 별표·단순한 진보라 눈동자와 두 몸 뒤를 잇는 단일 열린 연결 궤도가 정확한지",
         "두 색 물결이 닫힌 하트·고리·별자리 배열로 굳지 않고 세 번째 빛씨밭과 접근 틈이 완전히 untouched 상태이며 외부 인물·손·그림자·반사가 없는지"
-      ]
+      ],
+      "approvedArtworkSha256": "b77873cd7ee979bcf8c6d42d48b7318be5c128e57169aa0dfc630954b8e1272b"
     }
   ]
 }

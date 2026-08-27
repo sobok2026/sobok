@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "0ee96aad586d2573fd91f04bb4327ee9b85e1d0aae8418572acf5fc6e14eaedd",
-    "assets": "ed5e020f30039916e81e680b41051283a0833abebd53a7279e8058fa1d07f634"
+    "assets": "5cb70c38c830e423df6ac5ebd28867e3e48e6d3de83048a4a786f62ea1756f34"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,12 +16,12 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 393,
-    "remainingEditionCount": 663,
-    "pilotPartialBatchCount": 9,
+    "producedEditionCount": 488,
+    "remainingEditionCount": 568,
+    "pilotPartialBatchCount": 8,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 32,
-    "fullPendingBatchCount": 47,
+    "completedBatchCount": 40,
+    "fullPendingBatchCount": 40,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
     "visualApprovalAuthority": "human_editor",
@@ -881,23 +881,10 @@
         "pisces.love.shared-play.orbit"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.shared-play.orbit",
-        "taurus.love.shared-play.orbit",
-        "gemini.love.shared-play.orbit",
-        "cancer.love.shared-play.orbit",
-        "leo.love.shared-play.orbit",
-        "virgo.love.shared-play.orbit",
-        "libra.love.shared-play.orbit",
-        "scorpio.love.shared-play.orbit",
-        "sagittarius.love.shared-play.orbit",
-        "capricorn.love.shared-play.orbit",
-        "aquarius.love.shared-play.orbit",
-        "pisces.love.shared-play.orbit"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 34,
@@ -920,23 +907,10 @@
         "pisces.love.shared-play.nebula"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.shared-play.nebula",
-        "taurus.love.shared-play.nebula",
-        "gemini.love.shared-play.nebula",
-        "cancer.love.shared-play.nebula",
-        "leo.love.shared-play.nebula",
-        "virgo.love.shared-play.nebula",
-        "libra.love.shared-play.nebula",
-        "scorpio.love.shared-play.nebula",
-        "sagittarius.love.shared-play.nebula",
-        "capricorn.love.shared-play.nebula",
-        "aquarius.love.shared-play.nebula",
-        "pisces.love.shared-play.nebula"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 35,
@@ -959,23 +933,10 @@
         "pisces.love.shared-play.eclipse"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.shared-play.eclipse",
-        "taurus.love.shared-play.eclipse",
-        "gemini.love.shared-play.eclipse",
-        "cancer.love.shared-play.eclipse",
-        "leo.love.shared-play.eclipse",
-        "virgo.love.shared-play.eclipse",
-        "libra.love.shared-play.eclipse",
-        "scorpio.love.shared-play.eclipse",
-        "sagittarius.love.shared-play.eclipse",
-        "capricorn.love.shared-play.eclipse",
-        "aquarius.love.shared-play.eclipse",
-        "pisces.love.shared-play.eclipse"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 36,
@@ -998,23 +959,10 @@
         "pisces.love.shared-play.stella"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.shared-play.stella",
-        "taurus.love.shared-play.stella",
-        "gemini.love.shared-play.stella",
-        "cancer.love.shared-play.stella",
-        "leo.love.shared-play.stella",
-        "virgo.love.shared-play.stella",
-        "libra.love.shared-play.stella",
-        "scorpio.love.shared-play.stella",
-        "sagittarius.love.shared-play.stella",
-        "capricorn.love.shared-play.stella",
-        "aquarius.love.shared-play.stella",
-        "pisces.love.shared-play.stella"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 37,
@@ -1037,23 +985,10 @@
         "pisces.love.boundary-and-space.orbit"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.boundary-and-space.orbit",
-        "taurus.love.boundary-and-space.orbit",
-        "gemini.love.boundary-and-space.orbit",
-        "cancer.love.boundary-and-space.orbit",
-        "leo.love.boundary-and-space.orbit",
-        "virgo.love.boundary-and-space.orbit",
-        "libra.love.boundary-and-space.orbit",
-        "scorpio.love.boundary-and-space.orbit",
-        "sagittarius.love.boundary-and-space.orbit",
-        "capricorn.love.boundary-and-space.orbit",
-        "aquarius.love.boundary-and-space.orbit",
-        "pisces.love.boundary-and-space.orbit"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 38,
@@ -1076,22 +1011,10 @@
         "pisces.love.boundary-and-space.nebula"
       ],
       "pilotEditionIds": ["cancer.love.boundary-and-space.nebula"],
-      "remainingEditionIds": [
-        "aries.love.boundary-and-space.nebula",
-        "taurus.love.boundary-and-space.nebula",
-        "gemini.love.boundary-and-space.nebula",
-        "leo.love.boundary-and-space.nebula",
-        "virgo.love.boundary-and-space.nebula",
-        "libra.love.boundary-and-space.nebula",
-        "scorpio.love.boundary-and-space.nebula",
-        "sagittarius.love.boundary-and-space.nebula",
-        "capricorn.love.boundary-and-space.nebula",
-        "aquarius.love.boundary-and-space.nebula",
-        "pisces.love.boundary-and-space.nebula"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 11,
-      "productionStatus": "pilot_partial"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 39,
@@ -1114,23 +1037,10 @@
         "pisces.love.boundary-and-space.eclipse"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.boundary-and-space.eclipse",
-        "taurus.love.boundary-and-space.eclipse",
-        "gemini.love.boundary-and-space.eclipse",
-        "cancer.love.boundary-and-space.eclipse",
-        "leo.love.boundary-and-space.eclipse",
-        "virgo.love.boundary-and-space.eclipse",
-        "libra.love.boundary-and-space.eclipse",
-        "scorpio.love.boundary-and-space.eclipse",
-        "sagittarius.love.boundary-and-space.eclipse",
-        "capricorn.love.boundary-and-space.eclipse",
-        "aquarius.love.boundary-and-space.eclipse",
-        "pisces.love.boundary-and-space.eclipse"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 40,
@@ -1153,23 +1063,10 @@
         "pisces.love.boundary-and-space.stella"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.boundary-and-space.stella",
-        "taurus.love.boundary-and-space.stella",
-        "gemini.love.boundary-and-space.stella",
-        "cancer.love.boundary-and-space.stella",
-        "leo.love.boundary-and-space.stella",
-        "virgo.love.boundary-and-space.stella",
-        "libra.love.boundary-and-space.stella",
-        "scorpio.love.boundary-and-space.stella",
-        "sagittarius.love.boundary-and-space.stella",
-        "capricorn.love.boundary-and-space.stella",
-        "aquarius.love.boundary-and-space.stella",
-        "pisces.love.boundary-and-space.stella"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 41,
