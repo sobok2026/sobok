@@ -78,6 +78,38 @@
   animation: barSweep 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Scroll-story visuals are fully visible by default. Supporting browsers opt
+   into view timelines below, so unsupported engines keep all content intact. */
+.shapePath,
+.patternLine {
+  vector-effect: non-scaling-stroke;
+}
+
+.shapePoint,
+.patternPoint {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.nodeAxisTrack {
+  transform-origin: left center;
+}
+
+.storyChapter {
+  transition:
+    border-color 0.35s ease,
+    background-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.storyChapterActive {
+  border-color: color-mix(in srgb, var(--color-accent) 32%, transparent);
+  background-color: color-mix(in srgb, var(--color-surface-2) 88%, var(--color-accent) 12%);
+  box-shadow:
+    0 18px 55px rgb(5 1 15 / 26%),
+    inset 0 0 36px rgb(201 168 255 / 4%);
+}
+
 .aspectLine {
   transition:
     opacity 0.35s ease-out,
@@ -211,6 +243,79 @@
   }
 }
 
+@keyframes storyChapterReveal {
+  from {
+    opacity: 0.45;
+    transform: translateY(22px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes storyLineDraw {
+  from {
+    stroke-dashoffset: 1;
+    opacity: 0.2;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes storyPointReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes storyAxisDraw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .storyChapter {
+    animation: storyChapterReveal 1s linear both;
+    animation-timeline: view(block);
+    animation-range: entry 0% entry 72%;
+  }
+
+  .shapePath,
+  .patternLine {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: storyLineDraw 1s linear both;
+    animation-timeline: view(block);
+    animation-range: entry 8% cover 34%;
+  }
+
+  .shapePoint,
+  .patternPoint {
+    opacity: 0;
+    animation: storyPointReveal 1s linear both;
+    animation-timeline: view(block);
+    animation-range: entry 12% cover 38%;
+  }
+
+  .nodeAxisTrack {
+    animation: storyAxisDraw 1s linear both;
+    animation-timeline: view(block);
+    animation-range: entry 10% cover 34%;
+  }
+}
+
 /* Below the sm breakpoint the wheel renders smaller, so the relationship effects read
    fainter. Nudge their weight up a touch — phones only; desktop keeps the base values. */
 @media (max-width: 639px) {
@@ -237,8 +342,26 @@
      their static base state. Inline delays may remain, but no animation runs. */
   .tokenFloat,
   .aspectPulse,
-  .balanceBar {
+  .balanceBar,
+  .storyChapter,
+  .shapePath,
+  .shapePoint,
+  .patternLine,
+  .patternPoint,
+  .nodeAxisTrack {
     animation: none;
+  }
+
+  .storyChapter,
+  .shapePoint,
+  .patternPoint {
+    opacity: 1;
+    transform: none;
+  }
+
+  .shapePath,
+  .patternLine {
+    stroke-dashoffset: 0;
   }
 
   /* Without its traveling animation the comet would become a permanent dash. */

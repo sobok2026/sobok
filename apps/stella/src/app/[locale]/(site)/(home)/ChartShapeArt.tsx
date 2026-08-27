@@ -2,6 +2,8 @@ import { norm360 } from '@/chart/astrology'
 import { PLANET_ORDER } from '@/chart/data'
 import type { ChartShape, ComputedPlanetId, PlanetPosition } from '@/chart/types'
 
+import styles from './constellation.module.css'
+
 type ChartShapeArtProps = {
   className?: string
   planets: readonly PlanetPosition[]
@@ -98,8 +100,9 @@ export function ChartShapeArt({ className, planets, shape }: ChartShapeArtProps)
         />
       ))}
       <path
-        className="fill-none stroke-accent/45"
+        className={`${styles.shapePath} fill-none stroke-accent/55`}
         d={occupiedPath}
+        pathLength={1}
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={1.2}
@@ -111,7 +114,7 @@ export function ChartShapeArt({ className, planets, shape }: ChartShapeArtProps)
         const isLeading = point.id === shape.leading
 
         return (
-          <g key={point.id}>
+          <g className={styles.shapePoint} key={point.id}>
             {(isHandle || isLeading) && (
               <circle
                 className={isHandle ? 'fill-none stroke-positive/80' : 'fill-none stroke-accent/80'}
