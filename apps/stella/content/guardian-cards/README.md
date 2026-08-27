@@ -52,7 +52,8 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-031-review-ko.json`    | `visual_review_complete` | 서른한 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-032-review-ko.json`    | `visual_review_complete` | 서른두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-033-review-ko.json`    | `visual_review_ready`    | 서른세 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기      |
-| `production-art-batch-034-review-ko.json`    | `visual_review_ready`    | 서른네 번째 production 배치 신규 PNG 12개 사람 시각 승인 대기                 |
+| `production-art-batch-034-review-ko.json`    | `visual_review_ready`    | 서른네 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기      |
+| `production-art-batch-035-review-ko.json`    | `editorial_review_ready` | 서른다섯 번째 production 배치 신규 12개 편집 검토·사람 승인 대기              |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 393개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -830,8 +831,23 @@ honest-conversation Nebula·Eclipse·Stella의 날씨 보호·양방향 교환·
 모양, 쌍둥이자리의 얼굴 없는 웃음별, 사자자리의 별먼지 세 점, 천칭자리의 파란 색빛잎 접점,
 전갈자리의 왼쪽 오목틈 실루엣을 제한 수정했으며 수정 전 후보도 보존했다. 마스터·80px·직전 배치·
 앞선 33개 배치 비교와 기존 승인 원화 393장 유사도 보조 QA를 통과한 선택본은 공개 Git에 포함하지
-않는 `apps/stella/private/guardian-art-production/love-shared-play-nebula`에 보관한다. 현재 12개 모두
-사람의 최종 시각 승인 대기 상태이며 WebP 최적화와 R2 반영은 이후 배치와 일괄 진행한다.
+않는 `apps/stella/private/guardian-art-production/love-shared-play-nebula`에 보관한다. 12개 모두 사람의
+최종 시각 승인을 마쳤지만 WebP 최적화와 R2 반영은 이후 배치와 일괄 진행하기로 했으므로, 공개 검수
+파일은 누적 배포 매니페스트가 준비될 때까지 `visual_review_ready`와 `generated_candidate` 상태를
+유지한다.
+
+서른다섯 번째 배치는 `love.shared-play` 원고를 `eclipse` 희귀도로 제작할 신규 12개 편집 검토안이다.
+`production-art-batch-035-review-ko.json`에 현재 원고의 canonical SHA-256과, 지정된 두 수호령 또는
+쌍둥이·물고기자리의 정본 내부 쌍이 승부·평가 없이 한 가지 놀이를 실제로 주고받되 각자의 몸·발자리·
+조작점을 유지하고 같은 두 수호령이 선택할 다음 틈·재료·빛칸은 untouched 상태로 남기는 장면을
+고정했다. 별풀 빛틈, 느린 말랑 팽이, 불투명 구름 접힘, 물달잎 아래 부표, 반가림 천, 꽃잎 반그늘,
+색젤리 띠, 꼬리·집게 그림자 띠, 열린 달바위 홈, 반쪽 별빛, 구름둔덕 뒤 소리병, 달산호 색 경계처럼
+서로 다른 가림 실루엣·카메라·빛 방향·열린 다음 차례를 사용한다. 앞선 첫 신호·조심스러운 다가감·
+일상 돌봄·솔직한 대화 Eclipse의 문·교환·조명·다리·렌즈·무대·공명 장치와 바로 앞 shared-play
+Orbit·Nebula의 놀이 소품·날씨 동작, greeting card kite를 반복하지 않는다. 세 `gpt-5.6-sol` max
+에이전트가 12개 장면을 병렬 설계했고, 통합 검토에서 단일 수호령으로 흐른 일곱 초안을 기존 Eclipse
+계약에 맞는 정확한 두 named guardians 상호작용으로 교정했다. 현재 사람의 최종 편집 승인 대기이며
+승인된 canonical hash 없이는 imagegen을 시작하지 않는다.
 
 ## 검증
 
@@ -919,7 +935,12 @@ bun --filter=@sobok/stella guardian-cards:validate
   shared-play Nebula 장면, 앞선 first-signal·careful-approach·everyday-care·honest-conversation Nebula와
   바로 앞 shared-play Orbit·Batch 028 인사 카드 연 비반복, 편집 승인 해시 기반 세 에이전트 병렬 신규
   PNG 후보·마스터/80px·직전 및 앞선 33개 배치 비교·승인 원화 393장 유사도 보조 QA·다섯 제한 수정
-  완료, 사람의 최종 시각 승인 대기·WebP/R2 반영 차단
+  완료·사람의 최종 시각 승인, 이후 배치와 일괄 진행할 때까지 WebP/R2 반영 차단
+- 서른다섯 번째 production 배치 신규 12개 원고 해시와 두 named guardians가 부분 가림·온광·냉광
+  경계를 한 가지 무승부 놀이의 변수로 함께 다루면서 각자의 몸·발자리·조작점과 untouched 다음 차례를
+  유지하는 shared-play Eclipse 장면, 앞선 first-signal·careful-approach·everyday-care·honest-conversation
+  Eclipse와 바로 앞 shared-play Orbit·Nebula 비반복, 세 에이전트 병렬 설계·단일 수호령 초안 일곱 개
+  통합 교정 완료·사람의 최종 편집 승인 대기·이미지 생성 차단
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 393개를 제외한 현재 잔여
   663개 산식
