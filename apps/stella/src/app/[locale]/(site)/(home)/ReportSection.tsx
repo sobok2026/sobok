@@ -123,28 +123,6 @@ export default function ReportSection({
         {chart.ascendant === null && <p className="mt-2 text-[11px] text-foreground-faint">{report.noTimeNote}</p>}
       </header>
 
-      {resolvedActiveId && (
-        <div className="sticky top-[calc(4.5rem+var(--safe-area-top))] z-20 mx-auto mt-4 max-w-xl rounded-2xl border border-accent/15 bg-[#120b24]/88 px-3 py-2.5 shadow-xl backdrop-blur-xl lg:hidden">
-          <div className="flex items-center justify-between gap-3">
-            <p className="truncate text-xs font-semibold text-foreground-secondary">
-              <span className="mr-1.5 text-accent">
-                <ChapterGlyph id={resolvedActiveId} />
-              </span>
-              {chapters[activeIndex]?.title}
-            </p>
-            <span className="shrink-0 text-[10px] tabular-nums text-foreground-faint">
-              {activeIndex + 1} / {chapters.length}
-            </span>
-          </div>
-          <div aria-hidden className="mt-2 h-0.5 overflow-hidden rounded-full bg-white/8">
-            <div
-              className="h-full origin-left rounded-full bg-linear-to-r from-accent-cool via-brand to-accent-warm transition-transform duration-300"
-              style={{ transform: `scaleX(${progress})` }}
-            />
-          </div>
-        </div>
-      )}
-
       <div className="mt-4 lg:grid lg:grid-cols-[13rem_minmax(0,36rem)] lg:justify-center lg:gap-8">
         <nav aria-label={report.title} className="hidden lg:block">
           <div className="sticky top-[calc(5rem+var(--safe-area-top))] rounded-2xl border border-accent/10 bg-surface/70 p-4 backdrop-blur-xl">
@@ -180,8 +158,8 @@ export default function ReportSection({
           </div>
         </nav>
 
-        <div className="space-y-5">
-          {chapters.map((chapter) => (
+        <div className="space-y-7 lg:space-y-5">
+          {chapters.map((chapter, index) => (
             <article
               className={`${styles.storyChapter} ${chapter.id === resolvedActiveId ? styles.storyChapterActive : ''} scroll-mt-32 rounded-2xl border bg-surface-2 p-4 backdrop-blur sm:p-5`}
               data-report-chapter={chapter.id}
@@ -195,7 +173,21 @@ export default function ReportSection({
                 }
               }}
             >
-              <h3 className="text-base font-bold text-foreground">{chapter.title}</h3>
+              <header className="flex items-center gap-2.5">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-accent/30 bg-accent/10 text-sm text-accent lg:hidden">
+                  <ChapterGlyph id={chapter.id} />
+                </span>
+                <h3 className="min-w-0 flex-1 text-base font-bold text-foreground">{chapter.title}</h3>
+                <span className="shrink-0 text-[11px] tabular-nums text-foreground-faint lg:hidden">
+                  {index + 1} / {chapters.length}
+                </span>
+              </header>
+              <div aria-hidden className="mt-3 h-0.5 overflow-hidden rounded-full bg-white/8 lg:hidden">
+                <div
+                  className="h-full origin-left rounded-full bg-linear-to-r from-accent-cool via-brand to-accent-warm"
+                  style={{ transform: `scaleX(${(index + 1) / chapters.length})` }}
+                />
+              </div>
               {chapter.id === 'core' && sunSign && (
                 <CoreSignatureArt moonSigns={reportMoonSigns} risingSign={risingSign} sunSign={sunSign} />
               )}
