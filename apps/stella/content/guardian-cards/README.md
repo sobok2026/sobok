@@ -51,7 +51,8 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-030-review-ko.json`    | `visual_review_complete` | 서른 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
 | `production-art-batch-031-review-ko.json`    | `visual_review_complete` | 서른한 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-032-review-ko.json`    | `visual_review_complete` | 서른두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
-| `production-art-batch-033-review-ko.json`    | `visual_review_ready`    | 서른세 번째 production 배치 신규 PNG 12개 시각 검토 준비, 사람 승인 대기      |
+| `production-art-batch-033-review-ko.json`    | `visual_review_ready`    | 서른세 번째 production 배치 신규 PNG 12개 사람 시각 승인, 일괄 배포 대기      |
+| `production-art-batch-034-review-ko.json`    | `editorial_review_ready` | 서른네 번째 production 배치 신규 12개 편집 검토 준비, 사람 승인 대기          |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                    |
 | `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 393개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                       |
 
@@ -809,8 +810,22 @@ honest-conversation Nebula·Eclipse·Stella의 날씨 보호·양방향 교환·
 눈썹, 쌍둥이자리의 얼굴 없는 단일 구슬, 사수자리의 빈 두 번째 소켓, 물병자리의 구름·잎 탭,
 물고기자리의 열린 물보라를 제한 수정했다. 마스터·80px·직전 배치·앞선 32개 배치 비교와 기존 승인
 원화 393장 유사도 QA를 통과한 선택본은 공개 Git에 포함하지 않는
-`apps/stella/private/guardian-art-production/love-shared-play-orbit`에 보관한다. 현재 12개 모두
-`generated_candidate`이며 사람의 최종 시각 승인 전에는 WebP/R2 반영을 허용하지 않는다.
+`apps/stella/private/guardian-art-production/love-shared-play-orbit`에 보관한다. 12개 모두 사람의 최종
+시각 승인을 마쳤지만 WebP 최적화와 R2 반영은 이후 배치와 일괄 진행하기로 했으므로, 공개 검수 파일은
+누적 배포 매니페스트가 준비될 때까지 `visual_review_ready`와 `generated_candidate` 상태를 유지한다.
+
+서른네 번째 배치는 `love.shared-play` 원고를 `nebula` 희귀도로 제작할 신규 12개 편집 검토안이다.
+`production-art-batch-034-review-ko.json`에 현재 원고의 canonical SHA-256과, 비·눈·바람·보랏빛 황혼·
+푸른 새벽·별비·꿈물결 자체가 놀이의 속도·모양·소리·우연을 바꾸되 외부 상대의 참여와 관계 결론은
+비워 두는 장면을 고정했다. 빗물 위 별원반, 눈벽의 쿠키 달그림자, 새벽 안개 모양, 열린 빗물현,
+열기천둥 구름북, 바람에 흩는 별꽃 씨앗, 황혼 안개의 색빛잎, 별비 속 현무암 숨기 틈, 줄 없는
+구름별씨, 계단의 눈별 공, 서리 안개 음차, 발광 플랑크톤 물결처럼 서로 다른 대기·실루엣·카메라·빈
+다음 재료를 사용한다. 앞선 첫 신호·조심스러운 다가감·일상 돌봄·솔직한 대화 Nebula의 날씨 보호
+장치와 바로 앞 shared-play Orbit의 근접 놀이 장치, greeting card kite를 반복하지 않는다. 카드·규칙·
+점수판·표지·일정에는 읽을 수 있는 글자·숫자·물음표·가짜 글줄을 넣지 않고 별·물방울·잎·점·열린
+곡선 같은 추상 기호만 사용한다. 세 `gpt-5.6-sol` max 에이전트가 12개 장면을 병렬 설계했고 연 구도
+두 건, 천칭자리 계절·색감, 염소자리 숨은 별 찾기 중복을 통합 검토에서 교정했다. 사람의 최종 편집
+승인과 canonical hash 고정 전에는 built-in imagegen을 실행하지 않는다.
 
 ## 검증
 
@@ -892,8 +907,11 @@ bun --filter=@sobok/stella guardian-cards:validate
 - 서른세 번째 production 배치 신규 12개 원고 해시와 승부·평가·완성 압박 없이 시작하는 shared-play
   Orbit 근접 장면, 앞선 first-signal·careful-approach·everyday-care·honest-conversation Orbit와 바로 앞
   honest-conversation Nebula·Eclipse·Stella 비반복, 편집 승인 해시 기반 신규 PNG 후보·마스터/80px·
-  직전 및 앞선 32개 배치 비교·승인 원화 393장 유사도 보조 QA·여섯 제한 수정, 사람의 최종 시각 승인 전
-  WebP/R2 반영 차단
+  직전 및 앞선 32개 배치 비교·승인 원화 393장 유사도 보조 QA·여섯 제한 수정·사람의 최종 시각 승인,
+  이후 배치와 일괄 진행할 때까지 WebP/R2 반영 차단
+- 서른네 번째 production 배치 신규 12개 원고 해시와 날씨 자체가 속도·모양·소리·우연을 바꾸는
+  shared-play Nebula 장면, 앞선 first-signal·careful-approach·everyday-care·honest-conversation Nebula와
+  바로 앞 shared-play Orbit·Batch 028 인사 카드 연 비반복, 사람의 편집 승인 전 신규 이미지 제작 차단
 - 발견된 모든 production 배치 검수 파일의 단계별 상태·현재 원고 해시·배치 축·고유 구도 일치
 - 1,056개를 정확히 한 번씩 포함하는 88개 production 배치와 누적 승인 WebP 393개를 제외한 현재 잔여
   663개 산식
