@@ -3,7 +3,7 @@
   "locale": "ko",
   "contentType": "image/webp",
   "cacheControl": "public, max-age=31536000, immutable",
-  "assetCount": 548,
+  "assetCount": 607,
   "assets": [
     {
       "editionId": "aquarius.choice.evidence.shared-world",
@@ -231,11 +231,56 @@
       "height": 1440
     },
     {
+      "editionId": "aquarius.love.mutual-growth.nebula",
+      "objectKey": "guardian-cards/ko/aquarius.love.mutual-growth.nebula.58129cb3c37c.webp",
+      "sourceArtworkSha256": "ae5cb7e25945a004c332b8bab3315d540fa18ccdcb091d0fdefcc09ac14ff87c",
+      "deliveryArtworkSha256": "58129cb3c37cc4260033522de1d774318b5db92e8131df7aa344cbd525a78107",
+      "byteSize": 141338,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aquarius.love.mutual-growth.orbit",
+      "objectKey": "guardian-cards/ko/aquarius.love.mutual-growth.orbit.a0a97c3bc62e.webp",
+      "sourceArtworkSha256": "4ee32021490a92cb069a10938c4241ead84518437644d5b2caa4613888312ea9",
+      "deliveryArtworkSha256": "a0a97c3bc62e6578976fbd056ebd1a32edbe5c372f6b34674ee1ddf3c86b97ea",
+      "byteSize": 175450,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aquarius.love.repair.eclipse",
+      "objectKey": "guardian-cards/ko/aquarius.love.repair.eclipse.0634255029ad.webp",
+      "sourceArtworkSha256": "f249bb2ab5a0fa3672a49828f4a98e800a18e941e6e9e0481ddad96c9579dc3a",
+      "deliveryArtworkSha256": "0634255029add7d17219225f104a8160125ae7ec5a45961fdea63e5c636950d8",
+      "byteSize": 263282,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aquarius.love.repair.nebula",
+      "objectKey": "guardian-cards/ko/aquarius.love.repair.nebula.16f51d7f55d9.webp",
+      "sourceArtworkSha256": "795803e14bd6b080b45f090a3601243a319331d1466f0db78326ed9dfbe500e7",
+      "deliveryArtworkSha256": "16f51d7f55d9572764fc5e6384fd2ab65e8e3b86987142ea3b36cae783620443",
+      "byteSize": 252980,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "aquarius.love.repair.orbit",
       "objectKey": "guardian-cards/ko/aquarius.love.repair.orbit.d84339021128.webp",
       "sourceArtworkSha256": "0fb4e57885aad9915d4e61151d7b730e08b0ac24e0cec9d947b9fbfea6f1fee7",
       "deliveryArtworkSha256": "d843390211286aad1f1f269f48bd7b0ff5cee29da89897b2dabab7390480cbee",
       "byteSize": 156434,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aquarius.love.repair.stella",
+      "objectKey": "guardian-cards/ko/aquarius.love.repair.stella.225f0be952f2.webp",
+      "sourceArtworkSha256": "be05643f402803303306e6a38ab3449831cd8aeddcfc47f2713346a02c7521d4",
+      "deliveryArtworkSha256": "225f0be952f285a751d5656c51ce6154982c78094410586b7ae7fc23e758467d",
+      "byteSize": 212834,
       "width": 1080,
       "height": 1440
     },
@@ -636,11 +681,56 @@
       "height": 1440
     },
     {
+      "editionId": "aries.love.mutual-growth.nebula",
+      "objectKey": "guardian-cards/ko/aries.love.mutual-growth.nebula.7de9559ef368.webp",
+      "sourceArtworkSha256": "855fd0054b69b957a4cf779d49985a8baba87a49dc0ef0d9196162b878e09f43",
+      "deliveryArtworkSha256": "7de9559ef368990256575db40d98a9bd59701f2beb6e9419ab7a8c5f627b3b44",
+      "byteSize": 203504,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aries.love.mutual-growth.orbit",
+      "objectKey": "guardian-cards/ko/aries.love.mutual-growth.orbit.1501f2f2149b.webp",
+      "sourceArtworkSha256": "a5f25c7d32485533944adde0e99318f34b3728399681becd34bbef6a60dfc1e8",
+      "deliveryArtworkSha256": "1501f2f2149b0223676e73f2c38974529fa4d19ec890def33c08ddcd0d5414fe",
+      "byteSize": 208878,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aries.love.repair.eclipse",
+      "objectKey": "guardian-cards/ko/aries.love.repair.eclipse.dfb87299e9f5.webp",
+      "sourceArtworkSha256": "5822052713dcdd95d509e48692f12a03246b575c0e53f383277f16817794b93e",
+      "deliveryArtworkSha256": "dfb87299e9f5910535553a75db6abd3339d34ac33f2786c32e3808c527b7d850",
+      "byteSize": 214634,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aries.love.repair.nebula",
+      "objectKey": "guardian-cards/ko/aries.love.repair.nebula.642598247a7c.webp",
+      "sourceArtworkSha256": "8741c3f2a0a5c3a7f43ab783d8b4cb6657f9ba44381ebc9aa639af7da4ee5461",
+      "deliveryArtworkSha256": "642598247a7c158566b6fb315fd93b57dac650d04e8fda81c8de267e195a77cd",
+      "byteSize": 157470,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "aries.love.repair.orbit",
       "objectKey": "guardian-cards/ko/aries.love.repair.orbit.d73b2305a7f1.webp",
       "sourceArtworkSha256": "c2d3f7ed860a4521cb95345939f32e99d1d2e1935ef8731c2c5d2ac9290970c3",
       "deliveryArtworkSha256": "d73b2305a7f12b75a70b5e234c4bf767d313da276f0e089f9e4da7ea16ba6bc3",
       "byteSize": 251326,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "aries.love.repair.stella",
+      "objectKey": "guardian-cards/ko/aries.love.repair.stella.f3cadb263e89.webp",
+      "sourceArtworkSha256": "76b8b7fff44e216796c7b8f4c2befdaf1e952e91894090118d2c9553c980f82a",
+      "deliveryArtworkSha256": "f3cadb263e89999a259e8092b0b0ba612272256f798baccf15fb64ec14f27c08",
+      "byteSize": 173534,
       "width": 1080,
       "height": 1440
     },
@@ -1041,11 +1131,56 @@
       "height": 1440
     },
     {
+      "editionId": "cancer.love.mutual-growth.nebula",
+      "objectKey": "guardian-cards/ko/cancer.love.mutual-growth.nebula.cce685eb526b.webp",
+      "sourceArtworkSha256": "b67b8153d89bc09e42a7f8e5bb8fdf5b5ee61f6e50e4469040fb206d9a9a4a2c",
+      "deliveryArtworkSha256": "cce685eb526b360007b06b45fe8369fda624e3b21ee2cfbba4a3b6ceedd585b0",
+      "byteSize": 196276,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "cancer.love.mutual-growth.orbit",
+      "objectKey": "guardian-cards/ko/cancer.love.mutual-growth.orbit.90d5b888be12.webp",
+      "sourceArtworkSha256": "2813454dab7369ce960a9bea399938a93d732a1e37434584c01d5e74dda3eebb",
+      "deliveryArtworkSha256": "90d5b888be12495fdebff4a6c48615fccc41fb359d473c8ebdf08e52189d01b7",
+      "byteSize": 233248,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "cancer.love.repair.eclipse",
+      "objectKey": "guardian-cards/ko/cancer.love.repair.eclipse.f202b294a6fb.webp",
+      "sourceArtworkSha256": "ba61eb0721161a32cf718645e55a1665b4cff5333e8f20f265972b15e78276b6",
+      "deliveryArtworkSha256": "f202b294a6fbaab9fac894cbb63087ab8fb70fcab03a61e81742cb5ded54fc73",
+      "byteSize": 180428,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "cancer.love.repair.nebula",
+      "objectKey": "guardian-cards/ko/cancer.love.repair.nebula.27df0aa2389f.webp",
+      "sourceArtworkSha256": "65ff444b532828a9155afa15c921b8e6dbe02dbd16f4d18a2b21a385a9892369",
+      "deliveryArtworkSha256": "27df0aa2389f3882d3fd77331497978f3d79b572fc9702778698935860804e51",
+      "byteSize": 178118,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "cancer.love.repair.orbit",
       "objectKey": "guardian-cards/ko/cancer.love.repair.orbit.f4c1552ad7fe.webp",
       "sourceArtworkSha256": "44f906b80704b7e38b3174b4a87a763735e6f73ff43cb11ec81167e85a503ac6",
       "deliveryArtworkSha256": "f4c1552ad7fe001e397c020bb83ae288b1291b4e51688642ef0906cc8b126ecf",
       "byteSize": 157748,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "cancer.love.repair.stella",
+      "objectKey": "guardian-cards/ko/cancer.love.repair.stella.70a9b46299a2.webp",
+      "sourceArtworkSha256": "f28f936a06e2bd51b912ab58417dacad820905d57489a8741f89d0e04a561bdf",
+      "deliveryArtworkSha256": "70a9b46299a236131ef7ead9d393e666a5115a68c44b026ab45870c8c758a4f3",
+      "byteSize": 149390,
       "width": 1080,
       "height": 1440
     },
@@ -1446,11 +1581,56 @@
       "height": 1440
     },
     {
+      "editionId": "capricorn.love.mutual-growth.nebula",
+      "objectKey": "guardian-cards/ko/capricorn.love.mutual-growth.nebula.54fa409f62a1.webp",
+      "sourceArtworkSha256": "20026aa97792446a9aed468165711f205948d62e5e376927d05e8addc108e360",
+      "deliveryArtworkSha256": "54fa409f62a143680486b36f3c0a403bb8a8673bd49c0312fc110a9f55cf0cde",
+      "byteSize": 226678,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "capricorn.love.mutual-growth.orbit",
+      "objectKey": "guardian-cards/ko/capricorn.love.mutual-growth.orbit.4608ec23f43c.webp",
+      "sourceArtworkSha256": "61f4da409bb0e9643c4050a36a7267f8b7d63baa2874fcd6a884f430c91c72c5",
+      "deliveryArtworkSha256": "4608ec23f43c30863d85756155ea0dff7d4d970f4fdcac2708a13b02087c7d0c",
+      "byteSize": 138126,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "capricorn.love.repair.eclipse",
+      "objectKey": "guardian-cards/ko/capricorn.love.repair.eclipse.cc8d2c8e4b8c.webp",
+      "sourceArtworkSha256": "4e609610b2f6eb2b779ec98711bee81d2a99f6d95c692a8dc5b61c3c042e8ad2",
+      "deliveryArtworkSha256": "cc8d2c8e4b8c132622a70668f4541fc425c48dd1f4709e6c5272ddb31ca19113",
+      "byteSize": 223626,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "capricorn.love.repair.nebula",
+      "objectKey": "guardian-cards/ko/capricorn.love.repair.nebula.40e9893863f6.webp",
+      "sourceArtworkSha256": "c8f4e18facf75dde0c5773e03a17a0ddb9203edd261472975d5f2831dbc0159e",
+      "deliveryArtworkSha256": "40e9893863f69296aeef9165a99c456faa24d3600d6a2aefe975d66c6931a043",
+      "byteSize": 235278,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "capricorn.love.repair.orbit",
       "objectKey": "guardian-cards/ko/capricorn.love.repair.orbit.90bc4d4ca255.webp",
       "sourceArtworkSha256": "345d07ffbc3b80d551660de8f2fabab2256ceeef5d00378e877f5713da84b258",
       "deliveryArtworkSha256": "90bc4d4ca2554af2904e7cb3b523fd394ad2c7a8ad9a0fc93a878a945a19b3cf",
       "byteSize": 199812,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "capricorn.love.repair.stella",
+      "objectKey": "guardian-cards/ko/capricorn.love.repair.stella.fe638b77c92d.webp",
+      "sourceArtworkSha256": "1ae242e0a3e58a1187b00f23538956d5dfdb54168c9c7477681ea509846f0f8b",
+      "deliveryArtworkSha256": "fe638b77c92dcbee09283a4fa2c1a561b94e169ccccf36d23d964ec70bd15198",
+      "byteSize": 223534,
       "width": 1080,
       "height": 1440
     },
@@ -1860,11 +2040,56 @@
       "height": 1440
     },
     {
+      "editionId": "gemini.love.mutual-growth.nebula",
+      "objectKey": "guardian-cards/ko/gemini.love.mutual-growth.nebula.43fa02af57c3.webp",
+      "sourceArtworkSha256": "d8e1efcc2961b618a71dd1a3cec0a407af96243488b46881c51e35309a034eb0",
+      "deliveryArtworkSha256": "43fa02af57c35b695bd4148e8e5e3c4df34b5f27d53f1a23fc403ac80395fad0",
+      "byteSize": 204998,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "gemini.love.mutual-growth.orbit",
+      "objectKey": "guardian-cards/ko/gemini.love.mutual-growth.orbit.1c4d419cb48a.webp",
+      "sourceArtworkSha256": "2ac635460d25014c949714e68ef02a0f185c4da570ee3956be9e88ff8c3af503",
+      "deliveryArtworkSha256": "1c4d419cb48a0f36b8e00ac24d430a7700429fca9ebe498e75de38daffbd8527",
+      "byteSize": 231116,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "gemini.love.repair.eclipse",
+      "objectKey": "guardian-cards/ko/gemini.love.repair.eclipse.424c12b7e4ad.webp",
+      "sourceArtworkSha256": "ffe838816f4e44e5bf59772029b1d00da0c2f916e1103dd5c533b71f846872c7",
+      "deliveryArtworkSha256": "424c12b7e4ad74e0d19d0ad8f3ac08cd041224ef8a05937bb04e6ca560ad555f",
+      "byteSize": 186866,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "gemini.love.repair.nebula",
+      "objectKey": "guardian-cards/ko/gemini.love.repair.nebula.43f312c19cbf.webp",
+      "sourceArtworkSha256": "9f5e43405b2ef3ea970a18e278170c2d85e294a4550f222856feec4007088d4e",
+      "deliveryArtworkSha256": "43f312c19cbfc9ce860632fb157806757a18481d762d6674968e9e36e278a86c",
+      "byteSize": 147940,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "gemini.love.repair.orbit",
       "objectKey": "guardian-cards/ko/gemini.love.repair.orbit.a80e585351fd.webp",
       "sourceArtworkSha256": "c3a29a8edb22ecd774645cdad892ba85c249a2408da3724dca866f823512c122",
       "deliveryArtworkSha256": "a80e585351fd23720993f6ef8c22b6d38b19ba7d98c391b40b57bd2d40b79107",
       "byteSize": 201920,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "gemini.love.repair.stella",
+      "objectKey": "guardian-cards/ko/gemini.love.repair.stella.ce62aaabdb37.webp",
+      "sourceArtworkSha256": "f001a5d43506abaeffed7ab42aecb78161feec592610039da227b1d5ac0c6b66",
+      "deliveryArtworkSha256": "ce62aaabdb37464ad43ff19ff72a0f44e444c256739af61d6b9bf87d438b528d",
+      "byteSize": 125062,
       "width": 1080,
       "height": 1440
     },
@@ -2265,11 +2490,56 @@
       "height": 1440
     },
     {
+      "editionId": "leo.love.mutual-growth.nebula",
+      "objectKey": "guardian-cards/ko/leo.love.mutual-growth.nebula.d89c9d791007.webp",
+      "sourceArtworkSha256": "d2fcbaccabfcda4e30ee3cf522da50bb2ae957252018bf298be3020cd31a2eea",
+      "deliveryArtworkSha256": "d89c9d791007cd1e521db6b43767cfc241988db7d2450c5edf7fc0d61069c2f8",
+      "byteSize": 123776,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "leo.love.mutual-growth.orbit",
+      "objectKey": "guardian-cards/ko/leo.love.mutual-growth.orbit.91e051fa972f.webp",
+      "sourceArtworkSha256": "9c4e0ecb46a786e7e1892df2992213055711b0b14206ac79af998ca299d725b7",
+      "deliveryArtworkSha256": "91e051fa972f80291c0f7a3eb257cdfe549534352236ab4513fdb62f910aa95f",
+      "byteSize": 241314,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "leo.love.repair.eclipse",
+      "objectKey": "guardian-cards/ko/leo.love.repair.eclipse.7f714329a4f4.webp",
+      "sourceArtworkSha256": "315f1dc58e439fa5791d0c52823bd1a649e1db2381d12c01267d05506973afd7",
+      "deliveryArtworkSha256": "7f714329a4f4b8e27dad03ce3cf078014556163e4abe974fbe013d979394f258",
+      "byteSize": 152434,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "leo.love.repair.nebula",
+      "objectKey": "guardian-cards/ko/leo.love.repair.nebula.9844e05d3cb2.webp",
+      "sourceArtworkSha256": "64071cc2a97945ff4a302827ede8843dfc346758c427165d7a01674c84ca41ae",
+      "deliveryArtworkSha256": "9844e05d3cb219e93a16943fef7a405aecdaa2a84bbb5c3ced18b026d69e77b1",
+      "byteSize": 136342,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "leo.love.repair.orbit",
       "objectKey": "guardian-cards/ko/leo.love.repair.orbit.ed993a3c5063.webp",
       "sourceArtworkSha256": "a169e08dbaddfdb3fa792d180afdf0049873b149102118d7eead05fddcbd140b",
       "deliveryArtworkSha256": "ed993a3c50635223aaca507bda7360006a9d5ff5435c9689c1aee3c3c9819b7f",
       "byteSize": 109276,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "leo.love.repair.stella",
+      "objectKey": "guardian-cards/ko/leo.love.repair.stella.73cbd6e8d0d7.webp",
+      "sourceArtworkSha256": "133d9631666a9047819626641cc0cc246788458139927daa61487079f2779898",
+      "deliveryArtworkSha256": "73cbd6e8d0d76a2127c4db510c89d3d08b90151e99def7d9e4504bbcb3949a09",
+      "byteSize": 120650,
       "width": 1080,
       "height": 1440
     },
@@ -2679,11 +2949,56 @@
       "height": 1440
     },
     {
+      "editionId": "libra.love.mutual-growth.nebula",
+      "objectKey": "guardian-cards/ko/libra.love.mutual-growth.nebula.5c653dbb5787.webp",
+      "sourceArtworkSha256": "169c08395d9fd2d4a7026c699228bf34b9cf78e7b6814498794eb111abec6e1b",
+      "deliveryArtworkSha256": "5c653dbb5787bbd1bda113781da0412af59a91e9d1977e62d646f6a9d1edf397",
+      "byteSize": 137058,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "libra.love.mutual-growth.orbit",
+      "objectKey": "guardian-cards/ko/libra.love.mutual-growth.orbit.f490794da6f7.webp",
+      "sourceArtworkSha256": "b58f7be54142e5188f2d53eb1771d1fd7b7e06caa88d3cf4b0572df55241c615",
+      "deliveryArtworkSha256": "f490794da6f72d615638fd63c928842c7d9d4669a4049f2c9fbb8c7610cf9e57",
+      "byteSize": 84818,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "libra.love.repair.eclipse",
+      "objectKey": "guardian-cards/ko/libra.love.repair.eclipse.0eab808391fe.webp",
+      "sourceArtworkSha256": "09fbc38600f4e21bb0e429457e1b3e3a96073c938e1225a65ee47860fa4876f5",
+      "deliveryArtworkSha256": "0eab808391fea23559565ed3cc37c7dd7d4f3016abbe4637f25b3dd285743362",
+      "byteSize": 140356,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "libra.love.repair.nebula",
+      "objectKey": "guardian-cards/ko/libra.love.repair.nebula.69f136a46351.webp",
+      "sourceArtworkSha256": "880d377fbe4a1278c9d1fd3723db99b2b91e807fd08884e21b968714ba02fb8d",
+      "deliveryArtworkSha256": "69f136a46351675b6cb9421553b9a359e7e87e16c1b71462f83b55364ddecddd",
+      "byteSize": 202270,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "libra.love.repair.orbit",
       "objectKey": "guardian-cards/ko/libra.love.repair.orbit.e5e44e964639.webp",
       "sourceArtworkSha256": "a33e0451fd3b1fc3845608fafbef9ccfe95adee99dfbd1962f5e99b18d4181c7",
       "deliveryArtworkSha256": "e5e44e964639a315096bec59eed15ed709207589e8db31c60060b5c9bb0cf856",
       "byteSize": 169508,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "libra.love.repair.stella",
+      "objectKey": "guardian-cards/ko/libra.love.repair.stella.c687fb7e68f1.webp",
+      "sourceArtworkSha256": "b023bf79aa17e66107ef48cecdc5932e93d2e79225e586ad8a6cbf831b280010",
+      "deliveryArtworkSha256": "c687fb7e68f132f52826c8a3fc4a78bcdaa104b62faba3963efaead9111571c4",
+      "byteSize": 216302,
       "width": 1080,
       "height": 1440
     },
@@ -3093,11 +3408,56 @@
       "height": 1440
     },
     {
+      "editionId": "pisces.love.mutual-growth.nebula",
+      "objectKey": "guardian-cards/ko/pisces.love.mutual-growth.nebula.135424ea8a9e.webp",
+      "sourceArtworkSha256": "6c9a3cfac90fe6660abb218a3cdba8ed25e97f5c429a1051314f384a1d19a2cf",
+      "deliveryArtworkSha256": "135424ea8a9ec1174d8fe3404545b23cd94ba97cb9ebd27efb2c87f3d9e28fb1",
+      "byteSize": 195184,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "pisces.love.mutual-growth.orbit",
+      "objectKey": "guardian-cards/ko/pisces.love.mutual-growth.orbit.3a76a22c1a76.webp",
+      "sourceArtworkSha256": "4588a0bec0bf52d1d806401ce410066eee925bee97c05c74357734664f9191c4",
+      "deliveryArtworkSha256": "3a76a22c1a7667d8c39c6347bf7894e462c80f7d9e2ec7b0c8ec64b3956f7e17",
+      "byteSize": 166048,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "pisces.love.repair.eclipse",
+      "objectKey": "guardian-cards/ko/pisces.love.repair.eclipse.36d3b4339aa6.webp",
+      "sourceArtworkSha256": "7abd765aa154edabca86d641eda2c5d0d535690a0ec08eadebd2e047921df779",
+      "deliveryArtworkSha256": "36d3b4339aa6847e12264a72f67135d8317d705d5f92d4ae81c1519160a2dfdd",
+      "byteSize": 213370,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "pisces.love.repair.nebula",
+      "objectKey": "guardian-cards/ko/pisces.love.repair.nebula.ac6f0476f0ee.webp",
+      "sourceArtworkSha256": "bd9f258d3cb4385b3e51abb0c94c405a9ae49fca85a516b1689faa67622fbbb1",
+      "deliveryArtworkSha256": "ac6f0476f0eeaea6c5d55a30cb9443d6c8e3e286cd8a246c8b476d713838a324",
+      "byteSize": 349338,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "pisces.love.repair.orbit",
       "objectKey": "guardian-cards/ko/pisces.love.repair.orbit.78f67d450455.webp",
       "sourceArtworkSha256": "fb47aab159797ecdb7d4d2137ed9fbc11108a106ed887a474fc1678587f5eb81",
       "deliveryArtworkSha256": "78f67d450455a59e8a36379ed8dc5b1cb322d4ebc20314cc3eac1983e226a4ec",
       "byteSize": 182804,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "pisces.love.repair.stella",
+      "objectKey": "guardian-cards/ko/pisces.love.repair.stella.573f18ddaf33.webp",
+      "sourceArtworkSha256": "40c000d9658fb79fef2dd261507c77a1d72d8cfd212fff3a02ed07ae60486958",
+      "deliveryArtworkSha256": "573f18ddaf338d4dc77902d4214cfe4d371f26cf0a52f032217768b01f133b64",
+      "byteSize": 213918,
       "width": 1080,
       "height": 1440
     },
@@ -3507,11 +3867,56 @@
       "height": 1440
     },
     {
+      "editionId": "sagittarius.love.mutual-growth.nebula",
+      "objectKey": "guardian-cards/ko/sagittarius.love.mutual-growth.nebula.883eb77f06d1.webp",
+      "sourceArtworkSha256": "d42830333abf4a805e018611afc43f951b706485d353a7579cf8dc104634a008",
+      "deliveryArtworkSha256": "883eb77f06d1cab79364697b08ce35d61479ef5ea467cb6f4d9c0dc34751cdc6",
+      "byteSize": 249772,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "sagittarius.love.mutual-growth.orbit",
+      "objectKey": "guardian-cards/ko/sagittarius.love.mutual-growth.orbit.7c58ab97ce63.webp",
+      "sourceArtworkSha256": "16404cf7533a465a950698072be0e7aee79bb83589f902f93bf403c3dcb7e729",
+      "deliveryArtworkSha256": "7c58ab97ce63e99adc0b7d49d7f0ffea8bb657529bdafd4514cd18a5fa1286b8",
+      "byteSize": 145782,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "sagittarius.love.repair.eclipse",
+      "objectKey": "guardian-cards/ko/sagittarius.love.repair.eclipse.ae931e71e134.webp",
+      "sourceArtworkSha256": "a8385e4f3c2cdc5cab737db34d33cff738949985403d32b79dc9e93b09c1d755",
+      "deliveryArtworkSha256": "ae931e71e1349d3bfa62cbe5605ac9dff197371a4fee8cb05a85fe50460e20f7",
+      "byteSize": 176434,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "sagittarius.love.repair.nebula",
+      "objectKey": "guardian-cards/ko/sagittarius.love.repair.nebula.b69b4fa32688.webp",
+      "sourceArtworkSha256": "a35a0097d871afe16dad1f3f31b3c16d46fdc4b21adc16abd41744e88c9510aa",
+      "deliveryArtworkSha256": "b69b4fa326882d77e05465d227b32488498268ab16de145f733f35c8637cc6f6",
+      "byteSize": 232974,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "sagittarius.love.repair.orbit",
       "objectKey": "guardian-cards/ko/sagittarius.love.repair.orbit.38528dd58258.webp",
       "sourceArtworkSha256": "1d8ca4c4dd2b2d00423e295415b9a059bc4235d8e8b1b1e624ecc4711b4321c2",
       "deliveryArtworkSha256": "38528dd582581110ed5ebbe301f9482c51131c22ef579e14f78e2da82d2b46e4",
       "byteSize": 211796,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "sagittarius.love.repair.stella",
+      "objectKey": "guardian-cards/ko/sagittarius.love.repair.stella.a78ae999e54c.webp",
+      "sourceArtworkSha256": "7d8d41606c6c1e392c6c383b7227042be0694c9391b43d069bc564f2409469da",
+      "deliveryArtworkSha256": "a78ae999e54c183d6cc19c53d739cf6a7714768efba00cfcbbee9a64ee1c96e2",
+      "byteSize": 203552,
       "width": 1080,
       "height": 1440
     },
@@ -3912,6 +4317,24 @@
       "height": 1440
     },
     {
+      "editionId": "scorpio.love.mutual-growth.nebula",
+      "objectKey": "guardian-cards/ko/scorpio.love.mutual-growth.nebula.14353ee47a4b.webp",
+      "sourceArtworkSha256": "651859042d530f2b0088ccda70543edc26754d3b5312bb392dc9d196753f68af",
+      "deliveryArtworkSha256": "14353ee47a4bbcf4aa4ae9558a1ae5b1b9a80c0dd7de4ecdb07d6ebcf4451b25",
+      "byteSize": 212706,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "scorpio.love.mutual-growth.orbit",
+      "objectKey": "guardian-cards/ko/scorpio.love.mutual-growth.orbit.8e82b4cb1e75.webp",
+      "sourceArtworkSha256": "fbc637138d5de196d7ff0de318a4e168041d9c4abf445e93ff2bbe515ebd7d22",
+      "deliveryArtworkSha256": "8e82b4cb1e75a67d8ea22fb8183ad24155f9bb5f8d369a7fd87446820e6e3a85",
+      "byteSize": 166058,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "scorpio.love.repair.eclipse",
       "objectKey": "guardian-cards/ko/scorpio.love.repair.eclipse.webp",
       "sourceArtworkSha256": "a2f02e2fcbd8eec4cdcfdc19f6a8f540a50893414182bd39459a50f595b5e340",
@@ -3921,11 +4344,29 @@
       "height": 1440
     },
     {
+      "editionId": "scorpio.love.repair.nebula",
+      "objectKey": "guardian-cards/ko/scorpio.love.repair.nebula.ccd624aa38dd.webp",
+      "sourceArtworkSha256": "6e70544844376786b4825d78a9ae36a61b2e7153282650b6b989b5f79e709e62",
+      "deliveryArtworkSha256": "ccd624aa38dd861b03aa75405f2ad2e2ec41d5e025243a7fa72872df28acbada",
+      "byteSize": 164526,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "scorpio.love.repair.orbit",
       "objectKey": "guardian-cards/ko/scorpio.love.repair.orbit.9c4d316cd35b.webp",
       "sourceArtworkSha256": "eb3ab00f1ea125142e7167ebf27020720de076c78e2b1cbb3cbb8ee819d0772b",
       "deliveryArtworkSha256": "9c4d316cd35bf62c56fa5e925d56b89a480131c14fd387330f1c4e20c78557b5",
       "byteSize": 139820,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "scorpio.love.repair.stella",
+      "objectKey": "guardian-cards/ko/scorpio.love.repair.stella.de5b65acd864.webp",
+      "sourceArtworkSha256": "398f153e07d4044784fdf587570a8663ec773b0163ebd7ac469c0c1a40b45f74",
+      "deliveryArtworkSha256": "de5b65acd86453c1fde86ef46e0ff20cc19700df8b77b217fbd7db87edcfbb07",
+      "byteSize": 147098,
       "width": 1080,
       "height": 1440
     },
@@ -4326,11 +4767,56 @@
       "height": 1440
     },
     {
+      "editionId": "taurus.love.mutual-growth.nebula",
+      "objectKey": "guardian-cards/ko/taurus.love.mutual-growth.nebula.3a96e023aee8.webp",
+      "sourceArtworkSha256": "7e4c21a725182ce7a81a1b915bc74d084736acff9d3872ef08aacf574dcda34a",
+      "deliveryArtworkSha256": "3a96e023aee8f205ed9f29a8454500c6def16db5d1e79e220dd6823262d56164",
+      "byteSize": 276176,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "taurus.love.mutual-growth.orbit",
+      "objectKey": "guardian-cards/ko/taurus.love.mutual-growth.orbit.4dc041a50671.webp",
+      "sourceArtworkSha256": "9f752e1726e8a8ca805f060e755d1c3e3252530e8da4bd52be2038ef105f0d72",
+      "deliveryArtworkSha256": "4dc041a5067156c1c32e47f2bbd4e91d566200909d2d80d4378b0bb4e76b9b80",
+      "byteSize": 211288,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "taurus.love.repair.eclipse",
+      "objectKey": "guardian-cards/ko/taurus.love.repair.eclipse.a4b41bb23cc5.webp",
+      "sourceArtworkSha256": "f0b8d316ecca1182a9d16b03a125659c78f01004c4836ccca703def3a1838aeb",
+      "deliveryArtworkSha256": "a4b41bb23cc5bae4b4eddce17a9edeaaaf74d049b330012154b189922b3f2c96",
+      "byteSize": 173240,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "taurus.love.repair.nebula",
+      "objectKey": "guardian-cards/ko/taurus.love.repair.nebula.1747e82b8c95.webp",
+      "sourceArtworkSha256": "f0af81e4a1aa82812199cbb369d80364f4af32f72c6b41f13a733cad089e160d",
+      "deliveryArtworkSha256": "1747e82b8c95fbb9a50fc07f839e4a21d02924b421e7657ac83764f09af708a5",
+      "byteSize": 196732,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "taurus.love.repair.orbit",
       "objectKey": "guardian-cards/ko/taurus.love.repair.orbit.05055dc02ad0.webp",
       "sourceArtworkSha256": "20aa58c67b7e03833aec240e3921ee6cd883588095c87deca1d7adcf7ad8b672",
       "deliveryArtworkSha256": "05055dc02ad0b0d99862eb77e9633960c58bd8752b87a50027ad0095d7e1c8dd",
       "byteSize": 268300,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "taurus.love.repair.stella",
+      "objectKey": "guardian-cards/ko/taurus.love.repair.stella.4355dbe2346f.webp",
+      "sourceArtworkSha256": "ecec986db8a723845ded766a90ffd965ab1ee1d7ca5a0f3c33e4bcc19b99e5d8",
+      "deliveryArtworkSha256": "4355dbe2346f36d366e5ed1ea4e4c146652771e2d93df1c0db23006fff9ba078",
+      "byteSize": 214710,
       "width": 1080,
       "height": 1440
     },
@@ -4740,11 +5226,56 @@
       "height": 1440
     },
     {
+      "editionId": "virgo.love.mutual-growth.nebula",
+      "objectKey": "guardian-cards/ko/virgo.love.mutual-growth.nebula.8e86624d211f.webp",
+      "sourceArtworkSha256": "454df6740520a774c0cb50db952306363a11518f396f717b8dfc6cea2ba24c56",
+      "deliveryArtworkSha256": "8e86624d211f95761f9f9b7c900cf21b9a7453f1ab05dbf6aef7f0b2fb48e96b",
+      "byteSize": 243010,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "virgo.love.mutual-growth.orbit",
+      "objectKey": "guardian-cards/ko/virgo.love.mutual-growth.orbit.3bf99c0ddf62.webp",
+      "sourceArtworkSha256": "00a7df33df0298ca71f9dc415d3384f9e20a08c060dc1e262d828575987a7a12",
+      "deliveryArtworkSha256": "3bf99c0ddf628eff634be6d6b7fdc2a379ea0b54a857f0a89c0a2d99e459ae91",
+      "byteSize": 167872,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "virgo.love.repair.eclipse",
+      "objectKey": "guardian-cards/ko/virgo.love.repair.eclipse.347fd30addf9.webp",
+      "sourceArtworkSha256": "663b80b07e8cbd7301fc2423beafdb45f0e2501b3e1861a812e718e48a91c45e",
+      "deliveryArtworkSha256": "347fd30addf9124e32726242e8a8edd9e311448d2a1626f98aa4172eaff45fdd",
+      "byteSize": 158170,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "virgo.love.repair.nebula",
+      "objectKey": "guardian-cards/ko/virgo.love.repair.nebula.c26d2fd92841.webp",
+      "sourceArtworkSha256": "5ec9d0d3afcddf4f1fb5ac0f486a2b98814b6d489be23c7b1118949e9a21553d",
+      "deliveryArtworkSha256": "c26d2fd92841275d1d6200b8e6bf78aac8af476b9b27bad7bf63bcb364a4516c",
+      "byteSize": 221604,
+      "width": 1080,
+      "height": 1440
+    },
+    {
       "editionId": "virgo.love.repair.orbit",
       "objectKey": "guardian-cards/ko/virgo.love.repair.orbit.7cdac3f07594.webp",
       "sourceArtworkSha256": "3788de9c9ba345c8c05f63529aef879008ae669187e546d51a72bc6a637fc597",
       "deliveryArtworkSha256": "7cdac3f07594a1470c9c41fc5cb9a4fff30c421b2a31afcb5645abff561dc593",
       "byteSize": 221792,
+      "width": 1080,
+      "height": 1440
+    },
+    {
+      "editionId": "virgo.love.repair.stella",
+      "objectKey": "guardian-cards/ko/virgo.love.repair.stella.149cf58e6823.webp",
+      "sourceArtworkSha256": "72f95dae973c07b1cb7ea8c81850f4fc424609f0d9fa54125e3a9dd954a0db06",
+      "deliveryArtworkSha256": "149cf58e68230f675743bfbbccbe2b87ed2eb0fed15d77484d2ed1b38b92477a",
+      "byteSize": 178494,
       "width": 1080,
       "height": 1440
     },

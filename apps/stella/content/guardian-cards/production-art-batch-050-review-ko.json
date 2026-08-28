@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "editorialApprovedOn": "2026-08-29",
+  "generatedOn": "2026-08-29",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-29",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
+  "locale": "ko",
+  "batchId": "love.mutual-growth.nebula",
+  "batchOrder": 50,
+  "purpose": "사랑의 mutual-growth 원고를 각자의 목표·속도·영역을 지키는 성장 구조와 비·바람·눈·별비 속 보호 행동이 함께 보이는 Nebula 장면으로 번역한다. 보이지 않는 상대는 추가하지 않고 반복 가능한 일정·표식·교환·보호 제어를 다시 거둘 수 있게 남긴다. 두 길·두 화분·질문나무·집과 정원·세 무대·두 식물·세 별·세 상자·두 지도·두 계단·세 작업대·두 산호의 독립성을 유지하며, 열두 카메라·주실루엣·열린 여백·성운 확산은 서로 달라 합쳐진 정체성·확정된 동의·성장·재회를 만들지 않는다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "love",
+    "narrativeAxisId": "mutual-growth",
+    "visualAxisId": "nebula"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium Nebula zodiac-guardian mutual-growth card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair from the approved source, never an unseen partner, romantic recipient, extra guardian, body part, shadow, reflection, empty seat, or personal belonging that implies another person. Preserve character-sheet identity, relative size, colors, silhouette, simple dark-purple pupils, exactly one large and one small eye highlight, chest Stella star, clothing, and source-relevant signature props. Keep the guardian or canonical pair and focal mutual-growth plus protective-care cluster at 55–65% of the frame and readable at actual width 80px. Personal goals, spaces, speeds, maps, stages, boxes, tables, currents, or plants must stay physically distinct while every shared point and protective control remains removable, half-set, unlatched, open-ended, stoppable, or reorderable. Use symbols and simple shapes only: no readable text, sentence, name, label, title, badge, score, number, literal date, clock face, calendar text, question mark, zodiac glyph, arrowed route, map coordinate, logo, watermark, handwriting, pseudo-text lines, or personal birth-chart data. Do not bake actual birth-chart lines or personal colors into the master art. Keep every composition distinct in camera, depth axis, dominant silhouette, negative-space shape, reversible control, and open Nebula diffusion. Preserve exact topology: Aries Mongshil1 wearing red raincoat1, race-track system1 with faded groove1/splitter1/lanes2/goal flags2/shared star1, source large heart1/raincoat wrap flap1/open clasp1/signal light1/diffuse patches3; Taurus Chagoki1, independent pots2/seeds2/schedule board1/slots2/water tab1/sun tab1/pivot detent1, thick green blanket pocket1/fold pin1/warm milk vessel1/last star-cookie1 and mist plumes2; Gemini canonical Jejal-Sogon pair2/connector ribbon1, independent question trees2/star-fruit1/open stem collar1/flying letters2 with abstract blots only and diffuse wisps2; Cancer Dalkong1, houses2 consisting of canonical shell-house1 plus solid strapped portable house pack1, shared garden1/role board1/slots2/care tile1/solo-rest tile1, cropped door evidence1/eave1/gap-stop1/star signal1/snacks2/diffuse patches3; Leo Haenim1, personal stages2/shared stage1/bridge tongues2/schedule board1/mounts3/markers3, gold cape1 shielding one side light1 and separate Nebula plumes2; Virgo Saebom1, unequal star sprouts or flowers2/growth clips2/shared watering can1/removable hook1/care-time paddle1/tabs2, loose green ribbon1/free ends2 and separate pollen plumes2; Libra Gormi1, detached supports2/personal star-weights2/chocks2/shared third star1/swing tray1/role chart1/pockets3/tabs3 and separate Nebula columns2, with scale/beam/pan/long ribbon0; Scorpio Kkook1, purple umbrella1/tilt-stop1, personal starboxes2/shared starbox1/key-use chart1/hinged symbol leaves3/actual keys0/locks0, canonical tail-heart1 and open red plume1; Sagittarius Chongchongi1 with gold crescent bow behind, maps exactly2 consisting of discovery map1 plus cloak-pocket return map1/path washes2, travel cloak1/snacks2/exchange rocker1/cheer star1/third map0; Capricorn Oreumi1, stairs2/goal markers2, shared landing-footboard exactly1/work cloak1/screw1/driver1/second footboard0 and separate snow veils2; Aquarius Banguli1 in winter coat1, personal worktables2/shared experiment table1/help-rule tiles2, source blue heart-profile bottle1/temperature bead1/wave signal1; Pisces canonical pair2 with larger aqua Dreamstar in aqua pajamas and smaller pink Sleepstar in distinct pink pajamas, dream corals2/currents2/shared wave1/solo tabs2/shared-care tab1/divider clip1/loose starlight ring1/open clasp gap1/contact0 and separate plumes2. Only Aries source large heart1, Aquarius source blue heart bottle1, and Scorpio canonical tail-heart tip1 are allowed; add no other heart, heart glyph, heart-shaped void, or heart light. Never merge personal lanes, roots, houses, stages, plants, stars, boxes, maps, stairs, tables, corals, currents, ribbons, ring, or Nebula diffusion into one identity, closed heart, magic circle, infinity sign, cage, deterministic route, guaranteed agreement, completed growth, sacrifice, or reunion. Do not reuse same-sign Nebula cameras and dominant silhouettes from B018, B022, B026, B030, B034, B038, B042, or B046, nor B047–B049 devices and negative spaces. Within this batch keep Aries/Sagittarius navigation systems, Taurus/Capricorn material protection, Gemini/Virgo plant-care structures, Cancer/Scorpio shelters and containers, Leo/Libra three-goal systems, and Aquarius/Pisces fluid shared-role geometry visibly distinct. Follow each compositionFamily, distinctFrom, and visualReviewFocus literally. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes. No text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.love.mutual-growth.nebula",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-29",
+      "editorialContentHash": "2d7d511f282a80290d8fd1d2fc01920d4675c055cf2d4ce3691f19d9d117652c",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "sharedstar_height_shallow_frontright_crossaxis20_twin_horizontal_lane_bands_diagonal_raincoatwrapped_heart_onesideopen_parallelogram_rainbay_signal_diffusion",
+      "artDirection": "세로 3:4의 비 오는 Nebula 저녁을 shared-star 높이의 shallow front-right cross-axis oblique 약 20도로 본다. 카메라는 lane의 긴 축을 따라가지 않고 폭을 가로질러 보며, 가까운 아래에는 movable shared star와 track control, 중간에는 서로 어긋난 horizontal lane bands2와 몽실이, 먼 위에는 low diagonal large heart와 작은 signal light를 두어 세 깊이를 만든다. 몽실이 exactly1만 등장하며 track·heart·signal을 합친 hero cluster가 화면의 55–65%를 차지한다. 몽실이는 정본의 cream sheep 몸, lavender spiral horns exactly2, lavender hooves, 단순 진보라 눈, 가슴 Stella 별을 유지하고 source-authored red raincoat exactly1을 몸에 입는다. race-track system exactly1에는 faded original center groove exactly1과 removable splitter exactly1, parallel lanes exactly2가 있으며 두 lane은 서로 닿거나 하나의 road·bridge·rail·ring으로 합쳐지지 않는다. 각 lane의 서로 다른 far end에는 symbol 없는 detachable goal flag exactly1씩, 합계 flags2만 두고, 두 lane 중간 open cross-slot에는 movable shared meeting star exactly1을 one notch만 걸친다. 몽실이는 splitter를 옆으로 한 notch 옮겨 single groove를 two-lane topology로 바꾸되 star와 flags는 즉시 다시 이동할 수 있게 둔다. source-authorized large heart는 exactly1이며 lane 뒤의 low diagonal slab으로 세운다. 몽실이가 입은 raincoat의 single long wrap flap만 heart의 lower outer edge를 감싸고 removable open wrap-clasp exactly1로 반쯤 고정한다. flap은 heart 전체를 덮는 canopy, umbrella, shelter, second cloth 또는 closed pouch가 아니다. small signal light exactly1은 heart 옆의 low socket에서 켜져 있고 heart, lane, flag 또는 unseen recipient에게 선으로 이어지지 않는다. heart lower edge와 두 lane band 사이에는 guardian 몸 하나 너비보다 큰 broad one-side-open parallelogram rain bay가 오른쪽 frame 밖으로 완전히 열린다. 이 bay는 tunnel, gate, heart void, road, corridor, ring 또는 portal이 아니다. signal에서 나온 Nebula light는 detached soft glow patches exactly3으로 rain bay 안에 서로 떨어져 번지고 열린 오른쪽으로 사라진다. patches는 actual constellation, zodiac diagram, birth-chart line, arrowed route, closed halo, protective shield, guaranteed meeting 또는 deterministic relationship을 만들지 않는다. splitter, shared star, flags, wrap-clasp와 signal은 모두 회수·이동 가능하고 lane 속도·목표·재회·heart 보호 결과는 확정되지 않는다. 추가 guardian, human, recipient body clue, hand, reflection, silhouette, seat, lane, groove, flag, star, heart, raincoat, cloth, clasp, signal 또는 vehicle는 없다. 허용 heart는 source large heart1뿐이다. readable text, pseudo-text, 숫자, 좌표, 화살표, logo와 watermark를 넣지 않으며 같은 속도·승패·확정 재회나 완성된 관계 성장도 표현하지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례, 짙은 보라 외곽선, rain-violet·cream·restrained crimson·gold Nebula 팔레트를 사용한다.",
+      "distinctFrom": [
+        "B018의 puddle-level raincape heart shelter, B022의 puddle mirror foldscreen, B026의 inside umbrella-rack low-up와 B030의 inside rainglass heart shutters를 반복하지 않고 shared-star 높이 cross-axis 20°와 two horizontal lane bands·diagonal heart 사이 open parallelogram rain bay를 사용한다.",
+        "B034의 cross-slope running lane, B038의 nadir chairs·heart lane, B042의 rotated-nadir weather loom, B046의 strict side-profile heart/repair rail 및 B047–49의 broadside/high-oblique heart·low-axial twin lanes를 피하고 lane system1, heart1, worn raincoat wrap1과 detached signal diffusion patches3로 고정한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 정본 몽실이 exactly1의 horns2·hooves·가슴별·red raincoat1, track system1/groove1/splitter1/lanes2, flags2, shared star1, large heart1, wrap-clasp1, signal1이 분리 계수되고 hero cluster가 55–65%인지 확인한다.",
+        "cross-axis shallow oblique의 stacked horizontal lanes·low diagonal heart와 right-open parallelogram rain bay가 먼저 읽히고 canopy·rail·road·heart void가 아니며, patches3과 controls가 open/reversible 상태라 extra heart·recipient·text·pseudo-text·숫자·birth-chart·closed halo·same speed·확정 재회를 만들지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "855fd0054b69b957a4cf779d49985a8baba87a49dc0ef0d9196162b878e09f43"
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.love.mutual-growth.nebula",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-29",
+      "editorialContentHash": "1332c474ddad15a63e090532f69a5417b902f340d8046fca37fc115c14bb9c08",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "potbase_strict_frontal_unequal_twin_pot_pillars_center_scheduleboard_detached_low_openfront_greenblanket_pocket_tall_onesideopen_forkbay_split_warmmist",
+      "artDirection": "세로 3:4의 늦은 겨울 Nebula 밤을 pot-base 높이의 strict frontal 카메라로 본다. 가까운 아래에는 detached low blanket pocket과 milk·cookie, 중간에는 차곡이와 center schedule board, 먼 위에는 서로 다른 두 pot을 두어 세 깊이를 만든다. 차곡이 exactly1만 등장하며 pots·schedule·blanket care cluster가 화면의 55–65%를 차지한다. 차곡이는 정본의 custard-yellow calf 몸, lavender horns exactly2와 forelock, purple ribbon과 apron, 단순 진보라 눈과 가슴 Stella 별을 유지한다. source-authored independent pots는 exactly2이며 하나는 낮고 넓고 다른 하나는 높고 좁다. 각 pot에는 아직 싹트지 않은 star seed exactly1씩, 합계 seeds2만 있으며 roots·soil·water·light는 pot 사이에서 합쳐지지 않는다. pots 사이 center schedule board exactly1에는 open slots exactly2, removable water-drop tab exactly1과 sun-disc tab exactly1만 둔다. water tab은 first slot에 half-seated, sun tab은 second slot 앞 open side cradle에 unmounted이며, board의 pivot-detent exactly1도 잠기지 않는다. 글자·숫자·요일·시간·clock·calendar·arrow 없이 공동 물·햇빛 일정이 symbol-only로 읽혀야 한다. source-authored thick green blanket exactly1은 pots와 닿지 않는 foreground dry patch에서 low open-front rectangular pocket exactly1로만 접는다. blanket은 dome, cloche, spiral, hammock, sling, windbreak, garment 또는 second blanket이 아니다. pocket 안에는 warm milk vessel exactly1과 last star-cookie exactly1을 서로 떨어뜨려 두고, blanket side의 removable fold-pin exactly1만 half-set한다. cookie는 exactly1이며 crumb, half, plate 또는 additional food가 없다. 두 unequal pot과 center board는 broken three-pillar silhouette를 만들고, blanket pocket 위와 pots 사이의 tall one-side-open fork-shaped cold-air bay가 upper left frame 밖으로 완전히 열린다. 이 bay는 shelf, niche, tent, ring, portal 또는 enclosure가 아니다. warm milk에서 나온 Nebula mist는 diffuse plumes exactly2로 갈라져 각 pot 바깥을 따로 지나 열린 fork bay로 사라지고 서로 닿거나 closed halo·root connection을 만들지 않는다. tabs, detent, fold-pin, milk와 cookie 위치는 모두 되돌릴 수 있고 seeds는 미발아라 일정·돌봄·온기·성장 결과는 확정되지 않는다. 추가 guardian, human, recipient clue, hand, shadow, pot, seed, board, slot, tab, blanket, pin, milk vessel, cup, cookie, crumb, plate, heart, flower 또는 sprout는 없다. heart0이며 readable text, pseudo-text, 숫자, birth-chart line, logo와 watermark를 넣지 않고 합쳐진 뿌리·완성 일정·보장된 성장이나 관계 결론도 표현하지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례, 짙은 보라 외곽선, winter-blue·green·cream·restrained gold Nebula 팔레트를 사용한다.",
+      "distinctFrom": [
+        "B018의 blanket cloche, B022의 warming drawer, B026의 knit hammock와 B030의 green shawl sidecut을 반복하지 않고 pot-base strict frontal의 two pot pillars·center board·detached low open-front blanket pocket을 사용한다.",
+        "B034의 snowbank cookie play, B038의 L blanket windbreaks, B042의 cantilever thermal blade, B046의 near-nadir blanket spiral 및 B047–49의 crock/sloped terrace/two-pot oblique를 피하고 pots2·seeds2·board1·blanket pocket1·milk1·cookie1과 upper-left open fork bay로 고정한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 정본 차곡이 exactly1의 horns2·forelock·ribbon/apron·가슴별, unequal pots2/seeds2, board1/slots2/tabs2/detent1, blanket1/open pocket1/fold-pin1, milk1과 cookie1이 분리 계수되고 hero cluster가 55–65%인지 확인한다.",
+        "pot-base frontal broken three-pillar silhouette와 upper-left open fork cold-air bay가 먼저 읽히고 cloche·hammock·spiral·sling·shelf가 아니며, mist plumes2와 controls가 open/reversible 상태라 heart·recipient·text·pseudo-text·숫자·birth-chart·closed halo·합쳐진 roots·완성 성장을 만들지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "7e4c21a725182ce7a81a1b915bc74d084736acff9d3872ef08aacf574dcda34a"
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.love.mutual-growth.nebula",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-29",
+      "editorialContentHash": "adad9e9b28d6a6af9eb97c4de17514076fae5c14600eda5ebf46a2b8ac9db9a5",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "branchjunction_steep_diagonal_highoblique65_independent_asymmetric_comma_crowns_crooked_open_skychannel_caught_letters_two_wisps_starfruit_stemcollar",
+      "artDirection": "세로 3:4의 바람 부는 Nebula 새벽을 branch-junction 위의 steep diagonal high-oblique 약 65도로 내려다본다. strict near-nadir는 사용하지 않으며, 가까운 아래에는 서로 다른 crown edge와 caught letters, 중간에는 재잘이·소곤이, 먼 위 대각에는 가까워지는 branch tips와 star-fruit를 두어 비스듬한 세 깊이를 만든다. canonical internal pair 재잘이와 소곤이 exactly2, question trees·letters·star-fruit cluster가 화면의 55–65%를 차지한다. 재잘이는 warm cream star-cloud, 소곤이는 pale lavender star-cloud 몸이며 둘 모두 단순 진보라 눈, small white wings와 가슴 Stella 별을 유지한다. canonical single pink connector ribbon exactly1은 두 몸 뒤에서만 느슨하게 이어지고 tree, branch, fruit, letter 또는 light에 닿지 않는다. source-authored question trees exactly2는 independent root system1과 trunk1씩을 유지하고, 한 tree는 rounded comma-shaped crown, 다른 tree는 pointed comma-shaped crown을 가져 서로 다른 질문을 보이되 question mark·word·face·speech bubble을 만들지 않는다. 두 roots, trunks와 crowns는 graft·braid·arch·canopy·book·page·letter 또는 ring으로 합쳐지지 않는다. branches가 가까워지는 지점에는 learned small star-fruit exactly1과 이를 half-set으로 받치는 removable open stem-collar exactly1만 둔다. collar 한쪽에는 넓은 gap이 남아 fruit와 branch를 즉시 분리할 수 있다. source-authored flying letters는 exactly2이며 guardian별로 letter1씩 자기 crown 바깥에서 small wings로 붙잡아 face-up으로 천천히 다시 읽는다. letters는 서로 겹치거나 stack·book·envelope·kite·twin screen이 아니고, 각 면에는 2–4개의 large abstract blot만 두며 readable text, handwriting, sentence row, pseudo-text, number, heart glyph 또는 question mark가 없다. 각 guardian은 자기 letter만 잡고 상대 letter, body, tree 또는 star-fruit에 닿지 않는다. two comma crowns 사이에는 broad crooked lightning-shaped sky channel이 lower right frame 밖으로 완전히 열려 가장 큰 negative space가 된다. 이 channel은 hourglass, corridor, portal, heart, V screen 또는 closed canopy가 아니다. 각 letter에서 나온 diffuse Nebula wisp exactly1씩, 합계 wisps2는 서로 다른 색과 높이로 channel에 번지지만 중앙에서 흐려질 뿐 선·문장·답·halo로 합쳐지지 않고 열린 lower-right로 사라진다. collar, fruit와 letters는 모두 다시 분리·회수할 수 있어 질문·답·재독·배움·관계 성장은 확정되지 않는다. 추가 guardian, star-cloud, ribbon, tree, root, trunk, crown, fruit, collar, letter, envelope, wing object, heart 또는 answer token은 없다. heart0이고 readable text, pseudo-text, 숫자, birth-chart line, actual constellation, logo와 watermark를 넣지 않으며 같은 답·완성된 문장·결정론적 이해나 합병도 표현하지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례, 짙은 보라 외곽선, dawn-cream·lavender·leaf-green·diffuse gold/blue Nebula 팔레트를 사용한다.",
+      "distinctFrom": [
+        "B018의 vertical windbreak twin letters, B022의 oval windsleeve rails, B026의 underhanging mesh lantern과 B030의 ground-parallel windcomb를 반복하지 않고 branch-junction diagonal high-oblique 65°와 independent comma crowns 사이 crooked open sky channel을 사용한다.",
+        "B034의 wide vapor charades, B038의 eye-level open-C speech sleeves, B042의 low-front swivel perches, B046의 worm-eye bowed letter planes 및 B047–49의 vertical letters/L-book/low-up twin trees를 피하고 crowns2·letters2·star-fruit1·stem-collar1과 diffuse wisps2로 고정한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 canonical 재잘이·소곤이 exactly2의 colors·white wings·가슴별과 connector ribbon1, question trees2/roots2/trunks2/crowns2, star-fruit1, open stem-collar1, flying letters2가 분리 계수되고 hero cluster가 55–65%인지 확인한다.",
+        "65° diagonal high-oblique depth와 rounded/pointed comma crowns 사이 lower-right-open crooked sky channel이 먼저 읽히고 near-nadir·screen·book·hourglass가 아니며, wisps2와 removable controls가 open 상태라 heart·question glyph·text·pseudo-text·숫자·birth-chart·closed halo·같은 답·확정 성장을 만들지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "d8e1efcc2961b618a71dd1a3cec0a407af96243488b46881c51e35309a034eb0"
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.love.mutual-growth.nebula",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-29",
+      "editorialContentHash": "05fbb14f7cd483fd57ddfe63e867a0a28b2bd9e6883f6a936336f677a2f17983",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "dryshelf_underside_strict_wormeye_offaxis15_short_eave_blade_long_garden_diagonal_upperleft_open_scalene_rainaperture_signal_threepatch_diffusion",
+      "artDirection": "세로 3:4의 달빛 비가 내리는 Nebula 밤을 protected dry shelf 바로 아래의 strict worm-eye, 약 15-degree off-axis로 올려다본다. 가까운 아래에는 shelf underside와 dry lip, 중간에는 Dalkong·role board·garden, 먼 위에는 short eave underside와 cropped moon-house door evidence를 두어 low-up 세 깊이를 만든다. 달콩이 exactly1만 등장하며 houses·garden·eave·protected objects를 합친 hero cluster가 화면의 55–65%를 차지한다. 달콩이는 정본의 cream·lavender integrated crescent moon-house crab 몸, rounded purple claws, 단순 진보라 눈, forehead와 chest Stella stars, shell에 붙은 canonical small star charm-lantern exactly1을 유지한다. source-authored small houses는 exactly2다. canonical crescent shell-house exactly1은 달콩이 몸과 한 개체로 유지하고, second solid portable house pack exactly1은 guardian보다 작은 무창·무문·무얼굴 object이며 visible shoulder straps exactly2만 가진다. pack은 window0, door0, eye0, mouth0, limb0, clothing0, recipient body clue0이고 dry garden edge에 비점유 상태로 놓인다. houses 사이에는 shared garden exactly1과 role board exactly1을 둔다. board에는 open slots exactly2, removable care-role tile exactly1과 solo-rest tile exactly1만 있으며 한 tile은 half-set, 다른 tile은 unmounted라 역할과 혼자 쉴 자리를 다시 바꿀 수 있다. source-authored moon-house door evidence exactly1은 far background에 얕은 cropped edge만 남기고 full doorway, threshold, opening, portal 또는 recipient 공간을 만들지 않는다. 그 아래 short eave exactly1은 thin blade로 돌출되고 removable gap-stop exactly1을 one notch만 걸쳐 즉시 접을 수 있다. eave 안쪽 dry shelf top에는 star signal light exactly1과 snacks exactly2를 서로 떨어뜨려 두며, snacks는 heart, star, moon, face, letter 또는 body-part silhouette가 아닌 서로 다른 irregular rounded shapes다. 추가 crumb, plate, bowl 또는 food는 없다. shelf와 eave blade 사이에는 guardian 몸 하나 폭보다 큰 broad upper-left-open scalene rain aperture가 frame 밖으로 완전히 열리고 moon-rain은 aperture 바깥에서만 떨어진다. aperture는 door, tunnel, canopy, cage, ring 또는 portal이 아니다. star signal에서 나온 Nebula light는 shelf underside에 detached diffuse patches exactly3으로 번지고 열린 upper-left aperture로 사라진다. patches는 route, response line, actual constellation, zodiac diagram, birth-chart line, closed halo, protective shield 또는 guaranteed safety를 만들지 않는다. role tiles, pack, eave stop, snacks와 signal은 모두 이동 가능하고 garden care·private rest·dry shelter·safety·관계 성장은 확정되지 않는다. 추가 guardian, human, recipient clue, hand, reflection, silhouette, house, pack, strap, garden, board, slot, tile, door, eave, stop, signal, snack, heart 또는 lamp는 없다. heart0이며 readable text, pseudo-text, 숫자, logo와 watermark를 넣지 않고 한 집으로 합침·확정된 역할·보장된 안전이나 관계 결론도 표현하지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례, 짙은 보라 외곽선, moon-cream·lavender·leaf-green·cool rain-blue·restrained gold Nebula 팔레트를 사용한다.",
+      "distinctFrom": [
+        "B018의 eave-drip long-axis dry shelf, B022의 rainchain wall cutaway, B026의 through-bead curtain과 B030의 top-down moonroof를 반복하지 않고 dry-shelf underside strict worm-eye 15°와 eave blade·garden diagonal 사이 upper-left-open scalene rain aperture를 사용한다.",
+        "B034의 wide water-harp posts, B038의 eye-level door·long awning, B042의 ceiling-corner high-rear yoke, B046의 snack-height strict-side eave cutaway 및 B047–49의 door/window/soil-cutaway를 피하고 low-up shelf lip, cropped door evidence1, houses2, garden1, signal1, snacks2와 underside diffusion patches3로 고정한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 정본 달콩이 exactly1의 integrated shell·claws·forehead/chest stars·attached charm1, shell-house1, second solid pack1/straps2, garden1, board1/slots2/tiles2, eave1/stop1, signal1과 snacks2가 분리 계수되고 hero cluster가 55–65%인지 확인한다.",
+        "dry-shelf underside worm-eye와 eave blade·garden 사이 upper-left-open scalene rain aperture가 먼저 읽히고 full door·threshold·side cutaway·portal이 아니며, pack의 window/door/face/body clue0과 patches3·controls의 가역성이 유지돼 recipient·heart·text·pseudo-text·숫자·birth-chart·closed halo·확정 안전을 만들지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "b67b8153d89bc09e42a7f8e5bb8fdf5b5ee61f6e50e4469040fb206d9a9a4a2c"
+    },
+    {
+      "order": 5,
+      "editionId": "leo.love.mutual-growth.nebula",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-29",
+      "editorialContentHash": "828497ff92a08dc8383841fb3b524173d557f4f54cb144a05bbc7aebd505f8a8",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "wingheight_rearright_raking_brokenZ_three_stage_decks_twin_pivotbridges_cape_shielded_sidelight_open_scalene_bay",
+      "artDirection": "세로 3:4의 노을 진 빈 연습 극장을 오른쪽 뒤 wing slot의 stage 높이에서 왼쪽 앞으로 30–35도 얕게 긁는 rear-right raking 카메라로 본다. 가까운 오른쪽의 personal stage exactly1, 중앙 중간 깊이의 collaboration stage exactly1, 먼 왼쪽의 personal stage exactly1을 서로 겹치지 않는 thin trapezoid deck으로 두어 stages exactly3이 near-right→mid-center→far-left broken-Z 주실루엣을 만든다. personal stages2와 collaboration stage1 사이에는 short pivot bridge tongue exactly1씩 합계2를 두고 각각 half-open 상태로 남겨 즉시 접거나 다시 펼 수 있게 한다. 세 deck과 bridge는 gate, stair, sawtooth, chevron, turntable, chair, spotlight pool, cutaway room 또는 하나의 합쳐진 무대가 아니다. 해님이 exactly1만 collaboration stage의 near edge에 크게 두어 정본의 황금 민들레 갈기, 비뚤어진 종이 왕관, 별 끝 꼬리, 단순 진보라 눈과 가슴 Stella 별을 유지한다. shared deck에는 symbol-only schedule board exactly1과 open hinge mounts exactly3, removable schedule markers exactly3을 둔다. markers는 shared cheer marker exactly1의 detached four-point stars2와 solo-practice marker exactly2의 single dot1·open crescent1뿐이며 readable text, pseudo-text, 숫자, 날짜, 시계, 화살표 또는 체크 표시가 아니다. 해님이는 한 앞발로 cheer marker를 center mount에 한 notch만 half-set하고, 다른 앞발로 gold cape exactly1의 자유 가장자리를 잡아 shared deck에 붙은 side light exactly1의 바깥 한쪽만 바람막이처럼 감싼다. cape는 light를 덮거나 잠그지 않고 arch, canopy, curtain wall, recipient cloak, empty seat 또는 박수치는 상대를 만들지 않는다. side light는 어느 자리도 비추지 않는 stage-edge 장치이며 밝기와 cape 각도를 다시 조절할 수 있다. broken-Z 아래 왼쪽에는 guardian 몸보다 넓은 broad scalene wing-floor bay가 lower-left frame 밖으로 완전히 열려 가장 큰 negative space가 된다. generic gold Nebula haze plume exactly1은 side light 뒤에서, violet haze plume exactly1은 far personal stage edge에서 따로 시작해 서로 닿지 않은 채 scalene bay와 서로 다른 frame edge로 퍼져 사라진다. plumes2는 halo, ring, spotlight cone, constellation, birth-chart, personal fate route 또는 guaranteed applause가 아니다. 해님이, stages3, bridges2, schedule과 cape-light 행동의 중심군은 화면의 55–65%를 차지한다. 각자의 무대와 응원·혼자 연습 시간이 보이지만 협업, 박수, 성장 또는 상대 수락은 확정하지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례, 짙은 보라 외곽선과 restrained gold-violet Nebula 확산을 사용한다. 제2 guardian, 외부 recipient의 몸·손·얼굴·그림자·반사·자리·소지품, heart, readable text, pseudo-text, 숫자, zodiac glyph, 실제 birth-chart line, closed light loop, logo와 watermark를 넣지 않는다.",
+      "distinctFrom": [
+        "B018의 floor drape·small lamp, B022의 overhead spotlight fan, B026의 frontal gate, B030의 mesh screen, B034의 meadow cushion, B038의 trench cloth와 B042의 bench를 반복하지 않고 wing-height rear-right raking broken-Z의 three detached decks를 사용한다.",
+        "B046의 under-stage cutaway, B047의 deep-axis sawtooth split, B048의 frontal twin beams와 B049의 near-nadir open-Y stages를 피하고 pivot bridges2, schedule markers3, cape1·side light1과 lower-left open scalene Nebula bay로 고정한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 정본 해님이 exactly1의 갈기·왕관·별꼬리·가슴별, stages3 중 personal2/shared1, pivot bridges2, schedule1·mounts3·markers3(shared cheer1/solo2), cape1과 side light1이 분리 계수되고 중심군이 55–65%인지 확인한다.",
+        "rear-right broken-Z와 lower-left open scalene bay가 먼저 읽히고 cape는 one-side wind shield, bridges와 markers는 half-set이며 plumes2가 분리 확산되어 recipient 단서·heart·text·pseudo-text·숫자·birth-chart·closed halo·확정 박수나 성장을 만들지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "d2fcbaccabfcda4e30ee3cf522da50bb2ae957252018bf298be3020cd31a2eea"
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.love.mutual-growth.nebula",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-29",
+      "editorialContentHash": "3dcf0838b4ca06831336bd7e2f460d8902e580c70d1669308adb4bf79bcd7a71",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "flowerhead_true_side_unequal_twinspires_suspended_shared_can_openS_loose_ribbon_dual_growthclips_open_pollen_bay",
+      "artDirection": "세로 3:4의 바람 부는 봄밤 작업터를 star-flower head 높이의 strict true-side shallow lateral camera로 본다. 가까운 왼쪽에는 low star sprout/flower exactly1, 먼 오른쪽에는 같은 종이지만 더 긴 tall star sprout/flower exactly1을 두어 source-authored sprouts exactly2가 서로 다른 높이와 간격의 unequal twin-spire 주실루엣을 만든다. 두 stem과 root는 독립되어 서로 접목·꼬임·합침되지 않으며 추가 sprout, flower, pot, vase 또는 soil vessel은 없다. 새봄이 exactly1만 두 stem 사이의 낮은 중간 깊이에 크게 두어 정본의 크림색 씨앗 몸, 큰 초록 잎귀 exactly2, 이마 별, 초록 잎목깃과 작은 잎 꼬리, 단순 진보라 눈과 가슴 Stella 별을 유지한다. 각 stem 바깥에는 removable growth clip exactly1씩 합계2를 느슨하게 걸어 현재 높이만 표시하며 같은 눈금으로 맞추지 않는다. shared watering can exactly1은 두 stem 사이의 작은 removable center hook exactly1에 걸려 어느 sprout 쪽으로도 다시 돌릴 수 있고 물은 아직 붓지 않는다. can handle의 open side에는 care-time paddle exactly1과 shallow mounts exactly2, removable time tabs exactly2를 half-set한다. tabs는 open leaf relief1과 open crescent relief1만 가지며 text, pseudo-text, 숫자, 날짜, 시계 눈금, 순서 또는 arrow가 아니다. source-authored loose green ribbon exactly1은 low stem과 tall stem을 각각 한 번만 아주 느슨하게 스치는 낮은 open-S course를 만들고 free ends exactly2를 서로 다른 방향으로 노출한다. ribbon은 knot, bow, closed loop, equality band, heart, infinity sign 또는 stem-binding brace가 아니며 즉시 풀거나 더 느슨하게 할 수 있다. 새봄이는 한 앞발로 low stem의 clip을 한 notch만 옮기고 다른 앞발로 가까운 ribbon free end1을 느슨하게 받쳐 길이를 억지로 맞추지 않는다. clips2, hook1, tabs2와 ribbon1은 모두 회수 가능하다. 두 flower crown 사이에는 tall off-center tapered wedge가 upper-right frame 밖으로 완전히 열려 가장 큰 negative space가 된다. pale green Nebula pollen plume exactly1과 soft gold plume exactly1은 각 stem 뒤에서 따로 확산되다가 crown 사이의 큰 gap 전에 흐려지고 서로 닿거나 닫히지 않는다. plumes2는 constellation, zodiac diagram, birth-chart, growth chart, personal fate reading 또는 guaranteed equal growth가 아니다. 새봄이, sprouts2, can과 controls의 중심군은 화면의 55–65%를 차지한다. 서로 다른 성장 속도, 공동 물뿌리개와 돌봄 시간, 느슨한 보호는 보이지만 동일 성장, 완성 개화, 돌봄 합의 또는 상대 답은 확정하지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례, 짙은 보라 외곽선과 soil-brown·leaf-green·restrained gold Nebula 확산을 사용한다. 제2 guardian, 외부 recipient의 몸·손·얼굴·그림자·반사·자리·소지품, additional sprout·flower·pot·can·ribbon, heart, readable text, pseudo-text, 숫자, 실제 birth-chart line, closed ring, logo와 watermark를 넣지 않는다.",
+      "distinctFrom": [
+        "B018의 tripod flower cluster, B022의 overhead leaf-pot, B026의 rain grotto vessels, B030의 seated flower field, B034의 meadow front, B038의 overhead patchwork와 B042의 branching pipe를 반복하지 않고 flower-head true-side unequal twin spires를 사용한다.",
+        "B046의 exterior cracked pot, B047의 frontal pot-and-post, B048의 lateral fallen pot와 B049의 spout-tip extreme-depth can을 피하고 suspended shared can1, open-S ribbon1/free ends2, clips2, paddle1·tabs2와 upper-right open pollen bay로 고정한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 정본 새봄이 exactly1의 잎귀2·이마별·잎목깃·꼬리·가슴별, unequal sprouts2, growth clips2, shared can1, center hook1, care paddle1·mounts2·tabs2와 ribbon1/free ends2가 분리 계수되고 중심군이 55–65%인지 확인한다.",
+        "flower-head strict side twin-spire와 upper-right open wedge가 먼저 읽히고 ribbon은 open-S의 느슨한 untied course, water는 미사용이며 separate plumes2가 열린 채 recipient·heart·text·pseudo-text·숫자·birth-chart·동일 성장·확정 돌봄을 만들지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "454df6740520a774c0cb50db952306363a11518f396f717b8dfc6cea2ba24c56"
+    },
+    {
+      "order": 7,
+      "editionId": "libra.love.mutual-growth.nebula",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-29",
+      "editorialContentHash": "f3586bfd9783137e53e947996435660c50bc0df978523b7d7b441fc084f6b914",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "supporttop_highrear_threequarter_staggered_twin_buttress_ledges_independent_starweights_shared_swingtray_open_kite_bay",
+      "artDirection": "세로 3:4의 보랏빛 황혼 cloud workshop을 두 support top보다 약간 높은 뒤쪽에서 50–55도 내려다보는 support-top high rear three-quarter camera로 본다. 가까운 위쪽에는 near personal ledge exactly1, 중앙 중간 깊이에는 고르미와 role chart 및 shared swing tray, 먼 아래에는 far personal ledge exactly1을 두어 near-upper→mid-center→far-lower의 긴 대각 세 깊이를 만든다. personal ledges2는 서로 닿지 않는 detached buttress support exactly1씩 합계 supports2에만 붙고 beam, scale, pan, balance arch, seesaw, shelf, chair, island 또는 하나의 합쳐진 구조가 아니다. 고르미 exactly1만 중앙의 열린 side에 크게 두어 정본의 하늘색 구름 몸, 푸른 이마 소용돌이, 파랑·분홍의 긴 물결 귀 exactly2와 귀 끝 별, 단순 진보라 눈과 가슴 Stella 별을 유지한다. source-authored personal goal stars exactly2는 각각 star-weight exactly1로 near/far personal support 위에 하나씩 독립적으로 놓이며 크기·색·목표를 합치거나 교환하지 않는다. 각 star-weight 아래에는 removable open chock exactly1씩 합계2를 한 notch만 half-set해 흔들림을 줄이되 support에 잠그지 않는다. source-authored shared third goal star exactly1은 중앙의 removable swing tray exactly1 위에 unlatched 상태로 놓아 즉시 들어낼 수 있다. role chart exactly1은 central mid-plane의 shallow vane이며 open pockets exactly3과 removable role tabs exactly3을 half-set한다. personal tabs2에는 서로 다른 blunt single relief, shared tab1에는 detached paired dots만 두고 readable text, pseudo-text, 숫자, 순번, arrow, checklist 또는 heart glyph를 넣지 않는다. 고르미는 shared tab을 한 notch만 옮기고 다른 앞발은 shared star와 star-weights에서 떼어 둔다. tabs3, chocks2, swing tray1과 shared star1은 모두 즉시 회수할 수 있어 역할·공동 목표·안정은 확정되지 않는다. near/far buttress와 center swing tray가 staggered diagonal bracket 주실루엣을 만들고, 그 사이의 broad one-side-open asymmetric kite/diagonal air bay가 upper-left frame 밖으로 완전히 빠져 가장 큰 negative space가 된다. 이 bay는 scale aperture, heart, diamond seal, ring, portal 또는 closed cabinet이 아니다. pale blue Nebula column exactly1과 violet column exactly1은 각 support 뒤에서 따로 올라 shared star 전에 흐려지고 upper-left bay의 서로 다른 edge로 확산되어 사라진다. columns2는 closed balance halo, judgment line, constellation, birth-chart 또는 deterministic agreement가 아니다. 고르미, supports2, stars3, chart와 controls의 중심군은 화면의 55–65%를 차지한다. 각자의 별과 별추는 독립된 채 공동 별과 역할만 제안되며 꿈 축소, 양보, 역할 수락, 균형 판정 또는 관계 결론은 확정하지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례, 짙은 보라 외곽선과 cloud-blue·pale gold·restrained violet Nebula 확산을 사용한다. 제2 guardian, 외부 recipient의 몸·손·얼굴·그림자·반사·자리·소지품, additional star·weight·support·tray·ribbon, scale, beam, pan, heart, readable text, pseudo-text, 숫자, 실제 birth-chart line, closed ring, logo와 watermark를 넣지 않는다.",
+      "distinctFrom": [
+        "B018의 winding pedestal path, B022의 hanging pans, B026의 feather nest, B030의 paired bottles, B034의 open-sky petals, B038의 ribbon loops와 B042의 river path를 반복하지 않고 support-top high-rear 50–55°의 near-upper/mid/far-lower diagonal depth를 사용한다.",
+        "B046의 scale support layout, B047의 full beam, B048의 seesaw와 B049의 strict-side open-C shelf를 피하고 detached buttress supports2, personal star-weights2, shared swing tray/star1, chart tabs3, chocks2와 upper-left open asymmetric kite bay로 고정한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 정본 고르미 exactly1의 이마 소용돌이·귀2·귀 끝 별·가슴별, detached supports2, personal star-weights2, shared star1 합계 goal stars3, swing tray1, chart1·pockets3·tabs3와 chocks2가 분리 계수되고 중심군이 55–65%인지 확인한다.",
+        "support-top high-rear diagonal depth와 upper-left open kite bay가 scale·beam·pan·seesaw·shelf가 아니고 weights는 각 support, shared star는 unlatched tray에 남으며 columns2가 열린 채 recipient·ribbon·heart·text·pseudo-text·숫자·birth-chart·확정 역할이나 균형 판정을 만들지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "169c08395d9fd2d4a7026c699228bf34b9cf78e7b6814498794eb111abec6e1b"
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.love.mutual-growth.nebula",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-29",
+      "editorialContentHash": "426b5b84b8e5a2055e48efa2d5581c49e65bb976a97a1acd90f61240ff1615cc",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "umbrella_rimaxis_strict_edgeon_diagonal_blade_three_starbox_steps_hinged_keyuse_leaves_open_rain_corridor",
+      "artDirection": "세로 3:4의 별비 내리는 깊은 남보라 작업터를 umbrella rim 축과 거의 나란한 tabletop 높이의 strict edge-on camera로 본다. 검은 보랏빛 umbrella exactly1의 canopy는 화면을 가리는 넓은 dome이 아니라 앞쪽 아래에서 먼 위쪽으로 길게 기울어진 thin diagonal blade로만 보이고 handle과 rib edge는 하나의 우산으로 연결된다. blade 아래의 가까운 한쪽에는 shared starbox exactly1, 중간과 먼 반대쪽에는 서로 다른 깊이의 personal starbox exactly2를 두어 boxes exactly3이 near→mid→far stepped cluster를 만든다. personal boxes2는 각각 닫혀 독립 경계를 유지하고 shared box1만 half-open이며 세 box는 하나의 drawer, cross-net, shelf, door, portal 또는 합쳐진 container가 아니다. 꼬옥이 exactly1만 mid-depth에 크게 두어 정본의 짙은 보라 전갈 몸, 큰 둥근 집게, 단순 진보라 눈, 가슴 Stella 별과 canonical pink heart-shaped tail tip exactly1을 유지한다. shared lid inner face에는 key-use chart exactly1과 hinged symbol leaves exactly3을 두고 각 leaf를 다른 각도의 half-open 상태로 남긴다. leaves는 solid notch1, open crescent notch1, detached paired dots1의 blunt relief만 가지며 readable text, pseudo-text, 숫자, 순서, arrow, keyhole glyph 또는 additional heart가 아니다. actual physical key0, inserted key0, lock0이며 personal boxes에도 keyhole이나 lock hardware가 없다. 꼬옥이는 한 집게로 shared symbol leaf1을 한 notch만 옮기고, 다른 집게로 umbrella handle을 removable tilt-stop exactly1에 가볍게 기대어 neutral shared dry work-zone 쪽으로만 기울인다. tilt-stop은 즉시 빼거나 각도를 바꿀 수 있고 우산은 personal box나 외부 자리 위에 고정되지 않는다. dry work-zone은 비어 있는 단순한 바닥 patch이며 chair, body outline, hand, shadow, reflection, clothing, belonging, 답 또는 recipient position을 암시하지 않는다. canonical tail-heart1은 dim red light를 조금만 드러내며 tail에서 떨어지거나 두 번째 heart가 되지 않는다. diagonal blade와 stepped boxes가 open-K 주실루엣을 만들고, 그 바깥의 broad triangular rain corridor가 upper-right frame 밖으로 완전히 열려 가장 큰 negative space가 된다. violet star-rain Nebula streaks는 canopy 뒤에서 짧게 흩어져 corridor로 확산되지만 chart·boxes·guardian을 감싸기 전에 끊긴다. tail의 red glow는 short open plume exactly1로만 퍼져 streak와 만나지 않는다. 빛은 closed halo, protective dome, heart outline, constellation, zodiac diagram, birth-chart, personal fate route 또는 guaranteed access가 아니다. 꼬옥이, umbrella1, boxes3, chart와 controls의 중심군은 화면의 55–65%를 차지한다. shared opening, key-use 방식과 우산 보호는 제안되지만 personal box 개방, 권한, 성장 지지 수락, 상대 응답 또는 관계 심화는 확정하지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례, 짙은 보라 외곽선과 restrained violet-gold Nebula 확산을 사용한다. 제2 guardian, 제3 guardian, 외부 recipient의 몸·손·얼굴·그림자·반사·자리·소지품, additional box·umbrella·key·lock·door, canonical tail-heart1 외 additional heart, readable text, pseudo-text, 숫자, 실제 birth-chart line, closed ring, logo와 watermark를 넣지 않는다.",
+      "distinctFrom": [
+        "B018의 giant frontal canopy, B022의 wet rail, B026의 window umbrella, B030의 luminous halo, B034의 cave openings, B038의 lock-door umbrella와 B042의 overhead canopy를 반복하지 않고 umbrella-rim-axis strict edge-on thin blade를 사용한다.",
+        "B046의 broad repair umbrella, B047의 ajar door, B048의 true-nadir cross-box와 B049의 inside-box low-up V를 피하고 boxes3, hinged chart leaves3, tilt-stop1, actual key/lock0, canonical tail-heart1과 upper-right open rain corridor로 고정한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 정본 꼬옥이 exactly1의 전갈 몸·큰 집게·가슴별·canonical tail-heart1, edge-on umbrella1, personal boxes2/shared box1 합계3, key-use chart1·hinged leaves3, tilt-stop1과 actual key/lock0이 분리 계수되고 중심군이 55–65%인지 확인한다.",
+        "strict edge-on diagonal blade와 upper-right open triangular rain corridor가 dome·door·portal·cross-net이 아니고 shared box만 half-open, leaves와 tilt-stop은 가역적이며 open Nebula streaks와 tail plume가 recipient 단서·additional heart·text·pseudo-text·숫자·birth-chart·closed halo·확정 권한이나 관계 심화를 만들지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "651859042d530f2b0088ccda70543edc26754d3b5312bb392dc9d196753f68af"
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.love.mutual-growth.nebula",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-29",
+      "editorialContentHash": "3a83d3d03c2039ece9be68fc9b6987ba9d7db86d53d1807555a5ad255cc7f59a",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "strict_nadir_interrupted_three_lobe_discoverymap_cloakreturnmap_missing_quadrant_nebula",
+      "artDirection": "세로 3:4의 별바람 부는 Nebula 새벽을 strict nadir로 내려다본다. 가까운 아래 왼쪽에는 바깥 discovery map, 중간에는 removable two-slot exchange rocker와 cheer star, 먼 위에는 안쪽을 펼친 travel cloak lobe와 총총이를 두어 얕지만 분명한 세 깊이를 만든다. 총총이 정확히 한 명과 maps·cloak·controls를 합친 hero cluster가 화면의 55–65%를 차지한다. 총총이는 정본의 따뜻한 크림색 궁수 몸, 긴 귀, 연보라 갈기와 반점, 별무늬 스카프, 단순 진보라 눈, 가슴 Stella 별과 몸 뒤의 gold crescent bow·string 정확히 하나를 유지한다. 추가 guardian, 상대 guardian, 외부 recipient, 외부 손·몸·얼굴·그림자·반사·빈 상대 자리·개인 소지품은 없다. source-authored maps는 장면 전체에 정확히 두 장뿐이다. 바깥 discovery map 정확히 한 장과 travel cloak 안쪽 open pocket에 보관된 return map 정확히 한 장이며, return map은 cloak lobe와 분리된 실제 map으로 읽힌다. 각 map에는 새로 발견한 길을 뜻하는 broad abstract path wash 정확히 하나씩, 총 두 개를 둔다. path wash는 글자·선형 route·격자·좌표·화살표·실제 지도선·actual constellation·birth-chart line이 아니라 서로 다른 넓은 색면이다. third map, map fragment, scroll, advice note와 별도 route prop은 없다. 두 map의 위치를 잠정적으로 바꿀 removable two-slot exchange rocker는 정확히 하나이며 한 notch만 돌아가고 잠기지 않는다. 조언 대신 두는 source-authored movable cheer star token은 정확히 하나이며 discovery path wash 위에 느슨하게 놓인다. travel cloak은 정확히 하나이며 펼친 한 lobe가 third blade를 만들고, open pocket 안에는 return map1과 source-authored snacks 정확히 두 개만 서로 분리되어 보인다. 추가 cloak, snack, flag, time band, bag 또는 advice mark는 없다. outside map, rocker, cloak lobe가 interrupted three-lobe pinwheel dominant silhouette를 만들되 닫힌 rosette나 circle이 되지 않는다. 존재하지 않는 fourth quadrant에는 broad asymmetric empty-sky bay를 두고 아래쪽과 오른쪽 프레임 밖으로 완전히 연다. bay는 heart, ring, diamond, V, X, bag, gate, tunnel, road 또는 portal이 아니다. rocker·cheer star·maps·snacks는 즉시 회수하거나 원위치로 돌릴 수 있어 교환과 응원은 가역적이다. 두 path wash의 gold·lavender Nebula glow는 각자의 map edge에서 시작해 서로 만나지 않고 missing quadrant의 별바람 속으로 넓게 확산되어 먼 길의 신호를 지키되 답장·동행·목적지·성장·재회를 확정하지 않는다. readable text, pseudo-text, 숫자, zodiac glyph, actual constellation, birth-chart data, personal destiny reading, logo와 watermark는 없다. hearts0, guardian contact0. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례, 짙은 보라 외곽선과 열린 비개인 Nebula 확산광을 사용한다.",
+      "distinctFrom": [
+        "B018의 cloak-interior frame, B022의 bag facade, B026의 hanging diagonal, B030의 flag pivot, B034의 wide hill toss, B038의 canyon twin maps, B042의 cave mat, B046의 frontal cloak slab를 반복하지 않고 strict nadir의 outside map1·cloak return map1·missing-quadrant three-lobe 구성을 사용한다.",
+        "B047의 horizontal map shelves, B048의 pullout-T board, B049의 hinge-axis end-on V를 피하고 maps exactly2 total, path washes2, cloak1, snacks2, rocker1, cheer star1, guardian1과 lower-right-open sky bay로 고정한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 총총이 정확히 한 명의 긴 귀·갈기·스카프·가슴별·뒤쪽 crescent bow, outside discovery map1, cloak-pocket return map1, path washes2, rocker1, cheer star1, cloak1, snacks2가 분리 계수되고 maps total2·third map0·hero cluster55–65%인지 확인한다.",
+        "strict nadir interrupted three-lobe silhouette와 아래·오른쪽으로 열린 missing-quadrant sky bay가 닫힌 rosette·circle·bag·route가 아니고, 두 Nebula glow가 만나지 않은 채 확산되어 교환·답장·동행·성장을 결정론적으로 완성하지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "d42830333abf4a805e018611afc43f951b706485d353a7579cf8dc104634a008"
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.love.mutual-growth.nebula",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-29",
+      "editorialContentHash": "7e97cc10a524a9587aee9d45255a990f588d7c95ecad47b7723ffb4df392c5a5",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "screwhead_low_side_threequarter_underlanding_single_landingfootboard_offset_fork_open_underbay",
+      "artDirection": "세로 3:4의 눈 내리는 Nebula 새벽 계단을 screw-head 높이의 low side three-quarter under-landing raking camera로 본다. worm-eye가 아니라 계단 옆 아래에서 shared landing-footboard의 underside를 비스듬히 따라가는 시점이다. 가까운 아래 오른쪽에는 screw head와 driver, 중간에는 cloak이 덮인 landing-footboard의 underside와 edge, 먼 위에는 서로 다른 두 staircase와 오름이의 얼굴을 두어 세 깊이를 만든다. 오름이 정확히 한 명과 stairs·landing-footboard·controls를 합친 hero cluster가 화면의 55–65%를 차지한다. 오름이는 정본의 흰 염소 몸, 연보라 뿔과 발굽, 청록 물고기 꼬리, 파란 별장식 가방, 단순 진보라 눈과 가슴 Stella 별을 유지한다. 추가 guardian, 상대 guardian, 외부 recipient, 외부 손·몸·얼굴·그림자·반사·빈 상대 자리·개인 소지품은 없다. source-authored stairs는 정확히 두 개이며 서로 다른 tread pitch와 간격을 가진 별도 stair stringer로 독립적으로 올라간다. 각 stair에는 각자의 성장 목표를 나타내는 removable goal marker 정확히 하나씩, 총 두 개를 두며 marker는 solid abstract shape일 뿐 글자·숫자·눈금·순번·체크·화살표가 아니다. 두 stair의 중간에 있는 source-authored shared landing 정확히 하나는 source-authored small footboard 정확히 하나와 동일한 물리적 물체다. 따라서 landing-footboard는 장면 전체에 exactly1이고 separate landing, second footboard, bridge deck 또는 summit connector는 없다. thick work cloak은 정확히 하나이며 landing-footboard의 top과 한 edge만 느슨하게 덮어 arch·tent·canopy·tunnel을 만들지 않는다. landing-footboard underside의 source-authored screw는 정확히 하나이고 driver도 정확히 하나다. 오름이는 driver로 screw를 다음 안정 notch 직전까지 한 half-turn 조이지만 완전히 잠그지 않는다. screw와 driver 외 broken screw, spare screw, tray, socket, task bank 또는 second tool은 없다. stairs2와 single landing-footboard가 inverted offset-fork dominant silhouette를 만들고, 그 아래에는 broad skewed under-landing sky bay를 아래쪽과 왼쪽 프레임 밖으로 완전히 연다. bay는 central chasm, arch, tunnel, stairwell, drawer, heart, ring, V, X 또는 portal이 아니다. screw는 다시 한 turn 풀 수 있고 cloak corner와 goal markers도 즉시 거둘 수 있어 목표·중간 확인·발판 보호는 가역적이다. 두 goal marker의 gold·aqua Nebula haze는 서로 다른 stair underside를 따라 내려와 landing-footboard 반대편에서 잠시 겹친 뒤 아래 열린 bay로 서로 다른 veil이 되어 흩어진다. 빛은 same pace, guaranteed meeting, summit, answer, growth 또는 reunion을 만들지 않는다. readable text, pseudo-text, 숫자, zodiac glyph, actual constellation, birth-chart data, personal destiny sign, heart, logo와 watermark는 없다. hearts0, guardian contact0. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례, 짙은 보라 외곽선과 열린 비개인 Nebula 확산광을 사용한다.",
+      "distinctFrom": [
+        "B018의 curtain aperture, B022의 under-stair rail, B026의 triangular shelter, B030의 A-frame, B034의 frontal snow stairs, B038의 cliff gap, B042의 square platform, B046의 close service board를 반복하지 않고 screw-head low side three-quarter under-landing raking과 single landing-footboard underside를 사용한다.",
+        "B047의 axial ramp, B048의 transverse bench, B049의 frontal open-comb를 피하고 guardian1, stairs2, goal markers2, landing-footboard exactly1, cloak1, screw1, driver1, second footboard0과 lower-left-open under-bay로 고정한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 오름이 정확히 한 명의 뿔·청록 꼬리·가방·가슴별, stairs2, goal markers2, shared landing과 same physical object인 small footboard1, cloak1, screw1, driver1이 분리 계수되고 separate landing·second footboard·extra screw0, hero cluster55–65%인지 확인한다.",
+        "screw-head low side three-quarter raking, inverted offset fork와 아래·왼쪽으로 열린 broad under-bay가 worm-eye·arch·central chasm·bridge가 아니고, Nebula veils가 열린 bay로 흩어져 same pace·meeting·summit·growth를 확정하지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "20026aa97792446a9aed468165711f205948d62e5e376927d05e8addc108e360"
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.love.mutual-growth.nebula",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-29",
+      "editorialContentHash": "6b81b689a987f6d82bfeec9d1a6df185ef665a3122d7675728f08bb663a5af5a",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "true_side_tableedge_staggered_crenellated_shelves_coat_heartbottle_wave_signal_open_parallelogram_bay",
+      "artDirection": "세로 3:4의 푸른 Nebula 새벽 cloud workshop을 tabletop edge 높이의 strict true-side axial camera로 본다. 가까운 아래에는 edge-on shared experiment table과 reversible rule slots, 중간에는 겨울 코트를 입은 방울이와 blue heart-profile bottle, 먼 위에는 서로 높이와 각도가 다른 personal worktables 두 개를 두어 near·mid·far 세 깊이를 분명히 한다. 방울이 정확히 한 명과 tables·rule controls·bottle을 합친 hero cluster가 화면의 55–65%를 차지한다. 방울이는 정본의 연하늘색 구름양 몸, 큰 spiral forelock, 길고 처진 귀, 연보라 발굽, 단순 진보라 눈과 가슴 Stella 별을 유지한다. 추가 guardian, 상대 guardian, 외부 recipient, 외부 손·몸·얼굴·그림자·반사·빈 의자·빈 상대 자리·개인 소지품은 없다. source-authored tables는 정확히 세 개다. 각자의 고유한 실험 방식을 위한 personal worktable 정확히 두 개는 먼 depth의 high/low shelf plane으로 분리되고, source-authored shared experiment table 정확히 하나는 가까운 아래에서 edge-on으로 독립한다. 세 table은 서로 붙어 하나의 큰 table이 되지 않는다. 각 personal surface에는 broad color field 하나씩만 있고 bottle, tool, page, machine, hand, label 또는 chair는 없다. 서로의 아이디어를 고치지 않고 도울 규칙은 removable help-rule tile 정확히 두 개로 나타낸다. tile 하나는 open bracket와 detached dot, 다른 하나는 separated bars와 stop-dot만 가지며 readable text, pseudo-text, 숫자, 체크, 화살표 또는 heart glyph가 아니다. 두 tile은 shared table edge의 separate open rule slot에 반쯤 놓이고 personal table에는 닿지 않는다. 별도 dock, third tile 또는 locked clip은 없다. 방울이가 입는 winter coat는 정확히 하나이며 source-authored blue heart bottle 정확히 하나를 코트 앞쪽의 열린 품 안에서 온도만 지키도록 받친다. bottle outer silhouette는 분명한 single heart profile이고 intact/broken 여부를 추가 bottle로 반복하지 않는다. bottle neck에는 removable temperature bead 정확히 하나를 두며 thermometer, number, scale 또는 gauge가 아니다. 방울이는 한 앞발로 rule tile을 놓고 다른 앞발로 bottle을 코트 안에 받치되 모든 동작은 한 guardian 안에서 끝난다. tables3가 three detached crenellated shelf-plane dominant silhouette를 만들고, staggered high/low personal tables 사이에는 broad skewed parallelogram air bay를 위쪽과 왼쪽 프레임 밖으로 완전히 연다. bay는 teardrop, serrated trough, M, cloth aperture, circle, heart, bottle niche, tunnel 또는 portal이 아니다. tiles와 temperature bead는 즉시 빼고 coat도 열 수 있어 help rules와 온도 보호는 가역적이다. source-authored wave signal은 정확히 한 가닥이며 bottle neck 옆에서 시작해 설명이나 recipient 대신 broad blue Nebula haze로 넓어져 열린 parallelogram bay 밖으로 사라진다. signal은 route, reply line, closed ring, deterministic collaboration, completed experiment, answer 또는 reunion을 만들지 않는다. 추가 table, tile, coat, bottle, temperature control, wave, heart, chair, loom, framework, cloth 또는 triptych는 없다. readable text, pseudo-text, 숫자, zodiac glyph, actual constellation, birth-chart data, personal method reading, logo와 watermark는 없다. hearts exactly1이며 source-authored blue heart bottle1 외 heart0, guardian contact0. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례, 짙은 보라 외곽선과 열린 비개인 Nebula 확산광을 사용한다.",
+      "distinctFrom": [
+        "B018의 coat close-up, B022의 cloud tunnel, B026의 round caddy, B030의 hourglass tower, B034의 tuning forks, B038의 cliff tanks, B042의 fan, B046의 cuff trough·serrated bay를 반복하지 않고 strict true-side table-edge의 staggered crenellated shelf planes와 single heart bottle을 사용한다.",
+        "B047의 top-down cloth, B048의 open-M triptych, B049의 high-oblique trident를 피하고 guardian1, tables3(personal2+shared1), rule tiles2, coat1, blue heart bottle1, temperature bead1, wave signal1과 upper-left-open parallelogram bay로 고정한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 방울이 정확히 한 명의 spiral forelock·처진 귀·가슴별, personal tables2, shared table1, rule tiles2, winter coat1, single blue heart-profile bottle1, temperature bead1, wave signal1이 분리 계수되고 hero cluster55–65%, extra guardian·table·bottle·heart0인지 확인한다.",
+        "strict true-side near shared table·mid Banguli·far staggered personal tables와 detached crenellated silhouette, 위·왼쪽으로 열린 parallelogram bay가 trident·serrated trough·M·teardrop이 아니고, wave signal이 열린 haze로 확산되어 설명·reply·collaboration·experiment를 결정론적으로 완성하지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "ae5cb7e25945a004c332b8bab3315d540fa18ccdcb091d0fdefcc09ac14ff87c"
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.love.mutual-growth.nebula",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-29",
+      "editorialContentHash": "12d5d96efe83e6c5a6686775367444802841a48bbfeb6d4a11feb2e9f3fc07ef",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "low_true_side_raking_Z_current_terrace_open_clasp_ring_offset_clearwater_bay_role_tabs_nebula",
+      "artDirection": "세로 3:4의 달빛 깊은 Nebula dream sea를 매우 낮은 true-side raking camera로 Z-shaped three-tier current terrace의 긴 edge를 따라 본다. 가까운 아래에는 loose starlight ring의 open clasp gap, 중간 tier에는 더 큰 aqua 꿈별이와 aqua current 및 shared wave의 role controls, 먼 위 tier에는 더 작은 pink 잠별이와 pink current 및 서로 다른 dream coral을 두어 near·mid·far 세 깊이를 만든다. canonical internal pair인 꿈별이와 잠별이 정확히 두 명, currents·corals·shared wave·controls·ring을 합친 hero cluster가 화면의 55–65%를 차지한다. 꿈별이는 정본의 더 큰 aqua 물고기 몸, 푸른 지느러미, distinct canonical aqua pajamas, 단순 진보라 눈과 가슴 Stella 별을 유지한다. 잠별이는 정본의 더 작은 pink 물고기 몸, 분홍 지느러미, distinct canonical pink pajamas, 단순 진보라 눈과 가슴 Stella 별을 유지한다. 상대 크기와 색·pajamas는 바뀌거나 섞이지 않으며 pajamas/relative scale swap0이다. 추가 guardian, 외부 recipient, 외부 손·몸·얼굴·그림자·반사·개인 소지품은 없다. source-authored dream corals는 정확히 두 개다. aqua coral1과 pink coral1은 서로 다른 tier, 높이, branch rhythm과 색으로 독립하며 vertical bracket나 하나의 coral로 합쳐지지 않는다. 두 guardian이 타는 source-authored currents는 정확히 두 가닥, aqua current1과 pink current1이며 서로 다른 Z terrace edge를 따라 흐르고 합류하지 않는다. 가운데 source-authored shared wave는 정확히 하나의 짧고 넓은 band로 middle bend를 가로지르되 두 current나 coral roots를 묶지 않는다. 각자의 꿈을 스스로 키울 몫은 removable solo-growth tab 정확히 두 개, aqua1과 pink1로 나타내어 각 coral의 separate open slot에 반쯤 놓는다. 서로 돌볼 현실적 행동은 source-authored shared-care tab 정확히 하나이며 shared wave 중앙에만 둔다. care tab에는 separated droplets와 open bracket만 있고 글자·숫자·heart glyph가 아니다. solo tabs와 care tab의 역할을 나누는 removable divider clip은 정확히 하나이며 shared wave edge에 half-set 상태로 있다. loose starlight ring은 정확히 하나이며 가까운 tier를 비스듬히 지나되 open clasp gap 정확히 하나를 남겨 닫힌 circle이나 halo가 아니다. 꿈별이와 잠별이는 서로 다른 ring side를 놓치지 않고 각자의 current를 타지만 상대 몸·지느러미·current·coral·tab을 당기거나 만지지 않는다. pair contact0. ring end, tabs와 clip은 즉시 풀거나 회수할 수 있어 care roles, solo growth와 동행은 가역적이다. two currents와 short shared wave가 Z-shaped three-tier terrace dominant silhouette를 만들고, middle/far tier 사이에는 broad offset clear-water bay를 왼쪽 프레임 밖으로 완전히 연다. bay는 X, U, S, V, circle, lens, band corridor, diamond, dark disk, heart 또는 portal이 아니다. ring gap의 aqua·pink starlight는 서로 섞이지 않는 Nebula plume 정확히 두 가닥으로 넓어져 각각 다른 방향으로 사라진다. 빛은 closed ring, current merge, sacrifice, identity merge, guaranteed care, growth 또는 reunion을 만들지 않는다. 추가 coral, current, wave, tab, clip, ring, bubble, veil, membrane, rail, swatch, heart 또는 dream orb는 없다. readable text, pseudo-text, 숫자, zodiac glyph, actual constellation, birth-chart data, personal dream reading, logo와 watermark는 없다. hearts0. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례, 짙은 보라 외곽선과 열린 비개인 Nebula 확산광을 사용한다.",
+      "distinctFrom": [
+        "B018의 ring arc, B022의 S tether, B026의 sphere, B030의 vertical shaft, B034의 oval pool, B038의 boomerang waves, B042의 parallel arcs, B046의 S corridor를 반복하지 않고 low true-side raking의 Z-shaped three-tier current terrace와 near open-clasp ring을 사용한다.",
+        "B047의 broken-X, B048의 U/waterline, B049의 vertical coral brackets를 피하고 canonical pair2, currents2, corals2, shared wave1, solo tabs2, shared-care tab1, divider clip1, ring1, contact0과 left-open offset clear-water bay로 고정한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 큰 aqua 꿈별이와 작은 pink 잠별이 canonical pair2의 상대 크기·색·서로 다른 canonical aqua/pink pajamas·가슴별, currents2, corals2, shared wave1, solo tabs2, shared-care tab1, divider clip1, loose ring1/open clasp gap1, contact0이 분리 계수되고 pajamas/relative scale swap0·hero cluster55–65%인지 확인한다.",
+        "low true-side raking Z terrace와 왼쪽으로 열린 broad offset clear-water bay가 X·U·S·circle·vertical brackets가 아니고, aqua/pink Nebula plumes2가 섞이거나 ring을 닫지 않아 current merge·sacrifice·identity merge·care·growth를 확정하지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "6c9a3cfac90fe6660abb218a3cdba8ed25e97f5c429a1051314f384a1d19a2cf"
+    }
+  ]
+}
