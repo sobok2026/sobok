@@ -1,19 +1,16 @@
 # Civil
 
-Civil is Sobok's multi-tenant spatial civil-engineering product. It is a greenfield TypeScript application;
+Civil is Sobok's multi-tenant civil-engineering product. It is a greenfield TypeScript application;
 the former Python server and single-file HTML prototype are not runtime dependencies or compatibility targets.
 
 ## Runtime boundaries
 
 - `next build` produces the static `out/` site served by the public `civil` Worker.
 - The public Worker forwards only `/api/*` to the private Database Worker's `CivilService` entrypoint.
-- `CivilService` owns the host-local OIDC relying-party session and the PostgreSQL, Queue, and private R2 bindings.
-- Browser uploads are split into fixed 8 MiB parts. The service keeps the R2 upload ID and every part ETag in
-  PostgreSQL; clients never receive an R2 credential, upload ID, object key, or public bucket URL.
-- `civil-compute` consumes isolated calculation and artifact queues. Calculation jobs and artifact inspections use
-  separate job-scoped Cloudflare Containers with no database credential and no public route.
-- The calculation Container receives an immutable input snapshot and returns a deterministic official result. The
-  artifact Container streams files to ephemeral disk, calculates SHA-256, and runs fail-closed ClamAV inspection.
+- `CivilService` owns the host-local OIDC relying-party session and the PostgreSQL and calculation Queue bindings.
+- `civil-compute` is a private Queue consumer with no database credential or public route. It claims immutable work
+  through the Database Worker RPC, calculates the result in TypeScript, validates the output, and returns its hash.
+- The deployment uses Workers and Queues available on Cloudflare Free; it has no Container or paid runtime dependency.
 
 Production uses `https://civil.sobok.cc` and the fixed `civil-web` OIDC client. Staging uses
 `https://civil-stg.sobok.cc` with an environment-specific client secret and database.
@@ -25,12 +22,9 @@ transaction-local actor and organization context after validating the Civil sess
 second, default-deny tenant boundary. Authentication tables are product-local relying-party state and contain no
 business authorization roles.
 
-Original files and full GeoJSON belong in the environment's private R2 bucket. `r2.dev` remains disabled and every
-upload, part, completion, abort, list, and ranged download operation is authorized against the current project.
-Completed files remain quarantined until asynchronous inspection succeeds; rejected objects are never downloadable
-and are deleted from R2. PostgreSQL stores the authoritative quota reservation, upload state, checksum, revision
-state, and queryable PostGIS footprints. The scanner image is rebuilt weekly so the immutable ClamAV signature set
-does not depend on runtime Internet access.
+Official calculations use a validated immutable input snapshot, versioned algorithm identifier, canonical input and
+output hashes, append-only result revisions, approval history, and audit events. The Queue consumer can retry safely;
+the Database Worker serializes claims and is the only runtime principal allowed to mutate authoritative records.
 
 ## Commands
 

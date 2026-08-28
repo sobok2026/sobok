@@ -3,7 +3,6 @@ import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { requestId } from 'hono/request-id'
 import { secureHeaders } from 'hono/secure-headers'
-import { artifacts } from './api/artifacts'
 import { calculations } from './api/calculations'
 import { organizations } from './api/organizations'
 import { projects } from './api/projects'
@@ -36,7 +35,6 @@ app.get('/api/me', async (c) => {
 app.route('/api/organizations', organizations)
 app.route('/api/organizations', projects)
 app.route('/api/organizations', calculations)
-app.route('/api/organizations', artifacts)
 app.notFound(() => problem(404, 'not-found'))
 
 app.onError((error) => {
@@ -49,17 +47,11 @@ export async function handleCivilRequest(request: Request, env: Bindings, ctx: E
 }
 
 export type {
-  CivilArtifactInspectionClaim,
-  CivilArtifactInspectionGateway,
-  CivilArtifactInspectionOutput,
-} from '@sobok/civil/artifact'
-export type {
   CivilCalculationClaim,
   CivilCalculationOutput,
   CivilCalculationWork,
   CivilComputationGateway,
 } from '@sobok/civil/calculation'
-export { dispatchPendingArtifactInspections } from './artifact-dispatch'
 export type { CivilComputeGateway } from './compute-service'
 export { createCivilComputationGateway } from './compute-service'
 export type { Bindings as CivilBindings } from './env'

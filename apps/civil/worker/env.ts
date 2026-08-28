@@ -1,8 +1,6 @@
 export interface Bindings {
   HYPERDRIVE_FRESH: Hyperdrive
   CIVIL_CALCULATION_QUEUE: Queue<{ jobId: string }>
-  CIVIL_ARTIFACT_QUEUE: Queue<{ artifactId: string }>
-  CIVIL_FILES: R2Bucket
 
   CIVIL_PUBLIC_ORIGIN: string
   CIVIL_ACCOUNTS_ISSUER: string

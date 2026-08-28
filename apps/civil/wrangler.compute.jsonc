@@ -11,7 +11,6 @@
     "head_sampling_rate": 1
   },
   "services": [{ "binding": "DATABASE", "service": "database", "entrypoint": "CivilComputationService" }],
-  "r2_buckets": [{ "binding": "CIVIL_FILES", "bucket_name": "civil-files" }],
   "queues": {
     "consumers": [
       {
@@ -21,70 +20,13 @@
         "max_retries": 10,
         "retry_delay": 60,
         "dead_letter_queue": "civil-calculations-dlq"
-      },
-      {
-        "queue": "civil-artifacts",
-        "max_batch_size": 1,
-        "max_batch_timeout": 5,
-        "max_retries": 10,
-        "retry_delay": 60,
-        "dead_letter_queue": "civil-artifacts-dlq"
       }
     ]
   },
-  "containers": [
-    {
-      "name": "civil-calculation",
-      "class_name": "CivilCalculationContainer",
-      "image": "./Dockerfile.compute",
-      "instance_type": "basic",
-      "max_instances": 10
-    },
-    {
-      "name": "civil-artifact",
-      "class_name": "CivilArtifactContainer",
-      "image": "./Dockerfile.artifact",
-      "instance_type": "standard-1",
-      "max_instances": 2
-    }
-  ],
-  "durable_objects": {
-    "bindings": [
-      { "name": "CALCULATION_CONTAINER", "class_name": "CivilCalculationContainer" },
-      { "name": "ARTIFACT_CONTAINER", "class_name": "CivilArtifactContainer" }
-    ]
-  },
-  "migrations": [
-    { "tag": "v1", "new_sqlite_classes": ["CivilCalculationContainer"] },
-    { "tag": "v2", "new_sqlite_classes": ["CivilArtifactContainer"] }
-  ],
   "env": {
     "stg": {
       "workers_dev": false,
-      "containers": [
-        {
-          "name": "civil-calculation-stg",
-          "class_name": "CivilCalculationContainer",
-          "image": "./Dockerfile.compute",
-          "instance_type": "basic",
-          "max_instances": 10
-        },
-        {
-          "name": "civil-artifact-stg",
-          "class_name": "CivilArtifactContainer",
-          "image": "./Dockerfile.artifact",
-          "instance_type": "standard-1",
-          "max_instances": 2
-        }
-      ],
-      "durable_objects": {
-        "bindings": [
-          { "name": "CALCULATION_CONTAINER", "class_name": "CivilCalculationContainer" },
-          { "name": "ARTIFACT_CONTAINER", "class_name": "CivilArtifactContainer" }
-        ]
-      },
       "services": [{ "binding": "DATABASE", "service": "database-stg", "entrypoint": "CivilComputationService" }],
-      "r2_buckets": [{ "binding": "CIVIL_FILES", "bucket_name": "civil-files-stg" }],
       "queues": {
         "consumers": [
           {
@@ -94,14 +36,6 @@
             "max_retries": 10,
             "retry_delay": 60,
             "dead_letter_queue": "civil-calculations-stg-dlq"
-          },
-          {
-            "queue": "civil-artifacts-stg",
-            "max_batch_size": 1,
-            "max_batch_timeout": 5,
-            "max_retries": 10,
-            "retry_delay": 60,
-            "dead_letter_queue": "civil-artifacts-stg-dlq"
           }
         ]
       }

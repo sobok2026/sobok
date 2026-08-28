@@ -2,14 +2,10 @@ import { WorkerEntrypoint } from 'cloudflare:workers'
 import { deliverAccountEmail, handleAccountsRequest } from '@sobok/accounts/database-service'
 import { SobokAuthorityEmailSchema } from '@sobok/auth/authority'
 import {
-  type CivilArtifactInspectionClaim,
-  type CivilArtifactInspectionGateway,
-  type CivilArtifactInspectionOutput,
   type CivilCalculationClaim,
   type CivilCalculationOutput,
   type CivilComputationGateway,
   createCivilComputationGateway,
-  dispatchPendingArtifactInspections,
   handleCivilRequest,
 } from '@sobok/civil/database-service'
 import { PaymentEventSchema } from '@sobok/payments'
@@ -51,10 +47,7 @@ export class CivilService extends WorkerEntrypoint<Bindings> {
   }
 }
 
-export class CivilComputationService
-  extends WorkerEntrypoint<Bindings>
-  implements CivilComputationGateway, CivilArtifactInspectionGateway
-{
+export class CivilComputationService extends WorkerEntrypoint<Bindings> implements CivilComputationGateway {
   claimCalculation(jobId: string): Promise<CivilCalculationClaim> {
     return createCivilComputationGateway(this.env, this.ctx).claimCalculation(jobId)
   }
@@ -65,18 +58,6 @@ export class CivilComputationService
 
   failCalculation(input: { jobId: string; failureCode: string }): Promise<void> {
     return createCivilComputationGateway(this.env, this.ctx).failCalculation(input)
-  }
-
-  claimArtifactInspection(artifactId: string): Promise<CivilArtifactInspectionClaim> {
-    return createCivilComputationGateway(this.env, this.ctx).claimArtifactInspection(artifactId)
-  }
-
-  completeArtifactInspection(input: { artifactId: string; output: CivilArtifactInspectionOutput }): Promise<void> {
-    return createCivilComputationGateway(this.env, this.ctx).completeArtifactInspection(input)
-  }
-
-  failArtifactInspection(input: { artifactId: string; failureCode: string }): Promise<void> {
-    return createCivilComputationGateway(this.env, this.ctx).failArtifactInspection(input)
   }
 }
 
@@ -107,9 +88,6 @@ export class VibeMaintenance extends WorkerEntrypoint<Bindings> implements VibeM
 }
 
 export default {
-  scheduled(_controller, env, ctx): Promise<void> {
-    return dispatchPendingArtifactInspections(env, ctx)
-  },
   async queue(batch, env, ctx): Promise<void> {
     if (ACCOUNT_EMAIL_QUEUES.has(batch.queue)) {
       for (const message of batch.messages) {

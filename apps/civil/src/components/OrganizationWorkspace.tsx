@@ -10,7 +10,6 @@ import {
   type ProjectSummary,
 } from '@/lib/api'
 import { civilAuthClient } from '@/lib/auth-client'
-import ArtifactWorkspace from './ArtifactWorkspace'
 
 type OrganizationState =
   | { kind: 'idle' | 'loading' }
@@ -34,7 +33,6 @@ export default function OrganizationWorkspace() {
   const [projects, setProjects] = useState<ProjectState>({ kind: 'idle' })
   const [creatingProject, setCreatingProject] = useState(false)
   const [projectError, setProjectError] = useState(false)
-  const [selectedProject, setSelectedProject] = useState<ProjectSummary | null>(null)
 
   useEffect(() => {
     if (isPending || !userId) {
@@ -58,7 +56,6 @@ export default function OrganizationWorkspace() {
   useEffect(() => {
     if (!userId || !selectedOrganizationId) {
       setProjects({ kind: 'idle' })
-      setSelectedProject(null)
       return
     }
     let active = true
@@ -132,7 +129,6 @@ export default function OrganizationWorkspace() {
             }
           : current,
       )
-      setSelectedProject(item)
       formElement.reset()
     } catch {
       setProjectError(true)
@@ -148,7 +144,7 @@ export default function OrganizationWorkspace() {
           <p className="eyebrow">ORGANIZATIONS</p>
           <h2>내 기관</h2>
         </div>
-        <p>계정은 공유하지만 모든 업무자료와 권한은 기관 단위로 분리됩니다.</p>
+        <p>계정은 공유하지만 모든 프로젝트 데이터와 권한은 기관 단위로 분리됩니다.</p>
       </div>
 
       {!session && !isPending ? (
@@ -187,7 +183,6 @@ export default function OrganizationWorkspace() {
                       className="button button-quiet"
                       onClick={() => {
                         setSelectedOrganizationId(organization.id)
-                        setSelectedProject(null)
                       }}
                       type="button"
                     >
@@ -226,7 +221,6 @@ export default function OrganizationWorkspace() {
               className="button button-quiet"
               onClick={() => {
                 setSelectedOrganizationId(null)
-                setSelectedProject(null)
               }}
               type="button"
             >
@@ -248,9 +242,6 @@ export default function OrganizationWorkspace() {
                     <div>
                       <span>{project.status}</span>
                       <code>{project.coordinateReferenceSystem}</code>
-                      <button className="project-open" onClick={() => setSelectedProject(project)} type="button">
-                        업무자료
-                      </button>
                     </div>
                   </article>
                 ))}
@@ -277,14 +268,6 @@ export default function OrganizationWorkspace() {
                 </form>
               ) : null}
             </div>
-          ) : null}
-          {selectedProject ? (
-            <ArtifactWorkspace
-              organizationId={selectedOrganizationId}
-              projectId={selectedProject.id}
-              projectName={selectedProject.name}
-              onClose={() => setSelectedProject(null)}
-            />
           ) : null}
         </section>
       ) : null}

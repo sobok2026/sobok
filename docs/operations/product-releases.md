@@ -65,7 +65,7 @@ Affected staging workflow 순서:
    고정 `civil-web`·`stella-web` OAuth client를 멱등 bootstrap
 3. affected이면 Payments Worker 배포
 4. affected이면 `database-stg` 배포
-5. affected Civil compute Worker와 calculation/artifact Container를 Database Worker 뒤에 배포
+5. affected Civil calculation Queue Worker를 Database Worker 뒤에 배포
 6. affected 공개 Worker를 배포하고 Civil·Stella는 Accounts와 각자의 private provider가 준비된 뒤 배포
 
 각 단계는 앞선 provider가 이번 release 대상이면 그 성공을 기다리고, 대상이 아니면 이미 배포된 provider를
@@ -77,10 +77,6 @@ Payments → `database` → Civil compute → 공개 앱 순서를 고정한다.
 production SHA를 checkout해 `database`·`database-stg` maintenance binding을 배포한다. 따라서 최초
 전환에서도 Scheduler가 Database Worker보다 먼저 배포되지 않는다. Schema와 앱 workflow는 같은
 concurrency group을 사용한다.
-
-`Civil security scanner refresh` workflow는 매주 production compute 배포만 다시 실행해, 네트워크가 차단된
-artifact Container 이미지에 최신 ClamAV signature snapshot을 포함한다. 일반 production release와 같은
-concurrency group을 사용하므로 두 배포는 겹치지 않는다.
 
 Database Worker 배포만 Accounts의 Google·Kakao·BBaton 공개 client ID를 runtime var로 받는다. Accounts
 정적 빌드는 Google client ID만 `NEXT_PUBLIC_GOOGLE_CLIENT_ID`로 받는다. DB URL과 secret은 공개 앱

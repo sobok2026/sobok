@@ -12,6 +12,5 @@
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["**/*.ts", "../src/domain/**/*.ts", "../compute-configuration.generated.d.ts"],
-  "exclude": ["container", "artifact"]
+  "include": ["**/*.ts", "../src/domain/**/*.ts", "../compute-configuration.generated.d.ts"]
 }

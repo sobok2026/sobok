@@ -1,16 +1,5 @@
 import { sql } from 'drizzle-orm'
-import {
-  bigint,
-  check,
-  foreignKey,
-  index,
-  pgPolicy,
-  primaryKey,
-  text,
-  timestamp,
-  uniqueIndex,
-  uuid,
-} from 'drizzle-orm/pg-core'
+import { check, foreignKey, index, pgPolicy, primaryKey, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core'
 import { civilUser } from './auth'
 import { civil, organizationRoleEnum, projectStatusEnum } from './common'
 import { actorContext, civilRuntimeRole, computeContext, organizationContext } from './rls'
@@ -27,8 +16,6 @@ export const organizationTable = civil.table(
     id: uuid().defaultRandom().primaryKey(),
     name: text().notNull(),
     slug: text().notNull(),
-    storageQuotaBytes: bigint('storage_quota_bytes', { mode: 'number' }).default(1_073_741_824).notNull(),
-    storageUsedBytes: bigint('storage_used_bytes', { mode: 'number' }).default(0).notNull(),
     createdByUserId: text('created_by_user_id')
       .notNull()
       .references(() => civilUser.id, { onDelete: 'restrict' }),
@@ -38,11 +25,6 @@ export const organizationTable = civil.table(
   (table) => [
     uniqueIndex('uq_civil_organization_slug').on(table.slug),
     check('ck_civil_organization_slug', sql`${table.slug} ~ '^[a-z0-9][a-z0-9-]{1,47}$'`),
-    check('ck_civil_organization_storage_quota', sql`${table.storageQuotaBytes} between 1 and 1099511627776`),
-    check(
-      'ck_civil_organization_storage_used',
-      sql`${table.storageUsedBytes} between 0 and ${table.storageQuotaBytes}`,
-    ),
     pgPolicy('civil_organization_select', {
       for: 'select',
       to: civilRuntimeRole,

@@ -2,13 +2,10 @@ import { sql } from 'drizzle-orm'
 import {
   bigint,
   check,
-  customType,
   foreignKey,
   index,
-  integer,
   jsonb,
   numeric,
-  primaryKey,
   text,
   timestamp,
   uniqueIndex,
@@ -16,174 +13,15 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core'
 import { civilUser } from './auth'
-import {
-  approvalStatusEnum,
-  artifactInspectionStatusEnum,
-  artifactStatusEnum,
-  artifactUploadStatusEnum,
-  auditActorTypeEnum,
-  calculationStatusEnum,
-  civil,
-} from './common'
+import { approvalStatusEnum, auditActorTypeEnum, calculationStatusEnum, civil } from './common'
 import { projectPolicies, tenantAppendOnlyPolicies } from './rls'
 import { organizationTable, projectTable } from './tenancy'
-
-const geometry4326 = customType<{ data: string; driverData: string }>({
-  dataType() {
-    return 'extensions.geometry(Geometry,4326)'
-  },
-})
 
 const createdAt = timestamp('created_at', { precision: 3, withTimezone: true }).defaultNow().notNull()
 const updatedAt = timestamp('updated_at', { precision: 3, withTimezone: true })
   .defaultNow()
   .notNull()
   .$onUpdate(() => new Date())
-
-export const artifactTable = civil.table(
-  'artifact',
-  {
-    id: uuid().defaultRandom().primaryKey(),
-    organizationId: uuid('organization_id')
-      .notNull()
-      .references(() => organizationTable.id, { onDelete: 'restrict' }),
-    projectId: uuid('project_id').notNull(),
-    objectKey: text('object_key').notNull(),
-    fileName: text('file_name').notNull(),
-    mediaType: text('media_type').notNull(),
-    detectedMediaType: text('detected_media_type'),
-    byteSize: bigint('byte_size', { mode: 'number' }).notNull(),
-    sha256: varchar({ length: 64 }),
-    status: artifactStatusEnum().default('uploading').notNull(),
-    rejectionCode: text('rejection_code'),
-    spatialFootprint: geometry4326('spatial_footprint'),
-    metadata: jsonb().$type<Record<string, string | number | boolean | null>>().default({}).notNull(),
-    uploadedByUserId: text('uploaded_by_user_id')
-      .notNull()
-      .references(() => civilUser.id, { onDelete: 'restrict' }),
-    scannedAt: timestamp('scanned_at', { precision: 3, withTimezone: true }),
-    availableAt: timestamp('available_at', { precision: 3, withTimezone: true }),
-    createdAt,
-    updatedAt,
-  },
-  (table) => [
-    uniqueIndex('uq_civil_artifact_object_key').on(table.objectKey),
-    uniqueIndex('uq_civil_artifact_tenant_id').on(table.organizationId, table.projectId, table.id),
-    index('idx_civil_artifact_project_status').on(table.organizationId, table.projectId, table.status),
-    index('idx_civil_artifact_footprint').using('gist', table.spatialFootprint),
-    check('ck_civil_artifact_byte_size', sql`${table.byteSize} between 1 and 1073741824`),
-    check(
-      'ck_civil_artifact_file_name',
-      sql`length(${table.fileName}) between 1 and 255 and ${table.fileName} !~ '[[:cntrl:]/\\]'`,
-    ),
-    check('ck_civil_artifact_sha256', sql`${table.sha256} is null or ${table.sha256} ~ '^[0-9a-f]{64}$'`),
-    foreignKey({
-      name: 'fk_civil_artifact_project',
-      columns: [table.organizationId, table.projectId],
-      foreignColumns: [projectTable.organizationId, projectTable.id],
-    }).onDelete('restrict'),
-    ...projectPolicies('artifact', table.organizationId, table.projectId, { allowCompute: true }),
-  ],
-)
-
-export const artifactUploadTable = civil.table(
-  'artifact_upload',
-  {
-    artifactId: uuid('artifact_id')
-      .primaryKey()
-      .references(() => artifactTable.id, { onDelete: 'restrict' }),
-    organizationId: uuid('organization_id')
-      .notNull()
-      .references(() => organizationTable.id, { onDelete: 'restrict' }),
-    projectId: uuid('project_id').notNull(),
-    r2UploadId: text('r2_upload_id').notNull(),
-    partSize: integer('part_size').notNull(),
-    partCount: integer('part_count').notNull(),
-    status: artifactUploadStatusEnum().default('open').notNull(),
-    expiresAt: timestamp('expires_at', { precision: 3, withTimezone: true }).notNull(),
-    completedAt: timestamp('completed_at', { precision: 3, withTimezone: true }),
-    createdAt,
-    updatedAt,
-  },
-  (table) => [
-    uniqueIndex('uq_civil_artifact_upload_r2_id').on(table.r2UploadId),
-    uniqueIndex('uq_civil_artifact_upload_tenant_artifact').on(table.organizationId, table.projectId, table.artifactId),
-    index('idx_civil_artifact_upload_expiry').on(table.status, table.expiresAt),
-    check('ck_civil_artifact_upload_part_size', sql`${table.partSize} = 8388608`),
-    check('ck_civil_artifact_upload_part_count', sql`${table.partCount} between 1 and 128`),
-    foreignKey({
-      name: 'fk_civil_artifact_upload_artifact',
-      columns: [table.organizationId, table.projectId, table.artifactId],
-      foreignColumns: [artifactTable.organizationId, artifactTable.projectId, artifactTable.id],
-    }).onDelete('restrict'),
-    ...projectPolicies('artifact_upload', table.organizationId, table.projectId, { allowCompute: true }),
-  ],
-)
-
-export const artifactUploadPartTable = civil.table(
-  'artifact_upload_part',
-  {
-    artifactId: uuid('artifact_id').notNull(),
-    organizationId: uuid('organization_id')
-      .notNull()
-      .references(() => organizationTable.id, { onDelete: 'restrict' }),
-    projectId: uuid('project_id').notNull(),
-    partNumber: integer('part_number').notNull(),
-    etag: text().notNull(),
-    byteSize: bigint('byte_size', { mode: 'number' }).notNull(),
-    createdAt,
-    updatedAt,
-  },
-  (table) => [
-    primaryKey({ columns: [table.artifactId, table.partNumber], name: 'pk_civil_artifact_upload_part' }),
-    check('ck_civil_artifact_upload_part_number', sql`${table.partNumber} between 1 and 128`),
-    check('ck_civil_artifact_upload_part_byte_size', sql`${table.byteSize} between 1 and 8388608`),
-    foreignKey({
-      name: 'fk_civil_artifact_upload_part_upload',
-      columns: [table.organizationId, table.projectId, table.artifactId],
-      foreignColumns: [
-        artifactUploadTable.organizationId,
-        artifactUploadTable.projectId,
-        artifactUploadTable.artifactId,
-      ],
-    }).onDelete('restrict'),
-    ...projectPolicies('artifact_upload_part', table.organizationId, table.projectId),
-  ],
-)
-
-export const artifactInspectionJobTable = civil.table(
-  'artifact_inspection_job',
-  {
-    artifactId: uuid('artifact_id')
-      .primaryKey()
-      .references(() => artifactTable.id, { onDelete: 'restrict' }),
-    organizationId: uuid('organization_id')
-      .notNull()
-      .references(() => organizationTable.id, { onDelete: 'restrict' }),
-    projectId: uuid('project_id').notNull(),
-    status: artifactInspectionStatusEnum().default('queued').notNull(),
-    attemptCount: integer('attempt_count').default(0).notNull(),
-    dispatchAttemptCount: integer('dispatch_attempt_count').default(0).notNull(),
-    failureCode: text('failure_code'),
-    dispatchedAt: timestamp('dispatched_at', { precision: 3, withTimezone: true }),
-    queuedAt: timestamp('queued_at', { precision: 3, withTimezone: true }).defaultNow().notNull(),
-    startedAt: timestamp('started_at', { precision: 3, withTimezone: true }),
-    completedAt: timestamp('completed_at', { precision: 3, withTimezone: true }),
-    createdAt,
-    updatedAt,
-  },
-  (table) => [
-    index('idx_civil_artifact_inspection_queue').on(table.status, table.queuedAt),
-    check('ck_civil_artifact_inspection_attempt_count', sql`${table.attemptCount} between 0 and 100`),
-    check('ck_civil_artifact_inspection_dispatch_attempt_count', sql`${table.dispatchAttemptCount} between 0 and 100`),
-    foreignKey({
-      name: 'fk_civil_artifact_inspection_artifact',
-      columns: [table.organizationId, table.projectId, table.artifactId],
-      foreignColumns: [artifactTable.organizationId, artifactTable.projectId, artifactTable.id],
-    }).onDelete('restrict'),
-    ...projectPolicies('artifact_inspection_job', table.organizationId, table.projectId, { allowCompute: true }),
-  ],
-)
 
 export const calculationJobTable = civil.table(
   'calculation_job',

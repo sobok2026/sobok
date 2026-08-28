@@ -10,7 +10,6 @@
     "enabled": true,
     "head_sampling_rate": 1
   },
-  "triggers": { "crons": ["*/5 * * * *"] },
   // sobok-ops Terraform owns Hyperdrive and Queue/DLQ lifecycles. This file exclusively owns their
   // Worker bindings, Queue consumer triggers, and delivery settings.
   "hyperdrive": [
@@ -23,7 +22,6 @@
       "id": "5257f1944a2a49848a7996997f56f8e6"
     }
   ],
-  "r2_buckets": [{ "binding": "CIVIL_FILES", "bucket_name": "civil-files" }],
   "services": [
     { "binding": "STELLA_PAYMENTS", "service": "payments", "entrypoint": "StellaPayments" },
     { "binding": "VIBE_PAYMENTS", "service": "payments", "entrypoint": "VibePayments" }
@@ -31,8 +29,7 @@
   "queues": {
     "producers": [
       { "binding": "ACCOUNTS_EMAIL_QUEUE", "queue": "accounts-email" },
-      { "binding": "CIVIL_CALCULATION_QUEUE", "queue": "civil-calculations" },
-      { "binding": "CIVIL_ARTIFACT_QUEUE", "queue": "civil-artifacts" }
+      { "binding": "CIVIL_CALCULATION_QUEUE", "queue": "civil-calculations" }
     ],
     "consumers": [
       {
@@ -197,7 +194,6 @@
   "env": {
     "stg": {
       "workers_dev": false,
-      "triggers": { "crons": ["*/5 * * * *"] },
       "hyperdrive": [
         {
           "binding": "HYPERDRIVE_FRESH",
@@ -212,12 +208,10 @@
         { "binding": "STELLA_PAYMENTS", "service": "payments-stg", "entrypoint": "StellaPayments" },
         { "binding": "VIBE_PAYMENTS", "service": "payments-stg", "entrypoint": "VibePayments" }
       ],
-      "r2_buckets": [{ "binding": "CIVIL_FILES", "bucket_name": "civil-files-stg" }],
       "queues": {
         "producers": [
           { "binding": "ACCOUNTS_EMAIL_QUEUE", "queue": "accounts-email-stg" },
-          { "binding": "CIVIL_CALCULATION_QUEUE", "queue": "civil-calculations-stg" },
-          { "binding": "CIVIL_ARTIFACT_QUEUE", "queue": "civil-artifacts-stg" }
+          { "binding": "CIVIL_CALCULATION_QUEUE", "queue": "civil-calculations-stg" }
         ],
         "consumers": [
           {

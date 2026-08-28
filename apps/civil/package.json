@@ -4,7 +4,6 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./artifact": "./src/domain/artifact.ts",
     "./calculation": "./src/domain/calculation.ts",
     "./database-service": "./worker/service.ts"
   },
@@ -15,10 +14,9 @@
     "db:push": "NODE_EXTRA_CA_CERTS=../../certs/supabase/prod-ca-2021.crt bunx --bun drizzle-kit push --config drizzle.config.ts",
     "type:bindings": "WRANGLER_WRITE_LOGS=false wrangler types worker-configuration.generated.d.ts --env-file=/dev/null --env-interface CivilPublicBindings --include-runtime=false --strict-vars=false",
     "type:compute-bindings": "WRANGLER_WRITE_LOGS=false wrangler types compute-configuration.generated.d.ts --config wrangler.compute.jsonc --env-file=/dev/null --env-interface CivilComputeBindings --include-runtime=false --strict-vars=false",
-    "type": "WRANGLER_WRITE_LOGS=false wrangler types worker-configuration.generated.d.ts --env-file=/dev/null --env-interface CivilPublicBindings --include-runtime=false --strict-vars=false --check && WRANGLER_WRITE_LOGS=false wrangler types compute-configuration.generated.d.ts --config wrangler.compute.jsonc --env-file=/dev/null --env-interface CivilComputeBindings --include-runtime=false --strict-vars=false --check && next typegen && tsc --noEmit && tsc -p worker/tsconfig.json && tsc -p compute/tsconfig.json && tsc -p compute/container/tsconfig.json"
+    "type": "WRANGLER_WRITE_LOGS=false wrangler types worker-configuration.generated.d.ts --env-file=/dev/null --env-interface CivilPublicBindings --include-runtime=false --strict-vars=false --check && WRANGLER_WRITE_LOGS=false wrangler types compute-configuration.generated.d.ts --config wrangler.compute.jsonc --env-file=/dev/null --env-interface CivilComputeBindings --include-runtime=false --strict-vars=false --check && next typegen && tsc --noEmit && tsc -p worker/tsconfig.json && tsc -p compute/tsconfig.json"
   },
   "dependencies": {
-    "@cloudflare/containers": "^0.3.7",
     "@sobok/auth": "workspace:*",
     "@sobok/edge": "workspace:*",
     "@sobok/typography": "workspace:*",

@@ -1,5 +1,5 @@
 name: Deploy Civil Compute Worker
-description: Deploy the private Queue consumers and Civil calculation/artifact Containers after the Database Worker.
+description: Deploy the private Civil calculation Queue consumer after the Database Worker.
 
 inputs:
   target:
@@ -36,7 +36,7 @@ runs:
     - name: Set up Bun workspace
       uses: ./.github/actions/setup-bun
 
-    - name: Deploy private compute Worker and Containers
+    - name: Deploy private calculation Worker
       uses: cloudflare/wrangler-action@v4
       with:
         apiToken: ${{ inputs.cloudflare_api_token }}

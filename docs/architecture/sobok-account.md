@@ -215,7 +215,7 @@ Stella 첫 구매와 사랑 카드 재추첨은 로그인 없이 끝까지 가�
 - `apps/stella`: 첫 OIDC relying party session, 게스트 `guardian_collection` 귀속, 계정 보관함과 stable
   report 재열람, account-save 보상, 계정 세션 기반 리포트·재추첨 권한 확인
 - `apps/civil`: `civil-web` OIDC relying party session, 기관·프로젝트 관계 권한, RLS 적용 업무 schema,
-  Queue와 비공개 Container를 통한 서버 권위 계산
+  Queue와 비공개 TypeScript Worker를 통한 서버 권위 계산
 - `sobok-ops`: production/staging Supabase project, 환경별 `sobok_runtime`, 제품별 migrator, 전체 네 Hyperdrive
   config, 이메일 Queue/DLQ resource, 환경별 Secrets Store 항목, Stella OIDC client secret, accounts Turnstile,
   custom domain desired state

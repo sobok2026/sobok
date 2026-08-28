@@ -15,6 +15,5 @@ export default defineConfig({
   schema: './worker/db/schema/*.ts',
   dialect: 'postgresql',
   schemaFilter: ['civil'],
-  extensionsFilters: ['postgis'],
   dbCredentials: { url: migratorUrl },
 })
