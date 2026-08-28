@@ -125,7 +125,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Deploy Civil compute Worker and Containers
+      - name: Deploy Civil calculation Worker
         uses: ./.github/actions/deploy-civil-compute
         with:
           target: ${{ inputs.target }}

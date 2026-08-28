@@ -3,12 +3,16 @@
 
 ACCOUNTS_PUBLIC_ORIGIN="http://localhost:3014"
 ACCOUNTS_ALLOWED_HOSTNAMES="localhost"
-ACCOUNTS_FIRST_PARTY_CLIENT_IDS="stella-local"
+ACCOUNTS_FIRST_PARTY_CLIENT_IDS="stella-local,civil-local"
 ACCOUNTS_EMAIL_FROM="Sobok Accounts <accounts@example.invalid>"
 ACCOUNTS_EMAIL_REPLY_TO="developer@example.invalid"
 ACCOUNTS_GOOGLE_CLIENT_ID="<accounts-dev-google-client-id>"
 ACCOUNTS_KAKAO_CLIENT_ID="<accounts-dev-kakao-client-id>"
 ACCOUNTS_BBATON_CLIENT_ID="<accounts-dev-bbaton-client-id>"
+
+CIVIL_PUBLIC_ORIGIN="http://localhost:3016"
+CIVIL_ACCOUNTS_ISSUER="http://localhost:3014"
+CIVIL_OIDC_CLIENT_ID="civil-local"
 
 STELLA_ALLOWED_HOSTNAMES="localhost"
 STELLA_PUBLIC_ORIGIN="http://localhost:3010"

@@ -1,0 +1,44 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "civil-compute",
+  "main": "compute/worker.ts",
+  "compatibility_date": "2026-08-28",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "services": [{ "binding": "DATABASE", "service": "database", "entrypoint": "CivilComputationService" }],
+  "queues": {
+    "consumers": [
+      {
+        "queue": "civil-calculations",
+        "max_batch_size": 1,
+        "max_batch_timeout": 5,
+        "max_retries": 10,
+        "retry_delay": 60,
+        "dead_letter_queue": "civil-calculations-dlq"
+      }
+    ]
+  },
+  "env": {
+    "stg": {
+      "workers_dev": false,
+      "services": [{ "binding": "DATABASE", "service": "database-stg", "entrypoint": "CivilComputationService" }],
+      "queues": {
+        "consumers": [
+          {
+            "queue": "civil-calculations-stg",
+            "max_batch_size": 1,
+            "max_batch_timeout": 5,
+            "max_retries": 10,
+            "retry_delay": 60,
+            "dead_letter_queue": "civil-calculations-stg-dlq"
+          }
+        ]
+      }
+    }
+  }
+}

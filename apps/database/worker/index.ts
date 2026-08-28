@@ -1,6 +1,13 @@
 import { WorkerEntrypoint } from 'cloudflare:workers'
 import { deliverAccountEmail, handleAccountsRequest } from '@sobok/accounts/database-service'
 import { SobokAuthorityEmailSchema } from '@sobok/auth/authority'
+import {
+  type CivilCalculationClaim,
+  type CivilCalculationOutput,
+  type CivilComputationGateway,
+  createCivilComputationGateway,
+  handleCivilRequest,
+} from '@sobok/civil/database-service'
 import { PaymentEventSchema } from '@sobok/payments'
 import type { StellaMaintenanceService, VibeMaintenanceService } from '@sobok/scheduler'
 import {
@@ -31,6 +38,26 @@ export class AccountsService extends WorkerEntrypoint<Bindings> {
 export class StellaService extends WorkerEntrypoint<Bindings> {
   fetch(request: Request): Promise<Response> {
     return handleStellaRequest(request, this.env, this.ctx)
+  }
+}
+
+export class CivilService extends WorkerEntrypoint<Bindings> {
+  fetch(request: Request): Promise<Response> {
+    return handleCivilRequest(request, this.env, this.ctx)
+  }
+}
+
+export class CivilComputationService extends WorkerEntrypoint<Bindings> implements CivilComputationGateway {
+  claimCalculation(jobId: string): Promise<CivilCalculationClaim> {
+    return createCivilComputationGateway(this.env, this.ctx).claimCalculation(jobId)
+  }
+
+  completeCalculation(input: { jobId: string; output: CivilCalculationOutput; outputHash: string }): Promise<void> {
+    return createCivilComputationGateway(this.env, this.ctx).completeCalculation(input)
+  }
+
+  failCalculation(input: { jobId: string; failureCode: string }): Promise<void> {
+    return createCivilComputationGateway(this.env, this.ctx).failCalculation(input)
   }
 }
 

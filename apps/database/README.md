@@ -23,26 +23,28 @@ schema를 추가하고 Database Worker에 이름 있는 entrypoint를 추가한�
 
 ## 권한 경계
 
-공개 `accounts`, `stella`, `vibe` Worker에는 `ASSETS`와 `DATABASE` binding만 있다. 다음 capability는 이
+공개 `accounts`, `civil`, `stella`, `vibe` Worker에는 `ASSETS`와 `DATABASE` binding만 있다. 다음 capability는 이
 Worker에만 둔다.
 
 - 두 Hyperdrive binding
 - backend Secrets Store binding
 - Accounts email Queue producer/consumer
+- Civil calculation Queue producer
 - Stella/Vibe payment event Queue consumer
 - Payments Worker의 Stella/Vibe 전용 RPC binding
 - Stella/Vibe 유지보수 RPC entrypoint
 
-현재 HTTP entrypoint는 `AccountsService`, `StellaService`, `VibeService`다. Scheduler는 같은 환경 Worker의
-`StellaMaintenance`, `VibeMaintenance`를 호출한다. 제품 코드는 제품 폴더에 남고 이 Worker는 실행 권한과
-배포 단위만 소유한다.
+현재 HTTP entrypoint는 `AccountsService`, `CivilService`, `StellaService`, `VibeService`다. Civil의 비공개
+계산 Queue Worker는 `CivilComputationService` RPC만 호출하고 PostgreSQL credential을 갖지 않는다. Scheduler는
+같은 환경 Worker의 `StellaMaintenance`, `VibeMaintenance`를 호출한다. 제품 코드는 제품 폴더에 남고 이 Worker는
+실행 권한과 배포 단위만 소유한다.
 
 ## 설정 소유권
 
-| 소유자                         | 범위                                                                                                                                |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `sobok-ops` Terraform          | Hyperdrive config, Queue/DLQ, Secrets Store 항목 등 Worker와 독립적인 resource lifecycle                                            |
-| `apps/database/wrangler.jsonc` | Hyperdrive·Secrets Store·Payments Service Binding, Accounts Queue producer, Accounts/Stella/Vibe Queue consumer trigger와 전달 설정 |
+| 소유자                         | 범위                                                                                                                        |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `sobok-ops` Terraform          | Hyperdrive config, Queue/DLQ, Secrets Store 항목 등 Worker와 독립적인 resource lifecycle                                    |
+| `apps/database/wrangler.jsonc` | Hyperdrive·Secrets Store·Payments Service Binding, Accounts/Civil Queue producer와 Accounts/Stella/Vibe Queue consumer 설정 |
 
 한 설정을 두 도구가 함께 관리하지 않는다. 따라서 Terraform에는 `cloudflare_queue_consumer`를 선언하지 않고,
 Wrangler에는 Queue나 Hyperdrive 자체를 생성·삭제하는 절차를 두지 않는다. Cloudflare Dashboard는 조회
