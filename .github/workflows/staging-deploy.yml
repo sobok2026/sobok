@@ -25,6 +25,7 @@ jobs:
       NEXT_TELEMETRY_DISABLED: '1'
     outputs:
       accounts: ${{ steps.release_scope.outputs.accounts }}
+      civil: ${{ steps.release_scope.outputs.civil }}
       database: ${{ steps.release_scope.outputs.database }}
       oauth_client: ${{ steps.release_scope.outputs.oauth_client }}
       payments: ${{ steps.release_scope.outputs.payments }}
@@ -70,6 +71,7 @@ jobs:
           set -euo pipefail
 
           accounts=false
+          civil=false
           database=false
           oauth_client=false
           payments=false
@@ -109,6 +111,7 @@ jobs:
 
           if [ "$full_release" = true ]; then
             accounts=true
+            civil=true
             database=true
             oauth_client=true
             payments=true
@@ -130,6 +133,10 @@ jobs:
               accounts=true
               oauth_client=true
             fi
+            if has_package '@sobok/civil'; then
+              civil=true
+              oauth_client=true
+            fi
             if has_package '@sobok/database'; then database=true; fi
             if has_package '@sobok/payments-service'; then payments=true; fi
             if has_package '@sobok/stella'; then
@@ -141,7 +148,7 @@ jobs:
             scope="$(jq -r 'if length == 0 then "none" else join(", ") end' <<<"$affected_packages")"
           fi
 
-          if [ "$accounts" = true ] || [ "$stella" = true ] || [ "$vibe" = true ]; then
+          if [ "$accounts" = true ] || [ "$civil" = true ] || [ "$stella" = true ] || [ "$vibe" = true ]; then
             prepare=true
           else
             prepare=false
@@ -149,6 +156,7 @@ jobs:
 
           {
             echo "accounts=$accounts"
+            echo "civil=$civil"
             echo "database=$database"
             echo "oauth_client=$oauth_client"
             echo "payments=$payments"
@@ -167,6 +175,7 @@ jobs:
             echo '| Target | Release |'
             echo '| --- | --- |'
             echo "| Accounts | $accounts |"
+            echo "| Civil | $civil |"
             echo "| Database | $database |"
             echo "| OAuth client | $oauth_client |"
             echo "| Payments | $payments |"
@@ -206,6 +215,15 @@ jobs:
           SOBOK_MIGRATOR_URL: ${{ secrets.STELLA_MIGRATOR_URL }}
         run: bunx --bun drizzle-kit push --config drizzle.config.ts
 
+      - name: Push Civil schema with Drizzle
+        if: needs.verify.outputs.civil == 'true'
+        working-directory: apps/civil
+        env:
+          CI: 'true'
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
+          SOBOK_MIGRATOR_URL: ${{ secrets.CIVIL_MIGRATOR_URL }}
+        run: bunx --bun drizzle-kit push --config drizzle.config.ts
+
       - name: Push Vibe schema with Drizzle
         if: needs.verify.outputs.vibe == 'true'
         working-directory: apps/vibe
@@ -217,11 +235,25 @@ jobs:
 
       - name: Bootstrap fixed Stella client
         if: needs.verify.outputs.oauth_client == 'true'
-        uses: ./.github/actions/bootstrap-stella-oauth-client
+        uses: ./.github/actions/bootstrap-oauth-client
         with:
           target: staging
           accounts_migrator_url: ${{ secrets.ACCOUNTS_MIGRATOR_URL }}
-          stella_oidc_client_secret: ${{ secrets.STELLA_OIDC_CLIENT_SECRET }}
+          client_id: stella-web
+          client_name: Stella
+          client_origin: https://stella-stg.sobok.cc
+          client_secret: ${{ secrets.STELLA_OIDC_CLIENT_SECRET }}
+
+      - name: Bootstrap fixed Civil client
+        if: needs.verify.outputs.oauth_client == 'true'
+        uses: ./.github/actions/bootstrap-oauth-client
+        with:
+          target: staging
+          accounts_migrator_url: ${{ secrets.ACCOUNTS_MIGRATOR_URL }}
+          client_id: civil-web
+          client_name: Civil
+          client_origin: https://civil-stg.sobok.cc
+          client_secret: ${{ secrets.CIVIL_OIDC_CLIENT_SECRET }}
 
   payments:
     name: Deploy payments
@@ -305,6 +337,32 @@ jobs:
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+  civil-compute:
+    name: Deploy Civil compute
+    needs: [verify, prepare, payments, database]
+    if: >-
+      ${{
+        !cancelled() &&
+        needs.verify.result == 'success' &&
+        (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') &&
+        (needs.payments.result == 'success' || needs.payments.result == 'skipped') &&
+        (needs.database.result == 'success' || needs.database.result == 'skipped') &&
+        needs.verify.outputs.civil == 'true'
+      }}
+    environment: staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Deploy Civil compute Worker and Container
+        uses: ./.github/actions/deploy-civil-compute
+        with:
+          target: staging
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
   stella:
     name: Deploy Stella
     needs: [verify, prepare, payments, database, accounts]
@@ -332,6 +390,36 @@ jobs:
           directory: apps/stella
           target: staging
           turnstile_site_key: ${{ vars.STELLA_TURNSTILE_SITE_KEY }}
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  civil:
+    name: Deploy Civil
+    needs: [verify, prepare, payments, database, accounts, civil-compute]
+    if: >-
+      ${{
+        !cancelled() &&
+        needs.verify.result == 'success' &&
+        (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') &&
+        (needs.payments.result == 'success' || needs.payments.result == 'skipped') &&
+        (needs.database.result == 'success' || needs.database.result == 'skipped') &&
+        (needs.accounts.result == 'success' || needs.accounts.result == 'skipped') &&
+        (needs.civil-compute.result == 'success' || needs.civil-compute.result == 'skipped') &&
+        needs.verify.outputs.civil == 'true'
+      }}
+    environment: staging
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Build and deploy Civil
+        uses: ./.github/actions/deploy-app
+        with:
+          package_name: '@sobok/civil'
+          directory: apps/civil
+          target: staging
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 

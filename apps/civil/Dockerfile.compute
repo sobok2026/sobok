@@ -1,0 +1,15 @@
+FROM oven/bun:1.3.13-slim
+
+ENV NODE_ENV=production \
+    PORT=8080
+
+WORKDIR /app
+
+COPY compute/container ./compute/container
+COPY src/domain/earthwork.ts ./src/domain/earthwork.ts
+
+USER bun
+
+EXPOSE 8080
+
+CMD ["bun", "run", "compute/container/server.ts"]

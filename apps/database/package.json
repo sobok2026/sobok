@@ -12,6 +12,7 @@
   "dependencies": {
     "@sobok/accounts": "workspace:*",
     "@sobok/auth": "workspace:*",
+    "@sobok/civil": "workspace:*",
     "@sobok/payments": "workspace:*",
     "@sobok/scheduler": "workspace:*",
     "@sobok/stella": "workspace:*",
