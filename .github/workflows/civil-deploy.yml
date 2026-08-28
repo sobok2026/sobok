@@ -125,6 +125,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Set up Bun workspace for cleanup
+        if: inputs.target == 'staging'
+        uses: ./.github/actions/setup-bun
+
       - name: Remove abandoned container-backed staging Worker
         if: inputs.target == 'staging'
         uses: cloudflare/wrangler-action@v4
