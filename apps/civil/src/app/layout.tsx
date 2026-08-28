@@ -4,8 +4,8 @@ import type { ReactNode } from 'react'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Civil — 공간기반 토목업무 플랫폼',
-  description: '도면, 수량, 토공, 단가, 내역과 전자납품을 하나의 검증 가능한 흐름으로 관리합니다.',
+  title: 'Civil — 검증 가능한 토목 계산 플랫폼',
+  description: '기관별로 격리된 수량·토공 계산의 입력, 알고리즘 버전, 결과 해시와 승인 이력을 관리합니다.',
 }
 
 export const viewport: Viewport = {
