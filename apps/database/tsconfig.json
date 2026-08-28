@@ -9,6 +9,7 @@
     "typeRoots": ["../../node_modules", "../../node_modules/@types"],
     "types": ["@cloudflare/workers-types"],
     "paths": {
+      "@civil-worker/*": ["../civil/worker/*"],
       "@deep-type/*": ["../vibe/deep-type/*"],
       "@stella-worker/*": ["../stella/worker/*"],
       "@vibe-worker/*": ["../vibe/worker/*"]

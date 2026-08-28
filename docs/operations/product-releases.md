@@ -61,19 +61,19 @@ fallback한다. 배포 대상 package가 없으면 정적 검증만 수행한다
 Affected staging workflow 순서:
 
 1. 저장소 정적 검증과 release scope 계산
-2. 한 prepare job에서 affected 제품 schema를 `drizzle-kit push`하고, Accounts/Stella가 affected이면 고정
-   `stella-web` OAuth client를 멱등 bootstrap
+2. 한 prepare job에서 affected 제품 schema를 `drizzle-kit push`하고, Accounts/Civil/Stella가 affected이면
+   고정 `civil-web`·`stella-web` OAuth client를 멱등 bootstrap
 3. affected이면 Payments Worker 배포
 4. affected이면 `database-stg` 배포
-5. affected Accounts/Vibe 공개 Worker 배포, 둘 다 대상이면 병렬 실행하고 Accounts가 대상일 때 Stella는 Accounts
-   이후 배포
+5. affected Civil calculation Queue Worker를 Database Worker 뒤에 배포
+6. affected 공개 Worker를 배포하고 Civil·Stella는 Accounts와 각자의 private provider가 준비된 뒤 배포
 
 각 단계는 앞선 provider가 이번 release 대상이면 그 성공을 기다리고, 대상이 아니면 이미 배포된 provider를
 그대로 사용한다. prepare job은 checkout과 dependency install을 한 번만 수행하고 제품 schema는 서로 다른
 schema와 migrator role로 제한한다.
 
 Production은 제품별 schema plan/apply를 먼저 실행하고 수동 배포 workflow가 고정 OAuth client bootstrap →
-Payments → `database` → 공개 앱 순서를 고정한다. 그 workflow가 성공하면 Scheduler workflow가 같은
+Payments → `database` → Civil compute → 공개 앱 순서를 고정한다. 그 workflow가 성공하면 Scheduler workflow가 같은
 production SHA를 checkout해 `database`·`database-stg` maintenance binding을 배포한다. 따라서 최초
 전환에서도 Scheduler가 Database Worker보다 먼저 배포되지 않는다. Schema와 앱 workflow는 같은
 concurrency group을 사용한다.
@@ -92,16 +92,19 @@ Database Worker 배포만 Accounts의 Google·Kakao·BBaton 공개 client ID를 
 | `STELLA_MIGRATOR_URL`       | `stella_migrator` / `stella`                       |
 | `VIBE_MIGRATOR_URL`         | `vibe_migrator` / `deeptype`                       |
 | `STELLA_OIDC_CLIENT_SECRET` | 해당 환경 `stella-web` client bootstrap credential |
+| `CIVIL_OIDC_CLIENT_SECRET`  | 해당 환경 `civil-web` client bootstrap credential  |
+| `CIVIL_MIGRATOR_URL`        | `civil_migrator` / `civil`                         |
 
 같은 이름이라도 Environment마다 다른 Supabase project URL이다. URL은 session pooler와
 `sslmode=verify-full`을 사용하고 앱의 공통 `SOBOK_MIGRATOR_URL`에만 주입한다. Runtime credential이나 owner
 credential을 schema 작업에 재사용하지 않는다.
 
-`STELLA_OIDC_CLIENT_SECRET`은 `account-accounts` workspace의 같은 환경 sensitive output을 GitHub
-Environment secret으로 한 번 등록한다. Repository secret으로 만들거나 Terraform state에 GitHub secret
-평문을 복제하지 않는다. 같은 값은 Stella runtime에서 Secrets Store binding으로 읽고, 배포 workflow에서는
-OAuth client row의 최초 생성과 기존 credential 검증에 사용한다. Bootstrap 스크립트는 값을 출력하지 않으며
-같은 credential과 metadata로 재실행하면 no-op, 검토된 값과 다르면 Worker 배포 전에 실패한다.
+`STELLA_OIDC_CLIENT_SECRET`과 `CIVIL_OIDC_CLIENT_SECRET`은 `account-accounts` workspace의 같은 환경
+sensitive output을 GitHub Environment secret으로 한 번 등록한다. Repository secret으로 만들거나 Terraform
+state에 GitHub secret 평문을 복제하지 않는다. 같은 값은 각 relying-party runtime에서 Secrets Store binding으로
+읽고, 배포 workflow에서는 OAuth client row의 최초 생성과 기존 credential 검증에 사용한다. Bootstrap
+스크립트는 값을 출력하지 않으며 같은 credential과 metadata로 재실행하면 no-op, 검토된 값과 다르면 Worker
+배포 전에 실패한다.
 
 ## Hyperdrive ID 반영
 
@@ -135,7 +138,8 @@ Supabase project, GitHub Environment, Hyperdrive는 앱마다 추가하지 않�
 3. 두 Supabase workspace와 `account-secrets-store`의 Remote State Sharing을 `account-database`에 연다.
 4. `account-secrets-store`와 제품별 secret/Queue workspace를 apply한다.
 5. `account-database`를 apply하고 네 Hyperdrive ID를 Database Wrangler config에 반영한다.
-6. 환경별 migrator URL과 `STELLA_OIDC_CLIENT_SECRET`을 같은 GitHub Environment secret에 넣는다.
+6. 환경별 migrator URL과 `CIVIL_OIDC_CLIENT_SECRET`·`STELLA_OIDC_CLIENT_SECRET`을 같은 GitHub Environment
+   secret에 넣는다.
 7. Staging schema·OAuth client·Workers를 배포한 뒤 production schema plan/apply와 OAuth client·Workers
    배포를 수행한다.
 

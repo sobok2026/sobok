@@ -73,6 +73,9 @@ jobs:
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.STELLA_TURNSTILE_SITE_KEY }}
         run: bun run --filter=@sobok/stella build
 
+      - name: Build Civil
+        run: bun run --filter=@sobok/civil build
+
       - name: Build Vibe
         env:
           NEXT_PUBLIC_DEEPTYPE_PAY_PROFILE: ${{ github.base_ref == 'staging' && 'staging' || 'production' }}

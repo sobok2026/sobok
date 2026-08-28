@@ -11,7 +11,7 @@
 - 인증 런타임: Cloudflare Worker + 정적 Next.js UI
 - 계정 구현: Better Auth 기반 중앙 OAuth 2.1 / OpenID Connect authority
 
-이 문서는 `apps/web`, `apps/chat`, `apps/stella`, `apps/vibe`, `apps/zwds`가 공유하는 하나의 Sobok
+이 문서는 `apps/web`, `apps/chat`, `apps/civil`, `apps/stella`, `apps/vibe`, `apps/zwds`가 공유하는 하나의 Sobok
 계정 경계와 각 앱의 세션·프로필·도메인 데이터 소유권을 정한다. 기존 `apps/api` 인증 경로는 새
 구조의 authority 또는 공용 BFF로 사용하지 않는다.
 
@@ -127,7 +127,7 @@ TOTP가 활성화된 계정은 이메일/비밀번호와 username/비밀번호 �
 
 ## 6. OIDC client 운영
 
-- Stella, Vibe, ZWDS, Web, Chat에 production·staging client를 각각 만든다.
+- Civil, Stella, Vibe, ZWDS, Web, Chat에 production·staging client를 각각 만든다.
 - client별 redirect URI를 완전 일치로 등록한다.
 - client secret은 Git, Wrangler vars, Next public env에 넣지 않는다.
 - Cloudflare Secrets Store에서 앱 Worker에 client secret을 binding한다.
@@ -214,6 +214,8 @@ Stella 첫 구매와 사랑 카드 재추첨은 로그인 없이 끝까지 가�
   Google/One Tap, Kakao, passkey, TOTP/backup code, BBaton 연결 구성
 - `apps/stella`: 첫 OIDC relying party session, 게스트 `guardian_collection` 귀속, 계정 보관함과 stable
   report 재열람, account-save 보상, 계정 세션 기반 리포트·재추첨 권한 확인
+- `apps/civil`: `civil-web` OIDC relying party session, 기관·프로젝트 관계 권한, RLS 적용 업무 schema,
+  Queue와 비공개 TypeScript Worker를 통한 서버 권위 계산
 - `sobok-ops`: production/staging Supabase project, 환경별 `sobok_runtime`, 제품별 migrator, 전체 네 Hyperdrive
   config, 이메일 Queue/DLQ resource, 환경별 Secrets Store 항목, Stella OIDC client secret, accounts Turnstile,
   custom domain desired state

@@ -11,6 +11,7 @@ on:
         type: choice
         options:
           - accounts
+          - civil
           - stella
           - vibe
       mode:
@@ -104,6 +105,34 @@ jobs:
           MODE: ${{ inputs.mode }}
           NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
           SOBOK_MIGRATOR_URL: ${{ secrets.ACCOUNTS_MIGRATOR_URL }}
+        run: |
+          if [ "$MODE" = 'plan' ]; then
+            bunx --bun drizzle-kit push --config drizzle.config.ts --explain --verbose
+          else
+            bunx --bun drizzle-kit push --config drizzle.config.ts
+          fi
+
+  civil:
+    name: ${{ inputs.mode }} Civil schema
+    if: inputs.product == 'civil'
+    needs: validate
+    environment: production
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Run Drizzle
+        working-directory: apps/civil
+        env:
+          CI: 'true'
+          MODE: ${{ inputs.mode }}
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
+          SOBOK_MIGRATOR_URL: ${{ secrets.CIVIL_MIGRATOR_URL }}
         run: |
           if [ "$MODE" = 'plan' ]; then
             bunx --bun drizzle-kit push --config drizzle.config.ts --explain --verbose
