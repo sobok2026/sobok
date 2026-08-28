@@ -1,0 +1,322 @@
+{
+  "status": "visual_review_complete",
+  "editorialApprovedOn": "2026-08-28",
+  "generatedOn": "2026-08-28",
+  "locale": "ko",
+  "batchId": "love.distance-and-return.eclipse",
+  "batchOrder": 43,
+  "purpose": "사랑의 distance-and-return 원고를 답이나 귀환을 강요하지 않는 Eclipse 장면으로 번역한다. 지정된 두 수호령 또는 정본 내부 쌍이 일식의 반그늘 속에서 시간·기다림·경계·준비·연락 표식을 다시 옮기거나 거둘 수 있게 남기고, 하트·찻잔과 쿠키·편지·현관등·빈 의자·체크표·공동별·문·지도·발판·이름표·물살의 두 번째 원고 행동을 함께 보존한다. 열두 장의 카메라, 깊이축, 주실루엣, 여백과 빛 경로는 서로 다르며 어떤 장면도 외부 상대의 신체 단서나 확정된 답·재회·합의를 만들지 않는다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "love",
+    "narrativeAxisId": "distance-and-return",
+    "visualAxisId": "eclipse"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": [
+      "id",
+      "title",
+      "guardians",
+      "scene",
+      "artworkAlt",
+      "oneLineTemplate",
+      "reflection"
+    ],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium Stella zodiac-guardian card master artwork for the Eclipse rarity, full-bleed 3:4. Show exactly the named pair or canonical internal pair from the approved source, never an unseen romantic recipient or third guardian. Preserve every character-sheet identity, relative size, colors, silhouette, simple dark-purple pupils, exactly one large and one small eye highlight, chest Stella star, clothing, and signature prop. Keep both approved source sentences physically visible: the return/contact/date/wait/boundary control must remain reversible, while the paired heart, cup and cookie halves, letter slips, threshold lamp and snack, empty chair and spotlights, folded checklist and crooked flower, shared third star, private bolt, route markers and map, test plate and support palm, blank tag and bottles, or opposing currents and fin-tip clasp must remain source-authored actions rather than generic abstraction. Keep the guardian pair and focal cluster at 55–65% of the frame and readable at actual width 80px. Use symbols and simple shapes only: no readable text, sentence, name, label, title, badge, score, number, literal date, clock face, calendar text, question mark, zodiac glyph, arrowed route, map coordinate, logo, watermark, handwriting, pseudo-text lines, or personal birth-chart data. Do not bake actual birth-chart lines or personal colors into the master art. Keep every composition distinct in camera, depth axis, dominant silhouette, negative-space shape, reversible control, and Eclipse light path. Controls may use only large separated crescents, dots, stars, leaves, droplets, bars, blank wells, open notches, loose beads, half-pins, clips, tabs, sliders, wedges, or simple abstract reliefs. Preserve exact source counts and topology: Aries guardians2, padded heart1, red flag1, independent grips2 and open yoke gap; Taurus guardians2, upright open prism1, empty cup1, cookie halves2 and flip-pin1; Gemini canonical pair2, detached small folded slips2, short bookmark1, single body-to-body pink ribbon1 and central lozenge gap; Cancer guardians2, cropped low diagonal door evidence, star lamp1, snack1, date tab1 and reversible doorstop1; Leo guardians2, L-corner, empty chair1, off seat-light1, loose tokens2, spotlight fields2 and edge-tabs2; Virgo guardians2, ONE continuous three-crease W checklist sheet1, integrated date well1, question wells3, end-clip1 and crooked environmental flower1; Libra guardians2, detached broken-X pads, empty chair1, sign1 with date1 plus prep2, personal stars2, hovering shared third star1 and stop-wedges2; Scorpio guardians2, full-height edge-on closed door blade1, lamp1, date marker1, open boundary marker1, private bolt1, re-lock hook1, and only the canonical heart-tail tip; Sagittarius guardians2, low open-fork dial1, flat coral flag-markers2 with no standing flag or cloth, return block1, contact bead1, small one-sheet map1 and two separate map markers; Capricorn guardians2, thin test plate1, revealed support palm1, edge-on plan strip1, task tokens2, reunion peg1 and uninserted wedge1; Aquarius guardians2, long narrow blank tag1 with open fork end, blue heart bottle1, plain new bottle1, blue pulse1, wait-stop1 and removable color dabs2; Pisces canonical pair2, flat horizontal current shelves2, square star-time markers2 and exactly one relaxed inner side-fin-tip pair contact, with no head-fin, head, body, tail, or other-fin contact. Source-authored Aries heart and Aquarius heart bottle and Scorpio canonical heart-tail tip are allowed exactly as counted; add no other heart. Never close a ribbon, weather path, halo, boundary, Eclipse band, route, current, or light into a magic circle, closed heart, infinity sign, cage, enclosing dome, deterministic route, guaranteed reply, or completed reunion. Do not reuse the same-sign Eclipse cameras and dominant silhouettes from B019, B023, B027, B031, B035, or B039, or the camera, dominant device, negative space, and light path of B040–B042. Within this batch keep Aries and Sagittarius flag systems, Taurus and Capricorn equipment, Gemini and Virgo paper structures, Cancer and Scorpio thresholds, Leo and Libra chair scenes, and Aquarius and Pisces light/current geometry visibly distinct. Follow each edition's distinctFrom and visualReviewFocus literally. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, dark-purple outlines and eyes. No text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.love.distance-and-return.eclipse",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-28",
+      "editorialContentHash": "01d6f348fff8245c97af3a91a3571b327f4d0d971d52daaf2479e68c059c50d2",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "low_rear_threequarter_transverse_open_tensionyoke_edgeon_paddedheart_single_red_flag_scalene_shadow_releasegap",
+      "artDirection": "세로 3:4의 보랏빛 일식 직전 출발 지점을 낮은 rear three-quarter 시점으로 본다. 깊이는 왼쪽 가까운 몽실이에서 오른쪽 먼 달콩이로 짧게 횡단하며, 화면 안쪽으로 이어지는 길·원근 수렴선·목적지는 만들지 않는다. 몽실이와 달콩이 정확히 두 명만 화면의 55–65%를 차지한다. 몽실이는 크림색 양 몸, 보라색 뿔과 발굽, 단순 진보라 눈과 가슴 Stella 별을 유지하고, 달콩이는 정본의 크림·연보라 달집 게 몸, 단순 눈과 이마·가슴 별을 유지한다. 두 개의 짧고 낮은 tension-yoke arm은 서로 만나지 않으며 그 사이에 guardian 몸 하나 너비의 release gap을 남긴다. yoke는 문틀·삼각 gate·닫힌 halo가 아니다. source-authored padded heart는 정확히 하나다. 바닥 문양이나 윤곽 loop가 아닌 두께 있는 봉제 소품이며, 화면에 거의 edge-on인 비대칭 경사로 떠 있어 두 lobe와 측면 두께가 함께 보인다. 달콩이가 먼쪽 fabric grip loop를 잡고, 몽실이는 가까운 loop를 느슨하게 풀어 양쪽 장력이 명백히 다르다. 두 guardian이 완전히 맞닿거나 하트가 수평으로 고정되지 않아 속도 조절이 아직 되돌릴 수 있다. 달콩이 뒤에는 프레임 밖으로 잘린 낮은 문 가장자리만 남기고 완전한 문·현관·실내 전경은 만들지 않는다. 붉은 깃발은 정확히 한 장이며 몽실이 옆의 짧은 transverse start cleat에 달린다. 깃발 hinge에는 글자 대신 open-crescent time tab 하나와 짧은 range bar tab 하나만 탈착식으로 배치한다. 깃발이나 cleat는 road·방향 화살표·두 번째 flag가 아니다. 일식의 붉은 반그늘은 깃발과 heart의 한쪽 면까지만 닿고, 상부의 큰 scalene shadow void로 바람과 미세 입자가 빠져나간다. 추가 하트, ground heart, 닫힌 고리, 발자국, 외부 제3자 단서, 텍스트·숫자·pseudo-text, 확정된 재회는 넣지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제 비례와 짙은 보라 외곽선을 사용한다.",
+      "distinctFrom": [
+        "B019·B023의 정면 heart-door와 원형 heart stage, B027의 umbrella well, B031의 U자 악기, B035의 hedge portal, B039의 ground-heart rope를 반복하지 않고 낮은 횡축의 edge-on solid padded heart와 열린 two-arm tension-yoke를 사용한다.",
+        "B040의 수직 광분할, B041의 comet flag·road 위험, B042의 floor heart lens·weather-loom과 달리 pair의 비대칭 grip 장력, 몸 하나 너비 release gap, 상부 scalene shadow void를 핵심 판독점으로 삼는다."
+      ],
+      "visualReviewFocus": [
+        "80px에서도 몽실이·달콩이 정확히 두 명의 정본 눈·가슴별과 padded heart 정확히 하나, 붉은 깃발 정확히 한 장, 반대편 grip 두 개와 몽실이 쪽 느슨한 장력이 읽히며 영웅군이 55–65%인지 확인한다.",
+        "heart가 edge-on 두께 있는 소품이고 ground heart·outline loop·closed halo가 아니며, yoke release gap이 열린 상태이고 road·발자국·목적지·두 번째 깃발·추가 하트·외부 제3자 단서가 없는지 확인한다."
+      ],
+      "approvedArtworkSha256": "321037793f6cfb0907871713e1795c198ed0b2e00d4d2ca5aac70ca6492032d5"
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.love.distance-and-return.eclipse",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-28",
+      "editorialContentHash": "a68112dbc916dc53fe6a811b00d5f5384f6c9ce6f27f4f09d14532b65a80a275",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "high_side_threequarter_upright_asymmetric_splittemperature_prismsail_open_polygon_aperture_detached_cold_cup_two_cookie_lips",
+      "artDirection": "세로 3:4의 늦은 겨울 일식 장면을 높은 side three-quarter 시점으로 내려다본다. 깊이는 오른쪽 아래의 가까운 차곡이에서 왼쪽 위의 먼 새봄이로 상승한다. 주실루엣은 upright asymmetric split-temperature prism/sail frame 정확히 하나다. warm amber 면과 cold lavender 면의 폭·높이·각도가 서로 다르고, 중앙에는 큰 polygonal open aperture가 뚫려 있다. 하단 한쪽에는 명백한 release notch를 남겨 닫힌 ring이나 shelter가 되지 않는다. horizontal blade, cantilever, table, ledge, bench 또는 중앙 plan bay는 전혀 없다. frame 아래에는 길고 비대칭인 trapezoid cold void가 그대로 보인다. 차곡이와 새봄이 정확히 두 명만 영웅군의 55–65%를 차지한다. 차곡이는 노란 송아지 몸, 연보라 뿔·앞머리, 보라 리본과 발굽, 단순 진보라 눈과 가슴별을 유지한다. 새봄이는 정본의 크림빛 식물 몸, 초록 잎귀와 잎 ruff, 이마 별꽃, 단순 눈과 가슴별을 유지한다. 빈 찻잔은 정확히 하나만 far cold pedestal에 두며 prism frame과 잔 하나 너비 이상 떨어뜨린다. 내용물·김·손자국·외부 인물의 그림자 없이 완전히 비어 있다. 불규칙한 한 개의 별쿠키를 나눈 조각은 정확히 두 개다. 작은 반쪽은 새봄이 쪽의 짧은 detachable side lip 하나에 놓이고 새봄이가 그대로 받아 든다. 큰 반쪽은 차곡이 쪽의 별도 detachable side lip 하나 위에서 상대 방향으로 막 밀려 있지만 작은 반쪽과 닿지 않는다. 두 lip은 prism의 양 측면에 붙은 손바닥 크기 clip이며 긴 선반이나 bridge가 아니다. 온도 표식은 prism의 split joint에 달린 two-color flip-pin 정확히 하나다. amber edge와 lavender face가 동시에 보이는 반회전 상태이며 다시 뒤집거나 뺄 수 있다. 숫자·눈금·원형 dial은 없다. amber 빛은 차곡이 쪽 frame과 큰 cookie half에서 끊기고 빈 찻잔까지 도달하지 않는다. 차가운 입자는 aperture와 under-frame trapezoid void를 통과해 화면 밖으로 계속되어 재가열이나 귀환을 확정하지 않는다. 추가 cup·cookie·star token, 담요·둥지, 외부 제3자 단서, 텍스트·pseudo-text·하트·닫힌 고리를 넣지 않는다. 색연필과 수채, 종이결, 둥근 봉제 비례와 짙은 보라 외곽선을 유지한다.",
+      "distinctFrom": [
+        "B019·B023의 table-cookie staging, B027·B031의 둥근 nest와 underground console, B035의 tea glade, B039의 split terraces 대신 큰 aperture를 가진 단일 upright asymmetric prism/sail과 세로 상승 깊이축을 사용한다.",
+        "B040의 mats·amber path, B041의 tall empty place bay, 특히 B042의 horizontal cantilever thermal blade와 cup 배치를 반복하지 않고 완전히 분리된 cold pedestal, 양측 detachable cookie lips와 under-frame trapezoid void를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "80px에서도 차곡이·새봄이 정확히 두 명의 정본 특징, upright prism/sail frame 하나와 큰 polygonal aperture, 빈 찻잔 정확히 하나, 크기가 다른 cookie halves 정확히 두 개, flip-pin 하나가 분리되어 읽히는지 확인한다.",
+        "주실루엣이 horizontal blade·cantilever·ledge·bench가 아니고 cup이 frame에서 완전히 떨어져 있으며, 두 cookie lip이 서로 연결되지 않고 aperture의 release notch와 under-frame trapezoid void가 열린 상태인지 확인한다."
+      ],
+      "approvedArtworkSha256": "b761ab0b384dec9e68ace3e15abaa50ec4759001d5b1509d27e6146fdc686da4"
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.love.distance-and-return.eclipse",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-28",
+      "editorialContentHash": "898fc1dfe194e12371e7f564fd76608661528e72001cab5e9e33d0d4393c7df3",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "rotated_trueoverhead_offset_l_two_small_folded_slips_short_removable_bookmark_central_scalene_lozenge",
+      "artDirection": "세로 3:4의 바람 부는 일식 하늘을 약 25도 회전한 true-overhead 시점으로 본다. 깊이는 왼쪽 아래의 가까운 재잘이에서 오른쪽 위의 먼 소곤이로 얕게 흐른다. canonical internal pair인 재잘이와 소곤이 정확히 두 명만 등장하며, 정본의 서로 다른 별구름 몸색과 비대칭 크기, 작은 흰 날개, 단순 진보라 눈과 각각의 가슴 Stella 별을 유지한다. 정본의 분홍 connector ribbon 한 가닥은 두 몸 뒤에서만 느슨하게 이어지고 종이·책갈피를 묶거나 세 번째 형상을 만들지 않는다. letter-like small folded message slip은 정확히 두 장이다. 한 장은 near-left에서 짧은 가로 방향, 다른 한 장은 far-right에서 짧은 세로 방향으로 놓여 열린 offset-L을 만든다. 각 slip은 guardian 얼굴보다 약간 큰 작은 단일 접지물이며 서로 물리적으로 붙지 않는다. 하나의 긴 sheet, paper plane, book, page background, screen, panel, W-ridge 또는 stacked packet은 전혀 없다. 두 slip의 안쪽 모서리는 중앙에서 가까워지지만 사이에는 뚜렷한 scalene-lozenge dark gap을 남긴다. 짧고 좁은 bookmark는 정확히 하나만 두 inner corner 아래에 반쯤 끼운다. 길이는 slip 한 장의 절반보다 짧고, 한쪽에는 open crescent+detached dot, 다른 쪽에는 작은 leaf symbol 하나만 있어 날짜와 먼저 건넬 안부를 글자 없이 암시한다. bookmark를 빼면 두 slip은 다시 완전히 분리된다. 재잘이는 자기 slip 바깥에서 날개를 거둔 채 말을 멈춘 자세이고, 소곤이는 자기 slip을 한쪽 날개로 붙잡아 고른 내용을 끝까지 듣는 자세다. 두 guardian 모두 독립적으로 slip을 놓거나 유지할 수 있다. peach light와 lavender half-shadow는 bookmark 부근에서만 스치고 하나의 종이면으로 합쳐지지 않는다. 바람은 두 outer flap을 서로 다른 방향으로 살짝 들어 올린 뒤 중앙 lozenge gap을 지나 화면 밖으로 계속된다. guardian과 slips·bookmark 영웅군은 55–65%다. 텍스트·pseudo-text·숫자·추가 편지·추가 ribbon·하트·닫힌 고리·외부 제3자 단서·확정된 대화 재개는 넣지 않는다. 색연필과 수채, 종이결, 둥근 봉제 비례와 짙은 보라 외곽선을 유지한다.",
+      "distinctFrom": [
+        "B019의 round paper stage, B023의 zigzag ice-letter field, B027의 twin baskets, B031의 swings, B035의 cloud scroll, B039의 split page-panel을 반복하지 않고 회전 overhead의 small slips exactly2와 중앙 scalene-lozenge gap을 사용한다.",
+        "B040의 twin long boards, B041의 giant single page·bookmark, B042의 detached perches를 피하고, within-batch Virgo와 겹칠 수 있는 long sheet·panel·W-ridge·packet stack 없이 열린 offset-L의 작은 두 편지만 주실루엣으로 삼는다."
+      ],
+      "visualReviewFocus": [
+        "80px에서도 재잘이·소곤이 canonical pair 정확히 두 명과 각 가슴별, 서로 분리된 small folded slips 정확히 두 장, 짧은 bookmark 정확히 하나, 중앙 scalene-lozenge gap이 동시에 판독되는지 확인한다.",
+        "한 장의 긴 종이·book spread·paper plane·panel·W-ridge·four-layer packet이 없고, ribbon은 몸 뒤에만 있으며 두 slip의 inner corners와 반그늘이 하나의 닫힌 종이면으로 합쳐지지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "37ff9640b1b6bb4ecf525149d1524b6333e83760fa7467f37e4e5291fa2476e9"
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.love.distance-and-return.eclipse",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-28",
+      "editorialContentHash": "1f16c8385ecf8f740c8b6b1cf5c5b322576d1598a53b86876a564e378f22b438",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "thresholdheight_strict_axial_low_cropped_diagonal_doorleaf_two_short_jambs_elongated_scalene_lightwedge",
+      "artDirection": "세로 3:4의 비 오는 일식 저녁 현관을 threshold 높이의 strict axial macro로 본다. 깊이는 화면 아래쪽 외부 전경의 꼬옥이에서 위쪽 내부 후경의 달콩이로 길게 이어진다. full-height door blade와 수직 wall silhouette는 금지한다. 문짝은 화면 왼쪽 아래 밖에서 비스듬히 잘려 들어오는 낮은 diagonal edge 한 조각만 보이고, 양옆 jamb도 guardian 허리보다 낮은 두 개의 짧은 파편으로 제한한다. 주실루엣은 이 낮은 문 가장자리와 두 jamb 사이에 남은 길쭉한 scalene light wedge다. wedge는 한쪽 폭이 더 넓고 끝이 프레임 안에서 부드럽게 끊기며 길·화살표·상대에게 닿는 광선이 아니다. 주변의 넓은 어두운 threshold seam이 negative space를 만든다. 달콩이와 꼬옥이 정확히 두 명만 영웅군의 55–65%를 차지한다. 달콩이는 정본의 크림·연보라 달집 게 몸, 단순 눈과 이마·가슴 별을 유지하고 안쪽 후경에 선다. 꼬옥이는 짙은 보라 전갈 몸, 큰 집게, 단순 눈, 가슴 Stella 별과 정본의 분홍 heart-tail을 유지하며 외부 전경에 선다. heart-tail은 정체성 일부일 뿐 별도 하트 소품이나 하트 빛을 추가하지 않는다. 현관 별등은 정확히 하나만 안쪽의 낮은 peg에 켠다. 별등 아래에는 open-crescent+detached-dot symbol만 있는 removable date-notch tab 정확히 하나를 걸어 날짜 선택을 나타낸다. 달력 slab·grid·숫자·글자는 없다. sealed small snack은 정확히 하나만 바깥 jamb 옆 dry notch에 놓이며 꼬옥이의 한쪽 집게가 막 놓고 물러난 상태다. 꼬옥이는 문을 잡거나 밀지 않는다. 달콩이는 안쪽에서 asymmetric doorstop slider 하나를 반쯤 빼 문틈을 조금 넓히지만 완전히 열거나 고정하지 않는다. slider와 date tab은 모두 다시 끼우거나 뺄 수 있다. 별등의 amber 빛은 narrow wedge만 스치고 snack이나 꼬옥이 전에 끝난다. 바깥 비와 푸른 입자는 threshold 옆을 대각선으로 지나 화면 밖으로 계속되며 접근 경로를 만들지 않는다. 창문, 완전한 문·벽, calendar slab, 추가 lamp·snack·heart, 외부 제3자 단서, 텍스트·pseudo-text, 결정론적 재회는 넣지 않는다. 색연필과 수채, 종이결, 둥근 봉제 비례와 짙은 보라 외곽선을 유지한다.",
+      "distinctFrom": [
+        "B019·B023의 frontal crescent doorway, B027의 overhead hatch, B031의 snack table, B035의 rain-puddle leaf, B039의 large doorway를 반복하지 않고 threshold-height axial depth와 낮게 잘린 diagonal door edge, 긴 scalene light wedge를 사용한다.",
+        "B040의 eclipse ring·path-door, B041의 lamp+calendar slab, B042의 yoke·rain-lip을 피하며, within-batch Scorpio의 full-height edge-on door blade와 달리 수직 벽 실루엣 없이 두 짧은 jamb 사이의 저상 light wedge를 주형태로 삼는다."
+      ],
+      "visualReviewFocus": [
+        "80px에서도 달콩이·꼬옥이 정확히 두 명의 정본 특징과 가슴별, 별등 정확히 하나, snack 정확히 하나, removable date tab 하나와 half-withdrawn doorstop slider가 분리되어 읽히는지 확인한다.",
+        "full-height door blade·수직 wall·calendar slab·window가 없고 낮은 diagonal door edge와 두 짧은 jamb 사이의 scalene wedge가 주실루엣이며, 빛이 snack·guardian에게 닿는 route가 되지 않고 문틈이 가역적으로 열린 상태인지 확인한다."
+      ],
+      "approvedArtworkSha256": "dfb333f9558fdd55985ad666d9ebfedec58c6c720eb21127e390c4cd342ed1be"
+    },
+    {
+      "order": 5,
+      "editionId": "leo.love.distance-and-return.eclipse",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-28",
+      "editorialContentHash": "022d71fe197711a42a31d0fc9c959e0613c3a1b971649fd3e40acf6bc1b3739f",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "waisthigh_openelbow_oblique_matte_lcorner_single_nested_emptychair_off_seatlight_perpendicular_twin_spotfields_independent_edgetabs_scalene_exit",
+      "artDirection": "세로 3:4의 무광 공연장 서비스 코너를 허리 높이의 open-corner oblique 카메라로 보고, 서로 직각인 두 벽면과 깊은 L자 elbow를 한 화면에 연다. 해님이와 고르미 정확히 두 명만 서로 다른 벽면과 서로 다른 높이에 독립적으로 배치한다. 해님이는 황금 민들레 갈기, 비뚤어진 종이 왕관, 가슴 Stella 별표, 별 끝 꼬리와 진보라 눈을, 고르미는 하늘색 구름 몸, 푸른 이마 소용돌이, 청분홍 비늘형 긴 귀와 별 끝, 가슴별과 진보라 눈을 정본대로 유지한다. L자 elbow의 바닥에는 완전한 작은 1인용 빈 의자 정확히 하나를 허리 아래 크기로 끼워 두며, 좌석 조명은 꺼져 있고 몸 눌림이나 소지품은 없다. 좌면에는 서로 떨어진 loose token 정확히 두 개만 놓는다. 하나는 열린 초승달과 큰 점 하나의 다음 공연 날짜 표식, 다른 하나는 네 갈래 환영 별표다. 두 직각 벽면에는 따뜻한 금빛과 차가운 청빛의 독립된 spotlight field 정확히 두 개를 둔다. 해님이는 자기 금빛 field의 밝기와 폭을 줄이지 않은 채 왼쪽 벽의 recessed edge-tab 하나를, 고르미는 오른쪽 벽의 별도 edge-tab 하나를 조절한다. 탭은 정확히 두 개이며 각 guardian의 앞발 아래 하나씩만 둔다. 두 field는 corner까지 닿지만 작은 어두운 단절을 사이에 둔 broken edge로만 맞고 겹치거나 섞이지 않는다. visible beam cone이나 spotlight 기계는 없다. Eclipse 반그늘 경계가 corner와 두 guardian 일부를 사선으로 가르되 얼굴, 눈, 가슴별, 두 탭, 의자와 토큰은 읽힌다. 의자는 계속 어둡고 바닥의 좁은 slit 잔광만 근처에서 끝난다. L자 코너에서 화면 밖으로 빠지는 큰 scalene triangular floor opening을 주 여백과 다음 선택으로 남기며, guardian·corner·chair·token·tab·light field 영웅군은 화면의 55–65%를 차지한다. 무대, 커튼, cape, canopy, 객석열, 의자 밑면 crop, 관객, 박수, 외부 상대의 몸·손·얼굴·그림자·반사·실루엣을 넣지 않는다. 글자, 숫자, 실제 날짜, 가짜 글줄, 하트, 닫힌 고리, 합쳐진 광륜, 포옹, 악수, 확정된 귀환, 로고와 워터마크를 넣지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제인형 비례와 짙은 보라 외곽선을 유지한다.",
+      "distinctFrom": [
+        "B019·023·027·031·035·039의 lamp barrel, prism island, under-light seam, translucent stage, body-shadow flap, overhead open sector를 반복하지 않고, 직각 matte L-corner의 두 독립 wall field와 edge-tab 두 개, elbow에 끼운 작은 빈 의자를 사용한다.",
+        "B040의 profile cantilever spot deck, B041의 잘린 접힘 좌석 밑면, B042의 정면 bench·gold cape side flap과 달리 waist-height open-corner oblique, 완전하지만 작은 nested chair, scalene floor exit을 쓰며 B043 Libra의 high-oblique central dais chair보다 카메라·크기·주실루엣을 분리한다."
+      ],
+      "visualReviewFocus": [
+        "80px에서도 해님이·고르미 정확히 두 명의 정본 눈·가슴별·왕관·긴 별끝 귀가 분리되고, L자 elbow의 작은 빈 의자 하나, 꺼진 seat-light, 날짜·환영 토큰 두 개와 guardian별 edge-tab 정확히 두 개가 읽히는지 확인한다.",
+        "금빛·청빛 field가 beam이나 닫힌 광륜이 되지 않고 어두운 broken boundary로만 맞으며, 빈 의자에 외부 상대 단서가 없고 scalene floor exit과 slit 잔광이 열린 다음 선택으로 남는지 확인한다."
+      ],
+      "approvedArtworkSha256": "e587e33065e81488c91e97d3dbe5a248b12a813232bf8bbad0512b82084aa354"
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.love.distance-and-return.eclipse",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-28",
+      "editorialContentHash": "b43168b9766a16375dbf6672e791be9c5c9f582fee1306dee840ce55c952dd98",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "floorend_macro_single_continuous_threecrease_wfold_checksheet_open_rhomboid_corridors_integrated_date_questionwells_loose_endclip_crookedflower_acceptance",
+      "artDirection": "세로 3:4의 바닥 높이 end-on macro 카메라로 정확히 한 장의 매우 긴 continuous checklist sheet를 능선 방향으로 본다. 이 체크표는 한 재료가 세 번 이어서 접힌 비대칭 W 또는 번개형 ridge이며 모든 facet이 접힘선에서 물리적으로 연결된다. 분리형 slip, page, card, tile, tag, bookmark와 두 번째 종이는 전혀 없다. W의 exterior facet 네 곳에 종이 자체로 눌러 만든 큰 symbol well 정확히 네 개를 둔다. 첫 well은 열린 초승달과 큰 점 하나의 날짜 표식이고, 나머지 세 개는 서로 다른 물방울, 잎, 네 갈래 별의 확인 질문 표식이다. 글자, 숫자, checkbox와 가짜 글줄은 없다. W 능선 사이에는 열린 rhomboid air corridor 두 곳을 만들고 먼 flap은 unclipped 상태로 남긴다. 새봄이와 차곡이 정확히 두 명만 체크표의 서로 다른 끝에 독립적으로 둔다. 새봄이는 크림색 식물 토끼 몸, 큰 초록 잎귀, 이마의 정본 별꽃, 잎 칼라, 가슴별, 진보라 눈을 유지하며 가까운 끝의 plain rounded end-clip 정확히 하나에서 두 앞발을 거둔다. clip은 반쯤 열려 있어 다시 접거나 펼칠 수 있다. 차곡이는 커스터드색 송아지 몸, 라벤더 앞머리와 뿔, 보라 앞치마·리본, 가슴별과 진보라 눈을 유지하며 멀리 떨어진 끝에서 줄기가 삐뚤어진 prop starflower 정확히 한 송이를 두 손으로 받아 들고 고치지 않는다. 새봄이의 이마 별꽃 외에 환경 꽃은 이 prop 한 송이뿐이며 loose leaf나 꽃무더기는 없다. 둘은 서로 닿지 않은 채 작은 웃음을 나누고 새봄이의 정리 손은 멈춰 있다. 하나의 대각 Eclipse 반그늘이 W의 교대 facet과 두 guardian 일부를 지나지만 얼굴, 눈, 가슴별, 네 well, clip과 삐뚤어진 꽃은 읽힌다. unclipped far flap 너머로 넓은 빈 lane을 화면 밖까지 열어 다음 확인 여부를 남기고, guardian·W sheet·clip·symbol·flower 영웅군은 55–65%를 차지한다. basket, flower bed, ribbon, cloth row, Y cradle, layered packet, offset-L과 종이 조각 묶음을 넣지 않는다. 외부 상대의 몸·손·얼굴·그림자·반사·실루엣, 글자, 숫자, 가짜 글줄, 하트, 닫힌 고리, 포옹, 악수, 확정된 답이나 재회, 로고와 워터마크를 넣지 않는다. 부드러운 색연필과 수채, 종이결, 둥근 봉제인형 비례와 짙은 보라 외곽선을 유지한다.",
+      "distinctFrom": [
+        "B019의 petal-gap flower handoff, B023의 greenhouse wheel, B027의 capillary table, B031의 herbarium frame, B035의 shadow petal clusters, B039의 check fins와 B040의 cantilever shelves를 반복하지 않고, 한 장의 continuous three-crease W checklist sheet와 두 rhomboid void를 주실루엣으로 삼는다.",
+        "B041의 large top-down four-layer packet과 B042의 Y cradle·꽃 세 송이·broken ribbon·edge-on tag를 피하고, B043 Gemini의 separate slips2·offset-L과 달리 detachable paper pieces를 0으로 고정한 단일 연속 능선과 integrated wells 네 개만 사용한다."
+      ],
+      "visualReviewFocus": [
+        "80px에서도 새봄이·차곡이 정확히 두 명의 정본 눈·가슴별과 하나의 연속 W sheet, 연결된 접힘, 날짜1·질문3 well, 반열린 clip1, 삐뚤어진 prop starflower1이 분리되어 읽히는지 확인한다.",
+        "분리된 종이·tag·tile·ribbon이 없고 새봄이는 clip에서 손을 거두며 차곡이는 꽃을 고치지 않은 채 받아 들고, far flap과 두 rhomboid corridor가 답이나 재회를 확정하지 않는 열린 continuation인지 확인한다."
+      ],
+      "approvedArtworkSha256": "84f1c4746aeebe69ae92c610c864bb68401de23fe75f9ab0eb046a0b009d6548"
+    },
+    {
+      "order": 7,
+      "editionId": "libra.love.distance-and-return.eclipse",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-28",
+      "editorialContentHash": "56378bb7cd4a56048430956431b6a45f1d116d9d1591be23e084ec1630098a6d",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "highrotated_oblique_brokenx_detached_personalpads_single_complete_threequarter_chairdais_flat_triplet_sign_personal_stopwedges_hovering_sharedthirdstar_open_diamond_exit",
+      "artDirection": "세로 3:4의 60도 rotated high-oblique 카메라로 서로 떨어진 trapezoid personal pad 두 개와 중앙의 작은 neutral chair dais를 내려다본다. 세 solid는 연결되지 않은 broken X 또는 부러진 cruciform을 이루며 가까운 팔 하나는 완전히 비워 큰 diamond-shaped exit을 화면 밖으로 연다. 고르미와 해님이 정확히 두 명만 각자의 personal pad에 독립적으로 선다. 고르미는 하늘색 구름 몸, 청분홍 비늘형 긴 귀와 별 끝, 푸른 이마 소용돌이, 가슴별과 진보라 눈을, 해님이는 황금 민들레 갈기, 비뚤어진 종이 왕관, 가슴별, 별 끝 꼬리와 진보라 눈을 정본대로 유지한다. 중앙 dais에는 완전한 빈 1인용 low-backed chair 정확히 하나를 명백한 3/4 시점으로 둔다. 의자는 seat1, back1, legs4를 가지며 bench나 두 좌석이 아니고 occupant, imprint, belonging이 없다. dais 앞에는 flat sign plate 정확히 하나를 별도로 두고, plate 자체의 integrated well 세 개에 열린 초승달+점의 날짜 표식 하나와 잎·물방울의 준비 표식 두 개만 넣는다. 환경 star token은 정확히 세 개다. 고르미 pad의 차가운 blue personal star 하나, 해님이 pad의 따뜻한 gold personal star 하나, 중앙 chair 앞 open socket 위의 pale shared third star 하나다. 두 guardian은 shared star의 서로 반대인 뭉툭한 꼭짓점 하나씩만 잡고 몸과 앞발 사이에 공기 틈을 남긴다. shared star는 socket에 고정되지 않고 낮게 떠 있어 어느 쪽도 거둘 수 있다. 남은 앞발로 각자 pad 바깥의 removable stop-wedge 하나씩을 조절해 wedge는 정확히 두 개다. bridge, scale, beam, stand, ribbon, rope와 연결된 rail은 없다. 하나의 대각 Eclipse 반그늘이 중앙 chair, sign과 shared star를 지나고 두 personal star는 각자 cool·warm 빛을 유지한다. 얼굴, 눈, 가슴별, chair, 세 환경 별, 두 wedge와 sign symbol은 읽힌다. guardian·pads·dais·chair·sign·stars·wedges 영웅군은 55–65%를 차지하며 foreground open diamond가 가장 큰 여백과 다음 선택으로 남는다. 외부 상대의 몸·손·얼굴·그림자·반사·실루엣, 글자, 숫자, 가짜 글줄, 하트, 닫힌 고리, guardians끼리의 접촉, 포옹, 악수, 강제 양보, 확정 합의·귀환, 로고와 워터마크를 넣지 않는다. 부드러운 색연필과 수채, 종이결, 둥근 봉제인형 비례와 짙은 보라 외곽선을 유지한다.",
+      "distinctFrom": [
+        "B019의 scale fulcrum, B023의 rotary bridge, B027의 reed boats, B031의 top-down sand table, B035의 vertical shadow/color strips, B039의 split chair-bays와 B040의 worm-eye two-chair catenary를 반복하지 않고, detached pads와 central dais의 high-oblique broken-X를 사용한다.",
+        "B041의 큰 rear-axial central chair·tripanel과 B042의 open-water V·먼 side-profile chair를 피하고 완전한 3/4 chair를 중앙 dais에 두며, B043 Leo의 waist-oblique matte L-corner 속 작은 nested chair보다 카메라·의자 크기·주실루엣을 분리한다."
+      ],
+      "visualReviewFocus": [
+        "80px에서도 고르미·해님이 정확히 두 명의 정본 눈·가슴별, 완전한 3/4 single chair1, flat sign1의 날짜1+준비2, personal star2+hovering shared star1, stop-wedge2가 올바른 수로 읽히는지 확인한다.",
+        "pads와 dais가 연결된 scale·bridge·ribbon 없이 broken X를 이루고, shared star가 open socket 위에서 아직 고정되지 않으며 빈 의자에 외부 상대 단서가 없고 foreground diamond exit이 열린 채인지 확인한다."
+      ],
+      "approvedArtworkSha256": "171deb77cb40ebbb48e5f85fe48d205148979b68a94aaa342ee4554bb6f1e95c"
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.love.distance-and-return.eclipse",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-28",
+      "editorialContentHash": "2e762bf12dd9f0e3c7b2b4359ca2e13ade169e5729d884072c5a56a30d2ff42a",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "clawheight_strict_low_sidesection_fullheight_edgeon_closeddoorblade_tthreshold_exterior_openmarkerstrip_single_starlamp_private_slidebolt_relockhook_invertedl_retreat",
+      "artDirection": "세로 3:4의 claw-height strict low architectural side-section 카메라로 T자 문턱을 수평으로 바라본다. 정확히 하나의 완전히 닫힌 문은 바닥에서 화면 상단 가까이 이어지는 full-height vertical edge-on blade로만 보인다. 얇은 옆 두께와 T-shaped threshold는 분명하지만 broad door face, knob, handle, keyhole, key, window, panel, 열린 틈과 문 너머 시야는 전혀 없다. 꼬옥이와 달콩이 정확히 두 명만 닫힌 blade의 서로 반대쪽에 둔다. 외부의 달콩이는 라벤더 게 몸, 초승달 껍질, 둥근 집게, 이마별, 가슴별과 진보라 눈을 정본대로 유지하며 문에서 guardian 한 몸 길이 이상 떨어진 곳에 portable star lamp 정확히 하나를 내려놓고 집게를 거둔다. 내부의 꼬옥이는 짙은 보라 전갈 몸, 큰 집게, 가슴별, 진보라 눈과 유일한 분홍 heart-shaped tail tip 하나를 정본대로 유지하며 private plain slide-bolt 정확히 하나를 floor catch에서 들어 올린다. 풀린 bolt와 비어 있는 re-lock hook 정확히 하나는 보이지만 문은 계속 완전히 닫혀 있다. shared latch, pressure tab과 두 번째 bolt는 없다. 문과 떨어진 외부 바닥에는 flat flush open-ended marker strip 정확히 하나를 둔다. strip은 sled, caddy, tray, page, tag, stand가 아니며 pull tongue, handle, wheel, 닫힌 외곽선이 없다. strip에 열린 초승달+점의 date marker 하나와 서로 닿지 않는 두 right-angle bar의 boundary marker 하나를 직접 inset한다. 두 L bar는 넓은 틈을 두어 box, heart, ring이나 loop를 닫지 않는다. lamp의 작은 gold pool은 exterior에서 문 전에 끝나고, 꼬옥이의 유일한 tail-heart glow는 interior에만 머문다. 두 빛은 blade를 건너거나 만나거나 bridge·ring을 만들지 않는다. Eclipse 반그늘은 얇은 blade edge만 스치며 얼굴, 눈, 가슴별, heart tip, lamp, marker, bolt, catch와 hook은 읽힌다. 문에서 멀어지는 넓은 exterior retreat lane과 strip 위·옆의 큰 inverted-L air field를 다음 선택으로 열고, guardian·blade·threshold·lamp·strip·bolt 영웅군은 55–65%를 차지한다. umbrella, caddy, sled, broad door face, 낮게 잘린 diagonal door edge와 axial light wedge를 넣지 않는다. 달콩이는 열쇠를 요구하거나 문을 감싸지 않고, 꼬옥이는 문을 열거나 상대와 공유된 장치를 풀지 않는다. 외부 상대의 몸·손·얼굴·그림자·반사·실루엣, 글자, 숫자, 가짜 글줄, calendar, grid, 추가 하트, 닫힌 고리, 공유 열쇠, 접촉, 포옹, 악수, 열린 문, 확정 귀환·합의, 로고와 워터마크를 넣지 않는다. 부드러운 색연필과 수채, 종이결, 둥근 봉제인형 비례와 짙은 보라 외곽선을 유지한다.",
+      "distinctFrom": [
+        "B019의 horizontal lintel top-down door, B023의 hinge wedge, B027의 umbrella crossrail, B031의 geode crack, B035의 body shadow play와 B039의 high-corner cutaway를 반복하지 않고 full-height edge-on closed blade와 T threshold를 strict low side-section으로 세운다.",
+        "B040의 frontal tripanel·two keys·starbox, B041의 broad side door face·triangular caddy, B042의 overhead cropped umbrella·sled·tiny door edge를 피하며, B043 Cancer의 cropped low diagonal door edge·axial light wedge와 달리 수직 blade 전체 높이와 broad exterior retreat lane을 주축으로 삼는다."
+      ],
+      "visualReviewFocus": [
+        "80px에서도 꼬옥이·달콩이 정확히 두 명의 정본 눈·가슴별·달콩이 shell·꼬옥이 canonical heart tail tip1, full-height edge-on closed blade1, T threshold1, star lamp1, date1+boundary1 strip이 분리되어 읽히는지 확인한다.",
+        "private slide-bolt1이 floor catch에서 풀리고 empty re-lock hook1이 남되 문은 닫혀 있으며, key·broad door face·추가 lamp·추가 heart·닫힌 boundary box 없이 두 빛이 문 전에 끊기고 exterior retreat lane이 열린 채인지 확인한다."
+      ],
+      "approvedArtworkSha256": "649e45c5a5d7adb00da8ed74967bd4866b6a69db16460a0a373c295be398847d"
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.love.distance-and-return.eclipse",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-28",
+      "editorialContentHash": "041759a2322da5d377ee643498124ce562623777d37c9101c1e931a157711325",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "near_nadir_radial_openfork_eclipse_dial_twin_flat_coral_flagmarkers_small_map_loose_contactbead_open_penumbra_sector",
+      "artDirection": "세로 3:4의 별바람 부는 해질녘 고원을 70도 near-nadir radial oblique로 내려다보고, 화면 아래 가까운 귀환 dock에서 비어 있는 off-center hub를 지나 화면 위 먼 outbound slot으로 깊이가 퍼지게 한다. 총총이와 오름이 정확히 두 명만 둔다. 총총이는 크림색 구름 망아지 몸, 연보라 곱슬 갈기와 꼬리, 별무늬 목도리, 가슴 Stella 별표, 단순 진보라 눈을 유지하고 초승달 활은 가슴 앞에 들지 않고 몸 뒤에 맨다. 오름이는 크림색 산양 얼굴, 보라 줄무늬 뿔, 청록 물고기 꼬리와 옆구리 청록 공구가방, 가슴 별표와 단순 진보라 눈을 유지한다. 주실루엣은 땅에 낮게 박힌 matte moon-brass open-fork eclipse dial이다. 두 개의 길이가 다른 둥근 radial tine이 하나의 작은 hub에서 넓게 벌어지고 120도 이상의 sector를 완전히 비워, 교차선이나 직각 꺾임 없이 80px에서도 Libra의 broken-X나 Gemini의 offset-L이 아닌 비대칭 open fork로 읽힌다. 먼 tine의 outbound slot과 가까운 tine의 return-start slot에는 같은 산호색의 아주 작은 납작한 flag-shaped marker 정확히 두 개만 각각 끼운다. 둘은 낮은 타일이며 standing flag, pole, 긴 천, 망토, cloth tab이나 깃발 그림자는 없다. 오름이는 가까운 return slot 옆에 compact weighted return block 정확히 한 개를 세우지만 잠금 핀은 끼우지 않아 다시 옮길 수 있다. 별도의 짧고 열린 radial groove에는 removable contact-date bead 정확히 한 개가 느슨하게 놓인다. 총총이 앞에는 dial보다 훨씬 작은 irregular blank map sheet 정확히 한 장만 두고, 책등·접힘책·page stack 없이 한 장으로 보이게 한다. 총총이는 지도 위의 서로 연결되지 않은 removable outward-star marker 한 개와 crescent-plus-dot return-time marker 한 개를 각각 가리키며, 지도에는 길선, 화살표, 숫자, 문자나 가짜 글줄이 없다. 두 guardian, 낮은 dial과 작은 control 군은 화면의 55–65%를 차지한다. 넓은 반원형 penumbra sector를 한쪽에 비우고 사선 Eclipse 경계가 오름이의 무거운 return block과 총총이의 작은 map 선택을 서로 다른 밝기로 드러낸다. 얇은 warm rim-light와 별바람은 두 flag-marker 사이를 닫거나 목적지에 수렴하지 않고 열린 sector 밖으로 계속된다. 외부 상대의 몸, 손, 얼굴, 그림자, 반사, 실루엣이나 소지품, 추가 guardian은 전혀 없다. 추가 하트, 닫힌 원·고리·궤도, 확정된 귀환, 실제 날짜, 문자, 가짜 문자, 숫자, 로고와 워터마크를 넣지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제인형 비례와 짙은 보라 외곽선을 유지한다.",
+      "distinctFrom": [
+        "B019의 low map drum, B023의 vertical map sail, B027의 folding table·suitcase, B031의 twin telescope, B035의 three-notch moonrock와 B039의 top-down twin maps 대신 70도 near-nadir에서 낮은 open-fork dial을 주실루엣으로 두고 지도는 아주 작은 보조 한 장으로 축소한다.",
+        "B040의 cross-depth twin fanfold maps, B041의 두 freestanding coral wayflags와 B042의 cloak parcel·edge flag-tabs를 반복하지 않으며, pole·cloth 0인 두 flat radial flag-marker와 열린 반원 penumbra로 current Libra broken-X 및 Gemini offset-L과도 80px silhouette를 분리한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 총총이·오름이 정확히 두 명의 정본 얼굴·가슴별·총총이 몸 뒤 초승달 활이 보이고, low radial open fork가 broken-X·offset-L·map board보다 먼저 읽히며 hero coverage가 55–65%인지 확인한다.",
+        "같은 산호색 flat flag-marker exactly2, standing flag/pole/cloth 0, weighted return block1, loose contact bead1, one-sheet small map1과 분리된 outward-star1·return-time marker1이 계수되고 외부 상대·지도 선/화살표·문자·추가 하트·닫힌 ring·확정 귀환이 없는지 확인한다."
+      ],
+      "approvedArtworkSha256": "baf3c1259697e7e351d234ac16f7085669c1c3e3879abe1abe452d848aee4e18"
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.love.distance-and-return.eclipse",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-28",
+      "editorialContentHash": "523566c95355e3d9a287ca48b37816b19facfbfb2289e31c1a6e0d5b5e1accc1",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "plate_underside_wormeye_thin_cantilever_revealed_supportpalm_slim_edgeplan_large_triangular_void_eclipse_rim",
+      "artDirection": "세로 3:4의 눈 내리는 Eclipse 작업터에서 얇은 test plate 바로 아래 바닥 높이 worm-eye로 올려다본다. 화면 아래 가까운 slim plan edge에서 plate 밑의 오름이 손을 지나 화면 위 총총이까지 수직·사선 깊이가 열리며, plate 아래에는 큰 삼각형 negative void를 남긴다. 오름이와 총총이 정확히 두 명만 둔다. 오름이는 크림색 산양 얼굴, 보라 줄무늬 뿔, 청록 물고기 꼬리와 공구가방, 가슴 Stella 별표, 단순 진보라 눈을 유지한다. 총총이는 크림색 구름 망아지 몸, 연보라 갈기와 꼬리, 별무늬 목도리, 가슴 별표와 단순 진보라 눈을 유지하며 초승달 활은 몸 뒤에 고정한다. 주실루엣은 화면을 비대칭으로 가로지르는 thin off-center cantilever test plate 정확히 한 개와 그 아래 열린 오름이의 palm이다. 총총이는 상면 한쪽에 먼저 올라 무게를 시험하지만 난간·계단·목적지는 없다. 오름이는 이전에 받치던 한쪽 손을 plate underside에서 손가락 한 마디만큼 떼어 손바닥을 관객 쪽으로 보여 주고, 다른 손은 숨겨 도움을 강요하지 않는다. plate 가까운 edge에는 상면 plan plate가 아니라 두께만 보이는 slim fold-out blank plan board 정확히 한 개를 세로 edge-on으로 붙인다. 그 열린 strip에는 서로 분리된 removable task token 정확히 두 개와 짧은 open groove 속 reunion-date peg 정확히 한 개를 두며 숫자·문자 없이 leaf와 stone의 단순 아이콘만 사용한다. 오름이와 총총이 사이에는 compact support wedge 정확히 한 개를 아직 끼우지 않은 채 놓아, 함께 도움을 선택하면 넣고 원하면 다시 뺄 수 있게 한다. plan tokens, date peg와 support wedge는 모두 잠기지 않고 plate를 자동 완성하지 않는다. guardian 둘, test plate, revealed palm과 edge controls의 hero group은 화면의 55–65%를 차지한다. 한쪽 Eclipse rim이 plate underside와 오름이의 공개된 palm만 따뜻하게 긁고, 상면 총총이는 독립된 차가운 half-shadow에 남는다. 눈 입자는 큰 triangular under-plate void와 열린 측면을 지나 프레임 밖으로 계속되어 만남 지점이나 완성된 계단을 만들지 않는다. stairs, arch, jack, screw, work cloak, token bank, return bay, wall plan plate는 모두 없다. 외부 상대의 몸, 손, 얼굴, 그림자, 반사, 실루엣이나 소지품, 추가 guardian은 없다. 추가 하트, 닫힌 원·고리, 실제 날짜, 문자, 가짜 문자, 숫자, 로고와 워터마크를 넣지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제인형 비례와 짙은 보라 외곽선을 유지한다.",
+      "distinctFrom": [
+        "B019의 front two-level platform, B023의 switchback stairs, B027의 telescoping jack, B031의 counterweight arch, B035의 twin shadow panels와 B039의 lateral twin stairs 대신 실제 plate underside worm-eye와 공개된 빈 palm, 큰 triangular void를 주실루엣으로 삼는다.",
+        "B040의 moonwall·shared foothold, B041의 chunky task banks·tall return bay와 B042의 high-side top platform·flat plan plate·cloak·screw를 반복하지 않고, edge-on slim plan strip과 미삽입 support wedge를 plate 아래에서 보여 준다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 오름이·총총이 정확히 두 명의 정본 뿔·꼬리·가슴별·총총이 몸 뒤 활, thin cantilever plate1, plate underside에서 떨어진 revealed palm과 큰 triangular void가 최우선 silhouette로 읽히며 hero coverage가 55–65%인지 확인한다.",
+        "edge-on blank plan board1, separate task tokens2, removable reunion-date peg1, uninserted support wedge1이 계수되고 top plan plate·stairs·arch·jack·screw·cloak·banks·return bay·외부 상대·문자·추가 하트·닫힌 ring·완성 재회가 없는지 확인한다."
+      ],
+      "approvedArtworkSha256": "62522fd9ea63844c773a0fc010953ac5231b447686625bd21394a84676c0fd2d"
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.love.distance-and-return.eclipse",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-28",
+      "editorialContentHash": "8d042d5b836f3e3643ce1e65f56a43e5d0ae69918155335399998ad83e6f241b",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "low_lateral_crossdepth_long_openfork_blanktag_bridge_secondary_staggered_bottles_single_bluepulse_dark_cloud_trapezoid",
+      "artDirection": "세로 3:4의 낮은 구름 작업대에서 bottle/tag 높이 low lateral long-lens로 본다. 화면 왼쪽 아래 가까운 blank tag 끝에서 서로 다른 깊이의 방울이와 차곡이를 지나 오른쪽 위 먼 empty cloud의 pulse endpoint로 얕고 긴 cross-depth를 만든다. 방울이와 차곡이 정확히 두 명만 둔다. 방울이는 옅은 하늘색 구름·물결 몸, 이마의 단일 나선, 긴 물결 귀, 가슴 Stella 별표와 단순 진보라 눈을 유지한다. 차곡이는 custard calf 몸, 연보라 앞머리와 작은 뿔, 보라 앞치마, 가슴 Stella 별표와 단순 진보라 눈을 유지한다. 주실루엣은 차곡이가 건네고 방울이가 다른 끝을 아직 받기만 한 long narrow asymmetrical blank name-tag bridge 정확히 한 개다. tag는 반투명 vellum 질감, 한쪽 둥근 몸통과 반대쪽의 명백히 열린 두 갈래 fork end를 가지며, 중앙 면은 완전히 비어 있다. 네모 plan plate, 지도, 판자, 책, 표지판, 닫힌 label loop로 보일 직각 프레임·격자·글줄·구멍·끈은 없다. tag는 어느 병에도 부착되지 않고 두 guardian 손 사이에서 약간 처져 되돌려 줄 수 있다. bottles는 tag보다 훨씬 작은 보조군이며 서로 같은 축에 놓지 않는다. 방울이 쪽 가까운 낮은 cradle에는 source blue heart-shaped sealed bottle 정확히 한 개만 두고, 차곡이 뒤 먼 작은 perch에는 heart가 아닌 plain new bottle 정확히 한 개만 둔다. new bottle의 blank label zone 앞에서 두 guardian은 각각 하나씩의 작은 blue dab과 amber dab을 removable applicator 끝에 들고 있지만 아직 눌러 붙이지 않아 함께 이해한 뜻의 수정 가능성을 남긴다. 문자·가짜 글줄·숫자·추가 heart symbol은 없다. 방울이는 별도 작은 emitter 없이 손끝에서 가느다란 blue signal pulse 정확히 한 줄만 빈 구름으로 보내고, pulse는 답이나 반사 없이 cloud 안에서 끝난다. pulse 아래 독립된 짧은 open cloud groove에는 sliding wait-limit stop 정확히 한 개만 있어 끝점보다 앞뒤로 옮길 수 있다. tag, bottles, pulse와 wait-stop은 서로 연결되거나 잠기지 않는다. guardian 둘과 tag bridge, 작은 bottle/control 군은 화면의 55–65%를 차지한다. 사선 Eclipse edge가 tag의 두 반쪽과 두 guardian의 각자 mark를 서로 다른 밝기로 나누고, pulse 이후에는 broad dark trapezoid cloud를 크게 비운다. 구름결과 찬 별바람은 그 여백 밖으로 계속되며 reply, 얼굴, 손, 목적지나 귀환 실루엣을 만들지 않는다. tube, pipe, wave-vane, prism fan, loom, table과 bottle lens는 없다. 외부 상대의 몸, 손, 얼굴, 그림자, 반사, 실루엣이나 소지품, 추가 guardian은 전혀 없다. source blue heart bottle 이외의 추가 하트, 닫힌 원·고리, 실제 날짜, 문자, 가짜 문자, 숫자, 로고와 워터마크를 넣지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제인형 비례와 짙은 보라 외곽선을 유지한다.",
+      "distinctFrom": [
+        "B019의 bottle-glass lens, B023의 parallel wave tubes, B027의 label loom, B031의 resonance table, B035의 frontal split cloudbank와 B039의 bottle pair·slack wavepipe 대신 low lateral에서 열린 fork end의 long blank tag bridge를 가장 큰 silhouette로 둔다.",
+        "B040의 twin upright bottle niches·single-bend tube, B041의 tall open wave-vane와 B042의 top-down frost-prism fan을 반복하지 않고, 서로 다른 깊이의 small secondary bottles와 one blue pulse, independent wait-stop, broad dark cloud trapezoid를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 방울이·차곡이 정확히 두 명의 정본 나선·귀·앞머리·뿔·앞치마·가슴별과, open fork end가 분명한 long narrow blank tag가 plan plate·map·board보다 먼저 읽히며 hero coverage가 55–65%인지 확인한다.",
+        "small staggered blue heart bottle1·plain new bottle1, blue pulse exactly1, sliding wait-stop1, 미부착 blue/amber dab 각1이 계수되고 tube·vane·fan·reply·외부 상대·source 병 외 추가 하트·문자·닫힌 ring·확정 귀환이 없는지 확인한다."
+      ],
+      "approvedArtworkSha256": "0cb5adbdbf21a4093fd0f40e00c5d604beed8bb4f51f5a9687f5b1e25eaf38b4"
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.love.distance-and-return.eclipse",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-08-28",
+      "editorialContentHash": "0ff6112ec51980b994ea2873c29559c7c37defca9e4e85c156d07810a04cfdcb",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "strict_frontal_splitlevel_twin_horizontal_currents_dark_stillwater_slot_matching_loose_startime_tabs_reversible_fintouch",
+      "artDirection": "세로 3:4의 달빛 깊은 꿈바다를 strict frontal orthographic split-level section으로 본다. 원근 수렴을 거의 없애고 화면 위 먼 current shelf와 아래 가까운 current shelf를 평행하지만 서로 어긋난 두 깊이로 압축한다. 정본 내부 pair인 큰 aqua 꿈별이와 작은 pink 잠별이 정확히 두 명만 둔다. 두 guardian은 각자의 색, 상대 크기, 가슴 Stella 별표, 단순 진보라 눈, 부드러운 머리지느러미·옆지느러미·꼬리 정체성을 유지하며 추가 guardian은 없다. 주실루엣은 둥근 arc가 아니라 상·하로 떨어진 flat-edged horizontal current shelf 정확히 두 개와 그 사이 길고 어두운 stillwater slot이다. far upper shelf는 왼쪽에서 오른쪽으로, near lower shelf는 오른쪽에서 왼쪽으로 흘러 두 guardian의 몸과 꼬리는 서로 반대 outward 방향을 유지한다. 꿈별이는 잠별이 쪽 거품 리듬에 머리를 기울여 듣되 몸이나 물살을 당기지 않는다. 두 shelf가 겹치지 않는 중앙 edge에서 각 guardian의 안쪽 지느러미 한 개씩, 즉 fin-tip 한 쌍만 힘을 뺀 채 가볍게 다시 맞잡는다. 몸통·꼬리·다른 지느러미 접촉, 포옹, 매듭이나 당김은 없고 어느 쪽도 즉시 놓고 자기 물살로 돌아갈 수 있다. 각 shelf 아래에는 matching detachable square star-time marker 정확히 한 개씩, 합계 두 개만 둔다. 각 marker는 동일한 four-point star 한 개와 solid time dot 한 개를 가지며 hollow circle이나 ring outline은 없다. 두 marker는 같은 비어 있는 return center를 향해 어긋나게 놓이지만 서로 닿거나 물살·선으로 연결되지 않고 언제든 떼어 옮길 수 있어 별빛 원과 시간을 합의한 표식만 남기고 도착을 확정하지 않는다. guardian pair, current shelves, 두 marker와 작은 fin contact의 hero group은 화면의 55–65%를 차지한다. 넓은 horizontal Eclipse band가 upper와 lower lane을 서로 다른 밝기로 나누고, 중앙 dark slot은 프레임 한쪽까지 열린다. aqua와 pink 거품·별가루는 각 outward shelf의 반대 끝으로 계속 흘러가며 합류점, 목적지, 닫힌 귀환 경로를 만들지 않는다. dominant arc, broken oval, ring, V-current, vertical shaft, column, dome, membrane, wake와 orbit line은 모두 없다. 외부 상대의 몸, 손, 얼굴, 그림자, 반사, 실루엣이나 소지품, 제3 guardian은 전혀 없다. 추가 하트, 닫힌 원·고리, 실제 날짜, 문자, 가짜 문자, 숫자, 로고와 워터마크를 넣지 않는다. 부드러운 색연필과 수채, 보이는 종이결, 둥근 봉제인형 비례와 짙은 보라 외곽선을 유지한다.",
+      "distinctFrom": [
+        "B019의 central bubble column, B023의 open current arch, B027의 dream lens, B031의 tide xylophone, B035의 diagonal moon coral와 B039의 twin membrane sails 대신 strict frontal의 offset horizontal shelves2와 long dark slot을 dominant silhouette로 쓴다.",
+        "B040의 membrane awnings·orbit segments, B041의 open-V currents·vertical return shaft와 B042의 complementary broken-oval arcs·gap tabs를 반복하지 않고, arc/ring/V/shaft 0인 flat split-level lanes와 작은 matching square star-time markers, reversible single fin-tip clasp를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "master와 actual width80에서 큰 aqua 꿈별이와 작은 pink 잠별이 정확히 두 명의 정본 상대 크기·가슴별·반대 outward 방향, flat horizontal current shelves exactly2와 long dark slot이 arc·V·vertical shaft보다 먼저 읽히며 hero coverage가 55–65%인지 확인한다.",
+        "matching detachable square star-time markers exactly2와 중앙의 relaxed fin-tip pair contact exactly1이 보이고, pulling·embrace·third guardian·external recipient·dominant arc·broken oval·ring·V·shaft·membrane·문자·추가 하트·확정 reunion이 없는지 확인한다."
+      ],
+      "approvedArtworkSha256": "38279a296d8ac6136701e3c8ee879ab95b3012865ab1c19f8df8bed6d254cdbd"
+    }
+  ],
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-28",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

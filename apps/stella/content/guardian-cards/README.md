@@ -59,8 +59,13 @@ Next의 `src`나 정적 `public` 아래가 아니므로 웹 빌드에 자동 포
 | `production-art-batch-038-review-ko.json`    | `visual_review_complete` | 서른여덟 번째 production 배치 파일럿 1개·신규 PNG 11개 시각 승인·승인 해시 고정 |
 | `production-art-batch-039-review-ko.json`    | `visual_review_complete` | 서른아홉 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `production-art-batch-040-review-ko.json`    | `visual_review_complete` | 마흔 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정                |
+| `production-art-batch-041-review-ko.json`    | `visual_review_complete` | 마흔한 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-042-review-ko.json`    | `visual_review_complete` | 마흔두 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-043-review-ko.json`    | `visual_review_complete` | 마흔세 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-044-review-ko.json`    | `visual_review_complete` | 마흔네 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정              |
+| `production-art-batch-045-review-ko.json`    | `visual_review_complete` | 마흔다섯 번째 production 배치 신규 PNG 12개 시각 승인·승인 해시 고정            |
 | `guardian-card-asset-contract.json`          | `delivery_contract`      | R2 버킷·객체 키·WebP 최적화·캐시 불변 계약                                      |
-| `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 488개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                         |
+| `guardian-card-assets-ko.json`               | `release_candidate`      | 승인된 548개 WebP 배포 후보의 객체 키·원본/배포 SHA-256                         |
 
 파일명과 JSON에는 수동 버전을 두지 않는다. 각 파일이 현재 정본이며 변경 이력은 Git으로 추적한다. 카드
 원고와 의미를 바꾸면 새 에디션 ID를 만들고, 같은 에디션의 원화 교정은 ID를 유지한 채 WebP 해시를 넣은
@@ -237,8 +242,8 @@ Stella 등급도 마스터 원화 자체에는 사용자의 실제 출생 차트
 게이트다. 승인된 로컬 후보를 업로드된 운영 자산으로 오인하지 않고, 런타임이 존재하지 않는 R2
 object를 참조하지 않게 한다.
 
-현재 파일럿 12개와 production 배치 40개의 고유 신규 476개, 총 488개 승인 원본을 WebP quality 82·effort 6으로
-최적화했다. 누적 배포 후보 합계는 97,003,092 bytes다.
+현재 파일럿 12개와 production 배치 45개의 고유 신규 536개, 총 548개 승인 원본을 WebP quality 82·effort 6으로
+최적화했다. 누적 배포 후보 합계는 107,120,174 bytes다.
 `guardian-card-assets-ko.json`은 파일 본문 대신 각
 WebP의 객체 키·정확한 byte 수·원본과 배포 SHA-256만 추적한다. release bundle의 매니페스트가 Git의 이
 파일과 byte 단위로 같지 않으면 GitHub Actions가 배포하지 않는다.
@@ -252,7 +257,7 @@ WebP의 객체 키·정확한 byte 수·원본과 배포 SHA-256만 추적한다
 
 승인된 파일럿 12개는 각각 서로 다른 배치에 하나씩 포함된다. 따라서 12개 배치는 파일럿 한 장과 신규
 11장으로 구성되고, 나머지 76개 배치는 신규 12장으로 구성된다. 파일럿만 승인했을 때의 시작 잔여량은
-1,044장이며 마흔 번째 production 배치의 고유 신규 476개까지 승인·WebP 준비한 현재 잔여량은 568장이다. 이 목록은
+1,044장이며 마흔다섯 번째 production 배치의 고유 신규 536개까지 승인·WebP 준비한 현재 잔여량은 508장이다. 이 목록은
 에디션 정본, 파일럿 원고 해시, 누적 WebP 매니페스트에서 materialize하며 다음 명령으로 다시 만든다.
 
 ```bash
@@ -941,6 +946,14 @@ duplicate가 없었다. 선택본은 공개 Git에 포함하지 않는
 `apps/stella/private/guardian-art-production/love-boundary-and-space-stella`에 보관한다. 2026-08-28 사람의
 최종 시각 승인을 기록했고 승인 원본 SHA-256을 누적 488개 WebP 배포 매니페스트에 고정했다. 환경별
 R2 반영 이력은 동일한 immutable GitHub Release를 입력으로 쓰는 `Guardian Card Art Deploy` workflow가 남긴다.
+
+마흔한 번째부터 마흔다섯 번째 배치는 `love.distance-and-return`의 Orbit·Nebula·Eclipse·Stella와
+`love.repair.orbit` 신규 원화 각 12개를 제작했다. 세 에이전트가 4장씩 병렬 설계·생성하고 캐릭터 정체성,
+원고 소품 수량, 열린 귀환·연락·수선 제어, 외부 상대 비노출을 마스터와 실제 너비 80px에서 검수했다.
+같은 별자리의 이전 계보와 배치 내부 66쌍, 기존 승인·후보 원화에 대한 exact SHA·pHash·구조 상관 보조
+QA를 통과했으며 수정 전·미채택 후보도 private 작업 경로에 보존했다. 2026-08-28 사람의 최종 시각 승인을
+기록했고 승인 PNG 60개를 더한 누적 548개 WebP 배포 매니페스트를 고정했다. 환경별 R2 반영은 동일한
+immutable GitHub Release를 입력으로 쓰는 `Guardian Card Art Deploy` workflow가 남긴다.
 
 ## 검증
 
