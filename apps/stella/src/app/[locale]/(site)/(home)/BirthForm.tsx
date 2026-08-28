@@ -2,10 +2,11 @@
 
 import type { BirthplaceSnapshot } from '@sobok/domain/birthplace/model'
 import { useLocale, useTranslations } from 'next-intl'
-import { type SubmitEvent, useState } from 'react'
+import { type SubmitEvent, useEffect, useRef, useState } from 'react'
 import { useBirthProfile } from '@/components/BirthProfileProvider'
 import type { StoredBirth } from '@/lib/birth-storage'
 import BirthplaceCombobox from './BirthplaceCombobox'
+import styles from './constellation.module.css'
 
 const fieldClass =
   'w-full appearance-none rounded-xl border border-border-2 bg-surface-2 px-3 py-2.5 text-base text-foreground outline-none transition [color-scheme:dark] focus:border-white/60 focus:bg-surface-3 sm:text-sm'
@@ -25,11 +26,27 @@ export default function BirthForm({ onSubmit }: Props) {
   const [place, setPlace] = useState<BirthplaceSnapshot | null>(seed?.place ?? null)
   const [save, setSave] = useState(profile.persistent)
   const [error, setError] = useState<string | null>(null)
+  const [departing, setDeparting] = useState(false)
+  const submitTimerRef = useRef<number | null>(null)
   const t = useTranslations('Constellation.form')
   const locale = useLocale()
 
+  useEffect(
+    () => () => {
+      if (submitTimerRef.current !== null) {
+        window.clearTimeout(submitTimerRef.current)
+      }
+    },
+    [],
+  )
+
   function submit(e: SubmitEvent) {
     e.preventDefault()
+
+    if (departing) {
+      return
+    }
+
     const [year, month, day] = date.split('-').map(Number)
 
     if (!year || !month || !day) {
@@ -51,7 +68,13 @@ export default function BirthForm({ onSubmit }: Props) {
       place,
     }
 
-    onSubmit(birth, save)
+    setDeparting(true)
+
+    const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 320
+    submitTimerRef.current = window.setTimeout(() => {
+      submitTimerRef.current = null
+      onSubmit(birth, save)
+    }, delay)
   }
 
   // Forget the current profile and reset the form to a blank slate. Lives here —
@@ -68,7 +91,8 @@ export default function BirthForm({ onSubmit }: Props) {
 
   return (
     <form
-      className="relative z-20 w-full max-w-lg rounded-3xl border bg-surface-2 p-4 backdrop-blur-xl sm:p-5"
+      aria-busy={departing}
+      className={`relative z-20 w-full max-w-lg rounded-3xl border bg-surface-2 p-4 backdrop-blur-xl sm:p-5 ${departing ? styles.formDepart : ''}`}
       onSubmit={submit}
     >
       <h2 className="mb-4 text-center text-base font-bold text-foreground">{t('title')}</h2>
@@ -142,9 +166,10 @@ export default function BirthForm({ onSubmit }: Props) {
 
       <button
         className="mt-5 w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-white active:scale-[0.98] motion-reduce:active:scale-100"
+        disabled={departing}
         type="submit"
       >
-        {t('submit')}
+        {departing ? t('computing') : t('submit')}
       </button>
     </form>
   )
