@@ -20,8 +20,8 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
 - 일 production 원고: 192개 에디션 ID·제목·장면·접근성 설명·한 줄을 편집 초안으로 materialize
 - 결정 production 원고: 192개 에디션 ID·제목·장면·접근성 설명·한 줄을 편집 초안으로 materialize
 - production 원고 1차 자동 편집 감사: 1,056개 길이·문장·한국어 조사 token·접근성·비단정 표현 검증
-- production 원화: 12별자리 파일럿과 production 배치 45개의 고유 신규 536개 최종 시각 승인 완료, 누적
-  최적화 WebP 548개와 콘텐츠 주소형 R2 배포 매니페스트 고정
+- production 원화: 12별자리 파일럿과 production 배치 50개의 고유 신규 595개 최종 시각 승인 완료, 누적
+  최적화 WebP 607개와 콘텐츠 주소형 R2 배포 매니페스트 고정
 - 두 번째 production 배치: `self.present-weather.action-beat` 12개 원고 해시와 첫 배치 비반복 행동 구도,
   원화 후보·보조 시각 QA·사람의 최종 시각 승인 완료
 - 세 번째 production 배치: `self.present-weather.shared-world` 12개 원고 해시와 해결을 대신하지 않는
@@ -179,6 +179,16 @@ Stella의 확률형 유료 리포트와 컬렉션에 사용할 12별자리 캐�
   거리를 강요 없이 잇는 장면, 병렬 생성·마스터/80px·계보 비교·시각 승인·WebP 매니페스트 고정
 - 마흔다섯 번째 production 배치: `love.repair.orbit` 신규 12개, 손상 원인과 다음 행동을 숨기지 않고
   되돌릴 수 있는 수선 제어로 남기는 장면, 병렬 생성·마스터/80px·계보 비교·시각 승인·WebP 매니페스트 고정
+- 마흔여섯 번째 production 배치: `love.repair.nebula` 신규 12개, 날씨 속에서도 손상 원인과 가역 수선을
+  분리해 남기는 장면, 병렬 생성·마스터/80px·계보 비교·시각 승인·WebP 매니페스트 고정
+- 마흔일곱 번째 production 배치: `love.repair.eclipse` 승인 Scorpio 파일럿 1개 재사용·신규 11개,
+  두 수호령의 독립 제어와 미완료 수선을 유지하는 장면, 시각 승인·WebP 매니페스트 고정
+- 마흔여덟 번째 production 배치: `love.repair.stella` 신규 12개, 두 가슴별의 수선 빛이 열린 다음 행동으로
+  풀리는 장면, 병렬 생성·마스터/80px·계보 비교·시각 승인·WebP 매니페스트 고정
+- 마흔아홉 번째 production 배치: `love.mutual-growth.orbit` 신규 12개, 자기 몫과 상대 선택권을 남긴 성장
+  조절 장면, 병렬 생성·마스터/80px·계보 비교·시각 승인·WebP 매니페스트 고정
+- 쉰 번째 production 배치: `love.mutual-growth.nebula` 신규 12개, 날씨 속 독립 성장 경로와 열린 합류
+  가능성을 함께 남기는 장면, 병렬 생성·마스터/80px·계보 비교·시각 승인·WebP 매니페스트 고정
 - 유료 답변 효과: 네 주제 상세 본문·해석 초점·한 줄을 실질적으로 변경
 - 유료 질문 소스: 원문·선택지·적응형 선택 정책·점수를 Git JSON과 Database Worker 서버 번들로 관리
 - 반복 구매: 사랑 카드의 일러스트와 한 줄만 저가 재추첨
