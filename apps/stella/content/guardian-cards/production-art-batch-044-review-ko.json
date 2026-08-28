@@ -19,15 +19,7 @@
   "editorialReviewContract": {
     "approvalAuthority": "human_editor",
     "contentHashAlgorithm": "sha256-canonical-json",
-    "hashFields": [
-      "id",
-      "title",
-      "guardians",
-      "scene",
-      "artworkAlt",
-      "oneLineTemplate",
-      "reflection"
-    ],
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
     "requiredChecks": [
       "character_continuity",
       "scene_feasibility",
