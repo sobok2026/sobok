@@ -2,12 +2,12 @@ import AccountControls from './AccountControls'
 import OrganizationWorkspace from './OrganizationWorkspace'
 
 const MODULES = [
-  { code: '01', name: '사업·참여자', detail: '기관과 프로젝트 권한을 분리하고 설계회차를 관리합니다.' },
-  { code: '02', name: '도면·공간정보', detail: '원본 성과품과 검색용 공간형상을 안전하게 보관합니다.' },
+  { code: '01', name: '기관·프로젝트', detail: '기관과 프로젝트의 데이터 및 참여자 권한을 분리합니다.' },
+  { code: '02', name: '프로젝트 기준', detail: '좌표계와 사업 코드를 프로젝트 단위로 고정합니다.' },
   { code: '03', name: '수량·토공', detail: '입력 근거와 알고리즘 버전이 고정된 공식 산출을 만듭니다.' },
-  { code: '04', name: '단가·품셈', detail: '적용 기준과 선택 근거를 시점별 스냅샷으로 남깁니다.' },
-  { code: '05', name: '내역·변경', detail: '당초와 변경 내역을 revision 단위로 비교하고 승인합니다.' },
-  { code: '06', name: '전자납품', detail: '검토, 보완, 승인과 성과품 인계를 하나의 흐름으로 연결합니다.' },
+  { code: '04', name: '입력 스냅샷', detail: '계산 입력과 알고리즘 식별자를 해시와 함께 보존합니다.' },
+  { code: '05', name: '결과 revision', detail: '검증된 결과를 수정하지 않고 새 revision으로 축적합니다.' },
+  { code: '06', name: '승인·감사', detail: '승인 이력과 시스템 행위를 불변 감사 이벤트로 남깁니다.' },
 ] as const
 
 export default function CivilWorkspace() {
@@ -20,7 +20,7 @@ export default function CivilWorkspace() {
           </span>
           <span>
             <strong>Civil</strong>
-            <small>SPATIAL ENGINEERING WORKSPACE</small>
+            <small>OFFICIAL CALCULATION WORKSPACE</small>
           </span>
         </a>
         <AccountControls />
@@ -34,8 +34,8 @@ export default function CivilWorkspace() {
             <br />한 흐름으로 연결합니다.
           </h1>
           <p className="hero-description">
-            도면, 수량, 토공, 단가와 내역을 기관별로 격리하고 공식 계산의 입력·버전·검토 이력을 보존하는 공간기반
-            토목업무 플랫폼입니다.
+            수량과 토공 데이터를 기관별로 격리하고 공식 계산의 입력·알고리즘 버전·결과 해시·승인 이력을 보존하는 검증
+            가능한 토목업무 플랫폼입니다.
           </p>
           <ul className="hero-status" aria-label="플랫폼 원칙">
             <li>기관별 데이터 격리</li>
