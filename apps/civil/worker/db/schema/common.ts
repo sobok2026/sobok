@@ -14,6 +14,57 @@ export const organizationRoleEnum = civil.enum('organization_role', [
 
 export const projectStatusEnum = civil.enum('project_status', ['planning', 'design', 'review', 'approved', 'closed'])
 
+export const artifactKindEnum = civil.enum('artifact_kind', [
+  'drawing',
+  'survey',
+  'calculation_input',
+  'cost_basis',
+  'deliverable',
+  'supporting',
+])
+
+export const artifactStatusEnum = civil.enum('artifact_status', [
+  'uploading',
+  'verifying',
+  'verification_failed',
+  'available',
+  'rejected',
+  'deleted',
+])
+
+export const artifactUploadStatusEnum = civil.enum('artifact_upload_status', [
+  'open',
+  'completed',
+  'aborted',
+  'expired',
+])
+
+export const artifactVerificationStatusEnum = civil.enum('artifact_verification_status', [
+  'queued',
+  'running',
+  'succeeded',
+  'failed',
+])
+
+export const deliveryKindEnum = civil.enum('delivery_kind', ['survey', 'design', 'design_change', 'as_built'])
+
+export const deliveryStatusEnum = civil.enum('delivery_status', [
+  'assembling',
+  'ready',
+  'submitted',
+  'changes_requested',
+  'approved',
+  'failed',
+  'withdrawn',
+])
+
+export const deliveryGenerationStatusEnum = civil.enum('delivery_generation_status', [
+  'queued',
+  'running',
+  'succeeded',
+  'failed',
+])
+
 export const calculationStatusEnum = civil.enum('calculation_status', [
   'queued',
   'running',

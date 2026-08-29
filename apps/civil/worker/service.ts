@@ -3,7 +3,9 @@ import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { requestId } from 'hono/request-id'
 import { secureHeaders } from 'hono/secure-headers'
+import { artifacts } from './api/artifacts'
 import { calculations } from './api/calculations'
+import { deliveries } from './api/deliveries'
 import { organizations } from './api/organizations'
 import { projects } from './api/projects'
 import { handleCivilAuth, withCivilSession } from './auth'
@@ -35,6 +37,8 @@ app.get('/api/me', async (c) => {
 app.route('/api/organizations', organizations)
 app.route('/api/organizations', projects)
 app.route('/api/organizations', calculations)
+app.route('/api/organizations', artifacts)
+app.route('/api/organizations', deliveries)
 app.notFound(() => problem(404, 'not-found'))
 
 app.onError((error) => {
@@ -47,11 +51,21 @@ export async function handleCivilRequest(request: Request, env: Bindings, ctx: E
 }
 
 export type {
+  CivilArtifactVerificationClaim,
+  CivilArtifactVerificationGateway,
+  CivilArtifactVerificationOutput,
+} from '@sobok/civil/artifact'
+export type {
   CivilCalculationClaim,
   CivilCalculationOutput,
   CivilCalculationWork,
   CivilComputationGateway,
 } from '@sobok/civil/calculation'
+export type {
+  CivilDeliveryGenerationClaim,
+  CivilDeliveryGenerationGateway,
+  CivilDeliveryGenerationOutput,
+} from '@sobok/civil/delivery'
 export type { CivilComputeGateway } from './compute-service'
 export { createCivilComputationGateway } from './compute-service'
 export type { Bindings as CivilBindings } from './env'

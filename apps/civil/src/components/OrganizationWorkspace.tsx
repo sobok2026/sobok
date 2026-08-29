@@ -10,6 +10,7 @@ import {
   type ProjectSummary,
 } from '@/lib/api'
 import { civilAuthClient } from '@/lib/auth-client'
+import ProjectWorkspace from './ProjectWorkspace'
 
 type OrganizationState =
   | { kind: 'idle' | 'loading' }
@@ -31,6 +32,7 @@ export default function OrganizationWorkspace() {
   const [createError, setCreateError] = useState(false)
   const [selectedOrganizationId, setSelectedOrganizationId] = useState<string | null>(null)
   const [projects, setProjects] = useState<ProjectState>({ kind: 'idle' })
+  const [selectedProject, setSelectedProject] = useState<ProjectSummary | null>(null)
   const [creatingProject, setCreatingProject] = useState(false)
   const [projectError, setProjectError] = useState(false)
 
@@ -91,6 +93,7 @@ export default function OrganizationWorkspace() {
           : { kind: 'ready', items: [item] },
       )
       setSelectedOrganizationId(item.id)
+      setSelectedProject(null)
       formElement.reset()
     } catch {
       setCreateError(true)
@@ -183,6 +186,7 @@ export default function OrganizationWorkspace() {
                       className="button button-quiet"
                       onClick={() => {
                         setSelectedOrganizationId(organization.id)
+                        setSelectedProject(null)
                       }}
                       type="button"
                     >
@@ -221,6 +225,7 @@ export default function OrganizationWorkspace() {
               className="button button-quiet"
               onClick={() => {
                 setSelectedOrganizationId(null)
+                setSelectedProject(null)
               }}
               type="button"
             >
@@ -239,9 +244,12 @@ export default function OrganizationWorkspace() {
                       <small>{project.code}</small>
                       <h4>{project.name}</h4>
                     </div>
-                    <div>
+                    <div className="project-card-meta">
                       <span>{project.status}</span>
                       <code>{project.coordinateReferenceSystem}</code>
+                      <button className="button button-dark" onClick={() => setSelectedProject(project)} type="button">
+                        작업공간 열기
+                      </button>
                     </div>
                   </article>
                 ))}
@@ -270,6 +278,14 @@ export default function OrganizationWorkspace() {
             </div>
           ) : null}
         </section>
+      ) : null}
+
+      {session && selectedOrganizationId && selectedProject ? (
+        <ProjectWorkspace
+          onClose={() => setSelectedProject(null)}
+          organizationId={selectedOrganizationId}
+          project={selectedProject}
+        />
       ) : null}
     </section>
   )

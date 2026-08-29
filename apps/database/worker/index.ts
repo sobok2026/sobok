@@ -2,9 +2,13 @@ import { WorkerEntrypoint } from 'cloudflare:workers'
 import { deliverAccountEmail, handleAccountsRequest } from '@sobok/accounts/database-service'
 import { SobokAuthorityEmailSchema } from '@sobok/auth/authority'
 import {
+  type CivilArtifactVerificationClaim,
+  type CivilArtifactVerificationOutput,
   type CivilCalculationClaim,
   type CivilCalculationOutput,
-  type CivilComputationGateway,
+  type CivilComputeGateway,
+  type CivilDeliveryGenerationClaim,
+  type CivilDeliveryGenerationOutput,
   createCivilComputationGateway,
   handleCivilRequest,
 } from '@sobok/civil/database-service'
@@ -47,7 +51,7 @@ export class CivilService extends WorkerEntrypoint<Bindings> {
   }
 }
 
-export class CivilComputationService extends WorkerEntrypoint<Bindings> implements CivilComputationGateway {
+export class CivilComputationService extends WorkerEntrypoint<Bindings> implements CivilComputeGateway {
   claimCalculation(jobId: string): Promise<CivilCalculationClaim> {
     return createCivilComputationGateway(this.env, this.ctx).claimCalculation(jobId)
   }
@@ -58,6 +62,38 @@ export class CivilComputationService extends WorkerEntrypoint<Bindings> implemen
 
   failCalculation(input: { jobId: string; failureCode: string }): Promise<void> {
     return createCivilComputationGateway(this.env, this.ctx).failCalculation(input)
+  }
+
+  claimArtifactVerification(artifactId: string): Promise<CivilArtifactVerificationClaim> {
+    return createCivilComputationGateway(this.env, this.ctx).claimArtifactVerification(artifactId)
+  }
+
+  completeArtifactVerification(input: { artifactId: string; output: CivilArtifactVerificationOutput }): Promise<void> {
+    return createCivilComputationGateway(this.env, this.ctx).completeArtifactVerification(input)
+  }
+
+  failArtifactVerification(input: { artifactId: string; failureCode: string }): Promise<void> {
+    return createCivilComputationGateway(this.env, this.ctx).failArtifactVerification(input)
+  }
+
+  completeArtifactCleanup(artifactId: string): Promise<void> {
+    return createCivilComputationGateway(this.env, this.ctx).completeArtifactCleanup(artifactId)
+  }
+
+  claimDeliveryGeneration(packageId: string): Promise<CivilDeliveryGenerationClaim> {
+    return createCivilComputationGateway(this.env, this.ctx).claimDeliveryGeneration(packageId)
+  }
+
+  completeDeliveryGeneration(input: { packageId: string; output: CivilDeliveryGenerationOutput }): Promise<void> {
+    return createCivilComputationGateway(this.env, this.ctx).completeDeliveryGeneration(input)
+  }
+
+  failDeliveryGeneration(input: { packageId: string; failureCode: string }): Promise<void> {
+    return createCivilComputationGateway(this.env, this.ctx).failDeliveryGeneration(input)
+  }
+
+  completeDeliveryCleanup(packageId: string): Promise<void> {
+    return createCivilComputationGateway(this.env, this.ctx).completeDeliveryCleanup(packageId)
   }
 }
 
