@@ -45,6 +45,7 @@ export type ReportKicker = {
   house: string
   dignity: string
   stellium: string
+  chartRuler: string
   ruler: string
   rulerPlacement: string
   mcRuler: string
@@ -63,7 +64,7 @@ export type ReportContent = {
   angles: Partial<Record<PlanetId, Record<AngleKey, string>>>
   dignity: { domicile: string; exaltation: string; chartRulerNote: string }
   stellium: string
-  core: { bridge: string; bridgeNoTime: string }
+  core: { bridge: string; bridgeNoTime: string; ruler: string }
   path: { bridge: string; familiarLabel: string; growthLabel: string; houseNote: string }
   work: { mc: string }
   money: { empty: string }

@@ -4,10 +4,17 @@
 // component passes the data in and renders the result; next-intl only supplies
 // the small name vocabulary (planets, signs, house themes).
 
-import { elementCounts, houseOfLon, reliableAspects, reliableBodies, signOfLon } from '@/chart/astrology'
+import {
+  angleLongitude,
+  elementCounts,
+  houseOfLon,
+  reliableAspects,
+  reliableBodies,
+  signOfLon,
+} from '@/chart/astrology'
 import { ELEMENT_IDS } from '@/chart/data'
 import { chartRuler, computeSignature, dignityOf, SIGN_RULERS, type SignatureFeature } from '@/chart/signature'
-import type { ChartAspect, NatalChart, PlanetId } from '@/chart/types'
+import type { AngleId, ChartAspect, HouseNumber, NatalChart, PlanetId } from '@/chart/types'
 import type { AngleKey, Interpretations, ReportChapterId } from '@/content/interpretations/types'
 import { aspectTone, fill, houseText, orbTier, pairKey } from '@/content/interpretations/types'
 
@@ -27,6 +34,20 @@ export type ReportChapter = {
   title: string
   intro?: string
   paragraphs: ReportParagraph[]
+  visual?: ReportChapterVisual
+}
+
+export type ReportChapterVisual = {
+  angle?: Extract<AngleId, 'ic' | 'mc'>
+  houses: readonly HouseNumber[]
+  primary?: PlanetId
+  relatedAspect?: ChartAspect
+  residents: readonly PlanetId[]
+}
+
+type ResidentSelection = {
+  id: PlanetId
+  paragraph: ReportParagraph
 }
 
 export type ReportOptions = {
@@ -157,8 +178,8 @@ export function buildReport(
   }
 
   /** Up to MAX_HOUSE_PARAGRAPHS resident readings across the given houses. */
-  function residentParagraphs(houseNumbers: readonly number[]): ReportParagraph[] {
-    const result: ReportParagraph[] = []
+  function residentSelections(houseNumbers: readonly HouseNumber[]): ResidentSelection[] {
+    const result: ResidentSelection[] = []
 
     for (const p of chart.planets) {
       if (result.length >= MAX_HOUSE_PARAGRAPHS) {
@@ -174,7 +195,7 @@ export function buildReport(
       const para = houseParagraph(p.id, n)
 
       if (para) {
-        result.push(para)
+        result.push({ id: p.id, paragraph: para })
       }
     }
 
@@ -246,6 +267,15 @@ export function buildReport(
       paragraphs.push({
         kicker: fill(report.kicker.rising, { sign: signName(ascSign) }),
         text: report.rising[ascSign],
+      })
+    }
+
+    const overallRuler = chartRuler(chart)
+    if (overallRuler) {
+      const rulerSign = signOfLon(overallRuler.position.lon)
+      paragraphs.push({
+        kicker: fill(report.kicker.chartRuler, { planet: planetName(overallRuler.ruler) }),
+        text: fill(report.core.ruler, { planet: planetName(overallRuler.ruler), sign: signName(rulerSign) }),
       })
     }
 
@@ -336,8 +366,13 @@ export function buildReport(
   }
 
   /** A personal-planet chapter: the placement itself plus its loudest untold aspect. */
-  function personal(id: 'mercury' | 'venus', chapterId: 'love' | 'mind', houses: readonly number[]): ReportChapter {
+  function personal(
+    id: 'mercury' | 'venus',
+    chapterId: 'love' | 'mind',
+    houses: readonly HouseNumber[],
+  ): ReportChapter {
     const paragraphs: ReportParagraph[] = []
+    let relatedAspect: ChartAspect | undefined
     const placement = planetParagraph(id)
 
     if (placement) {
@@ -354,21 +389,30 @@ export function buildReport(
 
       if (para) {
         paragraphs.push(para)
+        relatedAspect = f.aspect
         break
       }
     }
 
-    paragraphs.push(...residentParagraphs(houses))
+    const residents = residentSelections(houses)
+    paragraphs.push(...residents.map((resident) => resident.paragraph))
 
     return {
       id: chapterId,
       title: report.chapterTitles[chapterId],
       paragraphs,
+      visual: {
+        houses,
+        primary: id,
+        relatedAspect,
+        residents: residents.map((resident) => resident.id),
+      },
     }
   }
 
   function work(): ReportChapter {
     const paragraphs: ReportParagraph[] = []
+    let primary: PlanetId | undefined
 
     if (chart.midheaven !== null) {
       const mcSign = signOfLon(chart.midheaven)
@@ -388,16 +432,19 @@ export function buildReport(
 
         if (para) {
           paragraphs.push(para)
+          primary = mcRuler
         }
       }
     }
 
-    paragraphs.push(...residentParagraphs([10]))
+    const residents = residentSelections([10])
+    paragraphs.push(...residents.map((resident) => resident.paragraph))
 
     return {
       id: 'work',
       title: report.chapterTitles.work,
       paragraphs,
+      visual: { angle: 'mc', houses: [10], primary, residents: residents.map((resident) => resident.id) },
     }
   }
 
@@ -405,57 +452,74 @@ export function buildReport(
     const paragraphs: ReportParagraph[] = []
 
     // Houses are the money axis — without a birth time the chapter simply stays out.
+    let residents: ResidentSelection[] = []
     if (chart.cusps !== null || chart.ascendant !== null) {
-      const residents = residentParagraphs([2, 8])
+      residents = residentSelections([2, 8])
 
-      paragraphs.push(...(residents.length > 0 ? residents : [{ text: report.money.empty }]))
+      paragraphs.push(
+        ...(residents.length > 0 ? residents.map((resident) => resident.paragraph) : [{ text: report.money.empty }]),
+      )
     }
 
     return {
       id: 'money',
       title: report.chapterTitles.money,
       paragraphs,
+      visual: { houses: [2, 8], residents: residents.map((resident) => resident.id) },
     }
   }
 
   function root(): ReportChapter {
     const paragraphs: ReportParagraph[] = []
-    const ruler = chartRuler(chart)
+    const fourthHouseLon = chart.cusps?.[3] ?? angleLongitude('ic', chart.ascendant, chart.midheaven)
+    let ruler: PlanetId | undefined
 
-    if (ruler) {
-      const rulerSign = signOfLon(ruler.position.lon)
+    if (fourthHouseLon !== null) {
+      const fourthHouseSign = signOfLon(fourthHouseLon)
+      ruler = SIGN_RULERS[fourthHouseSign]
+      const rulerPosition = position(ruler)
 
-      paragraphs.push({
-        kicker: fill(report.kicker.ruler, { planet: planetName(ruler.ruler) }),
-        text: fill(report.root.ruler, { planet: planetName(ruler.ruler), sign: signName(rulerSign) }),
-      })
-
-      const placement = planetParagraph(ruler.ruler, fill(report.kicker.rulerPlacement, { sign: signName(rulerSign) }))
-
-      if (placement) {
-        paragraphs.push(placement)
-      }
-
-      const dignity = dignityOf(ruler.ruler, rulerSign)
-
-      if ((dignity === 'domicile' || dignity === 'exaltation') && !used.has(`dignity.${dignity}:${ruler.ruler}`)) {
-        used.add(`dignity.${dignity}:${ruler.ruler}`)
+      if (rulerPosition) {
+        const rulerSign = signOfLon(rulerPosition.lon)
 
         paragraphs.push({
-          text: fill(report.dignity[dignity], {
-            planet: planetName(ruler.ruler),
-            sign: signName(rulerSign),
+          kicker: fill(report.kicker.ruler, { planet: planetName(ruler) }),
+          text: fill(report.root.ruler, {
+            planet: planetName(ruler),
+            rulerSign: signName(rulerSign),
+            sign: signName(fourthHouseSign),
           }),
         })
+
+        const placement = planetParagraph(ruler, fill(report.kicker.rulerPlacement, { sign: signName(rulerSign) }))
+
+        if (placement) {
+          paragraphs.push(placement)
+        }
+
+        const dignity = dignityOf(ruler, rulerSign)
+
+        if ((dignity === 'domicile' || dignity === 'exaltation') && !used.has(`dignity.${dignity}:${ruler}`)) {
+          used.add(`dignity.${dignity}:${ruler}`)
+
+          paragraphs.push({
+            text: fill(report.dignity[dignity], {
+              planet: planetName(ruler),
+              sign: signName(rulerSign),
+            }),
+          })
+        }
       }
     }
 
-    paragraphs.push(...residentParagraphs([4]))
+    const residents = residentSelections([4])
+    paragraphs.push(...residents.map((resident) => resident.paragraph))
 
     return {
       id: 'root',
       title: report.chapterTitles.root,
       paragraphs,
+      visual: { angle: 'ic', houses: [4], primary: ruler, residents: residents.map((resident) => resident.id) },
     }
   }
 

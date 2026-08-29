@@ -1,6 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import { useEffect, useRef, useState } from 'react'
 
 import { ELEMENT_COLORS, ELEMENT_IDS } from '@/chart/data'
 import type { ElementId } from '@/chart/types'
@@ -26,6 +27,8 @@ const COLUMN_GROUPS: readonly (readonly ElementId[])[] = [
  */
 export default function ElementBalance({ counts, dominant, note, total }: ElementBalanceProps) {
   const t = useTranslations('Constellation')
+  const sectionRef = useRef<HTMLElement>(null)
+  const [entered, setEntered] = useState(false)
 
   const descriptions: Record<string, string> = {
     fire: t('elements.fireDesc'),
@@ -34,8 +37,32 @@ export default function ElementBalance({ counts, dominant, note, total }: Elemen
     water: t('elements.waterDesc'),
   }
 
+  useEffect(() => {
+    const section = sectionRef.current
+
+    if (!section || !('IntersectionObserver' in window)) {
+      setEntered(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          return
+        }
+
+        setEntered(true)
+        observer.disconnect()
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.35 },
+    )
+
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <section className="p-4 rounded-2xl border bg-surface sm:p-5">
+    <section className="p-4 rounded-2xl border bg-surface sm:p-5" ref={sectionRef}>
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-bold text-foreground">{t('elements.title')}</h2>
         <span className="text-xs text-foreground-subtle">
@@ -44,7 +71,7 @@ export default function ElementBalance({ counts, dominant, note, total }: Elemen
       </div>
 
       <div aria-hidden="true" className="mb-4 flex h-2.5 overflow-hidden rounded-full bg-surface-2">
-        <div className={`${styles.balanceBar} flex h-full w-full`}>
+        <div className={`${styles.balanceBar} ${entered ? styles.balanceBarVisible : ''} flex h-full w-full`}>
           {ELEMENT_IDS.map((id) => {
             const pct = total > 0 ? (counts[id] / total) * 100 : 0
 
@@ -52,7 +79,13 @@ export default function ElementBalance({ counts, dominant, note, total }: Elemen
               return null
             }
 
-            return <div key={id} style={{ background: ELEMENT_COLORS[id], width: `${pct}%` }} />
+            return (
+              <div
+                className={id === dominant ? styles.dominantSegment : undefined}
+                key={id}
+                style={{ background: ELEMENT_COLORS[id], color: ELEMENT_COLORS[id], width: `${pct}%` }}
+              />
+            )
           })}
         </div>
       </div>
@@ -65,7 +98,10 @@ export default function ElementBalance({ counts, dominant, note, total }: Elemen
 
               return (
                 <div key={id} className="col-span-3 grid grid-cols-subgrid items-baseline">
-                  <span className="text-xs font-semibold" style={{ color: ELEMENT_COLORS[id] }}>
+                  <span
+                    className={`text-xs font-semibold ${id === dominant ? styles.dominantElementLabel : ''}`}
+                    style={{ color: ELEMENT_COLORS[id] }}
+                  >
                     {t(`elements.${id}`)}
                   </span>
                   <span className="text-[10px] text-foreground-faint">{descriptions[id]}</span>

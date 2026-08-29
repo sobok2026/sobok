@@ -29,8 +29,9 @@ export const report: ReportContent = {
     house: '{planet} · 第{n}宫',
     dignity: '{sign}的{planet}',
     stellium: '{sign}星群 · {count}颗星',
-    ruler: '星盘的守护星 · {planet}',
-    rulerPlacement: '驻留{sign}的守护星',
+    chartRuler: '人生的协调者 · {planet}',
+    ruler: '第4宫守护星 · {planet}',
+    rulerPlacement: '驻留{sign}的第4宫守护星',
     mcRuler: '事业的守护星 · {sign}{planet}',
   },
   angleKicker: {
@@ -146,6 +147,7 @@ export const report: ReportContent = {
   stellium:
     '在{sign}，{planets}并排聚在一起。力量这样涌进一个星座时，那股气运会越过性格、成为人生的主题。{keyword}的纹理，正同时染着你的好几个领域。',
   core: {
+    ruler: '掌管上升星座的星盘守护星，是位于{sign}的{planet}。它协调着你开启人生、回应整个世界时最基本的方式。',
     bridge:
       '总结一下：你有三层面孔。世界看见的第一印象是{rising}的纹理，拖着人生走的中心是{sun}的芯，情绪歇脚的地方是{moon}的水边。有些日子三层看着彼此陌生，但全都是真正的你。与其抹掉或只选一个，不如在每个场景里取出合适的那张脸。这才是把这个组合活得最好的方法。',
     bridgeNoTime:
@@ -166,7 +168,8 @@ export const report: ReportContent = {
       '掌管财富的第2宫和第8宫都空着。这意味着钱没有作为人生的大课题挂在那里，财富会顺着其他领域的流向平顺地移动。这个位置的轻，不是因为不安，而是因为自由。',
   },
   root: {
-    ruler: '掌管你上升的星是{planet}。握着整张星盘钥匙的这颗守护星驻留在{sign}，人生最深处的动机就顺着那种纹理流淌。',
+    ruler:
+      '象征内在与根基的第4宫起点落在{sign}。掌管这一领域的{planet}驻留在{rulerSign}，为你寻找安全感的方式与私生活的基础添上了那个星座的纹理。',
   },
   closing: {
     fire: '看整张星盘，火的气运流得最大。最终驱动你的不是计算，而是心跳的方向。不让那团热熄灭的人生，对你来说是最诚实的人生。',

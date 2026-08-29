@@ -30,8 +30,9 @@ export const report: ReportContent = {
     house: '{planet} · 第{n}ハウス',
     dignity: '{sign}の{planet}',
     stellium: '{sign}ステリウム · {count}つの星',
-    ruler: 'チャートの支配星 · {planet}',
-    rulerPlacement: '{sign}に留まる支配星',
+    chartRuler: '人生の調整役 · {planet}',
+    ruler: '第4ハウスの支配星 · {planet}',
+    rulerPlacement: '{sign}に留まる第4ハウスの支配星',
     mcRuler: 'キャリアの支配星 · {sign}の{planet}',
   },
   angleKicker: {
@@ -136,6 +137,8 @@ export const report: ReportContent = {
   stellium:
     '{sign}に{planets}が並んで集まっています。ひとつの星座にこれだけ力が集まると、その気運は性格を越えて人生のテーマになりますね。{keyword}のきめが、あなたのいくつもの領域を一度に染めているという意味です。',
   core: {
+    ruler:
+      'ライジングを治めるチャートの支配星は{sign}の{planet}です。この配置は、人生を始める基本姿勢と世界全体への反応の仕方を調整します。',
     bridge:
       'まとめると、あなたには三層の顔があります。世界に見える第一印象は{rising}のきめで、人生を引っ張る中心は{sun}の芯、感情が休んでいく場所は{moon}の水辺です。三層が別人に見える日もあるでしょうが、すべて本当のあなたです。ひとつを消したり選んだりするより、場面ごとにふさわしい顔を取り出して使うこと。それがこの組み合わせをいちばんうまく生きる方法です。',
     bridgeNoTime:
@@ -157,7 +160,7 @@ export const report: ReportContent = {
   },
   root: {
     ruler:
-      'あなたのアセンダントを治める星は{planet}です。チャート全体の鍵を握るこの支配星が{sign}に留まっていて、人生のいちばん深い動機がそのきめに沿って流れます。',
+      '内面とルーツを表す第4ハウスの始点は{sign}にあります。この領域を治める{planet}が{rulerSign}に留まり、心が安心を得る方法と私生活の土台にそのサインのきめを加えています。',
   },
   closing: {
     fire: 'チャート全体を見ると、火の気運がいちばん大きく流れています。結局あなたを動かすのは計算ではなく、心臓が高鳴る方向です。その熱を消さない人生が、あなたにはいちばん正直な人生です。',

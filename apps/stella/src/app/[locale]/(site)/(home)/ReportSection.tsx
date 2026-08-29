@@ -13,6 +13,7 @@ import type { Interpretations, ReportChapterId } from '@/content/interpretations
 import { CoreSignatureArt } from './CoreSignatureArt'
 import styles from './constellation.module.css'
 import { NodeAxisArt } from './NodeAxisArt'
+import ReportThemeArt, { type ReportThemeChapterId } from './ReportThemeArt'
 import { buildReport, type Translator } from './report'
 
 const CHAPTER_GLYPHS: Record<ReportChapterId, string> = {
@@ -30,6 +31,10 @@ const CHAPTER_GLYPHS: Record<ReportChapterId, string> = {
 function ChapterGlyph({ id }: { id: ReportChapterId }) {
   const glyph = CHAPTER_GLYPHS[id]
   return isAstrologyGlyph(glyph) ? <AstroGlyph glyph={glyph} /> : <span aria-hidden>{glyph}</span>
+}
+
+function isThemeChapter(id: ReportChapterId): id is ReportThemeChapterId {
+  return id === 'mind' || id === 'love' || id === 'work' || id === 'money' || id === 'root'
 }
 
 /**
@@ -198,6 +203,9 @@ export default function ReportSection({
                   northSign={northNodeSign}
                   southSign={southNodeSign}
                 />
+              )}
+              {isThemeChapter(chapter.id) && chapter.visual && (
+                <ReportThemeArt chapterId={chapter.id} chart={chart} visual={chapter.visual} />
               )}
               {chapter.intro && <p className="mt-2 text-xs leading-relaxed text-foreground-subtle">{chapter.intro}</p>}
               {chapter.paragraphs.map((para) => (

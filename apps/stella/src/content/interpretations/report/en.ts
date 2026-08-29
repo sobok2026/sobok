@@ -31,8 +31,9 @@ export const report: ReportContent = {
     house: '{planet} · house {n}',
     dignity: '{planet} in {sign}',
     stellium: '{sign} stellium · {count} stars',
-    ruler: 'Chart ruler · {planet}',
-    rulerPlacement: 'The ruler dwelling in {sign}',
+    chartRuler: 'Steward of the chart · {planet}',
+    ruler: 'Ruler of the 4th house · {planet}',
+    rulerPlacement: 'The 4th-house ruler in {sign}',
     mcRuler: 'Career ruler · {sign} {planet}',
   },
   angleKicker: {
@@ -149,6 +150,8 @@ export const report: ReportContent = {
   stellium:
     'In {sign}, {planets} stand gathered in a row. When force piles into one sign like this, its current becomes a life theme beyond personality. The grain of {keyword} is coloring several areas of your life at once.',
   core: {
+    ruler:
+      'Your chart ruler, the planet governing the Rising sign, is {planet} in {sign}. It describes the basic way you initiate life and coordinate your responses to the world as a whole.',
     bridge:
       "To sum up: you have three layers of face. The first impression the world sees is the grain of {rising}; the center that drives your life is the wick of {sun}; and the shore where feeling rests is the waters of {moon}. Some days the three layers look like strangers, but all of them are truly you. Rather than erasing or choosing one, take out the face that fits each scene. That's how this combination is lived best.",
     bridgeNoTime:
@@ -170,7 +173,7 @@ export const report: ReportContent = {
   },
   root: {
     ruler:
-      "The star that rules your Ascendant is {planet}. Holding the key to the whole chart, this ruler dwells in {sign} — so your life's deepest motive flows along that grain.",
+      'The cusp of your 4th house, the ground of home and inner belonging, falls in {sign}. Its ruler {planet} dwells in {rulerSign}, lending that sign’s texture to the way you seek safety and build a private foundation.',
   },
   closing: {
     fire: "Seen whole, the fire current runs largest in your chart. What moves you, in the end, isn't calculation but the direction your heart beats. A life that doesn't let that heat go out is, for you, the most honest life.",

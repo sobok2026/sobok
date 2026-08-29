@@ -4,6 +4,7 @@
 
 .wheel {
   animation: wheelIntro 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.28s;
   transform-origin: center;
 }
 
@@ -68,6 +69,26 @@
   animation: sheetUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.formDepart {
+  pointer-events: none;
+  overflow: hidden;
+  animation: formDepart 0.32s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+.formDepart::after {
+  content: '';
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 22% 28%, rgb(124 196 255 / 80%) 0 1px, transparent 2px),
+    radial-gradient(circle at 68% 22%, rgb(245 188 255 / 85%) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 78% 66%, rgb(255 214 107 / 75%) 0 1px, transparent 2px),
+    radial-gradient(circle at 38% 78%, rgb(255 255 255 / 80%) 0 1px, transparent 2px);
+  animation: formStarBurst 0.32s ease-out both;
+}
+
 /* Interactive/data-driven smoothing. The value itself is set inline (so it
    renders correctly and immediately); these classes only add the transition
    that animates any later change (selection dim/undim, a recomputed chart). */
@@ -75,18 +96,34 @@
    split reads as one whole filling in rather than four numbers appearing at once. */
 .balanceBar {
   transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.balanceBarVisible {
   animation: barSweep 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.dominantSegment {
+  position: relative;
+  z-index: 1;
+  filter: saturate(1.12) brightness(1.08) drop-shadow(0 0 6px currentColor);
+}
+
+.dominantElementLabel {
+  text-shadow: 0 0 10px currentColor;
 }
 
 /* Scroll-story visuals are fully visible by default. Supporting browsers opt
    into view timelines below, so unsupported engines keep all content intact. */
 .shapePath,
-.patternLine {
+.patternLine,
+.themeLine {
   vector-effect: non-scaling-stroke;
 }
 
 .shapePoint,
-.patternPoint {
+.patternPoint,
+.themeToken {
   transform-box: fill-box;
   transform-origin: center;
 }
@@ -148,6 +185,33 @@
   to {
     opacity: 1;
     transform: rotate(0) scale(1);
+  }
+}
+
+@keyframes formDepart {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.965);
+    filter: blur(5px);
+  }
+}
+
+@keyframes formStarBurst {
+  0% {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
   }
 }
 
@@ -293,7 +357,8 @@
   }
 
   .shapePath,
-  .patternLine {
+  .patternLine,
+  .themeLine {
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
     animation: storyLineDraw 1s linear both;
@@ -302,7 +367,8 @@
   }
 
   .shapePoint,
-  .patternPoint {
+  .patternPoint,
+  .themeToken {
     opacity: 0;
     animation: storyPointReveal 1s linear both;
     animation-timeline: view(block);
@@ -332,35 +398,45 @@
   .wheel,
   .sector,
   .token,
-  .sheetIn {
+  .sheetIn,
+  .formDepart {
     animation: fadeIn 0.3s ease-out both;
     animation-delay: 0ms !important;
     animation-iteration-count: 1;
+  }
+
+  .formDepart::after {
+    display: none;
   }
 
   /* Ambient/repeating effects and transform- or path-based motion rest at
      their static base state. Inline delays may remain, but no animation runs. */
   .tokenFloat,
   .aspectPulse,
-  .balanceBar,
+  .balanceBarVisible,
   .storyChapter,
   .shapePath,
   .shapePoint,
   .patternLine,
   .patternPoint,
+  .themeLine,
+  .themeToken,
   .nodeAxisTrack {
     animation: none;
   }
 
   .storyChapter,
+  .balanceBar,
   .shapePoint,
-  .patternPoint {
+  .patternPoint,
+  .themeToken {
     opacity: 1;
     transform: none;
   }
 
   .shapePath,
-  .patternLine {
+  .patternLine,
+  .themeLine {
     stroke-dashoffset: 0;
   }
 

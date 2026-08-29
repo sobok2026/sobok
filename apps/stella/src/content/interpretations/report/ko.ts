@@ -30,8 +30,9 @@ export const report: ReportContent = {
     house: '{planet} · {n}하우스',
     dignity: '{sign}의 {planet}',
     stellium: '{sign} 스텔리움 · {count}개의 별',
-    ruler: '차트의 지배성 · {planet}',
-    rulerPlacement: '{sign}에 자리한 지배성',
+    chartRuler: '삶의 조율자 · {planet}',
+    ruler: '4하우스의 지배성 · {planet}',
+    rulerPlacement: '{sign}에 자리한 4하우스 지배성',
     mcRuler: '커리어의 지배성 · {sign} {planet}',
   },
   angleKicker: {
@@ -148,6 +149,8 @@ export const report: ReportContent = {
   stellium:
     '{sign}에 {planets}이 함께 모여 있어요. 한 별자리에 힘이 이처럼 집중되면 단순한 성향을 넘어 삶에서 반복해서 마주하는 주제가 되죠. {keyword}의 결이 여러 선택과 경험에 두루 스며들고 있다는 뜻이에요.',
   core: {
+    ruler:
+      '상승궁을 다스리는 차트 지배성은 {planet}이고 {sign}에 있어요. 이 배치는 삶 전체를 시작하고 세상에 반응하는 기본 방식을 조율해요.',
     bridge:
       '정리하면 당신은 서로 다른 세 가지 힘을 함께 품고 있어요. 세상과 처음 맞닿는 방식에는 {rising}의 성향이 드러나고, 삶의 중심에는 {sun}의 힘이 자리하며, 감정이 안정을 찾는 방식에는 {moon}의 결이 스며 있어요. 세 힘이 서로 다른 방향을 가리키는 듯한 날에도 모두 진짜 당신의 모습이죠. 어느 하나를 지우거나 선택하기보다 상황에 맞게 조율할 때 이 조합의 장점이 가장 잘 살아나요.',
     bridgeNoTime:
@@ -169,7 +172,7 @@ export const report: ReportContent = {
   },
   root: {
     ruler:
-      '당신의 상승궁을 다스리는 별은 {planet}이에요. 차트 전체의 방향을 이끄는 이 지배성이 {sign}에 자리하고 있어서 삶의 깊은 동기와 세상을 헤쳐 가는 방식에도 그 별자리의 결이 자연스럽게 스며들어요.',
+      '당신의 내면과 뿌리를 나타내는 4하우스의 시작점은 {sign}에 있어요. 이 영역을 다스리는 {planet}이 {rulerSign}에 자리해, 마음이 안정을 찾는 방식과 사적인 삶의 기반에 그 별자리의 결을 더해요.',
   },
   closing: {
     fire: '차트 전체에는 불의 기운이 가장 강하게 흐르고 있어요. 오래 고민하고 계산하기보다 마음이 뜨거워지는 방향에서 힘을 얻는 사람이죠. 하고 싶은 일을 향한 열정을 건강하게 지켜 갈 때 가장 자신답게 살아갈 수 있어요.',
