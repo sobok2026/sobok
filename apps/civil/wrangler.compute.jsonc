@@ -10,7 +10,6 @@
     "enabled": true,
     "head_sampling_rate": 1
   },
-  "limits": { "cpu_ms": 300000 },
   "services": [{ "binding": "DATABASE", "service": "database", "entrypoint": "CivilComputationService" }],
   "r2_buckets": [{ "binding": "CIVIL_FILES", "bucket_name": "civil-files" }],
   "queues": {
