@@ -1,0 +1,46 @@
+name: Deploy Civil Compute Worker
+description: Deploy the private Civil calculation Queue consumer after the Database Worker.
+
+inputs:
+  target:
+    description: Cloudflare deployment target (`staging` or `production`).
+    required: true
+  cloudflare_api_token:
+    description: Cloudflare API token from the caller job's GitHub Environment.
+    required: true
+  cloudflare_account_id:
+    description: Cloudflare account id from the caller job's GitHub Environment.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Validate deployment inputs
+      shell: bash
+      env:
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare_account_id }}
+        CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare_api_token }}
+        TARGET: ${{ inputs.target }}
+      run: |
+        case "$TARGET" in
+          staging|production) ;;
+          *) echo "Unsupported deployment target: $TARGET" >&2; exit 1 ;;
+        esac
+        for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID; do
+          if [ -z "${!name}" ]; then
+            echo "$name is unavailable to the environment-scoped Civil compute deployment job." >&2
+            exit 1
+          fi
+        done
+
+    - name: Set up Bun workspace
+      uses: ./.github/actions/setup-bun
+
+    - name: Deploy private calculation Worker
+      uses: cloudflare/wrangler-action@v4
+      with:
+        apiToken: ${{ inputs.cloudflare_api_token }}
+        accountId: ${{ inputs.cloudflare_account_id }}
+        workingDirectory: apps/civil
+        packageManager: bun
+        command: ${{ inputs.target == 'staging' && 'deploy --config wrangler.compute.jsonc --env stg' || 'deploy --config wrangler.compute.jsonc --env=""' }}

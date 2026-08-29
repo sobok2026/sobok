@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "0ee96aad586d2573fd91f04bb4327ee9b85e1d0aae8418572acf5fc6e14eaedd",
-    "assets": "5cb70c38c830e423df6ac5ebd28867e3e48e6d3de83048a4a786f62ea1756f34"
+    "assets": "7dcb876304da990c1f6f292065c15e33ea32b04eb7cf56f1e8ca9933c466f135"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,12 +16,12 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 488,
-    "remainingEditionCount": 568,
-    "pilotPartialBatchCount": 8,
+    "producedEditionCount": 607,
+    "remainingEditionCount": 449,
+    "pilotPartialBatchCount": 7,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 40,
-    "fullPendingBatchCount": 40,
+    "completedBatchCount": 50,
+    "fullPendingBatchCount": 31,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
     "visualApprovalAuthority": "human_editor",
@@ -1089,23 +1089,10 @@
         "pisces.love.distance-and-return.orbit"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.distance-and-return.orbit",
-        "taurus.love.distance-and-return.orbit",
-        "gemini.love.distance-and-return.orbit",
-        "cancer.love.distance-and-return.orbit",
-        "leo.love.distance-and-return.orbit",
-        "virgo.love.distance-and-return.orbit",
-        "libra.love.distance-and-return.orbit",
-        "scorpio.love.distance-and-return.orbit",
-        "sagittarius.love.distance-and-return.orbit",
-        "capricorn.love.distance-and-return.orbit",
-        "aquarius.love.distance-and-return.orbit",
-        "pisces.love.distance-and-return.orbit"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 42,
@@ -1128,23 +1115,10 @@
         "pisces.love.distance-and-return.nebula"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.distance-and-return.nebula",
-        "taurus.love.distance-and-return.nebula",
-        "gemini.love.distance-and-return.nebula",
-        "cancer.love.distance-and-return.nebula",
-        "leo.love.distance-and-return.nebula",
-        "virgo.love.distance-and-return.nebula",
-        "libra.love.distance-and-return.nebula",
-        "scorpio.love.distance-and-return.nebula",
-        "sagittarius.love.distance-and-return.nebula",
-        "capricorn.love.distance-and-return.nebula",
-        "aquarius.love.distance-and-return.nebula",
-        "pisces.love.distance-and-return.nebula"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 43,
@@ -1167,23 +1141,10 @@
         "pisces.love.distance-and-return.eclipse"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.distance-and-return.eclipse",
-        "taurus.love.distance-and-return.eclipse",
-        "gemini.love.distance-and-return.eclipse",
-        "cancer.love.distance-and-return.eclipse",
-        "leo.love.distance-and-return.eclipse",
-        "virgo.love.distance-and-return.eclipse",
-        "libra.love.distance-and-return.eclipse",
-        "scorpio.love.distance-and-return.eclipse",
-        "sagittarius.love.distance-and-return.eclipse",
-        "capricorn.love.distance-and-return.eclipse",
-        "aquarius.love.distance-and-return.eclipse",
-        "pisces.love.distance-and-return.eclipse"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 44,
@@ -1206,23 +1167,10 @@
         "pisces.love.distance-and-return.stella"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.distance-and-return.stella",
-        "taurus.love.distance-and-return.stella",
-        "gemini.love.distance-and-return.stella",
-        "cancer.love.distance-and-return.stella",
-        "leo.love.distance-and-return.stella",
-        "virgo.love.distance-and-return.stella",
-        "libra.love.distance-and-return.stella",
-        "scorpio.love.distance-and-return.stella",
-        "sagittarius.love.distance-and-return.stella",
-        "capricorn.love.distance-and-return.stella",
-        "aquarius.love.distance-and-return.stella",
-        "pisces.love.distance-and-return.stella"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 45,
@@ -1245,23 +1193,10 @@
         "pisces.love.repair.orbit"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.repair.orbit",
-        "taurus.love.repair.orbit",
-        "gemini.love.repair.orbit",
-        "cancer.love.repair.orbit",
-        "leo.love.repair.orbit",
-        "virgo.love.repair.orbit",
-        "libra.love.repair.orbit",
-        "scorpio.love.repair.orbit",
-        "sagittarius.love.repair.orbit",
-        "capricorn.love.repair.orbit",
-        "aquarius.love.repair.orbit",
-        "pisces.love.repair.orbit"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 46,
@@ -1284,23 +1219,10 @@
         "pisces.love.repair.nebula"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.repair.nebula",
-        "taurus.love.repair.nebula",
-        "gemini.love.repair.nebula",
-        "cancer.love.repair.nebula",
-        "leo.love.repair.nebula",
-        "virgo.love.repair.nebula",
-        "libra.love.repair.nebula",
-        "scorpio.love.repair.nebula",
-        "sagittarius.love.repair.nebula",
-        "capricorn.love.repair.nebula",
-        "aquarius.love.repair.nebula",
-        "pisces.love.repair.nebula"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 47,
@@ -1323,22 +1245,10 @@
         "pisces.love.repair.eclipse"
       ],
       "pilotEditionIds": ["scorpio.love.repair.eclipse"],
-      "remainingEditionIds": [
-        "aries.love.repair.eclipse",
-        "taurus.love.repair.eclipse",
-        "gemini.love.repair.eclipse",
-        "cancer.love.repair.eclipse",
-        "leo.love.repair.eclipse",
-        "virgo.love.repair.eclipse",
-        "libra.love.repair.eclipse",
-        "sagittarius.love.repair.eclipse",
-        "capricorn.love.repair.eclipse",
-        "aquarius.love.repair.eclipse",
-        "pisces.love.repair.eclipse"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 11,
-      "productionStatus": "pilot_partial"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 48,
@@ -1361,23 +1271,10 @@
         "pisces.love.repair.stella"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.repair.stella",
-        "taurus.love.repair.stella",
-        "gemini.love.repair.stella",
-        "cancer.love.repair.stella",
-        "leo.love.repair.stella",
-        "virgo.love.repair.stella",
-        "libra.love.repair.stella",
-        "scorpio.love.repair.stella",
-        "sagittarius.love.repair.stella",
-        "capricorn.love.repair.stella",
-        "aquarius.love.repair.stella",
-        "pisces.love.repair.stella"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 49,
@@ -1400,23 +1297,10 @@
         "pisces.love.mutual-growth.orbit"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.mutual-growth.orbit",
-        "taurus.love.mutual-growth.orbit",
-        "gemini.love.mutual-growth.orbit",
-        "cancer.love.mutual-growth.orbit",
-        "leo.love.mutual-growth.orbit",
-        "virgo.love.mutual-growth.orbit",
-        "libra.love.mutual-growth.orbit",
-        "scorpio.love.mutual-growth.orbit",
-        "sagittarius.love.mutual-growth.orbit",
-        "capricorn.love.mutual-growth.orbit",
-        "aquarius.love.mutual-growth.orbit",
-        "pisces.love.mutual-growth.orbit"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 50,
@@ -1439,23 +1323,10 @@
         "pisces.love.mutual-growth.nebula"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.mutual-growth.nebula",
-        "taurus.love.mutual-growth.nebula",
-        "gemini.love.mutual-growth.nebula",
-        "cancer.love.mutual-growth.nebula",
-        "leo.love.mutual-growth.nebula",
-        "virgo.love.mutual-growth.nebula",
-        "libra.love.mutual-growth.nebula",
-        "scorpio.love.mutual-growth.nebula",
-        "sagittarius.love.mutual-growth.nebula",
-        "capricorn.love.mutual-growth.nebula",
-        "aquarius.love.mutual-growth.nebula",
-        "pisces.love.mutual-growth.nebula"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 51,

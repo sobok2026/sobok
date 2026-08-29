@@ -1,0 +1,58 @@
+name: Bootstrap Sobok OAuth Client
+description: Idempotently register one fixed first-party relying-party client after the Accounts schema is available.
+
+inputs:
+  target:
+    description: Deployment target (`staging` or `production`).
+    required: true
+  accounts_migrator_url:
+    description: Environment-scoped Accounts migrator URL.
+    required: true
+  client_id:
+    description: Stable first-party OAuth client identifier.
+    required: true
+  client_name:
+    description: Human-readable OAuth client name.
+    required: true
+  client_origin:
+    description: Exact public origin for this environment.
+    required: true
+  client_secret:
+    description: Environment-scoped confidential-client secret.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Validate bootstrap inputs
+      shell: bash
+      env:
+        ACCOUNTS_MIGRATOR_URL: ${{ inputs.accounts_migrator_url }}
+        CLIENT_ID: ${{ inputs.client_id }}
+        CLIENT_NAME: ${{ inputs.client_name }}
+        CLIENT_ORIGIN: ${{ inputs.client_origin }}
+        CLIENT_SECRET: ${{ inputs.client_secret }}
+        TARGET: ${{ inputs.target }}
+      run: |
+        case "$TARGET" in
+          staging|production) ;;
+          *) echo "Unsupported deployment target: $TARGET" >&2; exit 1 ;;
+        esac
+        for name in ACCOUNTS_MIGRATOR_URL CLIENT_ID CLIENT_NAME CLIENT_ORIGIN CLIENT_SECRET; do
+          if [ -z "${!name}" ]; then
+            echo "$name is unavailable to the environment-scoped OAuth client bootstrap job." >&2
+            exit 1
+          fi
+        done
+
+    - name: Bootstrap fixed first-party client
+      shell: bash
+      env:
+        CI: 'true'
+        SOBOK_MIGRATOR_URL: ${{ inputs.accounts_migrator_url }}
+        SOBOK_OAUTH_CLIENT_ID: ${{ inputs.client_id }}
+        SOBOK_OAUTH_CLIENT_NAME: ${{ inputs.client_name }}
+        SOBOK_OAUTH_CLIENT_ORIGIN: ${{ inputs.client_origin }}
+        SOBOK_OAUTH_CLIENT_SECRET: ${{ inputs.client_secret }}
+        SOBOK_OAUTH_REDIRECT_URIS: ${{ inputs.client_origin }}/api/auth/oauth2/callback/sobok
+      run: bun run --filter=@sobok/accounts oauth:bootstrap

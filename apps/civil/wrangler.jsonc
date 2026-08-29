@@ -1,0 +1,27 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "civil",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-08-28",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "assets": {
+    "directory": "./out",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "drop-trailing-slash",
+    "run_worker_first": ["/api/*"]
+  },
+  "services": [{ "binding": "DATABASE", "service": "database", "entrypoint": "CivilService" }],
+  "env": {
+    "stg": {
+      "workers_dev": false,
+      "services": [{ "binding": "DATABASE", "service": "database-stg", "entrypoint": "CivilService" }]
+    }
+  }
+}

@@ -1,0 +1,152 @@
+name: Civil Deploy
+
+run-name: Deploy Civil to ${{ inputs.target }} @ ${{ github.sha }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Civil deployment target
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      confirmation:
+        description: Type DEPLOY CIVIL
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sobok-${{ inputs.target }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify Civil release
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - name: Validate release request
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          REF: ${{ github.ref }}
+          TARGET: ${{ inputs.target }}
+        run: |
+          case "$TARGET:$REF" in
+            staging:refs/heads/staging|production:refs/heads/main) ;;
+            *) echo "Civil $TARGET releases must run from the matching branch." >&2; exit 1 ;;
+          esac
+          if [ "$CONFIRMATION" != 'DEPLOY CIVIL' ]; then
+            echo 'Type DEPLOY CIVIL to confirm the Civil release.' >&2
+            exit 1
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Verify Civil and Database packages
+        run: |
+          bun run --filter=@sobok/civil type
+          bun run --filter=@sobok/database type
+          bun run --filter=@sobok/civil build
+
+      - name: Assert no generated-file drift
+        run: git diff --exit-code
+
+  prepare:
+    name: Prepare Civil ${{ inputs.target }}
+    needs: verify
+    environment: ${{ inputs.target }}
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Push staging Civil schema
+        if: inputs.target == 'staging'
+        working-directory: apps/civil
+        env:
+          CI: 'true'
+          NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
+          SOBOK_MIGRATOR_URL: ${{ secrets.CIVIL_MIGRATOR_URL }}
+        run: bunx --bun drizzle-kit push --config drizzle.config.ts
+
+      - name: Bootstrap fixed Civil client
+        uses: ./.github/actions/bootstrap-oauth-client
+        with:
+          target: ${{ inputs.target }}
+          accounts_migrator_url: ${{ secrets.ACCOUNTS_MIGRATOR_URL }}
+          client_id: civil-web
+          client_name: Civil
+          client_origin: ${{ inputs.target == 'staging' && 'https://civil-stg.sobok.cc' || 'https://civil.sobok.cc' }}
+          client_secret: ${{ secrets.CIVIL_OIDC_CLIENT_SECRET }}
+
+  database:
+    name: Deploy Database Worker
+    needs: prepare
+    environment: ${{ inputs.target }}
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Deploy Database Worker
+        uses: ./.github/actions/deploy-database
+        with:
+          target: ${{ inputs.target }}
+          accounts_google_client_id: ${{ vars.ACCOUNTS_GOOGLE_CLIENT_ID }}
+          accounts_kakao_client_id: ${{ vars.ACCOUNTS_KAKAO_CLIENT_ID }}
+          accounts_bbaton_client_id: ${{ vars.ACCOUNTS_BBATON_CLIENT_ID }}
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  compute:
+    name: Deploy Civil compute
+    needs: database
+    environment: ${{ inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Deploy Civil calculation Worker
+        uses: ./.github/actions/deploy-civil-compute
+        with:
+          target: ${{ inputs.target }}
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  civil:
+    name: Deploy Civil public Worker
+    needs: [database, compute]
+    environment: ${{ inputs.target }}
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Build and deploy Civil
+        uses: ./.github/actions/deploy-app
+        with:
+          package_name: '@sobok/civil'
+          directory: apps/civil
+          target: ${{ inputs.target }}
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
