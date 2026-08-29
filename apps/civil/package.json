@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./artifact": "./src/domain/artifact.ts",
     "./calculation": "./src/domain/calculation.ts",
+    "./delivery": "./src/domain/delivery.ts",
     "./database-service": "./worker/service.ts"
   },
   "scripts": {
@@ -21,6 +23,7 @@
     "@sobok/edge": "workspace:*",
     "@sobok/typography": "workspace:*",
     "drizzle-orm": "1.0.0-rc.4",
+    "fflate": "^0.8.2",
     "hono": "^4.12.27",
     "next": "16.2.11",
     "postgres": "^3.4.9",
