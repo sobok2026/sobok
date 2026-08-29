@@ -7,6 +7,8 @@ import { auditEventTable } from '../schema/work'
 export type OrganizationRole = (typeof organizationMemberTable.$inferSelect)['role']
 
 const PROJECT_WRITE_ROLES: ReadonlySet<OrganizationRole> = new Set(['owner', 'administrator', 'designer'])
+const PROJECT_CONTRIBUTOR_ROLES: ReadonlySet<OrganizationRole> = new Set(['designer', 'contractor'])
+const PROJECT_REVIEW_ROLES: ReadonlySet<OrganizationRole> = new Set(['reviewer', 'approver'])
 
 async function organizationRole(
   tx: CivilTransaction,
@@ -114,4 +116,63 @@ export async function canWriteProject(
     .where(and(eq(projectMemberTable.projectId, projectId), eq(projectMemberTable.userId, userId)))
     .limit(1)
   return Boolean(projectMembership && PROJECT_WRITE_ROLES.has(projectMembership.role))
+}
+
+async function effectiveProjectRole(
+  tx: CivilTransaction,
+  userId: string,
+  organizationId: string,
+  projectId: string,
+): Promise<OrganizationRole | null> {
+  const role = await organizationRole(tx, userId, organizationId)
+  if (!role) return null
+  const [project] = await tx
+    .select({ id: projectTable.id })
+    .from(projectTable)
+    .where(and(eq(projectTable.organizationId, organizationId), eq(projectTable.id, projectId)))
+    .limit(1)
+  if (!project) return null
+  if (role === 'owner' || role === 'administrator') return role
+  const [membership] = await tx
+    .select({ role: projectMemberTable.role })
+    .from(projectMemberTable)
+    .where(
+      and(
+        eq(projectMemberTable.organizationId, organizationId),
+        eq(projectMemberTable.projectId, projectId),
+        eq(projectMemberTable.userId, userId),
+      ),
+    )
+    .limit(1)
+  return membership?.role ?? null
+}
+
+export async function canContributeProject(
+  tx: CivilTransaction,
+  userId: string,
+  organizationId: string,
+  projectId: string,
+): Promise<boolean> {
+  const role = await effectiveProjectRole(tx, userId, organizationId, projectId)
+  return role === 'owner' || role === 'administrator' || (role !== null && PROJECT_CONTRIBUTOR_ROLES.has(role))
+}
+
+export async function canReviewProject(
+  tx: CivilTransaction,
+  userId: string,
+  organizationId: string,
+  projectId: string,
+): Promise<boolean> {
+  const role = await effectiveProjectRole(tx, userId, organizationId, projectId)
+  return role === 'owner' || role === 'administrator' || (role !== null && PROJECT_REVIEW_ROLES.has(role))
+}
+
+export async function canApproveProject(
+  tx: CivilTransaction,
+  userId: string,
+  organizationId: string,
+  projectId: string,
+): Promise<boolean> {
+  const role = await effectiveProjectRole(tx, userId, organizationId, projectId)
+  return role === 'owner' || role === 'administrator' || role === 'approver'
 }

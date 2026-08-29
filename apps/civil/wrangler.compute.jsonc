@@ -10,7 +10,9 @@
     "enabled": true,
     "head_sampling_rate": 1
   },
+  "limits": { "cpu_ms": 300000 },
   "services": [{ "binding": "DATABASE", "service": "database", "entrypoint": "CivilComputationService" }],
+  "r2_buckets": [{ "binding": "CIVIL_FILES", "bucket_name": "civil-files" }],
   "queues": {
     "consumers": [
       {
@@ -20,6 +22,22 @@
         "max_retries": 10,
         "retry_delay": 60,
         "dead_letter_queue": "civil-calculations-dlq"
+      },
+      {
+        "queue": "civil-artifacts",
+        "max_batch_size": 1,
+        "max_batch_timeout": 5,
+        "max_retries": 10,
+        "retry_delay": 60,
+        "dead_letter_queue": "civil-artifacts-dlq"
+      },
+      {
+        "queue": "civil-deliveries",
+        "max_batch_size": 1,
+        "max_batch_timeout": 5,
+        "max_retries": 10,
+        "retry_delay": 60,
+        "dead_letter_queue": "civil-deliveries-dlq"
       }
     ]
   },
@@ -27,6 +45,7 @@
     "stg": {
       "workers_dev": false,
       "services": [{ "binding": "DATABASE", "service": "database-stg", "entrypoint": "CivilComputationService" }],
+      "r2_buckets": [{ "binding": "CIVIL_FILES", "bucket_name": "civil-files-stg" }],
       "queues": {
         "consumers": [
           {
@@ -36,6 +55,22 @@
             "max_retries": 10,
             "retry_delay": 60,
             "dead_letter_queue": "civil-calculations-stg-dlq"
+          },
+          {
+            "queue": "civil-artifacts-stg",
+            "max_batch_size": 1,
+            "max_batch_timeout": 5,
+            "max_retries": 10,
+            "retry_delay": 60,
+            "dead_letter_queue": "civil-artifacts-stg-dlq"
+          },
+          {
+            "queue": "civil-deliveries-stg",
+            "max_batch_size": 1,
+            "max_batch_timeout": 5,
+            "max_retries": 10,
+            "retry_delay": 60,
+            "dead_letter_queue": "civil-deliveries-stg-dlq"
           }
         ]
       }
