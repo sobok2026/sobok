@@ -57,11 +57,20 @@ export function createSobokRelyingParty(options: SobokRelyingPartyOptions) {
       accountLinking: { enabled: false },
     },
     user: {
+      // These stay writable-by-schema on purpose. Better Auth filters the mapped OIDC profile through the
+      // same gate as user-facing writes, so `input: false` would strip the very values mapProfileToUser
+      // supplies and fail account creation with "issuer is required". The account holder is kept out by
+      // `disabledPaths` below instead.
       additionalFields: {
-        issuer: { type: 'string', required: true, input: false },
-        subject: { type: 'string', required: true, input: false },
+        issuer: { type: 'string', required: true },
+        subject: { type: 'string', required: true },
       },
     },
+    // `/update-user` is the only wire surface that would accept the two fields above, and a relying party has
+    // no profile to edit — accounts.sobok.cc owns the profile, and the account page links out to it. A
+    // database hook cannot stand in for this: `updateWithHooks` merges a hook's returned data over the
+    // original payload, so omitting a key there does not drop it.
+    disabledPaths: ['/update-user'],
     plugins: [
       genericOAuth({
         config: [
