@@ -67,15 +67,11 @@ Workers Free의 현재 한도는 계정당 Queue 10,000개, 표준 작업 10,000
   있는 제품 `scopes`를 함께 가진다. RPC entrypoint는 자기 scope가 없는 채널을 반환하지 않는다.
 - `CORE_PAYMENT_EVENTS_URL`
 
-현재 production 카탈로그는 제품 도메인에서 카드사 심사를 받을 수 있도록 Stella·Vibe scope에
-실연동 토스페이(`tosspay_v2`)와 테스트 토스페이먼츠 카드(`tosspayments`)를 함께 둔다. core에는
-둘 다 노출하지 않는다. 심사 승인이 끝나면 `tosspayments` 항목의 channel key를 실연동 키로 바꾸고
-`mode`를 `live`로 바꾸는 것이 전환의 전부다. 제품 UI나 checkout 분기는 다시 바꾸지 않는다.
+production 카탈로그는 Stella·Vibe scope에 실연동 토스페이(`tosspay_v2`)와 실연동 토스페이먼츠
+카드(`tosspayments`)를 둔다. core에는 둘 다 노출하지 않는다. 테스트 채널은 stg env만 가진다.
 
-PortOne의 테스트 모드 웹훅은 production 화면에서 시작한 거래라도 `payments-stg` URL로 들어온다.
-따라서 production의 테스트 카드 심사 거래는 브라우저 confirm과 production scheduler 재조정을 완료
-경로로 사용하며, production Queue 웹훅 전달 검증 수단으로 사용하지 않는다. 웹훅까지 포함한 테스트
-결제 수직 확인은 staging에서 수행한다.
+PortOne의 테스트 모드 웹훅은 `payments-stg` URL로 들어온다. 따라서 웹훅까지 포함한 테스트 결제
+수직 확인은 staging에서 수행한다.
 
 비밀 값은 `sobok-ops/infra/cloudflare/account/sobok/payments`가 계정 Secrets Store에 만든다.
 
