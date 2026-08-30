@@ -120,6 +120,14 @@ type GuardianReportUiContent = {
       sampleLabel: string
       trustItems: readonly string[]
     }
+    /**
+     * The scale of the thing, in numerals, immediately under the promise. Every figure here is stated
+     * somewhere else on the page in a sentence; this band is where a reader who does not read sentences
+     * still gets them.
+     */
+    proof: {
+      items: readonly { value: string; label: string }[]
+    }
     /** The one section that shows the product itself rather than describing it. */
     sample: {
       eyebrow: string
@@ -148,7 +156,20 @@ type GuardianReportUiContent = {
     process: {
       eyebrow: string
       title: string
-      steps: readonly { number: string; title: string; body: string }[]
+      /** Rides the one step where money changes hands, so its place in the order is never a surprise. */
+      payLabel: string
+      steps: readonly { number: string; title: string; body: string; paid?: boolean }[]
+    }
+    /**
+     * The love card's four editions, shown as the four real artworks. The tier names come from
+     * `paid.reveal.rarityLabels` so the ladder cannot drift from the screen that reveals it, and the odds
+     * stay in the FAQ — a probability table belongs where someone goes looking for it, not in the pitch.
+     */
+    rarity: {
+      eyebrow: string
+      title: string
+      body: string
+      footnote: string
     }
     quiz: {
       eyebrow: string
@@ -367,16 +388,24 @@ const KO_CONTENT: GuardianReportUiContent = {
     },
     hero: {
       eyebrow: 'STELLA PREMIUM READING',
-      title: '별이 고른 네 장으로\n지금의 나를 깊이 읽어요',
-      body: '출생 차트와 마음의 답을 함께 읽어 자기이해·사랑·일·결정에 관한 소장용 카드와 한 편의 리포트를 만들어요.',
+      title: '별이 고른 네 장으로\n지금의 나를 읽어요',
+      body: '출생 차트와 내 답을 함께 읽어 나만의 카드 네 장과 리포트 한 편을 완성해요.',
       cta: '2문항 무료로 시작하기',
       offerNote: (price) => `전체 리포트는 ${price} 한 번 결제예요. 무료 결과를 보고 나서 정해도 늦지 않아요.`,
       sampleLabel: '실제 카드 예시',
       trustItems: ['회원가입 없이 시작', '결제 전 무료 결과 확인', '열기 전에는 전액 환불'],
     },
+    proof: {
+      items: [
+        { value: '4장', label: '소장용 수호령 카드' },
+        { value: '16~20', label: '나에게 맞춘 질문' },
+        { value: '4편', label: '주제별 상세 본문' },
+        { value: '1년', label: '언제든 다시 열람' },
+      ],
+    },
     sample: {
       eyebrow: 'INSIDE THE REPORT',
-      title: '리포트는 이렇게 쓰여 있어요',
+      title: '운세 한 줄로 끝내지 않고\n이만큼 쓰여 있어요',
       body: '네 주제마다 한 장의 카드와 이만큼의 본문이 붙어요. 아래는 자기이해 편의 일부예요.',
       caption: '실제 리포트 화면의 일부',
       section: {
@@ -401,7 +430,7 @@ const KO_CONTENT: GuardianReportUiContent = {
     },
     product: {
       eyebrow: 'WHAT YOU RECEIVE',
-      title: '짧은 운세가 아니라, 나를 위해 완성되는 한 편의 이야기',
+      title: '같은 별자리라도\n같은 리포트는 없어요',
       body: '같은 별자리라도 출생 차트와 답변의 흐름에 따라 카드와 본문의 초점이 달라져요.',
       items: [
         {
@@ -419,16 +448,12 @@ const KO_CONTENT: GuardianReportUiContent = {
           title: '연결해서 읽는 전체 리포트',
           body: '네 주제를 따로 설명하는 데 그치지 않고 반복되는 마음의 패턴과 다음 행동을 함께 정리해요.',
         },
-        {
-          glyph: '♡',
-          title: '희귀도가 있는 사랑 카드',
-          body: '사랑 카드에는 오비트부터 스텔라까지 네 희귀도 중 하나가 정해져요.',
-        },
       ],
     },
     process: {
       eyebrow: 'HOW IT WORKS',
-      title: '무료로 먼저 확인하고, 원할 때만 더 깊이',
+      title: '무료로 먼저 확인하고 원할 때만 더 깊이',
+      payLabel: '여기서 결제',
       steps: [
         { number: '01', title: '두 가지 마음 질문', body: '지금 듣고 싶은 목소리와 향하고 싶은 방향을 골라요.' },
         {
@@ -436,13 +461,24 @@ const KO_CONTENT: GuardianReportUiContent = {
           title: '무료 결과와 잠긴 미리보기',
           body: '지금의 마음을 읽은 작은 리포트와 오늘의 한 걸음을 먼저 받아요.',
         },
-        { number: '03', title: '결제 후 맞춤 질문', body: '핵심 12문항과 답변에 따라 이어지는 4~8문항에 답해요.' },
+        {
+          number: '03',
+          title: '결제 후 맞춤 질문',
+          body: '핵심 12문항과 답변에 따라 이어지는 4~8문항에 답해요.',
+          paid: true,
+        },
         {
           number: '04',
           title: '카드 공개와 전체 리포트',
           body: '네 장을 차례로 열고 시각 자료와 풍부한 본문을 읽어요.',
         },
       ],
+    },
+    rarity: {
+      eyebrow: 'LOVE CARD RARITY',
+      title: '어떤 결로 올지는\n열어야 알아요',
+      body: '같은 수호령이라도 만나는 결에 따라 그림이 달라져요. 어느 결이 나와도 리포트 본문의 분량과 내용은 똑같아요.',
+      footnote: '자기이해·일·결정 카드에는 희귀도가 없어요.',
     },
     quiz: {
       eyebrow: 'FREE PREVIEW',
@@ -665,11 +701,11 @@ const KO_CONTENT: GuardianReportUiContent = {
     },
     purchase: {
       eyebrow: 'FULL REPORT',
-      title: '네 답이 모두 모인 뒤에만 정해지는 카드',
+      title: '결제하자마자가 아니라\n네 답이 다 모인 뒤에 정해져요',
       body: '결제 직후 카드를 무작위로 보여주지 않아요. 핵심 질문과 맞춤 질문을 모두 마친 뒤 출생 차트와 답변을 함께 읽어 카드와 본문을 완성해요.',
       includes: ['수호령 카드 4장', '개인화 질문 16~20개', '네 주제 상세 본문', '시각 요약과 행동 문장'],
       priceSuffix: '한 번 결제 · 구독 아님',
-      cta: '무료 미리보기부터 시작하기',
+      cta: '2문항 무료로 시작하기',
       refundNote: '완성된 리포트를 열기 전에는 언제든 전액 환불받을 수 있어요.',
       refundLink: '청약철회·환불 정책',
     },
@@ -879,6 +915,7 @@ function emptyContent(): GuardianReportUiContent {
         sampleLabel: empty,
         trustItems: [],
       },
+      proof: { items: [] },
       sample: {
         eyebrow: empty,
         title: empty,
@@ -898,7 +935,8 @@ function emptyContent(): GuardianReportUiContent {
         continues: empty,
       },
       product: { eyebrow: empty, title: empty, body: empty, items: [] },
-      process: { eyebrow: empty, title: empty, steps: [] },
+      process: { eyebrow: empty, title: empty, payLabel: empty, steps: [] },
+      rarity: { eyebrow: empty, title: empty, body: empty, footnote: empty },
       quiz: {
         eyebrow: empty,
         tone: emptyQuestion,

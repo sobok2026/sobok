@@ -10,6 +10,13 @@ type Props = {
   price: string
   onSelect: () => void
   cta: string
+  /**
+   * Keeps the island on wide screens too. Off by default: on a screen where the real call to action is
+   * usually still in view, a second one is just clutter. The offer page opts in because it is long and its
+   * buttons are several screens apart, so a desktop reader can otherwise scroll a third of it with no way
+   * to act.
+   */
+  persistent?: boolean
   visible: boolean
 }
 
@@ -32,17 +39,19 @@ type Props = {
  * straight line. Wide rather than compact, though — this one asks for money, and it should carry the weight
  * of the button it stands in for.
  */
-export default function GuardianStickyCta({ cta, href, note, onSelect, price, visible }: Props) {
+export default function GuardianStickyCta({ cta, href, note, onSelect, persistent, price, visible }: Props) {
   const button =
     'cta shrink-0 rounded-full bg-[linear-gradient(100deg,#fff3f8,#eadfff)] px-5 py-2.5 text-xs font-bold text-[#24142e]'
 
   return (
     <div
       aria-hidden={!visible}
-      className="fixed inset-x-0 bottom-[max(0.5rem,var(--safe-area-bottom))] z-40 px-3 sm:hidden"
+      className={`fixed inset-x-0 bottom-[max(0.5rem,var(--safe-area-bottom))] z-40 px-3 ${
+        persistent ? '' : 'sm:hidden'
+      }`}
     >
       <div
-        className={`mx-auto flex items-center gap-3 rounded-full border border-white/12 bg-[#0b0618]/92 py-2 pl-5 pr-2 shadow-[0_-6px_20px_rgba(2,0,12,0.55)] backdrop-blur-md transition-[opacity,scale] duration-200 ease-out motion-reduce:transition-none ${
+        className={`mx-auto flex items-center gap-3 rounded-full sm:max-w-md border border-white/12 bg-[#0b0618]/92 py-2 pl-5 pr-2 shadow-[0_-6px_20px_rgba(2,0,12,0.55)] backdrop-blur-md transition-[opacity,scale] duration-200 ease-out motion-reduce:transition-none ${
           visible ? 'scale-100 opacity-100' : 'pointer-events-none scale-95 opacity-0'
         }`}
       >
