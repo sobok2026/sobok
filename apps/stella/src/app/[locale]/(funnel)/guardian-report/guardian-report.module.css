@@ -190,3 +190,231 @@
   height: calc(100% - 2.7rem);
   background: linear-gradient(rgb(255 193 214 / 28%), rgb(201 168 255 / 10%));
 }
+
+/*
+ * The numbers band under the hero. Hairlines rather than four separate cards: the four figures are one
+ * statement about the size of the product, and four bordered boxes read as four unrelated claims.
+ */
+.proof {
+  border: 1px solid rgb(255 255 255 / 9%);
+  background: rgb(255 255 255 / 9%);
+}
+
+/*
+ * Scroll-driven section reveal.
+ *
+ * Scrolling is the one interaction that exists on every device, so the page lets each section arrive rather
+ * than simply be there. Declaratively: no observer, no state, no hydration cost. Browsers without
+ * `animation-timeline` never run it and get the finished page — which is exactly what `prefers-reduced-motion`
+ * asks for too, so the fallback and the accessible path are the same path.
+ *
+ * The range closes 45% into the element's entry. For a section shorter than the viewport that is 45% of its
+ * own height of scrolling; for a taller one it is 45% of a viewport height. Either way it finishes well
+ * before the section settles, so nothing is ever left half-faded by a page that ran out of scroll beneath it.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
+  }
+}
+
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    translate: 0 1.75rem;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/*
+ * The hero stack deals itself out on load.
+ *
+ * toss.im spends its first screen on motion — a preloaded intro video over a scroll-scrubbed frame sequence
+ * — on the reasoning that a quarter of readers leave without scrolling, so the first screen has to be the
+ * strongest thing on the page. There is no film to run here, but there are three cards, and cards can be
+ * dealt. They start squared on top of each other and spring apart, front first, with the easing overshooting
+ * past the resting angle so the fan settles rather than arrives.
+ *
+ * Each `to` frame repeats its rule's resting transform exactly, and `both` holds it, so the finished state is
+ * the same whether the animation ran or not — which is what makes the reduced-motion path a plain deletion.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .heroCardFront {
+    animation: hero-deal-front 480ms cubic-bezier(0.22, 1.28, 0.36, 1) both;
+  }
+
+  .heroCardLeft {
+    animation: hero-deal-left 620ms cubic-bezier(0.22, 1.42, 0.36, 1) 90ms both;
+  }
+
+  .heroCardRight {
+    animation: hero-deal-right 620ms cubic-bezier(0.22, 1.42, 0.36, 1) 160ms both;
+  }
+}
+
+@keyframes hero-deal-front {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -38%) scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes hero-deal-left {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.9);
+  }
+
+  to {
+    opacity: 0.72;
+    transform: translate(-74%, -46%) rotate(-9deg) scale(0.9);
+  }
+}
+
+@keyframes hero-deal-right {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.9);
+  }
+
+  to {
+    opacity: 0.76;
+    transform: translate(-28%, -46%) rotate(9deg) scale(0.9);
+  }
+}
+
+/*
+ * The sample's card opens itself.
+ *
+ * toss.im never shows a still of its product: the mock plays the task through — "금리 분석 중…" resolves to
+ * "분석 완료", a payment slider slides and lands on "결제가 완료됐어요". This is that, for the one thing this
+ * product actually does: a card arrives sealed and you open it. The sample section used to put a finished
+ * artwork next to the prose, which described an opening without ever performing one.
+ *
+ * Built so the base state is OPEN, and the seal is added only where it is certain to come off again:
+ * `.seal` is transparent by default and is made opaque solely inside the scroll-timeline animation. So a
+ * browser without `animation-timeline`, a reader on `prefers-reduced-motion`, and a page whose JS never ran
+ * all land on the same correct frame — the artwork, plain — and none of them can strand a card shut.
+ *
+ * The timing is the point rather than the movement: the seal is held for the first half of the range so it
+ * is unmistakably a sealed card before anything happens, and only then breaks. Scrubbing back re-seals it,
+ * which is the honest behaviour for a scroll-driven reveal and reads as re-closing the card.
+ */
+.sealStage {
+  position: relative;
+}
+
+.seal {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: auto;
+  aspect-ratio: auto;
+  opacity: 0;
+  transform-origin: 50% 55%;
+}
+
+/** The flash at the break. Sits under the seal so the seal tears away over a lit card, not a dark one. */
+.sealFlare {
+  position: absolute;
+  inset: -12%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  border-radius: 1.5rem;
+  background: radial-gradient(circle at 50% 50%, rgb(255 236 189 / 85%), rgb(255 193 214 / 35%) 38%, transparent 68%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .seal,
+    .sealFlare,
+    .sealSubject {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      /* Ends on `cover`, not on `entry`. The card is 149px tall, so its whole entry phase is 149px of
+         scrolling — a hold-then-break inside that window is gone before it registers. Measured against
+         `cover` the sequence gets ~390px on a phone and breaks as the card reaches mid-screen. */
+      /* Starts at `entry 0%`: any later and the first sliver of the open card is on screen before the
+         seal covers it. */
+      animation-range: entry 0% cover 42%;
+    }
+
+    .seal {
+      animation-name: seal-break;
+    }
+
+    .sealFlare {
+      animation-name: seal-flare;
+    }
+
+    .sealSubject {
+      animation-name: seal-subject;
+    }
+  }
+}
+
+/* Shut, shut, then gone — the hold is what makes it read as opening rather than as a cross-fade. */
+@keyframes seal-break {
+  0%,
+  58% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  72% {
+    opacity: 0.9;
+    transform: scale(0.97) rotate(-1.5deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.14) rotate(4deg);
+  }
+}
+
+/* One burst at the break, gone by the end — a flare that lingers is a glow, and a glow is not an event. */
+@keyframes seal-flare {
+  0%,
+  58% {
+    opacity: 0;
+  }
+
+  74% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The card overshoots out of the seal and settles back. */
+@keyframes seal-subject {
+  0%,
+  58% {
+    transform: scale(0.93);
+  }
+
+  80% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}

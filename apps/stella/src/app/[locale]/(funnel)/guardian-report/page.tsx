@@ -105,8 +105,9 @@ export default async function GuardianReportPage({ params }: PageProps<'/[locale
       <JsonLd data={faqPageGraph(FAQ[locale].guardianReport)} />
       <GuardianReportLanding locale={locale} />
       <FaqSection locale={locale} page="guardianReport" />
-      {/* Below `sm` the offer CTA floats over the page, so the footer reserves its band. */}
-      <Footer className="pb-[calc(5.5rem+var(--safe-area-bottom))] sm:pb-8" locale={locale} />
+      {/* The offer CTA floats over the page at every width here, so the footer reserves its band at every
+          width too. */}
+      <Footer className="pb-[calc(5.5rem+var(--safe-area-bottom))]" locale={locale} />
     </>
   )
 }
