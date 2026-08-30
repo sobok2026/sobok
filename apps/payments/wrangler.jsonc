@@ -12,9 +12,8 @@
   },
   "vars": {
     "PORTONE_STORE_ID": "store-b5e2140b-9036-4122-b95a-caa90fc1e926",
-    // A channel records its own PortOne mode and the apps allowed to request it. Production intentionally mixes
-    // the approved Toss Pay live channel with the Toss Payments test channel needed on the real service domains
-    // during card-company review. Replace only the latter channel key + mode when live approval lands.
+    // A channel records its own PortOne mode and the apps allowed to request it. Production carries only live
+    // channels; the matching test channels live in the stg env below.
     "PORTONE_CHANNELS": {
       "tosspay_v2": {
         "channelKey": "channel-key-d14e0af9-18be-457f-aa21-228e7265211f",
@@ -22,8 +21,8 @@
         "scopes": ["stella", "vibe"]
       },
       "tosspayments": {
-        "channelKey": "channel-key-e26cc617-35e1-4b69-86be-cb95f7c42f88",
-        "mode": "test",
+        "channelKey": "channel-key-5127add3-8414-44c5-a400-ba4d46479d86",
+        "mode": "live",
         "scopes": ["stella", "vibe"]
       }
     },
