@@ -2,14 +2,18 @@ import AccountControls from './AccountControls'
 import OrganizationWorkspace from './OrganizationWorkspace'
 
 const MODULES = [
-  { code: '01', name: '기관·프로젝트', detail: '기관과 프로젝트의 데이터 및 참여자 권한을 분리합니다.' },
-  { code: '02', name: '도면·측량 성과', detail: 'CAD·GIS·PDF 원본과 좌표계·공간 범위·revision 계보를 연결합니다.' },
+  { code: '01', name: '기관·프로젝트', detail: '기관 구성원과 프로젝트별 설계·검토·승인 역할을 분리합니다.' },
+  { code: '02', name: '설계협업·변경', detail: '원안·변경·준공 회차를 제출·검토·보완·승인·확정합니다.' },
   { code: '03', name: '비공개 파일 보관', detail: 'R2 원본을 공개하지 않고 형식·크기·SHA-256을 확인해 보관합니다.' },
-  { code: '04', name: '수량·토공', detail: '입력 근거와 알고리즘 버전이 고정된 공식 산출을 만듭니다.' },
-  { code: '05', name: '결과 revision', detail: '검증된 결과를 수정하지 않고 새 revision으로 축적합니다.' },
+  { code: '04', name: '수량·토공', detail: '서버 계산과 입력·알고리즘·결과 해시를 공식 승인 흐름에 연결합니다.' },
+  { code: '05', name: '확정 revision', detail: '검토 완료본을 append-only 스냅샷과 SHA-256으로 잠급니다.' },
   { code: '06', name: '전자납품', detail: '원본과 manifest를 불변 ZIP으로 묶고 제출·보완·승인을 기록합니다.' },
   { code: '07', name: '무결성 증거', detail: '입력·원본·manifest·패키지 해시를 함께 보존합니다.' },
-  { code: '08', name: '승인·감사', detail: '승인 이력과 시스템 행위를 불변 감사 이벤트로 남깁니다.' },
+  {
+    code: '08',
+    name: '승인·감사',
+    detail: '권한·설계·계산·납품의 사용자와 상태 이력을 조회 가능한 감사 이벤트로 남깁니다.',
+  },
 ] as const
 
 export default function CivilWorkspace() {

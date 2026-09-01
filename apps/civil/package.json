@@ -6,6 +6,7 @@
   "exports": {
     "./artifact": "./src/domain/artifact.ts",
     "./calculation": "./src/domain/calculation.ts",
+    "./collaboration": "./src/domain/collaboration.ts",
     "./delivery": "./src/domain/delivery.ts",
     "./database-service": "./worker/service.ts"
   },
