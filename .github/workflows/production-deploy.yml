@@ -258,3 +258,22 @@ jobs:
           target: production
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  fall:
+    name: Deploy Fall
+    needs: verify
+    environment: production
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Build and deploy Fall
+        uses: ./.github/actions/deploy-app
+        with:
+          package_name: '@sobok/fall'
+          directory: apps/fall
+          target: production
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
