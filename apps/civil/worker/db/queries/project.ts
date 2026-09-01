@@ -10,7 +10,7 @@ const PROJECT_WRITE_ROLES: ReadonlySet<OrganizationRole> = new Set(['owner', 'ad
 const PROJECT_CONTRIBUTOR_ROLES: ReadonlySet<OrganizationRole> = new Set(['designer', 'contractor'])
 const PROJECT_REVIEW_ROLES: ReadonlySet<OrganizationRole> = new Set(['reviewer', 'approver'])
 
-async function organizationRole(
+export async function getOrganizationRole(
   tx: CivilTransaction,
   userId: string,
   organizationId: string,
@@ -25,7 +25,7 @@ async function organizationRole(
 
 export function listProjects(db: Db, userId: string, organizationId: string) {
   return withCivilContext(db, userId, organizationId, async (tx) => {
-    const role = await organizationRole(tx, userId, organizationId)
+    const role = await getOrganizationRole(tx, userId, organizationId)
     if (!role) return null
     const items = await tx
       .select({
@@ -57,7 +57,7 @@ export function createProject(
   },
 ) {
   return withCivilContext(db, input.userId, input.organizationId, async (tx) => {
-    const role = await organizationRole(tx, input.userId, input.organizationId)
+    const role = await getOrganizationRole(tx, input.userId, input.organizationId)
     if (!role || !PROJECT_WRITE_ROLES.has(role)) return null
     const projectId = crypto.randomUUID()
     await tx.insert(projectTable).values({
@@ -101,7 +101,7 @@ export async function canWriteProject(
   organizationId: string,
   projectId: string,
 ): Promise<boolean> {
-  const role = await organizationRole(tx, userId, organizationId)
+  const role = await getOrganizationRole(tx, userId, organizationId)
   if (!role) return false
   const [project] = await tx
     .select({ id: projectTable.id })
@@ -118,13 +118,13 @@ export async function canWriteProject(
   return Boolean(projectMembership && PROJECT_WRITE_ROLES.has(projectMembership.role))
 }
 
-async function effectiveProjectRole(
+export async function getEffectiveProjectRole(
   tx: CivilTransaction,
   userId: string,
   organizationId: string,
   projectId: string,
 ): Promise<OrganizationRole | null> {
-  const role = await organizationRole(tx, userId, organizationId)
+  const role = await getOrganizationRole(tx, userId, organizationId)
   if (!role) return null
   const [project] = await tx
     .select({ id: projectTable.id })
@@ -153,7 +153,7 @@ export async function canContributeProject(
   organizationId: string,
   projectId: string,
 ): Promise<boolean> {
-  const role = await effectiveProjectRole(tx, userId, organizationId, projectId)
+  const role = await getEffectiveProjectRole(tx, userId, organizationId, projectId)
   return role === 'owner' || role === 'administrator' || (role !== null && PROJECT_CONTRIBUTOR_ROLES.has(role))
 }
 
@@ -163,7 +163,7 @@ export async function canReviewProject(
   organizationId: string,
   projectId: string,
 ): Promise<boolean> {
-  const role = await effectiveProjectRole(tx, userId, organizationId, projectId)
+  const role = await getEffectiveProjectRole(tx, userId, organizationId, projectId)
   return role === 'owner' || role === 'administrator' || (role !== null && PROJECT_REVIEW_ROLES.has(role))
 }
 
@@ -173,6 +173,6 @@ export async function canApproveProject(
   organizationId: string,
   projectId: string,
 ): Promise<boolean> {
-  const role = await effectiveProjectRole(tx, userId, organizationId, projectId)
+  const role = await getEffectiveProjectRole(tx, userId, organizationId, projectId)
   return role === 'owner' || role === 'administrator' || role === 'approver'
 }
