@@ -387,6 +387,12 @@ function PrimaryRouteScene({
   route: ExposureRoute
   onClose: () => void
 }) {
+  const [traceVisible, setTraceVisible] = useState(true)
+
+  if (traceVisible) {
+    return <ManufactureTraceScene onContinue={() => setTraceVisible(false)} profile={profile} />
+  }
+
   return (
     <PhoneSurface className="primary-route-surface" dataRoute={route} time="11:31">
       <AppHeader eyebrow="새로운 활동" title={primaryTitle(route)} />
@@ -397,6 +403,81 @@ function PrimaryRouteScene({
       {route === 'work' ? <WorkRoute profile={profile} /> : null}
       <button className="close-one-button" onClick={onClose} type="button">
         이 화면 닫기
+      </button>
+    </PhoneSurface>
+  )
+}
+
+function ManufactureTraceScene({ profile, onContinue }: { profile: Profile; onContinue: () => void }) {
+  const steps = [
+    {
+      detail: `@${profile.account}에 공개된 얼굴 사진 12장이 별도 폴더에 저장됨`,
+      label: '공개 사진 수집',
+    },
+    {
+      detail: '눈·코·입의 위치 정보와 얼굴 영역이 원본 사진에서 분리됨',
+      label: '얼굴 데이터 분리',
+    },
+    {
+      detail: '출처를 알 수 없는 신체 영상 위에 얼굴이 덧씌워진 파일이 생성됨',
+      label: '성적 합성물 생성',
+    },
+    {
+      detail: '서로 다른 계정과 주소에 같은 파일의 복제본이 연속 등록됨',
+      label: '복제·업로드',
+    },
+  ]
+
+  return (
+    <PhoneSurface className="manufacture-trace-surface" time="11:25">
+      <AppHeader eyebrow="게시물 파일 정보 · 재구성" title="합성물이 만들어진 흔적" />
+      <section className="manufacture-trace">
+        <p className="trace-intro">
+          첫 게시물에 남아 있던 파일 순서입니다. 시작점은 내가 공개했던 <strong>{profile.profilePhoto}</strong>
+          이었습니다.
+        </p>
+
+        <div className="trace-comparison">
+          <figure>
+            <div aria-label={`${profile.name}의 공개 프로필 원본 사진`} className="trace-source-photo" role="img">
+              <i aria-hidden="true" />
+            </div>
+            <figcaption>공개 프로필 · 얼굴 원본</figcaption>
+          </figure>
+          <span className="trace-transfer" aria-hidden="true">
+            →
+          </span>
+          <figure>
+            <div aria-label={`${profile.name}의 얼굴이 합성된 이미지`} className="trace-synthetic-still" role="img">
+              <i aria-hidden="true" />
+              <span aria-hidden="true" />
+            </div>
+            <figcaption>성적 합성물 · 신체 영역 가림</figcaption>
+          </figure>
+        </div>
+
+        <ol className="trace-timeline">
+          {steps.map((step, index) => (
+            <li key={step.label}>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <strong>{step.label}</strong>
+                <p>{step.detail}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <div className="trace-copy-burst">
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+          <strong>11분 동안 복제 파일 8개 · 업로드 주소 5곳</strong>
+        </div>
+      </section>
+      <button className="trace-continue-button" onClick={onContinue} type="button">
+        이 기록을 계속 본다
       </button>
     </PhoneSurface>
   )
