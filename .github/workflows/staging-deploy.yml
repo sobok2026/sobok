@@ -27,6 +27,7 @@ jobs:
       accounts: ${{ steps.release_scope.outputs.accounts }}
       civil: ${{ steps.release_scope.outputs.civil }}
       database: ${{ steps.release_scope.outputs.database }}
+      fall: ${{ steps.release_scope.outputs.fall }}
       oauth_client: ${{ steps.release_scope.outputs.oauth_client }}
       payments: ${{ steps.release_scope.outputs.payments }}
       prepare: ${{ steps.release_scope.outputs.prepare }}
@@ -73,6 +74,7 @@ jobs:
           accounts=false
           civil=false
           database=false
+          fall=false
           oauth_client=false
           payments=false
           stella=false
@@ -113,6 +115,7 @@ jobs:
             accounts=true
             civil=true
             database=true
+            fall=true
             oauth_client=true
             payments=true
             stella=true
@@ -138,6 +141,7 @@ jobs:
               oauth_client=true
             fi
             if has_package '@sobok/database'; then database=true; fi
+            if has_package '@sobok/fall'; then fall=true; fi
             if has_package '@sobok/payments-service'; then payments=true; fi
             if has_package '@sobok/stella'; then
               stella=true
@@ -158,6 +162,7 @@ jobs:
             echo "accounts=$accounts"
             echo "civil=$civil"
             echo "database=$database"
+            echo "fall=$fall"
             echo "oauth_client=$oauth_client"
             echo "payments=$payments"
             echo "prepare=$prepare"
@@ -177,6 +182,7 @@ jobs:
             echo "| Accounts | $accounts |"
             echo "| Civil | $civil |"
             echo "| Database | $database |"
+            echo "| Fall | $fall |"
             echo "| OAuth client | $oauth_client |"
             echo "| Payments | $payments |"
             echo "| Stella | $stella |"
@@ -451,5 +457,25 @@ jobs:
           turnstile_site_key: ${{ vars.VIBE_TURNSTILE_SITE_KEY }}
           vibe_pay_profile: staging
           verify_export: 'true'
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  fall:
+    name: Deploy Fall
+    needs: verify
+    if: needs.verify.outputs.fall == 'true'
+    environment: staging
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Build and deploy Fall
+        uses: ./.github/actions/deploy-app
+        with:
+          package_name: '@sobok/fall'
+          directory: apps/fall
+          target: staging
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

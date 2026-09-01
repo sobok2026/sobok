@@ -69,6 +69,10 @@
       "dependsOn": ["^build"],
       "outputs": ["out/**", ".next/**"]
     },
+    "@sobok/fall#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["out/**", ".next/**"]
+    },
     "dev": {
       "dependsOn": ["^build"],
       "cache": false,
