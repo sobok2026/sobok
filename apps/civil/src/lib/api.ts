@@ -18,6 +18,184 @@ export type ProjectSummary = {
   updatedAt: string
 }
 
+export type OrganizationRole = OrganizationSummary['role']
+export type ManagedOrganizationRole = 'owner' | 'administrator' | 'viewer'
+export type ProjectRole = 'approver' | 'reviewer' | 'designer' | 'contractor' | 'viewer'
+
+export type OrganizationMember = {
+  userId: string
+  name: string
+  email: string
+  role: OrganizationRole
+  createdAt: string
+  updatedAt: string
+}
+
+export type ProjectMember = {
+  userId: string
+  name: string
+  email: string
+  role: OrganizationRole
+  createdAt: string
+  updatedAt: string
+}
+
+export type DesignWorkType = 'original' | 'change' | 'as_built'
+export type DesignRevisionStatus =
+  | 'draft'
+  | 'submitted'
+  | 'under_review'
+  | 'changes_requested'
+  | 'awaiting_approval'
+  | 'approved'
+  | 'finalized'
+export type DesignReviewArea = 'drawing' | 'quantity' | 'price' | 'unit_cost' | 'cost_calculation' | 'external_agency'
+export type DesignReviewResult = 'unreviewed' | 'compliant' | 'changes_required' | 'not_applicable'
+export type DesignTransition =
+  | 'submit'
+  | 'start_review'
+  | 'request_changes'
+  | 'request_approval'
+  | 'approve'
+  | 'finalize'
+
+export type DesignRevisionSummary = {
+  id: string
+  workType: DesignWorkType
+  revisionNumber: number
+  title: string
+  status: DesignRevisionStatus
+  reason: string | null
+  documentNumber: string | null
+  scheduleImpactDays: number | null
+  costImpactAmount: number | null
+  createdByUserId: string
+  submittedAt: string | null
+  approvedAt: string | null
+  finalizedAt: string | null
+  createdAt: string
+  updatedAt: string
+  reviewCount: number
+  unresolvedReviewCount: number
+}
+
+export type DesignRevisionDetail = {
+  role: OrganizationRole
+  canContribute: boolean
+  canReview: boolean
+  canApprove: boolean
+  item: Omit<DesignRevisionSummary, 'reviewCount' | 'unresolvedReviewCount'> & {
+    legalBasis: string | null
+    baseDrawingArtifactId: string | null
+    newDrawingArtifactId: string | null
+    baseCalculationResultId: string | null
+    newCalculationResultId: string | null
+  }
+  reviews: Array<{
+    id: string
+    area: DesignReviewArea
+    item: string
+    result: DesignReviewResult
+    comment: string | null
+    response: string | null
+    reviewedByUserId: string | null
+    respondedByUserId: string | null
+    reviewedAt: string | null
+    respondedAt: string | null
+    createdAt: string
+    updatedAt: string
+  }>
+  events: Array<{
+    id: number
+    fromStatus: DesignRevisionStatus | null
+    toStatus: DesignRevisionStatus
+    note: string | null
+    actorType: 'user' | 'system'
+    actorUserId: string | null
+    createdAt: string
+  }>
+  finalization: { id: string; snapshotHash: string; finalizedByUserId: string; createdAt: string } | null
+}
+
+export type DesignRevisionInput = {
+  title: string
+  reason: string | null
+  legalBasis: string | null
+  documentNumber: string | null
+  scheduleImpactDays: number | null
+  costImpactAmount: number | null
+  baseDrawingArtifactId: string | null
+  newDrawingArtifactId: string | null
+  baseCalculationResultId: string | null
+  newCalculationResultId: string | null
+}
+
+export type EarthworkInput = {
+  coordinateReferenceSystem: string
+  sections: Array<{ station: number; cutArea: number; fillArea: number }>
+}
+
+export type CalculationSummary = {
+  job: {
+    id: string
+    kind: string
+    status: 'queued' | 'running' | 'succeeded' | 'failed' | 'cancelled'
+    algorithmVersion: string
+    input: EarthworkInput
+    inputHash: string
+    failureCode: string | null
+    requestedByUserId: string
+    queuedAt: string
+    startedAt: string | null
+    completedAt: string | null
+  }
+  result: {
+    id: string
+    jobId: string
+    revision: number
+    output: {
+      coordinateReferenceSystem: string
+      unitSystem: 'SI'
+      totals: { cutVolume: number; fillVolume: number; netVolume: number }
+      segments: Array<unknown>
+    }
+    outputHash: string
+    unitSystem: string
+    coordinateReferenceSystem: string
+    createdAt: string
+  } | null
+  approval: {
+    id: string
+    resultId: string
+    status: 'draft' | 'submitted' | 'changes_requested' | 'approved' | 'superseded'
+    note: string | null
+    actedByUserId: string
+    actedAt: string
+  } | null
+}
+
+export type CalculationList = {
+  role: OrganizationRole
+  canCreate: boolean
+  canReview: boolean
+  canApprove: boolean
+  items: CalculationSummary[]
+}
+
+export type AuditEvent = {
+  id: string
+  actorType: 'user' | 'system'
+  actorUserId: string | null
+  actorName: string | null
+  actorEmail: string | null
+  action: string
+  targetType: string
+  targetId: string
+  requestId: string
+  detail: Record<string, unknown>
+  createdAt: string
+}
+
 export type ArtifactKind = 'drawing' | 'survey' | 'calculation_input' | 'cost_basis' | 'deliverable' | 'supporting'
 
 export type ArtifactSummary = {
@@ -174,6 +352,216 @@ export function createProject(
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(input),
   })
+}
+
+export function listOrganizationMembers(organizationId: string): Promise<{
+  actorRole: OrganizationRole
+  canManage: boolean
+  items: OrganizationMember[]
+}> {
+  return civilFetch(`/organizations/${encodeURIComponent(organizationId)}/members`, { cache: 'no-store' })
+}
+
+export function saveOrganizationMember(
+  organizationId: string,
+  input: { email: string; role: ManagedOrganizationRole },
+): Promise<OrganizationMember> {
+  return civilFetch(`/organizations/${encodeURIComponent(organizationId)}/members`, {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+}
+
+export function updateOrganizationMember(
+  organizationId: string,
+  userId: string,
+  role: ManagedOrganizationRole,
+): Promise<{ role: ManagedOrganizationRole }> {
+  return civilFetch(`/organizations/${encodeURIComponent(organizationId)}/members/${encodeURIComponent(userId)}`, {
+    method: 'PATCH',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ role }),
+  })
+}
+
+export function deleteOrganizationMember(organizationId: string, userId: string): Promise<null> {
+  return civilFetch(`/organizations/${encodeURIComponent(organizationId)}/members/${encodeURIComponent(userId)}`, {
+    method: 'DELETE',
+  })
+}
+
+export function listProjectMembers(
+  organizationId: string,
+  projectId: string,
+): Promise<{
+  canManage: boolean
+  items: ProjectMember[]
+}> {
+  return civilFetch(`${projectPath(organizationId, projectId)}/members`, { cache: 'no-store' })
+}
+
+export function saveProjectMember(
+  organizationId: string,
+  projectId: string,
+  input: { userId: string; role: ProjectRole },
+): Promise<{ userId: string; role: ProjectRole }> {
+  return civilFetch(`${projectPath(organizationId, projectId)}/members`, {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+}
+
+export function deleteProjectMember(organizationId: string, projectId: string, userId: string): Promise<null> {
+  return civilFetch(`${projectPath(organizationId, projectId)}/members/${encodeURIComponent(userId)}`, {
+    method: 'DELETE',
+  })
+}
+
+export function listDesignRevisions(
+  organizationId: string,
+  projectId: string,
+): Promise<{
+  role: OrganizationRole
+  canContribute: boolean
+  canReview: boolean
+  canApprove: boolean
+  items: DesignRevisionSummary[]
+}> {
+  return civilFetch(`${projectPath(organizationId, projectId)}/design-revisions`, { cache: 'no-store' })
+}
+
+export function createDesignRevision(
+  organizationId: string,
+  projectId: string,
+  input: DesignRevisionInput & { workType: DesignWorkType },
+): Promise<DesignRevisionDetail['item']> {
+  return civilFetch(`${projectPath(organizationId, projectId)}/design-revisions`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+}
+
+export function getDesignRevision(
+  organizationId: string,
+  projectId: string,
+  revisionId: string,
+): Promise<DesignRevisionDetail> {
+  return civilFetch(`${projectPath(organizationId, projectId)}/design-revisions/${encodeURIComponent(revisionId)}`, {
+    cache: 'no-store',
+  })
+}
+
+export function updateDesignRevision(
+  organizationId: string,
+  projectId: string,
+  revisionId: string,
+  input: DesignRevisionInput,
+): Promise<DesignRevisionDetail['item']> {
+  return civilFetch(`${projectPath(organizationId, projectId)}/design-revisions/${encodeURIComponent(revisionId)}`, {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+}
+
+export function transitionDesignRevision(
+  organizationId: string,
+  projectId: string,
+  revisionId: string,
+  input: { action: DesignTransition; note: string | null },
+): Promise<{ status: DesignRevisionStatus }> {
+  return civilFetch(
+    `${projectPath(organizationId, projectId)}/design-revisions/${encodeURIComponent(revisionId)}/transition`,
+    {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(input),
+    },
+  )
+}
+
+export function createDesignReview(
+  organizationId: string,
+  projectId: string,
+  revisionId: string,
+  input: { area: DesignReviewArea; item: string; comment: string | null },
+): Promise<DesignRevisionDetail['reviews'][number]> {
+  return civilFetch(
+    `${projectPath(organizationId, projectId)}/design-revisions/${encodeURIComponent(revisionId)}/reviews`,
+    {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(input),
+    },
+  )
+}
+
+export function decideDesignReview(
+  organizationId: string,
+  projectId: string,
+  revisionId: string,
+  reviewId: string,
+  input: { result: DesignReviewResult; comment: string | null },
+): Promise<{ result: DesignReviewResult }> {
+  return civilFetch(
+    `${projectPath(organizationId, projectId)}/design-revisions/${encodeURIComponent(revisionId)}/reviews/${encodeURIComponent(reviewId)}`,
+    { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify(input) },
+  )
+}
+
+export function respondDesignReview(
+  organizationId: string,
+  projectId: string,
+  revisionId: string,
+  reviewId: string,
+  response: string,
+): Promise<{ response: string }> {
+  return civilFetch(
+    `${projectPath(organizationId, projectId)}/design-revisions/${encodeURIComponent(revisionId)}/reviews/${encodeURIComponent(reviewId)}/response`,
+    { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ response }) },
+  )
+}
+
+export function listCalculations(organizationId: string, projectId: string): Promise<CalculationList> {
+  return civilFetch(`${projectPath(organizationId, projectId)}/calculations`, { cache: 'no-store' })
+}
+
+export function createEarthworkCalculation(
+  organizationId: string,
+  projectId: string,
+  input: EarthworkInput,
+): Promise<{ id: string; status: 'queued' }> {
+  return civilFetch(`${projectPath(organizationId, projectId)}/calculations/earthwork-average-end-area`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+}
+
+export function actOnCalculationApproval(
+  organizationId: string,
+  projectId: string,
+  resultId: string,
+  input: { action: 'submit' | 'request_changes' | 'approve'; note: string | null },
+): Promise<{ id: string; status: string; actedAt: string }> {
+  return civilFetch(`${projectPath(organizationId, projectId)}/results/${encodeURIComponent(resultId)}/approval`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+}
+
+export function listAuditEvents(
+  organizationId: string,
+  projectId: string,
+  before?: string,
+): Promise<{ role: OrganizationRole; items: AuditEvent[] }> {
+  const query = new URLSearchParams({ limit: '50' })
+  if (before) query.set('before', before)
+  return civilFetch(`${projectPath(organizationId, projectId)}/audit-events?${query}`, { cache: 'no-store' })
 }
 
 export function listArtifacts(organizationId: string, projectId: string): Promise<ArtifactList> {

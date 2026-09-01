@@ -6,6 +6,9 @@ import { secureHeaders } from 'hono/secure-headers'
 import { artifacts } from './api/artifacts'
 import { calculations } from './api/calculations'
 import { deliveries } from './api/deliveries'
+import { designs } from './api/designs'
+import { governance } from './api/governance'
+import { members } from './api/members'
 import { organizations } from './api/organizations'
 import { projects } from './api/projects'
 import { handleCivilAuth, withCivilSession } from './auth'
@@ -39,6 +42,9 @@ app.route('/api/organizations', projects)
 app.route('/api/organizations', calculations)
 app.route('/api/organizations', artifacts)
 app.route('/api/organizations', deliveries)
+app.route('/api/organizations', designs)
+app.route('/api/organizations', governance)
+app.route('/api/organizations', members)
 app.notFound(() => problem(404, 'not-found'))
 
 app.onError((error) => {

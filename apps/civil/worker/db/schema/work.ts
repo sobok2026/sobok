@@ -409,6 +409,7 @@ export const calculationResultTable = civil.table(
   },
   (table) => [
     uniqueIndex('uq_civil_calculation_result_job_revision').on(table.jobId, table.revision),
+    uniqueIndex('uq_civil_calculation_result_tenant_id').on(table.organizationId, table.projectId, table.id),
     check('ck_civil_calculation_result_revision', sql`${table.revision} > 0`),
     check('ck_civil_calculation_result_output_hash', sql`${table.outputHash} ~ '^[0-9a-f]{64}$'`),
     foreignKey({

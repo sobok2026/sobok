@@ -27,6 +27,13 @@ Official calculations use a validated immutable input snapshot, versioned algori
 output hashes, append-only result revisions, approval history, and audit events. The Queue consumer can retry safely;
 the Database Worker serializes claims and is the only runtime principal allowed to mutate authoritative records.
 
+Organization owners and administrators manage organization membership separately from project assignments. Project
+roles grant designer, contractor, reviewer, approver, or read-only access without widening access to other projects.
+Design revisions follow a server-enforced draft, submission, review, correction, approval, and finalization state
+machine. Finalization writes an append-only canonical snapshot and SHA-256 covering revision metadata and every review
+item; later work starts as a new revision instead of modifying the finalized record. Project audit events expose the
+actor, request, target, action, and evidence metadata to authorized project participants.
+
 ## Drawings, files, and electronic delivery
 
 - Source artifacts are private R2 objects and have no `r2.dev`, custom-domain, or browser CORS access.
