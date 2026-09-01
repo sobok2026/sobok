@@ -65,6 +65,25 @@ export const deliveryGenerationStatusEnum = civil.enum('delivery_generation_stat
   'failed',
 ])
 
+export const designWorkTypeEnum = civil.enum('design_work_type', ['original', 'change', 'as_built'])
+
+export const designRevisionStatusEnum = civil.enum('design_revision_status', [
+  'draft',
+  'submitted',
+  'under_review',
+  'changes_requested',
+  'awaiting_approval',
+  'approved',
+  'finalized',
+])
+
+export const designReviewResultEnum = civil.enum('design_review_result', [
+  'unreviewed',
+  'compliant',
+  'changes_required',
+  'not_applicable',
+])
+
 export const calculationStatusEnum = civil.enum('calculation_status', [
   'queued',
   'running',

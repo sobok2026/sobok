@@ -10,6 +10,7 @@ import {
   type ProjectSummary,
 } from '@/lib/api'
 import { civilAuthClient } from '@/lib/auth-client'
+import AccessWorkspace from './AccessWorkspace'
 import ProjectWorkspace from './ProjectWorkspace'
 
 type OrganizationState =
@@ -235,47 +236,54 @@ export default function OrganizationWorkspace() {
           {projects.kind === 'loading' ? <p className="muted">프로젝트를 불러오는 중입니다…</p> : null}
           {projects.kind === 'error' ? <p className="error-text">프로젝트를 불러오지 못했습니다.</p> : null}
           {projects.kind === 'ready' ? (
-            <div className="project-layout">
-              <div className="project-list">
-                {projects.items.length === 0 ? <p className="muted">등록된 프로젝트가 없습니다.</p> : null}
-                {projects.items.map((project) => (
-                  <article className="project-card" key={project.id}>
-                    <div>
-                      <small>{project.code}</small>
-                      <h4>{project.name}</h4>
-                    </div>
-                    <div className="project-card-meta">
-                      <span>{project.status}</span>
-                      <code>{project.coordinateReferenceSystem}</code>
-                      <button className="button button-dark" onClick={() => setSelectedProject(project)} type="button">
-                        작업공간 열기
-                      </button>
-                    </div>
-                  </article>
-                ))}
+            <>
+              <div className="project-layout">
+                <div className="project-list">
+                  {projects.items.length === 0 ? <p className="muted">등록된 프로젝트가 없습니다.</p> : null}
+                  {projects.items.map((project) => (
+                    <article className="project-card" key={project.id}>
+                      <div>
+                        <small>{project.code}</small>
+                        <h4>{project.name}</h4>
+                      </div>
+                      <div className="project-card-meta">
+                        <span>{project.status}</span>
+                        <code>{project.coordinateReferenceSystem}</code>
+                        <button
+                          className="button button-dark"
+                          onClick={() => setSelectedProject(project)}
+                          type="button"
+                        >
+                          작업공간 열기
+                        </button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+                {PROJECT_WRITE_ROLES.has(projects.role) ? (
+                  <form className="project-form" onSubmit={submitProject}>
+                    <h4>프로젝트 만들기</h4>
+                    <label>
+                      사업 코드
+                      <input name="code" maxLength={48} placeholder="CE-2026-001" required />
+                    </label>
+                    <label>
+                      사업명
+                      <input name="name" maxLength={160} placeholder="농로 포장공사" required />
+                    </label>
+                    <label>
+                      좌표계
+                      <input name="coordinateReferenceSystem" maxLength={64} defaultValue="EPSG:5186" required />
+                    </label>
+                    {projectError ? <p className="error-text">프로젝트를 만들지 못했습니다.</p> : null}
+                    <button className="button button-dark" disabled={creatingProject} type="submit">
+                      {creatingProject ? '만드는 중…' : '프로젝트 만들기'}
+                    </button>
+                  </form>
+                ) : null}
               </div>
-              {PROJECT_WRITE_ROLES.has(projects.role) ? (
-                <form className="project-form" onSubmit={submitProject}>
-                  <h4>프로젝트 만들기</h4>
-                  <label>
-                    사업 코드
-                    <input name="code" maxLength={48} placeholder="CE-2026-001" required />
-                  </label>
-                  <label>
-                    사업명
-                    <input name="name" maxLength={160} placeholder="농로 포장공사" required />
-                  </label>
-                  <label>
-                    좌표계
-                    <input name="coordinateReferenceSystem" maxLength={64} defaultValue="EPSG:5186" required />
-                  </label>
-                  {projectError ? <p className="error-text">프로젝트를 만들지 못했습니다.</p> : null}
-                  <button className="button button-dark" disabled={creatingProject} type="submit">
-                    {creatingProject ? '만드는 중…' : '프로젝트 만들기'}
-                  </button>
-                </form>
-              ) : null}
-            </div>
+              <AccessWorkspace organizationId={selectedOrganizationId} projects={projects.items} />
+            </>
           ) : null}
         </section>
       ) : null}

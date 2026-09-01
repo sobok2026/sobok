@@ -1,9 +1,27 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import type { ProjectSummary } from '@/lib/api'
-import ArtifactWorkspace from './ArtifactWorkspace'
-import DeliveryWorkspace from './DeliveryWorkspace'
+
+const panelLoading = () => <p className="muted workspace-loading">업무 화면을 불러오는 중입니다…</p>
+const ArtifactWorkspace = dynamic(() => import('./ArtifactWorkspace'), { loading: panelLoading })
+const AuditWorkspace = dynamic(() => import('./AuditWorkspace'), { loading: panelLoading })
+const CalculationWorkspace = dynamic(() => import('./CalculationWorkspace'), { loading: panelLoading })
+const DeliveryWorkspace = dynamic(() => import('./DeliveryWorkspace'), { loading: panelLoading })
+const DesignCollaborationWorkspace = dynamic(() => import('./DesignCollaborationWorkspace'), {
+  loading: panelLoading,
+})
+
+type WorkspaceTab = 'collaboration' | 'calculations' | 'artifacts' | 'deliveries' | 'audit'
+
+const TABS: Array<{ id: WorkspaceTab; label: string }> = [
+  { id: 'collaboration', label: '설계협업' },
+  { id: 'calculations', label: '계산·승인' },
+  { id: 'artifacts', label: '도면·파일' },
+  { id: 'deliveries', label: '전자납품' },
+  { id: 'audit', label: '감사기록' },
+]
 
 export default function ProjectWorkspace({
   organizationId,
@@ -14,7 +32,7 @@ export default function ProjectWorkspace({
   project: ProjectSummary
   onClose: () => void
 }) {
-  const [tab, setTab] = useState<'artifacts' | 'deliveries'>('artifacts')
+  const [tab, setTab] = useState<WorkspaceTab>('collaboration')
 
   return (
     <section className="project-workspace" aria-labelledby="project-workspace-title">
@@ -31,42 +49,42 @@ export default function ProjectWorkspace({
         </button>
       </div>
       <div className="workspace-tabs" role="tablist" aria-label="프로젝트 업무">
-        <button
-          aria-selected={tab === 'artifacts'}
-          aria-controls="civil-artifact-tabpanel"
-          className={tab === 'artifacts' ? 'active' : ''}
-          id="civil-artifact-tab"
-          onClick={() => setTab('artifacts')}
-          role="tab"
-          type="button"
-        >
-          도면·파일 보관
-        </button>
-        <button
-          aria-selected={tab === 'deliveries'}
-          aria-controls="civil-delivery-tabpanel"
-          className={tab === 'deliveries' ? 'active' : ''}
-          id="civil-delivery-tab"
-          onClick={() => setTab('deliveries')}
-          role="tab"
-          type="button"
-        >
-          전자납품
-        </button>
+        {TABS.map((item) => (
+          <button
+            aria-controls={`civil-${item.id}-tabpanel`}
+            aria-selected={tab === item.id}
+            className={tab === item.id ? 'active' : ''}
+            id={`civil-${item.id}-tab`}
+            key={item.id}
+            onClick={() => setTab(item.id)}
+            role="tab"
+            type="button"
+          >
+            {item.label}
+          </button>
+        ))}
       </div>
-      {tab === 'artifacts' ? (
-        <div aria-labelledby="civil-artifact-tab" id="civil-artifact-tabpanel" role="tabpanel">
-          <ArtifactWorkspace
+      <div aria-labelledby={`civil-${tab}-tab`} id={`civil-${tab}-tabpanel`} role="tabpanel">
+        {tab === 'collaboration' ? (
+          <DesignCollaborationWorkspace organizationId={organizationId} projectId={project.id} />
+        ) : null}
+        {tab === 'calculations' ? (
+          <CalculationWorkspace
+            coordinateReferenceSystem={project.coordinateReferenceSystem}
             organizationId={organizationId}
             projectId={project.id}
-            projectCoordinateReferenceSystem={project.coordinateReferenceSystem}
           />
-        </div>
-      ) : (
-        <div aria-labelledby="civil-delivery-tab" id="civil-delivery-tabpanel" role="tabpanel">
-          <DeliveryWorkspace organizationId={organizationId} projectId={project.id} />
-        </div>
-      )}
+        ) : null}
+        {tab === 'artifacts' ? (
+          <ArtifactWorkspace
+            organizationId={organizationId}
+            projectCoordinateReferenceSystem={project.coordinateReferenceSystem}
+            projectId={project.id}
+          />
+        ) : null}
+        {tab === 'deliveries' ? <DeliveryWorkspace organizationId={organizationId} projectId={project.id} /> : null}
+        {tab === 'audit' ? <AuditWorkspace organizationId={organizationId} projectId={project.id} /> : null}
+      </div>
     </section>
   )
 }
