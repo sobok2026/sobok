@@ -1,0 +1,3 @@
+import { createStaticExportConfig } from '@sobok/next-config/next'
+
+export default createStaticExportConfig()

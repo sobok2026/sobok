@@ -1,0 +1,25 @@
+{
+  "name": "@sobok/fall",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3017",
+    "build": "next build",
+    "preview": "wrangler dev",
+    "type": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "16.2.11",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@sobok/next-config": "workspace:*",
+    "@types/node": "^26.1.0",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.110.0"
+  }
+}
