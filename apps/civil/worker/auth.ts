@@ -5,7 +5,7 @@ import {
   type SobokRelyingPartySession,
 } from '@sobok/auth/relying-party'
 import { type Db, openDb } from '@sobok/edge/db/client'
-import { withPseudonymousClientIp } from '@sobok/edge/ip'
+import { withPseudonymousClientIp, withPseudonymousClientIpHeaders } from '@sobok/edge/ip'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import type { Context } from 'hono'
 import { civilAccount, civilAuthRateLimit, civilSession, civilUser, civilVerification } from './db/schema/auth'
@@ -72,8 +72,12 @@ export async function withCivilSession<T>(
 ): Promise<T> {
   const handle = await authorityFor(c)
   try {
-    const request = await withPseudonymousClientIp(c.req.raw, handle.ipHashSalt, SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER)
-    const session = await handle.auth.api.getSession({ headers: request.headers })
+    const headers = await withPseudonymousClientIpHeaders(
+      c.req.raw,
+      handle.ipHashSalt,
+      SOBOK_PSEUDONYMOUS_CLIENT_IP_HEADER,
+    )
+    const session = await handle.auth.api.getSession({ headers })
     return await run(handle.db, session)
   } finally {
     handle.close()
