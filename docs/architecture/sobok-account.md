@@ -93,6 +93,8 @@ BBaton은 로그인 제공자가 아니라 이미 로그인한 계정에 연결�
 이메일 확인·magic link는 최초 요청과 다른 브라우저 요청에서 세션을 만들고 Google One Tap은 응답의
 redirect보다 자체 callback URL을 우선하므로, 중앙 UI는 완료 표시가 있는 반환 URL에서만 원래 OIDC
 authorization을 재개한다. 단순히 로그인 세션이 있다는 이유로 `prompt=login` 요청을 건너뛰지는 않는다.
+relying party의 `state`가 가입 도중 만료되거나 이미 소비된 경우에는 검증을 생략하지 않는다. 앱은 전용 오류
+복구 화면에서 이미 만들어진 앱 세션을 먼저 확인하고, 세션이 없으면 새 authorization 요청을 한 번만 시작한다.
 
 Google처럼 확인된 동일 이메일을 제공하는 신뢰 가능한 제공자는 기존 계정에 연결할 수 있다. Kakao를
 전역 신뢰 제공자로 강제하지 않으며 이메일 또는 subject가 다르면 기존 인증을 거친 명시적 연결을

@@ -39,6 +39,7 @@ async function authorityFor(
     appName: 'Civil',
     database: drizzleAdapter(handle.db, { provider: 'pg', schema: authSchema }),
     baseURL: c.env.CIVIL_PUBLIC_ORIGIN,
+    errorURL: `${c.env.CIVIL_PUBLIC_ORIGIN}/auth/error`,
     secret,
     issuer: c.env.CIVIL_ACCOUNTS_ISSUER,
     clientId: c.env.CIVIL_OIDC_CLIENT_ID,
