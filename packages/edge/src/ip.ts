@@ -63,12 +63,13 @@ function digestAsPrivateIpv6(digest: Uint8Array): string {
 /**
  * Replaces any client-supplied internal header with a valid, HMAC-derived ULA address. Better Auth can then
  * use its standard IP limiter and session metadata without receiving or storing the Cloudflare source IP.
+ * This header-only variant remains safe after a route has consumed the request body.
  */
-export async function withPseudonymousClientIp(
-  request: Request,
+export async function withPseudonymousClientIpHeaders(
+  request: Pick<Request, 'headers' | 'url'>,
   salt: string,
   internalHeader: string,
-): Promise<Request> {
+): Promise<Headers> {
   const headers = new Headers(request.headers)
   headers.delete(internalHeader)
 
@@ -79,5 +80,15 @@ export async function withPseudonymousClientIp(
   if (!digest) throw new Error('A trusted Cloudflare client IP is required for authentication')
 
   headers.set(internalHeader, digestAsPrivateIpv6(digest))
+  return headers
+}
+
+/** Adds the pseudonymous client IP header while preserving the original request body for the auth handler. */
+export async function withPseudonymousClientIp(
+  request: Request,
+  salt: string,
+  internalHeader: string,
+): Promise<Request> {
+  const headers = await withPseudonymousClientIpHeaders(request, salt, internalHeader)
   return new Request(request, { headers })
 }
