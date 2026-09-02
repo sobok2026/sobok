@@ -116,7 +116,7 @@ export default function CalculationWorkspace({
       <div className="artifact-heading">
         <div>
           <p className="eyebrow">SERVER-AUTHORITATIVE RESULT</p>
-          <h4 id="calculation-title">토공량 계산·공식 승인</h4>
+          <h2 id="calculation-title">토공량 계산·공식 승인</h2>
         </div>
         <button className="button button-quiet" onClick={() => void reload()} type="button">
           새로 고침
@@ -137,7 +137,7 @@ export default function CalculationWorkspace({
                 <div className="calculation-card-head">
                   <div>
                     <small>{item.job.algorithmVersion}</small>
-                    <h5>평균단면법 토공량</h5>
+                    <h3>평균단면법 토공량</h3>
                     <p>{new Date(item.job.queuedAt).toLocaleString('ko-KR')}</p>
                   </div>
                   <span data-status={item.job.status}>{item.job.status}</span>
@@ -221,7 +221,7 @@ export default function CalculationWorkspace({
         </div>
         {calculations?.canCreate ? (
           <form className="calculation-form" onSubmit={submitCalculation}>
-            <h5>평균단면법 계산</h5>
+            <h3>평균단면법 계산</h3>
             <p>
               한 줄에 <code>측점 절토면적 성토면적</code>을 입력합니다. 탭·쉼표·공백을 사용할 수 있습니다.
             </p>

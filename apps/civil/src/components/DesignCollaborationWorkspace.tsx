@@ -290,7 +290,7 @@ export default function DesignCollaborationWorkspace({
       <div className="artifact-heading">
         <div>
           <p className="eyebrow">CONTROLLED DESIGN REVISION</p>
-          <h4 id="collaboration-title">설계협업·변경관리</h4>
+          <h2 id="collaboration-title">설계협업·변경관리</h2>
         </div>
         <button className="button button-quiet" onClick={() => void reload()} type="button">
           새로 고침
@@ -312,7 +312,7 @@ export default function DesignCollaborationWorkspace({
                   <small>
                     {WORK_TYPE_LABELS[revision.workType]} {revision.revisionNumber}차
                   </small>
-                  <h5>{revision.title}</h5>
+                  <h3>{revision.title}</h3>
                   <p>
                     검토 {revision.reviewCount}건 · 미해결 {revision.unresolvedReviewCount}건
                   </p>
@@ -326,7 +326,7 @@ export default function DesignCollaborationWorkspace({
           </div>
           {capabilities.canContribute ? (
             <form className="revision-form" onSubmit={createRevision}>
-              <h5>새 설계회차</h5>
+              <h3>새 설계회차</h3>
               <RevisionFields artifacts={artifacts} calculationResults={calculationResults} />
               <label>
                 구분
@@ -351,9 +351,9 @@ export default function DesignCollaborationWorkspace({
           <div className="delivery-card-head">
             <div>
               <p className="eyebrow">REVISION RECORD</p>
-              <h5>
+              <h3>
                 {WORK_TYPE_LABELS[detail.item.workType]} {detail.item.revisionNumber}차 · {detail.item.title}
-              </h5>
+              </h3>
             </div>
             <button className="button button-quiet" onClick={() => setDetail(null)} type="button">
               닫기
@@ -402,7 +402,7 @@ export default function DesignCollaborationWorkspace({
           ) : null}
 
           <div className="review-section">
-            <h6>검토 체크리스트</h6>
+            <h4>검토 체크리스트</h4>
             {detail.reviews.length === 0 ? <p className="muted">검토항목이 없습니다.</p> : null}
             {detail.reviews.map((review) => (
               <article className="review-row" key={review.id}>
@@ -476,7 +476,7 @@ export default function DesignCollaborationWorkspace({
             ) : null}
           </div>
           <div className="revision-history">
-            <h6>상태 이력</h6>
+            <h4>상태 이력</h4>
             {detail.events.map((event) => (
               <div key={event.id}>
                 <strong>{STATUS_LABELS[event.toStatus]}</strong>
