@@ -13,6 +13,17 @@ the former Python server and single-file HTML prototype are not runtime dependen
   delivery ZIP packages back to private R2.
 - The deployment uses Workers and Queues available on Cloudflare Free; it has no Container or paid runtime dependency.
 
+The static frontend keeps public and authenticated responsibilities in separate route boundaries:
+
+- `/` is the public product overview and has no business-data lifecycle.
+- `/workspace` owns the authenticated organization directory.
+- `/workspace/organization` and `/workspace/organization/access` own project and access administration.
+- `/workspace/project/{collaboration,calculations,artifacts,deliveries,audit}` owns one project module per route.
+
+Runtime organization and project identifiers are query parameters because they are not known at build time. The route
+segments themselves remain static-exportable, while each project module is built as an independent Next.js route bundle.
+The Database Worker remains the authorization authority; client role checks only control which actions are presented.
+
 Production uses `https://civil.sobok.cc` and the fixed `civil-web` OIDC client. Staging uses
 `https://civil-stg.sobok.cc` with an environment-specific client secret and database.
 
@@ -50,9 +61,9 @@ actor, request, target, action, and evidence metadata to authorized project part
 ## Commands
 
 ```sh
-bun --filter=@sobok/civil dev
-bun --filter=@sobok/civil build
-bun --filter=@sobok/civil type
+bun run --filter=@sobok/civil dev
+bun run --filter=@sobok/civil build
+bun run --filter=@sobok/civil type
 ```
 
 Schema changes use the environment's `civil_migrator` credential and `drizzle-kit push`. Runtime Workers never

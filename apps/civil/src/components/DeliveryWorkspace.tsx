@@ -171,7 +171,7 @@ export default function DeliveryWorkspace({
       <div className="artifact-heading">
         <div>
           <p className="eyebrow">IMMUTABLE DELIVERY PACKAGE</p>
-          <h4 id="delivery-panel-title">전자납품</h4>
+          <h2 id="delivery-panel-title">전자납품</h2>
         </div>
         <button className="button button-quiet" onClick={() => void reload()} type="button">
           새로 고침
@@ -203,7 +203,7 @@ export default function DeliveryWorkspace({
                   <div className="delivery-card-head">
                     <div>
                       <small>{KIND_LABELS[item.deliveryKind]}</small>
-                      <h5>{item.title}</h5>
+                      <h3>{item.title}</h3>
                       <p>
                         {item.vendorName} · {item.revision} · {item.artifactCount}개 파일 · {formatBytes(item.byteSize)}
                       </p>
@@ -306,7 +306,7 @@ export default function DeliveryWorkspace({
                 <div className="delivery-card-head">
                   <div>
                     <p className="eyebrow">PACKAGE RECORD</p>
-                    <h5 id="delivery-detail-title">{detail.item.title}</h5>
+                    <h3 id="delivery-detail-title">{detail.item.title}</h3>
                   </div>
                   <button className="button button-quiet" onClick={() => setDetail(null)} type="button">
                     닫기
@@ -314,7 +314,7 @@ export default function DeliveryWorkspace({
                 </div>
                 <div className="delivery-detail-grid">
                   <div>
-                    <h6>포함 파일</h6>
+                    <h4>포함 파일</h4>
                     <ol className="delivery-file-list">
                       {detail.items.map((item) => (
                         <li key={item.artifactId}>
@@ -327,7 +327,7 @@ export default function DeliveryWorkspace({
                     </ol>
                   </div>
                   <div>
-                    <h6>상태 이력</h6>
+                    <h4>상태 이력</h4>
                     <ol className="delivery-event-list">
                       {detail.events.map((event) => (
                         <li key={event.id}>
@@ -345,7 +345,7 @@ export default function DeliveryWorkspace({
 
           {deliveries.canCreate ? (
             <form className="delivery-form" onSubmit={submitNewDelivery}>
-              <h5>전자납품 패키지 만들기</h5>
+              <h3>전자납품 패키지 만들기</h3>
               <label>
                 납품 제목
                 <input maxLength={160} name="title" placeholder="설계성과품 1차 납품" required />

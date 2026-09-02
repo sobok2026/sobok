@@ -153,7 +153,7 @@ export default function ArtifactWorkspace({
       <div className="artifact-heading">
         <div>
           <p className="eyebrow">PRIVATE R2 STORAGE</p>
-          <h4 id="artifact-panel-title">도면·파일 보관</h4>
+          <h2 id="artifact-panel-title">도면·파일 보관</h2>
         </div>
         <button className="button button-quiet" onClick={() => void reload()} type="button">
           새로 고침
@@ -194,7 +194,7 @@ export default function ArtifactWorkspace({
                   <div className="artifact-file">
                     <span aria-hidden="true">{artifact.detectedFormat?.toUpperCase() ?? 'FILE'}</span>
                     <div>
-                      <h5>{artifact.fileName}</h5>
+                      <h3>{artifact.fileName}</h3>
                       <p>
                         {KIND_LABELS[artifact.kind]} · {artifact.revision} · {formatBytes(artifact.byteSize)}
                       </p>
@@ -236,7 +236,7 @@ export default function ArtifactWorkspace({
 
             {artifacts.canUpload ? (
               <form className="artifact-form" onSubmit={submitArtifact}>
-                <h5>도면·파일 올리기</h5>
+                <h3>도면·파일 올리기</h3>
                 <p>최대 1GB · 8MB 분할 전송 · 형식 시그니처와 SHA-256 확인</p>
                 <label>
                   파일

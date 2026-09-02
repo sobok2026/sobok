@@ -182,7 +182,7 @@ export default function AccessWorkspace({
       <div className="artifact-heading">
         <div>
           <p className="eyebrow">TENANT ACCESS CONTROL</p>
-          <h4 id="access-panel-title">참여자·권한</h4>
+          <h2 id="access-panel-title">참여자·권한</h2>
         </div>
         <button
           className="button button-quiet"
@@ -201,7 +201,7 @@ export default function AccessWorkspace({
       {!loading ? (
         <div className="access-layout">
           <div className="access-card">
-            <h5>기관 구성원</h5>
+            <h3>기관 구성원</h3>
             <div className="member-list">
               {members.map((member) => (
                 <article className="member-row" key={member.userId}>
@@ -270,7 +270,7 @@ export default function AccessWorkspace({
           </div>
 
           <div className="access-card">
-            <h5>프로젝트 배정</h5>
+            <h3>프로젝트 배정</h3>
             <label className="standalone-label">
               프로젝트
               <select onChange={(event) => setRequestedProjectId(event.target.value)} value={selectedProjectId}>
