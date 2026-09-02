@@ -1,8 +1,8 @@
 'use client'
 
-import { SOBOK_OIDC_PROVIDER_ID } from '@sobok/auth/contracts'
 import { useState } from 'react'
 import { civilAuthClient } from '@/lib/auth-client'
+import { currentCivilReturnURL, prepareCivilAuth, startCivilSignIn } from '@/lib/auth-flow'
 
 export default function AccountControls() {
   const { data: session, isPending } = civilAuthClient.useSession()
@@ -10,13 +10,9 @@ export default function AccountControls() {
 
   async function signIn() {
     setSigningIn(true)
-    const returnURL = `${window.location.pathname}${window.location.search}`
+    const returnURL = prepareCivilAuth(currentCivilReturnURL())
     try {
-      const result = await civilAuthClient.signIn.oauth2({
-        providerId: SOBOK_OIDC_PROVIDER_ID,
-        callbackURL: returnURL,
-        errorCallbackURL: returnURL,
-      })
+      const result = await startCivilSignIn(returnURL)
       if (result.error) setSigningIn(false)
     } catch {
       setSigningIn(false)
