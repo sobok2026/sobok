@@ -17,6 +17,7 @@ export type SobokRelyingPartyOptions = {
   appName: string
   database: Database
   baseURL: string
+  errorURL?: string
   secret: string
   issuer: string
   clientId: string
@@ -35,6 +36,7 @@ export function createSobokRelyingParty(options: SobokRelyingPartyOptions) {
     basePath: SOBOK_AUTH_PATH,
     secret: options.secret,
     trustedOrigins: options.trustedOrigins,
+    ...(options.errorURL ? { onAPIError: { errorURL: options.errorURL } } : {}),
     database: options.database,
     advanced: {
       cookiePrefix: options.cookiePrefix,
