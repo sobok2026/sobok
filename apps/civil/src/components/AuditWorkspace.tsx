@@ -62,7 +62,7 @@ export default function AuditWorkspace({ organizationId, projectId }: { organiza
       <div className="artifact-heading">
         <div>
           <p className="eyebrow">APPEND-ONLY AUDIT TRAIL</p>
-          <h4 id="audit-title">프로젝트 감사기록</h4>
+          <h2 id="audit-title">프로젝트 감사기록</h2>
         </div>
         <button className="button button-quiet" onClick={() => void reload()} type="button">
           새로 고침

@@ -10,11 +10,12 @@ export default function AccountControls() {
 
   async function signIn() {
     setSigningIn(true)
+    const returnURL = `${window.location.pathname}${window.location.search}`
     try {
       const result = await civilAuthClient.signIn.oauth2({
         providerId: SOBOK_OIDC_PROVIDER_ID,
-        callbackURL: '/',
-        errorCallbackURL: '/',
+        callbackURL: returnURL,
+        errorCallbackURL: returnURL,
       })
       if (result.error) setSigningIn(false)
     } catch {
