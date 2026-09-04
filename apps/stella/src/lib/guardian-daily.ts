@@ -137,7 +137,7 @@ export function requestGuardianDailyCard(input: {
   accessToken?: string
 }): Promise<GuardianDailyCardResponse> {
   const { accessToken, ...body } = input
-  return requestJson('/api/guardian-daily/card', jsonRequest(body, accessToken))
+  return requestJson('/api/guardian-daily/card', jsonRequest({ ...body, locale: 'ko' }, accessToken))
 }
 
 export function createGuardianPassCheckout(input: {
