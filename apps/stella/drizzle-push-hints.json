@@ -1,0 +1,62 @@
+[
+  {
+    "type": "create",
+    "kind": "enum",
+    "entity": ["stella", "guardian_daily_basis"]
+  },
+  {
+    "type": "create",
+    "kind": "enum",
+    "entity": ["stella", "guardian_daily_reveal_source"]
+  },
+  {
+    "type": "create",
+    "kind": "enum",
+    "entity": ["stella", "guardian_daily_theme"]
+  },
+  {
+    "type": "create",
+    "kind": "enum",
+    "entity": ["stella", "guardian_daily_tone"]
+  },
+  {
+    "type": "create",
+    "kind": "enum",
+    "entity": ["stella", "guardian_pass_purchase_status"]
+  },
+  {
+    "type": "create",
+    "kind": "enum",
+    "entity": ["stella", "guardian_pass_recovery_email_status"]
+  },
+  {
+    "type": "create",
+    "kind": "enum",
+    "entity": ["stella", "guardian_pass_reopen_source"]
+  },
+  {
+    "type": "create",
+    "kind": "table",
+    "entity": ["stella", "guardian_daily_card"]
+  },
+  {
+    "type": "create",
+    "kind": "table",
+    "entity": ["stella", "guardian_daily_collection"]
+  },
+  {
+    "type": "create",
+    "kind": "table",
+    "entity": ["stella", "guardian_pass_purchase"]
+  },
+  {
+    "type": "create",
+    "kind": "table",
+    "entity": ["stella", "guardian_pass_recovery_email_delivery"]
+  },
+  {
+    "type": "create",
+    "kind": "table",
+    "entity": ["stella", "guardian_pass_reopen_access"]
+  }
+]
