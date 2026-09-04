@@ -203,9 +203,6 @@ export const ko = {
       clearSaved: '정보 지우기',
       timeUnknownShort: '시간 모름',
     },
-    cardTopics: {
-      ariesLove: '몽실이와 달콩이의 사랑 카드',
-    },
     signs: {
       aries: '양자리',
       taurus: '황소자리',
@@ -320,9 +317,9 @@ export const ko = {
   },
   Today: {
     meta: {
-      title: '오늘의 흐름 · 매일 보는 오늘의 별자리 운세',
+      title: '오늘의 흐름과 수호령 카드 · 매일 보는 별자리 운세',
       description:
-        '오늘 달과 행성이 만드는 하루의 결을 읽고 행운 음식과 행운 색상을 추천해 드려요. 생년월일시를 넣으면 내 탄생 별자리 기준 오늘의 운세를 매일 확인할 수 있어요.',
+        '오늘 달과 행성이 만드는 하루의 결을 읽고 무료 수호령 카드와 행운 음식, 행운 색상을 만나보세요. 출생 차트가 있으면 내 태양 별자리 기준으로 개인화해 드려요.',
     },
     hero: {
       eyebrow: '매일 뜨는 새로운 하늘',
@@ -381,9 +378,9 @@ export const ko = {
   },
   Tomorrow: {
     meta: {
-      title: '내일의 행운 미리 보기 · 내일 행운 음식과 행운 색상',
+      title: '내일의 행운과 수호령 카드 미리 보기',
       description:
-        '내일 달이 머무는 별자리에 맞춰 행운 음식과 행운 색상을 하루 먼저 알려 드려요. 저녁에 미리 확인하고 내일을 준비해 보세요.',
+        '내일 달이 머무는 별자리에 맞춘 행운 음식과 색상을 보고, 7일 선공개권으로 내일의 수호령 카드를 하루 먼저 만나보세요.',
     },
     hero: {
       eyebrow: '하루 먼저 만나는 행운',
@@ -500,14 +497,12 @@ export const ko = {
   Comments: {
     heading: '이야기 나누기',
     subtitle: '같은 자리를 가진 사람들의 이야기예요.',
-    cardSubtitle: '같은 카드를 받은 사람들의 이야기예요.',
     empty: '아직 이야기가 없어요. 먼저 남겨보세요.',
     loading: '불러오는 중',
     loadMore: '더 보기',
     anonymous: '익명',
     nicknamePlaceholder: '닉네임 (선택)',
     bodyPlaceholder: '이 자리에 대한 생각을 남겨보세요',
-    cardBodyPlaceholder: '이 카드에서 어떤 마음이 들었는지 남겨보세요',
     submit: '남기기',
     submitting: '남기는 중',
     edit: '수정',
@@ -528,7 +523,6 @@ export const ko = {
     error: '문제가 생겼어요. 잠시 후 다시 시도해 주세요.',
     locked: '이 보드는 잠겨 있어요.',
     count: '{n}개의 이야기',
-    backToCardReport: '카드 리포트로 돌아가기',
     entry: '이야기 남기기',
     backToChart: '차트로 돌아가기',
     metaDescription: '{label}에 대한 이야기를 나눠보세요.',

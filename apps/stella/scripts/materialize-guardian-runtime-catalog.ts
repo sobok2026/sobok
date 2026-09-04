@@ -22,6 +22,30 @@ const SIGNS = [
 const SLOTS = ['self', 'love', 'work', 'choice'] as const
 const RARITIES = ['orbit', 'nebula', 'eclipse', 'stella'] as const
 const PREVIEW_TONES = ['comfort', 'honesty', 'action', 'possibility'] as const
+const LOVE_THEMES = [
+  'first-signal',
+  'careful-approach',
+  'everyday-care',
+  'honest-conversation',
+  'shared-play',
+  'boundary-and-space',
+  'distance-and-return',
+  'repair',
+  'mutual-growth',
+  'future-promise',
+] as const
+const LOVE_TONE_BY_THEME = {
+  'first-signal': 'honesty',
+  'careful-approach': 'action',
+  'everyday-care': 'comfort',
+  'honest-conversation': 'honesty',
+  'shared-play': 'action',
+  'boundary-and-space': 'honesty',
+  'distance-and-return': 'comfort',
+  repair: 'comfort',
+  'mutual-growth': 'possibility',
+  'future-promise': 'possibility',
+} as const satisfies Record<(typeof LOVE_THEMES)[number], (typeof PREVIEW_TONES)[number]>
 const SOURCE_HASH_KEYS = [
   'families',
   'selfEditions',
@@ -82,6 +106,8 @@ const editionSchema = z
     artworkAlt: nonEmptyText,
     oneLineTemplate: nonEmptyText,
     reflection: nonEmptyText,
+    narrativeContextId: nonEmptyText.optional(),
+    narrativeThemeId: z.enum(LOVE_THEMES).optional(),
     previewTone: z.enum(PREVIEW_TONES).optional(),
     tieBreakOrder: z.number().int().nonnegative().optional(),
     selectionSignals: z.array(nonEmptyText).optional(),
@@ -244,25 +270,43 @@ const cardCopySchema = z
     reflection: nonEmptyText,
   })
   .strict()
+const runtimeCopySchema = z
+  .object({
+    title: nonEmptyText,
+    guardians: nonEmptyText,
+    artworkAlt: nonEmptyText,
+    oneLineTemplate: nonEmptyText,
+    reflection: nonEmptyText,
+  })
+  .strict()
+const runtimeFamilySchema = z
+  .object({
+    id: contentId,
+    sign: z.enum(SIGNS),
+    theme: z.enum(SLOTS),
+  })
+  .strict()
+const runtimeEditionSchema = z
+  .object({
+    id: contentId,
+    familyId: contentId,
+    sign: z.enum(SIGNS),
+    theme: z.enum(SLOTS),
+    contextId: nonEmptyText,
+    tone: z.enum(PREVIEW_TONES),
+    rarity: z.enum(RARITIES).nullable(),
+    weight: z.number().int().positive(),
+    artworkObjectKey: z.string().regex(/^guardian-cards\/ko\/[a-z0-9]+(?:[.-][a-z0-9]+)+\.webp$/),
+    copy: runtimeCopySchema,
+  })
+  .strict()
 const generatedCatalogSchema = z
   .object({
-    schema: z.literal('stella-guardian-runtime-catalog/v1'),
+    schema: z.literal('stella-guardian-daily-runtime-catalog/v1'),
     locale: z.literal('ko'),
     sourceHashes: sourceHashesSchema,
-    families: z.array(generatedFamilySchema).length(48),
-    editions: z.array(generatedEditionSchema).length(1056),
-    familyPools: z
-      .object({
-        self: familyPoolSchema,
-        love: familyPoolSchema,
-        work: familyPoolSchema,
-        choice: familyPoolSchema,
-      })
-      .strict(),
-    editionPools: z
-      .array(z.discriminatedUnion('selection', [contextEditionPoolSchema, weightedEditionPoolSchema]))
-      .length(48),
-    cardCopyKo: z.record(contentId, cardCopySchema),
+    families: z.array(runtimeFamilySchema).length(48),
+    editions: z.array(runtimeEditionSchema).length(1056),
   })
   .strict()
 
@@ -351,7 +395,7 @@ try {
 
   if (values.write) {
     await writeFile(outputPath, output, 'utf8')
-    console.log(`materialized: ${outputPath} (48 families, 1,056 editions)`)
+    console.log(`materialized: ${outputPath} (48 daily families, 1,056 editions)`)
   } else {
     const existing = await readFile(outputPath, 'utf8')
     if (existing !== output) {
@@ -359,7 +403,7 @@ try {
         `Guardian runtime catalog is stale: run bun run guardian-cards:materialize-runtime and commit ${outputPath}`,
       )
     }
-    console.log('checked: runtime-catalog.generated.json (48 families, 1,056 editions, materialization current)')
+    console.log('checked: runtime-catalog.generated.json (48 daily families, 1,056 editions, materialization current)')
   }
 } catch (error) {
   console.error(error instanceof Error ? error.message : 'Guardian runtime catalog materialization failed')
@@ -429,11 +473,12 @@ function materializeRuntimeCatalog(input: {
       errors.push(`${edition.id}: oneLineTemplate must contain exactly one focus token`)
     }
     if (edition.slot === 'love') {
-      if (!edition.rarity || !edition.weight) {
-        errors.push(`${edition.id}: love edition must declare rarity and weight`)
+      if (!edition.rarity || !edition.weight || !edition.narrativeThemeId) {
+        errors.push(`${edition.id}: love edition must declare theme, rarity, and weight`)
       }
     } else if (
       edition.rarity !== null ||
+      !edition.narrativeContextId ||
       !edition.previewTone ||
       edition.tieBreakOrder === undefined ||
       edition.selectionSignals?.length !== 2
@@ -639,15 +684,43 @@ function materializeRuntimeCatalog(input: {
 
   checkPoolCompleteness(families, editions, familyPools, editionPools, cardCopyKo, errors)
   throwErrors(errors)
+
+  const runtimeFamilies = families.map((family) => ({ id: family.id, sign: family.sign, theme: family.slot }))
+  const runtimeEditions = sourceEditions.map((edition) => {
+    const asset = assetById.get(edition.id)
+    const contextId = edition.slot === 'love' ? edition.narrativeThemeId : edition.narrativeContextId
+    const tone =
+      edition.slot === 'love' && edition.narrativeThemeId
+        ? LOVE_TONE_BY_THEME[edition.narrativeThemeId]
+        : edition.previewTone
+    if (!asset || !contextId || !tone) {
+      throw new Error(`Cannot materialize daily edition ${edition.id}`)
+    }
+    return {
+      id: edition.id,
+      familyId: edition.familyId,
+      sign: edition.sign,
+      theme: edition.slot,
+      contextId,
+      tone,
+      rarity: edition.rarity,
+      weight: edition.slot === 'love' ? (edition.weight ?? 0) : 1,
+      artworkObjectKey: asset.objectKey,
+      copy: {
+        title: edition.title,
+        guardians: edition.guardians,
+        artworkAlt: edition.artworkAlt,
+        oneLineTemplate: edition.oneLineTemplate,
+        reflection: edition.reflection,
+      },
+    }
+  })
   const parsed = generatedCatalogSchema.safeParse({
-    schema: 'stella-guardian-runtime-catalog/v1',
+    schema: 'stella-guardian-daily-runtime-catalog/v1',
     locale: 'ko',
     sourceHashes,
-    families,
-    editions,
-    familyPools,
-    editionPools,
-    cardCopyKo,
+    families: runtimeFamilies,
+    editions: runtimeEditions,
   })
   if (!parsed.success) {
     throw new Error(formatIssues('Generated guardian runtime catalog is invalid', parsed.error))

@@ -57,7 +57,6 @@ export async function reconcileStaleGuardianPayments(env: Bindings): Promise<voi
             break
           case 'purchase-not-found':
           case 'purchase-state-conflict':
-          case 'report-state-conflict':
             summary.conflicts += 1
             break
         }
