@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "choice.protected-value.shared-world",
+  "batchOrder": 83,
+  "purpose": "지킬 가치가 대리 결정이나 강요된 보호가 아니라 정해진 두 수호령이 핵심 경계와 현실·관계 조건을 독립 제어점으로 나누는 shared-world 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "choice",
+    "narrativeAxisId": "protected-value",
+    "visualAxisId": "shared-world"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium choice-protected-value shared-world guardian card master artwork, full-bleed 3:4. Show exactly the two named guardians or canonical internal pair and no third guardian, adviser, user figure, audience, future self, human, silhouette, reflection or implied person. Preserve both canonical identities, approved white-sclera purple eye construction, relative size/colors, signature props, dark-purple outlines and visible chest Stella stars. The pair plus one shared protected-value setting covers 55–65% and reads at 80px. Give each guardian one independent identity, safety, relationship, resource or adjustability control and keep a broad open listening gap; never imply hierarchy, proxy decision, compulsory protection, permanent defense, correct choice, certainty, destiny or guaranteed outcome. Written surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, names, labels, score, number, date, clock face, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Boundaries, tracks, doors, boxes, trays, panels, clasps and connectors remain broken, open-notched, removable, ajar or unlatched; no closed circle, ring, halo, portal, infinity sign, cage, locked box or deterministic route. Replace literal keys with loose seal tokens. Do not add a scale; no scale is requested in this batch. Only Scorpio canonical tail-heart is allowed; no added heart. Keep every composition distinct. Soft colored-pencil and watercolor, visible paper grain, rounded plush proportions and dreamy violet-peach-gold lighting; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.choice.protected-value.shared-world",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "055d84c3ecc79b607bf7a52bc976479a658078583e32f5f95361bc9ccbdc10dc",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "1a10184067b67d3b112995cc906b5706bd6db4c0119fe4997aa2d1812b6583b5",
+      "compositionFamily": "protectedshared_ariescancer_threshold_flameboundary_returnlamp_twopads",
+      "artDirection": "세로 3:4. 몽실이·달콩이 exactly2를 ajar red threshold1 양쪽 independent pads2에 둔다. 몽실이는 flame core1와 open boundary tile1, 달콩이는 loose return lantern1과 safety token1을 조절한다. 중앙 listening gap과 door edge를 넓게 열며 ring·대리 조작·text는 없다.",
+      "distinctFrom": [
+        "B001–82의 같은 별자리·protected-value shared-world 구도를 반복하지 않고 protectedshared_ariescancer_threshold_flameboundary_returnlamp_twopads를 사용한다.",
+        "같은 choice.protected-value.shared-world 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이·달콩이 pair2·threshold1·pads2·flame/boundary controls2·lantern/safety controls2를 확인한다.",
+        "용기와 귀환 안전을 나누되 어느 수호령도 문·선택·결과를 대신 결정하지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.choice.protected-value.shared-world",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "a71765321f62004173574219bd137d238fbfa28c2bbe850391ae85e208f1b246",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "d62b8b9eb589ced8f98f06fc4fbba7fa4f5c2fd9074ab5bc9abbb7bd93f923f3",
+      "compositionFamily": "protectedshared_taurusvirgo_opensatchel_tokens3_criteriontile_changetray",
+      "artDirection": "세로 3:4. 차곡이·새봄이 exactly2를 open satchel1 양쪽 independent pads2에 둔다. 차곡이는 resource/rest/keepsake tokens3를, 새봄이는 protected criterion tile1과 open change tray1을 조절한다. satchel flap과 central ground gap을 열며 숫자·표·loop·text는 없다.",
+      "distinctFrom": [
+        "B001–82의 같은 별자리·protected-value shared-world 구도를 반복하지 않고 protectedshared_taurusvirgo_opensatchel_tokens3_criteriontile_changetray를 사용한다.",
+        "같은 choice.protected-value.shared-world 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이·새봄이 pair2·pads2·satchel1·tokens3·criterion tile1·change tray1·open gap을 확인한다.",
+        "지속 자원과 최소 기준을 함께 보되 안정 강요·완벽 관리·정답 합의로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.choice.protected-value.shared-world",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "227452ce667116ce134971fc4fce2d7340887e5b1b6c2c01d1c568a789cd5f95",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "88524614f18d65f88c7bdc7c473002fbf1002520c9a8ccaf23b6378a0c16ea1c",
+      "compositionFamily": "protectedshared_geminipair_panels2_futuretab_optiontokens_openhinge",
+      "artDirection": "세로 3:4. 재잘이·소곤이 canonical pair2/ribbon1를 panels2의 independent pads2에 둔다. 재잘이는 chosen token1, 소곤이는 future-window tab1과 possibility token1을 조절하며 central open hinge1을 비운다. 지도·지운 길·closed loop·합의 badge·text는 없다.",
+      "distinctFrom": [
+        "B001–82의 같은 별자리·protected-value shared-world 구도를 반복하지 않고 protectedshared_geminipair_panels2_futuretab_optiontokens_openhinge를 사용한다.",
+        "같은 choice.protected-value.shared-world 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "재잘이·소곤이 pair2·panels2·pads2·chosen/possibility tokens2·future tab1·open hinge1을 확인한다.",
+        "현재 선택과 다음 가능성이 공존하되 두 목소리·선택지·미래가 합쳐지지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.choice.protected-value.shared-world",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "591000c537451031a6490c799fe52186700e5712db516775dd500359410e9a9e",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "cd43f85b285f8dd1f5b46a4a2f60c4a4bf99dc3316cab740faa1c0b3cb1aefde",
+      "compositionFamily": "protectedshared_cancerscorpio_shellclasp_privacybox_safetytokens_gap",
+      "artDirection": "세로 3:4. 달콩이·꼬옥이 exactly2를 ajar moon door1 안팎 independent pads2에 둔다. 달콩이는 open shell clasp1와 safety token1을, 꼬옥이는 ajar privacy box1와 loose seal token1을 조절한다. wide threshold gap을 남기며 key·추가 heart·lock·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–82의 같은 별자리·protected-value shared-world 구도를 반복하지 않고 protectedshared_cancerscorpio_shellclasp_privacybox_safetytokens_gap를 사용한다.",
+        "같은 choice.protected-value.shared-world 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이·꼬옥이 pair2·door1·pads2·open clasp1·safety token1·ajar box1·seal token1을 확인한다.",
+        "관계 안전과 사적 경계를 나누되 보호 강요·영구 봉인·전면 공개로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.choice.protected-value.shared-world",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "62949263545933bb1360f7004e4cc2aba868bb60fd08b8d817d8d82127635dec",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "e03d8da974e3ed1d6961a5ef982befde49dce9ac82dcf3279d9266d464e01d12",
+      "compositionFamily": "protectedshared_leolibra_dignitystar_relationribbon_selftile_openstage",
+      "artDirection": "세로 3:4. 해님이·고르미 exactly2를 open stage gap 양쪽 independent pads2에 둔다. 해님이는 dignity star1와 set-aside crown1, 고르미는 loose relation ribbon1와 self-place tile1을 조절한다. small work lamp1만 켜고 audience·balance·scale·score·text는 없다.",
+      "distinctFrom": [
+        "B001–82의 같은 별자리·protected-value shared-world 구도를 반복하지 않고 protectedshared_leolibra_dignitystar_relationribbon_selftile_openstage를 사용한다.",
+        "같은 choice.protected-value.shared-world 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이·고르미 pair2·pads2·dignity star1·crown1·ribbon1·self tile1·work lamp1을 확인한다.",
+        "존엄·관계·자기 자리를 함께 말하되 인정 요구·대리 연출·완전 균형이 되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.choice.protected-value.shared-world",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "222ab22b02e935f0cdd53cd3daa25b03f25071dd049b2f75abc4b51594bb1c84",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "16f3a84e09aa9f57ee85bd6d915de1f10ac31fc703631b8620dd09e9f50db149",
+      "compositionFamily": "protectedshared_virgotaurus_openrail_criteriontile_feasibilityblocks",
+      "artDirection": "세로 3:4. 새봄이·차곡이 exactly2를 criterion wall1 양쪽 independent pads2에 둔다. 새봄이는 one protected tile1과 open gold rail1, 차곡이는 feasibility blocks2와 open satchel1을 조절한다. adjustable slots2와 central change bay1을 비우며 checklist·number·text는 없다.",
+      "distinctFrom": [
+        "B001–82의 같은 별자리·protected-value shared-world 구도를 반복하지 않고 protectedshared_virgotaurus_openrail_criteriontile_feasibilityblocks를 사용한다.",
+        "같은 choice.protected-value.shared-world 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이·차곡이 pair2·wall1·protected tile1·open rail1·blocks2·satchel1·change bay1을 확인한다.",
+        "최소 기준과 지속 조건을 나누되 완벽 계획·수정 금지·정답 결정으로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.choice.protected-value.shared-world",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "7a78f282ddc3d690de26b2ec24ea8cb5e5f342e792a01001d94711c67ae6c055",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "7782178786fc8cec8656ca9e15a0c99acdbf3a23b3b4966a9861f70faae0199c",
+      "compositionFamily": "protectedshared_libraaries_ribbon_selftile_flamecue_openboundarytracks",
+      "artDirection": "세로 3:4. 고르미·몽실이 exactly2를 open boundary tracks2의 independent pads2에 둔다. 고르미는 loose relation ribbon1와 self-place tile1, 몽실이는 small flame cue1와 responsibility token1을 조절한다. track 끝과 central cleft를 열며 balance·scale·loop·text는 없다.",
+      "distinctFrom": [
+        "B001–82의 같은 별자리·protected-value shared-world 구도를 반복하지 않고 protectedshared_libraaries_ribbon_selftile_flamecue_openboundarytracks를 사용한다.",
+        "같은 choice.protected-value.shared-world 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미·몽실이 pair2·tracks2·pads2·ribbon/self tile2·flame/responsibility controls2를 확인한다.",
+        "관계와 자기 몫을 나누되 몽실이가 대신 고르거나 고르미가 완전 균형을 만들지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.choice.protected-value.shared-world",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "0aa9cd079b70f0268a61ffa1931b65e3143969fe6c0fddcd748290d845c658b6",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "a7c7d623fcc09f628378713a88d299857cd3a1addea56836b058ee71d485b3bb",
+      "compositionFamily": "protectedshared_scorpiocancer_privacybox_sealtoken_lantern_boundarytray",
+      "artDirection": "세로 3:4. 꼬옥이·달콩이 exactly2를 low privacy table1 양쪽 independent pads2에 둔다. 꼬옥이는 ajar box1/loose seal1와 fact/private tiles2를, 달콩이는 safety lantern1와 open boundary tray1을 조절한다. canonical tail-heart1 외 heart·key·lock·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–82의 같은 별자리·protected-value shared-world 구도를 반복하지 않고 protectedshared_scorpiocancer_privacybox_sealtoken_lantern_boundarytray를 사용한다.",
+        "같은 choice.protected-value.shared-world 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이·달콩이 pair2·tail-heart1·box/seal·tiles2·lantern1·boundary tray1·pads2를 확인한다.",
+        "진실 범위와 안전을 나누되 사적 정보 봉인·공개 강요·대리 보호로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.choice.protected-value.shared-world",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "9b9b14fbb668cc4114f8eabf1931fa6acaff7d015cc63d33aa0b47104b15510b",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "24f622aa3e6aa09ccb8964d157ae0801f5d09f0b428bbf25ffeec5b741e79a8c",
+      "compositionFamily": "protectedshared_sagcap_blankfield_windowtab_returnmarker_blocks",
+      "artDirection": "세로 3:4. 총총이·오름이 exactly2를 blank field panel1 양쪽 independent pads2에 둔다. 총총이는 bow1와 future-window tab1/possibility token1을, 오름이는 removable return marker1와 resource blocks2를 조절한다. far edge와 horizon gap을 열며 지도·날짜·arrow·text는 없다.",
+      "distinctFrom": [
+        "B001–82의 같은 별자리·protected-value shared-world 구도를 반복하지 않고 protectedshared_sagcap_blankfield_windowtab_returnmarker_blocks를 사용한다.",
+        "같은 choice.protected-value.shared-world 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이·오름이 pair2·panel1·pads2·bow1·window tab1·possibility token1·return marker1·blocks2를 확인한다.",
+        "가능성과 귀환 조건을 함께 보되 목적지·완주·최고의 길을 합의하거나 보장하지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.choice.protected-value.shared-world",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "ce170d88b7fb8976ccf3c3208cd260618d87a020d1ecbc593744a38a1990165d",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "01ae4267a236bd9f73b246242dc75ffac5cc044872a90d2915dcf0036b19fec3",
+      "compositionFamily": "protectedshared_capsag_plaques3_goldclip_opencarrier_optionwindow",
+      "artDirection": "세로 3:4. 오름이·총총이 exactly2를 low responsibility deck1 양쪽 independent pads2에 둔다. 오름이는 plaques3 중 one gold-clipped plaque1와 open carrier1, 총총이는 bow1와 loose option-window tab1을 조절한다. next slot1을 비우며 rank·number·arrow route·text는 없다.",
+      "distinctFrom": [
+        "B001–82의 같은 별자리·protected-value shared-world 구도를 반복하지 않고 protectedshared_capsag_plaques3_goldclip_opencarrier_optionwindow를 사용한다.",
+        "같은 choice.protected-value.shared-world 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이·총총이 pair2·deck1·pads2·plaques3·clip1·carrier1·bow1·option tab1·empty slot1을 확인한다.",
+        "자기 책임과 다음 가능성을 나누되 모든 부담·완주·성과를 대신 정하지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.choice.protected-value.shared-world",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "c5d8f5c22b4ec9d4141c62d9fcbc482bf910d624abd408cd1d55f73fff154a5e",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "5064b8091e20046195f4d1140bb9ea2eb9c7bd93e0b7d56f919a91c2e204611b",
+      "compositionFamily": "protectedshared_aquataurus_boards2_corebottle_parts3_resourceblocks",
+      "artDirection": "세로 3:4. 방울이·차곡이 exactly2를 option boards2의 independent pads2에 둔다. 방울이는 untouched core bottle1/star stopper와 changeable parts3를, 차곡이는 resource blocks2와 open feasibility tray1을 조절한다. open socket1과 central gap을 비우며 diagram route·loop·text는 없다.",
+      "distinctFrom": [
+        "B001–82의 같은 별자리·protected-value shared-world 구도를 반복하지 않고 protectedshared_aquataurus_boards2_corebottle_parts3_resourceblocks를 사용한다.",
+        "같은 choice.protected-value.shared-world 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이·차곡이 pair2·boards2·pads2·core bottle1·parts3·blocks2·tray1·open socket1을 확인한다.",
+        "고유 원리와 현실 자원을 나누되 발명 완성·변화 거부·대리 판단으로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.choice.protected-value.shared-world",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "ac2ea7a0ee2bebcbcaf3a7bb01a4511cae1614a6b2d724598064849157eae331",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "223b981921842ea54e64cfbb00f6ef1ce8ac3c958dfa8bbc56d90fbb3e7d9955",
+      "compositionFamily": "protectedshared_piscespair_twopads_colortokens_openconnector_star_cleft",
+      "artDirection": "세로 3:4. 꿈별이·잠별이 canonical pair2를 aqua/pink independent pads2에 둔다. 각자는 identity color token1씩을 조절하고 loose connection star1은 open crescent connector1 사이 central tray1에 둔다. wide cleft를 남기며 ring·halo·heart·current merge·text는 없다.",
+      "distinctFrom": [
+        "B001–82의 같은 별자리·protected-value shared-world 구도를 반복하지 않고 protectedshared_piscespair_twopads_colortokens_openconnector_star_cleft를 사용한다.",
+        "같은 choice.protected-value.shared-world 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꿈별이·잠별이 pair2·pads2·color tokens2·connection star1·open connector1·tray1·cleft를 확인한다.",
+        "연결과 각자의 정체성을 함께 지키되 두 존재·감정·물살이 하나로 합쳐지지 않는지 확인한다."
+      ]
+    }
+  ],
+  "editorialApprovedOn": "2026-09-02",
+  "generatedOn": "2026-09-03",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-03",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "choice.reversible-step.close-emotion",
+  "batchOrder": 85,
+  "purpose": "선택을 확정하지 않고 아주 작은 범위만 시험한 뒤 즉시 되돌아올 수 있는 return gap·undo control·미고정 상태를 표정과 손끝 가까이에서 읽히게 하는 close-emotion 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "choice",
+    "narrativeAxisId": "reversible-step",
+    "visualAxisId": "close-emotion"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium choice-reversible-step close-emotion guardian card master artwork, full-bleed 3:4. Use the same-sign human-visually-approved B081 close-emotion PNG in apps/stella/private/guardian-art-production/choice-protected-value-close-emotion as the mandatory primary identity, eye and style anchor; perform an identity-preserving scene edit rather than regenerating the face. Preserve the exact approved white-sclera purple-eye construction, pupil direction, facial anatomy, colors, signature features, dark-purple outlines and visible chest Stella stars. Show exactly the named single guardian or canonical internal pair and no extra adviser, partner, audience, future self, human, silhouette, reflection, empty seat or implied person. Guardian or pair plus one tiny reversible trial and one visibly separate return gap or solid undo control covers 55–65% and reads at 80px. Frame face and hands closely so desire and fear coexist, while every trial remains half-set, unattached, unlatched, toe-touched or removable; never show a completed crossing, irreversible commitment, correct result, certainty, destiny, success or guaranteed outcome. Written surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, names, labels, score, number, date, clock face, hourglass reading, calendar grid, question mark, zodiac glyph, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. No map, directional route, arrow path, literal key, cord knot, closed circle, ring, halo, portal, infinity sign, cage, locked box or deterministic destination. Return gaps stay broad and undo controls stay separate and visibly reachable. Do not add a scale. Only Scorpio canonical tail-heart is allowed; no added heart. Keep every composition distinct from B001–84 and from the other 11 images in this batch. Soft colored-pencil and watercolor, visible paper grain, rounded plush proportions and dreamy violet-peach-gold lighting; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.choice.reversible-step.close-emotion",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "d5d0f63d188d118a58ca2c19b9c70c3869dc71976b9a9d3b9cb38939e541fcf6",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "bedec27148ab78174a0e55137d9d0ce9371a600a61fde310ded90533ac9479bf",
+      "compositionFamily": "reversibleclose_aries_trialdash_tile_returnwedge_openlaunchgap",
+      "artDirection": "세로 3:4. B081 승인 몽실이의 얼굴·보라 눈·앞발을 identity/eye anchor로 고정하고 solid trial star tile1, open-notched launch pad1, loose return wedge1, desire/fear pebbles2를 low close로 둔다. 앞발은 tile을 notch에 half-set할 뿐 누르지 않고 return wedge와 뒤쪽 여백을 분리한다. 길·모래시계·arrow·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–84의 같은 별자리 선택 구도를 반복하지 않고 reversibleclose_aries_trialdash_tile_returnwedge_openlaunchgap를 사용한다.",
+        "같은 choice.reversible-step.close-emotion 묶음의 다른 11개와 시험 물체·undo control·카메라·return gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·trial tile1·open launch pad1·return wedge1·desire/fear pebbles2와 승인 눈 정체성을 확인한다.",
+        "짧은 시험 직전의 바람과 두려움만 보이고 tile이 고정되거나 출발·귀환·성공 결과가 확정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.choice.reversible-step.close-emotion",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "be68a73f5a93dd44d135f02e33a383fa41f69b03f07166de66383543c1f0ae60",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "0e4fffb05263c4b18303d2e4dcc2b78860f81caf5ee53aa94aca200679519ce6",
+      "compositionFamily": "reversibleclose_taurus_firststone_toetouch_returnpad_groundgap",
+      "artDirection": "세로 3:4. B081 승인 차곡이의 얼굴·보라 눈·앞발을 identity/eye anchor로 고정하고 trial stone1, separate return pad1, loose sprout token1, solid undo pebble1을 ground close로 둔다. 앞발 끝만 trial stone 가장자리에 닿고 다른 발과 return pad 사이에는 넓은 흙 여백을 남긴다. 돌길 연속선·동전·숫자·route·text는 없다.",
+      "distinctFrom": [
+        "B001–84의 같은 별자리 선택 구도를 반복하지 않고 reversibleclose_taurus_firststone_toetouch_returnpad_groundgap를 사용한다.",
+        "같은 choice.reversible-step.close-emotion 묶음의 다른 11개와 시험 물체·undo control·카메라·return gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이1·trial stone1·return pad1·sprout token1·undo pebble1과 승인 눈 정체성을 확인한다.",
+        "한 발끝의 체감만 시험하며 생활 전체·새 길·안정 결과가 고정되지 않고 즉시 뒤로 디딜 여백이 보이는지 확인한다."
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.choice.reversible-step.close-emotion",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "12ea8be0a601e7367a4f3652cdbe945917127fd1d0d2aa67dc770e612376e3de",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "223edbad1fb007bd99fc5f10f5c8cdcc4d56219d16e959ee72cd51c878522f54",
+      "compositionFamily": "reversibleclose_geminipair_twintesttokens_splitpads_returnclip_cleft",
+      "artDirection": "세로 3:4. B081 승인 재잘이·소곤이 canonical pair2/연속된 열린 two-tone ribbon1의 얼굴·보라 눈·inner hands를 identity/eye anchor로 고정하고 split trial pads2, pink star/blue droplet tokens2, loose solid return clip1을 overhead close로 둔다. 각 손은 자기 token만 살짝 들어 올리고 clip은 중앙 cleft에 unattached로 둔다. 표지판·시계·질문표·지도·loop·text는 없다.",
+      "distinctFrom": [
+        "B001–84의 같은 별자리 선택 구도를 반복하지 않고 reversibleclose_geminipair_twintesttokens_splitpads_returnclip_cleft를 사용한다.",
+        "같은 choice.reversible-step.close-emotion 묶음의 다른 11개와 시험 물체·undo control·카메라·return gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "재잘이·소곤이 pair2·open ribbon1·pads2·tokens2·return clip1·central cleft와 승인 눈 정체성을 확인한다.",
+        "두 짧은 체험이 합쳐지거나 비교 결론으로 닫히지 않고 각 token을 제자리로 돌릴 수 있는지 확인한다."
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.choice.reversible-step.close-emotion",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "bebcd86ad3f3c1e7eb42124019e0d215b85e4b37eb3203afc7415ae044bdca31",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "bbef3526fa140ea049b4874f48887bb0ba1833ea3a5e8b00fe2ecd859dd05c33",
+      "compositionFamily": "reversibleclose_cancer_oneclaw_watersamplepad_crescentreturnlip",
+      "artDirection": "세로 3:4. B081 승인 달콩이의 얼굴·보라 눈·집게를 identity/eye anchor로 고정하고 캐릭터를 둘러싸지 않는 cropped open-notched crescent shelter lip1, shallow water sample pad1, sample droplet1, inside safety pebble1을 shoulder close로 둔다. 집게 끝만 pad 수면에 닿고 몸과 safety pebble은 shelter 안쪽 return lip 뒤에 남긴다. 닫힌 달집·문·portal·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–84의 같은 별자리 선택 구도를 반복하지 않고 reversibleclose_cancer_oneclaw_watersamplepad_crescentreturnlip를 사용한다.",
+        "같은 choice.reversible-step.close-emotion 묶음의 다른 11개와 시험 물체·undo control·카메라·return gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·cropped crescent lip1·sample pad1·droplet1·safety pebble1과 승인 눈 정체성을 확인한다.",
+        "집게 끝의 수온 확인만 보이고 몸·기반·관계가 이동하거나 shelter가 닫힌 방어선이 되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.choice.reversible-step.close-emotion",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "bca32c4d36a32c313df7ba771b540a48d6923912775168a2d9ae9dad5e810015",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "e778f6cd83e6cb1b28e64df5ccef65cc2a04ab6cf089768b8636c25fa3a6a08d",
+      "compositionFamily": "reversibleclose_leo_rehearsaltile_exitstartab_opencurtainedge",
+      "artDirection": "세로 3:4. B081 승인 해님이의 얼굴·보라 눈·머리에 쓴 crown1·앞발을 identity/eye anchor로 고정하고 small rehearsal tile1, loose exit star tab1, parted curtain panels2, trial pebble1을 low frontal close로 둔다. 한 앞발만 tile 가장자리에 올리고 exit tab은 바깥 여백에 untouched로 둔다. 관객·거울·표·score·scale·text는 없다.",
+      "distinctFrom": [
+        "B001–84의 같은 별자리 선택 구도를 반복하지 않고 reversibleclose_leo_rehearsaltile_exitstartab_opencurtainedge를 사용한다.",
+        "같은 choice.reversible-step.close-emotion 묶음의 다른 11개와 시험 물체·undo control·카메라·return gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1·worn crown1·rehearsal tile1·exit tab1·parted curtains2·trial pebble1과 승인 눈 정체성을 확인한다.",
+        "작은 리허설의 긴장과 기대만 보이고 무대 계약·박수·성공·영구 진입이 확정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.choice.reversible-step.close-emotion",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "a1a97dab7a2337c88816d19b7be84c44feb9458326615017c7230e2decfd4d1e",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "54f6913e537e865ee27658c6b0987d58614cc089bb453bdea677dedc9e160311",
+      "compositionFamily": "reversibleclose_virgo_foldoutplatform_halfopen_undotab_pencil",
+      "artDirection": "세로 3:4. B081 승인 새봄이의 얼굴·보라 눈·연필1·반대 손을 identity/eye anchor로 고정하고 compact fold-out trial platform1, open hinge1, solid undo tab1, observation tokens2를 axial close로 둔다. 반대 손은 platform을 half-open으로 받치고 undo tab과 tokens는 분리된 tray 밖에 남긴다. 확인표·grid·badge·다리 연속선·text는 없다.",
+      "distinctFrom": [
+        "B001–84의 같은 별자리 선택 구도를 반복하지 않고 reversibleclose_virgo_foldoutplatform_halfopen_undotab_pencil를 사용한다.",
+        "같은 choice.reversible-step.close-emotion 묶음의 다른 11개와 시험 물체·undo control·카메라·return gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·pencil1·fold-out platform1·open hinge1·undo tab1·tokens2와 승인 눈 정체성을 확인한다.",
+        "첫 구간만 펼친 미완료 상태이며 관찰 결과·완벽 기준·계속 진행이 정답으로 굳지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.choice.reversible-step.close-emotion",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "eaa3af143d7776585189f4f8d1aa2b49cd824fc86a8c6a4db4fefd1ba0451ac7",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c12e2dfecaaa9769521e309363f8f26f8ad8326d10e47021b3b533e179c6f42f",
+      "compositionFamily": "reversibleclose_libra_singletrialflap_halfraise_reviewtile_twogaps",
+      "artDirection": "세로 3:4. B081 승인 고르미의 얼굴·보라 눈·손과 loose open-ended relation ribbon1을 identity/eye anchor로 고정하고 open-notched bays2, removable trial flap1, separate review tile1, solid return peg1을 top-side close로 둔다. 손은 bay1의 flap을 half-raise하고 review tile은 bay2 밖에 untouched로 둔 채 두 open gap을 남긴다. 문·날짜·loop·balance·scale·text는 없다.",
+      "distinctFrom": [
+        "B001–84의 같은 별자리 선택 구도를 반복하지 않고 reversibleclose_libra_singletrialflap_halfraise_reviewtile_twogaps를 사용한다.",
+        "같은 choice.reversible-step.close-emotion 묶음의 다른 11개와 시험 물체·undo control·카메라·return gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·open ribbon1·bays2·trial flap1·review tile1·return peg1과 승인 눈 정체성을 확인한다.",
+        "한쪽 flap만 잠시 들리고 다른 선택·재검토 가능성·자기 자리가 닫히거나 완전 균형으로 결론 나지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.choice.reversible-step.close-emotion",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "48a6d73d030ddecc17a2067747800f544c63d5962dfd62454a297a04b23f387e",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "11a09a0ea5360f3a4eac56fa48097ada269aa13f86e7b4ac6c5d572a37278bb9",
+      "compositionFamily": "reversibleclose_scorpio_blanksealpanel_halflift_undotab_tailheart",
+      "artDirection": "세로 3:4. B081 승인 꼬옥이의 얼굴·보라 눈·pincers·canonical tail-heart1을 identity/eye anchor로 고정하고 blank star-relief panel1, loose seal token1, solid undo tab1, open privacy tray1을 reverse close로 둔다. 한 pincer가 seal을 panel notch에서 half-lift하고 다른 pincer와 undo tab 사이를 비운다. 문서 글자·날짜·끈·매듭·key·lock·추가 heart·text는 없다.",
+      "distinctFrom": [
+        "B001–84의 같은 별자리 선택 구도를 반복하지 않고 reversibleclose_scorpio_blanksealpanel_halflift_undotab_tailheart를 사용한다.",
+        "같은 choice.reversible-step.close-emotion 묶음의 다른 11개와 시험 물체·undo control·카메라·return gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1·tail-heart1·blank panel1·seal1 half-lift·undo tab1·open tray1과 승인 눈 정체성을 확인한다.",
+        "첫 정보 범위만 열리고 seal을 다시 놓을 수 있으며 진실·비밀·다음 확인이 영구 봉인되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.choice.reversible-step.close-emotion",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "8f4c3b483af0b6d5bc88eb0a8904e3e44ace3b1d795dd742fec4094315913dc1",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "6263b542335d325203fe2408c7afad1a9e596c93aac74e6394df313a6bd9b2a1",
+      "compositionFamily": "reversibleclose_sag_horizonprism_trialperch_returncradle_bow",
+      "artDirection": "세로 3:4. B081 승인 총총이의 얼굴·보라 눈·손·bow1을 identity/eye anchor로 고정하고 faceted horizon sample prism1, single trial perch tile1, open C-shaped return cradle1, solid stop pebble1을 cliff-side close로 둔다. 손은 prism을 턱 아래에 removable로 들고 앞발 끝만 perch에 닿으며 cradle과 stop pebble은 뒤쪽 여백에 분리한다. 표·전망대 그림·지도·route·arrow·목적지·text는 없다.",
+      "distinctFrom": [
+        "B001–84의 같은 별자리 선택 구도를 반복하지 않고 reversibleclose_sag_horizonprism_trialperch_returncradle_bow를 사용한다.",
+        "같은 choice.reversible-step.close-emotion 묶음의 다른 11개와 시험 물체·undo control·카메라·return gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이1·bow1·sample prism1·trial perch1·open return cradle1·stop pebble1과 승인 눈 정체성을 확인한다.",
+        "첫 전망의 기대와 두려움만 읽히며 탐험 경로·도착·중단 시점·성공이 확정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.choice.reversible-step.close-emotion",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "1f865e53fb106c9ae21f4b28df49ebfa66874870a8ec1ac439ab990b0132c364",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "45644905aa33b66e5e7ffb09321bc7201c500361b6e19b7f6ec6fbc54b044b7a",
+      "compositionFamily": "reversibleclose_cap_trialriser_halfset_resourceprism_opencarrier",
+      "artDirection": "세로 3:4. B081 승인 오름이의 얼굴·보라 눈·손·turquoise tail을 identity/eye anchor로 고정하고 compact trial riser1, open carrier1, resource prism1, solid undo wedge1을 top-oblique close로 둔다. 손은 riser를 carrier notch에 half-set하고 prism과 undo wedge는 바닥 여백에 떨어뜨려 둔다. 달력·grid·숫자·동전·rank·계단 연속선·text는 없다.",
+      "distinctFrom": [
+        "B001–84의 같은 별자리 선택 구도를 반복하지 않고 reversibleclose_cap_trialriser_halfset_resourceprism_opencarrier를 사용한다.",
+        "같은 choice.reversible-step.close-emotion 묶음의 다른 11개와 시험 물체·undo control·카메라·return gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1·tail·trial riser1·open carrier1·resource prism1·undo wedge1과 승인 눈 정체성을 확인한다.",
+        "한 구간의 용량만 시험하고 예산·전체 등반·완주·책임 결과가 고정되지 않으며 riser를 뺄 수 있는지 확인한다."
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.choice.reversible-step.close-emotion",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "cd830af738a141f58cf5b26bf335e04f08534a1cf4bde746ff8bea54447e2bfc",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "13efff615cb0c77872ddf23cc1cc1d6dc3da0da3102859d56a3e6a407310cd9b",
+      "compositionFamily": "reversibleclose_aqua_cloudpad_toetouch_unsnappedsocket_returncradle",
+      "artDirection": "세로 3:4. B081 승인 방울이의 얼굴·보라 눈·한 발을 identity/eye anchor로 고정하고 detachable cloud trial pad1, visibly unsnapped socket1, open return cradle1, weight pebbles2를 top-down close로 둔다. 발끝만 pad에 닿고 socket은 분리하며 pad와 cradle 사이에 넓은 return gap을 둔다. 두 길·diagram·heart profile·loop·route·text는 없다.",
+      "distinctFrom": [
+        "B001–84의 같은 별자리 선택 구도를 반복하지 않고 reversibleclose_aqua_cloudpad_toetouch_unsnappedsocket_returncradle를 사용한다.",
+        "같은 choice.reversible-step.close-emotion 묶음의 다른 11개와 시험 물체·undo control·카메라·return gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·cloud pad1·unsnapped socket1·open return cradle1·weight pebbles2와 승인 눈 정체성을 확인한다.",
+        "작은 시제품의 무게만 시험하며 pad가 연결·완성되거나 새 방향·정답 설계가 확정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.choice.reversible-step.close-emotion",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "37ecd90e0fc1b980da34a1315be993ca3519dd9237a218d4383eb4ff05d8b353",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "99b4eb0c81355db2c32dda561da646a84c1acbfe693da45f5e275057139213ef",
+      "compositionFamily": "reversibleclose_piscespair_twintrialscoops_halfdip_returnstar_cleft",
+      "artDirection": "세로 3:4. B081 승인 꿈별이·잠별이 canonical pair2의 얼굴·보라 눈·inner fins와 분리된 aqua/pink 색을 identity/eye anchor로 고정하고 open-notched trial scoops2, color droplets2, loose return star1을 end-on close로 둔다. 각 inner fin 끝만 자기 scoop에 half-dip하고 scoops와 droplets 사이, pair 중앙에 넓은 cleft를 남긴다. 꿈문·원·ring·halo·current loop·merge·추가 heart·text는 없다.",
+      "distinctFrom": [
+        "B001–84의 같은 별자리 선택 구도를 반복하지 않고 reversibleclose_piscespair_twintrialscoops_halfdip_returnstar_cleft를 사용한다.",
+        "같은 choice.reversible-step.close-emotion 묶음의 다른 11개와 시험 물체·undo control·카메라·return gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꿈별이·잠별이 pair2·trial scoops2·droplets2·return star1·central cleft와 승인 눈 정체성을 확인한다.",
+        "각자의 반응을 잠깐 느낄 뿐 두 존재·감정·물살이 합쳐지거나 원을 완주하고 꿈문을 통과한 결과가 되지 않는지 확인한다."
+      ]
+    }
+  ],
+  "editorialApprovedOn": "2026-09-03",
+  "generatedOn": "2026-09-03",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-03",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

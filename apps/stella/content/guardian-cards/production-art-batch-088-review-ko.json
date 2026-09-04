@@ -1,0 +1,313 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "choice.reversible-step.constellation-afterglow",
+  "batchOrder": 88,
+  "purpose": "되돌릴 수 있는 작은 시험 뒤 남은 제어점과 다음 판단 표식을 끊긴 별빛 여운으로 분리해, 선택이 완주·정답·운명 경로가 아니라 다시 회수하고 조정할 수 있는 단계로 읽히는 constellation-afterglow 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 1,
+    "newEditionCount": 11,
+    "onePerSign": true,
+    "slot": "choice",
+    "narrativeAxisId": "reversible-step",
+    "visualAxisId": "constellation-afterglow"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium choice-reversible-step constellation-afterglow guardian card master artwork, full-bleed 3:4. These generation rules apply to the eleven new images; reuse the approved Sagittarius pilot byte-for-byte and never regenerate it. For each new image use the same-sign human-approved B085 close-emotion artwork as the primary identity and white-sclera purple-eye anchor, B086 only as the reversible-device continuity reference, and B084 only as the disconnected-afterglow spacing reference; never copy their composition. Preserve canonical body, relative scale, colors, signature features, coherent pupil direction, dark-purple outlines and visible chest Stella stars. Show exactly the named single guardian or canonical internal pair and no extra adviser, partner, audience, future self, human, silhouette, reflection, empty seat or implied person. Guardian or pair plus one returned or removable trial remnant, one visibly separate rollback control and one blank revisit marker covers 55–65% and reads at 80px. Show only two or three isolated afterglow patches separated by broad empty gaps; they may echo the chest star, trial remnant and revisit marker but must never connect into a constellation, route, promise, verdict, destiny or guaranteed return. Keep every socket, support, fork, shelf, tray, recess and marker broken, open-sided, notched, loose, removable or unlatched. Written surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, names, labels, score, number, date, clock face, hourglass, calendar grid, map, coordinate, question mark, zodiac glyph, arrow, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. No literal key, connected path, closed circle, ring, halo, portal, infinity sign, cage, locked box or deterministic direction. Do not add a scale. Only Scorpio canonical tail-heart is allowed; no added heart. Keep every composition distinct from B001–87 and from the other eleven cards. Soft colored-pencil and watercolor with visible paper grain, rounded plush proportions and dreamy violet-peach-gold lighting; no naturalistic-animal drift, rough crayon, flat vector, readable text, logo or watermark."
+  },
+  "editorialApprovedOn": "2026-09-04",
+  "generatedOn": "2026-09-04",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-04",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.choice.reversible-step.constellation-afterglow",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-04",
+      "editorialContentHash": "1269edbf5b01f3563a98f5d7f65de086fa96fd3e64baf0511843a8ca9d83a245",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c9b71de624e49f61639ed5f8b30ee4d298a8f724bce2d134a67d87d0069ce35e",
+      "compositionFamily": "reversibleafterglow_aries_splitbenchblocks_coolingpuck_reversestop_blanknotch",
+      "artDirection": "세로 3:4. 몽실이1을 staggered split bench blocks2 사이 high rear close로 두고 returned cooling flame puck1, loose reverse-stop1, distant blank revisit notch1을 서로 다른 block에 둔다. puck과 notch 사이 afterglow patches2는 넓은 공중 틈에서 완전히 끊는다. rail·launch pad·길·flag·hourglass·arrow·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–87의 같은 별자리 선택 구도를 반복하지 않고 reversibleafterglow_aries_splitbenchblocks_coolingpuck_reversestop_blanknotch를 사용한다.",
+        "같은 choice.reversible-step.constellation-afterglow 묶음의 다른 11개와 trial remnant·rollback marker·카메라·끊긴 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·split blocks2·cooling puck1·reverse-stop1·blank notch1·disconnected patches2를 확인한다.",
+        "시험이 끝까지 이어진 길이 아니라 puck을 회수해 다시 판단할 수 있는 끊긴 여운으로 읽히는지 확인한다."
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.choice.reversible-step.constellation-afterglow",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-04",
+      "editorialContentHash": "b913b05d1aca89d2a27e563e017a646460e3243528e964867b4a5c334161c94b",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "4003fc337d8a7d2c0c0c87f7caf3397e708c682ed3ddc9d8c599da1986a82411",
+      "compositionFamily": "reversibleafterglow_taurus_liftedplate_releasepeg_returnpad_blankdish",
+      "artDirection": "세로 3:4. 차곡이1과 한쪽이 들린 first-stone plate1, 완전히 분리된 release peg1, separate return pad1, distant blank body-check dish1을 low side after-view로 둔다. plate와 dish 사이 afterglow patches2를 흙 여백에서 끊고 발은 어느 pad에도 고정하지 않는다. 길·계단·sprout·coin·number·scale·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–87의 같은 별자리 선택 구도를 반복하지 않고 reversibleafterglow_taurus_liftedplate_releasepeg_returnpad_blankdish를 사용한다.",
+        "같은 choice.reversible-step.constellation-afterglow 묶음의 다른 11개와 trial remnant·rollback marker·카메라·끊긴 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이1·lifted plate1·release peg1·return pad1·blank dish1·disconnected patches2를 확인한다.",
+        "plate가 원위치로 들릴 수 있고 몸의 반응·안정·다음 판단이 완주 결과로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.choice.reversible-step.constellation-afterglow",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-04",
+      "editorialContentHash": "fc40733786da5c784f861270f0f1b24a31c8c026089e8e93f504a3afa5563fe6",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "b34785049df1d9bc3383fb3dfcc7064a6b80abc45fc909a5fef1b8269ea9c0aa",
+      "compositionFamily": "reversibleafterglow_geminipair_foregroundforkrack_crosswisecartridges_highrevisitcut",
+      "artDirection": "세로 3:4. 재잘이·소곤이 canonical pair2와 한 줄의 열린 two-tone ribbon1은 화면 뒤 왼쪽의 같은 낮은 바닥면에 모으고, 극단적 전경에는 앞면과 윗면이 모두 열린 comb-like fork rack1을 가로질러 둔다. returned sample cartridges2/pull tabs2는 rack의 서로 먼 두 갈래 밖에 crosswise로 완전히 빼고, blank revisit cut1은 뒤 오른쪽의 독립 블록 위에 높게 둔 high-oblique 구도다. afterglow patches2는 전경 cartridge 옆과 높은 cut 아래에 각각 고립시키며 서로 잇지 않는다. ledge·central cleft·sleeve·pad·signpost·clock·map·loop·text는 없다.",
+      "distinctFrom": [
+        "B001–87의 같은 별자리 선택 구도, 특히 B084의 split ledges·central cleft를 반복하지 않고 reversibleafterglow_geminipair_foregroundforkrack_crosswisecartridges_highrevisitcut을 사용한다.",
+        "같은 choice.reversible-step.constellation-afterglow 묶음의 다른 11개와 극단적 전경 rack·높은 revisit cut·high-oblique 카메라·끊긴 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "canonical pair2·open ribbon1·전경 fork rack1·crosswise cartridges2·tabs2·높은 blank cut1을 확인한다.",
+        "두 짧은 실험의 여운이 합쳐진 답이나 같은 경로가 되지 않고 각 cartridge가 독립 회수 상태인지 확인한다."
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.choice.reversible-step.constellation-afterglow",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-04",
+      "editorialContentHash": "6333d66a8d529a50e25d0ea6fbb0d3b3c5c60c1139230b8163db403eb8f10d19",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "1f9324f2267cf4ca7e15ed7904f97ed26a789c0375c75d825675b472b7644de1",
+      "compositionFamily": "reversibleafterglow_cancer_splitwaterledges_returneddroplet_returnclip_checknotch",
+      "artDirection": "세로 3:4. 달콩이1을 캐릭터를 둘러싸지 않는 split water ledges2 사이에 두고 returned droplet prism1은 shallow open dish1 밖에, unlatched return clip1은 다른 ledge에, distant blank next-sample notch1은 넓은 물 여백 너머에 둔다. afterglow patches2는 서로 닿지 않는다. moon door·shell portal·cup·handle loop·ring·heart·text는 없다.",
+      "distinctFrom": [
+        "B001–87의 같은 별자리 선택 구도를 반복하지 않고 reversibleafterglow_cancer_splitwaterledges_returneddroplet_returnclip_checknotch를 사용한다.",
+        "같은 choice.reversible-step.constellation-afterglow 묶음의 다른 11개와 trial remnant·rollback marker·카메라·끊긴 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·water ledges2·droplet prism1·open dish1·return clip1·blank notch1·patches2를 확인한다.",
+        "집과 몸을 옮기지 않은 수온 시험의 여운만 남고 관계·안전·다음 시도가 고정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.choice.reversible-step.constellation-afterglow",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-04",
+      "editorialContentHash": "fcb6eec1460e9296e7c70fb5884275dd14f4342176eec7cfff90a5caa38f5866",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c6c8383ead654651fc054ef2020f5cb128c1ebf97ca154605a1ec1cba1db153a",
+      "compositionFamily": "reversibleafterglow_leo_foldedriser_releasepin_selfchecktile_revisitnotch",
+      "artDirection": "세로 3:4. crown1을 쓴 해님이1과 완전히 접힌 rehearsal riser1을 한 변이 열린 low equipment rest1에, detached release pin1과 loose self-check star tile1을 서로 다른 바닥 면에, distant blank revisit notch1을 후면 여백에 둔다. afterglow patches3는 셋을 연결하지 않는다. stage·curtain·door·mirror·audience·score·scale·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–87의 같은 별자리 선택 구도를 반복하지 않고 reversibleafterglow_leo_foldedriser_releasepin_selfchecktile_revisitnotch를 사용한다.",
+        "같은 choice.reversible-step.constellation-afterglow 묶음의 다른 11개와 trial remnant·rollback marker·카메라·끊긴 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1·crown1·folded riser1·release pin1·self-check tile1·blank notch1·patches3를 확인한다.",
+        "리허설 뒤 감각과 자기 확인만 남고 박수·계약·무대 성공이나 다음 공연이 확정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.choice.reversible-step.constellation-afterglow",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-04",
+      "editorialContentHash": "b09f9a3fb8406706f0e4a4bf6fa9dff19bf99a76397afdb50f2a88cfb9e0f9f6",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "d648239b40c72b370297929f5165e2e95d9adebf76bf37a7666a1fe23d7fcce8",
+      "compositionFamily": "reversibleafterglow_virgo_detachedplank_openfork_undopeg_retrydish",
+      "artDirection": "세로 3:4. 새봄이1/pencil1과 완전히 분리된 short star plank1, open fork1, detached undo peg1, folded blank observation packet1, distant empty retry dish1을 vertical macro로 둔다. plank와 dish 사이 afterglow patches2는 한쪽 끝이 없는 넓은 틈에서 끊고 pencil은 쓰지 않는다. bridge·checklist·grid·route·arrow·closed frame·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–87의 같은 별자리 선택 구도를 반복하지 않고 reversibleafterglow_virgo_detachedplank_openfork_undopeg_retrydish를 사용한다.",
+        "같은 choice.reversible-step.constellation-afterglow 묶음의 다른 11개와 trial remnant·rollback marker·카메라·끊긴 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·pencil1·detached plank1·open fork1·undo peg1·blank packet1·retry dish1을 확인한다.",
+        "첫 구간을 분해해 되돌린 상태이며 관찰 결과·완벽 기준·다음 구간이 연결된 답이 되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.choice.reversible-step.constellation-afterglow",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-04",
+      "editorialContentHash": "5c858e7675e1951854b5d54381a9616b6c5f874444fabc5f3235f8291436430c",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "80a482b514237b3e795b0288cf4e1f7b2c7eaf689b983eeebdeead93c7606ed7",
+      "compositionFamily": "reversibleafterglow_libra_lowfront_singleopensleeve_ejectedstrip_side_releaseblock",
+      "artDirection": "세로 3:4. 고르미1은 화면 뒤 중앙에 정면으로 앉히고, 전경 한가운데에 뒤와 오른쪽이 열린 single test sleeve1만 낮게 둔다. removable test strip1은 sleeve에서 완전히 빠져 왼쪽 전경으로 비스듬히 놓고, rollback release block1은 오른쪽 바깥 바닥에, blank revisit notch1은 화면 위 왼쪽의 작은 독립 세움판에 둔 low-frontal 구도다. afterglow patches2는 strip 뒤와 세움판 아래에 각각 고립시키며 sleeve·block·notch를 잇지 않는다. second sleeve·bracket·over-shoulder·ribbon·door·date·loop·balance·scale·score·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–87의 같은 별자리 선택 구도, 특히 B084의 open brackets2·over-shoulder diagonal을 반복하지 않고 reversibleafterglow_libra_lowfront_singleopensleeve_ejectedstrip_side_releaseblock을 사용한다.",
+        "같은 choice.reversible-step.constellation-afterglow 묶음의 다른 11개와 single foreground sleeve·측면 release block·low-frontal 카메라·끊긴 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·single open sleeve1·ejected strip1·release block1·높은 blank notch1·disconnected patches2를 확인한다.",
+        "한 선택을 시험한 뒤에도 다른 선택과 재검토 가능성이 봉인·완전 균형·합의 결과로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.choice.reversible-step.constellation-afterglow",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-04",
+      "editorialContentHash": "58729d547200d34aa9b3301a8453f85456d1b736a2d4a52849fcc12269f07e1f",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "cd57e3a08d0e0322208e9b65d3c674a7d0f88975c3163c419c6cd75e17eaad5a",
+      "compositionFamily": "reversibleafterglow_scorpio_floorsled_side_screen_returnedprism_loosecap_uprightnotch",
+      "artDirection": "세로 3:4. 꼬옥이1/canonical tail-heart1을 중앙 바닥에 낮게 두고, returned fact prism1은 왼쪽 전경의 바퀴·레일 없는 loose shallow sled1 위에 완전히 분리해 둔다. private tile1은 오른쪽 뒤의 freestanding partial screen1 옆에 세우되 screen 뒤 깊은 층으로 숨기지 않고, loose reseal cap1은 두 물체 사이 바닥에, blank revisit notch1은 화면 오른쪽 끝의 독립 upright marker1에 둔 low-frontal three-island 구도다. afterglow patches2는 sled 뒤와 marker 위에 따로 띄워 어떤 입구도 만들지 않는다. rock shelf·cleft·layered recess·sleeve·box·document·cord·knot·key·lock·추가 heart·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–87의 같은 별자리 선택 구도, 특히 B084의 open rock cleft·얕고 깊은 층·입구 여운을 반복하지 않고 reversibleafterglow_scorpio_floorsled_side_screen_returnedprism_loosecap_uprightnotch를 사용한다.",
+        "같은 choice.reversible-step.constellation-afterglow 묶음의 다른 11개와 서로 떨어진 floor sled·side screen·upright marker·low-frontal 카메라를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1·tail-heart1·loose sled1·fact prism1·private tile1·freestanding screen1·reseal cap1·upright notch1을 확인한다.",
+        "필요한 정보만 본 뒤 다시 덮을 수 있고 공개·봉인·다음 확인이 영구 결론으로 이어지지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.choice.reversible-step.constellation-afterglow",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved_pilot",
+      "editorialContentHash": "bf9fe80f7f2004ccaf1727e2f1c5a47d5a9c8f8331bb64c7eae7d477600bfde4",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "a87f452946e99e444035748769a764c2246af1f690dcfdfc9102e9ce951fc059",
+      "compositionFamily": "reversibleafterglow_sag_pilot_mooncart_ticket_lookout_returnarc",
+      "artDirection": "세로 3:4. 승인 파일럿 원화 apps/stella/private/guardian-art-pilot/sagittarius.choice.reversible-step.constellation-afterglow-v3.png를 바이트 그대로 재사용하고 새로 생성하거나 수정하지 않는다. 총총이1·moon cart1·first-lookout ticket1·return markers·별빛 afterglow의 기존 승인 상태를 유지한다.",
+      "distinctFrom": [
+        "승인 파일럿이 B088 Sagittarius의 고정 composition이며 나머지 11개 신규 구도는 reversibleafterglow_sag_pilot_mooncart_ticket_lookout_returnarc를 복제하지 않는다.",
+        "파일럿의 이미지·편집·시각 승인 해시를 그대로 재사용하고 신규 생성 대상에서 제외한다."
+      ],
+      "visualReviewFocus": [
+        "승인 파일럿 PNG와 approvedArtworkSha256 a87f452946e99e444035748769a764c2246af1f690dcfdfc9102e9ce951fc059를 바이트 단위로 재확인한다.",
+        "짧은 전망대 시험과 귀환 기준을 남기는 기존 승인 의미를 변경하거나 재해석해 그리지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.choice.reversible-step.constellation-afterglow",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-04",
+      "editorialContentHash": "d41bfd1740c2c6da7907be97e852fb20a22b03881ef36a8911fa90f7575570eb",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "5287ff82e2e40abb9324b5535aaa546e66d330ace250249098d78a3210bf3fdc",
+      "compositionFamily": "reversibleafterglow_cap_openunderledge_returnedbrick_resources_continuenotch",
+      "artDirection": "세로 3:4. 오름이1/turquoise tail과 한쪽이 열린 under-ledge bay1, 완전히 회수된 task brick1/pull grip1, separate open tray1의 resource tokens2, distant blank continue notch1을 low rear diagonal로 둔다. brick과 notch 사이 afterglow patches2는 ledge 앞에서 끊는다. stair·calendar·budget·grid·number·rank·route·scale·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–87의 같은 별자리 선택 구도를 반복하지 않고 reversibleafterglow_cap_openunderledge_returnedbrick_resources_continuenotch를 사용한다.",
+        "같은 choice.reversible-step.constellation-afterglow 묶음의 다른 11개와 trial remnant·rollback marker·카메라·끊긴 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1·tail·open bay1·returned brick1·pull grip1·resource tokens2·tray1·blank notch1을 확인한다.",
+        "한 업무 조각을 회수한 뒤 다음 구간·비용·성과·완주가 연결된 의무나 정답이 되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.choice.reversible-step.constellation-afterglow",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-04",
+      "editorialContentHash": "321a732a4410ba7cc38cf813e2ac8636f0298ad10d3137dad3dc4298e46cfebc",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "40e909fbac1d90024f78cecf569ae5a19dfcdb8a59c894f18589f9c28b968c50",
+      "compositionFamily": "reversibleafterglow_aqua_lowunderside_cantilevercomb_removedcloudtile_looseclip_floornotch",
+      "artDirection": "세로 3:4. worm's-eye low-underside profile로 방울이1을 오른쪽 아래에 두고, 화면 위 왼쪽에는 밑면과 바깥끝이 드러난 wall-free cantilever comb slab1만 비스듬히 띄운다. 완전히 분리된 cloud tile1/reaction droplet1은 slab 아래가 아닌 왼쪽 전경 바닥에 놓고, 방울이는 unsnapped release clip1만 자기 앞에 느슨하게 들며, blank retest notch1은 가까운 오른쪽 바닥의 독립 marker block1에 둔다. afterglow patch1은 slab의 노출된 밑면 아래, 다른 patch1은 floor notch 옆에 고립시켜 넓은 수직 공백으로 끊는다. petal·ledge·stand·top-side·board·bottle·footstep·road·diagram·arrow·heart profile·loop·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–87의 같은 별자리 선택 구도, 특히 B084의 detached petal stands·distant test rest·top-side 카메라를 반복하지 않고 reversibleafterglow_aqua_lowunderside_cantilevercomb_removedcloudtile_looseclip_floornotch를 사용한다.",
+        "같은 choice.reversible-step.constellation-afterglow 묶음의 다른 11개와 exposed underside·near-floor notch·worm's-eye profile·수직 공백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·cantilever comb slab1·exposed underside·cloud tile1·droplet1·loose release clip1·floor notch1·patches2를 확인한다.",
+        "시제품을 분리한 여운만 남고 발명 완성·새 방향·사용자 반응이 연결된 결론으로 고정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.choice.reversible-step.constellation-afterglow",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-04",
+      "editorialContentHash": "c2d7ba072afed9dfe63f7e5112b1c8c982fb98f259b539713218e2dba0f988dc",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "78f234ee8931440c55f5b931ac2327ee47117454d13831dee311e417aab01175",
+      "compositionFamily": "reversibleafterglow_piscespair_endonfloorstagger_outwardforks_loosepegs_cornernotch",
+      "artDirection": "세로 3:4. 꿈별이·잠별이 canonical pair2는 같은 낮은 바닥면에서 앞왼쪽과 뒤오른쪽으로 깊이 방향 stagger를 만들고 서로 반대 대각선을 바라보게 둔다. returned aqua/pink paddles2는 화면의 가까운 아래끝과 먼 위끝에 놓인 outward-facing open forks2 밖으로 각각 완전히 빼고, pull pegs2는 guardian 옆 바닥에 느슨하게 둔다. blank revisit notch1은 위 왼쪽 모서리의 독립 블록에 두며, afterglow patch1은 가까운 fork 위에, 다른 patch1은 먼 notch 아래에 띄워 넓은 빈 대각 띠로 분리한다. fin ledge·central cleft·scoop·droplet·trial arc·circle·halo·portal·heart·current loop·merge·text는 없다.",
+      "distinctFrom": [
+        "B001–87의 같은 별자리 선택 구도, 특히 B084의 offset fin ledges2·central cleft·좌우 여운을 반복하지 않고 reversibleafterglow_piscespair_endonfloorstagger_outwardforks_loosepegs_cornernotch를 사용한다.",
+        "같은 choice.reversible-step.constellation-afterglow 묶음의 다른 11개와 end-on 깊이 stagger·outward forks·모서리 notch·빈 대각 띠를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "canonical pair2·end-on floor stagger·returned paddles2·outward open forks2·loose pegs2·corner notch1을 확인한다.",
+        "두 시험을 각각 되돌린 뒤에도 두 존재·감정·물살·다음 판단이 하나의 고리나 경로로 합쳐지지 않는지 확인한다."
+      ]
+    }
+  ]
+}
