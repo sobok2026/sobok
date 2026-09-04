@@ -1,53 +1,29 @@
-import { CURRENT_GUARDIAN_MANIFEST, type GuardianProductKind } from './manifest'
-
 /**
  * The paid offer as the buyer-facing surfaces need to state it: the landing page, the terms, the refund
  * policy, the checkout summary and the GA4 item. One projection so those five cannot disagree.
  *
- * Derived from the current catalog rather than declared beside it, keeping the buyer-facing build-time values
- * aligned with the server's checkout source of truth.
- *
- * This module is imported by the browser. Everything here is already public (the catalog endpoint serves the
- * same numbers); the rest of the manifest — draw weights, edition ids, artwork paths — is not re-exported.
+ * This module is imported by the browser, so it deliberately owns only public offer constants. The server
+ * manifest imports these same values for checkout instead of making this module import the private card
+ * catalog; that keeps prices aligned without pulling card copy, draw weights or asset keys into client chunks.
  */
 
-function currentProduct(kind: GuardianProductKind) {
-  const product = CURRENT_GUARDIAN_MANIFEST.products.find((candidate) => candidate.kind === kind)
-  if (!product) {
-    throw new Error(`Guardian catalog has no ${kind} product`)
-  }
-  return product
-}
-
-const FULL_REPORT = currentProduct('full_report')
-
 /** The market the guardian report is sold in. One, for now, and every price below is quoted in it. */
-export const GUARDIAN_MARKET = 'KR'
-export const GUARDIAN_CURRENCY = 'KRW'
-
-function priceFor(product: { prices: readonly { market: string; currency: string; amountMinor: number }[] }) {
-  const price = product.prices.find(
-    ({ currency, market }) => market === GUARDIAN_MARKET && currency === GUARDIAN_CURRENCY,
-  )
-  if (!price) {
-    throw new Error(`Guardian product has no ${GUARDIAN_MARKET}/${GUARDIAN_CURRENCY} price`)
-  }
-  return price.amountMinor
-}
+export const GUARDIAN_MARKET = 'KR' as const
+export const GUARDIAN_CURRENCY = 'KRW' as const
 
 /**
  * Sale price in minor units. KRW has no subunit, so 3900 is ₩3,900 — the same integer the PortOne SDK is
  * handed and the server verifies against.
  */
-export const GUARDIAN_REPORT_PRICE = priceFor(FULL_REPORT)
+export const GUARDIAN_REPORT_PRICE = 3_900
 
 /**
  * The one name the report is sold under. 전자상거래법 §13(2)(2) makes '재화등의 명칭' a pre-contract disclosure,
  * so the terms, the landing page, the PortOne 결제창 and the card statement all have to say this.
  */
-export const GUARDIAN_REPORT_NAME = FULL_REPORT.orderNames
+export const GUARDIAN_REPORT_NAME = { ko: '별자리 수호령 전체 리포트' } as const
 
-export const GUARDIAN_REPORT_SKU = FULL_REPORT.sku
+export const GUARDIAN_REPORT_SKU = 'guardian-report-full-v1' as const
 
 /**
  * GA4 `items[]` for the paid report. Lives here so `view_item`, `begin_checkout` and `purchase` describe one

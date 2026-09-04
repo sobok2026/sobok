@@ -13,16 +13,17 @@
     "guardian-cards:materialize-choice": "bun run scripts/materialize-guardian-choice-editions.ts --write",
     "guardian-cards:materialize-art-batches": "bun run scripts/materialize-guardian-art-batches.ts --write",
     "guardian-cards:materialize-love": "bun run scripts/materialize-guardian-love-editions.ts --write",
+    "guardian-cards:materialize-runtime": "bun run scripts/materialize-guardian-runtime-catalog.ts --write",
     "guardian-cards:materialize-self": "bun run scripts/materialize-guardian-self-editions.ts --write",
     "guardian-cards:materialize-work": "bun run scripts/materialize-guardian-work-editions.ts --write",
     "guardian-cards:package-art-release": "bun run scripts/package-guardian-card-art-release.ts",
     "guardian-cards:prepare-art": "bun run scripts/prepare-guardian-card-art.ts",
     "guardian-cards:validate-art-release": "bun run scripts/validate-guardian-card-art-release.ts",
     "guardian-cards:validate-art-review": "bun run scripts/validate-guardian-art-batch-review.ts",
-    "guardian-cards:validate": "bun run scripts/materialize-guardian-self-editions.ts --check && bun run scripts/materialize-guardian-love-editions.ts --check && bun run scripts/materialize-guardian-work-editions.ts --check && bun run scripts/materialize-guardian-choice-editions.ts --check && bun run scripts/materialize-guardian-art-batches.ts --check && bun run scripts/validate-guardian-art-batch-review.ts && bun run scripts/validate-guardian-card-content.ts",
+    "guardian-cards:validate": "bun run scripts/materialize-guardian-self-editions.ts --check && bun run scripts/materialize-guardian-love-editions.ts --check && bun run scripts/materialize-guardian-work-editions.ts --check && bun run scripts/materialize-guardian-choice-editions.ts --check && bun run scripts/materialize-guardian-art-batches.ts --check && bun run scripts/validate-guardian-art-batch-review.ts && bun run scripts/validate-guardian-card-content.ts && bun run scripts/materialize-guardian-runtime-catalog.ts --check",
     "questionnaire:validate": "bun run scripts/validate-guardian-questionnaire.ts",
     "type:bindings": "WRANGLER_WRITE_LOGS=false wrangler types worker-configuration.generated.d.ts --env-file=/dev/null --env-interface StellaPublicBindings --include-runtime=false --strict-vars=false",
-    "type": "WRANGLER_WRITE_LOGS=false wrangler types worker-configuration.generated.d.ts --env-file=/dev/null --env-interface StellaPublicBindings --include-runtime=false --strict-vars=false --check && bun run questionnaire:validate && next typegen && tsc --noEmit && tsc -p worker/tsconfig.json && tsc -p scripts/tsconfig.json"
+    "type": "WRANGLER_WRITE_LOGS=false wrangler types worker-configuration.generated.d.ts --env-file=/dev/null --env-interface StellaPublicBindings --include-runtime=false --strict-vars=false --check && bun run questionnaire:validate && bun run guardian-cards:validate && next typegen && tsc --noEmit && tsc -p worker/tsconfig.json && tsc -p scripts/tsconfig.json"
   },
   "dependencies": {
     "@marsidev/react-turnstile": "^1.5.3",

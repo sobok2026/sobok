@@ -165,7 +165,11 @@ guardianLoveRedraw.post('/:reportPublicId/love-redraw/draws', async (c) => {
     if (!(await withinRateLimits(db, ipHash ?? 'noip', DRAW_LIMITS))) {
       return { status: 'rate-limited' as const }
     }
-    const draw = await consumeGuardianRedraw(db, { ...access, requestId: parsed.body.requestId })
+    const draw = await consumeGuardianRedraw(db, {
+      ...access,
+      requestId: parsed.body.requestId,
+      assetOrigin: c.env.STELLA_GUARDIAN_ASSET_ORIGIN,
+    })
     if (draw.status !== 'drawn') {
       return draw
     }
