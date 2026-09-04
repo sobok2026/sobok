@@ -7,7 +7,7 @@ import { LEGAL_CONTACT_EMAIL } from './identity'
 // digits of the 사업자등록번호 (373-03-02023 → "03") mark it individual, not a 법인.
 //
 // Brand-level rather than per-app because one 통신판매업 신고 covers every sobok storefront: vibe sells the
-// DeepType report and stella sells the guardian report under this same registration. Two copies of a
+// DeepType report and Stella sells the guardian early-access pass under this same registration. Two copies of a
 // registration number is not a duplication that merely risks drift — the disclosure is what the number is
 // filed against, so a site displaying a stale one is a filing violation, not a stale string.
 export const BUSINESS = {

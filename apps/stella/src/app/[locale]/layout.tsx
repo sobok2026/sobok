@@ -30,7 +30,7 @@ export const viewport: Viewport = buildViewport()
 
 // The document and everything that is true of every route: fonts, providers, the site's Organization graph
 // and the tag loader. Visible chrome lives one level down, because the paid funnel and the free site do not
-// agree on any of it — see `(site)/layout.tsx` and `(funnel)/layout.tsx`.
+// agree on any of it — see `(site)/layout.tsx` and `(commerce)/layout.tsx`.
 export default async function LocaleLayout({ children, params }: LayoutProps<'/[locale]'>) {
   const locale = await getLocale(params)
 

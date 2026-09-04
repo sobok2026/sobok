@@ -22,11 +22,11 @@ export interface Bindings {
   // Siteverify secret for stella's own Turnstile widget (account-turnstile workspace; cutover off the shared
   // "sobok" widget is written in Terraform but not applied yet).
   STELLA_TURNSTILE_SECRET: SecretsStoreSecret
-  // Environment-specific HMAC key for pseudonymous IP hashing (auth, abuse limits, and report dedup).
+  // Environment-specific HMAC key for pseudonymous IP hashing (auth and abuse limits).
   STELLA_IP_HASH_SALT: SecretsStoreSecret
   // Discord webhook for moderation/ops alerts. Empty value disables alerting.
   STELLA_DISCORD_WEBHOOK: SecretsStoreSecret
-  // Transactional guardian-report delivery and re-open email API key.
+  // Transactional guardian-pass receipt and recovery email API key.
   STELLA_RESEND_API_KEY: SecretsStoreSecret
   // Stella-local Better Auth session signing secret and central OIDC confidential-client secret.
   STELLA_AUTH_SECRET: SecretsStoreSecret

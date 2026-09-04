@@ -12,6 +12,7 @@ import { SignFigure } from '@/components/SignFigure'
 import { aspectTone } from '@/content/interpretations/types'
 
 import { seededPick } from './daily'
+import GuardianDailySection from './GuardianDailySection'
 import LuckySection from './LuckySection'
 import MoonPhase from './MoonPhase'
 import type { StationPlanetId } from './readings/types'
@@ -149,6 +150,8 @@ export default function TodayBody({ data, homeHref, onShare, shared }: TodayBody
           </div>
         )}
       </section>
+
+      <GuardianDailySection reading={data} shared={shared} surface="today" />
 
       <LuckySection lucky={lucky} namespace="Today" sky={sky} />
 
