@@ -75,6 +75,7 @@ export async function saveGuardianQuestionnaireAnswer(
     reportId: number
     questionId: string
     answer: GuardianQuestionnaireAnswer
+    assetOrigin: string
   },
 ): Promise<SaveGuardianQuestionnaireAnswerResult> {
   return db.transaction(async (tx) => {
