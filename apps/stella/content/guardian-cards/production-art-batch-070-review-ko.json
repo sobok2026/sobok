@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "work.next-move.action-beat",
+  "batchOrder": 70,
+  "purpose": "다음 행동이 완성 계획 증명이 아니라 중심 소품이 처음 움직이고 완료 가장자리가 열린 action-beat 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "work",
+    "narrativeAxisId": "next-move",
+    "visualAxisId": "action-beat"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium work-next-move action-beat guardian card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair; no extra guardian, coworker, client, recipient, human, silhouette, reflection, empty seat or personal belonging implying another person. Preserve canonical identity, colors, clothing, signature props, dark-purple eyes and visible chest Stella stars. Guardian or pair plus one next-step control covers 55–65% and reads at 80px. Capture only the first bounded planning motion while the completion edge remains visibly open; never guarantee completion, promotion or future success. Written surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, names, labels, score, number, date, clock face, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Controls remain removable, half-set, open-ended or unlatched. Only Scorpio canonical tail-heart is allowed; no added heart. No closed ring, portal, infinity sign or deterministic route. Keep every composition distinct. Soft colored-pencil and watercolor, paper grain, plush proportions and deep-purple outlines; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.work.next-move.action-beat",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "e3e80b0e2a3576f2125e252ca1a516ed0c65ac833bc133cedbff58e5918123a7",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "action_startbutton_close_resultrelief_responsibilitytoken_shortopenrail",
+      "artDirection": "세로 3:4. 몽실이1의 얼굴·손과 start button1, blank result relief1, responsibility token1, short open rail1을 close three-quarter로 둔다. token과 rail은 half-set이고 이름·경로선·완료 성과·text는 없다. 중심 소품은 첫 notch·첫 삽입·첫 이동만 보이고 완료 가장자리는 비워 둔다.",
+      "distinctFrom": [
+        "B001–069의 같은 별자리·첫 작업 구도를 반복하지 않고 action_startbutton_close_resultrelief_responsibilitytoken_shortopenrail를 사용한다.",
+        "같은 work.next-move.action-beat 묶음의 다른 11개와 첫 이동 방향·카메라·열린 완료 가장자리를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "aries 정체성과 첫 동작·소품 수를 확인한다.",
+        "한 동작만 시작되고 완료·성과·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "2118e6e287fa74ff19364f03cb6d26efa3c00a4ae0de479b0e0fc053e451d4dd"
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.work.next-move.action-beat",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "423d4cdb5e1bd33cbdf1791282f5f333f83f09a5d985d65ca7d9723e9c1d9269",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "action_boxrim_close_todaylater_boxes_oneblock_openmargin",
+      "artDirection": "세로 3:4. 차곡이1의 얼굴·두 손과 today/later boxes2, star block1을 close frontal로 둔다. block은 today box에 닿기 전이고 later box는 열린다. 목록·날짜·수량 text·완료 stack은 없다. 중심 소품은 첫 notch·첫 삽입·첫 이동만 보이고 완료 가장자리는 비워 둔다.",
+      "distinctFrom": [
+        "B001–069의 같은 별자리·첫 작업 구도를 반복하지 않고 action_boxrim_close_todaylater_boxes_oneblock_openmargin를 사용한다.",
+        "같은 work.next-move.action-beat 묶음의 다른 11개와 첫 이동 방향·카메라·열린 완료 가장자리를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "taurus 정체성과 첫 동작·소품 수를 확인한다.",
+        "한 동작만 시작되고 완료·성과·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "bf39b8a398db5104454bfa337d5fe66b67962bd8f61fb2f01d1beca8853788b4"
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.work.next-move.action-beat",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "e1d3ca6d133c55445e106eb93ff6c8ba308c31a83bf4ef38a064a92ae16c3192",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "action_windowedge_close_pair_windows3_durationresulttokens_openbay",
+      "artDirection": "세로 3:4. 재잘이·소곤이 pair2/ribbon1와 windows3, duration/result tokens2씩을 close top-oblique로 둔다. shortest window1만 half-folded이고 other windows2와 archive bay는 열린다. pseudo-text0. 중심 소품은 첫 notch·첫 삽입·첫 이동만 보이고 완료 가장자리는 비워 둔다.",
+      "distinctFrom": [
+        "B001–069의 같은 별자리·첫 작업 구도를 반복하지 않고 action_windowedge_close_pair_windows3_durationresulttokens_openbay를 사용한다.",
+        "같은 work.next-move.action-beat 묶음의 다른 11개와 첫 이동 방향·카메라·열린 완료 가장자리를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "gemini 정체성과 첫 동작·소품 수를 확인한다.",
+        "한 동작만 시작되고 완료·성과·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "edd0804246c067c76cff14543b24a01fbff9d1dd49a05e8c70f0500fc67b634d"
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.work.next-move.action-beat",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "37a61dba0a28672a816f672ac8d8fadea734cb61c4c520df350aafffdf302d8d",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "action_roleboard_close_selflimitrequest_cells3_opengap",
+      "artDirection": "세로 3:4. 달콩이1의 얼굴·집게와 role board1/cells3, self/limit/request tokens3를 close side로 둔다. request token만 half-set하고 다른 cells는 열린다. 이름·타인·빈 자리·text는 없다. 중심 소품은 첫 notch·첫 삽입·첫 이동만 보이고 완료 가장자리는 비워 둔다.",
+      "distinctFrom": [
+        "B001–069의 같은 별자리·첫 작업 구도를 반복하지 않고 action_roleboard_close_selflimitrequest_cells3_opengap를 사용한다.",
+        "같은 work.next-move.action-beat 묶음의 다른 11개와 첫 이동 방향·카메라·열린 완료 가장자리를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "cancer 정체성과 첫 동작·소품 수를 확인한다.",
+        "한 동작만 시작되고 완료·성과·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "610e11fe85ac9b8c344556eaa6d19def5551406e58b855a3852682e4947ce5fb"
+    },
+    {
+      "order": 5,
+      "editionId": "leo.work.next-move.action-beat",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "8702c2e4cdf66fd2eedbf9bdd8a503b2a61fdd75f3294b5ae5ece6bd53d98fcc",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "action_stageplan_close_resultslot_deadlinetoken_crownoff_flygap",
+      "artDirection": "세로 3:4. 해님이1의 얼굴과 crown1, stage plan1/result slot1/deadline token1을 close low-angle로 둔다. token은 slot 앞에 미접촉이며 fly gap을 연다. name·date·score·audience0. 중심 소품은 첫 notch·첫 삽입·첫 이동만 보이고 완료 가장자리는 비워 둔다.",
+      "distinctFrom": [
+        "B001–069의 같은 별자리·첫 작업 구도를 반복하지 않고 action_stageplan_close_resultslot_deadlinetoken_crownoff_flygap를 사용한다.",
+        "같은 work.next-move.action-beat 묶음의 다른 11개와 첫 이동 방향·카메라·열린 완료 가장자리를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "leo 정체성과 첫 동작·소품 수를 확인한다.",
+        "한 동작만 시작되고 완료·성과·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "19b5b933cebb3510f533264133060f76151d2e85fb5aeda56a3068a23f0e5b1e"
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.work.next-move.action-beat",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "ccf46ee09589abb86e6f2b28cbb722cedead380385544030d05ffe9c44f142cf",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "action_requirementstrip_close_threecriteria_nextbox_pencilhover",
+      "artDirection": "세로 3:4. 새봄이1의 얼굴·손과 requirement strip1/criteria tokens3, next-version box1, pencil1을 close axial로 둔다. token1만 strip에 half-set하고 box는 열린다. checklist text·완벽 badge0. 중심 소품은 첫 notch·첫 삽입·첫 이동만 보이고 완료 가장자리는 비워 둔다.",
+      "distinctFrom": [
+        "B001–069의 같은 별자리·첫 작업 구도를 반복하지 않고 action_requirementstrip_close_threecriteria_nextbox_pencilhover를 사용한다.",
+        "같은 work.next-move.action-beat 묶음의 다른 11개와 첫 이동 방향·카메라·열린 완료 가장자리를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "virgo 정체성과 첫 동작·소품 수를 확인한다.",
+        "한 동작만 시작되고 완료·성과·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "1cd603f718efbe682a1bf42bae8f53fd3e67b9342105bc829b54b1d09f1ed355"
+    },
+    {
+      "order": 7,
+      "editionId": "libra.work.next-move.action-beat",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "cbea0dc29bbb661c282094e0ddf0e60c78aa491408fc7836e9087ab27675c4fb",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "action_decisionboard_close_roledeadlinechoice_cells3_openY",
+      "artDirection": "세로 3:4. 고르미1의 얼굴·손과 decision board1/cells3, role/deadline/decision tokens3를 close frontal로 둔다. one token만 first notch이고 open Y gap을 남긴다. names·회의석·합의 완료0. 중심 소품은 첫 notch·첫 삽입·첫 이동만 보이고 완료 가장자리는 비워 둔다.",
+      "distinctFrom": [
+        "B001–069의 같은 별자리·첫 작업 구도를 반복하지 않고 action_decisionboard_close_roledeadlinechoice_cells3_openY를 사용한다.",
+        "같은 work.next-move.action-beat 묶음의 다른 11개와 첫 이동 방향·카메라·열린 완료 가장자리를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "libra 정체성과 첫 동작·소품 수를 확인한다.",
+        "한 동작만 시작되고 완료·성과·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "301a1eac055ebaedbf83e1417b67e719f5f4ac7a01be927264f5e701fec717bf"
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.work.next-move.action-beat",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "c15a7adeab0b2232b704ff1e3f663582bc1655a30ee07fd5f54d178b87db2598",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "action_responsibilitybox_close_boxes3_onelock_handofftokens_openbay",
+      "artDirection": "세로 3:4. 꼬옥이1/tail-heart1의 얼굴·pincers와 boxes3, one responsibility lock1, handoff tokens2를 close reverse로 둔다. lock은 half-set, other boxes2는 unlatched다. key·name·추가 heart0. 중심 소품은 첫 notch·첫 삽입·첫 이동만 보이고 완료 가장자리는 비워 둔다.",
+      "distinctFrom": [
+        "B001–069의 같은 별자리·첫 작업 구도를 반복하지 않고 action_responsibilitybox_close_boxes3_onelock_handofftokens_openbay를 사용한다.",
+        "같은 work.next-move.action-beat 묶음의 다른 11개와 첫 이동 방향·카메라·열린 완료 가장자리를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "scorpio 정체성과 첫 동작·소품 수를 확인한다.",
+        "한 동작만 시작되고 완료·성과·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "666ae75d98718567d9930679282e98a87ddf30111251b4dbaaf2f1b483989165"
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.work.next-move.action-beat",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "6d2420b73db6b330250a3c59781094d10e2a372a3e127ab2f047a4e06f5aad5a",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "action_currentpeak_close_foldedtelescope_blankflag_bow_skygap",
+      "artDirection": "세로 3:4. 총총이1/bow1의 얼굴·손과 folded telescope1, current-point flag1, blank deadline token1을 close side로 둔다. flag는 꽂기 전이고 sky gap을 연다. map route·date·arrow text0. 중심 소품은 첫 notch·첫 삽입·첫 이동만 보이고 완료 가장자리는 비워 둔다.",
+      "distinctFrom": [
+        "B001–069의 같은 별자리·첫 작업 구도를 반복하지 않고 action_currentpeak_close_foldedtelescope_blankflag_bow_skygap를 사용한다.",
+        "같은 work.next-move.action-beat 묶음의 다른 11개와 첫 이동 방향·카메라·열린 완료 가장자리를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "sagittarius 정체성과 첫 동작·소품 수를 확인한다.",
+        "한 동작만 시작되고 완료·성과·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "b991b09e9b7d1f723eec88c0e84d02c71d798e80999a682d4a37f1c94e57eb0c"
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.work.next-move.action-beat",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "5f427c74c6da001640e2b9627527853515017d073ff935d6fda8c5614d2dfddf",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "action_approved_pilot_weekgrid_recoverycell_equalblocks",
+      "artDirection": "세로 3:4. 승인 파일럿 원본을 그대로 재사용한다. 오름이1가 이번 주 작업 칸과 같은 크기의 회복 칸을 놓는 close-emotion 구도·정체성·가슴 Stella 별을 변경하지 않는다. 새로 생성하지 않고 approvedArtworkSha256 바이트를 그대로 사용한다. 중심 소품은 첫 notch·첫 삽입·첫 이동만 보이고 완료 가장자리는 비워 둔다.",
+      "distinctFrom": [
+        "B001–069의 같은 별자리·첫 작업 구도를 반복하지 않고 action_approved_pilot_weekgrid_recoverycell_equalblocks를 사용한다.",
+        "같은 work.next-move.action-beat 묶음의 다른 11개와 첫 이동 방향·카메라·열린 완료 가장자리를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "capricorn 정체성과 첫 동작·소품 수를 확인한다.",
+        "한 동작만 시작되고 완료·성과·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "94fb2634392cf8c9be6ebdac6ccb6f4c39eec404085ec60557d146469295da0a"
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.work.next-move.action-beat",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "e313a62e6d6d5d891259bb9cb49d258dcb031b7c2ffa40b99de06fef02560f18",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "action_prototypeport_close_smallmachine_coretile_blankusagecard_cloudbite",
+      "artDirection": "세로 3:4. 방울이1의 얼굴·손과 small cloud prototype1, core function tile1, blank usage card1을 close top-oblique로 둔다. tile은 port 앞에 half-set하고 cloud bite를 연다. 완성 대형 기계·user figure·text0. 중심 소품은 첫 notch·첫 삽입·첫 이동만 보이고 완료 가장자리는 비워 둔다.",
+      "distinctFrom": [
+        "B001–069의 같은 별자리·첫 작업 구도를 반복하지 않고 action_prototypeport_close_smallmachine_coretile_blankusagecard_cloudbite를 사용한다.",
+        "같은 work.next-move.action-beat 묶음의 다른 11개와 첫 이동 방향·카메라·열린 완료 가장자리를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "aquarius 정체성과 첫 동작·소품 수를 확인한다.",
+        "한 동작만 시작되고 완료·성과·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "a288b0c848035cdf0ec11eb3897929e1b127af771d5ff45d93c1ad706b3944dc"
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.work.next-move.action-beat",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "547bc84e7a7804577b566ae21fa7655f9dcd41e4fa39a09e09f04c16b10d9d9c",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "action_dreamjar_close_pair_bubbles3_onejar_resultchecktags_cleft",
+      "artDirection": "세로 3:4. 꿈별이·잠별이 pair2의 얼굴·inner fins와 dream bubbles3, open jar1, result/check tags2를 close end-on으로 둔다. bubble1만 jar 위에 있고 tags는 미부착, central cleft를 연다. time·name·ring·heart0. 중심 소품은 첫 notch·첫 삽입·첫 이동만 보이고 완료 가장자리는 비워 둔다.",
+      "distinctFrom": [
+        "B001–069의 같은 별자리·첫 작업 구도를 반복하지 않고 action_dreamjar_close_pair_bubbles3_onejar_resultchecktags_cleft를 사용한다.",
+        "같은 work.next-move.action-beat 묶음의 다른 11개와 첫 이동 방향·카메라·열린 완료 가장자리를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pisces 정체성과 첫 동작·소품 수를 확인한다.",
+        "한 동작만 시작되고 완료·성과·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "a6563799fdd5968a9ebc129c0196b7f3079b6693b8c69f60bebff79f115a6876"
+    }
+  ],
+  "editorialApprovedOn": "2026-09-01",
+  "generatedOn": "2026-09-01",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-02",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

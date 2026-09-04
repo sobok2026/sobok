@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "work.next-move.constellation-afterglow",
+  "batchOrder": 72,
+  "purpose": "다음 행동의 결과가 완성된 미래 예언이 아니라 한 번의 제한된 결과와 열린 다음 표식 사이의 끊긴 별빛으로 읽히는 constellation-afterglow 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "work",
+    "narrativeAxisId": "next-move",
+    "visualAxisId": "constellation-afterglow"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium work-next-move constellation-afterglow guardian card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair; no extra guardian, coworker, manager, client, recipient, human, silhouette, reflection, empty seat or personal belonging implying another person. Preserve canonical identity, colors, clothing, signature props, dark-purple eyes and visible chest Stella stars. Guardian or pair plus one bounded result and one separated next marker covers 55–65% and reads at 80px. Show only one limited work result with a broken, non-deterministic starlight interval toward an unfinished next marker; never guarantee completion, promotion, mastery or future success. Written surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, names, labels, score, number, date, clock face, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Controls and next markers remain removable, blank, open-ended or unlatched. Only Scorpio canonical tail-heart is allowed; no added heart. No closed ring, halo, portal, infinity sign or deterministic route. Keep every composition distinct. Soft colored-pencil and watercolor, paper grain, plush proportions and deep-purple outlines; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.work.next-move.constellation-afterglow",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "e2ee5d2e4700bb80487a62545bda201a6b188e8766d151e4dc165f59044f4479",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "afterglow_startplate_lowrear_resultrelief_responsibilitytoken_brokennextnotch",
+      "artDirection": "세로 3:4. 몽실이1의 얼굴·손과 식은 start plate1, bounded result relief1, responsibility token1, 멀리 떨어진 blank next notch1을 low rear three-quarter로 둔다. result와 notch 사이는 끊긴 별빛만 남기고 rail 끝은 열며 이름·완료 배지·경로선·text는 없다.",
+      "distinctFrom": [
+        "B001–71의 같은 별자리·next-move constellation-afterglow 구도를 반복하지 않고 afterglow_startplate_lowrear_resultrelief_responsibilitytoken_brokennextnotch를 사용한다.",
+        "같은 work.next-move.constellation-afterglow 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·result relief1·responsibility token1·blank next notch1을 확인한다.",
+        "한 결과 뒤 별빛이 끊기고 다음 성과·책임·미래가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "4c50e1cc85ba936c6277aa8314318cdaad35e8cb4d9d6c7332fd402028544e6b"
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.work.next-move.constellation-afterglow",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "5cde7ba5c5569b3290b71b4b35395639eac83dc3fab0396b4d21cabd032cd332",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "afterglow_twoboxes_highside_oneblock_result_nextblankgap",
+      "artDirection": "세로 3:4. 차곡이1와 today/later boxes2를 high side로 두고 today box에는 star block1의 제한된 결과만 남긴다. later box는 비어 열린 채이며 blank next block1은 떨어진 곳에 끊긴 별빛으로만 이어진다. stack·목록·수량·date·text는 없다.",
+      "distinctFrom": [
+        "B001–71의 같은 별자리·next-move constellation-afterglow 구도를 반복하지 않고 afterglow_twoboxes_highside_oneblock_result_nextblankgap를 사용한다.",
+        "같은 work.next-move.constellation-afterglow 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이1·boxes2·result block1·blank next block1의 수와 열린 later box를 확인한다.",
+        "한 칸 결과가 장기 완료나 생산성 보장으로 읽히지 않고 다음 여백이 남는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "f15912579d1297b502cf44d09394a8293cde4acf87a7914399767db949df1ede"
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.work.next-move.constellation-afterglow",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "acf777200b0f142141df90e2a00d93795707c8ec0a586abde9233093af61ef84",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "afterglow_threewindows_pair_rearoblique_onefolded_twoopen_nexttoken",
+      "artDirection": "세로 3:4. 재잘이·소곤이 pair2/ribbon1와 windows3를 rear oblique로 둔다. shortest window1에는 blank result token1만 남고 other windows2와 archive bay1는 열어 둔다. separated next token1까지 끊긴 별빛만 두며 pseudo-text·완료 순서·route는 없다.",
+      "distinctFrom": [
+        "B001–71의 같은 별자리·next-move constellation-afterglow 구도를 반복하지 않고 afterglow_threewindows_pair_rearoblique_onefolded_twoopen_nexttoken를 사용한다.",
+        "같은 work.next-move.constellation-afterglow 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "재잘이·소곤이 pair2·windows3·result token1·next token1과 열린 bay를 확인한다.",
+        "첫 결과 뒤 다른 두 창과 다음 선택이 열려 있고 완성 순서가 결정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "b7110a0e7dcc306e01669908540d2ef2bba637b22cb2965404095108cc8ffabf"
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.work.next-move.constellation-afterglow",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "2b6d06c22fd7369b9c37be7eb2367a34aed0854f0af5519a0f17936594f48bb7",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "afterglow_roleboard_overhead_cells3_resulttoken_requesttoken_openedge",
+      "artDirection": "세로 3:4. 달콩이1과 role board1/cells3를 overhead close로 두고 한 cell에는 bounded result token1, 다른 cell 앞에는 removable request token1을 둔다. third cell과 board edge는 열며 이름·타인·빈 자리·업무표 text는 없다. result에서 next marker까지 별빛은 중간에서 끊긴다.",
+      "distinctFrom": [
+        "B001–71의 같은 별자리·next-move constellation-afterglow 구도를 반복하지 않고 afterglow_roleboard_overhead_cells3_resulttoken_requesttoken_openedge를 사용한다.",
+        "같은 work.next-move.constellation-afterglow 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·role board1·cells3·result token1·request token1을 확인한다.",
+        "역할 한 칸의 결과가 영구 책임이나 도움 보장으로 닫히지 않고 열린 cell을 남기는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "3035e92ced5989e220a415896eba8ffd91f6ff1139301aafdcee07502b1a9780"
+    },
+    {
+      "order": 5,
+      "editionId": "leo.work.next-move.constellation-afterglow",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "5e308df7b672d3a82d735409603aff51ece93862a77baeae079d02c50ea2d742",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "afterglow_stageplan_profile_resulttile_blanknextslot_crown",
+      "artDirection": "세로 3:4. 해님이1/crown1과 stage plan1을 close profile로 두고 result slot1에는 plain result tile1만, 멀리 blank next slot1은 비운다. 두 slot 사이의 별빛은 끊기며 audience·name·date·score·박수·완료 휘장은 없다.",
+      "distinctFrom": [
+        "B001–71의 같은 별자리·next-move constellation-afterglow 구도를 반복하지 않고 afterglow_stageplan_profile_resulttile_blanknextslot_crown를 사용한다.",
+        "같은 work.next-move.constellation-afterglow 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1·crown1·stage plan1·result tile1·blank next slot1을 확인한다.",
+        "제한된 결과가 인정·승진·미래 무대 성공을 보장하지 않고 다음 slot이 비어 있는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "c98a1506b833a3236a085c766a91225a05b1eaecbbe0ef131fd934760cfa7cd6"
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.work.next-move.constellation-afterglow",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "8bd6ff48b6ce10d12b48ca0ceaa1d1797474adbaf5994054fa6ac972d179426e",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "afterglow_requirementstrip_sidecut_tokens3_resulttile_openversionbox",
+      "artDirection": "세로 3:4. 새봄이1의 얼굴·손과 requirement strip1/criteria tokens3, bounded result tile1, open next-version box1을 side cut으로 둔다. result와 box 사이 별빛은 끊고 pencil1은 내려놓는다. checklist text·완벽 badge·완료 도장은 없다.",
+      "distinctFrom": [
+        "B001–71의 같은 별자리·next-move constellation-afterglow 구도를 반복하지 않고 afterglow_requirementstrip_sidecut_tokens3_resulttile_openversionbox를 사용한다.",
+        "같은 work.next-move.constellation-afterglow 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·strip1·criteria tokens3·result tile1·open box1·pencil1을 확인한다.",
+        "기준 한 번의 결과가 완벽함을 증명하지 않고 다음 버전 상자가 열린 채인지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "08b1925fc619b3b0534eeb6f5187e29ec46aada8f7db88cf167be6083760b397"
+    },
+    {
+      "order": 7,
+      "editionId": "libra.work.next-move.constellation-afterglow",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "3a5635677d4c8c5965f92ad1996b79857c733addf4a5fe6ec05d078ac597b4d0",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "afterglow_decisionboard_lowfront_cells3_resulttoken_openygap",
+      "artDirection": "세로 3:4. 고르미1과 decision board1/cells3를 low frontal로 두고 one cell에 bounded result token1, other cells2에는 removable role/deadline tokens2를 둔다. result 뒤 open Y gap과 blank next marker1을 남기며 balance·names·meeting seats·합의 완료 text는 없다.",
+      "distinctFrom": [
+        "B001–71의 같은 별자리·next-move constellation-afterglow 구도를 반복하지 않고 afterglow_decisionboard_lowfront_cells3_resulttoken_openygap를 사용한다.",
+        "같은 work.next-move.constellation-afterglow 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·board1·cells3·result token1·tokens2·open Y gap을 확인한다.",
+        "한 결정 결과가 합의 완료나 정답으로 닫히지 않고 다음 분기가 열려 있는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "18929a2cc48714e96e853a31f4d19ce118ca4ebe008ea9d5812c4df101f90eed"
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.work.next-move.constellation-afterglow",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "da51abe11b508b8a7fd9739f22b0c7fb27003b3063092693a660ef25bafa9bff",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "afterglow_boxes_reversehigh_oneopen_result_handofftokens_brokengap",
+      "artDirection": "세로 3:4. 꼬옥이1/tail-heart1과 boxes3를 reverse high로 두고 one box만 열어 bounded result token1을 보인다. handoff tokens2는 other boxes 앞에 분리하고 latches는 unlatched다. key·name·추가 heart·완료 봉인은 없고 next gap까지 별빛은 끊긴다.",
+      "distinctFrom": [
+        "B001–71의 같은 별자리·next-move constellation-afterglow 구도를 반복하지 않고 afterglow_boxes_reversehigh_oneopen_result_handofftokens_brokengap를 사용한다.",
+        "같은 work.next-move.constellation-afterglow 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1·tail-heart1·boxes3·result token1·handoff tokens2와 열린 latch를 확인한다.",
+        "권한 한 번의 결과가 모든 책임 소유나 인계 완료로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "4796843f1285ecc9c8bb2041d9cd0a6b7a0520908c9adab5524a557a3a7f9d73"
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.work.next-move.constellation-afterglow",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "e8120325c6365adb2c9aa0b7439b85b2986ab9a3750ad9802f1904b8e64718fa",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "afterglow_currentflag_wideback_telescopefolded_nextmarker_brokenskygap",
+      "artDirection": "세로 3:4. 총총이1/bow1을 wide back three-quarter로 두고 folded telescope1, placed current-point flag1, blank next marker1을 서로 떨어뜨린다. flag와 marker 사이 sky gap은 넓고 별빛은 끊기며 date·map route·arrow·완주 표식·text는 없다.",
+      "distinctFrom": [
+        "B001–71의 같은 별자리·next-move constellation-afterglow 구도를 반복하지 않고 afterglow_currentflag_wideback_telescopefolded_nextmarker_brokenskygap를 사용한다.",
+        "같은 work.next-move.constellation-afterglow 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이1·bow1·telescope1·flag1·blank next marker1과 넓은 sky gap을 확인한다.",
+        "현재 지점 결과가 다음 산의 성공이나 정해진 경로로 이어지지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "1c1d6f2d8ef9d6d24238c77c0cd3218cc459bf677781a2a72fea9cc190d3e060"
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.work.next-move.constellation-afterglow",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "4388115adcc4c1d07c5a0229ace2800a6b0a8b6bddab4d0c7147944b91b9d171",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "afterglow_weekboard_topdown_equalcells_resultchip_nextopenslot",
+      "artDirection": "세로 3:4. 오름이1의 turquoise tail과 week board1을 top-down close로 두고 equal work/recovery cells2, bounded result chip1, open next slot1을 보인다. 숫자·요일·calendar grid·목표표 text는 없고 result와 next slot의 별빛은 끊긴다.",
+      "distinctFrom": [
+        "B001–71의 같은 별자리·next-move constellation-afterglow 구도를 반복하지 않고 afterglow_weekboard_topdown_equalcells_resultchip_nextopenslot를 사용한다.",
+        "같은 work.next-move.constellation-afterglow 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1 정체성·equal cells2·result chip1·open next slot1을 확인한다.",
+        "작업과 회복 한 칸의 결과가 장기 성취나 일정 확정으로 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "f88e93f2bf91b2b42374bca305f32413fcadaf3125a3a8b32b35261a7de71734"
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.work.next-move.constellation-afterglow",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "978f2992066462f30d79f7fe164c69937c8024378330e6a3854358fd1a58ee22",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "afterglow_cloudprototype_rearlow_resulttile_blankcard_opensocket",
+      "artDirection": "세로 3:4. 방울이1과 small cloud prototype1을 rear low close로 두고 tested function tile1, blank observation card1, open next socket1을 분리한다. result glow는 작고 socket까지 별빛은 끊기며 완성 대형 기계·user figure·diagram text·closed circuit는 없다.",
+      "distinctFrom": [
+        "B001–71의 같은 별자리·next-move constellation-afterglow 구도를 반복하지 않고 afterglow_cloudprototype_rearlow_resulttile_blankcard_opensocket를 사용한다.",
+        "같은 work.next-move.constellation-afterglow 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·prototype1·function tile1·blank card1·open socket1을 확인한다.",
+        "시험 결과 하나가 발명 완성이나 사용자 반응을 보장하지 않고 다음 socket이 열린 채인지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "8b9b0c47894f75a2a01e4e1d3078a25562b99324701069d62324f383743998c4"
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.work.next-move.constellation-afterglow",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "c992c915acfbe472bfaf2c879b1522ff07db9e1ae9bf90cf093b37e234267f74",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "afterglow_dreamjar_pair_sideend_bubble3_resulttag_nexttag_cleft",
+      "artDirection": "세로 3:4. 꿈별이·잠별이 pair2와 open jar1/dream bubbles3를 side end-on으로 둔다. jar에는 one bounded bubble1만, result tag1은 곁에 두고 blank next tag1은 떨어뜨린다. central cleft와 끊긴 별빛을 남기며 time·name·ring·heart·완료 광륜은 없다.",
+      "distinctFrom": [
+        "B001–71의 같은 별자리·next-move constellation-afterglow 구도를 반복하지 않고 afterglow_dreamjar_pair_sideend_bubble3_resulttag_nexttag_cleft를 사용한다.",
+        "같은 work.next-move.constellation-afterglow 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꿈별이·잠별이 pair2·jar1·bubbles3·result tag1·next tag1과 central cleft를 확인한다.",
+        "꿈 한 조각의 결과가 미래 약속으로 닫히지 않고 다음 확인 표식이 비어 있는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "c324e3ce009995317575773b388641701e0cb8aac6132af212a173a255532e53"
+    }
+  ],
+  "editorialApprovedOn": "2026-09-02",
+  "generatedOn": "2026-09-02",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-02",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

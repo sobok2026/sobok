@@ -1,0 +1,313 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "love.future-promise.stella",
+  "batchOrder": 56,
+  "purpose": "future-promise 원고를 각자의 정체성과 색을 유지한 열린 Stella 구조로 확장하는 신규 11개와 승인 Pisces 파일럿 1개의 편집·계보 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 1,
+    "newEditionCount": 11,
+    "onePerSign": true,
+    "slot": "love",
+    "narrativeAxisId": "future-promise",
+    "visualAxisId": "stella"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium Stella zodiac-guardian future-promise card master artwork, full-bleed 3:4. For newly generated editions show exactly the approved named guardian pair or canonical internal pair, never a third guardian, unseen recipient, human, body clue, shadow, reflection, silhouette, empty seat or personal belonging implying another person. Preserve canonical identity, relative size/colors, silhouette, clothing, signature props, dark-purple eyes with exactly one large plus one small highlight in each visible eye, and visible chest Stella stars. Pair plus focal promise device covers 55–65% and reads at actual width 80px. Build an open, revisable future-promise structure: every map panel, box, page, moon panel, cue arch, plan rail, agreement plane, folio, chart, footboard, blueprint, selector, token, peg, clip, cover, latch or cradle stays removable, half-set, unlatched, open-ended or reorderable. Stella trails begin at each guardian's own chest star, remain visually distinct, and leave through a specified open gap; never merge identities or form a closed destiny ring, halo, portal, infinity sign, cage or predetermined route. Symbols/simple shapes only: no readable text, pseudo-text, handwriting lines, name, number, date, clock face, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Keep each composition distinct in camera, depth axis, dominant silhouette, open negative-space shape, reversible control and split light path. Only Aries source action-heart1, Aquarius source heart-profile bottles2 and Scorpio canonical tail-heart tip1 are allowed; no other heart or heart-shaped void/light. No deterministic marriage, reunion, return, disclosure, agreement, growth, sacrifice, forgiveness or shared destiny. Follow compositionFamily, artDirection, distinctFrom and visualReviewFocus literally. The approved Pisces pilot is an inherited byte-identical exception and must not be regenerated or edited. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions and deep-purple outlines; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.love.future-promise.stella",
+      "sign": "aries",
+      "element": "fire",
+      "editorialContentHash": "8d0939040f03eb1f2d39bfeeb9d5e3221a02495fff4236e223d610c3c07a9f68",
+      "compositionFamily": "maphinge_highrear_openV_panels_clamshellheart_split_trails_outer_diamond_exit",
+      "artDirection": "세로 3:4의 맑아지는 Stella 새벽을 folded map hinge 위 high-rear three-quarter로 내려다본다. 몽실이·달콩이 exactly2는 서로 다른 map panels2 위 독립 pads2에 있고 panels는 physical corner1에서 open V를 만들지만 길로 이어지지 않는다. source action heart1은 hinge 위 low clamshell cradle1에 half-set되며 두 guardian이 grips2로 함께 열되 latch1은 잠그지 않는다. contact crescent bead1·shared action star1·removable corner clamp1은 서로 분리한다. chest-star trails2는 panels 바깥을 따라가다가 broad skewed-diamond exit를 감싸지 않고 위 양쪽 프레임으로 따로 빠진다. second heart·road·arrow·destination·closed ring·재회 확정은 없다.",
+      "distinctFrom": [
+        "B052 mutual-growth Stella의 twin lanes·finish flags를 반복하지 않고 two map panels·physical corner·open-V hinge를 쓴다.",
+        "B053 Orbit의 single L-map과 B055 Eclipse true-nadir map을 피해 high-rear clamshell heart와 outer diamond exits를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이·달콩이 exactly2, panels2/corner1, heart1/cradle1/grips2/latch1, bead/star/clamp 각1을 계수한다.",
+        "split trails와 open V가 하나의 영원한 길·닫힌 하트 문·보장된 재회를 만들지 않는지 확인한다."
+      ],
+      "editorialReviewStatus": "approved",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "3ded6411d813c00b9e0af79b41b65bc5d8b526542eaeff9c0491cf2eef5fdf50"
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.love.future-promise.stella",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialContentHash": "229b02547cdce8fb3835f2aae663bdd6a42a38cc1656c68a666415d93eef893f",
+      "compositionFamily": "boxrim_nadir_seasonbox_slips3_twin_seedcradles_open_spiral_chimney",
+      "artDirection": "세로 3:4를 small seasonal box1의 rim 위에서 near-nadir로 내려다본다. 차곡이·새봄이 exactly2는 box 양옆에 있고 open lid1은 화면 위에서 한쪽만 받친다. promise slips3에는 contact/time/money의 단일 relief 각1만 있으며 one slip은 lip에 half-set이다. box 밖 twin seed cradles2에는 star seeds2를 독립적으로 두고 roots contact0이다. removable lid-stop1과 seed divider1은 열려 있다. 두 chest stars에서 나온 seasonal arcs3는 서로 다른 반경의 broken open spiral로 상승해 tall off-center chimney를 남기고 프레임 밖으로 사라진다. ring·heart·gift lock·same growth·complete future는 없다.",
+      "distinctFrom": [
+        "B052의 two pots·care board·seasonal arcs를 반복하지 않고 single seasonal box/slips3와 detached seed cradles2를 쓴다.",
+        "B054 blanket end-on과 B055 low-front cookie halves 대신 near-nadir open spiral chimney를 주여백으로 둔다."
+      ],
+      "visualReviewFocus": [
+        "차곡이·새봄이 exactly2, box/lid/slips3/lid-stop, seed cradles2/seeds2/divider1을 확인한다.",
+        "broken spiral3가 닫힌 나이테·운명 고리·같은 성장 속도·완성 계획으로 읽히지 않는지 확인한다."
+      ],
+      "editorialReviewStatus": "approved",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "c71ee7e561d02fc2409b61036d2ae6fa8af30f49caa5849a7fd00499cdaba9c3"
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.love.future-promise.stella",
+      "sign": "gemini",
+      "element": "air",
+      "editorialContentHash": "8eda845e5d4c3572c857aa724037a762cb18885426a32a49315cc90571b80b40",
+      "compositionFamily": "pagecorner_endon_starbook_butterfly_nextpage_titlebar_tokens3_open_scalloped_airwell",
+      "artDirection": "세로 3:4의 밝은 구름방을 open star-book1의 near page corner 높이에서 end-on cross-page로 본다. canonical 재잘이·소곤이 pair2는 서로 다른 page depth에 있고 body-only connector ribbon1을 유지한다. pages2와 next page1은 flat-open butterfly silhouette를 만들며 blank shared-title bar1은 clips2로만 걸린다. paired-dot shared token1과 personal tokens2는 gutter와 outer page edges에 분리한다. two abstract sentence fields2는 글줄이 아닌 넓은 색면이고, 두 guardian은 각자 다른 field를 가리킨다. chest-star trails2는 upper scalloped airwell을 지나 만나지 않고 frame 밖으로 나간다. extra page/book·pseudo-text·question mark·heart·closed ribbon loop·determined ending은 없다.",
+      "distinctFrom": [
+        "B052의 question trees2/star-fruit를 반복하지 않고 next page·title bar·tokens3·abstract fields2를 주형태로 둔다.",
+        "B054 letters2 crosswind와 B055 detached reading panels를 피해 page-corner end-on과 scalloped airwell을 사용한다."
+      ],
+      "visualReviewFocus": [
+        "canonical pair2/ribbon1, book1/pages2/next page1, title bar/clips2, tokens3, fields2가 정확하고 글줄이 없는지 확인한다.",
+        "trails와 ribbon이 닫힌 loop·합쳐진 문장·완성 공동 제목·확정 결말을 만들지 않는지 확인한다."
+      ],
+      "editorialReviewStatus": "approved",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "4843d201d139b46361d5df49d9e01586a0a8ceb827cabf9d8fa34334ec2adc12"
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.love.future-promise.stella",
+      "sign": "cancer",
+      "element": "water",
+      "editorialContentHash": "fe0ea2e740dceec401e79948394df1dc4850f1b9eb295a46764481e1c500a67e",
+      "compositionFamily": "moonwindow_axial_shellhouse_panel3docks_twin_grips_open_offcenter_crescent_exit",
+      "artDirection": "세로 3:4의 맑은 달밤을 shell-house moon window1의 긴 축과 나란한 strict axial end-on으로 본다. near에는 달콩이1과 shell-house1, far에는 solid portable pack1을 멘 꼬옥이1을 두어 houses2는 분리한다. 가운데 full-moon panel1의 docks3에는 meeting peg·feeling pebble·house marker 각1만 있다. 두 guardian은 window의 opposite grips2를 잡아 한 notch 옆으로 열며 hinge1과 release tab1은 잠그지 않는다. 꼬옥이 tail-heart tip1 외 heart0이다. chest-star trails2는 window와 panel 옆 broad off-center crescent exit로 따로 빠져나가고 닫힌 궤도를 만들지 않는다. single home·forced entry·clock/grid·guaranteed meeting은 없다.",
+      "distinctFrom": [
+        "B052의 shared garden island·role board를 반복하지 않고 full-moon panel/docks3와 axial moon window를 결합한다.",
+        "B054 eave canopy와 B055 door seam을 피해 weather0·window grips2·off-center crescent exit를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이·꼬옥이 exactly2, houses2, moon panel1/markers3, window1/grips2/hinge/release, tail-heart1을 계수한다.",
+        "cresent exit가 열린 채이고 single home·동거·재회·닫힌 보호 고리로 보이지 않는지 확인한다."
+      ],
+      "editorialReviewStatus": "approved",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "c1509371e00449801fd86165908abcb734d064f9711b0b1df36c055d701ff4f5"
+    },
+    {
+      "order": 5,
+      "editionId": "leo.love.future-promise.stella",
+      "sign": "leo",
+      "element": "fire",
+      "editorialContentHash": "e2186d5db202c239d9260faecf83e516bfee4c958b83271904f001e6b25071e0",
+      "compositionFamily": "crownheight_frontal_missingtop_cuearch_equalplaques_roletiles_splitspot_trails_open_flygap",
+      "artDirection": "세로 3:4 backstage를 Haenim crown 높이 strict frontal로 본다. 해님이·고르미 exactly2와 top bar가 없는 open cue arch1이 주실루엣이다. arch의 columns2에는 equal blank name plaques2와 role tiles2가 같은 높이로 있고 shared cheer marker1은 center cradle1에 unseated다. separate spot heads2와 knobs2는 각 guardian이 조절하며 fields2는 같은 밝기로 겹치지 않는다. quick-release hinge1과 cradle clip1은 half-set이다. chest-star trails2는 arch outer sides를 지나 tall central flygap을 막지 않고 위 프레임으로 나간다. stage·seat·poster·trophy·heart·one protagonist·closed portal은 없다.",
+      "distinctFrom": [
+        "B052의 three detached stage wedges·broken pinwheel을 반복하지 않고 missing-top cue arch와 central flygap을 쓴다.",
+        "B054 lamp/cape shelter와 B055 rotated-nadir board를 피해 strict frontal open arch와 split spot trails를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "해님이·고르미 exactly2, arch/columns2/plaques2/tiles2, shared marker/cradle, spots2/knobs2/fields2가 정확한지 확인한다.",
+        "missing top과 central flygap이 유지되어 spotlight merge·한 주인공·완성 공동 무대가 되지 않는지 확인한다."
+      ],
+      "editorialReviewStatus": "approved",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "333e55ae8d2d466f12065652fe9ccdc2d495edd0e3f04c14cba1d6a0a3a1a518"
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.love.future-promise.stella",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialContentHash": "904f3ccac402c565bb488565c0dbe02583f92c0b834aac59ee0c14aff5b2773a",
+      "compositionFamily": "plantcradle_lowrear_offset_flowers2_planrail_twostops_broken_leafwreath_open_skybay",
+      "artDirection": "세로 3:4의 새벽 화단을 two plant cradles2 뒤 low-rear oblique로 본다. 새봄이·차곡이 exactly2는 서로 다른 cradle 옆에 있고 unequal star flowers2와 roots2는 분리한다. shared plan rail1에는 promise tile1과 review peg1이 separate slots2에 half-set되고 release leaf1은 열린다. growth clips2는 다른 높이, care-time beads2는 rail outer edge의 다른 stop에 둔다. 두 chest-star trails는 plants 바깥에서 broken asymmetric leaf-wreath segments3을 만들지만 upper-left guardian-width sky bay를 완전히 연다. heart·watering can·grid·same height·closed wreath·finished care는 없다.",
+      "distinctFrom": [
+        "B052의 shared watering can/crossbar를 반복하지 않고 plan rail two stops·beads2·open sky bay를 쓴다.",
+        "B054 loose wrap shelter와 B055 crooked flower handoff를 피해 weather0·two living flowers·broken leaf-wreath를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이·차곡이 exactly2, cradles/flowers/roots/clips 각2, rail1/slots2/tile/peg/release/beads2를 계수한다.",
+        "asymmetric segments3와 open bay가 닫힌 화관·같은 성장 속도·완성 돌봄으로 읽히지 않는지 확인한다."
+      ],
+      "editorialReviewStatus": "approved",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "97e573702e482dd1e07f2f04a13e2591e9fcccaba3b291662dd77d45e966b899"
+    },
+    {
+      "order": 7,
+      "editionId": "libra.love.future-promise.stella",
+      "sign": "libra",
+      "element": "air",
+      "editorialContentHash": "9a06f561878ef67a3ec85a249cf584cfb90954f3e2b512d9e9c19a04977c7540",
+      "compositionFamily": "floorlevel_open_tuningfork_three_starcradles_signatureplane_vertical_U_exit_split_arcs",
+      "artDirection": "세로 3:4 cloud workshop을 floor-level front oblique로 본다. 고르미·해님이 exactly2와 top bar가 없는 open tuning-fork shelf1을 올려다본다. prongs3 끝 detached cradles3에는 personal stars2와 removable shared third star1이 각각 분리되고 shared star는 아직 unseated다. 낮은 agreement plane1에는 personal tokens2·shared token1과 equal blank signature boxes2만 있다. pullout cradle1·tabs3·reversible clip1은 half-set이다. chest-star arcs2는 outer prongs 바깥으로 올라가며 central vertical U exit를 가로막지 않는다. scale·beam·pans·ring·heart·signature text·completed balance는 없다.",
+      "distinctFrom": [
+        "B052의 role shelf와 유사한 tuning-fork 계보를 유지하되 이번에는 signature plane/tokens3와 unseated shared star를 결합하고 top opening을 더 크게 둔다.",
+        "B054 independent supports·windscreen과 B055 strict-frontal cradle를 피해 floor-level upward view와 vertical U exit를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "고르미·해님이 exactly2, shelf/prongs3/cradles3/stars3, agreement tokens3/boxes2, pullout/tabs3/clip1을 확인한다.",
+        "central U exit와 split arcs가 scale·halo·양보·결혼 계약·완성 합의로 닫히지 않는지 확인한다."
+      ],
+      "editorialReviewStatus": "approved",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "a0858460f6b5f421e57a34347696c48b296b8ee12b8caa1a25fd2b8c326bd6f6"
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.love.future-promise.stella",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialContentHash": "92a5265a5a0dfb97a5a033d4d68d0aec9741b9cc0fbaa10c74692312a694f64d",
+      "compositionFamily": "lidhinge_highrear_three_starboxes_sealedfolio_tabs_open_zigzag_trapezoid_exit",
+      "artDirection": "세로 3:4의 깊은 twilight를 shared box lid hinge 높이 high-rear oblique로 본다. 꼬옥이·달콩이 exactly2와 personal starboxes2/shared starbox1은 서로 닿지 않는 shallow zigzag를 이룬다. shared lid1은 grips2로 함께 열지만 removable lid-stop1은 one notch만 걸고 boxes3는 모두 unlatched다. sealed folio1의 seal1·date tab1·trust-action tab1·lift-stop1은 별도 side tray에 닫힌 채 남아 상자와 합쳐지지 않는다. key/lock0이고 꼬옥이 canonical tail-heart1만 허용한다. chest-star trails2는 raised lid 아래 broad trapezoid exit 양옆을 지나 한쪽으로 빠지며 deep open C를 암시하되 닫지 않는다. full disclosure·all-open boundary·extra heart는 없다.",
+      "distinctFrom": [
+        "B052의 boxes3와 tri-leaf chart 계보를 유지하되 future-promise의 sealed folio/tabs를 별도 tray에 남겨 shared lid와 분리한다.",
+        "B054 umbrella folio와 B055 door/lock 장면을 피해 key/lock0·high-rear open zigzag·trapezoid exit를 쓴다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이·달콩이 exactly2, boxes3/lid/grips2/stop1, folio/seal/tabs2/lift-stop, tail-heart1, key/lock0을 확인한다.",
+        "deep open C와 trapezoid exit가 닫힌 고리·모든 봉인 해제·완성 신뢰·합쳐진 집으로 보이지 않는지 확인한다."
+      ],
+      "editorialReviewStatus": "approved",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "2ba7ac69516d346d4a8d97e812086a1ae29c59970ab44bee81b7eee45f5c92c5"
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.love.future-promise.stella",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialContentHash": "b1f1724c26354f48fe8cd6d6bd40c6eb465de77864e1caf276e5f4e059db125c",
+      "compositionFamily": "banneredge_strictside_maps2_compactchart_markers3_sharedwaystar_open_slanted_skyribbon",
+      "artDirection": "세로 3:4 Stella dawn을 rigid blank map banners2의 edge 높이 strict side elevation으로 본다. 총총이·오름이 exactly2는 서로 다른 banner depth에 있고 총총이 crescent bow1은 몸 뒤에만 보인다. maps2에는 broad color washes2만 있고 route/grid/arrow0이다. compact travel chart1의 departure/return/shared promise markers3와 sliding cover1은 banners 사이 detached bracket1에 놓인다. return block1·exchange pin1·shared waystar1은 서로 닿지 않고 두 guardian은 자기 banner edge만 잡는다. chest-star trails2는 broad slanted ribbon-shaped sky bay 양쪽을 지나 위 프레임으로 broken beats로 나간다. map merge·flag·heart·guaranteed journey/return은 없다.",
+      "distinctFrom": [
+        "B052의 future-neutral mutual-growth banners와 달리 compact chart markers3·return block·sliding cover를 추가하되 maps는 여전히 합치지 않는다.",
+        "B054 cloak pockets와 B055 low-up chart를 피해 strict side banners와 slanted sky ribbon을 사용한다."
+      ],
+      "visualReviewFocus": [
+        "총총이·오름이 exactly2, bow behind1, maps2/washes2, chart1/markers3/cover1/bracket1, block/pin/waystar를 계수한다.",
+        "split trails와 open sky bay가 실제 route·동행·귀환 보장·공동 목적지로 닫히지 않는지 확인한다."
+      ],
+      "editorialReviewStatus": "approved",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "55e4d9c35aac37c5d06dd7c174a4c4f7cbf72d3ca522d4c524ddf1a8df0f973e"
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.love.future-promise.stella",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialContentHash": "5becbf1a01c529c16a1345b0c0d63c02124ccbfa53b7b7550e6a8e0f6acbefb5",
+      "compositionFamily": "landing_highfrontal_stairs2_fourpocket_planboard_single_footboard_large_open_V_airfield",
+      "artDirection": "세로 3:4의 달빛 작업터를 shared landing 높이 high frontal로 내려다본다. 서로 다른 pitch의 stair runs2는 중앙에서 만나는 대신 아래 양쪽으로 갈라지고 goal markers2는 far ends에 각각 있다. 오름이·총총이 exactly2는 landing1 양쪽에 있으며 single footboard1을 together-placed but half-seated 상태로 둔다. folding plan board1의 pockets4에는 meeting/resource/role tiles3와 adjustment peg1을 남기고 removable latch1은 잠그지 않는다. 두 chest-star trails는 각 stair outer edge로 흘러 내려가 central large open V airfield를 비우고 bottom frame 밖으로 나간다. bridge·same pace·heart·closed halo·guaranteed summit은 없다.",
+      "distinctFrom": [
+        "B052의 stairs2 계보를 유지하되 future-promise four-pocket plan board와 adjustment peg를 landing에 명확히 결합한다.",
+        "B054 side-cut footboard shelter와 B055 true-nadir weight test를 피해 high frontal split stairs·large V airfield를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "오름이·총총이 exactly2, stairs2/goals2/landing1/footboard1/latch1, board1/pockets4/tiles3/peg1을 확인한다.",
+        "footboard가 bridge가 아니고 open V/trails가 same pace·안전·정상 도착·평생 계획을 확정하지 않는지 확인한다."
+      ],
+      "editorialReviewStatus": "approved",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "26870acc9bab0b3fb844b9510c0a3fef159cee4ef90bad8bbbfcebe00919fc67"
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.love.future-promise.stella",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialContentHash": "523a3498ade61442fd9d7af3799aed37abb728d95fda5510b6da8606f27a1e64",
+      "compositionFamily": "bottlebase_rearlateral_tables3_heartbottles2_blankblueprint_canopy_open_cloudstair_exit",
+      "artDirection": "세로 3:4 cloud lab을 source heart-bottle base 높이 strict rear lateral로 본다. 방울이·차곡이 exactly2와 personal tables2/shared table1은 서로 닿지 않는 three-step silhouette다. outer tables에는 source heart-profile bottles2, blue1과 warm1을 각각 독립적으로 두며 전달·교체하지 않는다. shared table의 blank blueprint1에는 erased field1·test/keep cells2·relief tiles2·version-stop1만 있고 reversible dock1에 help-rule tokens2를 half-set한다. blueprint의 open canopy edge1은 top bar를 닫지 않는다. chest-star trails2는 자기 bottle과 cell만 스치고 lower open staircase-shaped cloud exit로 서로 만나지 않은 채 나간다. extra bottle/heart·grid·text·closed circuit·fixed meaning은 없다.",
+      "distinctFrom": [
+        "B052의 garden beds3를 반복하지 않고 blank blueprint canopy·cells2·version-stop을 future-promise 중심 장치로 둔다.",
+        "B054 winter coat와 B055 blank tag 교환을 피해 rear-lateral tables3와 two independent heart bottles를 사용한다."
+      ],
+      "visualReviewFocus": [
+        "방울이·차곡이 exactly2, tables3, heart bottles exactly2 blue/warm, blueprint/field/cells2/tiles2/stop1/dock/tokens2를 확인한다.",
+        "bottles와 trails가 합쳐지지 않고 open canopy/cloud stair exit가 closed garden·완성 설계·고정 관계를 만들지 않는지 확인한다."
+      ],
+      "editorialReviewStatus": "approved",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "d682bac5b49651b1e66d6b96dbd40225d424b0234f6bdfd61173f5c6041738c4"
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.love.future-promise.stella",
+      "sign": "pisces",
+      "element": "water",
+      "editorialContentHash": "0d870f73c4e3c5302ac950fc02c900ad087a6e3f7ac349f2317b841d78929388",
+      "compositionFamily": "approved_pilot_wide_open_starlight_orbit_twin_currents_centerstar_nonpersonalized_underlay",
+      "artDirection": "승인 파일럿 원본을 그대로 재사용한다. 세로 3:4 dream sea에서 larger aqua 꿈별이와 smaller pink 잠별이 canonical pair2가 서로 다른 aqua/pink currents2를 따라 center star1 주위를 넓게 돈다. 두 guardian은 distinct pajamas·상대 크기·가슴 Stella 별을 유지하고 identity나 색을 합치지 않는다. 두 물살과 옅은 비개인화 starlight underlay는 넓은 열린 원형 여운을 만들지만 실제 출생 차트 선·개인 색·읽을 수 있는 표식은 없다. 이 항목은 새로 생성하거나 재구성하지 않고 approvedArtworkSha256 바이트를 그대로 사용한다.",
+      "distinctFrom": [
+        "B052의 coral shelves·control fan과 달리 승인 파일럿의 넓은 two-current starlight composition을 그대로 재사용한다.",
+        "B054 loose tether와 B055 fin-tip contact 장면을 반복 생성하지 않으며, 파일럿 바이트를 변경하지 않는다."
+      ],
+      "visualReviewFocus": [
+        "승인 파일럿의 larger aqua/smaller pink pair2, distinct currents2, center star1과 비개인화 광륜 언더레이가 그대로인지 확인한다.",
+        "실제 차트·개인 색·제3 fish·텍스트가 없고 승인 SHA-256 d1307a… 바이트가 변경되지 않는지 확인한다."
+      ],
+      "editorialReviewStatus": "approved_pilot",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "d1307aa47520f7a7680b2e337a348c04a39400b1e7017aa3aec6e2e2fb5482ee"
+    }
+  ],
+  "editorialApprovedOn": "2026-09-01",
+  "generatedOn": "2026-09-01",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-01",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

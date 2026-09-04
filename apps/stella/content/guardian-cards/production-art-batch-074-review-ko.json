@@ -1,0 +1,313 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "choice.desire.action-beat",
+  "batchOrder": 74,
+  "purpose": "선택 욕구가 확신이나 운명 판정이 아니라 문손잡이·표식·첫발 중 하나가 막 움직이는 가역적 첫 선택으로 읽히는 action-beat 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 1,
+    "newEditionCount": 11,
+    "onePerSign": true,
+    "slot": "choice",
+    "narrativeAxisId": "desire",
+    "visualAxisId": "action-beat"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium choice-desire action-beat guardian card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair; no extra guardian, adviser, family member, audience, future self, human, silhouette, reflection, empty seat or personal belonging implying another person. Preserve canonical identity, colors, clothing, signature props, dark-purple eyes and visible chest Stella stars. Guardian or pair plus one immediate reversible choice control covers 55–65% and reads at 80px. Capture only the first handle turn, token lift, foot shift or symbol move while the unchosen edge remains visibly open; never declare a correct choice, destiny, guaranteed peace, status or future outcome. Written surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, names, labels, score, number, date, clock face, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Doors, pads, seals, handles, tokens and bays remain ajar, removable, unnamed, reversible or open-ended. Libra may use exactly one abstract choice balance; no other sign uses a scale. Only Scorpio canonical tail-heart is allowed; no added heart. No closed ring, halo, portal, infinity sign or deterministic route. Keep every composition distinct. Soft colored-pencil and watercolor, paper grain, plush proportions and deep-purple outlines; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.choice.desire.action-beat",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "e8f205e14f8072bb42240ba15711256502596b81253d5906804f3727bf0da5ee",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "desireaction_reddoor_lowthreequarter_firsthandleturn_openedge",
+      "artDirection": "세로 3:4. 몽실이1와 ajar red door1/handle1을 low three-quarter로 두고 한 손이 handle을 first notch만 돌리는 찰나를 잡는다. small flame cue1은 가슴 별 곁에 있고 문 반대 edge와 바닥 여백은 열린다. 통과 완료·사람·arrow·name·text는 없다.",
+      "distinctFrom": [
+        "B001–73의 같은 별자리·desire action-beat 구도를 반복하지 않고 desireaction_reddoor_lowthreequarter_firsthandleturn_openedge를 사용한다.",
+        "같은 choice.desire.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·door1·handle1의 first notch·flame cue1과 열린 반대 edge를 확인한다.",
+        "첫 손잡이 동작만 보이고 문 통과·정답·미래 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "fe35088c9da6cbae1187734900adea79dbb845c467a128a84bfb886dcaaa4e79"
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.choice.desire.action-beat",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "c1a5fd3522b99c2b7e6b54860fd9db1c7be30944115b1f89d92065c745026b2d",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "desireaction_twopathpads_groundside_firstfootshift_soilgap",
+      "artDirection": "세로 3:4. 차곡이1와 stone pad1/sprout-soil pad1을 ground-side로 두고 한 발이 soil pad 위로 first shift하는 찰나를 잡는다. other foot와 stone pad 사이에는 되돌림 gap을 남기고 warm pebble1은 분리한다. route·signpost·score·text는 없다.",
+      "distinctFrom": [
+        "B001–73의 같은 별자리·desire action-beat 구도를 반복하지 않고 desireaction_twopathpads_groundside_firstfootshift_soilgap를 사용한다.",
+        "같은 choice.desire.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이1·pads2·first foot shift·warm pebble1과 되돌림 gap을 확인한다.",
+        "한 발 이동만 시작되고 길 선택·안정·장기 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "17e33518591155689f3151a7f17c0e915787769e9f9659a43281485210f38c73"
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.choice.desire.action-beat",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "7f949ae47abf163e2daaa058c768b49b4896f73bce3cba1657540c6e859ffd90",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "desireaction_twodoor_pair_overhead_matchingtokens_firstlift_cleft",
+      "artDirection": "세로 3:4. 재잘이·소곤이 pair2/ribbon1와 ajar doors2를 overhead close로 두고 matching star tokens2를 각 door에서 central open tray1 쪽으로 first lift하는 순간을 잡는다. tokens는 tray에 닿지 않고 central cleft를 남긴다. 합의 완료·label·text는 없다.",
+      "distinctFrom": [
+        "B001–73의 같은 별자리·desire action-beat 구도를 반복하지 않고 desireaction_twodoor_pair_overhead_matchingtokens_firstlift_cleft를 사용한다.",
+        "같은 choice.desire.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "재잘이·소곤이 pair2·doors2·matching tokens2·central tray1과 first lift를 확인한다.",
+        "공통 단서를 옮기는 첫 동작만 보이고 두 선택이나 합의가 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "79a0bc290d48143e657976f253fa893b64492812830a92f79772ee33a571eef5"
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.choice.desire.action-beat",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "1b8ce2395e26f384e4ba8d4f2761d2899baf9176b8a4a1e62fc2387e1528623f",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "desireaction_moonwindow_sidereach_beacon_firstlift_opensill",
+      "artDirection": "세로 3:4. 달콩이1을 moon-window side reach로 두고 window openings2 사이 loose star beacon1을 집게가 sill 위로 first lift하는 찰나를 잡는다. shell door와 other opening은 열고 외부 인물·destination·route·name·text는 없다.",
+      "distinctFrom": [
+        "B001–73의 같은 별자리·desire action-beat 구도를 반복하지 않고 desireaction_moonwindow_sidereach_beacon_firstlift_opensill를 사용한다.",
+        "같은 choice.desire.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·openings2·beacon1·집게의 first lift와 열린 sill을 확인한다.",
+        "안전한 자리 밖 첫 손짓만 보이고 관계·도착·정답 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "7b9af6761ab31a607ac28867f23f71a6d4430d1880a315cfc05a718437b0af87"
+    },
+    {
+      "order": 5,
+      "editionId": "leo.choice.desire.action-beat",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "f76e5413e17abf788046589a591ba0332ea9104663f563f6641401021cfdf92d",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "desireaction_twostages_rearlow_crownsetdown_firststep_smallpad",
+      "artDirection": "세로 3:4. 해님이1와 stage pads2를 rear low로 두고 crown1을 pedestal1에 막 내려놓으며 one foot이 small plain pad의 first edge에 닿는 순간을 잡는다. large pad와 돌아갈 floor gap은 열며 audience·applause·score·text는 없다.",
+      "distinctFrom": [
+        "B001–73의 같은 별자리·desire action-beat 구도를 반복하지 않고 desireaction_twostages_rearlow_crownsetdown_firststep_smallpad를 사용한다.",
+        "같은 choice.desire.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1·stage pads2·crown1·pedestal1·small pad first edge를 확인한다.",
+        "왕관을 내려놓는 첫 선택만 보이고 인정·성공·미래 무대가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "2a0a45072068f36c3a6daf2a41652000db5c145acb645040909e88de0a15b8cc"
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.choice.desire.action-beat",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "fe4b79106c3f46c88fa007dc36e728595d61bb6d077e045d3e321f9eb56c3c91",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "desireaction_conditionboard_sideaxial_blanktoken_firstslide_openmargin",
+      "artDirection": "세로 3:4. 새봄이1과 condition board1/cells3, blank desire token1을 side axial로 두고 token이 board 밖 open margin의 first notch로 미끄러지는 순간을 잡는다. wind strip1과 pencil1은 분리하고 checklist 문장·점수·완료 badge·text는 없다.",
+      "distinctFrom": [
+        "B001–73의 같은 별자리·desire action-beat 구도를 반복하지 않고 desireaction_conditionboard_sideaxial_blanktoken_firstslide_openmargin를 사용한다.",
+        "같은 choice.desire.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·board1·cells3·blank token1의 first slide·open margin을 확인한다.",
+        "조건 밖 첫 이동만 보이고 새 선택이 완벽한 정답으로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "4cbf95f81625d6b30026f066ec5ebe06dd131bbe6c5bcbee233430e885514671"
+    },
+    {
+      "order": 7,
+      "editionId": "libra.choice.desire.action-beat",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved_pilot",
+      "editorialContentHash": "11c65ef7f011819ff55bee97f87e5cae4d6634e018d39fc25883085c583c4871",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "approved_pilot_balance_pinkhandle_firstreach",
+      "artDirection": "세로 3:4. 승인 파일럿 원본을 그대로 재사용한다. 고르미1가 수평인 abstract choice balance1/pans2 옆에서 먼저 손이 간 warm pink handle1을 잡는 action-beat 구도·정체성·가슴 Stella 별을 변경하지 않는다. 새로 생성하지 않고 approvedArtworkSha256 바이트를 그대로 사용한다.",
+      "distinctFrom": [
+        "B001–73의 같은 별자리·desire action-beat 구도를 반복하지 않고 approved_pilot_balance_pinkhandle_firstreach를 사용한다.",
+        "같은 choice.desire.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·balance1·pans2·pink handle1과 먼저 움직인 손의 파일럿 구도를 확인한다.",
+        "승인 파일럿이 바이트 단위로 재사용되고 추가 인물·문구·결과 확정이 없는지 확인한다."
+      ],
+      "approvedArtworkSha256": "3e0941737997f931a89a9d9f7eaeed4f2960b5776936bd555b543eaba2e14040"
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.choice.desire.action-beat",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "43aa6d16ae927d572e6951bc7cfd4e69c04c59a8996493a33a3df33781129b76",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "desireaction_twoseals_lowreverse_firsttablift_tailheart_only",
+      "artDirection": "세로 3:4. 꼬옥이1/tail-heart1과 seal plates2를 low reverse로 두고 pincer가 one seal tab1을 first lift하는 찰나를 잡는다. other seal과 open return gap은 남기며 tail-heart 외 추가 heart·key·closed ring·name·text는 없다.",
+      "distinctFrom": [
+        "B001–73의 같은 별자리·desire action-beat 구도를 반복하지 않고 desireaction_twoseals_lowreverse_firsttablift_tailheart_only를 사용한다.",
+        "같은 choice.desire.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1·tail-heart1·seal plates2·one tab first lift와 return gap을 확인한다.",
+        "봉인을 드는 첫 동작만 보이고 숨은 답·권한·선택 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "18a61b50ff7eb78378d475b2feebe0d9204e0714da0ce454a5541f98eff0dd26"
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.choice.desire.action-beat",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "da93b543fb0a5ba348ef23fc4f441318661ff39d41dd560df46b4c331ebfca22",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "desireaction_twopaththresholds_widefront_mapfold_firstfoot_windpad",
+      "artDirection": "세로 3:4. 총총이1/bow1와 unnamed thresholds2를 wide front로 두고 map1을 first fold하며 one foot이 warm wind pad1에 처음 닿는 순간을 잡는다. other pad와 sky gap은 열고 signpost·map line·arrow route·date·text는 없다.",
+      "distinctFrom": [
+        "B001–73의 같은 별자리·desire action-beat 구도를 반복하지 않고 desireaction_twopaththresholds_widefront_mapfold_firstfoot_windpad를 사용한다.",
+        "같은 choice.desire.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이1·bow1·thresholds2·map first fold·foot first touch를 확인한다.",
+        "호기심을 따르는 첫발만 보이고 목적지·완주·미래 성공이 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "8bd9bbf261a509f6abb7b2b7af28b25343365d9d79fe9313e278ecdb4b8eb7f1"
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.choice.desire.action-beat",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "0f2f58d431c9da370298469efa85b7a4d899498a09139802aa5df5f998a3a189",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "desireaction_twodoors_lowupward_sturdyhandle_firstturn_golduntouched",
+      "artDirection": "세로 3:4. 오름이1의 turquoise tail과 tall gold door1/low sturdy door1을 low upward로 두고 sturdy handle1을 first notch만 돌리는 순간을 잡는다. gold handle1은 untouched, 두 door edge와 floor gap은 열며 성과패·future self·route·text는 없다.",
+      "distinctFrom": [
+        "B001–73의 같은 별자리·desire action-beat 구도를 반복하지 않고 desireaction_twodoors_lowupward_sturdyhandle_firstturn_golduntouched를 사용한다.",
+        "같은 choice.desire.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1 정체성·doors2·handles2·sturdy handle first turn을 확인한다.",
+        "첫 손잡이 동작만 보이고 장기 책임·지위·성공 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "bc7b4fe6ea7a98c222590639d876614d9c7f3b792c15e56c458c5cd82fbc4fdf"
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.choice.desire.action-beat",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "762aca4c8491c374559d4b472711fe611df1de17fcdc6841e308206193e30e74",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "desireaction_optiontrays_closeprofile_cloudtoken_firstpull_thirdbay",
+      "artDirection": "세로 3:4. 방울이1과 option trays2/bottle1/open third bay1을 close profile로 두고 cloud token1을 bottle에서 first pull하는 순간을 잡는다. token은 third bay에 닿지 않고 다른 trays도 열린다. 완성 발명·user figure·route·label·text는 없다.",
+      "distinctFrom": [
+        "B001–73의 같은 별자리·desire action-beat 구도를 반복하지 않고 desireaction_optiontrays_closeprofile_cloudtoken_firstpull_thirdbay를 사용한다.",
+        "같은 choice.desire.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·trays2·bottle1·cloud token first pull·open third bay를 확인한다.",
+        "세 번째 선택을 꺼내는 첫 동작만 보이고 발명 완성이나 정답이 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "0541de17e73a140bc371af916d81809af0ac986a671f2550f325f0400f38833a"
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.choice.desire.action-beat",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "7f7b5256c30b46b1b3adf0147fad38464b30df03e91131c97161fc69078c8e90",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "desireaction_twodreampanels_pair_topend_matchingtokens_firstraise_cleft",
+      "artDirection": "세로 3:4. 꿈별이·잠별이 pair2와 ajar dream panels2를 top end-on으로 두고 matching star tokens2를 각 panel에서 central open cradle1 쪽으로 first raise하는 순간을 잡는다. tokens는 닿지 않고 central cleft를 남기며 ring·heart·합일 광륜·name·text는 없다.",
+      "distinctFrom": [
+        "B001–73의 같은 별자리·desire action-beat 구도를 반복하지 않고 desireaction_twodreampanels_pair_topend_matchingtokens_firstraise_cleft를 사용한다.",
+        "같은 choice.desire.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꿈별이·잠별이 pair2·panels2·tokens2·open cradle1과 first raise를 확인한다.",
+        "공통 중심을 드는 첫 동작만 보이고 두 문·미래 약속·정답이 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "1278a2a4eac190bc4ba65bc6b6d98260d8f36250de20a77ea0605322e07c6bf8"
+    }
+  ],
+  "editorialApprovedOn": "2026-09-02",
+  "generatedOn": "2026-09-02",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-02",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

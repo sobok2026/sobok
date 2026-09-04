@@ -2,7 +2,7 @@
   "batchId": "love.mutual-growth.stella",
   "batchOrder": 52,
   "locale": "ko",
-  "status": "visual_review_ready",
+  "status": "visual_review_complete",
   "purpose": "사랑의 mutual-growth 원고를 각자의 목표·속도·공간을 유지하면서 공동 돌봄을 반복해서 선택할 수 있는 Stella 장면으로 번역한다. 열두 장 모두 두 수호령의 독립된 가슴별과 닫히지 않는 비개인화 광륜을 보이며, 서로 다른 카메라·깊이축·주실루엣·열린 여백·회수 가능한 제어를 사용한다. 공동 구조는 합쳐진 정체성이나 확정된 운명·성장·재회를 만들지 않고 다음 이탈 경로를 남긴다.",
   "sourceBatchPlan": "production-art-batches-ko.json",
   "editorialApprovedOn": "2026-08-30",
@@ -49,6 +49,14 @@
     "narrativeAxisId": "mutual-growth",
     "visualAxisId": "stella"
   },
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-31",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
   "editions": [
     {
       "order": 1,
@@ -58,7 +66,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "8d77178838175db9ce24adaf8e4b9dff4f0da24d448899ac294ad5969f201669",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "6bdedb46440dbbaa6a15818c71027f185458ee51a01dd9bdec5090acec12a3cb",
       "compositionFamily": "finishflag_height_rear_threequarter35_twin_nonconverging_diagonal_lanes_low_clamshell_openheart_skewed_diamond_exit",
       "artDirection": "세로 3:4의 맑아지는 Stella 새벽을 far finish flag 높이의 rear three-quarter 약 35도로 본다. lanes2는 아래 오른쪽에서 위 왼쪽으로 가는 서로 어긋난 얕은 대각 band이며 원근선이 만나지 않는다. far side의 source heart1은 낮은 clamshell처럼 두 guardian이 grip2로 함께 열고 unlatched hinge1을 남긴다. 몽실이와 달콩이 exactly2, track-heart cluster는 55-65%다. groove1, splitter1, flags2, open cross-slot1과 shared star1은 분리 계수되고 모두 회수 가능하다. 두 가슴별 light trails2는 heart와 lanes 사이 broad skewed-diamond bay를 감싸지 않고 바깥 위쪽으로 빠져나간다. heart1 외 additional heart0, closed ring0, text0.",
       "distinctFrom": [
@@ -78,7 +87,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "4736c2a3065240ad7be75cc1bbb7643497a5d43e0cbf73de7b6f8b8c5e50c73b",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "d820365f832b01521d8d145aa5892d7d876ceb106998a0637e09b5ab7378204b",
       "compositionFamily": "careboard_edge_height_low_rearright_endon_two_unequal_pot_ellipses_center_thin_board_tapered_sky_chimney",
       "artDirection": "care-board edge 높이의 low rear-right end-on 시점. 가까운 큰 pot ellipse와 먼 작은 pot ellipse가 한 대각축에 어긋나고, 두 pot 사이 care board1은 얇은 edge plane으로 선다. 차곡이와 새봄이 exactly2가 각 pot의 star seed1씩, seeds2를 돌보며 cluster 55-65%다. board slots2에는 water tab1과 sun tab1을 half-set하고 pivot detent1은 열어 둔다. 두 가슴별에서 시작한 broken seasonal arcs3는 pot 둘의 바깥을 서로 다른 높이로 지나 tall tapered sky chimney를 열어 둔 채 프레임 밖으로 사라진다. roots와 pots는 합쳐지지 않고 heart0, ring0, text0.",
       "distinctFrom": [
@@ -98,7 +108,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "f86087e0e64ba650fed63799756b3d69296763861b014ffff4a9123977a34099",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "ae0519318905dbad39ea32ebe147f431d8be76b9b0ff078d8991c91ddeb03a7f",
       "compositionFamily": "true_nadir_flat_open_starbook_butterfly_pages_dual_separate_questiontrees_spinegap_saddlefruit_upper_scalloped_exit",
       "artDirection": "90-degree true-nadir orthographic로 완전히 flat-open starbook1을 내려다본다. pages2가 butterfly silhouette를 만들고 각 page에 roots와 trunk가 분리된 question tree1씩, trees2가 자란다. canonical Jejal-Sogon exactly2와 connector ribbon1은 정본처럼 유지한다. branch tips 사이 spine gap 위에 removable open saddle-hook1이 star-fruit1을 지지하되 닿은 가지를 묶지 않는다. pages에는 readable sentence 대신 large abstract fields2만 둔다. 두 chest stars의 trails는 책 위쪽 broad scalloped notch를 통과해 서로 닫히지 않고 나간다. cluster 55-65%, heart0, flying page0, text0.",
       "distinctFrom": [
@@ -118,7 +129,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "ef21c8dbc49a8e2376f3ec6020bbd4fdf70a0cba756e96866f159e44789822d7",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "56f7a8dc82cfbb2699d9ffb2183d452d6bbc089ff2d2705d106d3f1986dc0af4",
       "compositionFamily": "star_charm_height_strict_axial_endon_low_shared_garden_island_nearfar_houses_sidepivot_moonwindow_offcenter_crescent_exit",
       "artDirection": "Dalkong의 star charm 높이에서 low shared-garden island의 긴 축을 strict axial end-on으로 본다. near end에는 canonical shell-house Dalkong1, far end에는 solid portable house pack을 straps2로 멘 Kkook1이 있고 houses2는 분리된다. 가운데 garden1과 role board1/slots2/care tile1/solo-rest tile1이 좁은 깊이축을 이룬다. 두 guardian은 shell-house side의 moon window1을 grip1씩 grips2로 옆으로 열며 hinge는 잠그지 않는다. Kkook tail-heart1만 허용한다. chest-star trails2는 window와 island 옆 broad off-center crescent sky exit로 빠져나간다. cluster55-65%, additional heart0, text0.",
       "distinctFrom": [
@@ -138,7 +150,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "3ed21b9959ca460808534bcf273b288af7654ae02a7b4fca1261d8da0e13a692",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "15a53b52d4fb66d6b0f0c4068c60f128ad3eb1757aa1de64528ffc48703908c1",
       "compositionFamily": "crownheight_reverse_oblique45_three_detached_fan_stagewedges_broken_pinwheel_two_bridge_tongues_open_triangular_flybay",
       "artDirection": "Haenim crown 높이의 reverse oblique 약45도로 세 detached fan-shaped stage wedges를 본다. personal stages2와 shared center stage1은 서로 다른 방향을 향해 broken pinwheel silhouette를 만들고 bridge tongues2만 half-extended다. Haenim1과 Gormi1 exactly2, cluster55-65%. schedule board1의 slots3에는 shared-cheer marker1과 solo-practice markers2를 재배치 가능하게 둔다. spotlights2는 각 guardian chest star에서 시작해 서로 가리지 않는 fields2만 비추고 shared stage 위에서 합쳐지지 않는다. 중앙 open triangular fly-bay를 통해 light trails가 바깥으로 나간다. heart0, closed ring0, text0.",
       "distinctFrom": [
@@ -158,7 +171,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "22e38a8961c02b2b14e26350388e3f99bfa37ad4e4d75eaf0ded00ba79c78863",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "a6ebe3e1231f82ae8e5b3fcd40acb6feb077ddc012fc776dbbdf0b3e79f8f68d",
       "compositionFamily": "soilheight_rearleft_oblique40_two_offset_plant_cradles_shared_can_crossbar_open_leafshaped_skybay_broken_asym_wreath",
       "artDirection": "soil height rear-left oblique 약40도. unequal star plants2는 서로 닿지 않는 offset cradle2에 있고 shared watering can1은 낮은 removable hook1으로 두 cradle 사이 crossbar에 half-hung한다. Saebom1+Chagoki1 exactly2, cluster55-65%. 각 stem의 growth clip1씩 clips2와 care-time rail1의 removable beads2가 분리된다. 두 chest-star trails는 plant 바깥으로 broken asymmetric wreath를 만들지만 upper-right의 guardian-width leaf-shaped sky bay를 열어 둔다. can, hook, beads는 회수 가능하고 roots·flowers·identities는 합쳐지지 않는다. heart0, text0.",
       "distinctFrom": [
@@ -178,7 +192,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "70f1cb8fea3745626fea4b2f418decd2d65d784297fafbd8a4b1ae5046b14445",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "b0c43258417a1beea6d8bce958d5ea2472515b9bf2cb14a9d167def63edbbff2",
       "compositionFamily": "floorlevel_front_oblique_open_tuningfork_role_shelf_three_detached_starcradles_missing_topbar_vertical_U_exit",
       "artDirection": "floor-level front oblique에서 top bar가 없는 open tuning-fork role shelf1을 올려다본다. prongs3 끝의 detached cradles3에는 personal stars2와 removable shared third star1이 각각 분리되고 scale/beam/pan은 없다. Gormi1+Haenim1 exactly2, cluster55-65%. pullout cradle1과 role chart1의 slots3/tabs3은 half-set 상태다. 각 chest star에서 나온 broken balance arc1씩 arcs2는 outer prongs를 지나지만 중앙 vertical U-shaped exit를 가로막지 않는다. shared star와 tabs는 회수 가능하며 stars3은 한 별로 합쳐지지 않는다. heart0, ring0, text0.",
       "distinctFrom": [
@@ -198,7 +213,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "abc0dbccbb6042a45f19534baccea19b621deb10717008b0ec097b4c672edd63",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "719d7a844423b6ee807dba0a06496fad5c28db240725b52f3e4b7b49e4e8b691",
       "compositionFamily": "lidinge_height_rear_oblique35_three_starboxes_open_zigzag_shared_raised_lid_broad_trapezoid_exit_trileaf_chart",
       "artDirection": "shared-box lid hinge 높이의 rear oblique 약35도. personal starboxes2와 offset shared starbox1이 얕은 open zigzag를 이루며 서로 닿지 않는다. Kkook1+Dalkong1 exactly2가 shared lid1의 grip1씩 grips2로 함께 열고 removable lid-stop1은 one notch만 건다. key-use chart1은 detached tri-leaf로 펼쳐 slots3/tabs3를 보이되 keys0/locks0/text0이다. Kkook canonical tail-heart1만 유지한다. 두 chest-star trails는 raised lid 아래 broad trapezoid sky bay 양옆을 지나 한쪽으로 빠져 깊은 open C를 암시하되 닫지 않는다. cluster55-65%, additional heart0.",
       "distinctFrom": [
@@ -218,7 +234,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "25f1bc60f56cab4930002c820a2f5a7a2cca213807582b4cce25d54293622aa2",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "d0d8916fba2ded2f40856dafe404bcda2baf5cb750da312817e5c66b21f7c7ec",
       "compositionFamily": "chestheight_strict_side90_two_offset_vertical_mapbanners_exchange_pin_cheerstar_waystar_open_slanted_ribbon_skybay",
       "artDirection": "chest height strict side elevation 90도에서 서로 다른 깊이와 높이의 rigid vertical map banners2를 본다. Chongchongi1+Oreumi1 exactly2, Chongchongi crescent bow는 몸 뒤에만 있고 cluster55-65%. maps의 separate path fields2는 글자·grid·arrow 없이 broad color washes만 쓴다. removable exchange pin1, cheer star1, shared waystar1은 서로 닿지 않는 별도 제어이며 두 guardians가 각각 자기 map edge만 잡는다. chest-star trails2는 banners 사이 broad slanted ribbon-shaped sky bay를 가로막지 않고 위 프레임으로 broken beats로 나간다. map merge0, heart0, text0.",
       "distinctFrom": [
@@ -238,7 +255,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "30b38f1cf22b726d5614550c49f9b5fe578d7b2a9b8feafcac35a8e3f781498e",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "2c69dd9f039706f542fe007c540814795e7da08e775fa80275e94b518d029afe",
       "compositionFamily": "landing_height_high_frontal_looking_down_two_outward_descending_stairs_shared_top_footboard_large_open_V_airfield",
       "artDirection": "shared landing 높이의 high frontal 카메라가 위에서 아래로 갈라져 내려가는 staircase runs2를 본다. stair pitch는 서로 다르고 far lower ends에 goal markers2가 각각 있다. Oreumi1+Chongchongi1 exactly2, cluster55-65%; horns/ears/bow/fish-tail identities를 정확히 유지한다. landing1에는 together-placed footboard1을 half-seated하고 removable latch1을 잠그지 않는다. 두 chest-star trails는 각 계단의 바깥 edge로 흘러 내려가며 중앙 large open V airfield를 비우고 하단 frame 밖으로 사라진다. stairs와 goals는 합쳐지지 않고 heart0, closed halo0, text0.",
       "distinctFrom": [
@@ -258,7 +276,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "99d26e8de70ae963c58b4a7ff17e88403f8436b451ddfd45c856e5fd4efac2b2",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "7e4760018d95b16f1c7a064590fcb586c4eb081132a426142cb4d57c7916e029",
       "compositionFamily": "bottlebase_height_strict_rear_lateral_three_nontouching_step_tables_outer_heartbottles_center_rule_dock_open_lower_cloudstair_bay",
       "artDirection": "heart-bottle base 높이의 strict rear lateral view. personal worktables2는 near-low와 far-high에, shared experiment table1은 center-mid에 놓여 서로 닿지 않는 three-step silhouette를 만든다. Banguli1+Chagoki1 exactly2, cluster55-65%. source heart bottles2는 blue1과 warm1을 outer tables에 각각 독립적으로 둔다. shared table의 reversible dock1에는 help-rule tiles2를 half-set한다. cloud garden beds3은 tables 뒤에 blue/warm/shared로 분리된다. chest-star trails2는 자기 bottle과 bed만 스치고 lower open staircase-shaped cloud bay를 통해 서로 만나지 않은 채 나간다. bottles 외 heart0, text0, closed garden ring0.",
       "distinctFrom": [
@@ -278,7 +297,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "5a17390fc506fe0b2896e43bd1edaf87531d6665b17baf73de78bf3f3bd590e1",
-      "imageStatus": "generated_candidate",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "599958a348110265912f2d22cb2fdb4dcacfc33d86caf51e07c546ab82a037af",
       "compositionFamily": "wavecrest_height_strict_endon_single_diagonal_sharedwave_nearfar_coral_shelves_open_kite_waterbay_role_tabs_dividerclip",
       "artDirection": "shared wave crest 높이에서 그 crest 긴 축을 strict end-on으로 본다. near-low aqua coral shelf1과 far-high pink coral shelf1, corals2가 깊이축에서 분리되고 larger aqua Dreamstar와 smaller pink Sleepstar exactly2는 distinct pajamas를 유지하며 body contact0이다. personal currents2는 각 coral에만 흐르고 diagonal shared wave1은 둘 사이를 지나되 끝이 열린다. control fan에는 solo tabs2/shared-care tab1을 분리하고 divider clip1을 half-set한다. cluster55-65%. two chest-star trails는 wave 양옆에 broken arc segments2를 만들지만 중앙 broad kite-shaped water bay와 upper exit를 열어 둔다. heart0, ring0, text0.",
       "distinctFrom": [

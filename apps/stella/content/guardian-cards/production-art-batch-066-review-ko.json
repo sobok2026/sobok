@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "work.pressure.action-beat",
+  "batchOrder": 66,
+  "purpose": "일의 압박이 완료된 대처 증명이 아니라 한계를 조절하는 첫 동작과 열린 완료 기준으로 읽히는 action-beat 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "work",
+    "narrativeAxisId": "pressure",
+    "visualAxisId": "action-beat"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium work-pressure action-beat guardian card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair from the approved source; never add a coworker, manager, client, recipient, extra guardian, human, body clue, reflection, silhouette, empty seat or personal belonging implying another person. Preserve canonical identity, relative size/colors, clothing, signature props, dark-purple eyes with exactly one large plus one small highlight in each visible eye, and visible chest Stella stars. Guardian or canonical pair plus one pressure-control device covers 55–65% and remains readable at actual width 80px. Capture only the first bounded boundary action while the completion edge remains open; never depict inevitable burnout, failure, punishment, flawless coping, promotion or predetermined outcome. Written work surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, handwriting lines, names, labels, score, number, date, clock face, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Every cover, plate, clip, divider, seal, marker, sleeve, gate, token, line or connector remains removable, half-set, open-ended or not yet applied. Libra may use exactly one abstract meeting balance; no other sign uses a scale. Only Scorpio canonical tail-heart tip is allowed; no added heart or heart-shaped light/void. No closed ring, halo, portal, infinity sign, deterministic route or completed coping emblem. Keep every composition distinct in action camera height, first boundary motion, pressure-device silhouette and open negative-space shape. Follow compositionFamily, artDirection, distinctFrom and visualReviewFocus literally. Soft colored-pencil and watercolor, visible paper grain, rounded plush proportions and deep-purple outlines; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.work.pressure.action-beat",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "130d1ef0b2eede023809f13cba17875e72dc25961ee32e0355b4d0171c4cb08b",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "reservoir_lowfront_firstcover_close_prioritybutton_exposed_finishgap",
+      "artDirection": "세로 3:4 countdown reservoir low-front. 몽실이1가 buttons3 중 nonpriority button1 위에 first cover1를 막 내리고 second cover1는 옆에 둔다. priority button1은 exposed, reservoir1은 숫자 없는 별빛으로 줄어들며 finish gap은 비어 있다. clock face·result light·text0.",
+      "distinctFrom": [
+        "B001–065의 같은 별자리·압박 행동 구도를 반복하지 않고 reservoir_lowfront_firstcover_close_prioritybutton_exposed_finishgap를 사용한다.",
+        "같은 work.pressure.action-beat 묶음의 다른 11개와 첫 경계 동작·압박 소품·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·reservoir1·buttons3·covers2의 첫 이동을 확인한다.",
+        "첫 덮기만 보이고 마감 성공·영구 우선순위·완료 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "0195433e255bb4c71a535d0c6b0bd90cd147fd3c9c3a70928012488f51e54bdb"
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.work.pressure.action-beat",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "63450b4f91e40c605a800c7f12dd33a19536aeca8d5910870c63ed2ad942af85",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "towerplate_axial_cookie_lower_emptyplate_stackuntouched",
+      "artDirection": "세로 3:4 full tower rim strict axial. 차곡이1가 new cookie1을 full tower1에서 empty relief plate1로 막 내리며 cookie와 plate 사이에 작은 공중 간격을 둔다. tower levels3는 untouched이고 open side bay를 남긴다. 추가 stack·낙하 실패·price·text는 없다.",
+      "distinctFrom": [
+        "B001–065의 같은 별자리·압박 행동 구도를 반복하지 않고 towerplate_axial_cookie_lower_emptyplate_stackuntouched를 사용한다.",
+        "같은 work.pressure.action-beat 묶음의 다른 11개와 첫 경계 동작·압박 소품·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이1·tower1/levels3·cookie1·plate1의 first lowering을 확인한다.",
+        "내려놓기 시작만 보이고 탑 붕괴·영구 포기·용량 조절 완료로 보이지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "d6de0f90971cd4b08f86040e0069c8aa7a61eb7b2a8ecf84d9dc811d7fcc591e"
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.work.pressure.action-beat",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "d82d7ecbf784d877c58faf26351b4676179712b83397ac151973dd7e8568e5be",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "windowrack_nadir_firstclip_priority_twofolding_openbay",
+      "artDirection": "세로 3:4 idea-window rack true nadir. canonical 재잘이·소곤이 pair2/ribbon1와 windows3를 둔다. gold clip1은 priority window1에 닿기 전이고 other windows2는 각 guardian이 first fold를 시작한다. archive bay는 열며 pseudo-text·닫힌 loop·완성 선택은 없다.",
+      "distinctFrom": [
+        "B001–065의 같은 별자리·압박 행동 구도를 반복하지 않고 windowrack_nadir_firstclip_priority_twofolding_openbay를 사용한다.",
+        "같은 work.pressure.action-beat 묶음의 다른 11개와 첫 경계 동작·압박 소품·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2/ribbon1·windows3·clip1과 two first-fold actions를 확인한다.",
+        "한 창 집중이 시작되되 다른 아이디어 삭제·영구 포기·결과 완료로 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "e06f1bfb6408625342570450d16728dc8ed686df19985749809d49abd6370099"
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.work.pressure.action-beat",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "484fbf8f86a922548a14a4c85f5d82223588ba5a394eaf79cb755a745a1b63c5",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "umbrellahub_side_firstselfmarker_attach_wetsector_opengap",
+      "artDirection": "세로 3:4 umbrella hub strict side. 달콩이1가 umbrella1/sectors3의 center self-sector에 marker1을 붙이기 직전이고 rain dots3는 shoulder 쪽에 남긴다. one rib만 움직이고 dry gap을 연다. 다른 인물·손·빈 자리·name·heart·text는 없다.",
+      "distinctFrom": [
+        "B001–065의 같은 별자리·압박 행동 구도를 반복하지 않고 umbrellahub_side_firstselfmarker_attach_wetsector_opengap를 사용한다.",
+        "같은 work.pressure.action-beat 묶음의 다른 11개와 첫 경계 동작·압박 소품·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·umbrella1/sectors3·marker1·rain dots3의 first attach를 확인한다.",
+        "자기 자리 확보가 시작되되 돌봄 실패·완료 보호·특정 타인 책임으로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "6a2654ee713e49328bd1b61b905d9acec6cf568ade4b8beb2cd93b46b0c891a0"
+    },
+    {
+      "order": 5,
+      "editionId": "leo.work.pressure.action-beat",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "027c9b4249115b99e44bfcca4dac4b91e3b9492366b50c98bf99843fee8fa23d",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "feedbackrail_low_crownsetdown_firstfacttoken_move_openfield",
+      "artDirection": "세로 3:4 feedback rail low oblique. 해님이1가 crown1을 side pad에 막 내려놓고 board1/fields2의 tokens4 중 fact token1만 first notch로 옮긴다. reaction tokens2와 other fact token1은 그대로이며 open fly field를 남긴다. audience·score·applause·text0.",
+      "distinctFrom": [
+        "B001–065의 같은 별자리·압박 행동 구도를 반복하지 않고 feedbackrail_low_crownsetdown_firstfacttoken_move_openfield를 사용한다.",
+        "같은 work.pressure.action-beat 묶음의 다른 11개와 첫 경계 동작·압박 소품·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1·crown1·board/fields2·tokens4의 첫 분류를 확인한다.",
+        "한 token 이동만 보이고 자기 가치 평가·피드백 완료·인기 결과를 확정하지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "bd45d5015f769e68fbeb421677378308fa988c2690423654861d296f064cf60d"
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.work.pressure.action-beat",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "202222fe12de6396622478246ca356cad5f88e72c4571390541d9e79125b3e5f",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "criterionstrip_raking_pencil_lift_sealremain_openrevisionbay",
+      "artDirection": "세로 3:4 finished diagram edge raking. 새봄이1가 diagram1에서 pencil1을 막 들어 올리고 completion seal1은 그대로 둔 채 criterion strip1/cells2를 펼치기 시작한다. improvement token1은 next tray 앞에 미이동이며 revision bay는 열린다. readable checklist·완벽 stamp·text는 없다.",
+      "distinctFrom": [
+        "B001–065의 같은 별자리·압박 행동 구도를 반복하지 않고 criterionstrip_raking_pencil_lift_sealremain_openrevisionbay를 사용한다.",
+        "같은 work.pressure.action-beat 묶음의 다른 11개와 첫 경계 동작·압박 소품·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·diagram1/seal1·pencil1·strip/cells2·token1의 상태를 확인한다.",
+        "수정 판단 시작만 보이고 추가 수정 의무·완벽 품질·완료 취소로 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "6aabea22b4c25f776c277ae80a7f5167fd9fe2d1b7f98d2d2aa0af5296492b7e"
+    },
+    {
+      "order": 7,
+      "editionId": "libra.work.pressure.action-beat",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "177046986b4cc2e9342c01c7857ac1b92033732c058df68bf4259bf0da75d0d1",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "balancebase_macro_hiddenweight_lift_speechtoken_wait_opensupport",
+      "artDirection": "세로 3:4 single meeting-balance base macro. 고르미1가 balance1/pans2 아래 hidden weight1을 막 들어 올리고 neutral weights2는 pans에 그대로 둔다. speech token1은 side pad에 미사용이며 support gap을 연다. 실제 사람·회의석·합의 결과·text는 없다.",
+      "distinctFrom": [
+        "B001–065의 같은 별자리·압박 행동 구도를 반복하지 않고 balancebase_macro_hiddenweight_lift_speechtoken_wait_opensupport를 사용한다.",
+        "같은 work.pressure.action-beat 묶음의 다른 11개와 첫 경계 동작·압박 소품·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·balance1/pans2·weights3·speech token1의 first lift를 확인한다.",
+        "숨은 부담을 드러내기 시작하되 갈등·합의·관계 결과가 자동 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "3a3fdbea685948ce9a949316a6bb1040fb26da5fa058472e161a5c79536a87cf"
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.work.pressure.action-beat",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "8cd5ceb97c599045c4c007745024ea6faa820322b957f8ed3eaf977533c4d530",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "requesttray_endon_firsttoken_sort_three_sleeves_boundaryopen",
+      "artDirection": "세로 3:4 request tray strict end-on. 꼬옥이1/tail-heart1가 geometric request tokens3 중 circle token1을 blank sleeves3의 fact sleeve 앞에 막 옮긴다. other tokens2는 unsorted이고 boundary sleeve1은 open bay 쪽에 분리한다. 추가 heart·key·label·봉인 완료0.",
+      "distinctFrom": [
+        "B001–065의 같은 별자리·압박 행동 구도를 반복하지 않고 requesttray_endon_firsttoken_sort_three_sleeves_boundaryopen를 사용한다.",
+        "같은 work.pressure.action-beat 묶음의 다른 11개와 첫 경계 동작·압박 소품·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1/tail-heart1·tokens3·sleeves3의 first sort를 확인한다.",
+        "한 요청 분류만 시작되고 모든 피드백 공격화·확정 판정·경계 완료로 보이지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "7f61cb522d469f03548dc45d97685b728e7b3c9f2e3dae8fd83b24eb34a26b49"
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.work.pressure.action-beat",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "0fc04a73cd2fdee475677941521603d7b471e31424d988ee04c4e931ce77d899",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "forkpanel_rear_firstfold_twooptions_deadlinegate_pacetoken_wait",
+      "artDirection": "세로 3:4 option panels rear three-quarter. 총총이1/bow1가 panels3 중 option1의 first fold를 시작하고 second option1은 이미 half-folded, current panel1은 open이다. deadline gate1과 pace token1은 미접촉으로 둔다. arrow·route·number·완주선·text0.",
+      "distinctFrom": [
+        "B001–065의 같은 별자리·압박 행동 구도를 반복하지 않고 forkpanel_rear_firstfold_twooptions_deadlinegate_pacetoken_wait를 사용한다.",
+        "같은 work.pressure.action-beat 묶음의 다른 11개와 첫 경계 동작·압박 소품·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이1/bow1·panels3·gate1·token1의 first fold를 확인한다.",
+        "현재 우선순위 선택이 시작되되 다른 가능성 삭제·정해진 길·마감 성공을 확정하지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "34d9bd82f4938722d0ee0bacc276f29d18a39f5a0e53a0aef7d9c17d3d20bc13"
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.work.pressure.action-beat",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "2ffa11e4ca7596f495dec553c8ed5bae44698617c284e2728f4cae7628cee328",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "qualityline_topdown_firstrequiredtoken_set_improvementhover_nexttray",
+      "artDirection": "세로 3:4 quality strip steep top-down. 오름이1가 blank fields2의 minimum-line relief1 위에 required token1을 막 놓고 improvement token1은 next tray1 위에 hover한다. deadline bell1은 울리지 않고 open air gap을 둔다. clock·date·score·완벽 badge·text0.",
+      "distinctFrom": [
+        "B001–065의 같은 별자리·압박 행동 구도를 반복하지 않고 qualityline_topdown_firstrequiredtoken_set_improvementhover_nexttray를 사용한다.",
+        "같은 work.pressure.action-beat 묶음의 다른 11개와 첫 경계 동작·압박 소품·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1·strip/fields2/line1·tokens2/tray1·bell1을 확인한다.",
+        "필수선 표시만 시작되고 마감·완벽·다음 버전 결과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "8a80ca688d383701a21eb28f994575caa79e7b006836a4ec248639b8f30234ed"
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.work.pressure.action-beat",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "144857735f2a7824ac9340bfd4476b157c603d616351c042d524af2d26bd664d",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "connectorport_side_firstcolortab_insert_secondtab_wait_mismatchgap",
+      "artDirection": "세로 3:4 cloud connector port strict side. 방울이1가 machine1과 standard card1 사이 tabs2 중 keep-method tab1을 first slot에 넣기 직전이고 explain-adjust tab1은 separate pad에 남긴다. mismatch gap1과 open cloud bite를 유지한다. readable procedure·closed circuit·text0.",
+      "distinctFrom": [
+        "B001–065의 같은 별자리·압박 행동 구도를 반복하지 않고 connectorport_side_firstcolortab_insert_secondtab_wait_mismatchgap를 사용한다.",
+        "같은 work.pressure.action-beat 묶음의 다른 11개와 첫 경계 동작·압박 소품·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·machine1/card1·tabs2·mismatch gap1의 first insert를 확인한다.",
+        "한 규칙 연결만 시작되고 모두 거부·모두 순응·완성 적응으로 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "def81ba0bc8ac71820f3d72477e0093ba1636a9624d277a9dae8b6a877c18600"
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.work.pressure.action-beat",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "003f80bc44acd49e411723ec08b055167c1617afdea51c072c2de7ad452f3c23",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "netframe_side_firstexternalwave_release_keep_token_held_cleftopen",
+      "artDirection": "세로 3:4 loose net frame strict side. larger aqua 꿈별이와 smaller pink 잠별이 pair2가 wave tokens3 중 external token1을 net1 밖 open sea로 막 밀어내고, own token1은 net 안에 남긴다. third token1은 rim에서 미분류이며 central cleft를 연다. heart·ring·recipient·text0.",
+      "distinctFrom": [
+        "B001–065의 같은 별자리·압박 행동 구도를 반복하지 않고 netframe_side_firstexternalwave_release_keep_token_held_cleftopen를 사용한다.",
+        "같은 work.pressure.action-beat 묶음의 다른 11개와 첫 경계 동작·압박 소품·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2·net1·wave tokens3의 release1/keep1/unclassified1 상태를 확인한다.",
+        "부담 반환 첫 행동만 보이고 책임 회피·감정 처리 완료·타인 결과를 확정하지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "89c382b85715565c370f94c1e6a5e8bdd63ec706fa81be529777921821df4e40"
+    }
+  ],
+  "editorialApprovedOn": "2026-09-01",
+  "generatedOn": "2026-09-01",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-01",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

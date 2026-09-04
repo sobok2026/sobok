@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "choice.reversible-step.action-beat",
+  "batchOrder": 86,
+  "purpose": "가역적 선택의 첫 시험을 준비나 완주가 아니라 이미 시작된 한 번의 작은 물리 동작과 즉시 회수 가능한 제어점으로 포착하는 action-beat 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "choice",
+    "narrativeAxisId": "reversible-step",
+    "visualAxisId": "action-beat"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium choice-reversible-step action-beat guardian card master artwork, full-bleed 3:4. Use the same-sign approved B082 PNG under apps/stella/private/guardian-art-production/choice-protected-value-action-beat/ only as a strict identity, approved white-sclera purple-eye, relative-scale, palette and rendering anchor; rebuild the composition below and do not copy B082 staging. Show exactly the named single guardian or canonical internal pair and no third guardian, adviser, user figure, audience, future self, human, silhouette, reflection or implied person. Preserve canonical colors, silhouette, clothing, signature props, dark-purple outlines, coherent gaze and visible chest Stella stars. Capture only the first physical test action already in motion, never preparation, completion, success, verdict, correct choice, certainty, destiny or guaranteed outcome. Make the action immediately undoable with a removable test token, half-set tab, unlatched release peg, open return edge, unsnapped socket or visibly loose control. Guardian or pair plus the active device covers 55–65% and reads at 80px; keep one broad open rollback gap. Written surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, names, labels, score, number, date, clock face, calendar grid, map, coordinate, route, arrow, question mark, zodiac glyph, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Boundaries, rails, sleeves, trays, panels, sockets, clasps and connectors stay broken, open-notched, removable, ajar or unlatched; no literal key, closed circle, ring, halo, portal, infinity sign, cage, locked box or deterministic path. No scale is allowed. Only Scorpio canonical tail-heart is allowed; no added heart. Keep every composition distinct from B001–85 and from the other eleven cards. Soft colored-pencil and watercolor, visible paper grain, rounded plush proportions and dreamy violet-peach-gold lighting; no readable text, no logo, no watermark."
+  },
+  "editorialApprovedOn": "2026-09-03",
+  "generatedOn": "2026-09-03",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-03",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.choice.reversible-step.action-beat",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "dc64231681daf84d7bc74e509b3f531e6015f3e0545fed9683a562dc64450999",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "bc1aed07c386c7b99827a6f9178b4376ba448e72ac026d35f56289c7398a8804",
+      "compositionFamily": "reversibleaction_aries_benchprofile_flamepuck_firstslide_openrail_returnstop",
+      "artDirection": "세로 3:4. B082의 몽실이1 정체성·눈만 anchor로 삼아 무릎 높이 strict side 작업대에 둔다. 앞발이 short test rail1의 removable flame puck1을 한 notch first slide하는 찰나를 잡고, puck 뒤 loose reverse-stop1과 rail의 broad open return edge1을 분리해 즉시 뒤로 밀 수 있게 한다. 달리기 길·출발선·flag·door·arrow·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–85의 몽실이 문·발판·launch-notch 구도를 반복하지 않고 reversibleaction_aries_benchprofile_flamepuck_firstslide_openrail_returnstop을 사용한다.",
+        "같은 choice.reversible-step.action-beat 묶음의 다른 11개와 tabletop profile·sliding puck·open rear edge를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·test rail1·flame puck1·reverse-stop1·open return edge1과 first slide 중간 자세를 확인한다.",
+        "puck이 종점에 닿지 않고 뒤로 회수 가능하며 눈·얼굴·가슴 별이 B082 anchor와 일치하는지 확인한다."
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.choice.reversible-step.action-beat",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "282c14f21f852a2555a01f827f0a88cf16f115609d5a5ee105634a0cb4eccf64",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "362ea24e0859b71f3c54a165371a60ccb6e2d75d17f1e4bc80c1d5c71ce49d00",
+      "compositionFamily": "reversibleaction_taurus_underplate_cutaway_firststone_halfpress_releasepeg",
+      "artDirection": "세로 3:4. B082의 차곡이1 정체성·눈만 anchor로 삼아 first-stone plate1 아래 구조가 보이는 low underside cutaway로 둔다. 앞발이 plate를 절반 first press한 순간, 아래의 dark lift gap1과 아직 잠기지 않은 detachable release peg1을 크게 보여 발을 떼면 원위치로 들릴 수 있게 한다. 별도 return pad·길·계단·scale·number·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–85의 차곡이 첫돌 toe-touch·분리 return-pad 구도를 반복하지 않고 reversibleaction_taurus_underplate_cutaway_firststone_halfpress_releasepeg를 사용한다.",
+        "같은 묶음의 다른 11개와 underside mechanism·half press·visible lift gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이1·first-stone plate1·lift gap1·release peg1과 네 발 중 앞발 하나만 누르는 찰나를 확인한다.",
+        "plate가 고정·완주되지 않고 즉시 들릴 수 있으며 정본 뿔·앞머리·앞치마·눈이 유지되는지 확인한다."
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.choice.reversible-step.action-beat",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "02df15f347ad99bc8d2882851a4cf433e046f266219de44f05322a028d78e8c7",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c689a4e05ead7ca0d979d20b05217ed44e696bb3317aaf915c5e6db6d2466cb0",
+      "compositionFamily": "reversibleaction_gemini_rotatedoverhead_twocartridges_halfwithdraw_comparewell",
+      "artDirection": "세로 3:4. B082의 재잘이·소곤이 canonical pair2와 pink/lavender ribbon1 정체성·네 눈만 anchor로 삼아 rotated overhead로 둔다. 각자 자기 색 sample cartridge1씩, 총2개를 separate open sleeves2에서 동시에 halfway withdraw하고 pull tabs2를 노출한다. cartridges는 만나지 않고 central compare well1은 비운다. path·signpost·clock·closed loop·text는 없다.",
+      "distinctFrom": [
+        "B001–85의 쌍둥이 trial-token·두 pad·central return-clip 구도를 반복하지 않고 reversibleaction_gemini_rotatedoverhead_twocartridges_halfwithdraw_comparewell을 사용한다.",
+        "같은 묶음의 다른 11개와 dual half-withdraw action·empty compare well·rotated overhead를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "canonical pair2·two-tone ribbon1·sleeves2·cartridges2·pull tabs2·empty well1을 확인한다.",
+        "두 cartridge가 절반만 빠져 각각 되돌아가고 네 눈의 흰자·보라 동공·시선이 coherent한지 확인한다."
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.choice.reversible-step.action-beat",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "92e7c36551db62e24c6199e40ab1d4b89e1fc3f09e510ce9e9b2be3f03d01347",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c211f10dcd4126eb1702613fef069fe146ff195cb937522c8450cb8037eb4e88",
+      "compositionFamily": "reversibleaction_cancer_waterline_liftdropletprism_openfork_returnclip",
+      "artDirection": "세로 3:4. B082의 달콩이1 정체성·눈만 anchor로 삼아 moon-shell lip을 비스듬히 자르는 waterline profile로 둔다. 한 집게가 shallow water notch1에서 removable droplet prism1을 막 first lift해 물방울이 떨어지고, 다른 집게는 shell 쪽 unlatched return clip1 가까이에 남는다. prism cradle은 open fork1이며 집·몸은 이동하지 않는다. cup·handle loop·portal·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–85의 달콩이 one-claw water sample-pad·return-lip 구도를 반복하지 않고 reversibleaction_cancer_waterline_liftdropletprism_openfork_returnclip을 사용한다.",
+        "같은 묶음의 다른 11개와 lifted prism·falling droplets·shell-side return clip을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·droplet prism1·water notch1·open fork1·return clip1과 집게의 first lift를 확인한다.",
+        "prism을 다시 notch에 놓을 수 있고 crescent shell·집게·가슴 별·네 눈 구조가 anchor대로인지 확인한다."
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.choice.reversible-step.action-beat",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "50b27e545e8bbac25df50e26f3616b9642799f1a8e5935aa7e16422e537c32fe",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "6f0dafc2f375e20ba2340391f207b934c1f77a5f75fd4acb4fc5422d75e9e781",
+      "compositionFamily": "reversibleaction_leo_floorlevel_foldoutriser_firstpaw_releasepin",
+      "artDirection": "세로 3:4. B082의 해님이1 정체성·눈만 anchor로 삼아 관객 없는 dark floor-level backstage에 둔다. low fold-out rehearsal riser1가 side equipment ledge에서 절반 펼쳐지고 해님이의 앞발 하나가 first land하는 순간, 옆 quick-release pin1은 halfway pulled 상태로 남긴다. open exit ledge1에는 blank self-check star tile1만 둔다. mirror·audience·curtain door·score·scale·text는 없다.",
+      "distinctFrom": [
+        "B001–85의 해님이 small rehearsal tile·loose exit tab·open curtain 구도를 반복하지 않고 reversibleaction_leo_floorlevel_foldoutriser_firstpaw_releasepin을 사용한다.",
+        "같은 묶음의 다른 11개와 floor-level fold-out riser·half-pulled release pin·blank exit ledge를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1·riser1·release pin1·exit ledge1·self-check tile1과 first paw landing을 확인한다.",
+        "pin을 빼 riser를 즉시 접을 수 있고 crown·갈기·꼬리별·눈이 anchor와 일치하며 성공 연출이 없는지 확인한다."
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.choice.reversible-step.action-beat",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "f4a4b43fcd55ed08b903b5e8ec85cbd5a71d2bd6d7eec72db8e8296584167a5d",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "3214a73fcf8ff8be91417291ce18e114a35dc541bfec901271989c0fe86fa6a4",
+      "compositionFamily": "reversibleaction_virgo_underplank_macro_firstspan_halfclip_undopeg",
+      "artDirection": "세로 3:4. B082의 새봄이1 정체성·눈만 anchor로 삼아 tabletop test span 아래를 보는 extreme low macro로 둔다. 새봄이가 short star plank1의 가까운 끝만 open fork1에 first half-clip하고, far end는 허공에 지지 없이 남긴다. protruding undo peg1과 side tray의 folded blank observation packet1을 분리한다. 완성 bridge·checklist marks·route·arrow·closed frame·text는 없다.",
+      "distinctFrom": [
+        "B001–85의 새봄이 fold-out trial platform·undo tab·open hinge 구도를 반복하지 않고 reversibleaction_virgo_underplank_macro_firstspan_halfclip_undopeg를 사용한다.",
+        "같은 묶음의 다른 11개와 under-plank macro·single-end half clip·unsupported far void를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·star plank1·open fork1·undo peg1·blank packet1과 half-clip 중인 손을 확인한다.",
+        "plank가 한쪽만 걸려 바로 빠지고 far gap이 열리며 잎귀·이마꽃·가슴 별·눈이 anchor대로인지 확인한다."
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.choice.reversible-step.action-beat",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "7ba6c7e9aeb17f3314c365f11947b12b54d7f3897f8b54e1313207b33d6f0109",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "5c156f22fb6b01d7b7e7b658968b36181d5492b61d82d17e70ae54513715178e",
+      "compositionFamily": "reversibleaction_libra_highdiagonal_choicesleeve_halfdraw_reviewtoken",
+      "artDirection": "세로 3:4. B082의 고르미1 정체성·눈만 anchor로 삼아 high diagonal work surface에 open-front choice sleeves2를 평행하지 않게 둔다. 고르미가 한 sleeve의 removable color test strip1을 first half-draw하고 바깥 pull edge1을 잡는다. 다른 sleeve에는 loose review star tile1을 넣지 않은 채 옆에 두고 양쪽 rear gaps를 연다. door·date·ribbon loop·scale·score·text는 없다.",
+      "distinctFrom": [
+        "B001–85의 고르미 trial flap half-rise·other review tile·two open gaps 구도를 반복하지 않고 reversibleaction_libra_highdiagonal_choicesleeve_halfdraw_reviewtoken을 사용한다.",
+        "같은 묶음의 다른 11개와 asymmetric sleeves·half-drawn strip·untouched review tile을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·sleeves2·test strip1·pull edge1·review tile1·rear gaps2와 first draw 자세를 확인한다.",
+        "strip을 다시 밀어 넣을 수 있고 다른 선택은 봉인되지 않으며 귀·이마 소용돌이·네 눈이 anchor대로인지 확인한다."
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.choice.reversible-step.action-beat",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "6f4f119667a6b7ad00535ecd65038ef345b20491c0bfbeffad45e73a864dea72",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "3af729c43de71535371422411a58dd0b4d93a1317a4472e200401020dd8e86fa",
+      "compositionFamily": "reversibleaction_scorpio_pincerlevel_factprism_halfwithdraw_privacysleeve",
+      "artDirection": "세로 3:4. B082의 꼬옥이1과 canonical tail-heart1 정체성·눈만 anchor로 삼아 pincer-height reverse close로 둔다. 집게가 open privacy sleeve1에서 blank fact prism1만 first halfway withdraw하고, deeper private tile1은 sleeve 안에 가려 둔다. loose reseal cap1은 sleeve 밖, rear return gap1은 열린다. 문서·글줄·literal key·lock·추가 heart·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–85의 꼬옥이 blank seal panel half-lift·undo tab 구도를 반복하지 않고 reversibleaction_scorpio_pincerlevel_factprism_halfwithdraw_privacysleeve를 사용한다.",
+        "같은 묶음의 다른 11개와 prism extraction·covered deeper tile·external loose cap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1·tail-heart1·privacy sleeve1·fact prism1·private tile1·reseal cap1·return gap1을 확인한다.",
+        "prism이 절반만 빠져 다시 넣을 수 있고 공개·봉인이 확정되지 않으며 집게·꼬리·네 눈이 anchor대로인지 확인한다."
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.choice.reversible-step.action-beat",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "325138355379c3ea0954a5b4f2fde94a85a547e8ab41739bf11cad170ce75704",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "7e24f32b55862a0546c1bb8f1664399cc2830a0fb865fcf9d3fa9b6ea4e45cf7",
+      "compositionFamily": "reversibleaction_sag_backthreequarter_testsail_firstunfold_releasehinge_homestar",
+      "artDirection": "세로 3:4. B082의 총총이1 정체성·눈과 bow1만 anchor로 삼아 open-sky back three-quarter로 둔다. bow는 등에 두고 arrow는 없으며, 앞손이 작은 asymmetric test sail1을 low open hinge1에서 first halfway unfold하는 찰나를 잡는다. hinge의 release tab1은 튀어나오고 반대 손의 loose home star token1과 넓은 side rollback gap은 분리한다. 전망 prism·perch·ticket·field panel·destination·map·route·portal·text는 없다.",
+      "distinctFrom": [
+        "B001–85의 총총이 horizon prism·trial perch·return cradle 구도를 반복하지 않고 reversibleaction_sag_backthreequarter_testsail_firstunfold_releasehinge_homestar를 사용한다.",
+        "같은 묶음의 다른 11개와 back three-quarter·half-unfolded test sail·exposed release tab을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이1·bow1·arrow0·test sail1·open hinge1·release tab1·home star token1을 확인한다.",
+        "sail이 절반만 펼쳐져 바로 접히고 목적지나 성공을 가리키지 않으며 갈기·뿔·눈이 anchor대로인지 확인한다."
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.choice.reversible-step.action-beat",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "c74ca9e1d73c9a7b1b266caf50f742f8fa9ba20528a050fb862a0cfe31136792",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "1fcb77d51a5f7d66aa13d6cc503f4dd6ffbda49c6e9a8dbb066f88f49d71d7df",
+      "compositionFamily": "reversibleaction_cap_workledge_taskbrick_halfslide_pullgrip_emptybay",
+      "artDirection": "세로 3:4. B082의 오름이1 정체성·눈만 anchor로 삼아 낮은 side macro work ledge에 둔다. 오름이가 removable task brick1을 shallow under-ledge socket1에 first halfway slide하고, 바깥 pull grip1을 완전히 노출한다. resource tokens2는 separate open tray1에 그대로 두며 adjacent next bay1은 비운다. 계단 완성·calendar·budget number·grid·scale·rank·text는 없다.",
+      "distinctFrom": [
+        "B001–85의 오름이 trial riser half-set·resource prism·open carrier 구도를 반복하지 않고 reversibleaction_cap_workledge_taskbrick_halfslide_pullgrip_emptybay를 사용한다.",
+        "같은 묶음의 다른 11개와 under-ledge insertion·exposed pull grip·blank adjacent bay를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1·task brick1·socket1·pull grip1·resource tokens2·tray1·empty bay1을 확인한다.",
+        "brick을 즉시 회수할 수 있고 다음 구간·비용·성과가 정해지지 않으며 물고기 꼬리·뿔·눈이 anchor대로인지 확인한다."
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.choice.reversible-step.action-beat",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "afc5d41710af09ddb20e5855b8af5b91e548dd89801434348ec001a05242c1ca",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "4aec5b8ae4d5e4a3d8274fec50dd7a060775161054acd84e948c2399d2d3a088",
+      "compositionFamily": "reversibleaction_aqua_airfork_cloudtile_halfinsert_reactiondrop_releaseclip",
+      "artDirection": "세로 3:4. B082의 방울이1 정체성·눈만 anchor로 삼아 bench-edge front oblique로 둔다. 두 손이 detachable cloud tile1을 open two-prong air fork1에 first halfway insert하고, tile 위 loose reaction droplet1은 아직 흔들리게 둔다. unsnapped side release clip1과 비어 있는 rear socket1을 크게 보인다. footstep·road·diagram·arrow·heart profile·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–85의 방울이 detachable cloudpad toe-touch·return cradle 구도를 반복하지 않고 reversibleaction_aqua_airfork_cloudtile_halfinsert_reactiondrop_releaseclip을 사용한다.",
+        "같은 묶음의 다른 11개와 hand-driven half insertion·loose reaction drop·empty rear socket을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·cloud tile1·air fork1·reaction droplet1·release clip1·rear socket1과 first insert를 확인한다.",
+        "clip이 잠기지 않아 tile을 바로 뺄 수 있고 발명 완성이나 방향 확정 없이 구름형 몸·네 눈이 anchor대로인지 확인한다."
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.choice.reversible-step.action-beat",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "7821c2c83fcaafa4b28ade305d1cf6faeec9fb67f3267a29d5302790a863944f",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "375ba4a22c1a1c9596c8893ba974a41ad2ebabad5999ebe53b3fe56663e6b972",
+      "compositionFamily": "reversibleaction_pisces_crosswater_twinpaddles_firstswivel_releasepegs_cleft",
+      "artDirection": "세로 3:4. B082의 꿈별이·잠별이 canonical pair2 정체성·네 눈만 anchor로 삼아 cross-water side view로 둔다. aqua/pink short current paddles2를 separate open forks2에 두고, 각 inner fin이 자기 paddle을 바깥쪽으로 first one-notch swivel하는 찰나를 동시에 잡는다. pull pegs2는 forks 밖으로 노출하고 두 paddle 끝과 central cleft는 넓게 분리한다. scoop·droplet·trial arc·circle·halo·portal·heart·current merge·text는 없다.",
+      "distinctFrom": [
+        "B001–85의 물고기 pair trial scoops·color droplets·return star 구도를 반복하지 않고 reversibleaction_pisces_crosswater_twinpaddles_firstswivel_releasepegs_cleft를 사용한다.",
+        "같은 묶음의 다른 11개와 cross-water side view·dual first swivel·exposed pull pegs를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "canonical pair2·current paddles2·open forks2·first swivel notches2·pull pegs2·central cleft를 확인한다.",
+        "각 paddle이 자기 fork에서 원위치로 돌아가고 두 흐름·몸·감정이 합쳐지지 않으며 네 눈·상대 크기가 anchor대로인지 확인한다."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "choice.protected-value.constellation-afterglow",
+  "batchOrder": 84,
+  "purpose": "지킬 핵심과 조정 가능한 요소 사이에 끊긴 별빛 여운만 남겨, 보호할 가치가 닫힌 운명·영구 방어·정답 경로가 아니라 다음 판단에서 다시 조절할 수 있는 기준으로 읽히는 constellation-afterglow 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "choice",
+    "narrativeAxisId": "protected-value",
+    "visualAxisId": "constellation-afterglow"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium choice-protected-value constellation-afterglow guardian card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair and no extra adviser, partner, audience, future self, human, silhouette, reflection, empty seat or implied person. Use the same-sign human-approved B081 artwork as the primary identity, eye, palette and rendering anchor; use B080 only as a broken-afterglow spacing reference and never copy its composition. Preserve canonical body, relative scale, colors, clothing, signature props, dark-purple outlines and visible chest Stella stars. Eye construction is a hard gate: approved white sclera, matched purple irises, coherent pupils and gaze aimed at one intended target, and consistent highlights; reject button eyes, crossed or divergent gaze without a target, duplicated or warped eyes, and mismatched iris size. Guardian or pair plus one protected core, one visibly separate adjustable element and one blank revisiting marker covers 55–65% and reads at 80px. Between them show only two or three disconnected afterglow patches with broad empty gaps; never draw a connected constellation, route, verdict, destiny, guaranteed return or correct choice. Written surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, names, labels, score, number, date, clock face, calendar grid, map, coordinate, question mark, zodiac glyph, arrow, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Every boundary, support, tray, recess and marker remains broken, open-sided, notched, loose, removable or unlatched; no key, lock, closed circle, ring, halo, portal, infinity sign, cage or deterministic path. Do not add a scale to any sign. Only Scorpio canonical tail-heart is allowed; no added heart. Keep every composition distinct from B001–83 and from the other eleven cards. Soft colored-pencil and watercolor with visible paper grain, rounded plush proportions and dreamy violet-peach-gold lighting; no naturalistic-animal drift, rough crayon, flat vector, readable text, logo or watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.choice.protected-value.constellation-afterglow",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "0231ed201ebdd3b18a959633c51ca94fa6536cb5066aafce035e13f809022b5f",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "f8615d4e24f3df268da18c01c3689f00f9fb986310a80b4ea1284a0a31f5428a",
+      "compositionFamily": "protectedafterglow_aries_opentrihearth_flamecore_pacetile_blankreturnpeg",
+      "artDirection": "세로 3:4. 몽실이1과 open three-sided hearth1 속 protected flame core1, hearth 밖 loose pace tile1, distant blank return peg1을 high-side close로 둔다. flame과 peg 사이 afterglow patches2는 서로 닿지 않게 띄우고 hearth의 열린 변을 화면 여백으로 향하게 한다. cradle·pebble·door·route·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–83의 같은 별자리 구도와 B080 evidence afterglow 및 B081–83 protected-value 장치를 반복하지 않고 protectedafterglow_aries_opentrihearth_flamecore_pacetile_blankreturnpeg를 사용한다.",
+        "같은 choice.protected-value.constellation-afterglow 묶음의 다른 11개와 받침 형태·카메라·여운 간격을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·open hearth1·flame core1·pace tile1·blank peg1·분리된 afterglow patches2를 확인한다.",
+        "용기의 핵심은 남지만 속도와 다음 판단은 조정 가능하며 여운이 길·귀환 보장·닫힌 방어선으로 연결되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.choice.protected-value.constellation-afterglow",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "9f5baf0fe96ae5b1c94e3b0dc12c818cb679ee3bd4f2a8d26af1216f30c8674e",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "ff5aa894cca77b97157f5ed99586764d64cd0448b1af85f2918e5bad00ff9912",
+      "compositionFamily": "protectedafterglow_taurus_opencornershelf_reserveblock_resttoken_blankrefillnotch",
+      "artDirection": "세로 3:4. 차곡이1과 open corner shelf1의 protected reserve block1, shelf 밖 adjustable rest crescent1과 keepsake star1, distant blank refill notch1을 eye-level side로 둔다. reserve block과 notch 사이 afterglow patches2는 흙 바닥의 넓은 틈에서 끊고 shelf 앞면 한쪽을 완전히 연다. satchel·basket·coin·number·scale·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–83의 같은 별자리 구도와 기존 satchel·basket·door relief를 반복하지 않고 protectedafterglow_taurus_opencornershelf_reserveblock_resttoken_blankrefillnotch를 사용한다.",
+        "같은 choice.protected-value.constellation-afterglow 묶음의 다른 11개와 선반 높이·토큰 배치·바닥 여운을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이1·open shelf1·reserve block1·rest/keepsake tokens2·blank notch1·afterglow patches2를 확인한다.",
+        "생활의 최소 자원은 보호하되 휴식·소지품·다음 보충 시점이 완벽한 안정이나 변화 금지로 굳지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.choice.protected-value.constellation-afterglow",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "6fdf8811728b93f5831c3b045d38cab2d6100e7edb8772e6c27f48510d6c2197",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "4b3a88f18ee34ea303e85eb91c8c4f4da8690088e65cdd018e5f0021128a644f",
+      "compositionFamily": "protectedafterglow_geminipair_splitledges_chosentoken_alternateprism_revisitcup",
+      "artDirection": "세로 3:4. 재잘이·소곤이 canonical pair2/ribbon1을 staggered open ledges2에 두고 chosen star token1, loose alternate prism1, open revisit cup1을 side-wide로 배치한다. token과 cup 사이 afterglow patches2는 pair의 central cleft에서 완전히 끊고 ribbon 양끝도 ledge와 연결하지 않는다. panel·window·hinge·map·route·halo·text는 없다.",
+      "distinctFrom": [
+        "B001–83의 같은 별자리 구도와 기존 panel·future tab·sample window를 반복하지 않고 protectedafterglow_geminipair_splitledges_chosentoken_alternateprism_revisitcup를 사용한다.",
+        "같은 choice.protected-value.constellation-afterglow 묶음의 다른 11개와 pair 높이·중앙 cleft·공중 여운을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "재잘이·소곤이 pair2·canonical ribbon1·open ledges2·tokens2·revisit cup1·afterglow patches2를 확인한다.",
+        "고른 가능성과 남긴 가능성이 구별되면서도 한쪽 삭제·합일·재개 보장·정답 경로로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.choice.protected-value.constellation-afterglow",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "ed3efb02dfa08c3f0fe5753d4ffbd5f5d0c65f5d603a03528d70076c2667e080",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "31928394e5fb663dd386a9687eecda8810ae87f0aecb990ac9e3b7a52554b61d",
+      "compositionFamily": "protectedafterglow_cancer_openbackperch_homestar_relationtoken_blankcheckdish",
+      "artDirection": "세로 3:4. 달콩이1을 등판이 끊긴 open crescent perch1에 앉히고 protected home star tile1은 한 집게 가까이, adjustable relation token1은 perch 밖 removable pad1에 둔다. distant blank check dish1까지 이어질 afterglow patches2는 바닥 중간에서 끊는다. shell clasp·door·lantern·strap loop·closed ring·heart·text는 없다.",
+      "distinctFrom": [
+        "B001–83의 같은 별자리 구도와 moon slit·shell clasp·door 장치를 반복하지 않고 protectedafterglow_cancer_openbackperch_homestar_relationtoken_blankcheckdish를 사용한다.",
+        "같은 choice.protected-value.constellation-afterglow 묶음의 다른 11개와 perch 방향·외부 pad·낮은 여운을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·open-backed perch1·home star1·relation token1·removable pad1·blank dish1·afterglow patches2를 확인한다.",
+        "안전한 자기 자리는 보호하되 관계 방식과 다음 대화가 고립·영구 잠금·상대 통제로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.choice.protected-value.constellation-afterglow",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "aa83b3f6f93092794aa1e03a131db31d300d37fe438a0092ed0b7e99265a6a76",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "cf0705114395a6338dcf5bda470b3b96449e8f41fd1d03c23de978aa089bc538",
+      "compositionFamily": "protectedafterglow_leo_openfandeck_dignityprism_visibilitypebble_blankvoicenotch",
+      "artDirection": "세로 3:4. crown1을 쓴 해님이1과 한쪽 날개가 비어 있는 open fan deck1, protected dignity star prism1, loose visibility pebble1, distant blank voice notch1을 high frontal로 둔다. prism과 notch 사이 afterglow patches3는 서로 떨어뜨리고 deck 외곽을 닫지 않는다. door pad·lamp·stage·audience·score·scale·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–83의 같은 별자리 구도와 crown-aside·door pad·lamp·stage를 반복하지 않고 protectedafterglow_leo_openfandeck_dignityprism_visibilitypebble_blankvoicenotch를 사용한다.",
+        "같은 choice.protected-value.constellation-afterglow 묶음의 다른 11개와 fan deck 실루엣·정면 높이·세 조각 여운을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1/crown1·open fan deck1·dignity prism1·visibility pebble1·blank notch1·afterglow patches3를 확인한다.",
+        "존엄과 표현은 남지만 가시성·인정·다음 발언이 크기 경쟁이나 보장된 성과로 굳지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.choice.protected-value.constellation-afterglow",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "54d3eda19686c475a1a01a5e430b67e0ec6f881d5c1cb4db621709a3919506b1",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "8e575557820e8b8f245a79443a60eaf8490eda33579e25180da159c42ee7a048",
+      "compositionFamily": "protectedafterglow_virgo_openleafcradle_coreseed_adjustseeds_emptytransplantdish",
+      "artDirection": "세로 3:4. 새봄이1/pencil1과 한 잎이 빠진 open leaf cradle1 속 protected criterion seed1, cradle 밖 adjustable seeds2, distant empty transplant dish1을 macro side로 둔다. pencil은 쓰지 않고 seed를 가리키며 criterion seed와 dish 사이 afterglow patches2는 공중에서 끊는다. strip·rail·table·checklist·grid·badge·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–83의 같은 별자리 구도와 criterion strip·gold rail·comparison table를 반복하지 않고 protectedafterglow_virgo_openleafcradle_coreseed_adjustseeds_emptytransplantdish를 사용한다.",
+        "같은 choice.protected-value.constellation-afterglow 묶음의 다른 11개와 식물형 cradle·macro 카메라·공중 여운을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·pencil1·open leaf cradle1·criterion seed1·adjustable seeds2·empty dish1·afterglow patches2를 확인한다.",
+        "최소 기준 하나는 보호하되 다른 조건과 다음 이식 판단이 완벽주의·수정 금지·완성된 답으로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.choice.protected-value.constellation-afterglow",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "2a8bea79cc2edad0c6a6173748e4ebb09db8771b4bf8be1a62e942543bfa376d",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "92a834bbd916ab4f9f139e06ef68ec2eb34950effef607f3bcbe84e9f50c0662",
+      "compositionFamily": "protectedafterglow_libra_offsetbrackets_relationtoken_selftoken_boundaryblock",
+      "artDirection": "세로 3:4. 고르미1과 서로 마주치지 않는 offset open brackets2, protected relation star token1, protected self-place prism1, removable boundary block1, distant blank listening notch1을 over-shoulder diagonal로 둔다. 두 token 사이가 아니라 boundary block과 notch 사이에만 afterglow patches2를 끊어 둔다. ribbon·track·balance·scale·loop·score·text는 없다.",
+      "distinctFrom": [
+        "B001–83의 같은 별자리 구도와 ribbon·self tile·open track·balance를 반복하지 않고 protectedafterglow_libra_offsetbrackets_relationtoken_selftoken_boundaryblock를 사용한다.",
+        "같은 choice.protected-value.constellation-afterglow 묶음의 다른 11개와 비대칭 brackets·어깨 시점·비접촉 여운을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·open brackets2·relation token1·self prism1·boundary block1·blank notch1·afterglow patches2를 확인한다.",
+        "관계 존중과 자기 자리를 함께 보호하되 간격 조정이 완전 균형·강제 합의·최종 판정으로 바뀌지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.choice.protected-value.constellation-afterglow",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "785817f92ad1221043462b54a04c9f457fcb43a327eca686212b7e1f9d85a6e6",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "1ffea92ec9a0d61eb98ff8dee581e1cf452fed592c2114eefaf6d77190b1e6e7",
+      "compositionFamily": "protectedafterglow_scorpio_openrockcleft_truthprism_privacytile_boundaryseal",
+      "artDirection": "세로 3:4. 꼬옥이1/canonical tail-heart1과 open rock cleft1의 얕은 층에 protected truth prism1, 깊은 층에 private tile1, cleft 밖 loose boundary seal1, distant blank revisit notch1을 high reverse로 둔다. truth prism과 notch 사이 afterglow patches2는 cleft 입구에서 끊는다. box·key·lock·necklace·closed track·추가 heart·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–83의 같은 별자리 구도와 privacy box·seal slit·boundary track를 반복하지 않고 protectedafterglow_scorpio_openrockcleft_truthprism_privacytile_boundaryseal를 사용한다.",
+        "같은 choice.protected-value.constellation-afterglow 묶음의 다른 11개와 cleft 깊이·reverse 카메라·입구 여운을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1·canonical tail-heart1·open cleft1·truth prism1·private tile1·loose seal1·blank notch1·afterglow patches2를 확인한다.",
+        "진실과 사적 정체성을 구분해 보호하되 공개 범위가 열쇠 소유·영구 봉인·전면 공개의 정답으로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.choice.protected-value.constellation-afterglow",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "122672ac4fbae60f2f73859c00606e2ed4062f97ba0ba86eb5f04a84a547f659",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "ce03dd52abb358d05a14e01214fa0eab16d9aaec45209e7d344b3c53dc842e86",
+      "compositionFamily": "protectedafterglow_sag_staggeredledges_exploredstar_possibilityshard_revisitcup",
+      "artDirection": "세로 3:4. 총총이1/bow1과 높이가 다른 open ledges2, protected explored star1, loose possibility shard1, 높은 쪽 distant blank revisit cup1을 vertical low-angle로 둔다. star와 cup 사이 afterglow patches3는 수직 여백에서 크게 끊고 ledge끼리 연결하지 않는다. field panel·window tab·map·coordinate·arrow·destination·route·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–83의 같은 별자리 구도와 blank field board·map·future window를 반복하지 않고 protectedafterglow_sag_staggeredledges_exploredstar_possibilityshard_revisitcup를 사용한다.",
+        "같은 choice.protected-value.constellation-afterglow 묶음의 다른 11개와 수직 ledge·low-angle 시점·세 조각 여운을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이1·bow1·open ledges2·explored star1·possibility shard1·blank cup1·afterglow patches3를 확인한다.",
+        "탐색한 가치 하나를 남겨도 다른 가능성과 다음 판단이 목적지·성공·정답 경로로 연결되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.choice.protected-value.constellation-afterglow",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "3188fb3846fe8e0682e657210a5c1962f1999651e5ce9b9185ccdc97993b08d4",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "59a30bc8a1608de4513e4f561ef62bb593842999c49277ca5b1b1203a408d6cf",
+      "compositionFamily": "protectedafterglow_cap_openangularbrace_responsibilitystone_burdenblocks_handoffnotch",
+      "artDirection": "세로 3:4. 오름이1/turquoise tail과 한쪽 끝이 비어 있는 open angular brace1 위 protected responsibility stone1, brace 밖 loose burden blocks2, open let-go pad1, distant blank handoff notch1을 side-low diagonal로 둔다. core stone과 notch 사이 afterglow patches2는 pad 앞에서 끊는다. plaque·gold clip·carrier·stairs·cord·rank·number·grid·route·text는 없다.",
+      "distinctFrom": [
+        "B001–83의 같은 별자리 구도와 plaque·clip·carrier·stair model을 반복하지 않고 protectedafterglow_cap_openangularbrace_responsibilitystone_burdenblocks_handoffnotch를 사용한다.",
+        "같은 choice.protected-value.constellation-afterglow 묶음의 다른 11개와 angular brace·낮은 대각 시점·pad 앞 여운을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1·turquoise tail·open brace1·responsibility stone1·burden blocks2·let-go pad1·blank notch1·afterglow patches2를 확인한다.",
+        "자기 몫은 보호하되 다른 부담·체면·다음 인계가 영구 의무나 성과 보장의 사다리로 굳지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.choice.protected-value.constellation-afterglow",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "a1d87e00165a4ea4db29e93beb03f92f4786d2d3e4f6c2f816f648c1d71762e9",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "3b2e69a51483009ef60c537364db831812e603acda7b0fc4eeafa1db41a5d234",
+      "compositionFamily": "protectedafterglow_aqua_splitpetalstands_principleprism_methodparts_testrest",
+      "artDirection": "세로 3:4. 방울이1과 원형으로 배열하지 않은 detached invention petal stands3, protected four-point principle prism1, loose adjustable method parts2, distant blank test rest1을 asymmetric top-side로 둔다. prism과 test rest 사이 afterglow patches2는 stands 사이에서 끊고 모든 stand 한 변을 연다. board·bottle·socket·cloud model·diagram line·heart profile·loop·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–83의 같은 별자리 구도와 option board·core bottle·socket·cloud model을 반복하지 않고 protectedafterglow_aqua_splitpetalstands_principleprism_methodparts_testrest를 사용한다.",
+        "같은 choice.protected-value.constellation-afterglow 묶음의 다른 11개와 비원형 stands·top-side 카메라·stand 사이 여운을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·detached open stands3·four-point principle prism1·method parts2·blank test rest1·afterglow patches2를 확인한다.",
+        "고유 원리는 보호하되 방법과 다음 실험이 발명 완성·변화 거부·정답 설계로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.choice.protected-value.constellation-afterglow",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-03",
+      "editorialContentHash": "a7438ee29c233d769fe1958f972e1f8aa3b1178a13189ab7225b24d03adaff4b",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "bdf9dd8f7250533b76d1b09b9fb14819933c65ed2a5fe65b78e5ab47e449fa78",
+      "compositionFamily": "protectedafterglow_piscespair_offsetfinledges_identityprisms_connectionstar_feelingnotch",
+      "artDirection": "세로 3:4. 꿈별이·잠별이 canonical pair2를 offset open fin ledges2에 분리해 두고 aqua/pink protected identity prisms2, loose connection star1을 open three-sided rest1에, distant blank next-feeling notch1을 central cleft 너머에 둔다. afterglow patches2는 cleft 양쪽에서 만나지 않는다. pad·crescent connector·bottle·ring·halo·heart·current merge·text는 없다.",
+      "distinctFrom": [
+        "B001–83의 같은 별자리 구도와 color pad·crescent connector·bottle를 반복하지 않고 protectedafterglow_piscespair_offsetfinledges_identityprisms_connectionstar_feelingnotch를 사용한다.",
+        "같은 choice.protected-value.constellation-afterglow 묶음의 다른 11개와 fin ledge 높이·central cleft·양쪽 여운을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꿈별이·잠별이 pair2·open fin ledges2·identity prisms2·connection star1·open rest1·blank notch1·afterglow patches2를 확인한다.",
+        "연결과 각자의 색을 함께 보호하되 두 존재·감정·물살·다음 관계가 하나의 고리나 운명으로 합쳐지지 않는지 확인한다."
+      ]
+    }
+  ],
+  "editorialApprovedOn": "2026-09-03",
+  "generatedOn": "2026-09-03",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-03",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

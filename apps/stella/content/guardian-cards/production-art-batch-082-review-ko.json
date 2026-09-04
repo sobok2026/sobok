@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "choice.protected-value.action-beat",
+  "batchOrder": 82,
+  "purpose": "지킬 가치가 선언이나 잠금이 아니라 한 개의 보호 표식·클립·열린 경계를 처음 놓는 가역적 행동으로 읽히는 action-beat 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "choice",
+    "narrativeAxisId": "protected-value",
+    "visualAxisId": "action-beat"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium choice-protected-value action-beat guardian card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair and no extra adviser, partner, audience, future self, human, silhouette, reflection, empty seat or implied person. Preserve canonical identity, approved white-sclera purple eye construction, colors, signature props, dark-purple outlines and visible chest Stella stars. Guardian or pair plus one immediate protected-value control covers 55–65% and reads at 80px. Capture only the first reversible placement, half-clip, window lift, open clasp or token move while the adjustable option and return edge remain separate; never declare a correct choice, permanent defense, certainty, destiny or guaranteed outcome. Written surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, names, labels, score, number, date, clock face, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Boundaries stay broken, C-shaped, open-notched, removable, half-set or unlatched; no closed circle, ring, halo, portal, infinity sign, cage, locked box or deterministic route. Replace literal keys with loose seal tokens. Do not add a scale; no scale is requested in this batch. Only Scorpio canonical tail-heart is allowed; no added heart. Keep every composition distinct. Soft colored-pencil and watercolor, paper grain, rounded plush proportions and dreamy violet-peach-gold lighting; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.choice.protected-value.action-beat",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "b9f81120ee88a35cc6962c7ed3b1d9bb76b3313b99b84994316237b388899083",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "807facbbde8a7bcd086367fd8163702cdbd79a965d98882fc1b4fb223327da0b",
+      "compositionFamily": "protectedaction_aries_flamecore_firstboundarytile_opencradle",
+      "artDirection": "세로 3:4. 몽실이1과 flame core1, open C-shaped cradle1, solid boundary tile1, desire/fear pebbles2를 low three-quarter로 둔다. 한 손이 boundary tile을 cradle open notch 옆에 first set하되 틈을 닫지 않는다. 문 통과·ring·route·text는 없다.",
+      "distinctFrom": [
+        "B001–81의 같은 별자리·protected-value action-beat 구도를 반복하지 않고 protectedaction_aries_flamecore_firstboundarytile_opencradle를 사용한다.",
+        "같은 choice.protected-value.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·flame core1·open cradle1·boundary tile first set·pebbles2를 확인한다.",
+        "경계 표식 하나만 놓이며 선택·용기·안전 결과가 확정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.choice.protected-value.action-beat",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "1ecbf371057832b51c17cc6ee3599bf2c0936e704709642177798c20d7e318ec",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "64ed2186731a78e09b354756b9c2d570fd5d443582e0e793100f963a35e57a16",
+      "compositionFamily": "protectedaction_taurus_opensatchel_thirdtoken_firstlower_openflap",
+      "artDirection": "세로 3:4. 차곡이1과 open satchel1, protected tokens3, separated door pads2를 ground close로 둔다. resource/rest tokens2는 satchel 안에 있고 keepsake star1을 first lower하는 찰나를 잡되 flap과 next pad는 연다. 숫자·동전·loop buckle·text는 없다.",
+      "distinctFrom": [
+        "B001–81의 같은 별자리·protected-value action-beat 구도를 반복하지 않고 protectedaction_taurus_opensatchel_thirdtoken_firstlower_openflap를 사용한다.",
+        "같은 choice.protected-value.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이1·open satchel1·tokens3·first lower·door pads2·open next pad를 확인한다.",
+        "필수 자원 하나를 챙기는 첫 동작만 보이고 머무를 문·완전한 안정이 정해지지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.choice.protected-value.action-beat",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "f94a0cfe6878b298a789afae964f811292a751ca76150f54a9fbe1ba9c2e51f6",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "4d0b75c697d7719bcd109d75e7f527f85a27d1fe03029018116cfb0d50719a0d",
+      "compositionFamily": "protectedaction_geminipair_futurewindowtab_firstlift_openhinge",
+      "artDirection": "세로 3:4. 재잘이·소곤이 canonical pair2/ribbon1와 chosen panel1, future-window tab1, open hinge1, option tokens2를 overhead close로 둔다. pair의 손이 tab 양끝을 first lift하되 panel에 끼우지 않고 central cleft를 남긴다. 지도·지운 길·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–81의 같은 별자리·protected-value action-beat 구도를 반복하지 않고 protectedaction_geminipair_futurewindowtab_firstlift_openhinge를 사용한다.",
+        "같은 choice.protected-value.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "재잘이·소곤이 pair2·panel1·tab1 first lift·hinge1·tokens2·cleft를 확인한다.",
+        "다시 열 가능성을 처음 들어 올릴 뿐 다른 선택·두 목소리·미래가 합쳐지지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.choice.protected-value.action-beat",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "12e7d25210829dc8fb0c9afcf09be6480d73453cfe7d218be173e5d726f67034",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "f81d08222e4a41abcf5ff2d2f992c0e45aa2ecb2556e718177c9ee5a8a1e3d06",
+      "compositionFamily": "protectedaction_cancer_shellclasp_firsthalffasten_safetytray",
+      "artDirection": "세로 3:4. 달콩이1과 crescent shell1, open clasp1, relation/safety tokens2, ajar door lip1, open tray1을 shoulder side로 둔다. 집게가 clasp 한쪽을 first half-fasten하고 다른 끝은 떨어뜨려 둔다. strap loop·written condition·closed ring·text는 없다.",
+      "distinctFrom": [
+        "B001–81의 같은 별자리·protected-value action-beat 구도를 반복하지 않고 protectedaction_cancer_shellclasp_firsthalffasten_safetytray를 사용한다.",
+        "같은 choice.protected-value.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·shell1·open clasp1의 half-fasten·tokens2·ajar lip·tray1을 확인한다.",
+        "안전 연결을 처음 고정하되 집·관계·이동을 영구 잠그지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.choice.protected-value.action-beat",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "d4bba08bdb10f4d48a19707dca5301b9d8d9d70ab9e20fec3d08d089af0c771c",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "12b287f87a0ca7180f1371f48559e5b51a5dcdaed9664bf2d3465fbeedec4787",
+      "compositionFamily": "protectedaction_leo_crownfirstaside_dignitystar_doorpads",
+      "artDirection": "세로 3:4. 해님이1/crown1과 dignity star tile1, open door pads2를 low frontal로 둔다. 한 손이 crown을 side cradle1에 first lower하고 다른 손은 chest star 곁에 둔다. door pads와 dignity tile은 untouched로 남긴다. audience·score·scale·text는 없다.",
+      "distinctFrom": [
+        "B001–81의 같은 별자리·protected-value action-beat 구도를 반복하지 않고 protectedaction_leo_crownfirstaside_dignitystar_doorpads를 사용한다.",
+        "같은 choice.protected-value.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1·crown first lower·side cradle1·dignity tile1·door pads2·chest star를 확인한다.",
+        "인정 표식을 내려놓는 첫 동작만 보이며 존엄·표현·정답 문이 자동 결정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.choice.protected-value.action-beat",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "4506364e13ca9cedcb4d14b4212d26625e797dcfcf9392197aee304694f9d477",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "52f0dd432b9ea793b8a3e82dd7e5ca48237e1ba732bc976fcfb0161ef0782f02",
+      "compositionFamily": "protectedaction_virgo_openrail_firstpress_criteriontiles_changetray",
+      "artDirection": "세로 3:4. 새봄이1과 criterion tiles3, open gold rail1, change tray1, pencil1을 axial close로 둔다. 연필 든 손 반대 손이 protected tile1을 rail 한 변에 first press하되 rail의 마지막 변은 비운다. checklist·badge·closed frame·text는 없다.",
+      "distinctFrom": [
+        "B001–81의 같은 별자리·protected-value action-beat 구도를 반복하지 않고 protectedaction_virgo_openrail_firstpress_criteriontiles_changetray를 사용한다.",
+        "같은 choice.protected-value.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·tiles3·protected tile first press·open rail1·tray1·pencil1을 확인한다.",
+        "최소 기준을 표시하는 첫 동작만 있고 완벽 규칙·수정 금지·정답이 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.choice.protected-value.action-beat",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "768ed8165f485b9e4de92ba1e5b98e71656e51b20daa744aa6ae7b32040bd579",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "30933d2ba3eacd9a69352f9bdc6b7ceaf94744fcd9b292d2967fc6f8820af3c3",
+      "compositionFamily": "protectedaction_libra_ribbon_firstlay_selftile_opentracks",
+      "artDirection": "세로 3:4. 고르미1과 loose relation ribbon1, self-place tile1, boundary peg1, open tracks2를 top-side close로 둔다. 한 손이 ribbon 한쪽 끝을 track1에 first lay하고 self tile은 other track에 untouched로 둔다. balance·scale·loop·score·text는 없다.",
+      "distinctFrom": [
+        "B001–81의 같은 별자리·protected-value action-beat 구도를 반복하지 않고 protectedaction_libra_ribbon_firstlay_selftile_opentracks를 사용한다.",
+        "같은 choice.protected-value.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·ribbon first lay·self tile1·boundary peg1·open tracks2를 확인한다.",
+        "관계선을 놓기 시작하지만 자기 자리·상대 반응·균형 결론을 대신 정하지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.choice.protected-value.action-beat",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "16767e7bac3b8a7a9e24cfbb0c285f86c4ac25fc045f5d8a79bf83d26e65b428",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "b6b85b3995a96da61fb4e6f3200147fabe58ad87a3841f92e7b83c1dfe47fcf4",
+      "compositionFamily": "protectedaction_scorpio_sealtoken_firstslide_ajarprivacybox_tailheart",
+      "artDirection": "세로 3:4. 꼬옥이1/canonical tail-heart1과 privacy box1/ajar, loose seal token1, fact/private tiles2, open boundary track1을 reverse close로 둔다. pincer가 seal을 box lip에 first slide하되 lid와 track은 열린다. key·추가 heart·lock·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–81의 같은 별자리·protected-value action-beat 구도를 반복하지 않고 protectedaction_scorpio_sealtoken_firstslide_ajarprivacybox_tailheart를 사용한다.",
+        "같은 choice.protected-value.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1·tail-heart1·ajar box1·seal first slide·tiles2·open track1을 확인한다.",
+        "사적 범위를 표시하는 첫 동작만 보이고 진실 봉인·전면 공개·정답이 확정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.choice.protected-value.action-beat",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "a2f624cad3a97f0f4af7795525008e71234d6eb154b3091ebf6766f7e13b9438",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "70fe2f62022fb74eb2c9fb954bd80c807fc729c26f7bfb9a748cba2b90ab5fd0",
+      "compositionFamily": "protectedaction_sag_blankwindowtab_firstraise_fieldpanel_bow",
+      "artDirection": "세로 3:4. 총총이1/bow1과 blank field panel1, removable open-window tab1, explored/possibility tokens2를 cliff-side close로 둔다. 한 손이 tab을 panel open edge에서 first raise하되 붙이지 않는다. 지도선·좌표·arrow route·destination·text는 없다.",
+      "distinctFrom": [
+        "B001–81의 같은 별자리·protected-value action-beat 구도를 반복하지 않고 protectedaction_sag_blankwindowtab_firstraise_fieldpanel_bow를 사용한다.",
+        "같은 choice.protected-value.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이1·bow1·field panel1·window tab first raise·tokens2·open edge를 확인한다.",
+        "다음 가능성을 여는 첫 동작만 있고 여행 경로·목적지·성공이 정해지지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.choice.protected-value.action-beat",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "11ea8162e371a70a232a455e98e4e8d19a4f035fdf0d27cb3336243c8285c2a5",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "b3fabec1c04d3403f773bb2eaf6e903f9f01880f33a4e010392963960778ddaa",
+      "compositionFamily": "protectedaction_cap_goldclip_firstattach_plaques3_opencarrier",
+      "artDirection": "세로 3:4. 오름이1/turquoise tail과 responsibility plaques3, solid gold clip1, open carrier1을 top-oblique로 둔다. 한 손이 clip을 one plaque edge에 first attach하고 other plaques2는 바닥에 내려놓는다. cord·loop·number·rank·grid·text는 없다.",
+      "distinctFrom": [
+        "B001–81의 같은 별자리·protected-value action-beat 구도를 반복하지 않고 protectedaction_cap_goldclip_firstattach_plaques3_opencarrier를 사용한다.",
+        "같은 choice.protected-value.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1·plaques3·gold clip first attach·open carrier1·tail을 확인한다.",
+        "자기 몫 하나만 표시되며 모든 책임·체면·완주 결과가 강제되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.choice.protected-value.action-beat",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "d52f49965cd7d870c708520f8a7dbb18404134ca36629d38f84873a459edfcec",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "cc32becff9be52c20ab2dd59083723e81ea773c8a4ccb38d71e18edaa0e4808c",
+      "compositionFamily": "protectedaction_aqua_firstpartlift_twoboards_corebottle_opensocket",
+      "artDirection": "세로 3:4. 방울이1과 boards2, changeable parts3, untouched core bottle1/star stopper, open socket1을 top-down으로 둔다. 한 손이 part1을 board에서 first lift하고 bottle과 other parts2는 그대로 둔다. heart profile·diagram route·loop handle·text는 없다.",
+      "distinctFrom": [
+        "B001–81의 같은 별자리·protected-value action-beat 구도를 반복하지 않고 protectedaction_aqua_firstpartlift_twoboards_corebottle_opensocket를 사용한다.",
+        "같은 choice.protected-value.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·boards2·parts3 중 first lift1·core bottle1·open socket1을 확인한다.",
+        "바꿀 부품 하나만 움직이고 고유 원리·완성 설계·정답이 확정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.choice.protected-value.action-beat",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "219bb866686720afb3c3d298b043232f067746096461908eaf3194c8fb88aa1b",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "4bbe5c563ac168ea34b86895c1999477c9455b39dfc9e53a5f6ea6c0a2c90263",
+      "compositionFamily": "protectedaction_piscespair_colortokens_firstlift_openconnector_cleft",
+      "artDirection": "세로 3:4. 꿈별이·잠별이 canonical pair2와 aqua/pink pads2, color tokens2, open crescent connector1, loose connection star1을 end-on close로 둔다. 각 inner fin이 자기 token을 first lift하되 connector에 넣지 않고 central cleft를 남긴다. ring·halo·heart·merge·text는 없다.",
+      "distinctFrom": [
+        "B001–81의 같은 별자리·protected-value action-beat 구도를 반복하지 않고 protectedaction_piscespair_colortokens_firstlift_openconnector_cleft를 사용한다.",
+        "같은 choice.protected-value.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꿈별이·잠별이 pair2·pads2·color tokens first lift2·open connector1·star1·cleft를 확인한다.",
+        "각자의 색을 드는 첫 동작만 보이며 연결·감정·정체성이 하나로 섞이지 않는지 확인한다."
+      ]
+    }
+  ],
+  "editorialApprovedOn": "2026-09-02",
+  "generatedOn": "2026-09-03",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-03",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}
