@@ -123,7 +123,7 @@ const familySchema = z
 const familyContentSchema = z
   .object({
     status: z.literal('authoring'),
-    productSku: z.literal('guardian-report-full-v1'),
+    catalogId: z.literal('stella-zodiac-guardians-v1'),
     locale: z.literal('ko'),
     focusToken: z.literal(FOCUS_TOKEN),
     families: z.array(familySchema).length(SIGNS.length * SLOTS.length),
@@ -311,7 +311,7 @@ const raritySchema = z
 const editionPlanSchema = z
   .object({
     status: z.literal('work_order'),
-    productSku: z.literal('guardian-report-full-v1'),
+    catalogId: z.literal('stella-zodiac-guardians-v1'),
     locale: z.literal('ko'),
     productionMinimumEditionCount: z.number().int().positive(),
     plannedEditionCount: z.number().int().positive(),
@@ -503,7 +503,6 @@ const { values } = parseArgs({
     'self-editions': { type: 'string' },
     'work-editions': { type: 'string' },
     plan: { type: 'string' },
-    questionnaire: { type: 'string' },
     help: { type: 'boolean', short: 'h', default: false },
   },
   strict: true,
@@ -512,7 +511,7 @@ const { values } = parseArgs({
 if (values.help) {
   console.log(`Usage:
   bun run guardian-cards:validate
-  bun run guardian-cards:validate --families <families.json> --self-editions <self-editions.json> --love-editions <love-editions.json> --work-editions <work-editions.json> --choice-editions <choice-editions.json> --plan <plan.json> --art-pilot <art-pilot.json> --asset-contract <asset-contract.json> --asset-manifest <asset-manifest.json> --questionnaire <questionnaire.json>`)
+  bun run guardian-cards:validate --families <families.json> --self-editions <self-editions.json> --love-editions <love-editions.json> --work-editions <work-editions.json> --choice-editions <choice-editions.json> --plan <plan.json> --art-pilot <art-pilot.json> --asset-contract <asset-contract.json> --asset-manifest <asset-manifest.json>`)
   process.exit(0)
 }
 
@@ -541,10 +540,6 @@ const assetContractPath =
 const assetManifestPath =
   values['asset-manifest'] ??
   fileURLToPath(new URL('../content/guardian-cards/guardian-card-assets-ko.json', import.meta.url))
-const questionnairePath =
-  values.questionnaire ??
-  fileURLToPath(new URL('../content/guardian-questionnaires/guardian-paid-ko.json', import.meta.url))
-
 try {
   const [
     familyJson,
@@ -556,7 +551,6 @@ try {
     artPilotJson,
     assetContractJson,
     assetManifestJson,
-    questionnaireJson,
   ] = await Promise.all([
     readJson(familiesPath, 'family content'),
     readJson(selfEditionsPath, 'self edition content'),
@@ -567,7 +561,6 @@ try {
     readJson(artPilotPath, 'art pilot plan'),
     readJson(assetContractPath, 'guardian card asset contract'),
     readJson(assetManifestPath, 'guardian card asset manifest'),
-    readJson(questionnairePath, 'questionnaire'),
   ])
   const familyContent = parseContent(familyContentSchema, familyJson, 'family content')
   const selfEditionContent = parseContent(selfEditionContentSchema, selfEditionJson, 'self edition content')
@@ -578,13 +571,11 @@ try {
   const artPilotPlan = parseContent(artPilotPlanSchema, artPilotJson, 'art pilot plan')
   const assetContract = parseContent(assetContractSchema, assetContractJson, 'guardian card asset contract')
   const assetManifest = parseContent(releaseManifestSchema, assetManifestJson, 'guardian card asset manifest')
-  const questionnaireSignals = collectQuestionnaireSignals(questionnaireJson)
-
-  validateFamilies(familyContent, questionnaireSignals)
-  validateSelfEditions(selfEditionContent, familyContent, editionPlan, questionnaireSignals)
-  validateLoveEditions(loveEditionContent, familyContent, editionPlan, questionnaireSignals)
-  validateWorkEditions(workEditionContent, familyContent, editionPlan, questionnaireSignals)
-  validateChoiceEditions(choiceEditionContent, familyContent, editionPlan, questionnaireSignals)
+  validateFamilies(familyContent)
+  validateSelfEditions(selfEditionContent, familyContent, editionPlan)
+  validateLoveEditions(loveEditionContent, familyContent, editionPlan)
+  validateWorkEditions(workEditionContent, familyContent, editionPlan)
+  validateChoiceEditions(choiceEditionContent, familyContent, editionPlan)
   validateEditionPlan(editionPlan)
   validateArtPilotPlan(artPilotPlan, selfEditionContent, loveEditionContent, workEditionContent, choiceEditionContent)
   validateAssetManifest(assetContract, assetManifest, artPilotPlan)
@@ -646,35 +637,7 @@ function parseContent<T>(schema: z.ZodType<T>, value: unknown, label: string): T
   throw new Error(`Invalid ${label}:\n- ${issues.join('\n- ')}`)
 }
 
-function collectQuestionnaireSignals(value: unknown): ReadonlySet<string> {
-  const signals = new Set<string>()
-
-  function visit(node: unknown): void {
-    if (Array.isArray(node)) {
-      node.forEach(visit)
-      return
-    }
-    if (!isRecord(node)) {
-      return
-    }
-    for (const [key, child] of Object.entries(node)) {
-      if ((key === 'signals' || key === 'signalWeights') && isRecord(child)) {
-        for (const signal of Object.keys(child)) {
-          signals.add(signal)
-        }
-      }
-      visit(child)
-    }
-  }
-
-  visit(value)
-  if (signals.size === 0) {
-    throw new Error('Questionnaire contains no answer or selection signals')
-  }
-  return signals
-}
-
-function validateFamilies(content: FamilyContent, questionnaireSignals: ReadonlySet<string>): void {
+function validateFamilies(content: FamilyContent): void {
   const errors: string[] = []
   const expectedIds = new Set(SIGNS.flatMap((sign) => SLOTS.map((slot) => `${sign}.${slot}`)))
   const familyIds = content.families.map((family) => family.id)
@@ -719,9 +682,6 @@ function validateFamilies(content: FamilyContent, questionnaireSignals: Readonly
       if (!signal.startsWith(`${family.slot}.`)) {
         errors.push(`${family.id}: signal ${signal} must belong to the ${family.slot} slot`)
       }
-      if (!questionnaireSignals.has(signal)) {
-        errors.push(`${family.id}: signal ${signal} does not exist in the questionnaire source`)
-      }
     }
     validateCharacterContinuity(
       family.id,
@@ -741,39 +701,19 @@ function validateFamilies(content: FamilyContent, questionnaireSignals: Readonly
   throwValidationErrors('Guardian family content', errors)
 }
 
-function validateSelfEditions(
-  content: SelfEditionContent,
-  familyContent: FamilyContent,
-  plan: EditionPlan,
-  questionnaireSignals: ReadonlySet<string>,
-): void {
-  validateNonLoveEditions(content, 'self', SELF_CONTEXTS, familyContent, plan, questionnaireSignals)
+function validateSelfEditions(content: SelfEditionContent, familyContent: FamilyContent, plan: EditionPlan): void {
+  validateNonLoveEditions(content, 'self', SELF_CONTEXTS, familyContent, plan)
 }
 
-function validateWorkEditions(
-  content: WorkEditionContent,
-  familyContent: FamilyContent,
-  plan: EditionPlan,
-  questionnaireSignals: ReadonlySet<string>,
-): void {
-  validateNonLoveEditions(content, 'work', WORK_CONTEXTS, familyContent, plan, questionnaireSignals)
+function validateWorkEditions(content: WorkEditionContent, familyContent: FamilyContent, plan: EditionPlan): void {
+  validateNonLoveEditions(content, 'work', WORK_CONTEXTS, familyContent, plan)
 }
 
-function validateChoiceEditions(
-  content: ChoiceEditionContent,
-  familyContent: FamilyContent,
-  plan: EditionPlan,
-  questionnaireSignals: ReadonlySet<string>,
-): void {
-  validateNonLoveEditions(content, 'choice', CHOICE_CONTEXTS, familyContent, plan, questionnaireSignals)
+function validateChoiceEditions(content: ChoiceEditionContent, familyContent: FamilyContent, plan: EditionPlan): void {
+  validateNonLoveEditions(content, 'choice', CHOICE_CONTEXTS, familyContent, plan)
 }
 
-function validateLoveEditions(
-  content: LoveEditionContent,
-  familyContent: FamilyContent,
-  plan: EditionPlan,
-  questionnaireSignals: ReadonlySet<string>,
-): void {
+function validateLoveEditions(content: LoveEditionContent, familyContent: FamilyContent, plan: EditionPlan): void {
   const errors: string[] = []
   const editions = content.editions
   const expectedIds = new Set(
@@ -867,9 +807,6 @@ function validateLoveEditions(
       if (!signal.startsWith('love.')) {
         errors.push(`${edition.id}: signal ${signal} must belong to the love slot`)
       }
-      if (!questionnaireSignals.has(signal)) {
-        errors.push(`${edition.id}: signal ${signal} does not exist in the questionnaire source`)
-      }
     }
   }
 
@@ -935,7 +872,6 @@ function validateNonLoveEditions(
   contexts: readonly string[],
   familyContent: FamilyContent,
   plan: EditionPlan,
-  questionnaireSignals: ReadonlySet<string>,
 ): void {
   const errors: string[] = []
   const editions = content.editions
@@ -1026,9 +962,6 @@ function validateNonLoveEditions(
     for (const signal of edition.selectionSignals) {
       if (!signal.startsWith(`${slot}.`)) {
         errors.push(`${edition.id}: signal ${signal} must belong to the ${slot} slot`)
-      }
-      if (!questionnaireSignals.has(signal)) {
-        errors.push(`${edition.id}: signal ${signal} does not exist in the questionnaire source`)
       }
     }
   }
@@ -1511,8 +1444,4 @@ function canonicalJson(value: unknown): string {
     .sort()
     .map((key) => `${JSON.stringify(key)}:${canonicalJson(object[key])}`)
     .join(',')}}`
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value)
 }

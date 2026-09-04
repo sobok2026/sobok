@@ -15,7 +15,8 @@
       "!apps/mobile/ios",
       "!**/*.css",
       "!**/*.generated.ts",
-      "!**/*.generated.d.ts"
+      "!**/*.generated.d.ts",
+      "!apps/stella/worker/guardian/runtime-catalog.generated.json"
     ]
   },
   "formatter": {

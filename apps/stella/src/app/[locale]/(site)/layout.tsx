@@ -6,12 +6,11 @@ import BottomNav from '@/components/BottomNav'
 import Header from '@/components/Header'
 
 /**
- * Everything outside the paid funnel: the free tools and the legal documents. The chrome that used to live in
- * `[locale]/layout.tsx` belongs here rather than one level up, because none of it may appear beside an offer.
+ * The free reading surfaces, account archive, and legal documents. Checkout and email recovery live in the
+ * sibling `(commerce)` group so advertising can never appear beside payment or recovery controls.
  *
  * The ad script is the reason this split exists. Auto ads are placement-side, so a page inherits them from
- * nothing more than this tag being present — which would put a competitor's ad next to a ₩3,900 checkout. The
- * bottom nav is the second reason: four fixed escape routes under a buyer's thumb for the whole funnel.
+ * nothing more than this tag being present. The bottom nav remains on reading surfaces but not on commerce.
  *
  * The footer is intentionally not site-wide. Home and document routes add the full footer in their own layouts;
  * tools and account surfaces omit it so their reading flows end without unrelated navigation.

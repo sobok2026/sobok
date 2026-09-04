@@ -1,13 +1,8 @@
 import { Hono } from 'hono'
 
 import { comments } from './api/comments'
-import { guardianCheckouts } from './api/guardian-checkouts'
-import { guardianCollections } from './api/guardian-collections'
-import { guardianLoveRedraw } from './api/guardian-love-redraw'
-import { guardianProducts } from './api/guardian-products'
-import { guardianPurchases } from './api/guardian-purchases'
-import { guardianReopen } from './api/guardian-reopen'
-import { guardianReports } from './api/guardian-reports'
+import { guardianDaily } from './api/guardian-daily'
+import { guardianPass } from './api/guardian-pass'
 import { handleStellaAuth } from './auth'
 import type { AppEnv, Bindings } from './env'
 import { problem } from './errors'
@@ -16,13 +11,8 @@ const app = new Hono<AppEnv>()
 
 app.all('/api/auth/*', handleStellaAuth)
 app.route('/api/comments', comments)
-app.route('/api/guardian-checkouts', guardianCheckouts)
-app.route('/api/guardian-collections', guardianCollections)
-app.route('/api/guardian-products', guardianProducts)
-app.route('/api/guardian-purchases', guardianPurchases)
-app.route('/api/guardian-reopen', guardianReopen)
-app.route('/api/guardian-reports', guardianReports)
-app.route('/api/guardian-reports', guardianLoveRedraw)
+app.route('/api/guardian-daily', guardianDaily)
+app.route('/api/guardian-pass', guardianPass)
 app.all('*', () => problem(404, 'not-found'))
 
 app.onError((error) => {

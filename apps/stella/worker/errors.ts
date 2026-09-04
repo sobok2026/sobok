@@ -1,7 +1,7 @@
 import { createProblem } from '@sobok/edge/problem'
 
 // Stella's RFC 9457 vocabulary. `@sobok/edge/problem` owns the wire shape, content type, and no-store policy;
-// this Worker owns only the slugs and URI namespace shared by comments and paid guardian-card APIs.
+// this Worker owns only the slugs and URI namespace shared by comments and guardian daily/pass APIs.
 const BASE = 'https://sobok.cc/problems/stella/'
 
 export type ProblemSlug =
@@ -14,18 +14,13 @@ export type ProblemSlug =
   | 'rate-limited'
   | 'thread-locked'
   | 'comment-not-found'
-  | 'report-not-found'
   | 'reopen-link-invalid'
-  | 'payment-required'
+  | 'pass-active'
   | 'payment-mismatch'
   | 'payment-conflict'
   | 'checkout-conflict'
-  | 'redraw-credit-required'
   | 'card-not-found'
   | 'product-unavailable'
-  | 'question-conflict'
-  | 'milestone-conflict'
-  | 'invalid-answer'
   | 'forbidden'
   | 'invalid-webhook'
   | 'service-unavailable'

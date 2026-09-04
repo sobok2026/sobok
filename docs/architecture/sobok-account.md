@@ -58,7 +58,7 @@ Browser
   ├─ stella.sobok.cc
   │    ├─ Stella UI와 Worker API
   │    ├─ Stella relying-party session (host-only)
-  │    └─ Stella 프로필·구매·리포트·카드 컬렉션
+  │    └─ Stella 프로필·7일 선공개권 구매·일일 카드 컬렉션
   │
   ├─ vibe.sobok.cc / zwds.sobok.cc / sobok.cc
   │    └─ 앱별 relying-party session과 앱별 도메인 데이터
@@ -162,31 +162,30 @@ access-token, refresh-token, JWKS를 둔다. 앱별 nickname, 카드, 구매, �
 
 ## 8. Stella 게스트 컬렉션 귀속
 
-Stella 첫 구매와 사랑 카드 재추첨은 로그인 없이 끝까지 가능하다.
+Stella 수호령 7일 선공개권의 첫 구매는 로그인 없이 끝까지 가능하다.
 
 ```text
 게스트 구매/획득
   → 이메일 재열람 + collection capability
-  → 카드 공개
+  → 내일 카드 선공개와 일일 카드 보관
   → “소복 계정에 보관하기”
   → Stella OIDC 로그인
-  → 같은 guardian_collection을 (issuer, sub)에 원자적으로 귀속
+  → 같은 guardian_daily_collection을 (issuer, sub)에 원자적으로 귀속
   → guest capability 폐기
-  → account-save reward 1회 멱등 지급
 ```
 
-새 계정용 컬렉션으로 카드를 복사하지 않는다. 기존 `guardian_collection`의 구매, 보유 카드, 대표 카드,
-중복 수량, 미보유 보장 진행률을 그대로 귀속한다. 이미 다른 계정이 소유한 collection은 덮어쓰거나
+새 계정용 컬렉션으로 카드를 복사하지 않는다. 기존 `guardian_daily_collection`의 구매와 날짜별 카드
+스냅샷을 그대로 귀속한다. 이미 다른 계정이 소유한 collection은 덮어쓰거나
 자동 병합하지 않는다. 동일 계정의 여러 게스트 collection을 어떻게 앨범 단위로 합쳐 보여줄지는 Stella
 도메인이 결정한다.
 
 로그인 뒤에는 앱 세션이 기본 재열람 경로이고 구매 이메일 링크는 복구 경로로 남는다. 이메일은 계정
 식별자나 소유권 병합 키로 사용하지 않는다. 계정 소유 collection의 이메일 링크는 새 guest capability를
-발급하지 않고 stable report reference만 돌려준 뒤 Stella OIDC 로그인을 요구한다.
+발급하지 않고 Stella OIDC 로그인을 요구한다.
 
-첫 고정 client ID는 `stella-web`이다. Stella 보관함은 계정 세션으로 소유 report 목록을 읽고
-`/{locale}/guardian-report/result?report={publicId}`를 stable 재열람 URL로 사용한다. public report ID 자체는
-권한이 아니며 모든 본문·재추첨 API는 Stella host-only session으로 collection owner를 다시 확인한다.
+첫 고정 client ID는 `stella-web`이다. Stella 보관함은 계정 세션으로 소유 카드 목록을 읽는다. public
+collection/card ID 자체는 권한이 아니며 모든 보관함 API는 Stella host-only session으로 collection owner를
+다시 확인한다.
 
 ## 9. 패키지 책임
 
@@ -214,8 +213,8 @@ Stella 첫 구매와 사랑 카드 재추첨은 로그인 없이 끝까지 가�
   Stella/Vibe payment event Queue consumer와 maintenance RPC, 환경별 fresh/cached Hyperdrive binding
 - `packages/auth`: authority와 relying-party factory, 안정적인 OIDC 계약, 비밀번호·username, magic link,
   Google/One Tap, Kakao, passkey, TOTP/backup code, BBaton 연결 구성
-- `apps/stella`: 첫 OIDC relying party session, 게스트 `guardian_collection` 귀속, 계정 보관함과 stable
-  report 재열람, account-save 보상, 계정 세션 기반 리포트·재추첨 권한 확인
+- `apps/stella`: 첫 OIDC relying party session, 게스트 `guardian_daily_collection` 귀속, 7일 선공개권,
+  이메일 복구, 일일 카드 보관함과 계정 세션 기반 소유권 확인
 - `apps/civil`: `civil-web` OIDC relying party session, 기관·프로젝트 관계 권한, RLS 적용 업무 schema,
   Queue와 비공개 TypeScript Worker를 통한 서버 권위 계산
 - `sobok-ops`: production/staging Supabase project, 환경별 `sobok_runtime`, 제품별 migrator, 전체 네 Hyperdrive

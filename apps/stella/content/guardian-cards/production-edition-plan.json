@@ -1,6 +1,6 @@
 {
   "status": "work_order",
-  "productSku": "guardian-report-full-v1",
+  "catalogId": "stella-zodiac-guardians-v1",
   "locale": "ko",
   "productionMinimumEditionCount": 1024,
   "plannedEditionCount": 1056,

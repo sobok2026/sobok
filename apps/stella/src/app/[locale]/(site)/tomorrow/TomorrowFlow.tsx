@@ -7,6 +7,7 @@ import { PersonalizeCard } from '@/components/PersonalizeCard'
 import { ReadingActions } from '@/components/ReadingActions'
 
 import DailyPageShell from '../today/DailyPageShell'
+import GuardianDailySection from '../today/GuardianDailySection'
 import LuckySection from '../today/LuckySection'
 import { useDailyReading } from '../today/useDailyReading'
 import { useDailyShare } from '../today/useDailyShare'
@@ -31,6 +32,8 @@ export default function TomorrowFlow() {
       {reading && (
         <div className="w-full space-y-3 sm:space-y-5">
           <LuckySection lucky={reading.lucky} namespace="Tomorrow" sky={reading.sky} />
+
+          <GuardianDailySection reading={reading} shared={shared} surface="tomorrow" />
 
           <p className="text-center text-[11px] leading-relaxed text-foreground-faint">{t('note')}</p>
 

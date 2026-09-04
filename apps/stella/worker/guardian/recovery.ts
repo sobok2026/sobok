@@ -68,7 +68,13 @@ export async function dispatchGuardianRecoveryEmails(env: Bindings, input: { pay
           apiKey,
           from: env.STELLA_EMAIL_FROM,
           idempotencyKey: `stella-guardian-purchase-${claimed.paymentId}-${claimed.attempt}`,
-          links: [{ paidAt: claimed.paidAt, url: guardianReopenUrl(env, claimed.locale, token) }],
+          links: [
+            {
+              paidAt: claimed.paidAt,
+              timeZone: claimed.timeZone,
+              url: guardianReopenUrl(env, claimed.locale, token),
+            },
+          ],
           locale: claimed.locale,
           reason: 'purchase',
           receipt: {
@@ -76,7 +82,9 @@ export async function dispatchGuardianRecoveryEmails(env: Bindings, input: { pay
             currency: claimed.currency,
             orderName: claimed.orderName,
             paidAt: claimed.paidAt,
+            accessExpiresAt: claimed.accessExpiresAt,
             paymentId: claimed.paymentId,
+            timeZone: claimed.timeZone,
           },
           replyTo: env.STELLA_EMAIL_REPLY_TO,
           to: claimed.recoveryEmail,
@@ -161,8 +169,9 @@ export async function sendRequestedGuardianReopenEmail(
       apiKey,
       from: env.STELLA_EMAIL_FROM,
       idempotencyKey: `stella-guardian-reopen-${firstLink.tokenHash}`,
-      links: links.map(({ locale, paidAt, token }) => ({
+      links: links.map(({ locale, paidAt, timeZone, token }) => ({
         paidAt,
+        timeZone,
         url: guardianReopenUrl(env, locale, token),
       })),
       locale: input.locale,
@@ -181,7 +190,7 @@ export async function sendRequestedGuardianReopenEmail(
 }
 
 export function guardianReopenUrl(env: Bindings, locale: Locale, token: string): string {
-  const url = new URL(`/${locale}/guardian-report/reopen`, env.STELLA_PUBLIC_ORIGIN)
+  const url = new URL(`/${locale}/guardian-pass/reopen`, env.STELLA_PUBLIC_ORIGIN)
   url.hash = new URLSearchParams({ token }).toString()
   return url.toString()
 }
