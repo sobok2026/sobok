@@ -70,6 +70,7 @@ guardianReports.put('/:reportPublicId/answers/:id', async (c) => {
       ...access,
       questionId: questionId.data,
       answer: parsed.data.answer,
+      assetOrigin: c.env.STELLA_GUARDIAN_ASSET_ORIGIN,
     }),
   )
   if (!authorized.authorized) {

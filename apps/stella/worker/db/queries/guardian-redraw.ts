@@ -6,6 +6,7 @@ import {
   type GuardianProductManifest,
   guardianEditionPool,
 } from '../../guardian/manifest'
+import { guardianLoveRarityOdds } from '../../guardian/rarity-odds'
 import type { GuardianLoveCardView, GuardianLoveRedrawState } from '../../guardian/redraw-contract'
 import {
   guardianCardAcquisitionTable,
@@ -302,13 +303,7 @@ export async function readGuardianLoveRedraw(
         paidDrawsInCycle,
         paidDrawsUntilGuarantee: interval - paidDrawsInCycle,
       },
-      odds: pool.candidates.map((candidate) => {
-        const edition = activeManifest.editions.find(({ id }) => id === candidate.editionId)
-        if (!edition?.rarity) {
-          throw new Error(`Guardian redraw edition ${candidate.editionId} has no rarity`)
-        }
-        return { rarity: edition.rarity, weight: candidate.weight, weightScale: activeManifest.weightScale }
-      }),
+      odds: guardianLoveRarityOdds(pool, activeManifest),
       products,
     },
   }

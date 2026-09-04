@@ -1,8 +1,32 @@
 import type { Locale } from '@sobok/domain/locale'
+import { z } from 'zod'
+import {
+  GUARDIAN_CURRENCY,
+  GUARDIAN_MARKET,
+  GUARDIAN_REPORT_NAME,
+  GUARDIAN_REPORT_PRICE,
+  GUARDIAN_REPORT_SKU,
+} from './offer'
 import type { GuardianQuestionnaireAnswerSnapshot, GuardianQuestionnaireSignalSnapshot } from './questionnaire'
+import runtimeCatalogSource from './runtime-catalog.generated.json'
 
 export const GUARDIAN_REPORT_SLOTS = ['self', 'love', 'work', 'choice'] as const
 export const GUARDIAN_RARITIES = ['orbit', 'nebula', 'eclipse', 'stella'] as const
+export const GUARDIAN_PREVIEW_TONES = ['comfort', 'honesty', 'action', 'possibility'] as const
+export const GUARDIAN_ZODIAC_SIGNS = [
+  'aries',
+  'taurus',
+  'gemini',
+  'cancer',
+  'leo',
+  'virgo',
+  'libra',
+  'scorpio',
+  'sagittarius',
+  'capricorn',
+  'aquarius',
+  'pisces',
+] as const
 export const GUARDIAN_PRODUCT_KINDS = ['full_report', 'love_redraw'] as const
 export const GUARDIAN_FULL_REPORT_PRODUCT_SKUS = ['guardian-report-full-v1'] as const
 export const GUARDIAN_LOVE_REDRAW_PRODUCT_SKUS = ['guardian-love-redraw-1-v1', 'guardian-love-redraw-5-v1'] as const
@@ -30,6 +54,7 @@ export const GUARDIAN_PLANET_IDS = [
 
 export type GuardianReportSlot = (typeof GUARDIAN_REPORT_SLOTS)[number]
 export type GuardianRarity = (typeof GUARDIAN_RARITIES)[number]
+export type GuardianZodiacSign = (typeof GUARDIAN_ZODIAC_SIGNS)[number]
 export type GuardianProductKind = (typeof GUARDIAN_PRODUCT_KINDS)[number]
 export type GuardianFullReportProductSku = (typeof GUARDIAN_FULL_REPORT_PRODUCT_SKUS)[number]
 export type GuardianLoveRedrawProductSku = (typeof GUARDIAN_LOVE_REDRAW_PRODUCT_SKUS)[number]
@@ -52,7 +77,7 @@ export interface GuardianChartSnapshot {
 }
 
 export interface GuardianPreviewAnswerSnapshot {
-  tone: 'comfort' | 'honesty' | 'action' | 'possibility'
+  tone: (typeof GUARDIAN_PREVIEW_TONES)[number]
   movement: 'start' | 'continue' | 'recover' | 'release'
 }
 
@@ -68,15 +93,20 @@ export interface GuardianSelectionContext extends GuardianReportInputSnapshot {
 
 export interface GuardianCardFamily {
   id: string
+  sign: GuardianZodiacSign
   slot: GuardianReportSlot
+  signalAffinities: readonly string[]
 }
 
 export interface GuardianCardEdition {
   id: string
   familyId: string
+  sign: GuardianZodiacSign
   slot: GuardianReportSlot
   rarity: GuardianRarity | null
-  artworkPath: string
+  artworkObjectKey: string
+  selectionSignals: readonly string[]
+  previewTone: GuardianPreviewAnswerSnapshot['tone'] | null
 }
 
 export interface GuardianFamilyCandidate {
@@ -148,6 +178,16 @@ export interface GuardianPriceDefinition {
   amountMinor: number
 }
 
+export interface GuardianCardCopyKo {
+  slot: GuardianReportSlot
+  label: '자기이해' | '사랑' | '일' | '결정'
+  title: string
+  guardians: string
+  artworkAlt: string
+  oneLineTemplate: string
+  reflection: string
+}
+
 interface GuardianProductDefinitionBase {
   orderNames: Partial<Record<Locale, string>>
   prices: readonly GuardianPriceDefinition[]
@@ -184,12 +224,168 @@ export interface GuardianProductManifest {
   products: readonly GuardianProductDefinition[]
 }
 
+interface GuardianRuntimeCatalogSource {
+  schema: 'stella-guardian-runtime-catalog/v1'
+  locale: 'ko'
+  sourceHashes: Readonly<Record<string, string>>
+  families: readonly GuardianCardFamily[]
+  editions: readonly GuardianCardEdition[]
+  familyPools: Readonly<Record<GuardianReportSlot, GuardianContextScoredFamilyPool>>
+  editionPools: readonly (GuardianContextScoredEditionPool | GuardianWeightedEditionPool)[]
+  cardCopyKo: Readonly<Record<string, GuardianCardCopyKo>>
+}
+
+const runtimeNonEmptyText = z.string().trim().min(1)
+const runtimeContentHash = z.string().regex(/^[a-f0-9]{64}$/)
+const runtimeFamilyCandidateSchema = z
+  .object({
+    familyId: runtimeNonEmptyText,
+    tieBreakOrder: z.number().int().min(0).max(11),
+  })
+  .strict()
+const runtimeContextEditionCandidateSchema = z
+  .object({
+    editionId: runtimeNonEmptyText,
+    tieBreakOrder: z.number().int().min(0).max(15),
+  })
+  .strict()
+const runtimeWeightedEditionCandidateSchema = z
+  .object({
+    editionId: runtimeNonEmptyText,
+    weight: z.number().int().positive(),
+  })
+  .strict()
+function runtimeFamilyPoolSchema<const Slot extends GuardianReportSlot>(slot: Slot) {
+  return z
+    .object({
+      id: runtimeNonEmptyText,
+      slot: z.literal(slot),
+      selection: z.literal('context_scored'),
+      candidates: z.array(runtimeFamilyCandidateSchema).length(12),
+    })
+    .strict()
+}
+const runtimeCatalogSchema = z
+  .object({
+    schema: z.literal('stella-guardian-runtime-catalog/v1'),
+    locale: z.literal('ko'),
+    sourceHashes: z
+      .object({
+        families: runtimeContentHash,
+        selfEditions: runtimeContentHash,
+        loveEditions: runtimeContentHash,
+        workEditions: runtimeContentHash,
+        choiceEditions: runtimeContentHash,
+        productionArtBatches: runtimeContentHash,
+        productionArtReviews: runtimeContentHash,
+        assets: runtimeContentHash,
+      })
+      .strict(),
+    families: z
+      .array(
+        z
+          .object({
+            id: runtimeNonEmptyText,
+            sign: z.enum(GUARDIAN_ZODIAC_SIGNS),
+            slot: z.enum(GUARDIAN_REPORT_SLOTS),
+            signalAffinities: z.array(runtimeNonEmptyText).length(2),
+            tieBreakOrder: z.number().int().min(0).max(11),
+          })
+          .strict(),
+      )
+      .length(48),
+    editions: z
+      .array(
+        z
+          .object({
+            id: runtimeNonEmptyText,
+            familyId: runtimeNonEmptyText,
+            sign: z.enum(GUARDIAN_ZODIAC_SIGNS),
+            slot: z.enum(GUARDIAN_REPORT_SLOTS),
+            rarity: z.enum(GUARDIAN_RARITIES).nullable(),
+            artworkObjectKey: runtimeNonEmptyText,
+            selectionSignals: z.array(runtimeNonEmptyText).max(2),
+            previewTone: z.enum(GUARDIAN_PREVIEW_TONES).nullable(),
+          })
+          .strict(),
+      )
+      .length(1_056),
+    familyPools: z
+      .object({
+        self: runtimeFamilyPoolSchema('self'),
+        love: runtimeFamilyPoolSchema('love'),
+        work: runtimeFamilyPoolSchema('work'),
+        choice: runtimeFamilyPoolSchema('choice'),
+      })
+      .strict(),
+    editionPools: z
+      .array(
+        z.discriminatedUnion('selection', [
+          z
+            .object({
+              id: runtimeNonEmptyText,
+              familyId: runtimeNonEmptyText,
+              selection: z.literal('context_scored'),
+              candidates: z.array(runtimeContextEditionCandidateSchema).length(16),
+            })
+            .strict(),
+          z
+            .object({
+              id: runtimeNonEmptyText,
+              familyId: runtimeNonEmptyText,
+              selection: z.literal('weighted_random'),
+              candidates: z.array(runtimeWeightedEditionCandidateSchema).length(40),
+            })
+            .strict(),
+        ]),
+      )
+      .length(48),
+    cardCopyKo: z.record(
+      runtimeNonEmptyText,
+      z
+        .object({
+          slot: z.enum(GUARDIAN_REPORT_SLOTS),
+          label: z.enum(['자기이해', '사랑', '일', '결정']),
+          title: runtimeNonEmptyText,
+          guardians: runtimeNonEmptyText,
+          artworkAlt: runtimeNonEmptyText,
+          oneLineTemplate: runtimeNonEmptyText,
+          reflection: runtimeNonEmptyText,
+        })
+        .strict(),
+    ),
+  })
+  .strict()
+
+function parseGuardianRuntimeCatalog(source: unknown): GuardianRuntimeCatalogSource {
+  const parsed = runtimeCatalogSchema.safeParse(source)
+  if (!parsed.success) {
+    const details = parsed.error.issues
+      .slice(0, 20)
+      .map((issue) => `${issue.path.join('.') || '<root>'}: ${issue.message}`)
+      .join('\n- ')
+    throw new Error(`Guardian production runtime catalog has an invalid shape:\n- ${details}`)
+  }
+  return parsed.data
+}
+
+const GUARDIAN_RUNTIME_CATALOG = parseGuardianRuntimeCatalog(runtimeCatalogSource)
+if (
+  GUARDIAN_RUNTIME_CATALOG.schema !== 'stella-guardian-runtime-catalog/v1' ||
+  GUARDIAN_RUNTIME_CATALOG.locale !== 'ko' ||
+  GUARDIAN_RUNTIME_CATALOG.families.length !== 48 ||
+  GUARDIAN_RUNTIME_CATALOG.editions.length !== 1_056 ||
+  GUARDIAN_RUNTIME_CATALOG.editionPools.length !== 48 ||
+  Object.keys(GUARDIAN_RUNTIME_CATALOG.cardCopyKo).length !== 1_056
+) {
+  throw new Error('Guardian production runtime catalog is incomplete')
+}
+
+export const CURRENT_GUARDIAN_CARD_COPY_KO = GUARDIAN_RUNTIME_CATALOG.cardCopyKo
+
 /**
- * The paid MVP is data, not a separate runtime path. Each base-card pool happens to contain one candidate
- * today; adding candidates and a scorer later keeps the same selection pipeline and persisted snapshot shape.
- *
- * Edition IDs name real assets. Season/outfit/rarity values must never be combined into an edition that was
- * not explicitly published here.
+ * The generated production catalog enumerates only reviewed families, editions and immutable R2 object keys.
+ * Selection still uses the original shared pool resolver and every fulfilled result remains snapshot-backed.
  */
 export const CURRENT_GUARDIAN_MANIFEST = {
   supportedLocales: ['ko'],
@@ -198,126 +394,16 @@ export const CURRENT_GUARDIAN_MANIFEST = {
     paidDrawInterval: 5,
     scope: 'card_family',
   },
-  families: [
-    { id: 'cancer.self', slot: 'self' },
-    { id: 'aries.love', slot: 'love' },
-    { id: 'taurus.work', slot: 'work' },
-    { id: 'libra.choice', slot: 'choice' },
-  ],
-  editions: [
-    {
-      id: 'cancer.self.base',
-      familyId: 'cancer.self',
-      slot: 'self',
-      rarity: null,
-      artworkPath: '/images/zodiac-guardians/cancer-self.webp',
-    },
-    {
-      id: 'aries.love.orbit',
-      familyId: 'aries.love',
-      slot: 'love',
-      rarity: 'orbit',
-      artworkPath: '/images/zodiac-guardians/aries-love-orbit.webp',
-    },
-    {
-      id: 'aries.love.nebula',
-      familyId: 'aries.love',
-      slot: 'love',
-      rarity: 'nebula',
-      artworkPath: '/images/zodiac-guardians/aries-love-nebula.webp',
-    },
-    {
-      id: 'aries.love.eclipse',
-      familyId: 'aries.love',
-      slot: 'love',
-      rarity: 'eclipse',
-      artworkPath: '/images/zodiac-guardians/aries-love-eclipse.webp',
-    },
-    {
-      id: 'aries.love.stella',
-      familyId: 'aries.love',
-      slot: 'love',
-      rarity: 'stella',
-      artworkPath: '/images/zodiac-guardians/aries-love-stella.webp',
-    },
-    {
-      id: 'taurus.work.base',
-      familyId: 'taurus.work',
-      slot: 'work',
-      rarity: null,
-      artworkPath: '/images/zodiac-guardians/taurus-work.webp',
-    },
-    {
-      id: 'libra.choice.base',
-      familyId: 'libra.choice',
-      slot: 'choice',
-      rarity: null,
-      artworkPath: '/images/zodiac-guardians/libra-choice.webp',
-    },
-  ],
-  familyPools: {
-    self: {
-      id: 'guardian-self-families',
-      slot: 'self',
-      selection: 'single',
-      candidates: [{ familyId: 'cancer.self' }],
-    },
-    love: {
-      id: 'guardian-love-families',
-      slot: 'love',
-      selection: 'single',
-      candidates: [{ familyId: 'aries.love' }],
-    },
-    work: {
-      id: 'guardian-work-families',
-      slot: 'work',
-      selection: 'single',
-      candidates: [{ familyId: 'taurus.work' }],
-    },
-    choice: {
-      id: 'guardian-choice-families',
-      slot: 'choice',
-      selection: 'single',
-      candidates: [{ familyId: 'libra.choice' }],
-    },
-  },
-  editionPools: [
-    {
-      id: 'cancer-self-editions',
-      familyId: 'cancer.self',
-      selection: 'single',
-      candidates: [{ editionId: 'cancer.self.base' }],
-    },
-    {
-      id: 'aries-love-editions',
-      familyId: 'aries.love',
-      selection: 'weighted_random',
-      candidates: [
-        { editionId: 'aries.love.orbit', weight: 5_500 },
-        { editionId: 'aries.love.nebula', weight: 3_000 },
-        { editionId: 'aries.love.eclipse', weight: 1_200 },
-        { editionId: 'aries.love.stella', weight: 300 },
-      ],
-    },
-    {
-      id: 'taurus-work-editions',
-      familyId: 'taurus.work',
-      selection: 'single',
-      candidates: [{ editionId: 'taurus.work.base' }],
-    },
-    {
-      id: 'libra-choice-editions',
-      familyId: 'libra.choice',
-      selection: 'single',
-      candidates: [{ editionId: 'libra.choice.base' }],
-    },
-  ],
+  families: GUARDIAN_RUNTIME_CATALOG.families,
+  editions: GUARDIAN_RUNTIME_CATALOG.editions,
+  familyPools: GUARDIAN_RUNTIME_CATALOG.familyPools,
+  editionPools: GUARDIAN_RUNTIME_CATALOG.editionPools,
   products: [
     {
-      sku: 'guardian-report-full-v1',
+      sku: GUARDIAN_REPORT_SKU,
       kind: 'full_report',
-      orderNames: { ko: '별자리 수호령 전체 리포트' },
-      prices: [{ market: 'KR', currency: 'KRW', amountMinor: 3_900 }],
+      orderNames: GUARDIAN_REPORT_NAME,
+      prices: [{ market: GUARDIAN_MARKET, currency: GUARDIAN_CURRENCY, amountMinor: GUARDIAN_REPORT_PRICE }],
     },
     {
       sku: 'guardian-love-redraw-1-v1',
@@ -363,6 +449,38 @@ export function guardianEdition(
     throw new Error(`Unknown guardian edition: ${editionId}`)
   }
   return edition
+}
+
+export function guardianArtworkUrl(edition: GuardianCardEdition, assetOrigin: string): string {
+  const normalizedOrigin = assetOrigin.trim()
+  if (!normalizedOrigin) {
+    throw new Error('Guardian asset origin is empty')
+  }
+  if (
+    edition.artworkObjectKey.startsWith('/') ||
+    edition.artworkObjectKey.includes('\\') ||
+    edition.artworkObjectKey.split('/').includes('..')
+  ) {
+    throw new Error(`Guardian edition ${edition.id} has an unsafe artwork object key`)
+  }
+
+  let base: URL
+  try {
+    base = new URL(normalizedOrigin.endsWith('/') ? normalizedOrigin : `${normalizedOrigin}/`)
+  } catch {
+    throw new Error('Guardian asset origin is not a valid URL')
+  }
+  if (
+    (base.protocol !== 'https:' && base.protocol !== 'http:') ||
+    base.username ||
+    base.password ||
+    base.search ||
+    base.hash ||
+    base.pathname !== '/'
+  ) {
+    throw new Error('Guardian asset origin must be a root HTTP(S) origin')
+  }
+  return new URL(edition.artworkObjectKey, base).toString()
 }
 
 export function guardianEditionPool(
@@ -415,11 +533,15 @@ export function guardianProductOrderName(
 function validateGuardianManifest(manifest: GuardianProductManifest): void {
   const familyIds = new Set(manifest.families.map(({ id }) => id))
   const editionIds = new Set(manifest.editions.map(({ id }) => id))
+  const artworkObjectKeys = new Set(manifest.editions.map(({ artworkObjectKey }) => artworkObjectKey))
   const productSkus = new Set(manifest.products.map(({ sku }) => sku))
   const supportedLocales = new Set(manifest.supportedLocales)
 
   if (familyIds.size !== manifest.families.length || editionIds.size !== manifest.editions.length) {
     throw new Error('Guardian manifest contains duplicate family or edition IDs')
+  }
+  if (artworkObjectKeys.size !== manifest.editions.length) {
+    throw new Error('Guardian manifest contains duplicate artwork object keys')
   }
   if (productSkus.size !== manifest.products.length) {
     throw new Error('Guardian manifest contains duplicate product SKUs')
@@ -434,10 +556,39 @@ function validateGuardianManifest(manifest: GuardianProductManifest): void {
     throw new Error('Guardian manifest weight scale must be a positive integer')
   }
 
+  for (const family of manifest.families) {
+    if (family.id !== `${family.sign}.${family.slot}` || family.signalAffinities.length === 0) {
+      throw new Error(`Guardian family ${family.id} has invalid production selection metadata`)
+    }
+    if (new Set(family.signalAffinities).size !== family.signalAffinities.length) {
+      throw new Error(`Guardian family ${family.id} contains duplicate signal affinities`)
+    }
+  }
+
   for (const edition of manifest.editions) {
     const family = manifest.families.find(({ id }) => id === edition.familyId)
-    if (!family || family.slot !== edition.slot) {
+    if (!family || family.slot !== edition.slot || family.sign !== edition.sign) {
       throw new Error(`Guardian edition ${edition.id} is not attached to its declared family and slot`)
+    }
+    if (
+      !edition.artworkObjectKey.startsWith(`guardian-cards/ko/${edition.id}.`) ||
+      !edition.artworkObjectKey.endsWith('.webp') ||
+      edition.artworkObjectKey.includes('\\') ||
+      edition.artworkObjectKey.split('/').includes('..')
+    ) {
+      throw new Error(`Guardian edition ${edition.id} has an invalid artwork object key`)
+    }
+    if (edition.slot === 'love') {
+      if (edition.rarity === null || edition.selectionSignals.length !== 0 || edition.previewTone !== null) {
+        throw new Error(`Guardian love edition ${edition.id} has invalid weighted selection metadata`)
+      }
+    } else if (
+      edition.rarity !== null ||
+      edition.selectionSignals.length !== 2 ||
+      edition.previewTone === null ||
+      !GUARDIAN_PREVIEW_TONES.includes(edition.previewTone)
+    ) {
+      throw new Error(`Guardian context edition ${edition.id} has invalid selection metadata`)
     }
   }
 
