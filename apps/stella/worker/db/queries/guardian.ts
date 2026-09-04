@@ -12,6 +12,7 @@ import {
   type GuardianFullReportProductSku,
   type GuardianProductManifest,
   type GuardianReportInputSnapshot,
+  guardianArtworkUrl,
   guardianEdition,
   guardianProduct,
   guardianProductOrderName,
@@ -24,6 +25,7 @@ import {
   generateGuardianLoveCardPresentation,
   generateGuardianReportNarrative,
 } from '../../guardian/report'
+import { scoreGuardianEditionSelection, scoreGuardianFamilySelection } from '../../guardian/selection-score'
 import {
   guardianCardAcquisitionTable,
   guardianCardOwnershipTable,
@@ -732,7 +734,7 @@ export type FulfillGuardianReportResult =
 
 export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
   db: Db,
-  input: { collectionId: number; reportId: number },
+  input: { collectionId: number; reportId: number; assetOrigin: string },
   questionnaire: GuardianQuestionnaireContent,
 ): Promise<FulfillGuardianReportResult> {
   const report = await lockedReportOf(db, input)
@@ -771,7 +773,11 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
       paidAnswers: report.questionnaireAnswerSnapshot,
       paidSignals: report.questionnaireSignalSnapshot,
     },
-    { manifest },
+    {
+      manifest,
+      familyScorer: scoreGuardianFamilySelection,
+      editionScorer: scoreGuardianEditionSelection,
+    },
   )
   const narrative = generateGuardianReportNarrative({
     locale: report.locale,
@@ -800,7 +806,7 @@ export async function fulfillGuardianReportAfterQuestionnaireInTransaction(
         familyId: card.familyId,
         slot: card.slot,
         rarity: card.rarity,
-        artworkPath: edition.artworkPath,
+        artworkPath: guardianArtworkUrl(edition, input.assetOrigin),
         title: section.title,
         guardians: section.guardians,
         artworkAlt: section.artworkAlt,
@@ -1048,6 +1054,7 @@ export async function consumeGuardianRedraw(
     collectionId: number
     reportId: number
     requestId: string
+    assetOrigin: string
   },
 ): Promise<ConsumeGuardianRedrawResult> {
   return db.transaction(async (tx) => {
@@ -1181,7 +1188,7 @@ export async function consumeGuardianRedraw(
     const presentation = generateGuardianLoveCardPresentation({
       locale: report.locale,
       card: decision.card,
-      artworkPath: edition.artworkPath,
+      artworkPath: guardianArtworkUrl(edition, input.assetOrigin),
       signalSnapshot: report.questionnaireSignalSnapshot,
     })
     const acquisition = await recordGuardianAcquisition(tx, {

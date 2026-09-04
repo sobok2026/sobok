@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import type { AppEnv } from '../../env'
-import { CURRENT_GUARDIAN_MANIFEST, guardianEdition } from '../../guardian/manifest'
+import { CURRENT_GUARDIAN_MANIFEST } from '../../guardian/manifest'
+import { guardianLoveRarityOdds } from '../../guardian/rarity-odds'
 
 export const guardianProducts = new Hono<AppEnv>()
 
@@ -34,14 +35,7 @@ guardianProducts.get('/current', (c) => {
           }
           return {
             familyId: pool.familyId,
-            rarities: pool.candidates.map((candidate) => {
-              const edition = guardianEdition(candidate.editionId, manifest)
-              return {
-                rarity: edition.rarity,
-                weight: candidate.weight,
-                weightScale: manifest.weightScale,
-              }
-            }),
+            rarities: guardianLoveRarityOdds(pool, manifest),
           }
         }),
       },

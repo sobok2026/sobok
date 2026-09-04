@@ -1,5 +1,11 @@
 import type { GuardianSelectedCard } from './draw'
-import { GUARDIAN_REPORT_SLOTS, type GuardianCardEdition, type GuardianReportSlot } from './manifest'
+import {
+  CURRENT_GUARDIAN_CARD_COPY_KO,
+  GUARDIAN_REPORT_SLOTS,
+  type GuardianCardCopyKo,
+  type GuardianCardEdition,
+  type GuardianReportSlot,
+} from './manifest'
 import type {
   GuardianQuestionnaireContent,
   GuardianQuestionnaireSignalSnapshot,
@@ -17,6 +23,7 @@ import type {
 import { GUARDIAN_ZODIAC_SIGNS } from './report-contract'
 
 const ANSWER_TOKEN = '{answer}'
+const FOCUS_TOKEN_PATTERN = /\{focus(?::(을|가|은))?\}/g
 
 interface QuestionFrame {
   slot: GuardianReportSlot
@@ -26,7 +33,6 @@ interface QuestionFrame {
 
 interface FocusCopy {
   focus: string
-  oneLine: string
 }
 
 interface SelectedQuestionAnswer {
@@ -304,76 +310,60 @@ const QUESTION_FRAMES = {
 const SELF_FOCUS = {
   'self.need.rest': {
     focus: '회복할 여백',
-    oneLine: '지금은 더 잘해내는 것보다 아무것도 증명하지 않고 쉬는 시간이 너를 다시 반짝이게 해.',
   },
   'self.need.expression': {
     focus: '숨기지 않는 표현',
-    oneLine: '마음속 생각을 작게라도 밖으로 꺼낼 때 네가 원하는 방향도 함께 선명해져.',
   },
   'self.need.connection': {
     focus: '따뜻한 연결',
-    oneLine: '혼자 단단해지려 애쓰기보다 믿을 수 있는 한 사람 곁에서 마음을 내려놓아도 괜찮아.',
   },
   'self.need.growth': {
     focus: '새로운 성장',
-    oneLine: '완벽히 준비된 다음이 아니라 궁금함이 살아나는 작은 경험에서 다음의 네가 시작돼.',
   },
 } as const satisfies Record<string, FocusCopy>
 
 const LOVE_FOCUS = {
   'love.need.certainty': {
     focus: '분명한 확신',
-    oneLine: '추측으로 마음을 채우지 말고, 관계의 이름과 방향을 다정하지만 분명하게 확인해 봐.',
   },
   'love.need.spark': {
     focus: '살아 있는 설렘',
-    oneLine: '안전한 익숙함만 지키기보다 둘의 마음이 다시 뛰는 작은 장면을 먼저 만들어 봐.',
   },
   'love.need.honesty': {
     focus: '솔직한 대화',
-    oneLine: '좋은 말만 고르기보다 진짜 마음을 짧고 정확하게 나눌 때 사랑이 숨을 쉬어.',
   },
   'love.need.trust': {
     focus: '오래 기대는 믿음',
-    oneLine: '큰 약속 한 번보다 반복해서 지켜지는 작은 행동이 네 사랑을 가장 편안하게 해.',
   },
 } as const satisfies Record<string, FocusCopy>
 
 const WORK_FOCUS = {
   'work.value.achievement': {
     focus: '눈에 보이는 성과',
-    oneLine: '완료의 기준을 먼저 정하면 흩어지던 힘이 해냈다고 말할 수 있는 한 점으로 모여.',
   },
   'work.value.stability': {
     focus: '흔들리지 않는 기반',
-    oneLine: '빠른 도약보다 수입과 일상을 지키는 구조를 먼저 만들 때 오래 달릴 힘이 생겨.',
   },
   'work.value.autonomy': {
     focus: '내 방식의 자유',
-    oneLine: '성과만큼 네 속도와 방법을 선택할 여지가 있어야 이 일이 오래 너다운 일이 돼.',
   },
   'work.value.meaning': {
     focus: '의미 있는 기여',
-    oneLine: '왜 하는지 다시 연결되는 순간, 멈춰 있던 집중력도 제자리를 찾아오기 시작해.',
   },
 } as const satisfies Record<string, FocusCopy>
 
 const CHOICE_FOCUS = {
   'choice.need.criteria': {
     focus: '비교할 기준',
-    oneLine: '선택지를 더 모으기 전에 무엇을 지키면 좋은 결정인지 세 가지 기준부터 정해 봐.',
   },
   'choice.need.courage': {
     focus: '움직일 용기',
-    oneLine: '확신이 모두 찰 때까지 기다리기보다 되돌릴 수 있는 가장 작은 한 걸음을 골라 봐.',
   },
   'choice.need.trust': {
     focus: '내 선택에 대한 신뢰',
-    oneLine: '이미 움직였다면 새 증거가 생기기 전까지는 그때의 네가 고른 이유를 믿어 줘.',
   },
   'choice.need.timing': {
     focus: '기다림의 기준',
-    oneLine: '좋은 때를 막연히 기다리지 말고 날짜나 정보처럼 확인할 수 있는 신호를 정해 둬.',
   },
 } as const satisfies Record<string, FocusCopy>
 
@@ -496,105 +486,23 @@ const BODY_LABELS = {
   mars: '화성',
 } as const satisfies Record<GuardianReportPlacementBody, string>
 
-const SECTION_BASE = {
-  self: {
-    label: '자기이해',
-    title: '마음이 쉬는 달집',
-    guardians: '달콩이',
-    artworkAlt: '달집 안에서 작은 우주 연못에 비친 자신의 표정을 바라보는 달콩이',
-    reflection: '오늘 네가 가장 편안해지는 선택은 무엇인지 한 문장으로 남겨 봐.',
-  },
-  work: {
-    label: '일',
-    title: '너무 높은 별탑',
-    guardians: '차곡이 · 새봄이',
-    artworkAlt: '기울어진 별쿠키 탑을 함께 수습하는 차곡이와 새봄이',
-    reflection: '이번 주에 덜어낼 일 하나와 끝낼 일 하나를 나란히 적어 봐.',
-  },
-  choice: {
-    label: '결정',
-    title: '먼저 반짝인 문',
-    guardians: '고르미',
-    artworkAlt: '저울을 내려놓고 먼저 반짝인 분홍 별 문손잡이를 잡는 고르미',
-    reflection: '결과가 아니라 선택 과정에서 꼭 지키고 싶은 태도 하나를 적어 봐.',
-  },
-} as const
-
-const LOVE_CARD_COPY = {
-  orbit: {
-    title: '먼저 달려간 하트',
-    guardians: '몽실이',
-    artworkAlt: '큰 하트를 혼자 달 우체통에 넣으려다 걸린 몽실이',
-  },
-  nebula: {
-    title: '비를 견딘 하트',
-    guardians: '몽실이',
-    artworkAlt: '비옷을 입고 비를 맞으며 큰 하트를 감싸 지키는 몽실이',
-  },
-  eclipse: {
-    title: '마주 잡은 하트',
-    guardians: '몽실이 · 달콩이',
-    artworkAlt: '달 우체통에 걸린 하트를 양쪽에서 함께 잡은 몽실이와 달콩이',
-  },
-  stella: {
-    title: '별빛으로 열린 하트',
-    guardians: '몽실이 · 달콩이',
-    artworkAlt: '함께 연 하트에서 두 수호령을 잇는 별 지도가 피어나는 몽실이와 달콩이',
-  },
-} as const
-
-const CARD_COPY_BY_EDITION = {
-  'cancer.self.base': { slot: 'self', ...SECTION_BASE.self },
-  'aries.love.orbit': {
-    slot: 'love',
-    label: '사랑',
-    ...LOVE_CARD_COPY.orbit,
-    reflection: '지금의 관계에서 추측 대신 직접 확인하고 싶은 마음 하나를 적어 봐.',
-  },
-  'aries.love.nebula': {
-    slot: 'love',
-    label: '사랑',
-    ...LOVE_CARD_COPY.nebula,
-    reflection: '지금의 관계에서 추측 대신 직접 확인하고 싶은 마음 하나를 적어 봐.',
-  },
-  'aries.love.eclipse': {
-    slot: 'love',
-    label: '사랑',
-    ...LOVE_CARD_COPY.eclipse,
-    reflection: '지금의 관계에서 추측 대신 직접 확인하고 싶은 마음 하나를 적어 봐.',
-  },
-  'aries.love.stella': {
-    slot: 'love',
-    label: '사랑',
-    ...LOVE_CARD_COPY.stella,
-    reflection: '지금의 관계에서 추측 대신 직접 확인하고 싶은 마음 하나를 적어 봐.',
-  },
-  'taurus.work.base': { slot: 'work', ...SECTION_BASE.work },
-  'libra.choice.base': { slot: 'choice', ...SECTION_BASE.choice },
-} as const
-
-const LOVE_CARD_ONE_LINE_BY_EDITION = {
-  'aries.love.orbit': (focus: string) =>
-    `지금 사랑에서 가장 밝게 보이는 말: “${focus}”. 먼저 궤도를 연 진심 뒤에 상대가 다가올 여백도 남겨 둬.`,
-  'aries.love.nebula': (focus: string) =>
-    `지금 사랑에서 가장 밝게 보이는 말: “${focus}”. 마음을 지키면서도 비가 그친 뒤 다시 문을 열 시점을 정해 둬.`,
-  'aries.love.eclipse': (focus: string) =>
-    `지금 사랑에서 가장 밝게 보이는 말: “${focus}”. 혼자 밀던 마음을 내려놓고 상대가 잡을 수 있는 자리를 보여 줘.`,
-  'aries.love.stella': (focus: string) =>
-    `지금 사랑에서 가장 밝게 보이는 말: “${focus}”. 둘만의 약속을 실제 일상에서 반복할 작은 행동으로 바꿔 봐.`,
-} as const
+const CARD_COPY_BY_EDITION: Readonly<Record<string, GuardianCardCopyKo>> = CURRENT_GUARDIAN_CARD_COPY_KO
 
 export function validateGuardianReportCardsKo(editions: readonly GuardianCardEdition[]): void {
   const editionIds = new Set(editions.map(({ id }) => id))
-  const editionById = new Map(editions.map((edition) => [edition.id, edition]))
   const issues: string[] = []
   for (const edition of editions) {
-    const copy = CARD_COPY_BY_EDITION[edition.id as keyof typeof CARD_COPY_BY_EDITION]
+    const copy = CARD_COPY_BY_EDITION[edition.id]
     if (!copy || copy.slot !== edition.slot) {
       issues.push(`Report card copy is missing edition ${edition.id}`)
+      continue
     }
-    if (edition.slot === 'love' && !(edition.id in LOVE_CARD_ONE_LINE_BY_EDITION)) {
-      issues.push(`Report love-card one-line is missing edition ${edition.id}`)
+    try {
+      renderGuardianCardOneLineKo(copy.oneLineTemplate, '검증 기준')
+    } catch (error) {
+      issues.push(
+        `Report card copy ${edition.id} has an invalid one-line template: ${error instanceof Error ? error.message : 'unknown error'}`,
+      )
     }
   }
   for (const editionId of Object.keys(CARD_COPY_BY_EDITION)) {
@@ -602,14 +510,48 @@ export function validateGuardianReportCardsKo(editions: readonly GuardianCardEdi
       issues.push(`Report card copy references unknown edition ${editionId}`)
     }
   }
-  for (const editionId of Object.keys(LOVE_CARD_ONE_LINE_BY_EDITION)) {
-    if (editionById.get(editionId)?.slot !== 'love') {
-      issues.push(`Report love-card one-line references a non-love or unknown edition ${editionId}`)
-    }
-  }
   if (issues.length > 0) {
     throw new Error(`Invalid guardian report card copy:\n${issues.map((issue) => `- ${issue}`).join('\n')}`)
   }
+}
+
+export function renderGuardianCardOneLineKo(template: string, focus: string): string {
+  const normalizedFocus = focus.trim().normalize('NFC')
+  if (!normalizedFocus) {
+    throw new Error('Guardian card focus must not be empty')
+  }
+
+  let replacementCount = 0
+  const rendered = template.replace(FOCUS_TOKEN_PATTERN, (_token, requestedParticle: string | undefined) => {
+    replacementCount += 1
+    if (!requestedParticle) {
+      return normalizedFocus
+    }
+    return `${normalizedFocus}${koreanFocusParticle(normalizedFocus, requestedParticle)}`
+  })
+  if (replacementCount !== 1 || rendered.includes('{focus')) {
+    throw new Error(`Guardian card one-line template must contain exactly one supported focus token`)
+  }
+  return rendered
+}
+
+function koreanFocusParticle(focus: string, requestedParticle: string): string {
+  const lastCharacter = Array.from(focus).at(-1)
+  const codePoint = lastCharacter?.codePointAt(0)
+  if (codePoint === undefined || codePoint < 0xac00 || codePoint > 0xd7a3) {
+    throw new Error('Guardian card focus requiring a particle must end in a Hangul syllable')
+  }
+  const hasFinalConsonant = (codePoint - 0xac00) % 28 !== 0
+  if (requestedParticle === '을') {
+    return hasFinalConsonant ? '을' : '를'
+  }
+  if (requestedParticle === '가') {
+    return hasFinalConsonant ? '이' : '가'
+  }
+  if (requestedParticle === '은') {
+    return hasFinalConsonant ? '은' : '는'
+  }
+  throw new Error(`Unsupported guardian card focus particle: ${requestedParticle}`)
 }
 
 export function validateGuardianReportCopyKo(questionnaire: GuardianQuestionnaireContent): void {
@@ -832,11 +774,11 @@ function buildSection(
   })
   const guidance = strongestSignalValue(input.signalSnapshot, GUIDANCE[slot])
   const cardCopy = sectionCardCopy(card)
-  const oneLine = slot === 'love' ? loveCardOneLine(card.editionId, focus.focus) : focus.oneLine
+  const { oneLineTemplate, ...sectionCopy } = cardCopy
 
   return {
-    ...cardCopy,
-    oneLine,
+    ...sectionCopy,
+    oneLine: renderGuardianCardOneLineKo(oneLineTemplate, focus.focus),
     chart: chartCopy(input, slot),
     details: frameDetails,
     guidance: {
@@ -848,19 +790,11 @@ function buildSection(
 }
 
 function sectionCardCopy(card: GuardianReportNarrativeInput['cards'][number]) {
-  const copy = CARD_COPY_BY_EDITION[card.editionId as keyof typeof CARD_COPY_BY_EDITION]
+  const copy = CARD_COPY_BY_EDITION[card.editionId]
   if (!copy || copy.slot !== card.slot) {
     throw new Error(`Guardian report copy has no card metadata for ${card.editionId}`)
   }
   return copy
-}
-
-function loveCardOneLine(editionId: string, focus: string): string {
-  const build = LOVE_CARD_ONE_LINE_BY_EDITION[editionId as keyof typeof LOVE_CARD_ONE_LINE_BY_EDITION]
-  if (!build) {
-    throw new Error(`Guardian report copy has no love-card one-line for ${editionId}`)
-  }
-  return build(focus)
 }
 
 export function buildGuardianLoveCardPresentationKo(input: {
@@ -884,7 +818,7 @@ export function buildGuardianLoveCardPresentationKo(input: {
     title: copy.title,
     guardians: copy.guardians,
     artworkAlt: copy.artworkAlt,
-    oneLine: loveCardOneLine(input.card.editionId, focus.focus),
+    oneLine: renderGuardianCardOneLineKo(copy.oneLineTemplate, focus.focus),
   }
 }
 
