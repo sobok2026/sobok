@@ -10,12 +10,15 @@ export const GuardianReopenTokenSchema = z
   .length(43)
   .regex(/^[A-Za-z0-9_-]+$/)
 
-export const GuardianReportPublicIdSchema = z
+export const GuardianCollectionPublicIdSchema = z
   .string()
   .length(16)
   .regex(/^[A-Za-z0-9_-]+$/)
 
-export const GuardianCollectionPublicIdSchema = GuardianReportPublicIdSchema
+export const GuardianDateKeySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
+export const GuardianTimeZoneSchema = z.string().trim().min(1).max(64)
+export const GuardianViewerIdSchema = z.uuid()
+export const GuardianCheckoutRequestIdSchema = z.uuid()
 
 export const GuardianPaymentIdSchema = z
   .string()

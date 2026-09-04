@@ -171,12 +171,12 @@ Bootstrap job은 `SOBOK_MIGRATOR_URL`이 `accounts_migrator`와 `sslmode=verify-
 Stella 동적 코드는 환경별 Database Worker의 fresh Hyperdrive, `sobok_runtime`, auth secret, OIDC secret,
 IP HMAC salt를 사용한다. staging에서 다음을 완주한 뒤 production을 배포한다.
 
-1. 게스트 무료 결과 → 결제 → 유료 질문 → 카드 공개
+1. 게스트 오늘 카드 무료 공개 → 내일 테마 티저 → 7일권 결제 → 목소리를 확정한 내일 카드 선공개
 2. “소복 계정으로 보관하기” → accounts 로그인/가입
 3. 기존 collection의 원자적 계정 귀속과 guest capability 폐기 확인
-4. account-save 보상 1회 멱등 지급 확인
-5. 계정 보관함과 새 브라우저 OIDC 로그인 재열람 확인
+4. 계정 보관함에서 자기이해·사랑·일·결정 날짜별 카드와 최근 7장의 테마·목소리 요약 확인
+5. 새 브라우저 OIDC 로그인으로 보관함 재열람 확인
 6. 구매 이메일 링크가 account-owned collection에 guest capability를 다시 발급하지 않는지 확인
-7. 무료/유료 재추첨과 대표 카드 변경을 계정 session으로 확인
+7. 결제 승인 시각부터 168시간 뒤 권한 만료와 현지 자정 카드 전환 확인
 
 중앙 계정 삭제 API는 앱별 lifecycle event와 재시도 가능한 소비자가 모두 생길 때까지 열지 않는다.

@@ -11,7 +11,7 @@ import { dispatchGuardianRecoveryEmails } from '../guardian/recovery'
 import { toGuardianRemotePayment } from './client'
 
 /** Applies a centrally verified PortOne event. Queue delivery is at-least-once; the local event id and paid CAS
- * keep fulfillment idempotent while preserving Stella as the owner of its report entitlement. */
+ * keep the seven-day entitlement grant idempotent. */
 export async function handleGuardianPaymentEvent(
   env: Bindings,
   ctx: ExecutionContext,
@@ -53,11 +53,7 @@ export async function handleGuardianPaymentEvent(
     return synced
   })
 
-  if (
-    outcome.status === 'payment-mismatch' ||
-    outcome.status === 'purchase-state-conflict' ||
-    outcome.status === 'report-state-conflict'
-  ) {
+  if (outcome.status === 'payment-mismatch' || outcome.status === 'purchase-state-conflict') {
     console.error('stella.guardian_payment_event.review_required')
     ctx.waitUntil(
       env.STELLA_DISCORD_WEBHOOK.get().then((webhook) =>
@@ -68,7 +64,7 @@ export async function handleGuardianPaymentEvent(
   if (outcome.status === 'purchase-not-found' || outcome.status === 'pending') {
     throw new Error(`Stella payment event could not converge: ${outcome.status}`)
   }
-  if ((outcome.status === 'granted' || outcome.status === 'already-granted') && outcome.kind === 'full_report') {
+  if (outcome.status === 'granted' || outcome.status === 'already-granted') {
     ctx.waitUntil(dispatchGuardianRecoveryEmails(env, { paymentId: paymentId.data }))
   }
 }
