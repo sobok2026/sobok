@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "choice.protected-value.close-emotion",
+  "batchOrder": 81,
+  "purpose": "선택에서 지킬 가치가 운명적 정답이나 닫힌 방어선이 아니라 조정 가능한 요소와 분리된 하나의 핵심 경계로 읽히는 close-emotion 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "choice",
+    "narrativeAxisId": "protected-value",
+    "visualAxisId": "close-emotion"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium choice-protected-value close-emotion guardian card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair and no extra adviser, partner, audience, future self, human, silhouette, reflection, empty seat or implied person. Preserve canonical identity, approved white-sclera purple eye construction, colors, clothing, signature props, dark-purple outlines and visible chest Stella stars. Guardian or pair plus one protected core and one visibly separate adjustable or relinquishable control covers 55–65% and reads at 80px. Frame the face and hand closely while leaving a broad outside margin; show desire and fear without declaring a correct choice, permanent defense, certainty, destiny or guaranteed outcome. Written surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, names, labels, score, number, date, clock face, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Boundaries remain broken, C-shaped, open-notched, removable or unlatched; no closed circle, ring, halo, portal, infinity sign, cage, locked box or deterministic route. Replace literal keys with loose seal or boundary tokens. Do not add a scale; no scale is requested in this batch. Only Scorpio canonical tail-heart is allowed; no added heart. Keep every composition distinct. Soft colored-pencil and watercolor, visible paper grain, rounded plush proportions and dreamy violet-peach-gold lighting; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.choice.protected-value.close-emotion",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "c77a1e8346c9c28003ab9dff253c9f8074578bb99fddcbd35c821ab58e25bdbb",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "a380f24a716777a4a1e84b335d7a30bda7e8082113d54700a51df501d732d82a",
+      "compositionFamily": "protectedclose_aries_openflamecradle_desirefearpebbles_threshold",
+      "artDirection": "세로 3:4. 몽실이1의 얼굴·손과 small flame core1, open C-shaped cradle1, desire pebble1, fear pebble1, distant ajar threshold1을 low close로 둔다. 손은 cradle의 open notch를 가리키되 닫지 않고 선택지 밖 여백을 넓게 남긴다. 원·ring·route·text는 없다.",
+      "distinctFrom": [
+        "B001–80의 같은 별자리·protected-value close-emotion 구도를 반복하지 않고 protectedclose_aries_openflamecradle_desirefearpebbles_threshold를 사용한다.",
+        "같은 choice.protected-value.close-emotion 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·flame core1·open cradle1·desire/fear pebbles2·ajar threshold1을 확인한다.",
+        "지킬 용기가 열린 경계로 보이며 두려움·바람·선택 결과가 하나로 고정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.choice.protected-value.close-emotion",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "7c2533c7de6d9fbcef68cbbe4491601511a6df9438dc6099accf43cf6fa81322",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "2208770cce233f848faa568f27142979798bbd9f3ca4540002f9baa747d7cd3d",
+      "compositionFamily": "protectedclose_taurus_opensatchel_resourcerestkeepsake_tokens_tworeliefs",
+      "artDirection": "세로 3:4. 차곡이1의 얼굴·손과 open satchel1, resource token1, rest crescent token1, keepsake star1, separated door reliefs2를 lap-level close로 둔다. satchel flap은 열고 clasp는 solid tab으로 두며 한 token은 아직 밖에 남긴다. 동전·숫자·loop buckle·text는 없다.",
+      "distinctFrom": [
+        "B001–80의 같은 별자리·protected-value close-emotion 구도를 반복하지 않고 protectedclose_taurus_opensatchel_resourcerestkeepsake_tokens_tworeliefs를 사용한다.",
+        "같은 choice.protected-value.close-emotion 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이1·open satchel1·tokens3·door reliefs2·solid clasp tab을 확인한다.",
+        "안전선 세 요소가 이동 금지나 완벽한 안정·정답 문으로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.choice.protected-value.close-emotion",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "c066f469201bd733f7ed0b2fe25a8080e8a8033bfd3da885d35d318ea44f673b",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "938ba0a6a36a9be1461e1fa59d4dddc847041bc95eca3eb7adac933fa7ee2333",
+      "compositionFamily": "protectedclose_geminipair_chosenpanel_futurewindowtab_openhinge_cleft",
+      "artDirection": "세로 3:4. 재잘이·소곤이 canonical pair2/ribbon1의 얼굴·손과 chosen panel1, removable future-window tab1, open hinge1, possibility tokens2를 overhead close로 둔다. tab은 panel 옆에 half-set하고 pair 사이 central cleft를 남긴다. 지도·지운 길·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–80의 같은 별자리·protected-value close-emotion 구도를 반복하지 않고 protectedclose_geminipair_chosenpanel_futurewindowtab_openhinge_cleft를 사용한다.",
+        "같은 choice.protected-value.close-emotion 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "재잘이·소곤이 pair2·panel1·window tab1·hinge1·tokens2·central cleft를 확인한다.",
+        "한 가능성을 고르면서 다른 가능성을 삭제·합일·보장하지 않고 다시 열 틈이 남는지 확인한다."
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.choice.protected-value.close-emotion",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "a1173be5e3b5461da7e4aa0a62288b19598550cbf8851ded2db5e398c2f970ff",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "a5d2d9251048e5f0ebb6860d615c650b3e7566e4ca6cb2cc7e682e13db79cdef",
+      "compositionFamily": "protectedclose_cancer_moonshell_openclasp_safetytokens_doorlip",
+      "artDirection": "세로 3:4. 달콩이1의 얼굴·집게와 crescent shell1, open fastening clasp1, relation/safety tokens2, ajar door lip1을 shoulder close로 둔다. clasp 양 끝은 맞닿지 않고 tokens는 shell 밖 removable tray1에 둔다. 글자 조건·strap loop·closed ring·text는 없다.",
+      "distinctFrom": [
+        "B001–80의 같은 별자리·protected-value close-emotion 구도를 반복하지 않고 protectedclose_cancer_moonshell_openclasp_safetytokens_doorlip를 사용한다.",
+        "같은 choice.protected-value.close-emotion 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·crescent shell1·open clasp1·tokens2·ajar door lip1·tray1을 확인한다.",
+        "관계와 안전을 지키는 장치가 고립·영구 잠금·상대 통제로 읽히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.choice.protected-value.close-emotion",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "afa5cdfba1887e97ca9b8d9b3c7f4bd606f5d53bb1869c1e264237ca22ac2d60",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "1b55f3578f3358b6a18a4ca04d629c2e69104c244acc2cb0dfd3db092d859216",
+      "compositionFamily": "protectedclose_leo_cheststar_dignitytile_crownaside_twodoorpads",
+      "artDirection": "세로 3:4. 해님이1의 얼굴·가슴 Stella star와 dignity tile1, crown1/set aside, open door pads2를 frontal close로 둔다. 한 손은 가슴 별에, 다른 손은 tile 곁에 두고 door pads 사이 넓은 여백을 남긴다. 자·score·audience·text는 없다.",
+      "distinctFrom": [
+        "B001–80의 같은 별자리·protected-value close-emotion 구도를 반복하지 않고 protectedclose_leo_cheststar_dignitytile_crownaside_twodoorpads를 사용한다.",
+        "같은 choice.protected-value.close-emotion 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1·chest star·dignity tile1·set-aside crown1·open door pads2를 확인한다.",
+        "존엄과 표현을 지키는 기준이 인정·크기 경쟁·정답 문으로 바뀌지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.choice.protected-value.close-emotion",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "85d05d58281c64d0509c204fad54e2c29ff5a6727e7da1d5110a512213e4905c",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "8f5bfca3bd1d84f2509d02027e0a6f5c1554849a941d0d8d7ae49d61f155280b",
+      "compositionFamily": "protectedclose_virgo_threetile_strip_opengoldrail_adjusttray_pencil",
+      "artDirection": "세로 3:4. 새봄이1의 얼굴·연필 든 손과 criterion strip1/tiles3, one protected tile1 beside an open gold rail1, adjustable tiles2, open change tray1을 axial close로 둔다. rail 한 변은 비우고 protected tile도 removable 상태로 둔다. checklist·badge·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–80의 같은 별자리·protected-value close-emotion 구도를 반복하지 않고 protectedclose_virgo_threetile_strip_opengoldrail_adjusttray_pencil를 사용한다.",
+        "같은 choice.protected-value.close-emotion 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·strip1·tiles3·open gold rail1·change tray1·pencil1을 확인한다.",
+        "최소 기준 하나가 보이되 완벽 기준·수정 금지·정보 완성으로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.choice.protected-value.close-emotion",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "c0a0b3b1084aa12f43108b66bf6dcad3063a25016fc9c244cf87ca47281e6913",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "5e4f69e2cb73eb0209e4b47209541368b2b8983d755d7d528700f580714494a4",
+      "compositionFamily": "protectedclose_libra_looseribbon_selfplacetile_boundarypeg_openends",
+      "artDirection": "세로 3:4. 고르미1의 얼굴·손과 loose relation ribbon1, self-place tile1, boundary peg1, open-ended tracks2를 close diagonal로 둔다. ribbon과 tile은 서로 다른 track에 두고 끝을 연결하지 않는다. balance·scale·closed loop·score·text는 없다.",
+      "distinctFrom": [
+        "B001–80의 같은 별자리·protected-value close-emotion 구도를 반복하지 않고 protectedclose_libra_looseribbon_selfplacetile_boundarypeg_openends를 사용한다.",
+        "같은 choice.protected-value.close-emotion 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·ribbon1·self-place tile1·boundary peg1·open tracks2를 확인한다.",
+        "관계 존중과 자기 자리가 동시에 남되 완전 균형·합의 강요·닫힌 선이 되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.choice.protected-value.close-emotion",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "d97ca105e2a617e7e496c5440a898f9c00a266d43f730cfcc5ef943e468eba29",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "17c7f43564fc9b954b984126fe7b5aed5a3b047472294cc7f2679916d6bd71c7",
+      "compositionFamily": "protectedclose_scorpio_privacybox_ajar_sealtoken_opentrack_tailheart",
+      "artDirection": "세로 3:4. 꼬옥이1/canonical tail-heart1의 얼굴·pincers와 privacy box1/ajar, loose seal token1, fact/private tiles2, open C-shaped boundary track1을 reverse close로 둔다. seal은 box 밖에 두고 lid는 열린다. key·추가 heart·lock·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–80의 같은 별자리·protected-value close-emotion 구도를 반복하지 않고 protectedclose_scorpio_privacybox_ajar_sealtoken_opentrack_tailheart를 사용한다.",
+        "같은 choice.protected-value.close-emotion 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1·tail-heart1·ajar box1·seal token1·tiles2·open boundary track1을 확인한다.",
+        "진실과 사적 경계를 나누되 비밀 영구 봉인·열쇠 소유·전면 공개로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.choice.protected-value.close-emotion",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "268d8928d4ee895644d870db90d009bdbde4b292fd9a2d3615acdd10e8bdc02b",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "3690dbd2fac7b2085a5d4157365b27711e546940b3d4395a6c8aa5db2d662729",
+      "compositionFamily": "protectedclose_sag_blankfieldpanel_openedge_possibilitytoken_bow",
+      "artDirection": "세로 3:4. 총총이1/bow1의 얼굴·손과 blank field panel1, one explored token1, broad erased blank field1, removable possibility token1, open panel edge1을 side close로 둔다. panel에는 길·좌표·arrow가 없고 빈 면이 프레임 밖으로 열린다. 지도·text는 없다.",
+      "distinctFrom": [
+        "B001–80의 같은 별자리·protected-value close-emotion 구도를 반복하지 않고 protectedclose_sag_blankfieldpanel_openedge_possibilitytoken_bow를 사용한다.",
+        "같은 choice.protected-value.close-emotion 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이1·bow1·field panel1·tokens2·blank field·open edge를 확인한다.",
+        "한 방향을 택해도 다음 가능성이 지도 경로·목적지·성공으로 고정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.choice.protected-value.close-emotion",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "8fcbf2638fa0c09697d54809647b39415f3983cead9ca996dd411da33a3cae92",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "cbfb76d9951479c4d7e739ce421f4c641d0068db48f3ddbedfd126cf8b34dd96",
+      "compositionFamily": "protectedclose_cap_responsibilityplaques3_goldclip_opencarrier_tail",
+      "artDirection": "세로 3:4. 오름이1/turquoise tail의 얼굴·손과 responsibility plaques3, one solid gold clip1, open carrier tray1을 top-side close로 둔다. clip은 one plaque edge에 half-set하고 other plaques2는 tray 밖에 놓는다. cord loop·number·rank·grid·text는 없다.",
+      "distinctFrom": [
+        "B001–80의 같은 별자리·protected-value close-emotion 구도를 반복하지 않고 protectedclose_cap_responsibilityplaques3_goldclip_opencarrier_tail를 사용한다.",
+        "같은 choice.protected-value.close-emotion 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1·tail·plaques3·gold clip1·open carrier1·half-set 상태를 확인한다.",
+        "자기 몫 하나를 지키되 모든 부담·체면·성과 의무를 떠안는 장면이 아닌지 확인한다."
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.choice.protected-value.close-emotion",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "3397c1890e1d63f55e6d61bf57e548432faa69219f288e142c3e0cf55bd449cc",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "bb4b06392e95d716bd7229ce5ce955eccfebeafaca20e1472f627842d01c99db",
+      "compositionFamily": "protectedclose_aqua_twoboards_changeableparts_corebottle_opensocket",
+      "artDirection": "세로 3:4. 방울이1의 얼굴·손과 option boards2, changeable parts3, untouched core bottle1/four-point-star stopper, open socket1을 top-oblique close로 둔다. 손은 part1만 옮기고 bottle과 socket 사이를 넓게 비운다. heart profile·diagram lines·loop handle·text는 없다.",
+      "distinctFrom": [
+        "B001–80의 같은 별자리·protected-value close-emotion 구도를 반복하지 않고 protectedclose_aqua_twoboards_changeableparts_corebottle_opensocket를 사용한다.",
+        "같은 choice.protected-value.close-emotion 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·boards2·parts3·core bottle1·star stopper·open socket1을 확인한다.",
+        "고유 원리를 지키되 발명 완성·변화 거부·정답 설계로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.choice.protected-value.close-emotion",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialApprovedOn": "2026-09-02",
+      "editorialContentHash": "54578bfba25cd414ea763dfc1c474cca96fca40f4c666d3734898e9c78554076",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "b6f302a01d5cebf7ca480873c35da8240e44ac3a16ff27059f5406d3201dff72",
+      "compositionFamily": "protectedclose_piscespair_twocolorpads_openconnector_tokens_cleft",
+      "artDirection": "세로 3:4. 꿈별이·잠별이 canonical pair2의 얼굴·inner fins와 aqua/pink pads2, identity color tokens2, open crescent connector1, loose connection star1을 end-on close로 둔다. connector 끝은 벌리고 pair 사이 central cleft를 남긴다. ring·halo·heart·current merge·text는 없다.",
+      "distinctFrom": [
+        "B001–80의 같은 별자리·protected-value close-emotion 구도를 반복하지 않고 protectedclose_piscespair_twocolorpads_openconnector_tokens_cleft를 사용한다.",
+        "같은 choice.protected-value.close-emotion 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꿈별이·잠별이 pair2·pads2·color tokens2·open connector1·star1·central cleft를 확인한다.",
+        "연결과 각자의 색이 함께 남되 두 존재·감정·물살이 하나로 합쳐지지 않는지 확인한다."
+      ]
+    }
+  ],
+  "editorialApprovedOn": "2026-09-02",
+  "generatedOn": "2026-09-03",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-03",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

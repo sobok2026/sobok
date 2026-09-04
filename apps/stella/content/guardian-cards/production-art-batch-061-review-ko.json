@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "work.strength.close-emotion",
+  "batchOrder": 61,
+  "purpose": "일의 강점이 능력 단정이 아니라 표정·손끝·첫 점검 도구에서 성취감과 부담으로 함께 읽히는 close-emotion 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "work",
+    "narrativeAxisId": "strength",
+    "visualAxisId": "close-emotion"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium work-strength close-emotion guardian card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair from the approved source; never add a coworker, manager, client, recipient, extra guardian, human, body clue, reflection, silhouette, empty seat or personal belonging implying another person. Preserve canonical identity, relative size/colors, clothing, signature props, dark-purple eyes with exactly one large plus one small highlight in each visible eye, and visible chest Stella stars. Guardian or canonical pair plus the focal diagnostic or guidance device covers 55–65% and remains readable at actual width 80px. Frame face, hands/fins and one bounded work control closely so capability, care, concentration and burden coexist; never show guaranteed mastery, flawless quality, leadership rank, applause, promotion or predetermined outcome. Written work surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, handwriting lines, names, labels, score, number, date, clock, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Every connector, bridge, marker, button, clip, wedge, block, token, lamp, thread or coupler remains removable, half-set, open-ended, unlatched or still under inspection. Only Scorpio canonical tail-heart tip is allowed; no added heart or heart-shaped light/void. No closed ring, halo, portal, infinity sign, deterministic route or completed mastery emblem. Keep every composition distinct in close camera height, hand action, focal-device silhouette and open negative-space shape. Follow compositionFamily, artDirection, distinctFrom and visualReviewFocus literally. Soft colored-pencil and watercolor, visible paper grain, rounded plush proportions and deep-purple outlines; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.work.strength.close-emotion",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "117b6cd48c7b0109a8bf2598e2e89fd1a2e4567573270bc81280c6fc7a2be412",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "buttonrim_close_three_stepchips_halfset_open_sidebreath",
+      "artDirection": "세로 3:4 start-button rim 높이 close three-quarter. 몽실이1의 얼굴·한 손과 start button1, geometric step chips3를 55–65%에 크게 둔다. 손끝은 button을 누르는 순간이지만 chips는 첫 칸부터 open sequence로 half-set되고 broad side breath를 비운다. 동료·result board·승리 light·text는 없다.",
+      "distinctFrom": [
+        "B001–060의 같은 별자리·근접 작업 소품을 반복하지 않고 buttonrim_close_three_stepchips_halfset_open_sidebreath를 사용한다.",
+        "같은 work.strength.close-emotion 묶음의 다른 11개와 얼굴 각도·제어점·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·button1·step chips3와 손끝 압력을 확인한다.",
+        "표정에 성취감과 부담이 함께 있고 세 칩이 리더십 서열이나 완료 경로로 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "40c8c3a584584ef148d62c0d462db2548a8b11f0d7e9ab0709ddf6b1dbd0bde5"
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.work.strength.close-emotion",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "192e35e2b6526c4fd211572b38fc67c22ec455b18a016208e29bed82bd300833",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "basewedge_macro_towerfoot_three_ticktokens_open_topgap",
+      "artDirection": "세로 3:4 star-tower foot macro low frontal. 차곡이1의 얼굴·두 손, base support1과 removable wedge1을 크게 두고 geometric tick tokens3는 숫자 없이 side rail에 분리한다. wedge는 정렬 중 half-set이고 tower upper body는 frame 밖 open top gap으로 남긴다. 날짜·완성 tower·price·text는 없다.",
+      "distinctFrom": [
+        "B001–060의 같은 별자리·근접 작업 소품을 반복하지 않고 basewedge_macro_towerfoot_three_ticktokens_open_topgap를 사용한다.",
+        "같은 work.strength.close-emotion 묶음의 다른 11개와 얼굴 각도·제어점·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이1·base support1/wedge1·tick tokens3를 계수한다.",
+        "받침 조정은 진행 중이며 꾸준함이 완벽한 품질이나 영구 안정으로 단정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "fb723b30e5ea243385f92bf9732591f058a92d747d9922d385b64c540ad204f0"
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.work.strength.close-emotion",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "df2bc57035cf4999f6dc179f5db392a5999b93489a5e228de889fe0088a66b64",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "nodeboard_close_twinfaces_three_ideanodes_two_shortlinks_opencenter",
+      "artDirection": "세로 3:4 node-board edge close view. canonical 재잘이·소곤이 pair2/ribbon1의 얼굴과 손끝, idea nodes3와 short connectors2만 둔다. connector1은 두 node 사이에 half-set이고 나머지 node는 open center margin 너머 분리한다. 실제 별자리·차트·글자·닫힌 loop·완성 해답은 없다.",
+      "distinctFrom": [
+        "B001–060의 같은 별자리·근접 작업 소품을 반복하지 않고 nodeboard_close_twinfaces_three_ideanodes_two_shortlinks_opencenter를 사용한다.",
+        "같은 work.strength.close-emotion 묶음의 다른 11개와 얼굴 각도·제어점·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2/ribbon1·idea nodes3·connectors2와 open center를 확인한다.",
+        "연결 감각은 보이되 실제 차트나 하나의 확정 답·닫힌 선망으로 완성되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "1d36665637481b2d668caa1a1388982b5d9702b41eb9e05b24cb38f87ed1749d"
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.work.strength.close-emotion",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "795a04a3007275c1e0ff4932e3eeba573971f20baff0076ab76369d20ab36873",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "messagewell_close_blank_speechshell_starnote_open_receivergap",
+      "artDirection": "세로 3:4 abstract message-well rim close oblique. 달콩이1의 얼굴·집게와 blank speech-shell token1, small star-note1, open holder1을 크게 둔다. 달콩이는 note를 holder 위에 내밀지만 받는 인물·손·빈 의자·개인 소지품은 없고 receiver gap은 넓게 열린다. 말풍선 text·name·heart는 없다.",
+      "distinctFrom": [
+        "B001–060의 같은 별자리·근접 작업 소품을 반복하지 않고 messagewell_close_blank_speechshell_starnote_open_receivergap를 사용한다.",
+        "같은 work.strength.close-emotion 묶음의 다른 11개와 얼굴 각도·제어점·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·speech-shell token1·star-note1·holder1을 확인한다.",
+        "빈 receiver gap이 특정 동료나 침묵한 사람의 존재를 암시하지 않고 돌봄 부담도 표정에 남는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "193ccfc4592785f2fc731e7f49ff7bb0470d5d15eaff26ea067778f723ce7c7d"
+    },
+    {
+      "order": 5,
+      "editionId": "leo.work.strength.close-emotion",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "0c1228a9e9bcde2946c412df72fc37a04d05d5410ef508c969fb30f02eb746a1",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "lampcontrol_close_start_goal_tokens_unlitgoal_open_flygap",
+      "artDirection": "세로 3:4 guide-lamp control 높이 close side. 해님이1/crown1의 얼굴과 switch1, small lamp1, independent start/goal tokens2를 크게 둔다. start token만 약하게 켜지고 goal token은 unlit·removable이며 tall fly gap을 비운다. 경로선·audience·score·applause·text는 없다.",
+      "distinctFrom": [
+        "B001–060의 같은 별자리·근접 작업 소품을 반복하지 않고 lampcontrol_close_start_goal_tokens_unlitgoal_open_flygap를 사용한다.",
+        "같은 work.strength.close-emotion 묶음의 다른 11개와 얼굴 각도·제어점·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1/crown1·switch1/lamp1·start와 goal tokens2의 상태 차이를 확인한다.",
+        "방향 제시는 보이되 goal이 성취 보장이나 팀의 일방적 추종으로 읽히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "a7056f200f8e7b30817c86d5abfbe4525c18af8c73e5621a690e6c03c1f3736f"
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.work.strength.close-emotion",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "ceac7f9590139c6f4f788925f0f57329c73acb7c465c3344f34226912486cb5a",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "magnifieredge_close_twinparts_hairlinecrack_two_reliefs_openmargin",
+      "artDirection": "세로 3:4 magnifier edge close axial. 새봄이1의 얼굴·한 손과 nearly identical star parts2, magnifier1, hairline crack1을 크게 둔다. cause/effect relief tokens2는 글자 없이 separate tray에 있고 repair tool0, fixed result0이다. right open margin을 넓게 두며 날짜·점수·text는 없다.",
+      "distinctFrom": [
+        "B001–060의 같은 별자리·근접 작업 소품을 반복하지 않고 magnifieredge_close_twinparts_hairlinecrack_two_reliefs_openmargin를 사용한다.",
+        "같은 work.strength.close-emotion 묶음의 다른 11개와 얼굴 각도·제어점·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·parts2·magnifier1·crack1·relief tokens2를 계수한다.",
+        "차이를 발견한 상태와 부담이 함께 보이고 아직 원인 확정·수리 완료·완벽 품질이 아닌지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "476b4d6162456d566b87e805a20bf20ebb40dc3e6dbf5feb88e7f3fadb34c237"
+    },
+    {
+      "order": 7,
+      "editionId": "libra.work.strength.close-emotion",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "dd1b1cfb676963e373cd2e467449e99f8ea1f2dbf48b6e32edfddb78f4749230",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "speechshell_close_two_panels_bridge_factmisreadtokens_openchannel",
+      "artDirection": "세로 3:4 speech-shell panel 높이 close frontal. 고르미1의 얼굴·손과 서로 반대 방향의 abstract speech shells2, removable bridge segment1을 크게 둔다. fact/misread tokens2는 각 panel에 분리하고 bridge는 central channel 위에 half-set한다. 실제 사람·대화문·scale·합의 완료·heart는 없다.",
+      "distinctFrom": [
+        "B001–060의 같은 별자리·근접 작업 소품을 반복하지 않고 speechshell_close_two_panels_bridge_factmisreadtokens_openchannel를 사용한다.",
+        "같은 work.strength.close-emotion 묶음의 다른 11개와 얼굴 각도·제어점·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·speech shells2·bridge1·tokens2를 확인한다.",
+        "bridge가 대화 재개 가능성만 보이고 두 입장을 하나로 지우거나 합의를 보장하지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "eedaefc075c01700a9f735db0325ea82b78d56673b15309a719e7472eb2a9870"
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.work.strength.close-emotion",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "8068f596fbc2ce70cb506c8c4923dff36c9f6c541e32baac393de4c33caf1a3a",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "documentedge_close_endpointtabs_redthread_contradictionclip_openend",
+      "artDirection": "세로 3:4 document slab edge close reverse. 꼬옥이1/tail-heart1의 얼굴·pincers2와 symbol-only document1, endpoint tabs2, red thread1, contradiction clip1을 크게 둔다. thread는 두 tab 사이에서 한쪽이 아직 open-ended이고 clip은 모순 relief 위에 half-set한다. pseudo-text·key·추가 heart·closed loop는 없다.",
+      "distinctFrom": [
+        "B001–060의 같은 별자리·근접 작업 소품을 반복하지 않고 documentedge_close_endpointtabs_redthread_contradictionclip_openend를 사용한다.",
+        "같은 work.strength.close-emotion 묶음의 다른 11개와 얼굴 각도·제어점·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1/tail-heart1·document1/tabs2/thread1/clip1을 확인한다.",
+        "끝까지 보는 집중이 보이되 thread가 닫힌 고리나 확정 결론·완료 조사로 읽히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "0c858e7bc1e2cb101ce218ec95a8a528eee34e259cffa1764aae8c1031839c38"
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.work.strength.close-emotion",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "7ee74665e344daf47ecf74169d526251a4317901a85e360b986d538d8f073707",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "mountainpanel_close_currentnext_opencrescentwindow_bow_skygap",
+      "artDirection": "세로 3:4 twin mountain panel edge close. 총총이1/bow1의 얼굴과 current panel1, hazy next panel1, removable open-crescent window token1을 크게 둔다. token은 두 panel 사이에 half-set되고 open sky gap을 남긴다. 지도선·arrow·closed circle·목표 확정·text는 없다.",
+      "distinctFrom": [
+        "B001–060의 같은 별자리·근접 작업 소품을 반복하지 않고 mountainpanel_close_currentnext_opencrescentwindow_bow_skygap를 사용한다.",
+        "같은 work.strength.close-emotion 묶음의 다른 11개와 얼굴 각도·제어점·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이1/bow1·panels2·open-crescent token1을 확인한다.",
+        "기회 감각은 보이되 다음 산의 경로나 타이밍이 확정되지 않고 sky gap이 열려 있는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "811311665a21f3c6c74dc910a03fab9149a63ad8a02fc2a2364eddfb0c7aaa03"
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.work.strength.close-emotion",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "34c5e41966004065c8a4f2ed34d74c1f70e9501f598a118685b7a9805999ec15",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "spacingjig_close_three_blocks_alignmentpeg_open_airwell",
+      "artDirection": "세로 3:4 spacing-jig lip close frontal. 오름이1의 얼굴·두 손과 star blocks3, spacing jig1, alignment peg1을 크게 둔다. block1만 jig에 half-set하고 other blocks2는 분리하며 phase reliefs3는 숫자·날짜 없는 도형이다. completed tower·calendar·정상·text는 없다.",
+      "distinctFrom": [
+        "B001–060의 같은 별자리·근접 작업 소품을 반복하지 않고 spacingjig_close_three_blocks_alignmentpeg_open_airwell를 사용한다.",
+        "같은 work.strength.close-emotion 묶음의 다른 11개와 얼굴 각도·제어점·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1·blocks3·jig1·peg1·phase reliefs3를 계수한다.",
+        "반복 숙련이 보이되 첫 block만 정렬 중이고 완성 탑이나 장기 성취로 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "4cd157aac340b8f9f590355fddd59fa50117e640b9794637167255b9e92c8a4e"
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.work.strength.close-emotion",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "9dc978f9cb4128441e5a6fc253b32bc476e4cff83ba44e42409c4bb5bd41cfd6",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "toolport_close_three_tools_two_couplers_open_socket_cloudbite",
+      "artDirection": "세로 3:4 cloud workbench port close top-oblique. 방울이1의 얼굴·손과 unrelated star tools3, flexible water couplers2, open socket1을 크게 둔다. coupler1만 두 tool 사이에 half-set하고 다른 coupler는 미연결이며 cloud bite 여백을 연다. closed circuit·무한기호·완성 발명·text는 없다.",
+      "distinctFrom": [
+        "B001–060의 같은 별자리·근접 작업 소품을 반복하지 않고 toolport_close_three_tools_two_couplers_open_socket_cloudbite를 사용한다.",
+        "같은 work.strength.close-emotion 묶음의 다른 11개와 얼굴 각도·제어점·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·tools3·couplers2·open socket1을 확인한다.",
+        "새 연결 구조가 보이되 닫힌 회로·완성 해결·시장 성공을 확정하지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "555dbf462ca77d12d150fafa81f982bf270fc76769f35f5e78b132eb51987695"
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.work.strength.close-emotion",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "89c9867ef12b3cafac173af1a951897ba10df8c46076a95a2c2d843c089739ac",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "currentcrest_close_pair_threecurrents_repeatstar_centralcleft",
+      "artDirection": "세로 3:4 current crest close end-on. larger aqua 꿈별이와 smaller pink 잠별이 pair2의 얼굴·inner fins, separate currents3와 repeat-star marker1을 크게 둔다. marker는 가장 잔잔한 current 위에 half-set하고 다른 currents2와 central cleft를 연다. chart line·ring·heart·name·text는 없다.",
+      "distinctFrom": [
+        "B001–060의 같은 별자리·근접 작업 소품을 반복하지 않고 currentcrest_close_pair_threecurrents_repeatstar_centralcleft를 사용한다.",
+        "같은 work.strength.close-emotion 묶음의 다른 11개와 얼굴 각도·제어점·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2/상대 크기·currents3·repeat-star marker1을 확인한다.",
+        "반복 흐름을 읽는 표정과 부담이 함께 보이고 분위기 해석이 확정 진단이나 개인화 차트가 아닌지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "89bb543e00e8a1e80b21858c6578bba8d4d6931b4d3e9e64367fed433f79e153"
+    }
+  ],
+  "editorialApprovedOn": "2026-09-01",
+  "generatedOn": "2026-09-01",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-01",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

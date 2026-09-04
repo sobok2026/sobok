@@ -1,0 +1,313 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "work.strength.action-beat",
+  "batchOrder": 62,
+  "purpose": "일의 강점이 완성된 능력 증명이 아니라 중심 작업 도구가 처음 움직이는 찰나와 열린 완료 기준으로 읽히는 action-beat 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 1,
+    "newEditionCount": 11,
+    "onePerSign": true,
+    "slot": "work",
+    "narrativeAxisId": "strength",
+    "visualAxisId": "action-beat"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium work-strength action-beat guardian card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair from the approved source; never add a coworker, manager, client, recipient, extra guardian, human, body clue, reflection, silhouette, empty seat or personal belonging implying another person. Preserve canonical identity, relative size/colors, clothing, signature props, dark-purple eyes with exactly one large plus one small highlight in each visible eye, and visible chest Stella stars. Guardian or canonical pair plus the focal work device covers 55–65% and remains readable at actual width 80px. Capture only the first bounded action: one button depresses, one connector lowers, one marker lifts or one block enters a jig while the completion edge remains visibly open; never show guaranteed mastery, flawless quality, leadership rank, applause, promotion or predetermined outcome. Written work surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, handwriting lines, names, labels, score, number, date, clock, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Every connector, bridge, marker, button, clip, wedge, block, token, lamp, thread or coupler remains removable, half-set, open-ended, unlatched or not yet applied. Only Scorpio canonical tail-heart tip is allowed; no added heart or heart-shaped light/void. No closed ring, halo, portal, infinity sign, deterministic route or completed mastery emblem. Keep every composition distinct in action camera height, first-motion vector, focal-device silhouette and open negative-space shape. Follow compositionFamily, artDirection, distinctFrom and visualReviewFocus literally. Soft colored-pencil and watercolor, visible paper grain, rounded plush proportions and deep-purple outlines; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.work.strength.action-beat",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "7b584c21b2e30f3accc53fd9e74f437783e4dd0c368553a778013439142a7e0a",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "benchcorner_lowfront_buttondepress_firstchip_slide_openfinishbay",
+      "artDirection": "세로 3:4 workbench corner low-front. 몽실이1가 start button1을 막 누르고 step chips3 중 first chip1만 shallow rail에 미끄러지기 시작한다. other chips2는 출발점에 남고 finish bay는 넓게 비어 있다. machine result light0·동료·경로선·승리 포즈·text는 없다.",
+      "distinctFrom": [
+        "B001–061의 같은 별자리·첫 작업 구도를 반복하지 않고 benchcorner_lowfront_buttondepress_firstchip_slide_openfinishbay를 사용한다.",
+        "같은 work.strength.action-beat 묶음의 다른 11개와 카메라 높이·첫 이동 방향·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·button1·chips3의 첫 이동과 open finish bay를 확인한다.",
+        "첫 동작만 보이고 세 단계 완료·팀 지휘·성과 달성이 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "92618ac606428751d6589d6f9403e020dcf7ca76f4ff60a382358ba2c093d850"
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.work.strength.action-beat",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved_pilot",
+      "editorialContentHash": "35ada3333058d5ccefcc513290a0e4cd41999352734be0a60fc54e0a8630f6d5",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "approved_pilot_towerbase_firstsupport_geometric_ticks_action",
+      "artDirection": "승인 파일럿 원본을 그대로 재사용한다. 세로 3:4에서 차곡이1가 별탑1의 하부 받침1을 맞추고 symbol-only geometric tick strip1로 첫 점검을 시작한다. canonical Taurus 정체성·purple apron·가슴 Stella 별·손동작과 1080×1440 구도를 바꾸지 않는다. 이 항목은 새로 생성하거나 재구성하지 않고 approvedArtworkSha256 바이트를 그대로 사용한다.",
+      "distinctFrom": [
+        "B001–061의 같은 별자리·첫 작업 구도를 반복하지 않고 approved_pilot_towerbase_firstsupport_geometric_ticks_action를 사용한다.",
+        "같은 work.strength.action-beat 묶음의 다른 11개와 카메라 높이·첫 이동 방향·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "승인 파일럿의 차곡이1·별탑1·하부 받침1·geometric tick strip1과 손동작이 그대로인지 확인한다.",
+        "읽을 수 있는 숫자·날짜·문자 없이 승인 SHA-256 5f54e8… 바이트가 변경되지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "5f54e8228fd45f5e8720ddfd6b8783b7f38bbd88d9484690661fe33538579a33"
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.work.strength.action-beat",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "56f1b02832003a9e1dacb13a58edb420151e1cbd97cd4b45fc6e3302005edfc3",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "nodeboard_nadir_firstlink_lift_three_nodes_opencompletionbay",
+      "artDirection": "세로 3:4 true nadir node-board. canonical 재잘이·소곤이 pair2/ribbon1와 idea nodes3, short connectors2를 둔다. 소곤이는 connector1을 first pair 사이에 내리기 시작하고 재잘이는 third node를 가리키지만 completion bay는 비어 있다. 실제 별자리·chart·text·merged answer·closed loop는 없다.",
+      "distinctFrom": [
+        "B001–061의 같은 별자리·첫 작업 구도를 반복하지 않고 nodeboard_nadir_firstlink_lift_three_nodes_opencompletionbay를 사용한다.",
+        "같은 work.strength.action-beat 묶음의 다른 11개와 카메라 높이·첫 이동 방향·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2/ribbon1·nodes3·connectors2와 first link 동작을 확인한다.",
+        "한 연결만 시작되고 third node와 completion bay가 열려 있어 완성 해답으로 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "58f734c21ae075bf8b9bf3fadb6f7e97d6f8d01d2c460114052ce54243a63bf8"
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.work.strength.action-beat",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "0ce88721fd3c52ed2789076f81814aaa15e1349bd2e3f36f0c182b306b8f116f",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "messagewell_side_firstnote_insert_blank_shell_openreturngap",
+      "artDirection": "세로 3:4 message-well side profile. 달콩이1가 small star-note1을 blank speech-shell holder1의 first slot에 넣기 직전이고 second blank slot1은 비어 있다. actual speech text·받는 인물·손·빈 의자·개인 물건은 없으며 open return gap을 넓게 둔다. heart·name·완료 대화0.",
+      "distinctFrom": [
+        "B001–061의 같은 별자리·첫 작업 구도를 반복하지 않고 messagewell_side_firstnote_insert_blank_shell_openreturngap를 사용한다.",
+        "같은 work.strength.action-beat 묶음의 다른 11개와 카메라 높이·첫 이동 방향·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·star-note1·holder1/slots2와 첫 삽입 동작을 확인한다.",
+        "수신자나 숨은 동료를 암시하지 않고 한 의견 통로만 열리며 대화 완료로 보이지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "252207d24074c19b74624201a0f2e954bbd4dc2ff4533d18bf1377dd978a0cb0"
+    },
+    {
+      "order": 5,
+      "editionId": "leo.work.strength.action-beat",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "227bc3bb907761b227a236b838568a9040d37dead652c2beb930f59f927df68c",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "stagefloor_lowrear_lampswitch_startmark_lit_goaldark_openaisle",
+      "artDirection": "세로 3:4 stage floor low rear. 해님이1/crown1가 guide-lamp switch1을 막 올려 start marker1만 켜고 distant goal marker1은 unlit로 남긴다. lamp1과 markers2는 독립되고 tall open aisle에는 audience·score·route line이 없다. applause·완료 무대·text0.",
+      "distinctFrom": [
+        "B001–061의 같은 별자리·첫 작업 구도를 반복하지 않고 stagefloor_lowrear_lampswitch_startmark_lit_goaldark_openaisle를 사용한다.",
+        "같은 work.strength.action-beat 묶음의 다른 11개와 카메라 높이·첫 이동 방향·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1/crown1·switch1/lamp1·start/goal markers2의 상태 차이를 확인한다.",
+        "첫 불빛만 켜지고 목표 도착·리더십 성공·관객 반응을 확정하지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "54aab7c78af41464e42c1c98135fa80b2b10c65e35736424ca999de6dc036860"
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.work.strength.action-beat",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "7137d9781ab208b445d631314a720c572b87f2a01634f38e8565f9dd42232bc6",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "partrail_macro_magnifiersweep_crackflag_openinspectiongap",
+      "artDirection": "세로 3:4 twin-part rail macro raking. 새봄이1가 magnifier1을 nearly identical parts2 사이로 막 움직이고 hairline crack1 위 inspection flag token1을 half-lift한다. cause/effect reliefs2는 blank tray에 분리하고 repair tool0·fixed result0이다. open inspection gap과 text0을 유지한다.",
+      "distinctFrom": [
+        "B001–061의 같은 별자리·첫 작업 구도를 반복하지 않고 partrail_macro_magnifiersweep_crackflag_openinspectiongap를 사용한다.",
+        "같은 work.strength.action-beat 묶음의 다른 11개와 카메라 높이·첫 이동 방향·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·parts2·magnifier1·crack1·flag1·reliefs2를 계수한다.",
+        "첫 발견·표시 행동만 보이고 원인 확정이나 수리 완료·완벽 품질로 읽히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "930b2972e36261ab13f299142d052c1eaa58f3fe84ae7ad0391145803a30f376"
+    },
+    {
+      "order": 7,
+      "editionId": "libra.work.strength.action-beat",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "6ca39c7502a96cffc9079d5fee02be6929788322bcf0284ea5fd94f5e89c7812",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "bridgehinge_side_firstsegment_lower_two_shells_tokensseparate_channel",
+      "artDirection": "세로 3:4 bridge hinge strict side. 고르미1가 abstract speech shells2 사이에 removable bridge segment1을 막 낮추지만 아직 양쪽에 닿지 않는다. fact/misread tokens2는 각 shell pad에 분리하고 central channel을 연다. 실제 사람·대화문·scale·합의 완료·heart는 없다.",
+      "distinctFrom": [
+        "B001–061의 같은 별자리·첫 작업 구도를 반복하지 않고 bridgehinge_side_firstsegment_lower_two_shells_tokensseparate_channel를 사용한다.",
+        "같은 work.strength.action-beat 묶음의 다른 11개와 카메라 높이·첫 이동 방향·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·speech shells2·bridge1·tokens2와 미접촉 간격을 확인한다.",
+        "첫 번역 연결만 시작되고 두 입장이나 책임이 합쳐지지 않으며 channel이 열린지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "ad09bb81f15e83c3c33a67f55c8efb8c577e28cc376f4d197001499b37cc75f1"
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.work.strength.action-beat",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "a9386a0d57caadf3414b2819895cf59999ff54e181c7e81fe27fa9bc60b29c9b",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "documentcorner_raking_contradictionclip_drop_thread_openend",
+      "artDirection": "세로 3:4 document corner raking close. 꼬옥이1/tail-heart1가 symbol-only document1의 hidden contradiction relief1 위에 clip1을 막 내린다. endpoint tabs2와 red thread1은 한쪽 끝이 아직 풀려 있고 broad open end를 남긴다. pseudo-text·key·추가 heart·closed loop·결론 완료는 없다.",
+      "distinctFrom": [
+        "B001–061의 같은 별자리·첫 작업 구도를 반복하지 않고 documentcorner_raking_contradictionclip_drop_thread_openend를 사용한다.",
+        "같은 work.strength.action-beat 묶음의 다른 11개와 카메라 높이·첫 이동 방향·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1/tail-heart1·document1/tabs2/thread1/clip1의 첫 표시를 확인한다.",
+        "thread가 닫히지 않고 모순 표시만 시작되어 조사 완료나 확정 판정으로 보이지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "bb6b8f67b16db6b35c16d4f0071456f91f5e3fed7b2c85893034a198deec3ae7"
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.work.strength.action-beat",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "c41a79535b546927f7af53d42b35be3f694f207b2310ccf2be7b4384015eaf7b",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "panelhinge_lowup_crescentwindow_place_currentnext_openskycut",
+      "artDirection": "세로 3:4 mountain-panel hinge low-up. 총총이1/bow1가 current panel1과 hazy next panel1 사이에 removable open-crescent window token1을 막 세운다. token은 one edge만 닿고 open sky cut이 남으며 map line·arrow·number·closed circle·완주 표식은 없다.",
+      "distinctFrom": [
+        "B001–061의 같은 별자리·첫 작업 구도를 반복하지 않고 panelhinge_lowup_crescentwindow_place_currentnext_openskycut를 사용한다.",
+        "같은 work.strength.action-beat 묶음의 다른 11개와 카메라 높이·첫 이동 방향·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이1/bow1·panels2·open-crescent token1의 first placement를 확인한다.",
+        "다음 기회를 가리키되 경로·타이밍·성과가 확정되지 않고 sky cut이 열려 있는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "4f6a5193eef3acf02c2861d008663976f05642ea71d0f558b6aebeb81d4f67d1"
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.work.strength.action-beat",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "f1fb6c81eba55252b5a23e4e075290517ca9774183416e5e18139f2d2aaf6af3",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "jigmouth_axial_firstblock_lower_two_unstacked_opentopgap",
+      "artDirection": "세로 3:4 spacing-jig mouth strict axial. 오름이1가 star blocks3 중 first block1을 jig1에 막 내리고 other blocks2는 side pads에 unstacked로 남긴다. alignment peg1은 first notch 전이며 open top gap을 크게 둔다. date·number·calendar·completed tower·정상·text는 없다.",
+      "distinctFrom": [
+        "B001–061의 같은 별자리·첫 작업 구도를 반복하지 않고 jigmouth_axial_firstblock_lower_two_unstacked_opentopgap를 사용한다.",
+        "같은 work.strength.action-beat 묶음의 다른 11개와 카메라 높이·첫 이동 방향·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1·blocks3·jig1·peg1과 first block의 공중 간격을 확인한다.",
+        "첫 정렬 동작만 보이고 반복 숙련이나 큰 목표 완료를 확정하지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "242d87d19ed5ce652b0ab4a89c04fe45dc11791652948399204af0b29e1da732"
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.work.strength.action-beat",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "6ea0d108459dd69935c8305ee61e7222b00b1a199f05966eeea2bd9551666d62",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "toolrack_topdown_firstcoupler_insert_three_tools_secondsocketopen",
+      "artDirection": "세로 3:4 steep top-down tool rack. 방울이1가 unrelated star tools3 중 tool1과 tool2 사이에 flexible coupler1을 막 삽입하고 second coupler1은 tool3 옆 open socket에 미연결로 둔다. closed circuit·infinity·완성 해결·시장 반응·text는 없다.",
+      "distinctFrom": [
+        "B001–061의 같은 별자리·첫 작업 구도를 반복하지 않고 toolrack_topdown_firstcoupler_insert_three_tools_secondsocketopen를 사용한다.",
+        "같은 work.strength.action-beat 묶음의 다른 11개와 카메라 높이·첫 이동 방향·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·tools3·couplers2·open socket과 first insert 동작을 확인한다.",
+        "한 연결만 시작되고 second socket이 열려 있어 구조 완성·만능 해결로 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "ba6f0504bd997a817223796db0f0952eaf53c247a1c6c2f3e3751b487c429f77"
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.work.strength.action-beat",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "6eef3e5bad7e1b7ffa49828483dcfdbbe233693ba77adc2415d253c9c0211f68",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "currentfork_endon_pair_repeatstar_lift_threecurrents_opencleft",
+      "artDirection": "세로 3:4 current fork strict end-on. larger aqua 꿈별이와 smaller pink 잠별이 pair2가 separate currents3를 살피며 repeat-star marker1을 가장 잔잔한 current 위로 막 들어 올린다. marker는 물결에 닿기 전이고 central cleft가 열린다. chart line·ring·heart·name·text·확정 진단은 없다.",
+      "distinctFrom": [
+        "B001–061의 같은 별자리·첫 작업 구도를 반복하지 않고 currentfork_endon_pair_repeatstar_lift_threecurrents_opencleft를 사용한다.",
+        "같은 work.strength.action-beat 묶음의 다른 11개와 카메라 높이·첫 이동 방향·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2/상대 크기·currents3·marker1의 first lift와 central cleft를 확인한다.",
+        "감각적 신호 표시만 시작되고 분위기 해석이 완료·확정 진단이나 개인화 차트가 아닌지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "a81aba3b7bb8fa8d168113eabff12b3f01d729335eef402b4362f92f43757410"
+    }
+  ],
+  "editorialApprovedOn": "2026-09-01",
+  "generatedOn": "2026-09-01",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-01",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

@@ -8,7 +8,7 @@
     "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
     "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
     "pilot": "0ee96aad586d2573fd91f04bb4327ee9b85e1d0aae8418572acf5fc6e14eaedd",
-    "assets": "7dcb876304da990c1f6f292065c15e33ea32b04eb7cf56f1e8ca9933c466f135"
+    "assets": "8a31cef899ac6b4dacf0ede00884cecb9da996d66c81c00627098e1bb65c34ee"
   },
   "productionContract": {
     "grouping": "same_slot_narrative_and_visual_axis_across_twelve_signs",
@@ -16,12 +16,12 @@
     "editionsPerFullBatch": 12,
     "plannedEditionCount": 1056,
     "pilotEditionCount": 12,
-    "producedEditionCount": 607,
-    "remainingEditionCount": 449,
-    "pilotPartialBatchCount": 7,
+    "producedEditionCount": 1056,
+    "remainingEditionCount": 0,
+    "pilotPartialBatchCount": 0,
     "inProgressBatchCount": 0,
-    "completedBatchCount": 50,
-    "fullPendingBatchCount": 31,
+    "completedBatchCount": 88,
+    "fullPendingBatchCount": 0,
     "editorialApprovalAuthority": "human_editor",
     "imageGenerationRequires": "approved_editorial_hash",
     "visualApprovalAuthority": "human_editor",
@@ -1349,23 +1349,10 @@
         "pisces.love.mutual-growth.eclipse"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.mutual-growth.eclipse",
-        "taurus.love.mutual-growth.eclipse",
-        "gemini.love.mutual-growth.eclipse",
-        "cancer.love.mutual-growth.eclipse",
-        "leo.love.mutual-growth.eclipse",
-        "virgo.love.mutual-growth.eclipse",
-        "libra.love.mutual-growth.eclipse",
-        "scorpio.love.mutual-growth.eclipse",
-        "sagittarius.love.mutual-growth.eclipse",
-        "capricorn.love.mutual-growth.eclipse",
-        "aquarius.love.mutual-growth.eclipse",
-        "pisces.love.mutual-growth.eclipse"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 52,
@@ -1388,23 +1375,10 @@
         "pisces.love.mutual-growth.stella"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.mutual-growth.stella",
-        "taurus.love.mutual-growth.stella",
-        "gemini.love.mutual-growth.stella",
-        "cancer.love.mutual-growth.stella",
-        "leo.love.mutual-growth.stella",
-        "virgo.love.mutual-growth.stella",
-        "libra.love.mutual-growth.stella",
-        "scorpio.love.mutual-growth.stella",
-        "sagittarius.love.mutual-growth.stella",
-        "capricorn.love.mutual-growth.stella",
-        "aquarius.love.mutual-growth.stella",
-        "pisces.love.mutual-growth.stella"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 53,
@@ -1427,23 +1401,10 @@
         "pisces.love.future-promise.orbit"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.future-promise.orbit",
-        "taurus.love.future-promise.orbit",
-        "gemini.love.future-promise.orbit",
-        "cancer.love.future-promise.orbit",
-        "leo.love.future-promise.orbit",
-        "virgo.love.future-promise.orbit",
-        "libra.love.future-promise.orbit",
-        "scorpio.love.future-promise.orbit",
-        "sagittarius.love.future-promise.orbit",
-        "capricorn.love.future-promise.orbit",
-        "aquarius.love.future-promise.orbit",
-        "pisces.love.future-promise.orbit"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 54,
@@ -1466,23 +1427,10 @@
         "pisces.love.future-promise.nebula"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.future-promise.nebula",
-        "taurus.love.future-promise.nebula",
-        "gemini.love.future-promise.nebula",
-        "cancer.love.future-promise.nebula",
-        "leo.love.future-promise.nebula",
-        "virgo.love.future-promise.nebula",
-        "libra.love.future-promise.nebula",
-        "scorpio.love.future-promise.nebula",
-        "sagittarius.love.future-promise.nebula",
-        "capricorn.love.future-promise.nebula",
-        "aquarius.love.future-promise.nebula",
-        "pisces.love.future-promise.nebula"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 55,
@@ -1505,23 +1453,10 @@
         "pisces.love.future-promise.eclipse"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.love.future-promise.eclipse",
-        "taurus.love.future-promise.eclipse",
-        "gemini.love.future-promise.eclipse",
-        "cancer.love.future-promise.eclipse",
-        "leo.love.future-promise.eclipse",
-        "virgo.love.future-promise.eclipse",
-        "libra.love.future-promise.eclipse",
-        "scorpio.love.future-promise.eclipse",
-        "sagittarius.love.future-promise.eclipse",
-        "capricorn.love.future-promise.eclipse",
-        "aquarius.love.future-promise.eclipse",
-        "pisces.love.future-promise.eclipse"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 56,
@@ -1544,22 +1479,10 @@
         "pisces.love.future-promise.stella"
       ],
       "pilotEditionIds": ["pisces.love.future-promise.stella"],
-      "remainingEditionIds": [
-        "aries.love.future-promise.stella",
-        "taurus.love.future-promise.stella",
-        "gemini.love.future-promise.stella",
-        "cancer.love.future-promise.stella",
-        "leo.love.future-promise.stella",
-        "virgo.love.future-promise.stella",
-        "libra.love.future-promise.stella",
-        "scorpio.love.future-promise.stella",
-        "sagittarius.love.future-promise.stella",
-        "capricorn.love.future-promise.stella",
-        "aquarius.love.future-promise.stella"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 11,
-      "productionStatus": "pilot_partial"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 57,
@@ -1582,23 +1505,10 @@
         "pisces.work.motivation.close-emotion"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.motivation.close-emotion",
-        "taurus.work.motivation.close-emotion",
-        "gemini.work.motivation.close-emotion",
-        "cancer.work.motivation.close-emotion",
-        "leo.work.motivation.close-emotion",
-        "virgo.work.motivation.close-emotion",
-        "libra.work.motivation.close-emotion",
-        "scorpio.work.motivation.close-emotion",
-        "sagittarius.work.motivation.close-emotion",
-        "capricorn.work.motivation.close-emotion",
-        "aquarius.work.motivation.close-emotion",
-        "pisces.work.motivation.close-emotion"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 58,
@@ -1621,23 +1531,10 @@
         "pisces.work.motivation.action-beat"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.motivation.action-beat",
-        "taurus.work.motivation.action-beat",
-        "gemini.work.motivation.action-beat",
-        "cancer.work.motivation.action-beat",
-        "leo.work.motivation.action-beat",
-        "virgo.work.motivation.action-beat",
-        "libra.work.motivation.action-beat",
-        "scorpio.work.motivation.action-beat",
-        "sagittarius.work.motivation.action-beat",
-        "capricorn.work.motivation.action-beat",
-        "aquarius.work.motivation.action-beat",
-        "pisces.work.motivation.action-beat"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 59,
@@ -1660,23 +1557,10 @@
         "pisces.work.motivation.shared-world"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.motivation.shared-world",
-        "taurus.work.motivation.shared-world",
-        "gemini.work.motivation.shared-world",
-        "cancer.work.motivation.shared-world",
-        "leo.work.motivation.shared-world",
-        "virgo.work.motivation.shared-world",
-        "libra.work.motivation.shared-world",
-        "scorpio.work.motivation.shared-world",
-        "sagittarius.work.motivation.shared-world",
-        "capricorn.work.motivation.shared-world",
-        "aquarius.work.motivation.shared-world",
-        "pisces.work.motivation.shared-world"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 60,
@@ -1699,23 +1583,10 @@
         "pisces.work.motivation.constellation-afterglow"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.motivation.constellation-afterglow",
-        "taurus.work.motivation.constellation-afterglow",
-        "gemini.work.motivation.constellation-afterglow",
-        "cancer.work.motivation.constellation-afterglow",
-        "leo.work.motivation.constellation-afterglow",
-        "virgo.work.motivation.constellation-afterglow",
-        "libra.work.motivation.constellation-afterglow",
-        "scorpio.work.motivation.constellation-afterglow",
-        "sagittarius.work.motivation.constellation-afterglow",
-        "capricorn.work.motivation.constellation-afterglow",
-        "aquarius.work.motivation.constellation-afterglow",
-        "pisces.work.motivation.constellation-afterglow"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 61,
@@ -1738,23 +1609,10 @@
         "pisces.work.strength.close-emotion"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.strength.close-emotion",
-        "taurus.work.strength.close-emotion",
-        "gemini.work.strength.close-emotion",
-        "cancer.work.strength.close-emotion",
-        "leo.work.strength.close-emotion",
-        "virgo.work.strength.close-emotion",
-        "libra.work.strength.close-emotion",
-        "scorpio.work.strength.close-emotion",
-        "sagittarius.work.strength.close-emotion",
-        "capricorn.work.strength.close-emotion",
-        "aquarius.work.strength.close-emotion",
-        "pisces.work.strength.close-emotion"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 62,
@@ -1777,22 +1635,10 @@
         "pisces.work.strength.action-beat"
       ],
       "pilotEditionIds": ["taurus.work.strength.action-beat"],
-      "remainingEditionIds": [
-        "aries.work.strength.action-beat",
-        "gemini.work.strength.action-beat",
-        "cancer.work.strength.action-beat",
-        "leo.work.strength.action-beat",
-        "virgo.work.strength.action-beat",
-        "libra.work.strength.action-beat",
-        "scorpio.work.strength.action-beat",
-        "sagittarius.work.strength.action-beat",
-        "capricorn.work.strength.action-beat",
-        "aquarius.work.strength.action-beat",
-        "pisces.work.strength.action-beat"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 11,
-      "productionStatus": "pilot_partial"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 63,
@@ -1815,23 +1661,10 @@
         "pisces.work.strength.shared-world"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.strength.shared-world",
-        "taurus.work.strength.shared-world",
-        "gemini.work.strength.shared-world",
-        "cancer.work.strength.shared-world",
-        "leo.work.strength.shared-world",
-        "virgo.work.strength.shared-world",
-        "libra.work.strength.shared-world",
-        "scorpio.work.strength.shared-world",
-        "sagittarius.work.strength.shared-world",
-        "capricorn.work.strength.shared-world",
-        "aquarius.work.strength.shared-world",
-        "pisces.work.strength.shared-world"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 64,
@@ -1854,23 +1687,10 @@
         "pisces.work.strength.constellation-afterglow"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.strength.constellation-afterglow",
-        "taurus.work.strength.constellation-afterglow",
-        "gemini.work.strength.constellation-afterglow",
-        "cancer.work.strength.constellation-afterglow",
-        "leo.work.strength.constellation-afterglow",
-        "virgo.work.strength.constellation-afterglow",
-        "libra.work.strength.constellation-afterglow",
-        "scorpio.work.strength.constellation-afterglow",
-        "sagittarius.work.strength.constellation-afterglow",
-        "capricorn.work.strength.constellation-afterglow",
-        "aquarius.work.strength.constellation-afterglow",
-        "pisces.work.strength.constellation-afterglow"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 65,
@@ -1893,23 +1713,10 @@
         "pisces.work.pressure.close-emotion"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.pressure.close-emotion",
-        "taurus.work.pressure.close-emotion",
-        "gemini.work.pressure.close-emotion",
-        "cancer.work.pressure.close-emotion",
-        "leo.work.pressure.close-emotion",
-        "virgo.work.pressure.close-emotion",
-        "libra.work.pressure.close-emotion",
-        "scorpio.work.pressure.close-emotion",
-        "sagittarius.work.pressure.close-emotion",
-        "capricorn.work.pressure.close-emotion",
-        "aquarius.work.pressure.close-emotion",
-        "pisces.work.pressure.close-emotion"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 66,
@@ -1932,23 +1739,10 @@
         "pisces.work.pressure.action-beat"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.pressure.action-beat",
-        "taurus.work.pressure.action-beat",
-        "gemini.work.pressure.action-beat",
-        "cancer.work.pressure.action-beat",
-        "leo.work.pressure.action-beat",
-        "virgo.work.pressure.action-beat",
-        "libra.work.pressure.action-beat",
-        "scorpio.work.pressure.action-beat",
-        "sagittarius.work.pressure.action-beat",
-        "capricorn.work.pressure.action-beat",
-        "aquarius.work.pressure.action-beat",
-        "pisces.work.pressure.action-beat"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 67,
@@ -1971,22 +1765,10 @@
         "pisces.work.pressure.shared-world"
       ],
       "pilotEditionIds": ["virgo.work.pressure.shared-world"],
-      "remainingEditionIds": [
-        "aries.work.pressure.shared-world",
-        "taurus.work.pressure.shared-world",
-        "gemini.work.pressure.shared-world",
-        "cancer.work.pressure.shared-world",
-        "leo.work.pressure.shared-world",
-        "libra.work.pressure.shared-world",
-        "scorpio.work.pressure.shared-world",
-        "sagittarius.work.pressure.shared-world",
-        "capricorn.work.pressure.shared-world",
-        "aquarius.work.pressure.shared-world",
-        "pisces.work.pressure.shared-world"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 11,
-      "productionStatus": "pilot_partial"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 68,
@@ -2009,23 +1791,10 @@
         "pisces.work.pressure.constellation-afterglow"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.pressure.constellation-afterglow",
-        "taurus.work.pressure.constellation-afterglow",
-        "gemini.work.pressure.constellation-afterglow",
-        "cancer.work.pressure.constellation-afterglow",
-        "leo.work.pressure.constellation-afterglow",
-        "virgo.work.pressure.constellation-afterglow",
-        "libra.work.pressure.constellation-afterglow",
-        "scorpio.work.pressure.constellation-afterglow",
-        "sagittarius.work.pressure.constellation-afterglow",
-        "capricorn.work.pressure.constellation-afterglow",
-        "aquarius.work.pressure.constellation-afterglow",
-        "pisces.work.pressure.constellation-afterglow"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 69,
@@ -2048,22 +1817,10 @@
         "pisces.work.next-move.close-emotion"
       ],
       "pilotEditionIds": ["capricorn.work.next-move.close-emotion"],
-      "remainingEditionIds": [
-        "aries.work.next-move.close-emotion",
-        "taurus.work.next-move.close-emotion",
-        "gemini.work.next-move.close-emotion",
-        "cancer.work.next-move.close-emotion",
-        "leo.work.next-move.close-emotion",
-        "virgo.work.next-move.close-emotion",
-        "libra.work.next-move.close-emotion",
-        "scorpio.work.next-move.close-emotion",
-        "sagittarius.work.next-move.close-emotion",
-        "aquarius.work.next-move.close-emotion",
-        "pisces.work.next-move.close-emotion"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 11,
-      "productionStatus": "pilot_partial"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 70,
@@ -2086,23 +1843,10 @@
         "pisces.work.next-move.action-beat"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.next-move.action-beat",
-        "taurus.work.next-move.action-beat",
-        "gemini.work.next-move.action-beat",
-        "cancer.work.next-move.action-beat",
-        "leo.work.next-move.action-beat",
-        "virgo.work.next-move.action-beat",
-        "libra.work.next-move.action-beat",
-        "scorpio.work.next-move.action-beat",
-        "sagittarius.work.next-move.action-beat",
-        "capricorn.work.next-move.action-beat",
-        "aquarius.work.next-move.action-beat",
-        "pisces.work.next-move.action-beat"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 71,
@@ -2125,23 +1869,10 @@
         "pisces.work.next-move.shared-world"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.next-move.shared-world",
-        "taurus.work.next-move.shared-world",
-        "gemini.work.next-move.shared-world",
-        "cancer.work.next-move.shared-world",
-        "leo.work.next-move.shared-world",
-        "virgo.work.next-move.shared-world",
-        "libra.work.next-move.shared-world",
-        "scorpio.work.next-move.shared-world",
-        "sagittarius.work.next-move.shared-world",
-        "capricorn.work.next-move.shared-world",
-        "aquarius.work.next-move.shared-world",
-        "pisces.work.next-move.shared-world"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 72,
@@ -2164,23 +1895,10 @@
         "pisces.work.next-move.constellation-afterglow"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.work.next-move.constellation-afterglow",
-        "taurus.work.next-move.constellation-afterglow",
-        "gemini.work.next-move.constellation-afterglow",
-        "cancer.work.next-move.constellation-afterglow",
-        "leo.work.next-move.constellation-afterglow",
-        "virgo.work.next-move.constellation-afterglow",
-        "libra.work.next-move.constellation-afterglow",
-        "scorpio.work.next-move.constellation-afterglow",
-        "sagittarius.work.next-move.constellation-afterglow",
-        "capricorn.work.next-move.constellation-afterglow",
-        "aquarius.work.next-move.constellation-afterglow",
-        "pisces.work.next-move.constellation-afterglow"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 73,
@@ -2203,23 +1921,10 @@
         "pisces.choice.desire.close-emotion"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.desire.close-emotion",
-        "taurus.choice.desire.close-emotion",
-        "gemini.choice.desire.close-emotion",
-        "cancer.choice.desire.close-emotion",
-        "leo.choice.desire.close-emotion",
-        "virgo.choice.desire.close-emotion",
-        "libra.choice.desire.close-emotion",
-        "scorpio.choice.desire.close-emotion",
-        "sagittarius.choice.desire.close-emotion",
-        "capricorn.choice.desire.close-emotion",
-        "aquarius.choice.desire.close-emotion",
-        "pisces.choice.desire.close-emotion"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 74,
@@ -2242,22 +1947,10 @@
         "pisces.choice.desire.action-beat"
       ],
       "pilotEditionIds": ["libra.choice.desire.action-beat"],
-      "remainingEditionIds": [
-        "aries.choice.desire.action-beat",
-        "taurus.choice.desire.action-beat",
-        "gemini.choice.desire.action-beat",
-        "cancer.choice.desire.action-beat",
-        "leo.choice.desire.action-beat",
-        "virgo.choice.desire.action-beat",
-        "scorpio.choice.desire.action-beat",
-        "sagittarius.choice.desire.action-beat",
-        "capricorn.choice.desire.action-beat",
-        "aquarius.choice.desire.action-beat",
-        "pisces.choice.desire.action-beat"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 11,
-      "productionStatus": "pilot_partial"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 75,
@@ -2280,23 +1973,10 @@
         "pisces.choice.desire.shared-world"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.desire.shared-world",
-        "taurus.choice.desire.shared-world",
-        "gemini.choice.desire.shared-world",
-        "cancer.choice.desire.shared-world",
-        "leo.choice.desire.shared-world",
-        "virgo.choice.desire.shared-world",
-        "libra.choice.desire.shared-world",
-        "scorpio.choice.desire.shared-world",
-        "sagittarius.choice.desire.shared-world",
-        "capricorn.choice.desire.shared-world",
-        "aquarius.choice.desire.shared-world",
-        "pisces.choice.desire.shared-world"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 76,
@@ -2319,23 +1999,10 @@
         "pisces.choice.desire.constellation-afterglow"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.desire.constellation-afterglow",
-        "taurus.choice.desire.constellation-afterglow",
-        "gemini.choice.desire.constellation-afterglow",
-        "cancer.choice.desire.constellation-afterglow",
-        "leo.choice.desire.constellation-afterglow",
-        "virgo.choice.desire.constellation-afterglow",
-        "libra.choice.desire.constellation-afterglow",
-        "scorpio.choice.desire.constellation-afterglow",
-        "sagittarius.choice.desire.constellation-afterglow",
-        "capricorn.choice.desire.constellation-afterglow",
-        "aquarius.choice.desire.constellation-afterglow",
-        "pisces.choice.desire.constellation-afterglow"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 77,
@@ -2358,23 +2025,10 @@
         "pisces.choice.evidence.close-emotion"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.evidence.close-emotion",
-        "taurus.choice.evidence.close-emotion",
-        "gemini.choice.evidence.close-emotion",
-        "cancer.choice.evidence.close-emotion",
-        "leo.choice.evidence.close-emotion",
-        "virgo.choice.evidence.close-emotion",
-        "libra.choice.evidence.close-emotion",
-        "scorpio.choice.evidence.close-emotion",
-        "sagittarius.choice.evidence.close-emotion",
-        "capricorn.choice.evidence.close-emotion",
-        "aquarius.choice.evidence.close-emotion",
-        "pisces.choice.evidence.close-emotion"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 78,
@@ -2397,23 +2051,10 @@
         "pisces.choice.evidence.action-beat"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.evidence.action-beat",
-        "taurus.choice.evidence.action-beat",
-        "gemini.choice.evidence.action-beat",
-        "cancer.choice.evidence.action-beat",
-        "leo.choice.evidence.action-beat",
-        "virgo.choice.evidence.action-beat",
-        "libra.choice.evidence.action-beat",
-        "scorpio.choice.evidence.action-beat",
-        "sagittarius.choice.evidence.action-beat",
-        "capricorn.choice.evidence.action-beat",
-        "aquarius.choice.evidence.action-beat",
-        "pisces.choice.evidence.action-beat"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 79,
@@ -2436,22 +2077,10 @@
         "pisces.choice.evidence.shared-world"
       ],
       "pilotEditionIds": ["aquarius.choice.evidence.shared-world"],
-      "remainingEditionIds": [
-        "aries.choice.evidence.shared-world",
-        "taurus.choice.evidence.shared-world",
-        "gemini.choice.evidence.shared-world",
-        "cancer.choice.evidence.shared-world",
-        "leo.choice.evidence.shared-world",
-        "virgo.choice.evidence.shared-world",
-        "libra.choice.evidence.shared-world",
-        "scorpio.choice.evidence.shared-world",
-        "sagittarius.choice.evidence.shared-world",
-        "capricorn.choice.evidence.shared-world",
-        "pisces.choice.evidence.shared-world"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 11,
-      "productionStatus": "pilot_partial"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 80,
@@ -2474,23 +2103,10 @@
         "pisces.choice.evidence.constellation-afterglow"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.evidence.constellation-afterglow",
-        "taurus.choice.evidence.constellation-afterglow",
-        "gemini.choice.evidence.constellation-afterglow",
-        "cancer.choice.evidence.constellation-afterglow",
-        "leo.choice.evidence.constellation-afterglow",
-        "virgo.choice.evidence.constellation-afterglow",
-        "libra.choice.evidence.constellation-afterglow",
-        "scorpio.choice.evidence.constellation-afterglow",
-        "sagittarius.choice.evidence.constellation-afterglow",
-        "capricorn.choice.evidence.constellation-afterglow",
-        "aquarius.choice.evidence.constellation-afterglow",
-        "pisces.choice.evidence.constellation-afterglow"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 81,
@@ -2513,23 +2129,10 @@
         "pisces.choice.protected-value.close-emotion"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.protected-value.close-emotion",
-        "taurus.choice.protected-value.close-emotion",
-        "gemini.choice.protected-value.close-emotion",
-        "cancer.choice.protected-value.close-emotion",
-        "leo.choice.protected-value.close-emotion",
-        "virgo.choice.protected-value.close-emotion",
-        "libra.choice.protected-value.close-emotion",
-        "scorpio.choice.protected-value.close-emotion",
-        "sagittarius.choice.protected-value.close-emotion",
-        "capricorn.choice.protected-value.close-emotion",
-        "aquarius.choice.protected-value.close-emotion",
-        "pisces.choice.protected-value.close-emotion"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 82,
@@ -2552,23 +2155,10 @@
         "pisces.choice.protected-value.action-beat"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.protected-value.action-beat",
-        "taurus.choice.protected-value.action-beat",
-        "gemini.choice.protected-value.action-beat",
-        "cancer.choice.protected-value.action-beat",
-        "leo.choice.protected-value.action-beat",
-        "virgo.choice.protected-value.action-beat",
-        "libra.choice.protected-value.action-beat",
-        "scorpio.choice.protected-value.action-beat",
-        "sagittarius.choice.protected-value.action-beat",
-        "capricorn.choice.protected-value.action-beat",
-        "aquarius.choice.protected-value.action-beat",
-        "pisces.choice.protected-value.action-beat"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 83,
@@ -2591,23 +2181,10 @@
         "pisces.choice.protected-value.shared-world"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.protected-value.shared-world",
-        "taurus.choice.protected-value.shared-world",
-        "gemini.choice.protected-value.shared-world",
-        "cancer.choice.protected-value.shared-world",
-        "leo.choice.protected-value.shared-world",
-        "virgo.choice.protected-value.shared-world",
-        "libra.choice.protected-value.shared-world",
-        "scorpio.choice.protected-value.shared-world",
-        "sagittarius.choice.protected-value.shared-world",
-        "capricorn.choice.protected-value.shared-world",
-        "aquarius.choice.protected-value.shared-world",
-        "pisces.choice.protected-value.shared-world"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 84,
@@ -2630,23 +2207,10 @@
         "pisces.choice.protected-value.constellation-afterglow"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.protected-value.constellation-afterglow",
-        "taurus.choice.protected-value.constellation-afterglow",
-        "gemini.choice.protected-value.constellation-afterglow",
-        "cancer.choice.protected-value.constellation-afterglow",
-        "leo.choice.protected-value.constellation-afterglow",
-        "virgo.choice.protected-value.constellation-afterglow",
-        "libra.choice.protected-value.constellation-afterglow",
-        "scorpio.choice.protected-value.constellation-afterglow",
-        "sagittarius.choice.protected-value.constellation-afterglow",
-        "capricorn.choice.protected-value.constellation-afterglow",
-        "aquarius.choice.protected-value.constellation-afterglow",
-        "pisces.choice.protected-value.constellation-afterglow"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 85,
@@ -2669,23 +2233,10 @@
         "pisces.choice.reversible-step.close-emotion"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.reversible-step.close-emotion",
-        "taurus.choice.reversible-step.close-emotion",
-        "gemini.choice.reversible-step.close-emotion",
-        "cancer.choice.reversible-step.close-emotion",
-        "leo.choice.reversible-step.close-emotion",
-        "virgo.choice.reversible-step.close-emotion",
-        "libra.choice.reversible-step.close-emotion",
-        "scorpio.choice.reversible-step.close-emotion",
-        "sagittarius.choice.reversible-step.close-emotion",
-        "capricorn.choice.reversible-step.close-emotion",
-        "aquarius.choice.reversible-step.close-emotion",
-        "pisces.choice.reversible-step.close-emotion"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 86,
@@ -2708,23 +2259,10 @@
         "pisces.choice.reversible-step.action-beat"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.reversible-step.action-beat",
-        "taurus.choice.reversible-step.action-beat",
-        "gemini.choice.reversible-step.action-beat",
-        "cancer.choice.reversible-step.action-beat",
-        "leo.choice.reversible-step.action-beat",
-        "virgo.choice.reversible-step.action-beat",
-        "libra.choice.reversible-step.action-beat",
-        "scorpio.choice.reversible-step.action-beat",
-        "sagittarius.choice.reversible-step.action-beat",
-        "capricorn.choice.reversible-step.action-beat",
-        "aquarius.choice.reversible-step.action-beat",
-        "pisces.choice.reversible-step.action-beat"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 87,
@@ -2747,23 +2285,10 @@
         "pisces.choice.reversible-step.shared-world"
       ],
       "pilotEditionIds": [],
-      "remainingEditionIds": [
-        "aries.choice.reversible-step.shared-world",
-        "taurus.choice.reversible-step.shared-world",
-        "gemini.choice.reversible-step.shared-world",
-        "cancer.choice.reversible-step.shared-world",
-        "leo.choice.reversible-step.shared-world",
-        "virgo.choice.reversible-step.shared-world",
-        "libra.choice.reversible-step.shared-world",
-        "scorpio.choice.reversible-step.shared-world",
-        "sagittarius.choice.reversible-step.shared-world",
-        "capricorn.choice.reversible-step.shared-world",
-        "aquarius.choice.reversible-step.shared-world",
-        "pisces.choice.reversible-step.shared-world"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 12,
-      "productionStatus": "not_started"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     },
     {
       "order": 88,
@@ -2786,22 +2311,10 @@
         "pisces.choice.reversible-step.constellation-afterglow"
       ],
       "pilotEditionIds": ["sagittarius.choice.reversible-step.constellation-afterglow"],
-      "remainingEditionIds": [
-        "aries.choice.reversible-step.constellation-afterglow",
-        "taurus.choice.reversible-step.constellation-afterglow",
-        "gemini.choice.reversible-step.constellation-afterglow",
-        "cancer.choice.reversible-step.constellation-afterglow",
-        "leo.choice.reversible-step.constellation-afterglow",
-        "virgo.choice.reversible-step.constellation-afterglow",
-        "libra.choice.reversible-step.constellation-afterglow",
-        "scorpio.choice.reversible-step.constellation-afterglow",
-        "capricorn.choice.reversible-step.constellation-afterglow",
-        "aquarius.choice.reversible-step.constellation-afterglow",
-        "pisces.choice.reversible-step.constellation-afterglow"
-      ],
+      "remainingEditionIds": [],
       "plannedEditionCount": 12,
-      "remainingEditionCount": 11,
-      "productionStatus": "pilot_partial"
+      "remainingEditionCount": 0,
+      "productionStatus": "complete"
     }
   ]
 }

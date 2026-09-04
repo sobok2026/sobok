@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "work.motivation.action-beat",
+  "batchOrder": 58,
+  "purpose": "일을 움직이는 이유가 실제 첫 작업으로 바뀌는 찰나를 완료 직전이 아니라 첫 notch·첫 이동·첫 표시에서 멈춘 action-beat 12개 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "work",
+    "narrativeAxisId": "motivation",
+    "visualAxisId": "action-beat"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium work-motivation action-beat guardian card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair and no extra worker, client, recipient, guardian, human, body clue, reflection, silhouette, empty seat or personal belonging implying someone else. Preserve canonical identity, relative size/colors, clothing, signature props, dark-purple eyes with exactly one large plus one small highlight in each visible eye, and visible chest Stella stars. Guardian or canonical pair plus the focal work mechanism covers 55–65% and reads at actual width 80px. Freeze the first irreversible-looking motion before completion: lever at first notch, fruit midair, pencil at first mark, snack beginning to slide, first practice step, tile beginning to lift, weight lowering, lock half-dropping, gate first swinging, peg first moving, test droplet first emerging or fruit first reaching the net. Controls stay removable, half-set, unlatched or stoppable. No guaranteed success, productivity, promotion, applause, delivery, harvest, invention or predetermined result. Symbols and isolated geometric reliefs only; no readable text, pseudo-text, handwriting lines, names, labels, score, number, clock, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Keep every composition distinct in camera axis, motion direction, completion boundary and open negative-space shape. Only Scorpio canonical tail-heart tip is allowed; no added heart, closed ring, halo, portal, infinity sign or deterministic path. Follow compositionFamily, artDirection, distinctFrom and visualReviewFocus literally. Soft colored-pencil and watercolor, visible paper grain, rounded plush proportions and deep-purple outlines; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.work.motivation.action-beat",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "2d3d5e3a3a46714da76c10beb126ec381ad0ca7b1350b6775ba6de8900da7b55",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "machineedge_lowup_startlever_flagtoken_open_exhaustbay",
+      "artDirection": "세로 3:4 machine edge low-up. 몽실이1가 start lever1을 첫 notch까지 내리는 순간 gear1이 한 칸 움직이고 blank result board1의 goal slot에 red flag token1을 half-set한다. open exhaust bay는 아래로 열리고 result lights0이다.",
+      "distinctFrom": [
+        "B057 close-emotion과 이전 배치의 같은 별자리 카메라를 반복하지 않고 machineedge_lowup_startlever_flagtoken_open_exhaustbay를 쓴다.",
+        "다른 action-beat 11개와 motion direction·first-notch boundary·open gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·lever1/gear1/board1/flag token1의 시작 동작을 확인한다.",
+        "움직임은 첫 notch뿐이며 완료·승리·폭주를 만들지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "74bceea93b0976d137a7a4bd311543f81bc8915fd82691744f082566a55593e3"
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.work.motivation.action-beat",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "b711b2d95b87d9c7634615daa7afea4de80f8f7c987a0032931ef74005270c07",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "boxmouth_axial_firstfruit_midair_threecompartments_open_backgap",
+      "artDirection": "세로 3:4 open box mouth strict axial. 차곡이1가 solid star-fruit1을 first compartment 위에 놓기 직전 midair로 잡고, other fruits2는 source tray에 남긴다. compartments3는 비어 있고 removable divider1은 half-set, far back gap은 열린다.",
+      "distinctFrom": [
+        "B057 close-emotion과 이전 배치의 같은 별자리 카메라를 반복하지 않고 boxmouth_axial_firstfruit_midair_threecompartments_open_backgap를 쓴다.",
+        "다른 action-beat 11개와 motion direction·first-notch boundary·open gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이1·fruits3·box1/compartments3/divider1을 계수한다.",
+        "첫 fruit가 아직 닿지 않아 stack·보관 완료가 아닌지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "c43ec0bb3e9f9fd81da2ee90cafbe52d2b72c7ed2d3a5e0f350f4bd0d330452b"
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.work.motivation.action-beat",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "f3e112d47a5718384136462d175b0c73258aa1c8941f1168f9328930c17c7fb1",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "true_nadir_twinpencils_blankpaper_two_startstrokes_open_diagonalcut",
+      "artDirection": "세로 3:4 true nadir. 재잘이·소곤이 pair2가 blank paper1의 opposite corners에서 pencil tips2를 동시에 첫 점에 대며 distinct strokes2가 막 시작된다. template tile1은 별도, ribbon1은 body-only. broad diagonal paper cut을 비운다.",
+      "distinctFrom": [
+        "B057 close-emotion과 이전 배치의 같은 별자리 카메라를 반복하지 않고 true_nadir_twinpencils_blankpaper_two_startstrokes_open_diagonalcut를 쓴다.",
+        "다른 action-beat 11개와 motion direction·first-notch boundary·open gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2/ribbon1·paper1/pencils2/strokes2/template1을 확인한다.",
+        "strokes가 합쳐지거나 화살표·글자·완성 해답이 되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "21b6e9eb04955afa22d2686582c24622145ae3bce062e73002996b6006744f3d"
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.work.motivation.action-beat",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "1f594a645727553438805d342361da18d5d789c219a5246a9d529c93865fbd20",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "snackrail_sideprofile_firstpiece_slide_phototile_blank_open_deliverygap",
+      "artDirection": "세로 3:4 snack rail side profile. 달콩이1가 snack piece1을 open box1의 첫 compartment로 밀기 시작하고 second piece1은 tray에 남긴다. blank star-photo tile1은 clip에 half-set, role chips3는 분리한다. rail 아래 delivery gap은 열린다.",
+      "distinctFrom": [
+        "B057 close-emotion과 이전 배치의 같은 별자리 카메라를 반복하지 않고 snackrail_sideprofile_firstpiece_slide_phototile_blank_open_deliverygap를 쓴다.",
+        "다른 action-beat 11개와 motion direction·first-notch boundary·open gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·snacks2/box1/photo tile1/chips3를 계수한다.",
+        "첫 이동만 보이고 배송·수령인·완료 돌봄이 없는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "2698500d285e278d7c16f3f9e45c1a4d9f0e2b28b93c62deaa708895b5b33fc8"
+    },
+    {
+      "order": 5,
+      "editionId": "leo.work.motivation.action-beat",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "ccc59160ebb9345d4561d4d8bff814d29fa5dea4167de9a5224df3bd154e58d6",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "stagefloor_lowfront_firstpractice_step_blankplaque_open_spotgap",
+      "artDirection": "세로 3:4 stage floor low-front. 해님이1가 first practice marker1 위에 한 발을 올리고 blank result plaque1의 clip1을 막 연다. crown1과 chest star를 유지하고 spot heads2는 꺼진 채 분리한다. tall spot gap을 비운다.",
+      "distinctFrom": [
+        "B057 close-emotion과 이전 배치의 같은 별자리 카메라를 반복하지 않고 stagefloor_lowfront_firstpractice_step_blankplaque_open_spotgap를 쓴다.",
+        "다른 action-beat 11개와 motion direction·first-notch boundary·open gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1/crown1·marker1/plaque1/clip1/spots2를 확인한다.",
+        "첫 연습 동작이 박수·성과·주인공 확정으로 보이지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "bf617dffe1897ce411dc5596d0201183fbff7b2f3574e49499cb9dc52b951f45"
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.work.motivation.action-beat",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "8c5ae54ba1332209d8e4765aaf509f67f6830cbd9239a703cf36f46da5a705a4",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "stripcorner_raking_eraser_lift_blanktile_releaseleaf_open_notch",
+      "artDirection": "세로 3:4 task strip corner raking. 새봄이1가 의미 없는 tile1을 eraser1로 막 들어 올리고 useful tiles2와 reason reliefs2는 제자리에 남긴다. release leaf1이 open notch에 half-set이고 빈 칸은 막 드러난다.",
+      "distinctFrom": [
+        "B057 close-emotion과 이전 배치의 같은 별자리 카메라를 반복하지 않고 stripcorner_raking_eraser_lift_blanktile_releaseleaf_open_notch를 쓴다.",
+        "다른 action-beat 11개와 motion direction·first-notch boundary·open gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·tiles3/eraser1/reliefs2/release leaf1을 계수한다.",
+        "삭제가 실패나 전체 완료가 아니라 첫 수정 행동인지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "7db9313978b66e9ba32fe66af6e6a16e55751faf92430484367df1b31a684638"
+    },
+    {
+      "order": 7,
+      "editionId": "libra.work.motivation.action-beat",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "c7280869688e3db24f40e2d609e32adcab9ade873b723ef838d19814ab4c2c14",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "supportheight_sideon_firststarweight_lowering_blankcenter_open_Ybay",
+      "artDirection": "세로 3:4 support height side-on. 고르미1가 personal star-weight1을 support1 위로 내리기 직전이고 second star/support는 untouched다. blank common token1은 center tray1 밖에 있다. open Y bay와 locks0, scale beam0.",
+      "distinctFrom": [
+        "B057 close-emotion과 이전 배치의 같은 별자리 카메라를 반복하지 않고 supportheight_sideon_firststarweight_lowering_blankcenter_open_Ybay를 쓴다.",
+        "다른 action-beat 11개와 motion direction·first-notch boundary·open gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·stars2/supports2/token/tray 각1의 상태 차이를 확인한다.",
+        "저울·합의 완료·균형 확정이 아니라 첫 배치 행동인지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "a04f64731b97710f0530d13ca40a600d4a02386e36bb24ca68adedf1278d9d80"
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.work.motivation.action-beat",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "7d0d3a97c84f0fd01bbd904b99815fed87752521be3c68b10172e72a909be4c4",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "boxhinge_macro_lockshackle_halfdrop_sorttray_open_sidebay",
+      "artDirection": "세로 3:4 box hinge macro. 꼬옥이1가 value box1의 new lock shackle1을 half-drop하는 순간이며 아직 닫히지 않는다. other boxes2와 sort tokens2는 open tray에 있고 key0이다. canonical tail-heart1만 유지한다.",
+      "distinctFrom": [
+        "B057 close-emotion과 이전 배치의 같은 별자리 카메라를 반복하지 않고 boxhinge_macro_lockshackle_halfdrop_sorttray_open_sidebay를 쓴다.",
+        "다른 action-beat 11개와 motion direction·first-notch boundary·open gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1/tail-heart1·boxes3/lock1/tokens2/tray1을 확인한다.",
+        "lock이 완전 봉인·성과 보호 완료가 아닌 half-set인지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "5fbd7b08a61ad7509a7f464bc075bb44d99b0244df5244c1b91cb6758a72d7ff"
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.work.motivation.action-beat",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "4c6555be93e80f9687a9eb863aa8d6b40590fec617f54c9b32cb8b01f625b909",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "gatepost_lowup_firstswing_stridechip_slide_open_skyfork",
+      "artDirection": "세로 3:4 schedule gate post low-up. 총총이1가 gate1을 첫 각도로 밀고 stride chip1이 open slot을 따라 한 칸 움직인다. fence strips3와 choice fields2는 분리하고 bow1은 뒤에 둔다. sky fork는 위로 열린다.",
+      "distinctFrom": [
+        "B057 close-emotion과 이전 배치의 같은 별자리 카메라를 반복하지 않고 gatepost_lowup_firstswing_stridechip_slide_open_skyfork를 쓴다.",
+        "다른 action-beat 11개와 motion direction·first-notch boundary·open gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이1/bow1·gate1/stride chips2/fence strips3를 확인한다.",
+        "실제 경로·탈출·완주가 아니라 선택 시작인지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "932ec5c32773b410565d1484ef51ca726295a2791c33811bd79a023b7e6aa050"
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.work.motivation.action-beat",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "8fdfb73541db6d0559734cb0ef351f04f82706f26b7586a4db201a4e02aad045",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "stepedge_axial_firstpeg_move_resulttile_far_open_risergap",
+      "artDirection": "세로 3:4 low step edge axial. 오름이1가 today peg1을 first step notch로 옮기는 순간, blank result tile1은 far riser에 half-set된 채 남는다. steps3/markers3는 분리하고 long riser gap은 위로 열린다.",
+      "distinctFrom": [
+        "B057 close-emotion과 이전 배치의 같은 별자리 카메라를 반복하지 않고 stepedge_axial_firstpeg_move_resulttile_far_open_risergap를 쓴다.",
+        "다른 action-beat 11개와 motion direction·first-notch boundary·open gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1·steps3/peg1/result tile1/markers3를 계수한다.",
+        "단계 세기 시작만 보이고 정상·완성 결과를 확정하지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "f48f3c1597de89a2d43090f6003c29ac1bc7da8b827615c5deda805c9c73e7c0"
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.work.motivation.action-beat",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "91ef7b48816c071485d5fa2daf3b1cf345c6a29c45fa0ede2c1fe2159a250043",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "machineport_rearthreequarter_firsttestdrop_functiontile_open_cloudchute",
+      "artDirection": "세로 3:4 machine port rear three-quarter. 방울이1가 function tile1을 slot에 half-set하자 test droplet1이 port 밖으로 막 나온다. other tiles2와 blank order card1은 untouched, version-stop1은 열린다. cloud chute는 frame 밖으로 이어진다.",
+      "distinctFrom": [
+        "B057 close-emotion과 이전 배치의 같은 별자리 카메라를 반복하지 않고 machineport_rearthreequarter_firsttestdrop_functiontile_open_cloudchute를 쓴다.",
+        "다른 action-beat 11개와 motion direction·first-notch boundary·open gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·machine1/tiles3/drop1/order card1/stop1을 확인한다.",
+        "첫 test만 보이고 완성 발명·수요·성공을 만들지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "b794a3f9463452d15a13e333472b9f7c78e22abf2820f936bf78367aff5e657c"
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.work.motivation.action-beat",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "d77536b28b74f6007bf1eb6b435427b6198ab1cd4abe54e8e9cf85f7d7812b39",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "netrim_endon_firstfruit_lift_twintags_open_currentgap",
+      "artDirection": "세로 3:4 loose net1 rim end-on. larger aqua 꿈별이와 smaller pink 잠별이 pair2가 independent currents2에서 first star-fruit1을 net edge까지 들어 올리고 second fruit1은 물속에 남긴다. blank tags2/clips2는 아직 부착 전이다. central current gap은 열린다.",
+      "distinctFrom": [
+        "B057 close-emotion과 이전 배치의 같은 별자리 카메라를 반복하지 않고 netrim_endon_firstfruit_lift_twintags_open_currentgap를 쓴다.",
+        "다른 action-beat 11개와 motion direction·first-notch boundary·open gap을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2·net1/fruits2/tags2/clips2/currents2를 확인한다.",
+        "첫 인양만 보이고 대상 사람·영향·완료 수확을 확정하지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "880c7c106f4027ffc7d21fa0029f0d59dfa13ea81707e9da6cb1643237c124cf"
+    }
+  ],
+  "editorialApprovedOn": "2026-09-01",
+  "generatedOn": "2026-09-01",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-01",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

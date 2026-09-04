@@ -1,0 +1,313 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "work.pressure.shared-world",
+  "batchOrder": 67,
+  "purpose": "일의 압박이 개인의 소진 운명이 아니라 두 수호령의 독립 경계 행동·역할 재분배·열린 handoff로 읽히는 shared-world 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 1,
+    "newEditionCount": 11,
+    "onePerSign": true,
+    "slot": "work",
+    "narrativeAxisId": "pressure",
+    "visualAxisId": "shared-world"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium work-pressure shared-world guardian card master artwork, full-bleed 3:4. Show exactly the two named guardians or canonical internal pair from the approved source and no third guardian, coworker, manager, client, recipient, human, silhouette, reflection, body clue, empty seat or personal belonging implying another person. Preserve both canonical identities, relative size/colors, clothing, signature props, dark-purple eyes with exactly one large plus one small highlight in each visible eye, and visible chest Stella stars. The pair plus one shared pressure-control system covers 55–65% and remains readable at actual width 80px. Give each guardian one independent boundary action or role control and keep a visible open handoff zone; never imply hierarchy, compulsory care, unanimous agreement, inevitable burnout, failure, punishment or guaranteed coping success. Written work surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, handwriting lines, names, labels, score, number, date, clock face, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Every cover, plate, clip, divider, sleeve, gate, token, line, clamp or connector remains removable, half-set, open-ended or still adjustable. Libra may use exactly one abstract meeting balance; no other sign uses a scale. Only Scorpio canonical tail-heart tip is allowed; no added heart or heart-shaped light/void. No closed ring, halo, portal, infinity sign, deterministic route or completed coping emblem. Keep every composition distinct in pair axis, pressure source, role boundary, focal-system silhouette and open negative-space shape. Follow compositionFamily, artDirection, distinctFrom and visualReviewFocus literally. Soft colored-pencil and watercolor, visible paper grain, rounded plush proportions and deep-purple outlines; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.work.pressure.shared-world",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "8e94a0271bee4595a0fe5c54a2bc87e9b0f871585bdeaec5183f42289c296289",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "prioritymachine_front_buttons3_covers2_screws2_speedhandoff",
+      "artDirection": "세로 3:4 priority machine strict front. 몽실이·달콩이 exactly2, reservoir1/buttons3/covers2와 screws2/tray1를 둔다. 몽실이는 priority button1만 열고 달콩이는 screws를 tray에 모으며 speed control1은 낮은 notch다. open handoff bay 유지, 마감 성공·서열·text0.",
+      "distinctFrom": [
+        "B001–066의 같은 별자리·압박 협업 구도를 반복하지 않고 prioritymachine_front_buttons3_covers2_screws2_speedhandoff를 사용한다.",
+        "같은 work.pressure.shared-world 묶음의 다른 11개와 pair axis·경계 역할·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2·reservoir/buttons3/covers2·screws2/tray1·speed control1을 확인한다.",
+        "속도와 수리 역할이 나뉘고 압박 해결·성과 완료·위계가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "8c1699b993425753f7c0ecc763b356d07d03d7f723a5cb8ec78449a1c51f42b1"
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.work.pressure.shared-world",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "78a596373cd469416b465b4ee04c2b7178701f08a9981898ddcf2df3f72868dc",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "towercapacity_rear_stacklevels3_emptyplate_tabs3_openbasegap",
+      "artDirection": "세로 3:4 full tower rear cutaway. 차곡이·새봄이 exactly2, tower1/levels3와 new cookie1/empty plate1, level tabs3를 둔다. 차곡이는 cookie를 plate로 내리고 새봄이는 last tab을 비우며 base gap을 연다. 추가 stack·완료 tower·price·text0.",
+      "distinctFrom": [
+        "B001–066의 같은 별자리·압박 협업 구도를 반복하지 않고 towercapacity_rear_stacklevels3_emptyplate_tabs3_openbasegap를 사용한다.",
+        "같은 work.pressure.shared-world 묶음의 다른 11개와 pair axis·경계 역할·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2·tower/levels3·cookie1/plate1·tabs3·base gap을 계수한다.",
+        "용량 조절과 점검 역할이 분리되고 실패·영구 중단·완료 품질로 보이지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "69d911d215fec9eacf8b15d21c53c8b162cb0ab8c695549c59eb755082f4bfb4"
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.work.pressure.shared-world",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "3c663a82b3f75efd6f0c549b28287d84762c0d4e76862797d1caa8b64a7e7dc2",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "windowsequence_topdown_windows3_clip_lanes2_turntokens_openqueue",
+      "artDirection": "세로 3:4 window-sequence steep top-down. canonical 재잘이·소곤이 pair2/ribbon1와 windows3/clip1, priority/in-progress lanes2, turn tokens2를 둔다. priority window만 open이고 other windows2는 folded, blank queue1은 열어 둔다. merged lane·closed loop·text0.",
+      "distinctFrom": [
+        "B001–066의 같은 별자리·압박 협업 구도를 반복하지 않고 windowsequence_topdown_windows3_clip_lanes2_turntokens_openqueue를 사용한다.",
+        "같은 work.pressure.shared-world 묶음의 다른 11개와 pair axis·경계 역할·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2/ribbon1·windows3/clip1·lanes2/tokens2/queue1을 확인한다.",
+        "아이디어 보관과 진행 순서가 한 목소리·완료 계획·영구 포기로 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "790da18b0254e5d87e5cf9d35938ba3d2017a5f87bb0045e198d20af69f94ee0"
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.work.pressure.shared-world",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "06510e33e6171cc12ce79f0518e12fe3522ab6242f91e68b778cc9b5c99f0324",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "umbrellaroleboard_side_sectors3_selfmarker_cells3_handofftray",
+      "artDirection": "세로 3:4 umbrella-role board strict side. 달콩이·꼬옥이 exactly2, umbrella1/sectors3/self marker1과 role board1/cells3/tiles2를 둔다. 꼬옥이는 external token1을 handoff tray1로 옮기고 달콩이는 self sector를 가리킨다. tail-heart1 외 heart0, recipient0.",
+      "distinctFrom": [
+        "B001–066의 같은 별자리·압박 협업 구도를 반복하지 않고 umbrellaroleboard_side_sectors3_selfmarker_cells3_handofftray를 사용한다.",
+        "같은 work.pressure.shared-world 묶음의 다른 11개와 pair axis·경계 역할·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2/tail-heart1·umbrella/sectors3/marker1·board/cells3/tiles2/token1/tray1을 확인한다.",
+        "돌봄 압박 재분배가 특정 사람·강제 책임·완료 보호로 보이지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "2930b3c8edef8d9824345d652e45388b07cfd0e9f02528d46777eed4e9338a92"
+    },
+    {
+      "order": 5,
+      "editionId": "leo.work.pressure.shared-world",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "8fd39447a5dcd20b038859745013d0a58d2dd5b1e6ff932d85f9abea9f125672",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "feedbackdesk_crossaxis_fields2_tokens4_divider_responsibilitycells_openfly",
+      "artDirection": "세로 3:4 feedback desk cross-axis. 해님이·고르미 exactly2, crown1과 board1/fields2/tokens4/divider1, responsibility cells2를 둔다. 해님이는 fact token1을 옮기고 고르미는 blank cell1을 가리킨다. audience·score·applause·합의 완료0, fly gap open.",
+      "distinctFrom": [
+        "B001–066의 같은 별자리·압박 협업 구도를 반복하지 않고 feedbackdesk_crossaxis_fields2_tokens4_divider_responsibilitycells_openfly를 사용한다.",
+        "같은 work.pressure.shared-world 묶음의 다른 11개와 pair axis·경계 역할·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2·crown1·fields2/tokens4/divider1·cells2를 확인한다.",
+        "피드백과 책임 조정이 인기·자기 가치 점수·만장일치 결과로 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "3fae1c392248d5d4192ad300798ee9422f2bf36073951431a1b25f6a7de510fc"
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.work.pressure.shared-world",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved_pilot",
+      "editorialContentHash": "1588a1cbedba72ad1e9ff9237de98c9a7799ce6d6b17a8392c24867417188e1f",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "approved_pilot_revisiondesk_selectivefix_completionbox_sharedworld",
+      "artDirection": "승인 파일럿 원본을 그대로 재사용한다. 세로 3:4에서 새봄이·차곡이 canonical pair2가 간소한 revision desk에서 symbol-only 수정 항목 중 필요한 것만 골라 completion box1에 담는다. 두 정체성·상대 크기·가슴 Stella 별·1080×1440 구도를 바꾸지 않는다. 새로 생성하거나 재구성하지 않고 approvedArtworkSha256 바이트를 그대로 사용한다.",
+      "distinctFrom": [
+        "B001–066의 같은 별자리·압박 협업 구도를 반복하지 않고 approved_pilot_revisiondesk_selectivefix_completionbox_sharedworld를 사용한다.",
+        "같은 work.pressure.shared-world 묶음의 다른 11개와 pair axis·경계 역할·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "승인 파일럿의 새봄이·차곡이 pair2, selective revision board와 completion box1이 그대로인지 확인한다.",
+        "승인 SHA-256 31eb67… 바이트와 text0·제3 guardian0이 변경되지 않는지 확인한다."
+      ],
+      "approvedArtworkSha256": "31eb67c0ca4bf93cf49004f90247fb7e39b0a507e93257f8672f2e3a751f3328"
+    },
+    {
+      "order": 7,
+      "editionId": "libra.work.pressure.shared-world",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "a539d87f58ee54a53b1cf5e597cc7f29d8cf6fa616960c306a455788992c7492",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "balanceagreement_front_hiddenweight_responsibilitycells2_speechtoken_openY",
+      "artDirection": "세로 3:4 balance-agreement strict front. 고르미·해님이 exactly2, single balance1/pans2/neutral weights2/hidden weight1과 responsibility cells2를 둔다. 해님이는 자기 token1을 cell 앞에 두고 고르미는 speech token1을 들어 올린다. audience·text·합의 완료0, open Y 유지.",
+      "distinctFrom": [
+        "B001–066의 같은 별자리·압박 협업 구도를 반복하지 않고 balanceagreement_front_hiddenweight_responsibilitycells2_speechtoken_openY를 사용한다.",
+        "같은 work.pressure.shared-world 묶음의 다른 11개와 pair axis·경계 역할·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2·balance/pans2/weights3·cells2·tokens2를 확인한다.",
+        "숨은 부담을 함께 보되 책임·갈등·합의 결과가 자동으로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "1382e085c9e2fc591301568bbbf513aa2cf61d57866a00247eb2e49d74334769"
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.work.pressure.shared-world",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "83a682fab10ccdfdaa94f97d8ba4544f37744fb6c43341f48f78d706f8a2952c",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "requestboundary_side_sleeves3_tokens3_externalboard_roles2_threshold",
+      "artDirection": "세로 3:4 request-boundary side profile. 꼬옥이·달콩이 exactly2, blank sleeves3/tokens3와 external request board1/tokens3, role tiles2를 둔다. 달콩이는 외부 tokens를 정리하고 꼬옥이는 boundary sleeve를 분리한다. tail-heart1 외 heart0, key0, threshold open.",
+      "distinctFrom": [
+        "B001–066의 같은 별자리·압박 협업 구도를 반복하지 않고 requestboundary_side_sleeves3_tokens3_externalboard_roles2_threshold를 사용한다.",
+        "같은 work.pressure.shared-world 묶음의 다른 11개와 pair axis·경계 역할·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2/tail-heart1·sleeves3/tokens3·board/tokens3·role tiles2를 확인한다.",
+        "피드백 경계와 외부 요청 정리가 공격화·책임 완료·비밀 강요로 보이지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "81bc33653be9367c63267b71ce102dc1f1b333c4d27558013a6fd0965622a169"
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.work.pressure.shared-world",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "5dc83d71783284a5bc18dbfc45737ec0cd0923c1adb929b104387c63057309ab",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "optionfield_front_panels3_deadlineband_pacetokens2_openskyfork",
+      "artDirection": "세로 3:4 option field strict frontal. 총총이·오름이 exactly2, option panels3와 deadline band1, pace tokens2를 둔다. 오름이는 band를 current panel에 half-set하고 총총이는 token1을 open field 앞에 둔다. route·arrow·number0, sky fork open.",
+      "distinctFrom": [
+        "B001–066의 같은 별자리·압박 협업 구도를 반복하지 않고 optionfield_front_panels3_deadlineband_pacetokens2_openskyfork를 사용한다.",
+        "같은 work.pressure.shared-world 묶음의 다른 11개와 pair axis·경계 역할·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2/bow1·panels3/band1/tokens2를 확인한다.",
+        "탐색과 마감 역할이 나뉘되 경로·타이밍·완주·성과가 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "4c8eba3109f7367010b580b22edca2fed67d36c2a3644e5628b9be08e1637917"
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.work.pressure.shared-world",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "44cefc12ffe62cbdc8c301a8da75fcd80315791011a04ebe1235d47258045a9a",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "qualityrecovery_highside_strip_fields2_tokens2_recoverycell_pacepeg_openV",
+      "artDirection": "세로 3:4 quality-recovery high side. 오름이·총총이 exactly2, quality strip1/fields2/minimum line1/tokens2와 recovery cell1/tile1/pace peg1을 둔다. 필수 token은 current field, 개선 token은 next tray 앞에 둔다. date·clock·완벽 badge0, open V 유지.",
+      "distinctFrom": [
+        "B001–066의 같은 별자리·압박 협업 구도를 반복하지 않고 qualityrecovery_highside_strip_fields2_tokens2_recoverycell_pacepeg_openV를 사용한다.",
+        "같은 work.pressure.shared-world 묶음의 다른 11개와 pair axis·경계 역할·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2/bow1·strip/fields2/line1/tokens2·recovery cell/tile/peg를 확인한다.",
+        "마감 품질과 회복 속도가 조정되되 완료 일정·정상 도착·같은 보폭으로 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "3d3f447cc7aa609d0280706cf0d32b0c563da8ef78e6c223486d222b3975a6ec"
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.work.pressure.shared-world",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "5f5587ffa85c59de7f7934133b34ae8c1f08d609e9bcd91ea229149fc038a205",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "machineexpectation_reartop_card_tabs2_clamp_selector_functiontile_cloudcut",
+      "artDirection": "세로 3:4 machine-expectation rear top-down. 방울이·차곡이 exactly2, machine1/standard card1/tabs2와 anchor clamp1/selector1/function tile1을 둔다. 차곡이는 clamp를 half-set하고 방울이는 explain tab을 미삽입으로 둔다. user figure·market·closed circuit0, cloud cut open.",
+      "distinctFrom": [
+        "B001–066의 같은 별자리·압박 협업 구도를 반복하지 않고 machineexpectation_reartop_card_tabs2_clamp_selector_functiontile_cloudcut를 사용한다.",
+        "같은 work.pressure.shared-world 묶음의 다른 11개와 pair axis·경계 역할·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2·machine/card/tabs2·clamp/selector/function tile1을 확인한다.",
+        "방식 조정과 고정 역할이 모두 거부·모두 순응·완성 적응으로 닫히지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "0a610768d58b2f4097a2f7d16490d40ae2b33711bf23b3a1b9e3969c4562fc42"
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.work.pressure.shared-world",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "4be1742b2052c36112363869d3aa131f84ae05ae209e2927282b620fd38fd768",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "wavehandoff_netfront_tokens3_keeprelease_dreamtag_deadlineclip_cleft",
+      "artDirection": "세로 3:4 wave-handoff net strict front. larger aqua 꿈별이와 smaller pink 잠별이 pair2, net1/wave tokens3와 dream token1/deadline tag1/clips2를 둔다. external wave1은 net 밖, own wave1은 안, third wave1은 rim에 두며 central cleft를 연다. heart·ring·recipient·text0.",
+      "distinctFrom": [
+        "B001–066의 같은 별자리·압박 협업 구도를 반복하지 않고 wavehandoff_netfront_tokens3_keeprelease_dreamtag_deadlineclip_cleft를 사용한다.",
+        "같은 work.pressure.shared-world 묶음의 다른 11개와 pair axis·경계 역할·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "pair2·net1/waves3의 상태·dream token/tag/clips2를 확인한다.",
+        "감정 경계와 기한 역할이 나뉘되 책임 처리·결과·진단 완료로 보이지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "f43a185535e5e26612e6bef5fbc6cbe822021f47faf68ffe1491d4b2c9a87754"
+    }
+  ],
+  "editorialApprovedOn": "2026-09-01",
+  "generatedOn": "2026-09-01",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-01",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

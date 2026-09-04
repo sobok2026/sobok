@@ -3,8 +3,9 @@
   "batchId": "love.future-promise.orbit",
   "batchOrder": 53,
   "purpose": "사랑의 future-promise 원고를 영원·운명·보장된 재회가 아닌 다음 한 번의 확인 가능한 약속으로 번역한다. 열두 수호령은 지도 모퉁이, 계절 상자, 별책, 보름달 패널, 공연표, 계획 레일, 합의지, 봉인, 여행표, 접이 계획판, 다음 버전 도면, 꿈 선택 장치에 가역적인 표식을 남기며, 모든 Orbit 빛과 여백은 열린 결말을 유지한다.",
-  "status": "editorial_review_complete",
+  "status": "visual_review_complete",
   "editorialApprovedOn": "2026-08-30",
+  "generatedOn": "2026-08-31",
   "sourceBatchPlan": "production-art-batches-ko.json",
   "selectionContract": {
     "plannedEditionCount": 12,
@@ -48,6 +49,14 @@
     "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
     "commonPrompt": "Use case: illustration-story. Asset type: premium Orbit zodiac-guardian future-promise card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair from the approved source, never an unseen romantic recipient, extra guardian, human, body part, shadow, reflection, silhouette, empty seat, or personal belonging that implies another person. Preserve character-sheet identity, relative size, colors, silhouette, simple deep-purple pupils, exactly one large and one small highlight in each visible eye, chest Stella star, canonical clothing, and source-relevant signature props. Keep the guardian or canonical pair and focal promise device at 55–65% of the frame and readable at actual width 80px. Every promise or planning control must remain removable, half-set, unlatched, open-ended, stoppable, erasable, or reorderable; never show a guaranteed marriage, reunion, forever path, shared destiny, completed agreement, or predetermined future. Use symbols and simple geometric shapes only: no readable text, sentence, name, title, label, badge, score, number, literal date, clock face, clock hand, calendar text, map coordinate, question mark, zodiac glyph, arrowed route, logo, watermark, handwriting, or pseudo-text lines. Calendars, clocks, maps, letters, schedules, plans, and signatures may contain only a few discrete geometric tokens and blank fields, never grids of writing. Do not bake actual birth-chart lines or personal colors into the master art. Keep every composition distinct in camera, depth axis, dominant silhouette, open negative-space shape, reversible control, and broken open Orbit light path. Preserve exact source topology: Aries Mongshil1 with map1 ending after physical corner1, contact-time marker1, shared-action small heart marker1, removable corner clamp1; Taurus Chagoki1 with small seasonal box1, lid1, promise slips3 for contact/time/money, removable lid-stop1; Gemini canonical Jejal-Sogon pair2 with star-book1, next page1, blank shared-title bar1 and task tokens3 consisting of shared1 plus personal2; Cancer Dalkong1 with full-moon calendar panel1, moon disc1, meeting-time peg1, feeling-check pebble1, small house marker1 and open hinge1; Leo Haenim1 with next-performance schedule board1, equal blank name plaques2 and equal role tiles2; Virgo Saebom1 with plan strip1, promise slot1 plus promise tile1, review-date slot1 plus movable review peg1; Libra Gormi1 with agreement sheet1, shared promise token1, personal promise tokens2 and equal blank signature boxes2; Scorpio Kkook1 with sealed folio1, seal1, date tab1, trust-action tab1, lift-stop1 and only the canonical tail-heart tip1; Sagittarius Chongchongi1 with gold crescent bow behind, small travel chart1, departure marker1, return marker1, shared promise marker1 and sliding cover1, with map0; Capricorn Oreumi1 with folding plan board1, slots4, symbol tiles3 for meeting/resource/role and final adjustment peg1 left half-set; Aquarius Banguli1 with blueprint1, erased blank field1, test-action cell1, keep-principle cell1, eraser1 and movable version-stop1, with heart/bottle0; Pisces canonical pair2 with center star1, connection signal bead1, independent selector paddles2 and removable cradle1. The only non-canonical heart in the batch is Aries source small action-heart marker1; Scorpio retains its canonical tail-heart tip1, and every other added heart or heart-shaped void/light is forbidden. Orbit light must be a few broken, open beats that identify the current adjustable control and then stop or leave the frame; never close light, route, ribbon, calendar, seal, page, signature, map, arc, or water into a magic circle, infinity sign, cage, portal, deterministic path, guaranteed answer, or completed future. Do not reuse same-sign Orbit cameras and dominant silhouettes from B017, B021, B025, B029, B033, B037, B041, B045, or B049, and do not repeat B050 devices or negative-space axes. Within this batch keep Aries/Sagittarius navigation, Taurus/Capricorn seasonal planning, Gemini/Virgo page-and-plan structures, Cancer/Scorpio time-and-seal devices, Leo/Libra equal-role systems, and Aquarius/Pisces revision-and-signal geometry visibly distinct. Follow each compositionFamily, artDirection, distinctFrom, and visualReviewFocus literally. Soft colored-pencil and watercolor on visible paper texture, rounded plush proportions, deep-purple outlines and eyes, warm cream/lavender/gold Orbit palette. No text, no logo, no watermark."
   },
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-08-31",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  },
   "editions": [
     {
       "order": 1,
@@ -57,7 +66,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "263467cad3a3c08deec2c6d512e1714d14fb7cefb86d5ef8065bca4a6261ad9d",
-      "imageStatus": "not_started",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "223299a9276d01da74dadcb01d8b3ac66de53a4ee1f06aeb97616fee55826f42",
       "compositionFamily": "foldcorner_height_leftrear_oblique_single_Lmap_contactbead_actionheart_open_outerwedge",
       "artDirection": "세로 3:4의 따뜻한 Orbit 초저녁을 접힌 지도 모퉁이 높이의 left-rear oblique 약 30도로 본다. 지도 exactly1은 화면 아래 왼쪽에서 시작해 물리적 직각 모퉁이 exactly1에서 한 번만 꺾이고, 그 뒤 한 뼘에서 종이가 끝나므로 영원한 길이나 목적지로 이어지지 않는다. 몽실이 exactly1과 지도·표식 cluster가 화면의 55–65%를 차지한다. 몽실이는 정본의 크림 양털, 연보라 spiral horns2, 보라 발굽, deep-purple eyes와 각 눈 large1+small1 highlight, 가슴 Stella 별을 유지한다. 모퉁이 전에는 removable contact-time crescent bead1, 모퉁이에는 source-authorized small action-heart marker1을 half-set하고, 몽실이는 removable corner clamp1을 한 notch만 느슨하게 잡아 지도 방향을 다시 펼칠 수 있게 한다. 지도 바깥 오른쪽에는 넓은 scalene wedge negative space가 프레임 밖으로 열리고, 가슴 별의 Orbit 빛은 bead와 heart marker 사이에 broken beats3만 남긴 뒤 종이 끝 전에 멈춘다. map coordinate, arrow, road, compass, destination, second heart, ring, text, number, pseudo-text, 다른 존재는 없다.",
       "distinctFrom": [
@@ -77,7 +87,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "ad5bb6a2cb799a973dcb9a2b30ca6e416fdec64446a9a2ea5cd541f7b427ad2f",
-      "imageStatus": "not_started",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "416652fe4c41c747cedd4eae2f232f67de0c8585013e475922bf0d49a91f96e8",
       "compositionFamily": "boxhinge_endon_sidecut_single_seasonbox_three_promiseslips_open_lid_crescent_airfan",
       "artDirection": "세로 3:4의 부드러운 Orbit 아침을 작은 계절 상자의 lid-hinge axis와 나란한 strict end-on side cutaway로 본다. foreground의 얇은 hinge edge, mid의 open seasonal box1과 차곡이1, far의 open lid1이 세 깊이를 만든다. 차곡이와 상자·slips cluster는 55–65%다. 차곡이는 정본의 크림 황소 몸, lavender horns2와 forelock, 보라 앞치마, deep-purple eyes와 각 눈 large1+small1 highlight, 가슴 Stella 별을 유지한다. 상자 안에는 서로 겹치지 않는 removable promise slips exactly3만 있고, slip마다 글자 대신 contact dot1, time crescent1, money coin-disc1의 단일 relief만 둔다. 차곡이는 세 번째 slip을 아직 box lip 위에 half-set하고, removable lid-stop1은 열린 lid를 임시로 받쳐 다시 닫거나 열 수 있다. lid 뒤에는 한쪽이 끊긴 broad crescent air fan이 열리고, Orbit light는 세 slip 윗변에 짧은 분리 점광3으로만 나타난다. 큰 상자, 네 번째 slip, 두 번째 뚜껑, 문서글, 숫자, 잠금, 선물의 확정, heart는 없다.",
       "distinctFrom": [
@@ -97,7 +108,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "9d87ef5377cf603b6d367613058475bbe590091fb0777d00006fda864f808653",
-      "imageStatus": "not_started",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "868f27fdce727f5dc4fad50a29ba281087cab3da52b5ef9c68a3c725d21ff68e",
       "compositionFamily": "bookgutter_height_crosspage_raking_single_starbook_shared_titlebar_three_tasktiles_open_kite_airwell",
       "artDirection": "세로 3:4의 맑은 Orbit 구름방에서 open star-book1의 gutter 높이에 카메라를 두고 near left page에서 far right page로 비스듬히 가로지르는 cross-page raking view를 쓴다. 재잘이·소곤이 canonical pair2는 서로 다른 page depth에 있으나 같은 책을 향하고, pair와 book cluster는 55–65%다. 두 캐릭터는 정본의 cream Jejal과 pale-lavender Sogon, 작은 wings, deep-purple eyes와 각 눈 large1+small1 highlight, 가슴 Stella 별, body-only connector ribbon1을 유지한다. 다음 page1 위 상단에는 blank shared-title bar1을 removable clips2로 가볍게 걸고, 아래에는 task tokens3을 둔다: paired-dot shared task1은 gutter 가까이 half-set, personal task tokens2는 서로 다른 페이지 바깥쪽에 하나씩 둔다. 토큰에는 각각 단일 기하 relief만 있고 줄·문자·가짜 글씨가 없다. gutter 위에는 넓은 asymmetric kite airwell이 위 프레임으로 열리고, 두 가슴 별의 Orbit beats는 title bar 양 끝에 따로 닿은 뒤 합쳐지지 않고 airwell로 흩어진다. 완성된 공동 제목, 추가 page/book, heart, closed ribbon loop, 결정된 결말은 없다.",
       "distinctFrom": [
@@ -117,7 +129,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "18752093f6fa84ad5906fbb88bd8a3dc9c9d0034fa335b40163eb4f17acb7513",
-      "imageStatus": "not_started",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "fedd6ed2d38e2178b970cb2f11980d6967aa38816f9e49741b709a3edeb3ac1f",
       "compositionFamily": "moonpanel_backrim_highrear_threequarter_fullmoon_calendar_housepeg_open_crescent_sidebay",
       "artDirection": "세로 3:4의 고요한 Orbit 밤을 freestanding full-moon calendar panel1의 back rim 너머 45-degree high rear three-quarter로 내려다본다. near의 얇은 panel rim, mid의 달콩이1과 moon disc1, far의 열린 옆 여백이 깊이를 만든다. 달콩이와 panel cluster는 55–65%이며 달콩이는 정본의 보랏빛 초승달 shell-seat, cream 몸, deep-purple eyes와 각 눈 large1+small1 highlight, 이마·가슴 Stella 별을 유지한다. calendar panel은 글자·숫자·격자·시곗바늘이 없는 단일 둥근 full-moon disc1이고, discrete blank docks3에 meeting-time peg1, feeling-check pebble1, small house marker1만 서로 떨어져 놓인다. 달콩이는 house marker를 마지막 dock에 half-set하며 open hinge1과 작은 release tab1은 panel을 다시 접을 수 있게 한다. panel 오른쪽에는 broad crescent side bay가 프레임 밖으로 열리고, Orbit 빛은 세 marker 아래에 짧은 broken dots3만 남긴다. clock face, calendar grid, 두 번째 달, 문, 사람의 집 silhouette, heart, 보장된 만남은 없다.",
       "distinctFrom": [
@@ -137,7 +150,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "ae5f7b604e77e876334337ba0fafa35ec707e741627f749b51a17528e3de97f8",
-      "imageStatus": "not_started",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "1aa2adfa4c39a65214d5e75d14406e45456d90c253f9a194e9915d0fdfc65679",
       "compositionFamily": "curtainwing_strict_profile_vertical_doublecueboard_equal_nameplates_roletiles_open_flygap",
       "artDirection": "세로 3:4의 조용한 Orbit backstage를 curtain wing 안쪽 chest-height strict profile로 가로본다. 무대·객석은 프레임 밖이며, 세로로 선 next-performance schedule board1의 two narrow hinged cue columns가 dominant silhouette다. 해님이 exactly1과 board cluster가 55–65%다. 해님이는 정본의 금빛 lion body와 mane, crown1, deep-purple eyes와 각 눈 large1+small1 highlight, 가슴 Stella 별과 별꼬리를 유지한다. 두 cue column에는 글자 없는 equal blank name plaques2가 같은 높이·크기로 하나씩, 그 아래 equal role tiles2가 하나씩 있다. 해님이는 role tile 하나를 open side-slot에 half-set하고 다른 role tile과 두 name plaque에는 손대지 않는다. board hinge는 unlatched하고 base의 quick-release knob1로 column 간격을 다시 조정할 수 있다. board와 curtain 사이의 tall rectangular fly-gap은 상단 프레임으로 열리고, Orbit 빛은 두 column 바깥에 서로 분리된 broken vertical beats2로만 오른다. poster, stage, spotlight, seat, readable name, pseudo-text, trophy, heart, 확정된 공동 공연은 없다.",
       "distinctFrom": [
@@ -157,7 +171,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "dde15fe1c9937cfb709d95d6ee0000f56fea97805d7c6f4845b946bfb136257d",
-      "imageStatus": "not_started",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "2e42947bbd9cbab3d0bca12b965a257667f605964ae218229ba89502dd322dc9",
       "compositionFamily": "railend_axial_leafplanstrip_two_stopslots_promise_tile_reviewpeg_long_open_channel",
       "artDirection": "세로 3:4의 맑은 Orbit 작업대를 leaf-shaped plan strip1의 near rail end 높이에서 strict axial로 길게 본다. foreground의 open rail mouth, mid의 새봄이1과 promise slot1, far의 review-date slot1이 한 축에 있지만 rail은 화살표나 길이 아니다. 새봄이와 strip cluster는 55–65%다. 새봄이는 정본의 cream sprout body, large green leaf ears2, forehead Stella flower, leafy collar, deep-purple eyes와 각 눈 large1+small1 highlight를 유지한다. promise slot에는 promise tile1을 half-set하고, far slot에는 movable review peg1을 한 notch만 걸쳐 둔다. 두 슬롯은 넓은 blank interval로 분리되며 추가 cell·grid·writing은 없다. rail side의 release leaf1을 누르면 tile과 peg를 모두 빼거나 순서를 바꿀 수 있다. far peg 너머의 long leaf-shaped channel은 상단 오른쪽 프레임으로 완전히 열리고, Orbit light는 rail outer edge의 broken beads3에서 끝난다. calendar, checklist, flowerpot, watering can, map, text, number, pseudo-text, heart는 없다.",
       "distinctFrom": [
@@ -177,7 +192,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "653d7d1c4b79744fd93507043df90962e6379a9839bc4ec3e7bdff15f1291415",
-      "imageStatus": "not_started",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c3b594ed857745aa6e28866b8111db51990a3d53220f5fe63870c6d0cc65336f",
       "compositionFamily": "rotated_nadir_diamond_agreementsheet_sharedtoken_personaltokens_twin_signatureboxes_open_Ymargin",
       "artDirection": "세로 3:4의 밝은 Orbit cloud desk를 near-orthographic nadir에서 약 20도 회전해 diamond-shaped agreement sheet1이 화면을 대각선으로 가르게 한다. 고르미1은 sheet upper corner에 몸 전체가 보이며 guardian와 sheet cluster는 55–65%다. 고르미는 정본의 cloud-blue plush body, long flowing ears2와 gold star tips2, deep-purple eyes와 각 눈 large1+small1 highlight, 가슴 Stella 별을 유지한다. sheet 중앙에는 removable shared promise token1, 좌우에는 personal promise tokens2를 물리적으로 분리해 두고, 아래에는 equal blank signature boxes2만 나란히 둔다. 서명 상자에는 실제 서명·선·글씨가 없고 둘 다 비어 있다. 고르미는 한 box corner의 reversible clip1을 half-set해 sheet를 고정하되 언제든 풀 수 있다. 세 promise token 사이에는 broad open Y-shaped blank margins가 sheet edge 밖으로 이어지고, Orbit light는 shared token에서 세 방향으로 한 beat씩만 떨어져 나가며 서로 닫히지 않는다. scale, beam, pans, long ribbon, handwriting, pseudo-text, heart, 완료된 합의는 없다.",
       "distinctFrom": [
@@ -197,7 +213,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "6280f15ffa62113a2a9a1c701e91b942fa01530590aa15bfff2af6225533d429",
-      "imageStatus": "not_started",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "51539cdc0cddf55f8ee41cdac9944521e4226f03647316f0797458ce4eb740b3",
       "compositionFamily": "sealflap_height_reverse_threequarter_single_folio_date_actiontabs_open_crescent_peelgap",
       "artDirection": "세로 3:4의 깊은 Orbit twilight에서 single sealed folio1의 flap 높이에 카메라를 두고 reverse three-quarter로 본다. near의 flap edge와 seal1, mid의 꼬옥이1, far의 어두운 open bay가 서로 다른 depth다. 꼬옥이와 folio cluster는 55–65%다. 꼬옥이는 정본의 dark-purple scorpion body, pincers2, segmented tail과 canonical pink heart tip1, deep-purple eyes와 각 눈 large1+small1 highlight, 가슴 Stella 별을 유지한다. folio의 한 flap만 closed seal1로 붙어 있으나 seal 옆 lift-stop1은 꼬옥이가 한 notch 들어 올린 상태라 아직 열지 않고도 다시 내릴 수 있다. seal 바깥의 서로 다른 flap edge에는 date tab1과 trust-action tab1을 분리해 half-set하며 둘 다 글자 없는 단일 기하 relief다. flap과 body 사이에는 wide crescent peel-gap이 한쪽으로 열리고, red-violet Orbit beats3는 tabs를 지나 seal 앞에서 끊긴다. key, lock, envelope, second seal, broken seal, extra heart, recipient clue, text, number, guaranteed disclosure는 없다.",
       "distinctFrom": [
@@ -217,7 +234,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "0afe319956e923aaf4f11e3afa15ad954e1698f8f86ad1b17c815d494a474b2b",
-      "imageStatus": "not_started",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "c6eb47d9bb48c1b0a80cf28f28e27e10bc4ad0eca9c07e397e8f3214832225bc",
       "compositionFamily": "chartbar_height_strict_frontal_suspended_travelstrip_departure_return_promise_markers_open_underbay",
       "artDirection": "세로 3:4의 맑은 Orbit dawn sky에서 compact suspended travel chart1의 bar 높이에 카메라를 맞춘 strict frontal view를 사용한다. chart는 두 짧은 side posts 사이에 떠 있는 얇은 horizontal strip이며 길·지도·철로가 아니다. 총총이1과 chart cluster는 55–65%다. 총총이는 정본의 cream centaur body, lavender mane와 tail, gold crescent bow1을 등 뒤에 유지하고, deep-purple eyes와 각 눈 large1+small1 highlight, 가슴 Stella 별을 지킨다. chart에는 departure marker1, return marker1, paired-dot shared promise marker1의 세 discrete tokens만 있고 숫자·날짜 글자·격자 없이 충분히 떨어진다. 총총이는 sliding cover1을 중간 위치에 두어 세 marker를 가리거나 다시 드러낼 수 있게 한다. strip 아래에는 broad open trapezoid under-bay가 바닥 없이 하단 프레임으로 열리고, Orbit light는 marker 위에 독립된 beats3으로만 나타난다. map0, route0, flag0, arrow0, destination0, heart0, guaranteed return0이며 실제 여행은 시작되지 않는다.",
       "distinctFrom": [
@@ -237,7 +255,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "8943b24db14230b1393dbe03e422009a52df297a9da1b56427b28e8a4ecbcce5",
-      "imageStatus": "not_started",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "ae1cd73c12f4dc23e6ab790fd7647b1eab7038b3abd1782805d3feba5330bb94",
       "compositionFamily": "foldscreen_corner_lowfront_oblique_fourcell_planboard_threefilled_adjustmenthalfset_open_zigzag_cut",
       "artDirection": "세로 3:4의 차분한 Orbit 산정 작업실을 folding plan board1의 front corner보다 조금 낮은 low-front oblique로 본다. board는 얕은 zigzag로 접힌 두 plane뿐이며 stair, book, box가 아니다. 오름이1과 board cluster는 55–65%다. 오름이는 정본의 white goat upper body, lavender horns2, aqua fish tail, deep-purple eyes와 각 눈 large1+small1 highlight, 가슴 Stella 별을 유지한다. board의 slots4는 한 줄 격자가 아니라 두 plane에 2개씩 물리적으로 떨어진 open pockets다. 첫 세 slot에는 meeting dot, resource pebble, role star의 symbol tiles3을 각각 하나씩 넣고, 마지막 adjustment slot에는 movable adjustment peg1을 half-set해 날짜를 다시 옮길 수 있게 한다. board hinge pin1은 뽑을 수 있어 접힘 각도와 pocket 순서를 바꿀 수 있다. zigzag planes 사이에는 narrow-to-wide open sky cut이 상단 왼쪽으로 빠지고, Orbit beats4는 각 pocket 바깥에 하나씩 떠 있지만 선으로 연결되지 않는다. calendar grid, lifetime plan, stairs, map, text, number, heart, completed schedule은 없다.",
       "distinctFrom": [
@@ -257,7 +276,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "4b47a5bc81e461a6ddcc00c7a7d2163d3e745d9f6eb382a06d80ade5e960802d",
-      "imageStatus": "not_started",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "0ac396fe0be1ce4553d7ab878edfe5a165f797426dce7f1c810e9d15fedee262",
       "compositionFamily": "blueprint_surface_grazing_rearleft_erased_blankfield_two_smallcells_liftable_eraser_open_lopsided_plane",
       "artDirection": "세로 3:4의 밝은 Orbit cloud lab에서 blueprint1 표면과 거의 같은 높이의 rear-left surface-grazing 카메라로 far edge를 본다. foreshortened blueprint가 아래에서 위로 넓어지는 lopsided plane을 만들고 방울이1은 near right에 앉아 guardian와 blueprint cluster가 55–65%다. 방울이는 정본의 pale-blue cloud rabbit body, spiral forelock, flowing cloud ears2, deep-purple eyes와 각 눈 large1+small1 highlight, 가슴 Stella 별을 유지하며 bottle·heart는 들지 않는다. blueprint 중앙에는 former final area를 지운 broad blank erased field1만 남고, far edge에 test-action cell1과 keep-principle cell1을 서로 떨어진 작은 blank pockets으로 둔다. 각 cell에는 단일 추상 relief tile1씩만 있어 총 tiles2다. 방울이는 eraser1을 종이에서 들어 올리고, movable version-stop1은 두 cell 옆 rail에 half-set되어 다음 revision 위치를 바꿀 수 있다. blank field 한쪽의 asymmetrical open triangular margin은 프레임 밖으로 이어지고, cyan Orbit wash는 두 cell 바깥에서 broken droplets2로 멈춘다. readable blueprint line, grid, formula, pseudo-text, bottle, heart, complete design, closed circuit은 없다.",
       "distinctFrom": [
@@ -277,7 +297,8 @@
       "editorialReviewStatus": "approved",
       "editorialApprovedOn": "2026-08-30",
       "editorialContentHash": "4779b133d05a732a45a74538766c831a1fc30d3c0c8a9a87d1c4eda2b6e3b6e1",
-      "imageStatus": "not_started",
+      "imageStatus": "approved_local_candidate",
+      "approvedArtworkSha256": "48563fb42d111edbe1180cdd7f403f2f25424963572e483557ed4f902ed36225",
       "compositionFamily": "selectorfin_height_opposed_diagonal_twin_paddles_centerstar_signalbead_open_butterfly_gap",
       "artDirection": "세로 3:4의 투명한 Orbit dream sea에서 independent selector paddles2의 fin 높이에 카메라를 두고 near lower-left paddle에서 far upper-right paddle로 가는 opposed diagonal cross-depth를 사용한다. 큰 aqua 꿈별이와 작은 pink 잠별이 canonical pair2는 서로 다른 paddle 옆에 떠 있고, pair와 selector cluster는 55–65%다. 두 캐릭터는 정본의 상대 크기, aqua/pink bodies와 fins, deep-purple eyes와 각 눈 large1+small1 highlight, 가슴 Stella 별을 유지한다. paddles2는 가운데에서 닿거나 교차하지 않고, 사이 removable cradle1에 center star1이 half-set되어 있다. connection signal bead1은 cradle 바깥 detachable clip1에 걸려 있어 둘이 다음 꿈 전까지 쓸 신호를 다시 고를 수 있다. paddles와 star 사이에는 broad open butterfly-shaped water gap이 위아래 프레임으로 열리며, aqua와 pink Orbit arcs는 각자 두 broken beats만 center star 근처까지 오고 서로 접촉·폐곡선을 만들지 않는다. ring, halo, current road, compass, heart, third fish, pair contact, guaranteed dream meeting은 없다.",
       "distinctFrom": [

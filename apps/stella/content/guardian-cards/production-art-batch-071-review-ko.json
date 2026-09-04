@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "work.next-move.shared-world",
+  "batchOrder": 71,
+  "purpose": "다음 행동이 개인 계획 단정이 아니라 두 수호령의 독립 역할·기대 조정·열린 handoff로 읽히는 shared-world 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "work",
+    "narrativeAxisId": "next-move",
+    "visualAxisId": "shared-world"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium work-next-move shared-world guardian card master artwork, full-bleed 3:4. Show exactly the two named guardians or canonical internal pair and no third guardian, coworker, client, human, silhouette, reflection or implied person. Preserve identities, relative size/colors, clothing, signature props, dark-purple eyes and chest Stella stars. The pair plus one shared next-step system covers 55–65% and reads at 80px. Give each guardian one independent control and keep an open handoff zone; never imply hierarchy, compulsory care, guaranteed completion, promotion or future success. Written surfaces use symbols and geometric reliefs only: no readable text, pseudo-text, names, labels, score, number, date, clock face, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Controls remain removable, half-set, open-ended or unlatched. Only Scorpio canonical tail-heart is allowed; no added heart. No closed ring, portal, infinity sign or deterministic route. Keep every composition distinct. Soft colored-pencil and watercolor, paper grain, plush proportions and deep-purple outlines; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.work.next-move.shared-world",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "4c06105f2e5b388ce8e63eaadd25221adba543ca177159998cc8a4eb29246a36",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "shared_startbutton_close_resultrelief_responsibilitytoken_shortopenrail",
+      "artDirection": "세로 3:4. 몽실이1의 얼굴·손과 start button1, blank result relief1, responsibility token1, short open rail1을 close three-quarter로 둔다. token과 rail은 half-set이고 이름·경로선·완료 성과·text는 없다. 몽실이 · 달콩이 exactly2가 independent pads2에서 각자 planning token1과 handoff token1을 조절하고 central handoff gap을 열린 채 둔다. 제3 guardian·위계·완료 합의는 없다.",
+      "distinctFrom": [
+        "B001–070의 같은 별자리·협업 구도를 반복하지 않고 shared_startbutton_close_resultrelief_responsibilitytoken_shortopenrail를 사용한다.",
+        "같은 work.next-move.shared-world 묶음의 다른 11개와 pair axis·역할 경계·열린 handoff를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이 · 달콩이 pair2의 정체성·상대 크기·독립 제어점을 확인한다.",
+        "다음 행동 범위가 합의 완료·위계·미래 성과로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "972c7b97bc712955435d37868e23e6e6372207c0bdf7a6a5fa827f545a3598a5"
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.work.next-move.shared-world",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "4cab74f6fca1813706349ca4c60bc6fd9df4bce9ac8db944a5bb9f13f460dae9",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "shared_boxrim_close_todaylater_boxes_oneblock_openmargin",
+      "artDirection": "세로 3:4. 차곡이1의 얼굴·두 손과 today/later boxes2, star block1을 close frontal로 둔다. block은 today box에 닿기 전이고 later box는 열린다. 목록·날짜·수량 text·완료 stack은 없다. 차곡이 · 새봄이 exactly2가 independent pads2에서 각자 planning token1과 handoff token1을 조절하고 central handoff gap을 열린 채 둔다. 제3 guardian·위계·완료 합의는 없다.",
+      "distinctFrom": [
+        "B001–070의 같은 별자리·협업 구도를 반복하지 않고 shared_boxrim_close_todaylater_boxes_oneblock_openmargin를 사용한다.",
+        "같은 work.next-move.shared-world 묶음의 다른 11개와 pair axis·역할 경계·열린 handoff를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이 · 새봄이 pair2의 정체성·상대 크기·독립 제어점을 확인한다.",
+        "다음 행동 범위가 합의 완료·위계·미래 성과로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "713b35b03e4b3b2c46f5aa8cb510bc95d5b17e0ae25af991148e6373741b6058"
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.work.next-move.shared-world",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "23252b992b2b71c6818433f6b47a423edadf4af808889d2057fa61213f36998c",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "shared_windowedge_close_pair_windows3_durationresulttokens_openbay",
+      "artDirection": "세로 3:4. 재잘이·소곤이 pair2/ribbon1와 windows3, duration/result tokens2씩을 close top-oblique로 둔다. shortest window1만 half-folded이고 other windows2와 archive bay는 열린다. pseudo-text0. 재잘이 · 소곤이 exactly2가 independent pads2에서 각자 planning token1과 handoff token1을 조절하고 central handoff gap을 열린 채 둔다. 제3 guardian·위계·완료 합의는 없다.",
+      "distinctFrom": [
+        "B001–070의 같은 별자리·협업 구도를 반복하지 않고 shared_windowedge_close_pair_windows3_durationresulttokens_openbay를 사용한다.",
+        "같은 work.next-move.shared-world 묶음의 다른 11개와 pair axis·역할 경계·열린 handoff를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "재잘이 · 소곤이 pair2의 정체성·상대 크기·독립 제어점을 확인한다.",
+        "다음 행동 범위가 합의 완료·위계·미래 성과로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "d8180dd8cda7cd65a51c431de3f0bbacf1b7cb736e87532b5a57218f32fa38b6"
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.work.next-move.shared-world",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "c4c154a716628019daa9ae3461b499b8a00abd7509c1f69dd7b76598a36bbf96",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "shared_roleboard_close_selflimitrequest_cells3_opengap",
+      "artDirection": "세로 3:4. 달콩이1의 얼굴·집게와 role board1/cells3, self/limit/request tokens3를 close side로 둔다. request token만 half-set하고 다른 cells는 열린다. 이름·타인·빈 자리·text는 없다. 달콩이 · 꼬옥이 exactly2가 independent pads2에서 각자 planning token1과 handoff token1을 조절하고 central handoff gap을 열린 채 둔다. 제3 guardian·위계·완료 합의는 없다.",
+      "distinctFrom": [
+        "B001–070의 같은 별자리·협업 구도를 반복하지 않고 shared_roleboard_close_selflimitrequest_cells3_opengap를 사용한다.",
+        "같은 work.next-move.shared-world 묶음의 다른 11개와 pair axis·역할 경계·열린 handoff를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이 · 꼬옥이 pair2의 정체성·상대 크기·독립 제어점을 확인한다.",
+        "다음 행동 범위가 합의 완료·위계·미래 성과로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "0c89867b0608e3048d020088563f802838f0cb00b15014d87d20c5033889bf21"
+    },
+    {
+      "order": 5,
+      "editionId": "leo.work.next-move.shared-world",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "f0782a6a0eff121205d98c9b413c17b8b40d80e0ad61407909b7b8e703650e0e",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "shared_stageplan_close_resultslot_deadlinetoken_crownoff_flygap",
+      "artDirection": "세로 3:4. 해님이1의 얼굴과 crown1, stage plan1/result slot1/deadline token1을 close low-angle로 둔다. token은 slot 앞에 미접촉이며 fly gap을 연다. name·date·score·audience0. 해님이 · 고르미 exactly2가 independent pads2에서 각자 planning token1과 handoff token1을 조절하고 central handoff gap을 열린 채 둔다. 제3 guardian·위계·완료 합의는 없다.",
+      "distinctFrom": [
+        "B001–070의 같은 별자리·협업 구도를 반복하지 않고 shared_stageplan_close_resultslot_deadlinetoken_crownoff_flygap를 사용한다.",
+        "같은 work.next-move.shared-world 묶음의 다른 11개와 pair axis·역할 경계·열린 handoff를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이 · 고르미 pair2의 정체성·상대 크기·독립 제어점을 확인한다.",
+        "다음 행동 범위가 합의 완료·위계·미래 성과로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "2ba7622c0b19ad20f19170e91602174eeb13e9df197ec807bb809329bd0a9c96"
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.work.next-move.shared-world",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "2698091930dbbd4cdfb4816a9cfde5c8bc619d8bf7b58a2e754ec47418946fb8",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "shared_requirementstrip_close_threecriteria_nextbox_pencilhover",
+      "artDirection": "세로 3:4. 새봄이1의 얼굴·손과 requirement strip1/criteria tokens3, next-version box1, pencil1을 close axial로 둔다. token1만 strip에 half-set하고 box는 열린다. checklist text·완벽 badge0. 새봄이 · 차곡이 exactly2가 independent pads2에서 각자 planning token1과 handoff token1을 조절하고 central handoff gap을 열린 채 둔다. 제3 guardian·위계·완료 합의는 없다.",
+      "distinctFrom": [
+        "B001–070의 같은 별자리·협업 구도를 반복하지 않고 shared_requirementstrip_close_threecriteria_nextbox_pencilhover를 사용한다.",
+        "같은 work.next-move.shared-world 묶음의 다른 11개와 pair axis·역할 경계·열린 handoff를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이 · 차곡이 pair2의 정체성·상대 크기·독립 제어점을 확인한다.",
+        "다음 행동 범위가 합의 완료·위계·미래 성과로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "f8edf66f6fab866124f28de481544aa861d6c2d6970dfdca7eb8d98310e43080"
+    },
+    {
+      "order": 7,
+      "editionId": "libra.work.next-move.shared-world",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "f56c0c7bc500f767a48c79e4b6ee165ebdb0efd456ce77bfdae0c78e633a18b2",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "shared_decisionboard_close_roledeadlinechoice_cells3_openY",
+      "artDirection": "세로 3:4. 고르미1의 얼굴·손과 decision board1/cells3, role/deadline/decision tokens3를 close frontal로 둔다. one token만 first notch이고 open Y gap을 남긴다. names·회의석·합의 완료0. 고르미 · 해님이 exactly2가 independent pads2에서 각자 planning token1과 handoff token1을 조절하고 central handoff gap을 열린 채 둔다. 제3 guardian·위계·완료 합의는 없다.",
+      "distinctFrom": [
+        "B001–070의 같은 별자리·협업 구도를 반복하지 않고 shared_decisionboard_close_roledeadlinechoice_cells3_openY를 사용한다.",
+        "같은 work.next-move.shared-world 묶음의 다른 11개와 pair axis·역할 경계·열린 handoff를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미 · 해님이 pair2의 정체성·상대 크기·독립 제어점을 확인한다.",
+        "다음 행동 범위가 합의 완료·위계·미래 성과로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "f799706b692b963971770cc875982513a85ea3acc6e22d3c7dcd570329586b64"
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.work.next-move.shared-world",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "add74b73c0d01fe42c9d5893e0f79a737091d7f8f89ebc092e9568971d874ceb",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "shared_responsibilitybox_close_boxes3_onelock_handofftokens_openbay",
+      "artDirection": "세로 3:4. 꼬옥이1/tail-heart1의 얼굴·pincers와 boxes3, one responsibility lock1, handoff tokens2를 close reverse로 둔다. lock은 half-set, other boxes2는 unlatched다. key·name·추가 heart0. 꼬옥이 · 달콩이 exactly2가 independent pads2에서 각자 planning token1과 handoff token1을 조절하고 central handoff gap을 열린 채 둔다. 제3 guardian·위계·완료 합의는 없다.",
+      "distinctFrom": [
+        "B001–070의 같은 별자리·협업 구도를 반복하지 않고 shared_responsibilitybox_close_boxes3_onelock_handofftokens_openbay를 사용한다.",
+        "같은 work.next-move.shared-world 묶음의 다른 11개와 pair axis·역할 경계·열린 handoff를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이 · 달콩이 pair2의 정체성·상대 크기·독립 제어점을 확인한다.",
+        "다음 행동 범위가 합의 완료·위계·미래 성과로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "c38d86799f7789f5b25f46d4e4835e5068f51a2d7b9ac204b191a9ab57288c1c"
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.work.next-move.shared-world",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "6c9f24358670d191423ae198225f23c3bb9901a9a25a6570e5020405fee1d16f",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "shared_currentpeak_close_foldedtelescope_blankflag_bow_skygap",
+      "artDirection": "세로 3:4. 총총이1/bow1의 얼굴·손과 folded telescope1, current-point flag1, blank deadline token1을 close side로 둔다. flag는 꽂기 전이고 sky gap을 연다. map route·date·arrow text0. 총총이 · 오름이 exactly2가 independent pads2에서 각자 planning token1과 handoff token1을 조절하고 central handoff gap을 열린 채 둔다. 제3 guardian·위계·완료 합의는 없다.",
+      "distinctFrom": [
+        "B001–070의 같은 별자리·협업 구도를 반복하지 않고 shared_currentpeak_close_foldedtelescope_blankflag_bow_skygap를 사용한다.",
+        "같은 work.next-move.shared-world 묶음의 다른 11개와 pair axis·역할 경계·열린 handoff를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이 · 오름이 pair2의 정체성·상대 크기·독립 제어점을 확인한다.",
+        "다음 행동 범위가 합의 완료·위계·미래 성과로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "04a75aa41d4f5bdc4238e057266e5c386a75babf560e9ab44d7c28925b5e06a5"
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.work.next-move.shared-world",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "2af79923080b17adff732f041b7a0194f8f57b9a79b62ae4a19055ed44d07b07",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "shared_approved_pilot_weekgrid_recoverycell_equalblocks",
+      "artDirection": "세로 3:4. 승인 파일럿 원본을 그대로 재사용한다. 오름이1가 이번 주 작업 칸과 같은 크기의 회복 칸을 놓는 close-emotion 구도·정체성·가슴 Stella 별을 변경하지 않는다. 새로 생성하지 않고 approvedArtworkSha256 바이트를 그대로 사용한다. 오름이 · 총총이 exactly2가 independent pads2에서 각자 planning token1과 handoff token1을 조절하고 central handoff gap을 열린 채 둔다. 제3 guardian·위계·완료 합의는 없다.",
+      "distinctFrom": [
+        "B001–070의 같은 별자리·협업 구도를 반복하지 않고 shared_approved_pilot_weekgrid_recoverycell_equalblocks를 사용한다.",
+        "같은 work.next-move.shared-world 묶음의 다른 11개와 pair axis·역할 경계·열린 handoff를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이 · 총총이 pair2의 정체성·상대 크기·독립 제어점을 확인한다.",
+        "다음 행동 범위가 합의 완료·위계·미래 성과로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "5005f9588863057c55b1d82b7142d00bf4e98d1b77c3b6b0aea2a3ef742070a9"
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.work.next-move.shared-world",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "347d97e28f7227e26bb76a01947348ceedb4c5ef895e86b21236286386509a71",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "shared_prototypeport_close_smallmachine_coretile_blankusagecard_cloudbite",
+      "artDirection": "세로 3:4. 방울이1의 얼굴·손과 small cloud prototype1, core function tile1, blank usage card1을 close top-oblique로 둔다. tile은 port 앞에 half-set하고 cloud bite를 연다. 완성 대형 기계·user figure·text0. 방울이 · 차곡이 exactly2가 independent pads2에서 각자 planning token1과 handoff token1을 조절하고 central handoff gap을 열린 채 둔다. 제3 guardian·위계·완료 합의는 없다.",
+      "distinctFrom": [
+        "B001–070의 같은 별자리·협업 구도를 반복하지 않고 shared_prototypeport_close_smallmachine_coretile_blankusagecard_cloudbite를 사용한다.",
+        "같은 work.next-move.shared-world 묶음의 다른 11개와 pair axis·역할 경계·열린 handoff를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이 · 차곡이 pair2의 정체성·상대 크기·독립 제어점을 확인한다.",
+        "다음 행동 범위가 합의 완료·위계·미래 성과로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "1cc2bb46d45c0919e4331dbc563a2455aac82170b5bf1e801e8fcbbe45f5e6d8"
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.work.next-move.shared-world",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "aaac0e6370e1415adf3f9198cdc2e875fc35337c240001d21a7725e71be1b31a",
+      "imageStatus": "approved_local_candidate",
+      "compositionFamily": "shared_dreamjar_close_pair_bubbles3_onejar_resultchecktags_cleft",
+      "artDirection": "세로 3:4. 꿈별이·잠별이 pair2의 얼굴·inner fins와 dream bubbles3, open jar1, result/check tags2를 close end-on으로 둔다. bubble1만 jar 위에 있고 tags는 미부착, central cleft를 연다. time·name·ring·heart0. 꿈별이 · 잠별이 exactly2가 independent pads2에서 각자 planning token1과 handoff token1을 조절하고 central handoff gap을 열린 채 둔다. 제3 guardian·위계·완료 합의는 없다.",
+      "distinctFrom": [
+        "B001–070의 같은 별자리·협업 구도를 반복하지 않고 shared_dreamjar_close_pair_bubbles3_onejar_resultchecktags_cleft를 사용한다.",
+        "같은 work.next-move.shared-world 묶음의 다른 11개와 pair axis·역할 경계·열린 handoff를 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꿈별이 · 잠별이 pair2의 정체성·상대 크기·독립 제어점을 확인한다.",
+        "다음 행동 범위가 합의 완료·위계·미래 성과로 확정되지 않는지 확인한다."
+      ],
+      "editorialApprovedOn": "2026-09-01",
+      "approvedArtworkSha256": "2518a81c093029cdea195bfa12fb9caee27c664cfd3f246726af8f065cb6321b"
+    }
+  ],
+  "editorialApprovedOn": "2026-09-01",
+  "generatedOn": "2026-09-01",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-02",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}

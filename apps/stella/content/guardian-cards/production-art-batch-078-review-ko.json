@@ -1,0 +1,314 @@
+{
+  "status": "visual_review_complete",
+  "locale": "ko",
+  "batchId": "choice.evidence.action-beat",
+  "batchOrder": 78,
+  "purpose": "선택의 근거 확인이 완전한 조사나 정답 판정이 아니라 결론을 실제로 바꿀 한 사실을 처음 움직여 확인하는 가역적 action-beat 12개 편집 검토안이다.",
+  "sourceBatchPlan": "production-art-batches-ko.json",
+  "selectionContract": {
+    "plannedEditionCount": 12,
+    "approvedPilotEditionCount": 0,
+    "newEditionCount": 12,
+    "onePerSign": true,
+    "slot": "choice",
+    "narrativeAxisId": "evidence",
+    "visualAxisId": "action-beat"
+  },
+  "editorialReviewContract": {
+    "approvalAuthority": "human_editor",
+    "contentHashAlgorithm": "sha256-canonical-json",
+    "hashFields": ["id", "title", "guardians", "scene", "artworkAlt", "oneLineTemplate", "reflection"],
+    "requiredChecks": [
+      "character_continuity",
+      "scene_feasibility",
+      "visible_alt_text",
+      "non_deterministic_copy",
+      "non_personalized_master_art",
+      "symbol_only_written_marks",
+      "distinct_composition_within_batch"
+    ],
+    "imageGenerationRequires": "approved_editorial_hash"
+  },
+  "renderContract": {
+    "aspectRatio": "3:4",
+    "masterSize": "1080x1440",
+    "fullBleed": true,
+    "maximumDisplayedGuardians": 2,
+    "bakedText": false,
+    "legibleTextInsideArtwork": false,
+    "writtenMarks": "symbols_and_shapes_only",
+    "characterCoverage": "55-65%",
+    "identityReferences": {
+      "fire": "apps/stella/design/zodiac-guardians/sheets/fire.png",
+      "earth": "apps/stella/design/zodiac-guardians/sheets/earth.png",
+      "air": "apps/stella/design/zodiac-guardians/sheets/air.png",
+      "water": "apps/stella/design/zodiac-guardians/sheets/water.png"
+    },
+    "styleReference": "apps/stella/private/guardian-art-pilot/contact-sheet-final.png",
+    "commonPrompt": "Use case: illustration-story. Asset type: premium choice-evidence action-beat guardian card master artwork, full-bleed 3:4. Show exactly the named single guardian or canonical internal pair and no extra adviser, partner, audience, future self, human, silhouette, reflection, empty seat or personal belonging implying another person. Preserve canonical identity, colors, clothing, signature props, dark-purple eyes and visible chest Stella stars. Guardian or pair plus one immediate evidence-check action covers 55–65% and reads at 80px. Capture only the first fact-token press, lamp switch, criterion lift, sample placement or narrow opening while unverified evidence and a return edge remain visibly separate; never declare a correct choice, certainty, verdict, destiny or guaranteed outcome. Written surfaces use isolated symbols and geometric reliefs only: no readable text, pseudo-text, names, labels, score, number, date, clock face, calendar grid, map coordinate, question mark, zodiac glyph, arrow route, logo or watermark. Do not bake actual birth-chart lines or personal colors into the master art. Trays, boards, doors, seals, sockets, bottles and bays remain open, removable, blank or reversible. Libra may use exactly one abstract evidence balance; no other sign uses a scale. Only Scorpio canonical tail-heart is allowed; no added heart. No closed ring, halo, portal, infinity sign or deterministic route. Keep every composition distinct. Soft colored-pencil and watercolor, paper grain, plush proportions and deep-purple outlines; no readable text, no logo, no watermark."
+  },
+  "editions": [
+    {
+      "order": 1,
+      "editionId": "aries.choice.evidence.action-beat",
+      "sign": "aries",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "f2e1e313b4389895515662357410db08593b80f7e3832fa8d89d834bdcc6221c",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "032ef66caf2d8fc28489371a8f050a73879e6adc0a04009e056e2258ea7a3c84",
+      "compositionFamily": "evidenceaction_aries_thresholdboard_factpress_returnlamp_opengap",
+      "artDirection": "세로 3:4. 몽실이1과 ajar red threshold1, blank evidence board1, distance block1, loose return lantern1을 low side로 둔다. 한 손이 solid star fact token1을 board의 첫 홈에 half-press하는 찰나만 잡고 문 통과·완료선·arrow·question mark·text는 없다.",
+      "distinctFrom": [
+        "B001–77의 같은 별자리·evidence action-beat 구도를 반복하지 않고 evidenceaction_aries_thresholdboard_factpress_returnlamp_opengap를 사용한다.",
+        "같은 choice.evidence.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "몽실이1·ajar threshold1·board1·distance block1·return lantern1·half-pressed fact token1을 확인한다.",
+        "핵심 사실 하나의 첫 확인만 보이고 출발·귀환·선택 결과가 확정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 2,
+      "editionId": "taurus.choice.evidence.action-beat",
+      "sign": "taurus",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "61fdc678aa8fdb8c5033a38177d729c56bbd18ba17f053ec2cfb5359e61f3a90",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "de378355925bc3533e08718acaadbcf25f2b545adcc66f09d8b71d7e2db82ed1",
+      "compositionFamily": "evidenceaction_taurus_groundbaskets_pebbles_firstsort_openmat",
+      "artDirection": "세로 3:4. 차곡이1과 open baskets2, cost/time pebble tokens2, soft worry cloud token1, verified cube1을 ground-side로 둔다. 차곡이가 verified cube만 fact basket에 first lower하고 다른 token과 넓은 open mat를 남긴다. 숫자·표·scale·text는 없다.",
+      "distinctFrom": [
+        "B001–77의 같은 별자리·evidence action-beat 구도를 반복하지 않고 evidenceaction_taurus_groundbaskets_pebbles_firstsort_openmat를 사용한다.",
+        "같은 choice.evidence.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "차곡이1·baskets2·pebbles2·worry token1·verified cube1의 first lower를 확인한다.",
+        "한 조건만 분류되고 비용·시간·장기 선택의 결론이 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 3,
+      "editionId": "gemini.choice.evidence.action-beat",
+      "sign": "gemini",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "60ad4e647c2ae5991ef313d032c98da262cc3c90cf8820614ebcedee4480491a",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "0568071300d1e0a9a69d5470a0407c659f595fc4a9fce9aa430109a65c884a7d",
+      "compositionFamily": "evidenceaction_gemini_twinwindows_sampletiles_firstexchange_unknownbay",
+      "artDirection": "세로 3:4. 재잘이·소곤이 canonical pair2/ribbon1와 open sample windows2, seen tile1, feeling tile1, central exchange tray1, empty unknown bay1을 overhead close로 둔다. 두 손이 각 tile을 tray 쪽으로 first lift하되 닿지 않게 한다. 지도선·label·text는 없다.",
+      "distinctFrom": [
+        "B001–77의 같은 별자리·evidence action-beat 구도를 반복하지 않고 evidenceaction_gemini_twinwindows_sampletiles_firstexchange_unknownbay를 사용한다.",
+        "같은 choice.evidence.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "재잘이·소곤이 pair2·windows2·seen/feeling tiles2·exchange tray1·unknown bay1을 확인한다.",
+        "첫 비교 자료만 교환되고 두 길의 우열이나 합의가 확정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 4,
+      "editionId": "cancer.choice.evidence.action-beat",
+      "sign": "cancer",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "ee6be7f12662eb60e7c668bfcfbf390e13211aa7ede3925152f150d24baa97d6",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "a9cc34773f787f9c9cabd35b4c8dcea8dc2ef0be9f80da4966fde167410ccdfa",
+      "compositionFamily": "evidenceaction_cancer_moondoor_facttoken_responsecup_firstreach",
+      "artDirection": "세로 3:4. 달콩이1과 ajar moon door1, solid star fact token1, empty response cup1, loose return lamp1을 inside three-quarter로 둔다. 달콩이가 token을 열린 문틈 쪽으로 first reach하되 cup에는 놓지 않는다. 상대 인물·물음표·말풍선·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–77의 같은 별자리·evidence action-beat 구도를 반복하지 않고 evidenceaction_cancer_moondoor_facttoken_responsecup_firstreach를 사용한다.",
+        "같은 choice.evidence.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "달콩이1·ajar moon door1·fact token1·empty response cup1·return lamp1의 first reach를 확인한다.",
+        "직접 확인을 시작하지만 상대 반응·관계 결과·정답을 화면이 대신 만들지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 5,
+      "editionId": "leo.choice.evidence.action-beat",
+      "sign": "leo",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "4d60f1d38b16ce2ff1d336e671ec0553c5fccb9934607dff549cdeaaa7dbd806",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "8500f37b8350bb1c312f9196765febd62c76802425eec8e6d5ec802dbc3ed779",
+      "compositionFamily": "evidenceaction_leo_publiclampoff_worklamp_firstswitch_tiles",
+      "artDirection": "세로 3:4. 해님이1/crown1과 ornate publicity lamp1/off, small work lamp1, schedule/responsibility relief tiles2를 low frontal로 둔다. 해님이 손이 work lamp의 solid star switch를 first press해 불빛이 막 켜지는 순간을 잡는다. audience·score·calendar grid·ring handle·text는 없다.",
+      "distinctFrom": [
+        "B001–77의 같은 별자리·evidence action-beat 구도를 반복하지 않고 evidenceaction_leo_publiclampoff_worklamp_firstswitch_tiles를 사용한다.",
+        "같은 choice.evidence.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "해님이1·crown1·publicity lamp off1·work lamp first-on1·relief tiles2를 확인한다.",
+        "화려한 이미지 밖의 조건 확인만 시작되고 인정·성과·정답이 보장되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 6,
+      "editionId": "virgo.choice.evidence.action-beat",
+      "sign": "virgo",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "6e291b284767ead2534b72d2de58b4c31f54085abdad6d4628531ac9e4e5f77f",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "be142d25a205c511c73866984af4b6f6e657ac5212447cabdaea8f9eac559e0e",
+      "compositionFamily": "evidenceaction_virgo_threeslotstrip_knownunknown_firstmove_pencil",
+      "artDirection": "세로 3:4. 새봄이1과 blank three-slot criterion strip1, loose tokens3, known bay1, unknown bay1, pencil1을 axial close로 둔다. 연필 든 손이 token1을 known bay 쪽으로 first slide하되 절반은 strip 위에 남긴다. checklist·letter·number·badge·text는 없다.",
+      "distinctFrom": [
+        "B001–77의 같은 별자리·evidence action-beat 구도를 반복하지 않고 evidenceaction_virgo_threeslotstrip_knownunknown_firstmove_pencil를 사용한다.",
+        "같은 choice.evidence.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "새봄이1·three-slot strip1·tokens3·known/unknown bays2·pencil1의 half-slide를 확인한다.",
+        "세 기준 중 하나만 확인 중이며 정보 완전성이나 완벽한 선택으로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 7,
+      "editionId": "libra.choice.evidence.action-beat",
+      "sign": "libra",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "caa5a079c7fede394dbc5e6eaef507c1bce4621a9f29c818ab35d6b39fc44775",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "5e930d7803dfc27bd0756ddcc5d0f946689b2dee183f604339796b86c56c979a",
+      "compositionFamily": "evidenceaction_libra_balance_extratoken_firstlift_openbox",
+      "artDirection": "세로 3:4. 고르미1과 exactly one abstract evidence balance1/pans2, criteria tokens3, open extra-token box1을 close diagonal로 둔다. 고르미가 extra token1을 한 pan에서 first lift하고 balance는 일부러 수평이 아니게 둔다. 다른 scale·score·label·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–77의 같은 별자리·evidence action-beat 구도를 반복하지 않고 evidenceaction_libra_balance_extratoken_firstlift_openbox를 사용한다.",
+        "같은 choice.evidence.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "고르미1·balance1·pans2·criteria tokens3·open box1·extra token first lift를 확인한다.",
+        "비교 기준을 줄이는 첫 동작만 보이고 기계적 균형·우열·정답 판정이 생기지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 8,
+      "editionId": "scorpio.choice.evidence.action-beat",
+      "sign": "scorpio",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "503063d03246c2c6fe107bc76cd05114174a925c551f97dd332e6a983193745b",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "aeedfea9f73a1356ca2c7c4dd21ce814e87743a36d6396f5d29d28bb51fae3f8",
+      "compositionFamily": "evidenceaction_scorpio_sealslit_factslide_feartray_tailheart",
+      "artDirection": "세로 3:4. 꼬옥이1/canonical tail-heart1과 seal plate1/narrow open slit1, fact tray1, fear tray1, loose tokens2를 reverse close로 둔다. 한 pincer가 solid fact token1을 slit 아래로 first slide하고 fear token은 분리한다. 추가 heart·key·document lines·ring·text는 없다.",
+      "distinctFrom": [
+        "B001–77의 같은 별자리·evidence action-beat 구도를 반복하지 않고 evidenceaction_scorpio_sealslit_factslide_feartray_tailheart를 사용한다.",
+        "같은 choice.evidence.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꼬옥이1·tail-heart1·seal slit1·fact/fear trays2·fact token first slide를 확인한다.",
+        "불편한 사실 한 조각만 확인되고 전면 공개·두려움 증명·정답으로 닫히지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 9,
+      "editionId": "sagittarius.choice.evidence.action-beat",
+      "sign": "sagittarius",
+      "element": "fire",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "cc747bcd37ee673d97701edd8ea1682fc0bf9ce5a22003e84ea929fa487f9a58",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "9ee9a1a9ca842f301e228dd3b20e6d453c06d295ec117859513d72fa344d85a4",
+      "compositionFamily": "evidenceaction_sag_fieldboard_conditionpieces_firstset_bow",
+      "artDirection": "세로 3:4. 총총이1/bow1과 blank field board1, cost/duration/opportunity tokens3, rumor cloud token1, fact star token1을 top-side로 둔다. 총총이가 fact star만 board의 open notch에 first set하는 찰나를 잡고 나머지는 loose로 둔다. 지도선·좌표·arrow·text는 없다.",
+      "distinctFrom": [
+        "B001–77의 같은 별자리·evidence action-beat 구도를 반복하지 않고 evidenceaction_sag_fieldboard_conditionpieces_firstset_bow를 사용한다.",
+        "같은 choice.evidence.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "총총이1·bow1·blank board1·condition tokens3·rumor/fact tokens2·first set을 확인한다.",
+        "현실 조건 하나만 놓였으며 목적지·성공 가능성·정답 경로가 정해지지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 10,
+      "editionId": "capricorn.choice.evidence.action-beat",
+      "sign": "capricorn",
+      "element": "earth",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "53662e0dbbdd45c50c199781a6b0e1baf11ba10d649b39115ec45dac856e9044",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "946d1243848ad75e3fda0ce4b68e618788d43add271c9d9152d9350db76c6630",
+      "compositionFamily": "evidenceaction_cap_stairmodels_expectedverified_firsttransfer",
+      "artDirection": "세로 3:4. 오름이1/turquoise tail과 stair models2, time/cost/duration tokens3, expected tray1, verified tray1을 top-oblique로 둔다. 오름이가 one cube를 expected에서 verified tray로 first transfer하되 두 stair의 next plate는 비워 둔다. 숫자·단계표·calendar grid·text는 없다.",
+      "distinctFrom": [
+        "B001–77의 같은 별자리·evidence action-beat 구도를 반복하지 않고 evidenceaction_cap_stairmodels_expectedverified_firsttransfer를 사용한다.",
+        "같은 choice.evidence.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "오름이1·stair models2·condition tokens3·expected/verified trays2·first transfer를 확인한다.",
+        "한 조건의 검증만 시작되고 더 높은 계단·지속 가능성·선택 결과가 확정되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 11,
+      "editionId": "aquarius.choice.evidence.action-beat",
+      "sign": "aquarius",
+      "element": "air",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "d4efb03664d8e7c329a358246d180c46fe2d8b80bbdbb92c7813998df5244612",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "8e8e45f03f81ac44c67c770e9563b9c76cd9eaa928bfb0ae7c7a297a0bd8fc2e",
+      "compositionFamily": "evidenceaction_aqua_cloudmodel_resourceblock_firstinsert_opensocket",
+      "artDirection": "세로 3:4. 방울이1과 small cloud-path model1, location/resource/function tiles3, open socket1, blank resource bay1을 front top-down으로 둔다. 방울이가 resource block1을 socket에 first half-insert하고 다른 tiles는 분리한다. user figure·diagram line·loop handle·label·text는 없다.",
+      "distinctFrom": [
+        "B001–77의 같은 별자리·evidence action-beat 구도를 반복하지 않고 evidenceaction_aqua_cloudmodel_resourceblock_firstinsert_opensocket를 사용한다.",
+        "같은 choice.evidence.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "방울이1·cloud model1·tiles3·open socket1·resource bay1·half-inserted block1을 확인한다.",
+        "작동 조건 하나의 시험만 시작되고 발명 완성·사용자 반응·정답이 보장되지 않는지 확인한다."
+      ]
+    },
+    {
+      "order": 12,
+      "editionId": "pisces.choice.evidence.action-beat",
+      "sign": "pisces",
+      "element": "water",
+      "editorialReviewStatus": "approved",
+      "editorialContentHash": "d4a80efd1df8bd68270d85408179b257db719c37ef6be2316626f6b10d91ee78",
+      "imageStatus": "approved_local_candidate",
+      "editorialApprovedOn": "2026-09-02",
+      "approvedArtworkSha256": "be753022f74ffa03637b197f133069ec68a2ed722f2a2b89219cc6aea5b873f7",
+      "compositionFamily": "evidenceaction_piscespair_openbottles_signalstar_firstraise_cleft",
+      "artDirection": "세로 3:4. 꿈별이·잠별이 canonical pair2와 open bottles2, intuition droplet1, fact prism1, repeated-signal star1을 end-on close로 둔다. 각자의 independent pad를 유지하고 두 inner fins가 star를 first raise하되 병에는 넣지 않으며 central cleft를 남긴다. handwriting·heart·ring·halo·text는 없다.",
+      "distinctFrom": [
+        "B001–77의 같은 별자리·evidence action-beat 구도를 반복하지 않고 evidenceaction_piscespair_openbottles_signalstar_firstraise_cleft를 사용한다.",
+        "같은 choice.evidence.action-beat 묶음의 다른 11개와 중심 제어점·카메라·열린 여백을 구분한다."
+      ],
+      "visualReviewFocus": [
+        "꿈별이·잠별이 pair2·bottles2·intuition/fact tokens2·signal star first raise·central cleft를 확인한다.",
+        "반복 신호를 처음 들어 올릴 뿐 직관·사실이 합쳐지거나 예언·정답으로 닫히지 않는지 확인한다."
+      ]
+    }
+  ],
+  "editorialApprovedOn": "2026-09-02",
+  "generatedOn": "2026-09-02",
+  "visualReviewContract": {
+    "approvalAuthority": "human_editor",
+    "approvedOn": "2026-09-02",
+    "assetHashAlgorithm": "sha256",
+    "approvedImageStatus": "approved_local_candidate",
+    "productionAssetStatus": "not_uploaded",
+    "runtimeMayPublishLocalCandidate": false
+  }
+}
