@@ -79,9 +79,9 @@ jobs:
           SOBOK_MIGRATOR_URL: ${{ secrets.STELLA_MIGRATOR_URL }}
         run: |
           if [ "$MODE" = 'plan' ]; then
-            bunx --bun drizzle-kit push --config drizzle.config.ts --explain --verbose
+            bunx --bun drizzle-kit push --config drizzle.config.ts --hints-file drizzle-push-hints.json --explain --verbose
           else
-            bunx --bun drizzle-kit push --config drizzle.config.ts
+            bunx --bun drizzle-kit push --config drizzle.config.ts --hints-file drizzle-push-hints.json
           fi
 
   accounts:
