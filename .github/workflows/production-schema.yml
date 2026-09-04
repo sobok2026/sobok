@@ -78,10 +78,37 @@ jobs:
           NODE_EXTRA_CA_CERTS: ${{ github.workspace }}/certs/supabase/prod-ca-2021.crt
           SOBOK_MIGRATOR_URL: ${{ secrets.STELLA_MIGRATOR_URL }}
         run: |
+          # The retired product has no buyers. Confirm only its abandoned draft rows,
+          # and stop if the database contradicts that release prerequisite.
+          bun - <<'JS'
+          import postgres from 'postgres'
+          const sql = postgres(process.env.SOBOK_MIGRATOR_URL, { max: 1, prepare: false, ssl: 'verify-full' })
+          const hints = await Bun.file('drizzle-push-hints.json').json()
+          try {
+            const [existing] = await sql`select to_regclass('stella.guardian_purchase') as purchases, to_regclass('stella.guardian_report') as reports`
+            if (existing.purchases) {
+              const counts = await sql`select status, count(*)::int as count from stella.guardian_purchase group by status`
+              console.log('Retired purchase status counts:', JSON.stringify(counts))
+              const [protectedRows] = await sql`select count(*)::int as count from stella.guardian_purchase where status not in ('pending', 'failed', 'cancelled') or paid_at is not null or entitlement_granted_at is not null`
+              if (protectedRows.count !== 0) throw new Error('Retired product has payment or entitlement records; stop the cutover')
+            }
+            if (existing.reports) {
+              const counts = await sql`select status, count(*)::int as count from stella.guardian_report group by status`
+              console.log('Retired report status counts:', JSON.stringify(counts))
+              if (counts.some(row => row.status !== 'draft')) throw new Error('Retired product has fulfilled reports; stop the cutover')
+            }
+            for (const table of ['guardian_collection', 'guardian_purchase', 'guardian_report']) {
+              hints.push({ type: 'confirm_data_loss', kind: 'table', entity: ['stella', table] })
+            }
+            await Bun.write(`${process.env.RUNNER_TEMP}/stella-push-hints.json`, JSON.stringify(hints))
+          } finally {
+            await sql.end({ timeout: 5 })
+          }
+          JS
           if [ "$MODE" = 'plan' ]; then
-            bunx --bun drizzle-kit push --config drizzle.config.ts --hints-file drizzle-push-hints.json --explain --verbose
+            bunx --bun drizzle-kit push --config drizzle.config.ts --hints-file "$RUNNER_TEMP/stella-push-hints.json" --explain --verbose
           else
-            bunx --bun drizzle-kit push --config drizzle.config.ts --hints-file drizzle-push-hints.json
+            bunx --bun drizzle-kit push --config drizzle.config.ts --hints-file "$RUNNER_TEMP/stella-push-hints.json"
           fi
 
   accounts:
