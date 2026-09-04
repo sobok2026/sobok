@@ -6,50 +6,12 @@ import {
   type Discovery,
   type ExposureRoute,
   type FirstResponse,
+  josa,
   type Profile,
   ROUTE_LABELS,
   ROUTES,
+  type Stage,
 } from '@/lib/experience'
-
-export type Stage =
-  | 'profile'
-  | 'identity'
-  | 'morning'
-  | 'unknownMessage'
-  | 'friendDelay'
-  | 'friendReady'
-  | 'accountGone'
-  | 'searchResults'
-  | 'primaryRoute'
-  | 'secondaryRoute'
-  | 'responseChoice'
-  | 'responseResult'
-  | 'incomingCall'
-  | 'workplaceCall'
-  | 'workplaceResult'
-  | 'relationships'
-  | 'relationshipResult'
-  | 'locationFear'
-  | 'locationResult'
-  | 'supportIntake'
-  | 'supportResult'
-  | 'deletedNotice'
-  | 'deletionResult'
-  | 'publicReaction'
-  | 'publicReactionResult'
-  | 'employment'
-  | 'employmentResult'
-  | 'coordination'
-  | 'jobSearch'
-  | 'jobRejection'
-  | 'investigation'
-  | 'investigationResult'
-  | 'judgment'
-  | 'judgmentResult'
-  | 'newRelationship'
-  | 'networkFinal'
-  | 'nameErased'
-  | 'ending'
 
 export type DailyAction = 'family' | 'friend' | 'work'
 
@@ -131,7 +93,7 @@ function IdentityScene({ profile }: { profile: Profile }) {
   return (
     <section className="identity-scene">
       <div className="identity-card">
-        <span className="identity-index">PERSON / 01</span>
+        <span className="identity-index">오늘의 나</span>
         <div className="identity-avatar" aria-hidden="true">
           {profile.name.slice(0, 1)}
         </div>
@@ -225,7 +187,7 @@ function UnknownMessageScene({ profile, onDiscovery }: { profile: Profile; onDis
             <div className="second-message">
               <p>이거 지금 돌아다니는데 본인 아닌가 해서요.</p>
               <div className="broken-preview">
-                <span className="mosaic-mini" aria-hidden="true" />
+                <span className="blurred-image blurred-image--mini" aria-hidden="true" />
                 <span>
                   {profile.company} 다니는 {profile.name}…
                 </span>
@@ -493,7 +455,7 @@ function ImageRoute({ profile }: { profile: Profile }) {
             archive_17<small>1분</small>
           </span>
         </div>
-        <div className="mosaic-large" aria-label="깨진 합성물 미리보기" role="img" />
+        <div className="blurred-image blurred-image--large" aria-label="흐리게 처리된 합성물 미리보기" role="img" />
         <strong>삭제되기 전에 저장.</strong>
         <p>비교해 보니까 @{profile.account}에 있던 사진이랑 같은 사람 맞음.</p>
       </article>
@@ -602,7 +564,7 @@ function WorkRoute({ profile }: { profile: Profile }) {
           <span>대표 메일</span>
         </div>
         <div className="mail-attachment">
-          <span className="mosaic-mini" />
+          <span className="blurred-image blurred-image--mini" />
           <strong>첨부 3개</strong>
         </div>
       </article>
@@ -695,7 +657,7 @@ function ResponseChoiceScene({
             archive_17<small>방금 전</small>
           </span>
         </div>
-        <div className="mosaic-wide" />
+        <div className="blurred-image blurred-image--wide" />
         <strong>
           {profile.company} {profile.name}
         </strong>
@@ -905,7 +867,9 @@ function SearchResult({
         <strong>{title}</strong>
         <p>합성인지 아닌지 모르겠는데 얼굴은 똑같네. {profile.company} 어디인지 찾음.</p>
       </span>
-      {withThumbnail ? <span className="mosaic-result" aria-label="모자이크된 미리보기" role="img" /> : null}
+      {withThumbnail ? (
+        <span className="blurred-image blurred-image--result" aria-label="흐리게 처리된 미리보기" role="img" />
+      ) : null}
     </button>
   )
 }
@@ -931,7 +895,7 @@ function secondaryNotification(route: ExposureRoute, profile: Profile): string {
 function secondaryDetail(route: ExposureRoute, profile: Profile): string {
   return {
     image: `@${profile.account} 사진 비교 게시물이 세 플랫폼에 복제되었습니다.`,
-    location: `${profile.station}과 ${profile.place}가 같은 이동 경로로 표시되었습니다.`,
+    location: `${josa(profile.station, '와/과')} ${josa(profile.place, '이/가')} 같은 이동 경로로 표시되었습니다.`,
     relationship: `${profile.friend}, ${profile.family}, 직장 동료에게 같은 링크가 전송되었습니다.`,
     work: `외부 발신 메일이 ${profile.company}의 여러 수신자에게 전달되었습니다.`,
   }[route]

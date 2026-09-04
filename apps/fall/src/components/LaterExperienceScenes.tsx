@@ -2,21 +2,23 @@
 
 import { type ReactNode, useEffect, useState } from 'react'
 
-import { AppHeader, Bubble, Notification, PhoneSurface, type Stage } from '@/components/ExperienceScenes'
-import type {
-  Coordination,
-  DeletionResponse,
-  EmploymentExit,
-  EvidenceMode,
-  ExposureRoute,
-  LegalView,
-  MonitoringResponse,
-  NightResponse,
-  Profile,
-  PublicResponse,
-  RecruitmentResponse,
-  RelationshipResponse,
-  WorkResponse,
+import { AppHeader, Bubble, Notification, PhoneSurface } from '@/components/ExperienceScenes'
+import {
+  type Coordination,
+  type DeletionResponse,
+  type EmploymentExit,
+  type EvidenceMode,
+  type ExposureRoute,
+  josa,
+  type LegalView,
+  type MonitoringResponse,
+  type NightResponse,
+  type Profile,
+  type PublicResponse,
+  type RecruitmentResponse,
+  type RelationshipResponse,
+  type Stage,
+  type WorkResponse,
 } from '@/lib/experience'
 
 const WORKPLACE_CALL_LINES = [
@@ -762,7 +764,7 @@ function EmploymentResultScene({ profile, exit }: { profile: Profile; exit: Empl
     },
     resign: {
       title: `${profile.company} 퇴사 처리`,
-      body: `회사 계정에서 이름은 사라졌지만 검색 결과 제목에는 ${profile.company}이 계속 남아 있습니다.`,
+      body: `회사 계정에서 이름은 사라졌지만 검색 결과 제목에는 ${josa(profile.company, '이/가')} 계속 남아 있습니다.`,
     },
   }[exit]
 
@@ -1118,7 +1120,7 @@ function NewRelationshipScene({ profile, onReply }: { profile: Profile; onReply:
           <>
             <Bubble side="incoming">혹시 예전에 인터넷에 올라왔던 사람이 본인 맞아요?</Bubble>
             <div className="fresh-link-preview">
-              <span className="mosaic-mini" />
+              <span className="blurred-image blurred-image--mini" />
               <span>
                 <small>게시일 · 3일 전</small>
                 <strong>{profile.name.slice(0, 1)}○○ 관련 게시물</strong>
