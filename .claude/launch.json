@@ -49,6 +49,13 @@
       "runtimeArgs": ["run", "dev"],
       "cwd": "apps/horn",
       "port": 3013
+    },
+    {
+      "name": "fall",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "apps/fall",
+      "port": 3017
     }
   ]
 }
