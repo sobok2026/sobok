@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react'
 
-import ExperienceScenes, { type DailyAction, type Stage } from '@/components/ExperienceScenes'
+import EndingScreen from '@/components/EndingScreen'
+import ExperienceChrome from '@/components/ExperienceChrome'
+import ExperienceScenes, { type DailyAction } from '@/components/ExperienceScenes'
+import IntroScreen from '@/components/IntroScreen'
 import LaterExperienceScenes from '@/components/LaterExperienceScenes'
 import ProfileComposer from '@/components/ProfileComposer'
 import {
@@ -22,11 +25,13 @@ import {
   type RecruitmentResponse,
   type RelationshipResponse,
   rankExposureRoutes,
+  type Stage,
   type WorkResponse,
 } from '@/lib/experience'
 
 type Session = {
   profile: Profile
+  disclosures: DisclosureState
   primaryRoute: ExposureRoute
   secondaryRoute: ExposureRoute
 }
@@ -56,12 +61,35 @@ const LATE_STAGES = new Set<Stage>([
   'newRelationship',
   'networkFinal',
   'nameErased',
-  'ending',
+])
+
+/** Stages that own the whole viewport instead of rendering inside the phone frame. */
+const FULL_SCREEN_STAGES = new Set<Stage>(['intro', 'profile', 'ending'])
+
+/** Scenes the reader only watches. Going back lands on the last scene they acted on,
+    so these are skipped — `morning` is excluded because its notifications are tappable. */
+const PASS_THROUGH_STAGES = new Set<Stage>([
+  'identity',
+  'friendDelay',
+  'responseResult',
+  'workplaceResult',
+  'relationshipResult',
+  'locationResult',
+  'supportResult',
+  'deletionResult',
+  'publicReactionResult',
+  'employmentResult',
+  'jobRejection',
+  'investigationResult',
+  'judgmentResult',
+  'nameErased',
 ])
 
 export default function FallExperience() {
   const [session, setSession] = useState<Session | null>(null)
-  const [stage, setStage] = useState<Stage>('profile')
+  const [stage, setStage] = useState<Stage>('intro')
+  const [history, setHistory] = useState<Stage[]>([])
+  const [exitConfirmOpen, setExitConfirmOpen] = useState(false)
   const [discovery, setDiscovery] = useState<Discovery>('direct')
   const [response, setResponse] = useState<FirstResponse | null>(null)
   const [openedRoute, setOpenedRoute] = useState<ExposureRoute | null>(null)
@@ -81,33 +109,81 @@ export default function FallExperience() {
   useEffect(() => {
     const delay = getAutomaticStageDelay(stage)
 
-    if (!delay) {
+    // The exit dialog holds the story still so the reader can decide.
+    if (!delay || exitConfirmOpen) {
       return
     }
 
     const timeout = window.setTimeout(() => {
+      setHistory((current) => [...current, stage])
       setStage(nextAutomaticStage(stage))
     }, delay)
 
     return () => window.clearTimeout(timeout)
-  }, [stage])
+  }, [stage, exitConfirmOpen])
+
+  function goToStage(next: Stage) {
+    setHistory((current) => [...current, stage])
+    setStage(next)
+  }
+
+  function goBack() {
+    setHistory((current) => {
+      const remaining = [...current]
+
+      while (remaining.length > 0) {
+        const previous = remaining.pop() as Stage
+
+        if (!PASS_THROUGH_STAGES.has(previous)) {
+          setStage(previous)
+          return remaining
+        }
+      }
+
+      setStage('profile')
+      return []
+    })
+  }
+
+  function resetToIntro() {
+    setExitConfirmOpen(false)
+    setSession(null)
+    setHistory([])
+    setStage('intro')
+    setDiscovery('direct')
+    setResponse(null)
+    setOpenedRoute(null)
+    setDailyActions([])
+    setWorkResponse(null)
+    setRelationshipResponse(null)
+    setNightResponse(null)
+    setEvidenceMode(null)
+    setDeletionResponse(null)
+    setPublicResponse(null)
+    setEmploymentExit(null)
+    setCoordination(null)
+    setRecruitmentResponse(null)
+    setLegalView(null)
+    setMonitoringResponse(null)
+  }
 
   function startExperience(profile: Profile, disclosures: DisclosureState) {
     const rankedRoutes = rankExposureRoutes(profile, disclosures)
 
     setSession({
       profile,
+      disclosures,
       primaryRoute: rankedRoutes[0].route,
       secondaryRoute: rankedRoutes[1].route,
     })
-    setStage('identity')
+    goToStage('identity')
   }
 
   function handleDailyAction(action: DailyAction) {
     setDailyActions((current) => (current.includes(action) ? current : [...current, action]))
 
     if (action === 'work') {
-      setStage('unknownMessage')
+      goToStage('unknownMessage')
     }
   }
 
@@ -115,82 +191,105 @@ export default function FallExperience() {
     setDiscovery(nextDiscovery)
 
     if (nextDiscovery === 'direct') {
-      setStage('searchResults')
+      goToStage('searchResults')
       return
     }
 
-    setStage(nextDiscovery === 'friend' ? 'friendDelay' : 'accountGone')
+    goToStage(nextDiscovery === 'friend' ? 'friendDelay' : 'accountGone')
   }
 
   function handleSecondaryOpen(route: ExposureRoute) {
     setOpenedRoute(route)
-    setStage('responseChoice')
+    goToStage('responseChoice')
   }
 
   function handleResponse(nextResponse: FirstResponse) {
     setResponse(nextResponse)
-    setStage('responseResult')
+    goToStage('responseResult')
   }
 
   function handleWorkResponse(nextResponse: WorkResponse) {
     setWorkResponse(nextResponse)
-    setStage('workplaceResult')
+    goToStage('workplaceResult')
   }
 
   function handleRelationshipResponse(nextResponse: RelationshipResponse) {
     setRelationshipResponse(nextResponse)
-    setStage('relationshipResult')
+    goToStage('relationshipResult')
   }
 
   function handleNightResponse(nextResponse: NightResponse) {
     setNightResponse(nextResponse)
-    setStage('locationResult')
+    goToStage('locationResult')
   }
 
   function handleEvidenceMode(nextMode: EvidenceMode) {
     setEvidenceMode(nextMode)
-    setStage('supportResult')
+    goToStage('supportResult')
   }
 
   function handleDeletionResponse(nextResponse: DeletionResponse) {
     setDeletionResponse(nextResponse)
-    setStage('deletionResult')
+    goToStage('deletionResult')
   }
 
   function handlePublicResponse(nextResponse: PublicResponse) {
     setPublicResponse(nextResponse)
-    setStage('publicReactionResult')
+    goToStage('publicReactionResult')
   }
 
   function handleEmploymentExit(nextExit: EmploymentExit) {
     setEmploymentExit(nextExit)
-    setStage('employmentResult')
+    goToStage('employmentResult')
   }
 
   function handleCoordination(nextCoordination: Coordination) {
     setCoordination(nextCoordination)
-    setStage('jobSearch')
+    goToStage('jobSearch')
   }
 
   function handleRecruitmentResponse(nextResponse: RecruitmentResponse) {
     setRecruitmentResponse(nextResponse)
-    setStage('jobRejection')
+    goToStage('jobRejection')
   }
 
   function handleLegalView(nextView: LegalView) {
     setLegalView(nextView)
-    setStage('investigationResult')
+    goToStage('investigationResult')
   }
 
   function handleMonitoringResponse(nextResponse: MonitoringResponse) {
     setMonitoringResponse(nextResponse)
-    setStage('judgmentResult')
+    goToStage('judgmentResult')
   }
 
+  const inStory = !FULL_SCREEN_STAGES.has(stage) && session !== null
+
   return (
-    <div className="fall-shell" data-stage={stage}>
-      {stage === 'profile' || !session ? (
-        <ProfileComposer onStart={startExperience} />
+    <div className="fall-shell" data-stage={stage} data-mode={inStory ? 'story' : 'page'}>
+      {inStory ? (
+        <ExperienceChrome
+          canGoBack={history.length > 0}
+          confirmOpen={exitConfirmOpen}
+          onBack={goBack}
+          onCancelExit={() => setExitConfirmOpen(false)}
+          onExit={resetToIntro}
+          onRequestExit={() => setExitConfirmOpen(true)}
+          stage={stage}
+        />
+      ) : null}
+
+      {stage === 'intro' ? (
+        <IntroScreen onStart={() => goToStage('profile')} />
+      ) : !session || stage === 'profile' ? (
+        <ProfileComposer onBack={resetToIntro} onStart={startExperience} />
+      ) : stage === 'ending' ? (
+        <EndingScreen
+          disclosures={session.disclosures}
+          employmentExit={employmentExit}
+          monitoringResponse={monitoringResponse}
+          onRestart={resetToIntro}
+        />
       ) : LATE_STAGES.has(stage) ? (
         <LaterExperienceScenes
           coordination={coordination}
@@ -203,11 +302,11 @@ export default function FallExperience() {
           onCoordination={handleCoordination}
           onDeletionResponse={handleDeletionResponse}
           onEmploymentExit={handleEmploymentExit}
-          onEraseName={() => setStage('nameErased')}
+          onEraseName={() => goToStage('nameErased')}
           onEvidenceMode={handleEvidenceMode}
           onLegalView={handleLegalView}
           onMonitoringResponse={handleMonitoringResponse}
-          onNewRelationshipReply={() => setStage('networkFinal')}
+          onNewRelationshipReply={() => goToStage('networkFinal')}
           onNightResponse={handleNightResponse}
           onPublicResponse={handlePublicResponse}
           onRecruitmentResponse={handleRecruitmentResponse}
@@ -226,14 +325,14 @@ export default function FallExperience() {
         <ExperienceScenes
           dailyActions={dailyActions}
           discovery={discovery}
-          onAccountSearch={() => setStage('searchResults')}
-          onAnswerCall={() => setStage('workplaceCall')}
+          onAccountSearch={() => goToStage('searchResults')}
+          onAnswerCall={() => goToStage('workplaceCall')}
           onDailyAction={handleDailyAction}
           onDiscovery={handleDiscovery}
-          onFriendOpen={() => setStage('searchResults')}
-          onPrimaryClose={() => setStage('secondaryRoute')}
+          onFriendOpen={() => goToStage('searchResults')}
+          onPrimaryClose={() => goToStage('secondaryRoute')}
           onResponse={handleResponse}
-          onSearchAction={() => setStage('primaryRoute')}
+          onSearchAction={() => goToStage('primaryRoute')}
           onSecondaryOpen={handleSecondaryOpen}
           openedRoute={openedRoute}
           primaryRoute={session.primaryRoute}

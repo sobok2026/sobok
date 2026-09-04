@@ -234,3 +234,153 @@ function stableHash(value: string): number {
 
   return hash >>> 0
 }
+
+export type Stage =
+  | 'intro'
+  | 'profile'
+  | 'identity'
+  | 'morning'
+  | 'unknownMessage'
+  | 'friendDelay'
+  | 'friendReady'
+  | 'accountGone'
+  | 'searchResults'
+  | 'primaryRoute'
+  | 'secondaryRoute'
+  | 'responseChoice'
+  | 'responseResult'
+  | 'incomingCall'
+  | 'workplaceCall'
+  | 'workplaceResult'
+  | 'relationships'
+  | 'relationshipResult'
+  | 'locationFear'
+  | 'locationResult'
+  | 'supportIntake'
+  | 'supportResult'
+  | 'deletedNotice'
+  | 'deletionResult'
+  | 'publicReaction'
+  | 'publicReactionResult'
+  | 'employment'
+  | 'employmentResult'
+  | 'coordination'
+  | 'jobSearch'
+  | 'jobRejection'
+  | 'investigation'
+  | 'investigationResult'
+  | 'judgment'
+  | 'judgmentResult'
+  | 'newRelationship'
+  | 'networkFinal'
+  | 'nameErased'
+  | 'ending'
+
+export type Chapter = {
+  title: string
+  stages: Stage[]
+}
+
+/** Narrative order. Branch variants of one beat sit next to each other. */
+export const CHAPTERS: Chapter[] = [
+  { title: '하루의 시작', stages: ['identity', 'morning'] },
+  {
+    title: '발견',
+    stages: [
+      'unknownMessage',
+      'friendDelay',
+      'friendReady',
+      'accountGone',
+      'searchResults',
+      'primaryRoute',
+      'secondaryRoute',
+    ],
+  },
+  {
+    title: '대응',
+    stages: [
+      'responseChoice',
+      'responseResult',
+      'incomingCall',
+      'workplaceCall',
+      'workplaceResult',
+      'relationships',
+      'relationshipResult',
+      'locationFear',
+      'locationResult',
+    ],
+  },
+  {
+    title: '삭제',
+    stages: [
+      'supportIntake',
+      'supportResult',
+      'deletedNotice',
+      'deletionResult',
+      'publicReaction',
+      'publicReactionResult',
+    ],
+  },
+  { title: '일상', stages: ['employment', 'employmentResult', 'coordination', 'jobSearch', 'jobRejection'] },
+  {
+    title: '판결 이후',
+    stages: [
+      'investigation',
+      'investigationResult',
+      'judgment',
+      'judgmentResult',
+      'newRelationship',
+      'networkFinal',
+      'nameErased',
+    ],
+  },
+]
+
+const STAGE_SEQUENCE: Stage[] = CHAPTERS.flatMap((chapter) => chapter.stages)
+
+export type StageProgress = {
+  chapterIndex: number
+  chapterCount: number
+  chapterTitle: string
+  ratio: number
+}
+
+export function stageProgress(stage: Stage): StageProgress | null {
+  const chapterIndex = CHAPTERS.findIndex((chapter) => chapter.stages.includes(stage))
+
+  if (chapterIndex < 0) {
+    return null
+  }
+
+  const position = STAGE_SEQUENCE.indexOf(stage)
+
+  return {
+    chapterIndex,
+    chapterCount: CHAPTERS.length,
+    chapterTitle: CHAPTERS[chapterIndex].title,
+    ratio: (position + 1) / STAGE_SEQUENCE.length,
+  }
+}
+
+const JOSA_PAIRS = {
+  '이/가': ['이', '가'],
+  '은/는': ['은', '는'],
+  '을/를': ['을', '를'],
+  '와/과': ['과', '와'],
+} as const
+
+export type JosaPair = keyof typeof JOSA_PAIRS
+
+/**
+ * Appends the Korean particle that agrees with the word's final consonant.
+ * Profile values are player-supplied, so the particle cannot be hard-coded.
+ * Non-Hangul endings fall back to the open-syllable form.
+ */
+export function josa(word: string, pair: JosaPair): string {
+  const [withFinal, withoutFinal] = JOSA_PAIRS[pair]
+  const lastCode = word.codePointAt(word.length - 1) ?? 0
+  const isHangulSyllable = lastCode >= 0xac00 && lastCode <= 0xd7a3
+  const hasFinalConsonant = isHangulSyllable && (lastCode - 0xac00) % 28 !== 0
+
+  return `${word}${hasFinalConsonant ? withFinal : withoutFinal}`
+}

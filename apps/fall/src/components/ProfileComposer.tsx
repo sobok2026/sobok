@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useId, useState } from 'react'
 
 import {
   DISCLOSURE_LABELS,
@@ -15,14 +15,16 @@ import {
 
 type Props = {
   onStart: (profile: Profile, disclosures: DisclosureState) => void
+  onBack: () => void
 }
 
-type TextFieldProps = {
+type FieldRowProps = {
   label: string
   value: string
   onChange: (value: string) => void
   inputMode?: 'numeric' | 'text'
   maxLength?: number
+  placeholder?: string
 }
 
 const PHOTO_OPTIONS = [
@@ -32,12 +34,13 @@ const PHOTO_OPTIONS = [
   '프로필 촬영 때 남긴 사진',
 ]
 
-export default function ProfileComposer({ onStart }: Props) {
+export default function ProfileComposer({ onStart, onBack }: Props) {
   const [presetIndex, setPresetIndex] = useState(0)
   const [profile, setProfile] = useState<Profile>({ ...PROFILE_PRESETS[0].profile })
   const [disclosures, setDisclosures] = useState<DisclosureState>({ ...PROFILE_PRESETS[0].disclosures })
   const selectedCount = selectedDisclosureCount(disclosures)
   const allFieldsFilled = Object.values(profile).every((value) => value.trim().length > 0)
+  const ready = allFieldsFilled && selectedCount >= 2
 
   function updateProfile<Key extends keyof Profile>(key: Key, value: Profile[Key]) {
     setProfile((current) => ({ ...current, [key]: value }))
@@ -59,7 +62,7 @@ export default function ProfileComposer({ onStart }: Props) {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (!allFieldsFilled || selectedCount < 2) {
+    if (!ready) {
       return
     }
 
@@ -83,83 +86,48 @@ export default function ProfileComposer({ onStart }: Props) {
 
   return (
     <section className="composer-screen">
-      <header className="composer-heading">
-        <p className="eyebrow">SEARCHABLE PERSON / 00</p>
-        <h1>오늘 하루를 시작할 사람을 만들어 주세요.</h1>
-        <p>입력값은 이 탭 안에서만 사용되고 새로고침하면 사라집니다. 모두 허구의 정보로 구성하세요.</p>
-      </header>
-
       <form autoComplete="off" className="composer-form" onSubmit={handleSubmit}>
-        <div className="profile-card">
-          <div className="profile-card-topline">
-            <span>PERSON / 28</span>
-            <button className="text-button" onClick={loadNextPreset} type="button">
-              다른 가상 인물
+        <header className="composer-nav">
+          <div className="nav-row">
+            <button className="nav-back" onClick={onBack} type="button">
+              <span aria-hidden="true">←</span>
+              안내
+            </button>
+            <button className="text-action" onClick={loadNextPreset} type="button">
+              다른 사람
             </button>
           </div>
-          <div className="avatar-placeholder" aria-hidden="true">
-            <span>{profile.name.slice(0, 1)}</span>
+          <div className="nav-title">
+            <strong>프로필 만들기</strong>
+            <small>오늘 하루를 대신 살 사람</small>
           </div>
-          <TextField label="이름" onChange={(value) => updateProfile('name', value)} value={profile.name} />
-          <label className="field-label">
-            <span>공개 프로필 사진</span>
-            <select
-              value={profile.profilePhoto}
-              onChange={(event) => updateProfile('profilePhoto', event.target.value)}
-            >
-              {PHOTO_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
+        </header>
+
+        <div className="composer-identity">
+          <span className="composer-avatar" aria-hidden="true" />
+          <strong>{profile.name || '이름 없음'}</strong>
+          <small>
+            {profile.company} · {profile.role}
+          </small>
         </div>
 
-        <fieldset className="field-group">
-          <legend>직장과 생활권</legend>
-          <div className="field-grid">
-            <TextField label="회사" onChange={(value) => updateProfile('company', value)} value={profile.company} />
-            <TextField label="직무" onChange={(value) => updateProfile('role', value)} value={profile.role} />
-            <TextField
-              label="사는 동네"
-              onChange={(value) => updateProfile('neighborhood', value)}
-              value={profile.neighborhood}
+        <div className="settings-group">
+          <p className="group-title">기본 정보</p>
+          <div className="settings-card">
+            <FieldRow label="이름" onChange={(value) => updateProfile('name', value)} value={profile.name} />
+            <SelectRow
+              label="공개 프로필 사진"
+              onChange={(value) => updateProfile('profilePhoto', value)}
+              options={PHOTO_OPTIONS}
+              value={profile.profilePhoto}
             />
-            <TextField
-              label="이용하는 역"
-              onChange={(value) => updateProfile('station', value)}
-              value={profile.station}
-            />
-            <div className="field-span">
-              <TextField
-                label="자주 가는 장소"
-                onChange={(value) => updateProfile('place', value)}
-                value={profile.place}
-              />
-            </div>
-          </div>
-        </fieldset>
-
-        <fieldset className="field-group">
-          <legend>관계와 계정</legend>
-          <div className="field-grid">
-            <TextField
-              label="가장 가까운 친구"
-              onChange={(value) => updateProfile('friend', value)}
-              value={profile.friend}
-            />
-            <TextField
-              label="자주 연락하는 가족"
-              onChange={(value) => updateProfile('family', value)}
-              value={profile.family}
-            />
-            <TextField
+            <FieldRow
               label="공개 계정"
               onChange={(value) => updateProfile('account', value.replace(/^@/, ''))}
+              placeholder="아이디"
               value={profile.account}
             />
-            <TextField
+            <FieldRow
               inputMode="numeric"
               label="연락처 끝 네 자리"
               maxLength={4}
@@ -167,54 +135,152 @@ export default function ProfileComposer({ onStart }: Props) {
               value={profile.phoneSuffix}
             />
           </div>
-        </fieldset>
+        </div>
 
-        <fieldset className="disclosure-fieldset">
-          <div className="disclosure-heading">
-            <legend>이 인물에게서 공개적으로 찾을 수 있는 정보</legend>
-            <span>{selectedCount}개 선택</span>
+        <div className="settings-group">
+          <p className="group-title">직장과 생활권</p>
+          <div className="settings-card">
+            <FieldRow label="회사" onChange={(value) => updateProfile('company', value)} value={profile.company} />
+            <FieldRow label="직무" onChange={(value) => updateProfile('role', value)} value={profile.role} />
+            <FieldRow
+              label="사는 동네"
+              onChange={(value) => updateProfile('neighborhood', value)}
+              value={profile.neighborhood}
+            />
+            <FieldRow
+              label="이용하는 역"
+              onChange={(value) => updateProfile('station', value)}
+              value={profile.station}
+            />
+            <FieldRow
+              label="자주 가는 장소"
+              onChange={(value) => updateProfile('place', value)}
+              value={profile.place}
+            />
           </div>
-          <div className="disclosure-list">
+        </div>
+
+        <div className="settings-group">
+          <p className="group-title">가까운 사람</p>
+          <div className="settings-card">
+            <FieldRow
+              label="가장 가까운 친구"
+              onChange={(value) => updateProfile('friend', value)}
+              value={profile.friend}
+            />
+            <FieldRow
+              label="자주 연락하는 가족"
+              onChange={(value) => updateProfile('family', value)}
+              value={profile.family}
+            />
+          </div>
+        </div>
+
+        <div className="settings-group">
+          <p className="group-title">공개 범위</p>
+          <p className="group-caption">켜 둔 항목은 누구나 검색해서 찾을 수 있는 정보가 됩니다.</p>
+          <div className="settings-card">
             {DISCLOSURES.map((key) => (
-              <button
-                aria-pressed={disclosures[key]}
-                className="disclosure-option"
-                data-selected={disclosures[key]}
+              <DisclosureRow
+                checked={disclosures[key]}
                 key={key}
-                onClick={() => toggleDisclosure(key)}
-                type="button"
-              >
-                <span className="selection-mark" aria-hidden="true" />
-                <span>
-                  <strong>{DISCLOSURE_LABELS[key]}</strong>
-                  <small>{disclosureValue(key, profile)}</small>
-                </span>
-              </button>
+                label={DISCLOSURE_LABELS[key]}
+                onToggle={() => toggleDisclosure(key)}
+                value={disclosureValue(key, profile)}
+              />
             ))}
           </div>
-          {selectedCount < 2 ? <p className="field-message">두 가지 이상 선택해야 합니다.</p> : null}
-        </fieldset>
+          <p className="group-caption" data-tone={selectedCount < 2 ? 'warning' : undefined}>
+            {selectedCount < 2 ? '두 가지 이상 켜야 시작할 수 있습니다.' : `${selectedCount}개를 공개했습니다.`}
+          </p>
+        </div>
 
-        <button className="start-button" disabled={!allFieldsFilled || selectedCount < 2} type="submit">
-          이 사람으로 시작하기
-          <span aria-hidden="true">→</span>
-        </button>
+        <div className="composer-footer">
+          <button className="primary-action" disabled={!ready} type="submit">
+            이 사람으로 시작하기
+          </button>
+        </div>
       </form>
     </section>
   )
 }
 
-function TextField({ label, value, onChange, inputMode = 'text', maxLength }: TextFieldProps) {
+function FieldRow({ label, value, onChange, inputMode = 'text', maxLength, placeholder = '입력' }: FieldRowProps) {
   return (
-    <label className="field-label">
-      <span>{label}</span>
-      <input
-        inputMode={inputMode}
-        maxLength={maxLength}
-        onChange={(event) => onChange(event.target.value)}
-        spellCheck={false}
-        value={value}
-      />
+    <label className="settings-row">
+      <span className="row-label">{label}</span>
+      <span className="row-control">
+        <input
+          inputMode={inputMode}
+          maxLength={maxLength}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          spellCheck={false}
+          value={value}
+        />
+      </span>
     </label>
+  )
+}
+
+function SelectRow({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string
+  value: string
+  options: string[]
+  onChange: (value: string) => void
+}) {
+  return (
+    <label className="settings-row">
+      <span className="row-label">{label}</span>
+      <span className="row-control row-control--select">
+        <select onChange={(event) => onChange(event.target.value)} value={value}>
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        <i aria-hidden="true">⌄</i>
+      </span>
+    </label>
+  )
+}
+
+function DisclosureRow({
+  label,
+  value,
+  checked,
+  onToggle,
+}: {
+  label: string
+  value: string
+  checked: boolean
+  onToggle: () => void
+}) {
+  const id = useId()
+
+  return (
+    <div className="settings-row settings-row--switch">
+      <span className="row-label">
+        <label htmlFor={id}>{label}</label>
+        <small>{value}</small>
+      </span>
+      <button
+        aria-checked={checked}
+        className="switch"
+        data-checked={checked}
+        id={id}
+        onClick={onToggle}
+        role="switch"
+        type="button"
+      >
+        <i aria-hidden="true" />
+      </button>
+    </div>
   )
 }
