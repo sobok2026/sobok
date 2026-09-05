@@ -178,7 +178,7 @@ export default function GuardianPassCheckout({ locale }: { locale: Locale }) {
     return (
       <CheckoutShell>
         <section className="mx-auto max-w-md rounded-[2rem] border border-white/10 bg-[#120b24]/90 p-7 text-center">
-          <h1 className="text-xl font-bold text-white">한국어에서 준비 중인 상품이에요</h1>
+          <h1 className="text-xl font-bold text-white">한국어로 제공하는 상품이에요</h1>
           <Link className="mt-6 block text-sm text-accent underline" href={paths.today}>
             오늘의 운세로 돌아가기
           </Link>
