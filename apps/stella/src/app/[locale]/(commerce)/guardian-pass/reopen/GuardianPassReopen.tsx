@@ -100,7 +100,7 @@ export default function GuardianPassReopen({ locale }: { locale: Locale }) {
         </header>
 
         {locale !== 'ko' ? (
-          <p className="mt-6 text-center text-sm text-foreground-muted">한국어에서 준비 중인 상품이에요.</p>
+          <p className="mt-6 text-center text-sm text-foreground-muted">한국어로 제공하는 상품이에요.</p>
         ) : state === 'exchanging' ? (
           <p className="mt-8 animate-pulse text-center text-sm text-foreground-muted motion-reduce:animate-none">
             {copy.reopen.exchanging}
