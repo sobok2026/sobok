@@ -1,0 +1,51 @@
+name: Cafe Deploy
+
+run-name: Deploy Cafe to production @ ${{ github.sha }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type DEPLOY CAFE
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sobok-production
+  cancel-in-progress: false
+
+jobs:
+  cafe:
+    name: Deploy Cafe
+    environment: production
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - name: Validate release request
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$REF" != 'refs/heads/main' ]; then
+            echo 'Cafe production releases must run from main.' >&2
+            exit 1
+          fi
+          if [ "$CONFIRMATION" != 'DEPLOY CAFE' ]; then
+            echo 'Type DEPLOY CAFE to confirm the Cafe release.' >&2
+            exit 1
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Build and deploy Cafe
+        uses: ./.github/actions/deploy-app
+        with:
+          package_name: '@sobok/cafe'
+          directory: apps/cafe
+          target: production
+          cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

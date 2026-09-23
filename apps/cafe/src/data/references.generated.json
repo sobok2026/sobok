@@ -1,0 +1,4673 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "file": "26_pre-autumn_recipes.xlsx",
+      "sha256": "d1d7e34ba65fdd19a8be882e945d441d989c355930d014d440af9be43d8a1682"
+    },
+    {
+      "file": "best_by_core.xlsx",
+      "sha256": "57383c4e43a4c0462f9cd1696ca82650a9a84ae936abcc3bfcf3e2f724b93058"
+    },
+    {
+      "file": "best_by_special.xlsx",
+      "sha256": "0ee48a7d05213b0d06456626c70470eedf731c5e0c5a4c555945b1d167076f64"
+    },
+    {
+      "file": "ingredient_prep_guide.xlsx",
+      "sha256": "5fff7fc1a4ebf5f57f48bd57a38b500e988abe775d75cdfb02ac3762eac70426"
+    }
+  ],
+  "recipes": [
+    {
+      "name": "블랙 글레이즈드 라떼",
+      "variant": "HOT",
+      "steps": [
+        {
+          "order": 1,
+          "item": "일반 우유",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "스팀 피처의 사이즈별 정확한 선까지 넣고 X-Hot 스팀한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 7
+          }
+        },
+        {
+          "order": 2,
+          "item": "에스프레소",
+          "unit": "샷",
+          "tall": 1,
+          "grande": 2,
+          "venti": 2,
+          "instruction": "컵에 에스프레소 샷을 추출한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 8
+          }
+        },
+        {
+          "order": 3,
+          "item": "글레이즈드 소스",
+          "unit": "펌프",
+          "tall": 3,
+          "grande": 4,
+          "venti": 5,
+          "instruction": "컵에 글레이즈드 소스를 펌핑한다.",
+          "note": "화이트 모카 펌프 10.2ml. 적게는 1펌프 감소.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 9
+          }
+        },
+        {
+          "order": 4,
+          "item": "에스프레소·소스",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "머들러로 에스프레소 샷과 글레이즈드 소스를 섞는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 10
+          }
+        },
+        {
+          "order": 5,
+          "item": "스팀 우유",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵 테두리 아래 12mm까지 붓는다.",
+          "note": "스팀 스쿱 사용. 우유 폼 제외.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 11
+          }
+        },
+        {
+          "order": 6,
+          "item": "바모카 드리즐",
+          "unit": "바퀴",
+          "tall": 1,
+          "grande": 1,
+          "venti": 1,
+          "instruction": "스팀 우유 위 컵의 가장자리에 두른다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 12
+          }
+        },
+        {
+          "order": 7,
+          "item": "글레이즈드 폼",
+          "unit": "ml (텀블러)",
+          "tall": 50,
+          "grande": 60,
+          "venti": 70,
+          "instruction": "컵 테두리 아래 6mm까지 붓는다.",
+          "note": "텀블러 계량값. 적게 선택 시 기존 용량의 1/2 제공.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 13
+          }
+        },
+        {
+          "order": 8,
+          "item": "번트 카라멜 파우더",
+          "unit": "톡",
+          "tall": 2,
+          "grande": 2,
+          "venti": 2,
+          "instruction": "글레이즈드 폼 위 정중앙에 토핑한다.",
+          "note": "없이/적게/보통. 적게는 기존 용량의 1/2.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 14
+          }
+        },
+        {
+          "order": 9,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 리드를 덮어 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 15
+          }
+        }
+      ]
+    },
+    {
+      "name": "블랙 글레이즈드 라떼",
+      "variant": "ICED",
+      "steps": [
+        {
+          "order": 1,
+          "item": "에스프레소",
+          "unit": "샷",
+          "tall": 1,
+          "grande": 2,
+          "venti": 2,
+          "instruction": "샷 글라스에 에스프레소 샷을 추출한다.",
+          "note": "우유 스팀 단계 생략.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 16
+          }
+        },
+        {
+          "order": 2,
+          "item": "글레이즈드 소스",
+          "unit": "펌프",
+          "tall": 3,
+          "grande": 4,
+          "venti": 5,
+          "instruction": "컵에 글레이즈드 소스를 펌핑한다.",
+          "note": "화이트 모카 펌프 10.2ml. 적게는 1펌프 감소.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 17
+          }
+        },
+        {
+          "order": 3,
+          "item": "에스프레소·소스",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "머들러로 에스프레소 샷과 글레이즈드 소스를 섞는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 18
+          }
+        },
+        {
+          "order": 4,
+          "item": "일반 우유",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 상단선까지 넣는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 19
+          }
+        },
+        {
+          "order": 5,
+          "item": "얼음",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵 테두리 아래 12mm까지 넣는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 20
+          }
+        },
+        {
+          "order": 6,
+          "item": "바모카 드리즐",
+          "unit": "바퀴",
+          "tall": 1,
+          "grande": 1,
+          "venti": 1,
+          "instruction": "얼음 위 컵의 가장자리에 두른다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 21
+          }
+        },
+        {
+          "order": 7,
+          "item": "글레이즈드 폼",
+          "unit": "ml (텀블러)",
+          "tall": 50,
+          "grande": 60,
+          "venti": 70,
+          "instruction": "컵 테두리 아래 6mm까지 붓는다.",
+          "note": "텀블러 계량값. 적게 선택 시 기존 용량의 1/2 제공.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 22
+          }
+        },
+        {
+          "order": 8,
+          "item": "번트 카라멜 파우더",
+          "unit": "톡",
+          "tall": 2,
+          "grande": 2,
+          "venti": 2,
+          "instruction": "글레이즈드 폼 위 정중앙에 토핑한다.",
+          "note": "없이/적게/보통. 적게는 기존 용량의 1/2.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 23
+          }
+        },
+        {
+          "order": 9,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 리드를 덮어 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 24
+          }
+        }
+      ]
+    },
+    {
+      "name": "호지 글레이즈드 티 라떼",
+      "variant": "HOT",
+      "steps": [
+        {
+          "order": 1,
+          "item": "일반 우유",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "스팀 피처의 사이즈별 정확한 선까지 넣고 X-Hot 스팀한다.",
+          "note": "에스프레소 샷 추출 단계 생략.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 25
+          }
+        },
+        {
+          "order": 2,
+          "item": "클래식 시럽",
+          "unit": "펌프",
+          "tall": 3,
+          "grande": 4,
+          "venti": 5,
+          "instruction": "컵에 클래식 시럽을 펌핑한다.",
+          "note": "시럽 펌프 7.5ml.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 26
+          }
+        },
+        {
+          "order": 3,
+          "item": "스팀 우유",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵 테두리 아래 18mm까지 붓는다.",
+          "note": "스팀 스푼 사용. 우유 폼 제외.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 27
+          }
+        },
+        {
+          "order": 4,
+          "item": "호지차 샷",
+          "unit": "ml (텀블러)",
+          "tall": 50,
+          "grande": 60,
+          "venti": 70,
+          "instruction": "컵 테두리 아래 12mm까지 붓는다.",
+          "note": "사용 전 믹싱 필수. 텀블러 계량값은 HOT 전용.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 28
+          }
+        },
+        {
+          "order": 5,
+          "item": "글레이즈드 폼",
+          "unit": "ml (텀블러)",
+          "tall": 50,
+          "grande": 60,
+          "venti": 70,
+          "instruction": "컵 테두리 아래 6mm까지 붓는다.",
+          "note": "텀블러 계량값. 적게 선택 시 기존 용량의 1/2 제공.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 29
+          }
+        },
+        {
+          "order": 6,
+          "item": "번트 카라멜 파우더",
+          "unit": "톡",
+          "tall": 2,
+          "grande": 2,
+          "venti": 2,
+          "instruction": "글레이즈드 폼 위 정중앙에 토핑한다.",
+          "note": "없이/적게/보통. 적게는 기존 용량의 1/2.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 30
+          }
+        },
+        {
+          "order": 7,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 리드를 덮어 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 31
+          }
+        }
+      ]
+    },
+    {
+      "name": "호지 글레이즈드 티 라떼",
+      "variant": "ICED",
+      "steps": [
+        {
+          "order": 1,
+          "item": "클래식 시럽",
+          "unit": "펌프",
+          "tall": 3,
+          "grande": 4,
+          "venti": 5,
+          "instruction": "컵에 클래식 시럽을 펌핑한다.",
+          "note": "시럽 펌프 7.5ml. 에스프레소 샷 추출 단계 생략.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 32
+          }
+        },
+        {
+          "order": 2,
+          "item": "일반 우유",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 중간선까지 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 33
+          }
+        },
+        {
+          "order": 3,
+          "item": "호지차 샷",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 상단선까지 붓는다.",
+          "note": "사용 전 믹싱 필수.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 34
+          }
+        },
+        {
+          "order": 4,
+          "item": "얼음",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵 테두리 아래 12mm까지 넣는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 35
+          }
+        },
+        {
+          "order": 5,
+          "item": "글레이즈드 폼",
+          "unit": "ml (텀블러)",
+          "tall": 50,
+          "grande": 60,
+          "venti": 70,
+          "instruction": "컵 테두리 아래 6mm까지 붓는다.",
+          "note": "텀블러 계량값. 적게 선택 시 기존 용량의 1/2 제공.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 36
+          }
+        },
+        {
+          "order": 6,
+          "item": "번트 카라멜 파우더",
+          "unit": "톡",
+          "tall": 2,
+          "grande": 2,
+          "venti": 2,
+          "instruction": "글레이즈드 폼 위 정중앙에 토핑한다.",
+          "note": "없이/적게/보통. 적게는 기존 용량의 1/2.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 37
+          }
+        },
+        {
+          "order": 7,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 리드를 덮어 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 38
+          }
+        }
+      ]
+    },
+    {
+      "name": "퓨어 말차",
+      "variant": "HOT",
+      "steps": [
+        {
+          "order": 1,
+          "item": "온수",
+          "unit": "핫 디스펜서",
+          "tall": "T",
+          "grande": "G",
+          "venti": "V",
+          "instruction": "컵에 사이즈별 핫 디스펜서 버튼으로 온수를 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 39
+          }
+        },
+        {
+          "order": 2,
+          "item": "말차 샷",
+          "unit": "ml (텀블러)",
+          "tall": 60,
+          "grande": 70,
+          "venti": 90,
+          "instruction": "컵 테두리 아래 12mm까지 붓는다.",
+          "note": "사용 전 믹싱 필수. 화상 위험 방지를 위해 12mm에서 마무리. 텀블러 계량값은 HOT 표에 기재.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 40
+          }
+        },
+        {
+          "order": 3,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 리드를 덮어 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 41
+          }
+        }
+      ]
+    },
+    {
+      "name": "퓨어 말차",
+      "variant": "ICED",
+      "steps": [
+        {
+          "order": 1,
+          "item": "정수",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 중간선까지 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 42
+          }
+        },
+        {
+          "order": 2,
+          "item": "말차 샷",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 상단선까지 붓는다.",
+          "note": "사용 전 믹싱 필수.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 43
+          }
+        },
+        {
+          "order": 3,
+          "item": "얼음",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵 테두리 아래 6mm까지 넣는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 44
+          }
+        },
+        {
+          "order": 4,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 리드를 덮어 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 45
+          }
+        }
+      ]
+    },
+    {
+      "name": "퓨어 호지차",
+      "variant": "HOT",
+      "steps": [
+        {
+          "order": 1,
+          "item": "온수",
+          "unit": "핫 디스펜서",
+          "tall": "T",
+          "grande": "G",
+          "venti": "V",
+          "instruction": "컵에 사이즈별 핫 디스펜서 버튼으로 온수를 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 46
+          }
+        },
+        {
+          "order": 2,
+          "item": "호지차 샷",
+          "unit": "ml (텀블러)",
+          "tall": 60,
+          "grande": 70,
+          "venti": 90,
+          "instruction": "컵 테두리 아래 12mm까지 붓는다.",
+          "note": "사용 전 믹싱 필수. 화상 위험 방지를 위해 12mm에서 마무리. 텀블러 계량값은 HOT 표에 기재.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 47
+          }
+        },
+        {
+          "order": 3,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 리드를 덮어 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 48
+          }
+        }
+      ]
+    },
+    {
+      "name": "퓨어 호지차",
+      "variant": "ICED",
+      "steps": [
+        {
+          "order": 1,
+          "item": "정수",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 중간선까지 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 49
+          }
+        },
+        {
+          "order": 2,
+          "item": "호지차 샷",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 상단선까지 붓는다.",
+          "note": "사용 전 믹싱 필수.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 50
+          }
+        },
+        {
+          "order": 3,
+          "item": "얼음",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵 테두리 아래 6mm까지 넣는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 51
+          }
+        },
+        {
+          "order": 4,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 리드를 덮어 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 52
+          }
+        }
+      ]
+    },
+    {
+      "name": "유자 V 피지오",
+      "variant": "ICED",
+      "steps": [
+        {
+          "order": 1,
+          "item": "유자 V 베이스",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 하단선까지 붓는다.",
+          "note": "제조 전 잘 흔들어서 사용.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 53
+          }
+        },
+        {
+          "order": 2,
+          "item": "정수",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 상단선까지 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 54
+          }
+        },
+        {
+          "order": 3,
+          "item": "혼합물",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "내용물을 피지오 전용 용기에 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 55
+          }
+        },
+        {
+          "order": 4,
+          "item": "스파클링",
+          "unit": "탄산 버튼",
+          "tall": "T",
+          "grande": "G",
+          "venti": "V",
+          "instruction": "사이즈에 맞는 버튼을 눌러 엑스트라 스파클링한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 56
+          }
+        },
+        {
+          "order": 5,
+          "item": "얼음",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "아이스 스쿱으로 컵 테두리 아래 1.3cm까지 넣는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 57
+          }
+        },
+        {
+          "order": 6,
+          "item": "스파클링된 내용물",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "얼음이 담긴 컵에 탄산이 넘치지 않도록 조심히 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 58
+          }
+        },
+        {
+          "order": 7,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 빨대 없는 리드를 덮어 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 59
+          }
+        }
+      ]
+    },
+    {
+      "name": "유자 말차 V 피지오",
+      "variant": "ICED",
+      "steps": [
+        {
+          "order": 1,
+          "item": "유자 V 베이스",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 하단선까지 붓는다.",
+          "note": "제조 전 잘 흔들어서 사용.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 60
+          }
+        },
+        {
+          "order": 2,
+          "item": "정수",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 중간선까지 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 61
+          }
+        },
+        {
+          "order": 3,
+          "item": "혼합물",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "내용물을 피지오 전용 용기에 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 62
+          }
+        },
+        {
+          "order": 4,
+          "item": "스파클링",
+          "unit": "탄산 버튼",
+          "tall": "T",
+          "grande": "G",
+          "venti": "V",
+          "instruction": "사이즈에 맞는 버튼을 눌러 엑스트라 스파클링한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 63
+          }
+        },
+        {
+          "order": 5,
+          "item": "얼음",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "아이스 스쿱으로 컵 테두리 아래 1.3cm까지 넣는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 64
+          }
+        },
+        {
+          "order": 6,
+          "item": "스파클링된 내용물",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "얼음이 담긴 컵에 탄산이 넘치지 않도록 조심히 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 65
+          }
+        },
+        {
+          "order": 7,
+          "item": "말차 샷",
+          "unit": "ml (텀블러)",
+          "tall": 50,
+          "grande": 60,
+          "venti": 70,
+          "instruction": "컵 테두리 아래 6mm까지 붓는다.",
+          "note": "사용 전 믹싱 필수. 수치는 텀블러 계량값.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 66
+          }
+        },
+        {
+          "order": 8,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 빨대 없는 리드를 덮어 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 67
+          }
+        }
+      ]
+    },
+    {
+      "name": "카스텔라 고구마 라떼",
+      "variant": "HOT",
+      "steps": [
+        {
+          "order": 1,
+          "item": "고구마 프리믹스",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "50:50 스팀 피처의 하단선까지 붓는다.",
+          "note": "사용 전 베이스 믹싱 필수.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 68
+          }
+        },
+        {
+          "order": 2,
+          "item": "일반 우유",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "50:50 스팀 피처의 상단선까지 붓고 스팀한다.",
+          "note": "에스프레소 샷 추출 단계 생략.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 69
+          }
+        },
+        {
+          "order": 3,
+          "item": "쫀득 펄 토핑",
+          "unit": "2티스푼 스쿱",
+          "tall": 2,
+          "grande": 3,
+          "venti": 4,
+          "instruction": "컵에 넣는다.",
+          "note": "없이/보통/많이.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 70
+          }
+        },
+        {
+          "order": 4,
+          "item": "스팀한 베이스",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵 테두리 아래 12mm까지 붓는다.",
+          "note": "스팀 스푼 사용. 폼 제외.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 71
+          }
+        },
+        {
+          "order": 5,
+          "item": "콜드 폼",
+          "unit": "ml (텀블러)",
+          "tall": 50,
+          "grande": 60,
+          "venti": 70,
+          "instruction": "컵 테두리 아래 6mm까지 올린다.",
+          "note": "수치는 텀블러 계량값. 콜드 폼 자체 제조 배합은 원문 미기재.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 72
+          }
+        },
+        {
+          "order": 6,
+          "item": "카스텔라 토핑",
+          "unit": "2티스푼 스쿱",
+          "tall": 1,
+          "grande": 1,
+          "venti": 1,
+          "instruction": "콜드 폼 위에 토핑한다.",
+          "note": "냉동 상태에서 사용할 양만 소분하고 잘 섞어 냉장 보관. 해동 없이 사용. 소분 후 냉장 당일.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 73
+          }
+        },
+        {
+          "order": 7,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 리드를 덮어 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 74
+          }
+        }
+      ]
+    },
+    {
+      "name": "카스텔라 고구마 라떼",
+      "variant": "ICED",
+      "steps": [
+        {
+          "order": 1,
+          "item": "고구마 프리믹스",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 하단선까지 붓는다.",
+          "note": "사용 전 베이스 믹싱 필수. 에스프레소 샷 추출 단계 생략.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 75
+          }
+        },
+        {
+          "order": 2,
+          "item": "일반 우유",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 중간선까지 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 76
+          }
+        },
+        {
+          "order": 3,
+          "item": "쫀득 펄 토핑",
+          "unit": "2티스푼 스쿱",
+          "tall": 2,
+          "grande": 3,
+          "venti": 4,
+          "instruction": "컵에 넣는다.",
+          "note": "없이/보통/많이.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 77
+          }
+        },
+        {
+          "order": 4,
+          "item": "얼음",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵 테두리 아래 12mm까지 넣는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 78
+          }
+        },
+        {
+          "order": 5,
+          "item": "콜드 폼",
+          "unit": "ml (텀블러)",
+          "tall": 50,
+          "grande": 60,
+          "venti": 70,
+          "instruction": "컵 테두리 아래 6mm까지 올린다.",
+          "note": "수치는 텀블러 계량값. 콜드 폼 자체 제조 배합은 원문 미기재.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 79
+          }
+        },
+        {
+          "order": 6,
+          "item": "카스텔라 토핑",
+          "unit": "2티스푼 스쿱",
+          "tall": 1,
+          "grande": 1,
+          "venti": 1,
+          "instruction": "콜드 폼 위에 토핑한다.",
+          "note": "냉동 상태에서 사용할 양만 소분하고 잘 섞어 냉장 보관. 해동 없이 사용. 소분 후 냉장 당일.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 80
+          }
+        },
+        {
+          "order": 7,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 리드를 덮어 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 81
+          }
+        }
+      ]
+    },
+    {
+      "name": "수박 주스 블렌디드",
+      "variant": "BLENDED",
+      "steps": [
+        {
+          "order": 1,
+          "item": "클래식 시럽",
+          "unit": "펌프",
+          "tall": 1,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵에 펌핑한다.",
+          "note": "Tall 전용. 시럽 펌프 7.5ml.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 82
+          }
+        },
+        {
+          "order": 2,
+          "item": "수박 베이스",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 하단선까지 붓는다.",
+          "note": "사용 직전 가볍게 흔들어 가라앉은 과육을 섞는다.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 83
+          }
+        },
+        {
+          "order": 3,
+          "item": "정수",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 중간선까지 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 84
+          }
+        },
+        {
+          "order": 4,
+          "item": "혼합물",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "내용물을 모두 블렌더 피처에 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 85
+          }
+        },
+        {
+          "order": 5,
+          "item": "얼음",
+          "unit": "CBS T 스쿱",
+          "tall": 0.5,
+          "grande": null,
+          "venti": null,
+          "instruction": "블렌더 피처에 넣는다.",
+          "note": "원문 표기: 1/2 T.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 86
+          }
+        },
+        {
+          "order": 6,
+          "item": "냉동 수박 다이스",
+          "unit": "컵",
+          "tall": 1,
+          "grande": null,
+          "venti": null,
+          "instruction": "블렌더 피처에 넣는다.",
+          "note": "1컵 = 1EA(100g).",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 87
+          }
+        },
+        {
+          "order": 7,
+          "item": "블렌딩",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "블렌더의 1번 버튼을 누른다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 88
+          }
+        },
+        {
+          "order": 8,
+          "item": "초콜릿 땅콩 토핑",
+          "unit": "1티스푼 스쿱",
+          "tall": 1,
+          "grande": null,
+          "venti": null,
+          "instruction": "블렌더 피처에 흩뿌려 넣고 피처를 4~5회 흔들어 섞는다(스월).",
+          "note": "한 곳에 뭉치지 않도록 전체적으로 뿌린다.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 89
+          }
+        },
+        {
+          "order": 9,
+          "item": "스월한 음료",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵에 모두 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 90
+          }
+        },
+        {
+          "order": 10,
+          "item": "수박 베이스",
+          "unit": "ml (텀블러)",
+          "tall": 30,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵 테두리 아래 6mm까지 추가로 붓는다.",
+          "note": "원문 텀블러 계량표: 수박 베이스 30ml. 처음 넣는 베이스 양과 구분.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 91
+          }
+        },
+        {
+          "order": 11,
+          "item": "제공",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "일회용 컵은 돔리드를 덮고 굵은 빨대를 제공한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 92
+          }
+        },
+        {
+          "order": 12,
+          "item": "2잔 동시 제조",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "원문 1~3단계(시럽·베이스·정수)를 반복해 피처에 넣는다. 얼음·수박 다이스와 마무리 토핑은 2배로 넣고 두 잔에 나눈다.",
+          "note": "스월한 토핑이 각 잔에 나뉘어 담기도록 한다.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 93
+          }
+        }
+      ]
+    },
+    {
+      "name": "콜드 브루",
+      "variant": "ICED",
+      "steps": [
+        {
+          "order": 1,
+          "item": "콜드 브루 추출액",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 하단선까지 넣는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 94
+          }
+        },
+        {
+          "order": 2,
+          "item": "정수",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵의 상단선까지 채운다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 95
+          }
+        },
+        {
+          "order": 3,
+          "item": "얼음",
+          "unit": "",
+          "tall": null,
+          "grande": null,
+          "venti": null,
+          "instruction": "컵 테두리 아래 6mm까지 채운다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "음료 제조",
+            "row": 96
+          }
+        }
+      ]
+    }
+  ],
+  "preparations": [
+    {
+      "name": "글레이즈드 폼",
+      "batch": "기본 배합 / 약 9잔",
+      "tools": "믹싱 피처, 콜드 폼 피처",
+      "storage": "제조 후 반드시 냉장 보관. 24시간. 숫자 Tag + Price Tag.",
+      "steps": [
+        {
+          "order": 1,
+          "item": "휘핑크림",
+          "unit": "ml",
+          "amount": 200,
+          "instruction": "콜드 폼 피처에 계량하여 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 7
+          }
+        },
+        {
+          "order": 2,
+          "item": "일반 우유",
+          "unit": "ml",
+          "amount": 50,
+          "instruction": "콜드 폼 피처에 계량하여 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 8
+          }
+        },
+        {
+          "order": 3,
+          "item": "글레이즈드 소스",
+          "unit": "펌프",
+          "amount": 7,
+          "instruction": "콜드 폼 피처에 펌핑한다.",
+          "note": "10.2ml 화이트 모카 펌프.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 9
+          }
+        },
+        {
+          "order": 4,
+          "item": "블렌딩",
+          "unit": "회",
+          "amount": 1,
+          "instruction": "3번 버튼을 누른다.",
+          "note": "3번 버튼 1회 = 약 25초.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 10
+          }
+        }
+      ]
+    },
+    {
+      "name": "글레이즈드 폼",
+      "batch": "대용량 배합 / 약 18잔",
+      "tools": "믹싱 피처, 콜드 폼 피처",
+      "storage": "제조 후 반드시 냉장 보관. 24시간. 숫자 Tag + Price Tag.",
+      "steps": [
+        {
+          "order": 1,
+          "item": "휘핑크림",
+          "unit": "ml",
+          "amount": 400,
+          "instruction": "콜드 폼 피처에 계량하여 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 11
+          }
+        },
+        {
+          "order": 2,
+          "item": "일반 우유",
+          "unit": "ml",
+          "amount": 100,
+          "instruction": "콜드 폼 피처에 계량하여 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 12
+          }
+        },
+        {
+          "order": 3,
+          "item": "글레이즈드 소스",
+          "unit": "펌프",
+          "amount": 14,
+          "instruction": "콜드 폼 피처에 펌핑한다.",
+          "note": "10.2ml 화이트 모카 펌프.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 13
+          }
+        },
+        {
+          "order": 4,
+          "item": "블렌딩",
+          "unit": "회",
+          "amount": 2,
+          "instruction": "3번 버튼을 누른다.",
+          "note": "1회 = 약 25초. 물성이 묽을 때는 3번 버튼 1회 추가.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 14
+          }
+        }
+      ]
+    },
+    {
+      "name": "호지차 샷",
+      "batch": "기본 배합 / 약 5잔",
+      "tools": "원형 쉐이커 보틀",
+      "storage": "제조 후 반드시 냉장 보관. 24시간. 숫자 Tag + Price Tag.",
+      "steps": [
+        {
+          "order": 1,
+          "item": "정수",
+          "unit": "ml",
+          "amount": 250,
+          "instruction": "원형 쉐이커 보틀의 250ml 선까지 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 15
+          }
+        },
+        {
+          "order": 2,
+          "item": "호지차 파우더",
+          "unit": "1티스푼 스쿱",
+          "amount": 8,
+          "instruction": "보틀에 넣는다.",
+          "note": "2티스푼 스쿱 4번으로 대체 가능.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 16
+          }
+        },
+        {
+          "order": 3,
+          "item": "쉐이킹",
+          "unit": "회",
+          "amount": 10,
+          "instruction": "뚜껑을 닫고 약 10회 쉐이킹 후 사용한다.",
+          "note": "음료 제조에 사용하기 전 믹싱 필수.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "말차 샷",
+      "batch": "기본 배합",
+      "tools": "원형 쉐이커 보틀",
+      "storage": "제조 후 반드시 냉장 보관. 24시간. 숫자 Tag + Price Tag.",
+      "steps": [
+        {
+          "order": 1,
+          "item": "정수",
+          "unit": "ml",
+          "amount": 250,
+          "instruction": "원형 쉐이커 보틀의 250ml 선까지 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 18
+          }
+        },
+        {
+          "order": 2,
+          "item": "말차 파우더",
+          "unit": "1티스푼 스쿱",
+          "amount": 8,
+          "instruction": "보틀에 넣는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 19
+          }
+        },
+        {
+          "order": 3,
+          "item": "쉐이킹",
+          "unit": "회",
+          "amount": 10,
+          "instruction": "뚜껑을 닫고 약 10회 쉐이킹 후 사용한다.",
+          "note": "음료 제조에 사용하기 전 믹싱 필수.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 20
+          }
+        }
+      ]
+    },
+    {
+      "name": "고구마 프리믹스",
+      "batch": "기본 배합 / 1L",
+      "tools": "믹싱 피처",
+      "storage": "제조 후 반드시 냉장 보관. 24시간. 숫자 Tag + Price Tag.",
+      "steps": [
+        {
+          "order": 1,
+          "item": "군고구마 소스",
+          "unit": "ml",
+          "amount": 200,
+          "instruction": "믹싱 피처에 계량하여 붓는다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 21
+          }
+        },
+        {
+          "order": 2,
+          "item": "휘핑크림",
+          "unit": "ml",
+          "amount": 200,
+          "instruction": "믹싱 피처에 계량하여 넣는다.",
+          "note": "데빅, 프릿츠골드, 매일. 휘핑크림 200ml와 우유 600ml는 하프앤하프 800ml로 대체 가능(추가 투입 아님).",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 22
+          }
+        },
+        {
+          "order": 3,
+          "item": "일반 우유",
+          "unit": "ml",
+          "amount": 600,
+          "instruction": "믹싱 피처에 계량하여 넣고 잘 섞어 마무리한다.",
+          "note": "대용량은 같은 비율로 2배합 제조 가능. 사용 전 믹싱 필수.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 23
+          }
+        }
+      ]
+    },
+    {
+      "name": "콜드 브루 추출액",
+      "batch": "Cold Brew Blend 5lb 기준",
+      "tools": "스타벅스 콜드 브루어(SCB) 또는 토디(Toddy)",
+      "storage": "제조 완료 후 내부 품질 기한 표시. 피처에 옮긴 후 냉장 최대 7일.",
+      "steps": [
+        {
+          "order": 1,
+          "item": "Cold Brew Blend",
+          "unit": "lb",
+          "amount": 5,
+          "instruction": "굵은 분쇄(Coarse Grind) 원두를 사용한다.",
+          "note": "그라인더 마스터 15 / G3 그라인더 26(Coarse) / 디팅 그라인더 9.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 24
+          }
+        },
+        {
+          "order": 2,
+          "item": "정수 물",
+          "unit": "L",
+          "amount": 14,
+          "instruction": "원두 5lb에 정수 물 14L 비율로 준비한다.",
+          "note": "",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 25
+          }
+        },
+        {
+          "order": 3,
+          "item": "추출 시간",
+          "unit": "시간",
+          "amount": 20,
+          "instruction": "차가운 물로 20시간 추출한다.",
+          "note": "추출 환경 주변 온도 21~27°C 유지.",
+          "source": {
+            "file": "26_pre-autumn_recipes.xlsx",
+            "sheet": "폼·베이스 제조",
+            "row": 26
+          }
+        }
+      ]
+    }
+  ],
+  "quality": [
+    {
+      "category": "커피",
+      "name": "오늘의 커피",
+      "storage": "URN",
+      "state": "추출후",
+      "lifetime": "1시간",
+      "portioned": "",
+      "opened": "",
+      "marking": "타이머",
+      "note": "71°C 이상",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 7
+      }
+    },
+    {
+      "category": "커피",
+      "name": "아이스커피",
+      "storage": "실온",
+      "state": "추출후",
+      "lifetime": "4시간",
+      "portioned": "",
+      "opened": "",
+      "marking": "타이머",
+      "note": "매장 상황에 따라 선택가능. 단, 교차보관금지",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 8
+      }
+    },
+    {
+      "category": "커피",
+      "name": "아이스커피",
+      "storage": "냉장",
+      "state": "추출후",
+      "lifetime": "8시간",
+      "portioned": "",
+      "opened": "",
+      "marking": "타이머",
+      "note": "매장 상황에 따라 선택가능. 단, 교차보관금지",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 9
+      }
+    },
+    {
+      "category": "커피",
+      "name": "갈은커피(드립/에스프레소침용)",
+      "storage": "실온",
+      "state": "제조후",
+      "lifetime": "24시간",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 10
+      }
+    },
+    {
+      "category": "커피",
+      "name": "cold brew 커피 추출액",
+      "storage": "냉장",
+      "state": "추출후",
+      "lifetime": "7일",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "리저브 공통",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 11
+      }
+    },
+    {
+      "category": "커피",
+      "name": "cold brew 커피 추출액 (원액보틀)",
+      "storage": "냉장",
+      "state": "추출후",
+      "lifetime": "3일",
+      "portioned": "",
+      "opened": "",
+      "marking": "넥 tag + price tag",
+      "note": "시그니처 더 블랙 콜드브루",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 12
+      }
+    },
+    {
+      "category": "커피",
+      "name": "원두",
+      "storage": "실온",
+      "state": "개봉후",
+      "lifetime": "7일",
+      "portioned": "",
+      "opened": "",
+      "marking": "수기기입 또는 price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 13
+      }
+    },
+    {
+      "category": "티",
+      "name": "티바나 더블스트렝스 티",
+      "storage": "실온",
+      "state": "제조후",
+      "lifetime": "12시간",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 14
+      }
+    },
+    {
+      "category": "유제품",
+      "name": "휘핑크림",
+      "storage": "냉장",
+      "state": "제조후",
+      "lifetime": "24시간",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 15
+      }
+    },
+    {
+      "category": "유제품",
+      "name": "Half &Half",
+      "storage": "냉장",
+      "state": "제조후",
+      "lifetime": "24시간",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 16
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "딸기리프레셔 믹스",
+      "storage": "냉장",
+      "state": "제조후",
+      "lifetime": "24시간",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 17
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "클래식밀크 티 베이스",
+      "storage": "냉장",
+      "state": "제조후",
+      "lifetime": "24시간",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 18
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "클래식 밀크티 (보틀)",
+      "storage": "냉장",
+      "state": "제조후",
+      "lifetime": "2일",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "진열판매용",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 19
+      }
+    },
+    {
+      "category": "소스",
+      "name": "모카소스(초콜릿드리즐 포함)",
+      "storage": "실온",
+      "state": "제조후",
+      "lifetime": "24시간",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "특화 다크초콜릿모카소스 동일",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 20
+      }
+    },
+    {
+      "category": "소스",
+      "name": "프라푸치노 로스트 믹스",
+      "storage": "실온",
+      "state": "제조후",
+      "lifetime": "48시간",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 21
+      }
+    },
+    {
+      "category": "소스",
+      "name": "시그니처초콜릿믹스",
+      "storage": "실온",
+      "state": "제조후",
+      "lifetime": "2일",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "마감시 냉장보관 실시",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 22
+      }
+    },
+    {
+      "category": "소스",
+      "name": "시그니처초콜릿믹스 (우유 포함)",
+      "storage": "냉장",
+      "state": "제조후",
+      "lifetime": "당일",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 23
+      }
+    },
+    {
+      "category": "폼",
+      "name": "폼파우더 사용, 반제품 음료베이스 (희석, 혼합)",
+      "storage": "냉장",
+      "state": "제조후",
+      "lifetime": "24시간",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 24
+      }
+    },
+    {
+      "category": "셔벗",
+      "name": "특화매장 (커피셔벗, 제주팔삭셔벗 등)",
+      "storage": "냉동",
+      "state": "제조후",
+      "lifetime": "2일",
+      "portioned": "",
+      "opened": "",
+      "marking": "숫자 tag + price tag",
+      "note": "제조후 6시간 냉동 후 사용",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "제조 베이스",
+        "row": 25
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "25 화이트 초콜릿맛 모카시럽",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "14일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 7
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "카라멜향 시럽 N",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "14일",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "체험매장 고객키트 제공시, 24시간",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 8
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "흑당 시럽 850ML",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 9
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "클래식, 바닐라, 스위트, 헤이즐넛, 심플시럽750ML CJ",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "심플시럽 컨디바용 일원화",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 10
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "솔티드 카라멜 시럽 850ML",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 11
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "베르가못 시럽 850ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 12
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "제로 클래식 시럽",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "21일",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 13
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "커피향시럽, 크림향시럽 (저당포함)",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "3일",
+      "marking": "숫자 tag + price tag",
+      "note": "저당시럽의 경우, 밀봉사용 가능",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 14
+      }
+    },
+    {
+      "category": "토핑",
+      "name": "LIME / 25G (건라임)",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "5일",
+      "opened": "1개월",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 15
+      }
+    },
+    {
+      "category": "토핑",
+      "name": "동결 건조 딸기 슬라이스(로컬) 50G",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "3개월",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 16
+      }
+    },
+    {
+      "category": "토핑",
+      "name": "망고 용과 토핑 25g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "3개월",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 17
+      }
+    },
+    {
+      "category": "토핑",
+      "name": "New 프라푸치노 칩 (자바칩)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "7일",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "부분소분 실온 당일 숫자 tag",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 18
+      }
+    },
+    {
+      "category": "연유",
+      "name": "연유소스, 스위트블랜디드",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "2일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 19
+      }
+    },
+    {
+      "category": "대체유",
+      "name": "두유, 오트음료",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "냉장 3일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 20
+      }
+    },
+    {
+      "category": "대체유",
+      "name": "코코넛베이스 (코코넛밀크)",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "냉장 3일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 21
+      }
+    },
+    {
+      "category": "유제품",
+      "name": "휘핑 크림 (프릿츠골드, 데빅듀오휩)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "24시간",
+      "opened": "24시간",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 22
+      }
+    },
+    {
+      "category": "유제품",
+      "name": "우유(무지방,일반,저지방)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "2일",
+      "marking": "냉장고 예시문구 부착대체\n(개봉 후 다음날까지 사용합니다)",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 23
+      }
+    },
+    {
+      "category": "유제품",
+      "name": "폼베이스",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "2일",
+      "marking": "냉장고 예시문구 부착대체\n(개봉 후 다음날까지 사용합니다)",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 24
+      }
+    },
+    {
+      "category": "유제품",
+      "name": "바닐라 크림 베이스",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "당일",
+      "opened": "2일",
+      "marking": "냉장고 예시문구 부착대체\n(개봉 후 다음날까지 사용합니다)",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 25
+      }
+    },
+    {
+      "category": "티백",
+      "name": "티바나 더블스트렝스 티",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "3개월",
+      "marking": "개봉 후: 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 26
+      }
+    },
+    {
+      "category": "티백",
+      "name": "제주 녹차 티백",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "1개월",
+      "marking": "개봉 후: 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "소분은 선택사항으로, 필요량만큼 소분. DID 보관 시 숫자 tag + price tag",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 27
+      }
+    },
+    {
+      "category": "티백",
+      "name": "1CS티백",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "-",
+      "marking": "개봉 후: 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "소분은 선택사항으로, 필요량만큼 소분. DID 보관 시 숫자 tag + price tag",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 28
+      }
+    },
+    {
+      "category": "사인판",
+      "name": "초콜릿사인판",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소비기한까지",
+      "opened": "소비기한까지",
+      "marking": "DID 소분가능, price tag (개봉일~만료일)",
+      "note": "원팩 반드시 보관",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 29
+      }
+    },
+    {
+      "category": "젤리",
+      "name": "레몬코코젤리",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "7일",
+      "marking": "소분시 숫자 tag + price tag\n개봉 후, 수기기입 / price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 30
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "모카 파우더 885g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "개봉 후 보관 시 밀봉보관 필수",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 31
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "초콜릿 드링크 믹스 532g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "개봉 후 보관 시 밀봉보관 필수",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 32
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "요거트 파우더 1000g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "개봉 후 보관 시 밀봉보관 필수",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 33
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "스노우 폼파우더 300g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "개봉 후 보관 시 밀봉보관 필수",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 34
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "시나몬 파우더40g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "개봉 후 보관 시 밀봉보관 필수",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 35
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "유기농 100% 말차 100g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "개봉 후 보관 시 밀봉보관 필수",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 36
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "슈거파우더",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "냉동푸드 2차 가공용",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 37
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "허니 자몽 소스 1.4KG",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "14일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 38
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "딸기 베이스 1000ml (냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "3일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 39
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "복숭아 소스 500g (냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 40
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "피치 베이스 1000ml",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 41
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "핑크 자몽 베이스 1000ml(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "냉장 7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 42
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "유자 진저 베이스 1000ml",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "냉장 7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 43
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "망고패션후르츠 블랜드(NEW)",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "냉장 7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 44
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "스타벅스 레모네이드 1L",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "냉장 7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 45
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "딸기 리프레셔 베이스 1L",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "냉장 7일",
+      "marking": "숫자 tag + price tag",
+      "note": "매장상황에 따라 선택가능. 단, 교차보관금지. 실온 3일 가능",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 46
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "라임 비버리지 베이스 1L",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "냉장 7일",
+      "marking": "숫자 tag + price tag",
+      "note": "매장상황에 따라 선택가능. 단, 교차보관금지. 실온 3일 가능",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 47
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "체리 자두 베이스 1000ML",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "냉장 7일",
+      "marking": "숫자 tag + price tag",
+      "note": "매장상황에 따라 선택가능. 단, 교차보관금지. 실온 3일 가능",
+      "source": {
+        "file": "best_by_core.xlsx",
+        "sheet": "코어 원재료",
+        "row": 48
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "화이트 뱅쇼 시럽 700ml(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "14일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 7
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "(제주특화)블랙 흑임자 시럽 830ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "실온 당일",
+      "opened": "냉장 14일",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 8
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "차이시럽",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "냉장 7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 9
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "흑당 시럽 850ML(이노라이즈 PE)",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 10
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "베르가못 시럽 850ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 11
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "우베시럽",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 12
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "리저브 위스키향 시럽 700ML",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 13
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "리저브 바닐라 빈 시럽 750ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 14
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "솔티드 카라멜 시럽 850ML",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 15
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "민트향 시럽 750ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 16
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "리저브 민트 시럽 750ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 17
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "꼬냑향 시럽 750ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 18
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "핑크 스트로베리 시럽 750ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 19
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "프렌치 바닐라 시럽 850ML",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 20
+      }
+    },
+    {
+      "category": "시럽",
+      "name": "리저브 라벤더향 시럽 850ML",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1개월",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 21
+      }
+    },
+    {
+      "category": "토핑 (실온)",
+      "name": "쿠키스트로우",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "1일",
+      "opened": "-",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 22
+      }
+    },
+    {
+      "category": "토핑 (실온)",
+      "name": "(제주)제주 감귤칩 30PC",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 23
+      }
+    },
+    {
+      "category": "토핑 (실온)",
+      "name": "동결 건조 딸기 25g (특화용)",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 24
+      }
+    },
+    {
+      "category": "토핑 (실온)",
+      "name": "시나몬 스틱 15PC",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 25
+      }
+    },
+    {
+      "category": "토핑 (실온)",
+      "name": "팔각토핑 500g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 26
+      }
+    },
+    {
+      "category": "토핑 (실온)",
+      "name": "호떡 믹스 토핑, 땅콩파우더",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 27
+      }
+    },
+    {
+      "category": "토핑 (실온)",
+      "name": "(제주)블랙소보로토핑 100g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 28
+      }
+    },
+    {
+      "category": "토핑 (실온)",
+      "name": "블랙 쿠키 분태, 너티쿠키 토핑",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 29
+      }
+    },
+    {
+      "category": "토핑 (실온)",
+      "name": "라이스 토핑 200g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 30
+      }
+    },
+    {
+      "category": "토핑 (실온)",
+      "name": "토피 넛 토핑 80G",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 31
+      }
+    },
+    {
+      "category": "토핑 (실온)",
+      "name": "레인보우 미니구슬 100g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "소비기한까지",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 32
+      }
+    },
+    {
+      "category": "토핑 (농산)",
+      "name": "애플민트 10G",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 33
+      }
+    },
+    {
+      "category": "토핑 (농산)",
+      "name": "로즈마리 10G(리저브특화매장용)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 34
+      }
+    },
+    {
+      "category": "토핑 (농산)",
+      "name": "레몬 슬라이스 6개입 90g",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 35
+      }
+    },
+    {
+      "category": "토핑 (농산)",
+      "name": "라임 웨지 6PC",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 36
+      }
+    },
+    {
+      "category": "토핑 (농산)",
+      "name": "타임_허브 12pc (냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 37
+      }
+    },
+    {
+      "category": "토핑 (농산)",
+      "name": "레몬 웨지 8개입(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 38
+      }
+    },
+    {
+      "category": "토핑 (농산)",
+      "name": "오렌지 슬라이스 10개입(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 39
+      }
+    },
+    {
+      "category": "토핑 (농산)",
+      "name": "레몬 하프 슬라이스 10PC(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 40
+      }
+    },
+    {
+      "category": "토핑(기타)",
+      "name": "복숭아 토핑 300G(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 41
+      }
+    },
+    {
+      "category": "토핑(기타)",
+      "name": "뱅쇼 과일 토핑 500g(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 42
+      }
+    },
+    {
+      "category": "토핑(기타)",
+      "name": "알로에 토핑 300g(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 43
+      }
+    },
+    {
+      "category": "토핑(기타)",
+      "name": "초당 옥수수 토핑",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 44
+      }
+    },
+    {
+      "category": "토핑(기타)",
+      "name": "그린 올리브 200g(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 45
+      }
+    },
+    {
+      "category": "토핑(기타)",
+      "name": "자몽쌕",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 46
+      }
+    },
+    {
+      "category": "토핑(기타)",
+      "name": "유자토핑 300G (냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 47
+      }
+    },
+    {
+      "category": "토핑(기타)",
+      "name": "화이트 타피오카 전분펄 50g(1개입)",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "가열 후 4시간",
+      "opened": "해당없음",
+      "marking": "해당없음",
+      "note": "타이머 가능 / 반투명시 사용",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 48
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "리저브 다크 초콜릿 파우더 200g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "모카소스 내품기와 동일",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 49
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "(제주)쑥파우더 500g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 50
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "번트 카라멜 파우더 30g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 51
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "라이스 토핑 파우더 100g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 52
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "블렌딩 몰트 파우더 120g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 53
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "블루컬러파우더 150g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 54
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "블루슈가 토핑 30g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 55
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "콩고물 파우더 500g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 56
+      }
+    },
+    {
+      "category": "파우더",
+      "name": "블루 혼합 파우더 80g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "3개월",
+      "marking": "소분 후 숫자 tag + price tag\n개봉 후 수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 57
+      }
+    },
+    {
+      "category": "떡류",
+      "name": "(제주)흑임자빙수떡 300g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 58
+      }
+    },
+    {
+      "category": "대체유",
+      "name": "정식품 베지밀 에이 190ml(미군부대매장용)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "3일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 59
+      }
+    },
+    {
+      "category": "대체유",
+      "name": "두유 950ml_정식품",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "3일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 60
+      }
+    },
+    {
+      "category": "대체유",
+      "name": "펫밀크 1000ml",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "당일",
+      "opened": "5일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 61
+      }
+    },
+    {
+      "category": "대체유",
+      "name": "휘핑크림(베지크렘 데코)500g(미군부대)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 62
+      }
+    },
+    {
+      "category": "대체유",
+      "name": "코코넛베이스 (코코넛밀크)",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "냉장 당일",
+      "opened": "냉장 3일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 63
+      }
+    },
+    {
+      "category": "초코소스",
+      "name": "초코쉘 800g",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "1일",
+      "opened": "7일",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "중탕가능",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 64
+      }
+    },
+    {
+      "category": "빙과류",
+      "name": "컬러풀 엘로우, 블루,핑크 토핑 400g(냉동)",
+      "storage": "냉동",
+      "state": "",
+      "lifetime": "",
+      "portioned": "7일",
+      "opened": "전량소분",
+      "marking": "개봉일~만료일 Price Tag 또는 수기 기입",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 65
+      }
+    },
+    {
+      "category": "빙과류",
+      "name": "산 모양 토핑, 가을,겨울 50g(냉동)",
+      "storage": "냉동",
+      "state": "",
+      "lifetime": "",
+      "portioned": "불가",
+      "opened": "바로사용",
+      "marking": "없음",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 66
+      }
+    },
+    {
+      "category": "빙과류",
+      "name": "리저브 바닐라 빈 아이스크림 2Kg",
+      "storage": "냉동",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 67
+      }
+    },
+    {
+      "category": "젤리",
+      "name": "인절미 젤리 200g(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 68
+      }
+    },
+    {
+      "category": "젤리",
+      "name": "한라봉 젤리 300g(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 69
+      }
+    },
+    {
+      "category": "젤리",
+      "name": "라임레몬젤리 300g(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 70
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "스타벅스 딸기 소스 750g (2021년)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "3일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 71
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "글레이즈드 소스, 뉴글레이즈소스",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "3일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 72
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "리저브 번트 카라멜 소스 500ML(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "3일",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 73
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "호떡 소스 1000g (냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 74
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "인절미 소스 1000ml(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "14일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 75
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "레몬 펄프셀 베이스 1000g(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 76
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "화이트 상그리아 베이스 700ml(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 77
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "오미자 베이스 / 오미자베이스S",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 78
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "(제주)제주 유채꿀 베이스 700ml",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 79
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "마누카 자몽소스 1200g (냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 80
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "블루자몽소스 750ml",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 81
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "팔삭 한라봉 베이스 1200ml (냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 82
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "복숭아 소스 500g (냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 83
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "레드 뱅쇼 베이스 700ml(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 84
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "파인 코코넛 향 소스 1000g(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 85
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "백도 복숭아 다이스 1000g(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 86
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "체리 소스 50ML",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "전량소분",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 87
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "허니 레몬 소스 700g(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "3일",
+      "opened": "14일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 88
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "슬래머 베이스 1000ml",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "3일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 89
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "쌀 베이스 1000ml(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "3일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 90
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "크리스마스 뱅쇼 베이스 1000ML(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 91
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "블루라임베이스 1000ML (냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 92
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "감귤 홉 베이스 1000ml (냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 93
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "체리 자두 베이스 1000ML",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 94
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "한라봉 천혜향 베이스 1000ml(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 95
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "라벤더향베이스 1000ML(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 96
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "레몬그라스&리치베이스",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 97
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "청자몽베이스 1000ML(냉장)",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "7일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 98
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "체리 베이스 750ML",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "전량 제조",
+      "marking": "해당없음",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 99
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "리저브 리얼 바닐라 빈 소스 500ML",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "14일",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 100
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "땅콩카라멜소스",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "냉장 7일",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 101
+      }
+    },
+    {
+      "category": "베이스",
+      "name": "초당옥수수 소스",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "2일",
+      "opened": "냉장 7일",
+      "marking": "수기기입 또는 price tag (개봉일~만료일)",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 102
+      }
+    },
+    {
+      "category": "주류",
+      "name": "별다방 라거 20L",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "케그연결 후 1개월",
+      "opened": "케그연결 후 1개월",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 103
+      }
+    },
+    {
+      "category": "주류",
+      "name": "(알콜)폰세카 타우니 포트 750ml",
+      "storage": "냉장",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "14일",
+      "marking": "숫자 tag + price tag",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 104
+      }
+    },
+    {
+      "category": "주류",
+      "name": "(알콜)에반윌리엄스 블랙 750ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1년",
+      "marking": "개봉일~만료일 Price Tag 또는 수기 기입",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 105
+      }
+    },
+    {
+      "category": "주류",
+      "name": "(알콜)칸티 프로세코 750ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1년",
+      "marking": "개봉일~만료일 Price Tag 또는 수기 기입",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 106
+      }
+    },
+    {
+      "category": "주류",
+      "name": "(알콜)바카디 카르타 블랑카 1,000ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1년",
+      "marking": "개봉일~만료일 Price Tag 또는 수기 기입",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 107
+      }
+    },
+    {
+      "category": "주류",
+      "name": "앱솔루트 보드카 700ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1년",
+      "marking": "개봉일~만료일 Price Tag 또는 수기 기입",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 108
+      }
+    },
+    {
+      "category": "주류",
+      "name": "(알콜)앙고스트라 비터 200ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1년",
+      "marking": "개봉일~만료일 Price Tag 또는 수기 기입",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 109
+      }
+    },
+    {
+      "category": "주류",
+      "name": "(알콜)아페롤 700ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1년",
+      "marking": "개봉일~만료일 Price Tag 또는 수기 기입",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 110
+      }
+    },
+    {
+      "category": "주류",
+      "name": "(알콜)마티니엑스트라드라이 750ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1년",
+      "marking": "개봉일~만료일 Price Tag 또는 수기 기입",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 111
+      }
+    },
+    {
+      "category": "주류",
+      "name": "(알콜)텐커레이넘버텐 700ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1년",
+      "marking": "개봉일~만료일 Price Tag 또는 수기 기입",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 112
+      }
+    },
+    {
+      "category": "주류",
+      "name": "(알콜)일품진로 375ML",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1년",
+      "marking": "개봉일~만료일 Price Tag 또는 수기 기입",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 113
+      }
+    },
+    {
+      "category": "주류",
+      "name": "진저엘 250ML",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "1년",
+      "marking": "개봉일~만료일 Price Tag 또는 수기 기입",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 114
+      }
+    },
+    {
+      "category": "주류",
+      "name": "토닉워터 300ml",
+      "storage": "실온",
+      "state": "",
+      "lifetime": "",
+      "portioned": "소분제외",
+      "opened": "냉장 당일",
+      "marking": "없음",
+      "note": "",
+      "source": {
+        "file": "best_by_special.xlsx",
+        "sheet": "특화 원재료",
+        "row": 115
+      }
+    }
+  ],
+  "prepGuide": [
+    {
+      "name": "오늘의 커피",
+      "instruction": "118g + 1/4\n안내려져 있다면 5분 안내",
+      "code": "BC",
+      "lifetime": "1시간",
+      "marking": "타이머",
+      "storage": "실온",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 7
+      }
+    },
+    {
+      "name": "아이스 커피",
+      "instruction": "196g + 1/4\n5분 내린 후 얼음 660g",
+      "code": "IC",
+      "lifetime": "4시간",
+      "marking": "타이머",
+      "storage": "실온",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 8
+      }
+    },
+    {
+      "name": "아이스 커피",
+      "instruction": "196g + 1/4\n5분 내린 후 얼음 660g",
+      "code": "IC",
+      "lifetime": "8시간",
+      "marking": "타이머",
+      "storage": "냉장",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 9
+      }
+    },
+    {
+      "name": "FR (프라푸치노 로스트)",
+      "instruction": "프라푸치노 로스트 1봉 + 정수물 1L",
+      "code": "FR",
+      "lifetime": "48시간",
+      "marking": "숫자 + Price Tag",
+      "storage": "실온",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 10
+      }
+    },
+    {
+      "name": "시그니처 초코",
+      "instruction": "시그니쳐 초코 1봉 + 온수 500ml + 얼음물 500ml",
+      "code": "SC",
+      "lifetime": "2일",
+      "marking": "숫자 + Price Tag",
+      "storage": "냉장",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 11
+      }
+    },
+    {
+      "name": "하프 앤 하프",
+      "instruction": "프릿츠골드 250ml + 우유 750ml\n(우유3 : 휘핑1 비율)",
+      "code": "H&H",
+      "lifetime": "24시간",
+      "marking": "숫자 + Price Tag",
+      "storage": "냉장",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 12
+      }
+    },
+    {
+      "name": "바모카",
+      "instruction": "바모카 1봉 + 온수 1L",
+      "code": "M",
+      "lifetime": "24시간",
+      "marking": "숫자 + Price Tag",
+      "storage": "실온",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 13
+      }
+    },
+    {
+      "name": "일반 휘핑 (까라페,ITIS)",
+      "instruction": "휘핑크림 260ml + 심플 시럽 3펌프",
+      "code": "WC",
+      "lifetime": "24시간",
+      "marking": "숫자 + Price Tag",
+      "storage": "냉장",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 14
+      }
+    },
+    {
+      "name": "일반 휘핑 (바트)",
+      "instruction": "휘핑크림 1L + 심플 시럽 11펌프",
+      "code": "WC",
+      "lifetime": "24시간",
+      "marking": "숫자 + Price Tag",
+      "storage": "냉장",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 15
+      }
+    },
+    {
+      "name": "에스프레소 칩",
+      "instruction": "에스프레소 원두(2~3스쿱) 그라인더 에스프레소로 분쇄",
+      "code": "ESP Chip",
+      "lifetime": "24시간",
+      "marking": "숫자 + Price Tag",
+      "storage": "실온",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 16
+      }
+    },
+    {
+      "name": "더블 스트랭스(블랙)",
+      "instruction": "블랙티 2EA + 온수 1L\n5분 후 티백제거 + 2L까지 정수물",
+      "code": "BT",
+      "lifetime": "12시간",
+      "marking": "숫자 + Price Tag",
+      "storage": "실온",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 17
+      }
+    },
+    {
+      "name": "더블 스트랭스(민트)",
+      "instruction": "민트티 2EA + 스팀피쳐 V사이즈까지 온수\n5분 후 티백제거 + MAX선까지 얼음",
+      "code": "MT",
+      "lifetime": "12시간",
+      "marking": "숫자 + Price Tag",
+      "storage": "실온",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 18
+      }
+    },
+    {
+      "name": "클래식 밀크티 베이스",
+      "instruction": "블랙티 2EA + 온수 700ml\n10분 후 티백제거 + V얼음 + 흑당 시럽 20펌프 + 하프 앤 하프 1L",
+      "code": "C MT",
+      "lifetime": "24시간",
+      "marking": "숫자 + Price Tag",
+      "storage": "냉장",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 19
+      }
+    },
+    {
+      "name": "콜드 폼",
+      "instruction": "폼 베이스 250ml + 바닐라 시럽(7.5ml) 4번\n대용량 제조 시 2배",
+      "code": "Cold F",
+      "lifetime": "24시간",
+      "marking": "숫자 + Price Tag",
+      "storage": "냉장",
+      "source": {
+        "file": "ingredient_prep_guide.xlsx",
+        "sheet": "부재료 제조",
+        "row": 20
+      }
+    }
+  ]
+}
