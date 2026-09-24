@@ -1,6 +1,8 @@
 import referenceData from '../data/references.generated.json'
+import { type DrinkReference, type DrinkStepReference, linkReferences, sourceLine } from './reference-links'
 
-export const references = referenceData
+export const referenceLinks = linkReferences(referenceData)
+export const COLD_BREW_HOURS = referenceLinks.brew.hours
 export const BAR_CENTER_Z = -1.05
 export const STAFF_AISLE_EDGE_Z = -1.95
 export const staffStartPosition = (): [number, number, number, number] => [-4.4, -3.05, Math.PI, -0.17]
@@ -61,92 +63,76 @@ type Ingredient = {
   prepared?: boolean
   source: string
 }
-const HOUR = 3600
+const quality = referenceLinks.quality
 // Pack capacities, purchase prices and volume estimates are prototype rules, not store standards.
 export const INGREDIENTS: Record<IngredientId, Ingredient> = {
   beans: {
     name: '에스프레소 원두',
     unit: 'g',
     pack: 500,
-    storage: 'room',
-    lifetime: 7 * 24 * HOUR,
+    ...quality.beans,
     price: 12000,
-    source: 'core 제조 베이스 13행',
   },
   milk: {
     name: '일반 우유',
     unit: 'ml',
     pack: 1000,
-    storage: 'fridge',
-    lifetime: 2 * 24 * HOUR,
+    ...quality.milk,
     price: 3000,
-    source: 'core 코어 원재료 23행',
   },
   cream: {
     name: '휘핑크림 원재료',
     unit: 'ml',
     pack: 1000,
-    storage: 'fridge',
-    lifetime: 24 * HOUR,
+    ...quality.cream,
     price: 6000,
-    source: 'core 코어 원재료 22행',
   },
   glaze: {
     name: '글레이즈드 소스',
     unit: 'ml',
     pack: 1000,
-    storage: 'fridge',
-    lifetime: 3 * 24 * HOUR,
+    ...quality.glaze,
     price: 8000,
-    source: 'special 72행 · 개봉후',
   },
   powder: {
     name: '번트 카라멜 파우더',
     unit: '톡',
     pack: 100,
-    storage: 'room',
-    lifetime: 7 * 24 * HOUR,
+    ...quality.powder,
     price: 4000,
-    source: 'special 51행 · 소분후',
   },
   mochaPowder: {
     name: '바모카 원팩',
     unit: '봉',
     pack: 1,
     storage: 'room',
-    lifetime: 7 * 24 * HOUR,
+    lifetime: 7 * 86400, // Prototype opened-pack lifetime; the guide only specifies the prepared sauce.
     price: 7000,
-    source: 'prep 13행 · 원팩 단위',
+    source: `${sourceLine(referenceLinks.mocha.reference.source)} · 원팩 단위 / 개봉 후 7일은 게임용 임시값`,
   },
   mocha: {
     name: '바모카',
     unit: 'ml',
     pack: 1500,
-    storage: 'room',
-    lifetime: 24 * HOUR,
+    ...quality.mocha,
     price: 0,
     prepared: true,
-    source: 'prep 13행 / core 제조 베이스 20행',
   },
   foam: {
     name: '글레이즈드 폼',
     unit: 'ml',
     pack: 450,
-    storage: 'fridge',
-    lifetime: 24 * HOUR,
+    ...quality.foam,
     price: 0,
     prepared: true,
-    source: 'recipes 폼·베이스 제조 7~10행',
   },
   coldBrew: {
     name: '콜드 브루 추출액',
     unit: 'ml',
     pack: 3000,
-    storage: 'fridge',
-    lifetime: 7 * 24 * HOUR,
+    ...quality.coldBrew,
     price: 0,
     prepared: true,
-    source: 'core 제조 베이스 11행',
   },
 }
 export type Costs = Partial<Record<IngredientId, number>>
@@ -158,7 +144,8 @@ export type Step = {
   costs: Costs
   seconds: number
   usesPitcher: boolean
-  sourceRow: number
+  target: number
+  source: DrinkStepReference['source']
 }
 export const recipeIds = ['cold-brew', 'glazed-hot', 'glazed-iced'] as const
 export type RecipeId = (typeof recipeIds)[number]
@@ -172,85 +159,80 @@ export type Recipe = {
   color: string
 }
 
-function makeRecipe(
-  id: RecipeId,
-  name: string,
-  variant: string,
-  stations: StationId[],
-  costs: Costs[],
-  price: number,
-  color: string,
-): Recipe {
-  const source = references.recipes.find((recipe) => recipe.name === name && recipe.variant === variant)
-  if (!source || source.steps.length !== stations.length)
-    throw new Error(`레시피 구조를 확인해주세요: ${name} ${variant}`)
+function makeRecipe(id: RecipeId, reference: DrinkReference, steps: Step[], price: number, color: string): Recipe {
   return {
     id,
-    name,
+    name: reference.name,
     shortName: id === 'cold-brew' ? '콜드 브루' : '블랙 글레이즈드',
-    variant,
+    variant: reference.variant,
     price,
     color,
-    steps: source.steps.map((step, index) => ({
-      station: stations[index],
-      label: step.item,
-      instruction: step.instruction,
-      note: step.note,
-      costs: costs[index] ?? {},
-      seconds: step.item.includes('스팀') || (id === 'glazed-hot' && index === 0) ? 5 : 2,
-      usesPitcher: id === 'glazed-hot' && index === 0,
-      sourceRow: step.source.row,
-    })),
+    steps,
   }
 }
-const sourcePumpCount = Number(references.recipes[0].steps[2].tall)
-const sourceShotCount = Number(references.recipes[0].steps[1].tall)
-const glazeCost = sourcePumpCount * 10.2
-const espressoCost = sourceShotCount * 9 // Prototype grams per shot; source expresses shots, not grams.
+function recipeStep(
+  reference: DrinkStepReference,
+  station: StationId,
+  costs: Costs = {},
+  options: Partial<Pick<Step, 'target' | 'seconds' | 'usesPitcher'>> = {},
+): Step {
+  return {
+    station,
+    label: reference.item,
+    instruction: reference.instruction,
+    note: reference.note,
+    costs,
+    seconds: 2,
+    usesPitcher: false,
+    target: 1,
+    source: reference.source,
+    ...options,
+  }
+}
+const { hot, iced, cold } = referenceLinks
+// Grams per shot and cup-line volumes are prototype conversions; counts use each drink's own source.
 export const RECIPES: Record<RecipeId, Recipe> = {
   'cold-brew': makeRecipe(
     'cold-brew',
-    '콜드 브루',
-    'ICED',
-    ['brew', 'water', 'ice'],
-    [{ coldBrew: 90 }, {}, {}],
+    cold.reference,
+    [
+      recipeStep(cold.steps.extract, 'brew', { coldBrew: 90 }),
+      recipeStep(cold.steps.water, 'water'),
+      recipeStep(cold.steps.ice, 'ice'),
+    ],
     5000,
     '#493022',
   ),
   'glazed-hot': makeRecipe(
     'glazed-hot',
-    '블랙 글레이즈드 라떼',
-    'HOT',
-    ['steam', 'espresso', 'sauce', 'mix', 'steam', 'mix', 'topping', 'topping', 'pickup'],
+    hot.reference,
     [
-      { milk: 200 },
-      { beans: espressoCost },
-      { glaze: glazeCost },
-      {},
-      {},
-      { mocha: 5 },
-      { foam: 45 },
-      { powder: 2 },
-      {},
+      recipeStep(hot.steps.milk, 'steam', { milk: 200 }, { seconds: 5, usesPitcher: true }),
+      recipeStep(hot.steps.espresso, 'espresso', { beans: hot.shots * 9 }),
+      recipeStep(hot.steps.glaze, 'sauce', { glaze: hot.glazePumps * hot.pumpMl }, { target: hot.glazePumps }),
+      recipeStep(hot.steps.mix, 'mix'),
+      recipeStep(hot.steps.steamedMilk, 'steam', {}, { seconds: 5 }),
+      recipeStep(hot.steps.drizzle, 'mix', { mocha: hot.drizzleTurns * 5 }, { target: hot.drizzleTurns }),
+      recipeStep(hot.steps.foam, 'topping', { foam: 45 }),
+      recipeStep(hot.steps.powder, 'topping', { powder: hot.powderTaps }, { target: hot.powderTaps }),
+      recipeStep(hot.steps.serve, 'pickup'),
     ],
     6500,
     '#be9871',
   ),
   'glazed-iced': makeRecipe(
     'glazed-iced',
-    '블랙 글레이즈드 라떼',
-    'ICED',
-    ['espresso', 'sauce', 'mix', 'steam', 'ice', 'mix', 'topping', 'topping', 'pickup'],
+    iced.reference,
     [
-      { beans: espressoCost },
-      { glaze: glazeCost },
-      {},
-      { milk: 180 },
-      {},
-      { mocha: 5 },
-      { foam: 45 },
-      { powder: 2 },
-      {},
+      recipeStep(iced.steps.espresso, 'espresso', { beans: iced.shots * 9 }),
+      recipeStep(iced.steps.glaze, 'sauce', { glaze: iced.glazePumps * iced.pumpMl }, { target: iced.glazePumps }),
+      recipeStep(iced.steps.mix, 'mix'),
+      recipeStep(iced.steps.milk, 'steam', { milk: 180 }),
+      recipeStep(iced.steps.ice, 'ice'),
+      recipeStep(iced.steps.drizzle, 'mix', { mocha: iced.drizzleTurns * 5 }, { target: iced.drizzleTurns }),
+      recipeStep(iced.steps.foam, 'topping', { foam: 45 }),
+      recipeStep(iced.steps.powder, 'topping', { powder: iced.powderTaps }, { target: iced.powderTaps }),
+      recipeStep(iced.steps.serve, 'pickup'),
     ],
     6500,
     '#b58b63',

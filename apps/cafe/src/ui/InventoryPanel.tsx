@@ -1,4 +1,5 @@
 import {
+  COLD_BREW_HOURS,
   type Costs,
   formatAmount,
   INGREDIENTS,
@@ -178,7 +179,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                         : id === 'coldBrew'
                           ? state.jobs.some((job) => job.kind === 'cold-brew')
                             ? '콜드 브루를 추출 중이에요. 추출이 끝나면 사용할 수 있어요.'
-                            : '창고에서 추출 준비를 시작하세요. 20시간 뒤 사용할 수 있어요.'
+                            : `창고에서 추출 준비를 시작하세요. ${COLD_BREW_HOURS}시간 뒤 사용할 수 있어요.`
                           : state.preparation?.recipe === id
                             ? state.preparation.fault
                               ? '현재 배합을 폐기한 뒤 준비대에서 다시 제조해주세요.'
@@ -217,7 +218,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                     </button>
                   ) : (
                     <small className="text-xs text-muted">
-                      {id === 'coldBrew' ? '창고에서 20시간 추출' : '준비대에서 제조'}
+                      {id === 'coldBrew' ? `창고에서 ${COLD_BREW_HOURS}시간 추출` : '준비대에서 제조'}
                     </small>
                   )}
                 </div>
@@ -241,7 +242,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
         disabled={state.cash < 9000 || state.jobs.some((job) => job.kind === 'cold-brew')}
         onClick={() => act({ type: 'cold-brew' })}
       >
-        다음 날 콜드 브루 추출 · 20시간 · 9,000원
+        다음 날 콜드 브루 추출 · {COLD_BREW_HOURS}시간 · 9,000원
       </Button>
       <SupplyPanel state={state} act={act} location="stock" />
     </>

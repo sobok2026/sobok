@@ -73,9 +73,14 @@ Tailwind CSS v4와 공식 `@tailwindcss/vite` 플러그인을 사용한다. `src
 
 ```sh
 bun run --filter=@sobok/cafe import:references
+bun run --filter=@sobok/cafe check:references
 ```
 
 생성된 `src/data/references.generated.json`을 사용하므로 빌드 시 원본 엑셀은 필요하지 않다. 가져오기는 원본 파일을 수정하지 않는다. 자료 공개는 사용자가 명시적으로 허용했다.
+
+가져오기에서는 열 제목과 현재 플레이하는 메뉴·온도·제조 단계·단위·품질 기준을 확인한 뒤 JSON을 교체한다. 검사나 포맷에 실패하면 이전 생성 파일을 유지한다. `check:references`는 생성된 JSON만 검사하며 `dev`·`build`에서도 먼저 실행된다. 누락·중복·단위 변경·실제 제조 순서 변경이 발견되면 출력된 파일·시트·항목을 확인한다.
+
+메뉴와 단계의 배열 위치 대신 이름·온도·단계 의미로 연결한다. HOT·ICED 수량은 각각의 자료를 사용하며 자료에 새 메뉴가 들어와도 POS 메뉴는 자동으로 늘어나지 않는다. 컵의 ml 환산·수율·원팩 규격·일 단위 기한 계산은 [임시 규칙](../../docs/cafe/prototype-rules.md)을 유지한다.
 
 ## 문서
 

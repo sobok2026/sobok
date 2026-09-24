@@ -1,4 +1,5 @@
 import {
+  COLD_BREW_HOURS,
   type Costs,
   type CupSurfaceId,
   INGREDIENTS,
@@ -1222,7 +1223,7 @@ export class CafeStore {
         }
         s.cash -= 9000
         s.totals.coldBrewPurchases += 9000
-        this.job(s, 'cold-brew', 'stock', '다음 날 콜드 브루 추출', 20 * 3600)
+        this.job(s, 'cold-brew', 'stock', '다음 날 콜드 브루 추출', COLD_BREW_HOURS * 3600)
         break
       case 'close':
         s.phase = 'closing'

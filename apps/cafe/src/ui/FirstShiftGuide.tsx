@@ -1,4 +1,4 @@
-import { INGREDIENTS, type IngredientId, RECIPES, STATIONS, type StationId } from '../game/catalog'
+import { COLD_BREW_HOURS, INGREDIENTS, type IngredientId, RECIPES, STATIONS, type StationId } from '../game/catalog'
 import { CLEANING_SECONDS } from '../game/cleaning'
 import { isContinuous, operationFor, readyToConfirm, TOOL_NAMES } from '../game/crafting'
 import { PREP_TOOL_NAMES, PREPARATIONS, preparationStep } from '../game/preparation'
@@ -38,7 +38,7 @@ function materialTip(state: GameState, ingredient: IngredientId): Tip {
     return {
       title: '추출액을 준비하세요',
       action: '창고에서 콜드 브루 추출을 시작하세요. 추출 중이면 완료를 기다려주세요.',
-      reason: '20시간 추출은 마감 후 다음 날로 넘어갈 때도 진행돼요.',
+      reason: `${COLD_BREW_HOURS}시간 추출은 마감 후 다음 날로 넘어갈 때도 진행돼요.`,
     }
   const sealed = state.batches.some(
     (batch) => batch.ingredient === ingredient && batch.amount > 0 && batch.openedAt === null,

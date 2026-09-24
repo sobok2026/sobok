@@ -1,4 +1,5 @@
-import { INGREDIENTS, type IngredientId, references } from './catalog'
+import { INGREDIENTS, type IngredientId, referenceLinks } from './catalog'
+import { sourceLine } from './reference-links'
 
 export const preparationIds = ['foam', 'mocha'] as const
 export type PreparationId = (typeof preparationIds)[number]
@@ -36,15 +37,7 @@ export type Preparation = {
   fault: string | null
   batchId: string | null
 }
-const foam = references.preparations.find((item) => item.name === '글레이즈드 폼' && item.batch.startsWith('기본'))!
-const mocha = references.prepGuide.find((item) => item.name === '바모카')!
-if (foam?.steps.length !== 4 || !mocha) throw new Error('부재료 준비 자료를 확인해주세요.')
-const pumpMl = Number(foam.steps[2].note.match(/([\d.]+)ml/)?.[1])
-const blendSeconds = Number(foam.steps[3].note.match(/(\d+)초/)?.[1])
-const mochaAmounts = mocha.instruction.match(/(\d+)봉\s*\+\s*온수\s*([\d.]+)L/)
-if (!(pumpMl > 0) || !(blendSeconds > 0) || !mochaAmounts) throw new Error('부재료 배합 수치를 확인해주세요.')
-const sourceLine = (source: { file: string; sheet: string; row: number }) =>
-  `${source.file} / ${source.sheet} ${source.row}행`
+const { foam, mocha } = referenceLinks
 export const PREPARATIONS: Record<
   PreparationId,
   {
@@ -58,22 +51,45 @@ export const PREPARATIONS: Record<
   foam: {
     name: INGREDIENTS.foam.name,
     marking: '숫자 Tag + Price Tag',
-    storageNote: foam.storage,
-    seconds: blendSeconds,
+    storageNote: foam.reference.storage,
+    seconds: foam.seconds,
     steps: [
-      ...foam.steps.slice(0, 3).map(
-        (step, index): PrepStep => ({
-          label: step.item,
-          kind: index === 2 ? 'pump' : 'pour',
-          tool: index === 0 ? 'cream-carton' : index === 1 ? 'milk-carton' : null,
-          target: Number(step.amount),
-          unit: step.unit,
-          rate: Number(step.amount) / 4,
-          tolerance: index === 2 ? 0 : 0.06,
-          ingredient: (['cream', 'milk', 'glaze'] as const)[index],
-          perUnit: index === 2 ? pumpMl : 1,
-          instruction: [step.instruction, step.note].filter(Boolean).join(' '),
-          source: sourceLine(step.source),
+      ...(
+        [
+          {
+            reference: foam.steps.cream,
+            kind: 'pour',
+            tool: 'cream-carton',
+            ingredient: 'cream',
+            target: foam.creamMl,
+            perUnit: 1,
+          },
+          {
+            reference: foam.steps.milk,
+            kind: 'pour',
+            tool: 'milk-carton',
+            ingredient: 'milk',
+            target: foam.milkMl,
+            perUnit: 1,
+          },
+          {
+            reference: foam.steps.glaze,
+            kind: 'pump',
+            tool: null,
+            ingredient: 'glaze',
+            target: foam.glazePumps,
+            perUnit: foam.pumpMl,
+          },
+        ] as const
+      ).map(
+        ({ reference, ...step }): PrepStep => ({
+          ...step,
+          label: reference.item,
+          unit: reference.unit,
+          rate: step.target / 4,
+          tolerance: step.kind === 'pump' ? 0 : 0.06,
+          instruction: [reference.instruction, reference.note].filter(Boolean).join(' '),
+          source: sourceLine(reference.source),
         }),
       ),
       {
@@ -84,40 +100,40 @@ export const PREPARATIONS: Record<
         unit: '회',
         rate: 0,
         tolerance: 0,
-        instruction: [foam.steps[3].instruction, foam.steps[3].note].join(' '),
-        source: sourceLine(foam.steps[3].source),
+        instruction: [foam.steps.blend.instruction, foam.steps.blend.note].join(' '),
+        source: sourceLine(foam.steps.blend.source),
       },
     ],
   },
   mocha: {
     name: INGREDIENTS.mocha.name,
-    marking: `${mocha.code} · ${mocha.marking}`,
-    storageNote: `${mocha.storage} · ${mocha.lifetime}`,
+    marking: `${mocha.reference.code} · ${mocha.reference.marking}`,
+    storageNote: `${mocha.reference.storage} · ${mocha.reference.lifetime}`,
     seconds: 0,
     steps: [
       {
         label: '바모카 원팩 넣기',
         kind: 'pack',
         tool: 'mocha-pack',
-        target: Number(mochaAmounts[1]),
+        target: mocha.packs,
         unit: '봉',
         rate: 0,
         tolerance: 0,
         ingredient: 'mochaPowder',
         perUnit: 1,
-        instruction: mocha.instruction,
-        source: sourceLine(mocha.source),
+        instruction: mocha.reference.instruction,
+        source: sourceLine(mocha.reference.source),
       },
       {
         label: '온수 계량',
         kind: 'pour',
         tool: 'water-jug',
-        target: Number(mochaAmounts[2]) * 1000,
+        target: mocha.waterMl,
         unit: 'ml',
-        rate: Number(mochaAmounts[2]) * 250,
+        rate: mocha.waterMl / 4,
         tolerance: 0.06,
-        instruction: mocha.instruction,
-        source: sourceLine(mocha.source),
+        instruction: mocha.reference.instruction,
+        source: sourceLine(mocha.reference.source),
       },
       {
         label: '바모카 혼합',
@@ -128,7 +144,7 @@ export const PREPARATIONS: Record<
         rate: 1,
         tolerance: 0,
         instruction: '스패튤러로 저어 섞어요. 혼합 동작 시간은 게임용 임시 규칙이에요.',
-        source: sourceLine(mocha.source),
+        source: sourceLine(mocha.reference.source),
       },
     ],
   },

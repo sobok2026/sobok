@@ -3,10 +3,41 @@ import { createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import readExcelFile from 'read-excel-file/node'
+import { linkReferences } from '../src/game/reference-links.ts'
 
 const root = new URL('../../../', import.meta.url)
 const referencesDir = new URL('../references/', import.meta.url)
 const files = ['26_pre-autumn_recipes.xlsx', 'best_by_core.xlsx', 'best_by_special.xlsx', 'ingredient_prep_guide.xlsx']
+const headers = {
+  '음료 제조': [
+    '메뉴',
+    '구분',
+    '순서',
+    '재료·대상',
+    '단위',
+    'Tall',
+    'Grande',
+    'Venti',
+    '제조 방법·계량 기준',
+    '주의·대체 방법',
+  ],
+  '폼·베이스 제조': [
+    '제조 항목',
+    '배합 기준',
+    '순서',
+    '재료·대상',
+    '단위',
+    '수량',
+    '제조 방법',
+    '도구',
+    '보관·품질 기한',
+    '주의·대체 방법',
+  ],
+  '제조 베이스': ['분류', '품목', '보관기준', '구분', '내부품질기한', '표기법', '참고'],
+  '코어 원재료': ['구분', 'SKU 명', '보관기준', '소분후', '개봉후(원팩)', '표기법', '참고'],
+  '특화 원재료': ['구분', 'SKU 명', '보관기준', '소분후', '개봉후(원팩)', '표기법', '참고'],
+  '부재료 제조': ['이름', '제조 방법', '마킹명', '유통기한', '표기법', '보관방법'],
+}
 const sources = []
 const sheets = {}
 for (const file of files) {
@@ -22,6 +53,11 @@ for (const file of files) {
 const rowsOf = (file, sheet) => {
   const rows = sheets[`${file}/${sheet}`]
   if (!rows) throw new Error(`Missing sheet: ${file}/${sheet}`)
+  for (const [column, expected] of headers[sheet].entries())
+    if (rows[5]?.[column] !== expected)
+      throw new Error(
+        `${file} / ${sheet} 6행 ${column + 1}열: '${expected}' 헤더를 확인해주세요. 현재 '${rows[5]?.[column] ?? '빈칸'}'.`,
+      )
   return rows
 }
 const text = (value) => (value === null || value === undefined ? '' : String(value))
@@ -106,18 +142,17 @@ const prepGuide = rowsOf(files[3], '부재료 제조').flatMap((row, index) =>
         },
       ],
 )
-if (recipes.length !== 14 || preparations.length !== 6)
-  throw new Error('Recipe groups changed; review the import mapping before regenerating.')
+const result = { version: 1, sources, recipes, preparations, quality, prepGuide }
+// Validate the candidate before touching the last usable generated file.
+linkReferences(result)
 const output = new URL('../src/data/references.generated.json', import.meta.url)
-await mkdir(new URL('.', output), { recursive: true })
-await writeFile(
-  output,
-  `${JSON.stringify({ version: 1, sources, recipes, preparations, quality, prepGuide }, null, 2)}\n`,
-)
-execFileSync('bun', ['x', 'biome', 'format', '--write', fileURLToPath(output)], {
+const formatted = execFileSync('bun', ['x', 'biome', 'format', '--stdin-file-path', fileURLToPath(output)], {
   cwd: fileURLToPath(root),
-  stdio: 'inherit',
+  input: `${JSON.stringify(result, null, 2)}\n`,
+  encoding: 'utf8',
 })
+await mkdir(new URL('.', output), { recursive: true })
+await writeFile(output, formatted)
 console.log(
   `Imported ${recipes.length} recipe variants, ${preparations.length} preparations, ${quality.length} quality rules, ${prepGuide.length} preparation rows.`,
 )

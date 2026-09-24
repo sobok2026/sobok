@@ -87,8 +87,10 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
     cue: '누르는 동안 진행 · 놓으면 멈춤',
   }
   if (recipe === 'cold-brew') {
-    if (step === 0) return { ...base, kind: 'pour', label: '추출액 따르기', tool: null, content: 'coffee', weight: 0.4 }
-    if (step === 1) return { ...base, kind: 'pour', label: '정수 채우기', tool: null, content: 'water', weight: 0.4 }
+    if (source.label === '콜드 브루 추출액')
+      return { ...base, kind: 'pour', label: '추출액 따르기', tool: null, content: 'coffee', weight: 0.4 }
+    if (source.label === '정수')
+      return { ...base, kind: 'pour', label: '정수 채우기', tool: null, content: 'water', weight: 0.4 }
     return {
       ...base,
       kind: 'ice',
@@ -102,7 +104,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       cue: '한 번 누를 때마다 한 스쿱',
     }
   }
-  if (recipe === 'glazed-hot' && step === 0)
+  if (source.usesPitcher)
     return {
       ...base,
       kind: 'steam',
@@ -128,7 +130,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       kind: 'pump',
       label: '소스 펌핑',
       tool: null,
-      target: Math.round((source.costs.glaze ?? 30.6) / 10.2),
+      target: source.target,
       tolerance: 0,
       unit: '펌프',
       content: 'sauce',
@@ -179,6 +181,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
     return {
       ...base,
       kind: 'drizzle',
+      target: source.target,
       label: '가장자리에 드리즐',
       tool: 'mocha-bottle',
       rate: 0.45,
@@ -203,7 +206,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       kind: 'sprinkle',
       label: '파우더 토핑',
       tool: 'shaker',
-      target: source.costs.powder ?? 2,
+      target: source.target,
       tolerance: 0,
       unit: '톡',
       content: 'powder',
