@@ -14,10 +14,11 @@ import {
 import { cleaningHandsBusy, cupSurface, dirtyTableCount } from '../game/cleaning'
 import { craftStations } from '../game/crafting'
 import { CUSTOMER_SECONDS, CUSTOMER_STATUS, customerWalking } from '../game/customer'
+import type { Preferences } from '../game/preferences'
 import { PREPARATIONS, preparationStep } from '../game/preparation'
 import type { CafeScene, MouseMode } from '../game/scene'
 import type { GameState } from '../game/state'
-import { exportGame, importGame, loadGame, saveGame } from '../game/storage'
+import { exportGame, importGame, loadGame, loadPreferences, saveGame, savePreferences } from '../game/storage'
 import {
   type Action,
   available,
@@ -33,11 +34,14 @@ import { washingHandsBusy } from '../game/washing'
 import { Button, TextButton } from './Button'
 import CleaningHud from './CleaningHud'
 import CraftingHud from './CraftingHud'
+import FirstShiftGuide, { firstOrdersDone } from './FirstShiftGuide'
 import InventoryPanel from './InventoryPanel'
 import PreparationHud from './PreparationHud'
 import ShiftLedger from './ShiftLedger'
 import SupplyPanel from './SupplyPanel'
 import WashingHud from './WashingHud'
+import WorkSettings from './WorkSettings'
+import { actionSound, createWorkSounds, type SoundStatus, tickSound, workLoop } from './work-sounds'
 
 function CupIcon({ small = false }: { small?: boolean }) {
   return (
@@ -64,26 +68,34 @@ function clock(time: number) {
   })
 }
 export default function App() {
-  const [boot, setBoot] = useState<{ store: CafeStore; hasSave: boolean; notice: string } | null>(null)
+  const [boot, setBoot] = useState<{
+    store: CafeStore
+    hasSave: boolean
+    notice: string
+    preferences: Preferences
+  } | null>(null)
   useEffect(() => {
     let cancelled = false
-    loadGame()
-      .then(({ state, recovered }) => {
-        if (!cancelled)
-          setBoot({
-            store: new CafeStore(state ?? initialState()),
-            hasSave: !!state,
-            notice: recovered ? '이전 정상 저장본으로 복구했어요.' : '',
-          })
-      })
-      .catch(() => {
-        if (!cancelled)
-          setBoot({
-            store: new CafeStore(initialState()),
-            hasSave: false,
-            notice: '저장 기록을 읽지 못했어요. 새 근무를 시작하거나 백업 파일을 불러올 수 있어요.',
-          })
-      })
+    const game = loadGame()
+      .then(({ state, recovered }) => ({
+        state,
+        hasSave: !!state,
+        notice: recovered ? '이전 정상 저장본으로 복구했어요.' : '',
+      }))
+      .catch(() => ({
+        state: null,
+        hasSave: false,
+        notice: '저장 기록을 읽지 못했어요. 새 근무를 시작하거나 백업 파일을 불러올 수 있어요.',
+      }))
+    void Promise.all([game, loadPreferences()]).then(([game, preferences]) => {
+      if (!cancelled)
+        setBoot({
+          store: new CafeStore(game.state ?? initialState()),
+          hasSave: game.hasSave,
+          notice: game.notice,
+          preferences,
+        })
+    })
     return () => {
       cancelled = true
     }
@@ -99,8 +111,41 @@ export default function App() {
   )
 }
 
-function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boolean; notice: string }) {
+function CafeGame({
+  store,
+  hasSave,
+  notice,
+  preferences: initialPreferences,
+}: {
+  store: CafeStore
+  hasSave: boolean
+  notice: string
+  preferences: Preferences
+}) {
   const state = useSyncExternalStore(store.subscribe, store.getSnapshot)
+  const [preferences, setPreferences] = useState(initialPreferences)
+  const preferencesRef = useRef(preferences)
+  preferencesRef.current = preferences
+  const [preferencesError, setPreferencesError] = useState(false)
+  const [soundStatus, setSoundStatus] = useState<SoundStatus>('off')
+  const sounds = useRef<ReturnType<typeof createWorkSounds> | null>(null)
+  const focused = useRef(true)
+  const [guideOpen, setGuideOpen] = useState(initialPreferences.guidance && !firstOrdersDone(state))
+  const guideOpenRef = useRef(guideOpen)
+  guideOpenRef.current = guideOpen
+  const guideDone = firstOrdersDone(state)
+  useEffect(() => {
+    if (guideDone) setGuideOpen(false)
+  }, [guideDone])
+  useEffect(() => {
+    const player = createWorkSounds(setSoundStatus)
+    sounds.current = player
+    player.configure(preferencesRef.current)
+    return () => {
+      sounds.current = null
+      player.dispose()
+    }
+  }, [])
   const [mode, setMode] = useState<'welcome' | 'play' | 'pause' | 'guide' | 'overview'>('welcome')
   const [panel, setPanel] = useState<StationId | null>(null)
   const [target, setTarget] = useState<StationId | null>(null)
@@ -132,6 +177,42 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
   const input = useRef<HTMLInputElement>(null)
   const flags = useRef({ mode, panel, started, hasLock })
   flags.current = { mode, panel, started, hasLock }
+
+  function updatePreferences(update: Partial<Preferences>) {
+    const next = { ...preferencesRef.current, ...update }
+    preferencesRef.current = next
+    setPreferences(next)
+    sounds.current?.configure(next)
+    if (update.muted === false) void sounds.current?.unlock()
+    void savePreferences(next)
+      .then(() => setPreferencesError(false))
+      .catch(() => setPreferencesError(true))
+  }
+  function toggleGuide() {
+    stopUse()
+    const open = !guideOpenRef.current
+    guideOpenRef.current = open
+    setGuideOpen(open)
+    updatePreferences({ guidance: open })
+    if (open && flags.current.mode === 'play') scene.current?.unlockForCraft()
+  }
+  function updateSoundLoop() {
+    const playing =
+      flags.current.mode === 'play' &&
+      flags.current.started &&
+      flags.current.hasLock &&
+      !document.hidden &&
+      focused.current
+    sounds.current?.setLoop(
+      playing && !preferencesRef.current.muted && preferencesRef.current.volume > 0
+        ? workLoop(
+            store.getSnapshot(),
+            store.getActiveInput(),
+            scene.current?.capture() ?? store.getSnapshot().position,
+          )
+        : null,
+    )
+  }
 
   function capture(): GameState {
     return { ...store.getSnapshot(), position: scene.current?.capture() ?? store.getSnapshot().position }
@@ -209,6 +290,7 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
   }
   function pause(nextMode: 'pause' | 'overview' = 'pause') {
     stopUse()
+    sounds.current?.stop()
     flags.current.mode = nextMode
     flags.current.panel = null
     setPanel(null)
@@ -217,6 +299,8 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
     void persist()
   }
   function resume() {
+    focused.current = true
+    void sounds.current?.unlock()
     flags.current.mode = 'play'
     flags.current.panel = null
     setPanel(null)
@@ -224,10 +308,13 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
     scene.current?.lock()
   }
   function start(fresh = false) {
+    focused.current = true
+    void sounds.current?.unlock()
     if (fresh) {
       const value = initialState()
       store.replace(value)
       scene.current?.reset(value.position)
+      setGuideOpen(preferencesRef.current.guidance)
     }
     flags.current.started = true
     flags.current.mode = 'play'
@@ -257,6 +344,11 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
       scene.current?.unlockForCraft()
     if (action.type === 'pick-cup' && store.getSnapshot().cup?.craft.location === 'hand') scene.current?.lock()
     const current = store.getSnapshot()
+    if (flags.current.mode === 'play' && focused.current && !document.hidden) {
+      const feedback = actionSound(action, previous, current, store.getActiveInput())
+      if (feedback) sounds.current?.play(feedback)
+    }
+    updateSoundLoop()
     if (
       !flags.current.panel &&
       ((previous.cup && !current.cup) ||
@@ -292,6 +384,7 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
   function stopUse() {
     if (!store.getActiveInput()) return
     store.stopActiveInput()
+    updateSoundLoop()
     void persist()
   }
   function tool(station: StationId) {
@@ -413,11 +506,18 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
     const tick = window.setInterval(() => {
       const now = performance.now()
       const seconds = (now - last) / 1000
+      updateSoundLoop()
       if (!store.getActiveInput() && !customerWalking(store.getSnapshot().customer) && seconds < 0.49) return
       last = now
       if (flags.current.mode === 'play' && flags.current.started && flags.current.hasLock && !document.hidden) {
         const wasUsing = !!store.getActiveInput()
+        const previous = store.getSnapshot()
         store.tick(seconds)
+        if (focused.current) {
+          const feedback = tickSound(previous, store.getSnapshot())
+          if (feedback) sounds.current?.play(feedback)
+        }
+        updateSoundLoop()
         if (wasUsing && !store.getActiveInput()) void persist()
       }
     }, 100)
@@ -430,6 +530,16 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
     }
     const keyboard = (event: KeyboardEvent) => {
       if (event.repeat || event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement) return
+      if (
+        event.code === 'KeyH' &&
+        flags.current.started &&
+        flags.current.mode === 'play' &&
+        store.getSnapshot().phase !== 'summary'
+      ) {
+        event.preventDefault()
+        toggleGuide()
+        return
+      }
       if (event.code === 'KeyM' && flags.current.started && store.getSnapshot().phase !== 'summary') {
         if (flags.current.mode === 'play') {
           event.preventDefault()
@@ -455,14 +565,24 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
       }
     }
     document.addEventListener('visibilitychange', hidden)
+    const blur = () => {
+      focused.current = false
+      stopUse()
+      sounds.current?.stop()
+    }
+    const focus = () => {
+      focused.current = true
+    }
     window.addEventListener('keydown', keyboard)
-    window.addEventListener('blur', stopUse)
+    window.addEventListener('blur', blur)
+    window.addEventListener('focus', focus)
     return () => {
       clearInterval(tick)
       clearInterval(save)
       document.removeEventListener('visibilitychange', hidden)
       window.removeEventListener('keydown', keyboard)
-      window.removeEventListener('blur', stopUse)
+      window.removeEventListener('blur', blur)
+      window.removeEventListener('focus', focus)
     }
   }, [store])
   const step = nextStep(state)
@@ -569,6 +689,8 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
             const imported = await importGame(file)
             await saveGame(imported)
             store.replace(imported)
+            sounds.current?.stop()
+            setGuideOpen(preferencesRef.current.guidance && !firstOrdersDone(imported))
             scene.current?.reset(imported.position)
             flags.current.started = true
             setStarted(true)
@@ -598,6 +720,24 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
         </div>
         {running ? (
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              className="pointer-events-auto flex min-h-10 items-center gap-2 rounded-lg bg-surface px-3 py-2 text-xs text-ink"
+              aria-pressed={guideOpen}
+              onClick={toggleGuide}
+            >
+              <kbd className="font-sans">H</kbd> 단계 안내
+            </button>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={!preferences.muted}
+              aria-label="작업음"
+              className="pointer-events-auto min-h-10 rounded-lg bg-surface px-3 py-2 text-xs text-ink"
+              onClick={() => updatePreferences({ muted: !preferencesRef.current.muted })}
+            >
+              {preferences.muted ? '소리 끔' : '소리 켬'}
+            </button>
             <button
               type="button"
               className="pointer-events-auto flex min-h-10 items-center gap-2.5 rounded-lg bg-surface px-3.5 py-2 text-sm text-ink"
@@ -688,50 +828,57 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
       {running ? (
         <>
           {!panel ? (
-            <aside
-              className="pointer-events-none absolute top-22 left-7 w-70 rounded-lg bg-surface/96 px-4.5 py-4 data-[mismatch=true]:bg-[#fff3e9] max-wide:left-5 max-wide:w-55 max-wide:p-4.25 max-tablet:top-25 max-tablet:w-43.75 max-tablet:p-3.25"
-              data-mismatch={mismatch}
-              aria-label="현재 주문"
-            >
-              {state.phase === 'closing' && !state.ticket ? (
-                <>
-                  <span className="flex justify-between gap-3 text-xs text-muted">접수 마감</span>
-                  <h2 className="mt-2 text-lg leading-normal font-semibold tracking-[-0.035em]">
-                    남은 정리를 마쳐주세요
-                  </h2>
-                </>
-              ) : (
-                <>
-                  <div className="flex justify-between gap-3 text-xs text-muted">
-                    <span>주문 {String(state.orderNumber).padStart(3, '0')}</span>
-                    <span>
-                      {state.cup
-                        ? step
-                          ? '제조 중'
-                          : '전달 준비'
-                        : state.ticket
-                          ? '컵 준비'
-                          : state.customer
-                            ? CUSTOMER_STATUS[state.customer.stage]
-                            : '손님 없음'}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex items-baseline gap-3">
-                    <h2 className="m-0 text-lg leading-normal font-semibold tracking-[-0.035em]">
-                      {request.shortName}
+            <div className="pointer-events-none absolute top-22 left-7 z-6 flex max-h-[calc(100dvh-12rem)] w-70 flex-col gap-3 overflow-y-auto max-wide:left-5 max-wide:max-h-[calc(50dvh-6rem)] max-wide:w-55 max-tablet:top-25 max-tablet:max-h-[calc(50dvh-8rem)] max-tablet:w-43.75">
+              <aside
+                className="shrink-0 rounded-lg bg-surface/96 px-4.5 py-4 data-[mismatch=true]:bg-[#fff3e9] max-wide:p-4.25 max-tablet:p-3.25"
+                data-mismatch={mismatch}
+                aria-label="현재 주문"
+              >
+                {state.phase === 'closing' && !state.ticket ? (
+                  <>
+                    <span className="flex justify-between gap-3 text-xs text-muted">접수 마감</span>
+                    <h2 className="mt-2 text-lg leading-normal font-semibold tracking-[-0.035em]">
+                      남은 정리를 마쳐주세요
                     </h2>
-                    <span className="shrink-0 text-xs text-muted">{request.variant}</span>
-                  </div>
-                  {mismatch ? (
-                    <div className="mt-3 flex flex-col gap-1 border-t border-[#d9bdae] pt-3 text-label leading-[1.6] text-danger">
-                      <strong>주문표가 요청과 달라요</strong>
-                      <span>입력: {recipeLabel(state.ticket!)}</span>
-                      <span>{state.cup ? '컵을 폐기한 뒤 POS에서 수정하세요.' : 'POS에서 주문표를 수정하세요.'}</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-between gap-3 text-xs text-muted">
+                      <span>주문 {String(state.orderNumber).padStart(3, '0')}</span>
+                      <span>
+                        {state.cup
+                          ? step
+                            ? '제조 중'
+                            : '전달 준비'
+                          : state.ticket
+                            ? '컵 준비'
+                            : state.customer
+                              ? CUSTOMER_STATUS[state.customer.stage]
+                              : '손님 없음'}
+                      </span>
                     </div>
-                  ) : null}
-                </>
-              )}
-            </aside>
+                    <div className="mt-2 flex items-baseline gap-3">
+                      <h2 className="m-0 text-lg leading-normal font-semibold tracking-[-0.035em]">
+                        {request.shortName}
+                      </h2>
+                      <span className="shrink-0 text-xs text-muted">{request.variant}</span>
+                    </div>
+                    {mismatch ? (
+                      <div className="mt-3 flex flex-col gap-1 border-t border-[#d9bdae] pt-3 text-label leading-[1.6] text-danger">
+                        <strong>주문표가 요청과 달라요</strong>
+                        <span>입력: {recipeLabel(state.ticket!)}</span>
+                        <span>{state.cup ? '컵을 폐기한 뒤 POS에서 수정하세요.' : 'POS에서 주문표를 수정하세요.'}</span>
+                      </div>
+                    ) : null}
+                  </>
+                )}
+              </aside>
+              {guideOpen ? (
+                <div className="pointer-events-auto">
+                  <FirstShiftGuide state={state} panel={null} onClose={toggleGuide} />
+                </div>
+              ) : null}
+            </div>
           ) : null}
           {!panel && !focusedWork ? (
             <section
@@ -831,7 +978,7 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                     ? '메뉴 조작 중'
                     : '커서 조작 중 · WASD로 이동'}
               <span className="px-3">·</span>
-              <kbd className="font-sans max-tablet:ml-0.75 max-tablet:p-0.75">Esc</kbd> 메뉴·조작법
+              <kbd className="font-sans max-tablet:ml-0.75 max-tablet:p-0.75">Esc</kbd> 메뉴·조작법·소리
             </span>
             {saveError ? (
               <span
@@ -849,7 +996,7 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
 
       {panel && running ? (
         <div className="pointer-events-none absolute inset-0 z-8 bg-[linear-gradient(90deg,#263c281f,transparent_70%)]">
-          <section className="pointer-events-auto absolute top-26.25 bottom-16 left-7 w-90 [scrollbar-width:thin] [scrollbar-color:#c6cdb9_transparent] overflow-auto rounded-md border border-white/60 bg-surface p-6.25 shadow-panel max-wide:left-5 max-tablet:top-24 max-tablet:bottom-11.25 max-tablet:left-3 max-tablet:max-w-[calc(100vw-1.5rem)]">
+          <section className="pointer-events-auto absolute top-26.25 bottom-16 left-7 w-90 [scrollbar-width:thin] [scrollbar-color:#c6cdb9_transparent] overflow-auto rounded-md border border-white/60 bg-surface p-6.25 shadow-panel compact:top-22 compact:p-5 max-wide:left-5 max-tablet:top-24 max-tablet:bottom-11.25 max-tablet:left-3 max-tablet:max-w-[calc(100vw-1.5rem)]">
             <div className="flex items-center justify-between">
               <div>
                 <span className="mb-2 block text-xs font-semibold tracking-[0.19em] text-muted">작업대</span>
@@ -864,7 +1011,12 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                 ×
               </button>
             </div>
-            <p className="mt-3 mb-6 text-sm leading-[1.9] text-muted">{STATIONS[panel].subtitle}</p>
+            <p className="mt-3 mb-6 text-sm leading-[1.9] text-muted compact:mb-4">{STATIONS[panel].subtitle}</p>
+            {guideOpen ? (
+              <div className="mb-5 compact:mb-3">
+                <FirstShiftGuide state={state} panel={panel} onClose={toggleGuide} />
+              </div>
+            ) : null}
             {actionJob ? (
               <div className="mb-5 flex flex-col gap-1.75 rounded-sm bg-[#e1e8d5] p-4.25 text-xs">
                 <span>{actionJob.label}</span>
@@ -879,7 +1031,7 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                 !state.customer.visit &&
                 state.customer.stage !== 'leaving' ? (
                   <>
-                    <div className="mb-5.5 rounded-[0.1875rem] border-l-2 border-[#a9b495] bg-[#eaeade] p-4">
+                    <div className="mb-5.5 rounded-[0.1875rem] border-l-2 border-[#a9b495] bg-[#eaeade] p-4 compact:mb-4 compact:p-3">
                       <span className="text-xs text-muted">{customer} 님</span>
                       <p className="mt-2.25 mb-0 text-body leading-[1.7] text-[#4b6248]">
                         {recipeLabel(state.request)}
@@ -1200,6 +1352,15 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                 <Button onClick={() => (started ? resume() : setMode('welcome'))}>
                   {started ? '근무로 돌아가기' : '알겠어요'}
                 </Button>
+                <WorkSettings
+                  preferences={preferences}
+                  status={soundStatus}
+                  error={preferencesError}
+                  guideOpen={guideOpen}
+                  onChange={updatePreferences}
+                  onPreview={() => void sounds.current?.preview()}
+                  onGuide={toggleGuide}
+                />
               </>
             ) : (
               <>
@@ -1223,6 +1384,15 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                 <Button variant="secondary" onClick={() => setMode('guide')}>
                   조작과 근무 안내
                 </Button>
+                <WorkSettings
+                  preferences={preferences}
+                  status={soundStatus}
+                  error={preferencesError}
+                  guideOpen={guideOpen}
+                  onChange={updatePreferences}
+                  onPreview={() => void sounds.current?.preview()}
+                  onGuide={toggleGuide}
+                />
                 <div className="mt-4.5 flex justify-between gap-3.5">
                   <TextButton onClick={() => exportGame(capture())}>백업 내보내기</TextButton>
                   <TextButton disabled={!hasLock} onClick={() => input.current?.click()}>
