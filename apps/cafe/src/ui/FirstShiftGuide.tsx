@@ -127,7 +127,17 @@ function currentTip(state: GameState, panel: StationId | null): Tip {
         reason: prep.fault,
         fault: true,
       }
-    if (prep.stage === 'ready') return materialTip(state, prep.recipe)
+    if (prep.stage === 'ready') {
+      const batch = state.batches.find((item) => item.id === prep.batchId)
+      if (batch?.expiresAt != null && batch.expiresAt <= state.time)
+        return {
+          title: '기한이 지난 배합이에요',
+          action: '준비대에서 이 배치를 폐기한 뒤 다시 준비하세요.',
+          reason: '라벨을 붙이거나 보관해도 만료 시각은 늘어나지 않아요.',
+          fault: true,
+        }
+      return materialTip(state, prep.recipe)
+    }
     if (prep.stage === 'processing')
       return {
         title: '블렌딩 중이에요',

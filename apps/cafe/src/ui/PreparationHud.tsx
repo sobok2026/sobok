@@ -1,5 +1,5 @@
 import { formatAmount, INGREDIENTS, type StationId } from '../game/catalog'
-import { continuousPreparation, PREP_TOOL_NAMES, PREPARATIONS, preparationStep } from '../game/preparation'
+import { batchDate, continuousPreparation, PREP_TOOL_NAMES, PREPARATIONS, preparationStep } from '../game/preparation'
 import type { GameState } from '../game/state'
 import { type Action, available } from '../game/store'
 import BatchLabel from './BatchLabel'
@@ -14,6 +14,7 @@ export default function PreparationHud({ state, target, act, stop }: Props) {
   const step = preparationStep(prep)
   const job = state.jobs.find((job) => job.preparationId === prep.id)
   const batch = state.batches.find((batch) => batch.id === prep.batchId)
+  const expiredBatch = batch?.expiresAt != null && batch.expiresAt <= state.time
   const ratio = job ? (state.time - job.startedAt) / (job.endsAt - job.startedAt) : prep.progress / step.target
   const handsFull = !!state.cup && (state.cup.craft.location === 'hand' || !!state.cup.craft.tool)
   const ready = prep.progress + 0.0001 >= step.target * (1 - step.tolerance)
@@ -43,12 +44,25 @@ export default function PreparationHud({ state, target, act, stop }: Props) {
         </>
       ) : prep.stage === 'ready' && batch ? (
         <>
-          <WorkTitle>{batch.labelled ? '보관 위치를 선택하세요' : '날짜를 확인하고 라벨을 붙이세요'}</WorkTitle>
+          <WorkTitle>
+            {expiredBatch
+              ? '기한이 지난 배합을 폐기해주세요'
+              : batch.labelled
+                ? '보관 위치를 선택하세요'
+                : '날짜를 확인하고 라벨을 붙이세요'}
+          </WorkTitle>
           <BatchLabel batch={batch} time={state.time} act={act} />
         </>
       ) : (
         <>
           <WorkTitle>{prep.stage === 'processing' ? '블렌딩 중이에요' : step.label}</WorkTitle>
+          {prep.ingredientExpiresAt != null ? (
+            <p className="my-2 text-xs leading-relaxed text-muted">
+              투입한 원재료 기한 · {batchDate(prep.ingredientExpiresAt, true)}
+              <br />
+              완성 배합도 이 시각을 넘겨 사용할 수 없어요.
+            </p>
+          ) : null}
           {missing && step.ingredient ? (
             <p className="my-2.5 border-l-3 border-[#bb8a57] pl-3 text-sm leading-[1.65] text-danger group-data-[fault=true]/work:text-danger">
               {INGREDIENTS[step.ingredient].name} 보충이 필요해요. {prep.tool ? '도구를 놓고 ' : ''}창고에서

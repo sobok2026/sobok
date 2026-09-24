@@ -36,6 +36,8 @@ export type Preparation = {
   amounts: { cream: number; milk: number; glaze: number; water: number; mochaPowder: number }
   fault: string | null
   batchId: string | null
+  // Undefined means the saved preparation has no ingredient-deadline record.
+  ingredientExpiresAt?: number | null
 }
 const { foam, mocha } = referenceLinks
 export const PREPARATIONS: Record<
@@ -161,12 +163,13 @@ export function createPreparation(recipe: PreparationId): Preparation {
     amounts: { cream: 0, milk: 0, glaze: 0, water: 0, mochaPowder: 0 },
     fault: null,
     batchId: null,
+    ingredientExpiresAt: null,
   }
 }
 export const preparationStep = (prep: Preparation) => PREPARATIONS[prep.recipe].steps[prep.step]
 export const continuousPreparation = (step: PrepStep) => step.kind === 'pour' || step.kind === 'stir'
 export const PREP_SPOT: [number, number, number] = [-2.3, 1.105, -4.95]
-export function batchDate(time: number | null) {
+export function batchDate(time: number | null, withSeconds = false) {
   return time === null
     ? '—'
     : new Date(time * 1000).toLocaleString('ko-KR', {
@@ -175,6 +178,7 @@ export function batchDate(time: number | null) {
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        hour12: false,
+        second: withSeconds ? '2-digit' : undefined,
+        hourCycle: 'h23',
       })
 }

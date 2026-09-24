@@ -120,7 +120,7 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
       for (const model of tools.values()) model.visible = false
       if (!prep) return
       const operation = preparationStep(prep)
-      const processing = prep.stage === 'processing'
+      const processing = prep.stage === 'processing' && !prep.fault
       if (processing) vessel.position.set(-2.9, 1.355, -5.12)
       else vessel.position.fromArray(PREP_SPOT)
       vessel.rotation.z = processing ? Math.sin(now / 25) * 0.007 : 0

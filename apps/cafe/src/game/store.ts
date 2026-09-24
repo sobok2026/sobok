@@ -48,6 +48,7 @@ import {
   type PrepStep,
   preparationStep,
 } from './preparation'
+import { expiryAt } from './quality'
 import { type Batch, emptyTotals, type GameState, type Job, uid } from './state'
 import {
   CUSTOMER_HABITS,
@@ -74,7 +75,7 @@ function newBatch(ingredient: IngredientId, amount: number, now: number, locatio
     amount,
     location,
     openedAt: location !== 'stock' ? now : null,
-    expiresAt: location !== 'stock' ? now + INGREDIENTS[ingredient].lifetime : null,
+    expiresAt: location !== 'stock' ? expiryAt(now, INGREDIENTS[ingredient].lifetime) : null,
     labelled: location === 'bar',
   }
 }
@@ -349,14 +350,15 @@ export class CafeStore {
   private say(state: GameState, text: string, tone: 'info' | 'success' | 'error' = 'info') {
     state.messages = [...state.messages.slice(-5), { id: uid(), text, tone }]
   }
-  private consume(state: GameState, costs: Costs): boolean {
+  private consume(state: GameState, costs: Costs): { earliestExpiry: number | null } | null {
     for (const [key, amount] of Object.entries(costs)) {
       const ingredient = key as IngredientId
       if (available(state, ingredient) + 0.0001 < amount) {
         this.say(state, `${INGREDIENTS[ingredient].name}가 부족해요. 준비대 또는 창고에서 보충해주세요.`, 'error')
-        return false
+        return null
       }
     }
+    let earliestExpiry: number | null = null
     for (const [key, amount] of Object.entries(costs)) {
       let remaining = amount
       const batches = state.batches
@@ -370,12 +372,14 @@ export class CafeStore {
         .sort((a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity))
       for (const batch of batches) {
         const used = Math.min(batch.amount, remaining)
+        if (used > 0 && batch.expiresAt !== null)
+          earliestExpiry = Math.min(earliestExpiry ?? batch.expiresAt, batch.expiresAt)
         batch.amount -= used
         remaining -= used
         if (remaining <= 0) break
       }
     }
-    return true
+    return { earliestExpiry }
   }
   private job(
     state: GameState,
@@ -394,6 +398,8 @@ export class CafeStore {
     const busy = (station: StationId) => s.jobs.some((j) => j.station === station)
     const fail = (text: string) => this.say(s, text, 'error')
     if (s.phase === 'summary' && action.type !== 'next-day') return
+    this.completeJobs(s)
+    this.expirePreparation(s, s.time)
     if (s.supplyDelivery && !['place-supply', 'return-supply', 'ticket', 'close'].includes(action.type)) {
       fail('들고 있는 소모품을 컨디먼트 바에 채우거나 창고에 먼저 내려놓아주세요.')
       this.state = s
@@ -1037,7 +1043,7 @@ export class CafeStore {
         const batch = s.batches.find((b) => b.id === action.id)
         if (batch?.location !== 'stock' || batch.openedAt !== null) break
         batch.openedAt = s.time
-        batch.expiresAt = s.time + INGREDIENTS[batch.ingredient].lifetime
+        batch.expiresAt = expiryAt(s.time, INGREDIENTS[batch.ingredient].lifetime)
         batch.labelled = false
         this.say(s, `${INGREDIENTS[batch.ingredient].name} 개봉 완료. 라벨을 붙이고 보관 위치를 선택해주세요.`)
         break
@@ -1045,6 +1051,10 @@ export class CafeStore {
       case 'label-batch': {
         const batch = s.batches.find((b) => b.id === action.id)
         if (!batch || batch.amount <= 0 || batch.openedAt === null || batch.labelled) break
+        if (s.preparation?.batchId === batch.id && s.preparation.fault) {
+          fail(s.preparation.fault)
+          break
+        }
         if (batch.expiresAt !== null && batch.expiresAt <= s.time) {
           fail('기한이 지난 재료는 새 라벨로 연장할 수 없어요. 폐기해주세요.')
           break
@@ -1056,6 +1066,10 @@ export class CafeStore {
       case 'store-batch': {
         const batch = s.batches.find((b) => b.id === action.id)
         if (!batch || batch.amount <= 0 || batch.location === 'bar' || batch.openedAt === null) break
+        if (s.preparation?.batchId === batch.id && s.preparation.fault) {
+          fail(s.preparation.fault)
+          break
+        }
         if (batch.expiresAt !== null && batch.expiresAt <= s.time) {
           fail('기한이 지난 재료는 폐기해주세요.')
           break
@@ -1361,10 +1375,26 @@ export class CafeStore {
       }
     }
   }
+  private expirePreparation(s: GameState, at: number) {
+    const prep = s.preparation
+    if (!prep || prep.fault) return false
+    const ingredientExpiry = prep.ingredientExpiresAt
+    const missingRecord = ingredientExpiry === undefined
+    if (!missingRecord && (prep.stage === 'ready' || ingredientExpiry === null || ingredientExpiry > at)) return false
+    prep.fault = missingRecord
+      ? '투입한 원재료의 기한 기록이 없어요. 이 배합을 폐기하고 다시 준비해주세요.'
+      : '투입한 원재료의 기한이 지났어요. 이 배합을 폐기하고 다시 준비해주세요.'
+    prep.tool = null
+    s.jobs = s.jobs.filter((job) => job.preparationId !== prep.id)
+    if (this.input?.kind === 'prep') this.input = null
+    this.say(s, prep.fault, 'error')
+    return true
+  }
   private finishPreparation(s: GameState, completedAt: number) {
     const prep = s.preparation
-    if (!prep || prep.stage === 'ready') return
+    if (!prep || prep.stage === 'ready' || prep.fault || this.expirePreparation(s, completedAt)) return
     const batch = newBatch(prep.recipe, INGREDIENTS[prep.recipe].pack, completedAt, 'prep')
+    if (prep.ingredientExpiresAt != null) batch.expiresAt = Math.min(batch.expiresAt!, prep.ingredientExpiresAt)
     s.batches.push(batch)
     prep.stage = 'ready'
     prep.batchId = batch.id
@@ -1372,7 +1402,14 @@ export class CafeStore {
     if (prep.toolReserved) s.tools.dirty++
     prep.toolReserved = false
     s.totals.prepared++
-    this.say(s, `${PREPARATIONS[prep.recipe].name} 제조 완료. 라벨을 붙이고 보관해야 사용할 수 있어요.`, 'success')
+    const expired = batch.expiresAt! <= s.time
+    this.say(
+      s,
+      expired
+        ? `${PREPARATIONS[prep.recipe].name} 제조는 끝났지만 기한이 지났어요. 이 배합을 폐기해주세요.`
+        : `${PREPARATIONS[prep.recipe].name} 제조 완료. 라벨을 붙이고 보관해야 사용할 수 있어요.`,
+      expired ? 'error' : 'success',
+    )
   }
   private applyPreparation(s: GameState, step: PrepStep, delta: number) {
     const prep = s.preparation
@@ -1386,9 +1423,17 @@ export class CafeStore {
       return
     }
     const amount = delta * (step.perUnit ?? 1)
-    if (step.ingredient && !this.consume(s, { [step.ingredient]: amount })) {
-      this.input = null
-      return
+    if (step.ingredient) {
+      const consumed = this.consume(s, { [step.ingredient]: amount })
+      if (!consumed) {
+        this.input = null
+        return
+      }
+      if (consumed.earliestExpiry !== null)
+        prep.ingredientExpiresAt = Math.min(
+          prep.ingredientExpiresAt ?? consumed.earliestExpiry,
+          consumed.earliestExpiry,
+        )
     }
     prep.progress += delta
     if (step.ingredient && step.ingredient in prep.amounts)
@@ -1443,6 +1488,9 @@ export class CafeStore {
     const s = structuredClone(this.state)
     const dt = Math.max(0, Math.min(seconds, 2))
     s.time += dt
+    // Complete scheduled work at its own timestamp before checking expiry at the current time.
+    this.completeJobs(s)
+    this.expirePreparation(s, s.time)
     if (this.input?.kind === 'clean') {
       const cleaning = s.cleaning
       if (!cleaning || cleaning.id !== this.input.cleaningId || cleaning.stage === 'collect') this.input = null
@@ -1477,7 +1525,6 @@ export class CafeStore {
         this.input = null
       else this.applyCraft(s, op, Math.min(dt, 0.15) * op.rate)
     }
-    this.completeJobs(s)
     this.advanceCustomer(s, dt)
     this.state = s
     this.emit()

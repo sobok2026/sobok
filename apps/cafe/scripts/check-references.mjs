@@ -16,6 +16,7 @@ try {
     `- 바모카: ${links.mocha.packs}봉 + 온수 ${links.mocha.waterMl}ml / 콜드 브루 추출: ${links.brew.hours}시간`,
   )
   console.log('- 컵의 ml 환산·완성 수율·샷당 원두량·원팩 규격은 게임용 임시값을 유지합니다.')
+  console.log('- N일 기한은 시작일 포함 N일의 마지막 날 종료까지, N시간은 시작 시각부터 계산합니다.')
   console.log(
     `- 바모카 원팩의 개봉 후 7일은 임시값입니다. ${sourceLine(links.mocha.reference.source)}의 ${links.mocha.reference.lifetime}은 완성 배합 기준입니다.`,
   )

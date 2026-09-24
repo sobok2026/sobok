@@ -112,6 +112,7 @@ const preparationSchema = z
     amounts: z.object({ cream: quantity, milk: quantity, glaze: quantity, water: quantity, mochaPowder: quantity }),
     fault: z.string().max(300).nullable(),
     batchId: z.string().max(100).nullable(),
+    ingredientExpiresAt: timestamp.nullable().optional(),
   })
   .refine((prep) => prep.step < PREPARATIONS[prep.recipe].steps.length, '부재료 준비 단계가 범위를 벗어났어요.')
 const washingSchema = z

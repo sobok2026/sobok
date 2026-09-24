@@ -1,4 +1,5 @@
 import referenceData from '../data/references.generated.json'
+import type { Lifetime } from './quality'
 import { type DrinkReference, type DrinkStepReference, linkReferences, sourceLine } from './reference-links'
 
 export const referenceLinks = linkReferences(referenceData)
@@ -58,7 +59,7 @@ type Ingredient = {
   unit: string
   pack: number
   storage: 'room' | 'fridge'
-  lifetime: number
+  lifetime: Lifetime
   price: number
   prepared?: boolean
   source: string
@@ -106,7 +107,7 @@ export const INGREDIENTS: Record<IngredientId, Ingredient> = {
     unit: '봉',
     pack: 1,
     storage: 'room',
-    lifetime: 7 * 86400, // Prototype opened-pack lifetime; the guide only specifies the prepared sauce.
+    lifetime: { amount: 7, unit: 'days' }, // Prototype opened-pack lifetime; the guide only specifies the prepared sauce.
     price: 7000,
     source: `${sourceLine(referenceLinks.mocha.reference.source)} · 원팩 단위 / 개봉 후 7일은 게임용 임시값`,
   },

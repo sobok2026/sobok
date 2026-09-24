@@ -1,4 +1,5 @@
 import type referenceData from '../data/references.generated.json'
+import { type Lifetime, sameLifetime } from './quality'
 
 type ReferenceData = typeof referenceData
 type ImportedDrink = ReferenceData['recipes'][number]
@@ -62,10 +63,13 @@ function notedNumber(text: string, pattern: RegExp, context: string) {
 function pumpMl(step: { note: string; source: Source }) {
   return notedNumber(step.note, /(?<![\d.,+-])(\d+(?:\.\d+)?)\s*ml\b/gi, `${sourceLine(step.source)} / 펌프당 ml`)
 }
-function lifetime(text: string, context: string) {
+function lifetime(text: string, context: string): Lifetime {
   const match = text.trim().match(/^(\d+(?:\.\d+)?)\s*(일|시간)$/)
   if (!match) invalid(context, `일·시간 단위의 기한이 필요해요. 현재 '${text}'.`)
-  return positive(Number(match[1]), context) * (match[2] === '일' ? 86400 : 3600)
+  return {
+    amount: positive(Number(match[1]), context, match[2] === '일'),
+    unit: match[2] === '일' ? 'days' : 'hours',
+  }
 }
 function storage(text: string, context: string): 'room' | 'fridge' {
   if (text === '실온') return 'room'
@@ -203,7 +207,7 @@ export function linkReferences(data: ReferenceData) {
   }
   if (
     qualities.mocha.storage !== storage(mocha.storage, sourceLine(mocha.source)) ||
-    qualities.mocha.lifetime !== lifetime(mocha.lifetime, sourceLine(mocha.source))
+    !sameLifetime(qualities.mocha.lifetime, lifetime(mocha.lifetime, sourceLine(mocha.source)))
   )
     invalid(
       sourceLine(mocha.source),
@@ -227,7 +231,7 @@ export function linkReferences(data: ReferenceData) {
   if (
     !brewStorage ||
     qualities.coldBrew.storage !== storage(brewStorage[1], sourceLine(brewSteps.time.source)) ||
-    qualities.coldBrew.lifetime !== lifetime(brewStorage[2], sourceLine(brewSteps.time.source))
+    !sameLifetime(qualities.coldBrew.lifetime, lifetime(brewStorage[2], sourceLine(brewSteps.time.source)))
   )
     invalid(sourceLine(brewSteps.time.source), `콜드 브루 보관·기한을 ${qualities.coldBrew.source}와 대조해주세요.`)
 
