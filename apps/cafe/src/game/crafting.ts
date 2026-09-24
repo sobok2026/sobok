@@ -34,6 +34,7 @@ export type CraftContents = {
   powder: number
 }
 export type CraftState = {
+  consumed: Costs
   location: StationId | 'hand'
   tool: CraftTool | null
   progress: number
@@ -222,6 +223,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
 
 export function createCraft(): CraftState {
   return {
+    consumed: {},
     location: 'hand',
     tool: null,
     progress: 0,

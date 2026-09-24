@@ -22,13 +22,21 @@ export const STATIONS = {
   stock: { name: '냉장고 · 창고', subtitle: '기한 확인, 개봉과 보충', x: 5.5, z: -4.8, color: '#8bb2a2' },
   wash: { name: '세척대', subtitle: '사용한 피처를 씻어요', x: -5.0, z: -5.1, color: '#aac4cf' },
   rack: { name: '건조 · 도구 선반', subtitle: '씻은 도구를 제자리에', x: -3.9, z: -5.1, color: '#d1bc9d' },
-  table: { name: '고객 테이블', subtitle: '사용한 자리를 정리해요', x: 3.2, z: 3.7, color: '#d2ad7d' },
+  table: { name: '고객 테이블 1', subtitle: '사용한 컵을 회수하고 닦아요', x: 3.2, z: 3.7, color: '#d2ad7d' },
+  'table-left': { name: '고객 테이블 2', subtitle: '사용한 컵을 회수하고 닦아요', x: -2.2, z: 3.7, color: '#d2ad7d' },
+  condiment: { name: '컨디먼트 바', subtitle: '컵 반납·청소와 냅킨·빨대·설탕 보충', x: 0, z: 5.1, color: '#bca681' },
   trash: { name: '분리수거함', subtitle: '마감 전에 비워요', x: -5.4, z: 5.1, color: '#79988b' },
 } as const
 export type StationId = keyof typeof STATIONS
 export const stationIds = Object.keys(STATIONS) as StationId[]
+export const tableIds = ['table', 'table-left'] as const
+export type TableId = (typeof tableIds)[number]
+export const isTable = (station: StationId): station is TableId => station === 'table' || station === 'table-left'
+export const cupSurfaceIds = [...tableIds, 'condiment'] as const
+export type CupSurfaceId = (typeof cupSurfaceIds)[number]
+export const isCupSurface = (station: StationId): station is CupSurfaceId => isTable(station) || station === 'condiment'
 export function canAccessStation(station: StationId, playerZ: number) {
-  return station === 'table' || station === 'trash' || playerZ <= STAFF_AISLE_EDGE_Z
+  return isCupSurface(station) || station === 'trash' || playerZ <= STAFF_AISLE_EDGE_Z
 }
 
 export const ingredientIds = [
