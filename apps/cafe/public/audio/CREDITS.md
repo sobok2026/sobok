@@ -4,10 +4,8 @@ These are adapted foley recordings used for game feedback, not recordings of a s
 
 | File          | Original asset                      | Creator / source                                                                                                  |
 | ------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `pump.wav`    | `switch_01.ogg`                     | rubberduck · [100 CC0 SFX](https://opengameart.org/node/85570)                                                    |
 | `cup.wav`     | `dishes_03.ogg`                     | rubberduck · [100 CC0 SFX](https://opengameart.org/node/85570)                                                    |
 | `bell.wav`    | `bell_02.ogg`                       | rubberduck · [100 CC0 SFX](https://opengameart.org/node/85570)                                                    |
-| `error.wav`   | `switch_02.ogg`                     | rubberduck · [100 CC0 SFX](https://opengameart.org/node/85570)                                                    |
 | `cloth.wav`   | `paper_01.ogg`                      | rubberduck · [100 CC0 SFX](https://opengameart.org/node/85570)                                                    |
 | `ice.wav`     | `Audio/impactGlass_medium_002.ogg`  | Kenney · [Impact Sounds 1.0](https://kenney.nl/assets/impact-sounds)                                              |
 | `confirm.wav` | `Audio/impactGlass_light_000.ogg`   | Kenney · [Impact Sounds 1.0](https://kenney.nl/assets/impact-sounds)                                              |

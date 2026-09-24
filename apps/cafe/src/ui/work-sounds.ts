@@ -8,9 +8,9 @@ import type { GameState } from '../game/state'
 import type { Action, CafeStore } from '../game/store'
 import { WASH_STEPS } from '../game/washing'
 
-const assetIds = ['pump', 'cup', 'ice', 'confirm', 'bell', 'error', 'cloth', 'water', 'steam'] as const
+const assetIds = ['cup', 'ice', 'confirm', 'bell', 'cloth', 'water', 'steam'] as const
 type Asset = (typeof assetIds)[number]
-export type WorkSound = 'pump' | 'cup' | 'ice' | 'ready' | 'confirm' | 'complete' | 'serve' | 'error'
+export type WorkSound = 'cup' | 'ice' | 'ready' | 'confirm' | 'complete' | 'serve'
 export type WorkLoop = 'water' | 'steam' | 'cloth'
 export type SoundStatus = 'off' | 'idle' | 'loading' | 'ready' | 'blocked' | 'unavailable'
 type ActiveInput = ReturnType<CafeStore['getActiveInput']>
@@ -144,13 +144,10 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
   }
   function play(sound: WorkSound) {
     if (!context || muted || volume === 0 || disposed || context.state !== 'running') return
-    if (sound === lastCue && context.currentTime - lastCueAt < (sound === 'error' ? 0.16 : 0.06)) return
+    if (sound === lastCue && context.currentTime - lastCueAt < 0.06) return
     lastCue = sound
     lastCueAt = context.currentTime
     switch (sound) {
-      case 'pump':
-        hit('pump', 0.45)
-        break
       case 'cup':
         hit('cup', 0.35, 0.95)
         break
@@ -169,10 +166,6 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
       case 'serve':
         hit('cup', 0.35)
         hit('bell', 0.22, 1, 0.12)
-        break
-      case 'error':
-        hit('error', 0.32, 0.8)
-        hit('error', 0.18, 0.8, 0.1)
         break
     }
   }
@@ -228,7 +221,7 @@ export function actionSound(
   current: GameState,
   input: ActiveInput,
 ): WorkSound | null {
-  if (newError(previous, current)) return 'error'
+  if (newError(previous, current)) return null
   if (current.totals.served > previous.totals.served) return 'serve'
   if (completedWork(previous, current)) return 'complete'
   if (
@@ -256,13 +249,10 @@ export function actionSound(
   if (action.type === 'use-start' && previous.cup && current.cup) {
     const op = operationFor(previous.cup.recipe, previous.cup.step, previous.cup.craft)
     if (current.cup.craft.progress > previous.cup.craft.progress)
-      return op?.kind === 'ice' || op?.kind === 'sprinkle' ? 'ice' : op?.kind === 'lid' ? 'cup' : 'pump'
-    if (current.jobs.length > previous.jobs.length) return 'pump'
+      return op?.kind === 'ice' || op?.kind === 'sprinkle' ? 'ice' : op?.kind === 'lid' ? 'cup' : null
     if (input?.kind === 'drink' && op?.kind === 'stir') return 'cup'
   }
   if (action.type === 'prep-use' && previous.preparation && current.preparation) {
-    if (current.preparation.progress > previous.preparation.progress || current.jobs.length > previous.jobs.length)
-      return 'pump'
     if (input?.kind === 'prep' && preparationStep(current.preparation).kind === 'stir') return 'cup'
   }
   if (
@@ -292,7 +282,7 @@ export function actionSound(
   return null
 }
 export function tickSound(previous: GameState, current: GameState): WorkSound | null {
-  if (newError(previous, current)) return 'error'
+  if (newError(previous, current)) return null
   if (
     completedWork(previous, current) ||
     previous.jobs.some((job) => job.endsAt <= current.time && !current.jobs.some((item) => item.id === job.id))
