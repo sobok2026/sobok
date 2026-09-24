@@ -1,7 +1,10 @@
+import { batchDestination, batchOrigin, carriedBatch } from '../game/batches'
 import { COLD_BREW_HOURS, INGREDIENTS, type IngredientId, RECIPES, STATIONS, type StationId } from '../game/catalog'
 import { CLEANING_SECONDS } from '../game/cleaning'
+import { COLD_BREW_TOOL_NAMES, coldBrewStep } from '../game/cold-brew'
 import { isContinuous, operationFor, readyToConfirm, TOOL_NAMES } from '../game/crafting'
 import { PREP_TOOL_NAMES, PREPARATIONS, preparationStep } from '../game/preparation'
+import { expiryAt } from '../game/quality'
 import type { GameState } from '../game/state'
 import { available, closingTasks, nextStep, suggestedStation } from '../game/store'
 import { WASH_STEPS } from '../game/washing'
@@ -23,7 +26,12 @@ function materialTip(state: GameState, ingredient: IngredientId): Tip {
   if (pending)
     return {
       title: `${definition.name} 사용 준비`,
-      action: `${pending.location === 'prep' ? '준비대' : '창고'}에서 ${pending.labelled ? `${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하세요.` : '날짜 확인 후 라벨을 붙이세요.'}`,
+      station: definition.prepared ? batchOrigin(pending) : 'stock',
+      action: definition.prepared
+        ? pending.labelled
+          ? `E로 용기를 집어 ${STATIONS[batchDestination(pending)].name}로 운반하세요.`
+          : `${STATIONS[batchOrigin(pending)].name}에서 날짜를 확인하고 라벨을 붙이세요.`
+        : `창고에서 ${pending.labelled ? `${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하세요.` : '날짜 확인 후 라벨을 붙이세요.'}`,
       reason: '개봉·제조만으로는 사용할 수 없어요. 라벨과 보관까지 마쳐야 해요.',
     }
   if (ingredient === 'foam' || ingredient === 'mocha')
@@ -37,7 +45,11 @@ function materialTip(state: GameState, ingredient: IngredientId): Tip {
   if (ingredient === 'coldBrew')
     return {
       title: '추출액을 준비하세요',
-      action: '창고에서 콜드 브루 추출을 시작하세요. 추출 중이면 완료를 기다려주세요.',
+      station: 'cold-prep',
+      action:
+        state.coldBrew?.stage === 'finished'
+          ? '추출대에서 E로 추출액을 용기에 회수하세요.'
+          : '콜드 브루 추출대에서 원두·물을 계량해 추출하세요. 추출 중이면 완료를 기다려주세요.',
       reason: `${COLD_BREW_HOURS}시간 추출은 마감 후 다음 날로 넘어갈 때도 진행돼요.`,
     }
   const sealed = state.batches.some(
@@ -51,13 +63,32 @@ function materialTip(state: GameState, ingredient: IngredientId): Tip {
 }
 function currentTip(state: GameState, panel: StationId | null): Tip {
   const cup = state.cup
+  const carrying = carriedBatch(state)
+  if (carrying) {
+    const expired = carrying.expiresAt !== null && carrying.expiresAt <= state.time
+    return {
+      title: expired ? '기한이 지난 용기예요' : '배합 용기를 보관하세요',
+      station: expired ? batchOrigin(carrying) : batchDestination(carrying),
+      action: expired
+        ? `${STATIONS[batchOrigin(carrying)].name}에 E로 내려놓고 폐기하세요.`
+        : `${STATIONS[batchDestination(carrying)].name}까지 운반해 E로 보관하세요.`,
+      reason: `다시 놓으려면 ${STATIONS[batchOrigin(carrying)].name}로 가세요. 이동해도 잔량·기한은 바뀌지 않아요.`,
+    }
+  }
+  if (panel === 'cold-prep' && !state.coldBrew)
+    return {
+      title: '콜드 브루 한 배치를 준비하세요',
+      station: 'cold-prep',
+      action: '원두 한 배치 준비 버튼을 누르면 직접 계량을 시작해요.',
+      reason: '원두와 물을 계량하고 추출이 끝나면 회수·라벨·냉장 보관을 마쳐주세요.',
+    }
   if (state.supplyDelivery)
     return {
       title: '보충품을 먼저 놓으세요',
       action: '컨디먼트 바에서 E로 소모품을 채우세요.',
       reason: '창고에서 E로 다시 내려놓을 수도 있어요. 손을 비워야 다른 도구를 집을 수 있어요.',
     }
-  if (cup?.craft.location === 'hand' && (state.preparation || state.washing))
+  if (cup?.craft.location === 'hand' && (state.preparation || state.washing || state.coldBrew))
     return {
       title: '컵을 먼저 내려놓으세요',
       station: nextStep(state)?.station ?? 'pickup',
@@ -116,6 +147,58 @@ function currentTip(state: GameState, panel: StationId | null): Tip {
           ? 'G로 스펀지를 먼저 집으세요.'
           : 'Space나 작업 버튼을 누르고 있으면 진행돼요.',
       reason: '문지르기 → 헹구기 → 선반 정리 순서예요.',
+    }
+  }
+  const brew = state.coldBrew
+  if (brew && (brew.tool || (!state.preparation && !cup))) {
+    if (brew.completedAt !== null && expiryAt(brew.completedAt, INGREDIENTS.coldBrew.lifetime) <= state.time)
+      return {
+        title: '추출액의 기한이 지났어요',
+        station: 'cold-prep',
+        action: '추출대에서 F로 폐기한 뒤 다시 준비하세요.',
+        reason: '회수하거나 라벨을 붙여도 기한은 늘어나지 않아요.',
+        fault: true,
+      }
+    if (brew.fault)
+      return {
+        title: '콜드 브루를 다시 준비하세요',
+        station: 'cold-prep',
+        action: '추출대에서 F로 한 배치분을 폐기하세요.',
+        reason: brew.fault,
+        fault: true,
+      }
+    if (brew.stage === 'finished')
+      return {
+        title: '추출액을 회수하세요',
+        station: 'cold-prep',
+        action: '추출대에서 E로 용기에 회수하고 F로 라벨을 붙이세요.',
+        reason: '추출 완료 시각부터 기한이 계산돼요. 회수한 뒤 냉장고로 운반해야 사용할 수 있어요.',
+      }
+    if (brew.stage === 'ready') return materialTip(state, 'coldBrew')
+    if (brew.stage === 'extracting')
+      return {
+        title: '콜드 브루 추출 중이에요',
+        action: '기다리는 동안 주문·정리를 이어가거나 마감할 수 있어요.',
+        reason: '다음 날로 넘어간 시간도 추출에 반영돼요. 완료 후에는 직접 회수하세요.',
+      }
+    const step = coldBrewStep(brew)
+    const ready = brew.progress + 0.0001 >= step.target * (1 - step.tolerance)
+    return {
+      title: step.label,
+      station: 'cold-prep',
+      action:
+        brew.tool && ready
+          ? 'G로 도구를 내려놓고 F로 계량을 확인하세요.'
+          : brew.step === 2
+            ? `Space로 ${COLD_BREW_HOURS}시간 추출을 시작하세요.`
+            : ready
+              ? 'F로 계량을 확인하세요.'
+              : !brew.tool
+                ? `G로 ${COLD_BREW_TOOL_NAMES[step.tool!]}를 집으세요.`
+                : brew.step === 0
+                  ? 'Space를 누르고 원두 한 봉을 모두 담으세요.'
+                  : 'Space로 물을 붓다가 초록 목표 구간에서 손을 떼세요.',
+      reason: '추출이 끝나면 회수·라벨·냉장고 운반까지 마쳐야 사용할 수 있어요.',
     }
   }
   if (state.preparation) {

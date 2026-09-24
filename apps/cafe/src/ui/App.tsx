@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { batchDestination, batchOrigin, carriedBatch } from '../game/batches'
 import {
   customerNames,
   formatAmount,
+  INGREDIENTS,
   isCupSurface,
   money,
   RECIPES,
@@ -12,10 +14,12 @@ import {
   tableIds,
 } from '../game/catalog'
 import { cleaningHandsBusy, cupSurface, dirtyTableCount } from '../game/cleaning'
+import { COLD_BREW_BEANS, COLD_BREW_COST, COLD_BREW_WATER } from '../game/cold-brew'
 import { craftStations } from '../game/crafting'
 import { CUSTOMER_SECONDS, CUSTOMER_STATUS, customerWalking } from '../game/customer'
 import type { Preferences } from '../game/preferences'
 import { PREPARATIONS, preparationStep } from '../game/preparation'
+import { expiryAt } from '../game/quality'
 import type { CafeScene, MouseMode } from '../game/scene'
 import type { GameState } from '../game/state'
 import { exportGame, importGame, loadGame, loadPreferences, saveGame, savePreferences } from '../game/storage'
@@ -31,8 +35,10 @@ import {
 } from '../game/store'
 import { SUPPLIES, supplyIds } from '../game/supplies'
 import { washingHandsBusy } from '../game/washing'
+import BatchLabel from './BatchLabel'
 import { Button, TextButton } from './Button'
 import CleaningHud from './CleaningHud'
+import ColdBrewHud from './ColdBrewHud'
 import CraftingHud from './CraftingHud'
 import FirstShiftGuide, { firstOrdersDone } from './FirstShiftGuide'
 import InventoryPanel from './InventoryPanel'
@@ -231,6 +237,13 @@ function CafeGame({
   function openPanel(id: StationId) {
     stopUse()
     const current = store.getSnapshot()
+    const carrying = carriedBatch(current)
+    if (carrying && id !== 'pos') {
+      if (id === 'stock' || id === 'shelf')
+        act({ type: 'store-batch', id: carrying.id, storage: id === 'stock' ? 'fridge' : 'room', station: id })
+      else act({ type: 'return-batch', station: id })
+      return
+    }
     if (current.supplyDelivery && (id === 'condiment' || id === 'stock')) {
       act({ type: id === 'condiment' ? 'place-supply' : 'return-supply' })
       return
@@ -255,7 +268,18 @@ function CafeGame({
       return
     }
     if (id === 'prep' && current.preparation) {
-      scene.current?.unlockForCraft()
+      const batch = current.batches.find((item) => item.id === current.preparation?.batchId)
+      if (batch?.labelled && batch.expiresAt !== null && batch.expiresAt > current.time)
+        act({ type: 'take-batch', id: batch.id, station: id })
+      else scene.current?.unlockForCraft()
+      return
+    }
+    if (id === 'cold-prep' && current.coldBrew) {
+      const batch = current.batches.find((item) => item.id === current.coldBrew?.batchId)
+      if (current.coldBrew.stage === 'finished') act({ type: 'collect-cold-brew' })
+      else if (batch?.labelled && batch.expiresAt !== null && batch.expiresAt > current.time)
+        act({ type: 'take-batch', id: batch.id, station: id })
+      else scene.current?.unlockForCraft()
       return
     }
     if (id === 'cups' && current.ticket && !current.cup) {
@@ -334,6 +358,10 @@ function CafeGame({
     }
     if (action.type === 'take-cup' && store.getSnapshot().cup) closePanel()
     if (action.type === 'take-supply' && store.getSnapshot().supplyDelivery) closePanel()
+    if (action.type === 'take-batch' && carriedBatch(store.getSnapshot())) closePanel()
+    if (action.type === 'return-batch' && !carriedBatch(store.getSnapshot())) beginWork()
+    if ((action.type === 'start-cold-brew' || action.type === 'collect-cold-brew') && store.getSnapshot().coldBrew)
+      beginWork()
     if (action.type === 'start-preparation' && store.getSnapshot().preparation) {
       beginWork()
     }
@@ -353,6 +381,7 @@ function CafeGame({
       !flags.current.panel &&
       ((previous.cup && !current.cup) ||
         (previous.preparation && !current.preparation) ||
+        (previous.coldBrew && !current.coldBrew) ||
         (previous.washing && !current.washing) ||
         (previous.cleaning && !current.cleaning) ||
         (previous.supplyDelivery && !current.supplyDelivery))
@@ -379,6 +408,7 @@ function CafeGame({
     if (station === store.getSnapshot().cleaning?.station) act({ type: 'clean-use' })
     else if (station === 'wash' && store.getSnapshot().washing) act({ type: 'wash-use' })
     else if (station === 'prep' && store.getSnapshot().preparation) act({ type: 'prep-use' })
+    else if (station === 'cold-prep' && store.getSnapshot().coldBrew) act({ type: 'cold-use' })
     else act({ type: 'use-start', station })
   }
   function stopUse() {
@@ -391,6 +421,7 @@ function CafeGame({
     if (station === store.getSnapshot().cleaning?.station) act({ type: 'clean-tool' })
     else if (station === 'wash' && store.getSnapshot().washing) act({ type: 'wash-tool' })
     else if (station === 'prep' && store.getSnapshot().preparation) act({ type: 'prep-tool' })
+    else if (station === 'cold-prep' && store.getSnapshot().coldBrew) act({ type: 'cold-tool' })
     else act({ type: 'tool', station })
   }
   function confirm(station: StationId) {
@@ -410,8 +441,37 @@ function CafeGame({
     const prep = store.getSnapshot().preparation
     if (station === 'prep' && prep) {
       if (prep.fault) act({ type: 'discard-preparation' })
-      else if (prep.stage === 'ready' && prep.batchId) act({ type: 'label-batch', id: prep.batchId })
-      else act({ type: 'prep-confirm' })
+      else if (prep.stage === 'ready' && prep.batchId) {
+        const batch = store.getSnapshot().batches.find((item) => item.id === prep.batchId)
+        act({
+          type:
+            batch?.expiresAt != null && batch.expiresAt <= store.getSnapshot().time ? 'discard-batch' : 'label-batch',
+          id: prep.batchId,
+          station,
+        })
+      } else act({ type: 'prep-confirm' })
+      return
+    }
+    const brew = store.getSnapshot().coldBrew
+    if (station === 'cold-prep' && brew) {
+      if (brew.fault) act({ type: 'discard-cold-brew' })
+      else if (brew.stage === 'finished')
+        act({
+          type:
+            brew.completedAt !== null &&
+            expiryAt(brew.completedAt, INGREDIENTS.coldBrew.lifetime) <= store.getSnapshot().time
+              ? 'discard-cold-brew'
+              : 'collect-cold-brew',
+        })
+      else if (brew.stage === 'ready' && brew.batchId) {
+        const batch = store.getSnapshot().batches.find((item) => item.id === brew.batchId)
+        act({
+          type:
+            batch?.expiresAt != null && batch.expiresAt <= store.getSnapshot().time ? 'discard-batch' : 'label-batch',
+          id: brew.batchId,
+          station,
+        })
+      } else act({ type: 'cold-confirm' })
       return
     }
     if (store.getSnapshot().cup?.craft.fault) act({ type: 'discard-cup' })
@@ -607,13 +667,18 @@ function CafeGame({
           : 'POS에서 주문 받기'
       : STATIONS[goalStation].name
   const canStart = sceneReady && hasLock === true && !graphicsError
-  const showPreparation = !!state.preparation && target === 'prep'
+  const heldBatch = carriedBatch(state)
+  const showPreparation = !heldBatch && !!state.preparation && target === 'prep'
+  const showColdBrew = !heldBatch && !!state.coldBrew && target === 'cold-prep'
   const showWashing =
-    !!state.washing && (target === 'wash' || (target === 'rack' && state.washing.stage === 'carrying'))
-  const showCrafting = !!state.cup && state.cup.craft.location !== 'hand' && target === state.cup.craft.location
+    !heldBatch && !!state.washing && (target === 'wash' || (target === 'rack' && state.washing.stage === 'carrying'))
+  const showCrafting =
+    !heldBatch && !!state.cup && state.cup.craft.location !== 'hand' && target === state.cup.craft.location
   const showCleaning =
-    !!state.cleaning && (target === state.cleaning.station || (target === 'trash' && state.cleaning.heldCups > 0))
-  const focusedWork = !panel && (showPreparation || showWashing || showCrafting || showCleaning)
+    !heldBatch &&
+    !!state.cleaning &&
+    (target === state.cleaning.station || (target === 'trash' && state.cleaning.heldCups > 0))
+  const focusedWork = !panel && (showPreparation || showColdBrew || showWashing || showCrafting || showCleaning)
   const careNeeded =
     state.condiment.cups > 0 ||
     state.condiment.dirty ||
@@ -625,23 +690,30 @@ function CafeGame({
     state.trash > 0 ||
     state.batches.some((batch) => batch.amount > 0 && batch.expiresAt !== null && batch.expiresAt <= state.time)
   const mismatch = !!state.ticket && state.ticket !== state.request
-  const handLabel = state.supplyDelivery
-    ? `${SUPPLIES[state.supplyDelivery.supply].name} 보충품을 들고 있어요`
-    : state.cleaning?.heldCups
-      ? `회수한 컵 ${state.cleaning.heldCups}개를 들고 있어요`
-      : cleaningHandsBusy(state.cleaning)
-        ? '청소용 천을 들고 있어요'
-        : state.washing?.stage === 'carrying'
-          ? '씻은 피처를 들고 있어요'
-          : washingHandsBusy(state.washing)
-            ? '스펀지를 들고 있어요'
-            : state.cup?.craft.location === 'hand'
-              ? '컵을 들고 있어요'
-              : state.preparation?.tool || state.cup?.craft.tool
-                ? '도구를 들고 있어요'
-                : '다음 업무'
-  const targetAction =
-    state.supplyDelivery && target === 'condiment'
+  const handLabel = heldBatch
+    ? `${INGREDIENTS[heldBatch.ingredient].name} 용기를 들고 있어요`
+    : state.supplyDelivery
+      ? `${SUPPLIES[state.supplyDelivery.supply].name} 보충품을 들고 있어요`
+      : state.cleaning?.heldCups
+        ? `회수한 컵 ${state.cleaning.heldCups}개를 들고 있어요`
+        : cleaningHandsBusy(state.cleaning)
+          ? '청소용 천을 들고 있어요'
+          : state.washing?.stage === 'carrying'
+            ? '씻은 피처를 들고 있어요'
+            : washingHandsBusy(state.washing)
+              ? '스펀지를 들고 있어요'
+              : state.cup?.craft.location === 'hand'
+                ? '컵을 들고 있어요'
+                : state.preparation?.tool || state.cup?.craft.tool || state.coldBrew?.tool
+                  ? '도구를 들고 있어요'
+                  : '다음 업무'
+  const targetAction = heldBatch
+    ? target === batchOrigin(heldBatch)
+      ? '용기 다시 내려놓기'
+      : target === batchDestination(heldBatch)
+        ? '용기 보관하기'
+        : '용기를 보관 장소로 운반하세요'
+    : state.supplyDelivery && target === 'condiment'
       ? '소모품 채우기'
       : state.supplyDelivery && target === 'stock'
         ? '소모품 다시 놓기'
@@ -657,16 +729,20 @@ function CafeGame({
               ? '컵 내려놓기'
               : target === 'prep' && state.preparation
                 ? '준비 이어가기'
-                : target === 'wash'
-                  ? '세척대 열기'
-                  : target === 'stock'
-                    ? '재고 확인하기'
-                    : '작업대 열기'
+                : target === 'cold-prep' && state.coldBrew
+                  ? state.coldBrew.stage === 'finished'
+                    ? '추출액 회수하기'
+                    : '콜드 브루 준비 이어가기'
+                  : target === 'wash'
+                    ? '세척대 열기'
+                    : target === 'stock'
+                      ? '재고 확인하기'
+                      : '작업대 열기'
   const destinationNote =
     suggestedInstruction(state) ??
     (state.preparation
       ? state.preparation.stage === 'ready'
-        ? '라벨을 붙이고 보관하세요.'
+        ? '라벨을 붙이고 E로 용기를 집어 보관 장소로 운반하세요.'
         : state.preparation.stage === 'processing'
           ? '블렌딩이 끝나면 라벨을 붙이세요.'
           : preparationStep(state.preparation).label
@@ -934,6 +1010,7 @@ function CafeGame({
           {!panel && showPreparation && !showWashing && !showCleaning ? (
             <PreparationHud state={state} target={target} act={act} stop={stopUse} />
           ) : null}
+          {!panel && showColdBrew ? <ColdBrewHud state={state} act={act} stop={stopUse} /> : null}
           {!panel && showCrafting && !showPreparation && !showWashing && !showCleaning ? (
             <CraftingHud
               state={state}
@@ -1183,6 +1260,34 @@ function CafeGame({
                     바모카: {PREPARATIONS.mocha.storageNote}
                   </p>
                 </details>
+              </>
+            ) : null}
+            {panel === 'cold-prep' ? (
+              <>
+                <h3 className="my-4 text-lg font-medium">다음 근무를 위한 콜드 브루</h3>
+                <p className="mb-4 text-sm leading-relaxed text-muted">
+                  한 배치분의 원두를 준비하고 원두 {COLD_BREW_BEANS}lb·정수 {COLD_BREW_WATER}L를 직접 계량해요. 추출이
+                  끝나면 용기에 회수해 라벨을 붙이고 냉장고로 운반하세요.
+                </p>
+                <p className="mb-4 text-xs text-muted">
+                  준비를 중단하면 원두 한 배치분을 폐기해요. 준비비는 반환되지 않아요.
+                </p>
+                <Button
+                  disabled={!!state.coldBrew || state.cash < COLD_BREW_COST}
+                  onClick={() => act({ type: 'start-cold-brew' })}
+                >
+                  원두 한 배치 준비 · {money(COLD_BREW_COST)}
+                </Button>
+              </>
+            ) : null}
+            {panel === 'shelf' ? (
+              <>
+                <p className="my-4 text-sm text-muted">라벨을 붙인 바모카 용기를 들고 와 E로 보관하세요.</p>
+                {state.batches
+                  .filter((batch) => batch.ingredient === 'mocha' && batch.location === 'bar' && batch.amount > 0)
+                  .map((batch) => (
+                    <BatchLabel key={batch.id} batch={batch} time={state.time} act={act} station="shelf" />
+                  ))}
               </>
             ) : null}
             {panel === 'wash' ? (

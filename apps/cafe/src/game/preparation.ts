@@ -36,8 +36,7 @@ export type Preparation = {
   amounts: { cream: number; milk: number; glaze: number; water: number; mochaPowder: number }
   fault: string | null
   batchId: string | null
-  // Undefined means the saved preparation has no ingredient-deadline record.
-  ingredientExpiresAt?: number | null
+  ingredientExpiresAt: number | null
 }
 const { foam, mocha } = referenceLinks
 export const PREPARATIONS: Record<

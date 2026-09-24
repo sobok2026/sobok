@@ -1,4 +1,5 @@
-import { formatAmount, INGREDIENTS } from '../game/catalog'
+import { batchDestination, batchOrigin } from '../game/batches'
+import { formatAmount, INGREDIENTS, STATIONS, type StationId } from '../game/catalog'
 import { batchDate, PREPARATIONS } from '../game/preparation'
 import { expiryAt, lifetimeLabel } from '../game/quality'
 import type { Batch } from '../game/state'
@@ -9,21 +10,30 @@ export default function BatchLabel({
   batch,
   time,
   act,
+  station,
 }: {
   batch: Batch
   time: number
   act: (action: Action) => void
+  station: StationId
 }) {
   const definition = INGREDIENTS[batch.ingredient]
   const expired = batch.expiresAt !== null && batch.expiresAt <= time
   const pending = batch.location !== 'bar'
+  const atOrigin =
+    batch.location === 'stock'
+      ? station === 'stock'
+      : batch.location === batchOrigin(batch) && station === batchOrigin(batch)
+  const canDiscard = atOrigin || (batch.location === 'bar' && (station === 'stock' || station === 'shelf'))
   const usualExpiry = batch.openedAt === null ? null : expiryAt(batch.openedAt, definition.lifetime)
   const limitedByIngredient =
     !!definition.prepared && batch.expiresAt !== null && usualExpiry !== null && batch.expiresAt < usualExpiry
   const marking =
     batch.ingredient === 'foam' || batch.ingredient === 'mocha'
       ? PREPARATIONS[batch.ingredient].marking
-      : '개봉일 · 품질 기한'
+      : definition.prepared
+        ? '제조일 · 품질 기한'
+        : '개봉일 · 품질 기한'
   return (
     <details className="group/label my-1 text-xs" data-expired={expired} open={pending || expired}>
       <summary className="cursor-pointer py-1.5 text-[#56734f] group-data-[expired=true]/label:text-[#aa593c]">
@@ -56,38 +66,48 @@ export default function BatchLabel({
           <p className="mt-2 text-xs leading-snug text-muted">
             {limitedByIngredient
               ? '투입한 원재료 기한에 맞춰 짧아진 배합이에요. '
-              : batch.expiresAt === usualExpiry
-                ? `${lifetimeLabel(definition.lifetime, !!definition.prepared)}. `
-                : ''}
+              : `${lifetimeLabel(definition.lifetime, !!definition.prepared)}. `}
             표시된 시각부터 사용할 수 없어요.
           </p>
         ) : null}
       </div>
-      {!expired && !batch.labelled ? (
-        <Button size="compact" className="mt-1" onClick={() => act({ type: 'label-batch', id: batch.id })}>
+      {!expired && !batch.labelled && atOrigin ? (
+        <Button size="compact" className="mt-1" onClick={() => act({ type: 'label-batch', id: batch.id, station })}>
           날짜 확인 · 라벨 붙이기
         </Button>
       ) : null}
-      {!expired && pending && batch.labelled ? (
+      {!expired && pending && batch.labelled && definition.prepared && atOrigin ? (
+        <Button size="compact" className="mt-1" onClick={() => act({ type: 'take-batch', id: batch.id, station })}>
+          E · 용기 집어 {STATIONS[batchDestination(batch)].name}로 운반
+        </Button>
+      ) : null}
+      {pending && definition.prepared && !atOrigin ? (
+        <p className="mt-2 text-xs text-muted">
+          {batch.location === 'hand'
+            ? '용기를 운반 중이에요.'
+            : `${STATIONS[batchOrigin(batch)].name}에 있는 용기를 확인하세요.`}
+        </p>
+      ) : null}
+      {!expired && pending && batch.labelled && !definition.prepared && atOrigin ? (
         <fieldset className="mt-2.5 grid min-w-0 grid-cols-2 gap-2 border-0 p-0" aria-label="보관 위치 선택">
           <button
             className="rounded-[0.1875rem] border border-[#bbcbb0] bg-[#eaf0de] px-1.25 py-2.5 text-xs text-[#416039] enabled:hover:bg-[#d6e5c9]"
             type="button"
-            onClick={() => act({ type: 'store-batch', id: batch.id, storage: 'fridge' })}
+            onClick={() => act({ type: 'store-batch', id: batch.id, storage: 'fridge', station })}
           >
             냉장고에 보관
           </button>
           <button
             className="rounded-[0.1875rem] border border-[#bbcbb0] bg-[#eaf0de] px-1.25 py-2.5 text-xs text-[#416039] enabled:hover:bg-[#d6e5c9]"
             type="button"
-            onClick={() => act({ type: 'store-batch', id: batch.id, storage: 'room' })}
+            onClick={() => act({ type: 'store-batch', id: batch.id, storage: 'room', station })}
           >
             실온 선반에 보관
           </button>
         </fieldset>
       ) : null}
-      {expired || pending ? (
-        <TextButton danger className="mt-1.5" onClick={() => act({ type: 'discard-batch', id: batch.id })}>
+      {(expired || pending) && canDiscard ? (
+        <TextButton danger className="mt-1.5" onClick={() => act({ type: 'discard-batch', id: batch.id, station })}>
           이 배치 폐기
         </TextButton>
       ) : null}

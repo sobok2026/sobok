@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import { createBatchVisuals } from './batch-visuals'
+import { carriedBatch } from './batches'
 import {
   BAR_CENTER_Z,
   canAccessStation,
@@ -11,6 +13,7 @@ import {
 } from './catalog'
 import { cleaningSpot } from './cleaning'
 import { createCleaningVisuals } from './cleaning-visuals'
+import { createColdBrewVisuals } from './cold-brew-visuals'
 import { createCraftVisuals } from './craft-visuals'
 import { craftStations, cupSpot } from './crafting'
 import { CUSTOMER_DOOR_X } from './customer'
@@ -315,6 +318,18 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   box(5.5, 1.12, -4.68, 1.25, 2.03, 0.05, '#aebfae')
   box(5.02, 1.45, -4.61, 0.045, 0.42, 0.065, '#556e5d')
   obstacles.push({ x: 5.5, z: -5.2, width: 1.4, depth: 1.1 })
+  box(3, 0.5, -5.2, 1.9, 1, 0.85, '#b39a79')
+  box(3, 1.05, -5.2, 2, 0.09, 0.95, '#d3c3a5')
+  obstacles.push({ x: 3, z: -5.2, width: 2, depth: 0.95 })
+  const shelfSign = sign('실온 보관', 1.25, 0.28, '#eee5d1', '#344e3d')
+  shelfSign.position.set(3, 1.6, -5.7)
+  scene.add(shelfSign)
+  box(1, 0.5, -5.2, 1.55, 1, 0.85, '#a38b70')
+  box(1, 1.05, -5.2, 1.65, 0.09, 0.95, '#d3c3a5')
+  obstacles.push({ x: 1, z: -5.2, width: 1.65, depth: 0.95 })
+  const extractionSign = sign('COLD BREW\n계량 · 추출 · 회수', 1.4, 0.4, '#eee5d1', '#344e3d')
+  extractionSign.position.set(1, 1.9, -5.7)
+  scene.add(extractionSign)
   box(-5.0, 1.1, -5.1, 0.84, 0.035, 0.65, '#283c38')
   for (const z of [-5.43, -4.77]) box(-5, 1.126, z, 0.9, 0.035, 0.04, '#b5c6ba', scene, 0.6)
   for (const x of [-5.44, -4.56]) box(x, 1.126, -5.1, 0.04, 0.035, 0.66, '#b5c6ba', scene, 0.6)
@@ -348,7 +363,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     const station = STATIONS[id]
     const mesh = new THREE.Mesh(
       new THREE.BoxGeometry(
-        isCupSurface(id) || id === 'prep' ? 1.3 : id === 'wash' ? 1.2 : 0.8,
+        isCupSurface(id) || id === 'prep' || id === 'cold-prep' || id === 'shelf' ? 1.3 : id === 'wash' ? 1.2 : 0.8,
         isTable(id) ? 1 : 0.8,
         0.8,
       ),
@@ -377,6 +392,8 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   const washingVisuals = createWashingVisuals(scene, camera)
   const cleaningVisuals = createCleaningVisuals(scene, camera)
   const supplyVisuals = createSupplyVisuals(scene, camera)
+  const batchVisuals = createBatchVisuals(scene, camera)
+  const coldBrewVisuals = createColdBrewVisuals(scene, camera)
   const raycaster = new THREE.Raycaster()
   raycaster.far = 3.4
   const keys = new Set<string>()
@@ -509,6 +526,10 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   }
   const pointerDown = (event: PointerEvent) => {
     if (event.button !== 0 || !options.canMove()) return
+    if (carriedBatch(options.getState()) && hovered) {
+      options.onInteract(hovered)
+      return
+    }
     if (options.getState().supplyDelivery && (hovered === 'condiment' || hovered === 'stock')) {
       options.onInteract(hovered)
       return
@@ -526,6 +547,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
       hovered &&
       ((c?.craft.location === hovered && craftStations.includes(hovered)) ||
         (hovered === 'prep' && options.getState().preparation) ||
+        (hovered === 'cold-prep' && options.getState().coldBrew) ||
         (hovered === 'wash' && options.getState().washing) ||
         hovered === options.getState().cleaning?.station)
     ) {
@@ -639,7 +661,8 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     guideRing.visible = state.phase !== 'summary'
     const benchFocused =
       (state.cup && target === state.cup.craft.location) ||
-      (state.preparation && target === 'prep') ||
+      (state.preparation && !carriedBatch(state) && target === 'prep') ||
+      (state.coldBrew && !carriedBatch(state) && target === 'cold-prep') ||
       (state.washing && state.washing.stage !== 'carrying' && target === 'wash') ||
       (state.cleaning && !state.cleaning.heldCups && target === state.cleaning.station)
     const fov = benchFocused ? 48 : 62
@@ -656,6 +679,8 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     washingVisuals.update(state, options.activeStation() === 'wash', now)
     cleaningVisuals.update(state, !!state.cleaning && options.activeStation() === state.cleaning.station, now)
     supplyVisuals.update(state)
+    batchVisuals.update(state)
+    coldBrewVisuals.update(state, options.activeStation() === 'cold-prep')
     idleBlenderJar.visible = state.preparation?.stage !== 'processing'
     idleBlenderLid.visible = idleBlenderJar.visible
     cupStack.visible = state.cups > 0

@@ -23,6 +23,8 @@ export const STATIONS = {
   pickup: { name: '픽업대', subtitle: '주문을 확인하고 전달해요', x: 6.1, z: -1.4, color: '#d3b76b' },
   prep: { name: '준비대', subtitle: '폼과 바모카를 만들어요', x: -2.7, z: -5.1, color: '#c3a8cc' },
   stock: { name: '냉장고 · 창고', subtitle: '기한 확인, 개봉과 보충', x: 5.5, z: -4.8, color: '#8bb2a2' },
+  shelf: { name: '실온 선반', subtitle: '실온 보관 배합을 정리해요', x: 3, z: -4.8, color: '#bc9d76' },
+  'cold-prep': { name: '콜드 브루 추출대', subtitle: '원두·물 계량, 추출과 회수', x: 1, z: -5.1, color: '#9c7954' },
   wash: { name: '세척대', subtitle: '사용한 피처를 씻어요', x: -5.0, z: -5.1, color: '#aac4cf' },
   rack: { name: '건조 · 도구 선반', subtitle: '씻은 도구를 제자리에', x: -3.9, z: -5.1, color: '#d1bc9d' },
   table: { name: '고객 테이블 1', subtitle: '사용한 컵을 회수하고 닦아요', x: 3.2, z: 3.7, color: '#d2ad7d' },

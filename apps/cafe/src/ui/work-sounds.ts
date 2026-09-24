@@ -1,5 +1,6 @@
 import { RECIPES, STATIONS } from '../game/catalog'
 import { CLEANING_SECONDS } from '../game/cleaning'
+import { coldBrewStep } from '../game/cold-brew'
 import { isContinuous, operationFor, readyToConfirm } from '../game/crafting'
 import type { Preferences } from '../game/preferences'
 import { preparationStep } from '../game/preparation'
@@ -240,7 +241,15 @@ export function actionSound(
     return 'complete'
   const changedMessage = previous.messages.at(-1)?.id !== current.messages.at(-1)?.id
   if (
-    ['confirm-craft', 'prep-confirm', 'wash-confirm', 'clean-confirm', 'label-batch', 'ticket'].includes(action.type) &&
+    [
+      'confirm-craft',
+      'prep-confirm',
+      'cold-confirm',
+      'wash-confirm',
+      'clean-confirm',
+      'label-batch',
+      'ticket',
+    ].includes(action.type) &&
     changedMessage
   )
     return 'confirm'
@@ -273,6 +282,10 @@ export function actionSound(
       'place-supply',
       'return-supply',
       'store-batch',
+      'take-batch',
+      'return-batch',
+      'cold-tool',
+      'collect-cold-brew',
     ].includes(action.type)
   )
     return 'cup'
@@ -327,10 +340,24 @@ export function tickSound(previous: GameState, current: GameState): WorkSound | 
     previous.cleaning.progress < CLEANING_SECONDS[cleaning.stage]
   )
     return 'ready'
+  const brew = current.coldBrew
+  if (
+    brew &&
+    !brew.fault &&
+    brew.stage === 'measuring' &&
+    brew.step < 2 &&
+    previous.coldBrew?.id === brew.id &&
+    previous.coldBrew.step === brew.step
+  ) {
+    const step = coldBrewStep(brew)
+    const target = step.target * (1 - step.tolerance)
+    if (brew.progress >= target && previous.coldBrew.progress < target) return 'ready'
+  }
   return null
 }
 export function workLoop(state: GameState, input: ActiveInput, position: GameState['position']): WorkLoop | null {
   if (input?.kind === 'clean') return 'cloth'
+  if (input?.kind === 'cold') return state.coldBrew?.step === 0 ? 'cloth' : 'water'
   if (input?.kind === 'wash') return state.washing?.stage === 'rinse' ? 'water' : 'cloth'
   if (input?.kind === 'prep' && state.preparation)
     return preparationStep(state.preparation).kind === 'pour' ? 'water' : null

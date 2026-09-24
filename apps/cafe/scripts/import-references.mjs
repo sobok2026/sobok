@@ -142,7 +142,7 @@ const prepGuide = rowsOf(files[3], '부재료 제조').flatMap((row, index) =>
         },
       ],
 )
-const result = { version: 1, sources, recipes, preparations, quality, prepGuide }
+const result = { sources, recipes, preparations, quality, prepGuide }
 // Validate the candidate before touching the last usable generated file.
 linkReferences(result)
 const output = new URL('../src/data/references.generated.json', import.meta.url)

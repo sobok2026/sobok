@@ -114,11 +114,12 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
   return {
     update(state: GameState, active: boolean, now: number) {
       const prep = state.preparation
-      vessel.visible = !!prep
+      const batch = state.batches.find((batch) => batch.id === prep?.batchId)
+      vessel.visible = !!prep && batch?.location !== 'hand'
       pump.visible = false
       stream.visible = false
       for (const model of tools.values()) model.visible = false
-      if (!prep) return
+      if (!prep || batch?.location === 'hand') return
       const operation = preparationStep(prep)
       const processing = prep.stage === 'processing' && !prep.fault
       if (processing) vessel.position.set(-2.9, 1.355, -5.12)
@@ -138,7 +139,6 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
       swirl.visible = processing || (active && operation.kind === 'stir')
       swirl.position.y = height + 0.017
       swirl.rotation.z = now / 100
-      const batch = state.batches.find((batch) => batch.id === prep.batchId)
       marking.visible = !!batch?.labelled
       const nextKey = `${prep.id}:${prep.step}`
       if (nextKey !== key) {

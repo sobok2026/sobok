@@ -53,10 +53,21 @@ export default function ShiftLedger({ state, embedded = false }: { state: GameSt
           <p className="mb-4 text-xs leading-[1.7] text-muted">오늘 입고한 내역이 없어요.</p>
         )}
       </details>
-      <details className="mt-3.5 border-t border-line pt-3 text-sm" open={discarded.length > 0}>
-        <summary className="mb-3 cursor-pointer text-muted">재료 폐기 · {discarded.length}개 품목</summary>
-        {discarded.length ? (
+      <details
+        className="mt-3.5 border-t border-line pt-3 text-sm"
+        open={discarded.length > 0 || totals.coldBrewDiscardedBeans > 0}
+      >
+        <summary className="mb-3 cursor-pointer text-muted">
+          재료 폐기 · {discarded.length + (totals.coldBrewDiscardedBeans > 0 ? 1 : 0)}개 품목
+        </summary>
+        {discarded.length || totals.coldBrewDiscardedBeans > 0 ? (
           <dl className="my-3">
+            {totals.coldBrewDiscardedBeans > 0 ? (
+              <div className="flex items-baseline justify-between gap-3 py-1.5 text-label">
+                <dt>콜드 브루 준비 원두</dt>
+                <dd>{formatAmount(totals.coldBrewDiscardedBeans)}lb</dd>
+              </div>
+            ) : null}
             {discarded.map((id) => (
               <div className="flex items-baseline justify-between gap-3 py-1.5 text-label" key={id}>
                 <dt>{INGREDIENTS[id].name}</dt>

@@ -1,3 +1,4 @@
+import { batchDestination, batchOrigin, carriedBatch } from './batches'
 import {
   COLD_BREW_HOURS,
   type Costs,
@@ -16,6 +17,7 @@ import {
   tableIds,
 } from './catalog'
 import { CLEANING_SECONDS, type CleaningStation, cleaningHandsBusy, cupSurface, dirtyTableCount } from './cleaning'
+import { COLD_BREW_BEANS, COLD_BREW_COST, coldBrewStep, createColdBrew } from './cold-brew'
 import {
   type CraftOperation,
   craftStations,
@@ -102,6 +104,7 @@ export function initialState(): GameState {
     ticket: null,
     cup: null,
     preparation: null,
+    coldBrew: null,
     washing: null,
     cleaning: null,
     batches: ingredientIds.flatMap((ingredient) => [
@@ -144,6 +147,11 @@ export function nextStep(state: GameState) {
   return state.cup ? RECIPES[state.cup.recipe].steps[state.cup.step] : undefined
 }
 function plannedStation(state: GameState): StationId {
+  const carrying = carriedBatch(state)
+  if (carrying)
+    return carrying.expiresAt !== null && carrying.expiresAt <= state.time
+      ? batchOrigin(carrying)
+      : batchDestination(carrying)
   if (state.supplyDelivery) return 'condiment'
   if (cleaningHandsBusy(state.cleaning)) return state.cleaning!.heldCups ? 'trash' : state.cleaning!.station
   if (state.washing) return state.washing.stage === 'carrying' ? 'rack' : 'wash'
@@ -163,6 +171,7 @@ function plannedStation(state: GameState): StationId {
       return 'stock'
     return 'prep'
   }
+  if (state.coldBrew && state.coldBrew.stage !== 'extracting') return 'cold-prep'
   const step = nextStep(state)
   if (step) {
     const craft = state.cup!.craft
@@ -183,8 +192,10 @@ function plannedStation(state: GameState): StationId {
           batch.expiresAt !== null &&
           batch.expiresAt > state.time,
       )
-      if (pending) return pending.location === 'prep' ? 'prep' : 'stock'
+      if (pending)
+        return pending.location === 'prep' ? 'prep' : pending.location === 'cold-prep' ? 'cold-prep' : 'stock'
       if (key === 'foam' || key === 'mocha') return state.tools.clean ? 'prep' : toolStation()
+      if (key === 'coldBrew') return 'cold-prep'
       return 'stock'
     }
     return step.station
@@ -220,12 +231,17 @@ function plannedStation(state: GameState): StationId {
 }
 export function suggestedStation(state: GameState): StationId {
   const destination = plannedStation(state)
-  if (state.cup?.craft.location === 'hand' && ['prep', 'wash', 'rack'].includes(destination))
+  if (state.cup?.craft.location === 'hand' && ['prep', 'cold-prep', 'wash', 'rack'].includes(destination))
     return nextStep(state)?.station ?? 'pickup'
   return destination
 }
 export function suggestedInstruction(state: GameState): string | null {
   const destination = plannedStation(state)
+  const carrying = carriedBatch(state)
+  if (carrying)
+    return carrying.expiresAt !== null && carrying.expiresAt <= state.time
+      ? `기한이 지난 용기를 ${STATIONS[batchOrigin(carrying)].name}에 E로 내려놓고 폐기하세요.`
+      : `${INGREDIENTS[carrying.ingredient].name} 용기를 ${STATIONS[batchDestination(carrying)].name}에 E로 보관하세요.`
   if (state.supplyDelivery)
     return `${SUPPLIES[state.supplyDelivery.supply].name} 보충품을 컨디먼트 바에 가져가 E로 채우세요.`
   if (
@@ -241,8 +257,8 @@ export function suggestedInstruction(state: GameState): string | null {
       ? '누르고 닦은 뒤 천을 놓고 F로 확인하세요.'
       : 'G로 청소용 천을 집고 누르는 동안 닦으세요.'
   }
-  if (state.cup?.craft.location === 'hand' && ['prep', 'wash', 'rack'].includes(destination))
-    return `먼저 E로 컵을 내려놓으세요. ${destination === 'prep' ? '부재료 준비' : '피처 세척·정리'}에는 빈손이 필요해요.`
+  if (state.cup?.craft.location === 'hand' && ['prep', 'cold-prep', 'wash', 'rack'].includes(destination))
+    return `먼저 E로 컵을 내려놓으세요. ${destination === 'prep' || destination === 'cold-prep' ? '재료 준비' : '피처 세척·정리'}에는 빈손이 필요해요.`
   if (state.washing) {
     if (state.washing.stage === 'carrying') return '씻은 피처를 들고 선반으로 가서 E로 놓으세요.'
     if (state.washing.stage === 'ready') return 'E로 씻은 피처를 집어 선반으로 가져가세요.'
@@ -270,6 +286,8 @@ export function closingTasks(state: GameState) {
     state.ticket || state.cup ? '남은 주문 마무리' : '',
     state.customer ? `손님 ${CUSTOMER_STATUS[state.customer.stage]} · 퇴장까지 응대` : '',
     state.preparation ? '부재료 준비 마무리' : '',
+    state.coldBrew && state.coldBrew.stage !== 'extracting' ? '콜드 브루 계량·회수·보관 마무리' : '',
+    carriedBatch(state) ? '운반 중인 배합 용기 보관·반납' : '',
     state.washing ? '세척 중인 피처·들고 있는 피처 정리' : '',
     state.cleaning ? '진행 중인 청소·회수한 컵 정리' : '',
     state.supplyDelivery ? '들고 있는 소모품 정리' : '',
@@ -297,11 +315,12 @@ export type Action =
   | { type: 'take-supply' | 'buy-supply'; supply: SupplyId }
   | { type: 'place-supply' | 'return-supply' }
   | { type: 'collect-cup' | 'drop-used-cups' | 'clean-tool' | 'clean-use' | 'clean-confirm' | 'leave-cleaning' }
-  | { type: 'label-batch'; id: string }
-  | { type: 'store-batch'; id: string; storage: 'room' | 'fridge' }
+  | { type: 'label-batch' | 'take-batch' | 'discard-batch'; id: string; station: StationId }
+  | { type: 'return-batch'; station: StationId }
+  | { type: 'store-batch'; id: string; storage: 'room' | 'fridge'; station: StationId }
+  | { type: 'start-cold-brew' | 'cold-tool' | 'cold-use' | 'cold-confirm' | 'collect-cold-brew' | 'discard-cold-brew' }
   | { type: 'place-cup' | 'pick-cup' | 'tool' | 'use-start' | 'confirm-craft'; station: StationId }
   | { type: 'open-batch'; id: string }
-  | { type: 'discard-batch'; id: string }
   | { type: 'buy'; ingredient: IngredientId }
   | {
       type:
@@ -312,7 +331,6 @@ export type Action =
         | 'rack'
         | 'cups'
         | 'buy-cups'
-        | 'cold-brew'
         | 'close'
         | 'finish'
         | 'next-day'
@@ -324,6 +342,7 @@ export class CafeStore {
   private input:
     | { kind: 'drink'; cupId: string; step: number; station: StationId; operation: string }
     | { kind: 'prep'; preparationId: string; step: number; station: 'prep' }
+    | { kind: 'cold'; preparationId: string; step: number; station: 'cold-prep' }
     | { kind: 'wash'; washingId: string; stage: 'scrub' | 'rinse'; station: 'wash' }
     | { kind: 'clean'; cleaningId: string; station: CleaningStation }
     | null = null
@@ -400,6 +419,21 @@ export class CafeStore {
     if (s.phase === 'summary' && action.type !== 'next-day') return
     this.completeJobs(s)
     this.expirePreparation(s, s.time)
+    if (carriedBatch(s) && !['return-batch', 'store-batch', 'ticket', 'close'].includes(action.type)) {
+      fail('들고 있는 배합 용기를 보관하거나 원래 작업대에 먼저 내려놓아주세요.')
+      this.state = s
+      this.emit()
+      return
+    }
+    if (
+      s.coldBrew?.tool &&
+      !['cold-tool', 'cold-use', 'cold-confirm', 'discard-cold-brew', 'ticket', 'close'].includes(action.type)
+    ) {
+      fail('콜드 브루 계량 도구를 G로 먼저 내려놓아주세요.')
+      this.state = s
+      this.emit()
+      return
+    }
     if (s.supplyDelivery && !['place-supply', 'return-supply', 'ticket', 'close'].includes(action.type)) {
       fail('들고 있는 소모품을 컨디먼트 바에 채우거나 창고에 먼저 내려놓아주세요.')
       this.state = s
@@ -449,6 +483,12 @@ export class CafeStore {
         'prep-tool',
         'prep-use',
         'prep-confirm',
+        'take-batch',
+        'start-cold-brew',
+        'cold-tool',
+        'cold-use',
+        'cold-confirm',
+        'collect-cold-brew',
       ].includes(action.type)
     ) {
       fail(
@@ -1051,8 +1091,12 @@ export class CafeStore {
       case 'label-batch': {
         const batch = s.batches.find((b) => b.id === action.id)
         if (!batch || batch.amount <= 0 || batch.openedAt === null || batch.labelled) break
-        if (s.preparation?.batchId === batch.id && s.preparation.fault) {
-          fail(s.preparation.fault)
+        if (
+          batch.location !== action.station ||
+          action.station !== (batch.location === 'stock' ? 'stock' : batchOrigin(batch)) ||
+          !['stock', 'prep', 'cold-prep'].includes(batch.location)
+        ) {
+          fail('용기가 놓인 작업대에서 라벨을 붙여주세요.')
           break
         }
         if (batch.expiresAt !== null && batch.expiresAt <= s.time) {
@@ -1063,11 +1107,57 @@ export class CafeStore {
         this.say(s, '개봉·제조 시각과 품질 기한 라벨을 붙였어요. 보관 위치를 선택해주세요.', 'success')
         break
       }
+      case 'take-batch': {
+        const batch = s.batches.find((item) => item.id === action.id)
+        if (
+          !batch ||
+          !['prep', 'cold-prep'].includes(batch.location) ||
+          batch.location !== action.station ||
+          action.station !== batchOrigin(batch)
+        )
+          break
+        if ((s.cup && (s.cup.craft.location === 'hand' || s.cup.craft.tool)) || s.preparation?.tool) {
+          fail('컵과 도구를 먼저 내려놓아주세요.')
+          break
+        }
+        if (!batch.labelled || batch.expiresAt === null || batch.expiresAt <= s.time || batch.amount <= 0) {
+          fail(
+            batch.expiresAt !== null && batch.expiresAt <= s.time
+              ? '기한이 지난 배합은 여기서 폐기해주세요.'
+              : '날짜 라벨을 먼저 붙여주세요.',
+          )
+          break
+        }
+        batch.location = 'hand'
+        this.say(
+          s,
+          `${INGREDIENTS[batch.ingredient].name} 용기를 집었어요. ${STATIONS[batchDestination(batch)].name}로 가져가주세요.`,
+        )
+        break
+      }
+      case 'return-batch': {
+        const batch = carriedBatch(s)
+        if (!batch || action.station !== batchOrigin(batch)) {
+          fail('용기를 집었던 작업대에 다시 내려놓아주세요.')
+          break
+        }
+        batch.location = batchOrigin(batch)
+        this.say(s, '배합 용기를 원래 자리에 내려놓았어요. 잔량·라벨·기한은 그대로예요.')
+        break
+      }
       case 'store-batch': {
         const batch = s.batches.find((b) => b.id === action.id)
         if (!batch || batch.amount <= 0 || batch.location === 'bar' || batch.openedAt === null) break
-        if (s.preparation?.batchId === batch.id && s.preparation.fault) {
-          fail(s.preparation.fault)
+        if (
+          INGREDIENTS[batch.ingredient].prepared
+            ? batch.location !== 'hand' || action.station !== batchDestination(batch)
+            : batch.location !== 'stock' || action.station !== 'stock'
+        ) {
+          fail(
+            INGREDIENTS[batch.ingredient].prepared
+              ? `용기를 들고 ${STATIONS[batchDestination(batch)].name}로 가져가주세요.`
+              : '창고에서 원팩을 보관해주세요.',
+          )
           break
         }
         if (batch.expiresAt !== null && batch.expiresAt <= s.time) {
@@ -1088,6 +1178,7 @@ export class CafeStore {
         batch.location = 'bar'
         s.totals.restocked++
         if (s.preparation?.batchId === batch.id) s.preparation = null
+        if (s.coldBrew?.batchId === batch.id) s.coldBrew = null
         this.say(
           s,
           `${definition.name} ${definition.storage === 'fridge' ? '냉장' : '실온'} 보관 완료. 이제 음료에 사용할 수 있어요.`,
@@ -1098,9 +1189,19 @@ export class CafeStore {
       case 'discard-batch': {
         const batch = s.batches.find((b) => b.id === action.id)
         if (!batch || batch.amount <= 0) break
+        if (
+          batch.location === 'hand' ||
+          (['prep', 'cold-prep'].includes(batch.location)
+            ? action.station !== batchOrigin(batch)
+            : action.station !== 'stock' && action.station !== 'shelf')
+        ) {
+          fail('용기가 놓인 작업대에서 폐기해주세요.')
+          break
+        }
         addAmounts(s.totals.disposed, { [batch.ingredient]: batch.amount })
         batch.amount = 0
         if (s.preparation?.batchId === batch.id) s.preparation = null
+        if (s.coldBrew?.batchId === batch.id) s.coldBrew = null
         s.trash++
         this.say(s, '선택한 배치를 폐기했어요.')
         break
@@ -1226,19 +1327,107 @@ export class CafeStore {
         this.say(s, '준비 중인 배합을 폐기했어요. 사용한 재료는 돌아오지 않고 피처는 세척해야 해요.')
         break
       }
-      case 'cold-brew':
-        if (s.jobs.some((j) => j.kind === 'cold-brew')) {
-          fail('이미 추출 중이에요.')
+      case 'start-cold-brew':
+        if (s.coldBrew) {
+          fail('진행 중인 콜드 브루를 먼저 마무리해주세요.')
           break
         }
-        if (s.cash < 9000) {
+        if ((s.cup && (s.cup.craft.location === 'hand' || s.cup.craft.tool)) || s.preparation?.tool) {
+          fail('컵과 도구를 먼저 내려놓아주세요.')
+          break
+        }
+        if (s.cash < COLD_BREW_COST) {
           fail('추출용 원두 입고비가 부족해요.')
           break
         }
-        s.cash -= 9000
-        s.totals.coldBrewPurchases += 9000
-        this.job(s, 'cold-brew', 'stock', '다음 날 콜드 브루 추출', COLD_BREW_HOURS * 3600)
+        s.cash -= COLD_BREW_COST
+        s.totals.coldBrewPurchases += COLD_BREW_COST
+        s.coldBrew = createColdBrew()
+        this.say(s, '한 배치분의 콜드 브루 원두를 준비했어요. 원두와 물을 직접 계량해주세요.')
         break
+      case 'cold-tool': {
+        const brew = s.coldBrew
+        if (brew?.stage !== 'measuring') break
+        if (brew.tool) brew.tool = null
+        else if (
+          !brew.fault &&
+          !(s.cup && (s.cup.craft.location === 'hand' || s.cup.craft.tool)) &&
+          !s.preparation?.tool
+        )
+          brew.tool = coldBrewStep(brew).tool
+        else {
+          fail('컵과 다른 도구를 먼저 내려놓거나 실패한 배합을 폐기해주세요.')
+          break
+        }
+        this.say(s, brew.tool ? '콜드 브루 계량 도구를 집었어요.' : '콜드 브루 계량 도구를 내려놓았어요.')
+        break
+      }
+      case 'cold-use': {
+        const brew = s.coldBrew
+        if (brew?.stage !== 'measuring' || brew.fault) break
+        if (s.preparation?.tool || (s.cup && (s.cup.craft.location === 'hand' || s.cup.craft.tool))) {
+          fail('컵과 다른 도구를 먼저 내려놓아주세요.')
+          break
+        }
+        const step = coldBrewStep(brew)
+        if (brew.tool !== step.tool) {
+          fail('G로 필요한 도구를 집거나 내려놓아주세요.')
+          break
+        }
+        if (brew.step === 2) {
+          brew.stage = 'extracting'
+          this.job(s, 'cold-brew', 'cold-prep', '콜드 브루 추출', COLD_BREW_HOURS * 3600, { preparationId: brew.id })
+        } else this.input = { kind: 'cold', preparationId: brew.id, step: brew.step, station: 'cold-prep' }
+        break
+      }
+      case 'cold-confirm': {
+        const brew = s.coldBrew
+        if (brew?.stage !== 'measuring' || brew.fault || brew.step === 2) break
+        const step = coldBrewStep(brew)
+        if (brew.tool) {
+          fail('G로 계량 도구를 내려놓은 뒤 확인해주세요.')
+          break
+        }
+        if (brew.progress + 0.0001 < step.target * (1 - step.tolerance)) {
+          fail('아직 목표량에 못 미쳤어요. 계량을 이어가세요.')
+          break
+        }
+        brew.step++
+        brew.progress = 0
+        this.say(s, '콜드 브루 계량을 확인했어요.', 'success')
+        break
+      }
+      case 'collect-cold-brew': {
+        const brew = s.coldBrew
+        if (brew?.stage !== 'finished' || brew.completedAt === null) break
+        if (s.preparation?.tool || (s.cup && (s.cup.craft.location === 'hand' || s.cup.craft.tool))) {
+          fail('컵과 도구를 먼저 내려놓아주세요.')
+          break
+        }
+        const batch = newBatch('coldBrew', INGREDIENTS.coldBrew.pack, brew.completedAt, 'cold-prep')
+        s.batches.push(batch)
+        brew.batchId = batch.id
+        brew.stage = 'ready'
+        this.say(s, '추출액을 용기에 회수했어요. 추출 완료 시각을 확인해 라벨을 붙여주세요.', 'success')
+        break
+      }
+      case 'discard-cold-brew': {
+        const brew = s.coldBrew
+        if (!brew) break
+        if (brew.batchId) {
+          const batch = s.batches.find((item) => item.id === brew.batchId)
+          if (batch) {
+            addAmounts(s.totals.disposed, { coldBrew: batch.amount })
+            batch.amount = 0
+          }
+        } else if (brew.stage === 'finished') addAmounts(s.totals.disposed, { coldBrew: INGREDIENTS.coldBrew.pack })
+        else s.totals.coldBrewDiscardedBeans += COLD_BREW_BEANS
+        s.jobs = s.jobs.filter((job) => job.preparationId !== brew.id)
+        s.coldBrew = null
+        s.trash++
+        this.say(s, '콜드 브루 준비를 정리했어요. 한 배치분의 준비비는 반환되지 않아요.')
+        break
+      }
       case 'close':
         s.phase = 'closing'
         if (s.customer && !s.customer.visit && !s.ticket) customerLeave(s.customer)
@@ -1353,6 +1542,20 @@ export class CafeStore {
     const finished = s.jobs.filter((job) => job.endsAt <= s.time)
     s.jobs = s.jobs.filter((job) => job.endsAt > s.time)
     for (const job of finished) {
+      if (job.kind === 'cold-brew') {
+        const brew = s.coldBrew
+        if (brew && brew.id === job.preparationId && brew.stage === 'extracting') {
+          brew.stage = 'finished'
+          brew.completedAt = job.endsAt
+          s.totals.prepared++
+          this.say(
+            s,
+            '콜드 브루 추출이 끝났어요. 추출대에서 용기에 회수한 뒤 라벨을 붙이고 냉장 보관해주세요.',
+            'success',
+          )
+        }
+        continue
+      }
       if (job.preparationId) {
         if (s.preparation?.id === job.preparationId && s.preparation.stage === 'processing')
           this.finishPreparation(s, job.endsAt)
@@ -1368,22 +1571,14 @@ export class CafeStore {
         c.progress = 0
         this.say(s, `${job.label} 완료.`, 'success')
       }
-      if (job.kind === 'cold-brew') {
-        s.batches.push(newBatch('coldBrew', INGREDIENTS.coldBrew.pack, job.endsAt))
-        s.totals.prepared++
-        this.say(s, '콜드 브루 추출액 준비 완료. 새 배치에 라벨을 붙여 보관했어요.', 'success')
-      }
     }
   }
   private expirePreparation(s: GameState, at: number) {
     const prep = s.preparation
     if (!prep || prep.fault) return false
     const ingredientExpiry = prep.ingredientExpiresAt
-    const missingRecord = ingredientExpiry === undefined
-    if (!missingRecord && (prep.stage === 'ready' || ingredientExpiry === null || ingredientExpiry > at)) return false
-    prep.fault = missingRecord
-      ? '투입한 원재료의 기한 기록이 없어요. 이 배합을 폐기하고 다시 준비해주세요.'
-      : '투입한 원재료의 기한이 지났어요. 이 배합을 폐기하고 다시 준비해주세요.'
+    if (prep.stage === 'ready' || ingredientExpiry === null || ingredientExpiry > at) return false
+    prep.fault = '투입한 원재료의 기한이 지났어요. 이 배합을 폐기하고 다시 준비해주세요.'
     prep.tool = null
     s.jobs = s.jobs.filter((job) => job.preparationId !== prep.id)
     if (this.input?.kind === 'prep') this.input = null
@@ -1444,6 +1639,27 @@ export class CafeStore {
       s.totals.mistakes++
       this.input = null
       this.say(s, prep.fault, 'error')
+    }
+  }
+  private applyColdBrew(s: GameState, seconds: number) {
+    const brew = s.coldBrew
+    if (brew?.stage !== 'measuring' || brew.fault || brew.step === 2) {
+      this.input = null
+      return
+    }
+    const step = coldBrewStep(brew)
+    const delta =
+      brew.step === 0 ? Math.min(seconds * step.rate, Math.max(0, step.target - brew.progress)) : seconds * step.rate
+    brew.progress += delta
+    if (brew.step === 0) {
+      brew.beans += delta
+      if (brew.progress >= step.target) this.input = null
+    } else brew.water += delta
+    if (brew.progress > step.target * (1 + step.tolerance) + 0.0001) {
+      brew.fault = '콜드 브루 물 계량을 초과했어요. 배합을 폐기하고 다시 준비해주세요.'
+      this.input = null
+      s.totals.mistakes++
+      this.say(s, brew.fault, 'error')
     }
   }
   private applyCraft(s: GameState, op: CraftOperation, delta: number) {
@@ -1512,6 +1728,9 @@ export class CafeStore {
       if (!prep || prep.id !== this.input.preparationId || prep.step !== this.input.step || prep.stage !== 'measuring')
         this.input = null
       else this.applyPreparation(s, preparationStep(prep), Math.min(dt, 0.15) * preparationStep(prep).rate)
+    } else if (this.input?.kind === 'cold') {
+      if (s.coldBrew?.id !== this.input.preparationId || s.coldBrew.step !== this.input.step) this.input = null
+      else this.applyColdBrew(s, Math.min(dt, 0.15))
     } else if (this.input?.kind === 'drink') {
       const c = s.cup
       const op = c ? operationFor(c.recipe, c.step, c.craft) : null

@@ -48,10 +48,10 @@ export default function PreparationHud({ state, target, act, stop }: Props) {
             {expiredBatch
               ? '기한이 지난 배합을 폐기해주세요'
               : batch.labelled
-                ? '보관 위치를 선택하세요'
+                ? '용기를 보관 장소로 옮기세요'
                 : '날짜를 확인하고 라벨을 붙이세요'}
           </WorkTitle>
-          <BatchLabel batch={batch} time={state.time} act={act} />
+          <BatchLabel batch={batch} time={state.time} act={act} station="prep" />
         </>
       ) : (
         <>

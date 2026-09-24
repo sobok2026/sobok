@@ -179,7 +179,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                         : id === 'coldBrew'
                           ? state.jobs.some((job) => job.kind === 'cold-brew')
                             ? '콜드 브루를 추출 중이에요. 추출이 끝나면 사용할 수 있어요.'
-                            : `창고에서 추출 준비를 시작하세요. ${COLD_BREW_HOURS}시간 뒤 사용할 수 있어요.`
+                            : `콜드 브루 추출대에서 원두·물을 계량하고 ${COLD_BREW_HOURS}시간 추출해주세요.`
                           : state.preparation?.recipe === id
                             ? state.preparation.fault
                               ? '현재 배합을 폐기한 뒤 준비대에서 다시 제조해주세요.'
@@ -192,7 +192,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                 {batches
                   .filter((batch) => batch.openedAt !== null)
                   .map((batch) => (
-                    <BatchLabel key={batch.id} batch={batch} time={state.time} act={act} />
+                    <BatchLabel key={batch.id} batch={batch} time={state.time} act={act} station="stock" />
                   ))}
                 <div className="mt-3 grid gap-2">
                   {sealed.length ? (
@@ -218,7 +218,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                     </button>
                   ) : (
                     <small className="text-xs text-muted">
-                      {id === 'coldBrew' ? `창고에서 ${COLD_BREW_HOURS}시간 추출` : '준비대에서 제조'}
+                      {id === 'coldBrew' ? `추출대에서 ${COLD_BREW_HOURS}시간 추출·회수` : '준비대에서 제조'}
                     </small>
                   )}
                 </div>
@@ -237,13 +237,9 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
       >
         컵 24개 입고 · 2,000원
       </Button>
-      <Button
-        variant="secondary"
-        disabled={state.cash < 9000 || state.jobs.some((job) => job.kind === 'cold-brew')}
-        onClick={() => act({ type: 'cold-brew' })}
-      >
-        다음 날 콜드 브루 추출 · {COLD_BREW_HOURS}시간 · 9,000원
-      </Button>
+      <p className="my-4 text-sm leading-relaxed text-muted">
+        콜드 브루는 옆 추출대에서 준비해요. {COLD_BREW_HOURS}시간 추출 후 용기를 회수해 냉장고로 운반하세요.
+      </p>
       <SupplyPanel state={state} act={act} location="stock" />
     </>
   )
