@@ -1,27 +1,35 @@
 import referenceData from '../data/references.generated.json'
 
 export const references = referenceData
+export const BAR_CENTER_Z = -1.05
+export const STAFF_AISLE_EDGE_Z = -1.95
+export const staffStartPosition = (): [number, number, number, number] => [-4.4, -3.05, Math.PI, -0.17]
+// Reflect the original customer-facing fixtures toward the employee aisle.
+export const staffFacingZ = (z: number) => 2 * BAR_CENTER_Z - z
 export const STATIONS = {
-  pos: { name: 'POS', subtitle: '주문을 듣고 입력해요', x: -4.8, z: -0.9, color: '#e5b263' },
-  cups: { name: '컵 보관대', subtitle: '주문에 맞는 컵을 준비해요', x: -3.7, z: -0.9, color: '#f1dfc5' },
-  espresso: { name: '에스프레소 머신', subtitle: '샷을 추출해요', x: -2.5, z: -0.9, color: '#a2b7ae' },
-  steam: { name: '우유 · 스팀', subtitle: '우유를 계량하고 스팀해요', x: -1.2, z: -0.9, color: '#d8e8dd' },
-  brew: { name: '콜드 브루', subtitle: '보관된 추출액을 계량해요', x: 0, z: -0.9, color: '#a27c58' },
-  water: { name: '워터 스테이션', subtitle: '컵의 기준선까지 채워요', x: 1.1, z: -0.9, color: '#a6ced4' },
-  ice: { name: '아이스 빈', subtitle: '얼음을 채워요', x: 2.1, z: -0.9, color: '#c5e4e5' },
-  sauce: { name: '소스 펌프', subtitle: '소스를 펌핑해요', x: 3.1, z: -0.9, color: '#d2ad7d' },
-  mix: { name: '혼합 작업대', subtitle: '혼합하고 드리즐해요', x: 4.1, z: -0.9, color: '#bf9370' },
-  topping: { name: '폼 · 토핑', subtitle: '음료를 마무리해요', x: 5.1, z: -0.9, color: '#eed6ad' },
-  pickup: { name: '픽업대', subtitle: '주문을 확인하고 전달해요', x: 6.0, z: 1.2, color: '#d3b76b' },
+  pos: { name: 'POS', subtitle: '주문을 듣고 입력해요', x: -4.8, z: -1.4, color: '#e5b263' },
+  cups: { name: '컵 보관대', subtitle: '주문에 맞는 컵을 준비해요', x: -3.7, z: -1.4, color: '#f1dfc5' },
+  espresso: { name: '에스프레소 머신', subtitle: '샷을 추출해요', x: -2.5, z: -1.4, color: '#a2b7ae' },
+  steam: { name: '우유 · 스팀', subtitle: '우유를 계량하고 스팀해요', x: -1.2, z: -1.4, color: '#d8e8dd' },
+  brew: { name: '콜드 브루', subtitle: '보관된 추출액을 계량해요', x: 0, z: -1.4, color: '#a27c58' },
+  water: { name: '워터 스테이션', subtitle: '컵의 기준선까지 채워요', x: 1.1, z: -1.4, color: '#a6ced4' },
+  ice: { name: '아이스 빈', subtitle: '얼음을 채워요', x: 2.1, z: -1.4, color: '#c5e4e5' },
+  sauce: { name: '소스 펌프', subtitle: '소스를 펌핑해요', x: 3.1, z: -1.4, color: '#d2ad7d' },
+  mix: { name: '혼합 작업대', subtitle: '혼합하고 드리즐해요', x: 4.1, z: -1.4, color: '#bf9370' },
+  topping: { name: '폼 · 토핑', subtitle: '음료를 마무리해요', x: 5.1, z: -1.4, color: '#eed6ad' },
+  pickup: { name: '픽업대', subtitle: '주문을 확인하고 전달해요', x: 6.1, z: -1.4, color: '#d3b76b' },
   prep: { name: '준비대', subtitle: '폼과 바모카를 만들어요', x: -2.7, z: -5.1, color: '#c3a8cc' },
   stock: { name: '냉장고 · 창고', subtitle: '기한 확인, 개봉과 보충', x: 5.5, z: -4.8, color: '#8bb2a2' },
-  wash: { name: '세척대', subtitle: '사용한 피처를 씻어요', x: -6.0, z: 1.3, color: '#aac4cf' },
-  rack: { name: '건조 · 도구 선반', subtitle: '씻은 도구를 제자리에', x: -6.0, z: 3.5, color: '#d1bc9d' },
+  wash: { name: '세척대', subtitle: '사용한 피처를 씻어요', x: -5.0, z: -5.1, color: '#aac4cf' },
+  rack: { name: '건조 · 도구 선반', subtitle: '씻은 도구를 제자리에', x: -3.9, z: -5.1, color: '#d1bc9d' },
   table: { name: '고객 테이블', subtitle: '사용한 자리를 정리해요', x: 3.2, z: 3.7, color: '#d2ad7d' },
   trash: { name: '분리수거함', subtitle: '마감 전에 비워요', x: -5.4, z: 5.1, color: '#79988b' },
 } as const
 export type StationId = keyof typeof STATIONS
 export const stationIds = Object.keys(STATIONS) as StationId[]
+export function canAccessStation(station: StationId, playerZ: number) {
+  return station === 'table' || station === 'trash' || playerZ <= STAFF_AISLE_EDGE_Z
+}
 
 export const ingredientIds = [
   'beans',

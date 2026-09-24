@@ -11,6 +11,8 @@ import {
   STATIONS,
   type StationId,
 } from '../game/catalog'
+import { craftStations } from '../game/crafting'
+import { PREPARATIONS, preparationStep } from '../game/preparation'
 import type { CafeScene } from '../game/scene'
 import type { GameState } from '../game/state'
 import { exportGame, importGame, loadGame, saveGame } from '../game/storage'
@@ -23,6 +25,9 @@ import {
   nextStep,
   suggestedStation,
 } from '../game/store'
+import BatchLabel from './BatchLabel'
+import CraftingHud from './CraftingHud'
+import PreparationHud from './PreparationHud'
 
 function CupIcon({ small = false }: { small?: boolean }) {
   return (
@@ -42,14 +47,6 @@ function clock(time: number) {
     second: '2-digit',
   })
 }
-function remaining(time: number, until: number | null) {
-  if (until === null) return '미개봉'
-  const hours = Math.floor((until - time) / 3600)
-  if (until <= time) return '기한 경과'
-  if (hours < 1) return `${Math.max(1, Math.ceil((until - time) / 60))}분 남음`
-  return hours >= 24 ? `${Math.floor(hours / 24)}일 ${hours % 24}시간 남음` : `${hours}시간 남음`
-}
-
 export default function App() {
   const [boot, setBoot] = useState<{ store: CafeStore; hasSave: boolean; notice: string } | null>(null)
   useEffect(() => {
@@ -91,6 +88,7 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
   const [mode, setMode] = useState<'welcome' | 'play' | 'pause' | 'guide'>('welcome')
   const [panel, setPanel] = useState<StationId | null>(null)
   const [target, setTarget] = useState<StationId | null>(null)
+  const [needsStaffAccess, setNeedsStaffAccess] = useState(false)
   const [saveStatus, setSaveStatus] = useState(notice || '이 기기에 자동 저장')
   const [saveError, setSaveError] = useState(false)
   const [graphicsError, setGraphicsError] = useState('')
@@ -120,6 +118,20 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
     }
   }
   function openPanel(id: StationId) {
+    stopUse()
+    const current = store.getSnapshot()
+    if (id === 'prep' && current.preparation) {
+      scene.current?.unlockForCraft()
+      return
+    }
+    if (id === 'cups' && current.ticket && !current.cup) {
+      act({ type: 'take-cup' })
+      return
+    }
+    if (current.cup && craftStations.includes(id)) {
+      moveCup(id)
+      return
+    }
     flags.current.panel = id
     setPanel(id)
     setTarget(null)
@@ -132,6 +144,7 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
     scene.current?.lock()
   }
   function pause() {
+    stopUse()
     flags.current.mode = 'pause'
     flags.current.panel = null
     setPanel(null)
@@ -161,8 +174,16 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
     void persist()
   }
   function act(action: Action) {
-    if (!hasLock) return
+    if (!flags.current.hasLock) return
     store.dispatch(action)
+    if (action.type === 'take-cup' && store.getSnapshot().cup) closePanel()
+    if (action.type === 'start-preparation' && store.getSnapshot().preparation) {
+      closePanel()
+      scene.current?.unlockForCraft()
+    }
+    if (action.type === 'place-cup' && store.getSnapshot().cup?.craft.location === action.station)
+      scene.current?.unlockForCraft()
+    if (action.type === 'pick-cup' && store.getSnapshot().cup?.craft.location === 'hand') scene.current?.lock()
     if (action.type === 'next-day') {
       scene.current?.reset(store.getSnapshot().position)
       closePanel()
@@ -173,6 +194,37 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
       scene.current?.unlock()
     }
     void persist()
+  }
+  function moveCup(station: StationId) {
+    const cup = store.getSnapshot().cup
+    if (!cup) return
+    act({ type: cup.craft.location === 'hand' ? 'place-cup' : 'pick-cup', station })
+  }
+  function use(station: StationId) {
+    if (flags.current.mode !== 'play' || flags.current.panel) return
+    if (station === 'prep' && store.getSnapshot().preparation) act({ type: 'prep-use' })
+    else act({ type: 'use-start', station })
+  }
+  function stopUse() {
+    if (!store.getActiveInput()) return
+    store.stopActiveInput()
+    void persist()
+  }
+  function tool(station: StationId) {
+    if (station === 'prep' && store.getSnapshot().preparation) act({ type: 'prep-tool' })
+    else act({ type: 'tool', station })
+  }
+  function confirm(station: StationId) {
+    const prep = store.getSnapshot().preparation
+    if (station === 'prep' && prep) {
+      if (prep.fault) act({ type: 'discard-preparation' })
+      else if (prep.stage === 'ready' && prep.batchId) act({ type: 'label-batch', id: prep.batchId })
+      else act({ type: 'prep-confirm' })
+      return
+    }
+    if (store.getSnapshot().cup?.craft.fault) act({ type: 'discard-cup' })
+    else if (store.getSnapshot().cup && !nextStep(store.getSnapshot()) && station === 'pickup') act({ type: 'serve' })
+    else act({ type: 'confirm-craft', station })
   }
   useEffect(() => {
     let cancelled = false
@@ -214,8 +266,16 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
               flags.current.panel === null &&
               flags.current.hasLock === true &&
               store.getSnapshot().phase !== 'summary',
-            onTarget: setTarget,
+            onTarget: (id, blocked) => {
+              setTarget(id)
+              setNeedsStaffAccess(blocked)
+            },
             onInteract: openPanel,
+            onUseStart: use,
+            onUseEnd: stopUse,
+            onTool: tool,
+            onConfirm: confirm,
+            activeStation: () => store.getActiveInput()?.station ?? null,
             onUnlock: () => {
               if (
                 flags.current.mode === 'play' &&
@@ -237,6 +297,7 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
       .catch(() => setGraphicsError('게임 화면을 불러오지 못했어요. 새로고침해주세요.'))
     return () => {
       cancelled = true
+      store.stopActiveInput()
       scene.current?.dispose()
       scene.current = null
     }
@@ -246,10 +307,14 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
     const tick = window.setInterval(() => {
       const now = performance.now()
       const seconds = (now - last) / 1000
+      if (!store.getActiveInput() && seconds < 0.49) return
       last = now
-      if (flags.current.mode === 'play' && flags.current.started && flags.current.hasLock && !document.hidden)
+      if (flags.current.mode === 'play' && flags.current.started && flags.current.hasLock && !document.hidden) {
+        const wasUsing = !!store.getActiveInput()
         store.tick(seconds)
-    }, 500)
+        if (wasUsing && !store.getActiveInput()) void persist()
+      }
+    }, 100)
     const save = window.setInterval(() => {
       void persist()
     }, 8000)
@@ -260,17 +325,22 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
     const keyboard = (event: KeyboardEvent) => {
       if (event.code === 'Escape' && flags.current.mode === 'play') {
         event.preventDefault()
-        if (flags.current.panel) closePanel()
-        else pause()
+        if (flags.current.panel) {
+          // Escape also releases pointer lock natively; reacquiring it here would reopen the pause menu.
+          flags.current.panel = null
+          setPanel(null)
+        } else pause()
       }
     }
     document.addEventListener('visibilitychange', hidden)
     window.addEventListener('keydown', keyboard)
+    window.addEventListener('blur', stopUse)
     return () => {
       clearInterval(tick)
       clearInterval(save)
       document.removeEventListener('visibilitychange', hidden)
       window.removeEventListener('keydown', keyboard)
+      window.removeEventListener('blur', stopUse)
     }
   }, [store])
   const step = nextStep(state)
@@ -287,9 +357,17 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
         : 'POS에서 주문 받기'
       : STATIONS[goalStation].name
   const canStart = sceneReady && hasLock === true && !graphicsError
+  const showPreparation = !!state.preparation && (target === 'prep' || !state.cup)
+  const taskLabel = state.preparation
+    ? state.preparation.stage === 'ready'
+      ? '라벨·보관'
+      : preparationStep(state.preparation).label
+    : step?.label
 
   return (
-    <main className="cafe-app">
+    <main
+      className={`cafe-app ${!panel && ((state.cup && target === state.cup.craft.location) || (state.preparation && target === 'prep')) ? 'craft-active' : ''}`}
+    >
       <div ref={host} className="scene-host" />
       <div className="scene-vignette" />
       <input
@@ -466,7 +544,11 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                   <div>
                     <span>{state.cup ? '제조 진행' : '다음 업무'}</span>
                     <strong>
-                      {state.cup ? `${state.cup.step} / ${RECIPES[state.cup.recipe].steps.length}` : 'POS'}
+                      {state.cup
+                        ? `${state.cup.step} / ${RECIPES[state.cup.recipe].steps.length}`
+                        : state.preparation
+                          ? 'PREP'
+                          : 'POS'}
                     </strong>
                   </div>
                   <div className="progress-track">
@@ -484,7 +566,7 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
               <div>
                 <small>지금 할 일</small>
                 <strong>{goal}</strong>
-                {step ? <p>{step.label}</p> : null}
+                {taskLabel ? <p>{taskLabel}</p> : null}
               </div>
             </div>
           </aside>
@@ -551,16 +633,41 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                   <button type="button" onClick={() => openPanel(target)}>
                     <kbd>E</kbd>
                     <span>
-                      <small>{STATIONS[target].subtitle}</small>
+                      <small>
+                        {state.cup && craftStations.includes(target)
+                          ? state.cup.craft.location === 'hand'
+                            ? 'E · 컵 내려놓기'
+                            : state.cup.craft.location === target
+                              ? 'E · 컵 집기'
+                              : '컵이 다른 작업대에 있어요'
+                          : STATIONS[target].subtitle}
+                      </small>
                       <strong>{STATIONS[target].name}</strong>
                     </span>
                     <span className="hint-arrow">↗</span>
                   </button>
                 ) : (
-                  <span className="look-hint">작업대를 바라보고 가까이 다가가세요</span>
+                  <span className="look-hint">
+                    {needsStaffAccess
+                      ? '직원 쪽에서만 사용할 수 있어요 · POS 옆 직원 출입구로 들어가세요'
+                      : '작업대를 바라보고 가까이 다가가세요'}
+                  </span>
                 )}
               </div>
             </>
+          ) : null}
+          {!panel && showPreparation ? <PreparationHud state={state} target={target} act={act} stop={stopUse} /> : null}
+          {!panel && state.cup && !showPreparation ? (
+            <CraftingHud
+              state={state}
+              target={target}
+              onUse={use}
+              onStop={stopUse}
+              onTool={tool}
+              onConfirm={confirm}
+              onMoveCup={moveCup}
+              onDiscard={() => act({ type: 'discard-cup' })}
+            />
           ) : null}
           <div className={`toast ${lastMessage?.tone ?? ''}`} role="status" aria-live="polite" key={lastMessage?.id}>
             <span>{lastMessage?.tone === 'success' ? '✓' : lastMessage?.tone === 'error' ? '!' : '·'}</span>
@@ -568,7 +675,8 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
           </div>
           <footer className="game-footer">
             <div>
-              <kbd>W A S D</kbd> 이동 <kbd>마우스 / 방향키</kbd> 시점 <kbd>E</kbd> 작업 <kbd>Esc</kbd> 쉬기
+              <kbd>W A S D</kbd> 이동 <kbd>E</kbd> 컵·작업대 <kbd>G</kbd> 도구 <kbd>Space</kbd> 사용 <kbd>F</kbd> 확인{' '}
+              <kbd>Esc</kbd> 쉬기
             </div>
             <span className={saveError ? 'error-text' : ''}>
               <i className="save-dot" />
@@ -687,24 +795,6 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                 </button>
               </>
             ) : null}
-            {step?.station === panel ? (
-              <div className="recipe-action">
-                <span className="field-label">
-                  STEP {state.cup!.step + 1} · {RECIPES[state.cup!.recipe].variant}
-                </span>
-                <h3>{step.label}</h3>
-                <p>{step.instruction}</p>
-                {step.note ? <small>{step.note}</small> : null}
-                <button
-                  type="button"
-                  className="primary-button"
-                  disabled={!!actionJob || state.jobs.some((j) => j.cupId === state.cup?.id)}
-                  onClick={() => act({ type: 'step', station: panel })}
-                >
-                  {step.label} 시작 <span>→</span>
-                </button>
-              </div>
-            ) : null}
             {['espresso', 'steam', 'brew', 'water', 'ice', 'sauce', 'mix', 'topping'].includes(panel) &&
             step?.station !== panel ? (
               <div className="empty-work">
@@ -744,9 +834,9 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                     type="button"
                     className="primary-button"
                     disabled={!!actionJob}
-                    onClick={() => act({ type: 'foam' })}
+                    onClick={() => act({ type: 'start-preparation', recipe: 'foam' })}
                   >
-                    기본 배합 제조 · 25초
+                    피처 놓고 직접 계량
                   </button>
                 </div>
                 <div className="prep-card">
@@ -762,12 +852,17 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                     type="button"
                     className="secondary-button"
                     disabled={!!actionJob}
-                    onClick={() => act({ type: 'mocha' })}
+                    onClick={() => act({ type: 'start-preparation', recipe: 'mocha' })}
                   >
-                    바모카 준비
+                    원팩·온수 직접 배합
                   </button>
                 </div>
                 <p className="subtle-note">피처가 필요해요. 작업 후 세척대와 도구 선반을 이용하세요.</p>
+                <p className="subtle-note">
+                  {PREPARATIONS.foam.storageNote}
+                  <br />
+                  바모카: {PREPARATIONS.mocha.storageNote}
+                </p>
               </>
             ) : null}
             {panel === 'wash' ? (
@@ -853,7 +948,7 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                   {ingredientIds.map((id) => {
                     const definition = INGREDIENTS[id]
                     const batches = state.batches.filter((batch) => batch.ingredient === id && batch.amount > 0)
-                    const sealed = batches.find((batch) => batch.location === 'stock')
+                    const sealed = batches.find((batch) => batch.location === 'stock' && batch.openedAt === null)
                     return (
                       <article className="inventory-item" key={id}>
                         <div>
@@ -865,27 +960,14 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                           <small>{definition.unit} 사용 가능</small>
                         </p>
                         {batches
-                          .filter((batch) => batch.location === 'bar')
+                          .filter((batch) => batch.openedAt !== null)
                           .map((batch) => (
-                            <div
-                              className={`batch-label ${batch.expiresAt !== null && batch.expiresAt <= state.time ? 'expired' : ''}`}
-                              key={batch.id}
-                            >
-                              <span>
-                                {formatAmount(batch.amount)}
-                                {definition.unit} · {remaining(state.time, batch.expiresAt)}
-                              </span>
-                              {batch.expiresAt !== null && batch.expiresAt <= state.time ? (
-                                <button type="button" onClick={() => act({ type: 'discard-batch', id: batch.id })}>
-                                  폐기
-                                </button>
-                              ) : null}
-                            </div>
+                            <BatchLabel key={batch.id} batch={batch} time={state.time} act={act} />
                           ))}
                         <div className="inventory-actions">
                           {sealed ? (
                             <button type="button" onClick={() => act({ type: 'open-batch', id: sealed.id })}>
-                              원팩 개봉 · 보충
+                              원팩 개봉
                             </button>
                           ) : !definition.prepared ? (
                             <button type="button" onClick={() => act({ type: 'buy', ingredient: id })}>
@@ -950,7 +1032,19 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                   </p>
                   <p>
                     <kbd>E</kbd>
-                    <span>가까운 작업대</span>
+                    <span>컵 집기·놓기 / 작업대 열기</span>
+                  </p>
+                  <p>
+                    <kbd>G</kbd>
+                    <span>도구 집기·놓기</span>
+                  </p>
+                  <p>
+                    <kbd>클릭 / Space</kbd>
+                    <span>누르고 붓기·젓기 / 한 번 펌핑</span>
+                  </p>
+                  <p>
+                    <kbd>F</kbd>
+                    <span>계량 확인 / 픽업대에서 전달</span>
                   </p>
                   <p>
                     <kbd>Esc</kbd>
@@ -958,11 +1052,17 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                   </p>
                 </div>
                 <p className="subtle-note">
-                  바 뒤의 준비대에서는 폼과 바모카를 만들어요.
+                  컵을 작업대에 놓고 계량하세요. 목표 구간에서 멈춘 뒤 도구를 놓고 F로 확인해요.
+                  <br />
+                  제조·POS·픽업은 카운터 안쪽 직원 통로에서 진행해요.
+                  <br />
+                  뒤쪽 준비대에서는 폼과 바모카를 만들어요.
+                  <br />
+                  직접 계량한 뒤 라벨을 붙이고 냉장·실온 보관 위치를 선택해요.
                   <br />
                   피처를 씻은 뒤에는 도구 선반에 정리해주세요.
                   <br />
-                  오른쪽·왼쪽 통로로 바 뒤에 들어갈 수 있어요.
+                  객석 청소는 POS 옆 직원 출입구로 나가서 진행해요.
                 </p>
                 <button
                   type="button"

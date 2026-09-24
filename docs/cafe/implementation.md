@@ -39,7 +39,7 @@
 
 ### 5. 저장과 복구
 
-IndexedDB에 현재 상태를 저장한다. 형식 버전, 입력 검증, 저장 실패 안내, 이전 정상 저장, 파일 백업·복원을 제공한다. 저장 완료 전 페이지를 닫는 경우와 여러 탭의 동시 진행을 처리한다.
+IndexedDB에 현재 상태를 저장한다. 입력 검증, 저장 실패 안내, 이전 정상 저장, 파일 백업·복원을 제공한다. 저장 버전 관리와 이전 구조의 마이그레이션은 사용자 요청에 따라 구현하지 않는다. 저장 완료 전 페이지를 닫는 경우와 여러 탭의 동시 진행을 처리한다.
 
 ## 완료 기준
 
@@ -54,14 +54,31 @@ IndexedDB에 현재 상태를 저장한다. 형식 버전, 입력 검증, 저장
 ## 현재 파일 구조
 
 - `apps/cafe/src/game/catalog.ts`: 작업대, 초기 메뉴와 재고 단위.
+- `apps/cafe/src/game/crafting.ts`: 단계별 도구·계량 조작, 허용 구간, 컵 내용물.
+- `apps/cafe/src/game/craft-visuals.ts`: 컵·피처·샷 글라스·도구와 붓기·혼합·토핑 표현.
+- `apps/cafe/src/game/preparation.ts`: 자료에서 읽은 폼·바모카 배합과 준비 단계.
+- `apps/cafe/src/game/preparation-visuals.ts`: 준비 용기·계량 도구·블렌딩·라벨 표현.
 - `apps/cafe/src/game/state.ts`: 저장 형식과 검증.
 - `apps/cafe/src/game/store.ts`: 주문·작업·재고·시간·마감 상태 전이.
 - `apps/cafe/src/game/scene.ts`: 3D 공간, 이동·충돌, 시선 상호작용과 정리.
 - `apps/cafe/src/game/storage.ts`: IndexedDB, 이전 저장본, 파일 백업.
 - `apps/cafe/src/ui/App.tsx`: 시작 화면, POS, 작업 패널, HUD, 결산.
+- `apps/cafe/src/ui/CraftingHud.tsx`: 직접 제조 조작, 목표량과 진행량, 다음 작업대 안내.
+- `apps/cafe/src/ui/PreparationHud.tsx`: 부재료 직접 계량과 혼합·라벨·보관 안내.
+- `apps/cafe/src/ui/BatchLabel.tsx`: 제조·개봉 시각과 기한 라벨, 보관 위치 선택.
 - `apps/cafe/references/`: 레시피·품질 기준·부재료 제조 가이드의 원본 엑셀 네 파일.
 - `apps/cafe/scripts/import-references.mjs`: `apps/cafe/references/`의 원본 엑셀을 읽는 재생성 명령.
 - `apps/cafe/src/data/references.generated.json`: 파일·시트·행 근거를 보존한 자료.
+
+## 직접 제조 구현 확인
+
+2026-09-24 기준으로 준비된 주문·재료 상태에서 브라우저의 이동·집기·붓기·펌핑 조작을 사용해 콜드 브루, HOT·ICED 블랙 글레이즈드 라떼의 제조와 전달을 확인했다. 판매액·재고 소비·피처 상태가 반영되고, 네 번째 소스 펌핑은 오류로 기록되며 폐기해도 사용한 재료는 반환되지 않는다.
+
+계량 도중 저장 후 새로고침, 진행 중 작업의 완료, 창 포커스 이탈 시 투입 정지, 제조 HUD의 마우스 누름·해제를 확인했다. 타입 검사와 Vite 빌드를 통과했고 자동 테스트 파일은 추가하지 않았다. Three.js 장면 청크에는 Vite 기본 500kB 크기 경고가 남아 있다.
+
+직원 동선은 카운터 안쪽으로 수정했다. 장비 전면·컵·추출 위치와 POS가 직원 쪽을 향하고, 픽업대·세척대·도구 선반도 같은 업무 공간에 연결된다. 직원 통로에서 콜드 브루 주문 접수부터 제조·전달까지, 샷 추출과 세척·정리, 고객 쪽 제조 차단과 카운터 충돌을 브라우저에서 확인했다. 새 근무는 직원 통로에서 시작하고 저장한 근무는 저장 위치에서 이어진다.
+
+부재료 준비는 폼·바모카의 직접 계량·혼합·라벨·보관까지 연결했다. 브라우저에서 폼 7펌프와 25초 블렌딩, 바모카 원팩·온수·젓기, 준비 도중 저장 복원, 잘못된 보관 위치 안내와 올바른 보관 후 재고 반영을 확인했다. 원팩은 개봉·라벨 단계에서 사용 가능량이 늘지 않고 보관 완료 후 증가한다. 사용한 피처는 세척 대상으로 돌아가며, 과다 계량 폐기와 만료 배치 차단도 확인했다.
 
 첫 구현은 로컬 빌드까지 진행했다. 운영 배포는 Vite가 생성하는 `dist`를 Cloudflare Workers Static Assets로
 제공한다. GitHub Actions의 `Cafe Deploy` 또는 `Production Deploy`가 Worker를 배포하고,

@@ -1,13 +1,22 @@
 import * as THREE from 'three'
-import { RECIPES, STATIONS, type StationId, stationIds } from './catalog'
+import { BAR_CENTER_Z, canAccessStation, STATIONS, type StationId, staffFacingZ, stationIds } from './catalog'
+import { createCraftVisuals } from './craft-visuals'
+import { craftStations, cupSpot } from './crafting'
+import { PREP_SPOT } from './preparation'
+import { createPreparationVisuals } from './preparation-visuals'
 import type { GameState } from './state'
-import { nextStep, suggestedStation } from './store'
+import { suggestedStation } from './store'
 
 type Options = {
   getState: () => GameState
   canMove: () => boolean
-  onTarget: (id: StationId | null) => void
+  onTarget: (id: StationId | null, needsStaffAccess: boolean) => void
   onInteract: (id: StationId) => void
+  onUseStart: (id: StationId) => void
+  onUseEnd: () => void
+  onTool: (id: StationId) => void
+  onConfirm: (id: StationId) => void
+  activeStation: () => StationId | null
   onUnlock: () => void
   onError: (message: string) => void
 }
@@ -15,6 +24,7 @@ type Obstacle = { x: number; z: number; width: number; depth: number }
 export type CafeScene = {
   lock: () => void
   unlock: () => void
+  unlockForCraft: () => void
   capture: () => GameState['position']
   dispose: () => void
   reset: (position: GameState['position']) => void
@@ -37,7 +47,10 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   renderer.shadowMap.type = THREE.PCFShadowMap
   renderer.toneMapping = THREE.ACESFilmicToneMapping
   renderer.toneMappingExposure = 1.1
-  renderer.domElement.setAttribute('aria-label', '1인칭 카페 매장. WASD 이동, 방향키 시점, E 상호작용')
+  renderer.domElement.setAttribute(
+    'aria-label',
+    '1인칭 카페 매장. WASD 이동, 방향키 시점, E 컵·작업대, G 도구, Space 사용, F 확인',
+  )
   renderer.domElement.tabIndex = 0
   container.appendChild(renderer.domElement)
   scene.add(new THREE.HemisphereLight('#fff5df', '#8fa78e', 1.5))
@@ -128,6 +141,11 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   // Warm wooden floor and a cream envelope; the front glazing opens toward a small street.
   box(0, -0.08, 0, 14, 0.15, 12, '#ad9174')
   for (let x = -6.75; x < 7; x += 0.5) box(x, 0.003, 0, 0.012, 0.008, 12, '#967b61')
+  // The tiled employee aisle stays behind the counter; the timber floor belongs to the seating area.
+  box(0, 0.014, -3.82, 13.45, 0.02, 4.05, '#b6bcb1')
+  for (let x = -6.5; x < 6.8; x += 0.65) box(x, 0.026, -3.82, 0.012, 0.004, 4.05, '#9fa89c')
+  for (let z = -5.7; z < -1.8; z += 0.65) box(0, 0.027, z, 13.4, 0.004, 0.012, '#9fa89c')
+  box(0, 0.037, -2.24, 10.9, 0.02, 0.65, '#4c6156')
   box(0, 1.8, -5.85, 14, 3.6, 0.18, '#eee7d7')
   box(-6.85, 1.8, 0, 0.18, 3.6, 12, '#e8e0ce')
   box(6.85, 1.8, -3.0, 0.18, 3.6, 5.8, '#e8e0ce')
@@ -145,7 +163,22 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   box(0, 0.48, -1.05, 11.5, 0.96, 1.18, '#946e4c')
   box(0, 1.0, -1.05, 11.7, 0.12, 1.35, '#ddd1b9')
   for (let x = -5.6; x <= 5.6; x += 0.18) box(x, 0.47, -0.445, 0.035, 0.85, 0.025, '#795a3c')
+  for (let x = -5.15; x < 5.5; x += 1.15) {
+    box(x, 0.47, -1.655, 1.08, 0.83, 0.025, '#aaa48f')
+    box(x, 0.79, -1.679, 0.22, 0.024, 0.025, '#45564a', scene, 0.5)
+  }
   obstacles.push({ x: 0, z: -1.05, width: 11.7, depth: 1.4 })
+  // The left staff entrance is the only route between the work aisle and the customer floor.
+  box(-6.26, 0.019, BAR_CENTER_Z, 0.94, 0.025, 1.45, '#466050')
+  for (const x of [-6.78, -5.83]) box(x, 1.17, BAR_CENTER_Z, 0.045, 2.34, 0.08, '#465b4d')
+  box(-6.3, 2.32, BAR_CENTER_Z, 1.02, 0.07, 0.1, '#465b4d')
+  const staffSign = sign('STAFF ONLY\n직원 출입구', 0.82, 0.32)
+  staffSign.position.set(-6.3, 2.08, BAR_CENTER_Z + 0.045)
+  scene.add(staffSign)
+  const floorSign = sign('고객 공간 ↗', 0.82, 0.25, '#d9d8c8', '#304d3d')
+  floorSign.position.set(-6.3, 2.08, BAR_CENTER_Z - 0.045)
+  floorSign.rotation.y = Math.PI
+  scene.add(floorSign)
   box(-2.9, 0.5, -5.2, 5.5, 1, 0.9, '#e1d5bb')
   box(-2.9, 1.05, -5.2, 5.6, 0.09, 1.0, '#c8bda5')
   obstacles.push({ x: -2.9, z: -5.2, width: 5.6, depth: 1 })
@@ -188,72 +221,72 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     }
   }
   plant(5.9, 4.6, 1.3)
-  plant(-4.0, -4.0, 0.75)
+  plant(-5.0, 3.7, 0.75)
   // Named work surfaces remain visually distinct at first-person distance.
   box(-4.8, 1.12, -1.05, 0.35, 0.13, 0.38, '#38483d')
-  const screen = box(-4.8, 1.45, -1.06, 0.54, 0.36, 0.05, '#183b32')
-  screen.rotation.x = -0.2
+  const screen = box(-4.8, 1.45, staffFacingZ(-1.06), 0.54, 0.36, 0.05, '#183b32')
+  screen.rotation.set(0.2, Math.PI, 0)
   const screenText = sign('POS\n주문 접수', 0.48, 0.28, '#a5beab', '#17372f')
-  screenText.position.set(-4.8, 1.46, -1.015)
-  screenText.rotation.x = -0.2
+  screenText.position.set(-4.8, 1.46, staffFacingZ(-1.015))
+  screenText.rotation.set(0.2, Math.PI, 0)
   scene.add(screenText)
   const cupStack = new THREE.Group()
   scene.add(cupStack)
   for (let i = 0; i < 4; i++) cup(-3.9 + (i % 2) * 0.27, 1.065 + Math.floor(i / 2) * 0.1, -1.05, cupStack)
-  box(-2.5, 1.38, -1.14, 0.96, 0.58, 0.65, '#aab6ad', scene, 0.65)
-  box(-2.5, 1.36, -0.79, 0.84, 0.3, 0.025, '#293e35')
+  box(-2.5, 1.54, staffFacingZ(-1.14), 0.96, 0.66, 0.65, '#aab6ad', scene, 0.65)
+  box(-2.5, 1.53, staffFacingZ(-0.79), 0.84, 0.3, 0.025, '#293e35')
   for (const x of [-2.75, -2.26]) {
-    cylinder(x, 1.21, -0.68, 0.045, 0.045, 0.12, '#b8bcae')
-    box(x, 1.46, -0.756, 0.06, 0.06, 0.018, '#d8c889')
+    cylinder(x, 1.47, staffFacingZ(-0.68), 0.045, 0.045, 0.08, '#b8bcae')
+    box(x, 1.46, staffFacingZ(-0.756), 0.06, 0.06, 0.018, '#d8c889')
   }
-  box(-2.5, 1.09, -0.76, 0.92, 0.04, 0.45, '#4f6256', scene, 0.5)
-  cylinder(-1.25, 1.24, -1.0, 0.14, 0.1, 0.35, '#a0aaa4')
-  box(-0.96, 1.25, -1.12, 0.15, 0.38, 0.18, '#e7e6d7')
-  cylinder(0, 1.33, -1.12, 0.2, 0.2, 0.5, '#4c3827')
-  cylinder(0, 1.6, -1.12, 0.21, 0.21, 0.035, '#273e33')
-  box(0, 1.3, -0.83, 0.06, 0.05, 0.22, '#a9b7ad')
-  box(1.1, 1.3, -1.15, 0.25, 0.5, 0.26, '#d5ded3')
-  box(1.1, 1.45, -0.91, 0.05, 0.05, 0.3, '#6d8c7b')
-  box(2.1, 1.15, -1.1, 0.65, 0.2, 0.57, '#8dada9')
+  box(-2.5, 1.09, staffFacingZ(-0.76), 0.92, 0.04, 0.45, '#4f6256', scene, 0.5)
+  cylinder(-1.25, 1.24, staffFacingZ(-1.0), 0.14, 0.1, 0.35, '#a0aaa4')
+  box(-0.96, 1.25, staffFacingZ(-1.12), 0.15, 0.38, 0.18, '#e7e6d7')
+  cylinder(0, 1.33, staffFacingZ(-1.12), 0.2, 0.2, 0.5, '#4c3827')
+  cylinder(0, 1.6, staffFacingZ(-1.12), 0.21, 0.21, 0.035, '#273e33')
+  box(0, 1.3, staffFacingZ(-0.83), 0.06, 0.05, 0.22, '#a9b7ad')
+  box(1.1, 1.3, staffFacingZ(-1.15), 0.25, 0.5, 0.26, '#d5ded3')
+  box(1.1, 1.45, staffFacingZ(-0.91), 0.05, 0.05, 0.3, '#6d8c7b')
+  box(2.1, 1.15, staffFacingZ(-1.1), 0.65, 0.2, 0.57, '#8dada9')
   for (let i = 0; i < 8; i++)
-    box(1.9 + (i % 3) * 0.14, 1.26 + (i % 2) * 0.025, -1.26 + Math.floor(i / 3) * 0.14, 0.1, 0.08, 0.1, '#e2eddf')
+    box(
+      1.9 + (i % 3) * 0.14,
+      1.26 + (i % 2) * 0.025,
+      staffFacingZ(-1.26 + Math.floor(i / 3) * 0.14),
+      0.1,
+      0.08,
+      0.1,
+      '#e2eddf',
+    )
   for (let i = 0; i < 2; i++) {
-    cylinder(2.96 + i * 0.28, 1.28, -1.1, 0.1, 0.1, 0.4, i ? '#d5b476' : '#eee0bb')
-    box(2.96 + i * 0.28, 1.52, -1.01, 0.045, 0.03, 0.25, '#484b3a')
+    cylinder(2.96 + i * 0.28, 1.28, staffFacingZ(-1.1), 0.1, 0.1, 0.4, i ? '#d5b476' : '#eee0bb')
+    box(2.96 + i * 0.28, 1.52, staffFacingZ(-1.01), 0.045, 0.03, 0.25, '#484b3a')
   }
-  box(4.1, 1.07, -1.0, 0.72, 0.025, 0.5, '#697959')
-  cylinder(4.95, 1.24, -1.1, 0.15, 0.13, 0.33, '#e9ddbc')
-  cylinder(5.3, 1.18, -1.1, 0.11, 0.11, 0.22, '#c69c5e')
-  box(6, 0.5, 1.2, 1, 1, 1.15, '#57735c')
-  box(6, 1.05, 1.2, 1.08, 0.08, 1.25, '#e0d4b9')
-  obstacles.push({ x: 6, z: 1.2, width: 1.08, depth: 1.25 })
+  box(4.1, 1.07, staffFacingZ(-1.0), 0.72, 0.025, 0.5, '#697959')
+  cylinder(4.95, 1.24, staffFacingZ(-1.1), 0.15, 0.13, 0.33, '#e9ddbc')
+  cylinder(5.3, 1.18, staffFacingZ(-1.1), 0.11, 0.11, 0.22, '#c69c5e')
+  box(6.1, 0.5, BAR_CENTER_Z, 1.1, 1, 1.2, '#57735c')
+  box(6.1, 1.05, BAR_CENTER_Z, 1.15, 0.08, 1.35, '#e0d4b9')
+  obstacles.push({ x: 6.1, z: BAR_CENTER_Z, width: 1.15, depth: 1.4 })
   const pickupSign = sign('PICK UP', 0.7, 0.2, '#e0d4b9', '#254c3d')
-  pickupSign.position.set(5.445, 0.75, 1.2)
-  pickupSign.rotation.y = -Math.PI / 2
+  pickupSign.position.set(6.1, 0.75, -0.438)
   scene.add(pickupSign)
   // Preparation blender and sauce pitcher.
   box(-2.9, 1.2, -5.12, 0.43, 0.3, 0.43, '#304d40')
-  cylinder(-2.9, 1.57, -5.12, 0.18, 0.14, 0.44, '#d9e0ce')
-  cylinder(-2.9, 1.82, -5.12, 0.2, 0.2, 0.055, '#314b3d')
-  cylinder(-2.3, 1.3, -5.1, 0.2, 0.16, 0.43, '#977455')
+  const idleBlenderJar = cylinder(-2.9, 1.57, -5.12, 0.18, 0.14, 0.44, '#d9e0ce')
+  const idleBlenderLid = cylinder(-2.9, 1.82, -5.12, 0.2, 0.2, 0.055, '#314b3d')
   box(5.5, 1.1, -5.2, 1.4, 2.2, 1.0, '#c0cabb', scene, 0.25)
   box(5.5, 1.12, -4.68, 1.25, 2.03, 0.05, '#aebfae')
   box(5.02, 1.45, -4.61, 0.045, 0.42, 0.065, '#556e5d')
   obstacles.push({ x: 5.5, z: -5.2, width: 1.4, depth: 1.1 })
-  for (const [z, col] of [
-    [1.3, '#aebdb4'],
-    [3.5, '#baa47f'],
-  ] as const) {
-    box(-6.1, 0.5, z, 1.1, 1.0, 1.4, col)
-    obstacles.push({ x: -6.1, z, width: 1.1, depth: 1.4 })
-  }
-  box(-6.1, 1.015, 1.3, 0.72, 0.035, 0.9, '#506b65')
-  box(-6.45, 1.3, 1.3, 0.035, 0.55, 0.04, '#c5d1c8', scene, 0.6)
-  box(-6.25, 1.56, 1.3, 0.42, 0.03, 0.035, '#c5d1c8', scene, 0.6)
+  box(-5.0, 1.1, -5.1, 0.84, 0.035, 0.65, '#506b65')
+  box(-5.0, 1.36, -5.47, 0.035, 0.55, 0.04, '#c5d1c8', scene, 0.6)
+  box(-5.0, 1.62, -5.31, 0.035, 0.03, 0.35, '#c5d1c8', scene, 0.6)
+  box(-3.9, 1.11, -5.1, 0.9, 0.035, 0.65, '#8a9a83')
   const cleanTools = new THREE.Group()
   scene.add(cleanTools)
   for (let i = 0; i < 5; i++)
-    cylinder(-6.3 + (i % 2) * 0.32, 1.18, 3.1 + Math.floor(i / 2) * 0.32, 0.11, 0.08, 0.27, '#c8d1c5', cleanTools)
+    cylinder(-4.12 + (i % 2) * 0.3, 1.27, -5.3 + Math.floor(i / 2) * 0.24, 0.11, 0.08, 0.27, '#c8d1c5', cleanTools)
   box(-5.4, 0.38, 5.1, 0.58, 0.76, 0.58, '#3c5e4a')
   box(-5.4, 0.8, 5.1, 0.65, 0.07, 0.65, '#263f31')
   // Two quiet seating areas.
@@ -278,7 +311,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   stain.position.set(3.3, 0.846, 3.55)
   dirtyCups.add(stain)
   const barStain = stain.clone()
-  barStain.position.set(4.1, 1.09, -0.95)
+  barStain.position.set(4.1, 1.09, -1.48)
   scene.add(barStain)
   const customer = new THREE.Group()
   customer.position.set(-4.8, 0, 0.45)
@@ -298,7 +331,10 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   const pickMaterial = new THREE.MeshBasicMaterial({ visible: false })
   const targets = stationIds.map((id) => {
     const station = STATIONS[id]
-    const mesh = new THREE.Mesh(new THREE.BoxGeometry(id === 'table' ? 1.3 : 0.8, 0.8, 0.8), pickMaterial)
+    const mesh = new THREE.Mesh(
+      new THREE.BoxGeometry(id === 'table' || id === 'prep' ? 1.3 : 0.8, 0.8, 0.8),
+      pickMaterial,
+    )
     mesh.position.set(station.x, 1.2, station.z)
     mesh.userData.station = id
     scene.add(mesh)
@@ -316,41 +352,82 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   )
   guideRing.rotation.x = -Math.PI / 2
   scene.add(guideRing)
-  const heldCup = cup(0.31, -0.48, -0.58, camera)
-  heldCup.scale.setScalar(0.85)
   scene.add(camera)
-  const fill = cylinder(0, 0.12, 0, 0.09, 0.07, 0.18, '#ac784b', heldCup)
+  const craftVisuals = createCraftVisuals(scene, camera)
+  const preparationVisuals = createPreparationVisuals(scene, camera)
   const raycaster = new THREE.Raycaster()
   raycaster.far = 3.4
   const keys = new Set<string>()
   let hovered: StationId | null = null
+  let needsStaffAccess = false
   let frame = 0
   let lastTime = performance.now()
   let disposed = false
+  let using = false
+  let pressedStation: StationId | null = null
+  let previousCupPlace = ''
+  let previousPreparation: string | null = null
   const collides = (x: number, z: number) =>
     Math.abs(x) > 6.55 ||
     z < -5.55 ||
     z > 5.45 ||
     obstacles.some((o) => Math.abs(x - o.x) < o.width / 2 + 0.22 && Math.abs(z - o.z) < o.depth / 2 + 0.22)
   function keydown(event: KeyboardEvent) {
+    if (event.defaultPrevented) return
     if (!options.canMove() || event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement)
       return
+    if (event.target instanceof HTMLButtonElement && ['Space', 'Enter'].includes(event.code)) return
     if (
-      ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyE'].includes(event.code)
+      [
+        'KeyW',
+        'KeyA',
+        'KeyS',
+        'KeyD',
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+        'KeyE',
+        'KeyG',
+        'KeyF',
+        'Space',
+      ].includes(event.code)
     )
       event.preventDefault()
     keys.add(event.code)
     if (event.code === 'KeyE' && !event.repeat && hovered) options.onInteract(hovered)
+    if (event.code === 'KeyG' && !event.repeat && hovered) options.onTool(hovered)
+    if (event.code === 'KeyF' && !event.repeat && hovered) options.onConfirm(hovered)
+    if (event.code === 'Space' && !event.repeat && hovered) {
+      using = true
+      pressedStation = hovered
+      options.onUseStart(hovered)
+    }
   }
-  const keyup = (event: KeyboardEvent) => keys.delete(event.code)
+  const keyup = (event: KeyboardEvent) => {
+    keys.delete(event.code)
+    if (event.code === 'Space') {
+      using = false
+      pressedStation = null
+      options.onUseEnd()
+    }
+  }
   let locked = false
   let dragging = false
+  let releasingForCraft = false
   const clear = () => {
     keys.clear()
     dragging = false
+    if (using || options.activeStation()) {
+      using = false
+      pressedStation = null
+      options.onUseEnd()
+    }
   }
   const lock = () => {
     if (!renderer.domElement.isConnected || !options.canMove()) return
+    const cup = options.getState().cup
+    if ((cup && cup.craft.location !== 'hand') || options.getState().preparation) return
     try {
       const result = renderer.domElement.requestPointerLock()
       void Promise.resolve(result).catch(() => undefined)
@@ -359,25 +436,48 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     }
   }
   const unlock = () => {
+    releasingForCraft = false
     if (document.pointerLockElement === renderer.domElement) document.exitPointerLock()
+  }
+  const unlockForCraft = () => {
+    if (document.pointerLockElement !== renderer.domElement) return
+    releasingForCraft = true
+    document.exitPointerLock()
   }
   const pointerChanged = () => {
     const previous = locked
     locked = document.pointerLockElement === renderer.domElement
     if (previous && !locked) {
       clear()
-      options.onUnlock()
+      const intentional = releasingForCraft
+      releasingForCraft = false
+      if (!intentional) options.onUnlock()
     }
   }
   const pointerDown = (event: PointerEvent) => {
     if (event.button !== 0 || !options.canMove()) return
-    dragging = true
-    lock()
+    const c = options.getState().cup
+    if (
+      hovered &&
+      ((c?.craft.location === hovered && craftStations.includes(hovered)) ||
+        (hovered === 'prep' && options.getState().preparation))
+    ) {
+      using = true
+      pressedStation = hovered
+      options.onUseStart(hovered)
+    } else {
+      dragging = true
+      lock()
+    }
   }
   const pointerUp = () => {
     dragging = false
+    using = false
+    pressedStation = null
+    options.onUseEnd()
   }
   const look = (event: MouseEvent) => {
+    if (using || options.activeStation()) return
     if ((!locked && !dragging) || !options.canMove()) return
     camera.rotation.y -= event.movementX * 0.0013
     camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x - event.movementY * 0.0013, -1.1, 1.1)
@@ -407,6 +507,15 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     const dt = Math.min((now - lastTime) / 1000, 0.05)
     lastTime = now
     const state = options.getState()
+    const cupPlace = state.cup ? `${state.cup.id}:${state.cup.craft.location}` : ''
+    if (cupPlace !== previousCupPlace && state.cup && state.cup.craft.location !== 'hand') {
+      const spot = cupSpot(state.cup.craft.location)
+      camera.lookAt(spot[0], spot[1] + 0.16, spot[2])
+    }
+    previousCupPlace = cupPlace
+    if (state.preparation && state.preparation.id !== previousPreparation)
+      camera.lookAt(PREP_SPOT[0], PREP_SPOT[1] + 0.17, PREP_SPOT[2])
+    previousPreparation = state.preparation?.id ?? null
     if (options.canMove()) {
       camera.rotation.y += ((keys.has('ArrowLeft') ? 1 : 0) - (keys.has('ArrowRight') ? 1 : 0)) * dt * 1.4
       camera.rotation.x = THREE.MathUtils.clamp(
@@ -417,6 +526,11 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
       let forward = Number(keys.has('KeyW')) - Number(keys.has('KeyS'))
       let sideways = Number(keys.has('KeyD')) - Number(keys.has('KeyA'))
       const length = Math.hypot(forward, sideways) || 1
+      if ((forward || sideways) && (using || options.activeStation())) {
+        using = false
+        pressedStation = null
+        options.onUseEnd()
+      }
       forward /= length
       sideways /= length
       const yaw = camera.rotation.y
@@ -429,22 +543,38 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     camera.updateMatrixWorld()
     raycaster.setFromCamera(new THREE.Vector2(0, 0), camera)
     const found = options.canMove() ? raycaster.intersectObjects(targets, false)[0] : undefined
-    const target = found ? (found.object.userData.station as StationId) : null
-    if (target !== hovered) {
+    const pointed = found ? (found.object.userData.station as StationId) : null
+    const blocked = pointed !== null && !canAccessStation(pointed, camera.position.z)
+    const target = blocked ? null : pointed
+    if ((using || options.activeStation()) && target !== (options.activeStation() ?? pressedStation)) {
+      using = false
+      pressedStation = null
+      options.onUseEnd()
+    }
+    if (target !== hovered || blocked !== needsStaffAccess) {
       hovered = target
-      options.onTarget(hovered)
+      needsStaffAccess = blocked
+      options.onTarget(hovered, blocked)
     }
     const desired = suggestedStation(state)
     const anchor = STATIONS[desired]
     guideRing.position.set(anchor.x, 1.72 + Math.sin(now / 600) * 0.025, anchor.z)
     guideRing.rotation.x = -Math.PI / 2
     guideRing.visible = state.phase !== 'summary'
-    heldCup.visible = !!state.cup
-    heldCup.children[2].visible = !!state.cup && !nextStep(state)
-    if (state.cup) {
-      fill.scale.y = Math.max(0.08, state.cup.step / RECIPES[state.cup.recipe].steps.length)
-      heldCup.rotation.z = Math.sin(now / 600) * 0.025
+    const benchFocused = (state.cup && target === state.cup.craft.location) || (state.preparation && target === 'prep')
+    const fov = benchFocused ? 48 : 62
+    if (Math.abs(camera.fov - fov) > 0.01) {
+      camera.fov = THREE.MathUtils.lerp(camera.fov, fov, 0.12)
+      camera.updateProjectionMatrix()
     }
+    craftVisuals.update(
+      state,
+      options.activeStation() !== null && options.activeStation() === state.cup?.craft.location,
+      now,
+    )
+    preparationVisuals.update(state, options.activeStation() === 'prep', now)
+    idleBlenderJar.visible = state.preparation?.stage !== 'processing'
+    idleBlenderLid.visible = idleBlenderJar.visible
     dirtyCups.visible = state.dirtyTables > 0
     barStain.visible = state.dirtyBar > 0
     cleanTools.children.forEach((child, i) => {
@@ -460,6 +590,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   return {
     lock,
     unlock,
+    unlockForCraft,
     reset,
     capture: () => [camera.position.x, camera.position.z, camera.rotation.y, camera.rotation.x],
     dispose: () => {

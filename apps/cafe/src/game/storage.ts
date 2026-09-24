@@ -5,7 +5,7 @@ let database: Promise<IDBDatabase> | undefined
 function open() {
   if (!database)
     database = new Promise((resolve, reject) => {
-      const request = indexedDB.open(DATABASE, 1)
+      const request = indexedDB.open(DATABASE)
       request.onupgradeneeded = () => request.result.createObjectStore('saves')
       request.onsuccess = () => resolve(request.result)
       request.onerror = () => {
