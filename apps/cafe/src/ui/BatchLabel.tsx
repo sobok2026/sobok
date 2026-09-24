@@ -29,7 +29,7 @@ export default function BatchLabel({
   const limitedByIngredient =
     !!definition.prepared && batch.expiresAt !== null && usualExpiry !== null && batch.expiresAt < usualExpiry
   const marking =
-    batch.ingredient === 'foam' || batch.ingredient === 'mocha'
+    batch.ingredient === 'foam' || batch.ingredient === 'mocha' || batch.ingredient === 'hojicha'
       ? PREPARATIONS[batch.ingredient].marking
       : definition.prepared
         ? '제조일 · 품질 기한'

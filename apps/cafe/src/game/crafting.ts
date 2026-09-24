@@ -10,6 +10,7 @@ export const craftToolIds = [
   'shaker',
   'ice-scoop',
   'lid',
+  'tea-bottle',
 ] as const
 export type CraftTool = (typeof craftToolIds)[number]
 export const TOOL_NAMES: Record<CraftTool, string> = {
@@ -22,11 +23,13 @@ export const TOOL_NAMES: Record<CraftTool, string> = {
   shaker: '토핑 쉐이커',
   'ice-scoop': '아이스 스쿱',
   lid: '리드',
+  'tea-bottle': '호지차 샷 보틀',
 }
 export type CraftContents = {
   coffee: number
   sauce: number
   milk: number
+  tea: number
   water: number
   foam: number
   ice: number
@@ -45,12 +48,13 @@ export type CraftState = {
   shotReady: boolean
   shotTransferred: boolean
   mixed: boolean
+  teaMixed: boolean
   lidded: boolean
   fault: string | null
 }
 export type CraftOperation = {
   id: string
-  kind: 'machine' | 'steam' | 'pour' | 'pump' | 'stir' | 'drizzle' | 'sprinkle' | 'ice' | 'lid' | 'transfer'
+  kind: 'machine' | 'steam' | 'pour' | 'pump' | 'stir' | 'shake' | 'drizzle' | 'sprinkle' | 'ice' | 'lid' | 'transfer'
   label: string
   tool: CraftTool | null
   target: number
@@ -124,11 +128,11 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       weight: 0.13,
       cue: '한 번 눌러 추출 시작 · 완료될 때까지 컵 고정',
     }
-  if (source.label === '글레이즈드 소스')
+  if (source.label === '글레이즈드 소스' || source.label === '클래식 시럽')
     return {
       ...base,
       kind: 'pump',
-      label: '소스 펌핑',
+      label: source.label === '클래식 시럽' ? '클래식 시럽 펌핑' : '소스 펌핑',
       tool: null,
       target: source.target,
       tolerance: 0,
@@ -164,6 +168,22 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
     return { ...base, kind: 'pour', label: '스팀 우유 붓기', tool: 'pitcher', content: 'milk', weight: 0.55 }
   if (source.label === '일반 우유')
     return { ...base, kind: 'pour', label: '우유 붓기', tool: 'milk-carton', content: 'milk', weight: 0.5 }
+  if (source.label === '호지차 샷') {
+    if (!craft.teaMixed)
+      return {
+        ...base,
+        id: `${base.id}:tea-mix`,
+        kind: 'shake',
+        label: '사용 전 호지차 샷 재혼합',
+        tool: 'tea-bottle',
+        target: 3,
+        tolerance: 0,
+        unit: '회',
+        costs: {},
+        cue: '한 번 누를 때마다 한 번 흔들어요',
+      }
+    return { ...base, kind: 'pour', label: '호지차 샷 붓기', tool: 'tea-bottle', content: 'tea', weight: 0.18 }
+  }
   if (source.label === '얼음')
     return {
       ...base,
@@ -230,13 +250,14 @@ export function createCraft(): CraftState {
     location: 'hand',
     tool: null,
     progress: 0,
-    contents: { coffee: 0, sauce: 0, milk: 0, water: 0, foam: 0, ice: 0, drizzle: 0, powder: 0 },
+    contents: { coffee: 0, sauce: 0, milk: 0, tea: 0, water: 0, foam: 0, ice: 0, drizzle: 0, powder: 0 },
     pitcherMilk: 0,
     pitcherReserved: false,
     steamed: false,
     shotReady: false,
     shotTransferred: false,
     mixed: false,
+    teaMixed: false,
     lidded: false,
     fault: null,
   }
@@ -245,7 +266,7 @@ export function isContinuous(op: CraftOperation) {
   return ['steam', 'pour', 'stir', 'drizzle', 'transfer'].includes(op.kind)
 }
 export function isMetered(op: CraftOperation) {
-  return !['machine', 'stir', 'lid', 'transfer'].includes(op.kind) && op.tool !== 'pitcher'
+  return !['machine', 'stir', 'shake', 'lid', 'transfer'].includes(op.kind) && op.tool !== 'pitcher'
 }
 export function readyToConfirm(op: CraftOperation, progress: number) {
   return progress >= op.target * (1 - op.tolerance)

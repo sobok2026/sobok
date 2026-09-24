@@ -224,7 +224,13 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   const mainSign = sign('DAY SHIFT\nCOFFEE & COMPANY', 3.9, 1.2)
   mainSign.position.set(0, 2.65, -5.72)
   scene.add(mainSign)
-  const menuSign = sign('TODAY’S MENU\nCOLD BREW\nBLACK GLAZED LATTE', 2.4, 1.4, '#ece1ca', '#344e3d')
+  const menuSign = sign(
+    'TODAY’S MENU\nCOLD BREW\nBLACK GLAZED LATTE\nHOJI GLAZED TEA LATTE',
+    2.4,
+    1.4,
+    '#ece1ca',
+    '#344e3d',
+  )
   menuSign.position.set(-4.6, 2.45, -5.71)
   scene.add(menuSign)
   box(3.0, 2.1, -5.4, 1.9, 0.08, 0.65, '#806749')

@@ -34,13 +34,13 @@ function materialTip(state: GameState, ingredient: IngredientId): Tip {
         : `창고에서 ${pending.labelled ? `${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하세요.` : '날짜 확인 후 라벨을 붙이세요.'}`,
       reason: '개봉·제조만으로는 사용할 수 없어요. 라벨과 보관까지 마쳐야 해요.',
     }
-  if (ingredient === 'foam' || ingredient === 'mocha')
+  if (ingredient === 'foam' || ingredient === 'mocha' || ingredient === 'hojicha')
     return {
       title: `${definition.name} 준비가 필요해요`,
       action: state.tools.clean
         ? `준비대에서 ${definition.name} 제조를 선택하세요.`
         : '세척대에서 피처를 씻고 옆 도구 선반에 먼저 정리하세요.',
-      reason: '폼과 바모카는 완성한 뒤 라벨을 붙이고 보관해야 음료에 넣을 수 있어요.',
+      reason: '준비 배합은 완성한 뒤 라벨을 붙이고 보관해야 음료에 넣을 수 있어요.',
     }
   if (ingredient === 'coldBrew')
     return {
@@ -247,7 +247,7 @@ function currentTip(state: GameState, panel: StationId | null): Tip {
               ? `G로 도구를 집으세요 · ${PREP_TOOL_NAMES[step.tool]}`
               : step.kind === 'machine'
                 ? 'Space를 한 번 눌러 블렌딩을 시작하세요.'
-                : step.kind === 'pump' || step.kind === 'pack'
+                : ['pump', 'pack', 'scoop', 'shake'].includes(step.kind)
                   ? `Space를 한 번씩 눌러 ${step.target}${step.unit}를 맞추세요.`
                   : 'Space나 작업 버튼을 누르다가 목표 구간에서 손을 떼세요.',
       reason: '다음 재료를 넣기 전에 도구를 놓고 계량을 확인해요. 완성 후에는 라벨·보관이 필요해요.',
@@ -314,10 +314,10 @@ function currentTip(state: GameState, panel: StationId | null): Tip {
           : '컵은 여기에 두고 세척대에서 피처를 하나 씻으세요.',
         reason: '씻은 뒤 선반에 정리해야 제조에 사용할 수 있어요.',
       }
-    for (const [id, amount] of Object.entries(op.costs))
+    for (const [id, amount] of Object.entries(op.kind === 'shake' ? source.costs : op.costs))
       if (
         available(state, id as IngredientId) + 0.0001 <
-        amount * Math.max(0, 1 - op.tolerance - craft.progress / op.target)
+        amount * (op.kind === 'shake' ? 1 : Math.max(0, 1 - op.tolerance - craft.progress / op.target))
       )
         return materialTip(state, id as IngredientId)
     const ready = readyToConfirm(op, craft.progress)
@@ -355,7 +355,7 @@ function currentTip(state: GameState, panel: StationId | null): Tip {
     return {
       title: '음료 전달을 마쳤어요',
       action: '손님이 나가면 다음 손님이 들어와요. 피처 세척·재료 보충을 해두세요.',
-      reason: '다음 라떼에는 우유와 깨끗한 피처, 폼·바모카 준비가 필요해요.',
+      reason: '라떼에 쓸 우유·폼과 메뉴에 맞는 바모카·호지차 샷을 준비해두세요.',
     }
   if (!state.ticket)
     return {

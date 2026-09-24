@@ -92,6 +92,9 @@ export function initialState(): GameState {
     mocha: 0,
     foam: 0,
     coldBrew: 600,
+    classic: 0,
+    hojichaPowder: 0,
+    hojicha: 0,
   }
   return {
     day: 1,
@@ -181,7 +184,7 @@ function plannedStation(state: GameState): StationId {
     if ((step.usesPitcher || op.tool === 'pitcher') && !craft.pitcherReserved && !state.tools.clean)
       return toolStation()
     for (const [key, fullAmount] of Object.entries(step.costs)) {
-      const amount = fullAmount * Math.max(0, 1 - craft.progress / op.target)
+      const amount = fullAmount * (op.kind === 'shake' ? 1 : Math.max(0, 1 - craft.progress / op.target))
       if (available(state, key as IngredientId) + 0.0001 >= amount) continue
       const pending = state.batches.find(
         (batch) =>
@@ -194,7 +197,7 @@ function plannedStation(state: GameState): StationId {
       )
       if (pending)
         return pending.location === 'prep' ? 'prep' : pending.location === 'cold-prep' ? 'cold-prep' : 'stock'
-      if (key === 'foam' || key === 'mocha') return state.tools.clean ? 'prep' : toolStation()
+      if (key === 'foam' || key === 'mocha' || key === 'hojicha') return state.tools.clean ? 'prep' : toolStation()
       if (key === 'coldBrew') return 'cold-prep'
       return 'stock'
     }
@@ -635,6 +638,10 @@ export class CafeStore {
           fail(c.fault)
           break
         }
+        if (op.kind === 'shake' && available(s, 'hojicha') < (nextStep(s)!.costs.hojicha ?? 0)) {
+          fail('호지차 샷을 먼저 준비하고 보관해주세요.')
+          break
+        }
         if (s.jobs.some((j) => j.cupId === s.cup?.id) || busy(action.station)) {
           fail('장비가 작동 중이에요.')
           break
@@ -690,6 +697,14 @@ export class CafeStore {
           c.shotTransferred = true
           c.progress = 0
           this.say(s, '샷을 옮겼어요.', 'success')
+        } else if (op.kind === 'shake') {
+          if (available(s, 'hojicha') < (nextStep(s)!.costs.hojicha ?? 0)) {
+            fail('사용할 호지차 샷이 부족해요. 먼저 준비하고 다시 섞어주세요.')
+            break
+          }
+          c.teaMixed = true
+          c.progress = 0
+          this.say(s, '호지차 샷을 다시 섞었어요. 같은 보틀로 계량해 부어주세요.', 'success')
         } else {
           if (op.kind === 'stir') c.mixed = true
           if (op.kind === 'lid') c.lidded = true
@@ -1104,7 +1119,13 @@ export class CafeStore {
           break
         }
         batch.labelled = true
-        this.say(s, '개봉·제조 시각과 품질 기한 라벨을 붙였어요. 보관 위치를 선택해주세요.', 'success')
+        this.say(
+          s,
+          INGREDIENTS[batch.ingredient].prepared
+            ? '기한 라벨을 붙였어요. E로 용기를 집어 보관 장소로 운반해주세요.'
+            : '개봉 시각과 기한 라벨을 붙였어요. 보관 위치를 선택해주세요.',
+          'success',
+        )
         break
       }
       case 'take-batch': {
@@ -1612,7 +1633,7 @@ export class CafeStore {
       this.input = null
       return
     }
-    if (step.kind === 'stir') delta = Math.min(delta, Math.max(0, step.target - prep.progress))
+    if (step.kind === 'stir' || step.kind === 'shake') delta = Math.min(delta, Math.max(0, step.target - prep.progress))
     if (delta <= 0) {
       this.input = null
       return
@@ -1633,8 +1654,8 @@ export class CafeStore {
     prep.progress += delta
     if (step.ingredient && step.ingredient in prep.amounts)
       prep.amounts[step.ingredient as keyof typeof prep.amounts] += amount
-    else if (step.tool === 'water-jug') prep.amounts.water += delta
-    if (step.kind !== 'stir' && prep.progress > step.target * (1 + step.tolerance) + 0.0001) {
+    else if (step.tool === 'water-jug' || step.tool === 'cold-water-jug') prep.amounts.water += delta
+    if (!['stir', 'shake'].includes(step.kind) && prep.progress > step.target * (1 + step.tolerance) + 0.0001) {
       prep.fault = `${step.label} 계량을 초과했어요. 배합을 폐기하고 다시 준비해주세요.`
       s.totals.mistakes++
       this.input = null

@@ -91,12 +91,21 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
   const pack = tool('mocha-pack')
   box(pack, 0.15, 0.22, 0.045, mat('#b6a079'))
   box(pack, 0.153, 0.07, 0.047, brown)
-  const jug = tool('water-jug')
-  cylinder(jug, 0.09, 0.067, 0.22, steel, 0, true)
-  const jugHandle = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.01, 8, 20), steel)
-  jugHandle.rotation.y = Math.PI / 2
-  jugHandle.position.x = 0.095
-  jug.add(jugHandle)
+  for (const id of ['water-jug', 'cold-water-jug'] as const) {
+    const jug = tool(id)
+    cylinder(jug, 0.09, 0.067, 0.22, steel, 0, true)
+    const jugHandle = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.01, 8, 20), steel)
+    jugHandle.rotation.y = Math.PI / 2
+    jugHandle.position.x = 0.095
+    jug.add(jugHandle)
+  }
+  const scoop = tool('tea-scoop')
+  box(scoop, 0.042, 0.025, 0.06, steel)
+  box(scoop, 0.012, 0.01, 0.13, steel, 0, 0, 0.08)
+  box(scoop, 0.034, 0.015, 0.045, brown, 0, 0.015)
+  const teaShaker = tool('tea-shaker')
+  cylinder(teaShaker, 0.07, 0.065, 0.25, mat('#967345'))
+  cylinder(teaShaker, 0.073, 0.073, 0.025, green, 0.137)
   const spatula = tool('spatula')
   box(spatula, 0.018, 0.26, 0.012, mat('#9c835b'))
   box(spatula, 0.045, 0.075, 0.015, cream, 0, -0.14)
@@ -115,7 +124,7 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
     update(state: GameState, active: boolean, now: number) {
       const prep = state.preparation
       const batch = state.batches.find((batch) => batch.id === prep?.batchId)
-      vessel.visible = !!prep && batch?.location !== 'hand'
+      vessel.visible = !!prep && batch?.location !== 'hand' && prep.tool !== 'tea-shaker'
       pump.visible = false
       stream.visible = false
       for (const model of tools.values()) model.visible = false
@@ -129,13 +138,16 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
       const liquidRatio =
         prep.recipe === 'foam'
           ? (prep.amounts.cream + prep.amounts.milk + prep.amounts.glaze) / 380
-          : prep.amounts.water / 1250 + prep.amounts.mochaPowder * 0.08
+          : prep.recipe === 'hojicha'
+            ? prep.amounts.water / 300 + prep.amounts.hojichaPowder * 0.005
+            : prep.amounts.water / 1250 + prep.amounts.mochaPowder * 0.08
       const height = Math.min(0.3, Math.max(0.001, liquidRatio * 0.3))
       liquid.visible = liquidRatio > 0
       liquid.scale.y = height
       liquid.position.y = 0.01 + height / 2
-      liquidMaterial.color.set(prep.recipe === 'foam' ? '#efe3c8' : '#54382b')
-      lid.visible = processing
+      liquidMaterial.color.set(prep.recipe === 'foam' ? '#efe3c8' : prep.recipe === 'hojicha' ? '#967345' : '#54382b')
+      handle.visible = prep.recipe !== 'hojicha'
+      lid.visible = processing || (prep.recipe === 'hojicha' && operation.kind === 'shake')
       swirl.visible = processing || (active && operation.kind === 'stir')
       swirl.position.y = height + 0.017
       swirl.rotation.z = now / 100
@@ -145,7 +157,8 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
         key = nextKey
         previous = prep.progress
       }
-      if (prep.progress > previous && ['pump', 'pack'].includes(operation.kind)) pulseUntil = now + 330
+      if (prep.progress > previous && ['pump', 'pack', 'scoop', 'shake'].includes(operation.kind))
+        pulseUntil = now + 330
       previous = prep.progress
       const pulse = Math.max(0, (pulseUntil - now) / 330)
       if (prep.stage === 'measuring' && operation.kind === 'pump') {
@@ -167,6 +180,14 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
             )
             model.rotation.z = 0.22
           }
+          if (operation.kind === 'shake') {
+            model.position.set(
+              PREP_SPOT[0] + 0.1,
+              PREP_SPOT[1] + 0.4 + Math.sin(pulse * Math.PI * 4) * 0.07,
+              PREP_SPOT[2],
+            )
+            model.rotation.z = 0.35 + Math.sin(pulse * Math.PI * 4) * 0.25
+          }
         } else {
           hand.set(0.27, -0.23, -0.57)
           camera.localToWorld(hand)
@@ -175,7 +196,7 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
           model.quaternion.copy(rotation)
         }
       }
-      if ((active && operation.kind === 'pour') || pulse > 0) {
+      if ((active && operation.kind === 'pour') || (pulse > 0 && operation.kind !== 'shake')) {
         from.set(PREP_SPOT[0] + 0.1, PREP_SPOT[1] + 0.45, PREP_SPOT[2])
         to.set(PREP_SPOT[0], PREP_SPOT[1] + height + 0.015, PREP_SPOT[2])
         direction.subVectors(to, from)
@@ -184,9 +205,9 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
         stream.scale.set(0.009, direction.length(), 0.009)
         stream.visible = true
         ;(stream.material as THREE.MeshStandardMaterial).color.set(
-          operation.kind === 'pack'
+          operation.kind === 'pack' || operation.kind === 'scoop'
             ? '#634329'
-            : operation.tool === 'water-jug'
+            : operation.tool === 'water-jug' || operation.tool === 'cold-water-jug'
               ? '#b9d5cf'
               : operation.kind === 'pump'
                 ? '#caaa73'

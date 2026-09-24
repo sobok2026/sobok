@@ -1,9 +1,18 @@
 import { INGREDIENTS, type IngredientId, referenceLinks } from './catalog'
 import { sourceLine } from './reference-links'
 
-export const preparationIds = ['foam', 'mocha'] as const
+export const preparationIds = ['foam', 'mocha', 'hojicha'] as const
 export type PreparationId = (typeof preparationIds)[number]
-export const prepToolIds = ['cream-carton', 'milk-carton', 'mocha-pack', 'water-jug', 'spatula'] as const
+export const prepToolIds = [
+  'cream-carton',
+  'milk-carton',
+  'mocha-pack',
+  'water-jug',
+  'spatula',
+  'cold-water-jug',
+  'tea-scoop',
+  'tea-shaker',
+] as const
 export type PrepTool = (typeof prepToolIds)[number]
 export const PREP_TOOL_NAMES: Record<PrepTool, string> = {
   'cream-carton': '휘핑크림 팩',
@@ -11,10 +20,13 @@ export const PREP_TOOL_NAMES: Record<PrepTool, string> = {
   'mocha-pack': '바모카 원팩',
   'water-jug': '온수 계량 피처',
   spatula: '혼합 스패튤러',
+  'cold-water-jug': '정수 계량 피처',
+  'tea-scoop': '1티스푼 스쿱',
+  'tea-shaker': '호지차 쉐이커 보틀',
 }
 export type PrepStep = {
   label: string
-  kind: 'pour' | 'pump' | 'pack' | 'stir' | 'machine'
+  kind: 'pour' | 'pump' | 'pack' | 'scoop' | 'shake' | 'stir' | 'machine'
   tool: PrepTool | null
   target: number
   unit: string
@@ -33,12 +45,12 @@ export type Preparation = {
   stage: 'measuring' | 'processing' | 'ready'
   tool: PrepTool | null
   toolReserved: boolean
-  amounts: { cream: number; milk: number; glaze: number; water: number; mochaPowder: number }
+  amounts: { cream: number; milk: number; glaze: number; water: number; mochaPowder: number; hojichaPowder: number }
   fault: string | null
   batchId: string | null
   ingredientExpiresAt: number | null
 }
-const { foam, mocha } = referenceLinks
+const { foam, mocha, hojicha } = referenceLinks
 export const PREPARATIONS: Record<
   PreparationId,
   {
@@ -149,6 +161,49 @@ export const PREPARATIONS: Record<
       },
     ],
   },
+  hojicha: {
+    name: INGREDIENTS.hojicha.name,
+    marking: '숫자 Tag + Price Tag',
+    storageNote: hojicha.reference.storage,
+    seconds: 0,
+    steps: [
+      {
+        label: hojicha.steps.water.item,
+        kind: 'pour',
+        tool: 'cold-water-jug',
+        target: hojicha.waterMl,
+        unit: 'ml',
+        rate: hojicha.waterMl / 4,
+        tolerance: 0.06,
+        instruction: hojicha.steps.water.instruction,
+        source: sourceLine(hojicha.steps.water.source),
+      },
+      {
+        label: hojicha.steps.powder.item,
+        kind: 'scoop',
+        tool: 'tea-scoop',
+        target: hojicha.powderScoops,
+        unit: '스쿱',
+        rate: 0,
+        tolerance: 0,
+        ingredient: 'hojichaPowder',
+        perUnit: 1,
+        instruction: `${hojicha.steps.powder.instruction} 1티스푼 스쿱을 사용해요.`,
+        source: sourceLine(hojicha.steps.powder.source),
+      },
+      {
+        label: '호지차 샷 쉐이킹',
+        kind: 'shake',
+        tool: 'tea-shaker',
+        target: hojicha.shakes,
+        unit: '회',
+        rate: 0,
+        tolerance: 0,
+        instruction: `${hojicha.steps.shake.instruction} ${hojicha.steps.shake.note}`,
+        source: sourceLine(hojicha.steps.shake.source),
+      },
+    ],
+  },
 }
 export function createPreparation(recipe: PreparationId): Preparation {
   return {
@@ -159,7 +214,7 @@ export function createPreparation(recipe: PreparationId): Preparation {
     stage: 'measuring',
     tool: null,
     toolReserved: true,
-    amounts: { cream: 0, milk: 0, glaze: 0, water: 0, mochaPowder: 0 },
+    amounts: { cream: 0, milk: 0, glaze: 0, water: 0, mochaPowder: 0, hojichaPowder: 0 },
     fault: null,
     batchId: null,
     ingredientExpiresAt: null,

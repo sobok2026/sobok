@@ -122,7 +122,11 @@ export default function PreparationHud({ state, target, act, stop }: Props) {
                       ? '3번 버튼 · 블렌딩 시작'
                       : step.kind === 'pump'
                         ? '한 번 펌핑'
-                        : '원팩 한 봉 넣기'}
+                        : step.kind === 'scoop'
+                          ? '한 스쿱 넣기'
+                          : step.kind === 'shake'
+                            ? '한 번 흔들기'
+                            : '원팩 한 봉 넣기'}
                   </WorkButton>
                 )
               ) : null}

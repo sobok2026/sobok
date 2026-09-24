@@ -10,7 +10,7 @@ import {
   recipeLabel,
 } from '../game/catalog'
 import { operationFor } from '../game/crafting'
-import { PREPARATIONS, type PreparationId } from '../game/preparation'
+import { PREPARATIONS, preparationIds } from '../game/preparation'
 import type { GameState } from '../game/state'
 import { type Action, available } from '../game/store'
 import BatchLabel from './BatchLabel'
@@ -53,12 +53,13 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
     for (let index = stepIndex; index < RECIPES[recipe].steps.length; index++) {
       if (cup && index === stepIndex && state.jobs.some((job) => job.cupId === cup.id)) continue
       const operation = cup && index === stepIndex ? operationFor(cup.recipe, cup.step, cup.craft) : null
-      const remaining = operation ? Math.max(0, 1 - cup!.craft.progress / operation.target) : 1
+      const remaining =
+        operation && operation.kind !== 'shake' ? Math.max(0, 1 - cup!.craft.progress / operation.target) : 1
       for (const [id, amount] of Object.entries(RECIPES[recipe].steps[index].costs))
         add(id as IngredientId, amount * remaining)
     }
   }
-  for (const id of ['foam', 'mocha'] as PreparationId[]) {
+  for (const id of preparationIds) {
     const stock = items.find((item) => item.id === id)!
     const prep = state.preparation?.recipe === id ? state.preparation : null
     const needsBatch = (required[id] ?? 0) > stock.amount + stock.pending + 0.0001

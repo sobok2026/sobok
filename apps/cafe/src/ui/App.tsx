@@ -1251,6 +1251,22 @@ function CafeGame({
                     원팩·온수 직접 배합
                   </Button>
                 </div>
+                <div className="border-t border-line py-5">
+                  <h3 className="my-2.5 text-[1.3125rem] font-medium">호지차 샷</h3>
+                  <p className="mb-4 text-sm leading-[1.9] text-muted">
+                    정수와 호지차 파우더를 계량하고 보틀을 흔들어 섞어요.
+                  </p>
+                  <small className="my-3 block text-xs text-muted">
+                    준비된 양 {formatAmount(available(state, 'hojicha'))}ml
+                  </small>
+                  <Button
+                    variant="secondary"
+                    disabled={!!actionJob}
+                    onClick={() => act({ type: 'start-preparation', recipe: 'hojicha' })}
+                  >
+                    보틀 놓고 직접 배합
+                  </Button>
+                </div>
                 <details className="mt-6 border-t border-line pt-4 text-sm">
                   <summary className="mb-3 cursor-pointer text-muted">준비 · 보관 안내</summary>
                   <p className="mb-4">깨끗한 피처가 필요해요. 사용한 피처는 씻어서 선반에 정리해주세요.</p>
@@ -1258,6 +1274,8 @@ function CafeGame({
                     폼: {PREPARATIONS.foam.storageNote}
                     <br />
                     바모카: {PREPARATIONS.mocha.storageNote}
+                    <br />
+                    호지차 샷: {PREPARATIONS.hojicha.storageNote}
                   </p>
                 </details>
               </>

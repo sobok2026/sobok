@@ -64,11 +64,11 @@ function pumpMl(step: { note: string; source: Source }) {
   return notedNumber(step.note, /(?<![\d.,+-])(\d+(?:\.\d+)?)\s*ml\b/gi, `${sourceLine(step.source)} / 펌프당 ml`)
 }
 function lifetime(text: string, context: string): Lifetime {
-  const match = text.trim().match(/^(\d+(?:\.\d+)?)\s*(일|시간)$/)
-  if (!match) invalid(context, `일·시간 단위의 기한이 필요해요. 현재 '${text}'.`)
+  const match = text.trim().match(/^(\d+(?:\.\d+)?)\s*(일|시간|개월)$/)
+  if (!match) invalid(context, `일·시간·개월 단위의 기한이 필요해요. 현재 '${text}'.`)
   return {
-    amount: positive(Number(match[1]), context, match[2] === '일'),
-    unit: match[2] === '일' ? 'days' : 'hours',
+    amount: positive(Number(match[1]), context, match[2] !== '시간'),
+    unit: match[2] === '일' ? 'days' : match[2] === '개월' ? 'months' : 'hours',
   }
 }
 function storage(text: string, context: string): 'room' | 'fridge' {
@@ -77,7 +77,7 @@ function storage(text: string, context: string): 'room' | 'fridge' {
   return invalid(context, `냉장·실온 보관 조건을 확인해주세요. 현재 '${text}'.`)
 }
 
-// Only the three playable drinks and their supporting ingredients are linked here.
+// Only playable drinks and their supporting ingredients are linked here.
 // Unimplemented menus and the rest of the quality workbook remain reference material.
 export function linkReferences(data: ReferenceData) {
   const recipeFile = '26_pre-autumn_recipes.xlsx'
@@ -102,6 +102,8 @@ export function linkReferences(data: ReferenceData) {
   const hot = recipe('블랙 글레이즈드 라떼', 'HOT')
   const iced = recipe('블랙 글레이즈드 라떼', 'ICED')
   const cold = recipe('콜드 브루', 'ICED')
+  const hojiHot = recipe('호지 글레이즈드 티 라떼', 'HOT')
+  const hojiIced = recipe('호지 글레이즈드 티 라떼', 'ICED')
   const hotSteps = linkSteps(
     hot.steps,
     {
@@ -135,7 +137,36 @@ export function linkReferences(data: ReferenceData) {
     },
     `${recipeFile} / 음료 제조 / ${cold.name} ${cold.variant}`,
   )
-  for (const group of [hot, iced, cold])
+  const hojiFinish = { foam: finish.foam, powder: finish.powder, serve: finish.serve }
+  const hojiHotSteps = linkSteps(
+    hojiHot.steps,
+    {
+      milk: ['일반 우유', ''],
+      syrup: ['클래식 시럽', '펌프'],
+      steamedMilk: ['스팀 우유', ''],
+      tea: ['호지차 샷', 'ml (텀블러)'],
+      ...hojiFinish,
+    },
+    `${recipeFile} / 음료 제조 / ${hojiHot.name} HOT`,
+  )
+  const hojiIcedSteps = linkSteps(
+    hojiIced.steps,
+    {
+      syrup: ['클래식 시럽', '펌프'],
+      milk: ['일반 우유', ''],
+      tea: ['호지차 샷', ''],
+      ice: ['얼음', ''],
+      ...hojiFinish,
+    },
+    `${recipeFile} / 음료 제조 / ${hojiIced.name} ICED`,
+  )
+  const hojiAmounts = (steps: Pick<typeof hojiHotSteps, 'syrup' | 'foam' | 'powder'>) => ({
+    syrupPumps: tall(steps.syrup, true),
+    syrupPumpMl: pumpMl(steps.syrup),
+    powderTaps: tall(steps.powder, true),
+    tumblerFoamMl: tall(steps.foam),
+  })
+  for (const group of [hot, iced, cold, hojiHot, hojiIced])
     for (const step of group.steps)
       if (!step.unit && step.tall !== null)
         invalid(
@@ -152,6 +183,16 @@ export function linkReferences(data: ReferenceData) {
   })
 
   const foam = preparation('글레이즈드 폼', '기본 배합 / 약 9잔')
+  const hojicha = preparation('호지차 샷', '기본 배합 / 약 5잔')
+  const hojichaSteps = linkSteps(
+    hojicha.steps,
+    {
+      water: ['정수', 'ml'],
+      powder: ['호지차 파우더', '1티스푼 스쿱'],
+      shake: ['쉐이킹', '회'],
+    },
+    `${recipeFile} / 폼·베이스 제조 / 호지차 샷 / ${hojicha.batch}`,
+  )
   const foamSteps = linkSteps(
     foam.steps,
     {
@@ -164,9 +205,16 @@ export function linkReferences(data: ReferenceData) {
   )
   if (amount(foamSteps.blend, true) !== 1 || foamSteps.blend.instruction !== '3번 버튼을 누른다.')
     invalid(sourceLine(foamSteps.blend.source), '기본 폼의 3번 버튼 1회 블렌딩 절차를 확인해주세요.')
-  const foamStorage = foam.storage.match(/^제조 후 반드시 (냉장|실온) 보관\.\s*(\d+\s*(?:시간|일))\./)
-  if (!foamStorage)
-    invalid(`${sourceLine(foamSteps.cream.source)} / ${foam.name}`, `보관·기한을 확인해주세요. 현재 '${foam.storage}'.`)
+  function preparedQuality(prep: PreparationReference, source: Source) {
+    const context = `${sourceLine(source)} / ${prep.name}`
+    const rule = prep.storage.match(/^제조 후 반드시 (냉장|실온) 보관\.\s*(\d+\s*(?:시간|일|개월))\./)
+    if (!rule) invalid(context, `보관·기한을 확인해주세요. 현재 '${prep.storage}'.`)
+    return {
+      storage: storage(rule[1], context),
+      lifetime: lifetime(rule[2], context),
+      source: `${context} / ${prep.storage}`,
+    }
+  }
 
   const mocha = unique(
     data.prepGuide,
@@ -199,11 +247,14 @@ export function linkReferences(data: ReferenceData) {
     powder: quality('best_by_special.xlsx', '특화 원재료', '번트 카라멜 파우더 30g', 'portioned'),
     mocha: quality('best_by_core.xlsx', '제조 베이스', '모카소스(초콜릿드리즐 포함)', 'lifetime', '제조후'),
     coldBrew: quality('best_by_core.xlsx', '제조 베이스', 'cold brew 커피 추출액', 'lifetime', '추출후'),
-    foam: {
-      storage: storage(foamStorage[1], sourceLine(foamSteps.cream.source)),
-      lifetime: lifetime(foamStorage[2], sourceLine(foamSteps.cream.source)),
-      source: `${sourceLine(foamSteps.cream.source)} / ${foam.name} / ${foam.storage}`,
-    },
+    classic: quality(
+      'best_by_core.xlsx',
+      '코어 원재료',
+      '클래식, 바닐라, 스위트, 헤이즐넛, 심플시럽750ML CJ',
+      'opened',
+    ),
+    foam: preparedQuality(foam, foamSteps.cream.source),
+    hojicha: preparedQuality(hojicha, hojichaSteps.water.source),
   }
   if (
     qualities.mocha.storage !== storage(mocha.storage, sourceLine(mocha.source)) ||
@@ -239,6 +290,20 @@ export function linkReferences(data: ReferenceData) {
     hot: { reference: hot, steps: hotSteps, ...latteAmounts(hotSteps) },
     iced: { reference: iced, steps: icedSteps, ...latteAmounts(icedSteps) },
     cold: { reference: cold, steps: coldSteps },
+    hojiHot: {
+      reference: hojiHot,
+      steps: hojiHotSteps,
+      ...hojiAmounts(hojiHotSteps),
+      tumblerTeaMl: tall(hojiHotSteps.tea),
+    },
+    hojiIced: { reference: hojiIced, steps: hojiIcedSteps, ...hojiAmounts(hojiIcedSteps) },
+    hojicha: {
+      reference: hojicha,
+      steps: hojichaSteps,
+      waterMl: amount(hojichaSteps.water),
+      powderScoops: amount(hojichaSteps.powder, true),
+      shakes: amount(hojichaSteps.shake, true),
+    },
     foam: {
       reference: foam,
       steps: foamSteps,

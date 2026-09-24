@@ -50,7 +50,7 @@ export const batchSchema = z.object({
 })
 const jobSchema = z.object({
   id: z.string().max(100),
-  kind: z.enum(['craft-machine', 'foam', 'mocha', 'cold-brew']),
+  kind: z.enum(['craft-machine', ...preparationIds, 'cold-brew']),
   station: z.enum(stationIds),
   label: z.string().max(200),
   startedAt: timestamp,
@@ -87,6 +87,7 @@ const craftSchema = z.object({
     coffee: quantity,
     sauce: quantity,
     milk: quantity,
+    tea: quantity,
     water: quantity,
     foam: quantity,
     ice: quantity,
@@ -99,6 +100,7 @@ const craftSchema = z.object({
   shotReady: z.boolean(),
   shotTransferred: z.boolean(),
   mixed: z.boolean(),
+  teaMixed: z.boolean(),
   lidded: z.boolean(),
   fault: z.string().max(300).nullable(),
 })
@@ -111,7 +113,14 @@ const preparationSchema = z
     stage: z.enum(['measuring', 'processing', 'ready']),
     tool: z.enum(prepToolIds).nullable(),
     toolReserved: z.boolean(),
-    amounts: z.object({ cream: quantity, milk: quantity, glaze: quantity, water: quantity, mochaPowder: quantity }),
+    amounts: z.object({
+      cream: quantity,
+      milk: quantity,
+      glaze: quantity,
+      water: quantity,
+      mochaPowder: quantity,
+      hojichaPowder: quantity,
+    }),
     fault: z.string().max(300).nullable(),
     batchId: z.string().max(100).nullable(),
     ingredientExpiresAt: timestamp.nullable(),
@@ -255,7 +264,7 @@ export const stateSchema = z
         if (!['prep', 'cold-prep', 'hand'].includes(batch.location)) return true
         return batch.ingredient === 'coldBrew'
           ? batch.location !== 'prep' && state.coldBrew?.stage === 'ready' && state.coldBrew.batchId === batch.id
-          : ['foam', 'mocha'].includes(batch.ingredient) &&
+          : preparationIds.some((id) => id === batch.ingredient) &&
               batch.location !== 'cold-prep' &&
               state.preparation?.stage === 'ready' &&
               state.preparation.batchId === batch.id

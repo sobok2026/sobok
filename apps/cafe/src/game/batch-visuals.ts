@@ -50,8 +50,15 @@ export function createBatchVisuals(scene: THREE.Scene, camera: THREE.Perspective
       vessel.visible = !!held
       if (held) {
         drinkMaterial.color.set(
-          held.ingredient === 'foam' ? '#eee0bf' : held.ingredient === 'mocha' ? '#65422e' : '#3e2c20',
+          held.ingredient === 'foam'
+            ? '#eee0bf'
+            : held.ingredient === 'mocha'
+              ? '#65422e'
+              : held.ingredient === 'hojicha'
+                ? '#967345'
+                : '#3e2c20',
         )
+        handle.visible = held.ingredient !== 'hojicha'
         const height = Math.max(0.012, 0.29 * Math.min(1, held.amount / INGREDIENTS[held.ingredient].pack))
         liquid.scale.y = height
         liquid.position.y = height / 2 + 0.006

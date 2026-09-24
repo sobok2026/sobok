@@ -33,13 +33,15 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
     : op
       ? c.progress / op.target
       : 1
-  const counter = op && ['pump', 'sprinkle', 'ice', 'lid'].includes(op.kind)
+  const counter = op && ['pump', 'sprinkle', 'ice', 'lid', 'shake'].includes(op.kind)
   const missing =
     op && !ready
       ? ingredientIds.find(
           (id) =>
             available(state, id) + 0.0001 <
-            (op.costs[id] ?? 0) * Math.max(0, 1 - op.tolerance - c.progress / op.target),
+            (op.kind === 'shake'
+              ? (sourceStep.costs[id] ?? 0)
+              : (op.costs[id] ?? 0) * Math.max(0, 1 - op.tolerance - c.progress / op.target)),
         )
       : undefined
   const supplyNotice =
@@ -52,9 +54,14 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
   const useLabel = op
     ? isContinuous(op)
       ? `누르고 ${op.kind === 'stir' ? '젓기' : op.kind === 'drizzle' ? '두르기' : '붓기'}`
-      : { machine: '샷 추출하기', pump: '한 번 펌핑', sprinkle: '한 톡 뿌리기', ice: '한 스쿱 담기', lid: '리드 덮기' }[
-          op.kind as 'machine' | 'pump' | 'sprinkle' | 'ice' | 'lid'
-        ]
+      : {
+          machine: '샷 추출하기',
+          pump: '한 번 펌핑',
+          sprinkle: '한 톡 뿌리기',
+          ice: '한 스쿱 담기',
+          lid: '리드 덮기',
+          shake: '한 번 흔들기',
+        }[op.kind as 'machine' | 'pump' | 'sprinkle' | 'ice' | 'lid' | 'shake']
     : ''
   return (
     <WorkHud data-fault={!!c.fault} aria-label="직접 제조 조작">

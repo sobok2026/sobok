@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { staffFacingZ } from './catalog'
+import { RECIPES, staffFacingZ } from './catalog'
 import { type CraftState, type CraftTool, cupSpot, operationFor } from './crafting'
 import type { GameState } from './state'
 
@@ -65,7 +65,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
     const lid = cylinder(root, 0.119, 0.117, 0.023, standard('#f1e7cf'), 0.301)
     const sip = block(lid, 0.035, 0.004, 0.012, chocolate)
     sip.position.set(0, 0.014, 0.08)
-    const colors = ['#cdad74', '#4d2b18', '#e8f0e9', '#dfc29b', '#fff2d7']
+    const colors = ['#cdad74', '#4d2b18', '#e8f0e9', '#dfc29b', '#967345', '#fff2d7']
     const layers = colors.map((color) => {
       const mesh = cylinder(root, 1, 1, 1, standard(color))
       return { mesh, vertices: new Float32Array(mesh.geometry.getAttribute('position').array) }
@@ -141,6 +141,9 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
   const bottle = tool('mocha-bottle')
   cylinder(bottle, 0.038, 0.042, 0.17, chocolate)
   cylinder(bottle, 0.006, 0.03, 0.045, cream, 0.106)
+  const teaBottle = tool('tea-bottle')
+  cylinder(teaBottle, 0.065, 0.062, 0.24, standard('#9b8056'))
+  cylinder(teaBottle, 0.067, 0.067, 0.025, standard('#45644d'), 0.133)
   const shaker = tool('shaker')
   cylinder(shaker, 0.038, 0.035, 0.105, standard('#c69b59'))
   cylinder(shaker, 0.04, 0.04, 0.025, steel, 0.065)
@@ -197,8 +200,8 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
     visual.lid.visible = craft.lidded
     const c = craft.contents
     const amounts = craft.mixed
-      ? [0, c.coffee + c.sauce + extraction, c.water, c.milk, c.foam]
-      : [c.sauce, c.coffee + extraction, c.water, c.milk, c.foam]
+      ? [0, c.coffee + c.sauce + extraction, c.water, c.milk, c.tea, c.foam]
+      : [c.sauce, c.coffee + extraction, c.water, c.milk, c.tea, c.foam]
     let height = 0.008
     visual.layers.forEach(({ mesh, vertices }, i) => {
       const value = Math.min(amounts[i] * 0.265, Math.max(0, 0.276 - height))
@@ -258,8 +261,8 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         job?.machine === 'espresso' && cup.recipe === 'glazed-iced'
           ? Math.min(1, (state.time - job.startedAt) / (job.endsAt - job.startedAt))
           : null
-      drawCup(bench, c, cup.recipe !== 'glazed-hot', extraction, shotExtraction)
-      drawCup(held, c, cup.recipe !== 'glazed-hot', extraction, shotExtraction)
+      drawCup(bench, c, RECIPES[cup.recipe].variant === 'ICED', extraction, shotExtraction)
+      drawCup(held, c, RECIPES[cup.recipe].variant === 'ICED', extraction, shotExtraction)
       held.root.rotation.z = Math.sin(now / 650) * 0.018
       const station = c.location === 'hand' ? null : c.location
       if (station) bench.root.position.fromArray(cupSpot(station))
@@ -268,12 +271,12 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         previous = key
         previousProgress = c.progress
       }
-      if (c.progress > previousProgress && op && ['pump', 'sprinkle', 'ice', 'lid'].includes(op.kind))
+      if (c.progress > previousProgress && op && ['pump', 'sprinkle', 'ice', 'lid', 'shake'].includes(op.kind))
         pulseUntil = now + 280
       previousProgress = c.progress
       const pulse = Math.max(0, (pulseUntil - now) / 280)
       const spot = station ? cupSpot(station) : [0, 0, 0]
-      if (station === 'steam' && cup.recipe === 'glazed-hot' && (c.pitcherReserved || c.pitcherMilk > 0)) {
+      if (station === 'steam' && RECIPES[cup.recipe].variant === 'HOT' && (c.pitcherReserved || c.pitcherMilk > 0)) {
         receivingPitcher.visible = c.tool !== 'pitcher'
         receivingPitcher.position.set(spot[0] - 0.28, spot[1], spot[2])
         pitcherMilk.scale.y = Math.max(0.001, c.pitcherMilk / 200)
@@ -306,6 +309,10 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
             model.position.set(spot[0], spot[1] + 0.42 + Math.sin(pulse * Math.PI) * 0.04, spot[2])
             model.rotation.z = Math.PI
           }
+          if (op?.kind === 'shake') {
+            model.position.set(spot[0] + 0.12, spot[1] + 0.42 + Math.sin(pulse * Math.PI * 4) * 0.06, spot[2])
+            model.rotation.z = 0.35 + Math.sin(pulse * Math.PI * 4) * 0.22
+          }
         } else {
           model.position.copy(handPosition)
           model.quaternion.copy(handRotation)
@@ -322,9 +329,13 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         start.set(x + (job ? 0 : 0.09), job ? 1.43 : spot[1] + 0.44, job ? staffFacingZ(-0.68) : spot[2])
         const fillHeight = Math.min(
           0.267,
-          Object.values(c.contents)
-            .slice(0, 5)
-            .reduce((sum, amount) => sum + amount, 0) * 0.265,
+          (c.contents.sauce +
+            c.contents.coffee +
+            c.contents.water +
+            c.contents.milk +
+            c.contents.tea +
+            c.contents.foam) *
+            0.265,
         )
         end.set(
           x,
@@ -349,7 +360,9 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
                   ? '#b7ddd6'
                   : op?.content === 'coffee'
                     ? '#593624'
-                    : '#f5e7ca',
+                    : op?.content === 'tea'
+                      ? '#967345'
+                      : '#f5e7ca',
         )
       }
       if (station && job?.machine === 'steam')
