@@ -2,12 +2,42 @@ import { z } from 'zod'
 import { ingredientIds, isCupSurface, RECIPES, recipeIds, stationIds, tableIds } from './catalog'
 import { CLEANING_SECONDS, cleaningStationIds } from './cleaning'
 import { craftToolIds } from './crafting'
+import { customerStages } from './customer'
 import { PREPARATIONS, preparationIds, prepToolIds } from './preparation'
 import { SUPPLY_CAPACITY, supplyIds } from './supplies'
 
 const quantity = z.number().finite().min(0).max(100000000)
 const timestamp = z.number().finite().min(0).max(100000000000)
 const ingredientAmounts = z.partialRecord(z.enum(ingredientIds), quantity)
+const customerPoint = z.tuple([z.number().finite().min(-7).max(7), z.number().finite().min(0).max(7)])
+const customerSchema = z
+  .object({
+    id: z.string().max(100),
+    orderNumber: z.number().int().min(1).max(100000),
+    recipe: z.enum(recipeIds),
+    stage: z.enum(customerStages),
+    position: customerPoint,
+    yaw: z.number().finite(),
+    path: z.array(customerPoint).max(12),
+    nextPoint: z.number().int().min(0).max(12),
+    elapsed: quantity,
+    visit: z
+      .object({
+        table: z.enum(tableIds),
+        returnCup: z.boolean(),
+        dirtyTable: z.boolean(),
+        dirtyReturn: z.boolean(),
+        usesSugar: z.boolean(),
+      })
+      .nullable(),
+  })
+  .refine((customer) => customer.nextPoint <= customer.path.length, '손님 이동 위치가 경로를 벗어났어요.')
+  .refine(
+    (customer) =>
+      !['to-condiment', 'condiment', 'to-table', 'drinking', 'to-return', 'returning'].includes(customer.stage) ||
+      customer.visit !== null,
+    '수령한 손님의 이용 정보가 없어요.',
+  )
 export const batchSchema = z.object({
   id: z.string().max(100),
   ingredient: z.enum(ingredientIds),
@@ -118,53 +148,62 @@ const cleaningSchema = z
     (cleaning) => cleaning.progress <= (cleaning.stage === 'collect' ? 0 : CLEANING_SECONDS[cleaning.stage]),
     '청소 진행량이 범위를 벗어났어요.',
   )
-export const stateSchema = z.object({
-  day: z.number().int().min(1).max(10000),
-  time: timestamp,
-  phase: z.enum(['open', 'closing', 'summary']),
-  cash: quantity,
-  orderNumber: z.number().int().min(1).max(100000),
-  request: z.enum(recipeIds),
-  ticket: z.enum(recipeIds).nullable(),
-  preparation: preparationSchema.nullable(),
-  washing: washingSchema.nullable().optional(),
-  cleaning: cleaningSchema.nullable(),
-  condiment: z.object({ cups: quantity.int(), dirty: z.boolean() }),
-  supplies: z.record(
-    z.enum(supplyIds),
-    z.object({ bar: z.number().int().min(0).max(SUPPLY_CAPACITY), stock: quantity.int() }),
-  ),
-  supplyDelivery: z
-    .object({ supply: z.enum(supplyIds), amount: z.number().int().min(1).max(SUPPLY_CAPACITY) })
-    .nullable(),
-  cup: z
-    .object({
-      id: z.string().max(100),
-      recipe: z.enum(recipeIds),
-      step: z.number().int().min(0).max(20),
-      craft: craftSchema,
-    })
-    .refine((cup) => cup.step <= RECIPES[cup.recipe].steps.length, '제조 단계가 범위를 벗어났어요.')
-    .nullable(),
-  batches: z.array(batchSchema).max(300),
-  jobs: z.array(jobSchema).max(30),
-  tools: z.object({ clean: quantity, dirty: quantity, washed: quantity }),
-  cups: quantity,
-  reserveCups: quantity,
-  tables: z.record(z.enum(tableIds), z.object({ cups: quantity.int(), dirty: z.boolean() })),
-  dirtyBar: z.number().int().min(0).max(20),
-  trash: quantity,
-  totals: totalsSchema,
-  messages: z
-    .array(z.object({ id: z.string().max(100), text: z.string().max(400), tone: z.enum(['info', 'success', 'error']) }))
-    .max(8),
-  position: z.tuple([
-    z.number().finite().min(-7).max(7),
-    z.number().finite().min(-6).max(6),
-    z.number().finite(),
-    z.number().finite(),
-  ]),
-})
+export const stateSchema = z
+  .object({
+    day: z.number().int().min(1).max(10000),
+    time: timestamp,
+    phase: z.enum(['open', 'closing', 'summary']),
+    cash: quantity,
+    orderNumber: z.number().int().min(1).max(100000),
+    request: z.enum(recipeIds),
+    customer: customerSchema.nullable(),
+    ticket: z.enum(recipeIds).nullable(),
+    preparation: preparationSchema.nullable(),
+    washing: washingSchema.nullable().optional(),
+    cleaning: cleaningSchema.nullable(),
+    condiment: z.object({ cups: quantity.int(), dirty: z.boolean() }),
+    supplies: z.record(
+      z.enum(supplyIds),
+      z.object({ bar: z.number().int().min(0).max(SUPPLY_CAPACITY), stock: quantity.int() }),
+    ),
+    supplyDelivery: z
+      .object({ supply: z.enum(supplyIds), amount: z.number().int().min(1).max(SUPPLY_CAPACITY) })
+      .nullable(),
+    cup: z
+      .object({
+        id: z.string().max(100),
+        recipe: z.enum(recipeIds),
+        step: z.number().int().min(0).max(20),
+        craft: craftSchema,
+      })
+      .refine((cup) => cup.step <= RECIPES[cup.recipe].steps.length, '제조 단계가 범위를 벗어났어요.')
+      .nullable(),
+    batches: z.array(batchSchema).max(300),
+    jobs: z.array(jobSchema).max(30),
+    tools: z.object({ clean: quantity, dirty: quantity, washed: quantity }),
+    cups: quantity,
+    reserveCups: quantity,
+    tables: z.record(z.enum(tableIds), z.object({ cups: quantity.int(), dirty: z.boolean() })),
+    dirtyBar: z.number().int().min(0).max(20),
+    trash: quantity,
+    totals: totalsSchema,
+    messages: z
+      .array(
+        z.object({ id: z.string().max(100), text: z.string().max(400), tone: z.enum(['info', 'success', 'error']) }),
+      )
+      .max(8),
+    position: z.tuple([
+      z.number().finite().min(-7).max(7),
+      z.number().finite().min(-6).max(6),
+      z.number().finite(),
+      z.number().finite(),
+    ]),
+  })
+  .refine(
+    (state) =>
+      !state.customer || (state.customer.orderNumber === state.orderNumber && state.customer.recipe === state.request),
+    '손님과 현재 주문 정보가 맞지 않아요.',
+  )
 export type GameState = z.infer<typeof stateSchema>
 export type Batch = z.infer<typeof batchSchema>
 export type Job = z.infer<typeof jobSchema>

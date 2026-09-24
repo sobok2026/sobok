@@ -13,6 +13,8 @@ import { cleaningSpot } from './cleaning'
 import { createCleaningVisuals } from './cleaning-visuals'
 import { createCraftVisuals } from './craft-visuals'
 import { craftStations, cupSpot } from './crafting'
+import { CUSTOMER_DOOR_X } from './customer'
+import { createCustomerVisuals } from './customer-visuals'
 import { PREP_SPOT } from './preparation'
 import { createPreparationVisuals } from './preparation-visuals'
 import type { GameState } from './state'
@@ -25,6 +27,7 @@ export type MouseMode = 'look' | 'cursor' | 'fallback'
 type Options = {
   getState: () => GameState
   canMove: () => boolean
+  isRunning: () => boolean
   onTarget: (id: StationId | null, needsStaffAccess: boolean) => void
   onInteract: (id: StationId) => void
   onUseStart: (id: StationId) => void
@@ -56,6 +59,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   let previousPreparation: string | null = null
   let previousWashing: string | null = null
   let previousCleaning: string | null = null
+  let customerVisuals: ReturnType<typeof createCustomerVisuals> | undefined
   const reset = ([x, z, yaw, pitch]: GameState['position']) => {
     camera.position.set(x, 1.65, z)
     camera.rotation.set(pitch, yaw, 0, 'YXZ')
@@ -64,6 +68,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     previousPreparation = state.preparation?.id ?? null
     previousWashing = state.washing?.id ?? null
     previousCleaning = state.cleaning?.id ?? null
+    customerVisuals?.reset()
   }
   reset(options.getState().position)
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' })
@@ -174,7 +179,13 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   box(0, 1.8, -5.85, 14, 3.6, 0.18, '#eee7d7')
   box(-6.85, 1.8, 0, 0.18, 3.6, 12, '#e8e0ce')
   box(6.85, 1.8, -3.0, 0.18, 3.6, 5.8, '#e8e0ce')
-  box(0, 0.25, 5.8, 14, 0.5, 0.16, '#244c3e')
+  box(-1.125, 0.25, 5.8, 11.75, 0.5, 0.16, '#244c3e')
+  box(6.575, 0.25, 5.8, 0.85, 0.5, 0.16, '#244c3e')
+  for (const x of [CUSTOMER_DOOR_X - 0.72, CUSTOMER_DOOR_X + 0.72]) box(x, 1.75, 5.8, 0.06, 3.5, 0.12, '#244c3e')
+  const entranceSign = sign('입구 · EXIT', 1.15, 0.3, '#244c3e', '#f2e7ce')
+  entranceSign.position.set(CUSTOMER_DOOR_X, 2.55, 5.78)
+  entranceSign.rotation.y = Math.PI
+  scene.add(entranceSign)
   for (const x of [-6.7, -2.2, 2.2, 6.7]) box(x, 1.95, 5.8, 0.07, 3.5, 0.12, '#244c3e')
   box(0, 3.55, 5.8, 14, 0.08, 0.12, '#244c3e')
   box(0, 0, 10, 25, 0.1, 8, '#c7c9b8')
@@ -330,20 +341,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
       box(x, 0.77, z + (z < 3.7 ? -0.24 : 0.24), 0.55, 0.58, 0.06, '#778267')
     }
   }
-  const customer = new THREE.Group()
-  customer.position.set(-4.8, 0, 0.45)
-  scene.add(customer)
-  cylinder(0, 0.94, 0, 0.23, 0.26, 0.63, '#bc997d', customer)
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.19, 16, 12), material('#dcb894'))
-  head.position.set(0, 1.5, 0)
-  customer.add(head)
-  const hair = new THREE.Mesh(
-    new THREE.SphereGeometry(0.198, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.58),
-    material('#4d3e30'),
-  )
-  hair.position.set(0, 1.51, 0)
-  customer.add(hair)
-  for (const x of [-0.12, 0.12]) cylinder(x, 0.33, 0, 0.075, 0.07, 0.64, '#4c6253', customer)
+  customerVisuals = createCustomerVisuals(scene)
   // Pick volumes are visible only through the interaction UI, never drawn over the shop.
   const pickMaterial = new THREE.MeshBasicMaterial({ visible: false })
   const targets = stationIds.map((id) => {
@@ -661,8 +659,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     idleBlenderJar.visible = state.preparation?.stage !== 'processing'
     idleBlenderLid.visible = idleBlenderJar.visible
     cupStack.visible = state.cups > 0
-    customer.visible = state.phase === 'open' || !!state.ticket
-    customer.position.y = Math.sin(now / 850) * 0.012
+    customerVisuals?.update(state, dt, options.isRunning())
     renderer.render(scene, camera)
     frame = requestAnimationFrame(animate)
   }

@@ -13,6 +13,7 @@ import {
 } from '../game/catalog'
 import { cleaningHandsBusy, cupSurface, dirtyTableCount } from '../game/cleaning'
 import { craftStations } from '../game/crafting'
+import { CUSTOMER_SECONDS, CUSTOMER_STATUS, customerWalking } from '../game/customer'
 import { PREPARATIONS, preparationStep } from '../game/preparation'
 import type { CafeScene, MouseMode } from '../game/scene'
 import type { GameState } from '../game/state'
@@ -113,6 +114,10 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
   const [confirmNew, setConfirmNew] = useState(false)
   const [started, setStarted] = useState(false)
   const [posSelection, setPosSelection] = useState(state.ticket ?? state.request)
+  const customerId = state.customer?.id
+  useEffect(() => {
+    if (customerId) setPosSelection(state.ticket ?? state.request)
+  }, [customerId, state.ticket, state.request])
   const [dismissedMessageId, setDismissedMessageId] = useState(state.messages.at(-1)?.id)
   const lastMessage = state.messages.at(-1)
   useEffect(() => {
@@ -355,6 +360,12 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
         try {
           scene.current = createCafeScene(host.current, {
             getState: store.getSnapshot,
+            isRunning: () =>
+              flags.current.mode === 'play' &&
+              flags.current.started &&
+              flags.current.hasLock === true &&
+              !document.hidden &&
+              store.getSnapshot().phase !== 'summary',
             canMove: () =>
               flags.current.mode === 'play' &&
               flags.current.panel === null &&
@@ -402,7 +413,7 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
     const tick = window.setInterval(() => {
       const now = performance.now()
       const seconds = (now - last) / 1000
-      if (!store.getActiveInput() && seconds < 0.49) return
+      if (!store.getActiveInput() && !customerWalking(store.getSnapshot().customer) && seconds < 0.49) return
       last = now
       if (flags.current.mode === 'play' && flags.current.started && flags.current.hasLock && !document.hidden) {
         const wasUsing = !!store.getActiveInput()
@@ -457,14 +468,23 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
   const step = nextStep(state)
   const request = RECIPES[state.request]
   const customer = customerNames[(state.orderNumber - 1) % customerNames.length]
+  const canTakeOrder =
+    !!state.customer &&
+    !state.customer.visit &&
+    state.customer.stage !== 'leaving' &&
+    (state.customer.stage === 'ordering' || !!state.ticket)
   const running = mode === 'play' && state.phase !== 'summary'
   const actionJob = state.jobs.find((job) => job.station === panel)
   const goalStation = suggestedStation(state)
   const goal =
     goalStation === 'pos'
       ? state.phase === 'closing'
-        ? 'POS에서 근무 결산'
-        : 'POS에서 주문 받기'
+        ? state.customer
+          ? '손님 퇴장을 기다리는 중이에요'
+          : 'POS에서 근무 결산'
+        : state.customer?.stage === 'entering'
+          ? '손님이 POS에 도착하는 중이에요'
+          : 'POS에서 주문 받기'
       : STATIONS[goalStation].name
   const canStart = sceneReady && hasLock === true && !graphicsError
   const showPreparation = !!state.preparation && target === 'prep'
@@ -508,7 +528,9 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
         : target === 'pos'
           ? state.phase === 'closing'
             ? '마감 확인하기'
-            : '주문 받기'
+            : canTakeOrder
+              ? '주문 받기'
+              : '손님·주문 확인하기'
           : target === 'cups' && state.ticket && !state.cup
             ? '컵 집기'
             : target && state.cup && craftStations.includes(target) && state.cup.craft.location === 'hand'
@@ -682,7 +704,17 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                 <>
                   <div className="flex justify-between gap-3 text-xs text-muted">
                     <span>주문 {String(state.orderNumber).padStart(3, '0')}</span>
-                    <span>{state.cup ? (step ? '제조 중' : '전달 준비') : state.ticket ? '컵 준비' : '접수 대기'}</span>
+                    <span>
+                      {state.cup
+                        ? step
+                          ? '제조 중'
+                          : '전달 준비'
+                        : state.ticket
+                          ? '컵 준비'
+                          : state.customer
+                            ? CUSTOMER_STATUS[state.customer.stage]
+                            : '손님 없음'}
+                    </span>
                   </div>
                   <div className="mt-2 flex items-baseline gap-3">
                     <h2 className="m-0 text-lg leading-normal font-semibold tracking-[-0.035em]">
@@ -842,7 +874,10 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
             ) : null}
             {panel === 'pos' ? (
               <>
-                {state.phase === 'open' || state.ticket ? (
+                {(state.phase === 'open' || state.ticket) &&
+                state.customer &&
+                !state.customer.visit &&
+                state.customer.stage !== 'leaving' ? (
                   <>
                     <div className="mb-5.5 rounded-[0.1875rem] border-l-2 border-[#a9b495] bg-[#eaeade] p-4">
                       <span className="text-xs text-muted">{customer} 님</span>
@@ -859,6 +894,7 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                       className="mb-3.5 w-full rounded-[0.1875rem] border border-[#d9ddce] bg-[#fffdf7] p-3 text-sm text-[#496347]"
                       id="pos-menu"
                       value={posSelection}
+                      disabled={!!state.cup || !canTakeOrder}
                       onChange={(event) => setPosSelection(event.target.value as typeof posSelection)}
                     >
                       {recipeIds.map((id) => (
@@ -867,11 +903,29 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
                         </option>
                       ))}
                     </select>
-                    <Button disabled={!!state.cup} onClick={() => act({ type: 'ticket', recipe: posSelection })}>
-                      {state.ticket ? '주문표 수정' : '결제 확인 · 주문표 출력'}
+                    <Button
+                      disabled={!!state.cup || !canTakeOrder}
+                      onClick={() => act({ type: 'ticket', recipe: posSelection })}
+                    >
+                      {state.ticket
+                        ? '주문표 수정'
+                        : canTakeOrder
+                          ? '결제 확인 · 주문표 출력'
+                          : '손님 도착을 기다려주세요'}
                     </Button>
                   </>
-                ) : null}
+                ) : (
+                  <div className="mb-5 rounded-md bg-[#eaeade] p-4 text-sm leading-relaxed text-muted">
+                    <p>
+                      {state.customer
+                        ? `${customer} 님 · ${CUSTOMER_STATUS[state.customer.stage]}`
+                        : '매장 안의 손님이 모두 나갔어요.'}
+                    </p>
+                    {state.phase === 'open' ? (
+                      <p className="mt-2">이 손님이 나가면 다음 손님이 들어와요. 정리·보충을 진행할 수 있어요.</p>
+                    ) : null}
+                  </div>
+                )}
                 <details className="mt-6 border-t border-line pt-4 text-sm" open={state.phase !== 'open'}>
                   <summary className="mb-3 cursor-pointer text-muted">영업 관리</summary>
                   <div className="mb-4.25 flex justify-between text-xs text-muted">
@@ -934,7 +988,10 @@ function CafeGame({ store, hasSave, notice }: { store: CafeStore; hasSave: boole
             {panel === 'pickup' ? (
               <>
                 <div className="my-5.5 h-px bg-line" />
-                <Button disabled={!state.cup || !!step} onClick={() => act({ type: 'serve' })}>
+                <Button
+                  disabled={!state.cup || !!step || state.customer?.stage !== 'pickup'}
+                  onClick={() => act({ type: 'serve' })}
+                >
                   주문 확인 · 손님에게 전달
                 </Button>
               </>
@@ -1377,6 +1434,20 @@ function ShiftOverview({ state, onClose }: { state: GameState; onClose: () => vo
             <dd className="mt-1.5 text-stat font-medium tabular-nums">{state.reserveCups}개</dd>
           </div>
         </dl>
+        {state.customer ? (
+          <section className="mb-5 rounded-md bg-[#eaeade] p-4 text-sm leading-relaxed" aria-label="응대 중인 손님">
+            <strong>
+              주문 {String(state.customer.orderNumber).padStart(3, '0')} ·{' '}
+              {customerNames[(state.customer.orderNumber - 1) % customerNames.length]} 님
+            </strong>
+            <p className="mt-1 text-muted">
+              {CUSTOMER_STATUS[state.customer.stage]}
+              {state.customer.stage === 'drinking'
+                ? ` · ${Math.max(0, Math.ceil(CUSTOMER_SECONDS.drinking - state.customer.elapsed))}초 남음`
+                : ''}
+            </p>
+          </section>
+        ) : null}
         <ShiftLedger state={state} embedded />
         <h3 className="mt-5 mb-2.5 text-body font-semibold">남은 정리</h3>
         {tasks.length ? (

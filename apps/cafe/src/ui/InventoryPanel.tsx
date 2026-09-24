@@ -40,7 +40,12 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
   const add = (id: IngredientId, amount: number) => {
     required[id] = (required[id] ?? 0) + Math.max(0, amount)
   }
-  const recipe = state.cup?.recipe ?? state.ticket ?? (state.phase === 'open' ? state.request : null)
+  const recipe =
+    state.cup?.recipe ??
+    state.ticket ??
+    (state.phase === 'open' && state.customer && !state.customer.visit && state.customer.stage !== 'leaving'
+      ? state.request
+      : null)
   if (recipe) {
     const cup = state.cup?.craft.fault ? null : state.cup
     const stepIndex = cup?.step ?? 0

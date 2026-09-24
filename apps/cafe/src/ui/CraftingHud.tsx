@@ -1,5 +1,6 @@
 import { INGREDIENTS, ingredientIds, RECIPES, STATIONS, type StationId } from '../game/catalog'
 import { isContinuous, isMetered, operationFor, readyToConfirm, TOOL_NAMES } from '../game/crafting'
+import { CUSTOMER_STATUS } from '../game/customer'
 import type { GameState } from '../game/state'
 import { available } from '../game/store'
 import { TextButton } from './Button'
@@ -170,8 +171,17 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
         </>
       ) : (
         <>
-          <WorkTitle>손님에게 전달할 준비가 됐어요</WorkTitle>
-          <WorkButton shortcut="F" primary onUse={() => onConfirm(place)}>
+          <WorkTitle>
+            {state.customer?.stage === 'pickup' ? '손님에게 전달할 준비가 됐어요' : '음료가 완성됐어요'}
+          </WorkTitle>
+          {state.customer?.stage !== 'pickup' ? (
+            <p className="my-2.5 text-sm leading-relaxed text-muted">
+              {state.customer
+                ? `손님 ${CUSTOMER_STATUS[state.customer.stage]}. 픽업대에 도착하면 전달하세요.`
+                : '응대할 손님이 없어요.'}
+            </p>
+          ) : null}
+          <WorkButton shortcut="F" primary disabled={state.customer?.stage !== 'pickup'} onUse={() => onConfirm(place)}>
             음료 전달하기
           </WorkButton>
           <TextButton onClick={() => onMoveCup(place)}>

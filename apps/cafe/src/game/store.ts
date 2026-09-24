@@ -1,5 +1,6 @@
 import {
   type Costs,
+  type CupSurfaceId,
   INGREDIENTS,
   type IngredientId,
   ingredientIds,
@@ -24,6 +25,19 @@ import {
   readyToConfirm,
   TOOL_NAMES,
 } from './crafting'
+import {
+  CUSTOMER_SECONDS,
+  CUSTOMER_STATUS,
+  createCustomer,
+  customerLeave,
+  customerToCondiment,
+  customerToPickup,
+  customerToReturn,
+  customerToTable,
+  customerWait,
+  customerWalking,
+  moveCustomer,
+} from './customer'
 import {
   continuousPreparation,
   createPreparation,
@@ -82,6 +96,7 @@ export function initialState(): GameState {
     cash: 50000,
     orderNumber: 1,
     request: 'cold-brew',
+    customer: createCustomer(1, 'cold-brew'),
     ticket: null,
     cup: null,
     preparation: null,
@@ -108,7 +123,7 @@ export function initialState(): GameState {
     dirtyBar: 0,
     trash: 0,
     totals: emptyTotals(50000),
-    messages: [{ id: uid(), text: '첫 손님이 도착했어요.', tone: 'info' }],
+    messages: [{ id: uid(), text: '첫 손님이 들어오고 있어요. 매장을 둘러보세요.', tone: 'info' }],
     position: staffStartPosition(),
   }
 }
@@ -187,8 +202,18 @@ function plannedStation(state: GameState): StationId {
     if (state.trash) return 'trash'
     if (state.batches.some((b) => b.amount > 0 && b.expiresAt !== null && b.expiresAt <= state.time)) return 'stock'
     if (state.batches.some((b) => b.amount > 0 && b.openedAt !== null && b.location !== 'bar')) return 'stock'
+    if (state.customer) return 'pos'
   }
   if (state.phase === 'open' && supplyIds.some((id) => !state.supplies[id].bar)) return 'stock'
+  if (state.customer?.visit || state.customer?.stage === 'leaving') {
+    if (state.tools.dirty || state.tools.washed) return 'wash'
+    const dirtyTable = tableIds.find((id) => state.tables[id].dirty || state.tables[id].cups)
+    if (dirtyTable) return dirtyTable
+    if (state.condiment.cups || state.condiment.dirty) return 'condiment'
+    if (state.dirtyBar) return 'mix'
+    if (state.trash) return 'trash'
+    return 'stock'
+  }
   return 'pos'
 }
 export function suggestedStation(state: GameState): StationId {
@@ -207,7 +232,8 @@ export function suggestedInstruction(state: GameState): string | null {
   ) {
     const cleaning = state.cleaning
     if (cleaning.heldCups) return '회수한 컵을 분리수거함에 가져가 E로 넣으세요.'
-    if (cleaning.stage === 'collect') return 'E로 테이블의 컵을 집어 분리수거함으로 옮기세요.'
+    if (cleaning.stage === 'collect')
+      return `E로 ${STATIONS[cleaning.station].name}의 컵을 집어 분리수거함으로 옮기세요.`
     if (cleaning.stage === 'bag') return '누르고 쓰레기를 모은 뒤 F로 봉투를 비우세요.'
     return cleaning.clothHeld
       ? '누르고 닦은 뒤 천을 놓고 F로 확인하세요.'
@@ -230,11 +256,17 @@ export function suggestedInstruction(state: GameState): string | null {
   }
   if (destination === 'wash' && state.tools.washed) return '씻은 피처를 집어 선반에 정리하면 다시 쓸 수 있어요.'
   if (destination === 'wash' && !state.tools.clean) return '깨끗한 피처가 필요해요. 하나 씻고 선반에 정리해주세요.'
+  if (state.customer?.stage === 'entering') return '손님이 POS에 도착하면 주문을 받을 수 있어요.'
+  if (state.customer?.visit || state.customer?.stage === 'leaving')
+    return state.phase === 'closing'
+      ? `손님 ${CUSTOMER_STATUS[state.customer.stage]}. 퇴장한 뒤 남은 정리를 마치세요.`
+      : `손님 ${CUSTOMER_STATUS[state.customer.stage]}. 다음 손님이 오기 전에 정리·보충할 수 있어요.`
   return null
 }
 export function closingTasks(state: GameState) {
   return [
     state.ticket || state.cup ? '남은 주문 마무리' : '',
+    state.customer ? `손님 ${CUSTOMER_STATUS[state.customer.stage]} · 퇴장까지 응대` : '',
     state.preparation ? '부재료 준비 마무리' : '',
     state.washing ? '세척 중인 피처·들고 있는 피처 정리' : '',
     state.cleaning ? '진행 중인 청소·회수한 컵 정리' : '',
@@ -431,7 +463,16 @@ export class CafeStore {
           fail('제조 중인 컵을 정리한 뒤 주문을 수정해주세요.')
           break
         }
+        if (!s.customer || s.customer.visit || (!s.ticket && s.customer.stage !== 'ordering')) {
+          fail(
+            s.customer?.stage === 'entering'
+              ? '손님이 POS에 도착하면 주문을 받아주세요.'
+              : '응대 중인 손님이 나가면 다음 주문을 받을 수 있어요.',
+          )
+          break
+        }
         s.ticket = action.recipe
+        if (s.customer.stage === 'ordering') customerToPickup(s.customer)
         this.say(s, `${recipeLabel(action.recipe)} 주문을 접수했어요.`, 'success')
         break
       case 'take-cup':
@@ -631,6 +672,19 @@ export class CafeStore {
         this.say(s, '컵을 폐기했어요. 이미 사용한 재료는 돌아오지 않아요.')
         break
       case 'serve': {
+        if (
+          s.customer?.stage !== 'pickup' ||
+          s.customer.visit ||
+          s.customer.orderNumber !== s.orderNumber ||
+          s.customer.recipe !== s.request
+        ) {
+          fail(
+            s.customer?.stage === 'to-pickup'
+              ? '손님이 픽업대로 오고 있어요. 도착하면 전달해주세요.'
+              : '현재 주문의 손님이 픽업대에 도착해야 전달할 수 있어요.',
+          )
+          break
+        }
         if (!s.ticket || !s.cup || nextStep(s)) {
           fail('아직 완성된 음료가 없어요.')
           break
@@ -648,50 +702,24 @@ export class CafeStore {
           fail('손님이 요청한 메뉴와 달라요. 컵을 정리하고 POS 주문을 수정해주세요.')
           break
         }
-        const iced = RECIPES[s.cup.recipe].variant === 'ICED'
         s.cash += RECIPES[s.cup.recipe].price
         s.totals.revenue += RECIPES[s.cup.recipe].price
         s.totals.served++
         s.ticket = null
         s.cup = null
-        const tableId = tableIds[Math.floor(Math.random() * tableIds.length)]
-        const returnStation = Math.random() < CUSTOMER_HABITS.returnCup ? 'condiment' : tableId
-        cupSurface(s, returnStation).cups++
-        if (s.cleaning?.station === returnStation) {
-          s.cleaning.stage = 'collect'
-          s.cleaning.progress = 0
-        }
-        if (Math.random() < CUSTOMER_HABITS.stain) {
-          s.tables[tableId].dirty = true
-          if (s.cleaning?.station === tableId) s.cleaning.progress = 0
-        }
-        if (returnStation === 'condiment' && Math.random() < CUSTOMER_HABITS.stain) {
-          s.condiment.dirty = true
-          if (s.cleaning?.station === 'condiment') s.cleaning.progress = 0
+        s.customer.visit = {
+          table: tableIds[Math.floor(Math.random() * tableIds.length)],
+          returnCup: Math.random() < CUSTOMER_HABITS.returnCup,
+          dirtyTable: Math.random() < CUSTOMER_HABITS.stain,
+          dirtyReturn: Math.random() < CUSTOMER_HABITS.stain,
+          usesSugar: Math.random() < CUSTOMER_HABITS.sugar,
         }
         if (Math.random() < CUSTOMER_HABITS.stain) {
           s.dirtyBar = Math.min(3, s.dirtyBar + 1)
           if (s.cleaning?.station === 'mix') s.cleaning.progress = 0
         }
-        const usedSupplies: SupplyId[] = ['napkins']
-        if (iced) usedSupplies.push('straws')
-        if (Math.random() < CUSTOMER_HABITS.sugar) usedSupplies.push('sugar')
-        const missing: string[] = []
-        for (const id of usedSupplies) {
-          if (s.supplies[id].bar > 0) {
-            s.supplies[id].bar--
-            s.totals.suppliesUsed[id] = (s.totals.suppliesUsed[id] ?? 0) + 1
-          } else missing.push(SUPPLIES[id].name)
-        }
-        s.orderNumber++
-        s.request = orderSequence[(s.orderNumber - 1) % orderSequence.length]
-        this.say(
-          s,
-          missing.length
-            ? `음료를 전달했어요. 컨디먼트 바에 ${missing.join('·')} 보충이 필요해요.`
-            : '손님에게 음료를 전달했어요.',
-          missing.length ? 'info' : 'success',
-        )
+        customerToCondiment(s.customer)
+        this.say(s, '손님이 음료를 받았어요. 컨디먼트 바와 테이블을 이용한 뒤 나가요.', 'success')
         break
       }
       case 'wash':
@@ -887,8 +915,16 @@ export class CafeStore {
           fail('아직 정리가 끝나지 않았어요. 누르고 작업을 이어가세요.')
           break
         }
-        if (isCupSurface(cleaning.station)) cupSurface(s, cleaning.station).dirty = false
-        else if (cleaning.station === 'mix') s.dirtyBar = 0
+        if (isCupSurface(cleaning.station)) {
+          const surface = cupSurface(s, cleaning.station)
+          surface.dirty = false
+          if (surface.cups > 0) {
+            cleaning.stage = 'collect'
+            cleaning.progress = 0
+            this.say(s, '닦기는 끝났어요. 새로 남은 컵도 회수해주세요.', 'success')
+            break
+          }
+        } else if (cleaning.station === 'mix') s.dirtyBar = 0
         else s.trash = Math.max(0, s.trash - cleaning.trashCount)
         s.totals.cleaned++
         s.cleaning = null
@@ -1190,6 +1226,7 @@ export class CafeStore {
         break
       case 'close':
         s.phase = 'closing'
+        if (s.customer && !s.customer.visit && !s.ticket) customerLeave(s.customer)
         this.say(s, '신규 주문을 마감했어요. 남은 주문과 정리 업무를 마쳐주세요.')
         break
       case 'finish': {
@@ -1211,6 +1248,7 @@ export class CafeStore {
         s.day++
         s.time = Math.max(next, s.time + 3600)
         s.phase = 'open'
+        s.customer = createCustomer(s.orderNumber, s.request)
         s.totals = emptyTotals(s.cash)
         s.position = staffStartPosition()
         s.batches = s.batches.filter((b) => b.amount > 0)
@@ -1222,6 +1260,79 @@ export class CafeStore {
     s.batches = s.batches.filter((b) => b.amount > 0 || b.location === 'stock')
     this.state = s
     this.emit()
+  }
+  private customerSurface(s: GameState, station: CupSurfaceId, cup: boolean, dirty: boolean) {
+    const surface = cupSurface(s, station)
+    if (cup) surface.cups++
+    if (dirty) {
+      surface.dirty = true
+      if (s.cleaning?.station === station) s.cleaning.progress = 0
+    }
+  }
+  private advanceCustomer(s: GameState, seconds: number) {
+    const customer = s.customer
+    if (!customer) return
+    if (customerWalking(customer)) {
+      if (!moveCustomer(customer, seconds)) return
+      switch (customer.stage) {
+        case 'entering':
+          customerWait(customer, 'ordering')
+          customer.yaw = Math.PI
+          this.say(s, '손님이 POS에 도착했어요. 주문을 받아주세요.')
+          break
+        case 'to-pickup':
+          customerWait(customer, 'pickup')
+          customer.yaw = Math.PI
+          this.say(s, '손님이 픽업대에서 기다리고 있어요.')
+          break
+        case 'to-condiment':
+          customerWait(customer, 'condiment')
+          break
+        case 'to-table':
+          customerWait(customer, 'drinking')
+          customer.yaw = 0
+          break
+        case 'to-return':
+          customerWait(customer, 'returning')
+          break
+        case 'leaving':
+          if (customer.visit) {
+            s.orderNumber++
+            s.request = orderSequence[(s.orderNumber - 1) % orderSequence.length]
+          }
+          s.customer = s.phase === 'open' ? createCustomer(s.orderNumber, s.request) : null
+          this.say(s, s.customer ? '다음 손님이 들어오고 있어요.' : '마지막 손님이 나갔어요. 남은 정리를 마쳐주세요.')
+          break
+      }
+      return
+    }
+    if (!customer.visit) return
+    customer.elapsed += seconds
+    if (customer.stage === 'condiment' && customer.elapsed >= CUSTOMER_SECONDS.condiment) {
+      const supplies: SupplyId[] = ['napkins']
+      if (RECIPES[customer.recipe].variant === 'ICED') supplies.push('straws')
+      if (customer.visit.usesSugar) supplies.push('sugar')
+      const missing: string[] = []
+      for (const id of supplies) {
+        if (s.supplies[id].bar > 0) {
+          s.supplies[id].bar--
+          s.totals.suppliesUsed[id] = (s.totals.suppliesUsed[id] ?? 0) + 1
+        } else missing.push(SUPPLIES[id].name)
+      }
+      if (missing.length) this.say(s, `컨디먼트 바에 ${missing.join('·')} 보충이 필요해요. 손님은 테이블로 이동해요.`)
+      customerToTable(customer)
+    } else if (customer.stage === 'drinking' && customer.elapsed >= CUSTOMER_SECONDS.drinking) {
+      this.customerSurface(s, customer.visit.table, !customer.visit.returnCup, customer.visit.dirtyTable)
+      if (customer.visit.returnCup) customerToReturn(customer)
+      else {
+        this.say(s, `손님이 ${STATIONS[customer.visit.table].name}에 컵을 남겼어요.`)
+        customerLeave(customer)
+      }
+    } else if (customer.stage === 'returning' && customer.elapsed >= CUSTOMER_SECONDS.returning) {
+      this.customerSurface(s, 'condiment', true, customer.visit.dirtyReturn)
+      this.say(s, '손님이 컨디먼트 바에 컵을 반납했어요.')
+      customerLeave(customer)
+    }
   }
   private completeJobs(s: GameState) {
     const finished = s.jobs.filter((job) => job.endsAt <= s.time)
@@ -1366,6 +1477,7 @@ export class CafeStore {
       else this.applyCraft(s, op, Math.min(dt, 0.15) * op.rate)
     }
     this.completeJobs(s)
+    this.advanceCustomer(s, dt)
     this.state = s
     this.emit()
   }
