@@ -3,7 +3,7 @@
   "locale": "ko",
   "batchId": "love.future-promise.stella",
   "batchOrder": 56,
-  "purpose": "future-promise 원고를 각자의 정체성과 색을 유지한 열린 Stella 구조로 확장하는 신규 11개와 승인 Pisces 파일럿 1개의 편집·계보 검토안이다.",
+  "purpose": "future-promise 원고를 각자의 정체성과 색을 유지한 열린 Stella 구조로 확장하는 신규 11개와 승인 Pisces 파일럿 1개의 편집·계보 검토안이다. 2026-09-05 사용자 승인에 따라 한국어 해석·질문·제목·그림 설명의 교정본을 반영했다. 원화와 최초 제작·시각 승인 이력은 유지한다.",
   "sourceBatchPlan": "production-art-batches-ko.json",
   "selectionContract": {
     "plannedEditionCount": 12,
@@ -53,7 +53,7 @@
       "editionId": "aries.love.future-promise.stella",
       "sign": "aries",
       "element": "fire",
-      "editorialContentHash": "8d0939040f03eb1f2d39bfeeb9d5e3221a02495fff4236e223d610c3c07a9f68",
+      "editorialContentHash": "d88e3c9387c5bb98b0cdd31aa64d182a3244fb1394f93f33cc81a3f66667a8f3",
       "compositionFamily": "maphinge_highrear_openV_panels_clamshellheart_split_trails_outer_diamond_exit",
       "artDirection": "세로 3:4의 맑아지는 Stella 새벽을 folded map hinge 위 high-rear three-quarter로 내려다본다. 몽실이·달콩이 exactly2는 서로 다른 map panels2 위 독립 pads2에 있고 panels는 physical corner1에서 open V를 만들지만 길로 이어지지 않는다. source action heart1은 hinge 위 low clamshell cradle1에 half-set되며 두 guardian이 grips2로 함께 열되 latch1은 잠그지 않는다. contact crescent bead1·shared action star1·removable corner clamp1은 서로 분리한다. chest-star trails2는 panels 바깥을 따라가다가 broad skewed-diamond exit를 감싸지 않고 위 양쪽 프레임으로 따로 빠진다. second heart·road·arrow·destination·closed ring·재회 확정은 없다.",
       "distinctFrom": [
@@ -74,7 +74,7 @@
       "editionId": "taurus.love.future-promise.stella",
       "sign": "taurus",
       "element": "earth",
-      "editorialContentHash": "229b02547cdce8fb3835f2aae663bdd6a42a38cc1656c68a666415d93eef893f",
+      "editorialContentHash": "a01244972df027bba03ae108ae2634968388c814002bab90a7930a0fea2e1d61",
       "compositionFamily": "boxrim_nadir_seasonbox_slips3_twin_seedcradles_open_spiral_chimney",
       "artDirection": "세로 3:4를 small seasonal box1의 rim 위에서 near-nadir로 내려다본다. 차곡이·새봄이 exactly2는 box 양옆에 있고 open lid1은 화면 위에서 한쪽만 받친다. promise slips3에는 contact/time/money의 단일 relief 각1만 있으며 one slip은 lip에 half-set이다. box 밖 twin seed cradles2에는 star seeds2를 독립적으로 두고 roots contact0이다. removable lid-stop1과 seed divider1은 열려 있다. 두 chest stars에서 나온 seasonal arcs3는 서로 다른 반경의 broken open spiral로 상승해 tall off-center chimney를 남기고 프레임 밖으로 사라진다. ring·heart·gift lock·same growth·complete future는 없다.",
       "distinctFrom": [
@@ -95,7 +95,7 @@
       "editionId": "gemini.love.future-promise.stella",
       "sign": "gemini",
       "element": "air",
-      "editorialContentHash": "8eda845e5d4c3572c857aa724037a762cb18885426a32a49315cc90571b80b40",
+      "editorialContentHash": "3df3cd7a99379e1db5b8b49f01befcea24a4eb4de70c73cea9658c246e8bd32c",
       "compositionFamily": "pagecorner_endon_starbook_butterfly_nextpage_titlebar_tokens3_open_scalloped_airwell",
       "artDirection": "세로 3:4의 밝은 구름방을 open star-book1의 near page corner 높이에서 end-on cross-page로 본다. canonical 재잘이·소곤이 pair2는 서로 다른 page depth에 있고 body-only connector ribbon1을 유지한다. pages2와 next page1은 flat-open butterfly silhouette를 만들며 blank shared-title bar1은 clips2로만 걸린다. paired-dot shared token1과 personal tokens2는 gutter와 outer page edges에 분리한다. two abstract sentence fields2는 글줄이 아닌 넓은 색면이고, 두 guardian은 각자 다른 field를 가리킨다. chest-star trails2는 upper scalloped airwell을 지나 만나지 않고 frame 밖으로 나간다. extra page/book·pseudo-text·question mark·heart·closed ribbon loop·determined ending은 없다.",
       "distinctFrom": [
@@ -116,7 +116,7 @@
       "editionId": "cancer.love.future-promise.stella",
       "sign": "cancer",
       "element": "water",
-      "editorialContentHash": "fe0ea2e740dceec401e79948394df1dc4850f1b9eb295a46764481e1c500a67e",
+      "editorialContentHash": "053a452577fc808f7eedc646abba58e9cf1b34d065789fd7ef4436a1ddd533a8",
       "compositionFamily": "moonwindow_axial_shellhouse_panel3docks_twin_grips_open_offcenter_crescent_exit",
       "artDirection": "세로 3:4의 맑은 달밤을 shell-house moon window1의 긴 축과 나란한 strict axial end-on으로 본다. near에는 달콩이1과 shell-house1, far에는 solid portable pack1을 멘 꼬옥이1을 두어 houses2는 분리한다. 가운데 full-moon panel1의 docks3에는 meeting peg·feeling pebble·house marker 각1만 있다. 두 guardian은 window의 opposite grips2를 잡아 한 notch 옆으로 열며 hinge1과 release tab1은 잠그지 않는다. 꼬옥이 tail-heart tip1 외 heart0이다. chest-star trails2는 window와 panel 옆 broad off-center crescent exit로 따로 빠져나가고 닫힌 궤도를 만들지 않는다. single home·forced entry·clock/grid·guaranteed meeting은 없다.",
       "distinctFrom": [
@@ -137,7 +137,7 @@
       "editionId": "leo.love.future-promise.stella",
       "sign": "leo",
       "element": "fire",
-      "editorialContentHash": "e2186d5db202c239d9260faecf83e516bfee4c958b83271904f001e6b25071e0",
+      "editorialContentHash": "59aec6391cced589b854556790fc989d1fd5a40e18b9111933811c3a275f8644",
       "compositionFamily": "crownheight_frontal_missingtop_cuearch_equalplaques_roletiles_splitspot_trails_open_flygap",
       "artDirection": "세로 3:4 backstage를 Haenim crown 높이 strict frontal로 본다. 해님이·고르미 exactly2와 top bar가 없는 open cue arch1이 주실루엣이다. arch의 columns2에는 equal blank name plaques2와 role tiles2가 같은 높이로 있고 shared cheer marker1은 center cradle1에 unseated다. separate spot heads2와 knobs2는 각 guardian이 조절하며 fields2는 같은 밝기로 겹치지 않는다. quick-release hinge1과 cradle clip1은 half-set이다. chest-star trails2는 arch outer sides를 지나 tall central flygap을 막지 않고 위 프레임으로 나간다. stage·seat·poster·trophy·heart·one protagonist·closed portal은 없다.",
       "distinctFrom": [
@@ -158,7 +158,7 @@
       "editionId": "virgo.love.future-promise.stella",
       "sign": "virgo",
       "element": "earth",
-      "editorialContentHash": "904f3ccac402c565bb488565c0dbe02583f92c0b834aac59ee0c14aff5b2773a",
+      "editorialContentHash": "11bec0909d3dc9a21d54d2dcf1d63338c29231a096583dce63575eee55a4aefb",
       "compositionFamily": "plantcradle_lowrear_offset_flowers2_planrail_twostops_broken_leafwreath_open_skybay",
       "artDirection": "세로 3:4의 새벽 화단을 two plant cradles2 뒤 low-rear oblique로 본다. 새봄이·차곡이 exactly2는 서로 다른 cradle 옆에 있고 unequal star flowers2와 roots2는 분리한다. shared plan rail1에는 promise tile1과 review peg1이 separate slots2에 half-set되고 release leaf1은 열린다. growth clips2는 다른 높이, care-time beads2는 rail outer edge의 다른 stop에 둔다. 두 chest-star trails는 plants 바깥에서 broken asymmetric leaf-wreath segments3을 만들지만 upper-left guardian-width sky bay를 완전히 연다. heart·watering can·grid·same height·closed wreath·finished care는 없다.",
       "distinctFrom": [
@@ -179,7 +179,7 @@
       "editionId": "libra.love.future-promise.stella",
       "sign": "libra",
       "element": "air",
-      "editorialContentHash": "9a06f561878ef67a3ec85a249cf584cfb90954f3e2b512d9e9c19a04977c7540",
+      "editorialContentHash": "ada2229d44f52afd13f1d0a71b815adda1f59676f4fe0c98aed5dcd27cb7d468",
       "compositionFamily": "floorlevel_open_tuningfork_three_starcradles_signatureplane_vertical_U_exit_split_arcs",
       "artDirection": "세로 3:4 cloud workshop을 floor-level front oblique로 본다. 고르미·해님이 exactly2와 top bar가 없는 open tuning-fork shelf1을 올려다본다. prongs3 끝 detached cradles3에는 personal stars2와 removable shared third star1이 각각 분리되고 shared star는 아직 unseated다. 낮은 agreement plane1에는 personal tokens2·shared token1과 equal blank signature boxes2만 있다. pullout cradle1·tabs3·reversible clip1은 half-set이다. chest-star arcs2는 outer prongs 바깥으로 올라가며 central vertical U exit를 가로막지 않는다. scale·beam·pans·ring·heart·signature text·completed balance는 없다.",
       "distinctFrom": [
@@ -200,7 +200,7 @@
       "editionId": "scorpio.love.future-promise.stella",
       "sign": "scorpio",
       "element": "water",
-      "editorialContentHash": "92a5265a5a0dfb97a5a033d4d68d0aec9741b9cc0fbaa10c74692312a694f64d",
+      "editorialContentHash": "aaf351155cbf0f2526230970f17db12837804764e440e030c32f75028dc1b320",
       "compositionFamily": "lidhinge_highrear_three_starboxes_sealedfolio_tabs_open_zigzag_trapezoid_exit",
       "artDirection": "세로 3:4의 깊은 twilight를 shared box lid hinge 높이 high-rear oblique로 본다. 꼬옥이·달콩이 exactly2와 personal starboxes2/shared starbox1은 서로 닿지 않는 shallow zigzag를 이룬다. shared lid1은 grips2로 함께 열지만 removable lid-stop1은 one notch만 걸고 boxes3는 모두 unlatched다. sealed folio1의 seal1·date tab1·trust-action tab1·lift-stop1은 별도 side tray에 닫힌 채 남아 상자와 합쳐지지 않는다. key/lock0이고 꼬옥이 canonical tail-heart1만 허용한다. chest-star trails2는 raised lid 아래 broad trapezoid exit 양옆을 지나 한쪽으로 빠지며 deep open C를 암시하되 닫지 않는다. full disclosure·all-open boundary·extra heart는 없다.",
       "distinctFrom": [
@@ -221,7 +221,7 @@
       "editionId": "sagittarius.love.future-promise.stella",
       "sign": "sagittarius",
       "element": "fire",
-      "editorialContentHash": "b1f1724c26354f48fe8cd6d6bd40c6eb465de77864e1caf276e5f4e059db125c",
+      "editorialContentHash": "a8df109c4292c27395f3fe2c1747c5f14a409f4a0096255c55e2c0265c656aa6",
       "compositionFamily": "banneredge_strictside_maps2_compactchart_markers3_sharedwaystar_open_slanted_skyribbon",
       "artDirection": "세로 3:4 Stella dawn을 rigid blank map banners2의 edge 높이 strict side elevation으로 본다. 총총이·오름이 exactly2는 서로 다른 banner depth에 있고 총총이 crescent bow1은 몸 뒤에만 보인다. maps2에는 broad color washes2만 있고 route/grid/arrow0이다. compact travel chart1의 departure/return/shared promise markers3와 sliding cover1은 banners 사이 detached bracket1에 놓인다. return block1·exchange pin1·shared waystar1은 서로 닿지 않고 두 guardian은 자기 banner edge만 잡는다. chest-star trails2는 broad slanted ribbon-shaped sky bay 양쪽을 지나 위 프레임으로 broken beats로 나간다. map merge·flag·heart·guaranteed journey/return은 없다.",
       "distinctFrom": [
@@ -242,7 +242,7 @@
       "editionId": "capricorn.love.future-promise.stella",
       "sign": "capricorn",
       "element": "earth",
-      "editorialContentHash": "5becbf1a01c529c16a1345b0c0d63c02124ccbfa53b7b7550e6a8e0f6acbefb5",
+      "editorialContentHash": "2722f2bf5407c45a3d35d9db1e30a26e1a908638f348af20440f65beacfcab81",
       "compositionFamily": "landing_highfrontal_stairs2_fourpocket_planboard_single_footboard_large_open_V_airfield",
       "artDirection": "세로 3:4의 달빛 작업터를 shared landing 높이 high frontal로 내려다본다. 서로 다른 pitch의 stair runs2는 중앙에서 만나는 대신 아래 양쪽으로 갈라지고 goal markers2는 far ends에 각각 있다. 오름이·총총이 exactly2는 landing1 양쪽에 있으며 single footboard1을 together-placed but half-seated 상태로 둔다. folding plan board1의 pockets4에는 meeting/resource/role tiles3와 adjustment peg1을 남기고 removable latch1은 잠그지 않는다. 두 chest-star trails는 각 stair outer edge로 흘러 내려가 central large open V airfield를 비우고 bottom frame 밖으로 나간다. bridge·same pace·heart·closed halo·guaranteed summit은 없다.",
       "distinctFrom": [
@@ -263,7 +263,7 @@
       "editionId": "aquarius.love.future-promise.stella",
       "sign": "aquarius",
       "element": "air",
-      "editorialContentHash": "523a3498ade61442fd9d7af3799aed37abb728d95fda5510b6da8606f27a1e64",
+      "editorialContentHash": "a8952f24e0e39eec792ce81d8b247a349dfc7d309dad09b33492e89de2161994",
       "compositionFamily": "bottlebase_rearlateral_tables3_heartbottles2_blankblueprint_canopy_open_cloudstair_exit",
       "artDirection": "세로 3:4 cloud lab을 source heart-bottle base 높이 strict rear lateral로 본다. 방울이·차곡이 exactly2와 personal tables2/shared table1은 서로 닿지 않는 three-step silhouette다. outer tables에는 source heart-profile bottles2, blue1과 warm1을 각각 독립적으로 두며 전달·교체하지 않는다. shared table의 blank blueprint1에는 erased field1·test/keep cells2·relief tiles2·version-stop1만 있고 reversible dock1에 help-rule tokens2를 half-set한다. blueprint의 open canopy edge1은 top bar를 닫지 않는다. chest-star trails2는 자기 bottle과 cell만 스치고 lower open staircase-shaped cloud exit로 서로 만나지 않은 채 나간다. extra bottle/heart·grid·text·closed circuit·fixed meaning은 없다.",
       "distinctFrom": [
@@ -284,7 +284,7 @@
       "editionId": "pisces.love.future-promise.stella",
       "sign": "pisces",
       "element": "water",
-      "editorialContentHash": "0d870f73c4e3c5302ac950fc02c900ad087a6e3f7ac349f2317b841d78929388",
+      "editorialContentHash": "054d157d6cfd314471d56bca742e0e22c157d68cf2b95c7da39f35415b9b405f",
       "compositionFamily": "approved_pilot_wide_open_starlight_orbit_twin_currents_centerstar_nonpersonalized_underlay",
       "artDirection": "승인 파일럿 원본을 그대로 재사용한다. 세로 3:4 dream sea에서 larger aqua 꿈별이와 smaller pink 잠별이 canonical pair2가 서로 다른 aqua/pink currents2를 따라 center star1 주위를 넓게 돈다. 두 guardian은 distinct pajamas·상대 크기·가슴 Stella 별을 유지하고 identity나 색을 합치지 않는다. 두 물살과 옅은 비개인화 starlight underlay는 넓은 열린 원형 여운을 만들지만 실제 출생 차트 선·개인 색·읽을 수 있는 표식은 없다. 이 항목은 새로 생성하거나 재구성하지 않고 approvedArtworkSha256 바이트를 그대로 사용한다.",
       "distinctFrom": [

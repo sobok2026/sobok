@@ -1,0 +1,308 @@
+import { useEffect, useState } from 'react'
+import { money } from '../game/catalog'
+import { initialState } from '../game/initial-state'
+import type { Preferences } from '../game/preferences'
+import { exportGame, loadGame, loadPreferences } from '../game/storage'
+import { CafeStore } from '../game/store'
+import { Button, TextButton } from './Button'
+import GameDialog from './GameDialog'
+import PlayHud from './PlayHud'
+import ShiftLedger from './ShiftLedger'
+import ShiftOverview from './ShiftOverview'
+import StationPanel from './StationPanel'
+import { type CafeSessionProps, useCafeSession } from './use-cafe-session'
+import WorkGuide from './WorkGuide'
+import WorkSettings from './WorkSettings'
+
+function CupIcon() {
+  return (
+    <svg className="inline-block shrink-0" width={40} height={40} viewBox="0 0 40 40" fill="none" aria-hidden="true">
+      <path d="M10 13h20l-3 21H13l-3-21Z" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M8 13h24M12 8h16l2 5M17 2v3M23 2v3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M12 21h16M13 27h14" stroke="currentColor" strokeWidth="1.2" />
+    </svg>
+  )
+}
+function clock(time: number) {
+  return new Date(time * 1000).toLocaleTimeString('ko-KR', {
+    timeZone: 'UTC',
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+export default function App() {
+  const [boot, setBoot] = useState<{
+    store: CafeStore
+    hasSave: boolean
+    notice: string
+    preferences: Preferences
+  } | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    const game = loadGame()
+      .then(({ state, recovered }) => ({
+        state,
+        hasSave: !!state,
+        notice: recovered ? '이전 정상 저장본으로 복구했어요.' : '',
+      }))
+      .catch(() => ({
+        state: null,
+        hasSave: false,
+        notice: '저장 기록을 읽지 못했어요. 새 근무를 시작하거나 백업 파일을 불러올 수 있어요.',
+      }))
+    void Promise.all([game, loadPreferences()]).then(([game, preferences]) => {
+      if (!cancelled)
+        setBoot({
+          store: new CafeStore(game.state ?? initialState()),
+          hasSave: game.hasSave,
+          notice: game.notice,
+          preferences,
+        })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+  return boot ? (
+    <CafeGame {...boot} />
+  ) : (
+    <div className="flex h-dvh flex-col items-center justify-center gap-5">
+      <CupIcon />
+      <p className="mb-4 text-body text-muted">불러오는 중…</p>
+    </div>
+  )
+}
+
+function CafeGame(props: CafeSessionProps) {
+  const { hasSave, notice } = props
+  const session = useCafeSession(props)
+  const {
+    state,
+    preferences,
+    preferencesError,
+    soundStatus,
+    mode,
+    panel,
+    saveStatus,
+    saveError,
+    graphicsError,
+    sceneReady,
+    hasLock,
+    mouseMode,
+    confirmNew,
+    setConfirmNew,
+    started,
+    host,
+    input,
+    updatePreferences,
+    openGuide,
+    closeGuide,
+    closePanel,
+    pause,
+    resume,
+    start,
+    act,
+    capture,
+    persist,
+    importBackup,
+    guideStation,
+    previewSound,
+  } = session
+  const running = mode === 'play' && state.phase !== 'summary'
+  const canStart = sceneReady && hasLock === true && !graphicsError
+  return (
+    <main className="relative h-dvh overflow-hidden" data-mouse-mode={mouseMode}>
+      <div ref={host} className="absolute inset-0 [&_canvas]:block [&_canvas]:size-full [&_canvas]:outline-none" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#18231b29,transparent_24%,transparent_75%,#18231b4d)]" />
+      <input
+        ref={input}
+        type="file"
+        accept="application/json,.json"
+        className="sr-only"
+        aria-label="저장 백업 파일 불러오기"
+        onChange={async (event) => {
+          const file = event.target.files?.[0]
+          if (file) await importBackup(file)
+          event.target.value = ''
+        }}
+      />
+      {running ? (
+        <header className="pointer-events-none absolute inset-x-6 top-5 z-10 flex items-start justify-between gap-4 max-tablet:inset-x-4 max-tablet:top-4">
+          <div className="flex items-center gap-3 rounded-full border border-white/60 bg-surface/95 px-4 py-2.5 text-xs shadow-hud">
+            <span className="text-muted">{state.day}일차</span>
+            <span className="font-medium tabular-nums">{clock(state.time)}</span>
+            <span className="border-l border-line pl-3 text-brand">
+              {state.phase === 'open' ? '영업 중' : '마감 중'}
+            </span>
+          </div>
+          <nav
+            className="pointer-events-auto flex items-center gap-1 rounded-full border border-white/60 bg-surface/95 p-1 shadow-hud"
+            aria-label="게임 메뉴"
+          >
+            <button
+              type="button"
+              className="flex min-h-9 items-center gap-2 rounded-full px-3 text-xs"
+              onClick={openGuide}
+            >
+              <kbd className="font-sans text-muted">H</kbd> 도움말
+            </button>
+            <button
+              type="button"
+              className="flex min-h-9 items-center gap-2 rounded-full px-3 text-xs"
+              onClick={() => pause('overview')}
+            >
+              <kbd className="font-sans text-muted">M</kbd> 매장
+            </button>
+            <button
+              type="button"
+              className="flex min-h-9 items-center gap-2 rounded-full px-3 text-xs"
+              onClick={() => pause()}
+            >
+              <kbd className="font-sans text-muted">Esc</kbd> 메뉴
+            </button>
+          </nav>
+        </header>
+      ) : null}
+
+      {mode === 'welcome' ? (
+        <div className="absolute inset-0 flex items-center bg-[linear-gradient(90deg,#f3f2ecf5,transparent_80%)] max-tablet:bg-surface/60">
+          <section className="ml-[8vw] w-72 max-w-[80vw]">
+            <div className="mb-5 text-brand">
+              <CupIcon />
+            </div>
+            <h1 className="mb-10 text-5xl font-medium tracking-[-0.06em] text-brand">
+              Day Shift<span className="mt-3 block text-sm font-normal tracking-normal text-muted">카페 근무</span>
+            </h1>
+            <Button size="start" disabled={!canStart} onClick={() => start(false)}>
+              {sceneReady ? (hasSave ? '이어서 하기' : '시작하기') : '불러오는 중…'} <span aria-hidden="true">→</span>
+            </Button>
+            <div className="mt-3 flex items-center justify-between">
+              <TextButton onClick={openGuide}>도움말</TextButton>
+              <details className="relative text-xs text-muted">
+                <summary className="cursor-pointer py-3">저장 관리</summary>
+                <div className="absolute right-0 top-full z-10 grid w-40 rounded-xl border border-line bg-surface p-3 shadow-hud">
+                  <TextButton disabled={!hasLock} onClick={() => input.current?.click()}>
+                    백업 불러오기
+                  </TextButton>
+                  {hasSave ? (
+                    <TextButton danger onClick={() => setConfirmNew(true)}>
+                      처음부터 시작
+                    </TextButton>
+                  ) : null}
+                </div>
+              </details>
+            </div>
+            {notice || saveError ? (
+              <p className="mt-4 text-xs text-danger" role="status">
+                {saveError ? saveStatus : notice}
+              </p>
+            ) : null}
+          </section>
+        </div>
+      ) : null}
+
+      {running ? <PlayHud {...session} /> : null}
+
+      {mode === 'overview' ? <ShiftOverview state={state} onClose={resume} /> : null}
+
+      {running && panel ? <StationPanel state={state} panel={panel} act={act} closePanel={closePanel} /> : null}
+
+      {mode === 'guide' ? (
+        <GameDialog title="도움말" onClose={closeGuide} wide>
+          <WorkGuide state={state} station={guideStation} started={started} />
+        </GameDialog>
+      ) : null}
+      {mode === 'pause' ? (
+        <GameDialog title="일시정지" onClose={resume}>
+          <Button disabled={!canStart} onClick={resume}>
+            계속하기 <kbd className="font-sans text-xs">Esc</kbd>
+          </Button>
+          <div className="my-4 grid grid-cols-2 gap-2">
+            <Button variant="secondary" onClick={() => pause('overview')}>
+              매장 현황 <kbd className="font-sans text-xs">M</kbd>
+            </Button>
+            <Button variant="secondary" onClick={openGuide}>
+              도움말 <kbd className="font-sans text-xs">H</kbd>
+            </Button>
+          </div>
+          <details className="border-t border-line py-4">
+            <summary className="text-sm font-medium">설정</summary>
+            <WorkSettings
+              preferences={preferences}
+              status={soundStatus}
+              error={preferencesError}
+              onChange={updatePreferences}
+              onPreview={previewSound}
+            />
+          </details>
+          <details className="border-t border-line pt-4">
+            <summary className="text-sm font-medium">저장 관리</summary>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <TextButton onClick={() => exportGame(capture())}>백업 내보내기</TextButton>
+              <TextButton disabled={!hasLock} onClick={() => input.current?.click()}>
+                백업 불러오기
+              </TextButton>
+              <TextButton onClick={() => void persist()}>지금 저장</TextButton>
+              <TextButton danger onClick={() => setConfirmNew(true)}>
+                처음부터 시작
+              </TextButton>
+            </div>
+            <p className="mt-3 text-xs text-muted data-[error=true]:text-danger" data-error={saveError} role="status">
+              {saveStatus}
+            </p>
+          </details>
+          {saveError ? (
+            <p className="mt-4 text-xs text-danger" role="alert">
+              {saveStatus}
+            </p>
+          ) : null}
+        </GameDialog>
+      ) : null}
+
+      {state.phase === 'summary' && started && mode === 'play' ? (
+        <GameDialog title={`${state.day}일차 결산`} wide>
+          <div className="mb-6 grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs text-muted">판매액</p>
+              <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">{money(state.totals.revenue)}</p>
+            </div>
+            <div>
+              <p className="text-xs text-muted">완료 주문</p>
+              <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">
+                {state.totals.served}
+                <span className="ml-1 text-sm font-normal text-muted">잔</span>
+              </p>
+            </div>
+          </div>
+          <ShiftLedger state={state} />
+          <Button className="mt-6" onClick={() => act({ type: 'next-day' })}>
+            다음 날 시작 <span aria-hidden="true">→</span>
+          </Button>
+        </GameDialog>
+      ) : null}
+      {confirmNew ? (
+        <GameDialog title="처음부터 시작" onClose={() => setConfirmNew(false)}>
+          <p className="mb-5 text-sm text-muted">현재 근무 기록이 지워집니다.</p>
+          <Button disabled={!canStart} onClick={() => start(true)}>
+            새로 시작
+          </Button>
+          <Button variant="secondary" onClick={() => exportGame(capture())}>
+            현재 기록 백업
+          </Button>
+          <TextButton className="mt-3" onClick={() => setConfirmNew(false)}>
+            취소
+          </TextButton>
+        </GameDialog>
+      ) : null}
+      {graphicsError || hasLock === false ? (
+        <div
+          className="absolute bottom-16.25 left-1/2 z-30 max-w-145 -translate-x-1/2 rounded-[0.3125rem] border border-[#d9aa7d] bg-[#fcf1e1] px-5.5 py-4.25 text-xs leading-[1.8] text-[#995e3d] shadow-[0_4px_30px_#0002]"
+          role="alert"
+        >
+          {graphicsError || '다른 창에서 이 매장을 열고 있어요. 그 창을 닫은 뒤 새로고침해주세요.'}
+        </div>
+      ) : null}
+    </main>
+  )
+}
