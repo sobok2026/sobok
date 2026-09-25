@@ -86,6 +86,7 @@ export const recipeConditionSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('customization'), option: text, choice: text }),
   z.strictObject({ kind: z.literal('observation'), property: text, value: text }),
 ])
+export type RecipeCondition = z.infer<typeof recipeConditionSchema>
 // A list is a conjunction of explicit source conditions, never an evaluated expression.
 const when = z.union([recipeConditionSchema, z.array(recipeConditionSchema).min(1)])
 const target = id
@@ -248,6 +249,7 @@ export const recipeDocumentSchema = z.strictObject({
         name: text,
         temperature: z.enum(['hot', 'iced']).nullable(),
         sizes: z.array(recipeSizeSchema),
+        defaults: z.record(text, z.union([text, z.literal(false)])).optional(),
         steps: z.array(row).min(1),
         notes: z.array(text),
         review: z.array(text),

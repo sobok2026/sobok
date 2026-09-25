@@ -100,7 +100,10 @@
         }
       ],
       "notes": ["고객에게 5분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
-      "review": []
+      "review": [],
+      "defaults": {
+        "flavored-syrup": false
+      }
     },
     {
       "id": "earl-grey",
@@ -199,7 +202,10 @@
         }
       ],
       "notes": ["고객에게 5분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
-      "review": []
+      "review": [],
+      "defaults": {
+        "flavored-syrup": false
+      }
     },
     {
       "id": "chai",
@@ -298,7 +304,10 @@
         }
       ],
       "notes": ["고객에게 5분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
-      "review": []
+      "review": [],
+      "defaults": {
+        "flavored-syrup": false
+      }
     },
     {
       "id": "hibiscus",
@@ -397,7 +406,10 @@
         }
       ],
       "notes": ["고객에게 5분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
-      "review": []
+      "review": [],
+      "defaults": {
+        "flavored-syrup": false
+      }
     },
     {
       "id": "chamomile",
@@ -496,7 +508,10 @@
         }
       ],
       "notes": ["고객에게 5분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
-      "review": []
+      "review": [],
+      "defaults": {
+        "flavored-syrup": false
+      }
     },
     {
       "id": "mint",
@@ -595,7 +610,10 @@
         }
       ],
       "notes": ["고객에게 5분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
-      "review": []
+      "review": [],
+      "defaults": {
+        "flavored-syrup": false
+      }
     },
     {
       "id": "youthberry",
@@ -694,7 +712,10 @@
         }
       ],
       "notes": ["고객에게 3분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
-      "review": []
+      "review": [],
+      "defaults": {
+        "flavored-syrup": false
+      }
     },
     {
       "id": "green-tea",
@@ -793,7 +814,10 @@
         }
       ],
       "notes": ["고객에게 3분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
-      "review": []
+      "review": [],
+      "defaults": {
+        "flavored-syrup": false
+      }
     }
   ]
 }

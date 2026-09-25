@@ -163,7 +163,10 @@
         }
       ],
       "notes": [],
-      "review": []
+      "review": [],
+      "defaults": {
+        "flavored-syrup": false
+      }
     }
   ]
 }

@@ -118,7 +118,10 @@
         }
       ],
       "notes": ["항상 우유 첨가를 위한 공간이 필요한지 확인한다."],
-      "review": []
+      "review": [],
+      "defaults": {
+        "flavored-syrup": false
+      }
     }
   ]
 }

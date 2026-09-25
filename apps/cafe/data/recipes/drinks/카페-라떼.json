@@ -152,7 +152,10 @@
         }
       ],
       "notes": ["원본은 하트 모양 마무리 방법에 대해 영상 참고를 안내한다."],
-      "review": []
+      "review": [],
+      "defaults": {
+        "flavored-syrup": false
+      }
     }
   ]
 }
