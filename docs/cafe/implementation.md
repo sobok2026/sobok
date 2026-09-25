@@ -29,7 +29,7 @@
 - `apps/cafe/vite.config.ts`에서 `@tailwindcss/vite`를 연결한다. `src/style.css`의 `source('.')`는 클래스 탐색 기준을 이 앱의 소스 디렉터리로 고정한다.
 - 색상·글꼴·반복되는 글자 크기·그림자·화면 너비 기준은 `@theme`으로 정의한다. 낮은 화면의 HUD 배치는 `compact` 높이 변형을 사용한다.
 - 각 JSX 요소에 유틸리티 클래스를 작성한다. 기존 화면 클래스나 `@apply` 기반 컴포넌트 스타일은 두지 않는다. Three.js가 생성하는 canvas는 호스트의 하위 요소 변형으로 크기를 지정한다.
-- 반복되는 일반 버튼은 `Button.tsx`, 작업 HUD·제목·조작 버튼·게이지는 `WorkControls.tsx`에서 공유한다. 재고·소모품 목록의 동일한 버튼은 `Button.tsx`의 `InventoryButton`을 사용한다. 버튼의 색상과 크기는 명시적인 variant·size로 선택하고, 호출부의 `className`은 배치용으로 사용한다.
+- 반복되는 일반 버튼은 `shared/ui/Button.tsx`, 작업 HUD·제목·조작 버튼·게이지는 `shared/ui/WorkControls.tsx`에서 공유한다. 재고·소모품 목록의 동일한 버튼은 `Button.tsx`의 `InventoryButton`을 사용한다. 버튼의 색상과 크기는 명시적인 variant·size로 선택하고, 호출부의 `className`은 배치용으로 사용한다.
 - 클래스 이름의 일부를 동적으로 이어 붙이지 않는다. 상태는 완전한 클래스 문자열 또는 `data-*`·이름 있는 `group` 변형으로 표현한다. 재고 펼침 상태는 네이티브 `details`의 `open`을 따른다.
 - 실행 중 계산되는 게이지 너비·목표 위치는 인라인 스타일로 전달한다. 정적인 배치와 장식은 Tailwind로 관리한다.
 - Preflight의 초기화를 기준으로 여백·목록·타이포그래피를 요소에 명시한다. 전역 CSS에는 테마와 기본 요소 규칙만 두며, 키보드 `focus-visible`과 동작 줄이기 설정을 반영한다.
@@ -70,62 +70,18 @@ IndexedDB에 현재 상태를 저장한다. 입력 검증, 저장 실패 안내,
 
 ## 현재 파일 구조
 
-- `apps/cafe/src/game/catalog.ts`: 작업대, 초기 메뉴와 재고 단위.
-- `apps/cafe/src/game/reference-links.ts`: 초기 메뉴·준비·품질 자료의 이름·조건·단위·순서 연결과 오류 설명.
-- `apps/cafe/src/game/quality.ts`: 시작일 포함 날짜 기한·경과 시간 기한의 계산과 라벨 설명.
-- `apps/cafe/src/game/crafting.ts`: 단계별 도구·계량 조작, 허용 구간, 컵 내용물.
-- `apps/cafe/src/game/craft-visuals.ts`: 컵·피처·샷 글라스·도구와 붓기·혼합·토핑 표현.
-- `apps/cafe/src/game/preparation.ts`: 자료에서 읽은 폼·바모카·호지차 샷 배합과 준비 단계.
-- `apps/cafe/src/game/preparation-visuals.ts`: 준비 용기·계량 도구·블렌딩·라벨 표현.
-- `apps/cafe/src/game/batches.ts`: 운반 중인 배합 용기, 원래 작업대와 보관 장소 조회.
-- `apps/cafe/src/game/batch-visuals.ts`: 손에 든 배합 용기와 실온 선반의 보관 표현.
-- `apps/cafe/src/game/cold-brew.ts`: 자료에 연결된 원두·물 계량 목표와 추출 준비 상태.
-- `apps/cafe/src/game/cold-brew-visuals.ts`: 추출기·원두/물 도구·회수 용기 표현.
-- `apps/cafe/src/game/washing.ts`: 피처 문지르기·헹구기의 임시 조작 시간과 세척 상태.
-- `apps/cafe/src/game/washing-visuals.ts`: 세척대·스펀지·거품·물줄기와 피처 운반 표현.
-- `apps/cafe/src/game/cleaning.ts`: 청소 상태와 임시 조작 시간, 테이블 상태 조회.
-- `apps/cafe/src/game/cleaning-visuals.ts`: 테이블·컨디먼트 바의 컵·얼룩, 컵 운반·천·쓰레기 봉투 표현.
-- `apps/cafe/src/game/supplies.ts`: 소모품 규격과 사용자 확인을 받은 반납·오염·소비 확률.
-- `apps/cafe/src/game/supplies-visuals.ts`: 컨디먼트 진열 수량과 보충품 운반 표현.
-- `apps/cafe/src/game/customer.ts`: 한 손님의 이동 경로·단계·체류 시간·이용 의도.
-- `apps/cafe/src/game/customer-visuals.ts`: 걷기·방향 전환·착석·음료 운반·퇴장 표현.
-- `apps/cafe/src/game/state.ts`: 저장 형식·검증과 스키마에서 추론한 업무별 타입.
-- `apps/cafe/src/game/store.ts`: 행동·tick의 상태 복사, 처리 순서와 snapshot 발행.
-- `apps/cafe/src/game/actions.ts`, `work-context.ts`, `action-guards.ts`: 행동 타입, 일시적인 입력, 손 점유에 따른 공통 차단.
-- `apps/cafe/src/game/*-actions.ts`: 주문·음료 제조·부재료 준비·콜드 브루·세척·청소·재고의 업무별 상태 전이.
-- `apps/cafe/src/game/initial-state.ts`, `inventory.ts`, `inventory-summary.ts`, `progress.ts`: 초기 상태, 재고 소비·조회, 필요한 재료와 다음 작업·마감 목록.
-- `apps/cafe/src/game/active-work.ts`, `jobs.ts`, `customer-progress.ts`: 연속 입력, 장비 완료와 손님 이용 진행.
-- `apps/cafe/src/game/feedback.ts`, `format.ts`: 업무 메시지·작업 시작 기록과 날짜 표시.
-- `apps/cafe/src/game/scene.ts`: 시선 대상, 3D 장면 갱신과 GPU 자원 정리.
-- `apps/cafe/src/game/shop-interior.ts`, `player-controls.ts`: 매장 조형물·충돌 영역과 키보드·포인터 잠금·이동.
-- `apps/cafe/src/game/drink-visual.ts`, `work-geometry.ts`: 컵 내용물·목표선·토핑과 제조·준비가 공유하는 도형 생성.
-- `apps/cafe/src/game/storage.ts`: IndexedDB, 이전 저장본, 파일 백업.
-- `apps/cafe/src/game/preferences.ts`: 음소거·음량·마우스 감도의 기본값과 설정 검증.
-- `apps/cafe/src/ui/App.tsx`: 부팅과 시작·메뉴·결산 화면의 구성.
-- `apps/cafe/src/ui/use-cafe-session.ts`, `station-interactions.ts`: 화면 모드·작업 연결과 작업대에서 수행할 행동 선택.
-- `apps/cafe/src/ui/use-cafe-scene.ts`, `use-work-preferences.ts`, `use-writer-lock.ts`: 3D 수명, 설정·오디오 수명, 탭 잠금 수명.
-- `apps/cafe/src/ui/PosPanel.tsx`, `StationPanel.tsx`, `PlayHud.tsx`, `ShiftOverview.tsx`: POS 입력, 작업대 패널, 플레이 HUD, 매장 현황.
-- `apps/cafe/src/style.css`: Tailwind 진입점, 테마와 기본 요소 스타일.
-- `apps/cafe/src/ui/Button.tsx`: 일반·보조·텍스트 버튼의 공통 스타일과 크기 변형.
-- `apps/cafe/src/ui/CraftingHud.tsx`: 직접 제조 조작, 목표량과 진행량, 다음 작업대 안내.
-- `apps/cafe/src/ui/PreparationHud.tsx`: 부재료 직접 계량과 혼합·라벨·보관 안내.
-- `apps/cafe/src/ui/ColdBrewHud.tsx`: 콜드 브루 직접 계량·추출 시간·회수·라벨·운반 안내.
-- `apps/cafe/src/ui/WorkControls.tsx`: 제조·준비·세척·청소에서 공유하는 HUD·제목·누르기 조작과 계량 게이지.
-- `apps/cafe/src/ui/BatchLabel.tsx`: 제조·개봉 시각과 기한 라벨, 현장 집기·원팩 보관 조작.
-- `apps/cafe/src/ui/WashingHud.tsx`: 직접 세척 진행과 피처 집기·선반 정리 안내.
-- `apps/cafe/src/ui/CleaningHud.tsx`: 컵 회수·운반, 직접 닦기·분리수거 안내.
-- `apps/cafe/src/ui/InventoryPanel.tsx`: 재고 상태별 수량, 남은 주문·준비 배합의 부족량과 보충 안내.
-- `apps/cafe/src/ui/ShiftLedger.tsx`: 매장 현황·결산에서 공유하는 당일 입고·폐기·현금·소모품 사용 기록.
-- `apps/cafe/src/ui/SupplyPanel.tsx`: 창고의 소모품 입고·집기와 컨디먼트 바 진열 현황.
-- `apps/cafe/src/ui/WorkGuide.tsx`, `work-guide-tips.ts`: H로 여는 도움말 화면과 상황별 안내 선택.
-- `apps/cafe/src/ui/GameDialog.tsx`: 도움말·메뉴·매장 현황·결산의 공통 대화상자와 키보드 포커스 관리.
-- `apps/cafe/src/ui/work-sounds.ts`: 작업 상태 변화에 따른 녹음 재생, 연속 작업음과 오디오 수명 관리.
-- `apps/cafe/src/ui/WorkSettings.tsx`: 마우스 감도·음소거·음량·미리 듣기 설정.
-- `apps/cafe/public/audio/`: 사용자가 선택한 녹음 8개와 출처별 라이선스·편집 기록.
-- `apps/cafe/references/`: 레시피·품질 기준·부재료 제조 가이드의 원본 엑셀 네 파일.
-- `apps/cafe/scripts/import-references.mjs`: `apps/cafe/references/`의 원본 엑셀을 읽는 재생성 명령.
-- `apps/cafe/scripts/check-references.mjs`: 생성 JSON의 플레이 자료 연결을 확인하고 사용 수량·임시값을 출력하는 개발·빌드 전 검사.
-- `apps/cafe/src/data/references.generated.json`: 파일·시트·행 근거를 보존한 자료.
+2026-09-25 사용자 합의에 따라 기존 `game`·`ui`의 구분을 업무 중심으로 다시 구성했다. 현재 책임 경계와 변경 진입점은 [코드 아키텍처](./architecture.md)를 따른다.
+
+- `apps/cafe/src/app/`: 부팅, 화면 구성, 입력·3D·저장·오디오 연결. 작업대 패널과 도움말은 업무별 화면을 조합한다.
+- `apps/cafe/src/simulation/`: 전체 상태 스키마, 행동 union, 초기 상태, 공통 점유 조건, 상태 복사·발행과 시간 처리 순서.
+- `apps/cafe/src/features/`: 응대·제조·부재료 준비·콜드 브루·재고·세척·청소·근무별 규칙, 행동, 화면, 도움말과 3D 표현.
+- `apps/cafe/src/world/`: 매장 전체 장면, 정적 매장·충돌 영역, 플레이어 이동·포인터 잠금, GPU 자원 수명.
+- `apps/cafe/src/content/`: 작업대·재료·레시피·고객 정의, 원본 자료 연결과 생성 JSON, 기한 해석.
+- `apps/cafe/src/shared/`: 반복 UI·3D 자산, 표시 형식, 식별자와 도움말 값 타입.
+- `apps/cafe/src/main.tsx`, `style.css`: 앱 진입점과 Tailwind 테마·기본 스타일.
+- `apps/cafe/scripts/`: 원본 엑셀 가져오기와 `src/content/references.generated.json` 연결 확인.
+
+아래 완료 기록의 단독 파일명은 해당 작업을 진행한 시점의 이름이다. 현재 위치는 위 아키텍처 문서를 기준으로 찾는다.
 
 ## 직접 제조 구현 확인
 
@@ -344,3 +300,17 @@ JS 파일은 2개에서 6개가 되고, 전체 JS 크기는 1,105,118바이트�
 `bun run --filter=@sobok/cafe build`의 자료 검사·타입 검사·프로덕션 빌드와 설정의 Biome 검사를 통과했고, 청크 크기 경고는 발생하지 않았다. 프로덕션 미리보기의 별도 브라우저에서 여섯 JS 파일의 HTTP 200 응답, 1280×720 시작 화면과 3D 장면, POS 주문 접수, 도움말 진입·복귀, 컵 집기·이동·콜드 브루 계량·확인, 저장 후 새로고침·이어 하기를 확인했다. 브라우저 오류와 콘솔 오류는 없었다.
 
 자동 테스트나 분석용 제품 코드는 추가하지 않았다. 모듈 분석 결과와 화면 캡처는 저장소 밖에 보관하고, 확인용 브라우저·서버는 종료했다.
+
+## 업무 중심 구조 재구성
+
+2026-09-25 사용자가 기존 폴더 구분에 얽매이지 않는 설계를 요청하고 구조안에 합의했다. `app`, `simulation`, `features`, `world`, `content`, `shared`로 재구성했다. 현재 책임과 참조 원칙은 [코드 아키텍처](./architecture.md)에 기록한다.
+
+작업대 패널과 도움말의 업무별 내용, 규칙과 행동, 3D 표현을 같은 기능에 모았다. 주문 접수·전달과 접수 마감·결산·다음 날 처리를 분리했다. 작업대·재료·레시피·고객 정의도 나누고, HUD·패널이 세션 훅의 반환 타입을 참조하던 연결을 명시적인 데이터·행동 props로 바꿨다. 게임 상태의 스키마와 단일 발행 지점, 동적 장면 로딩은 유지한다.
+
+소스 대조에서 게임 함수 본문 101개와 업무 행동 분기 50개의 처리 내용이 유지됨을 확인했다. 상태 스키마의 검증 식과 원본에서 생성한 JSON도 동일하다. 타입을 제외한 정적 import 그래프에서 순환 참조가 없고, 저장소에서 React·Three.js로 이어지는 런타임 참조가 없음을 확인했다. 자료 스크립트와 문서의 현재 경로를 갱신했다.
+
+타입 검사·Biome 검사·자료 연결 검사·Vite 프로덕션 빌드를 통과했다. 모든 JavaScript 청크가 기본 500KB 경고 기준 이내이고, 장면의 동적 로딩도 유지된다.
+
+별도 브라우저 세션에서 FHD 프로덕션 미리보기로 시작 화면·도움말·POS 주문 접수·매장 현황·운영 기록을 확인했다. 세척을 37% 진행한 뒤 일시정지·새로고침·이어 하기를 실행해 접수한 주문과 진행량이 복원됐고, 문지르기·헹구기·피처 운반·선반 반납까지 마쳐 깨끗한 피처 3개를 확인했다. 준비대의 세 배합 목록, 폼 준비 HUD, 현재 작업 안내와 음료·배합 레시피 표시도 확인했다. 확인 중 브라우저 오류는 없었으며 임시 브라우저와 미리보기 서버는 종료했다.
+
+이번 브라우저 확인은 모든 메뉴의 제조·판매와 전체 마감·다음 날 플레이를 다시 완주한 결과는 아니다. 자동 테스트 코드는 추가하지 않았다.

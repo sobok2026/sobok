@@ -83,7 +83,7 @@ bun run --filter=@sobok/cafe preview
 
 ## UI 스타일
 
-Tailwind CSS v4와 공식 `@tailwindcss/vite` 플러그인을 사용한다. `src/style.css`는 테마·기본 요소 스타일·높이 반응형 변형을 정의하고, 화면 스타일은 `src/ui`의 JSX에 둔다. 반복되는 버튼과 작업 HUD는 앱 내부 컴포넌트로 공유한다. 계량 게이지의 진행률·목표 위치는 계산된 인라인 스타일을 사용한다.
+Tailwind CSS v4와 공식 `@tailwindcss/vite` 플러그인을 사용한다. `src/style.css`는 테마·기본 요소 스타일·높이 반응형 변형을 정의하고, 화면 스타일은 `src/app`, `src/features`, `src/shared/ui`의 JSX에 둔다. 반복되는 버튼과 작업 HUD는 앱 내부 컴포넌트로 공유한다. 계량 게이지의 진행률·목표 위치는 계산된 인라인 스타일을 사용한다.
 
 [화면 정보 설계](../../docs/cafe/hud.md)에서 정보의 노출 기준을 정의한다. 구체적인 작성 원칙과 공식 문서 근거는 [구현 문서의 UI 스타일](../../docs/cafe/implementation.md#ui-스타일)을 따른다.
 
@@ -96,13 +96,15 @@ bun run --filter=@sobok/cafe import:references
 bun run --filter=@sobok/cafe check:references
 ```
 
-생성된 `src/data/references.generated.json`을 사용하므로 빌드 시 원본 엑셀은 필요하지 않다. 가져오기는 원본 파일을 수정하지 않는다. 자료 공개는 사용자가 명시적으로 허용했다.
+생성된 `src/content/references.generated.json`을 사용하므로 빌드 시 원본 엑셀은 필요하지 않다. 가져오기는 원본 파일을 수정하지 않는다. 자료 공개는 사용자가 명시적으로 허용했다.
 
 가져오기에서는 열 제목과 현재 플레이하는 메뉴·온도·제조 단계·단위·품질 기준을 확인한 뒤 JSON을 교체한다. 검사나 포맷에 실패하면 이전 생성 파일을 유지한다. `check:references`는 생성된 JSON만 검사하며 `dev`·`build`에서도 먼저 실행된다. 누락·중복·단위 변경·실제 제조 순서 변경이 발견되면 출력된 파일·시트·항목을 확인한다.
 
 메뉴와 단계의 배열 위치 대신 이름·온도·단계 의미로 연결한다. HOT·ICED 수량은 각각의 자료를 사용하며 자료에 새 메뉴가 들어와도 POS 메뉴는 자동으로 늘어나지 않는다. 컵의 ml 환산·수율·원팩 규격은 [임시 규칙](../../docs/cafe/prototype-rules.md)을 유지한다. 날짜 계산과 배합의 원재료 기한 상한은 사용자 확인을 받은 게임 규칙이다.
 
 ## 문서
+
+- [코드 아키텍처와 기능별 진입점](../../docs/cafe/architecture.md)
 
 - [게임 설계](../../docs/cafe/design.md)
 - [구현 구조와 순서](../../docs/cafe/implementation.md)
