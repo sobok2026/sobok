@@ -1,0 +1,95 @@
+@import 'tailwindcss' source('.');
+
+@theme {
+  --font-sans: 'DM Sans', 'Noto Sans KR', sans-serif;
+
+  --color-page: #f1f0eb;
+  --color-brand: #244c3e;
+  --color-ink: #252c29;
+  --color-surface: #fcfbf7;
+  --color-muted: #6a716b;
+  --color-line: #e3e5dd;
+  --color-on-brand: #ffffff;
+  --color-control: #f0f2eb;
+  --color-control-line: #dfe3d8;
+  --color-danger: #ad4934;
+  --color-focus: #c8a55c;
+
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.5;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.5;
+  --text-stat: 1.1875rem;
+  --text-stat--line-height: 1.4;
+
+  --radius-panel: 1rem;
+  --shadow-hud: 0 8px 32px #18352b18;
+  --shadow-panel: 0 12px 55px #172c3635;
+  --shadow-dialog: 0 20px 100px #1d302e30;
+  --shadow-toast: 0 5px 24px #142d2012;
+
+  --breakpoint-tablet: 47.5rem;
+  --breakpoint-wide: 65.625rem;
+
+  --animate-appear: appear 180ms ease;
+  @keyframes appear {
+    from {
+      opacity: 0;
+      transform: translateY(0.25rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Keep controls reachable when the game viewport is short. */
+@custom-variant compact (@media (height <= 40.625rem));
+
+@layer base {
+  html {
+    background: var(--color-page);
+    color: var(--color-ink);
+    font-synthesis: none;
+  }
+
+  button,
+  select {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button:enabled,
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  :where(button, select, summary, a):focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 4px;
+  }
+
+  @media (hover: hover) {
+    button:enabled:hover {
+      filter: brightness(0.95);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    button {
+      transition:
+        background-color 160ms,
+        translate 160ms,
+        color 160ms;
+    }
+
+    button:enabled:active {
+      translate: 0 1px;
+    }
+  }
+}

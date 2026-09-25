@@ -3,11 +3,11 @@
   "locale": "ko",
   "purpose": "승인된 파일럿 12개를 포함한 1,056개 원화를 같은 주제·서사·표현 축의 12별자리 단위로 제작하고 검수한다.",
   "sourceContentHashes": {
-    "self": "9651ab56de1deb0dc6bec60aa310ba53684b15b2510b82e47c585771c5745f5c",
-    "love": "eab7268ce0ff4bcfaa0e0713b87df83aa7e728f1efeacc7736f82cb005e4b72c",
-    "work": "1a5425fe28a93e4e9d2cb8a059f884e651a136fbaae54842f6c84997323482ab",
-    "choice": "0855d23f4f582b5932897336dc3c0af8b1d64418b696202eefdc0da6ffdd8717",
-    "pilot": "0ee96aad586d2573fd91f04bb4327ee9b85e1d0aae8418572acf5fc6e14eaedd",
+    "self": "4a37a3da816578a3ab4a4903728133ba950d826d1e3e64a2ac0e6ad392f853b9",
+    "love": "0d5800ad227095b3071b448ea5ae026d678990d7e05881351d6fc02b82911ca5",
+    "work": "2e3dc73e539156bc807d274a7827e8ec8416b31d9544a07d99a9c8df9f3e82d7",
+    "choice": "fc9952115f91d237d9f676bf20d6fdb1bc46fb24eacca86aaa1763aaab519601",
+    "pilot": "9f64f2f37d9cf26fbd583ac53be4641b7d4a9b8b4c3f0e0519b3579540c3122f",
     "assets": "8a31cef899ac6b4dacf0ede00884cecb9da996d66c81c00627098e1bb65c34ee"
   },
   "productionContract": {
