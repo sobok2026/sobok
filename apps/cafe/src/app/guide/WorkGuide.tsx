@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import type { StationId } from '../../content/stations'
 import { CraftingGuide, RecipeGuide } from '../../features/crafting/Guide'
 import { PreparationGuide, PreparationRecipeGuide } from '../../features/preparation/Guide'
@@ -6,6 +7,8 @@ import ShiftGuide from '../../features/shift/Guide'
 import type { GameState } from '../../simulation/state'
 
 import { currentTip } from './current-tip'
+
+const RecipeLibrary = lazy(() => import('../../features/recipe-library/RecipeLibrary'))
 
 const controls = [
   ['W A S D', '이동'],
@@ -57,6 +60,9 @@ export default function WorkGuide({
         </p>
       </details>
       <RecipeGuide state={state} />
+      <Suspense fallback={<p className="py-4 text-xs text-muted">제조법 불러오는 중…</p>}>
+        <RecipeLibrary />
+      </Suspense>
       <PreparationRecipeGuide state={state} />
       <CraftingGuide />
       <PreparationGuide />
