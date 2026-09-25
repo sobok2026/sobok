@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises'
-import { linkReferences, sourceLine } from '../src/game/reference-links.ts'
+import { linkReferences, sourceLine } from '../src/content/reference-links.ts'
 
 try {
-  const data = JSON.parse(await readFile(new URL('../src/data/references.generated.json', import.meta.url), 'utf8'))
+  const data = JSON.parse(await readFile(new URL('../src/content/references.generated.json', import.meta.url), 'utf8'))
   const links = linkReferences(data)
   console.log('카페 자료 연결 확인: 음료 5개, 폼·바모카·호지차 샷·콜드 브루 준비, 품질 기준 10개')
   for (const drink of [links.hot, links.iced])

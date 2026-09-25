@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import readExcelFile from 'read-excel-file/node'
-import { linkReferences } from '../src/game/reference-links.ts'
+import { linkReferences } from '../src/content/reference-links.ts'
 
 const root = new URL('../../../', import.meta.url)
 const referencesDir = new URL('../references/', import.meta.url)
@@ -145,7 +145,7 @@ const prepGuide = rowsOf(files[3], '부재료 제조').flatMap((row, index) =>
 const result = { sources, recipes, preparations, quality, prepGuide }
 // Validate the candidate before touching the last usable generated file.
 linkReferences(result)
-const output = new URL('../src/data/references.generated.json', import.meta.url)
+const output = new URL('../src/content/references.generated.json', import.meta.url)
 const formatted = execFileSync('bun', ['x', 'biome', 'format', '--stdin-file-path', fileURLToPath(output)], {
   cwd: fileURLToPath(root),
   input: `${JSON.stringify(result, null, 2)}\n`,
