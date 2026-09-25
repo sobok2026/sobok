@@ -29,6 +29,20 @@ import {
   TOOL_NAMES,
 } from './crafting'
 import {
+  CUP_NAMES,
+  cleanCupCount,
+  cupCount,
+  cupKindFor,
+  type DisposableCupKind,
+  emptyCupCounts,
+  isReusableCup,
+  type ReusableCupKind,
+  reusableCupFor,
+  reusableCupKinds,
+  SERVICE_NAMES,
+  type ServiceMode,
+} from './cups'
+import {
   CUSTOMER_SECONDS,
   CUSTOMER_STATUS,
   createCustomer,
@@ -61,7 +75,15 @@ import {
   type SupplyId,
   supplyIds,
 } from './supplies'
-import { WASH_STEPS, washingHandsBusy } from './washing'
+import {
+  WASH_NAMES,
+  WASH_STEPS,
+  type WashItem,
+  washDestination,
+  washItems,
+  washingHandsBusy,
+  washStock,
+} from './washing'
 
 const START = Date.UTC(2026, 8, 1, 9) / 1000
 function addAmounts(target: Costs, amounts: Costs) {
@@ -118,10 +140,10 @@ export function initialState(): GameState {
     ]),
     jobs: [],
     tools: { clean: 2, dirty: 1, washed: 0 },
-    cups: 4,
-    reserveCups: 24,
-    tables: { table: { cups: 0, dirty: false }, 'table-left': { cups: 0, dirty: false } },
-    condiment: { cups: 0, dirty: false },
+    disposableCups: { 'hot-paper': { bar: 2, reserve: 12 }, 'iced-plastic': { bar: 2, reserve: 12 } },
+    reusableCups: { 'hot-mug': { clean: 4, dirty: 0, washed: 0 }, 'iced-glass': { clean: 4, dirty: 0, washed: 0 } },
+    tables: { table: { cups: emptyCupCounts(), dirty: false }, 'table-left': { cups: emptyCupCounts(), dirty: false } },
+    condiment: { cups: emptyCupCounts(), dirty: false },
     supplies: {
       napkins: { bar: SUPPLY_CAPACITY, stock: SUPPLY_PACK },
       straws: { bar: SUPPLY_CAPACITY, stock: SUPPLY_PACK },
@@ -147,7 +169,8 @@ export function available(state: GameState, ingredient: IngredientId) {
     .reduce((sum, batch) => sum + batch.amount, 0)
 }
 export function nextStep(state: GameState) {
-  return state.cup ? RECIPES[state.cup.recipe].steps[state.cup.step] : undefined
+  const cup = state.cup
+  return cup && operationFor(cup.recipe, cup.step, cup.craft) ? RECIPES[cup.recipe].steps[cup.step] : undefined
 }
 function plannedStation(state: GameState): StationId {
   const carrying = carriedBatch(state)
@@ -156,8 +179,8 @@ function plannedStation(state: GameState): StationId {
       ? batchOrigin(carrying)
       : batchDestination(carrying)
   if (state.supplyDelivery) return 'condiment'
-  if (cleaningHandsBusy(state.cleaning)) return state.cleaning!.heldCups ? 'trash' : state.cleaning!.station
-  if (state.washing) return state.washing.stage === 'carrying' ? 'rack' : 'wash'
+  if (cleaningHandsBusy(state.cleaning)) return cupCount(state.cleaning!.heldCups) ? 'wash' : state.cleaning!.station
+  if (state.washing) return state.washing.stage === 'carrying' ? washDestination(state.washing.item) : 'wash'
   if (state.cleaning && state.cup?.craft.location !== 'hand' && !state.cup?.craft.tool && !state.preparation?.tool)
     return state.cleaning.station
   const toolStation = () => 'wash' as const
@@ -207,13 +230,20 @@ function plannedStation(state: GameState): StationId {
     return state.cup.craft.location !== 'hand' && state.cup.craft.location !== 'pickup'
       ? state.cup.craft.location
       : 'pickup'
-  if (state.ticket) return state.cups ? 'cups' : 'stock'
+  if (state.ticket) {
+    const kind = cupKindFor(state.ticket.recipe, state.ticket.service)
+    if (cleanCupCount(state, kind)) return 'cups'
+    if (!isReusableCup(kind)) return 'stock'
+    if (state.reusableCups[kind].dirty || state.reusableCups[kind].washed) return 'wash'
+    if (state.condiment.cups[kind]) return 'condiment'
+    return tableIds.find((id) => state.tables[id].cups[kind]) ?? 'wash'
+  }
   if (state.phase === 'closing') {
-    if (state.tools.dirty) return 'wash'
-    if (state.tools.washed) return 'wash'
-    const dirtyTable = tableIds.find((id) => state.tables[id].dirty || state.tables[id].cups)
+    if (washItems.some((item) => washStock(state, item).dirty)) return 'wash'
+    if (washItems.some((item) => washStock(state, item).washed)) return 'wash'
+    const dirtyTable = tableIds.find((id) => state.tables[id].dirty || cupCount(state.tables[id].cups))
     if (dirtyTable) return dirtyTable
-    if (state.condiment.cups || state.condiment.dirty) return 'condiment'
+    if (cupCount(state.condiment.cups) || state.condiment.dirty) return 'condiment'
     if (state.dirtyBar) return 'mix'
     if (state.trash) return 'trash'
     if (state.batches.some((b) => b.amount > 0 && b.expiresAt !== null && b.expiresAt <= state.time)) return 'stock'
@@ -222,10 +252,10 @@ function plannedStation(state: GameState): StationId {
   }
   if (state.phase === 'open' && supplyIds.some((id) => !state.supplies[id].bar)) return 'stock'
   if (state.customer?.visit || state.customer?.stage === 'leaving') {
-    if (state.tools.dirty || state.tools.washed) return 'wash'
-    const dirtyTable = tableIds.find((id) => state.tables[id].dirty || state.tables[id].cups)
+    if (washItems.some((item) => washStock(state, item).dirty || washStock(state, item).washed)) return 'wash'
+    const dirtyTable = tableIds.find((id) => state.tables[id].dirty || cupCount(state.tables[id].cups))
     if (dirtyTable) return dirtyTable
-    if (state.condiment.cups || state.condiment.dirty) return 'condiment'
+    if (cupCount(state.condiment.cups) || state.condiment.dirty) return 'condiment'
     if (state.dirtyBar) return 'mix'
     if (state.trash) return 'trash'
     return 'stock'
@@ -249,12 +279,11 @@ export function suggestedInstruction(state: GameState): string | null {
     return `${SUPPLIES[state.supplyDelivery.supply].name} 보충품을 컨디먼트 바에 가져가 E로 채우세요.`
   if (
     state.cleaning &&
-    (destination === state.cleaning.station || (state.cleaning.heldCups && destination === 'trash'))
+    (destination === state.cleaning.station || (cupCount(state.cleaning.heldCups) && destination === 'wash'))
   ) {
     const cleaning = state.cleaning
-    if (cleaning.heldCups) return '회수한 컵을 분리수거함에 가져가 E로 넣으세요.'
-    if (cleaning.stage === 'collect')
-      return `E로 ${STATIONS[cleaning.station].name}의 컵을 집어 분리수거함으로 옮기세요.`
+    if (cupCount(cleaning.heldCups)) return '회수한 다회용 컵을 세척대에 가져가 E로 내려놓으세요.'
+    if (cleaning.stage === 'collect') return `E로 ${STATIONS[cleaning.station].name}의 컵을 집어 세척대로 옮기세요.`
     if (cleaning.stage === 'bag') return '누르고 쓰레기를 모은 뒤 F로 봉투를 비우세요.'
     return cleaning.clothHeld
       ? '누르고 닦은 뒤 천을 놓고 F로 확인하세요.'
@@ -263,19 +292,22 @@ export function suggestedInstruction(state: GameState): string | null {
   if (state.cup?.craft.location === 'hand' && ['prep', 'cold-prep', 'wash', 'rack'].includes(destination))
     return `먼저 E로 컵을 내려놓으세요. ${destination === 'prep' || destination === 'cold-prep' ? '재료 준비' : '피처 세척·정리'}에는 빈손이 필요해요.`
   if (state.washing) {
-    if (state.washing.stage === 'carrying') return '씻은 피처를 들고 선반으로 가서 E로 놓으세요.'
-    if (state.washing.stage === 'ready') return 'E로 씻은 피처를 집어 선반으로 가져가세요.'
+    const name = WASH_NAMES[state.washing.item]
+    const destinationName = STATIONS[washDestination(state.washing.item)].name
+    if (state.washing.stage === 'carrying') return `씻은 ${name}를 ${destinationName}에 E로 놓으세요.`
+    if (state.washing.stage === 'ready') return `E로 씻은 ${name}를 집어 ${destinationName}로 가져가세요.`
     if (state.washing.stage === 'scrub') {
-      if (!state.washing.spongeHeld) return '스펀지를 집어 피처를 문질러주세요.'
+      if (!state.washing.spongeHeld) return '스펀지를 집어 용기를 문질러주세요.'
       return state.washing.progress >= WASH_STEPS.scrub.seconds
         ? '스펀지를 놓고 헹구기로 넘어가세요.'
-        : '스펀지로 피처를 문질러주세요.'
+        : '스펀지로 용기를 문질러주세요.'
     }
     return state.washing.progress >= WASH_STEPS.rinse.seconds
-      ? '세척을 마치고 피처를 선반에 정리하세요.'
-      : '피처를 물로 헹궈주세요.'
+      ? '세척을 마치고 용기를 제자리에 정리하세요.'
+      : '용기를 물로 헹궈주세요.'
   }
-  if (destination === 'wash' && state.tools.washed) return '씻은 피처를 집어 선반에 정리하면 다시 쓸 수 있어요.'
+  if (destination === 'wash' && washItems.some((item) => washStock(state, item).washed))
+    return '씻은 용기를 집어 제자리에 정리하면 다시 쓸 수 있어요.'
   if (destination === 'wash' && !state.tools.clean) return '깨끗한 피처가 필요해요. 하나 씻고 선반에 정리해주세요.'
   if (state.customer?.stage === 'entering') return '손님이 POS에 도착하면 주문을 받을 수 있어요.'
   if (state.customer?.visit || state.customer?.stage === 'leaving')
@@ -291,16 +323,16 @@ export function closingTasks(state: GameState) {
     state.preparation ? '부재료 준비 마무리' : '',
     state.coldBrew && state.coldBrew.stage !== 'extracting' ? '콜드 브루 계량·회수·보관 마무리' : '',
     carriedBatch(state) ? '운반 중인 배합 용기 보관·반납' : '',
-    state.washing ? '세척 중인 피처·들고 있는 피처 정리' : '',
+    state.washing ? '세척 중인 용기·들고 있는 용기 정리' : '',
     state.cleaning ? '진행 중인 청소·회수한 컵 정리' : '',
     state.supplyDelivery ? '들고 있는 소모품 정리' : '',
     state.batches.some((b) => b.amount > 0 && b.openedAt !== null && b.location !== 'bar')
       ? '개봉·제조한 재료 라벨·보관'
       : '',
-    state.tools.dirty ? '도구 세척' : '',
-    state.tools.washed ? '도구 선반 정리' : '',
+    washItems.some((item) => washStock(state, item).dirty) ? '피처·다회용 컵 세척' : '',
+    washItems.some((item) => washStock(state, item).washed) ? '피처·다회용 컵 보관대 정리' : '',
     dirtyTableCount(state.tables) ? '고객 테이블 청소' : '',
-    state.condiment.cups || state.condiment.dirty ? '컨디먼트 바 반납 컵·청소' : '',
+    cupCount(state.condiment.cups) || state.condiment.dirty ? '컨디먼트 바 반납 컵·청소' : '',
     state.dirtyBar ? '작업대 청소' : '',
     state.trash ? '쓰레기 비우기' : '',
     state.batches.some((b) => b.amount > 0 && b.expiresAt !== null && b.expiresAt <= state.time)
@@ -310,10 +342,13 @@ export function closingTasks(state: GameState) {
   ].filter(Boolean)
 }
 export type Action =
-  | { type: 'ticket'; recipe: RecipeId }
+  | { type: 'ticket'; recipe: RecipeId; service: ServiceMode }
   | { type: 'start-preparation'; recipe: PreparationId }
   | { type: 'prep-tool' | 'prep-use' | 'prep-confirm' | 'discard-preparation' }
-  | { type: 'wash-tool' | 'wash-use' | 'wash-confirm' | 'take-washed' | 'leave-wash' }
+  | { type: 'wash-tool' | 'wash-use' | 'wash-confirm' | 'leave-wash' }
+  | { type: 'wash' | 'take-washed'; item: WashItem }
+  | { type: 'store-washed'; station: StationId }
+  | { type: 'cups' | 'buy-cups'; kind: DisposableCupKind }
   | { type: 'start-cleaning'; station: CleaningStation }
   | { type: 'take-supply' | 'buy-supply'; supply: SupplyId }
   | { type: 'place-supply' | 'return-supply' }
@@ -326,17 +361,7 @@ export type Action =
   | { type: 'open-batch'; id: string }
   | { type: 'buy'; ingredient: IngredientId }
   | {
-      type:
-        | 'take-cup'
-        | 'discard-cup'
-        | 'serve'
-        | 'wash'
-        | 'rack'
-        | 'cups'
-        | 'buy-cups'
-        | 'close'
-        | 'finish'
-        | 'next-day'
+      type: 'take-cup' | 'discard-cup' | 'serve' | 'close' | 'finish' | 'next-day'
     }
 
 export class CafeStore {
@@ -454,8 +479,8 @@ export class CafeStore {
     ].includes(action.type)
     if (cleaningHandsBusy(s.cleaning) && !cleaningAction && !['ticket', 'close'].includes(action.type)) {
       fail(
-        s.cleaning!.heldCups
-          ? '회수한 컵을 분리수거함에 먼저 넣어주세요.'
+        cupCount(s.cleaning!.heldCups)
+          ? '회수한 컵을 세척대에 먼저 내려놓아주세요.'
           : `${STATIONS[s.cleaning!.station].name}에서 G로 청소용 천을 내려놓아주세요.`,
       )
       this.state = s
@@ -496,7 +521,7 @@ export class CafeStore {
     ) {
       fail(
         s.washing?.stage === 'carrying'
-          ? '들고 있는 피처를 선반에 먼저 놓아주세요.'
+          ? '씻은 용기를 제자리에 먼저 놓아주세요.'
           : '세척대에서 G로 스펀지를 먼저 내려놓아주세요.',
       )
       this.state = s
@@ -521,11 +546,11 @@ export class CafeStore {
           )
           break
         }
-        s.ticket = action.recipe
+        s.ticket = { recipe: action.recipe, service: action.service }
         if (s.customer.stage === 'ordering') customerToPickup(s.customer)
-        this.say(s, `${recipeLabel(action.recipe)} 주문을 접수했어요.`, 'success')
+        this.say(s, `${SERVICE_NAMES[action.service]} · ${recipeLabel(action.recipe)} 주문을 접수했어요.`, 'success')
         break
-      case 'take-cup':
+      case 'take-cup': {
         if (s.preparation?.tool) {
           fail('준비대의 도구를 먼저 내려놓아주세요.')
           break
@@ -538,14 +563,21 @@ export class CafeStore {
           fail('이미 컵을 들고 있어요.')
           break
         }
-        if (!s.cups) {
-          fail('컵이 없어요. 창고에서 보충해주세요.')
+        const kind = cupKindFor(s.ticket.recipe, s.ticket.service)
+        if (!cleanCupCount(s, kind)) {
+          fail(
+            isReusableCup(kind)
+              ? `${CUP_NAMES[kind]}가 없어요. 회수·세척 후 컵 보관대에 돌려놓아주세요.`
+              : `${CUP_NAMES[kind]}가 없어요. 창고에서 보충해주세요.`,
+          )
           break
         }
-        s.cups--
-        s.cup = { id: uid(), recipe: s.ticket, step: 0, craft: createCraft() }
-        this.say(s, '컵을 집었어요.')
+        if (isReusableCup(kind)) s.reusableCups[kind].clean--
+        else s.disposableCups[kind].bar--
+        s.cup = { id: uid(), recipe: s.ticket.recipe, step: 0, craft: createCraft(kind) }
+        this.say(s, `${CUP_NAMES[kind]}를 집었어요.`)
         break
+      }
       case 'place-cup': {
         if (!s.cup || !craftStations.includes(action.station)) break
         if (action.station === 'mix' && s.cleaning?.station === 'mix') {
@@ -718,6 +750,7 @@ export class CafeStore {
             s.tools.dirty++
           }
           s.cup.step++
+          if (isReusableCup(c.kind) && RECIPES[s.cup.recipe].steps[s.cup.step]?.label === '제공') s.cup.step++
           c.progress = 0
           this.say(s, nextStep(s) ? `${op.label} 완료.` : '음료가 완성됐어요.', 'success')
         }
@@ -728,10 +761,15 @@ export class CafeStore {
         addAmounts(s.totals.disposed, s.cup.craft.consumed)
         if (s.cup.craft.pitcherReserved) s.tools.dirty++
         s.jobs = s.jobs.filter((j) => j.cupId !== s.cup?.id)
+        if (isReusableCup(s.cup.craft.kind)) {
+          s.reusableCups[s.cup.craft.kind].dirty++
+          this.say(s, '내용물을 비우고 다회용 컵을 세척 대상으로 보냈어요.')
+        } else {
+          s.trash++
+          s.totals.wastedCups++
+          this.say(s, '일회용 컵을 폐기했어요. 이미 사용한 재료는 돌아오지 않아요.')
+        }
         s.cup = null
-        s.trash++
-        s.totals.wastedCups++
-        this.say(s, '컵을 폐기했어요. 이미 사용한 재료는 돌아오지 않아요.')
         break
       case 'serve': {
         if (
@@ -759,9 +797,9 @@ export class CafeStore {
           fail('계량이 맞지 않는 음료예요. 컵을 정리하고 다시 만들어주세요.')
           break
         }
-        if (s.cup.recipe !== s.request) {
+        if (s.cup.recipe !== s.request || s.cup.craft.kind !== cupKindFor(s.request, s.customer.service)) {
           s.totals.mistakes++
-          fail('손님이 요청한 메뉴와 달라요. 컵을 정리하고 POS 주문을 수정해주세요.')
+          fail('손님이 요청한 메뉴 또는 매장·포장 컵과 달라요. 컵을 정리하고 POS 주문을 수정해주세요.')
           break
         }
         s.cash += RECIPES[s.cup.recipe].price
@@ -770,10 +808,10 @@ export class CafeStore {
         s.ticket = null
         s.cup = null
         s.customer.visit = {
-          table: tableIds[Math.floor(Math.random() * tableIds.length)],
-          returnCup: Math.random() < CUSTOMER_HABITS.returnCup,
-          dirtyTable: Math.random() < CUSTOMER_HABITS.stain,
-          dirtyReturn: Math.random() < CUSTOMER_HABITS.stain,
+          table: s.customer.service === 'dine-in' ? tableIds[Math.floor(Math.random() * tableIds.length)] : null,
+          returnCup: s.customer.service === 'dine-in' && Math.random() < CUSTOMER_HABITS.returnCup,
+          dirtyTable: s.customer.service === 'dine-in' && Math.random() < CUSTOMER_HABITS.stain,
+          dirtyReturn: s.customer.service === 'dine-in' && Math.random() < CUSTOMER_HABITS.stain,
           usesSugar: Math.random() < CUSTOMER_HABITS.sugar,
         }
         if (Math.random() < CUSTOMER_HABITS.stain) {
@@ -781,25 +819,31 @@ export class CafeStore {
           if (s.cleaning?.station === 'mix') s.cleaning.progress = 0
         }
         customerToCondiment(s.customer)
-        this.say(s, '손님이 음료를 받았어요. 컨디먼트 바와 테이블을 이용한 뒤 나가요.', 'success')
+        this.say(
+          s,
+          s.customer.service === 'takeout'
+            ? '포장 손님이 음료를 받았어요. 소모품을 챙긴 뒤 나가요.'
+            : '매장 손님이 음료를 받았어요. 소모품을 챙기고 테이블을 이용해요.',
+          'success',
+        )
         break
       }
       case 'wash':
         if (s.washing) {
-          fail('세척 중인 피처를 먼저 마무리하거나 세척대에 내려놓아주세요.')
+          fail('세척 중인 용기를 먼저 마무리하거나 세척대에 내려놓아주세요.')
           break
         }
         if ((s.cup && (s.cup.craft.location === 'hand' || s.cup.craft.tool)) || s.preparation?.tool) {
           fail('컵과 제조 도구를 바에 내려놓은 뒤 세척해주세요.')
           break
         }
-        if (!s.tools.dirty) {
-          fail('씻을 도구가 없어요.')
+        if (!washStock(s, action.item).dirty) {
+          fail('씻을 용기가 없어요.')
           break
         }
-        s.tools.dirty--
-        s.washing = { id: uid(), stage: 'scrub', progress: 0, spongeHeld: false }
-        this.say(s, '피처를 세척대에 놓았어요.')
+        washStock(s, action.item).dirty--
+        s.washing = { id: uid(), item: action.item, stage: 'scrub', progress: 0, spongeHeld: false }
+        this.say(s, `${WASH_NAMES[action.item]}를 세척대에 놓았어요.`)
         break
       case 'wash-tool':
         if (s.washing?.stage !== 'scrub') break
@@ -846,44 +890,48 @@ export class CafeStore {
         } else {
           washing.stage = 'ready'
           washing.progress = 0
-          s.tools.washed++
+          washStock(s, washing.item).washed++
           s.totals.washed++
-          this.say(s, '피처를 깨끗하게 씻었어요.', 'success')
+          this.say(s, `${WASH_NAMES[washing.item]}를 깨끗하게 씻었어요.`, 'success')
         }
         break
       }
       case 'take-washed':
         if (s.washing && s.washing.stage !== 'ready') {
-          fail('세척 중인 피처를 먼저 마무리해주세요.')
+          fail('세척 중인 용기를 먼저 마무리해주세요.')
           break
         }
         if ((s.cup && (s.cup.craft.location === 'hand' || s.cup.craft.tool)) || s.preparation?.tool) {
-          fail('컵과 제조 도구를 내려놓으면 피처를 집을 수 있어요.')
+          fail('컵과 제조 도구를 내려놓으면 용기를 집을 수 있어요.')
           break
         }
-        if (!s.tools.washed) {
-          fail('씻은 피처가 없어요. 먼저 세척해주세요.')
+        if (s.washing && s.washing.item !== action.item) {
+          fail('세척 중인 용기를 먼저 정리해주세요.')
           break
         }
-        s.tools.washed--
-        s.washing = { id: uid(), stage: 'carrying', progress: 0, spongeHeld: false }
-        this.say(s, '씻은 피처를 집었어요.')
+        if (!washStock(s, action.item).washed) {
+          fail('씻은 용기가 없어요. 먼저 세척해주세요.')
+          break
+        }
+        washStock(s, action.item).washed--
+        s.washing = { id: uid(), item: action.item, stage: 'carrying', progress: 0, spongeHeld: false }
+        this.say(s, `씻은 ${WASH_NAMES[action.item]}를 집었어요.`)
         break
       case 'leave-wash':
         if (!s.washing) break
-        if (s.washing.stage === 'carrying') s.tools.washed++
-        else if (s.washing.stage !== 'ready') s.tools.dirty++
+        if (s.washing.stage === 'carrying') washStock(s, s.washing.item).washed++
+        else if (s.washing.stage !== 'ready') washStock(s, s.washing.item).dirty++
         s.washing = null
-        this.say(s, '피처를 세척대에 내려놓았어요. 미완료 세척은 다시 시작해야 해요.')
+        this.say(s, '용기를 세척대에 내려놓았어요. 미완료 세척은 다시 시작해야 해요.')
         break
-      case 'rack':
-        if (s.washing?.stage !== 'carrying') {
-          fail('세척대에서 씻은 피처를 집어 가져와주세요.')
+      case 'store-washed':
+        if (s.washing?.stage !== 'carrying' || action.station !== washDestination(s.washing.item)) {
+          fail('씻은 피처는 도구 선반에, 다회용 컵은 컵 보관대에 가져와주세요.')
           break
         }
-        s.tools.clean++
+        washStock(s, s.washing.item).clean++
         s.washing = null
-        this.say(s, '피처를 선반에 정리했어요. 이제 제조에 다시 사용할 수 있어요.', 'success')
+        this.say(s, '씻은 용기를 정리했어요. 이제 다시 사용할 수 있어요.', 'success')
         break
       case 'start-cleaning': {
         if (s.cleaning) {
@@ -897,7 +945,7 @@ export class CafeStore {
         }
         if (
           isCupSurface(station)
-            ? !cupSurface(s, station).dirty && !cupSurface(s, station).cups
+            ? !cupSurface(s, station).dirty && !cupCount(cupSurface(s, station).cups)
             : station === 'mix'
               ? !s.dirtyBar
               : !s.trash
@@ -909,10 +957,14 @@ export class CafeStore {
           id: uid(),
           station,
           stage:
-            station === 'trash' ? 'bag' : isCupSurface(station) && cupSurface(s, station).cups ? 'collect' : 'wipe',
+            station === 'trash'
+              ? 'bag'
+              : isCupSurface(station) && cupCount(cupSurface(s, station).cups)
+                ? 'collect'
+                : 'wipe',
           progress: 0,
           clothHeld: false,
-          heldCups: 0,
+          heldCups: emptyCupCounts(),
           trashCount: station === 'trash' ? s.trash : 0,
         }
         this.say(
@@ -925,25 +977,26 @@ export class CafeStore {
         const cleaning = s.cleaning
         if (!cleaning || !isCupSurface(cleaning.station) || cleaning.stage !== 'collect') break
         const table = cupSurface(s, cleaning.station)
-        if (!table.cups) break
-        table.cups--
-        cleaning.heldCups++
-        this.say(s, `사용한 컵 ${cleaning.heldCups}개를 들고 있어요. 분리수거함으로 가져가세요.`)
+        const kind = reusableCupKinds.find((kind) => table.cups[kind] > 0)
+        if (!kind) break
+        table.cups[kind]--
+        cleaning.heldCups[kind]++
+        this.say(s, `사용한 컵 ${cupCount(cleaning.heldCups)}개를 들고 있어요. 세척대로 가져가세요.`)
         break
       }
       case 'drop-used-cups': {
         const cleaning = s.cleaning
-        if (!cleaning?.heldCups || !isCupSurface(cleaning.station)) break
-        s.trash += cleaning.heldCups
-        cleaning.heldCups = 0
+        if (!cleaning || !cupCount(cleaning.heldCups) || !isCupSurface(cleaning.station)) break
+        for (const kind of reusableCupKinds) s.reusableCups[kind].dirty += cleaning.heldCups[kind]
+        cleaning.heldCups = emptyCupCounts()
         const surface = cupSurface(s, cleaning.station)
-        if (!surface.cups && !surface.dirty) {
+        if (!cupCount(surface.cups) && !surface.dirty) {
           s.cleaning = null
           s.totals.cleaned++
           this.say(s, `${STATIONS[cleaning.station].name}의 컵을 모두 정리했어요.`, 'success')
           break
         }
-        if (!surface.cups) cleaning.stage = 'wipe'
+        if (!cupCount(surface.cups)) cleaning.stage = 'wipe'
         this.say(
           s,
           `${STATIONS[cleaning.station].name}로 돌아가 ${cleaning.stage === 'wipe' ? '닦아주세요.' : '남은 컵을 회수해주세요.'}`,
@@ -952,7 +1005,7 @@ export class CafeStore {
         break
       }
       case 'clean-tool':
-        if (s.cleaning?.stage !== 'wipe' || s.cleaning.heldCups) break
+        if (s.cleaning?.stage !== 'wipe' || cupCount(s.cleaning.heldCups)) break
         s.cleaning.clothHeld = !s.cleaning.clothHeld
         this.say(s, s.cleaning.clothHeld ? '청소용 천을 집었어요.' : '청소용 천을 내려놓았어요.')
         break
@@ -980,7 +1033,7 @@ export class CafeStore {
         if (isCupSurface(cleaning.station)) {
           const surface = cupSurface(s, cleaning.station)
           surface.dirty = false
-          if (surface.cups > 0) {
+          if (cupCount(surface.cups) > 0) {
             cleaning.stage = 'collect'
             cleaning.progress = 0
             this.say(s, '닦기는 끝났어요. 새로 남은 컵도 회수해주세요.', 'success')
@@ -1006,15 +1059,16 @@ export class CafeStore {
         this.say(s, '청소를 취소했어요. 다시 시작하면 처음부터 닦아요.')
         break
       case 'cups': {
-        const amount = Math.min(6, s.reserveCups, Math.max(0, 12 - s.cups))
+        const stock = s.disposableCups[action.kind]
+        const amount = Math.min(6, stock.reserve, Math.max(0, 12 - stock.bar))
         if (!amount) {
           fail('보충할 컵이 없거나 보관대가 가득 찼어요.')
           break
         }
-        s.reserveCups -= amount
-        s.cups += amount
+        stock.reserve -= amount
+        stock.bar += amount
         s.totals.restocked++
-        this.say(s, `컵 ${amount}개를 보충했어요.`, 'success')
+        this.say(s, `${CUP_NAMES[action.kind]} ${amount}개를 보충했어요.`, 'success')
         break
       }
       case 'take-supply': {
@@ -1085,14 +1139,14 @@ export class CafeStore {
           fail('컵 입고비가 부족해요.')
           break
         }
-        if (s.reserveCups >= 48) {
+        if (s.disposableCups[action.kind].reserve >= 48) {
           fail('후방에 충분한 컵이 있어요.')
           break
         }
         s.cash -= 2000
         s.totals.cupPurchases += 2000
-        s.reserveCups += 24
-        this.say(s, '컵 24개를 입고했어요.', 'success')
+        s.disposableCups[action.kind].reserve += 24
+        this.say(s, `${CUP_NAMES[action.kind]} 24개를 입고했어요.`, 'success')
         break
       case 'open-batch': {
         const batch = s.batches.find((b) => b.id === action.id)
@@ -1486,9 +1540,9 @@ export class CafeStore {
     this.state = s
     this.emit()
   }
-  private customerSurface(s: GameState, station: CupSurfaceId, cup: boolean, dirty: boolean) {
+  private customerSurface(s: GameState, station: CupSurfaceId, cup: ReusableCupKind | null, dirty: boolean) {
     const surface = cupSurface(s, station)
-    if (cup) surface.cups++
+    if (cup) surface.cups[cup]++
     if (dirty) {
       surface.dirty = true
       if (s.cleaning?.station === station) s.cleaning.progress = 0
@@ -1544,17 +1598,23 @@ export class CafeStore {
           s.totals.suppliesUsed[id] = (s.totals.suppliesUsed[id] ?? 0) + 1
         } else missing.push(SUPPLIES[id].name)
       }
-      if (missing.length) this.say(s, `컨디먼트 바에 ${missing.join('·')} 보충이 필요해요. 손님은 테이블로 이동해요.`)
-      customerToTable(customer)
-    } else if (customer.stage === 'drinking' && customer.elapsed >= CUSTOMER_SECONDS.drinking) {
-      this.customerSurface(s, customer.visit.table, !customer.visit.returnCup, customer.visit.dirtyTable)
+      if (missing.length) this.say(s, `컨디먼트 바에 ${missing.join('·')} 보충이 필요해요. 손님은 이용을 계속해요.`)
+      if (customer.service === 'takeout') customerLeave(customer)
+      else customerToTable(customer)
+    } else if (customer.stage === 'drinking' && customer.visit.table && customer.elapsed >= CUSTOMER_SECONDS.drinking) {
+      this.customerSurface(
+        s,
+        customer.visit.table,
+        customer.visit.returnCup ? null : reusableCupFor(customer.recipe),
+        customer.visit.dirtyTable,
+      )
       if (customer.visit.returnCup) customerToReturn(customer)
       else {
         this.say(s, `손님이 ${STATIONS[customer.visit.table].name}에 컵을 남겼어요.`)
         customerLeave(customer)
       }
     } else if (customer.stage === 'returning' && customer.elapsed >= CUSTOMER_SECONDS.returning) {
-      this.customerSurface(s, 'condiment', true, customer.visit.dirtyReturn)
+      this.customerSurface(s, 'condiment', reusableCupFor(customer.recipe), customer.visit.dirtyReturn)
       this.say(s, '손님이 컨디먼트 바에 컵을 반납했어요.')
       customerLeave(customer)
     }

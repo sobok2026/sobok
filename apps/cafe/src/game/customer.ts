@@ -1,4 +1,5 @@
 import { type RecipeId, STATIONS, type TableId } from './catalog'
+import type { ServiceMode } from './cups'
 
 export const customerStages = [
   'entering',
@@ -19,6 +20,7 @@ export type Customer = {
   id: string
   orderNumber: number
   recipe: RecipeId
+  service: ServiceMode
   stage: CustomerStage
   position: CustomerPoint
   yaw: number
@@ -26,7 +28,7 @@ export type Customer = {
   nextPoint: number
   elapsed: number
   visit: {
-    table: TableId
+    table: TableId | null
     returnCup: boolean
     dirtyTable: boolean
     dirtyReturn: boolean
@@ -56,7 +58,8 @@ export const CUSTOMER_STATUS: Record<CustomerStage, string> = {
   leaving: '퇴장 중',
 }
 export const customerWalking = (customer: Customer | null) => !!customer && customer.nextPoint < customer.path.length
-export const customerHasCup = (customer: Customer) => !!customer.visit && customer.stage !== 'leaving'
+export const customerHasCup = (customer: Customer) =>
+  !!customer.visit && (customer.service === 'takeout' || customer.stage !== 'leaving')
 export const customerSeat = (table: TableId): CustomerPoint => [STATIONS[table].x, 2.75]
 
 export function createCustomer(orderNumber: number, recipe: RecipeId): Customer {
@@ -64,6 +67,7 @@ export function createCustomer(orderNumber: number, recipe: RecipeId): Customer 
     id: crypto.randomUUID(),
     orderNumber,
     recipe,
+    service: Math.random() < 0.5 ? 'dine-in' : 'takeout',
     stage: 'entering',
     position: [...CUSTOMER_ENTRANCE],
     yaw: Math.PI,
@@ -89,19 +93,19 @@ export function customerToCondiment(customer: Customer) {
   customerPath(customer, 'to-condiment', [[PICKUP_SPOT[0], 1.7], [0, 1.7], [...CONDIMENT_SPOT]])
 }
 export function customerToTable(customer: Customer) {
-  if (!customer.visit) return
+  if (!customer.visit?.table) return
   const seat = customerSeat(customer.visit.table)
   customerPath(customer, 'to-table', [[0, 1.7], [seat[0] + 1, 1.7], [seat[0] + 1, seat[1]], seat])
 }
 export function customerToReturn(customer: Customer) {
-  if (!customer.visit) return
+  if (!customer.visit?.table) return
   const seat = customerSeat(customer.visit.table)
   customerPath(customer, 'to-return', [[seat[0] + 1, seat[1]], [seat[0] + 1, 1.7], [0, 1.7], [...CONDIMENT_SPOT]])
 }
 export function customerLeave(customer: Customer) {
   const [x, z] = customer.position
   const path: CustomerPoint[] = []
-  if (customer.stage === 'drinking' && customer.visit) {
+  if (customer.stage === 'drinking' && customer.visit?.table) {
     const seat = customerSeat(customer.visit.table)
     path.push([seat[0] + 1, seat[1]], [seat[0] + 1, 1.7])
   } else if (!(Math.abs(x - CUSTOMER_DOOR_X) < 0.1 && z >= 1.7)) path.push([x, 1.7])
@@ -130,7 +134,7 @@ export function moveCustomer(customer: Customer, seconds: number) {
   return customer.nextPoint === customer.path.length
 }
 export function customerSitting(customer: Customer) {
-  if (!customer.visit) return 0
+  if (!customer.visit?.table) return 0
   if (customer.stage === 'drinking') return 1
   const sittingDown = customer.stage === 'to-table' && customer.nextPoint === customer.path.length - 1
   const standingUp = ['to-return', 'leaving'].includes(customer.stage) && customer.nextPoint === 0

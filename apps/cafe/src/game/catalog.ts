@@ -25,7 +25,7 @@ export const STATIONS = {
   stock: { name: '냉장고 · 창고', subtitle: '기한 확인, 개봉과 보충', x: 5.5, z: -4.8, color: '#8bb2a2' },
   shelf: { name: '실온 선반', subtitle: '실온 보관 배합을 정리해요', x: 3, z: -4.8, color: '#bc9d76' },
   'cold-prep': { name: '콜드 브루 추출대', subtitle: '원두·물 계량, 추출과 회수', x: 1, z: -5.1, color: '#9c7954' },
-  wash: { name: '세척대', subtitle: '사용한 피처를 씻어요', x: -5.0, z: -5.1, color: '#aac4cf' },
+  wash: { name: '세척대', subtitle: '피처·머그·유리잔을 씻어요', x: -5.0, z: -5.1, color: '#aac4cf' },
   rack: { name: '건조 · 도구 선반', subtitle: '씻은 도구를 제자리에', x: -3.9, z: -5.1, color: '#d1bc9d' },
   table: { name: '고객 테이블 1', subtitle: '사용한 컵을 회수하고 닦아요', x: 3.2, z: 3.7, color: '#d2ad7d' },
   'table-left': { name: '고객 테이블 2', subtitle: '사용한 컵을 회수하고 닦아요', x: -2.2, z: 3.7, color: '#d2ad7d' },
@@ -162,7 +162,7 @@ export type Step = {
   seconds: number
   usesPitcher: boolean
   target: number
-  source: DrinkStepReference['source']
+  source: DrinkStepReference['source'] | null
 }
 export const recipeIds = ['cold-brew', 'glazed-hot', 'glazed-iced', 'hoji-hot', 'hoji-iced'] as const
 export type RecipeId = (typeof recipeIds)[number]
@@ -221,6 +221,17 @@ export const RECIPES: Record<RecipeId, Recipe> = {
       recipeStep(cold.steps.extract, 'brew', { coldBrew: 90 }),
       recipeStep(cold.steps.water, 'water'),
       recipeStep(cold.steps.ice, 'ice'),
+      {
+        station: 'pickup',
+        label: '제공',
+        instruction: '포장 음료는 리드를 덮어 제공해요. 매장 유리잔은 리드 없이 제공해요.',
+        note: '매장·포장에 따른 게임 규칙',
+        costs: {},
+        seconds: 0,
+        usesPitcher: false,
+        target: 1,
+        source: null,
+      },
     ],
     5000,
     '#493022',

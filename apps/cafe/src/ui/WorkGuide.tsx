@@ -3,16 +3,14 @@ import { COLD_BREW_HOURS, INGREDIENTS, type IngredientId, RECIPES, STATIONS, typ
 import { CLEANING_SECONDS } from '../game/cleaning'
 import { COLD_BREW_TOOL_NAMES, coldBrewStep } from '../game/cold-brew'
 import { isContinuous, operationFor, readyToConfirm, TOOL_NAMES } from '../game/crafting'
-import { PREP_TOOL_NAMES, PREPARATIONS, preparationStep } from '../game/preparation'
+import { CUP_NAMES, cleanCupCount, cupCount, cupKindFor, isReusableCup, SERVICE_NAMES } from '../game/cups'
+import { batchDate, PREP_TOOL_NAMES, PREPARATIONS, preparationStep } from '../game/preparation'
 import { expiryAt } from '../game/quality'
 import type { GameState } from '../game/state'
-import { available, closingTasks, nextStep, suggestedStation } from '../game/store'
-import { WASH_STEPS } from '../game/washing'
+import { available, closingTasks, nextStep } from '../game/store'
+import { WASH_NAMES, WASH_STEPS, washDestination } from '../game/washing'
 
 type Tip = { title: string; action: string; reason: string; fault?: boolean; station?: StationId }
-export function firstOrdersDone(state: GameState) {
-  return state.orderNumber > 2 || (state.orderNumber === 2 && !!state.customer?.visit)
-}
 function materialTip(state: GameState, ingredient: IngredientId): Tip {
   const definition = INGREDIENTS[ingredient]
   const pending = state.batches.find(
@@ -95,19 +93,49 @@ function currentTip(state: GameState, panel: StationId | null): Tip {
       action: `${STATIONS[nextStep(state)?.station ?? 'pickup'].name}를 보고 E를 누르세요.`,
       reason: '컵을 내려놓은 뒤 부재료 준비나 피처 세척을 이어갈 수 있어요.',
     }
+  if (state.washing && !cupCount(state.cleaning?.heldCups)) {
+    const wash = state.washing
+    const name = WASH_NAMES[wash.item]
+    const destination = STATIONS[washDestination(wash.item)].name
+    if (wash.stage === 'carrying')
+      return {
+        title: `${name}를 정리하세요`,
+        action: `${destination}로 가져가 E로 놓으세요.`,
+        reason: '씻기만 해서는 재사용할 수 없어요. 제자리에 놓으면 준비가 끝나요.',
+      }
+    if (wash.stage === 'ready')
+      return {
+        title: `씻은 ${name}를 옮기세요`,
+        action: `세척대에서 E로 집고 ${destination}로 가세요.`,
+        reason: '용기를 다시 사용할 수 있게 정리하는 단계예요.',
+      }
+    const ready = wash.progress >= WASH_STEPS[wash.stage].seconds
+    return {
+      title: `${name} ${wash.stage === 'scrub' ? '문지르기' : '헹구기'}`,
+      action: ready
+        ? wash.spongeHeld
+          ? 'G로 스펀지를 놓고 F를 누르세요.'
+          : 'F로 완료를 확인하세요.'
+        : wash.stage === 'scrub' && !wash.spongeHeld
+          ? 'G로 스펀지를 먼저 집으세요.'
+          : 'Space나 작업 버튼을 누르고 있으면 진행돼요.',
+      reason: '문지르기 → 헹구기 → 보관대 정리 순서예요.',
+    }
+  }
   if (state.cleaning) {
     const work = state.cleaning
-    if (work.heldCups)
+    if (cupCount(work.heldCups))
       return {
-        title: '회수한 컵을 비우세요',
-        action: '분리수거함으로 가져가 E로 넣으세요.',
+        title: '회수한 컵을 세척대로 옮기세요',
+        station: 'wash',
+        action: '세척대로 가져가 E로 내려놓으세요.',
         reason: '얼룩이 남아 있으면 원래 자리로 돌아가 닦아주세요.',
       }
     if (work.stage === 'collect')
       return {
         title: '사용한 컵을 회수하세요',
         action: `${STATIONS[work.station].name}에서 E로 컵을 집으세요.`,
-        reason: '컵을 모두 분리수거함에 옮긴 뒤 얼룩을 닦아요.',
+        reason: '컵을 모두 세척대로 옮긴 뒤 얼룩을 닦아요.',
       }
     const ready = work.progress >= CLEANING_SECONDS[work.stage]
     return {
@@ -120,33 +148,6 @@ function currentTip(state: GameState, panel: StationId | null): Tip {
           ? 'G로 청소용 천을 집으세요.'
           : 'Space나 작업 버튼을 누르고 있으면 진행돼요.',
       reason: '손을 떼거나 자리를 떠나도 진행량은 남아 있어요.',
-    }
-  }
-  if (state.washing) {
-    const wash = state.washing
-    if (wash.stage === 'carrying')
-      return {
-        title: '피처를 선반에 정리하세요',
-        action: '도구 선반으로 가져가 E로 놓으세요.',
-        reason: '씻기만 해서는 재사용할 수 없어요. 선반까지 정리하면 준비가 끝나요.',
-      }
-    if (wash.stage === 'ready')
-      return {
-        title: '씻은 피처를 옮기세요',
-        action: '세척대에서 E로 집고 도구 선반으로 가세요.',
-        reason: '이 피처를 다시 제조에 사용할 수 있게 정리하는 단계예요.',
-      }
-    const ready = wash.progress >= WASH_STEPS[wash.stage].seconds
-    return {
-      title: wash.stage === 'scrub' ? '피처를 문질러주세요' : '피처를 헹궈주세요',
-      action: ready
-        ? wash.spongeHeld
-          ? 'G로 스펀지를 놓고 F를 누르세요.'
-          : 'F로 완료를 확인하세요.'
-        : wash.stage === 'scrub' && !wash.spongeHeld
-          ? 'G로 스펀지를 먼저 집으세요.'
-          : 'Space나 작업 버튼을 누르고 있으면 진행돼요.',
-      reason: '문지르기 → 헹구기 → 선반 정리 순서예요.',
     }
   }
   const brew = state.coldBrew
@@ -256,17 +257,17 @@ function currentTip(state: GameState, panel: StationId | null): Tip {
   if (cup?.craft.fault)
     return {
       title: '이 컵은 다시 만들어야 해요',
-      action: `${panel ? 'Esc로 창을 닫고 ' : ''}컵이 있는 작업대에서 F로 폐기한 뒤 새 컵을 집으세요.`,
+      action: `${panel ? 'Esc로 창을 닫고 ' : ''}컵이 있는 작업대에서 F로 정리한 뒤 새 컵을 집으세요.`,
       reason: cup.craft.fault,
       fault: true,
     }
-  if (state.ticket && state.ticket !== state.request)
+  if (state.ticket && (state.ticket.recipe !== state.request || state.ticket.service !== state.customer?.service))
     return {
       title: '손님 요청과 주문표가 달라요',
       action: cup
-        ? 'POS 창의 현재 컵 관리에서 컵을 폐기하고 주문표를 수정하세요.'
-        : 'POS에서 손님이 요청한 메뉴와 온도로 주문표를 수정하세요.',
-      reason: '제조를 잘해도 다른 메뉴라면 전달할 수 없어요.',
+        ? 'POS 창의 현재 컵 관리에서 컵을 정리하고 주문표를 수정하세요.'
+        : 'POS에서 손님이 요청한 메뉴·온도·매장/포장으로 주문표를 수정하세요.',
+      reason: '요청 메뉴와 이용 방식에 맞는 컵이어야 전달할 수 있어요.',
       fault: true,
     }
   if (cup) {
@@ -363,74 +364,161 @@ function currentTip(state: GameState, panel: StationId | null): Tip {
       action:
         panel === 'pos'
           ? state.customer?.stage === 'ordering'
-            ? '메뉴·온도를 확인하고 주문표 출력 버튼을 누르세요.'
+            ? '메뉴·온도·매장/포장을 확인하고 주문 접수 버튼을 누르세요.'
             : '손님이 POS에 도착할 때까지 기다려주세요.'
           : 'WASD로 이동하고 마우스로 POS를 본 뒤 E를 누르세요.',
       reason: '손님 요청과 주문표는 별개예요. 카운터 안쪽에서 주문을 받아요.',
     }
-  if (!state.cups)
+  const kind = cupKindFor(state.ticket.recipe, state.ticket.service)
+  if (!cleanCupCount(state, kind))
     return {
-      title: '컵 보관대를 채우세요',
-      action: state.reserveCups
-        ? '창고에서 컵 보충을 누른 뒤 컵 보관대로 돌아가세요.'
-        : '창고에서 컵을 입고하고 컵 보관대를 보충하세요.',
-      reason: '주문표가 있어도 준비된 컵이 없으면 제조를 시작할 수 없어요.',
+      title: `${CUP_NAMES[kind]}를 준비하세요`,
+      action: isReusableCup(kind)
+        ? '사용한 컵을 회수해 세척대에서 씻고 컵 보관대에 돌려놓으세요.'
+        : state.disposableCups[kind].reserve
+          ? '창고에서 해당 컵을 보충한 뒤 컵 보관대로 돌아가세요.'
+          : '창고에서 해당 컵을 입고하고 보관대를 보충하세요.',
+      reason: '매장은 다회용, 포장은 일회용 컵을 사용해요. HOT·ICED 컵도 구분해요.',
     }
   return {
-    title: '주문에 맞는 컵을 집으세요',
+    title: `${CUP_NAMES[kind]}를 집으세요`,
     action: '컵 보관대를 보고 E를 누르세요.',
-    reason: `${RECIPES[state.ticket].shortName} 제조를 시작해요. 컵을 들고 첫 작업대로 이동하세요.`,
+    reason: `${SERVICE_NAMES[state.ticket.service]} · ${RECIPES[state.ticket.recipe].shortName} 제조를 시작해요.`,
   }
 }
 
-export default function FirstShiftGuide({
+const controls = [
+  ['W A S D', '이동'],
+  ['마우스 / 방향키', '시점'],
+  ['E', '컵·용기 집기 / 놓기 · 작업대 열기'],
+  ['G', '도구 집기 / 놓기'],
+  ['클릭 / Space', '누르고 붓기·젓기 · 한 번씩 펌핑·흔들기'],
+  ['F', '계량 확인 · 음료 전달'],
+  ['H', '도움말'],
+  ['M', '매장 현황'],
+  ['Esc', '닫기 / 일시정지'],
+]
+
+export default function WorkGuide({
   state,
-  panel,
-  onClose,
+  station,
+  started,
 }: {
   state: GameState
-  panel: StationId | null
-  onClose: () => void
+  station: StationId | null
+  started: boolean
 }) {
-  const tip = currentTip(state, panel)
-  const destination = tip.station ?? suggestedStation(state)
-  const action =
-    panel && !tip.fault && panel !== destination
-      ? `Esc로 창을 닫고 ${STATIONS[destination].name} 쪽으로 가세요.`
-      : tip.action
-  const coldDone = state.orderNumber > 1 || !!state.customer?.visit
-  const done = firstOrdersDone(state)
+  const tip = currentTip(state, station)
+  const recipe = state.cup?.recipe ?? state.ticket?.recipe
+  const preparation = state.preparation
   return (
-    <section
-      aria-label="단계별 근무 안내"
-      data-fault={!!tip.fault}
-      data-inline={!!panel}
-      className="rounded-panel border border-[#cbd4bc] bg-surface/96 p-4 shadow-hud data-[fault=true]:border-danger data-[inline=true]:p-3 data-[inline=true]:shadow-none max-wide:p-3"
-    >
-      <div className="mb-2 flex items-start justify-between gap-2 text-xs text-muted">
-        <span>{done ? '작업 안내 · 복습' : coldDone ? '2 / 2 · 첫 라떼' : '1 / 2 · 첫 콜드 브루'}</span>
-        <button
-          type="button"
-          className="-m-1 rounded px-1.5 py-0.5 text-base leading-none"
-          aria-label="단계별 안내 숨기기"
-          onClick={onClose}
-        >
-          ×
-        </button>
-      </div>
-      {!panel ? <h3 className="mb-2 text-sm leading-relaxed font-semibold max-wide:hidden">{tip.title}</h3> : null}
-      <p className="text-label leading-relaxed text-brand">{action}</p>
-      {!panel ? (
-        <>
-          <details className="mt-2 text-xs leading-relaxed text-muted">
-            <summary className="cursor-pointer">이 단계의 요령</summary>
-            <p className="mt-2">{tip.reason}</p>
-          </details>
-          <p className="mt-3 text-xs text-muted max-wide:hidden">
-            <kbd className="font-sans">H</kbd> 안내 숨기기·다시 보기
-          </p>
-        </>
+    <div className="text-sm leading-relaxed">
+      {started ? (
+        <section className="mb-6 rounded-xl bg-control p-4" aria-label="현재 작업 도움말">
+          <h3 className="font-semibold data-[fault=true]:text-danger" data-fault={!!tip.fault}>
+            {tip.title}
+          </h3>
+          <p className="mt-2">{tip.action}</p>
+          <p className="mt-2 text-xs text-muted">{tip.reason}</p>
+        </section>
       ) : null}
-    </section>
+      <details className="border-t border-line py-4" open={!started}>
+        <summary className="font-medium">조작법</summary>
+        <dl className="mt-3 divide-y divide-line">
+          {controls.map(([key, action]) => (
+            <div key={key} className="flex items-center justify-between gap-5 py-2.5">
+              <dt>
+                <kbd className="font-sans text-xs text-muted">{key}</kbd>
+              </dt>
+              <dd className="text-right text-xs">{action}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="mt-3 text-xs text-muted">
+          마우스 고정이 지원되지 않으면 화면을 누른 채 드래그하거나 방향키를 사용하세요.
+        </p>
+      </details>
+      {recipe ? (
+        <details className="border-t border-line py-4">
+          <summary className="font-medium">
+            {RECIPES[recipe].shortName} · {RECIPES[recipe].variant}
+          </summary>
+          <ol className="mt-4 space-y-4">
+            {RECIPES[recipe].steps.map((step, index) => (
+              <li key={step.label} className="flex gap-3">
+                <span className="text-xs tabular-nums text-muted">{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <strong className="font-medium">{step.label}</strong>
+                  <p className="mt-1 text-xs text-muted">
+                    {step.label === '제공'
+                      ? state.ticket?.service === 'dine-in'
+                        ? '머그·유리잔은 리드 없이 픽업대에서 제공해요.'
+                        : '일회용 컵은 리드를 덮어 픽업대에서 제공해요.'
+                      : step.instruction}
+                  </p>
+                  {step.note ? <p className="mt-1 text-xs text-muted">{step.note}</p> : null}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </details>
+      ) : null}
+      {preparation ? (
+        <details className="border-t border-line py-4">
+          <summary className="font-medium">{PREPARATIONS[preparation.recipe].name} 배합</summary>
+          {preparation.ingredientExpiresAt != null ? (
+            <p className="mt-3 text-xs text-muted">원재료 기한 · {batchDate(preparation.ingredientExpiresAt, true)}</p>
+          ) : null}
+          <ol className="mt-4 list-decimal space-y-3 pl-5 text-xs text-muted">
+            {PREPARATIONS[preparation.recipe].steps.map((step) => (
+              <li key={step.label}>{step.instruction}</li>
+            ))}
+          </ol>
+          <p className="mt-4 text-xs text-muted">{PREPARATIONS[preparation.recipe].storageNote}</p>
+        </details>
+      ) : null}
+      <details className="border-t border-line py-4">
+        <summary className="font-medium">주문과 제조</summary>
+        <p className="mt-3 text-muted">
+          POS에서 주문을 입력하고 컵 보관대에서 컵을 집으세요. 각 작업대에 컵을 놓고 계량한 뒤 픽업대에서 전달합니다.
+        </p>
+        <p className="mt-2 text-muted">
+          계량 게이지의 목표 구간에서 멈추고 도구를 놓은 뒤 F로 확인하세요. 초과한 음료는 정리하고 다시 만듭니다. 다회용
+          컵은 세척 후 재사용합니다.
+        </p>
+      </details>
+      <details className="border-t border-line py-4">
+        <summary className="font-medium">재료 준비와 보관</summary>
+        <p className="mt-3 text-muted">
+          준비대에서 폼·바모카·호지차 샷을 배합합니다. 라벨을 붙인 뒤 E로 용기를 집어 폼·호지차 샷은 냉장고, 바모카는
+          실온 선반에 보관하세요.
+        </p>
+        <p className="mt-2 text-muted">
+          콜드 브루는 추출대에서 원두·물을 계량하고 {COLD_BREW_HOURS}시간 추출합니다. 마감하고 다음 날로 넘어가도 추출이
+          진행됩니다. 완료 후 회수·라벨·냉장 보관까지 마쳐야 사용할 수 있습니다.
+        </p>
+      </details>
+      <details className="border-t border-line py-4">
+        <summary className="font-medium">매장·포장과 컵</summary>
+        <p className="mt-3 text-muted">
+          매장은 HOT 머그·ICED 유리잔, 포장은 HOT 종이컵·ICED 일회용 컵을 사용합니다. 포장 손님은 소모품을 챙긴 뒤 바로
+          퇴장합니다. 매장 손님은 테이블을 이용한 뒤 컵을 반납하거나 테이블에 남깁니다.
+        </p>
+        <p className="mt-2 text-muted">
+          ICED 컵에는 하단·중간·상단 기준선이 있습니다. 금색 선은 현재 단계의 목표 높이이며 HOT 컵에도 표시됩니다. ml
+          환산 수치는 게임용 임시값입니다.
+        </p>
+      </details>
+      <details className="border-t border-line pt-4">
+        <summary className="font-medium">정리와 마감</summary>
+        <p className="mt-3 text-muted">
+          피처는 세척한 뒤 도구 선반에 놓으세요. 사용한 머그·유리잔은 회수해 세척대에서 씻고 컵 보관대에 놓으세요.
+          얼룩은 천으로 닦습니다. 소모품은 창고에서 컨디먼트 바로 운반합니다.
+        </p>
+        <p className="mt-2 text-muted">
+          POS에서 주문 접수를 마감하고 M으로 남은 일을 확인하세요. 손님이 모두 나가고 정리가 끝나면 POS에서 결산합니다.
+        </p>
+      </details>
+    </div>
   )
 }

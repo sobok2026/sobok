@@ -33,7 +33,7 @@ export default function ColdBrewHud({
         <span>콜드 브루 준비</span>
         <span>
           {brew.stage === 'measuring'
-            ? `${brew.step + 1} / 3 단계`
+            ? `${brew.step + 1} / 3`
             : brew.stage === 'extracting'
               ? '추출 중'
               : '회수 · 보관'}
@@ -41,48 +41,37 @@ export default function ColdBrewHud({
       </div>
       {brew.fault ? (
         <>
-          <WorkTitle>콜드 브루를 다시 준비해주세요</WorkTitle>
+          <WorkTitle>추출 준비 실패</WorkTitle>
           <p className="mb-3 text-sm text-danger">{brew.fault}</p>
           <WorkButton shortcut="F" primary onUse={() => act({ type: 'discard-cold-brew' })}>
-            한 배치분 폐기하기
+            배치 폐기
           </WorkButton>
         </>
       ) : brew.stage === 'ready' && batch ? (
         <>
-          <WorkTitle>
-            {expired
-              ? '기한이 지난 추출액을 폐기해주세요'
-              : batch.labelled
-                ? '용기를 냉장고로 옮기세요'
-                : '추출 완료 시각으로 라벨을 붙이세요'}
-          </WorkTitle>
+          <WorkTitle>{expired ? '기한 만료' : batch.labelled ? '냉장 보관 준비' : '라벨 부착'}</WorkTitle>
           <BatchLabel batch={batch} time={state.time} act={act} station="cold-prep" />
         </>
       ) : brew.stage === 'finished' ? (
         <>
-          <WorkTitle>{expired ? '추출액의 기한이 지났어요' : '추출액을 용기에 회수하세요'}</WorkTitle>
-          <p className="mb-3 text-sm text-muted">
-            추출 완료 · {batchDate(brew.completedAt)}
-            <br />
-            기한은 회수 시각이 아닌 추출 완료 시각부터 계산해요.
-          </p>
+          <WorkTitle>{expired ? '기한 만료' : '추출 완료'}</WorkTitle>
+          <p className="mb-3 text-sm text-muted">추출 완료 · {batchDate(brew.completedAt)}</p>
           <WorkButton
             shortcut={expired ? 'F' : 'E'}
             primary
             disabled={handsFull}
             onUse={() => act({ type: expired ? 'discard-cold-brew' : 'collect-cold-brew' })}
           >
-            {expired ? '추출액 폐기하기' : '추출액 용기에 회수'}
+            {expired ? '추출액 폐기' : '용기에 회수'}
           </WorkButton>
         </>
       ) : brew.stage === 'extracting' && job ? (
         <>
-          <WorkTitle>콜드 브루를 추출하고 있어요</WorkTitle>
+          <WorkTitle>콜드 브루 추출 중</WorkTitle>
           <WorkMeter
             label="추출 진행"
             ratio={(state.time - job.startedAt) / (job.endsAt - job.startedAt)}
             value={`${Math.floor(minutes / 60)}시간 ${minutes % 60}분 남음`}
-            hint="추출 중에는 마감하고 다음 날로 넘어갈 수 있어요"
           />
         </>
       ) : (
@@ -93,21 +82,12 @@ export default function ColdBrewHud({
               label={step.label}
               ratio={brew.progress / step.target}
               value={`${formatAmount(brew.progress)} / ${step.target}${step.unit}`}
-              hint={
-                ready
-                  ? brew.tool
-                    ? '도구를 놓고 확인하세요'
-                    : '계량을 확인하세요'
-                  : brew.step === 0
-                    ? '원두 한 봉이 모두 들어갈 때까지 누르세요'
-                    : '초록 구간에서 멈추세요'
-              }
               tolerance={step.tolerance || undefined}
             />
           ) : (
             <p className="mb-3 text-sm text-muted">
               원두 {formatAmount(brew.beans)}lb · 정수 {formatAmount(brew.water)}L<br />
-              {COLD_BREW_HOURS}시간 추출 후 직접 회수하고 냉장 보관해요.
+              추출 {COLD_BREW_HOURS}시간
             </p>
           )}
           {handsFull ? <p className="mb-3 text-sm text-danger">컵과 다른 도구를 먼저 내려놓아주세요.</p> : null}
@@ -150,12 +130,10 @@ export default function ColdBrewHud({
       )}
       {brew.stage !== 'ready' && !brew.fault ? (
         <details className="mt-3 text-xs text-muted">
-          <summary className="cursor-pointer py-1">준비 · 중단 안내</summary>
-          <p className="my-2">
-            원두 한 배치분은 시작할 때 확보해요. 중단하면 한 배치분을 폐기하고 준비비는 반환되지 않아요.
-          </p>
+          <summary className="cursor-pointer py-1">작업 관리</summary>
+          <p className="my-2">중단 시 원두와 준비비가 소모됩니다.</p>
           <TextButton danger onClick={() => act({ type: 'discard-cold-brew' })}>
-            콜드 브루 준비 중단 · 폐기
+            추출 중단 · 폐기
           </TextButton>
         </details>
       ) : null}

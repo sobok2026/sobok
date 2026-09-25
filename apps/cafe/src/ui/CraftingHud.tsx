@@ -1,5 +1,6 @@
 import { INGREDIENTS, ingredientIds, RECIPES, STATIONS, type StationId } from '../game/catalog'
 import { isContinuous, isMetered, operationFor, readyToConfirm, TOOL_NAMES } from '../game/crafting'
+import { isReusableCup } from '../game/cups'
 import { CUSTOMER_STATUS } from '../game/customer'
 import type { GameState } from '../game/state'
 import { available } from '../game/store'
@@ -46,9 +47,9 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
       : undefined
   const supplyNotice =
     (op?.kind === 'steam' || op?.tool === 'pitcher') && !c.pitcherReserved && !state.tools.clean
-      ? '깨끗한 피처가 필요해요. 세척 후 선반에 정리해주세요.'
+      ? '피처 부족 · 세척 후 도구 선반에 정리'
       : missing
-        ? `${INGREDIENTS[missing].name} 보충이 필요해요. ${INGREDIENTS[missing].prepared ? '컵을 두고 준비대에서 준비해주세요.' : '창고에서 보충해주세요.'}`
+        ? `${INGREDIENTS[missing].name} 부족 · ${missing === 'coldBrew' ? '추출대' : INGREDIENTS[missing].prepared ? '준비대' : '창고'}에서 준비`
         : null
   const toolIsNext = supplyNotice ? !!c.tool : !rightTool || ready
   const useLabel = op
@@ -56,11 +57,11 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
       ? `누르고 ${op.kind === 'stir' ? '젓기' : op.kind === 'drizzle' ? '두르기' : '붓기'}`
       : {
           machine: '샷 추출하기',
-          pump: '한 번 펌핑',
-          sprinkle: '한 톡 뿌리기',
-          ice: '한 스쿱 담기',
+          pump: '펌핑',
+          sprinkle: '한 톡',
+          ice: '한 스쿱',
           lid: '리드 덮기',
-          shake: '한 번 흔들기',
+          shake: '흔들기',
         }[op.kind as 'machine' | 'pump' | 'sprinkle' | 'ice' | 'lid' | 'shake']
     : ''
   return (
@@ -68,20 +69,24 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
       <div className="mb-2 flex items-center justify-between gap-3 text-xs text-muted compact:mb-1.5">
         <span>{STATIONS[place].name}</span>
         <span>
-          {!op ? '제조 완료' : needsMove ? '다음 작업대' : `${cup.step + 1} / ${RECIPES[cup.recipe].steps.length} 단계`}
+          {!op
+            ? '제조 완료'
+            : needsMove
+              ? '다음 작업대'
+              : `${cup.step + 1} / ${RECIPES[cup.recipe].steps.length - (isReusableCup(c.kind) ? 1 : 0)}`}
         </span>
       </div>
       {c.fault ? (
         <>
-          <WorkTitle>계량을 초과했어요</WorkTitle>
+          <WorkTitle>제조 실패</WorkTitle>
           <p className="my-2.5 text-sm leading-[1.65] text-muted group-data-[fault=true]/work:text-danger">{c.fault}</p>
           <WorkButton shortcut="F" primary onUse={onDiscard}>
-            컵 폐기하고 다시 만들기
+            {isReusableCup(c.kind) ? '내용물 비우고 세척 대기로' : '컵 폐기'}
           </WorkButton>
         </>
       ) : needsMove ? (
         <>
-          <WorkTitle>{STATIONS[nextStation].name}에 컵을 옮기세요</WorkTitle>
+          <WorkTitle>{STATIONS[nextStation].name}로 이동</WorkTitle>
           <WorkButton shortcut="E" primary onUse={() => onMoveCup(place)}>
             컵 집기
           </WorkButton>
@@ -93,11 +98,7 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
             label={job.label}
             ratio={progress}
             value={`${Math.max(0, Math.ceil(job.endsAt - state.time))}초 남음`}
-            hint="장비 작동 중"
           />
-          <p className="my-2.5 text-sm leading-[1.65] text-muted group-data-[fault=true]/work:text-danger">
-            컵은 두고 다른 일을 할 수 있어요.
-          </p>
         </>
       ) : op ? (
         <>
@@ -111,17 +112,6 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
             label={op.label}
             ratio={progress}
             value={counter ? `${Math.round(c.progress)} / ${op.target} ${op.unit}` : `${Math.round(progress * 100)}%`}
-            hint={
-              ready
-                ? c.tool
-                  ? '도구를 놓고 확인하세요'
-                  : '계량을 확인하세요'
-                : isMetered(op) && !counter
-                  ? '초록 구간에서 멈추세요'
-                  : counter
-                    ? '횟수를 맞추세요'
-                    : '목표까지 진행하세요'
-            }
             tolerance={isMetered(op) && !counter ? op.tolerance : undefined}
           />
           <div className="flex flex-wrap gap-2">
@@ -159,28 +149,11 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
                 <kbd className="mr-1 font-sans">E</kbd> 컵 집기
               </TextButton>
             ) : null}
-            <details className="text-xs text-muted open:basis-full">
-              <summary className="cursor-pointer py-1.5">레시피 · 조작 안내</summary>
-              <p className="my-2.5 text-sm leading-[1.65] whitespace-pre-line text-muted">{op.cue}</p>
-              {sourceStep?.instruction ? (
-                <p className="my-2.5 text-sm leading-[1.65] whitespace-pre-line text-muted">{sourceStep.instruction}</p>
-              ) : null}
-              {sourceStep?.note ? (
-                <p className="my-2.5 text-sm leading-[1.65] whitespace-pre-line text-muted">{sourceStep.note}</p>
-              ) : null}
-              {place === 'mix' && state.dirtyBar > 0 ? (
-                <p className="my-2.5 text-sm leading-[1.65] whitespace-pre-line text-muted">
-                  컵을 다른 작업대에 옮기면 이 작업대를 닦을 수 있어요.
-                </p>
-              ) : null}
-            </details>
           </div>
         </>
       ) : (
         <>
-          <WorkTitle>
-            {state.customer?.stage === 'pickup' ? '손님에게 전달할 준비가 됐어요' : '음료가 완성됐어요'}
-          </WorkTitle>
+          <WorkTitle>{state.customer?.stage === 'pickup' ? '전달 준비' : '제조 완료'}</WorkTitle>
           {state.customer?.stage !== 'pickup' ? (
             <p className="my-2.5 text-sm leading-relaxed text-muted">
               {state.customer
@@ -189,10 +162,10 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
             </p>
           ) : null}
           <WorkButton shortcut="F" primary disabled={state.customer?.stage !== 'pickup'} onUse={() => onConfirm(place)}>
-            음료 전달하기
+            음료 전달
           </WorkButton>
           <TextButton onClick={() => onMoveCup(place)}>
-            <kbd className="font-sans">E</kbd> 컵 다시 집기
+            <kbd className="font-sans">E</kbd> 컵 집기
           </TextButton>
         </>
       )}

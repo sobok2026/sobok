@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { PREP_SPOT, type PrepTool, preparationStep } from './preparation'
 import type { GameState } from './state'
+import { addVesselLabel } from './vessel-label'
 
 export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
   const mat = (color: string, metalness = 0) =>
@@ -87,10 +88,12 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
     box(carton, 0.11, 0.21, 0.085, cream)
     box(carton, 0.112, 0.055, 0.087, mat(color), 0, -0.025)
     cylinder(carton, 0.022, 0.022, 0.025, cream, 0.117)
+    addVesselLabel(carton, id === 'cream-carton' ? '크림' : '우유', color, 0.086, 0.048, -0.025, 0.045)
   }
   const pack = tool('mocha-pack')
   box(pack, 0.15, 0.22, 0.045, mat('#b6a079'))
   box(pack, 0.153, 0.07, 0.047, brown)
+  addVesselLabel(pack, '바모카', '#77513b', 0.12, 0.064, -0.015, 0.025)
   for (const id of ['water-jug', 'cold-water-jug'] as const) {
     const jug = tool(id)
     cylinder(jug, 0.09, 0.067, 0.22, steel, 0, true)
@@ -98,6 +101,15 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
     jugHandle.rotation.y = Math.PI / 2
     jugHandle.position.x = 0.095
     jug.add(jugHandle)
+    addVesselLabel(
+      jug,
+      id === 'water-jug' ? '온수' : '정수',
+      id === 'water-jug' ? '#95612d' : '#476f87',
+      0.09,
+      0.054,
+      -0.015,
+      0.08,
+    )
   }
   const scoop = tool('tea-scoop')
   box(scoop, 0.042, 0.025, 0.06, steel)
@@ -106,6 +118,7 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
   const teaShaker = tool('tea-shaker')
   cylinder(teaShaker, 0.07, 0.065, 0.25, mat('#967345'))
   cylinder(teaShaker, 0.073, 0.073, 0.025, green, 0.137)
+  addVesselLabel(teaShaker, '호지차', '#756342', 0.096, 0.058, -0.015, 0.068)
   const spatula = tool('spatula')
   box(spatula, 0.018, 0.26, 0.012, mat('#9c835b'))
   box(spatula, 0.045, 0.075, 0.015, cream, 0, -0.14)

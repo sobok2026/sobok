@@ -1,5 +1,7 @@
 import { type Costs, RECIPES, type RecipeId, type StationId, staffFacingZ } from './catalog'
 
+import { type CupKind, isReusableCup } from './cups'
+
 export const craftToolIds = [
   'milk-carton',
   'pitcher',
@@ -37,6 +39,7 @@ export type CraftContents = {
   powder: number
 }
 export type CraftState = {
+  kind: CupKind
   consumed: Costs
   location: StationId | 'hand'
   tool: CraftTool | null
@@ -64,6 +67,7 @@ export type CraftOperation = {
   costs: Costs
   content?: keyof CraftContents
   weight: number
+  targetFill?: number
   cue: string
 }
 export const craftStations: StationId[] = [
@@ -79,7 +83,19 @@ export const craftStations: StationId[] = [
 ]
 export function operationFor(recipe: RecipeId, step: number, craft: CraftState): CraftOperation | null {
   const source = RECIPES[recipe].steps[step]
-  if (!source) return null
+  if (!source || (source.label === '제공' && isReusableCup(craft.kind))) return null
+  const toLine = (content: keyof CraftContents, targetFill: number) => ({
+    content,
+    targetFill,
+    weight: Math.max(
+      0,
+      targetFill -
+        (['coffee', 'sauce', 'milk', 'tea', 'water', 'foam', 'ice'] as const).reduce(
+          (sum, key) => sum + (key === content ? 0 : craft.contents[key]),
+          0,
+        ),
+    ),
+  })
   const base = {
     id: `${recipe}:${step}`,
     target: 1,
@@ -90,11 +106,11 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
     weight: 0,
     cue: '누르는 동안 진행 · 놓으면 멈춤',
   }
-  if (recipe === 'cold-brew') {
+  if (recipe === 'cold-brew' && source.label !== '제공') {
     if (source.label === '콜드 브루 추출액')
-      return { ...base, kind: 'pour', label: '추출액 따르기', tool: null, content: 'coffee', weight: 0.4 }
+      return { ...base, kind: 'pour', label: '추출액 따르기', tool: null, ...toLine('coffee', 0.4) }
     if (source.label === '정수')
-      return { ...base, kind: 'pour', label: '정수 채우기', tool: null, content: 'water', weight: 0.4 }
+      return { ...base, kind: 'pour', label: '정수 채우기', tool: null, ...toLine('water', 0.8) }
     return {
       ...base,
       kind: 'ice',
@@ -103,8 +119,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       target: 3,
       tolerance: 0,
       unit: '스쿱',
-      content: 'ice',
-      weight: 0.17,
+      ...toLine('ice', 0.96),
       cue: '한 번 누를 때마다 한 스쿱',
     }
   }
@@ -165,9 +180,21 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
     }
   }
   if (source.label === '스팀 우유')
-    return { ...base, kind: 'pour', label: '스팀 우유 붓기', tool: 'pitcher', content: 'milk', weight: 0.55 }
+    return {
+      ...base,
+      kind: 'pour',
+      label: '스팀 우유 붓기',
+      tool: 'pitcher',
+      ...toLine('milk', recipe === 'hoji-hot' ? 0.79 : 0.87),
+    }
   if (source.label === '일반 우유')
-    return { ...base, kind: 'pour', label: '우유 붓기', tool: 'milk-carton', content: 'milk', weight: 0.5 }
+    return {
+      ...base,
+      kind: 'pour',
+      label: '우유 붓기',
+      tool: 'milk-carton',
+      ...toLine('milk', recipe === 'hoji-iced' ? 0.6 : 0.8),
+    }
   if (source.label === '호지차 샷') {
     if (!craft.teaMixed)
       return {
@@ -182,7 +209,13 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
         costs: {},
         cue: '한 번 누를 때마다 한 번 흔들어요',
       }
-    return { ...base, kind: 'pour', label: '호지차 샷 붓기', tool: 'tea-bottle', content: 'tea', weight: 0.18 }
+    return {
+      ...base,
+      kind: 'pour',
+      label: '호지차 샷 붓기',
+      tool: 'tea-bottle',
+      ...toLine('tea', recipe === 'hoji-hot' ? 0.87 : 0.8),
+    }
   }
   if (source.label === '얼음')
     return {
@@ -193,8 +226,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       target: 3,
       tolerance: 0,
       unit: '스쿱',
-      content: 'ice',
-      weight: 0.1,
+      ...toLine('ice', 0.9),
       cue: '한 번 누를 때마다 한 스쿱',
     }
   if (source.label === '바모카 드리즐')
@@ -217,8 +249,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       label: '글레이즈드 폼 붓기',
       tool: 'foam-pitcher',
       rate: 0.22,
-      content: 'foam',
-      weight: 0.17,
+      ...toLine('foam', 0.96),
     }
   if (source.label === '번트 카라멜 파우더')
     return {
@@ -244,8 +275,9 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
   }
 }
 
-export function createCraft(): CraftState {
+export function createCraft(kind: CupKind): CraftState {
   return {
+    kind,
     consumed: {},
     location: 'hand',
     tool: null,

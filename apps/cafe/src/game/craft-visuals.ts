@@ -1,13 +1,16 @@
 import * as THREE from 'three'
 import { RECIPES, staffFacingZ } from './catalog'
 import { type CraftState, type CraftTool, cupSpot, operationFor } from './crafting'
+import { CUP_DIMENSIONS, createCupBody, cupFillY, cupRadius } from './cup-visual'
+import { type CupKind, cupKinds } from './cups'
 import type { GameState } from './state'
+import { addVesselLabel } from './vessel-label'
 
 type CupVisual = {
   root: THREE.Group
-  shell: THREE.Mesh
-  sleeve: THREE.Mesh
-  lid: THREE.Mesh
+  bodies: Map<CupKind, ReturnType<typeof createCupBody>>
+  target: THREE.Mesh
+  kind: CupKind | null
   layers: { mesh: THREE.Mesh; vertices: Float32Array; height: number; fill: number }[]
   ice: THREE.InstancedMesh
   drizzle: THREE.Mesh
@@ -48,25 +51,14 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
   function makeCup(parent: THREE.Object3D): CupVisual {
     const root = new THREE.Group()
     parent.add(root)
-    const shell = cylinder(
-      root,
-      0.112,
-      0.078,
-      0.285,
-      new THREE.MeshStandardMaterial({ color: '#f9efdc', side: THREE.DoubleSide, roughness: 0.36 }),
-      0.1425,
-      true,
+    const bodies = new Map(cupKinds.map((kind) => [kind, createCupBody(root, kind, true)]))
+    const target = new THREE.Mesh(
+      new THREE.TorusGeometry(1, 0.012, 5, 48),
+      new THREE.MeshBasicMaterial({ color: '#d69629', transparent: true, opacity: 0.95 }),
     )
-    const sleeve = cylinder(root, 0.101, 0.091, 0.072, standard('#3b6049'), 0.135, true)
-    const base = cylinder(root, 0.078, 0.078, 0.007, cream, 0.004)
-    base.receiveShadow = true
-    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.111, 0.004, 8, 40), cream)
-    rim.rotation.x = Math.PI / 2
-    rim.position.y = 0.285
-    root.add(rim)
-    const lid = cylinder(root, 0.119, 0.117, 0.023, standard('#f1e7cf'), 0.301)
-    const sip = block(lid, 0.035, 0.004, 0.012, chocolate)
-    sip.position.set(0, 0.014, 0.08)
+    target.rotation.x = Math.PI / 2
+    target.renderOrder = 2
+    root.add(target)
     const colors = ['#cdad74', '#4d2b18', '#e8f0e9', '#dfc29b', '#967345', '#fff2d7']
     const layers = colors.map((color) => {
       const mesh = cylinder(root, 1, 1, 1, standard(color))
@@ -110,9 +102,9 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
     const shotLiquid = cylinder(shot, 0.041, 0.034, 0.057, chocolate, 0.031)
     return {
       root,
-      shell,
-      sleeve,
-      lid,
+      bodies,
+      target,
+      kind: null,
       layers,
       ice,
       drizzle,
@@ -141,14 +133,47 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
   stripe.position.y = -0.005
   const spout = cylinder(carton, 0.022, 0.022, 0.025, cream, 0.11)
   spout.position.x = -0.025
+  addVesselLabel(carton, '우유', '#527f66', 0.075, 0.046, -0.005, 0.042)
+  let shotToolLiquid: THREE.Mesh | null = null
   for (const id of ['pitcher', 'foam-pitcher', 'shot-glass'] as const) {
     const root = tool(id)
     const scale = id === 'shot-glass' ? 0.62 : 1
-    cylinder(root, 0.087, 0.06, 0.19, id === 'pitcher' ? steel : cream, 0, true)
-    const handle = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.009, 8, 20), steel)
-    handle.rotation.y = Math.PI / 2
-    handle.position.x = 0.09
-    root.add(handle)
+    const glass = id === 'shot-glass'
+    cylinder(
+      root,
+      0.087,
+      0.06,
+      0.19,
+      glass
+        ? new THREE.MeshStandardMaterial({
+            color: '#d9eae2',
+            transparent: true,
+            opacity: 0.3,
+            depthWrite: false,
+            side: THREE.DoubleSide,
+          })
+        : id === 'pitcher'
+          ? steel
+          : cream,
+      0,
+      true,
+    )
+    if (glass) shotToolLiquid = cylinder(root, 0.075, 0.055, 0.12, chocolate, -0.025)
+    else {
+      const handle = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.009, 8, 20), steel)
+      handle.rotation.y = Math.PI / 2
+      handle.position.x = 0.09
+      root.add(handle)
+      addVesselLabel(
+        root,
+        id === 'pitcher' ? '스팀' : '폼',
+        id === 'pitcher' ? '#667e89' : '#527f66',
+        0.09,
+        0.052,
+        -0.015,
+        0.076,
+      )
+    }
     root.scale.setScalar(scale)
   }
   const stirrer = tool('stirrer')
@@ -156,12 +181,15 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
   const bottle = tool('mocha-bottle')
   cylinder(bottle, 0.038, 0.042, 0.17, chocolate)
   cylinder(bottle, 0.006, 0.03, 0.045, cream, 0.106)
+  addVesselLabel(bottle, '바모카', '#77513b', 0.062, 0.043, -0.015, 0.041)
   const teaBottle = tool('tea-bottle')
   cylinder(teaBottle, 0.065, 0.062, 0.24, standard('#9b8056'))
   cylinder(teaBottle, 0.067, 0.067, 0.025, standard('#45644d'), 0.133)
+  addVesselLabel(teaBottle, '호지차', '#756342', 0.09, 0.056, -0.008, 0.065)
   const shaker = tool('shaker')
   cylinder(shaker, 0.038, 0.035, 0.105, standard('#c69b59'))
   cylinder(shaker, 0.04, 0.04, 0.025, steel, 0.065)
+  addVesselLabel(shaker, '파우더', '#886628', 0.058, 0.036, 0, 0.038)
   const scoop = tool('ice-scoop')
   const scoopBowl = block(scoop, 0.07, 0.04, 0.1, steel)
   scoopBowl.position.z = -0.03
@@ -203,30 +231,41 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
     visual: CupVisual,
     craft: CraftState,
     iced: boolean,
+    targetFill: number | undefined,
     extraction: number,
     shotExtraction: number | null,
   ) {
-    const shellMaterial = visual.shell.material as THREE.MeshStandardMaterial
-    shellMaterial.transparent = iced
-    shellMaterial.opacity = iced ? 0.28 : 1
-    shellMaterial.depthWrite = !iced
-    shellMaterial.color.set(iced ? '#e4f0e9' : '#f9efdc')
-    visual.sleeve.visible = !iced
-    visual.lid.visible = craft.lidded
+    const kindChanged = visual.kind !== craft.kind
+    visual.kind = craft.kind
+    for (const [kind, body] of visual.bodies) {
+      body.root.visible = kind === craft.kind
+      body.lid.visible = !body.reusable && craft.lidded
+    }
+    visual.target.visible = targetFill !== undefined && !craft.lidded
+    if (targetFill !== undefined) {
+      visual.target.position.y = cupFillY(craft.kind, targetFill)
+      visual.target.scale.setScalar(cupRadius(craft.kind, visual.target.position.y) + 0.005)
+    }
     const c = craft.contents
     const amounts = craft.mixed
       ? [0, c.coffee + c.sauce + extraction, c.water, c.milk, c.tea, c.foam]
       : [c.sauce, c.coffee + extraction, c.water, c.milk, c.tea, c.foam]
+    let lastLiquid = 4
+    while (lastLiquid >= 0 && amounts[lastLiquid] <= 0) lastLiquid--
+    if (lastLiquid >= 0) amounts[lastLiquid] += c.ice
     let height = 0.008
     visual.layers.forEach((layer, i) => {
       const { mesh, vertices } = layer
-      const value = Math.min(amounts[i] * 0.265, Math.max(0, 0.276 - height))
+      const value = Math.min(
+        amounts[i] * (CUP_DIMENSIONS[craft.kind].height - 0.02),
+        Math.max(0, CUP_DIMENSIONS[craft.kind].height - 0.008 - height),
+      )
       mesh.visible = value > 0.0001
-      if (layer.height !== height || layer.fill !== value) {
+      if (kindChanged || layer.height !== height || layer.fill !== value) {
         const positions = mesh.geometry.getAttribute('position')
         for (let vertex = 0; vertex < positions.count; vertex++) {
           const localY = vertices[vertex * 3 + 1]
-          const radius = 0.076 + ((height + value * (localY + 0.5)) / 0.285) * 0.034
+          const radius = cupRadius(craft.kind, height + value * (localY + 0.5)) - 0.003
           positions.setXYZ(vertex, vertices[vertex * 3] * radius, localY, vertices[vertex * 3 + 2] * radius)
         }
         positions.needsUpdate = true
@@ -237,6 +276,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       }
       height += value
     })
+    visual.ice.position.y = CUP_DIMENSIONS[craft.kind].height - 0.285
     visual.ice.visible = iced && c.ice > 0
     visual.ice.count = Math.min(8, Math.ceil((c.ice / 0.1) * 8))
     visual.drizzle.visible = c.drizzle > 0 && !craft.lidded
@@ -275,6 +315,11 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       for (const cloud of vapor) cloud.visible = false
       if (!cup) return
       const c = cup.craft
+      if (shotToolLiquid) {
+        const fill = Math.max(0.001, 1 - Math.min(1, c.contents.coffee / 0.13))
+        shotToolLiquid.scale.y = fill
+        shotToolLiquid.position.y = -0.085 + 0.06 * fill
+      }
       const op = operationFor(cup.recipe, cup.step, c)
       const job = state.jobs.find((item) => item.kind === 'craft-machine' && item.cupId === cup.id)
       const extraction =
@@ -289,6 +334,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         c.location === 'hand' ? held : bench,
         c,
         RECIPES[cup.recipe].variant === 'ICED',
+        c.location !== 'hand' ? op?.targetFill : undefined,
         extraction,
         shotExtraction,
       )
@@ -357,14 +403,15 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
               : spot[0]
         start.set(x + (job ? 0 : 0.09), job ? 1.43 : spot[1] + 0.44, job ? staffFacingZ(-0.68) : spot[2])
         const fillHeight = Math.min(
-          0.267,
+          CUP_DIMENSIONS[c.kind].height - 0.018,
           (c.contents.sauce +
             c.contents.coffee +
             c.contents.water +
             c.contents.milk +
             c.contents.tea +
-            c.contents.foam) *
-            0.265,
+            c.contents.foam +
+            c.contents.ice) *
+            (CUP_DIMENSIONS[c.kind].height - 0.02),
         )
         end.set(
           x,

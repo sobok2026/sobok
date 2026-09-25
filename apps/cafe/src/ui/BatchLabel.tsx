@@ -1,7 +1,7 @@
 import { batchDestination, batchOrigin } from '../game/batches'
 import { formatAmount, INGREDIENTS, STATIONS, type StationId } from '../game/catalog'
-import { batchDate, PREPARATIONS } from '../game/preparation'
-import { expiryAt, lifetimeLabel } from '../game/quality'
+import { batchDate } from '../game/preparation'
+import { expiryAt } from '../game/quality'
 import type { Batch } from '../game/state'
 import type { Action } from '../game/store'
 import { Button, TextButton } from './Button'
@@ -28,12 +28,6 @@ export default function BatchLabel({
   const usualExpiry = batch.openedAt === null ? null : expiryAt(batch.openedAt, definition.lifetime)
   const limitedByIngredient =
     !!definition.prepared && batch.expiresAt !== null && usualExpiry !== null && batch.expiresAt < usualExpiry
-  const marking =
-    batch.ingredient === 'foam' || batch.ingredient === 'mocha' || batch.ingredient === 'hojicha'
-      ? PREPARATIONS[batch.ingredient].marking
-      : definition.prepared
-        ? '제조일 · 품질 기한'
-        : '개봉일 · 품질 기한'
   return (
     <details className="group/label my-1 text-xs" data-expired={expired} open={pending || expired}>
       <summary className="cursor-pointer py-1.5 text-[#56734f] group-data-[expired=true]/label:text-[#aa593c]">
@@ -46,7 +40,6 @@ export default function BatchLabel({
         </b>
       </summary>
       <div className="border border-l-3 border-[#cdd4c0] border-l-[#648361] bg-[#fffdf6] p-2.5">
-        <span className="mb-1 block text-xs font-semibold tracking-[0.19em] text-muted">{marking}</span>
         <strong className="block text-label font-semibold text-[#35533e]">{definition.name}</strong>
         <dl className="mt-2 mb-0 grid gap-1 tabular-nums">
           <div className="flex justify-between gap-3">
@@ -62,23 +55,16 @@ export default function BatchLabel({
             <dd className="text-[#45613f]">{definition.storage === 'fridge' ? '냉장' : '실온'}</dd>
           </div>
         </dl>
-        {batch.expiresAt !== null ? (
-          <p className="mt-2 text-xs leading-snug text-muted">
-            {limitedByIngredient
-              ? '투입한 원재료 기한에 맞춰 짧아진 배합이에요. '
-              : `${lifetimeLabel(definition.lifetime, !!definition.prepared)}. `}
-            표시된 시각부터 사용할 수 없어요.
-          </p>
-        ) : null}
+        {limitedByIngredient ? <p className="mt-2 text-xs text-muted">원재료 기한 적용</p> : null}
       </div>
       {!expired && !batch.labelled && atOrigin ? (
         <Button size="compact" className="mt-1" onClick={() => act({ type: 'label-batch', id: batch.id, station })}>
-          날짜 확인 · 라벨 붙이기
+          라벨 붙이기
         </Button>
       ) : null}
       {!expired && pending && batch.labelled && definition.prepared && atOrigin ? (
         <Button size="compact" className="mt-1" onClick={() => act({ type: 'take-batch', id: batch.id, station })}>
-          E · 용기 집어 {STATIONS[batchDestination(batch)].name}로 운반
+          E · 용기 집기 → {STATIONS[batchDestination(batch)].name}
         </Button>
       ) : null}
       {pending && definition.prepared && !atOrigin ? (
@@ -108,7 +94,7 @@ export default function BatchLabel({
       ) : null}
       {(expired || pending) && canDiscard ? (
         <TextButton danger className="mt-1.5" onClick={() => act({ type: 'discard-batch', id: batch.id, station })}>
-          이 배치 폐기
+          배치 폐기
         </TextButton>
       ) : null}
     </details>

@@ -7,14 +7,13 @@ import {
   ingredientIds,
   money,
   RECIPES,
-  recipeLabel,
 } from '../game/catalog'
 import { operationFor } from '../game/crafting'
 import { PREPARATIONS, preparationIds } from '../game/preparation'
 import type { GameState } from '../game/state'
 import { type Action, available } from '../game/store'
 import BatchLabel from './BatchLabel'
-import { Button } from './Button'
+import CupInventory from './CupInventory'
 import SupplyPanel from './SupplyPanel'
 
 export default function InventoryPanel({ state, act }: { state: GameState; act: (action: Action) => void }) {
@@ -43,7 +42,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
   }
   const recipe =
     state.cup?.recipe ??
-    state.ticket ??
+    state.ticket?.recipe ??
     (state.phase === 'open' && state.customer && !state.customer.visit && state.customer.stage !== 'leaving'
       ? state.request
       : null)
@@ -83,47 +82,38 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
   const shortages = inventory.filter((item) => item.shortage > 0.0001)
   return (
     <>
-      {recipe || state.preparation ? (
-        <div className="mt-3 mb-4.5 rounded-lg border border-control-line bg-control p-4">
-          <strong className="text-body">{recipe ? recipeLabel(recipe) : '진행 중인 부재료 준비'}</strong>
-          <p className="my-2 text-sm">
-            {shortages.length
-              ? `사용 가능한 재료가 부족해요 · ${shortages.length}개 품목`
-              : '남은 작업에 필요한 재료가 준비됐어요.'}
-          </p>
-          {state.cup?.craft.fault ? (
-            <small className="text-xs leading-[1.7] text-muted">현재 컵을 폐기하고 다시 만들 때 필요한 양이에요.</small>
-          ) : (
-            <small className="text-xs leading-[1.7] text-muted">
-              남은 제조 단계와 필요한 부재료 한 배치 기준이에요.
-            </small>
-          )}
-        </div>
+      {shortages.length ? (
+        <p className="mb-4 text-xs text-danger" role="status">
+          현재 작업에 부족한 재료 {shortages.length}종
+        </p>
       ) : null}
+      <div className="flex justify-between border-b border-line pb-2 text-xs text-muted">
+        <span>재료</span>
+        <span>사용 가능</span>
+      </div>
       <div className="grid">
         {inventory.map(
           ({ id, definition, batches, sealed, amount, pending, expired, unopened, needed, shortage, priority }) => (
-            <details className="group/inventory border-b border-line" key={id} open={priority < 3}>
+            <details className="group/inventory border-b border-line" key={id}>
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-3.5 after:text-lg after:text-muted after:content-['+'] group-open/inventory:after:content-['−'] [&::-webkit-details-marker]:hidden">
                 <span className="flex-1 text-sm font-medium">
                   {definition.name}
-                  <small
-                    className="mt-1.25 block text-xs font-normal text-muted data-[attention=true]:text-danger"
-                    data-attention={priority < 3}
-                  >
-                    {definition.storage === 'fridge' ? '냉장' : '실온'} ·{' '}
-                    {shortage > 0.0001
-                      ? '현재 작업에 부족'
-                      : expired
-                        ? '만료 재료 있음'
-                        : pending
-                          ? '라벨·보관 필요'
-                          : amount > 0
-                            ? '사용 가능'
-                            : definition.prepared
-                              ? '준비 필요'
-                              : '보충 필요'}
-                  </small>
+                  {priority < 3 || amount === 0 ? (
+                    <small
+                      className="mt-1.25 block text-xs font-normal text-muted data-[attention=true]:text-danger"
+                      data-attention={priority < 3}
+                    >
+                      {shortage > 0.0001
+                        ? '현재 작업에 부족'
+                        : expired
+                          ? '만료 재료 있음'
+                          : pending
+                            ? '라벨·보관 필요'
+                            : amount > 0
+                              ? ''
+                              : '재고 없음'}
+                    </small>
+                  ) : null}
                 </span>
                 <strong className="text-base font-medium tabular-nums">
                   {formatAmount(amount)}
@@ -131,36 +121,37 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                 </strong>
               </summary>
               <div className="pb-4">
-                <dl className="my-3.5 grid grid-cols-2 gap-3">
-                  <div>
-                    <dt className="text-xs text-muted">사용 가능</dt>
-                    <dd className="mt-1.25 text-base tabular-nums">
-                      {formatAmount(amount)}
-                      {definition.unit}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs text-muted">미개봉 · {sealed.length}팩</dt>
-                    <dd className="mt-1.25 text-base tabular-nums">
-                      {formatAmount(unopened)}
-                      {definition.unit}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs text-muted">라벨·보관 대기</dt>
-                    <dd className="mt-1.25 text-base tabular-nums">
-                      {formatAmount(pending)}
-                      {definition.unit}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs text-muted">만료</dt>
-                    <dd className="mt-1.25 text-base tabular-nums">
-                      {formatAmount(expired)}
-                      {definition.unit}
-                    </dd>
-                  </div>
-                </dl>
+                {unopened > 0 || pending > 0 || expired > 0 ? (
+                  <dl className="mb-3 space-y-2 text-xs text-muted">
+                    {unopened > 0 ? (
+                      <div className="flex justify-between">
+                        <dt>미개봉 · {sealed.length}팩</dt>
+                        <dd>
+                          {formatAmount(unopened)}
+                          {definition.unit}
+                        </dd>
+                      </div>
+                    ) : null}
+                    {pending > 0 ? (
+                      <div className="flex justify-between">
+                        <dt>라벨·보관 대기</dt>
+                        <dd>
+                          {formatAmount(pending)}
+                          {definition.unit}
+                        </dd>
+                      </div>
+                    ) : null}
+                    {expired > 0 ? (
+                      <div className="flex justify-between text-danger">
+                        <dt>만료</dt>
+                        <dd>
+                          {formatAmount(expired)}
+                          {definition.unit}
+                        </dd>
+                      </div>
+                    ) : null}
+                  </dl>
+                ) : null}
                 {needed > 0 ? (
                   <p
                     className="mb-4 rounded-md bg-[#e9eee1] px-3 py-2.5 text-label leading-[1.6] text-brand data-[shortage=true]:bg-[#f4e6d4] data-[shortage=true]:text-[#805430]"
@@ -171,23 +162,9 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                     {shortage > 0.0001 ? ` · ${formatAmount(shortage)}${definition.unit} 부족` : ''}
                   </p>
                 ) : null}
-                {shortage > 0.0001 ? (
-                  <p className="mb-4 text-xs leading-[1.7] text-muted">
-                    {pending >= shortage
-                      ? '대기 중인 배치의 라벨과 보관을 마치면 사용할 수 있어요.'
-                      : sealed.length
-                        ? '미개봉 원팩을 열고 라벨을 붙여 보관하세요.'
-                        : id === 'coldBrew'
-                          ? state.jobs.some((job) => job.kind === 'cold-brew')
-                            ? '콜드 브루를 추출 중이에요. 추출이 끝나면 사용할 수 있어요.'
-                            : `콜드 브루 추출대에서 원두·물을 계량하고 ${COLD_BREW_HOURS}시간 추출해주세요.`
-                          : state.preparation?.recipe === id
-                            ? state.preparation.fault
-                              ? '현재 배합을 폐기한 뒤 준비대에서 다시 제조해주세요.'
-                              : '준비 중인 배합을 마무리하고 라벨을 붙여 보관하세요.'
-                            : definition.prepared
-                              ? `준비대에서 제조해주세요 · ${definition.name}`
-                              : '원팩을 입고한 뒤 개봉·라벨·보관을 진행하세요.'}
+                {shortage > 0.0001 && definition.prepared && pending < shortage ? (
+                  <p className="mb-3 text-xs text-muted">
+                    {id === 'coldBrew' ? `추출대에서 준비 · ${COLD_BREW_HOURS}시간` : '준비대에서 배합 필요'}
                   </p>
                 ) : null}
                 {batches
@@ -202,7 +179,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                       type="button"
                       onClick={() => act({ type: 'open-batch', id: sealed[0].id })}
                     >
-                      원팩 개봉 · {sealed.length}팩 대기
+                      원팩 개봉
                     </button>
                   ) : null}
                   {!definition.prepared ? (
@@ -215,33 +192,22 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                       }
                       onClick={() => act({ type: 'buy', ingredient: id })}
                     >
-                      입고 · {money(definition.price)}
+                      원팩 입고 · {money(definition.price)}
                     </button>
-                  ) : (
-                    <small className="text-xs text-muted">
-                      {id === 'coldBrew' ? `추출대에서 ${COLD_BREW_HOURS}시간 추출·회수` : '준비대에서 제조'}
-                    </small>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </details>
           ),
         )}
       </div>
-      <Button variant="secondary" onClick={() => act({ type: 'cups' })}>
-        컵 보충 · 후방 {state.reserveCups}개
-      </Button>
-      <Button
-        variant="secondary"
-        disabled={state.cash < 2000 || state.reserveCups >= 48}
-        onClick={() => act({ type: 'buy-cups' })}
-      >
-        컵 24개 입고 · 2,000원
-      </Button>
-      <p className="my-4 text-sm leading-relaxed text-muted">
-        콜드 브루는 옆 추출대에서 준비해요. {COLD_BREW_HOURS}시간 추출 후 용기를 회수해 냉장고로 운반하세요.
-      </p>
-      <SupplyPanel state={state} act={act} location="stock" />
+      <details className="mt-5 border-t border-line pt-4 text-sm">
+        <summary>컵·소모품</summary>
+        <div className="mt-4">
+          <CupInventory state={state} act={act} purchasing />
+          <SupplyPanel state={state} act={act} location="stock" />
+        </div>
+      </details>
     </>
   )
 }

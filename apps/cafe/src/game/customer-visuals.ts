@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import { RECIPES } from './catalog'
+import { CUP_DIMENSIONS, createCupBody } from './cup-visual'
+import { cupKindFor, cupKinds } from './cups'
 import { customerHasCup, customerSitting, customerWalking } from './customer'
 import type { GameState } from './state'
 
@@ -64,13 +66,10 @@ export function createCustomerVisuals(scene: THREE.Scene) {
   })
   const cup = new THREE.Group()
   person.add(cup)
-  const paper = new THREE.MeshStandardMaterial({ color: '#eee1c9', roughness: 0.7 })
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.069, 0.046, 0.18, 16), paper)
-  body.position.y = 0.09
-  cup.add(body)
+  cup.scale.setScalar(0.64)
+  const bodies = new Map(cupKinds.map((kind) => [kind, createCupBody(cup, kind)]))
   const liquidMaterial = new THREE.MeshStandardMaterial({ color: '#493022', roughness: 0.5 })
-  cylinder(cup, 0.058, 0.008, liquidMaterial, 0, 0.179)
-  const lid = cylinder(cup, 0.075, 0.025, paper, 0, 0.19)
+  const liquid = cylinder(cup, 0.1, 0.008, liquidMaterial)
   const palette = ['#bc997d', '#708a83', '#ad806c', '#8a8e6d', '#978697', '#8c9aaa']
   let shownId: string | null = null
   let visualTime = 0
@@ -93,7 +92,13 @@ export function createCustomerVisuals(scene: THREE.Scene) {
         root.rotation.y = customer.yaw
         shirt.color.set(palette[(customer.orderNumber - 1) % palette.length])
         liquidMaterial.color.set(RECIPES[customer.recipe].color)
-        lid.visible = RECIPES[customer.recipe].variant === 'HOT'
+        const kind = cupKindFor(customer.recipe, customer.service)
+        for (const [id, body] of bodies) {
+          body.root.visible = id === kind
+          body.lid.visible = customer.service === 'takeout'
+        }
+        liquid.position.y = CUP_DIMENSIONS[kind].height - 0.014
+        liquid.scale.setScalar((CUP_DIMENSIONS[kind].top - 0.006) / 0.1)
         visualTime = state.time
       } else if (running) root.position.lerp(position, 1 - Math.exp(-delta * 20))
       if (running) visualTime += delta

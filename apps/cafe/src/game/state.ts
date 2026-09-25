@@ -3,11 +3,22 @@ import { ingredientIds, isCupSurface, RECIPES, recipeIds, stationIds, tableIds }
 import { CLEANING_SECONDS, cleaningStationIds } from './cleaning'
 import { COLD_BREW_BEANS, COLD_BREW_STEPS, coldBrewTools } from './cold-brew'
 import { craftToolIds } from './crafting'
-import { customerStages } from './customer'
+import {
+  cupCount,
+  cupKinds,
+  disposableCupKinds,
+  isReusableCup,
+  reusableCupFor,
+  reusableCupKinds,
+  serviceModes,
+} from './cups'
+import { customerHasCup, customerStages } from './customer'
 import { PREPARATIONS, preparationIds, prepToolIds } from './preparation'
 import { SUPPLY_CAPACITY, supplyIds } from './supplies'
+import { washItems } from './washing'
 
 const quantity = z.number().finite().min(0).max(100000000)
+const reusableCounts = z.record(z.enum(reusableCupKinds), quantity.int())
 const timestamp = z.number().finite().min(0).max(100000000000)
 const ingredientAmounts = z.partialRecord(z.enum(ingredientIds), quantity)
 const customerPoint = z.tuple([z.number().finite().min(-7).max(7), z.number().finite().min(0).max(7)])
@@ -16,6 +27,7 @@ const customerSchema = z
     id: z.string().max(100),
     orderNumber: z.number().int().min(1).max(100000),
     recipe: z.enum(recipeIds),
+    service: z.enum(serviceModes),
     stage: z.enum(customerStages),
     position: customerPoint,
     yaw: z.number().finite(),
@@ -24,7 +36,7 @@ const customerSchema = z
     elapsed: quantity,
     visit: z
       .object({
-        table: z.enum(tableIds),
+        table: z.enum(tableIds).nullable(),
         returnCup: z.boolean(),
         dirtyTable: z.boolean(),
         dirtyReturn: z.boolean(),
@@ -38,6 +50,12 @@ const customerSchema = z
       !['to-condiment', 'condiment', 'to-table', 'drinking', 'to-return', 'returning'].includes(customer.stage) ||
       customer.visit !== null,
     '수령한 손님의 이용 정보가 없어요.',
+  )
+  .refine(
+    (customer) =>
+      !customer.visit ||
+      (customer.service === 'dine-in' ? customer.visit.table !== null : customer.visit.table === null),
+    '손님의 이용 방식과 테이블 정보가 맞지 않아요.',
   )
 export const batchSchema = z.object({
   id: z.string().max(100),
@@ -79,6 +97,7 @@ const totalsSchema = z.object({
   prepared: quantity,
 })
 const craftSchema = z.object({
+  kind: z.enum(cupKinds),
   consumed: ingredientAmounts,
   location: z.union([z.literal('hand'), z.enum(stationIds)]),
   tool: z.enum(craftToolIds).nullable(),
@@ -150,6 +169,7 @@ const coldBrewSchema = z
 const washingSchema = z
   .object({
     id: z.string().max(100),
+    item: z.enum(washItems),
     stage: z.enum(['scrub', 'rinse', 'ready', 'carrying']),
     progress: z.number().finite().min(0).max(2.5),
     spongeHeld: z.boolean(),
@@ -162,11 +182,11 @@ const cleaningSchema = z
     stage: z.enum(['collect', 'wipe', 'bag']),
     progress: z.number().finite().min(0).max(3),
     clothHeld: z.boolean(),
-    heldCups: quantity.int(),
+    heldCups: reusableCounts,
     trashCount: quantity.int(),
   })
   .refine(
-    (cleaning) => !cleaning.clothHeld || (cleaning.stage === 'wipe' && cleaning.heldCups === 0),
+    (cleaning) => !cleaning.clothHeld || (cleaning.stage === 'wipe' && cupCount(cleaning.heldCups) === 0),
     '컵을 비운 뒤 닦아주세요.',
   )
   .refine(
@@ -174,7 +194,7 @@ const cleaningSchema = z
     '청소 단계와 작업대가 맞지 않아요.',
   )
   .refine(
-    (cleaning) => isCupSurface(cleaning.station) || (cleaning.heldCups === 0 && cleaning.stage !== 'collect'),
+    (cleaning) => isCupSurface(cleaning.station) || (cupCount(cleaning.heldCups) === 0 && cleaning.stage !== 'collect'),
     '테이블·컨디먼트 바에서만 컵을 회수할 수 있어요.',
   )
   .refine(
@@ -190,12 +210,12 @@ export const stateSchema = z
     orderNumber: z.number().int().min(1).max(100000),
     request: z.enum(recipeIds),
     customer: customerSchema.nullable(),
-    ticket: z.enum(recipeIds).nullable(),
+    ticket: z.object({ recipe: z.enum(recipeIds), service: z.enum(serviceModes) }).nullable(),
     preparation: preparationSchema.nullable(),
     coldBrew: coldBrewSchema.nullable(),
     washing: washingSchema.nullable(),
     cleaning: cleaningSchema.nullable(),
-    condiment: z.object({ cups: quantity.int(), dirty: z.boolean() }),
+    condiment: z.object({ cups: reusableCounts, dirty: z.boolean() }),
     supplies: z.record(
       z.enum(supplyIds),
       z.object({ bar: z.number().int().min(0).max(SUPPLY_CAPACITY), stock: quantity.int() }),
@@ -211,13 +231,17 @@ export const stateSchema = z
         craft: craftSchema,
       })
       .refine((cup) => cup.step <= RECIPES[cup.recipe].steps.length, '제조 단계가 범위를 벗어났어요.')
+      .refine((cup) => !isReusableCup(cup.craft.kind) || !cup.craft.lidded, '다회용 컵에는 리드를 덮지 않아요.')
       .nullable(),
     batches: z.array(batchSchema).max(300),
     jobs: z.array(jobSchema).max(30),
     tools: z.object({ clean: quantity, dirty: quantity, washed: quantity }),
-    cups: quantity,
-    reserveCups: quantity,
-    tables: z.record(z.enum(tableIds), z.object({ cups: quantity.int(), dirty: z.boolean() })),
+    disposableCups: z.record(z.enum(disposableCupKinds), z.object({ bar: quantity.int(), reserve: quantity.int() })),
+    reusableCups: z.record(
+      z.enum(reusableCupKinds),
+      z.object({ clean: quantity.int(), dirty: quantity.int(), washed: quantity.int() }),
+    ),
+    tables: z.record(z.enum(tableIds), z.object({ cups: reusableCounts, dirty: z.boolean() })),
     dirtyBar: z.number().int().min(0).max(20),
     trash: quantity,
     totals: totalsSchema,
@@ -253,7 +277,7 @@ export const stateSchema = z
         state.coldBrew?.tool ||
         state.washing?.stage === 'carrying' ||
         state.washing?.spongeHeld ||
-        state.cleaning?.heldCups ||
+        cupCount(state.cleaning?.heldCups) ||
         state.cleaning?.clothHeld
       ),
     '배합 용기와 다른 물건을 동시에 들 수 없어요.',
@@ -283,6 +307,33 @@ export const stateSchema = z
       state.batches.some((batch) => batch.id === state.coldBrew?.batchId && batch.ingredient === 'coldBrew'),
     '회수한 콜드 브루 용기가 없어요.',
   )
+  .refine(
+    (state) =>
+      reusableCupKinds.every((kind) => {
+        const stock = state.reusableCups[kind]
+        const washing = state.washing?.item === kind && state.washing.stage !== 'ready' ? 1 : 0
+        const customer =
+          state.customer?.service === 'dine-in' &&
+          customerHasCup(state.customer) &&
+          reusableCupFor(state.customer.recipe) === kind
+            ? 1
+            : 0
+        const surfaces = state.condiment.cups[kind] + tableIds.reduce((sum, id) => sum + state.tables[id].cups[kind], 0)
+        return (
+          stock.clean +
+            stock.dirty +
+            stock.washed +
+            washing +
+            customer +
+            surfaces +
+            (state.cleaning?.heldCups[kind] ?? 0) +
+            (state.cup?.craft.kind === kind ? 1 : 0) ===
+          4
+        )
+      }),
+    '다회용 컵은 종류별 4개가 보관·제조·사용·세척 위치 사이에서 유지되어야 해요.',
+  )
+
 export type GameState = z.infer<typeof stateSchema>
 export type Batch = z.infer<typeof batchSchema>
 export type Job = z.infer<typeof jobSchema>
