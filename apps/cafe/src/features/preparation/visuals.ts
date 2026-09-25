@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { createPumpVisual } from '../../shared/visuals/pump-visual'
 import { addVesselLabel } from '../../shared/visuals/vessel-label'
 import { workBox as box, workCylinder as cylinder, workMaterial as mat } from '../../shared/visuals/work-geometry'
 import type { GameState } from '../../simulation/state'
@@ -49,10 +50,8 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
   const swirl = new THREE.Mesh(new THREE.TorusGeometry(0.074, 0.008, 8, 32, Math.PI * 1.5), cream)
   swirl.rotation.x = Math.PI / 2
   vessel.add(swirl)
-  const pump = new THREE.Group()
-  scene.add(pump)
-  cylinder(pump, 0.055, 0.055, 0.19, cream, 0.095)
-  const head = box(pump, 0.18, 0.015, 0.025, green, -0.045, 0.23, 0)
+  const pump = createPumpVisual(scene, 'glaze')
+  pump.root.rotation.y = Math.PI
   const tools = new Map<PrepTool, THREE.Group>()
   function tool(id: PrepTool) {
     const group = new THREE.Group()
@@ -127,7 +126,7 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
         !!prep && batch?.location !== 'hand' && prep.tool !== 'tea-shaker' && prep.tool !== 'matcha-shaker'
       vessel.visible = vesselVisible && prep?.recipe !== 'foam'
       foamVessel.root.visible = vesselVisible && prep?.recipe === 'foam'
-      pump.visible = false
+      pump.root.visible = false
       stream.visible = false
       for (const model of tools.values()) model.visible = false
       if (!prep || batch?.location === 'hand') return
@@ -175,9 +174,9 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
       previous = prep.progress
       const pulse = Math.max(0, (pulseUntil - now) / 330)
       if (prep.stage === 'measuring' && operation.kind === 'pump') {
-        pump.visible = true
-        pump.position.set(PREP_SPOT[0] + 0.31, PREP_SPOT[1], PREP_SPOT[2] - 0.06)
-        head.position.y = 0.23 - Math.sin(pulse * Math.PI) * 0.035
+        pump.root.visible = true
+        pump.root.position.set(PREP_SPOT[0], PREP_SPOT[1], PREP_SPOT[2] + 0.36)
+        pump.head.position.y = 0.445 - Math.sin(pulse * Math.PI) * 0.035
       }
       if (prep.tool) {
         const model = tools.get(prep.tool)!
@@ -211,6 +210,7 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
       }
       if ((active && operation.kind === 'pour') || (pulse > 0 && operation.kind !== 'shake')) {
         from.set(PREP_SPOT[0] + 0.1, PREP_SPOT[1] + 0.45, PREP_SPOT[2])
+        if (operation.kind === 'pump') pump.outlet.getWorldPosition(from)
         to.set(PREP_SPOT[0], PREP_SPOT[1] + height + 0.015, PREP_SPOT[2])
         direction.subVectors(to, from)
         stream.position.copy(from).add(to).multiplyScalar(0.5)

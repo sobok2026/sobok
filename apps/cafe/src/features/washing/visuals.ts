@@ -1,7 +1,8 @@
 import * as THREE from 'three'
-import { createCupBody } from '../../shared/visuals/cup-visual'
+import { CUP_DIMENSIONS, createCupBody } from '../../shared/visuals/cup-visual'
 import type { GameState } from '../../simulation/state'
 import { reusableCupKinds } from '../inventory/cups'
+import { DRYING_LEVEL, WASH_OUTLET, WASHING_SPOT } from './equipment'
 import { WASH_STEPS, type WashItem, washItems, washStock } from './rules'
 
 export function createWashingVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
@@ -44,30 +45,22 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
   const working = pitcher(scene)
   const held = pitcher(camera)
   held.group.position.set(0.26, -0.37, -0.62)
-  const dirtyQueue = Array.from({ length: 11 }, (_, i) => {
+  const dirtyQueue = Array.from({ length: 4 }, (_, i) => {
     const value = pitcher(scene)
     value.group.scale.setScalar(0.65)
-    value.group.position.set(
-      -5.5 + (i % 2) * 0.18,
-      1.11 + Math.floor(i / 6) * 0.12,
-      -5.42 + (Math.floor(i / 2) % 3) * 0.2,
-    )
+    value.group.position.set(-5.53, 1.117, -5.42 + i * 0.16)
     return value
   })
-  const washedQueue = Array.from({ length: 11 }, (_, i) => {
+  const washedQueue = Array.from({ length: 6 }, (_, i) => {
     const value = pitcher(scene)
     value.group.scale.setScalar(0.65)
-    value.group.position.set(
-      -4.65 + (i % 2) * 0.18,
-      1.11 + Math.floor(i / 6) * 0.12,
-      -5.42 + (Math.floor(i / 2) % 3) * 0.2,
-    )
+    value.group.position.set(-4.15 + (i % 3) * 0.25, 1.132, -5.32 + Math.floor(i / 3) * 0.29)
     value.stain.visible = false
     return value
   })
   const cleanQueue = Array.from({ length: 5 }, (_, i) => {
     const value = pitcher(scene)
-    value.group.position.set(-4.12 + (i % 2) * 0.3, 1.13, -5.3 + Math.floor(i / 2) * 0.24)
+    value.group.position.set(-4.12 + (i % 2) * 0.3, DRYING_LEVEL, -5.3 + Math.floor(i / 2) * 0.24)
     value.stain.visible = false
     value.show('pitcher')
     return value
@@ -88,10 +81,10 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
     return mesh
   })
   const water = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.009, 0.012, 0.28, 10),
+    new THREE.CylinderGeometry(0.009, 0.012, 1, 10),
     new THREE.MeshStandardMaterial({ color: '#c3e2dc', transparent: true, opacity: 0.7, roughness: 0.1 }),
   )
-  water.position.set(-5, 1.44, -5.14)
+  water.position.fromArray(WASH_OUTLET)
   scene.add(water)
   const hand = new THREE.Vector3()
   const quaternion = new THREE.Quaternion()
@@ -129,7 +122,11 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
       sponge.visible = !!washing?.spongeHeld
       if (sponge.visible) {
         if (active) {
-          sponge.position.set(-5 + Math.sin(now / 75) * 0.065, 1.3, -5.03 + Math.cos(now / 90) * 0.045)
+          sponge.position.set(
+            WASH_SPOT[0] + Math.sin(now / 75) * 0.065,
+            WASH_SPOT[1] + 0.16,
+            WASH_SPOT[2] + 0.02 + Math.cos(now / 90) * 0.045,
+          )
           sponge.rotation.set(0.3, now / 300, 0.2)
         } else {
           hand.set(0.26, -0.24, -0.56)
@@ -149,8 +146,14 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
         mesh.scale.setScalar(Math.max(0.01, amount * (1 + Math.sin(now / 180 + i) * 0.06)))
       })
       water.visible = active && washing?.stage === 'rinse'
+      if (water.visible && washing) {
+        const vesselHeight = washing.item === 'pitcher' ? 0.23 : CUP_DIMENSIONS[washing.item].height
+        const endY = WASH_SPOT[1] + vesselHeight * 0.7
+        water.scale.y = WASH_OUTLET[1] - endY
+        water.position.y = (WASH_OUTLET[1] + endY) / 2
+      }
     },
   }
 }
 
-export const WASH_SPOT: [number, number, number] = [-5, 1.13, -5.05]
+export const WASH_SPOT = WASHING_SPOT

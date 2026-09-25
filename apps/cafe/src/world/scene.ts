@@ -92,7 +92,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const fillLight = new THREE.DirectionalLight('#dce9e3', 0.9)
   fillLight.position.set(-5, 5, -5)
   scene.add(fillLight)
-  const { obstacles, blender, cupStacks } = createShopInterior(scene)
+  const { obstacles, blender, register, syrupStation, cupStacks } = createShopInterior(scene)
   customerVisuals = createCustomerVisuals(scene)
   // Pick volumes are visible only through the interaction UI, never drawn over the shop.
   const pickMaterial = new THREE.MeshBasicMaterial({ visible: false })
@@ -109,7 +109,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
               : id === 'wash'
                 ? 1.2
                 : 0.8,
-        id === 'espresso' ? 1.12 : isTable(id) ? 1 : 0.8,
+        id === 'espresso' || id === 'water' ? 1.12 : isTable(id) ? 1 : 0.8,
         0.8,
       ),
       pickMaterial,
@@ -250,6 +250,8 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     batchVisuals.update(state)
     coldBrewVisuals.update(state, options.activeStation() === 'cold-prep')
     blender.update(state)
+    register.update(state)
+    syrupStation.update(state)
     for (const stack of cupStacks)
       stack.cups.forEach((body, index) => {
         body.root.visible = index < cleanCupCount(state, stack.kind)

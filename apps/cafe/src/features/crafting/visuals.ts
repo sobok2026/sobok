@@ -3,6 +3,8 @@ import { RECIPES, recipeFor } from '../../content/recipes'
 import type { StationId } from '../../content/stations'
 import { staffFacingZ } from '../../content/stations'
 import { CUP_DIMENSIONS } from '../../shared/visuals/cup-visual'
+import { createIceScoop, iceScoopSizes } from '../../shared/visuals/ice-scoop'
+import { createPumpVisual } from '../../shared/visuals/pump-visual'
 import { addVesselLabel } from '../../shared/visuals/vessel-label'
 import {
   workBox as block,
@@ -15,6 +17,7 @@ import { cupService, cupSize } from '../inventory/cups'
 import { createDrinkVisual } from './drink-visual'
 import { ESPRESSO_OUTLET, STEAM_PITCHER_SPOT } from './espresso-machine'
 import { type CraftTool, espressoFill, operationFor } from './rules'
+import { syrupPumpKind, WATER_OUTLET } from './station-equipment'
 
 export function createCraftVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
   const cream = standard('#f8edcf')
@@ -101,11 +104,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
   cylinder(shaker, 0.04, 0.04, 0.025, steel, 0.065)
   addVesselLabel(shaker, '파우더', '#886628', 0.058, 0.036, 0, 0.038)
   const scoop = tool('ice-scoop')
-  const scoopBowl = block(scoop, 0.07, 0.04, 0.1, steel)
-  scoopBowl.position.z = -0.03
-  const scoopHandle = cylinder(scoop, 0.009, 0.009, 0.16, steel)
-  scoopHandle.rotation.x = Math.PI / 2
-  scoopHandle.position.z = 0.07
+  const scoops = iceScoopSizes.map((size) => ({ size, model: createIceScoop(scoop, size) }))
   cylinder(tool('lid'), 0.119, 0.117, 0.018, cream)
 
   const receivingPitcher = new THREE.Group()
@@ -114,11 +113,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
   const pitcherMilk = cylinder(receivingPitcher, 0.081, 0.064, 0.17, cream, 0.09)
   const stream = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 12), standard('#e7d1a4'))
   scene.add(stream)
-  const pump = new THREE.Group()
-  scene.add(pump)
-  cylinder(pump, 0.057, 0.057, 0.18, cream, 0.09)
-  const pumpHead = block(pump, 0.1, 0.018, 0.035, steel)
-  pumpHead.position.set(0.02, 0.205, 0)
+  const pumps = { glaze: createPumpVisual(scene, 'glaze'), classic: createPumpVisual(scene, 'classic') }
   const vapor = Array.from({ length: 7 }, () => {
     const mesh = new THREE.Mesh(
       new THREE.SphereGeometry(0.025, 8, 6),
@@ -143,11 +138,14 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       held.root.visible = !!cup && cup.craft.location === 'hand'
       for (const model of tools.values()) model.visible = false
       stream.visible = false
-      pump.visible = false
+      for (const pump of Object.values(pumps)) pump.root.visible = false
       receivingPitcher.visible = false
       for (const cloud of vapor) cloud.visible = false
       if (!cup) return
       const c = cup.craft
+      const size = cupSize(c.kind)
+      const scoopSize = size === 'trenta' ? 'venti' : size
+      for (const scoop of scoops) scoop.model.visible = scoop.size === scoopSize
       const shotFill = espressoFill(cup.recipe, c.kind)
       if (shotToolLiquid) {
         const fill = Math.max(0.001, 1 - Math.min(1, c.contents.coffee / (shotFill || 1)))
@@ -210,10 +208,13 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         )
         pitcherMilk.position.y = 0.008 + 0.085 * pitcherMilk.scale.y
       }
-      if (station === 'sauce' && op?.kind === 'pump') {
-        pump.visible = true
-        pump.position.set(spot[0] - 0.15, spot[1], spot[2] + 0.05)
-        pumpHead.position.y = 0.205 - Math.sin(pulse * Math.PI) * 0.035
+      const pumpKind = station === 'sauce' ? syrupPumpKind(op) : null
+      const pump = pumpKind ? pumps[pumpKind] : null
+      if (pump) {
+        pump.root.visible = true
+        pump.root.rotation.y = Math.PI
+        pump.root.position.set(spot[0], spot[1], spot[2] + 0.36)
+        pump.head.position.y = 0.445 - Math.sin(pulse * Math.PI) * 0.035
       }
       if (c.tool) {
         const model = tools.get(c.tool)!
@@ -258,7 +259,9 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
             : spot[0]
         start.set(x + (job ? 0 : 0.09), job ? 1.43 : spot[1] + 0.44, job ? staffFacingZ(-0.68) : spot[2])
         if (job?.machine === 'espresso') start.fromArray(ESPRESSO_OUTLET)
-        if (station === 'brew' && op?.kind === 'dispense') start.fromArray(COLD_BREW_OUTLET)
+        if (station === 'brew' && op?.content === 'coffee' && !op.tool) start.fromArray(COLD_BREW_OUTLET)
+        if (station === 'water' && op?.content === 'water' && !op.tool) start.fromArray(WATER_OUTLET)
+        if (pump) pump.outlet.getWorldPosition(start)
         const fillHeight = Math.min(
           CUP_DIMENSIONS[c.kind].height - 0.018,
           (c.contents.sauce +
@@ -321,6 +324,7 @@ export function cupSpot(station: StationId): [number, number, number] {
   if (station === 'espresso') return [ESPRESSO_OUTLET[0], 1.11, ESPRESSO_OUTLET[2]]
   if (station === 'steam') return [STEAM_PITCHER_SPOT[0] + 0.28, STEAM_PITCHER_SPOT[1], STEAM_PITCHER_SPOT[2]]
   if (station === 'brew') return [COLD_BREW_OUTLET[0], 1.102, COLD_BREW_OUTLET[2]]
+  if (station === 'water') return [WATER_OUTLET[0], 1.071, WATER_OUTLET[2]]
   const x: Partial<Record<StationId, number>> = {
     water: 1.1,
     ice: 2.1,

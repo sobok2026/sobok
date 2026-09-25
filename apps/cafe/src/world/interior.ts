@@ -3,9 +3,13 @@ import { drinkSizeIds } from '../content/drink-sizes'
 import { BAR_CENTER_Z, staffFacingZ } from '../content/stations'
 import { createColdBrewDispenser } from '../features/cold-brew/equipment'
 import { createEspressoMachine } from '../features/crafting/espresso-machine'
+import { createIceBin, createSyrupStation, createWaterStation } from '../features/crafting/station-equipment'
 import { cupKinds, cupSize, cupStyle, cupStyles } from '../features/inventory/cups'
+import { createRefrigerator } from '../features/inventory/refrigerator'
 import { createBlender } from '../features/preparation/blender'
 import { CUSTOMER_DOOR_X } from '../features/service/customer'
+import { createRegister } from '../features/service/register'
+import { createWashingEquipment } from '../features/washing/equipment'
 import { createCupBody } from '../shared/visuals/cup-visual'
 import { addVesselLabel } from '../shared/visuals/vessel-label'
 
@@ -127,8 +131,16 @@ export function createShopInterior(scene: THREE.Scene) {
     scene.add(crown)
   }
   // Main bar with fluted wood facing.
-  box(0, 0.48, -1.05, 11.5, 0.96, 1.18, '#946e4c')
-  box(0, 1.0, -1.05, 11.7, 0.12, 1.35, '#ddd1b9')
+  // The drop-in ice bin extends through the top into a cavity in the existing cabinet.
+  box(-1.95, 0.48, -1.05, 7.6, 0.96, 1.18, '#946e4c')
+  box(4.05, 0.48, -1.05, 3.4, 0.96, 1.18, '#946e4c')
+  box(2.1, 0.48, -1.4525, 0.5, 0.96, 0.375, '#946e4c')
+  box(2.1, 0.48, -0.5275, 0.5, 0.96, 0.135, '#946e4c')
+  box(2.1, 0.36, -0.93, 0.5, 0.72, 0.67, '#946e4c')
+  box(-1.9925, 1.0, -1.05, 7.715, 0.12, 1.35, '#ddd1b9')
+  box(4.0925, 1.0, -1.05, 3.515, 0.12, 1.35, '#ddd1b9')
+  box(2.1, 1.0, -1.4875, 0.47, 0.12, 0.475, '#ddd1b9')
+  box(2.1, 1.0, -0.4925, 0.47, 0.12, 0.235, '#ddd1b9')
   const barSlats: [number, number, number, number, number, number][] = []
   for (let x = -5.6; x <= 5.6; x += 0.18) barSlats.push([x, 0.47, -0.445, 0.035, 0.85, 0.025])
   repeatedBoxes(barSlats, '#795a3c')
@@ -149,7 +161,11 @@ export function createShopInterior(scene: THREE.Scene) {
   floorSign.rotation.y = Math.PI
   scene.add(floorSign)
   box(-2.9, 0.5, -5.2, 5.5, 1, 0.9, '#e1d5bb')
-  box(-2.9, 1.05, -5.2, 5.6, 0.09, 1.0, '#c8bda5')
+  // Leave a real opening in the worktop for the recessed washing basin.
+  box(-5.56, 1.05, -5.2, 0.28, 0.09, 1.0, '#c8bda5')
+  box(-2.34, 1.05, -5.2, 4.48, 0.09, 1.0, '#c8bda5')
+  box(-5, 1.05, -5.56, 0.84, 0.09, 0.28, '#c8bda5')
+  box(-5, 1.05, -4.74, 0.84, 0.09, 0.08, '#c8bda5')
   obstacles.push({ x: -2.9, z: -5.2, width: 5.6, depth: 1 })
   const mainSign = sign('DAY SHIFT\nCOFFEE & COMPANY', 3.9, 1.2)
   mainSign.position.set(0, 2.65, -5.72)
@@ -189,13 +205,7 @@ export function createShopInterior(scene: THREE.Scene) {
   plant(5.9, 4.6, 1.3)
   plant(-5.0, 3.7, 0.75)
   // Named work surfaces remain visually distinct at first-person distance.
-  box(-4.8, 1.12, -1.05, 0.35, 0.13, 0.38, '#38483d')
-  const screen = box(-4.8, 1.45, staffFacingZ(-1.06), 0.54, 0.36, 0.05, '#183b32')
-  screen.rotation.set(0.2, Math.PI, 0)
-  const screenText = sign('POS\n주문 접수', 0.48, 0.28, '#a5beab', '#17372f')
-  screenText.position.set(-4.8, 1.46, staffFacingZ(-1.015))
-  screenText.rotation.set(0.2, Math.PI, 0)
-  scene.add(screenText)
+  const register = createRegister(scene)
   const cupStacks = cupKinds.map((kind) => ({
     kind,
     cups: Array.from({ length: 4 }, (_, i) => {
@@ -213,26 +223,9 @@ export function createShopInterior(scene: THREE.Scene) {
   const milkCarton = box(-3.23, 1.25, staffFacingZ(-1.12), 0.15, 0.38, 0.18, '#e7e6d7')
   addVesselLabel(milkCarton, '우유', '#527f66', 0.13, 0.09, 0, 0.092)
   createColdBrewDispenser(scene)
-  const waterDispenser = box(1.1, 1.3, staffFacingZ(-1.15), 0.25, 0.5, 0.26, '#d5ded3')
-  addVesselLabel(waterDispenser, '정수 · 온수', '#6e928e', 0.22, 0.09, 0.08, 0.132)
-  addVesselLabel(waterDispenser, 'HOT  T · G · V', '#95612d', 0.22, 0.055, -0.04, 0.133)
-  box(1.1, 1.45, staffFacingZ(-0.91), 0.05, 0.05, 0.3, '#6d8c7b')
-  box(2.1, 1.15, staffFacingZ(-1.1), 0.65, 0.2, 0.57, '#8dada9')
-  for (let i = 0; i < 8; i++)
-    box(
-      1.9 + (i % 3) * 0.14,
-      1.26 + (i % 2) * 0.025,
-      staffFacingZ(-1.26 + Math.floor(i / 3) * 0.14),
-      0.1,
-      0.08,
-      0.1,
-      '#e2eddf',
-    )
-  for (let i = 0; i < 2; i++) {
-    const bottle = cylinder(2.96 + i * 0.28, 1.28, staffFacingZ(-1.1), 0.1, 0.1, 0.4, i ? '#d5b476' : '#eee0bb')
-    addVesselLabel(bottle, i ? '클래식' : '글레이즈드', i ? '#9b793e' : '#44694b', 0.16, 0.085, -0.025, 0.102)
-    box(2.96 + i * 0.28, 1.52, staffFacingZ(-1.01), 0.045, 0.03, 0.25, '#484b3a')
-  }
+  createWaterStation(scene)
+  createIceBin(scene)
+  const syrupStation = createSyrupStation(scene)
   box(4.1, 1.07, staffFacingZ(-1.0), 0.72, 0.025, 0.5, '#697959')
   const foamContainer = cylinder(4.95, 1.24, staffFacingZ(-1.1), 0.15, 0.13, 0.33, '#e9ddbc')
   addVesselLabel(foamContainer, '폼', '#527f66', 0.19, 0.1, -0.015, 0.145)
@@ -245,9 +238,7 @@ export function createShopInterior(scene: THREE.Scene) {
   pickupSign.position.set(6.1, 0.75, -0.438)
   scene.add(pickupSign)
   const blender = createBlender(scene)
-  box(5.5, 1.1, -5.2, 1.4, 2.2, 1.0, '#c0cabb', scene, 0.25)
-  box(5.5, 1.12, -4.68, 1.25, 2.03, 0.05, '#aebfae')
-  box(5.02, 1.45, -4.61, 0.045, 0.42, 0.065, '#556e5d')
+  createRefrigerator(scene)
   obstacles.push({ x: 5.5, z: -5.2, width: 1.4, depth: 1.1 })
   box(3, 0.5, -5.2, 1.9, 1, 0.85, '#b39a79')
   box(3, 1.05, -5.2, 2, 0.09, 0.95, '#d3c3a5')
@@ -261,12 +252,7 @@ export function createShopInterior(scene: THREE.Scene) {
   const extractionSign = sign('COLD BREW\n계량 · 추출 · 회수', 1.4, 0.4, '#eee5d1', '#344e3d')
   extractionSign.position.set(1, 2.2, -5.7)
   scene.add(extractionSign)
-  box(-5.0, 1.1, -5.1, 0.84, 0.035, 0.65, '#283c38')
-  for (const z of [-5.43, -4.77]) box(-5, 1.126, z, 0.9, 0.035, 0.04, '#b5c6ba', scene, 0.6)
-  for (const x of [-5.44, -4.56]) box(x, 1.126, -5.1, 0.04, 0.035, 0.66, '#b5c6ba', scene, 0.6)
-  box(-5.0, 1.36, -5.47, 0.035, 0.55, 0.04, '#c5d1c8', scene, 0.6)
-  box(-5.0, 1.62, -5.31, 0.035, 0.03, 0.35, '#c5d1c8', scene, 0.6)
-  box(-3.9, 1.11, -5.1, 0.9, 0.035, 0.65, '#8a9a83')
+  createWashingEquipment(scene)
   box(-5.4, 0.38, 5.1, 0.58, 0.76, 0.58, '#3c5e4a')
   box(-5.4, 0.8, 5.1, 0.65, 0.07, 0.65, '#263f31')
   box(0, 0.49, 5.15, 1.85, 0.98, 0.8, '#946e4c')
@@ -287,5 +273,5 @@ export function createShopInterior(scene: THREE.Scene) {
       box(x, 0.77, z + (z < 3.7 ? -0.24 : 0.24), 0.55, 0.58, 0.06, '#778267')
     }
   }
-  return { obstacles, blender, cupStacks }
+  return { obstacles, blender, register, syrupStation, cupStacks }
 }
