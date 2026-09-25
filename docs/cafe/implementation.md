@@ -1,6 +1,8 @@
 # 카페 게임 구현 준비
 
-현재 구현 이후의 우선순위·범위·완료 기준은 [후속 작업 분석](./next-steps.md)을 따른다. 아래 구현 순서는 기반 작업의 순서와 완료 기록이다.
+현재 구현 이후의 우선순위·범위·완료 기준은 [후속 작업 분석](./next-steps.md)을 따른다. 2026-09-25 전체 코드 진단과 리팩터링 결과는 [코드 구조 진단](./code-health.md)에 기록한다. 아래 구현 순서는 기반 작업의 순서와 완료 기록이다.
+
+과거 확인 기록에 남아 있는 500KB 초과 경고는 후속 [빌드 청크 분리](#빌드-청크-분리)에서 해결했다.
 
 ## 착수 조건
 
@@ -25,9 +27,9 @@
 ## UI 스타일
 
 - `apps/cafe/vite.config.ts`에서 `@tailwindcss/vite`를 연결한다. `src/style.css`의 `source('.')`는 클래스 탐색 기준을 이 앱의 소스 디렉터리로 고정한다.
-- 색상·글꼴·반복되는 글자 크기·그림자·화면 너비 기준은 `@theme`으로 정의한다. 낮은 화면의 HUD 배치는 `short`·`compact` 높이 변형을 사용한다.
+- 색상·글꼴·반복되는 글자 크기·그림자·화면 너비 기준은 `@theme`으로 정의한다. 낮은 화면의 HUD 배치는 `compact` 높이 변형을 사용한다.
 - 각 JSX 요소에 유틸리티 클래스를 작성한다. 기존 화면 클래스나 `@apply` 기반 컴포넌트 스타일은 두지 않는다. Three.js가 생성하는 canvas는 호스트의 하위 요소 변형으로 크기를 지정한다.
-- 반복되는 일반 버튼은 `Button.tsx`, 작업 HUD·제목·조작 버튼·게이지는 `WorkControls.tsx`에서 공유한다. 버튼의 색상과 크기는 명시적인 variant·size로 선택하고, 호출부의 `className`은 배치용으로 사용한다.
+- 반복되는 일반 버튼은 `Button.tsx`, 작업 HUD·제목·조작 버튼·게이지는 `WorkControls.tsx`에서 공유한다. 재고·소모품 목록의 동일한 버튼은 `Button.tsx`의 `InventoryButton`을 사용한다. 버튼의 색상과 크기는 명시적인 variant·size로 선택하고, 호출부의 `className`은 배치용으로 사용한다.
 - 클래스 이름의 일부를 동적으로 이어 붙이지 않는다. 상태는 완전한 클래스 문자열 또는 `data-*`·이름 있는 `group` 변형으로 표현한다. 재고 펼침 상태는 네이티브 `details`의 `open`을 따른다.
 - 실행 중 계산되는 게이지 너비·목표 위치는 인라인 스타일로 전달한다. 정적인 배치와 장식은 Tailwind로 관리한다.
 - Preflight의 초기화를 기준으로 여백·목록·타이포그래피를 요소에 명시한다. 전역 CSS에는 테마와 기본 요소 규칙만 두며, 키보드 `focus-visible`과 동작 줄이기 설정을 반영한다.
@@ -87,12 +89,22 @@ IndexedDB에 현재 상태를 저장한다. 입력 검증, 저장 실패 안내,
 - `apps/cafe/src/game/supplies-visuals.ts`: 컨디먼트 진열 수량과 보충품 운반 표현.
 - `apps/cafe/src/game/customer.ts`: 한 손님의 이동 경로·단계·체류 시간·이용 의도.
 - `apps/cafe/src/game/customer-visuals.ts`: 걷기·방향 전환·착석·음료 운반·퇴장 표현.
-- `apps/cafe/src/game/state.ts`: 저장 형식과 검증.
-- `apps/cafe/src/game/store.ts`: 주문·작업·재고·시간·마감 상태 전이.
-- `apps/cafe/src/game/scene.ts`: 3D 공간, 이동·충돌, 시선 상호작용과 정리.
+- `apps/cafe/src/game/state.ts`: 저장 형식·검증과 스키마에서 추론한 업무별 타입.
+- `apps/cafe/src/game/store.ts`: 행동·tick의 상태 복사, 처리 순서와 snapshot 발행.
+- `apps/cafe/src/game/actions.ts`, `work-context.ts`, `action-guards.ts`: 행동 타입, 일시적인 입력, 손 점유에 따른 공통 차단.
+- `apps/cafe/src/game/*-actions.ts`: 주문·음료 제조·부재료 준비·콜드 브루·세척·청소·재고의 업무별 상태 전이.
+- `apps/cafe/src/game/initial-state.ts`, `inventory.ts`, `inventory-summary.ts`, `progress.ts`: 초기 상태, 재고 소비·조회, 필요한 재료와 다음 작업·마감 목록.
+- `apps/cafe/src/game/active-work.ts`, `jobs.ts`, `customer-progress.ts`: 연속 입력, 장비 완료와 손님 이용 진행.
+- `apps/cafe/src/game/feedback.ts`, `format.ts`: 업무 메시지·작업 시작 기록과 날짜 표시.
+- `apps/cafe/src/game/scene.ts`: 시선 대상, 3D 장면 갱신과 GPU 자원 정리.
+- `apps/cafe/src/game/shop-interior.ts`, `player-controls.ts`: 매장 조형물·충돌 영역과 키보드·포인터 잠금·이동.
+- `apps/cafe/src/game/drink-visual.ts`, `work-geometry.ts`: 컵 내용물·목표선·토핑과 제조·준비가 공유하는 도형 생성.
 - `apps/cafe/src/game/storage.ts`: IndexedDB, 이전 저장본, 파일 백업.
 - `apps/cafe/src/game/preferences.ts`: 음소거·음량·마우스 감도의 기본값과 설정 검증.
-- `apps/cafe/src/ui/App.tsx`: 시작 화면, POS, 작업 패널, HUD, 결산.
+- `apps/cafe/src/ui/App.tsx`: 부팅과 시작·메뉴·결산 화면의 구성.
+- `apps/cafe/src/ui/use-cafe-session.ts`, `station-interactions.ts`: 화면 모드·작업 연결과 작업대에서 수행할 행동 선택.
+- `apps/cafe/src/ui/use-cafe-scene.ts`, `use-work-preferences.ts`, `use-writer-lock.ts`: 3D 수명, 설정·오디오 수명, 탭 잠금 수명.
+- `apps/cafe/src/ui/PosPanel.tsx`, `StationPanel.tsx`, `PlayHud.tsx`, `ShiftOverview.tsx`: POS 입력, 작업대 패널, 플레이 HUD, 매장 현황.
 - `apps/cafe/src/style.css`: Tailwind 진입점, 테마와 기본 요소 스타일.
 - `apps/cafe/src/ui/Button.tsx`: 일반·보조·텍스트 버튼의 공통 스타일과 크기 변형.
 - `apps/cafe/src/ui/CraftingHud.tsx`: 직접 제조 조작, 목표량과 진행량, 다음 작업대 안내.
@@ -105,7 +117,7 @@ IndexedDB에 현재 상태를 저장한다. 입력 검증, 저장 실패 안내,
 - `apps/cafe/src/ui/InventoryPanel.tsx`: 재고 상태별 수량, 남은 주문·준비 배합의 부족량과 보충 안내.
 - `apps/cafe/src/ui/ShiftLedger.tsx`: 매장 현황·결산에서 공유하는 당일 입고·폐기·현금·소모품 사용 기록.
 - `apps/cafe/src/ui/SupplyPanel.tsx`: 창고의 소모품 입고·집기와 컨디먼트 바 진열 현황.
-- `apps/cafe/src/ui/WorkGuide.tsx`: H로 여는 현재 작업·조작법·레시피 도움말.
+- `apps/cafe/src/ui/WorkGuide.tsx`, `work-guide-tips.ts`: H로 여는 도움말 화면과 상황별 안내 선택.
 - `apps/cafe/src/ui/GameDialog.tsx`: 도움말·메뉴·매장 현황·결산의 공통 대화상자와 키보드 포커스 관리.
 - `apps/cafe/src/ui/work-sounds.ts`: 작업 상태 변화에 따른 녹음 재생, 연속 작업음과 오디오 수명 관리.
 - `apps/cafe/src/ui/WorkSettings.tsx`: 마우스 감도·음소거·음량·미리 듣기 설정.
@@ -305,3 +317,30 @@ Chrome에서 컵을 들고 60초 동안 회전하며 3,600프레임을 기록했
 - 일회용 두 종류가 각각 보관대 0개·후방 12개인 상태에서 UI로 따로 보충해 각각 6개·6개로 이동했다. 다른 종류의 수량은 함께 차감되지 않았다.
 - 마감 업무를 모두 마친 결산은 5잔·판매액 31,000원·입고 지출 0원·잔액 81,000원이었다. 피처는 깨끗한 3개, 머그·유리잔은 각각 깨끗한 4개였고 세척/정리 대기는 없었다. 다음 날 당일 기록이 초기화되고 잔액·재고·배치 기한이 이어졌다. 새로고침 뒤 2일차·81,000원·같은 손님 ID를 복원했고 M 현황의 컵 수량·만료 배치 표시와 H 도움말을 확인했다.
 - 전체 타입·자료 연결·프로덕션 빌드, `biome check apps/cafe/src`, `git diff --check`를 확인했다. 브라우저 애플리케이션 오류는 없었다. 빌드의 기존 500KB 청크 경고는 남아 있다. 자동 테스트 파일·검증을 위한 제품 코드·별도 저장 호환 계층은 추가하지 않았고, 조작 도우미·캡처·기록은 무시되는 로컬 `tmp/`에만 두었다.
+
+## 빌드 청크 분리
+
+2026-09-25 사용자가 500KB 초과 경고 해결을 요청했다. Vite 8.3.0의 빌드 모듈 구성을 확인한 결과, 메인 청크에는 React·React DOM·scheduler와 앱 코드·Zod·자료가 함께 들어 있었고, 동적 장면 청크에는 Three.js의 `three.core.js`와 `three.module.js`, 앱의 3D 코드가 함께 들어 있었다.
+
+`apps/cafe/vite.config.ts`의 `build.rolldownOptions.output.codeSplitting.groups`에서 React 계열, Three.js 코어, Three.js 렌더러를 각각 분리한다. Three.js 코어 그룹을 렌더러보다 먼저 선언해, 기본 의존성 포함 동작이 두 모듈을 다시 합치지 않도록 한다. 앱 코드는 기존 자동 청크 분리를 사용한다. [Vite 빌드 옵션](https://vite.dev/config/build-options#build-rolldownoptions), [Rolldown 청크 분리](https://rolldown.rs/reference/OutputOptions.codeSplitting)
+
+별도 라이브러리 청크는 앱 코드가 바뀔 때 함께 갱신되는 캐시 범위를 줄인다. 생성된 정적 의존성에서 React는 bundler runtime만, Three.js 렌더러는 Three.js 코어만 참조한다. 이 라이브러리들이 앱 청크를 참조하는 순환은 없다. `includeDependenciesRecursively`는 기본값을 유지하며, 원본 모듈 경계로 분리한다.
+
+3D 로딩 시점은 기존처럼 시작 화면을 준비할 때의 `import('../game/scene')`다. 초기 HTML은 React와 bundler runtime을 preload하고, 장면의 동적 import가 Three.js 코어·렌더러를 함께 불러온다. 게임 규칙·저장 형식·React 화면 구조·엔진·의존성 버전은 변경하지 않았다.
+
+| 청크            |   변경 전 바이트 | 변경 후 바이트 | 변경 후 gzip 바이트 |
+| --------------- | ---------------: | -------------: | ------------------: |
+| 메인            |          520,844 |        330,497 |              81,563 |
+| 장면            |          584,274 |         42,475 |              16,708 |
+| React 계열      |      메인에 포함 |        189,588 |              59,604 |
+| Three.js 코어   |      장면에 포함 |        191,004 |              51,880 |
+| Three.js 렌더러 |      장면에 포함 |        352,317 |              84,771 |
+| Bundler runtime | 기존 청크에 포함 |            589 |                 368 |
+
+수치는 minify한 실제 출력 파일의 UTF-8 바이트 길이다. 가장 큰 청크는 584,274바이트에서 352,317바이트로 줄었다. `chunkSizeWarningLimit` 변경이나 경고 필터 없이 Vite 기본 500KB 기준을 통과한다.
+
+JS 파일은 2개에서 6개가 되고, 전체 JS 크기는 1,105,118바이트에서 1,106,470바이트로 거의 같다. 이번 변경은 개별 청크와 캐시 경계를 정리한 결과다. 전체 전송량 감소나 실행 중 프레임 속도 향상을 의미하지 않는다.
+
+`bun run --filter=@sobok/cafe build`의 자료 검사·타입 검사·프로덕션 빌드와 설정의 Biome 검사를 통과했고, 청크 크기 경고는 발생하지 않았다. 프로덕션 미리보기의 별도 브라우저에서 여섯 JS 파일의 HTTP 200 응답, 1280×720 시작 화면과 3D 장면, POS 주문 접수, 도움말 진입·복귀, 컵 집기·이동·콜드 브루 계량·확인, 저장 후 새로고침·이어 하기를 확인했다. 브라우저 오류와 콘솔 오류는 없었다.
+
+자동 테스트나 분석용 제품 코드는 추가하지 않았다. 모듈 분석 결과와 화면 캡처는 저장소 밖에 보관하고, 확인용 브라우저·서버는 종료했다.

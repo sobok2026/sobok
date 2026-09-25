@@ -79,6 +79,8 @@ bun run --filter=@sobok/cafe preview
 
 측정 환경과 범위는 [구현 기록](../../docs/cafe/implementation.md#표현과-성능-측정)에 남긴다. 모든 PC의 60fps를 보장하는 수치는 아니다.
 
+프로덕션 빌드는 React와 Three.js의 코어·렌더러를 별도 청크로 출력한다. Vite의 기본 500KB 경고 기준을 유지하며, 분리 근거와 크기·로딩 확인 결과는 [빌드 청크 분리](../../docs/cafe/implementation.md#빌드-청크-분리)에 기록한다.
+
 ## UI 스타일
 
 Tailwind CSS v4와 공식 `@tailwindcss/vite` 플러그인을 사용한다. `src/style.css`는 테마·기본 요소 스타일·높이 반응형 변형을 정의하고, 화면 스타일은 `src/ui`의 JSX에 둔다. 반복되는 버튼과 작업 HUD는 앱 내부 컴포넌트로 공유한다. 계량 게이지의 진행률·목표 위치는 계산된 인라인 스타일을 사용한다.
@@ -104,6 +106,7 @@ bun run --filter=@sobok/cafe check:references
 
 - [게임 설계](../../docs/cafe/design.md)
 - [구현 구조와 순서](../../docs/cafe/implementation.md)
+- [코드 구조 진단과 정리](../../docs/cafe/code-health.md)
 - [자료 근거와 임시 규칙](../../docs/cafe/prototype-rules.md)
 - [후속 작업 분석과 우선순위](../../docs/cafe/next-steps.md)
 
