@@ -115,7 +115,7 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
             tolerance={isMetered(op) && !counter ? op.tolerance : undefined}
           />
           <div className="flex flex-wrap gap-2">
-            {op.tool || c.tool ? (
+            {c.tool || (op.tool && !ready) ? (
               <WorkButton shortcut="G" primary={toolIsNext} onUse={() => onTool(place)}>
                 {c.tool ? `${TOOL_NAMES[c.tool]} 놓기` : `${TOOL_NAMES[op.tool!]} 집기`}
               </WorkButton>
@@ -139,7 +139,7 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
             ) : null}
             {op.kind !== 'machine' && ready && !c.tool ? (
               <WorkButton shortcut="F" primary onUse={() => onConfirm(place)}>
-                {op.kind === 'steam' ? '스팀 시작' : '계량 확인'}
+                {op.kind === 'steam' ? '스팀 시작' : op.kind === 'lid' ? '리드 확인' : '계량 확인'}
               </WorkButton>
             ) : null}
           </div>

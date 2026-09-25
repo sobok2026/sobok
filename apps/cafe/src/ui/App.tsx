@@ -304,7 +304,12 @@ function CafeGame({
       else scene.current?.unlockForCraft()
       return
     }
-    if (id === 'cups' && current.ticket && !current.cup) {
+    if (
+      id === 'cups' &&
+      current.ticket &&
+      !current.cup &&
+      cleanCupCount(current, cupKindFor(current.ticket.recipe, current.ticket.service)) > 0
+    ) {
       act({ type: 'take-cup' })
       return
     }
@@ -626,7 +631,7 @@ function CafeGame({
         event.defaultPrevented ||
         event.repeat ||
         flags.current.confirmNew ||
-        event.target instanceof HTMLInputElement ||
+        (event.target instanceof HTMLInputElement && event.target.type !== 'radio') ||
         event.target instanceof HTMLSelectElement
       )
         return
@@ -730,6 +735,9 @@ function CafeGame({
             ? { name: CUP_NAMES[state.cup.craft.kind], destination: step?.station ?? ('pickup' as const) }
             : null
   const selectedCupKind = state.ticket ? cupKindFor(state.ticket.recipe, state.ticket.service) : null
+  const washingQueue = washItems
+    .map((item) => ({ item, ...washStock(state, item) }))
+    .filter((stock) => stock.dirty > 0 || stock.washed > 0)
   const targetAction =
     cupCount(state.cleaning?.heldCups) && target === 'wash'
       ? '사용한 컵 내려놓기'
@@ -749,8 +757,10 @@ function CafeGame({
               ? '소모품 채우기'
               : state.supplyDelivery && target === 'stock'
                 ? '보충품 내려놓기'
-                : target === 'cups' && state.ticket && !state.cup
-                  ? '컵 집기'
+                : target === 'cups' && selectedCupKind && !state.cup
+                  ? cleanCupCount(state, selectedCupKind) > 0
+                    ? `${CUP_NAMES[selectedCupKind]} 집기`
+                    : '컵 재고 확인'
                   : target && state.cup && craftStations.includes(target) && state.cup.craft.location === 'hand'
                     ? '컵 내려놓기'
                     : target === 'stock'
@@ -1038,22 +1048,27 @@ function CafeGame({
                         </option>
                       ))}
                     </select>
-                    <label className="mb-2 block text-xs text-muted" htmlFor="pos-service">
-                      이용 방식
-                    </label>
-                    <select
-                      id="pos-service"
-                      className="mb-4 w-full rounded-lg border border-control-line bg-control p-3 text-sm"
-                      value={posService}
+                    <fieldset
+                      className="mb-4 grid grid-cols-2 gap-2 disabled:opacity-45"
                       disabled={!!state.cup || !canTakeOrder}
-                      onChange={(event) => setPosService(event.target.value as ServiceMode)}
                     >
+                      <legend className="mb-2 text-xs text-muted">이용 방식</legend>
                       {serviceModes.map((service) => (
-                        <option key={service} value={service}>
-                          {SERVICE_NAMES[service]}
-                        </option>
+                        <label key={service} className="cursor-pointer">
+                          <input
+                            className="peer sr-only"
+                            type="radio"
+                            name="pos-service"
+                            value={service}
+                            checked={posService === service}
+                            onChange={() => setPosService(service)}
+                          />
+                          <span className="block rounded-xl border border-control-line bg-control px-3 py-2.5 text-center text-sm peer-checked:border-brand peer-checked:bg-brand peer-checked:text-on-brand peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus">
+                            {SERVICE_NAMES[service]}
+                          </span>
+                        </label>
                       ))}
-                    </select>
+                    </fieldset>
                     <Button
                       disabled={!!state.cup || !canTakeOrder}
                       onClick={() => act({ type: 'ticket', recipe: posSelection, service: posService })}
@@ -1193,24 +1208,28 @@ function CafeGame({
             ) : null}
             {panel === 'wash' ? (
               <div className="divide-y divide-line">
-                {washItems.map((item) => {
-                  const stock = washStock(state, item)
+                {washingQueue.length === 0 ? <p className="text-sm text-muted">세척할 용기 없음</p> : null}
+                {washingQueue.map(({ item, dirty, washed }) => {
                   return (
                     <section key={item} className="py-3" aria-label={`${WASH_NAMES[item]} 세척 재고`}>
                       <p className="mb-3 flex justify-between gap-3 text-sm">
                         <span>{WASH_NAMES[item]}</span>
-                        <span className="text-muted">세척 대기 {stock.dirty}개</span>
+                        <span className="text-muted">
+                          {dirty > 0 ? `세척 대기 ${dirty}개` : `세척 완료 ${washed}개`}
+                        </span>
                       </p>
-                      <Button disabled={!!state.washing || !stock.dirty} onClick={() => act({ type: 'wash', item })}>
-                        {WASH_NAMES[item]} 세척 시작
-                      </Button>
-                      {stock.washed > 0 ? (
+                      {dirty > 0 ? (
+                        <Button disabled={!!state.washing} onClick={() => act({ type: 'wash', item })}>
+                          {WASH_NAMES[item]} 세척 시작
+                        </Button>
+                      ) : null}
+                      {washed > 0 ? (
                         <Button
-                          variant="secondary"
+                          variant={dirty > 0 ? 'secondary' : 'primary'}
                           disabled={!!state.washing}
                           onClick={() => act({ type: 'take-washed', item })}
                         >
-                          씻은 {WASH_NAMES[item]} 집기 · {stock.washed}개
+                          씻은 {WASH_NAMES[item]} 집기
                         </Button>
                       ) : null}
                     </section>

@@ -331,7 +331,9 @@ function currentTip(state: GameState, panel: StationId | null): Tip {
           : ready
             ? op.kind === 'steam'
               ? 'F로 계량을 확인하고 스팀을 시작하세요.'
-              : 'F로 계량을 확인하고 다음 단계로 넘어가세요.'
+              : op.kind === 'lid'
+                ? 'F로 리드 부착을 확인하세요.'
+                : 'F로 계량을 확인하고 다음 단계로 넘어가세요.'
             : op.tool && craft.tool !== op.tool
               ? `G로 도구를 집으세요 · ${TOOL_NAMES[op.tool]}`
               : op.kind === 'machine'
@@ -374,9 +376,13 @@ function currentTip(state: GameState, panel: StationId | null): Tip {
     return {
       title: `${CUP_NAMES[kind]}를 준비하세요`,
       action: isReusableCup(kind)
-        ? '사용한 컵을 회수해 세척대에서 씻고 컵 보관대에 돌려놓으세요.'
+        ? state.reusableCups[kind].washed > 0
+          ? `세척대에서 씻은 ${CUP_NAMES[kind]}를 집어 컵 보관대에 놓으세요.`
+          : state.reusableCups[kind].dirty > 0
+            ? `세척대에서 ${CUP_NAMES[kind]}를 씻고 컵 보관대에 놓으세요.`
+            : '사용한 컵을 회수해 세척대에서 씻고 컵 보관대에 돌려놓으세요.'
         : state.disposableCups[kind].reserve
-          ? '창고에서 해당 컵을 보충한 뒤 컵 보관대로 돌아가세요.'
+          ? '컵 보관대에서 E로 재고를 열고 해당 컵을 보충하세요.'
           : '창고에서 해당 컵을 입고하고 보관대를 보충하세요.',
       reason: '매장은 다회용, 포장은 일회용 컵을 사용해요. HOT·ICED 컵도 구분해요.',
     }
@@ -505,8 +511,7 @@ export default function WorkGuide({
           퇴장합니다. 매장 손님은 테이블을 이용한 뒤 컵을 반납하거나 테이블에 남깁니다.
         </p>
         <p className="mt-2 text-muted">
-          ICED 컵에는 하단·중간·상단 기준선이 있습니다. 금색 선은 현재 단계의 목표 높이이며 HOT 컵에도 표시됩니다. ml
-          환산 수치는 게임용 임시값입니다.
+          ICED 컵에는 하단·중간·상단 기준선이 있습니다. 금색 선은 현재 단계의 목표 높이이며 HOT 컵에도 표시됩니다.
         </p>
       </details>
       <details className="border-t border-line pt-4">

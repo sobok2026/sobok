@@ -33,7 +33,7 @@ export default function CleaningHud({
   return (
     <WorkHud aria-label="청소·정리">
       <div className="mb-2 flex items-center justify-between gap-3 text-xs text-muted compact:mb-1.5">
-        <span>{STATIONS[cleaning.station].name}</span>
+        <span>{STATIONS[target ?? cleaning.station].name}</span>
         <span>{cleaning.stage === 'collect' ? '컵 회수' : cleaning.stage === 'bag' ? '분리수거' : '닦기'}</span>
       </div>
       {cupCount(cleaning.heldCups) > 0 ? (
