@@ -373,7 +373,7 @@ function CafeGame({
     if (action.type === 'pick-cup' && store.getSnapshot().cup?.craft.location === 'hand') scene.current?.lock()
     const current = store.getSnapshot()
     if (flags.current.mode === 'play' && focused.current && !document.hidden) {
-      const feedback = actionSound(action, previous, current, store.getActiveInput())
+      const feedback = actionSound(action, previous, current)
       if (feedback) sounds.current?.play(feedback)
     }
     updateSoundLoop()
