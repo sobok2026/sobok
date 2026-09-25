@@ -513,6 +513,7 @@ function CafeGame({
         try {
           scene.current = createCafeScene(host.current, {
             getState: store.getSnapshot,
+            mouseSensitivity: () => preferencesRef.current.mouseSensitivity,
             isRunning: () =>
               flags.current.mode === 'play' &&
               flags.current.started &&
@@ -768,6 +769,7 @@ function CafeGame({
             sounds.current?.stop()
             setGuideOpen(preferencesRef.current.guidance && !firstOrdersDone(imported))
             scene.current?.reset(imported.position)
+            scene.current?.unlock()
             flags.current.started = true
             setStarted(true)
             setSaveStatus('백업을 불러왔어요.')

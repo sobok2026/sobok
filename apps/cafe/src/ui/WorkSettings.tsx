@@ -20,8 +20,23 @@ export default function WorkSettings({
   onGuide: () => void
 }) {
   return (
-    <section className="my-5 border-y border-line py-4 text-sm" aria-label="안내와 작업음 설정">
-      <h3 className="mb-3 font-semibold">안내와 작업음</h3>
+    <section className="my-5 border-y border-line py-4 text-sm" aria-label="조작·안내·작업음 설정">
+      <h3 className="mb-3 font-semibold">조작·안내·작업음</h3>
+      <label className="flex items-center justify-between gap-3" htmlFor="mouse-sensitivity">
+        마우스 감도 <span className="text-xs text-muted">{Math.round(preferences.mouseSensitivity * 100)}%</span>
+      </label>
+      <input
+        id="mouse-sensitivity"
+        type="range"
+        className="my-2 w-full accent-brand"
+        min="50"
+        max="200"
+        step="10"
+        value={Math.round(preferences.mouseSensitivity * 100)}
+        aria-valuetext={`${Math.round(preferences.mouseSensitivity * 100)}%`}
+        onChange={(event) => onChange({ mouseSensitivity: Number(event.target.value) / 100 })}
+      />
+      <p className="mb-4 text-xs leading-relaxed text-muted">100%가 기본 속도예요. 방향키 회전 속도는 일정해요.</p>
       <label className="flex cursor-pointer items-center gap-3">
         <input
           type="checkbox"

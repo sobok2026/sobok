@@ -31,6 +31,7 @@ type Options = {
   getState: () => GameState
   canMove: () => boolean
   isRunning: () => boolean
+  mouseSensitivity: () => number
   onTarget: (id: StationId | null, needsStaffAccess: boolean) => void
   onInteract: (id: StationId) => void
   onUseStart: (id: StationId) => void
@@ -62,8 +63,10 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   let previousPreparation: string | null = null
   let previousWashing: string | null = null
   let previousCleaning: string | null = null
+  let needsRender = true
   let customerVisuals: ReturnType<typeof createCustomerVisuals> | undefined
   const reset = ([x, z, yaw, pitch]: GameState['position']) => {
+    needsRender = true
     camera.position.set(x, 1.65, z)
     camera.rotation.set(pitch, yaw, 0, 'YXZ')
     const state = options.getState()
@@ -147,6 +150,20 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     parent.add(mesh)
     return mesh
   }
+  function repeatedBoxes(instances: [number, number, number, number, number, number][], color: string) {
+    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), material(color), instances.length)
+    const transform = new THREE.Object3D()
+    instances.forEach(([x, y, z, width, height, depth], index) => {
+      transform.position.set(x, y, z)
+      transform.scale.set(width, height, depth)
+      transform.updateMatrix()
+      mesh.setMatrixAt(index, transform.matrix)
+    })
+    mesh.computeBoundingSphere()
+    mesh.castShadow = true
+    mesh.receiveShadow = true
+    scene.add(mesh)
+  }
   const textures: THREE.Texture[] = []
   function sign(text: string, width: number, height: number, background = '#153e32', foreground = '#f2e7ce') {
     const canvas = document.createElement('canvas')
@@ -173,11 +190,15 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   }
   // Warm wooden floor and a cream envelope; the front glazing opens toward a small street.
   box(0, -0.08, 0, 14, 0.15, 12, '#ad9174')
-  for (let x = -6.75; x < 7; x += 0.5) box(x, 0.003, 0, 0.012, 0.008, 12, '#967b61')
+  const floorSeams: [number, number, number, number, number, number][] = []
+  for (let x = -6.75; x < 7; x += 0.5) floorSeams.push([x, 0.003, 0, 0.012, 0.008, 12])
+  repeatedBoxes(floorSeams, '#967b61')
   // The tiled employee aisle stays behind the counter; the timber floor belongs to the seating area.
   box(0, 0.014, -3.82, 13.45, 0.02, 4.05, '#b6bcb1')
-  for (let x = -6.5; x < 6.8; x += 0.65) box(x, 0.026, -3.82, 0.012, 0.004, 4.05, '#9fa89c')
-  for (let z = -5.7; z < -1.8; z += 0.65) box(0, 0.027, z, 13.4, 0.004, 0.012, '#9fa89c')
+  const tileSeams: [number, number, number, number, number, number][] = []
+  for (let x = -6.5; x < 6.8; x += 0.65) tileSeams.push([x, 0.026, -3.82, 0.012, 0.004, 4.05])
+  for (let z = -5.7; z < -1.8; z += 0.65) tileSeams.push([0, 0.027, z, 13.4, 0.004, 0.012])
+  repeatedBoxes(tileSeams, '#9fa89c')
   box(0, 0.037, -2.24, 10.9, 0.02, 0.65, '#4c6156')
   box(0, 1.8, -5.85, 14, 3.6, 0.18, '#eee7d7')
   box(-6.85, 1.8, 0, 0.18, 3.6, 12, '#e8e0ce')
@@ -201,7 +222,9 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   // Main bar with fluted wood facing.
   box(0, 0.48, -1.05, 11.5, 0.96, 1.18, '#946e4c')
   box(0, 1.0, -1.05, 11.7, 0.12, 1.35, '#ddd1b9')
-  for (let x = -5.6; x <= 5.6; x += 0.18) box(x, 0.47, -0.445, 0.035, 0.85, 0.025, '#795a3c')
+  const barSlats: [number, number, number, number, number, number][] = []
+  for (let x = -5.6; x <= 5.6; x += 0.18) barSlats.push([x, 0.47, -0.445, 0.035, 0.85, 0.025])
+  repeatedBoxes(barSlats, '#795a3c')
   for (let x = -5.15; x < 5.5; x += 1.15) {
     box(x, 0.47, -1.655, 1.08, 0.83, 0.025, '#aaa48f')
     box(x, 0.79, -1.679, 0.22, 0.024, 0.025, '#45564a', scene, 0.5)
@@ -574,8 +597,9 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   const look = (event: MouseEvent) => {
     if (using || options.activeStation()) return
     if ((!locked && !dragging) || !options.canMove()) return
-    camera.rotation.y -= event.movementX * 0.0013
-    camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x - event.movementY * 0.0013, -1.1, 1.1)
+    const sensitivity = 0.0013 * options.mouseSensitivity()
+    camera.rotation.y -= event.movementX * sensitivity
+    camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x - event.movementY * sensitivity, -1.1, 1.1)
   }
   const contextLost = (event: Event) => {
     event.preventDefault()
@@ -591,6 +615,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   window.addEventListener('keyup', keyup)
   window.addEventListener('blur', clear)
   function resize() {
+    needsRender = true
     renderer.setSize(container.clientWidth, container.clientHeight)
     camera.aspect = container.clientWidth / Math.max(1, container.clientHeight)
     camera.updateProjectionMatrix()
@@ -598,11 +623,22 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   const observer = new ResizeObserver(resize)
   observer.observe(container)
   resize()
+  let renderedState: GameState | null = null
+  let wasRunning = false
+  let animationTime = 0
   function animate(now: number) {
     if (disposed) return
+    frame = requestAnimationFrame(animate)
     const dt = Math.min((now - lastTime) / 1000, 0.05)
     lastTime = now
+    if (document.hidden) return
     const state = options.getState()
+    const running = options.isRunning()
+    if (!running && !wasRunning && !needsRender && renderedState === state) return
+    wasRunning = running
+    renderedState = state
+    needsRender = false
+    if (running) animationTime += dt * 1000
     const cupPlace = state.cup ? `${state.cup.id}:${state.cup.craft.location}` : ''
     if (cupPlace !== previousCupPlace && state.cup && state.cup.craft.location !== 'hand') {
       const spot = cupSpot(state.cup.craft.location)
@@ -662,7 +698,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     }
     const desired = suggestedStation(state)
     const anchor = STATIONS[desired]
-    guideRing.position.set(anchor.x, 1.72 + Math.sin(now / 600) * 0.025, anchor.z)
+    guideRing.position.set(anchor.x, 1.72 + Math.sin(animationTime / 600) * 0.025, anchor.z)
     guideRing.rotation.x = -Math.PI / 2
     guideRing.visible = state.phase !== 'summary'
     const benchFocused =
@@ -679,20 +715,19 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     craftVisuals.update(
       state,
       options.activeStation() !== null && options.activeStation() === state.cup?.craft.location,
-      now,
+      animationTime,
     )
-    preparationVisuals.update(state, options.activeStation() === 'prep', now)
-    washingVisuals.update(state, options.activeStation() === 'wash', now)
-    cleaningVisuals.update(state, !!state.cleaning && options.activeStation() === state.cleaning.station, now)
+    preparationVisuals.update(state, options.activeStation() === 'prep', animationTime)
+    washingVisuals.update(state, options.activeStation() === 'wash', animationTime)
+    cleaningVisuals.update(state, !!state.cleaning && options.activeStation() === state.cleaning.station, animationTime)
     supplyVisuals.update(state)
     batchVisuals.update(state)
     coldBrewVisuals.update(state, options.activeStation() === 'cold-prep')
     idleBlenderJar.visible = state.preparation?.stage !== 'processing'
     idleBlenderLid.visible = idleBlenderJar.visible
     cupStack.visible = state.cups > 0
-    customerVisuals?.update(state, dt, options.isRunning())
+    customerVisuals?.update(state, dt, running)
     renderer.render(scene, camera)
-    frame = requestAnimationFrame(animate)
   }
   frame = requestAnimationFrame(animate)
   return {
@@ -718,6 +753,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
       const geometries = new Set<THREE.BufferGeometry>()
       const usedMaterials = new Set<THREE.Material>()
       scene.traverse((object) => {
+        if (object instanceof THREE.InstancedMesh) object.dispose()
         if (object instanceof THREE.Mesh) {
           geometries.add(object.geometry)
           for (const m of Array.isArray(object.material) ? object.material : [object.material]) usedMaterials.add(m)
@@ -726,7 +762,9 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
       for (const geometry of geometries) geometry.dispose()
       for (const value of usedMaterials) value.dispose()
       for (const texture of textures) texture.dispose()
+      sunlight.shadow.dispose()
       renderer.dispose()
+      renderer.forceContextLoss()
       renderer.domElement.remove()
     },
   }

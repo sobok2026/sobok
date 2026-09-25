@@ -8,10 +8,12 @@ type CupVisual = {
   shell: THREE.Mesh
   sleeve: THREE.Mesh
   lid: THREE.Mesh
-  layers: { mesh: THREE.Mesh; vertices: Float32Array }[]
+  layers: { mesh: THREE.Mesh; vertices: Float32Array; height: number; fill: number }[]
   ice: THREE.InstancedMesh
   drizzle: THREE.Mesh
   powder: THREE.InstancedMesh
+  powderHeight: number
+  powderCount: number
   shot: THREE.Group
   shotLiquid: THREE.Mesh
 }
@@ -68,7 +70,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
     const colors = ['#cdad74', '#4d2b18', '#e8f0e9', '#dfc29b', '#967345', '#fff2d7']
     const layers = colors.map((color) => {
       const mesh = cylinder(root, 1, 1, 1, standard(color))
-      return { mesh, vertices: new Float32Array(mesh.geometry.getAttribute('position').array) }
+      return { mesh, vertices: new Float32Array(mesh.geometry.getAttribute('position').array), height: -1, fill: -1 }
     })
     const ice = new THREE.InstancedMesh(
       new THREE.BoxGeometry(0.04, 0.033, 0.04),
@@ -106,7 +108,20 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       true,
     )
     const shotLiquid = cylinder(shot, 0.041, 0.034, 0.057, chocolate, 0.031)
-    return { root, shell, sleeve, lid, layers, ice, drizzle, powder, shot, shotLiquid }
+    return {
+      root,
+      shell,
+      sleeve,
+      lid,
+      layers,
+      ice,
+      drizzle,
+      powder,
+      powderHeight: -1,
+      powderCount: -1,
+      shot,
+      shotLiquid,
+    }
   }
   const bench = makeCup(scene)
   const held = makeCup(camera)
@@ -203,18 +218,23 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       ? [0, c.coffee + c.sauce + extraction, c.water, c.milk, c.tea, c.foam]
       : [c.sauce, c.coffee + extraction, c.water, c.milk, c.tea, c.foam]
     let height = 0.008
-    visual.layers.forEach(({ mesh, vertices }, i) => {
+    visual.layers.forEach((layer, i) => {
+      const { mesh, vertices } = layer
       const value = Math.min(amounts[i] * 0.265, Math.max(0, 0.276 - height))
       mesh.visible = value > 0.0001
-      const positions = mesh.geometry.getAttribute('position')
-      for (let vertex = 0; vertex < positions.count; vertex++) {
-        const localY = vertices[vertex * 3 + 1]
-        const radius = 0.076 + ((height + value * (localY + 0.5)) / 0.285) * 0.034
-        positions.setXYZ(vertex, vertices[vertex * 3] * radius, localY, vertices[vertex * 3 + 2] * radius)
+      if (layer.height !== height || layer.fill !== value) {
+        const positions = mesh.geometry.getAttribute('position')
+        for (let vertex = 0; vertex < positions.count; vertex++) {
+          const localY = vertices[vertex * 3 + 1]
+          const radius = 0.076 + ((height + value * (localY + 0.5)) / 0.285) * 0.034
+          positions.setXYZ(vertex, vertices[vertex * 3] * radius, localY, vertices[vertex * 3 + 2] * radius)
+        }
+        positions.needsUpdate = true
+        mesh.scale.y = Math.max(0.0001, value)
+        mesh.position.y = height + value / 2
+        layer.height = height
+        layer.fill = value
       }
-      positions.needsUpdate = true
-      mesh.scale.y = Math.max(0.0001, value)
-      mesh.position.y = height + value / 2
       height += value
     })
     visual.ice.visible = iced && c.ice > 0
@@ -225,13 +245,17 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
     visual.drizzle.geometry.setDrawRange(0, Math.floor((count * Math.min(1, c.drizzle)) / 3) * 3)
     visual.powder.count = Math.min(32, Math.ceil(c.powder * 32))
     visual.powder.visible = c.powder > 0 && !craft.lidded
-    for (let i = 0; i < visual.powder.count; i++) {
-      matrix.position.set(Math.sin(i * 5.1) * 0.046, height + 0.004, Math.cos(i * 2.3) * 0.047)
-      matrix.rotation.set(i, i * 0.4, 0)
-      matrix.updateMatrix()
-      visual.powder.setMatrixAt(i, matrix.matrix)
+    if (visual.powderHeight !== height || visual.powderCount !== visual.powder.count) {
+      for (let i = 0; i < visual.powder.count; i++) {
+        matrix.position.set(Math.sin(i * 5.1) * 0.046, height + 0.004, Math.cos(i * 2.3) * 0.047)
+        matrix.rotation.set(i, i * 0.4, 0)
+        matrix.updateMatrix()
+        visual.powder.setMatrixAt(i, matrix.matrix)
+      }
+      visual.powder.instanceMatrix.needsUpdate = true
+      visual.powderHeight = height
+      visual.powderCount = visual.powder.count
     }
-    visual.powder.instanceMatrix.needsUpdate = true
     visual.shot.visible =
       (craft.shotReady || shotExtraction !== null) && !craft.shotTransferred && craft.tool !== 'shot-glass'
     const shotFill =
@@ -261,8 +285,13 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         job?.machine === 'espresso' && cup.recipe === 'glazed-iced'
           ? Math.min(1, (state.time - job.startedAt) / (job.endsAt - job.startedAt))
           : null
-      drawCup(bench, c, RECIPES[cup.recipe].variant === 'ICED', extraction, shotExtraction)
-      drawCup(held, c, RECIPES[cup.recipe].variant === 'ICED', extraction, shotExtraction)
+      drawCup(
+        c.location === 'hand' ? held : bench,
+        c,
+        RECIPES[cup.recipe].variant === 'ICED',
+        extraction,
+        shotExtraction,
+      )
       held.root.rotation.z = Math.sin(now / 650) * 0.018
       const station = c.location === 'hand' ? null : c.location
       if (station) bench.root.position.fromArray(cupSpot(station))
