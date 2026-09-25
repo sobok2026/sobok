@@ -1,6 +1,6 @@
 # 카페 코드 아키텍처
 
-2026-09-25 사용자 합의로 적용한 업무 중심 구조다. 한 업무의 규칙·행동·화면·도움말·3D 표현을 같은 기능 폴더에서 찾고, 전체 게임 상태와 실행 순서는 한 곳에서 조정한다.
+업무의 생애주기와 공통 제조 실행을 분리한 구조다. 한 업무의 규칙·행동·화면·도움말·3D 표현을 같은 기능 폴더에서 찾고, 전체 게임 상태와 실행 순서는 한 곳에서 조정한다.
 
 Vite·React·Three.js·Tailwind·IndexedDB를 사용한다. 플레이 규칙, 저장 필드와 검증 조건, 단일 탭 정책은 기존 설계를 따른다. 제품 요구는 [게임 설계](./design.md), 화면의 정보 노출 기준은 [HUD 설계](./hud.md), 미확정 수치는 [임시 규칙](./prototype-rules.md)을 참조한다.
 
@@ -16,6 +16,7 @@ apps/cafe/src/
 ├── simulation/          전체 상태·행동·게임 시간과 상태 발행
 ├── features/
 │   ├── service/         손님 이동·주문 접수·음료 전달·POS
+│   ├── production/      원문 단계의 공통 계량·도구·장비·조건 실행
 │   ├── crafting/        음료 제조·계량·도구·컵 내용물
 │   ├── preparation/     부재료 배합·가공·완성
 │   ├── cold-brew/       콜드 브루 계량·추출·회수
@@ -65,28 +66,30 @@ apps/cafe/src/
 
 ## 변경할 때 찾는 곳
 
-| 바꾸는 내용                   | 주된 위치                                                                                   | 함께 확인할 연결                             |
-| ----------------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| 음료 종류·제조 수량·판매 가격 | `data/recipes`, `data/menu.json`, `content/recipe-plan.ts`, `features/crafting`             | 판매 사이즈·가격, 조건별 제조 계획           |
-| 원재료 규격·기한              | `data/materials.json`, `data/quality.json`, `content/ingredients.ts`, `content/lifetime.ts` | 재고 소비·배합의 원재료 기한                 |
-| 재고 계산용 추정              | `data/simulation/stock-estimates.json`, `content/stock-amounts.ts`                          | 제조 원문의 계량값과 분리                    |
-| 부재료 준비·콜드 브루         | 해당 기능의 규칙·행동·HUD·시각 표현                                                         | `simulation/jobs.ts`, 배치 재고              |
-| 컵 회수·세척                  | `features/cleaning`, `features/washing`                                                     | `features/inventory/cups.ts`, 전체 수량 검증 |
-| 손님·POS·음료 전달            | `features/service`                                                                          | 제조 완료 판정, 공통 재고·집계               |
-| 마감·다음 날·운영 기록        | `features/shift`                                                                            | 전체 시계와 예정 작업 완료                   |
-| 작업대 버튼·도움말            | 기능의 패널·`help.ts`·`Guide.tsx`                                                           | 앱의 표시·도움말 선택 순서                   |
-| 단축키·화면 전환              | `app/session`                                                                               | `world/player-controls.ts`, 공통 대화상자    |
-| 매장 조형물·이동·그래픽 자원  | `world`                                                                                     | `content/stations.ts`, 기능별 `visuals.ts`   |
-| 저장·복구·탭 정책             | `app/persistence`                                                                           | `simulation/state.ts`, 세션의 저장 시점      |
+| 바꾸는 내용                   | 주된 위치                                                                                          | 함께 확인할 연결                             |
+| ----------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| 음료 종류·제조 수량·판매 가격 | `data/recipes`, `data/menu.json`, `content/recipe-plan.ts`, `features/crafting`                    | 판매 사이즈·가격, 조건별 제조 계획           |
+| 원재료 규격·기한              | `data/materials.json`, `data/shop/inventory.json`, `content/ingredients.ts`, `content/lifetime.ts` | 재고 소비·배합의 원재료 기한                 |
+| 재고 계산용 추정              | `data/shop/stock-rules.json`, `content/stock-amounts.ts`                                           | 제조 원문의 계량값과 분리                    |
+| 부재료 준비·콜드 브루         | 해당 기능의 규칙·행동·HUD·시각 표현                                                                | `simulation/jobs.ts`, 배치 재고              |
+| 컵 회수·세척                  | `features/cleaning`, `features/washing`                                                            | `features/inventory/cups.ts`, 전체 수량 검증 |
+| 손님·POS·음료 전달            | `features/service`                                                                                 | 제조 완료 판정, 공통 재고·집계               |
+| 마감·다음 날·운영 기록        | `features/shift`                                                                                   | 전체 시계와 예정 작업 완료                   |
+| 작업대 버튼·도움말            | 기능의 패널·`help.ts`·`Guide.tsx`                                                                  | 앱의 표시·도움말 선택 순서                   |
+| 단축키·화면 전환              | `app/session`                                                                                      | `world/player-controls.ts`, 공통 대화상자    |
+| 매장 조형물·이동·그래픽 자원  | `world`                                                                                            | `content/stations.ts`, 기능별 `visuals.ts`   |
+| 저장·복구·탭 정책             | `app/persistence`                                                                                  | `simulation/state.ts`, 세션의 저장 시점      |
 
 새 행동은 기능의 처리 함수와 `simulation/actions.ts`, `simulation/store.ts`의 라우팅을 함께 연결한다. 새 UI나 시각 표현은 필요한 앱·장면 조합부에 직접 연결한다. 범용 등록 시스템이나 기능별 저장소는 도입하지 않는다.
 
 ## 제조 자료의 경계
 
-`apps/cafe/data/`가 제조 데이터의 원본이다. `recipe-schema.ts` → `recipe-catalog.ts` → `recipe-plan.ts` 순서로 구조·연결·주문 조건을 처리한다. 제조 기능은 한국어 이름이나 설명문으로 행동을 나누지 않고 계획의 행동 타입과 참조 ID를 읽는다. 현재 음료 9개·사이즈 28개 조합, 준비대 4종과 별도 콜드 브루 추출 업무가 이 자료를 사용한다.
+`data/recipes`는 제조 사실, `data/menu.json`은 판매 가격, `data/shop`은 게임 재고와 제공 용기를 소유한다. 원문과 운영값을 섞지 않는다. 제조 순서·표시 목표는 원문을 사용하고, 재고 계산만 운영 환산값을 읽는다.
 
-`catalog.ts`는 현재 매장에서 사용하는 JSON만 초기 로딩한다. H 도움말의 `features/recipe-library`는 필요할 때 `library-catalog.ts`와 전체 자료를 불러온다. 전체 204개 문서·272개 제조 구분의 수록 상태는 현재 게임의 장비 지원 여부와 구별한다. 미변환 자료는 `data/coverage.json`에 남긴다.
+`recipe-schema.ts` → `recipe-catalog.ts` → `recipe-plan.ts`가 구조·연결·주문 조건을 처리한다. `production-plans.ts`는 명확한 계량법과 부재료의 전체 준비 경로를 확인한다. `playable-menu.ts`는 가격·사이즈·이용 방식·제조 가능성이 갖춰진 조합만 발행한다. 손님·POS·주문 검증·매출이 이 결과를 함께 사용한다.
 
-제조 계획·화면의 계량 목표는 원문 수량·선·횟수·기간을 사용한다. `stock-amounts.ts`만 재고 계산을 위해 승인된 `data/simulation/stock-estimates.json`을 읽는다. 원문에 없는 시간은 장비 완료 확인으로 처리하고 임의의 제조 시간을 넣지 않는다.
+`features/production/workflow.ts`는 원문 행동을 작업대와 조작으로 연결하고, `runtime.ts`는 계량·소비·장비 완료·관찰 조건을 처리한다. `crafting`은 주문 컵과 전달 전 완료를, `preparation`은 준비 배치와 산출물·라벨·보관을 소유한다. 두 기능은 별도 제조 엔진이나 음료별 상태 분기를 만들지 않는다. 콜드 브루 추출대는 장시간 추출 장비의 생애주기를 소유한다.
 
-월간 갱신은 JSON 직접 수정 후 `check:recipes`와 빌드로 확인한다. 원본 엑셀은 `apps/cafe/references/`의 참고 자료이며 앱의 가져오기 경로가 아니다. 원본 이미지·영상, 레시피 DB, 카탈로그 버전·마이그레이션·호환 계층은 추가하지 않는다. 상세 파일별 책임과 작성 기준은 [제조 자료 운영](./recipe-data.md)을 따른다.
+용기 내부의 수량 이동은 `stock-amounts.ts`가 계산한다. 표현용 컵 높이·모델 크기를 재고 수량에 사용하지 않는다. 3D와 HUD는 공통 작업 상태를 읽으며 같은 원문 목표를 보여준다.
+
+`catalog.ts`는 전체 자료를 한 번 읽는다. 자료실의 화면 코드는 필요할 때 불러오지만 제조 데이터의 별도 복사본은 만들지 않는다. 월간 갱신은 JSON 수정 후 `check:recipes`·타입 검사·빌드로 확인한다. 원본 이미지·영상, 레시피 DB, 카탈로그 버전·마이그레이션·호환 계층은 추가하지 않는다. 상세 운영은 [제조 자료 운영](./recipe-data.md)을 따른다.
