@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises'
+import { DRINK_SIZES, recipeSizeIds } from '../src/content/drink-sizes.ts'
 import { linkReferences, sourceLine } from '../src/content/reference-links.ts'
 
 try {
@@ -6,9 +7,10 @@ try {
   const links = linkReferences(data)
   console.log('카페 자료 연결 확인: 음료 5개, 폼·바모카·호지차 샷·콜드 브루 준비, 품질 기준 10개')
   for (const drink of [links.hot, links.iced])
-    console.log(
-      `- ${drink.reference.name} ${drink.reference.variant}: Tall ${drink.shots}샷, ${drink.glazePumps}펌프 × ${drink.pumpMl}ml, 토핑 ${drink.powderTaps}톡`,
-    )
+    for (const size of recipeSizeIds)
+      console.log(
+        `- ${drink.reference.name} ${drink.reference.variant}: ${DRINK_SIZES[size].name} ${drink.shots[size]}샷, ${drink.glazePumps[size]}펌프 × ${drink.pumpMl}ml, 토핑 ${drink.powderTaps[size]}톡`,
+      )
   console.log(
     `- 폼: 크림 ${links.foam.creamMl}ml + 우유 ${links.foam.milkMl}ml + ${links.foam.glazePumps}펌프, 블렌딩 ${links.foam.seconds}초`,
   )
@@ -16,9 +18,10 @@ try {
     `- 바모카: ${links.mocha.packs}봉 + 온수 ${links.mocha.waterMl}ml / 콜드 브루 추출: ${links.brew.hours}시간`,
   )
   for (const drink of [links.hojiHot, links.hojiIced])
-    console.log(
-      `- ${drink.reference.name} ${drink.reference.variant}: 클래식 ${drink.syrupPumps}펌프 × ${drink.syrupPumpMl}ml, 토핑 ${drink.powderTaps}톡`,
-    )
+    for (const size of recipeSizeIds)
+      console.log(
+        `- ${drink.reference.name} ${drink.reference.variant}: ${DRINK_SIZES[size].name} 클래식 ${drink.syrupPumps[size]}펌프 × ${drink.syrupPumpMl}ml, 토핑 ${drink.powderTaps[size]}톡`,
+      )
   console.log(
     `- 호지차 샷: 정수 ${links.hojicha.waterMl}ml + 파우더 ${links.hojicha.powderScoops}스쿱, ${links.hojicha.shakes}회 쉐이킹`,
   )

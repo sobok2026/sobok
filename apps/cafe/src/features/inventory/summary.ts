@@ -1,8 +1,9 @@
 import { type Costs, INGREDIENTS, type IngredientId, ingredientIds } from '../../content/ingredients'
-import { RECIPES } from '../../content/recipes'
+import { recipeFor } from '../../content/recipes'
 import type { GameState } from '../../simulation/state'
 import { operationFor } from '../crafting/rules'
 import { PREPARATIONS, preparationIds } from '../preparation/rules'
+import { cupSize } from './cups'
 import { available } from './inventory'
 
 export function inventorySummary(state: GameState) {
@@ -35,16 +36,17 @@ export function inventorySummary(state: GameState) {
     (state.phase === 'open' && state.customer && !state.customer.visit && state.customer.stage !== 'leaving'
       ? state.request
       : null)
-  if (recipe) {
+  const size = state.cup ? cupSize(state.cup.craft.kind) : (state.ticket?.size ?? state.customer?.size)
+  if (recipe && size) {
+    const steps = recipeFor(recipe, size).steps
     const cup = state.cup?.craft.fault ? null : state.cup
     const stepIndex = cup?.step ?? 0
-    for (let index = stepIndex; index < RECIPES[recipe].steps.length; index++) {
+    for (let index = stepIndex; index < steps.length; index++) {
       if (cup && index === stepIndex && state.jobs.some((job) => job.cupId === cup.id)) continue
       const operation = cup && index === stepIndex ? operationFor(cup.recipe, cup.step, cup.craft) : null
       const remaining =
         operation && operation.kind !== 'shake' ? Math.max(0, 1 - cup!.craft.progress / operation.target) : 1
-      for (const [id, amount] of Object.entries(RECIPES[recipe].steps[index].costs))
-        add(id as IngredientId, amount * remaining)
+      for (const [id, amount] of Object.entries(steps[index].costs)) add(id as IngredientId, amount * remaining)
     }
   }
   for (const id of preparationIds) {

@@ -1,3 +1,4 @@
+import type { DrinkSize } from '../content/drink-sizes'
 import type { IngredientId } from '../content/ingredients'
 import type { RecipeId } from '../content/recipes'
 import type { StationId } from '../content/stations'
@@ -8,7 +9,7 @@ import type { PreparationId } from '../features/preparation/rules'
 import type { WashItem } from '../features/washing/rules'
 
 export type Action =
-  | { type: 'ticket'; recipe: RecipeId; service: ServiceMode }
+  | { type: 'ticket'; recipe: RecipeId; service: ServiceMode; size: DrinkSize }
   | { type: 'start-preparation'; recipe: PreparationId }
   | { type: 'prep-tool' }
   | { type: 'prep-use' }

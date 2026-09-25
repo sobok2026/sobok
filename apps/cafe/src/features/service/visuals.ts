@@ -92,7 +92,7 @@ export function createCustomerVisuals(scene: THREE.Scene) {
         root.rotation.y = customer.yaw
         shirt.color.set(palette[(customer.orderNumber - 1) % palette.length])
         liquidMaterial.color.set(RECIPES[customer.recipe].color)
-        const kind = cupKindFor(customer.recipe, customer.service)
+        const kind = cupKindFor(customer.recipe, customer.service, customer.size)
         for (const [id, body] of bodies) {
           body.root.visible = id === kind
           body.lid.visible = customer.service === 'takeout'

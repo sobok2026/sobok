@@ -1,3 +1,4 @@
+import { DRINK_SIZES } from '../content/drink-sizes'
 import { INGREDIENTS } from '../content/ingredients'
 import { RECIPES, recipeLabel } from '../content/recipes'
 import type { StationId } from '../content/stations'
@@ -70,7 +71,10 @@ export default function PlayHud({
     (target === state.cleaning.station || (target === 'wash' && cupCount(state.cleaning.heldCups) > 0))
   const focusedWork = !panel && (showPreparation || showColdBrew || showWashing || showCrafting || showCleaning)
   const mismatch =
-    !!state.ticket && (state.ticket.recipe !== state.request || state.ticket.service !== state.customer?.service)
+    !!state.ticket &&
+    (state.ticket.recipe !== state.request ||
+      state.ticket.service !== state.customer?.service ||
+      state.ticket.size !== state.customer?.size)
   const carried = heldBatch
     ? {
         name: `${INGREDIENTS[heldBatch.ingredient].name} 용기`,
@@ -88,7 +92,7 @@ export default function PlayHud({
           : state.cup?.craft.location === 'hand'
             ? { name: CUP_NAMES[state.cup.craft.kind], destination: step?.station ?? ('pickup' as const) }
             : null
-  const selectedCupKind = state.ticket ? cupKindFor(state.ticket.recipe, state.ticket.service) : null
+  const selectedCupKind = state.ticket ? cupKindFor(state.ticket.recipe, state.ticket.service, state.ticket.size) : null
   const targetAction =
     cupCount(state.cleaning?.heldCups) && target === 'wash'
       ? '사용한 컵 내려놓기'
@@ -135,10 +139,12 @@ export default function PlayHud({
           </div>
           <h2 className="text-base leading-snug font-semibold tracking-tight">
             {RECIPES[state.ticket.recipe].shortName}
+            <span className="mt-1 block text-sm font-medium text-muted">{DRINK_SIZES[state.ticket.size].name}</span>
           </h2>
           {mismatch ? (
             <p className="mt-3 border-t border-line pt-3 text-xs text-danger">
-              요청: {state.customer ? SERVICE_NAMES[state.customer.service] : ''} · {recipeLabel(state.request)}
+              요청: {state.customer ? SERVICE_NAMES[state.customer.service] : ''} ·{' '}
+              {recipeLabel(state.request, state.customer?.size)}
               <br />
               {state.cup ? '컵 정리 후 POS에서 주문 수정' : 'POS에서 주문 수정'}
             </p>

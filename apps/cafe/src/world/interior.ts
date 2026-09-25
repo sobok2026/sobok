@@ -1,6 +1,7 @@
 import * as THREE from 'three'
+import { drinkSizeIds } from '../content/drink-sizes'
 import { BAR_CENTER_Z, staffFacingZ } from '../content/stations'
-import { cupKinds } from '../features/inventory/cups'
+import { cupKinds, cupSize, cupStyle, cupStyles } from '../features/inventory/cups'
 import { CUSTOMER_DOOR_X } from '../features/service/customer'
 import { createCupBody } from '../shared/visuals/cup-visual'
 import { addVesselLabel } from '../shared/visuals/vessel-label'
@@ -192,15 +193,15 @@ export function createShopInterior(scene: THREE.Scene) {
   screenText.position.set(-4.8, 1.46, staffFacingZ(-1.015))
   screenText.rotation.set(0.2, Math.PI, 0)
   scene.add(screenText)
-  const cupStacks = cupKinds.map((kind, index) => ({
+  const cupStacks = cupKinds.map((kind) => ({
     kind,
     cups: Array.from({ length: 4 }, (_, i) => {
       const body = createCupBody(scene, kind)
-      body.root.scale.setScalar(0.68)
+      body.root.scale.setScalar(0.48)
       body.root.position.set(
-        -4.1 + (index % 2) * 0.38 + (i % 2) * 0.15,
-        1.066 + Math.floor(i / 2) * 0.14,
-        -1.3 + Math.floor(index / 2) * 0.45,
+        -4.13 + cupStyles.indexOf(cupStyle(kind)) * 0.2,
+        1.066 + i * 0.055,
+        -1.45 + drinkSizeIds.indexOf(cupSize(kind)) * 0.23,
       )
       return body
     }),

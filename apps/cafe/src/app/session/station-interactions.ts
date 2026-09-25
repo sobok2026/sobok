@@ -50,7 +50,7 @@ export function interactionAt(current: GameState, id: StationId): Action | 'work
     id === 'cups' &&
     current.ticket &&
     !current.cup &&
-    cleanCupCount(current, cupKindFor(current.ticket.recipe, current.ticket.service)) > 0
+    cleanCupCount(current, cupKindFor(current.ticket.recipe, current.ticket.service, current.ticket.size)) > 0
   ) {
     return { type: 'take-cup' }
   }

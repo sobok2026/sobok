@@ -1,10 +1,10 @@
 import { INGREDIENTS, ingredientIds } from '../../content/ingredients'
-import { RECIPES } from '../../content/recipes'
+import { recipeFor } from '../../content/recipes'
 import { STATIONS, type StationId } from '../../content/stations'
 import { TextButton } from '../../shared/ui/Button'
 import { WorkButton, WorkHud, WorkMeter, WorkTitle } from '../../shared/ui/WorkControls'
 import type { GameState } from '../../simulation/state'
-import { isReusableCup } from '../inventory/cups'
+import { cupSize, isReusableCup } from '../inventory/cups'
 import { available } from '../inventory/inventory'
 import { CUSTOMER_STATUS } from '../service/customer'
 import { isContinuous, isMetered, operationFor, readyToConfirm, TOOL_NAMES } from './rules'
@@ -25,7 +25,7 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
   const c = cup.craft
   const place = target!
   const op = operationFor(cup.recipe, cup.step, c)
-  const sourceStep = RECIPES[cup.recipe].steps[cup.step]
+  const sourceStep = recipeFor(cup.recipe, cupSize(cup.craft.kind)).steps[cup.step]
   const nextStation = sourceStep?.station ?? 'pickup'
   const job = state.jobs.find((item) => item.cupId === cup.id)
   const needsMove = nextStation !== place && !job
@@ -75,7 +75,7 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
             ? '제조 완료'
             : needsMove
               ? '다음 작업대'
-              : `${cup.step + 1} / ${RECIPES[cup.recipe].steps.length - (isReusableCup(c.kind) ? 1 : 0)}`}
+              : `${cup.step + 1} / ${recipeFor(cup.recipe, cupSize(cup.craft.kind)).steps.length - (isReusableCup(c.kind) ? 1 : 0)}`}
         </span>
       </div>
       {c.fault ? (

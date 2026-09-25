@@ -13,11 +13,11 @@ export default function CupInventory({
   act?: (action: Action) => void
   purchasing?: boolean
 }) {
-  const needed = state.ticket ? cupKindFor(state.ticket.recipe, state.ticket.service) : null
+  const needed = state.ticket ? cupKindFor(state.ticket.recipe, state.ticket.service, state.ticket.size) : null
   return (
-    <section className="divide-y divide-line" aria-label="컵 종류별 재고">
+    <section className="divide-y divide-line" aria-label="컵 종류·사이즈별 재고">
       <div className="flex justify-between gap-3 py-2 text-xs text-muted">
-        <span>컵 종류</span>
+        <span>컵 종류·사이즈</span>
         <span>사용 가능</span>
       </div>
       {reusableCupKinds.map((kind) => {

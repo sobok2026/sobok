@@ -1,6 +1,8 @@
-import type { RecipeId } from '../../content/recipes'
+import type { DrinkSize } from '../../content/drink-sizes'
+import { type RecipeId, recipeSizes } from '../../content/recipes'
 import { STATIONS, type TableId } from '../../content/stations'
 import type { Customer } from '../../simulation/state'
+import type { ServiceMode } from '../inventory/cups'
 
 export const customerStages = [
   'entering',
@@ -44,12 +46,18 @@ export const customerHasCup = (customer: Customer) =>
   !!customer.visit && (customer.service === 'takeout' || customer.stage !== 'leaving')
 const customerSeat = (table: TableId): CustomerPoint => [STATIONS[table].x, 2.75]
 
+export const orderSizes = (recipe: RecipeId, service: ServiceMode): DrinkSize[] =>
+  recipeSizes(recipe).filter((size) => size !== 'trenta' || service === 'takeout')
+
 export function createCustomer(orderNumber: number, recipe: RecipeId): Customer {
+  const service: ServiceMode = Math.random() < 0.5 ? 'dine-in' : 'takeout'
+  const sizes = orderSizes(recipe, service)
   return {
     id: crypto.randomUUID(),
     orderNumber,
     recipe,
-    service: Math.random() < 0.5 ? 'dine-in' : 'takeout',
+    service,
+    size: orderNumber <= 2 ? 'tall' : sizes[Math.floor(Math.random() * sizes.length)],
     stage: 'entering',
     position: [...CUSTOMER_ENTRANCE],
     yaw: Math.PI,

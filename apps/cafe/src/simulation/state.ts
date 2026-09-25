@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { drinkSizeIds } from '../content/drink-sizes'
 import { ingredientIds } from '../content/ingredients'
 import { RECIPES, recipeIds } from '../content/recipes'
 import { isCupSurface, stationIds, tableIds } from '../content/stations'
@@ -7,7 +8,9 @@ import { COLD_BREW_BEANS, COLD_BREW_STEPS, coldBrewTools } from '../features/col
 import { craftToolIds } from '../features/crafting/rules'
 import {
   cupCount,
+  cupKindFor,
   cupKinds,
+  cupSize,
   disposableCupKinds,
   isReusableCup,
   REUSABLE_CUPS_PER_KIND,
@@ -17,7 +20,7 @@ import {
 } from '../features/inventory/cups'
 import { SUPPLY_CAPACITY, supplyIds } from '../features/inventory/supplies'
 import { PREPARATIONS, preparationIds, prepToolIds } from '../features/preparation/rules'
-import { customerHasCup, customerStages } from '../features/service/customer'
+import { customerHasCup, customerStages, orderSizes } from '../features/service/customer'
 import { washItems } from '../features/washing/rules'
 
 const quantity = z.number().finite().min(0).max(100000000)
@@ -31,6 +34,7 @@ const customerSchema = z
     orderNumber: z.number().int().min(1).max(100000),
     recipe: z.enum(recipeIds),
     service: z.enum(serviceModes),
+    size: z.enum(drinkSizeIds),
     stage: z.enum(customerStages),
     position: customerPoint,
     yaw: z.number().finite(),
@@ -47,6 +51,10 @@ const customerSchema = z
       })
       .nullable(),
   })
+  .refine(
+    (customer) => orderSizes(customer.recipe, customer.service).includes(customer.size),
+    '손님 주문의 사이즈를 확인해주세요.',
+  )
   .refine((customer) => customer.nextPoint <= customer.path.length, '손님 이동 위치가 경로를 벗어났어요.')
   .refine(
     (customer) =>
@@ -210,7 +218,13 @@ export const stateSchema = z
     orderNumber: z.number().int().min(1).max(100000),
     request: z.enum(recipeIds),
     customer: customerSchema.nullable(),
-    ticket: z.object({ recipe: z.enum(recipeIds), service: z.enum(serviceModes) }).nullable(),
+    ticket: z
+      .object({ recipe: z.enum(recipeIds), service: z.enum(serviceModes), size: z.enum(drinkSizeIds) })
+      .refine(
+        (ticket) => orderSizes(ticket.recipe, ticket.service).includes(ticket.size),
+        '주문표의 사이즈를 확인해주세요.',
+      )
+      .nullable(),
     preparation: preparationSchema.nullable(),
     coldBrew: coldBrewSchema.nullable(),
     washing: washingSchema.nullable(),
@@ -230,7 +244,10 @@ export const stateSchema = z
         step: z.number().int().min(0).max(20),
         craft: craftSchema,
       })
-      .refine((cup) => cup.step <= RECIPES[cup.recipe].steps.length, '제조 단계가 범위를 벗어났어요.')
+      .refine((cup) => {
+        const recipe = RECIPES[cup.recipe].sizes[cupSize(cup.craft.kind)]
+        return !!recipe && cup.step <= recipe.steps.length
+      }, '메뉴·컵 사이즈 또는 제조 단계가 범위를 벗어났어요.')
       .refine((cup) => !isReusableCup(cup.craft.kind) || !cup.craft.lidded, '다회용 컵에는 리드를 덮지 않아요.')
       .nullable(),
     batches: z.array(batchSchema).max(300),
@@ -257,6 +274,15 @@ export const stateSchema = z
       z.number().finite(),
     ]),
   })
+  .refine(
+    (state) =>
+      !state.cup ||
+      (!!state.ticket &&
+        orderSizes(state.ticket.recipe, state.ticket.service).includes(state.ticket.size) &&
+        state.cup.recipe === state.ticket.recipe &&
+        state.cup.craft.kind === cupKindFor(state.ticket.recipe, state.ticket.service, state.ticket.size)),
+    '제조 중인 컵과 주문표의 메뉴·사이즈·이용 방식이 맞지 않아요.',
+  )
   .refine(
     (state) =>
       !state.customer || (state.customer.orderNumber === state.orderNumber && state.customer.recipe === state.request),
@@ -314,8 +340,9 @@ export const stateSchema = z
         const washing = state.washing?.item === kind && state.washing.stage !== 'ready' ? 1 : 0
         const customer =
           state.customer?.service === 'dine-in' &&
+          state.customer.size !== 'trenta' &&
           customerHasCup(state.customer) &&
-          reusableCupFor(state.customer.recipe) === kind
+          reusableCupFor(state.customer.recipe, state.customer.size) === kind
             ? 1
             : 0
         const surfaces = state.condiment.cups[kind] + tableIds.reduce((sum, id) => sum + state.tables[id].cups[kind], 0)
@@ -331,7 +358,7 @@ export const stateSchema = z
           REUSABLE_CUPS_PER_KIND
         )
       }),
-    `다회용 컵은 종류별 ${REUSABLE_CUPS_PER_KIND}개가 보관·제조·사용·세척 위치 사이에서 유지되어야 해요.`,
+    `다회용 컵은 종류·사이즈별 ${REUSABLE_CUPS_PER_KIND}개가 보관·제조·사용·세척 위치 사이에서 유지되어야 해요.`,
   )
 
 export type GameState = z.infer<typeof stateSchema>

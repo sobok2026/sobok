@@ -67,7 +67,7 @@ function plannedStation(state: GameState): StationId {
       ? state.cup.craft.location
       : 'pickup'
   if (state.ticket) {
-    const kind = cupKindFor(state.ticket.recipe, state.ticket.service)
+    const kind = cupKindFor(state.ticket.recipe, state.ticket.service, state.ticket.size)
     if (cleanCupCount(state, kind)) return 'cups'
     if (!isReusableCup(kind)) return 'stock'
     if (state.reusableCups[kind].dirty || state.reusableCups[kind].washed) return 'wash'

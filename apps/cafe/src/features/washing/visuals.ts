@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { createCupBody } from '../../shared/visuals/cup-visual'
 import type { GameState } from '../../simulation/state'
 import { reusableCupKinds } from '../inventory/cups'
-import { WASH_STEPS, type WashItem } from './rules'
+import { WASH_STEPS, type WashItem, washItems, washStock } from './rules'
 
 export function createWashingVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
   const steel = new THREE.MeshStandardMaterial({
@@ -114,12 +114,13 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
         [dirtyQueue, 'dirty'],
         [washedQueue, 'washed'],
       ] as const) {
-        const pitchers = state.tools[key]
-        const mugs = state.reusableCups['hot-mug'][key]
-        const count = pitchers + mugs + state.reusableCups['iced-glass'][key]
+        const items = washItems.flatMap((item) =>
+          Array.from({ length: Math.min(washStock(state, item)[key], queue.length) }, () => item),
+        )
+        const count = items.length
         queue.forEach((value, i) => {
           value.group.visible = i < count
-          if (i < count) value.show(i < pitchers ? 'pitcher' : i < pitchers + mugs ? 'hot-mug' : 'iced-glass')
+          if (i < count) value.show(items[i])
         })
       }
       cleanQueue.forEach((value, i) => {

@@ -1,11 +1,11 @@
 import type { Costs, IngredientId } from '../../content/ingredients'
-import { RECIPES } from '../../content/recipes'
+import { recipeFor } from '../../content/recipes'
 import type { StationId } from '../../content/stations'
 import { uid } from '../../shared/id'
 import type { Action } from '../../simulation/actions'
 import { say, startJob } from '../../simulation/feedback'
 import type { WorkContext } from '../../simulation/work-context'
-import { CUP_NAMES, cleanCupCount, cupKindFor, isReusableCup } from '../inventory/cups'
+import { CUP_NAMES, cleanCupCount, cupKindFor, cupSize, isReusableCup } from '../inventory/cups'
 import { addAmounts, available, consume } from '../inventory/inventory'
 import {
   type CraftOperation,
@@ -43,7 +43,7 @@ export function handleCraftActions(
         fail('이미 컵을 들고 있어요.')
         break
       }
-      const kind = cupKindFor(s.ticket.recipe, s.ticket.service)
+      const kind = cupKindFor(s.ticket.recipe, s.ticket.service, s.ticket.size)
       if (!cleanCupCount(s, kind)) {
         fail(
           isReusableCup(kind)
@@ -165,7 +165,7 @@ export function handleCraftActions(
       if (op.kind === 'machine') {
         if (!consume(s, op.costs)) break
         addAmounts(c.consumed, op.costs)
-        startJob(s, 'craft-machine', action.station, '에스프레소 추출', nextStep(s)!.seconds, {
+        startJob(s, 'craft-machine', action.station, op.label, nextStep(s)!.seconds, {
           cupId: s.cup.id,
           stepIndex: s.cup.step,
           machine: 'espresso',
@@ -230,7 +230,8 @@ export function handleCraftActions(
           s.tools.dirty++
         }
         s.cup.step++
-        if (isReusableCup(c.kind) && RECIPES[s.cup.recipe].steps[s.cup.step]?.label === '제공') s.cup.step++
+        if (isReusableCup(c.kind) && recipeFor(s.cup.recipe, cupSize(c.kind)).steps[s.cup.step]?.label === '제공')
+          s.cup.step++
         c.progress = 0
         say(s, nextStep(s) ? `${op.label} 완료.` : '음료가 완성됐어요.', 'success')
       }
@@ -263,7 +264,7 @@ export function applyCraft(work: WorkContext, op: CraftOperation, delta: number)
     return
   }
   if (!isMetered(op)) delta = Math.min(delta, Math.max(0, op.target - c.progress))
-  if (op.tool === 'pitcher') delta = Math.min(delta, c.pitcherMilk / 200)
+  if (op.tool === 'pitcher') delta = Math.min(delta, (c.pitcherMilk * op.target) / op.pitcherMl!)
   if (delta <= 0) {
     work.input = null
     return
@@ -276,8 +277,8 @@ export function applyCraft(work: WorkContext, op: CraftOperation, delta: number)
   }
   addAmounts(c.consumed, costs)
   c.progress += delta
-  if (op.kind === 'steam') c.pitcherMilk += ((op.costs.milk ?? 200) * delta) / op.target
-  if (op.tool === 'pitcher') c.pitcherMilk = Math.max(0, c.pitcherMilk - 200 * delta)
+  if (op.kind === 'steam') c.pitcherMilk += (op.costs.milk! * delta) / op.target
+  if (op.tool === 'pitcher') c.pitcherMilk = Math.max(0, c.pitcherMilk - (op.pitcherMl! * delta) / op.target)
   if (op.content) c.contents[op.content] += (op.weight * delta) / op.target
   if (op.kind === 'lid') {
     c.lidded = true

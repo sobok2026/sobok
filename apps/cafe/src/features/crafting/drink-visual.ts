@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { CUP_DIMENSIONS, createCupBody, cupFillY, cupRadius } from '../../shared/visuals/cup-visual'
+import { CUP_DIMENSIONS, createCupBody, cupFillY, cupRadius, cupScale } from '../../shared/visuals/cup-visual'
 import { workCylinder as cylinder, workMaterial as standard } from '../../shared/visuals/work-geometry'
 import type { CraftState } from '../../simulation/state'
 import { type CupKind, cupKinds } from '../inventory/cups'
@@ -97,7 +97,9 @@ export function createDrinkVisual(parent: THREE.Object3D) {
     targetFill: number | undefined,
     extraction: number,
     shotExtraction: number | null,
+    shotVolume: number,
   ) {
+    const scale = cupScale(craft.kind)
     const kindChanged = visual.kind !== craft.kind
     visual.kind = craft.kind
     for (const [kind, body] of visual.bodies) {
@@ -139,7 +141,9 @@ export function createDrinkVisual(parent: THREE.Object3D) {
       }
       height += value
     })
-    visual.ice.position.y = CUP_DIMENSIONS[craft.kind].height - 0.285
+    visual.ice.scale.setScalar(scale)
+    visual.ice.position.y = CUP_DIMENSIONS[craft.kind].height - 0.285 * scale
+    visual.drizzle.scale.setScalar(scale)
     visual.ice.visible = iced && c.ice > 0
     visual.ice.count = Math.min(8, Math.ceil((c.ice / 0.1) * 8))
     visual.drizzle.visible = c.drizzle > 0 && !craft.lidded
@@ -150,8 +154,9 @@ export function createDrinkVisual(parent: THREE.Object3D) {
     visual.powder.visible = c.powder > 0 && !craft.lidded
     if (visual.powderHeight !== height || visual.powderCount !== visual.powder.count) {
       for (let i = 0; i < visual.powder.count; i++) {
-        matrix.position.set(Math.sin(i * 5.1) * 0.046, height + 0.004, Math.cos(i * 2.3) * 0.047)
+        matrix.position.set(Math.sin(i * 5.1) * 0.046 * scale, height + 0.004, Math.cos(i * 2.3) * 0.047 * scale)
         matrix.rotation.set(i, i * 0.4, 0)
+        matrix.scale.setScalar(scale)
         matrix.updateMatrix()
         visual.powder.setMatrixAt(i, matrix.matrix)
       }
@@ -162,7 +167,7 @@ export function createDrinkVisual(parent: THREE.Object3D) {
     visual.shot.visible =
       (craft.shotReady || shotExtraction !== null) && !craft.shotTransferred && craft.tool !== 'shot-glass'
     const shotFill =
-      shotExtraction ?? (craft.shotReady && !craft.shotTransferred ? 1 - Math.min(1, c.coffee / 0.13) : 1)
+      shotExtraction ?? (craft.shotReady && !craft.shotTransferred ? 1 - Math.min(1, c.coffee / (shotVolume || 1)) : 1)
     visual.shotLiquid.scale.y = Math.max(0.001, shotFill)
     visual.shotLiquid.position.y = 0.003 + 0.0285 * shotFill
   }

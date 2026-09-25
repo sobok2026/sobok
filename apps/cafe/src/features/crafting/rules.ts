@@ -1,8 +1,9 @@
+import { drinkSizeRatio } from '../../content/drink-sizes'
 import type { Costs } from '../../content/ingredients'
-import { RECIPES, type RecipeId } from '../../content/recipes'
+import { type RecipeId, recipeFor } from '../../content/recipes'
 import type { StationId } from '../../content/stations'
 import type { CraftState, GameState } from '../../simulation/state'
-import { type CupKind, isReusableCup } from '../inventory/cups'
+import { type CupKind, cupSize, isReusableCup } from '../inventory/cups'
 
 export const craftToolIds = [
   'milk-carton',
@@ -43,6 +44,7 @@ export type CraftOperation = {
   content?: keyof CraftContents
   weight: number
   targetFill?: number
+  pitcherMl?: number
 }
 export const craftStations: StationId[] = [
   'espresso',
@@ -56,7 +58,9 @@ export const craftStations: StationId[] = [
   'pickup',
 ]
 export function operationFor(recipe: RecipeId, step: number, craft: CraftState): CraftOperation | null {
-  const source = RECIPES[recipe].steps[step]
+  const size = cupSize(craft.kind)
+  const definition = recipeFor(recipe, size)
+  const source = definition.steps[step]
   if (!source || (source.label === '제공' && isReusableCup(craft.kind))) return null
   const toLine = (content: keyof CraftContents, targetFill: number) => ({
     content,
@@ -71,11 +75,11 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
     ),
   })
   const base = {
-    id: `${recipe}:${step}`,
+    id: `${recipe}:${size}:${step}`,
     target: 1,
     tolerance: 0.06,
     unit: '기준선',
-    rate: 0.25,
+    rate: 0.25 / drinkSizeRatio(size),
     costs: source.costs,
     weight: 0,
   }
@@ -89,7 +93,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       kind: 'ice',
       label: '얼음 담기',
       tool: 'ice-scoop',
-      target: 3,
+      target: Math.round(3 * drinkSizeRatio(size)),
       tolerance: 0,
       unit: '스쿱',
       ...toLine('ice', 0.96),
@@ -106,12 +110,12 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
     return {
       ...base,
       kind: 'machine',
-      label: '샷 추출',
+      label: `${source.target}샷 추출`,
       tool: null,
       tolerance: 0,
       unit: '추출',
       content: 'coffee',
-      weight: 0.13,
+      weight: espressoFill(recipe, craft.kind),
     }
   if (source.label === '글레이즈드 소스' || source.label === '클래식 시럽')
     return {
@@ -123,7 +127,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       tolerance: 0,
       unit: '펌프',
       content: 'sauce',
-      weight: 0.07,
+      weight: (0.07 * source.target) / (3 * drinkSizeRatio(size)),
     }
   if (source.label === '에스프레소·소스') {
     if (recipe === 'glazed-iced' && craft.shotReady && !craft.shotTransferred)
@@ -134,7 +138,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
         label: '샷 글라스에서 옮기기',
         tool: 'shot-glass',
         content: 'coffee',
-        weight: 0.13,
+        weight: espressoFill(recipe, craft.kind),
       }
     return {
       ...base,
@@ -153,6 +157,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       label: '스팀 우유 붓기',
       tool: 'pitcher',
       ...toLine('milk', recipe === 'hoji-hot' ? 0.79 : 0.87),
+      pitcherMl: definition.steps.find((item) => item.usesPitcher)!.costs.milk!,
     }
   if (source.label === '일반 우유')
     return {
@@ -189,7 +194,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       kind: 'ice',
       label: '얼음 담기',
       tool: 'ice-scoop',
-      target: 3,
+      target: Math.round(3 * drinkSizeRatio(size)),
       tolerance: 0,
       unit: '스쿱',
       ...toLine('ice', 0.9),
@@ -213,7 +218,7 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       kind: 'pour',
       label: '글레이즈드 폼 붓기',
       tool: 'foam-pitcher',
-      rate: 0.22,
+      rate: 0.22 / drinkSizeRatio(size),
       ...toLine('foam', 0.96),
     }
   if (source.label === '번트 카라멜 파우더')
@@ -236,6 +241,12 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
     tolerance: 0,
     unit: '개',
   }
+}
+
+export function espressoFill(recipe: RecipeId, kind: CupKind) {
+  const size = cupSize(kind)
+  const shots = recipeFor(recipe, size).steps.find((step) => step.label === '에스프레소')?.target ?? 0
+  return (0.13 * shots) / drinkSizeRatio(size)
 }
 
 export function createCraft(kind: CupKind): CraftState {
@@ -268,5 +279,7 @@ export function readyToConfirm(op: CraftOperation, progress: number) {
 
 export function nextStep(state: GameState) {
   const cup = state.cup
-  return cup && operationFor(cup.recipe, cup.step, cup.craft) ? RECIPES[cup.recipe].steps[cup.step] : undefined
+  return cup && operationFor(cup.recipe, cup.step, cup.craft)
+    ? recipeFor(cup.recipe, cupSize(cup.craft.kind)).steps[cup.step]
+    : undefined
 }

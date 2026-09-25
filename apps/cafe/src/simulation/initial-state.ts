@@ -1,6 +1,12 @@
 import { INGREDIENTS, type IngredientId, ingredientIds } from '../content/ingredients'
 import { staffStartPosition } from '../content/stations'
-import { CUP_SUPPLY, emptyCupCounts, REUSABLE_CUPS_PER_KIND } from '../features/inventory/cups'
+import {
+  CUP_SUPPLY,
+  disposableCupKinds,
+  emptyCupCounts,
+  REUSABLE_CUPS_PER_KIND,
+  reusableCupKinds,
+} from '../features/inventory/cups'
 import { newBatch } from '../features/inventory/inventory'
 import { SUPPLY_CAPACITY, SUPPLY_PACK } from '../features/inventory/supplies'
 import { createCustomer } from '../features/service/customer'
@@ -46,14 +52,12 @@ export function initialState(): GameState {
     ]),
     jobs: [],
     tools: { clean: 2, dirty: 1, washed: 0 },
-    disposableCups: {
-      'hot-paper': { bar: CUP_SUPPLY.initialBar, reserve: CUP_SUPPLY.initialReserve },
-      'iced-plastic': { bar: CUP_SUPPLY.initialBar, reserve: CUP_SUPPLY.initialReserve },
-    },
-    reusableCups: {
-      'hot-mug': { clean: REUSABLE_CUPS_PER_KIND, dirty: 0, washed: 0 },
-      'iced-glass': { clean: REUSABLE_CUPS_PER_KIND, dirty: 0, washed: 0 },
-    },
+    disposableCups: Object.fromEntries(
+      disposableCupKinds.map((kind) => [kind, { bar: CUP_SUPPLY.initialBar, reserve: CUP_SUPPLY.initialReserve }]),
+    ) as GameState['disposableCups'],
+    reusableCups: Object.fromEntries(
+      reusableCupKinds.map((kind) => [kind, { clean: REUSABLE_CUPS_PER_KIND, dirty: 0, washed: 0 }]),
+    ) as GameState['reusableCups'],
     tables: { table: { cups: emptyCupCounts(), dirty: false }, 'table-left': { cups: emptyCupCounts(), dirty: false } },
     condiment: { cups: emptyCupCounts(), dirty: false },
     supplies: {

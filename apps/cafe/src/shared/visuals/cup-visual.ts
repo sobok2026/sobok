@@ -1,13 +1,22 @@
 import * as THREE from 'three'
-import { type CupKind, isReusableCup } from '../../features/inventory/cups'
+import { drinkSizeRatio } from '../../content/drink-sizes'
+import { type CupKind, cupKinds, cupSize, cupStyle, isReusableCup } from '../../features/inventory/cups'
 
 // Model proportions and fill fractions are game visuals, not real cup-volume conversions.
-export const CUP_DIMENSIONS = {
+const BASE_DIMENSIONS = {
   'hot-paper': { top: 0.112, bottom: 0.078, height: 0.285 },
   'iced-plastic': { top: 0.112, bottom: 0.078, height: 0.285 },
   'hot-mug': { top: 0.132, bottom: 0.12, height: 0.215 },
   'iced-glass': { top: 0.108, bottom: 0.092, height: 0.3 },
 } as const
+export const cupScale = (kind: CupKind) => Math.cbrt(drinkSizeRatio(cupSize(kind)))
+export const CUP_DIMENSIONS = Object.fromEntries(
+  cupKinds.map((kind) => {
+    const base = BASE_DIMENSIONS[cupStyle(kind)]
+    const scale = cupScale(kind)
+    return [kind, { top: base.top * scale, bottom: base.bottom * scale, height: base.height * scale }]
+  }),
+) as Record<CupKind, { top: number; bottom: number; height: number }>
 export function cupFillY(kind: CupKind, fill: number) {
   return 0.008 + fill * (CUP_DIMENSIONS[kind].height - 0.02)
 }
@@ -19,11 +28,13 @@ export function createCupBody(parent: THREE.Object3D, kind: CupKind, detailed = 
   const root = new THREE.Group()
   parent.add(root)
   const { top, bottom, height } = CUP_DIMENSIONS[kind]
-  const clear = kind === 'iced-plastic' || kind === 'iced-glass'
-  const glass = kind === 'iced-glass'
+  const style = cupStyle(kind)
+  const scale = cupScale(kind)
+  const clear = style === 'iced-plastic' || style === 'iced-glass'
+  const glass = style === 'iced-glass'
   const material = new THREE.MeshStandardMaterial({
-    color: clear ? '#d9eee8' : kind === 'hot-mug' ? '#dbe5d6' : '#f9efdc',
-    roughness: clear ? 0.16 : kind === 'hot-mug' ? 0.24 : 0.7,
+    color: clear ? '#d9eee8' : style === 'hot-mug' ? '#dbe5d6' : '#f9efdc',
+    roughness: clear ? 0.16 : style === 'hot-mug' ? 0.24 : 0.7,
     transparent: clear,
     opacity: clear ? (glass ? 0.26 : 0.18) : 1,
     depthWrite: !clear,
@@ -42,12 +53,12 @@ export function createCupBody(parent: THREE.Object3D, kind: CupKind, detailed = 
   rim.rotation.x = Math.PI / 2
   rim.position.y = height
   root.add(rim)
-  if (kind === 'hot-mug') {
-    const handle = new THREE.Mesh(new THREE.TorusGeometry(0.057, 0.014, 8, 24), material)
-    handle.position.set(top + 0.035, height * 0.53, 0)
+  if (style === 'hot-mug') {
+    const handle = new THREE.Mesh(new THREE.TorusGeometry(0.057 * scale, 0.014 * scale, 8, 24), material)
+    handle.position.set(top + 0.035 * scale, height * 0.53, 0)
     root.add(handle)
   }
-  if (kind === 'hot-paper') {
+  if (style === 'hot-paper') {
     const y = height * 0.47
     cylinder(
       cupRadius(kind, y + 0.035) + 0.002,

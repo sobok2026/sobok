@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { RECIPES } from '../../content/recipes'
+import { RECIPES, recipeFor } from '../../content/recipes'
 import type { StationId } from '../../content/stations'
 import { staffFacingZ } from '../../content/stations'
 import { CUP_DIMENSIONS } from '../../shared/visuals/cup-visual'
@@ -10,8 +10,9 @@ import {
   workMaterial as standard,
 } from '../../shared/visuals/work-geometry'
 import type { GameState } from '../../simulation/state'
+import { cupSize } from '../inventory/cups'
 import { createDrinkVisual } from './drink-visual'
-import { type CraftTool, operationFor } from './rules'
+import { type CraftTool, espressoFill, operationFor } from './rules'
 
 export function createCraftVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
   const cream = standard('#f8edcf')
@@ -140,8 +141,9 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       for (const cloud of vapor) cloud.visible = false
       if (!cup) return
       const c = cup.craft
+      const shotFill = espressoFill(cup.recipe, c.kind)
       if (shotToolLiquid) {
-        const fill = Math.max(0.001, 1 - Math.min(1, c.contents.coffee / 0.13))
+        const fill = Math.max(0.001, 1 - Math.min(1, c.contents.coffee / (shotFill || 1)))
         shotToolLiquid.scale.y = fill
         shotToolLiquid.position.y = -0.085 + 0.06 * fill
       }
@@ -149,7 +151,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       const job = state.jobs.find((item) => item.kind === 'craft-machine' && item.cupId === cup.id)
       const extraction =
         job?.machine === 'espresso' && cup.recipe !== 'glazed-iced'
-          ? Math.min(1, (state.time - job.startedAt) / (job.endsAt - job.startedAt)) * 0.13
+          ? Math.min(1, (state.time - job.startedAt) / (job.endsAt - job.startedAt)) * shotFill
           : 0
       const shotExtraction =
         job?.machine === 'espresso' && cup.recipe === 'glazed-iced'
@@ -161,6 +163,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         c.location !== 'hand' ? op?.targetFill : undefined,
         extraction,
         shotExtraction,
+        shotFill,
       )
       held.root.rotation.z = Math.sin(now / 650) * 0.018
       const station = c.location === 'hand' ? null : c.location
@@ -178,7 +181,10 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       if (station === 'steam' && RECIPES[cup.recipe].variant === 'HOT' && (c.pitcherReserved || c.pitcherMilk > 0)) {
         receivingPitcher.visible = c.tool !== 'pitcher'
         receivingPitcher.position.set(spot[0] - 0.28, spot[1], spot[2])
-        pitcherMilk.scale.y = Math.max(0.001, c.pitcherMilk / 200)
+        pitcherMilk.scale.y = Math.max(
+          0.001,
+          c.pitcherMilk / recipeFor(cup.recipe, cupSize(c.kind)).steps.find((step) => step.usesPitcher)!.costs.milk!,
+        )
         pitcherMilk.position.y = 0.008 + 0.085 * pitcherMilk.scale.y
       }
       if (station === 'sauce' && op?.kind === 'pump') {
@@ -289,5 +295,5 @@ export function cupSpot(station: StationId): [number, number, number] {
     mix: 4.1,
     topping: 5.1,
   }
-  return [x[station] ?? 0, station === 'espresso' ? 1.115 : 1.075, staffFacingZ(-0.62)]
+  return [x[station] ?? 0, station === 'espresso' ? 1.085 : 1.075, staffFacingZ(-0.62)]
 }

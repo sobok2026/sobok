@@ -85,7 +85,7 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
     customerSurface(
       s,
       customer.visit.table,
-      customer.visit.returnCup ? null : reusableCupFor(customer.recipe),
+      customer.visit.returnCup ? null : reusableCupFor(customer.recipe, customer.size),
       customer.visit.dirtyTable,
     )
     if (customer.visit.returnCup) customerToReturn(customer)
@@ -94,7 +94,7 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
       customerLeave(customer)
     }
   } else if (customer.stage === 'returning' && customer.elapsed >= CUSTOMER_SECONDS.returning) {
-    customerSurface(s, 'condiment', reusableCupFor(customer.recipe), customer.visit.dirtyReturn)
+    customerSurface(s, 'condiment', reusableCupFor(customer.recipe, customer.size), customer.visit.dirtyReturn)
     say(s, '손님이 컨디먼트 바에 컵을 반납했어요.')
     customerLeave(customer)
   }

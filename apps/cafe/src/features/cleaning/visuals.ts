@@ -21,10 +21,13 @@ export function createCleaningVisuals(scene: THREE.Scene, camera: THREE.Perspect
     return { root, bodies }
   }
   function showCups(visuals: ReturnType<typeof cup>[], counts: ReusableCupCounts | undefined) {
-    const count = cupCount(counts)
+    const kinds = reusableCupKinds.flatMap((kind) =>
+      Array.from({ length: Math.min(counts?.[kind] ?? 0, visuals.length) }, () => kind),
+    )
+    const count = kinds.length
     visuals.forEach((visual, i) => {
       visual.root.visible = i < count
-      const kind = i < (counts?.['hot-mug'] ?? 0) ? 'hot-mug' : 'iced-glass'
+      const kind = kinds[i]
       for (const [id, body] of visual.bodies) body.root.visible = id === kind
     })
   }

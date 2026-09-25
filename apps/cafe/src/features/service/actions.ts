@@ -1,12 +1,12 @@
 import { CUSTOMER_HABITS } from '../../content/customers'
-import { RECIPES, recipeLabel } from '../../content/recipes'
+import { recipeFor, recipeLabel } from '../../content/recipes'
 import { tableIds } from '../../content/stations'
 import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
 import type { WorkContext } from '../../simulation/work-context'
 import { nextStep } from '../crafting/rules'
-import { cupKindFor, SERVICE_NAMES } from '../inventory/cups'
-import { customerToCondiment, customerToPickup } from './customer'
+import { cupKindFor, cupSize, SERVICE_NAMES } from '../inventory/cups'
+import { customerToCondiment, customerToPickup, orderSizes } from './customer'
 
 export function handleOrderActions(work: WorkContext, action: Extract<Action, { type: 'ticket' | 'serve' }>) {
   const s = work.state
@@ -29,9 +29,17 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
         )
         break
       }
-      s.ticket = { recipe: action.recipe, service: action.service }
+      if (!orderSizes(action.recipe, action.service).includes(action.size)) {
+        fail('이 메뉴·이용 방식에서는 선택한 사이즈를 주문할 수 없어요.')
+        break
+      }
+      s.ticket = { recipe: action.recipe, service: action.service, size: action.size }
       if (s.customer.stage === 'ordering') customerToPickup(s.customer)
-      say(s, `${SERVICE_NAMES[action.service]} · ${recipeLabel(action.recipe)} 주문을 접수했어요.`, 'success')
+      say(
+        s,
+        `${SERVICE_NAMES[action.service]} · ${recipeLabel(action.recipe, action.size)} 주문을 접수했어요.`,
+        'success',
+      )
       break
     case 'serve': {
       if (
@@ -59,12 +67,15 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
         fail('계량이 맞지 않는 음료예요. 컵을 정리하고 다시 만들어주세요.')
         break
       }
-      if (s.cup.recipe !== s.request || s.cup.craft.kind !== cupKindFor(s.request, s.customer.service)) {
-        fail('손님이 요청한 메뉴 또는 매장·포장 컵과 달라요. 컵을 정리하고 POS 주문을 수정해주세요.')
+      if (
+        s.cup.recipe !== s.request ||
+        s.cup.craft.kind !== cupKindFor(s.request, s.customer.service, s.customer.size)
+      ) {
+        fail('손님이 요청한 메뉴·사이즈 또는 매장·포장 컵과 달라요. 컵을 정리하고 POS 주문을 수정해주세요.')
         break
       }
-      s.cash += RECIPES[s.cup.recipe].price
-      s.totals.revenue += RECIPES[s.cup.recipe].price
+      s.cash += recipeFor(s.cup.recipe, cupSize(s.cup.craft.kind)).price
+      s.totals.revenue += recipeFor(s.cup.recipe, cupSize(s.cup.craft.kind)).price
       s.totals.served++
       s.ticket = null
       s.cup = null

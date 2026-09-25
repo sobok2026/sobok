@@ -4,7 +4,7 @@ import type { GameState } from '../../simulation/state'
 import CupInventory from './CupInventory'
 import { CUP_NAMES, cleanCupCount, cupKindFor } from './cups'
 export default function CupRack({ state, act }: { state: GameState; act: (action: Action) => void }) {
-  const selectedCupKind = state.ticket ? cupKindFor(state.ticket.recipe, state.ticket.service) : null
+  const selectedCupKind = state.ticket ? cupKindFor(state.ticket.recipe, state.ticket.service, state.ticket.size) : null
   return (
     <>
       {selectedCupKind ? (

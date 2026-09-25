@@ -1,6 +1,7 @@
-import { RECIPES } from '../../content/recipes'
+import { recipeFor } from '../../content/recipes'
 import { STATIONS } from '../../content/stations'
 import { operationFor } from '../../features/crafting/rules'
+import { cupSize } from '../../features/inventory/cups'
 import { preparationStep } from '../../features/preparation/rules'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
@@ -226,7 +227,7 @@ export function actionSound(action: Action, previous: GameState, current: GameSt
     current.cup &&
     previous.cup?.id === current.cup.id &&
     current.cup.step > previous.cup.step &&
-    current.cup.step === RECIPES[current.cup.recipe].steps.length
+    current.cup.step === recipeFor(current.cup.recipe, cupSize(current.cup.craft.kind)).steps.length
   )
     return 'complete'
   if (action.type === 'use-start' && previous.cup && current.cup) {

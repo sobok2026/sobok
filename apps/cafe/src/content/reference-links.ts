@@ -1,3 +1,4 @@
+import { DRINK_SIZES, type RecipeSize, recipeSizeIds } from './drink-sizes'
 import { type Lifetime, sameLifetime } from './lifetime'
 import type referenceData from './references.generated.json'
 
@@ -49,8 +50,13 @@ function positive(value: unknown, context: string, whole = false) {
     invalid(context, `${whole ? '양의 정수' : '양수'} 수량이 필요해요. 현재 ${JSON.stringify(value)}.`)
   return value
 }
-function tall(step: DrinkStepReference, whole = false) {
-  return positive(step.tall, `${sourceLine(step.source)} / ${step.item} / Tall`, whole)
+function sizes(step: DrinkStepReference, whole = false): Record<RecipeSize, number> {
+  return Object.fromEntries(
+    recipeSizeIds.map((size) => [
+      size,
+      positive(step[size], `${sourceLine(step.source)} / ${step.item} / ${DRINK_SIZES[size].name}`, whole),
+    ]),
+  ) as Record<RecipeSize, number>
 }
 function amount(step: PreparationReference['steps'][number], whole = false) {
   return positive(step.amount, `${sourceLine(step.source)} / ${step.item} / 배합량`, whole)
@@ -161,25 +167,25 @@ export function linkReferences(data: ReferenceData) {
     `${recipeFile} / 음료 제조 / ${hojiIced.name} ICED`,
   )
   const hojiAmounts = (steps: Pick<typeof hojiHotSteps, 'syrup' | 'foam' | 'powder'>) => ({
-    syrupPumps: tall(steps.syrup, true),
+    syrupPumps: sizes(steps.syrup, true),
     syrupPumpMl: pumpMl(steps.syrup),
-    powderTaps: tall(steps.powder, true),
-    tumblerFoamMl: tall(steps.foam),
+    powderTaps: sizes(steps.powder, true),
+    tumblerFoamMl: sizes(steps.foam),
   })
   for (const group of [hot, iced, cold, hojiHot, hojiIced])
     for (const step of group.steps)
-      if (!step.unit && step.tall !== null)
+      if (!step.unit && recipeSizeIds.some((size) => step[size] !== null))
         invalid(
           `${sourceLine(step.source)} / ${group.name} ${group.variant} / ${step.item}`,
           '단위 없는 수량이 추가됐어요. 컵 기준선·게임용 환산을 확인해주세요.',
         )
   const latteAmounts = (steps: Pick<typeof icedSteps, 'espresso' | 'glaze' | 'drizzle' | 'powder' | 'foam'>) => ({
-    shots: tall(steps.espresso, true),
-    glazePumps: tall(steps.glaze, true),
+    shots: sizes(steps.espresso, true),
+    glazePumps: sizes(steps.glaze, true),
     pumpMl: pumpMl(steps.glaze),
-    drizzleTurns: tall(steps.drizzle),
-    powderTaps: tall(steps.powder, true),
-    tumblerFoamMl: tall(steps.foam),
+    drizzleTurns: sizes(steps.drizzle),
+    powderTaps: sizes(steps.powder, true),
+    tumblerFoamMl: sizes(steps.foam),
   })
 
   const foam = preparation('글레이즈드 폼', '기본 배합 / 약 9잔')
@@ -294,7 +300,7 @@ export function linkReferences(data: ReferenceData) {
       reference: hojiHot,
       steps: hojiHotSteps,
       ...hojiAmounts(hojiHotSteps),
-      tumblerTeaMl: tall(hojiHotSteps.tea),
+      tumblerTeaMl: sizes(hojiHotSteps.tea),
     },
     hojiIced: { reference: hojiIced, steps: hojiIcedSteps, ...hojiAmounts(hojiIcedSteps) },
     hojicha: {
