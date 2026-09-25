@@ -12,6 +12,7 @@ export default function ShiftLedger({ state }: { state: GameState }) {
   for (const id of supplyIds)
     if (totals.supplyPurchases[id]) purchases.push({ name: SUPPLIES[id].name, amount: totals.supplyPurchases[id]! })
   const spent = purchases.reduce((sum, item) => sum + item.amount, 0)
+  const usedSupplies = supplyIds.filter((id) => (totals.suppliesUsed[id] ?? 0) > 0)
   const discarded = ingredientIds.filter((id) => (totals.disposed[id] ?? 0) > 0.0001)
   const hasWaste = discarded.length > 0 || totals.coldBrewDiscardedBeans > 0 || totals.wastedCups > 0
   return (
@@ -37,6 +38,22 @@ export default function ShiftLedger({ state }: { state: GameState }) {
               <div key={item.name} className="flex justify-between gap-4">
                 <dt>{item.name}</dt>
                 <dd className="tabular-nums">{money(item.amount)}</dd>
+              </div>
+            ))}
+          </dl>
+        </details>
+      ) : null}
+      {usedSupplies.length ? (
+        <details className="border-b border-line py-4" aria-label="손님 소모품 사용량">
+          <summary className="text-muted">소모품 사용량</summary>
+          <dl className="mt-3 space-y-3 text-xs">
+            {usedSupplies.map((id) => (
+              <div key={id} className="flex justify-between gap-4">
+                <dt>{SUPPLIES[id].name}</dt>
+                <dd>
+                  {totals.suppliesUsed[id]}
+                  {SUPPLIES[id].unit}
+                </dd>
               </div>
             ))}
           </dl>
