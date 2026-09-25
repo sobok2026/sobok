@@ -74,7 +74,7 @@ export default function WorkSettings({
                 ? '작업음을 불러오고 있어요.'
                 : status === 'blocked' || status === 'unavailable'
                   ? '작업음을 시작하지 못했어요. 미리 듣기를 다시 눌러주세요.'
-                  : '얼음·물·스팀·세척 소리가 실제 작업에 맞춰 들려요.'}
+                  : '붓기·추출·스팀·얼음·닦기 소리가 작업에 맞춰 들려요. 계량 확인은 무음이에요.'}
       </p>
       <TextButton className="mt-3" onClick={onGuide}>
         {guideOpen ? '단계별 안내 숨기기' : '단계별 안내 다시 보기'} · H

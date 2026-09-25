@@ -1,17 +1,23 @@
 import { RECIPES, STATIONS } from '../game/catalog'
-import { CLEANING_SECONDS } from '../game/cleaning'
-import { coldBrewStep } from '../game/cold-brew'
-import { isContinuous, operationFor, readyToConfirm } from '../game/crafting'
+import { operationFor } from '../game/crafting'
 import type { Preferences } from '../game/preferences'
 import { preparationStep } from '../game/preparation'
 import type { GameState } from '../game/state'
 import type { Action, CafeStore } from '../game/store'
-import { WASH_STEPS } from '../game/washing'
 
-const assetIds = ['ice', 'confirm', 'bell', 'cloth', 'water', 'steam'] as const
+const assetIds = [
+  'bell',
+  'ice-cubes',
+  'pour-cup',
+  'pour-milk',
+  'espresso',
+  'steam-machine',
+  'steam-milk',
+  'wipe-table',
+] as const
 type Asset = (typeof assetIds)[number]
-export type WorkSound = 'ice' | 'ready' | 'confirm' | 'complete' | 'serve'
-export type WorkLoop = 'water' | 'steam' | 'cloth'
+export type WorkSound = 'ice' | 'complete' | 'serve'
+export type WorkLoop = 'pour-cup' | 'pour-milk' | 'espresso' | 'steam' | 'wipe-table'
 export type SoundStatus = 'off' | 'idle' | 'loading' | 'ready' | 'blocked' | 'unavailable'
 type ActiveInput = ReturnType<CafeStore['getActiveInput']>
 type Voice = { source: AudioBufferSourceNode; gain: GainNode }
@@ -27,6 +33,7 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
   let lastCueAt = -1
   let lastCue: WorkSound | null = null
   let loop: { kind: WorkLoop; voice: Voice } | null = null
+  let nextSteam = 0
   const buffers = new Map<Asset, AudioBuffer>()
   const voices = new Set<Voice>()
   const abort = new AbortController()
@@ -149,13 +156,7 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
     lastCueAt = context.currentTime
     switch (sound) {
       case 'ice':
-        hit('ice', 0.4)
-        break
-      case 'ready':
-        hit('confirm', 0.25, 1.1)
-        break
-      case 'confirm':
-        hit('confirm', 0.35)
+        hit('ice-cubes', 0.6)
         break
       case 'complete':
         hit('bell', 0.25, 0.95)
@@ -171,8 +172,12 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
     if (loop) stopVoice(loop.voice)
     loop = null
     if (!kind) return
-    const voice = createVoice(kind, kind === 'steam' ? 0.25 : 0.5, 1, 0, true)
-    if (voice) loop = { kind, voice }
+    const asset = kind === 'steam' ? (nextSteam % 2 === 0 ? 'steam-machine' : 'steam-milk') : kind
+    const voice = createVoice(asset, kind === 'wipe-table' ? 0.6 : 0.75, 1, 0, true)
+    if (voice) {
+      loop = { kind, voice }
+      if (kind === 'steam') nextSteam++
+    }
   }
   return {
     configure,
@@ -223,24 +228,9 @@ export function actionSound(action: Action, previous: GameState, current: GameSt
     current.cup.step === RECIPES[current.cup.recipe].steps.length
   )
     return 'complete'
-  const changedMessage = previous.messages.at(-1)?.id !== current.messages.at(-1)?.id
-  if (
-    [
-      'confirm-craft',
-      'prep-confirm',
-      'cold-confirm',
-      'wash-confirm',
-      'clean-confirm',
-      'label-batch',
-      'ticket',
-    ].includes(action.type) &&
-    changedMessage
-  )
-    return 'confirm'
   if (action.type === 'use-start' && previous.cup && current.cup) {
     const op = operationFor(previous.cup.recipe, previous.cup.step, previous.cup.craft)
-    if (current.cup.craft.progress > previous.cup.craft.progress)
-      return op?.kind === 'ice' || op?.kind === 'sprinkle' ? 'ice' : null
+    if (current.cup.craft.progress > previous.cup.craft.progress) return op?.kind === 'ice' ? 'ice' : null
   }
   return null
 }
@@ -251,72 +241,20 @@ export function tickSound(previous: GameState, current: GameState): WorkSound | 
     previous.jobs.some((job) => job.endsAt <= current.time && !current.jobs.some((item) => item.id === job.id))
   )
     return 'complete'
-  const cup = current.cup
-  if (cup && previous.cup?.id === cup.id && previous.cup.step === cup.step && !cup.craft.fault) {
-    const op = operationFor(cup.recipe, cup.step, cup.craft)
-    if (
-      op &&
-      isContinuous(op) &&
-      readyToConfirm(op, cup.craft.progress) &&
-      !readyToConfirm(op, previous.cup.craft.progress)
-    )
-      return 'ready'
-  }
-  const prep = current.preparation
-  if (
-    prep?.stage === 'measuring' &&
-    previous.preparation?.id === prep.id &&
-    previous.preparation.step === prep.step &&
-    !prep.fault
-  ) {
-    const step = preparationStep(prep)
-    const target = step.target * (1 - step.tolerance)
-    if (prep.progress >= target && previous.preparation.progress < target) return 'ready'
-  }
-  const wash = current.washing
-  if (
-    wash &&
-    (wash.stage === 'scrub' || wash.stage === 'rinse') &&
-    previous.washing?.id === wash.id &&
-    previous.washing.stage === wash.stage &&
-    wash.progress >= WASH_STEPS[wash.stage].seconds &&
-    previous.washing.progress < WASH_STEPS[wash.stage].seconds
-  )
-    return 'ready'
-  const cleaning = current.cleaning
-  if (
-    cleaning &&
-    cleaning.stage !== 'collect' &&
-    previous.cleaning?.id === cleaning.id &&
-    previous.cleaning.stage === cleaning.stage &&
-    cleaning.progress >= CLEANING_SECONDS[cleaning.stage] &&
-    previous.cleaning.progress < CLEANING_SECONDS[cleaning.stage]
-  )
-    return 'ready'
-  const brew = current.coldBrew
-  if (
-    brew &&
-    !brew.fault &&
-    brew.stage === 'measuring' &&
-    brew.step < 2 &&
-    previous.coldBrew?.id === brew.id &&
-    previous.coldBrew.step === brew.step
-  ) {
-    const step = coldBrewStep(brew)
-    const target = step.target * (1 - step.tolerance)
-    if (brew.progress >= target && previous.coldBrew.progress < target) return 'ready'
-  }
   return null
 }
 export function workLoop(state: GameState, input: ActiveInput, position: GameState['position']): WorkLoop | null {
-  if (input?.kind === 'clean') return 'cloth'
-  if (input?.kind === 'cold') return state.coldBrew?.step === 0 ? 'cloth' : 'water'
-  if (input?.kind === 'wash') return state.washing?.stage === 'rinse' ? 'water' : 'cloth'
-  if (input?.kind === 'prep' && state.preparation)
-    return preparationStep(state.preparation).kind === 'pour' ? 'water' : null
+  if (input?.kind === 'clean') return state.cleaning?.stage === 'wipe' ? 'wipe-table' : null
+  if (input?.kind === 'cold') return state.coldBrew?.step === 1 ? 'pour-cup' : null
+  if (input?.kind === 'prep' && state.preparation) {
+    const step = preparationStep(state.preparation)
+    if (step.kind === 'pour')
+      return step.ingredient === 'milk' || step.ingredient === 'cream' ? 'pour-milk' : 'pour-cup'
+  }
   if (input?.kind === 'drink' && state.cup) {
     const op = operationFor(state.cup.recipe, state.cup.step, state.cup.craft)
-    if (op && ['pour', 'steam', 'drizzle', 'transfer'].includes(op.kind)) return 'water'
+    if (op?.kind === 'steam') return 'pour-milk'
+    if (op && ['pour', 'transfer'].includes(op.kind)) return 'pour-cup'
   }
   const machine = state.jobs
     .filter((job) => job.kind === 'craft-machine' && job.endsAt > state.time)
@@ -326,5 +264,5 @@ export function workLoop(state: GameState, input: ActiveInput, position: GameSta
     }))
     .filter((item) => item.distance <= 3.5)
     .sort((a, b) => a.distance - b.distance)[0]
-  return machine ? (machine.job.machine === 'steam' ? 'steam' : 'water') : null
+  return machine ? (machine.job.machine === 'steam' ? 'steam' : 'espresso') : null
 }
