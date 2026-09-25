@@ -1,0 +1,184 @@
+{
+  "id": "라떼-위스키-마티니",
+  "name": "라떼 위스키 마티니",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["short"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "클래식 시럽 추가",
+          "instructions": ["클래식 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "에반 윌리엄스 블랙 위스키 추가",
+          "instructions": ["에반 윌리엄스 블랙 위스키 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "에반-윌리엄스-블랙-위스키",
+              "into": "shaker",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "에스프레소 추출",
+          "instructions": ["에스프레소 추출"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": ["수북하게 담는다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop",
+                "referenceSize": "tall"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "강하게 쉐이킹",
+          "instructions": ["뚜껑을 닫고 아래 위로 약 50회 이상 힘차게 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "shaker",
+              "repetitions": 50,
+              "atLeast": true,
+              "approximate": true
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "걸러 따르기",
+          "instructions": ["걸러 따르기"],
+          "notes": ["잔에 천천히 따른다."],
+          "operations": [
+            {
+              "action": "strain",
+              "from": "shaker",
+              "into": "serving-cup",
+              "toolIds": ["strainer", "fine-strainer"],
+              "excludeMaterialIds": ["ice"]
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "바닐라 크림 베이스 추가",
+          "instructions": ["바닐라 크림 베이스 추가"],
+          "notes": ["원본은 지거 1샷으로 표기하며 ml 환산은 제시하지 않는다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-크림-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "shot"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "리저브 다크 초콜릿 소스 추가",
+          "instructions": ["리저브 다크 초콜릿 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-다크-초콜릿-소스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "드리즐 양 미기재"
+              },
+              "toolId": "drizzle-bottle"
+            }
+          ]
+        },
+        {
+          "id": "step-9",
+          "label": "에칭",
+          "instructions": ["에칭"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "etch",
+              "vessel": "serving-cup"
+            }
+          ]
+        },
+        {
+          "id": "step-10",
+          "label": "제공",
+          "instructions": ["전용 잔에 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "none"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

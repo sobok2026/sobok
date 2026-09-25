@@ -1,0 +1,133 @@
+{
+  "id": "뱅쇼-베이스-프리믹스-제조",
+  "name": "뱅쇼 베이스(프리믹스) 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "티백-추가",
+          "label": "티백 추가",
+          "instructions": ["라벨을 제거한 히비스커스 티백 4개를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "히비스커스-티백",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 4,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "티-우리기",
+          "label": "티 우리기",
+          "instructions": ["뜨거운 물을 믹싱 피처 1L 선까지 넣고 10분 우린 후 티백을 제거한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 1.0,
+                "unit": "l"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "duration": {
+                "seconds": 600,
+                "approximate": false
+              },
+              "vessel": "mixing-pitcher",
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "remove",
+              "itemId": "히비스커스-티백",
+              "from": "mixing-pitcher",
+              "dispose": false
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 1.0,
+                "unit": "l"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "베이스-추가",
+          "label": "베이스 추가",
+          "instructions": ["크리스마스 뱅쇼 베이스 500ml를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "크리스마스-뱅쇼-베이스",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 500,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "정수-추가",
+          "label": "정수 추가",
+          "instructions": ["정수 500ml를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 500,
+                "unit": "ml"
+              }
+            }
+          ]
+        }
+      ],
+      "notes": ["뱅쇼 베이스는 사용 전 펌핑하여 혼합한다."],
+      "review": [],
+      "output": {
+        "materialId": "뱅쇼-베이스-프리믹스",
+        "amount": null,
+        "description": "완성 부피는 미기재."
+      }
+    }
+  ]
+}

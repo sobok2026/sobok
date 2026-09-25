@@ -1,0 +1,183 @@
+{
+  "id": "리저브-코르타도",
+  "name": "리저브 코르타도",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "리저브 코르타도",
+      "temperature": "hot",
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "에스프레소 준비",
+          "instructions": ["포터필터를 그라인더에 두고 커피를 도징한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "grind",
+              "equipmentId": "reserve-grinder",
+              "materialId": "리저브-에스프레소-원두",
+              "into": "portafilter",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 도징 g 미기재"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "우유 준비",
+          "instructions": ["Tall 라떼아트용 스팀 피처에 일반 우유 180ml를 계량한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 180,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "샷 추출",
+          "instructions": ["리저브 에스프레소 2샷을 코르타도 전용잔에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "cortado-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "equipmentId": "reserve-espresso-machine",
+              "materialId": "리저브-에스프레소-원두",
+              "when": {
+                "kind": "service",
+                "value": "for-here"
+              }
+            },
+            {
+              "action": "espresso",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "equipmentId": "reserve-espresso-machine",
+              "materialId": "리저브-에스프레소-원두",
+              "when": {
+                "kind": "service",
+                "value": "takeaway"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "우유 스팀",
+          "instructions": ["우유를 45~50°C로 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "standard",
+              "temperature": {
+                "kind": "range",
+                "min": 45,
+                "max": 50
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "매장용 마무리",
+          "instructions": [
+            "스팀 우유로 컵을 채우고 라떼아트로 마무리한다. 우유를 부으며 자연스럽게 폼이 들어가도록 하여 전체 폼 두께를 1~1.5cm로 맞춘다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "cortado-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "완성 음료의 거품 부분을 남기고 잔을 채우는 스팀 우유"
+              },
+              "portion": "liquid"
+            },
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "cortado-cup",
+              "amount": {
+                "kind": "depth-range",
+                "minMillimeters": 10,
+                "maxMillimeters": 15
+              },
+              "portion": "foam"
+            },
+            {
+              "action": "etch",
+              "vessel": "cortado-cup",
+              "pattern": "라떼아트"
+            }
+          ],
+          "when": {
+            "kind": "service",
+            "value": "for-here"
+          }
+        },
+        {
+          "id": "step-6",
+          "label": "포장용 마무리",
+          "instructions": [
+            "포장 요청 시 매장 전용잔보다 품질이 낮을 수 있음을 안내하고 샷을 추출한 컵에 스팀 우유 100g을 계량한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 100,
+                "unit": "g"
+              }
+            },
+            {
+              "action": "serve"
+            }
+          ],
+          "when": {
+            "kind": "service",
+            "value": "takeaway"
+          }
+        }
+      ],
+      "notes": [
+        "4.5oz 전용잔 제공을 권장한다.",
+        "폼은 1~1.5cm이며 라떼나 카푸치노보다 적다.",
+        "고객이 요청하면 물을 함께 제공한다.",
+        "럼 샷 코르타도 전용잔과 혼동하지 않는다."
+      ],
+      "review": []
+    }
+  ]
+}

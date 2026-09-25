@@ -1,0 +1,216 @@
+{
+  "id": "리저브-사케라또-비안코-오버-아이스",
+  "name": "리저브 사케라또 비안코 오버 아이스",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "에스프레소 준비",
+          "instructions": ["포터필터를 그라인더에 두고 커피를 도징한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "grind",
+              "equipmentId": "reserve-grinder",
+              "materialId": "리저브-에스프레소-원두",
+              "into": "portafilter",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 도징 g 미기재"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "샷 추출",
+          "instructions": ["리저브 에스프레소 샷을 샷 글라스에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "shot"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "shot"
+                  }
+                }
+              },
+              "method": "ristretto",
+              "equipmentId": "reserve-espresso-machine",
+              "materialId": "리저브-에스프레소-원두"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "샷 및 얼음 추가",
+          "instructions": ["추출한 리스트레토 샷을 쉐이커에 붓고 사이즈별 스쿱으로 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "shaker",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "쉐이킹",
+          "instructions": ["뚜껑을 닫고 약 10회 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "shaker",
+              "repetitions": 10,
+              "approximate": true
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "내용물 붓기",
+          "instructions": ["쉐이커의 얼음까지 모두 사이즈별 아이스 컵에 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shaker",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "기본 컵 스위트 크림",
+          "instructions": ["리저브 스위트 크림을 컵 테두리 아래 6mm까지 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-스위트-크림-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ],
+          "when": {
+            "kind": "container",
+            "value": "standard-cup"
+          }
+        },
+        {
+          "id": "step-7",
+          "label": "개인컵 스위트 크림",
+          "instructions": ["개인컵은 Tall 85ml 또는 91g, Grande 91ml 또는 97g을 계량한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-스위트-크림-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "amount",
+                    "value": 85,
+                    "unit": "ml"
+                  },
+                  "grande": {
+                    "kind": "amount",
+                    "value": 91,
+                    "unit": "ml"
+                  }
+                }
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "무게로 계량",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "리저브-스위트-크림-베이스",
+                  "into": "serving-cup",
+                  "amount": {
+                    "kind": "by-size",
+                    "values": {
+                      "tall": {
+                        "kind": "amount",
+                        "value": 91,
+                        "unit": "g"
+                      },
+                      "grande": {
+                        "kind": "amount",
+                        "value": 97,
+                        "unit": "g"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "when": {
+            "kind": "container",
+            "value": "personal-cup"
+          }
+        },
+        {
+          "id": "step-8",
+          "label": "완료 및 제공",
+          "instructions": ["흘러내리는 크림 층이 보이도록 섞지 않고 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "리저브 스위트 크림 베이스는 미리 제조한 전용 부재료이므로 우유 종류를 변경할 수 없다.",
+        "차가워진 쉐이커 뚜껑이 분리되지 않으면 하단과 뚜껑 접합부를 손으로 가볍게 2~3회 친 뒤 연다."
+      ],
+      "review": []
+    }
+  ]
+}

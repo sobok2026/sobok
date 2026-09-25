@@ -1,0 +1,210 @@
+{
+  "id": "피스타치오-폼-제조",
+  "name": "피스타치오 폼 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 배합",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "유제품-계량",
+          "label": "유제품 계량",
+          "instructions": ["콜드 폼 피처에 프릿츠 골드와 일반 우유를 계량한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 100,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 70,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "피스타치오-소스-펌핑",
+          "label": "피스타치오 소스 펌핑",
+          "instructions": ["피스타치오 소스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "피스타치오-소스",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 9,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "바닐라-시럽-펌핑",
+          "label": "바닐라 시럽 펌핑",
+          "instructions": ["바닐라 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-시럽",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 5,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["3번 버튼을 1회 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        }
+      ],
+      "notes": ["3번 버튼 1회는 약 25초이다."],
+      "review": [],
+      "output": {
+        "materialId": "피스타치오-폼",
+        "amount": null,
+        "description": "Tall 기준 약 6잔 제조 가능한 기본 배합의 1배수. 완성 부피는 미기재."
+      }
+    },
+    {
+      "id": "double",
+      "name": "2배 배합",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "유제품-계량",
+          "label": "유제품 계량",
+          "instructions": ["콜드 폼 피처에 프릿츠 골드와 일반 우유를 계량한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 200,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 140,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "피스타치오-소스-펌핑",
+          "label": "피스타치오 소스 펌핑",
+          "instructions": ["피스타치오 소스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "피스타치오-소스",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 18,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "바닐라-시럽-펌핑",
+          "label": "바닐라 시럽 펌핑",
+          "instructions": ["바닐라 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-시럽",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 10,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["2배수 제조 시 3번 버튼을 2~3회 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": {
+                "min": 2,
+                "max": 3
+              },
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        }
+      ],
+      "notes": ["3번 버튼 1회는 약 25초이다."],
+      "review": [],
+      "output": {
+        "materialId": "피스타치오-폼",
+        "amount": null,
+        "description": "Tall 기준 약 6잔 제조 가능한 기본 배합의 2배수. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

@@ -1,5 +1,5 @@
-import { INGREDIENTS } from '../../content/ingredients'
 import type { StationId } from '../../content/stations'
+import { estimatedPreparationMilliliters } from '../../content/stock-amounts'
 import type { Action } from '../../simulation/actions'
 import { say, startJob } from '../../simulation/feedback'
 import { cupHandsBusy } from '../../simulation/hands'
@@ -94,7 +94,7 @@ export function handlePreparationActions(
         fail('G로 도구를 놓은 뒤 확인해주세요.')
         break
       }
-      if (step.kind === 'machine' || prep.progress + 0.0001 < step.target * (1 - step.tolerance)) {
+      if (step.kind === 'machine' || prep.progress + 1e-9 < step.target * (1 - step.tolerance)) {
         fail('아직 목표량에 못 미쳤어요. 계량을 이어가세요.')
         break
       }
@@ -144,7 +144,7 @@ export function finishPreparation(work: WorkContext, completedAt: number) {
   const s = work.state
   const prep = s.preparation
   if (!prep || prep.stage === 'ready' || prep.fault || expirePreparation(work, completedAt)) return
-  const batch = newBatch(prep.recipe, INGREDIENTS[prep.recipe].pack, completedAt, 'prep')
+  const batch = newBatch(prep.recipe, estimatedPreparationMilliliters[prep.recipe], completedAt, 'prep')
   if (prep.ingredientExpiresAt != null) batch.expiresAt = Math.min(batch.expiresAt!, prep.ingredientExpiresAt)
   s.batches.push(batch)
   prep.stage = 'ready'
@@ -170,7 +170,8 @@ export function applyPreparation(work: WorkContext, step: PrepStep, delta: numbe
     work.input = null
     return
   }
-  if (step.kind === 'stir' || step.kind === 'shake') delta = Math.min(delta, Math.max(0, step.target - prep.progress))
+  if (step.kind === 'stir' || step.kind === 'shake' || step.kind === 'pour')
+    delta = Math.min(delta, Math.max(0, step.target - prep.progress))
   if (delta <= 0) {
     work.input = null
     return
@@ -189,7 +190,7 @@ export function applyPreparation(work: WorkContext, step: PrepStep, delta: numbe
   if (step.ingredient && step.ingredient in prep.amounts)
     prep.amounts[step.ingredient as keyof typeof prep.amounts] += amount
   else if (step.tool === 'water-jug' || step.tool === 'cold-water-jug') prep.amounts.water += delta
-  if (!['stir', 'shake'].includes(step.kind) && prep.progress > step.target * (1 + step.tolerance) + 0.0001) {
+  if (!['stir', 'shake'].includes(step.kind) && prep.progress > step.target * (1 + step.tolerance) + 1e-9) {
     prep.fault = `${step.label} 계량을 초과했어요. 배합을 폐기하고 다시 준비해주세요.`
     work.input = null
     say(s, prep.fault, 'error')

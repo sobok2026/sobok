@@ -1,0 +1,295 @@
+{
+  "id": "블론드-에스프레소-라떼",
+  "name": "블론드 에스프레소 라떼",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["short", "tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "우유 스팀",
+          "instructions": ["피처에 원본 기준으로 우유를 계량하고 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "standard"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "샷 추출",
+          "instructions": ["에스프레소 샷을 제공 컵에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "short": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "shot"
+                  },
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "shot"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  }
+                }
+              },
+              "method": "blonde"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "시럽 추가",
+          "instructions": ["컵에 흑당 시럽을 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "흑당-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "short": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "마무리 및 제공",
+          "instructions": [
+            "스팀 스푼으로 스팀 우유를 테두리 아래 12mm까지 붓는다.",
+            "에스프레소 휘핑 크림을 올리고 컨디먼트 쉐이커로 시나몬 파우더를 3번 토핑한다.",
+            "일회용 컵에 리드를 덮어 제공한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              },
+              "toolId": "steam-spoon"
+            },
+            {
+              "action": "add",
+              "materialId": "에스프레소-휘핑-크림",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 휘핑 계량 미기재"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "시나몬-파우더",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "tap"
+              },
+              "toolId": "topping-shaker"
+            },
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "standard"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    },
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "샷 추출",
+          "instructions": ["에스프레소 샷을 샷 글라스에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "shot"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  }
+                }
+              },
+              "method": "blonde"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "시럽 추가",
+          "instructions": ["컵에 흑당 시럽을 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "흑당-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "마무리 및 제공",
+          "instructions": [
+            "일반 우유를 컵 상단선까지 붓고 얼음을 테두리 아래 12mm까지 넣는다.",
+            "에스프레소 휘핑 크림을 올리고 컨디먼트 쉐이커로 시나몬 파우더를 3번 토핑한다.",
+            "일회용 컵에 리드를 덮어 제공한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "에스프레소-휘핑-크림",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 휘핑 계량 미기재"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "시나몬-파우더",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "tap"
+              },
+              "toolId": "topping-shaker"
+            },
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "dome"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": ["원본에는 샷 글라스의 에스프레소를 컵에 붓는 단계가 빠져 있어 투입 순서 확인이 필요합니다."]
+    }
+  ]
+}

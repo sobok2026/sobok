@@ -1,0 +1,123 @@
+{
+  "id": "캐모마일-유스베리티-베이스-제조",
+  "name": "캐모마일&유스베리티 베이스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "티-추가",
+          "label": "티 추가",
+          "instructions": ["홀리데이 캐모마일 티 파우치 1개, 라벨을 제거한 유스베리 티백 1개를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "홀리데이-캐모마일-티-파우치",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "유스베리-티백",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "티-우리기",
+          "label": "티 우리기",
+          "instructions": ["뜨거운 물을 워터 피처 1L 선까지 넣고 5분 우린 후 티백을 제거한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 1.0,
+                "unit": "l"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "duration": {
+                "seconds": 300,
+                "approximate": false
+              },
+              "vessel": "water-pitcher",
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "remove",
+              "itemId": "홀리데이-캐모마일-티-파우치",
+              "from": "water-pitcher",
+              "dispose": false
+            },
+            {
+              "action": "remove",
+              "itemId": "유스베리-티백",
+              "from": "water-pitcher",
+              "dispose": false
+            }
+          ]
+        },
+        {
+          "id": "얼음과-정수-추가",
+          "label": "얼음과 정수 추가",
+          "instructions": ["CBS Venti 스쿱으로 얼음 1스쿱을 넣고 워터 피처 2L 선까지 정수를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop-venti"
+            },
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 2.0,
+                "unit": "l"
+              }
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "캐모마일-유스베리-티-베이스",
+        "amount": null,
+        "description": "워터 피처 2L 선까지 완성."
+      }
+    }
+  ]
+}

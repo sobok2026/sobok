@@ -1,0 +1,136 @@
+{
+  "id": "마카다미아-베이스-제조",
+  "name": "마카다미아 베이스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "우유-계량",
+          "label": "우유 계량",
+          "instructions": ["워터 피처에 일반 우유 1.5L를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 1.5,
+                "unit": "l"
+              }
+            }
+          ]
+        },
+        {
+          "id": "로스티드-마카다미아향-시럽-펌핑",
+          "label": "로스티드 마카다미아향 시럽 펌핑",
+          "instructions": ["로스티드 마카다미아향 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "로스티드-마카다미아향-시럽",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 6,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "헤이즐넛-시럽-펌핑",
+          "label": "헤이즐넛 시럽 펌핑",
+          "instructions": ["헤이즐넛 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "헤이즐넛-시럽",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 4,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "화이트모카-시럽-펌핑",
+          "label": "화이트모카 시럽 펌핑",
+          "instructions": ["화이트모카 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "화이트모카-시럽",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "혼합",
+          "label": "혼합",
+          "instructions": ["머들러로 10~15회 저어 시럽과 우유를 충분히 섞는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "water-pitcher",
+              "toolId": "stirrer",
+              "repetitions": {
+                "min": 10,
+                "max": 15
+              }
+            }
+          ]
+        },
+        {
+          "id": "보관",
+          "label": "보관",
+          "instructions": ["뚜껑을 덮고 숫자 Tag와 Price Tag를 달아 냉장 보관한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "cover",
+              "vessel": "water-pitcher"
+            },
+            {
+              "action": "label",
+              "vessel": "water-pitcher",
+              "labels": ["유통기한 숫자 Tag", "Price Tag"]
+            },
+            {
+              "action": "store",
+              "vessel": "water-pitcher",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "마카다미아-베이스",
+        "amount": null,
+        "description": "아이스 Tall 기준 약 9잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

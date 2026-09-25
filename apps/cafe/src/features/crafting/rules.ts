@@ -1,9 +1,11 @@
-import { drinkSizeRatio } from '../../content/drink-sizes'
+import { DRINK_SIZES, drinkSizeRatio } from '../../content/drink-sizes'
 import type { Costs } from '../../content/ingredients'
 import { type RecipeId, recipeFor } from '../../content/recipes'
 import type { StationId } from '../../content/stations'
 import type { CraftState, GameState } from '../../simulation/state'
-import { type CupKind, cupSize, isReusableCup } from '../inventory/cups'
+import { type CupKind, cupService, cupSize, isReusableCup } from '../inventory/cups'
+
+export const CRAFT_EPSILON = 1e-9
 
 export const craftToolIds = [
   'milk-carton',
@@ -16,6 +18,7 @@ export const craftToolIds = [
   'ice-scoop',
   'lid',
   'tea-bottle',
+  'matcha-bottle',
 ] as const
 export type CraftTool = (typeof craftToolIds)[number]
 export const TOOL_NAMES: Record<CraftTool, string> = {
@@ -29,11 +32,24 @@ export const TOOL_NAMES: Record<CraftTool, string> = {
   'ice-scoop': '아이스 스쿱',
   lid: '리드',
   'tea-bottle': '호지차 샷 보틀',
+  'matcha-bottle': '말차 샷 보틀',
 }
 type CraftContents = CraftState['contents']
 export type CraftOperation = {
   id: string
-  kind: 'machine' | 'steam' | 'pour' | 'pump' | 'stir' | 'shake' | 'drizzle' | 'sprinkle' | 'ice' | 'lid' | 'transfer'
+  kind:
+    | 'machine'
+    | 'dispense'
+    | 'steam'
+    | 'pour'
+    | 'pump'
+    | 'stir'
+    | 'shake'
+    | 'drizzle'
+    | 'sprinkle'
+    | 'ice'
+    | 'lid'
+    | 'transfer'
   label: string
   tool: CraftTool | null
   target: number
@@ -41,10 +57,15 @@ export type CraftOperation = {
   unit: string
   rate: number
   costs: Costs
+  stockPrerequisite?: Costs
+  batchIngredient?: 'hojicha' | 'matcha'
   content?: keyof CraftContents
   weight: number
   targetFill?: number
   pitcherMl?: number
+  fillsPitcher?: boolean
+  destination?: string
+  seconds: number | null
 }
 export const craftStations: StationId[] = [
   'espresso',
@@ -57,11 +78,22 @@ export const craftStations: StationId[] = [
   'topping',
   'pickup',
 ]
+// These are drawing coordinates, not cup capacities or inventory conversion factors.
+function fillFor(amount: import('../../content/recipe-schema').RecipeAmount): number {
+  if (amount.kind === 'line') {
+    const lines = { lower: 0.4, middle: 0.6, upper: 0.8, size: 0.8, max: 0.96 }
+    return lines[amount.line]
+  }
+  if (amount.kind === 'rim-gap') return Math.max(0, 1 - amount.millimeters / 100)
+  throw new Error(`현재 컵에서 지원하지 않는 계량 방식입니다: ${amount.kind}`)
+}
 export function operationFor(recipe: RecipeId, step: number, craft: CraftState): CraftOperation | null {
   const size = cupSize(craft.kind)
-  const definition = recipeFor(recipe, size)
+  const definition = recipeFor(recipe, size, cupService(craft.kind))
   const source = definition.steps[step]
-  if (!source || (source.label === '제공' && isReusableCup(craft.kind))) return null
+  if (!source) return null
+  const operation = source.operation
+  if (operation.action === 'serve' && operation.lid === 'takeaway' && isReusableCup(craft.kind)) return null
   const toLine = (content: keyof CraftContents, targetFill: number) => ({
     content,
     targetFill,
@@ -75,177 +107,177 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
     ),
   })
   const base = {
-    id: `${recipe}:${size}:${step}`,
+    id: `${recipe}:${size}:${source.id}`,
+    label: source.label,
     target: 1,
-    tolerance: 0.06,
-    unit: '기준선',
-    rate: 0.25 / drinkSizeRatio(size),
+    tolerance: 0,
+    unit: '완료',
+    rate: 0.25,
     costs: source.costs,
     weight: 0,
+    seconds: source.seconds,
   }
-  if (recipe === 'cold-brew' && source.label !== '제공') {
-    if (source.label === '콜드 브루 추출액')
-      return { ...base, kind: 'pour', label: '추출액 따르기', tool: null, ...toLine('coffee', 0.4) }
-    if (source.label === '정수')
-      return { ...base, kind: 'pour', label: '정수 채우기', tool: null, ...toLine('water', 0.8) }
-    return {
-      ...base,
-      kind: 'ice',
-      label: '얼음 담기',
-      tool: 'ice-scoop',
-      target: Math.round(3 * drinkSizeRatio(size)),
-      tolerance: 0,
-      unit: '스쿱',
-      ...toLine('ice', 0.96),
-    }
-  }
-  if (source.usesPitcher)
-    return {
-      ...base,
-      kind: 'steam',
-      label: '피처에 우유 계량',
-      tool: 'milk-carton',
-    }
-  if (source.label === '에스프레소')
-    return {
-      ...base,
-      kind: 'machine',
-      label: `${source.target}샷 추출`,
-      tool: null,
-      tolerance: 0,
-      unit: '추출',
-      content: 'coffee',
-      weight: espressoFill(recipe, craft.kind),
-    }
-  if (source.label === '글레이즈드 소스' || source.label === '클래식 시럽')
-    return {
-      ...base,
-      kind: 'pump',
-      label: source.label === '클래식 시럽' ? '클래식 시럽 펌핑' : '소스 펌핑',
-      tool: null,
-      target: source.target,
-      tolerance: 0,
-      unit: '펌프',
-      content: 'sauce',
-      weight: (0.07 * source.target) / (3 * drinkSizeRatio(size)),
-    }
-  if (source.label === '에스프레소·소스') {
-    if (recipe === 'glazed-iced' && craft.shotReady && !craft.shotTransferred)
+  switch (operation.action) {
+    case 'run-machine':
       return {
         ...base,
-        id: `${base.id}:transfer`,
-        kind: 'transfer',
-        label: '샷 글라스에서 옮기기',
-        tool: 'shot-glass',
+        kind: 'dispense',
+        label: `${DRINK_SIZES[size].name} 온수 디스펜서 · ${operation.program.toUpperCase()}`,
+        tool: null,
+        unit: '회',
+        ...toLine('water', 0.72),
+      }
+    case 'espresso':
+      return {
+        ...base,
+        kind: 'machine',
+        label: `${source.target}샷 추출`,
+        tool: null,
+        unit: '추출',
         content: 'coffee',
         weight: espressoFill(recipe, craft.kind),
+        destination: operation.into,
       }
-    return {
-      ...base,
-      kind: 'stir',
-      label: '샷과 소스 섞기',
-      tool: 'stirrer',
-      rate: 0.4,
-      tolerance: 0,
-      unit: '혼합',
-    }
-  }
-  if (source.label === '스팀 우유')
-    return {
-      ...base,
-      kind: 'pour',
-      label: '스팀 우유 붓기',
-      tool: 'pitcher',
-      ...toLine('milk', recipe === 'hoji-hot' ? 0.79 : 0.87),
-      pitcherMl: definition.steps.find((item) => item.usesPitcher)!.costs.milk!,
-    }
-  if (source.label === '일반 우유')
-    return {
-      ...base,
-      kind: 'pour',
-      label: '우유 붓기',
-      tool: 'milk-carton',
-      ...toLine('milk', recipe === 'hoji-iced' ? 0.6 : 0.8),
-    }
-  if (source.label === '호지차 샷') {
-    if (!craft.teaMixed)
+    case 'steam':
+      return { ...base, kind: 'steam', label: `${operation.setting ?? ''} 우유 스팀`, tool: null, unit: '스팀' }
+    case 'shake': {
+      const following = definition.steps[step + 1]
+      const materialId = following?.operation.action === 'add' ? following.operation.materialId : undefined
+      if (materialId !== 'hojicha' && materialId !== 'matcha')
+        throw new Error('재혼합할 샷 재료가 연결되지 않았습니다.')
       return {
         ...base,
-        id: `${base.id}:tea-mix`,
         kind: 'shake',
-        label: '사용 전 호지차 샷 재혼합',
-        tool: 'tea-bottle',
-        target: 3,
-        tolerance: 0,
-        unit: '회',
-        costs: {},
+        label: '사용 전 샷 재혼합',
+        tool: materialId === 'matcha' ? 'matcha-bottle' : 'tea-bottle',
+        target: typeof operation.repetitions === 'number' ? operation.repetitions : 1,
+        unit: operation.repetitions ? '회' : '재혼합',
+        stockPrerequisite: following.costs,
+        batchIngredient: materialId,
       }
-    return {
-      ...base,
-      kind: 'pour',
-      label: '호지차 샷 붓기',
-      tool: 'tea-bottle',
-      ...toLine('tea', recipe === 'hoji-hot' ? 0.87 : 0.8),
+    }
+    case 'mix':
+      return {
+        ...base,
+        kind: 'stir',
+        label: source.label,
+        tool: 'stirrer',
+        target: source.seconds ?? (typeof operation.repetitions === 'number' ? operation.repetitions : 1),
+        unit: source.seconds ? '초' : operation.repetitions ? '회' : '혼합',
+        rate: source.seconds ? 1 : 0.4,
+      }
+    case 'transfer':
+      if (operation.from === 'shot-glass')
+        return {
+          ...base,
+          kind: 'transfer',
+          label: '추출한 샷 전량 옮기기',
+          tool: 'shot-glass',
+          content: 'coffee',
+          weight: espressoFill(recipe, craft.kind),
+        }
+      if (operation.from === 'steam-pitcher')
+        return {
+          ...base,
+          kind: 'pour',
+          label: '폼을 제외하고 스팀 우유 붓기',
+          tool: 'pitcher',
+          ...toLine('milk', fillFor(operation.amount)),
+          pitcherMl: definition.steps.find((item) => item.usesPitcher)!.costs.milk!,
+        }
+      break
+    case 'serve':
+      return { ...base, kind: 'lid', label: '리드 덮기', tool: 'lid', unit: '개' }
+    case 'add': {
+      const material = operation.materialId
+      const previous = definition.steps[step - 1]?.operation
+      const batchIngredient =
+        (material === 'hojicha' || material === 'matcha') && previous?.action === 'shake' ? material : undefined
+      if (batchIngredient && previous?.action === 'shake' && craft.remixPourProgress !== null) {
+        const remaining = Math.max(0, 1 - craft.remixPourProgress)
+        return {
+          ...base,
+          id: `${base.id}:remix`,
+          kind: 'shake',
+          label: '새 샷 배치 재혼합',
+          tool: batchIngredient === 'matcha' ? 'matcha-bottle' : 'tea-bottle',
+          target: typeof previous.repetitions === 'number' ? previous.repetitions : 1,
+          unit: previous.repetitions ? '회' : '재혼합',
+          costs: {},
+          batchIngredient,
+          stockPrerequisite: { [batchIngredient]: (source.costs[batchIngredient] ?? 0) * remaining },
+        }
+      }
+      if (operation.into === 'steam-pitcher')
+        return {
+          ...base,
+          kind: 'pour',
+          label: '피처의 주문 사이즈 선까지 우유 계량',
+          tool: 'milk-carton',
+          fillsPitcher: true,
+          unit: '기준선',
+        }
+      if (operation.amount.kind === 'count') {
+        const amount = operation.amount
+        if (amount.unit === 'pump')
+          return {
+            ...base,
+            kind: 'pump',
+            tool: null,
+            target: amount.value,
+            unit: '펌프',
+            content: 'sauce',
+            weight: (0.07 * amount.value) / (3 * drinkSizeRatio(size)),
+          }
+        if (amount.unit === 'turn')
+          return {
+            ...base,
+            kind: 'drizzle',
+            tool: 'mocha-bottle',
+            target: amount.value,
+            rate: 0.45,
+            unit: '바퀴',
+            content: 'drizzle',
+            weight: 1,
+          }
+        if (amount.unit === 'tap')
+          return {
+            ...base,
+            kind: 'sprinkle',
+            tool: 'shaker',
+            target: amount.value,
+            unit: '톡',
+            content: 'powder',
+            weight: 1,
+          }
+      }
+      const pours: Record<string, { content: keyof CraftContents; tool: CraftTool | null }> = {
+        coldBrew: { content: 'coffee', tool: null },
+        water: { content: 'water', tool: null },
+        milk: { content: 'milk', tool: 'milk-carton' },
+        hojicha: { content: 'tea', tool: 'tea-bottle' },
+        matcha: { content: 'tea', tool: 'matcha-bottle' },
+        foam: { content: 'foam', tool: 'foam-pitcher' },
+        ice: { content: 'ice', tool: 'ice-scoop' },
+      }
+      const pour = pours[material]
+      if (pour)
+        return {
+          ...base,
+          kind: material === 'ice' ? 'ice' : 'pour',
+          tool: pour.tool,
+          unit: source.measurement,
+          batchIngredient,
+          ...toLine(pour.content, fillFor(operation.amount)),
+        }
     }
   }
-  if (source.label === '얼음')
-    return {
-      ...base,
-      kind: 'ice',
-      label: '얼음 담기',
-      tool: 'ice-scoop',
-      target: Math.round(3 * drinkSizeRatio(size)),
-      tolerance: 0,
-      unit: '스쿱',
-      ...toLine('ice', 0.9),
-    }
-  if (source.label === '바모카 드리즐')
-    return {
-      ...base,
-      kind: 'drizzle',
-      target: source.target,
-      label: '가장자리에 드리즐',
-      tool: 'mocha-bottle',
-      rate: 0.45,
-      tolerance: 0.1,
-      unit: '바퀴',
-      content: 'drizzle',
-      weight: 1,
-    }
-  if (source.label === '글레이즈드 폼')
-    return {
-      ...base,
-      kind: 'pour',
-      label: '글레이즈드 폼 붓기',
-      tool: 'foam-pitcher',
-      rate: 0.22 / drinkSizeRatio(size),
-      ...toLine('foam', 0.96),
-    }
-  if (source.label === '번트 카라멜 파우더')
-    return {
-      ...base,
-      kind: 'sprinkle',
-      label: '파우더 토핑',
-      tool: 'shaker',
-      target: source.target,
-      tolerance: 0,
-      unit: '톡',
-      content: 'powder',
-      weight: 1,
-    }
-  return {
-    ...base,
-    kind: 'lid',
-    label: '리드 덮기',
-    tool: 'lid',
-    tolerance: 0,
-    unit: '개',
-  }
+  throw new Error(`제조 동작 연결이 필요합니다: ${operation.action}`)
 }
-
 export function espressoFill(recipe: RecipeId, kind: CupKind) {
   const size = cupSize(kind)
-  const shots = recipeFor(recipe, size).steps.find((step) => step.label === '에스프레소')?.target ?? 0
+  const shots =
+    recipeFor(recipe, size, cupService(kind)).steps.find((step) => step.operation.action === 'espresso')?.target ?? 0
   return (0.13 * shots) / drinkSizeRatio(size)
 }
 
@@ -263,23 +295,25 @@ export function createCraft(kind: CupKind): CraftState {
     shotTransferred: false,
     mixed: false,
     teaMixed: false,
+    mixedBatchIds: [],
+    remixPourProgress: null,
     lidded: false,
     fault: null,
   }
 }
 export function isContinuous(op: CraftOperation) {
-  return ['steam', 'pour', 'stir', 'drizzle', 'transfer'].includes(op.kind)
+  return ['pour', 'stir', 'drizzle', 'transfer', 'ice'].includes(op.kind)
 }
 export function isMetered(op: CraftOperation) {
-  return !['machine', 'stir', 'shake', 'lid', 'transfer'].includes(op.kind) && op.tool !== 'pitcher'
+  return ['pump', 'sprinkle'].includes(op.kind)
 }
 export function readyToConfirm(op: CraftOperation, progress: number) {
-  return progress >= op.target * (1 - op.tolerance)
+  return progress + CRAFT_EPSILON >= op.target * (1 - op.tolerance)
 }
 
 export function nextStep(state: GameState) {
   const cup = state.cup
   return cup && operationFor(cup.recipe, cup.step, cup.craft)
-    ? recipeFor(cup.recipe, cupSize(cup.craft.kind)).steps[cup.step]
+    ? recipeFor(cup.recipe, cupSize(cup.craft.kind), cupService(cup.craft.kind)).steps[cup.step]
     : undefined
 }

@@ -1,0 +1,74 @@
+{
+  "id": "mocha-sauce",
+  "name": "바모카 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "powder",
+          "label": "바모카 원팩",
+          "instructions": ["바모카 원팩 1봉을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "mochaPowder",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "pack"
+              }
+            }
+          ]
+        },
+        {
+          "id": "hot-water",
+          "label": "온수 계량",
+          "instructions": ["온수 1L를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "l"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            }
+          ]
+        },
+        {
+          "id": "mix",
+          "label": "혼합",
+          "instructions": ["덩어리 없이 잘 섞는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "mixing-pitcher",
+              "toolId": "spatula"
+            }
+          ]
+        }
+      ],
+      "notes": ["제조 후 실온 보관, 24시간."],
+      "review": [],
+      "output": {
+        "materialId": "mocha",
+        "amount": null,
+        "description": "온수 1L는 투입량이며 완성량은 미기재."
+      }
+    }
+  ]
+}

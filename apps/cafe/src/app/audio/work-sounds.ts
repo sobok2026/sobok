@@ -1,7 +1,7 @@
 import { recipeFor } from '../../content/recipes'
 import { STATIONS } from '../../content/stations'
 import { operationFor } from '../../features/crafting/rules'
-import { cupSize } from '../../features/inventory/cups'
+import { cupService, cupSize } from '../../features/inventory/cups'
 import { preparationStep } from '../../features/preparation/rules'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
@@ -227,7 +227,8 @@ export function actionSound(action: Action, previous: GameState, current: GameSt
     current.cup &&
     previous.cup?.id === current.cup.id &&
     current.cup.step > previous.cup.step &&
-    current.cup.step === recipeFor(current.cup.recipe, cupSize(current.cup.craft.kind)).steps.length
+    current.cup.step ===
+      recipeFor(current.cup.recipe, cupSize(current.cup.craft.kind), cupService(current.cup.craft.kind)).steps.length
   )
     return 'complete'
   if (action.type === 'use-start' && previous.cup && current.cup) {
@@ -255,7 +256,7 @@ export function workLoop(state: GameState, input: ActiveInput, position: GameSta
   }
   if (input?.kind === 'drink' && state.cup) {
     const op = operationFor(state.cup.recipe, state.cup.step, state.cup.craft)
-    if (op?.kind === 'steam') return 'pour-milk'
+    if (op?.fillsPitcher) return 'pour-milk'
     if (op && ['pour', 'transfer'].includes(op.kind)) return 'pour-cup'
   }
   const machine = state.jobs

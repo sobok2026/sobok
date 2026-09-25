@@ -1,0 +1,205 @@
+{
+  "id": "베이스볼-매실-그린-티",
+  "name": "베이스볼 매실 그린 티",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti", "trenta"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "더블 스트랭스 그린 티 추가",
+          "instructions": ["더블 스트랭스 그린 티 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "더블-스트랭스-그린-티",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "mark",
+                    "label": "1번 선"
+                  },
+                  "grande": {
+                    "kind": "mark",
+                    "label": "1번 선"
+                  },
+                  "venti": {
+                    "kind": "mark",
+                    "label": "1번 선"
+                  },
+                  "trenta": {
+                    "kind": "mark",
+                    "label": "2번 선",
+                    "referenceSize": "grande"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "매실 베이스 추가",
+          "instructions": ["매실 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "매실-베이스",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "mark",
+                    "label": "2번 선"
+                  },
+                  "grande": {
+                    "kind": "mark",
+                    "label": "2번 선"
+                  },
+                  "venti": {
+                    "kind": "mark",
+                    "label": "2번 선"
+                  },
+                  "trenta": {
+                    "kind": "mark",
+                    "label": "4번 선",
+                    "referenceSize": "grande"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "mark",
+                    "label": "4번 선"
+                  },
+                  "grande": {
+                    "kind": "mark",
+                    "label": "4번 선"
+                  },
+                  "venti": {
+                    "kind": "mark",
+                    "label": "4번 선"
+                  },
+                  "trenta": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "scoop",
+                    "referenceSize": "tall"
+                  }
+                }
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "쉐이킹",
+          "instructions": ["쉐이킹"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "tea-shaker",
+              "repetitions": 10
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "리치 보바 토핑 추가",
+          "instructions": ["리치 보바 토핑 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리치-보바-토핑",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "scoop"
+                  },
+                  "trenta": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "tea-shaker",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "제공",
+          "instructions": ["제공"],
+          "notes": ["원본에 리드 종류가 명시되지 않았다."],
+          "operations": [
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "T/G/V는 티 쉐이커의 주문 사이즈 계량선을 사용한다. Trenta는 Grande 2번·4번선 및 Tall 얼음 스쿱 2개를 사용한다."
+      ],
+      "review": []
+    }
+  ]
+}

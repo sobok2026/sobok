@@ -1,0 +1,266 @@
+{
+  "id": "자몽-망고-코코-프라푸치노",
+  "name": "자몽 망고 코코 프라푸치노",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "코코넛-믹스-추가",
+          "label": "코코넛 믹스 추가",
+          "instructions": ["코코넛 믹스을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "코코넛-믹스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "클래식-시럽-펌핑",
+          "label": "클래식 시럽 펌핑",
+          "instructions": ["클래식 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "cbs-pump"
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "tall"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "grande"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "venti"
+                  }
+                }
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "크림향-베이스-펌핑",
+          "label": "크림향 베이스 펌핑",
+          "instructions": ["크림향 베이스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "크림향-베이스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "base-pump"
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["블렌더 1번 버튼을 한 번 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "소스-스월",
+          "label": "소스 스월",
+          "instructions": ["자몽 망고 소스를 5티스푼 스쿱으로 넣고 피처를 4~5회 흔들어 섞는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "자몽-망고-소스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "five-teaspoon-scoop"
+            },
+            {
+              "action": "swirl",
+              "vessel": "blender-pitcher",
+              "repetitions": {
+                "min": 4,
+                "max": 5
+              }
+            }
+          ]
+        },
+        {
+          "id": "음료-붓기",
+          "label": "음료 붓기",
+          "instructions": ["스월한 음료를 컵 테두리 아래 6mm까지 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "자몽-쌕-추가",
+          "label": "자몽 쌕 추가",
+          "instructions": ["자몽 쌕을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "자몽-쌕",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮고 굵은 빨대를 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "dome",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "코코넛 믹스의 고객 노출명은 코코넛 베이스, 자몽 쌕의 고객 노출명은 자몽 토핑이다.",
+        "코코넛 믹스 1배합 기준 제조 가능 수량: Tall 8잔, Grande 5잔, Venti 4잔.",
+        "자몽 망고 소스 1개 기준: Tall 16잔, Grande 10잔, Venti 8잔. 자몽 쌕: 사이즈 공통 40잔."
+      ],
+      "review": []
+    }
+  ]
+}

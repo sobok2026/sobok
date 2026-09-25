@@ -1,0 +1,147 @@
+{
+  "id": "디카페인-에스프레소-샷-추출",
+  "name": "디카페인 에스프레소 샷 추출",
+  "kind": "procedure",
+  "variants": [
+    {
+      "id": "1-shot",
+      "name": "디카페인 1샷",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "샷 글라스 린스",
+          "instructions": ["일반·디카페인 샷 글라스는 구분하지 않지만 린스 버튼으로 세척 후 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "espresso-machine",
+              "vessel": "shot-glass",
+              "program": "rinse",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "디카페인 추출",
+          "instructions": ["마스트레나 좌측 Decaf Shot 버튼으로 디카페인 호퍼 원두를 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "shot"
+              },
+              "method": "decaf",
+              "equipmentId": "espresso-machine",
+              "materialId": "디카페인-에스프레소-로스트"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "컵 마킹",
+          "instructions": ["라벨프린터에는 Decaf로 표시한다. 직접 마킹 시 컵 DECAF 박스에 X를 표시한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "label",
+              "vessel": "serving-cup",
+              "labels": ["Decaf"]
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "수기 마킹",
+              "operations": [
+                {
+                  "action": "label",
+                  "vessel": "serving-cup",
+                  "labels": ["DECAF 박스: X"]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "notes": ["마스트레나 Decaf Shot에는 1샷·2샷 버튼만 있다.", "나머지 음료 제조법과 마킹명은 동일하다."],
+      "review": []
+    },
+    {
+      "id": "2-shot",
+      "name": "디카페인 2샷",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "샷 글라스 린스",
+          "instructions": ["일반·디카페인 샷 글라스는 구분하지 않지만 린스 버튼으로 세척 후 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "espresso-machine",
+              "vessel": "shot-glass",
+              "program": "rinse",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "디카페인 추출",
+          "instructions": ["마스트레나 좌측 Decaf Shot 버튼으로 디카페인 호퍼 원두를 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "decaf",
+              "equipmentId": "espresso-machine",
+              "materialId": "디카페인-에스프레소-로스트"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "컵 마킹",
+          "instructions": ["라벨프린터에는 Decaf로 표시한다. 직접 마킹 시 컵 DECAF 박스에 X를 표시한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "label",
+              "vessel": "serving-cup",
+              "labels": ["Decaf"]
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "수기 마킹",
+              "operations": [
+                {
+                  "action": "label",
+                  "vessel": "serving-cup",
+                  "labels": ["DECAF 박스: X"]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "notes": ["마스트레나 Decaf Shot에는 1샷·2샷 버튼만 있다.", "나머지 음료 제조법과 마킹명은 동일하다."],
+      "review": []
+    }
+  ]
+}

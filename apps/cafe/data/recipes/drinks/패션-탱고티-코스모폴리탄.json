@@ -1,0 +1,222 @@
+{
+  "id": "패션-탱고티-코스모폴리탄",
+  "name": "패션 탱고티 코스모폴리탄",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall"],
+      "steps": [
+        {
+          "id": "재료-계량",
+          "label": "재료 계량",
+          "instructions": [
+            "쉐이커에 레몬 웨지 1개, 흑당 시럽 1펌프, 클래식 시럽 1펌프, 바카디 카르타 블랑카 1온즈, 레모네이드 1온즈를 순서대로 넣는다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "레몬-웨지",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              },
+              "toolId": "tongs"
+            },
+            {
+              "action": "add",
+              "materialId": "흑당-시럽",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "pump"
+              },
+              "toolId": "unspecified-syrup-pump"
+            },
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "pump"
+              },
+              "toolId": "unspecified-syrup-pump"
+            },
+            {
+              "action": "add",
+              "materialId": "바카디-카르타-블랑카",
+              "into": "shaker",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            },
+            {
+              "action": "add",
+              "materialId": "레모네이드",
+              "into": "shaker",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop-tall"
+            }
+          ]
+        },
+        {
+          "id": "쉐이킹",
+          "label": "쉐이킹",
+          "instructions": ["뚜껑을 닫고 약 30회 쉐이킹한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "cover",
+              "vessel": "shaker"
+            },
+            {
+              "action": "shake",
+              "vessel": "shaker",
+              "repetitions": 30,
+              "approximate": true
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shaker",
+              "into": "cocktail-glass",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "레몬-정리",
+          "label": "레몬 정리",
+          "instructions": ["머들러를 꽂고 레몬 웨지가 잔에 예쁘게 보이도록 정리한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "place",
+              "itemId": "stirrer",
+              "into": "cocktail-glass"
+            },
+            {
+              "action": "arrange",
+              "materialId": "레몬-웨지",
+              "into": "cocktail-glass",
+              "pattern": "레몬 웨지가 잔에서 보이도록 정리"
+            }
+          ]
+        },
+        {
+          "id": "얼음-보충",
+          "label": "얼음 보충",
+          "instructions": ["얼음이 부족하면 잔을 끝까지 채운다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "cocktail-glass",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              },
+              "when": {
+                "kind": "observation",
+                "property": "얼음 양",
+                "value": "부족함"
+              }
+            }
+          ]
+        },
+        {
+          "id": "티-추가",
+          "label": "티 추가",
+          "instructions": ["전용잔에 패션 탱고 티를 가득 붓거나 지거로 1온즈 계량해 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "패션-탱고-티",
+              "into": "cocktail-glass",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "지거로 계량",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "패션-탱고-티",
+                  "into": "cocktail-glass",
+                  "amount": {
+                    "kind": "amount",
+                    "value": 1,
+                    "unit": "oz"
+                  },
+                  "toolId": "jigger"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["전용잔으로 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": ["흑당 및 클래식 시럽의 펌프 토출량은 이 원본에 미기재."],
+      "review": []
+    }
+  ]
+}

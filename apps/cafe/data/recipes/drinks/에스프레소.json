@@ -1,0 +1,105 @@
+{
+  "id": "에스프레소",
+  "name": "에스프레소",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "solo",
+      "name": "솔로",
+      "temperature": "hot",
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "샷 추출",
+          "instructions": ["에스프레소 샷을 제공 잔에 직접 추출한다. 매장은 데미타스 잔, 포장은 숏 컵을 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "demitasse",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "when": {
+                "kind": "service",
+                "value": "for-here"
+              }
+            },
+            {
+              "action": "espresso",
+              "into": "short-paper-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "when": {
+                "kind": "service",
+                "value": "takeaway"
+              }
+            },
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": ["매장용은 데미타스 잔, 포장용은 숏 컵을 사용한다."],
+      "review": []
+    },
+    {
+      "id": "doppio",
+      "name": "도피오",
+      "temperature": "hot",
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "샷 추출",
+          "instructions": ["에스프레소 샷을 제공 잔에 직접 추출한다. 매장은 데미타스 잔, 포장은 숏 컵을 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "demitasse",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "when": {
+                "kind": "service",
+                "value": "for-here"
+              }
+            },
+            {
+              "action": "espresso",
+              "into": "short-paper-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "when": {
+                "kind": "service",
+                "value": "takeaway"
+              }
+            },
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": ["매장용은 데미타스 잔, 포장용은 숏 컵을 사용한다."],
+      "review": []
+    }
+  ]
+}

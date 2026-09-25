@@ -1,0 +1,153 @@
+{
+  "id": "오미자-유스베리-모히토",
+  "name": "오미자 유스베리 모히토",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["short"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "앱솔루트 보드카 추가",
+          "instructions": ["앱솔루트 보드카 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "앱솔루트-보드카",
+              "into": "fizzio-bottle",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "오미자 베이스 추가",
+          "instructions": ["오미자 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "오미자-베이스",
+              "into": "fizzio-bottle",
+              "amount": {
+                "kind": "amount",
+                "value": 1.5,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "유스베리 티 베이스 추가",
+          "instructions": ["유스베리 티 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "유스베리-티-베이스",
+              "into": "fizzio-bottle",
+              "amount": {
+                "kind": "amount",
+                "value": 2,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "스파클링",
+          "instructions": ["스파클링"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "fizzio",
+              "vessel": "fizzio-bottle",
+              "program": "extra-t",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 20
+              },
+              "toolId": "ice-scoop-12oz"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "천천히 붓기",
+          "instructions": ["천천히 붓기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "fizzio-bottle",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "애플민트 추가",
+          "instructions": ["애플민트 추가"],
+          "notes": ["완성된 음료 중앙에 올린다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "애플민트",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "제공",
+          "instructions": ["전용 잔에 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "none"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

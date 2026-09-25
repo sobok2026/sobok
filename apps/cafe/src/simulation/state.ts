@@ -128,6 +128,11 @@ const craftSchema = z.object({
   shotTransferred: z.boolean(),
   mixed: z.boolean(),
   teaMixed: z.boolean(),
+  mixedBatchIds: z
+    .array(z.string().min(1).max(100))
+    .max(300)
+    .refine((ids) => new Set(ids).size === ids.length, '재혼합 배치 ID가 중복됩니다.'),
+  remixPourProgress: z.number().finite().min(0).max(1).nullable(),
   lidded: z.boolean(),
   fault: z.string().max(300).nullable(),
 })
@@ -147,6 +152,7 @@ const preparationSchema = z
       water: quantity,
       mochaPowder: quantity,
       hojichaPowder: quantity,
+      matchaPowder: quantity,
     }),
     fault: z.string().max(300).nullable(),
     batchId: z.string().max(100).nullable(),
@@ -249,6 +255,17 @@ export const stateSchema = z
         return !!recipe && cup.step <= recipe.steps.length
       }, '메뉴·컵 사이즈 또는 제조 단계가 범위를 벗어났어요.')
       .refine((cup) => !isReusableCup(cup.craft.kind) || !cup.craft.lidded, '다회용 컵에는 리드를 덮지 않아요.')
+      .refine((cup) => {
+        if (cup.craft.remixPourProgress === null) return true
+        const recipe = RECIPES[cup.recipe].sizes[cupSize(cup.craft.kind)]
+        const operation = recipe?.steps[cup.step]?.operation
+        return (
+          !cup.craft.teaMixed &&
+          operation?.action === 'add' &&
+          (operation.materialId === 'hojicha' || operation.materialId === 'matcha') &&
+          recipe?.steps[cup.step - 1]?.operation.action === 'shake'
+        )
+      }, '붓기 진행량은 샷 배치를 다시 혼합하는 동안에만 보관할 수 있어요.')
       .nullable(),
     batches: z.array(batchSchema).max(300),
     jobs: z.array(jobSchema).max(30),

@@ -1,0 +1,114 @@
+{
+  "id": "오트-콜드-브루",
+  "name": "오트 콜드 브루",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "클래식 시럽 추가",
+          "instructions": ["클래식 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "오트 밀크 추가",
+          "instructions": ["오트 밀크 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "오트-밀크",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "콜드 브루 추가",
+          "instructions": ["콜드 브루 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "coldBrew",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

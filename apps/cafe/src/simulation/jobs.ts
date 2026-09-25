@@ -1,3 +1,4 @@
+import { finishCraftStep } from '../features/crafting/actions'
 import { operationFor } from '../features/crafting/rules'
 
 import { finishPreparation } from '../features/preparation/actions'
@@ -27,13 +28,7 @@ export function completeJobs(work: WorkContext) {
     if (job.kind === 'craft-machine' && s.cup?.id === job.cupId && s.cup && s.cup.step === job.stepIndex) {
       const c = s.cup.craft
       const op = operationFor(s.cup.recipe, s.cup.step, c)
-      if (job.machine !== 'steam') {
-        if (s.cup.recipe === 'glazed-iced') c.shotReady = true
-        else if (op) c.contents.coffee += op.weight
-      }
-      s.cup.step++
-      c.progress = 0
-      say(s, `${job.label} 완료.`, 'success')
+      if (op) finishCraftStep(s, op)
     }
   }
 }

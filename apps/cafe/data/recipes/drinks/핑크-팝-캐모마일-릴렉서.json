@@ -1,0 +1,249 @@
+{
+  "id": "핑크-팝-캐모마일-릴렉서",
+  "name": "핑크 팝 캐모마일 릴렉서",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "계량-및-스팀",
+          "label": "계량 및 스팀",
+          "instructions": ["피처의 지정된 선까지 계량하고 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "릴렉싱-베이스",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "line",
+                    "line": "size",
+                    "referenceSize": "grande"
+                  },
+                  "grande": {
+                    "kind": "line",
+                    "line": "size",
+                    "referenceSize": "venti"
+                  },
+                  "venti": {
+                    "kind": "line",
+                    "line": "max"
+                  }
+                }
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "X-Hot"
+            }
+          ]
+        },
+        {
+          "id": "베이스-붓기",
+          "label": "베이스 붓기",
+          "instructions": ["스팀한 릴렉싱 베이스를 컵 테두리 아래 6mm까지 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "로즈마리-추가",
+          "label": "로즈마리 추가",
+          "instructions": ["로즈마리을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "로즈마리",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              },
+              "toolId": "tongs"
+            }
+          ]
+        },
+        {
+          "id": "핑크-리치-보바-추가",
+          "label": "핑크 리치 보바 추가",
+          "instructions": ["핑크 리치 보바을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "핑크-리치-보바",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "standard"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    },
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "릴렉싱-베이스-추가",
+          "label": "릴렉싱 베이스 추가",
+          "instructions": ["릴렉싱 베이스을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "릴렉싱-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "로즈마리-추가",
+          "label": "로즈마리 추가",
+          "instructions": ["로즈마리을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "로즈마리",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              },
+              "toolId": "tongs"
+            }
+          ]
+        },
+        {
+          "id": "핑크-리치-보바-추가",
+          "label": "핑크 리치 보바 추가",
+          "instructions": ["핑크 리치 보바을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "핑크-리치-보바",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮고 굵은 빨대를 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "dome",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

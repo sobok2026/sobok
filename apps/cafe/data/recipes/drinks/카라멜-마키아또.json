@@ -1,0 +1,190 @@
+{
+  "id": "카라멜-마키아또",
+  "name": "카라멜 마키아또",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["short", "tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "우유 스팀",
+          "instructions": ["피처에 원본 기준으로 우유를 계량하고 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "standard"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "샷 추출",
+          "instructions": ["에스프레소 샷을 샷 글라스에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "short": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "shot"
+                  },
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "shot"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  }
+                }
+              },
+              "method": "regular"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "시럽 추가",
+          "instructions": ["컵에 바닐라 시럽을 충분히 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "short": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "pump"
+                  },
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "완성 및 제공",
+          "instructions": [
+            "스팀 우유로 컵의 3/4를 채운 후 거품을 테두리 아래 12mm까지 채운다.",
+            "에스프레소가 우유 거품을 통과하도록 붓는다.",
+            "카라멜 소스를 벌집 모양으로 올린 후 원 모양으로 두 번 둘러 마무리한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "fraction",
+                "numerator": 3,
+                "denominator": 4,
+                "of": "대상 용기 용량"
+              },
+              "portion": "liquid"
+            },
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              },
+              "portion": "foam"
+            },
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "카라멜-소스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "벌집 모양"
+              },
+              "placement": "음료 위",
+              "toolId": "drizzle-bottle"
+            },
+            {
+              "action": "arrange",
+              "materialId": "카라멜-소스",
+              "into": "serving-cup",
+              "pattern": "벌집 모양"
+            },
+            {
+              "action": "add",
+              "materialId": "카라멜-소스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "turn"
+              },
+              "placement": "원 모양",
+              "toolId": "drizzle-bottle"
+            },
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "id": "자몽-허니-블랙-티",
+  "name": "자몽 허니 블랙 티",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["short", "tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["잉글리쉬 브렉퍼스트 풀 리프 티백을 컵에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "잉글리쉬-브렉퍼스트-풀-리프-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "short": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "소스 추가",
+          "instructions": ["그린 티 파우더용 스쿱으로 허니 자몽 소스를 계량한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "허니-자몽-소스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "short": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "scoop"
+                  },
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "green-tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "시럽 추가",
+          "instructions": ["클래식 시럽을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "short": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "pump"
+                  },
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "완료 및 제공",
+          "instructions": [
+            "뜨거운 물을 테두리 아래 6mm까지 붓고 소스를 저어 섞는다. 리드와 슬리브를 씌워 제공하고 뜨거운 음료임을 안내한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "mix",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "accessories": ["sleeve"]
+            }
+          ]
+        }
+      ],
+      "notes": ["허니 자몽 소스 1스쿱은 약 5ml이다.", "고객에게 5분 동안 우린 후 마시도록 안내한다."],
+      "review": []
+    }
+  ]
+}

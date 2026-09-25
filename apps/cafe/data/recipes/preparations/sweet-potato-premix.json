@@ -1,0 +1,93 @@
+{
+  "id": "sweet-potato-premix",
+  "name": "고구마 프리믹스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "군고구마 소스 추가",
+          "instructions": ["군고구마 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "sweet-potato-sauce",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 200,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "우유·휘핑크림 혼합",
+          "instructions": ["우유·휘핑크림 혼합"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 200,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 600,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "mix",
+              "vessel": "mixing-pitcher"
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "하프앤하프 사용",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "half-and-half",
+                  "into": "mixing-pitcher",
+                  "amount": {
+                    "kind": "amount",
+                    "value": 800,
+                    "unit": "ml"
+                  }
+                },
+                {
+                  "action": "mix",
+                  "vessel": "mixing-pitcher"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "notes": ["휘핑크림은 데빅, 프릿츠 골드 또는 매일 제품을 사용한다."],
+      "review": [],
+      "output": {
+        "materialId": "sweet-potato-premix",
+        "amount": null,
+        "description": "각 원재료의 계량값만 제시되어 있으며 완성량은 미기재."
+      }
+    }
+  ]
+}

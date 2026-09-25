@@ -1,0 +1,77 @@
+{
+  "id": "custard-whipped-cream",
+  "name": "슈크림 휘핑 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "itis",
+      "name": "ITIS",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "스위트-바닐라-소스-펌핑",
+          "label": "스위트 바닐라 소스 펌핑",
+          "instructions": ["스위트 바닐라 소스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "sweet-vanilla-sauce",
+              "into": "whipping-canister",
+              "amount": {
+                "kind": "count",
+                "value": 4,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "크림-계량",
+          "label": "크림 계량",
+          "instructions": ["휘핑통에 프릿츠 골드 260ml를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "whipping-canister",
+              "amount": {
+                "kind": "amount",
+                "value": 260,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "가스-주입-및-쉐이킹",
+          "label": "가스 주입 및 쉐이킹",
+          "instructions": ["휘핑 가스 주입 후 위아래로 30회 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "charge",
+              "vessel": "whipping-canister",
+              "equipmentId": "whipping-dispenser"
+            },
+            {
+              "action": "shake",
+              "vessel": "whipping-canister",
+              "repetitions": 30
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "custard-whipped-cream",
+        "amount": null,
+        "description": "ITIS 제조법. Tall 기준 약 7잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

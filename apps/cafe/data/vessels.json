@@ -1,0 +1,418 @@
+[
+  {
+    "lineVolumes": [
+      {
+        "size": "tall",
+        "line": "lower",
+        "cupStyle": "iced-plastic",
+        "milliliters": 111.73
+      },
+      {
+        "size": "tall",
+        "line": "middle",
+        "cupStyle": "iced-plastic",
+        "milliliters": 163.63
+      },
+      {
+        "size": "tall",
+        "line": "upper",
+        "cupStyle": "iced-plastic",
+        "milliliters": 206.23
+      },
+      {
+        "size": "venti",
+        "line": "lower",
+        "cupStyle": "iced-plastic",
+        "milliliters": 170.2
+      },
+      {
+        "size": "venti",
+        "line": "middle",
+        "cupStyle": "iced-plastic",
+        "milliliters": 249.33
+      },
+      {
+        "size": "venti",
+        "line": "upper",
+        "cupStyle": "iced-plastic",
+        "milliliters": 307.37
+      }
+    ],
+    "id": "serving-cup",
+    "lines": ["lower", "middle", "upper", "max"],
+    "marks": ["스타벅스 로고 제일 하단", "상단 초록선", "상단 검은선", "중간 초록선", "리저브 브랜디 잔 중간선"],
+    "name": "제공 컵",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "steam-pitcher",
+    "lines": ["size", "max", "lower"],
+    "name": "스팀 피처",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "mixing-pitcher",
+    "lines": [],
+    "marks": ["500ml", "1L", "2L"],
+    "name": "믹싱 피처",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "foam-pitcher",
+    "lines": [],
+    "marks": ["50ml", "400ml"],
+    "name": "콜드 폼 피처",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "shaker",
+    "lines": [],
+    "marks": ["2번선", "4번선"],
+    "name": "쉐이커",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "shot-glass",
+    "lines": [],
+    "name": "샷 글라스",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "brew-container",
+    "lines": [],
+    "name": "콜드 브루 추출 용기",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "blender-pitcher",
+    "lines": [],
+    "marks": [],
+    "name": "블렌더 피처",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "tea-shaker",
+    "lines": [],
+    "marks": ["C선", "1번 선", "2번 선", "3번 선(2번째 칸)", "4번 선", "1번선", "2번선", "4번선"],
+    "name": "티 쉐이커",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "fizzio-bottle",
+    "lines": ["lower"],
+    "marks": [],
+    "name": "피지오 전용 용기",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "water-pitcher",
+    "lines": [],
+    "marks": ["1L선", "2L선", "500ml", "1L", "2L"],
+    "name": "워터 피처",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "mixing-glass",
+    "lines": [],
+    "marks": [],
+    "name": "믹싱 글라스",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "steam-pitcher-50-50",
+    "lines": ["lower", "upper", "size"],
+    "marks": [],
+    "name": "50:50 스팀 피처",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "did",
+    "lines": [],
+    "marks": [],
+    "name": "DID",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "sauce-container",
+    "lines": [],
+    "marks": ["100ml"],
+    "name": "매장용 소스통",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "drizzle-container",
+    "lines": [],
+    "marks": [],
+    "name": "드리즐 통",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "matcha-container",
+    "lines": [],
+    "marks": [],
+    "name": "말차 샷 보관 용기",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "sweet-potato-premix-container",
+    "lines": [],
+    "marks": [],
+    "name": "고구마 프리믹스 보관 용기",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "유자-v-베이스-container",
+    "lines": [],
+    "marks": [],
+    "name": "유자 V 베이스 보관 용기",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "코코넛-믹스-container",
+    "lines": [],
+    "marks": [],
+    "name": "코코넛 믹스 보관 용기",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "블루베리-베이스-container",
+    "lines": [],
+    "marks": [],
+    "name": "블루베리 베이스 보관 용기",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "체리-자두-베이스-container",
+    "lines": [],
+    "marks": [],
+    "name": "체리 자두 베이스 보관 용기",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "애플망고-베이스-container",
+    "lines": [],
+    "marks": [],
+    "name": "애플망고 베이스 보관 용기",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "키위-베이스-container",
+    "lines": [],
+    "marks": [],
+    "name": "키위 베이스 보관 용기",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "whipping-canister",
+    "lines": [],
+    "name": "휘핑통",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "automatic-whipping-vat",
+    "lines": [],
+    "name": "자동휘핑머신 휘핑통",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "mixing-pitcher-2",
+    "lines": [],
+    "name": "두 번째 믹싱 피처",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "shallow-jar",
+    "lines": [],
+    "marks": [],
+    "name": "샬로우자",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "did-container",
+    "lines": [],
+    "name": "DID 컨테이너",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "cow-container",
+    "lines": [],
+    "name": "COW 통",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "tea-mug",
+    "lines": [],
+    "name": "티 우림용 머그컵",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "base-bottle",
+    "lines": [],
+    "name": "베이스 보틀",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "cocktail-glass",
+    "lines": ["max"],
+    "name": "칵테일 전용잔",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "vin-chaud-glass",
+    "lines": [],
+    "name": "뱅쇼 더블월 글라스",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "white-wine-glass",
+    "lines": [],
+    "name": "화이트 와인 글라스",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "carafe",
+    "lines": [],
+    "name": "컨디먼트 바 까라페",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "reserve-jug",
+    "lines": [],
+    "name": "리저브 저그 잔",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "rock-glass",
+    "lines": [],
+    "name": "락 글라스",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "reserve-brandy-glass",
+    "lines": ["middle"],
+    "name": "리저브 브랜디 잔",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "cortado-cup",
+    "lines": [],
+    "name": "리저브 코르타도 전용잔",
+    "notes": ["원본 제공 용량은 4.5oz입니다."]
+  },
+  {
+    "lineVolumes": [],
+    "id": "blended-measuring-cup",
+    "lines": ["lower", "middle", "upper"],
+    "name": "블렌디드 계량 컵",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "iced-measuring-cup",
+    "lines": ["lower", "middle", "upper"],
+    "name": "아이스 음료 계량컵",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "portafilter",
+    "lines": [],
+    "name": "리저브 에스프레소 포터필터",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "demitasse",
+    "lines": [],
+    "name": "데미타스 잔",
+    "notes": []
+  },
+  {
+    "lineVolumes": [],
+    "id": "short-paper-cup",
+    "lines": [],
+    "name": "숏 일회용 컵",
+    "notes": []
+  },
+  {
+    "id": "toddy-brewer",
+    "name": "토디 브루어",
+    "lines": [],
+    "lineVolumes": [],
+    "notes": []
+  },
+  {
+    "id": "toddy-paper-filter",
+    "name": "토디 종이 필터 내부",
+    "lines": [],
+    "lineVolumes": [],
+    "notes": []
+  },
+  {
+    "id": "toddy-stainless-stand",
+    "name": "토디 스테인레스 받침대",
+    "lines": [],
+    "lineVolumes": [],
+    "notes": []
+  },
+  {
+    "id": "cold-brew-plastic-pitcher",
+    "name": "콜드 브루 플라스틱 피처",
+    "lines": [],
+    "lineVolumes": [],
+    "notes": []
+  },
+  {
+    "id": "stainless-vat",
+    "name": "스테인레스 바트",
+    "lines": [],
+    "lineVolumes": [],
+    "notes": []
+  },
+  {
+    "id": "automatic-whipping-main-vat",
+    "name": "자동휘핑머신 메인 바트",
+    "lines": [],
+    "lineVolumes": [],
+    "notes": []
+  }
+]

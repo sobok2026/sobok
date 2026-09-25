@@ -1,0 +1,156 @@
+{
+  "id": "바삭-피스타치오-바닐라-크림-콜드브루",
+  "name": "바삭 피스타치오 바닐라 크림 콜드브루",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "헤이즐넛 시럽 추가",
+          "instructions": ["헤이즐넛 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "헤이즐넛-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "콜드 브루 추가",
+          "instructions": ["콜드 브루 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "coldBrew",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "바닐라 크림 베이스 추가",
+          "instructions": ["바닐라 크림 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-크림-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "그린 피스타치오 폼 추가",
+          "instructions": ["그린 피스타치오 폼 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "그린-피스타치오-폼",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "바모카 추가",
+          "instructions": ["바모카 추가"],
+          "notes": ["폼 위에 나선형으로 드리즐한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "mocha",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count-range",
+                "min": 3,
+                "max": 5,
+                "unit": "turn"
+              },
+              "toolId": "drizzle-bottle"
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "카다이프 토핑 추가",
+          "instructions": ["카다이프 토핑 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "카다이프-토핑",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮고 굵은 빨대와 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "id": "아이스-자몽-허니-블랙-티",
+  "name": "아이스 자몽 허니 블랙 티",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티 추가",
+          "instructions": ["더블 스트랭스 블랙 티를 티 쉐이커 1번선까지 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "더블-스트랭스-블랙-티",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "1번선"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "소스 추가",
+          "instructions": ["허니 자몽 소스를 그린 티 파우더용 스쿱으로 계량해 컵에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "허니-자몽-소스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "green-tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "시럽 추가",
+          "instructions": ["클래식 시럽을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "정수 추가",
+          "instructions": ["정수를 티 쉐이커 2번선까지 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "2번선"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 및 쉐이킹",
+          "instructions": ["얼음을 쉐이커 4번선까지 넣고 약 10회 흔든 뒤 컵에 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "4번선"
+              }
+            },
+            {
+              "action": "shake",
+              "vessel": "tea-shaker",
+              "repetitions": 10,
+              "approximate": true
+            },
+            {
+              "action": "transfer",
+              "from": "tea-shaker",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "완료 및 제공",
+          "instructions": ["플랫 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "always",
+              "lidType": "flat"
+            }
+          ]
+        }
+      ],
+      "notes": ["허니 자몽 소스 1스쿱은 약 5ml이며 그린 티 파우더용 스쿱을 사용한다."],
+      "review": [
+        "원본 본문은 허니 자몽 소스를 컵에 넣으라고 적지만 아래 단계 사진은 쉐이커에 소스를 넣는 모습을 보여 줍니다. 소스 투입 용기 확인이 필요합니다."
+      ]
+    }
+  ]
+}

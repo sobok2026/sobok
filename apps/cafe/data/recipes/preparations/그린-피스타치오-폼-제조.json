@@ -1,0 +1,96 @@
+{
+  "id": "그린-피스타치오-폼-제조",
+  "name": "그린 피스타치오 폼 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "프릿츠 골드 추가",
+          "instructions": ["프릿츠 골드 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 200,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 50,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "그린 피스타치오 소스 추가",
+          "instructions": ["그린 피스타치오 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "그린-피스타치오-소스",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 8,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "블렌딩",
+          "instructions": ["블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        }
+      ],
+      "notes": ["원본은 2배수 제조가 가능하다고 안내한다. 대용량의 별도 블렌딩 횟수는 제시하지 않는다."],
+      "review": [],
+      "output": {
+        "materialId": "그린-피스타치오-폼",
+        "amount": null,
+        "description": "Tall 기준 약 8잔 제조 가능. ml 완성량은 제시하지 않는다."
+      }
+    }
+  ]
+}

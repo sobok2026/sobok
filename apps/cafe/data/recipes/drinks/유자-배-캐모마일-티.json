@@ -1,0 +1,256 @@
+{
+  "id": "유자-배-캐모마일-티",
+  "name": "유자 배 캐모마일 티",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "베이스-스팀",
+          "label": "베이스 스팀",
+          "instructions": [
+            "유자 배 베이스를 사용 전 흔든다. 50:50 피처의 사이즈별 하단선까지 베이스, 상단선까지 물을 넣고 X-hot 스팀한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "base-bottle"
+            },
+            {
+              "action": "add",
+              "materialId": "유자-배-베이스",
+              "into": "steam-pitcher-50-50",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "steam-pitcher-50-50",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher-50-50",
+              "setting": "X-Hot"
+            }
+          ]
+        },
+        {
+          "id": "클래식-시럽-펌핑",
+          "label": "클래식 시럽 펌핑",
+          "instructions": ["클래식 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "cbs-pump"
+            }
+          ]
+        },
+        {
+          "id": "캐모마일-티백-추가",
+          "label": "캐모마일 티백 추가",
+          "instructions": ["캐모마일 티백을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "캐모마일-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "베이스-붓기",
+          "label": "베이스 붓기",
+          "instructions": ["스팀한 내용물을 컵 테두리 아래 6mm까지 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher-50-50",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "standard"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    },
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "클래식-시럽-펌핑",
+          "label": "클래식 시럽 펌핑",
+          "instructions": ["클래식 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "cbs-pump"
+            }
+          ]
+        },
+        {
+          "id": "베이스-붓기",
+          "label": "베이스 붓기",
+          "instructions": ["유자 배 베이스를 사용 전 흔들고 컵 하단선까지 붓는다. 컵 중간선까지 정수를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "base-bottle"
+            },
+            {
+              "action": "add",
+              "materialId": "유자-배-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "더블-스트랭스-캐모마일-티-추가",
+          "label": "더블 스트랭스 캐모마일 티 추가",
+          "instructions": ["더블 스트랭스 캐모마일 티을 컵 테두리 아래 6mm까지 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "더블-스트랭스-캐모마일-티",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["고객에게 상단의 티와 하단의 음료 베이스를 잘 섞어 마시도록 안내한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

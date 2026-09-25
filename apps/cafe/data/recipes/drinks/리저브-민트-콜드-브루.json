@@ -1,0 +1,160 @@
+{
+  "id": "리저브-민트-콜드-브루",
+  "name": "리저브 민트 콜드 브루",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["grande"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "얼음 추가",
+          "instructions": ["블렌더 피처에 Tall CBS 스쿱의 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop-tall"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "블렌딩",
+          "instructions": ["4번 버튼을 누르고 블렌딩한 얼음을 머들러로 컵에 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "4",
+              "cycles": 1
+            },
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "베이스 붓기",
+          "instructions": ["티 쉐이커 Grande 사이즈 2번선까지 리저브 콜드 브루를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-콜드-브루",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "2번선",
+                "referenceSize": "grande"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "시럽 추가",
+          "instructions": ["티 쉐이커에 리저브 민트 시럽 4펌프를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-민트-시럽",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "count",
+                "value": 4,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 추가",
+          "instructions": ["티 쉐이커에 Tall CBS 스쿱의 1/2만큼 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "count",
+                "value": 0.5,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop-tall"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "쉐이킹",
+          "instructions": ["약 10회 쉐이킹하여 컵에 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "tea-shaker",
+              "repetitions": 10,
+              "approximate": true
+            },
+            {
+              "action": "transfer",
+              "from": "tea-shaker",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "마무리 및 제공",
+          "instructions": ["컵 가장자리에 애플민트 1줄기를 올린다. 일회용 컵에는 빨대 없는 리드를 덮는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "애플민트",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            },
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "strawless"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

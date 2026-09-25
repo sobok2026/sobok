@@ -1,9 +1,28 @@
-import { COLD_BREW_HOURS, referenceLinks } from '../../content/references'
+import { recipeCatalog } from '../../content/catalog'
+import { recipeVariant } from '../../content/recipe-catalog'
+import { planRecipe } from '../../content/recipe-plan'
 import type { ColdBrew } from '../../simulation/state'
 
+const { variant } = recipeVariant(recipeCatalog, 'cold-brew-batch', 'standard')
+const operations = planRecipe(variant, { container: 'standard-cup', service: 'takeaway' }).map((step) => step.operation)
+const beans = operations.find((operation) => operation.action === 'add' && operation.materialId === 'cold-brew-beans')
+const water = operations.find((operation) => operation.action === 'add' && operation.materialId === 'water')
+const steep = operations.find((operation) => operation.action === 'steep')
+if (
+  beans?.action !== 'add' ||
+  beans.amount.kind !== 'amount' ||
+  beans.amount.unit !== 'lb' ||
+  water?.action !== 'add' ||
+  water.amount.kind !== 'amount' ||
+  water.amount.unit !== 'l' ||
+  steep?.action !== 'steep' ||
+  !('seconds' in steep.duration)
+)
+  throw new Error('콜드 브루 배합의 단위·시간을 확인해야 합니다.')
 export const COLD_BREW_COST = 9000
-export const COLD_BREW_BEANS = Number(referenceLinks.brew.steps.beans.amount)
-export const COLD_BREW_WATER = Number(referenceLinks.brew.steps.water.amount)
+export const COLD_BREW_BEANS = beans.amount.value
+export const COLD_BREW_WATER = water.amount.value
+export const COLD_BREW_HOURS = steep.duration.seconds / 3600
 export const coldBrewTools = ['bean-bag', 'water-jug'] as const
 type ColdBrewTool = (typeof coldBrewTools)[number]
 export const COLD_BREW_TOOL_NAMES: Record<ColdBrewTool, string> = {
@@ -24,7 +43,7 @@ export const COLD_BREW_STEPS = [
     unit: 'L',
     target: COLD_BREW_WATER,
     rate: COLD_BREW_WATER / 4,
-    tolerance: 0.06,
+    tolerance: 0,
     tool: 'water-jug' as ColdBrewTool,
   },
   { label: `${COLD_BREW_HOURS}시간 추출 시작`, unit: '회', target: 1, rate: 0, tolerance: 0, tool: null },

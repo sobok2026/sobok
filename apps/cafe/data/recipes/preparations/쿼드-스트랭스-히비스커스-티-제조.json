@@ -1,0 +1,123 @@
+{
+  "id": "쿼드-스트랭스-히비스커스-티-제조",
+  "name": "쿼드 스트랭스 히비스커스 티 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "히비스커스 티백 추가",
+          "instructions": ["히비스커스 티백 추가"],
+          "notes": ["티백의 태그를 제거한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "히비스커스-티백",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 5,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "뜨거운 물 추가",
+          "instructions": ["뜨거운 물 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size",
+                "referenceSize": "venti"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "차 우리기",
+          "instructions": ["차 우리기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "steep",
+              "vessel": "steam-pitcher",
+              "duration": {
+                "seconds": 300,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "티백 제거",
+          "instructions": ["티백 제거"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "remove",
+              "itemId": "히비스커스-티백",
+              "from": "steam-pitcher"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "쿼드-스트랭스-히비스커스-티",
+        "amount": null,
+        "description": "완성량은 원본에 명시되지 않았다."
+      }
+    }
+  ]
+}

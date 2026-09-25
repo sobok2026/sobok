@@ -1,0 +1,101 @@
+{
+  "id": "얼-그레이-폼-제조",
+  "name": "얼 그레이 폼 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "유제품-계량",
+          "label": "유제품 계량",
+          "instructions": ["콜드 폼 피처에 일반 우유와 휘핑 크림을 각각 150ml 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 150,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 150,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "파우더-추가",
+          "label": "파우더 추가",
+          "instructions": ["스노우 폼 파우더를 5티스푼 스쿱으로 4스쿱 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "스노우-폼-파우더",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 4,
+                "unit": "scoop"
+              },
+              "toolId": "five-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["3번 버튼을 1회 누른다. 1회는 약 25초이다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "냉장-보관",
+          "label": "냉장 보관",
+          "instructions": ["제조 후 반드시 냉장 보관한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "foam-pitcher",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": ["제조 후 반드시 냉장 보관한다. 개봉한 팩은 밀폐하여 보관한다."],
+      "review": [],
+      "output": {
+        "materialId": "얼-그레이-폼",
+        "amount": null,
+        "description": "완성 부피는 미기재."
+      }
+    }
+  ]
+}

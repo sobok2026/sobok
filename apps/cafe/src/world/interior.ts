@@ -1,7 +1,10 @@
 import * as THREE from 'three'
 import { drinkSizeIds } from '../content/drink-sizes'
 import { BAR_CENTER_Z, staffFacingZ } from '../content/stations'
+import { createColdBrewDispenser } from '../features/cold-brew/equipment'
+import { createEspressoMachine } from '../features/crafting/espresso-machine'
 import { cupKinds, cupSize, cupStyle, cupStyles } from '../features/inventory/cups'
+import { createBlender } from '../features/preparation/blender'
 import { CUSTOMER_DOOR_X } from '../features/service/customer'
 import { createCupBody } from '../shared/visuals/cup-visual'
 import { addVesselLabel } from '../shared/visuals/vessel-label'
@@ -152,7 +155,7 @@ export function createShopInterior(scene: THREE.Scene) {
   mainSign.position.set(0, 2.65, -5.72)
   scene.add(mainSign)
   const menuSign = sign(
-    'TODAY’S MENU\nCOLD BREW\nBLACK GLAZED LATTE\nHOJI GLAZED TEA LATTE',
+    'TODAY’S MENU\nCOLD BREW\nBLACK GLAZED LATTE\nHOJI GLAZED TEA LATTE\nPURE HOJICHA · MATCHA',
     2.4,
     1.4,
     '#ece1ca',
@@ -206,22 +209,13 @@ export function createShopInterior(scene: THREE.Scene) {
       return body
     }),
   }))
-  box(-2.5, 1.54, staffFacingZ(-1.14), 0.96, 0.66, 0.65, '#aab6ad', scene, 0.65)
-  box(-2.5, 1.53, staffFacingZ(-0.79), 0.84, 0.3, 0.025, '#293e35')
-  for (const x of [-2.75, -2.26]) {
-    cylinder(x, 1.47, staffFacingZ(-0.68), 0.045, 0.045, 0.08, '#b8bcae')
-    box(x, 1.46, staffFacingZ(-0.756), 0.06, 0.06, 0.018, '#d8c889')
-  }
-  box(-2.5, 1.09, staffFacingZ(-0.76), 0.92, 0.04, 0.45, '#4f6256', scene, 0.5)
-  cylinder(-1.25, 1.24, staffFacingZ(-1.0), 0.14, 0.1, 0.35, '#a0aaa4')
-  const milkCarton = box(-0.96, 1.25, staffFacingZ(-1.12), 0.15, 0.38, 0.18, '#e7e6d7')
+  createEspressoMachine(scene)
+  const milkCarton = box(-3.23, 1.25, staffFacingZ(-1.12), 0.15, 0.38, 0.18, '#e7e6d7')
   addVesselLabel(milkCarton, '우유', '#527f66', 0.13, 0.09, 0, 0.092)
-  const coldBrewDispenser = cylinder(0, 1.33, staffFacingZ(-1.12), 0.2, 0.2, 0.5, '#4c3827')
-  addVesselLabel(coldBrewDispenser, '콜드 브루', '#77513b', 0.27, 0.12, 0.08, 0.203)
-  cylinder(0, 1.6, staffFacingZ(-1.12), 0.21, 0.21, 0.035, '#273e33')
-  box(0, 1.3, staffFacingZ(-0.83), 0.06, 0.05, 0.22, '#a9b7ad')
+  createColdBrewDispenser(scene)
   const waterDispenser = box(1.1, 1.3, staffFacingZ(-1.15), 0.25, 0.5, 0.26, '#d5ded3')
-  addVesselLabel(waterDispenser, '정수', '#6e928e', 0.18, 0.11, 0.08, 0.132)
+  addVesselLabel(waterDispenser, '정수 · 온수', '#6e928e', 0.22, 0.09, 0.08, 0.132)
+  addVesselLabel(waterDispenser, 'HOT  T · G · V', '#95612d', 0.22, 0.055, -0.04, 0.133)
   box(1.1, 1.45, staffFacingZ(-0.91), 0.05, 0.05, 0.3, '#6d8c7b')
   box(2.1, 1.15, staffFacingZ(-1.1), 0.65, 0.2, 0.57, '#8dada9')
   for (let i = 0; i < 8; i++)
@@ -250,10 +244,7 @@ export function createShopInterior(scene: THREE.Scene) {
   const pickupSign = sign('PICK UP', 0.7, 0.2, '#e0d4b9', '#254c3d')
   pickupSign.position.set(6.1, 0.75, -0.438)
   scene.add(pickupSign)
-  // Preparation blender and sauce pitcher.
-  box(-2.9, 1.2, -5.12, 0.43, 0.3, 0.43, '#304d40')
-  const idleBlenderJar = cylinder(-2.9, 1.57, -5.12, 0.18, 0.14, 0.44, '#d9e0ce')
-  const idleBlenderLid = cylinder(-2.9, 1.82, -5.12, 0.2, 0.2, 0.055, '#314b3d')
+  const blender = createBlender(scene)
   box(5.5, 1.1, -5.2, 1.4, 2.2, 1.0, '#c0cabb', scene, 0.25)
   box(5.5, 1.12, -4.68, 1.25, 2.03, 0.05, '#aebfae')
   box(5.02, 1.45, -4.61, 0.045, 0.42, 0.065, '#556e5d')
@@ -268,7 +259,7 @@ export function createShopInterior(scene: THREE.Scene) {
   box(1, 1.05, -5.2, 1.65, 0.09, 0.95, '#d3c3a5')
   obstacles.push({ x: 1, z: -5.2, width: 1.65, depth: 0.95 })
   const extractionSign = sign('COLD BREW\n계량 · 추출 · 회수', 1.4, 0.4, '#eee5d1', '#344e3d')
-  extractionSign.position.set(1, 1.9, -5.7)
+  extractionSign.position.set(1, 2.2, -5.7)
   scene.add(extractionSign)
   box(-5.0, 1.1, -5.1, 0.84, 0.035, 0.65, '#283c38')
   for (const z of [-5.43, -4.77]) box(-5, 1.126, z, 0.9, 0.035, 0.04, '#b5c6ba', scene, 0.6)
@@ -296,5 +287,5 @@ export function createShopInterior(scene: THREE.Scene) {
       box(x, 0.77, z + (z < 3.7 ? -0.24 : 0.24), 0.55, 0.58, 0.06, '#778267')
     }
   }
-  return { obstacles, idleBlenderJar, idleBlenderLid, cupStacks }
+  return { obstacles, blender, cupStacks }
 }

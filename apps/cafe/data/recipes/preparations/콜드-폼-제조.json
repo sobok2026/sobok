@@ -1,0 +1,78 @@
+{
+  "id": "콜드-폼-제조",
+  "name": "콜드 폼 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "폼 베이스 추가",
+          "instructions": ["폼 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "폼-베이스",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 250,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "바닐라 시럽 추가",
+          "instructions": ["바닐라 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-시럽",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 4,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "블렌딩",
+          "instructions": ["블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "콜드-폼",
+        "amount": null,
+        "description": "완성량은 원본에 명시되지 않았다."
+      }
+    }
+  ]
+}

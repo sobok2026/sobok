@@ -1,0 +1,120 @@
+{
+  "id": "광화문-믹사토",
+  "name": "광화문 믹사토",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["short"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "클래식 시럽 추가",
+          "instructions": ["클래식 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "블루 라임 베이스 추가",
+          "instructions": ["블루 라임 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "블루-라임-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "일품 진로 추가",
+          "instructions": ["일품 진로 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "일품-진로",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 1.5,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "쿼드 스트랭스 히비스커스 티 추가",
+          "instructions": ["쿼드 스트랭스 히비스커스 티 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "쿼드-스트랭스-히비스커스-티",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 1.5,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "제공",
+          "instructions": ["전용 잔에 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "none"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

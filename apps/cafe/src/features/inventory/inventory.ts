@@ -35,15 +35,34 @@ function usableBatch(batch: Batch, ingredient: IngredientId, time: number) {
   )
 }
 
-export function available(state: GameState, ingredient: IngredientId) {
-  return state.batches
-    .filter((batch) => usableBatch(batch, ingredient, state.time))
-    .reduce((sum, batch) => sum + batch.amount, 0)
+function usableBatches(state: GameState, ingredient: IngredientId, batchIds?: readonly string[]) {
+  return state.batches.filter(
+    (batch) => usableBatch(batch, ingredient, state.time) && (!batchIds || batchIds.includes(batch.id)),
+  )
 }
-export function consume(state: GameState, costs: Costs): { earliestExpiry: number | null } | null {
+export function available(state: GameState, ingredient: IngredientId, batchIds?: readonly string[]) {
+  return usableBatches(state, ingredient, batchIds).reduce((sum, batch) => sum + batch.amount, 0)
+}
+export function batchIdsFor(state: GameState, ingredient: IngredientId, amount: number): string[] {
+  const ids: string[] = []
+  let remaining = amount
+  const batches = usableBatches(state, ingredient).sort((a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity))
+  for (const batch of batches) {
+    if (remaining <= 1e-9) break
+    if (batch.amount <= 0) continue
+    ids.push(batch.id)
+    remaining -= batch.amount
+  }
+  return ids
+}
+export function consume(
+  state: GameState,
+  costs: Costs,
+  batchIds?: readonly string[],
+): { earliestExpiry: number | null } | null {
   for (const [key, amount] of Object.entries(costs)) {
     const ingredient = key as IngredientId
-    if (available(state, ingredient) + 0.0001 < amount) {
+    if (available(state, ingredient, batchIds) + (batchIds ? 1e-9 : 0.0001) < amount) {
       say(state, `${INGREDIENTS[ingredient].name}가 부족해요. 준비대 또는 창고에서 보충해주세요.`, 'error')
       return null
     }
@@ -51,9 +70,9 @@ export function consume(state: GameState, costs: Costs): { earliestExpiry: numbe
   let earliestExpiry: number | null = null
   for (const [key, amount] of Object.entries(costs)) {
     let remaining = amount
-    const batches = state.batches
-      .filter((batch) => usableBatch(batch, key as IngredientId, state.time))
-      .sort((a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity))
+    const batches = usableBatches(state, key as IngredientId, batchIds).sort(
+      (a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity),
+    )
     for (const batch of batches) {
       const used = Math.min(batch.amount, remaining)
       if (used > 0 && batch.expiresAt !== null)

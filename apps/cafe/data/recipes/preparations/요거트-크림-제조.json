@@ -1,0 +1,329 @@
+{
+  "id": "요거트-크림-제조",
+  "name": "요거트 크림 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "휘핑 크림 추가",
+          "instructions": ["휘핑 크림 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 200,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 50,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "클래식 시럽 추가",
+          "instructions": ["클래식 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "요거트 파우더 추가",
+          "instructions": ["요거트 파우더 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "요거트-파우더",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "scoop"
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "블렌딩",
+          "instructions": ["블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "물성이 묽으면 추가 블렌딩",
+          "instructions": ["물성이 묽으면 추가 블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              },
+              "when": {
+                "kind": "observation",
+                "property": "크림 물성",
+                "value": "묽음"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "foam-pitcher",
+              "into": "did",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "냉장 보관",
+          "instructions": ["냉장 보관"],
+          "notes": ["스팀 스푼으로 사용한다."],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "did",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": ["크림은 피처 안에서 흔들림 없이 매우 단단한 제형으로 완성한다."],
+      "review": [],
+      "output": {
+        "materialId": "요거트-크림",
+        "amount": null,
+        "description": "약 6잔 제조 가능. ml 완성량은 명시되지 않았다."
+      }
+    },
+    {
+      "id": "large",
+      "name": "대용량 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "휘핑 크림 추가",
+          "instructions": ["휘핑 크림 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 400,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 100,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "클래식 시럽 추가",
+          "instructions": ["클래식 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "요거트 파우더 추가",
+          "instructions": ["요거트 파우더 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "요거트-파우더",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 6,
+                "unit": "scoop"
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "블렌딩",
+          "instructions": ["블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "3",
+              "cycles": 2,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "물성이 묽으면 추가 블렌딩",
+          "instructions": ["물성이 묽으면 추가 블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              },
+              "when": {
+                "kind": "observation",
+                "property": "크림 물성",
+                "value": "묽음"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "did",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "냉장 보관",
+          "instructions": ["냉장 보관"],
+          "notes": ["스팀 스푼으로 사용한다."],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "did",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": ["크림은 피처 안에서 흔들림 없이 매우 단단한 제형으로 완성한다."],
+      "review": [],
+      "output": {
+        "materialId": "요거트-크림",
+        "amount": null,
+        "description": "약 12잔 제조 가능. ml 완성량은 명시되지 않았다."
+      }
+    }
+  ]
+}

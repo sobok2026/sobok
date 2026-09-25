@@ -1,0 +1,246 @@
+{
+  "id": "블루베리-딜라이트-요거트-블렌디드",
+  "name": "블루베리 딜라이트 요거트 블렌디드",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "돌체 소스 추가",
+          "instructions": ["돌체 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "돌체-소스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "요거트 파우더 추가",
+          "instructions": ["요거트 파우더 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "요거트-파우더",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "tall"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "grande"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "venti"
+                  }
+                }
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "블렌딩",
+          "instructions": ["블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "블루베리 베이스 사용 전 혼합",
+          "instructions": ["블루베리 베이스 사용 전 혼합"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "블루베리-베이스-container"
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "블루베리 베이스 추가",
+          "instructions": ["블루베리 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "블루베리-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "amount",
+                    "value": 60,
+                    "unit": "ml"
+                  },
+                  "grande": {
+                    "kind": "amount",
+                    "value": 90,
+                    "unit": "ml"
+                  },
+                  "venti": {
+                    "kind": "amount",
+                    "value": 120,
+                    "unit": "ml"
+                  }
+                }
+              },
+              "toolId": "measuring-cup"
+            }
+          ]
+        },
+        {
+          "id": "step-9",
+          "label": "블렌딩 음료 붓기",
+          "instructions": ["블렌딩 음료 붓기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-10",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮고 굵은 빨대와 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

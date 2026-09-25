@@ -1,8 +1,9 @@
 import { INGREDIENTS, type IngredientId } from '../../content/ingredients'
-import { COLD_BREW_HOURS } from '../../content/references'
 import { STATIONS } from '../../content/stations'
 import type { WorkTip as Tip } from '../../shared/work-tip'
 import type { GameState } from '../../simulation/state'
+import { COLD_BREW_HOURS } from '../cold-brew/rules'
+import { preparationIds } from '../preparation/rules'
 import { batchDestination, batchOrigin } from './batches'
 
 export function materialTip(state: GameState, ingredient: IngredientId): Tip {
@@ -25,7 +26,7 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
         : `창고에서 ${pending.labelled ? `${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하세요.` : '날짜 확인 후 라벨을 붙이세요.'}`,
       reason: '개봉·제조만으로는 사용할 수 없어요. 라벨과 보관까지 마쳐야 해요.',
     }
-  if (ingredient === 'foam' || ingredient === 'mocha' || ingredient === 'hojicha')
+  if (preparationIds.some((id) => id === ingredient))
     return {
       title: `${definition.name} 준비가 필요해요`,
       action: state.tools.clean

@@ -1,0 +1,70 @@
+{
+  "id": "코코넛-믹스-제조",
+  "name": "코코넛 믹스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "코코넛 베이스 추가",
+          "instructions": ["코코넛 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "코코넛-베이스",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 1000,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 1000,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "혼합",
+          "instructions": ["혼합"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "mixing-pitcher"
+            }
+          ]
+        }
+      ],
+      "notes": ["사용 전 믹싱하여 사용한다."],
+      "review": [],
+      "output": {
+        "materialId": "코코넛-믹스",
+        "amount": null,
+        "description": "완성량은 원본에 명시되지 않았다."
+      }
+    }
+  ]
+}

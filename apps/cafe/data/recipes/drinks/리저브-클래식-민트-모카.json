@@ -1,0 +1,156 @@
+{
+  "id": "리저브-클래식-민트-모카",
+  "name": "리저브 클래식 민트 모카",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["grande"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "시럽 추가",
+          "instructions": ["스팀 피처에 리저브 바닐라 빈 시럽 1펌프를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-바닐라-빈-시럽",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "우유 스팀",
+          "instructions": ["스팀 피처 Grande 선까지 오트앤유를 계량한 후 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "오트앤유",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size",
+                "referenceSize": "grande"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "standard"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "파우더 추가",
+          "instructions": ["컵에 리저브 다크 모카 파우더 3스쿱을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-다크-모카-파우더",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "시럽 추가",
+          "instructions": ["컵에 리저브 민트 시럽 4펌프를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-민트-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 4,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "샷 추출",
+          "instructions": ["리저브 에스프레소 샷을 제공 컵에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "equipmentId": "reserve-espresso-machine",
+              "materialId": "리저브-에스프레소-원두"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "마무리 및 제공",
+          "instructions": [
+            "머들러로 에스프레소와 다크 모카 파우더를 섞는다.",
+            "스팀한 오트앤유를 컵 테두리 아래 6mm까지 붓는다.",
+            "리저브 다크 모카 파우더를 파우더 쉐이커로 음료 반쪽에 골고루 토핑한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            },
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "리저브-다크-모카-파우더",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "음료 반쪽에 골고루 토핑"
+              },
+              "toolId": "topping-shaker"
+            },
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

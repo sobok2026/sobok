@@ -1,0 +1,218 @@
+{
+  "id": "더블-머스캣-블렌디드",
+  "name": "더블 머스캣 블렌디드",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "클래식-시럽-펌핑",
+          "label": "클래식 시럽 펌핑",
+          "instructions": ["클래식 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "cbs-pump"
+            }
+          ]
+        },
+        {
+          "id": "그린-머스캣-베이스-추가",
+          "label": "그린 머스캣 베이스 추가",
+          "instructions": ["그린 머스캣 베이스을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "그린-머스캣-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "정수-추가",
+          "label": "정수 추가",
+          "instructions": ["정수을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "tall"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "grande"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "venti"
+                  }
+                }
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["블렌더 1번 버튼을 한 번 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "퍼플-머스캣-토핑-추가",
+          "label": "퍼플 머스캣 토핑 추가",
+          "instructions": ["퍼플 머스캣 토핑을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "퍼플-머스캣-토핑",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "음료-붓기",
+          "label": "음료 붓기",
+          "instructions": ["컵 테두리 아래 6mm까지 음료를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮고 굵은 빨대를 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "dome",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

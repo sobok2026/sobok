@@ -1,0 +1,210 @@
+{
+  "id": "피치-망고-선셋-블렌디드",
+  "name": "피치 망고 선셋 블렌디드",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "피치-베이스-추가",
+          "label": "피치 베이스 추가",
+          "instructions": ["피치 베이스을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "피치-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "망고패션-베이스-추가",
+          "label": "망고패션 베이스 추가",
+          "instructions": ["망고패션 베이스을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "망고패션-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "tall"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "grande"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "venti"
+                  }
+                }
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["블렌더 1번 버튼을 한 번 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "화이트피치-청크-추가",
+          "label": "화이트피치 청크 추가",
+          "instructions": ["화이트피치 청크을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "화이트피치-청크",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "망고-용과-스월",
+          "label": "망고 용과 스월",
+          "instructions": ["블렌더 피처에 망고 용과 토핑을 1티스푼 스쿱으로 1회 넣고 4~5회 흔들어 섞는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "망고-용과-토핑",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            },
+            {
+              "action": "swirl",
+              "vessel": "blender-pitcher",
+              "repetitions": {
+                "min": 4,
+                "max": 5
+              }
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기-2",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮고 굵은 빨대를 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "dome",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

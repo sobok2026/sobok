@@ -1,0 +1,73 @@
+{
+  "id": "matcha-shot",
+  "name": "말차 샷 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "water",
+          "label": "정수 계량",
+          "instructions": ["쉐이커 보틀에 정수 250ml를 계량한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "shaker",
+              "amount": {
+                "kind": "amount",
+                "value": 250,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "powder",
+          "label": "파우더 계량",
+          "instructions": ["1티스푼 스쿱으로 파우더 8스쿱을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "matchaPowder",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 8,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "shake",
+          "label": "쉐이킹",
+          "instructions": ["뚜껑을 닫고 약 10회 흔든다. 음료에 사용하기 전에 다시 혼합한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "shaker",
+              "repetitions": 10,
+              "approximate": true
+            }
+          ]
+        }
+      ],
+      "notes": ["제조 후 냉장 보관, 24시간."],
+      "review": [],
+      "output": {
+        "materialId": "matcha",
+        "amount": null,
+        "description": "완성 부피는 원본에 명시되지 않았다. 정수 250ml는 투입량이다."
+      }
+    }
+  ]
+}

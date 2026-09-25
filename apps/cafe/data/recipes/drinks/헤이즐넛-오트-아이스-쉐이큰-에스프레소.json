@@ -1,0 +1,287 @@
+{
+  "id": "헤이즐넛-오트-아이스-쉐이큰-에스프레소",
+  "name": "헤이즐넛 오트 아이스 쉐이큰 에스프레소",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "샷-추출",
+          "label": "샷 추출",
+          "instructions": ["에스프레소를 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "shot"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "shot"
+                  }
+                }
+              },
+              "method": "blonde"
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "디카페인",
+              "operations": [
+                {
+                  "action": "espresso",
+                  "into": "shot-glass",
+                  "amount": {
+                    "kind": "by-size",
+                    "values": {
+                      "tall": {
+                        "kind": "count",
+                        "value": 2,
+                        "unit": "shot"
+                      },
+                      "grande": {
+                        "kind": "count",
+                        "value": 3,
+                        "unit": "shot"
+                      },
+                      "venti": {
+                        "kind": "count",
+                        "value": 4,
+                        "unit": "shot"
+                      }
+                    }
+                  },
+                  "method": "decaf"
+                }
+              ]
+            },
+            {
+              "label": "하프 디카페인",
+              "operations": [
+                {
+                  "action": "espresso",
+                  "into": "shot-glass",
+                  "amount": {
+                    "kind": "by-size",
+                    "values": {
+                      "tall": {
+                        "kind": "count",
+                        "value": 2,
+                        "unit": "shot"
+                      },
+                      "grande": {
+                        "kind": "count",
+                        "value": 3,
+                        "unit": "shot"
+                      },
+                      "venti": {
+                        "kind": "count",
+                        "value": 4,
+                        "unit": "shot"
+                      }
+                    }
+                  },
+                  "method": "half-decaf"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "헤이즐넛-시럽-펌핑",
+          "label": "헤이즐넛 시럽 펌핑",
+          "instructions": ["헤이즐넛 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "헤이즐넛-시럽",
+              "into": "shaker",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "4번선"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "shaker",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "쉐이킹",
+          "label": "쉐이킹",
+          "instructions": ["뚜껑을 닫고 10회 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "cover",
+              "vessel": "shaker"
+            },
+            {
+              "action": "shake",
+              "vessel": "shaker",
+              "repetitions": 10
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기-2",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shaker",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "오트사이드-추가",
+          "label": "오트사이드 추가",
+          "instructions": ["오트사이드을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "오트사이드",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "when": {
+                "kind": "container",
+                "value": "standard-cup"
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "텀블러 계량",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "오트사이드",
+                  "into": "serving-cup",
+                  "amount": {
+                    "kind": "by-size",
+                    "values": {
+                      "tall": {
+                        "kind": "amount",
+                        "value": 80,
+                        "unit": "ml"
+                      },
+                      "grande": {
+                        "kind": "amount",
+                        "value": 100,
+                        "unit": "ml"
+                      },
+                      "venti": {
+                        "kind": "amount",
+                        "value": 160,
+                        "unit": "ml"
+                      }
+                    }
+                  },
+                  "when": {
+                    "kind": "container",
+                    "value": "tumbler"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "strawless"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "해당 프로모션 기간에는 코어와 프로모션 모두 오트사이드를 사용한다.",
+        "미군부대 매장은 기존 오트&유를 사용한다.",
+        "오트사이드 1개 기준 제조 가능 수량: Tall 12잔, Grande 10잔, Venti 6잔."
+      ],
+      "review": []
+    }
+  ]
+}

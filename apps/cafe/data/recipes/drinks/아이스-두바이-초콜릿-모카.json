@@ -1,0 +1,190 @@
+{
+  "id": "아이스-두바이-초콜릿-모카",
+  "name": "아이스 두바이 초콜릿 모카",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "샷-추출",
+          "label": "샷 추출",
+          "instructions": ["에스프레소를 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "shot"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  }
+                }
+              },
+              "method": "regular"
+            }
+          ]
+        },
+        {
+          "id": "바모카-소스-펌핑",
+          "label": "바모카 소스 펌핑",
+          "instructions": ["바모카 소스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "mocha",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "white-mocha-pump-15"
+            }
+          ]
+        },
+        {
+          "id": "샷-혼합",
+          "label": "샷 혼합",
+          "instructions": ["추출한 샷을 컵에 붓고 머들러로 섞는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "mix",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            }
+          ]
+        },
+        {
+          "id": "일반-우유-추가",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "피스타치오-폼-추가",
+          "label": "피스타치오 폼 추가",
+          "instructions": ["피스타치오 폼을 컵 테두리 아래 6mm까지 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "피스타치오-폼",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "쏠티드-브라운-버터리-토핑-추가",
+          "label": "쏠티드 브라운 버터리 토핑 추가",
+          "instructions": ["쏠티드 브라운 버터리 토핑을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "쏠티드-브라운-버터리-토핑",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count-range",
+                "min": 2,
+                "max": 3,
+                "unit": "tap"
+              },
+              "toolId": "topping-shaker"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "strawless"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

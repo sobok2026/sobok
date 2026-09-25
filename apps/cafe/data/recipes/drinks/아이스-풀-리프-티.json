@@ -1,0 +1,767 @@
+{
+  "id": "아이스-풀-리프-티",
+  "name": "아이스 풀 리프 티",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "홍차",
+      "name": "홍차",
+      "temperature": "iced",
+      "sizes": ["tall", "venti"],
+      "steps": [
+        {
+          "id": "티백-추가",
+          "label": "티백 추가",
+          "instructions": ["제공 사이즈와 같은 머그컵에 티백을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "홍차-티백",
+              "into": "tea-mug",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "티-우리기",
+          "label": "티 우리기",
+          "instructions": ["머그컵 절반까지 뜨거운 물을 넣고 5분간 우린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "tea-mug",
+              "amount": {
+                "kind": "fraction",
+                "numerator": 1,
+                "denominator": 2,
+                "of": "제공 사이즈와 같은 머그컵"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "vessel": "tea-mug",
+              "duration": {
+                "seconds": 300,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "고객-선택-시럽-펌핑",
+          "label": "고객 선택 시럽 펌핑",
+          "instructions": ["고객 선택 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객-선택-시럽",
+              "into": "tea-mug",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "unspecified-syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "시럽 추가",
+            "choice": "요청"
+          }
+        },
+        {
+          "id": "티백-제거",
+          "label": "티백 제거",
+          "instructions": ["기본적으로 우린 티백은 제거한다. 고객 요청 시에는 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "remove",
+              "itemId": "홍차-티백",
+              "from": "tea-mug",
+              "dispose": false,
+              "when": {
+                "kind": "customization",
+                "option": "티백 제공",
+                "choice": "기본 제거"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "tea-mug",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가-2",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["플랫 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "always",
+              "lidType": "flat"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "뜨거운 물로 우릴 때 머그컵 절반의 물 양을 준수한다.",
+        "시럽 추가 요청 시 반드시 티를 우린 뒤 시럽을 넣는다.",
+        "시럽의 종류와 펌프 토출량은 원본에 명시되지 않았다."
+      ],
+      "review": []
+    },
+    {
+      "id": "허브-티",
+      "name": "허브 티",
+      "temperature": "iced",
+      "sizes": ["tall", "venti"],
+      "steps": [
+        {
+          "id": "티백-추가",
+          "label": "티백 추가",
+          "instructions": ["제공 사이즈와 같은 머그컵에 티백을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "허브-티-티백",
+              "into": "tea-mug",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "티-우리기",
+          "label": "티 우리기",
+          "instructions": ["머그컵 절반까지 뜨거운 물을 넣고 5분간 우린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "tea-mug",
+              "amount": {
+                "kind": "fraction",
+                "numerator": 1,
+                "denominator": 2,
+                "of": "제공 사이즈와 같은 머그컵"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "vessel": "tea-mug",
+              "duration": {
+                "seconds": 300,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "고객-선택-시럽-펌핑",
+          "label": "고객 선택 시럽 펌핑",
+          "instructions": ["고객 선택 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객-선택-시럽",
+              "into": "tea-mug",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "unspecified-syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "시럽 추가",
+            "choice": "요청"
+          }
+        },
+        {
+          "id": "티백-제거",
+          "label": "티백 제거",
+          "instructions": ["기본적으로 우린 티백은 제거한다. 고객 요청 시에는 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "remove",
+              "itemId": "허브-티-티백",
+              "from": "tea-mug",
+              "dispose": false,
+              "when": {
+                "kind": "customization",
+                "option": "티백 제공",
+                "choice": "기본 제거"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "tea-mug",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가-2",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["플랫 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "always",
+              "lidType": "flat"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "뜨거운 물로 우릴 때 머그컵 절반의 물 양을 준수한다.",
+        "시럽 추가 요청 시 반드시 티를 우린 뒤 시럽을 넣는다.",
+        "시럽의 종류와 펌프 토출량은 원본에 명시되지 않았다."
+      ],
+      "review": []
+    },
+    {
+      "id": "화이트-티",
+      "name": "화이트 티",
+      "temperature": "iced",
+      "sizes": ["tall", "venti"],
+      "steps": [
+        {
+          "id": "티백-추가",
+          "label": "티백 추가",
+          "instructions": ["제공 사이즈와 같은 머그컵에 티백을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "화이트-티-티백",
+              "into": "tea-mug",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "티-우리기",
+          "label": "티 우리기",
+          "instructions": ["머그컵 절반까지 뜨거운 물을 넣고 3분간 우린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "tea-mug",
+              "amount": {
+                "kind": "fraction",
+                "numerator": 1,
+                "denominator": 2,
+                "of": "제공 사이즈와 같은 머그컵"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "vessel": "tea-mug",
+              "duration": {
+                "seconds": 180,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "고객-선택-시럽-펌핑",
+          "label": "고객 선택 시럽 펌핑",
+          "instructions": ["고객 선택 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객-선택-시럽",
+              "into": "tea-mug",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "unspecified-syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "시럽 추가",
+            "choice": "요청"
+          }
+        },
+        {
+          "id": "티백-제거",
+          "label": "티백 제거",
+          "instructions": ["기본적으로 우린 티백은 제거한다. 고객 요청 시에는 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "remove",
+              "itemId": "화이트-티-티백",
+              "from": "tea-mug",
+              "dispose": false,
+              "when": {
+                "kind": "customization",
+                "option": "티백 제공",
+                "choice": "기본 제거"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "tea-mug",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가-2",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["플랫 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "always",
+              "lidType": "flat"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "뜨거운 물로 우릴 때 머그컵 절반의 물 양을 준수한다.",
+        "시럽 추가 요청 시 반드시 티를 우린 뒤 시럽을 넣는다.",
+        "시럽의 종류와 펌프 토출량은 원본에 명시되지 않았다."
+      ],
+      "review": []
+    },
+    {
+      "id": "녹차",
+      "name": "녹차",
+      "temperature": "iced",
+      "sizes": ["tall", "venti"],
+      "steps": [
+        {
+          "id": "티백-추가",
+          "label": "티백 추가",
+          "instructions": ["제공 사이즈와 같은 머그컵에 티백을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "녹차-티백",
+              "into": "tea-mug",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "티-우리기",
+          "label": "티 우리기",
+          "instructions": ["머그컵 절반까지 뜨거운 물을 넣고 3분간 우린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "tea-mug",
+              "amount": {
+                "kind": "fraction",
+                "numerator": 1,
+                "denominator": 2,
+                "of": "제공 사이즈와 같은 머그컵"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "vessel": "tea-mug",
+              "duration": {
+                "seconds": 180,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "고객-선택-시럽-펌핑",
+          "label": "고객 선택 시럽 펌핑",
+          "instructions": ["고객 선택 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객-선택-시럽",
+              "into": "tea-mug",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "unspecified-syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "시럽 추가",
+            "choice": "요청"
+          }
+        },
+        {
+          "id": "티백-제거",
+          "label": "티백 제거",
+          "instructions": ["기본적으로 우린 티백은 제거한다. 고객 요청 시에는 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "remove",
+              "itemId": "녹차-티백",
+              "from": "tea-mug",
+              "dispose": false,
+              "when": {
+                "kind": "customization",
+                "option": "티백 제공",
+                "choice": "기본 제거"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "tea-mug",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가-2",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["플랫 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "always",
+              "lidType": "flat"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "뜨거운 물로 우릴 때 머그컵 절반의 물 양을 준수한다.",
+        "시럽 추가 요청 시 반드시 티를 우린 뒤 시럽을 넣는다.",
+        "시럽의 종류와 펌프 토출량은 원본에 명시되지 않았다."
+      ],
+      "review": []
+    }
+  ]
+}

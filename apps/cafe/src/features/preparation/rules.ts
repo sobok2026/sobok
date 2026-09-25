@@ -1,8 +1,11 @@
+import { recipeCatalog } from '../../content/catalog'
 import { INGREDIENTS, type IngredientId } from '../../content/ingredients'
-import { referenceLinks } from '../../content/references'
+import { operationSeconds } from '../../content/playable-menu'
+import { amountMilliliters, recipeVariant } from '../../content/recipe-catalog'
+import { planRecipe } from '../../content/recipe-plan'
 import type { Preparation } from '../../simulation/state'
 
-export const preparationIds = ['foam', 'mocha', 'hojicha'] as const
+export const preparationIds = ['foam', 'mocha', 'hojicha', 'matcha'] as const
 export type PreparationId = (typeof preparationIds)[number]
 export const prepToolIds = [
   'cream-carton',
@@ -13,6 +16,7 @@ export const prepToolIds = [
   'cold-water-jug',
   'tea-scoop',
   'tea-shaker',
+  'matcha-shaker',
 ] as const
 export type PrepTool = (typeof prepToolIds)[number]
 export const PREP_TOOL_NAMES: Record<PrepTool, string> = {
@@ -24,6 +28,7 @@ export const PREP_TOOL_NAMES: Record<PrepTool, string> = {
   'cold-water-jug': '정수 계량 피처',
   'tea-scoop': '1티스푼 스쿱',
   'tea-shaker': '호지차 쉐이커 보틀',
+  'matcha-shaker': '말차 쉐이커 보틀',
 }
 export type PrepStep = {
   label: string
@@ -37,149 +42,111 @@ export type PrepStep = {
   perUnit?: number
   instruction: string
 }
-const { foam, mocha, hojicha } = referenceLinks
-export const PREPARATIONS: Record<
-  PreparationId,
-  {
-    name: string
-    storageNote: string
-    seconds: number
-    steps: PrepStep[]
-  }
-> = {
-  foam: {
-    name: INGREDIENTS.foam.name,
-    storageNote: foam.reference.storage,
-    seconds: foam.seconds,
-    steps: [
-      ...(
-        [
-          {
-            reference: foam.steps.cream,
-            kind: 'pour',
-            tool: 'cream-carton',
-            ingredient: 'cream',
-            target: foam.creamMl,
-            perUnit: 1,
-          },
-          {
-            reference: foam.steps.milk,
-            kind: 'pour',
-            tool: 'milk-carton',
-            ingredient: 'milk',
-            target: foam.milkMl,
-            perUnit: 1,
-          },
-          {
-            reference: foam.steps.glaze,
-            kind: 'pump',
-            tool: null,
-            ingredient: 'glaze',
-            target: foam.glazePumps,
-            perUnit: foam.pumpMl,
-          },
-        ] as const
-      ).map(
-        ({ reference, ...step }): PrepStep => ({
-          ...step,
-          label: reference.item,
-          unit: reference.unit,
-          rate: step.target / 4,
-          tolerance: step.kind === 'pump' ? 0 : 0.06,
-          instruction: [reference.instruction, reference.note].filter(Boolean).join(' '),
-        }),
-      ),
-      {
-        label: '콜드 폼 블렌딩',
+function preparationDefinition(id: PreparationId) {
+  const recipeId = recipeCatalog.materials.get(id)?.preparationId
+  if (!recipeId) throw new Error(`${id} 제조법이 없습니다.`)
+  const { variant } = recipeVariant(recipeCatalog, recipeId, 'standard')
+  const plan = planRecipe(variant, { container: 'standard-cup', service: 'takeaway' })
+  let seconds = 0
+  const steps: PrepStep[] = []
+  for (const source of plan) {
+    const operation = source.operation
+    const base = {
+      label: source.label,
+      instruction: [source.instruction, source.note].filter(Boolean).join(' '),
+      tolerance: 0,
+    }
+    if (operation.action === 'store') continue // Completed batches use the existing label-and-storage workflow.
+    if (operation.action === 'add') {
+      const material = operation.materialId
+      const ingredient = material === 'water' ? undefined : (material as IngredientId)
+      if (operation.amount.kind === 'count') {
+        const amount = operation.amount
+        if (!['pump', 'scoop', 'pack'].includes(amount.unit))
+          throw new Error(`지원하지 않는 준비 계량입니다: ${amount.unit}`)
+        const volume = amountMilliliters(recipeCatalog, amount, operation.toolId)
+        steps.push({
+          ...base,
+          kind: amount.unit as 'pump' | 'scoop' | 'pack',
+          tool: amount.unit === 'scoop' ? 'tea-scoop' : amount.unit === 'pack' ? 'mocha-pack' : null,
+          target: amount.value,
+          unit: amount.unit === 'pump' ? '펌프' : amount.unit === 'pack' ? '봉' : '스쿱',
+          rate: 0,
+          ingredient,
+          perUnit:
+            amount.unit === 'pump'
+              ? (volume ??
+                  (() => {
+                    throw new Error('펌프 용량이 없습니다.')
+                  })()) / amount.value
+              : 1,
+        })
+      } else {
+        const volume = amountMilliliters(recipeCatalog, operation.amount, operation.toolId)
+        if (volume === null) throw new Error('준비 계량 부피를 확인해야 합니다.')
+        const tools: Record<string, PrepTool> = { cream: 'cream-carton', milk: 'milk-carton' }
+        steps.push({
+          ...base,
+          kind: 'pour',
+          tool:
+            material === 'water'
+              ? operation.temperature?.kind === 'hot'
+                ? 'water-jug'
+                : 'cold-water-jug'
+              : tools[material],
+          target: volume,
+          unit: 'ml',
+          rate: volume / 4,
+          ingredient,
+          perUnit: 1,
+        })
+      }
+    } else if (operation.action === 'shake') {
+      if (typeof operation.repetitions !== 'number') throw new Error('준비 쉐이킹 횟수가 없습니다.')
+      steps.push({
+        ...base,
+        kind: 'shake',
+        tool: id === 'matcha' ? 'matcha-shaker' : 'tea-shaker',
+        target: operation.repetitions,
+        unit: '회',
+        rate: 0,
+      })
+    } else if (operation.action === 'mix') {
+      const duration = operationSeconds(recipeCatalog, operation)
+      steps.push({
+        ...base,
+        kind: 'stir',
+        tool: 'spatula',
+        target: duration ?? 1,
+        unit: duration ? '초' : '혼합',
+        rate: duration ? 1 : 0.4,
+      })
+    } else if (operation.action === 'run-machine') {
+      const duration = operationSeconds(recipeCatalog, operation)
+      if (duration === null) throw new Error('준비 장비의 작동 시간을 확인해야 합니다.')
+      seconds += duration
+      steps.push({
+        ...base,
+        label: `${operation.program}번 프로그램 · ${operation.cycles}회`,
         kind: 'machine',
         tool: null,
         target: 1,
         unit: '회',
         rate: 0,
-        tolerance: 0,
-        instruction: [foam.steps.blend.instruction, foam.steps.blend.note].join(' '),
-      },
-    ],
-  },
-  mocha: {
-    name: INGREDIENTS.mocha.name,
-    storageNote: `${mocha.reference.storage} · ${mocha.reference.lifetime}`,
-    seconds: 0,
-    steps: [
-      {
-        label: '바모카 원팩 넣기',
-        kind: 'pack',
-        tool: 'mocha-pack',
-        target: mocha.packs,
-        unit: '봉',
-        rate: 0,
-        tolerance: 0,
-        ingredient: 'mochaPowder',
-        perUnit: 1,
-        instruction: mocha.reference.instruction,
-      },
-      {
-        label: '온수 계량',
-        kind: 'pour',
-        tool: 'water-jug',
-        target: mocha.waterMl,
-        unit: 'ml',
-        rate: mocha.waterMl / 4,
-        tolerance: 0.06,
-        instruction: mocha.reference.instruction,
-      },
-      {
-        label: '바모카 혼합',
-        kind: 'stir',
-        tool: 'spatula',
-        target: 6,
-        unit: '초',
-        rate: 1,
-        tolerance: 0,
-        instruction: '스패튤러로 저어 섞어요. 혼합 동작 시간은 게임용 임시 규칙이에요.',
-      },
-    ],
-  },
-  hojicha: {
-    name: INGREDIENTS.hojicha.name,
-    storageNote: hojicha.reference.storage,
-    seconds: 0,
-    steps: [
-      {
-        label: hojicha.steps.water.item,
-        kind: 'pour',
-        tool: 'cold-water-jug',
-        target: hojicha.waterMl,
-        unit: 'ml',
-        rate: hojicha.waterMl / 4,
-        tolerance: 0.06,
-        instruction: hojicha.steps.water.instruction,
-      },
-      {
-        label: hojicha.steps.powder.item,
-        kind: 'scoop',
-        tool: 'tea-scoop',
-        target: hojicha.powderScoops,
-        unit: '스쿱',
-        rate: 0,
-        tolerance: 0,
-        ingredient: 'hojichaPowder',
-        perUnit: 1,
-        instruction: `${hojicha.steps.powder.instruction} 1티스푼 스쿱을 사용해요.`,
-      },
-      {
-        label: '호지차 샷 쉐이킹',
-        kind: 'shake',
-        tool: 'tea-shaker',
-        target: hojicha.shakes,
-        unit: '회',
-        rate: 0,
-        tolerance: 0,
-        instruction: `${hojicha.steps.shake.instruction} ${hojicha.steps.shake.note}`,
-      },
-    ],
-  },
+      })
+    } else throw new Error(`준비대 동작 연결이 필요합니다: ${operation.action}`)
+  }
+  return {
+    name: INGREDIENTS[id].name,
+    storageNote: INGREDIENTS[id].storage === 'fridge' ? '제조 후 냉장 보관' : '제조 후 실온 보관',
+    seconds,
+    steps,
+  }
 }
+export const PREPARATIONS = Object.fromEntries(preparationIds.map((id) => [id, preparationDefinition(id)])) as Record<
+  PreparationId,
+  ReturnType<typeof preparationDefinition>
+>
 export function createPreparation(recipe: PreparationId): Preparation {
   return {
     id: crypto.randomUUID(),
@@ -189,7 +156,7 @@ export function createPreparation(recipe: PreparationId): Preparation {
     stage: 'measuring',
     tool: null,
     toolReserved: true,
-    amounts: { cream: 0, milk: 0, glaze: 0, water: 0, mochaPowder: 0, hojichaPowder: 0 },
+    amounts: { cream: 0, milk: 0, glaze: 0, water: 0, mochaPowder: 0, hojichaPowder: 0, matchaPowder: 0 },
     fault: null,
     batchId: null,
     ingredientExpiresAt: null,

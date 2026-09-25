@@ -1,0 +1,297 @@
+{
+  "id": "카페-브륄레-프라푸치노",
+  "name": "카페 브륄레 프라푸치노",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "샷-추출",
+          "label": "샷 추출",
+          "instructions": ["에스프레소를 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "shot"
+                  }
+                }
+              },
+              "method": "ristretto"
+            }
+          ]
+        },
+        {
+          "id": "베이스-계량",
+          "label": "베이스 계량",
+          "instructions": ["컵에 리스트레토 샷을 붓고 하단선까지 바닐라 크림 베이스를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "바닐라-크림-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "스위트-향-시럽-펌핑",
+          "label": "스위트 향 시럽 펌핑",
+          "instructions": ["스위트 향 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "sweet-syrup",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "cbs-pump"
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "tall"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "grande"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "venti"
+                  }
+                }
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "커피향-베이스-펌핑",
+          "label": "커피향 베이스 펌핑",
+          "instructions": ["커피향 베이스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "커피향-베이스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "base-pump"
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["블렌더 1번 버튼을 한 번 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "흑당-시럽-펌핑",
+          "label": "흑당 시럽 펌핑",
+          "instructions": ["흑당 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "흑당-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "pump"
+              },
+              "toolId": "cbs-pump"
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기-2",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "일반-휘핑-크림-추가",
+          "label": "일반 휘핑 크림 추가",
+          "instructions": ["일반 휘핑 크림을 넣는다. 평평하게 올린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "일반-휘핑-크림",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "평평하게 올린다."
+              }
+            }
+          ]
+        },
+        {
+          "id": "카라멜-드리즐-추가",
+          "label": "카라멜 드리즐 추가",
+          "instructions": ["휘핑 위에 원형으로 4~5회 드리즐한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "카라멜-드리즐",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count-range",
+                "min": 4,
+                "max": 5,
+                "unit": "turn"
+              },
+              "toolId": "drizzle-bottle"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮고 굵은 빨대를 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "dome",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "id": "custard-whipped-cream-machine",
+  "name": "슈크림 휘핑 제조_자동휘핑머신",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "자동휘핑머신 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "cream",
+          "label": "크림 계량",
+          "instructions": ["스테인레스 바트에 프릿츠 골드 1,000ml를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "stainless-vat",
+              "amount": {
+                "kind": "amount",
+                "value": 1000,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "sauce",
+          "label": "소스 펌핑",
+          "instructions": ["스위트 바닐라 소스를 18펌프 넣는다."],
+          "notes": ["180ml는 반올림 표기이다. 10.2ml × 18펌프의 계산량은 183.6ml이다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "sweet-vanilla-sauce",
+              "into": "stainless-vat",
+              "amount": {
+                "kind": "count",
+                "value": 18,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "mix",
+          "label": "혼합",
+          "instructions": ["머들러로 30초간 잘 젓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "stainless-vat",
+              "toolId": "stirrer",
+              "duration": {
+                "seconds": 30,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "mount-vat",
+          "label": "바트 장착",
+          "instructions": ["스테인레스 바트를 휘핑머신 메인 바트에 장착한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "attach",
+              "itemId": "stainless-vat",
+              "toId": "automatic-whipping-main-vat"
+            }
+          ]
+        },
+        {
+          "id": "connect-tube",
+          "label": "실리콘 튜브 연결",
+          "instructions": ["추출 실리콘 튜브를 연결한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "attach",
+              "itemId": "whipping-extraction-tube",
+              "toId": "automatic-whipping-machine"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "custard-whipped-cream",
+        "amount": null,
+        "description": "Tall 기준 약 30잔 제조 가능."
+      }
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "id": "클래식-밀크-티-베이스-제조",
+  "name": "클래식 밀크 티 베이스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "티-추출",
+          "label": "티 추출",
+          "instructions": ["믹싱 피처에 블랙 아이스 티 1개와 뜨거운 물 350ml를 넣고 10분 우린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "블랙-아이스티",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 350,
+                "unit": "ml"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "vessel": "mixing-pitcher",
+              "duration": {
+                "seconds": 600,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "티백-제거-및-냉각",
+          "label": "티백 제거 및 냉각",
+          "instructions": ["티백을 제거한 뒤 CBS Tall 스쿱으로 얼음을 1스쿱 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "remove",
+              "itemId": "블랙-아이스티",
+              "from": "mixing-pitcher",
+              "dispose": false
+            },
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop-tall"
+            }
+          ]
+        },
+        {
+          "id": "흑당-시럽-펌핑",
+          "label": "흑당 시럽 펌핑",
+          "instructions": ["흑당 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "흑당-시럽",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 10,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "하프앤하프-추가",
+          "label": "하프앤하프 추가",
+          "instructions": ["하프앤하프 500ml를 계량해 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "half-and-half",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 500,
+                "unit": "ml"
+              }
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "클래식-밀크-티-베이스",
+        "amount": null,
+        "description": "Tall 기준 약 6잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

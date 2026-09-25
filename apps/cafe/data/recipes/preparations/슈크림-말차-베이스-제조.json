@@ -1,0 +1,135 @@
+{
+  "id": "슈크림-말차-베이스-제조",
+  "name": "슈크림 말차 베이스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "스위트 바닐라 소스 추가",
+          "instructions": ["스위트 바닐라 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "sweet-vanilla-sauce",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 150,
+                "unit": "ml"
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "펌프로 계량",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "sweet-vanilla-sauce",
+                  "into": "foam-pitcher",
+                  "amount": {
+                    "kind": "count",
+                    "value": 15,
+                    "unit": "pump"
+                  },
+                  "toolId": "white-mocha-pump"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 300,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "말차 파우더 추가",
+          "instructions": ["말차 파우더 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "matchaPowder",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 5,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "5티스푼 스쿱 사용",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "matchaPowder",
+                  "into": "foam-pitcher",
+                  "amount": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop"
+                  },
+                  "toolId": "five-teaspoon-scoop"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "블렌딩",
+          "instructions": ["블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "대용량은 위 레시피의 2배 용량으로 제조한다고 안내한다. 별도 블렌딩 횟수는 제시하지 않는다.",
+        "소스는 150ml 계량 또는 15펌프가 원본의 대안이다. 펌프의 계산량과 정량 계량값을 동일한 물리 부피로 취급하지 않는다."
+      ],
+      "review": [],
+      "output": {
+        "materialId": "슈크림-말차-베이스",
+        "amount": null,
+        "description": "Tall 기준 약 4잔 제조 가능. ml 완성량은 제시하지 않는다."
+      }
+    }
+  ]
+}

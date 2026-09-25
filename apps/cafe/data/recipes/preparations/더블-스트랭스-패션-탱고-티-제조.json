@@ -1,0 +1,130 @@
+{
+  "id": "더블-스트랭스-패션-탱고-티-제조",
+  "name": "더블 스트랭스 패션 탱고 티 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "batch",
+      "name": "2L 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["워터 피처에 티바나 패션 탱고 아이스 티백 1개를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "티바나-패션-탱고-아이스-티백",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "티 우리기",
+          "instructions": ["뜨거운 물 1L를 붓고 5분간 우린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "l"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "vessel": "water-pitcher",
+              "duration": {
+                "seconds": 300,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "티백 제거",
+          "instructions": ["집게로 티백을 10초 동안 들어올린 다음 버린다. 티백을 짜거나 누르지 않는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "remove",
+              "from": "water-pitcher",
+              "itemId": "티바나-패션-탱고-아이스-티백",
+              "dispose": true,
+              "drain": {
+                "seconds": 10,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "냉각 및 희석",
+          "instructions": [
+            "Venti CBS 얼음 스쿱으로 얼음을 넣고 차가운 정수물을 피처의 2L선까지 채운 후 실온 보관한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop-venti"
+            },
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 2,
+                "unit": "l"
+              },
+              "temperature": {
+                "kind": "cold"
+              }
+            },
+            {
+              "action": "store",
+              "vessel": "water-pitcher",
+              "storage": "room"
+            }
+          ]
+        }
+      ],
+      "notes": ["Tall 기준 약 43잔 제조 가능."],
+      "review": [],
+      "output": {
+        "materialId": "더블-스트랭스-패션-탱고-티",
+        "amount": {
+          "kind": "amount",
+          "value": 2,
+          "unit": "l"
+        },
+        "description": "2L선까지 제조한 더블 스트랭스 패션 탱고 티"
+      }
+    }
+  ]
+}

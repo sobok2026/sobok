@@ -1,0 +1,2262 @@
+[
+  {
+    "id": "beans",
+    "kind": "raw",
+    "name": "에스프레소 원두",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "g"
+  },
+  {
+    "id": "milk",
+    "kind": "raw",
+    "name": "일반 우유",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "cream",
+    "kind": "raw",
+    "name": "휘핑크림 원재료",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "glaze",
+    "kind": "raw",
+    "name": "글레이즈드 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "powder",
+    "kind": "raw",
+    "name": "번트 카라멜 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "tap"
+  },
+  {
+    "id": "mochaPowder",
+    "kind": "raw",
+    "name": "바모카 원팩",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "pack"
+  },
+  {
+    "id": "mocha",
+    "kind": "prepared",
+    "name": "바모카",
+    "notes": [],
+    "preparationId": "mocha-sauce",
+    "stockUnit": "ml"
+  },
+  {
+    "id": "foam",
+    "kind": "prepared",
+    "name": "글레이즈드 폼",
+    "notes": [],
+    "preparationId": "glazed-foam",
+    "stockUnit": "ml"
+  },
+  {
+    "id": "coldBrew",
+    "kind": "prepared",
+    "name": "콜드 브루 추출액",
+    "notes": [],
+    "preparationId": "cold-brew-batch",
+    "stockUnit": "ml"
+  },
+  {
+    "id": "classic",
+    "kind": "raw",
+    "name": "클래식 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "hojichaPowder",
+    "kind": "raw",
+    "name": "호지차 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "scoop"
+  },
+  {
+    "id": "hojicha",
+    "kind": "prepared",
+    "name": "호지차 샷",
+    "notes": [],
+    "preparationId": "hojicha-shot",
+    "stockUnit": "ml"
+  },
+  {
+    "id": "matchaPowder",
+    "kind": "raw",
+    "name": "말차 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "scoop"
+  },
+  {
+    "id": "matcha",
+    "kind": "prepared",
+    "name": "말차 샷",
+    "notes": [],
+    "preparationId": "matcha-shot",
+    "stockUnit": "ml"
+  },
+  {
+    "id": "water",
+    "kind": "utility",
+    "name": "정수",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "ice",
+    "kind": "utility",
+    "name": "얼음",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "sweet-potato-sauce",
+    "kind": "raw",
+    "name": "군고구마 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "sweet-potato-premix",
+    "kind": "prepared",
+    "name": "고구마 프리믹스",
+    "notes": [],
+    "preparationId": "sweet-potato-premix",
+    "stockUnit": "ml"
+  },
+  {
+    "id": "half-and-half",
+    "kind": "prepared",
+    "name": "하프앤하프",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "sweet-vanilla-sauce",
+    "kind": "raw",
+    "name": "스위트 바닐라 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "custard-whipped-cream",
+    "kind": "prepared",
+    "name": "슈크림 휘핑",
+    "notes": [],
+    "preparationId": "custard-whipped-cream",
+    "stockUnit": null
+  },
+  {
+    "id": "sweet-syrup",
+    "kind": "raw",
+    "name": "스위트 향 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "cold-brew-beans",
+    "kind": "raw",
+    "name": "콜드 브루 블렌드 원두",
+    "notes": ["굵은 분쇄 원두. 에스프레소용 원두와 별도 재료이다."],
+    "preparationId": null,
+    "stockUnit": "g"
+  },
+  {
+    "id": "더블-블랙-티-베이스",
+    "kind": "prepared",
+    "name": "더블 블랙 티 베이스",
+    "notes": [
+      "원본 음료 카드의 재료명이다. 더블 스트랭스 블랙 티와 동일한 제조물인지 직접 근거가 없어 제조 레시피 연결은 미확정이다."
+    ],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "알로에-토핑",
+    "kind": "raw",
+    "name": "알로에 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "쫀득-펄-토핑",
+    "kind": "raw",
+    "name": "쫀득 펄 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "콜드-폼",
+    "kind": "prepared",
+    "name": "콜드 폼",
+    "notes": [],
+    "preparationId": "콜드-폼-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "카스텔라-토핑",
+    "kind": "raw",
+    "name": "카스텔라 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "크림향-베이스",
+    "kind": "raw",
+    "name": "크림향 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "일반-휘핑-크림",
+    "kind": "prepared",
+    "name": "일반 휘핑 크림",
+    "notes": ["이 자료에서 동일한 이름의 준비 제조법은 연결되지 않았다."],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "유자-v-베이스",
+    "kind": "raw",
+    "name": "유자 V 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "앱솔루트-보드카",
+    "kind": "raw",
+    "name": "앱솔루트 보드카",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "레모네이드",
+    "kind": "raw",
+    "name": "레모네이드",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "화이트-뱅쇼-시럽",
+    "kind": "raw",
+    "name": "화이트 뱅쇼 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "딸기-소스",
+    "kind": "raw",
+    "name": "딸기 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "동결건조-딸기-그릿",
+    "kind": "raw",
+    "name": "동결건조 딸기 그릿",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "텐커레이-넘버-텐",
+    "kind": "raw",
+    "name": "텐커레이 넘버 텐",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "드라이-버무스",
+    "kind": "raw",
+    "name": "드라이 버무스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "그린올리브",
+    "kind": "raw",
+    "name": "그린올리브",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "에반-윌리엄스-블랙-위스키",
+    "kind": "raw",
+    "name": "에반 윌리엄스 블랙 위스키",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "바닐라-크림-베이스",
+    "kind": "prepared",
+    "name": "바닐라 크림 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "리저브-다크-초콜릿-소스",
+    "kind": "prepared",
+    "name": "리저브 다크 초콜릿 소스",
+    "notes": [],
+    "preparationId": "리저브-다크-초콜릿-소스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "아페롤",
+    "kind": "raw",
+    "name": "아페롤",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "칸티-프로세코",
+    "kind": "raw",
+    "name": "칸티 프로세코",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "리저브-다크-초콜릿-파우더",
+    "kind": "raw",
+    "name": "리저브 다크 초콜릿 파우더",
+    "notes": ["원본 제조 카드의 1봉지 규격은 200g이다."],
+    "preparationId": null,
+    "stockUnit": "scoop"
+  },
+  {
+    "id": "레몬-웨지",
+    "kind": "raw",
+    "name": "레몬 웨지",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "위스키",
+    "kind": "raw",
+    "name": "위스키",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "앙고스투라-비터",
+    "kind": "raw",
+    "name": "앙고스투라 비터",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "블루-라임-베이스",
+    "kind": "raw",
+    "name": "블루 라임 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "일품-진로",
+    "kind": "raw",
+    "name": "일품 진로",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "쿼드-스트랭스-히비스커스-티",
+    "kind": "prepared",
+    "name": "쿼드 스트랭스 히비스커스 티",
+    "notes": [],
+    "preparationId": "쿼드-스트랭스-히비스커스-티-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "리저브-위스키향-시럽",
+    "kind": "raw",
+    "name": "리저브 위스키향 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "스테인리스-얼음",
+    "kind": "utility",
+    "name": "스테인리스 얼음",
+    "notes": ["스테인리스 재질의 냉각용 얼음이다. 물 얼음의 부피나 녹는 양으로 환산하지 않는다."],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "위스키-인퓨즈드-콜드브루",
+    "kind": "raw",
+    "name": "위스키 인퓨즈드 콜드브루",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "히비스커스-티백",
+    "kind": "raw",
+    "name": "히비스커스 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "바-믹사토-말차-샷",
+    "kind": "prepared",
+    "name": "바 믹사토 말차 샷",
+    "notes": [],
+    "preparationId": "바-믹사토-말차-샷-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "오미자-베이스",
+    "kind": "raw",
+    "name": "오미자 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "유스베리-티-베이스",
+    "kind": "prepared",
+    "name": "유스베리 티 베이스",
+    "notes": [],
+    "preparationId": "유스베리-티-베이스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "애플민트",
+    "kind": "raw",
+    "name": "애플민트",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "라임-웨지",
+    "kind": "raw",
+    "name": "라임 웨지",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "민트향시럽r",
+    "kind": "raw",
+    "name": "민트향시럽R",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "라임-베이스",
+    "kind": "raw",
+    "name": "라임 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "유자진저-베이스",
+    "kind": "raw",
+    "name": "유자진저 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "바카디-카르타-블랑카",
+    "kind": "raw",
+    "name": "바카디 카르타 블랑카",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "유스베리-티백",
+    "kind": "raw",
+    "name": "유스베리 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "바닐라빈-시럽",
+    "kind": "raw",
+    "name": "바닐라빈 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "리저브-초코-파우더",
+    "kind": "raw",
+    "name": "리저브 초코 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "코코넛-믹스",
+    "kind": "prepared",
+    "name": "코코넛 믹스",
+    "notes": [
+      "자몽 망고 코코 프라푸치노의 고객 노출명은 코코넛 베이스이다. 칵테일의 동명 원료와 임의로 합치지 않는다."
+    ],
+    "preparationId": "코코넛-믹스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "통팥-베이스",
+    "kind": "raw",
+    "name": "통팥 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "돌체-소스",
+    "kind": "raw",
+    "name": "돌체 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "요거트-파우더",
+    "kind": "raw",
+    "name": "요거트 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "블루베리-베이스",
+    "kind": "raw",
+    "name": "블루베리 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "코코넛-워터",
+    "kind": "raw",
+    "name": "코코넛 워터",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "더블-스트랭스-조이풀-메들리-티",
+    "kind": "prepared",
+    "name": "더블 스트랭스 조이풀 메들리 티",
+    "notes": [],
+    "preparationId": "더블-스트랭스-조이풀-메들리-티-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "애프리콧-소스",
+    "kind": "raw",
+    "name": "애프리콧 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "딸기-리프레셔-베이스",
+    "kind": "raw",
+    "name": "딸기 리프레셔 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "피치-베이스",
+    "kind": "raw",
+    "name": "피치 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "피치-망고-용과-토핑",
+    "kind": "raw",
+    "name": "피치 망고 용과 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "조이풀-메들리-필로우-티백",
+    "kind": "raw",
+    "name": "조이풀 메들리 필로우 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "코코넛-베이스",
+    "kind": "raw",
+    "name": "코코넛 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "허니-자몽-소스",
+    "kind": "raw",
+    "name": "허니 자몽 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "제로-클래식-시럽",
+    "kind": "raw",
+    "name": "제로 클래식 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "스타벅스-레모네이드",
+    "kind": "raw",
+    "name": "스타벅스 레모네이드",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "레몬-코코-젤리",
+    "kind": "raw",
+    "name": "레몬 코코 젤리",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "씨솔트-카라멜-드리즐",
+    "kind": "raw",
+    "name": "씨솔트 카라멜 드리즐",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "쏠티-클라우드-폼",
+    "kind": "prepared",
+    "name": "쏠티 클라우드 폼",
+    "notes": [],
+    "preparationId": "쏠티-클라우드-폼-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "씨솔트-카라멜-베이스",
+    "kind": "raw",
+    "name": "씨솔트 카라멜 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "파인애플-소스",
+    "kind": "raw",
+    "name": "파인애플 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "블루-스피룰리나-파우더",
+    "kind": "raw",
+    "name": "블루 스피룰리나 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "스노우-폼-파우더",
+    "kind": "raw",
+    "name": "스노우 폼 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "돌체-시럽",
+    "kind": "raw",
+    "name": "돌체 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "체리-자두-베이스",
+    "kind": "raw",
+    "name": "체리 자두 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "더블-스트랭스-블랙-티",
+    "kind": "prepared",
+    "name": "더블 스트랭스 블랙 티",
+    "notes": [],
+    "preparationId": "더블-스트랭스-블랙-티-추출",
+    "stockUnit": "ml"
+  },
+  {
+    "id": "딸기-베이스",
+    "kind": "raw",
+    "name": "딸기 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "연유",
+    "kind": "raw",
+    "name": "연유",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "오트-밀크",
+    "kind": "raw",
+    "name": "오트 밀크",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "바닐라-시럽",
+    "kind": "raw",
+    "name": "바닐라 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "수박-베이스",
+    "kind": "raw",
+    "name": "수박 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "냉동-수박-다이스",
+    "kind": "raw",
+    "name": "냉동 수박 다이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "초콜릿-땅콩-토핑",
+    "kind": "raw",
+    "name": "초콜릿 땅콩 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "베르가못-시럽",
+    "kind": "raw",
+    "name": "베르가못 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "화이트-모카-소스",
+    "kind": "raw",
+    "name": "화이트 모카 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "아이스-커피",
+    "kind": "prepared",
+    "name": "아이스 커피",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "프렌치-바닐라-시럽",
+    "kind": "raw",
+    "name": "프렌치 바닐라 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "폼-베이스",
+    "kind": "raw",
+    "name": "폼 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "팥앙금-찹쌀떡",
+    "kind": "raw",
+    "name": "팥앙금 찹쌀떡",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "팥앙금-찹쌀떡-반절",
+    "kind": "prepared",
+    "name": "팥앙금 찹쌀떡 반절",
+    "notes": [],
+    "preparationId": "팥앙금-찹쌀떡-반절-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "우유-베이스-파우더",
+    "kind": "raw",
+    "name": "우유 베이스 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "그래놀라-믹스",
+    "kind": "raw",
+    "name": "그래놀라 믹스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "인절미-크림",
+    "kind": "prepared",
+    "name": "인절미 크림",
+    "notes": [],
+    "preparationId": "인절미-크림-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "콩고물-파우더",
+    "kind": "raw",
+    "name": "콩고물 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "인절미-소스",
+    "kind": "raw",
+    "name": "인절미 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "요거트-크림",
+    "kind": "prepared",
+    "name": "요거트 크림",
+    "notes": [],
+    "preparationId": "요거트-크림-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "뉴-자몽-망고-소스",
+    "kind": "raw",
+    "name": "뉴 자몽 망고 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "애플망고-소스",
+    "kind": "raw",
+    "name": "애플망고 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "애플망고-베이스",
+    "kind": "prepared",
+    "name": "애플망고 베이스",
+    "notes": [],
+    "preparationId": "애플망고-베이스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "망고-별-토핑",
+    "kind": "raw",
+    "name": "망고 별 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "키위-베이스",
+    "kind": "raw",
+    "name": "키위 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "크림-베이스",
+    "kind": "raw",
+    "name": "크림 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "슈-폼",
+    "kind": "prepared",
+    "name": "슈 폼",
+    "notes": [],
+    "preparationId": "슈-폼-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "쿠키-토핑",
+    "kind": "raw",
+    "name": "쿠키 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "그린티-티백",
+    "kind": "raw",
+    "name": "그린티 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "더블-스트랭스-그린-티",
+    "kind": "prepared",
+    "name": "더블 스트랭스 그린 티",
+    "notes": [],
+    "preparationId": "더블-스트랭스-그린-티",
+    "stockUnit": null
+  },
+  {
+    "id": "매실-베이스",
+    "kind": "raw",
+    "name": "매실 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "리치-보바-토핑",
+    "kind": "raw",
+    "name": "리치 보바 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "헤이즐넛-시럽",
+    "kind": "raw",
+    "name": "헤이즐넛 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "그린-피스타치오-폼",
+    "kind": "prepared",
+    "name": "그린 피스타치오 폼",
+    "notes": [],
+    "preparationId": "그린-피스타치오-폼-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "카다이프-토핑",
+    "kind": "raw",
+    "name": "카다이프 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "그린-피스타치오-소스",
+    "kind": "raw",
+    "name": "그린 피스타치오 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "백도-파우더",
+    "kind": "raw",
+    "name": "백도 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "밀크-푸딩",
+    "kind": "raw",
+    "name": "밀크 푸딩",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "피치-젤리",
+    "kind": "raw",
+    "name": "피치 젤리",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "체리블라썸-스트로베리-소스",
+    "kind": "raw",
+    "name": "체리블라썸 스트로베리 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "블라썸-초콜릿-토핑",
+    "kind": "raw",
+    "name": "블라썸 초콜릿 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "고양이-귀-사인판",
+    "kind": "raw",
+    "name": "고양이 귀 사인판",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "슈크림-말차-베이스",
+    "kind": "prepared",
+    "name": "슈크림 말차 베이스",
+    "notes": [],
+    "preparationId": "슈크림-말차-베이스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "초콜릿-폼",
+    "kind": "prepared",
+    "name": "초콜릿 폼",
+    "notes": [],
+    "preparationId": "초콜릿-폼-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "피스타치오-폼",
+    "kind": "prepared",
+    "name": "피스타치오 폼",
+    "notes": [],
+    "preparationId": "피스타치오-폼-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "로즈-휘핑-크림",
+    "kind": "prepared",
+    "name": "로즈 휘핑 크림",
+    "notes": [],
+    "preparationId": "로즈-휘핑-크림-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "얼-그레이-폼",
+    "kind": "prepared",
+    "name": "얼 그레이 폼",
+    "notes": [],
+    "preparationId": "얼-그레이-폼-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "더블-스트랭스-캐모마일-티",
+    "kind": "prepared",
+    "name": "더블 스트랭스 캐모마일 티",
+    "notes": [],
+    "preparationId": "더블-스트랭스-캐모마일-티-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "에스프레소-크림",
+    "kind": "prepared",
+    "name": "에스프레소 크림",
+    "notes": [],
+    "preparationId": "에스프레소-크림-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "돌체-폼",
+    "kind": "prepared",
+    "name": "돌체 폼",
+    "notes": [],
+    "preparationId": "돌체-폼-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "얼-그레이-밀크-티-베이스",
+    "kind": "prepared",
+    "name": "얼 그레이 밀크 티 베이스",
+    "notes": [],
+    "preparationId": "얼-그레이-밀크-티-베이스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "쿼드-스트랭스-캐모마일-티",
+    "kind": "prepared",
+    "name": "쿼드 스트랭스 캐모마일 티",
+    "notes": [],
+    "preparationId": "쿼드-스트랭스-캐모마일-티-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "뱅쇼-베이스-프리믹스",
+    "kind": "prepared",
+    "name": "뱅쇼 베이스 프리믹스",
+    "notes": [],
+    "preparationId": "뱅쇼-베이스-프리믹스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "캐모마일-유스베리-티-베이스",
+    "kind": "prepared",
+    "name": "캐모마일 유스베리 티 베이스",
+    "notes": [],
+    "preparationId": "캐모마일-유스베리티-베이스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "릴렉싱-베이스",
+    "kind": "prepared",
+    "name": "릴렉싱 베이스",
+    "notes": [],
+    "preparationId": "릴렉싱-베이스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "버터-스카치-커피-크림",
+    "kind": "prepared",
+    "name": "버터 스카치 커피 크림",
+    "notes": [],
+    "preparationId": "버터-스카치-커피-크림-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "말차-클라우드-폼",
+    "kind": "prepared",
+    "name": "말차 클라우드 폼",
+    "notes": [],
+    "preparationId": "말차-클라우드-폼-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "멜론-소스",
+    "kind": "prepared",
+    "name": "멜론 소스",
+    "notes": [],
+    "preparationId": "멜론-소스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "마롱-에스프레소-크림",
+    "kind": "prepared",
+    "name": "마롱 에스프레소 크림",
+    "notes": [],
+    "preparationId": "마롱-에스프레소-크림-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "말차-글레이즈드-베이스",
+    "kind": "prepared",
+    "name": "말차 글레이즈드 베이스",
+    "notes": [],
+    "preparationId": "말차-글레이즈드-베이스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "멜론-베이스",
+    "kind": "prepared",
+    "name": "멜론 베이스",
+    "notes": [],
+    "preparationId": "멜론-베이스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "멜론-휘핑",
+    "kind": "prepared",
+    "name": "멜론 휘핑",
+    "notes": [],
+    "preparationId": "멜론-휘핑-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "마카다미아-베이스",
+    "kind": "prepared",
+    "name": "마카다미아 베이스",
+    "notes": [],
+    "preparationId": "마카다미아-베이스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "퍼플-머스캣-토핑",
+    "kind": "prepared",
+    "name": "퍼플 머스캣 토핑",
+    "notes": [],
+    "preparationId": "퍼플-머스캣-토핑",
+    "stockUnit": null
+  },
+  {
+    "id": "클래식-밀크-티-베이스",
+    "kind": "prepared",
+    "name": "클래식 밀크 티 베이스",
+    "notes": [],
+    "preparationId": "클래식-밀크-티-베이스-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "위스키-크림",
+    "kind": "prepared",
+    "name": "위스키 크림",
+    "notes": [],
+    "preparationId": "위스키-크림-제조",
+    "stockUnit": null
+  },
+  {
+    "id": "쏠티드-브라운-버터리-토핑",
+    "kind": "raw",
+    "name": "쏠티드 브라운 버터리 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "피스타치오-소스",
+    "kind": "raw",
+    "name": "피스타치오 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "심플-시럽",
+    "kind": "raw",
+    "name": "심플 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "로즈-파우더",
+    "kind": "raw",
+    "name": "로즈 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "루비-초콜릿-토핑",
+    "kind": "raw",
+    "name": "루비 초콜릿 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "핑크-자몽-베이스",
+    "kind": "raw",
+    "name": "핑크 자몽 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "건-라임-토핑",
+    "kind": "raw",
+    "name": "건 라임 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "유자-배-베이스",
+    "kind": "raw",
+    "name": "유자 배 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "캐모마일-티백",
+    "kind": "raw",
+    "name": "캐모마일 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "에스프레소-칩",
+    "kind": "raw",
+    "name": "에스프레소 칩",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "시나몬-파우더",
+    "kind": "raw",
+    "name": "시나몬 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "tap"
+  },
+  {
+    "id": "브륄레-토핑",
+    "kind": "raw",
+    "name": "브륄레 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "카라멜-드리즐",
+    "kind": "raw",
+    "name": "카라멜 드리즐",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "돌체-스파이스-시럽",
+    "kind": "raw",
+    "name": "돌체 스파이스 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "버터-스카치-소스",
+    "kind": "raw",
+    "name": "버터 스카치 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "마롱-바닐라-시럽",
+    "kind": "raw",
+    "name": "마롱 바닐라 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "트리플-베리-소스",
+    "kind": "raw",
+    "name": "트리플 베리 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "트리플-베리-폼",
+    "kind": "prepared",
+    "name": "트리플 베리 폼",
+    "notes": ["이 자료에서 동일한 이름의 준비 제조법은 연결되지 않았다."],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "프렌즈-초콜릿-토핑",
+    "kind": "raw",
+    "name": "프렌즈 초콜릿 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "블랙-아이스티",
+    "kind": "raw",
+    "name": "블랙 아이스티",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "얼-그레이-티백",
+    "kind": "raw",
+    "name": "얼 그레이 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "홀리데이-캐모마일-티-파우치",
+    "kind": "raw",
+    "name": "홀리데이 캐모마일 티 파우치",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "크리스마스-뱅쇼-베이스",
+    "kind": "raw",
+    "name": "크리스마스 뱅쇼 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "뱅쇼-과일-토핑",
+    "kind": "raw",
+    "name": "뱅쇼 과일 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "허니-캐모마일-시럽",
+    "kind": "raw",
+    "name": "허니 캐모마일 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "옐로우-파우더",
+    "kind": "raw",
+    "name": "옐로우 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "로즈마리",
+    "kind": "raw",
+    "name": "로즈마리",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "핑크-리치-보바",
+    "kind": "raw",
+    "name": "핑크 리치 보바",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "레몬그라스-리치-베이스",
+    "kind": "raw",
+    "name": "레몬그라스 리치 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "월리-체리-소스",
+    "kind": "raw",
+    "name": "월리 체리 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "블루-바닐라-푸딩",
+    "kind": "raw",
+    "name": "블루 바닐라 푸딩",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "월리-체리-드리즐",
+    "kind": "raw",
+    "name": "월리 체리 드리즐",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "월리-사인판",
+    "kind": "raw",
+    "name": "월리 사인판",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "무지방-우유",
+    "kind": "raw",
+    "name": "무지방 우유",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "칸탈로프-멜론-청크",
+    "kind": "raw",
+    "name": "칸탈로프 멜론 청크",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "멜론-시럽",
+    "kind": "raw",
+    "name": "멜론 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "마롱-베이스",
+    "kind": "raw",
+    "name": "마롱 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "고객-선택-시럽",
+    "kind": "raw",
+    "name": "고객 선택 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "홍차-티백",
+    "kind": "raw",
+    "name": "홍차 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "허브-티-티백",
+    "kind": "raw",
+    "name": "허브 티 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "화이트-티-티백",
+    "kind": "raw",
+    "name": "화이트 티 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "녹차-티백",
+    "kind": "raw",
+    "name": "녹차 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "오트사이드",
+    "kind": "raw",
+    "name": "오트사이드",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "망고패션-베이스",
+    "kind": "raw",
+    "name": "망고패션 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "화이트피치-청크",
+    "kind": "raw",
+    "name": "화이트피치 청크",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "망고-용과-토핑",
+    "kind": "raw",
+    "name": "망고 용과 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "로스티드-마카다미아향-시럽",
+    "kind": "raw",
+    "name": "로스티드 마카다미아향 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "마카다미아-크런치-토핑",
+    "kind": "raw",
+    "name": "마카다미아 크런치 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "화이트모카-시럽",
+    "kind": "raw",
+    "name": "화이트모카 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "커피향-베이스",
+    "kind": "raw",
+    "name": "커피향 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "흑당-시럽",
+    "kind": "raw",
+    "name": "흑당 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "솔티드-카라멜-시럽",
+    "kind": "raw",
+    "name": "솔티드 카라멜 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "자몽-망고-소스",
+    "kind": "raw",
+    "name": "자몽 망고 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "그린-머스캣-베이스",
+    "kind": "raw",
+    "name": "그린 머스캣 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "퍼플-머스캣-젤리",
+    "kind": "raw",
+    "name": "퍼플 머스캣 젤리",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "화이트-펄-토핑",
+    "kind": "raw",
+    "name": "화이트 펄 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "자몽-쌕",
+    "kind": "raw",
+    "name": "자몽 쌕",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "패션-탱고-티",
+    "kind": "prepared",
+    "name": "패션 탱고 티",
+    "notes": ["이 자료에서 동일한 이름의 준비 제조법은 연결되지 않았다."],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "망고-패션-프루트-주스",
+    "kind": "raw",
+    "name": "망고 패션 프루트 주스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "파인코코-베이스",
+    "kind": "raw",
+    "name": "파인코코 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "동결건조-망고-용과",
+    "kind": "raw",
+    "name": "동결건조 망고 용과",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "토닉-워터",
+    "kind": "raw",
+    "name": "토닉 워터",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "잉글리쉬-브렉퍼스트-티백",
+    "kind": "raw",
+    "name": "잉글리쉬 브렉퍼스트 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "프라푸치노-로스트-파우더",
+    "kind": "raw",
+    "name": "프라푸치노 로스트 파우더",
+    "notes": ["위스키 크림 제조 원문은 1티스푼 스쿱 1회를 2g으로 안내한다. 다른 재료의 스쿱 환산에 적용하지 않는다."],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "폰세카-타우니-포트",
+    "kind": "raw",
+    "name": "폰세카 타우니 포트",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "레드-뱅쇼-베이스",
+    "kind": "raw",
+    "name": "레드 뱅쇼 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "허브-스파이스-티백",
+    "kind": "raw",
+    "name": "허브 스파이스 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "하프-오렌지-슬라이스",
+    "kind": "raw",
+    "name": "하프 오렌지 슬라이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "레몬-슬라이스",
+    "kind": "raw",
+    "name": "레몬 슬라이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "화이트-상그리아-베이스",
+    "kind": "raw",
+    "name": "화이트 상그리아 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "복숭아-소스",
+    "kind": "raw",
+    "name": "복숭아 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "프라푸치노-로스트",
+    "kind": "prepared",
+    "name": "프라푸치노 로스트",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "커피-베이스",
+    "kind": "raw",
+    "name": "커피 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "말차-글레이즈드-소스",
+    "kind": "raw",
+    "name": "말차 글레이즈드 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "베르가못-크림",
+    "kind": "prepared",
+    "name": "베르가못 크림",
+    "notes": ["이 자료에서 동일한 이름의 준비 제조법은 연결되지 않았다."],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "스노우-토핑",
+    "kind": "raw",
+    "name": "스노우 토핑",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "허니-레몬-소스",
+    "kind": "raw",
+    "name": "허니 레몬 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "타임",
+    "kind": "raw",
+    "name": "타임",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "일회용-컵-실링",
+    "kind": "utility",
+    "name": "일회용 컵 실링",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "카라멜-시럽",
+    "kind": "raw",
+    "name": "카라멜 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "카라멜-소스",
+    "kind": "raw",
+    "name": "카라멜 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "화이트-초콜릿-모카-소스",
+    "kind": "raw",
+    "name": "화이트 초콜릿 모카 소스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "오트앤유",
+    "kind": "raw",
+    "name": "오트앤유",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "에스프레소-휘핑-크림",
+    "kind": "prepared",
+    "name": "에스프레소 휘핑 크림",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "초코-파우더",
+    "kind": "raw",
+    "name": "초코 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "tap"
+  },
+  {
+    "id": "커피-프라푸치노-베이스",
+    "kind": "raw",
+    "name": "커피 프라푸치노 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "크림-프라푸치노-베이스",
+    "kind": "raw",
+    "name": "크림 프라푸치노 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "프라푸치노-칩",
+    "kind": "raw",
+    "name": "프라푸치노 칩",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "scoop"
+  },
+  {
+    "id": "시그니처-초콜릿-프리믹스",
+    "kind": "prepared",
+    "name": "시그니처 초콜릿 프리믹스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "리저브-바닐라-빈-시럽",
+    "kind": "raw",
+    "name": "리저브 바닐라 빈 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "리저브-민트-시럽",
+    "kind": "raw",
+    "name": "리저브 민트 시럽",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "리저브-다크-모카-파우더",
+    "kind": "raw",
+    "name": "리저브 다크 모카 파우더",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "scoop"
+  },
+  {
+    "id": "리저브-콜드-브루",
+    "kind": "prepared",
+    "name": "리저브 콜드 브루",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "리저브-스위트-크림-베이스",
+    "kind": "prepared",
+    "name": "리저브 스위트 크림 베이스",
+    "notes": [],
+    "preparationId": "리저브-스위트-크림-베이스-제조",
+    "stockUnit": "ml"
+  },
+  {
+    "id": "리저브-에스프레소-원두",
+    "kind": "raw",
+    "name": "리저브 에스프레소 원두",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "g"
+  },
+  {
+    "id": "민트-잎",
+    "kind": "raw",
+    "name": "민트 잎",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "아이스크림",
+    "kind": "raw",
+    "name": "아이스크림",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "g"
+  },
+  {
+    "id": "티바나-패션-탱고-아이스-티백",
+    "kind": "raw",
+    "name": "티바나 패션 탱고 아이스 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "블랙-아이스-티백",
+    "kind": "raw",
+    "name": "블랙 아이스 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "티바나-민트-블렌드-풀-리프-티백",
+    "kind": "raw",
+    "name": "티바나 민트 블렌드 풀 리프 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "더블-스트랭스-패션-탱고-티",
+    "kind": "prepared",
+    "name": "더블 스트랭스 패션 탱고 티",
+    "notes": [],
+    "preparationId": "더블-스트랭스-패션-탱고-티-제조",
+    "stockUnit": "ml"
+  },
+  {
+    "id": "더블-스트랭스-민트-티",
+    "kind": "prepared",
+    "name": "더블 스트랭스 민트 티",
+    "notes": [],
+    "preparationId": "더블-스트랭스-민트-티-제조",
+    "stockUnit": "ml"
+  },
+  {
+    "id": "유자-베이스",
+    "kind": "raw",
+    "name": "유자 베이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "딸기-슬라이스",
+    "kind": "raw",
+    "name": "딸기 슬라이스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "scoop"
+  },
+  {
+    "id": "진저에일-토닉워터",
+    "kind": "raw",
+    "name": "진저에일 토닉워터",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "유기농-말차",
+    "kind": "raw",
+    "name": "유기농 말차",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "scoop"
+  },
+  {
+    "id": "망고-패션후르츠-주스",
+    "kind": "raw",
+    "name": "망고 패션후르츠 주스",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "바나나",
+    "kind": "raw",
+    "name": "바나나",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "오늘의-커피",
+    "kind": "prepared",
+    "name": "오늘의 커피",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "고객이-선택한-향-시럽",
+    "kind": "raw",
+    "name": "고객이 선택한 향 시럽",
+    "notes": ["원본이 시럽 종류를 한정하지 않는 선택 항목입니다."],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "디카페인-에스프레소-로스트",
+    "kind": "raw",
+    "name": "디카페인 에스프레소 로스트",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "g"
+  },
+  {
+    "id": "잉글리쉬-브렉퍼스트-풀-리프-티백",
+    "kind": "raw",
+    "name": "잉글리쉬 브렉퍼스트 풀 리프 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "얼-그레이-풀-리프-티백",
+    "kind": "raw",
+    "name": "얼 그레이 풀 리프 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "차이-풀-리프-티백",
+    "kind": "raw",
+    "name": "차이 풀 리프 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "히비스커스-풀-리프-티백",
+    "kind": "raw",
+    "name": "히비스커스 풀 리프 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "캐모마일-풀-리프-티백",
+    "kind": "raw",
+    "name": "캐모마일 풀 리프 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "유스베리-풀-리프-티백",
+    "kind": "raw",
+    "name": "유스베리 풀 리프 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "제주-유기-녹차-풀-리프-티백",
+    "kind": "raw",
+    "name": "제주 유기 녹차 풀 리프 티백",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "piece"
+  },
+  {
+    "id": "두유",
+    "kind": "raw",
+    "name": "두유",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": "ml"
+  },
+  {
+    "id": "1-2-디카페인-에스프레소",
+    "kind": "prepared",
+    "name": "1/2 디카페인 에스프레소",
+    "notes": [],
+    "preparationId": null,
+    "stockUnit": null
+  },
+  {
+    "id": "toddy-paper-filter",
+    "name": "토디 종이 필터",
+    "kind": "utility",
+    "stockUnit": "piece",
+    "preparationId": null,
+    "notes": []
+  },
+  {
+    "id": "toddy-filter-tie",
+    "name": "토디 필터 묶음 끈",
+    "kind": "utility",
+    "stockUnit": "piece",
+    "preparationId": null,
+    "notes": []
+  },
+  {
+    "id": "cold-brew-grounds",
+    "name": "콜드 브루 커피박",
+    "kind": "utility",
+    "stockUnit": null,
+    "preparationId": null,
+    "notes": ["침출 후 남은 커피박이다. 원본은 무게와 수분 함량을 제시하지 않는다."]
+  }
+]

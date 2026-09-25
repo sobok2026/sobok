@@ -1,0 +1,274 @@
+{
+  "id": "cold-brew-toddy",
+  "name": "콜드 브루 추출 방법(2022년)",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "TODDY 추출",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "prepare-brewer",
+          "label": "브루어 세척·건조",
+          "instructions": ["깨끗하게 씻어 건조한 토디 브루어를 준비한다."],
+          "notes": ["제조자는 손을 깨끗이 씻고 비닐장갑을 착용한다."],
+          "operations": [
+            {
+              "action": "wash",
+              "vessel": "toddy-brewer"
+            },
+            {
+              "action": "dry",
+              "vessel": "toddy-brewer"
+            }
+          ]
+        },
+        {
+          "id": "prepare-stand",
+          "label": "받침대 세척·건조·소독",
+          "instructions": [
+            "스테인레스 받침대를 식기세척기로 세척하고 완전히 건조한다.",
+            "사용 전 세니타이저를 앞뒤로 분사한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "wash",
+              "vessel": "toddy-stainless-stand"
+            },
+            {
+              "action": "dry",
+              "vessel": "toddy-stainless-stand"
+            },
+            {
+              "action": "sanitize",
+              "vessel": "toddy-stainless-stand"
+            }
+          ]
+        },
+        {
+          "id": "place-stand",
+          "label": "받침대 넣기",
+          "instructions": ["토디 브루어 바닥에 스테인레스 받침대를 놓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "place",
+              "itemId": "toddy-stainless-stand",
+              "into": "toddy-brewer"
+            }
+          ]
+        },
+        {
+          "id": "place-filter",
+          "label": "종이 필터 넣기",
+          "instructions": ["종이 필터를 토디 브루어에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "place",
+              "itemId": "toddy-paper-filter",
+              "into": "toddy-brewer"
+            }
+          ]
+        },
+        {
+          "id": "ground-beans",
+          "label": "분쇄 원두 계량",
+          "instructions": ["필터 안에 COARSE로 분쇄한 원두를 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "grind",
+              "equipmentId": "grind-master",
+              "materialId": "cold-brew-beans",
+              "into": "toddy-paper-filter",
+              "amount": {
+                "kind": "amount",
+                "value": 3,
+                "unit": "lb"
+              },
+              "setting": "#15 (COARSE)"
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "BUNN G3 grinder 사용",
+              "operations": [
+                {
+                  "action": "grind",
+                  "equipmentId": "bunn-g3-grinder",
+                  "materialId": "cold-brew-beans",
+                  "into": "toddy-paper-filter",
+                  "amount": {
+                    "kind": "amount",
+                    "value": 3,
+                    "unit": "lb"
+                  },
+                  "setting": "COARSE"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "wet-grounds",
+          "label": "필터 안에 물 붓기",
+          "instructions": ["필터 안으로 차가운 물을 부어 분쇄 원두가 충분히 젖게 한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "toddy-paper-filter",
+              "amount": {
+                "kind": "amount",
+                "value": 5,
+                "unit": "l"
+              },
+              "temperature": {
+                "kind": "cold"
+              }
+            }
+          ]
+        },
+        {
+          "id": "tie-filter",
+          "label": "필터 묶기",
+          "instructions": ["필터를 위에서 3~4인치 남기고 끈으로 꽉 묶는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "attach",
+              "itemId": "toddy-filter-tie",
+              "toId": "toddy-paper-filter"
+            }
+          ]
+        },
+        {
+          "id": "remaining-water",
+          "label": "남은 물 붓기",
+          "instructions": ["꽉 묶은 필터 위로 남은 물을 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "toddy-brewer",
+              "amount": {
+                "kind": "amount",
+                "value": 4,
+                "unit": "l"
+              },
+              "placement": "꽉 묶은 필터 위"
+            }
+          ]
+        },
+        {
+          "id": "cover-steep",
+          "label": "뚜껑을 덮고 침출",
+          "instructions": ["토디 브루어의 뚜껑을 덮고 정해진 온도에서 침출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "cover",
+              "vessel": "toddy-brewer"
+            },
+            {
+              "action": "steep",
+              "vessel": "toddy-brewer",
+              "duration": {
+                "seconds": 72000,
+                "approximate": false
+              },
+              "temperature": {
+                "kind": "range",
+                "min": 21,
+                "max": 27
+              }
+            }
+          ]
+        },
+        {
+          "id": "collect",
+          "label": "추출액 옮기기",
+          "instructions": ["추출된 콜드 브루 커피를 플라스틱 피처에 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "toddy-brewer",
+              "into": "cold-brew-plastic-pitcher",
+              "amount": {
+                "kind": "all"
+              },
+              "portion": "liquid"
+            }
+          ]
+        },
+        {
+          "id": "refrigerate",
+          "label": "즉시 냉장 보관",
+          "instructions": ["플라스틱 피처를 즉시 냉장고에 보관한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "cold-brew-plastic-pitcher",
+              "storage": "fridge",
+              "temperature": {
+                "kind": "celsius",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "dispose-filter",
+          "label": "커피박·필터 폐기",
+          "instructions": ["커피박과 종이 필터를 버린다."],
+          "notes": ["젖은 종이 필터는 쉽게 찢어질 수 있으므로 폐기할 때 주의한다."],
+          "operations": [
+            {
+              "action": "remove",
+              "itemId": "cold-brew-grounds",
+              "from": "toddy-paper-filter",
+              "dispose": true
+            },
+            {
+              "action": "remove",
+              "itemId": "toddy-paper-filter",
+              "from": "toddy-brewer",
+              "dispose": true
+            }
+          ]
+        },
+        {
+          "id": "sanitize-brewer",
+          "label": "브루어 세척",
+          "instructions": ["토디 브루어를 세니타이저를 이용하여 세척한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "sanitize",
+              "vessel": "toddy-brewer"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "coldBrew",
+        "amount": {
+          "kind": "amount",
+          "value": 6,
+          "unit": "l"
+        },
+        "description": "원본에 명시된 완성 콜드 브루 원액."
+      }
+    }
+  ]
+}

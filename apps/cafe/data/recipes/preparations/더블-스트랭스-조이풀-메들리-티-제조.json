@@ -1,0 +1,123 @@
+{
+  "id": "더블-스트랭스-조이풀-메들리-티-제조",
+  "name": "더블 스트랭스 조이풀 메들리 티 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "조이풀 메들리 필로우 티백 추가",
+          "instructions": ["조이풀 메들리 필로우 티백 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "조이풀-메들리-필로우-티백",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "뜨거운 물 추가",
+          "instructions": ["뜨거운 물 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 1.0,
+                "unit": "l"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "차 우리기",
+          "instructions": ["차 우리기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "steep",
+              "vessel": "mixing-pitcher",
+              "duration": {
+                "seconds": 600,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "티백 제거",
+          "instructions": ["티백 제거"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "remove",
+              "itemId": "조이풀-메들리-필로우-티백",
+              "from": "mixing-pitcher"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 1.0,
+                "unit": "l"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "소비기한 태그",
+          "instructions": ["소비기한 태그"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "label",
+              "vessel": "mixing-pitcher",
+              "labels": ["소비기한"]
+            }
+          ]
+        }
+      ],
+      "notes": ["소비기한 태그를 달아 사용한다."],
+      "review": [
+        "원본은 온수를 1L선까지 넣고 우린 다음 얼음도 1L선까지 넣으라고 표기한다. 같은 누적 계량선인지, 얼음 별도 1L 계량인지 확인이 필요하다."
+      ],
+      "output": {
+        "materialId": "더블-스트랭스-조이풀-메들리-티",
+        "amount": null,
+        "description": "완성량은 원본에 명시되지 않았다."
+      }
+    }
+  ]
+}

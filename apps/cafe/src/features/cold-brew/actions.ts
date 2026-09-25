@@ -1,9 +1,9 @@
 import { INGREDIENTS } from '../../content/ingredients'
-import { COLD_BREW_HOURS } from '../../content/references'
 import type { Action } from '../../simulation/actions'
 import { say, startJob } from '../../simulation/feedback'
 import { craftingHandsBusy, cupHandsBusy } from '../../simulation/hands'
 import type { WorkContext } from '../../simulation/work-context'
+import { COLD_BREW_HOURS } from '../cold-brew/rules'
 import { addAmounts, newBatch } from '../inventory/inventory'
 import { COLD_BREW_BEANS, COLD_BREW_COST, coldBrewStep, createColdBrew } from './rules'
 
@@ -73,7 +73,7 @@ export function handleColdBrewActions(
         fail('G로 계량 도구를 내려놓은 뒤 확인해주세요.')
         break
       }
-      if (brew.progress + 0.0001 < step.target * (1 - step.tolerance)) {
+      if (brew.progress + 1e-9 < step.target * (1 - step.tolerance)) {
         fail('아직 목표량에 못 미쳤어요. 계량을 이어가세요.')
         break
       }
@@ -124,14 +124,13 @@ export function applyColdBrew(work: WorkContext, seconds: number) {
     return
   }
   const step = coldBrewStep(brew)
-  const delta =
-    brew.step === 0 ? Math.min(seconds * step.rate, Math.max(0, step.target - brew.progress)) : seconds * step.rate
+  const delta = Math.min(seconds * step.rate, Math.max(0, step.target - brew.progress))
   brew.progress += delta
   if (brew.step === 0) {
     brew.beans += delta
     if (brew.progress >= step.target) work.input = null
   } else brew.water += delta
-  if (brew.progress > step.target * (1 + step.tolerance) + 0.0001) {
+  if (brew.progress > step.target * (1 + step.tolerance) + 1e-9) {
     brew.fault = '콜드 브루 물 계량을 초과했어요. 배합을 폐기하고 다시 준비해주세요.'
     work.input = null
     say(s, brew.fault, 'error')

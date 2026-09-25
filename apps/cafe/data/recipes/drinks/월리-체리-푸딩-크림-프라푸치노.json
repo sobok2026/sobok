@@ -1,0 +1,225 @@
+{
+  "id": "월리-체리-푸딩-크림-프라푸치노",
+  "name": "월리 체리 푸딩 크림 프라푸치노",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall"],
+      "steps": [
+        {
+          "id": "바닐라-크림-베이스-추가",
+          "label": "바닐라 크림 베이스 추가",
+          "instructions": ["바닐라 크림 베이스을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-크림-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "월리-체리-소스-펌핑",
+          "label": "월리 체리 소스 펌핑",
+          "instructions": ["월리 체리 소스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "월리-체리-소스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop-tall"
+            }
+          ]
+        },
+        {
+          "id": "크림-베이스-펌핑",
+          "label": "크림 베이스 펌핑",
+          "instructions": ["크림 베이스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "크림-베이스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "pump"
+              },
+              "toolId": "base-pump"
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["블렌더 1번 버튼을 한 번 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "블루-바닐라-푸딩-추가",
+          "label": "블루 바닐라 푸딩 추가",
+          "instructions": ["블루 바닐라 푸딩을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "블루-바닐라-푸딩",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "scoop"
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "월리-체리-드리즐-추가",
+          "label": "월리 체리 드리즐 추가",
+          "instructions": ["월리 체리 드리즐을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "월리-체리-드리즐",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "turn"
+              },
+              "toolId": "drizzle-bottle"
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기-2",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "일반-휘핑-크림-추가",
+          "label": "일반 휘핑 크림 추가",
+          "instructions": ["일반 휘핑 크림을 넣는다. 음료 위에 올린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "일반-휘핑-크림",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "음료 위에 올린다."
+              }
+            }
+          ]
+        },
+        {
+          "id": "월리-사인판-추가",
+          "label": "월리 사인판 추가",
+          "instructions": ["월리 사인판을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "월리-사인판",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮고 굵은 빨대를 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "dome",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { addVesselLabel } from '../../shared/visuals/vessel-label'
 import { workBox as box, workCylinder as cylinder, workMaterial as mat } from '../../shared/visuals/work-geometry'
 import type { GameState } from '../../simulation/state'
+import { BLENDER_JAR_SPOT, createBlenderJar } from './blender'
 import { type PrepTool, preparationStep } from './rules'
 
 export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
@@ -11,6 +12,8 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
   const brown = mat('#533326')
   const vessel = new THREE.Group()
   scene.add(vessel)
+  const foamVessel = createBlenderJar()
+  scene.add(foamVessel.root)
   cylinder(
     vessel,
     0.14,
@@ -91,11 +94,17 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
   const scoop = tool('tea-scoop')
   box(scoop, 0.042, 0.025, 0.06, steel)
   box(scoop, 0.012, 0.01, 0.13, steel, 0, 0, 0.08)
-  box(scoop, 0.034, 0.015, 0.045, brown, 0, 0.015)
-  const teaShaker = tool('tea-shaker')
-  cylinder(teaShaker, 0.07, 0.065, 0.25, mat('#967345'))
-  cylinder(teaShaker, 0.073, 0.073, 0.025, green, 0.137)
-  addVesselLabel(teaShaker, '호지차', '#756342', 0.096, 0.058, -0.015, 0.068)
+  const teaPowder = mat('#967345')
+  box(scoop, 0.034, 0.015, 0.045, teaPowder, 0, 0.015)
+  for (const [id, label, color] of [
+    ['tea-shaker', '호지차', '#967345'],
+    ['matcha-shaker', '말차', '#568438'],
+  ] as const) {
+    const shaker = tool(id)
+    cylinder(shaker, 0.07, 0.065, 0.25, mat(color))
+    cylinder(shaker, 0.073, 0.073, 0.025, green, 0.137)
+    addVesselLabel(shaker, label, color, 0.096, 0.058, -0.015, 0.068)
+  }
   const spatula = tool('spatula')
   box(spatula, 0.018, 0.26, 0.012, mat('#9c835b'))
   box(spatula, 0.045, 0.075, 0.015, cream, 0, -0.14)
@@ -114,34 +123,48 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
     update(state: GameState, active: boolean, now: number) {
       const prep = state.preparation
       const batch = state.batches.find((batch) => batch.id === prep?.batchId)
-      vessel.visible = !!prep && batch?.location !== 'hand' && prep.tool !== 'tea-shaker'
+      const vesselVisible =
+        !!prep && batch?.location !== 'hand' && prep.tool !== 'tea-shaker' && prep.tool !== 'matcha-shaker'
+      vessel.visible = vesselVisible && prep?.recipe !== 'foam'
+      foamVessel.root.visible = vesselVisible && prep?.recipe === 'foam'
       pump.visible = false
       stream.visible = false
       for (const model of tools.values()) model.visible = false
       if (!prep || batch?.location === 'hand') return
       const operation = preparationStep(prep)
+      const tea = prep.recipe === 'hojicha' || prep.recipe === 'matcha'
+      const teaColor = prep.recipe === 'matcha' ? '#568438' : '#967345'
+      teaPowder.color.set(teaColor)
       const processing = prep.stage === 'processing' && !prep.fault
-      if (processing) vessel.position.set(-2.9, 1.355, -5.12)
-      else vessel.position.fromArray(PREP_SPOT)
-      vessel.rotation.z = processing ? Math.sin(now / 25) * 0.007 : 0
+      const currentVessel = prep.recipe === 'foam' ? foamVessel.root : vessel
+      currentVessel.position.fromArray(processing ? BLENDER_JAR_SPOT : PREP_SPOT)
+      currentVessel.rotation.z = processing ? Math.sin(now / 25) * 0.007 : 0
       vessel.scale.setScalar(prep.recipe === 'mocha' ? 1.2 : 1)
       const liquidRatio =
         prep.recipe === 'foam'
           ? (prep.amounts.cream + prep.amounts.milk + prep.amounts.glaze) / 380
-          : prep.recipe === 'hojicha'
-            ? prep.amounts.water / 300 + prep.amounts.hojichaPowder * 0.005
+          : tea
+            ? prep.amounts.water / 300 + (prep.amounts.hojichaPowder + prep.amounts.matchaPowder) * 0.005
             : prep.amounts.water / 1250 + prep.amounts.mochaPowder * 0.08
       const height = Math.min(0.3, Math.max(0.001, liquidRatio * 0.3))
       liquid.visible = liquidRatio > 0
       liquid.scale.y = height
       liquid.position.y = 0.01 + height / 2
-      liquidMaterial.color.set(prep.recipe === 'foam' ? '#efe3c8' : prep.recipe === 'hojicha' ? '#967345' : '#54382b')
-      handle.visible = prep.recipe !== 'hojicha'
-      lid.visible = processing || (prep.recipe === 'hojicha' && operation.kind === 'shake')
+      liquidMaterial.color.set(prep.recipe === 'foam' ? '#efe3c8' : tea ? teaColor : '#54382b')
+      handle.visible = !tea
+      lid.visible = processing || (tea && operation.kind === 'shake')
       swirl.visible = processing || (active && operation.kind === 'stir')
       swirl.position.y = height + 0.017
       swirl.rotation.z = now / 100
       marking.visible = !!batch?.labelled
+      foamVessel.liquid.visible = liquidRatio > 0
+      foamVessel.liquid.scale.y = height
+      foamVessel.liquid.position.y = 0.032 + height / 2
+      foamVessel.lid.visible = processing
+      foamVessel.label.visible = !!batch?.labelled
+      foamVessel.swirl.visible = processing
+      foamVessel.swirl.position.y = height + 0.037
+      foamVessel.swirl.rotation.z = now / 100
       const nextKey = `${prep.id}:${prep.step}`
       if (nextKey !== key) {
         key = nextKey

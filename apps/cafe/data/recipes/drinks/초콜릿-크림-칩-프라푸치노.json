@@ -1,0 +1,217 @@
+{
+  "id": "초콜릿-크림-칩-프라푸치노",
+  "name": "초콜릿 크림 칩 프라푸치노",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "우유 붓기",
+          "instructions": ["컵 하단선까지 우유를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "내용물 붓기",
+          "instructions": ["컵 내용물을 전부 블렌더 피처로 옮긴다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "내용물 및 얼음 추가",
+          "instructions": [
+            "프라푸치노 칩을 사이즈별 레벨 스쿱으로 넣는다.",
+            "소스 또는 시럽을 충분히 펌핑하고 사이즈별 얼음 스쿱으로 얼음을 넣는다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "프라푸치노-칩",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "tea-scoop"
+            },
+            {
+              "action": "add",
+              "materialId": "mocha",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "frappuccino-flavor-pump"
+            },
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "베이스 펌핑",
+          "instructions": ["크림 프라푸치노 베이스를 충분히 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "크림-프라푸치노-베이스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "base-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "블렌딩",
+          "instructions": ["블렌더 1번 버튼을 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "제공",
+          "instructions": [
+            "완성 음료에 휘핑크림과 드리즐을 올리고 반구형 뚜껑을 덮어 제공한다. 드리즐은 나선형 5바퀴다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "일반-휘핑-크림",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 휘핑크림 계량 미기재"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "mocha",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 5,
+                "unit": "turn"
+              },
+              "placement": "나선형",
+              "toolId": "drizzle-bottle"
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "lidType": "dome"
+            }
+          ]
+        }
+      ],
+      "notes": ["각 펌프·스쿱의 ml·g 환산은 원본에 별도로 명시되지 않는다."],
+      "review": []
+    }
+  ]
+}

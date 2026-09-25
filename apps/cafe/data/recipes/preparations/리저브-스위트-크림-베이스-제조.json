@@ -1,0 +1,107 @@
+{
+  "id": "리저브-스위트-크림-베이스-제조",
+  "name": "리저브 스위트 크림 베이스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "batch",
+      "name": "5잔용",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "시럽 추가",
+          "instructions": ["50:50 피처에 바닐라 빈 시럽 8펌프를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-바닐라-빈-시럽",
+              "into": "steam-pitcher-50-50",
+              "amount": {
+                "kind": "count",
+                "value": 8,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "우유 추가",
+          "instructions": ["계량컵으로 일반 우유 100ml를 계량해 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher-50-50",
+              "amount": {
+                "kind": "amount",
+                "value": 100,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "휘핑크림 추가",
+          "instructions": ["계량컵으로 휘핑크림 원재료 330ml를 계량해 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "steam-pitcher-50-50",
+              "amount": {
+                "kind": "amount",
+                "value": 330,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "혼합 및 보관",
+          "instructions": ["머들러로 잘 섞은 후 컨디먼트 바 까라페로 옮기고 뚜껑을 닫아 냉장 보관한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "steam-pitcher-50-50",
+              "toolId": "stirrer"
+            },
+            {
+              "action": "transfer",
+              "from": "steam-pitcher-50-50",
+              "into": "carafe",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "cover",
+              "vessel": "carafe"
+            },
+            {
+              "action": "store",
+              "vessel": "carafe",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "리저브-스위트-크림-베이스",
+        "amount": null,
+        "description": "5잔용 배치. 원본 완성 ml는 별도로 명시되지 않음."
+      }
+    }
+  ]
+}

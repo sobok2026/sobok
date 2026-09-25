@@ -1,6 +1,6 @@
-import { COLD_BREW_HOURS } from '../../content/references'
 import { batchDate } from '../../shared/format'
 import type { GameState } from '../../simulation/state'
+import { COLD_BREW_HOURS } from '../cold-brew/rules'
 import { PREPARATIONS } from './rules'
 export function PreparationRecipeGuide({ state }: { state: GameState }) {
   const preparation = state.preparation

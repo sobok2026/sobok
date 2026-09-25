@@ -1,0 +1,295 @@
+{
+  "id": "쿼드-스트랭스-캐모마일-티-제조",
+  "name": "쿼드 스트랭스 캐모마일 티 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "티-파우치-추가",
+          "label": "티 파우치 추가",
+          "instructions": ["홀리데이 캐모마일 티 파우치를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "홀리데이-캐모마일-티-파우치",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "캐모마일 티백 대체",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "캐모마일-티백",
+                  "into": "water-pitcher",
+                  "amount": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "piece"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "티-우리기",
+          "label": "티 우리기",
+          "instructions": ["뜨거운 물을 500ml 선까지 넣어 10분간 우린 후 티백을 제거한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 500.0,
+                "unit": "ml"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "duration": {
+                "seconds": 600,
+                "approximate": false
+              },
+              "vessel": "water-pitcher",
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "remove",
+              "itemId": "홀리데이-캐모마일-티-파우치",
+              "from": "water-pitcher",
+              "dispose": false
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "캐모마일 티백 대체 시 제거",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "water",
+                  "into": "water-pitcher",
+                  "amount": {
+                    "kind": "fill-volume",
+                    "value": 500.0,
+                    "unit": "ml"
+                  },
+                  "temperature": {
+                    "kind": "hot"
+                  }
+                },
+                {
+                  "action": "steep",
+                  "duration": {
+                    "seconds": 600,
+                    "approximate": false
+                  },
+                  "vessel": "water-pitcher",
+                  "temperature": {
+                    "kind": "hot"
+                  }
+                },
+                {
+                  "action": "remove",
+                  "itemId": "캐모마일-티백",
+                  "from": "water-pitcher",
+                  "dispose": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 500.0,
+                "unit": "ml"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        }
+      ],
+      "notes": ["홀리데이 캐모마일 1파우치는 캐모마일 티백 4개로 대체할 수 있다."],
+      "review": [],
+      "output": {
+        "materialId": "쿼드-스트랭스-캐모마일-티",
+        "amount": null,
+        "description": "Tall 기준 약 10잔 제조 가능. 완성 부피는 미기재."
+      }
+    },
+    {
+      "id": "large",
+      "name": "large",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "티-파우치-추가",
+          "label": "티 파우치 추가",
+          "instructions": ["홀리데이 캐모마일 티 파우치를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "홀리데이-캐모마일-티-파우치",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "piece"
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "캐모마일 티백 대체",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "캐모마일-티백",
+                  "into": "water-pitcher",
+                  "amount": {
+                    "kind": "count",
+                    "value": 8,
+                    "unit": "piece"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "티-우리기",
+          "label": "티 우리기",
+          "instructions": ["뜨거운 물을 1000ml 선까지 넣어 10분간 우린 후 티백을 제거한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 1000.0,
+                "unit": "ml"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "duration": {
+                "seconds": 600,
+                "approximate": false
+              },
+              "vessel": "water-pitcher",
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "remove",
+              "itemId": "홀리데이-캐모마일-티-파우치",
+              "from": "water-pitcher",
+              "dispose": false
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "캐모마일 티백 대체 시 제거",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "water",
+                  "into": "water-pitcher",
+                  "amount": {
+                    "kind": "fill-volume",
+                    "value": 1000.0,
+                    "unit": "ml"
+                  },
+                  "temperature": {
+                    "kind": "hot"
+                  }
+                },
+                {
+                  "action": "steep",
+                  "duration": {
+                    "seconds": 600,
+                    "approximate": false
+                  },
+                  "vessel": "water-pitcher",
+                  "temperature": {
+                    "kind": "hot"
+                  }
+                },
+                {
+                  "action": "remove",
+                  "itemId": "캐모마일-티백",
+                  "from": "water-pitcher",
+                  "dispose": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 1000.0,
+                "unit": "ml"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        }
+      ],
+      "notes": ["홀리데이 캐모마일 1파우치는 캐모마일 티백 4개로 대체할 수 있다."],
+      "review": [],
+      "output": {
+        "materialId": "쿼드-스트랭스-캐모마일-티",
+        "amount": null,
+        "description": "Tall 기준 약 20잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

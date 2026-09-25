@@ -1,0 +1,69 @@
+{
+  "id": "퍼플-머스캣-토핑",
+  "name": "퍼플 머스캣 토핑",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "재료-추가",
+          "label": "재료 추가",
+          "instructions": ["DID 컨테이너에 퍼플 머스캣 젤리 1개와 화이트 펄 토핑 1개를 함께 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "퍼플-머스캣-젤리",
+              "into": "did-container",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "pack"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "화이트-펄-토핑",
+              "into": "did-container",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "pack"
+              }
+            }
+          ]
+        },
+        {
+          "id": "혼합",
+          "label": "혼합",
+          "instructions": ["2티스푼 스쿱으로 약 5회 섞어 화이트 펄이 골고루 분포하게 한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "did-container",
+              "toolId": "two-teaspoon-scoop",
+              "repetitions": 5,
+              "approximate": true
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "판매량에 따라 같은 배합의 배수로 제조 가능.",
+        "퍼플 머스캣 젤리와 화이트 펄 토핑은 반드시 1:1 세트로 사용한다. 젤리 2개와 펄 1개 배합은 불가.",
+        "화이트 펄의 식감을 유지하기 위해 개별 원부재료로 운영한다."
+      ],
+      "review": [],
+      "output": {
+        "materialId": "퍼플-머스캣-토핑",
+        "amount": null,
+        "description": "Tall 기준 약 10잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

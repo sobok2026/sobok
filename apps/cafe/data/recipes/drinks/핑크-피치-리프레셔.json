@@ -1,0 +1,147 @@
+{
+  "id": "핑크-피치-리프레셔",
+  "name": "핑크 피치 리프레셔",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "딸기 리프레셔 베이스 추가",
+          "instructions": ["딸기 리프레셔 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "딸기-리프레셔-베이스",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "C선"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "피치 베이스 추가",
+          "instructions": ["피치 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "피치-베이스",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "1번 선"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "레모네이드 추가",
+          "instructions": ["레모네이드 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "레모네이드",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "2번 선"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "4번 선"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "쉐이킹",
+          "instructions": ["쉐이킹"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "tea-shaker",
+              "repetitions": 10,
+              "approximate": true
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "tea-shaker",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "피치 망고 용과 토핑 추가",
+          "instructions": ["피치 망고 용과 토핑 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "피치-망고-용과-토핑",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮고 굵은 빨대와 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": ["티 쉐이커는 주문 사이즈의 계량선을 사용한다."],
+      "review": []
+    }
+  ]
+}

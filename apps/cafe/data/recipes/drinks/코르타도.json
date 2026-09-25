@@ -1,0 +1,108 @@
+{
+  "id": "코르타도",
+  "name": "코르타도",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["short"],
+      "steps": [
+        {
+          "id": "계량-및-스팀",
+          "label": "계량 및 스팀",
+          "instructions": ["피처의 지정된 선까지 계량하고 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "1~3초 공기 주입 후 스팀",
+              "airDuration": {
+                "minSeconds": 1,
+                "maxSeconds": 3
+              }
+            }
+          ]
+        },
+        {
+          "id": "샷-추출",
+          "label": "샷 추출",
+          "instructions": ["에스프레소를 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "shot"
+              },
+              "method": "blonde-ristretto"
+            }
+          ]
+        },
+        {
+          "id": "스팀-우유-붓기",
+          "label": "스팀 우유 붓기",
+          "instructions": ["스팀한 우유를 컵 테두리 아래 지정된 높이까지 붓는다."],
+          "notes": ["스팀 스쿱을 사용하거나 프리 푸어한다."],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "toolId": "steam-scoop"
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "프리 푸어",
+              "operations": [
+                {
+                  "action": "transfer",
+                  "from": "steam-pitcher",
+                  "into": "serving-cup",
+                  "amount": {
+                    "kind": "rim-gap",
+                    "millimeters": 6
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "standard"
+            }
+          ]
+        }
+      ],
+      "notes": ["블론드 리스트레토 샷을 핫 컵에 직접 추출한다."],
+      "review": []
+    }
+  ]
+}

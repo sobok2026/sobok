@@ -29,6 +29,8 @@ export function initialState(): GameState {
     classic: 0,
     hojichaPowder: 0,
     hojicha: 0,
+    matchaPowder: 0,
+    matcha: 0,
   }
   return {
     day: 1,

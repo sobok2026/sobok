@@ -1,0 +1,173 @@
+{
+  "id": "에스프레소-콘-파나",
+  "name": "에스프레소 콘 파나",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "solo",
+      "name": "솔로",
+      "temperature": "hot",
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "샷 추출",
+          "instructions": ["에스프레소 샷을 제공 잔에 직접 추출한다. 매장은 데미타스 잔, 포장은 숏 컵을 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "demitasse",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "when": {
+                "kind": "service",
+                "value": "for-here"
+              }
+            },
+            {
+              "action": "espresso",
+              "into": "short-paper-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "when": {
+                "kind": "service",
+                "value": "takeaway"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "휘핑크림 추가",
+          "instructions": ["에스프레소 샷 위에 휘핑크림을 얹는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "일반-휘핑-크림",
+              "into": "demitasse",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 휘핑크림 계량 미기재"
+              },
+              "when": {
+                "kind": "service",
+                "value": "for-here"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "일반-휘핑-크림",
+              "into": "short-paper-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 휘핑크림 계량 미기재"
+              },
+              "when": {
+                "kind": "service",
+                "value": "takeaway"
+              }
+            },
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": ["매장용은 데미타스 잔, 포장용은 숏 컵을 사용한다."],
+      "review": []
+    },
+    {
+      "id": "doppio",
+      "name": "도피오",
+      "temperature": "hot",
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "샷 추출",
+          "instructions": ["에스프레소 샷을 제공 잔에 직접 추출한다. 매장은 데미타스 잔, 포장은 숏 컵을 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "demitasse",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "when": {
+                "kind": "service",
+                "value": "for-here"
+              }
+            },
+            {
+              "action": "espresso",
+              "into": "short-paper-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "when": {
+                "kind": "service",
+                "value": "takeaway"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "휘핑크림 추가",
+          "instructions": ["에스프레소 샷 위에 휘핑크림을 얹는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "일반-휘핑-크림",
+              "into": "demitasse",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 휘핑크림 계량 미기재"
+              },
+              "when": {
+                "kind": "service",
+                "value": "for-here"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "일반-휘핑-크림",
+              "into": "short-paper-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 휘핑크림 계량 미기재"
+              },
+              "when": {
+                "kind": "service",
+                "value": "takeaway"
+              }
+            },
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": ["매장용은 데미타스 잔, 포장용은 숏 컵을 사용한다."],
+      "review": []
+    }
+  ]
+}

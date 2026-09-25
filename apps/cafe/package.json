@@ -4,12 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun run check:references && vite --host 127.0.0.1 --port 3018 --strictPort",
-    "build": "bun run check:references && tsc --noEmit && vite build",
+    "dev": "bun run check:recipes && vite --host 127.0.0.1 --port 3018 --strictPort",
+    "build": "bun run check:recipes && tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1 --port 3018 --strictPort",
     "type": "tsc --noEmit",
-    "import:references": "bun scripts/import-references.mjs",
-    "check:references": "bun scripts/check-references.mjs"
+    "check:recipes": "bun scripts/check-recipes.mjs"
   },
   "dependencies": {
     "react": "19.2.7",
@@ -23,7 +22,6 @@
     "@types/react-dom": "19.2.3",
     "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "6.1.1",
-    "read-excel-file": "9.3.10",
     "tailwindcss": "4.3.1",
     "typescript": "^6.0.3",
     "vite": "8.3.0",

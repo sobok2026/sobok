@@ -31,7 +31,7 @@ export function preparationTip(state: GameState, prep: Preparation): Tip {
   const step = preparationStep(prep)
   if (
     step.ingredient &&
-    available(state, step.ingredient) + 0.0001 <
+    available(state, step.ingredient) + 1e-9 <
       Math.max(0, step.target * (1 - step.tolerance) - prep.progress) * (step.perUnit ?? 1)
   )
     return materialTip(state, step.ingredient)

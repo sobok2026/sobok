@@ -1,0 +1,307 @@
+{
+  "id": "에스프레소-크림-제조",
+  "name": "에스프레소 크림 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "large",
+      "name": "large",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "에스프레소-추출",
+          "label": "에스프레소 추출",
+          "instructions": ["샷 글라스에 에스프레소를 추출하고 콜드 폼 피처로 옮긴다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 4,
+                "unit": "shot"
+              },
+              "method": "regular"
+            },
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "유제품-계량",
+          "label": "유제품 계량",
+          "instructions": ["프릿츠 골드와 일반 우유를 계량하여 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 400,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 100,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "바닐라-시럽-펌핑",
+          "label": "바닐라 시럽 펌핑",
+          "instructions": ["바닐라 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-시럽",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 10,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "칩-추가",
+          "label": "칩 추가",
+          "instructions": ["에스프레소 칩을 파우더 쉐이커로 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "에스프레소-칩",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 10,
+                "unit": "tap"
+              },
+              "toolId": "topping-shaker"
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["콜드 폼 블렌더 3번 버튼을 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 2,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "foam-pitcher",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "냉장-보관",
+          "label": "냉장 보관",
+          "instructions": ["반드시 냉장 보관하여 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "mixing-pitcher",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": ["소용량은 대용량 레시피의 1/2 용량으로 제조한다.", "제조 후 믹싱 피처에 담아 반드시 냉장 보관한다."],
+      "review": [],
+      "output": {
+        "materialId": "에스프레소-크림",
+        "amount": null,
+        "description": "Tall 기준 약 22잔 제조 가능. 완성 부피는 미기재."
+      }
+    },
+    {
+      "id": "small",
+      "name": "small",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "에스프레소-추출",
+          "label": "에스프레소 추출",
+          "instructions": ["샷 글라스에 에스프레소를 추출하고 콜드 폼 피처로 옮긴다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 2.0,
+                "unit": "shot"
+              },
+              "method": "regular"
+            },
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "유제품-계량",
+          "label": "유제품 계량",
+          "instructions": ["프릿츠 골드와 일반 우유를 계량하여 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 200.0,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 50.0,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "바닐라-시럽-펌핑",
+          "label": "바닐라 시럽 펌핑",
+          "instructions": ["바닐라 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-시럽",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 5.0,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "칩-추가",
+          "label": "칩 추가",
+          "instructions": ["에스프레소 칩을 파우더 쉐이커로 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "에스프레소-칩",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 5.0,
+                "unit": "tap"
+              },
+              "toolId": "topping-shaker"
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": [
+            "콜드 폼 블렌더 3번 버튼을 사용한다. 원본은 대용량의 2회 작동만 명시하고 소용량 작동 횟수는 별도로 명시하지 않는다."
+          ],
+          "notes": [],
+          "operations": []
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "foam-pitcher",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "냉장-보관",
+          "label": "냉장 보관",
+          "instructions": ["반드시 냉장 보관하여 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "mixing-pitcher",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": ["소용량은 대용량 레시피의 1/2 용량으로 제조한다.", "제조 후 믹싱 피처에 담아 반드시 냉장 보관한다."],
+      "review": ["소용량은 원재료를 반량으로 제조하라는 지침만 있다. 3번 버튼의 소용량 작동 횟수를 확인해야 한다."],
+      "output": {
+        "materialId": "에스프레소-크림",
+        "amount": null,
+        "description": "Tall 기준 약 11잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

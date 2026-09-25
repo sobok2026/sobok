@@ -1,0 +1,192 @@
+{
+  "id": "에스프레소-프라푸치노",
+  "name": "에스프레소 프라푸치노",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "프라푸치노 로스트 펌핑",
+          "instructions": ["사이즈별 컵에 프라푸치노 로스트를 충분히 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "프라푸치노-로스트",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "frappuccino-roast-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "샷 첨가",
+          "instructions": ["에스프레소 1샷을 추출해 로스트가 든 컵에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "shot"
+              },
+              "method": "regular"
+            },
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "우유 붓기",
+          "instructions": ["컵 하단선까지 우유를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "내용물 붓기",
+          "instructions": ["컵 내용물을 전부 블렌더 피처로 옮긴다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 및 베이스 추가",
+          "instructions": ["사이즈별 CBS 스쿱으로 얼음을 넣고 커피 베이스를 충분히 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop"
+            },
+            {
+              "action": "add",
+              "materialId": "커피-프라푸치노-베이스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "base-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "블렌딩",
+          "instructions": ["블렌더 1번 버튼을 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "완료 및 제공",
+          "instructions": ["컵 테두리 아래 6mm까지 붓고 일회용 컵에는 돔 리드를 덮는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            },
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "dome"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

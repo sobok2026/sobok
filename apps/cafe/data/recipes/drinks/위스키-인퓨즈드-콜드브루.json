@@ -1,0 +1,116 @@
+{
+  "id": "위스키-인퓨즈드-콜드브루",
+  "name": "위스키 인퓨즈드 콜드브루",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["short"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "리저브 위스키향 시럽 추가",
+          "instructions": ["리저브 위스키향 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-위스키향-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "pump"
+              },
+              "toolId": "cbs-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "스테인리스 얼음 추가",
+          "instructions": ["스테인리스 얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "스테인리스-얼음",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 정량 미기재"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "위스키 인퓨즈드 콜드브루 추가",
+          "instructions": ["위스키 인퓨즈드 콜드브루 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "위스키-인퓨즈드-콜드브루",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 2,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "정수 추가",
+          "instructions": ["정수 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 2,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "혼합",
+          "instructions": ["혼합"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "제공",
+          "instructions": ["전용 잔에 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "none"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

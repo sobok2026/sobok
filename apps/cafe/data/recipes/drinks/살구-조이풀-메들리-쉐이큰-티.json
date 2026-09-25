@@ -1,0 +1,177 @@
+{
+  "id": "살구-조이풀-메들리-쉐이큰-티",
+  "name": "살구 조이풀 메들리 쉐이큰 티",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "더블 스트랭스 조이풀 메들리 티 추가",
+          "instructions": ["더블 스트랭스 조이풀 메들리 티 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "더블-스트랭스-조이풀-메들리-티",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "1번 선"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "애프리콧 소스 추가",
+          "instructions": ["애프리콧 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "애프리콧-소스",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "클래식 시럽 추가",
+          "instructions": ["클래식 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "정수 추가",
+          "instructions": ["정수 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "2번 선"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "4번 선"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "쉐이킹",
+          "instructions": ["쉐이킹"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "tea-shaker",
+              "repetitions": 10
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "tea-shaker",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

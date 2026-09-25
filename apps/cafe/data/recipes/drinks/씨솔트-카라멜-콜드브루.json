@@ -1,0 +1,150 @@
+{
+  "id": "씨솔트-카라멜-콜드브루",
+  "name": "씨솔트 카라멜 콜드브루",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "클래식 시럽 추가",
+          "instructions": ["클래식 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "콜드 브루 추가",
+          "instructions": ["콜드 브루 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "coldBrew",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "정수 추가",
+          "instructions": ["정수 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "씨솔트 카라멜 드리즐 추가",
+          "instructions": ["씨솔트 카라멜 드리즐 추가"],
+          "notes": ["얼음 위 벽면 가까이 원형으로 드리즐한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "씨솔트-카라멜-드리즐",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 5,
+                "unit": "turn"
+              },
+              "toolId": "drizzle-bottle"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "쏠티 클라우드 폼 추가",
+          "instructions": ["쏠티 클라우드 폼 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "쏠티-클라우드-폼",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

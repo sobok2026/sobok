@@ -1,0 +1,132 @@
+{
+  "id": "위스키-크림-제조",
+  "name": "위스키 크림 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "크림-계량",
+          "label": "크림 계량",
+          "instructions": ["콜드 폼 피처에 프릿츠 골드 300ml를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 300,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "우유-계량",
+          "label": "우유 계량",
+          "instructions": ["일반 우유 50ml를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 50,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "위스키-계량",
+          "label": "위스키 계량",
+          "instructions": ["에반 윌리엄스 블랙 위스키 1온즈를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "에반-윌리엄스-블랙-위스키",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "로스트-파우더",
+          "label": "로스트 파우더",
+          "instructions": ["프라푸치노 로스트 파우더를 1티스푼 스쿱으로 1회 넣는다."],
+          "notes": ["원문에 1스쿱의 양이 2g으로 명시되어 있다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "프라푸치노-로스트-파우더",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["3번 버튼을 한 번 눌러 완성한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "냉장-보관",
+          "label": "냉장 보관",
+          "instructions": ["믹싱 피처에 옮겨 담아 냉장 보관한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "foam-pitcher",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "store",
+              "vessel": "mixing-pitcher",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "위스키-크림",
+        "amount": null,
+        "description": "약 8잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

@@ -1,0 +1,349 @@
+{
+  "id": "더블-에스프레소-칩-프라푸치노",
+  "name": "더블 에스프레소 칩 프라푸치노",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "샷-추출",
+          "label": "샷 추출",
+          "instructions": ["에스프레소를 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "shot"
+                  }
+                }
+              },
+              "method": "ristretto"
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "디카페인 리스트레토",
+              "operations": [
+                {
+                  "action": "espresso",
+                  "into": "shot-glass",
+                  "amount": {
+                    "kind": "by-size",
+                    "values": {
+                      "tall": {
+                        "kind": "count",
+                        "value": 2,
+                        "unit": "shot"
+                      },
+                      "grande": {
+                        "kind": "count",
+                        "value": 2,
+                        "unit": "shot"
+                      },
+                      "venti": {
+                        "kind": "count",
+                        "value": 4,
+                        "unit": "shot"
+                      }
+                    }
+                  },
+                  "method": "decaf-ristretto"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "유제품과-샷-계량",
+          "label": "유제품과 샷 계량",
+          "instructions": ["컵 하단선을 넘지 않도록 하프앤하프와 리스트레토 샷을 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "half-and-half",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "tall"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "grande"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "venti"
+                  }
+                }
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "칩-추가",
+          "label": "칩 추가",
+          "instructions": ["파우더 쉐이커로 에스프레소 칩을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "에스프레소-칩",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "tap"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "tap"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "tap"
+                  }
+                }
+              },
+              "toolId": "topping-shaker"
+            }
+          ]
+        },
+        {
+          "id": "커피-베이스-펌핑",
+          "label": "커피 베이스 펌핑",
+          "instructions": ["커피 베이스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "커피-베이스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "base-pump"
+            }
+          ]
+        },
+        {
+          "id": "로스트-추가-요청",
+          "label": "로스트 추가 요청",
+          "instructions": ["프라푸치노 로스트는 기본 레시피에 넣지 않으며 고객 요청 시에만 추가한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "프라푸치노-로스트",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "unspecified",
+                "description": "고객이 요청한 추가량"
+              }
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "프라푸치노 로스트 추가",
+            "choice": "요청"
+          }
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["블렌더 1번 버튼을 한 번 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "음료-붓기",
+          "label": "음료 붓기",
+          "instructions": ["블렌딩한 내용물을 컵 테두리 아래 6mm까지 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "일반-휘핑-크림-추가",
+          "label": "일반 휘핑 크림 추가",
+          "instructions": ["일반 휘핑 크림을 넣는다. 음료 위에 올린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "일반-휘핑-크림",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "음료 위에 올린다."
+              }
+            }
+          ]
+        },
+        {
+          "id": "에스프레소-칩-추가",
+          "label": "에스프레소 칩 추가",
+          "instructions": ["에스프레소 칩을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "에스프레소-칩",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "tap"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "tap"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "tap"
+                  }
+                }
+              },
+              "toolId": "topping-shaker"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "dome"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "리스트레토 샷은 커피의 쓴맛이 적고 풍미가 진하며, 반드시 리스트레토로 추출한다.",
+        "디카페인 리스트레토로 변경할 수 있으며 나머지 레시피는 동일하다."
+      ],
+      "review": []
+    }
+  ]
+}

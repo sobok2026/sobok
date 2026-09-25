@@ -49,10 +49,10 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
         : '컵은 여기에 두고 세척대에서 피처를 하나 씻으세요.',
       reason: '씻은 뒤 선반에 정리해야 제조에 사용할 수 있어요.',
     }
-  for (const [id, amount] of Object.entries(op.kind === 'shake' ? source.costs : op.costs))
+  for (const [id, amount] of Object.entries(op.stockPrerequisite ?? op.costs))
     if (
       available(state, id as IngredientId) + 0.0001 <
-      amount * (op.kind === 'shake' ? 1 : Math.max(0, 1 - op.tolerance - craft.progress / op.target))
+      amount * (op.stockPrerequisite ? 1 : Math.max(0, 1 - op.tolerance - craft.progress / op.target))
     )
       return materialTip(state, id as IngredientId)
   const ready = readyToConfirm(op, craft.progress)
@@ -62,20 +62,25 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
       craft.tool && (ready || craft.tool !== op.tool)
         ? 'G로 들고 있는 도구를 내려놓으세요.'
         : ready
-          ? op.kind === 'steam'
-            ? 'F로 계량을 확인하고 스팀을 시작하세요.'
+          ? op.kind === 'steam' || op.kind === 'machine'
+            ? 'F로 장비 작동 완료를 확인하세요.'
             : op.kind === 'lid'
               ? 'F로 리드 부착을 확인하세요.'
               : 'F로 계량을 확인하고 다음 단계로 넘어가세요.'
           : op.tool && craft.tool !== op.tool
             ? `G로 도구를 집으세요 · ${TOOL_NAMES[op.tool]}`
-            : op.kind === 'machine'
-              ? 'Space를 한 번 눌러 샷 추출을 시작하세요.'
-              : isContinuous(op)
-                ? 'Space나 작업 버튼을 누르다가 초록 목표 구간에서 손을 떼세요.'
-                : `Space를 한 번씩 눌러 ${op.target}${op.unit}를 맞추세요.`,
-    reason: isContinuous(op)
-      ? '손을 떼면 즉시 멈춰요. 도구를 놓고 F로 확인하기 전까지는 같은 단계예요.'
-      : '한 번 누를 때 한 회만 들어가요. 목표 횟수를 넘기지 않도록 확인하세요.',
+            : op.kind === 'machine' || op.kind === 'steam'
+              ? 'Space로 장비를 작동하고 F로 완료를 확인하세요.'
+              : op.kind === 'dispense'
+                ? 'Space로 주문 사이즈의 온수 버튼을 한 번 누른 뒤 F로 확인하세요.'
+                : isContinuous(op)
+                  ? 'Space나 작업 버튼을 누르다가 목표 기준선까지 계량하세요.'
+                  : `Space를 한 번씩 눌러 ${op.target}${op.unit}를 맞추세요.`,
+    reason:
+      op.kind === 'dispense'
+        ? '주문 사이즈에 맞는 온수가 자동으로 채워져요.'
+        : isContinuous(op)
+          ? '손을 떼면 즉시 멈춰요. 도구를 놓고 F로 확인하기 전까지는 같은 단계예요.'
+          : '한 번 누를 때 한 회만 들어가요. 목표 횟수를 넘기지 않도록 확인하세요.',
   }
 }

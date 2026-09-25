@@ -1,0 +1,133 @@
+{
+  "id": "마티니",
+  "name": "마티니",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["short"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "텐커레이 넘버 텐 추가",
+          "instructions": ["텐커레이 넘버 텐 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "텐커레이-넘버-텐",
+              "into": "mixing-glass",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "드라이 버무스 추가",
+          "instructions": ["드라이 버무스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "드라이-버무스",
+              "into": "mixing-glass",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "mixing-glass",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop",
+                "referenceSize": "tall"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "차갑게 젓기",
+          "instructions": ["차갑게 젓기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "mixing-glass",
+              "toolId": "stirrer"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음을 걸러 따르기",
+          "instructions": ["얼음을 걸러 따르기"],
+          "notes": ["얼음 없이 잔에 천천히 따른다."],
+          "operations": [
+            {
+              "action": "strain",
+              "from": "mixing-glass",
+              "into": "serving-cup",
+              "toolId": "strainer",
+              "excludeMaterialIds": ["ice"]
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "그린올리브 추가",
+          "instructions": ["그린올리브 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "그린올리브",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "제공",
+          "instructions": ["전용 잔에 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "none"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

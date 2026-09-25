@@ -1,0 +1,206 @@
+{
+  "id": "glazed-foam-black-tea",
+  "name": "글레이즈드 폼 블랙 티",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "클래식 시럽 추가",
+          "instructions": ["클래식 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "더블 블랙 티 베이스 추가",
+          "instructions": ["더블 블랙 티 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "더블-블랙-티-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "정수 추가",
+          "instructions": ["정수 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "알로에 토핑 추가",
+          "instructions": ["알로에 토핑 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "알로에-토핑",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "글레이즈드 폼 추가",
+          "instructions": ["글레이즈드 폼 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "foam",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "when": {
+                "kind": "container",
+                "value": "standard-cup"
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "텀블러 계량",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "foam",
+                  "into": "serving-cup",
+                  "amount": {
+                    "kind": "by-size",
+                    "values": {
+                      "tall": {
+                        "kind": "amount",
+                        "value": 50,
+                        "unit": "ml"
+                      },
+                      "grande": {
+                        "kind": "amount",
+                        "value": 60,
+                        "unit": "ml"
+                      },
+                      "venti": {
+                        "kind": "amount",
+                        "value": 70,
+                        "unit": "ml"
+                      }
+                    }
+                  },
+                  "when": {
+                    "kind": "container",
+                    "value": "tumbler"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "제공",
+          "instructions": ["일회용 컵은 일반 리드를 덮고 굵은 빨대와 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

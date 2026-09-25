@@ -1,0 +1,96 @@
+{
+  "id": "돌체-폼-제조",
+  "name": "돌체 폼 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "돌체-시럽-펌핑",
+          "label": "돌체 시럽 펌핑",
+          "instructions": ["돌체 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "돌체-시럽",
+              "into": "whipping-canister",
+              "amount": {
+                "kind": "count",
+                "value": 6,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "유제품-추가",
+          "label": "유제품 추가",
+          "instructions": ["프릿츠 골드와 일반 우유를 각각 150ml 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "whipping-canister",
+              "amount": {
+                "kind": "amount",
+                "value": 150,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "whipping-canister",
+              "amount": {
+                "kind": "amount",
+                "value": 150,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "가스-주입-및-쉐이킹",
+          "label": "가스 주입 및 쉐이킹",
+          "instructions": ["휘핑 가스를 50초 이상 넣고 위아래로 30회 이상 흔든다."],
+          "notes": ["50초와 30회는 최소값이다."],
+          "operations": [
+            {
+              "action": "charge",
+              "vessel": "whipping-canister",
+              "equipmentId": "whipping-dispenser",
+              "duration": {
+                "seconds": 50,
+                "approximate": false,
+                "atLeast": true
+              }
+            },
+            {
+              "action": "shake",
+              "vessel": "whipping-canister",
+              "repetitions": 30,
+              "atLeast": true
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "폼보다 단단하고 일반 휘핑보다 실키한 물성으로, 살짝 봉긋하게 올린다.",
+        "일반 휘핑처럼 단단하게 높게 쌓거나 기존 폼처럼 묽고 납작하게 만들지 않는다."
+      ],
+      "review": [],
+      "output": {
+        "materialId": "돌체-폼",
+        "amount": null,
+        "description": "Tall 기준 약 8잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "id": "유스베리-티-베이스-제조",
+  "name": "유스베리 티 베이스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "유스베리 티백 추가",
+          "instructions": ["유스베리 티백 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "유스베리-티백",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "뜨거운 물 추가",
+          "instructions": ["뜨거운 물 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size",
+                "referenceSize": "venti"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "차 우리기",
+          "instructions": ["차 우리기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "steep",
+              "vessel": "steam-pitcher",
+              "duration": {
+                "seconds": 180,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "티백 제거",
+          "instructions": ["티백 제거"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "remove",
+              "itemId": "유스베리-티백",
+              "from": "steam-pitcher"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "실온 보관",
+          "instructions": ["실온 보관"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "water-pitcher",
+              "storage": "room"
+            }
+          ]
+        }
+      ],
+      "notes": ["워터 피처에 옮겨 실온 보관하여 사용한다."],
+      "review": [],
+      "output": {
+        "materialId": "유스베리-티-베이스",
+        "amount": null,
+        "description": "완성량은 원본에 명시되지 않았다."
+      }
+    }
+  ]
+}

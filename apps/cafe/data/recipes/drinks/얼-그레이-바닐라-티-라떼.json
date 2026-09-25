@@ -1,0 +1,399 @@
+{
+  "id": "얼-그레이-바닐라-티-라떼",
+  "name": "얼 그레이 바닐라 티 라떼",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "바닐라 크림 베이스 추가",
+          "instructions": ["바닐라 크림 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-크림-베이스",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "line",
+                    "line": "size",
+                    "referenceSize": "short"
+                  },
+                  "grande": {
+                    "kind": "line",
+                    "line": "size",
+                    "referenceSize": "tall"
+                  },
+                  "venti": {
+                    "kind": "line",
+                    "line": "size",
+                    "referenceSize": "grande"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "더블 블랙 티 베이스 추가",
+          "instructions": ["더블 블랙 티 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "더블-블랙-티-베이스",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "스노우 폼 파우더 추가",
+          "instructions": ["스노우 폼 파우더 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "스노우-폼-파우더",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "스팀",
+          "instructions": ["스팀"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "X-Hot, 공기 주입 최소화"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "돌체 시럽 추가",
+          "instructions": ["돌체 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "돌체-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "스팀 베이스 붓기",
+          "instructions": ["스팀 베이스 붓기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "콜드 폼 추가",
+          "instructions": ["콜드 폼 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "콜드-폼",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    },
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "바닐라 크림 베이스 추가",
+          "instructions": ["바닐라 크림 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-크림-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "더블 블랙 티 베이스 추가",
+          "instructions": ["더블 블랙 티 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "더블-블랙-티-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "돌체 시럽 추가",
+          "instructions": ["돌체 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "돌체-시럽",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "스노우 폼 파우더 추가",
+          "instructions": ["스노우 폼 파우더 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "스노우-폼-파우더",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "블렌딩",
+          "instructions": ["블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-9",
+          "label": "콜드 폼 추가",
+          "instructions": ["콜드 폼 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "콜드-폼",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-10",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

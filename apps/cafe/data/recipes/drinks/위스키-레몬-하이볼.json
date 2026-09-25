@@ -1,0 +1,221 @@
+{
+  "id": "위스키-레몬-하이볼",
+  "name": "위스키 레몬 하이볼",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["short"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "정수 추가",
+          "instructions": ["정수 추가"],
+          "notes": ["차가운 정수를 사용한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "fizzio-bottle",
+              "amount": {
+                "kind": "fraction",
+                "numerator": 1,
+                "denominator": 4,
+                "of": "피지오 전용 용기"
+              },
+              "temperature": {
+                "kind": "cold"
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "Tall 하단선으로 계량",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "water",
+                  "into": "fizzio-bottle",
+                  "amount": {
+                    "kind": "line",
+                    "line": "lower",
+                    "referenceSize": "tall"
+                  },
+                  "temperature": {
+                    "kind": "cold"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "스파클링",
+          "instructions": ["스파클링"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "fizzio",
+              "vessel": "fizzio-bottle",
+              "program": "extra-t",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "레몬 웨지 추가",
+          "instructions": ["레몬 웨지 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "레몬-웨지",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "레몬 스퀴즈",
+          "instructions": ["레몬 스퀴즈"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "muddle",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "클래식 시럽 추가",
+          "instructions": ["클래식 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "위스키 추가",
+          "instructions": ["위스키 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "위스키",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 정량 미기재"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "피징한 물 붓기",
+          "instructions": ["피징한 물 붓기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "fizzio-bottle",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "잔에 가득"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-9",
+          "label": "앙고스투라 비터 추가",
+          "instructions": ["앙고스투라 비터 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "앙고스투라-비터",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "drop"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-10",
+          "label": "혼합",
+          "instructions": ["혼합"],
+          "notes": ["레몬 웨지가 잔 중간~상단에 위치하도록 젓는다."],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            }
+          ]
+        },
+        {
+          "id": "step-11",
+          "label": "제공",
+          "instructions": ["젓는 데 사용한 고객용 머들러를 꽂아 전용 잔에 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "none",
+              "accessories": ["머들러"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

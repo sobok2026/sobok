@@ -1,0 +1,193 @@
+{
+  "id": "딸기-레몬-보드카-블렌디드",
+  "name": "딸기 레몬 보드카 블렌디드",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["short"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "앱솔루트 보드카 추가",
+          "instructions": ["앱솔루트 보드카 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "앱솔루트-보드카",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 1.5,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "레모네이드 추가",
+          "instructions": ["레모네이드 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "레모네이드",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 0.5,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "화이트 뱅쇼 시럽 추가",
+          "instructions": ["화이트 뱅쇼 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "화이트-뱅쇼-시럽",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 1.5,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "시럽 펌프 사용",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "화이트-뱅쇼-시럽",
+                  "into": "blender-pitcher",
+                  "amount": {
+                    "kind": "count",
+                    "value": 6,
+                    "unit": "pump"
+                  },
+                  "toolId": "syrup-pump"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "딸기 소스 추가",
+          "instructions": ["딸기 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "딸기-소스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "scoop"
+              },
+              "toolId": "five-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop",
+                "referenceSize": "grande"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "블렌딩",
+          "instructions": ["블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "전용 잔에 담기",
+          "instructions": ["전용 잔에 담기"],
+          "notes": ["가운데로 수북하게 담는다."],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "동결건조 딸기 그릿 추가",
+          "instructions": ["동결건조 딸기 그릿 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "동결건조-딸기-그릿",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-9",
+          "label": "제공",
+          "instructions": ["전용 잔에 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "none"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

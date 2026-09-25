@@ -1,0 +1,81 @@
+{
+  "id": "cold-brew",
+  "name": "콜드 브루",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti", "trenta"],
+      "steps": [
+        {
+          "id": "add-concentrate",
+          "label": "콜드 브루 추출액",
+          "instructions": ["컵 하단선까지 콜드 브루 추출액을 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "coldBrew",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "add-water",
+          "label": "정수",
+          "instructions": ["컵 상단선까지 정수를 채운다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            }
+          ]
+        },
+        {
+          "id": "add-ice",
+          "label": "얼음",
+          "instructions": ["컵 테두리 아래 6mm까지 얼음을 채운다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "serve",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

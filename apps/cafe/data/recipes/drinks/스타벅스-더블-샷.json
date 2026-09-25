@@ -1,0 +1,352 @@
+{
+  "id": "스타벅스-더블-샷",
+  "name": "스타벅스 더블 샷",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "vanilla",
+      "name": "바닐라 더블 샷",
+      "temperature": "iced",
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "샷 추출",
+          "instructions": ["에스프레소 샷을 샷 글라스에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "시럽 추가",
+          "instructions": ["바닐라 시럽 3펌프를 스테인리스 쉐이커에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-시럽",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "하프앤하프 및 샷 추가",
+          "instructions": ["하프앤하프 70ml를 계량하여 스테인리스 쉐이커에 넣고 추출한 에스프레소 2샷을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "half-and-half",
+              "into": "shaker",
+              "amount": {
+                "kind": "amount",
+                "value": 70,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "shaker",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "쉐이킹",
+          "instructions": ["얼음을 넣고 뚜껑을 닫아 10회 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "shaker",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 얼음 계량 미기재"
+              }
+            },
+            {
+              "action": "shake",
+              "vessel": "shaker",
+              "repetitions": 10,
+              "approximate": false
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "마무리 및 제공",
+          "instructions": ["작은 리드만 열어 7oz 컵에 얼음을 제외한 음료만 따른 후 더블샷 전용 리드를 덮는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "strain",
+              "from": "shaker",
+              "into": "serving-cup",
+              "excludeMaterialIds": ["ice"]
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "lidType": "double-shot"
+            }
+          ]
+        }
+      ],
+      "notes": ["7oz 전용 음료.", "바닐라·헤이즐넛·클래식 중 주문한 시럽 종류를 사용한다."],
+      "review": []
+    },
+    {
+      "id": "hazelnut",
+      "name": "헤이즐넛 더블 샷",
+      "temperature": "iced",
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "샷 추출",
+          "instructions": ["에스프레소 샷을 샷 글라스에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "시럽 추가",
+          "instructions": ["헤이즐넛 시럽 3펌프를 스테인리스 쉐이커에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "헤이즐넛-시럽",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "하프앤하프 및 샷 추가",
+          "instructions": ["하프앤하프 70ml를 계량하여 스테인리스 쉐이커에 넣고 추출한 에스프레소 2샷을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "half-and-half",
+              "into": "shaker",
+              "amount": {
+                "kind": "amount",
+                "value": 70,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "shaker",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "쉐이킹",
+          "instructions": ["얼음을 넣고 뚜껑을 닫아 10회 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "shaker",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 얼음 계량 미기재"
+              }
+            },
+            {
+              "action": "shake",
+              "vessel": "shaker",
+              "repetitions": 10,
+              "approximate": false
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "마무리 및 제공",
+          "instructions": ["작은 리드만 열어 7oz 컵에 얼음을 제외한 음료만 따른 후 더블샷 전용 리드를 덮는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "strain",
+              "from": "shaker",
+              "into": "serving-cup",
+              "excludeMaterialIds": ["ice"]
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "lidType": "double-shot"
+            }
+          ]
+        }
+      ],
+      "notes": ["7oz 전용 음료."],
+      "review": []
+    },
+    {
+      "id": "classic",
+      "name": "클래식 더블 샷",
+      "temperature": "iced",
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "샷 추출",
+          "instructions": ["에스프레소 샷을 샷 글라스에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "시럽 추가",
+          "instructions": ["클래식 시럽 3펌프를 스테인리스 쉐이커에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "하프앤하프 및 샷 추가",
+          "instructions": ["하프앤하프 70ml를 계량하여 스테인리스 쉐이커에 넣고 추출한 에스프레소 2샷을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "half-and-half",
+              "into": "shaker",
+              "amount": {
+                "kind": "amount",
+                "value": 70,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "shaker",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "쉐이킹",
+          "instructions": ["얼음을 넣고 뚜껑을 닫아 10회 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "shaker",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 얼음 계량 미기재"
+              }
+            },
+            {
+              "action": "shake",
+              "vessel": "shaker",
+              "repetitions": 10,
+              "approximate": false
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "마무리 및 제공",
+          "instructions": ["작은 리드만 열어 7oz 컵에 얼음을 제외한 음료만 따른 후 더블샷 전용 리드를 덮는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "strain",
+              "from": "shaker",
+              "into": "serving-cup",
+              "excludeMaterialIds": ["ice"]
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "lidType": "double-shot"
+            }
+          ]
+        }
+      ],
+      "notes": ["7oz 전용 음료."],
+      "review": []
+    }
+  ]
+}

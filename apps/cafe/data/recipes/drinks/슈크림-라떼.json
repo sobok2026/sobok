@@ -1,0 +1,337 @@
+{
+  "id": "슈크림-라떼",
+  "name": "슈크림 라떼",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "우유 스팀",
+          "instructions": ["우유 스팀"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "X-Hot"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "에스프레소 추출",
+          "instructions": ["에스프레소 추출"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "shot"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  }
+                }
+              },
+              "method": "regular"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "스위트 바닐라 소스 추가",
+          "instructions": ["스위트 바닐라 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "sweet-vanilla-sauce",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "샷·소스 혼합",
+          "instructions": ["샷·소스 혼합"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "스팀 우유 붓기",
+          "instructions": ["스팀 우유 붓기"],
+          "notes": ["스팀 스푼을 사용한다."],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "슈크림 휘핑 추가",
+          "instructions": ["슈크림 휘핑 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "custard-whipped-cream",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 정량 미기재"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [
+        "원본 HOT 표는 샷 추출 대상을 컵으로 적은 뒤 마무리에서 추출한 샷을 컵에 붓는다고 다시 안내한다. 샷 추가 횟수는 한 번으로 보존했으며 추출 용기 확인이 필요하다."
+      ]
+    },
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "에스프레소 추출",
+          "instructions": ["에스프레소 추출"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "shot"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  }
+                }
+              },
+              "method": "regular"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "스위트 바닐라 소스 추가",
+          "instructions": ["스위트 바닐라 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "sweet-vanilla-sauce",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "샷·소스 혼합",
+          "instructions": ["샷·소스 혼합"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "슈크림 휘핑 추가",
+          "instructions": ["슈크림 휘핑 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "custard-whipped-cream",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 정량 미기재"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮고 일반 빨대와 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "accessories": ["일반 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

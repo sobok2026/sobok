@@ -6,7 +6,7 @@ import { batchDestination, batchOrigin, carriedBatch } from '../features/invento
 import { cleanCupCount, cupCount, cupKindFor, isReusableCup } from '../features/inventory/cups'
 import { available } from '../features/inventory/inventory'
 import { supplyIds } from '../features/inventory/supplies'
-import { preparationStep } from '../features/preparation/rules'
+import { preparationIds, preparationStep } from '../features/preparation/rules'
 import { washDestination, washItems, washStock } from '../features/washing/rules'
 import type { GameState } from './state'
 
@@ -56,7 +56,7 @@ function plannedStation(state: GameState): StationId {
       )
       if (pending)
         return pending.location === 'prep' ? 'prep' : pending.location === 'cold-prep' ? 'cold-prep' : 'stock'
-      if (key === 'foam' || key === 'mocha' || key === 'hojicha') return state.tools.clean ? 'prep' : 'wash'
+      if (preparationIds.some((id) => id === key)) return state.tools.clean ? 'prep' : 'wash'
       if (key === 'coldBrew') return 'cold-prep'
       return 'stock'
     }

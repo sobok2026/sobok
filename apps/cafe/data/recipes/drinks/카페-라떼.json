@@ -1,0 +1,158 @@
+{
+  "id": "카페-라떼",
+  "name": "카페 라떼",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["short", "tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "우유 스팀",
+          "instructions": ["피처에 원본 기준으로 우유를 계량하고 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "standard"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "샷 추출",
+          "instructions": ["에스프레소 샷을 제공 컵에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "short": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "shot"
+                  },
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "shot"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  }
+                }
+              },
+              "method": "regular"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "향 시럽 추가",
+          "instructions": ["고객이 향 시럽 추가를 요청한 경우에만 펌프를 끝까지 눌러 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객이-선택한-향-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "short": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "flavored-syrup",
+            "choice": "추가"
+          }
+        },
+        {
+          "id": "step-4",
+          "label": "마무리 및 제공",
+          "instructions": ["스팀 우유를 컵의 70%까지 채운 후 하트 모양으로 마무리한다. 일회용 컵에는 리드를 덮는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "fraction",
+                "numerator": 7,
+                "denominator": 10,
+                "of": "대상 용기 용량"
+              }
+            },
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "컵 70%까지 부은 뒤 하트 모양을 완성하는 나머지 스팀 우유"
+              }
+            },
+            {
+              "action": "etch",
+              "vessel": "serving-cup",
+              "pattern": "하트"
+            },
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": ["원본은 하트 모양 마무리 방법에 대해 영상 참고를 안내한다."],
+      "review": []
+    }
+  ]
+}

@@ -42,6 +42,7 @@ export const CUP_NAMES = Object.fromEntries(
 ) as Record<CupKind, string>
 export const isReusableCup = (kind: CupKind): kind is ReusableCupKind =>
   cupStyle(kind) === 'hot-mug' || cupStyle(kind) === 'iced-glass'
+export const cupService = (kind: CupKind): ServiceMode => (isReusableCup(kind) ? 'dine-in' : 'takeout')
 export const emptyCupCounts = (): ReusableCupCounts =>
   Object.fromEntries(reusableCupKinds.map((kind) => [kind, 0])) as ReusableCupCounts
 export const cupCount = (counts: ReusableCupCounts | undefined) =>

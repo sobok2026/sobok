@@ -1,0 +1,112 @@
+{
+  "id": "더블-스트랭스-캐모마일-티-제조",
+  "name": "더블 스트랭스 캐모마일 티 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "티백-추가",
+          "label": "티백 추가",
+          "instructions": ["라벨을 제거한 캐모마일 티백 2개를 스팀 피처에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "캐모마일-티백",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "티-우리기",
+          "label": "티 우리기",
+          "instructions": ["뜨거운 물을 스팀 피처 Venti 선까지 넣고 5분 우린 후 티백을 제거한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size",
+                "referenceSize": "venti"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "duration": {
+                "seconds": 300,
+                "approximate": false
+              },
+              "vessel": "steam-pitcher",
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "remove",
+              "itemId": "캐모마일-티백",
+              "from": "steam-pitcher",
+              "dispose": false
+            }
+          ]
+        },
+        {
+          "id": "얼음-및-보관",
+          "label": "얼음 및 보관",
+          "instructions": ["얼음을 스팀 피처 MAX 선까지 넣고 워터 피처로 옮겨 뚜껑을 덮고 소비기한 태그를 단다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              }
+            },
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "cover",
+              "vessel": "water-pitcher"
+            },
+            {
+              "action": "label",
+              "vessel": "water-pitcher",
+              "labels": ["소비기한"]
+            }
+          ]
+        }
+      ],
+      "notes": ["아이스 음료에만 사용한다."],
+      "review": [],
+      "output": {
+        "materialId": "더블-스트랭스-캐모마일-티",
+        "amount": null,
+        "description": "Tall 기준 약 8잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

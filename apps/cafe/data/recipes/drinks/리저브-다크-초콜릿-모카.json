@@ -1,0 +1,168 @@
+{
+  "id": "리저브-다크-초콜릿-모카",
+  "name": "리저브 다크 초콜릿 모카",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["tall", "grande"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "에스프레소 준비",
+          "instructions": ["포터필터를 그라인더에 두고 커피를 도징한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "grind",
+              "equipmentId": "reserve-grinder",
+              "materialId": "리저브-에스프레소-원두",
+              "into": "portafilter",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 도징 g 미기재"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "우유 준비",
+          "instructions": ["적합한 사이즈의 피처에 우유를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "샷 추출",
+          "instructions": ["리저브 에스프레소 샷을 샷 글라스에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "equipmentId": "reserve-espresso-machine",
+              "materialId": "리저브-에스프레소-원두"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "파우더 추가",
+          "instructions": ["그린티 스쿱으로 리저브 다크 초콜릿 파우더를 컵에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-다크-초콜릿-파우더",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "green-tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "파우더 녹이기",
+          "instructions": ["추출한 샷을 컵에 붓고 컵을 흔들어 섞은 후 전용 삼각 거품기로 약 10초 섞는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "swirl",
+              "vessel": "serving-cup"
+            },
+            {
+              "action": "mix",
+              "vessel": "serving-cup",
+              "toolId": "triangular-whisk",
+              "duration": {
+                "seconds": 10,
+                "approximate": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "우유 스팀",
+          "instructions": ["피처의 우유를 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "standard"
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "완료 및 제공",
+          "instructions": ["스팀 우유를 컵에 채우고 라떼아트로 마무리한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "컵에 채우는 양"
+              }
+            },
+            {
+              "action": "etch",
+              "vessel": "serving-cup",
+              "pattern": "라떼아트"
+            },
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

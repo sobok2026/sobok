@@ -4,7 +4,7 @@ import { STATIONS, type StationId } from '../../content/stations'
 import { TextButton } from '../../shared/ui/Button'
 import { WorkButton, WorkHud, WorkMeter, WorkTitle } from '../../shared/ui/WorkControls'
 import type { GameState } from '../../simulation/state'
-import { cupSize, isReusableCup } from '../inventory/cups'
+import { cupService, cupSize, isReusableCup } from '../inventory/cups'
 import { available } from '../inventory/inventory'
 import { CUSTOMER_STATUS } from '../service/customer'
 import { isContinuous, isMetered, operationFor, readyToConfirm, TOOL_NAMES } from './rules'
@@ -25,7 +25,7 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
   const c = cup.craft
   const place = target!
   const op = operationFor(cup.recipe, cup.step, c)
-  const sourceStep = recipeFor(cup.recipe, cupSize(cup.craft.kind)).steps[cup.step]
+  const sourceStep = recipeFor(cup.recipe, cupSize(cup.craft.kind), cupService(cup.craft.kind)).steps[cup.step]
   const nextStation = sourceStep?.station ?? 'pickup'
   const job = state.jobs.find((item) => item.cupId === cup.id)
   const needsMove = nextStation !== place && !job
@@ -36,19 +36,19 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
     : op
       ? c.progress / op.target
       : 1
-  const counter = op && ['pump', 'sprinkle', 'ice', 'lid', 'shake'].includes(op.kind)
+  const counter = op && ['machine', 'steam', 'dispense', 'pump', 'sprinkle', 'lid', 'shake'].includes(op.kind)
   const missing =
-    op && !ready
+    op && (!ready || op.stockPrerequisite)
       ? ingredientIds.find(
           (id) =>
             available(state, id) + 0.0001 <
-            (op.kind === 'shake'
-              ? (sourceStep.costs[id] ?? 0)
+            (op.stockPrerequisite
+              ? (op.stockPrerequisite[id] ?? 0)
               : (op.costs[id] ?? 0) * Math.max(0, 1 - op.tolerance - c.progress / op.target)),
         )
       : undefined
   const supplyNotice =
-    (op?.kind === 'steam' || op?.tool === 'pitcher') && !c.pitcherReserved && !state.tools.clean
+    (op?.fillsPitcher || op?.tool === 'pitcher') && !c.pitcherReserved && !state.tools.clean
       ? '피처 부족 · 세척 후 도구 선반에 정리'
       : missing
         ? `${INGREDIENTS[missing].name} 부족 · ${missing === 'coldBrew' ? '추출대' : INGREDIENTS[missing].prepared ? '준비대' : '창고'}에서 준비`
@@ -56,15 +56,17 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
   const toolIsNext = supplyNotice ? !!c.tool : !rightTool || ready
   const useLabel = op
     ? isContinuous(op)
-      ? `누르고 ${op.kind === 'stir' ? '젓기' : op.kind === 'drizzle' ? '두르기' : '붓기'}`
+      ? `누르고 ${op.kind === 'stir' ? '젓기' : op.kind === 'drizzle' ? '두르기' : op.kind === 'ice' ? '얼음 담기' : '붓기'}`
       : {
           machine: '샷 추출하기',
+          steam: '스팀하기',
+          dispense: '온수 버튼 누르기',
           pump: '펌핑',
           sprinkle: '한 톡',
           ice: '한 스쿱',
           lid: '리드 덮기',
           shake: '흔들기',
-        }[op.kind as 'machine' | 'pump' | 'sprinkle' | 'ice' | 'lid' | 'shake']
+        }[op.kind as 'machine' | 'steam' | 'dispense' | 'pump' | 'sprinkle' | 'ice' | 'lid' | 'shake']
     : ''
   return (
     <WorkHud data-fault={!!c.fault} aria-label="직접 제조 조작">
@@ -75,7 +77,7 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
             ? '제조 완료'
             : needsMove
               ? '다음 작업대'
-              : `${cup.step + 1} / ${recipeFor(cup.recipe, cupSize(cup.craft.kind)).steps.length - (isReusableCup(c.kind) ? 1 : 0)}`}
+              : `${cup.step + 1} / ${recipeFor(cup.recipe, cupSize(cup.craft.kind), cupService(cup.craft.kind)).steps.length - (isReusableCup(c.kind) ? 1 : 0)}`}
         </span>
       </div>
       {c.fault ? (
@@ -105,6 +107,7 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
       ) : op ? (
         <>
           <WorkTitle>{op.label}</WorkTitle>
+          {sourceStep.measurement ? <p className="mt-2 text-xs text-muted">{sourceStep.measurement}</p> : null}
           {supplyNotice ? (
             <p className="my-2.5 border-l-3 border-[#bb8a57] pl-3 text-sm leading-[1.65] text-danger group-data-[fault=true]/work:text-danger">
               {supplyNotice}
@@ -139,9 +142,13 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
                 </WorkButton>
               )
             ) : null}
-            {op.kind !== 'machine' && ready && !c.tool ? (
+            {ready && !c.tool ? (
               <WorkButton shortcut="F" primary onUse={() => onConfirm(place)}>
-                {op.kind === 'steam' ? '스팀 시작' : op.kind === 'lid' ? '리드 확인' : '계량 확인'}
+                {op.kind === 'steam' || op.kind === 'machine'
+                  ? '장비 완료 확인'
+                  : op.kind === 'lid'
+                    ? '리드 확인'
+                    : '계량 확인'}
               </WorkButton>
             ) : null}
           </div>

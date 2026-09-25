@@ -1,0 +1,269 @@
+{
+  "id": "리저브-사케라또-아포가토",
+  "name": "리저브 사케라또 아포가토",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "사케라또 아포가토",
+      "temperature": "iced",
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "에스프레소 준비",
+          "instructions": ["포터필터를 그라인더에 두고 커피를 도징한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "grind",
+              "equipmentId": "reserve-grinder",
+              "materialId": "리저브-에스프레소-원두",
+              "into": "portafilter",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 도징 g 미기재"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "샷 추출",
+          "instructions": ["리저브 에스프레소 샷을 샷 글라스에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "equipmentId": "reserve-espresso-machine",
+              "materialId": "리저브-에스프레소-원두"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "아이스크림 추가",
+          "instructions": ["락 글라스에 아이스크림 1스쿱(100g)을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "아이스크림",
+              "into": "rock-glass",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "when": {
+                "kind": "service",
+                "value": "for-here"
+              },
+              "toolId": "ice-cream-scoop"
+            },
+            {
+              "action": "add",
+              "materialId": "아이스크림",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "when": {
+                "kind": "service",
+                "value": "takeaway"
+              },
+              "toolId": "ice-cream-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "시럽 추가",
+          "instructions": ["스테인리스 쉐이커에 바닐라 빈 시럽 2펌프를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-바닐라-빈-시럽",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "민트 추가",
+          "instructions": ["스테인리스 쉐이커에 민트 잎 3줄기를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "민트-잎",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "샷 및 얼음 추가",
+          "instructions": ["추출한 에스프레소 2샷과 얼음 1스쿱을 쉐이커에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "shaker",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "쉐이킹",
+          "instructions": ["뚜껑을 닫고 30회 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "shaker",
+              "repetitions": 30,
+              "approximate": false
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "매장용 붓기",
+          "instructions": ["쉐이커의 샷을 저그 잔 절반까지 붓고 남은 샷을 아이스크림이 든 락 글라스에 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shaker",
+              "into": "reserve-jug",
+              "amount": {
+                "kind": "fraction",
+                "numerator": 1,
+                "denominator": 2,
+                "of": "대상 용기 용량"
+              },
+              "portion": "liquid"
+            },
+            {
+              "action": "transfer",
+              "from": "shaker",
+              "into": "rock-glass",
+              "amount": {
+                "kind": "all"
+              },
+              "portion": "liquid"
+            }
+          ],
+          "when": {
+            "kind": "service",
+            "value": "for-here"
+          }
+        },
+        {
+          "id": "step-9",
+          "label": "포장용 붓기",
+          "instructions": ["포장은 저그 잔 샷 없이 일회용 스프컵에 샷을 모두 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shaker",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              },
+              "portion": "liquid"
+            }
+          ],
+          "when": {
+            "kind": "service",
+            "value": "takeaway"
+          }
+        },
+        {
+          "id": "step-10",
+          "label": "마무리 및 제공",
+          "instructions": ["민트 잎 1줄기를 아이스크림 위에 올리고 아포가토용 스푼과 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "민트-잎",
+              "into": "rock-glass",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              },
+              "when": {
+                "kind": "service",
+                "value": "for-here"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "민트-잎",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              },
+              "when": {
+                "kind": "service",
+                "value": "takeaway"
+              }
+            },
+            {
+              "action": "serve",
+              "accessories": ["affogato-spoon"]
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "6oz 제공 음료.",
+        "별도 저그 잔 샷을 취향에 맞게 아이스크림 위에 더 붓도록 안내한다.",
+        "매장은 락 글라스, 포장은 일회용 스프컵에 아이스크림을 담는다."
+      ],
+      "review": []
+    }
+  ]
+}

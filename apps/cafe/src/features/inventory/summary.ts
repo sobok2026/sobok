@@ -3,7 +3,7 @@ import { recipeFor } from '../../content/recipes'
 import type { GameState } from '../../simulation/state'
 import { operationFor } from '../crafting/rules'
 import { PREPARATIONS, preparationIds } from '../preparation/rules'
-import { cupSize } from './cups'
+import { cupService, cupSize } from './cups'
 import { available } from './inventory'
 
 export function inventorySummary(state: GameState) {
@@ -38,7 +38,8 @@ export function inventorySummary(state: GameState) {
       : null)
   const size = state.cup ? cupSize(state.cup.craft.kind) : (state.ticket?.size ?? state.customer?.size)
   if (recipe && size) {
-    const steps = recipeFor(recipe, size).steps
+    const service = state.cup ? cupService(state.cup.craft.kind) : (state.ticket?.service ?? state.customer?.service)
+    const steps = recipeFor(recipe, size, service).steps
     const cup = state.cup?.craft.fault ? null : state.cup
     const stepIndex = cup?.step ?? 0
     for (let index = stepIndex; index < steps.length; index++) {

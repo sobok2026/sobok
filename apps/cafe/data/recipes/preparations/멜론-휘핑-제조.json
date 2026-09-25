@@ -1,0 +1,128 @@
+{
+  "id": "멜론-휘핑-제조",
+  "name": "멜론 휘핑 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "itis",
+      "name": "itis",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "재료-계량",
+          "label": "재료 계량",
+          "instructions": ["휘핑통에 프릿츠 골드 160ml와 멜론 시럽 80ml를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "whipping-canister",
+              "amount": {
+                "kind": "amount",
+                "value": 160,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "멜론-시럽",
+              "into": "whipping-canister",
+              "amount": {
+                "kind": "amount",
+                "value": 80,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "가스-주입-및-쉐이킹",
+          "label": "가스 주입 및 쉐이킹",
+          "instructions": ["휘핑 가스 주입 후 위아래로 30회 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "charge",
+              "vessel": "whipping-canister",
+              "equipmentId": "whipping-dispenser"
+            },
+            {
+              "action": "shake",
+              "vessel": "whipping-canister",
+              "repetitions": 30
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "멜론-휘핑",
+        "amount": null,
+        "description": "ITIS 제조법. Tall 기준 약 8잔 제조 가능."
+      }
+    },
+    {
+      "id": "machine",
+      "name": "machine",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "재료-계량",
+          "label": "재료 계량",
+          "instructions": ["자동휘핑머신 휘핑통에 프릿츠 골드 1L와 멜론 시럽 500ml를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "automatic-whipping-vat",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "l"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "멜론-시럽",
+              "into": "automatic-whipping-vat",
+              "amount": {
+                "kind": "amount",
+                "value": 500,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "혼합",
+          "label": "혼합",
+          "instructions": ["시럽과 크림이 충분히 잘 섞이도록 2~30회 저어준다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "automatic-whipping-vat",
+              "toolId": "stirrer",
+              "repetitions": {
+                "min": 2,
+                "max": 30
+              }
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": ["원본의 젓기 횟수는 “2~30회”로 표기되어 있다. 20~30회 의도인지 확인이 필요하다."],
+      "output": {
+        "materialId": "멜론-휘핑",
+        "amount": null,
+        "description": "자동휘핑머신 제조법. Tall 기준 약 50잔 제조 가능."
+      }
+    }
+  ]
+}

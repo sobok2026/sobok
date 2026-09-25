@@ -1,0 +1,158 @@
+{
+  "id": "스타벅스-딸기-라떼",
+  "name": "스타벅스 딸기 라떼",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "클래식 시럽 추가",
+          "instructions": ["클래식 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "딸기 베이스 추가",
+          "instructions": ["딸기 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "딸기-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "when": {
+                "kind": "container",
+                "value": "standard-cup"
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "텀블러 계량",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "딸기-베이스",
+                  "into": "serving-cup",
+                  "amount": {
+                    "kind": "by-size",
+                    "values": {
+                      "tall": {
+                        "kind": "amount",
+                        "value": 100,
+                        "unit": "ml"
+                      },
+                      "grande": {
+                        "kind": "amount",
+                        "value": 130,
+                        "unit": "ml"
+                      },
+                      "venti": {
+                        "kind": "amount",
+                        "value": 150,
+                        "unit": "ml"
+                      }
+                    }
+                  },
+                  "when": {
+                    "kind": "container",
+                    "value": "tumbler"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮고 굵은 빨대와 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "원본의 딸기 베이스 사이즈별 제조 가능 수량: T 10잔, G 7잔, V 6잔. 기준 원팩 규격은 제시하지 않는다.",
+        "텀블러 계량은 원본에서 Hot/Ice 동일로 안내하지만 제조 표는 차가운 음료 절차이다."
+      ],
+      "review": []
+    }
+  ]
+}

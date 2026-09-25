@@ -1,0 +1,85 @@
+{
+  "id": "cold-brew-batch",
+  "name": "콜드 브루 5lb 배합",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "5lb 배합",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "beans",
+          "label": "Cold Brew Blend",
+          "instructions": ["굵은 분쇄(Coarse Grind) 원두를 사용한다."],
+          "notes": ["그라인더 마스터 15 / G3 그라인더 26(Coarse) / 디팅 그라인더 9."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cold-brew-beans",
+              "into": "brew-container",
+              "amount": {
+                "kind": "amount",
+                "value": 5,
+                "unit": "lb"
+              }
+            }
+          ]
+        },
+        {
+          "id": "water",
+          "label": "정수 물",
+          "instructions": ["원두 5lb에 정수 물 14L 비율로 준비한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "brew-container",
+              "amount": {
+                "kind": "amount",
+                "value": 14,
+                "unit": "l"
+              },
+              "temperature": {
+                "kind": "cold"
+              }
+            }
+          ]
+        },
+        {
+          "id": "steep",
+          "label": "추출 시간",
+          "instructions": ["차가운 물로 20시간 추출한다."],
+          "notes": ["추출 환경 주변 온도 21~27°C 유지."],
+          "operations": [
+            {
+              "action": "steep",
+              "vessel": "brew-container",
+              "duration": {
+                "seconds": 72000,
+                "approximate": false
+              },
+              "temperature": {
+                "kind": "range",
+                "min": 21,
+                "max": 27
+              }
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "제조 완료 후 내부 품질 기한 표시. 피처에 옮긴 후 냉장 최대 7일.",
+        "제공된 제조표의 SCB 또는 Toddy 5lb 배합이다. 3lb TODDY 절차와 수량을 섞지 않는다."
+      ],
+      "review": [],
+      "output": {
+        "materialId": "coldBrew",
+        "amount": null,
+        "description": "제공된 5lb 배합표에는 완성 부피가 명시되지 않았다."
+      }
+    }
+  ]
+}

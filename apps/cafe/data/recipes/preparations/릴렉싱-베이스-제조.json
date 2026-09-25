@@ -1,0 +1,96 @@
+{
+  "id": "릴렉싱-베이스-제조",
+  "name": "릴렉싱 베이스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "티-나누기",
+          "label": "티 나누기",
+          "instructions": ["믹싱 피처 2개에 우려낸 캐모마일&유스베리 티를 각각 1L씩 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "캐모마일-유스베리-티-베이스",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "l"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "캐모마일-유스베리-티-베이스",
+              "into": "mixing-pitcher-2",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "l"
+              }
+            }
+          ]
+        },
+        {
+          "id": "베이스-추가",
+          "label": "베이스 추가",
+          "instructions": ["두 믹싱 피처에 레몬그라스&리치 베이스를 각각 1개(1L)씩 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "레몬그라스-리치-베이스",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "l"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "레몬그라스-리치-베이스",
+              "into": "mixing-pitcher-2",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "l"
+              }
+            }
+          ]
+        },
+        {
+          "id": "혼합",
+          "label": "혼합",
+          "instructions": ["두 피처의 내용물을 각각 잘 섞는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "mixing-pitcher",
+              "toolId": "stirrer"
+            },
+            {
+              "action": "mix",
+              "vessel": "mixing-pitcher-2",
+              "toolId": "stirrer"
+            }
+          ]
+        }
+      ],
+      "notes": ["총 2개의 릴렉싱 베이스가 완성된다. 사용 전 펌핑하여 혼합한다."],
+      "review": [],
+      "output": {
+        "materialId": "릴렉싱-베이스",
+        "amount": null,
+        "description": "믹싱 피처 2개 분량. 각 피처에 티 1L와 베이스 1L를 배합한다."
+      }
+    }
+  ]
+}

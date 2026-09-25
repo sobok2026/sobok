@@ -1,0 +1,239 @@
+{
+  "id": "glazed-foam",
+  "name": "글레이즈드 폼 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "cream",
+          "label": "크림 계량",
+          "instructions": ["콜드 폼 피처에 프릿츠 골드 200ml를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 200,
+                "unit": "ml"
+              },
+              "toolId": "measuring-cup"
+            }
+          ]
+        },
+        {
+          "id": "milk",
+          "label": "우유 계량",
+          "instructions": ["일반 우유 50ml를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 50,
+                "unit": "ml"
+              },
+              "toolId": "measuring-cup"
+            }
+          ]
+        },
+        {
+          "id": "sauce",
+          "label": "소스 펌핑",
+          "instructions": ["10.2ml 화이트 모카 펌프로 글레이즈드 소스를 7회 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "glaze",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 7,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "blend",
+          "label": "블렌딩",
+          "instructions": ["3번 버튼을 1회 누른다. 프로그램 1회는 약 25초이다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "store",
+          "label": "냉장 보관",
+          "instructions": ["제조 후 반드시 냉장 보관하여 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "foam-pitcher",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": ["제조 후 반드시 냉장 보관한다."],
+      "review": [],
+      "output": {
+        "materialId": "foam",
+        "amount": null,
+        "description": "약 10잔 제조 가능. 확정된 ml 완성량은 제시되지 않았다."
+      }
+    },
+    {
+      "id": "large",
+      "name": "대용량 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "cream",
+          "label": "크림 계량",
+          "instructions": ["콜드 폼 피처에 프릿츠 골드 400ml를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 400,
+                "unit": "ml"
+              },
+              "toolId": "measuring-cup"
+            }
+          ]
+        },
+        {
+          "id": "milk",
+          "label": "우유 계량",
+          "instructions": ["일반 우유 100ml를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 100,
+                "unit": "ml"
+              },
+              "toolId": "measuring-cup"
+            }
+          ]
+        },
+        {
+          "id": "sauce",
+          "label": "소스 펌핑",
+          "instructions": ["10.2ml 화이트 모카 펌프로 글레이즈드 소스를 14회 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "glaze",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 14,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "blend",
+          "label": "블렌딩",
+          "instructions": ["3번 버튼을 2회 누른다. 프로그램 1회는 약 25초이다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 2,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "blend-if-thin",
+          "label": "묽은 경우 추가 블렌딩",
+          "instructions": ["물성이 묽을 때는 3번 버튼을 1회 더 눌러 제조한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              },
+              "when": {
+                "kind": "observation",
+                "property": "글레이즈드 폼 물성",
+                "value": "묽음"
+              }
+            }
+          ]
+        },
+        {
+          "id": "store",
+          "label": "냉장 보관",
+          "instructions": ["제조 후 반드시 냉장 보관하여 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "foam-pitcher",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": ["제조 후 반드시 냉장 보관한다."],
+      "review": [],
+      "output": {
+        "materialId": "foam",
+        "amount": null,
+        "description": "약 20잔 제조 가능. 확정된 ml 완성량은 제시되지 않았다."
+      }
+    }
+  ]
+}

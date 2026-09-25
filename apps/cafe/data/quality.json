@@ -1,0 +1,86 @@
+{
+  "beans": {
+    "storage": "room",
+    "lifetime": {
+      "amount": 7,
+      "unit": "days"
+    }
+  },
+  "milk": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 2,
+      "unit": "days"
+    }
+  },
+  "cream": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 24,
+      "unit": "hours"
+    }
+  },
+  "glaze": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 3,
+      "unit": "days"
+    }
+  },
+  "powder": {
+    "storage": "room",
+    "lifetime": {
+      "amount": 7,
+      "unit": "days"
+    }
+  },
+  "mocha": {
+    "storage": "room",
+    "lifetime": {
+      "amount": 24,
+      "unit": "hours"
+    }
+  },
+  "coldBrew": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 7,
+      "unit": "days"
+    }
+  },
+  "classic": {
+    "storage": "room",
+    "lifetime": {
+      "amount": 1,
+      "unit": "months"
+    }
+  },
+  "foam": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 24,
+      "unit": "hours"
+    }
+  },
+  "hojicha": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 24,
+      "unit": "hours"
+    }
+  },
+  "matcha": {
+    "storage": "fridge",
+    "lifetime": {
+      "amount": 24,
+      "unit": "hours"
+    }
+  },
+  "matchaPowder": {
+    "storage": "room",
+    "lifetime": {
+      "amount": 3,
+      "unit": "months"
+    }
+  }
+}

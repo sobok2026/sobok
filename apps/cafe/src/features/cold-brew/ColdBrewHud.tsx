@@ -1,12 +1,12 @@
 import { INGREDIENTS } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
-import { COLD_BREW_HOURS } from '../../content/references'
 import { batchDate, formatAmount } from '../../shared/format'
 import { TextButton } from '../../shared/ui/Button'
 import { WorkButton, WorkHud, WorkMeter, WorkTitle } from '../../shared/ui/WorkControls'
 import type { Action } from '../../simulation/actions'
 import { craftingHandsBusy } from '../../simulation/hands'
 import type { GameState } from '../../simulation/state'
+import { COLD_BREW_HOURS } from '../cold-brew/rules'
 import BatchLabel from '../inventory/BatchLabel'
 import { COLD_BREW_TOOL_NAMES, coldBrewStep } from './rules'
 
@@ -24,7 +24,7 @@ export default function ColdBrewHud({
   const step = coldBrewStep(brew)
   const job = state.jobs.find((item) => item.kind === 'cold-brew' && item.preparationId === brew.id)
   const batch = state.batches.find((item) => item.id === brew.batchId)
-  const ready = brew.progress + 0.0001 >= step.target * (1 - step.tolerance)
+  const ready = brew.progress + 1e-9 >= step.target * (1 - step.tolerance)
   const expired = brew.completedAt !== null && expiryAt(brew.completedAt, INGREDIENTS.coldBrew.lifetime) <= state.time
   const minutes = job ? Math.max(0, Math.ceil((job.endsAt - state.time) / 60)) : 0
   const handsFull = craftingHandsBusy(state)

@@ -1,8 +1,8 @@
 import { INGREDIENTS } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
-import { COLD_BREW_HOURS } from '../../content/references'
 import type { WorkTip as Tip } from '../../shared/work-tip'
 import type { ColdBrew, GameState } from '../../simulation/state'
+import { COLD_BREW_HOURS } from '../cold-brew/rules'
 import { materialTip } from '../inventory/help'
 import { COLD_BREW_TOOL_NAMES, coldBrewStep } from './rules'
 export function coldBrewTip(state: GameState, brew: ColdBrew): Tip {

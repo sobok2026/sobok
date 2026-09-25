@@ -1,0 +1,799 @@
+{
+  "id": "풀-리프-핫-티",
+  "name": "풀 리프 핫 티",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "english-breakfast",
+      "name": "잉글리쉬 브렉퍼스트",
+      "temperature": "hot",
+      "sizes": ["tall", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["사이즈에 맞는 티백을 컵에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "잉글리쉬-브렉퍼스트-풀-리프-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "향 시럽 추가",
+          "instructions": ["고객이 향 시럽 추가를 요청한 경우에만 펌프를 끝까지 눌러 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객이-선택한-향-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "flavored-syrup",
+            "choice": "추가"
+          }
+        },
+        {
+          "id": "step-3",
+          "label": "완료 및 제공",
+          "instructions": [
+            "뜨거운 물을 테두리 아래 6mm까지 붓고 리드와 슬리브를 씌운다. 티백 받침용 티바나 전용 핫 샘플링컵 1개를 함께 제공한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "accessories": ["sleeve", "티바나 전용 핫 샘플링컵 1개"]
+            }
+          ]
+        }
+      ],
+      "notes": ["고객에게 5분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
+      "review": []
+    },
+    {
+      "id": "earl-grey",
+      "name": "얼 그레이",
+      "temperature": "hot",
+      "sizes": ["tall", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["사이즈에 맞는 티백을 컵에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "얼-그레이-풀-리프-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "향 시럽 추가",
+          "instructions": ["고객이 향 시럽 추가를 요청한 경우에만 펌프를 끝까지 눌러 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객이-선택한-향-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "flavored-syrup",
+            "choice": "추가"
+          }
+        },
+        {
+          "id": "step-3",
+          "label": "완료 및 제공",
+          "instructions": [
+            "뜨거운 물을 테두리 아래 6mm까지 붓고 리드와 슬리브를 씌운다. 티백 받침용 티바나 전용 핫 샘플링컵 1개를 함께 제공한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "accessories": ["sleeve", "티바나 전용 핫 샘플링컵 1개"]
+            }
+          ]
+        }
+      ],
+      "notes": ["고객에게 5분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
+      "review": []
+    },
+    {
+      "id": "chai",
+      "name": "차이",
+      "temperature": "hot",
+      "sizes": ["tall", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["사이즈에 맞는 티백을 컵에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "차이-풀-리프-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "향 시럽 추가",
+          "instructions": ["고객이 향 시럽 추가를 요청한 경우에만 펌프를 끝까지 눌러 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객이-선택한-향-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "flavored-syrup",
+            "choice": "추가"
+          }
+        },
+        {
+          "id": "step-3",
+          "label": "완료 및 제공",
+          "instructions": [
+            "뜨거운 물을 테두리 아래 6mm까지 붓고 리드와 슬리브를 씌운다. 티백 받침용 티바나 전용 핫 샘플링컵 1개를 함께 제공한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "accessories": ["sleeve", "티바나 전용 핫 샘플링컵 1개"]
+            }
+          ]
+        }
+      ],
+      "notes": ["고객에게 5분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
+      "review": []
+    },
+    {
+      "id": "hibiscus",
+      "name": "히비스커스",
+      "temperature": "hot",
+      "sizes": ["tall", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["사이즈에 맞는 티백을 컵에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "히비스커스-풀-리프-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "향 시럽 추가",
+          "instructions": ["고객이 향 시럽 추가를 요청한 경우에만 펌프를 끝까지 눌러 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객이-선택한-향-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "flavored-syrup",
+            "choice": "추가"
+          }
+        },
+        {
+          "id": "step-3",
+          "label": "완료 및 제공",
+          "instructions": [
+            "뜨거운 물을 테두리 아래 6mm까지 붓고 리드와 슬리브를 씌운다. 티백 받침용 티바나 전용 핫 샘플링컵 1개를 함께 제공한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "accessories": ["sleeve", "티바나 전용 핫 샘플링컵 1개"]
+            }
+          ]
+        }
+      ],
+      "notes": ["고객에게 5분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
+      "review": []
+    },
+    {
+      "id": "chamomile",
+      "name": "캐모마일",
+      "temperature": "hot",
+      "sizes": ["tall", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["사이즈에 맞는 티백을 컵에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "캐모마일-풀-리프-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "향 시럽 추가",
+          "instructions": ["고객이 향 시럽 추가를 요청한 경우에만 펌프를 끝까지 눌러 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객이-선택한-향-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "flavored-syrup",
+            "choice": "추가"
+          }
+        },
+        {
+          "id": "step-3",
+          "label": "완료 및 제공",
+          "instructions": [
+            "뜨거운 물을 테두리 아래 6mm까지 붓고 리드와 슬리브를 씌운다. 티백 받침용 티바나 전용 핫 샘플링컵 1개를 함께 제공한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "accessories": ["sleeve", "티바나 전용 핫 샘플링컵 1개"]
+            }
+          ]
+        }
+      ],
+      "notes": ["고객에게 5분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
+      "review": []
+    },
+    {
+      "id": "mint",
+      "name": "민트",
+      "temperature": "hot",
+      "sizes": ["tall", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["사이즈에 맞는 티백을 컵에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "티바나-민트-블렌드-풀-리프-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "향 시럽 추가",
+          "instructions": ["고객이 향 시럽 추가를 요청한 경우에만 펌프를 끝까지 눌러 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객이-선택한-향-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "flavored-syrup",
+            "choice": "추가"
+          }
+        },
+        {
+          "id": "step-3",
+          "label": "완료 및 제공",
+          "instructions": [
+            "뜨거운 물을 테두리 아래 6mm까지 붓고 리드와 슬리브를 씌운다. 티백 받침용 티바나 전용 핫 샘플링컵 1개를 함께 제공한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "accessories": ["sleeve", "티바나 전용 핫 샘플링컵 1개"]
+            }
+          ]
+        }
+      ],
+      "notes": ["고객에게 5분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
+      "review": []
+    },
+    {
+      "id": "youthberry",
+      "name": "유스베리",
+      "temperature": "hot",
+      "sizes": ["tall", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["사이즈에 맞는 티백을 컵에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "유스베리-풀-리프-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "향 시럽 추가",
+          "instructions": ["고객이 향 시럽 추가를 요청한 경우에만 펌프를 끝까지 눌러 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객이-선택한-향-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "flavored-syrup",
+            "choice": "추가"
+          }
+        },
+        {
+          "id": "step-3",
+          "label": "완료 및 제공",
+          "instructions": [
+            "뜨거운 물을 테두리 아래 6mm까지 붓고 리드와 슬리브를 씌운다. 티백 받침용 티바나 전용 핫 샘플링컵 1개를 함께 제공한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "accessories": ["sleeve", "티바나 전용 핫 샘플링컵 1개"]
+            }
+          ]
+        }
+      ],
+      "notes": ["고객에게 3분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
+      "review": []
+    },
+    {
+      "id": "green-tea",
+      "name": "제주 유기 녹차",
+      "temperature": "hot",
+      "sizes": ["tall", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["사이즈에 맞는 티백을 컵에 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "제주-유기-녹차-풀-리프-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "piece"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "piece"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "향 시럽 추가",
+          "instructions": ["고객이 향 시럽 추가를 요청한 경우에만 펌프를 끝까지 눌러 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객이-선택한-향-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "flavored-syrup",
+            "choice": "추가"
+          }
+        },
+        {
+          "id": "step-3",
+          "label": "완료 및 제공",
+          "instructions": [
+            "뜨거운 물을 테두리 아래 6mm까지 붓고 리드와 슬리브를 씌운다. 티백 받침용 티바나 전용 핫 샘플링컵 1개를 함께 제공한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "serve",
+              "lid": "always",
+              "accessories": ["sleeve", "티바나 전용 핫 샘플링컵 1개"]
+            }
+          ]
+        }
+      ],
+      "notes": ["고객에게 3분의 티 우림 시간을 안내한다.", "티백 개수 차이 때문에 Tall과 Venti만 제공한다."],
+      "review": []
+    }
+  ]
+}

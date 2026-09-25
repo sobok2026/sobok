@@ -112,6 +112,9 @@ export function createDrinkVisual(parent: THREE.Object3D) {
       visual.target.scale.setScalar(cupRadius(craft.kind, visual.target.position.y) + 0.005)
     }
     const c = craft.contents
+    ;(visual.layers[4].mesh.material as THREE.MeshStandardMaterial).color.set(
+      craft.consumed.matcha ? '#568438' : '#967345',
+    )
     const amounts = craft.mixed
       ? [0, c.coffee + c.sauce + extraction, c.water, c.milk, c.tea, c.foam]
       : [c.sauce, c.coffee + extraction, c.water, c.milk, c.tea, c.foam]
@@ -171,5 +174,5 @@ export function createDrinkVisual(parent: THREE.Object3D) {
     visual.shotLiquid.scale.y = Math.max(0.001, shotFill)
     visual.shotLiquid.position.y = 0.003 + 0.0285 * shotFill
   }
-  return { root, update }
+  return { root, shot, update }
 }

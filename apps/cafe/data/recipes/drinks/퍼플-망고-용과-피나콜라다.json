@@ -1,0 +1,172 @@
+{
+  "id": "퍼플-망고-용과-피나콜라다",
+  "name": "퍼플 망고 용과 피나콜라다",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall"],
+      "steps": [
+        {
+          "id": "재료-계량",
+          "label": "재료 계량",
+          "instructions": ["블렌더 피처에 럼, 코코넛 베이스, 유자진저 베이스, 파인코코 베이스를 순서대로 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바카디-카르타-블랑카",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            },
+            {
+              "action": "add",
+              "materialId": "코코넛-베이스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 2,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            },
+            {
+              "action": "add",
+              "materialId": "유자진저-베이스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 0.5,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            },
+            {
+              "action": "add",
+              "materialId": "파인코코-베이스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "scoop"
+              },
+              "toolId": "five-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop-tall"
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["블렌더 1번 버튼을 한 번 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "망고-용과-스월",
+          "label": "망고 용과 스월",
+          "instructions": ["동결건조 망고 용과를 1티스푼 스쿱으로 1회 넣어 스월한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "동결건조-망고-용과",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            },
+            {
+              "action": "swirl",
+              "vessel": "blender-pitcher"
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["전용잔에 쌓듯이 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "cocktail-glass",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "토핑",
+          "label": "토핑",
+          "instructions": ["동결건조 망고 용과를 1티스푼 스쿱으로 반 스쿱 뿌리듯이 토핑한다."],
+          "notes": ["너무 뭉치지 않도록 뿌려준다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "동결건조-망고-용과",
+              "into": "cocktail-glass",
+              "amount": {
+                "kind": "count",
+                "value": 0.5,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["전용잔으로 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

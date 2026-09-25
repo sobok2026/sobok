@@ -1,0 +1,285 @@
+{
+  "id": "체리블라썸-백도-크림-프라푸치노",
+  "name": "체리블라썸 백도 크림 프라푸치노",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "화이트 모카 소스 추가",
+          "instructions": ["화이트 모카 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "화이트-모카-소스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "백도 파우더 추가",
+          "instructions": ["백도 파우더 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "백도-파우더",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "scoop"
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop",
+                "referenceSize": "tall"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "크림 베이스 추가",
+          "instructions": ["크림 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "크림-베이스",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "pump"
+              },
+              "toolId": "base-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "블렌딩",
+          "instructions": ["블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "밀크 푸딩 추가",
+          "instructions": ["밀크 푸딩 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "밀크-푸딩",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "scoop"
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-9",
+          "label": "피치 젤리 추가",
+          "instructions": ["피치 젤리 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "피치-젤리",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "scoop"
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-10",
+          "label": "체리블라썸 스트로베리 소스 추가",
+          "instructions": ["체리블라썸 스트로베리 소스 추가"],
+          "notes": ["컵 벽면의 반을 왕복하며 드리즐한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "체리블라썸-스트로베리-소스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count-range",
+                "min": 3,
+                "max": 4,
+                "unit": "cycle"
+              },
+              "toolId": "drizzle-bottle"
+            }
+          ]
+        },
+        {
+          "id": "step-11",
+          "label": "블렌딩 음료 붓기",
+          "instructions": ["블렌딩 음료 붓기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-12",
+          "label": "일반 휘핑 크림 추가",
+          "instructions": ["일반 휘핑 크림 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "일반-휘핑-크림",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 정량 미기재"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-13",
+          "label": "블라썸 초콜릿 토핑 추가",
+          "instructions": ["블라썸 초콜릿 토핑 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "블라썸-초콜릿-토핑",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count-range",
+                "min": 3,
+                "max": 4,
+                "unit": "tap"
+              },
+              "toolId": "topping-shaker"
+            }
+          ]
+        },
+        {
+          "id": "step-14",
+          "label": "고양이 귀 사인판 추가",
+          "instructions": ["고양이 귀 사인판 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고양이-귀-사인판",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-15",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮고 굵은 빨대와 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

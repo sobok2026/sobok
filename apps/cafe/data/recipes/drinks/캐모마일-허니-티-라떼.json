@@ -1,0 +1,352 @@
+{
+  "id": "캐모마일-허니-티-라떼",
+  "name": "캐모마일 허니 티 라떼",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "베이스-스팀",
+          "label": "베이스 스팀",
+          "instructions": [
+            "한 단계 아래 사이즈 선까지 우유를 넣고, 주문 사이즈 선까지 쿼드 스트랭스 캐모마일 티를 넣어 3~5초 공기를 주입하며 스팀한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "line",
+                    "line": "size",
+                    "referenceSize": "short"
+                  },
+                  "grande": {
+                    "kind": "line",
+                    "line": "size",
+                    "referenceSize": "tall"
+                  },
+                  "venti": {
+                    "kind": "line",
+                    "line": "size",
+                    "referenceSize": "grande"
+                  }
+                }
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "쿼드-스트랭스-캐모마일-티",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "3~5초 공기 주입 후 스팀",
+              "airDuration": {
+                "minSeconds": 3,
+                "maxSeconds": 5
+              }
+            }
+          ]
+        },
+        {
+          "id": "허니-캐모마일-시럽-펌핑",
+          "label": "허니 캐모마일 시럽 펌핑",
+          "instructions": ["허니 캐모마일 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "허니-캐모마일-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "캐모마일-티백-추가",
+          "label": "캐모마일 티백 추가",
+          "instructions": ["캐모마일 티백을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "캐모마일-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "베이스-혼합",
+          "label": "베이스 혼합",
+          "instructions": [
+            "스팀 스푼으로 컵 테두리 아래 12mm까지 베이스를 붓고 머들러로 시럽과 섞은 뒤, 스팀한 베이스의 폼을 6mm까지 올린다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              },
+              "portion": "liquid",
+              "toolId": "steam-scoop"
+            },
+            {
+              "action": "mix",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            },
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "portion": "foam",
+              "toolId": "steam-scoop"
+            }
+          ]
+        },
+        {
+          "id": "옐로우-파우더-추가",
+          "label": "옐로우 파우더 추가",
+          "instructions": ["옐로우 파우더을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "옐로우-파우더",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count-range",
+                "min": 4,
+                "max": 5,
+                "unit": "tap"
+              },
+              "toolId": "mesh-shaker"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "standard"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    },
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "허니-캐모마일-시럽-펌핑",
+          "label": "허니 캐모마일 시럽 펌핑",
+          "instructions": ["허니 캐모마일 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "허니-캐모마일-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "일반-우유-추가",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "쿼드-스트랭스-캐모마일-티-추가",
+          "label": "쿼드 스트랭스 캐모마일 티 추가",
+          "instructions": ["쿼드 스트랭스 캐모마일 티을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "쿼드-스트랭스-캐모마일-티",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            }
+          ]
+        },
+        {
+          "id": "혼합",
+          "label": "혼합",
+          "instructions": ["머들러로 시럽과 우유를 잘 섞는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            }
+          ]
+        },
+        {
+          "id": "캐모마일-티백-추가",
+          "label": "캐모마일 티백 추가",
+          "instructions": ["캐모마일 티백을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "캐모마일-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "옐로우-파우더-추가",
+          "label": "옐로우 파우더 추가",
+          "instructions": ["옐로우 파우더을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "옐로우-파우더",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count-range",
+                "min": 4,
+                "max": 5,
+                "unit": "tap"
+              },
+              "toolId": "mesh-shaker"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "strawless"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

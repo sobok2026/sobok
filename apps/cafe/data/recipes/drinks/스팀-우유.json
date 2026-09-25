@@ -1,0 +1,137 @@
+{
+  "id": "스팀-우유",
+  "name": "스팀 우유",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["short", "tall"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "우유 스팀",
+          "instructions": ["피처 사이즈별 적정선까지 우유를 계량해 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "standard"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "완성 및 제공",
+          "instructions": ["스팀 우유를 테두리 아래 12mm까지 채운 후 우유 거품을 6mm 두께로 올린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              },
+              "portion": "liquid"
+            },
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "depth",
+                "millimeters": 6
+              },
+              "portion": "foam"
+            },
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": ["원본에서 Grande·Venti 우유 계량 칸은 회색으로 제외되어 있다."],
+      "review": []
+    },
+    {
+      "id": "kids",
+      "name": "키즈",
+      "temperature": "hot",
+      "sizes": ["short", "tall"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "우유 스팀",
+          "instructions": ["피처 사이즈별 적정선까지 우유를 계량해 스팀한다. 키즈 음료는 54°C까지 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "standard",
+              "temperature": {
+                "kind": "celsius",
+                "value": 54
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "완성 및 제공",
+          "instructions": ["스팀 우유를 테두리 아래 12mm까지 채운 후 우유 거품을 6mm 두께로 올린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              },
+              "portion": "liquid"
+            },
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "depth",
+                "millimeters": 6
+              },
+              "portion": "foam"
+            },
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": ["원본에서 Grande·Venti 우유 계량 칸은 회색으로 제외되어 있다."],
+      "review": []
+    }
+  ]
+}

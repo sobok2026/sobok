@@ -1,0 +1,181 @@
+{
+  "id": "스타벅스-에어로카노",
+  "name": "스타벅스 에어로카노",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "에스프레소 추출",
+          "instructions": ["에스프레소 추출"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "shot"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "shot"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "shot"
+                  }
+                }
+              },
+              "method": "regular"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "tall"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "grande"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "scoop",
+                    "referenceSize": "venti"
+                  }
+                }
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "샷과 얼음 혼합",
+          "instructions": ["샷과 얼음 혼합"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "swirl",
+              "vessel": "steam-pitcher"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "스팀 후 공기 주입",
+          "instructions": ["스팀 후 공기 주입"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "스팀 봉을 샷에 담근다.",
+              "duration": {
+                "seconds": 6,
+                "approximate": false
+              }
+            },
+            {
+              "action": "aerate",
+              "vessel": "steam-pitcher",
+              "duration": {
+                "seconds": 4,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "스월링하여 붓기",
+          "instructions": ["스월링하여 붓기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "swirl",
+              "vessel": "steam-pitcher"
+            },
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": ["고객이 커스텀 시럽 추가를 요청하면 7.5ml 시럽 펌프로 T/G/V 각각 2/3/4펌프를 사용한다."],
+      "review": []
+    }
+  ]
+}

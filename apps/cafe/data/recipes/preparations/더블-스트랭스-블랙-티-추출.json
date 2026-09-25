@@ -1,0 +1,203 @@
+{
+  "id": "더블-스트랭스-블랙-티-추출",
+  "name": "더블 스트랭스 블랙 티 추출",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "1l",
+      "name": "1L 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["워터 피처에 1리터용 블랙 아이스 티백 1개를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "블랙-아이스-티백",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "티 우리기",
+          "instructions": ["뜨거운 물 500ml를 붓고 5분 동안 우린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 500,
+                "unit": "ml"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "vessel": "water-pitcher",
+              "duration": {
+                "seconds": 300,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "티백 제거",
+          "instructions": ["집게로 티백을 들어올려 짜지 않고 안의 우려진 티가 다 빠질 때까지 기다린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "remove",
+              "itemId": "블랙-아이스-티백",
+              "from": "water-pitcher",
+              "dispose": true
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "정수 추가",
+          "instructions": ["워터 피처에 총 1L가 되도록 정수를 채운다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 1,
+                "unit": "l"
+              }
+            }
+          ]
+        }
+      ],
+      "notes": ["2020년 도입된 1리터용 블랙 아이스 티백 기준."],
+      "review": [],
+      "output": {
+        "materialId": "더블-스트랭스-블랙-티",
+        "amount": {
+          "kind": "amount",
+          "value": 1,
+          "unit": "l"
+        },
+        "description": "1L 더블 스트랭스 블랙 티"
+      }
+    },
+    {
+      "id": "2l",
+      "name": "2L 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["워터 피처에 1리터용 블랙 아이스 티백 2개를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "블랙-아이스-티백",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "티 우리기",
+          "instructions": ["뜨거운 물 1000ml를 붓고 5분 동안 우린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 1000,
+                "unit": "ml"
+              },
+              "temperature": {
+                "kind": "hot"
+              }
+            },
+            {
+              "action": "steep",
+              "vessel": "water-pitcher",
+              "duration": {
+                "seconds": 300,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "티백 제거",
+          "instructions": ["집게로 티백을 들어올려 짜지 않고 안의 우려진 티가 다 빠질 때까지 기다린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "remove",
+              "itemId": "블랙-아이스-티백",
+              "from": "water-pitcher",
+              "dispose": true
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "정수 추가",
+          "instructions": ["워터 피처에 총 2L가 되도록 정수를 채운다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 2,
+                "unit": "l"
+              }
+            }
+          ]
+        }
+      ],
+      "notes": ["2020년 도입된 1리터용 블랙 아이스 티백 기준."],
+      "review": [],
+      "output": {
+        "materialId": "더블-스트랭스-블랙-티",
+        "amount": {
+          "kind": "amount",
+          "value": 2,
+          "unit": "l"
+        },
+        "description": "2L 더블 스트랭스 블랙 티"
+      }
+    }
+  ]
+}

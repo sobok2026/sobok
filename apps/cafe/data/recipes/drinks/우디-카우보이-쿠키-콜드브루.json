@@ -1,0 +1,188 @@
+{
+  "id": "우디-카우보이-쿠키-콜드브루",
+  "name": "우디 카우보이 쿠키 콜드브루",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "바닐라 시럽 추가",
+          "instructions": ["바닐라 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "콜드 브루 추가",
+          "instructions": ["콜드 브루 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "coldBrew",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "정수 추가",
+          "instructions": ["정수 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "슈 폼 추가",
+          "instructions": ["슈 폼 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "슈-폼",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "바모카 추가",
+          "instructions": ["바모카 추가"],
+          "notes": ["벌집 모양으로 올린다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "mocha",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "벌집 모양을 그리는 드리즐 양 미기재"
+              },
+              "toolId": "drizzle-bottle"
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "바모카 추가",
+          "instructions": ["바모카 추가"],
+          "notes": ["벌집 모양 위 원을 두 번 돌려 마무리한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "mocha",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "turn"
+              },
+              "toolId": "drizzle-bottle"
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "쿠키 토핑 추가",
+          "instructions": ["쿠키 토핑 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "쿠키-토핑",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-9",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮고 굵은 빨대와 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

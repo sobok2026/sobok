@@ -1,0 +1,581 @@
+[
+  {
+    "dose": {
+      "value": 10.2,
+      "unit": "ml"
+    },
+    "id": "white-mocha-pump",
+    "kind": "pump",
+    "name": "화이트 모카 펌프",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": {
+      "value": 7.5,
+      "unit": "ml"
+    },
+    "id": "syrup-pump",
+    "kind": "pump",
+    "name": "시럽 펌프",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": {
+      "value": 3.75,
+      "unit": "ml"
+    },
+    "id": "cbs-pump",
+    "kind": "pump",
+    "name": "CBS 펌프",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "tea-scoop",
+    "kind": "scoop",
+    "name": "1티스푼 스쿱",
+    "notes": ["스쿱의 재료별 g·ml 환산은 확인된 값만 사용할 수 있습니다."],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "two-teaspoon-scoop",
+    "kind": "scoop",
+    "name": "2티스푼 스쿱",
+    "notes": ["스쿱의 재료별 g·ml 환산은 확인된 값만 사용할 수 있습니다."],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "ice-scoop",
+    "kind": "scoop",
+    "name": "사이즈별 얼음 스쿱",
+    "notes": ["스쿱의 재료별 g·ml 환산은 확인된 값만 사용할 수 있습니다."],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "stirrer",
+    "kind": "utensil",
+    "name": "머들러",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "spatula",
+    "kind": "utensil",
+    "name": "스패튤러",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "drizzle-bottle",
+    "kind": "utensil",
+    "name": "드리즐 보틀",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "topping-shaker",
+    "kind": "utensil",
+    "name": "파우더 쉐이커",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "milk-carton",
+    "kind": "utensil",
+    "name": "우유팩",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "tea-bottle",
+    "kind": "utensil",
+    "name": "호지차 샷 보틀",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "matcha-bottle",
+    "kind": "utensil",
+    "name": "말차 샷 보틀",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "cold-foam-blender",
+    "kind": "machine",
+    "name": "콜드 폼 블렌더",
+    "notes": [],
+    "programs": [
+      {
+        "duration": {
+          "seconds": 25,
+          "approximate": true
+        },
+        "id": "3",
+        "name": "3번 버튼"
+      }
+    ]
+  },
+  {
+    "dose": null,
+    "id": "hot-water-dispenser",
+    "kind": "machine",
+    "name": "핫 디스펜서",
+    "notes": ["버튼별 토출 ml는 확인되지 않았습니다."],
+    "programs": [
+      {
+        "duration": null,
+        "id": "t",
+        "name": "T"
+      },
+      {
+        "duration": null,
+        "id": "g",
+        "name": "G"
+      },
+      {
+        "duration": null,
+        "id": "v",
+        "name": "V"
+      }
+    ]
+  },
+  {
+    "dose": null,
+    "id": "espresso-machine",
+    "kind": "machine",
+    "name": "에스프레소 머신",
+    "notes": ["공식 가정용 안내의 싱글 9g·더블 18g은 한국 매장 마스트레나의 원두량으로 확정하지 않았습니다."],
+    "programs": [
+      {
+        "duration": null,
+        "id": "regular",
+        "name": "일반 에스프레소 추출"
+      },
+      {
+        "duration": null,
+        "id": "rinse",
+        "name": "샷 글라스 린스 버튼"
+      }
+    ]
+  },
+  {
+    "dose": null,
+    "id": "steam-wand",
+    "kind": "machine",
+    "name": "스팀 완드",
+    "notes": ["목표 온도 도달 과정의 실제 장비 규격이 필요합니다."],
+    "programs": [
+      {
+        "duration": null,
+        "id": "x-hot",
+        "name": "X-Hot"
+      }
+    ]
+  },
+  {
+    "dose": null,
+    "id": "blender",
+    "kind": "machine",
+    "name": "블렌더",
+    "notes": [],
+    "programs": [
+      {
+        "duration": null,
+        "id": "1",
+        "name": "1번 버튼"
+      },
+      {
+        "duration": null,
+        "id": "3",
+        "name": "3 버튼"
+      },
+      {
+        "duration": null,
+        "id": "4",
+        "name": "4번 버튼"
+      }
+    ]
+  },
+  {
+    "dose": null,
+    "id": "base-pump",
+    "kind": "pump",
+    "name": "프라푸치노 베이스 펌프",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "five-teaspoon-scoop",
+    "kind": "scoop",
+    "name": "5티스푼 스쿱",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "jigger",
+    "kind": "utensil",
+    "name": "지거",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "steam-spoon",
+    "kind": "scoop",
+    "name": "스팀 스푼",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "tongs",
+    "kind": "utensil",
+    "name": "집게",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "fine-strainer",
+    "kind": "utensil",
+    "name": "미세거름망",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "strainer",
+    "kind": "utensil",
+    "name": "스트레이너",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "bar-spoon",
+    "kind": "utensil",
+    "name": "바 스푼",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "fizzio",
+    "kind": "machine",
+    "name": "피지오 머신",
+    "notes": [],
+    "programs": [
+      {
+        "duration": null,
+        "id": "t",
+        "name": "T 버튼"
+      },
+      {
+        "duration": null,
+        "id": "g",
+        "name": "G 버튼"
+      },
+      {
+        "duration": null,
+        "id": "v",
+        "name": "V 버튼"
+      },
+      {
+        "duration": null,
+        "id": "extra-t",
+        "name": "Extra T 버튼"
+      },
+      {
+        "duration": null,
+        "id": "extra-g",
+        "name": "Extra G 버튼"
+      },
+      {
+        "duration": null,
+        "id": "extra-v",
+        "name": "Extra V 버튼"
+      }
+    ]
+  },
+  {
+    "dose": null,
+    "id": "food-scissors",
+    "kind": "utensil",
+    "name": "식가위",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "etching-tool",
+    "kind": "utensil",
+    "name": "에칭 도구",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "measuring-cup",
+    "kind": "utensil",
+    "name": "계량컵",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "mesh-shaker",
+    "kind": "utensil",
+    "name": "매쉬망 파우더 쉐이커",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": {
+      "value": 15,
+      "unit": "ml"
+    },
+    "id": "white-mocha-pump-15",
+    "kind": "pump",
+    "name": "화이트 모카 펌프 15ml",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "steam-scoop",
+    "kind": "utensil",
+    "name": "스팀 스쿱",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "whipping-dispenser",
+    "kind": "machine",
+    "name": "휘핑 디스펜서",
+    "notes": [],
+    "programs": [
+      {
+        "duration": null,
+        "id": "charge",
+        "name": "휘핑 가스 주입"
+      }
+    ]
+  },
+  {
+    "dose": null,
+    "id": "ice-scoop-tall",
+    "kind": "scoop",
+    "name": "Tall CBS 얼음 스쿱",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "ice-scoop-grande",
+    "kind": "scoop",
+    "name": "Grande CBS 얼음 스쿱",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "ice-scoop-venti",
+    "kind": "scoop",
+    "name": "Venti CBS 얼음 스쿱",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "unspecified-syrup-pump",
+    "kind": "pump",
+    "name": "시럽 펌프 (토출량 미기재)",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "ice-scoop-12oz",
+    "kind": "scoop",
+    "name": "12oz 아이스 스쿱",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "condiment-shaker",
+    "kind": "utensil",
+    "name": "컨디먼트 쉐이커",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "whipping-head",
+    "kind": "utensil",
+    "name": "휘핑 디스펜서 헤드",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "frappuccino-roast-pump",
+    "kind": "pump",
+    "name": "프라푸치노 로스트 펌프",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "mocha-pump",
+    "kind": "pump",
+    "name": "모카 소스 펌프",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "dolce-pump",
+    "kind": "pump",
+    "name": "돌체 시럽 펌프",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "green-tea-scoop",
+    "kind": "scoop",
+    "name": "그린 티 파우더용 스쿱",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "triangular-whisk",
+    "kind": "utensil",
+    "name": "리저브 전용 삼각 거품기",
+    "notes": [],
+    "programs": []
+  },
+  {
+    "dose": {
+      "value": 100,
+      "unit": "g"
+    },
+    "id": "ice-cream-scoop",
+    "kind": "scoop",
+    "name": "아이스크림 스쿱",
+    "notes": ["사케라또 아포가토 원본의 아이스크림 1스쿱 기준입니다."],
+    "programs": []
+  },
+  {
+    "dose": null,
+    "id": "reserve-grinder",
+    "kind": "machine",
+    "name": "리저브 에스프레소 그라인더",
+    "notes": [],
+    "programs": [
+      {
+        "duration": null,
+        "id": "dose",
+        "name": "포터필터 도징"
+      }
+    ]
+  },
+  {
+    "dose": null,
+    "id": "reserve-espresso-machine",
+    "kind": "machine",
+    "name": "리저브 에스프레소 머신",
+    "notes": [],
+    "programs": [
+      {
+        "duration": null,
+        "id": "regular",
+        "name": "에스프레소 추출"
+      },
+      {
+        "duration": null,
+        "id": "ristretto",
+        "name": "리스트레토 추출"
+      }
+    ]
+  },
+  {
+    "dose": null,
+    "id": "frappuccino-flavor-pump",
+    "kind": "pump",
+    "name": "프라푸치노 향 시럽·소스 펌프",
+    "notes": ["원본 카드에는 펌프 횟수만 명시되어 있어 1펌프 용량을 확정하지 않는다."],
+    "programs": []
+  },
+  {
+    "id": "grind-master",
+    "name": "Grind Master",
+    "kind": "machine",
+    "dose": null,
+    "programs": [
+      {
+        "id": "15-coarse",
+        "name": "#15 (COARSE)",
+        "duration": null
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "bunn-g3-grinder",
+    "name": "BUNN G3 grinder",
+    "kind": "machine",
+    "dose": null,
+    "programs": [
+      {
+        "id": "coarse",
+        "name": "COARSE",
+        "duration": null
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "automatic-whipping-machine",
+    "name": "자동휘핑머신",
+    "kind": "machine",
+    "dose": null,
+    "programs": [],
+    "notes": []
+  },
+  {
+    "id": "whipping-extraction-tube",
+    "name": "추출 실리콘 튜브",
+    "kind": "utensil",
+    "dose": null,
+    "programs": [],
+    "notes": []
+  },
+  {
+    "id": "dishwasher",
+    "name": "식기세척기",
+    "kind": "machine",
+    "dose": null,
+    "programs": [],
+    "notes": []
+  }
+]

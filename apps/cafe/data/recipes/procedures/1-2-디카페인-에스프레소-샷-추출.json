@@ -1,0 +1,88 @@
+{
+  "id": "1-2-디카페인-에스프레소-샷-추출",
+  "name": "1/2 디카페인 에스프레소 샷 추출",
+  "kind": "procedure",
+  "variants": [
+    {
+      "id": "half-decaf",
+      "name": "1/2 디카페인 샷 추출",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "샷 글라스 린스",
+          "instructions": ["일반·1/2 디카페인 샷 글라스를 구분하지 않지만 반드시 린스 버튼으로 세척 후 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "espresso-machine",
+              "vessel": "shot-glass",
+              "program": "rinse",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "1/2 디카페인 추출",
+          "instructions": [
+            "마스트레나 좌측 중앙 1/2 Decaf Shot 버튼을 사용한다. 싱글 샷 버튼은 없고 4 Shot 버튼은 사용하지 않는다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "unspecified",
+                "description": "주문에 필요한 샷 수에 맞추되 싱글 버튼은 없으며 4 Shot 버튼은 사용하지 않는다."
+              },
+              "method": "half-decaf",
+              "equipmentId": "espresso-machine"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "남은 샷 폐기",
+          "instructions": ["음료 제조 후 남은 1/2 디카페인 1샷은 폐기한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "remove",
+              "itemId": "1-2-디카페인-에스프레소",
+              "from": "shot-glass",
+              "dispose": true
+            }
+          ],
+          "when": {
+            "kind": "observation",
+            "property": "leftover-half-decaf-shots",
+            "value": "1"
+          }
+        },
+        {
+          "id": "step-4",
+          "label": "컵 마킹",
+          "instructions": ["라벨프린터는 1/2 Decaf로 표시한다. 직접 마킹 시 DECAF 박스에 1/2 Decaf를 표시한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "label",
+              "vessel": "serving-cup",
+              "labels": ["DECAF: 1/2 Decaf"]
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "디카페인 호퍼와 메인 호퍼의 원두가 반반씩 자동으로 그라인딩되므로 별도 계량하지 않는다.",
+        "원본은 1/2 디카페인을 카페인 함량이 절반이라는 의미로 설명한다.",
+        "그 밖의 음료 제조 방법과 마킹명은 동일하다."
+      ],
+      "review": []
+    }
+  ]
+}

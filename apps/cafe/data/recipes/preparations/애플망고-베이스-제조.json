@@ -1,0 +1,85 @@
+{
+  "id": "애플망고-베이스-제조",
+  "name": "애플망고 베이스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "뉴 자몽 망고 소스 추가",
+          "instructions": ["뉴 자몽 망고 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "뉴-자몽-망고-소스",
+              "into": "did",
+              "amount": {
+                "kind": "amount",
+                "value": 200,
+                "unit": "ml"
+              },
+              "toolId": "measuring-cup"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "애플망고 소스 추가",
+          "instructions": ["애플망고 소스 추가"],
+          "notes": ["원본은 1개로 표기하며 해당 단위의 용량은 제시하지 않는다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "애플망고-소스",
+              "into": "did",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "골고루 혼합",
+          "instructions": ["골고루 혼합"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "did",
+              "toolId": "five-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "냉장 보관",
+          "instructions": ["냉장 보관"],
+          "notes": ["사용 전 잘 혼합한 후 5티스푼 스쿱으로 사용한다."],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "did",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "애플망고-베이스",
+        "amount": null,
+        "description": "완성량은 원본에 명시되지 않았다."
+      }
+    }
+  ]
+}

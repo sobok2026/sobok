@@ -10,8 +10,10 @@ import {
   workMaterial as standard,
 } from '../../shared/visuals/work-geometry'
 import type { GameState } from '../../simulation/state'
-import { cupSize } from '../inventory/cups'
+import { COLD_BREW_OUTLET } from '../cold-brew/equipment'
+import { cupService, cupSize } from '../inventory/cups'
 import { createDrinkVisual } from './drink-visual'
+import { ESPRESSO_OUTLET, STEAM_PITCHER_SPOT } from './espresso-machine'
 import { type CraftTool, espressoFill, operationFor } from './rules'
 
 export function createCraftVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
@@ -85,10 +87,15 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
   cylinder(bottle, 0.038, 0.042, 0.17, chocolate)
   cylinder(bottle, 0.006, 0.03, 0.045, cream, 0.106)
   addVesselLabel(bottle, '바모카', '#77513b', 0.062, 0.043, -0.015, 0.041)
-  const teaBottle = tool('tea-bottle')
-  cylinder(teaBottle, 0.065, 0.062, 0.24, standard('#9b8056'))
-  cylinder(teaBottle, 0.067, 0.067, 0.025, standard('#45644d'), 0.133)
-  addVesselLabel(teaBottle, '호지차', '#756342', 0.09, 0.056, -0.008, 0.065)
+  for (const [id, label, color] of [
+    ['tea-bottle', '호지차', '#967345'],
+    ['matcha-bottle', '말차', '#568438'],
+  ] as const) {
+    const bottle = tool(id)
+    cylinder(bottle, 0.065, 0.062, 0.24, standard(color))
+    cylinder(bottle, 0.067, 0.067, 0.025, standard('#45644d'), 0.133)
+    addVesselLabel(bottle, label, color, 0.09, 0.056, -0.008, 0.065)
+  }
   const shaker = tool('shaker')
   cylinder(shaker, 0.038, 0.035, 0.105, standard('#c69b59'))
   cylinder(shaker, 0.04, 0.04, 0.025, steel, 0.065)
@@ -150,11 +157,11 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       const op = operationFor(cup.recipe, cup.step, c)
       const job = state.jobs.find((item) => item.kind === 'craft-machine' && item.cupId === cup.id)
       const extraction =
-        job?.machine === 'espresso' && cup.recipe !== 'glazed-iced'
+        job?.machine === 'espresso' && op?.destination !== 'shot-glass'
           ? Math.min(1, (state.time - job.startedAt) / (job.endsAt - job.startedAt)) * shotFill
           : 0
       const shotExtraction =
-        job?.machine === 'espresso' && cup.recipe === 'glazed-iced'
+        job?.machine === 'espresso' && op?.destination === 'shot-glass'
           ? Math.min(1, (state.time - job.startedAt) / (job.endsAt - job.startedAt))
           : null
       ;(c.location === 'hand' ? held : bench).update(
@@ -167,23 +174,39 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       )
       held.root.rotation.z = Math.sin(now / 650) * 0.018
       const station = c.location === 'hand' ? null : c.location
-      if (station) bench.root.position.fromArray(cupSpot(station))
+      bench.shot.position.y = 0
+      if (station) {
+        bench.root.position.fromArray(cupSpot(station))
+        // Stage the serving cup alongside the machine while the shot glass occupies its outlet.
+        if (station === 'espresso' && (op?.destination === 'shot-glass' || (c.shotReady && !c.shotTransferred))) {
+          bench.root.position.x += 0.48
+          bench.root.position.z -= 0.06
+          bench.root.position.y = 1.075
+          bench.shot.position.y = 0.035
+        }
+      }
       const key = `${cup.id}:${op?.id}`
       if (key !== previous) {
         previous = key
         previousProgress = c.progress
       }
-      if (c.progress > previousProgress && op && ['pump', 'sprinkle', 'ice', 'lid', 'shake'].includes(op.kind))
+      if (
+        c.progress > previousProgress &&
+        op &&
+        ['dispense', 'pump', 'sprinkle', 'ice', 'lid', 'shake'].includes(op.kind)
+      )
         pulseUntil = now + 280
       previousProgress = c.progress
       const pulse = Math.max(0, (pulseUntil - now) / 280)
-      const spot = station ? cupSpot(station) : [0, 0, 0]
+      const spot: [number, number, number] = station ? bench.root.position.toArray() : [0, 0, 0]
       if (station === 'steam' && RECIPES[cup.recipe].variant === 'HOT' && (c.pitcherReserved || c.pitcherMilk > 0)) {
         receivingPitcher.visible = c.tool !== 'pitcher'
         receivingPitcher.position.set(spot[0] - 0.28, spot[1], spot[2])
         pitcherMilk.scale.y = Math.max(
           0.001,
-          c.pitcherMilk / recipeFor(cup.recipe, cupSize(c.kind)).steps.find((step) => step.usesPitcher)!.costs.milk!,
+          c.pitcherMilk /
+            recipeFor(cup.recipe, cupSize(c.kind), cupService(c.kind)).steps.find((step) => step.usesPitcher)!.costs
+              .milk!,
         )
         pitcherMilk.position.y = 0.008 + 0.085 * pitcherMilk.scale.y
       }
@@ -199,7 +222,7 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         camera.localToWorld(handPosition)
         camera.getWorldQuaternion(handRotation)
         if (station && (active || pulse > 0)) {
-          const receiverX = op?.kind === 'steam' ? spot[0] - 0.28 : spot[0]
+          const receiverX = op?.fillsPitcher ? spot[0] - 0.28 : spot[0]
           model.position.set(receiverX + 0.15, spot[1] + 0.47, spot[2])
           model.rotation.set(0, 0, 0.85 + Math.sin(now / 140) * 0.025)
           if (op?.kind === 'stir') {
@@ -223,15 +246,19 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
           model.quaternion.copy(handRotation)
         }
       }
-      const pouring = station && op && active && ['steam', 'pour', 'drizzle', 'transfer'].includes(op.kind)
-      if (station && (pouring || job?.machine === 'espresso' || (op?.kind === 'pump' && pulse > 0))) {
-        const x =
-          op?.kind === 'steam'
-            ? spot[0] - 0.28
-            : job?.machine === 'espresso' && cup.recipe === 'glazed-iced'
-              ? spot[0] - 0.48
-              : spot[0]
+      const pouring = station && op && active && ['pour', 'drizzle', 'transfer'].includes(op.kind)
+      if (
+        station &&
+        (pouring || job?.machine === 'espresso' || ((op?.kind === 'pump' || op?.kind === 'dispense') && pulse > 0))
+      ) {
+        const x = op?.fillsPitcher
+          ? spot[0] - 0.28
+          : job?.machine === 'espresso' && op?.destination === 'shot-glass'
+            ? spot[0] - 0.48
+            : spot[0]
         start.set(x + (job ? 0 : 0.09), job ? 1.43 : spot[1] + 0.44, job ? staffFacingZ(-0.68) : spot[2])
+        if (job?.machine === 'espresso') start.fromArray(ESPRESSO_OUTLET)
+        if (station === 'brew' && op?.kind === 'dispense') start.fromArray(COLD_BREW_OUTLET)
         const fillHeight = Math.min(
           CUP_DIMENSIONS[c.kind].height - 0.018,
           (c.contents.sauce +
@@ -246,8 +273,12 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         end.set(
           x,
           spot[1] +
-            (op?.kind === 'steam' ? 0.1 : cup.recipe === 'glazed-iced' && job ? 0.05 : Math.max(0.025, fillHeight)),
-          spot[2] + (job && cup.recipe === 'glazed-iced' ? 0.06 : 0),
+            (op?.fillsPitcher
+              ? 0.1
+              : op?.destination === 'shot-glass' && job
+                ? bench.shot.position.y + 0.05
+                : Math.max(0.025, fillHeight)),
+          spot[2] + (job && op?.destination === 'shot-glass' ? 0.06 : 0),
         )
         direction.subVectors(end, start)
         stream.position.copy(start).add(end).multiplyScalar(0.5)
@@ -267,7 +298,9 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
                   : op?.content === 'coffee'
                     ? '#593624'
                     : op?.content === 'tea'
-                      ? '#967345'
+                      ? op.costs.matcha
+                        ? '#568438'
+                        : '#967345'
                       : '#f5e7ca',
         )
       }
@@ -285,15 +318,15 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
 
 export function cupSpot(station: StationId): [number, number, number] {
   if (station === 'pickup') return [6.1, 1.1, -1.48]
+  if (station === 'espresso') return [ESPRESSO_OUTLET[0], 1.11, ESPRESSO_OUTLET[2]]
+  if (station === 'steam') return [STEAM_PITCHER_SPOT[0] + 0.28, STEAM_PITCHER_SPOT[1], STEAM_PITCHER_SPOT[2]]
+  if (station === 'brew') return [COLD_BREW_OUTLET[0], 1.102, COLD_BREW_OUTLET[2]]
   const x: Partial<Record<StationId, number>> = {
-    espresso: -2.27,
-    steam: -1.05,
-    brew: 0,
     water: 1.1,
     ice: 2.1,
     sauce: 3.1,
     mix: 4.1,
     topping: 5.1,
   }
-  return [x[station] ?? 0, station === 'espresso' ? 1.085 : 1.075, staffFacingZ(-0.62)]
+  return [x[station] ?? 0, 1.075, staffFacingZ(-0.62)]
 }

@@ -1,0 +1,164 @@
+{
+  "id": "멜론-베이스-제조",
+  "name": "멜론 베이스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "재료-계량",
+          "label": "재료 계량",
+          "instructions": ["믹싱 피처에 멜론 시럽, 일반 우유, 정수를 각각 500ml 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "멜론-시럽",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 500,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 500,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 500,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "혼합",
+          "label": "혼합",
+          "instructions": ["잘 섞어 냉장 보관한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "mixing-pitcher",
+              "toolId": "stirrer"
+            },
+            {
+              "action": "store",
+              "vessel": "mixing-pitcher",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "사용 전 혼합한다.",
+        "멜론 시럽:일반 우유:정수 1:1:1 비율을 유지하며 매장 상황에 맞춰 소용량 또는 대용량 제조 가능."
+      ],
+      "review": [],
+      "output": {
+        "materialId": "멜론-베이스",
+        "amount": null,
+        "description": "Tall 기준 약 9잔 제조 가능."
+      }
+    },
+    {
+      "id": "large",
+      "name": "large",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "재료-계량",
+          "label": "재료 계량",
+          "instructions": ["COW 통에 멜론 시럽, 일반 우유, 정수를 각각 1L 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "멜론-시럽",
+              "into": "cow-container",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "l"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "cow-container",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "l"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "cow-container",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "l"
+              }
+            }
+          ]
+        },
+        {
+          "id": "혼합-및-이동",
+          "label": "혼합 및 이동",
+          "instructions": ["잘 섞은 뒤 믹싱 피처에 담아 냉장 보관한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "cow-container",
+              "toolId": "stirrer"
+            },
+            {
+              "action": "transfer",
+              "from": "cow-container",
+              "into": "mixing-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "store",
+              "vessel": "mixing-pitcher",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": ["사용 전 혼합한다.", "일 USD 36잔 이상인 매장에만 대용량 제조를 권장한다."],
+      "review": [],
+      "output": {
+        "materialId": "멜론-베이스",
+        "amount": {
+          "kind": "amount",
+          "value": 3,
+          "unit": "l"
+        },
+        "description": "3L 제조 시 Tall 기준 약 18잔 제조 가능."
+      }
+    }
+  ]
+}

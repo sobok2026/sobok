@@ -1,0 +1,85 @@
+{
+  "id": "아이스-커피",
+  "name": "아이스 커피",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "향 시럽 추가",
+          "instructions": ["고객이 향 시럽 추가를 요청한 경우에만 펌프를 끝까지 눌러 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "고객이-선택한-향-시럽",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ],
+          "when": {
+            "kind": "customization",
+            "option": "flavored-syrup",
+            "choice": "추가"
+          }
+        },
+        {
+          "id": "step-2",
+          "label": "완성 및 제공",
+          "instructions": ["미리 제조한 아이스 커피를 상단 초록선까지 붓고 얼음을 테두리 아래 6mm까지 채운다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "아이스-커피",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "mark",
+                "label": "상단 초록선"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            },
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

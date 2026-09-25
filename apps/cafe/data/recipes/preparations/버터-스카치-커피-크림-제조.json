@@ -1,0 +1,259 @@
+{
+  "id": "버터-스카치-커피-크림-제조",
+  "name": "버터 스카치 커피 크림 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "유제품-계량",
+          "label": "유제품 계량",
+          "instructions": ["프릿츠 골드와 일반 우유를 계량해 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 200,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 50,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "버터-스카치-소스-펌핑",
+          "label": "버터 스카치 소스 펌핑",
+          "instructions": ["버터 스카치 소스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "버터-스카치-소스",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "바닐라-시럽-펌핑",
+          "label": "바닐라 시럽 펌핑",
+          "instructions": ["바닐라 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-시럽",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "에스프레소-추가",
+          "label": "에스프레소 추가",
+          "instructions": ["콜드 폼 피처에 추출한 에스프레소를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular"
+            },
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["3번 버튼을 기본 배합은 1회, 대용량은 3회 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        }
+      ],
+      "notes": ["사용 전에 펌핑하여 혼합한다."],
+      "review": [],
+      "output": {
+        "materialId": "버터-스카치-커피-크림",
+        "amount": null,
+        "description": "Tall 기준 약 10잔 제조 가능. 완성 부피는 미기재."
+      }
+    },
+    {
+      "id": "large",
+      "name": "large",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "유제품-계량",
+          "label": "유제품 계량",
+          "instructions": ["프릿츠 골드와 일반 우유를 계량해 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 400,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 100,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "버터-스카치-소스-펌핑",
+          "label": "버터 스카치 소스 펌핑",
+          "instructions": ["버터 스카치 소스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "버터-스카치-소스",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 6,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "바닐라-시럽-펌핑",
+          "label": "바닐라 시럽 펌핑",
+          "instructions": ["바닐라 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라-시럽",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 6,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "에스프레소-추가",
+          "label": "에스프레소 추가",
+          "instructions": ["콜드 폼 피처에 추출한 에스프레소를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 4,
+                "unit": "shot"
+              },
+              "method": "regular"
+            },
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["3번 버튼을 기본 배합은 1회, 대용량은 3회 누른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 3,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        }
+      ],
+      "notes": ["사용 전에 펌핑하여 혼합한다."],
+      "review": [],
+      "output": {
+        "materialId": "버터-스카치-커피-크림",
+        "amount": null,
+        "description": "Tall 기준 약 20잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

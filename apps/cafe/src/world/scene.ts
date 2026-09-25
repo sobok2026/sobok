@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { canAccessStation, isCupSurface, isTable, STATIONS, type StationId, stationIds } from '../content/stations'
 import { cleaningSpot, createCleaningVisuals } from '../features/cleaning/visuals'
 import { createColdBrewVisuals } from '../features/cold-brew/visuals'
@@ -91,7 +92,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const fillLight = new THREE.DirectionalLight('#dce9e3', 0.9)
   fillLight.position.set(-5, 5, -5)
   scene.add(fillLight)
-  const { obstacles, idleBlenderJar, idleBlenderLid, cupStacks } = createShopInterior(scene)
+  const { obstacles, blender, cupStacks } = createShopInterior(scene)
   customerVisuals = createCustomerVisuals(scene)
   // Pick volumes are visible only through the interaction UI, never drawn over the shop.
   const pickMaterial = new THREE.MeshBasicMaterial({ visible: false })
@@ -99,8 +100,16 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     const station = STATIONS[id]
     const mesh = new THREE.Mesh(
       new THREE.BoxGeometry(
-        isCupSurface(id) || id === 'prep' || id === 'cold-prep' || id === 'shelf' ? 1.3 : id === 'wash' ? 1.2 : 0.8,
-        isTable(id) ? 1 : 0.8,
+        id === 'espresso'
+          ? 0.6
+          : id === 'steam'
+            ? 0.66
+            : isCupSurface(id) || id === 'prep' || id === 'cold-prep' || id === 'shelf'
+              ? 1.3
+              : id === 'wash'
+                ? 1.2
+                : 0.8,
+        id === 'espresso' ? 1.12 : isTable(id) ? 1 : 0.8,
         0.8,
       ),
       pickMaterial,
@@ -130,6 +139,21 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const supplyVisuals = createSupplyVisuals(scene, camera)
   const batchVisuals = createBatchVisuals(scene, camera)
   const coldBrewVisuals = createColdBrewVisuals(scene, camera)
+  // Bake an indoor reflection once; only the new equipment uses it. No per-frame reflection pass.
+  const environmentRoom = new RoomEnvironment()
+  const environmentGenerator = new THREE.PMREMGenerator(renderer)
+  const equipmentEnvironment = environmentGenerator.fromScene(environmentRoom, 0.04)
+  environmentRoom.dispose()
+  environmentGenerator.dispose()
+  scene.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return
+    for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+      if (material instanceof THREE.MeshStandardMaterial && material.userData.equipment) {
+        material.envMap = equipmentEnvironment.texture
+        material.envMapIntensity = 0.85
+      }
+    }
+  })
   const raycaster = new THREE.Raycaster()
   raycaster.far = 3.4
   const controls = createPlayerControls(renderer.domElement, camera, obstacles, options)
@@ -225,8 +249,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     supplyVisuals.update(state)
     batchVisuals.update(state)
     coldBrewVisuals.update(state, options.activeStation() === 'cold-prep')
-    idleBlenderJar.visible = state.preparation?.stage !== 'processing'
-    idleBlenderLid.visible = idleBlenderJar.visible
+    blender.update(state)
     for (const stack of cupStacks)
       stack.cups.forEach((body, index) => {
         body.root.visible = index < cleanCupCount(state, stack.kind)
@@ -259,11 +282,12 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       for (const geometry of geometries) geometry.dispose()
       const usedTextures = new Set<THREE.Texture>()
       for (const value of usedMaterials) {
-        if ((value instanceof THREE.MeshBasicMaterial || value instanceof THREE.MeshStandardMaterial) && value.map)
-          usedTextures.add(value.map)
+        for (const property of Object.values(value))
+          if (property instanceof THREE.Texture && property !== equipmentEnvironment.texture) usedTextures.add(property)
         value.dispose()
       }
       for (const texture of usedTextures) texture.dispose()
+      equipmentEnvironment.dispose()
       sunlight.shadow.dispose()
       renderer.dispose()
       renderer.forceContextLoss()

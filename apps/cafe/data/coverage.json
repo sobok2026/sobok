@@ -1,0 +1,128 @@
+{
+  "source": "Starbucks Spharos Academy 음료 제조 목록",
+  "scope": "영상의 레시피 표에서 OCR로 추출한 제조법. 표가 검출되지 않은 영상의 내용을 제조법으로 추정하지 않는다.",
+  "catalogEntries": 231,
+  "videosWithRecipeCards": 205,
+  "recipeCardCount": 241,
+  "documentsFromCards": 203,
+  "supplementalDocuments": ["cold-brew-batch"],
+  "withoutDetectedRecipeCard": [
+    {
+      "name": "[스타벅스 콜드 브루어] 콜드 브루 추출",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=13945&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "[리저브] 블랙이글 탬핑",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14126&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "[리저브] 블랙이글 스티밍",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14180&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "[리저브] 블랙이글 라떼아트_결하트",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14181&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "[리저브] 푸어오버 추출",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14265&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "[리저브] 케멕스 추출",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14266&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "블론드 에스프레소 소개",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14260&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "쉐이커 사용법",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14359&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "지거 사용법",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14358&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "벨벳 폼 만들기 (카페 라떼 편)",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14319&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "벨벳 폼 만들기 (카푸치노 편)",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14320&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "나이트로 콜드브루-시연",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14306&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "나이트로 콜드브루-샘플링",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14307&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "STARBUCKS TEAVANA 8종 소개영상",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14391&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "드리즐 차이",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14429&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "폼 차이",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14430&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "자바칩 차이",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14431&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "휘핑크림 차이",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14435&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "시그니처 초콜릿 믹스",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14436&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "프라푸치노 로스트",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14437&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "하프 앤 하프",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14441&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "음료 제조 시 주의사항1",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14442&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "음료 제조 시 주의사항2",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14443&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "잘못된 스티밍",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14447&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    },
+    {
+      "name": "음료 제조 시 주의사항",
+      "sourceUrl": "https://starbucks.spharosacademy.com/user/player/main/?p_seq=14393&p_back_url=%2Fuser%2Fmanual%2Flist%2F"
+    }
+  ],
+  "excludedEbooks": [
+    {
+      "name": "나이트로 콜드브루 아카데미 매뉴얼"
+    }
+  ],
+  "consolidatedDuplicates": [
+    {
+      "sourceName": "말차 글레이즈드 티 라떼",
+      "keptSourceName": "말차 글레이즈드 티 라떼",
+      "reason": "같은 제조법은 현행 자료 한 개로 정리"
+    },
+    {
+      "sourceName": "커피 스타벅스 더블 샷 (Coffee Starbucks Double Shot®)",
+      "keptSourceName": "스타벅스 더블 샷",
+      "reason": "동일 제조법 중복 항목 통합"
+    }
+  ]
+}

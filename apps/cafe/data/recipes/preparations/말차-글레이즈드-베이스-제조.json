@@ -1,0 +1,114 @@
+{
+  "id": "말차-글레이즈드-베이스-제조",
+  "name": "말차 글레이즈드 베이스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "소스-계량",
+          "label": "소스 계량",
+          "instructions": ["콜드 폼 피처의 50ml 선까지 글레이즈드 소스를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "glaze",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 50,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "우유-계량",
+          "label": "우유 계량",
+          "instructions": ["피처 전체 내용물이 400ml 선에 도달할 때까지 일반 우유를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 400,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "말차-추가",
+          "label": "말차 추가",
+          "instructions": ["말차 파우더를 1티스푼 스쿱으로 10회 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "matchaPowder",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 10,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "5티스푼 스쿱 대체",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "matchaPowder",
+                  "into": "foam-pitcher",
+                  "amount": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "scoop"
+                  },
+                  "toolId": "five-teaspoon-scoop"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["3번 버튼을 1회 누른다. 1회는 약 25초이다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "말차-글레이즈드-베이스",
+        "amount": null,
+        "description": "Tall 기준 약 5잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

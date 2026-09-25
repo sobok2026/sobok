@@ -12,7 +12,7 @@ export function RecipeGuide({ state }: { state: GameState }) {
       </summary>
       <ol className="mt-4 space-y-4">
         {recipeFor(recipe, size).steps.map((step, index) => (
-          <li key={step.label} className="flex gap-3">
+          <li key={step.id} className="flex gap-3">
             <span className="text-xs tabular-nums text-muted">{String(index + 1).padStart(2, '0')}</span>
             <div>
               <strong className="font-medium">
@@ -20,7 +20,7 @@ export function RecipeGuide({ state }: { state: GameState }) {
                 {step.measurement ? ` · ${step.measurement}` : ''}
               </strong>
               <p className="mt-1 text-xs text-muted">
-                {step.label === '제공'
+                {step.operation.action === 'serve'
                   ? state.ticket?.service === 'dine-in'
                     ? '머그·유리잔은 리드 없이 픽업대에서 제공해요.'
                     : '일회용 컵은 리드를 덮어 픽업대에서 제공해요.'

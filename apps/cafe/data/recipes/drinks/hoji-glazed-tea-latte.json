@@ -1,0 +1,407 @@
+{
+  "id": "hoji-glazed-tea-latte",
+  "name": "호지 글레이즈드 티 라떼",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "steam-milk",
+          "label": "우유 계량·스팀",
+          "instructions": ["스팀 피처의 주문 사이즈 선까지 일반 우유를 넣고 X-Hot 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "X-Hot"
+            }
+          ]
+        },
+        {
+          "id": "pump-classic",
+          "label": "클래식 시럽",
+          "instructions": ["컵에 클래식 시럽를 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "pour-steamed-milk",
+          "label": "스팀 우유",
+          "instructions": ["우유 폼을 제외하고 컵 테두리 아래 18mm까지 스팀 우유를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 18
+              },
+              "portion": "liquid"
+            }
+          ]
+        },
+        {
+          "id": "add-tea",
+          "label": "호지차 샷",
+          "instructions": ["사용 전에 호지차 샷을 다시 섞고 컵 테두리 아래 12mm까지 붓는다."],
+          "notes": ["HOT 텀블러 계량: Tall 50ml, Grande 60ml, Venti 70ml."],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "shaker"
+            },
+            {
+              "action": "add",
+              "materialId": "hojicha",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              },
+              "when": {
+                "kind": "container",
+                "value": "standard-cup"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "hojicha",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "amount",
+                    "value": 50,
+                    "unit": "ml"
+                  },
+                  "grande": {
+                    "kind": "amount",
+                    "value": 60,
+                    "unit": "ml"
+                  },
+                  "venti": {
+                    "kind": "amount",
+                    "value": 70,
+                    "unit": "ml"
+                  }
+                }
+              },
+              "when": {
+                "kind": "container",
+                "value": "tumbler"
+              }
+            }
+          ]
+        },
+        {
+          "id": "add-foam",
+          "label": "글레이즈드 폼",
+          "instructions": ["컵 테두리 아래 6mm까지 글레이즈드 폼을 붓는다."],
+          "notes": ["텀블러 계량은 Tall 50ml, Grande 60ml, Venti 70ml이다. 컵 기준선의 ml 환산값이 아니다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "foam",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "when": {
+                "kind": "container",
+                "value": "standard-cup"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "foam",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "amount",
+                    "value": 50,
+                    "unit": "ml"
+                  },
+                  "grande": {
+                    "kind": "amount",
+                    "value": 60,
+                    "unit": "ml"
+                  },
+                  "venti": {
+                    "kind": "amount",
+                    "value": 70,
+                    "unit": "ml"
+                  }
+                }
+              },
+              "when": {
+                "kind": "container",
+                "value": "tumbler"
+              }
+            }
+          ]
+        },
+        {
+          "id": "top-powder",
+          "label": "번트 카라멜 파우더",
+          "instructions": ["글레이즈드 폼 위 정중앙에 파우더를 톡 2번 토핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "powder",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "tap"
+              },
+              "toolId": "topping-shaker"
+            }
+          ]
+        },
+        {
+          "id": "serve",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    },
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "pump-classic",
+          "label": "클래식 시럽",
+          "instructions": ["컵에 클래식 시럽를 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "add-milk",
+          "label": "일반 우유",
+          "instructions": ["컵 중간선까지 일반 우유를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "add-tea",
+          "label": "호지차 샷",
+          "instructions": ["사용 전에 호지차 샷을 다시 섞고 컵 상단선까지 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "shaker"
+            },
+            {
+              "action": "add",
+              "materialId": "hojicha",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            }
+          ]
+        },
+        {
+          "id": "add-ice",
+          "label": "얼음",
+          "instructions": ["컵 테두리 아래 12mm까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "add-foam",
+          "label": "글레이즈드 폼",
+          "instructions": ["컵 테두리 아래 6mm까지 글레이즈드 폼을 붓는다."],
+          "notes": ["텀블러 계량은 Tall 50ml, Grande 60ml, Venti 70ml이다. 컵 기준선의 ml 환산값이 아니다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "foam",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "when": {
+                "kind": "container",
+                "value": "standard-cup"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "foam",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "amount",
+                    "value": 50,
+                    "unit": "ml"
+                  },
+                  "grande": {
+                    "kind": "amount",
+                    "value": 60,
+                    "unit": "ml"
+                  },
+                  "venti": {
+                    "kind": "amount",
+                    "value": 70,
+                    "unit": "ml"
+                  }
+                }
+              },
+              "when": {
+                "kind": "container",
+                "value": "tumbler"
+              }
+            }
+          ]
+        },
+        {
+          "id": "top-powder",
+          "label": "번트 카라멜 파우더",
+          "instructions": ["글레이즈드 폼 위 정중앙에 파우더를 톡 2번 토핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "powder",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "tap"
+              },
+              "toolId": "topping-shaker"
+            }
+          ]
+        },
+        {
+          "id": "serve",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

@@ -21,13 +21,13 @@ export default function PreparationHud({ state, target, act, stop }: Props) {
   const expiredBatch = batch?.expiresAt != null && batch.expiresAt <= state.time
   const ratio = job ? (state.time - job.startedAt) / (job.endsAt - job.startedAt) : prep.progress / step.target
   const handsFull = cupHandsBusy(state.cup)
-  const ready = prep.progress + 0.0001 >= step.target * (1 - step.tolerance)
+  const ready = prep.progress + 1e-9 >= step.target * (1 - step.tolerance)
   const canUse = !handsFull && prep.stage === 'measuring' && prep.tool === step.tool
   const missing =
     prep.stage === 'measuring' &&
     !ready &&
     step.ingredient &&
-    available(state, step.ingredient) + 0.0001 <
+    available(state, step.ingredient) + 1e-9 <
       Math.max(0, step.target * (1 - step.tolerance) - prep.progress) * (step.perUnit ?? 1)
   const toolIsNext = missing ? !!prep.tool : !prep.tool || ready
   return (

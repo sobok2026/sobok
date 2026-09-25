@@ -1,0 +1,511 @@
+{
+  "id": "matcha-glazed-tea-latte",
+  "name": "말차 글레이즈드 티 라떼",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "우유 스팀",
+          "instructions": ["우유 스팀"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "X-Hot"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "글레이즈드 소스 추가",
+          "instructions": ["글레이즈드 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "glaze",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "스위트 향 시럽 추가",
+          "instructions": ["스위트 향 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "sweet-syrup",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "cbs-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "스팀 우유 붓기",
+          "instructions": ["스팀 우유 붓기"],
+          "notes": ["스팀 스푼을 사용하여 우유 폼을 제외한다."],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 18
+              },
+              "portion": "liquid"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "말차 샷 사용 전 혼합",
+          "instructions": ["말차 샷 사용 전 혼합"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "matcha-container"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "말차 샷 추가",
+          "instructions": ["말차 샷 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "matcha",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              },
+              "when": {
+                "kind": "container",
+                "value": "standard-cup"
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "HOT 텀블러 계량",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "matcha",
+                  "into": "serving-cup",
+                  "amount": {
+                    "kind": "by-size",
+                    "values": {
+                      "tall": {
+                        "kind": "amount",
+                        "value": 50,
+                        "unit": "ml"
+                      },
+                      "grande": {
+                        "kind": "amount",
+                        "value": 60,
+                        "unit": "ml"
+                      },
+                      "venti": {
+                        "kind": "amount",
+                        "value": 70,
+                        "unit": "ml"
+                      }
+                    }
+                  },
+                  "when": {
+                    "kind": "container",
+                    "value": "tumbler"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "글레이즈드 폼 추가",
+          "instructions": ["글레이즈드 폼 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "foam",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "when": {
+                "kind": "container",
+                "value": "standard-cup"
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "텀블러 계량",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "foam",
+                  "into": "serving-cup",
+                  "amount": {
+                    "kind": "by-size",
+                    "values": {
+                      "tall": {
+                        "kind": "amount",
+                        "value": 50,
+                        "unit": "ml"
+                      },
+                      "grande": {
+                        "kind": "amount",
+                        "value": 60,
+                        "unit": "ml"
+                      },
+                      "venti": {
+                        "kind": "amount",
+                        "value": 70,
+                        "unit": "ml"
+                      }
+                    }
+                  },
+                  "when": {
+                    "kind": "container",
+                    "value": "tumbler"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "번트 카라멜 파우더 추가",
+          "instructions": ["번트 카라멜 파우더 추가"],
+          "notes": ["폼 위 정중앙에 토핑한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "powder",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "tap"
+              },
+              "toolId": "topping-shaker"
+            }
+          ]
+        },
+        {
+          "id": "step-9",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    },
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "글레이즈드 소스 추가",
+          "instructions": ["글레이즈드 소스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "glaze",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 1,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "white-mocha-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "스위트 향 시럽 추가",
+          "instructions": ["스위트 향 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "sweet-syrup",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "pump"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "pump"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 5,
+                    "unit": "pump"
+                  }
+                }
+              },
+              "toolId": "cbs-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "말차 샷 사용 전 혼합",
+          "instructions": ["말차 샷 사용 전 혼합"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "matcha-container"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "말차 샷 추가",
+          "instructions": ["말차 샷 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "matcha",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "글레이즈드 폼 추가",
+          "instructions": ["글레이즈드 폼 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "foam",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "when": {
+                "kind": "container",
+                "value": "standard-cup"
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "텀블러 계량",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "foam",
+                  "into": "serving-cup",
+                  "amount": {
+                    "kind": "by-size",
+                    "values": {
+                      "tall": {
+                        "kind": "amount",
+                        "value": 50,
+                        "unit": "ml"
+                      },
+                      "grande": {
+                        "kind": "amount",
+                        "value": 60,
+                        "unit": "ml"
+                      },
+                      "venti": {
+                        "kind": "amount",
+                        "value": 70,
+                        "unit": "ml"
+                      }
+                    }
+                  },
+                  "when": {
+                    "kind": "container",
+                    "value": "tumbler"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "번트 카라멜 파우더 추가",
+          "instructions": ["번트 카라멜 파우더 추가"],
+          "notes": ["폼 위 정중앙에 토핑한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "powder",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "tap"
+              },
+              "toolId": "topping-shaker"
+            }
+          ]
+        },
+        {
+          "id": "step-9",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

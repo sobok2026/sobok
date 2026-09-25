@@ -1,0 +1,62 @@
+{
+  "id": "팥앙금-찹쌀떡-반절-제조",
+  "name": "팥앙금 찹쌀떡 반절 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "찹쌀떡 반절 자르기",
+          "instructions": ["집게와 식가위를 사용하여 팥앙금 찹쌀떡을 반절로 자른다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "cut",
+              "materialId": "팥앙금-찹쌀떡",
+              "pieces": 2
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "절단면을 위로 담기",
+          "instructions": ["절단면을 위로 담기"],
+          "notes": ["2~3단 겹칠 때 끈적이는 절단면끼리 붙지 않도록 담는다."],
+          "operations": [
+            {
+              "action": "arrange",
+              "materialId": "팥앙금-찹쌀떡-반절",
+              "into": "did",
+              "pattern": "팥이 보이는 절단면이 위를 향하도록 담는다."
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "실온 보관",
+          "instructions": ["실온 보관"],
+          "notes": ["집게로 사용한다."],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "did",
+              "storage": "room"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "팥앙금-찹쌀떡-반절",
+        "amount": null,
+        "description": "완성량은 원본에 명시되지 않았다."
+      }
+    }
+  ]
+}

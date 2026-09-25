@@ -1,0 +1,348 @@
+{
+  "id": "복숭아-아이스-티",
+  "name": "복숭아 아이스 티",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "소스-추가",
+          "label": "소스 추가",
+          "instructions": ["50:50 피처에 복숭아 소스를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "복숭아-소스",
+              "into": "steam-pitcher-50-50",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "베이스-스팀",
+          "label": "베이스 스팀",
+          "instructions": ["50:50 피처 하단선까지 피치 베이스, 상단선까지 정수를 넣고 X-hot 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "피치-베이스",
+              "into": "steam-pitcher-50-50",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "steam-pitcher-50-50",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher-50-50",
+              "setting": "X-Hot"
+            }
+          ]
+        },
+        {
+          "id": "잉글리쉬-브렉퍼스트-티백-추가",
+          "label": "잉글리쉬 브렉퍼스트 티백 추가",
+          "instructions": ["잉글리쉬 브렉퍼스트 티백을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "잉글리쉬-브렉퍼스트-티백",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "베이스-붓기",
+          "label": "베이스 붓기",
+          "instructions": ["컵 테두리 아래 6mm까지 스팀한 베이스를 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher-50-50",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "standard"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    },
+    {
+      "id": "iced",
+      "name": "ICED T/G/V",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "복숭아-소스-추가",
+          "label": "복숭아 소스 추가",
+          "instructions": ["복숭아 소스을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "복숭아-소스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "tall": {
+                    "kind": "count",
+                    "value": 2,
+                    "unit": "scoop"
+                  },
+                  "grande": {
+                    "kind": "count",
+                    "value": 3,
+                    "unit": "scoop"
+                  },
+                  "venti": {
+                    "kind": "count",
+                    "value": 4,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "더블-스트랭스-블랙-티-추가",
+          "label": "더블 스트랭스 블랙 티 추가",
+          "instructions": ["더블 스트랭스 블랙 티을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "더블-스트랭스-블랙-티",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "피치-베이스-추가",
+          "label": "피치 베이스 추가",
+          "instructions": ["피치 베이스을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "피치-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮고 굵은 빨대를 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "dome",
+              "accessories": ["굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "Trenta는 고객 요청 시에도 돔 리드로 변경할 수 없다.",
+        "Trenta 전용 슬리브와 일반 굵은 빨대를 제공한다.",
+        "복숭아 소스 기준 제조 가능 수량: Tall 22잔, Grande 15잔, Venti 11잔, Trenta 7잔."
+      ],
+      "review": []
+    },
+    {
+      "id": "iced-trenta",
+      "name": "ICED Trenta",
+      "temperature": "iced",
+      "sizes": ["trenta"],
+      "steps": [
+        {
+          "id": "복숭아-소스-추가",
+          "label": "복숭아 소스 추가",
+          "instructions": ["복숭아 소스을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "복숭아-소스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "by-size",
+                "values": {
+                  "trenta": {
+                    "kind": "count",
+                    "value": 6,
+                    "unit": "scoop"
+                  }
+                }
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "더블-스트랭스-블랙-티-추가",
+          "label": "더블 스트랭스 블랙 티 추가",
+          "instructions": ["더블 스트랭스 블랙 티을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "더블-스트랭스-블랙-티",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "피치-베이스-추가",
+          "label": "피치 베이스 추가",
+          "instructions": ["피치 베이스을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "피치-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["Trenta 전용 빨대 없는 SIP 리드와 전용 슬리브를 사용하고 일반 굵은 빨대를 제공한다."],
+          "notes": ["고객 요청 시에도 돔 리드로 변경할 수 없다."],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "strawless",
+              "accessories": ["Trenta 전용 슬리브", "굵은 빨대"]
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "Trenta는 고객 요청 시에도 돔 리드로 변경할 수 없다.",
+        "Trenta 전용 슬리브와 일반 굵은 빨대를 제공한다.",
+        "복숭아 소스 기준 제조 가능 수량: Tall 22잔, Grande 15잔, Venti 11잔, Trenta 7잔."
+      ],
+      "review": []
+    }
+  ]
+}

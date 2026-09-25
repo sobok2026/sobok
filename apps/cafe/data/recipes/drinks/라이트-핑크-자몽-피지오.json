@@ -1,0 +1,145 @@
+{
+  "id": "라이트-핑크-자몽-피지오",
+  "name": "라이트 핑크 자몽 피지오",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "베이스-준비",
+          "label": "베이스 준비",
+          "instructions": ["사용 전 핑크 자몽 베이스를 잘 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "base-bottle"
+            }
+          ]
+        },
+        {
+          "id": "핑크-자몽-베이스-추가",
+          "label": "핑크 자몽 베이스 추가",
+          "instructions": ["핑크 자몽 베이스을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "핑크-자몽-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle"
+              }
+            }
+          ]
+        },
+        {
+          "id": "정수-추가",
+          "label": "정수 추가",
+          "instructions": ["정수을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물을 전량 옮겨 담는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "fizzio-bottle",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "스파클링",
+          "label": "스파클링",
+          "instructions": ["사이즈별 탄산 버튼을 눌러 스파클링한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "fizzio",
+              "vessel": "fizzio-bottle",
+              "program": {
+                "tall": "t",
+                "grande": "g",
+                "venti": "v"
+              },
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 13
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "내용물-옮기기-2",
+          "label": "내용물 옮기기",
+          "instructions": ["탄산이 넘치지 않도록 스파클링한 내용물을 얼음이 담긴 컵에 조심히 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "fizzio-bottle",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "strawless"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

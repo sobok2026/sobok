@@ -1,0 +1,173 @@
+{
+  "id": "시트러스-콜드브루-마티니",
+  "name": "시트러스 콜드브루 마티니",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["short"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "클래식 시럽 추가",
+          "instructions": ["클래식 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "앱솔루트 보드카 추가",
+          "instructions": ["앱솔루트 보드카 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "앱솔루트-보드카",
+              "into": "shaker",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "유자진저 베이스 추가",
+          "instructions": ["유자진저 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "유자진저-베이스",
+              "into": "shaker",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "콜드 브루 추가",
+          "instructions": ["콜드 브루 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "coldBrew",
+              "into": "shaker",
+              "amount": {
+                "kind": "amount",
+                "value": 2,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": ["수북하게 담는다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop",
+                "referenceSize": "tall"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "강하게 쉐이킹",
+          "instructions": ["뚜껑을 닫고 아래 위로 약 50회 이상 힘차게 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "shaker",
+              "repetitions": 50,
+              "atLeast": true,
+              "approximate": true
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "걸러 따르기",
+          "instructions": ["걸러 따르기"],
+          "notes": ["잔에 천천히 따른다."],
+          "operations": [
+            {
+              "action": "strain",
+              "from": "shaker",
+              "into": "serving-cup",
+              "toolIds": ["strainer", "fine-strainer"],
+              "excludeMaterialIds": ["ice"]
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "오렌지 하프 슬라이스 추가",
+          "instructions": ["오렌지 하프 슬라이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "하프-오렌지-슬라이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-9",
+          "label": "제공",
+          "instructions": ["전용 잔에 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "none"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

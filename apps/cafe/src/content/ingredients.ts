@@ -1,6 +1,7 @@
+import { z } from 'zod'
+import qualityData from '../../data/quality.json'
+import stockEstimates from '../../data/simulation/stock-estimates.json'
 import type { Lifetime } from './lifetime'
-import { sourceLine } from './reference-links'
-import { referenceLinks } from './references'
 export const ingredientIds = [
   'beans',
   'milk',
@@ -14,6 +15,8 @@ export const ingredientIds = [
   'classic',
   'hojichaPowder',
   'hojicha',
+  'matchaPowder',
+  'matcha',
 ] as const
 export type IngredientId = (typeof ingredientIds)[number]
 type Ingredient = {
@@ -24,9 +27,30 @@ type Ingredient = {
   lifetime: Lifetime
   price: number
   prepared?: boolean
-  source: string
+  source?: string
 }
-const quality = referenceLinks.quality
+const quality = z
+  .record(
+    z.enum([
+      'beans',
+      'milk',
+      'cream',
+      'glaze',
+      'powder',
+      'mocha',
+      'coldBrew',
+      'classic',
+      'foam',
+      'hojicha',
+      'matcha',
+      'matchaPowder',
+    ]),
+    z.strictObject({
+      storage: z.enum(['room', 'fridge']),
+      lifetime: z.strictObject({ amount: z.number().positive(), unit: z.enum(['days', 'hours', 'months']) }),
+    }),
+  )
+  .parse(qualityData)
 // Pack capacities, purchase prices and volume estimates are prototype rules, not store standards.
 export const INGREDIENTS: Record<IngredientId, Ingredient> = {
   beans: {
@@ -71,12 +95,12 @@ export const INGREDIENTS: Record<IngredientId, Ingredient> = {
     storage: 'room',
     lifetime: { amount: 7, unit: 'days' }, // Prototype opened-pack lifetime; the guide only specifies the prepared sauce.
     price: 7000,
-    source: `${sourceLine(referenceLinks.mocha.reference.source)} · 원팩 단위 / 개봉 후 7일은 게임용 임시값`,
+    source: '원팩 단위 / 개봉 후 7일은 게임용 임시값',
   },
   mocha: {
     name: '바모카',
     unit: 'ml',
-    pack: 1500,
+    pack: stockEstimates.preparedMilliliters.mocha,
     ...quality.mocha,
     price: 0,
     prepared: true,
@@ -84,7 +108,7 @@ export const INGREDIENTS: Record<IngredientId, Ingredient> = {
   foam: {
     name: '글레이즈드 폼',
     unit: 'ml',
-    pack: 450,
+    pack: stockEstimates.preparedMilliliters.foam,
     ...quality.foam,
     price: 0,
     prepared: true,
@@ -92,7 +116,7 @@ export const INGREDIENTS: Record<IngredientId, Ingredient> = {
   coldBrew: {
     name: '콜드 브루 추출액',
     unit: 'ml',
-    pack: 3000,
+    pack: stockEstimates.preparedMilliliters.coldBrew,
     ...quality.coldBrew,
     price: 0,
     prepared: true,
@@ -105,8 +129,31 @@ export const INGREDIENTS: Record<IngredientId, Ingredient> = {
     storage: 'room',
     lifetime: { amount: 7, unit: 'days' },
     price: 6000,
-    source: `${sourceLine(referenceLinks.hojicha.steps.powder.source)} · 1티스푼 스쿱 / 입고 규격·실온 7일은 게임용 임시값`,
+    source: '1티스푼 스쿱 / 입고 규격·실온 7일은 게임용 임시값',
   },
-  hojicha: { name: '호지차 샷', unit: 'ml', pack: 250, ...quality.hojicha, price: 0, prepared: true },
+  hojicha: {
+    name: '호지차 샷',
+    unit: 'ml',
+    pack: stockEstimates.preparedMilliliters.hojicha,
+    ...quality.hojicha,
+    price: 0,
+    prepared: true,
+  },
+  matchaPowder: {
+    name: '말차 파우더',
+    unit: '스쿱',
+    pack: 80,
+    ...quality.matchaPowder,
+    price: 6000,
+    source: '1티스푼 스쿱 / 80스쿱 원팩·입고 가격은 게임용 임시값',
+  },
+  matcha: {
+    name: '말차 샷',
+    unit: 'ml',
+    pack: stockEstimates.preparedMilliliters.matcha,
+    ...quality.matcha,
+    price: 0,
+    prepared: true,
+  },
 }
 export type Costs = Partial<Record<IngredientId, number>>

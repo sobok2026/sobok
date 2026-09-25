@@ -1,0 +1,152 @@
+{
+  "id": "에스프레소-마티니",
+  "name": "에스프레소 마티니",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["short"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "바닐라빈 시럽 추가",
+          "instructions": ["바닐라빈 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바닐라빈-시럽",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "앱솔루트 보드카 추가",
+          "instructions": ["앱솔루트 보드카 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "앱솔루트-보드카",
+              "into": "shaker",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "에스프레소 추출",
+          "instructions": ["에스프레소 추출"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "shot"
+              },
+              "method": "regular"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": ["수북하게 담는다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop",
+                "referenceSize": "tall"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "강하게 쉐이킹",
+          "instructions": ["뚜껑을 닫고 아래 위로 약 50회 이상 힘차게 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "shaker",
+              "repetitions": 50,
+              "atLeast": true,
+              "approximate": true
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "걸러 따르기",
+          "instructions": ["걸러 따르기"],
+          "notes": ["잔에 천천히 따른다."],
+          "operations": [
+            {
+              "action": "strain",
+              "from": "shaker",
+              "into": "serving-cup",
+              "toolIds": ["strainer", "fine-strainer"],
+              "excludeMaterialIds": ["ice"]
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "리저브 초코 파우더 추가",
+          "instructions": ["리저브 초코 파우더 추가"],
+          "notes": ["음료 중앙에 일자로 토핑한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "리저브-초코-파우더",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 정량 미기재"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "제공",
+          "instructions": ["전용 잔에 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "none"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

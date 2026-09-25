@@ -1,0 +1,116 @@
+{
+  "id": "핑크-자몽-럼-토닉",
+  "name": "핑크 자몽 럼 토닉",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall"],
+      "steps": [
+        {
+          "id": "베이스와-럼-추가",
+          "label": "베이스와 럼 추가",
+          "instructions": ["전용잔에 핑크 자몽 베이스 2온즈와 바카디 카르타 블랑카 1온즈를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "핑크-자몽-베이스",
+              "into": "cocktail-glass",
+              "amount": {
+                "kind": "amount",
+                "value": 2,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            },
+            {
+              "action": "add",
+              "materialId": "바카디-카르타-블랑카",
+              "into": "cocktail-glass",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "cocktail-glass",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "토닉-워터-추가",
+          "label": "토닉 워터 추가",
+          "instructions": ["토닉 워터 1온즈를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "토닉-워터",
+              "into": "cocktail-glass",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "자몽-쌕-토핑",
+          "label": "자몽 쌕 토핑",
+          "instructions": [
+            "1티스푼 스쿱으로 자몽 쌕을 1회 올린다. 컵 중앙에 살살 뒤집어 동그랗게 뭉친 모양으로 올린다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "자몽-쌕",
+              "into": "cocktail-glass",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["전용잔으로 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

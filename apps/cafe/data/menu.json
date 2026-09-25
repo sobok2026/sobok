@@ -1,0 +1,102 @@
+[
+  {
+    "id": "cold-brew",
+    "recipeId": "cold-brew",
+    "variantId": "iced",
+    "prices": {
+      "tall": 5100,
+      "grande": 5700,
+      "venti": 6500,
+      "trenta": 6900
+    },
+    "color": "#493022"
+  },
+  {
+    "id": "glazed-hot",
+    "recipeId": "black-glazed-latte",
+    "variantId": "hot",
+    "prices": {
+      "tall": 6700,
+      "grande": 7500,
+      "venti": 8300
+    },
+    "color": "#be9871"
+  },
+  {
+    "id": "glazed-iced",
+    "recipeId": "black-glazed-latte",
+    "variantId": "iced",
+    "prices": {
+      "tall": 6700,
+      "grande": 7500,
+      "venti": 8300
+    },
+    "color": "#b58b63"
+  },
+  {
+    "id": "hoji-hot",
+    "recipeId": "hoji-glazed-tea-latte",
+    "variantId": "hot",
+    "prices": {
+      "tall": 6700,
+      "grande": 7500,
+      "venti": 8300
+    },
+    "color": "#a58c63"
+  },
+  {
+    "id": "hoji-iced",
+    "recipeId": "hoji-glazed-tea-latte",
+    "variantId": "iced",
+    "prices": {
+      "tall": 6700,
+      "grande": 7500,
+      "venti": 8300
+    },
+    "color": "#ac9471"
+  },
+  {
+    "id": "pure-hoji-hot",
+    "recipeId": "pure-hojicha",
+    "variantId": "hot",
+    "prices": {
+      "tall": 5100,
+      "grande": 5700,
+      "venti": 6500
+    },
+    "color": "#967345"
+  },
+  {
+    "id": "pure-hoji-iced",
+    "recipeId": "pure-hojicha",
+    "variantId": "iced",
+    "prices": {
+      "tall": 5100,
+      "grande": 5700,
+      "venti": 6500
+    },
+    "color": "#967345"
+  },
+  {
+    "id": "pure-matcha-hot",
+    "recipeId": "pure-matcha",
+    "variantId": "hot",
+    "prices": {
+      "tall": 5100,
+      "grande": 5700,
+      "venti": 6500
+    },
+    "color": "#568438"
+  },
+  {
+    "id": "pure-matcha-iced",
+    "recipeId": "pure-matcha",
+    "variantId": "iced",
+    "prices": {
+      "tall": 5100,
+      "grande": 5700,
+      "venti": 6500
+    },
+    "color": "#568438"
+  }
+]

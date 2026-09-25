@@ -1,0 +1,86 @@
+{
+  "id": "바-믹사토-말차-샷-제조",
+  "name": "바 믹사토 말차 샷 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "기본 제조",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "정수 추가",
+          "instructions": ["정수 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "sauce-container",
+              "amount": {
+                "kind": "fill-volume",
+                "value": 100,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "말차 파우더 추가",
+          "instructions": ["말차 파우더 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "matchaPowder",
+              "into": "sauce-container",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "tea-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "뚜껑을 닫고 쉐이킹",
+          "instructions": ["뚜껑을 닫고 쉐이킹"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "sauce-container",
+              "repetitions": 10,
+              "approximate": true
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "냉장 보관",
+          "instructions": ["냉장 보관"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "store",
+              "vessel": "sauce-container",
+              "storage": "fridge"
+            }
+          ]
+        }
+      ],
+      "notes": ["혼합 후 냉장 보관한다."],
+      "review": [],
+      "output": {
+        "materialId": "바-믹사토-말차-샷",
+        "amount": null,
+        "description": "완성량은 원본에 명시되지 않았다."
+      }
+    }
+  ]
+}

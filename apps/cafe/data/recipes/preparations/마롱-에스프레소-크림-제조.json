@@ -1,0 +1,124 @@
+{
+  "id": "마롱-에스프레소-크림-제조",
+  "name": "마롱 에스프레소 크림 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "유제품과-베이스-계량",
+          "label": "유제품과 베이스 계량",
+          "instructions": ["계량컵으로 프릿츠 골드 200ml, 일반 우유 50ml, 마롱 베이스 50ml를 콜드 폼 피처에 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "cream",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 200,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 50,
+                "unit": "ml"
+              }
+            },
+            {
+              "action": "add",
+              "materialId": "마롱-베이스",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "amount",
+                "value": 50,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "마롱-바닐라-시럽-펌핑",
+          "label": "마롱 바닐라 시럽 펌핑",
+          "instructions": ["마롱 바닐라 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "마롱-바닐라-시럽",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 5,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "에스프레소-추가",
+          "label": "에스프레소 추가",
+          "instructions": ["샷 글라스에 1샷을 추출해 콜드 폼 피처에 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "shot"
+              },
+              "method": "regular"
+            },
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "foam-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "블렌딩",
+          "label": "블렌딩",
+          "instructions": ["3번 버튼을 1회 누른다. 1회는 약 25초이다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "cold-foam-blender",
+              "vessel": "foam-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 25,
+                "approximate": true
+              }
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "마롱-에스프레소-크림",
+        "amount": null,
+        "description": "Tall 기준 약 10잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "id": "더블-스트랭스-민트-티-제조",
+  "name": "더블 스트랭스 민트 티 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "batch",
+      "name": "약 4잔용",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "티백 추가",
+          "instructions": ["스팀 피처에 티바나 민트 블렌드 티백 2개를 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "티바나-민트-블렌드-풀-리프-티백",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "티 우리기",
+          "instructions": ["90°C 뜨거운 물을 스팀 피처 Venti 선까지 붓고 5분 우린 뒤 티백을 건져낸다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size",
+                "referenceSize": "venti"
+              },
+              "temperature": {
+                "kind": "celsius",
+                "value": 90
+              }
+            },
+            {
+              "action": "steep",
+              "vessel": "steam-pitcher",
+              "duration": {
+                "seconds": 300,
+                "approximate": false
+              }
+            },
+            {
+              "action": "remove",
+              "itemId": "티바나-민트-블렌드-풀-리프-티백",
+              "from": "steam-pitcher",
+              "dispose": true
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "얼음 추가",
+          "instructions": ["스쿱으로 얼음을 Max 선까지 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "max"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "옮기기 및 라벨",
+          "instructions": ["제조된 티를 워터 피처로 옮기고 더블 스트랭스 민트 티 라벨을 붙인다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "water-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "label",
+              "vessel": "water-pitcher",
+              "labels": ["더블 스트랭스 민트 티"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": [],
+      "output": {
+        "materialId": "더블-스트랭스-민트-티",
+        "amount": null,
+        "description": "약 4잔 제조. 원본 완성 부피는 명시되지 않음."
+      }
+    }
+  ]
+}

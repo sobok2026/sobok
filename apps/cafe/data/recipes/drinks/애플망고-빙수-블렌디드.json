@@ -1,0 +1,258 @@
+{
+  "id": "애플망고-빙수-블렌디드",
+  "name": "애플망고 빙수 블렌디드",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["grande"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "애플망고 베이스 사용 전 혼합",
+          "instructions": ["애플망고 베이스 사용 전 혼합"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "애플망고-베이스-container"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "애플망고 베이스 추가",
+          "instructions": ["애플망고 베이스 추가"],
+          "notes": ["과육을 제외한 소스 위주로 스쿠핑한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "애플망고-베이스",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "five-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "일반 우유 추가",
+          "instructions": ["일반 우유 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "tea-shaker",
+              "amount": {
+                "kind": "mark",
+                "label": "1번 선",
+                "referenceSize": "tall"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "tea-shaker",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "우유 베이스 파우더 추가",
+          "instructions": ["우유 베이스 파우더 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "우유-베이스-파우더",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "scoop"
+              },
+              "toolId": "five-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "클래식 시럽 추가",
+          "instructions": ["클래식 시럽 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": ["수북하게 담는다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop",
+                "referenceSize": "tall"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "블렌딩",
+          "instructions": ["블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "1",
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-9",
+          "label": "애플망고 베이스 추가",
+          "instructions": ["애플망고 베이스 추가"],
+          "notes": ["과육을 제외한 소스 위주로 스쿠핑한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "애플망고-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "five-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-10",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-11",
+          "label": "그래놀라 믹스 추가",
+          "instructions": ["그래놀라 믹스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "그래놀라-믹스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-12",
+          "label": "애플망고 베이스 추가",
+          "instructions": ["애플망고 베이스 추가"],
+          "notes": ["애플망고 과육 약 4~6개를 음료 좌측에 토핑한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "애플망고-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "scoop"
+              },
+              "toolId": "five-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-13",
+          "label": "요거트 크림 추가",
+          "instructions": ["요거트 크림 추가"],
+          "notes": ["음료 우측 가장자리에 토핑한다."],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "요거트-크림",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "steam-spoon"
+            }
+          ]
+        },
+        {
+          "id": "step-14",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮고 스푼과 함께 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "accessories": ["스푼"]
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "id": "멜론-소스-제조",
+  "name": "멜론 소스 제조",
+  "kind": "preparation",
+  "variants": [
+    {
+      "id": "standard",
+      "name": "standard",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "멜론-시럽-추가",
+          "label": "멜론 시럽 추가",
+          "instructions": ["샬로우자에 멜론 시럽을 계량해 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "멜론-시럽",
+              "into": "shallow-jar",
+              "amount": {
+                "kind": "amount",
+                "value": 1000,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "클래식-시럽-펌핑",
+          "label": "클래식 시럽 펌핑",
+          "instructions": ["클래식 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "shallow-jar",
+              "amount": {
+                "kind": "count",
+                "value": 2,
+                "unit": "pump"
+              },
+              "toolId": "cbs-pump"
+            }
+          ]
+        },
+        {
+          "id": "혼합",
+          "label": "혼합",
+          "instructions": ["잘 섞어서 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "shallow-jar",
+              "toolId": "stirrer"
+            }
+          ]
+        }
+      ],
+      "notes": ["매장 운영 상황에 맞춰 반 배합 제조가 가능하다."],
+      "review": [],
+      "output": {
+        "materialId": "멜론-소스",
+        "amount": null,
+        "description": "Tall 기준 약 30잔 제조 가능. 완성 부피는 미기재."
+      }
+    },
+    {
+      "id": "half",
+      "name": "half",
+      "temperature": null,
+      "sizes": [],
+      "steps": [
+        {
+          "id": "멜론-시럽-추가",
+          "label": "멜론 시럽 추가",
+          "instructions": ["샬로우자에 멜론 시럽을 계량해 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "멜론-시럽",
+              "into": "shallow-jar",
+              "amount": {
+                "kind": "amount",
+                "value": 500.0,
+                "unit": "ml"
+              }
+            }
+          ]
+        },
+        {
+          "id": "클래식-시럽-펌핑",
+          "label": "클래식 시럽 펌핑",
+          "instructions": ["클래식 시럽을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "classic",
+              "into": "shallow-jar",
+              "amount": {
+                "kind": "count",
+                "value": 1.0,
+                "unit": "pump"
+              },
+              "toolId": "cbs-pump"
+            }
+          ]
+        },
+        {
+          "id": "혼합",
+          "label": "혼합",
+          "instructions": ["잘 섞어서 사용한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "mix",
+              "vessel": "shallow-jar",
+              "toolId": "stirrer"
+            }
+          ]
+        }
+      ],
+      "notes": ["매장 운영 상황에 맞춰 반 배합 제조가 가능하다."],
+      "review": [],
+      "output": {
+        "materialId": "멜론-소스",
+        "amount": null,
+        "description": "Tall 기준 약 15잔 제조 가능. 완성 부피는 미기재."
+      }
+    }
+  ]
+}

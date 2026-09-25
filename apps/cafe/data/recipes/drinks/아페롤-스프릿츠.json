@@ -1,0 +1,121 @@
+{
+  "id": "아페롤-스프릿츠",
+  "name": "아페롤 스프릿츠",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["short"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "아페롤 추가",
+          "instructions": ["아페롤 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "아페롤",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "칸티 프로세코 추가",
+          "instructions": ["칸티 프로세코 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "칸티-프로세코",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 2,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "토닉워터 추가",
+          "instructions": ["토닉워터 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "토닉-워터",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 20
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "오렌지 하프 슬라이스 추가",
+          "instructions": ["오렌지 하프 슬라이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "하프-오렌지-슬라이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "제공",
+          "instructions": ["전용 잔에 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "none"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

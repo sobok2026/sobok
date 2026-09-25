@@ -1,0 +1,144 @@
+{
+  "id": "유자-v-피지오",
+  "name": "유자 V 피지오",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall", "grande", "venti"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "베이스 흔들기",
+          "instructions": ["베이스 흔들기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "유자-v-베이스-container"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "유자 V 베이스 추가",
+          "instructions": ["유자 V 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "유자-v-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "lower"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "정수 추가",
+          "instructions": ["정수 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "water",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "내용물 옮기기",
+          "instructions": ["내용물 옮기기"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "serving-cup",
+              "into": "fizzio-bottle",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "스파클링",
+          "instructions": ["스파클링"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "fizzio",
+              "vessel": "fizzio-bottle",
+              "program": {
+                "tall": "extra-t",
+                "grande": "extra-g",
+                "venti": "extra-v"
+              },
+              "cycles": 1
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 13
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "스파클링 음료 붓기",
+          "instructions": ["스파클링 음료 붓기"],
+          "notes": ["탄산이 넘치지 않도록 조심히 붓는다."],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "fizzio-bottle",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "제공",
+          "instructions": ["일회용 컵은 빨대 없는 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    }
+  ]
+}

@@ -1,0 +1,263 @@
+{
+  "id": "퓨어-말차-모히토",
+  "name": "퓨어 말차 모히토",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["short"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "라임 웨지 추가",
+          "instructions": ["라임 웨지 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "라임-웨지",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              },
+              "toolId": "tongs"
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "애플민트 추가",
+          "instructions": ["애플민트 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "애플민트",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 4,
+                "unit": "piece"
+              },
+              "toolId": "tongs"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "민트향시럽R 추가",
+          "instructions": ["민트향시럽R 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "민트향시럽r",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "pump"
+              },
+              "toolId": "syrup-pump"
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "스퀴즈",
+          "instructions": ["스퀴즈"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "muddle",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            }
+          ]
+        },
+        {
+          "id": "step-5",
+          "label": "라임 베이스 추가",
+          "instructions": ["라임 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "라임-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-6",
+          "label": "유자진저 베이스 추가",
+          "instructions": ["유자진저 베이스 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "유자진저-베이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 0.5,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "바카디 카르타 블랑카 추가",
+          "instructions": ["바카디 카르타 블랑카 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바카디-카르타-블랑카",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-8",
+          "label": "토닉워터 추가",
+          "instructions": ["토닉워터 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "토닉-워터",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-9",
+          "label": "얼음 추가",
+          "instructions": ["얼음 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "blender-pitcher",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop",
+                "referenceSize": "venti"
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "step-10",
+          "label": "블렌딩",
+          "instructions": ["블렌딩"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "run-machine",
+              "equipmentId": "blender",
+              "vessel": "blender-pitcher",
+              "program": "3",
+              "cycles": 1,
+              "duration": {
+                "seconds": 5,
+                "approximate": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-11",
+          "label": "크러시드 아이스 채우기",
+          "instructions": ["크러시드 아이스 채우기"],
+          "notes": ["바 스푼으로 담는다."],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "blender-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "unspecified",
+                "description": "잔에 가득"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-12",
+          "label": "말차 샷 다시 혼합",
+          "instructions": ["말차 샷 다시 혼합"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "shake",
+              "vessel": "sauce-container"
+            }
+          ]
+        },
+        {
+          "id": "step-13",
+          "label": "바 믹사토 말차 샷 추가",
+          "instructions": ["바 믹사토 말차 샷 추가"],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "바-믹사토-말차-샷",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 1,
+                "unit": "oz"
+              },
+              "toolId": "jigger"
+            }
+          ]
+        },
+        {
+          "id": "step-14",
+          "label": "제공",
+          "instructions": ["머들러를 꽂아 제공하고 잘 혼합하여 마시도록 안내한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "none",
+              "accessories": ["머들러"]
+            }
+          ]
+        }
+      ],
+      "notes": ["말차 파우더가 쉽게 가라앉으므로 사용할 때마다 샷을 잘 흔든다."],
+      "review": []
+    }
+  ]
+}

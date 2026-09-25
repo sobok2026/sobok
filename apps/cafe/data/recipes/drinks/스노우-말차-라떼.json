@@ -1,0 +1,266 @@
+{
+  "id": "스노우-말차-라떼",
+  "name": "스노우 말차 라떼",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "hot",
+      "name": "HOT",
+      "temperature": "hot",
+      "sizes": ["tall"],
+      "steps": [
+        {
+          "id": "계량-및-스팀",
+          "label": "계량 및 스팀",
+          "instructions": ["피처의 지정된 선까지 계량하고 스팀한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "steam-pitcher",
+              "amount": {
+                "kind": "line",
+                "line": "size"
+              }
+            },
+            {
+              "action": "steam",
+              "vessel": "steam-pitcher",
+              "setting": "일반 우유 스팀"
+            }
+          ]
+        },
+        {
+          "id": "말차-글레이즈드-소스-펌핑",
+          "label": "말차 글레이즈드 소스 펌핑",
+          "instructions": ["말차 글레이즈드 소스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "말차-글레이즈드-소스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump-15"
+            }
+          ]
+        },
+        {
+          "id": "우유-붓기-및-혼합",
+          "label": "우유 붓기 및 혼합",
+          "instructions": ["스팀 스쿱으로 컵 테두리 아래 12mm까지 우유를 붓고 머들러로 섞는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "steam-pitcher",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              },
+              "toolId": "steam-scoop"
+            },
+            {
+              "action": "mix",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            }
+          ]
+        },
+        {
+          "id": "베르가못-크림-추가",
+          "label": "베르가못 크림 추가",
+          "instructions": ["베르가못 크림을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "베르가못-크림",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "amount",
+                "value": 40,
+                "unit": "g"
+              }
+            }
+          ]
+        },
+        {
+          "id": "스노우-토핑-추가",
+          "label": "스노우 토핑 추가",
+          "instructions": ["음료 윗면 절반에만 스노우 토핑을 올린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "스노우-토핑",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "standard"
+            }
+          ]
+        }
+      ],
+      "notes": [],
+      "review": []
+    },
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall"],
+      "steps": [
+        {
+          "id": "말차-글레이즈드-소스-펌핑",
+          "label": "말차 글레이즈드 소스 펌핑",
+          "instructions": ["말차 글레이즈드 소스을 계량해 펌핑한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "말차-글레이즈드-소스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 3,
+                "unit": "pump"
+              },
+              "toolId": "white-mocha-pump-15"
+            }
+          ]
+        },
+        {
+          "id": "우유-혼합",
+          "label": "우유 혼합",
+          "instructions": ["컵 상단선까지 일반 우유를 넣고 머들러로 소스와 섞는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "milk",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "line",
+                "line": "upper"
+              }
+            },
+            {
+              "action": "mix",
+              "vessel": "serving-cup",
+              "toolId": "stirrer"
+            }
+          ]
+        },
+        {
+          "id": "얼음-추가",
+          "label": "얼음 추가",
+          "instructions": ["지정된 기준까지 얼음을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 12
+              },
+              "toolId": "ice-scoop"
+            }
+          ]
+        },
+        {
+          "id": "베르가못-크림-추가",
+          "label": "베르가못 크림 추가",
+          "instructions": ["베르가못 크림을 넣는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "베르가못-크림",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "rim-gap",
+                "millimeters": 6
+              }
+            }
+          ],
+          "alternatives": [
+            {
+              "label": "중량 계량",
+              "operations": [
+                {
+                  "action": "add",
+                  "materialId": "베르가못-크림",
+                  "into": "serving-cup",
+                  "amount": {
+                    "kind": "amount",
+                    "value": 40,
+                    "unit": "g"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "스노우-토핑-추가",
+          "label": "스노우 토핑 추가",
+          "instructions": ["음료 윗면 절반에만 스노우 토핑을 올린다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "스노우-토핑",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "two-teaspoon-scoop"
+            }
+          ]
+        },
+        {
+          "id": "제공",
+          "label": "제공",
+          "instructions": ["일회용 컵은 돔 리드를 덮어 제공한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "serve",
+              "lid": "takeaway",
+              "lidType": "dome"
+            }
+          ]
+        }
+      ],
+      "notes": ["원문은 베르가못 크림을 40g으로 함께 안내한다."],
+      "review": []
+    }
+  ]
+}

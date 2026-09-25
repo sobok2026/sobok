@@ -1,0 +1,192 @@
+{
+  "id": "리저브-스파클링-시트러스-에스프레소",
+  "name": "리저브 스파클링 시트러스 에스프레소",
+  "kind": "drink",
+  "variants": [
+    {
+      "id": "iced",
+      "name": "ICED",
+      "temperature": "iced",
+      "sizes": ["tall"],
+      "steps": [
+        {
+          "id": "step-1",
+          "label": "에스프레소 준비",
+          "instructions": ["포터필터를 그라인더에 두고 커피를 도징한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "grind",
+              "equipmentId": "reserve-grinder",
+              "materialId": "리저브-에스프레소-원두",
+              "into": "portafilter",
+              "amount": {
+                "kind": "unspecified",
+                "description": "원본에 도징 g 미기재"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-2",
+          "label": "샷 추출",
+          "instructions": ["리저브 에스프레소 샷을 샷 글라스에 추출한다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "espresso",
+              "into": "shot-glass",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "shot"
+              },
+              "method": "regular",
+              "equipmentId": "reserve-espresso-machine",
+              "materialId": "리저브-에스프레소-원두"
+            }
+          ]
+        },
+        {
+          "id": "step-3",
+          "label": "얼음 및 레몬 추가",
+          "instructions": [
+            "리저브 브랜디 잔에 얼음 1스쿱을 넣고 레몬 슬라이스 1개를 단면이 보이도록 컵 벽면에 넣는다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop"
+            },
+            {
+              "action": "add",
+              "materialId": "레몬-슬라이스",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "piece"
+              }
+            }
+          ]
+        },
+        {
+          "id": "step-4",
+          "label": "토닉워터 붓기",
+          "instructions": ["진저에일 토닉워터를 리저브 브랜디 잔 중간선까지 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "진저에일-토닉워터",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "mark",
+                "label": "리저브 브랜디 잔 중간선"
+              }
+            }
+          ],
+          "when": {
+            "kind": "service",
+            "value": "for-here"
+          }
+        },
+        {
+          "id": "step-5",
+          "label": "포장용 토닉워터 계량",
+          "instructions": [
+            "일회용 컵 제조 시 아이스 음료 계량컵의 Tall 중간선까지 계량한 진저에일 토닉워터를 사용한다."
+          ],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "진저에일-토닉워터",
+              "into": "iced-measuring-cup",
+              "amount": {
+                "kind": "line",
+                "line": "middle",
+                "referenceSize": "tall"
+              }
+            },
+            {
+              "action": "transfer",
+              "from": "iced-measuring-cup",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              }
+            }
+          ],
+          "when": {
+            "kind": "service",
+            "value": "takeaway"
+          }
+        },
+        {
+          "id": "step-6",
+          "label": "샷 쉐이킹",
+          "instructions": ["스테인리스 쉐이커에 얼음 1스쿱과 추출한 샷을 넣고 10회 흔든다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "add",
+              "materialId": "ice",
+              "into": "shaker",
+              "amount": {
+                "kind": "count",
+                "value": 1,
+                "unit": "scoop"
+              },
+              "toolId": "ice-scoop"
+            },
+            {
+              "action": "transfer",
+              "from": "shot-glass",
+              "into": "shaker",
+              "amount": {
+                "kind": "all"
+              }
+            },
+            {
+              "action": "shake",
+              "vessel": "shaker",
+              "repetitions": 10,
+              "approximate": false
+            }
+          ]
+        },
+        {
+          "id": "step-7",
+          "label": "마무리 및 제공",
+          "instructions": ["쉐이커 안의 샷을 제공 컵에 모두 붓는다."],
+          "notes": [],
+          "operations": [
+            {
+              "action": "transfer",
+              "from": "shaker",
+              "into": "serving-cup",
+              "amount": {
+                "kind": "all"
+              },
+              "portion": "liquid"
+            },
+            {
+              "action": "serve"
+            }
+          ]
+        }
+      ],
+      "notes": ["캔에 남은 진저에일 토닉워터는 폐기한다.", "매장 제공 컵은 리저브 브랜디 잔이다."],
+      "review": []
+    }
+  ]
+}
