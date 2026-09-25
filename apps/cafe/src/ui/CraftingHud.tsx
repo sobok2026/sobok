@@ -2,8 +2,8 @@ import { INGREDIENTS, ingredientIds, RECIPES, STATIONS, type StationId } from '.
 import { isContinuous, isMetered, operationFor, readyToConfirm, TOOL_NAMES } from '../game/crafting'
 import { isReusableCup } from '../game/cups'
 import { CUSTOMER_STATUS } from '../game/customer'
+import { available } from '../game/inventory'
 import type { GameState } from '../game/state'
-import { available } from '../game/store'
 import { TextButton } from './Button'
 import { WorkButton, WorkHud, WorkMeter, WorkTitle } from './WorkControls'
 

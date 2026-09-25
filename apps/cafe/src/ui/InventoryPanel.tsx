@@ -1,84 +1,14 @@
-import {
-  COLD_BREW_HOURS,
-  type Costs,
-  formatAmount,
-  INGREDIENTS,
-  type IngredientId,
-  ingredientIds,
-  money,
-  RECIPES,
-} from '../game/catalog'
-import { operationFor } from '../game/crafting'
-import { PREPARATIONS, preparationIds } from '../game/preparation'
+import type { Action } from '../game/actions'
+import { COLD_BREW_HOURS, formatAmount, money } from '../game/catalog'
+import { inventorySummary } from '../game/inventory-summary'
 import type { GameState } from '../game/state'
-import { type Action, available } from '../game/store'
 import BatchLabel from './BatchLabel'
+import { InventoryButton } from './Button'
 import CupInventory from './CupInventory'
 import SupplyPanel from './SupplyPanel'
 
 export default function InventoryPanel({ state, act }: { state: GameState; act: (action: Action) => void }) {
-  const items = ingredientIds.map((id) => {
-    const batches = state.batches.filter((batch) => batch.ingredient === id && batch.amount > 0)
-    const expired = batches.filter((batch) => batch.expiresAt !== null && batch.expiresAt <= state.time)
-    const sealed = batches.filter((batch) => batch.openedAt === null && !expired.includes(batch))
-    const pending = batches.filter(
-      (batch) => !expired.includes(batch) && !sealed.includes(batch) && (!batch.labelled || batch.location !== 'bar'),
-    )
-    const sum = (values: typeof batches) => values.reduce((amount, batch) => amount + batch.amount, 0)
-    return {
-      id,
-      definition: INGREDIENTS[id],
-      batches,
-      sealed,
-      amount: available(state, id),
-      pending: sum(pending),
-      expired: sum(expired),
-      unopened: sum(sealed),
-    }
-  })
-  const required: Costs = {}
-  const add = (id: IngredientId, amount: number) => {
-    required[id] = (required[id] ?? 0) + Math.max(0, amount)
-  }
-  const recipe =
-    state.cup?.recipe ??
-    state.ticket?.recipe ??
-    (state.phase === 'open' && state.customer && !state.customer.visit && state.customer.stage !== 'leaving'
-      ? state.request
-      : null)
-  if (recipe) {
-    const cup = state.cup?.craft.fault ? null : state.cup
-    const stepIndex = cup?.step ?? 0
-    for (let index = stepIndex; index < RECIPES[recipe].steps.length; index++) {
-      if (cup && index === stepIndex && state.jobs.some((job) => job.cupId === cup.id)) continue
-      const operation = cup && index === stepIndex ? operationFor(cup.recipe, cup.step, cup.craft) : null
-      const remaining =
-        operation && operation.kind !== 'shake' ? Math.max(0, 1 - cup!.craft.progress / operation.target) : 1
-      for (const [id, amount] of Object.entries(RECIPES[recipe].steps[index].costs))
-        add(id as IngredientId, amount * remaining)
-    }
-  }
-  for (const id of preparationIds) {
-    const stock = items.find((item) => item.id === id)!
-    const prep = state.preparation?.recipe === id ? state.preparation : null
-    const needsBatch = (required[id] ?? 0) > stock.amount + stock.pending + 0.0001
-    if (prep?.stage === 'ready' || (prep && !prep.fault && prep.stage === 'processing')) continue
-    if (!prep && !needsBatch) continue
-    const steps = PREPARATIONS[id].steps
-    for (let index = prep && !prep.fault ? prep.step : 0; index < steps.length; index++) {
-      const step = steps[index]
-      if (!step.ingredient) continue
-      const remaining = step.target - (prep && !prep.fault && index === prep.step ? prep.progress : 0)
-      add(step.ingredient, remaining * (step.perUnit ?? 1))
-    }
-  }
-  const inventory = items
-    .map((item) => {
-      const needed = required[item.id] ?? 0
-      const shortage = Math.max(0, needed - item.amount)
-      return { ...item, needed, shortage, priority: shortage > 0.0001 ? 0 : item.expired ? 1 : item.pending ? 2 : 3 }
-    })
-    .sort((a, b) => a.priority - b.priority)
+  const inventory = inventorySummary(state)
   const shortages = inventory.filter((item) => item.shortage > 0.0001)
   return (
     <>
@@ -174,18 +104,12 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                   ))}
                 <div className="mt-3 grid gap-2">
                   {sealed.length ? (
-                    <button
-                      className="w-full rounded-[0.3125rem] border border-control-line bg-control px-3 py-2.5 text-sm text-brand"
-                      type="button"
-                      onClick={() => act({ type: 'open-batch', id: sealed[0].id })}
-                    >
+                    <InventoryButton onClick={() => act({ type: 'open-batch', id: sealed[0].id })}>
                       원팩 개봉
-                    </button>
+                    </InventoryButton>
                   ) : null}
                   {!definition.prepared ? (
-                    <button
-                      className="w-full rounded-[0.3125rem] border border-control-line bg-control px-3 py-2.5 text-sm text-brand"
-                      type="button"
+                    <InventoryButton
                       disabled={
                         state.cash < definition.price ||
                         batches.filter((batch) => batch.location === 'stock').length >= 3
@@ -193,7 +117,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                       onClick={() => act({ type: 'buy', ingredient: id })}
                     >
                       원팩 입고 · {money(definition.price)}
-                    </button>
+                    </InventoryButton>
                   ) : null}
                 </div>
               </div>

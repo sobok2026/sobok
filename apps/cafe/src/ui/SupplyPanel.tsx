@@ -1,7 +1,8 @@
+import type { Action } from '../game/actions'
 import { money } from '../game/catalog'
 import type { GameState } from '../game/state'
-import type { Action } from '../game/store'
 import { SUPPLIES, SUPPLY_CAPACITY, SUPPLY_PACK, SUPPLY_PRICE, supplyIds } from '../game/supplies'
+import { InventoryButton } from './Button'
 
 export default function SupplyPanel({
   state,
@@ -40,9 +41,7 @@ export default function SupplyPanel({
             </p>
             {location === 'stock' ? (
               <div className="mt-3 grid gap-2">
-                <button
-                  className="w-full rounded-[0.3125rem] border border-control-line bg-control px-3 py-2.5 text-sm text-brand"
-                  type="button"
+                <InventoryButton
                   disabled={amount <= 0 || !!state.supplyDelivery}
                   onClick={() => act({ type: 'take-supply', supply: id })}
                 >
@@ -51,16 +50,14 @@ export default function SupplyPanel({
                     : supply.bar >= SUPPLY_CAPACITY
                       ? `${definition.name} 진열대가 가득 찼어요`
                       : `${definition.name} 후방 재고가 없어요`}
-                </button>
-                <button
-                  className="w-full rounded-[0.3125rem] border border-control-line bg-control px-3 py-2.5 text-sm text-brand"
-                  type="button"
+                </InventoryButton>
+                <InventoryButton
                   disabled={state.cash < SUPPLY_PRICE || !!state.supplyDelivery}
                   onClick={() => act({ type: 'buy-supply', supply: id })}
                 >
                   {definition.name} {SUPPLY_PACK}
                   {definition.unit} 입고 · {money(SUPPLY_PRICE)}
-                </button>
+                </InventoryButton>
               </div>
             ) : null}
           </article>

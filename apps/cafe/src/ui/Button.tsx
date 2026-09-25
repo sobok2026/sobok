@@ -39,3 +39,13 @@ export function TextButton({
     />
   )
 }
+
+export function InventoryButton(props: ComponentProps<'button'>) {
+  return (
+    <button
+      type="button"
+      {...props}
+      className="w-full rounded-[0.3125rem] border border-control-line bg-control px-3 py-2.5 text-sm text-brand"
+    />
+  )
+}

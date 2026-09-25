@@ -1,9 +1,10 @@
+import type { Action } from '../game/actions'
 import { RECIPES, STATIONS } from '../game/catalog'
 import { operationFor } from '../game/crafting'
 import type { Preferences } from '../game/preferences'
 import { preparationStep } from '../game/preparation'
 import type { GameState } from '../game/state'
-import type { Action, CafeStore } from '../game/store'
+import type { CafeStore } from '../game/store'
 
 const assetIds = [
   'bell',
@@ -16,8 +17,8 @@ const assetIds = [
   'wipe-table',
 ] as const
 type Asset = (typeof assetIds)[number]
-export type WorkSound = 'ice' | 'complete' | 'serve'
-export type WorkLoop = 'pour-cup' | 'pour-milk' | 'espresso' | 'steam' | 'wipe-table'
+type WorkSound = 'ice' | 'complete' | 'serve'
+type WorkLoop = 'pour-cup' | 'pour-milk' | 'espresso' | 'steam' | 'wipe-table'
 export type SoundStatus = 'off' | 'idle' | 'loading' | 'ready' | 'blocked' | 'unavailable'
 type ActiveInput = ReturnType<CafeStore['getActiveInput']>
 type Voice = { source: AudioBufferSourceNode; gain: GainNode }

@@ -33,3 +33,14 @@ export function cupKindFor(recipe: RecipeId, service: ServiceMode): CupKind {
 export function cleanCupCount(state: GameState, kind: CupKind) {
   return isReusableCup(kind) ? state.reusableCups[kind].clean : state.disposableCups[kind].bar
 }
+
+export const REUSABLE_CUPS_PER_KIND = 4
+export const CUP_SUPPLY = {
+  initialBar: 2,
+  initialReserve: 12,
+  barCapacity: 12,
+  refill: 6,
+  reserveLimit: 48,
+  pack: 24,
+  price: 2000,
+} as const

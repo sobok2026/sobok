@@ -2,14 +2,12 @@
 
 @theme {
   --font-sans: 'DM Sans', 'Noto Sans KR', sans-serif;
-  --font-display: 'Noto Sans KR', sans-serif;
 
   --color-page: #f1f0eb;
   --color-brand: #244c3e;
   --color-ink: #252c29;
   --color-surface: #fcfbf7;
   --color-muted: #6a716b;
-  --color-subtle: #878d86;
   --color-line: #e3e5dd;
   --color-on-brand: #ffffff;
   --color-control: #f0f2eb;
@@ -47,7 +45,6 @@
 }
 
 /* Keep controls reachable when the game viewport is short. */
-@custom-variant short (@media (height <= 45rem));
 @custom-variant compact (@media (height <= 40.625rem));
 
 @layer base {

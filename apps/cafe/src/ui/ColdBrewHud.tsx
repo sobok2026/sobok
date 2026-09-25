@@ -1,9 +1,11 @@
+import type { Action } from '../game/actions'
 import { COLD_BREW_HOURS, formatAmount, INGREDIENTS } from '../game/catalog'
 import { COLD_BREW_TOOL_NAMES, coldBrewStep } from '../game/cold-brew'
-import { batchDate } from '../game/preparation'
+import { craftingHandsBusy } from '../game/crafting'
+
+import { batchDate } from '../game/format'
 import { expiryAt } from '../game/quality'
 import type { GameState } from '../game/state'
-import type { Action } from '../game/store'
 import BatchLabel from './BatchLabel'
 import { TextButton } from './Button'
 import { WorkButton, WorkHud, WorkMeter, WorkTitle } from './WorkControls'
@@ -25,8 +27,7 @@ export default function ColdBrewHud({
   const ready = brew.progress + 0.0001 >= step.target * (1 - step.tolerance)
   const expired = brew.completedAt !== null && expiryAt(brew.completedAt, INGREDIENTS.coldBrew.lifetime) <= state.time
   const minutes = job ? Math.max(0, Math.ceil((job.endsAt - state.time) / 60)) : 0
-  const handsFull =
-    !!state.preparation?.tool || !!(state.cup && (state.cup.craft.location === 'hand' || state.cup.craft.tool))
+  const handsFull = craftingHandsBusy(state)
   return (
     <WorkHud aria-label="콜드 브루 직접 준비" data-fault={!!brew.fault}>
       <div className="mb-2 flex justify-between gap-3 text-xs text-muted">

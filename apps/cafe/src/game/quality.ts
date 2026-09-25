@@ -18,11 +18,3 @@ export function expiryAt(startedAt: number, lifetime: Lifetime) {
 export function sameLifetime(first: Lifetime, second: Lifetime) {
   return first.unit === second.unit && first.amount === second.amount
 }
-
-export function lifetimeLabel(lifetime: Lifetime, prepared: boolean) {
-  const start = prepared ? '제조' : '개봉'
-  if (lifetime.unit === 'months') return `${start}일 기준 달력 ${lifetime.amount}개월`
-  return lifetime.unit === 'days'
-    ? `${start}일 포함 ${lifetime.amount}일 · 마지막 날 종료까지`
-    : `${start} 후 ${lifetime.amount}시간`
-}

@@ -1,6 +1,7 @@
-import { CUP_NAMES, cupKindFor, disposableCupKinds, reusableCupKinds } from '../game/cups'
+import type { Action } from '../game/actions'
+import { money } from '../game/catalog'
+import { CUP_NAMES, CUP_SUPPLY, cupKindFor, disposableCupKinds, reusableCupKinds } from '../game/cups'
 import type { GameState } from '../game/state'
-import type { Action } from '../game/store'
 import { Button } from './Button'
 
 export default function CupInventory({
@@ -79,7 +80,7 @@ export default function CupInventory({
               {stock.reserve > 0 ? (
                 <Button
                   variant="secondary"
-                  disabled={stock.bar >= 12}
+                  disabled={stock.bar >= CUP_SUPPLY.barCapacity}
                   onClick={() => act({ type: 'cups', kind })}
                   aria-label={`${CUP_NAMES[kind]} 보충`}
                 >
@@ -91,11 +92,11 @@ export default function CupInventory({
               {purchasing ? (
                 <Button
                   variant="secondary"
-                  disabled={state.cash < 2000 || stock.reserve >= 48}
+                  disabled={state.cash < CUP_SUPPLY.price || stock.reserve >= CUP_SUPPLY.reserveLimit}
                   onClick={() => act({ type: 'buy-cups', kind })}
-                  aria-label={`${CUP_NAMES[kind]} 24개 입고 · 2,000원`}
+                  aria-label={`${CUP_NAMES[kind]} ${CUP_SUPPLY.pack}개 입고 · ${money(CUP_SUPPLY.price)}`}
                 >
-                  24개 입고 · 2,000원
+                  {CUP_SUPPLY.pack}개 입고 · {money(CUP_SUPPLY.price)}
                 </Button>
               ) : null}
             </div>

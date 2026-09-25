@@ -2,36 +2,13 @@ import * as THREE from 'three'
 import { PREP_SPOT, type PrepTool, preparationStep } from './preparation'
 import type { GameState } from './state'
 import { addVesselLabel } from './vessel-label'
+import { workBox as box, workCylinder as cylinder, workMaterial as mat } from './work-geometry'
 
 export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
-  const mat = (color: string, metalness = 0) =>
-    new THREE.MeshStandardMaterial({ color, roughness: metalness ? 0.3 : 0.65, metalness })
   const cream = mat('#eee6cd')
   const steel = mat('#afbcb2', 0.6)
   const green = mat('#446d55')
   const brown = mat('#533326')
-  function cylinder(
-    parent: THREE.Object3D,
-    top: number,
-    bottom: number,
-    height: number,
-    material: THREE.Material,
-    y = 0,
-    open = false,
-  ) {
-    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(top, bottom, height, 32, 1, open), material)
-    mesh.position.y = y
-    mesh.castShadow = true
-    parent.add(mesh)
-    return mesh
-  }
-  function box(parent: THREE.Object3D, w: number, h: number, d: number, material: THREE.Material, x = 0, y = 0, z = 0) {
-    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material)
-    mesh.position.set(x, y, z)
-    mesh.castShadow = true
-    parent.add(mesh)
-    return mesh
-  }
   const vessel = new THREE.Group()
   scene.add(vessel)
   cylinder(

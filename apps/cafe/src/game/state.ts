@@ -8,6 +8,7 @@ import {
   cupKinds,
   disposableCupKinds,
   isReusableCup,
+  REUSABLE_CUPS_PER_KIND,
   reusableCupFor,
   reusableCupKinds,
   serviceModes,
@@ -57,7 +58,7 @@ const customerSchema = z
       (customer.service === 'dine-in' ? customer.visit.table !== null : customer.visit.table === null),
     '손님의 이용 방식과 테이블 정보가 맞지 않아요.',
   )
-export const batchSchema = z.object({
+const batchSchema = z.object({
   id: z.string().max(100),
   ingredient: z.enum(ingredientIds),
   amount: quantity,
@@ -89,11 +90,9 @@ const totalsSchema = z.object({
   suppliesUsed: z.partialRecord(z.enum(supplyIds), quantity.int()),
   served: quantity,
   revenue: quantity,
-  mistakes: quantity,
   wastedCups: quantity,
   cleaned: quantity,
   washed: quantity,
-  restocked: quantity,
   prepared: quantity,
 })
 const craftSchema = z.object({
@@ -115,7 +114,6 @@ const craftSchema = z.object({
   }),
   pitcherMilk: quantity,
   pitcherReserved: z.boolean(),
-  steamed: z.boolean(),
   shotReady: z.boolean(),
   shotTransferred: z.boolean(),
   mixed: z.boolean(),
@@ -328,10 +326,10 @@ export const stateSchema = z
             surfaces +
             (state.cleaning?.heldCups[kind] ?? 0) +
             (state.cup?.craft.kind === kind ? 1 : 0) ===
-          4
+          REUSABLE_CUPS_PER_KIND
         )
       }),
-    '다회용 컵은 종류별 4개가 보관·제조·사용·세척 위치 사이에서 유지되어야 해요.',
+    `다회용 컵은 종류별 ${REUSABLE_CUPS_PER_KIND}개가 보관·제조·사용·세척 위치 사이에서 유지되어야 해요.`,
   )
 
 export type GameState = z.infer<typeof stateSchema>
@@ -348,11 +346,16 @@ export const emptyTotals = (openingCash: number): z.infer<typeof totalsSchema> =
   suppliesUsed: {},
   served: 0,
   revenue: 0,
-  mistakes: 0,
   wastedCups: 0,
   cleaned: 0,
   washed: 0,
-  restocked: 0,
   prepared: 0,
 })
 export const uid = () => crypto.randomUUID()
+
+export type CraftState = z.infer<typeof craftSchema>
+export type Preparation = z.infer<typeof preparationSchema>
+export type ColdBrew = z.infer<typeof coldBrewSchema>
+export type Washing = z.infer<typeof washingSchema>
+export type Cleaning = z.infer<typeof cleaningSchema>
+export type Customer = z.infer<typeof customerSchema>

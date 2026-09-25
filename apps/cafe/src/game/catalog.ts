@@ -5,32 +5,32 @@ import { type DrinkReference, type DrinkStepReference, linkReferences, sourceLin
 export const referenceLinks = linkReferences(referenceData)
 export const COLD_BREW_HOURS = referenceLinks.brew.hours
 export const BAR_CENTER_Z = -1.05
-export const STAFF_AISLE_EDGE_Z = -1.95
+const STAFF_AISLE_EDGE_Z = -1.95
 export const staffStartPosition = (): [number, number, number, number] => [-4.4, -3.05, Math.PI, -0.17]
 // Reflect the original customer-facing fixtures toward the employee aisle.
 export const staffFacingZ = (z: number) => 2 * BAR_CENTER_Z - z
 export const STATIONS = {
-  pos: { name: 'POS', subtitle: '주문을 듣고 입력해요', x: -4.8, z: -1.4, color: '#e5b263' },
-  cups: { name: '컵 보관대', subtitle: '주문에 맞는 컵을 준비해요', x: -3.7, z: -1.4, color: '#f1dfc5' },
-  espresso: { name: '에스프레소 머신', subtitle: '샷을 추출해요', x: -2.5, z: -1.4, color: '#a2b7ae' },
-  steam: { name: '우유 · 스팀', subtitle: '우유를 계량하고 스팀해요', x: -1.2, z: -1.4, color: '#d8e8dd' },
-  brew: { name: '콜드 브루', subtitle: '보관된 추출액을 계량해요', x: 0, z: -1.4, color: '#a27c58' },
-  water: { name: '워터 스테이션', subtitle: '컵의 기준선까지 채워요', x: 1.1, z: -1.4, color: '#a6ced4' },
-  ice: { name: '아이스 빈', subtitle: '얼음을 채워요', x: 2.1, z: -1.4, color: '#c5e4e5' },
-  sauce: { name: '소스 펌프', subtitle: '소스를 펌핑해요', x: 3.1, z: -1.4, color: '#d2ad7d' },
-  mix: { name: '혼합 작업대', subtitle: '혼합·호지차 샷·드리즐', x: 4.1, z: -1.4, color: '#bf9370' },
-  topping: { name: '폼 · 토핑', subtitle: '음료를 마무리해요', x: 5.1, z: -1.4, color: '#eed6ad' },
-  pickup: { name: '픽업대', subtitle: '주문을 확인하고 전달해요', x: 6.1, z: -1.4, color: '#d3b76b' },
-  prep: { name: '준비대', subtitle: '폼·바모카·호지차 샷을 만들어요', x: -2.7, z: -5.1, color: '#c3a8cc' },
-  stock: { name: '냉장고 · 창고', subtitle: '기한 확인, 개봉과 보충', x: 5.5, z: -4.8, color: '#8bb2a2' },
-  shelf: { name: '실온 선반', subtitle: '실온 보관 배합을 정리해요', x: 3, z: -4.8, color: '#bc9d76' },
-  'cold-prep': { name: '콜드 브루 추출대', subtitle: '원두·물 계량, 추출과 회수', x: 1, z: -5.1, color: '#9c7954' },
-  wash: { name: '세척대', subtitle: '피처·머그·유리잔을 씻어요', x: -5.0, z: -5.1, color: '#aac4cf' },
-  rack: { name: '건조 · 도구 선반', subtitle: '씻은 도구를 제자리에', x: -3.9, z: -5.1, color: '#d1bc9d' },
-  table: { name: '고객 테이블 1', subtitle: '사용한 컵을 회수하고 닦아요', x: 3.2, z: 3.7, color: '#d2ad7d' },
-  'table-left': { name: '고객 테이블 2', subtitle: '사용한 컵을 회수하고 닦아요', x: -2.2, z: 3.7, color: '#d2ad7d' },
-  condiment: { name: '컨디먼트 바', subtitle: '컵 반납·청소와 냅킨·빨대·설탕 보충', x: 0, z: 5.1, color: '#bca681' },
-  trash: { name: '분리수거함', subtitle: '마감 전에 비워요', x: -5.4, z: 5.1, color: '#79988b' },
+  pos: { name: 'POS', x: -4.8, z: -1.4 },
+  cups: { name: '컵 보관대', x: -3.7, z: -1.4 },
+  espresso: { name: '에스프레소 머신', x: -2.5, z: -1.4 },
+  steam: { name: '우유 · 스팀', x: -1.2, z: -1.4 },
+  brew: { name: '콜드 브루', x: 0, z: -1.4 },
+  water: { name: '워터 스테이션', x: 1.1, z: -1.4 },
+  ice: { name: '아이스 빈', x: 2.1, z: -1.4 },
+  sauce: { name: '소스 펌프', x: 3.1, z: -1.4 },
+  mix: { name: '혼합 작업대', x: 4.1, z: -1.4 },
+  topping: { name: '폼 · 토핑', x: 5.1, z: -1.4 },
+  pickup: { name: '픽업대', x: 6.1, z: -1.4 },
+  prep: { name: '준비대', x: -2.7, z: -5.1 },
+  stock: { name: '냉장고 · 창고', x: 5.5, z: -4.8 },
+  shelf: { name: '실온 선반', x: 3, z: -4.8 },
+  'cold-prep': { name: '콜드 브루 추출대', x: 1, z: -5.1 },
+  wash: { name: '세척대', x: -5.0, z: -5.1 },
+  rack: { name: '건조 · 도구 선반', x: -3.9, z: -5.1 },
+  table: { name: '고객 테이블 1', x: 3.2, z: 3.7 },
+  'table-left': { name: '고객 테이블 2', x: -2.2, z: 3.7 },
+  condiment: { name: '컨디먼트 바', x: 0, z: 5.1 },
+  trash: { name: '분리수거함', x: -5.4, z: 5.1 },
 } as const
 export type StationId = keyof typeof STATIONS
 export const stationIds = Object.keys(STATIONS) as StationId[]
@@ -153,7 +153,7 @@ export const INGREDIENTS: Record<IngredientId, Ingredient> = {
   hojicha: { name: '호지차 샷', unit: 'ml', pack: 250, ...quality.hojicha, price: 0, prepared: true },
 }
 export type Costs = Partial<Record<IngredientId, number>>
-export type Step = {
+type Step = {
   station: StationId
   label: string
   instruction: string
@@ -162,12 +162,10 @@ export type Step = {
   seconds: number
   usesPitcher: boolean
   target: number
-  source: DrinkStepReference['source'] | null
 }
 export const recipeIds = ['cold-brew', 'glazed-hot', 'glazed-iced', 'hoji-hot', 'hoji-iced'] as const
 export type RecipeId = (typeof recipeIds)[number]
-export type Recipe = {
-  id: RecipeId
+type Recipe = {
   name: string
   shortName: string
   variant: string
@@ -178,7 +176,6 @@ export type Recipe = {
 
 function makeRecipe(id: RecipeId, reference: DrinkReference, steps: Step[], price: number, color: string): Recipe {
   return {
-    id,
     name: reference.name,
     shortName:
       id === 'cold-brew'
@@ -207,7 +204,6 @@ function recipeStep(
     seconds: 2,
     usesPitcher: false,
     target: 1,
-    source: reference.source,
     ...options,
   }
 }
@@ -230,7 +226,6 @@ export const RECIPES: Record<RecipeId, Recipe> = {
         seconds: 0,
         usesPitcher: false,
         target: 1,
-        source: null,
       },
     ],
     5000,

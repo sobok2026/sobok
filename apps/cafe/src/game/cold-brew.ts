@@ -1,25 +1,14 @@
 import { COLD_BREW_HOURS, referenceLinks } from './catalog'
+import type { ColdBrew } from './state'
 
 export const COLD_BREW_COST = 9000
 export const COLD_BREW_BEANS = Number(referenceLinks.brew.steps.beans.amount)
 export const COLD_BREW_WATER = Number(referenceLinks.brew.steps.water.amount)
 export const coldBrewTools = ['bean-bag', 'water-jug'] as const
-export type ColdBrewTool = (typeof coldBrewTools)[number]
+type ColdBrewTool = (typeof coldBrewTools)[number]
 export const COLD_BREW_TOOL_NAMES: Record<ColdBrewTool, string> = {
   'bean-bag': '원두 봉투',
   'water-jug': '물 계량 피처',
-}
-export type ColdBrew = {
-  id: string
-  step: number
-  progress: number
-  stage: 'measuring' | 'extracting' | 'finished' | 'ready'
-  tool: ColdBrewTool | null
-  beans: number
-  water: number
-  fault: string | null
-  completedAt: number | null
-  batchId: string | null
 }
 export const COLD_BREW_STEPS = [
   {

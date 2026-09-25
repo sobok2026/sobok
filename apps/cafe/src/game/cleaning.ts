@@ -1,18 +1,9 @@
 import type { CupSurfaceId, TableId } from './catalog'
 import { cupCount, type ReusableCupCounts } from './cups'
-import type { GameState } from './state'
+import type { Cleaning, GameState } from './state'
 
 export const cleaningStationIds = ['table', 'table-left', 'condiment', 'mix', 'trash'] as const
 export type CleaningStation = (typeof cleaningStationIds)[number]
-export type Cleaning = {
-  id: string
-  station: CleaningStation
-  stage: 'collect' | 'wipe' | 'bag'
-  progress: number
-  clothHeld: boolean
-  heldCups: ReusableCupCounts
-  trashCount: number
-}
 
 // Interaction times for the prototype, not real sanitation procedures.
 export const CLEANING_SECONDS = { wipe: 3, bag: 2.5 } as const

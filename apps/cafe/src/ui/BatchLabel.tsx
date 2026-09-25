@@ -1,9 +1,10 @@
+import type { Action } from '../game/actions'
 import { batchDestination, batchOrigin } from '../game/batches'
 import { formatAmount, INGREDIENTS, STATIONS, type StationId } from '../game/catalog'
-import { batchDate } from '../game/preparation'
+
+import { batchDate } from '../game/format'
 import { expiryAt } from '../game/quality'
 import type { Batch } from '../game/state'
-import type { Action } from '../game/store'
 import { Button, TextButton } from './Button'
 
 export default function BatchLabel({

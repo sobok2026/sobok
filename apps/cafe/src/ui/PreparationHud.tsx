@@ -1,7 +1,9 @@
+import type { Action } from '../game/actions'
 import { formatAmount, INGREDIENTS, type StationId } from '../game/catalog'
+import { cupHandsBusy } from '../game/crafting'
+import { available } from '../game/inventory'
 import { continuousPreparation, PREP_TOOL_NAMES, PREPARATIONS, preparationStep } from '../game/preparation'
 import type { GameState } from '../game/state'
-import { type Action, available } from '../game/store'
 import BatchLabel from './BatchLabel'
 import { TextButton } from './Button'
 import { WorkButton, WorkHud, WorkMeter, WorkTitle } from './WorkControls'
@@ -16,7 +18,7 @@ export default function PreparationHud({ state, target, act, stop }: Props) {
   const batch = state.batches.find((batch) => batch.id === prep.batchId)
   const expiredBatch = batch?.expiresAt != null && batch.expiresAt <= state.time
   const ratio = job ? (state.time - job.startedAt) / (job.endsAt - job.startedAt) : prep.progress / step.target
-  const handsFull = !!state.cup && (state.cup.craft.location === 'hand' || !!state.cup.craft.tool)
+  const handsFull = cupHandsBusy(state.cup)
   const ready = prep.progress + 0.0001 >= step.target * (1 - step.tolerance)
   const canUse = !handsFull && prep.stage === 'measuring' && prep.tool === step.tool
   const missing =

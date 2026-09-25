@@ -1,6 +1,6 @@
 import { type Costs, RECIPES, type RecipeId, type StationId, staffFacingZ } from './catalog'
-
 import { type CupKind, isReusableCup } from './cups'
+import type { CraftState, GameState } from './state'
 
 export const craftToolIds = [
   'milk-carton',
@@ -27,34 +27,7 @@ export const TOOL_NAMES: Record<CraftTool, string> = {
   lid: '리드',
   'tea-bottle': '호지차 샷 보틀',
 }
-export type CraftContents = {
-  coffee: number
-  sauce: number
-  milk: number
-  tea: number
-  water: number
-  foam: number
-  ice: number
-  drizzle: number
-  powder: number
-}
-export type CraftState = {
-  kind: CupKind
-  consumed: Costs
-  location: StationId | 'hand'
-  tool: CraftTool | null
-  progress: number
-  contents: CraftContents
-  pitcherMilk: number
-  pitcherReserved: boolean
-  steamed: boolean
-  shotReady: boolean
-  shotTransferred: boolean
-  mixed: boolean
-  teaMixed: boolean
-  lidded: boolean
-  fault: string | null
-}
+type CraftContents = CraftState['contents']
 export type CraftOperation = {
   id: string
   kind: 'machine' | 'steam' | 'pour' | 'pump' | 'stir' | 'shake' | 'drizzle' | 'sprinkle' | 'ice' | 'lid' | 'transfer'
@@ -68,7 +41,6 @@ export type CraftOperation = {
   content?: keyof CraftContents
   weight: number
   targetFill?: number
-  cue: string
 }
 export const craftStations: StationId[] = [
   'espresso',
@@ -104,7 +76,6 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
     rate: 0.25,
     costs: source.costs,
     weight: 0,
-    cue: '누르는 동안 진행 · 놓으면 멈춤',
   }
   if (recipe === 'cold-brew' && source.label !== '제공') {
     if (source.label === '콜드 브루 추출액')
@@ -120,7 +91,6 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       tolerance: 0,
       unit: '스쿱',
       ...toLine('ice', 0.96),
-      cue: '한 번 누를 때마다 한 스쿱',
     }
   }
   if (source.usesPitcher)
@@ -129,7 +99,6 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       kind: 'steam',
       label: '피처에 우유 계량',
       tool: 'milk-carton',
-      cue: '우유를 계량한 뒤 우유팩을 놓고 스팀 시작',
     }
   if (source.label === '에스프레소')
     return {
@@ -141,7 +110,6 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       unit: '추출',
       content: 'coffee',
       weight: 0.13,
-      cue: '한 번 눌러 추출 시작 · 완료될 때까지 컵 고정',
     }
   if (source.label === '글레이즈드 소스' || source.label === '클래식 시럽')
     return {
@@ -154,7 +122,6 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       unit: '펌프',
       content: 'sauce',
       weight: 0.07,
-      cue: '한 번 누를 때마다 한 펌프',
     }
   if (source.label === '에스프레소·소스') {
     if (recipe === 'glazed-iced' && craft.shotReady && !craft.shotTransferred)
@@ -166,7 +133,6 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
         tool: 'shot-glass',
         content: 'coffee',
         weight: 0.13,
-        cue: '샷을 먼저 옮긴 뒤 머들러로 섞어요',
       }
     return {
       ...base,
@@ -176,7 +142,6 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       rate: 0.4,
       tolerance: 0,
       unit: '혼합',
-      cue: '머들러를 집고 누르는 동안 저어요',
     }
   }
   if (source.label === '스팀 우유')
@@ -207,7 +172,6 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
         tolerance: 0,
         unit: '회',
         costs: {},
-        cue: '한 번 누를 때마다 한 번 흔들어요',
       }
     return {
       ...base,
@@ -227,7 +191,6 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       tolerance: 0,
       unit: '스쿱',
       ...toLine('ice', 0.9),
-      cue: '한 번 누를 때마다 한 스쿱',
     }
   if (source.label === '바모카 드리즐')
     return {
@@ -262,7 +225,6 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
       unit: '톡',
       content: 'powder',
       weight: 1,
-      cue: '한 번 누를 때마다 한 톡',
     }
   return {
     ...base,
@@ -271,7 +233,6 @@ export function operationFor(recipe: RecipeId, step: number, craft: CraftState):
     tool: 'lid',
     tolerance: 0,
     unit: '개',
-    cue: '리드를 집어 컵 위에 덮어요',
   }
 }
 
@@ -285,7 +246,6 @@ export function createCraft(kind: CupKind): CraftState {
     contents: { coffee: 0, sauce: 0, milk: 0, tea: 0, water: 0, foam: 0, ice: 0, drizzle: 0, powder: 0 },
     pitcherMilk: 0,
     pitcherReserved: false,
-    steamed: false,
     shotReady: false,
     shotTransferred: false,
     mixed: false,
@@ -316,4 +276,12 @@ export function cupSpot(station: StationId): [number, number, number] {
     topping: 5.1,
   }
   return [x[station] ?? 0, station === 'espresso' ? 1.115 : 1.075, staffFacingZ(-0.62)]
+}
+
+export function cupHandsBusy(cup: GameState['cup']) {
+  return !!cup && (cup.craft.location === 'hand' || !!cup.craft.tool)
+}
+
+export function craftingHandsBusy(state: GameState) {
+  return cupHandsBusy(state.cup) || !!state.preparation?.tool
 }

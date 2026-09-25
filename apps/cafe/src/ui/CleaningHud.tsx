@@ -1,8 +1,9 @@
+import type { Action } from '../game/actions'
 import { isCupSurface, STATIONS, type StationId } from '../game/catalog'
 import { CLEANING_SECONDS, cupSurface } from '../game/cleaning'
+import { craftingHandsBusy } from '../game/crafting'
 import { cupCount } from '../game/cups'
 import type { GameState } from '../game/state'
-import type { Action } from '../game/store'
 import { washingHandsBusy } from '../game/washing'
 import { TextButton } from './Button'
 import { WorkButton, WorkHud, WorkMeter, WorkTitle } from './WorkControls'
@@ -21,12 +22,7 @@ export default function CleaningHud({
   const cleaning = state.cleaning
   if (!cleaning || (target !== cleaning.station && !(target === 'wash' && cupCount(cleaning.heldCups)))) return null
   const table = isCupSurface(cleaning.station) ? cupSurface(state, cleaning.station) : null
-  const occupied = !!(
-    state.supplyDelivery ||
-    (state.cup && (state.cup.craft.location === 'hand' || state.cup.craft.tool)) ||
-    state.preparation?.tool ||
-    washingHandsBusy(state.washing)
-  )
+  const occupied = !!(state.supplyDelivery || craftingHandsBusy(state) || washingHandsBusy(state.washing))
   const ratio = cleaning.stage === 'collect' ? 0 : cleaning.progress / CLEANING_SECONDS[cleaning.stage]
   const ready = ratio >= 1
   const label = cleaning.stage === 'bag' ? '쓰레기 모아 봉투 묶기' : '천으로 닦기'

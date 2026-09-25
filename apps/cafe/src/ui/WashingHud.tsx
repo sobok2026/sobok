@@ -1,7 +1,8 @@
+import type { Action } from '../game/actions'
 import { STATIONS, type StationId } from '../game/catalog'
+import { craftingHandsBusy } from '../game/crafting'
 import { cupCount } from '../game/cups'
 import type { GameState } from '../game/state'
-import type { Action } from '../game/store'
 import { WASH_NAMES, WASH_STEPS, washDestination } from '../game/washing'
 import { TextButton } from './Button'
 import { WorkButton, WorkHud, WorkMeter, WorkTitle } from './WorkControls'
@@ -27,10 +28,7 @@ export default function WashingHud({
   const destination = washDestination(washing.item)
   const name = WASH_NAMES[washing.item]
   const step = washing.stage === 'scrub' || washing.stage === 'rinse' ? WASH_STEPS[washing.stage] : null
-  const occupied = !!(
-    (state.cup && (state.cup.craft.location === 'hand' || state.cup.craft.tool)) ||
-    state.preparation?.tool
-  )
+  const occupied = craftingHandsBusy(state)
   const ratio = step ? washing.progress / step.seconds : 1
   const ready = ratio >= 1
   const canUse = !occupied && (washing.stage === 'rinse' || washing.spongeHeld)

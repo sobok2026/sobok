@@ -1,5 +1,5 @@
 import { type RecipeId, STATIONS, type TableId } from './catalog'
-import type { ServiceMode } from './cups'
+import type { Customer } from './state'
 
 export const customerStages = [
   'entering',
@@ -14,35 +14,16 @@ export const customerStages = [
   'returning',
   'leaving',
 ] as const
-export type CustomerStage = (typeof customerStages)[number]
-export type CustomerPoint = [number, number]
-export type Customer = {
-  id: string
-  orderNumber: number
-  recipe: RecipeId
-  service: ServiceMode
-  stage: CustomerStage
-  position: CustomerPoint
-  yaw: number
-  path: CustomerPoint[]
-  nextPoint: number
-  elapsed: number
-  visit: {
-    table: TableId | null
-    returnCup: boolean
-    dirtyTable: boolean
-    dirtyReturn: boolean
-    usesSugar: boolean
-  } | null
-}
+type CustomerStage = (typeof customerStages)[number]
+type CustomerPoint = [number, number]
 
 export const CUSTOMER_DOOR_X = 5.45
-export const CUSTOMER_ENTRANCE: CustomerPoint = [CUSTOMER_DOOR_X, 6.65]
+const CUSTOMER_ENTRANCE: CustomerPoint = [CUSTOMER_DOOR_X, 6.65]
 const ORDER_SPOT: CustomerPoint = [-4.8, 0.45]
 const PICKUP_SPOT: CustomerPoint = [6.1, 0.25]
 const CONDIMENT_SPOT: CustomerPoint = [0, 4.35]
 // Prototype movement and interaction timings; the 10-second table stay is user-approved.
-export const CUSTOMER_SPEED = 1.7
+const CUSTOMER_SPEED = 1.7
 export const CUSTOMER_SECONDS = { condiment: 1.2, drinking: 10, returning: 1.2 } as const
 export const CUSTOMER_STATUS: Record<CustomerStage, string> = {
   entering: '입장 중',
@@ -60,7 +41,7 @@ export const CUSTOMER_STATUS: Record<CustomerStage, string> = {
 export const customerWalking = (customer: Customer | null) => !!customer && customer.nextPoint < customer.path.length
 export const customerHasCup = (customer: Customer) =>
   !!customer.visit && (customer.service === 'takeout' || customer.stage !== 'leaving')
-export const customerSeat = (table: TableId): CustomerPoint => [STATIONS[table].x, 2.75]
+const customerSeat = (table: TableId): CustomerPoint => [STATIONS[table].x, 2.75]
 
 export function createCustomer(orderNumber: number, recipe: RecipeId): Customer {
   return {
@@ -77,7 +58,7 @@ export function createCustomer(orderNumber: number, recipe: RecipeId): Customer 
     visit: null,
   }
 }
-export function customerPath(customer: Customer, stage: CustomerStage, path: CustomerPoint[]) {
+function customerPath(customer: Customer, stage: CustomerStage, path: CustomerPoint[]) {
   customer.stage = stage
   customer.path = path
   customer.nextPoint = 0
