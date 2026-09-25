@@ -4,11 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1 --port 3018 --strictPort",
-    "build": "tsc --noEmit && vite build",
+    "dev": "bun run check:references && vite --host 127.0.0.1 --port 3018 --strictPort",
+    "build": "bun run check:references && tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1 --port 3018 --strictPort",
     "type": "tsc --noEmit",
-    "import:references": "bun scripts/import-references.mjs"
+    "import:references": "bun scripts/import-references.mjs",
+    "check:references": "bun scripts/check-references.mjs"
   },
   "dependencies": {
     "react": "19.2.7",

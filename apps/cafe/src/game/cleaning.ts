@@ -1,4 +1,5 @@
 import type { CupSurfaceId, TableId } from './catalog'
+import { cupCount, type ReusableCupCounts } from './cups'
 import type { GameState } from './state'
 
 export const cleaningStationIds = ['table', 'table-left', 'condiment', 'mix', 'trash'] as const
@@ -9,14 +10,14 @@ export type Cleaning = {
   stage: 'collect' | 'wipe' | 'bag'
   progress: number
   clothHeld: boolean
-  heldCups: number
+  heldCups: ReusableCupCounts
   trashCount: number
 }
 
 // Interaction times for the prototype, not real sanitation procedures.
 export const CLEANING_SECONDS = { wipe: 3, bag: 2.5 } as const
 export const cleaningHandsBusy = (cleaning: Cleaning | null) =>
-  !!cleaning && (cleaning.clothHeld || cleaning.heldCups > 0)
+  !!cleaning && (cleaning.clothHeld || cupCount(cleaning.heldCups) > 0)
 export function cleaningSpot(station: CleaningStation): [number, number, number] {
   if (station === 'condiment') return [0, 1.085, 4.95]
   if (station === 'mix') return [4.1, 1.09, -1.48]
@@ -26,6 +27,6 @@ export function cleaningSpot(station: CleaningStation): [number, number, number]
 export function cupSurface(state: GameState, station: CupSurfaceId) {
   return station === 'condiment' ? state.condiment : state.tables[station]
 }
-export function dirtyTableCount(tables: Record<TableId, { dirty: boolean; cups: number }>) {
-  return Object.values(tables).filter((table) => table.dirty || table.cups > 0).length
+export function dirtyTableCount(tables: Record<TableId, { dirty: boolean; cups: ReusableCupCounts }>) {
+  return Object.values(tables).filter((table) => table.dirty || cupCount(table.cups) > 0).length
 }

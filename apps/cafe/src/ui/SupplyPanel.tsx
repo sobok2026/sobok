@@ -17,11 +17,6 @@ export default function SupplyPanel({
       <h3 className="mt-0 mb-3 text-base font-semibold">
         {location === 'stock' ? '컨디먼트 바 보충품' : '셀프 소모품'}
       </h3>
-      <p className="mb-4 text-label leading-[1.7] text-muted">
-        {location === 'stock'
-          ? '필요한 만큼 집어 컨디먼트 바까지 가져가세요.'
-          : '창고에서 보충품을 가져오면 E로 채울 수 있어요.'}
-      </p>
       {supplyIds.map((id) => {
         const definition = SUPPLIES[id]
         const supply = state.supplies[id]
@@ -41,7 +36,7 @@ export default function SupplyPanel({
             <p className="mb-4 text-label leading-[1.7] text-muted">
               창고 {supply.stock}
               {definition.unit}
-              {supply.bar === 0 ? ' · 품절, 보충이 필요해요' : supply.bar <= 5 ? ' · 얼마 남지 않았어요' : ''}
+              {supply.bar === 0 ? ' · 품절' : supply.bar <= 5 ? ' · 보충 필요' : ''}
             </p>
             {location === 'stock' ? (
               <div className="mt-3 grid gap-2">

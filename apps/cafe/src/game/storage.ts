@@ -1,3 +1,4 @@
+import { defaultPreferences, type Preferences, preferencesSchema } from './preferences'
 import { type GameState, stateSchema } from './state'
 
 const DATABASE = 'sobok-cafe'
@@ -83,4 +84,39 @@ export function exportGame(state: GameState) {
 export async function importGame(file: File) {
   if (file.size > 2 * 1024 * 1024) throw new Error('백업 파일이 너무 커요.')
   return stateSchema.parse(JSON.parse(await file.text()))
+}
+
+export async function loadPreferences(): Promise<Preferences> {
+  try {
+    const db = await open()
+    const value = await new Promise<unknown>((resolve, reject) => {
+      const tx = db.transaction('saves', 'readonly')
+      const request = tx.objectStore('saves').get('preferences')
+      tx.oncomplete = () => resolve(request.result)
+      tx.onerror = () => reject(tx.error)
+      tx.onabort = () => reject(tx.error)
+    })
+    const result = preferencesSchema.safeParse(value)
+    return result.success ? result.data : defaultPreferences()
+  } catch {
+    return defaultPreferences()
+  }
+}
+let preferenceWrites: Promise<void> = Promise.resolve()
+export function savePreferences(preferences: Preferences) {
+  const snapshot = preferencesSchema.parse(preferences)
+  const write = preferenceWrites
+    .catch(() => undefined)
+    .then(async () => {
+      const db = await open()
+      await new Promise<void>((resolve, reject) => {
+        const tx = db.transaction('saves', 'readwrite')
+        tx.objectStore('saves').put(snapshot, 'preferences')
+        tx.oncomplete = () => resolve()
+        tx.onerror = () => reject(tx.error)
+        tx.onabort = () => reject(tx.error)
+      })
+    })
+  preferenceWrites = write
+  return write
 }

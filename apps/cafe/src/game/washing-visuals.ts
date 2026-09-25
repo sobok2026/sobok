@@ -1,6 +1,8 @@
 import * as THREE from 'three'
+import { createCupBody } from './cup-visual'
+import { reusableCupKinds } from './cups'
 import type { GameState } from './state'
-import { WASH_SPOT, WASH_STEPS } from './washing'
+import { WASH_SPOT, WASH_STEPS, type WashItem } from './washing'
 
 export function createWashingVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
   const steel = new THREE.MeshStandardMaterial({
@@ -28,21 +30,38 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
     const stain = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.012, 24), dirty)
     stain.position.y = 0.012
     group.add(stain)
-    return { group, stain }
+    const reusable = new Map(reusableCupKinds.map((kind) => [kind, createCupBody(group, kind)]))
+    const pitcherParts = [body, base, handle]
+    return {
+      group,
+      stain,
+      show(item: WashItem) {
+        for (const part of pitcherParts) part.visible = item === 'pitcher'
+        for (const [kind, cup] of reusable) cup.root.visible = kind === item
+      },
+    }
   }
   const working = pitcher(scene)
   const held = pitcher(camera)
   held.group.position.set(0.26, -0.37, -0.62)
-  const dirtyQueue = Array.from({ length: 3 }, (_, i) => {
+  const dirtyQueue = Array.from({ length: 11 }, (_, i) => {
     const value = pitcher(scene)
     value.group.scale.setScalar(0.65)
-    value.group.position.set(-5.48, 1.11, -5.35 + i * 0.2)
+    value.group.position.set(
+      -5.5 + (i % 2) * 0.18,
+      1.11 + Math.floor(i / 6) * 0.12,
+      -5.42 + (Math.floor(i / 2) % 3) * 0.2,
+    )
     return value
   })
-  const washedQueue = Array.from({ length: 3 }, (_, i) => {
+  const washedQueue = Array.from({ length: 11 }, (_, i) => {
     const value = pitcher(scene)
     value.group.scale.setScalar(0.65)
-    value.group.position.set(-4.52, 1.11, -5.35 + i * 0.2)
+    value.group.position.set(
+      -4.65 + (i % 2) * 0.18,
+      1.11 + Math.floor(i / 6) * 0.12,
+      -5.42 + (Math.floor(i / 2) % 3) * 0.2,
+    )
     value.stain.visible = false
     return value
   })
@@ -50,6 +69,7 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
     const value = pitcher(scene)
     value.group.position.set(-4.12 + (i % 2) * 0.3, 1.13, -5.3 + Math.floor(i / 2) * 0.24)
     value.stain.visible = false
+    value.show('pitcher')
     return value
   })
   const sponge = new THREE.Mesh(
@@ -80,18 +100,28 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
       const washing = state.washing
       working.group.visible = !!washing && (washing.stage === 'scrub' || washing.stage === 'rinse')
       working.group.position.fromArray(WASH_SPOT)
+      if (washing) {
+        working.show(washing.item)
+        held.show(washing.item)
+      }
       const scrub = washing?.stage === 'scrub' ? washing.progress / WASH_STEPS.scrub.seconds : 1
       working.stain.visible = scrub < 1
       working.stain.scale.y = Math.max(0.01, 1 - scrub)
       held.group.visible = washing?.stage === 'carrying'
       held.stain.visible = false
       held.group.rotation.z = Math.sin(now / 650) * 0.025
-      dirtyQueue.forEach((value, i) => {
-        value.group.visible = i < state.tools.dirty
-      })
-      washedQueue.forEach((value, i) => {
-        value.group.visible = i < state.tools.washed
-      })
+      for (const [queue, key] of [
+        [dirtyQueue, 'dirty'],
+        [washedQueue, 'washed'],
+      ] as const) {
+        const pitchers = state.tools[key]
+        const mugs = state.reusableCups['hot-mug'][key]
+        const count = pitchers + mugs + state.reusableCups['iced-glass'][key]
+        queue.forEach((value, i) => {
+          value.group.visible = i < count
+          if (i < count) value.show(i < pitchers ? 'pitcher' : i < pitchers + mugs ? 'hot-mug' : 'iced-glass')
+        })
+      }
       cleanQueue.forEach((value, i) => {
         value.group.visible = i < state.tools.clean
       })

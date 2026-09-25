@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import { createBatchVisuals } from './batch-visuals'
+import { carriedBatch } from './batches'
 import {
   BAR_CENTER_Z,
   canAccessStation,
@@ -11,20 +13,28 @@ import {
 } from './catalog'
 import { cleaningSpot } from './cleaning'
 import { createCleaningVisuals } from './cleaning-visuals'
+import { createColdBrewVisuals } from './cold-brew-visuals'
 import { createCraftVisuals } from './craft-visuals'
 import { craftStations, cupSpot } from './crafting'
+import { createCupBody } from './cup-visual'
+import { cleanCupCount, cupCount, cupKinds } from './cups'
+import { CUSTOMER_DOOR_X } from './customer'
+import { createCustomerVisuals } from './customer-visuals'
 import { PREP_SPOT } from './preparation'
 import { createPreparationVisuals } from './preparation-visuals'
 import type { GameState } from './state'
 import { suggestedStation } from './store'
 import { createSupplyVisuals } from './supplies-visuals'
-import { WASH_SPOT } from './washing'
+import { addVesselLabel } from './vessel-label'
+import { WASH_SPOT, washDestination } from './washing'
 import { createWashingVisuals } from './washing-visuals'
 
 export type MouseMode = 'look' | 'cursor' | 'fallback'
 type Options = {
   getState: () => GameState
   canMove: () => boolean
+  isRunning: () => boolean
+  mouseSensitivity: () => number
   onTarget: (id: StationId | null, needsStaffAccess: boolean) => void
   onInteract: (id: StationId) => void
   onUseStart: (id: StationId) => void
@@ -56,7 +66,10 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   let previousPreparation: string | null = null
   let previousWashing: string | null = null
   let previousCleaning: string | null = null
+  let needsRender = true
+  let customerVisuals: ReturnType<typeof createCustomerVisuals> | undefined
   const reset = ([x, z, yaw, pitch]: GameState['position']) => {
+    needsRender = true
     camera.position.set(x, 1.65, z)
     camera.rotation.set(pitch, yaw, 0, 'YXZ')
     const state = options.getState()
@@ -64,6 +77,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     previousPreparation = state.preparation?.id ?? null
     previousWashing = state.washing?.id ?? null
     previousCleaning = state.cleaning?.id ?? null
+    customerVisuals?.reset()
   }
   reset(options.getState().position)
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' })
@@ -139,6 +153,20 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     parent.add(mesh)
     return mesh
   }
+  function repeatedBoxes(instances: [number, number, number, number, number, number][], color: string) {
+    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), material(color), instances.length)
+    const transform = new THREE.Object3D()
+    instances.forEach(([x, y, z, width, height, depth], index) => {
+      transform.position.set(x, y, z)
+      transform.scale.set(width, height, depth)
+      transform.updateMatrix()
+      mesh.setMatrixAt(index, transform.matrix)
+    })
+    mesh.computeBoundingSphere()
+    mesh.castShadow = true
+    mesh.receiveShadow = true
+    scene.add(mesh)
+  }
   const textures: THREE.Texture[] = []
   function sign(text: string, width: number, height: number, background = '#153e32', foreground = '#f2e7ce') {
     const canvas = document.createElement('canvas')
@@ -165,16 +193,26 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   }
   // Warm wooden floor and a cream envelope; the front glazing opens toward a small street.
   box(0, -0.08, 0, 14, 0.15, 12, '#ad9174')
-  for (let x = -6.75; x < 7; x += 0.5) box(x, 0.003, 0, 0.012, 0.008, 12, '#967b61')
+  const floorSeams: [number, number, number, number, number, number][] = []
+  for (let x = -6.75; x < 7; x += 0.5) floorSeams.push([x, 0.003, 0, 0.012, 0.008, 12])
+  repeatedBoxes(floorSeams, '#967b61')
   // The tiled employee aisle stays behind the counter; the timber floor belongs to the seating area.
   box(0, 0.014, -3.82, 13.45, 0.02, 4.05, '#b6bcb1')
-  for (let x = -6.5; x < 6.8; x += 0.65) box(x, 0.026, -3.82, 0.012, 0.004, 4.05, '#9fa89c')
-  for (let z = -5.7; z < -1.8; z += 0.65) box(0, 0.027, z, 13.4, 0.004, 0.012, '#9fa89c')
+  const tileSeams: [number, number, number, number, number, number][] = []
+  for (let x = -6.5; x < 6.8; x += 0.65) tileSeams.push([x, 0.026, -3.82, 0.012, 0.004, 4.05])
+  for (let z = -5.7; z < -1.8; z += 0.65) tileSeams.push([0, 0.027, z, 13.4, 0.004, 0.012])
+  repeatedBoxes(tileSeams, '#9fa89c')
   box(0, 0.037, -2.24, 10.9, 0.02, 0.65, '#4c6156')
   box(0, 1.8, -5.85, 14, 3.6, 0.18, '#eee7d7')
   box(-6.85, 1.8, 0, 0.18, 3.6, 12, '#e8e0ce')
   box(6.85, 1.8, -3.0, 0.18, 3.6, 5.8, '#e8e0ce')
-  box(0, 0.25, 5.8, 14, 0.5, 0.16, '#244c3e')
+  box(-1.125, 0.25, 5.8, 11.75, 0.5, 0.16, '#244c3e')
+  box(6.575, 0.25, 5.8, 0.85, 0.5, 0.16, '#244c3e')
+  for (const x of [CUSTOMER_DOOR_X - 0.72, CUSTOMER_DOOR_X + 0.72]) box(x, 1.75, 5.8, 0.06, 3.5, 0.12, '#244c3e')
+  const entranceSign = sign('입구 · EXIT', 1.15, 0.3, '#244c3e', '#f2e7ce')
+  entranceSign.position.set(CUSTOMER_DOOR_X, 2.55, 5.78)
+  entranceSign.rotation.y = Math.PI
+  scene.add(entranceSign)
   for (const x of [-6.7, -2.2, 2.2, 6.7]) box(x, 1.95, 5.8, 0.07, 3.5, 0.12, '#244c3e')
   box(0, 3.55, 5.8, 14, 0.08, 0.12, '#244c3e')
   box(0, 0, 10, 25, 0.1, 8, '#c7c9b8')
@@ -187,7 +225,9 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   // Main bar with fluted wood facing.
   box(0, 0.48, -1.05, 11.5, 0.96, 1.18, '#946e4c')
   box(0, 1.0, -1.05, 11.7, 0.12, 1.35, '#ddd1b9')
-  for (let x = -5.6; x <= 5.6; x += 0.18) box(x, 0.47, -0.445, 0.035, 0.85, 0.025, '#795a3c')
+  const barSlats: [number, number, number, number, number, number][] = []
+  for (let x = -5.6; x <= 5.6; x += 0.18) barSlats.push([x, 0.47, -0.445, 0.035, 0.85, 0.025])
+  repeatedBoxes(barSlats, '#795a3c')
   for (let x = -5.15; x < 5.5; x += 1.15) {
     box(x, 0.47, -1.655, 1.08, 0.83, 0.025, '#aaa48f')
     box(x, 0.79, -1.679, 0.22, 0.024, 0.025, '#45564a', scene, 0.5)
@@ -210,7 +250,13 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   const mainSign = sign('DAY SHIFT\nCOFFEE & COMPANY', 3.9, 1.2)
   mainSign.position.set(0, 2.65, -5.72)
   scene.add(mainSign)
-  const menuSign = sign('TODAY’S MENU\nCOLD BREW\nBLACK GLAZED LATTE', 2.4, 1.4, '#ece1ca', '#344e3d')
+  const menuSign = sign(
+    'TODAY’S MENU\nCOLD BREW\nBLACK GLAZED LATTE\nHOJI GLAZED TEA LATTE',
+    2.4,
+    1.4,
+    '#ece1ca',
+    '#344e3d',
+  )
   menuSign.position.set(-4.6, 2.45, -5.71)
   scene.add(menuSign)
   box(3.0, 2.1, -5.4, 1.9, 0.08, 0.65, '#806749')
@@ -221,15 +267,6 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     cylinder(x, 3.25, -0.8, 0.015, 0.015, 0.7, '#594d3c')
     cylinder(x, 2.86, -0.8, 0.12, 0.32, 0.22, '#31483b')
     cylinder(x, 2.73, -0.8, 0.28, 0.28, 0.012, '#f2d8a0')
-  }
-  function cup(x: number, y: number, z: number, parent: THREE.Object3D = scene) {
-    const group = new THREE.Group()
-    group.position.set(x, y, z)
-    parent.add(group)
-    cylinder(0, 0.12, 0, 0.1, 0.072, 0.24, '#f2ead7', group, true)
-    cylinder(0, 0.12, 0, 0.101, 0.09, 0.085, '#52765b', group)
-    cylinder(0, 0.245, 0, 0.105, 0.105, 0.02, '#403f33', group)
-    return group
   }
   function plant(x: number, z: number, size = 1) {
     cylinder(x, 0.25 * size, z, 0.28 * size, 0.2 * size, 0.5 * size, '#c3aa84')
@@ -255,9 +292,19 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   screenText.position.set(-4.8, 1.46, staffFacingZ(-1.015))
   screenText.rotation.set(0.2, Math.PI, 0)
   scene.add(screenText)
-  const cupStack = new THREE.Group()
-  scene.add(cupStack)
-  for (let i = 0; i < 4; i++) cup(-3.9 + (i % 2) * 0.27, 1.065 + Math.floor(i / 2) * 0.1, -1.05, cupStack)
+  const cupStacks = cupKinds.map((kind, index) => ({
+    kind,
+    cups: Array.from({ length: 4 }, (_, i) => {
+      const body = createCupBody(scene, kind)
+      body.root.scale.setScalar(0.68)
+      body.root.position.set(
+        -4.1 + (index % 2) * 0.38 + (i % 2) * 0.15,
+        1.066 + Math.floor(i / 2) * 0.14,
+        -1.3 + Math.floor(index / 2) * 0.45,
+      )
+      return body
+    }),
+  }))
   box(-2.5, 1.54, staffFacingZ(-1.14), 0.96, 0.66, 0.65, '#aab6ad', scene, 0.65)
   box(-2.5, 1.53, staffFacingZ(-0.79), 0.84, 0.3, 0.025, '#293e35')
   for (const x of [-2.75, -2.26]) {
@@ -266,11 +313,14 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   }
   box(-2.5, 1.09, staffFacingZ(-0.76), 0.92, 0.04, 0.45, '#4f6256', scene, 0.5)
   cylinder(-1.25, 1.24, staffFacingZ(-1.0), 0.14, 0.1, 0.35, '#a0aaa4')
-  box(-0.96, 1.25, staffFacingZ(-1.12), 0.15, 0.38, 0.18, '#e7e6d7')
-  cylinder(0, 1.33, staffFacingZ(-1.12), 0.2, 0.2, 0.5, '#4c3827')
+  const milkCarton = box(-0.96, 1.25, staffFacingZ(-1.12), 0.15, 0.38, 0.18, '#e7e6d7')
+  addVesselLabel(milkCarton, '우유', '#527f66', 0.13, 0.09, 0, 0.092)
+  const coldBrewDispenser = cylinder(0, 1.33, staffFacingZ(-1.12), 0.2, 0.2, 0.5, '#4c3827')
+  addVesselLabel(coldBrewDispenser, '콜드 브루', '#77513b', 0.27, 0.12, 0.08, 0.203)
   cylinder(0, 1.6, staffFacingZ(-1.12), 0.21, 0.21, 0.035, '#273e33')
   box(0, 1.3, staffFacingZ(-0.83), 0.06, 0.05, 0.22, '#a9b7ad')
-  box(1.1, 1.3, staffFacingZ(-1.15), 0.25, 0.5, 0.26, '#d5ded3')
+  const waterDispenser = box(1.1, 1.3, staffFacingZ(-1.15), 0.25, 0.5, 0.26, '#d5ded3')
+  addVesselLabel(waterDispenser, '정수', '#6e928e', 0.18, 0.11, 0.08, 0.132)
   box(1.1, 1.45, staffFacingZ(-0.91), 0.05, 0.05, 0.3, '#6d8c7b')
   box(2.1, 1.15, staffFacingZ(-1.1), 0.65, 0.2, 0.57, '#8dada9')
   for (let i = 0; i < 8; i++)
@@ -284,12 +334,15 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
       '#e2eddf',
     )
   for (let i = 0; i < 2; i++) {
-    cylinder(2.96 + i * 0.28, 1.28, staffFacingZ(-1.1), 0.1, 0.1, 0.4, i ? '#d5b476' : '#eee0bb')
+    const bottle = cylinder(2.96 + i * 0.28, 1.28, staffFacingZ(-1.1), 0.1, 0.1, 0.4, i ? '#d5b476' : '#eee0bb')
+    addVesselLabel(bottle, i ? '클래식' : '글레이즈드', i ? '#9b793e' : '#44694b', 0.16, 0.085, -0.025, 0.102)
     box(2.96 + i * 0.28, 1.52, staffFacingZ(-1.01), 0.045, 0.03, 0.25, '#484b3a')
   }
   box(4.1, 1.07, staffFacingZ(-1.0), 0.72, 0.025, 0.5, '#697959')
-  cylinder(4.95, 1.24, staffFacingZ(-1.1), 0.15, 0.13, 0.33, '#e9ddbc')
-  cylinder(5.3, 1.18, staffFacingZ(-1.1), 0.11, 0.11, 0.22, '#c69c5e')
+  const foamContainer = cylinder(4.95, 1.24, staffFacingZ(-1.1), 0.15, 0.13, 0.33, '#e9ddbc')
+  addVesselLabel(foamContainer, '폼', '#527f66', 0.19, 0.1, -0.015, 0.145)
+  const powderContainer = cylinder(5.3, 1.18, staffFacingZ(-1.1), 0.11, 0.11, 0.22, '#c69c5e')
+  addVesselLabel(powderContainer, '파우더', '#886628', 0.16, 0.08, 0, 0.112)
   box(6.1, 0.5, BAR_CENTER_Z, 1.1, 1, 1.2, '#57735c')
   box(6.1, 1.05, BAR_CENTER_Z, 1.15, 0.08, 1.35, '#e0d4b9')
   obstacles.push({ x: 6.1, z: BAR_CENTER_Z, width: 1.15, depth: 1.4 })
@@ -304,6 +357,18 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   box(5.5, 1.12, -4.68, 1.25, 2.03, 0.05, '#aebfae')
   box(5.02, 1.45, -4.61, 0.045, 0.42, 0.065, '#556e5d')
   obstacles.push({ x: 5.5, z: -5.2, width: 1.4, depth: 1.1 })
+  box(3, 0.5, -5.2, 1.9, 1, 0.85, '#b39a79')
+  box(3, 1.05, -5.2, 2, 0.09, 0.95, '#d3c3a5')
+  obstacles.push({ x: 3, z: -5.2, width: 2, depth: 0.95 })
+  const shelfSign = sign('실온 보관', 1.25, 0.28, '#eee5d1', '#344e3d')
+  shelfSign.position.set(3, 1.6, -5.7)
+  scene.add(shelfSign)
+  box(1, 0.5, -5.2, 1.55, 1, 0.85, '#a38b70')
+  box(1, 1.05, -5.2, 1.65, 0.09, 0.95, '#d3c3a5')
+  obstacles.push({ x: 1, z: -5.2, width: 1.65, depth: 0.95 })
+  const extractionSign = sign('COLD BREW\n계량 · 추출 · 회수', 1.4, 0.4, '#eee5d1', '#344e3d')
+  extractionSign.position.set(1, 1.9, -5.7)
+  scene.add(extractionSign)
   box(-5.0, 1.1, -5.1, 0.84, 0.035, 0.65, '#283c38')
   for (const z of [-5.43, -4.77]) box(-5, 1.126, z, 0.9, 0.035, 0.04, '#b5c6ba', scene, 0.6)
   for (const x of [-5.44, -4.56]) box(x, 1.126, -5.1, 0.04, 0.035, 0.66, '#b5c6ba', scene, 0.6)
@@ -330,27 +395,14 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
       box(x, 0.77, z + (z < 3.7 ? -0.24 : 0.24), 0.55, 0.58, 0.06, '#778267')
     }
   }
-  const customer = new THREE.Group()
-  customer.position.set(-4.8, 0, 0.45)
-  scene.add(customer)
-  cylinder(0, 0.94, 0, 0.23, 0.26, 0.63, '#bc997d', customer)
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.19, 16, 12), material('#dcb894'))
-  head.position.set(0, 1.5, 0)
-  customer.add(head)
-  const hair = new THREE.Mesh(
-    new THREE.SphereGeometry(0.198, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.58),
-    material('#4d3e30'),
-  )
-  hair.position.set(0, 1.51, 0)
-  customer.add(hair)
-  for (const x of [-0.12, 0.12]) cylinder(x, 0.33, 0, 0.075, 0.07, 0.64, '#4c6253', customer)
+  customerVisuals = createCustomerVisuals(scene)
   // Pick volumes are visible only through the interaction UI, never drawn over the shop.
   const pickMaterial = new THREE.MeshBasicMaterial({ visible: false })
   const targets = stationIds.map((id) => {
     const station = STATIONS[id]
     const mesh = new THREE.Mesh(
       new THREE.BoxGeometry(
-        isCupSurface(id) || id === 'prep' ? 1.3 : id === 'wash' ? 1.2 : 0.8,
+        isCupSurface(id) || id === 'prep' || id === 'cold-prep' || id === 'shelf' ? 1.3 : id === 'wash' ? 1.2 : 0.8,
         isTable(id) ? 1 : 0.8,
         0.8,
       ),
@@ -379,6 +431,8 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   const washingVisuals = createWashingVisuals(scene, camera)
   const cleaningVisuals = createCleaningVisuals(scene, camera)
   const supplyVisuals = createSupplyVisuals(scene, camera)
+  const batchVisuals = createBatchVisuals(scene, camera)
+  const coldBrewVisuals = createColdBrewVisuals(scene, camera)
   const raycaster = new THREE.Raycaster()
   raycaster.far = 3.4
   const keys = new Set<string>()
@@ -511,15 +565,22 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   }
   const pointerDown = (event: PointerEvent) => {
     if (event.button !== 0 || !options.canMove()) return
+    if (carriedBatch(options.getState()) && hovered) {
+      options.onInteract(hovered)
+      return
+    }
     if (options.getState().supplyDelivery && (hovered === 'condiment' || hovered === 'stock')) {
       options.onInteract(hovered)
       return
     }
-    if (options.getState().washing?.stage === 'carrying' && (hovered === 'rack' || hovered === 'wash')) {
+    if (
+      options.getState().washing?.stage === 'carrying' &&
+      (hovered === washDestination(options.getState().washing!.item) || hovered === 'wash')
+    ) {
       options.onInteract(hovered)
       return
     }
-    if (options.getState().cleaning?.heldCups && hovered === 'trash') {
+    if (cupCount(options.getState().cleaning?.heldCups) && hovered === 'wash') {
       options.onInteract(hovered)
       return
     }
@@ -528,6 +589,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
       hovered &&
       ((c?.craft.location === hovered && craftStations.includes(hovered)) ||
         (hovered === 'prep' && options.getState().preparation) ||
+        (hovered === 'cold-prep' && options.getState().coldBrew) ||
         (hovered === 'wash' && options.getState().washing) ||
         hovered === options.getState().cleaning?.station)
     ) {
@@ -548,8 +610,9 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   const look = (event: MouseEvent) => {
     if (using || options.activeStation()) return
     if ((!locked && !dragging) || !options.canMove()) return
-    camera.rotation.y -= event.movementX * 0.0013
-    camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x - event.movementY * 0.0013, -1.1, 1.1)
+    const sensitivity = 0.0013 * options.mouseSensitivity()
+    camera.rotation.y -= event.movementX * sensitivity
+    camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x - event.movementY * sensitivity, -1.1, 1.1)
   }
   const contextLost = (event: Event) => {
     event.preventDefault()
@@ -565,6 +628,7 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   window.addEventListener('keyup', keyup)
   window.addEventListener('blur', clear)
   function resize() {
+    needsRender = true
     renderer.setSize(container.clientWidth, container.clientHeight)
     camera.aspect = container.clientWidth / Math.max(1, container.clientHeight)
     camera.updateProjectionMatrix()
@@ -572,11 +636,22 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
   const observer = new ResizeObserver(resize)
   observer.observe(container)
   resize()
+  let renderedState: GameState | null = null
+  let wasRunning = false
+  let animationTime = 0
   function animate(now: number) {
     if (disposed) return
+    frame = requestAnimationFrame(animate)
     const dt = Math.min((now - lastTime) / 1000, 0.05)
     lastTime = now
+    if (document.hidden) return
     const state = options.getState()
+    const running = options.isRunning()
+    if (!running && !wasRunning && !needsRender && renderedState === state) return
+    wasRunning = running
+    renderedState = state
+    needsRender = false
+    if (running) animationTime += dt * 1000
     const cupPlace = state.cup ? `${state.cup.id}:${state.cup.craft.location}` : ''
     if (cupPlace !== previousCupPlace && state.cup && state.cup.craft.location !== 'hand') {
       const spot = cupSpot(state.cup.craft.location)
@@ -636,14 +711,15 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     }
     const desired = suggestedStation(state)
     const anchor = STATIONS[desired]
-    guideRing.position.set(anchor.x, 1.72 + Math.sin(now / 600) * 0.025, anchor.z)
+    guideRing.position.set(anchor.x, 1.72 + Math.sin(animationTime / 600) * 0.025, anchor.z)
     guideRing.rotation.x = -Math.PI / 2
     guideRing.visible = state.phase !== 'summary'
     const benchFocused =
       (state.cup && target === state.cup.craft.location) ||
-      (state.preparation && target === 'prep') ||
+      (state.preparation && !carriedBatch(state) && target === 'prep') ||
+      (state.coldBrew && !carriedBatch(state) && target === 'cold-prep') ||
       (state.washing && state.washing.stage !== 'carrying' && target === 'wash') ||
-      (state.cleaning && !state.cleaning.heldCups && target === state.cleaning.station)
+      (state.cleaning && !cupCount(state.cleaning.heldCups) && target === state.cleaning.station)
     const fov = benchFocused ? 48 : 62
     if (Math.abs(camera.fov - fov) > 0.01) {
       camera.fov = THREE.MathUtils.lerp(camera.fov, fov, 0.12)
@@ -652,19 +728,22 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
     craftVisuals.update(
       state,
       options.activeStation() !== null && options.activeStation() === state.cup?.craft.location,
-      now,
+      animationTime,
     )
-    preparationVisuals.update(state, options.activeStation() === 'prep', now)
-    washingVisuals.update(state, options.activeStation() === 'wash', now)
-    cleaningVisuals.update(state, !!state.cleaning && options.activeStation() === state.cleaning.station, now)
+    preparationVisuals.update(state, options.activeStation() === 'prep', animationTime)
+    washingVisuals.update(state, options.activeStation() === 'wash', animationTime)
+    cleaningVisuals.update(state, !!state.cleaning && options.activeStation() === state.cleaning.station, animationTime)
     supplyVisuals.update(state)
+    batchVisuals.update(state)
+    coldBrewVisuals.update(state, options.activeStation() === 'cold-prep')
     idleBlenderJar.visible = state.preparation?.stage !== 'processing'
     idleBlenderLid.visible = idleBlenderJar.visible
-    cupStack.visible = state.cups > 0
-    customer.visible = state.phase === 'open' || !!state.ticket
-    customer.position.y = Math.sin(now / 850) * 0.012
+    for (const stack of cupStacks)
+      stack.cups.forEach((body, index) => {
+        body.root.visible = index < cleanCupCount(state, stack.kind)
+      })
+    customerVisuals?.update(state, dt, running)
     renderer.render(scene, camera)
-    frame = requestAnimationFrame(animate)
   }
   frame = requestAnimationFrame(animate)
   return {
@@ -690,15 +769,23 @@ export function createCafeScene(container: HTMLDivElement, options: Options): Ca
       const geometries = new Set<THREE.BufferGeometry>()
       const usedMaterials = new Set<THREE.Material>()
       scene.traverse((object) => {
+        if (object instanceof THREE.InstancedMesh) object.dispose()
         if (object instanceof THREE.Mesh) {
           geometries.add(object.geometry)
           for (const m of Array.isArray(object.material) ? object.material : [object.material]) usedMaterials.add(m)
         }
       })
       for (const geometry of geometries) geometry.dispose()
-      for (const value of usedMaterials) value.dispose()
-      for (const texture of textures) texture.dispose()
+      const usedTextures = new Set(textures)
+      for (const value of usedMaterials) {
+        if ((value instanceof THREE.MeshBasicMaterial || value instanceof THREE.MeshStandardMaterial) && value.map)
+          usedTextures.add(value.map)
+        value.dispose()
+      }
+      for (const texture of usedTextures) texture.dispose()
+      sunlight.shadow.dispose()
       renderer.dispose()
+      renderer.forceContextLoss()
       renderer.domElement.remove()
     },
   }
