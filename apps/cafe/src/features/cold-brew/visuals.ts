@@ -1,14 +1,14 @@
 import * as THREE from 'three'
 import type { GameState } from '../../simulation/state'
-import { createColdBrewTank } from './equipment'
+import { COLD_BREW_COLLECTION_SPOT, createColdBrewTank } from './equipment'
 import { COLD_BREW_BEANS, COLD_BREW_WATER } from './rules'
 
 export function createColdBrewVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
   const material = (color: string) => new THREE.MeshStandardMaterial({ color, roughness: 0.65 })
   const steel = material('#9cae9f')
-  const { lid, contents } = createColdBrewTank(scene)
+  const { vessel, stand, lid, contents } = createColdBrewTank(scene)
   const jar = new THREE.Group()
-  jar.position.set(0.84, 1.1, -4.89)
+  jar.position.fromArray(COLD_BREW_COLLECTION_SPOT)
   scene.add(jar)
   const jarBody = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.11, 0.25, 24), material('#64442c'))
   jarBody.position.y = 0.125
@@ -25,12 +25,16 @@ export function createColdBrewVisuals(scene: THREE.Scene, camera: THREE.Perspect
   tools.add(jug)
   const streamMaterial = material('#adced2')
   const stream = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.027, 0.28, 10), streamMaterial)
-  stream.position.set(0.84, 1.88, -5.22)
+  stream.position.set(0.84, 1.7, -5.22)
   scene.add(stream)
   return {
     update(state: GameState, active: boolean) {
       const brew = state.coldBrew
       const batch = state.batches.find((item) => item.id === brew?.batchId)
+      // Keep the open brewer below eye level for measuring; raise it to decant afterwards.
+      const measuring = brew?.stage === 'measuring'
+      vessel.position.y = measuring ? 0.015 : 0.3
+      stand.position.x = measuring ? 0.53 : 0
       lid.visible = brew?.stage !== 'measuring' || brew.step === 2
       contents.visible = !!brew && brew.stage !== 'ready' && (brew.beans > 0 || brew.water > 0)
       const height = brew

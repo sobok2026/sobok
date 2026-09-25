@@ -10,6 +10,7 @@ import {
 } from '../../shared/visuals/equipment-geometry'
 
 export const COLD_BREW_OUTLET: [number, number, number] = [0, 1.555, -1.33]
+export const COLD_BREW_COLLECTION_SPOT: [number, number, number] = [0.84, 1.1, -5.006]
 
 export function createColdBrewTank(scene: THREE.Scene) {
   const root = new THREE.Group()
@@ -21,11 +22,14 @@ export function createColdBrewTank(scene: THREE.Scene) {
   const black = material({ color: '#192023', roughness: 0.59 })
   const steel = material({ color: '#aab2b4', metalness: 0.9, roughness: 0.26 })
   const filter = material({ color: '#dfd3b8', roughness: 0.97, side: THREE.DoubleSide })
-  box(root, [0.49, 0.026, 0.45], [0, 0.22, 0], black)
-  for (const x of [-0.19, 0.19])
-    for (const z of [-0.17, 0.17]) box(root, [0.038, 0.22, 0.038], [x, 0.11, z], black, 0.009)
+  const stand = new THREE.Group()
+  root.add(stand)
+  box(stand, [0.35, 0.026, 0.32], [0, 0.285, 0], black)
+  for (const x of [-0.14, 0.14])
+    for (const z of [-0.12, 0.12]) box(stand, [0.03, 0.285, 0.03], [x, 0.1425, z], black, 0.009)
   const vessel = new THREE.Group()
-  vessel.position.y = 0.235
+  vessel.position.y = 0.3
+  vessel.scale.set(0.65, 0.9, 0.65)
   root.add(vessel)
   // A closed lathed wall has a real interior, rolled rim, and molded reinforcing rings.
   lathe(
@@ -138,7 +142,7 @@ export function createColdBrewTank(scene: THREE.Scene) {
     material({ color: '#3f2518', roughness: 0.33 }),
   )
   contents.visible = false
-  return { root, lid, contents }
+  return { root, vessel, stand, lid, contents }
 }
 
 export function createColdBrewDispenser(scene: THREE.Scene) {
