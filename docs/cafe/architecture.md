@@ -64,18 +64,18 @@ apps/cafe/src/
 
 ## 변경할 때 찾는 곳
 
-| 바꾸는 내용                   | 주된 위치                                       | 함께 확인할 연결                             |
-| ----------------------------- | ----------------------------------------------- | -------------------------------------------- |
-| 음료 종류·제조 수량·판매 가격 | `content/recipes.ts`, `features/crafting`       | POS 선택, 원본 자료 연결                     |
-| 원재료 규격·기한              | `content/ingredients.ts`, `content/lifetime.ts` | 재고 소비·배합의 원재료 기한                 |
-| 부재료 준비·콜드 브루         | 해당 기능의 규칙·행동·HUD·시각 표현             | `simulation/jobs.ts`, 배치 재고              |
-| 컵 회수·세척                  | `features/cleaning`, `features/washing`         | `features/inventory/cups.ts`, 전체 수량 검증 |
-| 손님·POS·음료 전달            | `features/service`                              | 제조 완료 판정, 공통 재고·집계               |
-| 마감·다음 날·운영 기록        | `features/shift`                                | 전체 시계와 예정 작업 완료                   |
-| 작업대 버튼·도움말            | 기능의 패널·`help.ts`·`Guide.tsx`               | 앱의 표시·도움말 선택 순서                   |
-| 단축키·화면 전환              | `app/session`                                   | `world/player-controls.ts`, 공통 대화상자    |
-| 매장 조형물·이동·그래픽 자원  | `world`                                         | `content/stations.ts`, 기능별 `visuals.ts`   |
-| 저장·복구·탭 정책             | `app/persistence`                               | `simulation/state.ts`, 세션의 저장 시점      |
+| 바꾸는 내용                   | 주된 위치                                                           | 함께 확인할 연결                             |
+| ----------------------------- | ------------------------------------------------------------------- | -------------------------------------------- |
+| 음료 종류·제조 수량·판매 가격 | `content/recipes.ts`, `content/drink-sizes.ts`, `features/crafting` | POS 선택, 원본 자료 연결                     |
+| 원재료 규격·기한              | `content/ingredients.ts`, `content/lifetime.ts`                     | 재고 소비·배합의 원재료 기한                 |
+| 부재료 준비·콜드 브루         | 해당 기능의 규칙·행동·HUD·시각 표현                                 | `simulation/jobs.ts`, 배치 재고              |
+| 컵 회수·세척                  | `features/cleaning`, `features/washing`                             | `features/inventory/cups.ts`, 전체 수량 검증 |
+| 손님·POS·음료 전달            | `features/service`                                                  | 제조 완료 판정, 공통 재고·집계               |
+| 마감·다음 날·운영 기록        | `features/shift`                                                    | 전체 시계와 예정 작업 완료                   |
+| 작업대 버튼·도움말            | 기능의 패널·`help.ts`·`Guide.tsx`                                   | 앱의 표시·도움말 선택 순서                   |
+| 단축키·화면 전환              | `app/session`                                                       | `world/player-controls.ts`, 공통 대화상자    |
+| 매장 조형물·이동·그래픽 자원  | `world`                                                             | `content/stations.ts`, 기능별 `visuals.ts`   |
+| 저장·복구·탭 정책             | `app/persistence`                                                   | `simulation/state.ts`, 세션의 저장 시점      |
 
 새 행동은 기능의 처리 함수와 `simulation/actions.ts`, `simulation/store.ts`의 라우팅을 함께 연결한다. 새 UI나 시각 표현은 필요한 앱·장면 조합부에 직접 연결한다. 범용 등록 시스템이나 기능별 저장소는 도입하지 않는다.
 
