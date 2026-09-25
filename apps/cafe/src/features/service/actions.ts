@@ -1,11 +1,13 @@
 import { CUSTOMER_HABITS } from '../../content/customers'
-import { recipeFor, recipeLabel } from '../../content/recipes'
+import { type Costs, INGREDIENTS } from '../../content/ingredients'
+import { recipeFor, recipeLabel, recipePrice } from '../../content/recipes'
 import { tableIds } from '../../content/stations'
 import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
 import type { WorkContext } from '../../simulation/work-context'
 import { nextStep } from '../crafting/rules'
-import { cupKindFor, cupSize, SERVICE_NAMES } from '../inventory/cups'
+import { cupKindFor, cupService, cupSize, SERVICE_NAMES } from '../inventory/cups'
+import { addAmounts } from '../inventory/inventory'
 import { customerToCondiment, customerToPickup, orderSizes } from './customer'
 
 export function handleOrderActions(work: WorkContext, action: Extract<Action, { type: 'ticket' | 'serve' }>) {
@@ -74,8 +76,19 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
         fail('손님이 요청한 메뉴·사이즈 또는 매장·포장 컵과 달라요. 컵을 정리하고 POS 주문을 수정해주세요.')
         break
       }
-      s.cash += recipeFor(s.cup.recipe, cupSize(s.cup.craft.kind)).price
-      s.totals.revenue += recipeFor(s.cup.recipe, cupSize(s.cup.craft.kind)).price
+      const price = recipePrice(s.cup.recipe, cupSize(s.cup.craft.kind))
+      const servingVessel = recipeFor(s.cup.recipe, cupSize(s.cup.craft.kind), cupService(s.cup.craft.kind)).vesselId
+      const leftovers: Costs = { ...s.cup.craft.stockHeld }
+      for (const [id, vessel] of Object.entries(s.cup.craft.vessels)) {
+        if (id === servingVessel) continue
+        for (const layer of vessel.layers) {
+          if (INGREDIENTS[layer.materialId])
+            leftovers[layer.materialId] = (leftovers[layer.materialId] ?? 0) + layer.quantity
+        }
+      }
+      addAmounts(s.totals.disposed, leftovers)
+      s.cash += price
+      s.totals.revenue += price
       s.totals.served++
       s.ticket = null
       s.cup = null

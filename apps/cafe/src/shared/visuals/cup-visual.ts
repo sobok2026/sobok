@@ -1,5 +1,7 @@
 import * as THREE from 'three'
-import { drinkSizeRatio } from '../../content/drink-sizes'
+import { recipeCatalog } from '../../content/catalog'
+import { drinkSizeModelScale } from '../../content/drink-sizes'
+import { vesselLineFill } from '../../content/stock-amounts'
 import { type CupKind, cupKinds, cupSize, cupStyle, isReusableCup } from '../../features/inventory/cups'
 
 // Model proportions and fill fractions are game visuals, not real cup-volume conversions.
@@ -9,7 +11,7 @@ const BASE_DIMENSIONS = {
   'hot-mug': { top: 0.132, bottom: 0.12, height: 0.215 },
   'iced-glass': { top: 0.108, bottom: 0.092, height: 0.3 },
 } as const
-export const cupScale = (kind: CupKind) => Math.cbrt(drinkSizeRatio(cupSize(kind)))
+export const cupScale = (kind: CupKind) => drinkSizeModelScale(cupSize(kind))
 export const CUP_DIMENSIONS = Object.fromEntries(
   cupKinds.map((kind) => {
     const base = BASE_DIMENSIONS[cupStyle(kind)]
@@ -91,7 +93,8 @@ export function createCupBody(parent: THREE.Object3D, kind: CupKind, detailed = 
   if (detailed && clear) {
     const black = new THREE.MeshBasicMaterial({ color: '#263b32' })
     const white = new THREE.MeshBasicMaterial({ color: '#fff9e8' })
-    for (const fill of [0.4, 0.6, 0.8]) {
+    for (const line of ['lower', 'middle', 'upper'] as const) {
+      const fill = vesselLineFill(recipeCatalog, 'serving-cup', cupSize(kind), style, line)
       const y = cupFillY(kind, fill)
       for (const rotation of [0, Math.PI]) {
         for (const [offset, mat] of [

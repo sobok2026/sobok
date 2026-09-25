@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import { recipeCatalog } from '../../content/catalog'
+import { recipeFor } from '../../content/recipes'
 import {
   equipmentBox as box,
   equipmentInstances as instances,
@@ -8,6 +10,9 @@ import {
   equipmentTube as tube,
 } from '../../shared/visuals/equipment-geometry'
 import type { GameState } from '../../simulation/state'
+import { operationFor } from '../crafting/rules'
+import { cupService, cupSize } from '../inventory/cups'
+import { PREPARATIONS, preparationStep } from './rules'
 
 export const BLENDER_JAR_SPOT: [number, number, number] = [-2.9, 1.355, -5.12]
 
@@ -147,7 +152,13 @@ export function createBlender(scene: THREE.Scene) {
   control.position.set(0, 0.177, 0.214)
   control.rotation.x = -0.11
   box(control, [0.345, 0.12, 0.015], [0, 0, 0], rubber)
-  const drawControls = (ctx: CanvasRenderingContext2D, w: number, h: number, blending = false) => {
+  const drawControls = (
+    ctx: CanvasRenderingContext2D,
+    w: number,
+    h: number,
+    blending = false,
+    program: string | null = null,
+  ) => {
     ctx.fillStyle = '#41484c'
     ctx.fillRect(0, 0, w, h)
     ctx.fillStyle = '#d3d8d9'
@@ -158,10 +169,19 @@ export function createBlender(scene: THREE.Scene) {
     ctx.fillRect(w * 0.3, h * 0.22, w * 0.4, h * 0.26)
     ctx.fillStyle = '#2e4248'
     ctx.font = `${h * 0.13}px monospace`
-    ctx.fillText(blending ? 'BLENDING 03' : 'READY', w / 2, h * 0.405)
+    const setting = program
+      ? recipeCatalog.equipment.get('blender')?.programs.find((entry) => entry.id === program)
+      : undefined
+    const displayProgram = program && /^\d+$/.test(program) ? program.padStart(2, '0') : setting?.name
+    ctx.fillText(
+      `${blending ? 'BLENDING' : 'READY'}${displayProgram ? ` ${displayProgram}` : ''}`,
+      w / 2,
+      h * 0.405,
+      w * 0.37,
+    )
     for (let i = 0; i < 6; i++) {
       const x = w * (0.195 + i * 0.104)
-      ctx.fillStyle = blending && i === 2 ? '#39785d' : '#11181c'
+      ctx.fillStyle = blending && String(i + 1) === program ? '#39785d' : '#11181c'
       ctx.strokeStyle = '#c4c9ca'
       ctx.lineWidth = 3
       ctx.beginPath()
@@ -179,7 +199,7 @@ export function createBlender(scene: THREE.Scene) {
     ctx.fillText('Ⅱ', w * 0.85, h * 0.4)
   }
   const controlFace = panel(control, 0.326, 0.104, [0, 0, 0.009], drawControls, true)
-  let previousBlending = false
+  let previousDisplay = ''
   const indicatorMaterial = material({ color: '#b8d6bd', emissive: '#77b391', emissiveIntensity: 0.5, roughness: 0.5 })
   mesh(control, new THREE.SphereGeometry(0.005, 8, 6), indicatorMaterial, [0.126, -0.002, 0.011])
   const idleJar = createBlenderJar()
@@ -210,17 +230,46 @@ export function createBlender(scene: THREE.Scene) {
   for (const x of [-0.2, 0.2]) box(root, [0.025, 0.46, 0.026], [x, 0.49, -0.193], black)
   return {
     update(state: GameState) {
-      const prep = state.preparation?.recipe === 'foam' ? state.preparation : null
-      const blending = prep?.stage === 'processing' && !prep.fault
-      idleJar.root.visible = !prep
-      cover.rotation.x = prep && !blending ? -1.05 : 0
+      const prep = state.preparation
+      const cup = state.cup
+      const prepStep = prep ? preparationStep(prep) : undefined
+      const drinkStep = cup ? operationFor(cup.recipe, cup.craft) : null
+      const job = state.jobs.find((item) => item.kind === 'production' && item.equipmentId === 'blender')
+      const step =
+        job?.preparationId && job.preparationId === prep?.id
+          ? prepStep
+          : job?.cupId && job.cupId === cup?.id
+            ? drinkStep
+            : prepStep?.equipmentId === 'blender'
+              ? prepStep
+              : drinkStep?.equipmentId === 'blender'
+                ? drinkStep
+                : undefined
+      const program =
+        step?.operation.action === 'run-machine' && step.operation.equipmentId === 'blender'
+          ? step.operation.program
+          : null
+      const prepJar =
+        !!prep &&
+        !state.batches.some((batch) => batch.id === prep.batchId && batch.location === 'hand') &&
+        PREPARATIONS[prep.recipe].steps.some((entry) => entry.equipmentId === 'blender')
+      const drinkJar =
+        !!cup &&
+        recipeFor(cup.recipe, cupSize(cup.craft.kind), cupService(cup.craft.kind)).steps.some(
+          (entry) => entry.equipmentId === 'blender',
+        )
+      const jarInUse = prepJar || drinkJar
+      const blending = !!job
+      idleJar.root.visible = !jarInUse
+      cover.rotation.x = jarInUse && !blending ? -1.05 : 0
       indicatorMaterial.emissiveIntensity = blending ? 1.1 : 0.25
-      if (blending !== previousBlending) {
+      const display = `${blending}:${program}`
+      if (display !== previousDisplay) {
         const texture = (controlFace.material as THREE.MeshStandardMaterial).map!
         const canvas = texture.image as HTMLCanvasElement
-        drawControls(canvas.getContext('2d')!, canvas.width, canvas.height, blending)
+        drawControls(canvas.getContext('2d')!, canvas.width, canvas.height, blending, program)
         texture.needsUpdate = true
-        previousBlending = blending
+        previousDisplay = display
       }
     },
   }

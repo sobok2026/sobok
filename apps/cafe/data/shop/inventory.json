@@ -1,0 +1,3795 @@
+{
+  "note": "게임 재고 운영값이다. 입고 규격·가격·초기 양·표현색을 포함하며 실제 매장 규격을 의미하지 않는다. quality.json에 확인된 보관·기한 기준이 있는 재료는 이 파일에 해당 값을 중복 선언하지 않는다. 그 외 재료의 보관 장소와 기한은 게임 운영값으로 이 파일에 모두 명시한다. utility는 이 목록에 없고 재고를 소비하지 않는다. prepared 및 생산 연결 여부는 원문 materials.json만 따른다.",
+  "materials": {
+    "beans": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 12000,
+      "startingAmount": 100,
+      "color": "#705040",
+      "visualGroup": "coffee"
+    },
+    "milk": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 3000,
+      "startingAmount": 100,
+      "color": "#f2edde",
+      "visualGroup": "milk"
+    },
+    "cream": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "startingAmount": 400,
+      "color": "#f4ead6",
+      "visualGroup": "milk"
+    },
+    "glaze": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 8000,
+      "startingAmount": 500,
+      "color": "#d6b672",
+      "visualGroup": "sauce"
+    },
+    "powder": {
+      "stockUnit": "tap",
+      "unit": "톡",
+      "pack": 100,
+      "price": 4000,
+      "startingAmount": 40,
+      "color": "#b68e65",
+      "visualGroup": "powder"
+    },
+    "mochaPowder": {
+      "stockUnit": "pack",
+      "unit": "봉",
+      "pack": 1,
+      "price": 7000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 1,
+      "color": "#694832",
+      "visualGroup": "powder"
+    },
+    "mocha": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1500,
+      "price": 0,
+      "startingAmount": 0,
+      "color": "#634532",
+      "visualGroup": "sauce"
+    },
+    "foam": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 450,
+      "price": 0,
+      "startingAmount": 0,
+      "color": "#e8d6b5",
+      "visualGroup": "foam"
+    },
+    "coldBrew": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 3000,
+      "price": 0,
+      "startingAmount": 600,
+      "color": "#705040",
+      "visualGroup": "coffee"
+    },
+    "classic": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 5000,
+      "startingAmount": 0,
+      "color": "#ece4c9",
+      "visualGroup": "sauce"
+    },
+    "hojichaPowder": {
+      "stockUnit": "scoop",
+      "unit": "스쿱",
+      "pack": 80,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#b68e65",
+      "visualGroup": "powder"
+    },
+    "hojicha": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 250,
+      "price": 0,
+      "startingAmount": 0,
+      "color": "#bf8b58",
+      "visualGroup": "tea"
+    },
+    "matchaPowder": {
+      "stockUnit": "scoop",
+      "unit": "스쿱",
+      "pack": 80,
+      "price": 6000,
+      "startingAmount": 0,
+      "color": "#6c8a48",
+      "visualGroup": "powder"
+    },
+    "matcha": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 250,
+      "price": 0,
+      "startingAmount": 0,
+      "color": "#6c8a48",
+      "visualGroup": "tea"
+    },
+    "sweet-potato-sauce": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#bf8b58",
+      "visualGroup": "sauce"
+    },
+    "sweet-potato-premix": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#bf8b58",
+      "visualGroup": "sauce"
+    },
+    "half-and-half": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#eee4ce",
+      "visualGroup": "milk"
+    },
+    "sweet-vanilla-sauce": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#eddcb6",
+      "visualGroup": "sauce"
+    },
+    "custard-whipped-cream": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 600,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#ecdaa6",
+      "visualGroup": "foam"
+    },
+    "sweet-syrup": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e6d7b7",
+      "visualGroup": "sauce"
+    },
+    "cold-brew-beans": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 2267.96185,
+      "price": 9000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee"
+    },
+    "더블-블랙-티-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#a27143",
+      "visualGroup": "tea"
+    },
+    "알로에-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#c6d6b4",
+      "visualGroup": "other"
+    },
+    "쫀득-펄-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b68e65",
+      "visualGroup": "other"
+    },
+    "콜드-폼": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 390,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#f1e9d7",
+      "visualGroup": "foam"
+    },
+    "카스텔라-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b68e65",
+      "visualGroup": "other"
+    },
+    "크림향-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#efe5d1",
+      "visualGroup": "sauce"
+    },
+    "일반-휘핑-크림": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 500,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#f4ecdc",
+      "visualGroup": "foam"
+    },
+    "유자-v-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "앱솔루트-보드카": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 35000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 6,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e3ece4",
+      "visualGroup": "water"
+    },
+    "레모네이드": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#eaca75",
+      "visualGroup": "sauce"
+    },
+    "화이트-뱅쇼-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e8db9e",
+      "visualGroup": "sauce"
+    },
+    "딸기-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#c8738e",
+      "visualGroup": "sauce"
+    },
+    "동결건조-딸기-그릿": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#c8738e",
+      "visualGroup": "other"
+    },
+    "텐커레이-넘버-텐": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 750,
+      "price": 35000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 6,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e3ece4",
+      "visualGroup": "water"
+    },
+    "드라이-버무스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 35000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 6,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e4d9b3",
+      "visualGroup": "sauce"
+    },
+    "그린올리브": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 100,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#91a466",
+      "visualGroup": "other"
+    },
+    "에반-윌리엄스-블랙-위스키": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 35000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 6,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b1814b",
+      "visualGroup": "sauce"
+    },
+    "바닐라-크림-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#f4ead6",
+      "visualGroup": "milk"
+    },
+    "리저브-다크-초콜릿-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 320,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#503527",
+      "visualGroup": "sauce"
+    },
+    "아페롤": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 35000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 6,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#dc9651",
+      "visualGroup": "sauce"
+    },
+    "칸티-프로세코": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 35000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 6,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e4d9b3",
+      "visualGroup": "sauce"
+    },
+    "리저브-다크-초콜릿-파우더": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 200,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#543c2d",
+      "visualGroup": "powder"
+    },
+    "레몬-웨지": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "other"
+    },
+    "위스키": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 35000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 6,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b1814b",
+      "visualGroup": "sauce"
+    },
+    "앙고스투라-비터": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 35000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 6,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#8e5a43",
+      "visualGroup": "sauce"
+    },
+    "블루-라임-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#8cb4d5",
+      "visualGroup": "sauce"
+    },
+    "일품-진로": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 35000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 6,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e3ece4",
+      "visualGroup": "water"
+    },
+    "쿼드-스트랭스-히비스커스-티": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 500,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#b75875",
+      "visualGroup": "tea"
+    },
+    "리저브-위스키향-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b1814b",
+      "visualGroup": "sauce"
+    },
+    "위스키-인퓨즈드-콜드브루": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 8000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee"
+    },
+    "히비스커스-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b75875",
+      "visualGroup": "tea"
+    },
+    "바-믹사토-말차-샷": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 100,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#6c8a48",
+      "visualGroup": "tea"
+    },
+    "오미자-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#ae556b",
+      "visualGroup": "sauce"
+    },
+    "유스베리-티-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 500,
+      "price": 0,
+      "storage": "room",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#c97b91",
+      "visualGroup": "tea"
+    },
+    "애플민트": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 100,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#6c8a48",
+      "visualGroup": "other"
+    },
+    "라임-웨지": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#aac064",
+      "visualGroup": "other"
+    },
+    "민트향시럽r": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 100,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#c8d7b1",
+      "visualGroup": "sauce"
+    },
+    "라임-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#a8bf6d",
+      "visualGroup": "sauce"
+    },
+    "유자진저-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "바카디-카르타-블랑카": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 35000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 6,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e3ece4",
+      "visualGroup": "water"
+    },
+    "유스베리-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#c97b91",
+      "visualGroup": "tea"
+    },
+    "바닐라빈-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e6d7b7",
+      "visualGroup": "sauce"
+    },
+    "리저브-초코-파우더": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#694832",
+      "visualGroup": "powder"
+    },
+    "코코넛-믹스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 2000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#f0ead8",
+      "visualGroup": "milk"
+    },
+    "통팥-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#885950",
+      "visualGroup": "sauce"
+    },
+    "돌체-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#eddcb6",
+      "visualGroup": "sauce"
+    },
+    "요거트-파우더": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#eee7d6",
+      "visualGroup": "powder"
+    },
+    "블루베리-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#8766a5",
+      "visualGroup": "sauce"
+    },
+    "코코넛-워터": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e9e8d9",
+      "visualGroup": "water"
+    },
+    "더블-스트랭스-조이풀-메들리-티": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#b39758",
+      "visualGroup": "tea"
+    },
+    "애프리콧-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#efa86b",
+      "visualGroup": "sauce"
+    },
+    "딸기-리프레셔-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#c8738e",
+      "visualGroup": "sauce"
+    },
+    "피치-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e4b39a",
+      "visualGroup": "sauce"
+    },
+    "피치-망고-용과-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "other"
+    },
+    "조이풀-메들리-필로우-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#a4ad72",
+      "visualGroup": "tea"
+    },
+    "코코넛-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#f1eadb",
+      "visualGroup": "sauce"
+    },
+    "허니-자몽-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#df996b",
+      "visualGroup": "sauce"
+    },
+    "제로-클래식-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#ece4c9",
+      "visualGroup": "sauce"
+    },
+    "스타벅스-레모네이드": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#eaca75",
+      "visualGroup": "sauce"
+    },
+    "레몬-코코-젤리": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "other"
+    },
+    "씨솔트-카라멜-드리즐": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d6b672",
+      "visualGroup": "sauce"
+    },
+    "쏠티-클라우드-폼": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 420,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#f4ecdc",
+      "visualGroup": "foam"
+    },
+    "씨솔트-카라멜-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d6b672",
+      "visualGroup": "sauce"
+    },
+    "파인애플-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "블루-스피룰리나-파우더": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#54a9c6",
+      "visualGroup": "powder"
+    },
+    "스노우-폼-파우더": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#eee7d6",
+      "visualGroup": "powder"
+    },
+    "돌체-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#eddcb6",
+      "visualGroup": "sauce"
+    },
+    "체리-자두-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#ae556b",
+      "visualGroup": "sauce"
+    },
+    "더블-스트랭스-블랙-티": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#a27143",
+      "visualGroup": "tea"
+    },
+    "딸기-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#c8738e",
+      "visualGroup": "sauce"
+    },
+    "연유": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#eee4ce",
+      "visualGroup": "milk"
+    },
+    "오트-밀크": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 2,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e8deca",
+      "visualGroup": "milk"
+    },
+    "바닐라-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e6d7b7",
+      "visualGroup": "sauce"
+    },
+    "수박-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#dc727a",
+      "visualGroup": "sauce"
+    },
+    "냉동-수박-다이스": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#dc727a",
+      "visualGroup": "other"
+    },
+    "초콜릿-땅콩-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "other"
+    },
+    "베르가못-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#d7c986",
+      "visualGroup": "sauce"
+    },
+    "화이트-모카-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#eee5cb",
+      "visualGroup": "sauce"
+    },
+    "아이스-커피": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee"
+    },
+    "프렌치-바닐라-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e6d7b7",
+      "visualGroup": "sauce"
+    },
+    "폼-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#efe5d1",
+      "visualGroup": "sauce"
+    },
+    "팥앙금-찹쌀떡": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d6b66d",
+      "visualGroup": "other"
+    },
+    "팥앙금-찹쌀떡-반절": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 2,
+      "price": 0,
+      "storage": "room",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#d6b66d",
+      "visualGroup": "other"
+    },
+    "우유-베이스-파우더": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 2,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#eee7d6",
+      "visualGroup": "powder"
+    },
+    "그래놀라-믹스": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b68e65",
+      "visualGroup": "other"
+    },
+    "인절미-크림": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 430,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#e6d5b7",
+      "visualGroup": "foam"
+    },
+    "콩고물-파우더": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b68e65",
+      "visualGroup": "powder"
+    },
+    "인절미-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#bf8b58",
+      "visualGroup": "sauce"
+    },
+    "요거트-크림": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 400,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#f4ecdc",
+      "visualGroup": "foam"
+    },
+    "뉴-자몽-망고-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "애플망고-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "애플망고-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1200,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "망고-별-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "other"
+    },
+    "키위-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#8daf54",
+      "visualGroup": "sauce"
+    },
+    "크림-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#efe5d1",
+      "visualGroup": "sauce"
+    },
+    "슈-폼": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 440,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#ecdaa6",
+      "visualGroup": "foam"
+    },
+    "쿠키-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b68e65",
+      "visualGroup": "other"
+    },
+    "그린티-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#aaba73",
+      "visualGroup": "tea"
+    },
+    "더블-스트랭스-그린-티": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 2000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#aaba73",
+      "visualGroup": "tea"
+    },
+    "매실-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#a8bf6d",
+      "visualGroup": "sauce"
+    },
+    "리치-보바-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#f0ead8",
+      "visualGroup": "other"
+    },
+    "헤이즐넛-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b89469",
+      "visualGroup": "sauce"
+    },
+    "그린-피스타치오-폼": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 460,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#c5d6a4",
+      "visualGroup": "foam"
+    },
+    "카다이프-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b68e65",
+      "visualGroup": "other"
+    },
+    "그린-피스타치오-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#6c8a48",
+      "visualGroup": "sauce"
+    },
+    "백도-파우더": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#ecd1bd",
+      "visualGroup": "powder"
+    },
+    "밀크-푸딩": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 2,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#eee4ce",
+      "visualGroup": "milk"
+    },
+    "피치-젤리": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e4b39a",
+      "visualGroup": "other"
+    },
+    "체리블라썸-스트로베리-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#c8738e",
+      "visualGroup": "sauce"
+    },
+    "블라썸-초콜릿-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "other"
+    },
+    "고양이-귀-사인판": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 100,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d6b66d",
+      "visualGroup": "other"
+    },
+    "슈크림-말차-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 480,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#a9bd78",
+      "visualGroup": "tea"
+    },
+    "초콜릿-폼": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 350,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#9b745d",
+      "visualGroup": "foam"
+    },
+    "피스타치오-폼": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 420,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#c5d6a4",
+      "visualGroup": "foam"
+    },
+    "로즈-휘핑-크림": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 660,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#dfb2bc",
+      "visualGroup": "foam"
+    },
+    "얼-그레이-폼": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 560,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#bba98e",
+      "visualGroup": "foam"
+    },
+    "더블-스트랭스-캐모마일-티": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 500,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#ddc178",
+      "visualGroup": "tea"
+    },
+    "에스프레소-크림": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 980,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#c6aa87",
+      "visualGroup": "foam"
+    },
+    "돌체-폼": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 360,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#e8d6b5",
+      "visualGroup": "foam"
+    },
+    "얼-그레이-밀크-티-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 2000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#c9b596",
+      "visualGroup": "milk"
+    },
+    "쿼드-스트랭스-캐모마일-티": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 500,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#ddc178",
+      "visualGroup": "tea"
+    },
+    "뱅쇼-베이스-프리믹스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1020,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#874551",
+      "visualGroup": "sauce"
+    },
+    "캐모마일-유스베리-티-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 2000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#c97b91",
+      "visualGroup": "tea"
+    },
+    "릴렉싱-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 4000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#bf8b58",
+      "visualGroup": "sauce"
+    },
+    "버터-스카치-커피-크림": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 510,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#c7a376",
+      "visualGroup": "foam"
+    },
+    "말차-클라우드-폼": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 320,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#a9bf80",
+      "visualGroup": "foam"
+    },
+    "멜론-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1010,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#bad388",
+      "visualGroup": "sauce"
+    },
+    "마롱-에스프레소-크림": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 510,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#c6aa87",
+      "visualGroup": "foam"
+    },
+    "말차-글레이즈드-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 400,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#6c8a48",
+      "visualGroup": "tea"
+    },
+    "멜론-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1500,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#bad388",
+      "visualGroup": "sauce"
+    },
+    "멜론-휘핑": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 480,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#d8e4bc",
+      "visualGroup": "foam"
+    },
+    "마카다미아-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1600,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#d7c19d",
+      "visualGroup": "sauce"
+    },
+    "퍼플-머스캣-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#9167ad",
+      "visualGroup": "other"
+    },
+    "클래식-밀크-티-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1040,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#c9b596",
+      "visualGroup": "milk"
+    },
+    "위스키-크림": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 540,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#e8d6b5",
+      "visualGroup": "foam"
+    },
+    "쏠티드-브라운-버터리-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b68e65",
+      "visualGroup": "other"
+    },
+    "피스타치오-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#6c8a48",
+      "visualGroup": "sauce"
+    },
+    "심플-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#ece4c9",
+      "visualGroup": "sauce"
+    },
+    "로즈-파우더": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#c8738e",
+      "visualGroup": "powder"
+    },
+    "루비-초콜릿-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#d594a4",
+      "visualGroup": "other"
+    },
+    "핑크-자몽-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#c8738e",
+      "visualGroup": "sauce"
+    },
+    "건-라임-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#91a466",
+      "visualGroup": "other"
+    },
+    "유자-배-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "캐모마일-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#ddc178",
+      "visualGroup": "tea"
+    },
+    "에스프레소-칩": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#694837",
+      "visualGroup": "other"
+    },
+    "시나몬-파우더": {
+      "stockUnit": "tap",
+      "unit": "톡",
+      "pack": 100,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b68e65",
+      "visualGroup": "powder"
+    },
+    "브륄레-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b68e65",
+      "visualGroup": "other"
+    },
+    "카라멜-드리즐": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d6b672",
+      "visualGroup": "sauce"
+    },
+    "돌체-스파이스-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#cda467",
+      "visualGroup": "sauce"
+    },
+    "버터-스카치-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#cda467",
+      "visualGroup": "sauce"
+    },
+    "마롱-바닐라-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b89469",
+      "visualGroup": "sauce"
+    },
+    "트리플-베리-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#a95d81",
+      "visualGroup": "sauce"
+    },
+    "트리플-베리-폼": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 500,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#c995b0",
+      "visualGroup": "foam"
+    },
+    "프렌즈-초콜릿-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "other"
+    },
+    "블랙-아이스티": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#a27143",
+      "visualGroup": "tea"
+    },
+    "얼-그레이-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#946741",
+      "visualGroup": "tea"
+    },
+    "홀리데이-캐모마일-티-파우치": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#ddc178",
+      "visualGroup": "tea"
+    },
+    "크리스마스-뱅쇼-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#874551",
+      "visualGroup": "sauce"
+    },
+    "뱅쇼-과일-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#dab374",
+      "visualGroup": "other"
+    },
+    "허니-캐모마일-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#d7c986",
+      "visualGroup": "sauce"
+    },
+    "옐로우-파우더": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e1c964",
+      "visualGroup": "powder"
+    },
+    "로즈마리": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 100,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#718f5e",
+      "visualGroup": "other"
+    },
+    "핑크-리치-보바": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#c8738e",
+      "visualGroup": "other"
+    },
+    "레몬그라스-리치-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "월리-체리-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#ae556b",
+      "visualGroup": "sauce"
+    },
+    "블루-바닐라-푸딩": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#a9d0e4",
+      "visualGroup": "other"
+    },
+    "월리-체리-드리즐": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#ae556b",
+      "visualGroup": "other"
+    },
+    "월리-사인판": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 100,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d6b66d",
+      "visualGroup": "other"
+    },
+    "무지방-우유": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 2,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#f2edde",
+      "visualGroup": "milk"
+    },
+    "칸탈로프-멜론-청크": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#efa86b",
+      "visualGroup": "other"
+    },
+    "멜론-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#bad388",
+      "visualGroup": "sauce"
+    },
+    "마롱-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d7c19d",
+      "visualGroup": "sauce"
+    },
+    "고객-선택-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#bf8b58",
+      "visualGroup": "sauce"
+    },
+    "홍차-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#946741",
+      "visualGroup": "tea"
+    },
+    "허브-티-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#a4ad72",
+      "visualGroup": "tea"
+    },
+    "화이트-티-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#d9d2a5",
+      "visualGroup": "tea"
+    },
+    "녹차-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#aaba73",
+      "visualGroup": "tea"
+    },
+    "오트사이드": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 2,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e8deca",
+      "visualGroup": "milk"
+    },
+    "망고패션-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "화이트피치-청크": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#ecd1bd",
+      "visualGroup": "other"
+    },
+    "망고-용과-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "other"
+    },
+    "로스티드-마카다미아향-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b89469",
+      "visualGroup": "sauce"
+    },
+    "마카다미아-크런치-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b68e65",
+      "visualGroup": "other"
+    },
+    "화이트모카-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#eee5cb",
+      "visualGroup": "sauce"
+    },
+    "커피향-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee"
+    },
+    "흑당-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#694731",
+      "visualGroup": "sauce"
+    },
+    "솔티드-카라멜-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#d6b672",
+      "visualGroup": "sauce"
+    },
+    "자몽-망고-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "그린-머스캣-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#a9c967",
+      "visualGroup": "sauce"
+    },
+    "퍼플-머스캣-젤리": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#9167ad",
+      "visualGroup": "other"
+    },
+    "화이트-펄-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#f0ead8",
+      "visualGroup": "other"
+    },
+    "자몽-쌕": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#df996b",
+      "visualGroup": "other"
+    },
+    "패션-탱고-티": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#b75875",
+      "visualGroup": "tea"
+    },
+    "망고-패션-프루트-주스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "파인코코-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e7bc59",
+      "visualGroup": "sauce"
+    },
+    "동결건조-망고-용과": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "other"
+    },
+    "토닉-워터": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e9e8d9",
+      "visualGroup": "water"
+    },
+    "잉글리쉬-브렉퍼스트-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#946741",
+      "visualGroup": "tea"
+    },
+    "프라푸치노-로스트-파우더": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#694c39",
+      "visualGroup": "powder"
+    },
+    "폰세카-타우니-포트": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 35000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 6,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#8e5a43",
+      "visualGroup": "sauce"
+    },
+    "레드-뱅쇼-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#874551",
+      "visualGroup": "sauce"
+    },
+    "허브-스파이스-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#a4ad72",
+      "visualGroup": "tea"
+    },
+    "하프-오렌지-슬라이스": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e3a148",
+      "visualGroup": "other"
+    },
+    "레몬-슬라이스": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "other"
+    },
+    "화이트-상그리아-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e8db9e",
+      "visualGroup": "sauce"
+    },
+    "복숭아-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e4b39a",
+      "visualGroup": "sauce"
+    },
+    "프라푸치노-로스트": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#634630",
+      "visualGroup": "coffee"
+    },
+    "커피-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee"
+    },
+    "말차-글레이즈드-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#6c8a48",
+      "visualGroup": "tea"
+    },
+    "베르가못-크림": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 500,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#e8d6b5",
+      "visualGroup": "foam"
+    },
+    "스노우-토핑": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#f0ead8",
+      "visualGroup": "other"
+    },
+    "허니-레몬-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "타임": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 100,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#718f5e",
+      "visualGroup": "other"
+    },
+    "카라멜-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#d6b672",
+      "visualGroup": "sauce"
+    },
+    "카라멜-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d6b672",
+      "visualGroup": "sauce"
+    },
+    "화이트-초콜릿-모카-소스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#eee5cb",
+      "visualGroup": "sauce"
+    },
+    "오트앤유": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 2,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e8deca",
+      "visualGroup": "milk"
+    },
+    "에스프레소-휘핑-크림": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 500,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#c6aa87",
+      "visualGroup": "foam"
+    },
+    "초코-파우더": {
+      "stockUnit": "tap",
+      "unit": "톡",
+      "pack": 100,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#694832",
+      "visualGroup": "powder"
+    },
+    "커피-프라푸치노-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee"
+    },
+    "크림-프라푸치노-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#efe5d1",
+      "visualGroup": "sauce"
+    },
+    "프라푸치노-칩": {
+      "stockUnit": "scoop",
+      "unit": "스쿱",
+      "pack": 80,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#694837",
+      "visualGroup": "other"
+    },
+    "시그니처-초콜릿-프리믹스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#503527",
+      "visualGroup": "sauce"
+    },
+    "리저브-바닐라-빈-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#e6d7b7",
+      "visualGroup": "sauce"
+    },
+    "리저브-민트-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 100,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#c8d7b1",
+      "visualGroup": "sauce"
+    },
+    "리저브-다크-모카-파우더": {
+      "stockUnit": "scoop",
+      "unit": "스쿱",
+      "pack": 80,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#543c2d",
+      "visualGroup": "powder"
+    },
+    "리저브-콜드-브루": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee"
+    },
+    "리저브-스위트-크림-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 490,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#f4ead6",
+      "visualGroup": "milk"
+    },
+    "리저브-에스프레소-원두": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 15000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee"
+    },
+    "민트-잎": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 100,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#6c8a48",
+      "visualGroup": "other"
+    },
+    "아이스크림": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#eee4ce",
+      "visualGroup": "milk"
+    },
+    "티바나-패션-탱고-아이스-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b75875",
+      "visualGroup": "tea"
+    },
+    "블랙-아이스-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#946741",
+      "visualGroup": "tea"
+    },
+    "티바나-민트-블렌드-풀-리프-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b7c58e",
+      "visualGroup": "tea"
+    },
+    "더블-스트랭스-패션-탱고-티": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 2000,
+      "price": 0,
+      "storage": "room",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#b75875",
+      "visualGroup": "tea"
+    },
+    "더블-스트랭스-민트-티": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 500,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#b7c58e",
+      "visualGroup": "tea"
+    },
+    "유자-베이스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "딸기-슬라이스": {
+      "stockUnit": "scoop",
+      "unit": "스쿱",
+      "pack": 80,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#c8738e",
+      "visualGroup": "other"
+    },
+    "진저에일-토닉워터": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#dcc88c",
+      "visualGroup": "water"
+    },
+    "유기농-말차": {
+      "stockUnit": "scoop",
+      "unit": "스쿱",
+      "pack": 80,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#6c8a48",
+      "visualGroup": "tea"
+    },
+    "망고-패션후르츠-주스": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#d8b44e",
+      "visualGroup": "sauce"
+    },
+    "바나나": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e7cf87",
+      "visualGroup": "other"
+    },
+    "오늘의-커피": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#705040",
+      "visualGroup": "coffee"
+    },
+    "고객이-선택한-향-시럽": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 750,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 1,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#bf8b58",
+      "visualGroup": "sauce"
+    },
+    "디카페인-에스프레소-로스트": {
+      "stockUnit": "g",
+      "unit": "g",
+      "pack": 500,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#634630",
+      "visualGroup": "coffee"
+    },
+    "잉글리쉬-브렉퍼스트-풀-리프-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#946741",
+      "visualGroup": "tea"
+    },
+    "얼-그레이-풀-리프-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#946741",
+      "visualGroup": "tea"
+    },
+    "차이-풀-리프-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#946741",
+      "visualGroup": "tea"
+    },
+    "히비스커스-풀-리프-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#b75875",
+      "visualGroup": "tea"
+    },
+    "캐모마일-풀-리프-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#ddc178",
+      "visualGroup": "tea"
+    },
+    "유스베리-풀-리프-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#c97b91",
+      "visualGroup": "tea"
+    },
+    "제주-유기-녹차-풀-리프-티백": {
+      "stockUnit": "piece",
+      "unit": "개",
+      "pack": 20,
+      "price": 6000,
+      "storage": "room",
+      "lifetime": {
+        "amount": 3,
+        "unit": "months"
+      },
+      "startingAmount": 0,
+      "color": "#aaba73",
+      "visualGroup": "tea"
+    },
+    "두유": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 6000,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 2,
+        "unit": "days"
+      },
+      "startingAmount": 0,
+      "color": "#e8deca",
+      "visualGroup": "milk"
+    },
+    "1-2-디카페인-에스프레소": {
+      "stockUnit": "ml",
+      "unit": "ml",
+      "pack": 1000,
+      "price": 0,
+      "storage": "fridge",
+      "lifetime": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "startingAmount": 0,
+      "color": "#634630",
+      "visualGroup": "coffee"
+    }
+  }
+}

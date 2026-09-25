@@ -13,7 +13,7 @@ export type Action =
   | { type: 'start-preparation'; recipe: PreparationId }
   | { type: 'prep-tool' }
   | { type: 'prep-use' }
-  | { type: 'prep-confirm' }
+  | { type: 'prep-confirm'; observation?: { id: string; value: boolean } }
   | { type: 'discard-preparation' }
   | { type: 'wash-tool' }
   | { type: 'wash-use' }
@@ -50,7 +50,7 @@ export type Action =
   | { type: 'pick-cup'; station: StationId }
   | { type: 'tool'; station: StationId }
   | { type: 'use-start'; station: StationId }
-  | { type: 'confirm-craft'; station: StationId }
+  | { type: 'confirm-craft'; station: StationId; observation?: { id: string; value: boolean } }
   | { type: 'open-batch'; id: string }
   | { type: 'buy'; ingredient: IngredientId }
   | {

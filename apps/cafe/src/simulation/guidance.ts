@@ -1,12 +1,12 @@
 import type { IngredientId } from '../content/ingredients'
 import { type StationId, tableIds } from '../content/stations'
 import { cleaningHandsBusy } from '../features/cleaning/rules'
-import { nextStep, operationFor } from '../features/crafting/rules'
+import { nextStep } from '../features/crafting/rules'
 import { batchDestination, batchOrigin, carriedBatch } from '../features/inventory/batches'
 import { cleanCupCount, cupCount, cupKindFor, isReusableCup } from '../features/inventory/cups'
 import { available } from '../features/inventory/inventory'
 import { supplyIds } from '../features/inventory/supplies'
-import { preparationIds, preparationStep } from '../features/preparation/rules'
+import { preparationForMaterial, preparationStep } from '../features/preparation/rules'
 import { washDestination, washItems, washStock } from '../features/washing/rules'
 import type { GameState } from './state'
 
@@ -27,9 +27,12 @@ function plannedStation(state: GameState): StationId {
     if (
       prep.stage === 'measuring' &&
       !prep.fault &&
-      operation.ingredient &&
-      available(state, operation.ingredient) + 0.0001 <
-        Math.max(0, operation.target - prep.progress) * (operation.perUnit ?? 1)
+      operation &&
+      Object.entries(operation.inputRequirements ?? operation.costs).some(
+        ([id, amount]) =>
+          available(state, id) + 0.0001 <
+          amount * (operation.inputRequirements ? 1 : Math.max(0, 1 - prep.progress / operation.target)),
+      )
     )
       return 'stock'
     return 'prep'
@@ -38,12 +41,11 @@ function plannedStation(state: GameState): StationId {
   const step = nextStep(state)
   if (step) {
     const craft = state.cup!.craft
-    const op = operationFor(state.cup!.recipe, state.cup!.step, craft)!
     if (craft.fault) return craft.location === 'hand' ? 'trash' : craft.location
     if (craft.location !== 'hand' && craft.location !== step.station) return craft.location
-    if ((step.usesPitcher || op.tool === 'pitcher') && !craft.pitcherReserved && !state.tools.clean) return 'wash'
-    for (const [key, fullAmount] of Object.entries(step.costs)) {
-      const amount = fullAmount * (op.kind === 'shake' ? 1 : Math.max(0, 1 - craft.progress / op.target))
+    if (step.requiresReusableTool && !craft.reservedTool && !state.tools.clean) return 'wash'
+    for (const [key, fullAmount] of Object.entries(step.inputRequirements ?? step.costs)) {
+      const amount = fullAmount * (step.inputRequirements ? 1 : Math.max(0, 1 - craft.progress / step.target))
       if (available(state, key as IngredientId) + 0.0001 >= amount) continue
       const pending = state.batches.find(
         (batch) =>
@@ -56,7 +58,7 @@ function plannedStation(state: GameState): StationId {
       )
       if (pending)
         return pending.location === 'prep' ? 'prep' : pending.location === 'cold-prep' ? 'cold-prep' : 'stock'
-      if (preparationIds.some((id) => id === key)) return state.tools.clean ? 'prep' : 'wash'
+      if (preparationForMaterial(key)) return state.tools.clean ? 'prep' : 'wash'
       if (key === 'coldBrew') return 'cold-prep'
       return 'stock'
     }

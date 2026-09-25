@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { libraryCatalog as recipeCatalog } from '../../content/library-catalog'
+import { recipeCatalog } from '../../content/catalog'
 import { amountLabel, conditionLabel } from '../../content/recipe-plan'
 import type { CatalogSize, RecipeOperation, RecipeVariant } from '../../content/recipe-schema'
 import { selectedAmount } from '../../content/recipe-schema'

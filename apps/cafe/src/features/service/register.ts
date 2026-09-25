@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { DRINK_SIZES } from '../../content/drink-sizes'
-import { RECIPES, recipeFor } from '../../content/recipes'
+import { RECIPES, recipePrice } from '../../content/recipes'
 import {
   equipmentBox as box,
   equipmentInstances as instances,
@@ -180,7 +180,7 @@ export function createRegister(scene: THREE.Scene) {
           h * 0.51,
         )
         ctx.font = `600 ${h * 0.064}px sans-serif`
-        ctx.fillText(`${recipeFor(ticket.recipe, ticket.size).price.toLocaleString('ko-KR')}원`, w * 0.68, h * 0.7)
+        ctx.fillText(`${recipePrice(ticket.recipe, ticket.size).toLocaleString('ko-KR')}원`, w * 0.68, h * 0.7)
       }
       ctx.fillStyle = '#c6d6ca'
       ctx.fillRect(0, h * 0.86, w, h * 0.14)

@@ -13,10 +13,11 @@ export type RecipeContext = {
   size?: CatalogSize
   container: 'standard-cup' | 'personal-cup' | 'tumbler'
   service: 'for-here' | 'takeaway'
-  customizations?: Record<string, string>
+  customizations?: Record<string, string | false>
   observations?: Record<string, string>
   alternatives?: Record<string, string>
 }
+export type PlannedObservation = { id: string; property: string; value: string }
 export type PlannedStep = {
   id: string
   sourceStepId: string
@@ -25,6 +26,7 @@ export type PlannedStep = {
   note: string
   operation: ResolvedOperation
   measurement: string
+  conditions: PlannedObservation[]
 }
 
 const sizeNames = {
@@ -107,11 +109,19 @@ export function matchesConditions(when: RecipeStep['when'], context: RecipeConte
   return (Array.isArray(when) ? when : [when]).every((condition) => {
     if (condition.kind === 'container') return context.container === condition.value
     if (condition.kind === 'service') return context.service === condition.value
-    if (condition.kind === 'customization') return context.customizations?.[condition.option] === condition.choice
+    if (condition.kind === 'customization')
+      return (context.customizations?.[condition.option] ?? false) === condition.choice
     const observation = context.observations?.[condition.property]
-    if (observation === undefined) throw new Error(`${condition.property} 상태를 먼저 확인해야 합니다.`)
-    return observation === condition.value
+    return observation === undefined || observation === condition.value
   })
+}
+function pendingObservations(when: RecipeStep['when'], context: RecipeContext, prefix: string): PlannedObservation[] {
+  if (!when) return []
+  return (Array.isArray(when) ? when : [when]).flatMap((condition, index) =>
+    condition.kind === 'observation' && context.observations?.[condition.property] === undefined
+      ? [{ id: `${prefix}:${index}`, property: condition.property, value: condition.value }]
+      : [],
+  )
 }
 function resolveOperation(operation: RecipeOperation, context: RecipeContext): ResolvedOperation {
   const selected = { ...operation }
@@ -130,6 +140,7 @@ export function planRecipe(variant: RecipeVariant, context: RecipeContext): Plan
   if (variant.review.length) throw new Error(variant.review.join(' '))
   if (variant.sizes.length && (!context.size || !variant.sizes.includes(context.size)))
     throw new Error('지원하지 않는 주문 사이즈입니다.')
+  context = { ...context, customizations: { ...variant.defaults, ...context.customizations } }
   const plan: PlannedStep[] = []
   for (const step of variant.steps) {
     if (!matchesConditions(step.when, context)) continue
@@ -149,6 +160,10 @@ export function planRecipe(variant: RecipeVariant, context: RecipeContext): Plan
         note: step.notes.join(' '),
         operation: resolved,
         measurement: 'amount' in resolved && resolved.amount ? amountLabel(resolved.amount) : '',
+        conditions: [
+          ...pendingObservations(step.when, context, `${step.id}:condition`),
+          ...pendingObservations(operation.when, context, `${step.id}:${index}:condition`),
+        ],
       })
     })
   }

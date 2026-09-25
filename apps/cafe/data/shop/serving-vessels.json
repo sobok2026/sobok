@@ -1,0 +1,8 @@
+[
+  { "vesselId": "serving-cup", "services": ["dine-in", "takeout"] },
+  { "vesselId": "demitasse", "services": ["dine-in"] },
+  { "vesselId": "short-paper-cup", "services": ["takeout"] },
+  { "vesselId": "vin-chaud-glass", "services": ["dine-in"] },
+  { "vesselId": "cocktail-glass", "services": ["dine-in"] },
+  { "vesselId": "white-wine-glass", "services": ["dine-in"] }
+]

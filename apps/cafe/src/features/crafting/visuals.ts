@@ -1,133 +1,41 @@
 import * as THREE from 'three'
 import { RECIPES, recipeFor } from '../../content/recipes'
-import type { StationId } from '../../content/stations'
-import { staffFacingZ } from '../../content/stations'
+import { STATIONS, type StationId, staffFacingZ } from '../../content/stations'
 import { CUP_DIMENSIONS } from '../../shared/visuals/cup-visual'
-import { createIceScoop, iceScoopSizes } from '../../shared/visuals/ice-scoop'
 import { createPumpVisual } from '../../shared/visuals/pump-visual'
-import { addVesselLabel } from '../../shared/visuals/vessel-label'
-import {
-  workBox as block,
-  workCylinder as cylinder,
-  workMaterial as standard,
-} from '../../shared/visuals/work-geometry'
 import type { GameState } from '../../simulation/state'
 import { COLD_BREW_OUTLET } from '../cold-brew/equipment'
 import { cupService, cupSize } from '../inventory/cups'
-import { createDrinkVisual } from './drink-visual'
+import { BLENDER_JAR_SPOT } from '../preparation/blender'
+import { productionTargetFill } from '../production/runtime'
+import {
+  createDrinkVisual,
+  createProductionEffects,
+  createProductionToolVisual,
+  createWorkVesselVisual,
+  materialColor,
+  operationVessel,
+  positionProductionTool,
+  projectVessel,
+  workVesselShape,
+} from './drink-visual'
 import { ESPRESSO_OUTLET, STEAM_PITCHER_SPOT } from './espresso-machine'
-import { type CraftTool, espressoFill, operationFor } from './rules'
-import { syrupPumpKind, WATER_OUTLET } from './station-equipment'
+import { operationFor } from './rules'
+import { WATER_OUTLET } from './station-equipment'
 
 export function createCraftVisuals(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
-  const cream = standard('#f8edcf')
-  const steel = standard('#adbbb2', 0.65)
-  const chocolate = standard('#48281c')
   const bench = createDrinkVisual(scene)
   const held = createDrinkVisual(camera)
   held.root.position.set(0.28, -0.43, -0.62)
   held.root.scale.setScalar(0.85)
-  const tools = new Map<CraftTool, THREE.Group>()
-  function tool(id: CraftTool) {
-    const root = new THREE.Group()
-    scene.add(root)
-    root.visible = false
-    tools.set(id, root)
-    return root
-  }
-  const carton = tool('milk-carton')
-  block(carton, 0.1, 0.19, 0.08, cream)
-  const stripe = block(carton, 0.102, 0.055, 0.081, standard('#709581'))
-  stripe.position.y = -0.005
-  const spout = cylinder(carton, 0.022, 0.022, 0.025, cream, 0.11)
-  spout.position.x = -0.025
-  addVesselLabel(carton, '우유', '#527f66', 0.075, 0.046, -0.005, 0.042)
-  let shotToolLiquid: THREE.Mesh | null = null
-  for (const id of ['pitcher', 'foam-pitcher', 'shot-glass'] as const) {
-    const root = tool(id)
-    const scale = id === 'shot-glass' ? 0.62 : 1
-    const glass = id === 'shot-glass'
-    cylinder(
-      root,
-      0.087,
-      0.06,
-      0.19,
-      glass
-        ? new THREE.MeshStandardMaterial({
-            color: '#d9eae2',
-            transparent: true,
-            opacity: 0.3,
-            depthWrite: false,
-            side: THREE.DoubleSide,
-          })
-        : id === 'pitcher'
-          ? steel
-          : cream,
-      0,
-      true,
-    )
-    if (glass) shotToolLiquid = cylinder(root, 0.075, 0.055, 0.12, chocolate, -0.025)
-    else {
-      const handle = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.009, 8, 20), steel)
-      handle.rotation.y = Math.PI / 2
-      handle.position.x = 0.09
-      root.add(handle)
-      addVesselLabel(
-        root,
-        id === 'pitcher' ? '스팀' : '폼',
-        id === 'pitcher' ? '#667e89' : '#527f66',
-        0.09,
-        0.052,
-        -0.015,
-        0.076,
-      )
-    }
-    root.scale.setScalar(scale)
-  }
-  const stirrer = tool('stirrer')
-  cylinder(stirrer, 0.006, 0.006, 0.26, standard('#b8a17a'))
-  const bottle = tool('mocha-bottle')
-  cylinder(bottle, 0.038, 0.042, 0.17, chocolate)
-  cylinder(bottle, 0.006, 0.03, 0.045, cream, 0.106)
-  addVesselLabel(bottle, '바모카', '#77513b', 0.062, 0.043, -0.015, 0.041)
-  for (const [id, label, color] of [
-    ['tea-bottle', '호지차', '#967345'],
-    ['matcha-bottle', '말차', '#568438'],
-  ] as const) {
-    const bottle = tool(id)
-    cylinder(bottle, 0.065, 0.062, 0.24, standard(color))
-    cylinder(bottle, 0.067, 0.067, 0.025, standard('#45644d'), 0.133)
-    addVesselLabel(bottle, label, color, 0.09, 0.056, -0.008, 0.065)
-  }
-  const shaker = tool('shaker')
-  cylinder(shaker, 0.038, 0.035, 0.105, standard('#c69b59'))
-  cylinder(shaker, 0.04, 0.04, 0.025, steel, 0.065)
-  addVesselLabel(shaker, '파우더', '#886628', 0.058, 0.036, 0, 0.038)
-  const scoop = tool('ice-scoop')
-  const scoops = iceScoopSizes.map((size) => ({ size, model: createIceScoop(scoop, size) }))
-  cylinder(tool('lid'), 0.119, 0.117, 0.018, cream)
-
-  const receivingPitcher = new THREE.Group()
-  scene.add(receivingPitcher)
-  cylinder(receivingPitcher, 0.09, 0.065, 0.21, steel, 0.105, true)
-  const pitcherMilk = cylinder(receivingPitcher, 0.081, 0.064, 0.17, cream, 0.09)
-  const stream = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 12), standard('#e7d1a4'))
-  scene.add(stream)
-  const pumps = { glaze: createPumpVisual(scene, 'glaze'), classic: createPumpVisual(scene, 'classic') }
-  const vapor = Array.from({ length: 7 }, () => {
-    const mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(0.025, 8, 6),
-      new THREE.MeshBasicMaterial({ color: '#fff9e7', transparent: true, opacity: 0.1, depthWrite: false }),
-    )
-    scene.add(mesh)
-    return mesh
-  })
+  const tools = createProductionToolVisual(scene)
+  const effects = createProductionEffects(scene)
+  const auxiliaries = new Map<string, ReturnType<typeof createWorkVesselVisual>>()
+  const pumps = new Map<'glaze' | 'classic', ReturnType<typeof createPumpVisual>>()
+  const positions = new Map<string, THREE.Vector3>()
   const start = new THREE.Vector3()
   const end = new THREE.Vector3()
-  const direction = new THREE.Vector3()
-  const up = new THREE.Vector3(0, 1, 0)
-  const handPosition = new THREE.Vector3()
-  const handRotation = new THREE.Quaternion()
+  const spot = new THREE.Vector3()
   let previous = ''
   let previousProgress = 0
   let pulseUntil = 0
@@ -136,185 +44,136 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       const cup = state.cup
       bench.root.visible = !!cup && cup.craft.location !== 'hand'
       held.root.visible = !!cup && cup.craft.location === 'hand'
-      for (const model of tools.values()) model.visible = false
-      stream.visible = false
-      for (const pump of Object.values(pumps)) pump.root.visible = false
-      receivingPitcher.visible = false
-      for (const cloud of vapor) cloud.visible = false
-      if (!cup) return
-      const c = cup.craft
-      const size = cupSize(c.kind)
-      const scoopSize = size === 'trenta' ? 'venti' : size
-      for (const scoop of scoops) scoop.model.visible = scoop.size === scoopSize
-      const shotFill = espressoFill(cup.recipe, c.kind)
-      if (shotToolLiquid) {
-        const fill = Math.max(0.001, 1 - Math.min(1, c.contents.coffee / (shotFill || 1)))
-        shotToolLiquid.scale.y = fill
-        shotToolLiquid.position.y = -0.085 + 0.06 * fill
+      for (const model of auxiliaries.values()) model.root.visible = false
+      for (const pump of pumps.values()) pump.root.visible = false
+      positions.clear()
+      effects.update(null, end, '#dfc29b', null, now)
+      if (!cup) {
+        tools.update(null, '#dfc29b')
+        return
       }
-      const op = operationFor(cup.recipe, cup.step, c)
-      const job = state.jobs.find((item) => item.kind === 'craft-machine' && item.cupId === cup.id)
-      const extraction =
-        job?.machine === 'espresso' && op?.destination !== 'shot-glass'
-          ? Math.min(1, (state.time - job.startedAt) / (job.endsAt - job.startedAt)) * shotFill
-          : 0
-      const shotExtraction =
-        job?.machine === 'espresso' && op?.destination === 'shot-glass'
-          ? Math.min(1, (state.time - job.startedAt) / (job.endsAt - job.startedAt))
-          : null
-      ;(c.location === 'hand' ? held : bench).update(
-        c,
-        RECIPES[cup.recipe].variant === 'ICED',
-        c.location !== 'hand' ? op?.targetFill : undefined,
-        extraction,
-        shotExtraction,
-        shotFill,
-      )
+      const craft = cup.craft
+      const definition = recipeFor(cup.recipe, cupSize(craft.kind), cupService(craft.kind))
+      const step = operationFor(cup.recipe, craft) ?? undefined
+      const operation = step?.operation
+      const servingId = definition.vesselId
+      const currentVessel = operation ? operationVessel(operation) : servingId
+      const serving = projectVessel(craft, servingId, RECIPES[cup.recipe].color)
+      const job = state.jobs.find((item) => item.kind === 'production' && item.cupId === cup.id)
+      const station = craft.location === 'hand' ? null : craft.location
+      const view = craft.location === 'hand' ? held : bench
+      const amount = operation && 'amount' in operation ? operation.amount : undefined
+      const targetFill =
+        step &&
+        currentVessel === servingId &&
+        amount &&
+        ['line', 'mark', 'fill-volume', 'rim-gap'].includes(amount.kind)
+          ? productionTargetFill(craft, step, servingId)
+          : undefined
+      view.update({ kind: craft.kind, lidded: craft.lidded, vessel: serving, targetFill })
       held.root.rotation.z = Math.sin(now / 650) * 0.018
-      const station = c.location === 'hand' ? null : c.location
-      bench.shot.position.y = 0
       if (station) {
         bench.root.position.fromArray(cupSpot(station))
-        // Stage the serving cup alongside the machine while the shot glass occupies its outlet.
-        if (station === 'espresso' && (op?.destination === 'shot-glass' || (c.shotReady && !c.shotTransferred))) {
+        if (station === 'espresso' && currentVessel !== servingId) {
           bench.root.position.x += 0.48
           bench.root.position.z -= 0.06
           bench.root.position.y = 1.075
-          bench.shot.position.y = 0.035
+        }
+        positions.set(servingId, bench.root.position)
+        const ids = new Set(
+          Object.entries(craft.vessels)
+            .filter(([, vessel]) => vessel.fill > 0)
+            .map(([id]) => id),
+        )
+        if (currentVessel) ids.add(currentVessel)
+        if (operation && 'from' in operation) ids.add(operation.from)
+        ids.delete(servingId)
+        let index = 0
+        for (const id of ids) {
+          const shape = workVesselShape(id, definition.steps)
+          const key = `${shape}:${index++}`
+          let model = auxiliaries.get(key)
+          if (!model) {
+            model = createWorkVesselVisual(scene, shape)
+            auxiliaries.set(key, model)
+          }
+          model.root.visible = craft.tool !== `vessel:${id}`
+          model.root.position.copy(bench.root.position).add(new THREE.Vector3(-0.32 * index, 0, 0.04))
+          if (station === 'espresso' && currentVessel === id)
+            model.root.position.set(ESPRESSO_OUTLET[0], 1.11, ESPRESSO_OUTLET[2])
+          if (station === 'steam' && currentVessel === id) model.root.position.fromArray(STEAM_PITCHER_SPOT)
+          const blending = job?.equipmentId === 'blender' && currentVessel === id
+          const atBlender =
+            station === 'prep' && shape === 'blender' && currentVessel === id && step?.equipmentId === 'blender'
+          if (atBlender) model.root.position.fromArray(BLENDER_JAR_SPOT)
+          model.root.rotation.z = blending ? Math.sin(now / 25) * 0.007 : 0
+          positions.set(id, model.root.position)
+          model.update(projectVessel(craft, id, RECIPES[cup.recipe].color), {
+            lidded: atBlender || operation?.action === 'cover',
+            stirring:
+              blending || (active && currentVessel === id && (step?.kind === 'mix' || operation?.action === 'shake')),
+            now,
+          })
         }
       }
-      const key = `${cup.id}:${op?.id}`
+      const key = `${cup.id}:${step?.id}`
       if (key !== previous) {
         previous = key
-        previousProgress = c.progress
+        previousProgress = craft.progress
       }
-      if (
-        c.progress > previousProgress &&
-        op &&
-        ['dispense', 'pump', 'sprinkle', 'ice', 'lid', 'shake'].includes(op.kind)
-      )
-        pulseUntil = now + 280
-      previousProgress = c.progress
-      const pulse = Math.max(0, (pulseUntil - now) / 280)
-      const spot: [number, number, number] = station ? bench.root.position.toArray() : [0, 0, 0]
-      if (station === 'steam' && RECIPES[cup.recipe].variant === 'HOT' && (c.pitcherReserved || c.pitcherMilk > 0)) {
-        receivingPitcher.visible = c.tool !== 'pitcher'
-        receivingPitcher.position.set(spot[0] - 0.28, spot[1], spot[2])
-        pitcherMilk.scale.y = Math.max(
-          0.001,
-          c.pitcherMilk /
-            recipeFor(cup.recipe, cupSize(c.kind), cupService(c.kind)).steps.find((step) => step.usesPitcher)!.costs
-              .milk!,
-        )
-        pitcherMilk.position.y = 0.008 + 0.085 * pitcherMilk.scale.y
-      }
-      const pumpKind = station === 'sauce' ? syrupPumpKind(op) : null
-      const pump = pumpKind ? pumps[pumpKind] : null
-      if (pump) {
+      if (craft.progress > previousProgress && step && !['pour', 'mix'].includes(step.kind)) pulseUntil = now + 330
+      previousProgress = craft.progress
+      const pulse = Math.max(0, (pulseUntil - now) / 330)
+      spot.copy(positions.get(currentVessel ?? servingId) ?? bench.root.position)
+      const color =
+        operation && 'materialId' in operation && operation.materialId
+          ? materialColor(operation.materialId)
+          : operation && 'from' in operation
+            ? projectVessel(craft, operation.from, serving.color).color
+            : serving.color
+      const descriptor = craft.tool
+        ? step?.tool?.id === craft.tool
+          ? step.tool
+          : (definition.steps.find((item) => item.tool?.id === craft.tool)?.tool ?? null)
+        : null
+      const tool = tools.update(descriptor, color, cupSize(craft.kind))
+      if (tool) positionProductionTool(tool, camera, step, spot, !!station && active, station ? pulse : 0, now)
+      const pumped =
+        operation?.action === 'add' &&
+        (operation.amount.kind === 'count' || operation.amount.kind === 'count-range') &&
+        operation.amount.unit === 'pump'
+      let pump: ReturnType<typeof createPumpVisual> | undefined
+      if (station && pumped && (operation.materialId === 'classic' || operation.materialId === 'glaze')) {
+        const kind = operation.materialId
+        pump = pumps.get(kind)
+        if (!pump) {
+          pump = createPumpVisual(scene, kind)
+          pumps.set(kind, pump)
+        }
         pump.root.visible = true
         pump.root.rotation.y = Math.PI
-        pump.root.position.set(spot[0], spot[1], spot[2] + 0.36)
+        pump.root.position.set(spot.x, spot.y, spot.z + 0.36)
         pump.head.position.y = 0.445 - Math.sin(pulse * Math.PI) * 0.035
       }
-      if (c.tool) {
-        const model = tools.get(c.tool)!
-        model.visible = true
-        handPosition.set(0.26, -0.25, -0.58)
-        camera.localToWorld(handPosition)
-        camera.getWorldQuaternion(handRotation)
-        if (station && (active || pulse > 0)) {
-          const receiverX = op?.fillsPitcher ? spot[0] - 0.28 : spot[0]
-          model.position.set(receiverX + 0.15, spot[1] + 0.47, spot[2])
-          model.rotation.set(0, 0, 0.85 + Math.sin(now / 140) * 0.025)
-          if (op?.kind === 'stir') {
-            model.position.set(
-              spot[0] + Math.sin(now / 120) * 0.04,
-              spot[1] + 0.3,
-              spot[2] + Math.cos(now / 120) * 0.04,
-            )
-            model.rotation.z = 0.25
-          }
-          if (op?.kind === 'sprinkle') {
-            model.position.set(spot[0], spot[1] + 0.42 + Math.sin(pulse * Math.PI) * 0.04, spot[2])
-            model.rotation.z = Math.PI
-          }
-          if (op?.kind === 'shake') {
-            model.position.set(spot[0] + 0.12, spot[1] + 0.42 + Math.sin(pulse * Math.PI * 4) * 0.06, spot[2])
-            model.rotation.z = 0.35 + Math.sin(pulse * Math.PI * 4) * 0.22
-          }
-        } else {
-          model.position.copy(handPosition)
-          model.quaternion.copy(handRotation)
-        }
-      }
-      const pouring = station && op && active && ['pour', 'drizzle', 'transfer'].includes(op.kind)
-      if (
-        station &&
-        (pouring || job?.machine === 'espresso' || ((op?.kind === 'pump' || op?.kind === 'dispense') && pulse > 0))
-      ) {
-        const x = op?.fillsPitcher
-          ? spot[0] - 0.28
-          : job?.machine === 'espresso' && op?.destination === 'shot-glass'
-            ? spot[0] - 0.48
-            : spot[0]
-        start.set(x + (job ? 0 : 0.09), job ? 1.43 : spot[1] + 0.44, job ? staffFacingZ(-0.68) : spot[2])
-        if (job?.machine === 'espresso') start.fromArray(ESPRESSO_OUTLET)
-        if (station === 'brew' && op?.content === 'coffee' && !op.tool) start.fromArray(COLD_BREW_OUTLET)
-        if (station === 'water' && op?.content === 'water' && !op.tool) start.fromArray(WATER_OUTLET)
+      const extraction = job?.equipmentId === 'espresso-machine' || (operation?.action === 'espresso' && pulse > 0)
+      const dispensing = job?.equipmentId === 'hot-water-dispenser'
+      const pouring = active && step?.kind === 'pour'
+      const adding = pulse > 0 && operation?.action === 'add'
+      if (station && (pouring || adding || extraction || dispensing)) {
+        start.set(spot.x + 0.09, spot.y + 0.44, spot.z)
+        if (extraction) start.fromArray(ESPRESSO_OUTLET)
+        if (dispensing || (station === 'water' && !step?.tool)) start.fromArray(WATER_OUTLET)
+        if (station === 'brew' && !step?.tool) start.fromArray(COLD_BREW_OUTLET)
         if (pump) pump.outlet.getWorldPosition(start)
-        const fillHeight = Math.min(
-          CUP_DIMENSIONS[c.kind].height - 0.018,
-          (c.contents.sauce +
-            c.contents.coffee +
-            c.contents.water +
-            c.contents.milk +
-            c.contents.tea +
-            c.contents.foam +
-            c.contents.ice) *
-            (CUP_DIMENSIONS[c.kind].height - 0.02),
-        )
-        end.set(
-          x,
-          spot[1] +
-            (op?.fillsPitcher
-              ? 0.1
-              : op?.destination === 'shot-glass' && job
-                ? bench.shot.position.y + 0.05
-                : Math.max(0.025, fillHeight)),
-          spot[2] + (job && op?.destination === 'shot-glass' ? 0.06 : 0),
-        )
-        direction.subVectors(end, start)
-        stream.position.copy(start).add(end).multiplyScalar(0.5)
-        stream.quaternion.setFromUnitVectors(up, direction.clone().normalize())
-        const radius = op?.kind === 'drizzle' ? 0.0035 : op?.kind === 'pump' ? 0.006 : 0.008
-        stream.scale.set(radius, direction.length(), radius)
-        stream.visible = true
-        ;(stream.material as THREE.MeshStandardMaterial).color.set(
-          job || op?.kind === 'transfer'
-            ? '#593624'
-            : op?.kind === 'drizzle'
-              ? '#452419'
-              : op?.kind === 'pump'
-                ? '#caa574'
-                : op?.content === 'water'
-                  ? '#b7ddd6'
-                  : op?.content === 'coffee'
-                    ? '#593624'
-                    : op?.content === 'tea'
-                      ? op.costs.matcha
-                        ? '#568438'
-                        : '#967345'
-                      : '#f5e7ca',
-        )
+        const height =
+          currentVessel === servingId
+            ? Math.max(0.025, serving.fill * (CUP_DIMENSIONS[craft.kind].height - 0.02))
+            : Math.max(0.04, (craft.vessels[currentVessel ?? '']?.fill ?? 0) * 0.25)
+        end.set(spot.x, spot.y + height, spot.z)
+        effects.update(start, end, color, null, now)
       }
-      if (station && job?.machine === 'steam')
-        for (const [i, cloud] of vapor.entries()) {
-          cloud.visible = true
-          const cycle = (now / 1600 + i / 7) % 1
-          cloud.position.set(spot[0] - 0.28 + Math.sin(i + cycle * 3) * 0.04, spot[1] + 0.22 + cycle * 0.22, spot[2])
-          cloud.scale.setScalar(0.4 + cycle)
-          ;(cloud.material as THREE.MeshBasicMaterial).opacity = 0.16 * (1 - cycle)
-        }
+      const steaming = job?.equipmentId === 'steam-wand' || (operation?.action === 'steam' && pulse > 0)
+      if (station && steaming) effects.update(null, end, color, spot, now)
     },
   }
 }
@@ -325,12 +184,6 @@ export function cupSpot(station: StationId): [number, number, number] {
   if (station === 'steam') return [STEAM_PITCHER_SPOT[0] + 0.28, STEAM_PITCHER_SPOT[1], STEAM_PITCHER_SPOT[2]]
   if (station === 'brew') return [COLD_BREW_OUTLET[0], 1.102, COLD_BREW_OUTLET[2]]
   if (station === 'water') return [WATER_OUTLET[0], 1.071, WATER_OUTLET[2]]
-  const x: Partial<Record<StationId, number>> = {
-    water: 1.1,
-    ice: 2.1,
-    sauce: 3.1,
-    mix: 4.1,
-    topping: 5.1,
-  }
-  return [x[station] ?? 0, 1.075, staffFacingZ(-0.62)]
+  if (station === 'prep') return [-1.95, 1.105, -4.95]
+  return [STATIONS[station].x, 1.075, staffFacingZ(-0.62)]
 }

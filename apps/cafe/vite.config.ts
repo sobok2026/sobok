@@ -10,13 +10,14 @@ export default defineConfig({
       output: {
         codeSplitting: {
           groups: [
+            { name: 'shop-data', test: /data[\\/]shop[\\/]/ },
             {
               name: 'recipe-drinks',
-              test: /data[\\/]recipes[\\/]drinks[\\/](?!(?:black-glazed-latte|hoji-glazed-tea-latte|pure-hojicha|pure-matcha|cold-brew)\.json)/,
+              test: /data[\\/]recipes[\\/]drinks[\\/]/,
             },
             {
               name: 'recipe-preparations',
-              test: /data[\\/]recipes[\\/]preparations[\\/](?!(?:glazed-foam|mocha-sauce|hojicha-shot|matcha-shot|cold-brew-batch)\.json)/,
+              test: /data[\\/]recipes[\\/]preparations[\\/]/,
             },
             { name: 'react', test: /node_modules[\\/](?:react|react-dom|scheduler)[\\/]/ },
             // Capture the core first so the renderer's dependencies do not merge both Three.js modules.

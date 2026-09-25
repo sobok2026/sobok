@@ -1,6 +1,6 @@
 import { handleCleaningActions } from '../features/cleaning/actions'
 import { handleColdBrewActions } from '../features/cold-brew/actions'
-import { handleCraftActions } from '../features/crafting/actions'
+import { expireDrink, handleCraftActions } from '../features/crafting/actions'
 import { handleStockActions } from '../features/inventory/actions'
 import { expirePreparation, handlePreparationActions } from '../features/preparation/actions'
 import { handleOrderActions } from '../features/service/actions'
@@ -45,6 +45,7 @@ export class CafeStore {
     const s = work.state
     completeJobs(work)
     expirePreparation(work, s.time)
+    expireDrink(work, s.time)
     if (canDispatch(work, action)) {
       switch (action.type) {
         case 'ticket':
@@ -132,6 +133,7 @@ export class CafeStore {
     // Finish scheduled work at its own timestamp before checking expiry at the current time.
     completeJobs(work)
     expirePreparation(work, work.state.time)
+    expireDrink(work, work.state.time)
     advanceWork(work, dt)
     advanceCustomer(work, dt)
     this.input = work.input

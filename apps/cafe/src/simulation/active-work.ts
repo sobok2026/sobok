@@ -27,19 +27,23 @@ export function advanceWork(work: WorkContext, dt: number) {
     }
   } else if (work.input?.kind === 'prep') {
     const prep = s.preparation
-    if (!prep || prep.id !== work.input.preparationId || prep.step !== work.input.step || prep.stage !== 'measuring')
+    if (!prep || prep.id !== work.input.preparationId || prep.cursor !== work.input.step || prep.stage !== 'measuring')
       work.input = null
-    else applyPreparation(work, preparationStep(prep), Math.min(dt, 0.15) * preparationStep(prep).rate)
+    else {
+      const step = preparationStep(prep)
+      if (step) applyPreparation(work, step, Math.min(dt, 0.15) * step.rate)
+      else work.input = null
+    }
   } else if (work.input?.kind === 'cold') {
     if (s.coldBrew?.id !== work.input.preparationId || s.coldBrew.step !== work.input.step) work.input = null
     else applyColdBrew(work, Math.min(dt, 0.15))
   } else if (work.input?.kind === 'drink') {
     const c = s.cup
-    const op = c ? operationFor(c.recipe, c.step, c.craft) : null
+    const op = c ? operationFor(c.recipe, c.craft) : null
     if (
       !c ||
       c.id !== work.input.cupId ||
-      c.step !== work.input.step ||
+      c.craft.cursor !== work.input.step ||
       c.craft.location !== work.input.station ||
       op?.id !== work.input.operation
     )

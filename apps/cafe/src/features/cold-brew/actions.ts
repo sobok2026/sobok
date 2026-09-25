@@ -1,11 +1,16 @@
-import { INGREDIENTS } from '../../content/ingredients'
 import type { Action } from '../../simulation/actions'
 import { say, startJob } from '../../simulation/feedback'
 import { craftingHandsBusy, cupHandsBusy } from '../../simulation/hands'
 import type { WorkContext } from '../../simulation/work-context'
-import { COLD_BREW_HOURS } from '../cold-brew/rules'
 import { addAmounts, newBatch } from '../inventory/inventory'
-import { COLD_BREW_BEANS, COLD_BREW_COST, coldBrewStep, createColdBrew } from './rules'
+import {
+  COLD_BREW_BEANS,
+  COLD_BREW_COST,
+  COLD_BREW_HOURS,
+  COLD_BREW_OUTPUT,
+  coldBrewStep,
+  createColdBrew,
+} from './rules'
 
 export function handleColdBrewActions(
   work: WorkContext,
@@ -89,7 +94,7 @@ export function handleColdBrewActions(
         fail('컵과 도구를 먼저 내려놓아주세요.')
         break
       }
-      const batch = newBatch('coldBrew', INGREDIENTS.coldBrew.pack, brew.completedAt, 'cold-prep')
+      const batch = newBatch('coldBrew', COLD_BREW_OUTPUT, brew.completedAt, 'cold-prep')
       s.batches.push(batch)
       brew.batchId = batch.id
       brew.stage = 'ready'
@@ -105,7 +110,7 @@ export function handleColdBrewActions(
           addAmounts(s.totals.disposed, { coldBrew: batch.amount })
           batch.amount = 0
         }
-      } else if (brew.stage === 'finished') addAmounts(s.totals.disposed, { coldBrew: INGREDIENTS.coldBrew.pack })
+      } else if (brew.stage === 'finished') addAmounts(s.totals.disposed, { coldBrew: COLD_BREW_OUTPUT })
       else s.totals.coldBrewDiscardedBeans += COLD_BREW_BEANS
       s.jobs = s.jobs.filter((job) => job.preparationId !== brew.id)
       s.coldBrew = null

@@ -1,5 +1,5 @@
 import type { DrinkSize } from '../../content/drink-sizes'
-import { type RecipeId, recipeSizes } from '../../content/recipes'
+import { RECIPES, type RecipeId, recipeServices, recipeSizes } from '../../content/recipes'
 import { STATIONS, type TableId } from '../../content/stations'
 import type { Customer } from '../../simulation/state'
 import type { ServiceMode } from '../inventory/cups'
@@ -46,18 +46,26 @@ export const customerHasCup = (customer: Customer) =>
   !!customer.visit && (customer.service === 'takeout' || customer.stage !== 'leaving')
 const customerSeat = (table: TableId): CustomerPoint => [STATIONS[table].x, 2.75]
 
-export const orderSizes = (recipe: RecipeId, service: ServiceMode): DrinkSize[] =>
-  recipeSizes(recipe).filter((size) => size !== 'trenta' || service === 'takeout')
+export const orderSizes = (recipe: RecipeId, service: ServiceMode): DrinkSize[] => {
+  const menu = RECIPES[recipe]
+  if (!menu) return []
+  return recipeSizes(recipe, service).filter(
+    (size) => size !== 'trenta' || (service === 'takeout' && menu.temperature === 'iced'),
+  )
+}
 
-export function createCustomer(orderNumber: number, recipe: RecipeId): Customer {
-  const service: ServiceMode = Math.random() < 0.5 ? 'dine-in' : 'takeout'
+export function createCustomer(orderNumber: number, recipe: RecipeId): Customer | null {
+  if (!RECIPES[recipe]) return null
+  const services = recipeServices(recipe).filter((service) => orderSizes(recipe, service).length > 0)
+  if (!services.length) return null
+  const service = services[Math.floor(Math.random() * services.length)]
   const sizes = orderSizes(recipe, service)
   return {
     id: crypto.randomUUID(),
     orderNumber,
     recipe,
     service,
-    size: orderNumber <= 2 ? 'tall' : sizes[Math.floor(Math.random() * sizes.length)],
+    size: sizes[Math.floor(Math.random() * sizes.length)],
     stage: 'entering',
     position: [...CUSTOMER_ENTRANCE],
     yaw: Math.PI,

@@ -1,6 +1,7 @@
 import { recipeCatalog } from '../../content/catalog'
 import { recipeVariant } from '../../content/recipe-catalog'
 import { planRecipe } from '../../content/recipe-plan'
+import { preparationStockOutput } from '../../content/stock-amounts'
 import type { ColdBrew } from '../../simulation/state'
 
 const { variant } = recipeVariant(recipeCatalog, 'cold-brew-batch', 'standard')
@@ -23,6 +24,7 @@ export const COLD_BREW_COST = 9000
 export const COLD_BREW_BEANS = beans.amount.value
 export const COLD_BREW_WATER = water.amount.value
 export const COLD_BREW_HOURS = steep.duration.seconds / 3600
+export const COLD_BREW_OUTPUT = preparationStockOutput(recipeCatalog, 'cold-brew-batch', 'standard').amount
 export const coldBrewTools = ['bean-bag', 'water-jug'] as const
 type ColdBrewTool = (typeof coldBrewTools)[number]
 export const COLD_BREW_TOOL_NAMES: Record<ColdBrewTool, string> = {

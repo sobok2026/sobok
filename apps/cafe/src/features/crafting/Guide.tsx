@@ -1,38 +1,50 @@
 import { DRINK_SIZES } from '../../content/drink-sizes'
 import { RECIPES, recipeFor } from '../../content/recipes'
+import { STATIONS } from '../../content/stations'
 import type { GameState } from '../../simulation/state'
-import { cupSize } from '../inventory/cups'
+import { cupService, cupSize } from '../inventory/cups'
+import { operationDetails } from '../production/presentation'
+
 export function RecipeGuide({ state }: { state: GameState }) {
   const recipe = state.cup?.recipe ?? state.ticket?.recipe
   const size = state.cup ? cupSize(state.cup.craft.kind) : state.ticket?.size
-  return recipe && size ? (
+  const service = state.cup ? cupService(state.cup.craft.kind) : state.ticket?.service
+  if (!recipe || !size || !service) return null
+  const definition = recipeFor(recipe, size, service)
+  return (
     <details className="border-t border-line py-4">
       <summary className="font-medium">
-        {RECIPES[recipe].shortName} · {RECIPES[recipe].variant} · {DRINK_SIZES[size].name}
+        {RECIPES[recipe].shortName} · {RECIPES[recipe].variant} · {DRINK_SIZES[size].name} ·{' '}
+        {service === 'dine-in' ? '매장' : '포장'}
       </summary>
       <ol className="mt-4 space-y-4">
-        {recipeFor(recipe, size).steps.map((step, index) => (
-          <li key={step.id} className="flex gap-3">
-            <span className="text-xs tabular-nums text-muted">{String(index + 1).padStart(2, '0')}</span>
-            <div>
-              <strong className="font-medium">
-                {step.label}
-                {step.measurement ? ` · ${step.measurement}` : ''}
-              </strong>
-              <p className="mt-1 text-xs text-muted">
-                {step.operation.action === 'serve'
-                  ? state.ticket?.service === 'dine-in'
-                    ? '머그·유리잔은 리드 없이 픽업대에서 제공해요.'
-                    : '일회용 컵은 리드를 덮어 픽업대에서 제공해요.'
-                  : step.instruction}
-              </p>
-              {step.note ? <p className="mt-1 text-xs text-muted">{step.note}</p> : null}
-            </div>
-          </li>
-        ))}
+        {definition.steps.map((step, index) => {
+          const details = operationDetails(step)
+          return (
+            <li
+              key={step.id}
+              className="flex gap-3"
+              aria-current={state.cup?.craft.cursor === index ? 'step' : undefined}
+            >
+              <span className="text-xs tabular-nums text-muted">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <strong className="font-medium">
+                  {step.label}
+                  {step.measurement ? ` · ${step.measurement}` : ''}
+                </strong>
+                <p className="mt-1 text-xs text-muted">
+                  {STATIONS[step.station].name}
+                  {details.length ? ` · ${details.join(' · ')}` : ''}
+                </p>
+                <p className="mt-1 text-xs text-muted">{step.instruction}</p>
+                {step.note ? <p className="mt-1 text-xs text-muted">{step.note}</p> : null}
+              </div>
+            </li>
+          )
+        })}
       </ol>
     </details>
-  ) : null
+  )
 }
 export function CraftingGuide() {
   return (
@@ -43,8 +55,12 @@ export function CraftingGuide() {
         전달합니다.
       </p>
       <p className="mt-2 text-muted">
-        계량 게이지의 목표 구간에서 멈추고 도구를 놓은 뒤 F로 확인하세요. 초과한 음료는 정리하고 다시 만듭니다. 다회용
-        컵은 세척 후 재사용합니다.
+        화면의 원문 계량 목표에 맞춰 진행하고 도구를 놓은 뒤 F로 확인하세요. 분수와 범위는 표시된 기준을 따릅니다.
+        초과한 음료는 정리하고 다시 만듭니다.
+      </p>
+      <p className="mt-2 text-muted">
+        장비는 한 번씩 작동합니다. 작동 횟수를 맞춘 뒤 F로 완료를 확인하세요. 제조 시간이 정해져 있지 않은 장비는 작동
+        확인 버튼을 사용합니다. 다회용 컵은 세척 후 재사용합니다.
       </p>
     </details>
   )

@@ -226,14 +226,15 @@ export function actionSound(action: Action, previous: GameState, current: GameSt
     action.type === 'confirm-craft' &&
     current.cup &&
     previous.cup?.id === current.cup.id &&
-    current.cup.step > previous.cup.step &&
-    current.cup.step ===
+    current.cup.craft.cursor > previous.cup.craft.cursor &&
+    current.cup.craft.cursor ===
       recipeFor(current.cup.recipe, cupSize(current.cup.craft.kind), cupService(current.cup.craft.kind)).steps.length
   )
     return 'complete'
   if (action.type === 'use-start' && previous.cup && current.cup) {
-    const op = operationFor(previous.cup.recipe, previous.cup.step, previous.cup.craft)
-    if (current.cup.craft.progress > previous.cup.craft.progress) return op?.kind === 'ice' ? 'ice' : null
+    const op = operationFor(previous.cup.recipe, previous.cup.craft)
+    if (current.cup.craft.progress > previous.cup.craft.progress)
+      return op?.operation.action === 'add' && op.operation.materialId === 'ice' ? 'ice' : null
   }
   return null
 }
@@ -251,21 +252,30 @@ export function workLoop(state: GameState, input: ActiveInput, position: GameSta
   if (input?.kind === 'cold') return state.coldBrew?.step === 1 ? 'pour-cup' : null
   if (input?.kind === 'prep' && state.preparation) {
     const step = preparationStep(state.preparation)
-    if (step.kind === 'pour')
-      return step.ingredient === 'milk' || step.ingredient === 'cream' ? 'pour-milk' : 'pour-cup'
+    if (step?.kind === 'pour')
+      return step.operation.action === 'add' && ['milk', 'cream'].includes(step.operation.materialId)
+        ? 'pour-milk'
+        : 'pour-cup'
   }
   if (input?.kind === 'drink' && state.cup) {
-    const op = operationFor(state.cup.recipe, state.cup.step, state.cup.craft)
-    if (op?.fillsPitcher) return 'pour-milk'
-    if (op && ['pour', 'transfer'].includes(op.kind)) return 'pour-cup'
+    const op = operationFor(state.cup.recipe, state.cup.craft)
+    if (op?.kind === 'pour')
+      return op.operation.action === 'add' && ['milk', 'cream'].includes(op.operation.materialId)
+        ? 'pour-milk'
+        : 'pour-cup'
   }
   const machine = state.jobs
-    .filter((job) => job.kind === 'craft-machine' && job.endsAt > state.time)
+    .filter(
+      (job) =>
+        job.kind === 'production' &&
+        ['steam-wand', 'espresso-machine'].includes(job.equipmentId ?? '') &&
+        job.endsAt > state.time,
+    )
     .map((job) => ({
       job,
       distance: Math.hypot(position[0] - STATIONS[job.station].x, position[1] - STATIONS[job.station].z),
     }))
     .filter((item) => item.distance <= 3.5)
     .sort((a, b) => a.distance - b.distance)[0]
-  return machine ? (machine.job.machine === 'steam' ? 'steam' : 'espresso') : null
+  return machine ? (machine.job.equipmentId === 'steam-wand' ? 'steam' : 'espresso') : null
 }

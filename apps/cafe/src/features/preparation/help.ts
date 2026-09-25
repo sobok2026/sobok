@@ -1,9 +1,34 @@
+import { INGREDIENTS, type IngredientId } from '../../content/ingredients'
 import type { WorkTip as Tip } from '../../shared/work-tip'
+import { cupHandsBusy } from '../../simulation/hands'
 import type { GameState, Preparation } from '../../simulation/state'
 import { materialTip } from '../inventory/help'
 import { available } from '../inventory/inventory'
-import { PREP_TOOL_NAMES, PREPARATIONS, preparationStep } from './rules'
+import { operationDetails, workUseLabel } from '../production/presentation'
+import { continuousWork, readyWork } from '../production/runtime'
+import { PRODUCTION_EPSILON, type WorkStep } from '../production/workflow'
+import { PREPARATIONS, preparationStep } from './rules'
+
+export function preparationMissingIngredient(
+  state: GameState,
+  prep: Preparation,
+  step: WorkStep,
+): IngredientId | undefined {
+  const remaining =
+    step.inputRequirements ??
+    Object.fromEntries(
+      Object.entries(step.costs).map(([id, amount]) => [
+        id,
+        (amount ?? 0) * Math.max(0, 1 - prep.progress / step.target),
+      ]),
+    )
+  return Object.entries(remaining).find(
+    ([id, amount]) => available(state, id) + PRODUCTION_EPSILON < (amount ?? 0),
+  )?.[0]
+}
+
 export function preparationTip(state: GameState, prep: Preparation): Tip {
+  const definition = PREPARATIONS[prep.recipe]
   if (prep.fault)
     return {
       title: '배합을 다시 준비해야 해요',
@@ -20,36 +45,59 @@ export function preparationTip(state: GameState, prep: Preparation): Tip {
         reason: '라벨을 붙이거나 보관해도 만료 시각은 늘어나지 않아요.',
         fault: true,
       }
-    return materialTip(state, prep.recipe)
+    return materialTip(state, definition.output.materialId)
   }
-  if (prep.stage === 'processing')
-    return {
-      title: '블렌딩 중이에요',
-      action: '작업이 끝나면 준비대로 돌아와 라벨을 붙이세요.',
-      reason: '기다리는 동안 다른 일을 할 수 있어요. 진행 시간은 매장 현황에서 확인해요.',
-    }
   const step = preparationStep(prep)
-  if (
-    step.ingredient &&
-    available(state, step.ingredient) + 1e-9 <
-      Math.max(0, step.target * (1 - step.tolerance) - prep.progress) * (step.perUnit ?? 1)
-  )
-    return materialTip(state, step.ingredient)
-  const ready = step.kind !== 'machine' && prep.progress >= step.target * (1 - step.tolerance)
+  if (!step)
+    return {
+      title: '준비 상태를 확인해야 해요',
+      action: '준비대에서 배합을 정리하고 다시 시작하세요.',
+      reason: '다음 제조 단계를 찾을 수 없어요.',
+      fault: true,
+    }
+  if (prep.stage === 'processing' || state.jobs.some((job) => job.preparationId === prep.id))
+    return {
+      title: `${step.label} 진행 중이에요`,
+      action: prep.tool
+        ? 'G로 도구를 내려놓을 수 있어요. 작동 후 F로 현재 단계를 확인하세요.'
+        : '작동이 끝나면 준비대로 돌아와 F로 현재 단계를 확인하세요.',
+      reason: '기다리는 동안 다른 일을 할 수 있어요. 장비 작동만으로 다음 단계가 완료되지는 않아요.',
+    }
+  if (cupHandsBusy(state.cup))
+    return {
+      title: '손을 먼저 비워주세요',
+      action: '음료 컵과 도구를 내려놓은 뒤 준비대로 돌아오세요.',
+      reason: '음료 컵과 준비 도구를 함께 들 수 없어요.',
+    }
+  const missing = preparationMissingIngredient(state, prep, step)
+  if (missing) return materialTip(state, missing)
+  if (step.requiresReusableTool && !prep.reservedTool && !state.tools.clean)
+    return {
+      title: '깨끗한 제조 용기가 필요해요',
+      action: '세척대에서 용기를 씻고 도구 선반에 보관하세요.',
+      reason: `${step.label}에 사용할 용기가 없어요.`,
+    }
+  const ready = readyWork(step, prep.progress)
   return {
-    title: `${PREPARATIONS[prep.recipe].name} · ${step.label}`,
+    title: `${definition.name} · ${step.label}`,
     action:
-      prep.tool && (ready || prep.tool !== step.tool)
+      prep.tool && (ready || prep.tool !== step.tool?.id)
         ? 'G로 도구를 내려놓으세요.'
         : ready
-          ? 'F로 계량을 확인하세요.'
-          : step.tool && prep.tool !== step.tool
-            ? `G로 도구를 집으세요 · ${PREP_TOOL_NAMES[step.tool]}`
-            : step.kind === 'machine'
-              ? 'Space를 한 번 눌러 블렌딩을 시작하세요.'
-              : ['pump', 'pack', 'scoop', 'shake'].includes(step.kind)
-                ? `Space를 한 번씩 눌러 ${step.target}${step.unit}를 맞추세요.`
-                : 'Space나 작업 버튼을 누르다가 목표 구간에서 손을 떼세요.',
-    reason: '다음 재료를 넣기 전에 도구를 놓고 계량을 확인해요. 완성 후에는 라벨·보관이 필요해요.',
+          ? 'F로 현재 단계를 확인하세요.'
+          : step.tool && prep.tool !== step.tool.id
+            ? `G로 ${step.tool.name}를 집으세요.`
+            : continuousWork(step)
+              ? 'Space를 누르고 진행한 뒤 목표에 도달하면 손을 떼세요.'
+              : `Space로 ${workUseLabel(step)} 후 F로 확인하세요.`,
+    reason: [step.measurement, ...operationDetails(step), step.instruction, step.note].filter(Boolean).join(' · '),
   }
+}
+
+export function preparationSupplyNotice(state: GameState, prep: Preparation, step: WorkStep): string | null {
+  const missing = preparationMissingIngredient(state, prep, step)
+  if (missing) return `${INGREDIENTS[missing].name} 보충이 필요해요. 도구를 내려놓고 재료를 준비해주세요.`
+  if (step.requiresReusableTool && !prep.reservedTool && !state.tools.clean)
+    return '깨끗한 제조 용기가 없어요. 세척하고 도구 선반에 보관해주세요.'
+  return null
 }

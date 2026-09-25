@@ -57,10 +57,17 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
       case 'leaving':
         if (customer.visit) {
           s.orderNumber++
-          s.request = orderSequence[(s.orderNumber - 1) % orderSequence.length]
+          s.request = orderSequence.length ? orderSequence[(s.orderNumber - 1) % orderSequence.length] : null
         }
-        s.customer = s.phase === 'open' ? createCustomer(s.orderNumber, s.request) : null
-        say(s, s.customer ? '다음 손님이 들어오고 있어요.' : '마지막 손님이 나갔어요. 남은 정리를 마쳐주세요.')
+        s.customer = s.phase === 'open' && s.request !== null ? createCustomer(s.orderNumber, s.request) : null
+        say(
+          s,
+          s.customer
+            ? '다음 손님이 들어오고 있어요.'
+            : s.phase === 'open'
+              ? '주문 가능한 메뉴가 없어 손님을 기다리고 있어요.'
+              : '마지막 손님이 나갔어요. 남은 정리를 마쳐주세요.',
+        )
         break
     }
     return
@@ -69,7 +76,7 @@ export function advanceCustomer(work: WorkContext, seconds: number) {
   customer.elapsed += seconds
   if (customer.stage === 'condiment' && customer.elapsed >= CUSTOMER_SECONDS.condiment) {
     const supplies: SupplyId[] = ['napkins']
-    if (RECIPES[customer.recipe].variant === 'ICED') supplies.push('straws')
+    if (RECIPES[customer.recipe].temperature === 'iced') supplies.push('straws')
     if (customer.visit.usesSugar) supplies.push('sugar')
     const missing: string[] = []
     for (const id of supplies) {

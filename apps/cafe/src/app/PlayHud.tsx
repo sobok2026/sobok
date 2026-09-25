@@ -144,7 +144,7 @@ export default function PlayHud({
           {mismatch ? (
             <p className="mt-3 border-t border-line pt-3 text-xs text-danger">
               요청: {state.customer ? SERVICE_NAMES[state.customer.service] : ''} ·{' '}
-              {recipeLabel(state.request, state.customer?.size)}
+              {state.request ? recipeLabel(state.request, state.customer?.size) : '요청 없음'}
               <br />
               {state.cup ? '컵 정리 후 POS에서 주문 수정' : 'POS에서 주문 수정'}
             </p>
@@ -204,7 +204,9 @@ export default function PlayHud({
           onUse={use}
           onStop={stopUse}
           onTool={tool}
-          onConfirm={confirm}
+          onConfirm={(station, observation) =>
+            observation ? act({ type: 'confirm-craft', station, observation }) : confirm(station)
+          }
           onMoveCup={moveCup}
           onDiscard={() => act({ type: 'discard-cup' })}
         />

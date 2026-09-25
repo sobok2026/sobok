@@ -36,7 +36,7 @@ export function handleShiftActions(
       s.day++
       s.time = Math.max(next, s.time + 3600)
       s.phase = 'open'
-      s.customer = createCustomer(s.orderNumber, s.request)
+      s.customer = s.request ? createCustomer(s.orderNumber, s.request) : null
       s.totals = emptyTotals(s.cash)
       s.position = staffStartPosition()
       s.batches = s.batches.filter((b) => b.amount > 0)

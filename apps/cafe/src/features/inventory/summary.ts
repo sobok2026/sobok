@@ -1,8 +1,8 @@
 import { type Costs, INGREDIENTS, type IngredientId, ingredientIds } from '../../content/ingredients'
 import { recipeFor } from '../../content/recipes'
 import type { GameState } from '../../simulation/state'
-import { operationFor } from '../crafting/rules'
-import { PREPARATIONS, preparationIds } from '../preparation/rules'
+import { PREPARATIONS, preparationForMaterial } from '../preparation/rules'
+import type { ProductionState, WorkStep } from '../production/workflow'
 import { cupService, cupSize } from './cups'
 import { available } from './inventory'
 
@@ -30,6 +30,15 @@ export function inventorySummary(state: GameState) {
   const add = (id: IngredientId, amount: number) => {
     required[id] = (required[id] ?? 0) + Math.max(0, amount)
   }
+  const addPlan = (steps: WorkStep[], session: ProductionState | null, batches = 1) => {
+    for (let index = session?.cursor ?? 0; index < steps.length; index++) {
+      const step = steps[index]
+      if (session && step.conditions.some((condition) => session.decisions[condition.id] === false)) continue
+      const progress = session && index === session.cursor ? (session.resumeProgress ?? session.progress) : 0
+      const remaining = Math.max(0, 1 - progress / step.target)
+      for (const [id, amount] of Object.entries(step.costs)) add(id, amount * remaining * batches)
+    }
+  }
   const recipe =
     state.cup?.recipe ??
     state.ticket?.recipe ??
@@ -37,39 +46,39 @@ export function inventorySummary(state: GameState) {
       ? state.request
       : null)
   const size = state.cup ? cupSize(state.cup.craft.kind) : (state.ticket?.size ?? state.customer?.size)
-  if (recipe && size) {
-    const service = state.cup ? cupService(state.cup.craft.kind) : (state.ticket?.service ?? state.customer?.service)
-    const steps = recipeFor(recipe, size, service).steps
-    const cup = state.cup?.craft.fault ? null : state.cup
-    const stepIndex = cup?.step ?? 0
-    for (let index = stepIndex; index < steps.length; index++) {
-      if (cup && index === stepIndex && state.jobs.some((job) => job.cupId === cup.id)) continue
-      const operation = cup && index === stepIndex ? operationFor(cup.recipe, cup.step, cup.craft) : null
-      const remaining =
-        operation && operation.kind !== 'shake' ? Math.max(0, 1 - cup!.craft.progress / operation.target) : 1
-      for (const [id, amount] of Object.entries(steps[index].costs)) add(id as IngredientId, amount * remaining)
-    }
+  const service = state.cup ? cupService(state.cup.craft.kind) : (state.ticket?.service ?? state.customer?.service)
+  if (recipe && size && service) {
+    addPlan(recipeFor(recipe, size, service).steps, state.cup && !state.cup.craft.fault ? state.cup.craft : null)
   }
-  for (const id of preparationIds) {
+  const prep = state.preparation && !state.preparation.fault ? state.preparation : null
+  const activeOutput = prep && prep.stage !== 'ready' ? PREPARATIONS[prep.recipe].output : null
+  if (activeOutput && prep) addPlan(PREPARATIONS[prep.recipe].steps, prep)
+  const plannedBatches: Record<string, number> = {}
+  const queue = Object.keys(required)
+  for (let index = 0; index < queue.length; index++) {
+    const id = queue[index]
+    const definition = preparationForMaterial(id)
+    if (!definition) continue
     const stock = items.find((item) => item.id === id)!
-    const prep = state.preparation?.recipe === id ? state.preparation : null
-    const needsBatch = (required[id] ?? 0) > stock.amount + stock.pending + 0.0001
-    if (prep?.stage === 'ready' || (prep && !prep.fault && prep.stage === 'processing')) continue
-    if (!prep && !needsBatch) continue
-    const steps = PREPARATIONS[id].steps
-    for (let index = prep && !prep.fault ? prep.step : 0; index < steps.length; index++) {
-      const step = steps[index]
-      if (!step.ingredient) continue
-      const remaining = step.target - (prep && !prep.fault && index === prep.step ? prep.progress : 0)
-      add(step.ingredient, remaining * (step.perUnit ?? 1))
-    }
+    const preparing = activeOutput?.materialId === id ? activeOutput.amount : 0
+    const shortage = Math.max(0, required[id] - stock.amount - stock.pending - preparing)
+    const batches = Math.ceil(shortage / definition.output.amount)
+    const extra = batches - (plannedBatches[id] ?? 0)
+    if (extra <= 0) continue
+    plannedBatches[id] = batches
+    addPlan(definition.steps, null, extra)
+    queue.push(...new Set(definition.steps.flatMap((step) => Object.keys(step.costs))))
   }
-  const inventory = items
+  return items
     .map((item) => {
       const needed = required[item.id] ?? 0
       const shortage = Math.max(0, needed - item.amount)
-      return { ...item, needed, shortage, priority: shortage > 0.0001 ? 0 : item.expired ? 1 : item.pending ? 2 : 3 }
+      return {
+        ...item,
+        needed,
+        shortage,
+        priority: shortage > 0.0001 ? 0 : item.expired > 0 ? 1 : item.pending > 0 ? 2 : 3,
+      }
     })
     .sort((a, b) => a.priority - b.priority)
-  return inventory
 }

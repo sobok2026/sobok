@@ -1,4 +1,5 @@
-import { INGREDIENTS, type IngredientId, ingredientIds } from '../content/ingredients'
+import { orderSequence } from '../content/customers'
+import { INGREDIENTS, ingredientIds } from '../content/ingredients'
 import { staffStartPosition } from '../content/stations'
 import {
   CUP_SUPPLY,
@@ -16,30 +17,15 @@ import type { GameState } from './state'
 
 const START = Date.UTC(2026, 8, 1, 9) / 1000
 export function initialState(): GameState {
-  const amounts: Record<IngredientId, number> = {
-    beans: 100,
-    milk: 100,
-    cream: 400,
-    glaze: 500,
-    powder: 40,
-    mochaPowder: 1,
-    mocha: 0,
-    foam: 0,
-    coldBrew: 600,
-    classic: 0,
-    hojichaPowder: 0,
-    hojicha: 0,
-    matchaPowder: 0,
-    matcha: 0,
-  }
+  const request = orderSequence[0] ?? null
   return {
     day: 1,
     time: START,
     phase: 'open',
     cash: 50000,
     orderNumber: 1,
-    request: 'cold-brew',
-    customer: createCustomer(1, 'cold-brew'),
+    request,
+    customer: request ? createCustomer(1, request) : null,
     ticket: null,
     cup: null,
     preparation: null,
@@ -47,7 +33,9 @@ export function initialState(): GameState {
     washing: null,
     cleaning: null,
     batches: ingredientIds.flatMap((ingredient) => [
-      newBatch(ingredient, amounts[ingredient], START),
+      ...(INGREDIENTS[ingredient].startingAmount > 0
+        ? [newBatch(ingredient, INGREDIENTS[ingredient].startingAmount, START)]
+        : []),
       ...(!INGREDIENTS[ingredient].prepared
         ? [newBatch(ingredient, INGREDIENTS[ingredient].pack, START, 'stock')]
         : []),

@@ -11,7 +11,7 @@ import {
 import { createIceScoop, iceScoopScale, iceScoopSizes } from '../../shared/visuals/ice-scoop'
 import { createPumpVisual } from '../../shared/visuals/pump-visual'
 import type { GameState } from '../../simulation/state'
-import { type CraftOperation, operationFor } from './rules'
+import { operationFor } from './rules'
 
 export const WATER_OUTLET: [number, number, number] = [1.1, 1.62, -1.48]
 
@@ -165,16 +165,17 @@ export function createSyrupStation(scene: THREE.Scene) {
   return {
     update(state: GameState) {
       const cup = state.cup
-      const operation = cup?.craft.location === 'sauce' ? operationFor(cup.recipe, cup.step, cup.craft) : null
-      const selected = syrupPumpKind(operation)
+      const operation = cup?.craft.location === 'sauce' ? operationFor(cup.recipe, cup.craft)?.operation : null
+      const selected =
+        operation?.action === 'add' &&
+        (operation.amount.kind === 'count' || operation.amount.kind === 'count-range') &&
+        operation.amount.unit === 'pump' &&
+        (operation.materialId === 'glaze' || operation.materialId === 'classic')
+          ? operation.materialId
+          : null
       // The chosen pump is placed over the cup by crafting visuals; avoid a second copy in the rail.
       bottles.glaze.root.visible = selected !== 'glaze'
       bottles.classic.root.visible = selected !== 'classic'
     },
   }
-}
-
-export function syrupPumpKind(operation: CraftOperation | null) {
-  if (operation?.kind !== 'pump') return null
-  return operation.costs.classic ? 'classic' : operation.costs.glaze ? 'glaze' : null
 }
