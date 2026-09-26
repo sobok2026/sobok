@@ -12,6 +12,7 @@
     "check:font-coverage": "bun ../../packages/typography/scripts/verify-font-coverage.ts src data index.html"
   },
   "dependencies": {
+    "@sobok/std": "workspace:*",
     "@sobok/typography": "workspace:*",
     "clsx": "^2.1.1",
     "react": "19.2.7",

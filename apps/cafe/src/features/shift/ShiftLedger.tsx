@@ -1,5 +1,6 @@
+import { formatDecimal } from '@sobok/std/format/number'
 import { INGREDIENTS, ingredientIds } from '../../content/ingredients'
-import { formatAmount, money } from '../../shared/format'
+import { money } from '../../shared/format'
 import type { GameState } from '../../simulation/state'
 import { SUPPLIES, supplyIds } from '../inventory/supplies'
 
@@ -78,14 +79,14 @@ export default function ShiftLedger({ state }: { state: GameState }) {
             {totals.coldBrewDiscardedBeans > 0 && (
               <div className="flex justify-between gap-4">
                 <dt>콜드 브루 원두</dt>
-                <dd>{formatAmount(totals.coldBrewDiscardedBeans)}lb</dd>
+                <dd>{formatDecimal(totals.coldBrewDiscardedBeans)}lb</dd>
               </div>
             )}
             {discarded.map((id) => (
               <div key={id} className="flex justify-between gap-4">
                 <dt>{INGREDIENTS[id].name}</dt>
                 <dd>
-                  {formatAmount(totals.disposed[id]!)}
+                  {formatDecimal(totals.disposed[id]!)}
                   {INGREDIENTS[id].unit}
                 </dd>
               </div>

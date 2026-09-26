@@ -1,8 +1,8 @@
+import { formatDecimal } from '@sobok/std/format/number'
 import clsx from 'clsx'
 import { useId, useState } from 'react'
 import { INGREDIENTS } from '../../content/ingredients'
 import { recipeFor } from '../../content/recipes'
-import { formatAmount } from '../../shared/format'
 import { Button } from '../../shared/ui/Button'
 import type { Action } from '../../simulation/actions'
 import { cupHandsBusy } from '../../simulation/hands'
@@ -88,7 +88,7 @@ export default function PreparationPanel({ state, act }: { state: GameState; act
             <span className="block font-medium">{item.name}</span>
             <span className="mt-1 flex flex-wrap justify-between gap-2 text-xs text-muted">
               <span>
-                사용 가능 {formatAmount(available(state, item.output.materialId))}
+                사용 가능 {formatDecimal(available(state, item.output.materialId))}
                 {INGREDIENTS[item.output.materialId].unit}
               </span>
               {needed.has(item.output.materialId) && <span className="text-brand">현재 주문</span>}

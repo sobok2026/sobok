@@ -1,8 +1,9 @@
+import { formatDecimal } from '@sobok/std/format/number'
 import clsx from 'clsx'
 import { INGREDIENTS } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
 import { STATIONS, type StationId } from '../../content/stations'
-import { batchDate, formatAmount } from '../../shared/format'
+import { batchDate } from '../../shared/format'
 import { Button, TextButton } from '../../shared/ui/Button'
 import type { Action } from '../../simulation/actions'
 import type { Batch } from '../../simulation/state'
@@ -40,7 +41,7 @@ export default function BatchLabel({
     <details className="group/label my-1 text-xs" data-expired={expired} open={pending || expired}>
       <summary className="cursor-pointer py-1.5 text-brand group-data-[expired=true]/label:text-danger">
         <span>
-          {formatAmount(batch.amount)}
+          {formatDecimal(batch.amount)}
           {definition.unit}
         </span>
         <b className="ml-2.5 text-xs font-medium">{batchStatus(batch, expired, pending)}</b>

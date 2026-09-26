@@ -1,3 +1,4 @@
+import { formatDecimal } from '@sobok/std/format/number'
 import Image from 'next/image'
 import { type ReactNode, useState } from 'react'
 import survivorTriadArt from '@/app/survivor-triad.webp'
@@ -1564,9 +1565,9 @@ export function BattleResultDialog({
                     {battleResult.victory
                       ? `계승 효과까지 반영한 명성 +${(
                           battleResult.scoreReward - battleResult.contractScoreBonus
-                        ).toLocaleString('ko-KR')}에 계약 배율 ×${MASTERY_CONTRACTS[
-                          game.masteryContract
-                        ].scoreScale.toFixed(2)}와 반올림을 적용했습니다.`
+                        ).toLocaleString('ko-KR')}에 계약 배율 ×${formatDecimal(
+                          MASTERY_CONTRACTS[game.masteryContract].scoreScale,
+                        )}와 반올림을 적용했습니다.`
                       : `이번 후퇴에는 승리 명성이 없어 계약 배율은 대기합니다. ${MASTERY_CONTRACTS[game.masteryContract].burden}은 계속 유지됩니다.`}
                   </p>
                 </div>

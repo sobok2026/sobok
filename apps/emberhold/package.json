@@ -9,6 +9,7 @@
     "type": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@sobok/std": "workspace:*",
     "@sobok/typography": "workspace:*",
     "next": "16.2.11",
     "react": "19.2.7",

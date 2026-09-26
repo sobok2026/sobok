@@ -1,10 +1,9 @@
+import { formatDecimal } from '@sobok/std/format/number'
 import { recipeCatalog } from '../../content/catalog'
 import type { ResolvedOperation } from '../../content/recipe-plan'
 import type { RecipeTemperature } from '../../content/recipe-schema'
 import { continuousWork, readyWork } from './runtime'
 import type { WorkStep } from './workflow'
-
-const number = (value: number) => value.toLocaleString('ko-KR', { maximumFractionDigits: 2 })
 
 const countUnits = {
   pump: '펌프',
@@ -37,13 +36,13 @@ const itemName = (id: string) =>
   '작업 재료'
 
 const range = (minimum: number, maximum: number) =>
-  minimum === maximum ? number(minimum) : `${number(minimum)}–${number(maximum)}`
+  minimum === maximum ? formatDecimal(minimum) : `${formatDecimal(minimum)}–${formatDecimal(maximum)}`
 
 function durationLabel(
   duration: { seconds: number; approximate: boolean; atLeast?: boolean } | { minSeconds: number; maxSeconds: number },
 ) {
   return 'seconds' in duration
-    ? `${duration.approximate ? '약 ' : ''}${number(duration.seconds)}초${duration.atLeast ? ' 이상' : ''}`
+    ? `${duration.approximate ? '약 ' : ''}${formatDecimal(duration.seconds)}초${duration.atLeast ? ' 이상' : ''}`
     : `${range(duration.minSeconds, duration.maxSeconds)}초`
 }
 
@@ -94,7 +93,7 @@ export function operationDetails(step: WorkStep): string[] {
 
   if ('repetitions' in op && op.repetitions) {
     const repetitions =
-      typeof op.repetitions === 'number' ? number(op.repetitions) : range(op.repetitions.min, op.repetitions.max)
+      typeof op.repetitions === 'number' ? formatDecimal(op.repetitions) : range(op.repetitions.min, op.repetitions.max)
     details.push(
       `${'approximate' in op && op.approximate ? '약 ' : ''}${repetitions}회${
         'atLeast' in op && op.atLeast ? ' 이상' : ''
@@ -178,32 +177,32 @@ export function workProgressLabel(step: WorkStep, progress: number): string {
     return readyWork(step, progress) ? '재혼합 완료' : '재혼합 전'
   }
   if (step.kind === 'machine') {
-    return `${number(progress)} / ${goal}회${minimum}`
+    return `${formatDecimal(progress)} / ${goal}회${minimum}`
   }
 
   if ('amount' in op && op.amount) {
     const amount = op.amount
     if (amount.kind === 'amount' || amount.kind === 'amount-range') {
-      return `${number(progress)} / ${goal}${amount.unit}${minimum}`
+      return `${formatDecimal(progress)} / ${goal}${amount.unit}${minimum}`
     }
     if (amount.kind === 'count' || amount.kind === 'count-range') {
-      return `${number(progress)} / ${goal}${countUnits[amount.unit]}${minimum}`
+      return `${formatDecimal(progress)} / ${goal}${countUnits[amount.unit]}${minimum}`
     }
     if (amount.kind === 'depth' || amount.kind === 'depth-range') {
-      return `${number(progress)} / ${goal}mm${minimum}`
+      return `${formatDecimal(progress)} / ${goal}mm${minimum}`
     }
     if (amount.kind === 'fraction') {
-      return `${number(progress * amount.denominator)}/${amount.denominator} · 목표 ${amount.numerator}/${
+      return `${formatDecimal(progress * amount.denominator)}/${amount.denominator} · 목표 ${amount.numerator}/${
         amount.denominator
       }`
     }
-    return `진행 ${number(Math.min(1, progress / step.target) * 100)}%`
+    return `진행 ${formatDecimal(Math.min(1, progress / step.target) * 100)}%`
   }
 
   if (step.kind === 'confirm' || step.unit === '완료') {
     return readyWork(step, progress) ? '동작 완료' : '동작 전'
   }
-  return `${number(progress)} / ${goal}${step.unit}${minimum}`
+  return `${formatDecimal(progress)} / ${goal}${step.unit}${minimum}`
 }
 
 const actionLabels: Partial<Record<ResolvedOperation['action'], string>> = {

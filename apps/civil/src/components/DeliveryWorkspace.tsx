@@ -1,5 +1,6 @@
 'use client'
 
+import { formatDecimal } from '@sobok/std/format/number'
 import { type FormEvent, useCallback, useEffect, useState } from 'react'
 import {
   type ArtifactList,
@@ -45,9 +46,9 @@ const WITHDRAWABLE_STATUSES: ReadonlySet<DeliveryStatus> = new Set(['assembling'
 
 function formatBytes(bytes: number | null): string {
   if (bytes === null) return '산정 중'
-  if (bytes >= 1024 ** 3) return `${(bytes / 1024 ** 3).toFixed(1)} GB`
-  if (bytes >= 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(1)} MB`
-  if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  if (bytes >= 1024 ** 3) return `${formatDecimal(bytes / 1024 ** 3)} GB`
+  if (bytes >= 1024 ** 2) return `${formatDecimal(bytes / 1024 ** 2)} MB`
+  if (bytes >= 1024) return `${formatDecimal(bytes / 1024)} KB`
   return `${bytes} B`
 }
 

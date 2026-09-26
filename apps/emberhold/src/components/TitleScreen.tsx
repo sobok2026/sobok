@@ -1,3 +1,4 @@
+import { formatDecimal } from '@sobok/std/format/number'
 import Image from 'next/image'
 import titleArt from '@/app/emberhold-title.webp'
 import type {
@@ -243,7 +244,7 @@ export function TitleScreen({
                 <div className="setup-summary">
                   <span>{DIFFICULTIES[selectedDifficulty].subtitle}</span>
                   <strong>{DIFFICULTIES[selectedDifficulty].name}</strong>
-                  <small>명성 배율 ×{DIFFICULTIES[selectedDifficulty].scoreScale.toFixed(2)}</small>
+                  <small>명성 배율 ×{formatDecimal(DIFFICULTIES[selectedDifficulty].scoreScale)}</small>
                 </div>
                 <div className="difficulty-protocol-preview" data-difficulty={selectedDifficulty}>
                   <span aria-hidden="true">{DIFFICULTIES[selectedDifficulty].glyph}</span>
@@ -436,7 +437,7 @@ export function TitleScreen({
                               </div>
                               <div>
                                 <dt>명성</dt>
-                                <dd>×{contract.scoreScale.toFixed(2)}</dd>
+                                <dd>×{formatDecimal(contract.scoreScale)}</dd>
                               </div>
                             </dl>
                             <b>
@@ -591,7 +592,7 @@ export function TitleScreen({
                             <dd>{mastered ? `✓ ${mastery.name}` : mastery.requirement}</dd>
                           </div>
                         </dl>
-                        <b>{locked ? '잠김' : `명성 ×${option.scoreScale.toFixed(2)} · 서약 선택 ›`}</b>
+                        <b>{locked ? '잠김' : `명성 ×${formatDecimal(option.scoreScale)} · 서약 선택 ›`}</b>
                       </button>
                     )
                   })}

@@ -1,5 +1,6 @@
 import { LOCALE_LANGUAGE_TAGS, type Locale } from '@sobok/domain/locale'
 import { KOREAN_TO_ENGLISH_QUERY_KEYS } from '@sobok/domain/search/query-key-alias'
+import { formatDecimal } from '@sobok/std/format/number'
 
 export function formatDate(timestamp: number | string, locale: Locale) {
   return new Date(Number(timestamp) * 1000).toLocaleDateString(LOCALE_LANGUAGE_TAGS[locale], {
@@ -11,7 +12,7 @@ export function formatDate(timestamp: number | string, locale: Locale) {
 
 export function formatNumber(num: number | string | null | undefined, defaultValue: string, locale: Locale) {
   if (!num) return defaultValue
-  return Number(num).toLocaleString(LOCALE_LANGUAGE_TAGS[locale])
+  return formatDecimal(Number(num), LOCALE_LANGUAGE_TAGS[locale])
 }
 
 export function getWordAtCursor(text: string, cursorPosition: number): { word: string; start: number; end: number } {

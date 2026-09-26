@@ -1,3 +1,4 @@
+import { formatDecimal } from '@sobok/std/format/number'
 import type { CampUndo, MasteryContractId, UnitKind } from './game-model'
 import { KIND_META, LEGACY_UPGRADES, MASTERY_CONTRACTS } from './game-model'
 
@@ -305,7 +306,7 @@ export function CampActions({ recruit, stoke, marchSeal, onRecruit, onStoke, onS
                 <b>
                   {marchSeal.contract.scoreBonus > 0
                     ? `+${marchSeal.contract.scoreBonus.toLocaleString('ko-KR')} 기여`
-                    : `×${MASTERY_CONTRACTS[marchSeal.contract.id].scoreScale.toFixed(2)} 적재`}
+                    : `×${formatDecimal(MASTERY_CONTRACTS[marchSeal.contract.id].scoreScale)} 적재`}
                 </b>
               </em>
             ) : null}

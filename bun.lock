@@ -119,6 +119,7 @@
       "name": "@sobok/cafe",
       "version": "0.1.0",
       "dependencies": {
+        "@sobok/std": "workspace:*",
         "@sobok/typography": "workspace:*",
         "clsx": "^2.1.1",
         "react": "19.2.7",
@@ -195,6 +196,7 @@
       "dependencies": {
         "@sobok/auth": "workspace:*",
         "@sobok/edge": "workspace:*",
+        "@sobok/std": "workspace:*",
         "@sobok/typography": "workspace:*",
         "drizzle-orm": "1.0.0-rc.4",
         "fflate": "^0.8.2",
@@ -242,6 +244,7 @@
       "name": "@sobok/emberhold",
       "version": "0.1.0",
       "dependencies": {
+        "@sobok/std": "workspace:*",
         "@sobok/typography": "workspace:*",
         "next": "16.2.11",
         "react": "19.2.7",

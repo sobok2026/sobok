@@ -1,6 +1,7 @@
+import { formatDecimal } from '@sobok/std/format/number'
 import { INGREDIENTS } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
-import { batchDate, formatAmount } from '../../shared/format'
+import { batchDate } from '../../shared/format'
 import { TextButton } from '../../shared/ui/Button'
 import { WorkButton, WorkHud, WorkMeter, WorkTitle } from '../../shared/ui/WorkControls'
 import type { Action } from '../../simulation/actions'
@@ -131,12 +132,12 @@ function ColdBrewWork({
         <WorkMeter
           label={step.label}
           ratio={brew.progress / step.target}
-          value={`${formatAmount(brew.progress)} / ${step.target}${step.unit}`}
+          value={`${formatDecimal(brew.progress)} / ${step.target}${step.unit}`}
           tolerance={step.tolerance || undefined}
         />
       ) : (
         <p className="mb-3 text-sm text-muted">
-          원두 {formatAmount(brew.beans)}lb · 정수 {formatAmount(brew.water)}L<br />
+          원두 {formatDecimal(brew.beans)}lb · 정수 {formatDecimal(brew.water)}L<br />
           추출 {COLD_BREW_HOURS}시간
         </p>
       )}

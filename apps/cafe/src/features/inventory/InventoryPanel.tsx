@@ -1,6 +1,7 @@
+import { formatDecimal } from '@sobok/std/format/number'
 import clsx from 'clsx'
 import { useState } from 'react'
-import { formatAmount, money } from '../../shared/format'
+import { money } from '../../shared/format'
 import { InventoryButton, TextButton } from '../../shared/ui/Button'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
@@ -145,7 +146,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                   )}
                 </span>
                 <strong className="text-base font-medium tabular-nums">
-                  {formatAmount(amount)}
+                  {formatDecimal(amount)}
                   <small className="ml-1 text-xs font-normal">{definition.unit}</small>
                 </strong>
               </summary>
@@ -156,7 +157,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                       <div className="flex justify-between">
                         <dt>미개봉 · {sealed.length}팩</dt>
                         <dd>
-                          {formatAmount(unopened)}
+                          {formatDecimal(unopened)}
                           {definition.unit}
                         </dd>
                       </div>
@@ -165,7 +166,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                       <div className="flex justify-between">
                         <dt>라벨·보관 대기</dt>
                         <dd>
-                          {formatAmount(pending)}
+                          {formatDecimal(pending)}
                           {definition.unit}
                         </dd>
                       </div>
@@ -174,7 +175,7 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                       <div className="flex justify-between text-danger">
                         <dt>만료</dt>
                         <dd>
-                          {formatAmount(expired)}
+                          {formatDecimal(expired)}
                           {definition.unit}
                         </dd>
                       </div>
@@ -189,9 +190,9 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                     )}
                     data-shortage={shortage > 0.0001}
                   >
-                    남은 작업에 예상 {formatAmount(needed)}
+                    남은 작업에 예상 {formatDecimal(needed)}
                     {definition.unit} 필요
-                    {shortage > 0.0001 ? ` · ${formatAmount(shortage)}${definition.unit} 부족` : ''}
+                    {shortage > 0.0001 ? ` · ${formatDecimal(shortage)}${definition.unit} 부족` : ''}
                   </p>
                 )}
                 {shortage > 0.0001 && definition.prepared && pending < shortage && (

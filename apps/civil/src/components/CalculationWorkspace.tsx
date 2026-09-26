@@ -1,5 +1,6 @@
 'use client'
 
+import { formatDecimal } from '@sobok/std/format/number'
 import { type FormEvent, useCallback, useEffect, useState } from 'react'
 import { actOnCalculationApproval, type CalculationList, createEarthworkCalculation, listCalculations } from '@/lib/api'
 
@@ -147,15 +148,15 @@ export default function CalculationWorkspace({
                     <dl className="calculation-totals">
                       <div>
                         <dt>절토</dt>
-                        <dd>{item.result.output.totals.cutVolume.toLocaleString()} m³</dd>
+                        <dd>{formatDecimal(item.result.output.totals.cutVolume)} m³</dd>
                       </div>
                       <div>
                         <dt>성토</dt>
-                        <dd>{item.result.output.totals.fillVolume.toLocaleString()} m³</dd>
+                        <dd>{formatDecimal(item.result.output.totals.fillVolume)} m³</dd>
                       </div>
                       <div>
                         <dt>순토량</dt>
-                        <dd>{item.result.output.totals.netVolume.toLocaleString()} m³</dd>
+                        <dd>{formatDecimal(item.result.output.totals.netVolume)} m³</dd>
                       </div>
                     </dl>
                     <div className="calculation-evidence">

@@ -1,3 +1,4 @@
+import { formatDecimal } from '@sobok/std/format/number'
 import './deferred.css'
 
 import Image from 'next/image'
@@ -547,9 +548,9 @@ export function EndingScreen({
                   {masteryContractMastered ? ' · 영구 정복 기록' : ''}
                 </strong>
                 <p>
-                  각 명성 보상에서 유산 적용을 마친 뒤 ×{MASTERY_CONTRACTS[game.masteryContract].scoreScale.toFixed(2)}
-                  와 반올림으로 생긴 추가분만 합산했습니다. {MASTERY_CONTRACTS[game.masteryContract].burden}도 원정
-                  전체에 유지됐습니다.
+                  각 명성 보상에서 유산 적용을 마친 뒤 ×
+                  {formatDecimal(MASTERY_CONTRACTS[game.masteryContract].scoreScale)}와 반올림으로 생긴 추가분만
+                  합산했습니다. {MASTERY_CONTRACTS[game.masteryContract].burden}도 원정 전체에 유지됐습니다.
                 </p>
               </div>
               <dl>

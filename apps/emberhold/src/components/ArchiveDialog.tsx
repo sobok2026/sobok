@@ -1,3 +1,4 @@
+import { formatDecimal } from '@sobok/std/format/number'
 import './deferred.css'
 
 import { EndingAtlas } from './EndingAtlas'
@@ -569,7 +570,7 @@ export function ArchiveDialog({
                         <span aria-hidden="true">{protocol.glyph}</span>
                         <div>
                           <small>
-                            {protocol.label} · 명성 ×{protocol.scoreScale.toFixed(2)}
+                            {protocol.label} · 명성 ×{formatDecimal(protocol.scoreScale)}
                           </small>
                           <strong>
                             {protocol.name} · {protocol.ruleName}

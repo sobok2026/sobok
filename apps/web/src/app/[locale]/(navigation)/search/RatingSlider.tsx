@@ -1,7 +1,8 @@
 'use client'
 
+import { formatDecimal } from '@sobok/std/format/number'
 import { Star } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { memo, useCallback, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
@@ -24,6 +25,7 @@ export default memo(RatingSlider)
 function RatingSlider({ minValue, maxValue, onMinChange, onMaxChange }: Props) {
   const sliderRef = useRef<HTMLDivElement>(null)
   const t = useTranslations('Search.rating')
+  const locale = useLocale()
   const [isDragging, setIsDragging] = useState<'max' | 'min' | null>(null)
 
   const min = 0
@@ -149,7 +151,7 @@ function RatingSlider({ minValue, maxValue, onMinChange, onMaxChange }: Props) {
             className="size-4 aria-current:fill-brand aria-current:text-brand"
           />
           <span className="font-medium tabular-nums">
-            {minVal.toFixed(1)} ~ {maxVal.toFixed(1)}
+            {formatDecimal(minVal, locale)} ~ {formatDecimal(maxVal, locale)}
           </span>
         </div>
       </div>
