@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { canvasFont } from '../../shared/visuals/canvas-text'
 import {
   equipmentBasin as basin,
   equipmentBox as box,
@@ -124,7 +125,7 @@ export function createWashingEquipment(scene: THREE.Scene) {
     ctx.fillStyle = '#263c36'
     ctx.fillRect(0, 0, w, h)
     ctx.fillStyle = '#e7eee3'
-    ctx.font = `600 ${h * 0.5}px sans-serif`
+    ctx.font = canvasFont(h * 0.5, 600)
     ctx.textAlign = 'center'
     ctx.fillText('건조 · 도구 보관', w / 2, h * 0.7)
   })

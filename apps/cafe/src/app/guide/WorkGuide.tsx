@@ -49,7 +49,7 @@ export default function WorkGuide({
           {controls.map(([key, action]) => (
             <div key={key} className="flex items-center justify-between gap-5 py-2.5">
               <dt>
-                <kbd className="font-sans text-xs text-muted">{key}</kbd>
+                <kbd className="text-xs text-muted">{key}</kbd>
               </dt>
               <dd className="text-right text-xs">{action}</dd>
             </div>

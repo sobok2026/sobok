@@ -10,6 +10,7 @@ import { createBlender } from '../features/preparation/blender'
 import { CUSTOMER_DOOR_X } from '../features/service/customer'
 import { createRegister } from '../features/service/register'
 import { createWashingEquipment } from '../features/washing/equipment'
+import { canvasFont, paintTexture } from '../shared/visuals/canvas-text'
 import { createCupBody } from '../shared/visuals/cup-visual'
 import { addVesselLabel } from '../shared/visuals/vessel-label'
 
@@ -77,23 +78,25 @@ export function createShopInterior(scene: THREE.Scene) {
     mesh.receiveShadow = true
     scene.add(mesh)
   }
-  function sign(text: string, width: number, height: number, background = '#153e32', foreground = '#f2e7ce') {
+  function sign(text: string, width: number, height: number, background = '#123f35', foreground = '#f2e7ce') {
     const canvas = document.createElement('canvas')
     canvas.width = 1024
     canvas.height = Math.round((1024 * height) / width)
     const ctx = canvas.getContext('2d')!
-    ctx.fillStyle = background
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-    ctx.fillStyle = foreground
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    const lines = text.split('\n')
-    ctx.font = `600 ${Math.min(95, canvas.height / (lines.length + 1))}px sans-serif`
-    lines.forEach((line, i) => {
-      ctx.fillText(line, 512, (canvas.height * (i + 1)) / (lines.length + 1), 950)
-    })
     const texture = new THREE.CanvasTexture(canvas)
     texture.colorSpace = THREE.SRGBColorSpace
+    paintTexture(texture, () => {
+      ctx.fillStyle = background
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.fillStyle = foreground
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      const lines = text.split('\n')
+      ctx.font = canvasFont(Math.min(95, canvas.height / (lines.length + 1)), 600)
+      lines.forEach((line, i) => {
+        ctx.fillText(line, 512, (canvas.height * (i + 1)) / (lines.length + 1), 950)
+      })
+    })
     return new THREE.Mesh(
       new THREE.PlaneGeometry(width, height),
       new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide }),
@@ -167,7 +170,7 @@ export function createShopInterior(scene: THREE.Scene) {
   box(-5, 1.05, -5.56, 0.84, 0.09, 0.28, '#c8bda5')
   box(-5, 1.05, -4.74, 0.84, 0.09, 0.08, '#c8bda5')
   obstacles.push({ x: -2.9, z: -5.2, width: 5.6, depth: 1 })
-  const mainSign = sign('DAY SHIFT\nCOFFEE & COMPANY', 3.9, 1.2)
+  const mainSign = sign('소복다방\nCOFFEE & COMPANY', 3.9, 1.2)
   mainSign.position.set(0, 2.65, -5.72)
   scene.add(mainSign)
   const menuSign = sign(

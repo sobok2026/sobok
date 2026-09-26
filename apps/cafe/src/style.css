@@ -1,8 +1,7 @@
 @import 'tailwindcss' source('.');
+@import '@sobok/typography/styles.css';
 
 @theme {
-  --font-sans: 'DM Sans', 'Noto Sans KR', sans-serif;
-
   --color-page: #f1f0eb;
   --color-brand: #244c3e;
   --color-ink: #252c29;
@@ -59,6 +58,13 @@
     background: var(--color-page);
     color: var(--color-ink);
     font-synthesis: none;
+    /* Dragging the camera must not pull-to-refresh or bounce the page. */
+    overscroll-behavior: none;
+  }
+
+  /* Key caps read as part of the sentence, so they keep the text face instead of Preflight's monospace. */
+  kbd {
+    font-family: inherit;
   }
 
   button,
@@ -76,7 +82,7 @@
     opacity: 0.45;
   }
 
-  :where(button, select, summary, a):focus-visible {
+  :where(button, select, summary, a, input, textarea):focus-visible {
     outline: 3px solid var(--color-focus);
     outline-offset: 4px;
   }

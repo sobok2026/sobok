@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { canvasFont } from '../../shared/visuals/canvas-text'
 import {
   equipmentBox as box,
   equipmentInstances as instances,
@@ -82,7 +83,7 @@ export function createEspressoMachine(scene: THREE.Scene) {
       ctx.beginPath()
       ctx.arc(w / 2, h / 2, w * 0.27, 0, Math.PI * 2)
       ctx.fill()
-      ctx.font = `500 ${w * 0.074}px sans-serif`
+      ctx.font = canvasFont(w * 0.074, 500)
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       for (let i = 0; i < 6; i++) {
@@ -97,7 +98,7 @@ export function createEspressoMachine(scene: THREE.Scene) {
         ctx.fillText(String((i % 3) + 1), x, y)
       }
       ctx.fillStyle = '#dfece5'
-      ctx.font = `${w * 0.055}px sans-serif`
+      ctx.font = canvasFont(w * 0.055)
       ctx.fillText('ESPRESSO', w / 2, h * 0.44)
       ctx.fillText('READY', w / 2, h * 0.55)
     },
@@ -124,9 +125,9 @@ export function createEspressoMachine(scene: THREE.Scene) {
       ctx.fillRect(w * 0.2, h * 0.16, w * 0.63, h * 0.6)
       ctx.textAlign = 'center'
       ctx.fillStyle = '#263f40'
-      ctx.font = `600 ${h * 0.17}px sans-serif`
-      ctx.fillText('DAY SHIFT', w * 0.51, h * 0.4)
-      ctx.font = `${h * 0.11}px sans-serif`
+      ctx.font = canvasFont(h * 0.17, 600)
+      ctx.fillText('소복다방', w * 0.51, h * 0.4)
+      ctx.font = canvasFont(h * 0.11)
       ctx.fillText('READY TO BREW', w * 0.51, h * 0.62)
       ctx.fillStyle = '#9aa5aa'
       for (const x of [0.04, 0.9])

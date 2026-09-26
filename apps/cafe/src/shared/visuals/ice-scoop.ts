@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { canvasFont } from './canvas-text'
 import {
   equipmentMaterial as material,
   equipmentMesh as mesh,
@@ -104,7 +105,7 @@ export function createIceScoop(parent: THREE.Object3D, size: IceScoopSize) {
   const label = panel(root, 0.015, 0.02, [0, 0.038, 0.135], (ctx, w, h) => {
     ctx.fillStyle = '#3c626c'
     ctx.textAlign = 'center'
-    ctx.font = `600 ${h * 0.68}px sans-serif`
+    ctx.font = canvasFont(h * 0.68, 600)
     ctx.fillText(size[0].toUpperCase(), w / 2, h * 0.79)
   })
   label.rotation.x = -Math.PI / 2

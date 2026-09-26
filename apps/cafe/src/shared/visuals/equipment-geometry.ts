@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
+import { paintTexture } from './canvas-text'
 
 type Point = [number, number, number]
 
@@ -163,8 +164,8 @@ export function equipmentPanel(
   const canvas = document.createElement('canvas')
   canvas.width = 768
   canvas.height = Math.round((768 * height) / width)
-  draw(canvas.getContext('2d')!, canvas.width, canvas.height)
   const map = new THREE.CanvasTexture(canvas)
+  paintTexture(map, () => draw(canvas.getContext('2d')!, canvas.width, canvas.height))
   map.colorSpace = THREE.SRGBColorSpace
   map.anisotropy = 4
   const surface = {

@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { canvasFont } from '../../shared/visuals/canvas-text'
 import {
   equipmentBox as box,
   equipmentInstances as instances,
@@ -116,9 +117,9 @@ export function createColdBrewTank(scene: THREE.Scene) {
     ctx.fill()
     ctx.fillStyle = '#f4f0e1'
     ctx.textAlign = 'center'
-    ctx.font = `600 ${h * 0.23}px sans-serif`
+    ctx.font = canvasFont(h * 0.23, 600)
     ctx.fillText('COLD BREW', w / 2, h * 0.47)
-    ctx.font = `${h * 0.12}px sans-serif`
+    ctx.font = canvasFont(h * 0.12)
     ctx.fillText('COMMERCIAL BREWER', w / 2, h * 0.68)
   })
   const valve = mesh(vessel, new THREE.CylinderGeometry(0.036, 0.036, 0.038, 24), plastic, [0, 0.088, 0.235])
@@ -201,7 +202,7 @@ export function createColdBrewDispenser(scene: THREE.Scene) {
   panel(root, 0.074, 0.105, [0, 0.81, 0.181], (ctx, w, h) => {
     ctx.fillStyle = '#e7ddbd'
     ctx.textAlign = 'center'
-    ctx.font = `600 ${h * 0.16}px sans-serif`
+    ctx.font = canvasFont(h * 0.16, 600)
     ctx.fillText('COLD', w / 2, h * 0.32)
     ctx.fillText('BREW', w / 2, h * 0.55)
     ctx.strokeStyle = '#a38b60'

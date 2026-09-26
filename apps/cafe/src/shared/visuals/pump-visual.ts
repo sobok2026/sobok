@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { canvasFont } from './canvas-text'
 import {
   equipmentBox as box,
   equipmentLathe as lathe,
@@ -99,14 +100,14 @@ export function createPumpVisual(parent: THREE.Object3D, kind: 'glaze' | 'classi
     ctx.fillStyle = syrup ? '#9d773c' : '#38604d'
     ctx.fillRect(0, h * 0.06, w, h * 0.22)
     ctx.fillStyle = '#ffffff'
-    ctx.font = `600 ${h * 0.12}px sans-serif`
+    ctx.font = canvasFont(h * 0.12, 600)
     ctx.textAlign = 'center'
     ctx.fillText(syrup ? 'CLASSIC' : 'GLAZED', w / 2, h * 0.215)
     ctx.fillStyle = '#354b42'
-    ctx.font = `600 ${h * 0.18}px sans-serif`
+    ctx.font = canvasFont(h * 0.18, 600)
     ctx.fillText(syrup ? '클래식' : '글레이즈드', w / 2, h * 0.56)
-    ctx.font = `${h * 0.08}px sans-serif`
-    ctx.fillText('DAY SHIFT  ·  BAR', w / 2, h * 0.8)
+    ctx.font = canvasFont(h * 0.08)
+    ctx.fillText('소복다방  ·  BAR', w / 2, h * 0.8)
   })
   return { root, head, outlet }
 }

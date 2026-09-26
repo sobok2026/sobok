@@ -87,7 +87,7 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
           {!craft.tool && !job ? (
             <div className="mt-3 compact:mt-1.5">
               <TextButton onClick={() => onMoveCup(place)}>
-                <kbd className="mr-1 font-sans">E</kbd> 컵 집기
+                <kbd className="mr-1">E</kbd> 컵 집기
               </TextButton>
             </div>
           ) : null}
@@ -106,7 +106,7 @@ export default function CraftingHud({ state, target, onUse, onStop, onTool, onCo
             음료 전달
           </WorkButton>
           <TextButton onClick={() => onMoveCup(place)}>
-            <kbd className="font-sans">E</kbd> 컵 집기
+            <kbd>E</kbd> 컵 집기
           </TextButton>
         </>
       )}

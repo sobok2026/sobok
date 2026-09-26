@@ -37,6 +37,11 @@ That exception leaves the locale default unchanged for every other app and remov
 sheet from that one document. Do not use it for user-authored, CMS, API, or otherwise remote text;
 those surfaces must keep the default Korean Han webfont.
 
+`scripts/verify-font-coverage.ts` is that check. Run it first in the app's `build`, passing every path
+that holds rendered copy (`bun ../../packages/typography/scripts/verify-font-coverage.ts src`). A Vite app
+has no `FontStylesheets` to pass the flag to, so it links the Korean sheet alone from `index.html`
+instead — statically, so the browser finds it before the bundle runs.
+
 ## Where the bytes come from
 
 Each app carries its own committed copy under `public/fonts/<family>/<version>/`, taken unmodified

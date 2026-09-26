@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
+import { canvasFont } from '../../shared/visuals/canvas-text'
 import {
   equipmentBasin as basin,
   equipmentBox as box,
@@ -142,7 +143,7 @@ export function createIceBin(scene: THREE.Scene) {
     panel(rack, 0.087, 0.033, [-0.2 + i * 0.2, 0.035, 0.084], (ctx, w, h) => {
       ctx.fillStyle = '#304f58'
       ctx.textAlign = 'center'
-      ctx.font = `600 ${h * 0.6}px sans-serif`
+      ctx.font = canvasFont(h * 0.6, 600)
       ctx.fillText(size[0].toUpperCase(), w / 2, h * 0.77)
     })
   }

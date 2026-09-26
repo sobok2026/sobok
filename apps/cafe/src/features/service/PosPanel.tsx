@@ -88,7 +88,11 @@ export default function PosPanel({
         aria-modal="true"
         aria-label="POS 주문"
         tabIndex={-1}
-        className="relative grid h-full min-h-0 grid-cols-[minmax(15rem,0.95fr)_minmax(0,2fr)] gap-2 overflow-hidden rounded-lg bg-pos-shell p-2 text-pos-ink shadow-2xl outline-none max-md:grid-cols-[minmax(11rem,0.7fr)_minmax(0,2fr)]"
+        className={`
+          relative grid h-full min-h-0 grid-cols-[minmax(15rem,0.95fr)_minmax(0,2fr)] gap-2 overflow-hidden
+          rounded-lg bg-pos-shell p-2 text-pos-ink shadow-2xl outline-none
+          max-md:grid-cols-[minmax(11rem,0.7fr)_minmax(0,2fr)]
+        `}
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
             event.preventDefault()
@@ -123,7 +127,7 @@ export default function PosPanel({
               <span>소복점 · POS 01</span>
               <span>영업일 {date}</span>
             </div>
-            <div className="py-3 text-center text-2xl font-bold tracking-widest">DAY SHIFT</div>
+            <div className="py-3 text-center text-2xl font-bold tracking-widest">소복다방</div>
             <div className="flex justify-between text-xs">
               <span>주문 {String(state.orderNumber).padStart(3, '0')}</span>
               <span>{state.customer ? CUSTOMER_STATUS[state.customer.stage] : '응대 중인 손님 없음'}</span>

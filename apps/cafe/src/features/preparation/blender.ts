@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { recipeCatalog } from '../../content/catalog'
 import { recipeFor } from '../../content/recipes'
+import { canvasFont } from '../../shared/visuals/canvas-text'
 import {
   equipmentBox as box,
   equipmentInstances as instances,
@@ -86,7 +87,7 @@ export function createBlenderJar() {
     ctx.strokeStyle = '#35474c'
     ctx.fillStyle = '#35474c'
     ctx.lineWidth = 4
-    ctx.font = `${w * 0.14}px sans-serif`
+    ctx.font = canvasFont(w * 0.14)
     ctx.textAlign = 'right'
     for (let i = 0; i < 12; i++) {
       const y = h * (0.09 + i * 0.076)
@@ -103,10 +104,10 @@ export function createBlenderJar() {
     ctx.fillRect(0, 0, w, h)
     ctx.fillStyle = '#354a42'
     ctx.textAlign = 'center'
-    ctx.font = `600 ${h * 0.33}px sans-serif`
+    ctx.font = canvasFont(h * 0.33, 600)
     ctx.fillText('PREPARED', w / 2, h * 0.44)
-    ctx.font = `${h * 0.24}px sans-serif`
-    ctx.fillText('DAY SHIFT', w / 2, h * 0.81)
+    ctx.font = canvasFont(h * 0.24)
+    ctx.fillText('소복다방', w / 2, h * 0.81)
   })
   label.visible = false
   const swirl = mesh(
@@ -162,7 +163,7 @@ export function createBlender(scene: THREE.Scene) {
     ctx.fillStyle = '#41484c'
     ctx.fillRect(0, 0, w, h)
     ctx.fillStyle = '#d3d8d9'
-    ctx.font = `600 ${h * 0.11}px sans-serif`
+    ctx.font = canvasFont(h * 0.11, 600)
     ctx.textAlign = 'center'
     ctx.fillText('BLENDING STATION', w / 2, h * 0.16)
     ctx.fillStyle = '#b7c9ca'
@@ -189,11 +190,11 @@ export function createBlender(scene: THREE.Scene) {
       ctx.fill()
       ctx.stroke()
       ctx.fillStyle = '#e7edef'
-      ctx.font = `600 ${h * 0.19}px sans-serif`
+      ctx.font = canvasFont(h * 0.19, 600)
       ctx.fillText(String(i + 1), x, h * 0.85)
     }
     ctx.fillStyle = '#dce2e3'
-    ctx.font = `${h * 0.16}px sans-serif`
+    ctx.font = canvasFont(h * 0.16)
     ctx.fillText('▲', w * 0.13, h * 0.39)
     ctx.fillText('▼', w * 0.13, h * 0.59)
     ctx.fillText('Ⅱ', w * 0.85, h * 0.4)
