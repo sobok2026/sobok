@@ -1,23 +1,20 @@
 import clsx from 'clsx'
-import { INGREDIENTS } from '../content/ingredients'
 import type { StationId } from '../content/stations'
 import { STATIONS } from '../content/stations'
 import CleaningHud from '../features/cleaning/CleaningHud'
 import ColdBrewHud from '../features/cold-brew/ColdBrewHud'
 import CraftingHud from '../features/crafting/CraftingHud'
-import { craftStations } from '../features/crafting/rules'
-import { batchDestination, batchOrigin, carriedBatch } from '../features/inventory/batches'
-import { CUP_NAMES, cleanCupCount, cupCount, cupKindFor } from '../features/inventory/cups'
-import { SUPPLIES } from '../features/inventory/supplies'
+import { carriedBatch } from '../features/inventory/batches'
+import { cupCount } from '../features/inventory/cups'
 import PreparationHud from '../features/preparation/PreparationHud'
-import { currentTicket } from '../features/service/orders'
-import { WASH_NAMES, washDestination } from '../features/washing/rules'
+import { washDestination } from '../features/washing/rules'
 import WashingHud from '../features/washing/WashingHud'
 import type { Action } from '../simulation/actions'
 import { objective } from '../simulation/guidance'
-import type { Batch, GameState } from '../simulation/state'
+import type { GameState } from '../simulation/state'
 import type { GuideSide } from '../world/scene'
 import OrderRail from './OrderRail'
+import { stationPrompt } from './session/station-prompt'
 
 export default function PlayHud({
   state,
@@ -87,16 +84,10 @@ export default function PlayHud({
             )}
             data-focused={!!target}
           />
-          <ReticlePrompt
-            state={state}
-            target={target}
-            heldBatch={heldBatch}
-            needsStaffAccess={needsStaffAccess}
-            openPanel={openPanel}
-          />
+          <ReticlePrompt state={state} target={target} needsStaffAccess={needsStaffAccess} openPanel={openPanel} />
         </>
       )}
-      {!panel && !focusedWork && guideSide && <EdgeGuide side={guideSide} station={goal.station} />}
+      {!panel && !focusedWork && guideSide && goal.station && <EdgeGuide side={guideSide} station={goal.station} />}
       {!panel && showCleaning && <CleaningHud state={state} target={target} act={act} stop={stopUse} />}
       {!panel && showWashing && !showCleaning && <WashingHud state={state} target={target} act={act} stop={stopUse} />}
       {!panel && showPreparation && !showWashing && !showCleaning && (
@@ -165,19 +156,17 @@ export default function PlayHud({
 function ReticlePrompt({
   state,
   target,
-  heldBatch,
   needsStaffAccess,
   openPanel,
 }: {
   state: GameState
   target: StationId | null
-  heldBatch: Batch | undefined
   needsStaffAccess: boolean
   openPanel: (station: StationId) => void
 }) {
   const pill = clsx(
     'absolute top-1/2 left-1/2 z-6 -translate-x-1/2 translate-y-7',
-    'flex items-center gap-3 rounded-full border border-white/60 bg-surface/95 shadow-hud',
+    'flex items-center gap-3 rounded-full border border-white/60 bg-surface/95 shadow-hud whitespace-nowrap',
   )
 
   if (needsStaffAccess) {
@@ -188,21 +177,27 @@ function ReticlePrompt({
     )
   }
 
-  if (
-    !target ||
-    (heldBatch && target !== batchOrigin(heldBatch) && target !== batchDestination(heldBatch) && target !== 'pos')
-  ) {
+  if (!target) {
     return null
   }
-  const { verb, object } = targetAction(state, target, heldBatch)
+  const prompt = stationPrompt(state, target)
+
+  if ('status' in prompt) {
+    return (
+      <p className={clsx(pill, 'px-5 py-2.5 text-body')}>
+        <span className="font-semibold">{STATIONS[target].name}</span>
+        <span className="text-muted">{prompt.status}</span>
+      </p>
+    )
+  }
 
   return (
     <button type="button" className={clsx(pill, 'py-2 pr-5 pl-2 text-left')} onClick={() => openPanel(target)}>
       <kbd className="grid size-8 shrink-0 place-items-center rounded-full bg-brand text-sm font-semibold text-on-brand">
         E
       </kbd>
-      <span className="text-lg font-semibold whitespace-nowrap">{verb}</span>
-      <span className="text-body whitespace-nowrap text-muted">{object}</span>
+      <span className="text-lg font-semibold">{prompt.verb}</span>
+      <span className="text-body text-muted">{prompt.object}</span>
     </button>
   )
 }
@@ -226,57 +221,4 @@ function EdgeGuide({ side, station }: { side: 'left' | 'right'; station: Station
       </span>
     </div>
   )
-}
-
-function targetAction(
-  state: GameState,
-  target: StationId,
-  heldBatch: Batch | undefined,
-): { verb: string; object: string } {
-  const station = STATIONS[target].name
-  const heldCups = cupCount(state.cleaning?.heldCups)
-  if (heldCups && target === 'wash') {
-    return { verb: '컵 내려놓기', object: `사용한 컵 ${heldCups}개` }
-  }
-  if (state.washing?.stage === 'carrying' && target === washDestination(state.washing.item)) {
-    return { verb: '제자리에 놓기', object: `씻은 ${WASH_NAMES[state.washing.item]}` }
-  }
-
-  if (target === 'pos') {
-    return { verb: posAction(state), object: station }
-  }
-
-  if (heldBatch) {
-    return {
-      verb: target === batchOrigin(heldBatch) ? '용기 내려놓기' : '용기 보관',
-      object: INGREDIENTS[heldBatch.ingredient].name,
-    }
-  }
-  if (state.supplyDelivery && target === 'condiment') {
-    return { verb: '채우기', object: SUPPLIES[state.supplyDelivery.supply].name }
-  }
-  if (state.supplyDelivery && target === 'stock') {
-    return { verb: '보충품 내려놓기', object: SUPPLIES[state.supplyDelivery.supply].name }
-  }
-
-  const ticket = currentTicket(state)
-
-  if (target === 'cups' && ticket && !state.cup) {
-    const kind = cupKindFor(ticket.recipe, ticket.service, ticket.size)
-    return cleanCupCount(state, kind) > 0
-      ? { verb: '컵 집기', object: CUP_NAMES[kind] }
-      : { verb: '재고 확인', object: CUP_NAMES[kind] }
-  }
-
-  if (state.cup?.craft.location === 'hand' && craftStations.includes(target)) {
-    return { verb: '컵 내려놓기', object: station }
-  }
-  return { verb: target === 'stock' ? '재고 확인' : '열기', object: station }
-}
-
-function posAction(state: GameState) {
-  if (state.phase === 'closing') {
-    return '마감 관리'
-  }
-  return state.customer?.stage === 'ordering' && !state.customer.visit ? '주문 입력' : '주문 확인'
 }

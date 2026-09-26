@@ -4,10 +4,8 @@ import { noCustomizations } from '../../content/customizations'
 import { DRINK_SIZES, type DrinkSize, drinkSizeIds } from '../../content/drink-sizes'
 import { RECIPES, type RecipeId, recipeLabel, recipeSizes } from '../../content/recipes'
 import { money } from '../../shared/format'
-import { Button } from '../../shared/ui/Button'
 import type { Action } from '../../simulation/actions'
 import type { GameState, OrderItem, OrderLine } from '../../simulation/state'
-import { nextStep } from '../crafting/rules'
 import { SERVICE_NAMES, type ServiceMode } from '../inventory/cups'
 import ShiftControls from '../shift/ShiftControls'
 import ShiftLedger from '../shift/ShiftLedger'
@@ -618,22 +616,6 @@ function PosCalculator() {
         ))}
       </div>
       <NumericPad value={value} onChange={setValue} onConfirm={compute} />
-    </>
-  )
-}
-
-export function PickupPanel({ state, act }: { state: GameState; act: (action: Action) => void }) {
-  const step = nextStep(state)
-
-  return (
-    <>
-      <div className="my-5.5 h-px bg-line" />
-      <Button
-        disabled={!state.cup || !!step || state.customer?.stage !== 'pickup'}
-        onClick={() => act({ type: 'serve' })}
-      >
-        음료 전달
-      </Button>
     </>
   )
 }

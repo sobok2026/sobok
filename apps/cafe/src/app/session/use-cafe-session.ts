@@ -129,6 +129,10 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     stopUse()
     const interaction = interactionAt(store.getSnapshot(), id)
 
+    if (interaction === null) {
+      return
+    }
+
     if (interaction === 'work') {
       scene.current?.unlockForCraft()
       return
@@ -223,7 +227,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     if (action.type === 'take-supply' && current.supplyDelivery) {
       closePanel()
     }
-    if (action.type === 'take-batch' && carriedBatch(current)) {
+    if ((action.type === 'take-batch' || action.type === 'buy') && carriedBatch(current)) {
       closePanel()
     }
     if (action.type === 'return-batch' && !carriedBatch(current)) {

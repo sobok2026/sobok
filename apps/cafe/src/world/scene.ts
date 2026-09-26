@@ -62,6 +62,11 @@ function pickWidth(id: StationId) {
   return 0.8
 }
 
+// The storeroom shelf runs along the side wall, so its pick volume is long in depth rather than width.
+function pickDepth(id: StationId) {
+  return id === 'stock' ? 1.6 : 0.8
+}
+
 function pickHeight(id: StationId) {
   if (id === 'espresso' || id === 'water') {
     return 1.12
@@ -143,7 +148,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const pickMaterial = new THREE.MeshBasicMaterial({ visible: false })
   const targets = stationIds.map((id) => {
     const station = STATIONS[id]
-    const mesh = new THREE.Mesh(new THREE.BoxGeometry(pickWidth(id), pickHeight(id), 0.8), pickMaterial)
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(pickWidth(id), pickHeight(id), pickDepth(id)), pickMaterial)
     mesh.position.set(station.x, 1.2, station.z)
     mesh.userData.station = id
     scene.add(mesh)
@@ -160,7 +165,7 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   const guidePoint = new THREE.Vector3()
   const guideView = new THREE.Vector3()
   let guideState: GameState | null = null
-  let guideStation: StationId = 'pos'
+  let guideStation: StationId | null = null
   let guideSide: GuideSide = null
   scene.add(camera)
   const craftVisuals = createCraftVisuals(scene, camera)
@@ -283,9 +288,13 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       guideStation = objective(state).station
     }
 
-    const anchor = STATIONS[guideStation]
-    const guiding = state.phase !== 'summary' && options.canMove() && target !== guideStation
-    guidePoint.set(anchor.x, markerHeight(guideStation) + Math.sin(animationTime / 600) * 0.03, anchor.z)
+    const guiding = !!guideStation && state.phase !== 'summary' && options.canMove() && target !== guideStation
+
+    if (guideStation) {
+      const anchor = STATIONS[guideStation]
+      guidePoint.set(anchor.x, markerHeight(guideStation) + Math.sin(animationTime / 600) * 0.03, anchor.z)
+    }
+
     guideMarker.position.copy(guidePoint)
     guideMarker.rotation.y = animationTime / 900
     guideMarker.visible = guiding

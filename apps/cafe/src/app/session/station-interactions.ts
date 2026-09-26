@@ -1,23 +1,29 @@
 import { INGREDIENTS } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
-import type { StationId } from '../../content/stations'
+import { isCupSurface, type StationId } from '../../content/stations'
+import { needsCleaning } from '../../features/cleaning/rules'
 import { craftStations, nextStep } from '../../features/crafting/rules'
-import { carriedBatch } from '../../features/inventory/batches'
+import { batchDestination, batchHome, batchOrigin, carriedBatch, isSealed } from '../../features/inventory/batches'
 import { cleanCupCount, cupCount, cupKindFor } from '../../features/inventory/cups'
 import { currentTicket } from '../../features/service/orders'
-import { washDestination } from '../../features/washing/rules'
+import { washDestination, washQueue } from '../../features/washing/rules'
 import type { Action } from '../../simulation/actions'
 import type { GameState } from '../../simulation/state'
 
-export function interactionAt(current: GameState, id: StationId): Action | 'work' | 'panel' {
+export type Interaction = Action | 'work' | 'panel' | null
+
+/** What E does at a station. Null means there is nothing to do there, so no panel opens. */
+export function interactionAt(current: GameState, id: StationId): Interaction {
   const ticket = currentTicket(current)
   const carrying = carriedBatch(current)
   if (carrying && id !== 'pos') {
-    if (id === 'stock' || id === 'shelf') {
-      return { type: 'store-batch', id: carrying.id, storage: id === 'stock' ? 'fridge' : 'room', station: id }
-    } else {
-      return { type: 'return-batch', station: id }
+    if (isSealed(carrying)) {
+      return id === 'fridge' || id === 'stock' ? { type: 'shelve-pack', station: id } : null
     }
+    if (id === batchDestination(carrying)) {
+      return { type: 'store-batch', id: carrying.id, station: id }
+    }
+    return id === batchOrigin(carrying) ? { type: 'return-batch', station: id } : null
   }
   if (current.supplyDelivery && (id === 'condiment' || id === 'stock')) {
     return { type: id === 'condiment' ? 'place-supply' : 'return-supply' }
@@ -26,20 +32,13 @@ export function interactionAt(current: GameState, id: StationId): Action | 'work
     return { type: 'drop-used-cups' }
   }
   if (id === current.cleaning?.station) {
-    if (current.cleaning.stage === 'collect') {
-      return { type: 'collect-cup' }
-    } else {
-      return 'work'
-    }
+    return current.cleaning.stage === 'collect' ? { type: 'collect-cup' } : 'work'
   }
   if (id === 'wash' && current.washing) {
     if (current.washing.stage === 'ready') {
       return { type: 'take-washed', item: current.washing.item }
-    } else if (current.washing.stage === 'carrying') {
-      return { type: 'leave-wash' }
-    } else {
-      return 'work'
     }
+    return current.washing.stage === 'carrying' ? { type: 'leave-wash' } : 'work'
   }
   if (current.washing?.stage === 'carrying' && id === washDestination(current.washing.item)) {
     return { type: 'store-washed', station: id }
@@ -47,22 +46,19 @@ export function interactionAt(current: GameState, id: StationId): Action | 'work
 
   if (id === 'prep' && current.preparation) {
     const batch = current.batches.find((item) => item.id === current.preparation?.batchId)
-    if (batch?.labelled && batch.expiresAt !== null && batch.expiresAt > current.time) {
-      return { type: 'take-batch', id: batch.id, station: id }
-    } else {
-      return 'work'
-    }
+    return batch?.labelled && batch.expiresAt !== null && batch.expiresAt > current.time
+      ? { type: 'take-batch', id: batch.id, station: id }
+      : 'work'
   }
 
   if (id === 'cold-prep' && current.coldBrew) {
     const batch = current.batches.find((item) => item.id === current.coldBrew?.batchId)
     if (current.coldBrew.stage === 'finished') {
       return { type: 'collect-cold-brew' }
-    } else if (batch?.labelled && batch.expiresAt !== null && batch.expiresAt > current.time) {
-      return { type: 'take-batch', id: batch.id, station: id }
-    } else {
-      return 'work'
     }
+    return batch?.labelled && batch.expiresAt !== null && batch.expiresAt > current.time
+      ? { type: 'take-batch', id: batch.id, station: id }
+      : 'work'
   }
 
   if (
@@ -82,7 +78,39 @@ export function interactionAt(current: GameState, id: StationId): Action | 'work
       ? { type: 'place-cup', station: id }
       : { type: 'pick-cup', station: id }
   }
-  return 'panel'
+  return stationDefault(current, id)
+}
+
+const panelStations: StationId[] = ['pos', 'cups', 'fridge', 'stock', 'prep', 'cold-prep']
+
+function stationDefault(state: GameState, id: StationId): Interaction {
+  if (panelStations.includes(id)) {
+    return 'panel'
+  }
+  if (isCupSurface(id) || id === 'mix' || id === 'trash') {
+    return needsCleaning(state, id) ? { type: 'start-cleaning', station: id } : null
+  }
+  if (id === 'wash') {
+    return washInteraction(state)
+  }
+  if (id === 'shelf') {
+    return state.batches.some((batch) => batch.amount > 0 && batchHome(batch) === 'shelf') ? 'panel' : null
+  }
+  return null
+}
+
+/** One thing to wash or collect starts at once; a choice between vessels opens the sink panel. */
+function washInteraction(state: GameState): Interaction {
+  const ticket = currentTicket(state)
+  const queue = washQueue(state, ticket ? cupKindFor(ticket.recipe, ticket.service, ticket.size) : null)
+  const actions = queue.flatMap(({ dirtyItem, washedItem }): Action[] => [
+    ...(dirtyItem ? [{ type: 'wash' as const, item: dirtyItem }] : []),
+    ...(washedItem ? [{ type: 'take-washed' as const, item: washedItem }] : []),
+  ])
+  if (actions.length > 1) {
+    return 'panel'
+  }
+  return actions[0] ?? null
 }
 
 export function workActionAt(state: GameState, station: StationId): Action {

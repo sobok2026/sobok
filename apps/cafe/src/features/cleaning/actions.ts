@@ -1,11 +1,11 @@
-import { isCupSurface, STATIONS } from '../../content/stations'
+import { isCupSurface, STATIONS, toward } from '../../content/stations'
 import { uid } from '../../shared/id'
 import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
 import type { GameState } from '../../simulation/state'
 import type { WorkContext } from '../../simulation/work-context'
 import { cupCount, emptyCupCounts, reusableCupKinds } from '../inventory/cups'
-import { CLEANING_SECONDS, type CleaningStation, cleaningHandsBusy, cupSurface } from './rules'
+import { CLEANING_SECONDS, type CleaningStation, cleaningHandsBusy, cupSurface, needsCleaning } from './rules'
 
 export function handleCleaningActions(
   work: WorkContext,
@@ -40,7 +40,7 @@ export function handleCleaningActions(
         break
       }
 
-      if (alreadyClean(s, station)) {
+      if (!needsCleaning(s, station)) {
         fail('이미 깨끗하게 정리됐어요.')
         break
       }
@@ -93,7 +93,7 @@ export function handleCleaningActions(
       }
       say(
         s,
-        `${STATIONS[cleaning.station].name}로 돌아가 ${cleaning.stage === 'wipe' ? '닦아주세요.' : '남은 컵을 회수해주세요.'}`,
+        `${toward(STATIONS[cleaning.station].name)} 돌아가 ${cleaning.stage === 'wipe' ? '닦아주세요.' : '남은 컵을 회수해주세요.'}`,
         'success',
       )
       break
@@ -166,16 +166,6 @@ export function handleCleaningActions(
       say(s, '청소를 취소했어요. 다시 시작하면 처음부터 닦아요.')
       break
   }
-}
-
-function alreadyClean(s: GameState, station: CleaningStation) {
-  if (isCupSurface(station)) {
-    return !cupSurface(s, station).dirty && !cupCount(cupSurface(s, station).cups)
-  }
-  if (station === 'mix') {
-    return !s.dirtyBar
-  }
-  return !s.trash
 }
 
 function initialStage(s: GameState, station: CleaningStation) {

@@ -85,7 +85,7 @@ function CraftingWork({
         <WorkHeader title={step?.label ?? '제조 완료'} />
         <WorkBlocker reason="다시 만들어야 해요" fix={craft.fault} />
         <WorkLinks>
-          <HoldAction onConfirm={onDiscard}>{isReusableCup(craft.kind) ? '비우고 세척 대기로' : '컵 폐기'}</HoldAction>
+          <HoldAction onConfirm={onDiscard}>{discardLabel(craft)}</HoldAction>
         </WorkLinks>
       </>
     )
@@ -124,6 +124,7 @@ function CraftingWork({
             <WorkLink shortcut="E" onUse={() => onMoveCup(place)}>
               컵 집기
             </WorkLink>
+            <HoldAction onConfirm={onDiscard}>{discardLabel(craft)}</HoldAction>
           </WorkLinks>
         )}
       </>
@@ -152,4 +153,8 @@ function CraftingWork({
       </WorkLinks>
     </>
   )
+}
+
+function discardLabel(craft: CraftState) {
+  return isReusableCup(craft.kind) ? '비우고 세척 대기로' : '컵 폐기'
 }

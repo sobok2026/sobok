@@ -58,8 +58,19 @@ export function WorkLink({ shortcut, children, onUse }: { shortcut?: string; chi
   )
 }
 
-/** Destructive work actions sit behind a hold so they never share a key with confirmation. */
-export function HoldAction({ children, onConfirm }: { children: ReactNode; onConfirm: () => void }) {
+/**
+ * Destructive actions sit behind a hold so they never share a key with confirmation. Panels with several of them
+ * turn the Q shortcut off so one key press cannot reach every row.
+ */
+export function HoldAction({
+  children,
+  onConfirm,
+  shortcut = true,
+}: {
+  children: ReactNode
+  onConfirm: () => void
+  shortcut?: boolean
+}) {
   const [holding, setHolding] = useState(false)
   const confirm = useEffectEvent(onConfirm)
 
@@ -76,6 +87,9 @@ export function HoldAction({ children, onConfirm }: { children: ReactNode; onCon
   }, [holding])
 
   useEffect(() => {
+    if (!shortcut) {
+      return
+    }
     const press = (event: KeyboardEvent) => {
       if (event.code !== 'KeyQ' || event.repeat || event.defaultPrevented || event.target instanceof HTMLInputElement) {
         return
@@ -99,7 +113,7 @@ export function HoldAction({ children, onConfirm }: { children: ReactNode; onCon
       window.removeEventListener('keyup', lift)
       window.removeEventListener('blur', release)
     }
-  }, [])
+  }, [shortcut])
 
   return (
     <button
@@ -132,7 +146,7 @@ export function HoldAction({ children, onConfirm }: { children: ReactNode; onCon
         }
       }}
     >
-      <kbd className="rounded border border-current/40 px-1.5 text-sm">Q</kbd>
+      {shortcut && <kbd className="rounded border border-current/40 px-1.5 text-sm">Q</kbd>}
       <span>길게 눌러 {children}</span>
       <span
         className={clsx(

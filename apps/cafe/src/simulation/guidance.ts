@@ -4,10 +4,10 @@ import { STATIONS, type StationId, tableIds } from '../content/stations'
 import { cleaningHandsBusy } from '../features/cleaning/rules'
 import { coldBrewStep } from '../features/cold-brew/rules'
 import { nextStep } from '../features/crafting/rules'
-import { batchDestination, batchOrigin, carriedBatch } from '../features/inventory/batches'
-import { CUP_NAMES, cleanCupCount, cupCount, cupKindFor, isReusableCup } from '../features/inventory/cups'
+import { batchDestination, batchHome, batchOrigin, carriedBatch, isSealed } from '../features/inventory/batches'
+import { CUP_NAMES, type CupKind, cleanCupCount, cupCount, cupKindFor, isReusableCup } from '../features/inventory/cups'
 import { cupRestockAction, materialTip } from '../features/inventory/help'
-import { SUPPLIES, supplyIds } from '../features/inventory/supplies'
+import { SUPPLIES, type SupplyId, supplyIds } from '../features/inventory/supplies'
 import { PREPARATIONS, preparationForMaterial, preparationStep } from '../features/preparation/rules'
 import { missingInput, readyWork } from '../features/production/runtime'
 import type { WorkStep } from '../features/production/workflow'
@@ -16,13 +16,22 @@ import { WASH_NAMES, washDestination, washItems, washStock } from '../features/w
 import { cupHandsBusy } from './hands'
 import type { Cleaning, CraftState, GameState, Preparation } from './state'
 
-export type Blocker = { station: StationId; reason: string; fix: string }
+/** What an objective is about, so the panel at that station can offer the exact action. */
+export type Subject = { ingredient: IngredientId } | { cup: CupKind } | { supply: SupplyId }
+
+export type Blocker = { station: StationId; reason: string; fix: string; subject?: Subject }
 
 /**
  * The single answer to "where do I go next and why". The order rail, the 3D marker, the off-screen arrow
  * and the work HUD blockers all read this so they never disagree.
  */
-export type Objective = { station: StationId; particle: '에' | '에서'; task: string; blocker?: Blocker }
+export type Objective = {
+  station: StationId | null
+  particle: '에' | '에서'
+  task: string
+  blocker?: Blocker
+  subject?: Subject
+}
 
 const at = (station: StationId, task: string): Objective => ({ station, particle: '에서', task })
 const to = (station: StationId, task: string): Objective => ({ station, particle: '에', task })
@@ -40,29 +49,41 @@ function materialStation(state: GameState, ingredient: IngredientId): StationId 
   if (pending?.location === 'hand') {
     return batchDestination(pending)
   }
-  if (pending?.location === 'prep' || pending?.location === 'cold-prep') {
-    return pending.location
-  }
   if (pending) {
-    return 'stock'
+    return batchHome(pending) ?? 'stock'
   }
   if (preparationForMaterial(ingredient)) {
     return state.tools.clean ? 'prep' : 'wash'
   }
-  return ingredient === 'coldBrew' ? 'cold-prep' : 'stock'
+  if (ingredient === 'coldBrew') {
+    return 'cold-prep'
+  }
+  const sealed = state.batches.find((batch) => batch.ingredient === ingredient && isSealed(batch))
+
+  return sealed && sealed.location !== 'hand' ? (batchHome(sealed) ?? 'stock') : 'stock'
+}
+
+function shortageReason(state: GameState, ingredient: IngredientId) {
+  const name = INGREDIENTS[ingredient].name
+  const usable = state.batches.filter(
+    (batch) =>
+      batch.ingredient === ingredient &&
+      batch.amount > 0 &&
+      batch.openedAt !== null &&
+      (batch.expiresAt === null || batch.expiresAt > state.time),
+  )
+  if (usable.some((batch) => batch.location !== 'bar')) {
+    return `${name} 사용 준비 전`
+  }
+  return usable.length ? `${name} 부족` : `${name} 없음`
 }
 
 function materialBlocker(state: GameState, ingredient: IngredientId): Blocker {
-  const name = INGREDIENTS[ingredient].name
-  const pending = state.batches.some(
-    (batch) =>
-      batch.ingredient === ingredient && batch.amount > 0 && batch.openedAt !== null && batch.location !== 'bar',
-  )
-
   return {
     station: materialStation(state, ingredient),
-    reason: pending ? `${name} 사용 준비 전` : `${name} 없음`,
+    reason: shortageReason(state, ingredient),
     fix: materialTip(state, ingredient).action,
+    subject: { ingredient },
   }
 }
 
@@ -221,17 +242,18 @@ function cupObjective(state: GameState, ticket: NonNullable<ReturnType<typeof cu
   }
   const reason = `${CUP_NAMES[kind]} 없음`
   const fix = cupRestockAction(state, kind)
+  const subject = { cup: kind }
   if (!isReusableCup(kind)) {
-    return blocked({ station: state.disposableCups[kind].reserve ? 'cups' : 'stock', reason, fix })
+    return blocked({ station: state.disposableCups[kind].reserve ? 'cups' : 'stock', reason, fix, subject })
   }
   if (state.reusableCups[kind].dirty || state.reusableCups[kind].washed) {
-    return blocked({ station: 'wash', reason, fix })
+    return blocked({ station: 'wash', reason, fix, subject })
   }
   if (state.condiment.cups[kind]) {
-    return blocked({ station: 'condiment', reason, fix })
+    return blocked({ station: 'condiment', reason, fix, subject })
   }
 
-  return blocked({ station: tableIds.find((id) => state.tables[id].cups[kind]) ?? 'wash', reason, fix })
+  return blocked({ station: tableIds.find((id) => state.tables[id].cups[kind]) ?? 'wash', reason, fix, subject })
 }
 
 function closingObjective(state: GameState): Objective | null {
@@ -239,17 +261,25 @@ function closingObjective(state: GameState): Objective | null {
   if (pending) {
     return pending
   }
-  if (state.batches.some((b) => b.amount > 0 && b.expiresAt !== null && b.expiresAt <= state.time)) {
-    return at('stock', '기한 지난 재료 폐기')
+  const expired = state.batches.find((b) => b.amount > 0 && b.expiresAt !== null && b.expiresAt <= state.time)
+  const expiredHome = expired && batchHome(expired)
+  if (expiredHome) {
+    return at(expiredHome, `${INGREDIENTS[expired.ingredient].name} 폐기`)
   }
-  if (state.batches.some((b) => b.amount > 0 && b.openedAt !== null && b.location !== 'bar')) {
-    return at('stock', '보관 전 재료 정리')
+  const unlabelled = state.batches.find((b) => b.amount > 0 && !isSealed(b) && b.location !== 'bar')
+  const unlabelledHome = unlabelled && batchHome(unlabelled)
+  if (unlabelledHome) {
+    return at(unlabelledHome, `${INGREDIENTS[unlabelled.ingredient].name} 라벨 붙이기`)
   }
   return state.customer ? at('pos', '남은 손님 확인') : null
 }
 
 function plannedObjective(state: GameState): Objective {
   const carrying = carriedBatch(state)
+  if (carrying && isSealed(carrying)) {
+    // Choosing the right storage is the player's call, so the guide does not point at it.
+    return { station: null, particle: '에', task: `${INGREDIENTS[carrying.ingredient].name} 원팩을 알맞은 곳에 넣기` }
+  }
   if (carrying) {
     return carrying.expiresAt !== null && carrying.expiresAt <= state.time
       ? to(batchOrigin(carrying), '용기 내려놓고 폐기')
@@ -299,10 +329,10 @@ function plannedObjective(state: GameState): Objective {
   }
   const emptySupply = supplyIds.find((id) => !state.supplies[id].bar)
   if (state.phase === 'open' && emptySupply) {
-    return at('stock', `${SUPPLIES[emptySupply].name} 보충품 가져오기`)
+    return { ...at('stock', `${SUPPLIES[emptySupply].name} 보충품 가져오기`), subject: { supply: emptySupply } }
   }
   if (state.customer?.visit || state.customer?.stage === 'leaving') {
-    return chore(state) ?? at('stock', '재료·소모품 점검')
+    return chore(state) ?? at('pos', '다음 손님 기다리기')
   }
   return at('pos', state.customer?.stage === 'ordering' ? '주문 받기' : '손님 기다리기')
 }
@@ -310,7 +340,7 @@ function plannedObjective(state: GameState): Objective {
 export function objective(state: GameState): Objective {
   const planned = plannedObjective(state)
   const needsFreeHands: StationId[] = ['prep', 'cold-prep', 'wash', 'rack']
-  if (state.cup?.craft.location === 'hand' && needsFreeHands.includes(planned.station)) {
+  if (state.cup?.craft.location === 'hand' && planned.station && needsFreeHands.includes(planned.station)) {
     return to(nextStep(state)?.station ?? 'pickup', '컵 먼저 내려놓기')
   }
   return planned

@@ -47,7 +47,8 @@ export type Action =
   | { type: 'take-batch'; id: string; station: StationId }
   | { type: 'discard-batch'; id: string; station: StationId }
   | { type: 'return-batch'; station: StationId }
-  | { type: 'store-batch'; id: string; storage: 'room' | 'fridge'; station: StationId }
+  | { type: 'store-batch'; id: string; station: StationId }
+  | { type: 'shelve-pack'; station: StationId }
   | { type: 'start-cold-brew' }
   | { type: 'cold-tool' }
   | { type: 'cold-use' }

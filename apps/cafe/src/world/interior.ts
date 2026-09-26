@@ -5,6 +5,7 @@ import { createColdBrewDispenser } from '../features/cold-brew/equipment'
 import { createEspressoMachine } from '../features/crafting/espresso-machine'
 import { createIceBin, createSyrupStation, createWaterStation } from '../features/crafting/station-equipment'
 import { cupKinds, cupSize, cupStyle, cupStyles } from '../features/inventory/cups'
+import { createDryStorage } from '../features/inventory/dry-storage'
 import { createRefrigerator } from '../features/inventory/refrigerator'
 import { createBlender } from '../features/preparation/blender'
 import { CUSTOMER_DOOR_X } from '../features/service/customer'
@@ -134,7 +135,7 @@ export function createShopInterior(scene: THREE.Scene) {
   box(-1.125, 0.25, 5.8, 11.75, 0.5, 0.16, '#244c3e')
   box(6.575, 0.25, 5.8, 0.85, 0.5, 0.16, '#244c3e')
   for (const x of [CUSTOMER_DOOR_X - 0.72, CUSTOMER_DOOR_X + 0.72]) box(x, 1.75, 5.8, 0.06, 3.5, 0.12, '#244c3e')
-  const entranceSign = sign('입구 · EXIT', 1.15, 0.3, '#244c3e', '#f2e7ce')
+  const entranceSign = sign('출입구', 1.15, 0.3, '#244c3e', '#f2e7ce')
   entranceSign.position.set(CUSTOMER_DOOR_X, 2.55, 5.78)
   entranceSign.rotation.y = Math.PI
   scene.add(entranceSign)
@@ -265,16 +266,22 @@ export function createShopInterior(scene: THREE.Scene) {
   const blender = createBlender(scene)
   createRefrigerator(scene)
   obstacles.push({ x: 5.5, z: -5.2, width: 1.4, depth: 1.1 })
+  createDryStorage(scene)
+  obstacles.push({ x: 6.34, z: -3.3, width: 0.5, depth: 1.7 })
+  const storageSign = sign('창고', 0.62, 0.24, '#eee5d1', '#344e3d')
+  storageSign.position.set(6.75, 2.15, -3.3)
+  storageSign.rotation.y = -Math.PI / 2
+  scene.add(storageSign)
   box(3, 0.5, -5.2, 1.9, 1, 0.85, '#b39a79')
   box(3, 1.05, -5.2, 2, 0.09, 0.95, '#d3c3a5')
   obstacles.push({ x: 3, z: -5.2, width: 2, depth: 0.95 })
-  const shelfSign = sign('실온 보관', 1.25, 0.28, '#eee5d1', '#344e3d')
+  const shelfSign = sign('실온 선반', 1.25, 0.28, '#eee5d1', '#344e3d')
   shelfSign.position.set(3, 1.6, -5.7)
   scene.add(shelfSign)
   box(1, 0.5, -5.2, 1.55, 1, 0.85, '#a38b70')
   box(1, 1.05, -5.2, 1.65, 0.09, 0.95, '#d3c3a5')
   obstacles.push({ x: 1, z: -5.2, width: 1.65, depth: 0.95 })
-  const extractionSign = sign('COLD BREW\n계량 · 추출 · 회수', 1.4, 0.4, '#eee5d1', '#344e3d')
+  const extractionSign = sign('콜드 브루 추출대', 1.4, 0.3, '#eee5d1', '#344e3d')
   extractionSign.position.set(1, 2.2, -5.7)
   scene.add(extractionSign)
   createWashingEquipment(scene)

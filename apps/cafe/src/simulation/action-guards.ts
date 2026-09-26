@@ -17,6 +17,7 @@ export function canDispatch(work: WorkContext, action: Action) {
     ![
       'return-batch',
       'store-batch',
+      'shelve-pack',
       'pos-add',
       'pos-update',
       'pos-remove',
@@ -27,7 +28,11 @@ export function canDispatch(work: WorkContext, action: Action) {
       'close',
     ].includes(action.type)
   ) {
-    fail('들고 있는 배합 용기를 보관하거나 원래 작업대에 먼저 내려놓아주세요.')
+    fail(
+      carriedBatch(s)!.openedAt === null
+        ? '들고 있는 원팩을 먼저 보관해주세요.'
+        : '들고 있는 배합 용기를 보관하거나 원래 작업대에 먼저 내려놓아주세요.',
+    )
     return false
   }
 

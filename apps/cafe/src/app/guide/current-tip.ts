@@ -1,5 +1,5 @@
 import { RECIPES } from '../../content/recipes'
-import { STATIONS, type StationId } from '../../content/stations'
+import { STATIONS, type StationId, toward } from '../../content/stations'
 import { cleaningTip } from '../../features/cleaning/help'
 import { coldBrewTip } from '../../features/cold-brew/help'
 import { craftTip } from '../../features/crafting/help'
@@ -19,6 +19,13 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   const cup = state.cup
   const carrying = carriedBatch(state)
 
+  if (carrying?.openedAt === null) {
+    return {
+      title: '입고한 원팩을 보관하세요',
+      action: '보관 방식에 맞는 곳을 보고 E를 눌러 넣으세요.',
+      reason: '냉장 보관 재료는 냉장고, 실온 보관 재료는 창고에 둬요. 잘못 넣으면 다시 넣어야 해요.',
+    }
+  }
   if (carrying) {
     const expired = carrying.expiresAt !== null && carrying.expiresAt <= state.time
     return {
@@ -26,7 +33,7 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
       action: expired
         ? `${STATIONS[batchOrigin(carrying)].name}에 E로 내려놓고 폐기하세요.`
         : `${STATIONS[batchDestination(carrying)].name}까지 운반해 E로 보관하세요.`,
-      reason: `다시 놓으려면 ${STATIONS[batchOrigin(carrying)].name}로 가세요. 이동해도 잔량·기한은 바뀌지 않아요.`,
+      reason: `다시 놓으려면 ${toward(STATIONS[batchOrigin(carrying)].name)} 가세요. 이동해도 잔량·기한은 바뀌지 않아요.`,
     }
   }
 

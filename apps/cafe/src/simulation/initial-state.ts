@@ -1,5 +1,6 @@
 import { INGREDIENTS, ingredientIds } from '../content/ingredients'
 import { staffStartPosition } from '../content/stations'
+import { packStorage } from '../features/inventory/batches'
 import {
   CUP_SUPPLY,
   disposableCupKinds,
@@ -35,7 +36,7 @@ export function initialState(): GameState {
         ? [newBatch(ingredient, INGREDIENTS[ingredient].startingAmount, START)]
         : []),
       ...(!INGREDIENTS[ingredient].prepared
-        ? [newBatch(ingredient, INGREDIENTS[ingredient].pack, START, 'stock')]
+        ? [newBatch(ingredient, INGREDIENTS[ingredient].pack, START, packStorage(ingredient), true)]
         : []),
     ]),
     jobs: [],

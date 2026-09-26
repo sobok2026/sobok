@@ -1,6 +1,6 @@
-import type { CupSurfaceId, TableId } from '../../content/stations'
+import { type CupSurfaceId, isCupSurface } from '../../content/stations'
 import type { Cleaning, GameState } from '../../simulation/state'
-import { cupCount, type ReusableCupCounts } from '../inventory/cups'
+import { cupCount } from '../inventory/cups'
 
 export const cleaningStationIds = ['table', 'table-left', 'condiment', 'mix', 'trash'] as const
 export type CleaningStation = (typeof cleaningStationIds)[number]
@@ -15,6 +15,12 @@ export function cupSurface(state: GameState, station: CupSurfaceId) {
   return station === 'condiment' ? state.condiment : state.tables[station]
 }
 
-export function dirtyTableCount(tables: Record<TableId, { dirty: boolean; cups: ReusableCupCounts }>) {
-  return Object.values(tables).filter((table) => table.dirty || cupCount(table.cups) > 0).length
+export function needsCleaning(state: GameState, station: CleaningStation) {
+  if (isCupSurface(station)) {
+    return cupSurface(state, station).dirty || cupCount(cupSurface(state, station).cups) > 0
+  }
+  if (station === 'mix') {
+    return !!state.dirtyBar && !state.jobs.some((job) => job.station === 'mix')
+  }
+  return state.trash > 0
 }

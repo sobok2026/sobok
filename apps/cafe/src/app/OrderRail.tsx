@@ -85,7 +85,7 @@ function stepState(index: number, done: number, started: boolean) {
 }
 
 function ObjectiveLine({ goal, now }: { goal: Objective; now: boolean }) {
-  const place = STATIONS[goal.station].name
+  const place = goal.station && STATIONS[goal.station].name
 
   if (goal.blocker) {
     return (
@@ -101,7 +101,7 @@ function ObjectiveLine({ goal, now }: { goal: Objective; now: boolean }) {
   return (
     <p className="flex gap-2.5 text-body">
       <span className="shrink-0 text-muted">{now ? '지금' : '다음'}</span>
-      {now ? (
+      {now || !place ? (
         <span>{goal.task}</span>
       ) : (
         <span>

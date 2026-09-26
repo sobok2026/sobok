@@ -133,6 +133,6 @@ export function createWashingEquipment(scene: THREE.Scene) {
     ctx.fillStyle = '#e7eee3'
     ctx.font = canvasFont(h * 0.5, 600)
     ctx.textAlign = 'center'
-    ctx.fillText('건조 · 도구 보관', w / 2, h * 0.7)
+    ctx.fillText('도구 선반', w / 2, h * 0.7)
   })
 }

@@ -115,6 +115,7 @@ export class CafeStore {
         case 'take-batch':
         case 'return-batch':
         case 'store-batch':
+        case 'shelve-pack':
         case 'discard-batch':
         case 'buy':
           handleStockActions(work, action)
@@ -139,7 +140,7 @@ export class CafeStore {
           throw new Error(`Unknown cafe action: ${unhandled}`)
         }
       }
-      s.batches = s.batches.filter((batch) => batch.amount > 0 || batch.location === 'stock')
+      s.batches = s.batches.filter((batch) => batch.amount > 0 || batch.openedAt === null)
     }
 
     this.input = work.input

@@ -6,6 +6,7 @@ import { recipeFor, recipeIds } from '../content/recipes'
 import { isCupSurface, stationIds, tableIds } from '../content/stations'
 import { CLEANING_SECONDS, cleaningStationIds } from '../features/cleaning/rules'
 import { COLD_BREW_BEANS, COLD_BREW_STEPS, coldBrewTools } from '../features/cold-brew/rules'
+import { isSealed, packStorage } from '../features/inventory/batches'
 import {
   cupCount,
   cupKindFor,
@@ -150,7 +151,7 @@ const batchSchema = z.object({
   id: z.string().max(100),
   ingredient: z.enum(ingredientIds),
   amount: quantity,
-  location: z.enum(['bar', 'stock', 'prep', 'cold-prep', 'hand']),
+  location: z.enum(['bar', 'fridge', 'stock', 'prep', 'cold-prep', 'hand']),
   openedAt: timestamp.nullable(),
   expiresAt: timestamp.nullable(),
   labelled: z.boolean(),
@@ -383,8 +384,15 @@ export const stateSchema = z
   )
   .refine(
     (state) =>
+      state.batches.every(
+        (batch) => !isSealed(batch) || batch.location === 'hand' || batch.location === packStorage(batch.ingredient),
+      ),
+    '미개봉 원팩은 알맞은 보관 장소에만 둘 수 있어요.',
+  )
+  .refine(
+    (state) =>
       state.batches.every((batch) => {
-        if (!['prep', 'cold-prep', 'hand'].includes(batch.location)) {
+        if (isSealed(batch) || !['prep', 'cold-prep', 'hand'].includes(batch.location)) {
           return true
         }
 

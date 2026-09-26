@@ -1,12 +1,12 @@
 import { INGREDIENTS } from '../../content/ingredients'
 import { expiryAt } from '../../content/lifetime'
-import { STATIONS } from '../../content/stations'
+import { STATIONS, toward } from '../../content/stations'
 import type { Action } from '../../simulation/actions'
 import { say } from '../../simulation/feedback'
 import { craftingHandsBusy } from '../../simulation/hands'
 import type { WorkContext } from '../../simulation/work-context'
 import { washingHandsBusy } from '../washing/rules'
-import { batchDestination, batchOrigin, carriedBatch } from './batches'
+import { batchDestination, batchHome, batchOrigin, carriedBatch, isSealed, packStorage } from './batches'
 import { CUP_NAMES, CUP_SUPPLY } from './cups'
 import { addAmounts, newBatch } from './inventory'
 import { SUPPLIES, SUPPLY_CAPACITY, SUPPLY_PACK, SUPPLY_PRICE } from './supplies'
@@ -28,6 +28,7 @@ export function handleStockActions(
         | 'take-batch'
         | 'return-batch'
         | 'store-batch'
+        | 'shelve-pack'
         | 'discard-batch'
         | 'buy'
     }
@@ -127,26 +128,22 @@ export function handleStockActions(
       break
     case 'open-batch': {
       const batch = s.batches.find((b) => b.id === action.id)
-      if (batch?.location !== 'stock' || batch.openedAt !== null) {
+      if (!batch || !isSealed(batch) || (batch.location !== 'fridge' && batch.location !== 'stock')) {
         break
       }
       batch.openedAt = s.time
       batch.expiresAt = expiryAt(s.time, INGREDIENTS[batch.ingredient].lifetime)
       batch.labelled = false
-      say(s, `${INGREDIENTS[batch.ingredient].name} 개봉 완료. 라벨을 붙이고 보관 위치를 선택해주세요.`)
+      say(s, `${INGREDIENTS[batch.ingredient].name} 개봉 완료. 날짜 라벨을 붙여주세요.`)
       break
     }
     case 'label-batch': {
       const batch = s.batches.find((b) => b.id === action.id)
-      if (!batch || batch.amount <= 0 || batch.openedAt === null || batch.labelled) {
+      if (!batch || batch.amount <= 0 || isSealed(batch) || batch.labelled) {
         break
       }
 
-      if (
-        batch.location !== action.station ||
-        action.station !== (batch.location === 'stock' ? 'stock' : batchOrigin(batch)) ||
-        !['stock', 'prep', 'cold-prep'].includes(batch.location)
-      ) {
+      if (batch.location !== action.station || !['fridge', 'stock', 'prep', 'cold-prep'].includes(batch.location)) {
         fail('용기가 놓인 작업대에서 라벨을 붙여주세요.')
         break
       }
@@ -157,11 +154,15 @@ export function handleStockActions(
       }
 
       batch.labelled = true
+      if (!INGREDIENTS[batch.ingredient].prepared) {
+        // A raw pack was put away when it arrived, so the label is the last step before use.
+        batch.location = 'bar'
+      }
       say(
         s,
         INGREDIENTS[batch.ingredient].prepared
           ? '기한 라벨을 붙였어요. E로 용기를 집어 보관 장소로 운반해주세요.'
-          : '개봉 시각과 기한 라벨을 붙였어요. 보관 위치를 선택해주세요.',
+          : '개봉 시각과 기한 라벨을 붙였어요. 이제 음료에 사용할 수 있어요.',
         'success',
       )
       break
@@ -194,7 +195,7 @@ export function handleStockActions(
       batch.location = 'hand'
       say(
         s,
-        `${INGREDIENTS[batch.ingredient].name} 용기를 집었어요. ${STATIONS[batchDestination(batch)].name}로 가져가주세요.`,
+        `${INGREDIENTS[batch.ingredient].name} 용기를 집었어요. ${toward(STATIONS[batchDestination(batch)].name)} 가져가주세요.`,
       )
       break
     }
@@ -212,39 +213,17 @@ export function handleStockActions(
     }
     case 'store-batch': {
       const batch = s.batches.find((b) => b.id === action.id)
-      if (!batch || batch.amount <= 0 || batch.location === 'bar' || batch.openedAt === null) {
+      if (!batch || batch.amount <= 0 || batch.location !== 'hand' || isSealed(batch)) {
         break
       }
 
-      if (
-        INGREDIENTS[batch.ingredient].prepared
-          ? batch.location !== 'hand' || action.station !== batchDestination(batch)
-          : batch.location !== 'stock' || action.station !== 'stock'
-      ) {
-        fail(
-          INGREDIENTS[batch.ingredient].prepared
-            ? `용기를 들고 ${STATIONS[batchDestination(batch)].name}로 가져가주세요.`
-            : '창고에서 원팩을 보관해주세요.',
-        )
+      if (action.station !== batchDestination(batch)) {
+        fail(`용기를 들고 ${toward(STATIONS[batchDestination(batch)].name)} 가져가주세요.`)
         break
       }
 
       if (batch.expiresAt !== null && batch.expiresAt <= s.time) {
         fail('기한이 지난 재료는 폐기해주세요.')
-        break
-      }
-
-      if (!batch.labelled) {
-        fail('날짜 라벨을 먼저 붙여주세요.')
-        break
-      }
-
-      const definition = INGREDIENTS[batch.ingredient]
-
-      if (action.storage !== definition.storage) {
-        fail(
-          `${definition.name}: ${definition.storage === 'fridge' ? '냉장' : '실온'} 보관이 필요해요. 라벨을 다시 확인해주세요.`,
-        )
         break
       }
 
@@ -255,11 +234,31 @@ export function handleStockActions(
       if (s.coldBrew?.batchId === batch.id) {
         s.coldBrew = null
       }
-      say(
-        s,
-        `${definition.name} ${definition.storage === 'fridge' ? '냉장' : '실온'} 보관 완료. 이제 음료에 사용할 수 있어요.`,
-        'success',
-      )
+      say(s, `${INGREDIENTS[batch.ingredient].name} 보관 완료. 이제 음료에 사용할 수 있어요.`, 'success')
+      break
+    }
+    case 'shelve-pack': {
+      const pack = carriedBatch(s)
+      if (!pack || !isSealed(pack)) {
+        break
+      }
+      const definition = INGREDIENTS[pack.ingredient]
+      const place = packStorage(pack.ingredient)
+
+      if (action.station !== 'fridge' && action.station !== 'stock') {
+        fail('원팩은 냉장고나 창고에 넣어주세요.')
+        break
+      }
+
+      if (action.station !== place) {
+        fail(
+          `${definition.storage === 'fridge' ? '냉장' : '실온'} 보관 재료예요. ${STATIONS[place].name}에 넣어주세요.`,
+        )
+        break
+      }
+
+      pack.location = place
+      say(s, `${definition.name} 원팩을 ${STATIONS[place].name}에 넣었어요.`, 'success')
       break
     }
     case 'discard-batch': {
@@ -268,12 +267,7 @@ export function handleStockActions(
         break
       }
 
-      if (
-        batch.location === 'hand' ||
-        (['prep', 'cold-prep'].includes(batch.location)
-          ? action.station !== batchOrigin(batch)
-          : action.station !== 'stock' && action.station !== 'shelf')
-      ) {
+      if (action.station !== batchHome(batch)) {
         fail('용기가 놓인 작업대에서 폐기해주세요.')
         break
       }
@@ -298,11 +292,13 @@ export function handleStockActions(
         break
       }
 
-      if (
-        s.batches.filter((b) => b.location === 'stock' && b.ingredient === action.ingredient && b.amount > 0).length >=
-        3
-      ) {
-        fail('이 품목은 창고에 충분해요.')
+      if (s.batches.filter((b) => isSealed(b) && b.ingredient === action.ingredient).length >= 3) {
+        fail('이 품목의 미개봉 원팩이 충분해요.')
+        break
+      }
+
+      if (craftingHandsBusy(s) || washingHandsBusy(s.washing)) {
+        fail('컵과 제조·세척 도구를 먼저 내려놓아주세요.')
         break
       }
 
@@ -313,8 +309,8 @@ export function handleStockActions(
 
       s.cash -= ingredient.price
       addAmounts(s.totals.purchases, { [action.ingredient]: ingredient.price })
-      s.batches.push(newBatch(action.ingredient, ingredient.pack, s.time, 'stock'))
-      say(s, '원팩을 입고했어요. 사용할 때 개봉해주세요.', 'success')
+      s.batches.push(newBatch(action.ingredient, ingredient.pack, s.time, 'hand', true))
+      say(s, `${ingredient.name} 원팩을 입고했어요. 알맞은 보관 장소에 넣어주세요.`)
       break
     }
   }

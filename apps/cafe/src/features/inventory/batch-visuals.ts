@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { INGREDIENTS } from '../../content/ingredients'
 import type { GameState } from '../../simulation/state'
-import { carriedBatch } from './batches'
+import { carriedBatch, isSealed } from './batches'
 
 const BATCH_COLORS: Partial<Record<string, string>> = {
   foam: '#eee0bf',
@@ -44,6 +44,23 @@ export function createBatchVisuals(scene: THREE.Scene, camera: THREE.Perspective
   )
   label.position.set(0, 0.17, 0.128)
   vessel.add(label)
+  // A delivered pack is the same plain box for every ingredient, so where it belongs stays the player's call.
+  const pack = new THREE.Group()
+  pack.position.set(0.25, -0.34, -0.72)
+  pack.rotation.y = -0.35
+  camera.add(pack)
+  const carton = new THREE.Mesh(
+    new THREE.BoxGeometry(0.22, 0.26, 0.17),
+    new THREE.MeshStandardMaterial({ color: '#c49a68', roughness: 0.86 }),
+  )
+  carton.position.y = 0.13
+  pack.add(carton)
+  const packLabel = new THREE.Mesh(
+    new THREE.BoxGeometry(0.13, 0.08, 0.004),
+    new THREE.MeshStandardMaterial({ color: '#efe9dc', roughness: 0.8 }),
+  )
+  packLabel.position.set(0, 0.15, 0.087)
+  pack.add(packLabel)
   const shelfCups = Array.from({ length: 3 }, (_, index) => {
     const cup = new THREE.Mesh(
       new THREE.CylinderGeometry(0.12, 0.1, 0.32, 20),
@@ -57,9 +74,11 @@ export function createBatchVisuals(scene: THREE.Scene, camera: THREE.Perspective
   return {
     update(state: GameState) {
       const held = carriedBatch(state)
-      vessel.visible = !!held
+      const sealed = !!held && isSealed(held)
+      vessel.visible = !!held && !sealed
+      pack.visible = sealed
 
-      if (held) {
+      if (held && !sealed) {
         drinkMaterial.color.set(BATCH_COLORS[held.ingredient] ?? '#3e2c20')
         handle.visible = held.ingredient !== 'hojicha' && held.ingredient !== 'matcha'
         const height = Math.max(0.012, 0.29 * Math.min(1, held.amount / INGREDIENTS[held.ingredient].pack))

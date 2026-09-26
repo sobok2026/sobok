@@ -1,19 +1,21 @@
 import clsx from 'clsx'
 import type { StationId } from '../content/stations'
-import { isCupSurface, STATIONS } from '../content/stations'
-import CleaningPanel from '../features/cleaning/CleaningPanel'
+import { STATIONS } from '../content/stations'
 import ColdBrewPanel from '../features/cold-brew/ColdBrewPanel'
-import CraftingPanel, { CupManagement } from '../features/crafting/CraftingPanel'
 import CupRack from '../features/inventory/CupRack'
-import InventoryPanel from '../features/inventory/InventoryPanel'
 import ShelfPanel from '../features/inventory/ShelfPanel'
-import SupplyPanel from '../features/inventory/SupplyPanel'
+import StoragePanel from '../features/inventory/StoragePanel'
 import PreparationPanel from '../features/preparation/PreparationPanel'
-import PosPanel, { PickupPanel } from '../features/service/PosPanel'
-import WashingPanel, { ToolRack } from '../features/washing/WashingPanel'
+import PosPanel from '../features/service/PosPanel'
+import WashingPanel from '../features/washing/WashingPanel'
 import type { Action } from '../simulation/actions'
+import { objective } from '../simulation/guidance'
 import type { GameState } from '../simulation/state'
 
+/**
+ * A station panel opens only where there is a choice to make. It sizes to its content and keeps the one current
+ * action at the top, in step with the order rail.
+ */
 export default function StationPanel({
   state,
   panel,
@@ -39,59 +41,38 @@ export default function StationPanel({
       />
     )
   }
-  const actionJob = state.jobs.find((job) => job.station === panel)
+  const goal = objective(state)
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-8 bg-[linear-gradient(90deg,#263c281f,transparent_70%)]">
+    <div className="pointer-events-none absolute inset-0 z-8 bg-[linear-gradient(90deg,#263c281f,transparent_60%)]">
       <section
         className={clsx(
-          'pointer-events-auto absolute top-6 bottom-6 left-6',
-          'w-90 [scrollbar-width:thin] [scrollbar-color:#c6cdb9_transparent] overflow-auto',
+          'pointer-events-auto absolute top-6 left-6 flex max-h-[calc(100dvh-3rem)] w-100 flex-col',
+          'overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#c6cdb9_transparent]',
           'rounded-2xl border border-white/60 bg-surface p-6 shadow-panel',
-          'compact:top-4 compact:p-5 max-wide:left-5',
-          'max-tablet:top-4 max-tablet:bottom-4 max-tablet:left-3 max-tablet:max-w-[calc(100vw-1.5rem)]',
+          'compact:top-4 compact:max-h-[calc(100dvh-2rem)] compact:p-5',
+          'max-tablet:left-3 max-tablet:max-w-[calc(100vw-1.5rem)]',
         )}
+        aria-label={STATIONS[panel].name}
       >
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="m-0 text-2xl font-medium tracking-tighter">{STATIONS[panel].name}</h2>
-          </div>
+        <header className="mb-5 flex items-center justify-between gap-4">
+          <h2 className="text-2xl font-semibold tracking-tight">{STATIONS[panel].name}</h2>
           <button
             type="button"
-            className={clsx(
-              'pointer-events-auto grid size-10 shrink-0 place-items-center',
-              'rounded-full border-0 border-line bg-transparent text-2xl text-muted',
-            )}
+            className="-mr-2 grid size-10 shrink-0 place-items-center rounded-full text-2xl text-muted"
             onClick={() => closePanel()}
-            aria-label="작업대 닫기"
+            aria-label={`${STATIONS[panel].name} 닫기`}
           >
             ×
           </button>
-        </div>
-        <div className="h-5" />
-        {actionJob && (
-          <div className="mb-5 flex flex-col gap-1.75 rounded-sm bg-control p-4.25 text-xs">
-            <span>{actionJob.label}</span>
-            <strong className="text-stat font-medium">{Math.ceil(actionJob.endsAt - state.time)}초 남음</strong>
-          </div>
-        )}
+        </header>
         {panel === 'cups' && <CupRack state={state} act={act} />}
-        {['espresso', 'steam', 'brew', 'water', 'ice', 'sauce', 'mix', 'topping'].includes(panel) && (
-          <CraftingPanel state={state} />
-        )}
-        {panel === 'pickup' && <PickupPanel state={state} act={act} />}
-        {panel === 'prep' && <PreparationPanel state={state} act={act} />}
+        {panel === 'fridge' && <StoragePanel key="fridge" state={state} act={act} goal={goal} place="fridge" />}
+        {panel === 'stock' && <StoragePanel key="stock" state={state} act={act} goal={goal} place="stock" />}
+        {panel === 'prep' && <PreparationPanel state={state} act={act} goal={goal} />}
         {panel === 'cold-prep' && <ColdBrewPanel state={state} act={act} />}
-        {panel === 'shelf' && <ShelfPanel state={state} act={act} />}
         {panel === 'wash' && <WashingPanel state={state} act={act} />}
-        {panel === 'rack' && <ToolRack state={state} />}
-        {(isCupSurface(panel) || panel === 'mix' || panel === 'trash') && (
-          <CleaningPanel state={state} station={panel} act={act} />
-        )}
-        {panel === 'condiment' && <SupplyPanel state={state} act={act} location="bar" />}
-
-        {panel === 'stock' && <InventoryPanel state={state} act={act} />}
-        <CupManagement state={state} act={act} />
+        {panel === 'shelf' && <ShelfPanel state={state} act={act} />}
       </section>
     </div>
   )

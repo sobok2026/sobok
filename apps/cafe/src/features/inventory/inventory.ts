@@ -18,14 +18,15 @@ export function newBatch(
   amount: number,
   now: number,
   location: Batch['location'] = 'bar',
+  sealed = false,
 ): Batch {
   return {
     id: uid(),
     ingredient,
     amount,
     location,
-    openedAt: location !== 'stock' ? now : null,
-    expiresAt: location !== 'stock' ? expiryAt(now, INGREDIENTS[ingredient].lifetime) : null,
+    openedAt: sealed ? null : now,
+    expiresAt: sealed ? null : expiryAt(now, INGREDIENTS[ingredient].lifetime),
     labelled: location === 'bar',
   }
 }

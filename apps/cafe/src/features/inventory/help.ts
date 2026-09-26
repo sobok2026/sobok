@@ -1,10 +1,10 @@
 import { INGREDIENTS, type Ingredient, type IngredientId } from '../../content/ingredients'
-import { STATIONS } from '../../content/stations'
+import { STATIONS, toward } from '../../content/stations'
 import type { WorkTip as Tip } from '../../shared/work-tip'
 import type { Batch, GameState } from '../../simulation/state'
 import { COLD_BREW_HOURS } from '../cold-brew/rules'
 import { preparationForMaterial } from '../preparation/rules'
-import { batchDestination, batchOrigin } from './batches'
+import { batchDestination, batchHome, batchOrigin, isSealed } from './batches'
 import { CUP_NAMES, type CupKind, isReusableCup } from './cups'
 
 export function materialTip(state: GameState, ingredient: IngredientId): Tip {
@@ -21,7 +21,9 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
     return {
       title: `${definition.name} 사용 준비`,
       action: pendingAction(definition, pending),
-      reason: '개봉·제조만으로는 사용할 수 없어요. 라벨과 보관까지 마쳐야 해요.',
+      reason: definition.prepared
+        ? '만든 배합은 라벨을 붙이고 보관해야 사용할 수 있어요.'
+        : '개봉한 원팩은 날짜 라벨을 붙여야 사용할 수 있어요.',
     }
   }
   if (preparationForMaterial(ingredient)) {
@@ -43,29 +45,34 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
       reason: `${COLD_BREW_HOURS}시간 추출은 마감 후 다음 날로 넘어갈 때도 진행돼요.`,
     }
   }
-  const sealed = state.batches.some(
-    (batch) => batch.ingredient === ingredient && batch.amount > 0 && batch.openedAt === null,
+  const sealed = state.batches.find(
+    (batch) => batch.ingredient === ingredient && isSealed(batch) && batch.location !== 'hand',
   )
+  const home = sealed && batchHome(sealed)
+  if (home) {
+    return {
+      title: `${definition.name} 보충이 필요해요`,
+      action: `${STATIONS[home].name}에서 미개봉 원팩을 여세요.`,
+      reason: '개봉한 뒤 날짜 라벨을 붙이면 사용할 수 있어요.',
+    }
+  }
 
   return {
     title: `${definition.name} 보충이 필요해요`,
-    action: `창고에서 ${sealed ? '미개봉 원팩을 여세요.' : '원팩을 입고한 뒤 개봉하세요.'}`,
-    reason: `라벨을 붙이고 ${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하면 사용할 수 있어요.`,
+    action: '창고에서 원팩을 입고하세요.',
+    reason: '입고한 원팩은 보관 방식에 맞는 곳에 넣어야 해요.',
   }
 }
 
 function pendingAction(definition: Ingredient, batch: Batch) {
   if (definition.prepared) {
     if (batch.labelled) {
-      return `E로 용기를 집어 ${STATIONS[batchDestination(batch)].name}로 운반하세요.`
+      return `E로 용기를 집어 ${toward(STATIONS[batchDestination(batch)].name)} 운반하세요.`
     }
     return `${STATIONS[batchOrigin(batch)].name}에서 날짜를 확인하고 라벨을 붙이세요.`
   }
 
-  if (!batch.labelled) {
-    return '창고에서 날짜 확인 후 라벨을 붙이세요.'
-  }
-  return `창고에서 ${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하세요.`
+  return `${STATIONS[batchHome(batch) ?? 'stock'].name}에서 날짜 라벨을 붙이세요.`
 }
 
 export function cupRestockAction(state: GameState, kind: CupKind) {
