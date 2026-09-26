@@ -56,6 +56,41 @@
       "runtimeArgs": ["run", "dev"],
       "cwd": "apps/fall",
       "port": 3017
+    },
+    {
+      "name": "cafe",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "apps/cafe",
+      "port": 3018
+    },
+    {
+      "name": "cafe-preview",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "wrangler", "dev", "--port", "3019"],
+      "cwd": "apps/cafe",
+      "port": 3019
+    },
+    {
+      "name": "zwds-preview",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "wrangler", "dev", "--port", "3021"],
+      "cwd": "apps/zwds",
+      "port": 3021
+    },
+    {
+      "name": "civil-preview",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "wrangler", "dev", "--port", "3022"],
+      "cwd": "apps/civil",
+      "port": 3022
+    },
+    {
+      "name": "vibe-preview",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "wrangler", "dev", "--port", "3023"],
+      "cwd": "apps/vibe",
+      "port": 3023
     }
   ]
 }
