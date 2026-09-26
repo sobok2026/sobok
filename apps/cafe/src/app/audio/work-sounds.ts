@@ -18,6 +18,10 @@ const assetIds = [
   'steam-milk',
   'wipe-table',
 ] as const
+// FLAC rather than a lossy codec: five of these loop, and only a lossless file decodes to the exact sample count
+// in every browser, without encoder padding that would put a gap at each wrap. Vite fingerprints each URL, so
+// the files can be cached forever.
+const assetUrls = import.meta.glob<string>('./sounds/*.flac', { eager: true, import: 'default', query: '?no-inline' })
 type Asset = (typeof assetIds)[number]
 type WorkSound = 'ice' | 'complete' | 'serve'
 type WorkLoop = 'pour-cup' | 'pour-milk' | 'espresso' | 'steam' | 'wipe-table'
@@ -97,7 +101,7 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
           assetIds
             .filter((id) => !buffers.has(id))
             .map(async (id) => {
-              const response = await fetch(`/audio/${id}.wav`, { signal: abort.signal })
+              const response = await fetch(assetUrls[`./sounds/${id}.flac`]!, { signal: abort.signal })
               if (!response.ok) throw new Error('Sound unavailable')
               const buffer = await audioContext.decodeAudioData(await response.arrayBuffer())
               if (!disposed) buffers.set(id, buffer)
