@@ -1,8 +1,9 @@
 import { recipeCatalog } from '../../content/catalog'
-import { type Costs, INGREDIENTS } from '../../content/ingredients'
+import { type Costs, INGREDIENTS, type IngredientId } from '../../content/ingredients'
 import type { StationId } from '../../content/stations'
 import { buildStockEffect, projectStockEffect, scaleStockEffect } from '../../content/stock-amounts'
 import { say, startJob } from '../../simulation/feedback'
+import type { GameState } from '../../simulation/state'
 import type { WorkContext } from '../../simulation/work-context'
 import { addAmounts, available, batchIdsFor, consume } from '../inventory/inventory'
 import { observationStep } from './conditions'
@@ -11,6 +12,14 @@ import { PRODUCTION_EPSILON, type ProductionState, type WorkStep } from './workf
 export type WorkOwner = { kind: 'drink' | 'preparation'; id: string; station: StationId }
 export const continuousWork = (step: WorkStep) => step.kind === 'pour' || step.kind === 'mix'
 export const readyWork = (step: WorkStep, progress: number) => progress + PRODUCTION_EPSILON >= step.target
+
+export function missingInput(state: GameState, step: WorkStep, progress: number): IngredientId | undefined {
+  const remaining = step.inputRequirements ? 1 : Math.max(0, 1 - progress / step.target)
+
+  return Object.entries(step.inputRequirements ?? step.costs).find(
+    ([id, amount]) => available(state, id) + PRODUCTION_EPSILON < (amount ?? 0) * remaining,
+  )?.[0]
+}
 
 export const workIsBusy = (work: WorkContext, owner: WorkOwner) =>
   work.state.jobs.some((job) => (owner.kind === 'drink' ? job.cupId === owner.id : job.preparationId === owner.id))

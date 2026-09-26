@@ -10,7 +10,7 @@ export function coldBrewTip(state: GameState, brew: ColdBrew): Tip {
   if (brew.completedAt !== null && expiryAt(brew.completedAt, INGREDIENTS.coldBrew.lifetime) <= state.time) {
     return {
       title: '추출액의 기한이 지났어요',
-      action: '추출대에서 F로 폐기한 뒤 다시 준비하세요.',
+      action: '추출대에서 Q를 길게 눌러 폐기한 뒤 다시 준비하세요.',
       reason: '회수하거나 라벨을 붙여도 기한은 늘어나지 않아요.',
       fault: true,
     }
@@ -18,7 +18,7 @@ export function coldBrewTip(state: GameState, brew: ColdBrew): Tip {
   if (brew.fault) {
     return {
       title: '콜드 브루를 다시 준비하세요',
-      action: '추출대에서 F로 한 배치분을 폐기하세요.',
+      action: '추출대에서 Q를 길게 눌러 한 배치분을 폐기하세요.',
       reason: brew.fault,
       fault: true,
     }

@@ -28,6 +28,8 @@ export type PlannedStep = {
   id: string
   sourceStepId: string
   label: string
+  // The recipe names one step that covers several operations, so the label does not tell them apart.
+  sharedLabel: boolean
   instruction: string
   note: string
   operation: ResolvedOperation
@@ -197,6 +199,7 @@ export function planRecipe(variant: RecipeVariant, context: RecipeContext): Plan
     if (!operations.length) {
       throw new Error(`${step.label} 제조 동작을 확인해야 합니다.`)
     }
+    const sharedLabel = operations.filter((operation) => matchesConditions(operation.when, context)).length > 1
 
     operations.forEach((operation, index) => {
       if (!matchesConditions(operation.when, context)) {
@@ -207,6 +210,7 @@ export function planRecipe(variant: RecipeVariant, context: RecipeContext): Plan
         id: `${step.id}:${index}`,
         sourceStepId: step.id,
         label: step.label,
+        sharedLabel,
         instruction: step.instructions.join(' '),
         note: step.notes.join(' '),
         operation: resolved,

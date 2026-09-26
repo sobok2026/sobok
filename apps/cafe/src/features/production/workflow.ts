@@ -11,6 +11,7 @@ import {
 import type { RecipeAmount } from '../../content/recipe-schema'
 import type { StationId } from '../../content/stations'
 import type { StockContext, StockNextAdd } from '../../content/stock-amounts'
+import { workStepLabels } from './step-labels'
 
 export const productionQuantity = z.number().min(0).max(100000000)
 
@@ -258,6 +259,7 @@ export function compileWorkflow(
   stockContext: StockContext,
   owner?: 'prep',
 ): WorkStep[] {
+  const labels = workStepLabels(catalog, plan)
   const populated = new Set<string>()
   const destinations = plan.flatMap((step) => ('into' in step.operation ? [step.operation.into] : []))
   const servingVessel = destinations.includes('serving-cup') ? 'serving-cup' : (destinations.at(-1) ?? 'serving-cup')
@@ -349,6 +351,7 @@ export function compileWorkflow(
     const step: WorkStep = {
       ...source,
       ...control,
+      label: labels[index],
       stockContext,
       nextStockAdd,
       nextStockPortion: nextStockStep?.portion,

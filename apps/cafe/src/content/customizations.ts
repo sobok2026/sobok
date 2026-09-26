@@ -210,6 +210,7 @@ export function customizePlan(base: PlannedStep[], custom: Customizations): Plan
       id: `custom:${id}`,
       sourceStepId: `custom:${id}`,
       label: extraSyrups[id as keyof typeof extraSyrups],
+      sharedLabel: false,
       instruction: '',
       note: '',
       conditions: [],

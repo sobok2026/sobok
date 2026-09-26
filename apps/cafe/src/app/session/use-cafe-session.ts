@@ -7,7 +7,7 @@ import type { Action } from '../../simulation/actions'
 import { initialState } from '../../simulation/initial-state'
 import type { GameState } from '../../simulation/state'
 import type { CafeStore } from '../../simulation/store'
-import type { MouseMode } from '../../world/scene'
+import type { GuideSide, MouseMode } from '../../world/scene'
 import { actionSound, tickSound, workLoop } from '../audio/work-sounds'
 import { importGame, saveGame } from '../persistence/storage'
 import { useWriterLock } from '../persistence/use-writer-lock'
@@ -34,6 +34,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   const [target, setTarget] = useState<StationId | null>(null)
   const targetRef = useRef<StationId | null>(null)
   const [needsStaffAccess, setNeedsStaffAccess] = useState(false)
+  const [guideSide, setGuideSide] = useState<GuideSide>(null)
   const [saveStatus, setSaveStatus] = useState(notice || '이 기기에 자동 저장')
   const [saveError, setSaveError] = useState(false)
   const hasLock = useWriterLock()
@@ -310,7 +311,10 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   }
 
   function confirm(station: StationId) {
-    act(confirmationAt(store.getSnapshot(), station))
+    const action = confirmationAt(store.getSnapshot(), station)
+    if (action) {
+      act(action)
+    }
   }
 
   const { scene, sceneReady, graphicsError } = useCafeScene(store, host, {
@@ -332,6 +336,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
       setTarget(id)
       setNeedsStaffAccess(blocked)
     },
+    onGuideSide: setGuideSide,
     onInteract: openPanel,
     onUseStart: use,
     onUseEnd: stopUse,
@@ -502,6 +507,7 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     panel,
     target,
     needsStaffAccess,
+    guideSide,
     saveStatus,
     saveError,
     graphicsError,

@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import ShiftLedger from '../features/shift/ShiftLedger'
 import ShiftOverview from '../features/shift/ShiftOverview'
 import { money } from '../shared/format'
@@ -146,50 +146,29 @@ function CafeGame(props: CafeSessionProps) {
       {running && (
         <header
           className={clsx(
-            'pointer-events-none absolute inset-x-6 top-5 z-10 flex items-start justify-between gap-4',
-            'max-tablet:inset-x-4 max-tablet:top-4',
+            'absolute top-6 right-6 z-10 flex items-center gap-1',
+            'rounded-full border border-white/60 bg-surface/95 py-1 pr-1 pl-4 shadow-hud',
+            'max-tablet:top-4 max-tablet:right-4',
           )}
         >
-          <div
-            className={clsx(
-              'flex items-center gap-3',
-              'rounded-full border border-white/60 bg-surface/95 px-4 py-2.5 text-xs shadow-hud',
+          <time className="mr-2 text-body font-semibold tabular-nums">{clock(state.time)}</time>
+          {state.phase === 'closing' && (
+            <span className="mr-1 rounded-full bg-brand/10 px-2.5 py-1 text-sm font-medium text-brand">마감 중</span>
+          )}
+          <nav className="flex items-center" aria-label="게임 메뉴">
+            {state.day === 1 && (
+              <>
+                <MenuKey shortcut="H" onClick={openGuide}>
+                  도움말
+                </MenuKey>
+                <MenuKey shortcut="M" onClick={() => pause('overview')}>
+                  매장
+                </MenuKey>
+              </>
             )}
-          >
-            <span className="text-muted">{state.day}일차</span>
-            <span className="font-medium tabular-nums">{clock(state.time)}</span>
-            <span className="border-l border-line pl-3 text-brand">
-              {state.phase === 'open' ? '영업 중' : '마감 중'}
-            </span>
-          </div>
-          <nav
-            className={clsx(
-              'pointer-events-auto flex items-center gap-1',
-              'rounded-full border border-white/60 bg-surface/95 p-1 shadow-hud',
-            )}
-            aria-label="게임 메뉴"
-          >
-            <button
-              type="button"
-              className="flex min-h-9 items-center gap-2 rounded-full px-3 text-xs"
-              onClick={openGuide}
-            >
-              <kbd className="text-muted">H</kbd> 도움말
-            </button>
-            <button
-              type="button"
-              className="flex min-h-9 items-center gap-2 rounded-full px-3 text-xs"
-              onClick={() => pause('overview')}
-            >
-              <kbd className="text-muted">M</kbd> 매장
-            </button>
-            <button
-              type="button"
-              className="flex min-h-9 items-center gap-2 rounded-full px-3 text-xs"
-              onClick={() => pause()}
-            >
-              <kbd className="text-muted">Esc</kbd> 메뉴
-            </button>
+            <MenuKey shortcut="Esc" onClick={() => pause()}>
+              메뉴
+            </MenuKey>
           </nav>
         </header>
       )}
@@ -347,6 +326,14 @@ function CafeGame(props: CafeSessionProps) {
         </div>
       )}
     </main>
+  )
+}
+
+function MenuKey({ shortcut, children, onClick }: { shortcut: string; children: ReactNode; onClick: () => void }) {
+  return (
+    <button type="button" className="flex min-h-9 items-center gap-2 rounded-full px-3 text-sm" onClick={onClick}>
+      <kbd className="text-muted">{shortcut}</kbd> {children}
+    </button>
   )
 }
 

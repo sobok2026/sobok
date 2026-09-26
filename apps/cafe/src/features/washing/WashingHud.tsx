@@ -1,12 +1,22 @@
-import clsx from 'clsx'
 import { STATIONS, type StationId } from '../../content/stations'
-import { TextButton } from '../../shared/ui/Button'
-import { WorkButton, WorkHud, WorkMeter, WorkTitle } from '../../shared/ui/WorkControls'
+import {
+  HoldAction,
+  WorkActions,
+  WorkBlocker,
+  WorkButton,
+  WorkHeader,
+  WorkHud,
+  WorkLink,
+  WorkLinks,
+  WorkMeter,
+} from '../../shared/ui/WorkControls'
 import type { Action } from '../../simulation/actions'
 import { craftingHandsBusy } from '../../simulation/hands'
 import type { GameState, Washing } from '../../simulation/state'
 import { cupCount } from '../inventory/cups'
 import { WASH_NAMES, WASH_STEPS, washDestination } from './rules'
+
+const handsBusy = { reason: '손이 비어 있지 않아요', fix: '컵과 제조 도구를 먼저 내려놓으세요.' }
 
 export default function WashingHud({
   state,
@@ -30,16 +40,10 @@ export default function WashingHud({
 
   return (
     <WorkHud aria-label="용기 세척·정리">
-      <div className="mb-2 flex items-center justify-between gap-3 text-xs text-muted compact:mb-1.5">
-        <span>{WASH_NAMES[washing.item]} 세척</span>
-        <span>{STAGE_POSITIONS[washing.stage]}</span>
-      </div>
       <WashingWork state={state} washing={washing} target={target} act={act} stop={stop} />
     </WorkHud>
   )
 }
-
-const STAGE_POSITIONS = { scrub: '1 / 3', rinse: '2 / 3', ready: '3 / 3', carrying: '3 / 3' } as const
 
 function WashingWork({
   state,
@@ -59,20 +63,20 @@ function WashingWork({
   const occupied = craftingHandsBusy(state)
 
   if (washing.stage === 'carrying') {
+    const arrived = target === destination
+
     return (
       <>
-        <WorkTitle>
-          {target === destination ? STATIONS[destination].name : `${STATIONS[destination].name}로 이동`}
-        </WorkTitle>
-        <WorkButton
-          shortcut="E"
-          primary={target === destination}
-          onUse={() =>
-            act(target === destination ? { type: 'store-washed', station: destination } : { type: 'leave-wash' })
-          }
-        >
-          {target === destination ? `${name} 정리하기` : '세척대에 다시 놓기'}
-        </WorkButton>
+        <WorkHeader title={arrived ? `씻은 ${name} 정리` : `다음 · ${STATIONS[destination].name}`} />
+        <WorkActions>
+          <WorkButton
+            shortcut="E"
+            primary={arrived}
+            onUse={() => act(arrived ? { type: 'store-washed', station: destination } : { type: 'leave-wash' })}
+          >
+            {arrived ? '제자리에 놓기' : '세척대에 다시 놓기'}
+          </WorkButton>
+        </WorkActions>
       </>
     )
   }
@@ -80,17 +84,19 @@ function WashingWork({
   if (washing.stage === 'ready') {
     return (
       <>
-        <WorkTitle>세척 완료</WorkTitle>
-        {occupied && <p className="my-2.5 text-sm leading-relaxed text-danger">컵과 제조 도구를 먼저 내려놓으세요.</p>}
-        <WorkButton
-          shortcut="E"
-          primary
-          disabled={occupied}
-          onUse={() => act({ type: 'take-washed', item: washing.item })}
-        >
-          {name} 집기
-        </WorkButton>
-        <TextButton onClick={() => act({ type: 'leave-wash' })}>세척대에 두기</TextButton>
+        <WorkHeader title="세척 완료" />
+        {occupied ? (
+          <WorkBlocker {...handsBusy} />
+        ) : (
+          <WorkActions>
+            <WorkButton shortcut="E" primary onUse={() => act({ type: 'take-washed', item: washing.item })}>
+              {name} 집기
+            </WorkButton>
+          </WorkActions>
+        )}
+        <WorkLinks>
+          <WorkLink onUse={() => act({ type: 'leave-wash' })}>세척대에 두기</WorkLink>
+        </WorkLinks>
       </>
     )
   }
@@ -98,46 +104,35 @@ function WashingWork({
   const step = WASH_STEPS[washing.stage]
   const ratio = washing.progress / step.seconds
   const ready = ratio >= 1
-  const canUse = !occupied && (washing.stage === 'rinse' || washing.spongeHeld)
+  const value = `${Math.floor(Math.min(1, ratio) * 100)}%`
+  const title = `${name} ${step.label}`
 
   return (
     <>
-      <WorkTitle>{step.label}</WorkTitle>
-      <WorkMeter label={step.label} ratio={ratio} value={`${Math.floor(ratio * 100)}%`} />
-      {occupied && <p className="my-2.5 text-sm leading-relaxed text-danger">컵과 제조 도구를 먼저 내려놓으세요.</p>}
-      <div className="flex flex-wrap gap-2">
-        {washing.stage === 'scrub' && (
-          <WorkButton
-            shortcut="G"
-            primary={!washing.spongeHeld || ready}
-            disabled={occupied}
-            onUse={() => act({ type: 'wash-tool' })}
-          >
-            {washing.spongeHeld ? '스펀지 놓기' : '스펀지 집기'}
-          </WorkButton>
-        )}
-        {canUse && (
-          <WorkButton shortcut="Space" primary={!ready} hold onUse={() => act({ type: 'wash-use' })} onStop={stop}>
-            {washing.stage === 'scrub' ? '누르고 문지르기' : '누르고 헹구기'}
-          </WorkButton>
-        )}
-        {ready && !washing.spongeHeld && (
-          <WorkButton shortcut="F" primary disabled={occupied} onUse={() => act({ type: 'wash-confirm' })}>
-            {washing.stage === 'scrub' ? '헹구기 시작' : '세척 마치기'}
-          </WorkButton>
-        )}
-      </div>
-      <details
-        className={clsx(
-          'mt-3 flex flex-wrap items-baseline gap-x-5 gap-y-1.5 text-xs text-muted',
-          'open:basis-full compact:mt-1.5',
-        )}
-      >
-        <summary className="cursor-pointer py-1.5">작업 관리</summary>
-        <TextButton danger onClick={() => act({ type: 'leave-wash' })}>
-          세척 취소 · 진행 초기화
-        </TextButton>
-      </details>
+      <WorkHeader title={title} value={value} />
+      {occupied ? <WorkBlocker {...handsBusy} /> : <WorkMeter label={title} ratio={ratio} valueText={value} />}
+      {!occupied && (
+        <WorkActions>
+          {washing.stage === 'scrub' && (
+            <WorkButton shortcut="G" primary={!washing.spongeHeld || ready} onUse={() => act({ type: 'wash-tool' })}>
+              {washing.spongeHeld ? '스펀지 놓기' : '스펀지 집기'}
+            </WorkButton>
+          )}
+          {(washing.stage === 'rinse' || washing.spongeHeld) && (
+            <WorkButton shortcut="Space" primary={!ready} hold onUse={() => act({ type: 'wash-use' })} onStop={stop}>
+              {washing.stage === 'scrub' ? '누르고 문지르기' : '누르고 헹구기'}
+            </WorkButton>
+          )}
+          {ready && !washing.spongeHeld && (
+            <WorkButton shortcut="F" primary onUse={() => act({ type: 'wash-confirm' })}>
+              {washing.stage === 'scrub' ? '헹구기 시작' : '세척 마치기'}
+            </WorkButton>
+          )}
+        </WorkActions>
+      )}
+      <WorkLinks>
+        <HoldAction onConfirm={() => act({ type: 'leave-wash' })}>세척 취소</HoldAction>
+      </WorkLinks>
     </>
   )
 }

@@ -2,9 +2,8 @@ import { STATIONS } from '../../content/stations'
 import type { WorkTip as Tip } from '../../shared/work-tip'
 import type { CraftState, GameState } from '../../simulation/state'
 import { materialTip } from '../inventory/help'
-import { available } from '../inventory/inventory'
-import { continuousWork, readyWork } from '../production/runtime'
-import { PRODUCTION_EPSILON, type WorkStep } from '../production/workflow'
+import { continuousWork, missingInput, readyWork } from '../production/runtime'
+import type { WorkStep } from '../production/workflow'
 import { nextStep, operationFor } from './rules'
 
 export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): Tip {
@@ -12,7 +11,7 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
   if (craft.fault) {
     return {
       title: '제조한 음료를 정리해주세요',
-      action: '컵이 놓인 작업대에서 F로 정리하고 새 컵으로 다시 시작하세요.',
+      action: '컵이 놓인 작업대에서 Q를 길게 눌러 정리하고 새 컵으로 다시 시작하세요.',
       reason: craft.fault,
     }
   }
@@ -65,13 +64,9 @@ export function craftTip(state: GameState, cup: NonNullable<GameState['cup']>): 
     }
   }
 
-  if (!ready) {
-    for (const [id, amount] of Object.entries(step.inputRequirements ?? step.costs)) {
-      const needed = (amount ?? 0) * (step.inputRequirements ? 1 : Math.max(0, 1 - craft.progress / step.target))
-      if (available(state, id) + PRODUCTION_EPSILON < needed) {
-        return materialTip(state, id)
-      }
-    }
+  const missing = ready ? undefined : missingInput(state, step, craft.progress)
+  if (missing) {
+    return materialTip(state, missing)
   }
 
   return {

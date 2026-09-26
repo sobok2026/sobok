@@ -24,7 +24,10 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
   const expired = state.batches.filter(
     (batch) => batch.amount > 0 && batch.expiresAt !== null && batch.expiresAt <= state.time,
   ).length
+  const drinks = state.sale?.paidAt != null ? state.sale.lines : []
+  const unserved = drinks.reduce((sum, line) => sum + line.quantity - line.served, 0)
   const tasks = [
+    unserved ? `음료 제조 · ${unserved}잔 남음` : '',
     cupCount(state.condiment.cups) || state.condiment.dirty
       ? `컨디먼트 바 · 반납 컵 ${cupCount(state.condiment.cups)}개${state.condiment.dirty ? ' · 닦기 필요' : ''}`
       : '',
@@ -68,7 +71,7 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
   const remaining = state.phase === 'closing' ? closingTasks(state) : tasks
 
   return (
-    <GameDialog title="매장 현황" onClose={onClose} wide>
+    <GameDialog title={`${state.day}일차 매장 현황`} onClose={onClose} wide>
       <fieldset className="mb-6 grid grid-cols-2 gap-1 rounded-xl bg-control p-1" aria-label="현황 보기">
         {TABS.map(({ id, label }) => (
           <button

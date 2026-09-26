@@ -1,15 +1,17 @@
 import clsx from 'clsx'
-import type { ComponentProps, ReactNode } from 'react'
+import { type ComponentProps, type ReactNode, useEffect, useEffectEvent, useState } from 'react'
+
+const HOLD_MS = 800
 
 export function WorkHud({ children, ...props }: Omit<ComponentProps<'section'>, 'className'>) {
   return (
     <section
       {...props}
       className={clsx(
-        'group/work absolute bottom-6 left-1/2 z-6 -translate-x-1/2',
-        'max-h-[calc(100dvh-12rem)] w-110 max-w-[calc(100%-2rem)] overflow-y-auto [scrollbar-width:thin]',
-        'rounded-panel border border-white/70 bg-surface/97 p-5 shadow-hud',
-        'compact:bottom-4 compact:p-4',
+        'absolute bottom-8 left-1/2 z-6 -translate-x-1/2',
+        'max-h-[calc(100dvh-12rem)] w-140 max-w-[calc(100%-2rem)] overflow-y-auto [scrollbar-width:thin]',
+        'rounded-panel border border-white/70 bg-surface/97 px-6 py-5 shadow-hud',
+        'compact:bottom-4 compact:px-5 compact:py-4',
       )}
     >
       {children}
@@ -17,17 +19,130 @@ export function WorkHud({ children, ...props }: Omit<ComponentProps<'section'>, 
   )
 }
 
-export function WorkTitle({ children }: { children: ReactNode }) {
+export function WorkHeader({ title, value }: { title: ReactNode; value?: ReactNode }) {
   return (
-    <h2
-      className={clsx(
-        'mb-4 text-lg leading-snug font-semibold tracking-tight',
-        'group-data-[fault=true]/work:text-danger',
-        'compact:mb-3',
-      )}
-    >
+    <div className="mb-3 flex items-baseline justify-between gap-4 compact:mb-2">
+      <h2 className="text-lg leading-snug font-semibold tracking-tight">{title}</h2>
+      {value !== undefined && <p className="shrink-0 text-lg font-semibold tabular-nums">{value}</p>}
+    </div>
+  )
+}
+
+export function WorkNote({ children }: { children: ReactNode }) {
+  return <p className="-mt-1 mb-3 text-body text-muted compact:mb-2">{children}</p>
+}
+
+export function WorkBlocker({ reason, fix }: { reason: string; fix: string }) {
+  return (
+    <div className="mb-3 rounded-xl bg-danger/8 px-4 py-3 text-body compact:mb-2" role="status">
+      <strong className="block font-semibold text-danger">{reason}</strong>
+      <span className="text-ink/80">{fix}</span>
+    </div>
+  )
+}
+
+export function WorkActions({ children }: { children: ReactNode }) {
+  return <div className="flex flex-wrap gap-2">{children}</div>
+}
+
+export function WorkLinks({ children }: { children: ReactNode }) {
+  return <div className="mt-2 flex flex-wrap items-center justify-between gap-x-5 compact:mt-1">{children}</div>
+}
+
+export function WorkLink({ shortcut, children, onUse }: { shortcut?: string; children: ReactNode; onUse: () => void }) {
+  return (
+    <button type="button" className="flex min-h-9 items-center gap-2 text-sm text-muted" onClick={onUse}>
+      {shortcut && <kbd className="rounded border border-current/40 px-1.5 text-sm">{shortcut}</kbd>}
       {children}
-    </h2>
+    </button>
+  )
+}
+
+/** Destructive work actions sit behind a hold so they never share a key with confirmation. */
+export function HoldAction({ children, onConfirm }: { children: ReactNode; onConfirm: () => void }) {
+  const [holding, setHolding] = useState(false)
+  const confirm = useEffectEvent(onConfirm)
+
+  useEffect(() => {
+    if (!holding) {
+      return
+    }
+    const timeout = window.setTimeout(() => {
+      setHolding(false)
+      confirm()
+    }, HOLD_MS)
+
+    return () => window.clearTimeout(timeout)
+  }, [holding])
+
+  useEffect(() => {
+    const press = (event: KeyboardEvent) => {
+      if (event.code !== 'KeyQ' || event.repeat || event.defaultPrevented || event.target instanceof HTMLInputElement) {
+        return
+      }
+      event.preventDefault()
+      setHolding(true)
+    }
+    const lift = (event: KeyboardEvent) => {
+      if (event.code === 'KeyQ') {
+        setHolding(false)
+      }
+    }
+    const release = () => setHolding(false)
+
+    window.addEventListener('keydown', press)
+    window.addEventListener('keyup', lift)
+    window.addEventListener('blur', release)
+
+    return () => {
+      window.removeEventListener('keydown', press)
+      window.removeEventListener('keyup', lift)
+      window.removeEventListener('blur', release)
+    }
+  }, [])
+
+  return (
+    <button
+      type="button"
+      className="group/hold relative flex min-h-9 touch-none items-center gap-2 text-sm text-danger select-none"
+      data-holding={holding}
+      onPointerDown={(event) => {
+        if (event.button !== 0) {
+          return
+        }
+        event.preventDefault()
+        event.currentTarget.setPointerCapture(event.pointerId)
+        setHolding(true)
+      }}
+      onPointerUp={() => setHolding(false)}
+      onPointerCancel={() => setHolding(false)}
+      onLostPointerCapture={() => setHolding(false)}
+      onBlur={() => setHolding(false)}
+      onKeyDown={(event) => {
+        if (['Space', 'Enter'].includes(event.code)) {
+          event.preventDefault()
+          if (!event.repeat) {
+            setHolding(true)
+          }
+        }
+      }}
+      onKeyUp={(event) => {
+        if (['Space', 'Enter'].includes(event.code)) {
+          setHolding(false)
+        }
+      }}
+    >
+      <kbd className="rounded border border-current/40 px-1.5 text-sm">Q</kbd>
+      <span>길게 눌러 {children}</span>
+      <span
+        className={clsx(
+          'absolute inset-x-0 bottom-1 h-0.5 origin-left scale-x-0 bg-danger',
+          'group-data-[holding=true]/hold:scale-x-100 group-data-[holding=true]/hold:transition-transform',
+          'group-data-[holding=true]/hold:duration-800 group-data-[holding=true]/hold:ease-linear',
+        )}
+        aria-hidden="true"
+      />
+    </button>
   )
 }
 
@@ -44,8 +159,8 @@ export function WorkButton(props: WorkButtonProps) {
     <button
       type="button"
       className={clsx(
-        'flex min-h-11 w-full min-w-0 grow basis-36 touch-none items-center justify-center gap-2 select-none',
-        'rounded-xl border border-control-line bg-control px-3 py-2.5 text-left text-sm font-medium text-ink',
+        'flex min-h-12 w-full min-w-0 grow basis-36 touch-none items-center justify-center gap-2.5 select-none',
+        'rounded-xl border border-control-line bg-control px-3 py-2.5 text-left text-base font-medium text-ink',
         'data-[primary=true]:border-brand data-[primary=true]:bg-brand data-[primary=true]:text-on-brand',
       )}
       data-primary={props.primary && !props.disabled}
@@ -89,7 +204,7 @@ export function WorkButton(props: WorkButtonProps) {
           : undefined
       }
     >
-      <kbd className="shrink-0 rounded border border-current/30 px-1.5 py-0.5 text-xs">{props.shortcut}</kbd>
+      <kbd className="shrink-0 rounded border border-current/30 px-1.5 py-0.5 text-sm">{props.shortcut}</kbd>
       <span>{props.children}</span>
     </button>
   )
@@ -98,28 +213,21 @@ export function WorkButton(props: WorkButtonProps) {
 export function WorkMeter({
   label,
   ratio,
-  value,
+  valueText,
   tolerance,
+  caption,
 }: {
   label: string
   ratio: number
-  value: string
+  valueText: string
   tolerance?: number
+  caption?: string | null
 }) {
   const scale = tolerance === undefined ? 1 : 1.3
-  const reached = ratio >= 1 - (tolerance ?? 0) && (tolerance === undefined || ratio <= 1 + tolerance)
+  const reached = tolerance === undefined ? ratio >= 1 : ratio >= 1 - tolerance && ratio <= 1 + tolerance
 
   return (
-    <div className="mb-4 compact:mb-3">
-      <div
-        className={clsx(
-          'mb-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1.5',
-          'text-label text-muted tabular-nums',
-        )}
-      >
-        <strong className="text-base font-semibold text-ink">{value}</strong>
-        {tolerance !== undefined && <span className="text-xs">{reached ? '목표 도달' : '목표 구간'}</span>}
-      </div>
+    <div className="group/meter mb-4 compact:mb-3" data-reached={reached}>
       <div
         className="relative h-2.5 overflow-hidden rounded bg-control"
         role="progressbar"
@@ -127,7 +235,7 @@ export function WorkMeter({
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(Math.min(1, ratio) * 100)}
-        aria-valuetext={`${value}${tolerance !== undefined ? `, 목표 100%, 허용 오차 ${Math.round(tolerance * 100)}%` : ''}`}
+        aria-valuetext={`${valueText}${tolerance !== undefined ? `, 목표 100%, 허용 오차 ${Math.round(tolerance * 100)}%` : ''}`}
       >
         {tolerance !== undefined && (
           <>
@@ -144,11 +252,13 @@ export function WorkMeter({
         <i
           className={clsx(
             'absolute inset-y-0 left-0 bg-brand/65 transition-[width] duration-90 ease-linear',
+            'group-data-[reached=true]/meter:bg-success',
             'motion-reduce:transition-none',
           )}
           style={{ width: `${Math.min(100, (ratio / scale) * 100)}%` }}
         />
       </div>
+      {caption && <p className="mt-2 text-sm text-muted">{caption}</p>}
     </div>
   )
 }

@@ -11,12 +11,13 @@ import { createSupplyVisuals } from '../features/inventory/supplies-visuals'
 import { createPreparationVisuals, PREP_SPOT } from '../features/preparation/visuals'
 import { createCustomerVisuals } from '../features/service/visuals'
 import { createWashingVisuals, WASH_SPOT } from '../features/washing/visuals'
-import { suggestedStation } from '../simulation/guidance'
+import { objective } from '../simulation/guidance'
 import type { GameState } from '../simulation/state'
 import { createShopInterior } from './interior'
 import { createPlayerControls } from './player-controls'
 
 export type MouseMode = 'look' | 'cursor' | 'fallback'
+export type GuideSide = 'left' | 'right' | null
 
 export type SceneOptions = {
   getState: () => GameState
@@ -24,6 +25,7 @@ export type SceneOptions = {
   isRunning: () => boolean
   mouseSensitivity: () => number
   onTarget: (id: StationId | null, needsStaffAccess: boolean) => void
+  onGuideSide: (side: GuideSide) => void
   onInteract: (id: StationId) => void
   onUseStart: (id: StationId) => void
   onUseEnd: () => void
@@ -65,6 +67,22 @@ function pickHeight(id: StationId) {
     return 1.12
   }
   return isTable(id) ? 1 : 0.8
+}
+
+function markerHeight(id: StationId) {
+  if (id === 'espresso' || id === 'water') {
+    return 1.9
+  }
+  return isTable(id) || id === 'condiment' || id === 'trash' ? 1.2 : 1.42
+}
+
+/** Which screen edge leads to a point the camera cannot see, or null while it is in view. */
+function offscreenSide(point: THREE.Vector3, scratch: THREE.Vector3, camera: THREE.PerspectiveCamera): GuideSide {
+  const projected = scratch.copy(point).project(camera)
+  if (projected.z < 1 && Math.abs(projected.x) <= 0.92 && Math.abs(projected.y) <= 0.92) {
+    return null
+  }
+  return scratch.copy(point).applyMatrix4(camera.matrixWorldInverse).x < 0 ? 'left' : 'right'
 }
 
 export function createCafeScene(container: HTMLDivElement, options: SceneOptions): CafeScene {
@@ -131,18 +149,19 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     scene.add(mesh)
     return mesh
   })
-  const guideRing = new THREE.Mesh(
-    new THREE.RingGeometry(0.27, 0.33, 40),
-    new THREE.MeshBasicMaterial({
-      color: '#f8db80',
-      transparent: true,
-      opacity: 0.75,
-      side: THREE.DoubleSide,
-      depthWrite: false,
-    }),
+  // The objective marker points down at the station and stays readable through equipment, like a waypoint.
+  const guideMarker = new THREE.Mesh(
+    new THREE.ConeGeometry(0.1, 0.2, 4),
+    new THREE.MeshBasicMaterial({ color: '#f8db80', transparent: true, opacity: 0.92, depthTest: false }),
   )
-  guideRing.rotation.x = -Math.PI / 2
-  scene.add(guideRing)
+  guideMarker.rotation.x = Math.PI
+  guideMarker.renderOrder = 10
+  scene.add(guideMarker)
+  const guidePoint = new THREE.Vector3()
+  const guideView = new THREE.Vector3()
+  let guideState: GameState | null = null
+  let guideStation: StationId = 'pos'
+  let guideSide: GuideSide = null
   scene.add(camera)
   const craftVisuals = createCraftVisuals(scene, camera)
   const preparationVisuals = createPreparationVisuals(scene, camera)
@@ -259,11 +278,23 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       options.onTarget(hovered, blocked)
     }
 
-    const desired = suggestedStation(state)
-    const anchor = STATIONS[desired]
-    guideRing.position.set(anchor.x, 1.72 + Math.sin(animationTime / 600) * 0.025, anchor.z)
-    guideRing.rotation.x = -Math.PI / 2
-    guideRing.visible = state.phase !== 'summary'
+    if (state !== guideState) {
+      guideState = state
+      guideStation = objective(state).station
+    }
+
+    const anchor = STATIONS[guideStation]
+    const guiding = state.phase !== 'summary' && options.canMove() && target !== guideStation
+    guidePoint.set(anchor.x, markerHeight(guideStation) + Math.sin(animationTime / 600) * 0.03, anchor.z)
+    guideMarker.position.copy(guidePoint)
+    guideMarker.rotation.y = animationTime / 900
+    guideMarker.visible = guiding
+    const side = guiding ? offscreenSide(guidePoint, guideView, camera) : null
+
+    if (side !== guideSide) {
+      guideSide = side
+      options.onGuideSide(side)
+    }
     const benchFocused =
       (state.cup && target === state.cup.craft.location) ||
       (state.preparation && !carriedBatch(state) && target === 'prep') ||

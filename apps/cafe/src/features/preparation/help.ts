@@ -1,39 +1,18 @@
-import { INGREDIENTS, type IngredientId } from '../../content/ingredients'
 import type { WorkTip as Tip } from '../../shared/work-tip'
 import { cupHandsBusy } from '../../simulation/hands'
 import type { GameState, Preparation } from '../../simulation/state'
 import { materialTip } from '../inventory/help'
-import { available } from '../inventory/inventory'
 import { operationDetails, workUseLabel } from '../production/presentation'
-import { continuousWork, readyWork } from '../production/runtime'
-import { PRODUCTION_EPSILON, type WorkStep } from '../production/workflow'
+import { continuousWork, missingInput, readyWork } from '../production/runtime'
+import type { WorkStep } from '../production/workflow'
 import { PREPARATIONS, preparationStep } from './rules'
-
-export function preparationMissingIngredient(
-  state: GameState,
-  prep: Preparation,
-  step: WorkStep,
-): IngredientId | undefined {
-  const remaining =
-    step.inputRequirements ??
-    Object.fromEntries(
-      Object.entries(step.costs).map(([id, amount]) => [
-        id,
-        (amount ?? 0) * Math.max(0, 1 - prep.progress / step.target),
-      ]),
-    )
-
-  return Object.entries(remaining).find(
-    ([id, amount]) => available(state, id) + PRODUCTION_EPSILON < (amount ?? 0),
-  )?.[0]
-}
 
 export function preparationTip(state: GameState, prep: Preparation): Tip {
   const definition = PREPARATIONS[prep.recipe]
   if (prep.fault) {
     return {
       title: '배합을 다시 준비해야 해요',
-      action: '준비대에서 F로 배합을 폐기하고 다시 시작하세요.',
+      action: '준비대에서 Q를 길게 눌러 배합을 폐기하고 다시 시작하세요.',
       reason: prep.fault,
       fault: true,
     }
@@ -44,7 +23,7 @@ export function preparationTip(state: GameState, prep: Preparation): Tip {
     if (batch?.expiresAt != null && batch.expiresAt <= state.time) {
       return {
         title: '기한이 지난 배합이에요',
-        action: '준비대에서 이 배치를 폐기한 뒤 다시 준비하세요.',
+        action: '준비대에서 Q를 길게 눌러 폐기한 뒤 다시 준비하세요.',
         reason: '라벨을 붙이거나 보관해도 만료 시각은 늘어나지 않아요.',
         fault: true,
       }
@@ -77,7 +56,7 @@ export function preparationTip(state: GameState, prep: Preparation): Tip {
       reason: '음료 컵과 준비 도구를 함께 들 수 없어요.',
     }
   }
-  const missing = preparationMissingIngredient(state, prep, step)
+  const missing = missingInput(state, step, prep.progress)
   if (missing) {
     return materialTip(state, missing)
   }
@@ -111,15 +90,4 @@ function stepAction(prep: Preparation, step: WorkStep, ready: boolean) {
     return 'Space를 누르고 진행한 뒤 목표에 도달하면 손을 떼세요.'
   }
   return `Space로 ${workUseLabel(step)} 후 F로 확인하세요.`
-}
-
-export function preparationSupplyNotice(state: GameState, prep: Preparation, step: WorkStep): string | null {
-  const missing = preparationMissingIngredient(state, prep, step)
-  if (missing) {
-    return `${INGREDIENTS[missing].name} 보충이 필요해요. 도구를 내려놓고 재료를 준비해주세요.`
-  }
-  if (step.requiresReusableTool && !prep.reservedTool && !state.tools.clean) {
-    return '깨끗한 제조 용기가 없어요. 세척하고 도구 선반에 보관해주세요.'
-  }
-  return null
 }

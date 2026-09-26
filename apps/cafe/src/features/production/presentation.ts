@@ -3,6 +3,7 @@ import { recipeCatalog } from '../../content/catalog'
 import type { ResolvedOperation } from '../../content/recipe-plan'
 import type { RecipeTemperature } from '../../content/recipe-schema'
 import { continuousWork, readyWork } from './runtime'
+import { itemName, portionNames } from './step-labels'
 import type { WorkStep } from './workflow'
 
 const countUnits = {
@@ -29,11 +30,7 @@ const methods = {
   'decaf-ristretto': '디카페인 리스트레토',
 }
 
-const itemName = (id: string) =>
-  recipeCatalog.materials.get(id)?.name ??
-  recipeCatalog.equipment.get(id)?.name ??
-  recipeCatalog.vessels.get(id)?.name ??
-  '작업 재료'
+const nameOf = (id: string) => itemName(recipeCatalog, id)
 
 const range = (minimum: number, maximum: number) =>
   minimum === maximum ? formatDecimal(minimum) : `${formatDecimal(minimum)}–${formatDecimal(maximum)}`
@@ -50,21 +47,34 @@ export function operationDetails(step: WorkStep): string[] {
   if (step.kind === 'condition') {
     return step.condition ? [`${step.condition.property}: ${step.condition.value} 확인`] : []
   }
-  const op = step.operation
-  const details: string[] = []
+  return [...operationObjects(step.operation), ...operationNotes(step)]
+}
+
+function operationObjects(op: ResolvedOperation): string[] {
+  const objects: string[] = []
   if ('materialId' in op && op.materialId) {
-    details.push(itemName(op.materialId))
+    objects.push(nameOf(op.materialId))
   }
   if (op.action === 'charge' && op.gasMaterialId) {
-    details.push(itemName(op.gasMaterialId))
+    objects.push(nameOf(op.gasMaterialId))
   }
   if ('from' in op && 'into' in op) {
-    details.push(`${itemName(op.from)} → ${itemName(op.into)}`)
+    objects.push(`${nameOf(op.from)} → ${nameOf(op.into)}`)
   } else if ('into' in op) {
-    details.push(itemName(op.into))
+    objects.push(nameOf(op.into))
   } else if ('vessel' in op) {
-    details.push(itemName(op.vessel))
+    objects.push(nameOf(op.vessel))
   }
+  return objects
+}
+
+/** Settings, durations and finishing details that the work HUD cannot express through the tool or target. */
+export function operationNotes(step: WorkStep): string[] {
+  if (step.kind === 'condition') {
+    return []
+  }
+  const op = step.operation
+  const details: string[] = []
   if ('setting' in op && op.setting) {
     details.push(`설정 ${op.setting}`)
   }
@@ -102,7 +112,7 @@ export function operationDetails(step: WorkStep): string[] {
   }
 
   if ('portion' in op && op.portion) {
-    details.push({ liquid: '액체만', foam: '거품만', all: '전체' }[op.portion])
+    details.push(portionNames[op.portion])
   }
   if ('placement' in op && op.placement) {
     details.push(op.placement)
@@ -118,7 +128,7 @@ export function operationDetails(step: WorkStep): string[] {
   }
 
   if (op.action === 'remove') {
-    details.push(`${itemName(op.itemId)} 제거`)
+    details.push(`${nameOf(op.itemId)} 제거`)
     if (op.drain) {
       details.push(`물기 빼기 ${durationLabel(op.drain)}`)
     }
@@ -128,13 +138,13 @@ export function operationDetails(step: WorkStep): string[] {
   }
 
   if (op.action === 'place') {
-    details.push(itemName(op.itemId))
+    details.push(nameOf(op.itemId))
   }
   if (op.action === 'strain' && op.excludeMaterialIds?.length) {
-    details.push(`${op.excludeMaterialIds.map(itemName).join(' · ')} 제외`)
+    details.push(`${op.excludeMaterialIds.map(nameOf).join(' · ')} 제외`)
   }
   if (op.action === 'attach') {
-    details.push(`${itemName(op.itemId)} → ${itemName(op.toId)}`)
+    details.push(`${nameOf(op.itemId)} → ${nameOf(op.toId)}`)
   }
   if (op.action === 'label') {
     details.push(op.labels.join(' · '))
@@ -196,13 +206,27 @@ export function workProgressLabel(step: WorkStep, progress: number): string {
         amount.denominator
       }`
     }
-    return `진행 ${formatDecimal(Math.min(1, progress / step.target) * 100)}%`
+    return `${Math.floor(Math.min(1, progress / step.target) * 100)}%`
   }
 
   if (step.kind === 'confirm' || step.unit === '완료') {
     return readyWork(step, progress) ? '동작 완료' : '동작 전'
   }
   return `${formatDecimal(progress)} / ${goal}${step.unit}${minimum}`
+}
+
+const numericAmounts = ['amount', 'amount-range', 'count', 'count-range', 'depth', 'depth-range', 'fraction']
+
+/** The written target for steps whose progress reads only as a percentage, such as filling to a cup line. */
+export function workTargetCaption(step: WorkStep): string | null {
+  if (step.kind === 'condition' || step.kind === 'machine' || step.mixesMaterialId || !step.measurement) {
+    return null
+  }
+  const op = step.operation
+  if (!('amount' in op) || !op.amount || numericAmounts.includes(op.amount.kind)) {
+    return null
+  }
+  return `목표 · ${step.measurement}`
 }
 
 const actionLabels: Partial<Record<ResolvedOperation['action'], string>> = {

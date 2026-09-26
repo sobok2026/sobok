@@ -1,28 +1,30 @@
 import clsx from 'clsx'
-import { DRINK_SIZES } from '../content/drink-sizes'
 import { INGREDIENTS } from '../content/ingredients'
-import { RECIPES } from '../content/recipes'
 import type { StationId } from '../content/stations'
 import { STATIONS } from '../content/stations'
 import CleaningHud from '../features/cleaning/CleaningHud'
 import ColdBrewHud from '../features/cold-brew/ColdBrewHud'
 import CraftingHud from '../features/crafting/CraftingHud'
-import { craftStations, nextStep } from '../features/crafting/rules'
+import { craftStations } from '../features/crafting/rules'
 import { batchDestination, batchOrigin, carriedBatch } from '../features/inventory/batches'
-import { CUP_NAMES, cleanCupCount, cupCount, cupKindFor, SERVICE_NAMES } from '../features/inventory/cups'
+import { CUP_NAMES, cleanCupCount, cupCount, cupKindFor } from '../features/inventory/cups'
 import { SUPPLIES } from '../features/inventory/supplies'
 import PreparationHud from '../features/preparation/PreparationHud'
-import { currentTicket, itemCustomizations } from '../features/service/orders'
+import { currentTicket } from '../features/service/orders'
 import { WASH_NAMES, washDestination } from '../features/washing/rules'
 import WashingHud from '../features/washing/WashingHud'
 import type { Action } from '../simulation/actions'
+import { objective } from '../simulation/guidance'
 import type { Batch, GameState } from '../simulation/state'
+import type { GuideSide } from '../world/scene'
+import OrderRail from './OrderRail'
 
 export default function PlayHud({
   state,
   panel,
   target,
   needsStaffAccess,
+  guideSide,
   dismissedMessageId,
   setDismissedMessageId,
   saveError,
@@ -39,6 +41,7 @@ export default function PlayHud({
   panel: StationId | null
   target: StationId | null
   needsStaffAccess: boolean
+  guideSide: GuideSide
   dismissedMessageId: string | undefined
   setDismissedMessageId: (id: string | undefined) => void
   saveError: boolean
@@ -51,9 +54,8 @@ export default function PlayHud({
   moveCup: (station: StationId) => void
   pause: (mode?: 'pause' | 'overview') => void
 }) {
-  const ticket = currentTicket(state)
+  const goal = objective(state)
   const heldBatch = carriedBatch(state)
-  const carried = carriedItem(state, heldBatch)
   const lastMessage = state.messages.at(-1)
 
   const showPreparation = !heldBatch && !!state.preparation && target === 'prep'
@@ -73,62 +75,28 @@ export default function PlayHud({
 
   return (
     <>
-      {!panel && ticket && (
-        <aside
-          className={clsx(
-            'pointer-events-none absolute top-21 left-6 z-6 w-64',
-            'rounded-xl border border-white/60 bg-surface/95 p-4 shadow-hud',
-            'max-tablet:left-4 max-tablet:w-56',
-          )}
-          aria-label="현재 주문"
-        >
-          <div className="mb-1.5 flex items-center justify-between gap-3 text-xs text-muted">
-            <span>주문 {String(state.orderNumber).padStart(3, '0')}</span>
-            <span className="font-medium">
-              {SERVICE_NAMES[ticket.service]} · {RECIPES[ticket.recipe].variant}
-            </span>
-          </div>
-          <h2 className="text-base leading-snug font-semibold tracking-tight">
-            {RECIPES[ticket.recipe].shortName}
-            <span className="mt-1 block text-sm font-medium text-muted">{DRINK_SIZES[ticket.size].name}</span>
-          </h2>
-          <p className="mt-2 text-xs text-muted">
-            전달 {state.sale?.lines.reduce((sum, line) => sum + line.served, 0)} /{' '}
-            {state.sale?.lines.reduce((sum, line) => sum + line.quantity, 0)}잔
-          </p>
-          {ticket && <p className="mt-1 text-xs text-muted">{itemCustomizations(ticket).join(' · ')}</p>}
-        </aside>
-      )}
-      {!panel && !focusedWork && (target || carried || needsStaffAccess) && (
-        <section
-          className={clsx(
-            'absolute bottom-6 left-1/2 z-6 w-max max-w-[calc(100%-2rem)] -translate-x-1/2',
-            'rounded-2xl border border-white/60 bg-surface/97 px-5 py-3.5 shadow-hud',
-            'compact:bottom-4',
-          )}
-          aria-label="현재 행동"
-        >
-          <ActionPrompt
+      {!panel && <OrderRail state={state} goal={goal} now={focusedWork && target === goal.station} />}
+      {!panel && !focusedWork && (
+        <>
+          <div
+            className={clsx(
+              'pointer-events-none absolute top-1/2 left-1/2 size-1.25 -translate-1/2',
+              'rounded-full border border-[#36472c55] bg-white/60',
+              'data-[focused=true]:border-1.5 data-[focused=true]:size-2.5 data-[focused=true]:border-amber-100',
+              'data-[focused=true]:bg-transparent data-[focused=true]:shadow-[0_0_0_5px_#d0bc7730]',
+            )}
+            data-focused={!!target}
+          />
+          <ReticlePrompt
             state={state}
             target={target}
             heldBatch={heldBatch}
-            carried={carried}
             needsStaffAccess={needsStaffAccess}
             openPanel={openPanel}
           />
-        </section>
+        </>
       )}
-      {!panel && (
-        <div
-          className={clsx(
-            'pointer-events-none absolute top-1/2 left-1/2 size-1.25 -translate-1/2',
-            'rounded-full border border-[#36472c55] bg-white/60',
-            'data-[focused=true]:border-1.5 data-[focused=true]:size-2.5 data-[focused=true]:border-amber-100',
-            'data-[focused=true]:bg-transparent data-[focused=true]:shadow-[0_0_0_5px_#d0bc7730]',
-          )}
-          data-focused={!!target}
-        />
-      )}
+      {!panel && !focusedWork && guideSide && <EdgeGuide side={guideSide} station={goal.station} />}
       {!panel && showCleaning && <CleaningHud state={state} target={target} act={act} stop={stopUse} />}
       {!panel && showWashing && !showCleaning && <WashingHud state={state} target={target} act={act} stop={stopUse} />}
       {!panel && showPreparation && !showWashing && !showCleaning && (
@@ -152,21 +120,19 @@ export default function PlayHud({
       {lastMessage?.tone === 'error' && lastMessage.id !== dismissedMessageId && (
         <div
           className={clsx(
-            'absolute top-21 left-1/2 z-15 -translate-x-1/2',
-            'flex w-max max-w-[min(28.75rem,calc(100%-3rem))] items-center gap-2.5',
-            'rounded-lg border border-line bg-surface py-2.5 pr-3 pl-4 shadow-toast',
-            'animate-appear text-sm leading-relaxed text-ink',
-            'data-[tone=error]:border-danger/30 data-[tone=error]:bg-orange-100 data-[tone=error]:text-danger',
-            'motion-reduce:animate-none max-wide:max-w-[min(28.75rem,54vw)] max-tablet:max-w-[85vw]',
+            'absolute top-1/2 left-1/2 z-15 -translate-x-1/2 translate-y-22',
+            'flex w-max max-w-[min(30rem,calc(100%-3rem))] items-center gap-2.5',
+            'rounded-xl border border-danger/30 bg-orange-100 py-2.5 pr-3 pl-4 shadow-toast',
+            'animate-appear text-body leading-relaxed text-danger',
+            'data-[pos=true]:top-6 data-[pos=true]:translate-y-0',
+            'motion-reduce:animate-none max-tablet:max-w-[85vw]',
           )}
-          data-tone={lastMessage.tone}
+          data-pos={panel === 'pos'}
           role="status"
           aria-live="polite"
           key={lastMessage.id}
         >
-          <span className="text-danger" aria-hidden="true">
-            !
-          </span>
+          <span aria-hidden="true">!</span>
           {lastMessage.text}
           <button
             className="grid size-7 shrink-0 place-items-center border-0 bg-transparent text-xl text-inherit"
@@ -185,7 +151,7 @@ export default function PlayHud({
             onClick={() => pause()}
             className={clsx(
               'absolute right-6 bottom-6 z-10 max-w-64',
-              'rounded-xl border border-danger/30 bg-surface px-4 py-3 text-xs text-danger',
+              'rounded-xl border border-danger/30 bg-surface px-4 py-3 text-sm text-danger',
             )}
           >
             저장 실패 · 메뉴에서 백업
@@ -196,122 +162,121 @@ export default function PlayHud({
   )
 }
 
-type CarriedItem = { name: string; destination: StationId }
-
-function ActionPrompt({
+function ReticlePrompt({
   state,
   target,
   heldBatch,
-  carried,
   needsStaffAccess,
   openPanel,
 }: {
   state: GameState
   target: StationId | null
   heldBatch: Batch | undefined
-  carried: CarriedItem | null
   needsStaffAccess: boolean
   openPanel: (station: StationId) => void
 }) {
+  const pill = clsx(
+    'absolute top-1/2 left-1/2 z-6 -translate-x-1/2 translate-y-7',
+    'flex items-center gap-3 rounded-full border border-white/60 bg-surface/95 shadow-hud',
+  )
+
   if (needsStaffAccess) {
     return (
-      <p className="text-sm">
-        직원 통로에서 이용 가능 <span className="ml-3 text-xs text-muted">POS 옆 출입구</span>
+      <p className={clsx(pill, 'px-4 py-2.5 text-body')}>
+        직원 통로에서만 이용 <span className="text-muted">POS 옆 출입구</span>
       </p>
     )
   }
 
   if (
-    target &&
-    (!heldBatch || target === batchOrigin(heldBatch) || target === batchDestination(heldBatch) || target === 'pos')
+    !target ||
+    (heldBatch && target !== batchOrigin(heldBatch) && target !== batchDestination(heldBatch) && target !== 'pos')
   ) {
-    return (
-      <button type="button" className="flex items-center gap-4 text-left" onClick={() => openPanel(target)}>
-        <div>
-          <span className="mb-1 block text-xs text-muted">{STATIONS[target].name}</span>
-          <span className="text-sm font-medium">{targetActionLabel(state, target, heldBatch)}</span>
-        </div>
-        <kbd className="ml-4 grid size-9 shrink-0 place-items-center rounded-lg bg-brand text-sm text-on-brand">E</kbd>
-      </button>
-    )
+    return null
   }
+  const { verb, object } = targetAction(state, target, heldBatch)
 
-  if (carried) {
-    return (
-      <p className="flex flex-wrap items-center gap-3 text-sm">
-        <span className="text-muted">{carried.name}</span>
-        <span aria-hidden="true">→</span>
-        <span className="font-medium">{STATIONS[carried.destination].name}</span>
-      </p>
-    )
-  }
-
-  return null
+  return (
+    <button type="button" className={clsx(pill, 'py-2 pr-5 pl-2 text-left')} onClick={() => openPanel(target)}>
+      <kbd className="grid size-8 shrink-0 place-items-center rounded-full bg-brand text-sm font-semibold text-on-brand">
+        E
+      </kbd>
+      <span className="text-lg font-semibold whitespace-nowrap">{verb}</span>
+      <span className="text-body whitespace-nowrap text-muted">{object}</span>
+    </button>
+  )
 }
 
-function carriedItem(state: GameState, heldBatch: Batch | undefined): CarriedItem | null {
-  if (heldBatch) {
-    const expired = heldBatch.expiresAt !== null && heldBatch.expiresAt <= state.time
-    return {
-      name: `${INGREDIENTS[heldBatch.ingredient].name} 용기`,
-      destination: expired ? batchOrigin(heldBatch) : batchDestination(heldBatch),
-    }
-  }
+function EdgeGuide({ side, station }: { side: 'left' | 'right'; station: StationId }) {
+  return (
+    <div
+      className={clsx(
+        'pointer-events-none absolute top-1/2 z-6 flex -translate-y-1/2 items-center gap-2.5',
+        'data-[side=left]:left-6 data-[side=right]:right-6 data-[side=right]:flex-row-reverse',
+      )}
+      data-side={side}
+    >
+      <span className="grid size-11 place-items-center rounded-full bg-focus text-ink shadow-hud">
+        <svg className="size-5 data-[side=right]:rotate-180" data-side={side} viewBox="0 0 20 20" aria-hidden="true">
+          <path d="m12.5 4-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+        </svg>
+      </span>
+      <span className="rounded-full bg-surface/95 px-3.5 py-2 text-body font-semibold shadow-hud">
+        {STATIONS[station].name}
+      </span>
+    </div>
+  )
+}
 
+function targetAction(
+  state: GameState,
+  target: StationId,
+  heldBatch: Batch | undefined,
+): { verb: string; object: string } {
+  const station = STATIONS[target].name
   const heldCups = cupCount(state.cleaning?.heldCups)
-  if (state.supplyDelivery) {
-    return { name: SUPPLIES[state.supplyDelivery.supply].name, destination: 'condiment' }
-  }
-  if (heldCups) {
-    return { name: `사용한 컵 ${heldCups}개`, destination: 'wash' }
-  }
-  if (state.washing?.stage === 'carrying') {
-    return { name: `씻은 ${WASH_NAMES[state.washing.item]}`, destination: washDestination(state.washing.item) }
-  }
-  if (state.cup?.craft.location === 'hand') {
-    return { name: CUP_NAMES[state.cup.craft.kind], destination: nextStep(state)?.station ?? 'pickup' }
-  }
-  return null
-}
-
-function targetActionLabel(state: GameState, target: StationId, heldBatch: Batch | undefined) {
-  if (cupCount(state.cleaning?.heldCups) && target === 'wash') {
-    return '사용한 컵 내려놓기'
+  if (heldCups && target === 'wash') {
+    return { verb: '컵 내려놓기', object: `사용한 컵 ${heldCups}개` }
   }
   if (state.washing?.stage === 'carrying' && target === washDestination(state.washing.item)) {
-    return '씻은 용기 정리'
+    return { verb: '제자리에 놓기', object: `씻은 ${WASH_NAMES[state.washing.item]}` }
   }
 
   if (target === 'pos') {
-    if (state.phase === 'closing') {
-      return '마감 관리'
-    }
-    const canTakeOrder = state.customer?.stage === 'ordering' && !state.customer.visit
-    return canTakeOrder ? '주문 입력' : '주문 확인'
+    return { verb: posAction(state), object: station }
   }
 
   if (heldBatch) {
-    return target === batchOrigin(heldBatch) ? '용기 내려놓기' : '용기 보관'
+    return {
+      verb: target === batchOrigin(heldBatch) ? '용기 내려놓기' : '용기 보관',
+      object: INGREDIENTS[heldBatch.ingredient].name,
+    }
   }
   if (state.supplyDelivery && target === 'condiment') {
-    return '소모품 채우기'
+    return { verb: '채우기', object: SUPPLIES[state.supplyDelivery.supply].name }
   }
   if (state.supplyDelivery && target === 'stock') {
-    return '보충품 내려놓기'
+    return { verb: '보충품 내려놓기', object: SUPPLIES[state.supplyDelivery.supply].name }
   }
 
   const ticket = currentTicket(state)
 
   if (target === 'cups' && ticket && !state.cup) {
     const kind = cupKindFor(ticket.recipe, ticket.service, ticket.size)
-    return cleanCupCount(state, kind) > 0 ? `${CUP_NAMES[kind]} 집기` : '컵 재고 확인'
+    return cleanCupCount(state, kind) > 0
+      ? { verb: '컵 집기', object: CUP_NAMES[kind] }
+      : { verb: '재고 확인', object: CUP_NAMES[kind] }
   }
 
   if (state.cup?.craft.location === 'hand' && craftStations.includes(target)) {
-    return '컵 내려놓기'
+    return { verb: '컵 내려놓기', object: station }
   }
-  if (target === 'stock') {
-    return '재고 확인'
+  return { verb: target === 'stock' ? '재고 확인' : '열기', object: station }
+}
+
+function posAction(state: GameState) {
+  if (state.phase === 'closing') {
+    return '마감 관리'
   }
-  return '열기'
+  return state.customer?.stage === 'ordering' && !state.customer.visit ? '주문 입력' : '주문 확인'
 }

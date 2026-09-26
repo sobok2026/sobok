@@ -26,6 +26,7 @@ export function useCafeScene(store: CafeStore, host: RefObject<HTMLDivElement | 
             canMove: () => latest.current.canMove(),
             activeStation: () => latest.current.activeStation(),
             onTarget: (id, blocked) => latest.current.onTarget(id, blocked),
+            onGuideSide: (side) => latest.current.onGuideSide(side),
             onInteract: (id) => latest.current.onInteract(id),
             onUseStart: (id) => latest.current.onUseStart(id),
             onUseEnd: () => latest.current.onUseEnd(),

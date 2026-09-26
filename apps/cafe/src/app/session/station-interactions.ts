@@ -113,7 +113,8 @@ export function toolAt(state: GameState, station: StationId): Action {
   }
 }
 
-export function confirmationAt(state: GameState, station: StationId): Action {
+/** F confirms work. Discarding never shares this key; it sits behind the work HUD's hold action. */
+export function confirmationAt(state: GameState, station: StationId): Action | null {
   if (station === state.cleaning?.station) {
     return { type: 'clean-confirm' }
   }
@@ -132,14 +133,9 @@ export function confirmationAt(state: GameState, station: StationId): Action {
 
   if (station === 'prep' && prep) {
     if (prep.fault) {
-      return { type: 'discard-preparation' }
+      return null
     } else if (prep.stage === 'ready' && prep.batchId) {
-      const batch = state.batches.find((item) => item.id === prep.batchId)
-      return {
-        type: batch?.expiresAt != null && batch.expiresAt <= state.time ? 'discard-batch' : 'label-batch',
-        id: prep.batchId,
-        station,
-      }
+      return labelAt(state, prep.batchId, station)
     } else {
       return { type: 'prep-confirm' }
     }
@@ -149,31 +145,29 @@ export function confirmationAt(state: GameState, station: StationId): Action {
 
   if (station === 'cold-prep' && brew) {
     if (brew.fault) {
-      return { type: 'discard-cold-brew' }
+      return null
     } else if (brew.stage === 'finished') {
-      return {
-        type:
-          brew.completedAt !== null && expiryAt(brew.completedAt, INGREDIENTS.coldBrew.lifetime) <= state.time
-            ? 'discard-cold-brew'
-            : 'collect-cold-brew',
-      }
+      return brew.completedAt !== null && expiryAt(brew.completedAt, INGREDIENTS.coldBrew.lifetime) <= state.time
+        ? null
+        : { type: 'collect-cold-brew' }
     } else if (brew.stage === 'ready' && brew.batchId) {
-      const batch = state.batches.find((item) => item.id === brew.batchId)
-      return {
-        type: batch?.expiresAt != null && batch.expiresAt <= state.time ? 'discard-batch' : 'label-batch',
-        id: brew.batchId,
-        station,
-      }
+      return labelAt(state, brew.batchId, station)
     } else {
       return { type: 'cold-confirm' }
     }
   }
 
   if (state.cup?.craft.fault) {
-    return { type: 'discard-cup' }
+    return null
   } else if (state.cup && !nextStep(state) && station === 'pickup') {
     return { type: 'serve' }
   } else {
     return { type: 'confirm-craft', station }
   }
+}
+
+function labelAt(state: GameState, id: string, station: StationId): Action | null {
+  const batch = state.batches.find((item) => item.id === id)
+
+  return batch?.expiresAt != null && batch.expiresAt <= state.time ? null : { type: 'label-batch', id, station }
 }

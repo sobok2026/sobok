@@ -5,15 +5,8 @@ import { coldBrewTip } from '../../features/cold-brew/help'
 import { craftTip } from '../../features/crafting/help'
 import { nextStep } from '../../features/crafting/rules'
 import { batchDestination, batchOrigin, carriedBatch } from '../../features/inventory/batches'
-import {
-  CUP_NAMES,
-  type CupKind,
-  cleanCupCount,
-  cupCount,
-  cupKindFor,
-  isReusableCup,
-  SERVICE_NAMES,
-} from '../../features/inventory/cups'
+import { CUP_NAMES, cleanCupCount, cupCount, cupKindFor, SERVICE_NAMES } from '../../features/inventory/cups'
+import { cupRestockAction } from '../../features/inventory/help'
 import { preparationTip } from '../../features/preparation/help'
 import { currentTicket } from '../../features/service/orders'
 import { closingTasks } from '../../features/shift/rules'
@@ -74,7 +67,7 @@ export function currentTip(state: GameState, panel: StationId | null): Tip {
   if (cup?.craft.fault) {
     return {
       title: '이 컵은 다시 만들어야 해요',
-      action: `${panel ? 'Esc로 창을 닫고 ' : ''}컵이 있는 작업대에서 F로 정리한 뒤 새 컵을 집으세요.`,
+      action: `${panel ? 'Esc로 창을 닫고 ' : ''}컵이 있는 작업대에서 Q를 길게 눌러 정리한 뒤 새 컵을 집으세요.`,
       reason: cup.craft.fault,
       fault: true,
     }
@@ -129,22 +122,4 @@ function orderEntryAction(state: GameState, panel: StationId | null) {
     return '메뉴·온도·사이즈·매장/포장을 확인하고 음료를 담고 결제를 완료하세요.'
   }
   return '손님이 POS에 도착할 때까지 기다려주세요.'
-}
-
-function cupRestockAction(state: GameState, kind: CupKind) {
-  if (isReusableCup(kind)) {
-    const cups = state.reusableCups[kind]
-    if (cups.washed > 0) {
-      return `세척대에서 씻은 ${CUP_NAMES[kind]}를 집어 컵 보관대에 놓으세요.`
-    }
-    if (cups.dirty > 0) {
-      return `세척대에서 ${CUP_NAMES[kind]}를 씻고 컵 보관대에 놓으세요.`
-    }
-    return '사용한 컵을 회수해 세척대에서 씻고 컵 보관대에 돌려놓으세요.'
-  }
-
-  if (state.disposableCups[kind].reserve) {
-    return '컵 보관대에서 E로 재고를 열고 해당 컵을 보충하세요.'
-  }
-  return '창고에서 해당 컵을 입고하고 보관대를 보충하세요.'
 }

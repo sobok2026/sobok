@@ -1,13 +1,12 @@
 import { formatDecimal } from '@sobok/std/format/number'
 import clsx from 'clsx'
 import { INGREDIENTS } from '../../content/ingredients'
-import { expiryAt } from '../../content/lifetime'
 import { STATIONS, type StationId } from '../../content/stations'
 import { batchDate } from '../../shared/format'
 import { Button, TextButton } from '../../shared/ui/Button'
 import type { Action } from '../../simulation/actions'
 import type { Batch } from '../../simulation/state'
-import { batchDestination, batchOrigin } from './batches'
+import { batchDestination, batchOrigin, limitedByIngredient } from './batches'
 
 const STORAGES = [
   { storage: 'fridge', label: '냉장고에 보관' },
@@ -33,9 +32,6 @@ export default function BatchLabel({
       ? station === 'stock'
       : batch.location === batchOrigin(batch) && station === batchOrigin(batch)
   const canDiscard = atOrigin || (batch.location === 'bar' && (station === 'stock' || station === 'shelf'))
-  const usualExpiry = batch.openedAt === null ? null : expiryAt(batch.openedAt, definition.lifetime)
-  const limitedByIngredient =
-    !!definition.prepared && batch.expiresAt !== null && usualExpiry !== null && batch.expiresAt < usualExpiry
 
   return (
     <details className="group/label my-1 text-xs" data-expired={expired} open={pending || expired}>
@@ -62,7 +58,7 @@ export default function BatchLabel({
             <dd className="text-brand">{definition.storage === 'fridge' ? '냉장' : '실온'}</dd>
           </div>
         </dl>
-        {limitedByIngredient && <p className="mt-2 text-xs text-muted">원재료 기한 적용</p>}
+        {limitedByIngredient(batch) && <p className="mt-2 text-xs text-muted">원재료 기한 적용</p>}
       </div>
       {!expired && !batch.labelled && atOrigin && (
         <Button size="compact" className="mt-1" onClick={() => act({ type: 'label-batch', id: batch.id, station })}>

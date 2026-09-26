@@ -5,6 +5,7 @@ import type { Batch, GameState } from '../../simulation/state'
 import { COLD_BREW_HOURS } from '../cold-brew/rules'
 import { preparationForMaterial } from '../preparation/rules'
 import { batchDestination, batchOrigin } from './batches'
+import { CUP_NAMES, type CupKind, isReusableCup } from './cups'
 
 export function materialTip(state: GameState, ingredient: IngredientId): Tip {
   const definition = INGREDIENTS[ingredient]
@@ -65,4 +66,22 @@ function pendingAction(definition: Ingredient, batch: Batch) {
     return '창고에서 날짜 확인 후 라벨을 붙이세요.'
   }
   return `창고에서 ${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하세요.`
+}
+
+export function cupRestockAction(state: GameState, kind: CupKind) {
+  if (isReusableCup(kind)) {
+    const cups = state.reusableCups[kind]
+    if (cups.washed > 0) {
+      return `세척대에서 씻은 ${CUP_NAMES[kind]}를 집어 컵 보관대에 놓으세요.`
+    }
+    if (cups.dirty > 0) {
+      return `세척대에서 ${CUP_NAMES[kind]}를 씻고 컵 보관대에 놓으세요.`
+    }
+    return '사용한 컵을 회수해 세척대에서 씻고 컵 보관대에 돌려놓으세요.'
+  }
+
+  if (state.disposableCups[kind].reserve) {
+    return '컵 보관대에서 E로 재고를 열고 해당 컵을 보충하세요.'
+  }
+  return '창고에서 해당 컵을 입고하고 보관대를 보충하세요.'
 }
