@@ -17,13 +17,21 @@ export const workIsBusy = (work: WorkContext, owner: WorkOwner) =>
 
 export function currentWorkStep(steps: WorkStep[], session: ProductionState): WorkStep | undefined {
   const source = steps[session.cursor]
-  if (!source) return undefined
+  if (!source) {
+    return undefined
+  }
   const step = stockAwareWorkStep(session, observationStep(source, session))
-  if (step.kind === 'condition' || session.resumeProgress === null) return step
+  if (step.kind === 'condition' || session.resumeProgress === null) {
+    return step
+  }
   const operation = step.operation
-  if (operation.action !== 'add') throw new Error('재혼합 대상 재료가 없습니다.')
+  if (operation.action !== 'add') {
+    throw new Error('재혼합 대상 재료가 없습니다.')
+  }
   const mixing = steps.slice(0, session.cursor).findLast((item) => item.mixesMaterialId === operation.materialId)
-  if (!mixing) throw new Error('원문의 재혼합 단계를 찾을 수 없습니다.')
+  if (!mixing) {
+    throw new Error('원문의 재혼합 단계를 찾을 수 없습니다.')
+  }
 
   return {
     ...mixing,
@@ -42,7 +50,9 @@ export function currentWorkStep(steps: WorkStep[], session: ProductionState): Wo
 }
 
 function stockEffect(session: ProductionState, step: WorkStep) {
-  if (session.stepStart?.stepId === step.id) return session.stepStart.effect
+  if (session.stepStart?.stepId === step.id) {
+    return session.stepStart.effect
+  }
   const effect = buildStockEffect(
     recipeCatalog,
     session,
@@ -54,10 +64,14 @@ function stockEffect(session: ProductionState, step: WorkStep) {
 }
 
 export function stockAwareWorkStep(session: ProductionState, step: WorkStep): WorkStep {
-  if (step.kind === 'condition') return step
+  if (step.kind === 'condition') {
+    return step
+  }
 
   if (step.mixesMaterialId) {
-    if (session.resumeProgress !== null) return step
+    if (session.resumeProgress !== null) {
+      return step
+    }
     const effect = step.nextStockAdd
       ? buildStockEffect(recipeCatalog, session, step.nextStockAdd, step.stockContext)
       : null
@@ -74,19 +88,24 @@ export function stockAwareWorkStep(session: ProductionState, step: WorkStep): Wo
 }
 
 export function productionTargetFill(session: ProductionState, step: WorkStep, vesselId: string) {
-  if (step.kind === 'condition' || step.mixesMaterialId) return undefined
+  if (step.kind === 'condition' || step.mixesMaterialId) {
+    return undefined
+  }
   return stockEffect(session, step).targetFills[vesselId]
 }
 
 function enoughToTransfer(work: WorkContext, session: ProductionState, step: WorkStep) {
-  if (step.mixesMaterialId || step.kind === 'condition') return true
+  if (step.mixesMaterialId || step.kind === 'condition') {
+    return true
+  }
   const transfer = stockEffect(session, step).transfer
   if (
     !transfer ||
     transfer.requiredMilliliters === null ||
     transfer.availableMilliliters + PRODUCTION_EPSILON >= transfer.requiredMilliliters
-  )
+  ) {
     return true
+  }
   session.fault = '옮길 내용물이 부족해서 원문의 계량 목표를 채울 수 없어요.'
   work.input = null
   say(work.state, session.fault, 'error')
@@ -94,15 +113,18 @@ function enoughToTransfer(work: WorkContext, session: ProductionState, step: Wor
 }
 
 function mixedInputReady(work: WorkContext, session: ProductionState, step: WorkStep): boolean {
-  if (!step.requiresMixedMaterialId || readyWork(step, session.progress)) return true
+  if (!step.requiresMixedMaterialId || readyWork(step, session.progress)) {
+    return true
+  }
   const id = step.requiresMixedMaterialId
   const remaining = (step.costs[id] ?? 0) * Math.max(0, 1 - session.progress / step.target)
   const selected = session.mixedInputs[id]
   if (
     remaining <= PRODUCTION_EPSILON ||
     (selected?.length && available(work.state, id, selected) + PRODUCTION_EPSILON >= remaining)
-  )
+  ) {
     return true
+  }
   session.resumeProgress = session.progress
   session.progress = 0
   delete session.mixedInputs[id]
@@ -124,7 +146,9 @@ export function applyProduction(work: WorkContext, session: ProductionState, ste
     return
   }
 
-  if (!enoughToTransfer(work, session, step)) return
+  if (!enoughToTransfer(work, session, step)) {
+    return
+  }
 
   if (step.mixesMaterialId) {
     const id = step.mixesMaterialId
@@ -135,7 +159,9 @@ export function applyProduction(work: WorkContext, session: ProductionState, ste
       return
     }
 
-    if (session.progress <= PRODUCTION_EPSILON) session.mixedInputs[id] = batchIdsFor(work.state, id, needed)
+    if (session.progress <= PRODUCTION_EPSILON) {
+      session.mixedInputs[id] = batchIdsFor(work.state, id, needed)
+    }
 
     if (available(work.state, id, session.mixedInputs[id]) + PRODUCTION_EPSILON < needed) {
       session.progress = 0
@@ -145,8 +171,9 @@ export function applyProduction(work: WorkContext, session: ProductionState, ste
     }
   }
 
-  if (continuousWork(step) || step.kind === 'confirm')
+  if (continuousWork(step) || step.kind === 'confirm') {
     delta = Math.min(delta, Math.max(0, (step.maximum ?? Infinity) - session.progress))
+  }
 
   if (delta <= 0) {
     work.input = null
@@ -186,8 +213,9 @@ export function applyProduction(work: WorkContext, session: ProductionState, ste
   }
 
   addAmounts(session.consumed, costs)
-  if (result.earliestExpiry !== null)
+  if (result.earliestExpiry !== null) {
     session.ingredientExpiresAt = Math.min(session.ingredientExpiresAt ?? result.earliestExpiry, result.earliestExpiry)
+  }
 
   if (effect && nextStock) {
     session.stepStart ??= { stepId: step.id, target, effect }
@@ -196,8 +224,9 @@ export function applyProduction(work: WorkContext, session: ProductionState, ste
   }
 
   session.progress += delta
-  if (Math.abs(session.progress - (step.maximum ?? Infinity)) < PRODUCTION_EPSILON)
+  if (Math.abs(session.progress - (step.maximum ?? Infinity)) < PRODUCTION_EPSILON) {
     session.progress = step.maximum ?? session.progress
+  }
 }
 
 export function beginProduction(work: WorkContext, session: ProductionState, step: WorkStep, owner: WorkOwner) {
@@ -206,7 +235,9 @@ export function beginProduction(work: WorkContext, session: ProductionState, ste
     return
   }
 
-  if (session.fault || workIsBusy(work, owner)) return
+  if (session.fault || workIsBusy(work, owner)) {
+    return
+  }
 
   if (work.state.jobs.some((job) => job.station === step.station)) {
     say(work.state, '장비를 사용 중이에요.', 'error')
@@ -218,7 +249,9 @@ export function beginProduction(work: WorkContext, session: ProductionState, ste
     return
   }
 
-  if (!mixedInputReady(work, session, step)) return
+  if (!mixedInputReady(work, session, step)) {
+    return
+  }
 
   if (continuousWork(step)) {
     work.input =
@@ -228,10 +261,14 @@ export function beginProduction(work: WorkContext, session: ProductionState, ste
     return
   }
 
-  if (step.kind === 'machine' && session.progress + PRODUCTION_EPSILON >= (step.maximum ?? Infinity)) return
+  if (step.kind === 'machine' && session.progress + PRODUCTION_EPSILON >= (step.maximum ?? Infinity)) {
+    return
+  }
   const before = session.progress
   applyProduction(work, session, step, step.increment)
-  if (session.progress <= before || step.kind !== 'machine' || step.seconds === null) return
+  if (session.progress <= before || step.kind !== 'machine' || step.seconds === null) {
+    return
+  }
   startJob(work.state, 'production', owner.station, step.label, step.seconds, {
     ...(owner.kind === 'drink' ? { cupId: owner.id } : { preparationId: owner.id }),
     stepIndex: session.cursor,
@@ -250,14 +287,18 @@ export function confirmProduction(
     return false
   }
 
-  if (session.fault || workIsBusy(work, owner)) return false
+  if (session.fault || workIsBusy(work, owner)) {
+    return false
+  }
 
   if (!readyWork(step, session.progress)) {
     say(work.state, '현재 단계의 목표까지 진행해주세요.', 'error')
     return false
   }
 
-  if (!enoughToTransfer(work, session, step)) return false
+  if (!enoughToTransfer(work, session, step)) {
+    return false
+  }
 
   if (session.tool) {
     say(work.state, '도구를 내려놓은 뒤 확인해주세요.', 'error')
@@ -284,7 +325,9 @@ export function confirmProduction(
     }
   }
 
-  if (step.requiresMixedMaterialId) delete session.mixedInputs[step.requiresMixedMaterialId]
+  if (step.requiresMixedMaterialId) {
+    delete session.mixedInputs[step.requiresMixedMaterialId]
+  }
   session.cursor++
   session.progress = 0
   session.stepStart = null

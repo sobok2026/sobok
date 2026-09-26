@@ -37,7 +37,9 @@ export function handleWashingActions(
       say(s, `${WASH_NAMES[action.item]}를 세척대에 놓았어요.`)
       break
     case 'wash-tool':
-      if (s.washing?.stage !== 'scrub') break
+      if (s.washing?.stage !== 'scrub') {
+        break
+      }
 
       if (craftingHandsBusy(s)) {
         fail('컵과 제조 도구를 먼저 내려놓아주세요.')
@@ -49,7 +51,9 @@ export function handleWashingActions(
       break
     case 'wash-use': {
       const washing = s.washing
-      if (!washing || !['scrub', 'rinse'].includes(washing.stage)) break
+      if (!washing || !['scrub', 'rinse'].includes(washing.stage)) {
+        break
+      }
 
       if (craftingHandsBusy(s)) {
         fail('컵과 제조 도구를 먼저 내려놓아주세요.')
@@ -66,7 +70,9 @@ export function handleWashingActions(
     }
     case 'wash-confirm': {
       const washing = s.washing
-      if (!washing || (washing.stage !== 'scrub' && washing.stage !== 'rinse')) break
+      if (!washing || (washing.stage !== 'scrub' && washing.stage !== 'rinse')) {
+        break
+      }
 
       if (craftingHandsBusy(s)) {
         fail('컵과 제조 도구를 먼저 내려놓아주세요.')
@@ -123,9 +129,14 @@ export function handleWashingActions(
       say(s, `씻은 ${WASH_NAMES[action.item]}를 집었어요.`)
       break
     case 'leave-wash':
-      if (!s.washing) break
-      if (s.washing.stage === 'carrying') washStock(s, s.washing.item).washed++
-      else if (s.washing.stage !== 'ready') washStock(s, s.washing.item).dirty++
+      if (!s.washing) {
+        break
+      }
+      if (s.washing.stage === 'carrying') {
+        washStock(s, s.washing.item).washed++
+      } else if (s.washing.stage !== 'ready') {
+        washStock(s, s.washing.item).dirty++
+      }
       s.washing = null
       say(s, '용기를 세척대에 내려놓았어요. 미완료 세척은 다시 시작해야 해요.')
       break

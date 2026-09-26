@@ -13,18 +13,25 @@ export function useWriterLock() {
     }
 
     queueMicrotask(() => {
-      if (cancelled) return
+      if (cancelled) {
+        return
+      }
       void navigator.locks
         .request('sobok-cafe-writer', { ifAvailable: true }, async (lock) => {
-          if (cancelled) return
+          if (cancelled) {
+            return
+          }
           setHasLock(!!lock)
-          if (lock)
+          if (lock) {
             await new Promise<void>((resolve) => {
               release = resolve
             })
+          }
         })
         .catch(() => {
-          if (!cancelled) setHasLock(false)
+          if (!cancelled) {
+            setHasLock(false)
+          }
         })
     })
 

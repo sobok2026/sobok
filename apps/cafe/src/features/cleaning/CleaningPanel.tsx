@@ -19,7 +19,7 @@ export default function CleaningPanel({
 
   return (
     <>
-      {isCupSurface(panel) ? (
+      {isCupSurface(panel) && (
         <>
           <div className="my-5 text-[1.75rem] leading-[1.2] font-normal text-[#536f4b]">
             {cupCount(cupSurface(state, panel).cups)}
@@ -33,8 +33,8 @@ export default function CleaningPanel({
             정리 시작
           </Button>
         </>
-      ) : null}
-      {panel === 'mix' ? (
+      )}
+      {panel === 'mix' && (
         <Button
           variant="secondary"
           disabled={!state.dirtyBar || !!actionJob}
@@ -42,8 +42,8 @@ export default function CleaningPanel({
         >
           작업대 닦기
         </Button>
-      ) : null}
-      {panel === 'trash' ? (
+      )}
+      {panel === 'trash' && (
         <>
           <div className="my-5 text-[1.75rem] leading-[1.2] font-normal text-[#536f4b]">
             {state.trash}
@@ -53,12 +53,14 @@ export default function CleaningPanel({
             분리수거 시작
           </Button>
         </>
-      ) : null}
+      )}
     </>
   )
 }
 
 function surfaceStatus(surface: ReturnType<typeof cupSurface>) {
-  if (surface.dirty) return '얼룩 있음'
+  if (surface.dirty) {
+    return '얼룩 있음'
+  }
   return cupCount(surface.cups) ? '컵 회수 필요' : '정리 완료'
 }

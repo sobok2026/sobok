@@ -49,20 +49,31 @@ export function canOmit(step: PlannedStep) {
 
 export function customizationLabels(plan: PlannedStep[], custom: Customizations): string[] {
   const labels: string[] = []
-  if (custom.coffee)
+  if (custom.coffee) {
     labels.push({ regular: '일반 원두', decaf: '디카페인', 'half-decaf': '1/2 디카페인' }[custom.coffee])
-  if (custom.milk) labels.push(milkChoices[custom.milk])
+  }
+  if (custom.milk) {
+    labels.push(milkChoices[custom.milk])
+  }
 
   for (const step of plan) {
     const count = custom.quantities[step.id]
     const amount = countAmount(step)
-    if (count !== undefined && amount) labels.push(`${step.label} ${count}${amount.unit === 'shot' ? '샷' : '펌프'}`)
-    if (custom.omitted.includes(step.id)) labels.push(`${step.label} 없이`)
-    if (custom.levels[step.id]) labels.push(`${step.label} ${custom.levels[step.id] === 'less' ? '적게' : '많이'}`)
+    if (count !== undefined && amount) {
+      labels.push(`${step.label} ${count}${amount.unit === 'shot' ? '샷' : '펌프'}`)
+    }
+    if (custom.omitted.includes(step.id)) {
+      labels.push(`${step.label} 없이`)
+    }
+    if (custom.levels[step.id]) {
+      labels.push(`${step.label} ${custom.levels[step.id] === 'less' ? '적게' : '많이'}`)
+    }
   }
 
   for (const [id, count] of Object.entries(custom.syrups))
-    if (count) labels.push(`${extraSyrups[id as keyof typeof extraSyrups]} ${count}펌프`)
+    if (count) {
+      labels.push(`${extraSyrups[id as keyof typeof extraSyrups]} ${count}펌프`)
+    }
 
   return labels
 }
@@ -74,18 +85,25 @@ export function customizationPrice(plan: PlannedStep[], custom: Customizations):
   const baseDecaf = espresso.some(
     (step) => step.operation.action === 'espresso' && step.operation.method.includes('decaf'),
   )
-  if (custom.coffee && custom.coffee !== 'regular' && !baseDecaf) total += 300
-  if (custom.milk === '오트앤유') total += 800
+  if (custom.coffee && custom.coffee !== 'regular' && !baseDecaf) {
+    total += 300
+  }
+  if (custom.milk === '오트앤유') {
+    total += 800
+  }
 
   for (const step of espresso) {
     const amount = countAmount(step)
-    if (amount && custom.quantities[step.id] !== undefined)
+    if (amount && custom.quantities[step.id] !== undefined) {
       total += Math.ceil(Math.max(0, custom.quantities[step.id] - amount.value)) * 800
+    }
   }
 
   for (const [id, count] of Object.entries(custom.syrups)) {
     const included = plan.some((step) => step.operation.action === 'add' && step.operation.materialId === id)
-    if (count && !included && !(custom.milk === '두유' && id === '바닐라-시럽')) total += 800
+    if (count && !included && !(custom.milk === '두유' && id === '바닐라-시럽')) {
+      total += 800
+    }
   }
 
   return total
@@ -98,28 +116,39 @@ export function customizePlan(base: PlannedStep[], custom: Customizations): Plan
 
   for (const id of Object.keys(custom.quantities)) {
     const step = base.find((item) => item.id === id)
-    if (!step || !customizableQuantity(step)) throw new Error('이 음료에서 변경할 수 없는 수량입니다.')
+    if (!step || !customizableQuantity(step)) {
+      throw new Error('이 음료에서 변경할 수 없는 수량입니다.')
+    }
     const amount = countAmount(step)!
-    if (amount.unit === 'pump' && !Number.isInteger(custom.quantities[id]))
+    if (amount.unit === 'pump' && !Number.isInteger(custom.quantities[id])) {
       throw new Error('시럽은 펌프 단위로 선택해주세요.')
-    if (step.operation.action === 'espresso' && custom.quantities[id] < 0.5)
+    }
+    if (step.operation.action === 'espresso' && custom.quantities[id] < 0.5) {
       throw new Error('에스프레소는 최소 0.5샷이 필요해요.')
+    }
   }
 
-  if (custom.omitted.some((id) => !ids.has(id) || !canOmit(base.find((step) => step.id === id)!)))
+  if (custom.omitted.some((id) => !ids.has(id) || !canOmit(base.find((step) => step.id === id)!))) {
     throw new Error('이 음료에서 제외할 수 없는 재료입니다.')
+  }
   if (
     Object.keys(custom.levels).some(
       (id) => !ids.has(id) || !canOmit(base.find((step) => step.id === id)!) || custom.omitted.includes(id),
     )
-  )
+  ) {
     throw new Error('얼음·휘핑·드리즐의 양을 확인해주세요.')
+  }
   const hasMilk = base.some((step) => step.operation.action === 'add' && step.operation.materialId === 'milk')
-  if (custom.milk && !hasMilk) throw new Error('일반 우유가 들어가는 음료에서 변경해주세요.')
-  if (custom.coffee && !base.some((step) => step.operation.action === 'espresso'))
+  if (custom.milk && !hasMilk) {
+    throw new Error('일반 우유가 들어가는 음료에서 변경해주세요.')
+  }
+  if (custom.coffee && !base.some((step) => step.operation.action === 'espresso')) {
     throw new Error('에스프레소 음료에서 원두를 변경해주세요.')
+  }
   const plan = base.flatMap((step): PlannedStep[] => {
-    if (custom.omitted.includes(step.id)) return []
+    if (custom.omitted.includes(step.id)) {
+      return []
+    }
     let operation = { ...step.operation }
     const count = custom.quantities[step.id]
 
@@ -128,17 +157,24 @@ export function customizePlan(base: PlannedStep[], custom: Customizations): Plan
       (operation.action === 'add' || operation.action === 'espresso') &&
       operation.amount.kind === 'count'
     ) {
-      if (count === 0) return []
+      if (count === 0) {
+        return []
+      }
       operation = { ...operation, amount: { ...operation.amount, value: count } }
     }
 
-    if (operation.action === 'espresso' && custom.coffee) operation = { ...operation, method: custom.coffee }
-    if (operation.action === 'add' && operation.materialId === 'milk' && custom.milk)
+    if (operation.action === 'espresso' && custom.coffee) {
+      operation = { ...operation, method: custom.coffee }
+    }
+    if (operation.action === 'add' && operation.materialId === 'milk' && custom.milk) {
       operation = { ...operation, materialId: custom.milk }
+    }
 
     if (operation.action === 'add' && operation.materialId in custom.syrups && operation.amount.kind === 'count') {
       const count = custom.syrups[operation.materialId as keyof typeof extraSyrups]!
-      if (!count) return []
+      if (!count) {
+        return []
+      }
       operation = { ...operation, amount: { ...operation.amount, value: count } }
     }
 
@@ -159,13 +195,17 @@ export function customizePlan(base: PlannedStep[], custom: Customizations): Plan
   })
 
   for (const [id, count] of Object.entries(custom.syrups)) {
-    if (!count || base.some((step) => step.operation.action === 'add' && step.operation.materialId === id)) continue
+    if (!count || base.some((step) => step.operation.action === 'add' && step.operation.materialId === id)) {
+      continue
+    }
     const firstPour = plan.find(
       (step) =>
         (step.operation.action === 'add' || step.operation.action === 'espresso') &&
         step.operation.into === 'serving-cup',
     )
-    if (!firstPour) throw new Error('이 제공 용기에는 시럽을 추가할 수 없어요.')
+    if (!firstPour) {
+      throw new Error('이 제공 용기에는 시럽을 추가할 수 없어요.')
+    }
     plan.unshift({
       id: `custom:${id}`,
       sourceStepId: `custom:${id}`,

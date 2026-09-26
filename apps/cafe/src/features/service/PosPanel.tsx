@@ -106,8 +106,11 @@ export default function PosPanel({
           if (event.key === 'Escape') {
             event.preventDefault()
             event.stopPropagation()
-            if (view !== 'order' && !paid) setView('order')
-            else onEscape()
+            if (view !== 'order' && !paid) {
+              setView('order')
+            } else {
+              onEscape()
+            }
           } else if (event.key === 'Tab') {
             const controls = [
               ...event.currentTarget.querySelectorAll<HTMLElement>(
@@ -127,7 +130,9 @@ export default function PosPanel({
               event.preventDefault()
               controls[0]?.focus()
             }
-          } else if (!['KeyH', 'KeyM'].includes(event.code)) event.stopPropagation()
+          } else if (!['KeyH', 'KeyM'].includes(event.code)) {
+            event.stopPropagation()
+          }
         }}
       >
         <aside className="flex min-h-0 min-w-0 flex-col rounded-md bg-white p-2.5">
@@ -142,7 +147,7 @@ export default function PosPanel({
               <span>{state.customer ? CUSTOMER_STATUS[state.customer.stage] : '응대 중인 손님 없음'}</span>
             </div>
           </header>
-          {state.customer && !state.customer.visit ? (
+          {state.customer && !state.customer.visit && (
             <div className="mb-3 rounded bg-pos-soft/70 p-2.5 text-xs">
               <button
                 type="button"
@@ -159,7 +164,7 @@ export default function PosPanel({
                 </p>
               ))}
             </div>
-          ) : null}
+          )}
           <fieldset ref={list} className="min-h-0 flex-1 space-y-1 overflow-y-auto" aria-label="주문 목록">
             {sale?.lines.map((line, index) => (
               <div
@@ -205,13 +210,13 @@ export default function PosPanel({
                       {label}
                     </p>
                   ))}
-                  {paid ? (
+                  {paid && (
                     <p className="mt-2 text-xs">
                       전달 {line.served} / {line.quantity}잔 {line.served === line.quantity ? '✓' : ''}
                     </p>
-                  ) : null}
+                  )}
                 </button>
-                {selected?.id === line.id && editable ? (
+                {selected?.id === line.id && editable && (
                   <div className="flex justify-end px-2 pb-2">
                     <button
                       type="button"
@@ -221,12 +226,12 @@ export default function PosPanel({
                       항목 삭제 ×
                     </button>
                   </div>
-                ) : null}
+                )}
               </div>
             ))}
-            {!sale ? (
+            {!sale && (
               <p className="flex h-full items-center justify-center text-sm text-pos-panel">선택된 메뉴가 없습니다.</p>
-            ) : null}
+            )}
           </fieldset>
           <div className="mt-3 grid shrink-0 grid-cols-5 gap-1">
             <PosButton disabled={!editable || !sale} onClick={() => setDialog('clear')} className="px-1 text-xs">
@@ -330,7 +335,7 @@ export default function PosPanel({
               <PosCheckout state={state} act={act} onBack={() => setView('order')} onClose={onClose} />
             ) : (
               <>
-                {view === 'order' ? (
+                {view === 'order' && (
                   <nav className="flex w-22 shrink-0 flex-col gap-1" aria-label="주문 규격">
                     <PosButton
                       tone="active"
@@ -357,8 +362,9 @@ export default function PosPanel({
 
                         if (selected) {
                           const other = temperatureVariant(selected.recipe, next)
-                          if (other && recipeSizes(other, selected.service).includes(selected.size))
+                          if (other && recipeSizes(other, selected.service).includes(selected.size)) {
                             update(selected, { ...selected, recipe: other, customizations: noCustomizations() })
+                          }
                         }
                       }}
                     >
@@ -378,7 +384,9 @@ export default function PosPanel({
                           className="min-h-9 flex-1 px-1"
                           onClick={() => {
                             setSize(id)
-                            if (selected) update(selected, { ...selected, size: id })
+                            if (selected) {
+                              update(selected, { ...selected, size: id })
+                            }
                           }}
                         >
                           {DRINK_SIZES[id].name}
@@ -396,14 +404,16 @@ export default function PosPanel({
                         className="min-h-13 px-1"
                         onClick={() => {
                           setService(mode)
-                          if (selected) update(selected, { ...selected, service: mode })
+                          if (selected) {
+                            update(selected, { ...selected, service: mode })
+                          }
                         }}
                       >
                         {mode === 'dine-in' ? '매장컵' : '일회용컵'}
                       </PosButton>
                     ))}
                   </nav>
-                ) : null}
+                )}
                 {view === 'custom' ? (
                   <PosCustomize
                     onBack={() => setView('order')}
@@ -473,7 +483,7 @@ export default function PosPanel({
             </PosButton>
           </footer>
         </div>
-        {dialog === 'request' ? (
+        {dialog === 'request' && (
           <PosDialog title="손님 요청" onClose={closeDialog}>
             {state.customer?.items.map((item, index) => (
               <div key={`${index}-${item.recipe}`} className="border-b border-pos-soft py-3">
@@ -484,14 +494,14 @@ export default function PosPanel({
               </div>
             )) ?? <p>응대 중인 손님이 없습니다.</p>}
           </PosDialog>
-        ) : null}
-        {dialog === 'store' ? (
+        )}
+        {dialog === 'store' && (
           <PosDialog title="매장 현황 · 영업 관리" onClose={closeDialog} wide>
             <ShiftLedger state={state} />
             <ShiftControls state={state} act={act} />
           </PosDialog>
-        ) : null}
-        {dialog === 'clear' ? (
+        )}
+        {dialog === 'clear' && (
           <PosDialog title="주문 전체 삭제" onClose={closeDialog}>
             <p className="mb-6">담은 음료 {count}잔을 모두 삭제할까요?</p>
             <div className="grid grid-cols-2 gap-2">
@@ -508,15 +518,17 @@ export default function PosPanel({
               </PosButton>
             </div>
           </PosDialog>
-        ) : null}
-        {dialog === 'quantity' && selected ? (
+        )}
+        {dialog === 'quantity' && selected && (
           <PosDialog title="수량 변경" onClose={closeDialog}>
             <input
               aria-label="주문 수량"
               inputMode="numeric"
               value={quantity}
               onChange={(event) => {
-                if (/^\d{0,2}$/.test(event.target.value)) setQuantity(event.target.value)
+                if (/^\d{0,2}$/.test(event.target.value)) {
+                  setQuantity(event.target.value)
+                }
               }}
               className="mb-3 min-h-13 w-full rounded border-2 border-pos-active bg-[#fff2cb] px-3 text-xl"
             />
@@ -531,33 +543,43 @@ export default function PosPanel({
               }}
             />
           </PosDialog>
-        ) : null}
-        {dialog === 'calculator' ? (
+        )}
+        {dialog === 'calculator' && (
           <PosDialog title="계산기" onClose={closeDialog}>
             <PosCalculator />
           </PosDialog>
-        ) : null}
+        )}
       </section>
     </div>
   )
 }
 
 function checkoutButtonLabel(paid: boolean, view: View, total: number) {
-  if (paid) return '결제 완료'
+  if (paid) {
+    return '결제 완료'
+  }
   return view === 'checkout' ? '‹ 주문으로 돌아가기' : `${total.toLocaleString('ko-KR')} 결제`
 }
 
 function orderStatus(paid: boolean, paidAmount: number, total: number) {
-  if (paid) return '결제한 주문을 제조해주세요.'
+  if (paid) {
+    return '결제한 주문을 제조해주세요.'
+  }
   return paidAmount ? `남은 결제금액 ${money(total - paidAmount)}` : '주문 · 커스텀 · 결제'
 }
 
 type Operator = '+' | '−' | '×' | '÷'
 
 function calculate(left: number, operator: Operator, right: number) {
-  if (operator === '+') return left + right
-  if (operator === '−') return left - right
-  if (operator === '×') return left * right
+  if (operator === '+') {
+    return left + right
+  }
+  if (operator === '−') {
+    return left - right
+  }
+  if (operator === '×') {
+    return left * right
+  }
   return right ? left / right : 0
 }
 
@@ -567,7 +589,9 @@ function PosCalculator() {
   const [operator, setOperator] = useState<Operator>('+')
 
   const compute = () => {
-    if (left === null) return
+    if (left === null) {
+      return
+    }
     const right = Number(value)
     const result = calculate(left, operator, right)
     setValue(String(Math.round(result * 100) / 100))

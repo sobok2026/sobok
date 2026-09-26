@@ -49,7 +49,9 @@ export class CafeStore {
 
   dispatch(action: Action) {
     this.input = null
-    if (this.state.phase === 'summary' && action.type !== 'next-day') return
+    if (this.state.phase === 'summary' && action.type !== 'next-day') {
+      return
+    }
     const work: WorkContext = { state: structuredClone(this.state), input: null }
     const s = work.state
     completeJobs(work)
@@ -146,7 +148,9 @@ export class CafeStore {
   }
 
   tick(seconds: number) {
-    if (this.state.phase === 'summary') return
+    if (this.state.phase === 'summary') {
+      return
+    }
     const work: WorkContext = { state: structuredClone(this.state), input: this.input }
     const dt = Math.max(0, Math.min(seconds, 2))
     work.state.time += dt

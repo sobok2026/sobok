@@ -58,7 +58,9 @@ const customerSeat = (table: TableId): CustomerPoint => [STATIONS[table].x, 2.75
 
 export const orderSizes = (recipe: RecipeId, service: ServiceMode): DrinkSize[] => {
   const menu = RECIPES[recipe]
-  if (!menu) return []
+  if (!menu) {
+    return []
+  }
 
   return recipeSizes(recipe, service).filter(
     (size) => size !== 'trenta' || (service === 'takeout' && menu.temperature === 'iced'),
@@ -66,7 +68,9 @@ export const orderSizes = (recipe: RecipeId, service: ServiceMode): DrinkSize[] 
 }
 
 export function createCustomer(orderNumber: number): Customer | null {
-  if (!orderSequence.length) return null
+  if (!orderSequence.length) {
+    return null
+  }
   const preferredService = Math.random() < 0.5 ? 'dine-in' : 'takeout'
   const items: Customer['items'] = Array.from({ length: 1 + (orderNumber % 3) }, (_, index) => {
     const recipe = orderSequence[(orderNumber - 1 + index) % orderSequence.length]
@@ -87,20 +91,28 @@ export function createCustomer(orderNumber: number): Customer | null {
             step.operation.amount.unit === 'pump'),
       )
       const amount = step && countAmount(step)
-      if (step && amount)
+      if (step && amount) {
         candidates.push({
           ...noCustomizations(),
           quantities: { [step.id]: amount.unit === 'shot' ? amount.value + 1 : Math.max(0, amount.value - 1) },
         })
-      if (plan.some((step) => step.operation.action === 'espresso' && step.operation.method === 'regular'))
+      }
+      if (plan.some((step) => step.operation.action === 'espresso' && step.operation.method === 'regular')) {
         candidates.push({ ...noCustomizations(), coffee: 'decaf' })
-      if (plan.some((step) => step.operation.action === 'add' && step.operation.materialId === 'milk'))
+      }
+      if (plan.some((step) => step.operation.action === 'add' && step.operation.materialId === 'milk')) {
         candidates.push({ ...noCustomizations(), milk: '두유' })
+      }
       const omission = plan.find(canOmit)
-      if (omission) candidates.push({ ...noCustomizations(), omitted: [omission.id] })
-      if (omission) candidates.push({ ...noCustomizations(), levels: { [omission.id]: 'less' } })
-      if (plan.some((step) => 'into' in step.operation && step.operation.into === 'serving-cup'))
+      if (omission) {
+        candidates.push({ ...noCustomizations(), omitted: [omission.id] })
+      }
+      if (omission) {
+        candidates.push({ ...noCustomizations(), levels: { [omission.id]: 'less' } })
+      }
+      if (plan.some((step) => 'into' in step.operation && step.operation.into === 'serving-cup')) {
         candidates.push({ ...noCustomizations(), syrups: { '바닐라-시럽': 2 } })
+      }
       const proposed = candidates[Math.floor(orderNumber / 2) % candidates.length]
 
       if (proposed) {
@@ -150,13 +162,17 @@ export function customerToCondiment(customer: Customer) {
 }
 
 export function customerToTable(customer: Customer) {
-  if (!customer.visit?.table) return
+  if (!customer.visit?.table) {
+    return
+  }
   const seat = customerSeat(customer.visit.table)
   customerPath(customer, 'to-table', [[0, 1.7], [seat[0] + 1, 1.7], [seat[0] + 1, seat[1]], seat])
 }
 
 export function customerToReturn(customer: Customer) {
-  if (!customer.visit?.table) return
+  if (!customer.visit?.table) {
+    return
+  }
   const seat = customerSeat(customer.visit.table)
   customerPath(customer, 'to-return', [[seat[0] + 1, seat[1]], [seat[0] + 1, 1.7], [0, 1.7], [...CONDIMENT_SPOT]])
 }
@@ -168,9 +184,13 @@ export function customerLeave(customer: Customer) {
   if (customer.stage === 'drinking' && customer.visit?.table) {
     const seat = customerSeat(customer.visit.table)
     path.push([seat[0] + 1, seat[1]], [seat[0] + 1, 1.7])
-  } else if (!(Math.abs(x - CUSTOMER_DOOR_X) < 0.1 && z >= 1.7)) path.push([x, 1.7])
+  } else if (!(Math.abs(x - CUSTOMER_DOOR_X) < 0.1 && z >= 1.7)) {
+    path.push([x, 1.7])
+  }
 
-  if (path.length) path.push([CUSTOMER_DOOR_X, 1.7])
+  if (path.length) {
+    path.push([CUSTOMER_DOOR_X, 1.7])
+  }
   path.push([...CUSTOMER_ENTRANCE])
   customerPath(customer, 'leaving', path)
 }
@@ -183,7 +203,9 @@ export function moveCustomer(customer: Customer, seconds: number) {
     const dx = target[0] - customer.position[0]
     const dz = target[1] - customer.position[1]
     const remaining = Math.hypot(dx, dz)
-    if (remaining > 0.0001) customer.yaw = Math.atan2(dx, dz)
+    if (remaining > 0.0001) {
+      customer.yaw = Math.atan2(dx, dz)
+    }
 
     if (remaining <= distance + 0.0001) {
       customer.position = [...target]
@@ -200,11 +222,17 @@ export function moveCustomer(customer: Customer, seconds: number) {
 }
 
 export function customerSitting(customer: Customer) {
-  if (!customer.visit?.table) return 0
-  if (customer.stage === 'drinking') return 1
+  if (!customer.visit?.table) {
+    return 0
+  }
+  if (customer.stage === 'drinking') {
+    return 1
+  }
   const sittingDown = customer.stage === 'to-table' && customer.nextPoint === customer.path.length - 1
   const standingUp = ['to-return', 'leaving'].includes(customer.stage) && customer.nextPoint === 0
-  if (!sittingDown && !standingUp) return 0
+  if (!sittingDown && !standingUp) {
+    return 0
+  }
   const seat = customerSeat(customer.visit.table)
   return Math.max(0, 1 - Math.hypot(customer.position[0] - seat[0], customer.position[1] - seat[1]))
 }

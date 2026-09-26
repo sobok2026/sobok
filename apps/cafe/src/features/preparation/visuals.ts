@@ -57,8 +57,12 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
             .map((entry) => operationVessel(entry.operation))
             .find((id) => id && populated.includes(id)) ?? populated.at(-1))
       const ids = new Set(populated)
-      if (vesselId) ids.add(vesselId)
-      if (operation && 'from' in operation) ids.add(operation.from)
+      if (vesselId) {
+        ids.add(vesselId)
+      }
+      if (operation && 'from' in operation) {
+        ids.add(operation.from)
+      }
       const job = state.jobs.find((item) => item.kind === 'production' && item.preparationId === prep.id)
       const nextKey = `${prep.id}:${step?.id}`
 
@@ -67,7 +71,9 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
         previous = prep.progress
       }
 
-      if (prep.progress > previous && step && !['pour', 'mix'].includes(step.kind)) pulseUntil = now + 330
+      if (prep.progress > previous && step && !['pour', 'mix'].includes(step.kind)) {
+        pulseUntil = now + 330
+      }
       previous = prep.progress
       const pulse = Math.max(0, (pulseUntil - now) / 330)
       let index = 0
@@ -84,10 +90,14 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
 
         model.root.visible = prep.tool !== `vessel:${id}`
         model.root.position.fromArray(PREP_SPOT)
-        if (id !== vesselId) model.root.position.x += index * 0.32
+        if (id !== vesselId) {
+          model.root.position.x += index * 0.32
+        }
         const atBlender = id === vesselId && step?.equipmentId === 'blender' && shape === 'blender'
         const blending = atBlender && (!!job || pulse > 0)
-        if (atBlender) model.root.position.fromArray(BLENDER_JAR_SPOT)
+        if (atBlender) {
+          model.root.position.fromArray(BLENDER_JAR_SPOT)
+        }
         model.root.rotation.z = blending ? Math.sin(now / 25) * 0.007 : 0
         positions.set(id, model.root.position)
         const current = id === vesselId
@@ -103,7 +113,9 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
       const color = operationColor(prep, operation, fallback)
       const descriptor = heldTool(prep, step, definition.steps)
       const tool = tools.update(descriptor, color)
-      if (tool) positionProductionTool(tool, camera, step, spot, active, pulse, now)
+      if (tool) {
+        positionProductionTool(tool, camera, step, spot, active, pulse, now)
+      }
       const pumped =
         operation?.action === 'add' &&
         (operation.amount.kind === 'count' || operation.amount.kind === 'count-range') &&
@@ -129,7 +141,9 @@ export function createPreparationVisuals(scene: THREE.Scene, camera: THREE.Persp
 
       if (pouring) {
         from.set(spot.x + 0.1, spot.y + 0.45, spot.z)
-        if (pump) pump.outlet.getWorldPosition(from)
+        if (pump) {
+          pump.outlet.getWorldPosition(from)
+        }
         const fill = prep.vessels[vesselId ?? '']?.fill ?? 0
         to.set(spot.x, spot.y + Math.max(0.025, fill * 0.3), spot.z)
       }

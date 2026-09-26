@@ -5,7 +5,7 @@ const DATABASE = 'sobok-cafe'
 let database: Promise<IDBDatabase> | undefined
 
 function open() {
-  if (!database)
+  if (!database) {
     database = new Promise((resolve, reject) => {
       const request = indexedDB.open(DATABASE)
       request.onupgradeneeded = () => request.result.createObjectStore('saves')
@@ -19,6 +19,7 @@ function open() {
         reject(new Error('다른 창을 닫고 다시 시도해주세요.'))
       }
     })
+  }
   return database
 }
 
@@ -71,7 +72,9 @@ export function saveGame(state: GameState): Promise<void> {
         const old = store.get('current')
         old.onsuccess = () => {
           const parsed = stateSchema.safeParse(old.result)
-          if (parsed.success) store.put(parsed.data, 'previous')
+          if (parsed.success) {
+            store.put(parsed.data, 'previous')
+          }
           store.put(snapshot, 'current')
         }
         tx.oncomplete = () => resolve()
@@ -94,7 +97,9 @@ export function exportGame(state: GameState) {
 }
 
 export async function importGame(file: File) {
-  if (file.size > 2 * 1024 * 1024) throw new Error('백업 파일이 너무 커요.')
+  if (file.size > 2 * 1024 * 1024) {
+    throw new Error('백업 파일이 너무 커요.')
+  }
   return stateSchema.parse(JSON.parse(await file.text()))
 }
 

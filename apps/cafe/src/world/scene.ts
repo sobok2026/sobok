@@ -45,15 +45,25 @@ export type CafeScene = {
 }
 
 function pickWidth(id: StationId) {
-  if (id === 'espresso') return 0.6
-  if (id === 'steam') return 0.66
-  if (isCupSurface(id) || id === 'prep' || id === 'cold-prep' || id === 'shelf') return 1.3
-  if (id === 'wash') return 1.2
+  if (id === 'espresso') {
+    return 0.6
+  }
+  if (id === 'steam') {
+    return 0.66
+  }
+  if (isCupSurface(id) || id === 'prep' || id === 'cold-prep' || id === 'shelf') {
+    return 1.3
+  }
+  if (id === 'wash') {
+    return 1.2
+  }
   return 0.8
 }
 
 function pickHeight(id: StationId) {
-  if (id === 'espresso' || id === 'water') return 1.12
+  if (id === 'espresso' || id === 'water') {
+    return 1.12
+  }
   return isTable(id) ? 1 : 0.8
 }
 
@@ -149,7 +159,9 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   environmentGenerator.dispose()
 
   scene.traverse((object) => {
-    if (!(object instanceof THREE.Mesh)) return
+    if (!(object instanceof THREE.Mesh)) {
+      return
+    }
     for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
       if (material instanceof THREE.MeshStandardMaterial && material.userData.equipment) {
         material.envMap = equipmentEnvironment.texture
@@ -189,18 +201,26 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
   let animationTime = 0
 
   function animate(now: number) {
-    if (disposed) return
+    if (disposed) {
+      return
+    }
     frame = requestAnimationFrame(animate)
     const dt = Math.min((now - lastTime) / 1000, 0.05)
     lastTime = now
-    if (document.hidden) return
+    if (document.hidden) {
+      return
+    }
     const state = options.getState()
     const running = options.isRunning()
-    if (!running && !wasRunning && !needsRender && renderedState === state) return
+    if (!running && !wasRunning && !needsRender && renderedState === state) {
+      return
+    }
     wasRunning = running
     renderedState = state
     needsRender = false
-    if (running) animationTime += dt * 1000
+    if (running) {
+      animationTime += dt * 1000
+    }
     const cupPlace = state.cup ? `${state.cup.id}:${state.cup.craft.location}` : ''
 
     if (cupPlace !== previousCupPlace && state.cup && state.cup.craft.location !== 'hand') {
@@ -209,11 +229,13 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
     }
 
     previousCupPlace = cupPlace
-    if (state.preparation && state.preparation.id !== previousPreparation)
+    if (state.preparation && state.preparation.id !== previousPreparation) {
       camera.lookAt(PREP_SPOT[0], PREP_SPOT[1] + 0.17, PREP_SPOT[2])
+    }
     previousPreparation = state.preparation?.id ?? null
-    if (state.washing && state.washing.id !== previousWashing && state.washing.stage !== 'carrying')
+    if (state.washing && state.washing.id !== previousWashing && state.washing.stage !== 'carrying') {
       camera.lookAt(WASH_SPOT[0], WASH_SPOT[1] + 0.13, WASH_SPOT[2])
+    }
     previousWashing = state.washing?.id ?? null
 
     if (state.cleaning && state.cleaning.id !== previousCleaning) {
@@ -297,7 +319,9 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
       const usedMaterials = new Set<THREE.Material>()
 
       scene.traverse((object) => {
-        if (object instanceof THREE.InstancedMesh) object.dispose()
+        if (object instanceof THREE.InstancedMesh) {
+          object.dispose()
+        }
         if (object instanceof THREE.Mesh) {
           geometries.add(object.geometry)
           for (const m of Array.isArray(object.material) ? object.material : [object.material]) usedMaterials.add(m)
@@ -309,7 +333,9 @@ export function createCafeScene(container: HTMLDivElement, options: SceneOptions
 
       for (const value of usedMaterials) {
         for (const property of Object.values(value))
-          if (property instanceof THREE.Texture && property !== equipmentEnvironment.texture) usedTextures.add(property)
+          if (property instanceof THREE.Texture && property !== equipmentEnvironment.texture) {
+            usedTextures.add(property)
+          }
         value.dispose()
       }
 

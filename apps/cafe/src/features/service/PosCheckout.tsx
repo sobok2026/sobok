@@ -33,7 +33,9 @@ export function PosCheckout({
   const matches = orderMatchesRequest(state)
 
   const pay = () => {
-    if (!method || complete) return
+    if (!method || complete) {
+      return
+    }
     const tendered = Number(value)
 
     if (!Number.isSafeInteger(tendered) || tendered <= 0 || (method === 'card' && tendered > remaining)) {
@@ -71,10 +73,10 @@ export function PosCheckout({
                 <span>{payment.method === 'cash' ? '현금' : '신용카드'}</span>
                 <strong className="tabular-nums">{money(payment.amount)}</strong>
               </div>
-              {payment.tendered > payment.amount ? (
+              {payment.tendered > payment.amount && (
                 <p className="mt-1 text-xs text-pos-panel">거스름돈 {money(payment.tendered - payment.amount)}</p>
-              ) : null}
-              {!complete ? (
+              )}
+              {!complete && (
                 <button
                   type="button"
                   className="mt-2 text-xs text-danger underline underline-offset-2"
@@ -83,7 +85,7 @@ export function PosCheckout({
                 >
                   결제 취소
                 </button>
-              ) : null}
+              )}
             </div>
           ))}
         </div>
@@ -106,7 +108,7 @@ export function PosCheckout({
         className="flex min-h-0 min-w-0 flex-col overflow-y-auto rounded-md bg-white p-4 text-pos-ink"
         aria-label={checkoutLabel(complete, method)}
       >
-        {complete ? (
+        {complete && (
           <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
             <span
               className="grid size-18 place-items-center rounded-full bg-pos-active text-4xl text-white"
@@ -117,13 +119,13 @@ export function PosCheckout({
             <h2 className="text-2xl font-semibold">결제 완료</h2>
             <p className="text-sm">음료 {saleQuantity(sale)}잔 · 제조 주문이 접수되었습니다.</p>
             <p className="text-3xl font-semibold tabular-nums">{money(total)}</p>
-            {change > 0 ? <p className="text-lg text-danger">거스름돈 {money(change)}</p> : null}
+            {change > 0 && <p className="text-lg text-danger">거스름돈 {money(change)}</p>}
             <PosButton tone="active" onClick={onClose} className="mt-4 w-full min-h-14">
               제조하러 가기 →
             </PosButton>
           </div>
-        ) : null}
-        {!complete && method ? (
+        )}
+        {!complete && method && (
           <form
             className="flex min-h-full flex-col gap-3 pos-compact:gap-2"
             onSubmit={(event) => {
@@ -137,7 +139,7 @@ export function PosCheckout({
               </PosButton>
               <h2 className="text-lg font-semibold">{method === 'cash' ? '현금결제' : '신용카드 결제'}</h2>
             </div>
-            {method === 'card' ? (
+            {method === 'card' && (
               <div className="grid grid-cols-2 gap-2">
                 <PosButton
                   tone="active"
@@ -152,7 +154,7 @@ export function PosCheckout({
                   {recognized ? '카드 인식 완료' : '카드를 인식해주세요'}
                 </div>
               </div>
-            ) : null}
+            )}
             <div className="flex items-center justify-between gap-4 bg-[#f0f1f0] p-3 pos-compact:p-2">
               <span className="text-sm">받을금액</span>
               <strong className="text-xl text-[#d87150] tabular-nums">{remaining.toLocaleString('ko-KR')}</strong>
@@ -164,7 +166,9 @@ export function PosCheckout({
                 inputMode="numeric"
                 value={value}
                 onChange={(event) => {
-                  if (/^\d{0,8}$/.test(event.target.value)) setValue(event.target.value)
+                  if (/^\d{0,8}$/.test(event.target.value)) {
+                    setValue(event.target.value)
+                  }
                 }}
                 className={clsx(
                   'min-h-12 min-w-0 flex-1',
@@ -179,14 +183,15 @@ export function PosCheckout({
                 value={value}
                 onChange={setValue}
                 onConfirm={() => {
-                  if (!value) setValue(String(remaining))
-                  else if (
+                  if (!value) {
+                    setValue(String(remaining))
+                  } else if (
                     !Number.isSafeInteger(Number(value)) ||
                     Number(value) <= 0 ||
                     (method === 'card' && Number(value) > remaining)
-                  )
+                  ) {
                     setError('결제 금액을 확인해주세요.')
-                  else {
+                  } else {
                     setValue(String(Number(value)))
                     setError('')
                   }
@@ -211,18 +216,18 @@ export function PosCheckout({
               결제
             </PosButton>
           </form>
-        ) : null}
-        {!complete && !method ? (
+        )}
+        {!complete && !method && (
           <>
             <h2 className="mb-5 text-lg font-semibold">결제</h2>
-            {!matches ? (
+            {!matches && (
               <div className="mb-5 rounded bg-[#fff2cb] p-3 text-sm" role="status">
                 손님 요청과 주문 내역을 확인해주세요.
                 <PosButton onClick={onBack} className="mt-3 w-full">
                   주문 확인
                 </PosButton>
               </div>
-            ) : null}
+            )}
             <div className="grid grid-cols-2 gap-2">
               {(['cash', 'card'] as const).map((kind) => (
                 <PosButton
@@ -249,7 +254,7 @@ export function PosCheckout({
               ← 주문으로 돌아가기
             </PosButton>
           </>
-        ) : null}
+        )}
       </section>
     </div>
   )
@@ -258,13 +263,21 @@ export function PosCheckout({
 type PaymentMethod = 'cash' | 'card'
 
 function checkoutLabel(complete: boolean, method: PaymentMethod | null) {
-  if (complete) return '결제 완료'
-  if (method === 'cash') return '현금결제'
+  if (complete) {
+    return '결제 완료'
+  }
+  if (method === 'cash') {
+    return '현금결제'
+  }
   return method === 'card' ? '신용카드 결제' : '결제수단 선택'
 }
 
 function paymentNote(method: PaymentMethod, tendered: number, remaining: number) {
-  if (method === 'cash' && tendered > remaining) return `거스름돈 ${money(tendered - remaining)}`
-  if (tendered > 0 && tendered < remaining) return `결제 후 남은 금액 ${money(remaining - tendered)}`
+  if (method === 'cash' && tendered > remaining) {
+    return `거스름돈 ${money(tendered - remaining)}`
+  }
+  if (tendered > 0 && tendered < remaining) {
+    return `결제 후 남은 금액 ${money(remaining - tendered)}`
+  }
   return ''
 }

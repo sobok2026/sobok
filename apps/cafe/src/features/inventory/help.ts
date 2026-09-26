@@ -16,13 +16,14 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
       batch.location !== 'bar' &&
       (batch.expiresAt === null || batch.expiresAt > state.time),
   )
-  if (pending)
+  if (pending) {
     return {
       title: `${definition.name} 사용 준비`,
       action: pendingAction(definition, pending),
       reason: '개봉·제조만으로는 사용할 수 없어요. 라벨과 보관까지 마쳐야 해요.',
     }
-  if (preparationForMaterial(ingredient))
+  }
+  if (preparationForMaterial(ingredient)) {
     return {
       title: `${definition.name} 준비가 필요해요`,
       action: state.tools.clean
@@ -30,7 +31,8 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
         : '세척대에서 피처를 씻고 옆 도구 선반에 먼저 정리하세요.',
       reason: '준비 배합은 완성한 뒤 라벨을 붙이고 보관해야 음료에 넣을 수 있어요.',
     }
-  if (ingredient === 'coldBrew')
+  }
+  if (ingredient === 'coldBrew') {
     return {
       title: '추출액을 준비하세요',
       action:
@@ -39,6 +41,7 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
           : '콜드 브루 추출대에서 원두·물을 계량해 추출하세요. 추출 중이면 완료를 기다려주세요.',
       reason: `${COLD_BREW_HOURS}시간 추출은 마감 후 다음 날로 넘어갈 때도 진행돼요.`,
     }
+  }
   const sealed = state.batches.some(
     (batch) => batch.ingredient === ingredient && batch.amount > 0 && batch.openedAt === null,
   )
@@ -52,10 +55,14 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
 
 function pendingAction(definition: Ingredient, batch: Batch) {
   if (definition.prepared) {
-    if (batch.labelled) return `E로 용기를 집어 ${STATIONS[batchDestination(batch)].name}로 운반하세요.`
+    if (batch.labelled) {
+      return `E로 용기를 집어 ${STATIONS[batchDestination(batch)].name}로 운반하세요.`
+    }
     return `${STATIONS[batchOrigin(batch)].name}에서 날짜를 확인하고 라벨을 붙이세요.`
   }
 
-  if (!batch.labelled) return '창고에서 날짜 확인 후 라벨을 붙이세요.'
+  if (!batch.labelled) {
+    return '창고에서 날짜 확인 후 라벨을 붙이세요.'
+  }
   return `창고에서 ${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하세요.`
 }

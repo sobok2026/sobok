@@ -30,19 +30,17 @@ export function PreparationInstructions({
             >
               <strong className="font-medium">{step.label}</strong>
               <p>{step.instruction}</p>
-              {step.measurement ? <p className="mt-1 font-medium text-ink">계량 · {step.measurement}</p> : null}
-              {details.length ? <p className="mt-1">{details.join(' · ')}</p> : null}
-              {step.note ? <p className="mt-1">{step.note}</p> : null}
+              {step.measurement && <p className="mt-1 font-medium text-ink">계량 · {step.measurement}</p>}
+              {details.length > 0 && <p className="mt-1">{details.join(' · ')}</p>}
+              {step.note && <p className="mt-1">{step.note}</p>}
             </li>
           )
         })}
       </ol>
-      {variant.output?.description ? (
+      {variant.output?.description && (
         <p className="mt-4 text-xs leading-relaxed text-muted">{variant.output.description}</p>
-      ) : null}
-      {variant.notes.length ? (
-        <p className="mt-3 text-xs leading-relaxed text-muted">{variant.notes.join(' ')}</p>
-      ) : null}
+      )}
+      {variant.notes.length > 0 && <p className="mt-3 text-xs leading-relaxed text-muted">{variant.notes.join(' ')}</p>}
       <p className="mt-3 text-xs leading-relaxed text-muted">{definition.storageNote}</p>
     </>
   )
@@ -50,15 +48,17 @@ export function PreparationInstructions({
 
 export function PreparationRecipeGuide({ state }: { state: GameState }) {
   const prep = state.preparation
-  if (!prep) return null
+  if (!prep) {
+    return null
+  }
   const definition = PREPARATIONS[prep.recipe]
 
   return (
     <details className="border-t border-line py-4">
       <summary className="font-medium">{definition.name} 배합</summary>
-      {prep.ingredientExpiresAt !== null ? (
+      {prep.ingredientExpiresAt !== null && (
         <p className="mt-3 text-xs text-muted">투입 원재료 기한 · {batchDate(prep.ingredientExpiresAt, true)}</p>
-      ) : null}
+      )}
       <PreparationInstructions definition={definition} cursor={prep.cursor} />
     </details>
   )

@@ -144,7 +144,9 @@ export function createRegister(scene: THREE.Scene) {
       const sale = state.sale
       receipt.visible = !!sale && sale.paidAt !== null
       const key = `${state.phase}:${state.orderNumber}:${JSON.stringify(sale)}:${state.customer?.stage}`
-      if (key === previous) return
+      if (key === previous) {
+        return
+      }
       previous = key
       const texture = (screen.material as THREE.MeshStandardMaterial).map!
       const canvas = texture.image as HTMLCanvasElement
@@ -164,7 +166,9 @@ export function createRegister(scene: THREE.Scene) {
         ctx.textAlign = 'left'
         ctx.font = canvasFont(h * 0.032)
         ctx.fillText(`주문 ${String(state.orderNumber).padStart(3, '0')}`, w * 0.03, h * 0.18)
-        if (!sale) ctx.fillText('주문 대기', w * 0.1, h * 0.46)
+        if (!sale) {
+          ctx.fillText('주문 대기', w * 0.1, h * 0.46)
+        }
 
         for (const [index, line] of (sale?.lines.slice(0, 4) ?? []).entries()) {
           const y = h * (0.23 + index * 0.1)

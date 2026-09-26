@@ -19,8 +19,9 @@ if (
   water.amount.unit !== 'l' ||
   steep?.action !== 'steep' ||
   !('seconds' in steep.duration)
-)
+) {
   throw new Error('콜드 브루 배합의 단위·시간을 확인해야 합니다.')
+}
 
 export const COLD_BREW_COST = 9000
 export const COLD_BREW_BEANS = beans.amount.value

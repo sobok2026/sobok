@@ -46,11 +46,15 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
   const abort = new AbortController()
 
   const notify = (status: SoundStatus) => {
-    if (!disposed) onStatus(muted ? 'off' : status)
+    if (!disposed) {
+      onStatus(muted ? 'off' : status)
+    }
   }
 
   function stopVoice(voice: Voice) {
-    if (!context) return
+    if (!context) {
+      return
+    }
     voice.gain.gain.cancelScheduledValues(context.currentTime)
     voice.gain.gain.setTargetAtTime(0, context.currentTime, 0.006)
     voice.source.stop(context.currentTime + 0.03)
@@ -58,7 +62,9 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
 
   function stop() {
     generation++
-    if (loop) stopVoice(loop.voice)
+    if (loop) {
+      stopVoice(loop.voice)
+    }
     loop = null
     for (const voice of voices) stopVoice(voice)
     voices.clear()
@@ -67,19 +73,29 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
   function configure(preferences: Preferences) {
     muted = preferences.muted
     volume = preferences.volume
-    if (master && context) master.gain.setTargetAtTime(muted ? 0 : volume * 0.8, context.currentTime, 0.015)
-    if (muted || volume === 0) stop()
+    if (master && context) {
+      master.gain.setTargetAtTime(muted ? 0 : volume * 0.8, context.currentTime, 0.015)
+    }
+    if (muted || volume === 0) {
+      stop()
+    }
     notify(currentStatus())
   }
 
   function currentStatus(): SoundStatus {
-    if (loading) return 'loading'
-    if (!context) return 'idle'
+    if (loading) {
+      return 'loading'
+    }
+    if (!context) {
+      return 'idle'
+    }
     return context.state === 'running' && buffers.size === assetIds.length ? 'ready' : 'blocked'
   }
 
   async function unlock() {
-    if (disposed || muted) return
+    if (disposed || muted) {
+      return
+    }
     try {
       if (!context) {
         context = new AudioContext()
@@ -87,13 +103,20 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
         master.gain.value = volume * 0.8
         master.connect(context.destination)
         context.onstatechange = () => {
-          if (context?.state !== 'running') notify('blocked')
-          else if (buffers.size === assetIds.length) notify('ready')
+          if (context?.state !== 'running') {
+            notify('blocked')
+          } else if (buffers.size === assetIds.length) {
+            notify('ready')
+          }
         }
       }
 
-      if (context.state !== 'running') await context.resume()
-      if (disposed || muted) return
+      if (context.state !== 'running') {
+        await context.resume()
+      }
+      if (disposed || muted) {
+        return
+      }
 
       if (context.state !== 'running') {
         notify('blocked')
@@ -108,9 +131,13 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
             .filter((id) => !buffers.has(id))
             .map(async (id) => {
               const response = await fetch(assetUrls[`./sounds/${id}.flac`]!, { signal: abort.signal })
-              if (!response.ok) throw new Error('Sound unavailable')
+              if (!response.ok) {
+                throw new Error('Sound unavailable')
+              }
               const buffer = await audioContext.decodeAudioData(await response.arrayBuffer())
-              if (!disposed) buffers.set(id, buffer)
+              if (!disposed) {
+                buffers.set(id, buffer)
+              }
             }),
         )
           .then(() => undefined)
@@ -119,7 +146,9 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
           })
       }
 
-      if (loading) await loading
+      if (loading) {
+        await loading
+      }
       notify('ready')
     } catch {
       notify('unavailable')
@@ -128,7 +157,9 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
 
   function createVoice(asset: Asset, level: number, rate = 1, delay = 0, repeats = false): Voice | null {
     const buffer = buffers.get(asset)
-    if (!context || !master || !buffer || muted || volume === 0 || context.state !== 'running' || disposed) return null
+    if (!context || !master || !buffer || muted || volume === 0 || context.state !== 'running' || disposed) {
+      return null
+    }
     const source = context.createBufferSource()
     const gain = context.createGain()
     source.buffer = buffer
@@ -165,12 +196,18 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
     }
 
     const voice = createVoice(asset, level, rate, delay)
-    if (voice) voices.add(voice)
+    if (voice) {
+      voices.add(voice)
+    }
   }
 
   function play(sound: WorkSound) {
-    if (!context || muted || volume === 0 || disposed || context.state !== 'running') return
-    if (sound === lastCue && context.currentTime - lastCueAt < 0.06) return
+    if (!context || muted || volume === 0 || disposed || context.state !== 'running') {
+      return
+    }
+    if (sound === lastCue && context.currentTime - lastCueAt < 0.06) {
+      return
+    }
     lastCue = sound
     lastCueAt = context.currentTime
 
@@ -188,18 +225,28 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
   }
 
   function setLoop(kind: WorkLoop | null) {
-    if (muted || volume === 0 || context?.state !== 'running') kind = null
-    if (loop?.kind === kind) return
-    if (loop) stopVoice(loop.voice)
+    if (muted || volume === 0 || context?.state !== 'running') {
+      kind = null
+    }
+    if (loop?.kind === kind) {
+      return
+    }
+    if (loop) {
+      stopVoice(loop.voice)
+    }
     loop = null
-    if (!kind) return
+    if (!kind) {
+      return
+    }
     const steamAsset = nextSteam % 2 === 0 ? 'steam-machine' : 'steam-milk'
     const asset = kind === 'steam' ? steamAsset : kind
     const voice = createVoice(asset, kind === 'wipe-table' ? 0.6 : 0.75, 1, 0, true)
 
     if (voice) {
       loop = { kind, voice }
-      if (kind === 'steam') nextSteam++
+      if (kind === 'steam') {
+        nextSteam++
+      }
     }
   }
 
@@ -212,7 +259,9 @@ export function createWorkSounds(onStatus: (status: SoundStatus) => void) {
     async preview() {
       const current = generation
       await unlock()
-      if (current === generation) play('serve')
+      if (current === generation) {
+        play('serve')
+      }
     },
     dispose() {
       stop()
@@ -245,9 +294,15 @@ function completedWork(previous: GameState, current: GameState) {
 }
 
 export function actionSound(action: Action, previous: GameState, current: GameState): WorkSound | null {
-  if (newError(previous, current)) return null
-  if (current.totals.served > previous.totals.served) return 'serve'
-  if (completedWork(previous, current)) return 'complete'
+  if (newError(previous, current)) {
+    return null
+  }
+  if (current.totals.served > previous.totals.served) {
+    return 'serve'
+  }
+  if (completedWork(previous, current)) {
+    return 'complete'
+  }
   if (
     action.type === 'confirm-craft' &&
     current.cup &&
@@ -260,46 +315,57 @@ export function actionSound(action: Action, previous: GameState, current: GameSt
         cupService(current.cup.craft.kind),
         current.cup.craft.customizations,
       ).steps.length
-  )
+  ) {
     return 'complete'
+  }
 
   if (action.type === 'use-start' && previous.cup && current.cup) {
     const op = operationFor(previous.cup.recipe, previous.cup.craft)
-    if (current.cup.craft.progress > previous.cup.craft.progress)
+    if (current.cup.craft.progress > previous.cup.craft.progress) {
       return op?.operation.action === 'add' && op.operation.materialId === 'ice' ? 'ice' : null
+    }
   }
 
   return null
 }
 
 export function tickSound(previous: GameState, current: GameState): WorkSound | null {
-  if (newError(previous, current)) return null
+  if (newError(previous, current)) {
+    return null
+  }
   if (
     completedWork(previous, current) ||
     previous.jobs.some((job) => job.endsAt <= current.time && !current.jobs.some((item) => item.id === job.id))
-  )
+  ) {
     return 'complete'
+  }
   return null
 }
 
 export function workLoop(state: GameState, input: ActiveInput, position: GameState['position']): WorkLoop | null {
-  if (input?.kind === 'clean') return state.cleaning?.stage === 'wipe' ? 'wipe-table' : null
-  if (input?.kind === 'cold') return state.coldBrew?.step === 1 ? 'pour-cup' : null
+  if (input?.kind === 'clean') {
+    return state.cleaning?.stage === 'wipe' ? 'wipe-table' : null
+  }
+  if (input?.kind === 'cold') {
+    return state.coldBrew?.step === 1 ? 'pour-cup' : null
+  }
 
   if (input?.kind === 'prep' && state.preparation) {
     const step = preparationStep(state.preparation)
-    if (step?.kind === 'pour')
+    if (step?.kind === 'pour') {
       return step.operation.action === 'add' && ['milk', 'cream'].includes(step.operation.materialId)
         ? 'pour-milk'
         : 'pour-cup'
+    }
   }
 
   if (input?.kind === 'drink' && state.cup) {
     const op = operationFor(state.cup.recipe, state.cup.craft)
-    if (op?.kind === 'pour')
+    if (op?.kind === 'pour') {
       return op.operation.action === 'add' && ['milk', 'cream'].includes(op.operation.materialId)
         ? 'pour-milk'
         : 'pour-cup'
+    }
   }
 
   const machine = state.jobs
@@ -315,6 +381,8 @@ export function workLoop(state: GameState, input: ActiveInput, position: GameSta
     }))
     .filter((item) => item.distance <= 3.5)
     .sort((a, b) => a.distance - b.distance)[0]
-  if (!machine) return null
+  if (!machine) {
+    return null
+  }
   return machine.job.equipmentId === 'steam-wand' ? 'steam' : 'espresso'
 }

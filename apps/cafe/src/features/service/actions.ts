@@ -61,10 +61,13 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
       const leftovers: Costs = { ...s.cup.craft.stockHeld }
 
       for (const [id, vessel] of Object.entries(s.cup.craft.vessels)) {
-        if (id === servingVessel) continue
+        if (id === servingVessel) {
+          continue
+        }
         for (const layer of vessel.layers) {
-          if (INGREDIENTS[layer.materialId])
+          if (INGREDIENTS[layer.materialId]) {
             leftovers[layer.materialId] = (leftovers[layer.materialId] ?? 0) + layer.quantity
+          }
         }
       }
 
@@ -89,7 +92,9 @@ export function handleOrderActions(work: WorkContext, action: Extract<Action, { 
 
       if (Math.random() < CUSTOMER_HABITS.stain) {
         s.dirtyBar = Math.min(3, s.dirtyBar + 1)
-        if (s.cleaning?.station === 'mix') s.cleaning.progress = 0
+        if (s.cleaning?.station === 'mix') {
+          s.cleaning.progress = 0
+        }
       }
 
       customerToCondiment(s.customer)

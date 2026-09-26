@@ -40,7 +40,7 @@ export default function SupplyPanel({
               {definition.unit}
               {shelfNote(supply.bar)}
             </p>
-            {location === 'stock' ? (
+            {location === 'stock' && (
               <div className="mt-3 grid gap-2">
                 <InventoryButton
                   disabled={amount <= 0 || !!state.supplyDelivery}
@@ -56,7 +56,7 @@ export default function SupplyPanel({
                   {definition.unit} 입고 · {money(SUPPLY_PRICE)}
                 </InventoryButton>
               </div>
-            ) : null}
+            )}
           </article>
         )
       })}
@@ -65,12 +65,18 @@ export default function SupplyPanel({
 }
 
 function shelfNote(bar: number) {
-  if (bar === 0) return ' · 품절'
+  if (bar === 0) {
+    return ' · 품절'
+  }
   return bar <= 5 ? ' · 보충 필요' : ''
 }
 
 function takeLabel(definition: { name: string; unit: string }, amount: number, bar: number) {
-  if (amount > 0) return `${definition.name} ${amount}${definition.unit} 집기`
-  if (bar >= SUPPLY_CAPACITY) return `${definition.name} 진열대가 가득 찼어요`
+  if (amount > 0) {
+    return `${definition.name} ${amount}${definition.unit} 집기`
+  }
+  if (bar >= SUPPLY_CAPACITY) {
+    return `${definition.name} 진열대가 가득 찼어요`
+  }
   return `${definition.name} 후방 재고가 없어요`
 }

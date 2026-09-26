@@ -18,7 +18,9 @@ import { createPreparation, PREPARATIONS, preparationStep } from './rules'
 const ownerFor = (prep: Preparation) => ({ kind: 'preparation' as const, id: prep.id, station: 'prep' as const })
 
 function reserveTool(work: WorkContext, prep: Preparation, step: WorkStep) {
-  if (!step.requiresReusableTool || prep.reservedTool) return true
+  if (!step.requiresReusableTool || prep.reservedTool) {
+    return true
+  }
 
   if (!work.state.tools.clean) {
     say(work.state, '깨끗한 제조 용기를 먼저 준비해주세요.', 'error')
@@ -65,11 +67,15 @@ export function handlePreparationActions(
     }
     case 'prep-tool': {
       const prep = s.preparation
-      if (!prep || prep.stage === 'ready') break
+      if (!prep || prep.stage === 'ready') {
+        break
+      }
 
       if (prep.tool) {
         prep.tool = null
-        if (work.input?.kind === 'prep' && work.input.preparationId === prep.id) work.input = null
+        if (work.input?.kind === 'prep' && work.input.preparationId === prep.id) {
+          work.input = null
+        }
         say(s, '준비 도구를 내려놓았어요.')
         break
       }
@@ -79,14 +85,18 @@ export function handlePreparationActions(
         break
       }
 
-      if (expirePreparation(work, s.time)) break
+      if (expirePreparation(work, s.time)) {
+        break
+      }
 
       if (cupHandsBusy(s.cup)) {
         fail('음료 컵과 도구를 먼저 내려놓아주세요.')
         break
       }
 
-      if (prep.stage !== 'measuring' || workIsBusy(work, ownerFor(prep))) break
+      if (prep.stage !== 'measuring' || workIsBusy(work, ownerFor(prep))) {
+        break
+      }
       const step = preparationStep(prep)
 
       if (step?.tool && reserveTool(work, prep, step)) {
@@ -98,7 +108,9 @@ export function handlePreparationActions(
     }
     case 'prep-use': {
       const prep = s.preparation
-      if (prep?.stage !== 'measuring' || prep.fault || expirePreparation(work, s.time)) break
+      if (prep?.stage !== 'measuring' || prep.fault || expirePreparation(work, s.time)) {
+        break
+      }
 
       if (cupHandsBusy(s.cup)) {
         fail('음료 컵과 도구를 먼저 내려놓아주세요.')
@@ -106,15 +118,23 @@ export function handlePreparationActions(
       }
 
       const step = preparationStep(prep)
-      if (!step || !reserveTool(work, prep, step)) break
+      if (!step || !reserveTool(work, prep, step)) {
+        break
+      }
       beginProduction(work, prep, step, ownerFor(prep))
-      if (workIsBusy(work, ownerFor(prep))) prep.stage = 'processing'
+      if (workIsBusy(work, ownerFor(prep))) {
+        prep.stage = 'processing'
+      }
       break
     }
     case 'prep-confirm': {
       const prep = s.preparation
-      if (prep?.stage !== 'measuring' || prep.fault || expirePreparation(work, s.time)) break
-      if (workIsBusy(work, ownerFor(prep))) break
+      if (prep?.stage !== 'measuring' || prep.fault || expirePreparation(work, s.time)) {
+        break
+      }
+      if (workIsBusy(work, ownerFor(prep))) {
+        break
+      }
 
       if (cupHandsBusy(s.cup)) {
         fail('음료 컵과 도구를 먼저 내려놓아주세요.')
@@ -130,22 +150,36 @@ export function handlePreparationActions(
           break
         }
 
-        if (work.input?.kind === 'prep' && work.input.preparationId === prep.id) work.input = null
-        if (prep.cursor === steps.length) finishPreparation(work, s.time)
-        else say(s, '관찰한 상태를 반영했어요.', 'success')
+        if (work.input?.kind === 'prep' && work.input.preparationId === prep.id) {
+          work.input = null
+        }
+        if (prep.cursor === steps.length) {
+          finishPreparation(work, s.time)
+        } else {
+          say(s, '관찰한 상태를 반영했어요.', 'success')
+        }
         break
       }
 
-      if (action.observation) break
-      if (!step || !confirmProduction(work, prep, step, ownerFor(prep))) break
+      if (action.observation) {
+        break
+      }
+      if (!step || !confirmProduction(work, prep, step, ownerFor(prep))) {
+        break
+      }
       skipObservedSteps(steps, prep)
-      if (prep.cursor === PREPARATIONS[prep.recipe].steps.length) finishPreparation(work, s.time)
-      else say(s, '현재 단계를 확인했어요.', 'success')
+      if (prep.cursor === PREPARATIONS[prep.recipe].steps.length) {
+        finishPreparation(work, s.time)
+      } else {
+        say(s, '현재 단계를 확인했어요.', 'success')
+      }
       break
     }
     case 'discard-preparation': {
       const prep = s.preparation
-      if (!prep) break
+      if (!prep) {
+        break
+      }
       releaseProductionTool(work, prep)
 
       if (prep.batchId) {
@@ -154,10 +188,14 @@ export function handlePreparationActions(
           addAmounts(s.totals.disposed, { [batch.ingredient]: batch.amount })
           batch.amount = 0
         }
-      } else addAmounts(s.totals.disposed, prep.consumed)
+      } else {
+        addAmounts(s.totals.disposed, prep.consumed)
+      }
 
       s.jobs = s.jobs.filter((job) => job.preparationId !== prep.id)
-      if (work.input?.kind === 'prep' && work.input.preparationId === prep.id) work.input = null
+      if (work.input?.kind === 'prep' && work.input.preparationId === prep.id) {
+        work.input = null
+      }
       s.preparation = null
       s.trash++
       say(s, '배합을 폐기했어요. 사용한 재료는 돌아오지 않고 사용한 제조 용기는 세척해야 해요.')
@@ -174,13 +212,16 @@ export function expirePreparation(work: WorkContext, at: number) {
     prep.stage === 'ready' ||
     prep.ingredientExpiresAt === null ||
     prep.ingredientExpiresAt > at
-  )
+  ) {
     return false
+  }
   prep.fault = '투입한 원재료의 기한이 지났어요. 이 배합을 폐기하고 다시 준비해주세요.'
   prep.tool = null
   prep.stage = 'measuring'
   work.state.jobs = work.state.jobs.filter((job) => job.preparationId !== prep.id)
-  if (work.input?.kind === 'prep' && work.input.preparationId === prep.id) work.input = null
+  if (work.input?.kind === 'prep' && work.input.preparationId === prep.id) {
+    work.input = null
+  }
   say(work.state, prep.fault, 'error')
   return true
 }
@@ -188,12 +229,17 @@ export function expirePreparation(work: WorkContext, at: number) {
 export function finishPreparation(work: WorkContext, completedAt: number) {
   const s = work.state
   const prep = s.preparation
-  if (!prep || prep.stage === 'ready' || prep.fault || expirePreparation(work, completedAt)) return
+  if (!prep || prep.stage === 'ready' || prep.fault || expirePreparation(work, completedAt)) {
+    return
+  }
   const definition = PREPARATIONS[prep.recipe]
-  if (prep.cursor !== definition.steps.length || workIsBusy(work, ownerFor(prep))) return
+  if (prep.cursor !== definition.steps.length || workIsBusy(work, ownerFor(prep))) {
+    return
+  }
   const batch = newBatch(definition.output.materialId, definition.output.amount, completedAt, 'prep')
-  if (prep.ingredientExpiresAt !== null)
+  if (prep.ingredientExpiresAt !== null) {
     batch.expiresAt = Math.min(batch.expiresAt ?? prep.ingredientExpiresAt, prep.ingredientExpiresAt)
+  }
   s.batches.push(batch)
   prep.stage = 'ready'
   prep.batchId = batch.id

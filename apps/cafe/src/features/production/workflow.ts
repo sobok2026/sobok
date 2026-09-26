@@ -80,8 +80,12 @@ export function createProductionState(): ProductionState {
 }
 
 function repetitionBounds(repetitions?: number | { min: number; max: number }) {
-  if (typeof repetitions === 'number') return [repetitions, repetitions]
-  if (repetitions) return [repetitions.min, repetitions.max]
+  if (typeof repetitions === 'number') {
+    return [repetitions, repetitions]
+  }
+  if (repetitions) {
+    return [repetitions.min, repetitions.max]
+  }
   return [1, 1]
 }
 
@@ -91,24 +95,32 @@ function durationBounds(duration: { seconds: number; atLeast?: boolean } | { min
 
 export function operationSeconds(catalog: RecipeCatalog, operation: ResolvedOperation): number | null {
   const duration = 'duration' in operation ? operation.duration : undefined
-  if (duration) return durationBounds(duration)[0]
+  if (duration) {
+    return durationBounds(duration)[0]
+  }
 
   if (operation.action === 'run-machine') {
     const program = catalog.equipment.get(operation.equipmentId)?.programs.find((item) => item.id === operation.program)
-    if (program?.duration) return durationBounds(program.duration)[0]
+    if (program?.duration) {
+      return durationBounds(program.duration)[0]
+    }
   }
 
   return null
 }
 
 function countMaximum(amount: Extract<RecipeAmount, { kind: 'count' | 'count-range' }>) {
-  if (amount.kind === 'count-range') return amount.max
+  if (amount.kind === 'count-range') {
+    return amount.max
+  }
   return amount.atLeast ? null : amount.value
 }
 
 function quantityControl(amount: RecipeAmount): Pick<WorkStep, 'kind' | 'target' | 'maximum' | 'increment' | 'unit'> {
   const unit = amountLabel(amount)
-  if (amount.kind === 'unspecified') throw new Error(`계량 기준 확인 필요: ${amount.description}`)
+  if (amount.kind === 'unspecified') {
+    throw new Error(`계량 기준 확인 필요: ${amount.description}`)
+  }
 
   if (amount.kind === 'count' || amount.kind === 'count-range') {
     const target = amount.kind === 'count' ? amount.value : amount.min
@@ -128,7 +140,7 @@ function quantityControl(amount: RecipeAmount): Pick<WorkStep, 'kind' | 'target'
     return { kind: 'pour', target, maximum, increment: 1, unit: amount.unit }
   }
 
-  if (amount.kind === 'fraction')
+  if (amount.kind === 'fraction') {
     return {
       kind: 'pour',
       target: amount.numerator / amount.denominator,
@@ -136,30 +148,37 @@ function quantityControl(amount: RecipeAmount): Pick<WorkStep, 'kind' | 'target'
       increment: 1 / amount.denominator,
       unit,
     }
-  if (amount.kind === 'depth')
+  }
+  if (amount.kind === 'depth') {
     return { kind: 'pour', target: amount.millimeters, maximum: amount.millimeters, increment: 1, unit: 'mm' }
-  if (amount.kind === 'depth-range')
+  }
+  if (amount.kind === 'depth-range') {
     return { kind: 'pour', target: amount.minMillimeters, maximum: amount.maxMillimeters, increment: 1, unit: 'mm' }
+  }
   return { kind: 'pour', target: 1, maximum: 1, increment: 1, unit }
 }
 
 function toolFor(catalog: RecipeCatalog, operation: ResolvedOperation): ProductionTool | null {
-  if ('toolIds' in operation && operation.toolIds?.length)
+  if ('toolIds' in operation && operation.toolIds?.length) {
     return {
       id: `equipment-set:${operation.toolIds.join('|')}`,
       name: operation.toolIds.map((id) => catalog.equipment.get(id)!.name).join(' · '),
       appearance: 'stirrer',
     }
+  }
 
   if ('toolId' in operation && operation.toolId) {
     const tool = catalog.equipment.get(operation.toolId)!
-    if (tool.kind === 'pump') return null
+    if (tool.kind === 'pump') {
+      return null
+    }
     return { id: `equipment:${tool.id}`, name: tool.name, appearance: tool.kind === 'scoop' ? 'scoop' : 'stirrer' }
   }
 
-  if (operation.action === 'transfer' || operation.action === 'strain')
+  if (operation.action === 'transfer' || operation.action === 'strain') {
     return { id: `vessel:${operation.from}`, name: catalog.vessels.get(operation.from)!.name, appearance: 'pitcher' }
-  if (operation.action === 'add' || operation.action === 'grind' || operation.action === 'squeeze')
+  }
+  if (operation.action === 'add' || operation.action === 'grind' || operation.action === 'squeeze') {
     return {
       id: `material:${operation.materialId}`,
       name: catalog.materials.get(operation.materialId)!.name,
@@ -168,40 +187,67 @@ function toolFor(catalog: RecipeCatalog, operation: ResolvedOperation): Producti
           ? 'pack'
           : 'bottle',
     }
-  if (operation.action === 'shake' || operation.action === 'swirl')
+  }
+  if (operation.action === 'shake' || operation.action === 'swirl') {
     return { id: `vessel:${operation.vessel}`, name: catalog.vessels.get(operation.vessel)!.name, appearance: 'shaker' }
-  if (operation.action === 'serve' && operation.lid && operation.lid !== 'none')
+  }
+  if (operation.action === 'serve' && operation.lid && operation.lid !== 'none') {
     return { id: 'service:lid', name: '리드', appearance: 'lid' }
+  }
   return null
 }
 
 function stationFor(operation: ResolvedOperation, owner?: 'prep'): StationId {
-  if (owner) return owner
-  if (operation.action === 'espresso' || operation.action === 'grind') return 'espresso'
-  if (operation.action === 'steam' || operation.action === 'aerate') return 'steam'
-  if (operation.action === 'serve') return 'pickup'
-  if (operation.action === 'run-machine') return operation.equipmentId === 'hot-water-dispenser' ? 'water' : 'prep'
+  if (owner) {
+    return owner
+  }
+  if (operation.action === 'espresso' || operation.action === 'grind') {
+    return 'espresso'
+  }
+  if (operation.action === 'steam' || operation.action === 'aerate') {
+    return 'steam'
+  }
+  if (operation.action === 'serve') {
+    return 'pickup'
+  }
+  if (operation.action === 'run-machine') {
+    return operation.equipmentId === 'hot-water-dispenser' ? 'water' : 'prep'
+  }
 
   if (operation.action === 'add') {
-    if (operation.into !== 'serving-cup')
+    if (operation.into !== 'serving-cup') {
       return ['steam-pitcher', 'steam-pitcher-50-50'].includes(operation.into) ? 'steam' : 'mix'
-    if (operation.materialId === 'water') return 'water'
-    if (operation.materialId === 'ice') return 'ice'
-    if (operation.materialId === 'milk') return 'steam'
-    if (operation.materialId === 'coldBrew') return 'brew'
-    if (operation.amount.kind === 'count' && operation.amount.unit === 'pump') return 'sauce'
+    }
+    if (operation.materialId === 'water') {
+      return 'water'
+    }
+    if (operation.materialId === 'ice') {
+      return 'ice'
+    }
+    if (operation.materialId === 'milk') {
+      return 'steam'
+    }
+    if (operation.materialId === 'coldBrew') {
+      return 'brew'
+    }
+    if (operation.amount.kind === 'count' && operation.amount.unit === 'pump') {
+      return 'sauce'
+    }
     return 'mix'
   }
 
-  if (operation.action === 'transfer' && ['steam-pitcher', 'steam-pitcher-50-50'].includes(operation.from))
+  if (operation.action === 'transfer' && ['steam-pitcher', 'steam-pitcher-50-50'].includes(operation.from)) {
     return 'steam'
+  }
   return 'mix'
 }
 
 const MIX_CONTROL_UNITS = { mix: '초', count: '회', confirm: '완료' } as const
 
 function mixControlKind(duration: unknown, repetitions: unknown) {
-  if (duration) return 'mix'
+  if (duration) {
+    return 'mix'
+  }
   return repetitions ? 'count' : 'confirm'
 }
 
@@ -230,8 +276,9 @@ export function compileWorkflow(
     let seconds = operationSeconds(catalog, operation)
     let mixesMaterialId: string | null = null
 
-    if (operation.action === 'add' || operation.action === 'transfer') control = quantityControl(operation.amount)
-    else if (operation.action === 'espresso') {
+    if (operation.action === 'add' || operation.action === 'transfer') {
+      control = quantityControl(operation.amount)
+    } else if (operation.action === 'espresso') {
       control = { kind: 'machine', target: 1, maximum: 1, increment: 1, unit: '추출' }
       equipmentId ??= 'espresso-machine'
     } else if (operation.action === 'grind') {
@@ -253,7 +300,9 @@ export function compileWorkflow(
         increment: 1,
         unit: operation.action === 'charge' ? '카트리지' : '완료',
       }
-      if (operation.action === 'steam') equipmentId = 'steam-wand'
+      if (operation.action === 'steam') {
+        equipmentId = 'steam-wand'
+      }
     } else if (['mix', 'shake', 'swirl', 'muddle', 'aerate'].includes(operation.action)) {
       const duration = 'duration' in operation ? operation.duration : undefined
       const [target, maximum] = duration
@@ -266,13 +315,21 @@ export function compileWorkflow(
 
       if ((operation.action === 'shake' || operation.action === 'mix') && !populated.has(operation.vessel)) {
         const next = plan[index + 1]?.operation
-        if (next?.action === 'add' && next.into !== operation.vessel) mixesMaterialId = next.materialId
+        if (next?.action === 'add' && next.into !== operation.vessel) {
+          mixesMaterialId = next.materialId
+        }
       }
     }
 
-    if (source.portion !== undefined) control = { kind: 'pour', target: 1, maximum: 1, increment: 1, unit: '비율' }
-    if ('into' in operation) populated.add(operation.into)
-    if (operation.action === 'transfer' && operation.amount.kind === 'all') populated.delete(operation.from)
+    if (source.portion !== undefined) {
+      control = { kind: 'pour', target: 1, maximum: 1, increment: 1, unit: '비율' }
+    }
+    if ('into' in operation) {
+      populated.add(operation.into)
+    }
+    if (operation.action === 'transfer' && operation.amount.kind === 'all') {
+      populated.delete(operation.from)
+    }
     const requiresMixedMaterialId =
       operation.action === 'add' && supplyMix === operation.materialId ? operation.materialId : null
     supplyMix = mixesMaterialId
@@ -306,15 +363,18 @@ export function compileWorkflow(
       requiresMixedMaterialId,
       requiresReusableTool,
     }
-    if ('atLeast' in operation && operation.atLeast) step.maximum = null
+    if ('atLeast' in operation && operation.atLeast) {
+      step.maximum = null
+    }
     if (
       step.kind === 'mix' &&
       'duration' in operation &&
       operation.duration &&
       'atLeast' in operation.duration &&
       operation.duration.atLeast
-    )
+    ) {
       step.maximum = null
+    }
 
     if (operation.action === 'remove' && operation.drain) {
       const draining: WorkStep = {

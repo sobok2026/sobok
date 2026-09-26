@@ -24,8 +24,9 @@ export default function WashingHud({
     !washing ||
     cupCount(state.cleaning?.heldCups) ||
     (target !== 'wash' && !(target === washDestination(washing.item) && washing.stage === 'carrying'))
-  )
+  ) {
     return null
+  }
 
   return (
     <WorkHud aria-label="용기 세척·정리">
@@ -80,9 +81,7 @@ function WashingWork({
     return (
       <>
         <WorkTitle>세척 완료</WorkTitle>
-        {occupied ? (
-          <p className="my-2.5 text-sm leading-[1.65] text-danger">컵과 제조 도구를 먼저 내려놓으세요.</p>
-        ) : null}
+        {occupied && <p className="my-2.5 text-sm leading-[1.65] text-danger">컵과 제조 도구를 먼저 내려놓으세요.</p>}
         <WorkButton
           shortcut="E"
           primary
@@ -105,11 +104,9 @@ function WashingWork({
     <>
       <WorkTitle>{step.label}</WorkTitle>
       <WorkMeter label={step.label} ratio={ratio} value={`${Math.floor(ratio * 100)}%`} />
-      {occupied ? (
-        <p className="my-2.5 text-sm leading-[1.65] text-danger">컵과 제조 도구를 먼저 내려놓으세요.</p>
-      ) : null}
+      {occupied && <p className="my-2.5 text-sm leading-[1.65] text-danger">컵과 제조 도구를 먼저 내려놓으세요.</p>}
       <div className="flex flex-wrap gap-2">
-        {washing.stage === 'scrub' ? (
+        {washing.stage === 'scrub' && (
           <WorkButton
             shortcut="G"
             primary={!washing.spongeHeld || ready}
@@ -118,17 +115,17 @@ function WashingWork({
           >
             {washing.spongeHeld ? '스펀지 놓기' : '스펀지 집기'}
           </WorkButton>
-        ) : null}
-        {canUse ? (
+        )}
+        {canUse && (
           <WorkButton shortcut="Space" primary={!ready} hold onUse={() => act({ type: 'wash-use' })} onStop={stop}>
             {washing.stage === 'scrub' ? '누르고 문지르기' : '누르고 헹구기'}
           </WorkButton>
-        ) : null}
-        {ready && !washing.spongeHeld ? (
+        )}
+        {ready && !washing.spongeHeld && (
           <WorkButton shortcut="F" primary disabled={occupied} onUse={() => act({ type: 'wash-confirm' })}>
             {washing.stage === 'scrub' ? '헹구기 시작' : '세척 마치기'}
           </WorkButton>
-        ) : null}
+        )}
       </div>
       <details
         className={clsx(

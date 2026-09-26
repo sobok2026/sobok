@@ -42,7 +42,9 @@ export function addVesselLabel(
   for (const side of [1, -1]) {
     const face = new THREE.Mesh(geometry, material)
     face.position.set(0, y, side * depth)
-    if (side < 0) face.rotation.y = Math.PI
+    if (side < 0) {
+      face.rotation.y = Math.PI
+    }
     label.add(face)
   }
 

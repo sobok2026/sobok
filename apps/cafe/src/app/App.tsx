@@ -56,13 +56,14 @@ export default function App() {
         notice: '저장 기록을 읽지 못했어요. 새 근무를 시작하거나 백업 파일을 불러올 수 있어요.',
       }))
     void Promise.all([game, loadPreferences()]).then(([game, preferences]) => {
-      if (!cancelled)
+      if (!cancelled) {
         setBoot({
           store: new CafeStore(game.state ?? initialState()),
           hasSave: game.hasSave,
           notice: game.notice,
           preferences,
         })
+      }
     })
 
     return () => {
@@ -136,11 +137,13 @@ function CafeGame(props: CafeSessionProps) {
         aria-label="저장 백업 파일 불러오기"
         onChange={async (event) => {
           const file = event.target.files?.[0]
-          if (file) await importBackup(file)
+          if (file) {
+            await importBackup(file)
+          }
           event.target.value = ''
         }}
       />
-      {running ? (
+      {running && (
         <header
           className={clsx(
             'pointer-events-none absolute inset-x-6 top-5 z-10 flex items-start justify-between gap-4',
@@ -189,9 +192,9 @@ function CafeGame(props: CafeSessionProps) {
             </button>
           </nav>
         </header>
-      ) : null}
+      )}
 
-      {mode === 'welcome' ? (
+      {mode === 'welcome' && (
         <div
           className={clsx(
             'absolute inset-0 flex items-center bg-[linear-gradient(90deg,#f3f2ecf5,transparent_80%)]',
@@ -221,35 +224,35 @@ function CafeGame(props: CafeSessionProps) {
                   <TextButton disabled={!hasLock} onClick={() => input.current?.click()}>
                     백업 불러오기
                   </TextButton>
-                  {hasSave ? (
+                  {hasSave && (
                     <TextButton danger onClick={() => setConfirmNew(true)}>
                       처음부터 시작
                     </TextButton>
-                  ) : null}
+                  )}
                 </div>
               </details>
             </div>
-            {notice || saveError ? (
+            {(notice || saveError) && (
               <p className="mt-4 text-xs text-danger" role="status">
                 {saveError ? saveStatus : notice}
               </p>
-            ) : null}
+            )}
           </section>
         </div>
-      ) : null}
+      )}
 
-      {running ? <PlayHud {...session} /> : null}
+      {running && <PlayHud {...session} />}
 
-      {mode === 'overview' ? <ShiftOverview state={state} onClose={resume} /> : null}
+      {mode === 'overview' && <ShiftOverview state={state} onClose={resume} />}
 
-      {running && panel ? <StationPanel state={state} panel={panel} act={act} closePanel={closePanel} /> : null}
+      {running && panel && <StationPanel state={state} panel={panel} act={act} closePanel={closePanel} />}
 
-      {mode === 'guide' ? (
+      {mode === 'guide' && (
         <GameDialog title="도움말" onClose={closeGuide} wide>
           <WorkGuide state={state} station={guideStation} started={started} />
         </GameDialog>
-      ) : null}
-      {mode === 'pause' ? (
+      )}
+      {mode === 'pause' && (
         <GameDialog title="일시정지" onClose={resume}>
           <Button disabled={!canStart} onClick={resume}>
             계속하기 <kbd className="text-xs">Esc</kbd>
@@ -288,15 +291,15 @@ function CafeGame(props: CafeSessionProps) {
               {saveStatus}
             </p>
           </details>
-          {saveError ? (
+          {saveError && (
             <p className="mt-4 text-xs text-danger" role="alert">
               {saveStatus}
             </p>
-          ) : null}
+          )}
         </GameDialog>
-      ) : null}
+      )}
 
-      {state.phase === 'summary' && started && mode === 'play' ? (
+      {state.phase === 'summary' && started && mode === 'play' && (
         <GameDialog title={`${state.day}일차 결산`} wide>
           <div className="mb-6 grid grid-cols-2 gap-4">
             <div>
@@ -316,8 +319,8 @@ function CafeGame(props: CafeSessionProps) {
             다음 날 시작 <span aria-hidden="true">→</span>
           </Button>
         </GameDialog>
-      ) : null}
-      {confirmNew ? (
+      )}
+      {confirmNew && (
         <GameDialog title="처음부터 시작" onClose={() => setConfirmNew(false)}>
           <p className="mb-5 text-sm text-muted">현재 근무 기록이 지워집니다.</p>
           <Button disabled={!canStart} onClick={() => start(true)}>
@@ -330,8 +333,8 @@ function CafeGame(props: CafeSessionProps) {
             취소
           </TextButton>
         </GameDialog>
-      ) : null}
-      {graphicsError || hasLock === false ? (
+      )}
+      {(graphicsError || hasLock === false) && (
         <div
           className={clsx(
             'absolute bottom-16.25 left-1/2 z-30 max-w-145 -translate-x-1/2',
@@ -342,12 +345,14 @@ function CafeGame(props: CafeSessionProps) {
         >
           {graphicsError || '다른 창에서 이 매장을 열고 있어요. 그 창을 닫은 뒤 새로고침해주세요.'}
         </div>
-      ) : null}
+      )}
     </main>
   )
 }
 
 function startLabel(sceneReady: boolean, hasSave: boolean) {
-  if (!sceneReady) return '불러오는 중…'
+  if (!sceneReady) {
+    return '불러오는 중…'
+  }
   return hasSave ? '이어서 하기' : '시작하기'
 }

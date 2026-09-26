@@ -16,14 +16,20 @@ const choices = preparationIds.map((id) => PREPARATIONS[id]).sort((a, b) => a.na
 
 function orderPreparationMaterials(ticket: OrderLine | null) {
   const needed = new Set<string>()
-  if (!ticket) return needed
+  if (!ticket) {
+    return needed
+  }
   const visited = new Set<string>()
 
   const visit = (materialId: string) => {
-    if (visited.has(materialId)) return
+    if (visited.has(materialId)) {
+      return
+    }
     visited.add(materialId)
     const definition = preparationForMaterial(materialId)
-    if (!definition) return
+    if (!definition) {
+      return
+    }
     needed.add(materialId)
     for (const step of definition.steps) for (const input of Object.keys(step.costs)) visit(input)
   }
@@ -65,7 +71,7 @@ export default function PreparationPanel({ state, act }: { state: GameState; act
         placeholder="준비할 재료 이름"
         className="mb-3 min-h-11 w-full rounded-lg border border-control-line bg-control px-3 text-sm text-ink"
       />
-      {currentTicket(state) ? <p className="mb-3 text-xs text-muted">현재 주문에 필요한 부재료부터 표시해요.</p> : null}
+      {currentTicket(state) && <p className="mb-3 text-xs text-muted">현재 주문에 필요한 부재료부터 표시해요.</p>}
       <fieldset className="max-h-64 min-w-0 space-y-2 overflow-y-auto border-0 p-0 pr-1">
         <legend className="sr-only">준비할 제조법</legend>
         {options.map((item) => (
@@ -85,13 +91,13 @@ export default function PreparationPanel({ state, act }: { state: GameState; act
                 사용 가능 {formatAmount(available(state, item.output.materialId))}
                 {INGREDIENTS[item.output.materialId].unit}
               </span>
-              {needed.has(item.output.materialId) ? <span className="text-brand">현재 주문</span> : null}
+              {needed.has(item.output.materialId) && <span className="text-brand">현재 주문</span>}
             </span>
           </button>
         ))}
       </fieldset>
-      {!options.length ? <p className="py-4 text-sm text-muted">검색한 이름의 준비 가능한 제조법이 없어요.</p> : null}
-      {selected ? (
+      {!options.length && <p className="py-4 text-sm text-muted">검색한 이름의 준비 가능한 제조법이 없어요.</p>}
+      {selected && (
         <section className="mt-4 border-t border-line pt-4" aria-label="선택한 부재료 제조법">
           <h3 className="text-sm font-semibold">{selected.name}</h3>
           <p className="mt-1 text-xs text-muted">
@@ -105,12 +111,12 @@ export default function PreparationPanel({ state, act }: { state: GameState; act
           >
             준비 시작
           </Button>
-          {busy ? <p className="mt-2 text-xs text-muted">진행 중인 배합의 보관 또는 정리를 먼저 마쳐주세요.</p> : null}
-          {!busy && handsFull ? <p className="mt-2 text-xs text-muted">음료 컵과 도구를 먼저 내려놓아주세요.</p> : null}
+          {busy && <p className="mt-2 text-xs text-muted">진행 중인 배합의 보관 또는 정리를 먼저 마쳐주세요.</p>}
+          {!busy && handsFull && <p className="mt-2 text-xs text-muted">음료 컵과 도구를 먼저 내려놓아주세요.</p>}
           <PreparationInstructions definition={selected} />
         </section>
-      ) : null}
-      {unavailable.length ? (
+      )}
+      {unavailable.length > 0 && (
         <details className="mt-4 border-t border-line py-4 text-xs text-muted">
           <summary>확인이 필요한 제조법 {unavailable.length}개</summary>
           <ul className="mt-3 space-y-3">
@@ -122,7 +128,7 @@ export default function PreparationPanel({ state, act }: { state: GameState; act
             ))}
           </ul>
         </details>
-      ) : null}
+      )}
     </div>
   )
 }

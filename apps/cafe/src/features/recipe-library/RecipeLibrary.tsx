@@ -11,30 +11,42 @@ const sizeNames = { short: 'Short', tall: 'Tall', grande: 'Grande', venti: 'Vent
 const searchText = (text: string) => text.normalize('NFKC').replace(/\s/g, '').toLocaleLowerCase('ko')
 
 function secondsLabel(seconds: number) {
-  if (seconds % 3600 === 0) return `${seconds / 3600}시간`
-  if (seconds % 60 === 0) return `${seconds / 60}분`
+  if (seconds % 3600 === 0) {
+    return `${seconds / 3600}시간`
+  }
+  if (seconds % 60 === 0) {
+    return `${seconds / 60}분`
+  }
   return `${seconds}초`
 }
 
 function details(operation: RecipeOperation, size?: CatalogSize) {
   const text: string[] = []
-  if ('materialId' in operation && operation.materialId)
+  if ('materialId' in operation && operation.materialId) {
     text.push(recipeCatalog.materials.get(operation.materialId)!.name)
+  }
 
   if ('amount' in operation && operation.amount) {
     const amount =
       operation.amount.kind === 'by-size' ? size && selectedAmount(operation.amount, size) : operation.amount
-    if (amount) text.push(amountLabel(amount))
+    if (amount) {
+      text.push(amountLabel(amount))
+    }
   }
 
-  if ('toolId' in operation && operation.toolId) text.push(recipeCatalog.equipment.get(operation.toolId)!.name)
-  if ('toolIds' in operation && operation.toolIds)
+  if ('toolId' in operation && operation.toolId) {
+    text.push(recipeCatalog.equipment.get(operation.toolId)!.name)
+  }
+  if ('toolIds' in operation && operation.toolIds) {
     text.push(...operation.toolIds.map((id) => recipeCatalog.equipment.get(id)!.name))
+  }
 
   if (operation.action === 'run-machine') {
     text.push(recipeCatalog.equipment.get(operation.equipmentId)!.name)
     const program = typeof operation.program === 'string' ? operation.program : size && operation.program[size]
-    if (program) text.push(`프로그램 ${program}`)
+    if (program) {
+      text.push(`프로그램 ${program}`)
+    }
     text.push(
       (typeof operation.cycles === 'number' ? operation.cycles : `${operation.cycles.min}–${operation.cycles.max}`) +
         '회',
@@ -46,10 +58,14 @@ function details(operation: RecipeOperation, size?: CatalogSize) {
     if ('seconds' in duration) {
       const seconds = duration.seconds
       text.push((duration.approximate ? '약 ' : '') + secondsLabel(seconds) + (duration.atLeast ? ' 이상' : ''))
-    } else text.push(`${duration.minSeconds}–${duration.maxSeconds}초`)
+    } else {
+      text.push(`${duration.minSeconds}–${duration.maxSeconds}초`)
+    }
   }
 
-  if (operation.when) text.unshift(conditionLabel(operation.when))
+  if (operation.when) {
+    text.unshift(conditionLabel(operation.when))
+  }
   return text.join(' · ')
 }
 
@@ -59,7 +75,7 @@ function VariantDetail({ variant }: { variant: RecipeVariant }) {
 
   return (
     <div className="mt-4">
-      {variant.sizes.length ? (
+      {variant.sizes.length > 0 && (
         <div className="mb-4 flex items-center gap-3">
           <label htmlFor={selectId} className="text-xs text-muted">
             사이즈
@@ -77,8 +93,8 @@ function VariantDetail({ variant }: { variant: RecipeVariant }) {
             ))}
           </select>
         </div>
-      ) : null}
-      {variant.review.length ? (
+      )}
+      {variant.review.length > 0 && (
         <div className="mb-4 rounded-lg border border-line p-3 text-xs text-danger">
           <p className="font-medium">제조표 확인 필요</p>
           <ul className="mt-2 list-disc space-y-1 pl-4">
@@ -87,14 +103,14 @@ function VariantDetail({ variant }: { variant: RecipeVariant }) {
             ))}
           </ul>
         </div>
-      ) : null}
+      )}
       <ol className="space-y-5">
         {variant.steps.map((step, index) => (
           <li key={step.id}>
             <p className="font-medium">
               {index + 1}. {step.label}
             </p>
-            {step.when ? <p className="mt-1 text-xs text-brand">{conditionLabel(step.when)}</p> : null}
+            {step.when && <p className="mt-1 text-xs text-brand">{conditionLabel(step.when)}</p>}
             {step.instructions.map((text) => (
               <p key={text} className="mt-1 text-xs leading-relaxed">
                 {text}
@@ -103,11 +119,13 @@ function VariantDetail({ variant }: { variant: RecipeVariant }) {
             {step.operations.map((operation, operationIndex) => {
               const label = details(operation, size)
 
-              return label ? (
-                <p key={operationIndex} className="mt-1 text-xs text-brand">
-                  {label}
-                </p>
-              ) : null
+              return (
+                label && (
+                  <p key={operationIndex} className="mt-1 text-xs text-brand">
+                    {label}
+                  </p>
+                )
+              )
             })}
             {step.notes.map((text) => (
               <p key={text} className="mt-1 text-xs text-muted">
@@ -127,12 +145,12 @@ function VariantDetail({ variant }: { variant: RecipeVariant }) {
           </li>
         ))}
       </ol>
-      {variant.output ? (
+      {variant.output && (
         <p className="mt-5 text-xs text-brand">
           완성: {recipeCatalog.materials.get(variant.output.materialId)!.name} ·{' '}
           {variant.output.amount ? amountLabel(variant.output.amount) : variant.output.description}
         </p>
-      ) : null}
+      )}
       {variant.notes.map((text) => (
         <p key={text} className="mt-3 text-xs text-muted">
           {text}
@@ -214,7 +232,7 @@ export default function RecipeLibrary() {
       ) : (
         <p className="mt-4 text-xs text-muted">검색 결과가 없어요.</p>
       )}
-      {selected ? (
+      {selected && (
         <section key={selected.id} className="mt-5" aria-label={selected.name}>
           <h3 className="font-semibold">{selected.name}</h3>
           {selected.variants.map((variant) => (
@@ -224,7 +242,7 @@ export default function RecipeLibrary() {
             </details>
           ))}
         </section>
-      ) : null}
+      )}
     </details>
   )
 }

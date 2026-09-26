@@ -28,8 +28,11 @@ export function paintTexture(texture: THREE.Texture, draw: () => void) {
 
   latestDraw.set(texture, draw)
   paint()
-  if (document.fonts.status === 'loading')
+  if (document.fonts.status === 'loading') {
     void document.fonts.ready.then(() => {
-      if (latestDraw.get(texture) === draw) paint()
+      if (latestDraw.get(texture) === draw) {
+        paint()
+      }
     })
+  }
 }

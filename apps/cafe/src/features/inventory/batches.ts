@@ -10,6 +10,8 @@ export const batchDestination = (batch: Batch) =>
   INGREDIENTS[batch.ingredient].storage === 'fridge' ? ('stock' as const) : ('shelf' as const)
 
 export function batchTitle(batch: Batch, expired: boolean, readyTitle: string) {
-  if (expired) return '기한 만료'
+  if (expired) {
+    return '기한 만료'
+  }
   return batch.labelled ? readyTitle : '라벨 부착'
 }

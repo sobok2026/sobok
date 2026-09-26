@@ -11,14 +11,14 @@ export default function CupRack({ state, act }: { state: GameState; act: (action
 
   return (
     <>
-      {selectedCupKind ? (
+      {selectedCupKind && (
         <Button
           disabled={!!state.cup || !cleanCupCount(state, selectedCupKind)}
           onClick={() => act({ type: 'take-cup' })}
         >
           {CUP_NAMES[selectedCupKind]} 집기
         </Button>
-      ) : null}
+      )}
       <CupInventory state={state} act={act} />
     </>
   )

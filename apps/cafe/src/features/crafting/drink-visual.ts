@@ -44,7 +44,9 @@ export function projectVessel(session: ProductionState, vesselId: string, fallba
   const groups = new Map<Ingredient['visualGroup'], string>()
 
   for (const [id, amount] of Object.entries(vessel?.materials ?? {})) {
-    if (amount <= 0) continue
+    if (amount <= 0) {
+      continue
+    }
     const group = materialGroup(id)
     groups.set(group, materialColor(id, fallbackColor))
   }
@@ -73,7 +75,9 @@ export function projectVessel(session: ProductionState, vesselId: string, fallba
   const colors = mixed ? [color] : layeredColors
   // Equal color bands communicate ingredient presence; stock units are not volume ratios.
   const layers = colors.map((value) => ({ color: value, fill: (fill - foamFill) / colors.length }))
-  if (foamFill > 0) layers.push({ color: groups.get('foam')!, fill: foamFill })
+  if (foamFill > 0) {
+    layers.push({ color: groups.get('foam')!, fill: foamFill })
+  }
 
   return {
     fill,
@@ -90,21 +94,35 @@ export function operationColor(
   operation: WorkStep['operation'] | undefined,
   fallback: string,
 ): string {
-  if (operation && 'materialId' in operation && operation.materialId) return materialColor(operation.materialId)
-  if (operation && 'from' in operation) return projectVessel(session, operation.from, fallback).color
+  if (operation && 'materialId' in operation && operation.materialId) {
+    return materialColor(operation.materialId)
+  }
+  if (operation && 'from' in operation) {
+    return projectVessel(session, operation.from, fallback).color
+  }
   return fallback
 }
 
 export function heldTool(session: ProductionState, step: WorkStep | null | undefined, steps: WorkStep[]) {
-  if (!session.tool) return null
-  if (step?.tool?.id === session.tool) return step.tool
+  if (!session.tool) {
+    return null
+  }
+  if (step?.tool?.id === session.tool) {
+    return step.tool
+  }
   return steps.find((item) => item.tool?.id === session.tool)?.tool ?? null
 }
 
 export function operationVessel(operation: ResolvedOperation): string | null {
-  if ('into' in operation) return operation.into
-  if ('vessel' in operation) return operation.vessel
-  if ('from' in operation) return operation.from
+  if ('into' in operation) {
+    return operation.into
+  }
+  if ('vessel' in operation) {
+    return operation.vessel
+  }
+  if ('from' in operation) {
+    return operation.from
+  }
   return null
 }
 
@@ -114,9 +132,12 @@ export function workVesselShape(id: string, steps: WorkStep[]): 'pitcher' | 'sho
       ({ operation }) =>
         operation.action === 'run-machine' && operation.equipmentId === 'blender' && operation.vessel === id,
     )
-  )
+  ) {
     return 'blender'
-  if (steps.some(({ operation }) => operation.action === 'espresso' && operation.into === id)) return 'shot'
+  }
+  if (steps.some(({ operation }) => operation.action === 'espresso' && operation.into === id)) {
+    return 'shot'
+  }
   return 'pitcher'
 }
 
@@ -147,7 +168,9 @@ export function createDrinkVisual(parent: THREE.Object3D) {
   let previousKind: CupKind | null = null
 
   function update(view: DrinkVisualState) {
-    if (!bodies.has(view.kind)) bodies.set(view.kind, createCupBody(root, view.kind, true))
+    if (!bodies.has(view.kind)) {
+      bodies.set(view.kind, createCupBody(root, view.kind, true))
+    }
 
     for (const [kind, body] of bodies) {
       body.root.visible = kind === view.kind
@@ -173,7 +196,9 @@ export function createDrinkVisual(parent: THREE.Object3D) {
         Math.max(0, CUP_DIMENSIONS[view.kind].height - 0.008 - height),
       )
       layer.mesh.visible = value > 0.0001
-      if (band) (layer.mesh.material as THREE.MeshStandardMaterial).color.set(band.color)
+      if (band) {
+        ;(layer.mesh.material as THREE.MeshStandardMaterial).color.set(band.color)
+      }
 
       if (kindChanged || layer.height !== height || layer.fill !== value) {
         const positions = layer.mesh.geometry.getAttribute('position')
@@ -307,7 +332,9 @@ export function createProductionToolVisual(parent: THREE.Object3D) {
 
   function model(appearance: ProductionTool['appearance']) {
     const cached = tools.get(appearance)
-    if (cached) return cached
+    if (cached) {
+      return cached
+    }
     const root = new THREE.Group()
     parent.add(root)
     const material = standard('#dfc29b')
@@ -359,7 +386,9 @@ export function createProductionToolVisual(parent: THREE.Object3D) {
     update(tool: ProductionTool | null, color: string, servingSize = 'grande') {
       for (const cached of tools.values()) cached.root.visible = false
       for (const scoop of iceScoops.values()) scoop.visible = false
-      if (!tool) return null
+      if (!tool) {
+        return null
+      }
 
       if (tool.appearance === 'scoop' && (tool.id === 'equipment:ice-scoop' || scoopLabels[tool.id])) {
         const size =
@@ -441,7 +470,9 @@ export function createProductionEffects(parent: THREE.Object3D) {
 
       for (const [index, cloud] of vapor.entries()) {
         cloud.visible = steamAt !== null
-        if (!steamAt) continue
+        if (!steamAt) {
+          continue
+        }
         const cycle = (now / 1600 + index / vapor.length) % 1
         cloud.position.set(steamAt.x + Math.sin(index + cycle * 3) * 0.04, steamAt.y + 0.22 + cycle * 0.22, steamAt.z)
         cloud.scale.setScalar(0.4 + cycle)

@@ -87,9 +87,7 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
       </fieldset>
       {tab === 'work' ? (
         <>
-          {state.customer ? (
-            <p className="mb-5 text-sm text-muted">손님 · {CUSTOMER_STATUS[state.customer.stage]}</p>
-          ) : null}
+          {state.customer && <p className="mb-5 text-sm text-muted">손님 · {CUSTOMER_STATUS[state.customer.stage]}</p>}
           {remaining.length ? (
             <ul className="divide-y divide-line text-sm">
               {remaining.map((task) => (
@@ -102,7 +100,7 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
           ) : (
             <p className="py-8 text-center text-sm text-muted">남은 정리 없음</p>
           )}
-          {state.jobs.length ? (
+          {state.jobs.length > 0 && (
             <section className="mt-6 border-t border-line pt-4" aria-label="진행 중인 작업">
               <h3 className="mb-3 text-xs text-muted">진행 중</h3>
               {state.jobs.map((job) => (
@@ -116,7 +114,7 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
                 </div>
               ))}
             </section>
-          ) : null}
+          )}
           <details className="mt-5 border-t border-line pt-4 text-sm">
             <summary>비품 수량</summary>
             <dl className="mt-3 space-y-3 text-xs text-muted">
@@ -151,7 +149,9 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
 }
 
 function washingTask(washing: Washing | null) {
-  if (!washing) return ''
+  if (!washing) {
+    return ''
+  }
   if (washing.stage === 'carrying') {
     return `씻은 ${WASH_NAMES[washing.item]}를 ${STATIONS[washDestination(washing.item)].name}에 정리`
   }

@@ -15,7 +15,9 @@ export function useCafeScene(store: CafeStore, host: RefObject<HTMLDivElement | 
     let cancelled = false
     void import('../../world/scene')
       .then(({ createCafeScene }) => {
-        if (cancelled || !host.current) return
+        if (cancelled || !host.current) {
+          return
+        }
         try {
           scene.current = createCafeScene(host.current, {
             getState: store.getSnapshot,
@@ -42,7 +44,9 @@ export function useCafeScene(store: CafeStore, host: RefObject<HTMLDivElement | 
         }
       })
       .catch(() => {
-        if (!cancelled) setGraphicsError('게임 화면을 불러오지 못했어요. 새로고침해주세요.')
+        if (!cancelled) {
+          setGraphicsError('게임 화면을 불러오지 못했어요. 새로고침해주세요.')
+        }
       })
 
     return () => {

@@ -121,7 +121,9 @@ export function createWashingVisuals(scene: THREE.Scene, camera: THREE.Perspecti
 
         queue.forEach((value, i) => {
           value.group.visible = i < count
-          if (i < count) value.show(items[i])
+          if (i < count) {
+            value.show(items[i])
+          }
         })
       }
 

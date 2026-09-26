@@ -11,7 +11,9 @@ export function RecipeGuide({ state }: { state: GameState }) {
   const recipe = state.cup?.recipe ?? ticket?.recipe
   const size = state.cup ? cupSize(state.cup.craft.kind) : ticket?.size
   const service = state.cup ? cupService(state.cup.craft.kind) : ticket?.service
-  if (!recipe || !size || !service) return null
+  if (!recipe || !size || !service) {
+    return null
+  }
   const definition = recipeFor(recipe, size, service, state.cup?.craft.customizations ?? ticket?.customizations)
 
   return (
@@ -41,7 +43,7 @@ export function RecipeGuide({ state }: { state: GameState }) {
                   {details.length ? ` · ${details.join(' · ')}` : ''}
                 </p>
                 <p className="mt-1 text-xs text-muted">{step.instruction}</p>
-                {step.note ? <p className="mt-1 text-xs text-muted">{step.note}</p> : null}
+                {step.note && <p className="mt-1 text-xs text-muted">{step.note}</p>}
               </div>
             </li>
           )

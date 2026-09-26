@@ -21,7 +21,9 @@ export default function CleaningHud({
   stop: () => void
 }) {
   const cleaning = state.cleaning
-  if (!cleaning || (target !== cleaning.station && !(target === 'wash' && cupCount(cleaning.heldCups)))) return null
+  if (!cleaning || (target !== cleaning.station && !(target === 'wash' && cupCount(cleaning.heldCups)))) {
+    return null
+  }
   const table = isCupSurface(cleaning.station) ? cupSurface(state, cleaning.station) : null
   const occupied = !!(state.supplyDelivery || craftingHandsBusy(state) || washingHandsBusy(state.washing))
 
@@ -39,9 +41,9 @@ export default function CleaningHud({
         act={act}
         stop={stop}
       />
-      {occupied ? (
+      {occupied && (
         <p className="my-2.5 text-sm leading-[1.65] text-danger">들고 있는 컵·도구·보충품을 먼저 내려놓으세요.</p>
-      ) : null}
+      )}
       <details
         className={clsx(
           'mt-3 flex flex-wrap items-baseline gap-x-5 gap-y-1.5 text-xs text-muted',
@@ -90,11 +92,11 @@ function CleaningWork({
         ) : (
           <>
             <p className="my-2.5 text-sm leading-[1.65] text-muted">세척대로 이동</p>
-            {tableCups > 0 ? (
+            {tableCups > 0 && (
               <WorkButton shortcut="E" primary onUse={() => act({ type: 'collect-cup' })}>
                 남은 컵 집기 · {tableCups}개
               </WorkButton>
-            ) : null}
+            )}
           </>
         )}
       </>
@@ -121,7 +123,7 @@ function CleaningWork({
       <WorkTitle>{label}</WorkTitle>
       <WorkMeter label={label} ratio={ratio} value={`${Math.floor(ratio * 100)}%`} />
       <div className="flex flex-wrap gap-2">
-        {cleaning.stage === 'wipe' ? (
+        {cleaning.stage === 'wipe' && (
           <WorkButton
             shortcut="G"
             primary={!cleaning.clothHeld || ready}
@@ -130,8 +132,8 @@ function CleaningWork({
           >
             {cleaning.clothHeld ? '천 놓기' : '청소용 천 집기'}
           </WorkButton>
-        ) : null}
-        {cleaning.stage === 'bag' || cleaning.clothHeld ? (
+        )}
+        {(cleaning.stage === 'bag' || cleaning.clothHeld) && (
           <WorkButton
             shortcut="Space"
             primary={!ready}
@@ -142,12 +144,12 @@ function CleaningWork({
           >
             {cleaning.stage === 'bag' ? '누르고 묶기' : '누르고 닦기'}
           </WorkButton>
-        ) : null}
-        {ready && !cleaning.clothHeld ? (
+        )}
+        {ready && !cleaning.clothHeld && (
           <WorkButton shortcut="F" primary disabled={occupied} onUse={() => act({ type: 'clean-confirm' })}>
             {cleaning.stage === 'bag' ? '봉투 비우기' : '청소 마치기'}
           </WorkButton>
-        ) : null}
+        )}
       </div>
     </>
   )

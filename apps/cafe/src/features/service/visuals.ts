@@ -106,17 +106,22 @@ export function createCustomerVisuals(scene: THREE.Scene) {
         root.rotation.y = customer.yaw
         shirt.color.set(palette[(customer.orderNumber - 1) % palette.length])
         visualTime = state.time
-      } else if (running) root.position.lerp(position, 1 - Math.exp(-delta * 20))
+      } else if (running) {
+        root.position.lerp(position, 1 - Math.exp(-delta * 20))
+      }
 
-      if (running) visualTime += delta
+      if (running) {
+        visualTime += delta
+      }
       const sitting = customerSitting({ ...customer, position: [root.position.x, root.position.z] })
       const walking = customerWalking(customer)
       const stride = walking ? Math.sin(visualTime * 8) * (1 - sitting) : 0
       const sipping = customer.stage === 'drinking' ? Math.max(0, Math.sin(visualTime * 2)) : 0
       const yaw = customer.yaw + Math.atan2(Math.sin(-customer.yaw), Math.cos(-customer.yaw)) * sitting
-      if (running)
+      if (running) {
         root.rotation.y +=
           Math.atan2(Math.sin(yaw - root.rotation.y), Math.cos(yaw - root.rotation.y)) * Math.min(1, delta * 14)
+      }
       person.position.y = -0.27 * sitting + (walking ? Math.abs(stride) * 0.018 : 0)
 
       legs.forEach((leg, i) => {
@@ -139,7 +144,9 @@ export function createCustomerVisuals(scene: THREE.Scene) {
         cupDisplays.forEach((display, index) => {
           const line = received[index]
           display.root.visible = !!line
-          if (!line) return
+          if (!line) {
+            return
+          }
           const kind = cupKindFor(line.recipe, line.service, line.size)
           display.root.position.x = (index - (received.length - 1) / 2) * 0.24
           display.liquidMaterial.color.set(RECIPES[line.recipe].color)

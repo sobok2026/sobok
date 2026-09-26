@@ -319,8 +319,12 @@ export const vesselSchema = z.array(
 export type RecipeVessel = z.infer<typeof vesselSchema>[number]
 
 export function selectedAmount(amount: z.infer<typeof amountChoice>, size: CatalogSize): RecipeAmount {
-  if (amount.kind !== 'by-size') return amount
+  if (amount.kind !== 'by-size') {
+    return amount
+  }
   const selected = amount.values[size]
-  if (!selected) throw new Error(`${size} 계량 기준이 없습니다.`)
+  if (!selected) {
+    throw new Error(`${size} 계량 기준이 없습니다.`)
+  }
   return selected
 }

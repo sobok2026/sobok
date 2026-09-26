@@ -8,7 +8,9 @@ import App from './app/App'
 // Reloading picks up the new build; the timestamp stops a chunk that the new build lacks too from looping.
 window.addEventListener('vite:preloadError', () => {
   const lastReload = Number(sessionStorage.getItem('cafe-chunk-reload'))
-  if (Date.now() - lastReload < 10_000) return
+  if (Date.now() - lastReload < 10_000) {
+    return
+  }
   sessionStorage.setItem('cafe-chunk-reload', String(Date.now()))
   window.location.reload()
 })

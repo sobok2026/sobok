@@ -22,7 +22,9 @@ export function createSupplyVisuals(scene: THREE.Scene, camera: THREE.Perspectiv
         1.15 + (id === 'straws' ? 0.06 : 0) + (id === 'napkins' ? i * 0.017 : 0),
         5.42,
       )
-      if (id === 'sugar') mesh.rotation.z = 0.25
+      if (id === 'sugar') {
+        mesh.rotation.z = 0.25
+      }
       scene.add(mesh)
       return mesh
     })
@@ -49,7 +51,9 @@ export function createSupplyVisuals(scene: THREE.Scene, camera: THREE.Perspectiv
         })
 
       held.visible = !!state.supplyDelivery
-      if (state.supplyDelivery) labelMaterial.color.set(SUPPLIES[state.supplyDelivery.supply].color)
+      if (state.supplyDelivery) {
+        labelMaterial.color.set(SUPPLIES[state.supplyDelivery.supply].color)
+      }
     },
   }
 }

@@ -117,13 +117,15 @@ export const shopInventory = shopInventorySchema.parse(inventoryData)
 export const shopStockRules = shopStockRulesSchema.parse(stockRuleData)
 
 for (const [method, setting] of Object.entries(shopStockRules.espresso)) {
-  if (Math.abs(setting.beans.reduce((total, bean) => total + bean.share, 0) - 1) > 1e-9)
+  if (Math.abs(setting.beans.reduce((total, bean) => total + bean.share, 0) - 1) > 1e-9) {
     throw new Error(`${method}: 에스프레소 재고 원두 비율의 합이 1이어야 합니다.`)
+  }
 }
 
 for (const output of Object.values(shopStockRules.preparationOutputs)) {
-  if (shopInventory.materials[output.materialId]?.stockUnit !== output.stockUnit)
+  if (shopInventory.materials[output.materialId]?.stockUnit !== output.stockUnit) {
     throw new Error(`${output.materialId}: 완성 배합의 재고 단위가 재료 운영값과 다릅니다.`)
+  }
 }
 
 const flowAmount = z.number().min(0).max(100000000)

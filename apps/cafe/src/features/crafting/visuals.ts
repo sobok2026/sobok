@@ -92,8 +92,12 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
             .filter(([, vessel]) => vessel.fill > 0)
             .map(([id]) => id),
         )
-        if (currentVessel) ids.add(currentVessel)
-        if (operation && 'from' in operation) ids.add(operation.from)
+        if (currentVessel) {
+          ids.add(currentVessel)
+        }
+        if (operation && 'from' in operation) {
+          ids.add(operation.from)
+        }
         ids.delete(servingId)
         let index = 0
 
@@ -109,13 +113,18 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
 
           model.root.visible = craft.tool !== `vessel:${id}`
           model.root.position.copy(bench.root.position).add(new THREE.Vector3(-0.32 * index, 0, 0.04))
-          if (station === 'espresso' && currentVessel === id)
+          if (station === 'espresso' && currentVessel === id) {
             model.root.position.set(ESPRESSO_OUTLET[0], 1.11, ESPRESSO_OUTLET[2])
-          if (station === 'steam' && currentVessel === id) model.root.position.fromArray(STEAM_PITCHER_SPOT)
+          }
+          if (station === 'steam' && currentVessel === id) {
+            model.root.position.fromArray(STEAM_PITCHER_SPOT)
+          }
           const blending = job?.equipmentId === 'blender' && currentVessel === id
           const atBlender =
             station === 'prep' && shape === 'blender' && currentVessel === id && step?.equipmentId === 'blender'
-          if (atBlender) model.root.position.fromArray(BLENDER_JAR_SPOT)
+          if (atBlender) {
+            model.root.position.fromArray(BLENDER_JAR_SPOT)
+          }
           model.root.rotation.z = blending ? Math.sin(now / 25) * 0.007 : 0
           positions.set(id, model.root.position)
           model.update(projectVessel(craft, id, RECIPES[cup.recipe].color), {
@@ -134,14 +143,18 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
         previousProgress = craft.progress
       }
 
-      if (craft.progress > previousProgress && step && !['pour', 'mix'].includes(step.kind)) pulseUntil = now + 330
+      if (craft.progress > previousProgress && step && !['pour', 'mix'].includes(step.kind)) {
+        pulseUntil = now + 330
+      }
       previousProgress = craft.progress
       const pulse = Math.max(0, (pulseUntil - now) / 330)
       spot.copy(positions.get(currentVessel ?? servingId) ?? bench.root.position)
       const color = operationColor(craft, operation, serving.color)
       const descriptor = heldTool(craft, step, definition.steps)
       const tool = tools.update(descriptor, color, cupSize(craft.kind))
-      if (tool) positionProductionTool(tool, camera, step, spot, !!station && active, station ? pulse : 0, now)
+      if (tool) {
+        positionProductionTool(tool, camera, step, spot, !!station && active, station ? pulse : 0, now)
+      }
       const pumped =
         operation?.action === 'add' &&
         (operation.amount.kind === 'count' || operation.amount.kind === 'count-range') &&
@@ -170,10 +183,18 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
 
       if (station && (pouring || adding || extraction || dispensing)) {
         start.set(spot.x + 0.09, spot.y + 0.44, spot.z)
-        if (extraction) start.fromArray(ESPRESSO_OUTLET)
-        if (dispensing || (station === 'water' && !step?.tool)) start.fromArray(WATER_OUTLET)
-        if (station === 'brew' && !step?.tool) start.fromArray(COLD_BREW_OUTLET)
-        if (pump) pump.outlet.getWorldPosition(start)
+        if (extraction) {
+          start.fromArray(ESPRESSO_OUTLET)
+        }
+        if (dispensing || (station === 'water' && !step?.tool)) {
+          start.fromArray(WATER_OUTLET)
+        }
+        if (station === 'brew' && !step?.tool) {
+          start.fromArray(COLD_BREW_OUTLET)
+        }
+        if (pump) {
+          pump.outlet.getWorldPosition(start)
+        }
         const height =
           currentVessel === servingId
             ? Math.max(0.025, serving.fill * (CUP_DIMENSIONS[craft.kind].height - 0.02))
@@ -183,17 +204,31 @@ export function createCraftVisuals(scene: THREE.Scene, camera: THREE.Perspective
       }
 
       const steaming = job?.equipmentId === 'steam-wand' || (operation?.action === 'steam' && pulse > 0)
-      if (station && steaming) effects.update(null, end, color, spot, now)
+      if (station && steaming) {
+        effects.update(null, end, color, spot, now)
+      }
     },
   }
 }
 
 export function cupSpot(station: StationId): [number, number, number] {
-  if (station === 'pickup') return [6.1, 1.1, -1.48]
-  if (station === 'espresso') return [ESPRESSO_OUTLET[0], 1.11, ESPRESSO_OUTLET[2]]
-  if (station === 'steam') return [STEAM_PITCHER_SPOT[0] + 0.28, STEAM_PITCHER_SPOT[1], STEAM_PITCHER_SPOT[2]]
-  if (station === 'brew') return [COLD_BREW_OUTLET[0], 1.102, COLD_BREW_OUTLET[2]]
-  if (station === 'water') return [WATER_OUTLET[0], 1.071, WATER_OUTLET[2]]
-  if (station === 'prep') return [-1.95, 1.105, -4.95]
+  if (station === 'pickup') {
+    return [6.1, 1.1, -1.48]
+  }
+  if (station === 'espresso') {
+    return [ESPRESSO_OUTLET[0], 1.11, ESPRESSO_OUTLET[2]]
+  }
+  if (station === 'steam') {
+    return [STEAM_PITCHER_SPOT[0] + 0.28, STEAM_PITCHER_SPOT[1], STEAM_PITCHER_SPOT[2]]
+  }
+  if (station === 'brew') {
+    return [COLD_BREW_OUTLET[0], 1.102, COLD_BREW_OUTLET[2]]
+  }
+  if (station === 'water') {
+    return [WATER_OUTLET[0], 1.071, WATER_OUTLET[2]]
+  }
+  if (station === 'prep') {
+    return [-1.95, 1.105, -4.95]
+  }
   return [STATIONS[station].x, 1.075, staffFacingZ(-0.62)]
 }

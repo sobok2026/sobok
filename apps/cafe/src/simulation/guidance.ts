@@ -14,15 +14,23 @@ import type { GameState } from './state'
 function plannedStation(state: GameState): StationId {
   const ticket = currentTicket(state)
   const carrying = carriedBatch(state)
-  if (carrying)
+  if (carrying) {
     return carrying.expiresAt !== null && carrying.expiresAt <= state.time
       ? batchOrigin(carrying)
       : batchDestination(carrying)
-  if (state.supplyDelivery) return 'condiment'
-  if (cleaningHandsBusy(state.cleaning)) return cupCount(state.cleaning!.heldCups) ? 'wash' : state.cleaning!.station
-  if (state.washing) return state.washing.stage === 'carrying' ? washDestination(state.washing.item) : 'wash'
-  if (state.cleaning && state.cup?.craft.location !== 'hand' && !state.cup?.craft.tool && !state.preparation?.tool)
+  }
+  if (state.supplyDelivery) {
+    return 'condiment'
+  }
+  if (cleaningHandsBusy(state.cleaning)) {
+    return cupCount(state.cleaning!.heldCups) ? 'wash' : state.cleaning!.station
+  }
+  if (state.washing) {
+    return state.washing.stage === 'carrying' ? washDestination(state.washing.item) : 'wash'
+  }
+  if (state.cleaning && state.cup?.craft.location !== 'hand' && !state.cup?.craft.tool && !state.preparation?.tool) {
     return state.cleaning.station
+  }
 
   if (state.preparation) {
     const prep = state.preparation
@@ -36,23 +44,34 @@ function plannedStation(state: GameState): StationId {
           available(state, id) + 0.0001 <
           amount * (operation.inputRequirements ? 1 : Math.max(0, 1 - prep.progress / operation.target)),
       )
-    )
+    ) {
       return 'stock'
+    }
     return 'prep'
   }
 
-  if (state.coldBrew && state.coldBrew.stage !== 'extracting') return 'cold-prep'
+  if (state.coldBrew && state.coldBrew.stage !== 'extracting') {
+    return 'cold-prep'
+  }
   const step = nextStep(state)
 
   if (step) {
     const craft = state.cup!.craft
-    if (craft.fault) return craft.location === 'hand' ? 'trash' : craft.location
-    if (craft.location !== 'hand' && craft.location !== step.station) return craft.location
-    if (step.requiresReusableTool && !craft.reservedTool && !state.tools.clean) return 'wash'
+    if (craft.fault) {
+      return craft.location === 'hand' ? 'trash' : craft.location
+    }
+    if (craft.location !== 'hand' && craft.location !== step.station) {
+      return craft.location
+    }
+    if (step.requiresReusableTool && !craft.reservedTool && !state.tools.clean) {
+      return 'wash'
+    }
 
     for (const [key, fullAmount] of Object.entries(step.inputRequirements ?? step.costs)) {
       const amount = fullAmount * (step.inputRequirements ? 1 : Math.max(0, 1 - craft.progress / step.target))
-      if (available(state, key as IngredientId) + 0.0001 >= amount) continue
+      if (available(state, key as IngredientId) + 0.0001 >= amount) {
+        continue
+      }
       const pending = state.batches.find(
         (batch) =>
           batch.ingredient === key &&
@@ -62,51 +81,96 @@ function plannedStation(state: GameState): StationId {
           batch.expiresAt !== null &&
           batch.expiresAt > state.time,
       )
-      if (pending) return pending.location === 'prep' || pending.location === 'cold-prep' ? pending.location : 'stock'
-      if (preparationForMaterial(key)) return state.tools.clean ? 'prep' : 'wash'
-      if (key === 'coldBrew') return 'cold-prep'
+      if (pending) {
+        return pending.location === 'prep' || pending.location === 'cold-prep' ? pending.location : 'stock'
+      }
+      if (preparationForMaterial(key)) {
+        return state.tools.clean ? 'prep' : 'wash'
+      }
+      if (key === 'coldBrew') {
+        return 'cold-prep'
+      }
       return 'stock'
     }
 
     return step.station
   }
 
-  if (state.cup)
+  if (state.cup) {
     return state.cup.craft.location !== 'hand' && state.cup.craft.location !== 'pickup'
       ? state.cup.craft.location
       : 'pickup'
+  }
 
   if (ticket) {
     const kind = cupKindFor(ticket.recipe, ticket.service, ticket.size)
-    if (cleanCupCount(state, kind)) return 'cups'
-    if (!isReusableCup(kind)) return 'stock'
-    if (state.reusableCups[kind].dirty || state.reusableCups[kind].washed) return 'wash'
-    if (state.condiment.cups[kind]) return 'condiment'
+    if (cleanCupCount(state, kind)) {
+      return 'cups'
+    }
+    if (!isReusableCup(kind)) {
+      return 'stock'
+    }
+    if (state.reusableCups[kind].dirty || state.reusableCups[kind].washed) {
+      return 'wash'
+    }
+    if (state.condiment.cups[kind]) {
+      return 'condiment'
+    }
     return tableIds.find((id) => state.tables[id].cups[kind]) ?? 'wash'
   }
 
   if (state.phase === 'closing') {
-    if (washItems.some((item) => washStock(state, item).dirty)) return 'wash'
-    if (washItems.some((item) => washStock(state, item).washed)) return 'wash'
+    if (washItems.some((item) => washStock(state, item).dirty)) {
+      return 'wash'
+    }
+    if (washItems.some((item) => washStock(state, item).washed)) {
+      return 'wash'
+    }
     const dirtyTable = tableIds.find((id) => state.tables[id].dirty || cupCount(state.tables[id].cups))
-    if (dirtyTable) return dirtyTable
-    if (cupCount(state.condiment.cups) || state.condiment.dirty) return 'condiment'
-    if (state.dirtyBar) return 'mix'
-    if (state.trash) return 'trash'
-    if (state.batches.some((b) => b.amount > 0 && b.expiresAt !== null && b.expiresAt <= state.time)) return 'stock'
-    if (state.batches.some((b) => b.amount > 0 && b.openedAt !== null && b.location !== 'bar')) return 'stock'
-    if (state.customer) return 'pos'
+    if (dirtyTable) {
+      return dirtyTable
+    }
+    if (cupCount(state.condiment.cups) || state.condiment.dirty) {
+      return 'condiment'
+    }
+    if (state.dirtyBar) {
+      return 'mix'
+    }
+    if (state.trash) {
+      return 'trash'
+    }
+    if (state.batches.some((b) => b.amount > 0 && b.expiresAt !== null && b.expiresAt <= state.time)) {
+      return 'stock'
+    }
+    if (state.batches.some((b) => b.amount > 0 && b.openedAt !== null && b.location !== 'bar')) {
+      return 'stock'
+    }
+    if (state.customer) {
+      return 'pos'
+    }
   }
 
-  if (state.phase === 'open' && supplyIds.some((id) => !state.supplies[id].bar)) return 'stock'
+  if (state.phase === 'open' && supplyIds.some((id) => !state.supplies[id].bar)) {
+    return 'stock'
+  }
 
   if (state.customer?.visit || state.customer?.stage === 'leaving') {
-    if (washItems.some((item) => washStock(state, item).dirty || washStock(state, item).washed)) return 'wash'
+    if (washItems.some((item) => washStock(state, item).dirty || washStock(state, item).washed)) {
+      return 'wash'
+    }
     const dirtyTable = tableIds.find((id) => state.tables[id].dirty || cupCount(state.tables[id].cups))
-    if (dirtyTable) return dirtyTable
-    if (cupCount(state.condiment.cups) || state.condiment.dirty) return 'condiment'
-    if (state.dirtyBar) return 'mix'
-    if (state.trash) return 'trash'
+    if (dirtyTable) {
+      return dirtyTable
+    }
+    if (cupCount(state.condiment.cups) || state.condiment.dirty) {
+      return 'condiment'
+    }
+    if (state.dirtyBar) {
+      return 'mix'
+    }
+    if (state.trash) {
+      return 'trash'
+    }
     return 'stock'
   }
 
@@ -115,7 +179,8 @@ function plannedStation(state: GameState): StationId {
 
 export function suggestedStation(state: GameState): StationId {
   const destination = plannedStation(state)
-  if (state.cup?.craft.location === 'hand' && ['prep', 'cold-prep', 'wash', 'rack'].includes(destination))
+  if (state.cup?.craft.location === 'hand' && ['prep', 'cold-prep', 'wash', 'rack'].includes(destination)) {
     return nextStep(state)?.station ?? 'pickup'
+  }
   return destination
 }

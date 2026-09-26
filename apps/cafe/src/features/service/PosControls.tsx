@@ -50,10 +50,14 @@ export function PosDialog({
     if (field) {
       field.focus()
       field.select()
-    } else dialog.current?.focus()
+    } else {
+      dialog.current?.focus()
+    }
 
     return () => {
-      if (previous instanceof HTMLElement && previous.isConnected) previous.focus()
+      if (previous instanceof HTMLElement && previous.isConnected) {
+        previous.focus()
+      }
     }
   }, [])
 
@@ -111,7 +115,9 @@ export function PosDialog({
 }
 
 function appendKey(value: string, key: string) {
-  if (key === '.5') return String(Math.floor(Number(value || 0)) + 0.5)
+  if (key === '.5') {
+    return String(Math.floor(Number(value || 0)) + 0.5)
+  }
   return value === '0' ? key : value + key
 }
 
@@ -132,7 +138,9 @@ export function NumericPad({
 }) {
   const append = (key: string) => {
     const next = appendKey(value, key)
-    if (next.length <= 8 && /^\d*(\.5)?$/.test(next)) onChange(next)
+    if (next.length <= 8 && /^\d*(\.5)?$/.test(next)) {
+      onChange(next)
+    }
   }
 
   return (
@@ -200,18 +208,17 @@ export function NumericPad({
       >
         {decimal ? '.5' : '00'}
       </PosButton>
-      {money
-        ? [1000, 10000, 50000].map((amount, index) => (
-            <PosButton
-              key={amount}
-              tone="key"
-              disabled={disabled}
-              onClick={() => onChange(String(Math.min(99999999, Number(value || 0) + amount)))}
-            >
-              {['천원', '만원', '오만원'][index]}
-            </PosButton>
-          ))
-        : null}
+      {money &&
+        [1000, 10000, 50000].map((amount, index) => (
+          <PosButton
+            key={amount}
+            tone="key"
+            disabled={disabled}
+            onClick={() => onChange(String(Math.min(99999999, Number(value || 0) + amount)))}
+          >
+            {['천원', '만원', '오만원'][index]}
+          </PosButton>
+        ))}
     </fieldset>
   )
 }

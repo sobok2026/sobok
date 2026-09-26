@@ -14,7 +14,9 @@ type Props = { state: GameState; target: StationId | null; act: (action: Action)
 
 export default function PreparationHud({ state, target, act, stop }: Props) {
   const prep = state.preparation
-  if (!prep || target !== 'prep') return null
+  if (!prep || target !== 'prep') {
+    return null
+  }
   const definition = PREPARATIONS[prep.recipe]
 
   return (
@@ -79,9 +81,7 @@ function PreparationWork({
 
   return (
     <>
-      {handsFull ? (
-        <p className="my-2.5 text-sm leading-relaxed text-danger">음료 컵과 도구를 먼저 내려놓으세요.</p>
-      ) : null}
+      {handsFull && <p className="my-2.5 text-sm leading-relaxed text-danger">음료 컵과 도구를 먼저 내려놓으세요.</p>}
       <ProductionControls
         session={prep}
         step={step}

@@ -20,7 +20,9 @@ export default function GameDialog({
     surface.current?.focus()
 
     return () => {
-      if (previous instanceof HTMLElement && previous.isConnected) previous.focus({ preventScroll: true })
+      if (previous instanceof HTMLElement && previous.isConnected) {
+        previous.focus({ preventScroll: true })
+      }
     }
   }, [])
 
@@ -48,7 +50,9 @@ export default function GameDialog({
             onClose?.()
           }
 
-          if (event.key !== 'Tab') return
+          if (event.key !== 'Tab') {
+            return
+          }
           const controls = Array.from(
             event.currentTarget.querySelectorAll<HTMLElement>(
               'button:not(:disabled), summary, input:not(:disabled), select:not(:disabled), [tabindex="0"]',
@@ -73,7 +77,7 @@ export default function GameDialog({
           <h2 id={titleId} className="text-2xl font-semibold tracking-tight">
             {title}
           </h2>
-          {onClose ? (
+          {onClose && (
             <button
               type="button"
               onClick={onClose}
@@ -82,7 +86,7 @@ export default function GameDialog({
             >
               ×
             </button>
-          ) : null}
+          )}
         </div>
         {children}
       </section>

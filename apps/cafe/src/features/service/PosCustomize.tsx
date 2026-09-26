@@ -20,12 +20,16 @@ const levelNames = { less: '적게', extra: '많이' } as const
 
 function syrupLabel(custom: Customizations, id: keyof typeof extraSyrups) {
   const pumps = custom.syrups[id]
-  if (pumps) return `${pumps}펌프`
+  if (pumps) {
+    return `${pumps}펌프`
+  }
   return custom.milk === '두유' && id === '바닐라-시럽' ? '무료' : '+800원'
 }
 
 function toppingLabel(custom: Customizations, stepId: string) {
-  if (custom.omitted.includes(stepId)) return '없이'
+  if (custom.omitted.includes(stepId)) {
+    return '없이'
+  }
   const level = custom.levels[stepId]
   return level ? levelNames[level] : '기본'
 }
@@ -51,7 +55,9 @@ export function PosCustomize({
   const custom = line?.customizations ?? noCustomizations()
 
   const change = (next: Customizations) => {
-    if (!line) return
+    if (!line) {
+      return
+    }
     try {
       recipeFor(line.recipe, line.size, line.service, next)
       onChange(next)
@@ -72,7 +78,9 @@ export function PosCustomize({
   }
 
   const confirm = () => {
-    if (!input || !value || !Number.isFinite(Number(value))) return
+    if (!input || !value || !Number.isFinite(Number(value))) {
+      return
+    }
     const amount = Number(value)
 
     if (
@@ -86,14 +94,20 @@ export function PosCustomize({
 
     if (input.extra) {
       const syrups = { ...custom.syrups }
-      if (!amount) delete syrups[input.extra]
-      else syrups[input.extra] = amount
+      if (!amount) {
+        delete syrups[input.extra]
+      } else {
+        syrups[input.extra] = amount
+      }
       change({ ...custom, syrups })
     } else {
       const quantities = { ...custom.quantities }
       const base = countAmount(plan.find((step) => step.id === input.id)!)!.value
-      if (amount === base) delete quantities[input.id]
-      else quantities[input.id] = amount
+      if (amount === base) {
+        delete quantities[input.id]
+      } else {
+        quantities[input.id] = amount
+      }
       change({ ...custom, quantities })
     }
   }
@@ -127,20 +141,19 @@ export function PosCustomize({
         </div>
         <div className="grid content-start grid-cols-3 gap-2 overflow-y-auto xl:grid-cols-4">
           {shown('coffee') &&
-          plan.some((step) => step.operation.action === 'espresso' && step.operation.method === 'regular')
-            ? (['regular', 'decaf', 'half-decaf'] as const).map((coffee) => (
-                <PosButton
-                  key={coffee}
-                  disabled={disabled}
-                  aria-pressed={(custom.coffee ?? 'regular') === coffee}
-                  className="min-h-22"
-                  onClick={() => change({ ...custom, coffee: coffee === 'regular' ? null : coffee })}
-                >
-                  {{ regular: '일반 원두', decaf: '디카페인', 'half-decaf': '1/2 디카페인' }[coffee]}
-                  <span className="mt-3 block text-xs">{coffee === 'regular' ? '기본' : '+300원'}</span>
-                </PosButton>
-              ))
-            : null}
+            plan.some((step) => step.operation.action === 'espresso' && step.operation.method === 'regular') &&
+            (['regular', 'decaf', 'half-decaf'] as const).map((coffee) => (
+              <PosButton
+                key={coffee}
+                disabled={disabled}
+                aria-pressed={(custom.coffee ?? 'regular') === coffee}
+                className="min-h-22"
+                onClick={() => change({ ...custom, coffee: coffee === 'regular' ? null : coffee })}
+              >
+                {{ regular: '일반 원두', decaf: '디카페인', 'half-decaf': '1/2 디카페인' }[coffee]}
+                <span className="mt-3 block text-xs">{coffee === 'regular' ? '기본' : '+300원'}</span>
+              </PosButton>
+            ))}
           {plan
             .filter(customizableQuantity)
             .filter((step) => shown(step.operation.action === 'espresso' ? 'coffee' : 'syrup'))
@@ -166,65 +179,64 @@ export function PosCustomize({
                 </PosButton>
               )
             })}
-          {shown('syrup') && plan.some((step) => 'into' in step.operation && step.operation.into === 'serving-cup')
-            ? (Object.entries(extraSyrups) as Array<[keyof typeof extraSyrups, string]>)
-                .filter(
-                  ([id]) => !plan.some((step) => step.operation.action === 'add' && step.operation.materialId === id),
-                )
-                .map(([id, label]) => (
-                  <PosButton
-                    key={id}
-                    disabled={disabled}
-                    aria-pressed={!!custom.syrups[id]}
-                    className="min-h-22 text-left"
-                    onClick={() => open({ id, label, extra: id, value: custom.syrups[id] ?? 0, unit: 'pump' })}
-                  >
-                    {label}
-                    <span className="mt-3 block text-right text-xs">{syrupLabel(custom, id)}</span>
-                  </PosButton>
-                ))
-            : null}
-          {shown('milk') && plan.some((step) => step.operation.action === 'add' && step.operation.materialId === 'milk')
-            ? (Object.entries(milkChoices) as Array<[keyof typeof milkChoices, string]>).map(([id, label]) => (
+          {shown('syrup') &&
+            plan.some((step) => 'into' in step.operation && step.operation.into === 'serving-cup') &&
+            (Object.entries(extraSyrups) as Array<[keyof typeof extraSyrups, string]>)
+              .filter(
+                ([id]) => !plan.some((step) => step.operation.action === 'add' && step.operation.materialId === id),
+              )
+              .map(([id, label]) => (
                 <PosButton
                   key={id}
                   disabled={disabled}
-                  aria-pressed={(custom.milk ?? 'milk') === id}
-                  className="min-h-22"
-                  onClick={() => change({ ...custom, milk: id === 'milk' ? null : id })}
+                  aria-pressed={!!custom.syrups[id]}
+                  className="min-h-22 text-left"
+                  onClick={() => open({ id, label, extra: id, value: custom.syrups[id] ?? 0, unit: 'pump' })}
                 >
                   {label}
-                  <span className="mt-3 block text-xs">{id === '오트앤유' ? '+800원' : '무료'}</span>
+                  <span className="mt-3 block text-right text-xs">{syrupLabel(custom, id)}</span>
                 </PosButton>
-              ))
-            : null}
-          {shown('topping')
-            ? plan.filter(canOmit).map((step) => (
-                <PosButton
-                  key={step.id}
-                  disabled={disabled}
-                  aria-pressed={custom.omitted.includes(step.id) || !!custom.levels[step.id]}
-                  className="min-h-22 text-left"
-                  onClick={() => setLevelStep(step)}
-                >
-                  {step.label}
-                  <span className="mt-3 block text-right text-xs">{toppingLabel(custom, step.id)}</span>
-                </PosButton>
-              ))
-            : null}
+              ))}
+          {shown('milk') &&
+            plan.some((step) => step.operation.action === 'add' && step.operation.materialId === 'milk') &&
+            (Object.entries(milkChoices) as Array<[keyof typeof milkChoices, string]>).map(([id, label]) => (
+              <PosButton
+                key={id}
+                disabled={disabled}
+                aria-pressed={(custom.milk ?? 'milk') === id}
+                className="min-h-22"
+                onClick={() => change({ ...custom, milk: id === 'milk' ? null : id })}
+              >
+                {label}
+                <span className="mt-3 block text-xs">{id === '오트앤유' ? '+800원' : '무료'}</span>
+              </PosButton>
+            ))}
+          {shown('topping') &&
+            plan.filter(canOmit).map((step) => (
+              <PosButton
+                key={step.id}
+                disabled={disabled}
+                aria-pressed={custom.omitted.includes(step.id) || !!custom.levels[step.id]}
+                className="min-h-22 text-left"
+                onClick={() => setLevelStep(step)}
+              >
+                {step.label}
+                <span className="mt-3 block text-right text-xs">{toppingLabel(custom, step.id)}</span>
+              </PosButton>
+            ))}
         </div>
-        {error && !input ? (
+        {error && !input && (
           <p role="alert" className="mt-3 text-sm text-danger">
             {error}
           </p>
-        ) : null}
+        )}
         <div className="mt-auto pt-4">
           <PosButton tone="dark" disabled={disabled || !line} onClick={() => change(noCustomizations())}>
             커스텀 초기화
           </PosButton>
         </div>
       </section>
-      {levelStep ? (
+      {levelStep && (
         <PosDialog title={`${levelStep.label} 선택`} onClose={() => setLevelStep(null)}>
           <div className="grid grid-cols-4 gap-2">
             {(['none', 'less', 'normal', 'extra'] as const).map((level) => (
@@ -233,10 +245,15 @@ export function PosCustomize({
                 className="min-h-24 px-1"
                 onClick={() => {
                   const levels = { ...custom.levels }
-                  if (level === 'less' || level === 'extra') levels[levelStep.id] = level
-                  else delete levels[levelStep.id]
+                  if (level === 'less' || level === 'extra') {
+                    levels[levelStep.id] = level
+                  } else {
+                    delete levels[levelStep.id]
+                  }
                   const omitted = custom.omitted.filter((id) => id !== levelStep.id)
-                  if (level === 'none') omitted.push(levelStep.id)
+                  if (level === 'none') {
+                    omitted.push(levelStep.id)
+                  }
                   change({ ...custom, levels, omitted })
                 }}
               >
@@ -245,14 +262,14 @@ export function PosCustomize({
               </PosButton>
             ))}
           </div>
-          {error ? (
+          {error && (
             <p role="alert" className="mt-3 text-sm text-danger">
               {error}
             </p>
-          ) : null}
+          )}
         </PosDialog>
-      ) : null}
-      {input ? (
+      )}
+      {input && (
         <PosDialog title={input.label} onClose={() => setInput(null)}>
           <form
             onSubmit={(event) => {
@@ -266,19 +283,21 @@ export function PosCustomize({
               autoFocus
               value={value}
               onChange={(event) => {
-                if (/^\d{0,2}(\.5?)?$/.test(event.target.value)) setValue(event.target.value)
+                if (/^\d{0,2}(\.5?)?$/.test(event.target.value)) {
+                  setValue(event.target.value)
+                }
               }}
               className="mb-3 min-h-14 w-full rounded border-2 border-pos-active bg-[#fff2cb] px-4 text-xl tabular-nums"
             />
             <NumericPad value={value} onChange={setValue} onConfirm={confirm} decimal={input.unit === 'shot'} />
-            {error ? (
+            {error && (
               <p role="alert" className="mt-3 text-sm text-danger">
                 {error}
               </p>
-            ) : null}
+            )}
           </form>
         </PosDialog>
-      ) : null}
+      )}
     </div>
   )
 }

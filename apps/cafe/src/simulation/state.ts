@@ -70,22 +70,28 @@ const saleSchema = z
     const invalid = (message: string) => context.addIssue({ code: 'custom', message })
     try {
       for (const line of sale.lines) recipeFor(line.recipe, line.size, line.service, line.customizations)
-      if (new Set(sale.lines.map((line) => line.id)).size !== sale.lines.length) invalid('주문 항목이 중복됩니다.')
-      if (new Set(sale.payments.map((payment) => payment.id)).size !== sale.payments.length)
+      if (new Set(sale.lines.map((line) => line.id)).size !== sale.lines.length) {
+        invalid('주문 항목이 중복됩니다.')
+      }
+      if (new Set(sale.payments.map((payment) => payment.id)).size !== sale.payments.length) {
         invalid('결제 내역이 중복됩니다.')
-      if (sale.lines.some((line) => line.served > line.quantity || (sale.paidAt === null && line.served > 0)))
+      }
+      if (sale.lines.some((line) => line.served > line.quantity || (sale.paidAt === null && line.served > 0))) {
         invalid('전달 수량을 확인해주세요.')
+      }
       if (
         sale.payments.some(
           (payment) =>
             payment.tendered < payment.amount || (payment.method === 'card' && payment.tendered !== payment.amount),
         )
-      )
+      ) {
         invalid('받은 금액을 확인해주세요.')
+      }
       const total = saleTotal(sale),
         paid = salePaid(sale)
-      if (paid > total || (sale.paidAt === null ? paid >= total : paid !== total))
+      if (paid > total || (sale.paidAt === null ? paid >= total : paid !== total)) {
         invalid('주문 금액과 결제 상태가 맞지 않아요.')
+      }
     } catch {
       invalid('주문할 수 없는 커스텀이나 메뉴가 포함되어 있어요.')
     }
@@ -318,7 +324,9 @@ export const stateSchema = z
     position: z.tuple([z.number().min(-7).max(7), z.number().min(-6).max(6), z.number(), z.number()]),
   })
   .refine((state) => {
-    if (!state.cup) return true
+    if (!state.cup) {
+      return true
+    }
     const ticket = currentTicket(state)
 
     return (
@@ -376,7 +384,9 @@ export const stateSchema = z
   .refine(
     (state) =>
       state.batches.every((batch) => {
-        if (!['prep', 'cold-prep', 'hand'].includes(batch.location)) return true
+        if (!['prep', 'cold-prep', 'hand'].includes(batch.location)) {
+          return true
+        }
 
         return batch.ingredient === 'coldBrew'
           ? batch.location !== 'prep' && state.coldBrew?.stage === 'ready' && state.coldBrew.batchId === batch.id

@@ -18,16 +18,22 @@ export function handlePosActions({ state: s }: WorkContext, action: PosAction) {
     return
   }
 
-  if (s.sale && (s.sale.customerId !== s.customer.id || s.sale.paidAt !== null)) return
+  if (s.sale && (s.sale.customerId !== s.customer.id || s.sale.paidAt !== null)) {
+    return
+  }
 
   if (action.type === 'pos-void') {
-    if (s.sale) s.sale.payments = s.sale.payments.filter((payment) => payment.id !== action.id)
+    if (s.sale) {
+      s.sale.payments = s.sale.payments.filter((payment) => payment.id !== action.id)
+    }
     return
   }
 
   if (action.type === 'pos-pay') {
     const sale = s.sale
-    if (!sale || sale.payments.some((payment) => payment.id === action.id)) return
+    if (!sale || sale.payments.some((payment) => payment.id === action.id)) {
+      return
+    }
 
     if (!Number.isSafeInteger(action.tendered) || action.tendered <= 0 || action.tendered > 100000000) {
       fail('결제 금액을 확인해주세요.')
@@ -87,14 +93,18 @@ export function handlePosActions({ state: s }: WorkContext, action: PosAction) {
   if (action.type === 'pos-remove') {
     if (s.sale) {
       s.sale.lines = s.sale.lines.filter((line) => line.id !== action.id)
-      if (!s.sale.lines.length) s.sale = null
+      if (!s.sale.lines.length) {
+        s.sale = null
+      }
     }
     return
   }
 
   if (action.type === 'pos-split') {
     const line = s.sale?.lines.find((line) => line.id === action.id)
-    if (!s.sale || !line || line.quantity <= 1 || s.sale.lines.length >= 50) return
+    if (!s.sale || !line || line.quantity <= 1 || s.sale.lines.length >= 50) {
+      return
+    }
     line.quantity--
     s.sale.lines.splice(s.sale.lines.indexOf(line) + 1, 0, { ...structuredClone(line), id: uid(), quantity: 1 })
     return
@@ -136,6 +146,8 @@ export function handlePosActions({ state: s }: WorkContext, action: PosAction) {
     }
 
     const line = s.sale?.lines.find((line) => line.id === action.id)
-    if (line) Object.assign(line, item, { quantity: action.quantity })
+    if (line) {
+      Object.assign(line, item, { quantity: action.quantity })
+    }
   }
 }

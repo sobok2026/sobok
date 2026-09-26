@@ -25,9 +25,13 @@ function buildPreparations() {
   const unavailable: UnavailablePreparation[] = []
 
   for (const recipe of recipeCatalog.recipes.values()) {
-    if (recipe.kind !== 'preparation') continue
+    if (recipe.kind !== 'preparation') {
+      continue
+    }
     for (const variant of recipe.variants) {
-      if (variant.output?.materialId === 'coldBrew') continue
+      if (variant.output?.materialId === 'coldBrew') {
+        continue
+      }
       const id = `${recipe.id}:${variant.id}`
       const name = recipe.variants.length > 1 ? `${recipe.name} · ${variant.name}` : recipe.name
 
@@ -64,7 +68,9 @@ export function preparationForMaterial(materialId: string): PreparationDefinitio
 }
 
 export function createPreparation(recipe: PreparationId): Preparation {
-  if (!PREPARATIONS[recipe]) throw new Error('준비할 수 없는 제조법입니다.')
+  if (!PREPARATIONS[recipe]) {
+    throw new Error('준비할 수 없는 제조법입니다.')
+  }
   return { ...createProductionState(), id: crypto.randomUUID(), recipe, stage: 'measuring', batchId: null }
 }
 

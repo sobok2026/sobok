@@ -10,8 +10,9 @@ async function recipesAt(folder) {
 
   for (const entry of await readdir(folder, { withFileTypes: true })) {
     const url = new URL(entry.name + (entry.isDirectory() ? '/' : ''), folder)
-    if (entry.isDirectory()) result.push(...(await recipesAt(url)))
-    else if (entry.name.endsWith('.json')) {
+    if (entry.isDirectory()) {
+      result.push(...(await recipesAt(url)))
+    } else if (entry.name.endsWith('.json')) {
       try {
         result.push(JSON.parse(await readFile(url, 'utf8')))
       } catch (error) {

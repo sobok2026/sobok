@@ -25,7 +25,9 @@ type Props = {
 
 export default function CraftingHud({ state, target, ...handlers }: Props) {
   const cup = state.cup
-  if (!cup || cup.craft.location === 'hand' || cup.craft.location !== target) return null
+  if (!cup || cup.craft.location === 'hand' || cup.craft.location !== target) {
+    return null
+  }
 
   const craft = cup.craft
   const place = cup.craft.location
@@ -56,7 +58,9 @@ export default function CraftingHud({ state, target, ...handlers }: Props) {
 }
 
 function progressLabel(step: WorkStep | null, needsMove: boolean, position: string) {
-  if (!step) return '제조 완료'
+  if (!step) {
+    return '제조 완료'
+  }
   return needsMove ? '다음 작업대' : position
 }
 
@@ -120,13 +124,13 @@ function CraftingWork({
           onConfirm={() => onConfirm(place)}
           onObserve={(id, value) => onConfirm(place, { id, value })}
         />
-        {!craft.tool && !job ? (
+        {!craft.tool && !job && (
           <div className="mt-3 compact:mt-1.5">
             <TextButton onClick={() => onMoveCup(place)}>
               <kbd className="mr-1">E</kbd> 컵 집기
             </TextButton>
           </div>
-        ) : null}
+        )}
       </>
     )
   }
@@ -134,13 +138,13 @@ function CraftingWork({
   return (
     <>
       <WorkTitle>{state.customer?.stage === 'pickup' ? '전달 준비' : '제조 완료'}</WorkTitle>
-      {state.customer?.stage !== 'pickup' ? (
+      {state.customer?.stage !== 'pickup' && (
         <p className="my-2.5 text-sm leading-relaxed text-muted">
           {state.customer
             ? `손님 ${CUSTOMER_STATUS[state.customer.stage]}. 픽업대에 도착하면 전달하세요.`
             : '응대할 손님이 없어요.'}
         </p>
-      ) : null}
+      )}
       <WorkButton shortcut="F" primary disabled={state.customer?.stage !== 'pickup'} onUse={() => onConfirm(place)}>
         음료 전달
       </WorkButton>
@@ -155,7 +159,9 @@ function supplyNotice(state: GameState, craft: CraftState, step: WorkStep) {
   if (step.requiresReusableTool && !craft.reservedTool && !state.tools.clean) {
     return '깨끗한 작업 용기 부족 · 세척 후 도구 선반에 정리하세요.'
   }
-  if (readyWork(step, craft.progress)) return null
+  if (readyWork(step, craft.progress)) {
+    return null
+  }
 
   const remaining = step.inputRequirements ? 1 : Math.max(0, 1 - craft.progress / step.target)
   const missing = Object.entries(step.inputRequirements ?? step.costs).find(

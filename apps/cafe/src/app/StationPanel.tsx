@@ -25,8 +25,10 @@ export default function StationPanel({
   act: (action: Action) => void
   closePanel: (lock?: boolean) => void
 }) {
-  if (!panel) return null
-  if (panel === 'pos')
+  if (!panel) {
+    return null
+  }
+  if (panel === 'pos') {
     return (
       <PosPanel
         key={state.customer?.id ?? 'empty-pos'}
@@ -36,6 +38,7 @@ export default function StationPanel({
         onEscape={() => closePanel(false)}
       />
     )
+  }
   const actionJob = state.jobs.find((job) => job.station === panel)
 
   return (
@@ -66,28 +69,28 @@ export default function StationPanel({
           </button>
         </div>
         <div className="h-5" />
-        {actionJob ? (
+        {actionJob && (
           <div className="mb-5 flex flex-col gap-1.75 rounded-sm bg-[#e1e8d5] p-4.25 text-xs">
             <span>{actionJob.label}</span>
             <strong className="text-stat font-medium">{Math.ceil(actionJob.endsAt - state.time)}초 남음</strong>
           </div>
-        ) : null}
-        {panel === 'cups' ? <CupRack state={state} act={act} /> : null}
-        {['espresso', 'steam', 'brew', 'water', 'ice', 'sauce', 'mix', 'topping'].includes(panel) ? (
+        )}
+        {panel === 'cups' && <CupRack state={state} act={act} />}
+        {['espresso', 'steam', 'brew', 'water', 'ice', 'sauce', 'mix', 'topping'].includes(panel) && (
           <CraftingPanel state={state} />
-        ) : null}
-        {panel === 'pickup' ? <PickupPanel state={state} act={act} /> : null}
-        {panel === 'prep' ? <PreparationPanel state={state} act={act} /> : null}
-        {panel === 'cold-prep' ? <ColdBrewPanel state={state} act={act} /> : null}
-        {panel === 'shelf' ? <ShelfPanel state={state} act={act} /> : null}
-        {panel === 'wash' ? <WashingPanel state={state} act={act} /> : null}
-        {panel === 'rack' ? <ToolRack state={state} /> : null}
-        {isCupSurface(panel) || panel === 'mix' || panel === 'trash' ? (
+        )}
+        {panel === 'pickup' && <PickupPanel state={state} act={act} />}
+        {panel === 'prep' && <PreparationPanel state={state} act={act} />}
+        {panel === 'cold-prep' && <ColdBrewPanel state={state} act={act} />}
+        {panel === 'shelf' && <ShelfPanel state={state} act={act} />}
+        {panel === 'wash' && <WashingPanel state={state} act={act} />}
+        {panel === 'rack' && <ToolRack state={state} />}
+        {(isCupSurface(panel) || panel === 'mix' || panel === 'trash') && (
           <CleaningPanel state={state} station={panel} act={act} />
-        ) : null}
-        {panel === 'condiment' ? <SupplyPanel state={state} act={act} location="bar" /> : null}
+        )}
+        {panel === 'condiment' && <SupplyPanel state={state} act={act} location="bar" />}
 
-        {panel === 'stock' ? <InventoryPanel state={state} act={act} /> : null}
+        {panel === 'stock' && <InventoryPanel state={state} act={act} />}
         <CupManagement state={state} act={act} />
       </section>
     </div>

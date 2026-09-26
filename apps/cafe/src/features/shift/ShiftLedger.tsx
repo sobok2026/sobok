@@ -8,11 +8,17 @@ export default function ShiftLedger({ state }: { state: GameState }) {
   const purchases = ingredientIds.flatMap((id) =>
     totals.purchases[id] ? [{ name: INGREDIENTS[id].name, amount: totals.purchases[id]! }] : [],
   )
-  if (totals.cupPurchases) purchases.push({ name: '컵', amount: totals.cupPurchases })
-  if (totals.coldBrewPurchases) purchases.push({ name: '콜드 브루 원두', amount: totals.coldBrewPurchases })
+  if (totals.cupPurchases) {
+    purchases.push({ name: '컵', amount: totals.cupPurchases })
+  }
+  if (totals.coldBrewPurchases) {
+    purchases.push({ name: '콜드 브루 원두', amount: totals.coldBrewPurchases })
+  }
 
   for (const id of supplyIds)
-    if (totals.supplyPurchases[id]) purchases.push({ name: SUPPLIES[id].name, amount: totals.supplyPurchases[id]! })
+    if (totals.supplyPurchases[id]) {
+      purchases.push({ name: SUPPLIES[id].name, amount: totals.supplyPurchases[id]! })
+    }
 
   const spent = purchases.reduce((sum, item) => sum + item.amount, 0)
   const usedSupplies = supplyIds.filter((id) => (totals.suppliesUsed[id] ?? 0) > 0)
@@ -36,7 +42,7 @@ export default function ShiftLedger({ state }: { state: GameState }) {
           </div>
         ))}
       </dl>
-      {purchases.length ? (
+      {purchases.length > 0 && (
         <details className="border-b border-line py-4">
           <summary className="text-muted">입고 내역 · {purchases.length}</summary>
           <dl className="mt-3 space-y-3 text-xs">
@@ -48,8 +54,8 @@ export default function ShiftLedger({ state }: { state: GameState }) {
             ))}
           </dl>
         </details>
-      ) : null}
-      {usedSupplies.length ? (
+      )}
+      {usedSupplies.length > 0 && (
         <details className="border-b border-line py-4" aria-label="손님 소모품 사용량">
           <summary className="text-muted">소모품 사용량</summary>
           <dl className="mt-3 space-y-3 text-xs">
@@ -64,17 +70,17 @@ export default function ShiftLedger({ state }: { state: GameState }) {
             ))}
           </dl>
         </details>
-      ) : null}
-      {hasWaste ? (
+      )}
+      {hasWaste && (
         <details className="border-b border-line py-4">
           <summary className="text-muted">폐기 내역</summary>
           <dl className="mt-3 space-y-3 text-xs">
-            {totals.coldBrewDiscardedBeans > 0 ? (
+            {totals.coldBrewDiscardedBeans > 0 && (
               <div className="flex justify-between gap-4">
                 <dt>콜드 브루 원두</dt>
                 <dd>{formatAmount(totals.coldBrewDiscardedBeans)}lb</dd>
               </div>
-            ) : null}
+            )}
             {discarded.map((id) => (
               <div key={id} className="flex justify-between gap-4">
                 <dt>{INGREDIENTS[id].name}</dt>
@@ -84,15 +90,15 @@ export default function ShiftLedger({ state }: { state: GameState }) {
                 </dd>
               </div>
             ))}
-            {totals.wastedCups > 0 ? (
+            {totals.wastedCups > 0 && (
               <div className="flex justify-between gap-4">
                 <dt>재제조 컵</dt>
                 <dd>{totals.wastedCups}개</dd>
               </div>
-            ) : null}
+            )}
           </dl>
         </details>
-      ) : null}
+      )}
     </section>
   )
 }

@@ -1,7 +1,9 @@
 export type Lifetime = { amount: number; unit: 'days' | 'hours' | 'months' }
 
 export function expiryAt(startedAt: number, lifetime: Lifetime) {
-  if (lifetime.unit === 'hours') return startedAt + lifetime.amount * 3600
+  if (lifetime.unit === 'hours') {
+    return startedAt + lifetime.amount * 3600
+  }
 
   if (lifetime.unit === 'months') {
     const start = new Date(startedAt * 1000)

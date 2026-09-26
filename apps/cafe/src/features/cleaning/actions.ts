@@ -59,10 +59,14 @@ export function handleCleaningActions(
     }
     case 'collect-cup': {
       const cleaning = s.cleaning
-      if (!cleaning || !isCupSurface(cleaning.station) || cleaning.stage !== 'collect') break
+      if (!cleaning || !isCupSurface(cleaning.station) || cleaning.stage !== 'collect') {
+        break
+      }
       const table = cupSurface(s, cleaning.station)
       const kind = reusableCupKinds.find((kind) => table.cups[kind] > 0)
-      if (!kind) break
+      if (!kind) {
+        break
+      }
       table.cups[kind]--
       cleaning.heldCups[kind]++
       say(s, `사용한 컵 ${cupCount(cleaning.heldCups)}개를 들고 있어요. 세척대로 가져가세요.`)
@@ -70,7 +74,9 @@ export function handleCleaningActions(
     }
     case 'drop-used-cups': {
       const cleaning = s.cleaning
-      if (!cleaning || !cupCount(cleaning.heldCups) || !isCupSurface(cleaning.station)) break
+      if (!cleaning || !cupCount(cleaning.heldCups) || !isCupSurface(cleaning.station)) {
+        break
+      }
       for (const kind of reusableCupKinds) s.reusableCups[kind].dirty += cleaning.heldCups[kind]
       cleaning.heldCups = emptyCupCounts()
       const surface = cupSurface(s, cleaning.station)
@@ -82,7 +88,9 @@ export function handleCleaningActions(
         break
       }
 
-      if (!cupCount(surface.cups)) cleaning.stage = 'wipe'
+      if (!cupCount(surface.cups)) {
+        cleaning.stage = 'wipe'
+      }
       say(
         s,
         `${STATIONS[cleaning.station].name}로 돌아가 ${cleaning.stage === 'wipe' ? '닦아주세요.' : '남은 컵을 회수해주세요.'}`,
@@ -91,13 +99,17 @@ export function handleCleaningActions(
       break
     }
     case 'clean-tool':
-      if (s.cleaning?.stage !== 'wipe' || cupCount(s.cleaning.heldCups)) break
+      if (s.cleaning?.stage !== 'wipe' || cupCount(s.cleaning.heldCups)) {
+        break
+      }
       s.cleaning.clothHeld = !s.cleaning.clothHeld
       say(s, s.cleaning.clothHeld ? '청소용 천을 집었어요.' : '청소용 천을 내려놓았어요.')
       break
     case 'clean-use': {
       const cleaning = s.cleaning
-      if (!cleaning || cleaning.stage === 'collect') break
+      if (!cleaning || cleaning.stage === 'collect') {
+        break
+      }
 
       if (cleaning.stage === 'wipe' && !cleaning.clothHeld) {
         fail('G로 청소용 천을 먼저 집어주세요.')
@@ -109,7 +121,9 @@ export function handleCleaningActions(
     }
     case 'clean-confirm': {
       const cleaning = s.cleaning
-      if (!cleaning || cleaning.stage === 'collect') break
+      if (!cleaning || cleaning.stage === 'collect') {
+        break
+      }
 
       if (cleaning.clothHeld) {
         fail('G로 청소용 천을 내려놓은 뒤 확인해주세요.')
@@ -131,8 +145,11 @@ export function handleCleaningActions(
           say(s, '닦기는 끝났어요. 새로 남은 컵도 회수해주세요.', 'success')
           break
         }
-      } else if (cleaning.station === 'mix') s.dirtyBar = 0
-      else s.trash = Math.max(0, s.trash - cleaning.trashCount)
+      } else if (cleaning.station === 'mix') {
+        s.dirtyBar = 0
+      } else {
+        s.trash = Math.max(0, s.trash - cleaning.trashCount)
+      }
 
       s.totals.cleaned++
       s.cleaning = null
@@ -152,13 +169,21 @@ export function handleCleaningActions(
 }
 
 function alreadyClean(s: GameState, station: CleaningStation) {
-  if (isCupSurface(station)) return !cupSurface(s, station).dirty && !cupCount(cupSurface(s, station).cups)
-  if (station === 'mix') return !s.dirtyBar
+  if (isCupSurface(station)) {
+    return !cupSurface(s, station).dirty && !cupCount(cupSurface(s, station).cups)
+  }
+  if (station === 'mix') {
+    return !s.dirtyBar
+  }
   return !s.trash
 }
 
 function initialStage(s: GameState, station: CleaningStation) {
-  if (station === 'trash') return 'bag'
-  if (isCupSurface(station) && cupCount(cupSurface(s, station).cups)) return 'collect'
+  if (station === 'trash') {
+    return 'bag'
+  }
+  if (isCupSurface(station) && cupCount(cupSurface(s, station).cups)) {
+    return 'collect'
+  }
   return 'wipe'
 }

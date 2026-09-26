@@ -73,7 +73,7 @@ export default function PlayHud({
 
   return (
     <>
-      {!panel && ticket ? (
+      {!panel && ticket && (
         <aside
           className={clsx(
             'pointer-events-none absolute top-21 left-6 z-6 w-64',
@@ -96,10 +96,10 @@ export default function PlayHud({
             전달 {state.sale?.lines.reduce((sum, line) => sum + line.served, 0)} /{' '}
             {state.sale?.lines.reduce((sum, line) => sum + line.quantity, 0)}잔
           </p>
-          {ticket ? <p className="mt-1 text-xs text-muted">{itemCustomizations(ticket).join(' · ')}</p> : null}
+          {ticket && <p className="mt-1 text-xs text-muted">{itemCustomizations(ticket).join(' · ')}</p>}
         </aside>
-      ) : null}
-      {!panel && !focusedWork && (target || carried || needsStaffAccess) ? (
+      )}
+      {!panel && !focusedWork && (target || carried || needsStaffAccess) && (
         <section
           className={clsx(
             'absolute bottom-6 left-1/2 z-6 w-max max-w-[calc(100%-2rem)] -translate-x-1/2',
@@ -117,8 +117,8 @@ export default function PlayHud({
             openPanel={openPanel}
           />
         </section>
-      ) : null}
-      {!panel ? (
+      )}
+      {!panel && (
         <div
           className={clsx(
             'pointer-events-none absolute top-1/2 left-1/2 size-1.25 -translate-1/2',
@@ -128,16 +128,14 @@ export default function PlayHud({
           )}
           data-focused={!!target}
         />
-      ) : null}
-      {!panel && showCleaning ? <CleaningHud state={state} target={target} act={act} stop={stopUse} /> : null}
-      {!panel && showWashing && !showCleaning ? (
-        <WashingHud state={state} target={target} act={act} stop={stopUse} />
-      ) : null}
-      {!panel && showPreparation && !showWashing && !showCleaning ? (
+      )}
+      {!panel && showCleaning && <CleaningHud state={state} target={target} act={act} stop={stopUse} />}
+      {!panel && showWashing && !showCleaning && <WashingHud state={state} target={target} act={act} stop={stopUse} />}
+      {!panel && showPreparation && !showWashing && !showCleaning && (
         <PreparationHud state={state} target={target} act={act} stop={stopUse} />
-      ) : null}
-      {!panel && showColdBrew ? <ColdBrewHud state={state} act={act} stop={stopUse} /> : null}
-      {!panel && showCrafting && !showPreparation && !showWashing && !showCleaning ? (
+      )}
+      {!panel && showColdBrew && <ColdBrewHud state={state} act={act} stop={stopUse} />}
+      {!panel && showCrafting && !showPreparation && !showWashing && !showCleaning && (
         <CraftingHud
           state={state}
           target={target}
@@ -150,8 +148,8 @@ export default function PlayHud({
           onMoveCup={moveCup}
           onDiscard={() => act({ type: 'discard-cup' })}
         />
-      ) : null}
-      {lastMessage?.tone === 'error' && lastMessage.id !== dismissedMessageId ? (
+      )}
+      {lastMessage?.tone === 'error' && lastMessage.id !== dismissedMessageId && (
         <div
           className={clsx(
             'absolute top-21 left-1/2 z-15 -translate-x-1/2',
@@ -179,8 +177,8 @@ export default function PlayHud({
             ×
           </button>
         </div>
-      ) : null}
-      {saveError ? (
+      )}
+      {saveError && (
         <div role="status">
           <button
             type="button"
@@ -193,7 +191,7 @@ export default function PlayHud({
             저장 실패 · 메뉴에서 백업
           </button>
         </div>
-      ) : null}
+      )}
     </>
   )
 }
@@ -261,8 +259,12 @@ function carriedItem(state: GameState, heldBatch: Batch | undefined): CarriedIte
   }
 
   const heldCups = cupCount(state.cleaning?.heldCups)
-  if (state.supplyDelivery) return { name: SUPPLIES[state.supplyDelivery.supply].name, destination: 'condiment' }
-  if (heldCups) return { name: `사용한 컵 ${heldCups}개`, destination: 'wash' }
+  if (state.supplyDelivery) {
+    return { name: SUPPLIES[state.supplyDelivery.supply].name, destination: 'condiment' }
+  }
+  if (heldCups) {
+    return { name: `사용한 컵 ${heldCups}개`, destination: 'wash' }
+  }
   if (state.washing?.stage === 'carrying') {
     return { name: `씻은 ${WASH_NAMES[state.washing.item]}`, destination: washDestination(state.washing.item) }
   }
@@ -273,18 +275,30 @@ function carriedItem(state: GameState, heldBatch: Batch | undefined): CarriedIte
 }
 
 function targetActionLabel(state: GameState, target: StationId, heldBatch: Batch | undefined) {
-  if (cupCount(state.cleaning?.heldCups) && target === 'wash') return '사용한 컵 내려놓기'
-  if (state.washing?.stage === 'carrying' && target === washDestination(state.washing.item)) return '씻은 용기 정리'
+  if (cupCount(state.cleaning?.heldCups) && target === 'wash') {
+    return '사용한 컵 내려놓기'
+  }
+  if (state.washing?.stage === 'carrying' && target === washDestination(state.washing.item)) {
+    return '씻은 용기 정리'
+  }
 
   if (target === 'pos') {
-    if (state.phase === 'closing') return '마감 관리'
+    if (state.phase === 'closing') {
+      return '마감 관리'
+    }
     const canTakeOrder = state.customer?.stage === 'ordering' && !state.customer.visit
     return canTakeOrder ? '주문 입력' : '주문 확인'
   }
 
-  if (heldBatch) return target === batchOrigin(heldBatch) ? '용기 내려놓기' : '용기 보관'
-  if (state.supplyDelivery && target === 'condiment') return '소모품 채우기'
-  if (state.supplyDelivery && target === 'stock') return '보충품 내려놓기'
+  if (heldBatch) {
+    return target === batchOrigin(heldBatch) ? '용기 내려놓기' : '용기 보관'
+  }
+  if (state.supplyDelivery && target === 'condiment') {
+    return '소모품 채우기'
+  }
+  if (state.supplyDelivery && target === 'stock') {
+    return '보충품 내려놓기'
+  }
 
   const ticket = currentTicket(state)
 
@@ -293,7 +307,11 @@ function targetActionLabel(state: GameState, target: StationId, heldBatch: Batch
     return cleanCupCount(state, kind) > 0 ? `${CUP_NAMES[kind]} 집기` : '컵 재고 확인'
   }
 
-  if (state.cup?.craft.location === 'hand' && craftStations.includes(target)) return '컵 내려놓기'
-  if (target === 'stock') return '재고 확인'
+  if (state.cup?.craft.location === 'hand' && craftStations.includes(target)) {
+    return '컵 내려놓기'
+  }
+  if (target === 'stock') {
+    return '재고 확인'
+  }
   return '열기'
 }

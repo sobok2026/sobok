@@ -25,7 +25,9 @@ const EPSILON = 1e-9
 const sizes: CatalogSize[] = ['short', 'tall', 'grande', 'venti', 'trenta']
 
 function requireValue<T>(value: T | undefined, message: string): T {
-  if (value === undefined) throw new Error(message)
+  if (value === undefined) {
+    throw new Error(message)
+  }
   return value
 }
 
@@ -50,32 +52,46 @@ function stockFromMass(materialId: string, grams: number) {
 }
 
 function physicalStock(materialId: string, value: number, unit: string) {
-  if (unit in rules.volumeUnits)
+  if (unit in rules.volumeUnits) {
     return stockFromVolume(materialId, value * rules.volumeUnits[unit as keyof typeof rules.volumeUnits])
-  if (unit in rules.massUnits)
+  }
+  if (unit in rules.massUnits) {
     return stockFromMass(materialId, value * rules.massUnits[unit as keyof typeof rules.massUnits])
+  }
   throw new Error(`${materialId}: '${unit}' 재고 변환이 없습니다.`)
 }
 
 function minimumCount(amount: RecipeAmount) {
-  if (amount.kind === 'count') return amount.value
-  if (amount.kind === 'count-range') return amount.min
+  if (amount.kind === 'count') {
+    return amount.value
+  }
+  if (amount.kind === 'count-range') {
+    return amount.min
+  }
   throw new Error('횟수 단위 계량이 필요합니다.')
 }
 
 function referenceSize(amount: RecipeAmount, size?: CatalogSize): StockSize {
   const reference = 'referenceSize' in amount ? amount.referenceSize : undefined
-  if (!reference) return size ?? 'single'
-  if (reference !== 'one-size-smaller' && reference !== 'one-size-larger') return reference
+  if (!reference) {
+    return size ?? 'single'
+  }
+  if (reference !== 'one-size-smaller' && reference !== 'one-size-larger') {
+    return reference
+  }
   const index = size === undefined ? -1 : sizes.indexOf(size)
   const selected = sizes[index + (reference === 'one-size-smaller' ? -1 : 1)]
-  if (index < 0 || !selected) throw new Error(`${size ?? '단일 제공'}에서 '${reference}' 계량을 선택할 수 없습니다.`)
+  if (index < 0 || !selected) {
+    throw new Error(`${size ?? '단일 제공'}에서 '${reference}' 계량을 선택할 수 없습니다.`)
+  }
   return selected
 }
 
 function toolDose(catalog: RecipeCatalog, toolId: string, size: StockSize): Dose {
   const tool = requireValue(catalog.equipment.get(toolId), `${toolId}: 도구 정의가 없습니다.`)
-  if (tool.dose) return tool.dose
+  if (tool.dose) {
+    return tool.dose
+  }
   const estimate = requireValue(rules.tools[toolId], `${tool.name}: 게임 재고용 토출량이 없습니다.`)
   return { value: estimate.bySize ? estimate.bySize[size] : estimate.value, unit: estimate.unit }
 }
@@ -94,7 +110,9 @@ function stockCount(
     return physicalStock(materialId, dose.value * count, dose.unit)
   }
 
-  if (amount.unit === stockUnit(catalog, materialId)) return count
+  if (amount.unit === stockUnit(catalog, materialId)) {
+    return count
+  }
   return count * factors(materialId).counts[amount.unit]
 }
 
@@ -106,32 +124,39 @@ export function preparationStockOutput(catalog: RecipeCatalog, recipeId: string,
     `${recipeId}/${variantId}: 제조 구분이 없습니다.`,
   )
   const output = variant.output
-  if (recipe.kind !== 'preparation' || !output)
+  if (recipe.kind !== 'preparation' || !output) {
     throw new Error(`${recipeId}/${variantId}: 부재료 완성 정의가 없습니다.`)
+  }
   const unit = stockUnit(catalog, output.materialId)
   const amount = output.amount
   let quantity: number
 
-  if (amount?.kind === 'amount') quantity = physicalStock(output.materialId, amount.value, amount.unit)
-  else if (amount?.kind === 'amount-range') quantity = physicalStock(output.materialId, amount.min, amount.unit)
-  else if (amount?.kind === 'count' || amount?.kind === 'count-range')
+  if (amount?.kind === 'amount') {
+    quantity = physicalStock(output.materialId, amount.value, amount.unit)
+  } else if (amount?.kind === 'amount-range') {
+    quantity = physicalStock(output.materialId, amount.min, amount.unit)
+  } else if (amount?.kind === 'count' || amount?.kind === 'count-range') {
     quantity = stockCount(catalog, output.materialId, amount, 'single')
-  else if (amount === null) {
+  } else if (amount === null) {
     const estimate = requireValue(
       rules.preparationOutputs[`${recipeId}/${variantId}`],
       `${recipeId}/${variantId}: 게임 완성 재고량이 없습니다.`,
     )
-    if (estimate.materialId !== output.materialId || estimate.stockUnit !== unit)
+    if (estimate.materialId !== output.materialId || estimate.stockUnit !== unit) {
       throw new Error(`${recipeId}/${variantId}: 완성 재고 연결이 다릅니다.`)
+    }
     quantity = estimate.amount
-  } else throw new Error(`${recipeId}/${variantId}: 완성 재고량의 단위를 확인해야 합니다.`)
+  } else {
+    throw new Error(`${recipeId}/${variantId}: 완성 재고량의 단위를 확인해야 합니다.`)
+  }
 
   return { materialId: output.materialId, amount: quantity, stockUnit: unit }
 }
 
 function checked(value: number, label: string): number {
-  if (!Number.isFinite(value) || value < -EPSILON || value > 100000000)
+  if (!Number.isFinite(value) || value < -EPSILON || value > 100000000) {
     throw new Error(`${label}: 재고 수량이 유효하지 않습니다.`)
+  }
   return Math.max(0, value)
 }
 
@@ -193,15 +218,22 @@ function volumeAtHeight(shape: StockGeometry, height: number) {
 }
 
 function heightAtVolume(shape: StockGeometry, volume: number) {
-  if (volume <= EPSILON) return 0
-  if (volume >= shape.capacityMilliliters) return shape.heightMillimeters
+  if (volume <= EPSILON) {
+    return 0
+  }
+  if (volume >= shape.capacityMilliliters) {
+    return shape.heightMillimeters
+  }
   let low = 0
   let high = shape.heightMillimeters
 
   for (let i = 0; i < 40; i++) {
     const middle = (low + high) / 2
-    if (volumeAtHeight(shape, middle) < volume) low = middle
-    else high = middle
+    if (volumeAtHeight(shape, middle) < volume) {
+      low = middle
+    } else {
+      high = middle
+    }
   }
 
   return (low + high) / 2
@@ -241,13 +273,19 @@ function addLayer(state: StockVessel, layer: StockLayer) {
   if (old) {
     old.quantity += layer.quantity
     old.milliliters += layer.milliliters
-  } else state.layers.push({ ...layer })
+  } else {
+    state.layers.push({ ...layer })
+  }
 }
 
 /** Resolve one source operation against the actual contents at the beginning of that step. */
 function transferFraction(volume: number | null, available: number) {
-  if (volume === null) return 1
-  if (available <= EPSILON) return 0
+  if (volume === null) {
+    return 1
+  }
+  if (available <= EPSILON) {
+    return 0
+  }
   return Math.min(1, Math.max(0, volume) / available)
 }
 
@@ -264,7 +302,9 @@ export function buildStockEffect(
   let transferInfo: StockEffect['transfer'] = null
 
   function vessel(id: string) {
-    if (!catalog.vessels.has(id)) throw new Error(`${id}: 용기 정의가 없습니다.`)
+    if (!catalog.vessels.has(id)) {
+      throw new Error(`${id}: 용기 정의가 없습니다.`)
+    }
     requireValue(rules.vessels[id], `${id}: 게임 용기 환산값이 없습니다.`)
     after.vessels[id] ??= emptyVessel()
     return after.vessels[id]
@@ -278,8 +318,12 @@ export function buildStockEffect(
   function fillVolume(id: string, amount: RecipeAmount, size: StockSize) {
     const model = requireValue(rules.vessels[id], `${id}: 게임 용기 환산값이 없습니다.`)
     let target: number
-    if (amount.kind === 'fill-volume') return amount.value * rules.volumeUnits[amount.unit]
-    if (amount.kind === 'rim-gap') return rimVolume(id, size, amount.millimeters)
+    if (amount.kind === 'fill-volume') {
+      return amount.value * rules.volumeUnits[amount.unit]
+    }
+    if (amount.kind === 'rim-gap') {
+      return rimVolume(id, size, amount.millimeters)
+    }
 
     if (amount.kind === 'line') {
       const source =
@@ -290,7 +334,9 @@ export function buildStockEffect(
       target = source ?? requireValue(model.lines[amount.line], `${id}: '${amount.line}' 재고 계량선이 없습니다.`)[size]
     } else if (amount.kind === 'mark') {
       target = requireValue(model.marks[amount.label], `${id}: '${amount.label}' 재고 표시선이 없습니다.`)[size]
-    } else throw new Error(`${amount.kind}: 누적 계량선이 아닙니다.`)
+    } else {
+      throw new Error(`${amount.kind}: 누적 계량선이 아닙니다.`)
+    }
 
     if (amount.offsetMillimeters) {
       const shape = geometry(id, size, context)
@@ -303,12 +349,16 @@ export function buildStockEffect(
   function fractionVolume(id: string, amount: Extract<RecipeAmount, { kind: 'fraction' }>, size: StockSize) {
     const basis = requireValue(rules.fractions[amount.of], `'${amount.of}' 분수 계량의 게임 환산값이 없습니다.`)
     const fraction = amount.numerator / amount.denominator
-    if (basis.kind === 'target')
+    if (basis.kind === 'target') {
       return { value: geometry(id, size, context).capacityMilliliters * fraction, cumulative: true }
-    if (basis.kind === 'vessel')
+    }
+    if (basis.kind === 'vessel') {
       return { value: rimVolume(basis.vesselId, size, basis.rimGapMillimeters) * fraction, cumulative: false }
+    }
     const dose = toolDose(catalog, basis.toolId, size)
-    if (!(dose.unit in rules.volumeUnits)) throw new Error(`${basis.toolId}: 분수 계량에 부피 기준이 필요합니다.`)
+    if (!(dose.unit in rules.volumeUnits)) {
+      throw new Error(`${basis.toolId}: 분수 계량에 부피 기준이 필요합니다.`)
+    }
 
     return {
       value: dose.value * rules.volumeUnits[dose.unit as keyof typeof rules.volumeUnits] * fraction,
@@ -345,11 +395,11 @@ export function buildStockEffect(
     const ice = materialId === rules.ice.materialId
     let quantity: number
 
-    if (amount.kind === 'amount' || amount.kind === 'amount-range')
+    if (amount.kind === 'amount' || amount.kind === 'amount-range') {
       quantity = physicalStock(materialId, amount.kind === 'amount' ? amount.value : amount.min, amount.unit)
-    else if (amount.kind === 'count' || amount.kind === 'count-range')
+    } else if (amount.kind === 'count' || amount.kind === 'count-range') {
       quantity = stockCount(catalog, materialId, amount, size, toolId)
-    else if (amount.kind === 'fraction') {
+    } else if (amount.kind === 'fraction') {
       const fraction = fractionVolume(into, amount, size)
       let volume = fraction.value
       if (fraction.cumulative) {
@@ -368,9 +418,11 @@ export function buildStockEffect(
         materialId,
         ice ? iceBulkToTarget(into, target) : volumeToTarget(into, target, profile.phase),
       )
-    } else if (amount.kind === 'all')
+    } else if (amount.kind === 'all') {
       quantity = requireValue(after.stockHeld[materialId], `${materialId}: 전량 투입할 재료를 먼저 계량해야 합니다.`)
-    else throw new Error(`${materialId}: 원문 정량이 없는 재료를 재고값으로 대신 계량할 수 없습니다.`)
+    } else {
+      throw new Error(`${materialId}: 원문 정량이 없는 재료를 재고값으로 대신 계량할 수 없습니다.`)
+    }
 
     quantity = checked(quantity, materialId)
 
@@ -400,22 +452,32 @@ export function buildStockEffect(
   function debit(materialId: string, quantity: number, useHeld = true) {
     const material = requireValue(catalog.materials.get(materialId), `${materialId}: 재료 정의가 없습니다.`)
     quantity = checked(quantity, materialId)
-    if (material.kind === 'utility') return
+    if (material.kind === 'utility') {
+      return
+    }
     requireValue(INGREDIENTS[materialId], `${material.name}: 재고 운영값이 없습니다.`)
     const credit = useHeld ? Math.min(after.stockHeld[materialId] ?? 0, quantity) : 0
-    if (credit) after.stockHeld[materialId] = checked((after.stockHeld[materialId] ?? 0) - credit, materialId)
+    if (credit) {
+      after.stockHeld[materialId] = checked((after.stockHeld[materialId] ?? 0) - credit, materialId)
+    }
     const consumed = quantity - credit
-    if (consumed > EPSILON) costs[materialId] = (costs[materialId] ?? 0) + consumed
+    if (consumed > EPSILON) {
+      costs[materialId] = (costs[materialId] ?? 0) + consumed
+    }
   }
 
   function transferVolume(op: Extract<ResolvedOperation, { action: 'transfer' }>) {
     const amount = op.amount
     const size = referenceSize(amount, context.size)
     const phase = op.portion === 'foam' ? 'foam' : 'liquid'
-    if (amount.kind === 'all') return null
+    if (amount.kind === 'all') {
+      return null
+    }
 
     if (amount.kind === 'amount' || amount.kind === 'amount-range') {
-      if (!(amount.unit in rules.volumeUnits)) throw new Error('혼합물 이관에는 부피 단위가 필요합니다.')
+      if (!(amount.unit in rules.volumeUnits)) {
+        throw new Error('혼합물 이관에는 부피 단위가 필요합니다.')
+      }
       return (
         (amount.kind === 'amount' ? amount.value : amount.min) *
         rules.volumeUnits[amount.unit as keyof typeof rules.volumeUnits]
@@ -423,9 +485,13 @@ export function buildStockEffect(
     }
 
     if (amount.kind === 'count' || amount.kind === 'count-range') {
-      if (!op.toolId) throw new Error('혼합물 횟수 이관에는 도구 용량이 필요합니다.')
+      if (!op.toolId) {
+        throw new Error('혼합물 횟수 이관에는 도구 용량이 필요합니다.')
+      }
       const dose = toolDose(catalog, op.toolId, size)
-      if (!(dose.unit in rules.volumeUnits)) throw new Error('혼합물 도구에는 부피 단위가 필요합니다.')
+      if (!(dose.unit in rules.volumeUnits)) {
+        throw new Error('혼합물 도구에는 부피 단위가 필요합니다.')
+      }
       return minimumCount(amount) * dose.value * rules.volumeUnits[dose.unit as keyof typeof rules.volumeUnits]
     }
 
@@ -446,13 +512,16 @@ export function buildStockEffect(
       )
     }
 
-    if (['line', 'mark', 'fill-volume', 'rim-gap'].includes(amount.kind))
+    if (['line', 'mark', 'fill-volume', 'rim-gap'].includes(amount.kind)) {
       return volumeToTarget(op.into, fillVolume(op.into, amount, size), phase)
+    }
     throw new Error(`${amount.kind}: 혼합물 이관의 재고 단위를 확인해야 합니다.`)
   }
 
   function transfer(from: string, into: string, volume: number | null, exclude: string[], portion?: string) {
-    if (from === into) throw new Error(`${from}: 같은 용기로 내용물을 옮길 수 없습니다.`)
+    if (from === into) {
+      throw new Error(`${from}: 같은 용기로 내용물을 옮길 수 없습니다.`)
+    }
     const source = vessel(from)
     const destination = vessel(into)
     const eligible = source.layers.filter(
@@ -478,10 +547,14 @@ export function buildStockEffect(
 
   function foam(id: string, profile: { stockFraction: number; volumeMultiplier: number }, process: string) {
     const target = vessel(id)
-    if (target.processes.includes(process)) return
+    if (target.processes.includes(process)) {
+      return
+    }
 
     for (const layer of [...target.layers]) {
-      if (layer.phase !== 'liquid') continue
+      if (layer.phase !== 'liquid') {
+        continue
+      }
       const quantity = layer.quantity
       const milliliters = layer.milliliters
       layer.quantity *= 1 - profile.stockFraction
@@ -525,7 +598,9 @@ export function buildStockEffect(
       break
     }
     case 'grind': {
-      if (!operation.amount) throw new Error('분쇄할 원두 계량이 필요합니다.')
+      if (!operation.amount) {
+        throw new Error('분쇄할 원두 계량이 필요합니다.')
+      }
       const amount = measured(operation.materialId, operation.amount, operation.into)
       debit(operation.materialId, amount.quantity)
       contents(operation.into, operation.materialId, amount.quantity, amount.milliliters, 'solid', true)
@@ -540,8 +615,9 @@ export function buildStockEffect(
       if (
         (operation.amount.kind !== 'count' && operation.amount.kind !== 'count-range') ||
         operation.amount.unit !== 'shot'
-      )
+      ) {
         throw new Error('에스프레소 재고 계산에는 샷 수가 필요합니다.')
+      }
       const shots = minimumCount(operation.amount)
       const beans = operation.materialId ? [{ materialId: operation.materialId, share: 1 }] : setting.beans
 
@@ -556,8 +632,9 @@ export function buildStockEffect(
               layer.materialId !== bean.materialId ||
               quantity <= EPSILON ||
               layer.quantity <= EPSILON
-            )
+            ) {
               continue
+            }
             const used = Math.min(layer.quantity, quantity)
             layer.milliliters *= Math.max(0, 1 - used / layer.quantity)
             layer.quantity -= used
@@ -579,10 +656,14 @@ export function buildStockEffect(
       transfer(operation.from, operation.into, null, operation.excludeMaterialIds ?? [])
       break
     case 'steam':
-      if (operation.airDuration) foam(operation.vessel, airProfile(operation.airDuration), 'aerate')
-      if (!vessel(operation.vessel).processes.includes('aerate'))
+      if (operation.airDuration) {
+        foam(operation.vessel, airProfile(operation.airDuration), 'aerate')
+      }
+      if (!vessel(operation.vessel).processes.includes('aerate')) {
         foam(operation.vessel, rules.foamProfiles.steam, 'steam')
-      else vessel(operation.vessel).processes.push('steam')
+      } else {
+        vessel(operation.vessel).processes.push('steam')
+      }
       break
     case 'aerate':
       foam(operation.vessel, airProfile(operation.duration), 'aerate')
@@ -656,8 +737,9 @@ export function buildStockEffect(
         const quantity = rules.actionUnits[operation.action] * factors(material.id).counts.piece
         debit(material.id, quantity)
         const target = operation.action === 'place' ? operation.into : operation.toId
-        if (catalog.vessels.has(target))
+        if (catalog.vessels.has(target)) {
           contents(target, material.id, quantity, quantity * factors(material.id).millilitersPerStockUnit)
+        }
       }
 
       break
@@ -678,11 +760,12 @@ export function buildStockEffect(
       break
     }
     case 'charge':
-      if (operation.gasMaterialId)
+      if (operation.gasMaterialId) {
         debit(
           operation.gasMaterialId,
           (operation.cartridges ?? rules.actionUnits.charge) * factors(operation.gasMaterialId).counts.piece,
         )
+      }
       foam(operation.vessel, rules.foamProfiles.charge, 'charge')
       break
     case 'remove':
@@ -720,7 +803,9 @@ export function buildStockEffect(
 
   for (const id of new Set([...Object.keys(state.stockHeld), ...Object.keys(after.stockHeld)])) {
     const change = (after.stockHeld[id] ?? 0) - (state.stockHeld[id] ?? 0)
-    if (Math.abs(change) > EPSILON) effect.stockHeld[id] = change
+    if (Math.abs(change) > EPSILON) {
+      effect.stockHeld[id] = change
+    }
   }
 
   for (const [id, target] of Object.entries(after.vessels)) {
@@ -744,8 +829,9 @@ export function buildStockEffect(
       (layer) => Math.abs(layer.quantity) > EPSILON || Math.abs(layer.milliliters) > EPSILON,
     )
     const processes = [...new Set(target.processes)]
-    if (layers.length || processes.join('|') !== before.processes.join('|') || !(id in state.vessels))
+    if (layers.length || processes.join('|') !== before.processes.join('|') || !(id in state.vessels)) {
       effect.vessels[id] = { layers, processes }
+    }
     effect.targetFills[id] = target.fill
   }
 
@@ -762,7 +848,9 @@ export function projectStockEffect(
 ): StockFlowState {
   checked(fromRatio, '이전 제조 진행률')
   checked(toRatio, '제조 진행률')
-  if (toRatio < fromRatio) throw new Error('제조 진행률이 감소할 수 없습니다.')
+  if (toRatio < fromRatio) {
+    throw new Error('제조 진행률이 감소할 수 없습니다.')
+  }
   let fraction = effect.repeatable ? toRatio - fromRatio : Math.min(1, toRatio) - Math.min(1, fromRatio)
   const next = copyFlow(state)
 
@@ -770,15 +858,23 @@ export function projectStockEffect(
   for (const [id, change] of Object.entries(effect.vessels))
     for (const layer of change.layers) {
       const old = next.vessels[id]?.layers.find((item) => layerKey(item) === layerKey(layer))
-      if (layer.quantity < -EPSILON) fraction = Math.min(fraction, (old?.quantity ?? 0) / -layer.quantity)
-      if (layer.milliliters < -EPSILON) fraction = Math.min(fraction, (old?.milliliters ?? 0) / -layer.milliliters)
+      if (layer.quantity < -EPSILON) {
+        fraction = Math.min(fraction, (old?.quantity ?? 0) / -layer.quantity)
+      }
+      if (layer.milliliters < -EPSILON) {
+        fraction = Math.min(fraction, (old?.milliliters ?? 0) / -layer.milliliters)
+      }
     }
 
   for (const [id, change] of Object.entries(effect.stockHeld))
-    if (change < -EPSILON) fraction = Math.min(fraction, (next.stockHeld[id] ?? 0) / -change)
+    if (change < -EPSILON) {
+      fraction = Math.min(fraction, (next.stockHeld[id] ?? 0) / -change)
+    }
 
   fraction = checked(fraction, '수량 이동 비율')
-  if (fraction <= EPSILON) return next
+  if (fraction <= EPSILON) {
+    return next
+  }
 
   for (const [id, change] of Object.entries(effect.stockHeld))
     next.stockHeld[id] = checked((next.stockHeld[id] ?? 0) + change * fraction, id)
@@ -844,7 +940,9 @@ export function planStockCosts(catalog: RecipeCatalog, plan: PlannedStep[], cont
             )
         : undefined
     let effect = buildStockEffect(catalog, state, step.operation, context, nextAdd)
-    if (step.portion !== undefined) effect = scaleStockEffect(state, effect, context, step.portion)
+    if (step.portion !== undefined) {
+      effect = scaleStockEffect(state, effect, context, step.portion)
+    }
     state = projectStockEffect(state, effect, context, 0, 1)
     return effect.costs
   })

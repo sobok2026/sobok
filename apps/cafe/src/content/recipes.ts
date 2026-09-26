@@ -31,7 +31,9 @@ const customizedRecipes = new Map<
 export function recipeFor(id: RecipeId, size: DrinkSize, service: ServiceMode, custom?: Customizations) {
   const serving = RECIPES[id]?.sizes[size]
   const steps = serving?.plans[service]
-  if (!serving || !steps) throw new Error(`판매할 수 없는 주문입니다: ${id}/${size}/${service}`)
+  if (!serving || !steps) {
+    throw new Error(`판매할 수 없는 주문입니다: ${id}/${size}/${service}`)
+  }
   const base = { price: serving.price, steps, vesselId: serving.vessels[service]! }
   if (
     !custom ||
@@ -41,11 +43,14 @@ export function recipeFor(id: RecipeId, size: DrinkSize, service: ServiceMode, c
       !Object.keys(custom.levels).length &&
       !Object.keys(custom.quantities).length &&
       !Object.keys(custom.syrups).length)
-  )
+  ) {
     return base
+  }
   const key = `${id}/${size}/${service}/${JSON.stringify(custom)}`
   const cached = customizedRecipes.get(key)
-  if (cached) return cached
+  if (cached) {
+    return cached
+  }
   const plan = customizePlan(steps, custom)
   const context = steps[0].stockContext
   const result = {
@@ -53,19 +58,25 @@ export function recipeFor(id: RecipeId, size: DrinkSize, service: ServiceMode, c
     price: base.price + customizationPrice(steps, custom),
     steps: compileWorkflow(recipeCatalog, plan, planStockCosts(recipeCatalog, plan, context), context),
   }
-  if (customizedRecipes.size >= 256) customizedRecipes.clear()
+  if (customizedRecipes.size >= 256) {
+    customizedRecipes.clear()
+  }
   customizedRecipes.set(key, result)
   return result
 }
 
 export function recipePrice(id: RecipeId, size: DrinkSize) {
   const serving = RECIPES[id]?.sizes[size]
-  if (!serving) throw new Error(`판매 가격이 없습니다: ${id}/${size}`)
+  if (!serving) {
+    throw new Error(`판매 가격이 없습니다: ${id}/${size}`)
+  }
   return serving.price
 }
 
 export function recipeLabel(id: RecipeId, size?: DrinkSize) {
   const recipe = RECIPES[id]
-  if (!recipe) throw new Error(`판매 메뉴가 없습니다: ${id}`)
+  if (!recipe) {
+    throw new Error(`판매 메뉴가 없습니다: ${id}`)
+  }
   return `${recipe.name} · ${recipe.variant}${size ? ` · ${DRINK_SIZES[size].name}` : ''}`
 }

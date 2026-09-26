@@ -57,16 +57,16 @@ export default function WorkSettings({
       <TextButton disabled={preferences.muted || preferences.volume === 0} onClick={onPreview}>
         작업음 미리 듣기
       </TextButton>
-      {status === 'loading' || status === 'blocked' || status === 'unavailable' ? (
+      {(status === 'loading' || status === 'blocked' || status === 'unavailable') && (
         <p className="mt-2 text-xs text-danger" role="status">
           {status === 'loading' ? '소리 불러오는 중…' : '소리를 재생하지 못했습니다. 미리 듣기로 다시 시도하세요.'}
         </p>
-      ) : null}
-      {error ? (
+      )}
+      {error && (
         <p className="mt-2 text-xs text-danger" role="status">
           설정을 저장하지 못했어요. 이번 실행에는 적용됩니다.
         </p>
-      ) : null}
+      )}
     </section>
   )
 }

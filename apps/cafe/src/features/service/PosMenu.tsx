@@ -143,9 +143,9 @@ export function PosMenu({
               >
                 <span className="line-clamp-3 pr-3 font-semibold">{menu.name}</span>
                 <span className="ml-auto text-right text-xs tabular-nums">
-                  {chosenSize !== size ? (
+                  {chosenSize !== size && (
                     <span className="mr-1 text-pos-panel">{chosenSize === 'single' ? '단일' : chosenSize}</span>
-                  ) : null}
+                  )}
                   {chosenSize ? menu.sizes[chosenSize]!.price.toLocaleString('ko-KR') : '—'}
                 </span>
               </button>
@@ -174,11 +174,11 @@ export function PosMenu({
           <div key={`empty-${index}`} className="rounded bg-pos-panel/60" />
         ))}
       </fieldset>
-      {!menus.length ? (
+      {!menus.length && (
         <p className="py-1 text-center text-sm text-white" role="status">
           {category === 'favorites' ? '상품의 별을 눌러 즐겨찾기에 추가하세요.' : '해당하는 메뉴가 없습니다.'}
         </p>
-      ) : null}
+      )}
       <div className="grid grid-cols-[1fr_auto_1fr] gap-1 text-white">
         <PosButton tone="dark" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>
           ← 이전
@@ -195,6 +195,8 @@ export function PosMenu({
 }
 
 function chooseSize(sizes: DrinkSize[], preferred: DrinkSize) {
-  if (sizes.includes(preferred)) return preferred
+  if (sizes.includes(preferred)) {
+    return preferred
+  }
   return sizes.includes('tall') ? 'tall' : sizes[0]
 }

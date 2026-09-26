@@ -61,26 +61,26 @@ export default function BatchLabel({
             <dd className="text-[#45613f]">{definition.storage === 'fridge' ? '냉장' : '실온'}</dd>
           </div>
         </dl>
-        {limitedByIngredient ? <p className="mt-2 text-xs text-muted">원재료 기한 적용</p> : null}
+        {limitedByIngredient && <p className="mt-2 text-xs text-muted">원재료 기한 적용</p>}
       </div>
-      {!expired && !batch.labelled && atOrigin ? (
+      {!expired && !batch.labelled && atOrigin && (
         <Button size="compact" className="mt-1" onClick={() => act({ type: 'label-batch', id: batch.id, station })}>
           라벨 붙이기
         </Button>
-      ) : null}
-      {!expired && pending && batch.labelled && definition.prepared && atOrigin ? (
+      )}
+      {!expired && pending && batch.labelled && definition.prepared && atOrigin && (
         <Button size="compact" className="mt-1" onClick={() => act({ type: 'take-batch', id: batch.id, station })}>
           E · 용기 집기 → {STATIONS[batchDestination(batch)].name}
         </Button>
-      ) : null}
-      {pending && definition.prepared && !atOrigin ? (
+      )}
+      {pending && definition.prepared && !atOrigin && (
         <p className="mt-2 text-xs text-muted">
           {batch.location === 'hand'
             ? '용기를 운반 중이에요.'
             : `${STATIONS[batchOrigin(batch)].name}에 있는 용기를 확인하세요.`}
         </p>
-      ) : null}
-      {!expired && pending && batch.labelled && !definition.prepared && atOrigin ? (
+      )}
+      {!expired && pending && batch.labelled && !definition.prepared && atOrigin && (
         <fieldset className="mt-2.5 grid min-w-0 grid-cols-2 gap-2 border-0 p-0" aria-label="보관 위치 선택">
           {STORAGES.map(({ storage, label }) => (
             <button
@@ -96,18 +96,22 @@ export default function BatchLabel({
             </button>
           ))}
         </fieldset>
-      ) : null}
-      {(expired || pending) && canDiscard ? (
+      )}
+      {(expired || pending) && canDiscard && (
         <TextButton danger className="mt-1.5" onClick={() => act({ type: 'discard-batch', id: batch.id, station })}>
           배치 폐기
         </TextButton>
-      ) : null}
+      )}
     </details>
   )
 }
 
 function batchStatus(batch: Batch, expired: boolean, pending: boolean) {
-  if (expired) return '기한 경과'
-  if (!batch.labelled) return '라벨 필요'
+  if (expired) {
+    return '기한 경과'
+  }
+  if (!batch.labelled) {
+    return '라벨 필요'
+  }
   return pending ? '보관 대기' : '사용 가능'
 }

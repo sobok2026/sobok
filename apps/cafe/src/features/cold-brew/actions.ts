@@ -46,11 +46,15 @@ export function handleColdBrewActions(
       break
     case 'cold-tool': {
       const brew = s.coldBrew
-      if (brew?.stage !== 'measuring') break
+      if (brew?.stage !== 'measuring') {
+        break
+      }
 
-      if (brew.tool) brew.tool = null
-      else if (!brew.fault && !cupHandsBusy(s.cup) && !s.preparation?.tool) brew.tool = coldBrewStep(brew).tool
-      else {
+      if (brew.tool) {
+        brew.tool = null
+      } else if (!brew.fault && !cupHandsBusy(s.cup) && !s.preparation?.tool) {
+        brew.tool = coldBrewStep(brew).tool
+      } else {
         fail('컵과 다른 도구를 먼저 내려놓거나 실패한 배합을 폐기해주세요.')
         break
       }
@@ -60,7 +64,9 @@ export function handleColdBrewActions(
     }
     case 'cold-use': {
       const brew = s.coldBrew
-      if (brew?.stage !== 'measuring' || brew.fault) break
+      if (brew?.stage !== 'measuring' || brew.fault) {
+        break
+      }
 
       if (craftingHandsBusy(s)) {
         fail('컵과 다른 도구를 먼저 내려놓아주세요.')
@@ -77,13 +83,17 @@ export function handleColdBrewActions(
       if (brew.step === 2) {
         brew.stage = 'extracting'
         startJob(s, 'cold-brew', 'cold-prep', '콜드 브루 추출', COLD_BREW_HOURS * 3600, { preparationId: brew.id })
-      } else work.input = { kind: 'cold', preparationId: brew.id, step: brew.step, station: 'cold-prep' }
+      } else {
+        work.input = { kind: 'cold', preparationId: brew.id, step: brew.step, station: 'cold-prep' }
+      }
 
       break
     }
     case 'cold-confirm': {
       const brew = s.coldBrew
-      if (brew?.stage !== 'measuring' || brew.fault || brew.step === 2) break
+      if (brew?.stage !== 'measuring' || brew.fault || brew.step === 2) {
+        break
+      }
       const step = coldBrewStep(brew)
 
       if (brew.tool) {
@@ -103,7 +113,9 @@ export function handleColdBrewActions(
     }
     case 'collect-cold-brew': {
       const brew = s.coldBrew
-      if (brew?.stage !== 'finished' || brew.completedAt === null) break
+      if (brew?.stage !== 'finished' || brew.completedAt === null) {
+        break
+      }
 
       if (craftingHandsBusy(s)) {
         fail('컵과 도구를 먼저 내려놓아주세요.')
@@ -119,7 +131,9 @@ export function handleColdBrewActions(
     }
     case 'discard-cold-brew': {
       const brew = s.coldBrew
-      if (!brew) break
+      if (!brew) {
+        break
+      }
 
       if (brew.batchId) {
         const batch = s.batches.find((item) => item.id === brew.batchId)
@@ -127,8 +141,11 @@ export function handleColdBrewActions(
           addAmounts(s.totals.disposed, { coldBrew: batch.amount })
           batch.amount = 0
         }
-      } else if (brew.stage === 'finished') addAmounts(s.totals.disposed, { coldBrew: COLD_BREW_OUTPUT })
-      else s.totals.coldBrewDiscardedBeans += COLD_BREW_BEANS
+      } else if (brew.stage === 'finished') {
+        addAmounts(s.totals.disposed, { coldBrew: COLD_BREW_OUTPUT })
+      } else {
+        s.totals.coldBrewDiscardedBeans += COLD_BREW_BEANS
+      }
 
       s.jobs = s.jobs.filter((job) => job.preparationId !== brew.id)
       s.coldBrew = null
@@ -154,8 +171,12 @@ export function applyColdBrew(work: WorkContext, seconds: number) {
 
   if (brew.step === 0) {
     brew.beans += delta
-    if (brew.progress >= step.target) work.input = null
-  } else brew.water += delta
+    if (brew.progress >= step.target) {
+      work.input = null
+    }
+  } else {
+    brew.water += delta
+  }
 
   if (brew.progress > step.target * (1 + step.tolerance) + 1e-9) {
     brew.fault = '콜드 브루 물 계량을 초과했어요. 배합을 폐기하고 다시 준비해주세요.'

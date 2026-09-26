@@ -80,8 +80,11 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     setMode(previous.mode)
     setPanel(previous.panel)
     if (previous.mode === 'play' && !previous.panel) {
-      if (previous.mouseMode === 'cursor') scene.current?.unlockForCraft()
-      else scene.current?.lock()
+      if (previous.mouseMode === 'cursor') {
+        scene.current?.unlockForCraft()
+      } else {
+        scene.current?.lock()
+      }
     }
   }
 
@@ -108,7 +111,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   }
 
   async function persist() {
-    if (!flags.current.started || !flags.current.hasLock) return
+    if (!flags.current.started || !flags.current.hasLock) {
+      return
+    }
     try {
       await saveGame(capture())
       setSaveStatus('이 기기에 저장됨')
@@ -147,7 +152,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
 
   function closePanel(lock = true) {
     dismissPanel()
-    if (lock) scene.current?.lock()
+    if (lock) {
+      scene.current?.lock()
+    }
   }
 
   function beginWork() {
@@ -196,31 +203,55 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   }
 
   function act(action: Action) {
-    if (!flags.current.hasLock) return
+    if (!flags.current.hasLock) {
+      return
+    }
     const previous = store.getSnapshot()
     store.dispatch(action)
     const current = store.getSnapshot()
     if ((action.type === 'wash' || action.type === 'take-washed') && current.washing) {
-      if (current.washing?.stage === 'carrying') closePanel()
-      else beginWork()
+      if (current.washing?.stage === 'carrying') {
+        closePanel()
+      } else {
+        beginWork()
+      }
     }
-    if (action.type === 'take-cup' && current.cup) closePanel()
-    if (action.type === 'take-supply' && current.supplyDelivery) closePanel()
-    if (action.type === 'take-batch' && carriedBatch(current)) closePanel()
-    if (action.type === 'return-batch' && !carriedBatch(current)) beginWork()
-    if ((action.type === 'start-cold-brew' || action.type === 'collect-cold-brew') && current.coldBrew) beginWork()
+    if (action.type === 'take-cup' && current.cup) {
+      closePanel()
+    }
+    if (action.type === 'take-supply' && current.supplyDelivery) {
+      closePanel()
+    }
+    if (action.type === 'take-batch' && carriedBatch(current)) {
+      closePanel()
+    }
+    if (action.type === 'return-batch' && !carriedBatch(current)) {
+      beginWork()
+    }
+    if ((action.type === 'start-cold-brew' || action.type === 'collect-cold-brew') && current.coldBrew) {
+      beginWork()
+    }
     if (action.type === 'start-preparation' && current.preparation) {
       beginWork()
     }
-    if (action.type === 'start-cleaning' && !previous.cleaning && current.cleaning) beginWork()
-    if ((action.type === 'collect-cup' && cupCount(current.cleaning?.heldCups)) || action.type === 'drop-used-cups')
+    if (action.type === 'start-cleaning' && !previous.cleaning && current.cleaning) {
+      beginWork()
+    }
+    if ((action.type === 'collect-cup' && cupCount(current.cleaning?.heldCups)) || action.type === 'drop-used-cups') {
       closePanel()
-    if (action.type === 'place-cup' && current.cup?.craft.location === action.station) scene.current?.unlockForCraft()
-    if (action.type === 'pick-cup' && current.cup?.craft.location === 'hand') scene.current?.lock()
+    }
+    if (action.type === 'place-cup' && current.cup?.craft.location === action.station) {
+      scene.current?.unlockForCraft()
+    }
+    if (action.type === 'pick-cup' && current.cup?.craft.location === 'hand') {
+      scene.current?.lock()
+    }
 
     if (flags.current.mode === 'play' && focused.current && !document.hidden) {
       const feedback = actionSound(action, previous, current)
-      if (feedback) sounds.current?.play(feedback)
+      if (feedback) {
+        sounds.current?.play(feedback)
+      }
     }
 
     updateSoundLoop()
@@ -232,8 +263,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
         (previous.washing && !current.washing) ||
         (previous.cleaning && !current.cleaning) ||
         (previous.supplyDelivery && !current.supplyDelivery))
-    )
+    ) {
       scene.current?.lock()
+    }
 
     if (action.type === 'next-day') {
       scene.current?.reset(current.position)
@@ -251,17 +283,23 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
 
   function moveCup(station: StationId) {
     const cup = store.getSnapshot().cup
-    if (!cup) return
+    if (!cup) {
+      return
+    }
     act(cup.craft.location === 'hand' ? { type: 'place-cup', station } : { type: 'pick-cup', station })
   }
 
   function use(station: StationId) {
-    if (flags.current.mode !== 'play' || flags.current.panel) return
+    if (flags.current.mode !== 'play' || flags.current.panel) {
+      return
+    }
     act(workActionAt(store.getSnapshot(), station))
   }
 
   function stopUse() {
-    if (!store.getActiveInput()) return
+    if (!store.getActiveInput()) {
+      return
+    }
     store.stopActiveInput()
     updateSoundLoop()
     void persist()
@@ -305,8 +343,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
       setMouseMode(nextMode)
     },
     onUnlock: () => {
-      if (flags.current.mode === 'play' && flags.current.panel === null && store.getSnapshot().phase !== 'summary')
+      if (flags.current.mode === 'play' && flags.current.panel === null && store.getSnapshot().phase !== 'summary') {
         pause()
+      }
     },
     onError: () => pause(),
   })
@@ -317,7 +356,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
       const now = performance.now()
       const seconds = (now - last) / 1000
       updateSoundLoop()
-      if (!store.getActiveInput() && !customerWalking(store.getSnapshot().customer) && seconds < 0.49) return
+      if (!store.getActiveInput() && !customerWalking(store.getSnapshot().customer) && seconds < 0.49) {
+        return
+      }
       last = now
 
       if (flags.current.mode === 'play' && flags.current.started && flags.current.hasLock && !document.hidden) {
@@ -327,11 +368,15 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
 
         if (focused.current) {
           const feedback = tickSound(previous, store.getSnapshot())
-          if (feedback) sounds.current?.play(feedback)
+          if (feedback) {
+            sounds.current?.play(feedback)
+          }
         }
 
         updateSoundLoop()
-        if (wasUsing && !store.getActiveInput()) void persist()
+        if (wasUsing && !store.getActiveInput()) {
+          void persist()
+        }
       }
     }, 100)
     const save = window.setInterval(() => {
@@ -339,7 +384,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
     }, 8000)
 
     const hidden = () => {
-      if (document.hidden && flags.current.started) pause()
+      if (document.hidden && flags.current.started) {
+        pause()
+      }
       last = performance.now()
     }
 
@@ -350,8 +397,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
         flags.current.confirmNew ||
         (event.target instanceof HTMLInputElement && event.target.type !== 'radio') ||
         event.target instanceof HTMLSelectElement
-      )
+      ) {
         return
+      }
 
       if (
         event.code === 'KeyH' &&
@@ -359,8 +407,11 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
         store.getSnapshot().phase !== 'summary'
       ) {
         event.preventDefault()
-        if (flags.current.mode === 'guide') closeGuide()
-        else openGuide()
+        if (flags.current.mode === 'guide') {
+          closeGuide()
+        } else {
+          openGuide()
+        }
         return
       }
 
@@ -387,7 +438,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
           // Escape also releases pointer lock natively; reacquiring it here would reopen the pause menu.
           flags.current.panel = null
           setPanel(null)
-        } else pause()
+        } else {
+          pause()
+        }
       }
     }
 
@@ -418,7 +471,9 @@ export function useCafeSession({ store, notice, preferences: initialPreferences 
   }, [store])
 
   async function importBackup(file: File) {
-    if (!flags.current.hasLock) return
+    if (!flags.current.hasLock) {
+      return
+    }
     try {
       const imported = await importGame(file)
       await saveGame(imported)

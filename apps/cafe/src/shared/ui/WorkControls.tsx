@@ -54,7 +54,9 @@ export function WorkButton(props: WorkButtonProps) {
       onPointerDown={
         props.hold
           ? (event) => {
-              if (event.button !== 0) return
+              if (event.button !== 0) {
+                return
+              }
               event.preventDefault()
               event.currentTarget.setPointerCapture(event.pointerId)
               props.onUse()
@@ -70,7 +72,9 @@ export function WorkButton(props: WorkButtonProps) {
           ? (event) => {
               if (['Space', 'Enter'].includes(event.code)) {
                 event.preventDefault()
-                if (!event.repeat) props.onUse()
+                if (!event.repeat) {
+                  props.onUse()
+                }
               }
             }
           : undefined
@@ -78,7 +82,9 @@ export function WorkButton(props: WorkButtonProps) {
       onKeyUp={
         props.hold
           ? (event) => {
-              if (['Space', 'Enter'].includes(event.code)) props.onStop()
+              if (['Space', 'Enter'].includes(event.code)) {
+                props.onStop()
+              }
             }
           : undefined
       }
@@ -112,7 +118,7 @@ export function WorkMeter({
         )}
       >
         <strong className="text-base font-semibold text-ink">{value}</strong>
-        {tolerance !== undefined ? <span className="text-xs">{reached ? '목표 도달' : '목표 구간'}</span> : null}
+        {tolerance !== undefined && <span className="text-xs">{reached ? '목표 도달' : '목표 구간'}</span>}
       </div>
       <div
         className="relative h-2.5 overflow-hidden rounded-[0.1875rem] bg-[#e1e5d9]"
@@ -123,7 +129,7 @@ export function WorkMeter({
         aria-valuenow={Math.round(Math.min(1, ratio) * 100)}
         aria-valuetext={`${value}${tolerance !== undefined ? `, 목표 100%, 허용 오차 ${Math.round(tolerance * 100)}%` : ''}`}
       >
-        {tolerance !== undefined ? (
+        {tolerance !== undefined && (
           <>
             <span
               className="absolute inset-y-0 z-2 bg-[#4e865999]"
@@ -134,7 +140,7 @@ export function WorkMeter({
             />
             <b className="absolute inset-y-0 z-3 w-0.5 bg-brand" style={{ left: `${100 / scale}%` }} />
           </>
-        ) : null}
+        )}
         <i
           className={clsx(
             'absolute inset-y-0 left-0 bg-brand/65 transition-[width] duration-90 ease-linear',

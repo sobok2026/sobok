@@ -49,7 +49,9 @@ export function orderMatchesRequest(state: {
   customer: { items: Array<OrderItem & { quantity: number }> } | null
   sale: { lines: Array<OrderItem & { quantity: number }> } | null
 }): boolean {
-  if (!state.customer || !state.sale) return false
+  if (!state.customer || !state.sale) {
+    return false
+  }
 
   const counts = (items: Array<OrderItem & { quantity: number }>) => {
     const map = new Map<string, number>()
@@ -72,11 +74,15 @@ export function customerCupCounts(state: {
   customer: { stage: string } | null
 }): ReusableCupCounts {
   const counts = emptyCupCounts()
-  if (!state.customer || state.customer.stage === 'leaving') return counts
+  if (!state.customer || state.customer.stage === 'leaving') {
+    return counts
+  }
 
   for (const item of state.sale?.lines ?? []) {
     const kind = cupKindFor(item.recipe, item.service, item.size)
-    if (isReusableCup(kind)) counts[kind] += item.served
+    if (isReusableCup(kind)) {
+      counts[kind] += item.served
+    }
   }
 
   return counts

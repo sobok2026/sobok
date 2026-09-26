@@ -98,7 +98,9 @@ export function createBlenderJar() {
       ctx.moveTo(w * (i % 2 ? 0.4 : 0.2), y)
       ctx.lineTo(w * 0.84, y)
       ctx.stroke()
-      if (!(i % 2)) ctx.fillText(String(48 - i * 2), w * 0.16, y + h * 0.013)
+      if (!(i % 2)) {
+        ctx.fillText(String(48 - i * 2), w * 0.16, y + h * 0.013)
+      }
     }
   })
   graduations.rotation.x = 0.1
@@ -279,9 +281,17 @@ export function createBlender(scene: THREE.Scene) {
 function blenderStep(job: Job | undefined, prep: GameState['preparation'], cup: GameState['cup']) {
   const prepStep = prep ? preparationStep(prep) : undefined
   const drinkStep = cup ? operationFor(cup.recipe, cup.craft) : null
-  if (job?.preparationId && job.preparationId === prep?.id) return prepStep
-  if (job?.cupId && job.cupId === cup?.id) return drinkStep
-  if (prepStep?.equipmentId === 'blender') return prepStep
-  if (drinkStep?.equipmentId === 'blender') return drinkStep
+  if (job?.preparationId && job.preparationId === prep?.id) {
+    return prepStep
+  }
+  if (job?.cupId && job.cupId === cup?.id) {
+    return drinkStep
+  }
+  if (prepStep?.equipmentId === 'blender') {
+    return prepStep
+  }
+  if (drinkStep?.equipmentId === 'blender') {
+    return drinkStep
+  }
   return undefined
 }

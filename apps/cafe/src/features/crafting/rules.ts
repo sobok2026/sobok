@@ -43,13 +43,20 @@ export function toolName(id: string): string {
   const separator = id.indexOf(':')
   const kind = id.slice(0, separator)
   const resource = id.slice(separator + 1)
-  if (kind === 'material') return recipeCatalog.materials.get(resource)?.name ?? '재료 용기'
-  if (kind === 'vessel') return recipeCatalog.vessels.get(resource)?.name ?? '제조 용기'
-  if (kind === 'equipment') return recipeCatalog.equipment.get(resource)?.name ?? '제조 도구'
-  if (kind === 'equipment-set')
+  if (kind === 'material') {
+    return recipeCatalog.materials.get(resource)?.name ?? '재료 용기'
+  }
+  if (kind === 'vessel') {
+    return recipeCatalog.vessels.get(resource)?.name ?? '제조 용기'
+  }
+  if (kind === 'equipment') {
+    return recipeCatalog.equipment.get(resource)?.name ?? '제조 도구'
+  }
+  if (kind === 'equipment-set') {
     return resource
       .split('|')
       .map((tool) => recipeCatalog.equipment.get(tool)?.name ?? '도구')
       .join(' · ')
+  }
   return '리드'
 }

@@ -74,7 +74,9 @@ export function createIceBin(scene: THREE.Scene) {
 
   // Subtle baked contact shading keeps the recessed liner distinct from the outer sheet metal.
   well.children.forEach((object, surface) => {
-    if (!(object instanceof THREE.Mesh)) return
+    if (!(object instanceof THREE.Mesh)) {
+      return
+    }
     const positions = object.geometry.getAttribute('position')
     const normals = object.geometry.getAttribute('normal')
     const colors = new Float32Array(positions.count * 3)
@@ -86,8 +88,11 @@ export function createIceBin(scene: THREE.Scene) {
       const inward = x * normals.getX(i) + z * normals.getZ(i) < -0.01
       const edgeDistance = Math.min(0.25 - Math.abs(x), 0.335 - Math.abs(z))
       let shade = 1
-      if (surface === 0) shade = 0.28 + 0.2 * Math.min(1, Math.max(0, edgeDistance) / 0.12)
-      else if (inward && y < 0.307) shade = 0.32 + (0.68 * Math.max(0, y)) / 0.31
+      if (surface === 0) {
+        shade = 0.28 + 0.2 * Math.min(1, Math.max(0, edgeDistance) / 0.12)
+      } else if (inward && y < 0.307) {
+        shade = 0.32 + (0.68 * Math.max(0, y)) / 0.31
+      }
       colors.set([shade, shade, shade], i * 3)
     }
 

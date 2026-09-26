@@ -25,10 +25,15 @@ export function createPlayerControls(
     obstacles.some((o) => Math.abs(x - o.x) < o.width / 2 + 0.22 && Math.abs(z - o.z) < o.depth / 2 + 0.22)
 
   function keydown(event: KeyboardEvent) {
-    if (event.defaultPrevented) return
-    if (!options.canMove() || event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement)
+    if (event.defaultPrevented) {
       return
-    if (event.target instanceof HTMLButtonElement && ['Space', 'Enter'].includes(event.code)) return
+    }
+    if (!options.canMove() || event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement) {
+      return
+    }
+    if (event.target instanceof HTMLButtonElement && ['Space', 'Enter'].includes(event.code)) {
+      return
+    }
     if (
       [
         'KeyW',
@@ -44,17 +49,25 @@ export function createPlayerControls(
         'KeyF',
         'Space',
       ].includes(event.code)
-    )
+    ) {
       event.preventDefault()
+    }
     if (
       !event.repeat &&
       ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.code)
-    )
+    ) {
       lock()
+    }
     keys.add(event.code)
-    if (event.code === 'KeyE' && !event.repeat && hovered) options.onInteract(hovered)
-    if (event.code === 'KeyG' && !event.repeat && hovered) options.onTool(hovered)
-    if (event.code === 'KeyF' && !event.repeat && hovered) options.onConfirm(hovered)
+    if (event.code === 'KeyE' && !event.repeat && hovered) {
+      options.onInteract(hovered)
+    }
+    if (event.code === 'KeyG' && !event.repeat && hovered) {
+      options.onTool(hovered)
+    }
+    if (event.code === 'KeyF' && !event.repeat && hovered) {
+      options.onConfirm(hovered)
+    }
 
     if (event.code === 'Space' && !event.repeat && hovered) {
       using = true
@@ -90,16 +103,22 @@ export function createPlayerControls(
   }
 
   const lock = () => {
-    if (!element.isConnected || !options.canMove()) return
+    if (!element.isConnected || !options.canMove()) {
+      return
+    }
     wantsMouseLook = true
-    if (document.pointerLockElement === element || lockPending) return
+    if (document.pointerLockElement === element || lockPending) {
+      return
+    }
     lockPending = true
 
     try {
       const result = element.requestPointerLock()
       void Promise.resolve(result)
         .catch(() => {
-          if (!disposed && wantsMouseLook) options.onMouseMode('fallback')
+          if (!disposed && wantsMouseLook) {
+            options.onMouseMode('fallback')
+          }
         })
         .finally(() => {
           lockPending = false
@@ -114,14 +133,18 @@ export function createPlayerControls(
     wantsMouseLook = false
     releasingForCraft = false
     options.onMouseMode('cursor')
-    if (document.pointerLockElement === element) document.exitPointerLock()
+    if (document.pointerLockElement === element) {
+      document.exitPointerLock()
+    }
   }
 
   const unlockForCraft = () => {
     wantsMouseLook = false
     releasingForCraft = true
     options.onMouseMode('cursor')
-    if (document.pointerLockElement === element) document.exitPointerLock()
+    if (document.pointerLockElement === element) {
+      document.exitPointerLock()
+    }
   }
 
   const pointerChanged = () => {
@@ -144,17 +167,24 @@ export function createPlayerControls(
       const intentional = releasingForCraft
       releasingForCraft = false
       options.onMouseMode('cursor')
-      if (!intentional) options.onUnlock()
-      else if (wantsMouseLook) lock()
+      if (!intentional) {
+        options.onUnlock()
+      } else if (wantsMouseLook) {
+        lock()
+      }
     }
   }
 
   const pointerFailed = () => {
-    if (wantsMouseLook) options.onMouseMode('fallback')
+    if (wantsMouseLook) {
+      options.onMouseMode('fallback')
+    }
   }
 
   const pointerDown = (event: PointerEvent) => {
-    if (event.button !== 0 || !options.canMove()) return
+    if (event.button !== 0 || !options.canMove()) {
+      return
+    }
 
     if (carriedBatch(options.getState()) && hovered) {
       options.onInteract(hovered)
@@ -206,8 +236,12 @@ export function createPlayerControls(
   }
 
   const look = (event: MouseEvent) => {
-    if (using || options.activeStation()) return
-    if ((!locked && !dragging) || !options.canMove()) return
+    if (using || options.activeStation()) {
+      return
+    }
+    if ((!locked && !dragging) || !options.canMove()) {
+      return
+    }
     const sensitivity = 0.0013 * options.mouseSensitivity()
     camera.rotation.y -= event.movementX * sensitivity
     camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x - event.movementY * sensitivity, -1.1, 1.1)
@@ -250,9 +284,15 @@ export function createPlayerControls(
         const speed = dt * 2.9
         const dx = (-Math.sin(yaw) * forward + Math.cos(yaw) * sideways) * speed
         const dz = (-Math.cos(yaw) * forward - Math.sin(yaw) * sideways) * speed
-        if (!collides(camera.position.x + dx, camera.position.z)) camera.position.x += dx
-        if (!collides(camera.position.x, camera.position.z + dz)) camera.position.z += dz
-      } else clear()
+        if (!collides(camera.position.x + dx, camera.position.z)) {
+          camera.position.x += dx
+        }
+        if (!collides(camera.position.x, camera.position.z + dz)) {
+          camera.position.z += dz
+        }
+      } else {
+        clear()
+      }
     },
     setTarget(target: StationId | null) {
       if ((using || options.activeStation()) && target !== (options.activeStation() ?? pressedStation)) {

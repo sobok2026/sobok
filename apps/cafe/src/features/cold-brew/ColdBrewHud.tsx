@@ -21,7 +21,9 @@ export default function ColdBrewHud({
   stop: () => void
 }) {
   const brew = state.coldBrew
-  if (!brew) return null
+  if (!brew) {
+    return null
+  }
 
   return (
     <WorkHud aria-label="콜드 브루 직접 준비" data-fault={!!brew.fault}>
@@ -30,7 +32,7 @@ export default function ColdBrewHud({
         <span>{progressLabel(brew)}</span>
       </div>
       <ColdBrewWork state={state} brew={brew} act={act} stop={stop} />
-      {brew.stage !== 'ready' && !brew.fault ? (
+      {brew.stage !== 'ready' && !brew.fault && (
         <details className="mt-3 text-xs text-muted">
           <summary className="cursor-pointer py-1">작업 관리</summary>
           <p className="my-2">중단 시 원두와 준비비가 소모됩니다.</p>
@@ -38,13 +40,15 @@ export default function ColdBrewHud({
             추출 중단 · 폐기
           </TextButton>
         </details>
-      ) : null}
+      )}
     </WorkHud>
   )
 }
 
 function progressLabel(brew: ColdBrew) {
-  if (brew.stage === 'measuring') return `${brew.step + 1} / 3`
+  if (brew.stage === 'measuring') {
+    return `${brew.step + 1} / 3`
+  }
   return brew.stage === 'extracting' ? '추출 중' : '회수 · 보관'
 }
 
@@ -136,9 +140,9 @@ function ColdBrewWork({
           추출 {COLD_BREW_HOURS}시간
         </p>
       )}
-      {handsFull ? <p className="mb-3 text-sm text-danger">컵과 다른 도구를 먼저 내려놓아주세요.</p> : null}
+      {handsFull && <p className="mb-3 text-sm text-danger">컵과 다른 도구를 먼저 내려놓아주세요.</p>}
       <div className="flex flex-wrap gap-2">
-        {step.tool || brew.tool ? (
+        {(step.tool || brew.tool) && (
           <WorkButton
             shortcut="G"
             disabled={handsFull}
@@ -147,13 +151,13 @@ function ColdBrewWork({
           >
             {brew.tool ? `${COLD_BREW_TOOL_NAMES[brew.tool]} 놓기` : `${COLD_BREW_TOOL_NAMES[step.tool!]} 집기`}
           </WorkButton>
-        ) : null}
-        {holding && brew.step === 2 ? (
+        )}
+        {holding && brew.step === 2 && (
           <WorkButton shortcut="Space" primary disabled={handsFull} onUse={() => act({ type: 'cold-use' })}>
             추출 시작
           </WorkButton>
-        ) : null}
-        {holding && brew.step !== 2 ? (
+        )}
+        {holding && brew.step !== 2 && (
           <WorkButton
             shortcut="Space"
             hold
@@ -164,12 +168,12 @@ function ColdBrewWork({
           >
             누르고 {brew.step === 0 ? '원두 담기' : '물 붓기'}
           </WorkButton>
-        ) : null}
-        {brew.step < 2 && ready && !brew.tool ? (
+        )}
+        {brew.step < 2 && ready && !brew.tool && (
           <WorkButton shortcut="F" primary disabled={handsFull} onUse={() => act({ type: 'cold-confirm' })}>
             계량 확인
           </WorkButton>
-        ) : null}
+        )}
       </div>
     </>
   )

@@ -48,15 +48,21 @@ export const cupCount = (counts: ReusableCupCounts | undefined) =>
   counts ? reusableCupKinds.reduce((sum, kind) => sum + counts[kind], 0) : 0
 
 export function reusableCupFor(recipe: RecipeId, size: DrinkSize): ReusableCupKind {
-  if (size === 'trenta') throw new Error('Trenta는 포장 전용이에요.')
+  if (size === 'trenta') {
+    throw new Error('Trenta는 포장 전용이에요.')
+  }
   return `${RECIPES[recipe].temperature === 'hot' ? 'hot-mug' : 'iced-glass'}-${size}`
 }
 
 export function cupKindFor(recipe: RecipeId, service: ServiceMode, size: DrinkSize): CupKind {
-  if (service === 'dine-in') return reusableCupFor(recipe, size)
+  if (service === 'dine-in') {
+    return reusableCupFor(recipe, size)
+  }
 
   if (RECIPES[recipe].temperature === 'hot') {
-    if (size === 'trenta') throw new Error('HOT 음료에는 Trenta 컵을 사용할 수 없어요.')
+    if (size === 'trenta') {
+      throw new Error('HOT 음료에는 Trenta 컵을 사용할 수 없어요.')
+    }
     return `hot-paper-${size}`
   }
 

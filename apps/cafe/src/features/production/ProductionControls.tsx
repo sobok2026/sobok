@@ -74,13 +74,13 @@ export function ProductionControls({
   return (
     <>
       <WorkTitle>{step.label}</WorkTitle>
-      {step.measurement && !step.mixesMaterialId ? (
+      {step.measurement && !step.mixesMaterialId && (
         <p className="mb-2 text-sm font-medium">목표 · {step.measurement}</p>
-      ) : null}
-      {details.length ? <p className="mb-3 text-xs leading-relaxed text-muted">{details.join(' · ')}</p> : null}
-      {supplyNotice ? (
+      )}
+      {details.length > 0 && <p className="mb-3 text-xs leading-relaxed text-muted">{details.join(' · ')}</p>}
+      {supplyNotice && (
         <p className="mb-3 border-l-3 border-[#bb8a57] pl-3 text-sm leading-relaxed text-danger">{supplyNotice}</p>
-      ) : null}
+      )}
       <WorkMeter
         label={job?.label ?? step.label}
         ratio={job ? jobRatio : session.progress / (step.maximum ?? step.target)}
@@ -89,15 +89,15 @@ export function ProductionControls({
       {job ? (
         <>
           <p className="mb-3 text-xs text-muted">작동이 끝난 뒤 완료를 확인하세요.</p>
-          {session.tool ? (
+          {session.tool && (
             <WorkButton shortcut="G" disabled={blocked} onUse={onTool}>
               도구 놓기
             </WorkButton>
-          ) : null}
+          )}
         </>
       ) : (
         <div className="flex flex-wrap gap-2">
-          {session.tool || (step.tool && !atMaximum) ? (
+          {(session.tool || (step.tool && !atMaximum)) && (
             <WorkButton
               shortcut="G"
               primary={(!!session.tool && (ready || !rightTool)) || (!rightTool && !supplyNotice)}
@@ -108,8 +108,8 @@ export function ProductionControls({
                 ? `${session.tool === step.tool?.id ? step.tool.name : '도구'} 놓기`
                 : `${step.tool!.name} 집기`}
             </WorkButton>
-          ) : null}
-          {canUse && continuous ? (
+          )}
+          {canUse && continuous && (
             <WorkButton
               shortcut="Space"
               primary={!ready && !supplyNotice}
@@ -120,8 +120,8 @@ export function ProductionControls({
             >
               {workUseLabel(step)}
             </WorkButton>
-          ) : null}
-          {canUse && !continuous ? (
+          )}
+          {canUse && !continuous && (
             <WorkButton
               shortcut="Space"
               primary={!ready && !supplyNotice}
@@ -130,12 +130,12 @@ export function ProductionControls({
             >
               {workUseLabel(step)}
             </WorkButton>
-          ) : null}
-          {ready && !session.tool ? (
+          )}
+          {ready && !session.tool && (
             <WorkButton shortcut="F" primary disabled={blocked} onUse={onConfirm}>
               {step.kind === 'machine' ? '장비 완료 확인' : '단계 완료 확인'}
             </WorkButton>
-          ) : null}
+          )}
         </div>
       )}
     </>

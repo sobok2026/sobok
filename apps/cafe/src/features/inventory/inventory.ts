@@ -7,7 +7,9 @@ import type { Batch, GameState } from '../../simulation/state'
 export function addAmounts(target: Costs, amounts: Costs) {
   for (const id of ingredientIds) {
     const amount = amounts[id] ?? 0
-    if (amount > 0) target[id] = (target[id] ?? 0) + amount
+    if (amount > 0) {
+      target[id] = (target[id] ?? 0) + amount
+    }
   }
 }
 
@@ -53,8 +55,12 @@ export function batchIdsFor(state: GameState, ingredient: IngredientId, amount: 
   const batches = usableBatches(state, ingredient).sort((a, b) => (a.expiresAt ?? Infinity) - (b.expiresAt ?? Infinity))
 
   for (const batch of batches) {
-    if (remaining <= 1e-9) break
-    if (batch.amount <= 0) continue
+    if (remaining <= 1e-9) {
+      break
+    }
+    if (batch.amount <= 0) {
+      continue
+    }
     ids.push(batch.id)
     remaining -= batch.amount
   }
@@ -85,11 +91,14 @@ export function consume(
 
     for (const batch of batches) {
       const used = Math.min(batch.amount, remaining)
-      if (used > 0 && batch.expiresAt !== null)
+      if (used > 0 && batch.expiresAt !== null) {
         earliestExpiry = Math.min(earliestExpiry ?? batch.expiresAt, batch.expiresAt)
+      }
       batch.amount -= used
       remaining -= used
-      if (remaining <= 0) break
+      if (remaining <= 0) {
+        break
+      }
     }
   }
 

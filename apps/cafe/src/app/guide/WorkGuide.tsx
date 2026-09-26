@@ -35,7 +35,7 @@ export default function WorkGuide({
 
   return (
     <div className="text-sm leading-relaxed">
-      {started ? (
+      {started && (
         <section className="mb-6 rounded-xl bg-control p-4" aria-label="현재 작업 도움말">
           <h3 className="font-semibold data-[fault=true]:text-danger" data-fault={!!tip.fault}>
             {tip.title}
@@ -43,7 +43,7 @@ export default function WorkGuide({
           <p className="mt-2">{tip.action}</p>
           <p className="mt-2 text-xs text-muted">{tip.reason}</p>
         </section>
-      ) : null}
+      )}
       <details className="border-t border-line py-4" open={!started}>
         <summary className="font-medium">조작법</summary>
         <dl className="mt-3 divide-y divide-line">

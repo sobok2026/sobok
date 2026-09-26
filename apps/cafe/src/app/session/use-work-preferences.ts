@@ -28,7 +28,9 @@ export function useWorkPreferences(initialPreferences: Preferences) {
     preferencesRef.current = next
     setPreferences(next)
     sounds.current?.configure(next)
-    if (update.muted === false) void sounds.current?.unlock()
+    if (update.muted === false) {
+      void sounds.current?.unlock()
+    }
     void savePreferences(next)
       .then(() => setPreferencesError(false))
       .catch(() => setPreferencesError(true))

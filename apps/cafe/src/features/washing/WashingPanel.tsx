@@ -28,7 +28,7 @@ export default function WashingPanel({ state, act }: { state: GameState; act: (a
 
   return (
     <div className="divide-y divide-line">
-      {washingQueue.length === 0 ? <p className="text-sm text-muted">세척할 용기 없음</p> : null}
+      {washingQueue.length === 0 && <p className="text-sm text-muted">세척할 용기 없음</p>}
       {washingQueue.map(({ group, name, dirty, washed, dirtyItem, washedItem }) => {
         return (
           <section key={group} className="py-3" aria-label={`${name} 세척 재고`}>
@@ -40,12 +40,12 @@ export default function WashingPanel({ state, act }: { state: GameState; act: (a
                   .join(' · ')}
               </span>
             </p>
-            {dirtyItem ? (
+            {dirtyItem && (
               <Button disabled={!!state.washing} onClick={() => act({ type: 'wash', item: dirtyItem })}>
                 {name} 세척 시작
               </Button>
-            ) : null}
-            {washedItem ? (
+            )}
+            {washedItem && (
               <Button
                 variant={dirty > 0 ? 'secondary' : 'primary'}
                 disabled={!!state.washing}
@@ -53,7 +53,7 @@ export default function WashingPanel({ state, act }: { state: GameState; act: (a
               >
                 씻은 {name} 집기
               </Button>
-            ) : null}
+            )}
           </section>
         )
       })}
