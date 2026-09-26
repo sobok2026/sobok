@@ -3,7 +3,6 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "skipLibCheck": true,
     "noEmit": true,
-    "typeRoots": ["./types", "./node_modules/@types"],
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     // Bans the four TypeScript constructs that emit runtime JS instead of erasing: enum, namespace with a body,
