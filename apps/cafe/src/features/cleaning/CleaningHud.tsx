@@ -95,7 +95,12 @@ export default function CleaningHud({
       {occupied ? (
         <p className="my-2.5 text-sm leading-[1.65] text-danger">들고 있는 컵·도구·보충품을 먼저 내려놓으세요.</p>
       ) : null}
-      <details className="mt-3 flex flex-wrap items-baseline gap-x-5 gap-y-1.5 text-xs text-muted open:basis-full compact:mt-1.5">
+      <details
+        className={`
+        mt-3 flex flex-wrap items-baseline gap-x-5 gap-y-1.5 text-xs text-muted open:basis-full
+        compact:mt-1.5
+      `}
+      >
         <summary className="cursor-pointer py-1.5">작업 관리</summary>
 
         <TextButton

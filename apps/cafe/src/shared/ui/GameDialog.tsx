@@ -21,14 +21,21 @@ export default function GameDialog({
     }
   }, [])
   return (
-    <div className="absolute inset-0 z-20 flex items-center justify-center bg-ink/35 p-6 backdrop-blur-sm max-tablet:p-4">
+    <div
+      className={`
+      absolute inset-0 z-20 flex items-center justify-center bg-ink/35 p-6 backdrop-blur-sm max-tablet:p-4
+    `}
+    >
       <section
         ref={surface}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className={`max-h-full w-full overflow-y-auto rounded-2xl bg-surface p-7 shadow-dialog outline-none [scrollbar-width:thin] ${wide ? 'max-w-140' : 'max-w-100'}`}
+        className={`
+          max-h-full w-full overflow-y-auto rounded-2xl bg-surface p-7 shadow-dialog outline-none [scrollbar-width:thin]
+          ${wide ? 'max-w-140' : 'max-w-100'}
+        `}
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
             event.preventDefault()

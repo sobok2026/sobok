@@ -25,7 +25,9 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
       .filter((id) => state.supplies[id].bar <= 5)
       .map(
         (id) =>
-          `${SUPPLIES[id].name} 보충 · 진열 ${state.supplies[id].bar}${SUPPLIES[id].unit}, 창고 ${state.supplies[id].stock}${SUPPLIES[id].unit}`,
+          `${SUPPLIES[id].name} 보충 · 진열 ${state.supplies[id].bar}${SUPPLIES[id].unit}, 창고 ${
+            state.supplies[id].stock
+          }${SUPPLIES[id].unit}`,
       ),
     state.supplyDelivery ? `들고 있는 ${SUPPLIES[state.supplyDelivery.supply].name} 보충품 정리` : '',
     ...tableIds
@@ -36,7 +38,9 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
       ),
     state.dirtyBar ? '작업대 닦기' : '',
     state.cleaning
-      ? `${STATIONS[state.cleaning.station].name} 청소 중${cupCount(state.cleaning.heldCups) ? ` · 들고 있는 컵 ${cupCount(state.cleaning.heldCups)}개` : ''}`
+      ? `${STATIONS[state.cleaning.station].name} 청소 중${
+          cupCount(state.cleaning.heldCups) ? ` · 들고 있는 컵 ${cupCount(state.cleaning.heldCups)}개` : ''
+        }`
       : '',
     ...washItems.flatMap((item) => {
       const stock = washStock(state, item)
@@ -64,7 +68,10 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
         <button
           type="button"
           aria-pressed={tab === 'work'}
-          className="rounded-lg py-2.5 text-sm text-muted aria-pressed:bg-surface aria-pressed:text-ink aria-pressed:shadow-sm"
+          className={`
+            rounded-lg py-2.5 text-sm text-muted aria-pressed:bg-surface aria-pressed:text-ink
+            aria-pressed:shadow-sm
+          `}
           onClick={() => setTab('work')}
         >
           할 일
@@ -72,7 +79,10 @@ export default function ShiftOverview({ state, onClose }: { state: GameState; on
         <button
           type="button"
           aria-pressed={tab === 'ledger'}
-          className="rounded-lg py-2.5 text-sm text-muted aria-pressed:bg-surface aria-pressed:text-ink aria-pressed:shadow-sm"
+          className={`
+            rounded-lg py-2.5 text-sm text-muted aria-pressed:bg-surface aria-pressed:text-ink
+            aria-pressed:shadow-sm
+          `}
           onClick={() => setTab('ledger')}
         >
           운영 기록

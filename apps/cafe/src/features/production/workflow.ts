@@ -12,7 +12,7 @@ import type { RecipeAmount } from '../../content/recipe-schema'
 import type { StationId } from '../../content/stations'
 import type { StockContext, StockNextAdd } from '../../content/stock-amounts'
 
-export const productionQuantity = z.number().finite().min(0).max(100000000)
+export const productionQuantity = z.number().min(0).max(100000000)
 export const productionStateSchema = z.object({
   cursor: z.number().int().min(0),
   decisions: z.record(z.string(), z.boolean()),
@@ -21,13 +21,11 @@ export const productionStateSchema = z.object({
   consumed: z.record(z.string(), productionQuantity),
   vessels: z.record(z.string(), stockVesselSchema),
   stockHeld: z.record(z.string(), productionQuantity),
-  stepStart: z
-    .object({ stepId: z.string(), target: z.number().finite().positive(), effect: stockEffectSchema })
-    .nullable(),
+  stepStart: z.object({ stepId: z.string(), target: z.number().positive(), effect: stockEffectSchema }).nullable(),
   mixedInputs: z.record(z.string(), z.array(z.string())),
   resumeProgress: productionQuantity.nullable(),
   reservedTool: z.boolean(),
-  ingredientExpiresAt: z.number().finite().nullable(),
+  ingredientExpiresAt: z.number().nullable(),
   fault: z.string().nullable(),
 })
 export type ProductionState = z.infer<typeof productionStateSchema>

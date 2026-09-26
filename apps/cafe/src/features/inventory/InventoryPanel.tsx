@@ -61,7 +61,10 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
             key={choice.id}
             type="button"
             aria-pressed={filter === choice.id}
-            className="min-h-10 rounded-xl border border-control-line bg-control px-3 py-2 text-xs text-ink aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-on-brand"
+            className={`
+              min-h-10 rounded-xl border border-control-line bg-control px-3 py-2 text-xs text-ink
+              aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-on-brand
+            `}
             onClick={() => setFilter(choice.id)}
           >
             {choice.label} · {choice.count}
@@ -79,7 +82,13 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
         {filtered.map(
           ({ id, definition, batches, sealed, amount, pending, expired, unopened, needed, shortage, priority }) => (
             <details className="group/inventory border-b border-line" key={id}>
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-3.5 after:text-lg after:text-muted after:content-['+'] group-open/inventory:after:content-['−'] [&::-webkit-details-marker]:hidden">
+              <summary
+                className={`
+                flex cursor-pointer list-none items-center justify-between gap-3 py-3.5 after:text-lg
+                after:text-muted after:content-['+'] group-open/inventory:after:content-['−']
+                [&::-webkit-details-marker]:hidden
+              `}
+              >
                 <span className="flex-1 text-sm font-medium">
                   {definition.name}
                   {needed > 0.0001 || priority < 3 || amount === 0 ? (
@@ -140,7 +149,10 @@ export default function InventoryPanel({ state, act }: { state: GameState; act: 
                 ) : null}
                 {needed > 0 ? (
                   <p
-                    className="mb-4 rounded-md bg-[#e9eee1] px-3 py-2.5 text-label leading-[1.6] text-brand data-[shortage=true]:bg-[#f4e6d4] data-[shortage=true]:text-[#805430]"
+                    className={`
+                      mb-4 rounded-md bg-[#e9eee1] px-3 py-2.5 text-label leading-[1.6] text-brand
+                      data-[shortage=true]:bg-[#f4e6d4] data-[shortage=true]:text-[#805430]
+                    `}
                     data-shortage={shortage > 0.0001}
                   >
                     남은 작업에 예상 {formatAmount(needed)}

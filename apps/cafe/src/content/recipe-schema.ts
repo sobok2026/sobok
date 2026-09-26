@@ -6,7 +6,7 @@ const id = z
   .max(160)
   .regex(/^[A-Za-z0-9가-힣][A-Za-z0-9가-힣._-]*$/)
 const text = z.string().trim().min(1)
-const positive = z.number().finite().positive()
+const positive = z.number().positive()
 const sizes = ['short', 'tall', 'grande', 'venti', 'trenta'] as const
 export const recipeSizeSchema = z.enum(sizes)
 export type CatalogSize = z.infer<typeof recipeSizeSchema>
@@ -41,13 +41,13 @@ export const amountSchema = z.discriminatedUnion('kind', [
     kind: z.literal('line'),
     line: z.enum(['lower', 'middle', 'upper', 'size', 'max']),
     referenceSize: referenceSize.optional(),
-    offsetMillimeters: z.number().finite().optional(),
+    offsetMillimeters: z.number().optional(),
   }),
   z.strictObject({
     kind: z.literal('mark'),
     label: text,
     referenceSize: referenceSize.optional(),
-    offsetMillimeters: z.number().finite().optional(),
+    offsetMillimeters: z.number().optional(),
   }),
   z.strictObject({ kind: z.literal('fill-volume'), value: positive, unit: z.enum(['ml', 'l']) }),
   z.strictObject({
@@ -74,8 +74,8 @@ const duration = z.union([
 ])
 const repetitions = z.union([positive, z.strictObject({ min: positive, max: positive })])
 const temperature = z.discriminatedUnion('kind', [
-  z.strictObject({ kind: z.literal('celsius'), value: z.number().finite() }),
-  z.strictObject({ kind: z.literal('range'), min: z.number().finite(), max: z.number().finite() }),
+  z.strictObject({ kind: z.literal('celsius'), value: z.number() }),
+  z.strictObject({ kind: z.literal('range'), min: z.number(), max: z.number() }),
   z.strictObject({ kind: z.literal('boiling') }),
   z.strictObject({ kind: z.literal('hot') }),
   z.strictObject({ kind: z.literal('cold') }),

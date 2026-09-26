@@ -1,13 +1,4 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "resolveJsonModule": true,
-    "allowImportingTsExtensions": true,
-    "types": ["node", "react", "react-dom"]
-  },
-  "include": ["src", "vite.config.ts"]
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }

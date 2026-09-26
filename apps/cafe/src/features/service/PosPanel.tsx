@@ -155,7 +155,12 @@ export default function PosPanel({
             {sale?.lines.map((line, index) => (
               <div
                 key={line.id}
-                className={`rounded border ${selected?.id === line.id ? 'border-pos-active bg-pos-active text-white' : 'border-pos-soft bg-white'}`}
+                className={`
+                  rounded border
+                  ${
+                    selected?.id === line.id ? 'border-pos-active bg-pos-active text-white' : 'border-pos-soft bg-white'
+                  }
+                `}
               >
                 <button
                   type="button"
@@ -167,7 +172,10 @@ export default function PosPanel({
                   <div className="flex items-start gap-2">
                     <span className="mt-0.5 text-xs opacity-75">{String(index + 1).padStart(2, '0')}</span>
                     <span
-                      className={`shrink-0 rounded px-1.5 py-1 text-xs text-white ${RECIPES[line.recipe].temperature === 'hot' ? 'bg-[#de835f]' : 'bg-[#45a6c4]'}`}
+                      className={`
+                        shrink-0 rounded px-1.5 py-1 text-xs text-white
+                        ${RECIPES[line.recipe].temperature === 'hot' ? 'bg-[#de835f]' : 'bg-[#45a6c4]'}
+                      `}
                     >
                       {DRINK_SIZES[line.size].name.slice(0, 1)}
                     </span>

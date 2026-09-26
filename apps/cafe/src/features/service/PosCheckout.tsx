@@ -166,7 +166,10 @@ export function PosCheckout({
                 onChange={(event) => {
                   if (/^\d{0,8}$/.test(event.target.value)) setValue(event.target.value)
                 }}
-                className="min-h-12 min-w-0 flex-1 pos-compact:min-h-10 rounded border-2 border-pos-active bg-[#fff2cb] px-3 text-right text-xl tabular-nums"
+                className={`
+                  min-h-12 min-w-0 flex-1 pos-compact:min-h-10 rounded border-2 border-pos-active
+                  bg-[#fff2cb] px-3 text-right text-xl tabular-nums
+                `}
               />
             </label>
             <div className="mx-auto w-full max-w-sm">

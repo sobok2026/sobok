@@ -76,7 +76,9 @@ export function operationDetails(step: WorkStep): string[] {
     const repetitions =
       typeof op.repetitions === 'number' ? number(op.repetitions) : range(op.repetitions.min, op.repetitions.max)
     details.push(
-      `${'approximate' in op && op.approximate ? '약 ' : ''}${repetitions}회${'atLeast' in op && op.atLeast ? ' 이상' : ''}`,
+      `${'approximate' in op && op.approximate ? '약 ' : ''}${repetitions}회${
+        'atLeast' in op && op.atLeast ? ' 이상' : ''
+      }`,
     )
   }
   if ('portion' in op && op.portion) details.push({ liquid: '액체만', foam: '거품만', all: '전체' }[op.portion])
@@ -127,7 +129,9 @@ export function workProgressLabel(step: WorkStep, progress: number): string {
       return `${number(progress)} / ${goal}${countUnits[amount.unit]}${minimum}`
     if (amount.kind === 'depth' || amount.kind === 'depth-range') return `${number(progress)} / ${goal}mm${minimum}`
     if (amount.kind === 'fraction')
-      return `${number(progress * amount.denominator)}/${amount.denominator} · 목표 ${amount.numerator}/${amount.denominator}`
+      return `${number(progress * amount.denominator)}/${amount.denominator} · 목표 ${amount.numerator}/${
+        amount.denominator
+      }`
     return `진행 ${number(Math.min(1, progress / step.target) * 100)}%`
   }
   if (step.kind === 'confirm' || step.unit === '완료') return readyWork(step, progress) ? '동작 완료' : '동작 전'

@@ -23,7 +23,11 @@ export function materialTip(state: GameState, ingredient: IngredientId): Tip {
         ? pending.labelled
           ? `E로 용기를 집어 ${STATIONS[batchDestination(pending)].name}로 운반하세요.`
           : `${STATIONS[batchOrigin(pending)].name}에서 날짜를 확인하고 라벨을 붙이세요.`
-        : `창고에서 ${pending.labelled ? `${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하세요.` : '날짜 확인 후 라벨을 붙이세요.'}`,
+        : `창고에서 ${
+            pending.labelled
+              ? `${definition.storage === 'fridge' ? '냉장고' : '실온 선반'}에 보관하세요.`
+              : '날짜 확인 후 라벨을 붙이세요.'
+          }`,
       reason: '개봉·제조만으로는 사용할 수 없어요. 라벨과 보관까지 마쳐야 해요.',
     }
   if (preparationForMaterial(ingredient))

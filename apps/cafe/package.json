@@ -5,26 +5,31 @@
   "type": "module",
   "scripts": {
     "dev": "bun run check:recipes && vite --host 127.0.0.1 --port 3018 --strictPort",
-    "build": "bun run check:recipes && tsc --noEmit && vite build",
+    "build": "bun run check:recipes && bun run check:font-coverage && tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1 --port 3018 --strictPort",
-    "type": "tsc --noEmit",
-    "check:recipes": "bun scripts/check-recipes.mjs"
+    "type": "tsc -b",
+    "check:recipes": "bun scripts/check-recipes.mjs",
+    "check:font-coverage": "bun ../../packages/typography/scripts/verify-font-coverage.ts src data index.html"
   },
   "dependencies": {
+    "@sobok/typography": "workspace:*",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "three": "0.186.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@rolldown/plugin-babel": "^0.2.0",
     "@tailwindcss/vite": "4.3.1",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "6.1.1",
+    "babel-plugin-react-compiler": "^1.0.0",
     "tailwindcss": "4.3.1",
     "typescript": "^6.0.3",
     "vite": "8.3.0",
-    "wrangler": "^4.110.0"
+    "wrangler": "^4.141.0"
   }
 }

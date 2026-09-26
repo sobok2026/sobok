@@ -67,7 +67,10 @@ export default function PreparationPanel({ state, act }: { state: GameState; act
             type="button"
             aria-pressed={selected?.id === item.id}
             onClick={() => setSelection(item.id)}
-            className="w-full rounded-lg border border-control-line bg-control px-3 py-2.5 text-left text-sm aria-pressed:border-brand aria-pressed:bg-brand/10"
+            className={`
+              w-full rounded-lg border border-control-line bg-control px-3 py-2.5 text-left text-sm
+              aria-pressed:border-brand aria-pressed:bg-brand/10
+            `}
           >
             <span className="block font-medium">{item.name}</span>
             <span className="mt-1 flex flex-wrap justify-between gap-2 text-xs text-muted">

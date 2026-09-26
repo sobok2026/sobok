@@ -98,7 +98,12 @@ export default function WashingHud({
               </WorkButton>
             ) : null}
           </div>
-          <details className="mt-3 flex flex-wrap items-baseline gap-x-5 gap-y-1.5 text-xs text-muted open:basis-full compact:mt-1.5">
+          <details
+            className={`
+            mt-3 flex flex-wrap items-baseline gap-x-5 gap-y-1.5 text-xs text-muted open:basis-full
+            compact:mt-1.5
+          `}
+          >
             <summary className="cursor-pointer py-1.5">작업 관리</summary>
 
             <TextButton danger onClick={() => act({ type: 'leave-wash' })}>

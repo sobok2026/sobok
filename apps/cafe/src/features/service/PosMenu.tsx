@@ -127,7 +127,10 @@ export function PosMenu({
                 type="button"
                 disabled={disabled || !chosenSize}
                 onClick={() => onAdd(id, chosenSize, services)}
-                className="flex h-full w-full flex-col justify-between gap-1 rounded p-2 text-left text-sm leading-snug disabled:opacity-60"
+                className={`
+                  flex h-full w-full flex-col justify-between gap-1 rounded p-2 text-left text-sm
+                  leading-snug disabled:opacity-60
+                `}
                 aria-label={`${menu.name} ${temperature === 'hot' ? 'HOT' : 'ICED'} 담기`}
               >
                 <span className="line-clamp-3 pr-3 font-semibold">{menu.name}</span>

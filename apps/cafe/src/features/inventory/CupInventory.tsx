@@ -74,7 +74,12 @@ export default function CupInventory({
           )
         return (
           <details key={kind} className="group/cups" open={needed === kind && stock.bar === 0}>
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-3 text-sm after:text-muted after:content-['+'] group-open/cups:after:content-['−'] [&::-webkit-details-marker]:hidden">
+            <summary
+              className={`
+              flex cursor-pointer list-none items-center justify-between gap-3 py-3 text-sm after:text-muted
+              after:content-['+'] group-open/cups:after:content-['−'] [&::-webkit-details-marker]:hidden
+            `}
+            >
               {row}
             </summary>
             <div className="pb-3">

@@ -133,7 +133,11 @@ export function customizePlan(base: PlannedStep[], custom: Customizations): Plan
         instruction: custom.levels[step.id]
           ? `${step.label} · 기본 투입량의 ${custom.levels[step.id] === 'less' ? 50 : 150}%`
           : changed
-            ? `${step.label} · ${measurement}${operation.action === 'add' && custom.milk === operation.materialId ? ` · ${milkChoices[custom.milk]}` : ''}`
+            ? `${step.label} · ${measurement}${
+                operation.action === 'add' && custom.milk === operation.materialId
+                  ? ` · ${milkChoices[custom.milk]}`
+                  : ''
+              }`
             : step.instruction,
       },
     ]

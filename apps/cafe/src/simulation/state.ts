@@ -25,16 +25,16 @@ import { customerStages } from '../features/service/customer'
 import { currentTicket, customerCupCounts, orderMatchesRequest, salePaid, saleTotal } from '../features/service/orders'
 import { washItems } from '../features/washing/rules'
 
-const quantity = z.number().finite().min(0).max(100000000)
+const quantity = z.number().min(0).max(100000000)
 const reusableCounts = z.record(z.enum(reusableCupKinds), quantity.int())
-const timestamp = z.number().finite().min(0).max(100000000000)
+const timestamp = z.number().min(0).max(100000000000)
 const ingredientAmounts = z
   .record(z.string(), quantity)
   .refine(
     (amounts) => Object.keys(amounts).every((id) => ingredientIds.includes(id)),
     '등록되지 않은 재료가 포함되어 있어요.',
   )
-const customerPoint = z.tuple([z.number().finite().min(-7).max(7), z.number().finite().min(0).max(7)])
+const customerPoint = z.tuple([z.number().min(-7).max(7), z.number().min(0).max(7)])
 const orderItemSchema = z.object({
   recipe: z.enum(recipeIds),
   service: z.enum(serviceModes),
@@ -90,7 +90,7 @@ const customerSchema = z
     items: z.array(requestedItemSchema).min(1).max(50),
     stage: z.enum(customerStages),
     position: customerPoint,
-    yaw: z.number().finite(),
+    yaw: z.number(),
     path: z.array(customerPoint).max(12),
     nextPoint: z.number().int().min(0).max(12),
     elapsed: quantity,
@@ -195,7 +195,7 @@ const coldBrewSchema = z
     progress: quantity,
     stage: z.enum(['measuring', 'extracting', 'finished', 'ready']),
     tool: z.enum(coldBrewTools).nullable(),
-    beans: z.number().finite().min(0).max(COLD_BREW_BEANS),
+    beans: z.number().min(0).max(COLD_BREW_BEANS),
     water: quantity,
     fault: z.string().max(300).nullable(),
     completedAt: timestamp.nullable(),
@@ -210,7 +210,7 @@ const washingSchema = z
     id: z.string().max(100),
     item: z.enum(washItems),
     stage: z.enum(['scrub', 'rinse', 'ready', 'carrying']),
-    progress: z.number().finite().min(0).max(2.5),
+    progress: z.number().min(0).max(2.5),
     spongeHeld: z.boolean(),
   })
   .refine((washing) => washing.stage === 'scrub' || !washing.spongeHeld, '스펀지를 먼저 내려놓아주세요.')
@@ -219,7 +219,7 @@ const cleaningSchema = z
     id: z.string().max(100),
     station: z.enum(cleaningStationIds),
     stage: z.enum(['collect', 'wipe', 'bag']),
-    progress: z.number().finite().min(0).max(3),
+    progress: z.number().min(0).max(3),
     clothHeld: z.boolean(),
     heldCups: reusableCounts,
     trashCount: quantity.int(),
@@ -298,12 +298,7 @@ export const stateSchema = z
         z.object({ id: z.string().max(100), text: z.string().max(400), tone: z.enum(['info', 'success', 'error']) }),
       )
       .max(8),
-    position: z.tuple([
-      z.number().finite().min(-7).max(7),
-      z.number().finite().min(-6).max(6),
-      z.number().finite(),
-      z.number().finite(),
-    ]),
+    position: z.tuple([z.number().min(-7).max(7), z.number().min(-6).max(6), z.number(), z.number()]),
   })
   .refine((state) => {
     if (!state.cup) return true

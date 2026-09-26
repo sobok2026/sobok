@@ -3,8 +3,8 @@ import inventoryData from '../../data/shop/inventory.json'
 import stockRuleData from '../../data/shop/stock-rules.json'
 
 const text = z.string().trim().min(1)
-const positive = z.number().finite().positive()
-const nonnegative = z.number().finite().nonnegative()
+const positive = z.number().positive()
+const nonnegative = z.number().nonnegative()
 const materialQuality = z.strictObject({
   storage: z.enum(['room', 'fridge']),
   lifetime: z.strictObject({ amount: positive, unit: z.enum(['days', 'hours', 'months']) }),
@@ -122,8 +122,8 @@ for (const output of Object.values(shopStockRules.preparationOutputs)) {
     throw new Error(`${output.materialId}: 완성 배합의 재고 단위가 재료 운영값과 다릅니다.`)
 }
 
-const flowAmount = z.number().finite().min(0).max(100000000)
-const flowChange = z.number().finite().min(-100000000).max(100000000)
+const flowAmount = z.number().min(0).max(100000000)
+const flowChange = z.number().min(-100000000).max(100000000)
 const phase = z.enum(['liquid', 'foam', 'solid'])
 export const stockLayerSchema = z.strictObject({
   materialId: text,
@@ -137,7 +137,7 @@ export const stockVesselSchema = z.strictObject({
   voids: flowAmount,
   processes: z.array(text),
   // Read projections. Only layers are used to calculate content transfers.
-  fill: z.number().finite().min(0).max(1),
+  fill: z.number().min(0).max(1),
   materials: z.record(text, flowAmount),
 })
 export const stockEffectSchema = z.strictObject({
