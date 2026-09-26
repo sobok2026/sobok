@@ -1,7 +1,7 @@
 import { recipeCatalog } from '../../content/catalog'
 import { type Costs, INGREDIENTS } from '../../content/ingredients'
 import type { StationId } from '../../content/stations'
-import { buildStockEffect, projectStockEffect } from '../../content/stock-amounts'
+import { buildStockEffect, projectStockEffect, scaleStockEffect } from '../../content/stock-amounts'
 import { say, startJob } from '../../simulation/feedback'
 import type { WorkContext } from '../../simulation/work-context'
 import { addAmounts, available, batchIdsFor, consume } from '../inventory/inventory'
@@ -38,16 +38,28 @@ export function currentWorkStep(steps: WorkStep[], session: ProductionState): Wo
   }
 }
 function stockEffect(session: ProductionState, step: WorkStep) {
-  return session.stepStart?.stepId === step.id
-    ? session.stepStart.effect
-    : buildStockEffect(recipeCatalog, session, step.operation, step.stockContext, step.nextStockAdd ?? undefined)
+  if (session.stepStart?.stepId === step.id) return session.stepStart.effect
+  const effect = buildStockEffect(
+    recipeCatalog,
+    session,
+    step.operation,
+    step.stockContext,
+    step.nextStockAdd ?? undefined,
+  )
+  return step.portion === undefined ? effect : scaleStockEffect(session, effect, step.stockContext, step.portion)
 }
 export function stockAwareWorkStep(session: ProductionState, step: WorkStep): WorkStep {
   if (step.kind === 'condition') return step
   if (step.mixesMaterialId) {
     if (session.resumeProgress !== null) return step
-    const inputRequirements = step.nextStockAdd
-      ? buildStockEffect(recipeCatalog, session, step.nextStockAdd, step.stockContext).costs
+    const effect = step.nextStockAdd
+      ? buildStockEffect(recipeCatalog, session, step.nextStockAdd, step.stockContext)
+      : null
+    const inputRequirements = effect
+      ? (step.nextStockPortion === undefined
+          ? effect
+          : scaleStockEffect(session, effect, step.stockContext, step.nextStockPortion)
+        ).costs
       : step.inputRequirements
     return { ...step, inputRequirements }
   }

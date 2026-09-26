@@ -702,6 +702,35 @@ export function projectStockEffect(
 }
 
 /** Static guidance includes potential branches; runtime resolves each executed step against actual state. */
+export function scaleStockEffect(
+  state: StockFlowState,
+  effect: StockEffect,
+  context: StockContext,
+  portion: number,
+): StockEffect {
+  const scaled: StockEffect = {
+    ...effect,
+    costs: Object.fromEntries(Object.entries(effect.costs).map(([id, value]) => [id, value * portion])),
+    stockHeld: Object.fromEntries(Object.entries(effect.stockHeld).map(([id, value]) => [id, value * portion])),
+    vessels: Object.fromEntries(
+      Object.entries(effect.vessels).map(([id, change]) => [
+        id,
+        {
+          ...change,
+          layers: change.layers.map((layer) => ({
+            ...layer,
+            quantity: layer.quantity * portion,
+            milliliters: layer.milliliters * portion,
+          })),
+        },
+      ]),
+    ),
+  }
+  const target = projectStockEffect(state, scaled, context, 0, 1)
+  scaled.targetFills = Object.fromEntries(Object.keys(scaled.vessels).map((id) => [id, target.vessels[id].fill]))
+  return scaled
+}
+
 export function planStockCosts(catalog: RecipeCatalog, plan: PlannedStep[], context: StockContext): Costs[] {
   let state: StockFlowState = { vessels: {}, stockHeld: {} }
   return plan.map((step, index) => {
@@ -717,7 +746,8 @@ export function planStockCosts(catalog: RecipeCatalog, plan: PlannedStep[], cont
                   (step.operation as Extract<ResolvedOperation, { action: 'peel' | 'cut' }>).materialId,
             )
         : undefined
-    const effect = buildStockEffect(catalog, state, step.operation, context, nextAdd)
+    let effect = buildStockEffect(catalog, state, step.operation, context, nextAdd)
+    if (step.portion !== undefined) effect = scaleStockEffect(state, effect, context, step.portion)
     state = projectStockEffect(state, effect, context, 0, 1)
     return effect.costs
   })

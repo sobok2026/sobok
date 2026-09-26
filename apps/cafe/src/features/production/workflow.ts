@@ -39,6 +39,7 @@ export type ProductionTool = {
 export type WorkStep = PlannedStep & {
   stockContext: StockContext
   nextStockAdd: StockNextAdd | null
+  nextStockPortion?: number
   station: StationId
   kind: 'pour' | 'count' | 'mix' | 'machine' | 'confirm' | 'condition'
   condition?: PlannedObservation
@@ -241,6 +242,7 @@ export function compileWorkflow(
         if (next?.action === 'add' && next.into !== operation.vessel) mixesMaterialId = next.materialId
       }
     }
+    if (source.portion !== undefined) control = { kind: 'pour', target: 1, maximum: 1, increment: 1, unit: '비율' }
     if ('into' in operation) populated.add(operation.into)
     if (operation.action === 'transfer' && operation.amount.kind === 'all') populated.delete(operation.from)
     const requiresMixedMaterialId =
@@ -253,17 +255,18 @@ export function compileWorkflow(
       !mixesMaterialId && (owner === 'prep' || vesselIds.some((id) => id !== servingVessel && id !== 'serving-cup'))
     const nextMaterial =
       mixesMaterialId ?? (operation.action === 'peel' || operation.action === 'cut' ? operation.materialId : null)
-    const nextStockAdd = nextMaterial
+    const nextStockStep = nextMaterial
       ? (plan
           .slice(index + 1)
-          .map((item) => item.operation)
-          .find((item): item is StockNextAdd => item.action === 'add' && item.materialId === nextMaterial) ?? null)
+          .find((item) => item.operation.action === 'add' && item.operation.materialId === nextMaterial) ?? null)
       : null
+    const nextStockAdd = nextStockStep?.operation.action === 'add' ? nextStockStep.operation : null
     const step: WorkStep = {
       ...source,
       ...control,
       stockContext,
       nextStockAdd,
+      nextStockPortion: nextStockStep?.portion,
       tool: toolFor(catalog, operation),
       station: stationFor(operation, owner),
       equipmentId,

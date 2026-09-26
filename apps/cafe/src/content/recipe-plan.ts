@@ -19,6 +19,8 @@ export type RecipeContext = {
 }
 export type PlannedObservation = { id: string; property: string; value: string }
 export type PlannedStep = {
+  // An explicit game customization; source recipe operations remain unchanged.
+  portion?: number
   id: string
   sourceStepId: string
   label: string
