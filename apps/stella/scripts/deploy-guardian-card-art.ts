@@ -5,48 +5,38 @@ import { parseArgs } from 'node:util'
 import { z } from 'zod'
 import { readAssetContract, validateReleaseDirectory } from './guardian-card-art'
 
-const listedObjectSchema = z
-  .object({
+const listedObjectSchema = z.looseObject({
+  etag: z.string().min(1),
+  http_metadata: z
+    .looseObject({
+      cacheControl: z.string().optional(),
+      contentType: z.string().optional(),
+    })
+    .optional(),
+  key: z.string().min(1),
+  size: z.number().int().nonnegative(),
+  storage_class: z.string().min(1).optional(),
+})
+
+const listResponseSchema = z.looseObject({
+  result: z.array(listedObjectSchema),
+  result_info: z
+    .looseObject({
+      cursor: z.string().optional(),
+      is_truncated: z.boolean().optional(),
+    })
+    .optional(),
+  success: z.literal(true),
+})
+
+const uploadResponseSchema = z.looseObject({
+  result: z.looseObject({
     etag: z.string().min(1),
-    http_metadata: z
-      .object({
-        cacheControl: z.string().optional(),
-        contentType: z.string().optional(),
-      })
-      .passthrough()
-      .optional(),
     key: z.string().min(1),
-    size: z.number().int().nonnegative(),
-    storage_class: z.string().min(1).optional(),
-  })
-  .passthrough()
-
-const listResponseSchema = z
-  .object({
-    result: z.array(listedObjectSchema),
-    result_info: z
-      .object({
-        cursor: z.string().optional(),
-        is_truncated: z.boolean().optional(),
-      })
-      .passthrough()
-      .optional(),
-    success: z.literal(true),
-  })
-  .passthrough()
-
-const uploadResponseSchema = z
-  .object({
-    result: z
-      .object({
-        etag: z.string().min(1),
-        key: z.string().min(1),
-        size: z.union([z.string(), z.number()]),
-      })
-      .passthrough(),
-    success: z.literal(true),
-  })
-  .passthrough()
+    size: z.union([z.string(), z.number()]),
+  }),
+  success: z.literal(true),
+})
 
 type ListedObject = z.infer<typeof listedObjectSchema>
 

@@ -19,9 +19,9 @@ type ComputeMessage = { jobId?: string; artifactId?: string; packageId?: string 
 const CALCULATION_QUEUES = new Set(['civil-calculations', 'civil-calculations-stg'])
 const ARTIFACT_QUEUES = new Set(['civil-artifacts', 'civil-artifacts-stg'])
 const DELIVERY_QUEUES = new Set(['civil-deliveries', 'civil-deliveries-stg'])
-const CalculationMessageSchema = z.object({ jobId: z.uuid() }).strict()
-const ArtifactMessageSchema = z.object({ artifactId: z.uuid() }).strict()
-const DeliveryMessageSchema = z.object({ packageId: z.uuid() }).strict()
+const CalculationMessageSchema = z.strictObject({ jobId: z.uuid() })
+const ArtifactMessageSchema = z.strictObject({ artifactId: z.uuid() })
+const DeliveryMessageSchema = z.strictObject({ packageId: z.uuid() })
 
 async function processCalculationMessage(message: Message<ComputeMessage>, env: ComputeEnv): Promise<void> {
   const parsedMessage = CalculationMessageSchema.safeParse(message.body)

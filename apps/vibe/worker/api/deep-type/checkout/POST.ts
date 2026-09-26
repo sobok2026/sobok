@@ -21,7 +21,7 @@ const CheckoutBody = z.object({
   // Which method to open. Shape-checked against the catalogue here and policy-checked below against the
   // result's locale — the enum alone would let an EN sitting open a domestic wallet it was never offered.
   payMethod: z.enum(PAY_METHODS),
-  email: z.string().email().max(254),
+  email: z.email().max(254),
   consentWithdrawal: z.boolean(),
   consentPrivacy: z.boolean(),
   ageConfirmed: z.boolean(),

@@ -31,7 +31,7 @@ import { z } from 'zod'
 
 const BODY_LIMIT_BYTES = 4 * 1024
 const CardBody = z
-  .object({
+  .strictObject({
     surface: z.enum(['today', 'tomorrow']),
     locale: z.literal('ko'),
     dateKey: GuardianDateKeySchema,
@@ -42,7 +42,6 @@ const CardBody = z
     tone: z.enum(GUARDIAN_DAILY_TONES).optional(),
     viewerId: GuardianViewerIdSchema,
   })
-  .strict()
   .superRefine((value, context) => {
     if (value.basis === 'daily_moon' && value.sign !== value.skySign) {
       context.addIssue({ code: 'custom', message: 'Collective cards use the daily Moon sign', path: ['sign'] })

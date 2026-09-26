@@ -7,16 +7,14 @@ import { problem } from '../errors'
 import { NO_STORE_HEADERS, readJson } from '../lib/http'
 
 const BODY_LIMIT_BYTES = 4096
-const CreateOrganizationBody = z
-  .object({
-    name: z.string().trim().min(2).max(120),
-    slug: z
-      .string()
-      .trim()
-      .toLowerCase()
-      .regex(/^[a-z0-9][a-z0-9-]{1,47}$/),
-  })
-  .strict()
+const CreateOrganizationBody = z.strictObject({
+  name: z.string().trim().min(2).max(120),
+  slug: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .regex(/^[a-z0-9][a-z0-9-]{1,47}$/),
+})
 
 export const organizations = new Hono<AppEnv>()
 

@@ -13,7 +13,7 @@ import { z } from 'zod'
 import { DEEPTYPE_REOPEN_ACTION } from '../../actions'
 
 const RequestBody = z.object({
-  email: z.string().email().max(254),
+  email: z.email().max(254),
   locale: z.enum(LOCALES),
   turnstileToken: z.string().min(1).max(2048),
 })

@@ -52,33 +52,27 @@ const REOPEN_LIMITS = [
   { bucket: 'guardian_pass_reopen_burst', windowMs: 60_000, limit: 2 },
 ] as const
 
-const CheckoutBody = z
-  .object({
-    locale: z.literal('ko'),
-    timeZone: GuardianTimeZoneSchema,
-    email: z.string().trim().email().max(254),
-    payMethod: z.enum(GUARDIAN_PAY_METHODS),
-    turnstileToken: z.string().min(1).max(2048),
-    viewerId: GuardianViewerIdSchema,
-    checkoutRequestId: GuardianCheckoutRequestIdSchema,
-    consents: z
-      .object({
-        age: z.literal(true),
-        terms: z.literal(true),
-        privacy: z.literal(true),
-        withdrawal: z.literal(true),
-      })
-      .strict(),
-  })
-  .strict()
-const ReopenRequestBody = z
-  .object({
-    locale: z.literal('ko'),
-    email: z.string().trim().email().max(254),
-    turnstileToken: z.string().min(1).max(2048),
-  })
-  .strict()
-const ReopenExchangeBody = z.object({ token: GuardianReopenTokenSchema }).strict()
+const CheckoutBody = z.strictObject({
+  locale: z.literal('ko'),
+  timeZone: GuardianTimeZoneSchema,
+  email: z.string().trim().check(z.email()).max(254),
+  payMethod: z.enum(GUARDIAN_PAY_METHODS),
+  turnstileToken: z.string().min(1).max(2048),
+  viewerId: GuardianViewerIdSchema,
+  checkoutRequestId: GuardianCheckoutRequestIdSchema,
+  consents: z.strictObject({
+    age: z.literal(true),
+    terms: z.literal(true),
+    privacy: z.literal(true),
+    withdrawal: z.literal(true),
+  }),
+})
+const ReopenRequestBody = z.strictObject({
+  locale: z.literal('ko'),
+  email: z.string().trim().check(z.email()).max(254),
+  turnstileToken: z.string().min(1).max(2048),
+})
+const ReopenExchangeBody = z.strictObject({ token: GuardianReopenTokenSchema })
 
 export const guardianPass = new Hono<AppEnv>()
 

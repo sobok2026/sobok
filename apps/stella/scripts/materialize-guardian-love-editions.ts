@@ -46,60 +46,52 @@ const STELLA_ARTWORK_ALT_TOKEN = '{stellaArtworkAlt}'
 const WEIGHT_SCALE = 10_000
 
 const nonEmptyText = z.string().trim().min(1)
-const blueprintSchema = z
-  .object({
-    status: z.literal('authoring'),
-    locale: z.literal('ko'),
-    slot: z.literal('love'),
-    rarities: z
-      .array(
-        z
-          .object({
-            id: z.enum(RARITIES),
-            titleSuffix: nonEmptyText,
-            weight: z.number().int().positive(),
-            sceneSuffix: nonEmptyText,
-            artworkAltSuffix: nonEmptyText,
-            oneLineAction: z.string().trim().min(20),
-          })
-          .strict(),
-      )
-      .length(RARITIES.length),
-    families: z
-      .array(
-        z
-          .object({
-            familyId: nonEmptyText,
-            sign: z.enum(SIGNS),
-            guardians: nonEmptyText,
-            sharedGuardians: nonEmptyText,
-            nebulaBeat: z.string().trim().min(20),
-            nebulaArtworkAlt: z.string().trim().min(15),
-            sharedBeat: z.string().trim().min(20),
-            sharedArtworkAlt: z.string().trim().min(15),
-            stellaBeat: z.string().trim().min(20),
-            stellaArtworkAlt: z.string().trim().min(15),
-            themes: z
-              .array(
-                z
-                  .object({
-                    id: z.enum(THEMES),
-                    titleStem: nonEmptyText,
-                    sceneCore: z.string().trim().min(30),
-                    artworkAltCore: z.string().trim().min(20),
-                    oneLineInsightTemplate: z.string().trim().min(25),
-                    reflection: z.string().trim().min(15),
-                    interpretationSignals: z.array(nonEmptyText).length(2),
-                  })
-                  .strict(),
-              )
-              .length(THEMES.length),
-          })
-          .strict(),
-      )
-      .length(SIGNS.length),
-  })
-  .strict()
+const blueprintSchema = z.strictObject({
+  status: z.literal('authoring'),
+  locale: z.literal('ko'),
+  slot: z.literal('love'),
+  rarities: z
+    .array(
+      z.strictObject({
+        id: z.enum(RARITIES),
+        titleSuffix: nonEmptyText,
+        weight: z.number().int().positive(),
+        sceneSuffix: nonEmptyText,
+        artworkAltSuffix: nonEmptyText,
+        oneLineAction: z.string().trim().min(20),
+      }),
+    )
+    .length(RARITIES.length),
+  families: z
+    .array(
+      z.strictObject({
+        familyId: nonEmptyText,
+        sign: z.enum(SIGNS),
+        guardians: nonEmptyText,
+        sharedGuardians: nonEmptyText,
+        nebulaBeat: z.string().trim().min(20),
+        nebulaArtworkAlt: z.string().trim().min(15),
+        sharedBeat: z.string().trim().min(20),
+        sharedArtworkAlt: z.string().trim().min(15),
+        stellaBeat: z.string().trim().min(20),
+        stellaArtworkAlt: z.string().trim().min(15),
+        themes: z
+          .array(
+            z.strictObject({
+              id: z.enum(THEMES),
+              titleStem: nonEmptyText,
+              sceneCore: z.string().trim().min(30),
+              artworkAltCore: z.string().trim().min(20),
+              oneLineInsightTemplate: z.string().trim().min(25),
+              reflection: z.string().trim().min(15),
+              interpretationSignals: z.array(nonEmptyText).length(2),
+            }),
+          )
+          .length(THEMES.length),
+      }),
+    )
+    .length(SIGNS.length),
+})
 
 type Blueprint = z.infer<typeof blueprintSchema>
 

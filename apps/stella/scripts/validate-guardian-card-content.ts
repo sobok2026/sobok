@@ -101,383 +101,323 @@ const SAFE_COMPANIONS: Readonly<Record<(typeof SIGNS)[number], readonly (typeof 
 }
 
 const nonEmptyText = z.string().trim().min(1)
-const familySchema = z
-  .object({
-    id: nonEmptyText,
-    sign: z.enum(SIGNS),
-    slot: z.enum(SLOTS),
-    primaryGuardianId: z.enum(SIGNS),
-    companionGuardianIds: z.array(z.enum(SIGNS)).max(2),
-    title: nonEmptyText,
-    baseScene: z.string().trim().min(30),
-    emotion: z.string().trim().min(4),
-    baseArtworkAlt: z.string().trim().min(20),
-    dialogue: z.string().trim().min(4),
-    oneLineTemplate: z.string().trim().min(20),
-    reflection: z.string().trim().min(15),
-    visualMotifs: z.array(nonEmptyText).length(3),
-    editionSignalAffinities: z.array(nonEmptyText).length(2),
-  })
-  .strict()
+const familySchema = z.strictObject({
+  id: nonEmptyText,
+  sign: z.enum(SIGNS),
+  slot: z.enum(SLOTS),
+  primaryGuardianId: z.enum(SIGNS),
+  companionGuardianIds: z.array(z.enum(SIGNS)).max(2),
+  title: nonEmptyText,
+  baseScene: z.string().trim().min(30),
+  emotion: z.string().trim().min(4),
+  baseArtworkAlt: z.string().trim().min(20),
+  dialogue: z.string().trim().min(4),
+  oneLineTemplate: z.string().trim().min(20),
+  reflection: z.string().trim().min(15),
+  visualMotifs: z.array(nonEmptyText).length(3),
+  editionSignalAffinities: z.array(nonEmptyText).length(2),
+})
 
-const familyContentSchema = z
-  .object({
-    status: z.literal('authoring'),
-    catalogId: z.literal('stella-zodiac-guardians-v1'),
-    locale: z.literal('ko'),
-    focusToken: z.literal(FOCUS_TOKEN),
-    families: z.array(familySchema).length(SIGNS.length * SLOTS.length),
-  })
-  .strict()
+const familyContentSchema = z.strictObject({
+  status: z.literal('authoring'),
+  catalogId: z.literal('stella-zodiac-guardians-v1'),
+  locale: z.literal('ko'),
+  focusToken: z.literal(FOCUS_TOKEN),
+  families: z.array(familySchema).length(SIGNS.length * SLOTS.length),
+})
 
-const selfEditionSchema = z
-  .object({
-    id: nonEmptyText,
-    familyId: nonEmptyText,
-    sign: z.enum(SIGNS),
-    slot: z.literal('self'),
-    narrativeContextId: z.enum(SELF_CONTEXTS),
-    renderTreatmentId: z.enum(RENDER_TREATMENTS),
-    previewTone: z.enum(PREVIEW_TONES),
-    tieBreakOrder: z.number().int().min(0),
-    rarity: z.null(),
-    editorialStatus: z.literal('draft'),
-    assetStatus: z.literal('not_started'),
-    artworkPath: z.null(),
-    title: z.string().trim().min(8),
-    guardians: nonEmptyText,
-    scene: z.string().trim().min(60),
-    artworkAlt: z.string().trim().min(30),
-    oneLineTemplate: z.string().trim().min(50),
-    reflection: z.string().trim().min(15),
-    selectionSignals: z.array(nonEmptyText).length(2),
-  })
-  .strict()
+const selfEditionSchema = z.strictObject({
+  id: nonEmptyText,
+  familyId: nonEmptyText,
+  sign: z.enum(SIGNS),
+  slot: z.literal('self'),
+  narrativeContextId: z.enum(SELF_CONTEXTS),
+  renderTreatmentId: z.enum(RENDER_TREATMENTS),
+  previewTone: z.enum(PREVIEW_TONES),
+  tieBreakOrder: z.number().int().min(0),
+  rarity: z.null(),
+  editorialStatus: z.literal('draft'),
+  assetStatus: z.literal('not_started'),
+  artworkPath: z.null(),
+  title: z.string().trim().min(8),
+  guardians: nonEmptyText,
+  scene: z.string().trim().min(60),
+  artworkAlt: z.string().trim().min(30),
+  oneLineTemplate: z.string().trim().min(50),
+  reflection: z.string().trim().min(15),
+  selectionSignals: z.array(nonEmptyText).length(2),
+})
 
-const selfEditionContentSchema = z
-  .object({
-    status: z.literal('editorial_draft'),
-    locale: z.literal('ko'),
-    slot: z.literal('self'),
-    assetPolicy: nonEmptyText,
-    editionCount: z.literal(192),
-    editions: z.array(selfEditionSchema).length(192),
-  })
-  .strict()
+const selfEditionContentSchema = z.strictObject({
+  status: z.literal('editorial_draft'),
+  locale: z.literal('ko'),
+  slot: z.literal('self'),
+  assetPolicy: nonEmptyText,
+  editionCount: z.literal(192),
+  editions: z.array(selfEditionSchema).length(192),
+})
 
-const workEditionSchema = z
-  .object({
-    id: nonEmptyText,
-    familyId: nonEmptyText,
-    sign: z.enum(SIGNS),
-    slot: z.literal('work'),
-    narrativeContextId: z.enum(WORK_CONTEXTS),
-    renderTreatmentId: z.enum(RENDER_TREATMENTS),
-    previewTone: z.enum(PREVIEW_TONES),
-    tieBreakOrder: z.number().int().min(0),
-    rarity: z.null(),
-    editorialStatus: z.literal('draft'),
-    assetStatus: z.literal('not_started'),
-    artworkPath: z.null(),
-    title: z.string().trim().min(8),
-    guardians: nonEmptyText,
-    scene: z.string().trim().min(60),
-    artworkAlt: z.string().trim().min(30),
-    oneLineTemplate: z.string().trim().min(50),
-    reflection: z.string().trim().min(15),
-    selectionSignals: z.array(nonEmptyText).length(2),
-  })
-  .strict()
+const workEditionSchema = z.strictObject({
+  id: nonEmptyText,
+  familyId: nonEmptyText,
+  sign: z.enum(SIGNS),
+  slot: z.literal('work'),
+  narrativeContextId: z.enum(WORK_CONTEXTS),
+  renderTreatmentId: z.enum(RENDER_TREATMENTS),
+  previewTone: z.enum(PREVIEW_TONES),
+  tieBreakOrder: z.number().int().min(0),
+  rarity: z.null(),
+  editorialStatus: z.literal('draft'),
+  assetStatus: z.literal('not_started'),
+  artworkPath: z.null(),
+  title: z.string().trim().min(8),
+  guardians: nonEmptyText,
+  scene: z.string().trim().min(60),
+  artworkAlt: z.string().trim().min(30),
+  oneLineTemplate: z.string().trim().min(50),
+  reflection: z.string().trim().min(15),
+  selectionSignals: z.array(nonEmptyText).length(2),
+})
 
-const workEditionContentSchema = z
-  .object({
-    status: z.literal('editorial_draft'),
-    locale: z.literal('ko'),
-    slot: z.literal('work'),
-    assetPolicy: nonEmptyText,
-    editionCount: z.literal(192),
-    editions: z.array(workEditionSchema).length(192),
-  })
-  .strict()
+const workEditionContentSchema = z.strictObject({
+  status: z.literal('editorial_draft'),
+  locale: z.literal('ko'),
+  slot: z.literal('work'),
+  assetPolicy: nonEmptyText,
+  editionCount: z.literal(192),
+  editions: z.array(workEditionSchema).length(192),
+})
 
-const choiceEditionSchema = z
-  .object({
-    id: nonEmptyText,
-    familyId: nonEmptyText,
-    sign: z.enum(SIGNS),
-    slot: z.literal('choice'),
-    narrativeContextId: z.enum(CHOICE_CONTEXTS),
-    renderTreatmentId: z.enum(RENDER_TREATMENTS),
-    previewTone: z.enum(PREVIEW_TONES),
-    tieBreakOrder: z.number().int().min(0),
-    rarity: z.null(),
-    editorialStatus: z.literal('draft'),
-    assetStatus: z.literal('not_started'),
-    artworkPath: z.null(),
-    title: z.string().trim().min(8),
-    guardians: nonEmptyText,
-    scene: z.string().trim().min(60),
-    artworkAlt: z.string().trim().min(30),
-    oneLineTemplate: z.string().trim().min(50),
-    reflection: z.string().trim().min(15),
-    selectionSignals: z.array(nonEmptyText).length(2),
-  })
-  .strict()
+const choiceEditionSchema = z.strictObject({
+  id: nonEmptyText,
+  familyId: nonEmptyText,
+  sign: z.enum(SIGNS),
+  slot: z.literal('choice'),
+  narrativeContextId: z.enum(CHOICE_CONTEXTS),
+  renderTreatmentId: z.enum(RENDER_TREATMENTS),
+  previewTone: z.enum(PREVIEW_TONES),
+  tieBreakOrder: z.number().int().min(0),
+  rarity: z.null(),
+  editorialStatus: z.literal('draft'),
+  assetStatus: z.literal('not_started'),
+  artworkPath: z.null(),
+  title: z.string().trim().min(8),
+  guardians: nonEmptyText,
+  scene: z.string().trim().min(60),
+  artworkAlt: z.string().trim().min(30),
+  oneLineTemplate: z.string().trim().min(50),
+  reflection: z.string().trim().min(15),
+  selectionSignals: z.array(nonEmptyText).length(2),
+})
 
-const choiceEditionContentSchema = z
-  .object({
-    status: z.literal('editorial_draft'),
-    locale: z.literal('ko'),
-    slot: z.literal('choice'),
-    assetPolicy: nonEmptyText,
-    editionCount: z.literal(192),
-    editions: z.array(choiceEditionSchema).length(192),
-  })
-  .strict()
+const choiceEditionContentSchema = z.strictObject({
+  status: z.literal('editorial_draft'),
+  locale: z.literal('ko'),
+  slot: z.literal('choice'),
+  assetPolicy: nonEmptyText,
+  editionCount: z.literal(192),
+  editions: z.array(choiceEditionSchema).length(192),
+})
 
-const loveEditionSchema = z
-  .object({
-    id: nonEmptyText,
-    familyId: nonEmptyText,
-    sign: z.enum(SIGNS),
-    slot: z.literal('love'),
-    narrativeThemeId: z.enum(LOVE_THEMES),
-    rarity: z.enum(RARITIES),
-    weight: z.number().int().positive(),
-    editorialStatus: z.literal('draft'),
-    assetStatus: z.literal('not_started'),
-    artworkPath: z.null(),
-    title: z.string().trim().min(8),
-    guardians: nonEmptyText,
-    scene: z.string().trim().min(60),
-    artworkAlt: z.string().trim().min(30),
-    oneLineTemplate: z.string().trim().min(50),
-    reflection: z.string().trim().min(15),
-    interpretationSignals: z.array(nonEmptyText).length(2),
-  })
-  .strict()
+const loveEditionSchema = z.strictObject({
+  id: nonEmptyText,
+  familyId: nonEmptyText,
+  sign: z.enum(SIGNS),
+  slot: z.literal('love'),
+  narrativeThemeId: z.enum(LOVE_THEMES),
+  rarity: z.enum(RARITIES),
+  weight: z.number().int().positive(),
+  editorialStatus: z.literal('draft'),
+  assetStatus: z.literal('not_started'),
+  artworkPath: z.null(),
+  title: z.string().trim().min(8),
+  guardians: nonEmptyText,
+  scene: z.string().trim().min(60),
+  artworkAlt: z.string().trim().min(30),
+  oneLineTemplate: z.string().trim().min(50),
+  reflection: z.string().trim().min(15),
+  interpretationSignals: z.array(nonEmptyText).length(2),
+})
 
-const loveEditionContentSchema = z
-  .object({
-    status: z.literal('editorial_draft'),
-    locale: z.literal('ko'),
-    slot: z.literal('love'),
-    oddsPolicy: z.literal('Questionnaire signals guide interpretation only; rarity selection uses fixed weights.'),
-    weightScale: z.literal(LOVE_WEIGHT_SCALE),
-    assetPolicy: nonEmptyText,
-    editionCount: z.literal(480),
-    editions: z.array(loveEditionSchema).length(480),
-  })
-  .strict()
+const loveEditionContentSchema = z.strictObject({
+  status: z.literal('editorial_draft'),
+  locale: z.literal('ko'),
+  slot: z.literal('love'),
+  oddsPolicy: z.literal('Questionnaire signals guide interpretation only; rarity selection uses fixed weights.'),
+  weightScale: z.literal(LOVE_WEIGHT_SCALE),
+  assetPolicy: nonEmptyText,
+  editionCount: z.literal(480),
+  editions: z.array(loveEditionSchema).length(480),
+})
 
-const narrativeContextSchema = z
-  .object({
-    id: nonEmptyText,
-    title: nonEmptyText,
-    signalIntent: z.string().trim().min(20),
-    copyIntent: z.string().trim().min(20),
-  })
-  .strict()
+const narrativeContextSchema = z.strictObject({
+  id: nonEmptyText,
+  title: nonEmptyText,
+  signalIntent: z.string().trim().min(20),
+  copyIntent: z.string().trim().min(20),
+})
 
-const renderTreatmentSchema = z
-  .object({
-    id: nonEmptyText,
-    title: nonEmptyText,
-    composition: z.string().trim().min(20),
-    variationRequirement: z.string().trim().min(20),
-  })
-  .strict()
+const renderTreatmentSchema = z.strictObject({
+  id: nonEmptyText,
+  title: nonEmptyText,
+  composition: z.string().trim().min(20),
+  variationRequirement: z.string().trim().min(20),
+})
 
-const loveThemeSchema = z
-  .object({
-    id: nonEmptyText,
-    title: nonEmptyText,
-    artIntent: z.string().trim().min(20),
-    copyIntent: z.string().trim().min(20),
-  })
-  .strict()
+const loveThemeSchema = z.strictObject({
+  id: nonEmptyText,
+  title: nonEmptyText,
+  artIntent: z.string().trim().min(20),
+  copyIntent: z.string().trim().min(20),
+})
 
-const raritySchema = z
-  .object({
-    id: z.enum(RARITIES),
+const raritySchema = z.strictObject({
+  id: z.enum(RARITIES),
+  editionCountPerFamily: z.number().int().positive(),
+  weightPerEdition: z.number().int().positive(),
+  totalWeightPerFamily: z.number().int().positive(),
+  artDirection: z.string().trim().min(20),
+  copyDirection: z.string().trim().min(20),
+})
+
+const editionPlanSchema = z.strictObject({
+  status: z.literal('work_order'),
+  catalogId: z.literal('stella-zodiac-guardians-v1'),
+  locale: z.literal('ko'),
+  productionMinimumEditionCount: z.number().int().positive(),
+  plannedEditionCount: z.number().int().positive(),
+  editionIdPatterns: z.strictObject({
+    self: nonEmptyText,
+    love: nonEmptyText,
+    work: nonEmptyText,
+    choice: nonEmptyText,
+  }),
+  materializationContract: z.strictObject({
+    runtimeMayExpandMatrix: z.literal(false),
+    requiredPerEditionFields: z.array(nonEmptyText).min(8),
+    publishOnlyWhen: z.array(nonEmptyText).min(4),
+  }),
+  nonLove: z.strictObject({
+    familyCountPerSlot: z.number().int().positive(),
     editionCountPerFamily: z.number().int().positive(),
-    weightPerEdition: z.number().int().positive(),
-    totalWeightPerFamily: z.number().int().positive(),
-    artDirection: z.string().trim().min(20),
-    copyDirection: z.string().trim().min(20),
-  })
-  .strict()
+    selection: z.literal('context_scored'),
+    narrativeContextsBySlot: z.strictObject({
+      self: z.array(narrativeContextSchema),
+      work: z.array(narrativeContextSchema),
+      choice: z.array(narrativeContextSchema),
+    }),
+    renderTreatments: z.array(renderTreatmentSchema),
+    targets: z.strictObject({
+      self: z.number().int().positive(),
+      work: z.number().int().positive(),
+      choice: z.number().int().positive(),
+      total: z.number().int().positive(),
+    }),
+  }),
+  love: z.strictObject({
+    familyCount: z.number().int().positive(),
+    editionCountPerFamily: z.number().int().positive(),
+    selection: z.literal('weighted_random'),
+    weightScale: z.number().int().positive(),
+    narrativeThemes: z.array(loveThemeSchema),
+    rarities: z.array(raritySchema),
+    target: z.number().int().positive(),
+  }),
+  slotTargets: z.strictObject({
+    self: z.number().int().positive(),
+    love: z.number().int().positive(),
+    work: z.number().int().positive(),
+    choice: z.number().int().positive(),
+    total: z.number().int().positive(),
+  }),
+})
 
-const editionPlanSchema = z
-  .object({
-    status: z.literal('work_order'),
-    catalogId: z.literal('stella-zodiac-guardians-v1'),
-    locale: z.literal('ko'),
-    productionMinimumEditionCount: z.number().int().positive(),
-    plannedEditionCount: z.number().int().positive(),
-    editionIdPatterns: z
-      .object({
-        self: nonEmptyText,
-        love: nonEmptyText,
-        work: nonEmptyText,
-        choice: nonEmptyText,
-      })
-      .strict(),
-    materializationContract: z
-      .object({
-        runtimeMayExpandMatrix: z.literal(false),
-        requiredPerEditionFields: z.array(nonEmptyText).min(8),
-        publishOnlyWhen: z.array(nonEmptyText).min(4),
-      })
-      .strict(),
-    nonLove: z
-      .object({
-        familyCountPerSlot: z.number().int().positive(),
-        editionCountPerFamily: z.number().int().positive(),
-        selection: z.literal('context_scored'),
-        narrativeContextsBySlot: z
-          .object({
-            self: z.array(narrativeContextSchema),
-            work: z.array(narrativeContextSchema),
-            choice: z.array(narrativeContextSchema),
-          })
-          .strict(),
-        renderTreatments: z.array(renderTreatmentSchema),
-        targets: z
-          .object({
-            self: z.number().int().positive(),
-            work: z.number().int().positive(),
-            choice: z.number().int().positive(),
-            total: z.number().int().positive(),
-          })
-          .strict(),
-      })
-      .strict(),
-    love: z
-      .object({
-        familyCount: z.number().int().positive(),
-        editionCountPerFamily: z.number().int().positive(),
-        selection: z.literal('weighted_random'),
-        weightScale: z.number().int().positive(),
-        narrativeThemes: z.array(loveThemeSchema),
-        rarities: z.array(raritySchema),
-        target: z.number().int().positive(),
-      })
-      .strict(),
-    slotTargets: z
-      .object({
-        self: z.number().int().positive(),
-        love: z.number().int().positive(),
-        work: z.number().int().positive(),
-        choice: z.number().int().positive(),
-        total: z.number().int().positive(),
-      })
-      .strict(),
-  })
-  .strict()
-
-const artPilotPlanSchema = z
-  .object({
-    status: z.literal('visual_review_complete'),
-    locale: z.literal('ko'),
-    purpose: z.string().trim().min(40),
-    selectionContract: z
-      .object({
-        pilotCount: z.literal(12),
-        onePerSign: z.literal(true),
-        slotTargets: z
-          .object({
-            self: z.literal(ART_PILOT_SLOT_TARGETS.self),
-            love: z.literal(ART_PILOT_SLOT_TARGETS.love),
-            work: z.literal(ART_PILOT_SLOT_TARGETS.work),
-            choice: z.literal(ART_PILOT_SLOT_TARGETS.choice),
-          })
-          .strict(),
-        loveRarityCoverage: z.literal('one_each'),
-        coverEveryNonLoveTreatment: z.literal(true),
-        editorialApprovalRequiredBeforeImageGeneration: z.literal(true),
-        runtimeMayPublishPilotPlan: z.literal(false),
-      })
-      .strict(),
-    renderContract: z
-      .object({
-        aspectRatio: z.literal('3:4'),
-        masterSize: z.literal('1080x1440'),
-        fullBleed: z.literal(true),
-        maximumDisplayedGuardians: z.literal(2),
-        bakedText: z.literal(false),
-        legibleTextInsideArtwork: z.literal(false),
-        writtenMarks: z.literal('symbols_and_shapes_only'),
-        characterCoverage: z.literal('55-65%'),
-        assetDestination: z.literal('cloudflare_r2_webp_after_review'),
-      })
-      .strict(),
-    editorialReviewContract: z
-      .object({
-        approvalAuthority: z.literal('human_editor'),
-        contentHashAlgorithm: z.literal('sha256-canonical-json'),
-        hashFields: z.tuple([
-          z.literal('id'),
-          z.literal('title'),
-          z.literal('guardians'),
-          z.literal('scene'),
-          z.literal('artworkAlt'),
-          z.literal('oneLineTemplate'),
-          z.literal('reflection'),
-        ]),
-        requiredChecks: z.tuple([
-          z.literal('character_continuity'),
-          z.literal('scene_feasibility'),
-          z.literal('visible_alt_text'),
-          z.literal('non_deterministic_copy'),
-          z.literal('non_personalized_master_art'),
-          z.literal('symbol_only_written_marks'),
-        ]),
-        imageGenerationRequires: z.literal('approved_editorial_hash'),
-      })
-      .strict(),
-    visualReviewContract: z
-      .object({
-        approvalAuthority: z.literal('human_editor'),
-        approvedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-        assetHashAlgorithm: z.literal('sha256'),
-        approvedImageStatus: z.literal('approved_local_candidate'),
-        productionAssetStatus: z.literal('not_uploaded'),
-        runtimeMayPublishLocalCandidate: z.literal(false),
-      })
-      .strict(),
-    deliveryReviewContract: z
-      .object({
-        provider: z.literal('cloudflare_r2'),
-        format: z.literal('webp'),
-        objectKeyTemplate: z.literal('guardian-cards/ko/{editionId}.{deliverySha256_12}.webp'),
-        trackedManifest: z.literal('guardian-card-assets-ko.json'),
-        candidateStatus: z.literal('webp_prepared_not_uploaded'),
-        runtimeMayPublishPreparedCandidate: z.literal(false),
-      })
-      .strict(),
-    pilots: z
-      .array(
-        z
-          .object({
-            order: z.number().int().min(1).max(12),
-            editionId: nonEmptyText,
-            sign: z.enum(SIGNS),
-            slot: z.enum(SLOTS),
-            selectionReason: z.string().trim().min(25),
-            visualReviewFocus: z.array(z.string().trim().min(10)).min(2).max(3),
-            editorialReviewStatus: z.literal('approved'),
-            editorialContentHash: z.string().regex(/^[a-f0-9]{64}$/),
-            editorialReviewNote: z.string().trim().min(20).max(160),
-            imageStatus: z.literal('approved_local_candidate'),
-            approvedArtworkSha256: z.string().regex(/^[a-f0-9]{64}$/),
-            artworkPath: z.null(),
-          })
-          .strict(),
-      )
-      .length(SIGNS.length),
-  })
-  .strict()
+const artPilotPlanSchema = z.strictObject({
+  status: z.literal('visual_review_complete'),
+  locale: z.literal('ko'),
+  purpose: z.string().trim().min(40),
+  selectionContract: z.strictObject({
+    pilotCount: z.literal(12),
+    onePerSign: z.literal(true),
+    slotTargets: z.strictObject({
+      self: z.literal(ART_PILOT_SLOT_TARGETS.self),
+      love: z.literal(ART_PILOT_SLOT_TARGETS.love),
+      work: z.literal(ART_PILOT_SLOT_TARGETS.work),
+      choice: z.literal(ART_PILOT_SLOT_TARGETS.choice),
+    }),
+    loveRarityCoverage: z.literal('one_each'),
+    coverEveryNonLoveTreatment: z.literal(true),
+    editorialApprovalRequiredBeforeImageGeneration: z.literal(true),
+    runtimeMayPublishPilotPlan: z.literal(false),
+  }),
+  renderContract: z.strictObject({
+    aspectRatio: z.literal('3:4'),
+    masterSize: z.literal('1080x1440'),
+    fullBleed: z.literal(true),
+    maximumDisplayedGuardians: z.literal(2),
+    bakedText: z.literal(false),
+    legibleTextInsideArtwork: z.literal(false),
+    writtenMarks: z.literal('symbols_and_shapes_only'),
+    characterCoverage: z.literal('55-65%'),
+    assetDestination: z.literal('cloudflare_r2_webp_after_review'),
+  }),
+  editorialReviewContract: z.strictObject({
+    approvalAuthority: z.literal('human_editor'),
+    contentHashAlgorithm: z.literal('sha256-canonical-json'),
+    hashFields: z.tuple([
+      z.literal('id'),
+      z.literal('title'),
+      z.literal('guardians'),
+      z.literal('scene'),
+      z.literal('artworkAlt'),
+      z.literal('oneLineTemplate'),
+      z.literal('reflection'),
+    ]),
+    requiredChecks: z.tuple([
+      z.literal('character_continuity'),
+      z.literal('scene_feasibility'),
+      z.literal('visible_alt_text'),
+      z.literal('non_deterministic_copy'),
+      z.literal('non_personalized_master_art'),
+      z.literal('symbol_only_written_marks'),
+    ]),
+    imageGenerationRequires: z.literal('approved_editorial_hash'),
+  }),
+  visualReviewContract: z.strictObject({
+    approvalAuthority: z.literal('human_editor'),
+    approvedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    assetHashAlgorithm: z.literal('sha256'),
+    approvedImageStatus: z.literal('approved_local_candidate'),
+    productionAssetStatus: z.literal('not_uploaded'),
+    runtimeMayPublishLocalCandidate: z.literal(false),
+  }),
+  deliveryReviewContract: z.strictObject({
+    provider: z.literal('cloudflare_r2'),
+    format: z.literal('webp'),
+    objectKeyTemplate: z.literal('guardian-cards/ko/{editionId}.{deliverySha256_12}.webp'),
+    trackedManifest: z.literal('guardian-card-assets-ko.json'),
+    candidateStatus: z.literal('webp_prepared_not_uploaded'),
+    runtimeMayPublishPreparedCandidate: z.literal(false),
+  }),
+  pilots: z
+    .array(
+      z.strictObject({
+        order: z.number().int().min(1).max(12),
+        editionId: nonEmptyText,
+        sign: z.enum(SIGNS),
+        slot: z.enum(SLOTS),
+        selectionReason: z.string().trim().min(25),
+        visualReviewFocus: z.array(z.string().trim().min(10)).min(2).max(3),
+        editorialReviewStatus: z.literal('approved'),
+        editorialContentHash: z.string().regex(/^[a-f0-9]{64}$/),
+        editorialReviewNote: z.string().trim().min(20).max(160),
+        imageStatus: z.literal('approved_local_candidate'),
+        approvedArtworkSha256: z.string().regex(/^[a-f0-9]{64}$/),
+        artworkPath: z.null(),
+      }),
+    )
+    .length(SIGNS.length),
+})
 
 type FamilyContent = z.infer<typeof familyContentSchema>
 type SelfEditionContent = z.infer<typeof selfEditionContentSchema>

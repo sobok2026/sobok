@@ -24,17 +24,15 @@ import {
 
 const app = new Hono<AppEnv>()
 const WEBHOOK_BODY_LIMIT = 64 * 1024
-const BillingKeyBody = z.object({ billingKey: z.string().min(1).max(256) }).strict()
-const ChargeBody = z
-  .object({
-    paymentId: z.string().min(1).max(64),
-    billingKey: z.string().min(1).max(256),
-    orderName: z.string().min(1).max(128),
-    amount: z.number().int().positive(),
-    currency: z.literal('KRW'),
-  })
-  .strict()
-const CancelBody = z.object({ reason: z.string().min(1).max(256) }).strict()
+const BillingKeyBody = z.strictObject({ billingKey: z.string().min(1).max(256) })
+const ChargeBody = z.strictObject({
+  paymentId: z.string().min(1).max(64),
+  billingKey: z.string().min(1).max(256),
+  orderName: z.string().min(1).max(128),
+  amount: z.number().int().positive(),
+  currency: z.literal('KRW'),
+})
+const CancelBody = z.strictObject({ reason: z.string().min(1).max(256) })
 
 app.get('/health', (c) => c.json({ ok: true }))
 

@@ -30,36 +30,31 @@ const RevisionFields = {
   legalBasis: z.string().trim().max(4000).nullable().default(null),
   documentNumber: z.string().trim().max(120).nullable().default(null),
   scheduleImpactDays: z.number().int().min(-36_500).max(36_500).nullable().default(null),
-  costImpactAmount: z.number().int().safe().nullable().default(null),
+  costImpactAmount: z.number().int().nullable().default(null),
   baseDrawingArtifactId: NullableId,
   newDrawingArtifactId: NullableId,
   baseCalculationResultId: NullableId,
   newCalculationResultId: NullableId,
 }
-const CreateRevisionBody = z.object({ workType: CivilDesignWorkTypeSchema, ...RevisionFields }).strict()
-const UpdateRevisionBody = z.object(RevisionFields).strict()
+const CreateRevisionBody = z.strictObject({ workType: CivilDesignWorkTypeSchema, ...RevisionFields })
+const UpdateRevisionBody = z.strictObject(RevisionFields)
 const TransitionBody = z
-  .object({ action: CivilDesignTransitionSchema, note: z.string().trim().max(4000).nullable().default(null) })
-  .strict()
+  .strictObject({ action: CivilDesignTransitionSchema, note: z.string().trim().max(4000).nullable().default(null) })
   .superRefine((value, context) => {
     if (['request_changes', 'approve', 'finalize'].includes(value.action) && !value.note) {
       context.addIssue({ code: 'custom', message: 'note is required', path: ['note'] })
     }
   })
-const CreateReviewBody = z
-  .object({
-    area: CivilDesignReviewAreaSchema,
-    item: z.string().trim().min(1).max(240),
-    comment: z.string().trim().max(4000).nullable().default(null),
-  })
-  .strict()
-const DecideReviewBody = z
-  .object({
-    result: CivilDesignReviewResultSchema,
-    comment: z.string().trim().max(4000).nullable().default(null),
-  })
-  .strict()
-const RespondReviewBody = z.object({ response: z.string().trim().min(1).max(4000) }).strict()
+const CreateReviewBody = z.strictObject({
+  area: CivilDesignReviewAreaSchema,
+  item: z.string().trim().min(1).max(240),
+  comment: z.string().trim().max(4000).nullable().default(null),
+})
+const DecideReviewBody = z.strictObject({
+  result: CivilDesignReviewResultSchema,
+  comment: z.string().trim().max(4000).nullable().default(null),
+})
+const RespondReviewBody = z.strictObject({ response: z.string().trim().min(1).max(4000) })
 
 export const designs = new Hono<AppEnv>()
 

@@ -25,56 +25,48 @@ const SHARED_BEAT_TOKEN = '{sharedBeat}'
 const SHARED_ARTWORK_ALT_TOKEN = '{sharedArtworkAlt}'
 
 const nonEmptyText = z.string().trim().min(1)
-const blueprintSchema = z
-  .object({
-    status: z.literal('authoring'),
-    locale: z.literal('ko'),
-    slot: z.literal('self'),
-    treatments: z
-      .array(
-        z
-          .object({
-            id: z.enum(TREATMENTS),
-            titleSuffix: nonEmptyText,
-            previewTone: z.enum(PREVIEW_TONES),
-            sceneSuffix: nonEmptyText,
-            artworkAltSuffix: nonEmptyText,
-            oneLineAction: z.string().trim().min(20),
-          })
-          .strict(),
-      )
-      .length(TREATMENTS.length),
-    families: z
-      .array(
-        z
-          .object({
-            familyId: nonEmptyText,
-            sign: z.enum(SIGNS),
-            guardians: nonEmptyText,
-            sharedGuardians: nonEmptyText,
-            sharedBeat: z.string().trim().min(20),
-            sharedArtworkAlt: z.string().trim().min(15),
-            contexts: z
-              .array(
-                z
-                  .object({
-                    id: z.enum(CONTEXTS),
-                    titleStem: nonEmptyText,
-                    sceneCore: z.string().trim().min(30),
-                    artworkAltCore: z.string().trim().min(20),
-                    oneLineInsightTemplate: z.string().trim().min(25),
-                    reflection: z.string().trim().min(15),
-                    selectionSignals: z.array(nonEmptyText).length(2),
-                  })
-                  .strict(),
-              )
-              .length(CONTEXTS.length),
-          })
-          .strict(),
-      )
-      .length(SIGNS.length),
-  })
-  .strict()
+const blueprintSchema = z.strictObject({
+  status: z.literal('authoring'),
+  locale: z.literal('ko'),
+  slot: z.literal('self'),
+  treatments: z
+    .array(
+      z.strictObject({
+        id: z.enum(TREATMENTS),
+        titleSuffix: nonEmptyText,
+        previewTone: z.enum(PREVIEW_TONES),
+        sceneSuffix: nonEmptyText,
+        artworkAltSuffix: nonEmptyText,
+        oneLineAction: z.string().trim().min(20),
+      }),
+    )
+    .length(TREATMENTS.length),
+  families: z
+    .array(
+      z.strictObject({
+        familyId: nonEmptyText,
+        sign: z.enum(SIGNS),
+        guardians: nonEmptyText,
+        sharedGuardians: nonEmptyText,
+        sharedBeat: z.string().trim().min(20),
+        sharedArtworkAlt: z.string().trim().min(15),
+        contexts: z
+          .array(
+            z.strictObject({
+              id: z.enum(CONTEXTS),
+              titleStem: nonEmptyText,
+              sceneCore: z.string().trim().min(30),
+              artworkAltCore: z.string().trim().min(20),
+              oneLineInsightTemplate: z.string().trim().min(25),
+              reflection: z.string().trim().min(15),
+              selectionSignals: z.array(nonEmptyText).length(2),
+            }),
+          )
+          .length(CONTEXTS.length),
+      }),
+    )
+    .length(SIGNS.length),
+})
 
 type Blueprint = z.infer<typeof blueprintSchema>
 

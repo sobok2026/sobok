@@ -19,22 +19,18 @@ import { NO_STORE_HEADERS, readJson } from '../lib/http'
 
 const BODY_LIMIT_BYTES = 16 * 1024
 const Id = z.uuid()
-const CreateDeliveryBody = z
-  .object({
-    title: z.string().trim().min(1).max(160),
-    deliveryKind: CivilDeliveryKindSchema,
-    vendorName: z.string().trim().min(1).max(160),
-    revision: z.string().trim().min(1).max(64),
-    artifactIds: z.array(z.uuid()).min(1).max(CIVIL_DELIVERY_MAX_ARTIFACTS),
-  })
-  .strict()
-const SubmitDeliveryBody = z.object({ note: z.string().trim().max(2000).nullable().default(null) }).strict()
-const ReviewDeliveryBody = z
-  .object({
-    decision: z.enum(['changes_requested', 'approved']),
-    note: z.string().trim().min(1).max(2000),
-  })
-  .strict()
+const CreateDeliveryBody = z.strictObject({
+  title: z.string().trim().min(1).max(160),
+  deliveryKind: CivilDeliveryKindSchema,
+  vendorName: z.string().trim().min(1).max(160),
+  revision: z.string().trim().min(1).max(64),
+  artifactIds: z.array(z.uuid()).min(1).max(CIVIL_DELIVERY_MAX_ARTIFACTS),
+})
+const SubmitDeliveryBody = z.strictObject({ note: z.string().trim().max(2000).nullable().default(null) })
+const ReviewDeliveryBody = z.strictObject({
+  decision: z.enum(['changes_requested', 'approved']),
+  note: z.string().trim().min(1).max(2000),
+})
 
 export const deliveries = new Hono<AppEnv>()
 

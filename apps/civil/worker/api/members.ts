@@ -17,11 +17,12 @@ import { NO_STORE_HEADERS, readJson } from '../lib/http'
 
 const BODY_LIMIT_BYTES = 4096
 const Id = z.uuid()
-const AddOrganizationMemberBody = z
-  .object({ email: z.email().trim().toLowerCase().max(320), role: CivilOrganizationRoleSchema })
-  .strict()
-const UpdateOrganizationMemberBody = z.object({ role: CivilOrganizationRoleSchema }).strict()
-const SaveProjectMemberBody = z.object({ userId: z.string().min(1).max(255), role: CivilProjectRoleSchema }).strict()
+const AddOrganizationMemberBody = z.strictObject({
+  email: z.email().trim().toLowerCase().max(320),
+  role: CivilOrganizationRoleSchema,
+})
+const UpdateOrganizationMemberBody = z.strictObject({ role: CivilOrganizationRoleSchema })
+const SaveProjectMemberBody = z.strictObject({ userId: z.string().min(1).max(255), role: CivilProjectRoleSchema })
 
 export const members = new Hono<AppEnv>()
 

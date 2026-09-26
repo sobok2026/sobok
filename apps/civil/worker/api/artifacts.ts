@@ -39,23 +39,21 @@ function isSafeFileName(value: string): boolean {
   return true
 }
 
-const CreateArtifactUploadBody = z
-  .object({
-    fileName: z.string().min(1).max(255).refine(isSafeFileName).refine(isAllowedCivilArtifactFileName),
-    mediaType: z
-      .string()
-      .trim()
-      .min(1)
-      .max(255)
-      .regex(/^[\w!#$&^_.+-]+\/[\w!#$&^_.+-]+$/u),
-    byteSize: z.number().int().min(1).max(CIVIL_ARTIFACT_MAX_BYTES),
-    kind: CivilArtifactKindSchema,
-    revision: z.string().trim().min(1).max(64),
-    coordinateReferenceSystem: z.string().trim().min(1).max(64).nullable().default(null),
-    boundingBox: CivilBoundingBoxSchema.nullable().default(null),
-    previousArtifactId: z.uuid().nullable().default(null),
-  })
-  .strict()
+const CreateArtifactUploadBody = z.strictObject({
+  fileName: z.string().min(1).max(255).refine(isSafeFileName).refine(isAllowedCivilArtifactFileName),
+  mediaType: z
+    .string()
+    .trim()
+    .min(1)
+    .max(255)
+    .regex(/^[\w!#$&^_.+-]+\/[\w!#$&^_.+-]+$/u),
+  byteSize: z.number().int().min(1).max(CIVIL_ARTIFACT_MAX_BYTES),
+  kind: CivilArtifactKindSchema,
+  revision: z.string().trim().min(1).max(64),
+  coordinateReferenceSystem: z.string().trim().min(1).max(64).nullable().default(null),
+  boundingBox: CivilBoundingBoxSchema.nullable().default(null),
+  previousArtifactId: z.uuid().nullable().default(null),
+})
 
 export const artifacts = new Hono<AppEnv>()
 

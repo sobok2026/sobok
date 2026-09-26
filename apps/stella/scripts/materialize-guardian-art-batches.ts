@@ -45,48 +45,38 @@ type BatchDefinition = {
 }
 
 const nonEmptyText = z.string().trim().min(1)
-const editionSchema = z
-  .object({
-    id: nonEmptyText,
-    sign: z.enum(SIGNS),
-    slot: z.enum(SLOTS),
-    narrativeContextId: nonEmptyText.optional(),
-    renderTreatmentId: nonEmptyText.optional(),
-    narrativeThemeId: nonEmptyText.optional(),
-    rarity: nonEmptyText.nullable().optional(),
-    title: nonEmptyText,
-    guardians: nonEmptyText,
-    scene: nonEmptyText,
-    artworkAlt: nonEmptyText,
-    oneLineTemplate: nonEmptyText,
-    reflection: nonEmptyText,
-  })
-  .passthrough()
-const editionSourceSchema = z.object({ editions: z.array(editionSchema) }).passthrough()
-const assetManifestSchema = z
-  .object({
-    assets: z.array(
-      z
-        .object({
-          editionId: nonEmptyText,
-          sourceArtworkSha256: z.string().regex(/^[a-f0-9]{64}$/),
-        })
-        .passthrough(),
-    ),
-  })
-  .passthrough()
-const pilotPlanSchema = z
-  .object({
-    pilots: z.array(
-      z
-        .object({
-          editionId: nonEmptyText,
-          editorialContentHash: z.string().regex(/^[a-f0-9]{64}$/),
-        })
-        .passthrough(),
-    ),
-  })
-  .passthrough()
+const editionSchema = z.looseObject({
+  id: nonEmptyText,
+  sign: z.enum(SIGNS),
+  slot: z.enum(SLOTS),
+  narrativeContextId: nonEmptyText.optional(),
+  renderTreatmentId: nonEmptyText.optional(),
+  narrativeThemeId: nonEmptyText.optional(),
+  rarity: nonEmptyText.nullable().optional(),
+  title: nonEmptyText,
+  guardians: nonEmptyText,
+  scene: nonEmptyText,
+  artworkAlt: nonEmptyText,
+  oneLineTemplate: nonEmptyText,
+  reflection: nonEmptyText,
+})
+const editionSourceSchema = z.looseObject({ editions: z.array(editionSchema) })
+const assetManifestSchema = z.looseObject({
+  assets: z.array(
+    z.looseObject({
+      editionId: nonEmptyText,
+      sourceArtworkSha256: z.string().regex(/^[a-f0-9]{64}$/),
+    }),
+  ),
+})
+const pilotPlanSchema = z.looseObject({
+  pilots: z.array(
+    z.looseObject({
+      editionId: nonEmptyText,
+      editorialContentHash: z.string().regex(/^[a-f0-9]{64}$/),
+    }),
+  ),
+})
 
 type Edition = z.infer<typeof editionSchema>
 

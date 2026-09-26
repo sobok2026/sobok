@@ -17,13 +17,12 @@ export const CivilArtifactKindSchema = z.enum([
 export type CivilArtifactKind = z.infer<typeof CivilArtifactKindSchema>
 
 export const CivilBoundingBoxSchema = z
-  .object({
-    minX: z.number().finite(),
-    minY: z.number().finite(),
-    maxX: z.number().finite(),
-    maxY: z.number().finite(),
+  .strictObject({
+    minX: z.number(),
+    minY: z.number(),
+    maxX: z.number(),
+    maxY: z.number(),
   })
-  .strict()
   .refine((value) => value.minX <= value.maxX && value.minY <= value.maxY)
 
 export type CivilBoundingBox = z.infer<typeof CivilBoundingBoxSchema>
@@ -64,28 +63,24 @@ export function isAllowedCivilArtifactFileName(fileName: string): boolean {
   return extension !== null && allowedExtensionSet.has(extension)
 }
 
-export const CivilArtifactVerificationWorkSchema = z
-  .object({
-    artifactId: z.uuid(),
-    organizationId: z.uuid(),
-    projectId: z.uuid(),
-    objectKey: z.string().min(1).max(1024),
-    fileName: z.string().min(1).max(255),
-    declaredMediaType: z.string().min(1).max(255),
-    byteSize: z.number().int().min(1).max(CIVIL_ARTIFACT_MAX_BYTES),
-  })
-  .strict()
+export const CivilArtifactVerificationWorkSchema = z.strictObject({
+  artifactId: z.uuid(),
+  organizationId: z.uuid(),
+  projectId: z.uuid(),
+  objectKey: z.string().min(1).max(1024),
+  fileName: z.string().min(1).max(255),
+  declaredMediaType: z.string().min(1).max(255),
+  byteSize: z.number().int().min(1).max(CIVIL_ARTIFACT_MAX_BYTES),
+})
 
 export type CivilArtifactVerificationWork = z.infer<typeof CivilArtifactVerificationWorkSchema>
 
-const VerificationEvidenceSchema = z
-  .object({
-    byteSize: z.number().int().min(1).max(CIVIL_ARTIFACT_MAX_BYTES),
-    sha256: z.string().regex(/^[0-9a-f]{64}$/),
-    detectedMediaType: z.string().min(1).max(255),
-    detectedFormat: z.string().min(1).max(64),
-  })
-  .strict()
+const VerificationEvidenceSchema = z.strictObject({
+  byteSize: z.number().int().min(1).max(CIVIL_ARTIFACT_MAX_BYTES),
+  sha256: z.string().regex(/^[0-9a-f]{64}$/),
+  detectedMediaType: z.string().min(1).max(255),
+  detectedFormat: z.string().min(1).max(64),
+})
 
 export const CivilArtifactVerificationOutputSchema = z.discriminatedUnion('decision', [
   VerificationEvidenceSchema.extend({ decision: z.literal('accepted') }),

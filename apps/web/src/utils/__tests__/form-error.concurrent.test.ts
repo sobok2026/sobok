@@ -28,7 +28,7 @@ describe('폼 오류 유틸', () => {
     test('중첩 객체 필드 오류를 처리한다', () => {
       const schema = z.object({
         user: z.object({
-          email: z.string().email('이메일 형식이 올바르지 않아요'),
+          email: z.string().check(z.email('이메일 형식이 올바르지 않아요')),
           name: z.string().min(1, '이름은 필수예요'),
         }),
       })
@@ -130,7 +130,7 @@ describe('폼 오류 유틸', () => {
 
     test('검증기가 여러 개인 문자열 필드를 처리한다', () => {
       const schema = z.object({
-        email: z.string().min(1, '이메일은 필수예요').email('이메일 형식이 올바르지 않아요'),
+        email: z.string().min(1, '이메일은 필수예요').check(z.email('이메일 형식이 올바르지 않아요')),
       })
 
       const validationResult = schema.safeParse({

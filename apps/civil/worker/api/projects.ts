@@ -8,13 +8,11 @@ import { NO_STORE_HEADERS, readJson } from '../lib/http'
 
 const BODY_LIMIT_BYTES = 4096
 const OrganizationId = z.uuid()
-const CreateProjectBody = z
-  .object({
-    code: z.string().trim().min(1).max(48),
-    name: z.string().trim().min(2).max(160),
-    coordinateReferenceSystem: z.string().trim().min(1).max(64).default('EPSG:5186'),
-  })
-  .strict()
+const CreateProjectBody = z.strictObject({
+  code: z.string().trim().min(1).max(48),
+  name: z.string().trim().min(2).max(160),
+  coordinateReferenceSystem: z.string().trim().min(1).max(64).default('EPSG:5186'),
+})
 
 export const projects = new Hono<AppEnv>()
 

@@ -11,9 +11,9 @@ export {
 } from './earthwork'
 
 const EarthworkSectionSchema = z.object({
-  station: z.number().finite().nonnegative(),
-  cutArea: z.number().finite().nonnegative(),
-  fillArea: z.number().finite().nonnegative(),
+  station: z.number().nonnegative(),
+  cutArea: z.number().nonnegative(),
+  fillArea: z.number().nonnegative(),
 })
 
 export const EarthworkAverageEndAreaInputSchema = z

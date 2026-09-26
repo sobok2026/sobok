@@ -71,244 +71,200 @@ const nonEmptyText = z.string().trim().min(1)
 const sha256 = z.string().regex(/^[a-f0-9]{64}$/)
 const contentId = z.string().regex(/^[a-z0-9]+(?:[.-][a-z0-9]+)+$/)
 
-const familySourceSchema = z
-  .object({
-    status: z.literal('authoring'),
-    locale: z.literal('ko'),
-    families: z
-      .array(
-        z
-          .object({
-            id: contentId,
-            sign: z.enum(SIGNS),
-            slot: z.enum(SLOTS),
-            editionSignalAffinities: z.array(nonEmptyText).length(2),
-          })
-          .passthrough(),
-      )
-      .length(48),
-  })
-  .passthrough()
+const familySourceSchema = z.looseObject({
+  status: z.literal('authoring'),
+  locale: z.literal('ko'),
+  families: z
+    .array(
+      z.looseObject({
+        id: contentId,
+        sign: z.enum(SIGNS),
+        slot: z.enum(SLOTS),
+        editionSignalAffinities: z.array(nonEmptyText).length(2),
+      }),
+    )
+    .length(48),
+})
 
-const editionSchema = z
-  .object({
-    id: contentId,
-    familyId: contentId,
-    sign: z.enum(SIGNS),
-    slot: z.enum(SLOTS),
-    rarity: z.enum(RARITIES).nullable(),
-    editorialStatus: z.literal('draft'),
-    assetStatus: z.literal('not_started'),
-    artworkPath: z.null(),
-    title: nonEmptyText,
-    guardians: nonEmptyText,
-    scene: nonEmptyText,
-    artworkAlt: nonEmptyText,
-    oneLineTemplate: nonEmptyText,
-    reflection: nonEmptyText,
-    narrativeContextId: nonEmptyText.optional(),
-    narrativeThemeId: z.enum(LOVE_THEMES).optional(),
-    previewTone: z.enum(PREVIEW_TONES).optional(),
-    tieBreakOrder: z.number().int().nonnegative().optional(),
-    selectionSignals: z.array(nonEmptyText).optional(),
-    weight: z.number().int().positive().optional(),
-  })
-  .passthrough()
-const editionSourceSchema = z
-  .object({
-    status: z.literal('editorial_draft'),
-    locale: z.literal('ko'),
-    slot: z.enum(SLOTS),
-    editionCount: z.number().int().positive(),
-    editions: z.array(editionSchema),
-  })
-  .passthrough()
+const editionSchema = z.looseObject({
+  id: contentId,
+  familyId: contentId,
+  sign: z.enum(SIGNS),
+  slot: z.enum(SLOTS),
+  rarity: z.enum(RARITIES).nullable(),
+  editorialStatus: z.literal('draft'),
+  assetStatus: z.literal('not_started'),
+  artworkPath: z.null(),
+  title: nonEmptyText,
+  guardians: nonEmptyText,
+  scene: nonEmptyText,
+  artworkAlt: nonEmptyText,
+  oneLineTemplate: nonEmptyText,
+  reflection: nonEmptyText,
+  narrativeContextId: nonEmptyText.optional(),
+  narrativeThemeId: z.enum(LOVE_THEMES).optional(),
+  previewTone: z.enum(PREVIEW_TONES).optional(),
+  tieBreakOrder: z.number().int().nonnegative().optional(),
+  selectionSignals: z.array(nonEmptyText).optional(),
+  weight: z.number().int().positive().optional(),
+})
+const editionSourceSchema = z.looseObject({
+  status: z.literal('editorial_draft'),
+  locale: z.literal('ko'),
+  slot: z.enum(SLOTS),
+  editionCount: z.number().int().positive(),
+  editions: z.array(editionSchema),
+})
 
-const batchPlanSchema = z
-  .object({
-    status: z.literal('work_order'),
-    locale: z.literal('ko'),
-    sourceContentHashes: z
-      .object({
-        self: sha256,
-        love: sha256,
-        work: sha256,
-        choice: sha256,
-        assets: sha256,
-      })
-      .passthrough(),
-    productionContract: z
-      .object({
-        batchCount: z.literal(88),
-        plannedEditionCount: z.literal(1056),
-        producedEditionCount: z.literal(1056),
+const batchPlanSchema = z.looseObject({
+  status: z.literal('work_order'),
+  locale: z.literal('ko'),
+  sourceContentHashes: z.looseObject({
+    self: sha256,
+    love: sha256,
+    work: sha256,
+    choice: sha256,
+    assets: sha256,
+  }),
+  productionContract: z.looseObject({
+    batchCount: z.literal(88),
+    plannedEditionCount: z.literal(1056),
+    producedEditionCount: z.literal(1056),
+    remainingEditionCount: z.literal(0),
+    completedBatchCount: z.literal(88),
+  }),
+  batches: z
+    .array(
+      z.looseObject({
+        order: z.number().int().min(1).max(88),
+        id: contentId,
+        slot: z.enum(SLOTS),
+        editionIds: z.array(contentId).length(SIGNS.length),
+        pilotEditionIds: z.array(contentId).max(1),
+        remainingEditionIds: z.array(contentId).length(0),
+        plannedEditionCount: z.literal(12),
         remainingEditionCount: z.literal(0),
-        completedBatchCount: z.literal(88),
-      })
-      .passthrough(),
-    batches: z
-      .array(
-        z
-          .object({
-            order: z.number().int().min(1).max(88),
-            id: contentId,
-            slot: z.enum(SLOTS),
-            editionIds: z.array(contentId).length(SIGNS.length),
-            pilotEditionIds: z.array(contentId).max(1),
-            remainingEditionIds: z.array(contentId).length(0),
-            plannedEditionCount: z.literal(12),
-            remainingEditionCount: z.literal(0),
-            productionStatus: z.literal('complete'),
-          })
-          .passthrough(),
-      )
-      .length(88),
-  })
-  .passthrough()
+        productionStatus: z.literal('complete'),
+      }),
+    )
+    .length(88),
+})
 
-const reviewSchema = z
-  .object({
-    status: z.literal('visual_review_complete'),
-    locale: z.literal('ko'),
-    batchId: contentId,
-    batchOrder: z.number().int().min(1).max(88),
-    editorialApprovedOn: z.string().regex(ISO_DATE_PATTERN),
-    generatedOn: z.string().regex(ISO_DATE_PATTERN),
-    visualReviewContract: z
-      .object({
-        approvalAuthority: z.literal('human_editor'),
-        approvedOn: z.string().regex(ISO_DATE_PATTERN),
-        assetHashAlgorithm: z.literal('sha256'),
-        approvedImageStatus: z.literal('approved_local_candidate'),
-        productionAssetStatus: z.literal('not_uploaded'),
-        runtimeMayPublishLocalCandidate: z.literal(false),
-      })
-      .passthrough(),
-    editions: z
-      .array(
-        z
-          .object({
-            order: z.number().int().min(1).max(12),
-            editionId: contentId,
-            sign: z.enum(SIGNS),
-            editorialReviewStatus: z.enum(['approved', 'approved_pilot']),
-            editorialApprovedOn: z.string().regex(ISO_DATE_PATTERN).optional(),
-            editorialContentHash: sha256,
-            imageStatus: z.literal('approved_local_candidate'),
-            approvedArtworkSha256: sha256,
-          })
-          .passthrough(),
-      )
-      .length(SIGNS.length),
-  })
-  .passthrough()
+const reviewSchema = z.looseObject({
+  status: z.literal('visual_review_complete'),
+  locale: z.literal('ko'),
+  batchId: contentId,
+  batchOrder: z.number().int().min(1).max(88),
+  editorialApprovedOn: z.string().regex(ISO_DATE_PATTERN),
+  generatedOn: z.string().regex(ISO_DATE_PATTERN),
+  visualReviewContract: z.looseObject({
+    approvalAuthority: z.literal('human_editor'),
+    approvedOn: z.string().regex(ISO_DATE_PATTERN),
+    assetHashAlgorithm: z.literal('sha256'),
+    approvedImageStatus: z.literal('approved_local_candidate'),
+    productionAssetStatus: z.literal('not_uploaded'),
+    runtimeMayPublishLocalCandidate: z.literal(false),
+  }),
+  editions: z
+    .array(
+      z.looseObject({
+        order: z.number().int().min(1).max(12),
+        editionId: contentId,
+        sign: z.enum(SIGNS),
+        editorialReviewStatus: z.enum(['approved', 'approved_pilot']),
+        editorialApprovedOn: z.string().regex(ISO_DATE_PATTERN).optional(),
+        editorialContentHash: sha256,
+        imageStatus: z.literal('approved_local_candidate'),
+        approvedArtworkSha256: sha256,
+      }),
+    )
+    .length(SIGNS.length),
+})
 
-const sourceHashesSchema = z
-  .object(
-    Object.fromEntries(SOURCE_HASH_KEYS.map((key) => [key, sha256])) as Record<
-      (typeof SOURCE_HASH_KEYS)[number],
-      typeof sha256
-    >,
-  )
-  .strict()
-const generatedFamilySchema = z
-  .object({
-    id: contentId,
-    sign: z.enum(SIGNS),
-    slot: z.enum(SLOTS),
-    signalAffinities: z.array(nonEmptyText).length(2),
-    tieBreakOrder: z.number().int().min(0).max(11),
-  })
-  .strict()
-const generatedEditionSchema = z
-  .object({
-    id: contentId,
-    familyId: contentId,
-    sign: z.enum(SIGNS),
-    slot: z.enum(SLOTS),
-    rarity: z.enum(RARITIES).nullable(),
-    artworkObjectKey: z.string().regex(/^guardian-cards\/ko\/[a-z0-9]+(?:[.-][a-z0-9]+)+\.webp$/),
-    selectionSignals: z.array(nonEmptyText).max(2),
-    previewTone: z.enum(PREVIEW_TONES).nullable(),
-  })
-  .strict()
-const familyCandidateSchema = z.object({ familyId: contentId, tieBreakOrder: z.number().int().min(0).max(11) }).strict()
-const familyPoolSchema = z
-  .object({
-    id: nonEmptyText,
-    slot: z.enum(SLOTS),
-    selection: z.literal('context_scored'),
-    candidates: z.array(familyCandidateSchema).length(SIGNS.length),
-  })
-  .strict()
-const contextEditionPoolSchema = z
-  .object({
-    id: nonEmptyText,
-    familyId: contentId,
-    selection: z.literal('context_scored'),
-    candidates: z
-      .array(z.object({ editionId: contentId, tieBreakOrder: z.number().int().min(0).max(15) }).strict())
-      .length(16),
-  })
-  .strict()
-const weightedEditionPoolSchema = z
-  .object({
-    id: nonEmptyText,
-    familyId: contentId,
-    selection: z.literal('weighted_random'),
-    candidates: z.array(z.object({ editionId: contentId, weight: z.number().int().positive() }).strict()).length(40),
-  })
-  .strict()
-const cardCopySchema = z
-  .object({
-    slot: z.enum(SLOTS),
-    label: z.enum(['자기이해', '사랑', '일', '결정']),
-    title: nonEmptyText,
-    guardians: nonEmptyText,
-    artworkAlt: nonEmptyText,
-    oneLineTemplate: nonEmptyText,
-    reflection: nonEmptyText,
-  })
-  .strict()
-const runtimeCopySchema = z
-  .object({
-    title: nonEmptyText,
-    guardians: nonEmptyText,
-    artworkAlt: nonEmptyText,
-    oneLineTemplate: nonEmptyText,
-    reflection: nonEmptyText,
-  })
-  .strict()
-const runtimeFamilySchema = z
-  .object({
-    id: contentId,
-    sign: z.enum(SIGNS),
-    theme: z.enum(SLOTS),
-  })
-  .strict()
-const runtimeEditionSchema = z
-  .object({
-    id: contentId,
-    familyId: contentId,
-    sign: z.enum(SIGNS),
-    theme: z.enum(SLOTS),
-    contextId: nonEmptyText,
-    tone: z.enum(PREVIEW_TONES),
-    rarity: z.enum(RARITIES).nullable(),
-    weight: z.number().int().positive(),
-    artworkObjectKey: z.string().regex(/^guardian-cards\/ko\/[a-z0-9]+(?:[.-][a-z0-9]+)+\.webp$/),
-    copy: runtimeCopySchema,
-  })
-  .strict()
-const generatedCatalogSchema = z
-  .object({
-    schema: z.literal('stella-guardian-daily-runtime-catalog/v1'),
-    locale: z.literal('ko'),
-    sourceHashes: sourceHashesSchema,
-    families: z.array(runtimeFamilySchema).length(48),
-    editions: z.array(runtimeEditionSchema).length(1056),
-  })
-  .strict()
+const sourceHashesSchema = z.strictObject(
+  Object.fromEntries(SOURCE_HASH_KEYS.map((key) => [key, sha256])) as Record<
+    (typeof SOURCE_HASH_KEYS)[number],
+    typeof sha256
+  >,
+)
+const generatedFamilySchema = z.strictObject({
+  id: contentId,
+  sign: z.enum(SIGNS),
+  slot: z.enum(SLOTS),
+  signalAffinities: z.array(nonEmptyText).length(2),
+  tieBreakOrder: z.number().int().min(0).max(11),
+})
+const generatedEditionSchema = z.strictObject({
+  id: contentId,
+  familyId: contentId,
+  sign: z.enum(SIGNS),
+  slot: z.enum(SLOTS),
+  rarity: z.enum(RARITIES).nullable(),
+  artworkObjectKey: z.string().regex(/^guardian-cards\/ko\/[a-z0-9]+(?:[.-][a-z0-9]+)+\.webp$/),
+  selectionSignals: z.array(nonEmptyText).max(2),
+  previewTone: z.enum(PREVIEW_TONES).nullable(),
+})
+const familyCandidateSchema = z.strictObject({ familyId: contentId, tieBreakOrder: z.number().int().min(0).max(11) })
+const familyPoolSchema = z.strictObject({
+  id: nonEmptyText,
+  slot: z.enum(SLOTS),
+  selection: z.literal('context_scored'),
+  candidates: z.array(familyCandidateSchema).length(SIGNS.length),
+})
+const contextEditionPoolSchema = z.strictObject({
+  id: nonEmptyText,
+  familyId: contentId,
+  selection: z.literal('context_scored'),
+  candidates: z
+    .array(z.strictObject({ editionId: contentId, tieBreakOrder: z.number().int().min(0).max(15) }))
+    .length(16),
+})
+const weightedEditionPoolSchema = z.strictObject({
+  id: nonEmptyText,
+  familyId: contentId,
+  selection: z.literal('weighted_random'),
+  candidates: z.array(z.strictObject({ editionId: contentId, weight: z.number().int().positive() })).length(40),
+})
+const cardCopySchema = z.strictObject({
+  slot: z.enum(SLOTS),
+  label: z.enum(['자기이해', '사랑', '일', '결정']),
+  title: nonEmptyText,
+  guardians: nonEmptyText,
+  artworkAlt: nonEmptyText,
+  oneLineTemplate: nonEmptyText,
+  reflection: nonEmptyText,
+})
+const runtimeCopySchema = z.strictObject({
+  title: nonEmptyText,
+  guardians: nonEmptyText,
+  artworkAlt: nonEmptyText,
+  oneLineTemplate: nonEmptyText,
+  reflection: nonEmptyText,
+})
+const runtimeFamilySchema = z.strictObject({
+  id: contentId,
+  sign: z.enum(SIGNS),
+  theme: z.enum(SLOTS),
+})
+const runtimeEditionSchema = z.strictObject({
+  id: contentId,
+  familyId: contentId,
+  sign: z.enum(SIGNS),
+  theme: z.enum(SLOTS),
+  contextId: nonEmptyText,
+  tone: z.enum(PREVIEW_TONES),
+  rarity: z.enum(RARITIES).nullable(),
+  weight: z.number().int().positive(),
+  artworkObjectKey: z.string().regex(/^guardian-cards\/ko\/[a-z0-9]+(?:[.-][a-z0-9]+)+\.webp$/),
+  copy: runtimeCopySchema,
+})
+const generatedCatalogSchema = z.strictObject({
+  schema: z.literal('stella-guardian-daily-runtime-catalog/v1'),
+  locale: z.literal('ko'),
+  sourceHashes: sourceHashesSchema,
+  families: z.array(runtimeFamilySchema).length(48),
+  editions: z.array(runtimeEditionSchema).length(1056),
+})
 
 type Edition = z.infer<typeof editionSchema>
 type EditionSources = Record<Slot, z.infer<typeof editionSourceSchema>>

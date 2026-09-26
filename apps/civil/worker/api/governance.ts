@@ -10,11 +10,10 @@ import { NO_STORE_HEADERS, readJson } from '../lib/http'
 const BODY_LIMIT_BYTES = 8192
 const Id = z.uuid()
 const ApprovalBody = z
-  .object({
+  .strictObject({
     action: CivilCalculationApprovalActionSchema,
     note: z.string().trim().max(4000).nullable().default(null),
   })
-  .strict()
   .superRefine((value, context) => {
     if (value.action !== 'submit' && !value.note) {
       context.addIssue({ code: 'custom', message: 'note is required', path: ['note'] })

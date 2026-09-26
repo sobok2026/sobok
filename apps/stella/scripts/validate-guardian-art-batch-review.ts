@@ -39,55 +39,45 @@ const ELEMENT_BY_SIGN = {
 const nonEmptyText = z.string().trim().min(1)
 const sha256 = z.string().regex(/^[a-f0-9]{64}$/)
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
-const editionSchema = z
-  .object({
-    id: nonEmptyText,
-    sign: z.enum(SIGNS),
-    title: nonEmptyText,
-    guardians: nonEmptyText,
-    scene: nonEmptyText,
-    artworkAlt: nonEmptyText,
-    oneLineTemplate: nonEmptyText,
-    reflection: nonEmptyText,
-  })
-  .passthrough()
-const editionSourceSchema = z.object({ editions: z.array(editionSchema) }).passthrough()
-const batchPlanSchema = z
-  .object({
-    batches: z.array(
-      z
-        .object({
-          order: z.number().int().positive(),
-          id: nonEmptyText,
-          slot: z.enum(SLOTS),
-          narrativeAxisId: nonEmptyText,
-          visualAxisId: nonEmptyText,
-          editionIds: z.array(nonEmptyText),
-          pilotEditionIds: z.array(nonEmptyText),
-          remainingEditionIds: z.array(nonEmptyText),
-          plannedEditionCount: z.number().int().positive(),
-          remainingEditionCount: z.number().int().nonnegative(),
-          productionStatus: z.enum(['not_started', 'pilot_partial', 'in_progress', 'complete']),
-        })
-        .passthrough(),
-    ),
-  })
-  .passthrough()
-const pilotPlanSchema = z
-  .object({
-    pilots: z.array(
-      z
-        .object({
-          editionId: nonEmptyText,
-          editorialContentHash: sha256,
-          approvedArtworkSha256: sha256,
-        })
-        .passthrough(),
-    ),
-  })
-  .passthrough()
+const editionSchema = z.looseObject({
+  id: nonEmptyText,
+  sign: z.enum(SIGNS),
+  title: nonEmptyText,
+  guardians: nonEmptyText,
+  scene: nonEmptyText,
+  artworkAlt: nonEmptyText,
+  oneLineTemplate: nonEmptyText,
+  reflection: nonEmptyText,
+})
+const editionSourceSchema = z.looseObject({ editions: z.array(editionSchema) })
+const batchPlanSchema = z.looseObject({
+  batches: z.array(
+    z.looseObject({
+      order: z.number().int().positive(),
+      id: nonEmptyText,
+      slot: z.enum(SLOTS),
+      narrativeAxisId: nonEmptyText,
+      visualAxisId: nonEmptyText,
+      editionIds: z.array(nonEmptyText),
+      pilotEditionIds: z.array(nonEmptyText),
+      remainingEditionIds: z.array(nonEmptyText),
+      plannedEditionCount: z.number().int().positive(),
+      remainingEditionCount: z.number().int().nonnegative(),
+      productionStatus: z.enum(['not_started', 'pilot_partial', 'in_progress', 'complete']),
+    }),
+  ),
+})
+const pilotPlanSchema = z.looseObject({
+  pilots: z.array(
+    z.looseObject({
+      editionId: nonEmptyText,
+      editorialContentHash: sha256,
+      approvedArtworkSha256: sha256,
+    }),
+  ),
+})
 
-const reviewEditionBaseSchema = z.object({
+const reviewEditionBaseSchema = z.strictObject({
   order: z.number().int().min(1).max(12),
   editionId: nonEmptyText,
   sign: z.enum(SIGNS),
@@ -98,153 +88,123 @@ const reviewEditionBaseSchema = z.object({
   distinctFrom: z.array(z.string().trim().min(10)).min(1).max(3),
   visualReviewFocus: z.array(z.string().trim().min(10)).min(2).max(3),
 })
-const pendingEditionSchema = reviewEditionBaseSchema
-  .extend({
-    editorialReviewStatus: z.literal('pending_human_approval'),
-    imageStatus: z.literal('not_started'),
-  })
-  .strict()
-const editoriallyApprovedEditionSchema = reviewEditionBaseSchema
-  .extend({
-    editorialReviewStatus: z.literal('approved'),
-    editorialApprovedOn: date,
-    imageStatus: z.literal('not_started'),
-  })
-  .strict()
-const generatedCandidateEditionSchema = reviewEditionBaseSchema
-  .extend({
-    editorialReviewStatus: z.literal('approved'),
-    editorialApprovedOn: date,
-    imageStatus: z.literal('generated_candidate'),
-  })
-  .strict()
-const visuallyApprovedEditionSchema = reviewEditionBaseSchema
-  .extend({
-    editorialReviewStatus: z.literal('approved'),
-    editorialApprovedOn: date,
-    imageStatus: z.literal('approved_local_candidate'),
-    approvedArtworkSha256: sha256,
-  })
-  .strict()
-const approvedPilotEditionSchema = reviewEditionBaseSchema
-  .extend({
-    editorialReviewStatus: z.literal('approved_pilot'),
-    imageStatus: z.literal('approved_local_candidate'),
-    approvedArtworkSha256: sha256,
-  })
-  .strict()
+const pendingEditionSchema = reviewEditionBaseSchema.extend({
+  editorialReviewStatus: z.literal('pending_human_approval'),
+  imageStatus: z.literal('not_started'),
+})
+const editoriallyApprovedEditionSchema = reviewEditionBaseSchema.extend({
+  editorialReviewStatus: z.literal('approved'),
+  editorialApprovedOn: date,
+  imageStatus: z.literal('not_started'),
+})
+const generatedCandidateEditionSchema = reviewEditionBaseSchema.extend({
+  editorialReviewStatus: z.literal('approved'),
+  editorialApprovedOn: date,
+  imageStatus: z.literal('generated_candidate'),
+})
+const visuallyApprovedEditionSchema = reviewEditionBaseSchema.extend({
+  editorialReviewStatus: z.literal('approved'),
+  editorialApprovedOn: date,
+  imageStatus: z.literal('approved_local_candidate'),
+  approvedArtworkSha256: sha256,
+})
+const approvedPilotEditionSchema = reviewEditionBaseSchema.extend({
+  editorialReviewStatus: z.literal('approved_pilot'),
+  imageStatus: z.literal('approved_local_candidate'),
+  approvedArtworkSha256: sha256,
+})
 
-const selectionContractSchema = z
-  .object({
-    plannedEditionCount: z.literal(12),
-    approvedPilotEditionCount: z.number().int().min(0).max(1),
-    newEditionCount: z.number().int().min(11).max(12),
-    onePerSign: z.literal(true),
-    slot: z.enum(SLOTS),
-    narrativeAxisId: nonEmptyText,
-    visualAxisId: nonEmptyText,
-  })
-  .strict()
-const editorialReviewContractSchema = z
-  .object({
-    approvalAuthority: z.literal('human_editor'),
-    contentHashAlgorithm: z.literal('sha256-canonical-json'),
-    hashFields: z.tuple([
-      z.literal('id'),
-      z.literal('title'),
-      z.literal('guardians'),
-      z.literal('scene'),
-      z.literal('artworkAlt'),
-      z.literal('oneLineTemplate'),
-      z.literal('reflection'),
-    ]),
-    requiredChecks: z.tuple([
-      z.literal('character_continuity'),
-      z.literal('scene_feasibility'),
-      z.literal('visible_alt_text'),
-      z.literal('non_deterministic_copy'),
-      z.literal('non_personalized_master_art'),
-      z.literal('symbol_only_written_marks'),
-      z.literal('distinct_composition_within_batch'),
-    ]),
-    imageGenerationRequires: z.literal('approved_editorial_hash'),
-  })
-  .strict()
-const renderContractSchema = z
-  .object({
-    aspectRatio: z.literal('3:4'),
-    masterSize: z.literal('1080x1440'),
-    fullBleed: z.literal(true),
-    maximumDisplayedGuardians: z.literal(2),
-    bakedText: z.literal(false),
-    legibleTextInsideArtwork: z.literal(false),
-    writtenMarks: z.literal('symbols_and_shapes_only'),
-    characterCoverage: z.literal('55-65%'),
-    identityReferences: z
-      .object({
-        fire: z.literal('apps/stella/design/zodiac-guardians/sheets/fire.png'),
-        earth: z.literal('apps/stella/design/zodiac-guardians/sheets/earth.png'),
-        air: z.literal('apps/stella/design/zodiac-guardians/sheets/air.png'),
-        water: z.literal('apps/stella/design/zodiac-guardians/sheets/water.png'),
-      })
-      .strict(),
-    styleReference: z.literal('apps/stella/private/guardian-art-pilot/contact-sheet-final.png'),
-    commonPrompt: z.string().trim().min(300),
-  })
-  .strict()
-const visualReviewContractSchema = z
-  .object({
-    approvalAuthority: z.literal('human_editor'),
-    approvedOn: date,
-    assetHashAlgorithm: z.literal('sha256'),
-    approvedImageStatus: z.literal('approved_local_candidate'),
-    productionAssetStatus: z.literal('not_uploaded'),
-    runtimeMayPublishLocalCandidate: z.literal(false),
-  })
-  .strict()
-const reviewPlanBaseSchema = z
-  .object({
-    locale: z.literal('ko'),
-    batchId: nonEmptyText,
-    batchOrder: z.number().int().positive(),
-    purpose: z.string().trim().min(40),
-    sourceBatchPlan: z.literal('production-art-batches-ko.json'),
-    selectionContract: selectionContractSchema,
-    editorialReviewContract: editorialReviewContractSchema,
-    renderContract: renderContractSchema,
-  })
-  .strict()
-const editorialReviewReadySchema = reviewPlanBaseSchema
-  .extend({
-    status: z.literal('editorial_review_ready'),
-    preparedOn: date,
-    editions: z.array(z.union([pendingEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
-  })
-  .strict()
-const editorialReviewCompleteSchema = reviewPlanBaseSchema
-  .extend({
-    status: z.literal('editorial_review_complete'),
-    editorialApprovedOn: date,
-    editions: z.array(z.union([editoriallyApprovedEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
-  })
-  .strict()
-const visualReviewReadySchema = reviewPlanBaseSchema
-  .extend({
-    status: z.literal('visual_review_ready'),
-    editorialApprovedOn: date,
-    generatedOn: date,
-    editions: z.array(z.union([generatedCandidateEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
-  })
-  .strict()
-const visualReviewCompleteSchema = reviewPlanBaseSchema
-  .extend({
-    status: z.literal('visual_review_complete'),
-    editorialApprovedOn: date,
-    generatedOn: date,
-    visualReviewContract: visualReviewContractSchema,
-    editions: z.array(z.union([visuallyApprovedEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
-  })
-  .strict()
+const selectionContractSchema = z.strictObject({
+  plannedEditionCount: z.literal(12),
+  approvedPilotEditionCount: z.number().int().min(0).max(1),
+  newEditionCount: z.number().int().min(11).max(12),
+  onePerSign: z.literal(true),
+  slot: z.enum(SLOTS),
+  narrativeAxisId: nonEmptyText,
+  visualAxisId: nonEmptyText,
+})
+const editorialReviewContractSchema = z.strictObject({
+  approvalAuthority: z.literal('human_editor'),
+  contentHashAlgorithm: z.literal('sha256-canonical-json'),
+  hashFields: z.tuple([
+    z.literal('id'),
+    z.literal('title'),
+    z.literal('guardians'),
+    z.literal('scene'),
+    z.literal('artworkAlt'),
+    z.literal('oneLineTemplate'),
+    z.literal('reflection'),
+  ]),
+  requiredChecks: z.tuple([
+    z.literal('character_continuity'),
+    z.literal('scene_feasibility'),
+    z.literal('visible_alt_text'),
+    z.literal('non_deterministic_copy'),
+    z.literal('non_personalized_master_art'),
+    z.literal('symbol_only_written_marks'),
+    z.literal('distinct_composition_within_batch'),
+  ]),
+  imageGenerationRequires: z.literal('approved_editorial_hash'),
+})
+const renderContractSchema = z.strictObject({
+  aspectRatio: z.literal('3:4'),
+  masterSize: z.literal('1080x1440'),
+  fullBleed: z.literal(true),
+  maximumDisplayedGuardians: z.literal(2),
+  bakedText: z.literal(false),
+  legibleTextInsideArtwork: z.literal(false),
+  writtenMarks: z.literal('symbols_and_shapes_only'),
+  characterCoverage: z.literal('55-65%'),
+  identityReferences: z.strictObject({
+    fire: z.literal('apps/stella/design/zodiac-guardians/sheets/fire.png'),
+    earth: z.literal('apps/stella/design/zodiac-guardians/sheets/earth.png'),
+    air: z.literal('apps/stella/design/zodiac-guardians/sheets/air.png'),
+    water: z.literal('apps/stella/design/zodiac-guardians/sheets/water.png'),
+  }),
+  styleReference: z.literal('apps/stella/private/guardian-art-pilot/contact-sheet-final.png'),
+  commonPrompt: z.string().trim().min(300),
+})
+const visualReviewContractSchema = z.strictObject({
+  approvalAuthority: z.literal('human_editor'),
+  approvedOn: date,
+  assetHashAlgorithm: z.literal('sha256'),
+  approvedImageStatus: z.literal('approved_local_candidate'),
+  productionAssetStatus: z.literal('not_uploaded'),
+  runtimeMayPublishLocalCandidate: z.literal(false),
+})
+const reviewPlanBaseSchema = z.strictObject({
+  locale: z.literal('ko'),
+  batchId: nonEmptyText,
+  batchOrder: z.number().int().positive(),
+  purpose: z.string().trim().min(40),
+  sourceBatchPlan: z.literal('production-art-batches-ko.json'),
+  selectionContract: selectionContractSchema,
+  editorialReviewContract: editorialReviewContractSchema,
+  renderContract: renderContractSchema,
+})
+const editorialReviewReadySchema = reviewPlanBaseSchema.extend({
+  status: z.literal('editorial_review_ready'),
+  preparedOn: date,
+  editions: z.array(z.union([pendingEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
+})
+const editorialReviewCompleteSchema = reviewPlanBaseSchema.extend({
+  status: z.literal('editorial_review_complete'),
+  editorialApprovedOn: date,
+  editions: z.array(z.union([editoriallyApprovedEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
+})
+const visualReviewReadySchema = reviewPlanBaseSchema.extend({
+  status: z.literal('visual_review_ready'),
+  editorialApprovedOn: date,
+  generatedOn: date,
+  editions: z.array(z.union([generatedCandidateEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
+})
+const visualReviewCompleteSchema = reviewPlanBaseSchema.extend({
+  status: z.literal('visual_review_complete'),
+  editorialApprovedOn: date,
+  generatedOn: date,
+  visualReviewContract: visualReviewContractSchema,
+  editions: z.array(z.union([visuallyApprovedEditionSchema, approvedPilotEditionSchema])).length(SIGNS.length),
+})
 const reviewPlanSchema = z.discriminatedUnion('status', [
   editorialReviewReadySchema,
   editorialReviewCompleteSchema,

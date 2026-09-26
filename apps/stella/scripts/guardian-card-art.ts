@@ -8,80 +8,64 @@ import { z } from 'zod'
 const sha256 = z.string().regex(/^[a-f0-9]{64}$/)
 const editionId = z.string().regex(/^[a-z0-9]+(?:[.-][a-z0-9]+)+$/)
 
-export const assetContractSchema = z
-  .object({
-    provider: z.literal('cloudflare_r2'),
-    infrastructureOwner: z.literal('sobok-ops/infra/cloudflare/account/sobok/stella'),
-    objectDeploymentOwner: z.literal('sobok/.github/workflows/guardian-card-art-deploy.yml'),
-    runtimeOriginBinding: z.literal('STELLA_GUARDIAN_ASSET_ORIGIN'),
-    locale: z.literal('ko'),
-    plannedAssetCount: z.literal(1056),
-    legacyObjectKeyTemplate: z.literal('guardian-cards/ko/{editionId}.webp'),
-    objectKeyTemplate: z.literal('guardian-cards/ko/{editionId}.{deliverySha256_12}.webp'),
-    artworkPathTemplate: z.literal('{origin}/{objectKey}'),
-    editionIdPolicy: z.string().trim().min(20),
-    sourceContract: z
-      .object({
-        format: z.literal('png'),
-        width: z.literal(1080),
-        height: z.literal(1440),
-        trackedInGit: z.literal(false),
-      })
-      .strict(),
-    deliveryContract: z
-      .object({
-        format: z.literal('webp'),
-        mimeType: z.literal('image/webp'),
-        width: z.literal(1080),
-        height: z.literal(1440),
-        quality: z.number().int().min(1).max(100),
-        effort: z.number().int().min(0).max(6),
-        smartSubsample: z.boolean(),
-        cacheControl: z.literal('public, max-age=31536000, immutable'),
-        trackedInGit: z.literal(false),
-      })
-      .strict(),
-    environments: z
-      .object({
-        staging: z
-          .object({
-            bucket: z.literal('stella-guardian-assets-stg'),
-            origin: z.literal('https://guardian-assets-stg.sobok.cc'),
-          })
-          .strict(),
-        production: z
-          .object({
-            bucket: z.literal('stella-guardian-assets'),
-            origin: z.literal('https://guardian-assets.sobok.cc'),
-          })
-          .strict(),
-      })
-      .strict(),
-  })
-  .strict()
-
-export const releaseAssetSchema = z
-  .object({
-    editionId,
-    objectKey: z.string().regex(/^guardian-cards\/ko\/[a-z0-9]+(?:[.-][a-z0-9]+)+\.webp$/),
-    sourceArtworkSha256: sha256,
-    deliveryArtworkSha256: sha256,
-    byteSize: z.number().int().positive(),
+export const assetContractSchema = z.strictObject({
+  provider: z.literal('cloudflare_r2'),
+  infrastructureOwner: z.literal('sobok-ops/infra/cloudflare/account/sobok/stella'),
+  objectDeploymentOwner: z.literal('sobok/.github/workflows/guardian-card-art-deploy.yml'),
+  runtimeOriginBinding: z.literal('STELLA_GUARDIAN_ASSET_ORIGIN'),
+  locale: z.literal('ko'),
+  plannedAssetCount: z.literal(1056),
+  legacyObjectKeyTemplate: z.literal('guardian-cards/ko/{editionId}.webp'),
+  objectKeyTemplate: z.literal('guardian-cards/ko/{editionId}.{deliverySha256_12}.webp'),
+  artworkPathTemplate: z.literal('{origin}/{objectKey}'),
+  editionIdPolicy: z.string().trim().min(20),
+  sourceContract: z.strictObject({
+    format: z.literal('png'),
     width: z.literal(1080),
     height: z.literal(1440),
-  })
-  .strict()
-
-export const releaseManifestSchema = z
-  .object({
-    schema: z.literal('stella-guardian-card-art-release/v1'),
-    locale: z.literal('ko'),
-    contentType: z.literal('image/webp'),
+    trackedInGit: z.literal(false),
+  }),
+  deliveryContract: z.strictObject({
+    format: z.literal('webp'),
+    mimeType: z.literal('image/webp'),
+    width: z.literal(1080),
+    height: z.literal(1440),
+    quality: z.number().int().min(1).max(100),
+    effort: z.number().int().min(0).max(6),
+    smartSubsample: z.boolean(),
     cacheControl: z.literal('public, max-age=31536000, immutable'),
-    assetCount: z.number().int().positive().max(1056),
-    assets: z.array(releaseAssetSchema).min(1).max(1056),
-  })
-  .strict()
+    trackedInGit: z.literal(false),
+  }),
+  environments: z.strictObject({
+    staging: z.strictObject({
+      bucket: z.literal('stella-guardian-assets-stg'),
+      origin: z.literal('https://guardian-assets-stg.sobok.cc'),
+    }),
+    production: z.strictObject({
+      bucket: z.literal('stella-guardian-assets'),
+      origin: z.literal('https://guardian-assets.sobok.cc'),
+    }),
+  }),
+})
+
+export const releaseAssetSchema = z.strictObject({
+  editionId,
+  objectKey: z.string().regex(/^guardian-cards\/ko\/[a-z0-9]+(?:[.-][a-z0-9]+)+\.webp$/),
+  sourceArtworkSha256: sha256,
+  deliveryArtworkSha256: sha256,
+  byteSize: z.number().int().positive(),
+  width: z.literal(1080),
+  height: z.literal(1440),
+})
+
+export const releaseManifestSchema = z.strictObject({
+  schema: z.literal('stella-guardian-card-art-release/v1'),
+  locale: z.literal('ko'),
+  contentType: z.literal('image/webp'),
+  cacheControl: z.literal('public, max-age=31536000, immutable'),
+  assetCount: z.number().int().positive().max(1056),
+  assets: z.array(releaseAssetSchema).min(1).max(1056),
+})
 
 export type AssetContract = z.infer<typeof assetContractSchema>
 export type ReleaseManifest = z.infer<typeof releaseManifestSchema>

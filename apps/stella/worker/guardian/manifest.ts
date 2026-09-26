@@ -13,46 +13,39 @@ import {
 import runtimeCatalogSource from './runtime-catalog.generated.json'
 
 const nonEmptyText = z.string().trim().min(1)
-const copySchema = z
-  .object({
-    title: nonEmptyText,
-    guardians: nonEmptyText,
-    artworkAlt: nonEmptyText,
-    oneLineTemplate: nonEmptyText,
-    reflection: nonEmptyText,
-  })
-  .strict()
+const copySchema = z.strictObject({
+  title: nonEmptyText,
+  guardians: nonEmptyText,
+  artworkAlt: nonEmptyText,
+  oneLineTemplate: nonEmptyText,
+  reflection: nonEmptyText,
+})
 const source = z
-  .object({
+  .looseObject({
     schema: z.literal('stella-guardian-daily-runtime-catalog/v1'),
     locale: z.literal('ko'),
     families: z.array(
-      z
-        .object({
-          id: nonEmptyText,
-          sign: z.enum(GUARDIAN_ZODIAC_SIGNS),
-          theme: z.enum(GUARDIAN_DAILY_THEMES),
-        })
-        .strict(),
+      z.strictObject({
+        id: nonEmptyText,
+        sign: z.enum(GUARDIAN_ZODIAC_SIGNS),
+        theme: z.enum(GUARDIAN_DAILY_THEMES),
+      }),
     ),
     editions: z.array(
-      z
-        .object({
-          id: nonEmptyText,
-          familyId: nonEmptyText,
-          sign: z.enum(GUARDIAN_ZODIAC_SIGNS),
-          theme: z.enum(GUARDIAN_DAILY_THEMES),
-          contextId: nonEmptyText,
-          tone: z.enum(GUARDIAN_DAILY_TONES),
-          rarity: z.enum(GUARDIAN_DAILY_RARITIES).nullable(),
-          weight: z.number().int().positive(),
-          artworkObjectKey: nonEmptyText,
-          copy: copySchema,
-        })
-        .strict(),
+      z.strictObject({
+        id: nonEmptyText,
+        familyId: nonEmptyText,
+        sign: z.enum(GUARDIAN_ZODIAC_SIGNS),
+        theme: z.enum(GUARDIAN_DAILY_THEMES),
+        contextId: nonEmptyText,
+        tone: z.enum(GUARDIAN_DAILY_TONES),
+        rarity: z.enum(GUARDIAN_DAILY_RARITIES).nullable(),
+        weight: z.number().int().positive(),
+        artworkObjectKey: nonEmptyText,
+        copy: copySchema,
+      }),
     ),
   })
-  .passthrough()
   .parse(runtimeCatalogSource)
 
 export type GuardianDailyFamily = {
