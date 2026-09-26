@@ -1,4 +1,8 @@
 # Workers Static Assets custom headers (copied into ./out by `next build`).
+#
+# Cloudflare joins a header that two matching rules both set with a comma, so `/*` must not set Cache-Control:
+# the hashed paths would end up with both max-age values. Everything not listed below keeps the platform
+# default, `public, max-age=0, must-revalidate`, which is what HTML needs for a deploy to show at once.
 
 /*
   X-Content-Type-Options: nosniff
@@ -6,10 +10,6 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Strict-Transport-Security: max-age=63072000; includeSubDomains
-  # Default for HTML pages and other unhashed assets: always revalidate so a
-  # deploy propagates immediately. The immutable rules below are both later and
-  # more specific, so hashed assets keep their long-lived cache.
-  Cache-Control: public, max-age=0, must-revalidate
 
 # Next.js content-hashes everything under /_next/static, so browsers may cache it forever.
 /_next/static/*
