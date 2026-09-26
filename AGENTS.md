@@ -27,6 +27,45 @@
 - 커밋되는 모든 파일은 공개될 수 있다고 가정한다.
 - secret, token, private key, credential, 계정 정보, 민감한 운영 정보는 커밋하지 않는다.
 
+## Code Style
+
+- 포맷은 Biome(JS·TS·JSON)와 Prettier(CSS·Markdown·YAML·HTML)가 정한다. 아래 규칙은 포매터가 정하지 않는
+  부분만 다룬다.
+- 기존 코드는 그 파일을 수정할 때 맞춘다. `apps/cafe`는 모두 맞춰져 있고 중첩 삼항은 Biome
+  `style/noNestedTernary`로 막는다.
+
+### 빈 줄
+
+- 빈 줄은 문단을 나눌 때만 한 줄씩 쓴다. 블록의 처음과 끝에는 넣지 않는다.
+- import 블록 뒤와 최상위 선언 사이는 띄운다. 한 줄짜리 선언끼리는 붙이고 스키마와 그 `z.infer` 타입도 붙인다.
+- 함수 본문은 준비 → 가드 → 본 작업 → 반환 단위로 나눈다.
+  - 여러 줄 블록(`if`·`for`·`switch`·`try`·함수·핸들러)은 앞뒤를 띄운다. 본문이 한 문장인 `if`는 가드로 보고
+    붙인다.
+  - 여러 줄 `return` 앞은 띄운다. 컴포넌트는 훅 묶음 뒤도 띄운다.
+- 빈 줄을 넣어도 흐름이 안 읽히면 함수 추출을 먼저 검토한다.
+
+### 분기
+
+- 중첩 삼항은 쓰지 않는다.
+  - 값 선택은 early return 함수나 lookup 객체로 쓴다.
+  - JSX 분기는 early return 하위 컴포넌트로 빼거나 서로 배타적인 조건 블록으로 나눈다.
+
+### className
+
+- 한 줄(120자)에 들어가면 문자열 하나로 쓴다.
+- 넘으면 `clsx()` 인자로 나눈다. 글자 수가 아니라 의미로 나누고 아래 순서를 따른다.
+  1. 기본 스타일. 길면 레이아웃(배치·표시·크기·바깥 여백)과 외형(테두리·배경·안쪽 여백·그림자·글자·모션)으로
+     나눈다.
+  2. 상태·선택자 variant(`hover:` `aria-*:` `data-*:` `group-*:` `after:` 등)
+  3. 미디어 variant(`compact:` `max-tablet:` `motion-reduce:` 등)
+  4. 조건부 클래스
+  5. 밖에서 받은 `className`
+- 각 문자열 안은 Tailwind 정렬 순서를 따른다.
+- 여러 줄 문자열과 템플릿 리터럴은 쓰지 않는다. 공백이 DOM에 남고 클래스 정렬기가 한 줄로 합친다.
+- `[...].join(' ')`은 쓰지 않는다. falsy 값이 `false` 클래스로 남는다.
+- `tailwind-merge`는 override가 실제로 충돌하는 공용 컴포넌트에서만 쓰고 커스텀 테마 토큰을 설정에 등록한다.
+- 같은 클래스 묶음이 반복되면 문자열을 나누기보다 반복문이나 컴포넌트로 뺀다.
+
 ## Web Rules
 
 - `apps/web`는 App Router + Server Components + Tailwind를 사용한다.

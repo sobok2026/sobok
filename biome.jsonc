@@ -65,5 +65,19 @@
       "quoteStyle": "single",
       "semicolons": "asNeeded"
     }
-  }
+  },
+  "overrides": [
+    {
+      // AGENTS.md Code Style: nested ternaries become a function with early returns or a lookup object.
+      // Enforced where the codebase already complies; other apps follow the rule as files are touched.
+      "includes": ["apps/cafe/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noNestedTernary": "error"
+          }
+        }
+      }
+    }
+  ]
 }
